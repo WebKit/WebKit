@@ -25,6 +25,7 @@
 
 #if USE(APPLE_INTERNAL_SDK)
 
+#import <Metal/MTLCommandQueue_Private.h>
 #import <Metal/MTLTexture_Private.h>
 #import <Metal/MetalPrivate.h>
 
@@ -54,5 +55,13 @@ typedef struct __IOSurface *IOSurfaceRef;
 - (instancetype)initWithIOSurface:(IOSurfaceRef)ioSurface label:(NSString*)label;
 @end
 #endif
+
+typedef NS_ENUM(NSUInteger, WebKitMTLGPUPriority) {
+    MTLGPUPriorityLow = 2,
+};
+
+@protocol MTLCommandQueueSPI <MTLCommandQueue>
+- (BOOL)setGPUPriority:(WebKitMTLGPUPriority)priority;
+@end
 
 #endif

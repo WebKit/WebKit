@@ -63,6 +63,56 @@
 // FIXME: Checking for EGL_Initialize does not seem to be robust in recovery OS.
 WTF_WEAK_LINK_FORCE_IMPORT(EGL_GetPlatformDisplayEXT);
 
+#if HAVE(METAL_GPU_PRIORITY)
+#import <objc/runtime.h>
+#import <sys/sysctl.h>
+
+@implementation _MTLCommandQueue (_MTLCommandQueueWebKitSwizzle)
+
++ (void)initialize
+{
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        if (!(WebCore::isInGPUProcess() || WebCore::isInWebProcess()))
+            return;
+
+        uint32_t vmmPresent = 0;
+        size_t size = sizeof(vmmPresent);
+        int result = sysctlbyname("kern.hv_vmm_present", &vmmPresent, &size, nullptr, 0);
+        if (result < 0)
+            vmmPresent = 0;
+
+        if (vmmPresent)
+            return;
+
+        auto originalSelector = @selector(initWithDevice:descriptor:);
+        auto swizzledSelector = @selector(WebKit_initWithDevice:descriptor:);
+
+        auto mtlCommandQueueClass = [self class];
+        auto originalMethod = class_getInstanceMethod(mtlCommandQueueClass, originalSelector);
+        auto swizzledMethod = class_getInstanceMethod(mtlCommandQueueClass, swizzledSelector);
+
+        auto originalImplementation = method_getImplementation(originalMethod);
+        auto swizzledImplementation = method_getImplementation(swizzledMethod);
+
+        class_replaceMethod(mtlCommandQueueClass, swizzledSelector, originalImplementation, method_getTypeEncoding(originalMethod));
+        class_replaceMethod(mtlCommandQueueClass, originalSelector, swizzledImplementation, method_getTypeEncoding(swizzledMethod));
+    });
+}
+
+- (id<MTLCommandQueue>)WebKit_initWithDevice:(id<MTLDevice>)device descriptor:(const MTLCommandQueueDescriptor *)descriptor
+{
+    id<MTLCommandQueue> queue = [self WebKit_initWithDevice:device descriptor:descriptor];
+    NSNumber *priorityOverride = [[NSUserDefaults standardUserDefaults] objectForKey:@"WebKitMTLCommandQueuePriority"];
+    auto priority = static_cast<MTLGPUPriority>(priorityOverride ? priorityOverride.integerValue : MTLGPUPriorityLow);
+    [(id<MTLCommandQueueSPI>)queue setGPUPriority:priority];
+
+    return queue;
+}
+
+@end
+#endif // HAVE(METAL_GPU_PRIORITY)
+
 namespace WebCore {
 
 // In isCurrentContextPredictable() == true case this variable is accessed in single-threaded manner.
