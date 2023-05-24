@@ -102,7 +102,7 @@ void ValidatedFormListedElement::updateVisibleValidationMessage(Ref<HTMLElement>
         return;
     String message;
     if (element.renderer() && willValidate())
-        message = validationMessage().stripWhiteSpace();
+        message = validationMessage().stripLeadingAndTrailingCharacters(deprecatedIsSpaceOrNewline);
     if (!m_validationMessage)
         m_validationMessage = makeUnique<ValidationMessage>(validationAnchor);
     m_validationMessage->updateValidationMessage(validationAnchor, message);

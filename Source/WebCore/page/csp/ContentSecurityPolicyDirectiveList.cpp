@@ -132,7 +132,7 @@ static inline bool checkMediaType(ContentSecurityPolicyMediaListDirective* direc
 {
     if (!directive)
         return true;
-    if (typeAttribute.isEmpty() || typeAttribute.stripWhiteSpace() != type)
+    if (typeAttribute.isEmpty() || StringView(typeAttribute).stripLeadingAndTrailingMatchedCharacters(deprecatedIsSpaceOrNewline) != type)
         return false;
     return directive->allows(type);
 }
@@ -401,6 +401,7 @@ const ContentSecurityPolicyDirective* ContentSecurityPolicyDirectiveList::violat
     return operativeDirective;
 }
 
+// FIXME: typeAttribute should be a StringView throughout
 const ContentSecurityPolicyDirective* ContentSecurityPolicyDirectiveList::violatedDirectiveForPluginType(const String& type, const String& typeAttribute) const
 {
     if (checkMediaType(m_pluginTypes.get(), type, typeAttribute))

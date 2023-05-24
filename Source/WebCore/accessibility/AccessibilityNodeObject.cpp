@@ -580,8 +580,7 @@ bool AccessibilityNodeObject::computeAccessibilityIsIgnored() const
             return true;
 
         // Whitespace only text elements should be ignored when they have no renderer.
-        String string = stringValue().stripWhiteSpace().simplifyWhiteSpace();
-        if (!string.length())
+        if (stringValue().isAllSpecialCharacters<deprecatedIsSpaceOrNewline>())
             return true;
     }
 
@@ -2239,7 +2238,7 @@ String AccessibilityNodeObject::textUnderElement(AccessibilityTextUnderElementMo
             appendNameToStringBuilder(builder, childText);
     }
 
-    return builder.toString().stripWhiteSpace().simplifyWhiteSpace(isHTMLSpaceButNotLineBreak);
+    return builder.toString().stripLeadingAndTrailingCharacters(deprecatedIsSpaceOrNewline).simplifyWhiteSpace(isHTMLSpaceButNotLineBreak);
 }
 
 String AccessibilityNodeObject::title() const

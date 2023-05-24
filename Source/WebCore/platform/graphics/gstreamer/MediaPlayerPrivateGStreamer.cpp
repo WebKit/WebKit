@@ -2786,7 +2786,9 @@ bool isMediaDiskCacheDisabled()
     std::call_once(once, []() {
         auto s = String::fromLatin1(std::getenv("WPE_SHELL_DISABLE_MEDIA_DISK_CACHE"));
         if (!s.isEmpty()) {
-            String value = s.stripWhiteSpace().convertToLowercaseWithoutLocale();
+            // FIXME: should this use StringView and equalLettersIgnoringASCIICase? Or even strcmp?
+            // https://github.com/WebKit/WebKit/pull/14233#discussion_r1202410966
+            String value = s.stripLeadingAndTrailingCharacters(deprecatedIsSpaceOrNewline).convertToLowercaseWithoutLocale();
             result = (value == "1"_s || value == "t"_s || value == "true"_s);
         }
     });

@@ -437,11 +437,10 @@ public:
 
     Ref<StringImpl> foldCase();
 
-    WTF_EXPORT_PRIVATE Ref<StringImpl> stripWhiteSpace();
     WTF_EXPORT_PRIVATE Ref<StringImpl> simplifyWhiteSpace();
     Ref<StringImpl> simplifyWhiteSpace(CodeUnitMatchFunction);
 
-    Ref<StringImpl> stripLeadingAndTrailingCharacters(CodeUnitMatchFunction);
+    WTF_EXPORT_PRIVATE Ref<StringImpl> stripLeadingAndTrailingCharacters(CodeUnitMatchFunction);
     template<typename Predicate> Ref<StringImpl> removeCharacters(const Predicate&);
 
     bool isAllASCII() const;
@@ -627,13 +626,14 @@ template<size_t inlineCapacity> bool equalIgnoringNullity(const Vector<UChar, in
 template<typename CharacterType1, typename CharacterType2> int codePointCompare(const CharacterType1*, unsigned length1, const CharacterType2*, unsigned length2);
 int codePointCompare(const StringImpl*, const StringImpl*);
 
+bool isUnicodeWhitespace(UChar);
+
 // Deprecated as this excludes U+0085 and U+00A0 which are part of Unicode's White_Space definition:
 // https://www.unicode.org/Public/UCD/latest/ucd/PropList.txt
-bool deprecatedIsSpaceOrNewline(UChar32);
-bool isUnicodeWhitespace(UChar32);
+bool deprecatedIsSpaceOrNewline(UChar);
 
 // Inverse of deprecatedIsSpaceOrNewline for predicates
-bool deprecatedIsNotSpaceOrNewline(UChar32);
+bool deprecatedIsNotSpaceOrNewline(UChar);
 
 // StringHash is the default hash for StringImpl* and RefPtr<StringImpl>
 template<typename> struct DefaultHash;
@@ -789,20 +789,20 @@ inline int codePointCompare(const StringImpl* string1, const StringImpl* string2
     return codePointCompare(string1->characters16(), string1->length(), string2->characters16(), string2->length());
 }
 
-inline bool deprecatedIsSpaceOrNewline(UChar32 character)
+// FIXME: For LChar, isUnicodeCompatibleASCIIWhitespace(character) || character == 0x0085 || character == noBreakSpace would be enough
+inline bool isUnicodeWhitespace(UChar character)
+{
+    return isASCII(character) ? isUnicodeCompatibleASCIIWhitespace(character) : u_isUWhiteSpace(character);
+}
+
+inline bool deprecatedIsSpaceOrNewline(UChar character)
 {
     // Use isUnicodeCompatibleASCIIWhitespace() for all Latin-1 characters, which is incorrect as it
     // excludes U+0085 and U+00A0.
     return isLatin1(character) ? isUnicodeCompatibleASCIIWhitespace(character) : u_charDirection(character) == U_WHITE_SPACE_NEUTRAL;
 }
 
-// FIXME: For LChar, isUnicodeCompatibleASCIIWhitespace(character) || character == 0x0085 || character == noBreakSpace would be enough
-inline bool isUnicodeWhitespace(UChar32 character)
-{
-    return isASCII(character) ? isUnicodeCompatibleASCIIWhitespace(character) : u_isUWhiteSpace(character);
-}
-
-inline bool deprecatedIsNotSpaceOrNewline(UChar32 character)
+inline bool deprecatedIsNotSpaceOrNewline(UChar character)
 {
     return !deprecatedIsSpaceOrNewline(character);
 }
@@ -1558,6 +1558,6 @@ inline Expected<std::invoke_result_t<Func, std::span<const char>>, UTF8Conversio
 using WTF::StaticStringImpl;
 using WTF::StringImpl;
 using WTF::equal;
-using WTF::deprecatedIsSpaceOrNewline;
 using WTF::isUnicodeWhitespace;
+using WTF::deprecatedIsSpaceOrNewline;
 using WTF::deprecatedIsNotSpaceOrNewline;

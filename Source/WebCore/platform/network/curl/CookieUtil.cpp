@@ -97,10 +97,10 @@ static void parseCookieAttributes(const String& attribute, bool& hasMaxAge, Cook
     String attributeValue;
 
     if (assignmentPosition != notFound) {
-        attributeName = attribute.left(assignmentPosition).stripWhiteSpace();
-        attributeValue = attribute.substring(assignmentPosition + 1).stripWhiteSpace();
+        attributeName = attribute.left(assignmentPosition).stripLeadingAndTrailingCharacters(deprecatedIsSpaceOrNewline);
+        attributeValue = attribute.substring(assignmentPosition + 1).stripLeadingAndTrailingCharacters(deprecatedIsSpaceOrNewline);
     } else
-        attributeName = attribute.stripWhiteSpace();
+        attributeName = attribute.stripLeadingAndTrailingCharacters(deprecatedIsSpaceOrNewline);
 
     if (equalLettersIgnoringASCIICase(attributeName, "httponly"_s))
         result.httpOnly = true;
@@ -169,8 +169,8 @@ std::optional<Cookie> parseCookieHeader(const String& cookieLine)
     }
 
     Cookie cookie;
-    cookie.name = cookieName.stripWhiteSpace();
-    cookie.value = cookieValue.stripWhiteSpace();
+    cookie.name = cookieName.stripLeadingAndTrailingCharacters(deprecatedIsSpaceOrNewline);
+    cookie.value = cookieValue.stripLeadingAndTrailingCharacters(deprecatedIsSpaceOrNewline);
 
     bool hasMaxAge = false;
     cookie.session = true;

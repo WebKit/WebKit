@@ -116,8 +116,8 @@ void ResourceResponse::appendHTTPHeaderField(const String& header)
 {
     auto splitPosition = header.find(':');
     if (splitPosition != notFound) {
-        auto key = header.left(splitPosition).stripWhiteSpace();
-        auto value = header.substring(splitPosition + 1).stripWhiteSpace();
+        auto key = header.left(splitPosition).stripLeadingAndTrailingCharacters(deprecatedIsSpaceOrNewline);
+        auto value = header.substring(splitPosition + 1).stripLeadingAndTrailingCharacters(deprecatedIsSpaceOrNewline);
 
         if (isAppendableHeader(key))
             addHTTPHeaderField(key, value);

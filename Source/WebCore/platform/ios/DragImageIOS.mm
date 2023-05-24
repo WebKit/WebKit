@@ -120,7 +120,7 @@ DragImageRef createDragImageForLink(Element& linkElement, URL& url, const String
     static const NeverDestroyed titleFontCascade = cascadeForSystemFont(16);
     static const NeverDestroyed urlFontCascade = cascadeForSystemFont(14);
 
-    String topString(title.stripWhiteSpace());
+    String topString(title.stripLeadingAndTrailingCharacters(deprecatedIsSpaceOrNewline));
     String bottomString([(NSURL *)url absoluteString]);
     if (topString.isEmpty()) {
         topString = bottomString;

@@ -459,7 +459,7 @@ void TypingCommand::markMisspellingsAfterTyping(ETypingCommand commandType)
             auto range = makeSimpleRange(p1, p2);
             String strippedPreviousWord;
             if (range && (commandType == TypingCommand::InsertText || commandType == TypingCommand::InsertLineBreak || commandType == TypingCommand::InsertParagraphSeparator || commandType == TypingCommand::InsertParagraphSeparatorInQuotedContent))
-                strippedPreviousWord = plainText(*range).stripWhiteSpace();
+                strippedPreviousWord = plainText(*range).stripLeadingAndTrailingCharacters(deprecatedIsSpaceOrNewline);
             document().editor().markMisspellingsAfterTypingToWord(p1, endingSelection(), !strippedPreviousWord.isEmpty());
         } else if (commandType == TypingCommand::InsertText)
             document().editor().startAlternativeTextUITimer();

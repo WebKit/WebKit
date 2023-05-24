@@ -63,7 +63,7 @@ static KeyValueMap retrieveKeyValuePairs(WebCore::SharedBufferChunkReader& buffe
         if (!key.isEmpty()) {
             if (keyValuePairs.find(key) != keyValuePairs.end())
                 LOG_ERROR("Key duplicate found in MIME header. Key is '%s', previous value replaced.", key.ascii().data());
-            keyValuePairs.add(key, value.toString().stripWhiteSpace());
+            keyValuePairs.add(key, value.toString().stripLeadingAndTrailingCharacters(deprecatedIsSpaceOrNewline));
             key = String();
             value.clear();
         }
@@ -77,7 +77,7 @@ static KeyValueMap retrieveKeyValuePairs(WebCore::SharedBufferChunkReader& buffe
     }
     // Store the last property if there is one.
     if (!key.isEmpty())
-        keyValuePairs.set(key, value.toString().stripWhiteSpace());
+        keyValuePairs.set(key, value.toString().stripLeadingAndTrailingCharacters(deprecatedIsSpaceOrNewline));
     return keyValuePairs;
 }
 
@@ -90,7 +90,7 @@ RefPtr<MIMEHeader> MIMEHeader::parseHeader(SharedBufferChunkReader& buffer)
         String contentType, charset, multipartType, endOfPartBoundary;
         if (auto parsedContentType = ParsedContentType::create(mimeParametersIterator->value)) {
             contentType = parsedContentType->mimeType();
-            charset = parsedContentType->charset().stripWhiteSpace();
+            charset = parsedContentType->charset().stripLeadingAndTrailingCharacters(deprecatedIsSpaceOrNewline);
             multipartType = parsedContentType->parameterValueForName("type"_s);
             endOfPartBoundary = parsedContentType->parameterValueForName("boundary"_s);
         }

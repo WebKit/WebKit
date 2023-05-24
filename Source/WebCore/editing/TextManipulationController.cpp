@@ -287,11 +287,6 @@ static bool canPerformTextManipulationByReplacingEntireTextContent(const Element
     return element.hasTagName(HTMLNames::titleTag) || element.hasTagName(HTMLNames::optionTag);
 }
 
-static bool areEqualIgnoringLeadingAndTrailingWhitespaces(const String& content, const String& originalContent)
-{
-    return content.stripWhiteSpace() == originalContent.stripWhiteSpace();
-}
-
 static std::optional<TextManipulationTokenInfo> tokenInfo(Node* node)
 {
     if (!node)
@@ -842,7 +837,7 @@ auto TextManipulationController::replace(const ManipulationItemData& item, const
                 return ManipulationFailure::Type::ContentChanged;
 
             auto& currentToken = item.tokens[currentTokenIndex++];
-            bool isContentUnchanged = areEqualIgnoringLeadingAndTrailingWhitespaces(currentToken.content, token.content);
+            bool isContentUnchanged = StringView(currentToken.content).stripLeadingAndTrailingMatchedCharacters(deprecatedIsSpaceOrNewline) == StringView(token.content).stripLeadingAndTrailingMatchedCharacters(deprecatedIsSpaceOrNewline);
             if (!content.isReplacedContent && !isContentUnchanged)
                 return ManipulationFailure::Type::ContentChanged;
 

@@ -400,7 +400,7 @@ String ApplicationManifestParser::parseGenericString(const JSON::Object& manifes
         return { };
     }
 
-    return stringValue.stripWhiteSpace();
+    return stringValue.stripLeadingAndTrailingCharacters(deprecatedIsSpaceOrNewline);
 }
 
 } // namespace WebCore

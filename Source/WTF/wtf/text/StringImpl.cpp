@@ -740,11 +740,6 @@ template<typename CodeUnitPredicate> inline Ref<StringImpl> StringImpl::stripMat
     return create(m_data16 + start, end + 1 - start);
 }
 
-Ref<StringImpl> StringImpl::stripWhiteSpace()
-{
-    return stripMatchedCharacters(deprecatedIsSpaceOrNewline);
-}
-
 Ref<StringImpl> StringImpl::stripLeadingAndTrailingCharacters(CodeUnitMatchFunction predicate)
 {
     return stripMatchedCharacters(predicate);

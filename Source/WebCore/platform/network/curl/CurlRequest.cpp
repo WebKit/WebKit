@@ -531,8 +531,8 @@ int CurlRequest::didReceiveDebugInfo(curl_infotype type, char* data, size_t size
         for (auto& header : headerFields) {
             auto pos = header.find(':');
             if (pos != notFound) {
-                auto key = header.left(pos).stripWhiteSpace();
-                auto value = header.substring(pos + 1).stripWhiteSpace();
+                auto key = header.left(pos).stripLeadingAndTrailingCharacters(deprecatedIsSpaceOrNewline);
+                auto value = header.substring(pos + 1).stripLeadingAndTrailingCharacters(deprecatedIsSpaceOrNewline);
                 m_requestHeaders.add(key, value);
             }
         }

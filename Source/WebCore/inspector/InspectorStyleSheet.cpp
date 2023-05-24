@@ -1319,7 +1319,7 @@ static Ref<JSON::ArrayOf<Protocol::CSS::CSSSelector>> selectorsFromSource(const 
 
         // We don't want to see any comments in the selector components, only the meaningful parts.
         replace(selectorText, comment, String());
-        result->addItem(buildObjectForSelectorHelper(selectorText.stripWhiteSpace(), *selectors.at(selectorIndex)));
+        result->addItem(buildObjectForSelectorHelper(selectorText.stripLeadingAndTrailingCharacters(deprecatedIsSpaceOrNewline), *selectors.at(selectorIndex)));
 
         ++selectorIndex;
     }
