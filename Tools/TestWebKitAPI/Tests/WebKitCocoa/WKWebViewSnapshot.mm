@@ -29,6 +29,7 @@
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import "TestNavigationDelegate.h"
+#import "TestWKWebView.h"
 #import <WebKit/WKSnapshotConfigurationPrivate.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/RetainPtr.h>
@@ -80,7 +81,7 @@ TEST(WKWebView, SnapshotImageError)
 {
     CGFloat viewWidth = 800;
     CGFloat viewHeight = 600;
-    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, viewWidth, viewHeight)]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, viewWidth, viewHeight)]);
     
     [webView loadHTMLString:@"<body style='background-color: red;'></body>" baseURL:nil];
     [webView _test_waitForDidFinishNavigation];
@@ -105,7 +106,7 @@ TEST(WKWebView, SnapshotImageEmptyRect)
 {
     CGFloat viewWidth = 800;
     CGFloat viewHeight = 600;
-    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, viewWidth, viewHeight)]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, viewWidth, viewHeight)]);
 
     [webView loadHTMLString:@"<body style='background-color: red;'></body>" baseURL:nil];
     [webView _test_waitForDidFinishNavigation];
@@ -133,7 +134,7 @@ TEST(WKWebView, SnapshotImageZeroWidth)
 {
     CGFloat viewWidth = 800;
     CGFloat viewHeight = 600;
-    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, viewWidth, viewHeight)]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, viewWidth, viewHeight)]);
 
     [webView loadHTMLString:@"<body style='background-color: red;'></body>" baseURL:nil];
     [webView _test_waitForDidFinishNavigation];
@@ -159,7 +160,7 @@ TEST(WKWebView, SnapshotImageZeroSizeView)
 {
     CGFloat viewWidth = 0;
     CGFloat viewHeight = 0;
-    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, viewWidth, viewHeight)]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, viewWidth, viewHeight)]);
 
     [webView loadHTMLString:@"<body style='background-color: red;'></body>" baseURL:nil];
     [webView _test_waitForDidFinishNavigation];
@@ -187,7 +188,7 @@ TEST(WKWebView, SnapshotImageZeroSizeViewNoConfiguration)
 {
     CGFloat viewWidth = 0;
     CGFloat viewHeight = 0;
-    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, viewWidth, viewHeight)]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, viewWidth, viewHeight)]);
 
     [webView loadHTMLString:@"<body style='background-color: red;'></body>" baseURL:nil];
     [webView _test_waitForDidFinishNavigation];
@@ -211,7 +212,7 @@ TEST(WKWebView, SnapshotImageEmptyWithOutOfScopeCompletionHandler)
 {
     CGFloat viewWidth = 0;
     CGFloat viewHeight = 0;
-    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, viewWidth, viewHeight)]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, viewWidth, viewHeight)]);
 
     [webView loadHTMLString:@"<body style='background-color: red;'></body>" baseURL:nil];
     [webView _test_waitForDidFinishNavigation];
@@ -244,7 +245,7 @@ TEST(WKWebView, SnapshotImageBaseCase)
 {
     NSInteger viewWidth = 800;
     NSInteger viewHeight = 600;
-    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, viewWidth, viewHeight)]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, viewWidth, viewHeight)]);
 
     RetainPtr<PlatformWindow> window;
     CGFloat backingScaleFactor;
@@ -311,7 +312,7 @@ TEST(WKWebView, SnapshotImageScale)
     CGFloat viewWidth = 800;
     CGFloat viewHeight = 600;
     CGFloat scaleFactor = 2;
-    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, viewWidth, viewHeight)]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, viewWidth, viewHeight)]);
 
     [webView loadHTMLString:@"<body style='background-color: red;'></body>" baseURL:nil];
     [webView _test_waitForDidFinishNavigation];
@@ -337,7 +338,7 @@ TEST(WKWebView, SnapshotImageNilConfiguration)
 {
     CGFloat viewWidth = 800;
     CGFloat viewHeight = 600;
-    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, viewWidth, viewHeight)]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, viewWidth, viewHeight)]);
 
     [webView loadHTMLString:@"<body style='background-color: red;'></body>" baseURL:nil];
     [webView _test_waitForDidFinishNavigation];
@@ -358,7 +359,7 @@ TEST(WKWebView, SnapshotImageUninitializedConfiguration)
 {
     CGFloat viewWidth = 800;
     CGFloat viewHeight = 600;
-    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, viewWidth, viewHeight)]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, viewWidth, viewHeight)]);
 
     [webView loadHTMLString:@"<body style='background-color: red;'></body>" baseURL:nil];
     [webView _test_waitForDidFinishNavigation];
@@ -381,7 +382,7 @@ TEST(WKWebView, SnapshotImageUninitializedSnapshotWidth)
 {
     CGFloat viewWidth = 800;
     CGFloat viewHeight = 600;
-    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, viewWidth, viewHeight)]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, viewWidth, viewHeight)]);
 
     [webView loadHTMLString:@"<body style='background-color: red;'></body>" baseURL:nil];
     [webView _test_waitForDidFinishNavigation];
@@ -405,13 +406,14 @@ TEST(WKWebView, SnapshotImageLargeAsyncDecoding)
 {
     NSInteger viewWidth = 800;
     NSInteger viewHeight = 600;
-    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, viewWidth, viewHeight)]);
+    // FIXME: This test fails when adopting TestWKWebView; it might be interesting to investigate why.
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, viewWidth, viewHeight)]);
 
     NSURL *fileURL = [[NSBundle mainBundle] URLForResource:@"large-red-square-image" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
     [webView loadFileURL:fileURL allowingReadAccessToURL:fileURL];
     [webView _test_waitForDidFinishNavigation];
 
-    RetainPtr<WKSnapshotConfiguration> snapshotConfiguration = adoptNS([[WKSnapshotConfiguration alloc] init]);
+    auto snapshotConfiguration = adoptNS([[WKSnapshotConfiguration alloc] init]);
     [snapshotConfiguration setRect:NSMakeRect(0, 0, viewWidth, viewHeight)];
     [snapshotConfiguration setSnapshotWidth:@(viewWidth)];
 
@@ -421,8 +423,8 @@ TEST(WKWebView, SnapshotImageLargeAsyncDecoding)
 
         EXPECT_EQ(viewWidth, snapshotImage.size.width);
 
-        RetainPtr<CGImageRef> cgImage = convertToCGImage(snapshotImage);
-        RetainPtr<CGColorSpaceRef> colorSpace = adoptCF(CGColorSpaceCreateDeviceRGB());
+        auto cgImage = convertToCGImage(snapshotImage);
+        auto colorSpace = adoptCF(CGColorSpaceCreateDeviceRGB());
 
         uint8_t *rgba = (unsigned char *)calloc(viewWidth * viewHeight * 4, sizeof(unsigned char));
         auto context = adoptCF(CGBitmapContextCreate(rgba, viewWidth, viewHeight, 8, 4 * viewWidth, colorSpace.get(), static_cast<uint32_t>(kCGImageAlphaPremultipliedLast) | static_cast<uint32_t>(kCGBitmapByteOrder32Big)));
@@ -462,7 +464,7 @@ TEST(WKWebView, SnapshotAfterScreenUpdates)
     // pass this test.
     NSInteger viewWidth = 800;
     NSInteger viewHeight = 600;
-    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, viewWidth, viewHeight)]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, viewWidth, viewHeight)]);
     
     RetainPtr<PlatformWindow> window;
     CGFloat backingScaleFactor;
@@ -525,7 +527,7 @@ TEST(WKWebView, SnapshotWithoutAfterScreenUpdates)
     // then we would expect the pixels to be red instead of blue.
     NSInteger viewWidth = 800;
     NSInteger viewHeight = 600;
-    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, viewWidth, viewHeight)]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, viewWidth, viewHeight)]);
     
     RetainPtr<PlatformWindow> window;
     CGFloat backingScaleFactor;
@@ -585,7 +587,7 @@ TEST(WKWebView, SnapshotWebGL)
 {
     NSInteger viewWidth = 800;
     NSInteger viewHeight = 600;
-    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, viewWidth, viewHeight)]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, viewWidth, viewHeight)]);
 
     RetainPtr<PlatformWindow> window;
     CGFloat backingScaleFactor;
@@ -644,7 +646,7 @@ TEST(WKWebView, SnapshotWithoutSelectionHighlighting)
 {
     NSInteger viewWidth = 800;
     NSInteger viewHeight = 600;
-    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, viewWidth, viewHeight)]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, viewWidth, viewHeight)]);
 
     RetainPtr<PlatformWindow> window = adoptNS([[NSWindow alloc] initWithContentRect:[webView frame] styleMask:NSBorderlessWindowMask backing:NSBackingStoreBuffered defer:NO]);
     [[window contentView] addSubview:webView.get()];

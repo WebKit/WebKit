@@ -774,7 +774,7 @@ static UICalloutBar *suppressUICalloutBar()
     _overrideSafeAreaInset = inset;
 }
 
-- (UIEdgeInsets)safeAreaInsets
+- (UIEdgeInsets)_safeAreaInsetsForFrame:(CGRect)frame inSuperview:(UIView *)view
 {
     return _overrideSafeAreaInset;
 }
