@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: SyntaxError: The string did not match the expected pattern.
+CONSOLE MESSAGE: SyntaxError: ':::not-going-to-be-valid' is not a valid selector.
 CONSOLE MESSAGE: Not executing script because it moved between documents during fetching
 
 

@@ -4,31 +4,31 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 PASS document.querySelectorAll(":-webkit-any\").length threw exception SyntaxError: Unexpected EOF.
-PASS document.querySelectorAll(":-webkit-any\\").length threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.querySelectorAll(":-webkit-any\\").length threw exception SyntaxError: ':-webkit-any\' is not a valid selector..
 PASS document.querySelectorAll(":-webkit-any\\\").length threw exception SyntaxError: Unexpected EOF.
-PASS document.querySelectorAll(":-webkit-any\\\\").length threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.querySelectorAll(":-webkit-any\\\\").length threw exception SyntaxError: ':-webkit-any\\' is not a valid selector..
 PASS document.querySelectorAll(":-webkit-any\(").length did not throw exception.
-PASS document.querySelectorAll(":-webkit-any\\(").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":-webkit-any\\\(").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":-webkit-any\\\\(").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":-webkit-any\ .foo").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":-webkit-any\\ .foo").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":-webkit-any\\\ .foo").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":-webkit-any\\\\ .foo").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":-webkit-any\\( .foo").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":-webkit-any\\\( .foo").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":-webkit-any\\\\( .foo").length threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.querySelectorAll(":-webkit-any\\(").length threw exception SyntaxError: ':-webkit-any\(' is not a valid selector..
+PASS document.querySelectorAll(":-webkit-any\\\(").length threw exception SyntaxError: ':-webkit-any\(' is not a valid selector..
+PASS document.querySelectorAll(":-webkit-any\\\\(").length threw exception SyntaxError: ':-webkit-any\\(' is not a valid selector..
+PASS document.querySelectorAll(":-webkit-any\ .foo").length threw exception SyntaxError: ':-webkit-any .foo' is not a valid selector..
+PASS document.querySelectorAll(":-webkit-any\\ .foo").length threw exception SyntaxError: ':-webkit-any\ .foo' is not a valid selector..
+PASS document.querySelectorAll(":-webkit-any\\\ .foo").length threw exception SyntaxError: ':-webkit-any\ .foo' is not a valid selector..
+PASS document.querySelectorAll(":-webkit-any\\\\ .foo").length threw exception SyntaxError: ':-webkit-any\\ .foo' is not a valid selector..
+PASS document.querySelectorAll(":-webkit-any\\( .foo").length threw exception SyntaxError: ':-webkit-any\( .foo' is not a valid selector..
+PASS document.querySelectorAll(":-webkit-any\\\( .foo").length threw exception SyntaxError: ':-webkit-any\( .foo' is not a valid selector..
+PASS document.querySelectorAll(":-webkit-any\\\\( .foo").length threw exception SyntaxError: ':-webkit-any\\( .foo' is not a valid selector..
 PASS document.querySelectorAll(":-webkit-any\()").length did not throw exception.
-PASS document.querySelectorAll(":-webkit-any\\()").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":-webkit-any\\\()").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":-webkit-any\\\\()").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":-webkit-any\ .foo)").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":-webkit-any\\ .foo)").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":-webkit-any\\\ .foo)").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":-webkit-any\\\\ .foo)").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":-webkit-any\\( .foo)").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":-webkit-any\\\( .foo)").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":-webkit-any\\\\( .foo)").length threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.querySelectorAll(":-webkit-any\\()").length threw exception SyntaxError: ':-webkit-any\()' is not a valid selector..
+PASS document.querySelectorAll(":-webkit-any\\\()").length threw exception SyntaxError: ':-webkit-any\()' is not a valid selector..
+PASS document.querySelectorAll(":-webkit-any\\\\()").length threw exception SyntaxError: ':-webkit-any\\()' is not a valid selector..
+PASS document.querySelectorAll(":-webkit-any\ .foo)").length threw exception SyntaxError: ':-webkit-any .foo)' is not a valid selector..
+PASS document.querySelectorAll(":-webkit-any\\ .foo)").length threw exception SyntaxError: ':-webkit-any\ .foo)' is not a valid selector..
+PASS document.querySelectorAll(":-webkit-any\\\ .foo)").length threw exception SyntaxError: ':-webkit-any\ .foo)' is not a valid selector..
+PASS document.querySelectorAll(":-webkit-any\\\\ .foo)").length threw exception SyntaxError: ':-webkit-any\\ .foo)' is not a valid selector..
+PASS document.querySelectorAll(":-webkit-any\\( .foo)").length threw exception SyntaxError: ':-webkit-any\( .foo)' is not a valid selector..
+PASS document.querySelectorAll(":-webkit-any\\\( .foo)").length threw exception SyntaxError: ':-webkit-any\( .foo)' is not a valid selector..
+PASS document.querySelectorAll(":-webkit-any\\\\( .foo)").length threw exception SyntaxError: ':-webkit-any\\( .foo)' is not a valid selector..
 PASS document.styleSheets[1].cssRules.length is 0
 PASS document.styleSheets[1].cssRules.length is 0
 PASS document.styleSheets[1].cssRules.length is 0
@@ -56,31 +56,31 @@ PASS document.styleSheets[1].cssRules.length is 0
 PASS document.styleSheets[1].cssRules.length is 0
 PASS document.styleSheets[1].cssRules.length is 0
 PASS document.querySelectorAll(":dir\").length threw exception SyntaxError: Unexpected EOF.
-PASS document.querySelectorAll(":dir\\").length threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.querySelectorAll(":dir\\").length threw exception SyntaxError: ':dir\' is not a valid selector..
 PASS document.querySelectorAll(":dir\\\").length threw exception SyntaxError: Unexpected EOF.
-PASS document.querySelectorAll(":dir\\\\").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":dir\(").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":dir\\(").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":dir\\\(").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":dir\\\\(").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":dir\ .foo").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":dir\\ .foo").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":dir\\\ .foo").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":dir\\\\ .foo").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":dir\\( .foo").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":dir\\\( .foo").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":dir\\\\( .foo").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":dir\()").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":dir\\()").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":dir\\\()").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":dir\\\\()").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":dir\ .foo)").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":dir\\ .foo)").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":dir\\\ .foo)").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":dir\\\\ .foo)").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":dir\\( .foo)").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":dir\\\( .foo)").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":dir\\\\( .foo)").length threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.querySelectorAll(":dir\\\\").length threw exception SyntaxError: ':dir\\' is not a valid selector..
+PASS document.querySelectorAll(":dir\(").length threw exception SyntaxError: ':dir(' is not a valid selector..
+PASS document.querySelectorAll(":dir\\(").length threw exception SyntaxError: ':dir\(' is not a valid selector..
+PASS document.querySelectorAll(":dir\\\(").length threw exception SyntaxError: ':dir\(' is not a valid selector..
+PASS document.querySelectorAll(":dir\\\\(").length threw exception SyntaxError: ':dir\\(' is not a valid selector..
+PASS document.querySelectorAll(":dir\ .foo").length threw exception SyntaxError: ':dir .foo' is not a valid selector..
+PASS document.querySelectorAll(":dir\\ .foo").length threw exception SyntaxError: ':dir\ .foo' is not a valid selector..
+PASS document.querySelectorAll(":dir\\\ .foo").length threw exception SyntaxError: ':dir\ .foo' is not a valid selector..
+PASS document.querySelectorAll(":dir\\\\ .foo").length threw exception SyntaxError: ':dir\\ .foo' is not a valid selector..
+PASS document.querySelectorAll(":dir\\( .foo").length threw exception SyntaxError: ':dir\( .foo' is not a valid selector..
+PASS document.querySelectorAll(":dir\\\( .foo").length threw exception SyntaxError: ':dir\( .foo' is not a valid selector..
+PASS document.querySelectorAll(":dir\\\\( .foo").length threw exception SyntaxError: ':dir\\( .foo' is not a valid selector..
+PASS document.querySelectorAll(":dir\()").length threw exception SyntaxError: ':dir()' is not a valid selector..
+PASS document.querySelectorAll(":dir\\()").length threw exception SyntaxError: ':dir\()' is not a valid selector..
+PASS document.querySelectorAll(":dir\\\()").length threw exception SyntaxError: ':dir\()' is not a valid selector..
+PASS document.querySelectorAll(":dir\\\\()").length threw exception SyntaxError: ':dir\\()' is not a valid selector..
+PASS document.querySelectorAll(":dir\ .foo)").length threw exception SyntaxError: ':dir .foo)' is not a valid selector..
+PASS document.querySelectorAll(":dir\\ .foo)").length threw exception SyntaxError: ':dir\ .foo)' is not a valid selector..
+PASS document.querySelectorAll(":dir\\\ .foo)").length threw exception SyntaxError: ':dir\ .foo)' is not a valid selector..
+PASS document.querySelectorAll(":dir\\\\ .foo)").length threw exception SyntaxError: ':dir\\ .foo)' is not a valid selector..
+PASS document.querySelectorAll(":dir\\( .foo)").length threw exception SyntaxError: ':dir\( .foo)' is not a valid selector..
+PASS document.querySelectorAll(":dir\\\( .foo)").length threw exception SyntaxError: ':dir\( .foo)' is not a valid selector..
+PASS document.querySelectorAll(":dir\\\\( .foo)").length threw exception SyntaxError: ':dir\\( .foo)' is not a valid selector..
 PASS document.styleSheets[1].cssRules.length is 0
 PASS document.styleSheets[1].cssRules.length is 0
 PASS document.styleSheets[1].cssRules.length is 0
@@ -108,31 +108,31 @@ PASS document.styleSheets[1].cssRules.length is 0
 PASS document.styleSheets[1].cssRules.length is 0
 PASS document.styleSheets[1].cssRules.length is 0
 PASS document.querySelectorAll(":lang\").length threw exception SyntaxError: Unexpected EOF.
-PASS document.querySelectorAll(":lang\\").length threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.querySelectorAll(":lang\\").length threw exception SyntaxError: ':lang\' is not a valid selector..
 PASS document.querySelectorAll(":lang\\\").length threw exception SyntaxError: Unexpected EOF.
-PASS document.querySelectorAll(":lang\\\\").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":lang\(").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":lang\\(").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":lang\\\(").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":lang\\\\(").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":lang\ .foo").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":lang\\ .foo").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":lang\\\ .foo").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":lang\\\\ .foo").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":lang\\( .foo").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":lang\\\( .foo").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":lang\\\\( .foo").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":lang\()").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":lang\\()").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":lang\\\()").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":lang\\\\()").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":lang\ .foo)").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":lang\\ .foo)").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":lang\\\ .foo)").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":lang\\\\ .foo)").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":lang\\( .foo)").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":lang\\\( .foo)").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":lang\\\\( .foo)").length threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.querySelectorAll(":lang\\\\").length threw exception SyntaxError: ':lang\\' is not a valid selector..
+PASS document.querySelectorAll(":lang\(").length threw exception SyntaxError: ':lang(' is not a valid selector..
+PASS document.querySelectorAll(":lang\\(").length threw exception SyntaxError: ':lang\(' is not a valid selector..
+PASS document.querySelectorAll(":lang\\\(").length threw exception SyntaxError: ':lang\(' is not a valid selector..
+PASS document.querySelectorAll(":lang\\\\(").length threw exception SyntaxError: ':lang\\(' is not a valid selector..
+PASS document.querySelectorAll(":lang\ .foo").length threw exception SyntaxError: ':lang .foo' is not a valid selector..
+PASS document.querySelectorAll(":lang\\ .foo").length threw exception SyntaxError: ':lang\ .foo' is not a valid selector..
+PASS document.querySelectorAll(":lang\\\ .foo").length threw exception SyntaxError: ':lang\ .foo' is not a valid selector..
+PASS document.querySelectorAll(":lang\\\\ .foo").length threw exception SyntaxError: ':lang\\ .foo' is not a valid selector..
+PASS document.querySelectorAll(":lang\\( .foo").length threw exception SyntaxError: ':lang\( .foo' is not a valid selector..
+PASS document.querySelectorAll(":lang\\\( .foo").length threw exception SyntaxError: ':lang\( .foo' is not a valid selector..
+PASS document.querySelectorAll(":lang\\\\( .foo").length threw exception SyntaxError: ':lang\\( .foo' is not a valid selector..
+PASS document.querySelectorAll(":lang\()").length threw exception SyntaxError: ':lang()' is not a valid selector..
+PASS document.querySelectorAll(":lang\\()").length threw exception SyntaxError: ':lang\()' is not a valid selector..
+PASS document.querySelectorAll(":lang\\\()").length threw exception SyntaxError: ':lang\()' is not a valid selector..
+PASS document.querySelectorAll(":lang\\\\()").length threw exception SyntaxError: ':lang\\()' is not a valid selector..
+PASS document.querySelectorAll(":lang\ .foo)").length threw exception SyntaxError: ':lang .foo)' is not a valid selector..
+PASS document.querySelectorAll(":lang\\ .foo)").length threw exception SyntaxError: ':lang\ .foo)' is not a valid selector..
+PASS document.querySelectorAll(":lang\\\ .foo)").length threw exception SyntaxError: ':lang\ .foo)' is not a valid selector..
+PASS document.querySelectorAll(":lang\\\\ .foo)").length threw exception SyntaxError: ':lang\\ .foo)' is not a valid selector..
+PASS document.querySelectorAll(":lang\\( .foo)").length threw exception SyntaxError: ':lang\( .foo)' is not a valid selector..
+PASS document.querySelectorAll(":lang\\\( .foo)").length threw exception SyntaxError: ':lang\( .foo)' is not a valid selector..
+PASS document.querySelectorAll(":lang\\\\( .foo)").length threw exception SyntaxError: ':lang\\( .foo)' is not a valid selector..
 PASS document.styleSheets[1].cssRules.length is 0
 PASS document.styleSheets[1].cssRules.length is 0
 PASS document.styleSheets[1].cssRules.length is 0
@@ -160,31 +160,31 @@ PASS document.styleSheets[1].cssRules.length is 0
 PASS document.styleSheets[1].cssRules.length is 0
 PASS document.styleSheets[1].cssRules.length is 0
 PASS document.querySelectorAll(":not\").length threw exception SyntaxError: Unexpected EOF.
-PASS document.querySelectorAll(":not\\").length threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.querySelectorAll(":not\\").length threw exception SyntaxError: ':not\' is not a valid selector..
 PASS document.querySelectorAll(":not\\\").length threw exception SyntaxError: Unexpected EOF.
-PASS document.querySelectorAll(":not\\\\").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":not\(").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":not\\(").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":not\\\(").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":not\\\\(").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":not\ .foo").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":not\\ .foo").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":not\\\ .foo").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":not\\\\ .foo").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":not\\( .foo").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":not\\\( .foo").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":not\\\\( .foo").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":not\()").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":not\\()").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":not\\\()").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":not\\\\()").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":not\ .foo)").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":not\\ .foo)").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":not\\\ .foo)").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":not\\\\ .foo)").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":not\\( .foo)").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":not\\\( .foo)").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":not\\\\( .foo)").length threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.querySelectorAll(":not\\\\").length threw exception SyntaxError: ':not\\' is not a valid selector..
+PASS document.querySelectorAll(":not\(").length threw exception SyntaxError: ':not(' is not a valid selector..
+PASS document.querySelectorAll(":not\\(").length threw exception SyntaxError: ':not\(' is not a valid selector..
+PASS document.querySelectorAll(":not\\\(").length threw exception SyntaxError: ':not\(' is not a valid selector..
+PASS document.querySelectorAll(":not\\\\(").length threw exception SyntaxError: ':not\\(' is not a valid selector..
+PASS document.querySelectorAll(":not\ .foo").length threw exception SyntaxError: ':not .foo' is not a valid selector..
+PASS document.querySelectorAll(":not\\ .foo").length threw exception SyntaxError: ':not\ .foo' is not a valid selector..
+PASS document.querySelectorAll(":not\\\ .foo").length threw exception SyntaxError: ':not\ .foo' is not a valid selector..
+PASS document.querySelectorAll(":not\\\\ .foo").length threw exception SyntaxError: ':not\\ .foo' is not a valid selector..
+PASS document.querySelectorAll(":not\\( .foo").length threw exception SyntaxError: ':not\( .foo' is not a valid selector..
+PASS document.querySelectorAll(":not\\\( .foo").length threw exception SyntaxError: ':not\( .foo' is not a valid selector..
+PASS document.querySelectorAll(":not\\\\( .foo").length threw exception SyntaxError: ':not\\( .foo' is not a valid selector..
+PASS document.querySelectorAll(":not\()").length threw exception SyntaxError: ':not()' is not a valid selector..
+PASS document.querySelectorAll(":not\\()").length threw exception SyntaxError: ':not\()' is not a valid selector..
+PASS document.querySelectorAll(":not\\\()").length threw exception SyntaxError: ':not\()' is not a valid selector..
+PASS document.querySelectorAll(":not\\\\()").length threw exception SyntaxError: ':not\\()' is not a valid selector..
+PASS document.querySelectorAll(":not\ .foo)").length threw exception SyntaxError: ':not .foo)' is not a valid selector..
+PASS document.querySelectorAll(":not\\ .foo)").length threw exception SyntaxError: ':not\ .foo)' is not a valid selector..
+PASS document.querySelectorAll(":not\\\ .foo)").length threw exception SyntaxError: ':not\ .foo)' is not a valid selector..
+PASS document.querySelectorAll(":not\\\\ .foo)").length threw exception SyntaxError: ':not\\ .foo)' is not a valid selector..
+PASS document.querySelectorAll(":not\\( .foo)").length threw exception SyntaxError: ':not\( .foo)' is not a valid selector..
+PASS document.querySelectorAll(":not\\\( .foo)").length threw exception SyntaxError: ':not\( .foo)' is not a valid selector..
+PASS document.querySelectorAll(":not\\\\( .foo)").length threw exception SyntaxError: ':not\\( .foo)' is not a valid selector..
 PASS document.styleSheets[1].cssRules.length is 0
 PASS document.styleSheets[1].cssRules.length is 0
 PASS document.styleSheets[1].cssRules.length is 0
@@ -212,31 +212,31 @@ PASS document.styleSheets[1].cssRules.length is 0
 PASS document.styleSheets[1].cssRules.length is 0
 PASS document.styleSheets[1].cssRules.length is 0
 PASS document.querySelectorAll(":nth-child\").length threw exception SyntaxError: Unexpected EOF.
-PASS document.querySelectorAll(":nth-child\\").length threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.querySelectorAll(":nth-child\\").length threw exception SyntaxError: ':nth-child\' is not a valid selector..
 PASS document.querySelectorAll(":nth-child\\\").length threw exception SyntaxError: Unexpected EOF.
-PASS document.querySelectorAll(":nth-child\\\\").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":nth-child\(").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":nth-child\\(").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":nth-child\\\(").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":nth-child\\\\(").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":nth-child\ .foo").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":nth-child\\ .foo").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":nth-child\\\ .foo").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":nth-child\\\\ .foo").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":nth-child\\( .foo").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":nth-child\\\( .foo").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":nth-child\\\\( .foo").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":nth-child\()").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":nth-child\\()").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":nth-child\\\()").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":nth-child\\\\()").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":nth-child\ .foo)").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":nth-child\\ .foo)").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":nth-child\\\ .foo)").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":nth-child\\\\ .foo)").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":nth-child\\( .foo)").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":nth-child\\\( .foo)").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":nth-child\\\\( .foo)").length threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.querySelectorAll(":nth-child\\\\").length threw exception SyntaxError: ':nth-child\\' is not a valid selector..
+PASS document.querySelectorAll(":nth-child\(").length threw exception SyntaxError: ':nth-child(' is not a valid selector..
+PASS document.querySelectorAll(":nth-child\\(").length threw exception SyntaxError: ':nth-child\(' is not a valid selector..
+PASS document.querySelectorAll(":nth-child\\\(").length threw exception SyntaxError: ':nth-child\(' is not a valid selector..
+PASS document.querySelectorAll(":nth-child\\\\(").length threw exception SyntaxError: ':nth-child\\(' is not a valid selector..
+PASS document.querySelectorAll(":nth-child\ .foo").length threw exception SyntaxError: ':nth-child .foo' is not a valid selector..
+PASS document.querySelectorAll(":nth-child\\ .foo").length threw exception SyntaxError: ':nth-child\ .foo' is not a valid selector..
+PASS document.querySelectorAll(":nth-child\\\ .foo").length threw exception SyntaxError: ':nth-child\ .foo' is not a valid selector..
+PASS document.querySelectorAll(":nth-child\\\\ .foo").length threw exception SyntaxError: ':nth-child\\ .foo' is not a valid selector..
+PASS document.querySelectorAll(":nth-child\\( .foo").length threw exception SyntaxError: ':nth-child\( .foo' is not a valid selector..
+PASS document.querySelectorAll(":nth-child\\\( .foo").length threw exception SyntaxError: ':nth-child\( .foo' is not a valid selector..
+PASS document.querySelectorAll(":nth-child\\\\( .foo").length threw exception SyntaxError: ':nth-child\\( .foo' is not a valid selector..
+PASS document.querySelectorAll(":nth-child\()").length threw exception SyntaxError: ':nth-child()' is not a valid selector..
+PASS document.querySelectorAll(":nth-child\\()").length threw exception SyntaxError: ':nth-child\()' is not a valid selector..
+PASS document.querySelectorAll(":nth-child\\\()").length threw exception SyntaxError: ':nth-child\()' is not a valid selector..
+PASS document.querySelectorAll(":nth-child\\\\()").length threw exception SyntaxError: ':nth-child\\()' is not a valid selector..
+PASS document.querySelectorAll(":nth-child\ .foo)").length threw exception SyntaxError: ':nth-child .foo)' is not a valid selector..
+PASS document.querySelectorAll(":nth-child\\ .foo)").length threw exception SyntaxError: ':nth-child\ .foo)' is not a valid selector..
+PASS document.querySelectorAll(":nth-child\\\ .foo)").length threw exception SyntaxError: ':nth-child\ .foo)' is not a valid selector..
+PASS document.querySelectorAll(":nth-child\\\\ .foo)").length threw exception SyntaxError: ':nth-child\\ .foo)' is not a valid selector..
+PASS document.querySelectorAll(":nth-child\\( .foo)").length threw exception SyntaxError: ':nth-child\( .foo)' is not a valid selector..
+PASS document.querySelectorAll(":nth-child\\\( .foo)").length threw exception SyntaxError: ':nth-child\( .foo)' is not a valid selector..
+PASS document.querySelectorAll(":nth-child\\\\( .foo)").length threw exception SyntaxError: ':nth-child\\( .foo)' is not a valid selector..
 PASS document.styleSheets[1].cssRules.length is 0
 PASS document.styleSheets[1].cssRules.length is 0
 PASS document.styleSheets[1].cssRules.length is 0
@@ -264,31 +264,31 @@ PASS document.styleSheets[1].cssRules.length is 0
 PASS document.styleSheets[1].cssRules.length is 0
 PASS document.styleSheets[1].cssRules.length is 0
 PASS document.querySelectorAll(":nth-last-child\").length threw exception SyntaxError: Unexpected EOF.
-PASS document.querySelectorAll(":nth-last-child\\").length threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.querySelectorAll(":nth-last-child\\").length threw exception SyntaxError: ':nth-last-child\' is not a valid selector..
 PASS document.querySelectorAll(":nth-last-child\\\").length threw exception SyntaxError: Unexpected EOF.
-PASS document.querySelectorAll(":nth-last-child\\\\").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":nth-last-child\(").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":nth-last-child\\(").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":nth-last-child\\\(").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":nth-last-child\\\\(").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":nth-last-child\ .foo").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":nth-last-child\\ .foo").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":nth-last-child\\\ .foo").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":nth-last-child\\\\ .foo").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":nth-last-child\\( .foo").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":nth-last-child\\\( .foo").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":nth-last-child\\\\( .foo").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":nth-last-child\()").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":nth-last-child\\()").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":nth-last-child\\\()").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":nth-last-child\\\\()").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":nth-last-child\ .foo)").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":nth-last-child\\ .foo)").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":nth-last-child\\\ .foo)").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":nth-last-child\\\\ .foo)").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":nth-last-child\\( .foo)").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":nth-last-child\\\( .foo)").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":nth-last-child\\\\( .foo)").length threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.querySelectorAll(":nth-last-child\\\\").length threw exception SyntaxError: ':nth-last-child\\' is not a valid selector..
+PASS document.querySelectorAll(":nth-last-child\(").length threw exception SyntaxError: ':nth-last-child(' is not a valid selector..
+PASS document.querySelectorAll(":nth-last-child\\(").length threw exception SyntaxError: ':nth-last-child\(' is not a valid selector..
+PASS document.querySelectorAll(":nth-last-child\\\(").length threw exception SyntaxError: ':nth-last-child\(' is not a valid selector..
+PASS document.querySelectorAll(":nth-last-child\\\\(").length threw exception SyntaxError: ':nth-last-child\\(' is not a valid selector..
+PASS document.querySelectorAll(":nth-last-child\ .foo").length threw exception SyntaxError: ':nth-last-child .foo' is not a valid selector..
+PASS document.querySelectorAll(":nth-last-child\\ .foo").length threw exception SyntaxError: ':nth-last-child\ .foo' is not a valid selector..
+PASS document.querySelectorAll(":nth-last-child\\\ .foo").length threw exception SyntaxError: ':nth-last-child\ .foo' is not a valid selector..
+PASS document.querySelectorAll(":nth-last-child\\\\ .foo").length threw exception SyntaxError: ':nth-last-child\\ .foo' is not a valid selector..
+PASS document.querySelectorAll(":nth-last-child\\( .foo").length threw exception SyntaxError: ':nth-last-child\( .foo' is not a valid selector..
+PASS document.querySelectorAll(":nth-last-child\\\( .foo").length threw exception SyntaxError: ':nth-last-child\( .foo' is not a valid selector..
+PASS document.querySelectorAll(":nth-last-child\\\\( .foo").length threw exception SyntaxError: ':nth-last-child\\( .foo' is not a valid selector..
+PASS document.querySelectorAll(":nth-last-child\()").length threw exception SyntaxError: ':nth-last-child()' is not a valid selector..
+PASS document.querySelectorAll(":nth-last-child\\()").length threw exception SyntaxError: ':nth-last-child\()' is not a valid selector..
+PASS document.querySelectorAll(":nth-last-child\\\()").length threw exception SyntaxError: ':nth-last-child\()' is not a valid selector..
+PASS document.querySelectorAll(":nth-last-child\\\\()").length threw exception SyntaxError: ':nth-last-child\\()' is not a valid selector..
+PASS document.querySelectorAll(":nth-last-child\ .foo)").length threw exception SyntaxError: ':nth-last-child .foo)' is not a valid selector..
+PASS document.querySelectorAll(":nth-last-child\\ .foo)").length threw exception SyntaxError: ':nth-last-child\ .foo)' is not a valid selector..
+PASS document.querySelectorAll(":nth-last-child\\\ .foo)").length threw exception SyntaxError: ':nth-last-child\ .foo)' is not a valid selector..
+PASS document.querySelectorAll(":nth-last-child\\\\ .foo)").length threw exception SyntaxError: ':nth-last-child\\ .foo)' is not a valid selector..
+PASS document.querySelectorAll(":nth-last-child\\( .foo)").length threw exception SyntaxError: ':nth-last-child\( .foo)' is not a valid selector..
+PASS document.querySelectorAll(":nth-last-child\\\( .foo)").length threw exception SyntaxError: ':nth-last-child\( .foo)' is not a valid selector..
+PASS document.querySelectorAll(":nth-last-child\\\\( .foo)").length threw exception SyntaxError: ':nth-last-child\\( .foo)' is not a valid selector..
 PASS document.styleSheets[1].cssRules.length is 0
 PASS document.styleSheets[1].cssRules.length is 0
 PASS document.styleSheets[1].cssRules.length is 0
@@ -316,31 +316,31 @@ PASS document.styleSheets[1].cssRules.length is 0
 PASS document.styleSheets[1].cssRules.length is 0
 PASS document.styleSheets[1].cssRules.length is 0
 PASS document.querySelectorAll(":nth-last-of-type\").length threw exception SyntaxError: Unexpected EOF.
-PASS document.querySelectorAll(":nth-last-of-type\\").length threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.querySelectorAll(":nth-last-of-type\\").length threw exception SyntaxError: ':nth-last-of-type\' is not a valid selector..
 PASS document.querySelectorAll(":nth-last-of-type\\\").length threw exception SyntaxError: Unexpected EOF.
-PASS document.querySelectorAll(":nth-last-of-type\\\\").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":nth-last-of-type\(").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":nth-last-of-type\\(").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":nth-last-of-type\\\(").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":nth-last-of-type\\\\(").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":nth-last-of-type\ .foo").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":nth-last-of-type\\ .foo").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":nth-last-of-type\\\ .foo").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":nth-last-of-type\\\\ .foo").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":nth-last-of-type\\( .foo").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":nth-last-of-type\\\( .foo").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":nth-last-of-type\\\\( .foo").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":nth-last-of-type\()").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":nth-last-of-type\\()").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":nth-last-of-type\\\()").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":nth-last-of-type\\\\()").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":nth-last-of-type\ .foo)").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":nth-last-of-type\\ .foo)").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":nth-last-of-type\\\ .foo)").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":nth-last-of-type\\\\ .foo)").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":nth-last-of-type\\( .foo)").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":nth-last-of-type\\\( .foo)").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":nth-last-of-type\\\\( .foo)").length threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.querySelectorAll(":nth-last-of-type\\\\").length threw exception SyntaxError: ':nth-last-of-type\\' is not a valid selector..
+PASS document.querySelectorAll(":nth-last-of-type\(").length threw exception SyntaxError: ':nth-last-of-type(' is not a valid selector..
+PASS document.querySelectorAll(":nth-last-of-type\\(").length threw exception SyntaxError: ':nth-last-of-type\(' is not a valid selector..
+PASS document.querySelectorAll(":nth-last-of-type\\\(").length threw exception SyntaxError: ':nth-last-of-type\(' is not a valid selector..
+PASS document.querySelectorAll(":nth-last-of-type\\\\(").length threw exception SyntaxError: ':nth-last-of-type\\(' is not a valid selector..
+PASS document.querySelectorAll(":nth-last-of-type\ .foo").length threw exception SyntaxError: ':nth-last-of-type .foo' is not a valid selector..
+PASS document.querySelectorAll(":nth-last-of-type\\ .foo").length threw exception SyntaxError: ':nth-last-of-type\ .foo' is not a valid selector..
+PASS document.querySelectorAll(":nth-last-of-type\\\ .foo").length threw exception SyntaxError: ':nth-last-of-type\ .foo' is not a valid selector..
+PASS document.querySelectorAll(":nth-last-of-type\\\\ .foo").length threw exception SyntaxError: ':nth-last-of-type\\ .foo' is not a valid selector..
+PASS document.querySelectorAll(":nth-last-of-type\\( .foo").length threw exception SyntaxError: ':nth-last-of-type\( .foo' is not a valid selector..
+PASS document.querySelectorAll(":nth-last-of-type\\\( .foo").length threw exception SyntaxError: ':nth-last-of-type\( .foo' is not a valid selector..
+PASS document.querySelectorAll(":nth-last-of-type\\\\( .foo").length threw exception SyntaxError: ':nth-last-of-type\\( .foo' is not a valid selector..
+PASS document.querySelectorAll(":nth-last-of-type\()").length threw exception SyntaxError: ':nth-last-of-type()' is not a valid selector..
+PASS document.querySelectorAll(":nth-last-of-type\\()").length threw exception SyntaxError: ':nth-last-of-type\()' is not a valid selector..
+PASS document.querySelectorAll(":nth-last-of-type\\\()").length threw exception SyntaxError: ':nth-last-of-type\()' is not a valid selector..
+PASS document.querySelectorAll(":nth-last-of-type\\\\()").length threw exception SyntaxError: ':nth-last-of-type\\()' is not a valid selector..
+PASS document.querySelectorAll(":nth-last-of-type\ .foo)").length threw exception SyntaxError: ':nth-last-of-type .foo)' is not a valid selector..
+PASS document.querySelectorAll(":nth-last-of-type\\ .foo)").length threw exception SyntaxError: ':nth-last-of-type\ .foo)' is not a valid selector..
+PASS document.querySelectorAll(":nth-last-of-type\\\ .foo)").length threw exception SyntaxError: ':nth-last-of-type\ .foo)' is not a valid selector..
+PASS document.querySelectorAll(":nth-last-of-type\\\\ .foo)").length threw exception SyntaxError: ':nth-last-of-type\\ .foo)' is not a valid selector..
+PASS document.querySelectorAll(":nth-last-of-type\\( .foo)").length threw exception SyntaxError: ':nth-last-of-type\( .foo)' is not a valid selector..
+PASS document.querySelectorAll(":nth-last-of-type\\\( .foo)").length threw exception SyntaxError: ':nth-last-of-type\( .foo)' is not a valid selector..
+PASS document.querySelectorAll(":nth-last-of-type\\\\( .foo)").length threw exception SyntaxError: ':nth-last-of-type\\( .foo)' is not a valid selector..
 PASS document.styleSheets[1].cssRules.length is 0
 PASS document.styleSheets[1].cssRules.length is 0
 PASS document.styleSheets[1].cssRules.length is 0
@@ -368,31 +368,31 @@ PASS document.styleSheets[1].cssRules.length is 0
 PASS document.styleSheets[1].cssRules.length is 0
 PASS document.styleSheets[1].cssRules.length is 0
 PASS document.querySelectorAll(":nth-of-type\").length threw exception SyntaxError: Unexpected EOF.
-PASS document.querySelectorAll(":nth-of-type\\").length threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.querySelectorAll(":nth-of-type\\").length threw exception SyntaxError: ':nth-of-type\' is not a valid selector..
 PASS document.querySelectorAll(":nth-of-type\\\").length threw exception SyntaxError: Unexpected EOF.
-PASS document.querySelectorAll(":nth-of-type\\\\").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":nth-of-type\(").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":nth-of-type\\(").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":nth-of-type\\\(").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":nth-of-type\\\\(").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":nth-of-type\ .foo").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":nth-of-type\\ .foo").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":nth-of-type\\\ .foo").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":nth-of-type\\\\ .foo").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":nth-of-type\\( .foo").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":nth-of-type\\\( .foo").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":nth-of-type\\\\( .foo").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":nth-of-type\()").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":nth-of-type\\()").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":nth-of-type\\\()").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":nth-of-type\\\\()").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":nth-of-type\ .foo)").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":nth-of-type\\ .foo)").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":nth-of-type\\\ .foo)").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":nth-of-type\\\\ .foo)").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":nth-of-type\\( .foo)").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":nth-of-type\\\( .foo)").length threw exception SyntaxError: The string did not match the expected pattern..
-PASS document.querySelectorAll(":nth-of-type\\\\( .foo)").length threw exception SyntaxError: The string did not match the expected pattern..
+PASS document.querySelectorAll(":nth-of-type\\\\").length threw exception SyntaxError: ':nth-of-type\\' is not a valid selector..
+PASS document.querySelectorAll(":nth-of-type\(").length threw exception SyntaxError: ':nth-of-type(' is not a valid selector..
+PASS document.querySelectorAll(":nth-of-type\\(").length threw exception SyntaxError: ':nth-of-type\(' is not a valid selector..
+PASS document.querySelectorAll(":nth-of-type\\\(").length threw exception SyntaxError: ':nth-of-type\(' is not a valid selector..
+PASS document.querySelectorAll(":nth-of-type\\\\(").length threw exception SyntaxError: ':nth-of-type\\(' is not a valid selector..
+PASS document.querySelectorAll(":nth-of-type\ .foo").length threw exception SyntaxError: ':nth-of-type .foo' is not a valid selector..
+PASS document.querySelectorAll(":nth-of-type\\ .foo").length threw exception SyntaxError: ':nth-of-type\ .foo' is not a valid selector..
+PASS document.querySelectorAll(":nth-of-type\\\ .foo").length threw exception SyntaxError: ':nth-of-type\ .foo' is not a valid selector..
+PASS document.querySelectorAll(":nth-of-type\\\\ .foo").length threw exception SyntaxError: ':nth-of-type\\ .foo' is not a valid selector..
+PASS document.querySelectorAll(":nth-of-type\\( .foo").length threw exception SyntaxError: ':nth-of-type\( .foo' is not a valid selector..
+PASS document.querySelectorAll(":nth-of-type\\\( .foo").length threw exception SyntaxError: ':nth-of-type\( .foo' is not a valid selector..
+PASS document.querySelectorAll(":nth-of-type\\\\( .foo").length threw exception SyntaxError: ':nth-of-type\\( .foo' is not a valid selector..
+PASS document.querySelectorAll(":nth-of-type\()").length threw exception SyntaxError: ':nth-of-type()' is not a valid selector..
+PASS document.querySelectorAll(":nth-of-type\\()").length threw exception SyntaxError: ':nth-of-type\()' is not a valid selector..
+PASS document.querySelectorAll(":nth-of-type\\\()").length threw exception SyntaxError: ':nth-of-type\()' is not a valid selector..
+PASS document.querySelectorAll(":nth-of-type\\\\()").length threw exception SyntaxError: ':nth-of-type\\()' is not a valid selector..
+PASS document.querySelectorAll(":nth-of-type\ .foo)").length threw exception SyntaxError: ':nth-of-type .foo)' is not a valid selector..
+PASS document.querySelectorAll(":nth-of-type\\ .foo)").length threw exception SyntaxError: ':nth-of-type\ .foo)' is not a valid selector..
+PASS document.querySelectorAll(":nth-of-type\\\ .foo)").length threw exception SyntaxError: ':nth-of-type\ .foo)' is not a valid selector..
+PASS document.querySelectorAll(":nth-of-type\\\\ .foo)").length threw exception SyntaxError: ':nth-of-type\\ .foo)' is not a valid selector..
+PASS document.querySelectorAll(":nth-of-type\\( .foo)").length threw exception SyntaxError: ':nth-of-type\( .foo)' is not a valid selector..
+PASS document.querySelectorAll(":nth-of-type\\\( .foo)").length threw exception SyntaxError: ':nth-of-type\( .foo)' is not a valid selector..
+PASS document.querySelectorAll(":nth-of-type\\\\( .foo)").length threw exception SyntaxError: ':nth-of-type\\( .foo)' is not a valid selector..
 PASS document.styleSheets[1].cssRules.length is 0
 PASS document.styleSheets[1].cssRules.length is 0
 PASS document.styleSheets[1].cssRules.length is 0

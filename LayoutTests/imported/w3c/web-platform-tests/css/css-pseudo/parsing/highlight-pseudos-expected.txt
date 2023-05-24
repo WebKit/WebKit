@@ -9,30 +9,30 @@ PASS "::selection div" should be an invalid selector
 PASS "::selection::after" should be an invalid selector
 PASS "::selection:hover" should be an invalid selector
 PASS ":not(::selection)" should be an invalid selector
-FAIL "::target-text" should be a valid selector The string did not match the expected pattern.
-FAIL ".a::target-text" should be a valid selector The string did not match the expected pattern.
-FAIL "div ::target-text" should be a valid selector The string did not match the expected pattern.
-FAIL "::part(my-part)::target-text" should be a valid selector The string did not match the expected pattern.
+FAIL "::target-text" should be a valid selector '::target-text' is not a valid selector.
+FAIL ".a::target-text" should be a valid selector '.a::target-text' is not a valid selector.
+FAIL "div ::target-text" should be a valid selector 'div ::target-text' is not a valid selector.
+FAIL "::part(my-part)::target-text" should be a valid selector '::part(my-part)::target-text' is not a valid selector.
 PASS "::before::target-text" should be an invalid selector
 PASS "::target-text.a" should be an invalid selector
 PASS "::target-text div" should be an invalid selector
 PASS "::target-text::after" should be an invalid selector
 PASS "::target-text:hover" should be an invalid selector
 PASS ":not(::target-text)" should be an invalid selector
-FAIL "::spelling-error" should be a valid selector The string did not match the expected pattern.
-FAIL ".a::spelling-error" should be a valid selector The string did not match the expected pattern.
-FAIL "div ::spelling-error" should be a valid selector The string did not match the expected pattern.
-FAIL "::part(my-part)::spelling-error" should be a valid selector The string did not match the expected pattern.
+FAIL "::spelling-error" should be a valid selector '::spelling-error' is not a valid selector.
+FAIL ".a::spelling-error" should be a valid selector '.a::spelling-error' is not a valid selector.
+FAIL "div ::spelling-error" should be a valid selector 'div ::spelling-error' is not a valid selector.
+FAIL "::part(my-part)::spelling-error" should be a valid selector '::part(my-part)::spelling-error' is not a valid selector.
 PASS "::before::spelling-error" should be an invalid selector
 PASS "::spelling-error.a" should be an invalid selector
 PASS "::spelling-error div" should be an invalid selector
 PASS "::spelling-error::after" should be an invalid selector
 PASS "::spelling-error:hover" should be an invalid selector
 PASS ":not(::spelling-error)" should be an invalid selector
-FAIL "::grammar-error" should be a valid selector The string did not match the expected pattern.
-FAIL ".a::grammar-error" should be a valid selector The string did not match the expected pattern.
-FAIL "div ::grammar-error" should be a valid selector The string did not match the expected pattern.
-FAIL "::part(my-part)::grammar-error" should be a valid selector The string did not match the expected pattern.
+FAIL "::grammar-error" should be a valid selector '::grammar-error' is not a valid selector.
+FAIL ".a::grammar-error" should be a valid selector '.a::grammar-error' is not a valid selector.
+FAIL "div ::grammar-error" should be a valid selector 'div ::grammar-error' is not a valid selector.
+FAIL "::part(my-part)::grammar-error" should be a valid selector '::part(my-part)::grammar-error' is not a valid selector.
 PASS "::before::grammar-error" should be an invalid selector
 PASS "::grammar-error.a" should be an invalid selector
 PASS "::grammar-error div" should be an invalid selector

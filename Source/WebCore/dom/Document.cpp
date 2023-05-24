@@ -933,11 +933,11 @@ void Document::invalidateAccessKeyCacheSlowCase()
 ExceptionOr<SelectorQuery&> Document::selectorQueryForString(const String& selectorString)
 {
     if (selectorString.isEmpty())
-        return Exception { SyntaxError };
+        return Exception { SyntaxError, makeString("'", selectorString, "' is not a valid selector.") };
 
     auto* query = SelectorQueryCache::singleton().add(selectorString, *this);
     if (!query)
-        return Exception { SyntaxError };
+        return Exception { SyntaxError, makeString("'", selectorString, "' is not a valid selector.") };
 
     return *query;
 }

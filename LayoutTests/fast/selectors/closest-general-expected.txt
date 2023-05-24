@@ -45,16 +45,16 @@ PASS sour.closest("a") is a
 PASS document.closest is undefined
 PASS document.closest() threw exception TypeError: document.closest is not a function. (In 'document.closest()', 'document.closest' is undefined).
 PASS theTarget.closest() threw exception TypeError: Not enough arguments.
-PASS theTarget.closest("") threw exception SyntaxError: The string did not match the expected pattern..
-PASS theTarget.closest(".123") threw exception SyntaxError: The string did not match the expected pattern..
-PASS theTarget.closest("    ") threw exception SyntaxError: The string did not match the expected pattern..
-PASS theTarget.closest(")") threw exception SyntaxError: The string did not match the expected pattern..
-PASS theTarget.closest("(") threw exception SyntaxError: The string did not match the expected pattern..
-PASS theTarget.closest("()") threw exception SyntaxError: The string did not match the expected pattern..
-PASS theTarget.closest("^_^") threw exception SyntaxError: The string did not match the expected pattern..
-PASS theTarget.closest("{") threw exception SyntaxError: The string did not match the expected pattern..
-PASS theTarget.closest("}") threw exception SyntaxError: The string did not match the expected pattern..
-PASS theTarget.closest("{}") threw exception SyntaxError: The string did not match the expected pattern..
+PASS theTarget.closest("") threw exception SyntaxError: '' is not a valid selector..
+PASS theTarget.closest(".123") threw exception SyntaxError: '.123' is not a valid selector..
+PASS theTarget.closest("    ") threw exception SyntaxError: '    ' is not a valid selector..
+PASS theTarget.closest(")") threw exception SyntaxError: ')' is not a valid selector..
+PASS theTarget.closest("(") threw exception SyntaxError: '(' is not a valid selector..
+PASS theTarget.closest("()") threw exception SyntaxError: '()' is not a valid selector..
+PASS theTarget.closest("^_^") threw exception SyntaxError: '^_^' is not a valid selector..
+PASS theTarget.closest("{") threw exception SyntaxError: '{' is not a valid selector..
+PASS theTarget.closest("}") threw exception SyntaxError: '}' is not a valid selector..
+PASS theTarget.closest("{}") threw exception SyntaxError: '{}' is not a valid selector..
 PASS successfullyParsed is true
 
 TEST COMPLETE
