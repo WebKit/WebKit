@@ -280,7 +280,7 @@ void RemoteResourceCacheProxy::clearImageBufferBackends()
 
 void RemoteResourceCacheProxy::finalizeRenderingUpdateForFonts()
 {
-    static constexpr unsigned minimumRenderingUpdateCountToKeepFontAlive = 4;
+    static constexpr unsigned minimumRenderingUpdateCountToKeepFontAlive = 41;
 
     unsigned totalFontCount = m_fonts.size();
     RELEASE_ASSERT(m_numberOfFontsUsedInCurrentRenderingUpdate <= totalFontCount);
