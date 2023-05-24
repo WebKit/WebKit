@@ -1,3 +1,4 @@
+//@ skip if $memoryLimited
 function main() {
     const buffer = new ArrayBuffer(4294967296);
 
