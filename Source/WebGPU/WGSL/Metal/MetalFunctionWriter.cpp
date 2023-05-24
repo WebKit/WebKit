@@ -120,8 +120,8 @@ void FunctionDefinitionWriter::write()
         m_stringBuilder.append("struct texture_external {\n");
         {
             IndentationScope scope(m_indent);
-            m_stringBuilder.append(m_indent, "texture2d<half> FirstPlane;\n");
-            m_stringBuilder.append(m_indent, "texture2d<half> SecondPlane;\n");
+            m_stringBuilder.append(m_indent, "texture2d<float> FirstPlane;\n");
+            m_stringBuilder.append(m_indent, "texture2d<float> SecondPlane;\n");
             m_stringBuilder.append(m_indent, "float3x2 UVRemapMatrix;\n");
             m_stringBuilder.append(m_indent, "float4x3 ColorSpaceConversionMatrix;\n");
         }
@@ -198,8 +198,8 @@ void FunctionDefinitionWriter::visit(AST::Structure& structDecl)
             auto& name = member.name();
             auto* type = member.type().resolvedType();
             if (auto* primitive = std::get_if<Types::Primitive>(type); primitive && primitive->kind == Types::Primitive::TextureExternal) {
-                m_stringBuilder.append(m_indent, "texture2d<half> __", name, "_FirstPlane;\n");
-                m_stringBuilder.append(m_indent, "texture2d<half> __", name, "_SecondPlane;\n");
+                m_stringBuilder.append(m_indent, "texture2d<float> __", name, "_FirstPlane;\n");
+                m_stringBuilder.append(m_indent, "texture2d<float> __", name, "_SecondPlane;\n");
                 m_stringBuilder.append(m_indent, "float3x2 __", name, "_UVRemapMatrix;\n");
                 m_stringBuilder.append(m_indent, "float4x3 __", name, "_ColorSpaceConversionMatrix;\n");
                 continue;
