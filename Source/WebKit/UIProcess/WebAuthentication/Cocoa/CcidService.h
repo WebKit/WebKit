@@ -34,6 +34,8 @@
 OBJC_CLASS NSArray;
 OBJC_CLASS TKSmartCardSlot;
 OBJC_CLASS TKSmartCard;
+OBJC_CLASS _WKSmartCardSlotObserver;
+OBJC_CLASS _WKSmartCardSlotStateObserver;
 
 namespace WebKit {
 
@@ -55,11 +57,14 @@ private:
     void startDiscoveryInternal() final;
     void restartDiscoveryInternal() final;
 
+    void removeObservers();
+
     virtual void platformStartDiscovery();
 
     RunLoop::Timer m_restartTimer;
     RefPtr<CcidConnection> m_connection;
-    HashSet<String> m_slotNames;
+    RetainPtr<_WKSmartCardSlotObserver> m_slotsObserver;
+    HashMap<String, RetainPtr<_WKSmartCardSlotStateObserver>> m_slotObservers;
 };
 
 } // namespace WebKit
