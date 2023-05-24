@@ -227,7 +227,7 @@ public:
     void tiledBackingUsageChanged(const GraphicsLayer*, bool /*usingTiledBacking*/) override;
     void notifyAnimationStarted(const GraphicsLayer*, const String& animationKey, MonotonicTime startTime) override;
     void notifyFlushRequired(const GraphicsLayer*) override;
-    void notifyFlushBeforeDisplayRefresh(const GraphicsLayer*) override;
+    void notifySubsequentFlushRequired(const GraphicsLayer*) override;
 
     void paintContents(const GraphicsLayer*, GraphicsContext&, const FloatRect& clip, OptionSet<GraphicsLayerPaintBehavior>) override;
 

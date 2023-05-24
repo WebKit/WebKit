@@ -4065,9 +4065,9 @@ void RenderLayerBacking::notifyFlushRequired(const GraphicsLayer* layer)
     compositor().notifyFlushRequired(layer);
 }
 
-void RenderLayerBacking::notifyFlushBeforeDisplayRefresh(const GraphicsLayer* layer)
+void RenderLayerBacking::notifySubsequentFlushRequired(const GraphicsLayer* layer)
 {
-    compositor().notifyFlushBeforeDisplayRefresh(layer);
+    compositor().notifySubsequentFlushRequired(layer);
 }
 
 // This is used for the 'freeze' API, for testing only.

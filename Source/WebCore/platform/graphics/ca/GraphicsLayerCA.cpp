@@ -1842,7 +1842,7 @@ void GraphicsLayerCA::recursiveCommitChanges(CommitState& commitState, const Tra
     commitLayerChangesAfterSublayers(childCommitState);
 
     if (affectedByTransformAnimation && m_layer->layerType() == PlatformCALayer::LayerTypeTiledBackingLayer)
-        client().notifyFlushBeforeDisplayRefresh(this);
+        client().notifySubsequentFlushRequired(this);
 
     if (layerTypeChanged)
         client().didChangePlatformLayerForLayer(this);

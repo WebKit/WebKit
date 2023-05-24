@@ -406,6 +406,7 @@ static inline bool layersLogEnabled()
 RenderLayerCompositor::RenderLayerCompositor(RenderView& renderView)
     : m_renderView(renderView)
     , m_updateCompositingLayersTimer(*this, &RenderLayerCompositor::updateCompositingLayersTimerFired)
+    , m_updateRenderingTimer(*this, &RenderLayerCompositor::scheduleRenderingUpdate)
 {
 #if PLATFORM(IOS_FAMILY)
     if (m_renderView.frameView().platformWidget())
@@ -729,24 +730,10 @@ void RenderLayerCompositor::didChangeVisibleRect()
         scheduleRenderingUpdate();
 }
 
-void RenderLayerCompositor::notifyFlushBeforeDisplayRefresh(const GraphicsLayer*)
+void RenderLayerCompositor::notifySubsequentFlushRequired(const GraphicsLayer*)
 {
-    if (!m_layerUpdater) {
-        PlatformDisplayID displayID = page().chrome().displayID();
-        m_layerUpdater = makeUnique<GraphicsLayerUpdater>(*this, displayID);
-    }
-    
-    m_layerUpdater->scheduleUpdate();
-}
-
-void RenderLayerCompositor::flushLayersSoon(GraphicsLayerUpdater&)
-{
-    scheduleRenderingUpdate();
-}
-
-DisplayRefreshMonitorFactory* RenderLayerCompositor::displayRefreshMonitorFactory()
-{
-    return page().chrome().client().displayRefreshMonitorFactory();
+    if (!m_updateRenderingTimer.isActive())
+        m_updateRenderingTimer.startOneShot(0_s);
 }
 
 void RenderLayerCompositor::layerTiledBackingUsageChanged(const GraphicsLayer* graphicsLayer, bool usingTiledBacking)
@@ -4399,8 +4386,6 @@ void RenderLayerCompositor::destroyRootLayer()
     }
     ASSERT(!m_scrolledContentsLayer);
     GraphicsLayer::unparentAndClear(m_rootContentsLayer);
-
-    m_layerUpdater = nullptr;
 }
 
 void RenderLayerCompositor::attachRootLayer(RootLayerAttachment attachment)
@@ -5230,12 +5215,6 @@ void RenderLayerCompositor::didAddScrollingLayer(RenderLayer& layer)
 #else
     UNUSED_PARAM(layer);
 #endif
-}
-
-void RenderLayerCompositor::windowScreenDidChange(PlatformDisplayID displayID)
-{
-    if (m_layerUpdater)
-        m_layerUpdater->screenDidChange(displayID);
 }
 
 ScrollingCoordinator* RenderLayerCompositor::scrollingCoordinator() const

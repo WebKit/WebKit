@@ -7096,11 +7096,6 @@ void Document::serviceRequestVideoFrameCallbacks()
 
 void Document::windowScreenDidChange(PlatformDisplayID displayID)
 {
-    if (RenderView* view = renderView()) {
-        if (view->usesCompositing())
-            view->compositor().windowScreenDidChange(displayID);
-    }
-
     for (auto& observer : copyToVector(m_displayChangedObservers)) {
         if (observer)
             (*observer)(displayID);
