@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(MANAGED_MEDIA_SOURCE) && ENABLE(MEDIA_SOURCE)
+#if ENABLE(MANAGED_MEDIA_SOURCE)
 
 #include "SourceBuffer.h"
 

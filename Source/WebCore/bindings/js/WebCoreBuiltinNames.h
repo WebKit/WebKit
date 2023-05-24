@@ -101,6 +101,7 @@ namespace WebCore {
     macro(BiquadFilterNode) \
     macro(BlobEvent) \
     macro(BroadcastChannel) \
+    macro(BufferedChangeEvent) \
     macro(Cache) \
     macro(CacheStorage) \
     macro(ChannelMergerNode) \

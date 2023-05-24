@@ -396,6 +396,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/mediarecorder/MediaRecorder.idl \
     $(WebCore)/Modules/mediarecorder/MediaRecorderErrorEvent.idl \
     $(WebCore)/Modules/mediasource/AudioTrack+MediaSource.idl \
+    $(WebCore)/Modules/mediasource/BufferedChangeEvent.idl \
     $(WebCore)/Modules/mediasource/DOMURL+MediaSource.idl \
     $(WebCore)/Modules/mediasource/ManagedMediaSource.idl \
     $(WebCore)/Modules/mediasource/ManagedSourceBuffer.idl \

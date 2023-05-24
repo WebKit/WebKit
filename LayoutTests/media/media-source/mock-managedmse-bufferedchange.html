@@ -1,0 +1,117 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ ManagedMediaSourceEnabled=true MediaSourceEnabled=true ] -->
+<html>
+<head>
+    <title>managedmediasource</title>
+    <script src="mock-media-source.js"></script>
+    <script src="../../media/video-test.js"></script>
+    <script src="../../media/utilities.js"></script>
+    <script>
+    var loader;
+    var source;
+    var sourceBuffer;
+    var bufferedChangeEvent;
+    var sourceElement;
+
+    if (window.internals)
+        internals.initializeMockMediaSource();
+
+    function syncSampleRun(start, end, stepSync = 9999999999) {
+        const samples = [];
+        for (let time = start; time < end; time++)
+            samples.push(makeASample(time, time, 1, 1, 1, (time - start) % stepSync == 0 ? SAMPLE_FLAG.SYNC : SAMPLE_FLAG.NONE));
+        return concatenateSamples(samples);
+    }
+
+    window.addEventListener('load', async event => {
+        findMediaElement();
+
+        source = new ManagedMediaSource();
+
+        testExpected('source.readyState', 'closed');
+        run('sourceElement = document.createElement("source")');
+        run('sourceElement.type = "video/mock; codecs=mock"');
+        run('sourceElement.src = URL.createObjectURL(source)');
+        run('video.appendChild(sourceElement)');
+        run('sourceElement = document.createElement("source")');
+        run('sourceElement.src = "http://foo.com/playlist.m3u8"');
+        run('sourceElement.type = "application/vnd.apple.mpegurl"');
+        run('video.appendChild(sourceElement)');
+        await waitFor(source, 'sourceopen');
+
+        run('sourceBuffer = source.addSourceBuffer("video/mock; codecs=mock")');
+        sourceBuffer.onbufferedchange = (e) => {
+            consoleWrite('onbufferedchange called.')
+            consoleWrite(`e.addedRanges = ${ timeRangesToString(e.addedRanges) }`);
+            consoleWrite(`e.removedRanges = ${ timeRangesToString(e.removedRanges) }`);
+        };
+
+        initSegment = makeAInit(10, [makeATrack(1, 'mock', TRACK_KIND.VIDEO)]);
+
+        run('sourceBuffer.appendBuffer(initSegment)');
+        await waitFor(sourceBuffer, 'updateend');
+
+        run('sourceBuffer.appendBuffer(syncSampleRun(5, 10))');
+        await waitFor(sourceBuffer, 'update');
+        testExpected('sourceBuffer.buffered.length', '1');
+
+        run('sourceBuffer.appendBuffer(syncSampleRun(0, 5))');
+        await waitFor(sourceBuffer, 'update');
+        testExpected('sourceBuffer.buffered.length', '1');
+
+        consoleWrite('Clean sourcebuffer of all content.');
+        run('sourceBuffer.remove(0, sourceBuffer.buffered.end(0))');
+        await waitFor(sourceBuffer, 'update');
+        testExpected('sourceBuffer.buffered.length', '0');
+
+        run('sourceBuffer.appendBuffer(syncSampleRun(0, 3))');
+        await waitFor(sourceBuffer, 'update');
+        run('sourceBuffer.appendBuffer(syncSampleRun(3, 6))');
+        await waitFor(sourceBuffer, 'update');
+        run('sourceBuffer.appendBuffer(syncSampleRun(6, 9))');
+        await waitFor(sourceBuffer, 'update');
+
+        consoleWrite('Re-adding the same samples does not update the buffer');
+        run('sourceBuffer.appendBuffer(syncSampleRun(0, 3))');
+        await waitFor(sourceBuffer, 'update');
+
+        consoleWrite('Removing first sync sample, remove the first 3 seconds block');
+        run('sourceBuffer.remove(0, 1)');
+        await waitFor(sourceBuffer, 'update');
+
+        consoleWrite('Removing from 8 to infinity, remove to the end of existing buffer');
+        run('sourceBuffer.remove(8, Infinity)');
+        await waitFor(sourceBuffer, 'update');
+
+        consoleWrite('Removing from empty range, does not update the buffer');
+        run('sourceBuffer.remove(0, 2)');
+        await waitFor(sourceBuffer, 'update');
+
+        consoleWrite('Removing from non-sync sample');
+        run('sourceBuffer.remove(4, 5)');
+        await waitFor(sourceBuffer, 'update');
+
+        consoleWrite('Overriding sync sample, remove following block and only update buffer for missing samples');
+        consoleWrite(`before: ${ timeRangesToString(sourceBuffer.buffered) }`);
+        run('sourceBuffer.appendBuffer(syncSampleRun(5, 7))');
+        await waitFor(sourceBuffer, 'update');
+        consoleWrite(`after: ${ timeRangesToString(sourceBuffer.buffered) }`);
+
+        consoleWrite('Only report samples added in missing intervals');
+        run('sourceBuffer.appendBuffer(syncSampleRun(0, 10, 2))');
+        await waitFor(sourceBuffer, 'update');
+
+        run('sourceBuffer.remove(2, 4)');
+        await waitFor(sourceBuffer, 'update');
+        run('sourceBuffer.remove(6, 8)');
+        await waitFor(sourceBuffer, 'update');
+        run('sourceBuffer.remove(0, 10)');
+        await waitFor(sourceBuffer, 'update');
+
+        endTest();
+    });
+    </script>
+</head>
+<body>
+    <video controls></video>
+</body>
+</html>

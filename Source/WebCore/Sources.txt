@@ -184,6 +184,7 @@ Modules/mediarecorder/BlobEvent.cpp
 Modules/mediarecorder/MediaRecorder.cpp
 Modules/mediarecorder/MediaRecorderErrorEvent.cpp
 Modules/mediarecorder/MediaRecorderProvider.cpp
+Modules/mediasource/BufferedChangeEvent.cpp
 Modules/mediasource/DOMURLMediaSource.cpp
 Modules/mediasource/ManagedMediaSource.cpp
 Modules/mediasource/ManagedSourceBuffer.cpp
@@ -3147,6 +3148,7 @@ JSBlob.cpp
 JSBlobCallback.cpp
 JSBlobEvent.cpp
 JSBlobPropertyBag.cpp
+JSBufferedChangeEvent.cpp
 JSBroadcastChannel.cpp
 JSByteLengthQueuingStrategy.cpp
 JSCDATASection.cpp

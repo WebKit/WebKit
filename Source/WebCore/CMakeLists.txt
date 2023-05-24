@@ -407,6 +407,7 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/mediasession/Navigator+MediaSession.idl
 
     Modules/mediasource/AudioTrack+MediaSource.idl
+    Modules/mediasource/BufferedChangeEvent.idl
     Modules/mediasource/DOMURL+MediaSource.idl
     Modules/mediasource/ManagedMediaSource.idl
     Modules/mediasource/ManagedSourceBuffer.idl

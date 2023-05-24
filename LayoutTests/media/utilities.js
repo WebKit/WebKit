@@ -78,3 +78,15 @@ function waitForVideoFrameUntil(video, time, cb) {
         p.then(cb);
     return p;
 }
+
+function timeRangesToString(ranges) {
+    var str = "";
+    if (!!!ranges) {
+        str += "null";
+        return str;
+    }
+    for (var i = 0; i < ranges.length; i++) {
+        str += "[" + ranges.start(i) + ", " + ranges.end(i) + ")";
+    }
+    return str;
+}

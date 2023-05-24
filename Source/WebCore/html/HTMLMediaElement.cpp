@@ -8701,7 +8701,7 @@ void HTMLMediaElement::setBufferingPolicy(BufferingPolicy policy)
     m_bufferingPolicy = policy;
     if (m_player)
         m_player->setBufferingPolicy(policy);
-#if ENABLE(MEDIA_SOURCE)
+#if ENABLE(MANAGED_MEDIA_SOURCE)
     if (m_mediaSource && policy == BufferingPolicy::PurgeResources)
         m_mediaSource->memoryPressure();
 #endif
@@ -8712,7 +8712,7 @@ void HTMLMediaElement::purgeBufferedDataIfPossible()
     ALWAYS_LOG(LOGIDENTIFIER);
 
     bool isPausedOrMSE = [&] {
-#if ENABLE(MEDIA_SOURCE)
+#if ENABLE(MANAGED_MEDIA_SOURCE)
         if (m_mediaSource)
             return true;
 #endif

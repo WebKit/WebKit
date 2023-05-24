@@ -128,8 +128,10 @@ public:
 
     void failedToCreateRenderer(RendererType) final;
 
+#if ENABLE(MANAGED_MEDIA_SOURCE)
     virtual bool isManaged() const { return false; }
     void memoryPressure();
+#endif
 
 protected:
     explicit MediaSource(ScriptExecutionContext&);

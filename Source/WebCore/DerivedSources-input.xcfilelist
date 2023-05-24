@@ -393,6 +393,7 @@ $(PROJECT_DIR)/Modules/mediasession/MediaSessionPlaylistMixin.idl
 $(PROJECT_DIR)/Modules/mediasession/MediaSessionReadyState.idl
 $(PROJECT_DIR)/Modules/mediasession/Navigator+MediaSession.idl
 $(PROJECT_DIR)/Modules/mediasource/AudioTrack+MediaSource.idl
+$(PROJECT_DIR)/Modules/mediasource/BufferedChangeEvent.idl
 $(PROJECT_DIR)/Modules/mediasource/DOMURL+MediaSource.idl
 $(PROJECT_DIR)/Modules/mediasource/ManagedMediaSource.idl
 $(PROJECT_DIR)/Modules/mediasource/ManagedSourceBuffer.idl
