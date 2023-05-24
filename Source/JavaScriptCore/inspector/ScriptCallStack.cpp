@@ -53,7 +53,7 @@ ScriptCallStack::ScriptCallStack(Vector<ScriptCallFrame>&& frames, bool truncate
     , m_truncated(truncated)
     , m_parentStackTrace(parentStackTrace)
 {
-    ASSERT(m_frames.size() < maxCallStackSizeToCapture);
+    ASSERT(m_frames.size() <= maxCallStackSizeToCapture);
 }
 
 ScriptCallStack::~ScriptCallStack()
