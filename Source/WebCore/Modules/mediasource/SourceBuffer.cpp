@@ -433,7 +433,7 @@ MediaTime SourceBuffer::highestPresentationTimestamp() const
 void SourceBuffer::readyStateChanged()
 {
     if (!isRemoved())
-        m_private->updateBufferedFromTrackBuffers(m_source->isEnded());
+        m_private->clientReadyStateChanged(m_source->isEnded());
 }
 
 void SourceBuffer::removedFromMediaSource()

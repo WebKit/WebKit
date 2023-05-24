@@ -185,20 +185,11 @@ void SourceBufferPrivateRemote::setMode(SourceBufferAppendMode mode)
     m_gpuProcessConnection->connection().send(Messages::RemoteSourceBufferProxy::SetMode(mode), m_remoteSourceBufferIdentifier);
 }
 
-void SourceBufferPrivateRemote::updateBufferedFromTrackBuffers(bool sourceIsEnded)
+void SourceBufferPrivateRemote::clientReadyStateChanged(bool sourceIsEnded)
 {
-    if (!m_mediaSourcePrivate)
-        return;
-
-    if (!isGPURunning())
-        return;
-
-    auto sendResult = m_gpuProcessConnection->connection().sendSync(Messages::RemoteSourceBufferProxy::UpdateBufferedFromTrackBuffers(sourceIsEnded), m_remoteSourceBufferIdentifier);
-    if (!sendResult)
-        return;
-
-    auto [buffered] = sendResult.takeReply();
-    setBufferedRanges(WTFMove(buffered));
+    if (isGPURunning())
+        m_gpuProcessConnection->connection().send(Messages::RemoteSourceBufferProxy::ClientReadyStateChanged(sourceIsEnded), m_remoteSourceBufferIdentifier);
+    SourceBufferPrivate::updateBufferedFromTrackBuffers(m_trackBufferRanges, sourceIsEnded);
 }
 
 void SourceBufferPrivateRemote::removeCodedFrames(const MediaTime& start, const MediaTime& end, const MediaTime& currentMediaTime, bool isEnded, CompletionHandler<void()>&& completionHandler)
@@ -456,6 +447,11 @@ void SourceBufferPrivateRemote::sourceBufferPrivateDurationChanged(const MediaTi
 void SourceBufferPrivateRemote::sourceBufferPrivateBufferedChanged(WebCore::PlatformTimeRanges&& timeRanges, CompletionHandler<void()>&& completionHandler)
 {
     setBufferedRanges(WTFMove(timeRanges), WTFMove(completionHandler));
+}
+
+void SourceBufferPrivateRemote::sourceBufferPrivateTrackBuffersChanged(Vector<WebCore::PlatformTimeRanges>&& trackBuffersRanges)
+{
+    m_trackBufferRanges = WTFMove(trackBuffersRanges);
 }
 
 void SourceBufferPrivateRemote::sourceBufferPrivateDidParseSample(double sampleDuration)

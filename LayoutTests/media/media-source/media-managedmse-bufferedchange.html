@@ -38,6 +38,10 @@
             testExpected('sourceBuffer.__proto__', ManagedSourceBuffer.prototype);
             testExpected('sourceBuffer.onbufferedchange !== undefined', true);
 
+            sourceBuffer.onbufferedchange = () => {
+                consoleWrite('onbufferedchange called.')
+            };
+
             run('sourceBuffer.appendBuffer(loader.initSegment())');
             await waitFor(sourceBuffer, 'update');
 
