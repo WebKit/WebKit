@@ -32,7 +32,6 @@
 #include "GPUProcessCreationParameters.h"
 #include "GPUProcessMessages.h"
 #include "MediaPermissionUtilities.h"
-#include "WebProcessProxy.h"
 
 #if HAVE(POWERLOG_TASK_MODE_QUERY)
 #include <pal/spi/mac/PowerLogSPI.h>
@@ -46,7 +45,6 @@ namespace WebKit {
 void GPUProcessProxy::platformInitializeGPUProcessParameters(GPUProcessCreationParameters& parameters)
 {
     parameters.mobileGestaltExtensionHandle = createMobileGestaltSandboxExtensionIfNeeded();
-    parameters.gpuToolsExtensionHandles = createGPUToolsSandboxExtensionHandlesIfNeeded();
     parameters.applicationVisibleName = applicationVisibleName();
     parameters.strictSecureDecodingForAllObjCEnabled = IPC::strictSecureDecodingForAllObjCEnabled();
 }
@@ -77,14 +75,6 @@ void GPUProcessProxy::enablePowerLogging()
     send(Messages::GPUProcess::EnablePowerLogging(*handle), 0);
 }
 #endif // HAVE(POWERLOG_TASK_MODE_QUERY)
-
-Vector<SandboxExtension::Handle> GPUProcessProxy::createGPUToolsSandboxExtensionHandlesIfNeeded()
-{
-    if (!WebProcessProxy::shouldEnableRemoteInspector())
-        return { };
-
-    return SandboxExtension::createHandlesForMachLookup({ "com.apple.gputools.service"_s, }, std::nullopt);
-}
 
 }
 

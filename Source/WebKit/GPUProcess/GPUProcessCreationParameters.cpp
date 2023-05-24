@@ -62,9 +62,6 @@ void GPUProcessCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << dynamicIOKitExtensionHandles;
 #endif
     encoder << mobileGestaltExtensionHandle;
-#if PLATFORM(COCOA) && ENABLE(REMOTE_INSPECTOR)
-    encoder << gpuToolsExtensionHandles;
-#endif
 
     encoder << applicationVisibleName;
 #if PLATFORM(COCOA)
@@ -130,14 +127,6 @@ bool GPUProcessCreationParameters::decode(IPC::Decoder& decoder, GPUProcessCreat
     if (!mobileGestaltExtensionHandle)
         return false;
     result.mobileGestaltExtensionHandle = WTFMove(*mobileGestaltExtensionHandle);
-
-#if PLATFORM(COCOA) && ENABLE(REMOTE_INSPECTOR)
-    std::optional<Vector<SandboxExtension::Handle>> gpuToolsExtensionHandles;
-    decoder >> gpuToolsExtensionHandles;
-    if (!gpuToolsExtensionHandles)
-        return false;
-    result.gpuToolsExtensionHandles = WTFMove(*gpuToolsExtensionHandles);
-#endif
 
     if (!decoder.decode(result.applicationVisibleName))
         return false;

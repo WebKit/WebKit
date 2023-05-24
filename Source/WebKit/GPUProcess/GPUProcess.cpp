@@ -262,10 +262,6 @@ void GPUProcess::initializeGPUProcess(GPUProcessCreationParameters&& parameters)
 
     populateMobileGestaltCache(WTFMove(parameters.mobileGestaltExtensionHandle));
 
-#if PLATFORM(COCOA) && ENABLE(REMOTE_INSPECTOR)
-    SandboxExtension::consumePermanently(parameters.gpuToolsExtensionHandles);
-#endif
-
 #if HAVE(CGIMAGESOURCE_WITH_SET_ALLOWABLE_TYPES)
     auto emptyArray = adoptCF(CFArrayCreate(kCFAllocatorDefault, nullptr, 0, &kCFTypeArrayCallBacks));
     CGImageSourceSetAllowableTypes(emptyArray.get());
@@ -379,12 +375,6 @@ GPUConnectionToWebProcess* GPUProcess::webProcessConnection(WebCore::ProcessIden
     return m_webProcessConnections.get(identifier);
 }
 
-void GPUProcess::updateSandboxAccess(const Vector<SandboxExtension::Handle>& extensions)
-{
-    for (auto& extension : extensions)
-        SandboxExtension::consumePermanently(extension);
-}
-
 #if ENABLE(MEDIA_STREAM)
 void GPUProcess::setMockCaptureDevicesEnabled(bool isEnabled)
 {
@@ -430,6 +420,12 @@ void GPUProcess::updateCaptureOrigin(const WebCore::SecurityOriginData& originDa
 {
     if (auto* connection = webProcessConnection(processID))
         connection->updateCaptureOrigin(originData);
+}
+
+void GPUProcess::updateSandboxAccess(const Vector<SandboxExtension::Handle>& extensions)
+{
+    for (auto& extension : extensions)
+        SandboxExtension::consumePermanently(extension);
 }
 
 void GPUProcess::addMockMediaDevice(const WebCore::MockMediaDevice& device)
