@@ -50,6 +50,7 @@
 
 - (instancetype)initWithService:(WeakPtr<WebKit::CcidService>&&)service slot:(RetainPtr<TKSmartCardSlot>&&)slot;
 - (void)observeValueForKeyPath:(id)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context;
+- (void)removeObserver;
 @end
 
 namespace WebKit {
@@ -62,6 +63,7 @@ CcidService::CcidService(Observer& observer)
 
 CcidService::~CcidService()
 {
+    removeObservers();
 }
 
 void CcidService::didConnectTag()
@@ -80,9 +82,22 @@ void CcidService::restartDiscoveryInternal()
     m_restartTimer.startOneShot(1_s); // Magic number to give users enough time for reactions.
 }
 
+void CcidService::removeObservers()
+{
+    if (m_slotsObserver) {
+        [[TKSmartCardSlotManager defaultManager] removeObserver:m_slotsObserver.get() forKeyPath:@"slotNames"];
+        m_slotsObserver.clear();
+    }
+    for (auto observer : m_slotObservers.values())
+        [observer removeObserver];
+    m_slotObservers.clear();
+}
+
 void CcidService::platformStartDiscovery()
 {
-    [[TKSmartCardSlotManager defaultManager] addObserver:adoptNS([[_WKSmartCardSlotObserver alloc] initWithService:this]).get() forKeyPath:@"slotNames" options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial context:nil];
+    removeObservers();
+    m_slotsObserver = adoptNS([[_WKSmartCardSlotObserver alloc] initWithService:this]);
+    [[TKSmartCardSlotManager defaultManager] addObserver:m_slotsObserver.get() forKeyPath:@"slotNames" options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial context:nil];
 }
 
 void CcidService::onValidCard(RetainPtr<TKSmartCard>&& smartCard)
@@ -96,21 +111,24 @@ void CcidService::updateSlots(NSArray *slots)
     for (NSString *nsName : slots) {
         auto name = String(nsName);
         slotsSet.add(name);
-        auto it = m_slotNames.find(name);
-        if (it == m_slotNames.end()) {
-            m_slotNames.add(name);
-            [[TKSmartCardSlotManager defaultManager] getSlotWithName:nsName reply:makeBlockPtr([this](TKSmartCardSlot * _Nullable slot) mutable {
-                [slot addObserver:adoptNS([[_WKSmartCardSlotStateObserver alloc] initWithService:this slot:WTFMove(slot)]).get() forKeyPath:@"state" options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial context:nil];
+        auto it = m_slotObservers.find(name);
+        if (it == m_slotObservers.end()) {
+            [[TKSmartCardSlotManager defaultManager] getSlotWithName:nsName reply:makeBlockPtr([this, name](TKSmartCardSlot * _Nullable slot) mutable {
+                auto slotObserver = adoptNS([[_WKSmartCardSlotStateObserver alloc] initWithService:this slot:WTFMove(slot)]);
+                m_slotObservers.add(name, slotObserver);
+                [slot addObserver:slotObserver.get() forKeyPath:@"state" options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial context:nil];
             }).get()];
         }
     }
     HashSet<String> staleSlots;
-    for (const String& slot : m_slotNames) {
-        if (!slotsSet.contains(slot))
-            staleSlots.add(slot);
+    for (auto& slotPair : m_slotObservers) {
+        if (!slotsSet.contains(slotPair.key)) {
+            staleSlots.add(slotPair.key);
+            [slotPair.value removeObserver];
+        }
     }
     for (const String& slot : staleSlots)
-        m_slotNames.remove(slot);
+        m_slotObservers.remove(slot);
 }
 
 } // namespace WebKit
@@ -162,7 +180,7 @@ void CcidService::updateSlots(NSArray *slots)
         return;
     switch ([change[NSKeyValueChangeNewKey] intValue]) {
     case TKSmartCardSlotStateMissing:
-        m_slot.clear();
+        [self removeObserver];
         return;
     case TKSmartCardSlotStateValidCard: {
         auto* smartCard = [object makeSmartCard];
@@ -175,6 +193,14 @@ void CcidService::updateSlots(NSArray *slots)
     }
     default:
         break;
+    }
+}
+
+- (void)removeObserver
+{
+    if (m_slot) {
+        [m_slot removeObserver:self forKeyPath:@"state"];
+        m_slot.clear();
     }
 }
 @end
