@@ -1978,6 +1978,42 @@ bool EventHandler::passMouseMovedEventToScrollbars(const PlatformMouseEvent& eve
     return handleMouseMoveEvent(event, &hitTestResult, true);
 }
 
+OptionSet<HitTestRequest::Type> EventHandler::getHitTypeForMouseMoveEvent(const PlatformMouseEvent& platformMouseEvent, bool onlyUpdateScrollbars)
+{
+    OptionSet hitType { HitTestRequest::Type::Move, HitTestRequest::Type::DisallowUserAgentShadowContent, HitTestRequest::Type::AllowFrameScrollbars };
+    if (m_mousePressed)
+        hitType.add(HitTestRequest::Type::Active);
+    else if (onlyUpdateScrollbars) {
+        // Mouse events should be treated as "read-only" if we're updating only scrollbars. This
+        // means that :hover and :active freeze in the state they were in, rather than updating
+        // for nodes the mouse moves while the window is not key (which will be the case if
+        // onlyUpdateScrollbars is true).
+        hitType.add(HitTestRequest::Type::ReadOnly);
+    }
+
+#if ENABLE(TOUCH_EVENTS) && !ENABLE(IOS_TOUCH_EVENTS)
+    // Treat any mouse move events as readonly if the user is currently touching the screen.
+    if (m_touchPressed) {
+        hitType.add(HitTestRequest::Type::Active);
+        hitType.add(HitTestRequest::Type::ReadOnly);
+    }
+#endif
+
+#if ENABLE(PENCIL_HOVER)
+    if (platformMouseEvent.pointerType() == WebCore::penPointerEventType())
+        hitType.add(WebCore::HitTestRequest::Type::PenEvent);
+#else
+    UNUSED_PARAM(platformMouseEvent);
+#endif
+    return hitType;
+}
+
+HitTestResult EventHandler::getHitTestResultForMouseEvent(const PlatformMouseEvent& platformMouseEvent)
+{
+    HitTestRequest request(getHitTypeForMouseMoveEvent(platformMouseEvent));
+    return prepareMouseEvent(request, platformMouseEvent).hitTestResult();
+}
+
 bool EventHandler::handleMouseMoveEvent(const PlatformMouseEvent& platformMouseEvent, HitTestResult* hitTestResult, bool onlyUpdateScrollbars)
 {
 #if ENABLE(TOUCH_EVENTS)
@@ -2022,31 +2058,7 @@ bool EventHandler::handleMouseMoveEvent(const PlatformMouseEvent& platformMouseE
         return m_lastScrollbarUnderMouse->mouseMoved(platformMouseEvent);
 #endif
 
-    OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::Move, HitTestRequest::Type::DisallowUserAgentShadowContent, HitTestRequest::Type::AllowFrameScrollbars };
-    if (m_mousePressed)
-        hitType.add(HitTestRequest::Type::Active);
-    else if (onlyUpdateScrollbars) {
-        // Mouse events should be treated as "read-only" if we're updating only scrollbars. This  
-        // means that :hover and :active freeze in the state they were in, rather than updating  
-        // for nodes the mouse moves while the window is not key (which will be the case if 
-        // onlyUpdateScrollbars is true). 
-        hitType.add(HitTestRequest::Type::ReadOnly);
-    }
-
-#if ENABLE(TOUCH_EVENTS) && !ENABLE(IOS_TOUCH_EVENTS)
-    // Treat any mouse move events as readonly if the user is currently touching the screen.
-    if (m_touchPressed) {
-        hitType.add(HitTestRequest::Type::Active);
-        hitType.add(HitTestRequest::Type::ReadOnly);
-    }
-#endif
-    
-#if ENABLE(PENCIL_HOVER)
-    if (platformMouseEvent.pointerType() == WebCore::penPointerEventType())
-        hitType.add(WebCore::HitTestRequest::Type::PenEvent);
-#endif
-    
-    HitTestRequest request(hitType);
+    HitTestRequest request(getHitTypeForMouseMoveEvent(platformMouseEvent, onlyUpdateScrollbars));
     MouseEventWithHitTestResults mouseEvent = prepareMouseEvent(request, platformMouseEvent);
     if (hitTestResult)
         *hitTestResult = mouseEvent.hitTestResult();

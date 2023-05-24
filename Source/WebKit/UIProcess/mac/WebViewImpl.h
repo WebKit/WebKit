@@ -735,8 +735,6 @@ private:
     void scheduleSetTopContentInsetDispatch();
     void dispatchSetTopContentInset();
 
-    void postFakeMouseMovedEventForFlagsChangedEvent(NSEvent *);
-
     void sendToolTipMouseExited();
     void sendToolTipMouseEntered();
 
@@ -751,6 +749,8 @@ private:
     void nativeMouseEventHandler(NSEvent *);
     void nativeMouseEventHandlerInternal(NSEvent *);
     
+    void scheduleMouseDidMoveOverElement(NSEvent *);
+
     void mouseMovedInternal(NSEvent *);
     void mouseDownInternal(NSEvent *);
     void mouseUpInternal(NSEvent *);

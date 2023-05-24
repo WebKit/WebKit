@@ -2181,7 +2181,7 @@ void WebViewImpl::viewDidMoveToWindow()
             WeakPtr weakThis { *this };
             m_flagsChangedEventMonitor = [NSEvent addLocalMonitorForEventsMatchingMask:NSEventMaskFlagsChanged handler:[weakThis] (NSEvent *flagsChangedEvent) {
                 if (weakThis)
-                    weakThis->postFakeMouseMovedEventForFlagsChangedEvent(flagsChangedEvent);
+                    weakThis->scheduleMouseDidMoveOverElement(flagsChangedEvent);
                 return flagsChangedEvent;
             }];
         }
@@ -2306,13 +2306,13 @@ NSView *WebViewImpl::hitTest(CGPoint point)
     return hitView;
 }
 
-void WebViewImpl::postFakeMouseMovedEventForFlagsChangedEvent(NSEvent *flagsChangedEvent)
+void WebViewImpl::scheduleMouseDidMoveOverElement(NSEvent *flagsChangedEvent)
 {
     NSEvent *fakeEvent = [NSEvent mouseEventWithType:NSEventTypeMouseMoved location:flagsChangedEvent.window.mouseLocationOutsideOfEventStream
         modifierFlags:flagsChangedEvent.modifierFlags timestamp:flagsChangedEvent.timestamp windowNumber:flagsChangedEvent.windowNumber
         context:nullptr eventNumber:0 clickCount:0 pressure:0];
     NativeWebMouseEvent webEvent(fakeEvent, m_lastPressureEvent.get(), m_view.getAutoreleased());
-    m_page->handleMouseEvent(webEvent);
+    m_page->dispatchMouseDidMoveOverElementAsynchronously(webEvent);
 }
 
 WebCore::DestinationColorSpace WebViewImpl::colorSpace()

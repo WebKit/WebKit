@@ -340,6 +340,7 @@ void Chrome::setStatusbarText(LocalFrame& frame, const String& status)
     m_client->setStatusbarText(frame.displayStringModifiedByEncoding(status));
 }
 
+// FIXME: Adopt `OptionSet<PlatformEventModifier>` instead of raw integral modifierFlags. https://bugs.webkit.org/show_bug.cgi?id=257175
 void Chrome::mouseDidMoveOverElement(const HitTestResult& result, unsigned modifierFlags)
 {
     auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page.mainFrame());

@@ -230,10 +230,10 @@ public:
     void registerPopupOpeningObserver(PopupOpeningObserver&);
     void unregisterPopupOpeningObserver(PopupOpeningObserver&);
 
+    WEBCORE_EXPORT void getToolTip(const HitTestResult&, String&, TextDirection&);
+
 private:
     void notifyPopupOpeningObservers() const;
-
-    void getToolTip(const HitTestResult&, String&, TextDirection&);
 
     Page& m_page;
     UniqueRef<ChromeClient> m_client;

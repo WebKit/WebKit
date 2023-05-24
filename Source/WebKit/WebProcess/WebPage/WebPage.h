@@ -2038,6 +2038,8 @@ private:
     void handleAcceptedCandidate(WebCore::TextCheckingResult);
 #endif
 
+    void performHitTestForMouseEvent(const WebMouseEvent&, CompletionHandler<void(WebHitTestResultData&&, OptionSet<WebEventModifier>, UserData&&)>&&);
+
 #if PLATFORM(COCOA)
     void requestActiveNowPlayingSessionInfo(CompletionHandler<void(bool, bool, const String&, double, double, uint64_t)>&&);
     RetainPtr<NSData> accessibilityRemoteTokenData() const;
