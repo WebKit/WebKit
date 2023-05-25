@@ -222,9 +222,11 @@
 
   <meson id="glib"
          mesonargs="-Dlibmount=disabled -Dselinux=disabled">
-    <branch module="/sources/glib/2.70/glib-${version}.tar.xz" version="2.70.0"
+    <pkg-config>glib-2.0.pc</pkg-config>
+    <branch module="/sources/glib/2.72/glib-${version}.tar.xz"
+            version="2.72.4"
             repo="download.gnome.org"
-            hash="sha256:200d7df811c5ba634afbf109f14bb40ba7fde670e89389885da14e27c0840742">
+            hash="sha256:8848aba518ba2f4217d144307a1d6cb9afcc92b54e5c13ac1f8c4d4608e96f0e">
     </branch>
   </meson>
 
