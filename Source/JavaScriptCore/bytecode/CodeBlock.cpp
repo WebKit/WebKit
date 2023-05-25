@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Cameron Zwarich <cwzwarich@uwaterloo.ca>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -1007,6 +1007,7 @@ void CodeBlock::setAlternative(VM& vm, CodeBlock* alternative)
 {
     RELEASE_ASSERT(alternative);
     RELEASE_ASSERT(alternative->jitCode());
+    ASSERT(JITCode::isBaselineCode(alternative->jitType()) || alternative->jitType() == JITType::None);
     m_alternative.set(vm, this, alternative);
 }
 
@@ -1908,7 +1909,7 @@ CodeBlock* CodeBlock::baselineAlternative()
 {
 #if ENABLE(JIT)
     CodeBlock* result = this;
-    while (result->alternative())
+    if (result->alternative())
         result = result->alternative();
     RELEASE_ASSERT(result);
     RELEASE_ASSERT(JITCode::isBaselineCode(result->jitType()) || result->jitType() == JITType::None);
