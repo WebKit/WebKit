@@ -135,9 +135,11 @@ Status Callback::OnSegmentEnd(const ElementMetadata& /* metadata */) {
   return Status(Status::kOkCompleted);
 }
 
+#if defined(WEBRTC_WEBKIT_BUILD)
 Status Callback::OnElementEnd(const ElementMetadata& /* metadata */) {
   return Status(Status::kOkCompleted);
 }
+#endif
 
 Status Callback::Skip(Reader* reader, std::uint64_t* bytes_remaining) {
   assert(reader != nullptr);

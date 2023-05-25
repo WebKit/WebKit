@@ -606,8 +606,8 @@ uint64 WriteVoidElement(IMkvWriter* writer, uint64 size) {
 
 void GetVersion(int32* major, int32* minor, int32* build, int32* revision) {
   *major = 0;
-  *minor = 2;
-  *build = 1;
+  *minor = 3;
+  *build = 0;
   *revision = 0;
 }
 

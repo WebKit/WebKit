@@ -40,6 +40,10 @@ enum Vp9Level {
 };
 
 struct Vp9LevelRow {
+  Vp9LevelRow() = default;
+  ~Vp9LevelRow() = default;
+  Vp9LevelRow(Vp9LevelRow&& other) = default;
+  Vp9LevelRow(const Vp9LevelRow& other) = default;
   Vp9LevelRow& operator=(Vp9LevelRow&& other) = delete;
   Vp9LevelRow& operator=(const Vp9LevelRow& other) = delete;
 

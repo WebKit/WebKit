@@ -176,7 +176,9 @@ class WebmParser::DocumentParser {
           PrepareForNextChild();
           callback = original_callback;
           child_metadata_.position = reader->Position();
+#if defined(WEBRTC_WEBKIT_BUILD)
           callback->OnElementEnd(child_metadata_);
+#endif
           continue;
         }
 
