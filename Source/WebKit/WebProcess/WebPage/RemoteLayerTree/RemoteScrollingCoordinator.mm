@@ -66,7 +66,7 @@ RemoteScrollingCoordinator::~RemoteScrollingCoordinator()
 
 void RemoteScrollingCoordinator::scheduleTreeStateCommit()
 {
-    m_webPage->drawingArea()->triggerRenderingUpdate();
+    scheduleRenderingUpdate();
 }
 
 bool RemoteScrollingCoordinator::coordinatesScrollingForFrameView(const LocalFrameView& frameView) const
