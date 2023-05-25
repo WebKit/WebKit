@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -447,6 +447,8 @@ bool RenderTreeUpdater::textRendererIsNeeded(const Text& textNode)
         return true;
     // This text node has nothing but white space. We may still need a renderer in some cases.
     if (parentRenderer.isTable() || parentRenderer.isTableRow() || parentRenderer.isTableSection() || parentRenderer.isRenderTableCol() || parentRenderer.isFrameSet() || parentRenderer.isRenderGrid() || (parentRenderer.isFlexibleBox() && !parentRenderer.isRenderButton()))
+        return false;
+    if (parentRenderer.style().whiteSpace() == WhiteSpace::PreWrap && parentRenderer.isSVGRoot())
         return false;
     if (parentRenderer.style().preserveNewline()) // pre/pre-wrap/pre-line always make renderers.
         return true;
