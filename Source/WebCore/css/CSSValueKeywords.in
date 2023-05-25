@@ -865,6 +865,16 @@ break-word
 break-spaces
 
 //
+// CSS_PROP_WHITE_SPACE_COLLAPSE
+//
+// collapse
+// discard
+preserve
+preserve-breaks
+preserve-spaces
+// break-spaces
+
+//
 // CSS_PROP__KHTML_NBSP_MODE
 //
 space

@@ -1407,6 +1407,20 @@ CSSTypedOMEnabled:
     WebCore:
       default: true
 
+CSSWhiteSpaceCollapseEnabled:
+  type: bool
+  status: testable
+  category: css
+  humanReadableName: "CSS white-space-collapse property"
+  humanReadableDescription: "Enable white-space-collapse CSS property"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 # FIXME: This is not relevent for WebKitLegacy, so should be excluded from WebKitLegacy entirely (though we should still set the default value to false when initializing settings).
 CacheAPIEnabled:
   type: bool

@@ -368,6 +368,10 @@ PASS white-space (type: discrete) has testInterpolation function
 PASS white-space uses discrete animation when animating between "pre" and "nowrap" with linear easing
 PASS white-space uses discrete animation when animating between "pre" and "nowrap" with effect easing
 PASS white-space uses discrete animation when animating between "pre" and "nowrap" with keyframe easing
+PASS white-space-collapse (type: discrete) has testInterpolation function
+PASS white-space-collapse uses discrete animation when animating between "collapse" and "preserve" with linear easing
+PASS white-space-collapse uses discrete animation when animating between "collapse" and "preserve" with effect easing
+PASS white-space-collapse uses discrete animation when animating between "collapse" and "preserve" with keyframe easing
 PASS word-break (type: discrete) has testInterpolation function
 PASS word-break uses discrete animation when animating between "keep-all" and "break-all" with linear easing
 PASS word-break uses discrete animation when animating between "keep-all" and "break-all" with effect easing

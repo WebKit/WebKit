@@ -6300,6 +6300,25 @@
                 "url": "https://www.w3.org/TR/CSS22/text.html#propdef-white-space"
             }
         },
+        "white-space-collapse": {
+            "inherited": true,
+            "values": [
+                "collapse",
+                "discard",
+                "preserve",
+                "preserve-breaks",
+                "preserve-spaces",
+                "break-spaces"
+            ],
+            "codegen-properties": {
+                "settings-flag": "cssWhiteSpaceCollapseEnabled",
+                "parser-grammar": "<<values>>"
+            },
+            "specification": {
+                "category": "css-text",
+                "url": "https://www.w3.org/TR/css-text-4/#white-space-collapsing"
+            }
+        },
         "widows": {
             "inherited": true,
             "codegen-properties": {

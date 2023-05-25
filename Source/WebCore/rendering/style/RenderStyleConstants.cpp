@@ -1318,6 +1318,18 @@ TextStream& operator<<(TextStream& ts, WhiteSpace whiteSpace)
     }
     return ts;
 }
+TextStream& operator<<(TextStream& ts, WhiteSpaceCollapse whiteSpaceCollapse)
+{
+    switch (whiteSpaceCollapse) {
+    case WhiteSpaceCollapse::Collapse: ts << "collapse"; break;
+    case WhiteSpaceCollapse::Discard: ts << "discard"; break;
+    case WhiteSpaceCollapse::Preserve: ts << "preserve"; break;
+    case WhiteSpaceCollapse::PreserveBreaks: ts << "preserve-breaks"; break;
+    case WhiteSpaceCollapse::PreserveSpaces: ts << "preserve-spaces"; break;
+    case WhiteSpaceCollapse::BreakSpaces: ts << "break-spaces"; break;
+    }
+    return ts;
+}
 
 TextStream& operator<<(TextStream& ts, WordBreak wordBreak)
 {

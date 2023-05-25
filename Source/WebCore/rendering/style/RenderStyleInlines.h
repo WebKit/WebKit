@@ -488,6 +488,7 @@ constexpr UserSelect RenderStyle::initialUserSelect() { return UserSelect::Text;
 constexpr VerticalAlign RenderStyle::initialVerticalAlign() { return VerticalAlign::Baseline; }
 constexpr Visibility RenderStyle::initialVisibility() { return Visibility::Visible; }
 constexpr WhiteSpace RenderStyle::initialWhiteSpace() { return WhiteSpace::Normal; }
+constexpr WhiteSpaceCollapse RenderStyle::initialWhiteSpaceCollapse() { return WhiteSpaceCollapse::Collapse; }
 constexpr WordBreak RenderStyle::initialWordBreak() { return WordBreak::Normal; }
 inline Length RenderStyle::initialWordSpacing() { return zeroLength(); }
 constexpr WritingMode RenderStyle::initialWritingMode() { return WritingMode::TopToBottom; }
@@ -790,6 +791,7 @@ inline bool RenderStyle::InheritedFlags::operator==(const InheritedFlags& other)
 #endif
         && direction == other.direction
         && whiteSpace == other.whiteSpace
+        && whiteSpaceCollapse == other.whiteSpaceCollapse
         && borderCollapse == other.borderCollapse
         && boxDirection == other.boxDirection
         && rtlOrdering == other.rtlOrdering
