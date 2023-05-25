@@ -590,7 +590,9 @@ LayoutUnit RenderFlexibleBox::cachedChildIntrinsicContentLogicalHeight(const Ren
 {
     if (child.isRenderReplaced())
         return downcast<RenderReplaced>(child).intrinsicLogicalHeight();
-    
+    if (child.isAttachment())
+        return child.intrinsicLogicalHeight();
+
     if (m_intrinsicContentLogicalHeights.contains(&child))
         return m_intrinsicContentLogicalHeights.get(&child);
     
@@ -599,14 +601,14 @@ LayoutUnit RenderFlexibleBox::cachedChildIntrinsicContentLogicalHeight(const Ren
 
 void RenderFlexibleBox::setCachedChildIntrinsicContentLogicalHeight(const RenderBox& child, LayoutUnit height)
 {
-    if (child.isRenderReplaced())
+    if (child.isRenderReplacedOrAttachment())
         return; // Replaced elements know their intrinsic height already, so save space by not caching.
     m_intrinsicContentLogicalHeights.set(&child, height);
 }
 
 void RenderFlexibleBox::clearCachedChildIntrinsicContentLogicalHeight(const RenderBox& child)
 {
-    if (child.isRenderReplaced())
+    if (child.isRenderReplacedOrAttachment())
         return; // Replaced elements know their intrinsic height already, so nothing to do.
     m_intrinsicContentLogicalHeights.remove(&child);
 }
@@ -1565,7 +1567,7 @@ std::pair<LayoutUnit, LayoutUnit> RenderFlexibleBox::computeFlexItemMinMaxSizes(
         LayoutUnit contentSize;
         Length childCrossSizeLength = crossSizeLengthForChild(MainOrPreferredSize, child);
 
-        bool canComputeSizeThroughAspectRatio = child.isRenderReplaced() && childHasComputableAspectRatio(child) && childCrossSizeIsDefinite(child, childCrossSizeLength);
+        bool canComputeSizeThroughAspectRatio = child.isRenderReplacedOrAttachment() && childHasComputableAspectRatio(child) && childCrossSizeIsDefinite(child, childCrossSizeLength);
 
         if (canComputeSizeThroughAspectRatio)
             contentSize = computeMainSizeFromAspectRatioUsing(child, childCrossSizeLength);
@@ -1585,7 +1587,7 @@ std::pair<LayoutUnit, LayoutUnit> RenderFlexibleBox::computeFlexItemMinMaxSizes(
             return { std::min(specifiedSize, contentSize), maxExtent.value_or(LayoutUnit::max()) };
         }
 
-        if (child.isRenderReplaced() && childHasComputableAspectRatioAndCrossSizeIsConsideredDefinite(child)) {
+        if (child.isRenderReplacedOrAttachment() && childHasComputableAspectRatioAndCrossSizeIsConsideredDefinite(child)) {
             LayoutUnit transferredSize = computeMainSizeFromAspectRatioUsing(child, childCrossSizeLength);
             transferredSize = adjustChildSizeForAspectRatioCrossAxisMinAndMax(child, transferredSize);
             return { std::min(transferredSize, contentSize), maxExtent.value_or(LayoutUnit::max()) };
@@ -2079,7 +2081,7 @@ bool RenderFlexibleBox::needToStretchChildLogicalHeight(const RenderBox& child) 
         return false;
 
     // Aspect ratio is properly handled by RenderReplaced during layout.
-    if (child.isRenderReplaced() && childHasAspectRatio(child))
+    if (child.isRenderReplacedOrAttachment() && childHasAspectRatio(child))
         return false;
 
     return child.style().logicalHeight().isAuto();

@@ -135,7 +135,7 @@ private:
     ItemPosition selfAlignmentNormalBehavior(const RenderBox* child = nullptr) const override
     {
         ASSERT(child);
-        return child->isRenderReplaced() ? ItemPosition::Start : ItemPosition::Stretch;
+        return child->isRenderReplacedOrAttachment() ? ItemPosition::Start : ItemPosition::Stretch;
     }
 
     ASCIILiteral renderName() const override;

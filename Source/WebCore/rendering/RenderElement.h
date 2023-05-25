@@ -122,6 +122,7 @@ public:
     bool isRenderBlock() const;
     bool isRenderBlockFlow() const;
     bool isRenderReplaced() const;
+    bool isRenderReplacedOrAttachment() const;
     bool isRenderInline() const;
 
     virtual bool isChildAllowed(const RenderObject&, const RenderStyle&) const { return true; }
@@ -457,6 +458,11 @@ inline bool RenderElement::isRenderReplaced() const
     return m_baseTypeFlags & RenderReplacedFlag;
 }
 
+inline bool RenderElement::isRenderReplacedOrAttachment() const
+{
+    return isRenderReplaced() || isAttachment();
+}
+
 inline bool RenderElement::isRenderInline() const
 {
     return m_baseTypeFlags & RenderInlineFlag;
@@ -495,6 +501,11 @@ inline bool RenderObject::isRenderBlockFlow() const
 inline bool RenderObject::isRenderReplaced() const
 {
     return is<RenderElement>(*this) && downcast<RenderElement>(*this).isRenderReplaced();
+}
+
+inline bool RenderObject::isRenderReplacedOrAttachment() const
+{
+    return is<RenderElement>(*this) && downcast<RenderElement>(*this).isRenderReplacedOrAttachment();
 }
 
 inline bool RenderObject::isRenderInline() const

@@ -358,8 +358,11 @@ DOMRectReadOnly* HTMLAttachmentElement::saveButtonClientRect() const
 
 RenderPtr<RenderElement> HTMLAttachmentElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition& position)
 {
-    if (m_implementation == Implementation::Modern)
-        return HTMLElement::createElementRenderer(WTFMove(style), position);
+    if (m_implementation == Implementation::Modern) {
+        auto renderer = HTMLElement::createElementRenderer(WTFMove(style), position);
+        renderer->setReplacedOrInlineBlock(true);
+        return renderer;
+    }
 
     return createRenderer<RenderAttachment>(*this, WTFMove(style));
 }
