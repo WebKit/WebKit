@@ -5,7 +5,7 @@
  *           (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  * Copyright (C) 2003-2023 Apple Inc. All rights reserved.
- * Copyright (C) 2015 Google Inc. All rights reserved.
+ * Copyright (C) 2015-2017 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -152,6 +152,9 @@ void RenderTableRow::layout()
             cell->setChildNeedsLayout(MarkOnlyThis);
 
         if (cell->needsLayout()) {
+            // If we are laying out the cell's children clear its intrinsic padding so it doesn't skew the position of the content.
+            if (cell->cellWidthChanged())
+                cell->clearIntrinsicPadding();
             cell->layout();
         }
     }
