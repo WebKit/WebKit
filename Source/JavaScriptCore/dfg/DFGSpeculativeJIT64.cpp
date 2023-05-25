@@ -2831,8 +2831,8 @@ void SpeculativeJIT::compileRegExpTestInline(Node* node)
         loadPtr(Address(argumentGPR, JSString::offsetOfFiberAndLengthAndFlag()), stringImplGPR);
         // If the string is a rope or 16 bit, we call the operation.
         slowCases.append(branchIfRopeStringImpl(stringImplGPR));
-        loadJSStringImpl(stringImplGPR, stringImplGPR);
         expandJSStringLength(stringImplGPR, strLengthGPR);
+        loadJSStringImpl(stringImplGPR, stringImplGPR);
         slowCases.append(branchTest32(
             Zero,
             Address(stringImplGPR, StringImpl::flagsOffset()),

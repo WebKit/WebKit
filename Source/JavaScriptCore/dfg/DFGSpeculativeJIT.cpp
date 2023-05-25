@@ -3193,17 +3193,23 @@ void SpeculativeJIT::compileGetByValOnString(Node* node, const ScopedLambda<std:
     DataFormat format;
     std::tie(resultRegs, format, std::ignore) = prefix(node->arrayMode().isOutOfBounds() ? DataFormatJS : DataFormatCell);
     GPRReg scratchReg = resultRegs.payloadGPR();
-    GPRTemporary scratch(this);
-    GPRReg scratch2Reg = scratch.gpr();
 
     // unsigned comparison so we can filter out negative indices and indices that are too large
-    loadPtr(Address(baseReg, JSString::offsetOfFiberAndLengthAndFlag()), scratchReg);
-    expandJSStringLength(scratchReg, scratch2Reg);
-
     // This must be a 32-bit branch, otherwise the fiber stored in the top 32 bits will make the result invalid.
+    // isRopeString should not be set, so we should be able to treat the lower 32 bits directly as the length.
+    static_assert(StringImpl::MaxLength <= std::numeric_limits<int32_t>::max());
+    loadPtr(Address(baseReg, JSString::offsetOfFiberAndLengthAndFlag()), scratchReg);
+#if ASSERT_ENABLED
+    probeDebug([=](Probe::Context& ctx) {
+        uint64_t fiber = ctx.gpr(scratchReg);
+        // We already know this must not be a rope string, but let's just be sure, otherwise this comparison will fail.
+        ASSERT((fiber & JSString::fiberAndLengthAndFlagLengthMask) == (uint32_t) fiber);
+    });
+#endif
+
     Jump outOfBounds = branch32(
         AboveOrEqual, propertyReg,
-        scratch2Reg);
+        scratchReg);
     if (node->arrayMode().isInBounds())
         speculationCheck(OutOfBounds, JSValueRegs(), nullptr, outOfBounds);
 
