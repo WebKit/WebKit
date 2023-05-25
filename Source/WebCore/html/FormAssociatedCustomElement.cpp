@@ -136,13 +136,6 @@ bool FormAssociatedCustomElement::appendFormData(DOMFormData& formData)
     return true;
 }
 
-void FormAssociatedCustomElement::formWillBeDestroyed()
-{
-    m_formWillBeDestroyed = true;
-    ValidatedFormListedElement::formWillBeDestroyed();
-    m_formWillBeDestroyed = false;
-}
-
 bool FormAssociatedCustomElement::isEnumeratable() const
 {
     ASSERT(m_element->isDefinedCustomElement());
@@ -166,7 +159,7 @@ void FormAssociatedCustomElement::didChangeForm()
 {
     ASSERT(m_element->isDefinedCustomElement());
     ValidatedFormListedElement::didChangeForm();
-    if (!m_formWillBeDestroyed)
+    if (!belongsToFormThatIsBeingDestroyed())
         CustomElementReactionQueue::enqueueFormAssociatedCallbackIfNeeded(*m_element, form());
 }
 
