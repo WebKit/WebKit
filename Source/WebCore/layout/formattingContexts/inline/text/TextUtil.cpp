@@ -136,9 +136,15 @@ static void fallbackFontsForRunWithIterator(HashSet<const Font*>& fallbackFonts,
             auto glyphData = fontCascade.glyphDataForCharacter(character, isRTL);
             if (glyphData.glyph && glyphData.font && glyphData.font != &primaryFont) {
                 auto isNonSpacingMark = U_MASK(u_charType(character)) & U_GC_MN_MASK;
+
+                // https://drafts.csswg.org/css-text-3/#white-space-processing
+                // "Unsupported Default_ignorable characters must be ignored for text rendering."
+                auto isIgnored = isDefaultIgnorableCodePoint(character);
+
                 // If we include the synthetic bold expansion, then even zero-width glyphs will have their fonts added.
                 if (isNonSpacingMark || glyphData.font->widthForGlyph(glyphData.glyph, Font::SyntheticBoldInclusion::Exclude))
-                    fallbackFonts.add(glyphData.font);
+                    if (!isIgnored)
+                        fallbackFonts.add(glyphData.font);
             }
         };
         addFallbackFontForCharacterIfApplicable(currentCharacter);
