@@ -59,16 +59,16 @@ bool shouldAllowMiniMode()
 {
     // Mini mode is mainly meant for constraining memory usage in bursty daemons that use JavaScriptCore.
     // It's also contributed to power regressions when enabled for large application processes and in the
-    // WebKit GPU process. So we disable mini mode for those processes.
+    // WebKit XPC services. So we disable mini mode for those processes.
     bool isApplication = false;
-    bool isGPUProcess = false;
+    bool isWebKitProcess = false;
     if (const char* serviceName = getenv("XPC_SERVICE_NAME")) {
         static constexpr char appPrefix[] = "application.";
-        static constexpr char gpuProcessPrefix[] = "com.apple.WebKit.GPU";
+        static constexpr char webKitPrefix[] = "com.apple.WebKit.";
         isApplication = !strncmp(serviceName, appPrefix, sizeof(appPrefix) - 1);
-        isGPUProcess = !strncmp(serviceName, gpuProcessPrefix, sizeof(gpuProcessPrefix) - 1);
+        isWebKitProcess = !strncmp(serviceName, webKitPrefix, sizeof(webKitPrefix) - 1);
     }
-    return !isApplication && !isGPUProcess;
+    return !isApplication && !isWebKitProcess;
 }
 
 #if BPLATFORM(IOS_FAMILY)
