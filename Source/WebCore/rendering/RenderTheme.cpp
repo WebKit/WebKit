@@ -1490,7 +1490,7 @@ bool RenderTheme::paintCapsLockIndicator(const RenderObject&, const PaintInfo&, 
 String RenderTheme::attachmentStyleSheet() const
 {
     ASSERT(DeprecatedGlobalSettings::attachmentElementEnabled());
-    return "attachment { appearance: auto; }"_s;
+    return "attachment { appearance: auto; -webkit-user-select: all; user-select: all; display: inline-block; }"_s;
 }
 
 bool RenderTheme::paintAttachment(const RenderObject&, const PaintInfo&, const IntRect&)

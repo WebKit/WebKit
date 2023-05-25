@@ -42,6 +42,7 @@
 #include "HTMLElementTypeHelpers.h"
 #include "HTMLImageElement.h"
 #include "HTMLNames.h"
+#include "HTMLSpanElement.h"
 #include "HTMLStyleElement.h"
 #include "LocalFrame.h"
 #include "MIMETypeRegistry.h"
@@ -215,9 +216,17 @@ void HTMLAttachmentElement::ensureModernShadowTree(ShadowRoot& root)
     style->setTextContent(String { shadowStyle });
     root.appendChild(WTFMove(style));
 
-    m_containerElement = HTMLDivElement::create(document());
+    auto spanBefore = HTMLSpanElement::create(document());
+    spanBefore->setInnerText("-"_s);
+    root.appendChild(spanBefore);
+
+    m_containerElement = HTMLSpanElement::create(document());
     m_containerElement->setIdAttribute(attachmentContainerIdentifier());
     root.appendChild(*m_containerElement);
+
+    auto spanAfter = HTMLSpanElement::create(document());
+    spanAfter->setInnerText("_"_s);
+    root.appendChild(spanAfter);
 
     auto previewArea = createContainedElement<HTMLDivElement>(*m_containerElement, attachmentPreviewAreaIdentifier());
 
