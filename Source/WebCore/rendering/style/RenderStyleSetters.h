@@ -309,7 +309,6 @@ inline void RenderStyle::setTextStrokeWidth(float value) { SET(m_rareInheritedDa
 inline void RenderStyle::setTextTransform(OptionSet<TextTransform> value) { m_inheritedFlags.textTransform = value.toRaw(); }
 inline void RenderStyle::setTextUnderlineOffset(TextUnderlineOffset textUnderlineOffset) { SET(m_rareInheritedData, textUnderlineOffset, textUnderlineOffset); }
 inline void RenderStyle::setTextUnderlinePosition(TextUnderlinePosition position) { SET(m_rareInheritedData, textUnderlinePosition, static_cast<unsigned>(position)); }
-inline void RenderStyle::setTextWrap(TextWrap wrap) { SET(m_rareInheritedData, textWrap, static_cast<unsigned>(wrap)); }
 inline void RenderStyle::setTextZoom(TextZoom zoom) { SET(m_rareInheritedData, textZoom, static_cast<unsigned>(zoom)); }
 inline void RenderStyle::setTop(Length&& length) { SET_NESTED(m_nonInheritedData, surroundData, offset.top(), WTFMove(length)); }
 inline void RenderStyle::setTouchActions(OptionSet<TouchAction> actions) { SET_NESTED(m_nonInheritedData, rareData, touchActions, actions); }
