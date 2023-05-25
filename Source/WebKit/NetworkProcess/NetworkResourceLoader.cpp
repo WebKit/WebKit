@@ -63,6 +63,7 @@
 #include <WebCore/CrossOriginEmbedderPolicy.h>
 #include <WebCore/DiagnosticLoggingKeys.h>
 #include <WebCore/HTTPParsers.h>
+#include <WebCore/LegacySchemeRegistry.h>
 #include <WebCore/LinkHeader.h>
 #include <WebCore/NetworkLoadMetrics.h>
 #include <WebCore/NetworkStorageSession.h>
@@ -1513,7 +1514,8 @@ void NetworkResourceLoader::didReceiveMainResourceResponse(const WebCore::Resour
         speculativeLoadManager->registerMainResourceLoadResponse(globalFrameID(), originalRequest(), response);
 #endif
 #if ENABLE(WEB_ARCHIVE)
-    if (equalIgnoringASCIICase(response.mimeType(), "application/x-webarchive"_s)) {
+    if (equalIgnoringASCIICase(response.mimeType(), "application/x-webarchive"_s)
+        && LegacySchemeRegistry::shouldTreatURLSchemeAsLocal(response.url().protocol())) {
         auto& connection = connectionToWebProcess();
         connection.networkProcess().webProcessWillLoadWebArchive(connection.webProcessIdentifier());
     }
