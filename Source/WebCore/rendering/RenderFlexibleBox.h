@@ -89,7 +89,7 @@ public:
     // be laid out again.
     bool setStaticPositionForPositionedLayout(const RenderBox&);
 
-    enum class GapType { BetweenLines, BetweenItems };
+    enum class GapType : uint8_t { BetweenLines, BetweenItems };
     LayoutUnit computeGap(GapType) const;
 
     bool shouldApplyMinBlockSizeAutoForChild(const RenderBox&) const;
@@ -103,14 +103,14 @@ protected:
 
 private:
     friend class FlexLayoutAlgorithm;
-    enum FlexSign {
+    enum class FlexSign : uint8_t {
         PositiveFlexibility,
         NegativeFlexibility,
     };
     
-    enum ChildLayoutType { LayoutIfNeeded, ForceLayout, NeverLayout };
+    enum class ChildLayoutType : uint8_t { LayoutIfNeeded, ForceLayout, NeverLayout };
     
-    enum class SizeDefiniteness { Definite, Indefinite, Unknown };
+    enum class SizeDefiniteness : uint8_t { Definite, Indefinite, Unknown };
     
     // Use an inline capacity of 8, since flexbox containers usually have less than 8 children.
     typedef Vector<LayoutRect, 8> ChildFrameRects;
