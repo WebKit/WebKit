@@ -200,6 +200,7 @@ void NavigationState::setNavigationDelegate(id <WKNavigationDelegate> delegate)
     m_navigationDelegateMethods.webViewDidStartLoadForQuickLookDocumentInMainFrame = [delegate respondsToSelector:@selector(_webView:didStartLoadForQuickLookDocumentInMainFrameWithFileName:uti:)];
     m_navigationDelegateMethods.webViewDidFinishLoadForQuickLookDocumentInMainFrame = [delegate respondsToSelector:@selector(_webView:didFinishLoadForQuickLookDocumentInMainFrame:)];
     m_navigationDelegateMethods.webViewDidRequestPasswordForQuickLookDocument = [delegate respondsToSelector:@selector(_webViewDidRequestPasswordForQuickLookDocument:)];
+    m_navigationDelegateMethods.webViewDidStopRequestingPasswordForQuickLookDocument = [delegate respondsToSelector:@selector(_webViewDidStopRequestingPasswordForQuickLookDocument:)];
 #endif
 #if PLATFORM(MAC)
     m_navigationDelegateMethods.webViewBackForwardListItemAddedRemoved = [delegate respondsToSelector:@selector(_webView:backForwardListItemAdded:removed:)];
@@ -296,6 +297,18 @@ void NavigationState::didRequestPasswordForQuickLookDocument()
         return;
 
     [static_cast<id <WKNavigationDelegatePrivate>>(navigationDelegate) _webViewDidRequestPasswordForQuickLookDocument:m_webView];
+}
+
+void NavigationState::didStopRequestingPasswordForQuickLookDocument()
+{
+    if (!m_navigationDelegateMethods.webViewDidStopRequestingPasswordForQuickLookDocument)
+        return;
+
+    auto navigationDelegate = m_navigationDelegate.get();
+    if (!navigationDelegate)
+        return;
+
+    [static_cast<id <WKNavigationDelegatePrivate>>(navigationDelegate) _webViewDidStopRequestingPasswordForQuickLookDocument:m_webView];
 }
 #endif
 

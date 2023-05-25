@@ -2924,6 +2924,10 @@ static WebCore::IntDegrees activeOrientation(WKWebView *webView)
     self._currentContentView.hidden = NO;
     [_passwordView hide];
     _passwordView = nil;
+
+#if USE(QUICK_LOOK)
+    _navigationState->didStopRequestingPasswordForQuickLookDocument();
+#endif
 }
 
 - (WKPasswordView *)_passwordView

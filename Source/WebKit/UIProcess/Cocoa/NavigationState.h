@@ -79,6 +79,7 @@ public:
     void navigationGestureSnapshotWasRemoved();
 #if USE(QUICK_LOOK)
     void didRequestPasswordForQuickLookDocument();
+    void didStopRequestingPasswordForQuickLookDocument();
 #endif
 
     void didFirstPaint();
@@ -255,6 +256,7 @@ private:
         bool webViewDidStartLoadForQuickLookDocumentInMainFrame : 1;
         bool webViewDidFinishLoadForQuickLookDocumentInMainFrame : 1;
         bool webViewDidRequestPasswordForQuickLookDocument : 1;
+        bool webViewDidStopRequestingPasswordForQuickLookDocument : 1;
 #endif
 
 #if PLATFORM(MAC)
