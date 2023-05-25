@@ -83,7 +83,7 @@ class FileLock(object):
             try:
                 if self.USE_WINDOWS:
                     self._descriptor = os.open(self.path, os.O_TRUNC | os.O_CREAT)
-                    msvcrt.locking(descriptor, msvcrt.LK_NBLCK, 32)
+                    msvcrt.locking(self._descriptor, msvcrt.LK_NBLCK, 32)
                 elif self.USE_EXLOCK:
                     self._descriptor = os.open(self.path, os.O_CREAT | os.O_WRONLY | os.O_EXLOCK | os.O_NONBLOCK)
                 else:
