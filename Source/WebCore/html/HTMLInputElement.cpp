@@ -1104,6 +1104,9 @@ ExceptionOr<void> HTMLInputElement::setValue(const String& value, TextFieldEvent
     if (selfOrPrecedingNodesAffectDirAuto())
         updateEffectiveDirectionalityOfDirAuto();
 
+    if (valueChanged && eventBehavior == DispatchNoEvent)
+        setTextAsOfLastFormControlChangeEvent(sanitizedValue);
+
     bool wasModifiedProgrammatically = eventBehavior == DispatchNoEvent;
     if (wasModifiedProgrammatically) {
         resignStrongPasswordAppearance();
