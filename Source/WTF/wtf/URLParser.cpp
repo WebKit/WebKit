@@ -433,7 +433,7 @@ void URLParser::appendWindowsDriveLetter(CodePointIterator<CharacterType>& itera
 
 bool URLParser::copyBaseWindowsDriveLetter(const URL& base)
 {
-    if (base.protocolIs("file"_s)) {
+    if (base.protocolIsFile()) {
         RELEASE_ASSERT(base.m_hostEnd + base.m_portLength < base.m_string.length());
         if (base.m_string.is8Bit()) {
             const LChar* begin = base.m_string.characters8();
@@ -1100,7 +1100,7 @@ URLParser::URLParser(String&& input, const URL& base, const URLTextEncoding* non
     ASSERT(!m_url.m_isValid
         || m_didSeeSyntaxViolation == (m_url.string() != m_inputString)
         || (m_inputString.isAllSpecialCharacters<isC0ControlOrSpace>() && m_url.m_string == base.m_string.left(base.m_queryEnd))
-        || (base.isValid() && base.protocolIs("file"_s)));
+        || (base.isValid() && base.protocolIsFile()));
     ASSERT(internalValuesConsistent(m_url));
 #if ASSERT_ENABLED
     if (!m_didSeeSyntaxViolation) {
@@ -1290,7 +1290,7 @@ void URLParser::parse(const CharacterType* input, const unsigned length, const U
                 ++c;
                 break;
             }
-            if (!base.protocolIs("file"_s)) {
+            if (!base.protocolIsFile()) {
                 state = State::Relative;
                 break;
             }
@@ -1512,7 +1512,7 @@ void URLParser::parse(const CharacterType* input, const unsigned length, const U
                 break;
             case '?':
                 syntaxViolation(c);
-                if (base.isValid() && base.protocolIs("file"_s)) {
+                if (base.isValid() && base.protocolIsFile()) {
                     copyURLPartsUntil(base, URLPart::PathEnd, c, nonUTF8QueryEncoding);
                     appendToASCIIBuffer('?');
                     ++c;
@@ -1535,7 +1535,7 @@ void URLParser::parse(const CharacterType* input, const unsigned length, const U
                 break;
             case '#':
                 syntaxViolation(c);
-                if (base.isValid() && base.protocolIs("file"_s)) {
+                if (base.isValid() && base.protocolIsFile()) {
                     copyURLPartsUntil(base, URLPart::QueryEnd, c, nonUTF8QueryEncoding);
                     appendToASCIIBuffer('#');
                 } else {
@@ -1554,11 +1554,11 @@ void URLParser::parse(const CharacterType* input, const unsigned length, const U
                 break;
             default:
                 syntaxViolation(c);
-                if (base.isValid() && base.protocolIs("file"_s) && shouldCopyFileURL(c))
+                if (base.isValid() && base.protocolIsFile() && shouldCopyFileURL(c))
                     copyURLPartsUntil(base, URLPart::PathAfterLastSlash, c, nonUTF8QueryEncoding);
                 else {
                     bool copiedHost = false;
-                    if (base.isValid() && base.protocolIs("file"_s)) {
+                    if (base.isValid() && base.protocolIsFile()) {
                         if (base.host().isEmpty()) {
                             copyURLPartsUntil(base, URLPart::SchemeEnd, c, nonUTF8QueryEncoding);
                             appendToASCIIBuffer(":///", 4);
@@ -1589,7 +1589,7 @@ void URLParser::parse(const CharacterType* input, const unsigned length, const U
             if (LIKELY(*c == '/' || *c == '\\')) {
                 if (UNLIKELY(*c == '\\'))
                     syntaxViolation(c);
-                if (base.isValid() && base.protocolIs("file"_s)) {
+                if (base.isValid() && base.protocolIsFile()) {
                     copyURLPartsUntil(base, URLPart::SchemeEnd, c, nonUTF8QueryEncoding);
                     appendToASCIIBuffer(":/", 2);
                 }
@@ -1606,7 +1606,7 @@ void URLParser::parse(const CharacterType* input, const unsigned length, const U
             }
             {
                 bool copiedHost = false;
-                if (base.isValid() && base.protocolIs("file"_s)) {
+                if (base.isValid() && base.protocolIsFile()) {
                     if (base.host().isEmpty()) {
                         copyURLPartsUntil(base, URLPart::SchemeEnd, c, nonUTF8QueryEncoding);
                         appendToASCIIBuffer(":///", 4);
@@ -1900,7 +1900,7 @@ void URLParser::parse(const CharacterType* input, const unsigned length, const U
         break;
     case State::File:
         LOG_FINAL_STATE("File");
-        if (base.isValid() && base.protocolIs("file"_s)) {
+        if (base.isValid() && base.protocolIsFile()) {
             copyURLPartsUntil(base, URLPart::QueryEnd, c, nonUTF8QueryEncoding);
             break;
         }
@@ -1920,7 +1920,7 @@ void URLParser::parse(const CharacterType* input, const unsigned length, const U
         syntaxViolation(c);
         {
             bool copiedHost = false;
-            if (base.isValid() && base.protocolIs("file"_s)) {
+            if (base.isValid() && base.protocolIsFile()) {
                 if (base.host().isEmpty()) {
                     copyURLPartsUntil(base, URLPart::SchemeEnd, c, nonUTF8QueryEncoding);
                     appendToASCIIBuffer(":/", 2);

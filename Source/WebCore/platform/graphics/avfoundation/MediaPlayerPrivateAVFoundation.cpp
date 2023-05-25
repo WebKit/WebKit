@@ -1047,7 +1047,7 @@ bool MediaPlayerPrivateAVFoundation::canSaveMediaData() const
 {
     URL url = resolvedURL();
 
-    if (url.isLocalFile())
+    if (url.protocolIsFile())
         return true;
 
     if (!url.protocolIsInHTTPFamily())

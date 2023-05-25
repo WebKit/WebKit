@@ -321,7 +321,7 @@ void ResourceRequest::doUpdatePlatformRequest()
     }
 
 #if PLATFORM(MAC)
-    if (m_requestData.m_url.isLocalFile()) {
+    if (m_requestData.m_url.protocolIsFile()) {
         auto filePath = m_requestData.m_url.fileSystemPath();
         if (!filePath.isNull()) {
             auto fileDevice = FileSystem::getFileDeviceId(filePath);

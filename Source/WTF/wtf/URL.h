@@ -142,13 +142,13 @@ public:
     // Returns true if the current URL's protocol is the same as the null-
     // terminated ASCII argument. The argument must be lower-case.
     WTF_EXPORT_PRIVATE bool protocolIs(StringView) const;
+    bool protocolIsAbout() const { return protocolIs("about"_s); };
     bool protocolIsBlob() const { return protocolIs("blob"_s); }
     bool protocolIsData() const { return protocolIs("data"_s); }
-    WTF_EXPORT_PRIVATE bool protocolIsAbout() const;
+    bool protocolIsFile() const { return protocolIs("file"_s); }
     WTF_EXPORT_PRIVATE bool protocolIsJavaScript() const;
     WTF_EXPORT_PRIVATE bool protocolIsInFTPFamily() const;
     bool protocolIsInHTTPFamily() const;
-    WTF_EXPORT_PRIVATE bool isLocalFile() const;
     bool cannotBeABaseURL() const { return m_cannotBeABaseURL; }
 
     WTF_EXPORT_PRIVATE bool isAboutBlank() const;

@@ -1074,7 +1074,7 @@ void ContextMenuController::populate()
             appendItem(DownloadImageItem, m_contextMenu.get());
 
             auto image = m_context.hitTestResult().image();
-            if (imageURL.isLocalFile() || image) {
+            if (imageURL.protocolIsFile() || image) {
                 appendItem(CopyImageItem, m_contextMenu.get());
 
                 if (image && !image->isAnimated()) {
@@ -1628,7 +1628,7 @@ void ContextMenuController::checkOrEnableIfNeeded(ContextMenuItem& item) const
             break;
         case ContextMenuItemTagDownloadImageToDisk:
 #if PLATFORM(MAC)
-            if (m_context.hitTestResult().absoluteImageURL().protocolIs("file"_s))
+            if (m_context.hitTestResult().absoluteImageURL().protocolIsFile())
                 shouldEnable = false;
 #endif
             break;
@@ -1643,7 +1643,7 @@ void ContextMenuController::checkOrEnableIfNeeded(ContextMenuItem& item) const
                 item.setTitle(contextMenuItemTagDownloadVideoToDisk());
             else
                 item.setTitle(contextMenuItemTagDownloadAudioToDisk());
-            if (m_context.hitTestResult().absoluteImageURL().protocolIs("file"_s))
+            if (m_context.hitTestResult().absoluteImageURL().protocolIsFile())
                 shouldEnable = false;
             break;
         case ContextMenuItemTagCopyMediaLinkToClipboard:

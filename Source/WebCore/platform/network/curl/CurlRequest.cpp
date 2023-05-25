@@ -118,7 +118,7 @@ void CurlRequest::start()
         break;
     }
 
-    if (m_request.url().isLocalFile())
+    if (m_request.url().protocolIsFile())
         invokeDidReceiveResponseForFile(m_request.url());
     else
         startWithJobManager();
@@ -599,7 +599,7 @@ void CurlRequest::invokeDidReceiveResponseForFile(const URL& url)
     // Run the code here for local files to resolve the issue.
 
     ASSERT(isMainThread());
-    ASSERT(url.isLocalFile());
+    ASSERT(url.protocolIsFile());
 
     // Determine the MIME type based on the path.
     auto mimeType = MIMETypeRegistry::mimeTypeForPath(url.path().toString());

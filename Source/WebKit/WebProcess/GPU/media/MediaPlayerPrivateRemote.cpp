@@ -160,7 +160,7 @@ void MediaPlayerPrivateRemote::prepareForPlayback(bool privateMode, MediaPlayer:
 void MediaPlayerPrivateRemote::load(const URL& url, const ContentType& contentType, const String& keySystem)
 {
     std::optional<SandboxExtension::Handle> sandboxExtensionHandle;
-    if (url.isLocalFile()) {
+    if (url.protocolIsFile()) {
         SandboxExtension::Handle handle;
         auto fileSystemPath = url.fileSystemPath();
 

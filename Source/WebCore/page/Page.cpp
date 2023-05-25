@@ -3818,7 +3818,7 @@ bool Page::allowsLoadFromURL(const URL& url, MainFrameMainResource mainFrameMain
 
 bool Page::hasLocalDataForURL(const URL& url)
 {
-    if (url.isLocalFile())
+    if (url.protocolIsFile())
         return true;
 
     auto* localMainFrame = dynamicDowncast<LocalFrame>(mainFrame());

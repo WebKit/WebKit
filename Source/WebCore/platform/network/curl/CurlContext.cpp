@@ -404,7 +404,7 @@ void CurlHandle::setUrl(const URL& url)
     curlUrl.removeFragmentIdentifier();
 
     // Remove any query part sent to a local file.
-    if (curlUrl.isLocalFile()) {
+    if (curlUrl.protocolIsFile()) {
         // By setting the query to a null string it'll be removed.
         if (!curlUrl.query().isEmpty())
             curlUrl.setQuery(String());

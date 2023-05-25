@@ -5054,7 +5054,7 @@ String Element::resolveURLStringIfNeeded(const String& urlString, ResolveURLs re
     case ResolveURLs::YesExcludingURLsForPrivacy: {
         if (document().shouldMaskURLForBindings(completeURL))
             return maskedURLStringForBindings.get();
-        if (!document().url().isLocalFile())
+        if (!document().url().protocolIsFile())
             return completeURL.string();
         break;
     }

@@ -845,7 +845,7 @@ void WebProcessProxy::didDestroyWebUserContentControllerProxy(WebUserContentCont
 void WebProcessProxy::assumeReadAccessToBaseURL(WebPageProxy& page, const String& urlString)
 {
     URL url { urlString };
-    if (!url.isLocalFile())
+    if (!url.protocolIsFile())
         return;
 
     // There's a chance that urlString does not point to a directory.
@@ -862,7 +862,7 @@ void WebProcessProxy::assumeReadAccessToBaseURL(WebPageProxy& page, const String
 
 bool WebProcessProxy::hasAssumedReadAccessToURL(const URL& url) const
 {
-    if (!url.isLocalFile())
+    if (!url.protocolIsFile())
         return false;
 
     String path = url.fileSystemPath();
@@ -893,7 +893,7 @@ bool WebProcessProxy::checkURLReceivedFromWebProcess(const URL& url, CheckBackFo
     // FIXME: Consider checking that the URL is valid. Currently, WebProcess sends invalid URLs in many cases, but it probably doesn't have good reasons to do that.
 
     // Any other non-file URL is OK.
-    if (!url.isLocalFile())
+    if (!url.protocolIsFile())
         return true;
 
     // Any file URL is also OK if we've loaded a file URL through API before, granting universal read access.
@@ -910,10 +910,10 @@ bool WebProcessProxy::checkURLReceivedFromWebProcess(const URL& url, CheckBackFo
         String path = url.fileSystemPath();
         for (auto& item : WebBackForwardListItem::allItems().values()) {
             URL itemURL { item->url() };
-            if (itemURL.isLocalFile() && itemURL.fileSystemPath() == path)
+            if (itemURL.protocolIsFile() && itemURL.fileSystemPath() == path)
                 return true;
             URL itemOriginalURL { item->originalURL() };
-            if (itemOriginalURL.isLocalFile() && itemOriginalURL.fileSystemPath() == path)
+            if (itemOriginalURL.protocolIsFile() && itemOriginalURL.fileSystemPath() == path)
                 return true;
         }
     }
@@ -1282,7 +1282,7 @@ auto WebProcessProxy::visiblePageToken() const -> VisibleWebPageToken
 
 void WebProcessProxy::addPreviouslyApprovedFileURL(const URL& url)
 {
-    ASSERT(url.isLocalFile());
+    ASSERT(url.protocolIsFile());
     auto fileSystemPath = url.fileSystemPath();
     if (!fileSystemPath.isEmpty())
         m_previouslyApprovedFilePaths.add(fileSystemPath);
@@ -1290,7 +1290,7 @@ void WebProcessProxy::addPreviouslyApprovedFileURL(const URL& url)
 
 bool WebProcessProxy::wasPreviouslyApprovedFileURL(const URL& url) const
 {
-    ASSERT(url.isLocalFile());
+    ASSERT(url.protocolIsFile());
     auto fileSystemPath = url.fileSystemPath();
     if (fileSystemPath.isEmpty())
         return false;

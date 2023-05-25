@@ -186,7 +186,7 @@ void Editor::writeImageToPasteboard(Pasteboard& pasteboard, Element& imageElemen
     auto imageSourceURL = imageElement.document().completeURL(stripLeadingAndTrailingHTMLSpaces(imageElement.imageSourceURL()));
 
     auto pasteboardImageURL = url.isEmpty() ? imageSourceURL : url;
-    if (!pasteboardImageURL.isLocalFile()) {
+    if (!pasteboardImageURL.protocolIsFile()) {
         pasteboardImage.url.url = pasteboardImageURL;
         pasteboardImage.url.title = title;
     }

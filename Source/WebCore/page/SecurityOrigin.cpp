@@ -54,7 +54,7 @@ constexpr unsigned maximumURLSize = 0x04000000;
 
 bool SecurityOrigin::shouldIgnoreHost(const URL& url)
 {
-    return url.protocolIsData() || url.protocolIsAbout() || url.protocolIsJavaScript() || url.protocolIs("file"_s);
+    return url.protocolIsData() || url.protocolIsAbout() || url.protocolIsJavaScript() || url.protocolIsFile();
 }
 
 bool SecurityOrigin::shouldUseInnerURL(const URL& url)
@@ -200,7 +200,7 @@ Ref<SecurityOrigin> SecurityOrigin::createOpaque()
 
 Ref<SecurityOrigin> SecurityOrigin::createNonLocalWithAllowedFilePath(const URL& url, const String& filePath)
 {
-    ASSERT(!url.isLocalFile());
+    ASSERT(!url.protocolIsFile());
     auto securityOrigin = SecurityOrigin::create(url);
     securityOrigin->m_filePath = filePath;
     return securityOrigin;
@@ -355,7 +355,7 @@ bool SecurityOrigin::canDisplay(const URL& url, const OriginAccessPatterns& patt
         return false;
     
 #if !PLATFORM(IOS_FAMILY) && !ENABLE(BUBBLEWRAP_SANDBOX)
-    if (m_data.protocol() == "file"_s && url.isLocalFile() && !FileSystem::filesHaveSameVolume(m_filePath, url.fileSystemPath()))
+    if (m_data.protocol() == "file"_s && url.protocolIsFile() && !FileSystem::filesHaveSameVolume(m_filePath, url.fileSystemPath()))
         return false;
 #endif
 
@@ -373,7 +373,7 @@ bool SecurityOrigin::canDisplay(const URL& url, const OriginAccessPatterns& patt
     if (!SecurityPolicy::restrictAccessToLocal())
         return true;
 
-    if (url.isLocalFile() && url.fileSystemPath() == m_filePath)
+    if (url.protocolIsFile() && url.fileSystemPath() == m_filePath)
         return true;
 
     if (LegacySchemeRegistry::shouldTreatURLSchemeAsLocal(protocol))

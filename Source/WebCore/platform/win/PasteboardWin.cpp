@@ -618,7 +618,7 @@ static String fileSystemPathFromURLOrTitle(const String& urlString, const String
         // we just use the entire url.
         DWORD len = fsPathMaxLengthExcludingExtension;
         auto lastComponent = url.lastPathComponent();
-        if (url.isLocalFile() || (!isLink && !lastComponent.isEmpty())) {
+        if (url.protocolIsFile() || (!isLink && !lastComponent.isEmpty())) {
             len = std::min<DWORD>(fsPathMaxLengthExcludingExtension, lastComponent.length());
             lastComponent.left(len).getCharacters(fsPathBuffer);
         } else {
@@ -992,7 +992,7 @@ static HGLOBAL createGlobalHDropContent(const URL& url, String& fileName, Fragme
 
     WCHAR filePath[MAX_PATH];
 
-    if (url.isLocalFile()) {
+    if (url.protocolIsFile()) {
         String localPath = PAL::decodeURLEscapeSequences(url.path());
         // windows does not enjoy a leading slash on paths
         if (localPath[0] == '/')

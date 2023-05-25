@@ -113,7 +113,7 @@ bool URL::hasSpecialScheme() const
 {
     // https://url.spec.whatwg.org/#special-scheme
     return protocolIs("ftp"_s)
-        || protocolIs("file"_s)
+        || protocolIsFile()
         || protocolIs("http"_s)
         || protocolIs("https"_s)
         || protocolIs("ws"_s)
@@ -123,9 +123,9 @@ bool URL::hasSpecialScheme() const
 bool URL::hasLocalScheme() const
 {
     // https://fetch.spec.whatwg.org/#local-scheme
-    return protocolIs("about"_s)
-        || protocolIs("blob"_s)
-        || protocolIs("data"_s);
+    return protocolIsAbout()
+        || protocolIsBlob()
+        || protocolIsData();
 }
 
 unsigned URL::pathStart() const
@@ -273,7 +273,7 @@ URL URL::truncatedForUseAsBase() const
 
 String URL::fileSystemPath() const
 {
-    if (!isLocalFile())
+    if (!protocolIsFile())
         return { };
 
     auto result = decodeEscapeSequencesFromParsedURL(path());
@@ -417,7 +417,7 @@ bool URL::setProtocol(StringView newProtocol)
     if ((m_passwordEnd != m_userStart || port()) && *newProtocolCanonicalized == "file"_s)
         return true;
 
-    if (isLocalFile() && host().isEmpty())
+    if (protocolIsFile() && host().isEmpty())
         return true;
 
     parse(makeString(*newProtocolCanonicalized, StringView(m_string).substring(m_schemeEnd)));
@@ -709,7 +709,7 @@ void URL::setPath(StringView path)
 
     parse(makeString(
         StringView(m_string).left(pathStart()),
-        path.startsWith('/') || (path.startsWith('\\') && (hasSpecialScheme() || protocolIs("file"_s))) || (!hasSpecialScheme() && path.isEmpty() && m_schemeEnd + 1U < pathStart()) ? ""_s : "/"_s,
+        path.startsWith('/') || (path.startsWith('\\') && (hasSpecialScheme() || protocolIsFile())) || (!hasSpecialScheme() && path.isEmpty() && m_schemeEnd + 1U < pathStart()) ? ""_s : "/"_s,
         !hasSpecialScheme() && host().isEmpty() && path.startsWith("//"_s) && path.length() > 2 ? "/."_s : ""_s,
         escapePathWithoutCopying(path),
         StringView(m_string).substring(m_pathEnd)
@@ -904,15 +904,6 @@ String URL::strippedForUseAsReport() const
     return makeString(StringView(m_string).left(m_userStart), StringView(m_string).substring(end, m_pathEnd - end));
 }
 
-bool URL::isLocalFile() const
-{
-    // Including feed here might be a bad idea since drag and drop uses this check
-    // and including feed would allow feeds to potentially let someone's blog
-    // read the contents of the clipboard on a drag, even without a drop.
-    // Likewise with using the FrameLoader::shouldTreatURLAsLocal() function.
-    return protocolIs("file"_s);
-}
-
 bool protocolIsJavaScript(StringView string)
 {
     return protocolIsInternal(string, "javascript"_s);
@@ -962,11 +953,6 @@ const URL& aboutSrcDocURL()
         staticSrcDocURL.construct(&aboutSrcDocString);
     });
     return staticSrcDocURL;
-}
-
-bool URL::protocolIsAbout() const
-{
-    return protocolIs("about"_s);
 }
 
 bool portAllowed(const URL& url)
@@ -1074,7 +1060,7 @@ bool portAllowed(const URL& url)
         return true;
 
     // Allow any port number in a file URL, since the port number is ignored.
-    if (url.protocolIs("file"_s))
+    if (url.protocolIsFile())
         return true;
 
     return false;

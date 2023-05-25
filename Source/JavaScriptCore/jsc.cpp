@@ -918,7 +918,7 @@ JSInternalPromise* GlobalObject::moduleLoaderImportModule(JSGlobalObject* global
     auto specifier = moduleNameValue->value(globalObject);
     RETURN_IF_EXCEPTION(scope, promise->rejectWithCaughtException(globalObject, scope));
 
-    if (!referrer.isLocalFile())
+    if (!referrer.protocolIsFile())
         RELEASE_AND_RETURN(scope, rejectWithError(createError(globalObject, makeString("Could not resolve the referrer's path '"_s, referrer.string(), "', while trying to resolve module '"_s, specifier, "'."_s))));
 
     auto assertions = JSC::retrieveAssertionsFromDynamicImportOptions(globalObject, parameters, { vm.propertyNames->type.impl() });
@@ -957,7 +957,7 @@ Identifier GlobalObject::moduleLoaderResolve(JSGlobalObject* globalObject, JSMod
             return { };
         }
 
-        if (!directoryURL.isLocalFile()) {
+        if (!directoryURL.protocolIsFile()) {
             throwException(globalObject, scope, createError(globalObject, makeString("Could not resolve the referrer's path: "_s, directoryURL.string())));
             return { };
         }
@@ -967,7 +967,7 @@ Identifier GlobalObject::moduleLoaderResolve(JSGlobalObject* globalObject, JSMod
             throwException(globalObject, scope, createError(globalObject, makeString("Resolved module url is not valid: "_s, resolvedURL.string())));
             return { };
         }
-        ASSERT(resolvedURL.isLocalFile());
+        ASSERT(resolvedURL.protocolIsFile());
 
         return Identifier::fromString(vm, resolvedURL.string());
     };
@@ -983,7 +983,7 @@ Identifier GlobalObject::moduleLoaderResolve(JSGlobalObject* globalObject, JSMod
 
     // If the referrer exists, we assume that the referrer is the correct file url.
     URL url = URL({ }, referrer.impl());
-    ASSERT(url.isLocalFile());
+    ASSERT(url.protocolIsFile());
     return resolvePath(url);
 }
 
@@ -1269,7 +1269,7 @@ JSInternalPromise* GlobalObject::moduleLoaderFetch(JSGlobalObject* globalObject,
     RETURN_IF_EXCEPTION(scope, promise->rejectWithCaughtException(globalObject, scope));
 
     URL moduleURL({ }, moduleKey);
-    ASSERT(moduleURL.isLocalFile());
+    ASSERT(moduleURL.protocolIsFile());
     // Strip the URI from our key so Errors print canonical system paths.
     moduleKey = moduleURL.fileSystemPath();
 
@@ -1721,7 +1721,7 @@ static URL computeFilePath(VM& vm, JSGlobalObject* globalObject, CallFrame* call
     URL path;
     if (callerRelative) {
         path = URL(callFrame->callerSourceOrigin(vm).url(), fileName);
-        if (!path.isLocalFile()) {
+        if (!path.protocolIsFile()) {
             throwException(globalObject, scope, createURIError(globalObject, makeString("caller relative URL path is not a local file: "_s, path.string())));
             return URL();
         }
