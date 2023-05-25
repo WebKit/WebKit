@@ -1153,7 +1153,7 @@ public:
 
     const BoyerMooreHorspoolTable<uint8_t>* tryAddStringSearchTable8(const String& string)
     {
-        constexpr unsigned minPatternLength = 9;
+        constexpr unsigned minPatternLength = 4;
         if (string.length() > BoyerMooreHorspoolTable<uint8_t>::maxPatternLength)
             return nullptr;
         if (string.length() < minPatternLength)

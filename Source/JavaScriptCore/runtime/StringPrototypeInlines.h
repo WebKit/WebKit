@@ -189,8 +189,8 @@ ALWAYS_INLINE JSString* jsSpliceSubstringsWithSeparators(JSGlobalObject* globalO
 
 enum class StringReplaceSubstitutions : bool { No, Yes };
 enum class StringReplaceUseTable : bool { No, Yes };
-template<StringReplaceSubstitutions substitutions, StringReplaceUseTable useTable, typename TableType>
-ALWAYS_INLINE JSString* stringReplaceStringString(JSGlobalObject* globalObject, JSString* stringCell, String string, String search, String replacement, const TableType* table)
+template<StringReplaceSubstitutions substitutions, StringReplaceUseTable useTable, typename TableType, typename ReplacementType>
+ALWAYS_INLINE JSString* stringReplaceStringString(JSGlobalObject* globalObject, JSString* stringCell, String string, String search, ReplacementType replacement, const TableType* table)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);

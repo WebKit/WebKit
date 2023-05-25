@@ -1922,7 +1922,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         return;
 
     case StringReplaceString:
-        if (node->child3().useKind() == StringUse)
+        if (node->child3().useKind() == StringUse || node->child3().useKind() == Int32Use)
             return;
         clobberTop();
         return;
