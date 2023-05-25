@@ -90,6 +90,12 @@ namespace WebCore {
    and would make it really hard to understand.
 */
 
+FEConvolveMatrixSoftwareApplier::FEConvolveMatrixSoftwareApplier(const FEConvolveMatrix& effect)
+    : Base(effect)
+{
+    ASSERT(IntRect(IntPoint::zero(), m_effect.kernelSize()).contains(m_effect.targetOffset()));
+}
+
 inline uint8_t FEConvolveMatrixSoftwareApplier::clampRGBAValue(float channel, uint8_t max)
 {
     if (channel <= 0)

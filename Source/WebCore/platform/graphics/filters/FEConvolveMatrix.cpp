@@ -49,6 +49,7 @@ FEConvolveMatrix::FEConvolveMatrix(const IntSize& kernelSize, float divisor, flo
 {
     ASSERT(m_kernelSize.width() > 0);
     ASSERT(m_kernelSize.height() > 0);
+    ASSERT(IntRect(IntPoint::zero(), kernelSize).contains(targetOffset));
 }
 
 bool FEConvolveMatrix::operator==(const FEConvolveMatrix& other) const

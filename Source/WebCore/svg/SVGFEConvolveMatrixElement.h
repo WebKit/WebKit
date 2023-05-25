@@ -102,6 +102,8 @@ private:
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) override;
     void svgAttributeChanged(const QualifiedName&) override;
 
+    bool isValidTargetXOffset() const;
+    bool isValidTargetYOffset() const;
     bool setFilterEffectAttribute(FilterEffect&, const QualifiedName&) override;
     Vector<AtomString> filterEffectInputsNames() const override { return { AtomString { in1() } }; }
     RefPtr<FilterEffect> createFilterEffect(const FilterEffectVector&, const GraphicsContext& destinationContext) const override;
