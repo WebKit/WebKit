@@ -456,6 +456,9 @@ void RemoteLayerTreeDrawingArea::displayDidRefresh()
     while (!monitorsToNotify.isEmpty())
         monitorsToNotify.takeAny()->triggerDisplayDidRefresh();
     m_displayRefreshMonitorsToNotify = nullptr;
+
+    if (!m_updateRenderingTimer.isActive())
+        send(Messages::RemoteLayerTreeDrawingAreaProxy::CommitLayerTreeNotTriggered());
 }
 
 auto RemoteLayerTreeDrawingArea::rootLayerInfoWithFrameIdentifier(WebCore::FrameIdentifier frameID) -> RootLayerInfo*

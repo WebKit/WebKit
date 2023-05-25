@@ -118,6 +118,7 @@ private:
     // Message handlers
     virtual void setPreferredFramesPerSecond(WebCore::FramesPerSecond) { }
     void willCommitLayerTree(TransactionID);
+    void commitLayerTreeNotTriggered();
     void commitLayerTree(IPC::Connection&, const Vector<std::pair<RemoteLayerTreeTransaction, RemoteScrollingCoordinatorTransaction>>&);
     void commitLayerTreeTransaction(IPC::Connection&, const RemoteLayerTreeTransaction&, const RemoteScrollingCoordinatorTransaction&);
     virtual void didCommitLayerTree(IPC::Connection&, const RemoteLayerTreeTransaction&, const RemoteScrollingCoordinatorTransaction&) { }
@@ -128,8 +129,13 @@ private:
 
     std::unique_ptr<RemoteLayerTreeHost> m_remoteLayerTreeHost;
     bool m_isWaitingForDidUpdateGeometry { false };
-    enum DidUpdateMessageState { DoesNotNeedDidUpdate, NeedsDidUpdate, MissedCommit };
-    DidUpdateMessageState m_didUpdateMessageState { DoesNotNeedDidUpdate };
+
+    // displayDidRefresh is sent to the WebProcess, and it responds
+    // with a commitLayerTree message (ideally before the next
+    // displayDidRefresh, otherwise we mark it as missed and send
+    // it when commitLayerTree does arrive).
+    enum CommitLayerTreeMessageState { CommitLayerTreePending, NeedsDisplayDidRefresh, MissedCommit, Idle };
+    CommitLayerTreeMessageState m_commitLayerTreeMessageState { Idle };
 
     WebCore::IntSize m_lastSentSize;
     WebCore::IntSize m_lastSentMinimumSizeForAutoLayout;
