@@ -451,7 +451,6 @@ No pre-PR checks to run""")
         log = captured.root.log.getvalue().splitlines()
         self.assertEqual(
             [line for line in log if 'Mock process' not in line], [
-                '    Found 1 commit...',
                 "Amending commit...",
                 "Rebasing 'eng/pr-branch' on 'main'...",
                 "Rebased 'eng/pr-branch' on 'main!'",
@@ -500,7 +499,6 @@ No pre-PR checks to run""")
         log = captured.root.log.getvalue().splitlines()
         self.assertEqual(
             [line for line in log if 'Mock process' not in line], [
-                '    Found 1 commit...',
                 "Amending commit...",
                 "Rebasing 'eng/pr-branch' on 'main'...",
                 "Rebased 'eng/pr-branch' on 'main!'",
@@ -548,7 +546,6 @@ No pre-PR checks to run""")
         log = captured.root.log.getvalue().splitlines()
         self.assertEqual(
             [line for line in log if 'Mock process' not in line], [
-                '    Found 1 commit...',
                 "Amending commit...",
                 "Rebasing 'eng/pr-branch' on 'main'...",
                 "Rebased 'eng/pr-branch' on 'main!'",
@@ -591,7 +588,6 @@ No pre-PR checks to run""")
         log = captured.root.log.getvalue().splitlines()
         self.assertEqual(
             [line for line in log if 'Mock process' not in line], [
-                '    Found 1 commit...',
                 'Creating commit...',
                 "Rebasing 'eng/pr-branch' on 'main'...",
                 "Rebased 'eng/pr-branch' on 'main!'",
@@ -641,7 +637,6 @@ No pre-PR checks to run""")
         log = captured.root.log.getvalue().splitlines()
         self.assertEqual(
             [line for line in log if 'Mock process' not in line], [
-                '    Found 1 commit...',
                 "Amending commit...",
                 "Rebasing 'eng/pr-branch' on 'main'...",
                 "Rebased 'eng/pr-branch' on 'main!'",
@@ -705,7 +700,6 @@ No pre-PR checks to run""")
         log = captured.root.log.getvalue().splitlines()
         self.assertEqual(
             [line for line in log if 'Mock process' not in line], [
-                '    Found 1 commit...',
                 "Using committed changes...",
                 "Rebasing 'eng/pr-branch' on 'main'...",
                 "Rebased 'eng/pr-branch' on 'main!'",
@@ -969,7 +963,6 @@ No pre-PR checks to run""")
         log = captured.root.log.getvalue().splitlines()
         self.assertEqual(
             [line for line in log if 'Mock process' not in line], [
-                '    Found 1 commit...',
                 'Using committed changes...',
                 "Rebasing 'eng/pr-branch' on 'main'...",
                 "Rebased 'eng/pr-branch' on 'main!'",
@@ -1040,7 +1033,6 @@ No pre-PR checks to run""")
         log = captured.root.log.getvalue().splitlines()
         self.assertEqual(
             [line for line in log if 'Mock process' not in line], [
-                '    Found 1 commit...',
                 'Using committed changes...',
                 "Rebasing 'eng/pr-branch' on 'main'...",
                 "Rebased 'eng/pr-branch' on 'main!'",
@@ -1105,7 +1097,6 @@ No pre-PR checks to run""")
         log = captured.root.log.getvalue().splitlines()
         self.assertEqual(
             [line for line in log if 'Mock process' not in line], [
-                '    Found 1 commit...',
                 "Using committed changes...",
                 "Rebasing 'eng/pr-branch' on 'main'...",
                 "Rebased 'eng/pr-branch' on 'main!'",
@@ -1180,7 +1171,6 @@ No pre-PR checks to run""")
         log = captured.root.log.getvalue().splitlines()
         self.assertEqual(
             [line for line in log if 'Mock process' not in line], [
-                '    Found 1 commit...',
                 "Using committed changes...",
                 "Rebasing 'eng/pr-branch' on 'main'...",
                 "Rebased 'eng/pr-branch' on 'main!'",
@@ -1257,7 +1247,6 @@ No pre-PR checks to run""")
         log = captured.root.log.getvalue().splitlines()
         self.assertEqual(
             [line for line in log if 'Mock process' not in line], [
-                '    Found 1 commit...',
                 "Using committed changes...",
                 "Rebasing 'eng/pr-branch' on 'main'...",
                 "Rebased 'eng/pr-branch' on 'main!'",
@@ -1337,7 +1326,6 @@ No pre-PR checks to run""")
         log = captured.root.log.getvalue().splitlines()
         self.assertEqual(
             [line for line in log if 'Mock process' not in line], [
-                '    Found 1 commit...',
                 "Using committed changes...",
                 "Rebasing 'eng/pr-branch' on 'main'...",
                 "Rebased 'eng/pr-branch' on 'main!'",
@@ -1408,7 +1396,6 @@ No pre-PR checks to run""")
         log = captured.root.log.getvalue().splitlines()
         self.assertEqual(
             [line for line in log if 'Mock process' not in line], [
-                '    Found 1 commit...',
                 "Using committed changes...",
                 "Rebasing 'eng/pr-branch' on 'main'...",
                 "Rebased 'eng/pr-branch' on 'main!'",
@@ -1522,7 +1509,6 @@ No pre-PR checks to run""")
         log = captured.root.log.getvalue().splitlines()
         self.assertEqual(
             [line for line in log if 'Mock process' not in line], [
-                '    Found 1 commit...',
                 "Amending commit...",
                 "Rebasing 'eng/pr-branch' on 'main'...",
                 "Rebased 'eng/pr-branch' on 'main!'",
@@ -1562,7 +1548,6 @@ No pre-PR checks to run""")
         log = captured.root.log.getvalue().splitlines()
         self.assertEqual(
             [line for line in log if 'Mock process' not in line], [
-                '    Found 1 commit...',
                 'Creating commit...',
                 "Rebasing 'eng/pr-branch' on 'main'...",
                 "Rebased 'eng/pr-branch' on 'main!'",
@@ -1609,7 +1594,6 @@ No pre-PR checks to run""")
         log = captured.root.log.getvalue().splitlines()
         self.assertEqual(
             [line for line in log if 'Mock process' not in line], [
-                '    Found 1 commit...',
                 "Amending commit...",
                 "Rebasing 'eng/pr-branch' on 'main'...",
                 "Rebased 'eng/pr-branch' on 'main!'",
@@ -1659,7 +1643,6 @@ No pre-PR checks to run""")
         log = captured.root.log.getvalue().splitlines()
         self.assertEqual(
             [line for line in log if 'Mock process' not in line], [
-                '    Found 1 commit...',
                 "Using committed changes...",
                 "Rebasing 'eng/pr-branch' on 'main'...",
                 "Rebased 'eng/pr-branch' on 'main!'",
@@ -1712,7 +1695,6 @@ No pre-PR checks to run""")
         log = captured.root.log.getvalue().splitlines()
         self.assertEqual(
             [line for line in log if 'Mock process' not in line], [
-                '    Found 1 commit...',
                 "Using committed changes...",
                 "Rebasing 'eng/pr-branch' on 'main'...",
                 "Rebased 'eng/pr-branch' on 'main!'",

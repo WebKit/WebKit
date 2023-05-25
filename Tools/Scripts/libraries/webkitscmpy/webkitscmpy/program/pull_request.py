@@ -213,6 +213,9 @@ class PullRequest(Command):
             return None
 
         branch_point = Branch.branch_point(repository)
+        if not branch_point:
+            sys.stderr.write('Failed to determine where pull-request diverged from production branch\n')
+            return None
         source_remote = args.remote
         if not source_remote:
             bp_remotes = set(repository.branches_for(hash=branch_point.hash, remote=None).keys())

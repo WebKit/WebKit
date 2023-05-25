@@ -1,4 +1,4 @@
-# Copyright (C) 2022 Apple Inc. All rights reserved.
+# Copyright (C) 2022-2023 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -70,9 +70,6 @@ class TestSquash(testing.PathTestCase):
         log = captured.root.log.getvalue().splitlines()
         self.assertEqual(
             [line for line in log if 'Mock process' not in line], [
-                '    Found 1 commit...',
-                '    Found 2 commits...',
-                '    Found 3 commits...',
                 'Using committed changes...',
                 '    Squashed 3 commits',
                 "Rebasing 'eng/squash-branch' on 'main'...",
@@ -118,9 +115,6 @@ class TestSquash(testing.PathTestCase):
         log = captured.root.log.getvalue().splitlines()
         self.assertEqual(
             [line for line in log if 'Mock process' not in line], [
-                '    Found 1 commit...',
-                '    Found 2 commits...',
-                '    Found 3 commits...',
                 'Using committed changes...',
                 '    Squashed 3 commits',
                 "Rebasing 'eng/squash-branch' on 'main'...",
@@ -162,11 +156,7 @@ class TestSquash(testing.PathTestCase):
         log = captured.root.log.getvalue().splitlines()
         self.assertEqual(
             [line for line in log if 'Mock process' not in line], [
-                '    Found 1 commit...',
-                '    Found 2 commits...',
-                '    Found 3 commits...',
                 '    Squashed 3 commits',
-                '    Found 1 commit...',
                 'Using committed changes...',
                 "Rebasing 'eng/squash-branch' on 'main'...",
                 "Rebased 'eng/squash-branch' on 'main!'",

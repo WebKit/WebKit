@@ -501,3 +501,29 @@ Created the local development branch 'eng/4'
         )
         self.assertEqual(captured.stdout.getvalue(), "Created the local development branch 'eng/1234'\n")
         self.assertEqual(captured.stderr.getvalue(), "")
+
+    def test_branch_point(self):
+        with OutputCapture(level=logging.INFO) as captured, mocks.local.Git(self.path) as repo, mocks.local.Svn():
+            repo.commits['eng/1234'] = [
+                repo.commits[repo.default_branch][-1],
+                Commit(
+                    hash='06de5d56554e693db72313f4ca1fb969c30b8ccb',
+                    branch='eng/1234',
+                    author=dict(name='Tim Contributor', emails=['tcontributor@example.com']),
+                    identifier="5.1@eng/1234",
+                    timestamp=int(time.time()),
+                    message='[Testing] Existing commit\n'
+                )
+            ]
+            repo.head = repo.commits['eng/1234'][-1]
+            self.assertEqual(program.Branch.branch_point(local.Git(self.path)).hash, 'd8bce26fa65c6fc8f39c17927abb77f69fab82fc')
+        self.assertEqual(captured.root.log.getvalue(), '')
+        self.assertEqual(captured.stdout.getvalue(), '')
+        self.assertEqual(captured.stderr.getvalue(), '')
+
+    def test_branch_point_main(self):
+        with OutputCapture(level=logging.INFO) as captured, mocks.local.Git(self.path), mocks.local.Svn():
+            self.assertEqual(program.Branch.branch_point(local.Git(self.path)).hash, 'd8bce26fa65c6fc8f39c17927abb77f69fab82fc')
+        self.assertEqual(captured.root.log.getvalue(), '')
+        self.assertEqual(captured.stdout.getvalue(), '')
+        self.assertEqual(captured.stderr.getvalue(), '')

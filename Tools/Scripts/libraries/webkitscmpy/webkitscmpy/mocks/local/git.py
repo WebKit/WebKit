@@ -686,7 +686,7 @@ nothing to commit, working tree clean
             ), mocks.Subprocess.Route(
                 self.executable, 'merge-base', re.compile(r'.+'), re.compile(r'.+'),
                 cwd=self.path,
-                generator=lambda *args, **kwargs: self.merge_base(args[2], args[3]),
+                generator=lambda *args, **kwargs: self.merge_base(args[2], *args[3:]),
             ), mocks.Subprocess.Route(
                 self.executable,
                 cwd=self.path,
@@ -1332,22 +1332,31 @@ nothing to commit, working tree clean
 
     def merge_base(self, *refs):
         objs = [self.find(ref) for ref in refs]
-        for i in [0, 1]:
+        for i in range(len(objs)):
             if not refs[i] or not objs[i]:
                 return mocks.ProcessCompletion(
                     returncode=128,
                     stderr='fatal: Not a valid object name {}\n'.format(refs[i]),
                 )
-        if objs[0].branch != objs[1].branch:
-            for i in [0, 1]:
-                if objs[i].branch == self.default_branch:
-                    continue
-                objs[i] = self.commits[self.default_branch][objs[i].branch_point - 1]
 
-        base = objs[0] if objs[0].identifier < objs[1].identifier else objs[1]
+        def pair_base(*values):
+            objs = list(values)
+            if objs[0].branch != objs[1].branch:
+                for i in [0, 1]:
+                    if objs[i].branch == self.default_branch:
+                        continue
+                    objs[i] = self.commits[self.default_branch][objs[i].branch_point - 1]
+
+            return objs[0] if objs[0].identifier < objs[1].identifier else objs[1]
+
+        if len(objs) > 1:
+            objs = [pair_base(objs[0], obj) for obj in objs[1:]]
+        if len(objs) > 1:
+            objs = sorted(objs, key=lambda obj: obj.identifier + (obj.branch_point or 0), reverse=True)
+
         return mocks.ProcessCompletion(
             returncode=0,
-            stdout='{}\n'.format(base.hash),
+            stdout='{}\n'.format(objs[0].hash),
         )
 
     def branch_merged_to(self, ref):
