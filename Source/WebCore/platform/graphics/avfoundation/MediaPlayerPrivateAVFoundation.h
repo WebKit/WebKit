@@ -308,8 +308,8 @@ protected:
 
     const String& assetURL() const { return m_assetURL.string(); }
 
-    MediaPlayer* player() { return m_player; }
-    const MediaPlayer* player() const { return m_player; }
+    MediaPlayer* player() { return m_player.get(); }
+    const MediaPlayer* player() const { return m_player.get(); }
 
     String engineDescription() const override { return "AVFoundation"_s; }
     long platformErrorCode() const override { return assetErrorCode(); }
@@ -334,7 +334,7 @@ protected:
     bool shouldEnableInheritURIQueryComponent() const;
 
 private:
-    MediaPlayer* m_player;
+    WeakPtr<MediaPlayer> m_player;
 
     Function<void()> m_pendingSeek;
 

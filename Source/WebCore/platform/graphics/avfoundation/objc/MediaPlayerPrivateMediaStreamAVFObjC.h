@@ -234,7 +234,7 @@ private:
     LayerHostingContextID hostingContextID() const final;
     void setVideoInlineSizeFenced(const FloatSize&, const WTF::MachSendRight&) final;
 
-    MediaPlayer* m_player { nullptr };
+    WeakPtr<MediaPlayer> m_player;
     RefPtr<MediaStreamPrivate> m_mediaStreamPrivate;
     RefPtr<VideoTrackPrivateMediaStream> m_activeVideoTrack;
 
