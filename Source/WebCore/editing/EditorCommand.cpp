@@ -298,7 +298,7 @@ static bool executeDelete(LocalFrame& frame, Event*, EditorCommandSource source,
     case EditorCommandSource::DOMWithUserInterface:
         // If the current selection is a caret, delete the preceding character. IE performs forwardDelete, but we currently side with Firefox.
         // Doesn't scroll to make the selection visible, or modify the kill ring (this time, siding with IE, not Firefox).
-        TypingCommand::deleteKeyPressed(*frame.document(), frame.editor().shouldSmartDelete() ? TypingCommand::SmartDelete : 0);
+        TypingCommand::deleteKeyPressed(*frame.document(), frame.editor().shouldSmartDelete() ? TypingCommand::Option::SmartDelete : OptionSet<TypingCommand::Option> { });
         return true;
     }
     ASSERT_NOT_REACHED();
@@ -494,7 +494,7 @@ static bool executeInsertLineBreak(LocalFrame& frame, Event* event, EditorComman
         // Doesn't scroll to make the selection visible, or modify the kill ring.
         // InsertLineBreak is not implemented in IE or Firefox, so this behavior is only needed for
         // backward compatibility with ourselves, and for consistency with other commands.
-        TypingCommand::insertLineBreak(*frame.document(), 0);
+        TypingCommand::insertLineBreak(*frame.document(), { });
         return true;
     }
     ASSERT_NOT_REACHED();
@@ -522,7 +522,7 @@ static bool executeInsertOrderedList(LocalFrame& frame, Event*, EditorCommandSou
 
 static bool executeInsertParagraph(LocalFrame& frame, Event*, EditorCommandSource, const String&)
 {
-    TypingCommand::insertParagraphSeparator(*frame.document(), 0);
+    TypingCommand::insertParagraphSeparator(*frame.document(), { });
     return true;
 }
 
@@ -533,7 +533,7 @@ static bool executeInsertTab(LocalFrame& frame, Event* event, EditorCommandSourc
 
 static bool executeInsertText(LocalFrame& frame, Event*, EditorCommandSource, const String& value)
 {
-    TypingCommand::insertText(*frame.document(), value, 0);
+    TypingCommand::insertText(*frame.document(), value, { });
     return true;
 }
 

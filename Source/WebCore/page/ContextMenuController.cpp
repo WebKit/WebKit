@@ -283,7 +283,7 @@ static void insertUnicodeCharacter(UChar character, LocalFrame& frame)
         return;
 
     ASSERT(frame.document());
-    TypingCommand::insertText(*frame.document(), text, 0, TypingCommand::TextCompositionNone);
+    TypingCommand::insertText(*frame.document(), text, { }, TypingCommand::TextCompositionType::None);
 }
 
 #endif

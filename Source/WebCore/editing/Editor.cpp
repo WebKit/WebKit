@@ -591,7 +591,7 @@ bool Editor::deleteWithDirection(SelectionDirection direction, TextGranularity g
 
     if (m_document.selection().isRange()) {
         if (isTypingAction) {
-            TypingCommand::deleteKeyPressed(document(), canSmartCopyOrDelete() ? TypingCommand::SmartDelete : 0, granularity);
+            TypingCommand::deleteKeyPressed(document(), canSmartCopyOrDelete() ? TypingCommand::Option::SmartDelete : OptionSet<TypingCommand::Option> { }, granularity);
             revealSelectionAfterEditingOperation();
         } else {
             if (shouldAddToKillRing)
@@ -600,11 +600,11 @@ bool Editor::deleteWithDirection(SelectionDirection direction, TextGranularity g
             // Implicitly calls revealSelectionAfterEditingOperation().
         }
     } else {
-        TypingCommand::Options options = 0;
+        OptionSet<TypingCommand::Option> options;
         if (canSmartCopyOrDelete())
-            options |= TypingCommand::SmartDelete;
+            options.add(TypingCommand::Option::SmartDelete);
         if (shouldAddToKillRing)
-            options |= TypingCommand::AddsToKillRing;
+            options.add(TypingCommand::Option::AddsToKillRing);
         switch (direction) {
         case SelectionDirection::Forward:
         case SelectionDirection::Right:
@@ -1380,14 +1380,14 @@ bool Editor::insertTextWithoutSendingTextEvent(const String& text, bool selectIn
             if (triggeringEvent && triggeringEvent->isDictation())
                 DictationCommand::insertText(document, text, triggeringEvent->dictationAlternatives(), selection);
             else {
-                TypingCommand::Options options = TypingCommand::RetainAutocorrectionIndicator;
+                auto options = OptionSet { TypingCommand::Option::RetainAutocorrectionIndicator };
                 if (selectInsertedText)
-                    options |= TypingCommand::SelectInsertedText;
+                    options.add(TypingCommand::Option::SelectInsertedText);
                 if (triggeringEvent && triggeringEvent->isAutocompletion())
-                    options |= TypingCommand::IsAutocompletion;
-                if (shouldRemoveAutocorrectionIndicator(shouldConsiderApplyingAutocorrection, autocorrectionWasApplied, options & TypingCommand::IsAutocompletion))
-                    options &= ~TypingCommand::RetainAutocorrectionIndicator;
-                TypingCommand::insertText(document, text, selection, options, triggeringEvent && triggeringEvent->isComposition() ? TypingCommand::TextCompositionFinal : TypingCommand::TextCompositionNone);
+                    options.add(TypingCommand::Option::IsAutocompletion);
+                if (shouldRemoveAutocorrectionIndicator(shouldConsiderApplyingAutocorrection, autocorrectionWasApplied, options.contains(TypingCommand::Option::IsAutocompletion)))
+                    options.remove(TypingCommand::Option::RetainAutocorrectionIndicator);
+                TypingCommand::insertText(document, text, selection, options, triggeringEvent && triggeringEvent->isComposition() ? TypingCommand::TextCompositionType::Final : TypingCommand::TextCompositionType::None);
             }
 
             // Reveal the current selection. Note that focus may have changed after insertion.
@@ -1416,7 +1416,7 @@ bool Editor::insertLineBreak()
     VisiblePosition caret = m_document.selection().selection().visibleStart();
     bool alignToEdge = isEndOfEditableOrNonEditableContent(caret);
     bool autocorrectionIsApplied = m_alternativeTextController->applyAutocorrectionBeforeTypingIfAppropriate();
-    TypingCommand::insertLineBreak(document(), autocorrectionIsApplied ? TypingCommand::RetainAutocorrectionIndicator : 0);
+    TypingCommand::insertLineBreak(document(), autocorrectionIsApplied ? TypingCommand::Option::RetainAutocorrectionIndicator : OptionSet<TypingCommand::Option> { });
     revealSelectionAfterEditingOperation(alignToEdge ? ScrollAlignment::alignToEdgeIfNeeded : ScrollAlignment::alignCenterIfNeeded);
 
     return true;
@@ -1436,7 +1436,7 @@ bool Editor::insertParagraphSeparator()
     VisiblePosition caret = m_document.selection().selection().visibleStart();
     bool alignToEdge = isEndOfEditableOrNonEditableContent(caret);
     bool autocorrectionIsApplied = m_alternativeTextController->applyAutocorrectionBeforeTypingIfAppropriate();
-    TypingCommand::insertParagraphSeparator(document(), autocorrectionIsApplied ? TypingCommand::RetainAutocorrectionIndicator : 0);
+    TypingCommand::insertParagraphSeparator(document(), autocorrectionIsApplied ? TypingCommand::Option::RetainAutocorrectionIndicator : OptionSet<TypingCommand::Option> { });
     revealSelectionAfterEditingOperation(alignToEdge ? ScrollAlignment::alignToEdgeIfNeeded : ScrollAlignment::alignCenterIfNeeded);
 
     return true;
@@ -2154,9 +2154,9 @@ void Editor::setComposition(const String& text, SetCompositionMode mode)
 
     // Always delete the current composition before inserting the finalized composition text if we're confirming our composition.
     // Our default behavior (if the beforeinput event is not prevented) is to insert the finalized composition text back in.
-    // We pass TypingCommand::TextCompositionPending here to indicate that we are deleting the pending composition.
+    // We pass TypingCommand::TextCompositionType::Pending here to indicate that we are deleting the pending composition.
     if (mode != CancelComposition)
-        TypingCommand::deleteSelection(document(), 0, TypingCommand::TextCompositionPending);
+        TypingCommand::deleteSelection(document(), { }, TypingCommand::TextCompositionType::Pending);
 
     insertTextForConfirmedComposition(text);
 
@@ -2186,8 +2186,8 @@ void Editor::setComposition(const String& text, const Vector<CompositionUnderlin
     String originalText = selectedText();
     bool isStartingToRecomposeExistingRange = !text.isEmpty() && selectionStart < selectionEnd && !hasComposition();
     if (isStartingToRecomposeExistingRange) {
-        // We pass TypingCommand::TextCompositionFinal here to indicate that we are removing composition text that has been finalized.
-        TypingCommand::deleteSelection(document(), 0, TypingCommand::TextCompositionFinal);
+        // We pass TypingCommand::TextCompositionType::Final here to indicate that we are removing composition text that has been finalized.
+        TypingCommand::deleteSelection(document(), { }, TypingCommand::TextCompositionType::Final);
         const VisibleSelection& currentSelection = m_document.selection().selection();
         if (currentSelection.isRange()) {
             // If deletion was prevented, then we need to collapse the selection to the end so that the original text will not be recomposed.
@@ -2234,7 +2234,7 @@ void Editor::setComposition(const String& text, const Vector<CompositionUnderlin
     // If text is empty, then delete the old composition here.  If text is non-empty, InsertTextCommand::input
     // will delete the old composition with an optimized replace operation.
     if (text.isEmpty()) {
-        TypingCommand::deleteSelection(document(), TypingCommand::PreventSpellChecking, TypingCommand::TextCompositionPending);
+        TypingCommand::deleteSelection(document(), TypingCommand::Option::PreventSpellChecking, TypingCommand::TextCompositionType::Pending);
         if (target)
             target->dispatchEvent(CompositionEvent::create(eventNames().compositionendEvent, document().windowProxy(), text));
     }
@@ -2244,7 +2244,7 @@ void Editor::setComposition(const String& text, const Vector<CompositionUnderlin
     m_customCompositionHighlights.clear();
 
     if (!text.isEmpty()) {
-        TypingCommand::insertText(document(), text, TypingCommand::SelectInsertedText | TypingCommand::PreventSpellChecking, TypingCommand::TextCompositionPending);
+        TypingCommand::insertText(document(), text, OptionSet { TypingCommand::Option::SelectInsertedText, TypingCommand::Option::PreventSpellChecking }, TypingCommand::TextCompositionType::Pending);
 
         // Find out what node has the composition now.
         Position base = m_document.selection().selection().base().downstream();
