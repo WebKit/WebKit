@@ -50,7 +50,7 @@ typedef const struct __CFData* CFDataRef;
 OBJC_CLASS NSString;
 
 #if OS(WINDOWS)
-typedef void *HANDLE;
+#include <wtf/win/Win32Handle.h>
 #endif
 
 
@@ -256,7 +256,7 @@ public:
     void* leakHandle() { return std::exchange(m_fileData, nullptr); }
 #endif
 #if OS(WINDOWS)
-    HANDLE fileMapping() const { return m_fileMapping; }
+    const Win32Handle& fileMapping() const { return m_fileMapping; }
 #endif
 
 private:
@@ -265,7 +265,7 @@ private:
     void* m_fileData { nullptr };
     unsigned m_fileSize { 0 };
 #if OS(WINDOWS)
-    HANDLE m_fileMapping { nullptr };
+    Win32Handle m_fileMapping;
 #endif
 };
 
@@ -283,7 +283,7 @@ inline MappedFileData::MappedFileData(MappedFileData&& other)
     : m_fileData(std::exchange(other.m_fileData, nullptr))
     , m_fileSize(std::exchange(other.m_fileSize, 0))
 #if OS(WINDOWS)
-    , m_fileMapping(std::exchange(other.m_fileMapping, nullptr))
+    , m_fileMapping(WTFMove(other.m_fileMapping))
 #endif
 {
 }
@@ -293,7 +293,7 @@ inline MappedFileData& MappedFileData::operator=(MappedFileData&& other)
     m_fileData = std::exchange(other.m_fileData, nullptr);
     m_fileSize = std::exchange(other.m_fileSize, 0);
 #if OS(WINDOWS)
-    m_fileMapping = std::exchange(other.m_fileMapping, nullptr);
+    m_fileMapping = WTFMove(other.m_fileMapping);
 #endif
     return *this;
 }

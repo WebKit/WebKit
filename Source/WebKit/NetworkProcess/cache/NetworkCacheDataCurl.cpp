@@ -113,12 +113,11 @@ RefPtr<SharedMemory> Data::tryCreateSharedMemory() const
     if (isNull() || !isMap())
         return nullptr;
 
-    HANDLE handle = std::get<FileSystem::MappedFileData>(*m_buffer).fileMapping();
-    HANDLE newHandle;
-    if (!DuplicateHandle(GetCurrentProcess(), handle, GetCurrentProcess(), &newHandle, 0, false, DUPLICATE_SAME_ACCESS))
+    auto newHandle = std::get<FileSystem::MappedFileData>(*m_buffer).fileMapping();
+    if (!newHandle)
         return nullptr;
 
-    return SharedMemory::adopt(newHandle, m_size, SharedMemory::Protection::ReadOnly);
+    return SharedMemory::adopt(newHandle.leak(), m_size, SharedMemory::Protection::ReadOnly);
 }
 #endif
 
