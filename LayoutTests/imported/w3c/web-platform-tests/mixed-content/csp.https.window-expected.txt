@@ -1,0 +1,5 @@
+
+FAIL Mixed content checks apply to fetches in sandboxed documents assert_unreached: Should have rejected: mixed content fetch Reached unreachable code
+FAIL Mixed content checks apply to iframes in sandboxed documents promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: remoteExecutorUrl"
+FAIL Mixed content checks apply to popups in sandboxed documents promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: remoteExecutorUrl"
+

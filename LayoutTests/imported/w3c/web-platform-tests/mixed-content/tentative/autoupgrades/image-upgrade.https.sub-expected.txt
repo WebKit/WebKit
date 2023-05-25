@@ -1,3 +1,4 @@
 
 FAIL Image autoupgraded assert_unreached: Image should load successfully from http://localhost:9443/mixed-content/tentative/resources/pass.png Reached unreachable code
+FAIL Image of other host autoupgraded assert_unreached: image of other host should load successfully from http://127.0.0.1:9443/mixed-content/tentative/resources/pass.png Reached unreachable code
 

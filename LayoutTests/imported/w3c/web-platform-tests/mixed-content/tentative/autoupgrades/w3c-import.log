@@ -16,4 +16,5 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/mixed-content/tentative/autoupgrades/audio-upgrade.https.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/mixed-content/tentative/autoupgrades/image-upgrade.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/tentative/autoupgrades/mixed-content-cors.https.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/mixed-content/tentative/autoupgrades/video-upgrade.https.sub.html

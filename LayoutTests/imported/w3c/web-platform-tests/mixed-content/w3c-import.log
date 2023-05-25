@@ -17,5 +17,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/mixed-content/META.yml
 /LayoutTests/imported/w3c/web-platform-tests/mixed-content/README.md
 /LayoutTests/imported/w3c/web-platform-tests/mixed-content/blob.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/csp.https.window.js
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/csp.https.window.js.headers
 /LayoutTests/imported/w3c/web-platform-tests/mixed-content/imageset.https.sub.html
+/LayoutTests/imported/w3c/web-platform-tests/mixed-content/nested-iframes.window.js
 /LayoutTests/imported/w3c/web-platform-tests/mixed-content/spec.src.json
