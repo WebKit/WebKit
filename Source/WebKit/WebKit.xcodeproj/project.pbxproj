@@ -4341,6 +4341,7 @@
 		337822422947F679002106BB /* _WKWebExtensionWebNavigationURLFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKWebExtensionWebNavigationURLFilter.h; sourceTree = "<group>"; };
 		337822452947FBA4002106BB /* _WKWebExtensionUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKWebExtensionUtilities.h; sourceTree = "<group>"; };
 		337822462947FBA4002106BB /* _WKWebExtensionUtilities.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKWebExtensionUtilities.mm; sourceTree = "<group>"; };
+		33D059A42A1EEEDC009AFE71 /* WebEventModifier.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebEventModifier.cpp; sourceTree = "<group>"; };
 		33F68335293FF6F5005C63C0 /* JSWebExtensionAPIWebNavigationEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebExtensionAPIWebNavigationEvent.h; sourceTree = "<group>"; };
 		33F68336293FF6F5005C63C0 /* JSWebExtensionAPIWebNavigationEvent.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = JSWebExtensionAPIWebNavigationEvent.mm; sourceTree = "<group>"; };
 		33F6833D293FFA4B005C63C0 /* WebExtensionAPIWebNavigationEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebExtensionAPIWebNavigationEvent.h; sourceTree = "<group>"; };
@@ -8099,6 +8100,7 @@
 				86DD518C28EF204F00DF2A58 /* WebEvent.serialization.in */,
 				BC032DB010F4380F0058C15A /* WebEventConversion.cpp */,
 				BC032DB110F4380F0058C15A /* WebEventConversion.h */,
+				33D059A42A1EEEDC009AFE71 /* WebEventModifier.cpp */,
 				86DD518F28EF28E800DF2A58 /* WebEventModifier.h */,
 				1C0234BF28A00DCF00AC1E5B /* WebExtensionContextIdentifier.h */,
 				1C0234BE28A00DCF00AC1E5B /* WebExtensionContextParameters.h */,

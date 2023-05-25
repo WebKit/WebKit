@@ -304,10 +304,10 @@ void InspectorInstrumentation::pseudoElementDestroyedImpl(InstrumentingAgents& i
         layerTreeAgent->pseudoElementDestroyed(pseudoElement);
 }
 
-void InspectorInstrumentation::mouseDidMoveOverElementImpl(InstrumentingAgents& instrumentingAgents, const HitTestResult& result, unsigned modifierFlags)
+void InspectorInstrumentation::mouseDidMoveOverElementImpl(InstrumentingAgents& instrumentingAgents, const HitTestResult& result, OptionSet<PlatformEventModifier> modifiers)
 {
     if (auto* domAgent = instrumentingAgents.persistentDOMAgent())
-        domAgent->mouseDidMoveOverElement(result, modifierFlags);
+        domAgent->mouseDidMoveOverElement(result, modifiers);
 }
 
 void InspectorInstrumentation::didScrollImpl(InstrumentingAgents& instrumentingAgents)

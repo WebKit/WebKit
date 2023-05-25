@@ -633,10 +633,10 @@ void WebChromeClient::unavailablePluginButtonClicked(Element& element, RenderEmb
     CallUIDelegate(m_webView, @selector(webView:didPressMissingPluginButton:), kit(&element));
 }
 
-void WebChromeClient::mouseDidMoveOverElement(const HitTestResult& result, unsigned modifierFlags, const String& toolTip, TextDirection)
+void WebChromeClient::mouseDidMoveOverElement(const HitTestResult& result, OptionSet<WebCore::PlatformEventModifier> modifiers, const String& toolTip, TextDirection)
 {
     auto element = adoptNS([[WebElementDictionary alloc] initWithHitTestResult:result]);
-    [m_webView _mouseDidMoveOverElement:element.get() modifierFlags:modifierFlags];
+    [m_webView _mouseDidMoveOverElement:element.get() modifierFlags:modifiers.toRaw()];
     setToolTip(toolTip);
 }
 

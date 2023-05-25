@@ -340,8 +340,7 @@ void Chrome::setStatusbarText(LocalFrame& frame, const String& status)
     m_client->setStatusbarText(frame.displayStringModifiedByEncoding(status));
 }
 
-// FIXME: Adopt `OptionSet<PlatformEventModifier>` instead of raw integral modifierFlags. https://bugs.webkit.org/show_bug.cgi?id=257175
-void Chrome::mouseDidMoveOverElement(const HitTestResult& result, unsigned modifierFlags)
+void Chrome::mouseDidMoveOverElement(const HitTestResult& result, OptionSet<PlatformEventModifier> modifiers)
 {
     auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page.mainFrame());
     if (!localMainFrame)
@@ -353,9 +352,9 @@ void Chrome::mouseDidMoveOverElement(const HitTestResult& result, unsigned modif
     String toolTip;
     TextDirection toolTipDirection;
     getToolTip(result, toolTip, toolTipDirection);
-    m_client->mouseDidMoveOverElement(result, modifierFlags, toolTip, toolTipDirection);
+    m_client->mouseDidMoveOverElement(result, modifiers, toolTip, toolTipDirection);
 
-    InspectorInstrumentation::mouseDidMoveOverElement(m_page, result, modifierFlags);
+    InspectorInstrumentation::mouseDidMoveOverElement(m_page, result, modifiers);
 }
 
 void Chrome::getToolTip(const HitTestResult& result, String& toolTip, TextDirection& toolTipDirection)

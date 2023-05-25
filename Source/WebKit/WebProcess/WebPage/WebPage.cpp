@@ -3413,7 +3413,7 @@ void WebPage::performHitTestForMouseEvent(const WebMouseEvent& event, Completion
     auto modifiers = event.modifiers();
     injectedBundleUIClient().mouseDidMoveOverElement(this, hitTestResult, modifiers, userData);
 
-    completionHandler(WTFMove(hitTestResultData), WTFMove(modifiers), UserData(WebProcess::singleton().transformObjectsToHandles(WTFMove(userData).get()).get()));
+    completionHandler(WTFMove(hitTestResultData), modifiers, UserData(WebProcess::singleton().transformObjectsToHandles(WTFMove(userData).get()).get()));
 }
 
 void WebPage::handleWheelEvent(const WebWheelEvent& event, const OptionSet<WheelEventProcessingSteps>& processingSteps, std::optional<bool> willStartSwipe, CompletionHandler<void(WebCore::ScrollingNodeID, std::optional<WebCore::WheelScrollGestureState>, bool)>&& completionHandler)

@@ -3189,7 +3189,7 @@ void WebPageProxy::handleMouseEvent(const NativeWebMouseEvent& event)
 void WebPageProxy::dispatchMouseDidMoveOverElementAsynchronously(const NativeWebMouseEvent& event)
 {
     sendWithAsyncReply(Messages::WebPage::PerformHitTestForMouseEvent { event }, [this, protectedThis = Ref { *this }](WebHitTestResultData&& hitTestResult, OptionSet<WebEventModifier> modifiers, UserData&& userData) {
-        this->mouseDidMoveOverElement(WTFMove(hitTestResult), modifiers.toRaw(), WTFMove(userData));
+        this->mouseDidMoveOverElement(WTFMove(hitTestResult), modifiers, WTFMove(userData));
     });
 }
 
@@ -6942,10 +6942,10 @@ void WebPageProxy::setStatusText(const String& text)
     m_uiClient->setStatusText(this, text);
 }
 
-void WebPageProxy::mouseDidMoveOverElement(WebHitTestResultData&& hitTestResultData, uint32_t opaqueModifiers, UserData&& userData)
+void WebPageProxy::mouseDidMoveOverElement(WebHitTestResultData&& hitTestResultData, OptionSet<WebEventModifier> modifiers, UserData&& userData)
 {
     m_lastMouseMoveHitTestResult = API::HitTestResult::create(hitTestResultData);
-    m_uiClient->mouseDidMoveOverElement(*this, hitTestResultData, OptionSet<WebEventModifier>::fromRaw(opaqueModifiers), m_process->transformHandlesToObjects(userData.object()).get());
+    m_uiClient->mouseDidMoveOverElement(*this, hitTestResultData, modifiers, m_process->transformHandlesToObjects(userData.object()).get());
     setToolTip(hitTestResultData.toolTipText);
 }
 

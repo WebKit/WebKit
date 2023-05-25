@@ -148,7 +148,7 @@ public:
     static void didRegisterNamedFlowContentElement(Document&, WebKitNamedFlow&, Node& contentElement, Node* nextContentElement = nullptr);
     static void didUnregisterNamedFlowContentElement(Document&, WebKitNamedFlow&, Node& contentElement);
 
-    static void mouseDidMoveOverElement(Page&, const HitTestResult&, unsigned modifierFlags);
+    static void mouseDidMoveOverElement(Page&, const HitTestResult&, OptionSet<PlatformEventModifier>);
     static bool handleMousePress(LocalFrame&);
     static bool handleTouchEvent(LocalFrame&, Node&);
     static bool forcePseudoState(const Element&, CSSSelector::PseudoClassType);
@@ -374,7 +374,7 @@ private:
     static void didRegisterNamedFlowContentElementImpl(InstrumentingAgents&, Document&, WebKitNamedFlow&, Node& contentElement, Node* nextContentElement = nullptr);
     static void didUnregisterNamedFlowContentElementImpl(InstrumentingAgents&, Document&, WebKitNamedFlow&, Node& contentElement);
 
-    static void mouseDidMoveOverElementImpl(InstrumentingAgents&, const HitTestResult&, unsigned modifierFlags);
+    static void mouseDidMoveOverElementImpl(InstrumentingAgents&, const HitTestResult&, OptionSet<PlatformEventModifier>);
     static bool handleMousePressImpl(InstrumentingAgents&);
     static bool handleTouchEventImpl(InstrumentingAgents&, Node&);
     static bool forcePseudoStateImpl(InstrumentingAgents&, const Element&, CSSSelector::PseudoClassType);
@@ -761,10 +761,10 @@ inline void InspectorInstrumentation::didUnregisterNamedFlowContentElement(Docum
         didUnregisterNamedFlowContentElementImpl(*agents, document, namedFlow, contentElement);
 }
 
-inline void InspectorInstrumentation::mouseDidMoveOverElement(Page& page, const HitTestResult& result, unsigned modifierFlags)
+inline void InspectorInstrumentation::mouseDidMoveOverElement(Page& page, const HitTestResult& result, OptionSet<PlatformEventModifier> modifiers)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
-    mouseDidMoveOverElementImpl(instrumentingAgents(page), result, modifierFlags);
+    mouseDidMoveOverElementImpl(instrumentingAgents(page), result, modifiers);
 }
 
 inline bool InspectorInstrumentation::handleTouchEvent(LocalFrame& frame, Node& node)

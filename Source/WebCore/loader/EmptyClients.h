@@ -124,7 +124,7 @@ class EmptyChromeClient : public ChromeClient {
     void contentsSizeChanged(LocalFrame&, const IntSize&) const final { }
     void intrinsicContentsSizeChanged(const IntSize&) const final { }
 
-    void mouseDidMoveOverElement(const HitTestResult&, unsigned, const String&, TextDirection) final { }
+    void mouseDidMoveOverElement(const HitTestResult&, OptionSet<PlatformEventModifier>, const String&, TextDirection) final { }
 
     void print(LocalFrame&, const StringWithDirection&) final { }
 

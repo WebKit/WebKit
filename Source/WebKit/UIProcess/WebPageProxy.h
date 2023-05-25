@@ -2366,7 +2366,7 @@ private:
     void runJavaScriptConfirm(WebCore::FrameIdentifier, FrameInfoData&&, const String&, CompletionHandler<void(bool)>&&);
     void runJavaScriptPrompt(WebCore::FrameIdentifier, FrameInfoData&&, const String&, const String&, CompletionHandler<void(const String&)>&&);
     void setStatusText(const String&);
-    void mouseDidMoveOverElement(WebHitTestResultData&&, uint32_t modifiers, UserData&&);
+    void mouseDidMoveOverElement(WebHitTestResultData&&, OptionSet<WebEventModifier>, UserData&&);
 
     void setToolbarsAreVisible(bool toolbarsAreVisible);
     void getToolbarsAreVisible(CompletionHandler<void(bool)>&&);

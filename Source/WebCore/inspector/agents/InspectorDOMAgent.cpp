@@ -1251,7 +1251,7 @@ void InspectorDOMAgent::focusNode()
     injectedScript.inspectObject(nodeAsScriptValue(globalObject, node.get()));
 }
 
-void InspectorDOMAgent::mouseDidMoveOverElement(const HitTestResult& result, unsigned)
+void InspectorDOMAgent::mouseDidMoveOverElement(const HitTestResult& result, OptionSet<PlatformEventModifier>)
 {
     m_mousedOverNode = result.innerNode();
 

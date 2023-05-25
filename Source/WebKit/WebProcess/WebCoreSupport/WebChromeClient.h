@@ -142,7 +142,7 @@ private:
     bool shouldUnavailablePluginMessageBeButton(WebCore::RenderEmbeddedObject::PluginUnavailabilityReason) const final;
     void unavailablePluginButtonClicked(WebCore::Element&, WebCore::RenderEmbeddedObject::PluginUnavailabilityReason) const final;
 
-    void mouseDidMoveOverElement(const WebCore::HitTestResult&, unsigned modifierFlags, const String& toolTip, WebCore::TextDirection) final;
+    void mouseDidMoveOverElement(const WebCore::HitTestResult&, OptionSet<WebCore::PlatformEventModifier>, const String& toolTip, WebCore::TextDirection) final;
 
     void print(WebCore::LocalFrame&, const WebCore::StringWithDirection&) final;
 

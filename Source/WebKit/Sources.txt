@@ -254,6 +254,7 @@ Shared/WebCoreArgumentCoders.cpp
 Shared/WebErrors.cpp
 Shared/WebEvent.cpp
 Shared/WebEventConversion.cpp
+Shared/WebEventModifier.cpp
 Shared/WebFindOptions.cpp
 Shared/WebFoundTextRange.cpp
 Shared/WebGeolocationPosition.cpp

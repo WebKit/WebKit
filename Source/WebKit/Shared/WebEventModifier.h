@@ -29,6 +29,7 @@
 
 namespace WebCore {
 class NavigationAction;
+enum class PlatformEventModifier : uint8_t;
 }
 
 namespace WebKit {
@@ -41,6 +42,7 @@ enum class WebEventModifier : uint8_t {
     CapsLockKey = 1 << 4,
 };
 
+OptionSet<WebEventModifier> modifiersFromPlatformEventModifiers(OptionSet<WebCore::PlatformEventModifier>);
 OptionSet<WebEventModifier> modifiersForNavigationAction(const WebCore::NavigationAction&);
 
 } // namespace WebKit
