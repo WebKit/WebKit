@@ -1,3 +1,4 @@
 
 FAIL Audio autoupgraded assert_unreached: Audio should load successfully from http://localhost:9443/mixed-content/tentative/resources/test.wav Reached unreachable code
+FAIL Audio of other host autoupgraded assert_unreached: Audio of other host should load successfully from http://127.0.0.1:9443/mixed-content/tentative/resources/test.wav Reached unreachable code
 
