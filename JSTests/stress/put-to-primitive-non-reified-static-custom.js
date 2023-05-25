@@ -33,8 +33,8 @@ const primitives = [true, 1, "", Symbol(), 0n];
         const staticCustomValue = $vm.createStaticCustomValue();
         Object.setPrototypeOf(primitivePrototype, staticCustomValue);
 
-        primitive.testStaticValue = 1;
-        shouldBe(staticCustomValue.testStaticValue, 1);
+        shouldThrow(() => { primitive.testStaticValue = 1; }, "TypeError: Attempted to assign to readonly property.");
+        shouldBe(staticCustomValue.testStaticValue, undefined);
         shouldThrow(() => { primitive.testStaticValue = 1; }, "TypeError: Attempted to assign to readonly property.");
 
         shouldThrow(() => { primitive.testStaticValueNoSetter = 1; }, "TypeError: Attempted to assign to readonly property.");

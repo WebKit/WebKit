@@ -27,13 +27,15 @@ function validate(x, valueResult, accessorResult) {
 
     let o = {};
     x.customValue = o;
-    assert(o.result === valueResult);
+    assert(o.result === undefined);
+    assert(x.customValue === o);
 
     o = {};
     x.customAccessor = o;
     assert(o.result === accessorResult);
 
     assert(x.randomProp === 42 || x.randomProp === undefined);
+    x.customValue = valueResult;
 }
 noInline(validate);
 
@@ -53,7 +55,25 @@ for (let i = 0; i < 10000; ++i) {
     }
 }
 
+function validate2(x, valueResult, accessorResult) {
+    assert(x.customValue === valueResult);
+
+    assert(x.customAccessor === accessorResult);
+
+    let o = {};
+    x.customValue = o;
+    assert(o.result === valueResult);
+
+    o = {};
+    x.customAccessor = o;
+    assert(o.result === accessorResult);
+
+    assert(x.randomProp === 42 || x.randomProp === undefined);
+}
+noInline(validate2);
+
 items.forEach((x) => {
+    delete x.customValue;
     Reflect.setPrototypeOf(x, {
         get customValue() { return 42; },
         get customAccessor() { return 22; },
@@ -64,6 +84,6 @@ items.forEach((x) => {
 
 for (let i = 0; i < 10000; ++i) {
     for (let i = 0; i < items.length; ++i) {
-        validate(items[i], 42, 22);
+        validate2(items[i], 42, 22);
     }
 }

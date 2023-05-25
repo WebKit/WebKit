@@ -821,14 +821,13 @@ bool JSObject::putInlineSlow(JSGlobalObject* globalObject, PropertyName property
                 return true;
             }
             if (attributes & PropertyAttribute::CustomValue) {
-                // FIXME: Once legacy RegExp features are implemented, there would be no use case for calling CustomValue setter if receiver is altered.
-                if (customSetter && !(isThisValueAltered(slot, obj) && slot.context() == PutPropertySlot::ReflectSet)) {
-                    // FIXME: We should only be caching these if we're not an uncacheable dictionary:
-                    // https://bugs.webkit.org/show_bug.cgi?id=215347
-                    slot.setCustomValue(obj, customSetter);
-                    RELEASE_AND_RETURN(scope, customSetter(obj->globalObject(), JSValue::encode(obj), JSValue::encode(value), propertyName));
-                }
                 if (!isThisValueAltered(slot, obj)) {
+                    if (customSetter) {
+                        // FIXME: We should only be caching these if we're not an uncacheable dictionary:
+                        // https://bugs.webkit.org/show_bug.cgi?id=215347
+                        slot.setCustomValue(obj, customSetter);
+                        RELEASE_AND_RETURN(scope, customSetter(obj->globalObject(), JSValue::encode(obj), JSValue::encode(value), propertyName));
+                    }
                     // Avoid PutModePut because it fails for non-extensible structures.
                     obj->putDirect(vm, propertyName, value, attributesForStructure(attributes) & ~PropertyAttribute::CustomValue, slot);
                     return true;
@@ -943,7 +942,6 @@ bool JSObject::putInlineFastReplacingStaticPropertyIfNeeded(JSGlobalObject* glob
     if (!isValidOffset(structure->get(vm, propertyName))) {
         if (auto entry = structure->findPropertyHashEntry(propertyName)) {
             if (entry->value->attributes() & PropertyAttribute::ReadOnlyOrAccessorOrCustomAccessor) {
-                ASSERT(slot.context() == PutPropertySlot::ReflectSet);
                 // FIXME: For an accessor with setter, the error message is misleading.
                 return typeError(globalObject, scope, slot.isStrictMode(), ReadonlyPropertyWriteError);
             }
