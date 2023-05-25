@@ -1573,7 +1573,7 @@ bool MediaPlayerPrivateGStreamer::handleNeedContextMessage(GstMessage* message)
         GstStructure* contextStructure = gst_context_writable_structure(context.get());
 
         ASSERT(m_player);
-        gst_structure_set(contextStructure, "player", G_TYPE_POINTER, m_player, nullptr);
+        gst_structure_set(contextStructure, "player", G_TYPE_POINTER, m_player.get(), nullptr);
         gst_element_set_context(GST_ELEMENT(GST_MESSAGE_SRC(message)), context.get());
         return true;
     }

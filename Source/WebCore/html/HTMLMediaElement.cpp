@@ -7360,8 +7360,8 @@ void HTMLMediaElement::createMediaPlayer() WTF_IGNORES_THREAD_SAFETY_ANALYSIS
         setIsPlayingToWirelessTarget(false);
 #endif
 
-if (auto player = std::exchange(m_player, { }))
-    player->invalidate();
+    if (auto player = std::exchange(m_player, { }))
+        player->invalidate();
 
     m_player = MediaPlayer::create(*this);
     m_player->setBufferingPolicy(m_bufferingPolicy);
