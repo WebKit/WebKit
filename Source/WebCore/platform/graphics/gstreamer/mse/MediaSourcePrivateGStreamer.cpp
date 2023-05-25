@@ -84,7 +84,7 @@ MediaSourcePrivateGStreamer::AddStatus MediaSourcePrivateGStreamer::addSourceBuf
     DEBUG_LOG(LOGIDENTIFIER, contentType);
 
     // Once every SourceBuffer has had an initialization segment appended playback starts and it's too late to add new SourceBuffers.
-    if (m_playerPrivate.hasAllTracks())
+    if (m_hasAllTracks)
         return MediaSourcePrivateGStreamer::AddStatus::ReachedIdLimit;
 
     if (!SourceBufferPrivateGStreamer::isContentTypeSupported(contentType))
