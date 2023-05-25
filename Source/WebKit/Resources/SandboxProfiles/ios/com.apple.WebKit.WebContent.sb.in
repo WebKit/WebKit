@@ -664,7 +664,7 @@
 (with-filter (system-attribute apple-internal)
     (mobile-preferences-read "com.apple.CFNetwork"))
 
-(deny sysctl-read (with no-report) (with telemetry))
+(deny sysctl*)
 (allow sysctl-read
     (sysctl-name
         "hw.activecpu" ;; Needed by JSC engine.
@@ -716,14 +716,15 @@
     (sysctl-name-prefix "hw.perflevel") ;; <rdar://problem/76782530>
 )
 
+(deny sysctl-read (with no-report)
+    (sysctl-name "vm.task_no_footprint_for_debug"))
+
 #if HAVE(SANDBOX_STATE_FLAGS)
 (with-filter (require-not (state-flag "WebContentProcessLaunched"))
     (allow sysctl-read (sysctl-name "vm.malloc_ranges"))) ;; <rdar://problem/105161083>
 #else
 (allow sysctl-read (sysctl-name "vm.malloc_ranges")) ;; <rdar://problem/105161083>
 #endif
-
-(deny sysctl-write (with no-report) (with telemetry))
 
 (allow iokit-get-properties
     (iokit-property "AAPL,DisplayPipe")
