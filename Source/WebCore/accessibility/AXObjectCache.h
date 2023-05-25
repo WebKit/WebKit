@@ -663,6 +663,7 @@ public:
 #if ENABLE(ACCESSIBILITY)
 private:
     AXObjectCache* m_cache;
+    bool m_wasAlreadyCaching { false };
 #endif
 };
 

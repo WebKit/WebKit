@@ -4364,13 +4364,17 @@ std::optional<Vector<AXID>> AXObjectCache::relatedObjectIDsFor(const AXCoreObjec
 AXAttributeCacheEnabler::AXAttributeCacheEnabler(AXObjectCache* cache)
     : m_cache(cache)
 {
-    if (m_cache)
-        m_cache->startCachingComputedObjectAttributesUntilTreeMutates();
+    if (m_cache) {
+        if (m_cache->computedObjectAttributeCache())
+            m_wasAlreadyCaching = true;
+        else
+            m_cache->startCachingComputedObjectAttributesUntilTreeMutates();
+    }
 }
     
 AXAttributeCacheEnabler::~AXAttributeCacheEnabler()
 {
-    if (m_cache)
+    if (m_cache && !m_wasAlreadyCaching)
         m_cache->stopCachingComputedObjectAttributes();
 }
 

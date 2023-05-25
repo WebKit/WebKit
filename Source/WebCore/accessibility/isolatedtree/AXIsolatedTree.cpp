@@ -225,6 +225,8 @@ void AXIsolatedTree::generateSubtree(AccessibilityObject& axObject)
     if (axObject.isDetached())
         return;
 
+    // We're about to a lot of read-only work, so start the attribute cache.
+    AXAttributeCacheEnabler enableCache(axObject.axObjectCache());
     collectNodeChangesForSubtree(axObject);
     queueRemovalsAndUnresolvedChanges({ });
 }
@@ -616,6 +618,9 @@ void AXIsolatedTree::updateChildren(AccessibilityObject& axObject, ResolveNodeCh
 
     if (!axObject.document() || !axObject.document()->hasLivingRenderTree())
         return;
+
+    // We're about to a lot of read-only work, so start the attribute cache.
+    AXAttributeCacheEnabler enableCache(axObject.axObjectCache());
 
     // updateChildren may be called as the result of a children changed
     // notification for an axObject that has no associated isolated object.
