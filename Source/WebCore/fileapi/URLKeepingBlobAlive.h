@@ -38,9 +38,10 @@ public:
     WEBCORE_EXPORT ~URLKeepingBlobAlive();
 
     URLKeepingBlobAlive(URLKeepingBlobAlive&&) = default;
-    URLKeepingBlobAlive(const URLKeepingBlobAlive&);
-    URLKeepingBlobAlive& operator=(const URLKeepingBlobAlive&);
     URLKeepingBlobAlive& operator=(URLKeepingBlobAlive&&);
+
+    URLKeepingBlobAlive(const URLKeepingBlobAlive&) = delete;
+    URLKeepingBlobAlive& operator=(const URLKeepingBlobAlive&) = delete;
 
     operator const URL&() const { return m_url; }
     const URL& url() const { return m_url; }

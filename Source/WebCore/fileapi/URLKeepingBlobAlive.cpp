@@ -37,13 +37,6 @@ URLKeepingBlobAlive::URLKeepingBlobAlive(const URL& url, const SecurityOriginDat
     registerBlobURLHandleIfNecessary();
 }
 
-URLKeepingBlobAlive::URLKeepingBlobAlive(const URLKeepingBlobAlive& other)
-    : m_url(other.m_url)
-    , m_topOrigin(other.m_topOrigin)
-{
-    registerBlobURLHandleIfNecessary();
-}
-
 URLKeepingBlobAlive::~URLKeepingBlobAlive()
 {
     unregisterBlobURLHandleIfNecessary();
@@ -54,18 +47,6 @@ void URLKeepingBlobAlive::clear()
     unregisterBlobURLHandleIfNecessary();
     m_url = { };
     m_topOrigin = { };
-}
-
-URLKeepingBlobAlive& URLKeepingBlobAlive::operator=(const URLKeepingBlobAlive& other)
-{
-    if (&other == this)
-        return *this;
-
-    unregisterBlobURLHandleIfNecessary();
-    m_url = other.m_url;
-    m_topOrigin = other.m_topOrigin;
-    registerBlobURLHandleIfNecessary();
-    return *this;
 }
 
 URLKeepingBlobAlive& URLKeepingBlobAlive::operator=(URLKeepingBlobAlive&& other)
