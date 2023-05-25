@@ -121,8 +121,8 @@ Device::ExternalTextureData Device::createExternalTextureFromPixelBuffer(CVPixel
 
     float Ax = 1.f / (upperRight[0] - lowerLeft[0]);
     float Bx = -Ax * lowerLeft[0];
-    float Ay = 1.f / (upperLeft[1] - lowerRight[1]);
-    float By = -Ay * lowerRight[1];
+    float Ay = 1.f / (lowerRight[1] - upperLeft[1]);
+    float By = -Ay * upperLeft[1];
     simd::float3x2 uvRemappingMatrix = simd::float3x2(simd::make_float2(Ax, 0.f), simd::make_float2(0.f, Ay), simd::make_float2(Bx, By));
     simd::float4x3 colorSpaceConversionMatrix = colorSpaceConversionMatrixForPixelBuffer(pixelBuffer);
 
