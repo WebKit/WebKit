@@ -224,7 +224,7 @@ static float truncate(InlineDisplay::Box& displayBox, float contentWidth, float 
     return contentWidth;
 }
 
-static float truncateOverflowingDisplayBoxes(const InlineDisplay::Line& displayLine, InlineDisplay::Boxes& boxes, float ellipsisWidth, const RenderStyle& rootStyle)
+static float truncateOverflowingDisplayBoxes(const InlineDisplay::Line& displayLine, InlineDisplay::Boxes& boxes, float ellipsisWidth, const RenderStyle& rootStyle, LineEndingEllipsisPolicy lineEndingEllipsisPolicy)
 {
     // We gotta truncate some runs.
     ASSERT(displayLine.lineBoxLogicalRect().x() + displayLine.contentLogicalLeft() + displayLine.contentLogicalWidth() + ellipsisWidth > displayLine.lineBoxLogicalRect().maxX());
@@ -257,7 +257,7 @@ static float truncateOverflowingDisplayBoxes(const InlineDisplay::Line& displayL
             }
             isFirstContentRun = false;
         }
-        ASSERT(truncateRight.has_value() || right(boxes.last()) == visualRightForContentEnd);
+        ASSERT_UNUSED(lineEndingEllipsisPolicy, lineEndingEllipsisPolicy != LineEndingEllipsisPolicy::WhenContentOverflowsInInlineDirection || truncateRight.has_value() || right(boxes.last()) == visualRightForContentEnd);
         return truncateRight.value_or(right(boxes.last()));
     }
 
@@ -277,7 +277,7 @@ static float truncateOverflowingDisplayBoxes(const InlineDisplay::Line& displayL
         }
         isFirstContentRun = false;
     }
-    ASSERT(truncateLeft.has_value() || left(boxes.first()) == visualLeftForContentEnd);
+    ASSERT_UNUSED(lineEndingEllipsisPolicy, lineEndingEllipsisPolicy != LineEndingEllipsisPolicy::WhenContentOverflowsInInlineDirection || truncateLeft.has_value() || left(boxes.first()) == visualLeftForContentEnd);
     return truncateLeft.value_or(left(boxes.first())) - ellipsisWidth;
 }
 
@@ -335,7 +335,7 @@ std::optional<FloatRect> InlineDisplayLineBuilder::trailingEllipsisVisualRectAft
             ellipsisStart = displayBoxes.first().left();
         }
     } else
-        ellipsisStart = truncateOverflowingDisplayBoxes(displayLine, displayBoxes, ellipsisWidth, rootStyle);
+        ellipsisStart = truncateOverflowingDisplayBoxes(displayLine, displayBoxes, ellipsisWidth, rootStyle, lineEndingEllipsisPolicy);
 
     if (rootStyle.isHorizontalWritingMode())
         return FloatRect { ellipsisStart, rootInlineBox.top(), ellipsisWidth, rootInlineBox.height() };
