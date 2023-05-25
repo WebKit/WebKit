@@ -94,6 +94,31 @@ typedef NS_ENUM(NSInteger, SCContentFilterType) {
 - (instancetype)initWithSharingSession:(SCContentSharingSession *)session captureOutputProperties:(SCStreamConfiguration *)streamConfig delegate:(id<SCStreamDelegate>)delegate;
 @end
 
+@protocol SCContentSharingPickerDelegate <NSObject>
+@required
+@optional
+- (void)contentSharingPicker:(SCContentSharingPicker *)picker didCancelForStream:(nullable SCStream *)stream;
+- (void)contentSharingPickerStartDidFailWithError:(NSError *)error;
+- (void)contentSharingPickerDidCancel:(SCContentSharingPicker *)picker forStream:(nullable SCStream *)stream;
+@end
+
+typedef NS_OPTIONS(NSUInteger, SCContentSharingAllowedPickerModes) {
+    SCContentSharingPickerAllowedModeSingleWindow          = 1 << 0,
+    SCContentSharingPickerAllowedModeMultipleWindows       = 1 << 1,
+    SCContentSharingPickerAllowedModeSingleApplication     = 1 << 2,
+    SCContentSharingPickerAllowedModeSingleDisplay         = 1 << 3,
+};
+
+@interface SCContentSharingPickerConfiguration : NSObject
+@property (nonatomic, assign) SCContentSharingAllowedPickerModes allowedPickingModes;
+@end
+
+@interface SCContentSharingPicker : NSObject
+@property (nonatomic, weak, nullable) id<SCContentSharingPickerDelegate> delegate;
+@property (nonatomic, nullable, strong) NSNumber *maxStreamCount;
+@property (nonatomic, nullable, copy) SCContentSharingPickerConfiguration *configuration;
+@end
+
 NS_ASSUME_NONNULL_END
 
 #endif // USE(APPLE_INTERNAL_SDK)

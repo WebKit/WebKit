@@ -5231,6 +5231,18 @@ RequestVideoFrameCallbackEnabled:
       "USE(GSTREAMER)": true
       default: false
 
+RequireUAGetDisplayMediaPrompt:
+  type: bool
+  status: internal
+  humanReadableName: "Require User Agent getDisplayMedia prompt"
+  humanReadableDescription: "Require and use User Agent getDisplayMedia prompt"
+  condition: HAVE(SC_CONTENT_SHARING_PICKER)
+  defaultValue:
+    WebKit:
+      default: true
+    WebCore:
+      default: true
+
 RequiresPageVisibilityToPlayAudio:
   type: bool
   status: embedder

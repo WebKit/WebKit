@@ -169,7 +169,7 @@ namespace WebCore {
 bool ScreenCaptureKitSharingSessionManager::isAvailable()
 {
 #if HAVE(SC_CONTENT_SHARING_PICKER)
-    if (PAL::getSCContentSharingPickerClass())
+    if (PAL::getSCContentSharingPickerClass() && PAL::getSCContentSharingPickerConfigurationClass())
         return true;
 #endif
 
@@ -410,21 +410,33 @@ bool ScreenCaptureKitSharingSessionManager::promptWithSCContentSharingSession(Di
 
 bool ScreenCaptureKitSharingSessionManager::promptWithSCContentSharingPicker(DisplayCapturePromptType promptType)
 {
-    UNUSED_PARAM(promptType);
-
 #if HAVE(SC_CONTENT_SHARING_PICKER)
     ASSERT(useSCContentSharingPicker());
 
-    SCContentSharingPicker* picker = [PAL::getSCContentSharingPickerClass() sharedPicker];
-    picker.excludedPickingModes = SCContentSharingPickerModeMultipleWindows | SCContentSharingPickerModeApplicationWindows;
-    picker.active = YES;
-    picker.delegate = (id<SCContentSharingPickerDelegate> _Nullable)m_promptHelper.get();
-    picker.maxStreamCount = @(1);
+    auto configuration = adoptNS([PAL::allocSCContentSharingPickerConfigurationInstance() init]);
+    switch (promptType) {
+    case DisplayCapturePromptType::Window:
+        [configuration setAllowedPickingModes:SCContentSharingPickerModeSingleWindow];
+        break;
+    case DisplayCapturePromptType::Screen:
+        [configuration setAllowedPickingModes:SCContentSharingPickerModeSingleDisplay];
+        break;
+    case DisplayCapturePromptType::UserChoose:
+        [configuration setAllowedPickingModes:SCContentSharingPickerModeSingleWindow | SCContentSharingPickerModeSingleDisplay];
+        break;
+    }
 
-    [picker startPickingContentForStream:nil withFilter:nil];
+    SCContentSharingPicker* picker = [PAL::getSCContentSharingPickerClass() sharedPicker];
+    picker.active = YES;
+    picker.maxStreamCount = @(1);
+    picker.configuration = configuration.get();
+    picker.delegate = (id<SCContentSharingPickerDelegate> _Nullable)m_promptHelper.get();
+
+    [picker present];
 
     return true;
 #else
+    UNUSED_PARAM(promptType);
     return false;
 #endif
 }
