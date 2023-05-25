@@ -6100,18 +6100,14 @@ public:
         // Because we compile in a single pass, we always need to pessimistically check for stack underflow/overflow.
         static_assert(wasmScratchGPR == GPRInfo::nonPreservedNonArgumentGPR0);
         m_jit.subPtr(GPRInfo::callFrameRegister, wasmScratchGPR, wasmScratchGPR);
-        MacroAssembler::JumpList underflow;
-        underflow.append(m_jit.branchPtr(CCallHelpers::Above, wasmScratchGPR, GPRInfo::callFrameRegister));
-        m_jit.addLinkTask([underflow] (LinkBuffer& linkBuffer) {
-            linkBuffer.link(underflow, CodeLocationLabel<JITThunkPtrTag>(Thunks::singleton().stub(throwStackOverflowFromWasmThunkGenerator).code()));
-        });
 
         MacroAssembler::JumpList overflow;
-        m_jit.loadPtr(CCallHelpers::Address(GPRInfo::wasmContextInstancePointer, Instance::offsetOfVM()), GPRInfo::nonPreservedNonArgumentGPR1);
-        overflow.append(m_jit.branchPtr(CCallHelpers::Below, wasmScratchGPR, CCallHelpers::Address(GPRInfo::nonPreservedNonArgumentGPR1, VM::offsetOfSoftStackLimit())));
+        overflow.append(m_jit.branchPtr(CCallHelpers::Above, wasmScratchGPR, GPRInfo::callFrameRegister));
+        overflow.append(m_jit.branchPtr(CCallHelpers::Below, wasmScratchGPR, CCallHelpers::Address(GPRInfo::wasmContextInstancePointer, Instance::offsetOfSoftStackLimit())));
         m_jit.addLinkTask([overflow] (LinkBuffer& linkBuffer) {
             linkBuffer.link(overflow, CodeLocationLabel<JITThunkPtrTag>(Thunks::singleton().stub(throwStackOverflowFromWasmThunkGenerator).code()));
         });
+
         m_jit.move(wasmScratchGPR, MacroAssembler::stackPointerRegister);
 
         LocalOrTempIndex i = 0;
@@ -6257,15 +6253,9 @@ public:
         int roundedFrameSize = WTF::roundUpToMultipleOf(stackAlignmentBytes(), frameSize);
         m_jit.subPtr(GPRInfo::callFrameRegister, TrustedImm32(roundedFrameSize), MacroAssembler::stackPointerRegister);
 
-        MacroAssembler::JumpList underflow;
-        underflow.append(m_jit.branchPtr(CCallHelpers::Above, MacroAssembler::stackPointerRegister, GPRInfo::callFrameRegister));
-        m_jit.addLinkTask([underflow] (LinkBuffer& linkBuffer) {
-            linkBuffer.link(underflow, CodeLocationLabel<JITThunkPtrTag>(Thunks::singleton().stub(throwStackOverflowFromWasmThunkGenerator).code()));
-        });
-
         MacroAssembler::JumpList overflow;
-        m_jit.loadPtr(CCallHelpers::Address(GPRInfo::wasmContextInstancePointer, Instance::offsetOfVM()), GPRInfo::nonPreservedNonArgumentGPR0);
-        overflow.append(m_jit.branchPtr(CCallHelpers::Below, MacroAssembler::stackPointerRegister, CCallHelpers::Address(GPRInfo::nonPreservedNonArgumentGPR0, VM::offsetOfSoftStackLimit())));
+        overflow.append(m_jit.branchPtr(CCallHelpers::Above, MacroAssembler::stackPointerRegister, GPRInfo::callFrameRegister));
+        overflow.append(m_jit.branchPtr(CCallHelpers::Below, MacroAssembler::stackPointerRegister, CCallHelpers::Address(GPRInfo::wasmContextInstancePointer, Instance::offsetOfSoftStackLimit())));
         m_jit.addLinkTask([overflow] (LinkBuffer& linkBuffer) {
             linkBuffer.link(overflow, CodeLocationLabel<JITThunkPtrTag>(Thunks::singleton().stub(throwStackOverflowFromWasmThunkGenerator).code()));
         });

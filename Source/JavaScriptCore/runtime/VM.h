@@ -70,6 +70,7 @@
 #include <wtf/StackPointer.h>
 #include <wtf/Stopwatch.h>
 #include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/ThreadSafeWeakHashSet.h>
 #include <wtf/UniqueArray.h>
 #include <wtf/text/SymbolImpl.h>
 #include <wtf/text/SymbolRegistry.h>
@@ -161,6 +162,9 @@ class Database;
 }
 namespace DOMJIT {
 class Signature;
+}
+namespace Wasm {
+class Instance;
 }
 
 struct EntryFrame;
@@ -965,6 +969,10 @@ public:
 
     Ref<Waiter> syncWaiter();
 
+#if ENABLE(WEBASSEMBLY)
+    void registerWasmInstance(Wasm::Instance&);
+#endif
+
 private:
     VM(VMType, HeapType, WTF::RunLoop* = nullptr, bool* success = nullptr);
     static VM*& sharedInstanceInternal();
@@ -1086,6 +1094,9 @@ private:
     Ref<Waiter> m_syncWaiter;
 
     Vector<Function<void()>> m_didPopListeners;
+#if ENABLE(WEBASSEMBLY)
+    ThreadSafeWeakHashSet<Wasm::Instance> m_wasmInstances;
+#endif
 
 #if ENABLE(DFG_DOES_GC_VALIDATION)
     DoesGCCheck m_doesGC;

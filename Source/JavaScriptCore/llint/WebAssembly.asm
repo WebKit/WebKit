@@ -389,8 +389,7 @@ if not JSVALUE64
 end
 
     bpa ws1, cfr, .stackOverflow
-    loadp Wasm::Instance::m_vm[wasmInstance], ws0
-    bpbeq VM::m_softStackLimit[ws0], ws1, .stackHeightOK
+    bpbeq Wasm::Instance::m_softStackLimit[wasmInstance], ws1, .stackHeightOK
 
 .stackOverflow:
     throwException(StackOverflow)
@@ -485,8 +484,7 @@ if not JSVALUE64
 end
 
     bpa ws1, cfr, .stackOverflow
-    loadp Wasm::Instance::m_vm[wasmInstance], ws0
-    bpbeq VM::m_softStackLimit[ws0], ws1, .stackHeightOK
+    bpbeq Wasm::Instance::m_softStackLimit[wasmInstance], ws1, .stackHeightOK
 
 .stackOverflow:
     throwException(StackOverflow)

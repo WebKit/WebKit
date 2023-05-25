@@ -114,6 +114,7 @@
 #include "VMInspector.h"
 #include "VariableEnvironment.h"
 #include "WaiterListManager.h"
+#include "WasmInstance.h"
 #include "WasmWorklist.h"
 #include "Watchdog.h"
 #include "WeakGCMapInlines.h"
@@ -959,9 +960,7 @@ static void preCommitStackMemory(void* stackLimit)
 
 void VM::updateStackLimits()
 {
-#if OS(WINDOWS)
     void* lastSoftStackLimit = m_softStackLimit;
-#endif
 
     const StackBounds& stack = Thread::current().stack();
     size_t reservedZoneSize = Options::reservedZoneSize();
@@ -980,18 +979,23 @@ void VM::updateStackLimits()
         m_stackLimit = stack.recursionLimit(reservedZoneSize);
     }
 
+    if (lastSoftStackLimit != m_softStackLimit) {
 #if OS(WINDOWS)
-    // We only need to precommit stack memory dictated by the VM::m_softStackLimit limit.
-    // This is because VM::m_softStackLimit applies to stack usage by LLINT asm or JIT
-    // generated code which can allocate stack space that the C++ compiler does not know
-    // about. As such, we have to precommit that stack memory manually.
-    //
-    // In contrast, we do not need to worry about VM::m_stackLimit because that limit is
-    // used exclusively by C++ code, and the C++ compiler will automatically commit the
-    // needed stack pages.
-    if (lastSoftStackLimit != m_softStackLimit)
+        // We only need to precommit stack memory dictated by the VM::m_softStackLimit limit.
+        // This is because VM::m_softStackLimit applies to stack usage by LLINT asm or JIT
+        // generated code which can allocate stack space that the C++ compiler does not know
+        // about. As such, we have to precommit that stack memory manually.
+        //
+        // In contrast, we do not need to worry about VM::m_stackLimit because that limit is
+        // used exclusively by C++ code, and the C++ compiler will automatically commit the
+        // needed stack pages.
         preCommitStackMemory(m_softStackLimit);
 #endif
+#if ENABLE(WEBASSEMBLY)
+        for (auto& instance : m_wasmInstances.values())
+            instance->updateSoftStackLimit(m_softStackLimit);
+#endif
+    }
 }
 
 #if ENABLE(DFG_JIT)
@@ -1650,5 +1654,12 @@ void VM::invalidateStructureChainIntegrity(StructureChainIntegrityEvent)
     if (m_megamorphicCache)
         m_megamorphicCache->bumpEpoch();
 }
+
+#if ENABLE(WEBASSEMBLY)
+void VM::registerWasmInstance(Wasm::Instance& instance)
+{
+    m_wasmInstances.add(instance);
+}
+#endif
 
 } // namespace JSC
