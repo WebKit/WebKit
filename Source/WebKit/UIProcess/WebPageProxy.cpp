@@ -168,7 +168,7 @@
 #include <WebCore/AlternativeTextClient.h>
 #include <WebCore/AppHighlight.h>
 #include <WebCore/BitmapImage.h>
-#include <WebCore/CompositionHighlight.h>
+#include <WebCore/CompositionAttribute.h>
 #include <WebCore/CrossSiteNavigationDataTransfer.h>
 #include <WebCore/DOMPasteAccess.h>
 #include <WebCore/DeprecatedGlobalSettings.h>

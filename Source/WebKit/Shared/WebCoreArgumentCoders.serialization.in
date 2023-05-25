@@ -1476,9 +1476,18 @@ struct WebCore::WindowFeatures {
     [NotSerialized] Vector<String> additionalFeatures;
 };
 
-[Nested] enum class WebCore::CompositionUnderlineColor : bool
+header: <WebCore/CompositionAttribute.h>
 
-struct WebCore::CompositionUnderline {
+enum class WebCore::CompositionUnderlineColor : bool
+
+[CustomHeader] struct WebCore::CompositionHighlight {
+    unsigned startOffset;
+    unsigned endOffset;
+    std::optional<WebCore::Color> backgroundColor;
+    std::optional<WebCore::Color> foregroundColor;
+};
+
+[CustomHeader] struct WebCore::CompositionUnderline {
     unsigned startOffset;
     unsigned endOffset;
     WebCore::CompositionUnderlineColor compositionUnderlineColor;
@@ -3196,13 +3205,6 @@ struct WebCore::FontShadow {
     WebCore::Color color;
     WebCore::FloatSize offset;
     double blurRadius;
-};
-
-struct WebCore::CompositionHighlight {
-    unsigned startOffset;
-    unsigned endOffset;
-    std::optional<WebCore::Color> backgroundColor;
-    std::optional<WebCore::Color> foregroundColor;
 };
 
 header: <WebCore/FontAttributeChanges.h>

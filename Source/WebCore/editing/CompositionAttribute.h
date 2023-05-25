@@ -29,11 +29,25 @@
 
 namespace WebCore {
 
-struct CompositionHighlight {
-    CompositionHighlight() = default;
-    CompositionHighlight(unsigned startOffset, unsigned endOffset, const std::optional<Color>& backgroundColor, const std::optional<Color>& foregroundColor)
+struct CompositionAttribute {
+    CompositionAttribute() = default;
+    CompositionAttribute(unsigned startOffset, unsigned endOffset)
         : startOffset(startOffset)
         , endOffset(endOffset)
+    {
+    }
+    virtual ~CompositionAttribute() = default;
+
+    unsigned startOffset { 0 };
+    unsigned endOffset { 0 };
+};
+
+// Highlights
+
+struct CompositionHighlight : CompositionAttribute {
+    CompositionHighlight() = default;
+    CompositionHighlight(unsigned startOffset, unsigned endOffset, const std::optional<Color>& backgroundColor, const std::optional<Color>& foregroundColor)
+        : CompositionAttribute(startOffset, endOffset)
         , backgroundColor(backgroundColor)
         , foregroundColor(foregroundColor)
     {
@@ -45,10 +59,28 @@ struct CompositionHighlight {
     static constexpr auto defaultCompositionFillColor = SRGBA<uint8_t> { 225, 221, 85 };
 #endif
 
-    unsigned startOffset { 0 };
-    unsigned endOffset { 0 };
     std::optional<Color> backgroundColor;
     std::optional<Color> foregroundColor;
 };
+
+// Underline
+
+enum class CompositionUnderlineColor : bool { GivenColor, TextColor };
+
+struct CompositionUnderline : CompositionAttribute {
+    CompositionUnderline() = default;
+    CompositionUnderline(unsigned startOffset, unsigned endOffset, CompositionUnderlineColor compositionUnderlineColor, const Color& color, bool thick)
+        : CompositionAttribute(startOffset, endOffset)
+        , compositionUnderlineColor(compositionUnderlineColor)
+        , color(color)
+        , thick(thick)
+    {
+    }
+
+    CompositionUnderlineColor compositionUnderlineColor { CompositionUnderlineColor::TextColor };
+    Color color;
+    bool thick { false };
+};
+
 
 } // namespace WebCore

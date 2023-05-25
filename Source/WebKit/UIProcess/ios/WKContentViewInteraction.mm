@@ -104,7 +104,7 @@
 #import <WebCore/AppHighlight.h>
 #import <WebCore/ColorCocoa.h>
 #import <WebCore/ColorSerialization.h>
-#import <WebCore/CompositionHighlight.h>
+#import <WebCore/CompositionAttribute.h>
 #import <WebCore/DOMPasteAccess.h>
 #import <WebCore/DataDetection.h>
 #import <WebCore/FloatQuad.h>

@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "CompositionUnderline.h"
+#include "CompositionAttribute.h"
 #include "DocumentMarker.h"
 #include "EditAction.h"
 #include "EditingBehavior.h"

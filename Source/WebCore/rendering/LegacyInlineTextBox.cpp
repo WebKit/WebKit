@@ -24,7 +24,7 @@
 #include "LegacyInlineTextBox.h"
 
 #include "BreakLines.h"
-#include "CompositionHighlight.h"
+#include "CompositionAttribute.h"
 #include "DashArray.h"
 #include "Document.h"
 #include "DocumentMarkerController.h"

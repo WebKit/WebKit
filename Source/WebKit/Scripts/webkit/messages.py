@@ -700,6 +700,8 @@ def headers_for_type(type):
         'WebCore::COEPDisposition': ['<WebCore/CrossOriginEmbedderPolicy.h>'],
         'WebCore::ColorSchemePreference': ['<WebCore/DocumentLoader.h>'],
         'WebCore::CompositeOperator': ['<WebCore/GraphicsTypes.h>'],
+        'WebCore::CompositionHighlight': ['<WebCore/CompositionAttribute.h>'],
+        'WebCore::CompositionUnderline': ['<WebCore/CompositionAttribute.h>'],
         'WebCore::Cookie': ['<WebCore/Cookie.h>'],
         'WebCore::COOPDisposition': ['<WebCore/CrossOriginOpenerPolicy.h>'],
         'WebCore::CreateNewGroupForHighlight': ['<WebCore/AppHighlight.h>'],

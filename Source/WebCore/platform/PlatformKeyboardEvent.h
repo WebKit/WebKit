@@ -26,7 +26,7 @@
 
 #pragma once
 
-#include "CompositionUnderline.h"
+#include "CompositionAttribute.h"
 #include "KeypressCommand.h"
 #include "PlatformEvent.h"
 #include <wtf/WindowsExtras.h>

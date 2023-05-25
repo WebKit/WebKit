@@ -28,7 +28,7 @@
 
 #include "EditingRange.h"
 #include "WebEvent.h"
-#include <WebCore/CompositionUnderline.h>
+#include <WebCore/CompositionAttribute.h>
 
 #if USE(APPKIT)
 #include <WebCore/KeypressCommand.h>

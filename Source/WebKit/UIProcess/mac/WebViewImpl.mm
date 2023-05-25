@@ -87,7 +87,7 @@
 #import <WebCore/AttributedString.h>
 #import <WebCore/ColorMac.h>
 #import <WebCore/ColorSerialization.h>
-#import <WebCore/CompositionHighlight.h>
+#import <WebCore/CompositionAttribute.h>
 #import <WebCore/DataDetectorElementInfo.h>
 #import <WebCore/DestinationColorSpace.h>
 #import <WebCore/DictionaryLookup.h>

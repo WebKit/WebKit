@@ -66,7 +66,7 @@
 #import <WebCore/CachedResourceLoader.h>
 #import <WebCore/Chrome.h>
 #import <WebCore/ColorMac.h>
-#import <WebCore/CompositionHighlight.h>
+#import <WebCore/CompositionAttribute.h>
 #import <WebCore/DatabaseManager.h>
 #import <WebCore/DocumentFragment.h>
 #import <WebCore/DocumentLoader.h>

@@ -78,7 +78,7 @@
 #import <WebCore/CachedResourceLoader.h>
 #import <WebCore/Chrome.h>
 #import <WebCore/ColorMac.h>
-#import <WebCore/CompositionHighlight.h>
+#import <WebCore/CompositionAttribute.h>
 #import <WebCore/ContextMenu.h>
 #import <WebCore/ContextMenuController.h>
 #import <WebCore/DeprecatedGlobalSettings.h>

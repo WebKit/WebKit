@@ -45,7 +45,7 @@
 #include <WebCore/CacheQueryOptions.h>
 #include <WebCore/CacheStorageConnection.h>
 #include <WebCore/ColorWellPart.h>
-#include <WebCore/CompositionUnderline.h>
+#include <WebCore/CompositionAttribute.h>
 #include <WebCore/ControlPart.h>
 #include <WebCore/Credential.h>
 #include <WebCore/Cursor.h>
