@@ -43,6 +43,7 @@ depends:
 - sdk/ruby-webrick.bst
 - sdk/sccache.bst
 - sdk/sparkle-cdm.bst
+- sdk/svt-av1.bst
 - sdk/unifdef.bst
 - sdk/woff2.bst
 - sdk/wpebackend-fdo.bst
