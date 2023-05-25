@@ -460,17 +460,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     return cgContext;
 }
 
-std::optional<IOSurface::LockAndContext> IOSurface::createBitmapPlatformContext()
-{
-    IOSurface::Locker locker { *this, IOSurface::Locker::AccessMode::ReadWrite };
-    auto configuration = bitmapConfiguration();
-    auto size = this->size();
-    auto context = adoptCF(CGBitmapContextCreate(locker.surfaceBaseAddress(), size.width(), size.height(), configuration.bitsPerComponent, bytesPerRow(), colorSpace().platformColorSpace(), configuration.bitmapInfo));
-    if (!context)
-        return std::nullopt;
-    return LockAndContext { WTFMove(locker), WTFMove(context) };
-}
-
 SetNonVolatileResult IOSurface::state() const
 {
     uint32_t previousState = 0;

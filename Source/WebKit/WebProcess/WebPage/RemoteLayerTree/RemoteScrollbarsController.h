@@ -32,9 +32,8 @@
 #include <wtf/RetainPtr.h>
 #include <wtf/ThreadSafeWeakPtr.h>
 
-namespace WebCore {
 class ScrollingCoordinator;
-}
+class Scrollbar;
 
 namespace WebKit {
 
@@ -57,6 +56,6 @@ private:
     ThreadSafeWeakPtr<WebCore::ScrollingCoordinator> m_coordinator;
 };
 
-} // namespace WebKit
+} // namespace WebCore
 
 #endif // PLATFORM(MAC)

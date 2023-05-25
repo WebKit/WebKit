@@ -1199,8 +1199,7 @@ enum class WebCore::RenderingPurpose : uint8_t {
     LayerBacking,
     Snapshot,
     ShareableSnapshot,
-    ShareableLocalSnapshot,
-    MediaPainting,
+    MediaPainting
 };
 
 #if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
