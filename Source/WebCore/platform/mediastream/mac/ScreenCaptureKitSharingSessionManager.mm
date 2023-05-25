@@ -42,6 +42,14 @@
 
 using namespace WebCore;
 
+typedef NS_OPTIONS(NSUInteger, WKSCContentSharingPickerMode) {
+    WKSCContentSharingPickerModeSingleWindow          = 1 << 0,
+    WKSCContentSharingPickerModeMultipleWindows       = 1 << 1,
+    WKSCContentSharingPickerModeSingleApplication     = 1 << 2,
+    WKSCContentSharingPickerModeMultipleApplications  = 1 << 3,
+    WKSCContentSharingPickerModeSingleDisplay         = 1 << 4
+};
+
 @protocol WKSCContentSharingPickerDelegate <NSObject>
 @required
 - (void)contentSharingPicker:(SCContentSharingPicker *)picker didUpdateWithFilter:(SCContentFilter *)filter forStream:(SCStream *)stream;
@@ -416,13 +424,13 @@ bool ScreenCaptureKitSharingSessionManager::promptWithSCContentSharingPicker(Dis
     auto configuration = adoptNS([PAL::allocSCContentSharingPickerConfigurationInstance() init]);
     switch (promptType) {
     case DisplayCapturePromptType::Window:
-        [configuration setAllowedPickingModes:SCContentSharingPickerModeSingleWindow];
+        [configuration setAllowedPickingModes:(SCContentSharingPickerMode)WKSCContentSharingPickerModeSingleWindow];
         break;
     case DisplayCapturePromptType::Screen:
-        [configuration setAllowedPickingModes:SCContentSharingPickerModeSingleDisplay];
+        [configuration setAllowedPickingModes:(SCContentSharingPickerMode)WKSCContentSharingPickerModeSingleDisplay];
         break;
     case DisplayCapturePromptType::UserChoose:
-        [configuration setAllowedPickingModes:SCContentSharingPickerModeSingleWindow | SCContentSharingPickerModeSingleDisplay];
+        [configuration setAllowedPickingModes:(SCContentSharingPickerMode)(WKSCContentSharingPickerModeSingleWindow | WKSCContentSharingPickerModeSingleDisplay)];
         break;
     }
 
@@ -431,7 +439,6 @@ bool ScreenCaptureKitSharingSessionManager::promptWithSCContentSharingPicker(Dis
     picker.maxStreamCount = @(1);
     picker.configuration = configuration.get();
     picker.delegate = (id<SCContentSharingPickerDelegate> _Nullable)m_promptHelper.get();
-
     [picker present];
 
     return true;
