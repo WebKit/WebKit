@@ -189,7 +189,7 @@ ExceptionOr<void> History::stateObjectAdded(RefPtr<SerializedScriptValue>&& data
 
     // Each unique main-frame document is only allowed to send 64MB of state object payload to the UI client/process.
     static uint32_t totalStateObjectPayloadLimit = 0x4000000;
-    static Seconds stateObjectTimeSpan { 30_s };
+    static Seconds stateObjectTimeSpan { 10_s };
     static unsigned perStateObjectTimeSpanLimit = 100;
 
     auto* frame = this->frame();
