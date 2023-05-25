@@ -2296,12 +2296,8 @@ static void runTest(ResponseType responseType)
     EXPECT_TRUE(isTestServerTrust(webView.get().serverTrust));
 }
 
-// FIXME when rdar://109725221 is resolved
-#if PLATFORM(IOS)
+// FIXME when rdar://109725221 & rdar://109852531 is resolved
 TEST(ServiceWorkers, DISABLED_ServerTrust)
-#else
-TEST(ServiceWorkers, ServerTrust)
-#endif
 {
     runTest(ResponseType::Synthetic);
     runTest(ResponseType::Cached);
