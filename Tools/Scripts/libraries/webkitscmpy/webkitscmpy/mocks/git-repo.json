@@ -186,6 +186,7 @@
             "timestamp": 1601672000, 
             "branch": "eng/squash-branch", 
             "message": "Changed something 1",
+            "identifier": "5.1@eng/squash-branch",
             "changeFiles": {
                 "a.cpp": "diff --git a/a.cpp b/a.cpp"
             }
@@ -201,6 +202,7 @@
             "timestamp": 1601674000, 
             "branch": "eng/squash-branch", 
             "message": "Changed something 2",
+            "identifier": "5.2@eng/squash-branch",
             "changeFiles": {
                 "c.cpp": "diff --git a/c.cpp b/c.cpp"
             }
@@ -216,6 +218,7 @@
             "timestamp": 1601677000, 
             "branch": "eng/squash-branch", 
             "message": "Changed something 3",
+            "identifier": "5.3@eng/squash-branch",
             "changeFiles": {
                 "a.cpp": "diff --git a/a.cpp b/a.cpp",
                 "b.cpp": "diff --git a/b.cpp b/b.cpp"
