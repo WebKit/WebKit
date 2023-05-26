@@ -281,12 +281,8 @@ endif ()
 if (ENABLE_WPE_QT_API)
     find_package(Qt5 REQUIRED COMPONENTS Core Quick Gui)
     find_package(Qt5Test REQUIRED)
-endif ()
-
-if (ENABLE_WPE_QT_API OR USE_WPE_VIDEO_PLANE_DISPLAY_DMABUF)
     find_package(WPEBackend_fdo 1.5.0 REQUIRED)
 endif ()
-
 
 if (ENABLE_WEBXR)
     if (NOT ENABLE_GAMEPAD)
