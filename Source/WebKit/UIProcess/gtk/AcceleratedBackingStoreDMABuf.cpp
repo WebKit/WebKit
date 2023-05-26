@@ -160,9 +160,13 @@ AcceleratedBackingStoreDMABuf::Texture::~Texture()
         glDeleteTextures(1, &m_textureID);
 }
 
-bool AcceleratedBackingStoreDMABuf::Texture::swap()
+void AcceleratedBackingStoreDMABuf::Texture::swap()
 {
     std::swap(m_backImage, m_frontImage);
+}
+
+bool AcceleratedBackingStoreDMABuf::Texture::prepareForRendering()
+{
     if (!m_textureID)
         return false;
 
@@ -274,15 +278,21 @@ RefPtr<cairo_surface_t> AcceleratedBackingStoreDMABuf::Surface::map(RefPtr<Share
     return bitmap->createCairoSurface();
 }
 
-bool AcceleratedBackingStoreDMABuf::Surface::swap()
+void AcceleratedBackingStoreDMABuf::Surface::swap()
 {
-    if (m_backBitmap && m_frontBitmap) {
+    if (m_backBitmap && m_frontBitmap)
         std::swap(m_backBitmap, m_frontBitmap);
-        m_surface = map(m_frontBitmap);
-    } else {
+    else
         std::swap(m_backBuffer, m_frontBuffer);
+}
+
+bool AcceleratedBackingStoreDMABuf::Surface::prepareForRendering()
+{
+    if (m_backBitmap && m_frontBitmap)
+        m_surface = map(m_frontBitmap);
+    else
         m_surface = map(m_frontBuffer);
-    }
+
     if (m_surface) {
         cairo_surface_mark_dirty(m_surface.get());
         return true;
@@ -370,12 +380,15 @@ void AcceleratedBackingStoreDMABuf::frame()
     else
         std::swap(m_surface.backFD, m_surface.frontFD);
 
-    if (!m_committedSource || !m_committedSource->swap()) {
-        frameDone();
-        return;
+    if (m_committedSource) {
+        m_committedSource->swap();
+        if (m_committedSource->prepareForRendering()) {
+            gtk_widget_queue_draw(m_webPage.viewWidget());
+            return;
+        }
     }
 
-    gtk_widget_queue_draw(m_webPage.viewWidget());
+    frameDone();
 }
 
 void AcceleratedBackingStoreDMABuf::frameDone()
@@ -393,7 +406,8 @@ void AcceleratedBackingStoreDMABuf::realize()
         return;
 
     m_committedSource = createSource();
-    gtk_widget_queue_draw(m_webPage.viewWidget());
+    if (m_committedSource->prepareForRendering())
+        gtk_widget_queue_draw(m_webPage.viewWidget());
 }
 
 void AcceleratedBackingStoreDMABuf::unrealize()

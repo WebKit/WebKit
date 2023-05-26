@@ -85,7 +85,8 @@ private:
         WTF_MAKE_FAST_ALLOCATED;
     public:
         virtual ~RenderSource() = default;
-        virtual bool swap() = 0;
+        virtual void swap() = 0;
+        virtual bool prepareForRendering() = 0;
 #if USE(GTK4)
         virtual void snapshot(GtkSnapshot*) const = 0;
 #else
@@ -109,7 +110,8 @@ private:
         unsigned texture() const { return m_textureID; }
 
     private:
-        bool swap() override;
+        void swap() override;
+        bool prepareForRendering() override;
 #if USE(GTK4)
         void snapshot(GtkSnapshot*) const override;
 #else
@@ -135,7 +137,8 @@ private:
         cairo_surface_t* surface() const { return m_surface.get(); }
 
     private:
-        bool swap() override;
+        void swap() override;
+        bool prepareForRendering() override;
 #if USE(GTK4)
         void snapshot(GtkSnapshot*) const override;
 #else
