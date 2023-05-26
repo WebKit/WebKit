@@ -75,6 +75,23 @@ public:
         return *node;
     }
 
+    class State {
+        friend Builder;
+    private:
+        State() = default;
+
+        uint8_t* m_arena;
+#if ASSERT_ENABLED
+        uint8_t* m_arenaStart;
+        uint8_t* m_arenaEnd;
+#endif
+        unsigned m_numberOfArenas;
+        unsigned m_numberOfNodes;
+    };
+
+    State saveCurrentState();
+    void restore(State&&);
+
 private:
     static constexpr size_t alignSize(size_t size)
     {

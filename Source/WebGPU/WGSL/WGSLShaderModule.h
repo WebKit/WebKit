@@ -145,6 +145,25 @@ public:
         m_replacements.clear();
     }
 
+    class Compilation {
+    public:
+        Compilation(ShaderModule& shaderModule)
+            : m_shaderModule(shaderModule)
+            , m_builderState(shaderModule.astBuilder().saveCurrentState())
+        {
+        }
+
+        ~Compilation()
+        {
+            m_shaderModule.revertReplacements();
+            m_shaderModule.astBuilder().restore(WTFMove(m_builderState));
+        }
+
+    private:
+        ShaderModule& m_shaderModule;
+        AST::Builder::State m_builderState;
+    };
+
 private:
     String m_source;
     bool m_usesExternalTextures { false };

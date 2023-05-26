@@ -95,6 +95,8 @@ SuccessfulCheck::~SuccessfulCheck() = default;
 
 inline PrepareResult prepareImpl(ShaderModule& ast, const HashMap<String, std::optional<PipelineLayout>>& pipelineLayouts)
 {
+    ShaderModule::Compilation compilation(ast);
+
     PhaseTimes phaseTimes;
     PrepareResult result;
 
@@ -116,7 +118,6 @@ inline PrepareResult prepareImpl(ShaderModule& ast, const HashMap<String, std::o
 
     logPhaseTimes(phaseTimes);
 
-    ast.revertReplacements();
     return result;
 }
 
