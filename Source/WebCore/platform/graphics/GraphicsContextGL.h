@@ -1590,7 +1590,7 @@ public:
 
     IntSize getInternalFramebufferSize() const { return IntSize(m_currentWidth, m_currentHeight); }
 
-    struct PixelStoreParams final {
+    struct PixelStoreParameters final {
         GCGLint alignment { 4 };
         GCGLint rowLength { 0 };
         GCGLint imageHeight { 0 };
@@ -1608,7 +1608,7 @@ public:
     // return the suggested GL error indicating the cause of the failure:
     //   INVALID_VALUE if width/height is negative or overflow happens.
     //   INVALID_ENUM if format/type is illegal.
-    static GCGLenum computeImageSizeInBytes(GCGLenum format, GCGLenum type, GCGLsizei width, GCGLsizei height, GCGLsizei depth, const PixelStoreParams&, unsigned* imageSizeInBytes, unsigned* paddingInBytes, unsigned* skipSizeInBytes);
+    static GCGLenum computeImageSizeInBytes(GCGLenum format, GCGLenum type, GCGLsizei width, GCGLsizei height, GCGLsizei depth, const PixelStoreParameters&, unsigned* imageSizeInBytes, unsigned* paddingInBytes, unsigned* skipSizeInBytes);
 
     // Extracts the contents of the given PixelBuffer into the passed Vector,
     // packing the pixel data according to the given format and type,
@@ -1621,7 +1621,7 @@ public:
     // If the data is not tightly packed according to the passed
     // unpackParams, the output data will be tightly packed.
     // Returns true if successful, false if any error occurred.
-    static bool extractTextureData(unsigned width, unsigned height, GCGLenum format, GCGLenum type, const PixelStoreParams& unpackParams, bool flipY, bool premultiplyAlpha, std::span<const uint8_t> pixels, Vector<uint8_t>& data);
+    static bool extractTextureData(unsigned width, unsigned height, GCGLenum format, GCGLenum type, const PixelStoreParameters& unpackParams, bool flipY, bool premultiplyAlpha, std::span<const uint8_t> pixels, Vector<uint8_t>& data);
 
     // Packs the contents of the given Image which is passed in |pixels| into the passed Vector
     // according to the given format and type, and obeying the flipY and AlphaOp flags.

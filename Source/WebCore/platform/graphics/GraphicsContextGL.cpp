@@ -425,7 +425,7 @@ unsigned GraphicsContextGL::computeBytesPerGroup(GCGLenum format, GCGLenum type)
     }
 }
 
-GCGLenum GraphicsContextGL::computeImageSizeInBytes(GCGLenum format, GCGLenum type, GCGLsizei width, GCGLsizei height, GCGLsizei depth, const PixelStoreParams& params, unsigned* imageSizeInBytes, unsigned* paddingInBytes, unsigned* skipSizeInBytes)
+GCGLenum GraphicsContextGL::computeImageSizeInBytes(GCGLenum format, GCGLenum type, GCGLsizei width, GCGLsizei height, GCGLsizei depth, const PixelStoreParameters& params, unsigned* imageSizeInBytes, unsigned* paddingInBytes, unsigned* skipSizeInBytes)
 {
     ASSERT(imageSizeInBytes);
     ASSERT(params.alignment == 1 || params.alignment == 2 || params.alignment == 4 || params.alignment == 8);
@@ -532,7 +532,7 @@ bool GraphicsContextGL::packImageData(Image* image, const void* pixels, GCGLenum
 
     unsigned packedSize;
     // Output data is tightly packed (alignment == 1).
-    PixelStoreParams params;
+    PixelStoreParameters params;
     params.alignment = 1;
     if (computeImageSizeInBytes(format, type, sourceImageSubRectangle.width(), sourceImageSubRectangle.height(), depth, params, &packedSize, nullptr, nullptr) != GraphicsContextGL::NO_ERROR)
         return false;
@@ -552,7 +552,7 @@ bool GraphicsContextGL::extractPixelBuffer(const PixelBuffer& pixelBuffer, DataF
 
     unsigned packedSize;
     // Output data is tightly packed (alignment == 1).
-    PixelStoreParams params;
+    PixelStoreParameters params;
     params.alignment = 1;
     if (computeImageSizeInBytes(format, type, sourceImageSubRectangle.width(), sourceImageSubRectangle.height(), depth, params, &packedSize, nullptr, nullptr) != GraphicsContextGL::NO_ERROR)
         return false;
@@ -564,7 +564,7 @@ bool GraphicsContextGL::extractPixelBuffer(const PixelBuffer& pixelBuffer, DataF
     return true;
 }
 
-bool GraphicsContextGL::extractTextureData(unsigned width, unsigned height, GCGLenum format, GCGLenum type, const PixelStoreParams& unpackParams, bool flipY, bool premultiplyAlpha, std::span<const uint8_t> pixels, Vector<uint8_t>& data)
+bool GraphicsContextGL::extractTextureData(unsigned width, unsigned height, GCGLenum format, GCGLenum type, const PixelStoreParameters& unpackParams, bool flipY, bool premultiplyAlpha, std::span<const uint8_t> pixels, Vector<uint8_t>& data)
 {
     // Assumes format, type, etc. have already been validated.
     DataFormat sourceDataFormat = getDataFormat(format, type);

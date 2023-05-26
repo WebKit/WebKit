@@ -482,6 +482,11 @@ public:
 
     // Returns the ordinal number of when the context was last active (drew, read pixels).
     uint64_t activeOrdinal() const { return m_activeOrdinal; }
+
+    using PixelStoreParameters = GraphicsContextGL::PixelStoreParameters;
+    const PixelStoreParameters& pixelStorePackParameters() const { return m_packParameters; }
+    const PixelStoreParameters& unpackPixelStoreParameters() const { return m_unpackParameters; };
+
 protected:
     WebGLRenderingContextBase(CanvasBase&, WebGLContextAttributes);
     WebGLRenderingContextBase(CanvasBase&, Ref<GraphicsContextGL>&&, WebGLContextAttributes);
@@ -514,7 +519,6 @@ protected:
 
     // Implementation helpers.
     friend class InspectorScopedShaderProgramHighlight;
-    friend class ScopedUnpackParametersResetRestore;
 
     virtual void initializeNewContext();
     virtual void initializeVertexArrayObjects() = 0;
@@ -571,11 +575,6 @@ protected:
 
     // Adds a compressed texture format.
     void addCompressedTextureFormat(GCGLenum);
-
-    // Set UNPACK_ALIGNMENT to 1, all other parameters to 0.
-    virtual void resetUnpackParameters();
-    // Restore the client unpack parameters.
-    virtual void restoreUnpackParameters();
 
     RefPtr<Image> drawImageIntoBuffer(Image&, int width, int height, int deviceScaleFactor, const char* functionName);
 
@@ -692,8 +691,8 @@ protected:
     bool m_drawBuffersWebGLRequirementsChecked;
     bool m_drawBuffersSupported;
 
-    GCGLint m_packAlignment;
-    GCGLint m_unpackAlignment;
+    PixelStoreParameters m_packParameters;
+    PixelStoreParameters m_unpackParameters;
     bool m_unpackFlipY;
     bool m_unpackPremultiplyAlpha;
     GCGLenum m_unpackColorspaceConversion;
@@ -865,9 +864,7 @@ protected:
     static const char* texImageFunctionName(TexImageFunctionID);
     static TexImageFunctionType texImageFunctionType(TexImageFunctionID);
 
-    using PixelStoreParams = GraphicsContextGL::PixelStoreParams;
-    virtual PixelStoreParams getPackPixelStoreParams() const;
-    virtual PixelStoreParams getUnpackPixelStoreParams(TexImageDimension) const;
+    PixelStoreParameters computeUnpackPixelStoreParameters(TexImageDimension) const;
 
     // Helper function to verify limits on the length of uniform and attribute locations.
     bool validateLocationLength(const char* functionName, const String&);
