@@ -93,7 +93,7 @@ std::optional<NotificationData> NotificationData::fromDictionary(NSDictionary *d
 
 NSDictionary *NotificationData::dictionaryRepresentation() const
 {
-    return @{
+    NSMutableDictionary *result = @{
         WebNotificationTitleKey : (NSString *)title,
         WebNotificationBodyKey : (NSString *)body,
         WebNotificationIconURLKey : (NSString *)iconURL,
@@ -106,8 +106,12 @@ NSDictionary *NotificationData::dictionaryRepresentation() const
         WebNotificationContextUUIDStringKey : (NSString *)contextIdentifier.toString(),
         WebNotificationSessionIDKey : @(sourceSession.toUInt64()),
         WebNotificationDataKey: [NSData dataWithBytes:data.data() length:data.size()],
-        WebNotificationSilentKey: silent == std::nullopt ? [NSNull null] : [NSNumber numberWithBool:*silent]
-    };
+    }.mutableCopy;
+
+    if (silent != std::nullopt)
+        result[WebNotificationSilentKey] = @(*silent);
+
+    return result;
 }
 
 } // namespace WebKit

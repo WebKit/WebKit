@@ -358,7 +358,7 @@ TEST(PushAPI, testSilentFlag)
     EXPECT_TRUE(pushMessageSuccessful);
     EXPECT_TRUE([delegate.get().mostRecentNotification.title isEqualToString:@"nothing"]);
     EXPECT_EQ(delegate.get().mostRecentNotification.alert, _WKNotificationAlertDefault);
-    EXPECT_TRUE([delegate.get().mostRecentNotification.userInfo[@"WebNotificationSilentKey"] isEqual:[NSNull null]]);
+    EXPECT_TRUE(delegate.get().mostRecentNotification.userInfo[@"WebNotificationSilentKey"] == nil);
 
     done = false;
     pushMessageProcessed = false;
