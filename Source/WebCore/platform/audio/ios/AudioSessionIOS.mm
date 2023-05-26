@@ -171,6 +171,8 @@ void AudioSessionIOS::setCategory(CategoryType newCategory, Mode newMode, RouteS
 
     LOG(Media, "AudioSession::setCategory() - category = %s mode = %s", convertEnumerationToString(newCategory).ascii().data(), convertEnumerationToString(newMode).ascii().data());
 
+    AudioSessionCocoa::setCategory(newCategory, newMode, policy);
+
     if (categoryOverride() != CategoryType::None && categoryOverride() != newCategory) {
         LOG(Media, "AudioSession::setCategory() - override set, NOT changing");
         return;
