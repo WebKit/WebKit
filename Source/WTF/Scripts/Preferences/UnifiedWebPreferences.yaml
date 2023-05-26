@@ -637,7 +637,7 @@ AsynchronousSpellCheckingEnabled:
 
 AttachmentElementEnabled:
   type: bool
-  status: embedder
+  status: internal
   humanReadableName: "Attachment Element"
   humanReadableDescription: "Allow the insertion of attachment elements"
   webcoreBinding: DeprecatedGlobalSettings
@@ -650,7 +650,7 @@ AttachmentElementEnabled:
 
 AttachmentWideLayoutEnabled:
   type: bool
-  status: embedder
+  status: internal
   humanReadableName: "Attachment wide-layout styling"
   humanReadableDescription: "Use horizontal wide-layout attachment style, requires Attachment Element"
   condition: ENABLE(ATTACHMENT_ELEMENT)

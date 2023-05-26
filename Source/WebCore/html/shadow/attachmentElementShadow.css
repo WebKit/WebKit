@@ -36,7 +36,7 @@ div#attachment-container {
     height: 80px;
     background-color: -apple-system-tertiary-fill;
 #endif
-    margin: 1px;
+    /* margin: 1px; */
     border-radius: 8px;
     font: caption;
     pointer-events: none;
@@ -46,6 +46,20 @@ div#attachment-container {
 
 div#attachment-container::selection {
     background-color: -apple-system-selected-content-background;
+}
+
+span#attachment-selectable-overlay {
+    position: absolute;
+    inset: 0;
+    font-size: 1064px;
+    overflow: hidden;
+#if (defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY)
+    width: 338px;
+    height: 92px;
+#else
+    width: 266px;
+    height: 80px;
+#endif
 }
 
 div#attachment-preview-area {
