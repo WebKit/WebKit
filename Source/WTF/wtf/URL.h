@@ -142,13 +142,13 @@ public:
     // Returns true if the current URL's protocol is the same as the null-
     // terminated ASCII argument. The argument must be lower-case.
     WTF_EXPORT_PRIVATE bool protocolIs(StringView) const;
-    bool protocolIsAbout() const { return protocolIs("about"_s); };
+    bool protocolIsAbout() const { return protocolIs("about"_s); }
     bool protocolIsBlob() const { return protocolIs("blob"_s); }
     bool protocolIsData() const { return protocolIs("data"_s); }
     bool protocolIsFile() const { return protocolIs("file"_s); }
     WTF_EXPORT_PRIVATE bool protocolIsJavaScript() const;
-    WTF_EXPORT_PRIVATE bool protocolIsInFTPFamily() const;
-    bool protocolIsInHTTPFamily() const;
+    bool protocolIsInFTPFamily() const { return protocolIs("ftp"_s) || protocolIs("ftps"_s); }
+    bool protocolIsInHTTPFamily() const { return m_protocolIsInHTTPFamily; }
     bool cannotBeABaseURL() const { return m_cannotBeABaseURL; }
 
     WTF_EXPORT_PRIVATE bool isAboutBlank() const;
@@ -273,7 +273,6 @@ WTF_EXPORT_PRIVATE const URL& aboutSrcDocURL();
 
 WTF_EXPORT_PRIVATE bool protocolIs(StringView url, ASCIILiteral protocol);
 WTF_EXPORT_PRIVATE bool protocolIsJavaScript(StringView url);
-WTF_EXPORT_PRIVATE bool protocolIsInFTPFamily(StringView url);
 WTF_EXPORT_PRIVATE bool protocolIsInHTTPFamily(StringView url);
 
 WTF_EXPORT_PRIVATE std::optional<uint16_t> defaultPortForProtocol(StringView protocol);
@@ -355,11 +354,6 @@ inline bool URL::hasQuery() const
 inline bool URL::hasFragmentIdentifier() const
 {
     return m_isValid && m_string.length() > m_queryEnd;
-}
-
-inline bool URL::protocolIsInHTTPFamily() const
-{
-    return m_protocolIsInHTTPFamily;
 }
 
 inline unsigned URL::pathEnd() const
