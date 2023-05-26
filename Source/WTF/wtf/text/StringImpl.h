@@ -441,7 +441,7 @@ public:
 
     WTF_EXPORT_PRIVATE Ref<StringImpl> simplifyWhiteSpace(CodeUnitMatchFunction);
 
-    WTF_EXPORT_PRIVATE Ref<StringImpl> stripLeadingAndTrailingCharacters(CodeUnitMatchFunction);
+    WTF_EXPORT_PRIVATE Ref<StringImpl> trim(CodeUnitMatchFunction);
     template<typename Predicate> Ref<StringImpl> removeCharacters(const Predicate&);
 
     bool isAllASCII() const;
@@ -532,7 +532,7 @@ private:
     WTF_EXPORT_PRIVATE static Ref<StringImpl> createWithoutCopyingNonEmpty(const LChar*, unsigned length);
     WTF_EXPORT_PRIVATE static Ref<StringImpl> createWithoutCopyingNonEmpty(const UChar*, unsigned length);
 
-    template<class CodeUnitPredicate> Ref<StringImpl> stripMatchedCharacters(CodeUnitPredicate);
+    template<class CodeUnitPredicate> Ref<StringImpl> trimMatchedCharacters(CodeUnitPredicate);
     template<typename CharacterType, typename Predicate> ALWAYS_INLINE Ref<StringImpl> removeCharactersImpl(const CharacterType* characters, const Predicate&);
     template<typename CharacterType, class CodeUnitPredicate> Ref<StringImpl> simplifyMatchedCharactersToSpace(CodeUnitPredicate);
     template<typename CharacterType> static Ref<StringImpl> constructInternal(StringImpl&, unsigned);

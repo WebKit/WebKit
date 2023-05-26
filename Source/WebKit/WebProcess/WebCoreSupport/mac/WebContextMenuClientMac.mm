@@ -65,7 +65,7 @@ void WebContextMenuClient::stopSpeaking()
 
 void WebContextMenuClient::searchWithGoogle(const LocalFrame* frame)
 {
-    String searchString = frame->editor().selectedText().stripLeadingAndTrailingCharacters(deprecatedIsSpaceOrNewline);
+    auto searchString = frame->editor().selectedText().trim(deprecatedIsSpaceOrNewline);
     m_page->send(Messages::WebPageProxy::SearchTheWeb(searchString));
 }
 

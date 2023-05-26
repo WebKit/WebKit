@@ -185,7 +185,7 @@ private:
         if (match(attributeName, srcAttr))
             setURLToLoad(attributeValue);
         else if (match(attributeName, crossoriginAttr))
-            m_crossOriginMode = attributeValue.stripLeadingAndTrailingMatchedCharacters(isASCIIWhitespace<UChar>).toString();
+            m_crossOriginMode = attributeValue.trim(isASCIIWhitespace<UChar>).toString();
         else if (match(attributeName, charsetAttr))
             m_charset = attributeValue.toString();
     }
@@ -280,7 +280,7 @@ private:
             else if (match(attributeName, charsetAttr))
                 m_charset = attributeValue.toString();
             else if (match(attributeName, crossoriginAttr))
-                m_crossOriginMode = attributeValue.stripLeadingAndTrailingMatchedCharacters(isASCIIWhitespace<UChar>).toString();
+                m_crossOriginMode = attributeValue.trim(isASCIIWhitespace<UChar>).toString();
             else if (match(attributeName, nonceAttr))
                 m_nonceAttribute = attributeValue.toString();
             else if (match(attributeName, asAttr))
@@ -331,10 +331,10 @@ private:
 
     void setURLToLoadAllowingReplacement(StringView value)
     {
-        auto strippedURL = value.stripLeadingAndTrailingMatchedCharacters(isASCIIWhitespace<UChar>);
-        if (strippedURL.isEmpty())
+        auto trimmedURL = value.trim(isASCIIWhitespace<UChar>);
+        if (trimmedURL.isEmpty())
             return;
-        m_urlToLoad = strippedURL.toString();
+        m_urlToLoad = trimmedURL.toString();
     }
 
     const String& charset() const

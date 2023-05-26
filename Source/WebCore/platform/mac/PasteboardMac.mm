@@ -211,7 +211,7 @@ static long writeURLForTypes(const Vector<String>& types, const String& pasteboa
     }
 
     if (types.contains(WebURLsWithTitlesPboardType)) {
-        PasteboardURL url = { pasteboardURL.url, String(title).stripLeadingAndTrailingCharacters(deprecatedIsSpaceOrNewline), emptyString() };
+        PasteboardURL url = { pasteboardURL.url, String(title).trim(deprecatedIsSpaceOrNewline), emptyString() };
         newChangeCount = platformStrategies()->pasteboardStrategy()->setURL(url, pasteboardName, context);
     }
     if (types.contains(String(legacyURLPasteboardType())))
@@ -233,7 +233,7 @@ void Pasteboard::write(const PasteboardURL& pasteboardURL)
 
 void Pasteboard::writeTrustworthyWebURLsPboardType(const PasteboardURL& pasteboardURL)
 {
-    PasteboardURL url = { pasteboardURL.url, pasteboardURL.title.stripLeadingAndTrailingCharacters(deprecatedIsSpaceOrNewline), emptyString() };
+    PasteboardURL url = { pasteboardURL.url, pasteboardURL.title.trim(deprecatedIsSpaceOrNewline), emptyString() };
     m_changeCount = platformStrategies()->pasteboardStrategy()->setURL(url, m_pasteboardName, context());
 }
 

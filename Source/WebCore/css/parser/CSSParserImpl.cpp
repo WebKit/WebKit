@@ -640,7 +640,7 @@ RefPtr<StyleRuleSupports> CSSParserImpl::consumeSupportsRule(CSSParserTokenRange
     if (m_observerWrapper)
         m_observerWrapper->observer().endRuleBody(m_observerWrapper->endOffset(block));
 
-    return StyleRuleSupports::create(prelude.serialize().stripLeadingAndTrailingCharacters(deprecatedIsSpaceOrNewline), supported, WTFMove(rules));
+    return StyleRuleSupports::create(prelude.serialize().trim(deprecatedIsSpaceOrNewline), supported, WTFMove(rules));
 }
 
 RefPtr<StyleRuleFontFace> CSSParserImpl::consumeFontFaceRule(CSSParserTokenRange prelude, CSSParserTokenRange block)

@@ -65,7 +65,7 @@ static Vector<float> parseKeyTimes(StringView value, bool verifyOrder)
     Vector<float> result;
 
     for (auto keyTime : keyTimes) {
-        keyTime = keyTime.stripLeadingAndTrailingMatchedCharacters(isUnicodeCompatibleASCIIWhitespace<UChar>);
+        keyTime = keyTime.trim(isUnicodeCompatibleASCIIWhitespace<UChar>);
 
         bool ok;
         float time = keyTime.toFloat(ok);
@@ -156,7 +156,7 @@ bool SVGAnimationElement::attributeContainsJavaScriptURL(const Attribute& attrib
 
     if (attribute.name() == SVGNames::valuesAttr) {
         for (auto innerValue : StringView(attribute.value()).split(';')) {
-            if (WTF::protocolIsJavaScript(innerValue.stripLeadingAndTrailingMatchedCharacters(isASCIIWhitespace<UChar>)))
+            if (WTF::protocolIsJavaScript(innerValue.trim(isASCIIWhitespace<UChar>)))
                 return true;
         }
         return false;
@@ -176,7 +176,7 @@ void SVGAnimationElement::attributeChanged(const QualifiedName& name, const Atom
         // http://www.w3.org/TR/SVG11/animate.html#ValuesAttribute
         m_values.clear();
         newValue.string().split(';', [this](StringView innerValue) {
-            m_values.append(innerValue.stripLeadingAndTrailingMatchedCharacters(isASCIIWhitespace<UChar>).toString());
+            m_values.append(innerValue.trim(isASCIIWhitespace<UChar>).toString());
         });
         updateAnimationMode();
         break;

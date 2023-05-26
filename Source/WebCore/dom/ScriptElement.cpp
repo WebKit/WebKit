@@ -153,7 +153,7 @@ std::optional<ScriptType> ScriptElement::determineScriptType(LegacyTypeSupport s
     if (type.isEmpty())
         return ScriptType::Classic; // Assume text/javascript.
 
-    if (MIMETypeRegistry::isSupportedJavaScriptMIMEType(type.stripLeadingAndTrailingCharacters(deprecatedIsSpaceOrNewline)))
+    if (MIMETypeRegistry::isSupportedJavaScriptMIMEType(type.trim(deprecatedIsSpaceOrNewline)))
         return ScriptType::Classic;
     if (supportLegacyTypes == AllowLegacyTypeInTypeAttribute && isLegacySupportedJavaScriptLanguage(type))
         return ScriptType::Classic;

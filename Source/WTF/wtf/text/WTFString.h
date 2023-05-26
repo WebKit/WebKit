@@ -200,7 +200,7 @@ public:
 
     WTF_EXPORT_PRIVATE String WARN_UNUSED_RETURN simplifyWhiteSpace(CodeUnitMatchFunction) const;
 
-    WTF_EXPORT_PRIVATE String WARN_UNUSED_RETURN stripLeadingAndTrailingCharacters(CodeUnitMatchFunction) const;
+    WTF_EXPORT_PRIVATE String WARN_UNUSED_RETURN trim(CodeUnitMatchFunction) const;
     template<typename Predicate> String WARN_UNUSED_RETURN removeCharacters(const Predicate&) const;
 
     // Returns the string with case folded for case insensitive comparison.

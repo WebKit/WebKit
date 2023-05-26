@@ -153,10 +153,10 @@ String String::convertToUppercaseWithLocale(const AtomString& localeIdentifier) 
     return m_impl ? m_impl->convertToUppercaseWithLocale(localeIdentifier) : String { };
 }
 
-String String::stripLeadingAndTrailingCharacters(CodeUnitMatchFunction predicate) const
+String String::trim(CodeUnitMatchFunction predicate) const
 {
     // FIXME: Should this function, and the many others like it, be inlined?
-    return m_impl ? m_impl->stripLeadingAndTrailingCharacters(predicate) : String { };
+    return m_impl ? m_impl->trim(predicate) : String { };
 }
 
 String String::simplifyWhiteSpace(CodeUnitMatchFunction isWhiteSpace) const

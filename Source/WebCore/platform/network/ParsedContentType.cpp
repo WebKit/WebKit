@@ -371,7 +371,7 @@ void ParsedContentType::setContentType(String&& contentRange, Mode mode)
     if (mode == Mode::MimeSniff)
         m_mimeType = stripLeadingAndTrailingHTTPSpaces(StringView(m_mimeType)).convertToASCIILowercase();
     else
-        m_mimeType = m_mimeType.stripLeadingAndTrailingCharacters(deprecatedIsSpaceOrNewline);
+        m_mimeType = m_mimeType.trim(deprecatedIsSpaceOrNewline);
 }
 
 static bool containsNonQuoteStringTokenCharacters(const String& input)

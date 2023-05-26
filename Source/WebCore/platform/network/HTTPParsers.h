@@ -131,12 +131,12 @@ inline bool isHTTPSpace(UChar character)
 // Strip leading and trailing whitespace as defined in https://fetch.spec.whatwg.org/#concept-header-value-normalize.
 inline String stripLeadingAndTrailingHTTPSpaces(const String& string)
 {
-    return string.stripLeadingAndTrailingCharacters(isHTTPSpace);
+    return string.trim(isHTTPSpace);
 }
 
 inline StringView stripLeadingAndTrailingHTTPSpaces(StringView string)
 {
-    return string.stripLeadingAndTrailingMatchedCharacters(isHTTPSpace);
+    return string.trim(isHTTPSpace);
 }
 
 template<class HashType>

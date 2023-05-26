@@ -143,7 +143,7 @@ static String truncatedStringForMenuItem(const String& original)
     // Truncate the string if it's too long. This number is roughly the same as the one used by AppKit.
     unsigned maxNumberOfGraphemeClustersInLookupMenuItem = 24;
 
-    String trimmed = original.stripLeadingAndTrailingCharacters(deprecatedIsSpaceOrNewline);
+    auto trimmed = original.trim(deprecatedIsSpaceOrNewline);
     unsigned numberOfCharacters = numCodeUnitsInGraphemeClusters(trimmed, maxNumberOfGraphemeClustersInLookupMenuItem);
     return numberOfCharacters == trimmed.length() ? trimmed : makeString(trimmed.left(numberOfCharacters), horizontalEllipsis);
 }

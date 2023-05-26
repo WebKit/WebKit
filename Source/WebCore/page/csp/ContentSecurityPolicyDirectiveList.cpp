@@ -132,7 +132,7 @@ static inline bool checkMediaType(ContentSecurityPolicyMediaListDirective* direc
 {
     if (!directive)
         return true;
-    if (typeAttribute.isEmpty() || StringView(typeAttribute).stripLeadingAndTrailingMatchedCharacters(deprecatedIsSpaceOrNewline) != type)
+    if (typeAttribute.isEmpty() || StringView(typeAttribute).trim(deprecatedIsSpaceOrNewline) != type)
         return false;
     return directive->allows(type);
 }

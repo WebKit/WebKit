@@ -8337,11 +8337,11 @@ String HTMLMediaElement::mediaSessionTitle() const
     if (!document().page() || document().page()->usesEphemeralSession())
         return emptyString();
 
-    auto title = String(attributeWithoutSynchronization(titleAttr)).stripLeadingAndTrailingCharacters(deprecatedIsSpaceOrNewline).simplifyWhiteSpace(deprecatedIsSpaceOrNewline);
+    auto title = String(attributeWithoutSynchronization(titleAttr)).trim(deprecatedIsSpaceOrNewline).simplifyWhiteSpace(deprecatedIsSpaceOrNewline);
     if (!title.isEmpty())
         return title;
 
-    title = document().title().stripLeadingAndTrailingCharacters(deprecatedIsSpaceOrNewline).simplifyWhiteSpace(deprecatedIsSpaceOrNewline);
+    title = document().title().trim(deprecatedIsSpaceOrNewline).simplifyWhiteSpace(deprecatedIsSpaceOrNewline);
     if (!title.isEmpty())
         return title;
 

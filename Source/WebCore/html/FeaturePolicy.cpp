@@ -129,7 +129,7 @@ static inline void processOriginItem(Document& document, FeaturePolicy::AllowRul
     if (rule.type == FeaturePolicy::AllowRule::Type::None)
         return;
 
-    item = item.stripLeadingAndTrailingMatchedCharacters(isASCIIWhitespace<UChar>);
+    item = item.trim(isASCIIWhitespace<UChar>);
     // FIXME: Support 'src'.
     if (item == "'src'"_s)
         return;
@@ -168,7 +168,7 @@ static inline void updateList(Document& document, FeaturePolicy::AllowRule& rule
         }
 
         processOriginItem(document, rule, value.left(position));
-        value = value.substring(position + 1).stripLeadingAndTrailingMatchedCharacters(isASCIIWhitespace<UChar>);
+        value = value.substring(position + 1).trim(isASCIIWhitespace<UChar>);
     }
 }
 
@@ -197,7 +197,7 @@ FeaturePolicy FeaturePolicy::parse(Document& document, const HTMLIFrameElement& 
     bool isXRSpatialTrackingInitialized = false;
 #endif
     for (auto allowItem : allowAttributeValue.split(';')) {
-        auto item = allowItem.stripLeadingAndTrailingMatchedCharacters(isASCIIWhitespace<UChar>);
+        auto item = allowItem.trim(isASCIIWhitespace<UChar>);
         if (item.startsWith("camera"_s)) {
             isCameraInitialized = true;
             updateList(document, policy.m_cameraRule, item.substring(7));

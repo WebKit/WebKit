@@ -2238,7 +2238,7 @@ String AccessibilityNodeObject::textUnderElement(AccessibilityTextUnderElementMo
             appendNameToStringBuilder(builder, childText);
     }
 
-    return builder.toString().stripLeadingAndTrailingCharacters(deprecatedIsSpaceOrNewline).simplifyWhiteSpace(isHTMLSpaceButNotLineBreak);
+    return builder.toString().trim(deprecatedIsSpaceOrNewline).simplifyWhiteSpace(isHTMLSpaceButNotLineBreak);
 }
 
 String AccessibilityNodeObject::title() const

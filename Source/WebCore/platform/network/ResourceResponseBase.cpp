@@ -814,7 +814,7 @@ bool ResourceResponseBase::isAttachment() const
     lazyInit(AllFields);
 
     auto value = m_httpHeaderFields.get(HTTPHeaderName::ContentDisposition);
-    return equalLettersIgnoringASCIICase(StringView(value).left(value.find(';')).stripLeadingAndTrailingMatchedCharacters(isUnicodeCompatibleASCIIWhitespace<UChar>), "attachment"_s);
+    return equalLettersIgnoringASCIICase(StringView(value).left(value.find(';')).trim(isUnicodeCompatibleASCIIWhitespace<UChar>), "attachment"_s);
 }
 
 bool ResourceResponseBase::isAttachmentWithFilename() const
@@ -826,7 +826,7 @@ bool ResourceResponseBase::isAttachmentWithFilename() const
         return false;
 
     StringView contentDispositionView { contentDisposition };
-    if (!equalLettersIgnoringASCIICase(contentDispositionView.left(contentDispositionView.find(';')).stripLeadingAndTrailingMatchedCharacters(isUnicodeCompatibleASCIIWhitespace<UChar>), "attachment"_s))
+    if (!equalLettersIgnoringASCIICase(contentDispositionView.left(contentDispositionView.find(';')).trim(isUnicodeCompatibleASCIIWhitespace<UChar>), "attachment"_s))
         return false;
 
     return !filenameFromHTTPContentDisposition(contentDispositionView).isNull();

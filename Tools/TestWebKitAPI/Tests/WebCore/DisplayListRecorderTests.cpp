@@ -478,8 +478,8 @@ TYPED_TEST_P(DisplayListRecorderResultStateTest, StateThroughDisplayListIsPreser
     auto resultTarget = createReferenceTarget();
     auto& result = resultTarget->context();
 
-    auto description = testedTarget->displayList().asText({ WebCore::DisplayList::AsTextFlag::IncludePlatformOperations }).stripLeadingAndTrailingCharacters(deprecatedIsSpaceOrNewline);
-    auto expectedDescription = this->operationDescription().stripLeadingAndTrailingCharacters(deprecatedIsSpaceOrNewline);
+    auto description = testedTarget->displayList().asText({ WebCore::DisplayList::AsTextFlag::IncludePlatformOperations }).trim(deprecatedIsSpaceOrNewline);
+    auto expectedDescription = this->operationDescription().trim(deprecatedIsSpaceOrNewline);
     EXPECT_EQ(expectedDescription, description);
 
     testedTarget->replayDisplayList(result);

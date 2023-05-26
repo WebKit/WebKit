@@ -346,7 +346,7 @@ static Elements updateSubtree(HTMLElement& element, const TextRecognitionResult&
                     return false;
 
                 for (size_t childIndex = 0; childIndex < childResults.size(); ++childIndex) {
-                    if (childResults[childIndex].text != StringView(childTextElements[childIndex]->textContent()).stripLeadingAndTrailingMatchedCharacters(deprecatedIsSpaceOrNewline))
+                    if (childResults[childIndex].text != StringView(childTextElements[childIndex]->textContent()).trim(deprecatedIsSpaceOrNewline))
                         return false;
                 }
             }
@@ -358,7 +358,7 @@ static Elements updateSubtree(HTMLElement& element, const TextRecognitionResult&
                     if (textContentByLine.size() <= lineIndex)
                         return false;
 
-                    if (StringView(textContentByLine[lineIndex++]).stripLeadingAndTrailingMatchedCharacters(deprecatedIsSpaceOrNewline) != StringView(text.wholeText()).stripLeadingAndTrailingMatchedCharacters(deprecatedIsSpaceOrNewline))
+                    if (StringView(textContentByLine[lineIndex++]).trim(deprecatedIsSpaceOrNewline) != StringView(text.wholeText()).trim(deprecatedIsSpaceOrNewline))
                         return false;
                 }
             }

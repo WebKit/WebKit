@@ -32,13 +32,13 @@ namespace WebCore {
 
 std::optional<HTTPHeaderField> HTTPHeaderField::create(String&& unparsedName, String&& unparsedValue)
 {
-    StringView strippedName = StringView(unparsedName).stripLeadingAndTrailingMatchedCharacters(isTabOrSpace<UChar>);
-    StringView strippedValue = StringView(unparsedValue).stripLeadingAndTrailingMatchedCharacters(isTabOrSpace<UChar>);
-    if (!RFC7230::isValidName(strippedName) || !RFC7230::isValidValue(strippedValue))
+    auto trimmedName = StringView(unparsedName).trim(isTabOrSpace<UChar>);
+    auto trimmedValue = StringView(unparsedValue).trim(isTabOrSpace<UChar>);
+    if (!RFC7230::isValidName(trimmedName) || !RFC7230::isValidValue(trimmedValue))
         return std::nullopt;
 
-    String name = strippedName.length() == unparsedName.length() ? WTFMove(unparsedName) : strippedName.toString();
-    String value = strippedValue.length() == unparsedValue.length() ? WTFMove(unparsedValue) : strippedValue.toString();
+    auto name = trimmedName.length() == unparsedName.length() ? WTFMove(unparsedName) : trimmedName.toString();
+    auto value = trimmedValue.length() == unparsedValue.length() ? WTFMove(unparsedValue) : trimmedValue.toString();
     return {{ WTFMove(name), WTFMove(value) }};
 }
 

@@ -751,7 +751,7 @@ static AtomString extractContentLanguageFromHeader(const String& header)
     auto commaIndex = header.find(',');
     if (commaIndex == notFound)
         return AtomString { stripLeadingAndTrailingHTMLSpaces(header) };
-    return StringView(header).left(commaIndex).stripLeadingAndTrailingMatchedCharacters(isASCIIWhitespace<UChar>).toAtomString();
+    return StringView(header).left(commaIndex).trim(isASCIIWhitespace<UChar>).toAtomString();
 }
 
 void FrameLoader::didBeginDocument(bool dispatch)

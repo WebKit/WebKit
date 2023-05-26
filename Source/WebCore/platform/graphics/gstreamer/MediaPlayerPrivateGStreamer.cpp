@@ -2773,7 +2773,7 @@ bool isMediaDiskCacheDisabled()
         if (!s.isEmpty()) {
             // FIXME: should this use StringView and equalLettersIgnoringASCIICase? Or even strcmp?
             // https://github.com/WebKit/WebKit/pull/14233#discussion_r1202410966
-            String value = s.stripLeadingAndTrailingCharacters(deprecatedIsSpaceOrNewline).convertToLowercaseWithoutLocale();
+            auto value = s.trim(deprecatedIsSpaceOrNewline).convertToLowercaseWithoutLocale();
             result = (value == "1"_s || value == "t"_s || value == "true"_s);
         }
     });

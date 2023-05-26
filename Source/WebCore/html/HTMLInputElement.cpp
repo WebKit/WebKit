@@ -1375,7 +1375,7 @@ static Vector<String> parseAcceptAttribute(StringView acceptString, bool (*predi
         return types;
 
     for (auto splitType : acceptString.split(',')) {
-        auto trimmedType = splitType.stripLeadingAndTrailingMatchedCharacters(isASCIIWhitespace<UChar>);
+        auto trimmedType = splitType.trim(isASCIIWhitespace<UChar>);
         if (trimmedType.isEmpty())
             continue;
         if (!predicate(trimmedType))

@@ -230,7 +230,7 @@ static String extractMarkupFromCFHTML(const String& cfhtml)
     unsigned fragmentStart = cfhtml.find('>', tagStart) + 1;
     unsigned tagEnd = cfhtml.findIgnoringASCIICase("endfragment"_s, fragmentStart);
     unsigned fragmentEnd = cfhtml.reverseFind('<', tagEnd);
-    return cfhtml.substring(fragmentStart, fragmentEnd - fragmentStart).stripLeadingAndTrailingCharacters(deprecatedIsSpaceOrNewline);
+    return cfhtml.substring(fragmentStart, fragmentEnd - fragmentStart).trim(deprecatedIsSpaceOrNewline);
 }
 
 // Documentation for the CF_HTML format is available at http://msdn.microsoft.com/workshop/networking/clipboard/htmlclipboard.asp
@@ -620,7 +620,7 @@ Ref<DocumentFragment> fragmentFromCFHTML(Document* doc, const String& cfhtml)
         unsigned srcStart = lineStart+srcURLStr.length();
         String rawSrcURL = cfhtml.substring(srcStart, srcEnd-srcStart);
         replaceNBSPWithSpace(rawSrcURL);
-        srcURL = rawSrcURL.stripLeadingAndTrailingCharacters(deprecatedIsSpaceOrNewline);
+        srcURL = rawSrcURL.trim(deprecatedIsSpaceOrNewline);
     }
 
     String markup = extractMarkupFromCFHTML(cfhtml);

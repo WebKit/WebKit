@@ -272,7 +272,7 @@ void RenderMenuList::setTextFromOption(int optionIndex)
     }
 #endif
 
-    setText(text.stripLeadingAndTrailingCharacters(deprecatedIsSpaceOrNewline));
+    setText(text.trim(deprecatedIsSpaceOrNewline));
     didUpdateActiveOption(optionIndex);
 }
 

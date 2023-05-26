@@ -306,8 +306,8 @@ size_t SourceBufferPrivateGStreamer::platformMaximumBufferSize() const
                 Vector<String> keyvalue = entry.split(':');
                 if (keyvalue.size() != 2)
                     continue;
-                String key = keyvalue[0].stripLeadingAndTrailingCharacters(deprecatedIsSpaceOrNewline).convertToLowercaseWithoutLocale();
-                String value = keyvalue[1].stripLeadingAndTrailingCharacters(deprecatedIsSpaceOrNewline).convertToLowercaseWithoutLocale();
+                auto key = keyvalue[0].trim(deprecatedIsSpaceOrNewline).convertToLowercaseWithoutLocale();
+                auto value = keyvalue[1].trim(deprecatedIsSpaceOrNewline).convertToLowercaseWithoutLocale();
                 size_t units = 1;
                 if (value.endsWith('k'))
                     units = 1024;

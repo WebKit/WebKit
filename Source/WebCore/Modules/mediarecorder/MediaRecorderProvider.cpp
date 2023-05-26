@@ -64,7 +64,7 @@ bool MediaRecorderProvider::isSupported(const String& value)
         return false;
 
     for (auto& item : mimeType.codecs()) {
-        auto codec = StringView(item).stripLeadingAndTrailingMatchedCharacters(isASCIIWhitespace<UChar>);
+        auto codec = StringView(item).trim(isASCIIWhitespace<UChar>);
         // FIXME: We should further validate parameters.
         if (!startsWithLettersIgnoringASCIICase(codec, "avc1"_s) && !startsWithLettersIgnoringASCIICase(codec, "mp4a"_s))
             return false;

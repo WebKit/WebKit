@@ -262,7 +262,7 @@ NodeTest:
     {
         auto stringImpl = adoptRef($3);
         if (stringImpl)
-            stringImpl = stringImpl->stripLeadingAndTrailingCharacters(deprecatedIsSpaceOrNewline);
+            stringImpl = stringImpl->trim(deprecatedIsSpaceOrNewline);
         $$ = new WebCore::XPath::Step::NodeTest(WebCore::XPath::Step::NodeTest::ProcessingInstructionNodeTest, stringImpl.get());
     }
     ;

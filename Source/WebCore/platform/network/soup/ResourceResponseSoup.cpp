@@ -103,8 +103,8 @@ static String sanitizeFilename(const String& filename)
     if (filename.isEmpty())
         return filename;
 
-    // Strip leading/trailing whitespaces, path separators and dots
-    auto result = filename.stripLeadingAndTrailingCharacters([](UChar character) -> bool {
+    // Trim leading/trailing whitespaces, path separators and dots
+    auto result = filename.trim([](UChar character) -> bool {
         return deprecatedIsSpaceOrNewline(character) || character == '/' || character == '\\' || character == '.';
     });
 

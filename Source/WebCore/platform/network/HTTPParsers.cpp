@@ -343,12 +343,12 @@ StringView filenameFromHTTPContentDisposition(StringView value)
         if (valueStartPos == notFound)
             continue;
 
-        auto key = keyValuePair.left(valueStartPos).stripLeadingAndTrailingMatchedCharacters(isUnicodeCompatibleASCIIWhitespace<UChar>);
+        auto key = keyValuePair.left(valueStartPos).trim(isUnicodeCompatibleASCIIWhitespace<UChar>);
 
         if (key.isEmpty() || key != "filename"_s)
             continue;
 
-        auto value = keyValuePair.substring(valueStartPos + 1).stripLeadingAndTrailingMatchedCharacters(isUnicodeCompatibleASCIIWhitespace<UChar>);
+        auto value = keyValuePair.substring(valueStartPos + 1).trim(isUnicodeCompatibleASCIIWhitespace<UChar>);
 
         // Remove quotes if there are any
         if (value.length() > 1 && value[0] == '\"')
@@ -564,7 +564,7 @@ XFrameOptionsDisposition parseXFrameOptionsHeader(StringView header)
         return result;
 
     for (auto currentHeader : header.splitAllowingEmptyEntries(',')) {
-        currentHeader = currentHeader.stripLeadingAndTrailingMatchedCharacters(isUnicodeCompatibleASCIIWhitespace<UChar>);
+        currentHeader = currentHeader.trim(isUnicodeCompatibleASCIIWhitespace<UChar>);
         XFrameOptionsDisposition currentValue = XFrameOptionsDisposition::None;
         if (equalLettersIgnoringASCIICase(currentHeader, "deny"_s))
             currentValue = XFrameOptionsDisposition::Deny;
@@ -595,7 +595,7 @@ OptionSet<ClearSiteDataValue> parseClearSiteDataHeader(const ResourceResponse& r
         return result;
 
     for (auto value : StringView(headerValue).split(',')) {
-        auto trimmedValue = value.stripLeadingAndTrailingMatchedCharacters(isHTTPSpace);
+        auto trimmedValue = value.trim(isHTTPSpace);
         if (trimmedValue == "\"cache\""_s)
             result.add(ClearSiteDataValue::Cache);
         else if (trimmedValue == "\"cookies\""_s)
@@ -839,7 +839,7 @@ bool isForbiddenHeader(const String& name, StringView value)
         return true;
     if (equalLettersIgnoringASCIICase(name, "x-http-method-override"_s) || equalLettersIgnoringASCIICase(name, "x-http-method"_s) || equalLettersIgnoringASCIICase(name, "x-method-override"_s)) {
         for (auto methodValue : StringView(value).split(',')) {
-            auto method = methodValue.stripLeadingAndTrailingMatchedCharacters(isUnicodeCompatibleASCIIWhitespace<UChar>);
+            auto method = methodValue.trim(isUnicodeCompatibleASCIIWhitespace<UChar>);
             if (isForbiddenMethod(method))
                 return true;
         }

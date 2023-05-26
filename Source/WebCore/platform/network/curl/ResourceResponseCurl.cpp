@@ -116,8 +116,8 @@ void ResourceResponse::appendHTTPHeaderField(const String& header)
 {
     auto splitPosition = header.find(':');
     if (splitPosition != notFound) {
-        auto key = header.left(splitPosition).stripLeadingAndTrailingCharacters(deprecatedIsSpaceOrNewline);
-        auto value = header.substring(splitPosition + 1).stripLeadingAndTrailingCharacters(deprecatedIsSpaceOrNewline);
+        auto key = header.left(splitPosition).trim(deprecatedIsSpaceOrNewline);
+        auto value = header.substring(splitPosition + 1).trim(deprecatedIsSpaceOrNewline);
 
         if (isAppendableHeader(key))
             addHTTPHeaderField(key, value);
@@ -131,20 +131,20 @@ void ResourceResponse::appendHTTPHeaderField(const String& header)
 
 void ResourceResponse::setStatusLine(StringView header)
 {
-    auto statusLine = header.stripLeadingAndTrailingMatchedCharacters(deprecatedIsSpaceOrNewline);
+    auto statusLine = header.trim(deprecatedIsSpaceOrNewline);
 
     auto httpVersionEndPosition = statusLine.find(' ');
     auto statusCodeEndPosition = notFound;
 
     // Extract the http version
     if (httpVersionEndPosition != notFound) {
-        statusLine = statusLine.substring(httpVersionEndPosition + 1).stripLeadingAndTrailingMatchedCharacters(deprecatedIsSpaceOrNewline);
+        statusLine = statusLine.substring(httpVersionEndPosition + 1).trim(deprecatedIsSpaceOrNewline);
         statusCodeEndPosition = statusLine.find(' ');
     }
 
     // Extract the http status text
     if (statusCodeEndPosition != notFound) {
-        auto statusText = statusLine.substring(statusCodeEndPosition + 1).stripLeadingAndTrailingMatchedCharacters(deprecatedIsSpaceOrNewline);
+        auto statusText = statusLine.substring(statusCodeEndPosition + 1).trim(deprecatedIsSpaceOrNewline);
         setHTTPStatusText(statusText.toAtomString());
     }
 }

@@ -241,7 +241,7 @@ static String extractMIMETypeFromTypeAttributeForLookup(const String& typeAttrib
     auto semicolonIndex = typeAttribute.find(';');
     if (semicolonIndex == notFound)
         return stripLeadingAndTrailingHTMLSpaces(typeAttribute);
-    return StringView(typeAttribute).left(semicolonIndex).stripLeadingAndTrailingMatchedCharacters(isASCIIWhitespace<UChar>).toStringWithoutCopying();
+    return StringView(typeAttribute).left(semicolonIndex).trim(isASCIIWhitespace<UChar>).toStringWithoutCopying();
 }
 
 ImageCandidate HTMLImageElement::bestFitSourceFromPictureElement()

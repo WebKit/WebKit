@@ -458,10 +458,10 @@ void TypingCommand::markMisspellingsAfterTyping(Type commandType)
         VisiblePosition p2 = startOfWord(start, LeftWordIfOnBoundary);
         if (p1 != p2) {
             auto range = makeSimpleRange(p1, p2);
-            String strippedPreviousWord;
+            String trimmedPreviousWord;
             if (range && (commandType == TypingCommand::Type::InsertText || commandType == TypingCommand::Type::InsertLineBreak || commandType == TypingCommand::Type::InsertParagraphSeparator || commandType == TypingCommand::Type::InsertParagraphSeparatorInQuotedContent))
-                strippedPreviousWord = plainText(*range).stripLeadingAndTrailingCharacters(deprecatedIsSpaceOrNewline);
-            document().editor().markMisspellingsAfterTypingToWord(p1, endingSelection(), !strippedPreviousWord.isEmpty());
+                trimmedPreviousWord = plainText(*range).trim(deprecatedIsSpaceOrNewline);
+            document().editor().markMisspellingsAfterTypingToWord(p1, endingSelection(), !trimmedPreviousWord.isEmpty());
         } else if (commandType == TypingCommand::Type::InsertText)
             document().editor().startAlternativeTextUITimer();
 #else

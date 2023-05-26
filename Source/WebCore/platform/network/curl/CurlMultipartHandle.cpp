@@ -56,11 +56,11 @@ std::optional<String> CurlMultipartHandle::extractBoundary(const CurlResponse& r
         if (splitPosition == notFound)
             continue;
 
-        auto key = header.left(splitPosition).stripLeadingAndTrailingCharacters(deprecatedIsSpaceOrNewline);
+        auto key = header.left(splitPosition).trim(deprecatedIsSpaceOrNewline);
         if (!equalIgnoringASCIICase(key, "Content-Type"_s))
             continue;
 
-        auto contentType = header.substring(splitPosition + 1).stripLeadingAndTrailingCharacters(deprecatedIsSpaceOrNewline);
+        auto contentType = header.substring(splitPosition + 1).trim(deprecatedIsSpaceOrNewline);
         auto mimeType = extractMIMETypeFromMediaType(contentType);
         if (!equalLettersIgnoringASCIICase(mimeType, "multipart/x-mixed-replace"_s))
             continue;

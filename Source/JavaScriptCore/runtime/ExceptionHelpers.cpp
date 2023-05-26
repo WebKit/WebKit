@@ -208,7 +208,7 @@ static String invalidParameterInSourceAppender(const String& originalMessage, St
         return makeString(originalMessage, " (evaluating '"_s, sourceText, "')"_s);
 
     static constexpr unsigned inLength = 2;
-    StringView rightHandSide = sourceText.substring(inIndex + inLength).stripLeadingAndTrailingMatchedCharacters(deprecatedIsSpaceOrNewline);
+    auto rightHandSide = sourceText.substring(inIndex + inLength).trim(deprecatedIsSpaceOrNewline);
     return makeString(rightHandSide, " is not an Object. (evaluating '"_s, sourceText, "')"_s);
 }
 
@@ -227,7 +227,7 @@ inline String invalidParameterInstanceofSourceAppender(const String& content, co
         return makeString(originalMessage, " (evaluating '"_s, sourceText, "')"_s);
 
     static constexpr unsigned instanceofLength = 10;
-    StringView rightHandSide = sourceText.substring(instanceofIndex + instanceofLength).stripLeadingAndTrailingMatchedCharacters(deprecatedIsSpaceOrNewline);
+    auto rightHandSide = sourceText.substring(instanceofIndex + instanceofLength).trim(deprecatedIsSpaceOrNewline);
     return makeString(rightHandSide, content, ". (evaluating '"_s, sourceText, "')"_s);
 }
 

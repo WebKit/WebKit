@@ -175,7 +175,7 @@ RefPtr<DOMFormData> FetchBodyConsumer::packageFormData(ScriptExecutionContext* c
             size_t contentTypeBegin = header.find(contentTypeCharacters);
             if (contentTypeBegin != notFound) {
                 size_t contentTypeEnd = header.find("\r\n"_s, contentTypeBegin);
-                contentType = StringView(header).substring(contentTypeBegin + contentTypePrefixLength, contentTypeEnd - contentTypeBegin - contentTypePrefixLength).stripLeadingAndTrailingMatchedCharacters(isHTTPSpace).toString();
+                contentType = StringView(header).substring(contentTypeBegin + contentTypePrefixLength, contentTypeEnd - contentTypeBegin - contentTypePrefixLength).trim(isHTTPSpace).toString();
             }
 
             form.append(name, File::create(context, Blob::create(context, Vector { bodyBegin, bodyLength }, Blob::normalizedContentType(contentType)).get(), filename).get(), filename);

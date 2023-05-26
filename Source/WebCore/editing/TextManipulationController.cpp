@@ -837,7 +837,7 @@ auto TextManipulationController::replace(const ManipulationItemData& item, const
                 return ManipulationFailure::Type::ContentChanged;
 
             auto& currentToken = item.tokens[currentTokenIndex++];
-            bool isContentUnchanged = StringView(currentToken.content).stripLeadingAndTrailingMatchedCharacters(deprecatedIsSpaceOrNewline) == StringView(token.content).stripLeadingAndTrailingMatchedCharacters(deprecatedIsSpaceOrNewline);
+            bool isContentUnchanged = StringView(currentToken.content).trim(deprecatedIsSpaceOrNewline) == StringView(token.content).trim(deprecatedIsSpaceOrNewline);
             if (!content.isReplacedContent && !isContentUnchanged)
                 return ManipulationFailure::Type::ContentChanged;
 

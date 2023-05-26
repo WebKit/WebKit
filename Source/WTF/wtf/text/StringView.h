@@ -145,7 +145,7 @@ public:
     StringView right(unsigned length) const { return substring(this->length() - length, length); }
 
     template<typename MatchedCharacterPredicate>
-    StringView stripLeadingAndTrailingMatchedCharacters(const MatchedCharacterPredicate&) const;
+    StringView trim(const MatchedCharacterPredicate&) const;
 
     class SplitResult;
     SplitResult split(UChar) const;
@@ -211,7 +211,7 @@ private:
     WTF_EXPORT_PRIVATE size_t reverseFind(const LChar* match, unsigned matchLength, unsigned start) const;
 
     template<typename CharacterType, typename MatchedCharacterPredicate>
-    StringView stripLeadingAndTrailingMatchedCharacters(const CharacterType*, const MatchedCharacterPredicate&) const;
+    StringView trim(const CharacterType*, const MatchedCharacterPredicate&) const;
 
     WTF_EXPORT_PRIVATE bool underlyingStringIsValidImpl() const;
     WTF_EXPORT_PRIVATE void setUnderlyingStringImpl(const StringImpl*);
@@ -1103,7 +1103,7 @@ inline bool StringView::SplitResult::Iterator::operator==(const Iterator& other)
 }
 
 template<typename CharacterType, typename MatchedCharacterPredicate>
-inline StringView StringView::stripLeadingAndTrailingMatchedCharacters(const CharacterType* characters, const MatchedCharacterPredicate& predicate) const
+inline StringView StringView::trim(const CharacterType* characters, const MatchedCharacterPredicate& predicate) const
 {
     if (!m_length)
         return *this;
@@ -1129,11 +1129,11 @@ inline StringView StringView::stripLeadingAndTrailingMatchedCharacters(const Cha
 }
 
 template<typename MatchedCharacterPredicate>
-StringView StringView::stripLeadingAndTrailingMatchedCharacters(const MatchedCharacterPredicate& predicate) const
+StringView StringView::trim(const MatchedCharacterPredicate& predicate) const
 {
     if (is8Bit())
-        return stripLeadingAndTrailingMatchedCharacters<LChar>(characters8(), predicate);
-    return stripLeadingAndTrailingMatchedCharacters<UChar>(characters16(), predicate);
+        return trim<LChar>(characters8(), predicate);
+    return trim<UChar>(characters16(), predicate);
 }
 
 inline bool equalLettersIgnoringASCIICase(StringView string, ASCIILiteral literal)

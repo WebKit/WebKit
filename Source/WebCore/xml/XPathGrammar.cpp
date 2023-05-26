@@ -1822,7 +1822,7 @@ yyreduce:
     {
         auto stringImpl = adoptRef((yyvsp[(3) - (4)].string));
         if (stringImpl)
-            stringImpl = stringImpl->stripLeadingAndTrailingCharacters(deprecatedIsSpaceOrNewline);
+            stringImpl = stringImpl->trim(deprecatedIsSpaceOrNewline);
         (yyval.nodeTest) = new WebCore::XPath::Step::NodeTest(WebCore::XPath::Step::NodeTest::ProcessingInstructionNodeTest, stringImpl.get());
     ;}
     break;
