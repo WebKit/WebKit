@@ -677,6 +677,10 @@ static void registerLogHook()
         if (msg->buffer_sz > 1024)
             return;
 
+        // Skip faults and debug logs in non-internal builds.
+        if (type == OS_LOG_TYPE_FAULT || type == OS_LOG_TYPE_DEBUG)
+            return;
+
         CString logFormat(msg->format);
         CString logChannel(msg->subsystem);
         CString logCategory(msg->category);

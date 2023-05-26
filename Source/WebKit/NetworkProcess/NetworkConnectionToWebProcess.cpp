@@ -1435,7 +1435,7 @@ void NetworkConnectionToWebProcess::logOnBehalfOfWebContent(IPC::DataReference&&
 
     // Use '%{public}s' in the format string for the preprocessed string from the WebContent process.
     // This should not reveal any redacted information in the string, since it has already been composed in the WebContent process.
-    os_log_with_type(osLogChannel.get() ? osLogChannel.get() : OS_LOG_DEFAULT, static_cast<os_log_type_t>(logType), "WebContent[pid=%d, identifier=%llu]: %{public}s", pid, m_webProcessIdentifier.toUInt64(), logString.data());
+    os_log_with_type(osLogChannel.get() ? osLogChannel.get() : OS_LOG_DEFAULT, static_cast<os_log_type_t>(logType), "WebContent[%d]: %{public}s", pid, logString.data());
 }
 #endif
 
