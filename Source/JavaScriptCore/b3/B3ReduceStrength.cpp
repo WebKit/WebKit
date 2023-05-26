@@ -632,10 +632,9 @@ private:
             // Into this: Shl(value, 1)
             // This is a useful canonicalization. It's not meant to be a strength reduction.
             if (m_value->isInteger() && m_value->child(0) == m_value->child(1)) {
-                replaceWithNewValue(
-                    m_proc.add<Value>(
-                        Shl, m_value->origin(), m_value->child(0),
-                        m_insertionSet.insert<Const32Value>(m_index, m_value->origin(), 1)));
+                replaceWithNew<Value>(
+                    Shl, m_value->origin(), m_value->child(0),
+                    m_insertionSet.insert<Const32Value>(m_index, m_value->origin(), 1));
                 break;
             }
 
@@ -881,11 +880,10 @@ private:
                 // Into this: Shl(value, log2(constant))
                 if (hasOneBitSet(factor)) {
                     unsigned shiftAmount = WTF::fastLog2(static_cast<uint64_t>(factor));
-                    replaceWithNewValue(
-                        m_proc.add<Value>(
-                            Shl, m_value->origin(), m_value->child(0),
-                            m_insertionSet.insert<Const32Value>(
-                                m_index, m_value->origin(), shiftAmount)));
+                    replaceWithNew<Value>(
+                        Shl, m_value->origin(), m_value->child(0),
+                        m_insertionSet.insert<Const32Value>(
+                            m_index, m_value->origin(), shiftAmount));
                     break;
                 }
             } else if (m_value->child(1)->hasDouble()) {
@@ -934,8 +932,7 @@ private:
                 case -1:
                     // Turn this: Div(value, -1)
                     // Into this: Neg(value)
-                    replaceWithNewValue(
-                        m_proc.add<Value>(Neg, m_value->origin(), m_value->child(0)));
+                    replaceWithNew<Value>(Neg, m_value->origin(), m_value->child(0));
                     break;
 
                 case 0:
@@ -1488,9 +1485,7 @@ private:
                     if (m_value->type() == Int32) {
                         // Turn this: SShr(Shl(value, 16), 16)
                         // Into this: SExt16(value)
-                        replaceWithNewValue(
-                            m_proc.add<Value>(
-                                SExt16, m_value->origin(), m_value->child(0)->child(0)));
+                        replaceWithNew<Value>(SExt16, m_value->origin(), m_value->child(0)->child(0));
                     }
                     break;
 
@@ -1498,9 +1493,7 @@ private:
                     if (m_value->type() == Int32) {
                         // Turn this: SShr(Shl(value, 24), 24)
                         // Into this: SExt8(value)
-                        replaceWithNewValue(
-                            m_proc.add<Value>(
-                                SExt8, m_value->origin(), m_value->child(0)->child(0)));
+                        replaceWithNew<Value>(SExt8, m_value->origin(), m_value->child(0)->child(0));
                     }
                     break;
 
@@ -1508,12 +1501,11 @@ private:
                     if (m_value->type() == Int64) {
                         // Turn this: SShr(Shl(value, 32), 32)
                         // Into this: SExt32(Trunc(value))
-                        replaceWithNewValue(
-                            m_proc.add<Value>(
-                                SExt32, m_value->origin(),
-                                m_insertionSet.insert<Value>(
-                                    m_index, Trunc, m_value->origin(),
-                                    m_value->child(0)->child(0))));
+                        replaceWithNew<Value>(
+                            SExt32, m_value->origin(),
+                            m_insertionSet.insert<Value>(
+                                m_index, Trunc, m_value->origin(),
+                                m_value->child(0)->child(0)));
                     }
                     break;
 
@@ -1521,12 +1513,11 @@ private:
                     if (m_value->type() == Int64) {
                         // Turn this: SShr(Shl(value, 48), 48)
                         // Into this: SExt16To64(Trunc(value))
-                        replaceWithNewValue(
-                            m_proc.add<Value>(
-                                SExt16To64, m_value->origin(),
-                                m_insertionSet.insert<Value>(
-                                    m_index, Trunc, m_value->origin(),
-                                    m_value->child(0)->child(0))));
+                        replaceWithNew<Value>(
+                            SExt16To64, m_value->origin(),
+                            m_insertionSet.insert<Value>(
+                                m_index, Trunc, m_value->origin(),
+                                m_value->child(0)->child(0)));
                     }
                     break;
 
@@ -1534,12 +1525,11 @@ private:
                     if (m_value->type() == Int64) {
                         // Turn this: SShr(Shl(value, 56), 56)
                         // Into this: SExt8To64(Trunc(value))
-                        replaceWithNewValue(
-                            m_proc.add<Value>(
-                                SExt8To64, m_value->origin(),
-                                m_insertionSet.insert<Value>(
-                                    m_index, Trunc, m_value->origin(),
-                                    m_value->child(0)->child(0))));
+                        replaceWithNew<Value>(
+                            SExt8To64, m_value->origin(),
+                            m_insertionSet.insert<Value>(
+                                m_index, Trunc, m_value->origin(),
+                                m_value->child(0)->child(0)));
                     }
                     break;
 
@@ -1776,11 +1766,10 @@ private:
                 // Turn this: SExt8(BitAnd(input, mask)) where (mask & 0x80) == 0
                 // Into this: BitAnd(input, const & 0x7f)
                 if (!(mask & 0x80)) {
-                    replaceWithNewValue(
-                        m_proc.add<Value>(
-                            BitAnd, m_value->origin(), input,
-                            m_insertionSet.insert<Const32Value>(
-                                m_index, m_value->origin(), mask & 0x7f)));
+                    replaceWithNew<Value>(
+                        BitAnd, m_value->origin(), input,
+                        m_insertionSet.insert<Const32Value>(
+                            m_index, m_value->origin(), mask & 0x7f));
                     break;
                 }
             }
@@ -1834,11 +1823,10 @@ private:
                 // Turn this: SExt16(BitAnd(input, mask)) where (mask & 0x8000) == 0
                 // Into this: BitAnd(input, const & 0x7fff)
                 if (!(mask & 0x8000)) {
-                    replaceWithNewValue(
-                        m_proc.add<Value>(
-                            BitAnd, m_value->origin(), input,
-                            m_insertionSet.insert<Const32Value>(
-                                m_index, m_value->origin(), mask & 0x7fff)));
+                    replaceWithNew<Value>(
+                        BitAnd, m_value->origin(), input,
+                        m_insertionSet.insert<Const32Value>(
+                            m_index, m_value->origin(), mask & 0x7fff));
                     break;
                 }
             }
@@ -2327,8 +2315,7 @@ private:
             IntRange leftRange = rangeFor(m_value->child(0));
             IntRange rightRange = rangeFor(m_value->child(1));
             if (!leftRange.couldOverflowAdd(rightRange, m_value->type())) {
-                replaceWithNewValue(
-                    m_proc.add<Value>(Add, m_value->origin(), m_value->child(0), m_value->child(1)));
+                replaceWithNew<Value>(Add, m_value->origin(), m_value->child(0), m_value->child(1));
                 break;
             }
             break;
@@ -2354,8 +2341,7 @@ private:
             IntRange leftRange = rangeFor(m_value->child(0));
             IntRange rightRange = rangeFor(m_value->child(1));
             if (!leftRange.couldOverflowSub(rightRange, m_value->type())) {
-                replaceWithNewValue(
-                    m_proc.add<Value>(Sub, m_value->origin(), m_value->child(0), m_value->child(1)));
+                replaceWithNew<Value>(Sub, m_value->origin(), m_value->child(0), m_value->child(1));
                 break;
             }
             break;
@@ -2392,8 +2378,7 @@ private:
             IntRange leftRange = rangeFor(m_value->child(0));
             IntRange rightRange = rangeFor(m_value->child(1));
             if (!leftRange.couldOverflowMul(rightRange, m_value->type())) {
-                replaceWithNewValue(
-                    m_proc.add<Value>(Mul, m_value->origin(), m_value->child(0), m_value->child(1)));
+                replaceWithNew<Value>(Mul, m_value->origin(), m_value->child(0), m_value->child(1));
                 break;
             }
             break;
