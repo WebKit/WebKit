@@ -86,7 +86,10 @@ InlineItemsBuilder::InlineItemsBuilder(const ElementBox& formattingContextRoot, 
 void InlineItemsBuilder::build(InlineItemPosition startPosition)
 {
     InlineItems inlineItems;
-    collectInlineItems(inlineItems, startPosition);
+    FormattingState::OutOfFlowBoxList outOfFlowBoxes;
+
+    collectInlineItems(inlineItems, outOfFlowBoxes, startPosition);
+
     if (!root().style().isLeftToRightDirection() || contentRequiresVisualReordering()) {
         // FIXME: Add support for partial, yet paragraph level bidi content handling.
         breakAndComputeBidiLevels(inlineItems);
@@ -106,6 +109,7 @@ void InlineItemsBuilder::build(InlineItemPosition startPosition)
         m_formattingState.appendInlineItems(WTFMove(inlineItems));
     };
     adjustInlineFormattingStateWithNewInlineItems();
+    m_formattingState.setOutOfFlowBoxes(WTFMove(outOfFlowBoxes));
 
 #if ASSERT_ENABLED
     // Check if we've got matching inline box start/end pairs and unique inline level items (non-text, non-inline box items).
@@ -186,7 +190,7 @@ static LayoutQueue initializeLayoutQueue(const ElementBox& formattingContextRoot
     return layoutQueue;
 }
 
-void InlineItemsBuilder::collectInlineItems(InlineItems& inlineItems, InlineItemPosition startPosition)
+void InlineItemsBuilder::collectInlineItems(InlineItems& inlineItems, FormattingState::OutOfFlowBoxList& outOfFlowBoxes, InlineItemPosition startPosition)
 {
     // Traverse the tree and create inline items out of inline boxes and leaf nodes. This essentially turns the tree inline structure into a flat one.
     // <span>text<span></span><img></span> -> [InlineBoxStart][InlineLevelBox][InlineBoxStart][InlineBoxEnd][InlineLevelBox][InlineBoxEnd]
@@ -239,7 +243,7 @@ void InlineItemsBuilder::collectInlineItems(InlineItems& inlineItems, InlineItem
             else if (layoutBox.isOutOfFlowPositioned()) {
                 // Let's not construct InlineItems for out-of-flow content as they don't participate in the inline layout.
                 // However to be able to static positioning them, we need to compute their approximate positions.
-                m_formattingState.addOutOfFlowBox(layoutBox);
+                outOfFlowBoxes.append(layoutBox);
             } else
                 ASSERT_NOT_REACHED();
 
