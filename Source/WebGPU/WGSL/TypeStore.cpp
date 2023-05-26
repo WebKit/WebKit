@@ -49,6 +49,7 @@ using namespace Types;
 // Matrix: rows in byte 1 and columns in byte 2
 // Array: 0 for dynamic array or 32-bit size in the upper 32-bits
 // Texture: kind << 16
+// Reference: AddressSpace + AccessMode compacted into 1 byte and shifted 24 bits left
 struct VectorKey {
     Type* elementType;
     uint8_t size;
@@ -76,6 +77,25 @@ struct TextureKey {
     Texture::Kind kind;
 
     uint64_t extra() const { return static_cast<uint64_t>(kind) << 16; }
+};
+
+struct ReferenceKey {
+    Type* elementType;
+    AddressSpace addressSpace;
+    AccessMode accessMode;
+
+    uint64_t extra() const
+    {
+        constexpr unsigned addressSpaceShift = 2;
+
+        auto addressSpace = WTF::enumToUnderlyingType(this->addressSpace);
+        auto accessMode = WTF::enumToUnderlyingType(this->accessMode);
+
+        ASSERT(accessMode < (1 << addressSpaceShift));
+        ASSERT(addressSpace < (1 << (sizeof(addressSpace) * 8 - addressSpaceShift)));
+
+        return static_cast<uint64_t>(accessMode | (addressSpace << addressSpaceShift)) << 24;
+    }
 };
 
 template<typename Key>
@@ -196,8 +216,13 @@ Type* TypeStore::functionType(WTF::Vector<Type*>&& parameters, Type* result)
 
 Type* TypeStore::referenceType(AddressSpace addressSpace, Type* element, AccessMode accessMode)
 {
-    // FIXME: do we need to cache reference types?
-    return allocateType<Reference>(addressSpace, accessMode, element);
+    ReferenceKey key { element, addressSpace, accessMode };
+    Type* type = m_cache.find(key);
+    if (type)
+        return type;
+    type = allocateType<Reference>(addressSpace, accessMode, element);
+    m_cache.insert(key, type);
+    return type;
 }
 
 template<typename TypeKind, typename... Arguments>
