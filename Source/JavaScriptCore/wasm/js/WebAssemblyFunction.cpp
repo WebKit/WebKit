@@ -275,7 +275,7 @@ CodePtr<JSEntryPtrTag> WebAssemblyFunction::jsCallEntrypointSlow()
                 slowPath.append(jit.branchIfNotCell(scratchJSR));
 
                 jit.emitLoadStructure(vm, scratchJSR.payloadGPR(), scratchJSR.payloadGPR());
-                jit.loadCompactPtr(CCallHelpers::Address(scratchJSR.payloadGPR(), Structure::classInfoOffset()), scratchJSR.payloadGPR());
+                jit.loadCompactPtr<ClassInfo>(CCallHelpers::Address(scratchJSR.payloadGPR(), Structure::classInfoOffset()), scratchJSR.payloadGPR());
 
                 static_assert(std::is_final<WebAssemblyFunction>::value, "We do not check for subtypes below");
                 static_assert(std::is_final<WebAssemblyWrapperFunction>::value, "We do not check for subtypes below");

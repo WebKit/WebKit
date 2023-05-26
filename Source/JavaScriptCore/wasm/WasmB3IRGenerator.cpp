@@ -3508,7 +3508,7 @@ Value* B3IRGenerator::emitLoadRTTFromFuncref(Value* funcref)
     PatchpointValue* patch = m_currentBlock->appendNew<PatchpointValue>(m_proc, B3::Int64, Origin());
     patch->append(funcref, ValueRep::SomeRegister);
     patch->setGenerator([](CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
-        jit.loadCompactPtr(CCallHelpers::Address(params[1].gpr(), WebAssemblyFunctionBase::offsetOfRTT()), params[0].gpr());
+        jit.loadCompactPtr<RTT>(CCallHelpers::Address(params[1].gpr(), WebAssemblyFunctionBase::offsetOfRTT()), params[0].gpr());
     });
     return patch;
 }

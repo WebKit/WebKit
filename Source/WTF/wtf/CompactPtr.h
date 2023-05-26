@@ -39,18 +39,8 @@
 
 namespace WTF {
 
-#if CPU(ADDRESS64)
-#if CPU(ARM64) && OS(DARWIN)
-#if MACH_VM_MAX_ADDRESS_RAW < (1ULL << 36)
-#define HAVE_36BIT_ADDRESS 1
-#endif
-#endif
-#endif // CPU(ADDRESS64)
-
 template <typename T>
-class CompactPtr {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
+struct BigHeapTypeTraits {
 #if HAVE(36BIT_ADDRESS)
     // The CompactPtr algorithm relies on being able to shift
     // a 36-bit address right by 4 in order to fit in 32-bits.
@@ -58,11 +48,49 @@ public:
     // loss is if the if the address is always 16 bytes aligned i.e.
     // the lower 4 bits is always 0.
     using StorageType = uint32_t;
-    static constexpr bool is32Bit = true;
 #else
     using StorageType = uintptr_t;
-    static constexpr bool is32Bit = false;
 #endif
+
+    static constexpr uint32_t additionalMask = 0;
+    static constexpr uint32_t bitsShift = 4;
+    static constexpr uintptr_t alignmentMask = (1ull << bitsShift) - 1;
+
+    static ALWAYS_INLINE StorageType encode(const T* ptr)
+    {
+        uintptr_t intPtr = bitwise_cast<uintptr_t>(ptr);
+#if HAVE(36BIT_ADDRESS)
+        static_assert(alignof(T) >= (1ULL << bitsShift));
+        ASSERT(!(intPtr & alignmentMask));
+        StorageType encoded = static_cast<StorageType>(intPtr >> bitsShift);
+        ASSERT(decode(encoded) == ptr);
+        return encoded;
+#else
+        return intPtr;
+#endif
+    }
+
+    static ALWAYS_INLINE T* decode(StorageType ptr)
+    {
+#if HAVE(36BIT_ADDRESS)
+        static_assert(alignof(T) >= (1ULL << bitsShift));
+        return bitwise_cast<T*>(static_cast<uintptr_t>(ptr) << bitsShift);
+#else
+        return bitwise_cast<T*>(ptr);
+#endif
+    }
+};
+
+template <typename T>
+class CompactPtr {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+
+    using CompactTypeTraits = typename T::CompactPtrTypeTraits;
+    using StorageType = typename CompactTypeTraits::StorageType;
+
+    static constexpr uint32_t additionalMask = CompactTypeTraits::additionalMask;
+    static constexpr bool is32Bit = sizeof(StorageType) <= 4;
     static constexpr bool isCompactedType = true;
 
     ALWAYS_INLINE constexpr CompactPtr() = default;
@@ -177,26 +205,12 @@ public:
 
     static ALWAYS_INLINE StorageType encode(T* ptr)
     {
-        uintptr_t intPtr = bitwise_cast<uintptr_t>(ptr);
-#if HAVE(36BIT_ADDRESS)
-        static_assert(alignof(T) >= (1ULL << bitsShift));
-        ASSERT(!(intPtr & alignmentMask));
-        StorageType encoded = static_cast<StorageType>(intPtr >> bitsShift);
-        ASSERT(decode(encoded) == ptr);
-        return encoded;
-#else
-        return intPtr;
-#endif
+        return CompactTypeTraits::encode(ptr);
     }
 
     static ALWAYS_INLINE T* decode(StorageType ptr)
     {
-#if HAVE(36BIT_ADDRESS)
-        static_assert(alignof(T) >= (1ULL << bitsShift));
-        return bitwise_cast<T*>(static_cast<uintptr_t>(ptr) << bitsShift);
-#else
-        return bitwise_cast<T*>(ptr);
-#endif
+        return CompactTypeTraits::decode(ptr);
     }
 
     bool isHashTableDeletedValue() const { return m_ptr == hashDeletedStorageValue; }
@@ -213,8 +227,6 @@ private:
     template <typename X>
     friend class CompactPtr;
 
-    static constexpr uint32_t bitsShift = 4;
-    static constexpr uintptr_t alignmentMask = (1ull << bitsShift) - 1;
     static constexpr StorageType hashDeletedStorageValue = 1; // 0x16 (encoded as 1) is within the first unmapped page for nullptr. Thus, it never appears.
 
     StorageType m_ptr { 0 };
