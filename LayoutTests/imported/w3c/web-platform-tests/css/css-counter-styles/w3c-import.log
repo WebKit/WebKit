@@ -16,6 +16,10 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/META.yml
 /LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/README
-/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/broken-symbols-expected.htm
-/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/broken-symbols.htm
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/counter-name-case-sensitive-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/counter-name-case-sensitive-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/counter-name-case-sensitive.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/counter-suffix-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/counter-suffix-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/counter-suffix.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/idlharness.html

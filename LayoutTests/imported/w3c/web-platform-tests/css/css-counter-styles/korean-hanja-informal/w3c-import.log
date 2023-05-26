@@ -14,13 +14,22 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/korean-hanja-informal/counter-korean-hanja-informal-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/korean-hanja-informal/counter-korean-hanja-informal-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/korean-hanja-informal/counter-korean-hanja-informal.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/korean-hanja-informal/css3-counter-styles-057-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/korean-hanja-informal/css3-counter-styles-057-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/korean-hanja-informal/css3-counter-styles-057.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/korean-hanja-informal/css3-counter-styles-058-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/korean-hanja-informal/css3-counter-styles-058-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/korean-hanja-informal/css3-counter-styles-058.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/korean-hanja-informal/css3-counter-styles-059-alt-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/korean-hanja-informal/css3-counter-styles-059-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/korean-hanja-informal/css3-counter-styles-059-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/korean-hanja-informal/css3-counter-styles-059.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/korean-hanja-informal/css3-counter-styles-060-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/korean-hanja-informal/css3-counter-styles-060-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/korean-hanja-informal/css3-counter-styles-060.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/korean-hanja-informal/css3-counter-styles-061-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/korean-hanja-informal/css3-counter-styles-061-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/korean-hanja-informal/css3-counter-styles-061.html

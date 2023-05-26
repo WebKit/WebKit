@@ -14,13 +14,22 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/simp-chinese-formal/counter-simp-chinese-formal-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/simp-chinese-formal/counter-simp-chinese-formal-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/simp-chinese-formal/counter-simp-chinese-formal.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/simp-chinese-formal/css3-counter-styles-076-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/simp-chinese-formal/css3-counter-styles-076-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/simp-chinese-formal/css3-counter-styles-076.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/simp-chinese-formal/css3-counter-styles-077-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/simp-chinese-formal/css3-counter-styles-077-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/simp-chinese-formal/css3-counter-styles-077.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/simp-chinese-formal/css3-counter-styles-078-alt-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/simp-chinese-formal/css3-counter-styles-078-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/simp-chinese-formal/css3-counter-styles-078-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/simp-chinese-formal/css3-counter-styles-078.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/simp-chinese-formal/css3-counter-styles-079-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/simp-chinese-formal/css3-counter-styles-079-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/simp-chinese-formal/css3-counter-styles-079.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/simp-chinese-formal/css3-counter-styles-080-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/simp-chinese-formal/css3-counter-styles-080-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/simp-chinese-formal/css3-counter-styles-080.html

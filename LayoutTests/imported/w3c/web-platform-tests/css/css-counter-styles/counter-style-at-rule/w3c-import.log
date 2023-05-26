@@ -69,9 +69,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/disclosure-styles-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/disclosure-styles-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/disclosure-styles.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/fallback-cycle-expected.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/fallback-cycle-ref.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/fallback-cycle.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/empty-string-symbol-expected-mismatch.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/empty-string-symbol-notref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/empty-string-symbol.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/fallback.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/fallbacks-in-shadow-dom-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/fallbacks-in-shadow-dom-ref.html
@@ -97,9 +97,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/shadow-dom-part-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/shadow-dom-part.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/speak-as-syntax.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/suffix-fallback-expected.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/suffix-fallback-ref.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/suffix-fallback.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/symbols-function-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/symbols-function-invalid-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/symbols-function-invalid-ref.html
@@ -125,6 +122,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/system-cyclic-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/system-cyclic.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/system-extends-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/system-extends-fixed-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/system-extends-fixed-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/system-extends-fixed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/system-extends-invalid-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/system-extends-invalid-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/system-extends-invalid.html

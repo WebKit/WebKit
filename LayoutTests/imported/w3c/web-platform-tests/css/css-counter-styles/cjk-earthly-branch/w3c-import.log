@@ -15,8 +15,11 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/cjk-earthly-branch/css3-counter-styles-201-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/cjk-earthly-branch/css3-counter-styles-201-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/cjk-earthly-branch/css3-counter-styles-201.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/cjk-earthly-branch/css3-counter-styles-202-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/cjk-earthly-branch/css3-counter-styles-202-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/cjk-earthly-branch/css3-counter-styles-202.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/cjk-earthly-branch/css3-counter-styles-203-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/cjk-earthly-branch/css3-counter-styles-203-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-counter-styles/cjk-earthly-branch/css3-counter-styles-203.html

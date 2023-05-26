@@ -6288,16 +6288,24 @@ http/tests/misc/heic-accept-header.html [ Pass Failure ]
 # Needs proper bidi algorithm.
 webkit.org/b/256153 imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/disclosure-styles.html [ ImageOnlyFailure ]
 
-# WPT seems to be wrong regarding prefix/suffix fallback (https://github.com/web-platform-tests/wpt/issues/38772). We need to fix the remaining tests on WPT:
-imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/suffix-fallback.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/fallback-cycle.html [ ImageOnlyFailure ]
-
 # Missing support to counter-style at-rule in shadow scope rdar://103873418
 imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/override-in-shadow-dom.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/fallbacks-in-shadow-dom.html [ ImageOnlyFailure ]
 
 # Missing counter-style integration with symbols() rdar://106084071
 imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/symbols-function.html [ ImageOnlyFailure ]
+
+imported/w3c/web-platform-tests/css/css-counter-styles/counter-suffix.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-counter-styles/hebrew/counter-hebrew-nested.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-counter-styles/japanese-formal/counter-japanese-formal.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-counter-styles/japanese-informal/counter-japanese-informal.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-counter-styles/korean-hangul-formal/counter-korean-hangul-formal.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-counter-styles/korean-hanja-formal/counter-korean-hanja-formal.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-counter-styles/korean-hanja-informal/counter-korean-hanja-informal.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-counter-styles/simp-chinese-formal/counter-simp-chinese-formal.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-counter-styles/simp-chinese-informal/counter-simp-chinese-informal.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-counter-styles/trad-chinese-formal/counter-trad-chinese-formal.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-counter-styles/trad-chinese-informal/counter-trad-chinese-informal.html [ ImageOnlyFailure ]
 
 # Newly imported ruby WPTs
 imported/w3c/web-platform-tests/css/css-ruby/abs-in-ruby-base-container.html [ ImageOnlyFailure ]
