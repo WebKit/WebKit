@@ -940,6 +940,15 @@
    },
    {
       "emails" : [
+         "anuj1panta@gmail.com",
+         "a_panta@apple.com"
+      ],
+      "expertise" : "Web Inspector",
+      "github" : "anujpanta1",
+      "name" : "Anuj Panta"
+   },
+   {
+      "emails" : [
          "webkit-bot-watchers-bugzilla@group.apple.com"
       ],
       "name" : "Apple Bot Watchers"
