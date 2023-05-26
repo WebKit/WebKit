@@ -2961,6 +2961,11 @@ ShadowRoot& Element::createUserAgentShadowRoot()
 
 inline void Node::setCustomElementState(CustomElementState state)
 {
+    RELEASE_ASSERT(is<Element>(this));
+    Style::PseudoClassChangeInvalidation styleInvalidation(downcast<Element>(*this),
+        CSSSelector::PseudoClassDefined,
+        state == CustomElementState::Custom || state == CustomElementState::Uncustomized
+    );
     auto bitfields = rareDataBitfields();
     bitfields.customElementState = static_cast<uint16_t>(state);
     setRareDataBitfields(bitfields);
@@ -2972,7 +2977,6 @@ void Element::setIsDefinedCustomElement(JSCustomElementInterface& elementInterfa
     auto& data = ensureElementRareData();
     if (!data.customElementReactionQueue())
         data.setCustomElementReactionQueue(makeUnique<CustomElementReactionQueue>(elementInterface));
-    invalidateStyleForSubtree();
     InspectorInstrumentation::didChangeCustomElementState(*this);
 }
 
