@@ -859,6 +859,7 @@ sub byAttrNameOrder
 {
     attributeCount($allAttrs{$a}{localName}) <=> attributeCount($allAttrs{$b}{localName})
         || $allAttrs{$a}{nodeNameEnumValue} cmp $allAttrs{$b}{nodeNameEnumValue}
+        || $allAttrs{$a}{cppNamespace} cmp $allAttrs{$b}{cppNamespace}
 }
 
 sub byElementThenAttrNameOrder
