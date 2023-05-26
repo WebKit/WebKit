@@ -176,7 +176,7 @@ void FunctionDefinitionWriter::visit(AST::Function& functionDefinition)
 
     m_stringBuilder.append(")\n");
     checkErrorAndVisit(functionDefinition.body());
-    m_stringBuilder.append("\n");
+    m_stringBuilder.append("\n\n");
 }
 
 void FunctionDefinitionWriter::visit(AST::Structure& structDecl)
@@ -277,7 +277,6 @@ void FunctionDefinitionWriter::visit(AST::Structure& structDecl)
 void FunctionDefinitionWriter::visit(AST::Variable& variable)
 {
     serializeVariable(variable);
-    m_stringBuilder.append(";\n");
 }
 
 void FunctionDefinitionWriter::visitGlobal(AST::Variable& variable)
@@ -926,20 +925,36 @@ void FunctionDefinitionWriter::visit(AST::AssignmentStatement& assignment)
     visit(assignment.lhs());
     m_stringBuilder.append(" = ");
     visit(assignment.rhs());
-    m_stringBuilder.append(";\n");
 }
 
 void FunctionDefinitionWriter::visit(AST::CompoundStatement& statement)
 {
-    m_stringBuilder.append(m_indent, "{\n");
+    m_stringBuilder.append("{\n");
     {
         IndentationScope scope(m_indent);
         for (auto& statement : statement.statements()) {
             m_stringBuilder.append(m_indent);
             checkErrorAndVisit(statement);
+            switch (statement.kind()) {
+            case AST::NodeKind::AssignmentStatement:
+            case AST::NodeKind::BreakStatement:
+            case AST::NodeKind::CallStatement:
+            case AST::NodeKind::CompoundAssignmentStatement:
+            case AST::NodeKind::ContinueStatement:
+            case AST::NodeKind::DecrementIncrementStatement:
+            case AST::NodeKind::DiscardStatement:
+            case AST::NodeKind::PhonyAssignmentStatement:
+            case AST::NodeKind::ReturnStatement:
+            case AST::NodeKind::VariableStatement:
+                m_stringBuilder.append(';');
+                break;
+            default:
+                break;
+            }
+            m_stringBuilder.append('\n');
         }
     }
-    m_stringBuilder.append(m_indent, "}\n");
+    m_stringBuilder.append(m_indent, "}");
 }
 
 void FunctionDefinitionWriter::visit(AST::DecrementIncrementStatement& statement)
@@ -953,17 +968,16 @@ void FunctionDefinitionWriter::visit(AST::DecrementIncrementStatement& statement
         m_stringBuilder.append("--");
         break;
     }
-    m_stringBuilder.append(";");
 }
 
 void FunctionDefinitionWriter::visit(AST::IfStatement& statement)
 {
     m_stringBuilder.append("if (");
     visit(statement.test());
-    m_stringBuilder.append(")\n");
+    m_stringBuilder.append(") ");
     visit(statement.trueBody());
     if (statement.maybeFalseBody()) {
-        m_stringBuilder.append(m_indent, "else ");
+        m_stringBuilder.append(" else ");
         visit(*statement.maybeFalseBody());
     }
 }
@@ -972,7 +986,7 @@ void FunctionDefinitionWriter::visit(AST::PhonyAssignmentStatement& statement)
 {
     m_stringBuilder.append("(void)(");
     visit(statement.rhs());
-    m_stringBuilder.append(");\n");
+    m_stringBuilder.append(")");
 }
 
 void FunctionDefinitionWriter::visit(AST::ReturnStatement& statement)
@@ -982,7 +996,6 @@ void FunctionDefinitionWriter::visit(AST::ReturnStatement& statement)
         m_stringBuilder.append(" ");
         visit(*statement.maybeExpression());
     }
-    m_stringBuilder.append(";\n");
 }
 
 void FunctionDefinitionWriter::visit(AST::ForStatement& statement)
@@ -991,12 +1004,16 @@ void FunctionDefinitionWriter::visit(AST::ForStatement& statement)
     if (auto* initializer = statement.maybeInitializer())
         visit(*initializer);
     m_stringBuilder.append(";");
-    if (auto* test = statement.maybeTest())
+    if (auto* test = statement.maybeTest()) {
+        m_stringBuilder.append(" ");
         visit(*test);
+    }
     m_stringBuilder.append(";");
-    if (auto* update = statement.maybeUpdate())
+    if (auto* update = statement.maybeUpdate()) {
+        m_stringBuilder.append(" ");
         visit(*update);
-    m_stringBuilder.append(")");
+    }
+    m_stringBuilder.append(") ");
     visit(statement.body());
 }
 
