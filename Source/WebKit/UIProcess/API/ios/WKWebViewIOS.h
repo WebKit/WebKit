@@ -117,6 +117,8 @@ enum class TapHandlingResult : uint8_t;
 
 - (void)_showPasswordViewWithDocumentName:(NSString *)documentName passwordHandler:(void (^)(NSString *))passwordHandler;
 - (void)_hidePasswordView;
+- (void)_didRequestPasswordForDocument;
+- (void)_didStopRequestingPasswordForDocument;
 
 - (void)_addShortcut:(id)sender;
 - (void)_define:(id)sender;

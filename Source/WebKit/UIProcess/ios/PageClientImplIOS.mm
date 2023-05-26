@@ -971,7 +971,6 @@ void PageClientImpl::requestPasswordForQuickLookDocument(const String& fileName,
     }
 
     [m_webView _showPasswordViewWithDocumentName:fileName passwordHandler:passwordHandler.get()];
-    NavigationState::fromWebPage(*m_webView.get()->_page).didRequestPasswordForQuickLookDocument();
 }
 #endif
 
