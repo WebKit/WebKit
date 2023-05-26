@@ -258,7 +258,7 @@ std::optional<InteractionRegion> interactionRegionForRenderedRegion(RenderObject
     bool isInlineNonBlock = renderer.isInline() && !renderer.isReplacedOrInlineBlock();
 
     // The parent will get its own InteractionRegion.
-    if (!isOriginalMatch && !isInlineNonBlock)
+    if (!isOriginalMatch && !isInlineNonBlock && !renderer.style().isDisplayTableOrTablePart())
         return std::nullopt;
 
     float borderRadius = 0;
