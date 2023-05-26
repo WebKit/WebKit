@@ -574,6 +574,15 @@ set(WTF_SOURCES
     unicode/icu/ICUHelpers.cpp
 )
 
+if (APPLE)
+    list(APPEND WTF_PUBLIC_HEADERS
+        darwin/OSLogPrintStream.h
+    )
+    list(APPEND WTF_SOURCES
+        darwin/OSLogPrintStream.mm
+    )
+endif ()
+
 set(WTF_PRIVATE_INCLUDE_DIRECTORIES
     "${CMAKE_BINARY_DIR}"
     "${WTF_DERIVED_SOURCES_DIR}"

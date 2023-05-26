@@ -242,7 +242,7 @@ public:
     WTF_EXPORT_PRIVATE RetainPtr<CFStringRef> createCFString() const;
 #endif
 
-#ifdef __OBJC__
+#if USE(FOUNDATION) && defined(__OBJC__)
 #if HAVE(SAFARI_FOR_WEBKIT_DEVELOPMENT_REQUIRING_EXTRA_SYMBOLS)
     WTF_EXPORT_PRIVATE String(NSString *);
 #else
@@ -505,7 +505,7 @@ inline Expected<std::invoke_result_t<Func, std::span<const char>>, UTF8Conversio
     return m_impl->tryGetUTF8(function, mode);
 }
 
-#ifdef __OBJC__
+#if USE(FOUNDATION) && defined(__OBJC__)
 
 inline String::operator NSString *() const
 {

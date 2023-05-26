@@ -113,7 +113,7 @@ public:
     AtomString(CFStringRef);
 #endif
 
-#ifdef __OBJC__
+#if USE(FOUNDATION) && defined(__OBJC__)
     AtomString(NSString *);
     operator NSString *() const { return m_string; }
 #endif
@@ -238,7 +238,7 @@ inline AtomString::AtomString(CFStringRef string)
 
 #endif
 
-#ifdef __OBJC__
+#if USE(FOUNDATION) && defined(__OBJC__)
 
 inline AtomString::AtomString(NSString *string)
     : m_string(AtomStringImpl::add((__bridge CFStringRef)string))
