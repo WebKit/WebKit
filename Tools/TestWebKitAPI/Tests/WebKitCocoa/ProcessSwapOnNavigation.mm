@@ -4405,12 +4405,11 @@ TEST(ProcessSwap, DelayedProcessLaunchThenLaunchInitialProcessIfNecessary)
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
     webViewConfiguration.get()._delaysWebProcessLaunchUntilFirstLoad = YES;
     [webViewConfiguration setProcessPool:processPool.get()];
-    webViewConfiguration.get().preferences._developerExtrasEnabled = YES;
 
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
 
     EXPECT_EQ(0, [webView _webProcessIdentifier]);
-    TestWebKitAPI::Util::spinRunLoop(100);
+    TestWebKitAPI::Util::runFor(200_ms);
     EXPECT_EQ(0, [webView _webProcessIdentifier]);
 
     [webView _launchInitialProcessIfNecessary];
@@ -4428,18 +4427,32 @@ TEST(ProcessSwap, DelayedProcessLaunchThenLoad)
     auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
     webViewConfiguration.get()._delaysWebProcessLaunchUntilFirstLoad = YES;
     [webViewConfiguration setProcessPool:processPool.get()];
-    webViewConfiguration.get().preferences._developerExtrasEnabled = YES;
 
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
 
     EXPECT_EQ(0, [webView _webProcessIdentifier]);
-    TestWebKitAPI::Util::spinRunLoop(100);
+    TestWebKitAPI::Util::runFor(200_ms);
     EXPECT_EQ(0, [webView _webProcessIdentifier]);
 
     [webView loadHTMLString:@"test" baseURL:[NSURL URLWithString:@"about:blank"]];
     [webView _test_waitForDidFinishNavigation];
 
     EXPECT_NE(0, [webView _webProcessIdentifier]);
+}
+
+TEST(ProcessSwap, DelayedProcessLaunchDisabled)
+{
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
+    auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+
+    auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    webViewConfiguration.get()._delaysWebProcessLaunchUntilFirstLoad = NO;
+    [webViewConfiguration setProcessPool:processPool.get()];
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+
+    while (![webView _webProcessIdentifier])
+        TestWebKitAPI::Util::spinRunLoop();
 }
 
 static const char* sameOriginBlobNavigationTestBytes = R"PSONRESOURCE(

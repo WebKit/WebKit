@@ -214,7 +214,7 @@ public:
     void setAllowTestOnlyIPC(bool enabled) { m_allowTestOnlyIPC = enabled; }
     bool allowTestOnlyIPC() const { return m_allowTestOnlyIPC; }
 
-    void setDelaysWebProcessLaunchUntilFirstLoad(bool delaysWebProcessLaunchUntilFirstLoad) { m_delaysWebProcessLaunchUntilFirstLoad = delaysWebProcessLaunchUntilFirstLoad; }
+    void setDelaysWebProcessLaunchUntilFirstLoad(bool);
     bool delaysWebProcessLaunchUntilFirstLoad() const;
 
     void setContentSecurityPolicyModeForExtension(WebCore::ContentSecurityPolicyModeForExtension mode) { m_contentSecurityPolicyModeForExtension = mode; }

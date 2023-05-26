@@ -28,6 +28,7 @@
 
 #include "APIProcessPoolConfiguration.h"
 #include "APIWebsitePolicies.h"
+#include "Logging.h"
 #include "WebInspectorUtilities.h"
 #include "WebPageGroup.h"
 #include "WebPageProxy.h"
@@ -82,6 +83,7 @@ Ref<PageConfiguration> PageConfiguration::copy() const
     copy->m_waitsForPaintAfterViewDidMoveToWindow = this->m_waitsForPaintAfterViewDidMoveToWindow;
     copy->m_drawsBackground = this->m_drawsBackground;
     copy->m_controlledByAutomation = this->m_controlledByAutomation;
+    copy->m_delaysWebProcessLaunchUntilFirstLoad = this->m_delaysWebProcessLaunchUntilFirstLoad;
     copy->m_cpuLimit = this->m_cpuLimit;
     copy->m_overrideContentSecurityPolicy = this->m_overrideContentSecurityPolicy;
 #if ENABLE(APPLICATION_MANIFEST)
@@ -250,18 +252,29 @@ bool PageConfiguration::lockdownModeEnabled() const
     return lockdownModeEnabledBySystem();
 }
 
+void PageConfiguration::setDelaysWebProcessLaunchUntilFirstLoad(bool delaysWebProcessLaunchUntilFirstLoad)
+{
+    RELEASE_LOG(Process, "%p - PageConfiguration::setDelaysWebProcessLaunchUntilFirstLoad(%d)", this, delaysWebProcessLaunchUntilFirstLoad);
+    m_delaysWebProcessLaunchUntilFirstLoad = delaysWebProcessLaunchUntilFirstLoad;
+}
+
 bool PageConfiguration::delaysWebProcessLaunchUntilFirstLoad() const
 {
     if (m_processPool && isInspectorProcessPool(*m_processPool)) {
         // Never delay process launch for inspector pages as inspector pages do not know how to transition from a terminated process.
+        RELEASE_LOG(Process, "%p - PageConfiguration::delaysWebProcessLaunchUntilFirstLoad() -> false because of WebInspector pool", this);
         return false;
     }
     if (m_delaysWebProcessLaunchUntilFirstLoad) {
+        RELEASE_LOG(Process, "%p - PageConfiguration::delaysWebProcessLaunchUntilFirstLoad() -> %{public}s because of explicit client value", this, *m_delaysWebProcessLaunchUntilFirstLoad ? "true" : "false");
         // If the client explicitly enabled / disabled the feature, then obey their directives.
         return *m_delaysWebProcessLaunchUntilFirstLoad;
     }
-    if (m_processPool)
+    if (m_processPool) {
+        RELEASE_LOG(Process, "%p - PageConfiguration::delaysWebProcessLaunchUntilFirstLoad() -> %{public}s because of associated processPool value", this, m_processPool->delaysWebProcessLaunchDefaultValue() ? "true" : "false");
         return m_processPool->delaysWebProcessLaunchDefaultValue();
+    }
+    RELEASE_LOG(Process, "%p - PageConfiguration::delaysWebProcessLaunchUntilFirstLoad() -> %{public}s because of global default value", this, WebProcessPool::globalDelaysWebProcessLaunchDefaultValue() ? "true" : "false");
     return WebProcessPool::globalDelaysWebProcessLaunchDefaultValue();
 }
 
