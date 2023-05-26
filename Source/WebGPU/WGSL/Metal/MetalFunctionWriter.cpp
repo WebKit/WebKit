@@ -945,7 +945,15 @@ void FunctionDefinitionWriter::visit(AST::CompoundStatement& statement)
 void FunctionDefinitionWriter::visit(AST::DecrementIncrementStatement& statement)
 {
     visit(statement.expression());
-    m_stringBuilder.append(statement.operation(), ";");
+    switch (statement.operation()) {
+    case AST::DecrementIncrementStatement::Operation::Increment:
+        m_stringBuilder.append("++");
+        break;
+    case AST::DecrementIncrementStatement::Operation::Decrement:
+        m_stringBuilder.append("--");
+        break;
+    }
+    m_stringBuilder.append(";");
 }
 
 void FunctionDefinitionWriter::visit(AST::IfStatement& statement)

@@ -365,7 +365,7 @@ void TypeChecker::visit(AST::ForStatement& statement)
     if (auto* test = statement.maybeTest()) {
         auto* testType = infer(*test);
         if (!unify(m_types.boolType(), testType))
-            typeError(test->span(), "for-loop condition must be bool, got ", *testType);
+            typeError(InferBottom::No, test->span(), "for-loop condition must be bool, got ", *testType);
     }
 
     if (auto* update = statement.maybeUpdate())
