@@ -28,9 +28,9 @@ PRODUCT_NAME = WTF;
 GCC_SYMBOLS_PRIVATE_EXTERN = YES;
 STRIP_INSTALLED_PRODUCT = NO;
 
-EXCLUDED_SOURCE_FILE_NAMES = $(inherited) $(EXCLUDED_SOURCE_FILE_NAMES_$(USE_INTERNAL_SDK));
+// ICU headers don't have target membership in WTF, but they are visible to the "Generate TAPI filelist" build phase. Since they are not installed to /usr/local/include/wtf and not API, tell the script to ignore them.
+EXCLUDED_SOURCE_FILE_NAMES = $(inherited) icu/unicode/* $(EXCLUDED_SOURCE_FILE_NAMES_$(USE_INTERNAL_SDK));
 EXCLUDED_SOURCE_FILE_NAMES_[sdk=embedded*] = MachExceptions.defs;
-EXCLUDED_SOURCE_FILE_NAMES_YES = icu/unicode/*;
 
 INSTALLHDRS_SCRIPT_PHASE = YES;
 APPLY_RULES_IN_COPY_HEADERS = YES;
