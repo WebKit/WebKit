@@ -71,6 +71,7 @@
 #include <WebCore/PointerEvent.h>
 #include <WebCore/RefPtrCairo.h>
 #include <WebCore/Region.h>
+#include <cmath>
 #include <gdk/gdk.h>
 #include <gdk/gdkkeysyms.h>
 #include <glib-object.h>
@@ -1646,7 +1647,33 @@ static void webkitWebViewBaseLeave(WebKitWebViewBase* webViewBase, GdkCrossingMo
         return;
 #endif
 
-    priv->pageProxy->handleMouseEvent(NativeWebMouseEvent({ -1, -1 }));
+    // We need to synthesize a fake mouse event here to let WebCore know that the mouse has left the
+    // web view. Let's compute a point outside the web view that is close to the previous
+    // coordinates of the pointer before it left the web view. First we'll figure out which
+    // coordinate is closest to an edge of the web view, then we'll adjust the coordinate to be one
+    // pixel outside the view. This is not necessarily the closest point outside the web view, but
+    // it's simple to calculate and surely good enough.
+
+    ASSERT(priv->lastMotionEvent);
+    int previousX = std::round(priv->lastMotionEvent->position.x());
+    int previousY = std::round(priv->lastMotionEvent->position.y());
+    int width = gtk_widget_get_width(GTK_WIDGET(webViewBase));
+    int height = gtk_widget_get_height(GTK_WIDGET(webViewBase));
+    int xDistanceFromRightEdge = width - previousX;
+    int yDistanceFromBottomEdge = height - previousY;
+
+    if (previousX <= xDistanceFromRightEdge && previousX <= previousY && previousX <= yDistanceFromBottomEdge)
+        priv->pageProxy->handleMouseEvent(NativeWebMouseEvent({ -1, previousY }));
+    else if (xDistanceFromRightEdge <= previousX && xDistanceFromRightEdge <= previousY && xDistanceFromRightEdge <= yDistanceFromBottomEdge)
+        priv->pageProxy->handleMouseEvent(NativeWebMouseEvent({ width, previousY }));
+    else if (previousY <= previousX && previousY <= xDistanceFromRightEdge && previousY <= yDistanceFromBottomEdge)
+        priv->pageProxy->handleMouseEvent(NativeWebMouseEvent({ previousX, -1 }));
+    else {
+        ASSERT(yDistanceFromBottomEdge <= previousX);
+        ASSERT(yDistanceFromBottomEdge <= previousY);
+        ASSERT(yDistanceFromBottomEdge <= xDistanceFromRightEdge);
+        priv->pageProxy->handleMouseEvent(NativeWebMouseEvent({ previousX, height }));
+    }
 }
 #endif
 
