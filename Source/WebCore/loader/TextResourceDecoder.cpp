@@ -289,7 +289,7 @@ TextResourceDecoder::ContentType TextResourceDecoder::determineContentType(const
         return CSS;
     if (equalLettersIgnoringASCIICase(mimeType, "text/html"_s))
         return HTML;
-    if (MIMETypeRegistry::isXMLMIMEType(mimeType))
+    if (MIMETypeRegistry::isXMLMIMEType(mimeType) || mimeType == "text/xsl"_s)
         return XML;
     return PlainText;
 }
