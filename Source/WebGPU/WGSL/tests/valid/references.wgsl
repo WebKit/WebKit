@@ -11,3 +11,17 @@ fn testImplicitConversion()
     _ = 0 + x;
     _ = x + 0;
 }
+
+fn testDecrementIcrement() {
+    {
+        var x = 0i;
+        x++;
+        x--;
+    }
+
+    {
+        var x = 0;
+        x++;
+        x--;
+    }
+}

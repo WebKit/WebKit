@@ -849,12 +849,27 @@ Result<AST::Statement::Ref> Parser<Lexer>::parseStatement()
     case TokenType::Identifier: {
         // FIXME: there will be other cases here eventually for function calls
         PARSE(lhs, LHSExpression);
+
+        std::optional<AST::DecrementIncrementStatement::Operation> operation;
+        if (current().type == TokenType::PlusPlus)
+            operation = AST::DecrementIncrementStatement::Operation::Increment;
+        else if (current().type == TokenType::MinusMinus)
+            operation = AST::DecrementIncrementStatement::Operation::Decrement;
+        if (operation) {
+            consume();
+            CONSUME_TYPE(Semicolon);
+            RETURN_ARENA_NODE(DecrementIncrementStatement, WTFMove(lhs), *operation);
+        }
+
         std::optional<AST::BinaryOperation> maybeOp;
         if (canContinueCompoundAssignmentStatement(current())) {
             maybeOp = toBinaryOperation(current());
             consume();
-        } else
-            CONSUME_TYPE(Equal);
+        } else if (current().type == TokenType::Equal)
+            consume();
+        else
+            FAIL("Expected one of `=`, `++`, or `--`"_s);
+
         PARSE(rhs, Expression);
         CONSUME_TYPE(Semicolon);
 

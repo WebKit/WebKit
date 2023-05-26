@@ -18,3 +18,21 @@ fn testReferenceAssignment()
     // FIXME: we can't test that we don't accept write-only references for reads
     // since there are no valid ways of declaring a write-only var
 }
+
+fn testDecrementIcrement() {
+    {
+        // CHECK-L: cannot modify a value of type 'i32'
+        let x = 0i;
+        x++;
+    }
+    {
+        // CHECK-L: cannot modify read-only type 'ref<storage, i32, read>'
+        x++;
+    }
+    {
+        // CHECK-L: increment can only be applied to integers, found f32
+        var x = 0f;
+        x++;
+    }
+}
+

@@ -86,6 +86,7 @@ public:
     void visit(AST::Statement&) override;
     void visit(AST::AssignmentStatement&) override;
     void visit(AST::CompoundStatement&) override;
+    void visit(AST::DecrementIncrementStatement&) override;
     void visit(AST::IfStatement&) override;
     void visit(AST::PhonyAssignmentStatement&) override;
     void visit(AST::ReturnStatement&) override;
@@ -939,6 +940,12 @@ void FunctionDefinitionWriter::visit(AST::CompoundStatement& statement)
         }
     }
     m_stringBuilder.append(m_indent, "}\n");
+}
+
+void FunctionDefinitionWriter::visit(AST::DecrementIncrementStatement& statement)
+{
+    visit(statement.expression());
+    m_stringBuilder.append(statement.operation(), ";");
 }
 
 void FunctionDefinitionWriter::visit(AST::IfStatement& statement)

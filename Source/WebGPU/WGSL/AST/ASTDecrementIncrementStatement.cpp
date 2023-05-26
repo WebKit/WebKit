@@ -23,38 +23,23 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "ASTDecrementIncrementStatement.h"
 
-#include "ASTExpression.h"
-#include "ASTStatement.h"
+#include <wtf/PrintStream.h>
 
 namespace WGSL::AST {
 
-class DecrementIncrementStatement final : public Statement {
-    WGSL_AST_BUILDER_NODE(DecrementIncrementStatement);
-public:
-    enum class Operation : uint8_t {
-        Decrement,
-        Increment,
-    };
-
-    NodeKind kind() const override;
-    Expression& expression() { return m_expression; }
-    Operation operation() const { return m_operation; }
-
-private:
-    DecrementIncrementStatement(SourceSpan span, Expression::Ref&& expression, Operation operation)
-        : Statement(span)
-        , m_expression(WTFMove(expression))
-        , m_operation(operation)
-    { }
-
-    Expression::Ref m_expression;
-    Operation m_operation;
-};
-
-void printInternal(PrintStream&, DecrementIncrementStatement::Operation);
+void printInternal(PrintStream& out, DecrementIncrementStatement::Operation operation)
+{
+    switch (operation) {
+    case DecrementIncrementStatement::Operation::Increment:
+        out.print("++");
+        break;
+    case DecrementIncrementStatement::Operation::Decrement:
+        out.print("--");
+        break;
+    }
+}
 
 } // namespace WGSL::AST
-
-SPECIALIZE_TYPE_TRAITS_WGSL_AST(DecrementIncrementStatement)

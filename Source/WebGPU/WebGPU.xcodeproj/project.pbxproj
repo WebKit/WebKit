@@ -149,6 +149,7 @@
 		97BCD6AE29D7422B00A82577 /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1CBAB0912718CCA0006080BB /* JavaScriptCore.framework */; };
 		97C36CFE29F1730100CFB379 /* Constraints.h in Headers */ = {isa = PBXBuildFile; fileRef = 97C36CFC29F1730000CFB379 /* Constraints.h */; };
 		97C36CFF29F1730100CFB379 /* Constraints.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97C36CFD29F1730000CFB379 /* Constraints.cpp */; };
+		97E21C8B2A1F5DCC009CEB0E /* ASTDecrementIncrementStatement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97E21C8A2A1F5DCC009CEB0E /* ASTDecrementIncrementStatement.cpp */; };
 		97F547B8298055D90011D79A /* GlobalVariableRewriter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97F547B6298055D90011D79A /* GlobalVariableRewriter.cpp */; };
 		97F547B9298055D90011D79A /* GlobalVariableRewriter.h in Headers */ = {isa = PBXBuildFile; fileRef = 97F547B7298055D90011D79A /* GlobalVariableRewriter.h */; };
 		97FA1A8E29C086230052D650 /* wgslc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97FA1A8729C085A60052D650 /* wgslc.cpp */; };
@@ -394,6 +395,7 @@
 		979240C729769AC00050EA2C /* EntryPointRewriter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EntryPointRewriter.cpp; sourceTree = "<group>"; };
 		97C36CFC29F1730000CFB379 /* Constraints.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Constraints.h; sourceTree = "<group>"; };
 		97C36CFD29F1730000CFB379 /* Constraints.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Constraints.cpp; sourceTree = "<group>"; };
+		97E21C8A2A1F5DCC009CEB0E /* ASTDecrementIncrementStatement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ASTDecrementIncrementStatement.cpp; sourceTree = "<group>"; };
 		97F547B6298055D90011D79A /* GlobalVariableRewriter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GlobalVariableRewriter.cpp; sourceTree = "<group>"; };
 		97F547B7298055D90011D79A /* GlobalVariableRewriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GlobalVariableRewriter.h; sourceTree = "<group>"; };
 		97FA1A7F29C085740052D650 /* wgslc */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = wgslc; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -625,6 +627,7 @@
 				3A12AE9E28FCE94B00C1B975 /* ASTConstAttribute.h */,
 				3A12AEA228FCE94C00C1B975 /* ASTContinueStatement.h */,
 				3AD0D2302988D3C10080D728 /* ASTDeclaration.h */,
+				97E21C8A2A1F5DCC009CEB0E /* ASTDecrementIncrementStatement.cpp */,
 				3A12AEA428FCE94C00C1B975 /* ASTDecrementIncrementStatement.h */,
 				33EA185F27BC198100A1DD52 /* ASTDirective.h */,
 				3A12AEA828FCE94C00C1B975 /* ASTDiscardStatement.h */,
@@ -971,6 +974,7 @@
 			files = (
 				3AD0D23E2988F3AB0080D728 /* ASTBinaryExpression.cpp in Sources */,
 				97835C9529F7D85A00939EBA /* ASTBuilder.cpp in Sources */,
+				97E21C8B2A1F5DCC009CEB0E /* ASTDecrementIncrementStatement.cpp in Sources */,
 				3A9D02A4298390CF00888A75 /* ASTStringDumper.cpp in Sources */,
 				3AD0D23B2988ED8F0080D728 /* ASTUnaryExpression.cpp in Sources */,
 				3A1337E728FBD56400F29B73 /* ASTVisitor.cpp in Sources */,

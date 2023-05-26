@@ -55,6 +55,7 @@ public:
     // Statements
     void visit(AST::AssignmentStatement&) override;
     void visit(AST::CompoundAssignmentStatement&) override;
+    void visit(AST::DecrementIncrementStatement&) override;
     void visit(AST::IfStatement&) override;
     void visit(AST::PhonyAssignmentStatement&) override;
     void visit(AST::ReturnStatement&) override;
@@ -291,6 +292,35 @@ void TypeChecker::visit(AST::CompoundAssignmentStatement& statement)
     // TypeChecker::visit(AST::Expression&)
     infer(statement.leftExpression());
     infer(statement.rightExpression());
+}
+
+void TypeChecker::visit(AST::DecrementIncrementStatement& statement)
+{
+    auto* expression = infer(statement.expression());
+    if (isBottom(expression))
+        return;
+
+    auto* reference = std::get_if<Types::Reference>(expression);
+    if (!reference) {
+        typeError(InferBottom::No, statement.span(), "cannot modify a value of type '", *expression, "'");
+        return;
+    }
+    if (reference->accessMode == AccessMode::Read) {
+        typeError(InferBottom::No, statement.span(), "cannot modify read-only type '", *expression, "'");
+        return;
+    }
+    if (!unify(m_types.i32Type(), reference->element) && !unify(m_types.u32Type(), reference->element)) {
+        const char* operation;
+        switch (statement.operation()) {
+        case AST::DecrementIncrementStatement::Operation::Increment:
+            operation = "increment";
+            break;
+        case AST::DecrementIncrementStatement::Operation::Decrement:
+            operation = "decrement";
+            break;
+        }
+        typeError(InferBottom::No, statement.span(), operation, " can only be applied to integers, found ", *reference->element);
+    }
 }
 
 void TypeChecker::visit(AST::IfStatement& statement)

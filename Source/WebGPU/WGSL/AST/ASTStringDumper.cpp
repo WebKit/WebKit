@@ -326,6 +326,14 @@ void StringDumper::visit(CompoundStatement& block)
     m_out.print("}\n");
 }
 
+void StringDumper::visit(DecrementIncrementStatement& statement)
+{
+    m_out.print(m_indent);
+    visit(statement.expression());
+    m_out.print(statement.operation(), ";");
+}
+
+
 void StringDumper::visit(IfStatement& statement)
 {
     m_out.print(m_indent, "if ");
