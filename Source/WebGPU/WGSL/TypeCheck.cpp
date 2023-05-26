@@ -224,6 +224,14 @@ void TypeChecker::visitVariable(AST::Variable& variable, VariableKind variableKi
             accessMode = AccessMode::Read;
         }
         result = m_types.referenceType(addressSpace, result, accessMode);
+        if (auto* maybeTypeName = variable.maybeTypeName()) {
+            auto& referenceType = m_shaderModule.astBuilder().construct<AST::ReferenceTypeName>(
+                maybeTypeName->span(),
+                *maybeTypeName
+            );
+            referenceType.m_resolvedType = result;
+            variable.m_referenceType = &referenceType;
+        }
     }
     introduceVariable(variable.name(), result);
 }

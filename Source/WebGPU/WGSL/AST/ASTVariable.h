@@ -33,7 +33,11 @@
 #include "ASTTypeName.h"
 #include "ASTVariableQualifier.h"
 
-namespace WGSL::AST {
+namespace WGSL {
+class TypeChecker;
+struct Type;
+
+namespace AST {
 
 enum class VariableFlavor : uint8_t {
     Const,
@@ -44,6 +48,7 @@ enum class VariableFlavor : uint8_t {
 
 class Variable final : public Declaration {
     WGSL_AST_BUILDER_NODE(Variable);
+    friend TypeChecker;
 public:
     using Ref = std::reference_wrapper<Variable>;
     using List = ReferenceWrapperVector<Variable>;
@@ -55,6 +60,13 @@ public:
     VariableQualifier* maybeQualifier() { return m_qualifier; }
     TypeName* maybeTypeName() { return m_type; }
     Expression* maybeInitializer() { return m_initializer; }
+    TypeName* maybeReferenceType() { return m_referenceType; }
+    const Type* storeType() const
+    {
+        if (m_type)
+            return m_type->resolvedType();
+        return m_initializer->inferredType();
+    }
 
 private:
     Variable(SourceSpan span, VariableFlavor flavor, Identifier&& name, TypeName::Ptr type, Expression::Ptr initializer)
@@ -81,8 +93,10 @@ private:
     TypeName::Ptr m_type;
     Expression::Ptr m_initializer;
     VariableFlavor m_flavor;
+    TypeName::Ptr m_referenceType { nullptr };
 };
 
-} // namespace WGSL::AST
+} // namespace AST
+} // namespace WGSL
 
 SPECIALIZE_TYPE_TRAITS_WGSL_AST(Variable)

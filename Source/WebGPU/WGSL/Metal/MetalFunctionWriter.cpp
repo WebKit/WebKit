@@ -291,27 +291,22 @@ void FunctionDefinitionWriter::visitGlobal(AST::Variable& variable)
 
 void FunctionDefinitionWriter::serializeVariable(AST::Variable& variable)
 {
-    if (variable.maybeTypeName()) {
-        auto* type = variable.maybeTypeName()->resolvedType();
-        if (isPrimitiveReference(type, Types::Primitive::TextureExternal)) {
-            ASSERT(variable.maybeInitializer());
-            m_stringBuilder.append("texture_external ", variable.name(), " { ");
-            visit(*variable.maybeInitializer());
-            m_stringBuilder.append("_FirstPlane, ");
-            visit(*variable.maybeInitializer());
-            m_stringBuilder.append("_SecondPlane, ");
-            visit(*variable.maybeInitializer());
-            m_stringBuilder.append("_UVRemapMatrix, ");
-            visit(*variable.maybeInitializer());
-            m_stringBuilder.append("_ColorSpaceConversionMatrix }");
-            return;
-        }
-        visit(*variable.maybeTypeName());
-    } else {
+    const Type* type = variable.storeType();
+    if (isPrimitiveReference(type, Types::Primitive::TextureExternal)) {
         ASSERT(variable.maybeInitializer());
-        const Type* inferredType = variable.maybeInitializer()->inferredType();
-        visit(inferredType);
+        m_stringBuilder.append("texture_external ", variable.name(), " { ");
+        visit(*variable.maybeInitializer());
+        m_stringBuilder.append("_FirstPlane, ");
+        visit(*variable.maybeInitializer());
+        m_stringBuilder.append("_SecondPlane, ");
+        visit(*variable.maybeInitializer());
+        m_stringBuilder.append("_UVRemapMatrix, ");
+        visit(*variable.maybeInitializer());
+        m_stringBuilder.append("_ColorSpaceConversionMatrix }");
+        return;
     }
+
+    visit(type);
     m_stringBuilder.append(" ", variable.name());
     if (variable.maybeInitializer()) {
         m_stringBuilder.append(" = ");
@@ -542,28 +537,31 @@ void FunctionDefinitionWriter::visit(const Type* type)
             m_stringBuilder.append(", access::", mode, ">");
         },
         [&](const Reference& reference) {
-            if (reference.accessMode == AccessMode::Read)
-                m_stringBuilder.append("const ");
+            const char* addressSpace = nullptr;
             switch (reference.addressSpace) {
             case AddressSpace::Function:
-                m_stringBuilder.append("thread");
-                break;
-            case AddressSpace::Private:
-                m_stringBuilder.append("private");
+                addressSpace = "thread";
                 break;
             case AddressSpace::Workgroup:
-                m_stringBuilder.append("threadgroup");
+                addressSpace = "threadgroup";
                 break;
             case AddressSpace::Uniform:
-                m_stringBuilder.append("constant");
+                addressSpace = "constant";
                 break;
             case AddressSpace::Storage:
-                m_stringBuilder.append("device");
+                addressSpace = "device";
                 break;
             case AddressSpace::Handle:
-                RELEASE_ASSERT_NOT_REACHED();
+            case AddressSpace::Private:
+                break;
             }
-            m_stringBuilder.append(" ");
+            if (!addressSpace) {
+                visit(reference.element);
+                return;
+            }
+            if (reference.accessMode == AccessMode::Read)
+                m_stringBuilder.append("const ");
+            m_stringBuilder.append(addressSpace, " ");
             visit(reference.element);
             m_stringBuilder.append("&");
         },

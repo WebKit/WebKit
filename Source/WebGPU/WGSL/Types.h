@@ -160,6 +160,7 @@ struct Type : public std::variant<
 using ConversionRank = Markable<unsigned, IntegralMarkableTraits<unsigned, std::numeric_limits<unsigned>::max()>>;
 ConversionRank conversionRank(Type* from, Type* to);
 
+bool isPrimitive(const Type*, Types::Primitive::Kind);
 bool isPrimitiveReference(const Type*, Types::Primitive::Kind);
 
 } // namespace WGSL

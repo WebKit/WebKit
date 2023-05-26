@@ -90,7 +90,6 @@ private:
     void insertParameters(AST::Function&, const UsedResources&);
     void insertMaterializations(AST::Function&, const UsedResources&);
     void insertLocalDefinitions(AST::Function&, const UsedPrivateGlobals&);
-    bool shouldBeReference(const Type*) const;
 
     CallGraph& m_callGraph;
     PrepareResult& m_result;
@@ -125,20 +124,10 @@ void RewriteGlobalVariables::visitCallee(const CallGraph::Callee& callee)
         auto it = m_globals.find(read);
         RELEASE_ASSERT(it != m_globals.end());
         auto& global = it->value;
-        AST::TypeName::Ref typeName = *global.declaration->maybeTypeName();
-        auto* type = typeName.get().resolvedType();
-        if (shouldBeReference(type)) {
-            typeName = m_callGraph.ast().astBuilder().construct<AST::ReferenceTypeName>(
-                SourceSpan::empty(),
-                WTFMove(typeName)
-            );
-            // FIXME: use const Type* everywhere
-            typeName.get().m_resolvedType = m_callGraph.ast().types().referenceType(AddressSpace::Function, const_cast<Type*>(type), AccessMode::ReadWrite);
-        }
         m_callGraph.ast().append(callee.target->parameters(), m_callGraph.ast().astBuilder().construct<AST::Parameter>(
             SourceSpan::empty(),
             AST::Identifier::make(read),
-            WTFMove(typeName),
+            *global.declaration->maybeReferenceType(),
             AST::Attribute::List { },
             AST::ParameterRole::UserDefined
         ));
@@ -287,14 +276,7 @@ auto RewriteGlobalVariables::determineUsedGlobals(PipelineLayout& pipelineLayout
 void RewriteGlobalVariables::usesOverride(AST::Variable& variable)
 {
     Reflection::SpecializationConstantType constantType;
-    const Type* type = nullptr;
-    if (auto* typeName = variable.maybeTypeName())
-        type = typeName->resolvedType();
-    else {
-        auto* initializer = variable.maybeInitializer();
-        ASSERT(initializer);
-        type = initializer->inferredType();
-    }
+    const Type* type = variable.storeType();
     ASSERT(std::holds_alternative<Types::Primitive>(*type));
     const auto& primitive = std::get<Types::Primitive>(*type);
     switch (primitive.kind) {
@@ -341,18 +323,10 @@ void RewriteGlobalVariables::insertStructs(const UsedResources& usedResources)
 
             ASSERT(global->declaration->maybeTypeName());
             auto span = global->declaration->span();
-
-            AST::TypeName::Ref memberType = *global->declaration->maybeTypeName();
-            auto* type = memberType.get().resolvedType();
-            if (shouldBeReference(type)) {
-                memberType = m_callGraph.ast().astBuilder().construct<AST::ReferenceTypeName>(span, WTFMove(memberType));
-                // FIXME: use const Type* everywhere
-                memberType.get().m_resolvedType = m_callGraph.ast().types().referenceType(AddressSpace::Uniform, const_cast<Type*>(type), AccessMode::Read);
-            }
             structMembers.append(m_callGraph.ast().astBuilder().construct<AST::StructureMember>(
                 span,
                 AST::Identifier::make(global->declaration->name()),
-                WTFMove(memberType),
+                *global->declaration->maybeReferenceType(),
                 AST::Attribute::List {
                     m_callGraph.ast().astBuilder().construct<AST::BindingAttribute>(span, binding)
                 }
@@ -401,42 +375,30 @@ void RewriteGlobalVariables::insertMaterializations(AST::Function& function, con
         for (auto& [_, global] : bindings) {
             auto& name = global->declaration->name();
             String fieldName = name;
-            AST::TypeName::Ref typeName = *global->declaration->maybeTypeName();
-            auto* type = typeName.get().resolvedType();
-            if (auto* primitive = std::get_if<Types::Primitive>(type); primitive && primitive->kind == Types::Primitive::TextureExternal) {
+            auto* storeType = global->declaration->storeType();
+            if (isPrimitive(storeType, Types::Primitive::TextureExternal)) {
                 fieldName = makeString("__", name);
                 m_callGraph.ast().setUsesExternalTextures();
             }
-
             auto& access = m_callGraph.ast().astBuilder().construct<AST::FieldAccessExpression>(
                 SourceSpan::empty(),
                 argument,
                 AST::Identifier::make(WTFMove(fieldName))
             );
-
-            if (shouldBeReference(type)) {
-                typeName = m_callGraph.ast().astBuilder().construct<AST::ReferenceTypeName>(
-                    SourceSpan::empty(),
-                    WTFMove(typeName)
-                );
-                // FIXME: use const Type* everywhere
-                typeName.get().m_resolvedType = m_callGraph.ast().types().referenceType(AddressSpace::Uniform, const_cast<Type*>(type), AccessMode::Read);
-            }
-
-            auto& variable = m_callGraph.ast().astBuilder().construct<AST::VariableStatement>(
+            auto& variable = m_callGraph.ast().astBuilder().construct<AST::Variable>(
                 SourceSpan::empty(),
-                m_callGraph.ast().astBuilder().construct<AST::Variable>(
-                    SourceSpan::empty(),
-                    AST::VariableFlavor::Let,
-                    AST::Identifier::make(name),
-                    nullptr,
-                    &typeName.get(),
-                    &access,
-                    AST::Attribute::List { }
-                )
+                AST::VariableFlavor::Let,
+                AST::Identifier::make(name),
+                nullptr,
+                global->declaration->maybeReferenceType(),
+                &access,
+                AST::Attribute::List { }
             );
-
-            m_callGraph.ast().insert(function.body().statements(), 0, AST::Statement::Ref(variable));
+            auto& variableStatement = m_callGraph.ast().astBuilder().construct<AST::VariableStatement>(
+                SourceSpan::empty(),
+                variable
+            );
+            m_callGraph.ast().insert(function.body().statements(), 0, AST::Statement::Ref(variableStatement));
         }
     }
 }
@@ -451,20 +413,6 @@ void RewriteGlobalVariables::insertLocalDefinitions(AST::Function& function, con
         m_callGraph.ast().insert(function.body().statements(), 0, std::reference_wrapper<AST::Statement>(variableStatement));
     }
 }
-
-bool RewriteGlobalVariables::shouldBeReference(const Type* type) const
-{
-    if (std::get_if<Types::Texture>(type))
-        return false;
-
-    if (auto* primitive = std::get_if<Types::Primitive>(type)) {
-        if (primitive->kind == Types::Primitive::Sampler)
-            return false;
-    }
-
-    return true;
-}
-
 
 void RewriteGlobalVariables::def(const String& name)
 {

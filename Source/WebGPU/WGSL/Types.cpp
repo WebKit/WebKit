@@ -323,15 +323,20 @@ unsigned Type::alignment() const
         });
 }
 
+bool isPrimitive(const Type* type, Primitive::Kind kind)
+{
+    auto* primitive = std::get_if<Primitive>(type);
+    if (!primitive)
+        return false;
+    return primitive->kind == kind;
+}
+
 bool isPrimitiveReference(const Type* type, Primitive::Kind kind)
 {
     auto* reference = std::get_if<Reference>(type);
     if (!reference)
         return false;
-    auto* primitive = std::get_if<Primitive>(reference->element);
-    if (!primitive)
-        return false;
-    return primitive->kind == kind;
+    return isPrimitive(reference->element, kind);
 }
 
 } // namespace WGSL
