@@ -2,8 +2,8 @@
 Harness Error (TIMEOUT), message = null
 
 PASS Test creating a VideoFrame with a same-origin HTMLImageElement
-FAIL Test creating a VideoFrame with a cross-origin HTMLImageElement assert_throws_dom: function "() => { create_frame(source); }" did not throw
-FAIL Test creating a VideoFrame with a CORS enabled cross-origin HTMLImageElement without setting crossorigin assert_throws_dom: function "() => { create_frame(source); }" did not throw
+PASS Test creating a VideoFrame with a cross-origin HTMLImageElement
+PASS Test creating a VideoFrame with a CORS enabled cross-origin HTMLImageElement without setting crossorigin
 PASS Test creating a VideoFrame with a CORS enabled cross-origin HTMLImageElement with crossorigin="anonymous"
 TIMEOUT Test creating a VideoFrame with a same-origin SVGImageElement Test timed out
 NOTRUN Test creating a VideoFrame with a cross-origin SVGImageElement

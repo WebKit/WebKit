@@ -78,10 +78,13 @@ WebCodecsVideoFrame::~WebCodecsVideoFrame()
 }
 
 // https://html.spec.whatwg.org/multipage/canvas.html#check-the-usability-of-the-image-argument
-static std::optional<Exception> checkImageUsability(const WebCodecsVideoFrame::CanvasImageSource& source)
+static std::optional<Exception> checkImageUsability(ScriptExecutionContext& context, const WebCodecsVideoFrame::CanvasImageSource& source)
 {
     return switchOn(source,
-    [] (const RefPtr<HTMLImageElement>& imageElement) -> std::optional<Exception> {
+    [&] (const RefPtr<HTMLImageElement>& imageElement) -> std::optional<Exception> {
+        if (!imageElement->originClean(*context.securityOrigin()))
+            return Exception { SecurityError, "Image element is tainted"_s };
+
         auto* image = imageElement->cachedImage() ? imageElement->cachedImage()->image() : nullptr;
         if (!image)
             return Exception { InvalidStateError,  "Image element has no data"_s };
@@ -97,16 +100,17 @@ static std::optional<Exception> checkImageUsability(const WebCodecsVideoFrame::C
             return Exception { InvalidStateError,  "Image element has a bad size"_s };
         return { };
     },
-    [] (const RefPtr<CSSStyleImageValue>& cssImage) -> std::optional<Exception> {
-        auto* image = cssImage->image() ? cssImage->image()->image() : nullptr;
-        if (!image)
-            return Exception { InvalidStateError,  "CSS Image has no data"_s };
-        if (!image->width() || !image->height())
-            return Exception { InvalidStateError,  "CSS Image has a bad size"_s };
-        return { };
+    [&] (const RefPtr<CSSStyleImageValue>& cssImage) -> std::optional<Exception> {
+        UNUSED_PARAM(cssImage);
+        ASSERT(!cssImage->isLoadedFromOpaqueSource());
+        return Exception { SecurityError, "Image element is tainted"_s };
     },
 #if ENABLE(VIDEO)
-    [] (const RefPtr<HTMLVideoElement>& video) -> std::optional<Exception> {
+    [&] (const RefPtr<HTMLVideoElement>& video) -> std::optional<Exception> {
+        auto* origin = context.securityOrigin();
+        if (video->taintsOrigin(*origin))
+            return Exception { SecurityError, "Video element is tainted"_s };
+
         auto readyState = video->readyState();
         if (readyState < HTMLMediaElement::HAVE_CURRENT_DATA)
             return Exception { InvalidStateError,  "Video element has no data"_s };
@@ -114,6 +118,9 @@ static std::optional<Exception> checkImageUsability(const WebCodecsVideoFrame::C
     },
 #endif
     [] (const RefPtr<HTMLCanvasElement>& canvas) -> std::optional<Exception> {
+        if (!canvas->originClean())
+            return Exception { SecurityError, "Image element is tainted"_s };
+
         auto size = canvas->size();
         if (!size.width() || !size.height())
             return Exception { InvalidStateError,  "Input canvas has a bad size"_s };
@@ -121,6 +128,9 @@ static std::optional<Exception> checkImageUsability(const WebCodecsVideoFrame::C
     },
 #if ENABLE(OFFSCREEN_CANVAS)
     [] (const RefPtr<OffscreenCanvas>& canvas) -> std::optional<Exception> {
+        if (!canvas->originClean())
+            return Exception { SecurityError, "Image element is tainted"_s };
+
         if (!canvas->width() || !canvas->height())
             return Exception { InvalidStateError,  "Input canvas has a bad size"_s };
         return { };
@@ -129,13 +139,16 @@ static std::optional<Exception> checkImageUsability(const WebCodecsVideoFrame::C
     [] (const RefPtr<ImageBitmap>& image) -> std::optional<Exception> {
         if (image->isDetached())
             return Exception { InvalidStateError,  "Input ImageBitmap is detached"_s };
+
+        if (!image->originClean())
+            return Exception { SecurityError,  "Input ImageBitmap is tainted"_s };
         return { };
     });
 }
 
 ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::create(ScriptExecutionContext& context, CanvasImageSource&& source, Init&& init)
 {
-    if (auto exception = checkImageUsability(source))
+    if (auto exception = checkImageUsability(context, source))
         return WTFMove(*exception);
 
     return switchOn(source,
