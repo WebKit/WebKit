@@ -290,9 +290,12 @@ class Manager(object):
                     start_time=start_time,
                     end_time=end_time,
                     tests_skipped=len(result_dictionary['Skipped']),
-                ),
-                results={test: Upload.create_test_result(actual=status_to_test_result[result[0]])
-                         for test, result in iteritems(runner.results) if result[0] in status_to_test_result},
+                ), results={
+                    test: Upload.create_test_result(
+                        actual=status_to_test_result[result[0]],
+                        time=int(result[2] * 1000),
+                    ) for test, result in iteritems(runner.results) if result[0] in status_to_test_result
+                },
             )
             for url in self._options.report_urls:
                 self._stream.write_update('Uploading to {} ...'.format(url))
