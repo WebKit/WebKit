@@ -157,16 +157,21 @@ ClipperData::Inputs RenderSVGResourceClipper::computeInputs(const GraphicsContex
 
 bool RenderSVGResourceClipper::applyClippingToContext(GraphicsContext& context, RenderElement& renderer, const FloatRect& objectBoundingBox, const FloatRect& clippedContentBounds, float effectiveZoom)
 {
-    auto& clipperData = *m_clipperMap.ensure(&renderer, [&]() {
-        return makeUnique<ClipperData>();
-    }).iterator->value;
-
-    LOG_WITH_STREAM(SVG, stream << "RenderSVGResourceClipper " << this << " applyClippingToContext: renderer " << &renderer << " objectBoundingBox " << objectBoundingBox << " clippedContentBounds " << clippedContentBounds << " (existing image buffer " << clipperData.imageBuffer.get() << ")");
+    LOG_WITH_STREAM(SVG, stream << "RenderSVGResourceClipper " << this << " applyClippingToContext: renderer " << &renderer << " objectBoundingBox " << objectBoundingBox << " clippedContentBounds " << clippedContentBounds);
 
     AffineTransform animatedLocalTransform = clipPathElement().animatedLocalTransform();
 
-    if (!clipperData.imageBuffer && pathOnlyClipping(context, animatedLocalTransform, objectBoundingBox, effectiveZoom))
+    if (pathOnlyClipping(context, animatedLocalTransform, objectBoundingBox, effectiveZoom)) {
+        auto it = m_clipperMap.find(&renderer);
+        if (it != m_clipperMap.end())
+            it->value->imageBuffer = nullptr;
+
         return true;
+    }
+
+    auto& clipperData = *m_clipperMap.ensure(&renderer, [&]() {
+        return makeUnique<ClipperData>();
+    }).iterator->value;
 
     if (clipperData.invalidate(computeInputs(context, renderer, objectBoundingBox, clippedContentBounds, effectiveZoom))) {
         // FIXME (149469): This image buffer should not be unconditionally unaccelerated. Making it match the context breaks nested clipping, though.
