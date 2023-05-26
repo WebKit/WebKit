@@ -329,54 +329,45 @@ void RemoteGraphicsContextGLProxy::simulateEventForTesting(SimulatedEventForTest
     }
 }
 
-void RemoteGraphicsContextGLProxy::readnPixels(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, std::span<uint8_t> data)
+void RemoteGraphicsContextGLProxy::readPixels(IntRect rect, GCGLenum format, GCGLenum type, std::span<uint8_t> data)
 {
+    if (isContextLost())
+        return;
     if (data.size() > readPixelsInlineSizeLimit) {
-        readnPixelsSharedMemory(x, y, width, height, format, type, data);
+        readPixelsSharedMemory(rect, format, type, data);
         return;
     }
-
-    if (!isContextLost()) {
-        auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::ReadnPixels0(x, y, width, height, format, type, IPC::ArrayReference<uint8_t>(reinterpret_cast<uint8_t*>(data.data()), data.size())));
-        if (sendResult) {
-            auto [dataReply] = sendResult.takeReply();
-            memcpy(data.data(), dataReply.data(), data.size());
-        } else
-            markContextLost();
+    auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::ReadPixelsInline(rect, format, type, IPC::ArrayReference<uint8_t>(reinterpret_cast<uint8_t*>(data.data()), data.size())));
+    if (!sendResult) {
+        markContextLost();
+        return;
     }
+    auto [dataReply] = sendResult.takeReply();
+    memcpy(data.data(), dataReply.data(), data.size());
 }
 
-void RemoteGraphicsContextGLProxy::readnPixels(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, GCGLintptr offset)
+void RemoteGraphicsContextGLProxy::readPixelsSharedMemory(IntRect rect, GCGLenum format, GCGLenum type, std::span<uint8_t> data)
 {
-    if (!isContextLost()) {
-        auto sendResult = send(Messages::RemoteGraphicsContextGL::ReadnPixels1(x, y, width, height, format, type, static_cast<uint64_t>(offset)));
-        if (!sendResult)
-            markContextLost();
+    auto buffer = SharedMemory::allocate(data.size());
+    if (!buffer) {
+        markContextLost();
+        return;
     }
-}
-
-void RemoteGraphicsContextGLProxy::readnPixelsSharedMemory(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, std::span<uint8_t> data)
-{
-    if (!isContextLost()) {
-        auto buffer = SharedMemory::allocate(data.size());
-        if (!buffer) {
-            markContextLost();
-            return;
-        }
-        auto handle = buffer->createHandle(SharedMemory::Protection::ReadWrite);
-        if (!handle || handle->isNull()) {
-            markContextLost();
-            return;
-        }
-        memcpy(buffer->data(), data.data(), data.size());
-        auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::ReadnPixels2(x, y, width, height, format, type, WTFMove(*handle)));
-        if (sendResult) {
-            auto [success] = sendResult.takeReply();
-            if (success)
-                memcpy(data.data(), buffer->data(), data.size());
-        } else
-            markContextLost();
+    auto handle = buffer->createHandle(SharedMemory::Protection::ReadWrite);
+    if (!handle || handle->isNull()) {
+        markContextLost();
+        return;
     }
+    memcpy(buffer->data(), data.data(), data.size());
+    auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::ReadPixelsSharedMemory(rect, format, type, WTFMove(*handle)));
+    if (!sendResult) {
+        markContextLost();
+        return;
+    }
+    auto [success] = sendResult.takeReply();
+    if (!success)
+        return;
+    memcpy(data.data(), buffer->data(), data.size());
 }
 
 void RemoteGraphicsContextGLProxy::multiDrawArraysANGLE(GCGLenum mode, GCGLSpanTuple<const GCGLint, const GCGLsizei> firstsAndCounts)

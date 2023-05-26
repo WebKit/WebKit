@@ -3357,7 +3357,7 @@ void WebGLRenderingContextBase::readPixels(GCGLint x, GCGLint y, GCGLsizei width
         return;
 
     clearIfComposited(CallerTypeOther);
-    m_context->readnPixels(x, y, width, height, format, type, std::span(static_cast<uint8_t*>(pixels.baseAddress()), pixels.byteLength()));
+    m_context->readPixels(IntRect { x, y, width, height }, format, type, std::span(static_cast<uint8_t*>(pixels.baseAddress()), pixels.byteLength()));
 }
 
 void WebGLRenderingContextBase::renderbufferStorage(GCGLenum target, GCGLenum internalformat, GCGLsizei width, GCGLsizei height)

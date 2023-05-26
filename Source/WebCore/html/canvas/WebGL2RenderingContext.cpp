@@ -3453,7 +3453,7 @@ void WebGL2RenderingContext::readPixels(GCGLint x, GCGLint y, GCGLsizei width, G
 
     clearIfComposited(CallerTypeOther);
 
-    m_context->readnPixels(x, y, width, height, format, type, offset);
+    m_context->readPixelsBufferObject(IntRect { x, y, width, height }, format, type, offset);
 }
 
 void WebGL2RenderingContext::readPixels(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, ArrayBufferView& dstData, GCGLuint dstOffset)

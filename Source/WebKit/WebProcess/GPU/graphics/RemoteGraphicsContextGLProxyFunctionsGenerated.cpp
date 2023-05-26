@@ -1588,6 +1588,17 @@ void RemoteGraphicsContextGLProxy::bufferSubData(GCGLenum target, GCGLintptr off
     }
 }
 
+void RemoteGraphicsContextGLProxy::readPixelsBufferObject(WebCore::IntRect rect, GCGLenum format, GCGLenum type, GCGLintptr offset)
+{
+    if (isContextLost())
+        return;
+    auto sendResult = send(Messages::RemoteGraphicsContextGL::ReadPixelsBufferObject(rect, format, type, static_cast<uint64_t>(offset)));
+    if (!sendResult) {
+        markContextLost();
+        return;
+    }
+}
+
 void RemoteGraphicsContextGLProxy::texImage2D(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLenum format, GCGLenum type, std::span<const uint8_t> pixels)
 {
     if (isContextLost())
