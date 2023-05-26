@@ -1599,10 +1599,9 @@ public:
         GCGLint skipImages { 0 };
     };
 
-    // Computes the components per pixel and bytes per component
-    // for the given format and type combination. Returns false if
-    // either was an invalid enum.
-    static bool computeFormatAndTypeParameters(GCGLenum format, GCGLenum type, unsigned* componentsPerPixel, unsigned* bytesPerComponent);
+    // Computes the bytes per image element for a format and type.
+    // Returns zero if format or type is an invalid enum.
+    static unsigned computeBytesPerGroup(GCGLenum format, GCGLenum type);
 
     // Computes the image size in bytes. If paddingInBytes is not null, padding
     // is also calculated in return. Returns NO_ERROR if succeed, otherwise
