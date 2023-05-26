@@ -276,8 +276,12 @@ ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncCopyWithin(VM& vm, JS
         // https://tc39.es/proposal-resizablearraybuffer/#sec-%typedarray%.prototype.copywithin
         if (updatedLength.value() != length) {
             length = updatedLength.value();
-            if (std::max(to, from) + count > length)
+            if (std::max(to, from) + count > length) {
+                // Either to or from index is larger than the updated length. In this case, we do not need to copy anything and finish copyWithin.
+                if (std::max(to, from) > length)
+                    return JSValue::encode(callFrame->thisValue());
                 count = length - std::max(to, from);
+            }
         }
 
         typename ViewClass::ElementType* array = thisObject->typedVector();
