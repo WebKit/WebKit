@@ -1947,13 +1947,13 @@ void MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
 
             GUniqueOutPtr<GstStructure> responseHeaders;
             if (gst_structure_get(structure, "response-headers", GST_TYPE_STRUCTURE, &responseHeaders.outPtr(), nullptr)) {
-                CString contentLengthHeaderName = httpHeaderNameString(HTTPHeaderName::ContentLength).utf8();
+                auto contentLengthHeaderName = httpHeaderNameString(HTTPHeaderName::ContentLength);
                 uint64_t contentLength = 0;
-                if (!gst_structure_get_uint64(responseHeaders.get(), contentLengthHeaderName.data(), &contentLength)) {
+                if (!gst_structure_get_uint64(responseHeaders.get(), contentLengthHeaderName.characters(), &contentLength)) {
                     // souphttpsrc sets a string for Content-Length, so
                     // handle it here, until we remove the webkit+ protocol
                     // prefix from webkitwebsrc.
-                    if (const char* contentLengthAsString = gst_structure_get_string(responseHeaders.get(), contentLengthHeaderName.data())) {
+                    if (const char* contentLengthAsString = gst_structure_get_string(responseHeaders.get(), contentLengthHeaderName.characters())) {
                         contentLength = g_ascii_strtoull(contentLengthAsString, nullptr, 10);
                         if (contentLength == G_MAXUINT64)
                             contentLength = 0;

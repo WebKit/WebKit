@@ -261,6 +261,36 @@ namespace WTF {
         }
     };
 
+    struct HashTranslatorASCIILiteral {
+        static unsigned hash(ASCIILiteral literal)
+        {
+            return StringHasher::computeHashAndMaskTop8Bits(literal.characters(), literal.length());
+        }
+
+        static bool equal(const String& a, ASCIILiteral b)
+        {
+            return a == b;
+        }
+
+        static void translate(String& location, ASCIILiteral literal, unsigned hash)
+        {
+            location = literal;
+            location.impl()->setHash(hash);
+        }
+    };
+
+    struct HashTranslatorASCIILiteralCaseInsensitive {
+        static unsigned hash(ASCIILiteral key)
+        {
+            return ASCIICaseInsensitiveHash::hash(key.characters(), key.length());
+        }
+
+        static bool equal(const String& a, ASCIILiteral b)
+        {
+            return equalIgnoringASCIICase(a, b);
+        }
+    };
+
     template<> struct DefaultHash<StringImpl*> : StringHash { };
     template<> struct DefaultHash<RefPtr<StringImpl>> : StringHash { };
     template<> struct DefaultHash<PackedPtr<StringImpl>> : StringHash { };
@@ -271,5 +301,7 @@ namespace WTF {
 using WTF::ASCIICaseInsensitiveHash;
 using WTF::ASCIICaseInsensitiveStringViewHashTranslator;
 using WTF::AlreadyHashed;
+using WTF::HashTranslatorASCIILiteral;
+using WTF::HashTranslatorASCIILiteralCaseInsensitive;
 using WTF::StringHash;
 using WTF::StringViewHashTranslator;

@@ -496,7 +496,7 @@ void ResourceResponseBase::sanitizeHTTPHeaderFieldsAccordingToTainting()
             return;
 
         m_httpHeaderFields.commonHeaders().removeAllMatching([&corsSafeHeaderSet](auto& header) {
-            return !isSafeCrossOriginResponseHeader(header.key) && !corsSafeHeaderSet.contains<ASCIICaseInsensitiveStringViewHashTranslator>(httpHeaderNameString(header.key));
+            return !isSafeCrossOriginResponseHeader(header.key) && !corsSafeHeaderSet.contains<HashTranslatorASCIILiteralCaseInsensitive>(httpHeaderNameString(header.key));
         });
         m_httpHeaderFields.uncommonHeaders().removeAllMatching([&corsSafeHeaderSet](auto& header) { return !corsSafeHeaderSet.contains(header.key); });
         break;
