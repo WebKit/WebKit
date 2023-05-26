@@ -31,7 +31,10 @@
 #import <TextRecognition/CRRegion.h>
 #endif
 
+// FIXME: Remove this after rdar://109896407 is resolved
+IGNORE_WARNINGS_BEGIN("undef")
 #import <VisionKitCore/VKImageAnalysis_WebKit.h>
+IGNORE_WARNINGS_END
 #import <VisionKitCore/VisionKitCore.h>
 
 #else
