@@ -963,7 +963,7 @@ void ScrollbarsControllerMac::updateScrollerStyle()
         // The different scrollbar styles have different thicknesses, so we must re-set the
         // frameRect to the new thickness, and the re-layout below will ensure the position
         // and length are properly updated.
-        int thickness = macTheme->scrollbarThickness(verticalScrollbar->controlSize());
+        int thickness = macTheme->scrollbarThickness(verticalScrollbar->controlSize(), verticalScrollbar->scrollableArea().scrollbarWidthStyle());
         verticalScrollbar->setFrameRect(IntRect(0, 0, thickness, thickness));
     }
 
@@ -981,7 +981,7 @@ void ScrollbarsControllerMac::updateScrollerStyle()
         // The different scrollbar styles have different thicknesses, so we must re-set the
         // frameRect to the new thickness, and the re-layout below will ensure the position
         // and length are properly updated.
-        int thickness = macTheme->scrollbarThickness(horizontalScrollbar->controlSize());
+        int thickness = macTheme->scrollbarThickness(horizontalScrollbar->controlSize(), horizontalScrollbar->scrollableArea().scrollbarWidthStyle());
         horizontalScrollbar->setFrameRect(IntRect(0, 0, thickness, thickness));
     }
 

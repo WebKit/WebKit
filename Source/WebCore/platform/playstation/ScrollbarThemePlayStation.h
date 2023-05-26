@@ -34,7 +34,7 @@ public:
     ScrollbarThemePlayStation() = default;
     virtual ~ScrollbarThemePlayStation() = default;
 
-    int scrollbarThickness(ScrollbarControlSize = ScrollbarControlSize::Regular, ScrollbarExpansionState = ScrollbarExpansionState::Expanded) override;
+    int scrollbarThickness(ScrollbarControlSize = ScrollbarControlSize::Regular, ScrollbarWidth = ScrollbarWidth::Auto, ScrollbarExpansionState = ScrollbarExpansionState::Expanded) override;
 
     bool hasButtons(Scrollbar&) override;
     bool hasThumb(Scrollbar&) override;

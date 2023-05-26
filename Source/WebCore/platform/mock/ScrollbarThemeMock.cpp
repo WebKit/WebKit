@@ -39,8 +39,10 @@ IntRect ScrollbarThemeMock::trackRect(Scrollbar& scrollbar, bool)
     return scrollbar.frameRect();
 }
 
-int ScrollbarThemeMock::scrollbarThickness(ScrollbarControlSize controlSize, ScrollbarExpansionState)
+int ScrollbarThemeMock::scrollbarThickness(ScrollbarControlSize controlSize, ScrollbarWidth scrollbarWidth, ScrollbarExpansionState)
 {
+    if (scrollbarWidth == ScrollbarWidth::None)
+        return 0;
     return cScrollbarThickness[static_cast<uint8_t>(controlSize)];
 }
 

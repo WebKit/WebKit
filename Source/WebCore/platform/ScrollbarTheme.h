@@ -27,6 +27,7 @@
 
 #include "GraphicsContext.h"
 #include "IntRect.h"
+#include "RenderStyleConstants.h"
 #include "ScrollTypes.h"
 
 namespace WebCore {
@@ -51,7 +52,7 @@ public:
     virtual bool paint(Scrollbar&, GraphicsContext&, const IntRect& /*damageRect*/) { return false; }
     virtual ScrollbarPart hitTest(Scrollbar&, const IntPoint&) { return NoPart; }
     
-    virtual int scrollbarThickness(ScrollbarControlSize = ScrollbarControlSize::Regular, ScrollbarExpansionState = ScrollbarExpansionState::Expanded) { return 0; }
+    virtual int scrollbarThickness(ScrollbarControlSize = ScrollbarControlSize::Regular, ScrollbarWidth = ScrollbarWidth::Auto, ScrollbarExpansionState = ScrollbarExpansionState::Expanded) { return 0; }
 
     virtual ScrollbarButtonsPlacement buttonsPlacement() const { return ScrollbarButtonsSingle; }
 

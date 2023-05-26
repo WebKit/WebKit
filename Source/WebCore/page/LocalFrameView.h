@@ -731,6 +731,8 @@ public:
     OverscrollBehavior horizontalOverscrollBehavior() const final;
     OverscrollBehavior verticalOverscrollBehavior() const final;
 
+    ScrollbarWidth scrollbarWidthStyle() const final;
+
 private:
     explicit LocalFrameView(LocalFrame&);
 

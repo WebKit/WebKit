@@ -867,7 +867,10 @@ Ref<Scrollbar> RenderLayerScrollableArea::createScrollbar(ScrollbarOrientation o
     if (hasCustomScrollbarStyle && element)
         widget = RenderScrollbar::createCustomScrollbar(*this, orientation, element);
     else {
-        widget = Scrollbar::createNativeScrollbar(*this, orientation, ScrollbarControlSize::Regular);
+        auto scrollbarSize = scrollbarWidthStyle() == ScrollbarWidth::Thin
+            ? ScrollbarControlSize::Small
+            : ScrollbarControlSize::Regular;
+        widget = Scrollbar::createNativeScrollbar(*this, orientation, scrollbarSize);
         
         if (auto scrollbarController = m_layer.page().chrome().client().createScrollbarsController(m_layer.page(), *this))
             setScrollbarsController(WTFMove(scrollbarController));
@@ -1002,6 +1005,13 @@ OverscrollBehavior RenderLayerScrollableArea::verticalOverscrollBehavior() const
     if (m_layer.renderBox())
         return m_layer.renderer().style().overscrollBehaviorY();
     return OverscrollBehavior::Auto;
+}
+
+ScrollbarWidth RenderLayerScrollableArea::scrollbarWidthStyle()  const
+{
+    if (m_layer.renderBox())
+        return m_layer.renderer().style().scrollbarWidth();
+    return ScrollbarWidth::Auto;
 }
 
 bool RenderLayerScrollableArea::hasOverflowControls() const

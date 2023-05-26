@@ -10,9 +10,9 @@ none
 PASS horizontal-tb, ltr, scrollbar-width auto
 PASS horizontal-tb, ltr, scrollbar-width thin
 PASS horizontal-tb, ltr, scrollbar-width "thin" is same or thinner than "auto"
-FAIL horizontal-tb, ltr, scrollbar-width none assert_equals: ltr none scrollWidth expected 200 but got 185
+PASS horizontal-tb, ltr, scrollbar-width none
 PASS horizontal-tb, rtl, scrollbar-width auto
 PASS horizontal-tb, rtl, scrollbar-width thin
 PASS horizontal-tb, rtl, scrollbar-width "thin" is same or thinner than "auto"
-FAIL horizontal-tb, rtl, scrollbar-width none assert_equals: rtl none scrollWidth expected 200 but got 185
+PASS horizontal-tb, rtl, scrollbar-width none
 

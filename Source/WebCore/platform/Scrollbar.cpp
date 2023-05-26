@@ -87,7 +87,7 @@ Scrollbar::Scrollbar(ScrollableArea& scrollableArea, ScrollbarOrientation orient
     // FIXME: This is ugly and would not be necessary if we fix cross-platform code to actually query for
     // scrollbar thickness and use it when sizing scrollbars (rather than leaving one dimension of the scrollbar
     // alone when sizing).
-    int thickness = theme().scrollbarThickness(controlSize);
+    int thickness = theme().scrollbarThickness(controlSize, m_scrollableArea.scrollbarWidthStyle());
     Widget::setFrameRect(IntRect(0, 0, thickness, thickness));
 
     m_currentPos = static_cast<float>(offsetForOrientation(m_scrollableArea.scrollOffset(), m_orientation));
@@ -504,6 +504,11 @@ NativeScrollbarVisibility Scrollbar::nativeScrollbarVisibility(const Scrollbar* 
     if (DeprecatedGlobalSettings::mockScrollbarsEnabled() || (scrollbar && scrollbar->isCustomScrollbar()))
         return NativeScrollbarVisibility::ReplacedByCustomScrollbar;
     return NativeScrollbarVisibility::Visible;
+}
+
+bool Scrollbar::isHiddenByStyle() const
+{
+    return m_scrollableArea.scrollbarWidthStyle() == ScrollbarWidth::None;
 }
 
 float Scrollbar::deviceScaleFactor() const

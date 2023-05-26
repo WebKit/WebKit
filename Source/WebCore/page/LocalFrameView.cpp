@@ -541,8 +541,12 @@ Ref<Scrollbar> LocalFrameView::createScrollbar(ScrollbarOrientation orientation)
     if (frameRenderer && frameRenderer->style().hasPseudoStyle(PseudoId::Scrollbar))
         return RenderScrollbar::createCustomScrollbar(*this, orientation, nullptr, m_frame.ptr());
 
+    auto scrollbarSize = scrollbarWidthStyle() == ScrollbarWidth::Thin
+        ? ScrollbarControlSize::Small
+        : ScrollbarControlSize::Regular;
+
     // Nobody set a custom style, so we just use a native scrollbar.
-    return ScrollView::createScrollbar(orientation);
+    return Scrollbar::createNativeScrollbar(*this, orientation, scrollbarSize);
 }
 
 void LocalFrameView::didRestoreFromBackForwardCache()
@@ -6279,6 +6283,15 @@ OverscrollBehavior LocalFrameView::verticalOverscrollBehavior()  const
     if (scrollingObject && renderView())
         return scrollingObject->style().overscrollBehaviorY();
     return OverscrollBehavior::Auto;
+}
+
+ScrollbarWidth LocalFrameView::scrollbarWidthStyle()  const
+{
+    auto* document = m_frame->document();
+    auto scrollingObject = document && document->scrollingElement() ? document->scrollingElement()->renderer() : nullptr;
+    if (scrollingObject && renderView())
+        return scrollingObject->style().scrollbarWidth();
+    return ScrollbarWidth::Auto;
 }
 
 bool LocalFrameView::isVisibleToHitTesting() const
