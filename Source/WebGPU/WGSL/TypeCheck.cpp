@@ -593,11 +593,36 @@ void TypeChecker::vectorFieldAccess(const Types::Vector& vector, AST::FieldAcces
     const auto& fieldName = access.fieldName().id();
     auto length = fieldName.length();
 
+    bool isValid = true;
     const auto& isXYZW = [&](char c) {
-        return c == 'x' || c == 'y' || c == 'z' || c == 'w';
+        switch (c) {
+        case 'x':
+        case 'y':
+            return true;
+        case 'z':
+            isValid &= length >= 3;
+            return true;
+        case 'w':
+            isValid &= length == 4;
+            return true;
+        default:
+            return false;
+        }
     };
     const auto& isRGBA = [&](char c) {
-        return c == 'r' || c == 'g' || c == 'b' || c == 'a';
+        switch (c) {
+        case 'r':
+        case 'g':
+            return true;
+        case 'b':
+            isValid &= length >= 3;
+            return true;
+        case 'a':
+            isValid &= length == 4;
+            return true;
+        default:
+            return false;
+        }
     };
 
     bool hasXYZW = false;
@@ -614,7 +639,7 @@ void TypeChecker::vectorFieldAccess(const Types::Vector& vector, AST::FieldAcces
         }
     }
 
-    if (hasXYZW && hasRGBA) {
+    if (!isValid || (hasRGBA && hasXYZW)) {
         typeError(access.span(), "invalid vector swizzle member");
         return;
     }
