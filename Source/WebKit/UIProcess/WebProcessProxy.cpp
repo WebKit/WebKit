@@ -759,6 +759,7 @@ void WebProcessProxy::addExistingWebPage(WebPageProxy& webPage, BeginsUsingDataS
     updateRegistrationWithDataStore();
     updateBackgroundResponsivenessTimer();
     updateBlobRegistryPartitioningState();
+    updateWebGPUEnabledStateInGPUProcess();
 
     // If this was previously a standalone worker process with no pages we need to call didChangeThrottleState()
     // to update our process assertions on the network process since standalone worker processes do not hold
@@ -797,7 +798,7 @@ void WebProcessProxy::removeWebPage(WebPageProxy& webPage, EndsUsingDataStore en
     updateAudibleMediaAssertions();
     updateMediaStreamingActivity();
     updateBackgroundResponsivenessTimer();
-
+    updateWebGPUEnabledStateInGPUProcess();
     updateBlobRegistryPartitioningState();
 
     maybeShutDown();
@@ -1927,6 +1928,17 @@ void WebProcessProxy::updateBlobRegistryPartitioningState() const
     auto* dataStore = websiteDataStore();
     if (auto* networkProcess = dataStore ? dataStore->networkProcessIfExists() : nullptr)
         networkProcess->setBlobRegistryTopOriginPartitioningEnabled(sessionID(),  dataStore->isBlobRegistryPartitioningEnabled());
+}
+
+void WebProcessProxy::updateWebGPUEnabledStateInGPUProcess()
+{
+#if ENABLE(GPU_PROCESS)
+    if (auto* process = processPool().gpuProcess()) {
+        process->updateWebGPUEnabled(*this, WTF::anyOf(pages(), [](const auto& page) {
+            return page && page->preferences().webGPUEnabled();
+        }));
+    }
+#endif
 }
 
 #if !PLATFORM(COCOA)

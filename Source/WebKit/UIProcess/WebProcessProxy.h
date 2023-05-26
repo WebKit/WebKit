@@ -558,6 +558,8 @@ private:
 
     void updateBlobRegistryPartitioningState() const;
 
+    void updateWebGPUEnabledStateInGPUProcess();
+
     void processDidTerminateOrFailedToLaunch(ProcessTerminationReason);
 
     // IPC::Connection::Client

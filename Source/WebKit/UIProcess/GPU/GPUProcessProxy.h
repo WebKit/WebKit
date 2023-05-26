@@ -73,6 +73,7 @@ public:
     ~GPUProcessProxy();
 
     void createGPUProcessConnection(WebProcessProxy&, IPC::Connection::Handle&&, GPUProcessConnectionParameters&&);
+    void updateWebGPUEnabled(WebProcessProxy&, bool webGPUEnabled);
 
     ProcessThrottler& throttler() final { return m_throttler; }
     void updateProcessAssertion();

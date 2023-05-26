@@ -120,6 +120,12 @@ void GPUProcess::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& de
     didReceiveGPUProcessMessage(connection, decoder);
 }
 
+void GPUProcess::updateWebGPUEnabled(WebCore::ProcessIdentifier processIdentifier, bool webGPUEnabled)
+{
+    if (auto* connection = m_webProcessConnections.get(processIdentifier))
+        connection->updateWebGPUEnabled(webGPUEnabled);
+}
+
 void GPUProcess::createGPUConnectionToWebProcess(WebCore::ProcessIdentifier identifier, PAL::SessionID sessionID, IPC::Connection::Handle&& connectionHandle, GPUProcessConnectionParameters&& parameters, CompletionHandler<void()>&& completionHandler)
 {
     RELEASE_LOG(Process, "%p - GPUProcess::createGPUConnectionToWebProcess: processIdentifier=%" PRIu64, this, identifier.toUInt64());
