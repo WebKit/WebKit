@@ -1772,6 +1772,8 @@ public:
     DOMAudioSessionType audioSessionType() const { return m_audioSessionType; }
 #endif
 
+    virtual void didChangeViewSize() { }
+
 protected:
     enum class ConstructionFlag : uint8_t {
         Synthesized = 1 << 0,
