@@ -27,24 +27,10 @@
 
 #include "ScrollbarTheme.h"
 
-#if PLATFORM(COCOA)
-OBJC_CLASS NSScrollerImp;
-#endif
-
 namespace WebCore {
 
 class ScrollbarThemeComposite : public ScrollbarTheme {
 public:
-    // Implement ScrollbarTheme interface
-    bool paint(Scrollbar&, GraphicsContext&, const IntRect& damageRect) override;
-    ScrollbarPart hitTest(Scrollbar&, const IntPoint&) override;
-    void invalidatePart(Scrollbar&, ScrollbarPart) override;
-    int thumbPosition(Scrollbar&) override;
-    int thumbLength(Scrollbar&) override;
-    int trackPosition(Scrollbar&) override;
-    int trackLength(Scrollbar&) override;
-    void paintOverhangAreas(ScrollView&, GraphicsContext&, const IntRect& horizontalOverhangArea, const IntRect& verticalOverhangArea, const IntRect& dirtyRect) override;
-
     virtual bool hasButtons(Scrollbar&) = 0;
     virtual bool hasThumb(Scrollbar&) = 0;
 
@@ -67,6 +53,17 @@ public:
     virtual void paintThumb(GraphicsContext&, Scrollbar&, const IntRect&) { }
 
     virtual IntRect constrainTrackRectToTrackPieces(Scrollbar&, const IntRect& rect) { return rect; }
+
+protected:
+    // Implement ScrollbarTheme interface
+    bool paint(Scrollbar&, GraphicsContext&, const IntRect& damageRect) override;
+    ScrollbarPart hitTest(Scrollbar&, const IntPoint&) override;
+    void invalidatePart(Scrollbar&, ScrollbarPart) override;
+    int thumbPosition(Scrollbar&) override;
+    int thumbLength(Scrollbar&) override;
+    int trackPosition(Scrollbar&) override;
+    int trackLength(Scrollbar&) override;
+    void paintOverhangAreas(ScrollView&, GraphicsContext&, const IntRect& horizontalOverhangArea, const IntRect& verticalOverhangArea, const IntRect& dirtyRect) override;
 };
 
 }

@@ -31,11 +31,14 @@
 
 namespace WebCore {
 
-class ScrollbarThemeIOS : public ScrollbarThemeComposite {
+class ScrollbarThemeIOS final : public ScrollbarThemeComposite {
 public:
     ScrollbarThemeIOS();
     virtual ~ScrollbarThemeIOS();
 
+    void preferencesChanged();
+
+private:
     bool paint(Scrollbar&, GraphicsContext&, const IntRect& damageRect) override;
 
     int scrollbarThickness(ScrollbarControlSize = ScrollbarControlSize::Regular, ScrollbarWidth = ScrollbarWidth::Auto, ScrollbarExpansionState = ScrollbarExpansionState::Expanded) override;
@@ -50,7 +53,6 @@ public:
     void registerScrollbar(Scrollbar&) override;
     void unregisterScrollbar(Scrollbar&) override;
 
-protected:
     bool hasButtons(Scrollbar&) override;
     bool hasThumb(Scrollbar&) override;
 
@@ -59,9 +61,6 @@ protected:
     IntRect trackRect(Scrollbar&, bool painting = false) override;
 
     int minimumThumbLength(Scrollbar&) override;
-
-public:
-    void preferencesChanged();
 };
 
 }

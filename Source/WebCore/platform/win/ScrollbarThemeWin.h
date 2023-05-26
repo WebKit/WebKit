@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-class ScrollbarThemeWin : public ScrollbarThemeComposite {
+class ScrollbarThemeWin final : public ScrollbarThemeComposite {
 public:
     ScrollbarThemeWin();
     virtual ~ScrollbarThemeWin();
