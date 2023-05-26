@@ -40,21 +40,6 @@ namespace WebCore {
 
 SVGTextLayoutEngine::SVGTextLayoutEngine(Vector<SVGTextLayoutAttributes*>& layoutAttributes)
     : m_layoutAttributes(layoutAttributes)
-    , m_layoutAttributesPosition(0)
-    , m_logicalCharacterOffset(0)
-    , m_logicalMetricsListOffset(0)
-    , m_visualCharacterOffset(0)
-    , m_visualMetricsListOffset(0)
-    , m_x(0)
-    , m_y(0)
-    , m_dx(0)
-    , m_dy(0)
-    , m_isVerticalText(false)
-    , m_inPathLayout(false)
-    , m_textPathLength(0)
-    , m_textPathCurrentOffset(0)
-    , m_textPathSpacing(0)
-    , m_textPathScaling(1)
 {
     ASSERT(!m_layoutAttributes.isEmpty());
 }
