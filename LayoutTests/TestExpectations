@@ -6297,15 +6297,20 @@ imported/w3c/web-platform-tests/css/css-counter-styles/counter-style-at-rule/sym
 
 imported/w3c/web-platform-tests/css/css-counter-styles/counter-suffix.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-counter-styles/hebrew/counter-hebrew-nested.html [ ImageOnlyFailure ]
+
+# Other browsers implement numbers outside of the range (even though it's unspecified), WebKit just falls back to cjk-decimal.
 imported/w3c/web-platform-tests/css/css-counter-styles/japanese-formal/counter-japanese-formal.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-counter-styles/japanese-informal/counter-japanese-informal.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/korean-hangul-formal/counter-korean-hangul-formal.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/korean-hanja-formal/counter-korean-hanja-formal.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-counter-styles/korean-hanja-informal/counter-korean-hanja-informal.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-counter-styles/simp-chinese-formal/counter-simp-chinese-formal.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-counter-styles/simp-chinese-informal/counter-simp-chinese-informal.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-counter-styles/trad-chinese-formal/counter-trad-chinese-formal.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-counter-styles/trad-chinese-informal/counter-trad-chinese-informal.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-counter-styles/korean-hangul-formal/counter-korean-hangul-formal.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-counter-styles/korean-hangul-formal/css3-counter-styles-054.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-counter-styles/korean-hanja-formal/counter-korean-hanja-formal.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-counter-styles/korean-hanja-formal/css3-counter-styles-064.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-counter-styles/korean-hanja-informal/counter-korean-hanja-informal.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-counter-styles/korean-hanja-informal/css3-counter-styles-059.html [ ImageOnlyFailure ]
 
 # Newly imported ruby WPTs
 imported/w3c/web-platform-tests/css/css-ruby/abs-in-ruby-base-container.html [ ImageOnlyFailure ]

@@ -333,6 +333,7 @@
     suffix: ', ';
     negative: "\B9C8\C774\B108\C2A4 \20";
     /* 마이너스 (followed by a space) */
+    fallback: cjk-decimal;
 }
 
 @counter-style korean-hanja-informal {
@@ -343,6 +344,7 @@
     suffix: ', ';
     negative: "\B9C8\C774\B108\C2A4 \20";
     /* 마이너스 (followed by a space) */
+    fallback: cjk-decimal;
 }
 
 @counter-style korean-hanja-formal {
@@ -353,6 +355,7 @@
     suffix: ', ';
     negative: "\B9C8\C774\B108\C2A4 \20";
     /* 마이너스 (followed by a space) */
+    fallback: cjk-decimal;
 }
 
 /*** Complex counter style systems ***/
@@ -459,7 +462,6 @@
     suffix: '\1366 '; /* ፦ */
 }
 
-/* FIXME: The W3C definition does not have a suffix */
 @counter-style ethiopic-halehame-ti-et {
     system: alphabetic;
     symbols: '\1200' '\1208' '\1210' '\1218' '\1220' '\1228' '\1230' '\1238' '\1240' '\1250' '\1260' '\1270' '\1278' '\1280' '\1290' '\1298' '\12A0' '\12A8' '\12B8' '\12C8' '\12D0' '\12D8' '\12E0' '\12E8' '\12F0' '\1300' '\1308' '\1320' '\1328' '\1330' '\1338' '\1340' '\1348' '\1350';
@@ -533,7 +535,7 @@
 
 /** Ethiopic WebKit-specific styles/aliases **/
 
-/* The W3C definition is named ethiopic-haleme-am */
+/* The W3C definition is named ethiopic-halehame-am */
 @counter-style amharic {
     system: alphabetic;
     symbols: '\1200' '\1208' '\1210' '\1218' '\1220' '\1228' '\1230' '\1238' '\1240' '\1260' '\1270' '\1278' '\1280' '\1290' '\1298' '\12A0' '\12A8' '\12B8' '\12C8' '\12D0' '\12D8' '\12E0' '\12E8' '\12F0' '\1300' '\1308' '\1320' '\1328' '\1330' '\1338' '\1340' '\1348' '\1350';
@@ -548,7 +550,7 @@
     suffix: '\1366 '; /* ፦ */
 }
 
-/* The W3C definition is named ethiopic-haleme */
+/* The W3C definition is named ethiopic-halehame */
 @counter-style ethiopic {
     system: alphabetic;
     symbols: '\1200' '\1208' '\1210' '\1218' '\1220' '\1228' '\1230' '\1240' '\1260' '\1270' '\1280' '\1290' '\12A0' '\12A8' '\12C8' '\12D0' '\12D8' '\12E8' '\12F0' '\1308' '\1320' '\1330' '\1338' '\1340' '\1348' '\1350';
