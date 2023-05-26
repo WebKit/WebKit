@@ -6507,8 +6507,6 @@ imported/w3c/web-platform-tests/css/css-overflow/scrollbar-gutter-vertical-lr-00
 imported/w3c/web-platform-tests/css/css-overflow/scrollbar-gutter-vertical-lr-002.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-overflow/scrollbar-gutter-vertical-rl-001.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-overflow/scrollbar-gutter-vertical-rl-002.html [ Skip ]
-imported/w3c/web-platform-tests/css/css-overflow/parsing/scrollbar-gutter-invalid.html [ Skip ]
-imported/w3c/web-platform-tests/css/css-overflow/parsing/scrollbar-gutter-valid.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-overflow/scrollbar-gutter-001.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-overflow/scrollbar-gutter-002.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-overflow/scrollbar-gutter-propagation-001.html [ Skip ]

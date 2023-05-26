@@ -928,6 +928,7 @@ static constexpr InitialValue initialValueForLonghand(CSSPropertyID longhand)
     case CSSPropertyScrollPaddingLeft:
     case CSSPropertyScrollPaddingRight:
     case CSSPropertyScrollPaddingTop:
+    case CSSPropertyScrollbarGutter:
     case CSSPropertyScrollbarWidth:
     case CSSPropertySize:
     case CSSPropertyTableLayout:

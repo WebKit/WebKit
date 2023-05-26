@@ -145,6 +145,13 @@ PASS quotes: ""“" "”" "‘" "’"" onto ""‘" "’" "“" "”""
 PASS resize (type: discrete) has testAddition function
 PASS resize: "horizontal" onto "both"
 PASS resize: "both" onto "horizontal"
+PASS scrollbar-gutter (type: discrete) has testAddition function
+PASS scrollbar-gutter: "stable" onto "auto"
+PASS scrollbar-gutter: "auto" onto "stable"
+PASS scrollbar-gutter: "stable both-edges" onto "auto"
+PASS scrollbar-gutter: "auto" onto "stable both-edges"
+PASS scrollbar-gutter: "stable both-edges" onto "stable"
+PASS scrollbar-gutter: "stable" onto "stable both-edges"
 PASS scrollbar-width (type: discrete) has testAddition function
 PASS scrollbar-width: "thin" onto "auto"
 PASS scrollbar-width: "auto" onto "thin"

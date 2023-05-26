@@ -6669,6 +6669,26 @@ RefPtr<CSSValue> consumeScrollSnapType(CSSParserTokenRange& range)
     return CSSValueList::createSpaceSeparated(firstValue.releaseNonNull());
 }
 
+RefPtr<CSSValue> consumeScrollbarGutter(CSSParserTokenRange& range)
+{
+    if (auto ident = consumeIdent<CSSValueAuto>(range))
+        return CSSPrimitiveValue::create(CSSValueAuto);
+
+    if (auto first = consumeIdent<CSSValueStable>(range)) {
+        if (auto second = consumeIdent<CSSValueBothEdges>(range))
+            return CSSValuePair::create(first.releaseNonNull(), second.releaseNonNull());
+        return first;
+    }
+
+    if (auto first = consumeIdent<CSSValueBothEdges>(range)) {
+        if (auto second = consumeIdent<CSSValueStable>(range))
+            return CSSValuePair::create(second.releaseNonNull(), first.releaseNonNull());
+        return nullptr;
+    }
+
+    return nullptr;
+}
+
 RefPtr<CSSValue> consumeTextBoxEdge(CSSParserTokenRange& range)
 {
     if (range.peek().id() == CSSValueLeading)

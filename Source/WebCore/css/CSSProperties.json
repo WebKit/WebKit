@@ -9306,6 +9306,19 @@
                 "url": "https://drafts.csswg.org/css-scroll-snap-1/#propdef-scroll-snap-stop"
             }
         },
+        "scrollbar-gutter": {
+            "codegen-properties": {
+                "converter": "ScrollbarGutter",
+                "parser-function": "consumeScrollbarGutter",
+                "parser-grammar-unused": "auto | [ stable && both-edges? ]",
+                "parser-grammar-unused-reason": "Needs support for '&&' groups and optionals.",
+                "settings-flag": "cssScrollbarGutterEnabled"
+            },
+            "specification": {
+                "category": "css-overflow",
+                "url": "https://drafts.csswg.org/css-overflow/#scrollbar-gutter-property"
+            }
+        },
         "scrollbar-width": {
             "codegen-properties": {
                 "parser-grammar": "auto | thin | none",

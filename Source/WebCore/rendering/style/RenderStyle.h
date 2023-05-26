@@ -243,6 +243,7 @@ struct NamedGridLinesMap;
 struct OrderedNamedGridLinesMap;
 struct ScrollSnapAlign;
 struct ScrollSnapType;
+struct ScrollbarGutter;
 
 struct TabSize;
 struct TextAutospace;
@@ -966,6 +967,7 @@ public:
     const ScrollSnapAlign& scrollSnapAlign() const;
     ScrollSnapStop scrollSnapStop() const;
 
+    const ScrollbarGutter scrollbarGutter() const;
     ScrollbarWidth scrollbarWidth() const;
 
 #if ENABLE(TOUCH_EVENTS)
@@ -1513,6 +1515,7 @@ public:
     void setScrollSnapAlign(const ScrollSnapAlign&);
     void setScrollSnapStop(ScrollSnapStop);
 
+    void setScrollbarGutter(ScrollbarGutter);
     void setScrollbarWidth(ScrollbarWidth);
 
 #if ENABLE(TOUCH_EVENTS)
@@ -1946,6 +1949,7 @@ public:
     static ScrollSnapAlign initialScrollSnapAlign();
     static ScrollSnapStop initialScrollSnapStop();
 
+    static ScrollbarGutter initialScrollbarGutter();
     static ScrollbarWidth initialScrollbarWidth();
 
 #if ENABLE(APPLE_PAY)

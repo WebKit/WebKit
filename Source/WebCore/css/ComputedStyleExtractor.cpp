@@ -1214,6 +1214,13 @@ static Ref<CSSValueList> valueForScrollSnapAlignment(const ScrollSnapAlign& alig
         createConvertingToCSSValueID(alignment.inlineAlign));
 }
 
+static Ref<CSSValue> valueForScrollbarGutter(const ScrollbarGutter& gutter)
+{
+    if (!gutter.bothEdges)
+        return CSSPrimitiveValue::create(gutter.isAuto ? CSSValueAuto : CSSValueStable);
+    return CSSValuePair::create(CSSPrimitiveValue::create(CSSValueStable), CSSPrimitiveValue::create(CSSValueBothEdges));
+}
+
 static Ref<CSSValueList> valueForTextBoxEdge(const TextBoxEdge& textBoxEdge)
 {
     return CSSValueList::createSpaceSeparated(createConvertingToCSSValueID(textBoxEdge.over),
@@ -4184,6 +4191,8 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         return createConvertingToCSSValueID(style.scrollSnapStop());
     case CSSPropertyScrollSnapType:
         return valueForScrollSnapType(style.scrollSnapType());
+    case CSSPropertyScrollbarGutter:
+        return valueForScrollbarGutter(style.scrollbarGutter());
     case CSSPropertyScrollbarWidth:
         return createConvertingToCSSValueID(style.scrollbarWidth());
     case CSSPropertyOverflowAnchor:

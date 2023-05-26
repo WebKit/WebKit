@@ -148,6 +148,13 @@ PASS resize: "both" onto "horizontal"
 PASS scroll-behavior (type: discrete) has testAccumulation function
 PASS scroll-behavior: "smooth" onto "auto"
 PASS scroll-behavior: "auto" onto "smooth"
+PASS scrollbar-gutter (type: discrete) has testAccumulation function
+PASS scrollbar-gutter: "stable" onto "auto"
+PASS scrollbar-gutter: "auto" onto "stable"
+PASS scrollbar-gutter: "stable both-edges" onto "auto"
+PASS scrollbar-gutter: "auto" onto "stable both-edges"
+PASS scrollbar-gutter: "stable both-edges" onto "stable"
+PASS scrollbar-gutter: "stable" onto "stable both-edges"
 PASS scrollbar-width (type: discrete) has testAccumulation function
 PASS scrollbar-width: "thin" onto "auto"
 PASS scrollbar-width: "auto" onto "thin"
