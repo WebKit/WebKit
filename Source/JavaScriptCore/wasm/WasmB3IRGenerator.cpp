@@ -144,6 +144,8 @@ public:
             , m_tryStart(tryStart)
             , m_tryCatchDepth(tryDepth)
         {
+            ASSERT(type == BlockType::Try);
+            m_stackSize -= signature->as<FunctionSignature>()->argumentCount();
             for (unsigned i = 0; i < signature->as<FunctionSignature>()->returnCount(); ++i)
                 phis.append(proc.add<Value>(Phi, toB3Type(signature->as<FunctionSignature>()->returnType(i)), origin));
         }
