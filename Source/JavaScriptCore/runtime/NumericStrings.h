@@ -47,7 +47,7 @@ public:
 
     ALWAYS_INLINE const String& add(int i)
     {
-        if (static_cast<unsigned>(i) < cacheSize)
+        if (static_cast<unsigned>(i) < m_smallIntCache.size())
             return lookupSmallString(static_cast<unsigned>(i)).value;
         auto& entry = lookup(i);
         if (i == entry.key && !entry.value.isNull())
@@ -60,7 +60,7 @@ public:
 
     ALWAYS_INLINE const String& add(unsigned i)
     {
-        if (i < cacheSize)
+        if (i < m_smallIntCache.size())
             return lookupSmallString(static_cast<unsigned>(i)).value;
         auto& entry = lookup(i);
         if (i == entry.key && !entry.value.isNull())
@@ -74,15 +74,13 @@ public:
 
     void clearOnGarbageCollection()
     {
-        for (auto& entry : intCache)
+        for (auto& entry : m_intCache)
             entry.jsString = nullptr;
-        for (auto& entry : smallIntCache)
+        for (auto& entry : m_smallIntCache)
             entry.jsString = nullptr;
     }
 
 private:
-    static const size_t cacheSize = 64;
-
     template<typename T>
     struct CacheEntry {
         T key;
@@ -101,21 +99,21 @@ private:
         JSString* jsString { nullptr };
     };
 
-    CacheEntry<double>& lookup(double d) { return doubleCache[WTF::FloatHash<double>::hash(d) & (cacheSize - 1)]; }
-    CacheEntryWithJSString<int>& lookup(int i) { return intCache[WTF::IntHash<int>::hash(i) & (cacheSize - 1)]; }
-    CacheEntry<unsigned>& lookup(unsigned i) { return unsignedCache[WTF::IntHash<unsigned>::hash(i) & (cacheSize - 1)]; }
+    CacheEntry<double>& lookup(double d) { return m_doubleCache[WTF::FloatHash<double>::hash(d) & (m_doubleCache.size() - 1)]; }
+    CacheEntryWithJSString<int>& lookup(int i) { return m_intCache[WTF::IntHash<int>::hash(i) & (m_intCache.size() - 1)]; }
+    CacheEntry<unsigned>& lookup(unsigned i) { return m_unsignedCache[WTF::IntHash<unsigned>::hash(i) & (m_unsignedCache.size() - 1)]; }
     ALWAYS_INLINE StringWithJSString& lookupSmallString(unsigned i)
     {
-        ASSERT(i < cacheSize);
-        if (smallIntCache[i].value.isNull())
-            smallIntCache[i].value = String::number(i);
-        return smallIntCache[i];
+        ASSERT(i < m_smallIntCache.size());
+        if (m_smallIntCache[i].value.isNull())
+            m_smallIntCache[i].value = String::number(i);
+        return m_smallIntCache[i];
     }
 
-    std::array<CacheEntry<double>, cacheSize> doubleCache { };
-    std::array<CacheEntryWithJSString<int>, cacheSize> intCache { };
-    std::array<CacheEntry<unsigned>, cacheSize> unsignedCache { };
-    std::array<StringWithJSString, cacheSize> smallIntCache { };
+    std::array<CacheEntry<double>, 64> m_doubleCache { };
+    std::array<CacheEntryWithJSString<int>, 256> m_intCache { };
+    std::array<CacheEntry<unsigned>, 64> m_unsignedCache { };
+    std::array<StringWithJSString, 64> m_smallIntCache { };
 };
 
 } // namespace JSC
