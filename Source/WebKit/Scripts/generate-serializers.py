@@ -175,7 +175,11 @@ class ConditionalHeader(object):
         self.condition = condition
 
     def __lt__(self, other):
-        return self.header < other.header
+        if self.header != other.header:
+            return self.header < other.header
+        def condition_str(condition):
+            return "" if condition is None else condition
+        return condition_str(self.condition) < condition_str(other.condition)
 
     def __eq__(self, other):
         return other and self.header == other.header and self.condition == other.condition
