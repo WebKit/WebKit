@@ -264,21 +264,12 @@ void attributedStringSetNumber(NSMutableAttributedString *attrString, NSString *
 
     if (number)
         [attrString addAttribute:attribute value:number range:range];
-    else
-        [attrString removeAttribute:attribute range:range];
 }
 
 void attributedStringSetFont(NSMutableAttributedString *attributedString, CTFontRef font, const NSRange& range)
 {
-    if (!attributedStringContainsRange(attributedString, range))
+    if (!attributedStringContainsRange(attributedString, range) || !font)
         return;
-
-    if (!font) {
-#if PLATFORM(MAC)
-        [attributedString removeAttribute:NSAccessibilityFontTextAttribute range:range];
-#endif
-        return;
-    }
 
     auto fontAttributes = adoptNS([[NSMutableDictionary alloc] init]);
     auto familyName = adoptCF(CTFontCopyFamilyName(font));
