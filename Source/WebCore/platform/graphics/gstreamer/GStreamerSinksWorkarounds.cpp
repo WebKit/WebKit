@@ -180,7 +180,7 @@ public:
         if (!isNeeded())
             return;
 
-        GRefPtr<GstPad> pad = gst_element_get_static_pad(GST_ELEMENT(appsink), "sink");
+        GRefPtr<GstPad> pad = adoptGRef(gst_element_get_static_pad(GST_ELEMENT(appsink), "sink"));
         GST_DEBUG_OBJECT(pad.get(), "Installing AppSinkFlushCapsWorkaroundProbe.");
         gst_pad_add_probe(pad.get(), static_cast<GstPadProbeType>(GST_PAD_PROBE_TYPE_BUFFER | GST_PAD_PROBE_TYPE_EVENT_FLUSH | GST_PAD_PROBE_TYPE_EVENT_DOWNSTREAM),
             probe, newUserData(), deleteUserData);
