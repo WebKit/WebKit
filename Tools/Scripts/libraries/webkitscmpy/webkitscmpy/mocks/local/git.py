@@ -684,6 +684,10 @@ nothing to commit, working tree clean
                     returncode=0,
                 ) if args[4] in self.remotes else mocks.ProcessCompletion(returncode=128, stderr="fatal: branch '{}' does not exist".format(args[4])),
             ), mocks.Subprocess.Route(
+                self.executable, 'merge-base', '--is-ancestor', re.compile(r'.+'), re.compile(r'.+'),
+                cwd=self.path,
+                generator=lambda *args, **kwargs: self.is_ancestor(args[3], args[4]),
+            ), mocks.Subprocess.Route(
                 self.executable, 'merge-base', re.compile(r'.+'), re.compile(r'.+'),
                 cwd=self.path,
                 generator=lambda *args, **kwargs: self.merge_base(args[2], *args[3:]),
@@ -1376,3 +1380,15 @@ nothing to commit, working tree clean
             returncode=0,
             stdout=out or '\n',
         )
+
+    def is_ancestor(self, ancestor, descendent):
+        ancestor_commit = self.find(ancestor)
+        descendent_commit = self.find(descendent)
+        for ref, commit in [(ancestor, ancestor_commit), (descendent, descendent_commit)]:
+            if not commit:
+                return mocks.ProcessCompletion(
+                    returncode=128,
+                    stderr='fatal: Not a valid object name {}\n'.format(ref),
+                )
+
+        return mocks.ProcessCompletion(returncode=0 if ancestor in self.rev_list(descendent)else 1)
