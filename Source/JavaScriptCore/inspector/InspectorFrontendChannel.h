@@ -25,20 +25,18 @@
 
 #pragma once
 
-#include <wtf/text/WTFString.h>
+#include <wtf/Forward.h>
 
 namespace Inspector {
 
 // Represents a one-way connection from an Inspection or Automation target to
 // a local or remote controller (such as a debugger or UI automation script).
 
+enum class FrontendChannelConnectionType : bool { Remote, Local };
+
 class FrontendChannel {
 public:
-
-    enum class ConnectionType {
-        Remote,
-        Local
-    };
+    using ConnectionType = FrontendChannelConnectionType;
 
     virtual ~FrontendChannel() { }
     virtual ConnectionType connectionType() const = 0;
@@ -46,15 +44,3 @@ public:
 };
 
 } // namespace Inspector
-
-namespace WTF {
-
-template<> struct EnumTraits<Inspector::FrontendChannel::ConnectionType> {
-    using values = EnumValues<
-        Inspector::FrontendChannel::ConnectionType,
-        Inspector::FrontendChannel::ConnectionType::Remote,
-        Inspector::FrontendChannel::ConnectionType::Local
-    >;
-};
-
-} // namespace WTF

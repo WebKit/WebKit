@@ -48,6 +48,7 @@ namespace WebKit {
 
 class RemoteLayerTreeContext;
 class RemoteLayerTreeDisplayRefreshMonitor;
+class WebFrame;
 
 class RemoteLayerTreeDrawingArea : public DrawingArea, public WebCore::GraphicsLayerClient {
     friend class RemoteLayerTreeDisplayRefreshMonitor;

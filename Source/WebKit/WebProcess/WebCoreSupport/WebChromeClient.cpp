@@ -28,6 +28,8 @@
 #include "WebChromeClient.h"
 
 #include "APIArray.h"
+#include "APIInjectedBundleFormClient.h"
+#include "APIInjectedBundlePageUIClient.h"
 #include "APISecurityOrigin.h"
 #include "DrawingArea.h"
 #include "FindController.h"
@@ -60,8 +62,8 @@
 #include "WebImage.h"
 #include "WebLocalFrameLoaderClient.h"
 #include "WebOpenPanelResultListener.h"
-#include "WebPage.h"
 #include "WebPageCreationParameters.h"
+#include "WebPageInlines.h"
 #include "WebPageProxyMessages.h"
 #include "WebPopupMenu.h"
 #include "WebProcess.h"

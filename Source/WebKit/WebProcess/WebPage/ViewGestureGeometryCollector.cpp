@@ -43,6 +43,7 @@
 #include <WebCore/Range.h>
 #include <WebCore/RenderView.h>
 #include <WebCore/TextIterator.h>
+#include <WebCore/ViewportConfiguration.h>
 
 #if PLATFORM(IOS_FAMILY)
 #include "SmartMagnificationControllerMessages.h"

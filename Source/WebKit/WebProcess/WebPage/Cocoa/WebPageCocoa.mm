@@ -33,6 +33,7 @@
 #import "PluginView.h"
 #import "UserMediaCaptureManager.h"
 #import "WKAccessibilityWebPageObjectBase.h"
+#import "WebPageInternals.h"
 #import "WebPageProxyMessages.h"
 #import "WebPasteboardOverrides.h"
 #import "WebPaymentCoordinator.h"
@@ -77,7 +78,7 @@
 #import <WebCore/ParentalControlsContentFilter.h>
 #endif
 
-#define WEBPAGE_RELEASE_LOG(channel, fmt, ...) RELEASE_LOG(channel, "%p - [webPageID=%" PRIu64 "] WebPage::" fmt, this, m_identifier.toUInt64(), ##__VA_ARGS__)
+#define WEBPAGE_RELEASE_LOG(channel, fmt, ...) RELEASE_LOG(channel, "%p - [webPageID=%" PRIu64 "] WebPage::" fmt, this, identifier().toUInt64(), ##__VA_ARGS__)
 
 #if PLATFORM(COCOA)
 
@@ -604,7 +605,7 @@ class OverridePasteboardForSelectionReplacement {
     WTF_MAKE_NONCOPYABLE(OverridePasteboardForSelectionReplacement);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    OverridePasteboardForSelectionReplacement(const Vector<String>& types, const IPC::DataReference& data)
+    OverridePasteboardForSelectionReplacement(const Vector<String>& types, std::span<const uint8_t> data)
         : m_types(types)
     {
         for (auto& type : types)
@@ -623,7 +624,7 @@ private:
 
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
 
-void WebPage::replaceImageForRemoveBackground(const ElementContext& elementContext, const Vector<String>& types, const IPC::DataReference& data)
+void WebPage::replaceImageForRemoveBackground(const ElementContext& elementContext, const Vector<String>& types, std::span<const uint8_t> data)
 {
     Ref frame = CheckedRef(m_page->focusController())->focusedOrMainFrame();
     auto element = elementForContext(elementContext);
@@ -657,7 +658,7 @@ void WebPage::replaceImageForRemoveBackground(const ElementContext& elementConte
         if (auto imageRange = makeSimpleRange(WebCore::VisiblePositionRange { position.previous(), position })) {
             for (WebCore::TextIterator iterator { *imageRange, { } }; !iterator.atEnd(); iterator.advance()) {
                 if (RefPtr image = dynamicDowncast<HTMLImageElement>(iterator.node())) {
-                    m_elementsToExcludeFromRemoveBackground.add(*image);
+                    internals().elementsToExcludeFromRemoveBackground.add(*image);
                     break;
                 }
             }
@@ -690,7 +691,7 @@ void WebPage::replaceImageForRemoveBackground(const ElementContext& elementConte
 
 #endif // ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
 
-void WebPage::replaceSelectionWithPasteboardData(const Vector<String>& types, const IPC::DataReference& data)
+void WebPage::replaceSelectionWithPasteboardData(const Vector<String>& types, std::span<const uint8_t> data)
 {
     OverridePasteboardForSelectionReplacement overridePasteboard { types, data };
     readSelectionFromPasteboard(replaceSelectionPasteboardName(), [](bool) { });
@@ -707,17 +708,8 @@ void WebPage::readSelectionFromPasteboard(const String& pasteboardName, Completi
 
 #if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/WebPageCocoaAdditions.mm>)
 #include <WebKitAdditions/WebPageCocoaAdditions.mm>
-#else
-URL WebPage::sanitizeLookalikeCharacters(const URL& url, LookalikeCharacterSanitizationTrigger)
-{
-    return url;
-}
-
-URL WebPage::allowedLookalikeCharacters(const URL& url)
-{
-    return url;
-}
 #endif
+
 } // namespace WebKit
 
 #endif // PLATFORM(COCOA)

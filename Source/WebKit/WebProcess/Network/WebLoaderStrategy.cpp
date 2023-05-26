@@ -1056,6 +1056,17 @@ void WebLoaderStrategy::prioritizeResourceLoads(const Vector<WebCore::Subresourc
     connection.send(Messages::NetworkConnectionToWebProcess::PrioritizeResourceLoads(identifiers), 0);
 }
 
+WebResourceLoader* WebLoaderStrategy::webResourceLoaderForIdentifier(WebCore::ResourceLoaderIdentifier identifier) const
+{
+    return m_webResourceLoaders.get(identifier);
+}
+
+Vector<WebCore::ResourceLoaderIdentifier> WebLoaderStrategy::ongoingLoads() const
+{
+    return WTF::map(m_webResourceLoaders, [](auto&& keyValue) -> WebCore::ResourceLoaderIdentifier {
+        return keyValue.key;
+    });
+}
 } // namespace WebKit
 
 #undef WEBLOADERSTRATEGY_RELEASE_LOG_BASIC

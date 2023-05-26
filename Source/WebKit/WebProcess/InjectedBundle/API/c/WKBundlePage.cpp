@@ -35,6 +35,7 @@
 #include "APIURL.h"
 #include "APIURLRequest.h"
 #include "InjectedBundleNodeHandle.h"
+#include "InjectedBundlePageContextMenuClient.h"
 #include "InjectedBundlePageEditorClient.h"
 #include "InjectedBundlePageFormClient.h"
 #include "InjectedBundlePageLoaderClient.h"

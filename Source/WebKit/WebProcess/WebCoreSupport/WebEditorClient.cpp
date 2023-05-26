@@ -26,6 +26,8 @@
 #include "config.h"
 #include "WebEditorClient.h"
 
+#include "APIInjectedBundleEditorClient.h"
+#include "APIInjectedBundleFormClient.h"
 #include "EditorState.h"
 #include "MessageSenderInlines.h"
 #include "SharedBufferReference.h"

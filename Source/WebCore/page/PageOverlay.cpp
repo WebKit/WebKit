@@ -40,9 +40,9 @@ namespace WebCore {
 static const Seconds fadeAnimationDuration { 200_ms };
 static const double fadeAnimationFrameRate = 30;
 
-static PageOverlay::PageOverlayID generatePageOverlayID()
+static PageOverlayID generatePageOverlayID()
 {
-    static PageOverlay::PageOverlayID pageOverlayID;
+    static PageOverlayID pageOverlayID;
     return ++pageOverlayID;
 }
 

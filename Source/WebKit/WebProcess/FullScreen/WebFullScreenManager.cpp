@@ -28,6 +28,7 @@
 #if ENABLE(FULLSCREEN_API)
 
 #include "Connection.h"
+#include "InjectedBundlePageFullScreenClient.h"
 #include "Logging.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebFrame.h"

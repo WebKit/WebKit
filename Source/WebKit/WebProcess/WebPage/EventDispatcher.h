@@ -63,6 +63,8 @@ class WebWheelEvent;
 class WebTouchEvent;
 #endif
 
+enum class EventDispatcherWheelEventOrigin : bool { UIProcess, MomentumEventDispatcher };
+
 class EventDispatcher final :
 #if ENABLE(MOMENTUM_EVENT_DISPATCHER)
     public MomentumEventDispatcher::Client,
@@ -72,7 +74,7 @@ public:
     EventDispatcher();
     ~EventDispatcher();
 
-    enum class WheelEventOrigin : bool { UIProcess, MomentumEventDispatcher };
+    using WheelEventOrigin = EventDispatcherWheelEventOrigin;
 
     WorkQueue& queue() { return m_queue.get(); }
 

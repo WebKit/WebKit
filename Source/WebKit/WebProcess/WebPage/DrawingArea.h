@@ -25,41 +25,37 @@
 
 #pragma once
 
-#include "CallbackID.h"
 #include "DrawingAreaInfo.h"
-#include "LayerTreeContext.h"
 #include "MessageReceiver.h"
-#include "WebPage.h"
-#include <WebCore/ActivityState.h>
 #include <WebCore/DisplayRefreshMonitorFactory.h>
-#include <WebCore/FloatRect.h>
-#include <WebCore/FrameIdentifier.h>
-#include <WebCore/IntRect.h>
-#include <WebCore/LayoutMilestone.h>
-#include <WebCore/PlatformScreen.h>
-#include <wtf/Forward.h>
-#include <wtf/Noncopyable.h>
-#include <wtf/TypeCasts.h>
-
-namespace WTF {
-class MachSendRight;
-}
+#include <WebCore/IntSize.h>
 
 namespace IPC {
 class Connection;
 class Decoder;
+struct AsyncReplyIDType;
+using AsyncReplyID = AtomicObjectIdentifier<AsyncReplyIDType>;
 }
 
 namespace WebCore {
 class DestinationColorSpace;
-class DisplayRefreshMonitor;
+class FloatPoint;
+class FloatRect;
+class Frame;
 class GraphicsLayer;
 class GraphicsLayerFactory;
-class LocalFrame;
+class IntRect;
 class LocalFrameView;
 class TiledBacking;
-struct ViewportAttributes;
+enum LayoutMilestone : uint16_t;
+enum class ActivityState : uint16_t;
 enum class DelegatedScrollingMode : uint8_t;
+struct FrameIdentifierType;
+struct PlatformLayerIdentifierType;
+struct ViewportAttributes;
+template<typename> class ProcessQualified;
+using FrameIdentifier = ProcessQualified<ObjectIdentifier<FrameIdentifierType>>;
+using PlatformLayerIdentifier = ProcessQualified<ObjectIdentifier<PlatformLayerIdentifierType>>;
 }
 
 OBJC_CLASS CABasicAnimation;
@@ -67,6 +63,8 @@ OBJC_CLASS CABasicAnimation;
 namespace WebKit {
 
 class LayerTreeHost;
+class WebPage;
+enum class LayerHostingMode : uint8_t;
 struct WebPageCreationParameters;
 struct WebPreferencesStore;
 
@@ -96,14 +94,14 @@ public:
     virtual bool layerTreeStateIsFrozen() const { return false; }
 
     virtual void updatePreferences(const WebPreferencesStore&) { }
-    virtual void mainFrameContentSizeChanged(WebCore::FrameIdentifier, const WebCore::IntSize&) { }
+    virtual void mainFrameContentSizeChanged(WebCore::FrameIdentifier, const WebCore::IntSize&);
 
 #if PLATFORM(COCOA)
     virtual void setViewExposedRect(std::optional<WebCore::FloatRect>) = 0;
     virtual std::optional<WebCore::FloatRect> viewExposedRect() const = 0;
 
-    virtual void acceleratedAnimationDidStart(WebCore::PlatformLayerIdentifier, const String& /*key*/, MonotonicTime /*startTime*/) { }
-    virtual void acceleratedAnimationDidEnd(WebCore::PlatformLayerIdentifier, const String& /*key*/) { }
+    virtual void acceleratedAnimationDidStart(WebCore::PlatformLayerIdentifier, const String& key, MonotonicTime startTime);
+    virtual void acceleratedAnimationDidEnd(WebCore::PlatformLayerIdentifier, const String& key);
     virtual void addFence(const WTF::MachSendRight&) { }
 
     virtual WebCore::FloatRect exposedContentRect() const = 0;
@@ -123,7 +121,7 @@ public:
 
     virtual WebCore::GraphicsLayerFactory* graphicsLayerFactory() { return nullptr; }
     virtual void setRootCompositingLayer(WebCore::Frame&, WebCore::GraphicsLayer*) = 0;
-    virtual void addRootFrame(WebCore::FrameIdentifier) { }
+    virtual void addRootFrame(WebCore::FrameIdentifier);
     // FIXME: Add a corresponding removeRootFrame.
     virtual void triggerRenderingUpdate() = 0;
 
@@ -134,14 +132,14 @@ public:
 
     virtual void dispatchAfterEnsuringUpdatedScrollPosition(WTF::Function<void ()>&&);
 
-    virtual void activityStateDidChange(OptionSet<WebCore::ActivityState>, ActivityStateChangeID, CompletionHandler<void()>&& completionHandler) { completionHandler(); };
+    virtual void activityStateDidChange(OptionSet<WebCore::ActivityState>, ActivityStateChangeID, CompletionHandler<void()>&&);
     virtual void setLayerHostingMode(LayerHostingMode) { }
 
     virtual void tryMarkLayersVolatile(CompletionHandler<void(bool)>&&);
 
-    virtual void attachViewOverlayGraphicsLayer(WebCore::FrameIdentifier, WebCore::GraphicsLayer*) { }
+    virtual void attachViewOverlayGraphicsLayer(WebCore::FrameIdentifier, WebCore::GraphicsLayer*);
 
-    virtual std::optional<WebCore::DestinationColorSpace> displayColorSpace() const { return { }; }
+    virtual std::optional<WebCore::DestinationColorSpace> displayColorSpace() const;
 
     virtual bool addMilestonesToDispatch(OptionSet<WebCore::LayoutMilestone>) { return false; }
 
@@ -180,10 +178,7 @@ public:
 protected:
     DrawingArea(DrawingAreaType, DrawingAreaIdentifier, WebPage&);
 
-    template<typename T> bool send(T&& message)
-    {
-        return m_webPage.send(WTFMove(message), m_identifier.toUInt64(), { });
-    }
+    template<typename T> inline bool send(T&& message);
 
     const DrawingAreaType m_type;
     DrawingAreaIdentifier m_identifier;
@@ -200,8 +195,6 @@ private:
     // Message handlers.
     // FIXME: These should be pure virtual.
 #if USE(COORDINATED_GRAPHICS) || USE(TEXTURE_MAPPER)
-    virtual void updateBackingStoreState(uint64_t /*backingStoreStateID*/, bool /*respondImmediately*/, float /*deviceScaleFactor*/, const WebCore::IntSize& /*size*/,
-                                         const WebCore::IntSize& /*scrollOffset*/) { }
     virtual void targetRefreshRateDidChange(unsigned /*rate*/) { }
     virtual void setDeviceScaleFactor(float) { }
 #endif
@@ -212,15 +205,13 @@ private:
 
 #if PLATFORM(COCOA)
     virtual void setDeviceScaleFactor(float) { }
-    virtual void setColorSpace(std::optional<WebCore::DestinationColorSpace>) { }
+    virtual void setColorSpace(std::optional<WebCore::DestinationColorSpace>);
 
     virtual void dispatchAfterEnsuringDrawing(IPC::AsyncReplyID) = 0;
 #endif
 
-#if PLATFORM(COCOA) || PLATFORM(GTK)
-    virtual void adjustTransientZoom(double scale, WebCore::FloatPoint origin) { }
-    virtual void commitTransientZoom(double scale, WebCore::FloatPoint origin) { }
-#endif
+    virtual void adjustTransientZoom(double scale, WebCore::FloatPoint);
+    virtual void commitTransientZoom(double scale, WebCore::FloatPoint);
 
     bool m_hasRemovedMessageReceiver { false };
 };

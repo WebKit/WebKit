@@ -26,6 +26,7 @@
 #import "config.h"
 #import "RemoteLayerTreeDrawingArea.h"
 
+#import "DrawingAreaInlines.h"
 #import "DrawingAreaProxyMessages.h"
 #import "GraphicsLayerCARemote.h"
 #import "MessageSenderInlines.h"

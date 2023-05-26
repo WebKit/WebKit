@@ -28,6 +28,7 @@
 #include "config.h"
 #include "DrawingAreaCoordinatedGraphics.h"
 
+#include "DrawingAreaInlines.h"
 #include "DrawingAreaProxyMessages.h"
 #include "LayerTreeHost.h"
 #include "MessageSenderInlines.h"

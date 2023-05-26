@@ -29,6 +29,7 @@
 #if PLATFORM(MAC)
 
 #import "DisplayRefreshMonitorMac.h"
+#import "DrawingAreaInlines.h"
 #import "DrawingAreaProxyMessages.h"
 #import "EventDispatcher.h"
 #import "LayerHostingContext.h"

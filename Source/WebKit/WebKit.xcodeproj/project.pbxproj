@@ -1560,6 +1560,8 @@
 		934B724419F5B9BE00AE96D6 /* WKActionMenuItemTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 934B724319F5B9BE00AE96D6 /* WKActionMenuItemTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		934CF815294B884C00304F7D /* CacheStorageMemoryStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 934CF811294B884A00304F7D /* CacheStorageMemoryStore.h */; };
 		934CF817294B884C00304F7D /* CacheStorageDiskStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 934CF813294B884B00304F7D /* CacheStorageDiskStore.h */; };
+		935245A12A06D6B500D8F18F /* WebPageInternals.h in Headers */ = {isa = PBXBuildFile; fileRef = 935245A02A06D6A800D8F18F /* WebPageInternals.h */; };
+		935245A32A06F17100D8F18F /* DrawingAreaInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 935245A22A06F16E00D8F18F /* DrawingAreaInlines.h */; };
 		9354242C2703BDCB005CA72C /* WebFileSystemStorageConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 9354242A2703BDCB005CA72C /* WebFileSystemStorageConnection.h */; };
 		9356F2DC2152B6B500E6D5DF /* WebSWClientConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 517A53021F4793B200DCDC0A /* WebSWClientConnection.h */; };
 		9356F2DD2152B6F600E6D5DF /* WebSWServerConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 93BA04E02151ADF4007F455F /* WebSWServerConnection.h */; };
@@ -5963,6 +5965,8 @@
 		934CF812294B884B00304F7D /* CacheStorageMemoryStore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CacheStorageMemoryStore.cpp; sourceTree = "<group>"; };
 		934CF813294B884B00304F7D /* CacheStorageDiskStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CacheStorageDiskStore.h; sourceTree = "<group>"; };
 		934CF814294B884B00304F7D /* CacheStorageDiskStore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CacheStorageDiskStore.cpp; sourceTree = "<group>"; };
+		935245A02A06D6A800D8F18F /* WebPageInternals.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebPageInternals.h; sourceTree = "<group>"; };
+		935245A22A06F16E00D8F18F /* DrawingAreaInlines.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DrawingAreaInlines.h; sourceTree = "<group>"; };
 		9354242A2703BDCB005CA72C /* WebFileSystemStorageConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebFileSystemStorageConnection.h; sourceTree = "<group>"; };
 		9354242B2703BDCB005CA72C /* WebFileSystemStorageConnection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebFileSystemStorageConnection.cpp; sourceTree = "<group>"; };
 		935B579826F51270008B48AC /* FileSystemStorageHandleRegistry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileSystemStorageHandleRegistry.h; sourceTree = "<group>"; };
@@ -12057,6 +12061,7 @@
 				0214701B2995D3860077AFD6 /* DrawingArea.cpp */,
 				BC8452A61162C80900CAB9B5 /* DrawingArea.h */,
 				1A64228A12DD024700CAAE2C /* DrawingArea.messages.in */,
+				935245A22A06F16E00D8F18F /* DrawingAreaInlines.h */,
 				1AA575F81496B52600A4EE06 /* EventDispatcher.cpp */,
 				1AA575F91496B52600A4EE06 /* EventDispatcher.h */,
 				1AA575FD1496B6F300A4EE06 /* EventDispatcher.messages.in */,
@@ -12099,6 +12104,7 @@
 				BC7B621412A4219A00D174A4 /* WebPageGroupProxy.cpp */,
 				BC7B621312A4219A00D174A4 /* WebPageGroupProxy.h */,
 				7A10937629BF8B71006BDB7B /* WebPageInlines.h */,
+				935245A02A06D6A800D8F18F /* WebPageInternals.h */,
 				2D5C9D0319C81D8F00B3C5C1 /* WebPageOverlay.cpp */,
 				2D5C9D0419C81D8F00B3C5C1 /* WebPageOverlay.h */,
 				BCA0EF7E12331E78007D3CFB /* WebUndoStep.cpp */,
@@ -14285,6 +14291,7 @@
 				F496A4311F58A272004C1757 /* DragDropInteractionState.h in Headers */,
 				BC8452A81162C80900CAB9B5 /* DrawingArea.h in Headers */,
 				0FB659231208B4DB0044816C /* DrawingAreaInfo.h in Headers */,
+				935245A32A06F17100D8F18F /* DrawingAreaInlines.h in Headers */,
 				1A64229A12DD029200CAAE2C /* DrawingAreaMessages.h in Headers */,
 				BC2652171182608100243E12 /* DrawingAreaProxy.h in Headers */,
 				1A64230912DD09EB00CAAE2C /* DrawingAreaProxyMessages.h in Headers */,
@@ -14932,6 +14939,7 @@
 				A543E30C215C8A8D00279CD9 /* WebPageInspectorTarget.h in Headers */,
 				A543E30D215C8A9000279CD9 /* WebPageInspectorTargetController.h in Headers */,
 				A543E307215AD13700279CD9 /* WebPageInspectorTargetFrontendChannel.h in Headers */,
+				935245A12A06D6B500D8F18F /* WebPageInternals.h in Headers */,
 				C0CE72A11247E71D00BC0EC4 /* WebPageMessages.h in Headers */,
 				2D5C9D0619C81D8F00B3C5C1 /* WebPageOverlay.h in Headers */,
 				939EF86F29D0C17300F23AEE /* WebPageProxy.h in Headers */,

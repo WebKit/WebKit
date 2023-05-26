@@ -32,6 +32,7 @@
 
 #import "MessageSenderInlines.h"
 #import "WebExtensionContextMessages.h"
+#import "WebPage.h"
 #import "WebPageProxy.h"
 #import "WebProcess.h"
 #import <JavaScriptCore/APICast.h>
