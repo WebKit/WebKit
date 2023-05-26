@@ -70,6 +70,7 @@
 #include <JavaScriptCore/CatchScope.h>
 #include <JavaScriptCore/DateInstance.h>
 #include <JavaScriptCore/Error.h>
+#include <JavaScriptCore/ErrorInstance.h>
 #include <JavaScriptCore/Exception.h>
 #include <JavaScriptCore/ExceptionHelpers.h>
 #include <JavaScriptCore/IterationKind.h>
@@ -215,6 +216,7 @@ enum SerializationTag {
     WebCodecsVideoFrameTag = 53,
 #endif
     ResizableArrayBufferTag = 54,
+    ErrorInstanceTag = 55,
     ErrorTag = 255
 };
 
@@ -255,6 +257,55 @@ static unsigned typedArrayElementSize(ArrayBufferViewSubtag tag)
     default:
         return 0;
     }
+}
+
+enum class SerializableErrorType : uint8_t {
+    Error,
+    EvalError,
+    RangeError,
+    ReferenceError,
+    SyntaxError,
+    TypeError,
+    URIError,
+    Last = URIError
+};
+
+static SerializableErrorType errorNameToSerializableErrorType(const String& name)
+{
+    if (equalLettersIgnoringASCIICase(name, "evalerror"_s))
+        return SerializableErrorType::EvalError;
+    if (equalLettersIgnoringASCIICase(name, "rangeerror"_s))
+        return SerializableErrorType::RangeError;
+    if (equalLettersIgnoringASCIICase(name, "referenceerror"_s))
+        return SerializableErrorType::ReferenceError;
+    if (equalLettersIgnoringASCIICase(name, "syntaxerror"_s))
+        return SerializableErrorType::SyntaxError;
+    if (equalLettersIgnoringASCIICase(name, "typeerror"_s))
+        return SerializableErrorType::TypeError;
+    if (equalLettersIgnoringASCIICase(name, "urierror"_s))
+        return SerializableErrorType::URIError;
+    return SerializableErrorType::Error;
+}
+
+static ErrorType toErrorType(SerializableErrorType value)
+{
+    switch (value) {
+    case SerializableErrorType::Error:
+        return ErrorType::Error;
+    case SerializableErrorType::EvalError:
+        return ErrorType::EvalError;
+    case SerializableErrorType::RangeError:
+        return ErrorType::RangeError;
+    case SerializableErrorType::ReferenceError:
+        return ErrorType::ReferenceError;
+    case SerializableErrorType::SyntaxError:
+        return ErrorType::SyntaxError;
+    case SerializableErrorType::TypeError:
+        return ErrorType::TypeError;
+    case SerializableErrorType::URIError:
+        return ErrorType::URIError;
+    }
+    return ErrorType::Error;
 }
 
 enum class PredefinedColorSpaceTag : uint8_t {
@@ -380,8 +431,9 @@ const uint8_t cryptoKeyOKPOpNameTagMaximumValue = 1;
  * Version 10. changed the length (and offsets) of ArrayBuffers (and ArrayBufferViews) from 32 to 64 bits.
  * Version 11. added support for Blob's memory cost.
  * Version 12. added support for agent cluster ID.
+ * Version 13. added support for ErrorInstance objects.
  */
-static const unsigned CurrentVersion = 12;
+static const unsigned CurrentVersion = 13;
 static const unsigned TerminatorTag = 0xFFFFFFFF;
 static const unsigned StringPoolTag = 0xFFFFFFFE;
 static const unsigned NonIndexPropertiesTag = 0xFFFFFFFD;
@@ -1390,6 +1442,63 @@ private:
                 write(String::fromLatin1(JSC::Yarr::flagsString(regExp->regExp()->flags()).data()));
                 return true;
             }
+            if (auto* errorInstance = jsDynamicCast<ErrorInstance*>(obj)) {
+                auto& vm = m_lexicalGlobalObject->vm();
+                auto scope = DECLARE_THROW_SCOPE(vm);
+                auto errorTypeValue = errorInstance->get(m_lexicalGlobalObject, vm.propertyNames->name);
+                RETURN_IF_EXCEPTION(scope, false);
+                auto errorTypeString = errorTypeValue.toWTFString(m_lexicalGlobalObject);
+                RETURN_IF_EXCEPTION(scope, false);
+
+                String message;
+                PropertyDescriptor messageDescriptor;
+                if (errorInstance->getOwnPropertyDescriptor(m_lexicalGlobalObject, vm.propertyNames->message, messageDescriptor) && messageDescriptor.isDataDescriptor()) {
+                    EXCEPTION_ASSERT(!scope.exception());
+                    message = messageDescriptor.value().toWTFString(m_lexicalGlobalObject);
+                }
+                RETURN_IF_EXCEPTION(scope, false);
+
+                unsigned line = 0;
+                PropertyDescriptor lineDescriptor;
+                if (errorInstance->getOwnPropertyDescriptor(m_lexicalGlobalObject, vm.propertyNames->line, lineDescriptor) && lineDescriptor.isDataDescriptor()) {
+                    EXCEPTION_ASSERT(!scope.exception());
+                    line = lineDescriptor.value().toNumber(m_lexicalGlobalObject);
+                }
+                RETURN_IF_EXCEPTION(scope, false);
+
+                unsigned column = 0;
+                PropertyDescriptor columnDescriptor;
+                if (errorInstance->getOwnPropertyDescriptor(m_lexicalGlobalObject, vm.propertyNames->column, columnDescriptor) && columnDescriptor.isDataDescriptor()) {
+                    EXCEPTION_ASSERT(!scope.exception());
+                    column = columnDescriptor.value().toNumber(m_lexicalGlobalObject);
+                }
+                RETURN_IF_EXCEPTION(scope, false);
+
+                String sourceURL;
+                PropertyDescriptor sourceURLDescriptor;
+                if (errorInstance->getOwnPropertyDescriptor(m_lexicalGlobalObject, vm.propertyNames->sourceURL, sourceURLDescriptor) && sourceURLDescriptor.isDataDescriptor()) {
+                    EXCEPTION_ASSERT(!scope.exception());
+                    sourceURL = sourceURLDescriptor.value().toWTFString(m_lexicalGlobalObject);
+                }
+                RETURN_IF_EXCEPTION(scope, false);
+
+                String stack;
+                PropertyDescriptor stackDescriptor;
+                if (errorInstance->getOwnPropertyDescriptor(m_lexicalGlobalObject, vm.propertyNames->stack, stackDescriptor) && stackDescriptor.isDataDescriptor()) {
+                    EXCEPTION_ASSERT(!scope.exception());
+                    stack = stackDescriptor.value().toWTFString(m_lexicalGlobalObject);
+                }
+                RETURN_IF_EXCEPTION(scope, false);
+
+                write(ErrorInstanceTag);
+                write(errorNameToSerializableErrorType(errorTypeString));
+                writeNullableString(message);
+                write(line);
+                write(column);
+                writeNullableString(sourceURL);
+                writeNullableString(stack);
+                return true;
+            }
             if (obj->inherits<JSMessagePort>()) {
                 auto index = m_transferredMessagePorts.find(obj);
                 if (index != m_transferredMessagePorts.end()) {
@@ -1637,6 +1746,11 @@ private:
     }
 #endif
 
+    void write(bool b)
+    {
+        writeLittleEndian(m_buffer, static_cast<int32_t>(b));
+    }
+
     void write(uint8_t c)
     {
         writeLittleEndian(m_buffer, c);
@@ -1732,6 +1846,14 @@ private:
         if (str.isNull())
             write(m_emptyIdentifier);
         else
+            write(Identifier::fromString(m_lexicalGlobalObject->vm(), str));
+    }
+
+    void writeNullableString(const String& str)
+    {
+        bool isNull = str.isNull();
+        write(isNull);
+        if (!isNull)
             write(Identifier::fromString(m_lexicalGlobalObject->vm(), str));
     }
 
@@ -1944,6 +2066,11 @@ private:
             write(key.otherPrimeInfos()[i].factorCRTExponent);
             write(key.otherPrimeInfos()[i].factorCRTCoefficient);
         }
+    }
+
+    void write(SerializableErrorType errorType)
+    {
+        write(enumToUnderlyingType(errorType));
     }
 
     void write(const CryptoKey* key)
@@ -2575,6 +2702,15 @@ private:
     }
 #endif
 
+    bool read(bool& b)
+    {
+        int32_t integer;
+        if (!readLittleEndian(integer) || integer > 1)
+            return false;
+        b = !!integer;
+        return true;
+    }
+
     bool read(uint32_t& i)
     {
         return readLittleEndian(i);
@@ -2665,6 +2801,20 @@ private:
             characters[i] = c;
         }
 #endif
+        return true;
+    }
+
+    bool readNullableString(String& nullableString)
+    {
+        bool isNull;
+        if (!read(isNull))
+            return false;
+        if (isNull)
+            return true;
+        CachedStringRef stringData;
+        if (!readStringData(stringData))
+            return false;
+        nullableString = stringData->string();
         return true;
     }
 
@@ -3386,6 +3536,16 @@ private:
     }
 #endif
 
+    bool read(SerializableErrorType& errorType)
+    {
+        std::underlying_type_t<SerializableErrorType> errorTypeInt;
+        if (!read(errorTypeInt) || errorTypeInt > enumToUnderlyingType(SerializableErrorType::Last))
+            return false;
+
+        errorType = static_cast<SerializableErrorType>(errorTypeInt);
+        return true;
+    }
+
     template<class T>
     JSValue getJSValue(T&& nativeObj)
     {
@@ -4001,6 +4161,39 @@ private:
             VM& vm = m_lexicalGlobalObject->vm();
             RegExp* regExp = RegExp::create(vm, pattern->string(), reFlags.value());
             return RegExpObject::create(vm, m_globalObject->regExpStructure(), regExp);
+        }
+        case ErrorInstanceTag: {
+            SerializableErrorType serializedErrorType;
+            if (!read(serializedErrorType)) {
+                fail();
+                return JSValue();
+            }
+            String message;
+            if (!readNullableString(message)) {
+                fail();
+                return JSValue();
+            }
+            uint32_t line;
+            if (!read(line)) {
+                fail();
+                return JSValue();
+            }
+            uint32_t column;
+            if (!read(column)) {
+                fail();
+                return JSValue();
+            }
+            String sourceURL;
+            if (!readNullableString(sourceURL)) {
+                fail();
+                return JSValue();
+            }
+            String stackString;
+            if (!readNullableString(stackString)) {
+                fail();
+                return JSValue();
+            }
+            return ErrorInstance::create(m_lexicalGlobalObject, WTFMove(message), toErrorType(serializedErrorType), line, column, WTFMove(sourceURL), WTFMove(stackString));
         }
         case ObjectReferenceTag: {
             unsigned index = 0;

@@ -1,7 +1,6 @@
 Tests that we clone object hierarchies
 
 PASS: 'postMessage((function(){}))' threw DataCloneError: The object can not be cloned.
-PASS: 'postMessage(var x = 0; try { eval("badref"); } catch(e) { x = e; } x)' threw DataCloneError: The object can not be cloned.
 PASS: 'postMessage(window)' threw DataCloneError: The object can not be cloned.
 PASS: 'postMessage(({get a() { throw "x" }}))' threw x
 PASS: 'postMessage((function() {return {get a() { throw "accessor-exn"; }};})())' threw accessor-exn
@@ -44,6 +43,7 @@ PASS: eventData is a,a,b,a,b of type object
 PASS: eventData is a,a,b,[object Object] of type object
 PASS: eventData is 1,2,3 of type object
 PASS: eventData is ,,1 of type object
+PASS: eventData is ReferenceError: Can't find variable: badref of type object
 PASS: eventData is 2009-02-13T23:31:30.000Z of type object
 PASS: eventData is [object Object] of type object
 PASS: eventData is true of type object

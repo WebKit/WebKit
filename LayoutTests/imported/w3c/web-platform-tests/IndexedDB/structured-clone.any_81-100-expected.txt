@@ -9,14 +9,14 @@ PASS Float32Array: -Infinity,-1.5,-1,-0.5,0,0.5,1,1.5,Infinity,NaN
 PASS Float64Array: -Infinity,-1.7976931348623157e+308,-5e-324,0,5e-324,1.7976931348623157e+308,Infinity,NaN
 PASS Map: [object Map]
 PASS Set: [object Set]
-FAIL Error: Error promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
-FAIL Error: Error: abc promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
-FAIL EvalError: EvalError promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
-FAIL EvalError: EvalError: ghi promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
-FAIL RangeError: RangeError promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
-FAIL RangeError: RangeError: ghi promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
-FAIL ReferenceError: ReferenceError promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
-FAIL ReferenceError: ReferenceError: ghi promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
-FAIL SyntaxError: SyntaxError promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
-FAIL SyntaxError: SyntaxError: ghi promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
+PASS Error: Error
+PASS Error: Error: abc
+PASS EvalError: EvalError
+PASS EvalError: EvalError: ghi
+PASS RangeError: RangeError
+PASS RangeError: RangeError: ghi
+PASS ReferenceError: ReferenceError
+PASS ReferenceError: ReferenceError: ghi
+PASS SyntaxError: SyntaxError
+PASS SyntaxError: SyntaxError: ghi
 

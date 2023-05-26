@@ -72,14 +72,14 @@ PASS Object RegExp object, RegExp unicode flag
 PASS Object RegExp object, RegExp empty
 PASS Object RegExp object, RegExp slash
 PASS Object RegExp object, RegExp new line
-FAIL Empty Error object promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
-FAIL Error object promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
-FAIL EvalError object promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
-FAIL RangeError object promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
-FAIL ReferenceError object promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
-FAIL SyntaxError object promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
-FAIL TypeError object promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
-FAIL URIError object promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
+PASS Empty Error object
+PASS Error object
+PASS EvalError object
+PASS RangeError object
+PASS ReferenceError object
+PASS SyntaxError object
+PASS TypeError object
+PASS URIError object
 PASS Blob basic
 PASS Blob unpaired high surrogate (invalid utf-8)
 PASS Blob unpaired low surrogate (invalid utf-8)

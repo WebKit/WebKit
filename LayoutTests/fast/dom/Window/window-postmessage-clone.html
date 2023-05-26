@@ -46,7 +46,7 @@ tryPostMessage('["a", "a", "b", {a:"b", b:"a"}]');
 tryPostMessage('[1,2,3]');
 tryPostMessage('[,,1]');
 tryPostMessage('(function(){})', true, null, DOMException.DATA_CLONE_ERR);
-tryPostMessage('var x = 0; try { eval("badref"); } catch(e) { x = e; } x', true, null, DOMException.DATA_CLONE_ERR);
+tryPostMessage('var x = 0; try { eval("badref"); } catch(e) { x = e; } x');
 tryPostMessage('new Date(1234567890000)');
 tryPostMessage('new ConstructorWithPrototype("foo")', false, '({field:"foo"})');
 tryPostMessage('new Boolean(true)');
