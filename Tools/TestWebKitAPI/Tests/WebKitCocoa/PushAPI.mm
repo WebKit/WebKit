@@ -506,24 +506,15 @@ self.addEventListener("push", (event) => {
 
 static void terminateNetworkProcessWhileRegistrationIsStored(WKWebViewConfiguration *configuration)
 {
-    auto path = configuration.websiteDataStore._configuration._serviceWorkerRegistrationDirectory.path;
-    NSURL* directory = [NSURL fileURLWithPath:path isDirectory:YES];
-    auto filename = makeString("ServiceWorkerRegistrations-"_s, WebCore::SWRegistrationDatabase::schemaVersion, ".sqlite3");
-    NSURL *swDBPath = [directory URLByAppendingPathComponent:filename];
-    unsigned timeout = 0;
-    while (![[NSFileManager defaultManager] fileExistsAtPath:swDBPath.path] && ++timeout < 100)
-        TestWebKitAPI::Util::runFor(0.1_s);
-    // Let's close the SQL database.
-    [configuration.websiteDataStore _sendNetworkProcessWillSuspendImminently];
+    done = false;
+    [configuration.websiteDataStore _storeServiceWorkerRegistrations:^{
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
     [configuration.websiteDataStore _terminateNetworkProcess];
 }
 
-// FIXME when rdar://109725221 is resolved
-#if PLATFORM(IOS)
-TEST(PushAPI, DISABLED_firePushEventWithNoPagesSuccessful)
-#else
 TEST(PushAPI, firePushEventWithNoPagesSuccessful)
-#endif
 {
     TestWebKitAPI::HTTPServer server({
         { "/"_s, { mainBytes } },
@@ -571,12 +562,7 @@ TEST(PushAPI, firePushEventWithNoPagesSuccessful)
     clearWebsiteDataStore([configuration websiteDataStore]);
 }
 
-// FIXME when rdar://109725221 is resolved
-#if PLATFORM(IOS)
-TEST(PushAPI, DISABLED_firePushEventWithNoPagesFail)
-#else
 TEST(PushAPI, firePushEventWithNoPagesFail)
-#endif
 {
     TestWebKitAPI::HTTPServer server({
         { "/"_s, { mainBytes } },
@@ -622,11 +608,8 @@ TEST(PushAPI, firePushEventWithNoPagesFail)
 
     clearWebsiteDataStore([configuration websiteDataStore]);
 }
-#if PLATFORM(IOS)
-TEST(PushAPI, DISABLED_firePushEventWithNoPagesTimeout)
-#else
+
 TEST(PushAPI, firePushEventWithNoPagesTimeout)
-#endif
 {
     TestWebKitAPI::HTTPServer server({
         { "/"_s, { mainBytes } },
