@@ -484,6 +484,9 @@ void FrameView::setFrameRect(const IntRect& newRect)
     if (m_frame->isMainFrame() && m_frame->page())
         m_frame->page()->pageOverlayController().didChangeViewSize();
 
+    if (auto* document = m_frame->document())
+        document->didChangeViewSize();
+
     viewportContentsChanged();
     setCurrentScrollType(oldScrollType);
 }

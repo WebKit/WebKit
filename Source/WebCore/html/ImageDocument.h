@@ -49,7 +49,6 @@ public:
     void disconnectImageElement() { m_imageElement = nullptr; }
 
 #if !PLATFORM(IOS_FAMILY)
-    void windowSizeChanged();
     void imageClicked(int x, int y);
 #endif
 
@@ -66,6 +65,7 @@ private:
     void restoreImageSize();
     bool imageFitsInWindow();
     float scale();
+    void didChangeViewSize() final;
 #endif
 
     void imageUpdated();

@@ -1748,6 +1748,8 @@ public:
     DOMAudioSessionType audioSessionType() const { return m_audioSessionType; }
 #endif
 
+    virtual void didChangeViewSize() { }
+
 protected:
     enum ConstructionFlags { Synthesized = 1, NonRenderedPlaceholder = 1 << 1 };
     WEBCORE_EXPORT Document(Frame*, const Settings&, const URL&, DocumentClasses = { }, unsigned constructionFlags = 0, ScriptExecutionContextIdentifier = { });

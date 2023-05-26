@@ -260,8 +260,6 @@ void ImageDocument::createDocumentStructure()
         processViewport("width=device-width,viewport-fit=cover"_s, ViewportArguments::ImageDocument);
 #else
         auto listener = ImageEventListener::create(*this);
-        if (RefPtr<DOMWindow> window = this->domWindow())
-            window->addEventListener(eventNames().resizeEvent, listener.copyRef(), false);
         imageElement->addEventListener(eventNames().clickEvent, WTFMove(listener), false);
 #endif
     }
@@ -291,8 +289,8 @@ void ImageDocument::imageUpdated()
         if (page())
             page()->chrome().client().imageOrMediaDocumentSizeChanged(IntSize(imageSize.width(), imageSize.height()));
 #else
-        // Call windowSizeChanged for its side effect of sizing the image.
-        windowSizeChanged();
+        // Call didChangeViewSize for its side effect of sizing the image.
+        didChangeViewSize();
 #endif
     }
 }
@@ -361,8 +359,7 @@ bool ImageDocument::imageFitsInWindow()
     return imageSize.width() <= viewportSize.width() && imageSize.height() <= viewportSize.height();
 }
 
-
-void ImageDocument::windowSizeChanged()
+void ImageDocument::didChangeViewSize()
 {
     if (!m_imageElement || !m_imageSizeIsKnown)
         return;
@@ -403,8 +400,8 @@ void ImageDocument::imageClicked(int x, int y)
     m_shouldShrinkImage = !m_shouldShrinkImage;
 
     if (m_shouldShrinkImage) {
-        // Call windowSizeChanged for its side effect of sizing the image.
-        windowSizeChanged();
+        // Call didChangeViewSize for its side effect of sizing the image.
+        didChangeViewSize();
     } else {
         restoreImageSize();
 
@@ -425,9 +422,7 @@ void ImageDocument::imageClicked(int x, int y)
 
 void ImageEventListener::handleEvent(ScriptExecutionContext&, Event& event)
 {
-    if (event.type() == eventNames().resizeEvent)
-        m_document.windowSizeChanged();
-    else if (event.type() == eventNames().clickEvent && is<MouseEvent>(event)) {
+    if (event.type() == eventNames().clickEvent && is<MouseEvent>(event)) {
         MouseEvent& mouseEvent = downcast<MouseEvent>(event);
         m_document.imageClicked(mouseEvent.offsetX(), mouseEvent.offsetY());
     }
