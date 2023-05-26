@@ -1884,13 +1884,11 @@ private:
                 }
 
                 // Turn this: SExt8To64(BitAnd(input, mask)) where (mask & 0x80) == 0
-                // Into this: ZExt32(BitAnd(input, const & 0x7f))
+                // Into this: ZExt32(BitAnd(input, mask & 0x7f))
                 if (!(mask & 0x80)) {
-                    replaceWithNew<Value>(ZExt32, m_value->origin(),
-                        m_proc.add<Value>(
-                            BitAnd, m_value->origin(), input,
-                            m_insertionSet.insert<Const32Value>(
-                                m_index, m_value->origin(), mask & 0x7f)));
+                    Const32Value* maskValue = m_insertionSet.insert<Const32Value>(m_index, m_value->origin(), mask & 0x7f);
+                    Value* bitAndValue = m_insertionSet.insert<Value>(m_index, BitAnd, m_value->origin(), input, maskValue);
+                    replaceWithNew<Value>(ZExt32, m_value->origin(), bitAndValue);
                     break;
                 }
             }
@@ -1932,13 +1930,11 @@ private:
                 }
 
                 // Turn this: SExt16To64(BitAnd(input, mask)) where (mask & 0x8000) == 0
-                // Into this: ZExt32(BitAnd(input, const & 0x7fff))
+                // Into this: ZExt32(BitAnd(input, mask & 0x7fff))
                 if (!(mask & 0x8000)) {
-                    replaceWithNew<Value>(ZExt32, m_value->origin(),
-                        m_proc.add<Value>(
-                            BitAnd, m_value->origin(), input,
-                            m_insertionSet.insert<Const32Value>(
-                                m_index, m_value->origin(), mask & 0x7fff)));
+                    Const32Value* maskValue = m_insertionSet.insert<Const32Value>(m_index, m_value->origin(), mask & 0x7fff);
+                    Value* bitAndValue = m_insertionSet.insert<Value>(m_index, BitAnd, m_value->origin(), input, maskValue);
+                    replaceWithNew<Value>(ZExt32, m_value->origin(), bitAndValue);
                     break;
                 }
             }
