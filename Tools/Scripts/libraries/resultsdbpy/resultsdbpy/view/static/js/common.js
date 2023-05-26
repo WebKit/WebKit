@@ -204,11 +204,17 @@ function percentage(value, max)
 
 function elapsedTime(startTimestamp, endTimestamp)
 {
-    const time = new Date((endTimestamp - startTimestamp) * 1000);
-    let result = '';
-    if (time.getMinutes())
-        result += `${time.getMinutes()} minute${time.getMinutes() == 1 ? '' : 's'} and `;
-    result += `${time.getSeconds()} second${time.getSeconds() == 1 ? '' : 's'} to run`;
+    const elapsed = Math.round(endTimestamp - startTimestamp);
+    const seconds = elapsed % 60;
+    const minutes = Math.floor(elapsed / 60) % 60;
+    const hours = Math.floor(elapsed / 3600);
+
+    let result = `${seconds} second${seconds == 1 ? '' : 's'} to run`;
+    if (minutes)
+        result = `${minutes} minute${minutes == 1 ? '' : 's'} and ${result}`;
+    if (hours)
+        result = `${hours} hour${hours == 1 ? '' : 's'}${minutes ? ', ' : ' and '}${result}`;
+
     return result;
 }
 
