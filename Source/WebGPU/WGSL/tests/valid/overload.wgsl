@@ -146,6 +146,127 @@ fn testTextureSample() {
   }
 }
 
+fn testTextureLoad()
+{
+    // [T < ConcreteInteger, U < ConcreteInteger, S < Concrete32BitNumber].(Texture[S, Texture1d], T, U) => Vector[S, 4],
+    {
+        {
+            let t: texture_1d<f32>;
+            _ = textureLoad(t, 0, 0);
+            _ = textureLoad(t, 0i, 0u);
+            _ = textureLoad(t, 0u, 0i);
+        }
+        {
+            let t: texture_1d<i32>;
+            _ = textureLoad(t, 0, 0);
+            _ = textureLoad(t, 0i, 0u);
+            _ = textureLoad(t, 0u, 0i);
+        }
+        {
+            let t: texture_1d<u32>;
+            _ = textureLoad(t, 0, 0);
+            _ = textureLoad(t, 0i, 0u);
+            _ = textureLoad(t, 0u, 0i);
+        }
+    }
+
+    // [T < ConcreteInteger, U < ConcreteInteger, S < Concrete32BitNumber].(Texture[S, Texture2d], Vector[T, 2], U) => Vector[S, 4],
+    {
+        {
+            let t: texture_2d<f32>;
+            _ = textureLoad(t, vec2(0), 0);
+            _ = textureLoad(t, vec2(0i), 0u);
+            _ = textureLoad(t, vec2(0u), 0i);
+        }
+        {
+            let t: texture_2d<i32>;
+            _ = textureLoad(t, vec2(0), 0);
+            _ = textureLoad(t, vec2(0i), 0u);
+            _ = textureLoad(t, vec2(0u), 0i);
+        }
+        {
+            let t: texture_2d<u32>;
+            _ = textureLoad(t, vec2(0), 0);
+            _ = textureLoad(t, vec2(0i), 0u);
+            _ = textureLoad(t, vec2(0u), 0i);
+        }
+    }
+
+    // [T < ConcreteInteger, V < ConcreteInteger, U < ConcreteInteger, S < Concrete32BitNumber].(Texture[S, Texture2dArray], Vector[T, 2], V, U) => Vector[S, 4],
+    {
+        {
+            let t: texture_2d_array<f32>;
+            _ = textureLoad(t, vec2(0), 0, 0);
+            _ = textureLoad(t, vec2(0i), 0u, 0i);
+            _ = textureLoad(t, vec2(0u), 0i, 0u);
+        }
+        {
+            let t: texture_2d_array<i32>;
+            _ = textureLoad(t, vec2(0), 0, 0);
+            _ = textureLoad(t, vec2(0i), 0u, 0i);
+            _ = textureLoad(t, vec2(0u), 0i, 0u);
+        }
+        {
+            let t: texture_2d_array<u32>;
+            _ = textureLoad(t, vec2(0), 0, 0);
+            _ = textureLoad(t, vec2(0i), 0u, 0i);
+            _ = textureLoad(t, vec2(0u), 0i, 0u);
+        }
+    }
+
+    // [T < ConcreteInteger, U < ConcreteInteger, S < Concrete32BitNumber].(Texture[S, Texture3d], Vector[T, 3], U) => Vector[S, 4],
+    {
+        {
+            let t: texture_3d<f32>;
+            _ = textureLoad(t, vec3(0), 0);
+            _ = textureLoad(t, vec3(0i), 0u);
+            _ = textureLoad(t, vec3(0u), 0i);
+        }
+        {
+            let t: texture_3d<i32>;
+            _ = textureLoad(t, vec3(0), 0);
+            _ = textureLoad(t, vec3(0i), 0u);
+            _ = textureLoad(t, vec3(0u), 0i);
+        }
+        {
+            let t: texture_3d<u32>;
+            _ = textureLoad(t, vec3(0), 0);
+            _ = textureLoad(t, vec3(0i), 0u);
+            _ = textureLoad(t, vec3(0u), 0i);
+        }
+    }
+
+    // [T < ConcreteInteger, U < ConcreteInteger, S < Concrete32BitNumber].(Texture[S, TextureMultisampled2d], Vector[T, 2], U) => Vector[S, 4],
+    {
+        {
+            let t: texture_multisampled_2d<f32>;
+            _ = textureLoad(t, vec2(0), 0);
+            _ = textureLoad(t, vec2(0i), 0u);
+            _ = textureLoad(t, vec2(0u), 0i);
+        }
+        {
+            let t: texture_multisampled_2d<i32>;
+            _ = textureLoad(t, vec2(0), 0);
+            _ = textureLoad(t, vec2(0i), 0u);
+            _ = textureLoad(t, vec2(0u), 0i);
+        }
+        {
+            let t: texture_multisampled_2d<u32>;
+            _ = textureLoad(t, vec2(0), 0);
+            _ = textureLoad(t, vec2(0i), 0u);
+            _ = textureLoad(t, vec2(0u), 0i);
+        }
+    }
+
+    // [T < ConcreteInteger].(TextureExternal, Vector[T, 2]) => Vector[F32, 4],
+    {
+        let t: texture_external;
+        _ = textureLoad(t, vec2(0));
+        _ = textureLoad(t, vec2(0i));
+        _ = textureLoad(t, vec2(0u));
+    }
+}
+
 fn testVec2() {
   _ = vec2<f32>(0);
   _ = vec2<f32>(0, 0);

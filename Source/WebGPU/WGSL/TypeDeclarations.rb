@@ -485,3 +485,19 @@ operator :trunc, {
     [T < Float].(T) => T,
     [T < Float, N].(Vector[T, N]) => Vector[T, N],
 }
+
+# 17.7. Texture Built-in Functions (https://gpuweb.github.io/gpuweb/wgsl/#texture-builtin-functions)
+
+# 17.7.4
+operator :textureLoad, {
+    [T < ConcreteInteger, U < ConcreteInteger, S < Concrete32BitNumber].(Texture[S, Texture1d], T, U) => Vector[S, 4],
+    [T < ConcreteInteger, U < ConcreteInteger, S < Concrete32BitNumber].(Texture[S, Texture2d], Vector[T, 2], U) => Vector[S, 4],
+    [T < ConcreteInteger, V < ConcreteInteger, U < ConcreteInteger, S < Concrete32BitNumber].(Texture[S, Texture2dArray], Vector[T, 2], V, U) => Vector[S, 4],
+    [T < ConcreteInteger, U < ConcreteInteger, S < Concrete32BitNumber].(Texture[S, Texture3d], Vector[T, 3], U) => Vector[S, 4],
+    [T < ConcreteInteger, U < ConcreteInteger, S < Concrete32BitNumber].(Texture[S, TextureMultisampled2d], Vector[T, 2], U) => Vector[S, 4],
+
+    [T < ConcreteInteger].(TextureExternal, Vector[T, 2]) => Vector[F32, 4],
+
+    # FIXME: add overloads for texture_depth
+    # https://bugs.webkit.org/show_bug.cgi?id=254515
+}

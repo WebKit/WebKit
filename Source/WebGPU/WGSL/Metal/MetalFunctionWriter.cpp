@@ -639,6 +639,50 @@ void FunctionDefinitionWriter::visit(AST::CallExpression& call)
 
     if (is<AST::NamedTypeName>(call.target())) {
         static constexpr std::pair<ComparableASCIILiteral, void(*)(FunctionDefinitionWriter*, AST::CallExpression&)> builtinMappings[] {
+            { "textureLoad", [](FunctionDefinitionWriter* writer, AST::CallExpression& call) {
+                auto& texture = call.arguments()[0];
+                auto* textureType = texture.inferredType();
+
+                // FIXME: this should become isPrimitiveReference once PR#14299 lands
+                auto* primitive = std::get_if<Types::Primitive>(textureType);
+                bool isExternalTexture = primitive && primitive->kind == Types::Primitive::TextureExternal;
+                if (!isExternalTexture) {
+                    writer->visit(call.arguments()[0]);
+                    writer->stringBuilder().append(".read");
+                    visitArguments(writer, call, 1);
+                    return;
+                }
+
+                auto& coordinates = call.arguments()[1];
+                writer->stringBuilder().append("({\n");
+                {
+                    IndentationScope scope(writer->indent());
+                    {
+                        writer->stringBuilder().append(writer->indent(), "auto __coords = (");
+                        writer->visit(texture);
+                        writer->stringBuilder().append(".UVRemapMatrix * float3(");
+                        writer->visit(coordinates);
+                        writer->stringBuilder().append(", 1)).xy;\n");
+                    }
+                    {
+                        writer->stringBuilder().append(writer->indent(), "auto __y = float(");
+                        writer->visit(texture);
+                        writer->stringBuilder().append(".FirstPlane.read(__cords).r);\n");
+                    }
+                    {
+                        writer->stringBuilder().append(writer->indent(), "auto __cbcr = float2(");
+                        writer->visit(texture);
+                        writer->stringBuilder().append(".SecondPlane.read(__coords).rg);\n");
+                    }
+                    writer->stringBuilder().append(writer->indent(), "auto __ycbcr = float3(__y, __cbcr);\n");
+                    {
+                        writer->stringBuilder().append(writer->indent(), "float4(");
+                        writer->visit(texture);
+                        writer->stringBuilder().append(".ColorSpaceConversionMatrix * float4(__ycbcr, 1), 1);\n");
+                    }
+                }
+                writer->stringBuilder().append(writer->indent(), "})");
+            } },
             { "textureSample", [](FunctionDefinitionWriter* writer, AST::CallExpression& call) {
                 ASSERT(call.arguments().size() > 1);
                 writer->visit(call.arguments()[0]);

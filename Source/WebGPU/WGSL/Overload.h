@@ -43,9 +43,11 @@ struct TypeVariable {
 
 struct AbstractVector;
 struct AbstractMatrix;
+struct AbstractTexture;
 using AbstractType = std::variant<
     AbstractVector,
     AbstractMatrix,
+    AbstractTexture,
     TypeVariable,
     Type*
 >;
@@ -64,6 +66,11 @@ struct AbstractMatrix {
     AbstractScalarType element;
     AbstractValue columns;
     AbstractValue rows;
+};
+
+struct AbstractTexture {
+    AbstractScalarType element;
+    Types::Texture::Kind kind;
 };
 
 struct OverloadCandidate {
@@ -89,4 +96,5 @@ void printInternal(PrintStream&, const WGSL::TypeVariable&);
 void printInternal(PrintStream&, const WGSL::AbstractType&);
 void printInternal(PrintStream&, const WGSL::AbstractScalarType&);
 void printInternal(PrintStream&, const WGSL::OverloadCandidate&);
+void printInternal(PrintStream&, WGSL::Types::Texture::Kind);
 } // namespace WTF

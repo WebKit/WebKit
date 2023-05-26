@@ -57,6 +57,8 @@ constexpr Constraint SignedInteger = I32 | AbstractInt;
 constexpr Constraint Scalar = Bool | Integer | Float;
 constexpr Constraint ConcreteScalar = Bool | ConcreteInteger | ConcreteFloat;
 
+constexpr Constraint Concrete32BitNumber = ConcreteInteger | F32;
+
 constexpr Constraint SignedNumber = Float | SignedInteger;
 constexpr Constraint Number = Float | Integer;
 
