@@ -66,7 +66,6 @@ class FragmentedSharedBuffer;
 
 namespace WebKit {
 class NetworkConnectionToWebProcess;
-class NetworkRTCResolver;
 class NetworkSession;
 struct RTCPacketOptions;
 
@@ -159,9 +158,8 @@ private:
 
     static constexpr size_t maxSockets { 256 };
 
-    HashMap<LibWebRTCResolverIdentifier, std::unique_ptr<NetworkRTCResolver>> m_resolvers;
     StdMap<WebCore::LibWebRTCSocketIdentifier, std::unique_ptr<Socket>, SocketComparator> m_sockets;
-    NetworkConnectionToWebProcess* m_connection;
+    WeakPtr<NetworkConnectionToWebProcess> m_connection;
     Ref<IPC::Connection> m_ipcConnection;
     bool m_isStarted { true };
 

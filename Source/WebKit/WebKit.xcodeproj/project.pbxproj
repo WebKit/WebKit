@@ -4465,10 +4465,6 @@
 		411223BD26024E8100B0A0B6 /* RTCDataChannelRemoteManagerProxy.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = RTCDataChannelRemoteManagerProxy.messages.in; sourceTree = "<group>"; };
 		411286EF21C8A90C003A8550 /* MediaUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaUtilities.h; sourceTree = "<group>"; };
 		411286F021C8A90D003A8550 /* MediaUtilities.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MediaUtilities.mm; sourceTree = "<group>"; };
-		4112B5471F9FD3AB00E67875 /* NetworkRTCResolver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkRTCResolver.cpp; sourceTree = "<group>"; };
-		4112B5471F9FD3AB00E67986 /* NetworkRTCResolverCocoa.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkRTCResolverCocoa.cpp; sourceTree = "<group>"; };
-		4112B5481F9FD3AC00E67875 /* NetworkRTCResolver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkRTCResolver.h; sourceTree = "<group>"; };
-		4112B5481F9FD3AC00E67986 /* NetworkRTCResolverCocoa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkRTCResolverCocoa.h; sourceTree = "<group>"; };
 		4118DC1B21E6D11A00DE04C7 /* WebsiteDataStoreClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebsiteDataStoreClient.h; sourceTree = "<group>"; };
 		411A8DD920DDB6050060D34F /* WKMockMediaDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKMockMediaDevice.h; sourceTree = "<group>"; };
 		411A8DDA20DDB6050060D34F /* WKMockMediaDevice.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKMockMediaDevice.cpp; sourceTree = "<group>"; };
@@ -10340,10 +10336,6 @@
 				41DC45941E3D6E1E00B11F51 /* NetworkRTCProvider.h */,
 				41DC45981E3D6ED600B11F51 /* NetworkRTCProvider.messages.in */,
 				4176901322FDD41B00B1576D /* NetworkRTCProvider.mm */,
-				4112B5471F9FD3AB00E67875 /* NetworkRTCResolver.cpp */,
-				4112B5481F9FD3AC00E67875 /* NetworkRTCResolver.h */,
-				4112B5471F9FD3AB00E67986 /* NetworkRTCResolverCocoa.cpp */,
-				4112B5481F9FD3AC00E67986 /* NetworkRTCResolverCocoa.h */,
 				410BA13A257135F2002E2F8A /* NetworkRTCTCPSocketCocoa.h */,
 				410BA139257135F2002E2F8A /* NetworkRTCTCPSocketCocoa.mm */,
 				41DD72A7267B8C3100A90C71 /* NetworkRTCUDPSocketCocoa.h */,

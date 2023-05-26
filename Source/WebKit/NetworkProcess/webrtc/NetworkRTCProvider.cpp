@@ -35,7 +35,6 @@
 #include "NetworkConnectionToWebProcess.h"
 #include "NetworkProcess.h"
 #include "NetworkRTCProviderMessages.h"
-#include "NetworkRTCResolver.h"
 #include "NetworkSession.h"
 #include "RTCPacketOptions.h"
 #include "WebRTCResolverMessages.h"
@@ -51,7 +50,6 @@ ALLOW_COMMA_BEGIN
 ALLOW_COMMA_END
 
 #if PLATFORM(COCOA)
-#include "NetworkRTCResolverCocoa.h"
 #include "NetworkRTCTCPSocketCocoa.h"
 #include "NetworkRTCUDPSocketCocoa.h"
 #include "NetworkSessionCocoa.h"
@@ -121,10 +119,6 @@ NetworkRTCProvider::~NetworkRTCProvider()
 void NetworkRTCProvider::close()
 {
     RTC_RELEASE_LOG("close");
-
-    // Cancel all pending DNS resolutions.
-    while (!m_resolvers.isEmpty())
-        stopResolver(*m_resolvers.keys().begin());
 
     m_connection->connection().removeMessageReceiver(Messages::NetworkRTCProvider::messageReceiverName());
     m_connection = nullptr;
@@ -331,13 +325,7 @@ void NetworkRTCProvider::createResolver(LibWebRTCResolverIdentifier identifier, 
         m_connection->connection().send(Messages::WebRTCResolver::SetResolvedAddress(ipAddresses), identifier);
     };
 
-#if PLATFORM(COCOA)
-    auto resolver = NetworkRTCResolver::create(identifier, WTFMove(completionHandler));
-    resolver->start(address);
-    m_resolvers.add(identifier, WTFMove(resolver));
-#else
     WebCore::resolveDNS(address, identifier.toUInt64(), WTFMove(completionHandler));
-#endif
 }
 
 void NetworkRTCProvider::stopResolver(LibWebRTCResolverIdentifier identifier)
@@ -350,12 +338,7 @@ void NetworkRTCProvider::stopResolver(LibWebRTCResolverIdentifier identifier)
         });
         return;
     }
-#if PLATFORM(COCOA)
-    if (auto resolver = m_resolvers.take(identifier))
-        resolver->stop();
-#else
     WebCore::stopResolveDNS(identifier.toUInt64());
-#endif
 }
 
 struct NetworkMessageData : public rtc::MessageData {

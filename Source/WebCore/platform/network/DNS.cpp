@@ -49,7 +49,7 @@ void resolveDNS(const String& hostname, uint64_t identifier, DNSCompletionHandle
 {
     ASSERT(isMainThread());
     if (hostname.isEmpty())
-        return;
+        return completionHandler(makeUnexpected(DNSError::CannotResolve));
 
     WebCore::DNSResolveQueue::singleton().resolve(hostname, identifier, WTFMove(completionHandler));
 }
