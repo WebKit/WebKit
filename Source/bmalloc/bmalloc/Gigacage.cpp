@@ -99,6 +99,9 @@ size_t runwaySize(Kind kind)
     case Kind::Primitive:
         return gigacageRunway;
     case Kind::JSValue:
+#if BENABLE(SMALL_HEAP)
+    case Kind::SmallHeap:
+#endif
         return 0;
     case Kind::NumberOfKinds:
         RELEASE_BASSERT_NOT_REACHED();
@@ -107,6 +110,41 @@ size_t runwaySize(Kind kind)
 }
 
 } // anonymous namespace
+
+void ensureSmallHeap()
+{
+    static std::once_flag onceFlag;
+    std::call_once(
+        onceFlag,
+        [] {
+            RELEASE_BASSERT(!g_gigacageConfig.ensureGigacageHasBeenCalled);
+#if BENABLE(SMALL_HEAP)
+            void* base = tryVMAllocate(alignment(SmallHeap), maxSize(SmallHeap), VMTag::JSGigacage);
+            if (!base) {
+                fprintf(stderr, "FATAL: Could not allocate small heap memory.\n");
+                fprintf(stderr, "(Make sure you have not set a virtual memory limit.)\n");
+                BCRASH();
+            }
+
+            g_gigacageConfig.setBasePtr(SmallHeap, base);
+            g_gigacageConfig.setAllocSize(SmallHeap, maxSize(SmallHeap));
+            g_gigacageConfig.setAllocBasePtr(SmallHeap, base);
+
+            RELEASE_BASSERT(bmalloc_force_auxiliary_heap_into_reserved_memory(
+                &api::heapForKind(SmallHeap),
+                reinterpret_cast<uintptr_t>(base),
+                reinterpret_cast<uintptr_t>(base) + maxSize(SmallHeap)));
+            vmDeallocatePhysicalPages(base, maxSize(SmallHeap));
+
+            {
+                auto* thiz = bmalloc::api::tryMalloc(32, bmalloc::HeapKind::SmallHeapGigacage);
+                RELEASE_BASSERT(reinterpret_cast<uintptr_t>(thiz) > reinterpret_cast<uintptr_t>(allocBase(Kind::SmallHeap)));
+                RELEASE_BASSERT(reinterpret_cast<uintptr_t>(thiz) < reinterpret_cast<uintptr_t>(allocBase(Kind::SmallHeap)) + maxSize(Kind::SmallHeap));
+                bmalloc::api::free(thiz);
+            }
+#endif
+        });
+}
 
 void ensureGigacage()
 {
@@ -117,6 +155,10 @@ void ensureGigacage()
             RELEASE_BASSERT(!g_gigacageConfig.ensureGigacageHasBeenCalled);
             g_gigacageConfig.ensureGigacageHasBeenCalled = true;
 
+#if BENABLE(SMALL_HEAP)
+            RELEASE_BASSERT(g_gigacageConfig.basePtrs[SmallHeap]);
+#endif
+
             if (!shouldBeEnabled())
                 return;
 
@@ -125,18 +167,25 @@ void ensureGigacage()
             // alignment we need for freezing the Config.
             RELEASE_BASSERT(!(reinterpret_cast<size_t>(&WebConfig::g_config) & (vmPageSize() - 1)));
 #endif
+#if BENABLE(SMALL_HEAP)
+            constexpr int numberOfCagedKinds = NumberOfKinds - 1;
+            static_assert(SmallHeap >= numberOfCagedKinds);
+            // SmallHeap is initialized above.
+#else
+            constexpr int numberOfCagedKinds = NumberOfKinds;
+#endif
 
-            Kind shuffledKinds[NumberOfKinds];
-            for (unsigned i = 0; i < NumberOfKinds; ++i)
+            Kind shuffledKinds[numberOfCagedKinds];
+            for (unsigned i = 0; i < numberOfCagedKinds; ++i)
                 shuffledKinds[i] = static_cast<Kind>(i);
-            
+
             // We just go ahead and assume that 64 bits is enough randomness. That's trivially true right
             // now, but would stop being true if we went crazy with gigacages. Based on my math, 21 is the
             // largest value of n so that n! <= 2^64.
             static_assert(NumberOfKinds <= 21, "too many kinds");
             uint64_t random;
             cryptoRandom(reinterpret_cast<unsigned char*>(&random), sizeof(random));
-            for (unsigned i = NumberOfKinds; i--;) {
+            for (unsigned i = numberOfCagedKinds; i--;) {
                 unsigned limit = i + 1;
                 unsigned j = static_cast<unsigned>(random % limit);
                 random /= limit;
@@ -149,10 +198,10 @@ void ensureGigacage()
             auto bump = [] (Kind kind, size_t totalSize) -> size_t {
                 return totalSize + maxSize(kind);
             };
-            
+
             size_t totalSize = 0;
             size_t maxAlignment = 0;
-            
+
             for (Kind kind : shuffledKinds) {
                 totalSize = bump(kind, alignTo(kind, totalSize));
                 totalSize += runwaySize(kind);
@@ -192,7 +241,7 @@ void ensureGigacage()
                     reinterpret_cast<uintptr_t>(thisBase),
                     reinterpret_cast<uintptr_t>(thisBase) + size);
 #endif
-                
+
                 if (runwaySize(kind) > 0) {
                     char* runway = reinterpret_cast<char*>(base) + nextCage;
                     // Make OOB accesses into the runway crash.
@@ -261,8 +310,9 @@ void removePrimitiveDisableCallback(void (*function)(void*), void* argument)
 static bool verifyGigacageIsEnabled()
 {
     bool isEnabled = g_gigacageConfig.isEnabled;
-    for (size_t i = 0; i < NumberOfKinds; ++i)
+    for (size_t i = 0; i < NumberOfKinds; ++i) {
         isEnabled = isEnabled && g_gigacageConfig.basePtrs[i];
+    }
     isEnabled = isEnabled && g_gigacageConfig.start;
     isEnabled = isEnabled && g_gigacageConfig.totalSize;
     return isEnabled;

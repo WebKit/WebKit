@@ -962,6 +962,8 @@ T AXIsolatedObject::getOrRetrievePropertyValue(AXPropertyName propertyName)
     return propertyValue<T>(propertyName);
 }
 
+template String AXIsolatedObject::getOrRetrievePropertyValue<String>(AXPropertyName propertyName);
+
 void AXIsolatedObject::fillChildrenVectorForProperty(AXPropertyName propertyName, AccessibilityChildrenVector& children) const
 {
     Vector<AXID> childIDs = vectorAttributeValue<AXID>(propertyName);

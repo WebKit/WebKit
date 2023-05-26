@@ -45,11 +45,7 @@ namespace WTF {
 
 using namespace Unicode;
 
-#if HAVE(36BIT_ADDRESS)
 #define STRING_IMPL_SIZE(n) roundUpToMultipleOfImpl(16, n)
-#else
-#define STRING_IMPL_SIZE(n) n
-#endif
 
 static_assert(sizeof(StringImpl) == STRING_IMPL_SIZE(2 * sizeof(int) + 2 * sizeof(void*)), "StringImpl should stay small");
 
@@ -106,7 +102,7 @@ void StringStats::printStats()
 }
 #endif
 
-DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StringImpl);
+DEFINE_SMALLHEAP_ALLOCATOR_WITH_HEAP_IDENTIFIER(StringImpl);
 
 StringImpl::StaticStringImpl StringImpl::s_emptyAtomString("", StringImpl::StringAtom);
 

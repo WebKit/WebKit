@@ -29,7 +29,11 @@
 #include <wtf/CompactPtr.h>
 #include <wtf/DebugHeap.h>
 #include <wtf/Expected.h>
+#include <wtf/Gigacage.h>
+#include <wtf/IsoMalloc.h>
 #include <wtf/MathExtras.h>
+#include <wtf/Noncopyable.h>
+#include <wtf/Nonmovable.h>
 #include <wtf/Packed.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
@@ -54,11 +58,7 @@ typedef const struct __CFString * CFStringRef;
 @class NSString;
 #endif
 
-#if HAVE(36BIT_ADDRESS)
 #define STRING_IMPL_ALIGNMENT alignas(16)
-#else
-#define STRING_IMPL_ALIGNMENT
-#endif
 
 namespace JSC {
 namespace LLInt { class Data; }
@@ -177,10 +177,11 @@ protected:
 // Or we could say that "const" doesn't make sense at all and use "StringImpl&" and "StringImpl*" everywhere.
 // Right now we use a mix of both, which makes code more confusing and has no benefit.
 
-DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StringImpl);
+DECLARE_SMALLHEAP_ALLOCATOR_WITH_HEAP_IDENTIFIER(StringImpl);
 class StringImpl : private StringImplShape {
     WTF_MAKE_NONCOPYABLE(StringImpl);
-    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(StringImpl);
+    WTF_MAKE_NONMOVABLE(StringImpl);
+    WTF_MAKE_STRUCT_SMALLHEAP_ALLOCATED_WITH_HEAP_IDENTIFIER(StringImpl);
 
     friend class AtomStringImpl;
     friend class JSC::LLInt::Data;
@@ -202,6 +203,7 @@ class StringImpl : private StringImplShape {
     template<typename> friend struct WTF::HashAndCharactersTranslator;
 
 public:
+
     enum BufferOwnership { BufferInternal, BufferOwned, BufferSubstring, BufferExternal };
 
     static constexpr unsigned MaxLength = StringImplShape::MaxLength;
