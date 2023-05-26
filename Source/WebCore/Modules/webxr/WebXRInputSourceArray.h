@@ -53,6 +53,7 @@ public:
     void deref();
 
     unsigned length() const;
+    bool isSupportedPropertyIndex(unsigned index) const { return index < length(); }
     WebXRInputSource* item(unsigned) const;
 
     void clear();

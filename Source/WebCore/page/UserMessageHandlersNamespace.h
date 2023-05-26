@@ -53,6 +53,7 @@ public:
 
     Vector<AtomString> supportedPropertyNames() const;
     UserMessageHandler* namedItem(DOMWrapperWorld&, const AtomString&);
+    bool isSupportedPropertyName(const AtomString&);
 
 private:
     explicit UserMessageHandlersNamespace(LocalFrame&, UserContentProvider&);

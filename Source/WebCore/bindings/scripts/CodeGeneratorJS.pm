@@ -1255,7 +1255,11 @@ sub GeneratePut
     }
 
     push(@$outputArray, "    throwScope.assertNoException();\n");
-    push(@$outputArray, "    RELEASE_AND_RETURN(throwScope, JSObject::put(thisObject, lexicalGlobalObject, propertyName, value, putPropertySlot));\n");
+    if (InstanceOverridesDefineOwnProperty($interface)) {
+        push(@$outputArray, "    RELEASE_AND_RETURN(throwScope, ordinarySetSlow(lexicalGlobalObject, thisObject, propertyName, value, putPropertySlot.thisValue(),  putPropertySlot.isStrictMode()));\n");
+    } else {
+        push(@$outputArray, "    RELEASE_AND_RETURN(throwScope, JSObject::put(thisObject, lexicalGlobalObject, propertyName, value, putPropertySlot));\n");
+    }
     push(@$outputArray, "}\n\n");
 }
 
@@ -1333,7 +1337,13 @@ sub GeneratePutByIndex
 
     if (!$ellidesCallsToBase) {
         push(@$outputArray, "    throwScope.assertNoException();\n");
-        push(@$outputArray, "    RELEASE_AND_RETURN(throwScope, JSObject::putByIndex(cell, lexicalGlobalObject, index, value, shouldThrow));\n");
+        if (InstanceOverridesDefineOwnProperty($interface)) {
+            push(@$outputArray, "    auto propertyName = Identifier::from(vm, index);\n") if !$namedSetterOperation;
+            push(@$outputArray, "    PutPropertySlot putPropertySlot(thisObject, shouldThrow);\n");
+            push(@$outputArray, "    RELEASE_AND_RETURN(throwScope, ordinarySetSlow(lexicalGlobalObject, thisObject, propertyName, value, putPropertySlot.thisValue(), shouldThrow));\n");
+        } else {
+            push(@$outputArray, "    RELEASE_AND_RETURN(throwScope, JSObject::putByIndex(cell, lexicalGlobalObject, index, value, shouldThrow));\n");
+        }
     }
     
     push(@$outputArray, "}\n\n");
@@ -1372,9 +1382,11 @@ sub GenerateDefineOwnProperty
     return if $interface->extendedAttributes->{CustomDefineOwnProperty};
     
     my $namedSetterOperation = GetNamedSetterOperation($interface);
+    my $namedGetterOperation = GetNamedGetterOperation($interface);
     my $indexedSetterOperation = GetIndexedSetterOperation($interface);
-    
-    return if !$namedSetterOperation && !$indexedSetterOperation;
+    my $indexedGetterOperation = GetIndexedGetterOperation($interface);
+
+    return if !$namedSetterOperation && !$namedGetterOperation && !$indexedSetterOperation && !$indexedGetterOperation;
     
     push(@$outputArray, "bool ${className}::defineOwnProperty(JSObject* object, JSGlobalObject* lexicalGlobalObject, PropertyName propertyName, const PropertyDescriptor& propertyDescriptor, bool shouldThrow)\n");
     push(@$outputArray, "{\n");
@@ -1393,20 +1405,20 @@ sub GenerateDefineOwnProperty
     }
     
     # 1. If O supports indexed properties and P is an array index property name, then:
-    if (GetIndexedGetterOperation($interface)) {
+    if ($indexedGetterOperation) {
         # NOTE: The numbers are out of order because there is no reason doing steps 1, 3, and 4 if there
         # is no indexed property setter.
 
         if (!$indexedSetterOperation) {
             # 2. If O does not implement an interface with an indexed property setter, then return false.
             push(@$outputArray, "    if (parseIndex(propertyName))\n");
-            push(@$outputArray, "        return false;\n\n");
+            push(@$outputArray, "        return typeError(lexicalGlobalObject, throwScope, shouldThrow, \"Cannot set indexed properties on this object\"_s);\n\n");
         } else {
             push(@$outputArray, "    if (auto index = parseIndex(propertyName)) {\n");
 
             # 1. If the result of calling IsDataDescriptor(Desc) is false, then return false.
             push(@$outputArray, "        if (!propertyDescriptor.isDataDescriptor())\n");
-            push(@$outputArray, "            return false;\n");
+            push(@$outputArray, "            return typeError(lexicalGlobalObject, throwScope, shouldThrow, \"Cannot set indexed properties on this object\"_s);\n");
             
             # 3. Invoke the indexed property setter with P and Desc.[[Value]].
             GenerateInvokeIndexedPropertySetter($outputArray, "        ", $interface, $indexedSetterOperation, "index.value()", "propertyDescriptor.value()");
@@ -1419,7 +1431,7 @@ sub GenerateDefineOwnProperty
     
     # 2. If O supports named properties, O does not implement an interface with the [Global]
     #    extended attribute and P is not an unforgeable property name of O, then:
-    if (GetNamedGetterOperation($interface) && !IsGlobalInterface($interface)) {
+    if ($namedGetterOperation && !IsGlobalInterface($interface)) {
         # FIMXE: We need a more comprehensive story for Symbols.
         push(@$outputArray, "    if (!propertyName.isSymbol()) {\n");
         
@@ -1451,13 +1463,13 @@ sub GenerateDefineOwnProperty
         if (!$namedSetterOperation) {
             # 2.1. If creating is false and O does not implement an interface with a named property setter, then return false.
             push(@$outputArray, $additionalIndent . "        if (thisObject->wrapped().isSupportedPropertyName(propertyNameToString(propertyName)))\n");
-            push(@$outputArray, $additionalIndent . "            return false;\n");
+            push(@$outputArray, $additionalIndent . "            return typeError(lexicalGlobalObject, throwScope, shouldThrow, \"Cannot set named properties on this object\"_s);\n");
         } else {
             # 2.2. If O implements an interface with a named property setter, then:
             
             # 2.2.1. If the result of calling IsDataDescriptor(Desc) is false, then return false.
             push(@$outputArray, $additionalIndent . "        if (!propertyDescriptor.isDataDescriptor())\n");
-            push(@$outputArray, $additionalIndent . "            return false;\n");
+            push(@$outputArray, $additionalIndent . "            return typeError(lexicalGlobalObject, throwScope, shouldThrow, \"Cannot set named properties on this object\"_s);\n");
             
             # 2.2.2. Invoke the named property setter with P and Desc.[[Value]].
             GenerateInvokeNamedPropertySetter($outputArray, $additionalIndent . "        ", $interface, $namedSetterOperation, "propertyDescriptor.value()");
@@ -1478,13 +1490,7 @@ sub GenerateDefineOwnProperty
     }
     
     push(@$outputArray, "    PropertyDescriptor newPropertyDescriptor = propertyDescriptor;\n");
-        
-    # 3. If O does not implement an interface with the [Global] extended attribute,
-    #    then set Desc.[[Configurable]] to true.
-    if (!IsGlobalInterface($interface)) {
-        push(@$outputArray, "    newPropertyDescriptor.setConfigurable(true);\n");
-    }
-    
+       
     # 4. Return OrdinaryDefineOwnProperty(O, P, Desc).
     push(@$outputArray, "    throwScope.release();\n");
     push(@$outputArray, "    return JSObject::defineOwnProperty(object, lexicalGlobalObject, propertyName, newPropertyDescriptor, shouldThrow);\n");
@@ -1507,7 +1513,7 @@ sub GenerateDeletePropertyCommon
 
     AddToImplIncludes("JSDOMAbstractOperations.h", $conditional);
     my $overrideBuiltin = $codeGenerator->InheritsExtendedAttribute($interface, "LegacyOverrideBuiltIns") ? "LegacyOverrideBuiltIns::Yes" : "LegacyOverrideBuiltIns::No";
-    push(@$outputArray, "    if (isVisibleNamedProperty<${overrideBuiltin}>(*lexicalGlobalObject, thisObject, propertyName)) {\n");
+    push(@$outputArray, "        if (isVisibleNamedProperty<${overrideBuiltin}>(*lexicalGlobalObject, thisObject, propertyName)) {\n");
 
     GenerateCustomElementReactionsStackIfNeeded($outputArray, $operation, "*lexicalGlobalObject");
 
@@ -1531,24 +1537,23 @@ sub GenerateDeletePropertyCommon
     # NOTE: We require the implementation function of named deleters without an identifier to
     #       return either bool or ExceptionOr<bool>.
     if (!$operation->name) {
-        push(@$outputArray, "        using ReturnType = decltype($functionCall);\n");
-        push(@$outputArray, "        static_assert(std::is_same_v<ReturnType, ExceptionOr<bool>> || std::is_same_v<ReturnType, bool>, \"The implementation of named deleters without an identifier must return either bool or ExceptionOr<bool>.\");\n");
+        push(@$outputArray, "            using ReturnType = decltype($functionCall);\n");
+        push(@$outputArray, "            static_assert(std::is_same_v<ReturnType, ExceptionOr<bool>> || std::is_same_v<ReturnType, bool>, \"The implementation of named deleters without an identifier must return either bool or ExceptionOr<bool>.\");\n");
     }
 
-    push(@$outputArray, "        return performLegacyPlatformObjectDeleteOperation(*lexicalGlobalObject, [&] { return $functionCall; });\n");
-    push(@$outputArray, "    }\n");
+    push(@$outputArray, "            return performLegacyPlatformObjectDeleteOperation(*lexicalGlobalObject, [&] { return $functionCall; });\n");
+    push(@$outputArray, "        }\n");
 }
 
 sub GenerateDeleteProperty
 {
-    my ($outputArray, $interface, $className, $operation, $conditional) = @_;
+    my ($outputArray, $interface, $className, $namedDeleterOperation, $conditional) = @_;
 
     # This implements https://webidl.spec.whatwg.org/#legacy-platform-object-delete for the
     # for the deleteProperty override hook.
 
     push(@$outputArray, "bool ${className}::deleteProperty(JSCell* cell, JSGlobalObject* lexicalGlobalObject, PropertyName propertyName, DeletePropertySlot& slot)\n");
     push(@$outputArray, "{\n");
-
     push(@$outputArray, "    auto& thisObject = *jsCast<${className}*>(cell);\n");
     push(@$outputArray, "    auto& impl = thisObject.wrapped();\n");
 
@@ -1562,7 +1567,17 @@ sub GenerateDeleteProperty
     }
 
     # GenerateDeletePropertyCommon implements step 2.
-    GenerateDeletePropertyCommon($outputArray, $interface, $className, $operation, $conditional);
+    if (GetNamedGetterOperation($interface)) {
+        push(@$outputArray, "    if (!propertyName.isSymbol() && impl.isSupportedPropertyName(propertyNameToString(propertyName))) {\n");
+        if ($namedDeleterOperation) {
+            GenerateDeletePropertyCommon($outputArray, $interface, $className, $namedDeleterOperation, $conditional);
+        } else {
+            push(@$outputArray, "        PropertySlot slotForGet { &thisObject, PropertySlot::InternalMethodType::VMInquiry, &lexicalGlobalObject->vm() };\n");
+            push(@$outputArray, "        if (!JSObject::getOwnPropertySlot(&thisObject, lexicalGlobalObject, propertyName, slotForGet))\n");
+            push(@$outputArray, "            return false;\n");
+        }
+        push(@$outputArray, "    }\n");
+    }
 
     # FIXME: Instead of calling down JSObject::deleteProperty, perhaps we should implement
     # the remained of the algorithm ourselves.
@@ -1572,14 +1587,14 @@ sub GenerateDeleteProperty
 
 sub GenerateDeletePropertyByIndex
 {
-    my ($outputArray, $interface, $className, $operation, $conditional) = @_;
+    my ($outputArray, $interface, $className, $namedDeleterOperation, $conditional) = @_;
 
     # This implements https://webidl.spec.whatwg.org/#legacy-platform-object-delete for the
     # for the deletePropertyByIndex override hook.
 
     push(@$outputArray, "bool ${className}::deletePropertyByIndex(JSCell* cell, JSGlobalObject* lexicalGlobalObject, unsigned index)\n");
     push(@$outputArray, "{\n");
-
+    push(@$outputArray, "    UNUSED_PARAM(lexicalGlobalObject);\n");
     push(@$outputArray, "    auto& thisObject = *jsCast<${className}*>(cell);\n");
     push(@$outputArray, "    auto& impl = thisObject.wrapped();\n");
 
@@ -1596,12 +1611,19 @@ sub GenerateDeletePropertyByIndex
     } else {
         push(@$outputArray, "    VM& vm = JSC::getVM(lexicalGlobalObject);\n");
         push(@$outputArray, "    auto propertyName = Identifier::from(vm, index);\n");
-
-        # GenerateDeletePropertyCommon implements step 2.
-        GenerateDeletePropertyCommon($outputArray, $interface, $className, $operation, $conditional);
+        push(@$outputArray, "    if (impl.isSupportedPropertyName(propertyNameToString(propertyName))) {\n");
+        if ($namedDeleterOperation) {
+            # GenerateDeletePropertyCommon implements step 2.
+            GenerateDeletePropertyCommon($outputArray, $interface, $className, $namedDeleterOperation, $conditional);
+        } else {
+            push(@$outputArray, "        PropertySlot slotForGet { &thisObject, PropertySlot::InternalMethodType::VMInquiry, &lexicalGlobalObject->vm() };\n");
+            push(@$outputArray, "        if (!JSObject::getOwnPropertySlot(&thisObject, lexicalGlobalObject, propertyName, slotForGet))\n");
+            push(@$outputArray, "            return false;\n");
+        }
+        push(@$outputArray, "    }\n");
 
         # FIXME: Instead of calling down JSObject::deletePropertyByIndex, perhaps we should implement
-        # the remaineder of the algoritm (steps 3 and 4) ourselves.
+        # the remainder of the algorithm (steps 3 and 4) ourselves.
         
         # 3. If O has an own property with name P, then:
         #    1. If the property is not configurable, then return false.
@@ -1615,7 +1637,7 @@ sub GenerateDeletePropertyByIndex
 }
 
 
-sub GenerateNamedDeleterDefinition
+sub GenerateDeletePropertyDefinition
 {
     my ($outputArray, $interface, $className) = @_;
     
@@ -1626,10 +1648,7 @@ sub GenerateNamedDeleterDefinition
     # This implements https://webidl.spec.whatwg.org/#legacy-platform-object-delete using
     # the deleteProperty and deletePropertyByIndex override hooks.
 
-    assert("Named property deleters are not allowed without a corresponding named property getter.") if !GetNamedGetterOperation($interface);
-    assert("Named property deleters are not allowed on global object interfaces.") if IsGlobalInterface($interface);
-
-    my $conditional = $namedDeleterOperation->extendedAttributes->{Conditional};
+    my $conditional = $namedDeleterOperation ? $namedDeleterOperation->extendedAttributes->{Conditional} : undef;
     if ($conditional) {
         my $conditionalString = $codeGenerator->GenerateConditionalStringFromAttributeValue($conditional);
         push(@$outputArray, "#if ${conditionalString}\n\n");;
@@ -2199,7 +2218,9 @@ sub InstanceOverridesPut
     return $interface->extendedAttributes->{CustomPut}
         || $interface->extendedAttributes->{Plugin}
         || GetIndexedSetterOperation($interface)
-        || GetNamedSetterOperation($interface);
+        || GetIndexedGetterOperation($interface)
+        || GetNamedSetterOperation($interface)
+        || GetNamedGetterOperation($interface);
 }
 
 sub InstanceOverridesDefineOwnProperty
@@ -2207,14 +2228,18 @@ sub InstanceOverridesDefineOwnProperty
     my $interface = shift;
     return $interface->extendedAttributes->{CustomDefineOwnProperty}
         || GetIndexedSetterOperation($interface)
-        || GetNamedSetterOperation($interface);
+        || GetIndexedGetterOperation($interface)
+        || GetNamedSetterOperation($interface)
+        || GetNamedGetterOperation($interface);
 }
 
 sub InstanceOverridesDeleteProperty
 {
     my $interface = shift;
     return $interface->extendedAttributes->{CustomDeleteProperty}
-        || GetNamedDeleterOperation($interface);
+        || GetNamedDeleterOperation($interface)
+        || GetNamedGetterOperation($interface)
+        || GetIndexedGetterOperation($interface);
 }
 
 sub PrototypeHasStaticPropertyTable
@@ -4945,7 +4970,7 @@ sub GenerateImplementation
     }
 
     if (InstanceOverridesDeleteProperty($interface)) {
-        GenerateNamedDeleterDefinition(\@implContent, $interface, $className);
+        GenerateDeletePropertyDefinition(\@implContent, $interface, $className);
     }
     
     if (InstanceOverridesGetCallData($interface)) {

@@ -39,9 +39,11 @@ public:
     ~DOMPluginArray();
 
     unsigned length() const;
+    bool isSupportedPropertyIndex(unsigned index) const { return index < length(); }
     RefPtr<DOMPlugin> item(unsigned index);
     RefPtr<DOMPlugin> namedItem(const AtomString& propertyName);
     Vector<AtomString> supportedPropertyNames() const;
+    bool isSupportedPropertyName(const AtomString&) const;
 
     void refresh(bool reloadPages);
 

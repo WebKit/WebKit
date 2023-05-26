@@ -87,6 +87,7 @@ public:
     // For IndexedGetter and CSSRuleList.
     unsigned length() const;
     CSSKeyframeRule* item(unsigned index) const;
+    bool isSupportedPropertyIndex(unsigned index) const { return index < length(); }
 
 private:
     CSSKeyframesRule(StyleRuleKeyframes&, CSSStyleSheet* parent);

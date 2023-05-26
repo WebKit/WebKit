@@ -39,6 +39,7 @@ public:
 
     virtual unsigned length() const = 0;
     virtual CSSRule* item(unsigned index) const = 0;
+    bool isSupportedPropertyIndex(unsigned index) const { return item(index); }
     
     virtual CSSStyleSheet* styleSheet() const = 0;
     

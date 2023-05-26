@@ -52,6 +52,11 @@ unsigned DataTransferItemList::length() const
     return ensureItems().size();
 }
 
+bool DataTransferItemList::isSupportedPropertyIndex(unsigned index)
+{
+    return index < ensureItems().size();
+}
+
 RefPtr<DataTransferItem> DataTransferItemList::item(unsigned index)
 {
     auto& items = ensureItems();

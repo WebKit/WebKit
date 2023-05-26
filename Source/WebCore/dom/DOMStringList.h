@@ -50,6 +50,8 @@ public:
     void append(String&& string) { m_strings.append(WTFMove(string)); }
     void sort();
 
+    bool isSupportedPropertyIndex(unsigned index) const { return index < m_strings.size(); }
+
     // Implements the IDL.
     size_t length() const { return m_strings.size(); }
     String item(unsigned index) const;

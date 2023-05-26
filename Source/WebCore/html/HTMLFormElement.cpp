@@ -934,6 +934,11 @@ Vector<Ref<Element>> HTMLFormElement::namedElements(const AtomString& name)
     return namedItems;
 }
 
+bool HTMLFormElement::isSupportedPropertyName(const AtomString& name)
+{
+    return !name.isEmpty() && elements()->isSupportedPropertyName(name);
+}
+
 void HTMLFormElement::resumeFromDocumentSuspension()
 {
     ASSERT(!shouldAutocomplete());
