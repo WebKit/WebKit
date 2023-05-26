@@ -12196,6 +12196,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (void)_contextMenuInteraction:(UIContextMenuInteraction *)interaction configurationForMenuAtLocation:(CGPoint)location completion:(void(^)(UIContextMenuConfiguration *))completion
 {
+    _useCompactMenuForContextMenuInteraction = NO;
+
 #if ENABLE(IMAGE_ANALYSIS)
     BOOL triggeredByImageAnalysisTimeout = std::exchange(_contextMenuWasTriggeredByImageAnalysisTimeout, NO);
 #else
@@ -12328,6 +12330,13 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 #if ENABLE(DATA_DETECTION)
     if ([(NSURL *)linkURL iTunesStoreURL]) {
+        _useCompactMenuForContextMenuInteraction = !_page->websiteDataStore().isPersistent();
+
+#if ENABLE(NETWORK_CONNECTION_INTEGRITY)
+        if (_page->networkConnectionIntegrityPolicies().contains(WebCore::NetworkConnectionIntegrity::Enabled))
+            _useCompactMenuForContextMenuInteraction = YES;
+#endif
+
         [self continueContextMenuInteractionWithDataDetectors:continueWithContextMenuConfiguration];
         return;
     }
@@ -12541,6 +12550,12 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (_UIContextMenuStyle *)_contextMenuInteraction:(UIContextMenuInteraction *)interaction styleForMenuWithConfiguration:(UIContextMenuConfiguration *)configuration
 {
+    if (_useCompactMenuForContextMenuInteraction) {
+        _UIContextMenuStyle *style = [_UIContextMenuStyle defaultStyle];
+        style.preferredLayout = _UIContextMenuLayoutCompactMenu;
+        return style;
+    }
+
 #if defined(DD_CONTEXT_MENU_SPI_VERSION) && DD_CONTEXT_MENU_SPI_VERSION >= 2
     if ([configuration isKindOfClass:PAL::getDDContextMenuConfigurationClass()]) {
         DDContextMenuConfiguration *ddConfiguration = static_cast<DDContextMenuConfiguration *>(configuration);

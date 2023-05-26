@@ -382,6 +382,7 @@ struct ImageAnalysisContextMenuActionData {
     BOOL _contextMenuActionProviderDelegateNeedsOverride;
     BOOL _contextMenuIsUsingAlternateURLForImage;
     BOOL _isDisplayingContextMenuWithAnimation;
+    BOOL _useCompactMenuForContextMenuInteraction;
 #endif
     RetainPtr<UIPreviewItemController> _previewItemController;
 #endif

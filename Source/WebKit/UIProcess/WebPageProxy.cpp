@@ -5723,6 +5723,8 @@ void WebPageProxy::didCommitLoadForFrame(FrameIdentifier frameID, FrameInfoData&
 #endif
 #if ENABLE(NETWORK_CONNECTION_INTEGRITY)
         updateAllowedLookalikeCharacterStringsIfNeeded();
+        if (navigation && navigation->websitePolicies())
+            m_networkConnectionIntegrityPolicies = navigation->websitePolicies()->networkConnectionIntegrityPolicy();
 #endif
     }
 
@@ -9006,6 +9008,10 @@ void WebPageProxy::resetState(ResetStateReason resetStateReason)
 
 #if ENABLE(MOMENTUM_EVENT_DISPATCHER)
     internals().lastSentScrollingAccelerationCurve = std::nullopt;
+#endif
+
+#if ENABLE(NETWORK_CONNECTION_INTEGRITY)
+    m_networkConnectionIntegrityPolicies = { };
 #endif
 }
 
