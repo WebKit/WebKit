@@ -44,9 +44,16 @@ extern "C" Slot g_config[];
 namespace Gigacage {
 
 struct Config {
-    void* basePtr(Kind kind) const
+    BINLINE BPURE_FUNCTION void* basePtr(Kind kind) const
     {
         RELEASE_BASSERT(kind < NumberOfKinds);
+        return basePtrs[kind];
+    }
+
+    template<Kind kind>
+    BINLINE BPURE_FUNCTION void* basePtr() const
+    {
+        static_assert(kind < NumberOfKinds);
         return basePtrs[kind];
     }
 
@@ -108,7 +115,7 @@ struct Config {
 constexpr size_t startSlotOfGigacageConfig = 2;
 constexpr size_t startOffsetOfGigacageConfig = startSlotOfGigacageConfig * sizeof(WebConfig::Slot);
 
-constexpr size_t reservedSlotsForGigacageConfig = 12;
+constexpr size_t reservedSlotsForGigacageConfig = 20;
 constexpr size_t reservedBytesForGigacageConfig = reservedSlotsForGigacageConfig * sizeof(WebConfig::Slot);
 
 constexpr size_t alignmentOfGigacageConfig = std::alignment_of<Gigacage::Config>::value;

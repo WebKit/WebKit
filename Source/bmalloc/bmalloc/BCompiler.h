@@ -114,3 +114,13 @@
 #error "Unsupported compiler"
 #endif
 #endif
+
+/* BPURE_FUNCTION */
+
+#if !defined(BPURE_FUNCTION) && BCOMPILER(GCC_COMPATIBLE)
+#define BPURE_FUNCTION __attribute__((__pure__))
+#endif
+
+#if !defined(BPURE_FUNCTION)
+#define BPURE_FUNCTION
+#endif

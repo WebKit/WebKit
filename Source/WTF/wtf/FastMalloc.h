@@ -25,6 +25,10 @@
 #include <wtf/DebugHeap.h>
 #include <wtf/StdLibExtras.h>
 
+#if ENABLE(SMALL_HEAP)
+#include <wtf/Gigacage.h>
+#endif
+
 namespace WTF {
 
 // There are several malloc-related macros to annotate class / struct. If these annotations are attached,
@@ -271,6 +275,43 @@ struct FastFree<T[]> {
     }
 };
 
+#if ENABLE(SMALL_HEAP)
+template<typename AllocatorInfo>
+struct SmallHeapMalloc {
+    static void* malloc(size_t size)
+    {
+        ASSERT(AllocatorInfo::baseAddress());
+        auto* p = Gigacage::malloc(::Gigacage::SmallHeap, size);
+        ASSERT(bitwise_cast<uintptr_t>(p) > AllocatorInfo::baseAddress());
+        return p;
+    }
+
+    static void* tryMalloc(size_t size)
+    {
+        ASSERT(AllocatorInfo::baseAddress());
+        auto* p = ::Gigacage::tryMalloc(Gigacage::SmallHeap, size);
+        ASSERT(bitwise_cast<uintptr_t>(p) > AllocatorInfo::baseAddress());
+        return p;
+    }
+
+    static void* tryRealloc(void* p, size_t size)
+    {
+        ASSERT(AllocatorInfo::baseAddress());
+        ASSERT(bitwise_cast<uintptr_t>(p) > AllocatorInfo::baseAddress());
+        p = ::Gigacage::tryRealloc(::Gigacage::SmallHeap, p, size);
+        ASSERT(bitwise_cast<uintptr_t>(p) > AllocatorInfo::baseAddress());
+        return p;
+    }
+
+    static void free(void* p)
+    {
+        ASSERT(AllocatorInfo::baseAddress());
+        ASSERT(bitwise_cast<uintptr_t>(p) > AllocatorInfo::baseAddress());
+        ::Gigacage::free(::Gigacage::SmallHeap, p);
+    }
+};
+#endif // ENABLE(SMALL_HEAP)
+
 } // namespace WTF
 
 #if !defined(NDEBUG)
@@ -354,6 +395,108 @@ using __thisIsHereToForceASemicolonAfterThisMacro UNUSED_TYPE_ALIAS = int
 #define WTF_MAKE_STRUCT_FAST_ALLOCATED \
     WTF_MAKE_FAST_ALLOCATED_IMPL \
 using __thisIsHereToForceASemicolonAfterThisMacro UNUSED_TYPE_ALIAS = int
+
+#if !ENABLE(SMALL_HEAP)
+#define WTF_MAKE_SMALLHEAP_ALLOCATED_IMPL \
+    WTF_MAKE_FAST_ALLOCATED_IMPL
+
+#else
+#define WTF_MAKE_SMALLHEAP_ALLOCATED_IMPL \
+    void* operator new(size_t, void* p) \
+    { \
+        ASSERT(AllocatorInfo::baseAddress()); \
+        ASSERT(bitwise_cast<uintptr_t>(p) > AllocatorInfo::baseAddress()); \
+        return p; \
+    } \
+    void* operator new[](size_t, void* p) \
+    { \
+        ASSERT(AllocatorInfo::baseAddress()); \
+        ASSERT(bitwise_cast<uintptr_t>(p) > AllocatorInfo::baseAddress()); \
+        return p; \
+    } \
+    \
+    void* operator new(size_t size) \
+    { \
+        ASSERT(AllocatorInfo::baseAddress()); \
+        auto* p = ::Gigacage::tryMalloc(Gigacage::SmallHeap, size); \
+        ASSERT(bitwise_cast<uintptr_t>(p) > AllocatorInfo::baseAddress()); \
+        return p; \
+    } \
+    \
+    void operator delete(void* p) \
+    { \
+        ASSERT(AllocatorInfo::baseAddress()); \
+        ASSERT(bitwise_cast<uintptr_t>(p) > AllocatorInfo::baseAddress()); \
+        ::Gigacage::free(::Gigacage::SmallHeap, p); \
+    } \
+    \
+    void* operator new[](size_t size) \
+    { \
+        ASSERT(AllocatorInfo::baseAddress()); \
+        auto* p = ::Gigacage::tryMalloc(Gigacage::SmallHeap, size); \
+        ASSERT(bitwise_cast<uintptr_t>(p) > AllocatorInfo::baseAddress()); \
+        return p; \
+    } \
+    \
+    void operator delete[](void* p) \
+    { \
+        ASSERT(AllocatorInfo::baseAddress()); \
+        ASSERT(bitwise_cast<uintptr_t>(p) > AllocatorInfo::baseAddress()); \
+        ::Gigacage::free(::Gigacage::SmallHeap, p); \
+    } \
+    void* operator new(size_t, NotNullTag, void* location) \
+    { \
+        ASSERT(AllocatorInfo::baseAddress()); \
+        ASSERT(location); \
+        ASSERT(bitwise_cast<uintptr_t>(location) > AllocatorInfo::baseAddress()); \
+        return location; \
+    } \
+    static void freeAfterDestruction(void* p) \
+    { \
+        ASSERT(AllocatorInfo::baseAddress()); \
+        ASSERT(bitwise_cast<uintptr_t>(p) > AllocatorInfo::baseAddress()); \
+        ::Gigacage::free(::Gigacage::SmallHeap, p); \
+    } \
+    using webkitFastMalloced = int; \
+
+#endif
+
+#define WTF_MAKE_SMALLHEAP_ALLOCATED \
+public: \
+    WTF_MAKE_SMALLHEAP_ALLOCATED_IMPL \
+private: \
+using __thisIsHereToForceASemicolonAfterThisMacro UNUSED_TYPE_ALIAS = int
+
+#define WTF_MAKE_SMALLHEAP_FAST_ALLOCATED \
+    WTF_MAKE_SMALLHEAP_ALLOCATED_IMPL \
+using __thisIsHereToForceASemicolonAfterThisMacro UNUSED_TYPE_ALIAS = int
+
+#define WTF_MAKE_SMALLHEAP_ALLOCATED_WITH_HEAP_IDENTIFIER_IMPL(classname) \
+    WTF_MAKE_SMALLHEAP_ALLOCATED_IMPL
+
+#define WTF_MAKE_SMALLHEAP_ALLOCATED_WITH_HEAP_IDENTIFIER(classname) \
+public: \
+    WTF_MAKE_SMALLHEAP_ALLOCATED_WITH_HEAP_IDENTIFIER_IMPL(classname) \
+private: \
+using __thisIsHereToForceASemicolonAfterThisMacro UNUSED_TYPE_ALIAS = int
+
+#if ENABLE(SMALL_HEAP)
+#define WTF_MAKE_STRUCT_SMALLHEAP_ALLOCATED_WITH_HEAP_IDENTIFIER(className) \
+public: \
+    WTF_MAKE_SMALLHEAP_ALLOCATED_WITH_HEAP_IDENTIFIER_IMPL(className) \
+    static constexpr uint8_t numberOfLowerTierCells = 0; \
+    using AllocatorInfo = Gigacage::SmallHeapAllocatorInfo; /* change DebugHeap.h too */ \
+    using CompactPtrTypeTraits = WTF::BigHeapTypeTraits<className>; \
+using __thisIsHereToForceASemicolonAfterThisMacro UNUSED_TYPE_ALIAS = int
+
+#else
+
+#define WTF_MAKE_STRUCT_SMALLHEAP_ALLOCATED_WITH_HEAP_IDENTIFIER(className) \
+public: \
+    WTF_MAKE_SMALLHEAP_ALLOCATED_WITH_HEAP_IDENTIFIER_IMPL(className) \
+    using CompactPtrTypeTraits = WTF::BigHeapTypeTraits<className>; \
+using __thisIsHereToForceASemicolonAfterThisMacro UNUSED_TYPE_ALIAS = int
+#endif
 
 #if ENABLE(MALLOC_HEAP_BREAKDOWN)
 

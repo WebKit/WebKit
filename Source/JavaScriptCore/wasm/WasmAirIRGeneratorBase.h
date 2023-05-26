@@ -3024,7 +3024,7 @@ void AirIRGeneratorBase<Derived, ExpressionType>::emitLoadRTTFromFuncref(Express
 {
     auto* patch = addPatchpoint(B3::Int64);
     patch->setGenerator([](CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
-        jit.loadCompactPtr(CCallHelpers::Address(params[1].gpr(), WebAssemblyFunctionBase::offsetOfRTT()), params[0].gpr());
+        jit.loadCompactPtr<RTT>(CCallHelpers::Address(params[1].gpr(), WebAssemblyFunctionBase::offsetOfRTT()), params[0].gpr());
     });
     self().emitPatchpoint(patch, result, funcref);
 }

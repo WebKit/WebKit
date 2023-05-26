@@ -43,9 +43,9 @@ namespace bmalloc {
 namespace api {
 
 #if BUSE(LIBPAS)
-extern pas_primitive_heap_ref gigacageHeaps[Gigacage::NumberOfKinds];
+extern BEXPORT pas_primitive_heap_ref gigacageHeaps[Gigacage::NumberOfKinds];
 
-inline pas_primitive_heap_ref& heapForKind(Gigacage::Kind kind)
+BINLINE BPURE_FUNCTION pas_primitive_heap_ref& heapForKind(Gigacage::Kind kind)
 {
     RELEASE_BASSERT(static_cast<unsigned>(kind) < Gigacage::NumberOfKinds);
     return gigacageHeaps[static_cast<unsigned>(kind)];

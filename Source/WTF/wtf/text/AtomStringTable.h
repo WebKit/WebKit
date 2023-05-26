@@ -35,9 +35,11 @@ class StringImpl;
 class AtomStringTable {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    // If CompactPtr is 32bit, it is more efficient than PackedPtr (6 bytes).
-    // We select underlying implementation based on CompactPtr's efficacy.
-    using StringEntry = std::conditional_t<CompactPtrTraits<StringImpl>::is32Bit, CompactPtr<StringImpl>, PackedPtr<StringImpl>>;
+#if HAVE(36_BIT_ADDRESS)
+    using StringEntry = CompactPtr<StringImpl>;
+#else
+    using StringEntry = PackedPtr<StringImpl>;
+#endif
     using StringTableImpl = HashSet<StringEntry>;
 
     WTF_EXPORT_PRIVATE ~AtomStringTable();

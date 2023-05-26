@@ -26,6 +26,7 @@
 #pragma once
 
 #include <wtf/ExportMacros.h>
+#include <wtf/Gigacage.h>
 #include <wtf/Platform.h>
 
 #if ENABLE(MALLOC_HEAP_BREAKDOWN)
@@ -92,6 +93,17 @@ private:
     using Type##Malloc = FastMalloc
 
 #define DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(Type) \
+    struct MakeDebugHeapMallocedImplMacroSemicolonifier##Type { }
+
+#if ENABLE(SMALL_HEAP)
+#define DECLARE_SMALLHEAP_ALLOCATOR_WITH_HEAP_IDENTIFIER(Type) \
+    using Type##Malloc = SmallHeapMalloc<Gigacage::SmallHeapAllocatorInfo>
+#else
+#define DECLARE_SMALLHEAP_ALLOCATOR_WITH_HEAP_IDENTIFIER(Type) \
+    using Type##Malloc = FastMalloc
+#endif
+
+#define DEFINE_SMALLHEAP_ALLOCATOR_WITH_HEAP_IDENTIFIER(Type) \
     struct MakeDebugHeapMallocedImplMacroSemicolonifier##Type { }
 
 #endif

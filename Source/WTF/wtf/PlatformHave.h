@@ -41,7 +41,6 @@
 #include <features.h>
 #endif
 
-
 #if CPU(ARM_NEON)
 /* All NEON intrinsics usage can be disabled by this macro. */
 #define HAVE_ARM_NEON_INTRINSICS 1
@@ -1498,4 +1497,15 @@
     && ((PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 140000) \
     || ((PLATFORM(IOS) || PLATFORM(MACCATALYST)) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 170000))
 #define HAVE_REDESIGNED_TEXT_CURSOR 1
+
+#if CPU(ADDRESS64) && CPU(ARM64) && PLATFORM(IOS) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+#define HAVE_36BIT_ADDRESS 1
+#else
+#define HAVE_36BIT_ADDRESS 0
+#endif
+
+#if !HAVE(36BIT_ADDRESS) && !PLATFORM(IOS_FAMILY) && CPU(ADDRESS64) && OS(DARWIN)
+#define ENABLE_SMALL_HEAP 1
+#else
+#define ENABLE_SMALL_HEAP 0
 #endif

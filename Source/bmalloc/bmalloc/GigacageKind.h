@@ -25,11 +25,16 @@
 
 #pragma once
 
+#include "BPlatform.h"
+
 namespace Gigacage {
 
 enum Kind {
     Primitive,
     JSValue,
+#if BENABLE(SMALL_HEAP)
+    SmallHeap,
+#endif
     NumberOfKinds
 };
 
