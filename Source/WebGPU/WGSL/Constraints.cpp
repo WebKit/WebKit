@@ -33,8 +33,11 @@ namespace WGSL {
 bool satisfies(const Type* type, Constraint constraint)
 {
     auto* primitive = std::get_if<Types::Primitive>(type);
-    if (!primitive)
+    if (!primitive) {
+        if (auto* reference = std::get_if<Types::Reference>(type))
+            return satisfies(reference->element, constraint);
         return false;
+    }
 
     switch (primitive->kind) {
     case Types::Primitive::AbstractInt:
@@ -62,8 +65,11 @@ bool satisfies(const Type* type, Constraint constraint)
 Type* satisfyOrPromote(Type* type, Constraint constraint, const TypeStore& types)
 {
     auto* primitive = std::get_if<Types::Primitive>(type);
-    if (!primitive)
+    if (!primitive) {
+        if (auto* reference = std::get_if<Types::Reference>(type))
+            return satisfyOrPromote(reference->element, constraint, types);
         return nullptr;
+    }
 
     switch (primitive->kind) {
     case Types::Primitive::AbstractInt:

@@ -136,7 +136,17 @@ ConversionRank conversionRank(Type* from, Type* to)
     if (from == to)
         return { 0 };
 
-    // FIXME: refs should also return 0
+    if (auto* fromReference = std::get_if<Reference>(from)) {
+        if (fromReference->accessMode == AccessMode::Write)
+            return std::nullopt;
+        return conversionRank(fromReference->element, to);
+    }
+
+    if (auto* toReference = std::get_if<Reference>(to)) {
+        if (toReference->accessMode == AccessMode::Write)
+            return std::nullopt;
+        return conversionRank(from, toReference->element);
+    }
 
     if (auto* fromPrimitive = std::get_if<Primitive>(from)) {
         auto* toPrimitive = std::get_if<Primitive>(to);
@@ -188,12 +198,6 @@ ConversionRank conversionRank(Type* from, Type* to)
         if (fromArray->size != toArray->size)
             return std::nullopt;
         return conversionRank(fromArray->element, toArray->element);
-    }
-
-    if (auto* fromReference = std::get_if<Reference>(from)) {
-        if (fromReference->accessMode == AccessMode::Write)
-            return std::nullopt;
-        return conversionRank(fromReference->element, to);
     }
 
     // FIXME: add the abstract result conversion rules

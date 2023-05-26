@@ -10,7 +10,7 @@ struct S {
 };
 
 fn testConstraints() {
-    var x : S;
+    let x = S(0);
 
     // CHECK-L: no matching overload for operator +(S, S)
     let x2 = x + x;

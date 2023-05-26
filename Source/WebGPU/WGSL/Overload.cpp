@@ -278,6 +278,11 @@ ConversionRank OverloadResolver::calculateRank(const AbstractType& parameter, Ty
         return conversionRank(argumentType, resolvedType);
     }
 
+    if (auto* reference = std::get_if<Types::Reference>(argumentType)) {
+        ASSERT(reference->accessMode != AccessMode::Write);
+        return calculateRank(parameter, reference->element);
+    }
+
     if (auto* vectorParameter = std::get_if<AbstractVector>(&parameter)) {
         auto& vectorArgument = std::get<Types::Vector>(*argumentType);
         return calculateRank(vectorParameter->element, vectorArgument.element);
@@ -357,6 +362,12 @@ bool OverloadResolver::unify(const AbstractType& parameter, Type* argumentType)
     logLn("unify parameter type '", parameter, "' with argument '", *argumentType, "'");
     if (auto* variable = std::get_if<TypeVariable>(&parameter))
         return unify(variable, argumentType);
+
+    if (auto* reference = std::get_if<Types::Reference>(argumentType)) {
+        if (reference->accessMode == AccessMode::Write)
+            return false;
+        return unify(parameter, reference->element);
+    }
 
     if (auto* vectorParameter = std::get_if<AbstractVector>(&parameter)) {
         auto* vectorArgument = std::get_if<Types::Vector>(argumentType);
