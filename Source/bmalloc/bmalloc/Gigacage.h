@@ -47,6 +47,7 @@
 #define GIGACAGE_ENABLED 0
 #endif
 
+
 namespace Gigacage {
 
 BINLINE const char* name(Kind kind)
@@ -56,10 +57,6 @@ BINLINE const char* name(Kind kind)
         return "Primitive";
     case JSValue:
         return "JSValue";
-#if BENABLE(SMALL_HEAP)
-    case SmallHeap:
-        return "JSValue";
-#endif
     case NumberOfKinds:
         break;
     }
@@ -73,9 +70,6 @@ constexpr bool hasCapacityToUseLargeGigacage = BOS_EFFECTIVE_ADDRESS_WIDTH > 36;
 
 constexpr size_t primitiveGigacageSize = (hasCapacityToUseLargeGigacage ? 32 : 2) * bmalloc::Sizes::GB;
 constexpr size_t jsValueGigacageSize = (hasCapacityToUseLargeGigacage ? 16 : 2) * bmalloc::Sizes::GB;
-#if BENABLE(SMALL_HEAP)
-constexpr size_t smallHeapGigacageSize = (hasCapacityToUseLargeGigacage ? 64 : 0) * bmalloc::Sizes::GB;
-#endif
 constexpr size_t maximumCageSizeReductionForSlide = hasCapacityToUseLargeGigacage ? 4 * bmalloc::Sizes::GB : bmalloc::Sizes::GB / 4;
 
 
@@ -90,36 +84,23 @@ constexpr size_t maximumCageSizeReductionForSlide = hasCapacityToUseLargeGigacag
 
 static_assert(bmalloc::isPowerOfTwo(primitiveGigacageSize));
 static_assert(bmalloc::isPowerOfTwo(jsValueGigacageSize));
-#if BENABLE(SMALL_HEAP)
-static_assert(!hasCapacityToUseLargeGigacage || bmalloc::isPowerOfTwo(smallHeapGigacageSize));
-#endif
 static_assert(primitiveGigacageSize > maximumCageSizeReductionForSlide);
 static_assert(jsValueGigacageSize > maximumCageSizeReductionForSlide);
-#if BENABLE(SMALL_HEAP)
-static_assert(smallHeapGigacageSize > maximumCageSizeReductionForSlide);
-#endif
 
 constexpr size_t gigacageSizeToMask(size_t size) { return size - 1; }
 
 constexpr size_t primitiveGigacageMask = gigacageSizeToMask(primitiveGigacageSize);
 constexpr size_t jsValueGigacageMask = gigacageSizeToMask(jsValueGigacageSize);
-#if BENABLE(SMALL_HEAP)
-constexpr size_t smallHeapGigacageMask = gigacageSizeToMask(smallHeapGigacageSize);
-#endif
 
 // These constants are needed by the LLInt.
 constexpr ptrdiff_t offsetOfPrimitiveGigacageBasePtr = Kind::Primitive * sizeof(void*);
 constexpr ptrdiff_t offsetOfJSValueGigacageBasePtr = Kind::JSValue * sizeof(void*);
-#if BENABLE(SMALL_HEAP)
-constexpr ptrdiff_t offsetOfSmallHeapGigacageBasePtr = Kind::SmallHeap * sizeof(void*);
-#endif
 
 extern "C" BEXPORT bool disablePrimitiveGigacageRequested;
 
 BINLINE bool isEnabled() { return g_gigacageConfig.isEnabled; }
 
 BEXPORT void ensureGigacage();
-BEXPORT void ensureSmallHeap();
 
 BEXPORT void disablePrimitiveGigacage();
 
@@ -165,10 +146,6 @@ BINLINE size_t maxSize(Kind kind)
         return static_cast<size_t>(primitiveGigacageSize);
     case JSValue:
         return static_cast<size_t>(jsValueGigacageSize);
-#if BENABLE(SMALL_HEAP)
-    case SmallHeap:
-        return static_cast<size_t>(smallHeapGigacageSize);
-#endif
     case NumberOfKinds:
         break;
     }
@@ -195,9 +172,6 @@ void forEachKind(const Func& func)
 {
     func(Primitive);
     func(JSValue);
-#if BENABLE(SMALL_HEAP)
-    func(SmallHeap);
-#endif
 }
 
 template<typename T>
@@ -234,13 +208,6 @@ BINLINE bool contains(const void* ptr)
 
 BEXPORT bool shouldBeEnabled();
 
-#if BENABLE(SMALL_HEAP)
-struct SmallHeapAllocatorInfo {
-    constexpr static uint64_t heapAddressMask = smallHeapGigacageMask;
-    static inline uintptr_t baseAddress() { return reinterpret_cast<uintptr_t>(allocBase(SmallHeap)); }
-};
-#endif
-
 #else // GIGACAGE_ENABLED
 
 BINLINE void* basePtr(Kind)
@@ -253,7 +220,6 @@ BINLINE size_t maxSize(Kind) { BCRASH(); return 0; }
 BINLINE size_t size(Kind) { return 0; }
 BINLINE size_t footprint(Kind) { return 0; }
 BINLINE void ensureGigacage() { }
-BINLINE void ensureSmallHeap() { }
 BINLINE bool contains(const void*) { return false; }
 BINLINE bool disablingPrimitiveGigacageIsForbidden() { return false; }
 BINLINE bool isEnabled() { return false; }

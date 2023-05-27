@@ -34,10 +34,7 @@ namespace bmalloc {
 enum class HeapKind {
     Primary,
     PrimitiveGigacage,
-    JSValueGigacage,
-#if BENABLE(SMALL_HEAP)
-    SmallHeapGigacage,
-#endif
+    JSValueGigacage
 };
 
 static constexpr unsigned numHeaps = 3;
@@ -49,9 +46,6 @@ BINLINE bool isGigacage(HeapKind heapKind)
         return false;
     case HeapKind::PrimitiveGigacage:
     case HeapKind::JSValueGigacage:
-#if BENABLE(SMALL_HEAP)
-    case HeapKind::SmallHeapGigacage:
-#endif
         return true;
     }
     BCRASH();
@@ -68,10 +62,6 @@ BINLINE Gigacage::Kind gigacageKind(HeapKind kind)
         return Gigacage::Primitive;
     case HeapKind::JSValueGigacage:
         return Gigacage::JSValue;
-#if BENABLE(SMALL_HEAP)
-    case HeapKind::SmallHeapGigacage:
-        return Gigacage::SmallHeap;
-#endif
     }
     BCRASH();
     return Gigacage::Primitive;
@@ -84,10 +74,6 @@ BINLINE HeapKind heapKind(Gigacage::Kind kind)
         return HeapKind::PrimitiveGigacage;
     case Gigacage::JSValue:
         return HeapKind::JSValueGigacage;
-#if BENABLE(SMALL_HEAP)
-    case Gigacage::SmallHeap:
-        return HeapKind::SmallHeapGigacage;
-#endif
     case Gigacage::NumberOfKinds:
         break;
     }
@@ -103,9 +89,6 @@ BINLINE bool isActiveHeapKindAfterEnsuringGigacage(HeapKind kind)
         if (Gigacage::isEnabled())
             return true;
         return false;
-#if BENABLE(SMALL_HEAP)
-    case HeapKind::SmallHeapGigacage:
-#endif
     default:
         return true;
     }
@@ -121,9 +104,6 @@ BINLINE HeapKind mapToActiveHeapKindAfterEnsuringGigacage(HeapKind kind)
         if (Gigacage::isEnabled())
             return kind;
         return HeapKind::Primary;
-#if BENABLE(SMALL_HEAP)
-    case HeapKind::SmallHeapGigacage:
-#endif
     default:
         return kind;
     }

@@ -1963,30 +1963,24 @@ public:
         emitFillStorageWithJSEmpty(butterflyGPR, initialOffset, outOfLineCapacity, scratchGPR);
     }
 
-    template<typename T>
     void loadCompactPtr(Address address, GPRReg dest)
     {
 #if HAVE(36BIT_ADDRESS)
-        static_assert(sizeof(typename T::CompactPtrTypeTraits::StorageType) == 4);
         load32(address, dest);
         lshift64(TrustedImm32(4), dest);
 #else
-        static_assert(sizeof(typename T::CompactPtrTypeTraits::StorageType) == sizeof(void*));
         loadPtr(address, dest);
 #endif
     }
 
-    template<typename T>
     Jump branchCompactPtr(RelationalCondition cond, GPRReg left, Address right, GPRReg scratch)
     {
 #if HAVE(36BIT_ADDRESS)
-        static_assert(sizeof(typename T::CompactPtrTypeTraits::StorageType) == 4);
         ASSERT(left != scratch);
         load32(right, scratch);
         lshift64(TrustedImm32(4), scratch);
         return branchPtr(cond, left, Address(scratch));
 #else
-        static_assert(sizeof(typename T::CompactPtrTypeTraits::StorageType) == sizeof(void*));
         UNUSED_PARAM(scratch);
         return branchPtr(cond, left, right);
 #endif

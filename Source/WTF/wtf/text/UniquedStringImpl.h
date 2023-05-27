@@ -38,13 +38,6 @@ protected:
     UniquedStringImpl(CreateSymbolTag, const LChar* characters, unsigned length) : StringImpl(CreateSymbol, characters, length) { }
     UniquedStringImpl(CreateSymbolTag, const UChar* characters, unsigned length) : StringImpl(CreateSymbol, characters, length) { }
     UniquedStringImpl(CreateSymbolTag) : StringImpl(CreateSymbol) { }
-public:
-#if ENABLE(SMALL_HEAP)
-    using AllocatorInfo = Gigacage::SmallHeapAllocatorInfo;
-    using CompactPtrTypeTraits = WTF::BigHeapTypeTraits<UniquedStringImpl>;
-#else
-    using CompactPtrTypeTraits = WTF::BigHeapTypeTraits<UniquedStringImpl>;
-#endif
 };
 
 #if ASSERT_ENABLED

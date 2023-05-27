@@ -33,20 +33,16 @@
 
 namespace JSC {
 
-IsoSubspace::IsoSubspace(CString name, Heap& heap, const HeapCellType& heapCellType, size_t size, uint8_t numberOfLowerTierCells, AlignedMemoryAllocator* allocator)
+IsoSubspace::IsoSubspace(CString name, Heap& heap, const HeapCellType& heapCellType, size_t size, uint8_t numberOfLowerTierCells, std::unique_ptr<IsoMemoryAllocatorBase>&& allocator)
     : Subspace(name, heap)
     , m_directory(WTF::roundUpToMultipleOf<MarkedBlock::atomSize>(size))
-    , m_isoAlignedMemoryAllocator(allocator)
+    , m_isoAlignedMemoryAllocator(allocator ? WTFMove(allocator) : makeUnique<IsoAlignedMemoryAllocator>(name))
 {
-    if (!allocator) {
-        m_optionalOwnedAllocator = makeUnique<IsoAlignedMemoryAllocator>(name);
-        m_isoAlignedMemoryAllocator = m_optionalOwnedAllocator.get();
-    }
     m_remainingLowerTierCellCount = numberOfLowerTierCells;
     ASSERT(WTF::roundUpToMultipleOf<MarkedBlock::atomSize>(size) == cellSize());
     ASSERT(numberOfLowerTierCells <= MarkedBlock::maxNumberOfLowerTierCells);
     m_isIsoSubspace = true;
-    initialize(heapCellType, m_isoAlignedMemoryAllocator);
+    initialize(heapCellType, m_isoAlignedMemoryAllocator.get());
 
     Locker locker { m_space.directoryLock() };
     m_directory.setSubspace(this);

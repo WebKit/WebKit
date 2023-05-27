@@ -27,7 +27,7 @@
 #include <wtf/CompactPtr.h>
 #include <wtf/PtrTag.h>
 
-#if HAVE(36BIT_ADDRESS) || ENABLE(SMALL_HEAP)
+#if HAVE(36BIT_ADDRESS)
 #define CLASS_INFO_ALIGNMENT alignas(16)
 #else
 #define CLASS_INFO_ALIGNMENT
@@ -179,7 +179,6 @@ struct MethodTable {
 
 struct CLASS_INFO_ALIGNMENT ClassInfo {
     using CheckJSCastSnippetFunctionPtr = Ref<Snippet> (*)(void);
-    using CompactPtrTypeTraits = WTF::BigHeapTypeTraits<ClassInfo>;
 
     // A string denoting the class name. Example: "Window".
     ASCIILiteral className;

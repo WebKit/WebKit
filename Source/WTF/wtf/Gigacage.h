@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <wtf/FastMalloc.h>
 #include <wtf/StdLibExtras.h>
 
 #if USE(SYSTEM_MALLOC)
@@ -44,7 +45,6 @@ enum Kind {
 };
 
 inline void ensureGigacage() { }
-inline void ensureSmallHeap() { }
 inline void disablePrimitiveGigacage() { }
 inline bool shouldBeEnabled() { return false; }
 
@@ -83,11 +83,11 @@ inline T* cagedMayBeNull(Kind, T* ptr) { return ptr; }
 
 inline bool isCaged(Kind, const void*) { return false; }
 
-WTF_EXPORT_PRIVATE void* tryAlignedMalloc(Kind, size_t alignment, size_t size);
-WTF_EXPORT_PRIVATE void alignedFree(Kind, void* p);
+inline void* tryAlignedMalloc(Kind, size_t alignment, size_t size) { return tryFastAlignedMalloc(alignment, size); }
+inline void alignedFree(Kind, void* p) { fastAlignedFree(p); }
 WTF_EXPORT_PRIVATE void* tryMalloc(Kind, size_t size);
 WTF_EXPORT_PRIVATE void* tryRealloc(Kind, void*, size_t);
-WTF_EXPORT_PRIVATE void free(Kind, void* p);
+inline void free(Kind, void* p) { fastFree(p); }
 
 WTF_EXPORT_PRIVATE void* tryAllocateZeroedVirtualPages(Kind, size_t size);
 WTF_EXPORT_PRIVATE void freeVirtualPages(Kind, void* basePtr, size_t size);
@@ -101,9 +101,6 @@ namespace Gigacage {
 WTF_EXPORT_PRIVATE void* tryAlignedMalloc(Kind, size_t alignment, size_t size);
 WTF_EXPORT_PRIVATE void alignedFree(Kind, void*);
 WTF_EXPORT_PRIVATE void* tryMalloc(Kind, size_t);
-#if ENABLE(SMALL_HEAP)
-WTF_EXPORT_PRIVATE void* tryMallocSmallHeap(size_t size);
-#endif
 WTF_EXPORT_PRIVATE void* tryRealloc(Kind, void*, size_t);
 WTF_EXPORT_PRIVATE void free(Kind, void*);
 

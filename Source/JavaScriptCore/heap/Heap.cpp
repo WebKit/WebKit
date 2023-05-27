@@ -270,24 +270,8 @@ private:
 #define INIT_SERVER_ISO_SUBSPACE(name, heapCellType, type) \
     , name ISO_SUBSPACE_INIT(*this, heapCellType, type)
 
-#define INIT_SERVER_STRUCTURE_ISO_SUBSPACE_ALLOCATOR(name, heapCellType, type) \
-    , structureAllocator##name(makeUnique<StructureAlignedMemoryAllocator>("Structure")) \
-
 #define INIT_SERVER_STRUCTURE_ISO_SUBSPACE(name, heapCellType, type) \
-    , name("IsoSubspace" #name, *this, heapCellType, WTF::roundUpToMultipleOf<type::atomSize>(sizeof(type)), type::numberOfLowerTierCells, structureAllocator##name.get())
-
-#if !ENABLE(SMALL_HEAP)
-#define INIT_SERVER_SMALLHEAP_ISO_SUBSPACE(name, heapCellType, type) \
-    INIT_SERVER_ISO_SUBSPACE(name, heapCellType, type)
-#else
-#define INIT_SERVER_SMALLHEAP_ISO_SUBSPACE(name, heapCellType, type) \
-    , name("SmallIsoSubspace" #name, *this, heapCellType, WTF::roundUpToMultipleOf<type::atomSize>(sizeof(type)), type::numberOfLowerTierCells, smallHeapGigacageAllocator.get())
-#endif
-
-#define ASSERT_SMALLHEAP_ISO_SUBSPACE(name, heapCellType, type) \
-    static_assert(!type::numberOfLowerTierCells, "Precise Allocation is not supported");
-FOR_EACH_JSC_SMALLHEAP_ISO_SUBSPACE(ASSERT_SMALLHEAP_ISO_SUBSPACE);
-#undef ASSERT_SMALLHEAP_ISO_SUBSPACE
+    , name("IsoSubspace" #name, *this, heapCellType, WTF::roundUpToMultipleOf<type::atomSize>(sizeof(type)), type::numberOfLowerTierCells, makeUnique<StructureAlignedMemoryAllocator>("Structure"))
 
 Heap::Heap(VM& vm, HeapType heapType)
     : m_heapType(heapType)
@@ -379,9 +363,6 @@ Heap::Heap(VM& vm, HeapType heapType)
     // AlignedMemoryAllocators
     , fastMallocAllocator(makeUnique<FastMallocAlignedMemoryAllocator>())
     , primitiveGigacageAllocator(makeUnique<GigacageAlignedMemoryAllocator>(Gigacage::Primitive))
-#if ENABLE(SMALL_HEAP)
-    , smallHeapGigacageAllocator(makeUnique<GigacageAlignedMemoryAllocator>(Gigacage::SmallHeap))
-#endif
     , jsValueGigacageAllocator(makeUnique<GigacageAlignedMemoryAllocator>(Gigacage::JSValue))
 
     // Subspaces
@@ -391,9 +372,7 @@ Heap::Heap(VM& vm, HeapType heapType)
     , cellSpace("JSCell", *this, cellHeapCellType, fastMallocAllocator.get()) // Hash:0xadfb5a79
     , variableSizedCellSpace("Variable Sized JSCell", *this, cellHeapCellType, fastMallocAllocator.get()) // Hash:0xbcd769cc
     , destructibleObjectSpace("JSDestructibleObject", *this, destructibleObjectHeapCellType, fastMallocAllocator.get()) // Hash:0x4f5ed7a9
-    FOR_EACH_JSC_STRUCTURE_ISO_SUBSPACE(INIT_SERVER_STRUCTURE_ISO_SUBSPACE_ALLOCATOR)
     FOR_EACH_JSC_COMMON_ISO_SUBSPACE(INIT_SERVER_ISO_SUBSPACE)
-    FOR_EACH_JSC_SMALLHEAP_ISO_SUBSPACE(INIT_SERVER_SMALLHEAP_ISO_SUBSPACE)
     FOR_EACH_JSC_STRUCTURE_ISO_SUBSPACE(INIT_SERVER_STRUCTURE_ISO_SUBSPACE)
     , codeBlockSpaceAndSet ISO_SUBSPACE_INIT(*this, destructibleCellHeapCellType, CodeBlock) // Hash:0x77e66ec9
     , functionExecutableSpaceAndSet ISO_SUBSPACE_INIT(*this, destructibleCellHeapCellType, FunctionExecutable) // Hash:0x5d158f3
@@ -437,8 +416,6 @@ Heap::Heap(VM& vm, HeapType heapType)
 
 #undef INIT_SERVER_ISO_SUBSPACE
 #undef INIT_SERVER_STRUCTURE_ISO_SUBSPACE
-#undef INIT_SERVER_STRUCTURE_ISO_SUBSPACE_ALLOCATOR
-#undef INIT_SERVER_SMALLHEAP_ISO_SUBSPACE
 
 Heap::~Heap()
 {

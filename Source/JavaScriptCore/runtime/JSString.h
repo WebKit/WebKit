@@ -33,9 +33,7 @@
 #include "ThrowScope.h"
 #include <array>
 #include <wtf/CheckedArithmetic.h>
-#include <wtf/CompactPtr.h>
 #include <wtf/ForbidHeapAllocation.h>
-#include <wtf/Gigacage.h>
 #include <wtf/MathExtras.h>
 #include <wtf/text/StringView.h>
 
@@ -96,13 +94,6 @@ JSString* asString(JSValue);
 //                                            x:(is8Bit),y:(isSubstring),z:(isRope) bit flags
 class JSString : public JSCell {
 public:
-    static constexpr uint8_t numberOfLowerTierCells = 0;
-#if ENABLE(SMALL_HEAP)
-    using AllocatorInfo = Gigacage::SmallHeapAllocatorInfo;
-    using CompactPtrTypeTraits = WTF::BigHeapTypeTraits<JSString>;
-#else
-    using CompactPtrTypeTraits = WTF::BigHeapTypeTraits<JSString>;
-#endif
     friend class JIT;
     friend class VM;
     friend class SpecializedThunkJIT;

@@ -27,19 +27,12 @@
 #include <wtf/Gigacage.h>
 
 #include <wtf/Atomics.h>
-#include <wtf/FastMalloc.h>
 #include <wtf/PageBlock.h>
 
 #if USE(SYSTEM_MALLOC)
 #include <wtf/OSAllocator.h>
 
 namespace Gigacage {
-
-void* tryAlignedMalloc(Kind, size_t alignment, size_t size) { return tryFastAlignedMalloc(alignment, size); }
-
-void alignedFree(Kind, void* p) { fastAlignedFree(p); }
-
-void free(Kind, void* p) { fastFree(p); }
 
 void* tryMalloc(Kind, size_t size)
 {
@@ -102,13 +95,6 @@ void* tryMalloc(Kind kind, size_t size)
     WTF::compilerFence();
     return result;
 }
-
-#if ENABLE(SMALL_HEAP)
-void* tryMallocSmallHeap(size_t size)
-{
-    return bmalloc::api::tryMalloc(size, bmalloc::heapKind(Kind::SmallHeap));
-}
-#endif
 
 void* tryRealloc(Kind kind, void* pointer, size_t size)
 {

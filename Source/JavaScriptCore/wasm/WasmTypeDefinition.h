@@ -657,8 +657,6 @@ class RTT_ALIGNMENT RTT : public ThreadSafeRefCounted<RTT> {
     WTF_MAKE_FAST_ALLOCATED;
 
 public:
-    using CompactPtrTypeTraits = WTF::BigHeapTypeTraits<RTT>;
-
     RTT() = delete;
     RTT(const RTT&) = delete;
 

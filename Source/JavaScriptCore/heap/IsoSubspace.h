@@ -41,7 +41,7 @@ class IsoSubspace;
 
 class IsoSubspace : public Subspace {
 public:
-    JS_EXPORT_PRIVATE IsoSubspace(CString name, Heap&, const HeapCellType&, size_t size, uint8_t numberOfLowerTierCells, AlignedMemoryAllocator* = nullptr);
+    JS_EXPORT_PRIVATE IsoSubspace(CString name, Heap&, const HeapCellType&, size_t size, uint8_t numberOfLowerTierCells, std::unique_ptr<IsoMemoryAllocatorBase>&& = nullptr);
     JS_EXPORT_PRIVATE ~IsoSubspace() override;
 
     size_t cellSize() { return m_directory.cellSize(); }
@@ -65,8 +65,7 @@ private:
     void didBeginSweepingToFreeList(MarkedBlock::Handle*) override;
 
     BlockDirectory m_directory;
-    AlignedMemoryAllocator* m_isoAlignedMemoryAllocator;
-    std::unique_ptr<IsoMemoryAllocatorBase> m_optionalOwnedAllocator; // If we own the allocator.
+    std::unique_ptr<IsoMemoryAllocatorBase> m_isoAlignedMemoryAllocator;
     SentinelLinkedList<PreciseAllocation, PackedRawSentinelNode<PreciseAllocation>> m_lowerTierFreeList;
     SentinelLinkedList<IsoCellSet, PackedRawSentinelNode<IsoCellSet>> m_cellSets;
 };

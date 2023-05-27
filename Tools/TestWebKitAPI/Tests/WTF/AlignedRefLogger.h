@@ -26,13 +26,10 @@
 #pragma once
 
 #include "Logger.h"
-#include <wtf/CompactPtr.h>
 
 namespace TestWebKitAPI {
 
 struct alignas(16) AlignedRefLogger {
-    using CompactPtrTypeTraits = WTF::BigHeapTypeTraits<AlignedRefLogger>;
-
     AlignedRefLogger(const char* name)
         : name { *name }
     {
@@ -52,8 +49,6 @@ struct alignas(16) AlignedRefLogger {
 };
 
 struct DerivedAlignedRefLogger : AlignedRefLogger {
-    using CompactPtrTypeTraits = WTF::BigHeapTypeTraits<DerivedAlignedRefLogger>;
-
     DerivedAlignedRefLogger(const char* name)
         : AlignedRefLogger { name }
     {

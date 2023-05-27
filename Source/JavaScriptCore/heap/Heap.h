@@ -91,7 +91,6 @@ class MarkingConstraintSet;
 class MutatorScheduler;
 class RunningScope;
 class SlotVisitor;
-class StructureAlignedMemoryAllocator;
 class SpaceTimeMutatorScheduler;
 class StopIfNecessaryTimer;
 class SweepingScope;
@@ -111,10 +110,6 @@ class SpeculativeJIT;
 namespace GCClient {
 class Heap;
 }
-
-#define FOR_EACH_JSC_SMALLHEAP_ISO_SUBSPACE(v) \
-    v(ropeStringSpace, stringHeapCellType, JSRopeString) \
-    v(stringSpace, stringHeapCellType, JSString)
 
 #define FOR_EACH_JSC_COMMON_ISO_SUBSPACE(v) \
     v(arraySpace, cellHeapCellType, JSArray) \
@@ -138,8 +133,10 @@ class Heap;
     v(propertyTableSpace, destructibleCellHeapCellType, PropertyTable) \
     v(regExpSpace, destructibleCellHeapCellType, RegExp) \
     v(regExpObjectSpace, cellHeapCellType, RegExpObject) \
+    v(ropeStringSpace, stringHeapCellType, JSRopeString) \
     v(scopedArgumentsSpace, cellHeapCellType, ScopedArguments) \
     v(sparseArrayValueMapSpace, destructibleCellHeapCellType, SparseArrayValueMap) \
+    v(stringSpace, stringHeapCellType, JSString) \
     v(stringObjectSpace, cellHeapCellType, StringObject) \
     v(structureChainSpace, cellHeapCellType, StructureChain) \
     v(structureRareDataSpace, destructibleCellHeapCellType, StructureRareData) \
@@ -151,7 +148,6 @@ class Heap;
 
 #define FOR_EACH_JSC_ISO_SUBSPACE(v) \
     FOR_EACH_JSC_COMMON_ISO_SUBSPACE(v) \
-    FOR_EACH_JSC_SMALLHEAP_ISO_SUBSPACE(v) \
     FOR_EACH_JSC_STRUCTURE_ISO_SUBSPACE(v)
 
 #if JSC_OBJC_API_ENABLED
@@ -988,9 +984,6 @@ public:
     // AlignedMemoryAllocators
     std::unique_ptr<FastMallocAlignedMemoryAllocator> fastMallocAllocator;
     std::unique_ptr<GigacageAlignedMemoryAllocator> primitiveGigacageAllocator;
-#if ENABLE(SMALL_HEAP)
-    std::unique_ptr<GigacageAlignedMemoryAllocator> smallHeapGigacageAllocator;
-#endif
     std::unique_ptr<GigacageAlignedMemoryAllocator> jsValueGigacageAllocator;
 
     // Subspaces
@@ -1011,26 +1004,17 @@ public:
             return primitiveGigacageAuxiliarySpace;
         case Gigacage::JSValue:
             return jsValueGigacageAuxiliarySpace;
-#if ENABLE(SMALL_HEAP)
-        case Gigacage::SmallHeap:
-#endif
         case Gigacage::NumberOfKinds:
             break;
         }
         RELEASE_ASSERT_NOT_REACHED();
         return primitiveGigacageAuxiliarySpace;
     }
-
+    
     // Whenever possible, use subspaceFor<CellType>(vm) to get one of these subspaces.
     CompleteSubspace cellSpace;
     CompleteSubspace variableSizedCellSpace; // FIXME: This space is problematic because we have things in here like DirectArguments and ScopedArguments; those should be split into JSValueOOB cells and JSValueStrict auxiliaries. https://bugs.webkit.org/show_bug.cgi?id=182858
     CompleteSubspace destructibleObjectSpace;
-
-#define DECLARE_STRUCTURE_ALLOCATOR(name, heapCellType, type) \
-    std::unique_ptr<StructureAlignedMemoryAllocator> structureAllocator##name;
-
-    FOR_EACH_JSC_ISO_SUBSPACE(DECLARE_STRUCTURE_ALLOCATOR)
-#undef DECLARE_STRUCTURE_ALLOCATOR
 
 #define DECLARE_ISO_SUBSPACE(name, heapCellType, type) \
     IsoSubspace name;

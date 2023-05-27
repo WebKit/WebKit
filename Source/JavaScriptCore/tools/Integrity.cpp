@@ -250,7 +250,7 @@ bool Analyzer::analyzeCell(VM& vm, JSCell* cell, Analyzer::Action action)
     }
 
     JSType cellType = cell->type();
-    if (cell->type() != JSImmutableButterflyType && cell->type() != StringType)
+    if (cell->type() != JSImmutableButterflyType)
         AUDIT_VERIFY(!Gigacage::contains(cell), "cell %p cell.type %d", cell, cellType);
 
     WeakSet& weakSet = cell->cellContainer().weakSet();
