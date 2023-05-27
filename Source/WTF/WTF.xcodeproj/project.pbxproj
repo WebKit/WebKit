@@ -478,7 +478,6 @@
 		DD3DC98127A4BF8E007E5B61 /* StdLibExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A47311151A825B004123FF /* StdLibExtras.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD3DC98227A4BF8E007E5B61 /* StringHashDumpContext.h in Headers */ = {isa = PBXBuildFile; fileRef = A748745117A0BDAE00FA04CB /* StringHashDumpContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD3DC98327A4BF8E007E5B61 /* OSRandomSource.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A472DB151A825B004123FF /* OSRandomSource.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DD3DC98427A4BF8E007E5B61 /* Span.h in Headers */ = {isa = PBXBuildFile; fileRef = BCA30C7F266D3034000D230C /* Span.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD3DC98527A4BF8E007E5B61 /* BlockPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A944F461C3D8814005BD28C /* BlockPtr.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD3DC98627A4BF8E007E5B61 /* DebugUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 996B17841EBA441C007E10EB /* DebugUtilities.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD3DC98727A4BF8E007E5B61 /* UniqueArray.h in Headers */ = {isa = PBXBuildFile; fileRef = E300E521203D645F00DA79BE /* UniqueArray.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1445,7 +1444,6 @@
 		AD89B6B91E64150F0090707F /* MemoryPressureHandlerCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MemoryPressureHandlerCocoa.mm; sourceTree = "<group>"; };
 		ADF2CE641E39F106006889DB /* MemoryFootprint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MemoryFootprint.h; sourceTree = "<group>"; };
 		ADF2CE651E39F106006889DB /* MemoryFootprintCocoa.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MemoryFootprintCocoa.cpp; sourceTree = "<group>"; };
-		BCA30C7F266D3034000D230C /* Span.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Span.h; sourceTree = "<group>"; };
 		C2BCFC3E1F61D13000C9222C /* Language.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Language.cpp; sourceTree = "<group>"; };
 		C2BCFC3F1F61D13000C9222C /* Language.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Language.h; sourceTree = "<group>"; };
 		C2BCFC411F61D61600C9222C /* LanguageCF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LanguageCF.cpp; sourceTree = "<group>"; };
@@ -2298,7 +2296,6 @@
 				7936D6A91C99F8AE000D1AED /* SmallSet.h */,
 				A30D412D1F0DE13F00B71954 /* SoftLinking.h */,
 				93156C8D262C982200EAE27B /* SortedArrayMap.h */,
-				BCA30C7F266D3034000D230C /* Span.h */,
 				79038E05224B05A7004C0738 /* SpanningTree.h */,
 				A8A4730D151A825B004123FF /* Spectrum.h */,
 				A8A4730E151A825B004123FF /* StackBounds.cpp */,
@@ -3259,7 +3256,6 @@
 				DDF3076727C086CD006A526F /* SoftLinking.h in Headers */,
 				DD3DC8D727A4BF8E007E5B61 /* SoftLinking.h in Headers */,
 				DD3DC91F27A4BF8E007E5B61 /* SortedArrayMap.h in Headers */,
-				DD3DC98427A4BF8E007E5B61 /* Span.h in Headers */,
 				DD3DC8CD27A4BF8E007E5B61 /* SpanningTree.h in Headers */,
 				DD3DC87727A4BF8E007E5B61 /* Spectrum.h in Headers */,
 				DD3DC97F27A4BF8E007E5B61 /* StackBounds.h in Headers */,

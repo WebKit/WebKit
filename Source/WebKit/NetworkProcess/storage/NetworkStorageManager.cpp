@@ -52,7 +52,6 @@
 #include <WebCore/UniqueIDBDatabaseConnection.h>
 #include <WebCore/UniqueIDBDatabaseTransaction.h>
 #include <pal/crypto/CryptoDigest.h>
-#include <wtf/Span.h>
 #include <wtf/SuspendableWorkQueue.h>
 #include <wtf/text/Base64.h>
 
@@ -663,7 +662,7 @@ bool NetworkStorageManager::persistOrigin(const WebCore::ClientOrigin& origin)
         return false;
     }
 
-    FileSystem::overwriteEntireFile(persistedFilePath(origin), Span<uint8_t> { });
+    FileSystem::overwriteEntireFile(persistedFilePath(origin), std::span<uint8_t> { });
     return true;
 }
 
