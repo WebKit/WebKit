@@ -541,7 +541,8 @@ void MediaPlayerPrivateRemote::updateCachedState(RemoteMediaPlayerState&& state)
     m_cachedState.didPassCORSAccessCheck = state.didPassCORSAccessCheck;
     m_cachedState.documentIsCrossOrigin = state.documentIsCrossOrigin;
 
-    m_cachedBufferedTimeRanges = state.bufferedRanges;
+    if (state.bufferedRanges)
+        m_cachedBufferedTimeRanges = *state.bufferedRanges;
 }
 
 bool MediaPlayerPrivateRemote::shouldIgnoreIntrinsicSize()

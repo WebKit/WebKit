@@ -44,7 +44,7 @@ struct RemoteMediaPlayerState {
     MediaTime startTime;
     String languageOfPrimaryAudioTrack;
     String wirelessPlaybackTargetName;
-    WebCore::PlatformTimeRanges bufferedRanges;
+    std::optional<WebCore::PlatformTimeRanges> bufferedRanges;
     WebCore::MediaPlayerEnums::NetworkState networkState { WebCore::MediaPlayerEnums::NetworkState::Empty };
     WebCore::MediaPlayerEnums::ReadyState readyState { WebCore::MediaPlayerEnums::ReadyState::HaveNothing };
     WebCore::MediaPlayerEnums::MovieLoadType movieLoadType { WebCore::MediaPlayerEnums::MovieLoadType::Unknown };

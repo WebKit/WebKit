@@ -541,11 +541,11 @@ void MediaPlayerPrivateAVFoundationObjC::cancelLoad()
     m_pendingStatusChanges = 0;
     m_cachedItemStatus = MediaPlayerAVPlayerItemStatusDoesNotExist;
     m_cachedSeekableRanges = nullptr;
-    m_cachedLoadedRanges = nullptr;
     m_cachedHasEnabledAudio = false;
     m_cachedHasEnabledVideo = false;
     m_cachedPresentationSize = FloatSize();
     m_cachedDuration = MediaTime::zeroTime();
+    m_buffered.clear();
 
     for (AVPlayerItemTrack *track in m_cachedTracks.get())
         [track removeObserver:m_objcObserver.get() forKeyPath:@"enabled"];
@@ -1720,17 +1720,9 @@ void MediaPlayerPrivateAVFoundationObjC::setPitchCorrectionAlgorithm(MediaPlayer
 
 const PlatformTimeRanges& MediaPlayerPrivateAVFoundationObjC::platformBufferedTimeRanges() const
 {
-    using namespace PAL; // For CMTIMERANGE_IS_EMPTY.
-
     if (!m_avPlayerItem)
         return PlatformTimeRanges::emptyRanges();
 
-    m_buffered.clear();
-    for (NSValue *thisRangeValue in m_cachedLoadedRanges.get()) {
-        CMTimeRange timeRange = [thisRangeValue CMTimeRangeValue];
-        if (CMTIMERANGE_IS_VALID(timeRange) && !CMTIMERANGE_IS_EMPTY(timeRange))
-            m_buffered.add(PAL::toMediaTime(timeRange.start), PAL::toMediaTime(PAL::CMTimeRangeGetEnd(timeRange)));
-    }
     return m_buffered;
 }
 
@@ -1781,23 +1773,9 @@ MediaTime MediaPlayerPrivateAVFoundationObjC::platformMaxTimeSeekable() const
 
 MediaTime MediaPlayerPrivateAVFoundationObjC::platformMaxTimeLoaded() const
 {
-    using namespace PAL; // For CMTIMERANGE_IS_EMPTY.
-
-    if (!m_cachedLoadedRanges)
+    if (!m_buffered.length())
         return MediaTime::zeroTime();
-
-    MediaTime maxTimeLoaded;
-    for (NSValue *thisRangeValue in m_cachedLoadedRanges.get()) {
-        CMTimeRange timeRange = [thisRangeValue CMTimeRangeValue];
-        if (!CMTIMERANGE_IS_VALID(timeRange) || CMTIMERANGE_IS_EMPTY(timeRange))
-            continue;
-
-        MediaTime endOfRange = PAL::toMediaTime(PAL::CMTimeRangeGetEnd(timeRange));
-        if (maxTimeLoaded < endOfRange)
-            maxTimeLoaded = endOfRange;
-    }
-
-    return maxTimeLoaded;
+    return m_buffered.maximumBufferedTime();
 }
 
 unsigned long long MediaPlayerPrivateAVFoundationObjC::totalBytes() const
@@ -3481,7 +3459,14 @@ void MediaPlayerPrivateAVFoundationObjC::seekableTimeRangesDidChange(RetainPtr<N
 
 void MediaPlayerPrivateAVFoundationObjC::loadedTimeRangesDidChange(RetainPtr<NSArray>&& loadedRanges)
 {
-    m_cachedLoadedRanges = WTFMove(loadedRanges);
+    using namespace PAL; // For CMTIMERANGE_IS_EMPTY.
+
+    m_buffered.clear();
+    for (NSValue *thisRangeValue in loadedRanges.get()) {
+        CMTimeRange timeRange = [thisRangeValue CMTimeRangeValue];
+        if (CMTIMERANGE_IS_VALID(timeRange) && !CMTIMERANGE_IS_EMPTY(timeRange))
+            m_buffered.add(PAL::toMediaTime(timeRange.start), PAL::toMediaTime(PAL::CMTimeRangeGetEnd(timeRange)));
+    }
 
     loadedTimeRangesChanged();
     updateStates();

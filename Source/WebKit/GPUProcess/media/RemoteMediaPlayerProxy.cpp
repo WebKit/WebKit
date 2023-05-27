@@ -980,7 +980,7 @@ void RemoteMediaPlayerProxy::sendCachedState()
 {
     updateCachedState();
     m_webProcessConnection->send(Messages::MediaPlayerPrivateRemote::UpdateCachedState(m_cachedState), m_id);
-    m_cachedState.bufferedRanges.clear();
+    m_cachedState.bufferedRanges = std::nullopt;
 }
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)

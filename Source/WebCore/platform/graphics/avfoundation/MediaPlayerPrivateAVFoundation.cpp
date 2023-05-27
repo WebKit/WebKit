@@ -413,7 +413,7 @@ void MediaPlayerPrivateAVFoundation::setDelayCharacteristicsChangedNotification(
 
 const PlatformTimeRanges& MediaPlayerPrivateAVFoundation::buffered() const
 {
-    return PlatformTimeRanges::emptyRanges();
+    return platformBufferedTimeRanges();
 }
 
 MediaTime MediaPlayerPrivateAVFoundation::maxMediaTimeSeekable() const
