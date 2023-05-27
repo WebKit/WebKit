@@ -1,4 +1,4 @@
-Popover 1 Popover 1 Popover1 anchor (no action) Outside all popovers  Next control after popover1 Popover 3 - button 3   Popover 6  Popover8 anchor (no action)  Open convoluted popover Popover 1
+Popover 1 Popover 1 Popover1 anchor (no action) Outside all popovers  Next control after popover1 Popover 3 - button 3   Popover 6  Popover8 anchor (no action)  Open convoluted popover Example 2
 
 PASS Clicking outside a popover will dismiss the popover
 PASS Canceling pointer events should not keep clicks from light dismissing popovers
@@ -24,4 +24,6 @@ PASS Moving focus back to the anchor element should not dismiss the popover
 PASS Ensure circular/convoluted ancestral relationships are functional
 PASS Ensure circular/convoluted ancestral relationships are functional, with a direct showPopover()
 PASS Hide the target popover during "hide all popovers until"
+PASS Show a sibling popover during "hide all popovers until"
+PASS Show an unrelated popover during "hide popover"
 

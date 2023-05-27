@@ -9009,8 +9009,14 @@ HTMLDialogElement* Document::activeModalDialog() const
 HTMLElement* Document::topmostAutoPopover() const
 {
     for (auto& element : makeReversedRange(m_topLayerElements)) {
-        if (auto* candidate = dynamicDowncast<HTMLElement>(element.get()); candidate && candidate->popoverState() == PopoverState::Auto)
-            return candidate;
+#if ENABLE(FULLSCREEN_API)
+        if (element->hasFullscreenFlag())
+            continue;
+#endif
+        if (auto* candidate = dynamicDowncast<HTMLElement>(element.get()); candidate && candidate->popoverState() == PopoverState::Auto) {
+            if (!is<HTMLDialogElement>(candidate) || !downcast<HTMLDialogElement>(candidate)->isOpen())
+                return candidate;
+        }
     }
 
     return nullptr;
@@ -9019,20 +9025,45 @@ HTMLElement* Document::topmostAutoPopover() const
 // https://html.spec.whatwg.org/#hide-all-popovers-until
 void Document::hideAllPopoversUntil(Element* endpoint, FocusPreviousElement focusPreviousElement, FireEvents fireEvents)
 {
-    Vector<Ref<HTMLElement>> popoversToHide;
-    for (auto& item : makeReversedRange(m_topLayerElements)) {
-        if (!is<HTMLElement>(item))
-            continue;
-        auto& element = downcast<HTMLElement>(item.get());
-        if (element.popoverState() == PopoverState::Auto) {
-            if (&element == endpoint)
-                break;
-            popoversToHide.append(element);
+    auto closeAllOpenPopovers = [&]() {
+        while (RefPtr popover = topmostAutoPopover())
+            popover->hidePopoverInternal(focusPreviousElement, fireEvents);
+    };
+    if (!endpoint)
+        return closeAllOpenPopovers();
+    auto autoPopoverList = [&]()  {
+        Vector<Ref<HTMLElement>> popovers;
+        for (auto& item : m_topLayerElements) {
+            if (auto* candidate = dynamicDowncast<HTMLElement>(item.get()); candidate && candidate->popoverState() == PopoverState::Auto)
+                popovers.append(*candidate);
         }
-    }
+        return popovers;
+    };
 
-    for (auto& popover : popoversToHide)
-        popover->hidePopoverInternal(focusPreviousElement, fireEvents);
+    bool repeatingHide = false;
+    do {
+        RefPtr<Element> lastToHide;
+        bool foundEndPoint = false;
+        for (auto& popover : autoPopoverList()) {
+            if (popover.ptr() == endpoint)
+                foundEndPoint = true;
+            else if (foundEndPoint) {
+                lastToHide = popover.ptr();
+                break;
+            }
+        }
+        if (!foundEndPoint)
+            return closeAllOpenPopovers();
+        while (lastToHide && lastToHide->popoverData() && lastToHide->popoverData()->visibilityState() == PopoverVisibilityState::Showing) {
+            auto* topmostAutoPopover = this->topmostAutoPopover();
+            if (!topmostAutoPopover)
+                break;
+            topmostAutoPopover->hidePopoverInternal(focusPreviousElement, fireEvents);
+        }
+        repeatingHide = m_topLayerElements.contains(*endpoint) && topmostAutoPopover() != endpoint;
+        if (repeatingHide)
+            fireEvents = FireEvents::No;
+    } while (repeatingHide);
 }
 
 // https://html.spec.whatwg.org/#popover-light-dismiss
