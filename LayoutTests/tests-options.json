@@ -2237,6 +2237,9 @@
     "imported/w3c/web-platform-tests/css/selectors/focus-visible-018-2.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/css/selectors/invalidation/media-loading-pseudo-classes-in-has.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/css/selectors/media/media-loading-state.html": [
         "slow"
     ],

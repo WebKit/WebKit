@@ -58,3 +58,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/i18n/css3-selectors-lang-054.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/i18n/css3-selectors-lang-055.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/i18n/css3-selectors-lang-056.html
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/i18n/lang-pseudo-class-across-shadow-boundaries-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/i18n/lang-pseudo-class-across-shadow-boundaries-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/i18n/lang-pseudo-class-across-shadow-boundaries.html
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/i18n/lang-pseudo-class-disconnected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/i18n/lang-pseudo-class-empty-attribute.xhtml
