@@ -844,21 +844,30 @@ FloatSize WebPageProxy::screenSize()
     return WebCore::screenSize();
 }
 
+#if HAVE(UIKIT_WEBKIT_INTERNALS)
+static FloatSize fullscreenPreferencesScreenSize(CGFloat preferredWidth)
+{
+    CGFloat preferredHeight = preferredWidth / kTargetFullscreenAspectRatio;
+    return FloatSize(CGSizeMake(preferredWidth, preferredHeight));
+}
+#endif
+
 FloatSize WebPageProxy::availableScreenSize()
 {
+#if HAVE(UIKIT_WEBKIT_INTERNALS)
+    return fullscreenPreferencesScreenSize(m_preferences->mediaPreferredFullscreenWidth());
+#else
     return WebCore::availableScreenSize();
+#endif
 }
 
 FloatSize WebPageProxy::overrideScreenSize()
 {
 #if HAVE(UIKIT_WEBKIT_INTERNALS)
-    // Report screen dimensions based on fullscreen preferences.
-    CGFloat preferredWidth = m_preferences->mediaPreferredFullscreenWidth();
-    CGFloat preferredHeight = preferredWidth / kTargetFullscreenAspectRatio;
-    return FloatSize(CGSizeMake(preferredWidth, preferredHeight));
-#endif
-
+    return fullscreenPreferencesScreenSize(m_preferences->mediaPreferredFullscreenWidth());
+#else
     return WebCore::overrideScreenSize();
+#endif
 }
 
 float WebPageProxy::textAutosizingWidth()
