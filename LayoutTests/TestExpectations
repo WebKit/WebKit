@@ -357,9 +357,6 @@ imported/w3c/web-platform-tests/referrer-policy/generic/subresource-test/worker-
 imported/w3c/web-platform-tests/referrer-policy/generic/subresource-test/xhr-messaging.html [ Skip ]
 imported/w3c/web-platform-tests/referrer-policy/generic/unsupported-csp-referrer-directive.html [ Skip ]
 
-# This test is timing out in both WebKit and Blink (one of the subtests is timing out in Gecko).
-imported/w3c/web-platform-tests/html/browsers/browsing-the-web/overlapping-navigations-and-traversals/tentative/cross-document-traversal-same-document-nav.html [ Skip ]
-
 # These tests times out. We should fix that.
 imported/w3c/web-platform-tests/selection/collapse-30.html [ Skip ]
 imported/w3c/web-platform-tests/selection/dir-manual.html [ Skip ]
@@ -673,12 +670,6 @@ imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal
 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal/window-name-after-cross-origin-main-frame-navigation.sub.html [ Skip ]
 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/replace-before-load/a-user-click-during-load.html [ Skip ]
 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/replace-before-load/a-user-click-during-pageshow.html [ Skip ]
-imported/w3c/web-platform-tests/html/browsers/browsing-the-web/overlapping-navigations-and-traversals/tentative/cross-document-traversal-cross-document-traversal.html [ Skip ]
-imported/w3c/web-platform-tests/html/browsers/browsing-the-web/overlapping-navigations-and-traversals/tentative/cross-document-traversal-same-document-traversal.html [ Skip ]
-imported/w3c/web-platform-tests/html/browsers/browsing-the-web/overlapping-navigations-and-traversals/tentative/same-document-nav-cross-document-traversal.html [ Skip ]
-imported/w3c/web-platform-tests/html/browsers/browsing-the-web/overlapping-navigations-and-traversals/tentative/same-document-traversal-cross-document-traversal.html [ Skip ]
-imported/w3c/web-platform-tests/html/browsers/browsing-the-web/overlapping-navigations-and-traversals/tentative/same-document-traversal-same-document-traversal-hashchange.html [ Skip ]
-imported/w3c/web-platform-tests/html/browsers/browsing-the-web/overlapping-navigations-and-traversals/tentative/same-document-traversal-same-document-traversal-pushstate.html [ Skip ]
 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/unloading-documents/prompt-and-unload-script-closeable.html [ Skip ]
 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/unloading-documents/prompt/004.html [ Skip ]
 imported/w3c/web-platform-tests/html/browsers/history/joint-session-history/joint-session-history-remove-iframe.html [ Skip ]
@@ -6097,7 +6088,6 @@ imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal
 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/004.html [ Skip ]
 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/javascript-url-global-scope.html [ Skip ]
 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/navigate-cross-origin-iframe-to-same-url-with-fragment-fire-load-event.html [ Skip ]
-imported/w3c/web-platform-tests/html/browsers/browsing-the-web/overlapping-navigations-and-traversals/tentative/nav-cancelation-2.sub.html [ Skip ]
 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/unloading-documents/004.html [ Skip ]
 imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/008.html [ Skip ]
 imported/w3c/web-platform-tests/html/browsers/history/the-history-interface/combination_history_004.html [ Skip ]
