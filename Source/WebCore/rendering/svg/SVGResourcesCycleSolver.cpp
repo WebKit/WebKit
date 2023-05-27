@@ -30,193 +30,102 @@
 #include "SVGPatternElement.h"
 #include "SVGResources.h"
 #include "SVGResourcesCache.h"
-
-// Set to truthy value to debug the resource cache.
-#define DEBUG_CYCLE_DETECTION 0
-
-#if DEBUG_CYCLE_DETECTION
-#define LOG_DEBUG_CYCLE(...) LOG(SVG, __VA_ARGS__)
-#else
-#define LOG_DEBUG_CYCLE(...) ((void)0)
-#endif
+#include <wtf/Scope.h>
 
 namespace WebCore {
 
-SVGResourcesCycleSolver::SVGResourcesCycleSolver(RenderElement& renderer, SVGResources& resources)
-    : m_renderer(renderer)
-    , m_resources(resources)
+bool SVGResourcesCycleSolver::resourceContainsCycles(RenderSVGResourceContainer& resource,
+    WeakHashSet<RenderSVGResourceContainer>& activeResources, WeakHashSet<RenderSVGResourceContainer>& acyclicResources)
 {
-}
+    if (acyclicResources.contains(resource))
+        return false;
 
-SVGResourcesCycleSolver::~SVGResourcesCycleSolver() = default;
+    activeResources.add(resource);
+    auto activeResourceAcquisition = WTF::makeScopeExit([&]() {
+        activeResources.remove(resource);
+    });
 
-bool SVGResourcesCycleSolver::resourceContainsCycles(RenderElement& renderer) const
-{
-    LOG_DEBUG_CYCLE("\n(%p) Check for cycles\n", &renderer);
-
-    // First operate on the resources of the given renderer.
-    // <marker id="a"> <path marker-start="url(#b)"/> ...
-    // <marker id="b" marker-start="url(#a)"/>
-    if (auto* resources = SVGResourcesCache::cachedResourcesForRenderer(renderer)) {
-        WeakHashSet<RenderSVGResourceContainer> resourceSet;
-        resources->buildSetOfResources(resourceSet);
-
-        LOG_DEBUG_CYCLE("(%p) Examine our cached resources\n", &renderer);
-
-        // Walk all resources and check whether they reference any resource contained in the resources set.
-        for (auto& resource : resourceSet) {
-            LOG_DEBUG_CYCLE("(%p) Check %p\n", &renderer, &resource);
-            if (m_allResources.contains(resource))
-                return true;
-
-            // Now check if the resources themselves contain cycles.
-            if (resourceContainsCycles(resource))
-                return true;
+    RenderObject* node = &resource;
+    while (node) {
+        if (node != &resource && node->isSVGResourceContainer()) {
+            node = node->nextInPreOrderAfterChildren(&resource);
+            continue;
         }
-    }
+        if (is<RenderElement>(*node)) {
+            if (auto* resources = SVGResourcesCache::cachedResourcesForRenderer(downcast<RenderElement>(*node))) {
+                WeakHashSet<RenderSVGResourceContainer> resourceSet;
+                resources->buildSetOfResources(resourceSet);
 
-    LOG_DEBUG_CYCLE("(%p) Now the children renderers\n", &renderer);
-
-    // Then operate on the child resources of the given renderer.
-    // <marker id="a"> <path marker-start="url(#b)"/> ...
-    // <marker id="b"> <path marker-start="url(#a)"/> ...
-    for (auto& child : childrenOfType<RenderElement>(renderer)) {
-
-        LOG_DEBUG_CYCLE("(%p) Checking child %p\n", &renderer, &child);
-
-        if (auto* childResources = SVGResourcesCache::cachedResourcesForRenderer(child)) {
-
-            LOG_DEBUG_CYCLE("(%p) Child %p had cached resources. Check them.\n", &renderer, &child);
-
-            // A child of the given 'resource' contains resources.
-            WeakHashSet<RenderSVGResourceContainer> childResourceSet;
-            childResources->buildSetOfResources(childResourceSet);
-
-            // Walk all child resources and check whether they reference any resource contained in the resources set.
-            for (auto& resource : childResourceSet) {
-                LOG_DEBUG_CYCLE("(%p) Child %p had resource %p\n", &renderer, &child, &resource);
-                if (m_allResources.contains(resource))
-                    return true;
+                for (auto& resource : resourceSet) {
+                    if (activeResources.contains(resource) || resourceContainsCycles(resource, activeResources, acyclicResources))
+                        return true;
+                }
             }
         }
 
-        LOG_DEBUG_CYCLE("(%p) Recurse into child %p\n", &renderer, &child);
-
-        // Walk children recursively, stop immediately if we found a cycle
-        if (resourceContainsCycles(child))
-            return true;
-
-        LOG_DEBUG_CYCLE("\n(%p) Child %p was ok\n", &renderer, &child);
+        node = node->nextInPreOrder(&resource);
     }
 
-    LOG_DEBUG_CYCLE("\n(%p) No cycles found\n", &renderer);
-
+    acyclicResources.add(resource);
     return false;
 }
 
-void SVGResourcesCycleSolver::resolveCycles()
+void SVGResourcesCycleSolver::resolveCycles(RenderElement& renderer, SVGResources& resources)
 {
-    ASSERT(m_allResources.isEmptyIgnoringNullReferences());
-
-#if DEBUG_CYCLE_DETECTION
-    LOG_DEBUG_CYCLE("\nBefore cycle detection:\n");
-    m_resources.dump(&m_renderer);
-#endif
-
-    // Stash all resources into a HashSet for the ease of traversing.
     WeakHashSet<RenderSVGResourceContainer> localResources;
-    m_resources.buildSetOfResources(localResources);
-    ASSERT(!localResources.isEmptyIgnoringNullReferences());
+    resources.buildSetOfResources(localResources);
 
-    // Add all parent resource containers to the HashSet.
-    WeakHashSet<RenderSVGResourceContainer> ancestorResources;
-    for (auto& resource : ancestorsOfType<RenderSVGResourceContainer>(m_renderer))
-        ancestorResources.add(resource);
+    WeakHashSet<RenderSVGResourceContainer> activeResources;
+    WeakHashSet<RenderSVGResourceContainer> acyclicResources;
 
-#if DEBUG_CYCLE_DETECTION
-    LOG_DEBUG_CYCLE("\nDetecting whether any resources references any of following objects:\n");
-    {
-        LOG_DEBUG_CYCLE("Local resources:\n");
-        for (RenderObject* resource : localResources)
-            LOG_DEBUG_CYCLE("|> %s : %p (node %p)\n", resource->renderName(), resource, resource->node());
-
-        fprintf(stderr, "Parent resources:\n");
-        for (RenderObject* resource : ancestorResources)
-            LOG_DEBUG_CYCLE("|> %s : %p (node %p)\n", resource->renderName(), resource, resource->node());
-    }
-#endif
-
-    // Build combined set of local and parent resources.
-    m_allResources = localResources;
-    for (auto& resource : ancestorResources)
-        m_allResources.add(resource);
-
-    // If we're a resource, add ourselves to the HashSet.
-    if (is<RenderSVGResourceContainer>(m_renderer))
-        m_allResources.add(downcast<RenderSVGResourceContainer>(m_renderer));
-
-    ASSERT(!m_allResources.isEmptyIgnoringNullReferences());
-
-#if DEBUG_CYCLE_DETECTION
-    LOG_DEBUG_CYCLE("\nAll resources:\n");
-    for (auto* resource : m_allResources)
-        LOG_DEBUG_CYCLE("- %p\n", resource);
-#endif
+    if (is<RenderSVGResourceContainer>(renderer))
+        activeResources.add(downcast<RenderSVGResourceContainer>(renderer));
 
     // The job of this function is to determine wheter any of the 'resources' associated with the given 'renderer'
     // references us (or whether any of its kids references us) -> that's a cycle, we need to find and break it.
     for (auto& resource : localResources) {
-        if (ancestorResources.contains(resource) || resourceContainsCycles(resource)) {
-            LOG_DEBUG_CYCLE("\n**** Detected a cycle (see the last test in the output above) ****\n");
-            breakCycle(resource);
-        }
+        if (activeResources.contains(resource) || resourceContainsCycles(resource, activeResources, acyclicResources))
+            breakCycle(resource, resources);
     }
-
-#if DEBUG_CYCLE_DETECTION
-    LOG_DEBUG_CYCLE("\nAfter cycle detection:\n");
-    m_resources.dump(&m_renderer);
-#endif
-
-    m_allResources.clear();
 }
 
-void SVGResourcesCycleSolver::breakCycle(RenderSVGResourceContainer& resourceLeadingToCycle)
+void SVGResourcesCycleSolver::breakCycle(RenderSVGResourceContainer& resourceLeadingToCycle, SVGResources& resources)
 {
-    if (&resourceLeadingToCycle == m_resources.linkedResource()) {
-        m_resources.resetLinkedResource();
+    if (&resourceLeadingToCycle == resources.linkedResource()) {
+        resources.resetLinkedResource();
         return;
     }
 
     switch (resourceLeadingToCycle.resourceType()) {
     case MaskerResourceType:
-        ASSERT(&resourceLeadingToCycle == m_resources.masker());
-        m_resources.resetMasker();
+        ASSERT(&resourceLeadingToCycle == resources.masker());
+        resources.resetMasker();
         break;
     case MarkerResourceType:
-        ASSERT(&resourceLeadingToCycle == m_resources.markerStart() || &resourceLeadingToCycle == m_resources.markerMid() || &resourceLeadingToCycle == m_resources.markerEnd());
-        if (m_resources.markerStart() == &resourceLeadingToCycle)
-            m_resources.resetMarkerStart();
-        if (m_resources.markerMid() == &resourceLeadingToCycle)
-            m_resources.resetMarkerMid();
-        if (m_resources.markerEnd() == &resourceLeadingToCycle)
-            m_resources.resetMarkerEnd();
+        ASSERT(&resourceLeadingToCycle == resources.markerStart() || &resourceLeadingToCycle == resources.markerMid() || &resourceLeadingToCycle == resources.markerEnd());
+        if (resources.markerStart() == &resourceLeadingToCycle)
+            resources.resetMarkerStart();
+        if (resources.markerMid() == &resourceLeadingToCycle)
+            resources.resetMarkerMid();
+        if (resources.markerEnd() == &resourceLeadingToCycle)
+            resources.resetMarkerEnd();
         break;
     case PatternResourceType:
     case LinearGradientResourceType:
     case RadialGradientResourceType:
-        ASSERT(&resourceLeadingToCycle == m_resources.fill() || &resourceLeadingToCycle == m_resources.stroke());
-        if (m_resources.fill() == &resourceLeadingToCycle)
-            m_resources.resetFill();
-        if (m_resources.stroke() == &resourceLeadingToCycle)
-            m_resources.resetStroke();
+        ASSERT(&resourceLeadingToCycle == resources.fill() || &resourceLeadingToCycle == resources.stroke());
+        if (resources.fill() == &resourceLeadingToCycle)
+            resources.resetFill();
+        if (resources.stroke() == &resourceLeadingToCycle)
+            resources.resetStroke();
         break;
     case FilterResourceType:
-        ASSERT(&resourceLeadingToCycle == m_resources.filter());
-        m_resources.resetFilter();
+        ASSERT(&resourceLeadingToCycle == resources.filter());
+        resources.resetFilter();
         break;
     case ClipperResourceType:
-        ASSERT(&resourceLeadingToCycle == m_resources.clipper());
-        m_resources.resetClipper();
+        ASSERT(&resourceLeadingToCycle == resources.clipper());
+        resources.resetClipper();
         break;
     case SolidColorResourceType:
         ASSERT_NOT_REACHED();
