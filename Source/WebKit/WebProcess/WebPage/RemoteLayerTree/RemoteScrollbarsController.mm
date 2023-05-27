@@ -91,7 +91,7 @@ bool RemoteScrollbarsController::shouldDrawIntoScrollbarLayer(WebCore::Scrollbar
 {
     // For UI-side compositing we only draw scrollbars in the web process
     // for custom scrollbars
-    return scrollbar.isCustomScrollbar();
+    return scrollbar.isCustomScrollbar() || scrollbar.isMockScrollbar();
 }
 
 }

@@ -443,6 +443,11 @@ bool Scrollbar::isOverlayScrollbar() const
     return theme().usesOverlayScrollbars();
 }
 
+bool Scrollbar::isMockScrollbar() const
+{
+    return theme().isMockTheme();
+}
+
 bool Scrollbar::shouldParticipateInHitTesting()
 {
     // Non-overlay scrollbars should always participate in hit testing.

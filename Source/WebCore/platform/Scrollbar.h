@@ -59,6 +59,8 @@ public:
     ScrollableArea& scrollableArea() const { return m_scrollableArea; }
 
     bool isCustomScrollbar() const { return m_isCustomScrollbar; }
+    WEBCORE_EXPORT bool isMockScrollbar() const;
+
     ScrollbarOrientation orientation() const { return m_orientation; }
 
     int value() const { return lroundf(m_currentPos); }
