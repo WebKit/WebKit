@@ -1,12 +1,12 @@
 
-FAIL Can set 'hyphens' to CSS-wide keywords: initial Invalid property hyphens
-FAIL Can set 'hyphens' to CSS-wide keywords: inherit Invalid property hyphens
-FAIL Can set 'hyphens' to CSS-wide keywords: unset Invalid property hyphens
-FAIL Can set 'hyphens' to CSS-wide keywords: revert Invalid property hyphens
-FAIL Can set 'hyphens' to var() references:  var(--A) Invalid property hyphens
-FAIL Can set 'hyphens' to the 'none' keyword: none Invalid property hyphens
-FAIL Can set 'hyphens' to the 'manual' keyword: manual Invalid property hyphens
-FAIL Can set 'hyphens' to the 'auto' keyword: auto Invalid property hyphens
+PASS Can set 'hyphens' to CSS-wide keywords: initial
+PASS Can set 'hyphens' to CSS-wide keywords: inherit
+PASS Can set 'hyphens' to CSS-wide keywords: unset
+PASS Can set 'hyphens' to CSS-wide keywords: revert
+PASS Can set 'hyphens' to var() references:  var(--A)
+PASS Can set 'hyphens' to the 'none' keyword: none
+PASS Can set 'hyphens' to the 'manual' keyword: manual
+PASS Can set 'hyphens' to the 'auto' keyword: auto
 PASS Setting 'hyphens' to a length: 0px throws TypeError
 PASS Setting 'hyphens' to a length: -3.14em throws TypeError
 PASS Setting 'hyphens' to a length: 3.14cm throws TypeError

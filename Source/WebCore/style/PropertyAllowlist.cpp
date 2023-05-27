@@ -68,7 +68,7 @@ bool isValidMarkerStyleProperty(CSSPropertyID id)
     case CSSPropertyFontOpticalSizing:
     case CSSPropertyFontVariationSettings:
 #endif
-    case CSSPropertyWebkitHyphens:
+    case CSSPropertyHyphens:
     case CSSPropertyLetterSpacing:
     case CSSPropertyLineBreak:
     case CSSPropertyLineHeight:

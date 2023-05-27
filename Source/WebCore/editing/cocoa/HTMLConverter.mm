@@ -1078,7 +1078,7 @@ NSDictionary *HTMLConverter::computedAttributesForElement(Element& element)
                 [paragraphStyle setBaseWritingDirection:NSWritingDirectionRightToLeft];
         }
 
-        String hyphenation = _caches->propertyValueForNode(coreBlockElement, CSSPropertyWebkitHyphens);
+        String hyphenation = _caches->propertyValueForNode(coreBlockElement, CSSPropertyHyphens);
         if (hyphenation.length()) {
             if (hyphenation == autoAtom())
                 [paragraphStyle setHyphenationFactor:1.0];

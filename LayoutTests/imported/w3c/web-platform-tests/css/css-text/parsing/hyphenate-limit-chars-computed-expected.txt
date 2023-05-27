@@ -1,5 +1,5 @@
 
-FAIL Property hyphenate-character value 'auto' assert_true: hyphenate-character doesn't seem to be supported in the computed style expected true got false
+PASS Property hyphenate-character value 'auto'
 FAIL Property hyphenate-limit-chars value 'auto auto' assert_true: hyphenate-limit-chars doesn't seem to be supported in the computed style expected true got false
 FAIL Property hyphenate-limit-chars value 'auto auto auto' assert_true: hyphenate-limit-chars doesn't seem to be supported in the computed style expected true got false
 FAIL Property hyphenate-limit-chars value '5' assert_true: hyphenate-limit-chars doesn't seem to be supported in the computed style expected true got false

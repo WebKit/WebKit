@@ -156,6 +156,8 @@ PASS grid-template-columns
 PASS grid-template-rows
 PASS hanging-punctuation
 PASS height
+PASS hyphenate-character
+PASS hyphens
 PASS image-orientation
 PASS image-rendering
 PASS inline-size

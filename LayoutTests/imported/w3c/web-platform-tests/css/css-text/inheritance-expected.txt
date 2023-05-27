@@ -1,8 +1,8 @@
 
 PASS Property hanging-punctuation has initial value none
 PASS Property hanging-punctuation inherits
-FAIL Property hyphens has initial value manual assert_true: hyphens doesn't seem to be supported in the computed style expected true got false
-FAIL Property hyphens inherits assert_true: hyphens doesn't seem to be supported in the computed style expected true got false
+PASS Property hyphens has initial value manual
+PASS Property hyphens inherits
 PASS Property letter-spacing has initial value normal
 PASS Property letter-spacing inherits
 PASS Property line-break has initial value auto

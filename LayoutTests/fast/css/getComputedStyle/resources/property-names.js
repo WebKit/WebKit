@@ -61,7 +61,7 @@ var propertiesToTest = {
     "grid-template-columns": true,
     "grid-template-rows": true,
     "-webkit-highlight": true,
-    "-webkit-hyphenate-character": true,
+    "hyphenate-character": true,
     "-webkit-hyphenate-limit-after": true,
     "-webkit-hyphenate-limit-before": true,
     "-webkit-hyphenate-limit-lines": true,

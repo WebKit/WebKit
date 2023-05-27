@@ -7809,19 +7809,19 @@
                 "url": "https://www.w3.org/TR/css-grid-1/#propdef-grid-auto-flow"
             }
         },
-        "-webkit-hyphenate-character": {
+        "hyphenate-character": {
             "inherited": true,
             "codegen-properties": {
+                "aliases": [
+                    "-webkit-hyphenate-character"
+                ],
                 "name-for-methods": "HyphenationString",
                 "converter": "StringOrAutoAtom",
                 "parser-grammar": "auto | <string>"
             },
-            "status": {
-                "status": "experimental"
-            },
             "specification": {
                 "category": "css-text",
-                "url": "https://www.w3.org/TR/css-text-4/#hyphenate-character"
+                "url": "https://drafts.csswg.org/css-text-4/#propdef-hyphenate-character"
             }
         },
         "-webkit-hyphenate-limit-after": {
@@ -7857,7 +7857,7 @@
                 "url": "https://www.w3.org/TR/css-text-4/#propdef-hyphenate-limit-lines"
             }
         },
-        "-webkit-hyphens": {
+        "hyphens": {
             "inherited": true,
             "values": [
                 "none",
@@ -7866,16 +7866,14 @@
             ],
             "codegen-properties": {
                 "aliases": [
-                    "-epub-hyphens"
+                    "-epub-hyphens",
+                    "-webkit-hyphens"
                 ],
                 "parser-grammar": "<<values>>"
             },
-            "status": {
-                "status": "experimental"
-            },
             "specification": {
                 "category": "css-text",
-                "url": "https://www.w3.org/TR/css-text-3/#hyphens-property"
+                "url": "https://drafts.csswg.org/css-text-3/"
             }
         },
         "-webkit-initial-letter": {

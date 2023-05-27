@@ -3379,9 +3379,9 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
                 return zoomAdjustedPixelValue(sizingBox(*renderer).height(), style);
         }
         return zoomAdjustedPixelValueForLength(style.height(), style);
-    case CSSPropertyWebkitHyphens:
+    case CSSPropertyHyphens:
         return createConvertingToCSSValueID(style.hyphens());
-    case CSSPropertyWebkitHyphenateCharacter:
+    case CSSPropertyHyphenateCharacter:
         if (style.hyphenationString().isNull())
             return CSSPrimitiveValue::create(CSSValueAuto);
         return CSSPrimitiveValue::create(style.hyphenationString());

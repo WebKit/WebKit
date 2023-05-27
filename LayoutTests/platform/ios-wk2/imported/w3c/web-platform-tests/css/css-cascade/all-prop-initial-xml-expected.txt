@@ -162,6 +162,8 @@ PASS grid-template-columns
 PASS grid-template-rows
 PASS hanging-punctuation
 PASS height
+PASS hyphenate-character
+PASS hyphens
 PASS image-orientation
 PASS image-rendering
 PASS inline-size
@@ -376,11 +378,9 @@ PASS -webkit-column-axis
 PASS -webkit-column-progression
 PASS -webkit-cursor-visibility
 PASS -webkit-font-smoothing
-PASS -webkit-hyphenate-character
 PASS -webkit-hyphenate-limit-after
 PASS -webkit-hyphenate-limit-before
 PASS -webkit-hyphenate-limit-lines
-PASS -webkit-hyphens
 PASS -webkit-initial-letter
 PASS -webkit-line-align
 PASS -webkit-line-box-contain
