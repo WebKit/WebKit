@@ -2229,8 +2229,13 @@ RenderStyle HTMLInputElement::createInnerTextStyle(const RenderStyle& style)
             textBlockStyle.setUsedZIndex(0);
     }
 
-    // Do not allow line-height to be smaller than our default.
-    if (textBlockStyle.metricsOfPrimaryFont().lineSpacing() > style.computedLineHeight())
+    auto shouldUseInitialLineHeight = [&] {
+        // Do not allow line-height to be smaller than our default.
+        if (textBlockStyle.metricsOfPrimaryFont().lineSpacing() > style.computedLineHeight())
+            return true;
+        return isText() && !style.logicalHeight().isAuto();
+    };
+    if (shouldUseInitialLineHeight())
         textBlockStyle.setLineHeight(RenderStyle::initialLineHeight());
 
     return textBlockStyle;
