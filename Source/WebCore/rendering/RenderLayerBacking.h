@@ -212,6 +212,10 @@ public:
     void setNeedsEventRegionUpdate(bool needsUpdate = true) { m_needsEventRegionUpdate = needsUpdate; }
 #endif
 
+#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+    void clearInteractionRegions();
+#endif
+
     void updateAfterWidgetResize();
     void positionOverflowControlsLayers();
     

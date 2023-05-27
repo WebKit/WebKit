@@ -1829,6 +1829,12 @@ void RenderLayerBacking::updateDrawsContent(PaintedContentsInfo& contentsInfo)
 
     bool hasPaintedContent = containsPaintedContent(contentsInfo);
 
+#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+    // We need to clean-up existing Interaction Regions since we won't repaint.
+    if (!hasPaintedContent)
+        clearInteractionRegions();
+#endif
+
     // FIXME: we could refine this to only allocate backing for one of these layers if possible.
     m_graphicsLayer->setDrawsContent(hasPaintedContent);
     if (m_foregroundLayer)
@@ -1960,6 +1966,28 @@ void RenderLayerBacking::updateEventRegion()
     renderer().view().setNeedsEventRegionUpdateForNonCompositedFrame(false);
     
     setNeedsEventRegionUpdate(false);
+}
+#endif
+
+#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+void RenderLayerBacking::clearInteractionRegions()
+{
+    auto clearInteractionRegionsForLayer = [&](GraphicsLayer& graphicsLayer) {
+        if (graphicsLayer.eventRegion().isEmpty())
+            return;
+
+        EventRegion eventRegion = graphicsLayer.eventRegion();
+        eventRegion.clearInteractionRegions();
+        graphicsLayer.setEventRegion(WTFMove(eventRegion));
+    };
+
+    clearInteractionRegionsForLayer(*m_graphicsLayer);
+
+    if (m_scrolledContentsLayer)
+        clearInteractionRegionsForLayer(*m_scrolledContentsLayer);
+
+    if (m_foregroundLayer)
+        clearInteractionRegionsForLayer(*m_foregroundLayer);
 }
 #endif
 

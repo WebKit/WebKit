@@ -540,6 +540,11 @@ void EventRegion::appendInteractionRegions(const Vector<InteractionRegion>& inte
     m_interactionRegions.appendVector(interactionRegions);
 }
 
+void EventRegion::clearInteractionRegions()
+{
+    m_interactionRegions.clear();
+}
+
 #endif
 
 void EventRegion::dump(TextStream& ts) const
