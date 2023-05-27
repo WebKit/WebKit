@@ -24,6 +24,9 @@
  */
 
 #if PLATFORM(IOS)
+
+#import <pal/spi/cocoa/LaunchServicesSPI.h>
+
 #if USE(APPLE_INTERNAL_SDK)
 
 // This space intentionally left blank
@@ -59,12 +62,6 @@ typedef NS_OPTIONS(uint64_t, LSApplicationEnumerationOptions) {
 
 @interface LSApplicationRecord (Enumeration)
 + (LSEnumerator<LSApplicationRecord *> *)enumeratorWithOptions:(LSApplicationEnumerationOptions)options;
-@end
-
-@interface _LSOpenConfiguration : NSObject <NSCopying, NSSecureCoding>
-@property (readwrite) BOOL sensitive;
-@property (readwrite) BOOL allowURLOverrides;
-@property (readwrite, copy, nullable) NSDictionary<NSString *, id> *frontBoardOptions;
 @end
 
 @interface LSApplicationWorkspace : NSObject

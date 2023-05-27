@@ -393,6 +393,8 @@ static void tryInterceptNavigation(Ref<API::NavigationAction>&& navigationAction
 #if HAVE(APP_LINKS)
     if (navigationAction->shouldOpenAppLinks()) {
         auto url = navigationAction->request().url();
+        auto referrer = navigationAction->request().httpReferrer();
+
         auto* localCompletionHandler = new WTF::Function<void (bool)>([navigationAction = WTFMove(navigationAction), weakPage = WeakPtr { page }, completionHandler = WTFMove(completionHandler)] (bool success) mutable {
             ASSERT(RunLoop::isMain());
             if (!success && weakPage) {
@@ -405,7 +407,12 @@ static void tryInterceptNavigation(Ref<API::NavigationAction>&& navigationAction
 #endif
             completionHandler(success);
         });
-        [LSAppLink openWithURL:url completionHandler:[localCompletionHandler](BOOL success, NSError *) {
+
+        RetainPtr<_LSOpenConfiguration> configuration = adoptNS([[_LSOpenConfiguration alloc] init]);
+        if (!referrer.isEmpty())
+            configuration.get().referrerURL = (NSURL *)URL(referrer);
+
+        [LSAppLink openWithURL:url configuration:configuration.get() completionHandler:[localCompletionHandler](BOOL success, NSError *) {
             RunLoop::main().dispatch([localCompletionHandler, success] {
                 (*localCompletionHandler)(success);
                 delete localCompletionHandler;
