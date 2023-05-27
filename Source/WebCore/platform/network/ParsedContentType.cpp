@@ -329,7 +329,7 @@ bool ParsedContentType::parseContentType(Mode mode)
 
 std::optional<ParsedContentType> ParsedContentType::create(const String& contentType, Mode mode)
 {
-    ParsedContentType parsedContentType(mode == Mode::Rfc2045 ? contentType : stripLeadingAndTrailingHTTPSpaces(contentType));
+    ParsedContentType parsedContentType(mode == Mode::Rfc2045 ? contentType : contentType.trim(isHTTPSpace));
     if (!parsedContentType.parseContentType(mode))
         return std::nullopt;
     return { WTFMove(parsedContentType) };
@@ -369,7 +369,7 @@ void ParsedContentType::setContentType(String&& contentRange, Mode mode)
 {
     m_mimeType = WTFMove(contentRange);
     if (mode == Mode::MimeSniff)
-        m_mimeType = stripLeadingAndTrailingHTTPSpaces(StringView(m_mimeType)).convertToASCIILowercase();
+        m_mimeType = StringView(m_mimeType).trim(isHTTPSpace).convertToASCIILowercase();
     else
         m_mimeType = m_mimeType.trim(deprecatedIsSpaceOrNewline);
 }

@@ -74,7 +74,7 @@ std::optional<ReferrerPolicy> parseReferrerPolicy(StringView policyString, Refer
         // Implementing https://www.w3.org/TR/2017/CR-referrer-policy-20170126/#parse-referrer-policy-from-header.
         std::optional<ReferrerPolicy> result;
         for (auto tokenView : policyString.split(',')) {
-            auto token = parseReferrerPolicyToken(stripLeadingAndTrailingHTTPSpaces(tokenView), ShouldParseLegacyKeywords::No);
+            auto token = parseReferrerPolicyToken(tokenView.trim(isHTTPSpace), ShouldParseLegacyKeywords::No);
             if (token && token.value() != ReferrerPolicy::EmptyString)
                 result = token.value();
         }

@@ -95,7 +95,7 @@ static HashMap<String, String> parseParameters(StringView input, size_t position
             size_t valueBegin = position;
             while (position < input.length() && input[position] != ';')
                 position++;
-            parameterValue = stripLeadingAndTrailingHTTPSpaces(input.substring(valueBegin, position - valueBegin));
+            parameterValue = input.substring(valueBegin, position - valueBegin).trim(isHTTPSpace);
         }
 
         if (parameterName.length()
@@ -110,7 +110,7 @@ static HashMap<String, String> parseParameters(StringView input, size_t position
 // https://mimesniff.spec.whatwg.org/#parsing-a-mime-type
 static std::optional<MimeType> parseMIMEType(const String& contentType)
 {
-    String input = stripLeadingAndTrailingHTTPSpaces(contentType);
+    String input = contentType.trim(isHTTPSpace);
     size_t slashIndex = input.find('/');
     if (slashIndex == notFound)
         return std::nullopt;
@@ -120,7 +120,7 @@ static std::optional<MimeType> parseMIMEType(const String& contentType)
         return std::nullopt;
     
     size_t semicolonIndex = input.find(';', slashIndex);
-    String subtype = stripLeadingAndTrailingHTTPSpaces(input.substring(slashIndex + 1, semicolonIndex - slashIndex - 1));
+    String subtype = input.substring(slashIndex + 1, semicolonIndex - slashIndex - 1).trim(isHTTPSpace);
     if (!subtype.length() || !isValidHTTPToken(subtype))
         return std::nullopt;
 

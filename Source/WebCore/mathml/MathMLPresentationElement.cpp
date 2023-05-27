@@ -300,20 +300,20 @@ MathMLElement::Length MathMLPresentationElement::parseMathMLLength(const String&
 
     // We first skip whitespace from both ends of the string.
     StringView stringView = string;
-    StringView strippedLength = stripLeadingAndTrailingHTTPSpaces(stringView);
+    StringView trimmedLength = stringView.trim(isHTTPSpace);
 
-    if (strippedLength.isEmpty())
+    if (trimmedLength.isEmpty())
         return Length();
 
     // We consider the most typical case: a number followed by an optional unit.
-    UChar firstChar = strippedLength[0];
+    UChar firstChar = trimmedLength[0];
     if (isASCIIDigit(firstChar) || firstChar == '-' || firstChar == '.')
-        return parseNumberAndUnit(strippedLength, acceptLegacyMathMLLengths);
+        return parseNumberAndUnit(trimmedLength, acceptLegacyMathMLLengths);
 
     // Otherwise, we try and parse a named space.
     if (!acceptLegacyMathMLLengths)
         return Length();
-    return parseNamedSpace(strippedLength);
+    return parseNamedSpace(trimmedLength);
 }
 
 const MathMLElement::Length& MathMLPresentationElement::cachedMathMLLength(const QualifiedName& name, std::optional<Length>& length)

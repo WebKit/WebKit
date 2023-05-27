@@ -536,7 +536,7 @@ XSSProtectionDisposition parseXSSProtectionHeader(const String& header, String& 
 ContentTypeOptionsDisposition parseContentTypeOptionsHeader(StringView header)
 {
     StringView leftToken = header.left(header.find(','));
-    if (equalLettersIgnoringASCIICase(stripLeadingAndTrailingHTTPSpaces(leftToken), "nosniff"_s))
+    if (equalLettersIgnoringASCIICase(leftToken.trim(isHTTPSpace), "nosniff"_s))
         return ContentTypeOptionsDisposition::Nosniff;
     return ContentTypeOptionsDisposition::None;
 }
@@ -625,7 +625,7 @@ bool parseRange(StringView range, RangeAllowWhitespace allowWhitespace, long lon
     if (!startsWithLettersIgnoringASCIICase(range, "bytes"_s))
         return false;
 
-    auto byteRange = stripLeadingAndTrailingHTTPSpaces(range.substring(bytesLength));
+    auto byteRange = range.substring(bytesLength).trim(isHTTPSpace);
 
     if (!byteRange.startsWith('='))
         return false;
@@ -991,18 +991,18 @@ bool isSafeMethod(const String& method)
 
 CrossOriginResourcePolicy parseCrossOriginResourcePolicyHeader(StringView header)
 {
-    auto strippedHeader = stripLeadingAndTrailingHTTPSpaces(header);
+    auto trimmedHeader = header.trim(isHTTPSpace);
 
-    if (strippedHeader.isEmpty())
+    if (trimmedHeader.isEmpty())
         return CrossOriginResourcePolicy::None;
 
-    if (strippedHeader == "same-origin"_s)
+    if (trimmedHeader == "same-origin"_s)
         return CrossOriginResourcePolicy::SameOrigin;
 
-    if (strippedHeader == "same-site"_s)
+    if (trimmedHeader == "same-site"_s)
         return CrossOriginResourcePolicy::SameSite;
 
-    if (strippedHeader == "cross-origin"_s)
+    if (trimmedHeader == "cross-origin"_s)
         return CrossOriginResourcePolicy::CrossOrigin;
 
     return CrossOriginResourcePolicy::Invalid;

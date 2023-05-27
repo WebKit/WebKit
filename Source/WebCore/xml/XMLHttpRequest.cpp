@@ -798,7 +798,7 @@ ExceptionOr<void> XMLHttpRequest::setRequestHeader(const String& name, const Str
     if (readyState() != OPENED || m_sendFlag)
         return Exception { InvalidStateError };
 
-    String normalizedValue = stripLeadingAndTrailingHTTPSpaces(value);
+    String normalizedValue = value.trim(isHTTPSpace);
     if (!isValidHTTPToken(name) || !isValidHTTPHeaderValue(normalizedValue))
         return Exception { SyntaxError };
 
