@@ -2414,6 +2414,7 @@ imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-width-005.html [ Sk
 imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-width-006.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-width-007.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-width-008.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-width-009.html [ Skip ]
 
 # Trailing space/text alignment iOS-specific WPT failures
 webkit.org/b/257182 imported/w3c/web-platform-tests/css/css-text/white-space/trailing-space-and-text-alignment-001.html [ ImageOnlyFailure ]

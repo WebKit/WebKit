@@ -6288,7 +6288,7 @@ OverscrollBehavior LocalFrameView::verticalOverscrollBehavior()  const
 ScrollbarWidth LocalFrameView::scrollbarWidthStyle()  const
 {
     auto* document = m_frame->document();
-    auto scrollingObject = document && document->scrollingElement() ? document->scrollingElement()->renderer() : nullptr;
+    auto scrollingObject = document && document->documentElement() ? document->documentElement()->renderer() : nullptr;
     if (scrollingObject && renderView())
         return scrollingObject->style().scrollbarWidth();
     return ScrollbarWidth::Auto;
