@@ -6255,6 +6255,16 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     return _private->pluginController.get();
 }
 
+- (WebCore::ScrollbarWidth)_scrollbarWidthStyle
+{
+    auto* frame = core([self _frame]);
+
+    if (!frame || !frame->document() || !frame->document()->documentElement() || !frame->document()->documentElement()->renderer())
+        return WebCore::ScrollbarWidth::Auto;
+
+    return frame->document()->documentElement()->renderer()->style().scrollbarWidth();
+}
+
 @end
 
 @implementation WebHTMLView (WebNSTextInputSupport)

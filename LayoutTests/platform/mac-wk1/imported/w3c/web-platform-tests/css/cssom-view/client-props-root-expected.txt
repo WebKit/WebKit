@@ -1,3 +1,0 @@
-
-FAIL client* properties on the root element assert_equals: Without scrollbars, client width should match viewport width expected 800 but got 785
-

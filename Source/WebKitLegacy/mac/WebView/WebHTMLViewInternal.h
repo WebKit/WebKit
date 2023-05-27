@@ -102,6 +102,8 @@ namespace WebCore {
 
 - (void)_executeSavedKeypressCommands;
 
+- (WebCore::ScrollbarWidth)_scrollbarWidthStyle;
+
 @end
 
 @interface WebHTMLView (RemovedAppKitSuperclassMethods)

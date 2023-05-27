@@ -968,7 +968,7 @@ public:
     ScrollSnapStop scrollSnapStop() const;
 
     const ScrollbarGutter scrollbarGutter() const;
-    ScrollbarWidth scrollbarWidth() const;
+    WEBCORE_EXPORT ScrollbarWidth scrollbarWidth() const;
 
 #if ENABLE(TOUCH_EVENTS)
     inline StyleColor tapHighlightColor() const;
