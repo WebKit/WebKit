@@ -6422,9 +6422,6 @@ imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-width-paint-001.htm
 imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-width-paint-002.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-width-paint-003.html [ Skip ]
 
-# This test relies on textarea resize handle showing without a scrollbar which isn't implemented yet. webkit.org/b/253310
-imported/w3c/web-platform-tests/css/css-scrollbars/textarea-scrollbar-width-none.html [ Skip ]
-
 # Imported WPT css-tables which are crashing or fails.
 imported/w3c/web-platform-tests/css/css-tables/auto-layout-calc-width-001.html [ Crash ]
 imported/w3c/web-platform-tests/css/css-tables/fixed-layout-calc-width-001.html [ Crash ]
