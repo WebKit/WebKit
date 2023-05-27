@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Google Inc. All rights reserved.
+ * Copyright (C) 2013-2014 Google Inc. All rights reserved.
  * Copyright (C) 2014-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -178,7 +178,6 @@ private:
 
     template <CSSPropertyID id>
     static void applyTextOrBoxShadowValue(BuilderState&, CSSValue&);
-    static bool isValidDisplayValue(BuilderState&, DisplayType);
 
     enum CounterBehavior {Increment = 0, Reset};
     template <CounterBehavior counterBehavior>
@@ -1129,13 +1128,6 @@ inline void BuilderCustom::applyValueBorderTopRightRadius(BuilderState& builderS
     builderState.style().setHasExplicitlySetBorderTopRightRadius(true);
 }
 
-inline bool BuilderCustom::isValidDisplayValue(BuilderState& builderState, DisplayType display)
-{
-    if (is<SVGElement>(builderState.element()) && builderState.style().styleType() == PseudoId::None)
-        return display == DisplayType::Inline || display == DisplayType::Block || display == DisplayType::None;
-    return true;
-}
-
 inline void BuilderCustom::applyInitialFontVariationSettings(BuilderState& builderState)
 {
     builderState.style().setFontVariationSettings({ });
@@ -1144,20 +1136,6 @@ inline void BuilderCustom::applyInitialFontVariationSettings(BuilderState& build
 inline void BuilderCustom::applyInheritFontVariationSettings(BuilderState& builderState)
 {
     builderState.style().setFontVariationSettings(builderState.parentStyle().fontVariationSettings());
-}
-
-inline void BuilderCustom::applyInheritDisplay(BuilderState& builderState)
-{
-    DisplayType display = builderState.parentStyle().display();
-    if (isValidDisplayValue(builderState, display))
-        builderState.style().setDisplay(display);
-}
-
-inline void BuilderCustom::applyValueDisplay(BuilderState& builderState, CSSValue& value)
-{
-    auto display = fromCSSValue<DisplayType>(value);
-    if (isValidDisplayValue(builderState, display))
-        builderState.style().setDisplay(display);
 }
 
 inline void BuilderCustom::applyInheritBaselineShift(BuilderState& builderState)

@@ -470,7 +470,6 @@
                 }
             ],
             "codegen-properties": {
-                "custom": "Inherit|Value",
                 "high-priority": true,
                 "parser-function": "consumeDisplay",
                 "parser-grammar-unused": "[ <display-outside> || <display-inside> ] | <display-listitem> | <display-internal> | <display-box> | <display-legacy> | <-webkit-display>",
