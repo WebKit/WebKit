@@ -496,6 +496,44 @@ TEST(WebKit, InterruptionBetweenSameProcessPages)
     TestWebKitAPI::Util::run(&done);
 }
 
+#if PLATFORM(MAC)
+TEST(WebKit, InterruptionBetweenGetDisplayMediaAndGetUserMedia)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto context = adoptWK(TestWebKitAPI::Util::createContextForInjectedBundleTest("InternalsInjectedBundleTest"));
+
+    configuration.get().processPool = (WKProcessPool *)context.get();
+
+    initializeMediaCaptureConfiguration(configuration.get());
+
+    auto messageHandler = adoptNS([[GUMMessageHandler alloc] init]);
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"gum"];
+
+    auto webView1 = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 300, 300) configuration:configuration.get() addToWindow:YES]);
+    auto delegate = adoptNS([[UserMediaCaptureUIDelegate alloc] init]);
+    webView1.get().UIDelegate = delegate.get();
+
+    auto observer = adoptNS([[MediaCaptureObserver alloc] init]);
+    [webView1 addObserver:observer.get() forKeyPath:@"microphoneCaptureState" options:NSKeyValueObservingOptionNew context:nil];
+    [webView1 addObserver:observer.get() forKeyPath:@"cameraCaptureState" options:NSKeyValueObservingOptionNew context:nil];
+
+    cameraCaptureStateChange = false;
+    [webView1 loadTestPageNamed:@"getUserMedia"];
+
+    EXPECT_TRUE(waitUntilCameraState(webView1.get(), WKMediaCaptureStateActive));
+
+    auto webView2 = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 300, 300) configuration:configuration.get() addToWindow:YES]);
+    webView2.get().UIDelegate = delegate.get();
+
+    [delegate setGetDisplayMediaDecision:WKDisplayCapturePermissionDecisionScreenPrompt];
+    [webView2 synchronouslyLoadTestPageNamed:@"getDisplayMedia"];
+    [webView2 stringByEvaluatingJavaScript:@"promptForCapture({ video : true })"];
+
+    cameraCaptureStateChange = false;
+    EXPECT_TRUE(waitUntilCameraState(webView1.get(), WKMediaCaptureStateMuted));
+}
+#endif // PLATFORM(MAC)
+
 static constexpr auto mainFrameText = R"DOCDOCDOC(
 <html><body>
 <iframe src='http://127.0.0.1:9091/frame' allow='camera:http://127.0.0.1:9091'></iframe>
