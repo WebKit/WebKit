@@ -1651,8 +1651,6 @@ webkit.org/b/234139 imported/w3c/web-platform-tests/css/selectors/focus-visible-
 webkit.org/b/234139 imported/w3c/web-platform-tests/css/selectors/focus-visible-025.html [ Skip ]
 webkit.org/b/217904 imported/w3c/web-platform-tests/css/selectors/is-where-visited.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/selectors/xml-class-selector.xml [ ImageOnlyFailure ]
-webkit.org/b/238822 imported/w3c/web-platform-tests/css/selectors/child-indexed-no-parent.html [ ImageOnlyFailure ]
-webkit.org/b/238822 imported/w3c/web-platform-tests/css/selectors/selector-structural-pseudo-root.html [ ImageOnlyFailure ]
 
 # :nth-child(n of S) invalidation
 imported/w3c/web-platform-tests/css/selectors/invalidation/nth-child-of-has.html [ ImageOnlyFailure ]
