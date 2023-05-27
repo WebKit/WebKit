@@ -362,33 +362,6 @@ all : $(GENERATED_MESSAGES_FILES)
 $(GENERATED_MESSAGES_FILES_AS_PATTERNS) : $(MESSAGES_IN_FILES) $(GENERATE_MESSAGE_RECEIVER_SCRIPTS)
 	$(PYTHON) $(GENERATE_MESSAGE_RECEIVER_SCRIPT) $(WebKit2) $(MESSAGE_RECEIVERS)
 
-TEXT_PREPROCESSOR_FLAGS=-E -P -w
-
-ifeq ($(USE_SYSTEM_CONTENT_PATH),YES)
-	SANDBOX_DEFINES = -DUSE_SYSTEM_CONTENT_PATH=1 -DSYSTEM_CONTENT_PATH=$(SYSTEM_CONTENT_PATH)
-endif
-
-SANDBOX_PROFILES = \
-	com.apple.WebProcess.sb \
-	com.apple.WebKit.NetworkProcess.sb \
-	com.apple.WebKit.GPUProcess.sb \
-	com.apple.WebKit.webpushd.mac.sb
-	
-SANDBOX_PROFILES_IOS = \
-	com.apple.WebKit.adattributiond.sb \
-	com.apple.WebKit.webpushd.sb \
-	com.apple.WebKit.GPU.sb \
-	com.apple.WebKit.Networking.sb \
-	com.apple.WebKit.WebContent.sb
-
-sandbox-profiles-ios : $(SANDBOX_PROFILES_IOS)
-
-all : $(SANDBOX_PROFILES) $(SANDBOX_PROFILES_IOS)
-
-%.sb : %.sb.in
-	@echo Pre-processing $* sandbox profile...
-	grep -o '^[^;]*' $< | $(CC) $(SDK_FLAGS) $(TARGET_TRIPLE_FLAGS) $(SANDBOX_DEFINES) $(TEXT_PREPROCESSOR_FLAGS) $(FRAMEWORK_FLAGS) $(HEADER_FLAGS) $(EXTERNAL_FLAGS) -include "wtf/Platform.h" - > $@
-
 AUTOMATION_PROTOCOL_GENERATOR_SCRIPTS = \
 	$(JavaScriptCore_SCRIPTS_DIR)/cpp_generator_templates.py \
 	$(JavaScriptCore_SCRIPTS_DIR)/cpp_generator.py \

@@ -70,7 +70,6 @@ $(PROJECT_DIR)/GPUProcess/graphics/WebGPU/RemoteSurface.messages.in
 $(PROJECT_DIR)/GPUProcess/graphics/WebGPU/RemoteSwapChain.messages.in
 $(PROJECT_DIR)/GPUProcess/graphics/WebGPU/RemoteTexture.messages.in
 $(PROJECT_DIR)/GPUProcess/graphics/WebGPU/RemoteTextureView.messages.in
-$(PROJECT_DIR)/GPUProcess/mac/com.apple.WebKit.GPUProcess.sb.in
 $(PROJECT_DIR)/GPUProcess/media/AudioTrackPrivateRemoteConfiguration.serialization.in
 $(PROJECT_DIR)/GPUProcess/media/InitializationSegmentInfo.serialization.in
 $(PROJECT_DIR)/GPUProcess/media/MediaDescriptionInfo.serialization.in
@@ -128,7 +127,6 @@ $(PROJECT_DIR)/NetworkProcess/ServiceWorker/WebSWServerToContextConnection.messa
 $(PROJECT_DIR)/NetworkProcess/SharedWorker/WebSharedWorkerServerConnection.messages.in
 $(PROJECT_DIR)/NetworkProcess/SharedWorker/WebSharedWorkerServerToContextConnection.messages.in
 $(PROJECT_DIR)/NetworkProcess/cache/CacheStorageEngineConnection.messages.in
-$(PROJECT_DIR)/NetworkProcess/mac/com.apple.WebKit.NetworkProcess.sb.in
 $(PROJECT_DIR)/NetworkProcess/storage/NetworkStorageManager.messages.in
 $(PROJECT_DIR)/NetworkProcess/webrtc/NetworkMDNSRegister.messages.in
 $(PROJECT_DIR)/NetworkProcess/webrtc/NetworkRTCMonitor.messages.in
@@ -137,13 +135,6 @@ $(PROJECT_DIR)/NetworkProcess/webrtc/RTCDataChannelRemoteManagerProxy.messages.i
 $(PROJECT_DIR)/PluginProcess/PluginControllerProxy.messages.in
 $(PROJECT_DIR)/PluginProcess/PluginProcess.messages.in
 $(PROJECT_DIR)/PluginProcess/WebProcessConnection.messages.in
-$(PROJECT_DIR)/PluginProcess/mac/com.apple.WebKit.plugin-common.sb.in
-$(PROJECT_DIR)/Resources/SandboxProfiles/ios/com.apple.WebKit.GPU.sb.in
-$(PROJECT_DIR)/Resources/SandboxProfiles/ios/com.apple.WebKit.Networking.sb.in
-$(PROJECT_DIR)/Resources/SandboxProfiles/ios/com.apple.WebKit.WebAuthn.sb.in
-$(PROJECT_DIR)/Resources/SandboxProfiles/ios/com.apple.WebKit.WebContent.sb.in
-$(PROJECT_DIR)/Resources/SandboxProfiles/ios/com.apple.WebKit.adattributiond.sb.in
-$(PROJECT_DIR)/Resources/SandboxProfiles/ios/com.apple.WebKit.webpushd.sb.in
 $(PROJECT_DIR)/Scripts/PreferencesTemplates/WebPageUpdatePreferences.cpp.erb
 $(PROJECT_DIR)/Scripts/PreferencesTemplates/WebPreferencesDefinitions.h.erb
 $(PROJECT_DIR)/Scripts/PreferencesTemplates/WebPreferencesFeatures.cpp.erb
@@ -353,7 +344,6 @@ $(PROJECT_DIR)/UIProcess/ios/WebDeviceOrientationUpdateProviderProxy.messages.in
 $(PROJECT_DIR)/UIProcess/mac/SecItemShimProxy.messages.in
 $(PROJECT_DIR)/WebAuthnProcess/WebAuthnConnectionToWebProcess.messages.in
 $(PROJECT_DIR)/WebAuthnProcess/WebAuthnProcess.messages.in
-$(PROJECT_DIR)/WebAuthnProcess/mac/com.apple.WebKit.WebAuthnProcess.sb.in
 $(PROJECT_DIR)/WebProcess/ApplePay/WebPaymentCoordinator.messages.in
 $(PROJECT_DIR)/WebProcess/Automation/WebAutomationSessionProxy.js
 $(PROJECT_DIR)/WebProcess/Automation/WebAutomationSessionProxy.messages.in
@@ -452,8 +442,6 @@ $(PROJECT_DIR)/WebProcess/cocoa/PlaybackSessionManager.messages.in
 $(PROJECT_DIR)/WebProcess/cocoa/RemoteCaptureSampleManager.messages.in
 $(PROJECT_DIR)/WebProcess/cocoa/UserMediaCaptureManager.messages.in
 $(PROJECT_DIR)/WebProcess/cocoa/VideoFullscreenManager.messages.in
-$(PROJECT_DIR)/WebProcess/com.apple.WebProcess.sb.in
-$(PROJECT_DIR)/webpushd/mac/com.apple.WebKit.webpushd.mac.sb.in
 $(WEBCORE_PRIVATE_HEADERS_DIR)/CodeGenerator.pm
 $(WEBCORE_PRIVATE_HEADERS_DIR)/IDLParser.pm
 $(WEBCORE_PRIVATE_HEADERS_DIR)/generate-bindings.pl
