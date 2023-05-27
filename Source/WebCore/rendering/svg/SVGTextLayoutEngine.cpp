@@ -34,7 +34,7 @@
 #include "SVGTextLayoutEngineSpacing.h"
 
 // Set to a value > 0 to dump the text fragments
-#define DUMP_TEXT_FRAGMENTS 0
+#define DUMP_SVG_TEXT_LAYOUT_FRAGMENTS 0
 
 namespace WebCore {
 
@@ -231,26 +231,26 @@ void SVGTextLayoutEngine::layoutInlineTextBox(SVGInlineTextBox& textBox)
     m_lineLayoutBoxes.append(&textBox);
 }
 
-#if DUMP_TEXT_FRAGMENTS > 0
+#if DUMP_SVG_TEXT_LAYOUT_FRAGMENTS > 0
 static inline void dumpTextBoxes(Vector<SVGInlineTextBox*>& boxes)
 {
-    unsigned boxCount = boxes.size();
-    fprintf(stderr, "Dumping all text fragments in text sub tree, %i boxes\n", boxCount);
+    auto boxCount = boxes.size();
+    fprintf(stderr, "Dumping all text fragments in text sub tree, %ld boxes\n", boxCount);
 
     for (unsigned boxPosition = 0; boxPosition < boxCount; ++boxPosition) {
         SVGInlineTextBox* textBox = boxes.at(boxPosition);
         Vector<SVGTextFragment>& fragments = textBox->textFragments();
-        fprintf(stderr, "-> Box %i: Dumping text fragments for SVGInlineTextBox, textBox=%p, textRenderer=%p\n", boxPosition, textBox, textBox->renderer());
-        fprintf(stderr, "        textBox properties, start=%i, len=%i, box direction=%i\n", textBox->start(), textBox->len(), textBox->direction());
-        fprintf(stderr, "   textRenderer properties, textLength=%i\n", textBox->renderer()->textLength());
+        fprintf(stderr, "-> Box %d: Dumping text fragments for SVGInlineTextBox, textBox=%p, textRenderer=%p\n", boxPosition, textBox, &textBox->renderer());
+        fprintf(stderr, "        textBox properties, start=%d, len=%d, box direction=%d\n", textBox->start(), textBox->len(), (int)textBox->direction());
+        fprintf(stderr, "   textRenderer properties, textLength=%d\n", textBox->renderer().text().length());
 
-        const UChar* characters = textBox->renderer()->characters();
+        const auto* characters = textBox->renderer().text().characters<UChar>();
 
         unsigned fragmentCount = fragments.size();
         for (unsigned i = 0; i < fragmentCount; ++i) {
             SVGTextFragment& fragment = fragments.at(i);
             String fragmentString(characters + fragment.characterOffset, fragment.length);
-            fprintf(stderr, "    -> Fragment %i, x=%lf, y=%lf, width=%lf, height=%lf, characterOffset=%i, length=%i, characters='%s'\n"
+            fprintf(stderr, "    -> Fragment %d, x=%.2f, y=%.2f, width=%.2f, height=%.2f, characterOffset=%d, length=%d, characters='%s'\n"
                           , i, fragment.x, fragment.y, fragment.width, fragment.height, fragment.characterOffset, fragment.length, fragmentString.utf8().data());
         }
     }
@@ -284,7 +284,7 @@ void SVGTextLayoutEngine::finishLayout()
 
     // Finalize transform matrices, after the chunk layout corrections have been applied, and all fragment x/y positions are finalized.
     if (!m_lineLayoutBoxes.isEmpty()) {
-#if DUMP_TEXT_FRAGMENTS > 0
+#if DUMP_SVG_TEXT_LAYOUT_FRAGMENTS > 0
         fprintf(stderr, "Line layout: ");
         dumpTextBoxes(m_lineLayoutBoxes);
 #endif
@@ -293,7 +293,7 @@ void SVGTextLayoutEngine::finishLayout()
     }
 
     if (!m_pathLayoutBoxes.isEmpty()) {
-#if DUMP_TEXT_FRAGMENTS > 0
+#if DUMP_SVG_TEXT_LAYOUT_FRAGMENTS > 0
         fprintf(stderr, "Path layout: ");
         dumpTextBoxes(m_pathLayoutBoxes);
 #endif
