@@ -63,6 +63,7 @@
 #include <CoreGraphics/CGColorSpace.h>
 #include <WebGPU/WebGPUExt.h>
 #include <wtf/BlockPtr.h>
+#include <wtf/SegmentedVector.h>
 
 namespace PAL::WebGPU {
 
@@ -247,7 +248,7 @@ Ref<BindGroup> DeviceImpl::createBindGroup(const BindGroupDescriptor& descriptor
 {
     auto label = descriptor.label.utf8();
 
-    Vector<WGPUBindGroupExternalTextureEntry> chainedEntries;
+    SegmentedVector<WGPUBindGroupExternalTextureEntry, 1> chainedEntries;
     auto backingEntries = descriptor.entries.map([&convertToBackingContext = m_convertToBackingContext.get(), &chainedEntries](const auto& bindGroupEntry) {
         auto externalTexture = std::holds_alternative<std::reference_wrapper<ExternalTexture>>(bindGroupEntry.resource) ? convertToBackingContext.convertToBacking(std::get<std::reference_wrapper<ExternalTexture>>(bindGroupEntry.resource).get()) : nullptr;
         chainedEntries.append(WGPUBindGroupExternalTextureEntry {
