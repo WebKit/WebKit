@@ -483,7 +483,7 @@ JSC_DEFINE_HOST_FUNCTION(numberProtoFuncToPrecision, (JSGlobalObject* globalObje
 
 JSString* NumericStrings::addJSString(VM& vm, int i)
 {
-    if (static_cast<unsigned>(i) < m_smallIntCache.size()) {
+    if (static_cast<unsigned>(i) < cacheSize) {
         auto& entry = lookupSmallString(static_cast<unsigned>(i));
         if (entry.jsString)
             return entry.jsString;
