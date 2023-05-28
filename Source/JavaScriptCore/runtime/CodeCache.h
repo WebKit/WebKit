@@ -38,6 +38,7 @@
 #include "UnlinkedFunctionCodeBlock.h"
 #include "UnlinkedModuleProgramCodeBlock.h"
 #include "UnlinkedProgramCodeBlock.h"
+#include <wtf/ApproximateTime.h>
 #include <wtf/MainThread.h>
 
 namespace JSC {
@@ -82,7 +83,7 @@ public:
     CodeCacheMap()
         : m_size(0)
         , m_sizeAtLastPrune(0)
-        , m_timeAtLastPrune(MonotonicTime::now())
+        , m_timeAtLastPrune(ApproximateTime::now())
         , m_minCapacity(0)
         , m_capacity(0)
         , m_age(0)
@@ -200,7 +201,7 @@ private:
         if (m_size <= m_capacity && canPruneQuickly())
             return;
 
-        if (MonotonicTime::now() - m_timeAtLastPrune < workingSetTime
+        if (ApproximateTime::now() - m_timeAtLastPrune < workingSetTime
             && m_size - m_sizeAtLastPrune < workingSetMaxBytes
             && canPruneQuickly())
                 return;
@@ -211,7 +212,7 @@ private:
     MapType m_map;
     int64_t m_size;
     int64_t m_sizeAtLastPrune;
-    MonotonicTime m_timeAtLastPrune;
+    ApproximateTime m_timeAtLastPrune;
     int64_t m_minCapacity;
     int64_t m_capacity;
     int64_t m_age;
