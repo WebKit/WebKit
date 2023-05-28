@@ -30,35 +30,16 @@
 #if PLATFORM(MAC)
 
 OBJC_CLASS CALayer;
+OBJC_CLASS NSScrollerImp;
 
 namespace WebCore {
 
-class ScrollbarThemeMac : public ScrollbarThemeComposite {
+class ScrollbarThemeMac final : public ScrollbarThemeComposite {
 public:
     ScrollbarThemeMac();
     virtual ~ScrollbarThemeMac();
 
     WEBCORE_EXPORT void preferencesChanged();
-
-    void updateEnabledState(Scrollbar&) override;
-
-    bool paint(Scrollbar&, GraphicsContext&, const IntRect& damageRect) override;
-    void paintScrollCorner(ScrollableArea&, GraphicsContext&, const IntRect& cornerRect) override;
-
-    int scrollbarThickness(ScrollbarControlSize = ScrollbarControlSize::Regular, ScrollbarWidth = ScrollbarWidth::Auto, ScrollbarExpansionState = ScrollbarExpansionState::Expanded) override;
-    
-    bool supportsControlTints() const override { return true; }
-    bool usesOverlayScrollbars() const  override;
-    void usesOverlayScrollbarsChanged() override;
-    void updateScrollbarOverlayStyle(Scrollbar&)  override;
-
-    Seconds initialAutoscrollTimerDelay() override { return 500_ms; }
-    Seconds autoscrollTimerDelay() override { return 50_ms; }
-
-    ScrollbarButtonsPlacement buttonsPlacement() const override;
-
-    void registerScrollbar(Scrollbar&) override;
-    void unregisterScrollbar(Scrollbar&) override;
 
     void setNewPainterForScrollbar(Scrollbar&, RetainPtr<NSScrollerImp>&&);
     static NSScrollerImp *painterForScrollbar(Scrollbar&);
@@ -79,7 +60,27 @@ public:
     WEBCORE_EXPORT static void removeOverhangAreaShadow(CALayer *);
 #endif
 
-protected:
+    void usesOverlayScrollbarsChanged() override;
+    int scrollbarThickness(ScrollbarControlSize = ScrollbarControlSize::Regular, ScrollbarWidth = ScrollbarWidth::Auto, ScrollbarExpansionState = ScrollbarExpansionState::Expanded) override;
+
+private:
+    void updateEnabledState(Scrollbar&) override;
+
+    bool paint(Scrollbar&, GraphicsContext&, const IntRect& damageRect) override;
+    void paintScrollCorner(ScrollableArea&, GraphicsContext&, const IntRect& cornerRect) override;
+
+    bool supportsControlTints() const override { return true; }
+    bool usesOverlayScrollbars() const  override;
+    void updateScrollbarOverlayStyle(Scrollbar&)  override;
+
+    Seconds initialAutoscrollTimerDelay() override { return 500_ms; }
+    Seconds autoscrollTimerDelay() override { return 50_ms; }
+
+    ScrollbarButtonsPlacement buttonsPlacement() const override;
+
+    void registerScrollbar(Scrollbar&) override;
+    void unregisterScrollbar(Scrollbar&) override;
+
     bool hasButtons(Scrollbar&) override;
     bool hasThumb(Scrollbar&) override;
 

@@ -23,19 +23,19 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ScrollbarThemeMock_h
-#define ScrollbarThemeMock_h
+#pragma once
 
 #include "ScrollbarThemeComposite.h"
 
 namespace WebCore {
 
 // Scrollbar theme used in image snapshots, to eliminate appearance differences between platforms.
-class ScrollbarThemeMock : public ScrollbarThemeComposite {
-public:
+class ScrollbarThemeMock final : public ScrollbarThemeComposite {
+private:
     int scrollbarThickness(ScrollbarControlSize = ScrollbarControlSize::Regular, ScrollbarWidth = ScrollbarWidth::Auto, ScrollbarExpansionState = ScrollbarExpansionState::Expanded) override;
 
-protected:
+    bool isMockTheme() const override { return true; }
+
     bool hasButtons(Scrollbar&) override { return false; }
     bool hasThumb(Scrollbar&) override  { return true; }
 
@@ -48,9 +48,6 @@ protected:
     int maxOverlapBetweenPages() override { return 40; }
 
     bool usesOverlayScrollbars() const override;
-private:
-    bool isMockTheme() const override { return true; }
 };
 
 }
-#endif // ScrollbarThemeMock_h
