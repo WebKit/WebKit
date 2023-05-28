@@ -116,7 +116,7 @@ void SVGFEConvolveMatrixElement::attributeChanged(const QualifiedName& name, con
         else if (newValue == falseAtom())
             m_preserveAlpha->setBaseValInternal(false);
         else
-            document().accessSVGExtensions().reportWarning("feConvolveMatrix: problem parsing preserveAlphaAttr=\"" + newValue  + "\". Filtered element will not be displayed.");
+            document().accessSVGExtensions().reportWarning("feConvolveMatrix: problem parsing preserveAlphaAttr=\"" + newValue + "\". Filtered element will not be displayed.");
         break;
     default:
         break;
@@ -216,54 +216,47 @@ void SVGFEConvolveMatrixElement::svgAttributeChanged(const QualifiedName& attrNa
 
 RefPtr<FilterEffect> SVGFEConvolveMatrixElement::createFilterEffect(const FilterEffectVector&, const GraphicsContext&) const
 {
-    int orderXValue = orderX();
-    int orderYValue = orderY();
-    if (!hasAttribute(SVGNames::orderAttr)) {
-        orderXValue = 3;
-        orderYValue = 3;
+    int orderXValue = 3;
+    int orderYValue = 3;
+    if (hasAttribute(SVGNames::orderAttr)) {
+        orderXValue = orderX();
+        orderYValue = orderY();
+        // Spec says order must be > 0. Bail if it is not.
+        if (orderXValue <= 0 || orderYValue <= 0)
+            return nullptr;
     }
-    // Spec says order must be > 0. Bail if it is not.
-    if (orderXValue < 1 || orderYValue < 1)
-        return nullptr;
 
     auto& kernelMatrix = this->kernelMatrix();
-    int kernelMatrixSize = kernelMatrix.items().size();
+    size_t kernelMatrixSize = kernelMatrix.items().size();
     // The spec says this is a requirement, and should bail out if fails
-    if (orderXValue * orderYValue != kernelMatrixSize)
+    if ((size_t)(orderXValue * orderYValue) != kernelMatrixSize)
         return nullptr;
 
-    if (!isValidTargetXOffset())
+    if (!isValidTargetXOffset() || !isValidTargetYOffset())
         return nullptr;
 
-    if (!isValidTargetYOffset())
-        return nullptr;
-
-    int targetXValue = targetX();
     // The spec says the default value is: targetX = floor ( orderX / 2 ))
-    if (!hasAttribute(SVGNames::targetXAttr))
-        targetXValue = static_cast<int>(floorf(orderXValue / 2));
+    int targetXValue = hasAttribute(SVGNames::targetXAttr) ? targetX() : static_cast<int>(floorf(orderXValue / 2));
 
-    int targetYValue = targetY();
     // The spec says the default value is: targetY = floor ( orderY / 2 ))
-    if (!hasAttribute(SVGNames::targetYAttr))
-        targetYValue = static_cast<int>(floorf(orderYValue / 2));
+    int targetYValue = hasAttribute(SVGNames::targetYAttr) ? targetY() : static_cast<int>(floorf(orderYValue / 2));
 
-    // Spec says default kernelUnitLength is 1.0, and a specified length cannot be 0.
-    int kernelUnitLengthXValue = kernelUnitLengthX();
-    int kernelUnitLengthYValue = kernelUnitLengthY();
-    if (!hasAttribute(SVGNames::kernelUnitLengthAttr)) {
-        kernelUnitLengthXValue = 1;
-        kernelUnitLengthYValue = 1;
+    // The spec says the default kernelUnitLength is 1.0, and a specified length cannot be 0.
+    int kernelUnitLengthXValue = 1;
+    int kernelUnitLengthYValue = 1;
+    if (hasAttribute(SVGNames::kernelUnitLengthAttr)) {
+        kernelUnitLengthXValue = kernelUnitLengthX();
+        kernelUnitLengthYValue = kernelUnitLengthY();
+        if (kernelUnitLengthXValue <= 0 || kernelUnitLengthYValue <= 0)
+            return nullptr;
     }
-    if (kernelUnitLengthXValue <= 0 || kernelUnitLengthYValue <= 0)
-        return nullptr;
 
     float divisorValue = divisor();
     if (hasAttribute(SVGNames::divisorAttr) && !divisorValue)
         return nullptr;
 
     if (!hasAttribute(SVGNames::divisorAttr)) {
-        for (int i = 0; i < kernelMatrixSize; ++i)
+        for (size_t i = 0; i < kernelMatrixSize; ++i)
             divisorValue += kernelMatrix.items()[i]->value();
         if (!divisorValue)
             divisorValue = 1;
