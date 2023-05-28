@@ -43,7 +43,8 @@ static HANDLE duplicateHandle(HANDLE handle)
 
     auto processHandle = ::GetCurrentProcess();
     HANDLE duplicate;
-    ::DuplicateHandle(processHandle, handle, processHandle, &duplicate, 0, FALSE, DUPLICATE_SAME_ACCESS);
+    if (!::DuplicateHandle(processHandle, handle, processHandle, &duplicate, 0, FALSE, DUPLICATE_SAME_ACCESS))
+        return INVALID_HANDLE_VALUE;
 
     return duplicate;
 }
