@@ -1101,12 +1101,6 @@ enum class ScrollSnapStop : bool {
     Always,
 };
 
-enum class ScrollbarWidth : uint8_t {
-    Auto,
-    Thin,
-    None
-};
-
 // These are all minimized combinations of paint-order.
 enum class PaintOrder : uint8_t {
     Normal,
@@ -1258,7 +1252,6 @@ WTF::TextStream& operator<<(WTF::TextStream&, ScrollSnapAxis);
 WTF::TextStream& operator<<(WTF::TextStream&, ScrollSnapAxisAlignType);
 WTF::TextStream& operator<<(WTF::TextStream&, ScrollSnapStop);
 WTF::TextStream& operator<<(WTF::TextStream&, ScrollSnapStrictness);
-WTF::TextStream& operator<<(WTF::TextStream&, ScrollbarWidth);
 WTF::TextStream& operator<<(WTF::TextStream&, SpeakAs);
 WTF::TextStream& operator<<(WTF::TextStream&, StyleDifference);
 WTF::TextStream& operator<<(WTF::TextStream&, TableLayoutType);

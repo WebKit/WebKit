@@ -141,7 +141,7 @@ void PopupMenuWin::show(const IntRect& r, LocalFrameView* view, int index)
 
     if (!m_scrollbar && visibleItems() < client()->listSize()) {
         // We need a scroll bar
-        m_scrollbar = client()->createScrollbar(*this, ScrollbarOrientation::Vertical, ScrollbarControlSize::Small);
+        m_scrollbar = client()->createScrollbar(*this, ScrollbarOrientation::Vertical, ScrollbarWidth::Thin);
         m_scrollbar->styleChanged();
     }
 
@@ -356,7 +356,7 @@ void PopupMenuWin::calculatePositionAndSize(const IntRect& r, LocalFrameView* v)
 
     if (naturalHeight > maxPopupHeight)
         // We need room for a scrollbar
-        popupWidth += ScrollbarTheme::theme().scrollbarThickness(ScrollbarControlSize::Small);
+        popupWidth += ScrollbarTheme::theme().scrollbarThickness(ScrollbarWidth::Thin);
 
     // Add padding to align the popup text with the <select> text
     popupWidth += std::max<int>(0, client()->clientPaddingRight() - client()->clientInsetRight()) + std::max<int>(0, client()->clientPaddingLeft() - client()->clientInsetLeft());

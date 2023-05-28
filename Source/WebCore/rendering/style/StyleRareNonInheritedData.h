@@ -35,6 +35,7 @@
 #include "PathOperation.h"
 #include "RotateTransformOperation.h"
 #include "ScaleTransformOperation.h"
+#include "ScrollTypes.h"
 #include "ScrollbarGutter.h"
 #include "ShapeValue.h"
 #include "StyleColor.h"

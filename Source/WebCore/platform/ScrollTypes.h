@@ -169,6 +169,12 @@ enum class ScrollbarExpansionState : uint8_t {
     Expanded
 };
 
+enum class ScrollbarWidth : uint8_t {
+    Auto,
+    Thin,
+    None
+};
+
 enum class NativeScrollbarVisibility : uint8_t {
     Visible,
     HiddenByStyle,
@@ -353,6 +359,7 @@ WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, OverflowAnchor);
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, ScrollDirection);
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, ScrollGranularity);
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, NativeScrollbarVisibility);
+WTF::TextStream& operator<<(WTF::TextStream&, ScrollbarWidth);
 
 struct ScrollPositionChangeOptions {
     ScrollType type;

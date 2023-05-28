@@ -1384,7 +1384,7 @@ void PDFPlugin::updateScrollbars()
 
 Ref<Scrollbar> PDFPlugin::createScrollbar(ScrollbarOrientation orientation)
 {
-    auto widget = Scrollbar::createNativeScrollbar(*this, orientation, ScrollbarControlSize::Regular);
+    auto widget = Scrollbar::createNativeScrollbar(*this, orientation, ScrollbarWidth::Auto);
     auto shouldFlip = m_view->isUsingUISideCompositing();
     if (orientation == ScrollbarOrientation::Horizontal) {
         m_horizontalScrollbarLayer = adoptNS([[WKPDFPluginScrollbarLayer alloc] initWithPDFPlugin:this shouldFlip:shouldFlip]);

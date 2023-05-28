@@ -155,4 +155,21 @@ TextStream& operator<<(TextStream& ts, ScrollGranularity granularity)
     return ts;
 }
 
+TextStream& operator<<(TextStream& ts, ScrollbarWidth width)
+{
+    switch (width) {
+    case ScrollbarWidth::Auto:
+        ts << "auto";
+        break;
+    case ScrollbarWidth::Thin:
+        ts << "thin";
+        break;
+    case ScrollbarWidth::None:
+        ts << "none";
+        break;
+    }
+    return ts;
+}
+
+
 } // namespace WebCore

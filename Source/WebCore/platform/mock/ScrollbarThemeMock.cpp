@@ -32,18 +32,23 @@
 
 namespace WebCore {
 
-static const int cScrollbarThickness[] = { 15, 11 };
-
 IntRect ScrollbarThemeMock::trackRect(Scrollbar& scrollbar, bool)
 {
     return scrollbar.frameRect();
 }
 
-int ScrollbarThemeMock::scrollbarThickness(ScrollbarControlSize controlSize, ScrollbarWidth scrollbarWidth, ScrollbarExpansionState)
+int ScrollbarThemeMock::scrollbarThickness(ScrollbarWidth scrollbarWidth, ScrollbarExpansionState)
 {
-    if (scrollbarWidth == ScrollbarWidth::None)
+    switch (scrollbarWidth) {
+    case ScrollbarWidth::Auto:
+        return 15;
+    case ScrollbarWidth::Thin:
+        return 11;
+    case ScrollbarWidth::None:
         return 0;
-    return cScrollbarThickness[static_cast<uint8_t>(controlSize)];
+    }
+    ASSERT_NOT_REACHED();
+    return 15;
 }
 
 void ScrollbarThemeMock::paintTrackBackground(GraphicsContext& context, Scrollbar& scrollbar, const IntRect& trackRect)

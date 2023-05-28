@@ -112,7 +112,7 @@ static int scrollbarThicknessInPixels()
     return thickness;
 }
 
-int ScrollbarThemeWin::scrollbarThickness(ScrollbarControlSize, ScrollbarWidth scrollbarWidth, ScrollbarExpansionState)
+int ScrollbarThemeWin::scrollbarThickness(ScrollbarWidth scrollbarWidth, ScrollbarExpansionState)
 {
     if (scrollbarWidth == ScrollbarWidth::None)
         return 0;

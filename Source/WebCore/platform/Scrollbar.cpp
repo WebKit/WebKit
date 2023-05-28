@@ -45,9 +45,9 @@
 
 namespace WebCore {
 
-Ref<Scrollbar> Scrollbar::createNativeScrollbar(ScrollableArea& scrollableArea, ScrollbarOrientation orientation, ScrollbarControlSize size)
+Ref<Scrollbar> Scrollbar::createNativeScrollbar(ScrollableArea& scrollableArea, ScrollbarOrientation orientation, ScrollbarWidth width)
 {
-    return adoptRef(*new Scrollbar(scrollableArea, orientation, size));
+    return adoptRef(*new Scrollbar(scrollableArea, orientation, width));
 }
 
 static bool s_shouldUseFixedPixelsPerLineStepForTesting;
@@ -74,10 +74,10 @@ int Scrollbar::maxOverlapBetweenPages()
     return maxOverlapBetweenPages;
 }
 
-Scrollbar::Scrollbar(ScrollableArea& scrollableArea, ScrollbarOrientation orientation, ScrollbarControlSize controlSize, ScrollbarTheme* customTheme, bool isCustomScrollbar)
+Scrollbar::Scrollbar(ScrollableArea& scrollableArea, ScrollbarOrientation orientation, ScrollbarWidth widthStyle, ScrollbarTheme* customTheme, bool isCustomScrollbar)
     : m_scrollableArea(scrollableArea)
     , m_orientation(orientation)
-    , m_controlSize(controlSize)
+    , m_widthStyle(widthStyle)
     , m_theme(customTheme ? *customTheme : ScrollbarTheme::theme())
     , m_isCustomScrollbar(isCustomScrollbar)
     , m_scrollTimer(*this, &Scrollbar::autoscrollTimerFired)
@@ -87,7 +87,7 @@ Scrollbar::Scrollbar(ScrollableArea& scrollableArea, ScrollbarOrientation orient
     // FIXME: This is ugly and would not be necessary if we fix cross-platform code to actually query for
     // scrollbar thickness and use it when sizing scrollbars (rather than leaving one dimension of the scrollbar
     // alone when sizing).
-    int thickness = theme().scrollbarThickness(controlSize, m_scrollableArea.scrollbarWidthStyle());
+    int thickness = theme().scrollbarThickness(widthStyle);
     Widget::setFrameRect(IntRect(0, 0, thickness, thickness));
 
     m_currentPos = static_cast<float>(offsetForOrientation(m_scrollableArea.scrollOffset(), m_orientation));
@@ -513,7 +513,7 @@ NativeScrollbarVisibility Scrollbar::nativeScrollbarVisibility(const Scrollbar* 
 
 bool Scrollbar::isHiddenByStyle() const
 {
-    return m_scrollableArea.scrollbarWidthStyle() == ScrollbarWidth::None;
+    return m_widthStyle == ScrollbarWidth::None;
 }
 
 float Scrollbar::deviceScaleFactor() const

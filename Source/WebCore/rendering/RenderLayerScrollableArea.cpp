@@ -867,10 +867,7 @@ Ref<Scrollbar> RenderLayerScrollableArea::createScrollbar(ScrollbarOrientation o
     if (hasCustomScrollbarStyle && element)
         widget = RenderScrollbar::createCustomScrollbar(*this, orientation, element);
     else {
-        auto scrollbarSize = scrollbarWidthStyle() == ScrollbarWidth::Thin
-            ? ScrollbarControlSize::Small
-            : ScrollbarControlSize::Regular;
-        widget = Scrollbar::createNativeScrollbar(*this, orientation, scrollbarSize);
+        widget = Scrollbar::createNativeScrollbar(*this, orientation, scrollbarWidthStyle());
         
         if (auto scrollbarController = m_layer.page().chrome().client().createScrollbarsController(m_layer.page(), *this))
             setScrollbarsController(WTFMove(scrollbarController));
