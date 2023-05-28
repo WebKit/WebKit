@@ -2141,7 +2141,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     rendering/RenderTheme.h
     rendering/RenderThemeCocoa.h
     rendering/RenderThemeIOS.h
-    rendering/RenderThemeWin.h
     rendering/RenderTreeAsText.h
     rendering/RenderVideo.h
     rendering/RenderView.h

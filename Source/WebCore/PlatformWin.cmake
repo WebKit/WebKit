@@ -115,9 +115,7 @@ list(APPEND WebCore_SOURCES
     platform/win/PasteboardWin.cpp
     platform/win/PlatformMouseEventWin.cpp
     platform/win/PlatformScreenWin.cpp
-    platform/win/PopupMenuWin.cpp
     platform/win/SearchPopupMenuDB.cpp
-    platform/win/SearchPopupMenuWin.cpp
     platform/win/SystemInfo.cpp
     platform/win/UserAgentWin.cpp
     platform/win/WCDataObject.cpp
@@ -151,9 +149,7 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/win/GDIObjectCounter.h
     platform/win/GDIUtilities.h
     platform/win/HWndDC.h
-    platform/win/PopupMenuWin.h
     platform/win/SearchPopupMenuDB.h
-    platform/win/SearchPopupMenuWin.h
     platform/win/SystemInfo.h
     platform/win/WCDataObject.h
     platform/win/WebCoreBundleWin.h
