@@ -834,7 +834,7 @@ String SamplingProfiler::StackFrame::displayName(VM& vm)
     case FrameType::Wasm:
 #if ENABLE(WEBASSEMBLY)
         if (wasmIndexOrName)
-            return makeString(wasmIndexOrName.value());
+            return Wasm::makeString(wasmIndexOrName.value());
 #endif
         return "(wasm)"_s;
 
@@ -878,7 +878,7 @@ String SamplingProfiler::StackFrame::displayNameForJSONTests(VM& vm)
     case FrameType::Wasm: {
 #if ENABLE(WEBASSEMBLY)
         if (wasmIndexOrName)
-            return makeString(wasmIndexOrName.value());
+            return Wasm::makeString(wasmIndexOrName.value());
 #endif
         return "(wasm)"_s;
     }

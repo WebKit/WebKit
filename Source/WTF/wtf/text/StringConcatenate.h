@@ -481,15 +481,15 @@ String tryMakeStringFromAdapters(StringTypeAdapter adapter, StringTypeAdapters .
 }
 
 template<typename... StringTypes>
-String tryMakeString(StringTypes ...strings)
+String tryMakeString(StringTypes&& ...strings)
 {
-    return tryMakeStringFromAdapters(StringTypeAdapter<StringTypes>(strings)...);
+    return tryMakeStringFromAdapters(StringTypeAdapter<std::decay_t<StringTypes>>(std::forward<StringTypes>(strings))...);
 }
 
 template<typename... StringTypes>
-String makeString(StringTypes... strings)
+String makeString(StringTypes&&... strings)
 {
-    String result = tryMakeString(strings...);
+    String result = tryMakeString(std::forward<StringTypes>(strings)...);
     if (!result)
         CRASH();
     return result;
@@ -524,13 +524,13 @@ AtomString tryMakeAtomStringFromAdapters(StringTypeAdapter adapter, StringTypeAd
 template<typename... StringTypes>
 AtomString tryMakeAtomString(StringTypes ...strings)
 {
-    return tryMakeAtomStringFromAdapters(StringTypeAdapter<StringTypes>(strings)...);
+    return tryMakeAtomStringFromAdapters(StringTypeAdapter<std::decay_t<StringTypes>>(std::forward<StringTypes>(strings))...);
 }
 
 template<typename... StringTypes>
-AtomString makeAtomString(StringTypes... strings)
+AtomString makeAtomString(StringTypes&&... strings)
 {
-    AtomString result = tryMakeAtomString(strings...);
+    AtomString result = tryMakeAtomString(std::forward<StringTypes>(strings)...);
     if (result.isNull())
         CRASH();
     return result;

@@ -35,6 +35,33 @@
 
 namespace TestWebKitAPI {
 
+class NonCopyable {
+    WTF_MAKE_NONCOPYABLE(NonCopyable);
+public:
+    NonCopyable(int value)
+        : m_value(value) { }
+    int value() const { return m_value * 2; }
+
+private:
+    int m_value;
+};
+
+} // namespace TestWebKitAPI
+
+namespace WTF {
+
+template<> class StringTypeAdapter<TestWebKitAPI::NonCopyable, void> : public StringTypeAdapter<int, void> {
+public:
+    StringTypeAdapter(const TestWebKitAPI::NonCopyable& object)
+        : StringTypeAdapter<int, void>(object.value())
+    {
+    }
+};
+
+} // namespace WTF
+
+namespace TestWebKitAPI {
+
 enum class BoolEnum : bool {
     A,
     B
@@ -214,6 +241,32 @@ TEST(WTF, StringConcatenate_Tuple)
     EXPECT_STREQ("hello 42 world", makeString(std::make_tuple(helloCodepoints), ' ', unsigned(42), ' ', "world").utf8().data());
     EXPECT_STREQ("hello 42 world", makeString(std::make_tuple(helloCodepoints, ' ', unsigned(42)), ' ', "world").utf8().data());
     EXPECT_STREQ("hello 42 world", makeString(std::make_tuple(helloCodepoints, ' ', unsigned(42), ' ', "world")).utf8().data());
+}
+
+TEST(WTF, StringConcatenate_StringLiteral)
+{
+    EXPECT_STREQ("hello 42 world", makeString("hello", ' ', 42, " ", "world").utf8().data());
+    EXPECT_STREQ("hello 42 world", makeString("hello"_s, ' ', 42, " "_s, "world"_s).utf8().data());
+
+    EXPECT_STREQ("hello 42 world", makeString("hello 42\0ignored", ' ', "world").utf8().data());
+    EXPECT_STREQ("hello 42 world", makeString("hello 42\0ignored"_s, ' ', "world").utf8().data());
+
+    const char helloChars[] = "hello";
+    char helloData[64];
+    memcpy(helloData, helloChars, sizeof(helloChars));
+
+    auto hello = makeString(helloData);
+    EXPECT_STREQ("hello", hello.utf8().data());
+    EXPECT_EQ(5u, hello.length());
+
+    EXPECT_STREQ("hello 42 world", makeString(helloData, " 42 world").utf8().data());
+    EXPECT_STREQ("hello 42 world", makeString(hello, " 42 world").utf8().data());
+}
+
+TEST(WTF, StringConcatenate_NonCopyable)
+{
+    NonCopyable object(21);
+    EXPECT_STREQ("hello 42 world", makeString("hello ", object, " world").utf8().data());
 }
 
 }

@@ -50,33 +50,17 @@ class Object;
 class ObjectBase;
 
 // FIXME: unify this JSON parser with JSONParse in JavaScriptCore.
-class WTF_EXPORT_PRIVATE Value : public RefCounted<Value> {
+class Value : public RefCounted<Value> {
 public:
     static constexpr int maxDepth = 1000;
 
-    virtual ~Value()
-    {
-        switch (m_type) {
-        case Type::Null:
-        case Type::Boolean:
-        case Type::Double:
-        case Type::Integer:
-            break;
-        case Type::String:
-            if (m_value.string)
-                m_value.string->deref();
-            break;
-        case Type::Object:
-        case Type::Array:
-            break;
-        }
-    }
+    WTF_EXPORT_PRIVATE virtual ~Value();
 
-    static Ref<Value> null();
-    static Ref<Value> create(bool);
-    static Ref<Value> create(int);
-    static Ref<Value> create(double);
-    static Ref<Value> create(const String&);
+    WTF_EXPORT_PRIVATE static Ref<Value> null();
+    WTF_EXPORT_PRIVATE static Ref<Value> create(bool);
+    WTF_EXPORT_PRIVATE static Ref<Value> create(int);
+    WTF_EXPORT_PRIVATE static Ref<Value> create(double);
+    WTF_EXPORT_PRIVATE static Ref<Value> create(const String&);
     template<class T>
     static Ref<Value> create(T) = delete;
 
@@ -93,27 +77,27 @@ public:
     Type type() const { return m_type; }
     bool isNull() const { return m_type == Type::Null; }
 
-    std::optional<bool> asBoolean() const;
-    std::optional<int> asInteger() const;
-    std::optional<double> asDouble() const;
-    String asString() const;
-    RefPtr<Value> asValue();
-    virtual RefPtr<Object> asObject();
-    virtual RefPtr<const Object> asObject() const;
+    WTF_EXPORT_PRIVATE std::optional<bool> asBoolean() const;
+    WTF_EXPORT_PRIVATE std::optional<int> asInteger() const;
+    WTF_EXPORT_PRIVATE std::optional<double> asDouble() const;
+    WTF_EXPORT_PRIVATE String asString() const;
+    WTF_EXPORT_PRIVATE RefPtr<Value> asValue();
+    WTF_EXPORT_PRIVATE virtual RefPtr<Object> asObject();
+    WTF_EXPORT_PRIVATE virtual RefPtr<const Object> asObject() const;
     virtual RefPtr<Array> asArray();
 
-    static RefPtr<Value> parseJSON(StringView);
+    WTF_EXPORT_PRIVATE static RefPtr<Value> parseJSON(StringView);
     static void escapeString(StringBuilder&, StringView);
 
-    String toJSONString() const;
+    WTF_EXPORT_PRIVATE String toJSONString() const;
     virtual void writeJSON(StringBuilder& output) const;
 
     virtual size_t memoryCost() const;
 
     // FIXME: <http://webkit.org/b/179847> remove these functions when legacy InspectorObject symbols are no longer needed.
-    bool asDouble(double&) const;
-    bool asInteger(int&) const;
-    bool asString(String&) const;
+    WTF_EXPORT_PRIVATE bool asDouble(double&) const;
+    WTF_EXPORT_PRIVATE bool asInteger(int&) const;
+    WTF_EXPORT_PRIVATE bool asString(String&) const;
 
 protected:
     Value()

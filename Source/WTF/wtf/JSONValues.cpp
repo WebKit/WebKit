@@ -466,6 +466,24 @@ inline void appendDoubleQuotedString(StringBuilder& builder, StringView string)
 
 } // anonymous namespace
 
+Value::~Value()
+{
+    switch (m_type) {
+    case Type::Null:
+    case Type::Boolean:
+    case Type::Double:
+    case Type::Integer:
+        break;
+    case Type::String:
+        if (m_value.string)
+            m_value.string->deref();
+        break;
+    case Type::Object:
+    case Type::Array:
+        break;
+    }
+}
+
 Ref<Value> Value::null()
 {
     return adoptRef(*new Value);
