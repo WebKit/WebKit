@@ -148,6 +148,32 @@ function testI31Get() {
     assert.eq(m.exports.f(), 0x7fffffff);
   }
 
+  {
+    let m = instantiate(`
+      (module
+        (func (export "f") (param $arg i32) (result i32)
+          (i31.get_u (i31.new (local.get $arg))))
+      )
+    `);
+    assert.eq(m.exports.f(0x7fffffff), 0x7fffffff);
+    assert.eq(m.exports.f(0x2aaaaaaa), 0x2aaaaaaa);
+    assert.eq(m.exports.f(0x40000000), 0x40000000);
+    assert.eq(m.exports.f(42), 42);
+  }
+
+  {
+    let m = instantiate(`
+      (module
+        (func (export "f") (param $arg i32) (result i32)
+          (i31.get_s (i31.new (local.get $arg))))
+      )
+    `);
+    assert.eq(m.exports.f(0x7fffffff), -1);
+    assert.eq(m.exports.f(0x2aaaaaaa), 0x2aaaaaaa);
+    assert.eq(m.exports.f(0x40000000), -0x40000000);
+    assert.eq(m.exports.f(42), 42);
+  }
+
   assert.throws(
     () => instantiate(`
       (module

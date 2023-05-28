@@ -1151,7 +1151,8 @@ wasm/WasmWorklist.cpp
 wasm/js/JSToWasm.cpp
 wasm/js/JSToWasm.h
 wasm/js/JSWebAssembly.cpp
-wasm/js/JSWebAssemblyArray.cpp
+// FIXME: Remove this @no-unify when clang-AS-debug builds stops crashing in register allocation.
+wasm/js/JSWebAssemblyArray.cpp @no-unify
 wasm/js/JSWebAssemblyCompileError.cpp
 wasm/js/JSWebAssemblyException.cpp
 wasm/js/JSWebAssemblyGlobal.cpp

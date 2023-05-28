@@ -1871,6 +1871,8 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             uint32_t argc;
             WASM_PARSER_FAIL_IF(!parseVarUInt32(argc), "can't get argument count for array.new_fixed");
 
+            WASM_VALIDATOR_FAIL_IF(argc > maxArrayNewFixedArgs, "array_new_fixed can take at most ", maxArrayNewFixedArgs, " operands. Got ", argc);
+
             // If more arguments are expected than the current stack size, that's an error
             WASM_VALIDATOR_FAIL_IF(argc > m_expressionStack.size(), "array_new_fixed: found ", m_expressionStack.size(), " operands on stack; expected ", argc, " operands");
 

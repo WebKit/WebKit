@@ -1072,6 +1072,7 @@
 		538F15F0268FBBB600D601C4 /* UnifiedSource149.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 538F15E6268FBBB600D601C4 /* UnifiedSource149.cpp */; };
 		538F15F2268FBC7B00D601C4 /* UnifiedSource146.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 538F15F1268FBC7B00D601C4 /* UnifiedSource146.cpp */; };
 		53917E7B1B7906FA000EBD33 /* JSGenericTypedArrayViewPrototypeFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = 53917E7A1B7906E4000EBD33 /* JSGenericTypedArrayViewPrototypeFunctions.h */; };
+		539900052A218CC4007F4335 /* JSWebAssemblyArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 55F5DFAD28DA9A2000595620 /* JSWebAssemblyArray.cpp */; };
 		539930C822AD3B9A0051CDE2 /* WeakObjectRefConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = 539930C722AD3B9A0051CDE2 /* WeakObjectRefConstructor.h */; };
 		539BFBAE22AD3C3A0023F4C0 /* WeakObjectRefPrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = 539BFBAD22AD3C3A0023F4C0 /* WeakObjectRefPrototype.h */; };
 		539BFBB022AD3CDC0023F4C0 /* JSWeakObjectRef.h in Headers */ = {isa = PBXBuildFile; fileRef = 539BFBAF22AD3CDC0023F4C0 /* JSWeakObjectRef.h */; };
@@ -12345,6 +12346,7 @@
 				DD28467C291AF1B20009A61D /* JSCBuiltins.cpp in Sources */,
 				DD284679291A29900009A61D /* JSCBytecodeCacheVersion.cpp.in in Sources */,
 				E38E8790254B978400F6F9E4 /* JSDateMath.cpp in Sources */,
+				539900052A218CC4007F4335 /* JSWebAssemblyArray.cpp in Sources */,
 				4BE92D442898522400FA48E1 /* LowLevelInterpreter.asm in Sources */,
 				4BE92D452898522400FA48E1 /* LowLevelInterpreter.cpp in Sources */,
 				4B46940328984FA800512FDF /* MacroAssemblerARM64.cpp in Sources */,

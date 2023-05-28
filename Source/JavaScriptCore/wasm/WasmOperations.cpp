@@ -1096,6 +1096,29 @@ JSC_DEFINE_JIT_OPERATION(operationWasmExternInternalize, EncodedJSValue, (Encode
     return externInternalize(reference);
 }
 
+JSC_DEFINE_JIT_OPERATION(operationWasmRefTest, int32_t, (Instance* instance, EncodedJSValue reference, uint32_t allowNull, int32_t heapType))
+{
+    Wasm::TypeIndex typeIndex;
+    if (Wasm::typeIndexIsType(static_cast<Wasm::TypeIndex>(heapType)))
+        typeIndex = static_cast<Wasm::TypeIndex>(heapType);
+    else
+        typeIndex = instance->module().moduleInformation().typeSignatures[heapType]->index();
+    // Explicitly return 1 or 0 because bool in C++ only reqiures that the bottom bit match the other bits can be anything.
+    return Wasm::refCast(reference, static_cast<bool>(allowNull), typeIndex) ? 1 : 0;
+}
+
+JSC_DEFINE_JIT_OPERATION(operationWasmRefCast, EncodedJSValue, (Instance* instance, EncodedJSValue reference, uint32_t allowNull, int32_t heapType))
+{
+    Wasm::TypeIndex typeIndex;
+    if (Wasm::typeIndexIsType(static_cast<Wasm::TypeIndex>(heapType)))
+        typeIndex = static_cast<Wasm::TypeIndex>(heapType);
+    else
+        typeIndex = instance->module().moduleInformation().typeSignatures[heapType]->index();
+    if (!Wasm::refCast(reference, static_cast<bool>(allowNull), typeIndex))
+        return encodedJSValue();
+    return reference;
+}
+
 } } // namespace JSC::Wasm
 
 IGNORE_WARNINGS_END
