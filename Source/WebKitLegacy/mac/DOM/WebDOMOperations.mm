@@ -46,7 +46,6 @@
 #import <WebCore/Document.h>
 #import <WebCore/FrameLoader.h>
 #import <WebCore/HTMLInputElement.h>
-#import <WebCore/HTMLParserIdioms.h>
 #import <WebCore/HTMLTextFormControlElement.h>
 #import <WebCore/JSElement.h>
 #import <WebCore/LegacyWebArchive.h>
@@ -164,7 +163,7 @@ using namespace JSC;
 
 - (NSURL *)URLWithAttributeString:(NSString *)string
 {
-    return core(self)->completeURL(stripLeadingAndTrailingHTMLSpaces(string));
+    return core(self)->completeURL(string);
 }
 
 @end

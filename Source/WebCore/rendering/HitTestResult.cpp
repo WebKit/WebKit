@@ -34,7 +34,6 @@
 #include "HTMLImageElement.h"
 #include "HTMLInputElement.h"
 #include "HTMLObjectElement.h"
-#include "HTMLParserIdioms.h"
 #include "HTMLTextAreaElement.h"
 #include "HTMLVideoElement.h"
 #include "ImageOverlay.h"
@@ -423,7 +422,7 @@ URL HitTestResult::absolutePDFURL() const
         return URL();
 
     HTMLPlugInImageElement& element = downcast<HTMLPlugInImageElement>(*m_innerNonSharedNode);
-    URL url = m_innerNonSharedNode->document().completeURL(stripLeadingAndTrailingHTMLSpaces(element.url()));
+    URL url = m_innerNonSharedNode->document().completeURL(element.url());
     if (!url.isValid())
         return URL();
 

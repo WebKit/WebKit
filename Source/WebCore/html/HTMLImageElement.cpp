@@ -792,7 +792,7 @@ bool HTMLImageElement::isServerMap() const
     if (usemap.string()[0] == '#')
         return false;
 
-    return document().completeURL(stripLeadingAndTrailingHTMLSpaces(usemap)).isEmpty();
+    return document().completeURL(usemap).isEmpty();
 }
 
 void HTMLImageElement::setCrossOrigin(const AtomString& value)

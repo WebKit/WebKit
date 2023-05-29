@@ -54,7 +54,6 @@
 #import "HTMLMetaElement.h"
 #import "HTMLNames.h"
 #import "HTMLOListElement.h"
-#import "HTMLParserIdioms.h"
 #import "HTMLTableCellElement.h"
 #import "HTMLTextAreaElement.h"
 #import "LoaderNSURLExtras.h"
@@ -1618,9 +1617,9 @@ void HTMLConverter::_addLinkForElement(Element& element, NSRange range)
     NSString *urlString = element.getAttribute(hrefAttr);
     NSString *strippedString = [urlString stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
     if (urlString && [urlString length] > 0 && strippedString && [strippedString length] > 0 && ![strippedString hasPrefix:@"#"]) {
-        NSURL *url = element.document().completeURL(stripLeadingAndTrailingHTMLSpaces(urlString));
+        NSURL *url = element.document().completeURL(urlString);
         if (!url)
-            url = element.document().completeURL(stripLeadingAndTrailingHTMLSpaces(strippedString));
+            url = element.document().completeURL(strippedString);
         if (!url)
             url = [NSURL _web_URLWithString:strippedString relativeToURL:_baseURL.get()];
         [_attrStr addAttribute:NSLinkAttributeName value:url ? (id)url : (id)urlString range:range];
@@ -1779,7 +1778,7 @@ BOOL HTMLConverter::_processElement(Element& element, NSInteger depth)
     } else if (element.hasTagName(imgTag)) {
         NSString *urlString = element.imageSourceURL();
         if (urlString && [urlString length] > 0) {
-            NSURL *url = element.document().completeURL(stripLeadingAndTrailingHTMLSpaces(urlString));
+            NSURL *url = element.document().completeURL(urlString);
             if (!url)
                 url = [NSURL _web_URLWithString:[urlString stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] relativeToURL:_baseURL.get()];
 #if PLATFORM(IOS_FAMILY)
@@ -1799,14 +1798,14 @@ BOOL HTMLConverter::_processElement(Element& element, NSInteger depth)
             NSURL *baseURL = nil;
             NSURL *url = nil;
             if (baseString && [baseString length] > 0) {
-                baseURL = element.document().completeURL(stripLeadingAndTrailingHTMLSpaces(baseString));
+                baseURL = element.document().completeURL(baseString);
                 if (!baseURL)
                     baseURL = [NSURL _web_URLWithString:[baseString stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] relativeToURL:_baseURL.get()];
             }
             if (baseURL)
                 url = [NSURL _web_URLWithString:[urlString stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] relativeToURL:baseURL];
             if (!url)
-                url = element.document().completeURL(stripLeadingAndTrailingHTMLSpaces(urlString));
+                url = element.document().completeURL(urlString);
             if (!url)
                 url = [NSURL _web_URLWithString:[urlString stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] relativeToURL:_baseURL.get()];
             if (url)

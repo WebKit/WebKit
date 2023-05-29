@@ -44,7 +44,6 @@
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "HTMLObjectElement.h"
-#include "HTMLParserIdioms.h"
 #include "HTMLTableElement.h"
 #include "InputTypeNames.h"
 #include "LocalDOMWindow.h"
@@ -723,7 +722,7 @@ String HTMLFormElement::action() const
     auto& value = attributeWithoutSynchronization(actionAttr);
     if (value.isEmpty())
         return document().url().string();
-    return document().completeURL(stripLeadingAndTrailingHTMLSpaces(value)).string();
+    return document().completeURL(value).string();
 }
 
 void HTMLFormElement::setAction(const AtomString& value)

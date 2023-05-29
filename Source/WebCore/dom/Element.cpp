@@ -2310,7 +2310,7 @@ URL Element::absoluteLinkURL() const
     if (linkAttribute.isEmpty())
         return URL();
 
-    return document().completeURL(stripLeadingAndTrailingHTMLSpaces(linkAttribute));
+    return document().completeURL(linkAttribute);
 }
 
 #if ENABLE(TOUCH_EVENTS)

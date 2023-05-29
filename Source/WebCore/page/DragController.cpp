@@ -59,7 +59,6 @@
 #include "HTMLImageElement.h"
 #include "HTMLInputElement.h"
 #include "HTMLModelElement.h"
-#include "HTMLParserIdioms.h"
 #include "HTMLPlugInElement.h"
 #include "HitTestRequest.h"
 #include "HitTestResult.h"
@@ -1441,7 +1440,7 @@ void DragController::doSystemDrag(DragImage image, const IntPoint& dragLoc, cons
         if (auto link = containingLinkElement(*element)) {
             auto titleAttribute = link->attributeWithoutSynchronization(HTMLNames::titleAttr);
             item.title = titleAttribute.isEmpty() ? link->innerText() : titleAttribute.string();
-            item.url = frame.document()->completeURL(stripLeadingAndTrailingHTMLSpaces(link->getAttribute(HTMLNames::hrefAttr)));
+            item.url = frame.document()->completeURL(link->getAttribute(HTMLNames::hrefAttr));
         }
     }
     client().startDrag(WTFMove(item), *state.dataTransfer, protectedLocalMainFrame.get());

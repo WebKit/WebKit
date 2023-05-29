@@ -3062,7 +3062,7 @@ static void elementPositionInformation(WebPage& page, Element& element, const In
 
     if (linkElement && !info.isImageOverlayText) {
         info.isLink = true;
-        info.url = page.sanitizeLookalikeCharacters(linkElement->document().completeURL(stripLeadingAndTrailingHTMLSpaces(linkElement->getAttribute(HTMLNames::hrefAttr))), LookalikeCharacterSanitizationTrigger::Unspecified);
+        info.url = page.sanitizeLookalikeCharacters(linkElement->document().completeURL(linkElement->getAttribute(HTMLNames::hrefAttr)), LookalikeCharacterSanitizationTrigger::Unspecified);
 
         linkIndicatorPositionInformation(page, *linkElement, request, info);
 #if ENABLE(DATA_DETECTION)
@@ -3474,7 +3474,7 @@ void WebPage::performActionOnElement(uint32_t action, const String& authorizatio
             }
             m_interactionNode->document().editor().writeImageToPasteboard(*Pasteboard::createForCopyAndPaste(PagePasteboardContext::create(element.document().pageID())), element, urlToCopy, titleToCopy);
         } else if (element.isLink())
-            m_interactionNode->document().editor().copyURL(element.document().completeURL(stripLeadingAndTrailingHTMLSpaces(element.attributeWithoutSynchronization(HTMLNames::hrefAttr))), element.textContent());
+            m_interactionNode->document().editor().copyURL(element.document().completeURL(element.attributeWithoutSynchronization(HTMLNames::hrefAttr)), element.textContent());
 #if ENABLE(ATTACHMENT_ELEMENT)
         else if (auto attachmentInfo = element.document().editor().promisedAttachmentInfo(element))
             send(Messages::WebPageProxy::WritePromisedAttachmentToPasteboard(WTFMove(attachmentInfo), authorizationToken));

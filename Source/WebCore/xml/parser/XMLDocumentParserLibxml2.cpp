@@ -42,7 +42,6 @@
 #include "FrameLoader.h"
 #include "HTMLEntityParser.h"
 #include "HTMLHtmlElement.h"
-#include "HTMLParserIdioms.h"
 #include "HTMLTemplateElement.h"
 #include "HTTPParsers.h"
 #include "InlineClassicScript.h"
@@ -466,7 +465,7 @@ static void* openFunc(const char* uri)
     Document* document = cachedResourceLoader.document();
     // Same logic as HTMLBaseElement::href(). Keep them in sync.
     auto* encoding = (document && document->decoder()) ? document->decoder()->encodingForURLParsing() : nullptr;
-    URL url(document ? document->fallbackBaseURL() : URL(), stripLeadingAndTrailingHTMLSpaces(String::fromLatin1(uri)), encoding);
+    URL url(document ? document->fallbackBaseURL() : URL(), String::fromLatin1(uri), encoding);
 
     if (!shouldAllowExternalLoad(url))
         return &globalDescriptor;
