@@ -1,11 +1,11 @@
 Not a popover
 Dialog without popover attribute
 
-PASS The element <div popover="" id="boolean">Pop up</div> should behave as a popover.
-PASS The element <div popover="">Pop up</div> should behave as a popover.
-PASS The element <div popover="auto">Pop up</div> should behave as a popover.
-PASS The element <div popover="hint">Pop up</div> should behave as a popover.
-PASS The element <div popover="manual">Pop up</div> should behave as a popover.
+PASS The element <div popover="" id="boolean">Popover</div> should behave as a popover.
+PASS The element <div popover="">Popover</div> should behave as a popover.
+PASS The element <div popover="auto">Popover</div> should behave as a popover.
+PASS The element <div popover="hint">Popover</div> should behave as a popover.
+PASS The element <div popover="manual">Popover</div> should behave as a popover.
 PASS The element <article popover="">Different element type</article> should behave as a popover.
 PASS The element <header popover="">Different element type</header> should behave as a popover.
 PASS The element <nav popover="">Different element type</nav> should behave as a popover.
@@ -28,7 +28,8 @@ PASS Removing a visible popover=manual element from the document should close th
 PASS A showing popover=manual does not match :modal
 PASS A popover=manual never matches :open or :closed
 PASS Changing the popover type in a "beforetoggle" event handler should throw an exception (during showPopover())
-PASS Changing the popover type in a "beforetoggle" event handler should throw an exception (during hidePopover())
+PASS Changing the popover type in a "beforetoggle" event handler during hidePopover() should not throw an exception
+PASS Calling hidePopover on a disconnected popover should not throw.
 PASS Changing a popover from auto to auto (via attr), and then auto during 'beforetoggle' works
 PASS Changing a popover from auto to auto (via attr), and then manual during 'beforetoggle' works
 PASS Changing a popover from auto to auto (via attr), and then invalid during 'beforetoggle' works

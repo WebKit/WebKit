@@ -1,6 +1,3 @@
-This is a popover
-
-autofocus button  second autofocus button
 
 FAIL Popover focus test: default behavior - popover is not focused assert_false: expected false got true
 FAIL Popover button click focus test: default behavior - popover is not focused assert_false: popover should start out hidden expected false got true
@@ -26,4 +23,10 @@ FAIL Popover corner cases test: autofocus multiple children assert_false: popove
 FAIL Popover focus test: autofocus popover and multiple autofocus children assert_equals: prior element should get focus after Escape expected Element node <button tabindex="0" id="priorFocus"></button> but got Element node <div popover="" autofocus="" tabindex="-1" data-test="aut...
 FAIL Popover button click focus test: autofocus popover and multiple autofocus children assert_false: popover should start out hidden expected false got true
 FAIL Popover corner cases test: autofocus popover and multiple autofocus children assert_false: popover should start out hidden expected false got true
+FAIL Popover focus test: Opening dialogs as popovers should use dialog initial focus algorithm. assert_equals: prior element should get focus after Escape expected Element node <button tabindex="0" id="priorFocus"></button> but got Element node <button class="should-be-focused">button</button>
+FAIL Popover button click focus test: Opening dialogs as popovers should use dialog initial focus algorithm. assert_false: popover should start out hidden expected false got true
+FAIL Popover corner cases test: Opening dialogs as popovers should use dialog initial focus algorithm. assert_false: popover should start out hidden expected false got true
+FAIL Popover focus test: Opening dialogs as popovers which have autofocus should focus the dialog. assert_equals: expected Element node <button tabindex="0" id="priorFocus"></button> but got Element node <button class="should-be-focused">button</button>
+FAIL Popover button click focus test: Opening dialogs as popovers which have autofocus should focus the dialog. assert_equals: expected Element node <button tabindex="0" id="priorFocus"></button> but got Element node <button class="should-be-focused">button</button>
+PASS Popover corner cases test: Opening dialogs as popovers which have autofocus should focus the dialog.
 

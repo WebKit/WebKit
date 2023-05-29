@@ -4,10 +4,30 @@
 <script src="/resources/testharness.js"></script>
 <script src="/resources/testharnessreport.js"></script>
 
+<script>
+async function iframeLoaded(iframe) {
+  return new Promise(resolve => {
+    if (iframe.contentWindow.document.readyState == 'complete') {
+      resolve();
+    } else {
+      iframe.onload = resolve;
+    }
+  });
+}
+</script>
+
 <iframe id=myframe srcdoc="<p>iframe</p>"></iframe>
 <div id=p1 popover=auto>p1</div>
 <script>
-test(() => {
+promise_test(async () => {
+  await iframeLoaded(myframe);
+  await new Promise(resolve => {
+    if (myframe.contentWindow.document.readyState == 'complete') {
+      resolve();
+    } else {
+
+    }
+  });
   p1.addEventListener('beforetoggle', () => {
     myframe.contentWindow.document.body.appendChild(p1);
   });
@@ -18,7 +38,8 @@ test(() => {
 <iframe id=myframe2 srcdoc="<p>iframe</p>"></iframe>
 <div id=p2 popover=auto>p2</div>
 <script>
-test(() => {
+promise_test(async () => {
+  await iframeLoaded(myframe2);
   const p2 = document.getElementById('p2');
   p2.showPopover();
   p2.addEventListener('beforetoggle', () => {
@@ -40,7 +61,8 @@ test(() => {
   <div id=p5 popover=auto>p5</div>
 </div>
 <script>
-test(() => {
+promise_test(async () => {
+  await iframeLoaded(myframe3);
   p3.showPopover();
   p4.showPopover();
   p4.addEventListener('beforetoggle', event => {

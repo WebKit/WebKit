@@ -1,0 +1,22 @@
+Unrelated element
+
+FAIL Test the harness promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'getComputedStyle(element)[property].slice')"
+FAIL The popover-hide-delay causes a popover to be hidden after a delay, popover=auto, invoker=button, popovertargetaction=hide assert_false: popover should hide after delay expected false got true
+FAIL hovering the popover keeps it from being hidden, popover=auto, invoker=button, popovertargetaction=hide assert_false: hovering unrelated element should hide popover after delay expected false got true
+FAIL hovering an invoking element keeps the popover from being hidden, popover=auto, invoker=button, popovertargetaction=hide assert_false: Moving hover to unrelated should finally hide the popover expected false got true
+FAIL The popover-hide-delay causes a popover to be hidden after a delay, popover=hint, invoker=button, popovertargetaction=hide assert_equals: Type hint not supported expected "hint" but got "manual"
+FAIL hovering the popover keeps it from being hidden, popover=hint, invoker=button, popovertargetaction=hide assert_equals: Type hint not supported expected "hint" but got "manual"
+FAIL hovering an invoking element keeps the popover from being hidden, popover=hint, invoker=button, popovertargetaction=hide assert_equals: Type hint not supported expected "hint" but got "manual"
+FAIL The popover-hide-delay causes a popover to be hidden after a delay, popover=manual, invoker=button, popovertargetaction=hide assert_false: popover should hide after delay expected false got true
+FAIL hovering the popover keeps it from being hidden, popover=manual, invoker=button, popovertargetaction=hide assert_false: hovering unrelated element should hide popover after delay expected false got true
+FAIL hovering an invoking element keeps the popover from being hidden, popover=manual, invoker=button, popovertargetaction=hide assert_false: Moving hover to unrelated should finally hide the popover expected false got true
+FAIL The popover-hide-delay causes a popover to be hidden after a delay, popover=auto, invoker=input, popovertargetaction=hide assert_false: popover should hide after delay expected false got true
+FAIL hovering the popover keeps it from being hidden, popover=auto, invoker=input, popovertargetaction=hide assert_false: hovering unrelated element should hide popover after delay expected false got true
+FAIL hovering an invoking element keeps the popover from being hidden, popover=auto, invoker=input, popovertargetaction=hide assert_false: Moving hover to unrelated should finally hide the popover expected false got true
+FAIL The popover-hide-delay causes a popover to be hidden after a delay, popover=hint, invoker=input, popovertargetaction=hide assert_equals: Type hint not supported expected "hint" but got "manual"
+FAIL hovering the popover keeps it from being hidden, popover=hint, invoker=input, popovertargetaction=hide assert_equals: Type hint not supported expected "hint" but got "manual"
+FAIL hovering an invoking element keeps the popover from being hidden, popover=hint, invoker=input, popovertargetaction=hide assert_equals: Type hint not supported expected "hint" but got "manual"
+FAIL The popover-hide-delay causes a popover to be hidden after a delay, popover=manual, invoker=input, popovertargetaction=hide assert_false: popover should hide after delay expected false got true
+FAIL hovering the popover keeps it from being hidden, popover=manual, invoker=input, popovertargetaction=hide assert_false: hovering unrelated element should hide popover after delay expected false got true
+FAIL hovering an invoking element keeps the popover from being hidden, popover=manual, invoker=input, popovertargetaction=hide assert_false: Moving hover to unrelated should finally hide the popover expected false got true
+

@@ -3,12 +3,13 @@
 <title>Popover light dismiss behavior</title>
 <meta name="timeout" content="long">
 <link rel="author" href="mailto:masonf@chromium.org">
-<link rel=help href="https://open-ui.org/components/popup.research.explainer">
+<link rel=help href="https://open-ui.org/components/popover.research.explainer">
 <script src="/resources/testharness.js"></script>
 <script src="/resources/testharnessreport.js"></script>
 <script src="/resources/testdriver.js"></script>
 <script src="/resources/testdriver-actions.js"></script>
 <script src="/resources/testdriver-vendor.js"></script>
+<script src="/resources/declarative-shadow-dom-polyfill.js"></script>
 <script src="resources/popover-utils.js"></script>
 
 <button id=b1t popovertarget='p1'>Popover 1</button>
@@ -105,13 +106,14 @@
     popover1.showPopover();
     await waitForRender();
     assert_true(popover1.matches(':popover-open'));
-    const actions = new test_driver.Actions();
-    await actions.pointerMove(0, 0, {origin: outside})
-      .pointerDown({button: actions.ButtonType.LEFT})
+    await new test_driver.Actions()
+      .pointerMove(0, 0, {origin: outside})
+      .pointerDown()
       .send();
     await waitForRender();
     assert_true(popover1.matches(':popover-open'),'pointerdown (outside the popover) should not hide the popover');
-    await actions.pointerUp({button: actions.ButtonType.LEFT})
+    await new test_driver.Actions()
+      .pointerUp()
       .send();
     await waitForRender();
     assert_false(popover1.matches(':popover-open'),'pointerup (outside the popover) should trigger light dismiss');
@@ -265,12 +267,12 @@
   },'Dragging from an open popover outside an open popover should leave the popover open');
 </script>
 
-<button id=b3 popovertarget=p3 tabindex="0">Popover 3 - button 3
+<button id=b3 popovertarget=p3>Popover 3 - button 3
   <div popover id=p4>Inside popover 4</div>
 </button>
 <div popover id=p3>Inside popover 3</div>
 <div popover id=p5>Inside popover 5
-  <button popovertarget=p3 tabindex="0">Popover 3 - button 4 - unused</button>
+  <button popovertarget=p3>Popover 3 - button 4 - unused</button>
 </div>
 <style>
   #p3 {top:100px;}
@@ -340,6 +342,7 @@
   </template>
 </my-element>
 <script>
+  polyfill_declarative_shadow_dom(document.querySelector('#myElement'));
   const button7 = document.querySelector('#myElement').shadowRoot.querySelector('#b7');
   const popover7 = document.querySelector('#myElement').shadowRoot.querySelector('#p7');
   const inside7 = document.querySelector('#myElement').shadowRoot.querySelector('#inside7');
