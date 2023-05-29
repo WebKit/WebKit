@@ -318,6 +318,8 @@ void GraphicsContextGLGBM::allocateDrawBufferObject()
             .height = std::clamp<uint32_t>(size.height(), 0, UINT_MAX),
             .flags = GBMBufferSwapchain::BufferDescription::NoFlags,
         });
+    if (!m_swapchain.drawBO)
+        return;
 
     auto [textureTarget, textureBinding] = drawingBufferTextureBindingPoint();
     ScopedRestoreTextureBinding restoreBinding(textureBinding, textureTarget, textureTarget != TEXTURE_RECTANGLE_ARB);
