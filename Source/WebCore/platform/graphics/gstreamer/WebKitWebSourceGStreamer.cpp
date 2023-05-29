@@ -1052,8 +1052,12 @@ void CachedResourceStreamingClient::responseReceived(PlatformMediaResource&, con
     }
 
     if (members->requestedPosition) {
-        // Seeking ... we expect a 206 == PARTIAL_CONTENT
-        if (response.httpStatusCode() != 206) {
+        // Seeking ... we expect a 206 == PARTIAL_CONTENT or...:
+        // https://tools.ietf.org/id/draft-ietf-httpbis-p5-range-09.html#header.content-range
+        // If the server ignores a byte - range - spec because it is syntactically invalid, the
+        // server SHOULD treat the request as if the invalid Range header field did not
+        // exist. Normally, this means return a 200 response containing the full entity.
+        if (response.httpStatusCode() != 206 && response.httpStatusCode() != 200) {
             // Range request completely failed.
             GST_ELEMENT_ERROR(src, RESOURCE, READ, ("R%u: Received unexpected %d HTTP status code for range request", m_requestNumber, response.httpStatusCode()), (nullptr));
             members->doesHaveEOS = true;
