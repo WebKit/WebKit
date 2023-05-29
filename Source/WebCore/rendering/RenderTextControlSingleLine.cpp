@@ -126,22 +126,22 @@ void RenderTextControlSingleLine::layout()
     RenderBlockFlow::layoutBlock(false);
 
     // Set the text block height
-    LayoutUnit desiredLogicalHeight = textBlockLogicalHeight();
+    LayoutUnit inputContentBoxLogicalHeight = logicalHeight() - borderAndPaddingLogicalHeight();
     LayoutUnit logicalHeightLimit = logicalHeight();
     LayoutUnit innerTextLogicalHeight;
     if (innerTextRenderer)
         innerTextLogicalHeight = innerTextRenderer->logicalHeight();
     if (innerTextRenderer && innerTextLogicalHeight > logicalHeightLimit) {
-        if (desiredLogicalHeight != innerTextLogicalHeight)
+        if (inputContentBoxLogicalHeight != innerTextLogicalHeight)
             setNeedsLayout(MarkOnlyThis);
 
-        innerTextRenderer->mutableStyle().setLogicalHeight(Length(desiredLogicalHeight, LengthType::Fixed));
+        innerTextRenderer->mutableStyle().setLogicalHeight(Length(inputContentBoxLogicalHeight, LengthType::Fixed));
         innerTextRenderer->setNeedsLayout(MarkOnlyThis);
         if (innerBlockRenderer) {
-            innerBlockRenderer->mutableStyle().setLogicalHeight(Length(desiredLogicalHeight, LengthType::Fixed));
+            innerBlockRenderer->mutableStyle().setLogicalHeight(Length(inputContentBoxLogicalHeight, LengthType::Fixed));
             innerBlockRenderer->setNeedsLayout(MarkOnlyThis);
         }
-        innerTextLogicalHeight = desiredLogicalHeight;
+        innerTextLogicalHeight = inputContentBoxLogicalHeight;
     }
     // The container might be taller because of decoration elements.
     LayoutUnit oldContainerLogicalTop;

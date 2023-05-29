@@ -83,24 +83,6 @@ void RenderTextControl::styleDidChange(StyleDifference diff, const RenderStyle* 
     textFormControlElement().updatePlaceholderVisibility();
 }
 
-int RenderTextControl::textBlockLogicalHeight() const
-{
-    return logicalHeight() - borderAndPaddingLogicalHeight();
-}
-
-int RenderTextControl::textBlockLogicalWidth() const
-{
-    auto innerText = innerTextElement();
-    if (!innerText)
-        return 0;
-
-    LayoutUnit unitWidth = logicalWidth() - borderAndPaddingLogicalWidth();
-    if (innerText->renderer())
-        unitWidth -= innerText->renderBox()->paddingStart() + innerText->renderBox()->paddingEnd();
-
-    return unitWidth;
-}
-
 int RenderTextControl::scrollbarThickness() const
 {
     // FIXME: We should get the size of the scrollbar from the RenderTheme instead.
