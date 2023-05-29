@@ -78,7 +78,7 @@ void RenderingUpdateScheduler::scheduleRenderingUpdate()
         return;
     }
 
-    tracePoint(ScheduleRenderingUpdate);
+    WTFEmitSignpost(this, "ScheduleRenderingUpdate");
 
     if (!scheduleAnimation()) {
         LOG_WITH_STREAM(DisplayLink, stream << "RenderingUpdateScheduler::scheduleRenderingUpdate for interval " << m_page.preferredRenderingUpdateInterval() << " falling back to timer");
@@ -125,7 +125,7 @@ void RenderingUpdateScheduler::displayRefreshFired()
 {
     LOG_WITH_STREAM(EventLoop, stream << "RenderingUpdateScheduler for page " << &m_page << " displayRefreshFired()");
 
-    tracePoint(TriggerRenderingUpdate);
+    WTFEmitSignpost(this, "TriggerRenderingUpdate");
 
     clearScheduled();
     
