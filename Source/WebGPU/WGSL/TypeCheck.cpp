@@ -689,6 +689,7 @@ Type* TypeChecker::vectorFieldAccess(const Types::Vector& vector, AST::FieldAcce
 {
     const auto& fieldName = access.fieldName().id();
     auto length = fieldName.length();
+    auto vectorSize = vector.size;
 
     bool isValid = true;
     const auto& isXYZW = [&](char c) {
@@ -697,10 +698,10 @@ Type* TypeChecker::vectorFieldAccess(const Types::Vector& vector, AST::FieldAcce
         case 'y':
             return true;
         case 'z':
-            isValid &= length >= 3;
+            isValid &= vectorSize >= 3;
             return true;
         case 'w':
-            isValid &= length == 4;
+            isValid &= vectorSize == 4;
             return true;
         default:
             return false;
@@ -712,10 +713,10 @@ Type* TypeChecker::vectorFieldAccess(const Types::Vector& vector, AST::FieldAcce
         case 'g':
             return true;
         case 'b':
-            isValid &= length >= 3;
+            isValid &= vectorSize >= 3;
             return true;
         case 'a':
-            isValid &= length == 4;
+            isValid &= vectorSize == 4;
             return true;
         default:
             return false;

@@ -17,4 +17,10 @@ fn testIndexAccess() {
   _ = vec3(0).w;
   // CHECK-L: invalid vector swizzle member
   _ = vec3(0).a;
+
+  // CHECK-L: invalid vector swizzle member
+  _ = vec2(0).rx;
+
+  // CHECK-L: invalid vector swizzle character
+  _ = vec2(0).v;
 }
