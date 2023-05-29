@@ -28,6 +28,7 @@
 #include "DNS.h"
 
 #include "DNSResolveQueue.h"
+#include <wtf/CompletionHandler.h>
 #include <wtf/MainThread.h>
 
 #if OS(UNIX)
