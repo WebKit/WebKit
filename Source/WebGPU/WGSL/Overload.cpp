@@ -182,7 +182,12 @@ Type* OverloadResolver::materialize(const AbstractScalarType& abstractScalarType
             return type;
         },
         [&](TypeVariable variable) -> Type* {
-            return resolve(variable);
+            Type* type = resolve(variable);
+            if (!type)
+                return nullptr;
+            type = satisfyOrPromote(type, variable.constraints, m_types);
+            RELEASE_ASSERT(type);
+            return type;
         });
 }
 
