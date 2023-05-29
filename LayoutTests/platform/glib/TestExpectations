@@ -1870,6 +1870,9 @@ webkit.org/b/151344 fast/mediastream/MediaStream-add-ended-tracks.html [ Skip ]
 # Flakes moved from wpe/TestExpectations -- if they're flaky in WPE they're very likely to be flaky in GTK
 http/tests/webrtc/muted-video-mediastream-invisible-autoplay.html [ Failure Timeout Pass ]
 
+# Crashing a lot in GTK, not so much in WPE, but it did crash there too.
+webkit.org/b/257456 fast/mediastream/RTCRtpSender-outlives-RTCPeerConnection.html [ Pass Crash ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of WebRTC-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
