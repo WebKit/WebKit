@@ -452,7 +452,7 @@ bool MediaPlayerPrivateGStreamer::doSeek(const MediaTime& position, float rate)
     if (rate < 0) {
         startTime = MediaTime::zeroTime();
         // If we are at beginning of media, start from the end to avoid immediate EOS.
-        endTime = position < MediaTime::zeroTime() ? durationMediaTime() : position;
+        endTime = position <= MediaTime::zeroTime() ? durationMediaTime() : position;
     }
 
     if (!rate)
