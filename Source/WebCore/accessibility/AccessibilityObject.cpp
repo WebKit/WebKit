@@ -448,7 +448,7 @@ AccessibilityObject* AccessibilityObject::previousSiblingUnignored(int limit) co
 FloatRect AccessibilityObject::convertFrameToSpace(const FloatRect& frameRect, AccessibilityConversionSpace conversionSpace) const
 {
     ASSERT(isMainThread());
-    
+
     // Find the appropriate scroll view to use to convert the contents to the window.
     const auto parentAccessibilityScrollView = ancestorAccessibilityScrollView(false /* includeSelf */);
     auto* parentScrollView = parentAccessibilityScrollView ? parentAccessibilityScrollView->scrollView() : nullptr;

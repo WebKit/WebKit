@@ -89,6 +89,10 @@ This test ensures elements with CSS display: contents have the correct role.
     AXRole: AXList
     computedRoleString: list
 
+<li class="testcase" id="ul-li-element"></li>
+    AXRole: AXListItem
+    computedRoleString: listitem
+
 <nav class="testcase" id="nav"></nav>
     AXRole: AXLandmarkNavigation
     computedRoleString: navigation

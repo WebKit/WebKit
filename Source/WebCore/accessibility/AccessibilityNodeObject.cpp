@@ -215,8 +215,27 @@ AccessibilityObject* AccessibilityNodeObject::parentObject() const
     return nullptr;
 }
 
+LayoutRect AccessibilityNodeObject::checkboxOrRadioRect() const
+{
+    auto* label = labelForElement(dynamicDowncast<Element>(node()));
+    if (!label || !label->renderer())
+        return boundingBoxRect();
+
+    auto* cache = axObjectCache();
+    if (!cache)
+        return boundingBoxRect();
+
+    // A checkbox or radio button should encompass its label.
+    auto labelRect = cache->getOrCreate(label)->elementRect();
+    labelRect.unite(boundingBoxRect());
+    return labelRect;
+}
+
 LayoutRect AccessibilityNodeObject::elementRect() const
 {
+    if (isCheckboxOrRadio())
+        return checkboxOrRadioRect();
+
     return boundingBoxRect();
 }
 
@@ -260,6 +279,13 @@ Document* AccessibilityNodeObject::document() const
     if (!node())
         return nullptr;
     return &node()->document();
+}
+
+LocalFrameView* AccessibilityNodeObject::documentFrameView() const
+{
+    if (auto* node = this->node())
+        return node->document().view();
+    return AccessibilityObject::documentFrameView();
 }
 
 AccessibilityRole AccessibilityNodeObject::determineAccessibilityRole()
@@ -490,12 +516,12 @@ void AccessibilityNodeObject::addChildren()
 {
     // If the need to add more children in addition to existing children arises, 
     // childrenChanged should have been called, leaving the object with no children.
-    ASSERT(!m_childrenInitialized); 
+    ASSERT(!m_childrenInitialized);
     
-    if (!m_node)
-        return;
-
     m_childrenInitialized = true;
+
+    if (!canHaveChildren())
+        return;
 
     // The only time we add children from the DOM tree to a node with a renderer is when it's a canvas.
     if (renderer() && !node()->hasTagName(canvasTag))
@@ -507,22 +533,19 @@ void AccessibilityNodeObject::addChildren()
 
     for (auto* child = node()->firstChild(); child; child = child->nextSibling())
         addChild(objectCache->getOrCreate(child));
-    
+
     updateOwnedChildren();
     m_subtreeDirty = false;
 }
 
 bool AccessibilityNodeObject::canHaveChildren() const
 {
-    // If this is an AccessibilityRenderObject, then it's okay if this object
-    // doesn't have a node - there are some renderers that don't have associated
-    // nodes, like scroll areas and css-generated text.
-    if (!node() && !isAccessibilityRenderObject())
-        return false;
-
     // When <noscript> is not being used (its renderer() == 0), ignore its children.
     if (node() && !renderer() && node()->hasTagName(noscriptTag))
         return false;
+    // If this is an AccessibilityRenderObject, then it's okay if this object
+    // doesn't have a node - there are some renderers that don't have associated
+    // nodes, like scroll areas and css-generated text.
 
     // Elements that should not have children.
     switch (roleValue()) {
@@ -572,6 +595,8 @@ bool AccessibilityNodeObject::computeAccessibilityIsIgnored() const
     // it's been initialized.
     ASSERT(m_initialized);
 #endif
+    if (!node())
+        return true;
 
     // Handle non-rendered text that is exposed through aria-hidden=false.
     if (node() && node()->isTextNode() && !renderer()) {

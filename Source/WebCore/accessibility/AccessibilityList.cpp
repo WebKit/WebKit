@@ -46,11 +46,21 @@ AccessibilityList::AccessibilityList(RenderObject* renderer)
 {
 }
 
+AccessibilityList::AccessibilityList(Node& node)
+    : AccessibilityRenderObject(node)
+{
+}
+
 AccessibilityList::~AccessibilityList() = default;
 
 Ref<AccessibilityList> AccessibilityList::create(RenderObject* renderer)
 {
     return adoptRef(*new AccessibilityList(renderer));
+}
+
+Ref<AccessibilityList> AccessibilityList::create(Node& node)
+{
+    return adoptRef(*new AccessibilityList(node));
 }
 
 bool AccessibilityList::computeAccessibilityIsIgnored() const

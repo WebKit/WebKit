@@ -597,15 +597,20 @@ static bool isSimpleImage(const RenderObject& renderer)
     return true;
 }
 
+static bool isAccessibilityList(Node* node)
+{
+    // If the node is aria role="list" or the aria role is empty and it's a
+    // ul/ol/dl type (it shouldn't be a list if aria says otherwise).
+    return (node && ((nodeHasRole(node, "list"_s) || nodeHasRole(node, "directory"_s))
+        || (nodeHasRole(node, nullAtom()) && (node->hasTagName(ulTag) || node->hasTagName(olTag) || node->hasTagName(dlTag) || node->hasTagName(menuTag)))));
+}
+
 Ref<AccessibilityObject> AXObjectCache::createObjectFromRenderer(RenderObject* renderer)
 {
     // FIXME: How could renderer->node() ever not be an Element?
     Node* node = renderer->node();
 
-    // If the node is aria role="list" or the aria role is empty and its a
-    // menu/ul/ol/dl type (it shouldn't be a list if aria says otherwise).
-    if (node && ((nodeHasRole(node, "list"_s) || nodeHasRole(node, "directory"_s))
-        || (nodeHasRole(node, nullAtom()) && (node->hasTagName(menuTag) || node->hasTagName(ulTag) || node->hasTagName(olTag) || node->hasTagName(dlTag)))))
+    if (isAccessibilityList(node))
         return AccessibilityList::create(renderer);
 
     // aria tables
@@ -682,6 +687,8 @@ Ref<AccessibilityObject> AXObjectCache::createObjectFromRenderer(RenderObject* r
 
 static Ref<AccessibilityObject> createFromNode(Node& node)
 {
+    if (isAccessibilityList(&node))
+        return AccessibilityList::create(node);
     return AccessibilityNodeObject::create(node);
 }
 
@@ -742,7 +749,7 @@ AccessibilityObject* AXObjectCache::getOrCreate(Node* node)
 
     if (!node->parentElement())
         return nullptr;
-    
+
     bool isOptionElement = is<HTMLOptionElement>(*node);
     if (isOptionElement || is<HTMLOptGroupElement>(*node)) {
         auto select = isOptionElement
@@ -788,7 +795,7 @@ AccessibilityObject* AXObjectCache::getOrCreate(Node* node)
     // it will disappear when this function is finished, leading to a use-after-free.
     if (newObject->isDetached())
         return nullptr;
-    
+
     return newObject.get();
 }
 

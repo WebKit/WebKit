@@ -72,6 +72,9 @@ This test ensures elements with CSS display: contents have the correct role.
 <menu class="testcase" type="toolbar" id="menu-toolbar"></menu>
     List
 
+<li class="testcase" id="ul-li-element"></li>
+    ListItem
+
 <nav class="testcase" id="nav"></nav>
     LandmarkNavigation
 

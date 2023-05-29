@@ -132,6 +132,13 @@ AccessibilityRenderObject::AccessibilityRenderObject(RenderObject* renderer)
 #endif
 }
 
+AccessibilityRenderObject::AccessibilityRenderObject(Node& node)
+    : AccessibilityNodeObject(&node)
+{
+    // We should only ever create an instance of this class with a node if that node has no renderer (i.e. because of display:contents).
+    ASSERT(!node.renderer());
+}
+
 AccessibilityRenderObject::~AccessibilityRenderObject()
 {
     ASSERT(isDetached());
@@ -218,7 +225,7 @@ static inline RenderObject* lastChildConsideringContinuation(RenderObject& rende
 AccessibilityObject* AccessibilityRenderObject::firstChild() const
 {
     if (!m_renderer)
-        return nullptr;
+        return AccessibilityNodeObject::firstChild();
     
     RenderObject* firstChild = firstChildConsideringContinuation(*m_renderer);
 
@@ -236,7 +243,7 @@ AccessibilityObject* AccessibilityRenderObject::firstChild() const
 AccessibilityObject* AccessibilityRenderObject::lastChild() const
 {
     if (!m_renderer)
-        return nullptr;
+        return AccessibilityNodeObject::lastChild();
 
     RenderObject* lastChild = lastChildConsideringContinuation(*m_renderer);
 
@@ -313,7 +320,7 @@ static inline bool firstChildIsInlineContinuation(RenderElement& renderer)
 AccessibilityObject* AccessibilityRenderObject::previousSibling() const
 {
     if (!m_renderer)
-        return nullptr;
+        return AccessibilityNodeObject::previousSibling();
 
     RenderObject* previousSibling = nullptr;
 
@@ -360,7 +367,10 @@ static inline bool lastChildHasContinuation(RenderElement& renderer)
 
 AccessibilityObject* AccessibilityRenderObject::nextSibling() const
 {
-    if (!m_renderer || is<RenderView>(*m_renderer))
+    if (!m_renderer)
+        return AccessibilityNodeObject::nextSibling();
+
+    if (is<RenderView>(m_renderer))
         return nullptr;
 
     RenderObject* nextSibling = nullptr;
@@ -483,7 +493,7 @@ RenderObject* AccessibilityRenderObject::renderParentObject() const
         
     return parent;
 }
-    
+
 AccessibilityObject* AccessibilityRenderObject::parentObjectIfExists() const
 {
     AXObjectCache* cache = axObjectCache();
@@ -512,7 +522,7 @@ AccessibilityObject* AccessibilityRenderObject::parentObject() const
         return displayContentsParent;
 
     if (!m_renderer)
-        return nullptr;
+        return AccessibilityNodeObject::parentObject();
 
     WeakPtr cache = axObjectCache();
     if (!cache)
@@ -614,7 +624,7 @@ Element* AccessibilityRenderObject::anchorElement() const
 String AccessibilityRenderObject::helpText() const
 {
     if (!m_renderer)
-        return { };
+        return AccessibilityNodeObject::helpText();
 
     const auto& ariaHelp = getAttribute(aria_helpAttr);
     if (!ariaHelp.isEmpty())
@@ -651,7 +661,7 @@ String AccessibilityRenderObject::helpText() const
 String AccessibilityRenderObject::textUnderElement(AccessibilityTextUnderElementMode mode) const
 {
     if (!m_renderer)
-        return String();
+        return AccessibilityNodeObject::textUnderElement(mode);
 
     if (is<RenderFileUploadControl>(*m_renderer))
         return downcast<RenderFileUploadControl>(*m_renderer).buttonValue();
@@ -744,17 +754,15 @@ bool AccessibilityRenderObject::shouldGetTextFromNode(AccessibilityTextUnderElem
 
 Node* AccessibilityRenderObject::node() const
 {
-    if (!m_renderer)
-        return nullptr;
-    if (m_renderer->isRenderView())
-        return &m_renderer->document();
-    return m_renderer->node();
-}    
+    if (m_renderer)
+        return LIKELY(!m_renderer->isRenderView()) ? m_renderer->node() : &m_renderer->document();
+    return AccessibilityNodeObject::node();
+}
 
 String AccessibilityRenderObject::stringValue() const
 {
     if (!m_renderer)
-        return { };
+        return AccessibilityNodeObject::stringValue();
 
     if (isStaticText() || isTextControl() || isSecureField())
         return text();
@@ -826,7 +834,7 @@ LayoutRect AccessibilityRenderObject::boundingBoxRect() const
     RenderObject* obj = renderer();
     
     if (!obj)
-        return LayoutRect();
+        return AccessibilityNodeObject::boundingBoxRect();
     
     if (obj->node()) // If we are a continuation, we want to make sure to use the primary renderer.
         obj = obj->node()->renderer();
@@ -860,29 +868,6 @@ LayoutRect AccessibilityRenderObject::boundingBoxRect() const
     return result;
 }
     
-LayoutRect AccessibilityRenderObject::checkboxOrRadioRect() const
-{
-    if (!m_renderer)
-        return LayoutRect();
-    
-    HTMLLabelElement* label = labelForElement(downcast<Element>(m_renderer->node()));
-    if (!label || !label->renderer())
-        return boundingBoxRect();
-    
-    LayoutRect labelRect = axObjectCache()->getOrCreate(label)->elementRect();
-    labelRect.unite(boundingBoxRect());
-    return labelRect;
-}
-
-LayoutRect AccessibilityRenderObject::elementRect() const
-{
-    // a checkbox or radio button should encompass its label
-    if (isCheckboxOrRadio())
-        return checkboxOrRadioRect();
-    
-    return boundingBoxRect();
-}
-
 bool AccessibilityRenderObject::supportsPath() const
 {
     return is<RenderText>(renderer()) || (renderer() && renderer()->isSVGShapeOrLegacySVGShape());
@@ -1062,13 +1047,6 @@ static AccessibilityObjectInclusion objectInclusionFromAltText(const String& alt
     return AccessibilityObjectInclusion::DefaultBehavior;
 }
 
-AccessibilityObjectInclusion AccessibilityRenderObject::defaultObjectInclusion() const
-{
-    if (!m_renderer)
-        return AccessibilityObjectInclusion::IgnoreObject;
-    return AccessibilityNodeObject::defaultObjectInclusion();
-}
-    
 static bool webAreaIsPresentational(RenderObject* renderer)
 {
     if (!renderer || !is<RenderView>(*renderer))
@@ -1087,7 +1065,7 @@ bool AccessibilityRenderObject::computeAccessibilityIsIgnored() const
 #endif
 
     if (!m_renderer)
-        return true;
+        return AccessibilityNodeObject::computeAccessibilityIsIgnored();
 
     // Check first if any of the common reasons cause this element to be ignored.
     // Then process other use cases that need to be applied to all the various roles
@@ -1532,7 +1510,7 @@ RenderView* AccessibilityRenderObject::topRenderer() const
 Document* AccessibilityRenderObject::document() const
 {
     if (!m_renderer)
-        return nullptr;
+        return AccessibilityNodeObject::document();
     return &m_renderer->document();
 }
 
@@ -1606,9 +1584,8 @@ AXCoreObject::AccessibilityChildrenVector AccessibilityRenderObject::documentLin
 LocalFrameView* AccessibilityRenderObject::documentFrameView() const 
 { 
     if (!m_renderer)
-        return nullptr;
+        return AccessibilityNodeObject::documentFrameView();
 
-    // this is the RenderObject's Document's Frame's LocalFrameView
     return &m_renderer->view().frameView();
 }
 
@@ -2601,7 +2578,11 @@ void AccessibilityRenderObject::updateRoleAfterChildrenCreation()
     
 void AccessibilityRenderObject::addChildren()
 {
-    // If the need to add more children in addition to existing children arises, 
+    if (UNLIKELY(!renderer())) {
+        AccessibilityNodeObject::addChildren();
+        return;
+    }
+    // If the need to add more children in addition to existing children arises,
     // childrenChanged should have been called, leaving the object with no children.
     ASSERT(!m_childrenInitialized); 
 
@@ -2641,11 +2622,6 @@ void AccessibilityRenderObject::addChildren()
 
     m_subtreeDirty = false;
     updateRoleAfterChildrenCreation();
-}
-
-bool AccessibilityRenderObject::canHaveChildren() const
-{
-    return m_renderer && AccessibilityNodeObject::canHaveChildren();
 }
 
 void AccessibilityRenderObject::setAccessibleName(const AtomString& name)

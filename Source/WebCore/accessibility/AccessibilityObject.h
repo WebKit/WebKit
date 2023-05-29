@@ -259,7 +259,7 @@ public:
     virtual bool computeAccessibilityIsIgnored() const { return true; }
     bool accessibilityIsIgnored() const override;
     void recomputeIsIgnored();
-    virtual AccessibilityObjectInclusion defaultObjectInclusion() const;
+    AccessibilityObjectInclusion defaultObjectInclusion() const;
     bool accessibilityIsIgnoredByDefault() const;
 
     bool isShowingValidationMessage() const;

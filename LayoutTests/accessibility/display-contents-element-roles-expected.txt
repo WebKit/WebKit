@@ -51,6 +51,7 @@ This test ensures elements with CSS display: contents have the correct role.
 
 <dl class="testcase" id="dl"></dl>
     AXRole: AXList
+    AXSubrole: AXDescriptionList
 
 <dt class="testcase" id="dt"></dt>
     AXRole: AXGroup
@@ -102,6 +103,11 @@ This test ensures elements with CSS display: contents have the correct role.
 <menu class="testcase" type="toolbar" id="menu-toolbar"></menu>
     AXRole: AXList
     computedRoleString: list
+    AXSubrole: AXContentList
+
+<li class="testcase" id="ul-li-element"></li>
+    AXRole: AXGroup
+    computedRoleString: listitem
 
 <nav class="testcase" id="nav"></nav>
     AXRole: AXGroup
@@ -111,6 +117,7 @@ This test ensures elements with CSS display: contents have the correct role.
 <ol class="testcase" id="ol"></ol>
     AXRole: AXList
     computedRoleString: list
+    AXSubrole: AXContentList
 
 <li class="testcase" id="ol-li-element"></li>
     AXRole: AXGroup
@@ -155,6 +162,7 @@ This test ensures elements with CSS display: contents have the correct role.
 <ul class="testcase" id="ul"></ul>
     AXRole: AXList
     computedRoleString: list
+    AXSubrole: AXContentList
 
 <li class="testcase" id="ul-li-element"></li>
     AXRole: AXGroup

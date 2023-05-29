@@ -67,9 +67,6 @@ public:
     bool hasUnderline() const override;
 
     void setAccessibleName(const AtomString&) override;
-
-    // Provides common logic used by all elements when determining isIgnored.
-    AccessibilityObjectInclusion defaultObjectInclusion() const override;
     
     int layoutCount() const override;
     
@@ -88,17 +85,14 @@ public:
     Element* anchorElement() const override;
     
     LayoutRect boundingBoxRect() const override;
-    LayoutRect elementRect() const override;
 
     RenderObject* renderer() const override { return m_renderer.get(); }
     RenderBoxModelObject* renderBoxModelObject() const;
     Node* node() const override;
 
     Document* document() const override;
-
     RenderView* topRenderer() const;
-    RenderTextControl* textControl() const;
-    
+
     URL url() const override;
     CharacterRange selectedTextRange() const override;
     int insertionPointLineNumber() const override;
@@ -117,7 +111,6 @@ public:
     bool setValue(const String&) override;
 
     void addChildren() override;
-    bool canHaveChildren() const override;
 
     VisiblePositionRange visiblePositionRange() const override;
     VisiblePositionRange visiblePositionRangeForLine(unsigned) const override;
@@ -145,11 +138,12 @@ public:
 
 protected:
     explicit AccessibilityRenderObject(RenderObject*);
+    explicit AccessibilityRenderObject(Node&);
     void detachRemoteParts(AccessibilityDetachmentType) override;
     ScrollableArea* getScrollableAreaIfScrollable() const override;
     void scrollTo(const IntPoint&) const override;
     
-    bool isDetached() const override { return !m_renderer; }
+    bool isDetached() const final { return !m_renderer && AccessibilityNodeObject::isDetached(); }
 
     bool shouldIgnoreAttributeRole() const override;
     AccessibilityRole determineAccessibilityRole() override;
@@ -169,7 +163,6 @@ private:
     bool nodeIsTextControl(const Node*) const;
     Path elementPath() const override;
     
-    LayoutRect checkboxOrRadioRect() const;
     AXCoreObject* accessibilityImageMapHitTest(HTMLAreaElement*, const IntPoint&) const;
     AccessibilityObject* accessibilityParentForImageMap(HTMLMapElement*) const;
     AXCoreObject* elementAccessibilityHitTest(const IntPoint&) const override;
