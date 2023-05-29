@@ -27,6 +27,7 @@
 #include "WGSL.h"
 
 #include "CallGraph.h"
+#include "ConstantRewriter.h"
 #include "EntryPointRewriter.h"
 #include "GlobalVariableRewriter.h"
 #include "MangleNames.h"
@@ -76,6 +77,10 @@ std::variant<SuccessfulCheck, FailedCheck> staticCheck(const String& wgsl, const
 
     // FIXME: add more validation
     auto maybeFailure = typeCheck(shaderModule);
+    if (maybeFailure.has_value())
+        return *maybeFailure;
+
+    maybeFailure = rewriteConstants(shaderModule);
     if (maybeFailure.has_value())
         return *maybeFailure;
 

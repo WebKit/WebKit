@@ -239,8 +239,7 @@ auto RewriteGlobalVariables::determineUsedGlobals(PipelineLayout& pipelineLayout
             }
             break;
         case AST::VariableFlavor::Const:
-            // Constants must be resolved at an earlier phase
-            RELEASE_ASSERT_NOT_REACHED();
+            continue;
         }
 
         auto group = global.resource->group;
