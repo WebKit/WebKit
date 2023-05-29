@@ -1,4 +1,17 @@
 ================
+WebKitGTK 2.40.2
+================
+
+What's new in WebKitGTK 2.40.2?
+
+  - Fix scrollbar jumping to top when drag released outside window in GTK4.
+  - Fix video rendering when GL is disabled.
+  - Fix flickering on looped videos when starting again.
+  - Fix CPU usage on autoplaying videos.
+  - Choose amount of painting threads depending on available CPU cores on GTK4.
+  - Fix several crashes and rendering issues.
+
+================
 WebKitGTK 2.40.1
 ================
 
