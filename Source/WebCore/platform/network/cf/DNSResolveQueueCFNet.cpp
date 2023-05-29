@@ -83,10 +83,13 @@ public:
 
         if (error)
             m_completionHandler(makeUnexpected(*error));
-        else if (m_addresses.isEmpty())
+        else if (m_addresses.isEmpty()) {
+            ASSERT(receivedIPv4AndIPv6());
             m_completionHandler(makeUnexpected(WebCore::DNSError::CannotResolve));
-        else
+        } else {
+            ASSERT(receivedIPv4AndIPv6());
             m_completionHandler(std::exchange(m_addresses, { }));
+        }
 
         // This is currently necessary to prevent unbounded growth of m_pendingRequests.
         // FIXME: NetworkRTCProvider::CreateResolver should use sendWithAsyncReply, and there's
@@ -95,7 +98,15 @@ public:
             stopResolveDNS(*m_identifier);
     }
 
-    void addIPAddress(IPAddress&& address) { m_addresses.append(WTFMove(address)); }
+    void addIPAddress(IPAddress&& address)
+    {
+        m_hasReceivedIPv4 |= address.isIPv4();
+        m_hasReceivedIPv6 |= address.isIPv6();
+        if (!address.isAllZeros())
+            m_addresses.append(WTFMove(address));
+    }
+
+    bool receivedIPv4AndIPv6() const { return m_hasReceivedIPv4 && m_hasReceivedIPv6; }
 
 private:
     CompletionHandlerWrapper(DNSCompletionHandler&& completionHandler, std::optional<uint64_t> identifier)
@@ -105,6 +116,8 @@ private:
     DNSCompletionHandler m_completionHandler;
     Vector<IPAddress> m_addresses;
     std::optional<uint64_t> m_identifier;
+    bool m_hasReceivedIPv4 { false };
+    bool m_hasReceivedIPv6 { false };
 };
 
 static std::optional<IPAddress> extractIPAddress(const struct sockaddr* address)
@@ -133,13 +146,13 @@ static void dnsLookupCallback(DNSServiceRef serviceRef, DNSServiceFlags flags, u
     };
     auto service = std::unique_ptr<_DNSServiceRef_t, DNSServiceDeallocator>(serviceRef);
 
-    if (errorCode != kDNSServiceErr_NoError)
+    if (errorCode != kDNSServiceErr_NoError && errorCode != kDNSServiceErr_NoSuchRecord)
         return wrapper->complete(WebCore::DNSError::Unknown);
 
     if (auto ipAddress = extractIPAddress(address))
         wrapper->addIPAddress(WTFMove(*ipAddress));
 
-    if (flags & kDNSServiceFlagsMoreComing) {
+    if (flags & kDNSServiceFlagsMoreComing || !wrapper->receivedIPv4AndIPv6()) {
         // These will be adopted again by a future callback.
         UNUSED_VARIABLE(wrapper.leakRef());
         service.release();
@@ -152,7 +165,7 @@ void DNSResolveQueueCFNet::performDNSLookup(const String& hostname, Ref<Completi
 {
     ASSERT(isMainThread());
     DNSServiceRef service { nullptr };
-    DNSServiceErrorType result = DNSServiceGetAddrInfo(&service, 0, kDNSServiceInterfaceIndexAny, 0, hostname.utf8().data(), dnsLookupCallback, &wrapper.leakRef());
+    DNSServiceErrorType result = DNSServiceGetAddrInfo(&service, kDNSServiceFlagsReturnIntermediates, kDNSServiceInterfaceIndexAny, kDNSServiceProtocol_IPv4 | kDNSServiceProtocol_IPv6, hostname.utf8().data(), dnsLookupCallback, &wrapper.leakRef());
     if (result != kDNSServiceErr_NoError) {
         ASSERT(!service);
         return wrapper->complete(DNSError::CannotResolve);

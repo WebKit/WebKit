@@ -60,6 +60,22 @@ void stopResolveDNS(uint64_t identifier)
     WebCore::DNSResolveQueue::singleton().stopResolve(identifier);
 }
 
+bool IPAddress::isAllZeros() const
+{
+    return std::visit(WTF::makeVisitor([] (const WTF::HashTableEmptyValueType&) {
+        ASSERT_NOT_REACHED();
+        return false;
+    }, [] (const in_addr& address) {
+        return !address.s_addr;
+    }, [] (const in6_addr& address) {
+        for (uint8_t byte : address.s6_addr) {
+            if (byte)
+                return false;
+        }
+        return true;
+    }), m_address);
+}
+
 std::optional<IPAddress> IPAddress::fromString(const String& string)
 {
 #if OS(UNIX)
