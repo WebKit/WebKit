@@ -298,6 +298,8 @@ void GraphicsContextGLGBM::allocateDrawBufferObject()
             .height = std::clamp<uint32_t>(size.height(), 0, UINT_MAX),
             .flags = GBMBufferSwapchain::BufferDescription::NoFlags,
         });
+    if (!m_swapchain.drawBO)
+        return;
 
     GLenum textureTarget = drawingBufferTextureTarget();
     ScopedRestoreTextureBinding restoreBinding(drawingBufferTextureTargetQueryForDrawingTarget(textureTarget), textureTarget, textureTarget != TEXTURE_RECTANGLE_ARB);
