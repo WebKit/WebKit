@@ -56,10 +56,6 @@
 #import "CodeSigning.h"
 #endif
 
-#if __has_include(<WebKitAdditions/InternalBuildAdditions.h>)
-#include <WebKitAdditions/InternalBuildAdditions.h>
-#endif
-
 namespace WebKit {
 
 static const char* webContentServiceName(const ProcessLauncher::LaunchOptions& launchOptions, ProcessLauncher::Client* client)
@@ -189,10 +185,6 @@ void ProcessLauncher::launchProcess()
 
     if (m_launchOptions.processType == ProcessLauncher::ProcessType::Web) {
         bool disableLogging = true;
-#if __has_include(<WebKitAdditions/InternalBuildAdditions.h>)
-        if (isInternalBuild())
-            disableLogging = false;
-#endif
         xpc_dictionary_set_bool(bootstrapMessage.get(), "disable-logging", disableLogging);
     }
 
