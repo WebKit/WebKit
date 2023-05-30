@@ -289,16 +289,22 @@ void RenderTextControlSingleLine::styleDidChange(StyleDifference diff, const Ren
 
 bool RenderTextControlSingleLine::hasControlClip() const
 {
-    // Apply control clip for text fields with decorations.
-    return !!containerElement();
+    auto shouldClipInnerContent = [&] {
+        // Apply control clip for text fields with decorations.
+        auto* innerElement = inputElement().containerElement();
+        if (!innerElement)
+            innerElement = inputElement().placeholderElement();
+        return innerElement && innerElement->renderBox();
+    };
+    return shouldClipInnerContent();
 }
 
 LayoutRect RenderTextControlSingleLine::controlClipRect(const LayoutPoint& additionalOffset) const
 {
     ASSERT(hasControlClip());
-    LayoutRect clipRect = contentBoxRect();
-    if (containerElement()->renderBox())
-        clipRect = unionRect(clipRect, containerElement()->renderBox()->frameRect());
+    auto clipRect = contentBoxRect();
+    if (auto* containerElementRenderer = containerElement() ? containerElement()->renderBox() : nullptr)
+        clipRect = unionRect(clipRect, containerElementRenderer->frameRect());
     clipRect.moveBy(additionalOffset);
     return clipRect;
 }
