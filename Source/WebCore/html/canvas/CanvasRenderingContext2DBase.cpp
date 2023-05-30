@@ -1677,6 +1677,7 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(CanvasBase& sourceCanv
     if (!state().hasInvertibleTransform)
         return { };
 
+    Ref protectedCanvas { sourceCanvas };
     // FIXME: Do this through platform-independent GraphicsContext API.
     ImageBuffer* buffer = sourceCanvas.buffer();
     if (!buffer)

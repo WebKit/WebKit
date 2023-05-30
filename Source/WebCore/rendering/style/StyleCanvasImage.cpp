@@ -77,7 +77,7 @@ RefPtr<Image> StyleCanvasImage::image(const RenderElement* renderer, const Float
         return &Image::nullImage();
 
     ASSERT(clients().contains(const_cast<RenderElement*>(renderer)));
-    auto* element = this->element(renderer->document());
+    RefPtr element = this->element(renderer->document());
     if (!element || !element->buffer())
         return nullptr;
     return element->copiedImage();

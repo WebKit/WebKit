@@ -142,6 +142,9 @@ public:
 #endif
     WEBCORE_EXPORT void setAvoidIOSurfaceSizeCheckInWebProcessForTesting();
 
+    using HTMLElement::ref;
+    using HTMLElement::deref;
+
 private:
     HTMLCanvasElement(const QualifiedName&, Document&);
 

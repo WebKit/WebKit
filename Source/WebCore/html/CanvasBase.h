@@ -60,6 +60,8 @@ public:
 
     virtual void refCanvasBase() = 0;
     virtual void derefCanvasBase() = 0;
+    void ref() { refCanvasBase(); }
+    void deref() { derefCanvasBase(); }
 
     virtual bool isHTMLCanvasElement() const { return false; }
     virtual bool isOffscreenCanvas() const { return false; }

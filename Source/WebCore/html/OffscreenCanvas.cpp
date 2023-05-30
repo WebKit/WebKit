@@ -111,9 +111,9 @@ Ref<OffscreenCanvas> OffscreenCanvas::create(ScriptExecutionContext& scriptExecu
         clone->setOriginTainted();
 
     callOnMainThread([detachedCanvas = WTFMove(detachedCanvas), placeholderData = Ref { *clone->m_placeholderData }] () mutable {
-        placeholderData->canvas = detachedCanvas->takePlaceholderCanvas();
-        if (placeholderData->canvas) {
-            auto& placeholderContext = downcast<PlaceholderRenderingContext>(*placeholderData->canvas->renderingContext());
+        if (RefPtr canvas = detachedCanvas->takePlaceholderCanvas().get()) {
+            placeholderData->canvas = canvas;
+            auto& placeholderContext = downcast<PlaceholderRenderingContext>(*canvas->renderingContext());
             auto& imageBufferPipe = placeholderContext.imageBufferPipe();
             if (imageBufferPipe)
                 placeholderData->bufferPipeSource = imageBufferPipe->source();
@@ -471,6 +471,7 @@ void OffscreenCanvas::setPlaceholderCanvas(HTMLCanvasElement& canvas)
 {
     ASSERT(!m_context);
     ASSERT(isMainThread());
+    Ref protectedCanvas { canvas };
     m_placeholderData->canvas = canvas;
     auto& placeholderContext = downcast<PlaceholderRenderingContext>(*canvas.renderingContext());
     auto& imageBufferPipe = placeholderContext.imageBufferPipe();
@@ -482,10 +483,12 @@ void OffscreenCanvas::pushBufferToPlaceholder()
 {
     callOnMainThread([placeholderData = Ref { *m_placeholderData }] () mutable {
         Locker locker { placeholderData->bufferLock };
-        if (placeholderData->canvas && placeholderData->canvas->document().page() && placeholderData->pendingCommitBuffer) {
-            GraphicsClient& client = placeholderData->canvas->document().page()->chrome();
-            auto imageBuffer = client.sinkIntoImageBuffer(WTFMove(placeholderData->pendingCommitBuffer));
-            placeholderData->canvas->setImageBufferAndMarkDirty(WTFMove(imageBuffer));
+        if (RefPtr canvas = placeholderData->canvas.get()) {
+            if (canvas->document().page() && placeholderData->pendingCommitBuffer) {
+                GraphicsClient& client = canvas->document().page()->chrome();
+                auto imageBuffer = client.sinkIntoImageBuffer(WTFMove(placeholderData->pendingCommitBuffer));
+                canvas->setImageBufferAndMarkDirty(WTFMove(imageBuffer));
+            }
         }
         placeholderData->pendingCommitBuffer = nullptr;
     });
