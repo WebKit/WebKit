@@ -174,6 +174,25 @@
       srcY += srcYStride * _cropY + _cropX;
       srcUV += srcUVStride * (_cropY / 2) + _cropX;
 
+#if defined(WEBRTC_WEBKIT_BUILD)
+      auto srcWidthY = CVPixelBufferGetWidthOfPlane(_pixelBuffer, 0);
+      auto srcHeightY = CVPixelBufferGetHeightOfPlane(_pixelBuffer, 0);
+      auto srcWidthUV = CVPixelBufferGetWidthOfPlane(_pixelBuffer, 1);
+      auto srcHeightUV = CVPixelBufferGetHeightOfPlane(_pixelBuffer, 1);
+
+      auto destWidthY = i420Buffer.width;
+      auto destHeightY = i420Buffer.height;
+      auto destWidthUV = i420Buffer.chromaWidth;
+      auto destHeightUV = i420Buffer.chromaHeight;
+
+      RTC_DCHECK(srcWidthUV && srcWidthUV == destWidthUV && srcHeightUV && srcHeightUV == destHeightUV && srcWidthY == destWidthY && srcHeightY == destHeightY);
+      if (![self requiresCropping] && (!srcWidthUV || srcWidthUV != destWidthUV || !srcHeightUV || srcHeightUV != destHeightUV || srcWidthY != destWidthY || srcHeightY != destHeightY)) {
+        RTC_LOG(LS_ERROR) << "RTCI420Buffer toI420 bad size: " << srcWidthY << " x " << srcHeightY;
+        CVPixelBufferUnlockBaseAddress(_pixelBuffer, kCVPixelBufferLock_ReadOnly);
+        return nullptr;
+      }
+#endif // defined(WEBRTC_WEBKIT_BUILD)
+
       // TODO(magjed): Use a frame buffer pool.
       webrtc::NV12ToI420Scaler nv12ToI420Scaler;
       nv12ToI420Scaler.NV12ToI420Scale(srcY,
