@@ -872,7 +872,8 @@ bool RenderBox::fixedElementLaysOutRelativeToFrame(const LocalFrameView& frameVi
 bool RenderBox::includeVerticalScrollbarSize() const
 {
     return hasNonVisibleOverflow() && layer() && !layer()->hasOverlayScrollbars()
-        && (style().overflowY() == Overflow::Scroll || style().overflowY() == Overflow::Auto);
+        && (style().overflowY() == Overflow::Scroll || style().overflowY() == Overflow::Auto
+            || (style().overflowY() == Overflow::Hidden && !style().scrollbarGutter().isAuto));
 }
 
 bool RenderBox::includeHorizontalScrollbarSize() const

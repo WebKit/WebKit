@@ -972,9 +972,15 @@ bool RenderLayerScrollableArea::hasScrollableOrRubberbandableAncestor()
 
 int RenderLayerScrollableArea::verticalScrollbarWidth(OverlayScrollbarSizeRelevancy relevancy) const
 {
-    if (!m_vBar
-        || !showsOverflowControls()
-        || (m_vBar->isOverlayScrollbar() && (relevancy == IgnoreOverlayScrollbarSize || !m_vBar->shouldParticipateInHitTesting())))
+    if (m_vBar && m_vBar->isOverlayScrollbar() && (relevancy == IgnoreOverlayScrollbarSize || !m_vBar->shouldParticipateInHitTesting()))
+        return 0;
+
+    if (!m_vBar && m_layer.renderBox() && !(m_layer.renderer().style().scrollbarGutter().isAuto
+        || ScrollbarTheme::theme().usesOverlayScrollbars())) {
+        return ScrollbarTheme::theme().scrollbarThickness(scrollbarWidthStyle());
+    }
+
+    if (!m_vBar || !showsOverflowControls())
         return 0;
 
     return m_vBar->width();

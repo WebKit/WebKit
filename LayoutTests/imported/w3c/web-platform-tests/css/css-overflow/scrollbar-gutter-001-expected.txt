@@ -1,0 +1,32 @@
+auto/auto
+scroll/auto
+visible/auto
+hidden/auto
+clip/auto
+auto/stable
+scroll/stable
+visible/stable
+hidden/stable
+clip/stable
+auto/stable both-edges
+scroll/stable both-edges
+visible/stable both-edges
+hidden/stable both-edges
+clip/stable both-edges
+
+PASS overflow auto, scrollbar-gutter auto
+PASS overflow scroll, scrollbar-gutter auto
+PASS overflow visible, scrollbar-gutter auto
+PASS overflow hidden, scrollbar-gutter auto
+PASS overflow clip, scrollbar-gutter auto
+PASS overflow auto, scrollbar-gutter stable
+PASS overflow scroll, scrollbar-gutter stable
+PASS overflow visible, scrollbar-gutter stable
+PASS overflow hidden, scrollbar-gutter stable
+PASS overflow clip, scrollbar-gutter stable
+FAIL overflow auto, scrollbar-gutter stable both-edges assert_less_than: content position expected a number less than 18 but got 18
+FAIL overflow scroll, scrollbar-gutter stable both-edges assert_less_than: content position expected a number less than 238 but got 238
+PASS overflow visible, scrollbar-gutter stable both-edges
+FAIL overflow hidden, scrollbar-gutter stable both-edges assert_less_than: content position expected a number less than 678 but got 678
+PASS overflow clip, scrollbar-gutter stable both-edges
+

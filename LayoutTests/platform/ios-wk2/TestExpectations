@@ -2416,6 +2416,27 @@ imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-width-007.html [ Sk
 imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-width-008.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-width-009.html [ Skip ]
 
+# Skipping scrollbar-gutter tests that don't work with overlay scrollbars
+imported/w3c/web-platform-tests/css/css-overflow/overflow-auto-scrollbar-gutter-intrinsic-001.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-overflow/overflow-auto-scrollbar-gutter-intrinsic-002.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-overflow/overflow-auto-scrollbar-gutter-intrinsic-003.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-overflow/scrollbar-gutter-dynamic-001.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-overflow/scrollbar-gutter-rtl-001.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-overflow/scrollbar-gutter-rtl-002.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-overflow/scrollbar-gutter-vertical-lr-001.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-overflow/scrollbar-gutter-vertical-lr-002.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-overflow/scrollbar-gutter-vertical-rl-001.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-overflow/scrollbar-gutter-vertical-rl-002.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-overflow/scrollbar-gutter-001.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-overflow/scrollbar-gutter-002.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-overflow/scrollbar-gutter-propagation-001.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-overflow/scrollbar-gutter-propagation-002.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-overflow/scrollbar-gutter-propagation-003.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-overflow/scrollbar-gutter-propagation-004.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-overflow/scrollbar-gutter-propagation-005.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-overflow/scrollbar-gutter-propagation-006.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-overflow/scrollbar-gutter-propagation-007.html [ Skip ]
+
 # Trailing space/text alignment iOS-specific WPT failures
 webkit.org/b/257182 imported/w3c/web-platform-tests/css/css-text/white-space/trailing-space-and-text-alignment-001.html [ ImageOnlyFailure ]
 webkit.org/b/257182 imported/w3c/web-platform-tests/css/css-text/white-space/trailing-space-and-text-alignment-005.html [ ImageOnlyFailure ]
