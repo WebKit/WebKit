@@ -963,8 +963,8 @@ private:
 
     private:
         unsigned m_positionedState : 2; // PositionedState
-        unsigned m_selectionState : 3; // SelectionState
-        unsigned m_fragmentedFlowState : 2; // FragmentedFlowState
+        unsigned m_selectionState : 3; // HighlightState
+        unsigned m_fragmentedFlowState : 1; // FragmentedFlowState
         unsigned m_boxDecorationState : 2; // BoxDecorationState
 
     public:

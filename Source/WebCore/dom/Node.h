@@ -250,6 +250,9 @@ public:
     HTMLSlotElement* manuallyAssignedSlot() const;
     void setManuallyAssignedSlot(HTMLSlotElement*);
 
+    bool hasEverPaintedImages() const;
+    void setHasEverPaintedImages(bool);
+
     bool isUncustomizedCustomElement() const { return customElementState() == CustomElementState::Uncustomized; }
     bool isCustomElementUpgradeCandidate() const { return customElementState() == CustomElementState::Undefined; }
     bool isDefinedCustomElement() const { return customElementState() == CustomElementState::Custom; }

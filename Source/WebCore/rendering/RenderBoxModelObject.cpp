@@ -322,37 +322,39 @@ DecodingMode RenderBoxModelObject::decodingModeForImageDraw(const Image& image, 
     // A PaintBehavior may force synchronous decoding.
     if (paintInfo.paintBehavior.contains(PaintBehavior::Snapshotting))
         return DecodingMode::Synchronous;
-    if (paintInfo.paintBehavior.contains(PaintBehavior::ForceSynchronousImageDecode))
-        return DecodingMode::Synchronous;
 
-    // <img decoding="sync"> forces synchronous decoding.
+    auto isFlickeringPossible = [&]() -> bool {
+        // Not first paint, so we have to avoid flickering anyway.
+        if (!(element() && element()->hasEverPaintedImages()))
+            return false;
+
+        // FIXME: isVisibleInViewport() is not cheap. Find a way to make this statement faster.
+        return isVisibleInViewport();
+    };
+
     if (is<HTMLImageElement>(element())) {
+        // <img decoding="sync"> forces synchronous decoding.
         if (downcast<HTMLImageElement>(*element()).decodingMode() == DecodingMode::Synchronous)
             return DecodingMode::Synchronous;
+
+        // <img decoding="async"> forces asynchronous decoding but make sure either
+        // the element has not been painted yet or it is outside the viewport.
+        if (downcast<HTMLImageElement>(*element()).decodingMode() == DecodingMode::Asynchronous)
+            return isFlickeringPossible() ? DecodingMode::Synchronous : DecodingMode::Asynchronous;
     }
 
-    // Layout tests may force asynchronous decoding.
-    if (bitmapImage.isLargeImageAsyncDecodingEnabledForTesting())
-        return DecodingMode::Asynchronous;
+    if (!bitmapImage.canUseAsyncDecodingForLargeImages())
+        return DecodingMode::Synchronous;
+
+    // The preference largeImageAsyncDecodingEnabled or WKR may force asynchronous decoding.
+    if (!(settings().largeImageAsyncDecodingEnabled() || bitmapImage.isLargeImageAsyncDecodingEnabledForTesting()))
+        return DecodingMode::Synchronous;
 
     // Not first paint, so we have to avoid flickering anyway.
-    if (!paintInfo.paintBehavior.contains(PaintBehavior::DefaultAsynchronousImageDecode)) {
-        // FIXME: isVisibleInViewport() is not cheap. Find a way to make this condition faster.
-        if (isVisibleInViewport())
-            return DecodingMode::Synchronous;
-    }
+    if (isFlickeringPossible())
+        return DecodingMode::Synchronous;
 
-    // <img decoding="async"> forces asynchronous decoding.
-    if (is<HTMLImageElement>(element())) {
-        if (downcast<HTMLImageElement>(*element()).decodingMode() == DecodingMode::Asynchronous)
-            return DecodingMode::Asynchronous;
-    }
-
-    // Resepect the web preferences key: largeImageAsyncDecodingEnabled.
-    if (settings().largeImageAsyncDecodingEnabled() && bitmapImage.canUseAsyncDecodingForLargeImages())
-        return DecodingMode::Asynchronous;
-
-    return DecodingMode::Synchronous;
+    return DecodingMode::Asynchronous;
 }
 
 LayoutSize RenderBoxModelObject::relativePositionOffset() const

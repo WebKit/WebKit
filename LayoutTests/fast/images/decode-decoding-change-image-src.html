@@ -4,16 +4,22 @@
     <script>
         if (window.internals && window.testRunner) {
             internals.clearMemoryCache();
+            internals.settings.setWebkitImageReadyEventEnabled(true);
+            internals.settings.setLargeImageAsyncDecodingEnabled(true);
             testRunner.waitUntilDone();
         }
 
         function setImageSrc() {
             var image = document.getElementById("image");
             image.onload = (() => {
+                if (window.internals && window.testRunner) {
+                    image.addEventListener("webkitImageFrameReady", function() {
+                        testRunner.notifyDone();
+                    }, false);
+                }
+
                 // Force layout and display so the image frame starts decoding.
                 document.body.offsetHeight;
-                if (window.testRunner)
-                    testRunner.notifyDone();
             });
             image.src = "resources/green-400x400.png";
         }
