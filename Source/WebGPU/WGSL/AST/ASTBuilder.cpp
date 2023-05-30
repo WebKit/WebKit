@@ -79,6 +79,7 @@ void Builder::restore(State&& state)
 {
     for (size_t i = state.m_numberOfNodes; i < m_nodes.size(); ++i)
         m_nodes[i]->~Node();
+    m_nodes.shrink(state.m_numberOfNodes);
     m_arena = state.m_arena;
     m_arenas.shrink(state.m_numberOfArenas);
     m_arenaEnd = m_arenas.last().get() + arenaSize;
