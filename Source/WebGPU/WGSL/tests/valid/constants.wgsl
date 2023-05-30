@@ -28,3 +28,12 @@ fn testLiteralConstants()
         _ = sqrt(x);
     }
 }
+
+fn testArrayConstants() -> i32
+{
+    if (false) {
+        const a = array(0, 0, 0);
+        return a[0];
+    }
+    return 0;
+}

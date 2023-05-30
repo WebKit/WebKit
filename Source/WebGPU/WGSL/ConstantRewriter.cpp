@@ -33,6 +33,7 @@
 #include "Types.h"
 #include "WGSLShaderModule.h"
 #include <wtf/DataLog.h>
+#include <wtf/FixedVector.h>
 
 namespace WGSL {
 
@@ -44,11 +45,31 @@ constexpr bool shouldDumpConstantValues = false;
 // - a matrix
 // - a fixed-size array type
 // - a structure
-using BaseValue = std::variant<double, int64_t, bool>;
+struct ConstantValue;
+
+struct ConstantArray {
+    ConstantArray(size_t size)
+        : elements(size)
+    {
+    }
+
+    FixedVector<ConstantValue> elements;
+};
+
+using BaseValue = std::variant<double, int64_t, bool, ConstantArray>;
 struct ConstantValue : BaseValue {
-    using BaseValue::BaseValue;
+    ConstantValue() = default;
+
+    template<typename T>
+    ConstantValue(const Type* type, T&& value)
+        : BaseValue(std::forward<T>(value))
+        , type(type)
+    {
+    }
 
     void dump(PrintStream&) const;
+
+    const Type* type;
 };
 
 void ConstantValue::dump(PrintStream& out) const
@@ -62,6 +83,17 @@ void ConstantValue::dump(PrintStream& out) const
         },
         [&](bool b) {
             out.print(b ? "true" : "false");
+        },
+        [&](const ConstantArray& a) {
+            out.print("array(");
+            bool first = true;
+            for (const auto& element : a.elements) {
+                if (!first)
+                    out.print(", ");
+                first = false;
+                out.print(element);
+            }
+            out.print(")");
         });
 }
 
@@ -87,8 +119,10 @@ private:
 
     ConstantValue evaluate(AST::Expression&);
     ConstantValue evaluate(AST::IdentifierExpression&);
+    ConstantValue evaluate(AST::CallExpression&);
 
-    void materialize(AST::Expression&, ConstantValue);
+    void materialize(AST::Expression&, const ConstantValue&);
+    AST::Expression& materialize(const ConstantValue&);
 
     ShaderModule& m_shaderModule;
     Vector<Error> m_errors;
@@ -159,34 +193,31 @@ void ConstantRewriter::visit(AST::IdentifierExpression& identifier)
 // Private helpers
 ConstantValue ConstantRewriter::evaluate(AST::Expression& expression)
 {
-    ConstantValue result;
-    switch (expression.kind()) {
-    case AST::NodeKind::AbstractFloatLiteral:
-        result = downcast<AST::AbstractFloatLiteral>(expression).value();
-        break;
-    case AST::NodeKind::AbstractIntegerLiteral:
-        result = downcast<AST::AbstractIntegerLiteral>(expression).value();
-        break;
-    case AST::NodeKind::Float32Literal:
-        result = downcast<AST::Float32Literal>(expression).value();
-        break;
-    case AST::NodeKind::Signed32Literal:
-        result = downcast<AST::Signed32Literal>(expression).value();
-        break;
-    case AST::NodeKind::Unsigned32Literal:
-        result = downcast<AST::Unsigned32Literal>(expression).value();
-        break;
-    case AST::NodeKind::BoolLiteral:
-        result = downcast<AST::BoolLiteral>(expression).value();
-        break;
+    ConstantValue result = [&] {
+        switch (expression.kind()) {
+        case AST::NodeKind::AbstractFloatLiteral:
+            return ConstantValue(expression.inferredType(), downcast<AST::AbstractFloatLiteral>(expression).value());
+        case AST::NodeKind::AbstractIntegerLiteral:
+            return ConstantValue(expression.inferredType(), downcast<AST::AbstractIntegerLiteral>(expression).value());
+        case AST::NodeKind::Float32Literal:
+            return ConstantValue(expression.inferredType(), downcast<AST::Float32Literal>(expression).value());
+        case AST::NodeKind::Signed32Literal:
+            return ConstantValue(expression.inferredType(), downcast<AST::Signed32Literal>(expression).value());
+        case AST::NodeKind::Unsigned32Literal:
+            return ConstantValue(expression.inferredType(), downcast<AST::Unsigned32Literal>(expression).value());
+        case AST::NodeKind::BoolLiteral:
+            return ConstantValue(expression.inferredType(), downcast<AST::BoolLiteral>(expression).value());
 
-    case AST::NodeKind::IdentifierExpression:
-        result = evaluate(downcast<AST::IdentifierExpression>(expression));
-        break;
+        case AST::NodeKind::IdentifierExpression:
+            return evaluate(downcast<AST::IdentifierExpression>(expression));
 
-    default:
-        ASSERT_NOT_REACHED("Unhandled Expression");
-    }
+        case AST::NodeKind::CallExpression:
+            return evaluate(downcast<AST::CallExpression>(expression));
+
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+    }();
 
     if (shouldDumpConstantValues) {
         dataLog("> Evaluated expression: ");
@@ -205,34 +236,49 @@ ConstantValue ConstantRewriter::evaluate(AST::IdentifierExpression& identifier)
     return *value;
 }
 
-void ConstantRewriter::materialize(AST::Expression& expression, ConstantValue value)
+ConstantValue ConstantRewriter::evaluate(AST::CallExpression& call)
+{
+    auto& target = call.target();
+    if (is<AST::ArrayTypeName>(target)) {
+        ConstantArray array(call.arguments().size());
+        unsigned index = 0;
+        for (auto& argument : call.arguments())
+            array.elements[index++] = evaluate(argument);
+        return { call.inferredType(), array };
+    }
+
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+
+void ConstantRewriter::materialize(AST::Expression& expression, const ConstantValue& value)
 {
     using namespace Types;
 
-    const auto& replace = [&]<typename Node, typename Value>() {
-        m_shaderModule.replace(expression, m_shaderModule.astBuilder().construct<Node>(SourceSpan::empty(), std::get<Value>(value)));
+    const auto& replace = [&]<typename Node>() {
+        m_shaderModule.replace(expression, downcast<Node>(materialize(value)));
     };
 
-    return WTF::switchOn(*expression.inferredType(),
+    return WTF::switchOn(*value.type,
         [&](const Primitive& primitive) {
             switch (primitive.kind) {
             case Primitive::AbstractInt:
-                replace.operator()<AST::AbstractIntegerLiteral, int64_t>();
+                replace.operator()<AST::AbstractIntegerLiteral>();
                 break;
             case Primitive::I32:
-                replace.operator()<AST::Signed32Literal, int64_t>();
+                replace.operator()<AST::Signed32Literal>();
                 break;
             case Primitive::U32:
-                replace.operator()<AST::Unsigned32Literal, int64_t>();
+                replace.operator()<AST::Unsigned32Literal>();
                 break;
             case Primitive::AbstractFloat:
-                replace.operator()<AST::AbstractFloatLiteral, double>();
+                replace.operator()<AST::AbstractFloatLiteral>();
                 break;
             case Primitive::F32:
-                replace.operator()<AST::Float32Literal, double>();
+                replace.operator()<AST::Float32Literal>();
                 break;
             case Primitive::Bool:
-                replace.operator()<AST::BoolLiteral, bool>();
+                replace.operator()<AST::BoolLiteral>();
                 break;
             case Primitive::Void:
             case Primitive::Sampler:
@@ -240,25 +286,17 @@ void ConstantRewriter::materialize(AST::Expression& expression, ConstantValue va
                 RELEASE_ASSERT_NOT_REACHED();
             }
         },
-        [&](const Vector& vector) {
-            // FIXME: implement
-            UNUSED_PARAM(vector);
-            RELEASE_ASSERT_NOT_REACHED();
+        [&](const Vector&) {
+            replace.operator()<AST::CallExpression>();
         },
-        [&](const Matrix& matrix) {
-            // FIXME: implement
-            UNUSED_PARAM(matrix);
-            RELEASE_ASSERT_NOT_REACHED();
+        [&](const Matrix&) {
+            replace.operator()<AST::CallExpression>();
         },
-        [&](const Array& array) {
-            // FIXME: implement
-            UNUSED_PARAM(array);
-            RELEASE_ASSERT_NOT_REACHED();
+        [&](const Array&) {
+            replace.operator()<AST::CallExpression>();
         },
-        [&](const Struct& structure) {
-            // FIXME: implement
-            UNUSED_PARAM(structure);
-            RELEASE_ASSERT_NOT_REACHED();
+        [&](const Struct&) {
+            replace.operator()<AST::CallExpression>();
         },
         [&](const Reference&) {
             RELEASE_ASSERT_NOT_REACHED();
@@ -270,6 +308,83 @@ void ConstantRewriter::materialize(AST::Expression& expression, ConstantValue va
             RELEASE_ASSERT_NOT_REACHED();
         },
         [&](const Bottom&) {
+            RELEASE_ASSERT_NOT_REACHED();
+        });
+}
+
+AST::Expression& ConstantRewriter::materialize(const ConstantValue& value)
+{
+    using namespace Types;
+
+    const auto& constructLiteral = [&]<typename Node, typename Value>() -> AST::Expression& {
+        return m_shaderModule.astBuilder().construct<Node>(SourceSpan::empty(), std::get<Value>(value));
+    };
+
+    return WTF::switchOn(*value.type,
+        [&](const Primitive& primitive) -> AST::Expression& {
+            switch (primitive.kind) {
+            case Primitive::AbstractInt:
+                return constructLiteral.operator()<AST::AbstractIntegerLiteral, int64_t>();
+            case Primitive::I32:
+                return constructLiteral.operator()<AST::Signed32Literal, int64_t>();
+            case Primitive::U32:
+                return constructLiteral.operator()<AST::Unsigned32Literal, int64_t>();
+            case Primitive::AbstractFloat:
+                return constructLiteral.operator()<AST::AbstractFloatLiteral, double>();
+            case Primitive::F32:
+                return constructLiteral.operator()<AST::Float32Literal, double>();
+            case Primitive::Bool:
+                return constructLiteral.operator()<AST::BoolLiteral, bool>();
+            case Primitive::Void:
+            case Primitive::Sampler:
+            case Primitive::TextureExternal:
+                RELEASE_ASSERT_NOT_REACHED();
+            }
+        },
+        [&](const Vector& vector) -> AST::Expression& {
+            // FIXME: implement
+            UNUSED_PARAM(vector);
+            RELEASE_ASSERT_NOT_REACHED();
+        },
+        [&](const Matrix& matrix) -> AST::Expression& {
+            // FIXME: implement
+            UNUSED_PARAM(matrix);
+            RELEASE_ASSERT_NOT_REACHED();
+        },
+        [&](const Array&) -> AST::Expression& {
+            AST::Expression::List arguments;
+            auto& array = std::get<ConstantArray>(value);
+            arguments.reserveCapacity(array.elements.size());
+            for (const auto& element : array.elements)
+                arguments.append(materialize(element));
+
+            auto& typeName = m_shaderModule.astBuilder().construct<AST::ArrayTypeName>(
+                SourceSpan::empty(),
+                nullptr,
+                nullptr
+            );
+
+            return m_shaderModule.astBuilder().construct<AST::CallExpression>(
+                SourceSpan::empty(),
+                typeName,
+                WTFMove(arguments)
+            );
+        },
+        [&](const Struct& structure) -> AST::Expression& {
+            // FIXME: implement
+            UNUSED_PARAM(structure);
+            RELEASE_ASSERT_NOT_REACHED();
+        },
+        [&](const Reference&) -> AST::Expression& {
+            RELEASE_ASSERT_NOT_REACHED();
+        },
+        [&](const Function&) -> AST::Expression& {
+            RELEASE_ASSERT_NOT_REACHED();
+        },
+        [&](const Texture&) -> AST::Expression& {
+            RELEASE_ASSERT_NOT_REACHED();
+        },
+        [&](const Bottom&) -> AST::Expression& {
             RELEASE_ASSERT_NOT_REACHED();
         });
 }
