@@ -1567,6 +1567,9 @@ http/tests/inspector/network/resource-response-inspector-override.html [ Skip ]
 inspector/network/intercept-aborted-request.html [ Skip ]
 inspector/network/interceptContinue.html [ Skip ]
 
+# Resource content retrival times out in WebKit1.
+webkit.org/b/257407 http/tests/inspector/network/xhr-request-type.html [ Skip ]
+
 webkit.org/b/164933 http/tests/misc/link-rel-icon-beforeload.html [ Failure ]
 
 # rdar://92764272 ([ Ventura wk1 ] 18 X fast/html/details (layout-tests) are flaky text failures)

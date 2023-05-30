@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="../resources/inspector-test.js"></script>
+<script>
+function triggerXHR(path) {
+    const x = new XMLHttpRequest();
+    x.open("GET", path || location.href, false);
+    x.send();
+}
+
+// ----
+
+function test()
+{
+    const suite = InspectorTest.createAsyncSuite("Resource.Type.XHR");
+
+    function addTestCase({name, description, expression, resourceHandler}) {
+        suite.addTestCase({
+            name, description,
+            async test() {
+                const completeEvent = InspectorTest.awaitEvent("Completed");
+                InspectorTest.evaluateInPage(expression);
+                const event = await WI.Frame.awaitEvent(WI.Frame.Event.ResourceWasAdded);
+                const resource = event.data.resource;
+                InspectorTest.expectEqual(resource.type, WI.Resource.Type.XHR, "Resource should be XHR type.");
+                InspectorTest.expectEqual(resource.requestMethod, "GET", "Resource should be a GET request.");
+                await resource.awaitEvent(WI.Resource.Event.LoadingDidFinish);
+                const content = await resource.requestContentFromBackend()
+                resourceHandler(resource, content);
+            }
+        });
+    }
+
+    addTestCase({
+        name: "Resource.Type.XHR.Same.As.Main.Resource.Url",
+        description: "XHR with the same URL as main resource.",
+        expression: "triggerXHR()",
+        resourceHandler(resource, content) {
+            InspectorTest.expectEqual(resource.statusCode, 200, "Resource should have a 200 response.");
+            InspectorTest.expectThat(content.body.includes("Tests that XHRs with the same url as a main resource have correct type"), "Resource should receive main resource in response.");
+        }
+    });
+
+    addTestCase({
+        name: "Resource.Type.XHR.Another.Url",
+        description: "XHR with the same URL as main resource.",
+        expression: "triggerXHR('/inspector/network/resources/data.json')",
+        resourceHandler(resource, content) {
+            InspectorTest.expectEqual(resource.statusCode, 200, "Resource should have a 200 response.");
+            InspectorTest.expectEqual(content.body, `{"json": true, "value": 42}\n`, "Resource should receive json in response.");
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that XHRs requests have type XHR, inlcuding those with the same URL as the main resource.</p>
+<a href="https://bugs.webkit.org/show_bug.cgi?id=68646">Bug 68646</a>
+<a href="https://bugs.webkit.org/show_bug.cgi?id=257407">Bug 257407</a>
+<div id="log"></div>
+</body>
+</html>

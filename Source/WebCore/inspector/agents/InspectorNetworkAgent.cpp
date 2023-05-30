@@ -471,22 +471,6 @@ void InspectorNetworkAgent::willSendRequest(ResourceLoaderIdentifier identifier,
     auto loaderId = loaderIdentifier(loader);
     String targetId = request.initiatorIdentifier();
 
-    if (type == InspectorPageAgent::OtherResource) {
-        if (m_loadingXHRSynchronously || request.requester() == ResourceRequestRequester::XHR)
-            type = InspectorPageAgent::XHRResource;
-        else if (request.requester() == ResourceRequestRequester::Fetch)
-            type = InspectorPageAgent::FetchResource;
-        else if (loader && equalIgnoringFragmentIdentifier(request.url(), loader->url()) && !loader->isCommitted())
-            type = InspectorPageAgent::DocumentResource;
-        else if (loader) {
-            for (auto& linkIcon : loader->linkIcons()) {
-                if (equalIgnoringFragmentIdentifier(request.url(), linkIcon.url)) {
-                    type = InspectorPageAgent::ImageResource;
-                    break;
-                }
-            }
-        }
-    }
 
     m_resourcesData->resourceCreated(requestId, loaderId, type);
 
@@ -528,9 +512,27 @@ static InspectorPageAgent::ResourceType resourceTypeForLoadType(InspectorInstrum
 
 void InspectorNetworkAgent::willSendRequest(ResourceLoaderIdentifier identifier, DocumentLoader* loader, ResourceRequest& request, const ResourceResponse& redirectResponse, const CachedResource* cachedResource, ResourceLoader* resourceLoader)
 {
-    if (!cachedResource && loader)
-        cachedResource = InspectorPageAgent::cachedResource(loader->frame(), request.url());
-    willSendRequest(identifier, loader, request, redirectResponse, resourceTypeForCachedResource(cachedResource), resourceLoader);
+    InspectorPageAgent::ResourceType type = InspectorPageAgent::OtherResource;
+    if (m_loadingXHRSynchronously || request.requester() == ResourceRequestRequester::XHR)
+        type = InspectorPageAgent::XHRResource;
+    else if (request.requester() == ResourceRequestRequester::Fetch)
+        type = InspectorPageAgent::FetchResource;
+    else if (loader && equalIgnoringFragmentIdentifier(request.url(), loader->url()) && !loader->isCommitted())
+        type = InspectorPageAgent::DocumentResource;
+    else if (loader) {
+        for (auto& linkIcon : loader->linkIcons()) {
+            if (equalIgnoringFragmentIdentifier(request.url(), linkIcon.url)) {
+                type = InspectorPageAgent::ImageResource;
+                break;
+            }
+        }
+    }
+    if (type == InspectorPageAgent::OtherResource) {
+        if (!cachedResource && loader)
+            cachedResource = InspectorPageAgent::cachedResource(loader->frame(), request.url());
+        type = resourceTypeForCachedResource(cachedResource);
+    }
+    willSendRequest(identifier, loader, request, redirectResponse, type, resourceLoader);
 }
 
 void InspectorNetworkAgent::willSendRequestOfType(ResourceLoaderIdentifier identifier, DocumentLoader* loader, ResourceRequest& request, InspectorInstrumentation::LoadType loadType)
