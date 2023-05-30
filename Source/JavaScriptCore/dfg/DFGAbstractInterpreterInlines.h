@@ -1926,6 +1926,29 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
     }
 
+    case GlobalIsNaN: {
+        AbstractValue child = forNode(node->child1());
+        if (JSValue value = child.value(); value && value.isNumber()) {
+            if (node->child1().useKind() != DoubleRepUse)
+                didFoldClobberWorld();
+            setConstant(node, jsBoolean(std::isnan(value.asNumber())));
+            break;
+        }
+        clobberWorld();
+        setNonCellTypeForNode(node, SpecBoolean);
+        break;
+    }
+
+    case NumberIsNaN: {
+        AbstractValue child = forNode(node->child1());
+        if (JSValue value = child.value()) {
+            setConstant(node, jsBoolean(value.isNumber() && std::isnan(value.asNumber())));
+            break;
+        }
+        setNonCellTypeForNode(node, SpecBoolean);
+        break;
+    }
+
     case TypeOf: {
         JSValue child = forNode(node->child1()).value();
         AbstractValue& abstractChild = forNode(node->child1());

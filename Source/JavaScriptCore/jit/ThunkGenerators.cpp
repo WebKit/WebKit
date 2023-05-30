@@ -832,6 +832,26 @@ MacroAssemblerCodeRef<JITThunkPtrTag> fromCharCodeThunkGenerator(VM& vm)
     return jit.finalize(vm.jitStubs->ctiNativeTailCall(vm), "fromCharCode");
 }
 
+MacroAssemblerCodeRef<JITThunkPtrTag> globalIsNaNThunkGenerator(VM& vm)
+{
+    SpecializedThunkJIT jit(vm, 1);
+    jit.loadJSArgument(0, JSRInfo::jsRegT10);
+    jit.appendFailure(jit.branchIfNotInt32(JSRInfo::jsRegT10));
+    jit.moveTrustedValue(jsBoolean(false), JSRInfo::jsRegT10);
+    jit.returnJSValue(JSRInfo::jsRegT10);
+    return jit.finalize(vm.jitStubs->ctiNativeTailCall(vm), "isNaN");
+}
+
+MacroAssemblerCodeRef<JITThunkPtrTag> numberIsNaNThunkGenerator(VM& vm)
+{
+    SpecializedThunkJIT jit(vm, 1);
+    jit.loadJSArgument(0, JSRInfo::jsRegT10);
+    jit.appendFailure(jit.branchIfNotInt32(JSRInfo::jsRegT10));
+    jit.moveTrustedValue(jsBoolean(false), JSRInfo::jsRegT10);
+    jit.returnJSValue(JSRInfo::jsRegT10);
+    return jit.finalize(vm.jitStubs->ctiNativeTailCall(vm), "Number.isNaN");
+}
+
 MacroAssemblerCodeRef<JITThunkPtrTag> stringPrototypeCodePointAtThunkGenerator(VM& vm)
 {
     SpecializedThunkJIT jit(vm, 1);
