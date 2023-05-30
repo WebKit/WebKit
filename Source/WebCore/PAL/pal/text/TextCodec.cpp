@@ -26,6 +26,7 @@
 
 #include "config.h"
 #include "TextCodec.h"
+#include <unicode/uchar.h>
 #include <wtf/unicode/CharacterNames.h>
 
 #include <array>
@@ -35,7 +36,7 @@ namespace PAL {
 
 int TextCodec::getUnencodableReplacement(UChar32 codePoint, UnencodableHandling handling, UnencodableReplacementArray& replacement)
 {
-    ASSERT(!(codePoint > 0x10FFFF));
+    ASSERT(!(codePoint > UCHAR_MAX_VALUE));
 
     // The Encoding Standard doesn't have surrogate code points in the input, but that would require
     // scanning and potentially manipulating inputs ahead of time. Instead handle them at the last

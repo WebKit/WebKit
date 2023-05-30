@@ -151,7 +151,7 @@ public:
         }
 
         addSortedInverted(0, 0x7f, other->m_matches, other->m_ranges, m_matches, m_ranges);
-        addSortedInverted(0x80, 0x10ffff, other->m_matchesUnicode, other->m_rangesUnicode, m_matchesUnicode, m_rangesUnicode);
+        addSortedInverted(0x80, UCHAR_MAX_VALUE, other->m_matchesUnicode, other->m_rangesUnicode, m_matchesUnicode, m_rangesUnicode);
     }
 
     void putChar(UChar32 ch)
@@ -905,7 +905,7 @@ private:
         if (!m_matches.size() && !m_matchesUnicode.size()
             && m_ranges.size() == 1 && m_rangesUnicode.size() == 1
             && m_ranges[0].begin == 0 && m_ranges[0].end == 0x7f
-            && m_rangesUnicode[0].begin == 0x80 && m_rangesUnicode[0].end == 0x10ffff)
+            && m_rangesUnicode[0].begin == 0x80 && m_rangesUnicode[0].end == UCHAR_MAX_VALUE)
             m_anyCharacter = true;
     }
 
@@ -2441,7 +2441,7 @@ std::unique_ptr<CharacterClass> anycharCreate()
 {
     auto characterClass = makeUnique<CharacterClass>();
     characterClass->m_ranges.append(CharacterRange(0x00, 0x7f));
-    characterClass->m_rangesUnicode.append(CharacterRange(0x0080, 0x10ffff));
+    characterClass->m_rangesUnicode.append(CharacterRange(0x0080, UCHAR_MAX_VALUE));
     characterClass->m_characterWidths = CharacterClassWidths::HasBothBMPAndNonBMP;
     characterClass->m_anyCharacter = true;
     return characterClass;
