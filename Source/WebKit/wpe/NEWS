@@ -1,4 +1,17 @@
 =================
+WPE WebKit 2.40.2
+=================
+
+What's new in WPE WebKit 2.40.2?
+
+  - Fix flickering on looped videos when starting again.
+  - Fix CPU usage on autoplaying videos.
+  - Enable threaded rendering by default.
+  - Choose amount of painting threads depending on available CPU cores.
+  - Make libgbm and libdrm optional dependencies.
+  - Fix several crashes and rendering issues.
+
+=================
 WPE WebKit 2.40.1
 =================
 
