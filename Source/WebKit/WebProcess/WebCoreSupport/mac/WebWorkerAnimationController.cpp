@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WebWorkerAnimationController.h"
 
-#if HAVE(CVDISPLAYLINK)
+#if PLATFORM(COCOA)
 
 #include "EventDispatcher.h"
 #include "WebProcess.h"

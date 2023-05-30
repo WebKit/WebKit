@@ -29,12 +29,84 @@
 #if PLATFORM(IOS_FAMILY)
 
 #import "AccessibilitySupportSPI.h"
+#import "EventDispatcherMessages.h"
 #import "WKFullKeyboardAccessWatcher.h"
 #import "WKMouseDeviceObserver.h"
 #import "WKStylusDeviceObserver.h"
 #import "WebProcessMessages.h"
 #import "WebProcessPool.h"
+#import <QuartzCore/CADisplayLink.h>
 #import <pal/system/cocoa/SleepDisablerCocoa.h>
+
+@interface WKProcessProxyDisplayLinkHandler : NSObject {
+    WebKit::WebProcessProxy* _webProcessProxy;
+    CADisplayLink *_displayLink;
+}
+
+- (id)initWithWebProcessProxy:(WebKit::WebProcessProxy*)webProcessProxy;
+- (void)setPreferredFramesPerSecond:(NSInteger)preferredFramesPerSecond;
+- (NSInteger)preferredFramesPerSecond;
+- (void)displayLinkFired:(CADisplayLink *)sender;
+- (void)invalidate;
+- (void)schedule;
+- (void)pause;
+
+@end
+
+@implementation WKProcessProxyDisplayLinkHandler
+
+- (id)initWithWebProcessProxy:(WebKit::WebProcessProxy*)webProcessProxy
+{
+    if (self = [super init]) {
+        _webProcessProxy = webProcessProxy;
+        // Note that CADisplayLink retains its target (self), so a call to -invalidate is needed on teardown.
+        _displayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(displayLinkFired:)];
+        [_displayLink addToRunLoop:[NSRunLoop mainRunLoop] forMode:NSRunLoopCommonModes];
+        _displayLink.paused = YES;
+        _displayLink.preferredFramesPerSecond = 60;
+    }
+    return self;
+}
+
+- (void)dealloc
+{
+    ASSERT(!_displayLink);
+    [super dealloc];
+}
+
+- (void)setPreferredFramesPerSecond:(NSInteger)preferredFramesPerSecond
+{
+    _displayLink.preferredFramesPerSecond = preferredFramesPerSecond;
+}
+
+- (NSInteger)preferredFramesPerSecond
+{
+    return _displayLink.preferredFramesPerSecond;
+}
+
+- (void)displayLinkFired:(CADisplayLink *)sender
+{
+    ASSERT(isUIThread());
+    _webProcessProxy->displayLinkFired();
+}
+
+- (void)invalidate
+{
+    [_displayLink invalidate];
+    _displayLink = nullptr;
+}
+
+- (void)schedule
+{
+    _displayLink.paused = NO;
+}
+
+- (void)pause
+{
+    _displayLink.paused = YES;
+}
+
+@end
 
 namespace WebKit {
 
@@ -79,6 +151,9 @@ void WebProcessProxy::platformDestroy()
 #if HAVE(STYLUS_DEVICE_OBSERVATION)
     [[WKStylusDeviceObserver sharedInstance] stop];
 #endif
+
+    if (m_displayLinkHandler)
+        [m_displayLinkHandler invalidate];
 }
 
 bool WebProcessProxy::fullKeyboardAccessEnabled()
@@ -88,6 +163,68 @@ bool WebProcessProxy::fullKeyboardAccessEnabled()
 #else
     return NO;
 #endif
+}
+
+WKProcessProxyDisplayLinkHandler *WebProcessProxy::displayLinkHandler()
+{
+    if (!m_displayLinkHandler) {
+        m_displayLinkHandler = adoptNS([[WKProcessProxyDisplayLinkHandler alloc] initWithWebProcessProxy:this]);
+        m_nextDisplayUpdate = { 0, 60 };
+    }
+    return m_displayLinkHandler.get();
+}
+
+void WebProcessProxy::startDisplayLink(DisplayLinkObserverID observerID, WebCore::PlatformDisplayID displayID, WebCore::FramesPerSecond framesPerSecond, bool)
+{
+    auto addResult = m_displayLinkObservers.set(observerID, DisplayLinkObserverData { displayID, framesPerSecond });
+    ASSERT_UNUSED(addResult, addResult.isNewEntry);
+    WebCore::FramesPerSecond maxFramesPerSecond = 0;
+    for (auto& data : m_displayLinkObservers)
+        maxFramesPerSecond = std::max(data.value.framesPerSecond, maxFramesPerSecond);
+
+    if (maxFramesPerSecond != [displayLinkHandler() preferredFramesPerSecond]) {
+        [displayLinkHandler() setPreferredFramesPerSecond:maxFramesPerSecond];
+        m_nextDisplayUpdate = { 0, maxFramesPerSecond };
+    }
+    [displayLinkHandler() schedule];
+}
+
+void WebProcessProxy::stopDisplayLink(DisplayLinkObserverID observerID, WebCore::PlatformDisplayID, bool)
+{
+    m_displayLinkObservers.remove(observerID);
+    if (m_displayLinkObservers.isEmpty())
+        [displayLinkHandler() pause];
+}
+
+void WebProcessProxy::setDisplayLinkPreferredFramesPerSecond(DisplayLinkObserverID observerID, WebCore::PlatformDisplayID, WebCore::FramesPerSecond preferredFramesPerSecond)
+{
+    auto it = m_displayLinkObservers.find(observerID);
+    if (it == m_displayLinkObservers.end())
+        return;
+    it->value.framesPerSecond = preferredFramesPerSecond;
+
+    WebCore::FramesPerSecond maxFramesPerSecond = 0;
+    for (auto& data : m_displayLinkObservers)
+        maxFramesPerSecond = std::max(data.value.framesPerSecond, maxFramesPerSecond);
+
+    if (maxFramesPerSecond != [displayLinkHandler() preferredFramesPerSecond]) {
+        [displayLinkHandler() setPreferredFramesPerSecond:maxFramesPerSecond];
+        m_nextDisplayUpdate = { 0, maxFramesPerSecond };
+    }
+}
+
+void WebProcessProxy::displayLinkFired()
+{
+    if (!connection())
+        return;
+
+    HashSet<WebCore::PlatformDisplayID> visitedDisplayIDs;
+    for (auto& data : m_displayLinkObservers) {
+        auto addResult = visitedDisplayIDs.add(data.value.displayID);
+        if (addResult.isNewEntry)
+            connection()->send(Messages::EventDispatcher::DisplayDidRefresh(data.value.displayID, m_nextDisplayUpdate, false, true), 0, { }, Thread::QOS::UserInteractive);
+    }
+    m_nextDisplayUpdate = m_nextDisplayUpdate.nextUpdate();
 }
 
 } // namespace WebKit

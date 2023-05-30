@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if HAVE(CVDISPLAYLINK)
+#if PLATFORM(COCOA)
 
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/WorkerAnimationController.h>

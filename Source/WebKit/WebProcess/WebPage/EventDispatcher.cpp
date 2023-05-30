@@ -305,7 +305,7 @@ void EventDispatcher::notifyScrollingTreesDisplayDidRefresh(PlatformDisplayID di
 #endif
 }
 
-#if HAVE(CVDISPLAYLINK)
+#if PLATFORM(COCOA)
 void EventDispatcher::displayDidRefresh(PlatformDisplayID displayID, const DisplayUpdate& displayUpdate, bool wantsFullSpeedUpdates, bool anyObserverWantsCallback)
 {
     assertIsCurrent(m_queue.get());
@@ -317,15 +317,17 @@ void EventDispatcher::displayDidRefresh(PlatformDisplayID displayID, const Displ
 #endif
     }
 
-    notifyScrollingTreesDisplayDidRefresh(displayID);
     notifyAsyncRenderingRefreshObserversDisplayDidRefresh(displayID, displayUpdate);
 
     if (!anyObserverWantsCallback)
         return;
 
+#if PLATFORM(MAC)
+    notifyScrollingTreesDisplayDidRefresh(displayID);
     RunLoop::main().dispatch([displayID, displayUpdate]() {
         DisplayRefreshMonitorManager::sharedManager().displayDidRefresh(displayID, displayUpdate);
     });
+#endif
 }
 #endif
 
@@ -338,7 +340,7 @@ void EventDispatcher::pageScreenDidChange(PageIdentifier pageID, PlatformDisplay
     UNUSED_PARAM(displayID);
 #endif
 
-#if HAVE(CVDISPLAYLINK)
+#if PLATFORM(COCOA)
     dispatchToMainRunLoop([this, pageID] () WTF_REQUIRES_CAPABILITY(mainRunLoop) {
         updateAsyncRenderingRefreshObservers(pageID);
     });
@@ -348,7 +350,7 @@ void EventDispatcher::pageScreenDidChange(PageIdentifier pageID, PlatformDisplay
 void EventDispatcher::renderingUpdateFrequencyChanged(PageIdentifier pageIdentifier)
 {
     assertIsMainRunLoop();
-#if HAVE(CVDISPLAYLINK)
+#if PLATFORM(COCOA)
     updateAsyncRenderingRefreshObservers(pageIdentifier);
 #endif
 }
@@ -374,7 +376,18 @@ void EventDispatcher::stopDisplayDidRefreshCallbacks(WebCore::PlatformDisplayID 
     WebProcess::singleton().parentProcessConnection()->send(Messages::WebProcessProxy::StopDisplayLink(m_observerID, displayID, false), 0);
 }
 
-#if HAVE(CVDISPLAYLINK)
+#if ENABLE(MOMENTUM_EVENT_DISPATCHER_TEMPORARY_LOGGING)
+void EventDispatcher::flushMomentumEventLoggingSoon()
+{
+    // FIXME: Nothing keeps this alive.
+    queue().dispatchAfter(1_s, [this] {
+        m_momentumEventDispatcher->flushLog();
+    });
+}
+#endif
+#endif // ENABLE(MOMENTUM_EVENT_DISPATCHER)
+
+#if PLATFORM(COCOA)
 EventDispatcher::PageObservers::PageObservers()
     : m_observerID(DisplayLinkObserverID::generate())
 { }
@@ -538,15 +551,5 @@ void EventDispatcher::removeAsyncRenderingRefreshObserver(PageIdentifier pageIde
 }
 #endif
 
-#if ENABLE(MOMENTUM_EVENT_DISPATCHER_TEMPORARY_LOGGING)
-void EventDispatcher::flushMomentumEventLoggingSoon()
-{
-    // FIXME: Nothing keeps this alive.
-    queue().dispatchAfter(1_s, [this] {
-        m_momentumEventDispatcher->flushLog();
-    });
-}
-#endif
-#endif // ENABLE(MOMENTUM_EVENT_DISPATCHER)
 
 } // namespace WebKit

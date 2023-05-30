@@ -42,6 +42,7 @@
 #include "WebConnectionToWebProcess.h"
 #include "WebPageProxyIdentifier.h"
 #include <WebCore/CrossOriginMode.h>
+#include <WebCore/DisplayUpdate.h>
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/MediaProducer.h>
 #include <WebCore/PageIdentifier.h>
@@ -63,8 +64,11 @@
 #include <WebCore/CaptionUserPreferences.h>
 #endif
 
-#if HAVE(CVDISPLAYLINK)
+#if PLATFORM(COCOA)
 #include "DisplayLinkObserverID.h"
+#endif
+
+#if HAVE(CVDISPLAYLINK)
 #include "DisplayLinkProcessProxyClient.h"
 #endif
 
@@ -89,6 +93,10 @@ using PlatformDisplayID = uint32_t;
 namespace WTF {
 class TextStream;
 }
+
+#if PLATFORM(IOS_FAMILY)
+OBJC_CLASS WKProcessProxyDisplayLinkHandler;
+#endif
 
 namespace WebKit {
 
@@ -342,11 +350,12 @@ public:
 #if HAVE(CVDISPLAYLINK)
     DisplayLink::Client& displayLinkClient() { return m_displayLinkClient; }
     std::optional<unsigned> nominalFramesPerSecondForDisplay(WebCore::PlatformDisplayID);
-
+    void setDisplayLinkForDisplayWantsFullSpeedUpdates(WebCore::PlatformDisplayID, bool wantsFullSpeedUpdates);
+#endif
+#if PLATFORM(COCOA)
     void startDisplayLink(DisplayLinkObserverID, WebCore::PlatformDisplayID, WebCore::FramesPerSecond, bool sendToEventDispatcher);
     void stopDisplayLink(DisplayLinkObserverID, WebCore::PlatformDisplayID, bool sendToEventDispatcher);
     void setDisplayLinkPreferredFramesPerSecond(DisplayLinkObserverID, WebCore::PlatformDisplayID, WebCore::FramesPerSecond);
-    void setDisplayLinkForDisplayWantsFullSpeedUpdates(WebCore::PlatformDisplayID, bool wantsFullSpeedUpdates);
 #endif
 
     // Called when the web process has crashed or we know that it will terminate soon.
@@ -490,6 +499,10 @@ public:
     static void permissionChanged(WebCore::PermissionName, const WebCore::SecurityOriginData&);
     void sendPermissionChanged(WebCore::PermissionName, const WebCore::SecurityOriginData&);
 
+#if PLATFORM(IOS_FAMILY)
+    void displayLinkFired();
+#endif
+
 protected:
     WebProcessProxy(WebProcessPool&, WebsiteDataStore*, IsPrewarmed, WebCore::CrossOriginMode, LockdownMode);
 
@@ -608,6 +621,10 @@ private:
     bool shouldTakeNearSuspendedAssertion() const;
     bool shouldDropNearSuspendedAssertionAfterDelay() const;
 
+#if PLATFORM(IOS_FAMILY)
+    WKProcessProxyDisplayLinkHandler *displayLinkHandler();
+#endif
+
     enum class IsWeak : bool { No, Yes };
     template<typename T> class WeakOrStrongPtr {
     public:
@@ -670,6 +687,15 @@ private:
 #if HAVE(CVDISPLAYLINK)
     DisplayLinkProcessProxyClient m_displayLinkClient;
     uint32_t m_observersWantingSendToEventDispatcher { 0 };
+#endif
+#if PLATFORM(IOS_FAMILY)
+    RetainPtr<WKProcessProxyDisplayLinkHandler> m_displayLinkHandler;
+    struct DisplayLinkObserverData {
+        WebCore::PlatformDisplayID displayID;
+        WebCore::FramesPerSecond framesPerSecond;
+    };
+    HashMap<DisplayLinkObserverID, DisplayLinkObserverData> m_displayLinkObservers;
+    WebCore::DisplayUpdate m_nextDisplayUpdate;
 #endif
 
 #if ENABLE(ROUTING_ARBITRATION)

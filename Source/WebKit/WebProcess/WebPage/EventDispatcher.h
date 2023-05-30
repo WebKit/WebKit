@@ -93,7 +93,7 @@ public:
 
     void notifyScrollingTreesDisplayDidRefresh(WebCore::PlatformDisplayID);
 
-#if HAVE(CVDISPLAYLINK)
+#if PLATFORM(COCOA)
     // Observes displayDidRefresh at the same rate that the WebCore::Page's
     // RenderingUpdateScheduler does, but without blocking on the main thread.
     // Automatically adjusts to throttling rate changes, and the page moving
@@ -144,7 +144,7 @@ private:
 
     static void sendDidReceiveEvent(WebCore::PageIdentifier, WebEventType, bool didHandleEvent);
 
-#if PLATFORM(MAC)
+#if PLATFORM(COCOA)
     void displayDidRefresh(WebCore::PlatformDisplayID, const WebCore::DisplayUpdate&, bool wantsFullSpeedUpdates, bool anyObserverWantsCallback);
 #endif
 
@@ -185,7 +185,7 @@ private:
 
     Ref<WorkQueue> m_queue;
 
-#if HAVE(CVDISPLAYLINK)
+#if PLATFORM(COCOA)
     struct ObserverAndDispatcher {
         FunctionDispatcher& m_dispatcher;
         Ref<AsyncRenderingRefreshObserver> m_observer;

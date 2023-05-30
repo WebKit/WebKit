@@ -29,7 +29,8 @@ messages -> EventDispatcher NotRefCounted {
 #if ENABLE(MAC_GESTURE_EVENTS)
     GestureEvent(WebCore::PageIdentifier pageID, WebKit::WebGestureEvent event)
 #endif
-#if HAVE(CVDISPLAYLINK)
+
+#if PLATFORM(COCOA)
     DisplayDidRefresh(uint32_t displayID, struct WebCore::DisplayUpdate update, bool wantsFullSpeedUpdates, bool anyObserverWantsCallback)
 #endif
 
