@@ -72,16 +72,27 @@ ScrollAnimator& ScrollableArea::scrollAnimator() const
 
 ScrollbarsController& ScrollableArea::scrollbarsController() const
 {
-    if (!m_scrollbarsController) {
-        if (mockScrollbarsControllerEnabled()) {
-            m_scrollbarsController = makeUnique<ScrollbarsControllerMock>(const_cast<ScrollableArea&>(*this), [this](const String& message) {
-                logMockScrollbarsControllerMessage(message);
-            });
-        } else
-            m_scrollbarsController = ScrollbarsController::create(const_cast<ScrollableArea&>(*this));
-    }
+    if (!m_scrollbarsController)
+        const_cast<ScrollableArea&>(*this).internalCreateScrollbarsController();
 
     return *m_scrollbarsController.get();
+}
+
+void ScrollableArea::internalCreateScrollbarsController()
+{
+    if (mockScrollbarsControllerEnabled()) {
+        auto mockController = makeUnique<ScrollbarsControllerMock>(const_cast<ScrollableArea&>(*this), [this](const String& message) {
+            logMockScrollbarsControllerMessage(message);
+        });
+        setScrollbarsController(WTFMove(mockController));
+    } else
+        createScrollbarsController();
+}
+
+void ScrollableArea::createScrollbarsController()
+{
+    auto controller = ScrollbarsController::create(const_cast<ScrollableArea&>(*this));
+    setScrollbarsController(WTFMove(controller));
 }
 
 void ScrollableArea::setScrollbarsController(std::unique_ptr<ScrollbarsController>&& scrollbarsController)

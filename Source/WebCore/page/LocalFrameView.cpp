@@ -5809,13 +5809,22 @@ void LocalFrameView::setScrollingPerformanceTestingEnabled(bool scrollingPerform
         tiledBacking->setScrollingPerformanceTestingEnabled(scrollingPerformanceTestingEnabled);
 }
 
+void LocalFrameView::createScrollbarsController()
+{
+    auto* page = m_frame->page();
+    if (page) {
+        if (auto scrollbarController = page->chrome().client().createScrollbarsController(*page, *this)) {
+            setScrollbarsController(WTFMove(scrollbarController));
+            return;
+        }
+    }
+
+    ScrollView::createScrollbarsController();
+}
+
 void LocalFrameView::didAddScrollbar(Scrollbar* scrollbar, ScrollbarOrientation orientation)
 {
-    Page* page = m_frame->page();
-    if (page) {
-        if (auto scrollbarController = page->chrome().client().createScrollbarsController(*page, *this))
-            setScrollbarsController(WTFMove(scrollbarController));
-    }
+    auto* page = m_frame->page();
 
     ScrollableArea::didAddScrollbar(scrollbar, orientation);
 

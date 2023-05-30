@@ -844,6 +844,16 @@ bool RenderLayerScrollableArea::canShowNonOverlayScrollbars() const
     return canHaveScrollbars() && !(m_layer.renderBox() && m_layer.renderBox()->canUseOverlayScrollbars());
 }
 
+void RenderLayerScrollableArea::createScrollbarsController()
+{
+    if (auto scrollbarController = m_layer.page().chrome().client().createScrollbarsController(m_layer.page(), *this)) {
+        setScrollbarsController(WTFMove(scrollbarController));
+        return;
+    }
+
+    ScrollableArea::createScrollbarsController();
+}
+
 static inline RenderElement* rendererForScrollbar(RenderLayerModelObject& renderer)
 {
     if (Element* element = renderer.element()) {
@@ -868,9 +878,6 @@ Ref<Scrollbar> RenderLayerScrollableArea::createScrollbar(ScrollbarOrientation o
         widget = RenderScrollbar::createCustomScrollbar(*this, orientation, element);
     else {
         widget = Scrollbar::createNativeScrollbar(*this, orientation, scrollbarWidthStyle());
-        
-        if (auto scrollbarController = m_layer.page().chrome().client().createScrollbarsController(m_layer.page(), *this))
-            setScrollbarsController(WTFMove(scrollbarController));
         
         didAddScrollbar(widget.get(), orientation);
         if (m_layer.page().isMonitoringWheelEvents())

@@ -280,6 +280,8 @@ private:
 
     float deviceScaleFactor() const final;
 
+    void createScrollbarsController() final;
+
 private:
     bool m_scrollDimensionsDirty { true };
     bool m_inOverflowRelayout { false };
