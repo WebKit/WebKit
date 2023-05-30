@@ -1278,7 +1278,7 @@ private:
                 break;
             case Array::ForceExit:
             case Array::Generic:
-                if (child1->shouldSpeculateCell()) {
+                if (child1->shouldSpeculateCell() || (child1->shouldSpeculateCellOrOther() && !m_graph.hasExitSite(node->origin.semantic, BadType))) {
                     if (child2->shouldSpeculateString()) {
                         fixEdge<CellUse>(child1);
                         fixEdge<StringUse>(child2);
@@ -2194,7 +2194,8 @@ private:
         }
 
         case InByVal: {
-            if (node->child1()->shouldSpeculateObject()
+            if ((node->child1()->shouldSpeculateObject()
+                || (node->child1()->shouldSpeculateObjectOrOther() && !m_graph.hasExitSite(node->origin.semantic, BadType)))
                 && node->child2()->shouldSpeculateInt32()) {
                 convertToHasIndexedProperty(node);
                 break;
