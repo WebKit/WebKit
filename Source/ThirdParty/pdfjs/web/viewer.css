@@ -2412,9 +2412,6 @@ dialog {
   border-radius: 4px;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
 }
-dialog::-webkit-backdrop {
-  background-color: rgba(0, 0, 0, 0.2);
-}
 dialog::backdrop {
   background-color: rgba(0, 0, 0, 0.2);
 }
