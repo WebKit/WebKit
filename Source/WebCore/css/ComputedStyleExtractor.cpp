@@ -1454,16 +1454,16 @@ static Ref<CSSPrimitiveValue> valueForAnimationIterationCount(double iterationCo
     return CSSPrimitiveValue::create(iterationCount);
 }
 
-static Ref<CSSPrimitiveValue> valueForAnimationDirection(Animation::AnimationDirection direction)
+static Ref<CSSPrimitiveValue> valueForAnimationDirection(Animation::Direction direction)
 {
     switch (direction) {
-    case Animation::AnimationDirectionNormal:
+    case Animation::Direction::Normal:
         return CSSPrimitiveValue::create(CSSValueNormal);
-    case Animation::AnimationDirectionAlternate:
+    case Animation::Direction::Alternate:
         return CSSPrimitiveValue::create(CSSValueAlternate);
-    case Animation::AnimationDirectionReverse:
+    case Animation::Direction::Reverse:
         return CSSPrimitiveValue::create(CSSValueReverse);
-    case Animation::AnimationDirectionAlternateReverse:
+    case Animation::Direction::AlternateReverse:
         return CSSPrimitiveValue::create(CSSValueAlternateReverse);
     }
     RELEASE_ASSERT_NOT_REACHED();

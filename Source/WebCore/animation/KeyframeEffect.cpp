@@ -2142,16 +2142,16 @@ Ref<const Animation> KeyframeEffect::backingAnimationForCompositedRenderer() con
 
     switch (direction()) {
     case PlaybackDirection::Normal:
-        animation->setDirection(Animation::AnimationDirectionNormal);
+        animation->setDirection(Animation::Direction::Normal);
         break;
     case PlaybackDirection::Alternate:
-        animation->setDirection(Animation::AnimationDirectionAlternate);
+        animation->setDirection(Animation::Direction::Alternate);
         break;
     case PlaybackDirection::Reverse:
-        animation->setDirection(Animation::AnimationDirectionReverse);
+        animation->setDirection(Animation::Direction::Reverse);
         break;
     case PlaybackDirection::AlternateReverse:
-        animation->setDirection(Animation::AnimationDirectionAlternateReverse);
+        animation->setDirection(Animation::Direction::AlternateReverse);
         break;
     }
 
