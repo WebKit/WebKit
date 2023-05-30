@@ -10,7 +10,6 @@ list(APPEND WebCore_SOURCES
     platform/network/curl/CookieUtil.cpp
     platform/network/curl/CredentialStorageCurl.cpp
     platform/network/curl/CurlContext.cpp
-    platform/network/curl/CurlDownload.cpp
     platform/network/curl/CurlFormDataStream.cpp
     platform/network/curl/CurlMultipartHandle.cpp
     platform/network/curl/CurlProxySettings.cpp
@@ -38,7 +37,6 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/network/curl/CookieJarDB.h
     platform/network/curl/CookieUtil.h
     platform/network/curl/CurlContext.h
-    platform/network/curl/CurlDownload.h
     platform/network/curl/CurlFormDataStream.h
     platform/network/curl/CurlMultipartHandle.h
     platform/network/curl/CurlMultipartHandleClient.h
