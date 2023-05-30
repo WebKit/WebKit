@@ -1111,6 +1111,7 @@ optgroup {
 
 option {
     font-weight: normal;
+    white-space: nowrap;
 }
 
 output {
