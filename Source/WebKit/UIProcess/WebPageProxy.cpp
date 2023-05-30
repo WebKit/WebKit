@@ -9585,8 +9585,6 @@ void WebPageProxy::setMockCaptureDevicesEnabledOverride(std::optional<bool> enab
 
 void WebPageProxy::willStartCapture(const UserMediaPermissionRequestProxy& request, CompletionHandler<void()>&& callback)
 {
-    activateMediaStreamCaptureInPage();
-
 #if ENABLE(GPU_PROCESS)
     if (!preferences().captureVideoInGPUProcessEnabled() && !preferences().captureAudioInGPUProcessEnabled())
         return callback();
