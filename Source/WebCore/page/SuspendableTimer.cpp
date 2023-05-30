@@ -90,13 +90,13 @@ void SuspendableTimerBase::cancel()
         m_suspended = false;
 }
 
-void SuspendableTimerBase::startRepeating(Seconds repeatInterval)
+void SuspendableTimerBase::startRepeating(Seconds nextFireInterval, Seconds repeatInterval)
 {
     if (!m_suspended)
-        TimerBase::startRepeating(repeatInterval);
+        TimerBase::start(nextFireInterval, repeatInterval);
     else {
         m_savedIsActive = true;
-        m_savedNextFireInterval = repeatInterval;
+        m_savedNextFireInterval = nextFireInterval;
         m_savedRepeatInterval = repeatInterval;
     }
 }

@@ -171,7 +171,7 @@ DOMTimer::DOMTimer(ScriptExecutionContext& context, Function<void(ScriptExecutio
     if (oneShot)
         startOneShot(m_currentTimerInterval);
     else
-        startRepeating(m_currentTimerInterval);
+        startRepeating(m_originalInterval, m_currentTimerInterval);
 }
 
 DOMTimer::~DOMTimer() = default;
