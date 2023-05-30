@@ -53,226 +53,168 @@ Ref<PageConfiguration> PageConfiguration::create()
     return adoptRef(*new PageConfiguration);
 }
 
-PageConfiguration::PageConfiguration()
-{
-}
+PageConfiguration::PageConfiguration() = default;
 
 PageConfiguration::~PageConfiguration() = default;
 
 Ref<PageConfiguration> PageConfiguration::copy() const
 {
     auto copy = create();
-
-    copy->m_processPool = this->m_processPool;
-    copy->m_userContentController = this->m_userContentController;
-#if ENABLE(WK_WEB_EXTENSIONS)
-    copy->m_webExtensionController = this->m_webExtensionController;
-    copy->m_weakWebExtensionController = this->m_weakWebExtensionController;
-#endif
-    copy->m_pageGroup = this->m_pageGroup;
-    copy->m_preferences = this->m_preferences;
-    copy->m_relatedPage = this->m_relatedPage;
-    copy->m_visitedLinkStore = this->m_visitedLinkStore;
-    copy->m_websiteDataStore = this->m_websiteDataStore;
-#if PLATFORM(IOS_FAMILY)
-    copy->m_clientNavigationsRunAtForegroundPriority = this->m_clientNavigationsRunAtForegroundPriority;
-    copy->m_canShowWhileLocked = this->m_canShowWhileLocked;
-    copy->m_clickInteractionDriverForTesting = this->m_clickInteractionDriverForTesting;
-#endif
-    copy->m_initialCapitalizationEnabled = this->m_initialCapitalizationEnabled;
-    copy->m_waitsForPaintAfterViewDidMoveToWindow = this->m_waitsForPaintAfterViewDidMoveToWindow;
-    copy->m_drawsBackground = this->m_drawsBackground;
-    copy->m_controlledByAutomation = this->m_controlledByAutomation;
-    copy->m_delaysWebProcessLaunchUntilFirstLoad = this->m_delaysWebProcessLaunchUntilFirstLoad;
-    copy->m_cpuLimit = this->m_cpuLimit;
-    copy->m_overrideContentSecurityPolicy = this->m_overrideContentSecurityPolicy;
-#if ENABLE(APPLICATION_MANIFEST)
-    copy->m_applicationManifest = this->m_applicationManifest;
-#endif
-    copy->m_shouldRelaxThirdPartyCookieBlocking = this->m_shouldRelaxThirdPartyCookieBlocking;
-    copy->m_attributedBundleIdentifier = this->m_attributedBundleIdentifier;
-    for (auto& pair : this->m_urlSchemeHandlers)
-        copy->m_urlSchemeHandlers.set(pair.key, pair.value.copyRef());
-    copy->m_corsDisablingPatterns = this->m_corsDisablingPatterns;
-    copy->m_maskedURLSchemes = this->m_maskedURLSchemes;
-    copy->m_crossOriginAccessControlCheckEnabled = this->m_crossOriginAccessControlCheckEnabled;
-    copy->m_userScriptsShouldWaitUntilNotification = this->m_userScriptsShouldWaitUntilNotification;
-
-    copy->m_processDisplayName = this->m_processDisplayName;
-    copy->m_loadsSubresources = this->m_loadsSubresources;
-    copy->m_allowedNetworkHosts = this->m_allowedNetworkHosts;
-#if ENABLE(APP_BOUND_DOMAINS)
-    copy->m_ignoresAppBoundDomains = this->m_ignoresAppBoundDomains;
-    copy->m_limitsNavigationsToAppBoundDomains = this->m_limitsNavigationsToAppBoundDomains;
-#endif
-
-    copy->m_mediaCaptureEnabled = this->m_mediaCaptureEnabled;
-    copy->m_httpsUpgradeEnabled = this->m_httpsUpgradeEnabled;
-#if PLATFORM(IOS_FAMILY)
-    copy->m_appInitiatedOverrideValueForTesting = this->m_appInitiatedOverrideValueForTesting;
-#endif
-#if HAVE(TOUCH_BAR)
-    copy->m_requiresUserActionForEditingControlsManager = this->m_requiresUserActionForEditingControlsManager;
-#endif
-    
-    copy->m_allowTestOnlyIPC = this->m_allowTestOnlyIPC;
-
-    copy->m_contentSecurityPolicyModeForExtension = this->m_contentSecurityPolicyModeForExtension;
-
+    copy->m_data = m_data;
     return copy;
 }
 
 
 WebProcessPool* PageConfiguration::processPool()
 {
-    return m_processPool.get();
+    return m_data.processPool.get();
 }
 
 void PageConfiguration::setProcessPool(WebProcessPool* processPool)
 {
-    m_processPool = processPool;
+    m_data.processPool = processPool;
 }
 
 WebUserContentControllerProxy* PageConfiguration::userContentController()
 {
-    return m_userContentController.get();
+    return m_data.userContentController.get();
 }
 
 void PageConfiguration::setUserContentController(WebUserContentControllerProxy* userContentController)
 {
-    m_userContentController = userContentController;
+    m_data.userContentController = userContentController;
 }
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 WebExtensionController* PageConfiguration::webExtensionController()
 {
-    return m_webExtensionController.get();
+    return m_data.webExtensionController.get();
 }
 
 void PageConfiguration::setWebExtensionController(WebExtensionController* webExtensionController)
 {
-    m_webExtensionController = webExtensionController;
+    m_data.webExtensionController = webExtensionController;
 }
 
 WebExtensionController* PageConfiguration::weakWebExtensionController()
 {
-    return m_weakWebExtensionController.get();
+    return m_data.weakWebExtensionController.get();
 }
 
 void PageConfiguration::setWeakWebExtensionController(WebExtensionController* webExtensionController)
 {
-    m_weakWebExtensionController = webExtensionController;
+    m_data.weakWebExtensionController = webExtensionController;
 }
 #endif // ENABLE(WK_WEB_EXTENSIONS)
 
 WebPageGroup* PageConfiguration::pageGroup()
 {
-    return m_pageGroup.get();
+    return m_data.pageGroup.get();
 }
 
 void PageConfiguration::setPageGroup(WebPageGroup* pageGroup)
 {
-    m_pageGroup = pageGroup;
+    m_data.pageGroup = pageGroup;
 }
 
 WebPreferences* PageConfiguration::preferences()
 {
-    return m_preferences.get();
+    return m_data.preferences.get();
 }
 
 void PageConfiguration::setPreferences(WebPreferences* preferences)
 {
-    m_preferences = preferences;
+    m_data.preferences = preferences;
 }
 
 WebPageProxy* PageConfiguration::relatedPage() const
 {
-    return m_relatedPage.get();
+    return m_data.relatedPage.get();
 }
 
 void PageConfiguration::setRelatedPage(WebPageProxy* relatedPage)
 {
-    m_relatedPage = relatedPage;
+    m_data.relatedPage = relatedPage;
 }
 
 WebKit::WebPageProxy* PageConfiguration::pageToCloneSessionStorageFrom() const
 {
-    return m_pageToCloneSessionStorageFrom.get();
+    return m_data.pageToCloneSessionStorageFrom.get();
 }
 
 void PageConfiguration::setPageToCloneSessionStorageFrom(WebKit::WebPageProxy* pageToCloneSessionStorageFrom)
 {
-    m_pageToCloneSessionStorageFrom = pageToCloneSessionStorageFrom;
+    m_data.pageToCloneSessionStorageFrom = pageToCloneSessionStorageFrom;
 }
 
 WebKit::VisitedLinkStore* PageConfiguration::visitedLinkStore()
 {
-    return m_visitedLinkStore.get();
+    return m_data.visitedLinkStore.get();
 }
 
 void PageConfiguration::setVisitedLinkStore(WebKit::VisitedLinkStore* visitedLinkStore)
 {
-    m_visitedLinkStore = visitedLinkStore;
+    m_data.visitedLinkStore = visitedLinkStore;
 }
 
 WebKit::WebsiteDataStore* PageConfiguration::websiteDataStore()
 {
-    return m_websiteDataStore.get();
+    return m_data.websiteDataStore.get();
 }
 
 void PageConfiguration::setWebsiteDataStore(WebKit::WebsiteDataStore* websiteDataStore)
 {
-    m_websiteDataStore = websiteDataStore;
+    m_data.websiteDataStore = websiteDataStore;
 }
 
 WebsitePolicies* PageConfiguration::defaultWebsitePolicies() const
 {
-    return m_defaultWebsitePolicies.get();
+    return m_data.defaultWebsitePolicies.get();
 }
 
 void PageConfiguration::setDefaultWebsitePolicies(WebsitePolicies* policies)
 {
-    m_defaultWebsitePolicies = policies;
+    m_data.defaultWebsitePolicies = policies;
 }
 
 RefPtr<WebKit::WebURLSchemeHandler> PageConfiguration::urlSchemeHandlerForURLScheme(const WTF::String& scheme)
 {
-    return m_urlSchemeHandlers.get(scheme);
+    return m_data.urlSchemeHandlers.get(scheme);
 }
 
 void PageConfiguration::setURLSchemeHandlerForURLScheme(Ref<WebKit::WebURLSchemeHandler>&& handler, const WTF::String& scheme)
 {
-    m_urlSchemeHandlers.set(scheme, WTFMove(handler));
+    m_data.urlSchemeHandlers.set(scheme, WTFMove(handler));
 }
 
 bool PageConfiguration::lockdownModeEnabled() const
 {
-    if (m_defaultWebsitePolicies)
-        return m_defaultWebsitePolicies->lockdownModeEnabled();
+    if (m_data.defaultWebsitePolicies)
+        return m_data.defaultWebsitePolicies->lockdownModeEnabled();
     return lockdownModeEnabledBySystem();
 }
 
 void PageConfiguration::setDelaysWebProcessLaunchUntilFirstLoad(bool delaysWebProcessLaunchUntilFirstLoad)
 {
     RELEASE_LOG(Process, "%p - PageConfiguration::setDelaysWebProcessLaunchUntilFirstLoad(%d)", this, delaysWebProcessLaunchUntilFirstLoad);
-    m_delaysWebProcessLaunchUntilFirstLoad = delaysWebProcessLaunchUntilFirstLoad;
+    m_data.delaysWebProcessLaunchUntilFirstLoad = delaysWebProcessLaunchUntilFirstLoad;
 }
 
 bool PageConfiguration::delaysWebProcessLaunchUntilFirstLoad() const
 {
-    if (m_processPool && isInspectorProcessPool(*m_processPool)) {
+    if (m_data.processPool && isInspectorProcessPool(*m_data.processPool)) {
         // Never delay process launch for inspector pages as inspector pages do not know how to transition from a terminated process.
         RELEASE_LOG(Process, "%p - PageConfiguration::delaysWebProcessLaunchUntilFirstLoad() -> false because of WebInspector pool", this);
         return false;
     }
-    if (m_delaysWebProcessLaunchUntilFirstLoad) {
-        RELEASE_LOG(Process, "%p - PageConfiguration::delaysWebProcessLaunchUntilFirstLoad() -> %{public}s because of explicit client value", this, *m_delaysWebProcessLaunchUntilFirstLoad ? "true" : "false");
+    if (m_data.delaysWebProcessLaunchUntilFirstLoad) {
+        RELEASE_LOG(Process, "%p - PageConfiguration::delaysWebProcessLaunchUntilFirstLoad() -> %{public}s because of explicit client value", this, *m_data.delaysWebProcessLaunchUntilFirstLoad ? "true" : "false");
         // If the client explicitly enabled / disabled the feature, then obey their directives.
-        return *m_delaysWebProcessLaunchUntilFirstLoad;
+        return *m_data.delaysWebProcessLaunchUntilFirstLoad;
     }
-    if (m_processPool) {
-        RELEASE_LOG(Process, "%p - PageConfiguration::delaysWebProcessLaunchUntilFirstLoad() -> %{public}s because of associated processPool value", this, m_processPool->delaysWebProcessLaunchDefaultValue() ? "true" : "false");
-        return m_processPool->delaysWebProcessLaunchDefaultValue();
+    if (m_data.processPool) {
+        RELEASE_LOG(Process, "%p - PageConfiguration::delaysWebProcessLaunchUntilFirstLoad() -> %{public}s because of associated processPool value", this, m_data.processPool->delaysWebProcessLaunchDefaultValue() ? "true" : "false");
+        return m_data.processPool->delaysWebProcessLaunchDefaultValue();
     }
     RELEASE_LOG(Process, "%p - PageConfiguration::delaysWebProcessLaunchUntilFirstLoad() -> %{public}s because of global default value", this, WebProcessPool::globalDelaysWebProcessLaunchDefaultValue() ? "true" : "false");
     return WebProcessPool::globalDelaysWebProcessLaunchDefaultValue();
@@ -280,18 +222,18 @@ bool PageConfiguration::delaysWebProcessLaunchUntilFirstLoad() const
 
 bool PageConfiguration::isLockdownModeExplicitlySet() const
 {
-    return m_defaultWebsitePolicies && m_defaultWebsitePolicies->isLockdownModeExplicitlySet();
+    return m_data.defaultWebsitePolicies && m_data.defaultWebsitePolicies->isLockdownModeExplicitlySet();
 }
 
 #if ENABLE(APPLICATION_MANIFEST)
 ApplicationManifest* PageConfiguration::applicationManifest() const
 {
-    return m_applicationManifest.get();
+    return m_data.applicationManifest.get();
 }
 
 void PageConfiguration::setApplicationManifest(ApplicationManifest* applicationManifest)
 {
-    m_applicationManifest = applicationManifest;
+    m_data.applicationManifest = applicationManifest;
 }
 #endif
 
