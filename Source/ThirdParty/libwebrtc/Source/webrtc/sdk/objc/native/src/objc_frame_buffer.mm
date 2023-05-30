@@ -88,15 +88,11 @@ rtc::scoped_refptr<I420BufferInterface> ObjCFrameBuffer::ToI420() {
 }
 
 id<RTCVideoFrameBuffer> ObjCFrameBuffer::wrapped_frame_buffer() const {
-  if (frame_buffer_)
-    return frame_buffer_;
-
-  {
-    webrtc::MutexLock lock(&mutex_);
-    if (!frame_buffer_ && frame_buffer_provider_.getBuffer)
-      const_cast<ObjCFrameBuffer*>(this)->frame_buffer_ = [[RTCCVPixelBuffer alloc] initWithPixelBuffer:frame_buffer_provider_.getBuffer(frame_buffer_provider_.pointer)];
-  }
-
+#if defined(WEBRTC_WEBKIT_BUILD)
+  webrtc::MutexLock lock(&mutex_);
+  if (!frame_buffer_ && frame_buffer_provider_.getBuffer)
+    const_cast<ObjCFrameBuffer*>(this)->frame_buffer_ = [[RTCCVPixelBuffer alloc] initWithPixelBuffer:frame_buffer_provider_.getBuffer(frame_buffer_provider_.pointer)];
+#endif
   return frame_buffer_;
 }
 
