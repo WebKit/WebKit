@@ -4415,6 +4415,9 @@ void MediaPlayerPrivateGStreamer::checkPlayingConsistency()
 
 String MediaPlayerPrivateGStreamer::codecForStreamId(const String& streamId)
 {
+    if (UNLIKELY(!m_codecs.contains(streamId)))
+        return emptyString();
+
     return m_codecs.get(streamId);
 }
 
