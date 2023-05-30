@@ -14,7 +14,9 @@
 #if !defined(LIBYUV_DISABLE_X86) && defined(_MSC_VER) && \
     !defined(__clang__) && (defined(_M_IX86) || defined(_M_X64))
 
-#if defined(_M_X64)
+#if defined(_M_ARM64EC)
+#include <intrin.h>
+#elif defined(_M_X64)
 #include <emmintrin.h>
 #include <tmmintrin.h>  // For _mm_maddubs_epi16
 #endif
@@ -2789,6 +2791,44 @@ __declspec(naked) void I422ToRGB24Row_SSSE3(
   }
 }
 
+// 8 pixels.
+// 8 UV values, mixed with 8 Y producing 8 RGB24 (24 bytes).
+__declspec(naked) void I444ToRGB24Row_SSSE3(
+    const uint8_t* y_buf,
+    const uint8_t* u_buf,
+    const uint8_t* v_buf,
+    uint8_t* dst_rgb24,
+    const struct YuvConstants* yuvconstants,
+    int width) {
+  __asm {
+    push       esi
+    push       edi
+    push       ebx
+    mov        eax, [esp + 12 + 4]  // Y
+    mov        esi, [esp + 12 + 8]  // U
+    mov        edi, [esp + 12 + 12]  // V
+    mov        edx, [esp + 12 + 16]  // argb
+    mov        ebx, [esp + 12 + 20]  // yuvconstants
+    mov        ecx, [esp + 12 + 24]  // width
+    sub        edi, esi
+    movdqa     xmm5, xmmword ptr kShuffleMaskARGBToRGB24_0
+    movdqa     xmm6, xmmword ptr kShuffleMaskARGBToRGB24
+
+ convertloop:
+    READYUV444
+    YUVTORGB(ebx)
+    STORERGB24
+
+    sub        ecx, 8
+    jg         convertloop
+
+    pop        ebx
+    pop        edi
+    pop        esi
+    ret
+  }
+}
+
 // 8 pixels
 // 4 UV values upsampled to 8 UV, mixed with 8 Y producing 8 RGB565 (16 bytes).
 __declspec(naked) void I422ToRGB565Row_SSSE3(
@@ -3423,17 +3463,14 @@ __declspec(naked) void MergeUVRow_AVX2(const uint8_t* src_u,
     sub        edx, eax
 
   convertloop:
-    vmovdqu    ymm0, [eax]  // read 32 U's
-    vmovdqu    ymm1, [eax + edx]  // and 32 V's
-    lea        eax,  [eax + 32]
-    vpunpcklbw ymm2, ymm0, ymm1  // low 16 UV pairs. mutated qqword 0,2
-    vpunpckhbw ymm0, ymm0, ymm1  // high 16 UV pairs. mutated qqword 1,3
-    vextractf128 [edi], ymm2, 0  // bytes 0..15
-    vextractf128 [edi + 16], ymm0, 0  // bytes 16..31
-    vextractf128 [edi + 32], ymm2, 1  // bytes 32..47
-    vextractf128 [edi + 48], ymm0, 1  // bytes 47..63
-    lea        edi, [edi + 64]
-    sub        ecx, 32
+    vpmovzxbw  ymm0, [eax]
+    vpmovzxbw  ymm1, [eax + edx]
+    lea        eax,  [eax + 16]
+    vpsllw     ymm1, ymm1, 8
+    vpor       ymm2, ymm1, ymm0
+    vmovdqu    [edi], ymm2
+    lea        edi, [edi + 32]
+    sub        ecx, 16
     jg         convertloop
 
     pop        edi

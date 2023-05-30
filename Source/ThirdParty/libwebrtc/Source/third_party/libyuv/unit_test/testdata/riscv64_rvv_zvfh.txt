@@ -1,0 +1,4 @@
+processor       : 0
+hart            : 1
+isa             : rv64imafdcv_zfh_zvfh
+mmu             : sv48

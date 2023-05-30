@@ -34,7 +34,5 @@ exec_script_whitelist = build_dotfile_settings.exec_script_whitelist +
 
 default_args = {
   mac_sdk_min = "10.12"
-
-  # https://bugs.chromium.org/p/libyuv/issues/detail?id=826
-  ios_deployment_target = "10.0"
+  ios_deployment_target = "12.0"
 }

@@ -13,6 +13,9 @@ build_with_chromium = false
 # Some non-Chromium builds don't support building java targets.
 enable_java_templates = true
 
+# Enables assertions on safety checks in libc++.
+enable_safe_libcxx = true
+
 # Allow using custom suppressions files (currently not used by libyuv).
 asan_suppressions_file = "//build/sanitizers/asan_suppressions.cc"
 lsan_suppressions_file = "//build/sanitizers/lsan_suppressions.cc"

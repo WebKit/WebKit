@@ -23,6 +23,25 @@ namespace libyuv {
 extern "C" {
 #endif
 
+#ifdef __cplusplus
+#define STATIC_CAST(type, expr) static_cast<type>(expr)
+#else
+#define STATIC_CAST(type, expr) (type)(expr)
+#endif
+
+// TODO(fbarchard): make clamp255 preserve negative values.
+static __inline int32_t clamp255(int32_t v) {
+  return (-(v >= 255) | v) & 255;
+}
+
+// Use scale to convert lsb formats to msb, depending how many bits there are:
+// 32768 = 9 bits
+// 16384 = 10 bits
+// 4096 = 12 bits
+// 256 = 16 bits
+// TODO(fbarchard): change scale to bits
+#define C16TO8(v, scale) clamp255(((v) * (scale)) >> 16)
+
 static __inline int Abs(int v) {
   return v >= 0 ? v : -v;
 }
@@ -62,6 +81,50 @@ void ScaleRowDown2_16_C(const uint16_t* src_ptr,
   }
 }
 
+void ScaleRowDown2_16To8_C(const uint16_t* src_ptr,
+                           ptrdiff_t src_stride,
+                           uint8_t* dst,
+                           int dst_width,
+                           int scale) {
+  int x;
+  (void)src_stride;
+  assert(scale >= 256);
+  assert(scale <= 32768);
+  for (x = 0; x < dst_width - 1; x += 2) {
+    dst[0] = STATIC_CAST(uint8_t, C16TO8(src_ptr[1], scale));
+    dst[1] = STATIC_CAST(uint8_t, C16TO8(src_ptr[3], scale));
+    dst += 2;
+    src_ptr += 4;
+  }
+  if (dst_width & 1) {
+    dst[0] = STATIC_CAST(uint8_t, C16TO8(src_ptr[1], scale));
+  }
+}
+
+void ScaleRowDown2_16To8_Odd_C(const uint16_t* src_ptr,
+                               ptrdiff_t src_stride,
+                               uint8_t* dst,
+                               int dst_width,
+                               int scale) {
+  int x;
+  (void)src_stride;
+  assert(scale >= 256);
+  assert(scale <= 32768);
+  dst_width -= 1;
+  for (x = 0; x < dst_width - 1; x += 2) {
+    dst[0] = STATIC_CAST(uint8_t, C16TO8(src_ptr[1], scale));
+    dst[1] = STATIC_CAST(uint8_t, C16TO8(src_ptr[3], scale));
+    dst += 2;
+    src_ptr += 4;
+  }
+  if (dst_width & 1) {
+    dst[0] = STATIC_CAST(uint8_t, C16TO8(src_ptr[1], scale));
+    dst += 1;
+    src_ptr += 2;
+  }
+  dst[0] = STATIC_CAST(uint8_t, C16TO8(src_ptr[0], scale));
+}
+
 void ScaleRowDown2Linear_C(const uint8_t* src_ptr,
                            ptrdiff_t src_stride,
                            uint8_t* dst,
@@ -96,6 +159,52 @@ void ScaleRowDown2Linear_16_C(const uint16_t* src_ptr,
   if (dst_width & 1) {
     dst[0] = (s[0] + s[1] + 1) >> 1;
   }
+}
+
+void ScaleRowDown2Linear_16To8_C(const uint16_t* src_ptr,
+                                 ptrdiff_t src_stride,
+                                 uint8_t* dst,
+                                 int dst_width,
+                                 int scale) {
+  const uint16_t* s = src_ptr;
+  int x;
+  (void)src_stride;
+  assert(scale >= 256);
+  assert(scale <= 32768);
+  for (x = 0; x < dst_width - 1; x += 2) {
+    dst[0] = STATIC_CAST(uint8_t, C16TO8((s[0] + s[1] + 1) >> 1, scale));
+    dst[1] = STATIC_CAST(uint8_t, C16TO8((s[2] + s[3] + 1) >> 1, scale));
+    dst += 2;
+    s += 4;
+  }
+  if (dst_width & 1) {
+    dst[0] = STATIC_CAST(uint8_t, C16TO8((s[0] + s[1] + 1) >> 1, scale));
+  }
+}
+
+void ScaleRowDown2Linear_16To8_Odd_C(const uint16_t* src_ptr,
+                                     ptrdiff_t src_stride,
+                                     uint8_t* dst,
+                                     int dst_width,
+                                     int scale) {
+  const uint16_t* s = src_ptr;
+  int x;
+  (void)src_stride;
+  assert(scale >= 256);
+  assert(scale <= 32768);
+  dst_width -= 1;
+  for (x = 0; x < dst_width - 1; x += 2) {
+    dst[0] = STATIC_CAST(uint8_t, C16TO8((s[0] + s[1] + 1) >> 1, scale));
+    dst[1] = STATIC_CAST(uint8_t, C16TO8((s[2] + s[3] + 1) >> 1, scale));
+    dst += 2;
+    s += 4;
+  }
+  if (dst_width & 1) {
+    dst[0] = STATIC_CAST(uint8_t, C16TO8((s[0] + s[1] + 1) >> 1, scale));
+    dst += 1;
+    s += 2;
+  }
+  dst[0] = STATIC_CAST(uint8_t, C16TO8(s[0], scale));
 }
 
 void ScaleRowDown2Box_C(const uint8_t* src_ptr,
@@ -158,6 +267,61 @@ void ScaleRowDown2Box_16_C(const uint16_t* src_ptr,
   if (dst_width & 1) {
     dst[0] = (s[0] + s[1] + t[0] + t[1] + 2) >> 2;
   }
+}
+
+void ScaleRowDown2Box_16To8_C(const uint16_t* src_ptr,
+                              ptrdiff_t src_stride,
+                              uint8_t* dst,
+                              int dst_width,
+                              int scale) {
+  const uint16_t* s = src_ptr;
+  const uint16_t* t = src_ptr + src_stride;
+  int x;
+  assert(scale >= 256);
+  assert(scale <= 32768);
+  for (x = 0; x < dst_width - 1; x += 2) {
+    dst[0] = STATIC_CAST(uint8_t,
+                         C16TO8((s[0] + s[1] + t[0] + t[1] + 2) >> 2, scale));
+    dst[1] = STATIC_CAST(uint8_t,
+                         C16TO8((s[2] + s[3] + t[2] + t[3] + 2) >> 2, scale));
+    dst += 2;
+    s += 4;
+    t += 4;
+  }
+  if (dst_width & 1) {
+    dst[0] = STATIC_CAST(uint8_t,
+                         C16TO8((s[0] + s[1] + t[0] + t[1] + 2) >> 2, scale));
+  }
+}
+
+void ScaleRowDown2Box_16To8_Odd_C(const uint16_t* src_ptr,
+                                  ptrdiff_t src_stride,
+                                  uint8_t* dst,
+                                  int dst_width,
+                                  int scale) {
+  const uint16_t* s = src_ptr;
+  const uint16_t* t = src_ptr + src_stride;
+  int x;
+  assert(scale >= 256);
+  assert(scale <= 32768);
+  dst_width -= 1;
+  for (x = 0; x < dst_width - 1; x += 2) {
+    dst[0] = STATIC_CAST(uint8_t,
+                         C16TO8((s[0] + s[1] + t[0] + t[1] + 2) >> 2, scale));
+    dst[1] = STATIC_CAST(uint8_t,
+                         C16TO8((s[2] + s[3] + t[2] + t[3] + 2) >> 2, scale));
+    dst += 2;
+    s += 4;
+    t += 4;
+  }
+  if (dst_width & 1) {
+    dst[0] = STATIC_CAST(uint8_t,
+                         C16TO8((s[0] + s[1] + t[0] + t[1] + 2) >> 2, scale));
+    dst += 1;
+    s += 2;
+    t += 2;
+  }
+  dst[0] = STATIC_CAST(uint8_t, C16TO8((s[0] + t[0] + 1) >> 1, scale));
 }
 
 void ScaleRowDown4_C(const uint8_t* src_ptr,
@@ -1116,18 +1280,13 @@ void ScaleUVRowDown2_C(const uint8_t* src_uv,
                        ptrdiff_t src_stride,
                        uint8_t* dst_uv,
                        int dst_width) {
-  const uint16_t* src = (const uint16_t*)(src_uv);
-  uint16_t* dst = (uint16_t*)(dst_uv);
   int x;
   (void)src_stride;
-  for (x = 0; x < dst_width - 1; x += 2) {
-    dst[0] = src[1];
-    dst[1] = src[3];
-    src += 2;
-    dst += 2;
-  }
-  if (dst_width & 1) {
-    dst[0] = src[1];
+  for (x = 0; x < dst_width; ++x) {
+    dst_uv[0] = src_uv[2];  // Store the 2nd UV
+    dst_uv[1] = src_uv[3];
+    src_uv += 4;
+    dst_uv += 2;
   }
 }
 
@@ -1469,7 +1628,7 @@ void ScalePlaneVertical(int src_height,
                         enum FilterMode filtering) {
   // TODO(fbarchard): Allow higher bpp.
   int dst_width_bytes = dst_width * bpp;
-  void (*InterpolateRow)(uint8_t * dst_argb, const uint8_t* src_argb,
+  void (*InterpolateRow)(uint8_t* dst_argb, const uint8_t* src_argb,
                          ptrdiff_t src_stride, int dst_width,
                          int source_y_fraction) = InterpolateRow_C;
   const int max_y = (src_height > 1) ? ((src_height - 1) << 16) - 1 : 0;
@@ -1548,7 +1707,7 @@ void ScalePlaneVertical_16(int src_height,
                            enum FilterMode filtering) {
   // TODO(fbarchard): Allow higher wpp.
   int dst_width_words = dst_width * wpp;
-  void (*InterpolateRow)(uint16_t * dst_argb, const uint16_t* src_argb,
+  void (*InterpolateRow)(uint16_t* dst_argb, const uint16_t* src_argb,
                          ptrdiff_t src_stride, int dst_width,
                          int source_y_fraction) = InterpolateRow_16_C;
   const int max_y = (src_height > 1) ? ((src_height - 1) << 16) - 1 : 0;
@@ -1627,7 +1786,7 @@ void ScalePlaneVertical_16To8(int src_height,
   // TODO(fbarchard): Allow higher wpp.
   int dst_width_words = dst_width * wpp;
   // TODO(https://crbug.com/libyuv/931): Add NEON 32 bit and AVX2 versions.
-  void (*InterpolateRow_16To8)(uint8_t * dst_argb, const uint16_t* src_argb,
+  void (*InterpolateRow_16To8)(uint8_t* dst_argb, const uint16_t* src_argb,
                                ptrdiff_t src_stride, int scale, int dst_width,
                                int source_y_fraction) = InterpolateRow_16To8_C;
   const int max_y = (src_height > 1) ? ((src_height - 1) << 16) - 1 : 0;

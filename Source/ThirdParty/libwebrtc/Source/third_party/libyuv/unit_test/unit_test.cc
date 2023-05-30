@@ -88,6 +88,11 @@ int TestCpuEnv(int cpu_info) {
     cpu_info &= ~libyuv::kCpuHasLASX;
   }
 #endif
+#if defined(__riscv) && defined(__linux__)
+  if (TestEnv("LIBYUV_DISABLE_RVV")) {
+    cpu_info &= ~libyuv::kCpuHasRVV;
+  }
+#endif
 #if !defined(__pnacl__) && !defined(__CLR_VER) &&                   \
     (defined(__x86_64__) || defined(_M_X64) || defined(__i386__) || \
      defined(_M_IX86))
