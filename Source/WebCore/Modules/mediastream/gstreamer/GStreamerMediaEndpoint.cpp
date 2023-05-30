@@ -1347,6 +1347,9 @@ void GStreamerMediaEndpoint::onNegotiationNeeded()
     GST_DEBUG_OBJECT(m_pipeline.get(), "Scheduling negotiation-needed");
     ++m_negotiationNeededEventId;
     callOnMainThread([protectedThis = Ref(*this), this] {
+        if (isStopped())
+            return;
+
         GST_DEBUG_OBJECT(m_pipeline.get(), "Negotiation needed!");
         m_peerConnectionBackend.markAsNeedingNegotiation(m_negotiationNeededEventId);
     });
