@@ -74,9 +74,9 @@ public:
 #endif
 
     RetainPtr<id> newSharedEventWithMachPort(mach_port_t);
-    void* createSyncWithSharedEvent(id sharedEvent, uint64_t signalValue);
-    bool destroySync(void* sync);
-    void clientWaitSyncWithFlush(void* sync, uint64_t timeout);
+    GCEGLSync createEGLSync(ExternalEGLSyncEvent) final;
+    // Short term support for in-process WebGL.
+    GCEGLSync createEGLSync(id, uint64_t);
 
     void waitUntilWorkScheduled();
 

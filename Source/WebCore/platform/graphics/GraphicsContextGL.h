@@ -42,6 +42,10 @@
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
 
+#if PLATFORM(COCOA)
+#include <wtf/MachSendRight.h>
+#endif
+
 #if OS(WINDOWS)
 // Defined in winerror.h
 #ifdef NO_ERROR
@@ -1469,6 +1473,17 @@ public:
     virtual void uniformBlockBinding(PlatformGLObject program, GCGLuint uniformBlockIndex, GCGLuint uniformBlockBinding) = 0;
 
     virtual void getActiveUniformBlockiv(GCGLuint program, GCGLuint uniformBlockIndex, GCGLenum pname, std::span<GCGLint> params) = 0;
+
+    // ========== EGL related entry points.
+
+#if PLATFORM(COCOA)
+    using ExternalEGLSyncEvent = std::tuple<MachSendRight, uint64_t>;
+#else
+    using ExternalEGLSyncEvent = int;
+#endif
+    virtual GCEGLSync createEGLSync(ExternalEGLSyncEvent) = 0;
+    virtual bool destroyEGLSync(GCEGLSync) = 0;
+    virtual void clientWaitEGLSyncWithFlush(GCEGLSync, uint64_t) = 0;
 
     // ========== Extension related entry points.
 

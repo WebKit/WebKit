@@ -131,6 +131,9 @@ protected:
     void setSharedVideoFrameSemaphore(IPC::Semaphore&&);
     void setSharedVideoFrameMemory(SharedMemory::Handle&&);
 #endif
+#if PLATFORM(COCOA)
+    virtual void createEGLSync(WTF::MachSendRight syncEvent, uint64_t signalValue, CompletionHandler<void(uint64_t)>&&) = 0;
+#endif
     void simulateEventForTesting(WebCore::GraphicsContextGL::SimulatedEventForTesting);
     void readPixelsInline(WebCore::IntRect, uint32_t format, uint32_t type, IPC::ArrayReference<uint8_t>&& data, CompletionHandler<void(IPC::ArrayReference<uint8_t>)>&&);
     void readPixelsSharedMemory(WebCore::IntRect, uint32_t format, uint32_t type, SharedMemory::Handle, CompletionHandler<void(bool)>&&);

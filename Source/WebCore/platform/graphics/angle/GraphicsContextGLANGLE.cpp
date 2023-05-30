@@ -2813,6 +2813,23 @@ void GraphicsContextGLANGLE::getActiveUniformBlockiv(GCGLuint program, GCGLuint 
     GL_GetActiveUniformBlockivRobustANGLE(program, uniformBlockIndex, pname, params.size(), nullptr, params.data());
 }
 
+GCEGLSync GraphicsContextGLANGLE::createEGLSync(ExternalEGLSyncEvent)
+{
+    notImplemented();
+    return nullptr;
+}
+
+bool GraphicsContextGLANGLE::destroyEGLSync(GCEGLSync sync)
+{
+    return !!EGL_DestroySync(platformDisplay(), sync);
+}
+
+void GraphicsContextGLANGLE::clientWaitEGLSyncWithFlush(GCEGLSync sync, uint64_t timeout)
+{
+    auto ret = EGL_ClientWaitSync(platformDisplay(), sync, EGL_SYNC_FLUSH_COMMANDS_BIT, timeout);
+    ASSERT_UNUSED(ret, ret == EGL_CONDITION_SATISFIED);
+}
+
 void GraphicsContextGLANGLE::multiDrawArraysANGLE(GCGLenum mode, GCGLSpanTuple<const GCGLint, const GCGLsizei> firstsAndCounts)
 {
     if (!makeContextCurrent())

@@ -60,6 +60,9 @@ messages -> RemoteGraphicsContextGL NotRefCounted Stream {
     void MultiDrawElementsInstancedANGLE(uint32_t mode, IPC::ArrayReferenceTuple<int32_t, int32_t, int32_t> countsOffsetsAndInstanceCounts, uint32_t type)
     void MultiDrawArraysInstancedBaseInstanceANGLE(uint32_t mode, IPC::ArrayReferenceTuple<int32_t, int32_t, int32_t, uint32_t> firstsCountsInstanceCountsAndBaseInstances)
     void MultiDrawElementsInstancedBaseVertexBaseInstanceANGLE(uint32_t mode, IPC::ArrayReferenceTuple<int32_t, int32_t, int32_t, int32_t, uint32_t> countsOffsetsInstanceCountsBaseVerticesAndBaseInstances, uint32_t type)
+#if PLATFORM(COCOA)
+    void CreateEGLSync(MachSendRight syncEvent, uint64_t signalValue) -> (uint64_t sync) Synchronous NotStreamEncodable NotStreamEncodableReply
+#endif
 
     void ActiveTexture(uint32_t texture)
     void AttachShader(uint32_t program, uint32_t shader)
@@ -195,7 +198,7 @@ messages -> RemoteGraphicsContextGL NotRefCounted Stream {
     void BufferData0(uint32_t target, uint64_t arg1, uint32_t usage)
     void BufferData1(uint32_t target, IPC::ArrayReference<uint8_t> data, uint32_t usage)
     void BufferSubData(uint32_t target, uint64_t offset, IPC::ArrayReference<uint8_t> data)
-    void ReadPixelsBufferObject(WebCore::IntRect rect, uint32_t format, uint32_t type, uint64_t offset)
+    void ReadPixelsBufferObject(WebCore::IntRect arg0, uint32_t format, uint32_t type, uint64_t offset)
     void TexImage2D0(uint32_t target, int32_t level, uint32_t internalformat, int32_t width, int32_t height, int32_t border, uint32_t format, uint32_t type, IPC::ArrayReference<uint8_t> pixels)
     void TexImage2D1(uint32_t target, int32_t level, uint32_t internalformat, int32_t width, int32_t height, int32_t border, uint32_t format, uint32_t type, uint64_t offset)
     void TexSubImage2D0(uint32_t target, int32_t level, int32_t xoffset, int32_t yoffset, int32_t width, int32_t height, uint32_t format, uint32_t type, IPC::ArrayReference<uint8_t> pixels)
@@ -321,6 +324,8 @@ messages -> RemoteGraphicsContextGL NotRefCounted Stream {
     void GetInternalformativ(uint32_t target, uint32_t internalformat, uint32_t pname, size_t paramsSize) -> (IPC::ArrayReference<int32_t> params) Synchronous
     void SetDrawingBufferColorSpace(WebCore::DestinationColorSpace arg0)
     void PaintRenderingResultsToPixelBuffer() -> (RefPtr<WebCore::PixelBuffer> returnValue) Synchronous
+    void DestroyEGLSync(uint64_t arg0) -> (bool returnValue) Synchronous
+    void ClientWaitEGLSyncWithFlush(uint64_t arg0, uint64_t timeout)
 }
 
 #endif

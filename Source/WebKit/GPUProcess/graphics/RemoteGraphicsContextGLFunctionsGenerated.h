@@ -778,10 +778,10 @@
         assertIsCurrent(workQueue());
         m_context->bufferSubData(target, static_cast<GCGLintptr>(offset), std::span(reinterpret_cast<const uint8_t*>(data.data()), data.size()));
     }
-    void readPixelsBufferObject(WebCore::IntRect&& rect, uint32_t format, uint32_t type, uint64_t offset)
+    void readPixelsBufferObject(WebCore::IntRect&& arg0, uint32_t format, uint32_t type, uint64_t offset)
     {
         assertIsCurrent(workQueue());
-        m_context->readPixelsBufferObject(rect, format, type, static_cast<GCGLintptr>(offset));
+        m_context->readPixelsBufferObject(arg0, format, type, static_cast<GCGLintptr>(offset));
     }
     void texImage2D0(uint32_t target, int32_t level, uint32_t internalformat, int32_t width, int32_t height, int32_t border, uint32_t format, uint32_t type, IPC::ArrayReference<uint8_t>&& pixels)
     {
@@ -1473,5 +1473,17 @@
         assertIsCurrent(workQueue());
         returnValue = m_context->paintRenderingResultsToPixelBuffer();
         completionHandler(WTFMove(returnValue));
+    }
+    void destroyEGLSync(uint64_t arg0, CompletionHandler<void(bool)>&& completionHandler)
+    {
+        bool returnValue = { };
+        assertIsCurrent(workQueue());
+        returnValue = m_context->destroyEGLSync(reinterpret_cast<GCEGLSync>(static_cast<intptr_t>(arg0)));
+        completionHandler(returnValue);
+    }
+    void clientWaitEGLSyncWithFlush(uint64_t arg0, uint64_t timeout)
+    {
+        assertIsCurrent(workQueue());
+        m_context->clientWaitEGLSyncWithFlush(reinterpret_cast<GCEGLSync>(static_cast<intptr_t>(arg0)), timeout);
     }
 

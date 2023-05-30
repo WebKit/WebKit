@@ -1588,11 +1588,11 @@ void RemoteGraphicsContextGLProxy::bufferSubData(GCGLenum target, GCGLintptr off
     }
 }
 
-void RemoteGraphicsContextGLProxy::readPixelsBufferObject(WebCore::IntRect rect, GCGLenum format, GCGLenum type, GCGLintptr offset)
+void RemoteGraphicsContextGLProxy::readPixelsBufferObject(WebCore::IntRect arg0, GCGLenum format, GCGLenum type, GCGLintptr offset)
 {
     if (isContextLost())
         return;
-    auto sendResult = send(Messages::RemoteGraphicsContextGL::ReadPixelsBufferObject(rect, format, type, static_cast<uint64_t>(offset)));
+    auto sendResult = send(Messages::RemoteGraphicsContextGL::ReadPixelsBufferObject(arg0, format, type, static_cast<uint64_t>(offset)));
     if (!sendResult) {
         markContextLost();
         return;
@@ -3038,6 +3038,30 @@ RefPtr<WebCore::PixelBuffer> RemoteGraphicsContextGLProxy::paintRenderingResults
     }
     auto& [returnValue] = sendResult.reply();
     return returnValue;
+}
+
+bool RemoteGraphicsContextGLProxy::destroyEGLSync(GCEGLSync arg0)
+{
+    if (isContextLost())
+        return { };
+    auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::DestroyEGLSync(static_cast<uint64_t>(reinterpret_cast<intptr_t>(arg0))));
+    if (!sendResult) {
+        markContextLost();
+        return { };
+    }
+    auto& [returnValue] = sendResult.reply();
+    return returnValue;
+}
+
+void RemoteGraphicsContextGLProxy::clientWaitEGLSyncWithFlush(GCEGLSync arg0, uint64_t timeout)
+{
+    if (isContextLost())
+        return;
+    auto sendResult = send(Messages::RemoteGraphicsContextGL::ClientWaitEGLSyncWithFlush(static_cast<uint64_t>(reinterpret_cast<intptr_t>(arg0)), timeout));
+    if (!sendResult) {
+        markContextLost();
+        return;
+    }
 }
 
 }

@@ -134,6 +134,9 @@ private:
 
 class RemoteGraphicsContextGLProxyCocoa final : public RemoteGraphicsContextGLProxy {
 public:
+    // GraphicsContextGL override.
+    GCEGLSync createEGLSync(ExternalEGLSyncEvent) final;
+
     // RemoteGraphicsContextGLProxy overrides.
     RefPtr<WebCore::GraphicsLayerContentsDisplayDelegate> layerContentsDisplayDelegate() final { return m_layerContentsDisplayDelegate.ptr(); }
     void prepareForDisplay() final;
@@ -155,6 +158,20 @@ private:
     Ref<DisplayBufferDisplayDelegate> m_layerContentsDisplayDelegate;
     friend class RemoteGraphicsContextGLProxy;
 };
+
+GCEGLSync RemoteGraphicsContextGLProxyCocoa::createEGLSync(ExternalEGLSyncEvent syncEvent)
+{
+    if (isContextLost())
+        return { };
+    auto [eventHandle, signalValue] = syncEvent;
+    auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::CreateEGLSync(eventHandle, signalValue));
+    if (!sendResult) {
+        markContextLost();
+        return { };
+    }
+    auto& [returnValue] = sendResult.reply();
+    return reinterpret_cast<GCEGLSync>(static_cast<intptr_t>(returnValue));
+}
 
 void RemoteGraphicsContextGLProxyCocoa::prepareForDisplay()
 {
