@@ -59,7 +59,7 @@ ExceptionOr<void> HTMLDialogElement::show()
         return Exception { InvalidStateError, "Cannot call show() on an open modal dialog."_s };
     }
 
-    if (popoverData() && popoverData()->visibilityState() == PopoverVisibilityState::Showing)
+    if (isPopoverShowing())
         return Exception { InvalidStateError, "Element is already an open popover."_s };
 
     setBooleanAttribute(openAttr, true);
@@ -85,7 +85,7 @@ ExceptionOr<void> HTMLDialogElement::showModal()
     if (!isConnected())
         return Exception { InvalidStateError, "Element is not connected."_s };
 
-    if (popoverData() && popoverData()->visibilityState() == PopoverVisibilityState::Showing)
+    if (isPopoverShowing())
         return Exception { InvalidStateError, "Element is already an open popover."_s };
 
     // setBooleanAttribute will dispatch a DOMSubtreeModified event.

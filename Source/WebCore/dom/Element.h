@@ -589,6 +589,7 @@ public:
     PopoverData* popoverData() const;
     PopoverData& ensurePopoverData();
     void clearPopoverData();
+    bool isPopoverShowing() const;
 
     ExceptionOr<void> setPointerCapture(int32_t);
     ExceptionOr<void> releasePointerCapture(int32_t);

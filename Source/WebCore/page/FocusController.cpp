@@ -73,7 +73,7 @@ using namespace HTMLNames;
 static bool isOpenPopoverWithInvoker(const Node* node)
 {
     RefPtr popover = dynamicDowncast<HTMLElement>(node);
-    return popover && popover->popoverData() && popover->popoverData()->visibilityState() == PopoverVisibilityState::Showing && popover->popoverData()->invoker();
+    return popover && popover->isPopoverShowing() && popover->popoverData()->invoker();
 }
 
 static const HTMLFormControlElement* invokerForPopoverShowingState(const Node* node)
@@ -82,7 +82,7 @@ static const HTMLFormControlElement* invokerForPopoverShowingState(const Node* n
     if (!invoker)
         return nullptr;
     HTMLElement* popover = invoker->popoverTargetElement();
-    if (popover && popover->popoverData() && popover->popoverData()->visibilityState() == PopoverVisibilityState::Showing && popover->popoverData()->invoker() == invoker)
+    if (popover && popover->isPopoverShowing() && popover->popoverData()->invoker() == invoker)
         return invoker.get();
     return nullptr;
 }

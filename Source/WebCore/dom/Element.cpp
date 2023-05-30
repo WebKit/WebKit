@@ -5358,4 +5358,9 @@ void Element::setHasDuplicateAttribute(bool hasDuplicateAttribute)
     setEventTargetFlag(EventTargetFlag::HasDuplicateAttribute, hasDuplicateAttribute);
 }
 
+bool Element::isPopoverShowing() const
+{
+    return popoverData() && popoverData()->visibilityState() == PopoverVisibilityState::Showing;
+}
+
 } // namespace WebCore

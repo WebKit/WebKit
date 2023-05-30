@@ -1483,7 +1483,7 @@ ExceptionOr<void> HTMLElement::hidePopover()
 
 ExceptionOr<void> HTMLElement::togglePopover(std::optional<bool> force)
 {
-    if (popoverData() && popoverData()->visibilityState() == PopoverVisibilityState::Showing && !force.value_or(false))
+    if (isPopoverShowing() && !force.value_or(false))
         return hidePopover();
 
     if ((!popoverData() || popoverData()->visibilityState() == PopoverVisibilityState::Hidden) && force.value_or(true))
@@ -1512,7 +1512,7 @@ void HTMLElement::popoverAttributeChanged(const AtomString& value)
 
     Style::PseudoClassChangeInvalidation styleInvalidation(*this, CSSSelector::PseudoClassPopoverOpen, false);
 
-    if (popoverData() && popoverData()->visibilityState() == PopoverVisibilityState::Showing) {
+    if (isPopoverShowing()) {
         hidePopoverInternal(FocusPreviousElement::Yes, FireEvents::Yes);
         newPopoverState = computePopoverState(attributeWithoutSynchronization(popoverAttr));
     }

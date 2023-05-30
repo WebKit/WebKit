@@ -9054,7 +9054,7 @@ void Document::hideAllPopoversUntil(Element* endpoint, FocusPreviousElement focu
         }
         if (!foundEndPoint)
             return closeAllOpenPopovers();
-        while (lastToHide && lastToHide->popoverData() && lastToHide->popoverData()->visibilityState() == PopoverVisibilityState::Showing) {
+        while (lastToHide && lastToHide->isPopoverShowing()) {
             auto* topmostAutoPopover = this->topmostAutoPopover();
             if (!topmostAutoPopover)
                 break;

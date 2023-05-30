@@ -575,10 +575,7 @@ ALWAYS_INLINE bool matchesModalPseudoClass(const Element& element)
 
 ALWAYS_INLINE bool matchesPopoverOpenPseudoClass(const Element& element)
 {
-    if (auto* popoverData = element.popoverData())
-        return popoverData->visibilityState() == PopoverVisibilityState::Showing;
-
-    return false;
+    return element.isPopoverShowing();
 }
 
 ALWAYS_INLINE bool matchesUserInvalidPseudoClass(const Element& element)

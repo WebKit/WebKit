@@ -41,7 +41,6 @@
 #include "LocalFrame.h"
 #include "Logging.h"
 #include "Page.h"
-#include "PopoverData.h"
 #include "PseudoClassChangeInvalidation.h"
 #include "QualifiedName.h"
 #include "Settings.h"
@@ -69,11 +68,6 @@ Element* FullscreenManager::fullscreenElement() const
     }
 
     return nullptr;
-}
-
-inline bool isInPopoverShowingState(Element& element)
-{
-    return element.popoverData() && element.popoverData()->visibilityState() == PopoverVisibilityState::Showing;
 }
 
 // https://fullscreen.spec.whatwg.org/#dom-element-requestfullscreen
@@ -109,7 +103,7 @@ void FullscreenManager::requestFullscreenForElement(Ref<Element>&& element, RefP
         return;
     }
 
-    if (isInPopoverShowingState(element)) {
+    if (element->isPopoverShowing()) {
         ERROR_LOG(identifier, "Element to fullscreen is an open popover; failing.");
         failedPreflights(WTFMove(element), WTFMove(promise));
         return;
@@ -207,7 +201,7 @@ void FullscreenManager::requestFullscreenForElement(Ref<Element>&& element, RefP
         }
 
         // The element is an open popover.
-        if (isInPopoverShowingState(element)) {
+        if (element->isPopoverShowing()) {
             ERROR_LOG(identifier, "Element to fullscreen is an open popover; failing.");
             failedPreflights(WTFMove(element), WTFMove(promise));
             return;
@@ -476,7 +470,7 @@ bool FullscreenManager::willEnterFullscreen(Element& element)
     }
 
     // The element is an open popover.
-    if (isInPopoverShowingState(element)) {
+    if (element.isPopoverShowing()) {
         ERROR_LOG(LOGIDENTIFIER, "Element to fullscreen is an open popover; bailing.");
         return false;
     }
