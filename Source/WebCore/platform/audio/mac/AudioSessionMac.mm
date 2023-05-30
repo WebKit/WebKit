@@ -32,6 +32,7 @@
 #import "Logging.h"
 #import "NotImplemented.h"
 #import <CoreAudio/AudioHardware.h>
+#import <wtf/LoggerHelper.h>
 #import <wtf/MainThread.h>
 #import <wtf/UniqueArray.h>
 #import <wtf/text/WTFString.h>
@@ -270,12 +271,14 @@ void AudioSessionMac::audioOutputDeviceChanged()
     if (!m_playingToBluetooth || *m_playingToBluetooth == defaultDeviceTransportIsBluetooth())
         return;
 
+    ALWAYS_LOG(LOGIDENTIFIER);
     m_playingToBluetooth = std::nullopt;
 #endif
 }
 
 void AudioSessionMac::setIsPlayingToBluetoothOverride(std::optional<bool> value)
 {
+    ALWAYS_LOG(LOGIDENTIFIER, value ? (*value ? "true" : "false") : "null");
 #if ENABLE(ROUTING_ARBITRATION)
     isPlayingToBluetoothOverride = value;
 #else
@@ -288,6 +291,8 @@ void AudioSessionMac::setCategory(CategoryType category, Mode mode, RouteSharing
     AudioSessionCocoa::setCategory(category, mode, policy);
 
 #if ENABLE(ROUTING_ARBITRATION)
+    ALWAYS_LOG(LOGIDENTIFIER, category, " mode = ", mode, " policy = ", policy);
+
     bool playingToBluetooth = defaultDeviceTransportIsBluetooth();
     if (category == m_category && m_playingToBluetooth && *m_playingToBluetooth == playingToBluetooth)
         return;
@@ -330,6 +335,7 @@ void AudioSessionMac::setCategory(CategoryType category, Mode mode, RouteSharing
             LOG(Media, "AudioSessionMac::setCategory() - defaultRouteChanged!");
     });
 #else
+    UNUSED_PARAM(mode);
     m_category = category;
     m_policy = policy;
 #endif
@@ -447,6 +453,8 @@ void AudioSessionMac::setPreferredBufferSize(size_t bufferSize)
 {
     if (m_bufferSize == bufferSize)
         return;
+
+    ALWAYS_LOG(LOGIDENTIFIER, bufferSize);
 
     AudioValueRange bufferSizeRange = {0, 0};
     UInt32 bufferSizeRangeSize = sizeof(AudioValueRange);
@@ -585,6 +593,21 @@ void AudioSessionMac::removeMuteChangeObserverIfNeeded() const
 
     AudioObjectRemovePropertyListener(defaultDevice(), &muteAddress(), handleMutePropertyChange, const_cast<AudioSessionMac*>(this));
     m_hasMuteChangeObserver = false;
+}
+
+WTFLogChannel& AudioSessionMac::logChannel() const
+{
+    return LogMedia;
+}
+
+const void* AudioSessionMac::logIdentifier() const
+{
+#if ENABLE(ROUTING_ARBITRATION)
+    if (m_routingArbitrationClient)
+        return m_routingArbitrationClient->logIdentifier();
+#endif
+
+    return nullptr;
 }
 
 }

@@ -490,6 +490,8 @@ public:
     static void permissionChanged(WebCore::PermissionName, const WebCore::SecurityOriginData&);
     void sendPermissionChanged(WebCore::PermissionName, const WebCore::SecurityOriginData&);
 
+    Logger& logger();
+
 protected:
     WebProcessProxy(WebProcessPool&, WebsiteDataStore*, IsPrewarmed, WebCore::CrossOriginMode, LockdownMode);
 
@@ -673,10 +675,6 @@ private:
     DisplayLinkProcessProxyClient m_displayLinkClient;
 #endif
 
-#if ENABLE(ROUTING_ARBITRATION)
-    UniqueRef<AudioSessionRoutingArbitratorProxy> m_routingArbitrator;
-#endif
-
 #if PLATFORM(COCOA)
     bool m_hasSentMessageToUnblockAccessibilityServer { false };
 #endif
@@ -759,6 +757,9 @@ private:
 #endif
     std::unique_ptr<WebLockRegistryProxy> m_webLockRegistry;
     std::unique_ptr<WebPermissionControllerProxy> m_webPermissionController;
+#if ENABLE(ROUTING_ARBITRATION)
+    UniqueRef<AudioSessionRoutingArbitratorProxy> m_routingArbitrator;
+#endif
     bool m_isConnectedToHardwareConsole { true };
 #if PLATFORM(MAC)
     bool m_platformSuspendDidReleaseNearSuspendedAssertion { false };

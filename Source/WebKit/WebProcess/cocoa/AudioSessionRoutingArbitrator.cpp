@@ -32,6 +32,7 @@
 #include "AudioSessionRoutingArbitratorProxyMessages.h"
 #include "WebConnectionToUIProcess.h"
 #include "WebProcess.h"
+#include <wtf/LoggerHelper.h>
 
 namespace WebKit {
 
@@ -40,6 +41,7 @@ using namespace WebCore;
 AudioSessionRoutingArbitrator::AudioSessionRoutingArbitrator(WebProcess& process)
     : m_process(process)
     , m_observer([this] (AudioSession& session) { session.setRoutingArbitrationClient(*this); })
+    , m_logIdentifier(LoggerHelper::uniqueLogIdentifier())
 {
     AudioSession::addAudioSessionChangedObserver(m_observer);
 }
@@ -59,6 +61,11 @@ void AudioSessionRoutingArbitrator::beginRoutingArbitrationWithCategory(AudioSes
 void AudioSessionRoutingArbitrator::leaveRoutingAbritration()
 {
     m_process.parentProcessConnection()->send(Messages::AudioSessionRoutingArbitratorProxy::EndRoutingArbitration(), AudioSessionRoutingArbitratorProxy::destinationId());
+}
+
+bool AudioSessionRoutingArbitrator::canLog() const
+{
+    return m_process.sessionID().isAlwaysOnLoggingAllowed();
 }
 
 }

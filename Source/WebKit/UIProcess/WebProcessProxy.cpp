@@ -261,11 +261,7 @@ private:
     IPC::Connection& connection() final { return *m_process.connection(); }
     Logger& logger() final
     {
-        if (!m_logger) {
-            m_logger = Logger::create(this);
-            m_logger->setEnabled(this, m_process.sessionID().isAlwaysOnLoggingAllowed());
-        }
-        return *m_logger;
+        return m_process.logger();
     }
     bool willStartCapture(CaptureDevice::DeviceType) const final
     {
@@ -280,7 +276,6 @@ private:
         return dummy.get();
     }
 
-    RefPtr<Logger> m_logger;
     WebProcessProxy& m_process;
 };
 #endif
@@ -292,9 +287,6 @@ WebProcessProxy::WebProcessProxy(WebProcessPool& processPool, WebsiteDataStore* 
     , m_mayHaveUniversalFileReadSandboxExtension(false)
     , m_numberOfTimesSuddenTerminationWasDisabled(0)
     , m_throttler(*this, processPool.shouldTakeUIBackgroundAssertion())
-#if ENABLE(ROUTING_ARBITRATION)
-    , m_routingArbitrator(makeUniqueRef<AudioSessionRoutingArbitratorProxy>(*this))
-#endif
     , m_isResponsive(NoOrMaybe::Maybe)
     , m_visiblePageCounter([this](RefCounterEvent) { updateBackgroundResponsivenessTimer(); })
     , m_websiteDataStore(websiteDataStore)
@@ -307,6 +299,9 @@ WebProcessProxy::WebProcessProxy(WebProcessPool& processPool, WebsiteDataStore* 
     , m_shutdownPreventingScopeCounter([this](RefCounterEvent event) { if (event == RefCounterEvent::Decrement) maybeShutDown(); })
     , m_webLockRegistry(websiteDataStore ? makeUnique<WebLockRegistryProxy>(*this) : nullptr)
     , m_webPermissionController(makeUnique<WebPermissionControllerProxy>(*this))
+#if ENABLE(ROUTING_ARBITRATION)
+    , m_routingArbitrator(makeUniqueRef<AudioSessionRoutingArbitratorProxy>(*this))
+#endif
 {
     RELEASE_ASSERT(isMainThreadOrCheckDisabled());
     WEBPROCESSPROXY_RELEASE_LOG(Process, "constructor:");
@@ -408,6 +403,7 @@ void WebProcessProxy::setWebsiteDataStore(WebsiteDataStore& dataStore)
     ASSERT(!m_websiteDataStore);
     WEBPROCESSPROXY_RELEASE_LOG(Process, "setWebsiteDataStore() dataStore=%p, sessionID=%" PRIu64, &dataStore, dataStore.sessionID().toUInt64());
     m_websiteDataStore = &dataStore;
+    logger().setEnabled(this, dataStore.sessionID().isAlwaysOnLoggingAllowed());
 #if PLATFORM(COCOA)
     if (m_networkProcessToKeepAliveUntilDataStoreIsCreated) {
         auto& networkProcess = m_websiteDataStore->networkProcess(); // Transfer ownership of the NetworkProcessProxy to the WebsiteDataStore.
@@ -2481,6 +2477,16 @@ void WebProcessProxy::permissionChanged(WebCore::PermissionName permissionName, 
 void WebProcessProxy::sendPermissionChanged(WebCore::PermissionName permissionName, const WebCore::SecurityOriginData& topOrigin)
 {
     send(Messages::WebPermissionController::permissionChanged(permissionName, topOrigin), 0);
+}
+
+Logger& WebProcessProxy::logger()
+{
+    if (!m_logger) {
+        m_logger = Logger::create(this);
+        auto alwaysOnLoggingAllowed = m_websiteDataStore ? m_websiteDataStore->sessionID().isAlwaysOnLoggingAllowed() : false;
+        m_logger->setEnabled(this, alwaysOnLoggingAllowed);
+    }
+    return *m_logger;
 }
 
 TextStream& operator<<(TextStream& ts, const WebProcessProxy& process)

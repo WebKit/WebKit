@@ -35,6 +35,7 @@
 #import <pal/spi/cocoa/AVFoundationSPI.h>
 #import <pal/spi/cocoa/LaunchServicesSPI.h>
 #import <wtf/BlockObjCExceptions.h>
+#import <wtf/LoggerHelper.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/WorkQueue.h>
 
@@ -125,6 +126,8 @@ AudioSessionIOS::~AudioSessionIOS()
 void AudioSessionIOS::setHostProcessAttribution(audit_token_t auditToken)
 {
 #if ENABLE(APP_PRIVACY_REPORT) && !PLATFORM(MACCATALYST)
+    ALWAYS_LOG(LOGIDENTIFIER);
+
     NSError *error = nil;
     auto bundleProxy = [LSBundleProxy bundleProxyWithAuditToken:auditToken error:&error];
     if (error) {
@@ -143,10 +146,13 @@ void AudioSessionIOS::setHostProcessAttribution(audit_token_t auditToken)
 void AudioSessionIOS::setPresentingProcesses(Vector<audit_token_t>&& auditTokens)
 {
 #if HAVE(AUDIOSESSION_PROCESSASSERTION)
+    ALWAYS_LOG(LOGIDENTIFIER);
+
     AVAudioSession *session = [PAL::getAVAudioSessionClass() sharedInstance];
     if (![session respondsToSelector:@selector(setAuditTokensForProcessAssertion:error:)])
         return;
 
+    ALWAYS_LOG(LOGIDENTIFIER);
     auto nsAuditTokens = adoptNS([[NSMutableArray alloc] init]);
     for (auto& token : auditTokens) {
         auto nsToken = adoptNS([[NSData alloc] initWithBytes:token.val length:sizeof(token.val)]);
@@ -169,12 +175,12 @@ void AudioSessionIOS::setCategory(CategoryType newCategory, Mode newMode, RouteS
         policy = RouteSharingPolicy::LongFormAudio;
 #endif
 
-    LOG(Media, "AudioSession::setCategory() - category = %s mode = %s", convertEnumerationToString(newCategory).ascii().data(), convertEnumerationToString(newMode).ascii().data());
+    auto identifier = LOGIDENTIFIER;
 
     AudioSessionCocoa::setCategory(newCategory, newMode, policy);
 
     if (categoryOverride() != CategoryType::None && categoryOverride() != newCategory) {
-        LOG(Media, "AudioSession::setCategory() - override set, NOT changing");
+        ALWAYS_LOG(identifier, "override set, NOT changing");
         return;
     }
 
@@ -240,6 +246,7 @@ void AudioSessionIOS::setCategory(CategoryType newCategory, Mode newMode, RouteS
         return;
 
     if (needSessionUpdate) {
+        ALWAYS_LOG(identifier, newCategory, ", mode = ", newMode);
         NSError *error = nil;
         [session setCategory:categoryString mode:modeString routeSharingPolicy:static_cast<AVAudioSessionRouteSharingPolicy>(policy) options:options error:&error];
 #if !PLATFORM(IOS_FAMILY_SIMULATOR) && !PLATFORM(MACCATALYST)
@@ -251,6 +258,7 @@ void AudioSessionIOS::setCategory(CategoryType newCategory, Mode newMode, RouteS
     if (needDeviceUpdate) {
         AVAudioSessionCaptureDeviceManager::singleton().configurePreferredAudioCaptureDevice();
         m_lastSetPreferredAudioDeviceUID = AVAudioSessionCaptureDeviceManager::singleton().preferredAudioSessionDeviceUID();
+        ALWAYS_LOG(identifier, "prefered device = ", m_lastSetPreferredAudioDeviceUID);
     }
 #endif
     for (auto& observer : audioSessionCategoryChangedObservers())
@@ -340,6 +348,8 @@ size_t AudioSessionIOS::preferredBufferSize() const
 
 void AudioSessionIOS::setPreferredBufferSize(size_t bufferSize)
 {
+    ALWAYS_LOG(LOGIDENTIFIER, bufferSize);
+
     NSError *error = nil;
     float duration = bufferSize / sampleRate();
     [[PAL::getAVAudioSessionClass() sharedInstance] setPreferredIOBufferDuration:duration error:&error];

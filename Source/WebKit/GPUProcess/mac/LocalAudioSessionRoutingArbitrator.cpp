@@ -29,6 +29,8 @@
 #include "GPUConnectionToWebProcess.h"
 #include "GPUProcess.h"
 #include "GPUProcessConnectionMessages.h"
+#include "Logging.h"
+#include <wtf/LoggerHelper.h>
 
 #if ENABLE(ROUTING_ARBITRATION) && HAVE(AVAUDIO_ROUTING_ARBITER)
 
@@ -43,6 +45,7 @@ UniqueRef<LocalAudioSessionRoutingArbitrator> LocalAudioSessionRoutingArbitrator
 
 LocalAudioSessionRoutingArbitrator::LocalAudioSessionRoutingArbitrator(GPUConnectionToWebProcess& gpuConnectionToWebProcess)
     : m_connectionToWebProcess(gpuConnectionToWebProcess)
+    , m_logIdentifier(LoggerHelper::uniqueLogIdentifier())
 {
 }
 
@@ -55,12 +58,28 @@ void LocalAudioSessionRoutingArbitrator::processDidTerminate()
 
 void LocalAudioSessionRoutingArbitrator::beginRoutingArbitrationWithCategory(AudioSession::CategoryType category, CompletionHandler<void(RoutingArbitrationError, DefaultRouteChanged)>&& callback)
 {
+    ALWAYS_LOG(LOGIDENTIFIER, category);
     m_connectionToWebProcess.connection().sendWithAsyncReply(Messages::GPUProcessConnection::BeginRoutingArbitrationWithCategory(category), WTFMove(callback), 0);
 }
 
 void LocalAudioSessionRoutingArbitrator::leaveRoutingAbritration()
 {
     m_connectionToWebProcess.connection().send(Messages::GPUProcessConnection::EndRoutingArbitration(), 0);
+}
+
+Logger& LocalAudioSessionRoutingArbitrator::logger()
+{
+    return m_connectionToWebProcess.logger();
+};
+
+WTFLogChannel& LocalAudioSessionRoutingArbitrator::logChannel() const
+{
+    return WebKit2LogMedia;
+}
+
+bool LocalAudioSessionRoutingArbitrator::canLog() const
+{
+    return m_connectionToWebProcess.sessionID().isAlwaysOnLoggingAllowed();
 }
 
 }
