@@ -430,26 +430,23 @@ Result<AST::Attribute::Ref> Parser<Lexer>::parseAttribute()
 
     if (ident.ident == "group"_s) {
         CONSUME_TYPE(ParenLeft);
-        // FIXME: should more kinds of literals be accepted here?
-        CONSUME_TYPE_NAMED(id, IntegerLiteral);
+        PARSE(group, Expression);
         CONSUME_TYPE(ParenRight);
-        RETURN_ARENA_NODE(GroupAttribute, id.literalValue);
+        RETURN_ARENA_NODE(GroupAttribute, WTFMove(group));
     }
 
     if (ident.ident == "binding"_s) {
         CONSUME_TYPE(ParenLeft);
-        // FIXME: should more kinds of literals be accepted here?
-        CONSUME_TYPE_NAMED(id, IntegerLiteral);
+        PARSE(binding, Expression);
         CONSUME_TYPE(ParenRight);
-        RETURN_ARENA_NODE(BindingAttribute, id.literalValue);
+        RETURN_ARENA_NODE(BindingAttribute, WTFMove(binding));
     }
 
     if (ident.ident == "location"_s) {
         CONSUME_TYPE(ParenLeft);
-        // FIXME: should more kinds of literals be accepted here?
-        CONSUME_TYPE_NAMED(id, IntegerLiteral);
+        PARSE(location, Expression);
         CONSUME_TYPE(ParenRight);
-        RETURN_ARENA_NODE(LocationAttribute, id.literalValue);
+        RETURN_ARENA_NODE(LocationAttribute, WTFMove(location));
     }
 
     if (ident.ident == "builtin"_s) {

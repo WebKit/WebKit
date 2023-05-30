@@ -172,11 +172,11 @@ void RewriteGlobalVariables::collectGlobals()
         std::optional<unsigned> binding;
         for (auto& attribute : globalVar.attributes()) {
             if (is<AST::GroupAttribute>(attribute)) {
-                group = { downcast<AST::GroupAttribute>(attribute).group() };
+                group = { *AST::extractInteger(downcast<AST::GroupAttribute>(attribute).group()) };
                 continue;
             }
             if (is<AST::BindingAttribute>(attribute)) {
-                binding = { downcast<AST::BindingAttribute>(attribute).binding() };
+                binding = { *AST::extractInteger(downcast<AST::BindingAttribute>(attribute).binding()) };
                 continue;
             }
         }
@@ -327,7 +327,10 @@ void RewriteGlobalVariables::insertStructs(const UsedResources& usedResources)
                 AST::Identifier::make(global->declaration->name()),
                 *global->declaration->maybeReferenceType(),
                 AST::Attribute::List {
-                    m_callGraph.ast().astBuilder().construct<AST::BindingAttribute>(span, binding)
+                    m_callGraph.ast().astBuilder().construct<AST::BindingAttribute>(
+                        span,
+                        m_callGraph.ast().astBuilder().construct<AST::AbstractIntegerLiteral>(span, binding)
+                    )
                 }
             ));
         }
@@ -355,7 +358,10 @@ void RewriteGlobalVariables::insertParameters(AST::Function& function, const Use
             argumentBufferParameterName(group),
             type,
             AST::Attribute::List {
-                m_callGraph.ast().astBuilder().construct<AST::GroupAttribute>(span, group)
+                m_callGraph.ast().astBuilder().construct<AST::GroupAttribute>(
+                    span,
+                    m_callGraph.ast().astBuilder().construct<AST::AbstractIntegerLiteral>(span, group)
+                )
             },
             AST::ParameterRole::BindGroup
         ));
