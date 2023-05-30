@@ -1785,7 +1785,8 @@ webkit.org/b/195098 pointerevents/mouse/enter-leave-order.html [ Failure ]
 webkit.org/b/195098 pointerevents/mouse/over-enter-out-leave.html [ Failure ]
 webkit.org/b/195098 pointerevents/mouse/pointer-capture.html [ Failure ]
 webkit.org/b/195098 pointerevents/mouse/pointer-events-before-mouse-events.html [ Failure ]
-webkit.org/b/195098 pointer-lock/pointermove-movement-delta.html [ Failure ]
+
+webkit.org/b/244304 [ Monterey+ ] pointer-lock/pointermove-movement-delta.html [ Pass Timeout ]
 
 webkit.org/b/196915 [ Debug ] inspector/timeline/timeline-recording.html [ Pass Failure ]
 
