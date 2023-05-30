@@ -90,6 +90,9 @@ private:
     float m_y { 0.0f };
     float m_dx { 0.0f };
     float m_dy { 0.0f };
+    float m_lastChunkStartPosition { 0.0f };
+    bool m_lastChunkHasTextLength { false };
+    bool m_lastChunkIsVerticalText { false };
     bool m_isVerticalText { false };
     bool m_inPathLayout { false };
 

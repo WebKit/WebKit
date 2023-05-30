@@ -458,8 +458,46 @@ void SVGTextLayoutEngine::layoutTextOnLineOrPath(SVGInlineTextBox& textBox, Rend
 
         // When we've advanced to the box start offset, determine using the original x/y values
         // whether this character starts a new text chunk before doing any further processing.
-        if (m_visualCharacterOffset == textBox.start())
-            textBox.setStartsNewTextChunk(logicalAttributes->context().characterStartsNewTextChunk(m_logicalCharacterOffset));
+        bool startsNewTextChunk = false;
+        if (m_visualCharacterOffset == textBox.start()) {
+            // If we're at a position that could start a new text chunk, but doesn't for intrinsic reasons (no x/y information specified for the
+            // current character), check further if there are other conditions met that enforce a new text chunk -- e.g. previous sibiling on the
+            // same line specified 'textLength' (consider: <text><tspan textLength="100">AB</tspan> <tspan dy="1em">...
+            // The space character is not allowed to be part of the 'AB' text chunk -- there is not explicit x/y given for the space character
+            // but because of the textLength attribute, we have to keep the space in a separated chunk, and position it such that it renders
+            // after the user-specified textLength.
+            startsNewTextChunk = logicalAttributes->context().characterStartsNewTextChunk(m_logicalCharacterOffset);
+
+            auto currentBoxOnLineHasAbsolutePosition = [&]() {
+                if (m_isVerticalText)
+                    return y != SVGTextLayoutAttributes::emptyValue();
+                return x != SVGTextLayoutAttributes::emptyValue();
+            };
+
+            // If we encounter an InlineTextBox that follows an InlineFlowBox with specified textLength,
+            // and if the InlineTextBox content is not positioned by explicit x/y attributes, then we have
+            // to correct the position of the InlineTextBox, to account for the textLength adjustments
+            // that will be applied on chunk-level in the next SVG text layout phase. Failing to do so,
+            // will lay out the remaining content at the nominal position, as if no textLength was given.
+            auto* previousBoxOnLine = textBox.previousOnLine();
+            if (m_lastChunkHasTextLength && previousBoxOnLine) {
+                startsNewTextChunk = true;
+
+                if (!currentBoxOnLineHasAbsolutePosition()) {
+                    if (auto* textContentElement = SVGTextContentElement::elementFromRenderer(&previousBoxOnLine->renderer())) {
+                        SVGLengthContext lengthContext(textContentElement);
+                        auto specifiedTextLength = textContentElement->specifiedTextLength().value(lengthContext);
+
+                        if (m_lastChunkIsVerticalText)
+                            y = m_lastChunkStartPosition + specifiedTextLength;
+                        else
+                            x = m_lastChunkStartPosition + specifiedTextLength;
+                    }
+                }
+            }
+
+            textBox.setStartsNewTextChunk(startsNewTextChunk);
+        }
 
         float angle = data.rotate == SVGTextLayoutAttributes::emptyValue() ? 0 : data.rotate;
 
@@ -546,6 +584,13 @@ void SVGTextLayoutEngine::layoutTextOnLineOrPath(SVGInlineTextBox& textBox, Rend
 
             x += m_dx;
             y += m_dy;
+        }
+
+        // Remember the position / direction of the start position of the new text chunk.
+        if (startsNewTextChunk) {
+            m_lastChunkStartPosition = m_isVerticalText ? y : x;
+            m_lastChunkIsVerticalText = m_isVerticalText;
+            m_lastChunkHasTextLength = definesTextLength;
         }
 
         // Determine whether we have to start a new fragment.
