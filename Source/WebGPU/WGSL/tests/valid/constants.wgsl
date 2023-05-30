@@ -37,3 +37,13 @@ fn testArrayConstants() -> i32
     }
     return 0;
 }
+
+@compute @workgroup_size(1)
+fn testVectorConstants() -> i32
+{
+    if (false) {
+        const a = vec3(0, 0, 0);
+        return a.x;
+    }
+    return 0;
+}

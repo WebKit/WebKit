@@ -56,7 +56,16 @@ struct ConstantArray {
     FixedVector<ConstantValue> elements;
 };
 
-using BaseValue = std::variant<double, int64_t, bool, ConstantArray>;
+struct ConstantVector {
+    ConstantVector(size_t size)
+        : elements(size)
+    {
+    }
+
+    FixedVector<ConstantValue> elements;
+};
+
+using BaseValue = std::variant<double, int64_t, bool, ConstantArray, ConstantVector>;
 struct ConstantValue : BaseValue {
     ConstantValue() = default;
 
@@ -88,6 +97,17 @@ void ConstantValue::dump(PrintStream& out) const
             out.print("array(");
             bool first = true;
             for (const auto& element : a.elements) {
+                if (!first)
+                    out.print(", ");
+                first = false;
+                out.print(element);
+            }
+            out.print(")");
+        },
+        [&](const ConstantVector& v) {
+            out.print("vec", v.elements.size(), "(");
+            bool first = true;
+            for (const auto& element : v.elements) {
                 if (!first)
                     out.print(", ");
                 first = false;
@@ -239,6 +259,55 @@ ConstantValue ConstantRewriter::evaluate(AST::IdentifierExpression& identifier)
 ConstantValue ConstantRewriter::evaluate(AST::CallExpression& call)
 {
     auto& target = call.target();
+    bool isNamedType = is<AST::NamedTypeName>(target);
+    bool isParameterizedType = !isNamedType && is<AST::ParameterizedTypeName>(target);
+    if (isNamedType || isParameterizedType) {
+        AST::ParameterizedTypeName::Base base;
+        if (isParameterizedType)
+            base = downcast<AST::ParameterizedTypeName>(target).base();
+        else {
+            auto& targetName = downcast<AST::NamedTypeName>(target).name().id();
+            auto maybeBase = AST::ParameterizedTypeName::stringViewToKind(targetName);
+            // FIXME: add support for built-in const function calls
+            ASSERT(maybeBase.has_value());
+            base = *maybeBase;
+        }
+
+        switch (base) {
+        case AST::ParameterizedTypeName::Base::Vec2:
+        case AST::ParameterizedTypeName::Base::Vec3:
+        case AST::ParameterizedTypeName::Base::Vec4: {
+            ConstantVector vector(call.arguments().size());
+            unsigned index = 0;
+            for (auto& argument : call.arguments())
+                vector.elements[index++] = evaluate(argument);
+            return { call.inferredType(), vector };
+        }
+
+        case AST::ParameterizedTypeName::Base::Mat2x2:
+        case AST::ParameterizedTypeName::Base::Mat2x3:
+        case AST::ParameterizedTypeName::Base::Mat2x4:
+        case AST::ParameterizedTypeName::Base::Mat3x2:
+        case AST::ParameterizedTypeName::Base::Mat3x3:
+        case AST::ParameterizedTypeName::Base::Mat3x4:
+        case AST::ParameterizedTypeName::Base::Mat4x2:
+        case AST::ParameterizedTypeName::Base::Mat4x3:
+        case AST::ParameterizedTypeName::Base::Mat4x4:
+        case AST::ParameterizedTypeName::Base::Texture1d:
+        case AST::ParameterizedTypeName::Base::Texture2d:
+        case AST::ParameterizedTypeName::Base::Texture2dArray:
+        case AST::ParameterizedTypeName::Base::Texture3d:
+        case AST::ParameterizedTypeName::Base::TextureCube:
+        case AST::ParameterizedTypeName::Base::TextureCubeArray:
+        case AST::ParameterizedTypeName::Base::TextureMultisampled2d:
+        case AST::ParameterizedTypeName::Base::TextureStorage1d:
+        case AST::ParameterizedTypeName::Base::TextureStorage2d:
+        case AST::ParameterizedTypeName::Base::TextureStorage2dArray:
+        case AST::ParameterizedTypeName::Base::TextureStorage3d:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+    }
+
     if (is<AST::ArrayTypeName>(target)) {
         ConstantArray array(call.arguments().size());
         unsigned index = 0;
@@ -341,10 +410,42 @@ AST::Expression& ConstantRewriter::materialize(const ConstantValue& value)
                 RELEASE_ASSERT_NOT_REACHED();
             }
         },
-        [&](const Vector& vector) -> AST::Expression& {
-            // FIXME: implement
-            UNUSED_PARAM(vector);
-            RELEASE_ASSERT_NOT_REACHED();
+        [&](const Vector& vectorType) -> AST::Expression& {
+            AST::ParameterizedTypeName::Base base;
+            switch (vectorType.size) {
+            case 2:
+                base = AST::ParameterizedTypeName::Base::Vec2;
+                break;
+            case 3:
+                base = AST::ParameterizedTypeName::Base::Vec3;
+                break;
+            case 4:
+                base = AST::ParameterizedTypeName::Base::Vec4;
+                break;
+            default:
+                RELEASE_ASSERT_NOT_REACHED();
+            }
+
+            AST::Expression::List arguments;
+            auto& vector = std::get<ConstantVector>(value);
+            arguments.reserveCapacity(vector.elements.size());
+            for (const auto& element : vector.elements)
+                arguments.append(materialize(element));
+
+            auto& typeName = m_shaderModule.astBuilder().construct<AST::NamedTypeName>(
+                SourceSpan::empty(),
+                AST::Identifier::make(AST::ParameterizedTypeName::baseToString(base))
+            );
+            typeName.m_resolvedType = value.type;
+
+            auto& call = m_shaderModule.astBuilder().construct<AST::CallExpression>(
+                SourceSpan::empty(),
+                typeName,
+                WTFMove(arguments)
+            );
+            call.m_inferredType = value.type;
+
+            return call;
         },
         [&](const Matrix& matrix) -> AST::Expression& {
             // FIXME: implement

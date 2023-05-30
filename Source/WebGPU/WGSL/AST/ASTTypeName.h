@@ -30,6 +30,7 @@
 #include "ASTIdentifier.h"
 
 namespace WGSL {
+class ConstantRewriter;
 class EntryPointRewriter;
 class RewriteGlobalVariables;
 class TypeChecker;
@@ -40,6 +41,7 @@ class Structure;
 
 class TypeName : public Node {
     friend TypeChecker;
+    friend ConstantRewriter;
     friend EntryPointRewriter;
     friend RewriteGlobalVariables;
 
