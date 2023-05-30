@@ -52,6 +52,7 @@ class FloatSize;
 class IntPoint;
 class IntSize;
 class IntRect;
+class Path;
 class Region;
 class TransformationMatrix;
 
@@ -86,6 +87,8 @@ public:
     WEBCORE_EXPORT FloatQuad mapQuad(const FloatQuad&) const;
 
     WEBCORE_EXPORT Region mapRegion(const Region&) const;
+
+    WEBCORE_EXPORT Path mapPath(const Path&) const;
 
     WEBCORE_EXPORT bool isIdentity() const;
 

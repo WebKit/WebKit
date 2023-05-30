@@ -91,7 +91,6 @@ void RenderSVGPath::strokeShape(GraphicsContext& context) const
     if (m_zeroLengthLinecapLocations.isEmpty())
         return;
 
-    Path* usePath;
     AffineTransform nonScalingTransform;
 
     if (hasNonScalingStroke())
@@ -100,10 +99,11 @@ void RenderSVGPath::strokeShape(GraphicsContext& context) const
     GraphicsContextStateSaver stateSaver(context, true);
     useStrokeStyleToFill(context);
     for (size_t i = 0; i < m_zeroLengthLinecapLocations.size(); ++i) {
-        usePath = zeroLengthLinecapPath(m_zeroLengthLinecapLocations[i]);
+        auto linecapPath = zeroLengthLinecapPath(m_zeroLengthLinecapLocations[i]);
         if (hasNonScalingStroke())
-            usePath = nonScalingStrokePath(usePath, nonScalingTransform);
-        context.fillPath(*usePath);
+            context.fillPath(nonScalingTransform.mapPath(linecapPath));
+        else
+            context.fillPath(linecapPath);
     }
 }
 
@@ -135,17 +135,14 @@ bool RenderSVGPath::shouldStrokeZeroLengthSubpath() const
     return style().svgStyle().hasStroke() && style().capStyle() != LineCap::Butt;
 }
 
-Path* RenderSVGPath::zeroLengthLinecapPath(const FloatPoint& linecapPosition) const
+Path RenderSVGPath::zeroLengthLinecapPath(const FloatPoint& linecapPosition) const
 {
-    static NeverDestroyed<Path> tempPath;
-
-    tempPath.get().clear();
+    Path linecapPath;
     if (style().capStyle() == LineCap::Square)
-        tempPath.get().addRect(zeroLengthSubpathRect(linecapPosition, this->strokeWidth()));
+        linecapPath.addRect(zeroLengthSubpathRect(linecapPosition, strokeWidth()));
     else
-        tempPath.get().addEllipse(zeroLengthSubpathRect(linecapPosition, this->strokeWidth()));
-
-    return &tempPath.get();
+        linecapPath.addEllipse(zeroLengthSubpathRect(linecapPosition, strokeWidth()));
+    return linecapPath;
 }
 
 FloatRect RenderSVGPath::zeroLengthSubpathRect(const FloatPoint& linecapPosition, float strokeWidth) const

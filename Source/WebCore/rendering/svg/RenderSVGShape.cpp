@@ -87,12 +87,11 @@ void RenderSVGShape::fillShape(GraphicsContext& context) const
 void RenderSVGShape::strokeShape(GraphicsContext& context) const
 {
     ASSERT(m_path);
-    Path* usePath = m_path.get();
 
     if (hasNonScalingStroke())
-        usePath = nonScalingStrokePath(usePath, nonScalingStrokeTransform());
-
-    context.strokePath(*usePath);
+        context.strokePath(nonScalingStrokeTransform().mapPath(path()));
+    else
+        context.strokePath(path());
 }
 
 bool RenderSVGShape::shapeDependentStrokeContains(const FloatPoint& point, PointCoordinateSpace pointCoordinateSpace)
@@ -100,16 +99,12 @@ bool RenderSVGShape::shapeDependentStrokeContains(const FloatPoint& point, Point
     ASSERT(m_path);
 
     if (hasNonScalingStroke() && pointCoordinateSpace != LocalCoordinateSpace) {
-        AffineTransform nonScalingTransform = nonScalingStrokeTransform();
-        Path* usePath = nonScalingStrokePath(m_path.get(), nonScalingTransform);
-        return usePath->strokeContains(nonScalingTransform.mapPoint(point), [this] (GraphicsContext& context) {
-            SVGRenderSupport::applyStrokeStyleToContext(context, style(), *this);
-        });
+        auto nonScalingTransform = nonScalingStrokeTransform();
+        auto usePath = nonScalingTransform.mapPath(path());
+        return usePath.strokeContains(nonScalingTransform.mapPoint(point), strokeStyleApplier());
     }
 
-    return m_path->strokeContains(point, [this] (GraphicsContext& context) {
-        SVGRenderSupport::applyStrokeStyleToContext(context, style(), *this);
-    });
+    return m_path->strokeContains(point, strokeStyleApplier());
 }
 
 bool RenderSVGShape::shapeDependentFillContains(const FloatPoint& point, const WindRule fillRule) const
@@ -165,25 +160,15 @@ void RenderSVGShape::layout()
     clearNeedsLayout();
 }
 
-Path* RenderSVGShape::nonScalingStrokePath(const Path* path, const AffineTransform& strokeTransform) const
+bool RenderSVGShape::setupNonScalingStrokeContext(GraphicsContextStateSaver& stateSaver)
 {
-    static NeverDestroyed<Path> tempPath;
+    if (auto inverse = nonScalingStrokeTransform().inverse()) {
+        stateSaver.save();
+        stateSaver.context()->concatCTM(*inverse);
+        return true;
+    }
 
-    tempPath.get() = *path;
-    tempPath.get().transform(strokeTransform);
-
-    return &tempPath.get();
-}
-
-bool RenderSVGShape::setupNonScalingStrokeContext(AffineTransform& strokeTransform, GraphicsContextStateSaver& stateSaver)
-{
-    std::optional<AffineTransform> inverse = strokeTransform.inverse();
-    if (!inverse)
-        return false;
-
-    stateSaver.save();
-    stateSaver.context()->concatCTM(inverse.value());
-    return true;
+    return false;
 }
 
 AffineTransform RenderSVGShape::nonScalingStrokeTransform() const
@@ -244,11 +229,8 @@ void RenderSVGShape::strokeShape(GraphicsContext& context)
         return;
 
     GraphicsContextStateSaver stateSaver(context, false);
-    if (hasNonScalingStroke()) {
-        AffineTransform nonScalingTransform = nonScalingStrokeTransform();
-        if (!setupNonScalingStrokeContext(nonScalingTransform, stateSaver))
-            return;
-    }
+    if (hasNonScalingStroke() && !setupNonScalingStrokeContext(stateSaver))
+        return;
     strokeShape(style(), context);
 }
 
@@ -431,20 +413,14 @@ FloatRect RenderSVGShape::calculateStrokeBoundingBox() const
 
     if (style().svgStyle().hasStroke()) {
         if (hasNonScalingStroke()) {
-            AffineTransform nonScalingTransform = nonScalingStrokeTransform();
-            if (std::optional<AffineTransform> inverse = nonScalingTransform.inverse()) {
-                Path* usePath = nonScalingStrokePath(m_path.get(), nonScalingTransform);
-                FloatRect strokeBoundingRect = usePath->strokeBoundingRect(Function<void(GraphicsContext&)> { [this] (GraphicsContext& context) {
-                    SVGRenderSupport::applyStrokeStyleToContext(context, style(), *this);
-                } });
-                strokeBoundingRect = inverse.value().mapRect(strokeBoundingRect);
-                strokeBoundingBox.unite(strokeBoundingRect);
+            auto nonScalingTransform = nonScalingStrokeTransform();
+            if (auto inverse = nonScalingTransform.inverse()) {
+                auto usePath = nonScalingTransform.mapPath(path());
+                auto strokeBoundingRect = usePath.strokeBoundingRect(strokeStyleApplier());
+                strokeBoundingBox.unite(inverse->mapRect(strokeBoundingRect));
             }
-        } else {
-            strokeBoundingBox.unite(path().strokeBoundingRect(Function<void(GraphicsContext&)> { [this] (GraphicsContext& context) {
-                SVGRenderSupport::applyStrokeStyleToContext(context, style(), *this);
-            } }));
-        }
+        } else
+            strokeBoundingBox.unite(path().strokeBoundingRect(strokeStyleApplier()));
     }
 
     return strokeBoundingBox;

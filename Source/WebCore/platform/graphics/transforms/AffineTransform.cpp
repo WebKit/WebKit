@@ -31,6 +31,7 @@
 #include "FloatQuad.h"
 #include "FloatRect.h"
 #include "IntRect.h"
+#include "Path.h"
 #include "Region.h"
 #include "TransformationMatrix.h"
 #include <wtf/MathExtras.h>
@@ -325,6 +326,19 @@ Region AffineTransform::mapRegion(const Region& region) const
         mappedRegion.unite(mapRect(rect));
 
     return mappedRegion;
+}
+
+Path AffineTransform::mapPath(const Path& path) const
+{
+    if (isIdentityOrTranslation()) {
+        Path mappedPath(path);
+        mappedPath.translate(roundedIntSize(FloatSize(narrowPrecisionToFloat(m_transform[4]), narrowPrecisionToFloat(m_transform[5]))));
+        return mappedPath;
+    }
+
+    Path transformedPath = path;
+    transformedPath.transform(*this);
+    return transformedPath;
 }
 
 void AffineTransform::blend(const AffineTransform& from, double progress, CompositeOperation compositeOperation)

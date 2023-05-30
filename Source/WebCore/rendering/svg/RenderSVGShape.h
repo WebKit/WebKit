@@ -98,7 +98,6 @@ protected:
 
     inline bool hasNonScalingStroke() const;
     AffineTransform nonScalingStrokeTransform() const;
-    Path* nonScalingStrokePath(const Path*, const AffineTransform&) const;
 
     FloatRect m_fillBoundingBox;
     FloatRect m_strokeBoundingBox;
@@ -120,7 +119,14 @@ private:
     FloatRect calculateObjectBoundingBox() const;
     FloatRect calculateStrokeBoundingBox() const;
 
-    bool setupNonScalingStrokeContext(AffineTransform&, GraphicsContextStateSaver&);
+    auto strokeStyleApplier() const
+    {
+        return [this] (GraphicsContext& context) {
+            SVGRenderSupport::applyStrokeStyleToContext(context, style(), *this);
+        };
+    }
+
+    bool setupNonScalingStrokeContext(GraphicsContextStateSaver&);
 
     bool shouldGenerateMarkerPositions() const;
     

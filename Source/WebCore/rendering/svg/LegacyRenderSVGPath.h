@@ -46,7 +46,7 @@ private:
     bool shapeDependentStrokeContains(const FloatPoint&, PointCoordinateSpace = GlobalCoordinateSpace) override;
 
     bool shouldStrokeZeroLengthSubpath() const;
-    Path* zeroLengthLinecapPath(const FloatPoint&) const;
+    Path zeroLengthLinecapPath(const FloatPoint&) const;
     FloatRect zeroLengthSubpathRect(const FloatPoint&, float) const;
     void updateZeroLengthSubpaths();
 
