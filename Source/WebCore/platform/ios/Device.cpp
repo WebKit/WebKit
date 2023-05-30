@@ -52,6 +52,8 @@ String deviceName()
     });
     return deviceName.get().get();
 #else
+    if (!deviceClassIsSmallScreen())
+        return "iPad"_s;
     return "iPhone"_s;
 #endif
 }
