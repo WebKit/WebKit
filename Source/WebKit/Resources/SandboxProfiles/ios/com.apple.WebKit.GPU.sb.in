@@ -768,8 +768,8 @@
 
 (when (defined? 'syscall-unix)
     (deny syscall-unix (with telemetry))
-    (deny syscall-unix (with no-report)
-        SYS_faccessat)
+    (deny syscall-unix (with no-report) (syscall-number
+        SYS_faccessat))
     (allow syscall-unix (syscall-number
         SYS___disable_threadsignal
         SYS___mac_syscall
