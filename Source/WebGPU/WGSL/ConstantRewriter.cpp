@@ -29,7 +29,9 @@
 #include "AST.h"
 #include "ASTStringDumper.h"
 #include "ASTVisitor.h"
+#include "ConstantFunctions.h"
 #include "ContextProviderInlines.h"
+#include "Overload.h"
 #include "Types.h"
 #include "WGSLShaderModule.h"
 #include <wtf/DataLog.h>
@@ -38,84 +40,6 @@
 namespace WGSL {
 
 constexpr bool shouldDumpConstantValues = false;
-
-// A constant value might be:
-// - a scalar
-// - a vector
-// - a matrix
-// - a fixed-size array type
-// - a structure
-struct ConstantValue;
-
-struct ConstantArray {
-    ConstantArray(size_t size)
-        : elements(size)
-    {
-    }
-
-    FixedVector<ConstantValue> elements;
-};
-
-struct ConstantVector {
-    ConstantVector(size_t size)
-        : elements(size)
-    {
-    }
-
-    FixedVector<ConstantValue> elements;
-};
-
-using BaseValue = std::variant<double, int64_t, bool, ConstantArray, ConstantVector>;
-struct ConstantValue : BaseValue {
-    ConstantValue() = default;
-
-    template<typename T>
-    ConstantValue(const Type* type, T&& value)
-        : BaseValue(std::forward<T>(value))
-        , type(type)
-    {
-    }
-
-    void dump(PrintStream&) const;
-
-    const Type* type;
-};
-
-void ConstantValue::dump(PrintStream& out) const
-{
-    WTF::switchOn(*this,
-        [&](double d) {
-            out.print(String::number(d));
-        },
-        [&](int64_t i) {
-            out.print(String::number(i));
-        },
-        [&](bool b) {
-            out.print(b ? "true" : "false");
-        },
-        [&](const ConstantArray& a) {
-            out.print("array(");
-            bool first = true;
-            for (const auto& element : a.elements) {
-                if (!first)
-                    out.print(", ");
-                first = false;
-                out.print(element);
-            }
-            out.print(")");
-        },
-        [&](const ConstantVector& v) {
-            out.print("vec", v.elements.size(), "(");
-            bool first = true;
-            for (const auto& element : v.elements) {
-                if (!first)
-                    out.print(", ");
-                first = false;
-                out.print(element);
-            }
-            out.print(")");
-        });
-}
 
 class ConstantRewriter : public AST::Visitor, public ContextProvider<ConstantValue> {
 public:
@@ -144,13 +68,17 @@ private:
     void materialize(AST::Expression&, const ConstantValue&);
     AST::Expression& materialize(const ConstantValue&);
 
+    using ConstantFunction = ConstantValue(*)(const FixedVector<ConstantValue>&);
+
     ShaderModule& m_shaderModule;
     Vector<Error> m_errors;
+    HashMap<String, ConstantFunction> m_constantFunctions;
 };
 
 ConstantRewriter::ConstantRewriter(ShaderModule& shaderModule)
     : m_shaderModule(shaderModule)
 {
+    m_constantFunctions.add("pow"_s, constantPow);
 }
 
 std::optional<FailedCheck> ConstantRewriter::rewrite()
@@ -217,8 +145,14 @@ ConstantValue ConstantRewriter::evaluate(AST::Expression& expression)
         switch (expression.kind()) {
         case AST::NodeKind::AbstractFloatLiteral:
             return ConstantValue(expression.inferredType(), downcast<AST::AbstractFloatLiteral>(expression).value());
-        case AST::NodeKind::AbstractIntegerLiteral:
-            return ConstantValue(expression.inferredType(), downcast<AST::AbstractIntegerLiteral>(expression).value());
+        case AST::NodeKind::AbstractIntegerLiteral: {
+            auto value = downcast<AST::AbstractIntegerLiteral>(expression).value();
+            if (!satisfies(expression.inferredType(), Constraints::ConcreteInteger)) {
+                // The abstract integer was promoted to a float
+                return ConstantValue(expression.inferredType(), static_cast<double>(value));
+            }
+            return ConstantValue(expression.inferredType(), value);
+        }
         case AST::NodeKind::Float32Literal:
             return ConstantValue(expression.inferredType(), downcast<AST::Float32Literal>(expression).value());
         case AST::NodeKind::Signed32Literal:
@@ -233,6 +167,9 @@ ConstantValue ConstantRewriter::evaluate(AST::Expression& expression)
 
         case AST::NodeKind::CallExpression:
             return evaluate(downcast<AST::CallExpression>(expression));
+
+        case AST::NodeKind::UnaryExpression:
+            return evaluate(downcast<AST::UnaryExpression>(expression));
 
         default:
             RELEASE_ASSERT_NOT_REACHED();
@@ -262,49 +199,58 @@ ConstantValue ConstantRewriter::evaluate(AST::CallExpression& call)
     bool isNamedType = is<AST::NamedTypeName>(target);
     bool isParameterizedType = !isNamedType && is<AST::ParameterizedTypeName>(target);
     if (isNamedType || isParameterizedType) {
-        AST::ParameterizedTypeName::Base base;
+        std::optional<AST::ParameterizedTypeName::Base> base;
         if (isParameterizedType)
             base = downcast<AST::ParameterizedTypeName>(target).base();
         else {
             auto& targetName = downcast<AST::NamedTypeName>(target).name().id();
-            auto maybeBase = AST::ParameterizedTypeName::stringViewToKind(targetName);
-            // FIXME: add support for built-in const function calls
-            ASSERT(maybeBase.has_value());
-            base = *maybeBase;
+            base = AST::ParameterizedTypeName::stringViewToKind(targetName);
         }
 
-        switch (base) {
-        case AST::ParameterizedTypeName::Base::Vec2:
-        case AST::ParameterizedTypeName::Base::Vec3:
-        case AST::ParameterizedTypeName::Base::Vec4: {
-            ConstantVector vector(call.arguments().size());
+        if (base) {
+            switch (*base) {
+            case AST::ParameterizedTypeName::Base::Vec2:
+            case AST::ParameterizedTypeName::Base::Vec3:
+            case AST::ParameterizedTypeName::Base::Vec4: {
+                ConstantVector vector(call.arguments().size());
+                unsigned index = 0;
+                for (auto& argument : call.arguments())
+                    vector.elements[index++] = evaluate(argument);
+                return { call.inferredType(), vector };
+            }
+
+            case AST::ParameterizedTypeName::Base::Mat2x2:
+            case AST::ParameterizedTypeName::Base::Mat2x3:
+            case AST::ParameterizedTypeName::Base::Mat2x4:
+            case AST::ParameterizedTypeName::Base::Mat3x2:
+            case AST::ParameterizedTypeName::Base::Mat3x3:
+            case AST::ParameterizedTypeName::Base::Mat3x4:
+            case AST::ParameterizedTypeName::Base::Mat4x2:
+            case AST::ParameterizedTypeName::Base::Mat4x3:
+            case AST::ParameterizedTypeName::Base::Mat4x4:
+            case AST::ParameterizedTypeName::Base::Texture1d:
+            case AST::ParameterizedTypeName::Base::Texture2d:
+            case AST::ParameterizedTypeName::Base::Texture2dArray:
+            case AST::ParameterizedTypeName::Base::Texture3d:
+            case AST::ParameterizedTypeName::Base::TextureCube:
+            case AST::ParameterizedTypeName::Base::TextureCubeArray:
+            case AST::ParameterizedTypeName::Base::TextureMultisampled2d:
+            case AST::ParameterizedTypeName::Base::TextureStorage1d:
+            case AST::ParameterizedTypeName::Base::TextureStorage2d:
+            case AST::ParameterizedTypeName::Base::TextureStorage2dArray:
+            case AST::ParameterizedTypeName::Base::TextureStorage3d:
+                RELEASE_ASSERT_NOT_REACHED();
+            }
+        }
+
+        ASSERT(isNamedType);
+        auto it = m_constantFunctions.find(downcast<AST::NamedTypeName>(target).name().id());
+        if (it != m_constantFunctions.end()) {
+            FixedVector<ConstantValue> arguments(call.arguments().size());
             unsigned index = 0;
             for (auto& argument : call.arguments())
-                vector.elements[index++] = evaluate(argument);
-            return { call.inferredType(), vector };
-        }
-
-        case AST::ParameterizedTypeName::Base::Mat2x2:
-        case AST::ParameterizedTypeName::Base::Mat2x3:
-        case AST::ParameterizedTypeName::Base::Mat2x4:
-        case AST::ParameterizedTypeName::Base::Mat3x2:
-        case AST::ParameterizedTypeName::Base::Mat3x3:
-        case AST::ParameterizedTypeName::Base::Mat3x4:
-        case AST::ParameterizedTypeName::Base::Mat4x2:
-        case AST::ParameterizedTypeName::Base::Mat4x3:
-        case AST::ParameterizedTypeName::Base::Mat4x4:
-        case AST::ParameterizedTypeName::Base::Texture1d:
-        case AST::ParameterizedTypeName::Base::Texture2d:
-        case AST::ParameterizedTypeName::Base::Texture2dArray:
-        case AST::ParameterizedTypeName::Base::Texture3d:
-        case AST::ParameterizedTypeName::Base::TextureCube:
-        case AST::ParameterizedTypeName::Base::TextureCubeArray:
-        case AST::ParameterizedTypeName::Base::TextureMultisampled2d:
-        case AST::ParameterizedTypeName::Base::TextureStorage1d:
-        case AST::ParameterizedTypeName::Base::TextureStorage2d:
-        case AST::ParameterizedTypeName::Base::TextureStorage2dArray:
-        case AST::ParameterizedTypeName::Base::TextureStorage3d:
-            RELEASE_ASSERT_NOT_REACHED();
+                arguments[index++] = evaluate(argument);
+            return it->value(arguments);
         }
     }
 
