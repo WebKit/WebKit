@@ -102,4 +102,4 @@ file Tools/PlatformWPE.cmake
 
 directory ${CMAKE_BINARY_DIR}/Documentation/wpe-javascriptcore-${WPE_API_VERSION} Documentation/wpe-javascriptcore-${WPE_API_VERSION}
 directory ${CMAKE_BINARY_DIR}/Documentation/wpe-webkit-${WPE_API_VERSION} Documentation/wpe-webkit-${WPE_API_VERSION}
-directory ${CMAKE_BINARY_DIR}/Documentation/wpe-web-extension-${WPE_API_VERSION} Documentation/wpe-web-extension-${WPE_API_VERSION}
+directory ${CMAKE_BINARY_DIR}/Documentation/wpe-web-process-extension-${WPE_API_VERSION} Documentation/wpe-web-process-extension-${WPE_API_VERSION}
