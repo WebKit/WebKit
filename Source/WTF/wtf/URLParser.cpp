@@ -613,7 +613,7 @@ std::optional<uint16_t> URLParser::defaultPortForProtocol(StringView scheme)
                 return wssPort;
             return std::nullopt;
         default:
-            return false;
+            return std::nullopt;
         }
     case 'h':
         switch (length) {
