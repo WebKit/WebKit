@@ -188,6 +188,9 @@ public:
         Vector<UChar32> unicodeMatches;
         Vector<CharacterRange> emptyRanges;
 
+        if (m_setOp == CharacterClassSetOp::Intersection)
+            m_strings.clear();
+
         auto addChar = [&] (UChar32 ch) {
             if (isASCII(ch))
                 asciiMatches.append(ch);

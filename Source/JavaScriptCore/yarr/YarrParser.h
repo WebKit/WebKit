@@ -60,7 +60,8 @@ private:
         NotAtom = 0,
         Atom = 1,
         Lookbehind = 2,
-        SetDisjunction
+        SetDisjunction = 3,
+        SetDisjunctionMayContainStrings = 4,
     };
 
     class NamedCaptureGroups {
@@ -309,12 +310,14 @@ private:
     private:
         struct NestingState {
         public:
-            NestingState(CharacterClassSetOp setOp, bool inverted)
+            NestingState(CharacterClassSetOp setOp, bool mayContainStrings, bool inverted)
                 : m_setOp(setOp)
+                , m_mayContainStrings(mayContainStrings)
                 , m_inverted(inverted)
             { }
 
             CharacterClassSetOp m_setOp;
+            bool m_mayContainStrings;
             bool m_inverted;
         };
 
@@ -324,6 +327,7 @@ private:
             , m_errorCode(err)
             , m_state(ClassSetConstructionState::Empty)
             , m_setOp(CharacterClassSetOp::Default)
+            , m_mayContainStrings(false)
             , m_inverted(false)
             , m_processingEscape(false)
             , m_character(0)
@@ -341,29 +345,37 @@ private:
             m_delegate.atomCharacterClassBegin(invert);
         }
 
-        void nestedClassBegin()
+        void nestedClassBegin(bool invert)
         {
             m_delegate.atomCharacterClassPushNested();
-            nestedParseState.append(NestingState(m_setOp, m_inverted));
+            nestedParseState.append(NestingState(m_setOp, m_mayContainStrings, m_inverted));
             m_setOp = CharacterClassSetOp::Default;
-            m_inverted = false;
+            m_mayContainStrings = false;
+            m_inverted = invert;
         }
 
         bool nestedClassEnd()
         {
             flushCachedCharacterIfNeeded();
 
+            if (m_inverted && m_mayContainStrings)
+                m_errorCode = ErrorCode::NegatedClassSetMayContainStrings;
+
             if (nestedParseState.isEmpty()) {
                 end();
                 return true;
             }
 
+            bool rhsMayContainStrings = m_mayContainStrings;
+
             NestingState lastState = nestedParseState.takeLast();
             m_setOp = lastState.m_setOp;
             m_inverted = lastState.m_inverted;
+            m_mayContainStrings = lastState.m_mayContainStrings;
 
             m_delegate.atomCharacterClassPopNested();
             m_state = ClassSetConstructionState::AfterSetOperand;
+            computeMayContainStrings(rhsMayContainStrings);
             return false;
         }
 
@@ -411,6 +423,24 @@ private:
             m_setOp = CharacterClassSetOp::Intersection;
             m_delegate.atomCharacterClassSetOp(m_setOp);
             m_state = ClassSetConstructionState::AfterSetOperator;
+        }
+
+        void computeMayContainStrings(bool rhsMayContainStrings)
+        {
+            switch (m_setOp) {
+            case CharacterClassSetOp::Default:
+            case CharacterClassSetOp::Union:
+                m_mayContainStrings |= rhsMayContainStrings;
+                break;
+
+            case CharacterClassSetOp::Intersection:
+                m_mayContainStrings = m_mayContainStrings && rhsMayContainStrings;
+                break;
+
+            case CharacterClassSetOp::Subtraction:
+                // Result is the value of the LHS
+                break;
+            }
         }
 
         void flushCachedCharacterIfNeeded()
@@ -571,10 +601,8 @@ private:
             bool unionOpActive = m_setOp == CharacterClassSetOp::Default || m_setOp == CharacterClassSetOp::Union;
 
             auto processBuiltInCharacterClass = [&] () {
-                if ((invert || m_inverted) && characterClassMayContainStrings(classID)) {
-                    m_errorCode = ErrorCode::NegatedClassSetMayContainStrings;
-                    return;
-                }
+                computeMayContainStrings(characterClassMayContainStrings(classID));
+
                 m_delegate.atomCharacterClassBuiltIn(classID, invert);
                 m_state = ClassSetConstructionState::AfterCharacterClass;
                 return;
@@ -646,8 +674,13 @@ private:
             } else if (m_state == ClassSetConstructionState::AfterSetOperator)
                 m_errorCode = ErrorCode::InvalidClassSetCharacter;
 
+            if (isInverted() && m_mayContainStrings)
+                m_errorCode = ErrorCode::NegatedClassSetMayContainStrings;
+
             m_delegate.atomCharacterClassEnd();
         }
+
+        bool isInverted() { return m_inverted; }
 
         ErrorCode error() { return m_errorCode; }
 
@@ -673,6 +706,7 @@ private:
         };
         ClassSetConstructionState m_state;
         CharacterClassSetOp m_setOp;
+        bool m_mayContainStrings;
         bool m_inverted;
         bool m_processingEscape;
         UChar32 m_character;
@@ -690,6 +724,7 @@ private:
     public:
         ClassStringDisjunctionParserDelegate(Delegate& delegate, ErrorCode& err)
             : m_delegate(delegate)
+            , m_mayContainStrings(false)
             , m_errorCode(err)
         {
         }
@@ -697,6 +732,8 @@ private:
         void atomPatternCharacter(UChar32 ch, bool = false)
         {
             m_stringInProgress.append(ch);
+            if (m_stringInProgress.size() > 1)
+                m_mayContainStrings = true;
         }
 
         void newAlternative()
@@ -716,6 +753,8 @@ private:
             m_delegate.atomClassStringDisjunction(m_strings);
         }
 
+        bool mayContainStrings() { return m_mayContainStrings; }
+
         // parseEscape() should never call these delegate methods when parsing a class string disjunction.
         NO_RETURN_DUE_TO_ASSERT void assertionWordBoundary(bool) { RELEASE_ASSERT_NOT_REACHED(); }
         NO_RETURN_DUE_TO_ASSERT void atomBackReference(unsigned) { RELEASE_ASSERT_NOT_REACHED(); }
@@ -725,6 +764,7 @@ private:
 
     private:
         Delegate& m_delegate;
+        bool m_mayContainStrings;
         ErrorCode& m_errorCode;
         Vector<UChar32> m_stringInProgress;
         Vector<Vector<UChar32>> m_strings;
@@ -1063,8 +1103,10 @@ private:
 
             if (parseEscapeMode == ParseEscapeMode::ClassSet) {
                 if (!atEndOfPattern() && peek() == '{') {
-                    parseClassStringDisjunction();
-                    return TokenType::SetDisjunction;
+                    bool disjunctionMayContainStrings = false;
+                    parseClassStringDisjunction(disjunctionMayContainStrings);
+
+                    return disjunctionMayContainStrings ? TokenType::SetDisjunctionMayContainStrings : TokenType::SetDisjunction;
                 }
 
                 m_errorCode = ErrorCode::InvalidUnicodePropertyExpression;
@@ -1254,7 +1296,7 @@ private:
 
             case '[': {
                 consume();
-                classSetConstructor.nestedClassBegin();
+                classSetConstructor.nestedClassBegin(tryConsume('^'));
                 break;
             }
 
@@ -1266,7 +1308,11 @@ private:
 
                 classSetConstructor.setProcessingEscape();
 
-                if (parseClassSetEscape(classSetConstructor) == TokenType::SetDisjunction)
+                TokenType tokenType = parseClassSetEscape(classSetConstructor);
+
+                classSetConstructor.computeMayContainStrings(tokenType == TokenType::SetDisjunctionMayContainStrings);
+
+                if (tokenType == TokenType::SetDisjunction || tokenType == TokenType::SetDisjunctionMayContainStrings)
                     classSetConstructor.afterSetOperand();
 
                 break;
@@ -1333,7 +1379,7 @@ private:
      * to an instance of ClassStringDisjunctionParserDelegate, to describe the Class String Disjunction to the
      * delegate.
      */
-    void parseClassStringDisjunction()
+    void parseClassStringDisjunction(bool &disjunctionMayContainStrings)
     {
         ASSERT(!hasError(m_errorCode));
         ASSERT(peek() == '{');
@@ -1346,6 +1392,7 @@ private:
             case '}':
                 consume();
                 stringDisjunctionDelegate.end();
+                disjunctionMayContainStrings = stringDisjunctionDelegate.mayContainStrings();
                 return;
 
             case '\\':
@@ -1376,7 +1423,7 @@ private:
                 return;
         }
 
-        m_errorCode = ErrorCode::ClassStringDIsjunctionUnmatched;
+        m_errorCode = ErrorCode::ClassStringDisjunctionUnmatched;
     }
 
     /*
