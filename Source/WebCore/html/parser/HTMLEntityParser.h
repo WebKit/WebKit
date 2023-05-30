@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008-2023 Apple Inc. All Rights Reserved.
  * Copyright (C) 2010 Google, Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,16 +26,46 @@
 
 #pragma once
 
-#include "SegmentedString.h"
+#include <array>
+#include <span>
+#include <unicode/umachine.h>
+#include <wtf/Forward.h>
+#include <wtf/text/LChar.h>
 
 namespace WebCore {
 
-bool consumeHTMLEntity(SegmentedString&, StringBuilder& decodedEntity, bool& notEnoughCharacters, UChar additionalAllowedCharacter = '\0');
-bool consumeHTMLEntity(SegmentedString&, Vector<UChar>& decodedEntity, bool& notEnoughCharacters, UChar additionalAllowedCharacter = '\0');
+class DecodedHTMLEntity;
+class SegmentedString;
 
-void appendLegalEntityFor(UChar32, Vector<UChar>&);
+// This function expects a null character at the end, otherwise it assumes the source is partial.
+DecodedHTMLEntity consumeHTMLEntity(SegmentedString&, UChar additionalAllowedCharacter = 0);
 
-// Used by the XML parser.  Not suitable for use in HTML parsing.  Use consumeHTMLEntity instead.
-size_t decodeNamedEntityToUCharArray(const char*, UChar result[4]);
+// This function assumes the source is complete, and does not expect a null character.
+DecodedHTMLEntity consumeHTMLEntity(StringParsingBuffer<LChar>&);
+DecodedHTMLEntity consumeHTMLEntity(StringParsingBuffer<UChar>&);
+
+// This function does not check for "not enough characters" at all.
+DecodedHTMLEntity decodeNamedHTMLEntityForXMLParser(const char*);
+
+class DecodedHTMLEntity {
+public:
+    constexpr DecodedHTMLEntity();
+    constexpr DecodedHTMLEntity(UChar);
+    constexpr DecodedHTMLEntity(UChar, UChar);
+    constexpr DecodedHTMLEntity(UChar, UChar, UChar);
+
+    enum ConstructNotEnoughCharactersType { ConstructNotEnoughCharacters };
+    constexpr DecodedHTMLEntity(ConstructNotEnoughCharactersType);
+
+    constexpr bool failed() const { return !m_length; }
+    constexpr bool notEnoughCharacters() const { return m_notEnoughCharacters; }
+
+    constexpr std::span<const UChar> span() const { return { m_characters.data(), m_length }; }
+
+private:
+    uint8_t m_length { 0 };
+    bool m_notEnoughCharacters { false };
+    std::array<UChar, 3> m_characters;
+};
 
 } // namespace WebCore

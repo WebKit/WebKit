@@ -131,20 +131,13 @@ inline bool HTMLTokenizer::haveBufferedCharacterToken() const
 
 inline bool HTMLTokenizer::processEntity(SegmentedString& source)
 {
-    bool notEnoughCharacters = false;
-    StringBuilder decodedEntity;
-    bool success = consumeHTMLEntity(source, decodedEntity, notEnoughCharacters);
-    if (notEnoughCharacters)
+    auto decodedEntity = consumeHTMLEntity(source);
+    if (decodedEntity.notEnoughCharacters())
         return false;
-    if (!success) {
-        ASSERT(decodedEntity.isEmpty());
+    if (decodedEntity.failed())
         bufferASCIICharacter('&');
-    } else {
-        if (decodedEntity.is8Bit())
-            bufferCharacters(decodedEntity.span<LChar>());
-        else
-            bufferCharacters(decodedEntity.span<UChar>());
-    }
+    else
+        bufferCharacters(decodedEntity.span());
     return true;
 }
 
@@ -845,20 +838,13 @@ bool HTMLTokenizer::processToken(SegmentedString& source)
     END_STATE()
 
     BEGIN_STATE(CharacterReferenceInAttributeValueState)
-        bool notEnoughCharacters = false;
-        StringBuilder decodedEntity;
-        bool success = consumeHTMLEntity(source, decodedEntity, notEnoughCharacters, m_additionalAllowedCharacter);
-        if (notEnoughCharacters)
+        auto decodedEntity = consumeHTMLEntity(source, m_additionalAllowedCharacter);
+        if (decodedEntity.notEnoughCharacters())
             RETURN_IN_CURRENT_STATE(haveBufferedCharacterToken());
-        if (!success) {
-            ASSERT(decodedEntity.isEmpty());
+        if (decodedEntity.failed())
             m_token.appendToAttributeValue('&');
-        } else {
-            if (decodedEntity.is8Bit())
-                m_token.appendToAttributeValue(decodedEntity.span<LChar>());
-            else
-                m_token.appendToAttributeValue(decodedEntity.span<UChar>());
-        }
+        else
+            m_token.appendToAttributeValue(decodedEntity.span());
         // We're supposed to switch back to the attribute value state that
         // we were in when we were switched into this state. Rather than
         // keeping track of this explictly, we observe that the previous
