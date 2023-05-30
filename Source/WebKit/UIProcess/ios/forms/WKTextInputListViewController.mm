@@ -119,7 +119,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (void)enterText:(NSString *)text
 {
-    [self.delegate quickboard:self textEntered:adoptNS([[NSAttributedString alloc] initWithString:text]).get()];
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    [self.delegate quickboard:static_cast<id<PUICQuickboardController>>(self) textEntered:adoptNS([[NSAttributedString alloc] initWithString:text]).get()];
+    ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 #pragma mark - Quickboard subclassing
