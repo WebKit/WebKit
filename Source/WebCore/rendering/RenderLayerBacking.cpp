@@ -3073,12 +3073,12 @@ bool RenderLayerBacking::isUnscaledBitmapOnly() const
 void RenderLayerBacking::contentChanged(ContentChangeType changeType)
 {
     PaintedContentsInfo contentsInfo(*this);
-    if (changeType == ImageChanged) {
+    if (changeType == ImageChanged || changeType == CanvasChanged) {
         if (contentsInfo.isDirectlyCompositedImage()) {
             updateImageContents(contentsInfo);
             return;
         }
-        if (contentsInfo.isUnscaledBitmapOnly()) {
+        if (contentsInfo.isUnscaledBitmapOnly() != m_graphicsLayer->appliesDeviceScale()) {
             compositor().scheduleCompositingLayerUpdate();
             return;
         }
