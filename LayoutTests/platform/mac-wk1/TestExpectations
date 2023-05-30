@@ -1063,8 +1063,6 @@ webkit.org/b/172092 [ Debug ] fast/parser/adoption-agency-unload-iframe-4.html [
 
 webkit.org/b/254706 [ Debug ] imported/w3c/web-platform-tests/html/dom/idlharness.https.html [ Pass Timeout ]
 
-webkit.org/b/255235 [ Ventura Debug ] imported/w3c/web-platform-tests/css/css-cascade/layer-counter-style-override.html [ Failure ]
-
 http/tests/security/xss-DENIED-xsl-external-entity.xml [ Skip ]
 
 # rdar://problem/34716163 Breaks subsequent tests using response.xml
@@ -2274,8 +2272,6 @@ http/tests/webshare/ [ Skip ]
 webkit.org/b/230842 [ BigSur Debug ] media/track/audio-track.html [ Pass Crash ]
 
 webkit.org/b/230848 [ BigSur Debug ] webrtc/datachannel/datachannel-gc.html [ Pass Crash ]
-
-webkit.org/b/230905 [ BigSur ] imported/w3c/web-platform-tests/css/css-cascade/layer-counter-style-override.html [ Pass Failure ]
 
 # DumpRenderTree doesn't invoke inspector instrumentation when repainting.
 webkit.org/b/232852 inspector/page/setShowPaintRects.html [ Skip ]

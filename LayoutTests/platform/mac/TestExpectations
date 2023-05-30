@@ -2094,8 +2094,6 @@ webkit.org/b/228311 imported/w3c/web-platform-tests/css/css-scoping/css-scoping-
 # webkit.org/b/228200 Setting multiple test expectations for Monterey on OpenSource:
 [ Monterey Debug arm64 ] imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-restartIce.https.html [ Pass Failure Crash ]
 
-webkit.org/b/255235 [ Monterey Debug ] imported/w3c/web-platform-tests/css/css-cascade/layer-counter-style-override.html [ Failure ]
-
 webkit.org/b/229291 imported/w3c/web-platform-tests/html/rendering/replaced-elements/images/revoked-blob-print.html [ Pass ImageOnlyFailure ]
 
 #rdar://82146367 ([Mac, iOS Release] imported/w3c/web-platform-tests/worklets/layout-worklet-csp.https.html is a flaky failure) imported/w3c/web-platform-tests/worklets/layout-worklet-csp.https.html [ Pass Failure ] 
