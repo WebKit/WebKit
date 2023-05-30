@@ -1,4 +1,8 @@
-Text
-Is settable: true
+This test ensures that the body element has a writable AXValue because it has a contenteditable attribute.
 
+PASS: body.isAttributeSettable('AXValue') === true
 
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Some Text.
