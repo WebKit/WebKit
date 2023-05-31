@@ -302,7 +302,7 @@ bool RenderTextControlSingleLine::hasControlClip() const
 LayoutRect RenderTextControlSingleLine::controlClipRect(const LayoutPoint& additionalOffset) const
 {
     ASSERT(hasControlClip());
-    auto clipRect = contentBoxRect();
+    auto clipRect = paddingBoxRect();
     if (auto* containerElementRenderer = containerElement() ? containerElement()->renderBox() : nullptr)
         clipRect = unionRect(clipRect, containerElementRenderer->frameRect());
     clipRect.moveBy(additionalOffset);
