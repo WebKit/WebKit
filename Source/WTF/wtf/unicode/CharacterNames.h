@@ -35,15 +35,12 @@ namespace Unicode {
 // Most of these are UChar constants, not UChar32, which makes them
 // more convenient for WebCore code that mostly uses UTF-16.
 
-constexpr UChar AppleLogo = 0xF8FF;
 constexpr UChar HiraganaLetterSmallA = 0x3041;
 constexpr UChar32 aegeanWordSeparatorDot = 0x10101;
 constexpr UChar32 aegeanWordSeparatorLine = 0x10100;
 constexpr UChar apostrophe = 0x0027;
 constexpr UChar blackCircle = 0x25CF;
-constexpr UChar blackDownPointingSmallTriangle = 0x25BE;
 constexpr UChar blackLeftPointingSmallTriangle = 0x25C2;
-constexpr UChar blackRightPointingSmallTriangle = 0x25B8;
 constexpr UChar blackSquare = 0x25A0;
 constexpr UChar blackUpPointingTriangle = 0x25B2;
 constexpr UChar bullet = 0x2022;
@@ -56,6 +53,7 @@ constexpr UChar deleteCharacter = 0x007F;
 constexpr UChar doubleHighReversed9QuotationMark = 0x201F;
 constexpr UChar doubleLowReversed9QuotationMark = 0x2E42;
 constexpr UChar doublePrimeQuotationMark = 0x301E;
+constexpr UChar emSpace = 0x2003;
 constexpr UChar ethiopicPrefaceColon = 0x1366;
 constexpr UChar ethiopicWordspace = 0x1361;
 constexpr UChar firstStrongIsolate = 0x2068;
@@ -88,6 +86,7 @@ constexpr UChar leftWhiteCornerBracket = 0x300E;
 constexpr UChar lowDoublePrimeQuotationMark = 0x301F;
 constexpr UChar lowLine = 0x005F;
 constexpr UChar minusSign = 0x2212;
+constexpr UChar multiplicationSign = 0x00D7;
 constexpr UChar narrowNoBreakSpace = 0x202F;
 constexpr UChar newlineCharacter = 0x000A;
 constexpr UChar noBreakSpace = 0x00A0;
@@ -142,14 +141,11 @@ constexpr UChar zeroWidthSpace = 0x200B;
 } // namespace Unicode
 } // namespace WTF
 
-using WTF::Unicode::AppleLogo;
 using WTF::Unicode::HiraganaLetterSmallA;
 using WTF::Unicode::aegeanWordSeparatorDot;
 using WTF::Unicode::aegeanWordSeparatorLine;
 using WTF::Unicode::blackCircle;
-using WTF::Unicode::blackDownPointingSmallTriangle;
 using WTF::Unicode::blackLeftPointingSmallTriangle;
-using WTF::Unicode::blackRightPointingSmallTriangle;
 using WTF::Unicode::blackSquare;
 using WTF::Unicode::blackUpPointingTriangle;
 using WTF::Unicode::bullet;
@@ -159,6 +155,7 @@ using WTF::Unicode::carriageReturn;
 using WTF::Unicode::cjkWater;
 using WTF::Unicode::combiningEnclosingKeycap;
 using WTF::Unicode::deleteCharacter;
+using WTF::Unicode::emSpace;
 using WTF::Unicode::ethiopicPrefaceColon;
 using WTF::Unicode::ethiopicWordspace;
 using WTF::Unicode::firstStrongIsolate;
@@ -205,6 +202,7 @@ using WTF::Unicode::leftToRightMark;
 using WTF::Unicode::leftToRightOverride;
 using WTF::Unicode::lowLine;
 using WTF::Unicode::minusSign;
+using WTF::Unicode::multiplicationSign;
 using WTF::Unicode::narrowNoBreakSpace;
 using WTF::Unicode::newlineCharacter;
 using WTF::Unicode::noBreakSpace;

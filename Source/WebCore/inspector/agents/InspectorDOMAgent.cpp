@@ -123,6 +123,7 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/StringToIntegerConversion.h>
 #include <wtf/text/WTFString.h>
+#include <wtf/unicode/CharacterNames.h>
 
 namespace WebCore {
 
@@ -131,7 +132,7 @@ using namespace Inspector;
 using namespace HTMLNames;
 
 static const size_t maxTextSize = 10000;
-static const UChar ellipsisUChar[] = { 0x2026, 0 };
+static const UChar horizontalEllipsisUChar[] = { horizontalEllipsis, 0 };
 
 static std::optional<Color> parseColor(RefPtr<JSON::Object>&& colorObject)
 {
@@ -1923,7 +1924,7 @@ Ref<Protocol::DOM::Node> InspectorDOMAgent::buildObjectForNode(Node* node, int d
     case Node::CDATA_SECTION_NODE:
         nodeValue = node->nodeValue();
         if (nodeValue.length() > maxTextSize)
-            nodeValue = makeString(StringView(nodeValue).left(maxTextSize), ellipsisUChar);
+            nodeValue = makeString(StringView(nodeValue).left(maxTextSize), horizontalEllipsisUChar);
         break;
     case Node::ATTRIBUTE_NODE:
         localName = node->localName();
