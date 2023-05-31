@@ -5843,6 +5843,12 @@ void LocalFrameView::willRemoveScrollbar(Scrollbar* scrollbar, ScrollbarOrientat
     }
 }
 
+void LocalFrameView::scrollbarFrameRectChanged(const Scrollbar& scrollbar) const
+{
+    if (auto* cache = axObjectCache())
+        cache->onScrollbarFrameRectChange(scrollbar);
+}
+
 void LocalFrameView::addPaintPendingMilestones(OptionSet<LayoutMilestone> milestones)
 {
     m_milestonesPendingPaint.add(milestones);

@@ -50,11 +50,11 @@ public:
     void willUpdateObjectRegions();
     void scheduleObjectRegionsUpdate(bool /* scheduleImmediately */);
 
-    void onPaint(AXID, IntRect&&);
-    // std::nullopt if there is no paint rect for the given ID (i.e. because it hasn't yet been painted, or cannot be painted at all).
-    std::optional<IntRect> paintRectForID(AXID);
+    void cacheRect(AXID, IntRect&&);
+    // std::nullopt if there is no cached rect for the given ID (i.e. because it hasn't been cached yet via paint or otherwise, or cannot be painted / cached at all).
+    std::optional<IntRect> cachedRectForID(AXID);
 
-    void remove(AXID axID) { m_paintRects.remove(axID); }
+    void remove(AXID axID) { m_cachedRects.remove(axID); }
 
 #if PLATFORM(MAC)
     void initializePrimaryScreenRect();
@@ -67,8 +67,7 @@ private:
 
     // The cache that owns this instance.
     WeakPtr<AXObjectCache> m_cache;
-    // Bounds computed by PaintPhase::Accessibility.
-    HashMap<AXID, IntRect> m_paintRects;
+    HashMap<AXID, IntRect> m_cachedRects;
     Timer m_updateObjectRegionsTimer;
 
 #if PLATFORM(MAC)

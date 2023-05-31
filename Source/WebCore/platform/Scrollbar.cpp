@@ -30,6 +30,7 @@
 #include "GraphicsContext.h"
 #include "LocalFrameView.h"
 #include "PlatformMouseEvent.h"
+#include "RegionContext.h"
 #include "ScrollAnimator.h"
 #include "ScrollView.h"
 #include "ScrollableArea.h"
@@ -88,7 +89,7 @@ Scrollbar::Scrollbar(ScrollableArea& scrollableArea, ScrollbarOrientation orient
     // scrollbar thickness and use it when sizing scrollbars (rather than leaving one dimension of the scrollbar
     // alone when sizing).
     int thickness = theme().scrollbarThickness(widthStyle);
-    Widget::setFrameRect(IntRect(0, 0, thickness, thickness));
+    setFrameRect(IntRect(0, 0, thickness, thickness));
 
     m_currentPos = static_cast<float>(offsetForOrientation(m_scrollableArea.scrollOffset(), m_orientation));
 }
@@ -158,6 +159,12 @@ void Scrollbar::updateThumbPosition()
 void Scrollbar::updateThumbProportion()
 {
     updateThumb();
+}
+
+void Scrollbar::setFrameRect(const IntRect& rect)
+{
+    Widget::setFrameRect(rect);
+    m_scrollableArea.scrollbarFrameRectChanged(*this);
 }
 
 void Scrollbar::paint(GraphicsContext& context, const IntRect& damageRect, Widget::SecurityOriginPaintPolicy, RegionContext*)

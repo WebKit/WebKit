@@ -56,6 +56,7 @@ class Page;
 class RenderBlock;
 class RenderObject;
 class RenderText;
+class Scrollbar;
 class ScrollView;
 class VisiblePosition;
 class Widget;
@@ -181,6 +182,7 @@ public:
     void childrenChanged(RenderObject*, RenderObject* newChild = nullptr);
     void childrenChanged(AccessibilityObject*);
     void onFocusChange(Node* oldFocusedNode, Node* newFocusedNode);
+    void onScrollbarFrameRectChange(const Scrollbar&);
     void onSelectedChanged(Node*);
     void onTextSecurityChanged(HTMLInputElement&);
     void onTitleChange(Document&);
@@ -252,7 +254,6 @@ public:
     Vector<RefPtr<AXCoreObject>> objectsForIDs(const Vector<AXID>&) const;
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-    std::optional<IntRect> paintRectForID(AXID axID) { return m_geometryManager->paintRectForID(axID); }
     void onPaint(const RenderObject&, IntRect&&) const;
     void onPaint(const Widget&, IntRect&&) const;
 #else

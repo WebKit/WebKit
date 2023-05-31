@@ -47,6 +47,8 @@ public:
     // Called by the ScrollableArea when the scroll offset changes.
     void offsetDidChange();
 
+    WEBCORE_EXPORT void setFrameRect(const IntRect&) final;
+
     static int pixelsPerLineStep() { return 40; }
     WEBCORE_EXPORT static int pixelsPerLineStep(int viewWidthOrHeight);
     WEBCORE_EXPORT static void setShouldUseFixedPixelsPerLineStepForTesting(bool);
