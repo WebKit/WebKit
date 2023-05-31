@@ -224,6 +224,11 @@
         assertIsCurrent(workQueue());
         m_context->depthRange(zNear, zFar);
     }
+    void destroyEGLImage(uint64_t handle)
+    {
+        assertIsCurrent(workQueue());
+        m_context->destroyEGLImage(reinterpret_cast<GCEGLImage>(static_cast<intptr_t>(handle)));
+    }
     void detachShader(uint32_t arg0, uint32_t arg1)
     {
         assertIsCurrent(workQueue());

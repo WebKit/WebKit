@@ -71,6 +71,7 @@ public:
     void didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName) final { }
 
     // WebCore::GraphicsContextGL overrides.
+    std::optional<WebCore::GraphicsContextGL::ExternalImageAttachResult> createAndBindExternalImage(GCGLenum, WebCore::GraphicsContextGL::ExternalImageSource) override;
     GCEGLSync createEGLSync(ExternalEGLSyncEvent) override;
     std::tuple<GCGLenum, GCGLenum> externalImageTextureBindingPoint() final;
     void reshape(int width, int height) final;
@@ -139,6 +140,7 @@ public:
     void depthFunc(GCGLenum func) final;
     void depthMask(GCGLboolean flag) final;
     void depthRange(GCGLclampf zNear, GCGLclampf zFar) final;
+    void destroyEGLImage(GCEGLImage handle) final;
     void detachShader(PlatformGLObject arg0, PlatformGLObject arg1) final;
     void disable(GCGLenum cap) final;
     void disableVertexAttribArray(GCGLuint index) final;
@@ -453,6 +455,7 @@ static_assert(sizeof(GCGLintptr) <= sizeof(uint64_t));
 static_assert(sizeof(GCGLsizeiptr) <= sizeof(uint64_t));
 static_assert(sizeof(GCGLvoidptr) <= sizeof(uint64_t));
 static_assert(sizeof(GCGLsync) <= sizeof(uint64_t) && sizeof(GCGLsync) == sizeof(intptr_t));
+static_assert(sizeof(GCEGLImage) <= sizeof(uint64_t) && sizeof(GCEGLImage) == sizeof(intptr_t));
 static_assert(sizeof(GCEGLSync) <= sizeof(uint64_t) && sizeof(GCEGLSync) == sizeof(intptr_t));
 // End of list used by generate-gpup-webgl script.
 

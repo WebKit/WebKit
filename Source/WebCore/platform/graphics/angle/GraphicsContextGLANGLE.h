@@ -43,6 +43,7 @@ public:
 
     GCGLDisplay platformDisplay() const;
     GCGLConfig platformConfig() const;
+
     GCGLenum drawingBufferTextureTarget();
     std::tuple<GCGLenum, GCGLenum> drawingBufferTextureBindingPoint();
     static GCGLint EGLDrawingBufferTextureTargetForDrawingTarget(GCGLenum drawingTarget);
@@ -290,6 +291,8 @@ public:
     String getActiveUniformBlockName(PlatformGLObject program, GCGLuint uniformBlockIndex) final;
     void uniformBlockBinding(PlatformGLObject program, GCGLuint uniformBlockIndex, GCGLuint uniformBlockBinding) final;
     void getActiveUniformBlockiv(GCGLuint program, GCGLuint uniformBlockIndex, GCGLenum pname, std::span<GCGLint> params) final;
+    std::optional<ExternalImageAttachResult> createAndBindExternalImage(GCGLenum, ExternalImageSource) override;
+    void destroyEGLImage(GCEGLImage) final;
     GCEGLSync createEGLSync(ExternalEGLSyncEvent) override;
     bool destroyEGLSync(GCEGLSync) final;
     void clientWaitEGLSyncWithFlush(GCEGLSync, uint64_t) final;

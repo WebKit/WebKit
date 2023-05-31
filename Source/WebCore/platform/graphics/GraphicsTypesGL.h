@@ -66,6 +66,7 @@ typedef GCGLuint PlatformGLObject;
 using GCGLDisplay = void*;
 using GCGLConfig = void*;
 using GCGLContext = void*;
+using GCEGLImage = void*;
 using GCEGLSync = void*;
 
 #if !PLATFORM(COCOA)

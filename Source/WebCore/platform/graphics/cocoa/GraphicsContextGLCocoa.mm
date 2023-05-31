@@ -680,29 +680,25 @@ void GraphicsContextGLCocoa::destroyPbufferAndDetachIOSurface(void* handle)
 }
 
 #if !PLATFORM(IOS_FAMILY_SIMULATOR)
-GraphicsContextGLCocoa::IOSurfaceTextureAttachment GraphicsContextGLCocoa::attachIOSurfaceToSharedTexture(GCGLenum target, IOSurface* surface)
+static std::optional<GraphicsContextGL::ExternalImageAttachResult> createAndBindSharedTextureToExternalImage(GCGLDisplay platformDisplay, GCGLenum target, MTLSharedTextureHandle* handle)
 {
-    constexpr EGLint emptyAttributes[] = { EGL_NONE };
+    EGLDeviceEXT eglDevice = EGL_NO_DEVICE_EXT;
+    if (!EGL_QueryDisplayAttribEXT(platformDisplay, EGL_DEVICE_EXT, reinterpret_cast<EGLAttrib*>(&eglDevice)))
+        return std::nullopt;
 
-    // Create a MTLTexture out of the IOSurface.
-    // FIXME: We need to use the same device that ANGLE is using, which might not be the default.
+    id<MTLDevice> mtlDevice = nil;
+    if (!EGL_QueryDeviceAttribEXT(eglDevice, EGL_METAL_DEVICE_ANGLE, reinterpret_cast<EGLAttrib*>(&mtlDevice)))
+        return std::nullopt;
 
-    RetainPtr<MTLSharedTextureHandle> handle = adoptNS([[MTLSharedTextureHandle alloc] initWithIOSurface:surface->surface() label:@"WebXR"]);
-    if (!handle) {
-        LOG(WebGL, "Unable to create a MTLSharedTextureHandle from the IOSurface in attachIOSurfaceToTexture.");
+    if (mtlDevice != [handle device]) {
+        LOG(WebGL, "MTLSharedTextureHandle does not have the same Metal device as platformDisplay in attachMTLTextureToExternalImage.");
         return std::nullopt;
     }
 
-    if (!handle.get().device) {
-        LOG(WebGL, "MTLSharedTextureHandle does not have a Metal device in attachIOSurfaceToTexture.");
+    // Create a MTLTexture out of the MTLSharedTextureHandle.
+    auto texture = adoptNS([mtlDevice newSharedTextureWithHandle:handle]);
+    if (!texture)
         return std::nullopt;
-    }
-
-    auto texture = adoptNS([handle.get().device newSharedTextureWithHandle:handle.get()]);
-    if (!texture) {
-        LOG(WebGL, "Unable to create a MTLSharedTexture from the texture handle in attachIOSurfaceToTexture.");
-        return std::nullopt;
-    }
 
     GCGLuint textureWidth = [texture width];
     GCGLuint textureHeight = [texture height];
@@ -710,25 +706,59 @@ GraphicsContextGLCocoa::IOSurfaceTextureAttachment GraphicsContextGLCocoa::attac
     // FIXME: Does the texture have the correct usage mode?
 
     // Create an EGLImage out of the MTLTexture
-    auto display = platformDisplay();
-    auto eglImage = EGL_CreateImageKHR(display, EGL_NO_CONTEXT, EGL_METAL_TEXTURE_ANGLE, reinterpret_cast<EGLClientBuffer>(texture.get()), emptyAttributes);
-    if (!eglImage) {
-        LOG(WebGL, "Unable to create an EGLImage from the Metal handle in attachIOSurfaceToTexture.");
+    constexpr EGLint emptyAttributes[] = { EGL_NONE };
+    auto eglImage = EGL_CreateImageKHR(platformDisplay, EGL_NO_CONTEXT, EGL_METAL_TEXTURE_ANGLE, reinterpret_cast<EGLClientBuffer>(texture.get()), emptyAttributes);
+    if (!eglImage)
         return std::nullopt;
-    }
 
     // Tell the currently bound texture to use the EGLImage.
     GL_EGLImageTargetTexture2DOES(target, eglImage);
 
-    return std::make_tuple(eglImage, textureWidth, textureHeight);
+    return std::make_tuple(eglImage, IntSize(textureWidth, textureHeight));
 }
 
-void GraphicsContextGLCocoa::detachIOSurfaceFromSharedTexture(void* handle)
+std::optional<GraphicsContextGL::ExternalImageAttachResult> GraphicsContextGLCocoa::createAndBindExternalImage(GCGLenum target, IOSurface* surface)
 {
-    auto display = platformDisplay();
-    EGL_DestroyImageKHR(display, handle);
+    MTLSharedTextureHandle* handle = [[MTLSharedTextureHandle alloc] initWithIOSurface:surface->surface() label:@"WebXR"];
+    if (!handle)
+        return std::nullopt;
+
+    return createAndBindSharedTextureToExternalImage(platformDisplay(), target, handle);
 }
 #endif
+
+std::optional<GraphicsContextGL::ExternalImageAttachResult> GraphicsContextGLCocoa::createAndBindExternalImage(GCGLenum target, ExternalImageSource source)
+{
+#if PLATFORM(IOS_FAMILY_SIMULATOR)
+    // MTLSharedTexture is unsupported on simulator
+    UNUSED_VARIABLE(target);
+    UNUSED_VARIABLE(source);
+
+    return std::nullopt;
+#else // !PLATFORM(IOS_FAMILY_SIMULATOR
+
+    MTLSharedTextureHandle* handle = nil;
+    return WTF::switchOn(WTFMove(source),
+        [&](ExternalImageSourceIOSurfaceHandle&& ioSurface) -> std::optional<ExternalImageAttachResult> {
+            auto surface = IOSurface::createFromSendRight(WTFMove(ioSurface.handle));
+            if (!surface)
+                return std::nullopt;
+
+            handle = [[MTLSharedTextureHandle alloc] initWithIOSurface:surface->surface() label:@"WebXR"];
+            if (!handle)
+                return std::nullopt;
+
+            return createAndBindSharedTextureToExternalImage(platformDisplay(), target, handle);
+        },
+        [&](ExternalImageSourceMTLSharedTextureHandle&& sharedTexture) -> std::optional<ExternalImageAttachResult> {
+            handle = [[MTLSharedTextureHandle alloc] initWithMachPort:sharedTexture.handle.sendRight()];
+            if (!handle)
+                return std::nullopt;
+
+            return createAndBindSharedTextureToExternalImage(platformDisplay(), target, handle);
+        });
+#endif
+}
 
 RetainPtr<id> GraphicsContextGLCocoa::newSharedEventWithMachPort(mach_port_t sharedEventSendRight)
 {

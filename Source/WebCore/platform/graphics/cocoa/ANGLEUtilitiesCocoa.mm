@@ -80,7 +80,7 @@ void destroyPbufferAndDetachIOSurface(EGLDisplay display, void* handle)
     EGL_DestroySurface(display, handle);
 }
 
-RetainPtr<MTLSharedEvent> newSharedEventWithMachPort(EGLDisplay display, mach_port_t machPort)
+RetainPtr<MTLSharedEvent> newSharedEventWithMachPort(GCGLDisplay display, mach_port_t machPort)
 {
     // FIXME: Check for invalid mach_port_t
     EGLDeviceEXT device = EGL_NO_DEVICE_EXT;
@@ -94,7 +94,7 @@ RetainPtr<MTLSharedEvent> newSharedEventWithMachPort(EGLDisplay display, mach_po
     return adoptNS([(id<MTLDeviceSPI>)mtlDevice newSharedEventWithMachPort:machPort]);
 }
 
-RetainPtr<MTLSharedEvent> newSharedEvent(EGLDisplay display)
+RetainPtr<MTLSharedEvent> newSharedEvent(GCGLDisplay display)
 {
     EGLDeviceEXT device = EGL_NO_DEVICE_EXT;
     if (!EGL_QueryDisplayAttribEXT(display, EGL_DEVICE_EXT, reinterpret_cast<EGLAttrib*>(&device)))

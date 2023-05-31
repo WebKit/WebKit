@@ -135,6 +135,7 @@ private:
 class RemoteGraphicsContextGLProxyCocoa final : public RemoteGraphicsContextGLProxy {
 public:
     // GraphicsContextGL override.
+    std::optional<WebCore::GraphicsContextGL::ExternalImageAttachResult> createAndBindExternalImage(GCGLenum, WebCore::GraphicsContextGL::ExternalImageSource) final;
     GCEGLSync createEGLSync(ExternalEGLSyncEvent) final;
 
     // RemoteGraphicsContextGLProxy overrides.
@@ -158,6 +159,21 @@ private:
     Ref<DisplayBufferDisplayDelegate> m_layerContentsDisplayDelegate;
     friend class RemoteGraphicsContextGLProxy;
 };
+
+std::optional<WebCore::GraphicsContextGL::ExternalImageAttachResult> RemoteGraphicsContextGLProxyCocoa::createAndBindExternalImage(GCGLenum target, WebCore::GraphicsContextGL::ExternalImageSource source)
+{
+    if (isContextLost())
+        return std::nullopt;
+    auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::CreateAndBindExternalImage(target, source));
+    if (!sendResult) {
+        markContextLost();
+        return std::nullopt;
+    }
+    auto [handle, size] = sendResult.takeReply();
+    if (!handle)
+        return std::nullopt;
+    return std::make_tuple(reinterpret_cast<GCEGLImage>(static_cast<intptr_t>(handle)), size);
+}
 
 GCEGLSync RemoteGraphicsContextGLProxyCocoa::createEGLSync(ExternalEGLSyncEvent syncEvent)
 {

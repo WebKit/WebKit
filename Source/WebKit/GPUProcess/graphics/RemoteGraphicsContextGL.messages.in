@@ -61,6 +61,7 @@ messages -> RemoteGraphicsContextGL NotRefCounted Stream {
     void MultiDrawArraysInstancedBaseInstanceANGLE(uint32_t mode, IPC::ArrayReferenceTuple<int32_t, int32_t, int32_t, uint32_t> firstsCountsInstanceCountsAndBaseInstances)
     void MultiDrawElementsInstancedBaseVertexBaseInstanceANGLE(uint32_t mode, IPC::ArrayReferenceTuple<int32_t, int32_t, int32_t, int32_t, uint32_t> countsOffsetsInstanceCountsBaseVerticesAndBaseInstances, uint32_t type)
 #if PLATFORM(COCOA)
+    void CreateAndBindExternalImage(GCGLenum target, WebCore::GraphicsContextGL::ExternalImageSource source) -> (uint64_t handle, WebCore::IntSize size) Synchronous NotStreamEncodable NotStreamEncodableReply
     void CreateEGLSync(MachSendRight syncEvent, uint64_t signalValue) -> (uint64_t sync) Synchronous NotStreamEncodable NotStreamEncodableReply
 #endif
 
@@ -101,6 +102,7 @@ messages -> RemoteGraphicsContextGL NotRefCounted Stream {
     void DepthFunc(uint32_t func)
     void DepthMask(bool flag)
     void DepthRange(float zNear, float zFar)
+    void DestroyEGLImage(uint64_t handle)
     void DetachShader(uint32_t arg0, uint32_t arg1)
     void Disable(uint32_t cap)
     void DisableVertexAttribArray(uint32_t index)

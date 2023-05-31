@@ -172,6 +172,14 @@ void RemoteGraphicsContextGL::dispatchContextChangedNotification()
     send(Messages::RemoteGraphicsContextGLProxy::WasChanged());
 }
 
+void RemoteGraphicsContextGL::createAndBindExternalImage(GCGLenum target, WebCore::GraphicsContextGL::ExternalImageSource source, CompletionHandler<void(uint64_t handle, WebCore::IntSize size)>&& completionHandler)
+{
+    assertIsCurrent(workQueue());
+    auto attachment = m_context->createAndBindExternalImage(target, source);
+    auto [handle, size] = attachment.value_or(std::make_tuple(nullptr, IntSize { }));
+    completionHandler(static_cast<uint64_t>(reinterpret_cast<intptr_t>(handle)), size);
+}
+
 void RemoteGraphicsContextGL::reshape(int32_t width, int32_t height)
 {
     assertIsCurrent(workQueue());

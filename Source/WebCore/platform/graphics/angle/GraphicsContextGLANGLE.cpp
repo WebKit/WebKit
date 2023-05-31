@@ -2813,6 +2813,17 @@ void GraphicsContextGLANGLE::getActiveUniformBlockiv(GCGLuint program, GCGLuint 
     GL_GetActiveUniformBlockivRobustANGLE(program, uniformBlockIndex, pname, params.size(), nullptr, params.data());
 }
 
+std::optional<GraphicsContextGL::ExternalImageAttachResult> GraphicsContextGLANGLE::createAndBindExternalImage(GCGLenum, ExternalImageSource)
+{
+    notImplemented();
+    return std::nullopt;
+}
+
+void GraphicsContextGLANGLE::destroyEGLImage(GCEGLImage handle)
+{
+    EGL_DestroyImageKHR(platformDisplay(), handle);
+}
+
 GCEGLSync GraphicsContextGLANGLE::createEGLSync(ExternalEGLSyncEvent)
 {
     notImplemented();

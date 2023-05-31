@@ -53,7 +53,6 @@
 #endif
 #endif
 
-
 template<typename... Types>
 struct GCGLSpanTuple;
 
@@ -1475,6 +1474,24 @@ public:
     virtual void getActiveUniformBlockiv(GCGLuint program, GCGLuint uniformBlockIndex, GCGLenum pname, std::span<GCGLint> params) = 0;
 
     // ========== EGL related entry points.
+
+#if PLATFORM(COCOA)
+    struct ExternalImageSourceIOSurfaceHandle {
+        MachSendRight handle;
+    };
+    struct ExternalImageSourceMTLSharedTextureHandle {
+        MachSendRight handle;
+    };
+    using ExternalImageSource = std::variant<
+        ExternalImageSourceIOSurfaceHandle,
+        ExternalImageSourceMTLSharedTextureHandle
+        >;
+#else
+    using ExternalImageSource = int;
+#endif
+    using ExternalImageAttachResult = std::tuple<GCEGLImage, IntSize>;
+    virtual std::optional<ExternalImageAttachResult> createAndBindExternalImage(GCGLenum, ExternalImageSource) = 0;
+    virtual void destroyEGLImage(GCEGLImage) = 0;
 
 #if PLATFORM(COCOA)
     using ExternalEGLSyncEvent = std::tuple<MachSendRight, uint64_t>;

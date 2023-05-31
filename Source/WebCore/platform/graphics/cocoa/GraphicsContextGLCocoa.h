@@ -67,10 +67,11 @@ public:
     // detach call below.
     void* createPbufferAndAttachIOSurface(GCGLenum target, PbufferAttachmentUsage, GCGLenum internalFormat, GCGLsizei width, GCGLsizei height, GCGLenum type, IOSurfaceRef, GCGLuint plane);
     void destroyPbufferAndDetachIOSurface(void* handle);
+
+    std::optional<ExternalImageAttachResult> createAndBindExternalImage(GCGLenum, ExternalImageSource) final;
 #if !PLATFORM(IOS_FAMILY_SIMULATOR)
-    using IOSurfaceTextureAttachment = std::optional<std::tuple<void*, unsigned, unsigned>>;
-    IOSurfaceTextureAttachment attachIOSurfaceToSharedTexture(GCGLenum target, IOSurface*);
-    void detachIOSurfaceFromSharedTexture(void* handle);
+    // Short-term support for in-process WebGL.
+    std::optional<ExternalImageAttachResult> createAndBindExternalImage(GCGLenum, IOSurface*);
 #endif
 
     RetainPtr<id> newSharedEventWithMachPort(mach_port_t);

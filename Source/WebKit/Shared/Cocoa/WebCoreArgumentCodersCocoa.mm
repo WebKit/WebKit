@@ -744,4 +744,34 @@ std::optional<RetainPtr<CVPixelBufferRef>> ArgumentCoder<RetainPtr<CVPixelBuffer
 
 #endif
 
+#if ENABLE(GPU_PROCESS) && ENABLE(WEBGL)
+
+void ArgumentCoder<WebCore::GraphicsContextGL::ExternalImageSourceIOSurfaceHandle>::encode(Encoder& encoder, const WebCore::GraphicsContextGL::ExternalImageSourceIOSurfaceHandle& source)
+{
+    encoder << source.handle;
+}
+
+std::optional<WebCore::GraphicsContextGL::ExternalImageSourceIOSurfaceHandle> ArgumentCoder<WebCore::GraphicsContextGL::ExternalImageSourceIOSurfaceHandle>::decode(Decoder& decoder)
+{
+    WebCore::GraphicsContextGL::ExternalImageSourceIOSurfaceHandle source;
+    if (!decoder.decode(source.handle))
+        return std::nullopt;
+    return source;
+}
+
+void ArgumentCoder<WebCore::GraphicsContextGL::ExternalImageSourceMTLSharedTextureHandle>::encode(Encoder& encoder, const WebCore::GraphicsContextGL::ExternalImageSourceMTLSharedTextureHandle& source)
+{
+    encoder << source.handle;
+}
+
+std::optional<WebCore::GraphicsContextGL::ExternalImageSourceMTLSharedTextureHandle> ArgumentCoder<WebCore::GraphicsContextGL::ExternalImageSourceMTLSharedTextureHandle>::decode(Decoder& decoder)
+{
+    WebCore::GraphicsContextGL::ExternalImageSourceMTLSharedTextureHandle source;
+    if (!decoder.decode(source.handle))
+        return std::nullopt;
+    return source;
+}
+
+#endif
+
 } // namespace IPC

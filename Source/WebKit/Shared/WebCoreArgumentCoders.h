@@ -79,6 +79,7 @@
 #endif
 
 #if ENABLE(GPU_PROCESS) && ENABLE(WEBGL)
+#include <WebCore/GraphicsContextGL.h>
 #include <WebCore/GraphicsContextGLEnums.h>
 #endif
 
@@ -501,6 +502,20 @@ template<> struct ArgumentCoder<WebCore::PixelBuffer> {
     template<class Encoder> static void encode(Encoder&, const WebCore::PixelBuffer&);
     static std::optional<Ref<WebCore::PixelBuffer>> decode(Decoder&);
 };
+
+#if PLATFORM(COCOA) && ENABLE(GPU_PROCESS) && ENABLE(WEBGL)
+
+template<> struct ArgumentCoder<WebCore::GraphicsContextGL::ExternalImageSourceIOSurfaceHandle> {
+    static void encode(Encoder&, const WebCore::GraphicsContextGL::ExternalImageSourceIOSurfaceHandle&);
+    static std::optional<WebCore::GraphicsContextGL::ExternalImageSourceIOSurfaceHandle> decode(Decoder&);
+};
+
+template<> struct ArgumentCoder<WebCore::GraphicsContextGL::ExternalImageSourceMTLSharedTextureHandle> {
+    static void encode(Encoder&, const WebCore::GraphicsContextGL::ExternalImageSourceMTLSharedTextureHandle&);
+    static std::optional<WebCore::GraphicsContextGL::ExternalImageSourceMTLSharedTextureHandle> decode(Decoder&);
+};
+
+#endif
 
 } // namespace IPC
 

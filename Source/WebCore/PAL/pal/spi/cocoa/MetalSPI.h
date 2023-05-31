@@ -52,6 +52,7 @@ typedef struct __IOSurface *IOSurfaceRef;
 #if !PLATFORM(IOS_FAMILY_SIMULATOR)
 @interface MTLSharedTextureHandle(Private)
 - (instancetype)initWithIOSurface:(IOSurfaceRef)ioSurface label:(NSString*)label;
+- (instancetype)initWithMachPort:(mach_port_t)machPort;
 @end
 #endif
 

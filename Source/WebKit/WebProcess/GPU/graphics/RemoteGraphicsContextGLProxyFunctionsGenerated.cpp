@@ -451,6 +451,17 @@ void RemoteGraphicsContextGLProxy::depthRange(GCGLclampf zNear, GCGLclampf zFar)
     }
 }
 
+void RemoteGraphicsContextGLProxy::destroyEGLImage(GCEGLImage handle)
+{
+    if (isContextLost())
+        return;
+    auto sendResult = send(Messages::RemoteGraphicsContextGL::DestroyEGLImage(static_cast<uint64_t>(reinterpret_cast<intptr_t>(handle))));
+    if (!sendResult) {
+        markContextLost();
+        return;
+    }
+}
+
 void RemoteGraphicsContextGLProxy::detachShader(PlatformGLObject arg0, PlatformGLObject arg1)
 {
     if (isContextLost())

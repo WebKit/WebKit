@@ -95,9 +95,7 @@ void WebXROpaqueFramebuffer::startFrame(const PlatformXR::Device::FrameData::Lay
 
 #if USE(IOSURFACE_FOR_XR_LAYER_DATA)
     ASSERT(data.surface);
-    auto size = data.surface->size();
-    auto bufferWidth = static_cast<uint32_t>(size.width());
-    auto bufferHeight = static_cast<uint32_t>(size.height());
+    auto bufferSize = data.surface->size();
 
     auto gCGL = static_cast<GraphicsContextGLCocoa*>(m_context.graphicsContextGL());
     auto [textureTarget, textureTargetBinding] = gl.externalImageTextureBindingPoint();
@@ -126,50 +124,49 @@ void WebXROpaqueFramebuffer::startFrame(const PlatformXR::Device::FrameData::Lay
     // the textures/renderbuffers.
 
 #if USE(IOSURFACE_FOR_XR_LAYER_DATA)
-    m_opaqueTexture.ensure(*gCGL);
-    gCGL->bindTexture(textureTarget, m_opaqueTexture);
-    gCGL->texParameteri(textureTarget, GL::TEXTURE_MAG_FILTER, GL::LINEAR);
-    gCGL->texParameteri(textureTarget, GL::TEXTURE_MIN_FILTER, GL::LINEAR);
-    gCGL->texParameteri(textureTarget, GL::TEXTURE_WRAP_S, GL::CLAMP_TO_EDGE);
-    gCGL->texParameteri(textureTarget, GL::TEXTURE_WRAP_T, GL::CLAMP_TO_EDGE);
+    m_opaqueTexture.ensure(gl);
+    gl.bindTexture(textureTarget, m_opaqueTexture);
+    gl.texParameteri(textureTarget, GL::TEXTURE_MAG_FILTER, GL::LINEAR);
+    gl.texParameteri(textureTarget, GL::TEXTURE_MIN_FILTER, GL::LINEAR);
+    gl.texParameteri(textureTarget, GL::TEXTURE_WRAP_S, GL::CLAMP_TO_EDGE);
+    gl.texParameteri(textureTarget, GL::TEXTURE_WRAP_T, GL::CLAMP_TO_EDGE);
 
     // Tell the GraphicsContextGL to use the IOSurface as the backing store for m_opaqueTexture.
     if (data.isShared) {
 #if !PLATFORM(IOS_FAMILY_SIMULATOR)
-        auto surfaceTextureAttachment = gCGL->attachIOSurfaceToSharedTexture(textureTarget, data.surface.get());
+        auto surfaceTextureAttachment = gCGL->createAndBindExternalImage(textureTarget, data.surface.get());
         if (!surfaceTextureAttachment) {
-            m_opaqueTexture.release(*gCGL);
+            m_opaqueTexture.release(gl);
             return;
         }
 
-        auto [textureHandle, textureWidth, textureHeight] = surfaceTextureAttachment.value();
+        auto [textureHandle, textureSize] = surfaceTextureAttachment.value();
         m_ioSurfaceTextureHandle = textureHandle;
-        bufferWidth = textureWidth;
-        bufferHeight = textureHeight;
+        bufferSize = textureSize;
 
         m_ioSurfaceTextureHandleIsShared = true;
 #else
         ASSERT_NOT_REACHED();
 #endif
     } else {
-        m_ioSurfaceTextureHandle = gCGL->createPbufferAndAttachIOSurface(textureTarget, GraphicsContextGLCocoa::PbufferAttachmentUsage::Write, GL::BGRA, bufferWidth, bufferHeight, GL::UNSIGNED_BYTE, data.surface->surface(), 0);
+        m_ioSurfaceTextureHandle = gCGL->createPbufferAndAttachIOSurface(textureTarget, GraphicsContextGLCocoa::PbufferAttachmentUsage::Write, GL::BGRA, bufferSize.width(), bufferSize.height(), GL::UNSIGNED_BYTE, data.surface->surface(), 0);
         m_ioSurfaceTextureHandleIsShared = false;
     }
 
-    if (!bufferWidth || !bufferHeight)
+    if (bufferSize.isEmpty())
         return;
 
     // The drawing target can change size at any point during the session. If this happens, we need
     // to recreate the framebuffer.
-    if (bufferWidth != m_width || bufferHeight != m_height) {
-        m_width = bufferWidth;
-        m_height = bufferHeight;
+    if (static_cast<uint32_t>(bufferSize.width()) != m_width || static_cast<uint32_t>(bufferSize.height()) != m_height) {
+        m_width = bufferSize.width();
+        m_height = bufferSize.height();
         if (!setupFramebuffer())
             return;
     }
 
     if (!m_ioSurfaceTextureHandle) {
-        m_opaqueTexture.release(*gCGL);
+        m_opaqueTexture.release(gl);
         return;
     }
 
@@ -250,15 +247,16 @@ void WebXROpaqueFramebuffer::endFrame()
 
 #if USE(IOSURFACE_FOR_XR_LAYER_DATA)
     if (m_ioSurfaceTextureHandle) {
-        auto gCGL = static_cast<GraphicsContextGLCocoa*>(&gl);
         if (m_ioSurfaceTextureHandleIsShared) {
 #if !PLATFORM(IOS_FAMILY_SIMULATOR)
-            gCGL->detachIOSurfaceFromSharedTexture(m_ioSurfaceTextureHandle);
+            gl.destroyExternalImage(m_ioSurfaceTextureHandle);
 #else
             ASSERT_NOT_REACHED();
 #endif
-        } else
+        } else {
+            auto gCGL = static_cast<GraphicsContextGLCocoa*>(&gl);
             gCGL->destroyPbufferAndDetachIOSurface(m_ioSurfaceTextureHandle);
+        }
         m_ioSurfaceTextureHandle = nullptr;
         m_ioSurfaceTextureHandleIsShared = false;
     }
