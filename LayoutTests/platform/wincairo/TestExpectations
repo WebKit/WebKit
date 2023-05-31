@@ -2813,5 +2813,5 @@ fast/images/image-alt-text-vertical.html [ ImageOnlyFailure ]
 
 webkit.org/b/177687 http/tests/inspector/network/resource-sizes-memory-cache.html [ Pass Failure ]
 
-webkit.org/b/257279 [ Debug ] fast/body-propagation/background-image/007-xhtml.xhtml [ Crash Pass ]
-webkit.org/b/257279 [ Debug ] fast/body-propagation/background-image/008-xhtml.xhtml [ Crash Pass ]
+webkit.org/b/157592 fast/images/composited-animated-gif-outside-viewport.html [ Pass Timeout ]
+webkit.org/b/230504 css3/masking/reference-clip-path-animate-transform-repaint.html [ Pass Failure ]
