@@ -1,8 +1,8 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../resources/accessibility-helper.js"></script>
-<script src="../resources/js-test.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
 </head>
 <body>
 
@@ -46,36 +46,36 @@
 </div>
 
 <script>
-    var testOutput = "This test ensures that display:contents elements are inserted in the correct place in the AX tree.\n\n";
+var testOutput = "This test ensures that display:contents elements are inserted in the correct place in the AX tree.\n\n";
 
-    function traverse(containerId) {
-        testOutput += `\nPerforming search traversal of #${containerId}.\n`;
-        const container = accessibilityController.accessibleElementById(containerId);
-        let searchResult = null;
-        while (true) {
-            searchResult = container.uiElementForSearchPredicate(searchResult, true, "AXAnyTypeSearchKey", "", false);
-            if (!searchResult)
-                break;
-            const role = searchResult.role;
-            const id = searchResult.domIdentifier;
-            testOutput += `\n${id ? `#${id} ` : ""}${role}`;
-            if (role.includes("StaticText")) {
-                let textContent = accessibilityController.platformName === "ios" ? searchResult.description : searchResult.stringValue;
-                testOutput += `\n${textContent}`;
-            }
-            testOutput += "\n";
+function traverse(containerId) {
+    testOutput += `\nPerforming search traversal of #${containerId}.\n`;
+    const container = accessibilityController.accessibleElementById(containerId);
+    let searchResult = null;
+    while (true) {
+        searchResult = container.uiElementForSearchPredicate(searchResult, true, "AXAnyTypeSearchKey", "", false);
+        if (!searchResult)
+            break;
+        const role = searchResult.role;
+        const id = searchResult.domIdentifier;
+        testOutput += `\n${id ? `#${id} ` : ""}${role}`;
+        if (role.includes("StaticText")) {
+            let textContent = accessibilityController.platformName === "ios" ? searchResult.description : searchResult.stringValue;
+            testOutput += `\n${textContent}`;
         }
+        testOutput += "\n";
     }
+}
 
-    if (window.accessibilityController) {
-        traverse("button-container");
-        traverse("heading-container");
-        traverse("mixed-element-container");
+if (window.accessibilityController) {
+    traverse("button-container");
+    traverse("heading-container");
+    traverse("mixed-element-container");
 
-        for (const containerId of ["button-container", "heading-container", "mixed-element-container"])
-            document.getElementById(containerId).style.visibility = "hidden";
-        debug(testOutput);
-    }
+    for (const containerId of ["button-container", "heading-container", "mixed-element-container"])
+        document.getElementById(containerId).style.visibility = "hidden";
+    debug(testOutput);
+}
 </script>
 </body>
 </html>

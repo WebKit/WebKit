@@ -605,6 +605,16 @@ static bool isAccessibilityList(Node* node)
         || (nodeHasRole(node, nullAtom()) && (node->hasTagName(ulTag) || node->hasTagName(olTag) || node->hasTagName(dlTag) || node->hasTagName(menuTag)))));
 }
 
+static bool isAccessibilityTree(Node* node)
+{
+    return nodeHasRole(node, "tree"_s);
+}
+
+static bool isAccessibilityTreeItem(Node* node)
+{
+    return nodeHasRole(node, "treeitem"_s);
+}
+
 Ref<AccessibilityObject> AXObjectCache::createObjectFromRenderer(RenderObject* renderer)
 {
     // FIXME: How could renderer->node() ever not be an Element?
@@ -622,9 +632,9 @@ Ref<AccessibilityObject> AXObjectCache::createObjectFromRenderer(RenderObject* r
         return AccessibilityARIAGridCell::create(renderer);
 
     // aria tree
-    if (nodeHasRole(node, "tree"_s))
+    if (isAccessibilityTree(node))
         return AccessibilityTree::create(renderer);
-    if (nodeHasRole(node, "treeitem"_s))
+    if (isAccessibilityTreeItem(node))
         return AccessibilityTreeItem::create(renderer);
 
     if (node && is<HTMLLabelElement>(node) && nodeHasRole(node, nullAtom()))
@@ -689,6 +699,10 @@ static Ref<AccessibilityObject> createFromNode(Node& node)
 {
     if (isAccessibilityList(&node))
         return AccessibilityList::create(node);
+    if (isAccessibilityTree(&node))
+        return AccessibilityTree::create(node);
+    if (isAccessibilityTreeItem(&node))
+        return AccessibilityTreeItem::create(node);
     return AccessibilityNodeObject::create(node);
 }
 

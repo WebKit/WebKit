@@ -497,9 +497,9 @@ accessibility/basic-focusability.html [ Skip ]
 # Missing AccessibilityUIElement::uiElementForSearchPredicate implementation.
 accessibility/aria-modal-with-text-crash.html [ Skip ]
 accessibility/button-inside-label-ax-text.html [ Skip ]
-accessibility/display-contents-dynamically-added-children.html [ Skip ]
-accessibility/display-contents-object-ordering.html [ Skip ]
-accessibility/display-contents-search-traversal.html [ Skip ]
+accessibility/display-contents/dynamically-added-children.html [ Skip ]
+accessibility/display-contents/object-ordering.html [ Skip ]
+accessibility/display-contents/search-traversal.html [ Skip ]
 accessibility/empty-text-under-element-cached.html [ Skip ]
 accessibility/search-traversal-after-role-change.html [ Skip ]
 accessibility/table-search-traversal.html [ Skip ]
@@ -511,6 +511,8 @@ accessibility/visible-character-range-basic.html [ Skip ]
 accessibility/visible-character-range-height-changes.html [ Skip ]
 accessibility/visible-character-range-scrolling.html [ Skip ]
 accessibility/visible-character-range-width-changes.html [ Skip ]
+
+accessibility/display-contents/tree-and-treeitems.html [ Skip ]
 
 # Started failing after it was rewritten in https://bugs.webkit.org/show_bug.cgi?id=251175.
 # Test may need to be altered to accommodate glib-specific behavior?

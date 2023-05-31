@@ -2181,7 +2181,7 @@ bool AccessibilityRenderObject::shouldIgnoreAttributeRole() const
 AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
 {
     if (!m_renderer)
-        return AccessibilityRole::Unknown;
+        return AccessibilityNodeObject::determineAccessibilityRole();
 
 #if ENABLE(APPLE_PAY)
     if (isApplePayButton())

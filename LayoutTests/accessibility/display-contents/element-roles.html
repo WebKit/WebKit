@@ -1,8 +1,8 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../resources/js-test.js"></script>
-<script src="../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
 <style>
 .testcase { display: contents };
 </style>
@@ -98,37 +98,37 @@
 </div>
 
 <script>
-    // Buffer test output and dump it at the end to make the test run faster vs. individual `debug` calls.
-    var testOutput = "This test ensures elements with CSS display: contents have the correct role.\n\n";
+// Buffer test output and dump it at the end to make the test run faster vs. individual `debug` calls.
+var testOutput = "This test ensures elements with CSS display: contents have the correct role.\n\n";
 
-    var axElement;
-    function verifyRoles() {
-        const testcases = document.getElementsByClassName("testcase");
-        for (const domElement of testcases) {
-            const outerHTML = escapeHTML(domElement.cloneNode().outerHTML);
-            axElement = accessibilityController.accessibleElementById(domElement.id);
-            if (!axElement) {
-                testOutput += `FAIL. Couldn't get AX element for #${domElement.id}: ${outerHTML}\n`;
-                return;
-            }
-            testOutput += `${outerHTML}\n`;
-            testOutput += `    ${axElement.role}`;
-
-            let computedRoleString = axElement.computedRoleString;
-            if (computedRoleString)
-                testOutput += `\n    computedRoleString: ${computedRoleString}`;
-
-            let subrole = axElement.subrole;
-            if (subrole.replace("AXSubrole: ", ""))
-                testOutput += `\n    ${subrole}`;
-            testOutput += `\n\n`;
+var axElement;
+function verifyRoles() {
+    const testcases = document.getElementsByClassName("testcase");
+    for (const domElement of testcases) {
+        const outerHTML = escapeHTML(domElement.cloneNode().outerHTML);
+        axElement = accessibilityController.accessibleElementById(domElement.id);
+        if (!axElement) {
+            testOutput += `FAIL. Couldn't get AX element for #${domElement.id}: ${outerHTML}\n`;
+            return;
         }
-    }
+        testOutput += `${outerHTML}\n`;
+        testOutput += `    ${axElement.role}`;
 
-    if (window.accessibilityController) {
-        verifyRoles();
-        document.getElementById("content").style.visibility = "hidden";
-        debug(testOutput);
+        let computedRoleString = axElement.computedRoleString;
+        if (computedRoleString)
+            testOutput += `\n    computedRoleString: ${computedRoleString}`;
+
+        let subrole = axElement.subrole;
+        if (subrole.replace("AXSubrole: ", ""))
+            testOutput += `\n    ${subrole}`;
+        testOutput += `\n\n`;
     }
+}
+
+if (window.accessibilityController) {
+    verifyRoles();
+    document.getElementById("content").style.visibility = "hidden";
+    debug(testOutput);
+}
 </script>
 </body>

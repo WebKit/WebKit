@@ -1,0 +1,119 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<ul id="tree" role="tree" style="display:contents" aria-labelledby="treelabel" aria-activedescendant="tree0_item0_2_0_1" tabindex="0">
+    <li id="treeitem1" style="display:contents" role="treeitem" aria-level="1" aria-expanded="true" aria-checked="true">
+        <span>
+            <span class="expander"></span>
+            Animals
+            </span>
+            <ul role="group">
+                <div id="treeitem2" style="display:contents" role="treeitem" aria-level="2"><span>Birds</span></div>
+                <li id="treeitem3" style="display:contents" role="treeitem" aria-level="2" aria-expanded="true">
+                    <span>
+                        <span class="expander"></span>
+                        Cats
+                    </span>
+                    <ul role="group">
+                        <li id="tree0_item0_1_0" role="treeitem" style="display:contents" aria-level="3"><span>Siamese</span></li>
+                        <li id="tree0_item0_1_1" role="treeitem" style="display:contents" aria-level="3"><span>Tabby</span></li>
+                    </ul>
+                </li>
+            </ul>
+        </span>
+    </li>
+
+    <li id="treeitem4" role="treeitem" style="display:contents" aria-expanded="true">
+        <span>
+            <span class="expander"></span>
+            Vegetables
+            </span>
+            <ul role="group">
+                <div id="treeitem5" style="display:contents" role="treeitem"><span>Carrots</span></div>
+                <div id="treeitem6" style="display:contents" role="treeitem"><span>Broccoli</span></div>
+            </ul>
+        </span>
+    </li>
+</ul>
+
+<script>
+var output = "This tests that aria trees and tree items are converted into AXOutlines and AXRows, with all the right attributes.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    // Test tree attributes.
+    var tree = accessibilityController.accessibleElementById("tree");
+    output += expect("tree.role", "'AXRole: AXOutline'");
+    var canSetRows = tree.isAttributeSettable('AXSelectedRows');
+    output += expect("canSetRows", "true");
+    output += expect("tree.childrenCount", "8");
+
+    // Test tree item attributes.
+    var treeitem1 = tree.childAtIndex(0);
+    output += expect("treeitem1.role", "'AXRole: AXRow'");
+    output += expect("treeitem1.subrole", "'AXSubrole: AXOutlineRow'");
+    output += expect("treeitem1.isExpanded", "true");
+    output += expect("treeitem1.hierarchicalLevel", "0");
+    output += expect("treeitem1.isAttributeSupported('AXValue')", "true");
+    var canSetDisclosing = treeitem1.isAttributeSettable('AXDisclosing');
+    output += expect("canSetDisclosing", "true");
+
+    var treeitem2 = treeitem1.disclosedRowAtIndex(0);
+    output += expect("treeitem2.role", "'AXRole: AXRow'");
+    output += expect("treeitem2.subrole", "'AXSubrole: AXOutlineRow'");
+    output += expect("treeitem2.isExpanded", "false");
+    output += expect("treeitem2.hierarchicalLevel", "1");
+    output += expect("treeitem2.disclosedByRow().isEqual(treeitem1)", "true");
+    canSetDisclosing = treeitem2.isAttributeSettable('AXDisclosing');
+    output += expect("canSetDisclosing", "false");
+
+    var treeitem3 = treeitem2.childAtIndex(0);
+    output += expect("treeitem3.stringValue", "'AXValue: Birds'");
+    canSetDisclosing = treeitem3.isAttributeSettable('AXDisclosing');
+    output += expect("canSetDisclosing", "false");
+
+    // Test more AXRow attributes and values as we dive further in.
+    treeitem3 = treeitem1.disclosedRowAtIndex(1);
+    output += expect("treeitem3.role", "'AXRole: AXRow'");
+    output += expect("treeitem3.subrole", "'AXSubrole: AXOutlineRow'");
+    output += expect("treeitem3.isExpanded", "true");
+
+    // Test that the row can be selected correctly.
+    output += expect("treeitem3.isSelected", "false");
+    document.getElementById("treeitem3").setAttribute("aria-selected", true);
+    output += expect("treeitem3.isSelected", "true");
+
+    // Test that the tree reports the right selected row (treeitem3)
+    var selectedRow = tree.selectedRowAtIndex(0);
+    output += expect("selectedRow.isEqual(treeitem3)", "true");
+
+    // Test that hierarchicalLevel can be computed automatically, and that it's consistent with the ARIA level.
+    var treeitem4 = accessibilityController.accessibleElementById("treeitem4");
+    output += expect("treeitem4.hierarchicalLevel", "0");
+
+    var treeitem5 = accessibilityController.accessibleElementById("treeitem5");
+    output += expect("treeitem5.hierarchicalLevel", "1");
+
+    var treeitem6 = accessibilityController.accessibleElementById("treeitem6");
+    output += expect("treeitem6.hierarchicalLevel", "1");
+
+    output += "\nUpdating aria-level of #treeitem2 to 3.\n";
+    document.getElementById("treeitem2").setAttribute("aria-level", "3");
+    setTimeout(async function() {
+        await waitFor(() => treeitem2.hierarchicalLevel === 2);
+        output += expect("treeitem2.hierarchicalLevel", "2");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
+

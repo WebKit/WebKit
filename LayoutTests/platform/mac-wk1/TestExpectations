@@ -812,8 +812,8 @@ accessibility/progress-indeterminate-value.html [ Skip ]
 # role="spinbutton" elements (month, day, year). WK1 renders date inputs using a contenteditable div.
 accessibility/mac/date-input-increment-decrement.html [ Skip ]
 
-accessibility/display-contents-dynamically-added-children.html [ Skip ]
-accessibility/display-contents-aria-owns.html [ Skip ]
+accessibility/display-contents/dynamically-added-children.html [ Skip ]
+accessibility/display-contents/aria-owns.html [ Skip ]
 
 accessibility/mac/lazy-spellchecking.html [ Skip ]
 
@@ -1945,7 +1945,7 @@ accessibility/element-reflection-ariaerrormessage.html [ Skip ]
 accessibility/mac/pseudo-element-text-markers.html [ Skip ]
 accessibility/nested-textareas-value-changed-notifications.html [ Skip ]
 accessibility/selected-state-changed-notifications.html [ Skip ]
-accessibility/display-contents-descendant-menu-item.html [ Skip ]
+accessibility/display-contents/descendant-menu-item.html [ Skip ]
 accessibility/element-line-rects-and-text.html [ Skip ]
 accessibility/mac/line-index-for-textmarker.html [ Skip ]
 accessibility/mac/mathml-elements.html [ Skip ]
