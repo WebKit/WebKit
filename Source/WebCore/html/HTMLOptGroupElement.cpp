@@ -63,11 +63,10 @@ bool HTMLOptGroupElement::isDisabledFormControl() const
 
 bool HTMLOptGroupElement::isFocusable() const
 {
-    if (!supportsFocus())
+    RefPtr select = ownerSelectElement();
+    if (select && select->usesMenuList())
         return false;
-    // Optgroup elements do not have a renderer.
-    auto* style = const_cast<HTMLOptGroupElement&>(*this).computedStyle();
-    return style && style->display() != DisplayType::None;
+    return HTMLElement::isFocusable();
 }
 
 const AtomString& HTMLOptGroupElement::formControlType() const

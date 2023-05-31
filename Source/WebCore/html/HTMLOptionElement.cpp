@@ -90,11 +90,10 @@ ExceptionOr<Ref<HTMLOptionElement>> HTMLOptionElement::createForLegacyFactoryFun
 
 bool HTMLOptionElement::isFocusable() const
 {
-    if (!supportsFocus())
+    RefPtr select = ownerSelectElement();
+    if (select && select->usesMenuList())
         return false;
-    // Option elements do not have a renderer.
-    auto* style = const_cast<HTMLOptionElement&>(*this).computedStyle();
-    return style && style->display() != DisplayType::None;
+    return HTMLElement::isFocusable();
 }
 
 bool HTMLOptionElement::matchesDefaultPseudoClass() const
