@@ -32,7 +32,6 @@
 
 #include <CoreText/CoreTextPriv.h>
 #include <OTSVG/OTSVG.h>
-#include <fparse/FPFontParser.h>
 
 #else
 
@@ -232,10 +231,5 @@ CTFontRef CTFontCreateForCharacters(CTFontRef currentFont, const UTF16Char *char
 CGFloat CTFontGetSbixImageSizeForGlyphAndContentsScale(CTFontRef, const CGGlyph, CGFloat contentsScale);
 
 CTFontDescriptorOptions CTFontDescriptorGetOptions(CTFontDescriptorRef);
-
-typedef const struct __FPFont* FPFontRef;
-CFArrayRef FPFontCreateFontsFromData(CFDataRef);
-CFStringRef FPFontCopyPostScriptName(FPFontRef);
-CFDataRef FPFontCopySFNTData(FPFontRef);
 
 WTF_EXTERN_C_END

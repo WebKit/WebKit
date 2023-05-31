@@ -64,8 +64,8 @@ RefPtr<FontCustomPlatformData> createFontCustomPlatformData(SharedBuffer& buffer
 {
     RetainPtr<CFDataRef> bufferData = buffer.createCFData();
 
-    FPFontRef font = nullptr;
-    auto array = adoptCF(FPFontCreateFontsFromData(bufferData.get()));
+    RetainPtr<CTFontDescriptorRef> fontDescriptor;
+    auto array = adoptCF(CTFontManagerCreateFontDescriptorsFromData(bufferData.get()));
     if (!array)
         return nullptr;
     auto length = CFArrayGetCount(array.get());
@@ -74,29 +74,19 @@ RefPtr<FontCustomPlatformData> createFontCustomPlatformData(SharedBuffer& buffer
     if (!itemInCollection.isNull()) {
         if (auto desiredName = itemInCollection.createCFString()) {
             for (CFIndex i = 0; i < length; ++i) {
-                auto candidate = static_cast<FPFontRef>(CFArrayGetValueAtIndex(array.get(), i));
-                auto postScriptName = adoptCF(FPFontCopyPostScriptName(candidate));
+                auto candidate = static_cast<CTFontDescriptorRef>(CFArrayGetValueAtIndex(array.get(), i));
+                auto postScriptName = adoptCF(static_cast<CFStringRef>(CTFontDescriptorCopyAttribute(candidate, kCTFontNameAttribute)));
                 if (CFStringCompare(postScriptName.get(), desiredName.get(), 0) == kCFCompareEqualTo) {
-                    font = candidate;
+                    fontDescriptor = candidate;
                     break;
                 }
             }
         }
     }
-    if (!font)
-        font = static_cast<FPFontRef>(CFArrayGetValueAtIndex(array.get(), 0));
+    if (!fontDescriptor)
+        fontDescriptor = static_cast<CTFontDescriptorRef>(CFArrayGetValueAtIndex(array.get(), 0));
 
-    // Retain the extracted font contents, so the GPU process doesn't have to extract it a second time later.
-    // This is a power optimization.
-    auto extractedData = adoptCF(FPFontCopySFNTData(font));
-    if (!extractedData) {
-        // Something is wrong with the font.
-        return nullptr;
-    }
-    auto fontDescriptor = adoptCF(CTFontManagerCreateFontDescriptorFromData(extractedData.get()));
-    auto protectedBuffer = SharedBuffer::create(extractedData.get());
-
-    FontPlatformData::CreationData creationData = { WTFMove(protectedBuffer), itemInCollection };
+    FontPlatformData::CreationData creationData = { buffer, itemInCollection };
     return adoptRef(new FontCustomPlatformData(fontDescriptor.get(), WTFMove(creationData)));
 }
 
