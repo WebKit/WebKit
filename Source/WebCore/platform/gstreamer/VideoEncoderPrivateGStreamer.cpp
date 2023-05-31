@@ -642,9 +642,11 @@ static void webkit_video_encoder_class_init(WebKitVideoEncoderClass* klass)
             };
         }, [](GstElement* encoder, LatencyMode mode) {
             switch (mode) {
-            case REALTIME_LATENCY_MODE:
-                g_object_set(encoder, "threads", NUMBER_OF_THREADS, "cpu-used", NUMBER_OF_THREADS, "deadline", 1, "lag-in-frames", 0, nullptr);
+            case REALTIME_LATENCY_MODE: {
+                int64_t deadline = 1000000;
+                g_object_set(encoder, "threads", NUMBER_OF_THREADS, "cpu-used", NUMBER_OF_THREADS, "deadline", deadline, "lag-in-frames", 0, nullptr);
                 break;
+            }
             case QUALITY_LATENCY_MODE:
                 g_object_set(encoder, "threads", NUMBER_OF_THREADS, "cpu-used", NUMBER_OF_THREADS, "deadline", 0, "lag-in-frames", 25, nullptr);
                 gst_util_set_object_arg(G_OBJECT(encoder), "end-usage", "cq");
