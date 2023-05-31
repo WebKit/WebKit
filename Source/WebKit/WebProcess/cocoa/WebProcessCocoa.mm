@@ -291,10 +291,9 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
         // Dispatch this work on a thread to avoid blocking the main thread. We will wait for this to complete at the end of this method.
         codeCheckSemaphore = adoptOSObject(dispatch_semaphore_create(0));
         dispatch_async(dispatch_get_global_queue(QOS_CLASS_USER_INTERACTIVE, 0), [codeCheckSemaphore = codeCheckSemaphore] {
-            auto bundleURL = adoptCF(CFBundleCopyBundleURL(CFBundleGetMainBundle()));
+            auto bundleURL = adoptCF(CFBundleCopyExecutableURL(CFBundleGetMainBundle()));
             SecStaticCodeRef code = nullptr;
-            if (bundleURL)
-                SecStaticCodeCreateWithPath(bundleURL.get(), kSecCSDefaultFlags, &code);
+            SecStaticCodeCreateWithPath(bundleURL.get(), kSecCSDefaultFlags, &code);
             if (code) {
                 SecStaticCodeCheckValidity(code, kSecCSDoNotValidateResources | kSecCSDoNotValidateExecutable, nullptr);
                 CFRelease(code);
