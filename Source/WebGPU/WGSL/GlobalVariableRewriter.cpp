@@ -233,13 +233,12 @@ auto RewriteGlobalVariables::determineUsedGlobals(PipelineLayout& pipelineLayout
             break;
         case AST::VariableFlavor::Var:
         case AST::VariableFlavor::Let:
+        case AST::VariableFlavor::Const:
             if (!global.resource.has_value()) {
                 usedGlobals.privateGlobals.append(&global);
                 continue;
             }
             break;
-        case AST::VariableFlavor::Const:
-            continue;
         }
 
         auto group = global.resource->group;
@@ -411,10 +410,10 @@ void RewriteGlobalVariables::insertMaterializations(AST::Function& function, con
 void RewriteGlobalVariables::insertLocalDefinitions(AST::Function& function, const UsedPrivateGlobals& usedPrivateGlobals)
 {
     for (auto* global : usedPrivateGlobals) {
-        auto& variableStatement = m_callGraph.ast().astBuilder().construct<AST::VariableStatement>(
-            SourceSpan::empty(),
-            *global->declaration
-        );
+        auto& variable = *global->declaration;
+        if (variable.flavor() == AST::VariableFlavor::Const)
+            m_callGraph.ast().replace(&variable.flavor(), AST::VariableFlavor::Let);
+        auto& variableStatement = m_callGraph.ast().astBuilder().construct<AST::VariableStatement>(SourceSpan::empty(), variable);
         m_callGraph.ast().insert(function.body().statements(), 0, std::reference_wrapper<AST::Statement>(variableStatement));
     }
 }
