@@ -54,8 +54,8 @@ AXTextMarker::AXTextMarker(PlatformTextMarkerData platformData)
     [platformData getBytes:&m_data length:sizeof(m_data)];
 #endif
 
-    if (isMainThread() && !m_data.node)
-        setNode();
+    if (isMainThread())
+        setNodeIfNeeded();
 }
 
 RetainPtr<PlatformTextMarkerData> AXTextMarker::platformData() const

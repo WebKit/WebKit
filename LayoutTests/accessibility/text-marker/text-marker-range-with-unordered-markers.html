@@ -1,0 +1,40 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/accessibility-helper.js"></script>
+</head>
+<body>
+
+<p id="text">This is a paragraph.</p>
+
+<script>
+if (accessibilityController) {
+    let output = "This test ensures that clietns can build an AXTextMarkerRange from unordered TextMarkers, i.e., start > end.\n\n";
+
+    var text = accessibilityController.accessibleElementById("text").childAtIndex(0);
+    var range = text.textMarkerRangeForElement(text);
+    output += expect("text.stringForTextMarkerRange(range)", "'This is a paragraph.'");
+    output += expect("text.textMarkerRangeLength(range)", "20");
+
+    let start = text.startTextMarkerForTextMarkerRange(range);
+    let end = text.endTextMarkerForTextMarkerRange(range);
+    var range1 = text.textMarkerRangeForMarkers(end, start);
+    output += expect("text.stringForTextMarkerRange(range1)", "'This is a paragraph.'");
+    output += expect("text.textMarkerRangeLength(range1)", "20");
+
+    // Get the range for the substring "para" and ensure that it works for unordered markers.
+    for (let i = 0; i < 10; ++i)
+        start = text.nextTextMarker(start);
+    for (let i = 0; i < 6; ++i)
+        end = text.previousTextMarker(end);
+    var range2 = text.textMarkerRangeForMarkers(end, start);
+    output += expect("text.stringForTextMarkerRange(range2)", "'para'");
+    output += expect("text.textMarkerRangeLength(range2)", "4");
+
+    document.getElementById("text").style.visibility = "hidden";
+    debug(output);
+}
+</script>
+</body>
+</html>
