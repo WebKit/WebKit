@@ -4227,7 +4227,7 @@ static inline bool isVisibleRenderText(const RenderObject& renderer)
         return false;
 
     auto& renderText = downcast<RenderText>(renderer);
-    return !renderText.linesBoundingBox().isEmpty() && !renderText.text().isAllSpecialCharacters<isASCIIWhitespace>();
+    return !renderText.linesBoundingBox().isEmpty() && !renderText.text().containsOnly<isASCIIWhitespace>();
 }
 
 static inline bool resizeTextPermitted(const RenderObject& renderer)

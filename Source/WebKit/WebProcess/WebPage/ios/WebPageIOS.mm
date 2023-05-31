@@ -363,7 +363,7 @@ void WebPage::getPlatformEditorState(LocalFrame& frame, EditorState& result) con
                 postLayoutData.selectedEditableImage = contextForElement(*imageElement);
         }
         // FIXME: We should disallow replace when the string contains only CJ characters.
-        postLayoutData.isReplaceAllowed = result.isContentEditable && !result.isInPasswordField && !selectedText.isAllSpecialCharacters<isASCIIWhitespace>();
+        postLayoutData.isReplaceAllowed = result.isContentEditable && !result.isInPasswordField && !selectedText.containsOnly<isASCIIWhitespace>();
     }
 
 #if USE(DICTATION_ALTERNATIVES)

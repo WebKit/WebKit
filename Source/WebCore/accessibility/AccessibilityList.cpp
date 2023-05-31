@@ -120,7 +120,7 @@ bool AccessibilityList::childHasPseudoVisibleListItemMarkers(Node* node)
     // those renderers as "ignored" objects.
 #if USE(ATSPI)
     String text = axBeforePseudo->textUnderElement();
-    return !text.isEmpty() && !text.isAllSpecialCharacters<isASCIIWhitespace>();
+    return !text.isEmpty() && !text.containsOnly<isASCIIWhitespace>();
 #else
     return false;
 #endif

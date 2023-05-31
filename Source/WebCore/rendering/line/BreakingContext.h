@@ -862,7 +862,7 @@ inline bool BreakingContext::handleText(WordMeasurements& wordMeasurements, bool
                     // Don't try to hyphenate at the final break of a block, since this means there is
                     // no more content, and a hyphenated single word would end up on a line by itself. This looks
                     // bad so just don't allow it.
-                    if (canHyphenate && !m_width.fitsOnLine() && (m_nextObject || !renderer.containsOnlyHTMLWhitespace(m_current.offset(), renderer.text().length() - m_current.offset()) || isLineEmpty)) {
+                    if (canHyphenate && !m_width.fitsOnLine() && (m_nextObject || !renderer.containsOnlyCSSWhitespace(m_current.offset(), renderer.text().length() - m_current.offset()) || isLineEmpty)) {
                         tryHyphenating(renderer, font, style.computedLocale(), consecutiveHyphenatedLines, m_blockStyle.hyphenationLimitLines(), style.hyphenationLimitBefore(), style.hyphenationLimitAfter(), lastSpace, m_current.offset(), m_width.currentWidth() - additionalTempWidth, m_width.availableWidth(), isFixedPitch, m_collapseWhiteSpace, lastSpaceWordSpacing, m_lineBreak, m_current.nextBreakablePosition(), m_lineBreaker.m_hyphenated);
                         if (m_lineBreaker.m_hyphenated) {
                             m_atEnd = true;

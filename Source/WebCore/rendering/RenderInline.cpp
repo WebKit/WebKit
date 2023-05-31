@@ -998,7 +998,7 @@ bool isEmptyInline(const RenderInline& renderer)
         if (current.isFloatingOrOutOfFlowPositioned())
             continue;
         if (is<RenderText>(current)) {
-            if (!downcast<RenderText>(current).isAllCollapsibleWhitespace())
+            if (!downcast<RenderText>(current).containsOnlyCollapsibleWhitespace())
                 return false;
             continue;
         }

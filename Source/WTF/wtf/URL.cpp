@@ -191,7 +191,7 @@ static std::optional<LChar> decodeEscapeSequence(StringView input, unsigned inde
 
 static String decodeEscapeSequencesFromParsedURL(StringView input)
 {
-    ASSERT(input.isAllASCII());
+    ASSERT(input.containsOnlyASCII());
 
     auto length = input.length();
     if (length < 3 || !input.contains('%'))
@@ -426,7 +426,7 @@ static bool appendEncodedHostname(Vector<UChar, 512>& buffer, StringView string)
 {
     // hostnameBuffer needs to be big enough to hold an IDN-encoded name.
     // For host names bigger than this, we won't do IDN encoding, which is almost certainly OK.
-    if (string.length() > URLParser::hostnameBufferLength || string.isAllASCII()) {
+    if (string.length() > URLParser::hostnameBufferLength || string.containsOnlyASCII()) {
         append(buffer, string);
         return true;
     }

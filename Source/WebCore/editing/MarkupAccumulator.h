@@ -71,7 +71,7 @@ public:
 
 protected:
     unsigned length() const { return m_markup.length(); }
-    bool isAllASCII() const { return m_markup.isAllASCII(); }
+    bool containsOnlyASCII() const { return m_markup.containsOnlyASCII(); }
 
     StringBuilder takeMarkup();
 

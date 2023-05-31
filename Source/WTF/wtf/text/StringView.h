@@ -104,7 +104,7 @@ public:
     // Return characters8() or characters16() depending on CharacterType.
     template<typename CharacterType> const CharacterType* characters() const;
 
-    bool isAllASCII() const;
+    bool containsOnlyASCII() const;
 
     String toString() const;
     String toStringWithoutCopying() const;
@@ -179,7 +179,7 @@ public:
     WTF_EXPORT_PRIVATE bool containsIgnoringASCIICase(StringView) const;
     WTF_EXPORT_PRIVATE bool containsIgnoringASCIICase(StringView, unsigned start) const;
 
-    template<bool isSpecialCharacter(UChar)> bool isAllSpecialCharacters() const;
+    template<bool isSpecialCharacter(UChar)> bool containsOnly() const;
 
     WTF_EXPORT_PRIVATE bool startsWith(UChar) const;
     WTF_EXPORT_PRIVATE bool startsWith(StringView) const;
@@ -481,7 +481,7 @@ template<> ALWAYS_INLINE const UChar* StringView::characters<UChar>() const
     return characters16();
 }
 
-inline bool StringView::isAllASCII() const
+inline bool StringView::containsOnlyASCII() const
 {
     if (is8Bit())
         return charactersAreAllASCII(characters8(), length());
@@ -575,11 +575,11 @@ inline bool StringView::contains(CodeUnitMatchFunction&& function) const
     return find(std::forward<CodeUnitMatchFunction>(function)) != notFound;
 }
 
-template<bool isSpecialCharacter(UChar)> inline bool StringView::isAllSpecialCharacters() const
+template<bool isSpecialCharacter(UChar)> inline bool StringView::containsOnly() const
 {
     if (is8Bit())
-        return WTF::isAllSpecialCharacters<isSpecialCharacter>(characters8(), length());
-    return WTF::isAllSpecialCharacters<isSpecialCharacter>(characters16(), length());
+        return WTF::containsOnly<isSpecialCharacter>(characters8(), length());
+    return WTF::containsOnly<isSpecialCharacter>(characters16(), length());
 }
 
 template<typename CharacterType> inline void StringView::getCharacters8(CharacterType* destination) const

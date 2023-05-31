@@ -1429,7 +1429,7 @@ JSC_DEFINE_HOST_FUNCTION(functionBtoa, (JSGlobalObject* globalObject, CallFrame*
     if (stringToEncode.isNull())
         return JSValue::encode(jsEmptyString(vm));
 
-    if (!stringToEncode.isAllLatin1())
+    if (!stringToEncode.containsOnlyLatin1())
         return JSValue::encode(throwException(globalObject, scope, createError(globalObject, "Invalid character in argument for btoa."_s)));
 
     String encodedString = base64EncodeToStringReturnNullIfOverflow(stringToEncode.latin1());

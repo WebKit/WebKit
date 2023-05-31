@@ -216,7 +216,7 @@ bool HTMLObjectElement::hasFallbackContent() const
     for (RefPtr<Node> child = firstChild(); child; child = child->nextSibling()) {
         // Ignore whitespace-only text, and <param> tags, any other content is fallback content.
         if (is<Text>(*child)) {
-            if (!downcast<Text>(*child).data().isAllSpecialCharacters<isASCIIWhitespace>())
+            if (!downcast<Text>(*child).data().containsOnly<isASCIIWhitespace>())
                 return true;
         } else if (!is<HTMLParamElement>(*child))
             return true;
@@ -376,7 +376,7 @@ static inline bool preventsParentObjectFromExposure(const Node& child)
     if (is<Element>(child))
         return preventsParentObjectFromExposure(downcast<Element>(child));
     if (is<Text>(child))
-        return !downcast<Text>(child).data().isAllSpecialCharacters<isASCIIWhitespace>();
+        return !downcast<Text>(child).data().containsOnly<isASCIIWhitespace>();
     return true;
 }
 

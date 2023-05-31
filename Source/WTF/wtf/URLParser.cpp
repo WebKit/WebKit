@@ -1099,7 +1099,7 @@ URLParser::URLParser(String&& input, const URL& base, const URLTextEncoding* non
 
     ASSERT(!m_url.m_isValid
         || m_didSeeSyntaxViolation == (m_url.string() != m_inputString)
-        || (m_inputString.isAllSpecialCharacters<isC0ControlOrSpace>() && m_url.m_string == base.m_string.left(base.m_queryEnd))
+        || (m_inputString.containsOnly<isC0ControlOrSpace>() && m_url.m_string == base.m_string.left(base.m_queryEnd))
         || (base.isValid() && base.protocolIsFile()));
     ASSERT(internalValuesConsistent(m_url));
 #if ASSERT_ENABLED
@@ -2536,7 +2536,7 @@ void URLParser::addNonSpecialDotSlash()
 template<typename CharacterType> std::optional<URLParser::LCharBuffer> URLParser::domainToASCII(StringImpl& domain, const CodePointIterator<CharacterType>& iteratorForSyntaxViolationPosition)
 {
     LCharBuffer ascii;
-    if (domain.isAllASCII() && !subdomainStartsWithXNDashDash(domain)) {
+    if (domain.containsOnlyASCII() && !subdomainStartsWithXNDashDash(domain)) {
         size_t length = domain.length();
         if (domain.is8Bit()) {
             const LChar* characters = domain.characters8();

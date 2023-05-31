@@ -976,13 +976,13 @@ TEST(WTF, StringViewTrim)
     EXPECT_TRUE(nullView.trim(isA) == nullView);
 }
 
-TEST(WTF, StringViewIsAllASCII)
+TEST(WTF, StringViewContainsOnlyASCII)
 {
-    EXPECT_TRUE(StringView(String("Hello"_s)).isAllASCII());
-    EXPECT_TRUE(StringView(String("Cocoa"_s)).isAllASCII());
-    EXPECT_FALSE(StringView(String::fromLatin1("📱")).isAllASCII());
-    EXPECT_FALSE(StringView(String::fromLatin1("\u0080")).isAllASCII());
-    EXPECT_TRUE(StringView(String(bitwise_cast<const UChar*>(u"Hello"), 0)).isAllASCII());
+    EXPECT_TRUE(StringView(String("Hello"_s)).containsOnlyASCII());
+    EXPECT_TRUE(StringView(String("Cocoa"_s)).containsOnlyASCII());
+    EXPECT_FALSE(StringView(String::fromLatin1("📱")).containsOnlyASCII());
+    EXPECT_FALSE(StringView(String::fromLatin1("\u0080")).containsOnlyASCII());
+    EXPECT_TRUE(StringView(String(bitwise_cast<const UChar*>(u"Hello"), 0)).containsOnlyASCII());
 }
 
 TEST(WTF, StringViewUpconvert)

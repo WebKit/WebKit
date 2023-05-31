@@ -110,7 +110,7 @@ void TextPainter::paintTextOrEmphasisMarks(const FontCascade& font, const TextRu
     ASSERT(startOffset < endOffset);
 
     if (m_context.detectingContentfulPaint()) {
-        if (!textRun.text().isAllSpecialCharacters<isASCIIWhitespace>())
+        if (!textRun.text().containsOnly<isASCIIWhitespace>())
             m_context.setContentfulPaintDetected();
         return;
     }

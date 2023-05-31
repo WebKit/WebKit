@@ -66,7 +66,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(PaymentRequest);
 static bool isWellFormedCurrencyCode(const String& currency)
 {
     if (currency.length() == 3)
-        return currency.isAllSpecialCharacters<isASCIIAlpha>();
+        return currency.containsOnly<isASCIIAlpha>();
     return false;
 }
 

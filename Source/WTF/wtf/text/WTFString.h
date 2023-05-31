@@ -46,7 +46,7 @@ WTF_EXPORT_PRIVATE float charactersToFloat(const UChar*, size_t, bool* ok = null
 WTF_EXPORT_PRIVATE float charactersToFloat(const LChar*, size_t, size_t& parsedLength);
 WTF_EXPORT_PRIVATE float charactersToFloat(const UChar*, size_t, size_t& parsedLength);
 
-template<bool isSpecialCharacter(UChar), typename CharacterType> bool isAllSpecialCharacters(const CharacterType*, size_t);
+template<bool isSpecialCharacter(UChar), typename CharacterType> bool containsOnly(const CharacterType*, size_t);
 
 enum TrailingZerosTruncatingPolicy { KeepTrailingZeros, TruncateTrailingZeros };
 
@@ -287,9 +287,9 @@ public:
     // Determines the writing direction using the Unicode Bidi Algorithm rules P2 and P3.
     std::optional<UCharDirection> defaultWritingDirection() const;
 
-    bool isAllASCII() const { return !m_impl || m_impl->isAllASCII(); }
-    bool isAllLatin1() const { return !m_impl || m_impl->isAllLatin1(); }
-    template<bool isSpecialCharacter(UChar)> bool isAllSpecialCharacters() const { return !m_impl || m_impl->isAllSpecialCharacters<isSpecialCharacter>(); }
+    bool containsOnlyASCII() const { return !m_impl || m_impl->containsOnlyASCII(); }
+    bool containsOnlyLatin1() const { return !m_impl || m_impl->containsOnlyLatin1(); }
+    template<bool isSpecialCharacter(UChar)> bool containsOnly() const { return !m_impl || m_impl->containsOnly<isSpecialCharacter>(); }
 
     // Hash table deleted values, which are only constructed and never copied or destroyed.
     String(WTF::HashTableDeletedValueType) : m_impl(WTF::HashTableDeletedValue) { }
@@ -588,7 +588,7 @@ using WTF::makeStringByReplacingAll;
 using WTF::nullString;
 using WTF::equal;
 using WTF::find;
-using WTF::isAllSpecialCharacters;
+using WTF::containsOnly;
 using WTF::reverseFind;
 
 #include <wtf/text/AtomString.h>

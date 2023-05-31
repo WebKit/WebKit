@@ -64,7 +64,7 @@ String topPrivatelyControlledDomain(const String& domain)
 {
     if (domain.isEmpty())
         return String();
-    if (!domain.isAllASCII())
+    if (!domain.containsOnlyASCII())
         return domain;
 
     String lowercaseDomain = domain.convertToASCIILowercase();

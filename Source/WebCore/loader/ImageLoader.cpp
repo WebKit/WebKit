@@ -183,7 +183,7 @@ void ImageLoader::updateFromElement(RelevantMutation relevantMutation)
     // Do not load any image if the 'src' attribute is missing or if it is
     // an empty string.
     CachedResourceHandle<CachedImage> newImage = nullptr;
-    if (!attr.isNull() && !StringView(attr).isAllSpecialCharacters<isASCIIWhitespace<UChar>>()) {
+    if (!attr.isNull() && !StringView(attr).containsOnly<isASCIIWhitespace<UChar>>()) {
         ResourceLoaderOptions options = CachedResourceLoader::defaultCachedResourceOptions();
         options.contentSecurityPolicyImposition = element().isInUserAgentShadowTree() ? ContentSecurityPolicyImposition::SkipPolicyCheck : ContentSecurityPolicyImposition::DoPolicyCheck;
         options.loadedFromPluginElement = is<HTMLPlugInElement>(element()) ? LoadedFromPluginElement::Yes : LoadedFromPluginElement::No;
@@ -488,7 +488,7 @@ void ImageLoader::decode(Ref<DeferredPromise>&& promise)
     }
 
     auto attr = element().imageSourceURL();
-    if (StringView(attr).isAllSpecialCharacters<isASCIIWhitespace<UChar>>()) {
+    if (StringView(attr).containsOnly<isASCIIWhitespace<UChar>>()) {
         rejectDecodePromises("Missing source URL."_s);
         return;
     }

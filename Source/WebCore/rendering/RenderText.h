@@ -151,7 +151,7 @@ public:
 
     void momentarilyRevealLastTypedCharacter(unsigned offsetAfterLastTypedCharacter);
 
-    bool isAllCollapsibleWhitespace() const;
+    bool containsOnlyCollapsibleWhitespace() const;
 
     bool canUseSimpleFontCodePath() const { return m_canUseSimpleFontCodePath; }
 
@@ -170,7 +170,7 @@ public:
 
     StringView stringView(unsigned start = 0, std::optional<unsigned> stop = std::nullopt) const;
     
-    bool containsOnlyHTMLWhitespace(unsigned from, unsigned length) const;
+    bool containsOnlyCSSWhitespace(unsigned from, unsigned length) const;
 
     Vector<std::pair<unsigned, unsigned>> draggedContentRangesBetweenOffsets(unsigned startOffset, unsigned endOffset) const;
 
@@ -239,7 +239,7 @@ private:
                            // just dirtying everything when character data is modified (e.g., appended/inserted
                            // or removed).
     unsigned m_needsVisualReordering : 1 { false };
-    unsigned m_isAllASCII : 1 { false };
+    unsigned m_containsOnlyASCII : 1 { false };
     unsigned m_canUseSimpleFontCodePath : 1 { false };
     mutable unsigned m_knownToHaveNoOverflowAndNoFallbackFonts : 1 { false };
     unsigned m_useBackslashAsYenSymbol : 1 { false };

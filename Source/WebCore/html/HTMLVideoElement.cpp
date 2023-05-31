@@ -241,7 +241,7 @@ bool HTMLVideoElement::isURLAttribute(const Attribute& attribute) const
 const AtomString& HTMLVideoElement::imageSourceURL() const
 {
     const auto& url = attributeWithoutSynchronization(posterAttr);
-    if (!StringView(url).isAllSpecialCharacters<isASCIIWhitespace<UChar>>())
+    if (!StringView(url).containsOnly<isASCIIWhitespace<UChar>>())
         return url;
     return m_defaultPosterURL;
 }

@@ -228,7 +228,7 @@ namespace CSSPropertyParserHelpersWorkerSafe {
 static RefPtr<CSSFontFaceSrcResourceValue> consumeFontFaceSrcURI(CSSParserTokenRange& range, const CSSParserContext& context)
 {
     StringView parsedURL = CSSPropertyParserHelpers::consumeURLRaw(range);
-    String urlString = !parsedURL.is8Bit() && parsedURL.isAllASCII() ? String::make8Bit(parsedURL.characters16(), parsedURL.length()) : parsedURL.toString();
+    String urlString = !parsedURL.is8Bit() && parsedURL.containsOnlyASCII() ? String::make8Bit(parsedURL.characters16(), parsedURL.length()) : parsedURL.toString();
     auto location = context.completeURL(urlString);
     if (location.resolvedURL.isNull())
         return nullptr;

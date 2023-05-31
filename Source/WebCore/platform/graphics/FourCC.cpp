@@ -30,7 +30,7 @@ namespace WebCore {
 
 std::optional<FourCC> FourCC::fromString(StringView string)
 {
-    if (string.length() != 4 || !string.isAllASCII())
+    if (string.length() != 4 || !string.containsOnlyASCII())
         return std::nullopt;
     return { { {
         static_cast<char>(string[0]),

@@ -2493,16 +2493,16 @@ Ref<Protocol::DOM::AccessibilityProperties> InspectorDOMAgent::buildObjectForAcc
     return value;
 }
 
-static bool containsOnlyHTMLWhitespace(Node* node)
+static bool containsOnlyASCIIWhitespace(Node* node)
 {
     // FIXME: Respect ignoreWhitespace setting from inspector front end?
-    return is<Text>(node) && downcast<Text>(*node).data().isAllSpecialCharacters<isASCIIWhitespace>();
+    return is<Text>(node) && downcast<Text>(*node).data().containsOnly<isASCIIWhitespace>();
 }
 
 Node* InspectorDOMAgent::innerFirstChild(Node* node)
 {
     node = node->firstChild();
-    while (containsOnlyHTMLWhitespace(node))
+    while (containsOnlyASCIIWhitespace(node))
         node = node->nextSibling();
     return node;
 }
@@ -2511,7 +2511,7 @@ Node* InspectorDOMAgent::innerNextSibling(Node* node)
 {
     do {
         node = node->nextSibling();
-    } while (containsOnlyHTMLWhitespace(node));
+    } while (containsOnlyASCIIWhitespace(node));
     return node;
 }
 
@@ -2519,7 +2519,7 @@ Node* InspectorDOMAgent::innerPreviousSibling(Node* node)
 {
     do {
         node = node->previousSibling();
-    } while (containsOnlyHTMLWhitespace(node));
+    } while (containsOnlyASCIIWhitespace(node));
     return node;
 }
 
@@ -2618,7 +2618,7 @@ void InspectorDOMAgent::addEventListenersToNode(Node& node)
 
 void InspectorDOMAgent::didInsertDOMNode(Node& node)
 {
-    if (containsOnlyHTMLWhitespace(&node))
+    if (containsOnlyASCIIWhitespace(&node))
         return;
 
     // We could be attaching existing subtree. Forget the bindings.
@@ -2645,7 +2645,7 @@ void InspectorDOMAgent::didInsertDOMNode(Node& node)
 
 void InspectorDOMAgent::didRemoveDOMNode(Node& node)
 {
-    if (containsOnlyHTMLWhitespace(&node))
+    if (containsOnlyASCIIWhitespace(&node))
         return;
 
     ContainerNode* parent = node.parentNode();
@@ -2667,7 +2667,7 @@ void InspectorDOMAgent::didRemoveDOMNode(Node& node)
 
 void InspectorDOMAgent::willDestroyDOMNode(Node& node)
 {
-    if (containsOnlyHTMLWhitespace(&node))
+    if (containsOnlyASCIIWhitespace(&node))
         return;
 
     auto nodeId = m_nodeToId.take(node);

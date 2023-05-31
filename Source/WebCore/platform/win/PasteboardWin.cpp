@@ -690,7 +690,7 @@ void Pasteboard::writeURLToDataObject(const URL& kurl, const String& titleStr)
     WebCore::writeURL(m_writableDataObject.get(), kurl, titleStr, true, true);
 
     String url = kurl.string();
-    ASSERT(url.isAllASCII()); // URL::string() is URL encoded.
+    ASSERT(url.containsOnlyASCII()); // URL::string() is URL encoded.
 
     String fsPath = fileSystemPathFromURLOrTitle(url, titleStr, ".URL"_s, true);
     String contentString("[InternetShortcut]\r\nURL=" + url + "\r\n");

@@ -86,7 +86,7 @@ template<typename> struct HashAndCharactersTranslator;
 // Define STRING_STATS to 1 turn on runtime statistics of string sizes and memory usage.
 #define STRING_STATS 0
 
-template<bool isSpecialCharacter(UChar), typename CharacterType> bool isAllSpecialCharacters(const CharacterType*, size_t length);
+template<bool isSpecialCharacter(UChar), typename CharacterType> bool containsOnly(const CharacterType*, size_t length);
 
 #if STRING_STATS
 
@@ -442,9 +442,9 @@ public:
     WTF_EXPORT_PRIVATE Ref<StringImpl> trim(CodeUnitMatchFunction);
     template<typename Predicate> Ref<StringImpl> removeCharacters(const Predicate&);
 
-    bool isAllASCII() const;
-    bool isAllLatin1() const;
-    template<bool isSpecialCharacter(UChar)> bool isAllSpecialCharacters() const;
+    bool containsOnlyASCII() const;
+    bool containsOnlyLatin1() const;
+    template<bool isSpecialCharacter(UChar)> bool containsOnly() const;
 
     size_t find(LChar character, unsigned start = 0);
     size_t find(char character, unsigned start = 0);
@@ -851,14 +851,14 @@ inline Ref<StringImpl> StringImpl::isolatedCopy() const
     return create(m_data16, m_length);
 }
 
-inline bool StringImpl::isAllASCII() const
+inline bool StringImpl::containsOnlyASCII() const
 {
     if (is8Bit())
         return charactersAreAllASCII(characters8(), length());
     return charactersAreAllASCII(characters16(), length());
 }
 
-inline bool StringImpl::isAllLatin1() const
+inline bool StringImpl::containsOnlyLatin1() const
 {
     if (is8Bit())
         return true;
@@ -869,7 +869,7 @@ inline bool StringImpl::isAllLatin1() const
     return isLatin1(mergedCharacterBits);
 }
 
-template<bool isSpecialCharacter(UChar), typename CharacterType> inline bool isAllSpecialCharacters(const CharacterType* characters, size_t length)
+template<bool isSpecialCharacter(UChar), typename CharacterType> inline bool containsOnly(const CharacterType* characters, size_t length)
 {
     for (size_t i = 0; i < length; ++i) {
         if (!isSpecialCharacter(characters[i]))
@@ -878,11 +878,11 @@ template<bool isSpecialCharacter(UChar), typename CharacterType> inline bool isA
     return true;
 }
 
-template<bool isSpecialCharacter(UChar)> inline bool StringImpl::isAllSpecialCharacters() const
+template<bool isSpecialCharacter(UChar)> inline bool StringImpl::containsOnly() const
 {
     if (is8Bit())
-        return WTF::isAllSpecialCharacters<isSpecialCharacter>(characters8(), length());
-    return WTF::isAllSpecialCharacters<isSpecialCharacter>(characters16(), length());
+        return WTF::containsOnly<isSpecialCharacter>(characters8(), length());
+    return WTF::containsOnly<isSpecialCharacter>(characters16(), length());
 }
 
 inline StringImpl::StringImpl(unsigned length, Force8Bit)

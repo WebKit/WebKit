@@ -102,7 +102,7 @@ public:
     {
         m_hasReceivedIPv4 |= address.isIPv4();
         m_hasReceivedIPv6 |= address.isIPv6();
-        if (!address.isAllZeros())
+        if (!address.containsOnlyZeros())
             m_addresses.append(WTFMove(address));
     }
 

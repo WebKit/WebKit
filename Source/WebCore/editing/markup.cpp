@@ -330,12 +330,12 @@ public:
 
     void prependMetaCharsetUTF8TagIfNonASCIICharactersArePresent()
     {
-        if (!isAllASCII())
+        if (!containsOnlyASCII())
             m_reversedPrecedingMarkup.append("<meta charset=\"UTF-8\">"_s);
     }
 
 private:
-    bool isAllASCII() const;
+    bool containsOnlyASCII() const;
     void appendStyleNodeOpenTag(StringBuilder&, StyleProperties*, Document&, bool isBlock = false);
     const String& styleNodeCloseTag(bool isBlock = false);
 
@@ -485,13 +485,13 @@ const String& StyledMarkupAccumulator::styleNodeCloseTag(bool isBlock)
     return isBlock ? divClose : styleSpanClose;
 }
 
-bool StyledMarkupAccumulator::isAllASCII() const
+bool StyledMarkupAccumulator::containsOnlyASCII() const
 {
     for (auto& preceding : m_reversedPrecedingMarkup) {
-        if (!preceding.isAllASCII())
+        if (!preceding.containsOnlyASCII())
             return false;
     }
-    return MarkupAccumulator::isAllASCII();
+    return MarkupAccumulator::containsOnlyASCII();
 }
 
 String StyledMarkupAccumulator::takeResults()

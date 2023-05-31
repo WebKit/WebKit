@@ -60,7 +60,7 @@ void stopResolveDNS(uint64_t identifier)
     WebCore::DNSResolveQueue::singleton().stopResolve(identifier);
 }
 
-bool IPAddress::isAllZeros() const
+bool IPAddress::containsOnlyZeros() const
 {
     return std::visit(WTF::makeVisitor([] (const WTF::HashTableEmptyValueType&) {
         ASSERT_NOT_REACHED();

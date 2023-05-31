@@ -100,7 +100,7 @@ static HashMap<String, String> parseParameters(StringView input, size_t position
 
         if (parameterName.length()
             && isValidHTTPToken(parameterName)
-            && parameterValue.isAllSpecialCharacters<isHTTPQuotedStringTokenCodePoint>()) {
+            && parameterValue.containsOnly<isHTTPQuotedStringTokenCodePoint>()) {
             parameters.ensure(parameterName.toString(), [&] { return parameterValue.toString(); });
         }
     }

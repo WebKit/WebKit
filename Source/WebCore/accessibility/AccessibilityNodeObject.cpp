@@ -605,7 +605,7 @@ bool AccessibilityNodeObject::computeAccessibilityIsIgnored() const
             return true;
 
         // Whitespace only text elements should be ignored when they have no renderer.
-        if (stringValue().isAllSpecialCharacters<deprecatedIsSpaceOrNewline>())
+        if (stringValue().containsOnly<deprecatedIsSpaceOrNewline>())
             return true;
     }
 

@@ -64,7 +64,7 @@ void HTMLTablePartElement::collectPresentationalHintsForAttribute(const Qualifie
         addHTMLColorToStyle(style, CSSPropertyBackgroundColor, value);
         break;
     case AttributeNames::backgroundAttr:
-        if (!StringView(value).isAllSpecialCharacters<isASCIIWhitespace<UChar>>())
+        if (!StringView(value).containsOnly<isASCIIWhitespace<UChar>>())
             style.setProperty(CSSProperty(CSSPropertyBackgroundImage, CSSImageValue::create(document().completeURL(value), LoadedFromOpaqueSource::No)));
         break;
     case AttributeNames::valignAttr:

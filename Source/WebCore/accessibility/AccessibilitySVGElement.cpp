@@ -229,7 +229,7 @@ bool AccessibilitySVGElement::computeAccessibilityIsIgnored() const
     // The SVG AAM states text elements should also be included, if they have content.
     if (m_renderer->isSVGText() || m_renderer->isSVGTextPath()) {
         for (auto& child : childrenOfType<RenderText>(downcast<RenderElement>(*m_renderer))) {
-            if (!child.isAllCollapsibleWhitespace())
+            if (!child.containsOnlyCollapsibleWhitespace())
                 return false;
         }
     }

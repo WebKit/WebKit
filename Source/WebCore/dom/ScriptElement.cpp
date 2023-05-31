@@ -314,7 +314,7 @@ bool ScriptElement::requestClassicScript(const String& sourceURL)
 {
     ASSERT(m_element.isConnected());
     ASSERT(!m_loadableScript);
-    if (!StringView(sourceURL).isAllSpecialCharacters<isASCIIWhitespace<UChar>>()) {
+    if (!StringView(sourceURL).containsOnly<isASCIIWhitespace<UChar>>()) {
         auto script = LoadableClassicScript::create(m_element.nonce(), m_element.attributeWithoutSynchronization(HTMLNames::integrityAttr), referrerPolicy(), fetchPriorityHint(),
             m_element.attributeWithoutSynchronization(HTMLNames::crossoriginAttr), scriptCharset(), m_element.localName(), m_element.isInUserAgentShadowTree(), hasAsyncAttribute());
 
@@ -353,7 +353,7 @@ bool ScriptElement::requestModuleScript(const TextPosition& scriptStartPosition)
         ASSERT(m_element.isConnected());
 
         String sourceURL = sourceAttributeValue();
-        if (StringView(sourceURL).isAllSpecialCharacters<isASCIIWhitespace<UChar>>()) {
+        if (StringView(sourceURL).containsOnly<isASCIIWhitespace<UChar>>()) {
             dispatchErrorEvent();
             return false;
         }
@@ -398,7 +398,7 @@ bool ScriptElement::requestImportMap(LocalFrame& frame, const String& sourceURL)
 {
     ASSERT(m_element.isConnected());
     ASSERT(!m_loadableScript);
-    if (!StringView(sourceURL).isAllSpecialCharacters<isASCIIWhitespace<UChar>>()) {
+    if (!StringView(sourceURL).containsOnly<isASCIIWhitespace<UChar>>()) {
         auto script = LoadableImportMap::create(m_element.nonce(), m_element.attributeWithoutSynchronization(HTMLNames::integrityAttr), referrerPolicy(),
             m_element.attributeWithoutSynchronization(HTMLNames::crossoriginAttr), m_element.localName(), m_element.isInUserAgentShadowTree(), hasAsyncAttribute());
 

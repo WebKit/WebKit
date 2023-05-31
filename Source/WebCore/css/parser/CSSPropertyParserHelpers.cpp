@@ -7586,7 +7586,7 @@ static Vector<String> parseGridTemplateAreasColumnNames(StringView gridRowNames)
 
 bool parseGridTemplateAreasRow(StringView gridRowNames, NamedGridAreaMap& gridAreaMap, const size_t rowCount, size_t& columnCount)
 {
-    if (gridRowNames.isAllSpecialCharacters<isCSSSpace>())
+    if (gridRowNames.containsOnly<isCSSSpace>())
         return false;
 
     auto columnNames = parseGridTemplateAreasColumnNames(gridRowNames);
