@@ -51,7 +51,7 @@ public:
         return false;
     }
 
-    void setText(StringView, StringView)
+    void setText(StringView, const UChar*, unsigned)
     {
         ASSERT_NOT_REACHED();
     }

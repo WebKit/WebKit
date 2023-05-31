@@ -23,6 +23,7 @@
 #include <unicode/ubrk.h>
 #include <wtf/text/StringView.h>
 #include <wtf/text/icu/UTextProviderLatin1.h>
+#include <wtf/text/icu/UTextProviderUTF16.h>
 #include <wtf/unicode/icu/ICUHelpers.h>
 
 namespace WTF {
@@ -43,36 +44,13 @@ public:
     };
     using Mode = std::variant<LineMode, CharacterMode>;
 
-    void set8BitText(const LChar* buffer, unsigned length)
-    {
-        UTextWithBuffer textLocal;
-        textLocal.text = UTEXT_INITIALIZER;
-        textLocal.text.extraSize = sizeof(textLocal.buffer);
-        textLocal.text.pExtra = textLocal.buffer;
-
-        UErrorCode status = U_ZERO_ERROR;
-        UText* text = openLatin1UTextProvider(&textLocal, buffer, length, &status);
-        ASSERT(U_SUCCESS(status));
-        ASSERT(text);
-
-        ubrk_setUText(m_iterator, text, &status);
-        ASSERT(U_SUCCESS(status));
-
-        utext_close(text);
-    }
-
-    TextBreakIteratorICU(StringView string, Mode mode, const AtomString& locale)
+    TextBreakIteratorICU(StringView string, const UChar* priorContext, unsigned priorContextLength, Mode mode, const AtomString& locale)
     {
         auto type = switchOn(mode, [](LineMode) {
             return UBRK_LINE;
         }, [](CharacterMode) {
             return UBRK_CHARACTER;
         });
-
-        bool requiresSet8BitText = string.is8Bit();
-
-        const UChar *text = requiresSet8BitText ? nullptr : string.characters16();
-        int32_t textLength = requiresSet8BitText ? 0 : string.length();
 
         auto localeWithOptionalBreakKeyword = switchOn(mode, [&locale](LineMode lineMode) {
             return makeLocaleWithBreakKeyword(locale, lineMode.behavior);
@@ -81,11 +59,10 @@ public:
         });
 
         UErrorCode status = U_ZERO_ERROR;
-        m_iterator = ubrk_open(type, localeWithOptionalBreakKeyword.string().utf8().data(), text, textLength, &status);
+        m_iterator = ubrk_open(type, localeWithOptionalBreakKeyword.string().utf8().data(), nullptr, 0, &status);
         ASSERT(U_SUCCESS(status));
 
-        if (requiresSet8BitText)
-            set8BitText(string.characters8(), string.length());
+        setText(string, priorContext, priorContextLength);
     }
 
     TextBreakIteratorICU() = delete;
@@ -111,49 +88,59 @@ public:
     ~TextBreakIteratorICU()
     {
         if (m_iterator)
-            ubrk_close(m_iterator);
+            ubrk_close(m_iterator); // FIXME: Use an RAII wrapper for this
     }
 
-    void setText(StringView string, StringView priorContext)
+    void setText(StringView string, const UChar* priorContext, unsigned priorContextLength)
     {
-        UNUSED_PARAM(priorContext); // FIXME: Implement prior context.
+        UTextWithBuffer textLocal;
+        textLocal.text = UTEXT_INITIALIZER;
+        textLocal.text.extraSize = sizeof(textLocal.buffer);
+        textLocal.text.pExtra = textLocal.buffer;
 
-        if (string.is8Bit()) {
-            set8BitText(string.characters8(), string.length());
-            return;
-        }
         UErrorCode status = U_ZERO_ERROR;
-        ubrk_setText(m_iterator, string.characters16(), string.length(), &status);
+        UText* text = nullptr;
+        if (string.is8Bit())
+            text = openLatin1ContextAwareUTextProvider(&textLocal, string.characters8(), string.length(), priorContext, priorContextLength, &status);
+        else
+            text = openUTF16ContextAwareUTextProvider(&textLocal.text, string.characters16(), string.length(), priorContext, priorContextLength, &status);
         ASSERT(U_SUCCESS(status));
+        ASSERT(text);
+
+        ubrk_setUText(m_iterator, text, &status);
+        ASSERT(U_SUCCESS(status));
+
+        utext_close(text);
+
+        m_priorContextLength = priorContextLength;
     }
 
     std::optional<unsigned> preceding(unsigned location) const
     {
-        auto result = ubrk_preceding(m_iterator, location);
+        if (!location)
+            return { };
+        auto result = ubrk_preceding(m_iterator, location + m_priorContextLength);
         if (result == UBRK_DONE)
             return { };
-        return result;
+        return std::max(static_cast<unsigned>(result), m_priorContextLength) - m_priorContextLength;
     }
 
     std::optional<unsigned> following(unsigned location) const
     {
-        auto result = ubrk_following(m_iterator, location);
+        auto result = ubrk_following(m_iterator, location + m_priorContextLength);
         if (result == UBRK_DONE)
             return { };
-        return result;
+        return result - m_priorContextLength;
     }
 
     bool isBoundary(unsigned location) const
     {
-        return ubrk_isBoundary(m_iterator, location);
+        return ubrk_isBoundary(m_iterator, location + m_priorContextLength);
     }
 
 private:
     friend class LineBreakIteratorPool;
 
-    // This is temporarily duplicated from LineBreakIteratorPool.
-    // Eventually, LineBreakIteratorPool will be replaced with TextBreakIteratorCache,
-    // and this won't be duplicated any more.
     static AtomString makeLocaleWithBreakKeyword(const AtomString& locale, LineMode::Behavior behavior)
     {
         if (behavior == LineMode::Behavior::Default)
@@ -200,6 +187,7 @@ private:
     }
 
     UBreakIterator* m_iterator;
+    unsigned m_priorContextLength { 0 };
 };
 
 }

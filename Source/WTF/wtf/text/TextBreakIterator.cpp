@@ -46,13 +46,13 @@ TextBreakIteratorCache& TextBreakIteratorCache::singleton()
 TextBreakIterator::Backing TextBreakIterator::mapModeToBackingIterator(StringView string, TextBreakIterator::Mode mode, const AtomString& locale)
 {
     return switchOn(mode, [string, &locale](TextBreakIterator::LineMode lineMode) -> TextBreakIterator::Backing {
-        return TextBreakIteratorICU(string, TextBreakIteratorICU::LineMode { lineMode.behavior }, locale);
+        return TextBreakIteratorICU(string, nullptr, 0, TextBreakIteratorICU::LineMode { lineMode.behavior }, locale);
     }, [string, &locale](TextBreakIterator::CaretMode) -> TextBreakIterator::Backing {
-        return TextBreakIteratorICU(string, TextBreakIteratorICU::CharacterMode { }, locale);
+        return TextBreakIteratorICU(string, nullptr, 0, TextBreakIteratorICU::CharacterMode { }, locale);
     }, [string, &locale](TextBreakIterator::DeleteMode) -> TextBreakIterator::Backing {
-        return TextBreakIteratorICU(string, TextBreakIteratorICU::CharacterMode { }, locale);
+        return TextBreakIteratorICU(string, nullptr, 0, TextBreakIteratorICU::CharacterMode { }, locale);
     }, [string, &locale](TextBreakIterator::CharacterMode) -> TextBreakIterator::Backing {
-        return TextBreakIteratorICU(string, TextBreakIteratorICU::CharacterMode { }, locale);
+        return TextBreakIteratorICU(string, nullptr, 0, TextBreakIteratorICU::CharacterMode { }, locale);
     });
 }
 
@@ -159,6 +159,7 @@ static UBreakIterator* setContextAwareTextForIterator(UBreakIterator& iterator, 
 
 // Static iterators
 
+// FIXME: Delete this in favor of CachedTextBreakIterator.
 UBreakIterator* wordBreakIterator(StringView string)
 {
     static UBreakIterator* staticWordBreakIterator = initializeIterator(UBRK_WORD);
@@ -168,6 +169,7 @@ UBreakIterator* wordBreakIterator(StringView string)
     return setTextForIterator(*staticWordBreakIterator, string);
 }
 
+// FIXME: Delete this in favor of CachedTextBreakIterator.
 UBreakIterator* sentenceBreakIterator(StringView string)
 {
     static UBreakIterator* staticSentenceBreakIterator = initializeIterator(UBRK_SENTENCE);

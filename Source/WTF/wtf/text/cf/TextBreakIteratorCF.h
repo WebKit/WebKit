@@ -49,10 +49,10 @@ public:
     TextBreakIteratorCF& operator=(const TextBreakIteratorCF&) = delete;
     TextBreakIteratorCF& operator=(TextBreakIteratorCF&&) = default;
 
-    void setText(StringView string, StringView priorContext)
+    void setText(StringView string, const UChar* priorContext, unsigned priorContextLength)
     {
         return switchOn(m_backing, [&](auto& iterator) {
-            return iterator.setText(string, priorContext);
+            return iterator.setText(string, { priorContext, priorContextLength });
         });
     }
 
