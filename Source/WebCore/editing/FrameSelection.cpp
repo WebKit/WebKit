@@ -1879,10 +1879,10 @@ void CaretBase::invalidateCaretRect(Node* node, bool caretRectChanged, CaretAnim
     }
 }
 
-void FrameSelection::paintCaret(GraphicsContext& context, const LayoutPoint& paintOffset, const LayoutRect& clipRect)
+void FrameSelection::paintCaret(GraphicsContext& context, const LayoutPoint& paintOffset)
 {
     if (m_selection.isCaret() && m_selection.start().deprecatedNode())
-        CaretBase::paintCaret(*m_selection.start().deprecatedNode(), context, paintOffset, clipRect, m_caretAnimator.ptr());
+        CaretBase::paintCaret(*m_selection.start().deprecatedNode(), context, paintOffset, m_caretAnimator.ptr());
 }
 
 Color CaretBase::computeCaretColor(const RenderStyle& elementStyle, const Node* node)
@@ -1908,18 +1908,17 @@ Color CaretBase::computeCaretColor(const RenderStyle& elementStyle, const Node* 
 #endif
 }
 
-void CaretBase::paintCaret(const Node& node, GraphicsContext& context, const LayoutPoint& paintOffset, const LayoutRect& clipRect, CaretAnimator* caretAnimator) const
+void CaretBase::paintCaret(const Node& node, GraphicsContext& context, const LayoutPoint& paintOffset, CaretAnimator* caretAnimator) const
 {
 #if ENABLE(TEXT_CARET)
     auto caretPresentationProperties = caretAnimator ? caretAnimator->presentationProperties() : CaretAnimator::PresentationProperties();
     if (m_caretVisibility == CaretVisibility::Hidden || caretPresentationProperties.blinkState == CaretAnimator::PresentationProperties::BlinkState::Off)
         return;
 
-    auto drawingRect = localCaretRectWithoutUpdate();
+    auto caret = localCaretRectWithoutUpdate();
     if (auto* renderer = rendererForCaretPainting(&node))
-        renderer->flipForWritingMode(drawingRect);
-    drawingRect.moveBy(paintOffset);
-    auto caret = intersection(drawingRect, clipRect);
+        renderer->flipForWritingMode(caret);
+    caret.moveBy(paintOffset);
     if (caret.isEmpty())
         return;
 
@@ -1937,7 +1936,6 @@ void CaretBase::paintCaret(const Node& node, GraphicsContext& context, const Lay
     UNUSED_PARAM(node);
     UNUSED_PARAM(context);
     UNUSED_PARAM(paintOffset);
-    UNUSED_PARAM(clipRect);
     UNUSED_PARAM(caretAnimator);
 #endif
 }
@@ -2366,16 +2364,15 @@ void FrameSelection::setFocusedElementIfNeeded()
         CheckedRef(m_document->page()->focusController())->setFocusedElement(nullptr, *m_document->frame());
 }
 
-void DragCaretController::paintDragCaret(LocalFrame* frame, GraphicsContext& p, const LayoutPoint& paintOffset, const LayoutRect& clipRect) const
+void DragCaretController::paintDragCaret(LocalFrame* frame, GraphicsContext& p, const LayoutPoint& paintOffset) const
 {
 #if ENABLE(TEXT_CARET)
     if (m_position.deepEquivalent().deprecatedNode() && m_position.deepEquivalent().deprecatedNode()->document().frame() == frame)
-        paintCaret(*m_position.deepEquivalent().deprecatedNode(), p, paintOffset, clipRect);
+        paintCaret(*m_position.deepEquivalent().deprecatedNode(), p, paintOffset);
 #else
     UNUSED_PARAM(frame);
     UNUSED_PARAM(p);
     UNUSED_PARAM(paintOffset);
-    UNUSED_PARAM(clipRect);
 #endif
 }
 
