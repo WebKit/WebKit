@@ -227,6 +227,7 @@ VM::VM(VMType vmType, HeapType heapType, WTF::RunLoop* runLoop, bool* success)
 
     updateSoftReservedZoneSize(Options::softReservedZoneSize());
     setLastStackTop(Thread::current());
+    stringSplitIndice.reserveInitialCapacity(256);
 
     JSRunLoopTimer::Manager::shared().registerVM(*this);
 

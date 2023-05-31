@@ -39,6 +39,7 @@
 #include "RegExpConstructor.h"
 #include "RegExpGlobalDataInlines.h"
 #include "StringPrototypeInlines.h"
+#include "StringSplitCacheInlines.h"
 #include "SuperSampler.h"
 #include "VMEntryScopeInlines.h"
 #include <algorithm>
@@ -1053,31 +1054,27 @@ JSC_DEFINE_HOST_FUNCTION(stringProtoFuncSlice, (JSGlobalObject* globalObject, Ca
 }
 
 // Return true in case of early return (resultLength got to limitLength).
-template<typename CharacterType>
-static ALWAYS_INLINE bool splitStringByOneCharacterImpl(JSGlobalObject* globalObject, JSArray* result, JSValue originalValue, const String& input, StringImpl* string, UChar separatorCharacter, size_t& position, unsigned& resultLength, unsigned limitLength)
+template<typename CharacterType, typename Indice>
+static ALWAYS_INLINE bool splitStringByOneCharacterImpl(Indice& result, StringImpl* string, UChar separatorCharacter, unsigned limitLength)
 {
-    VM& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
     // 12. Let q = p.
     size_t matchPosition;
+    size_t position = 0;
+    unsigned stringLength = string->length();
     const CharacterType* characters = string->characters<CharacterType>();
     // 13. Repeat, while q != s
     //   a. Call SplitMatch(S, q, R) and let z be its MatchResult result.
     //   b. If z is failure, then let q = q+1.
     //   c. Else, z is not failure
-    while ((matchPosition = WTF::find(characters, string->length(), separatorCharacter, position)) != notFound) {
+    while ((matchPosition = WTF::find(characters, stringLength, separatorCharacter, position)) != notFound) {
         // 1. Let T be a String value equal to the substring of S consisting of the characters at positions p (inclusive)
         //    through q (exclusive).
         // 2. Call the [[DefineOwnProperty]] internal method of A with arguments ToString(lengthA),
         //    Property Descriptor {[[Value]]: T, [[Writable]]: true, [[Enumerable]]: true, [[Configurable]]: true}, and false.
-        auto* substring = jsSubstring(globalObject, originalValue, input, position, matchPosition - position);
-        RETURN_IF_EXCEPTION(scope, false);
-        result->putDirectIndex(globalObject, resultLength, substring);
-        RETURN_IF_EXCEPTION(scope, false);
+        result.append(matchPosition);
         // 3. Increment lengthA by 1.
         // 4. If lengthA == lim, return A.
-        if (++resultLength == limitLength)
+        if (result.size() == limitLength)
             return true;
 
         // 5. Let p = e.
@@ -1097,44 +1094,83 @@ JSC_DEFINE_HOST_FUNCTION(stringProtoFuncSplitFast, (JSGlobalObject* globalObject
 
     // 3. Let S be the result of calling ToString, giving it the this value as its argument.
     // 7. Let s be the number of characters in S.
-    String input = thisValue.toWTFString(globalObject);
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    JSString* thisString = thisValue.toString(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
+    String input = thisString->value(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
     ASSERT(!input.isNull());
-
-    // 4. Let A be a new array created as if by the expression new Array()
-    //    where Array is the standard built-in constructor with that name.
-    JSArray* result = constructEmptyArray(globalObject, nullptr);
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
-
-    // 5. Let lengthA be 0.
-    unsigned resultLength = 0;
 
     // 6. If limit is undefined, let lim = 2^32-1; else let lim = ToUint32(limit).
     JSValue limitValue = callFrame->uncheckedArgument(1);
-    unsigned limit = limitValue.isUndefined() ? 0xFFFFFFFFu : limitValue.toUInt32(globalObject);
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
-
-    // 8. Let p = 0.
-    size_t position = 0;
+    unsigned limit = 0xFFFFFFFFu;
+    if (!limitValue.isUndefined()) {
+        limit = limitValue.toUInt32(globalObject);
+        RETURN_IF_EXCEPTION(scope, { });
+    }
 
     // 9. If separator is a RegExp object (its [[Class]] is "RegExp"), let R = separator;
     //    otherwise let R = ToString(separator).
     JSValue separatorValue = callFrame->uncheckedArgument(0);
     String separator = separatorValue.toWTFString(globalObject);
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    RETURN_IF_EXCEPTION(scope, { });
+    unsigned separatorLength = separator.length();
 
     // 10. If lim == 0, return A.
     if (!limit)
-        return JSValue::encode(result);
+        RELEASE_AND_RETURN(scope, JSValue::encode(constructEmptyArray(globalObject, nullptr)));
 
     // 11. If separator is undefined, then
     if (separatorValue.isUndefined()) {
         // a. Call the [[DefineOwnProperty]] internal method of A with arguments "0",
-        scope.release();
-        result->putDirectIndex(globalObject, 0, jsStringWithReuse(globalObject, thisValue, input));
+        MarkedArgumentBuffer result;
+        result.appendWithCrashOnOverflow(jsStringWithReuse(globalObject, thisString, input));
+        RETURN_IF_EXCEPTION(scope, { });
         // b. Return A.
-        return JSValue::encode(result);
+        RELEASE_AND_RETURN(scope, JSValue::encode(constructArray(globalObject, static_cast<ArrayAllocationProfile*>(nullptr), result)));
     }
+
+    if (LIKELY(limit == 0xFFFFFFFFu && !globalObject->isHavingABadTime())) {
+        if (auto* immutableButterfly = vm.stringSplitCache.get(input, separator)) {
+            Structure* arrayStructure = globalObject->originalArrayStructureForIndexingType(CopyOnWriteArrayWithContiguous);
+            return JSValue::encode(JSArray::createWithButterfly(vm, nullptr, arrayStructure, immutableButterfly->toButterfly()));
+        }
+    }
+
+    auto& result = vm.stringSplitIndice;
+    result.resize(0);
+
+    auto cacheAndCreateArray = [&]() -> JSArray* {
+        if (result.isEmpty())
+            return constructEmptyArray(globalObject, nullptr);
+
+        if (LIKELY(limit == 0xFFFFFFFFu && !globalObject->isHavingABadTime() && result.size() < MIN_SPARSE_ARRAY_INDEX)) {
+            auto* newButterfly = JSImmutableButterfly::create(vm, CopyOnWriteArrayWithContiguous, result.size());
+            unsigned start = 0;
+            for (unsigned i = 0, size = result.size(); i < size; ++i) {
+                unsigned end = result[i];
+                auto* string = jsSubstring(globalObject, thisString, start, end - start);
+                RETURN_IF_EXCEPTION(scope, { });
+                newButterfly->setIndex(vm, i, string);
+                start = end + separatorLength;
+            }
+            vm.stringSplitCache.set(input, separator, newButterfly);
+            Structure* arrayStructure = globalObject->originalArrayStructureForIndexingType(CopyOnWriteArrayWithContiguous);
+            return JSArray::createWithButterfly(vm, nullptr, arrayStructure, newButterfly->toButterfly());
+        }
+
+        auto* array = constructEmptyArray(globalObject, static_cast<ArrayAllocationProfile*>(nullptr), result.size());
+        RETURN_IF_EXCEPTION(scope, { });
+        unsigned start = 0;
+        for (unsigned i = 0, size = result.size(); i < size; ++i) {
+            unsigned end = result[i];
+            auto* string = jsSubstring(globalObject, thisString, start, end - start);
+            RETURN_IF_EXCEPTION(scope, { });
+            array->putDirectIndex(globalObject, i, string);
+            RETURN_IF_EXCEPTION(scope, { });
+            start = end + separatorLength;
+        }
+        return array;
+    };
 
     // 12. If s == 0, then
     if (input.isEmpty()) {
@@ -1142,25 +1178,34 @@ JSC_DEFINE_HOST_FUNCTION(stringProtoFuncSplitFast, (JSGlobalObject* globalObject
         // b. If z is not false, return A.
         // c. Call CreateDataProperty(A, "0", S).
         // d. Return A.
-        if (!separator.isEmpty()) {
-            scope.release();
-            result->putDirectIndex(globalObject, 0, jsStringWithReuse(globalObject, thisValue, input));
-        }
-        return JSValue::encode(result);
+        scope.release();
+        if (!separator.isEmpty())
+            result.append(input.length());
+        return JSValue::encode(cacheAndCreateArray());
     }
 
     // Optimized case for splitting on the empty string.
-    if (separator.isEmpty()) {
-        limit = std::min(limit, input.length());
+    if (!separatorLength) {
+        unsigned resultSize = std::min(limit, input.length());
         // Zero limt/input length handled in steps 9/11 respectively, above.
-        ASSERT(limit);
+        ASSERT(resultSize);
 
-        do {
-            result->putDirectIndex(globalObject, position, jsSingleCharacterString(vm, input[position]));
-            RETURN_IF_EXCEPTION(scope, encodedJSValue());
-        } while (++position < limit);
+        if (LIKELY(limit == 0xFFFFFFFFu && !globalObject->isHavingABadTime() && resultSize < MIN_SPARSE_ARRAY_INDEX)) {
+            auto* newButterfly = JSImmutableButterfly::create(vm, CopyOnWriteArrayWithContiguous, resultSize);
+            for (unsigned i = 0; i < resultSize; ++i)
+                newButterfly->setIndex(vm, i, jsSingleCharacterString(vm, input[i]));
+            vm.stringSplitCache.set(input, separator, newButterfly);
+            Structure* arrayStructure = globalObject->originalArrayStructureForIndexingType(CopyOnWriteArrayWithContiguous);
+            return JSValue::encode(JSArray::createWithButterfly(vm, nullptr, arrayStructure, newButterfly->toButterfly()));
+        }
 
-        return JSValue::encode(result);
+        auto* array = constructEmptyArray(globalObject, static_cast<ArrayAllocationProfile*>(nullptr), resultSize);
+        RETURN_IF_EXCEPTION(scope, { });
+        for (unsigned i = 0; i < resultSize; ++i) {
+            array->putDirectIndex(globalObject, i, jsSingleCharacterString(vm, input[i]));
+            RETURN_IF_EXCEPTION(scope, { });
+        }
+        return JSValue::encode(array);
     }
 
     // 3 cases:
@@ -1169,7 +1214,6 @@ JSC_DEFINE_HOST_FUNCTION(stringProtoFuncSplitFast, (JSGlobalObject* globalObject
     // -separator length > 1
     StringImpl* stringImpl = input.impl();
     StringImpl* separatorImpl = separator.impl();
-    size_t separatorLength = separatorImpl->length();
 
     if (separatorLength == 1) {
         UChar separatorCharacter;
@@ -1179,13 +1223,12 @@ JSC_DEFINE_HOST_FUNCTION(stringProtoFuncSplitFast, (JSGlobalObject* globalObject
             separatorCharacter = separatorImpl->characters16()[0];
 
         if (stringImpl->is8Bit()) {
-            if (splitStringByOneCharacterImpl<LChar>(globalObject, result, thisValue, input, stringImpl, separatorCharacter, position, resultLength, limit)) 
-                RELEASE_AND_RETURN(scope, JSValue::encode(result));
+            if (splitStringByOneCharacterImpl<LChar>(result, stringImpl, separatorCharacter, limit))
+                RELEASE_AND_RETURN(scope, JSValue::encode(cacheAndCreateArray()));
         } else {
-            if (splitStringByOneCharacterImpl<UChar>(globalObject, result, thisValue, input, stringImpl, separatorCharacter, position, resultLength, limit)) 
-                RELEASE_AND_RETURN(scope, JSValue::encode(result));
+            if (splitStringByOneCharacterImpl<UChar>(result, stringImpl, separatorCharacter, limit))
+                RELEASE_AND_RETURN(scope, JSValue::encode(cacheAndCreateArray()));
         }
-        RETURN_IF_EXCEPTION(scope, encodedJSValue());
     } else {
         // 13. Let q = p.
         size_t matchPosition;
@@ -1193,35 +1236,28 @@ JSC_DEFINE_HOST_FUNCTION(stringProtoFuncSplitFast, (JSGlobalObject* globalObject
         //   a. let e be SplitMatch(S, q, R).
         //   b. If e is failure, then let q = q+1.
         //   c. Else, e is an integer index <= s.
+        size_t position = 0;
         while ((matchPosition = stringImpl->find(separatorImpl, position)) != notFound) {
             // 1. Let T be a String value equal to the substring of S consisting of the characters at positions p (inclusive)
             //    through q (exclusive).
             // 2. Call CreateDataProperty(A, ToString(lengthA), T).
-            auto* substring = jsSubstring(globalObject, thisValue, input, position, matchPosition - position);
-            RETURN_IF_EXCEPTION(scope, { });
-            result->putDirectIndex(globalObject, resultLength, substring);
-            RETURN_IF_EXCEPTION(scope, { });
+            result.append(matchPosition);
             // 3. Increment lengthA by 1.
             // 4. If lengthA == lim, return A.
-            if (++resultLength == limit)
-                return JSValue::encode(result);
+            if (result.size() == limit)
+                RELEASE_AND_RETURN(scope, JSValue::encode(cacheAndCreateArray()));
 
             // 5. Let p = e.
             // 6. Let q = p.
-            position = matchPosition + separator.length();
+            position = matchPosition + separatorLength;
         }
     }
 
     // 15. Let T be a String value equal to the substring of S consisting of the characters at positions p (inclusive)
     //     through s (exclusive).
     // 16. Call CreateDataProperty(A, ToString(lengthA), T).
-    auto* substring = jsSubstring(globalObject, thisValue, input, position, input.length() - position);
-    RETURN_IF_EXCEPTION(scope, { });
-    scope.release();
-    result->putDirectIndex(globalObject, resultLength++, substring);
-
-    // 17. Return A.
-    return JSValue::encode(result);
+    result.append(input.length());
+    RELEASE_AND_RETURN(scope, JSValue::encode(cacheAndCreateArray()));
 }
 
 JSC_DEFINE_HOST_FUNCTION(stringProtoFuncSubstr, (JSGlobalObject* globalObject, CallFrame* callFrame))

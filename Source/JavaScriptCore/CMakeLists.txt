@@ -1209,6 +1209,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/StackFrame.h
     runtime/StringObject.h
     runtime/StringPrototype.h
+    runtime/StringSplitCache.h
     runtime/Structure.h
     runtime/StructureCache.h
     runtime/StructureChain.h

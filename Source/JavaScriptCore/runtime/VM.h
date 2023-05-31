@@ -51,6 +51,7 @@
 #include "NumericStrings.h"
 #include "SlotVisitorMacros.h"
 #include "SmallStrings.h"
+#include "StringSplitCache.h"
 #include "Strong.h"
 #include "SubspaceAccess.h"
 #include "ThunkGenerator.h"
@@ -568,6 +569,8 @@ public:
     Ref<AtomStringImpl> lastAtomizedIdentifierAtomStringImpl { *static_cast<AtomStringImpl*>(StringImpl::empty()) };
     JSONAtomStringCache jsonAtomStringCache;
     KeyAtomStringCache keyAtomStringCache;
+    StringSplitCache stringSplitCache;
+    Vector<unsigned> stringSplitIndice;
 
     AtomStringTable* atomStringTable() const { return m_atomStringTable; }
     WTF::SymbolRegistry& symbolRegistry() { return m_symbolRegistry; }

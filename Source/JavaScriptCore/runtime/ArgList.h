@@ -248,7 +248,8 @@ public:
         ASSERT(static_cast<int>(callFrame->argumentCount()) >= startingFrom);
     }
 
-    ArgList(const MarkedArgumentBuffer& args)
+    template<size_t inlineCapacity>
+    ArgList(const MarkedVector<JSValue, inlineCapacity, RecordOverflow>& args)
         : m_args(args.m_buffer)
         , m_argCount(args.size())
     {
