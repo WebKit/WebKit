@@ -5193,6 +5193,11 @@ static void logTextInteractionAssistantSelectionChange(const char* methodName, U
         return;
     }
 
+    if ([UIKeyboard usesInputSystemUI]) {
+        completionHandler(WKAutocorrectionContext.emptyAutocorrectionContext);
+        return;
+    }
+
     if ([self _disableAutomaticKeyboardUI]) {
         completionHandler(WKAutocorrectionContext.emptyAutocorrectionContext);
         return;

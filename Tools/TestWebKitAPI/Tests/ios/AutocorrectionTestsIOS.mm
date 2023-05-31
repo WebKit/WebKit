@@ -125,6 +125,8 @@ TEST(AutocorrectionTests, RequestAutocorrectionContextAfterClosingPage)
 
 TEST(AutocorrectionTests, AutocorrectionContextDoesNotIncludeNewlineInTextField)
 {
+    if ([UIKeyboard usesInputSystemUI])
+        return;
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 568)]);
     [webView synchronouslyLoadTestPageNamed:@"autofocused-text-input"];
 
@@ -144,6 +146,8 @@ TEST(AutocorrectionTests, AutocorrectionContextDoesNotIncludeNewlineInTextField)
 
 TEST(AutocorrectionTests, AutocorrectionContextBeforeAndAfterEditing)
 {
+    if ([UIKeyboard usesInputSystemUI])
+        return;
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 568)]);
     auto inputDelegate = adoptNS([[TestInputDelegate alloc] init]);
     [inputDelegate setFocusStartsInputSessionPolicyHandler:[] (WKWebView *, id <_WKFocusedElementInfo>) -> _WKFocusStartsInputSessionPolicy {

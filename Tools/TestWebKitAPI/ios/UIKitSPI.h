@@ -329,6 +329,7 @@ typedef NS_ENUM(NSInteger, _UITextSearchMatchMethod) {
 
 @interface UIKeyboard ()
 + (BOOL)isInHardwareKeyboardMode;
++ (BOOL)usesInputSystemUI;
 @end
 
 @interface UIKeyboardImpl (UIKitIPI)
