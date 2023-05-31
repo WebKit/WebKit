@@ -395,6 +395,19 @@ bool MediaConstraints::isConstraintSet(const Function<bool(const MediaTrackConst
     return false;
 }
 
+void MediaConstraints::setDefaultAudioConstraints()
+{
+    bool needsEchoCancellationConstraint = !isConstraintSet([](const MediaTrackConstraintSetMap& constraint) {
+        return !!constraint.echoCancellation();
+    });
+
+    if (needsEchoCancellationConstraint) {
+        BooleanConstraint echoCancellationConstraint({ }, MediaConstraintType::EchoCancellation);
+        echoCancellationConstraint.setIdeal(true);
+        mandatoryConstraints.set(MediaConstraintType::EchoCancellation, WTFMove(echoCancellationConstraint));
+    }
+}
+
 void MediaConstraints::setDefaultVideoConstraints()
 {
     // 640x480, 30fps camera

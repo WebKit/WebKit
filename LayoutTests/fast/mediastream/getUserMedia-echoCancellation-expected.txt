@@ -1,0 +1,3 @@
+
+PASS echoCancellation should be on by default if not explictly disabled
+
