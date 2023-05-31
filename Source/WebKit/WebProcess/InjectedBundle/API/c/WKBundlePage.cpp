@@ -272,6 +272,10 @@ void* WKAccessibilityRootObject(WKBundlePageRef pageRef)
 void* WKAccessibilityFocusedObject(WKBundlePageRef pageRef)
 {
 #if ENABLE(ACCESSIBILITY)
+#if PLATFORM(COCOA)
+    UNUSED_PARAM(pageRef);
+    return WebKit::WebProcess::accessibilityFocusedUIElement();
+#else
     if (!pageRef)
         return 0;
 
@@ -291,10 +295,11 @@ void* WKAccessibilityFocusedObject(WKBundlePageRef pageRef)
 
     auto* focus = axObjectCache->focusedObjectForPage(page);
     return focus ? focus->wrapper() : 0;
+#endif // PLATFORM(COCOA)
 #else
     UNUSED_PARAM(pageRef);
     return 0;
-#endif
+#endif // ENABLE(ACCESSIBILITY)
 }
 
 bool WKAccessibilityCanUseSecondaryAXThread(WKBundlePageRef pageRef)

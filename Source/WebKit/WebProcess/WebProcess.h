@@ -342,6 +342,7 @@ public:
     void enableRemoteWebInspector();
 #endif
     void unblockServicesRequiredByAccessibility(const Vector<SandboxExtension::Handle>&);
+    static id accessibilityFocusedUIElement();
 #if ENABLE(CFPREFS_DIRECT_MODE)
     void notifyPreferencesChanged(const String& domain, const String& key, const std::optional<String>& encodedValue);
 #endif
@@ -464,7 +465,7 @@ private:
 
     void setEnhancedAccessibility(bool);
     void remotePostMessage(WebCore::FrameIdentifier, std::optional<WebCore::SecurityOriginData>, const WebCore::MessageWithMessagePorts&);
-    
+
     void startMemorySampler(SandboxExtension::Handle&&, const String&, const double);
     void stopMemorySampler();
     

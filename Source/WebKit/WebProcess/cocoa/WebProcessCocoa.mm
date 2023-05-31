@@ -202,8 +202,7 @@ void WebProcess::platformSetCacheModel(CacheModel)
 {
 }
 
-#if USE(APPKIT)
-static id NSApplicationAccessibilityFocusedUIElement(NSApplication*, SEL)
+id WebProcess::accessibilityFocusedUIElement()
 {
     return Accessibility::retrieveAutoreleasedValueFromMainThread<id>([] () -> RetainPtr<id> {
         WebPage* page = WebProcess::singleton().focusedWebPage();
@@ -211,6 +210,12 @@ static id NSApplicationAccessibilityFocusedUIElement(NSApplication*, SEL)
             return nil;
         return [page->accessibilityRemoteObject() accessibilityFocusedUIElement];
     });
+}
+
+#if USE(APPKIT)
+static id NSApplicationAccessibilityFocusedUIElement(NSApplication*, SEL)
+{
+    return WebProcess::accessibilityFocusedUIElement();
 }
 
 #if ENABLE(SET_WEBCONTENT_PROCESS_INFORMATION_IN_NETWORK_PROCESS)
@@ -221,7 +226,6 @@ static void preventAppKitFromContactingLaunchServices(NSApplication*, SEL)
 }
 #endif
 #endif
-
 
 #if PLATFORM(MAC)
 static Boolean isAXAuthenticatedCallback(audit_token_t auditToken)
