@@ -1,6 +1,6 @@
 #!/bin/sh -e
 
-# Build setting vraiables are already shell-escaped, eval as an array to
+# Build setting variables are already shell-escaped, eval as an array to
 # differentiate whitespace in paths from list items.
 eval ARCHS=(${ARCHS})
 eval HEADER_SEARCH_PATHS=(${HEADER_SEARCH_PATHS} ${SYSTEM_HEADER_SEARCH_PATHS})
@@ -10,13 +10,13 @@ eval GCC_PREPROCESSOR_DEFINITIONS=(${GCC_PREPROCESSOR_DEFINITIONS})
 CFLAGS=(
     -isysroot "${SDKROOT}"
     -target ${ARCHS[0]}-${LLVM_TARGET_TRIPLE_VENDOR}-${LLVM_TARGET_TRIPLE_OS_VERSION}${LLVM_TARGET_TRIPLE_SUFFIX}
-    "-F${BUILT_PRODUCTS_DIR}" ${FRAMEWORK_SEARCH_PATHS[@]/#/-F}
-    "-I${BUILT_PRODUCTS_DIR}" ${HEADER_SEARCH_PATHS[@]/#/-I}
+    "-F${BUILT_PRODUCTS_DIR}" "${FRAMEWORK_SEARCH_PATHS[@]/#/-F}"
+    "-I${BUILT_PRODUCTS_DIR}" "${HEADER_SEARCH_PATHS[@]/#/-I}"
     ${GCC_PREPROCESSOR_DEFINITIONS[@]/#/-D}
 )
 if [ "${USE_SYSTEM_CONTENT_PATH}" = YES ]; then
     CFLAGS+=(-DUSE_SYSTEM_CONTENT_PATH=1 -DSYSTEM_CONTENT_PATH="${SYSTEM_CONTENT_PATH}")
 fi
 
-grep -o '^[^;]*' "${INPUT_FILE_PATH}" | clang -E -P -w -DRELEASE_WITHOUT_OPTIMIZATIONS -MD -MF "${DERIVED_FILES_DIR}/${INPUT_FILE_PATH}.d" ${CFLAGS[@]} -include "wtf/Platform.h" - > "${SCRIPT_OUTPUT_FILE_0}"
+grep -o '^[^;]*' "${INPUT_FILE_PATH}" | clang -E -P -w -DRELEASE_WITHOUT_OPTIMIZATIONS -MD -MF "${DERIVED_FILES_DIR}/${INPUT_FILE_PATH}.d" "${CFLAGS[@]}" -include "wtf/Platform.h" - > "${SCRIPT_OUTPUT_FILE_0}"
 
