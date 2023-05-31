@@ -4139,6 +4139,9 @@ void MediaPlayerPrivateGStreamer::setStreamVolumeElement(GstStreamVolume* volume
 
 bool MediaPlayerPrivateGStreamer::updateVideoSinkStatistics()
 {
+    if (!m_videoSink)
+        return false;
+
     uint64_t totalVideoFrames = 0;
     uint64_t droppedVideoFrames = 0;
     GUniqueOutPtr<GstStructure> stats;
