@@ -1028,6 +1028,7 @@
         SYS_csops_audittoken ;; used by WK to get entitlments
         SYS_dup
         SYS_exit
+        SYS_faccessat ;; <rdar://problem/56998930>
         SYS_fcntl
         SYS_fcntl_nocancel
         SYS_fstat64
@@ -1075,6 +1076,7 @@
         SYS_readlink
         SYS_shm_open
         SYS_stat64
+        SYS_statfs64
         SYS_sysctl
         SYS_thread_selfid
         SYS_ulock_wait
@@ -1085,7 +1087,6 @@
 (define (syscall-unix-in-use-after-launch-blocked-in-lockdown-mode) (syscall-number
     SYS_abort_with_payload ;; <rdar://problem/50967271>
     SYS_change_fdguard_np
-    SYS_faccessat ;; <rdar://problem/56998930>
     SYS_fgetattrlist ;; <rdar://problem/50266257>
     SYS_fileport_makefd
     SYS_flock
@@ -1108,15 +1109,17 @@
     SYS_sem_close
     SYS_sem_open
     SYS_shared_region_map_and_slide_2_np ;; <rdar://problem/60294880>
-    SYS_statfs64
     SYS_sysctlbyname
     SYS_ulock_wait2)) ;; <rdar://problem/58743778>
 
 (define (syscall-unix-rarely-in-use)
     (syscall-number
+        SYS_fgetxattr
         SYS_getxattr
+        SYS_iopolicysys
         SYS_openat_nocancel
         SYS_sigprocmask
+        SYS_umask
         SYS_unlink
         SYS_writev))
 
@@ -1124,11 +1127,9 @@
     (syscall-number
         SYS___pthread_sigmask
         SYS___semwait_signal
-        SYS_fgetxattr
         SYS_fsync
         SYS_getattrlistbulk ;; xpc_realpath and directory enumeration
         SYS_getgid
-        SYS_iopolicysys
         SYS_mkdirat
         SYS_open_dprotected_np
         SYS_pread_nocancel
@@ -1141,7 +1142,6 @@
         SYS_sigreturn
 #endif
         SYS_thread_selfusage
-        SYS_umask
         SYS_write))
 
 (define (syscall-unix-rarely-in-use-need-backtrace)
@@ -1339,6 +1339,7 @@
         MSC_mk_timer_destroy
         MSC_semaphore_signal_trap
         MSC_semaphore_timedwait_trap
+        MSC_semaphore_wait_trap
         MSC_swtch_pri
         MSC_syscall_thread_switch
         MSC_task_name_for_pid
@@ -1350,7 +1351,6 @@
         MSC_mach_msg_trap
         MSC_mach_voucher_extract_attr_recipe_trap
         MSC_pid_for_task
-        MSC_semaphore_wait_trap
         MSC_thread_self_trap))
 
 (deny syscall-mach
@@ -1433,7 +1433,8 @@
 
 (define (kernel-mig-routine-rarely-used-need-backtrace)
     (kernel-mig-routine
-        io_service_open_extended))
+        io_service_open_extended
+        mach_vm_region_recurse))
 
 (define (kernel-mig-routine-rarely-used-need-backtrace-blocked-in-lockdown-mode)
     (kernel-mig-routine
@@ -1446,7 +1447,6 @@
         io_service_close
         mach_exception_raise
         mach_vm_region
-        mach_vm_region_recurse
         task_threads_from_user))
 
 (define (kernel-mig-routine-rarely-used)
