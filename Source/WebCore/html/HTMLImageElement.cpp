@@ -40,7 +40,6 @@
 #include "HTMLFormElement.h"
 #include "HTMLImageLoader.h"
 #include "HTMLMapElement.h"
-#include "HTMLParserIdioms.h"
 #include "HTMLPictureElement.h"
 #include "HTMLSourceElement.h"
 #include "HTMLSrcsetParser.h"
@@ -240,7 +239,7 @@ static String extractMIMETypeFromTypeAttributeForLookup(const String& typeAttrib
 {
     auto semicolonIndex = typeAttribute.find(';');
     if (semicolonIndex == notFound)
-        return stripLeadingAndTrailingHTMLSpaces(typeAttribute);
+        return typeAttribute.trim(isASCIIWhitespace);
     return StringView(typeAttribute).left(semicolonIndex).trim(isASCIIWhitespace<UChar>).toStringWithoutCopying();
 }
 

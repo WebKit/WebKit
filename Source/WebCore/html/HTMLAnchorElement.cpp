@@ -245,7 +245,7 @@ void HTMLAnchorElement::attributeChanged(const QualifiedName& name, const AtomSt
         if (wasLink != isLink())
             invalidateStyleForSubtree();
         if (isLink()) {
-            String parsedURL = stripLeadingAndTrailingHTMLSpaces(newValue);
+            auto parsedURL = newValue.string().trim(isASCIIWhitespace);
             if (document().isDNSPrefetchEnabled() && document().frame()) {
                 if (protocolIsInHTTPFamily(parsedURL) || parsedURL.startsWith("//"_s))
                     document().frame()->loader().client().prefetchDNS(document().completeURL(parsedURL).host().toString());
@@ -577,7 +577,7 @@ void HTMLAnchorElement::handleClick(Event& event)
         return;
 
     StringBuilder url;
-    url.append(stripLeadingAndTrailingHTMLSpaces(attributeWithoutSynchronization(hrefAttr)));
+    url.append(attributeWithoutSynchronization(hrefAttr).string().trim(isASCIIWhitespace));
     appendServerMapMousePosition(url, event);
     URL completedURL = document().completeURL(url.toString());
 

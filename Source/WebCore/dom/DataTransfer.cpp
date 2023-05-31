@@ -39,7 +39,6 @@
 #include "FrameDestructionObserverInlines.h"
 #include "FrameLoader.h"
 #include "HTMLImageElement.h"
-#include "HTMLParserIdioms.h"
 #include "Image.h"
 #include "LocalFrame.h"
 #include "Page.h"
@@ -128,7 +127,7 @@ static String normalizeType(const String& type)
     if (type.isNull())
         return type;
 
-    String lowercaseType = stripLeadingAndTrailingHTMLSpaces(type).convertToASCIILowercase();
+    auto lowercaseType = type.trim(isASCIIWhitespace).convertToASCIILowercase();
     if (lowercaseType == "text"_s || lowercaseType.startsWith("text/plain;"_s))
         return textPlainContentTypeAtom();
     if (lowercaseType == "url"_s || lowercaseType.startsWith("text/uri-list;"_s))
@@ -175,7 +174,7 @@ String DataTransfer::getDataForItem(Document& document, const String& type) cons
     if (!canReadData())
         return { };
 
-    auto lowercaseType = stripLeadingAndTrailingHTMLSpaces(type).convertToASCIILowercase();
+    auto lowercaseType = type.trim(isASCIIWhitespace).convertToASCIILowercase();
     if (shouldSuppressGetAndSetDataToAvoidExposingFilePaths()) {
         if (lowercaseType == "text/uri-list"_s) {
             return readURLsFromPasteboardAsString(document.page(), *m_pasteboard, [] (auto& urlString) {

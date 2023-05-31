@@ -2466,7 +2466,7 @@ bool Element::isEventHandlerAttribute(const Attribute& attribute) const
 
 bool Element::attributeContainsJavaScriptURL(const Attribute& attribute) const
 {
-    return isURLAttribute(attribute) && WTF::protocolIsJavaScript(stripLeadingAndTrailingHTMLSpaces(attribute.value()));
+    return isURLAttribute(attribute) && WTF::protocolIsJavaScript(attribute.value());
 }
 
 void Element::stripScriptingAttributes(Vector<Attribute>& attributeVector) const
@@ -4322,7 +4322,7 @@ URL Element::getNonEmptyURLAttribute(const QualifiedName& name) const
             ASSERT(isURLAttribute(*attribute));
     }
 #endif
-    String value = stripLeadingAndTrailingHTMLSpaces(getAttribute(name));
+    auto value = getAttribute(name).string().trim(isASCIIWhitespace);
     if (value.isEmpty())
         return URL();
     return document().completeURL(value);

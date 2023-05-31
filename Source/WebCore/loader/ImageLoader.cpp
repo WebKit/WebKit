@@ -36,7 +36,6 @@
 #include "HTMLImageElement.h"
 #include "HTMLNames.h"
 #include "HTMLObjectElement.h"
-#include "HTMLParserIdioms.h"
 #include "HTMLPlugInElement.h"
 #include "InspectorInstrumentation.h"
 #include "JSDOMPromiseDeferred.h"
@@ -184,7 +183,7 @@ void ImageLoader::updateFromElement(RelevantMutation relevantMutation)
     // Do not load any image if the 'src' attribute is missing or if it is
     // an empty string.
     CachedResourceHandle<CachedImage> newImage = nullptr;
-    if (!attr.isNull() && !stripLeadingAndTrailingHTMLSpaces(attr).isEmpty()) {
+    if (!attr.isNull() && !StringView(attr).isAllSpecialCharacters<isASCIIWhitespace<UChar>>()) {
         ResourceLoaderOptions options = CachedResourceLoader::defaultCachedResourceOptions();
         options.contentSecurityPolicyImposition = element().isInUserAgentShadowTree() ? ContentSecurityPolicyImposition::SkipPolicyCheck : ContentSecurityPolicyImposition::DoPolicyCheck;
         options.loadedFromPluginElement = is<HTMLPlugInElement>(element()) ? LoadedFromPluginElement::Yes : LoadedFromPluginElement::No;
@@ -488,8 +487,8 @@ void ImageLoader::decode(Ref<DeferredPromise>&& promise)
         return;
     }
 
-    AtomString attr = element().imageSourceURL();
-    if (stripLeadingAndTrailingHTMLSpaces(attr).isEmpty()) {
+    auto attr = element().imageSourceURL();
+    if (StringView(attr).isAllSpecialCharacters<isASCIIWhitespace<UChar>>()) {
         rejectDecodePromises("Missing source URL."_s);
         return;
     }

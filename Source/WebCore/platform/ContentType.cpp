@@ -27,7 +27,6 @@
 
 #include "config.h"
 #include "ContentType.h"
-#include "HTMLParserIdioms.h"
 #include <wtf/JSONValues.h>
 #include <wtf/NeverDestroyed.h>
 
@@ -94,7 +93,7 @@ String ContentType::containerType() const
 {
     // Strip parameters that come after a semicolon.
     // FIXME: This will ignore a quotation mark if it comes before the semicolon. Is that the desired behavior?
-    return stripLeadingAndTrailingHTMLSpaces(m_type.left(m_type.find(';')));
+    return m_type.left(m_type.find(';')).trim(isASCIIWhitespace);
 }
 
 static inline Vector<String> splitParameters(StringView parametersView)

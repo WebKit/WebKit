@@ -31,7 +31,6 @@
 #include "Document.h"
 #include "ElementAncestorIteratorInlines.h"
 #include "HTMLNames.h"
-#include "HTMLParserIdioms.h"
 #include "HTMLTableElement.h"
 #include "MutableStyleProperties.h"
 #include "NodeName.h"
@@ -65,8 +64,8 @@ void HTMLTablePartElement::collectPresentationalHintsForAttribute(const Qualifie
         addHTMLColorToStyle(style, CSSPropertyBackgroundColor, value);
         break;
     case AttributeNames::backgroundAttr:
-        if (String url = stripLeadingAndTrailingHTMLSpaces(value); !url.isEmpty())
-            style.setProperty(CSSProperty(CSSPropertyBackgroundImage, CSSImageValue::create(document().completeURL(url), LoadedFromOpaqueSource::No)));
+        if (!StringView(value).isAllSpecialCharacters<isASCIIWhitespace<UChar>>())
+            style.setProperty(CSSProperty(CSSPropertyBackgroundImage, CSSImageValue::create(document().completeURL(value), LoadedFromOpaqueSource::No)));
         break;
     case AttributeNames::valignAttr:
         if (equalLettersIgnoringASCIICase(value, "top"_s))

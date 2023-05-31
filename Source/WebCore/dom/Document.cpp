@@ -119,7 +119,6 @@
 #include "HTMLMediaElement.h"
 #include "HTMLMetaElement.h"
 #include "HTMLNameCollection.h"
-#include "HTMLParserIdioms.h"
 #include "HTMLPictureElement.h"
 #include "HTMLPlugInElement.h"
 #include "HTMLScriptElement.h"
@@ -3696,9 +3695,9 @@ void Document::processBaseElement()
     // FIXME: Since this doesn't share code with completeURL it may not handle encodings correctly.
     URL baseElementURL;
     if (href) {
-        String strippedHref = stripLeadingAndTrailingHTMLSpaces(*href);
-        if (!strippedHref.isEmpty())
-            baseElementURL = URL(fallbackBaseURL(), strippedHref);
+        auto trimmedHref = href->string().trim(isASCIIWhitespace);
+        if (!trimmedHref.isEmpty())
+            baseElementURL = URL(fallbackBaseURL(), trimmedHref);
     }
     if (m_baseElementURL != baseElementURL && contentSecurityPolicy()->allowBaseURI(baseElementURL)) {
         if (settings().shouldRestrictBaseURLSchemes() && !SecurityPolicy::isBaseURLSchemeAllowed(baseElementURL))

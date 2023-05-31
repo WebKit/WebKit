@@ -33,7 +33,6 @@
 #include "HTMLFrameElement.h"
 #include "HTMLIFrameElement.h"
 #include "HTMLNames.h"
-#include "HTMLParserIdioms.h"
 #include "JSHTMLBodyElement.h"
 #include "LocalDOMWindow.h"
 #include "MutableStyleProperties.h"
@@ -87,7 +86,7 @@ void HTMLBodyElement::collectPresentationalHintsForAttribute(const QualifiedName
 {
     switch (name.nodeName()) {
     case AttributeNames::backgroundAttr: {
-        String url = stripLeadingAndTrailingHTMLSpaces(value);
+        auto url = value.string().trim(isASCIIWhitespace);
         if (!url.isEmpty()) {
             auto imageValue = CSSImageValue::create(document().completeURL(url), LoadedFromOpaqueSource::No, localName());
             style.setProperty(CSSProperty(CSSPropertyBackgroundImage, WTFMove(imageValue)));

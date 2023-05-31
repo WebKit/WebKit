@@ -30,7 +30,6 @@
 #include "HTMLImageLoader.h"
 #include "HTMLNames.h"
 #include "HTMLObjectElement.h"
-#include "HTMLParserIdioms.h"
 #include "LocalFrame.h"
 #include "LocalFrameView.h"
 #include "NodeName.h"
@@ -109,12 +108,14 @@ void HTMLEmbedElement::attributeChanged(const QualifiedName& name, const AtomStr
             invalidateStyle();
         break;
     case AttributeNames::codeAttr:
-        m_url = stripLeadingAndTrailingHTMLSpaces(newValue);
+        // FIXME: trimming whitespace is probably redundant with the URL parser
+        m_url = newValue.string().trim(isASCIIWhitespace);
         // FIXME: Why no call to updateImageLoaderWithNewURLSoon?
         // FIXME: If both code and src attributes are specified, last one parsed/changed wins. That can't be right!
         break;
     case AttributeNames::srcAttr:
-        m_url = stripLeadingAndTrailingHTMLSpaces(newValue);
+        // FIXME: trimming whitespace is probably redundant with the URL parser
+        m_url = newValue.string().trim(isASCIIWhitespace);
         updateImageLoaderWithNewURLSoon();
         if (renderer() && !hasTypeOrSrc(*this))
             invalidateStyle();

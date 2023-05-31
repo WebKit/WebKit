@@ -30,7 +30,6 @@
 #include "FrameLoader.h"
 #include "FrameLoaderTypes.h"
 #include "HTMLAnchorElement.h"
-#include "HTMLParserIdioms.h"
 #include "KeyboardEvent.h"
 #include "LegacyRenderSVGTransformableContainer.h"
 #include "LocalFrame.h"
@@ -129,7 +128,7 @@ void SVGAElement::defaultEventHandler(Event& event)
         }
 
         if (MouseEvent::canTriggerActivationBehavior(event)) {
-            String url = stripLeadingAndTrailingHTMLSpaces(href());
+            auto url = href().trim(isASCIIWhitespace);
 
             if (url[0] == '#') {
                 RefPtr targetElement = treeScope().getElementById(url.substringSharingImpl(1));

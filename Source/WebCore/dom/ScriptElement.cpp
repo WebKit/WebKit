@@ -37,7 +37,6 @@
 #include "EventNames.h"
 #include "FrameLoader.h"
 #include "HTMLNames.h"
-#include "HTMLParserIdioms.h"
 #include "HTMLScriptElement.h"
 #include "IgnoreDestructiveWriteCountIncrementer.h"
 #include "InlineClassicScript.h"
@@ -315,7 +314,7 @@ bool ScriptElement::requestClassicScript(const String& sourceURL)
 {
     ASSERT(m_element.isConnected());
     ASSERT(!m_loadableScript);
-    if (!stripLeadingAndTrailingHTMLSpaces(sourceURL).isEmpty()) {
+    if (!StringView(sourceURL).isAllSpecialCharacters<isASCIIWhitespace<UChar>>()) {
         auto script = LoadableClassicScript::create(m_element.nonce(), m_element.attributeWithoutSynchronization(HTMLNames::integrityAttr), referrerPolicy(), fetchPriorityHint(),
             m_element.attributeWithoutSynchronization(HTMLNames::crossoriginAttr), scriptCharset(), m_element.localName(), m_element.isInUserAgentShadowTree(), hasAsyncAttribute());
 
@@ -354,7 +353,7 @@ bool ScriptElement::requestModuleScript(const TextPosition& scriptStartPosition)
         ASSERT(m_element.isConnected());
 
         String sourceURL = sourceAttributeValue();
-        if (stripLeadingAndTrailingHTMLSpaces(sourceURL).isEmpty()) {
+        if (StringView(sourceURL).isAllSpecialCharacters<isASCIIWhitespace<UChar>>()) {
             dispatchErrorEvent();
             return false;
         }
@@ -399,7 +398,7 @@ bool ScriptElement::requestImportMap(LocalFrame& frame, const String& sourceURL)
 {
     ASSERT(m_element.isConnected());
     ASSERT(!m_loadableScript);
-    if (!stripLeadingAndTrailingHTMLSpaces(sourceURL).isEmpty()) {
+    if (!StringView(sourceURL).isAllSpecialCharacters<isASCIIWhitespace<UChar>>()) {
         auto script = LoadableImportMap::create(m_element.nonce(), m_element.attributeWithoutSynchronization(HTMLNames::integrityAttr), referrerPolicy(),
             m_element.attributeWithoutSynchronization(HTMLNames::crossoriginAttr), m_element.localName(), m_element.isInUserAgentShadowTree(), hasAsyncAttribute());
 
@@ -613,11 +612,11 @@ bool ScriptElement::isScriptForEventSupported() const
     String eventAttribute = eventAttributeValue();
     String forAttribute = forAttributeValue();
     if (!eventAttribute.isNull() && !forAttribute.isNull()) {
-        forAttribute = stripLeadingAndTrailingHTMLSpaces(forAttribute);
+        forAttribute = forAttribute.trim(isASCIIWhitespace);
         if (!equalLettersIgnoringASCIICase(forAttribute, "window"_s))
             return false;
 
-        eventAttribute = stripLeadingAndTrailingHTMLSpaces(eventAttribute);
+        eventAttribute = eventAttribute.trim(isASCIIWhitespace);
         if (!equalLettersIgnoringASCIICase(eventAttribute, "onload"_s) && !equalLettersIgnoringASCIICase(eventAttribute, "onload()"_s))
             return false;
     }

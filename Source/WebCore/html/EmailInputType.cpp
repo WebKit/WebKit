@@ -68,7 +68,7 @@ bool EmailInputType::typeMismatchFor(const String& value) const
     if (!element()->multiple())
         return !isValidEmailAddress(value);
     for (auto& address : value.splitAllowingEmptyEntries(',')) {
-        if (!isValidEmailAddress(stripLeadingAndTrailingHTMLSpaces(address)))
+        if (!isValidEmailAddress(address.trim(isASCIIWhitespace)))
             return true;
     }
     return false;
@@ -107,13 +107,13 @@ String EmailInputType::sanitizeValue(const String& proposedValue) const
     });
     ASSERT(element());
     if (!element()->multiple())
-        return stripLeadingAndTrailingHTMLSpaces(noLineBreakValue);
+        return noLineBreakValue.trim(isASCIIWhitespace);
     Vector<String> addresses = noLineBreakValue.splitAllowingEmptyEntries(',');
     StringBuilder strippedValue;
     for (unsigned i = 0; i < addresses.size(); ++i) {
         if (i > 0)
             strippedValue.append(',');
-        strippedValue.append(stripLeadingAndTrailingHTMLSpaces(addresses[i]));
+        strippedValue.append(addresses[i].trim(isASCIIWhitespace));
     }
     return strippedValue.toString();
 }
