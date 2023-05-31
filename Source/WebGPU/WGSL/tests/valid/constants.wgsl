@@ -47,3 +47,8 @@ fn testVectorConstants() -> i32
     }
     return 0;
 }
+
+fn testAbstractIntPromotion()
+{
+    const f = pow(vec2(0), vec2(0));
+}

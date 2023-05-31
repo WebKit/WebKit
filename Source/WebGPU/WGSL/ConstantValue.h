@@ -80,6 +80,19 @@ struct ConstantValue : BaseValue {
 
     void dump(PrintStream&) const;
 
+    bool isNumber() const
+    {
+        return std::holds_alternative<int64_t>(*this) || std::holds_alternative<double>(*this);
+    }
+
+    double toDouble() const
+    {
+        ASSERT(isNumber());
+        if (std::holds_alternative<double>(*this))
+            return std::get<double>(*this);
+        return static_cast<double>(std::get<int64_t>(*this));
+    }
+
     const Type* type;
 };
 

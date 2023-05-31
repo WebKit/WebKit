@@ -34,15 +34,15 @@ static ConstantValue constantPow(const FixedVector<ConstantValue>& arguments)
     const auto& value = arguments[0];
     const auto& exponent = arguments[1];
 
-    if (auto* f32 = std::get_if<double>(&value))
-        return { value.type, std::pow(*f32, std::get<double>(exponent)) };
+    if (value.isNumber())
+        return { value.type, std::pow(value.toDouble(), exponent.toDouble()) };
 
     auto& baseVector = std::get<ConstantVector>(value);
     auto& expVector = std::get<ConstantVector>(exponent);
     auto size = baseVector.elements.size();
     ConstantVector result(size);
     for (unsigned i = 0; i < size; ++i)
-        result.elements[i] = { baseVector.elements[i].type, std::pow(std::get<double>(baseVector.elements[i]), std::get<double>(expVector.elements[i])) };
+        result.elements[i] = { baseVector.elements[i].type, std::pow(baseVector.elements[i].toDouble(), expVector.elements[i].toDouble()) };
     return { value.type, result };
 }
 

@@ -147,10 +147,6 @@ ConstantValue ConstantRewriter::evaluate(AST::Expression& expression)
             return ConstantValue(expression.inferredType(), downcast<AST::AbstractFloatLiteral>(expression).value());
         case AST::NodeKind::AbstractIntegerLiteral: {
             auto value = downcast<AST::AbstractIntegerLiteral>(expression).value();
-            if (!satisfies(expression.inferredType(), Constraints::ConcreteInteger)) {
-                // The abstract integer was promoted to a float
-                return ConstantValue(expression.inferredType(), static_cast<double>(value));
-            }
             return ConstantValue(expression.inferredType(), value);
         }
         case AST::NodeKind::Float32Literal:
