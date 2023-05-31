@@ -839,6 +839,11 @@ imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/bufferedAmount/b
 imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/events/015.html [ Pass Failure ]
 imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/readyState/006.html [ Pass Failure ]
 
+# Tests are only relevant in WK2
+http/tests/websocket/tests/hybi/websocket-blocked-sending-cookie-as-third-party-after-redirect.html [ Skip ]
+http/tests/websocket/tests/hybi/websocket-blocked-sending-cookie-as-third-party-after-ws-redirect.html [ Skip ]
+http/tests/websocket/tests/hybi/websocket-blocked-sending-cookie-as-third-party.html [ Skip ]
+
 # ShouldOpenExternalURLs not yet supported in WK1
 loader/navigation-policy [ Skip ]
 
