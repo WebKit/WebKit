@@ -56,23 +56,34 @@ public:
 
     // Expressions
     void visit(AST::IdentifierExpression&) override;
+    void visit(AST::CallExpression&) override;
+
+    // Literals
+    void visit(AST::AbstractFloatLiteral&) override;
+    void visit(AST::AbstractIntegerLiteral&) override;
+    void visit(AST::BoolLiteral&) override;
+    void visit(AST::Float32Literal&) override;
+    void visit(AST::Signed32Literal&) override;
+    void visit(AST::Unsigned32Literal&) override;
 
 private:
     template<typename... Arguments>
     void error(const SourceSpan&, Arguments&&...);
 
-    ConstantValue evaluate(AST::Expression&);
-    ConstantValue evaluate(AST::IdentifierExpression&);
-    ConstantValue evaluate(AST::CallExpression&);
+    std::optional<ConstantValue> evaluate(AST::Expression&);
 
-    void materialize(AST::Expression&, const ConstantValue&);
-    AST::Expression& materialize(const ConstantValue&);
+    template<typename Node>
+    void evaluated(Node&, ConstantValue);
+
+    template<typename Node>
+    void materialize(Node&, const ConstantValue&);
 
     using ConstantFunction = ConstantValue(*)(const FixedVector<ConstantValue>&);
 
     ShaderModule& m_shaderModule;
     Vector<Error> m_errors;
     HashMap<String, ConstantFunction> m_constantFunctions;
+    std::optional<ConstantValue> m_evaluationResult;
 };
 
 ConstantRewriter::ConstantRewriter(ShaderModule& shaderModule)
@@ -109,13 +120,14 @@ void ConstantRewriter::visit(AST::Structure& structure)
 void ConstantRewriter::visit(AST::Variable& variable)
 {
     if (variable.flavor() != AST::VariableFlavor::Const) {
-        if (auto* initializer = variable.maybeInitializer())
-            AST::Visitor::visit(*initializer);
+        AST::Visitor::visit(variable);
         return;
     }
 
     ASSERT(variable.maybeInitializer());
-    introduceVariable(variable.name(), evaluate(*variable.maybeInitializer()));
+    auto value = evaluate(*variable.maybeInitializer());
+    ASSERT(value.has_value());
+    introduceVariable(variable.name(), *value);
 }
 
 // Statements
@@ -139,58 +151,24 @@ void ConstantRewriter::visit(AST::IdentifierExpression& identifier)
 }
 
 // Private helpers
-ConstantValue ConstantRewriter::evaluate(AST::Expression& expression)
+std::optional<ConstantValue> ConstantRewriter::evaluate(AST::Expression& expression)
 {
-    ConstantValue result = [&] {
-        switch (expression.kind()) {
-        case AST::NodeKind::AbstractFloatLiteral:
-            return ConstantValue(expression.inferredType(), downcast<AST::AbstractFloatLiteral>(expression).value());
-        case AST::NodeKind::AbstractIntegerLiteral: {
-            auto value = downcast<AST::AbstractIntegerLiteral>(expression).value();
-            return ConstantValue(expression.inferredType(), value);
-        }
-        case AST::NodeKind::Float32Literal:
-            return ConstantValue(expression.inferredType(), downcast<AST::Float32Literal>(expression).value());
-        case AST::NodeKind::Signed32Literal:
-            return ConstantValue(expression.inferredType(), downcast<AST::Signed32Literal>(expression).value());
-        case AST::NodeKind::Unsigned32Literal:
-            return ConstantValue(expression.inferredType(), downcast<AST::Unsigned32Literal>(expression).value());
-        case AST::NodeKind::BoolLiteral:
-            return ConstantValue(expression.inferredType(), downcast<AST::BoolLiteral>(expression).value());
+    AST::Visitor::visit(expression);
 
-        case AST::NodeKind::IdentifierExpression:
-            return evaluate(downcast<AST::IdentifierExpression>(expression));
+    return m_evaluationResult;
+}
 
-        case AST::NodeKind::CallExpression:
-            return evaluate(downcast<AST::CallExpression>(expression));
-
-        case AST::NodeKind::UnaryExpression:
-            return evaluate(downcast<AST::UnaryExpression>(expression));
-
-        default:
-            RELEASE_ASSERT_NOT_REACHED();
-        }
-    }();
-
-    if (shouldDumpConstantValues) {
-        dataLog("> Evaluated expression: ");
-        dumpNode(WTF::dataFile(), expression);
-        dataLog(" = ");
-        dataLogLn(result);
+void ConstantRewriter::visit(AST::CallExpression& call)
+{
+    unsigned argumentCount = call.arguments().size();
+    FixedVector<ConstantValue> arguments(argumentCount);
+    for (unsigned i = 0; i < argumentCount; ++i) {
+        auto value = evaluate(call.arguments()[i]);
+        if (!value.has_value())
+            return;
+        arguments[i] = *value;
     }
 
-    return result;
-}
-
-ConstantValue ConstantRewriter::evaluate(AST::IdentifierExpression& identifier)
-{
-    auto* value = readVariable(identifier.identifier());
-    ASSERT(value);
-    return *value;
-}
-
-ConstantValue ConstantRewriter::evaluate(AST::CallExpression& call)
-{
     auto& target = call.target();
     bool isNamedType = is<AST::NamedTypeName>(target);
     bool isParameterizedType = !isNamedType && is<AST::ParameterizedTypeName>(target);
@@ -208,11 +186,8 @@ ConstantValue ConstantRewriter::evaluate(AST::CallExpression& call)
             case AST::ParameterizedTypeName::Base::Vec2:
             case AST::ParameterizedTypeName::Base::Vec3:
             case AST::ParameterizedTypeName::Base::Vec4: {
-                ConstantVector vector(call.arguments().size());
-                unsigned index = 0;
-                for (auto& argument : call.arguments())
-                    vector.elements[index++] = evaluate(argument);
-                return { call.inferredType(), vector };
+                evaluated(call, { call.inferredType(), ConstantVector(WTFMove(arguments)) });
+                return;
             }
 
             case AST::ParameterizedTypeName::Base::Mat2x2:
@@ -235,61 +210,88 @@ ConstantValue ConstantRewriter::evaluate(AST::CallExpression& call)
             case AST::ParameterizedTypeName::Base::TextureStorage2d:
             case AST::ParameterizedTypeName::Base::TextureStorage2dArray:
             case AST::ParameterizedTypeName::Base::TextureStorage3d:
-                RELEASE_ASSERT_NOT_REACHED();
+                return;
             }
         }
 
         ASSERT(isNamedType);
         auto it = m_constantFunctions.find(downcast<AST::NamedTypeName>(target).name().id());
         if (it != m_constantFunctions.end()) {
-            FixedVector<ConstantValue> arguments(call.arguments().size());
-            unsigned index = 0;
-            for (auto& argument : call.arguments())
-                arguments[index++] = evaluate(argument);
-            return it->value(arguments);
+            materialize(call, it->value(arguments));
+            return;
         }
     }
 
     if (is<AST::ArrayTypeName>(target)) {
-        ConstantArray array(call.arguments().size());
-        unsigned index = 0;
-        for (auto& argument : call.arguments())
-            array.elements[index++] = evaluate(argument);
-        return { call.inferredType(), array };
+        evaluated(call, { call.inferredType(), ConstantArray(WTFMove(arguments)) });
+        return;
     }
-
-    RELEASE_ASSERT_NOT_REACHED();
 }
 
+// Literals
+void ConstantRewriter::visit(AST::BoolLiteral& literal)
+{
+    evaluated(literal, { literal.inferredType(), literal.value() });
+}
 
-void ConstantRewriter::materialize(AST::Expression& expression, const ConstantValue& value)
+void ConstantRewriter::visit(AST::Signed32Literal& literal)
+{
+    evaluated(literal, { literal.inferredType(), literal.value() });
+}
+
+void ConstantRewriter::visit(AST::Float32Literal& literal)
+{
+    evaluated(literal, { literal.inferredType(), literal.value() });
+}
+
+void ConstantRewriter::visit(AST::Unsigned32Literal& literal)
+{
+    evaluated(literal, { literal.inferredType(), literal.value() });
+}
+
+void ConstantRewriter::visit(AST::AbstractIntegerLiteral& literal)
+{
+    evaluated(literal, { literal.inferredType(), literal.value() });
+}
+
+void ConstantRewriter::visit(AST::AbstractFloatLiteral& literal)
+{
+    evaluated(literal, { literal.inferredType(), literal.value() });
+}
+
+template<typename Node>
+void ConstantRewriter::materialize(Node& expression, const ConstantValue& value)
 {
     using namespace Types;
 
-    const auto& replace = [&]<typename Node>() {
-        m_shaderModule.replace(expression, downcast<Node>(materialize(value)));
+    evaluated(expression, value);
+
+    const auto& replace = [&]<typename Literal, typename Value>() {
+        auto& node =  m_shaderModule.astBuilder().construct<Literal>(SourceSpan::empty(), std::get<Value>(value));
+        node.m_inferredType = expression.inferredType();
+        m_shaderModule.replace(expression, node);
     };
 
     return WTF::switchOn(*value.type,
         [&](const Primitive& primitive) {
             switch (primitive.kind) {
             case Primitive::AbstractInt:
-                replace.operator()<AST::AbstractIntegerLiteral>();
+                replace.template operator()<AST::AbstractIntegerLiteral, int64_t>();
                 break;
             case Primitive::I32:
-                replace.operator()<AST::Signed32Literal>();
+                replace.template operator()<AST::Signed32Literal, int64_t>();
                 break;
             case Primitive::U32:
-                replace.operator()<AST::Unsigned32Literal>();
+                replace.template operator()<AST::Unsigned32Literal, int64_t>();
                 break;
             case Primitive::AbstractFloat:
-                replace.operator()<AST::AbstractFloatLiteral>();
+                replace.template operator()<AST::AbstractFloatLiteral, double>();
                 break;
             case Primitive::F32:
-                replace.operator()<AST::Float32Literal>();
+                replace.template operator()<AST::Float32Literal, double>();
                 break;
             case Primitive::Bool:
-                replace.operator()<AST::BoolLiteral>();
+                replace.template operator()<AST::BoolLiteral, bool>();
                 break;
             case Primitive::Void:
             case Primitive::Sampler:
@@ -323,59 +325,16 @@ void ConstantRewriter::materialize(AST::Expression& expression, const ConstantVa
         });
 }
 
-AST::Expression& ConstantRewriter::materialize(const ConstantValue& value)
+template<typename Node>
+void ConstantRewriter::evaluated(Node& expression, ConstantValue value)
 {
-    using namespace Types;
-
-    const auto& constructLiteral = [&]<typename Node, typename Value>() -> AST::Expression& {
-        return m_shaderModule.astBuilder().construct<Node>(SourceSpan::empty(), std::get<Value>(value));
-    };
-
-    return WTF::switchOn(*value.type,
-        [&](const Primitive& primitive) -> AST::Expression& {
-            switch (primitive.kind) {
-            case Primitive::AbstractInt:
-                return constructLiteral.operator()<AST::AbstractIntegerLiteral, int64_t>();
-            case Primitive::I32:
-                return constructLiteral.operator()<AST::Signed32Literal, int64_t>();
-            case Primitive::U32:
-                return constructLiteral.operator()<AST::Unsigned32Literal, int64_t>();
-            case Primitive::AbstractFloat:
-                return constructLiteral.operator()<AST::AbstractFloatLiteral, double>();
-            case Primitive::F32:
-                return constructLiteral.operator()<AST::Float32Literal, double>();
-            case Primitive::Bool:
-                return constructLiteral.operator()<AST::BoolLiteral, bool>();
-            case Primitive::Void:
-            case Primitive::Sampler:
-            case Primitive::TextureExternal:
-                RELEASE_ASSERT_NOT_REACHED();
-            }
-        },
-        [&](const Vector&) -> AST::Expression& {
-            RELEASE_ASSERT_NOT_REACHED();
-        },
-        [&](const Matrix&) -> AST::Expression& {
-            RELEASE_ASSERT_NOT_REACHED();
-        },
-        [&](const Array&) -> AST::Expression& {
-            RELEASE_ASSERT_NOT_REACHED();
-        },
-        [&](const Struct&) -> AST::Expression& {
-            RELEASE_ASSERT_NOT_REACHED();
-        },
-        [&](const Reference&) -> AST::Expression& {
-            RELEASE_ASSERT_NOT_REACHED();
-        },
-        [&](const Function&) -> AST::Expression& {
-            RELEASE_ASSERT_NOT_REACHED();
-        },
-        [&](const Texture&) -> AST::Expression& {
-            RELEASE_ASSERT_NOT_REACHED();
-        },
-        [&](const Bottom&) -> AST::Expression& {
-            RELEASE_ASSERT_NOT_REACHED();
-        });
+    m_evaluationResult = value;
+    if (shouldDumpConstantValues) {
+        dataLog("> Evaluated expression: ");
+        dumpNode(WTF::dataFile(), expression);
+        dataLog(" = ");
+        dataLogLn(value);
+    }
 }
 
 template<typename... Arguments>

@@ -46,12 +46,22 @@ struct ConstantArray {
     {
     }
 
+    ConstantArray(FixedVector<ConstantValue>&& elements)
+        : elements(WTFMove(elements))
+    {
+    }
+
     FixedVector<ConstantValue> elements;
 };
 
 struct ConstantVector {
     ConstantVector(size_t size)
         : elements(size)
+    {
+    }
+
+    ConstantVector(FixedVector<ConstantValue>&& elements)
+        : elements(WTFMove(elements))
     {
     }
 
