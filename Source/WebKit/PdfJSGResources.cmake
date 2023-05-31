@@ -15,6 +15,7 @@ macro(WEBKIT_BUILD_PDFJS_GRESOURCES _derived_sources_dir)
         DEPENDS ${_derived_sources_dir}/PdfJSGResourceBundle.xml
         DEPFILE ${_derived_sources_dir}/PdfJSGResourceBundle.deps
         COMMAND glib-compile-resources --generate --sourcedir=${THIRDPARTY_DIR}/pdfjs --target=${_derived_sources_dir}/PdfJSGResourceBundle.c --dependency-file=${_derived_sources_dir}/PdfJSGResourceBundle.deps ${_derived_sources_dir}/PdfJSGResourceBundle.xml
+        COMMAND ${CMAKE_SOURCE_DIR}/Tools/glib/fix-glib-resource-deps-target.py ${_derived_sources_dir}/PdfJSGResourceBundle.deps ${_derived_sources_dir}/PdfJSGResourceBundle.xml ${CMAKE_BINARY_DIR}
         VERBATIM
     )
 
@@ -30,7 +31,8 @@ macro(WEBKIT_BUILD_PDFJS_GRESOURCES _derived_sources_dir)
         OUTPUT ${_derived_sources_dir}/PdfJSGResourceBundleExtras.c ${_derived_sources_dir}/PdfJSGResourceBundleExtras.deps
         DEPENDS ${_derived_sources_dir}/PdfJSGResourceBundleExtras.xml
         DEPFILE ${_derived_sources_dir}/PdfJSGResourceBundleExtras.deps
-        COMMAND glib-compile-resources --generate --sourcedir=${WEBCORE_DIR}/Modules/pdfjs-extras --target=${_derived_sources_dir}/PdfJSGResourceBundleExtras.c ${_derived_sources_dir}/PdfJSGResourceBundleExtras.xml
+        COMMAND glib-compile-resources --generate --sourcedir=${WEBCORE_DIR}/Modules/pdfjs-extras --target=${_derived_sources_dir}/PdfJSGResourceBundleExtras.c --dependency-file=${_derived_sources_dir}/PdfJSGResourceBundleExtras.deps ${_derived_sources_dir}/PdfJSGResourceBundleExtras.xml
+        COMMAND ${CMAKE_SOURCE_DIR}/Tools/glib/fix-glib-resource-deps-target.py ${_derived_sources_dir}/PdfJSGResourceBundleExtras.deps ${_derived_sources_dir}/PdfJSGResourceBundleExtras.xml ${CMAKE_BINARY_DIR}
         VERBATIM
     )
 endmacro()

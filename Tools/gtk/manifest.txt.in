@@ -95,6 +95,7 @@ exclude Tools/gtk/make-dist.py
 exclude Tools/gtk/ycm_extra_conf.py
 
 file Tools/glib/common.py
+file Tools/glib/fix-glib-resource-deps-target.py
 file Tools/glib/generate-inspector-gresource-manifest.py
 file Tools/glib/generate-modern-media-controls-gresource-manifest.py
 file Tools/glib/generate-pdfjs-resource-manifest.py

@@ -11,8 +11,9 @@ macro(WEBKIT_BUILD_INSPECTOR_GRESOURCES _derived_sources_dir)
     add_custom_command(
         OUTPUT ${_derived_sources_dir}/InspectorGResourceBundle.c ${_derived_sources_dir}/InspectorGResourceBundle.deps
         DEPENDS ${_derived_sources_dir}/InspectorGResourceBundle.xml
-        DEPFILE {_derived_sources_dir}/InspectorGResourceBundle.deps
+        DEPFILE ${_derived_sources_dir}/InspectorGResourceBundle.deps
         COMMAND glib-compile-resources --generate --sourcedir=${_derived_sources_dir}/InspectorResources/WebInspectorUI --target=${_derived_sources_dir}/InspectorGResourceBundle.c --dependency-file=${_derived_sources_dir}/InspectorGResourceBundle.deps ${_derived_sources_dir}/InspectorGResourceBundle.xml
+        COMMAND ${CMAKE_SOURCE_DIR}/Tools/glib/fix-glib-resource-deps-target.py ${_derived_sources_dir}/InspectorGResourceBundle.deps ${_derived_sources_dir}/InspectorGResourceBundle.xml ${CMAKE_BINARY_DIR}
         VERBATIM
     )
 endmacro()
