@@ -35,15 +35,15 @@ class LocationAttribute final : public Attribute {
     WGSL_AST_BUILDER_NODE(LocationAttribute);
 public:
     NodeKind kind() const override;
-    unsigned location() const { return m_value; }
+    Expression& location() const { return m_value; }
 
 private:
-    LocationAttribute(SourceSpan span, unsigned value)
+    LocationAttribute(SourceSpan span, Expression::Ref value)
         : Attribute(span)
         , m_value(value)
     { }
 
-    unsigned m_value;
+    Expression::Ref m_value;
 };
 
 } // namespace WGSL::AST

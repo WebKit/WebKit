@@ -371,7 +371,7 @@ void FunctionDefinitionWriter::visit(AST::StageAttribute& stage)
 
 void FunctionDefinitionWriter::visit(AST::GroupAttribute& group)
 {
-    unsigned bufferIndex = group.group();
+    unsigned bufferIndex = *AST::extractInteger(group.group());
     if (m_entryPointStage.has_value() && *m_entryPointStage == AST::StageAttribute::Stage::Vertex) {
         auto max = m_callGraph.ast().configuration().maxBuffersPlusVertexBuffersForVertexStage;
         bufferIndex = vertexBufferIndexForBindGroup(bufferIndex, max);
@@ -381,7 +381,7 @@ void FunctionDefinitionWriter::visit(AST::GroupAttribute& group)
 
 void FunctionDefinitionWriter::visit(AST::BindingAttribute& binding)
 {
-    m_stringBuilder.append("[[id(", binding.binding(), ")]]");
+    m_stringBuilder.append("[[id(", *AST::extractInteger(binding.binding()), ")]]");
 }
 
 void FunctionDefinitionWriter::visit(AST::LocationAttribute& location)
@@ -391,14 +391,14 @@ void FunctionDefinitionWriter::visit(AST::LocationAttribute& location)
         switch (role) {
         case AST::StructureRole::VertexOutput:
         case AST::StructureRole::FragmentInput:
-            m_stringBuilder.append("[[user(loc", location.location(), ")]]");
+            m_stringBuilder.append("[[user(loc", *AST::extractInteger(location.location()), ")]]");
             return;
         case AST::StructureRole::BindGroup:
         case AST::StructureRole::UserDefined:
         case AST::StructureRole::ComputeInput:
             return;
         case AST::StructureRole::VertexInput:
-            m_stringBuilder.append("[[attribute(", location.location(), ")]]");
+            m_stringBuilder.append("[[attribute(", *AST::extractInteger(location.location()), ")]]");
             break;
         }
     }
