@@ -41,7 +41,7 @@ using namespace HTMLNames;
 // From https://html.spec.whatwg.org/#valid-e-mail-address.
 static constexpr ASCIILiteral emailPattern = "^[a-zA-Z0-9.!#$%&'*+\\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$"_s;
 
-static bool isValidEmailAddress(const String& address)
+static bool isValidEmailAddress(StringView address)
 {
     int addressLength = address.length();
     if (!addressLength)
@@ -68,7 +68,7 @@ bool EmailInputType::typeMismatchFor(const String& value) const
     if (!element()->multiple())
         return !isValidEmailAddress(value);
     for (auto& address : value.splitAllowingEmptyEntries(',')) {
-        if (!isValidEmailAddress(address.trim(isASCIIWhitespace)))
+        if (!isValidEmailAddress(StringView(address).trim(isASCIIWhitespace<UChar>)))
             return true;
     }
     return false;

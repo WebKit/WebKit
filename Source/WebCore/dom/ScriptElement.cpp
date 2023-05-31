@@ -177,7 +177,7 @@ std::optional<ScriptType> ScriptElement::determineScriptType(LegacyTypeSupport s
     return std::nullopt;
 }
 
-// http://dev.w3.org/html5/spec/Overview.html#prepare-a-script
+// https://html.spec.whatwg.org/multipage/scripting.html#prepare-the-script-element
 bool ScriptElement::prepareScript(const TextPosition& scriptStartPosition, LegacyTypeSupport supportLegacyTypes)
 {
     if (m_alreadyStarted)
@@ -231,7 +231,7 @@ bool ScriptElement::prepareScript(const TextPosition& scriptStartPosition, Legac
     if (!document.frame()->script().canExecuteScripts(ReasonForCallingCanExecuteScripts::AboutToExecuteScript))
         return false;
 
-    if (scriptType == ScriptType::Classic && !isScriptForEventSupported())
+    if (scriptType == ScriptType::Classic && isScriptPreventedByAttributes())
         return false;
 
     // According to the spec, the module tag ignores the "charset" attribute as the same to the worker's
@@ -605,22 +605,6 @@ void ScriptElement::executePendingScript(PendingScript& pendingScript)
 bool ScriptElement::ignoresLoadRequest() const
 {
     return m_alreadyStarted || m_isExternalScript || m_parserInserted == ParserInserted::Yes || !m_element.isConnected();
-}
-
-bool ScriptElement::isScriptForEventSupported() const
-{
-    String eventAttribute = eventAttributeValue();
-    String forAttribute = forAttributeValue();
-    if (!eventAttribute.isNull() && !forAttribute.isNull()) {
-        forAttribute = forAttribute.trim(isASCIIWhitespace);
-        if (!equalLettersIgnoringASCIICase(forAttribute, "window"_s))
-            return false;
-
-        eventAttribute = eventAttribute.trim(isASCIIWhitespace);
-        if (!equalLettersIgnoringASCIICase(eventAttribute, "onload"_s) && !equalLettersIgnoringASCIICase(eventAttribute, "onload()"_s))
-            return false;
-    }
-    return true;
 }
 
 String ScriptElement::scriptContent() const
