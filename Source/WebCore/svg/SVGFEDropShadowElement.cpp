@@ -60,8 +60,6 @@ void SVGFEDropShadowElement::setStdDeviation(float x, float y)
 
 void SVGFEDropShadowElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
-    SVGFilterPrimitiveStandardAttributes::attributeChanged(name, oldValue, newValue, attributeModificationReason);
-
     switch (name.nodeName()) {
     case AttributeNames::stdDeviationAttr:
         if (auto result = parseNumberOptionalNumber(newValue)) {
@@ -81,6 +79,8 @@ void SVGFEDropShadowElement::attributeChanged(const QualifiedName& name, const A
     default:
         break;
     }
+
+    SVGFilterPrimitiveStandardAttributes::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 }
 
 void SVGFEDropShadowElement::svgAttributeChanged(const QualifiedName& attrName)

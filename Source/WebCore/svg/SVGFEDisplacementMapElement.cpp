@@ -52,8 +52,6 @@ Ref<SVGFEDisplacementMapElement> SVGFEDisplacementMapElement::create(const Quali
 
 void SVGFEDisplacementMapElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
-    SVGFilterPrimitiveStandardAttributes::attributeChanged(name, oldValue, newValue, attributeModificationReason);
-
     switch (name.nodeName()) {
     case AttributeNames::xChannelSelectorAttr: {
         auto propertyValue = SVGPropertyTraits<ChannelSelectorType>::fromString(newValue);
@@ -79,6 +77,8 @@ void SVGFEDisplacementMapElement::attributeChanged(const QualifiedName& name, co
     default:
         break;
     }
+
+    SVGFilterPrimitiveStandardAttributes::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 }
 
 bool SVGFEDisplacementMapElement::setFilterEffectAttribute(FilterEffect& filterEffect, const QualifiedName& attrName)

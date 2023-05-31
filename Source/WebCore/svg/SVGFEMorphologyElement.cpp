@@ -52,8 +52,6 @@ Ref<SVGFEMorphologyElement> SVGFEMorphologyElement::create(const QualifiedName& 
 
 void SVGFEMorphologyElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
-    SVGFilterPrimitiveStandardAttributes::attributeChanged(name, oldValue, newValue, attributeModificationReason);
-
     switch (name.nodeName()) {
     case AttributeNames::operatorAttr: {
         MorphologyOperatorType propertyValue = SVGPropertyTraits<MorphologyOperatorType>::fromString(newValue);
@@ -73,6 +71,8 @@ void SVGFEMorphologyElement::attributeChanged(const QualifiedName& name, const A
     default:
         break;
     }
+
+    SVGFilterPrimitiveStandardAttributes::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 }
 
 bool SVGFEMorphologyElement::setFilterEffectAttribute(FilterEffect& effect, const QualifiedName& attrName)

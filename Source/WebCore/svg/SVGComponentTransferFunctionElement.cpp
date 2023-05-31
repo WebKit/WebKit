@@ -50,8 +50,6 @@ SVGComponentTransferFunctionElement::SVGComponentTransferFunctionElement(const Q
 
 void SVGComponentTransferFunctionElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
-    SVGElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
-
     switch (name.nodeName()) {
     case AttributeNames::typeAttr: {
         ComponentTransferType propertyValue = SVGPropertyTraits<ComponentTransferType>::fromString(newValue);
@@ -80,6 +78,8 @@ void SVGComponentTransferFunctionElement::attributeChanged(const QualifiedName& 
     default:
         break;
     }
+
+    SVGElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 }
 
 void SVGComponentTransferFunctionElement::svgAttributeChanged(const QualifiedName& attrName)

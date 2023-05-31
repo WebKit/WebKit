@@ -60,8 +60,6 @@ Ref<SVGFEConvolveMatrixElement> SVGFEConvolveMatrixElement::create(const Qualifi
 
 void SVGFEConvolveMatrixElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
-    SVGFilterPrimitiveStandardAttributes::attributeChanged(name, oldValue, newValue, attributeModificationReason);
-
     switch (name.nodeName()) {
     case AttributeNames::inAttr:
         m_in1->setBaseValInternal(newValue);
@@ -121,6 +119,8 @@ void SVGFEConvolveMatrixElement::attributeChanged(const QualifiedName& name, con
     default:
         break;
     }
+
+    SVGFilterPrimitiveStandardAttributes::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 }
 
 bool SVGFEConvolveMatrixElement::setFilterEffectAttribute(FilterEffect& filterEffect, const QualifiedName& attrName)
