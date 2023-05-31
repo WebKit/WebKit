@@ -302,16 +302,16 @@ void ConstantRewriter::materialize(AST::Expression& expression, const ConstantVa
             }
         },
         [&](const Vector&) {
-            replace.operator()<AST::CallExpression>();
+            // Do not materialize complex types
         },
         [&](const Matrix&) {
-            replace.operator()<AST::CallExpression>();
+            // Do not materialize complex types
         },
         [&](const Array&) {
-            replace.operator()<AST::CallExpression>();
+            // Do not materialize complex types
         },
         [&](const Struct&) {
-            replace.operator()<AST::CallExpression>();
+            // Do not materialize complex types
         },
         [&](const Reference&) {
             RELEASE_ASSERT_NOT_REACHED();
@@ -356,70 +356,16 @@ AST::Expression& ConstantRewriter::materialize(const ConstantValue& value)
                 RELEASE_ASSERT_NOT_REACHED();
             }
         },
-        [&](const Vector& vectorType) -> AST::Expression& {
-            AST::ParameterizedTypeName::Base base;
-            switch (vectorType.size) {
-            case 2:
-                base = AST::ParameterizedTypeName::Base::Vec2;
-                break;
-            case 3:
-                base = AST::ParameterizedTypeName::Base::Vec3;
-                break;
-            case 4:
-                base = AST::ParameterizedTypeName::Base::Vec4;
-                break;
-            default:
-                RELEASE_ASSERT_NOT_REACHED();
-            }
-
-            AST::Expression::List arguments;
-            auto& vector = std::get<ConstantVector>(value);
-            arguments.reserveCapacity(vector.elements.size());
-            for (const auto& element : vector.elements)
-                arguments.append(materialize(element));
-
-            auto& typeName = m_shaderModule.astBuilder().construct<AST::NamedTypeName>(
-                SourceSpan::empty(),
-                AST::Identifier::make(AST::ParameterizedTypeName::baseToString(base))
-            );
-            typeName.m_resolvedType = value.type;
-
-            auto& call = m_shaderModule.astBuilder().construct<AST::CallExpression>(
-                SourceSpan::empty(),
-                typeName,
-                WTFMove(arguments)
-            );
-            call.m_inferredType = value.type;
-
-            return call;
+        [&](const Vector&) -> AST::Expression& {
+            RELEASE_ASSERT_NOT_REACHED();
         },
-        [&](const Matrix& matrix) -> AST::Expression& {
-            // FIXME: implement
-            UNUSED_PARAM(matrix);
+        [&](const Matrix&) -> AST::Expression& {
             RELEASE_ASSERT_NOT_REACHED();
         },
         [&](const Array&) -> AST::Expression& {
-            AST::Expression::List arguments;
-            auto& array = std::get<ConstantArray>(value);
-            arguments.reserveCapacity(array.elements.size());
-            for (const auto& element : array.elements)
-                arguments.append(materialize(element));
-
-            auto& typeName = m_shaderModule.astBuilder().construct<AST::ArrayTypeName>(
-                SourceSpan::empty(),
-                nullptr,
-                nullptr
-            );
-
-            return m_shaderModule.astBuilder().construct<AST::CallExpression>(
-                SourceSpan::empty(),
-                typeName,
-                WTFMove(arguments)
-            );
+            RELEASE_ASSERT_NOT_REACHED();
         },
-        [&](const Struct& structure) -> AST::Expression& {
-            // FIXME: implement
-            UNUSED_PARAM(structure);
+        [&](const Struct&) -> AST::Expression& {
             RELEASE_ASSERT_NOT_REACHED();
         },
         [&](const Reference&) -> AST::Expression& {
