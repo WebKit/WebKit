@@ -502,12 +502,24 @@ ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::clone(ScriptExecution
 // https://w3c.github.io/webcodecs/#close-videoframe
 void WebCodecsVideoFrame::close()
 {
-    m_data = { };
+    m_data.internalFrame = nullptr;
+
+    m_isDetached = true;
+
+    m_data.format = { };
+
+    m_data.codedWidth = 0;
+    m_data.codedHeight = 0;
+    m_data.displayWidth = 0;
+    m_data.displayHeight = 0;
+    m_data.visibleWidth = 0;
+    m_data.visibleHeight = 0;
+    m_data.visibleLeft = 0;
+    m_data.visibleTop = 0;
 
     m_codedRect = nullptr;
     m_visibleRect = nullptr;
     m_colorSpace = nullptr;
-    m_isDetached = true;
 }
 
 DOMRectReadOnly* WebCodecsVideoFrame::codedRect() const

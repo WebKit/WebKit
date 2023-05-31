@@ -1,6 +1,6 @@
 
 PASS Test we can clone a VideoFrame.
-FAIL Verify closing a frame doesn't affect its clones. assert_equals: expected 100 but got 0
+PASS Verify closing a frame doesn't affect its clones.
 PASS Verify cloning a closed frame throws.
 PASS Verify closing frames does not propagate accross contexts.
 PASS Verify transferring frames closes them.
