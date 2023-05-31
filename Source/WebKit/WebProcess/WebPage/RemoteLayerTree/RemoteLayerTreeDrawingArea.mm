@@ -330,7 +330,10 @@ void RemoteLayerTreeDrawingArea::updateRendering()
     // This function is not reentrant, e.g. a rAF callback may force repaint.
     if (m_inUpdateRendering)
         return;
-    
+
+    if (auto* page = m_webPage.corePage(); page && !page->rootFrames().computeSize())
+        return;
+
     scaleViewToFitDocumentIfNeeded();
 
     SetForScope change(m_inUpdateRendering, true);
