@@ -1,5 +1,4 @@
 Label for Submit
 
-FAIL Tests focusing of an inert label for a non-inert target. assert_equals: Clicking the label should be the same as clicking the document body. expected Element node <body><label for="submit">Label for Submit</label>
-<dialo... but got Element node <input id="submit" type="submit"></input>
+FAIL Tests focusing of an inert label for a non-inert target. assert_not_equals: Clicking the label should not focus the submit input. got disallowed value Element node <input id="submit" type="submit"></input>
 

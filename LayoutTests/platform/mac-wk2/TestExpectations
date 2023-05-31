@@ -1793,3 +1793,5 @@ webkit.org/b/256189 [ Debug ] ipc/wait-for-video-output-will-change.html [ Pass 
 webkit.org/b/256217 [ Debug ] imported/w3c/web-platform-tests/background-fetch/port-blocking.https.window.html [ Pass Crash ]
 
 webkit.org/b/256613 imported/w3c/web-platform-tests/screen-orientation/fullscreen-interactions.html [ DumpJSConsoleLogInStdErr ]
+
+webkit.org/b/238749 imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/focus-after-close.html [ Pass Failure ]

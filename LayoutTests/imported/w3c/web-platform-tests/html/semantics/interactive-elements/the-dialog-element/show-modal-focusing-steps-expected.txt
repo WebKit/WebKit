@@ -1,4 +1,7 @@
 
 
-PASS focus when a modal dialog is opened
+FAIL focus when a modal dialog is opened assert_equals: expected Element node <dialog id="outer-dialog" open="">
+    <dialog id="dialog... but got Element node <body>
+<button id="outer-button" autofocus=""></button>
+<...
 
