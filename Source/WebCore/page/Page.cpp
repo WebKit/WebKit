@@ -1974,9 +1974,6 @@ void Page::finalizeRenderingUpdate(OptionSet<FinalizeRenderingUpdateFlags> flags
 {
     for (auto& rootFrame : m_rootFrames)
         finalizeRenderingUpdateForRootFrame(rootFrame, flags);
-
-    ASSERT(m_renderingUpdateRemainingSteps.last().isEmpty());
-    renderingUpdateCompleted();
 }
 
 void Page::finalizeRenderingUpdateForRootFrame(LocalFrame& rootFrame, OptionSet<FinalizeRenderingUpdateFlags> flags)
@@ -2006,6 +2003,12 @@ void Page::finalizeRenderingUpdateForRootFrame(LocalFrame& rootFrame, OptionSet<
         scrollingCoordinator->didCompleteRenderingUpdate();
     }
 #endif
+
+    // FIXME: this should be moved to outside the loop in Page::finalizeRenderingUpdate
+    // but it currently asserts in some tests, sometimes because m_rootFrames is empty.
+    // We shouldn't ever be asking for rendering updates from a Page with no root frames.
+    ASSERT(m_renderingUpdateRemainingSteps.last().isEmpty());
+    renderingUpdateCompleted();
 }
 
 void Page::renderingUpdateCompleted()
