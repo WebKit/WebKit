@@ -1149,6 +1149,7 @@ void LocalDOMWindow::stop()
     if (!frame)
         return;
 
+    SetForScope isStopping { m_isStopping, true };
     // We must check whether the load is complete asynchronously, because we might still be parsing
     // the document until the callstack unwinds.
     frame->loader().stopForUserCancel(true);

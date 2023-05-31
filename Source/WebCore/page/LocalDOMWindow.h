@@ -192,6 +192,7 @@ public:
     void close(Document&);
     void print();
     void stop();
+    bool isStopping() const { return m_isStopping; }
 
     WEBCORE_EXPORT ExceptionOr<RefPtr<WindowProxy>> open(LocalDOMWindow& activeWindow, LocalDOMWindow& firstWindow, const String& urlString, const AtomString& frameName, const String& windowFeaturesString);
 
@@ -489,6 +490,7 @@ private:
 
     bool m_wasWrappedWithoutInitializedSecurityOrigin { false };
     bool m_mayReuseForNavigation { true };
+    bool m_isStopping { false };
 #if ENABLE(USER_MESSAGE_HANDLERS)
     mutable RefPtr<WebKitNamespace> m_webkitNamespace;
 #endif

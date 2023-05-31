@@ -114,7 +114,6 @@ XMLHttpRequest::XMLHttpRequest(ScriptExecutionContext& context)
     , m_error(false)
     , m_uploadListenerFlag(false)
     , m_uploadComplete(false)
-    , m_wasAbortedByClient(false)
     , m_responseCacheIsValid(false)
     , m_readyState(static_cast<unsigned>(UNSENT))
     , m_responseType(static_cast<unsigned>(ResponseType::EmptyString))
@@ -135,8 +134,7 @@ XMLHttpRequest::~XMLHttpRequest()
 
 Document* XMLHttpRequest::document() const
 {
-    ASSERT(scriptExecutionContext());
-    return downcast<Document>(scriptExecutionContext());
+    return dynamicDowncast<Document>(scriptExecutionContext());
 }
 
 SecurityOrigin* XMLHttpRequest::securityOrigin() const
@@ -377,7 +375,6 @@ ExceptionOr<void> XMLHttpRequest::open(const String& method, const URL& url, boo
     m_method = normalizeHTTPMethod(method);
     m_error = false;
     m_uploadComplete = false;
-    m_wasAbortedByClient = false;
 
     // clear stuff from possible previous load
     clearResponse();
@@ -682,7 +679,6 @@ void XMLHttpRequest::abort()
 {
     Ref<XMLHttpRequest> protectedThis(*this);
 
-    m_wasAbortedByClient = true;
     if (!internalAbort())
         return;
 
@@ -706,6 +702,7 @@ bool XMLHttpRequest::internalAbort()
     m_receivedLength = 0;
 
     m_decoder = nullptr;
+    m_abortErrorGroup.cancel();
 
     m_timeoutTimer.stop();
 
@@ -769,7 +766,6 @@ void XMLHttpRequest::networkError()
 
 void XMLHttpRequest::abortError()
 {
-    ASSERT(m_wasAbortedByClient);
     genericError();
     dispatchErrorEvents(eventNames().abortEvent);
 }
@@ -889,18 +885,29 @@ String XMLHttpRequest::statusText() const
     return m_response.httpStatusText();
 }
 
+void XMLHttpRequest::handleCancellation()
+{
+    m_exceptionCode = AbortError;
+    queueTaskKeepingObjectAlive(*this, TaskSource::Networking, CancellableTask(m_abortErrorGroup, [this] {
+        abortError();
+    }));
+}
+
 void XMLHttpRequest::didFail(const ResourceError& error)
 {
-    Ref protectedThis { *this };
-
     // If we are already in an error state, for instance we called abort(), bail out early.
     if (m_error)
         return;
 
+    bool wasAbortedByClient = false;
+    if (auto* document = this->document()) {
+        if (auto* window = document->domWindow())
+            wasAbortedByClient = window->isStopping();
+    }
+
     // The XHR specification says we should only fire an abort event if the cancelation was requested by the client.
-    if (m_wasAbortedByClient && error.isCancellation()) {
-        m_exceptionCode = AbortError;
-        abortError();
+    if (wasAbortedByClient && error.isCancellation()) {
+        handleCancellation();
         return;
     }
 
