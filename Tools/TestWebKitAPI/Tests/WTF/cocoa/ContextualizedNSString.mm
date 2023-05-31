@@ -44,6 +44,18 @@ TEST(WTF_ContextualizedNSString, Basic)
     EXPECT_EQ([contextualizedString characterAtIndex:5], 'f');
 }
 
+TEST(WTF_ContextualizedNSString, BasicNoContext)
+{
+    auto contents = "abc"_str;
+    auto contextualizedString = adoptNS([[WTFContextualizedNSString alloc] initWithContext: { } contents:contents]);
+    EXPECT_TRUE([contextualizedString isEqualToString:@"abc"]);
+    EXPECT_TRUE([@"abc" isEqualToString:contextualizedString.get()]);
+    EXPECT_EQ(contextualizedString.get().length, 3UL);
+    EXPECT_EQ([contextualizedString characterAtIndex:0], 'a');
+    EXPECT_EQ([contextualizedString characterAtIndex:1], 'b');
+    EXPECT_EQ([contextualizedString characterAtIndex:2], 'c');
+}
+
 TEST(WTF_ContextualizedNSString, getCharacters)
 {
     auto context = "abc"_str;

@@ -36,11 +36,11 @@ TextBreakIterator::Backing TextBreakIterator::mapModeToBackingIterator(StringVie
     return switchOn(mode, [string, &locale](TextBreakIterator::LineMode lineMode) -> TextBreakIterator::Backing {
         return TextBreakIteratorICU(string, TextBreakIteratorICU::LineMode { lineMode.behavior }, locale);
     }, [string, &locale](TextBreakIterator::CaretMode) -> TextBreakIterator::Backing {
-        return TextBreakIteratorCF(string, TextBreakIteratorCF::Mode::ComposedCharacter, locale);
+        return TextBreakIteratorCF(string, { }, TextBreakIteratorCF::Mode::ComposedCharacter, locale);
     }, [string, &locale](TextBreakIterator::DeleteMode) -> TextBreakIterator::Backing {
-        return TextBreakIteratorCF(string, TextBreakIteratorCF::Mode::BackwardDeletion, locale);
+        return TextBreakIteratorCF(string, { }, TextBreakIteratorCF::Mode::BackwardDeletion, locale);
     }, [string, &locale](TextBreakIterator::CharacterMode) -> TextBreakIterator::Backing {
-        return TextBreakIteratorCF(string, TextBreakIteratorCF::Mode::ComposedCharacter, locale);
+        return TextBreakIteratorCF(string, { }, TextBreakIteratorCF::Mode::ComposedCharacter, locale);
     });
 }
 

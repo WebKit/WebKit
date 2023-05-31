@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2023 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -23,6 +23,7 @@
 #include <wtf/RetainPtr.h>
 #include <wtf/spi/cf/CFStringSPI.h>
 #include <wtf/text/StringView.h>
+#include <wtf/text/cocoa/ContextualizedCFString.h>
 
 namespace WTF {
 
@@ -34,9 +35,9 @@ public:
         BackwardDeletion
     };
 
-    TextBreakIteratorCFCharacterCluster(StringView string, Mode mode)
+    TextBreakIteratorCFCharacterCluster(StringView string, StringView priorContext, Mode mode)
     {
-        setText(string);
+        setText(string, priorContext);
 
         switch (mode) {
         case Mode::ComposedCharacter:
@@ -54,10 +55,11 @@ public:
     TextBreakIteratorCFCharacterCluster& operator=(const TextBreakIteratorCFCharacterCluster&) = delete;
     TextBreakIteratorCFCharacterCluster& operator=(TextBreakIteratorCFCharacterCluster&&) = default;
 
-    void setText(StringView string)
+    void setText(StringView string, StringView priorContext)
     {
-        m_string = string.createCFStringWithoutCopying();
-        m_stringLength = static_cast<unsigned long>(CFStringGetLength(m_string.get()));
+        m_string = createContextualizedCFString(string, priorContext);
+        m_stringLength = string.length();
+        m_priorContextLength = priorContext.length();
     }
 
     std::optional<unsigned> preceding(unsigned location) const
@@ -66,30 +68,31 @@ public:
             return { };
         if (location > m_stringLength)
             return m_stringLength;
-        auto range = CFStringGetRangeOfCharacterClusterAtIndex(m_string.get(), location - 1, m_type);
-        return range.location;
+        auto range = CFStringGetRangeOfCharacterClusterAtIndex(m_string.get(), location - 1 + m_priorContextLength, m_type);
+        return std::max(static_cast<unsigned long>(range.location), m_priorContextLength) - m_priorContextLength;
     }
 
     std::optional<unsigned> following(unsigned location) const
     {
         if (location >= m_stringLength)
             return { };
-        auto range = CFStringGetRangeOfCharacterClusterAtIndex(m_string.get(), location, m_type);
-        return range.location + range.length;
+        auto range = CFStringGetRangeOfCharacterClusterAtIndex(m_string.get(), location + m_priorContextLength, m_type);
+        return range.location + range.length - m_priorContextLength;
     }
 
     bool isBoundary(unsigned location) const
     {
         if (location == m_stringLength)
             return true;
-        auto range = CFStringGetRangeOfCharacterClusterAtIndex(m_string.get(), location, m_type);
-        return static_cast<unsigned long>(range.location) == location;
+        auto range = CFStringGetRangeOfCharacterClusterAtIndex(m_string.get(), location + m_priorContextLength, m_type);
+        return static_cast<unsigned long>(range.location) == location + m_priorContextLength;
     }
 
 private:
     RetainPtr<CFStringRef> m_string;
     CFStringCharacterClusterType m_type;
     unsigned long m_stringLength { 0 };
+    unsigned long m_priorContextLength { 0 };
 };
 
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2023 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -38,8 +38,8 @@ public:
         WordBoundary,
     };
 
-    TextBreakIteratorCF(StringView string, Mode mode, const AtomString& locale)
-        : m_backing(mapModeToBackingIterator(string, mode, locale))
+    TextBreakIteratorCF(StringView string, StringView priorContext, Mode mode, const AtomString& locale)
+        : m_backing(mapModeToBackingIterator(string, priorContext, mode, locale))
     {
     }
 
@@ -49,10 +49,10 @@ public:
     TextBreakIteratorCF& operator=(const TextBreakIteratorCF&) = delete;
     TextBreakIteratorCF& operator=(TextBreakIteratorCF&&) = default;
 
-    void setText(StringView string)
+    void setText(StringView string, StringView priorContext)
     {
         return switchOn(m_backing, [&](auto& iterator) {
-            return iterator.setText(string);
+            return iterator.setText(string, priorContext);
         });
     }
 
@@ -80,23 +80,23 @@ public:
 private:
     using BackingVariant = std::variant<TextBreakIteratorCFCharacterCluster, TextBreakIteratorCFStringTokenizer>;
 
-    static BackingVariant mapModeToBackingIterator(StringView string, Mode mode, const AtomString& locale)
+    static BackingVariant mapModeToBackingIterator(StringView string, StringView priorContext, Mode mode, const AtomString& locale)
     {
         switch (mode) {
         case Mode::ComposedCharacter:
-            return TextBreakIteratorCFCharacterCluster(string, TextBreakIteratorCFCharacterCluster::Mode::ComposedCharacter);
+            return TextBreakIteratorCFCharacterCluster(string, priorContext, TextBreakIteratorCFCharacterCluster::Mode::ComposedCharacter);
         case Mode::BackwardDeletion:
-            return TextBreakIteratorCFCharacterCluster(string, TextBreakIteratorCFCharacterCluster::Mode::BackwardDeletion);
+            return TextBreakIteratorCFCharacterCluster(string, priorContext, TextBreakIteratorCFCharacterCluster::Mode::BackwardDeletion);
         case Mode::Word:
-            return TextBreakIteratorCFStringTokenizer(string, TextBreakIteratorCFStringTokenizer::Mode::Word, locale);
+            return TextBreakIteratorCFStringTokenizer(string, priorContext, TextBreakIteratorCFStringTokenizer::Mode::Word, locale);
         case Mode::Sentence:
-            return TextBreakIteratorCFStringTokenizer(string, TextBreakIteratorCFStringTokenizer::Mode::Sentence, locale);
+            return TextBreakIteratorCFStringTokenizer(string, priorContext, TextBreakIteratorCFStringTokenizer::Mode::Sentence, locale);
         case Mode::Paragraph:
-            return TextBreakIteratorCFStringTokenizer(string, TextBreakIteratorCFStringTokenizer::Mode::Paragraph, locale);
+            return TextBreakIteratorCFStringTokenizer(string, priorContext, TextBreakIteratorCFStringTokenizer::Mode::Paragraph, locale);
         case Mode::LineBreak:
-            return TextBreakIteratorCFStringTokenizer(string, TextBreakIteratorCFStringTokenizer::Mode::LineBreak, locale);
+            return TextBreakIteratorCFStringTokenizer(string, priorContext, TextBreakIteratorCFStringTokenizer::Mode::LineBreak, locale);
         case Mode::WordBoundary:
-            return TextBreakIteratorCFStringTokenizer(string, TextBreakIteratorCFStringTokenizer::Mode::WordBoundary, locale);
+            return TextBreakIteratorCFStringTokenizer(string, priorContext, TextBreakIteratorCFStringTokenizer::Mode::WordBoundary, locale);
         }
     }
 

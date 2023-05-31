@@ -52,6 +52,8 @@
 		1C2BA32628E6C19B00FA6E17 /* TextBreakIteratorCFCharacterCluster.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C2BA32528E6C19500FA6E17 /* TextBreakIteratorCFCharacterCluster.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1C2BA32828E6C24900FA6E17 /* TextBreakIteratorCFStringTokenizer.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C2BA32728E6C24400FA6E17 /* TextBreakIteratorCFStringTokenizer.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1C503BE623AAE0AE0072E66B /* LanguageCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1C503BE523AAE0AE0072E66B /* LanguageCocoa.mm */; };
+		1C867D772A254F08000DE93D /* ContextualizedCFString.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1C867D752A254F08000DE93D /* ContextualizedCFString.mm */; };
+		1C867D782A254F08000DE93D /* ContextualizedCFString.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C867D762A254F08000DE93D /* ContextualizedCFString.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1C96836426BE74DF00A2A2F9 /* LogInitialization.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C96836226BE74DF00A2A2F9 /* LogInitialization.cpp */; };
 		1C96836726BE754600A2A2F9 /* Logging.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1C96836526BE754600A2A2F9 /* Logging.cpp */; };
 		1C96836926BE76B600A2A2F9 /* LoggingCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1C96836826BE76B600A2A2F9 /* LoggingCocoa.mm */; };
@@ -1078,6 +1080,8 @@
 		1C2BA32528E6C19500FA6E17 /* TextBreakIteratorCFCharacterCluster.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TextBreakIteratorCFCharacterCluster.h; sourceTree = "<group>"; };
 		1C2BA32728E6C24400FA6E17 /* TextBreakIteratorCFStringTokenizer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TextBreakIteratorCFStringTokenizer.h; sourceTree = "<group>"; };
 		1C503BE523AAE0AE0072E66B /* LanguageCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = LanguageCocoa.mm; sourceTree = "<group>"; };
+		1C867D752A254F08000DE93D /* ContextualizedCFString.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ContextualizedCFString.mm; sourceTree = "<group>"; };
+		1C867D762A254F08000DE93D /* ContextualizedCFString.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ContextualizedCFString.h; sourceTree = "<group>"; };
 		1C96836226BE74DF00A2A2F9 /* LogInitialization.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LogInitialization.cpp; sourceTree = "<group>"; };
 		1C96836326BE74DF00A2A2F9 /* LogInitialization.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LogInitialization.h; sourceTree = "<group>"; };
 		1C96836526BE754600A2A2F9 /* Logging.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Logging.cpp; sourceTree = "<group>"; };
@@ -1916,6 +1920,8 @@
 			isa = PBXGroup;
 			children = (
 				4655743527F5FC4A002D5522 /* ASCIILiteralCocoa.mm */,
+				1C867D762A254F08000DE93D /* ContextualizedCFString.h */,
+				1C867D752A254F08000DE93D /* ContextualizedCFString.mm */,
 				1CA6FBAA2A1D75CD001D4402 /* ContextualizedNSString.h */,
 				1CA6FBA82A1D75B9001D4402 /* ContextualizedNSString.mm */,
 				A5BA15F2182433A900A82E69 /* StringCocoa.mm */,
@@ -2988,6 +2994,7 @@
 				DD3DC88F27A4BF8E007E5B61 /* ConcurrentVector.h in Headers */,
 				DD3DC8D027A4BF8E007E5B61 /* Condition.h in Headers */,
 				DDF307F527C0870E006A526F /* config.h in Headers */,
+				1C867D782A254F08000DE93D /* ContextualizedCFString.h in Headers */,
 				1CA6FBAB2A1D75D8001D4402 /* ContextualizedNSString.h in Headers */,
 				DDF307C627C086DF006A526F /* ConversionMode.h in Headers */,
 				DD3DC8D127A4BF8E007E5B61 /* CountingLock.h in Headers */,
@@ -3709,6 +3716,7 @@
 				0F8F2B92172E0103007DBDA5 /* CompilationThread.cpp in Sources */,
 				E3149A3B228BDCAC00BFA6C7 /* ConcurrentBuffer.cpp in Sources */,
 				0F30CB5A1FCDF134004B5323 /* ConcurrentPtrHashSet.cpp in Sources */,
+				1C867D772A254F08000DE93D /* ContextualizedCFString.mm in Sources */,
 				1CA6FBA92A1D75B9001D4402 /* ContextualizedNSString.mm in Sources */,
 				0F8E85DB1FD485B000691889 /* CountingLock.cpp in Sources */,
 				E38C41281EB4E0680042957D /* CPUTime.cpp in Sources */,

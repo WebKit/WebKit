@@ -99,10 +99,10 @@ private:
     // Use CachedTextBreakIterator instead of constructing one of these directly.
     WTF_EXPORT_PRIVATE TextBreakIterator(StringView, Mode, const AtomString& locale);
 
-    void setText(StringView string)
+    void setText(StringView string, StringView priorContext = { })
     {
         return switchOn(m_backing, [&](auto& iterator) {
-            return iterator.setText(string);
+            return iterator.setText(string, priorContext);
         });
     }
 

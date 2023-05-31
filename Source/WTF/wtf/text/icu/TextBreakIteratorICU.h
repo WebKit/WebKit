@@ -114,8 +114,10 @@ public:
             ubrk_close(m_iterator);
     }
 
-    void setText(StringView string)
+    void setText(StringView string, StringView priorContext)
     {
+        UNUSED_PARAM(priorContext); // FIXME: Implement prior context.
+
         if (string.is8Bit()) {
             set8BitText(string.characters8(), string.length());
             return;
