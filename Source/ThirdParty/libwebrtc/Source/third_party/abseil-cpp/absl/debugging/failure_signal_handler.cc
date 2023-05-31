@@ -33,6 +33,10 @@
 #include <sys/mman.h>
 #endif
 
+#ifdef __linux__
+#include <sys/prctl.h>
+#endif
+
 #include <algorithm>
 #include <atomic>
 #include <cerrno>
@@ -135,10 +139,11 @@ static bool SetupAlternateStackOnce() {
 #if defined(__wasm__) || defined (__asjms__)
   const size_t page_mask = getpagesize() - 1;
 #else
-  const size_t page_mask = sysconf(_SC_PAGESIZE) - 1;
+  const size_t page_mask = static_cast<size_t>(sysconf(_SC_PAGESIZE)) - 1;
 #endif
   size_t stack_size =
-      (std::max<size_t>(SIGSTKSZ, 65536) + page_mask) & ~page_mask;
+      (std::max(static_cast<size_t>(SIGSTKSZ), size_t{65536}) + page_mask) &
+      ~page_mask;
 #if defined(ABSL_HAVE_ADDRESS_SANITIZER) || \
     defined(ABSL_HAVE_MEMORY_SANITIZER) || defined(ABSL_HAVE_THREAD_SANITIZER)
   // Account for sanitizer instrumentation requiring additional stack space.
@@ -171,6 +176,20 @@ static bool SetupAlternateStackOnce() {
   if (sigaltstack(&sigstk, nullptr) != 0) {
     ABSL_RAW_LOG(FATAL, "sigaltstack() failed with errno=%d", errno);
   }
+
+#ifdef __linux__
+#if defined(PR_SET_VMA) && defined(PR_SET_VMA_ANON_NAME)
+  // Make a best-effort attempt to name the allocated region in
+  // /proc/$PID/smaps.
+  //
+  // The call to prctl() may fail if the kernel was not configured with the
+  // CONFIG_ANON_VMA_NAME kernel option.  This is OK since the call is
+  // primarily a debugging aid.
+  prctl(PR_SET_VMA, PR_SET_VMA_ANON_NAME, sigstk.ss_sp, sigstk.ss_size,
+        "absl-signalstack");
+#endif
+#endif  // __linux__
+
   return true;
 }
 
@@ -356,7 +375,7 @@ static void AbslFailureSignalHandler(int signo, siginfo_t*, void* ucontext) {
   if (fsh_options.alarm_on_failure_secs > 0) {
     alarm(0);  // Cancel any existing alarms.
     signal(SIGALRM, ImmediateAbortSignalHandler);
-    alarm(fsh_options.alarm_on_failure_secs);
+    alarm(static_cast<unsigned int>(fsh_options.alarm_on_failure_secs));
   }
 #endif
 

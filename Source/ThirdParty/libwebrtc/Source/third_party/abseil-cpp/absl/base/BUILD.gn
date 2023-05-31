@@ -1,4 +1,4 @@
-# Copyright 2018 The Chromium Authors. All rights reserved.
+# Copyright 2018 The Chromium Authors
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -63,6 +63,18 @@ absl_source_set("config") {
     "config.h",
     "options.h",
     "policy_checks.h",
+  ]
+}
+
+absl_source_set("cycleclock_internal") {
+  public = [
+    "internal/cycleclock_config.h",
+    "internal/unscaledcycleclock_config.h",
+  ]
+  visibility = [ "//third_party/abseil-cpp/absl/*" ]
+  deps = [
+    ":base_internal",
+    ":config",
   ]
 }
 
@@ -150,6 +162,7 @@ absl_source_set("base") {
     ":base_internal",
     ":config",
     ":core_headers",
+    ":cycleclock_internal",
     ":dynamic_annotations",
     ":log_severity",
     ":raw_logging_internal",
@@ -259,26 +272,25 @@ absl_source_set("fast_type_id") {
 }
 
 absl_source_set("prefetch") {
-  public = [ "internal/prefetch.h" ]
-  deps = [ ":config" ]
-  visibility = [ "//third_party/abseil-cpp/absl/*" ]
-}
-
-absl_source_set("prefetch_test") {
-  testonly = true
-  sources = [ "internal/prefetch_test.cc" ]
+  public = [
+    "internal/prefetch.h",
+    "prefetch.h",
+  ]
   deps = [
-    ":prefetch",
-    "//third_party/googletest:gtest",
+    ":config",
+    ":core_headers",
   ]
 }
 
-absl_source_set("config_test") {
-  testonly = true
+absl_test("prefetch_test") {
+  sources = [ "prefetch_test.cc" ]
+  deps = [ ":prefetch" ]
+}
+
+absl_test("config_test") {
   sources = [ "config_test.cc" ]
   deps = [
     ":config",
     "//third_party/abseil-cpp/absl/synchronization:thread_pool",
-    "//third_party/googletest:gtest",
   ]
 }

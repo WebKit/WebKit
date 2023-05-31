@@ -14,29 +14,41 @@
 
 #include "absl/container/internal/raw_hash_set.h"
 
+#include <algorithm>
 #include <atomic>
 #include <cmath>
 #include <cstdint>
 #include <deque>
 #include <functional>
+#include <iostream>
+#include <iterator>
+#include <list>
+#include <map>
 #include <memory>
 #include <numeric>
+#include <ostream>
 #include <random>
 #include <string>
+#include <type_traits>
 #include <unordered_map>
 #include <unordered_set>
+#include <utility>
+#include <vector>
 
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 #include "absl/base/attributes.h"
 #include "absl/base/config.h"
 #include "absl/base/internal/cycleclock.h"
-#include "absl/base/internal/prefetch.h"
 #include "absl/base/internal/raw_logging.h"
+#include "absl/base/prefetch.h"
+#include "absl/container/flat_hash_map.h"
+#include "absl/container/flat_hash_set.h"
 #include "absl/container/internal/container_memory.h"
 #include "absl/container/internal/hash_function_defaults.h"
 #include "absl/container/internal/hash_policy_testing.h"
 #include "absl/container/internal/hashtable_debug.h"
+#include "absl/log/log.h"
 #include "absl/strings/string_view.h"
 
 namespace absl {
@@ -45,8 +57,8 @@ namespace container_internal {
 
 struct RawHashSetTestOnlyAccess {
   template <typename C>
-  static auto GetSlots(const C& c) -> decltype(c.slots_) {
-    return c.slots_;
+  static auto GetSlots(const C& c) -> decltype(c.slot_array()) {
+    return c.slot_array();
   }
 };
 
@@ -339,7 +351,7 @@ class StringPolicy {
     struct ctor {};
 
     template <class... Ts>
-    slot_type(ctor, Ts&&... ts) : pair(std::forward<Ts>(ts)...) {}
+    explicit slot_type(ctor, Ts&&... ts) : pair(std::forward<Ts>(ts)...) {}
 
     std::pair<std::string, std::string> pair;
   };
@@ -388,7 +400,7 @@ struct StringEq : std::equal_to<absl::string_view> {
 struct StringTable
     : raw_hash_set<StringPolicy, StringHash, StringEq, std::allocator<int>> {
   using Base = typename StringTable::raw_hash_set;
-  StringTable() {}
+  StringTable() = default;
   using Base::Base;
 };
 
@@ -408,10 +420,10 @@ struct Uint8Table
 
 template <typename T>
 struct CustomAlloc : std::allocator<T> {
-  CustomAlloc() {}
+  CustomAlloc() = default;
 
   template <typename U>
-  CustomAlloc(const CustomAlloc<U>& other) {}
+  explicit CustomAlloc(const CustomAlloc<U>& /*other*/) {}
 
   template<class U> struct rebind {
     using other = CustomAlloc<U>;
@@ -435,7 +447,7 @@ struct BadFastHash {
 struct BadTable : raw_hash_set<IntPolicy, BadFastHash, std::equal_to<int>,
                                std::allocator<int>> {
   using Base = typename BadTable::raw_hash_set;
-  BadTable() {}
+  BadTable() = default;
   using Base::Base;
 };
 
@@ -444,12 +456,12 @@ TEST(Table, EmptyFunctorOptimization) {
   static_assert(std::is_empty<std::allocator<int>>::value, "");
 
   struct MockTable {
+    void* infoz;
     void* ctrl;
     void* slots;
     size_t size;
     size_t capacity;
     size_t growth_left;
-    void* infoz;
   };
   struct MockTableInfozDisabled {
     void* ctrl;
@@ -465,27 +477,37 @@ TEST(Table, EmptyFunctorOptimization) {
     size_t dummy;
   };
 
-  if (std::is_empty<HashtablezInfoHandle>::value) {
-    EXPECT_EQ(sizeof(MockTableInfozDisabled),
-              sizeof(raw_hash_set<StringPolicy, StatelessHash,
-                                  std::equal_to<absl::string_view>,
-                                  std::allocator<int>>));
+  struct GenerationData {
+    size_t reserved_growth;
+    GenerationType* generation;
+  };
 
-    EXPECT_EQ(sizeof(MockTableInfozDisabled) + sizeof(StatefulHash),
-              sizeof(raw_hash_set<StringPolicy, StatefulHash,
-                                  std::equal_to<absl::string_view>,
-                                  std::allocator<int>>));
-  } else {
-    EXPECT_EQ(sizeof(MockTable),
-              sizeof(raw_hash_set<StringPolicy, StatelessHash,
-                                  std::equal_to<absl::string_view>,
-                                  std::allocator<int>>));
+// Ignore unreachable-code warning. Compiler thinks one branch of each ternary
+// conditional is unreachable.
+#if defined(__clang__)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunreachable-code"
+#endif
+  constexpr size_t mock_size = std::is_empty<HashtablezInfoHandle>()
+                                   ? sizeof(MockTableInfozDisabled)
+                                   : sizeof(MockTable);
+  constexpr size_t generation_size =
+      SwisstableGenerationsEnabled() ? sizeof(GenerationData) : 0;
+#if defined(__clang__)
+#pragma clang diagnostic pop
+#endif
 
-    EXPECT_EQ(sizeof(MockTable) + sizeof(StatefulHash),
-              sizeof(raw_hash_set<StringPolicy, StatefulHash,
-                                  std::equal_to<absl::string_view>,
-                                  std::allocator<int>>));
-  }
+  EXPECT_EQ(
+      mock_size + generation_size,
+      sizeof(
+          raw_hash_set<StringPolicy, StatelessHash,
+                       std::equal_to<absl::string_view>, std::allocator<int>>));
+
+  EXPECT_EQ(
+      mock_size + sizeof(StatefulHash) + generation_size,
+      sizeof(
+          raw_hash_set<StringPolicy, StatefulHash,
+                       std::equal_to<absl::string_view>, std::allocator<int>>));
 }
 
 TEST(Table, Empty) {
@@ -843,6 +865,10 @@ void TestDecompose(bool construct_three) {
 }
 
 TEST(Table, Decompose) {
+  if (SwisstableGenerationsEnabled()) {
+    GTEST_SKIP() << "Generations being enabled causes extra rehashes.";
+  }
+
   TestDecompose<DecomposeHash, DecomposeEq>(false);
 
   struct TransparentHashIntOverload {
@@ -881,6 +907,10 @@ struct Modulo1000HashTable
 
 // Test that rehash with no resize happen in case of many deleted slots.
 TEST(Table, RehashWithNoResize) {
+  if (SwisstableGenerationsEnabled()) {
+    GTEST_SKIP() << "Generations being enabled causes extra rehashes.";
+  }
+
   Modulo1000HashTable t;
   // Adding the same length (and the same hash) strings
   // to have at least kMinFullGroups groups
@@ -974,6 +1004,10 @@ TEST(Table, EnsureNonQuadraticAsInRust) {
 }
 
 TEST(Table, ClearBug) {
+  if (SwisstableGenerationsEnabled()) {
+    GTEST_SKIP() << "Generations being enabled causes extra rehashes.";
+  }
+
   IntTable t;
   constexpr size_t capacity = container_internal::Group::kWidth - 1;
   constexpr size_t max_size = capacity / 2 + 1;
@@ -992,7 +1026,7 @@ TEST(Table, ClearBug) {
   // We are checking that original and second are close enough to each other
   // that they are probably still in the same group.  This is not strictly
   // guaranteed.
-  EXPECT_LT(std::abs(original - second),
+  EXPECT_LT(static_cast<size_t>(std::abs(original - second)),
             capacity * sizeof(IntTable::value_type));
 }
 
@@ -1068,19 +1102,6 @@ struct ProbeStats {
   std::vector<size_t> all_probes_histogram;
   // Ratios total_probe_length/size for every tested table.
   std::vector<double> single_table_ratios;
-
-  friend ProbeStats operator+(const ProbeStats& a, const ProbeStats& b) {
-    ProbeStats res = a;
-    res.all_probes_histogram.resize(std::max(res.all_probes_histogram.size(),
-                                             b.all_probes_histogram.size()));
-    std::transform(b.all_probes_histogram.begin(), b.all_probes_histogram.end(),
-                   res.all_probes_histogram.begin(),
-                   res.all_probes_histogram.begin(), std::plus<size_t>());
-    res.single_table_ratios.insert(res.single_table_ratios.end(),
-                                   b.single_table_ratios.begin(),
-                                   b.single_table_ratios.end());
-    return res;
-  }
 
   // Average ratio total_probe_length/size over tables.
   double AvgRatio() const {
@@ -1275,6 +1296,7 @@ TEST(Table, DISABLED_EnsureNonQuadraticTopNXorSeedByProbeSeqLength) {
   for (size_t size : sizes) {
     auto& stat = stats[size];
     VerifyStats(size, expected, stat);
+    LOG(INFO) << size << " " << stat;
   }
 }
 
@@ -1370,6 +1392,7 @@ TEST(Table, DISABLED_EnsureNonQuadraticTopNLinearTransformByProbeSeqLength) {
   for (size_t size : sizes) {
     auto& stat = stats[size];
     VerifyStats(size, expected, stat);
+    LOG(INFO) << size << " " << stat;
   }
 }
 
@@ -1504,7 +1527,7 @@ TEST(Table, RehashZeroForcesRehash) {
 TEST(Table, ConstructFromInitList) {
   using P = std::pair<std::string, std::string>;
   struct Q {
-    operator P() const { return {}; }
+    operator P() const { return {}; }  // NOLINT
   };
   StringTable t = {P(), Q(), {}, {{}, {}}};
 }
@@ -1542,7 +1565,7 @@ TEST(Table, CopyConstructWithAlloc) {
 struct ExplicitAllocIntTable
     : raw_hash_set<IntPolicy, container_internal::hash_default_hash<int64_t>,
                    std::equal_to<int64_t>, Alloc<int64_t>> {
-  ExplicitAllocIntTable() {}
+  ExplicitAllocIntTable() = default;
 };
 
 TEST(Table, AllocWithExplicitCtor) {
@@ -1809,7 +1832,6 @@ TEST(Table, HeterogeneousLookupOverloads) {
   EXPECT_TRUE((VerifyResultOf<CallCount, TransparentTable>()));
 }
 
-// TODO(alkis): Expand iterator tests.
 TEST(Iterator, IsDefaultConstructible) {
   StringTable::iterator i;
   EXPECT_TRUE(i == StringTable::iterator());
@@ -1930,7 +1952,7 @@ TEST(Nodes, ExtractInsert) {
   EXPECT_FALSE(res.inserted);
   EXPECT_THAT(*res.position, Pair(k0, ""));
   EXPECT_TRUE(res.node);
-  EXPECT_FALSE(node);
+  EXPECT_FALSE(node);  // NOLINT(bugprone-use-after-move)
 }
 
 TEST(Nodes, HintInsert) {
@@ -1940,7 +1962,7 @@ TEST(Nodes, HintInsert) {
   auto it = t.insert(t.begin(), std::move(node));
   EXPECT_THAT(t, UnorderedElementsAre(1, 2, 3));
   EXPECT_EQ(*it, 1);
-  EXPECT_FALSE(node);
+  EXPECT_FALSE(node);  // NOLINT(bugprone-use-after-move)
 
   node = t.extract(2);
   EXPECT_THAT(t, UnorderedElementsAre(1, 3));
@@ -1950,7 +1972,7 @@ TEST(Nodes, HintInsert) {
   it = t.insert(t.begin(), std::move(node));
   EXPECT_EQ(*it, 2);
   // The node was not emptied by the insert call.
-  EXPECT_TRUE(node);
+  EXPECT_TRUE(node);  // NOLINT(bugprone-use-after-move)
 }
 
 IntTable MakeSimpleTable(size_t size) {
@@ -2023,20 +2045,95 @@ TEST(Table, UnstablePointers) {
   EXPECT_NE(old_ptr, addr(0));
 }
 
-// Confirm that we assert if we try to erase() end().
-TEST(TableDeathTest, EraseOfEndAsserts) {
+bool IsAssertEnabled() {
   // Use an assert with side-effects to figure out if they are actually enabled.
   bool assert_enabled = false;
-  assert([&]() {
+  assert([&]() {  // NOLINT
     assert_enabled = true;
     return true;
   }());
-  if (!assert_enabled) return;
+  return assert_enabled;
+}
+
+TEST(TableDeathTest, InvalidIteratorAsserts) {
+  if (!IsAssertEnabled() && !SwisstableGenerationsEnabled())
+    GTEST_SKIP() << "Assertions not enabled.";
 
   IntTable t;
   // Extra simple "regexp" as regexp support is highly varied across platforms.
-  constexpr char kDeathMsg[] = "erase.. called on invalid iterator";
-  EXPECT_DEATH_IF_SUPPORTED(t.erase(t.end()), kDeathMsg);
+  EXPECT_DEATH_IF_SUPPORTED(t.erase(t.end()),
+                            "erase.* called on end.. iterator.");
+  typename IntTable::iterator iter;
+  EXPECT_DEATH_IF_SUPPORTED(
+      ++iter, "operator.* called on default-constructed iterator.");
+  t.insert(0);
+  iter = t.begin();
+  t.erase(iter);
+  const char* const kErasedDeathMessage =
+      SwisstableGenerationsEnabled()
+          ? "operator.* called on invalid iterator.*was likely erased"
+          : "operator.* called on invalid iterator.*might have been "
+            "erased.*config=asan";
+  EXPECT_DEATH_IF_SUPPORTED(++iter, kErasedDeathMessage);
+}
+
+// Invalid iterator use can trigger heap-use-after-free in asan,
+// use-of-uninitialized-value in msan, or invalidated iterator assertions.
+constexpr const char* kInvalidIteratorDeathMessage =
+    "heap-use-after-free|use-of-uninitialized-value|invalidated "
+    "iterator|Invalid iterator";
+
+// MSVC doesn't support | in regex.
+#if defined(_MSC_VER)
+constexpr bool kMsvc = true;
+#else
+constexpr bool kMsvc = false;
+#endif
+
+TEST(TableDeathTest, IteratorInvalidAssertsEqualityOperator) {
+  if (!IsAssertEnabled() && !SwisstableGenerationsEnabled())
+    GTEST_SKIP() << "Assertions not enabled.";
+
+  IntTable t;
+  t.insert(1);
+  t.insert(2);
+  t.insert(3);
+  auto iter1 = t.begin();
+  auto iter2 = std::next(iter1);
+  ASSERT_NE(iter1, t.end());
+  ASSERT_NE(iter2, t.end());
+  t.erase(iter1);
+  // Extra simple "regexp" as regexp support is highly varied across platforms.
+  const char* const kErasedDeathMessage =
+      SwisstableGenerationsEnabled()
+          ? "Invalid iterator comparison.*was likely erased"
+          : "Invalid iterator comparison.*might have been erased.*config=asan";
+  EXPECT_DEATH_IF_SUPPORTED(void(iter1 == iter2), kErasedDeathMessage);
+  EXPECT_DEATH_IF_SUPPORTED(void(iter2 != iter1), kErasedDeathMessage);
+  t.erase(iter2);
+  EXPECT_DEATH_IF_SUPPORTED(void(iter1 == iter2), kErasedDeathMessage);
+
+  IntTable t1, t2;
+  t1.insert(0);
+  t2.insert(0);
+  iter1 = t1.begin();
+  iter2 = t2.begin();
+  const char* const kContainerDiffDeathMessage =
+      SwisstableGenerationsEnabled()
+          ? "Invalid iterator comparison.*iterators from different hashtables"
+          : "Invalid iterator comparison.*may be from different "
+            ".*containers.*config=asan";
+  EXPECT_DEATH_IF_SUPPORTED(void(iter1 == iter2), kContainerDiffDeathMessage);
+  EXPECT_DEATH_IF_SUPPORTED(void(iter2 == iter1), kContainerDiffDeathMessage);
+
+  for (int i = 0; i < 10; ++i) t1.insert(i);
+  // There should have been a rehash in t1.
+  if (kMsvc) return;  // MSVC doesn't support | in regex.
+  const char* const kRehashedDeathMessage =
+      SwisstableGenerationsEnabled()
+          ? kInvalidIteratorDeathMessage
+          : "Invalid iterator comparison.*might have rehashed.*config=asan";
+  EXPECT_DEATH_IF_SUPPORTED(void(iter1 == t1.begin()), kRehashedDeathMessage);
 }
 
 #if defined(ABSL_INTERNAL_HASHTABLEZ_SAMPLE)
@@ -2047,7 +2144,7 @@ TEST(RawHashSamplerTest, Sample) {
 
   auto& sampler = GlobalHashtablezSampler();
   size_t start_size = 0;
-  std::unordered_set<const HashtablezInfo*> preexisting_info;
+  absl::flat_hash_set<const HashtablezInfo*> preexisting_info;
   start_size += sampler.Iterate([&](const HashtablezInfo& info) {
     preexisting_info.insert(&info);
     ++start_size;
@@ -2074,8 +2171,8 @@ TEST(RawHashSamplerTest, Sample) {
     }
   }
   size_t end_size = 0;
-  std::unordered_map<size_t, int> observed_checksums;
-  std::unordered_map<ssize_t, int> reservations;
+  absl::flat_hash_map<size_t, int> observed_checksums;
+  absl::flat_hash_map<ssize_t, int> reservations;
   end_size += sampler.Iterate([&](const HashtablezInfo& info) {
     if (preexisting_info.count(&info) == 0) {
       observed_checksums[info.hashes_bitwise_xor.load(
@@ -2179,6 +2276,129 @@ TEST(Table, AlignOne) {
   for (uint8_t u : t) {
     EXPECT_EQ(verifier.count(u), 1);
   }
+}
+
+TEST(Iterator, InvalidUseCrashesWithSanitizers) {
+  if (!SwisstableGenerationsEnabled()) GTEST_SKIP() << "Generations disabled.";
+  if (kMsvc) GTEST_SKIP() << "MSVC doesn't support | in regexp.";
+
+  IntTable t;
+  // Start with 1 element so that `it` is never an end iterator.
+  t.insert(-1);
+  for (int i = 0; i < 10; ++i) {
+    auto it = t.begin();
+    t.insert(i);
+    EXPECT_DEATH_IF_SUPPORTED(*it, kInvalidIteratorDeathMessage);
+    EXPECT_DEATH_IF_SUPPORTED(void(it == t.begin()),
+                              kInvalidIteratorDeathMessage);
+  }
+}
+
+TEST(Iterator, InvalidUseWithReserveCrashesWithSanitizers) {
+  if (!SwisstableGenerationsEnabled()) GTEST_SKIP() << "Generations disabled.";
+  if (kMsvc) GTEST_SKIP() << "MSVC doesn't support | in regexp.";
+
+  IntTable t;
+  t.reserve(10);
+  t.insert(0);
+  auto it = t.begin();
+  // Reserved growth can't rehash.
+  for (int i = 1; i < 10; ++i) {
+    t.insert(i);
+    EXPECT_EQ(*it, 0);
+  }
+  // ptr will become invalidated on rehash.
+  const int64_t* ptr = &*it;
+  (void)ptr;
+
+  // erase decreases size but does not decrease reserved growth so the next
+  // insertion still invalidates iterators.
+  t.erase(0);
+  // The first insert after reserved growth is 0 is guaranteed to rehash when
+  // generations are enabled.
+  t.insert(10);
+  EXPECT_DEATH_IF_SUPPORTED(*it, kInvalidIteratorDeathMessage);
+  EXPECT_DEATH_IF_SUPPORTED(void(it == t.begin()),
+                            kInvalidIteratorDeathMessage);
+#ifdef ABSL_HAVE_ADDRESS_SANITIZER
+  EXPECT_DEATH_IF_SUPPORTED(std::cout << *ptr, "heap-use-after-free");
+#endif
+}
+
+TEST(Table, ReservedGrowthUpdatesWhenTableDoesntGrow) {
+  IntTable t;
+  for (int i = 0; i < 8; ++i) t.insert(i);
+  // Want to insert twice without invalidating iterators so reserve.
+  const size_t cap = t.capacity();
+  t.reserve(t.size() + 2);
+  // We want to be testing the case in which the reserve doesn't grow the table.
+  ASSERT_EQ(cap, t.capacity());
+  auto it = t.find(0);
+  t.insert(100);
+  t.insert(200);
+  // `it` shouldn't have been invalidated.
+  EXPECT_EQ(*it, 0);
+}
+
+TEST(Table, GenerationInfoResetsOnClear) {
+  if (!SwisstableGenerationsEnabled()) GTEST_SKIP() << "Generations disabled.";
+  if (kMsvc) GTEST_SKIP() << "MSVC doesn't support | in regexp.";
+
+  IntTable t;
+  for (int i = 0; i < 1000; ++i) t.insert(i);
+  t.reserve(t.size() + 100);
+
+  t.clear();
+
+  t.insert(0);
+  auto it = t.begin();
+  t.insert(1);
+  EXPECT_DEATH_IF_SUPPORTED(*it, kInvalidIteratorDeathMessage);
+}
+
+TEST(Table, InvalidReferenceUseCrashesWithSanitizers) {
+  if (!SwisstableGenerationsEnabled()) GTEST_SKIP() << "Generations disabled.";
+#ifdef ABSL_HAVE_MEMORY_SANITIZER
+  GTEST_SKIP() << "MSan fails to detect some of these rehashes.";
+#endif
+
+  IntTable t;
+  t.insert(0);
+  // Rehashing is guaranteed on every insertion while capacity is less than
+  // RehashProbabilityConstant().
+  int64_t i = 0;
+  while (t.capacity() <= RehashProbabilityConstant()) {
+    // ptr will become invalidated on rehash.
+    const int64_t* ptr = &*t.begin();
+    t.insert(++i);
+    EXPECT_DEATH_IF_SUPPORTED(std::cout << *ptr, "heap-use-after-free") << i;
+  }
+}
+
+TEST(Iterator, InvalidComparisonDifferentTables) {
+  if (!SwisstableGenerationsEnabled()) GTEST_SKIP() << "Generations disabled.";
+
+  IntTable t1, t2;
+  IntTable::iterator default_constructed_iter;
+  // We randomly use one of N empty generations for generations from empty
+  // hashtables. In general, we won't always detect when iterators from
+  // different empty hashtables are compared, but in this test case, we
+  // should deterministically detect the error due to our randomness yielding
+  // consecutive random generations.
+  EXPECT_DEATH_IF_SUPPORTED(void(t1.end() == t2.end()),
+                            "Invalid iterator comparison.*empty hashtables");
+  EXPECT_DEATH_IF_SUPPORTED(void(t1.end() == default_constructed_iter),
+                            "Invalid iterator comparison.*default-constructed");
+  t1.insert(0);
+  EXPECT_DEATH_IF_SUPPORTED(void(t1.begin() == t2.end()),
+                            "Invalid iterator comparison.*empty hashtable");
+  EXPECT_DEATH_IF_SUPPORTED(void(t1.begin() == default_constructed_iter),
+                            "Invalid iterator comparison.*default-constructed");
+  t2.insert(0);
+  EXPECT_DEATH_IF_SUPPORTED(void(t1.begin() == t2.end()),
+                            "Invalid iterator comparison.*end.. iterator");
+  EXPECT_DEATH_IF_SUPPORTED(void(t1.begin() == t2.begin()),
+                            "Invalid iterator comparison.*non-end");
 }
 
 }  // namespace

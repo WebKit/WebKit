@@ -17,6 +17,7 @@
 #include <algorithm>
 #include <array>
 #include <bitset>
+#include <cstdint>
 #include <cstring>
 #include <deque>
 #include <forward_list>
@@ -51,6 +52,10 @@
 #include "absl/meta/type_traits.h"
 #include "absl/numeric/int128.h"
 #include "absl/strings/cord_test_helpers.h"
+
+#ifdef ABSL_HAVE_STD_STRING_VIEW
+#include <string_view>
+#endif
 
 namespace {
 
@@ -222,7 +227,7 @@ TEST(HashValueTest, PointerAlignment) {
     // Limit the scope to the bits we would be using for Swisstable.
     constexpr size_t kMask = (1 << (kLog2NumValues + 7)) - 1;
     size_t stuck_bits = (~bits_or | bits_and) & kMask;
-    EXPECT_EQ(stuck_bits, 0) << "0x" << std::hex << stuck_bits;
+    EXPECT_EQ(stuck_bits, 0u) << "0x" << std::hex << stuck_bits;
   }
 }
 
@@ -487,6 +492,47 @@ TEST(HashValueTest, U32String) {
       std::u32string(U"Iñtërnâtiônàlizætiøn"))));
 }
 
+TEST(HashValueTest, WStringView) {
+#ifndef ABSL_HAVE_STD_STRING_VIEW
+  GTEST_SKIP();
+#else
+  EXPECT_TRUE((is_hashable<std::wstring_view>::value));
+
+  EXPECT_TRUE(absl::VerifyTypeImplementsAbslHashCorrectly(std::make_tuple(
+      std::wstring_view(), std::wstring_view(L"ABC"), std::wstring_view(L"ABC"),
+      std::wstring_view(L"Some other different string_view"),
+      std::wstring_view(L"Iñtërnâtiônàlizætiøn"))));
+#endif
+}
+
+TEST(HashValueTest, U16StringView) {
+#ifndef ABSL_HAVE_STD_STRING_VIEW
+  GTEST_SKIP();
+#else
+  EXPECT_TRUE((is_hashable<std::u16string_view>::value));
+
+  EXPECT_TRUE(absl::VerifyTypeImplementsAbslHashCorrectly(
+      std::make_tuple(std::u16string_view(), std::u16string_view(u"ABC"),
+                      std::u16string_view(u"ABC"),
+                      std::u16string_view(u"Some other different string_view"),
+                      std::u16string_view(u"Iñtërnâtiônàlizætiøn"))));
+#endif
+}
+
+TEST(HashValueTest, U32StringView) {
+#ifndef ABSL_HAVE_STD_STRING_VIEW
+  GTEST_SKIP();
+#else
+  EXPECT_TRUE((is_hashable<std::u32string_view>::value));
+
+  EXPECT_TRUE(absl::VerifyTypeImplementsAbslHashCorrectly(
+      std::make_tuple(std::u32string_view(), std::u32string_view(U"ABC"),
+                      std::u32string_view(U"ABC"),
+                      std::u32string_view(U"Some other different string_view"),
+                      std::u32string_view(U"Iñtërnâtiônàlizætiøn"))));
+#endif
+}
+
 TEST(HashValueTest, StdArray) {
   EXPECT_TRUE((is_hashable<std::array<int, 3>>::value));
 
@@ -737,10 +783,10 @@ TEST(HashValueTest, CombinePiecewiseBuffer) {
   //
   // This test is run on a buffer that is a multiple of the stride size, and one
   // that isn't.
-  for (size_t big_buffer_size : {1024 * 2 + 512, 1024 * 3}) {
+  for (size_t big_buffer_size : {1024u * 2 + 512u, 1024u * 3}) {
     SCOPED_TRACE(big_buffer_size);
     std::string big_buffer;
-    for (int i = 0; i < big_buffer_size; ++i) {
+    for (size_t i = 0; i < big_buffer_size; ++i) {
       // Arbitrary string
       big_buffer.push_back(32 + (i * (i / 3)) % 64);
     }
@@ -904,8 +950,8 @@ TEST(IsHashableTest, PoisonHash) {
   EXPECT_FALSE(absl::is_copy_assignable<absl::Hash<X>>::value);
   EXPECT_FALSE(absl::is_move_assignable<absl::Hash<X>>::value);
   EXPECT_FALSE(IsHashCallable<X>::value);
-#if !defined(__GNUC__) || __GNUC__ < 9
-  // This doesn't compile on GCC 9.
+#if !defined(__GNUC__) || defined(__clang__)
+  // TODO(b/144368551): As of GCC 8.4 this does not compile.
   EXPECT_FALSE(IsAggregateInitializable<absl::Hash<X>>::value);
 #endif
 }
@@ -1135,10 +1181,10 @@ TEST(HashTest, HashNonUniquelyRepresentedType) {
   unsigned char buffer2[kNumStructs * sizeof(StructWithPadding)];
   std::memset(buffer2, 255, sizeof(buffer2));
   auto* s2 = reinterpret_cast<StructWithPadding*>(buffer2);
-  for (int i = 0; i < kNumStructs; ++i) {
+  for (size_t i = 0; i < kNumStructs; ++i) {
     SCOPED_TRACE(i);
-    s1[i].c = s2[i].c = '0' + i;
-    s1[i].i = s2[i].i = i;
+    s1[i].c = s2[i].c = static_cast<char>('0' + i);
+    s1[i].i = s2[i].i = static_cast<int>(i);
     ASSERT_FALSE(memcmp(buffer1 + i * sizeof(StructWithPadding),
                         buffer2 + i * sizeof(StructWithPadding),
                         sizeof(StructWithPadding)) == 0)
@@ -1226,7 +1272,9 @@ struct ValueWithBoolConversion {
 namespace std {
 template <>
 struct hash<ValueWithBoolConversion> {
-  size_t operator()(ValueWithBoolConversion v) { return v.i; }
+  size_t operator()(ValueWithBoolConversion v) {
+    return static_cast<size_t>(v.i);
+  }
 };
 }  // namespace std
 
@@ -1239,14 +1287,24 @@ TEST(HashTest, DoesNotUseImplicitConversionsToBool) {
 
 TEST(HashOf, MatchesHashForSingleArgument) {
   std::string s = "forty two";
-  int i = 42;
   double d = 42.0;
   std::tuple<int, int> t{4, 2};
+  int i = 42;
+  int neg_i = -42;
+  int16_t i16 = 42;
+  int16_t neg_i16 = -42;
+  int8_t i8 = 42;
+  int8_t neg_i8 = -42;
 
   EXPECT_EQ(absl::HashOf(s), absl::Hash<std::string>{}(s));
-  EXPECT_EQ(absl::HashOf(i), absl::Hash<int>{}(i));
   EXPECT_EQ(absl::HashOf(d), absl::Hash<double>{}(d));
   EXPECT_EQ(absl::HashOf(t), (absl::Hash<std::tuple<int, int>>{}(t)));
+  EXPECT_EQ(absl::HashOf(i), absl::Hash<int>{}(i));
+  EXPECT_EQ(absl::HashOf(neg_i), absl::Hash<int>{}(neg_i));
+  EXPECT_EQ(absl::HashOf(i16), absl::Hash<int16_t>{}(i16));
+  EXPECT_EQ(absl::HashOf(neg_i16), absl::Hash<int16_t>{}(neg_i16));
+  EXPECT_EQ(absl::HashOf(i8), absl::Hash<int8_t>{}(i8));
+  EXPECT_EQ(absl::HashOf(neg_i8), absl::Hash<int8_t>{}(neg_i8));
 }
 
 TEST(HashOf, MatchesHashOfTupleForMultipleArguments) {

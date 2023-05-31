@@ -48,6 +48,7 @@
     ::absl::raw_log_internal::RawLog(ABSL_RAW_LOG_INTERNAL_##severity,         \
                                      absl_raw_log_internal_basename, __LINE__, \
                                      __VA_ARGS__);                             \
+    ABSL_RAW_LOG_INTERNAL_MAYBE_UNREACHABLE_##severity;                        \
   } while (0)
 
 // Similar to CHECK(condition) << message, but for low-level modules:
@@ -77,8 +78,7 @@
     ::absl::raw_log_internal::internal_log_function(                      \
         ABSL_RAW_LOG_INTERNAL_##severity, absl_raw_log_internal_filename, \
         __LINE__, message);                                               \
-    if (ABSL_RAW_LOG_INTERNAL_##severity == ::absl::LogSeverity::kFatal)  \
-      ABSL_INTERNAL_UNREACHABLE;                                          \
+    ABSL_RAW_LOG_INTERNAL_MAYBE_UNREACHABLE_##severity;                   \
   } while (0)
 
 #define ABSL_INTERNAL_CHECK(condition, message)                    \
@@ -90,12 +90,32 @@
     }                                                              \
   } while (0)
 
+#ifndef NDEBUG
+
+#define ABSL_RAW_DLOG(severity, ...) ABSL_RAW_LOG(severity, __VA_ARGS__)
+#define ABSL_RAW_DCHECK(condition, message) ABSL_RAW_CHECK(condition, message)
+
+#else  // NDEBUG
+
+#define ABSL_RAW_DLOG(severity, ...)                   \
+  while (false) ABSL_RAW_LOG(severity, __VA_ARGS__)
+#define ABSL_RAW_DCHECK(condition, message) \
+  while (false) ABSL_RAW_CHECK(condition, message)
+
+#endif  // NDEBUG
+
 #define ABSL_RAW_LOG_INTERNAL_INFO ::absl::LogSeverity::kInfo
 #define ABSL_RAW_LOG_INTERNAL_WARNING ::absl::LogSeverity::kWarning
 #define ABSL_RAW_LOG_INTERNAL_ERROR ::absl::LogSeverity::kError
 #define ABSL_RAW_LOG_INTERNAL_FATAL ::absl::LogSeverity::kFatal
 #define ABSL_RAW_LOG_INTERNAL_LEVEL(severity) \
   ::absl::NormalizeLogSeverity(severity)
+
+#define ABSL_RAW_LOG_INTERNAL_MAYBE_UNREACHABLE_INFO
+#define ABSL_RAW_LOG_INTERNAL_MAYBE_UNREACHABLE_WARNING
+#define ABSL_RAW_LOG_INTERNAL_MAYBE_UNREACHABLE_ERROR
+#define ABSL_RAW_LOG_INTERNAL_MAYBE_UNREACHABLE_FATAL ABSL_UNREACHABLE()
+#define ABSL_RAW_LOG_INTERNAL_MAYBE_UNREACHABLE_LEVEL(severity)
 
 namespace absl {
 ABSL_NAMESPACE_BEGIN
