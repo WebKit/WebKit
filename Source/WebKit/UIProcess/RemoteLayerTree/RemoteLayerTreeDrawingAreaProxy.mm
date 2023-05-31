@@ -52,7 +52,7 @@ namespace WebKit {
 using namespace IPC;
 using namespace WebCore;
 
-RemoteLayerTreeDrawingAreaProxy::RemoteLayerTreeDrawingAreaProxy(WebPageProxy& pageProxy, WebProcessProxy& processProxy)
+RemoteLayerTreeDrawingAreaProxy::RemoteLayerTreeDrawingAreaProxy(WebPageProxy& pageProxy)
     : DrawingAreaProxy(DrawingAreaType::RemoteLayerTree, pageProxy)
     , m_remoteLayerTreeHost(makeUnique<RemoteLayerTreeHost>(*this))
 {
@@ -60,28 +60,22 @@ RemoteLayerTreeDrawingAreaProxy::RemoteLayerTreeDrawingAreaProxy(WebPageProxy& p
     // FIXME: We should do this somewhere else.
     IOSurfacePool::sharedPool().setPoolSize(0);
 
-    startReceivingRemoteLayerTreeDrawingAreaProxyMessages(processProxy);
-
     if (m_webPageProxy.preferences().tiledScrollingIndicatorVisible())
         initializeDebugIndicator();
 }
 
-RemoteLayerTreeDrawingAreaProxy::~RemoteLayerTreeDrawingAreaProxy()
+RemoteLayerTreeDrawingAreaProxy::~RemoteLayerTreeDrawingAreaProxy() = default;
+
+void RemoteLayerTreeDrawingAreaProxy::startReceivingMessages(WebProcessProxy& process)
 {
-    for (auto& process : m_processesWithRegisteredRemoteLayerTreeDrawingAreaProxyMessageReceiver)
-        process->removeMessageReceiver(Messages::RemoteLayerTreeDrawingAreaProxy::messageReceiverName(), m_identifier);
+    DrawingAreaProxy::startReceivingMessages(process);
+    process.addMessageReceiver(Messages::RemoteLayerTreeDrawingAreaProxy::messageReceiverName(), m_identifier, *this);
 }
 
-void RemoteLayerTreeDrawingAreaProxy::attachToProvisionalFrameProcess(WebProcessProxy& process)
+void RemoteLayerTreeDrawingAreaProxy::stopReceivingMessages(WebProcessProxy& process)
 {
-    startReceivingRemoteLayerTreeDrawingAreaProxyMessages(process);
-    startReceivingMessages(process);
-}
-
-void RemoteLayerTreeDrawingAreaProxy::startReceivingRemoteLayerTreeDrawingAreaProxyMessages(WebProcessProxy& processProxy)
-{
-    processProxy.addMessageReceiver(Messages::RemoteLayerTreeDrawingAreaProxy::messageReceiverName(), m_identifier, *this);
-    m_processesWithRegisteredRemoteLayerTreeDrawingAreaProxyMessageReceiver.append(processProxy);
+    DrawingAreaProxy::stopReceivingMessages(process);
+    process.removeMessageReceiver(Messages::RemoteLayerTreeDrawingAreaProxy::messageReceiverName(), m_identifier);
 }
 
 std::unique_ptr<RemoteLayerTreeHost> RemoteLayerTreeDrawingAreaProxy::detachRemoteLayerTreeHost()
@@ -442,19 +436,6 @@ void RemoteLayerTreeDrawingAreaProxy::waitForDidUpdateActivityState(ActivityStat
         if (!weakThis || activityStateChangeID == ActivityStateChangeAsynchronous || activityStateChangeID <= m_activityStateChangeID)
             return;
     }
-}
-
-void RemoteLayerTreeDrawingAreaProxy::dispatchAfterEnsuringDrawing(CompletionHandler<void()>&& callbackFunction)
-{
-    if (!m_webPageProxy.hasRunningProcess()) {
-        callbackFunction();
-        return;
-    }
-
-    auto aggregator = CallbackAggregator::create(WTFMove(callbackFunction));
-    m_webPageProxy.sendWithAsyncReply(Messages::DrawingArea::DispatchAfterEnsuringDrawing(), [aggregator] { }, m_identifier);
-    for (auto& process : m_processesWithRegisteredRemoteLayerTreeDrawingAreaProxyMessageReceiver)
-        process->sendWithAsyncReply(Messages::DrawingArea::DispatchAfterEnsuringDrawing(), [aggregator] { }, m_identifier);
 }
 
 void RemoteLayerTreeDrawingAreaProxy::hideContentUntilPendingUpdate()

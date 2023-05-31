@@ -38,7 +38,6 @@ public:
 
 private:
     // DrawingAreaProxy
-    void attachToProvisionalFrameProcess(WebProcessProxy&) final { ASSERT_NOT_REACHED(); }
     void deviceScaleFactorDidChange() override;
     void sizeDidChange() override;
     void colorSpaceDidChange() override;
@@ -54,7 +53,6 @@ private:
 
     void waitForDidUpdateActivityState(ActivityStateChangeID, WebProcessProxy&) override;
     void dispatchPresentationCallbacksAfterFlushingLayers(IPC::Connection&, Vector<IPC::AsyncReplyID>&&) final;
-    void dispatchAfterEnsuringDrawing(CompletionHandler<void()>&&) final;
 
     void willSendUpdateGeometry();
 

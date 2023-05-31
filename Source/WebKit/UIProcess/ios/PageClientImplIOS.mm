@@ -96,9 +96,9 @@ PageClientImpl::~PageClientImpl()
 {
 }
 
-std::unique_ptr<DrawingAreaProxy> PageClientImpl::createDrawingAreaProxy(WebProcessProxy& process)
+std::unique_ptr<DrawingAreaProxy> PageClientImpl::createDrawingAreaProxy()
 {
-    return [m_contentView _createDrawingAreaProxy:process];
+    return [m_contentView _createDrawingAreaProxy];
 }
 
 void PageClientImpl::setViewNeedsDisplay(const Region&)

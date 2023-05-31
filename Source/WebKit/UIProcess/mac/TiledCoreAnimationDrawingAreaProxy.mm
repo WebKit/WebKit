@@ -206,16 +206,6 @@ void TiledCoreAnimationDrawingAreaProxy::commitTransientZoom(double scale, Float
     m_webPageProxy.send(Messages::DrawingArea::CommitTransientZoom(scale, origin), m_identifier);
 }
 
-void TiledCoreAnimationDrawingAreaProxy::dispatchAfterEnsuringDrawing(CompletionHandler<void()>&& callback)
-{
-    if (!m_webPageProxy.hasRunningProcess()) {
-        callback();
-        return;
-    }
-
-    m_webPageProxy.sendWithAsyncReply(Messages::DrawingArea::DispatchAfterEnsuringDrawing(), WTFMove(callback), m_identifier.toUInt64());
-}
-
 void TiledCoreAnimationDrawingAreaProxy::dispatchPresentationCallbacksAfterFlushingLayers(IPC::Connection& connection, Vector<IPC::AsyncReplyID>&& callbackIDs)
 {
     for (auto& callbackID : callbackIDs) {

@@ -42,7 +42,7 @@ class RemoteScrollingCoordinatorTransaction;
 
 class RemoteLayerTreeDrawingAreaProxy : public DrawingAreaProxy {
 public:
-    RemoteLayerTreeDrawingAreaProxy(WebPageProxy&, WebProcessProxy&);
+    RemoteLayerTreeDrawingAreaProxy(WebPageProxy&);
     virtual ~RemoteLayerTreeDrawingAreaProxy();
 
     virtual bool isRemoteLayerTreeDrawingAreaProxyMac() const { return false; }
@@ -88,13 +88,9 @@ private:
     void minimumSizeForAutoLayoutDidChange() final;
     void sizeToContentAutoSizeMaximumSizeDidChange() final;
     void didUpdateGeometry();
-    void attachToProvisionalFrameProcess(WebProcessProxy&) final;
-    void startReceivingRemoteLayerTreeDrawingAreaProxyMessages(WebProcessProxy&);
+    void startReceivingMessages(WebProcessProxy&) final;
+    void stopReceivingMessages(WebProcessProxy&) final;
 
-    // For now, all callbacks are called before committing changes, because that's what the only client requires.
-    // Once we have other callbacks, it may make sense to have a before-commit/after-commit option.
-    void dispatchAfterEnsuringDrawing(CompletionHandler<void()>&&) final;
-    
     virtual void scheduleDisplayRefreshCallbacks() { }
     virtual void pauseDisplayRefreshCallbacks() { }
 
@@ -154,8 +150,6 @@ private:
     ActivityStateChangeID m_activityStateChangeID { ActivityStateChangeAsynchronous };
     
     unsigned m_countOfTransactionsWithNonEmptyLayerChanges { 0 };
-
-    Vector<Ref<WebProcessProxy>> m_processesWithRegisteredRemoteLayerTreeDrawingAreaProxyMessageReceiver;
 };
 
 } // namespace WebKit

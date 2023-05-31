@@ -396,7 +396,6 @@ void WebFrameProxy::commitProvisionalFrame(FrameIdentifier frameID, FrameInfoDat
 
         RegistrableDomain oldDomain(url());
         m_subframePageProxy = m_page->subpageFrameProxyForRegistrableDomain(RegistrableDomain(request.url()));
-        m_page->removeSubpageFrameProxyIfUnused(oldDomain);
     }
     m_page->didCommitLoadForFrame(frameID, WTFMove(frameInfo), WTFMove(request), navigationID, mimeType, frameHasCustomContentProvider, frameLoadType, certificateInfo, usedLegacyTLS, privateRelayed, containsPluginDocument, hasInsecureContent, mouseEventPolicy, userData);
 }

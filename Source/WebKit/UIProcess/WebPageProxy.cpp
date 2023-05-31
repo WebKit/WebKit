@@ -68,6 +68,7 @@
 #include "DragControllerAction.h"
 #include "DrawingAreaMessages.h"
 #include "DrawingAreaProxy.h"
+#include "DrawingAreaProxyMessages.h"
 #include "EventDispatcherMessages.h"
 #include "FormDataReference.h"
 #include "FrameInfoData.h"
@@ -353,6 +354,10 @@
 
 #if USE(SYSTEM_PREVIEW)
 #include "SystemPreviewController.h"
+#endif
+
+#if USE(COORDINATED_GRAPHICS)
+#include "DrawingAreaProxyCoordinatedGraphics.h"
 #endif
 
 #if ENABLE(WK_WEB_EXTENSIONS)
@@ -1273,6 +1278,9 @@ void WebPageProxy::setDrawingArea(std::unique_ptr<DrawingAreaProxy>&& drawingAre
     m_scrollingCoordinatorProxy = nullptr;
 #endif
 
+    if (m_drawingArea)
+        m_drawingArea->stopReceivingMessages(process());
+
     m_drawingArea = WTFMove(drawingArea);
     if (!m_drawingArea)
         return;
@@ -1291,7 +1299,7 @@ void WebPageProxy::initializeWebPage()
     if (!hasRunningProcess())
         return;
 
-    setDrawingArea(pageClient().createDrawingAreaProxy(m_process));
+    setDrawingArea(pageClient().createDrawingAreaProxy());
     ASSERT(m_drawingArea);
 
 #if ENABLE(REMOTE_INSPECTOR)
@@ -5782,7 +5790,12 @@ void WebPageProxy::createRemoteSubframesInOtherProcesses(WebFrameProxy& newFrame
     auto& internals = this->internals();
 
     // FIXME: We'll also have to use this pattern to update remoteProcessIdentifier so that postMessage continues to work after an iframe changes processes.
-    for (auto& subframePageProxy : internals.domainToSubframePageProxyMap.values()) {
+    for (auto& pair : internals.domainToSubframePageProxyMap) {
+        auto& subframePageProxy = pair.value;
+        if (!subframePageProxy) {
+            ASSERT_NOT_REACHED();
+            continue;
+        }
         if (&subframePageProxy->process() == &newFrameProcess)
             continue;
         subframePageProxy->send(Messages::WebPage::CreateRemoteSubframe(parent->frameID(), newFrame.frameID(), newFrameProcess.coreProcessIdentifier()));
@@ -11070,12 +11083,20 @@ void WebPageProxy::clearWheelEventTestMonitor()
 
 void WebPageProxy::callAfterNextPresentationUpdate(CompletionHandler<void()>&& callback)
 {
-    if (!hasRunningProcess() || !m_drawingArea) {
-        callback();
-        return;
-    }
+    if (!hasRunningProcess() || !m_drawingArea)
+        return callback();
 
-    m_drawingArea->dispatchAfterEnsuringDrawing(WTFMove(callback));
+#if PLATFORM(COCOA)
+    auto aggregator = CallbackAggregator::create(WTFMove(callback));
+    auto drawingAreaIdentifier = m_drawingArea->identifier();
+    sendWithAsyncReply(Messages::DrawingArea::DispatchAfterEnsuringDrawing(), [aggregator] { }, drawingAreaIdentifier);
+    for (auto& subframePageProxy : internals().domainToSubframePageProxyMap.values())
+        subframePageProxy->sendWithAsyncReply(Messages::DrawingArea::DispatchAfterEnsuringDrawing(), [aggregator] { }, drawingAreaIdentifier);
+#elif USE(COORDINATED_GRAPHICS)
+    downcast<DrawingAreaProxyCoordinatedGraphics>(*m_drawingArea).dispatchAfterEnsuringDrawing(WTFMove(callback));
+#else
+    callback();
+#endif
 }
 
 void WebPageProxy::setShouldScaleViewToFitDocument(bool shouldScaleViewToFitDocument)
@@ -12549,17 +12570,14 @@ void WebPageProxy::generateTestReport(const String& message, const String& group
     send(Messages::WebPage::GenerateTestReport(message, group));
 }
 
-void WebPageProxy::addSubframePageProxy(const WebCore::RegistrableDomain& domain, Ref<SubframePageProxy>&& subframePageProxy)
+void WebPageProxy::addSubframePageProxy(const WebCore::RegistrableDomain& domain, WeakPtr<SubframePageProxy>&& subframePageProxy)
 {
     internals().domainToSubframePageProxyMap.add(domain, WTFMove(subframePageProxy));
 }
 
-void WebPageProxy::removeSubpageFrameProxyIfUnused(const WebCore::RegistrableDomain& domain)
+void WebPageProxy::removeSubpageFrameProxy(const WebCore::RegistrableDomain& domain)
 {
-    auto& map = internals().domainToSubframePageProxyMap;
-    auto it = map.find(domain);
-    if (it != map.end() && !it->value)
-        map.remove(it);
+    internals().domainToSubframePageProxyMap.remove(domain);
 }
 
 SubframePageProxy* WebPageProxy::subpageFrameProxyForRegistrableDomain(WebCore::RegistrableDomain domain) const

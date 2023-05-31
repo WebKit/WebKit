@@ -38,26 +38,36 @@
 
 namespace WebKit {
 
-SubframePageProxy::SubframePageProxy(WebPageProxy& page, WebProcessProxy& process)
+SubframePageProxy::SubframePageProxy(WebPageProxy& page, WebProcessProxy& process, const WebCore::RegistrableDomain& domain)
     : m_webPageID(page.webPageID())
     , m_process(process)
     , m_page(page)
+    , m_domain(domain)
 {
     m_process->addMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_webPageID, *this);
 
     auto* drawingArea = page.drawingArea();
+    RELEASE_ASSERT(drawingArea);
+    drawingArea->startReceivingMessages(m_process);
+
     auto parameters = page.creationParameters(m_process, *drawingArea);
     parameters.subframeProcessFrameTreeCreationParameters = page.frameTreeCreationParameters();
     parameters.isProcessSwap = true; // FIXME: This should be a parameter to creationParameters rather than doctoring up the parameters afterwards.
     parameters.topContentInset = 0;
     m_process->send(Messages::WebProcess::CreateWebPage(m_webPageID, parameters), 0);
     m_process->addVisitedLinkStoreUser(page.visitedLinkStore(), page.identifier());
-    drawingArea->attachToProvisionalFrameProcess(m_process);
+    page.addSubframePageProxy(domain, *this);
 }
 
 SubframePageProxy::~SubframePageProxy()
 {
     m_process->removeMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_webPageID);
+
+    if (auto* drawingArea = m_page->drawingArea())
+        drawingArea->stopReceivingMessages(m_process);
+
+    if (m_page)
+        m_page->removeSubpageFrameProxy(m_domain);
 }
 
 IPC::Connection* SubframePageProxy::messageSenderConnection() const

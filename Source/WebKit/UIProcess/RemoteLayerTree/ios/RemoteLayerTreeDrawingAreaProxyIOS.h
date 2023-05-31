@@ -35,7 +35,7 @@ namespace WebKit {
 
 class RemoteLayerTreeDrawingAreaProxyIOS final : public RemoteLayerTreeDrawingAreaProxy {
 public:
-    RemoteLayerTreeDrawingAreaProxyIOS(WebPageProxy&, WebProcessProxy&);
+    RemoteLayerTreeDrawingAreaProxyIOS(WebPageProxy&);
     virtual ~RemoteLayerTreeDrawingAreaProxyIOS();
 
 private:

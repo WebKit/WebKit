@@ -29,6 +29,7 @@
 #include "MessageSender.h"
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/PageIdentifier.h>
+#include <WebCore/RegistrableDomain.h>
 
 namespace IPC {
 class Connection;
@@ -62,13 +63,13 @@ struct FrameInfoData;
 class SubframePageProxy : public RefCounted<SubframePageProxy>, public IPC::MessageReceiver, public IPC::MessageSender {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<SubframePageProxy> create(WebPageProxy& page, WebProcessProxy& process) { return adoptRef(*new SubframePageProxy(page, process)); }
+    static Ref<SubframePageProxy> create(WebPageProxy& page, WebProcessProxy& process, const WebCore::RegistrableDomain& domain) { return adoptRef(*new SubframePageProxy(page, process, domain)); }
     ~SubframePageProxy();
 
     WebProcessProxy& process() { return m_process.get(); }
 
 private:
-    SubframePageProxy(WebPageProxy&, WebProcessProxy&);
+    SubframePageProxy(WebPageProxy&, WebProcessProxy&, const WebCore::RegistrableDomain&);
     IPC::Connection* messageSenderConnection() const final;
     uint64_t messageSenderDestinationID() const final;
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
@@ -76,9 +77,10 @@ private:
     void decidePolicyForResponse(WebCore::FrameIdentifier, FrameInfoData&&, WebCore::PolicyCheckIdentifier, uint64_t navigationID, const WebCore::ResourceResponse&, const WebCore::ResourceRequest&, bool canShowMIMEType, const String& downloadAttribute, uint64_t listenerID);
     void didCommitLoadForFrame(WebCore::FrameIdentifier, FrameInfoData&&, WebCore::ResourceRequest&&, uint64_t navigationID, const String& mimeType, bool frameHasCustomContentProvider, WebCore::FrameLoadType, const WebCore::CertificateInfo&, bool usedLegacyTLS, bool privateRelayed, bool containsPluginDocument, WebCore::HasInsecureContent, WebCore::MouseEventPolicy, const UserData&);
 
-    WebCore::PageIdentifier m_webPageID;
-    Ref<WebProcessProxy> m_process;
+    const WebCore::PageIdentifier m_webPageID;
+    const Ref<WebProcessProxy> m_process;
     WeakPtr<WebPageProxy> m_page;
+    const WebCore::RegistrableDomain m_domain;
 };
 
 }
