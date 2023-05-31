@@ -23,17 +23,18 @@ if (window.accessibilityController) {
     setTimeout(async function() {
         var numOfTests = 6;
         for (let testId = 0; testId < numOfTests; testId++) {
+            testOutput += `Test case ${testId}:\n`;
             slider = accessibilityController.accessibleElementById("test" + testId);
             var shouldChange = document.getElementById("test" + testId).getAttribute("should-change") == "true" ? true : false;
             testOutput += expect("slider.intValue", "50");
 
             slider.increment();
-            await waitFor(() => slider.intValue === shouldChange ? 55 : 50);
+            await waitFor(() => slider.intValue === (shouldChange ? 55 : 50));
             testOutput += expect("slider.intValue", shouldChange ? "55" : "50");
 
             slider.decrement();
             slider.decrement();
-            await waitFor(() => slider.intValue === shouldChange ? 45 : 50);
+            await waitFor(() => slider.intValue === (shouldChange ? 45 : 50));
             testOutput += expect("slider.intValue", shouldChange ? "45" : "50");
         }
         debug(testOutput);
