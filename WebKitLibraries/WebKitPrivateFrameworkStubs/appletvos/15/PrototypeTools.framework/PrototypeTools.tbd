@@ -1,9 +1,0 @@
---- !tapi-tbd-v3
-archs:           [ x86_64, arm64 ]
-install-name:    '/System/Library/PrivateFrameworks/PrototypeTools.framework/PrototypeTools'
-objc-constraint: none
-platform: tvos
-exports:
-  - archs:           [ x86_64, arm64 ]
-    objc-classes:    [ PTButtonRow, PTDomain, PTEditFloatRow, PTModule, PTRestoreDefaultSettingsRowAction, PTRow, PTRowAction, PTSection, PTSettings, PTSliderRow, PTSRow, PTSwitchRow ]
-...
