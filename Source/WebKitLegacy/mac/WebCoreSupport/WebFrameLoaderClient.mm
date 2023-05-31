@@ -2174,7 +2174,7 @@ void WebFrameLoaderClient::finishedLoadingIcon(WebCore::FragmentedSharedBuffer* 
         return nil;
 
     _appLinkURL = appLinkURL;
-    _referrerURL = referrerURL;
+    _referrerURL = (NSURL *)WebCore::SecurityOrigin::create(URL { referrerURL })->toURL();
 
     return self;
 }
