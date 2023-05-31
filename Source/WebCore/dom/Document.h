@@ -148,6 +148,7 @@ class HTMLMapElement;
 class HTMLMediaElement;
 class HTMLMetaElement;
 class HTMLVideoElement;
+class HighlightRangeData;
 class HighlightRegister;
 class HitTestLocation;
 class HitTestRequest;
@@ -248,7 +249,6 @@ struct ApplicationManifest;
 struct BoundaryPoint;
 struct ClientOrigin;
 struct FocusOptions;
-struct HighlightRangeData;
 struct IntersectionObserverData;
 struct SecurityPolicyViolationEventInit;
 

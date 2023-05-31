@@ -6467,6 +6467,11 @@ imported/w3c/web-platform-tests/css/css-tables/zero-rowspan-001.html [ ImageOnly
 imported/w3c/web-platform-tests/css/css-tables/zero-rowspan-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-tables/html5-table-formatting-fixed-layout-1.html [ Pass Failure ]
 
+# This test started failing when we started supporting passing a Range to the Highlight constructor.
+# We used to only support StaticRange objects and thus ignore the passed in parameter, which
+# caused the test to pass by luck.
+imported/w3c/web-platform-tests/css/css-pseudo/highlight-painting-currentcolor-005.html [ ImageOnlyFailure ]
+
 # New failures after re-importing css-overflow
 imported/w3c/web-platform-tests/css/css-overflow/margin-block-end-scroll-area-001.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-overflow/overflow-clip-margin-010.html [ Skip ]
