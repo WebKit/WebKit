@@ -1627,8 +1627,6 @@ public:
     void compileStringCodePointAt(Node*);
     void compileStringLocaleCompare(Node*);
     void compileDateGet(Node*);
-    void compileGlobalIsNaN(Node*);
-    void compileNumberIsNaN(Node*);
 
     template<typename JSClass, typename Operation>
     void compileCreateInternalFieldObject(Node*, Operation);

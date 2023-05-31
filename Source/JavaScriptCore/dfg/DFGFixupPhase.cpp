@@ -2905,33 +2905,6 @@ private:
             }
             break;
 
-        case GlobalIsNaN: {
-            if (node->child1()->shouldSpeculateInt32()) {
-                fixEdge<Int32Use>(node->child1());
-                m_graph.convertToConstant(node, jsBoolean(false));
-                break;
-            }
-            if (node->child1()->shouldSpeculateNumber()) {
-                fixEdge<DoubleRepUse>(node->child1());
-                node->clearFlags(NodeMustGenerate);
-                break;
-            }
-            break;
-        }
-
-        case NumberIsNaN: {
-            if (node->child1()->shouldSpeculateInt32()) {
-                fixEdge<Int32Use>(node->child1());
-                m_graph.convertToConstant(node, jsBoolean(false));
-                break;
-            }
-            if (node->child1()->shouldSpeculateNumber()) {
-                fixEdge<DoubleRepUse>(node->child1());
-                break;
-            }
-            break;
-        }
-
         case SetCallee:
             fixEdge<CellUse>(node->child1());
             break;

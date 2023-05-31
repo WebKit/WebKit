@@ -1130,8 +1130,6 @@ private:
         case IsNumber:
         case IsBigInt:
         case NumberIsInteger:
-        case GlobalIsNaN:
-        case NumberIsNaN:
         case IsObject:
         case IsCallable:
         case IsConstructor:

@@ -261,7 +261,6 @@ bool doesGC(Graph& graph, Node* node)
     case DataViewSet:
     case PutByOffset:
     case WeakMapGet:
-    case NumberIsNaN:
         return false;
 
 #if ASSERT_ENABLED
@@ -446,9 +445,6 @@ bool doesGC(Graph& graph, Node* node)
     default:
 #endif // not ASSERT_ENABLED
         return true;
-
-    case GlobalIsNaN:
-        return node->child1().useKind() != DoubleRepUse;
 
     case CallNumberConstructor:
         switch (node->child1().useKind()) {

@@ -48,7 +48,7 @@ function acquireWritableStreamDefaultWriter(stream)
 // https://streams.spec.whatwg.org/#create-writable-stream
 function createWritableStream(startAlgorithm, writeAlgorithm, closeAlgorithm, abortAlgorithm, highWaterMark, sizeAlgorithm)
 {
-    @assert(typeof highWaterMark === "number" && highWaterMark === highWaterMark && highWaterMark >= 0);
+    @assert(typeof highWaterMark === "number" && !@isNaN(highWaterMark) && highWaterMark >= 0);
 
     const internalStream = { };
     @initializeWritableStreamSlots(internalStream, { });

@@ -106,12 +106,15 @@ function validateAndNormalizeQueuingStrategy(size, highWaterMark)
     if (size !== @undefined && typeof size !== "function")
         @throwTypeError("size parameter must be a function");
 
-    highWaterMark = @toNumber(highWaterMark);
+    const normalizedStrategy = {
+        size: size,
+        highWaterMark: @toNumber(highWaterMark)
+    };
 
-    if (highWaterMark !== highWaterMark || highWaterMark < 0)
+    if (@isNaN(normalizedStrategy.highWaterMark) || normalizedStrategy.highWaterMark < 0)
         @throwRangeError("highWaterMark value is negative or not a number");
 
-    return { size, highWaterMark };
+    return normalizedStrategy;
 }
 
 function newQueue()
@@ -187,11 +190,10 @@ function extractHighWaterMark(strategy, defaultHWM)
     if (highWaterMark === @undefined)
         return defaultHWM;
 
-    const result = @toNumber(highWaterMark);
-    if (result !== result || result < 0)
+    if (@isNaN(highWaterMark) || highWaterMark < 0)
         @throwRangeError("highWaterMark value is negative or not a number");
 
-    return result;
+    return @toNumber(highWaterMark);
 }
 
 function extractHighWaterMarkFromQueuingStrategyInit(init)

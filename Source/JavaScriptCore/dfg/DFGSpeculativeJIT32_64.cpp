@@ -3695,16 +3695,6 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
-    case GlobalIsNaN: {
-        compileGlobalIsNaN(node);
-        break;
-    }
-
-    case NumberIsNaN: {
-        compileNumberIsNaN(node);
-        break;
-    }
-
     case IsObject: {
         compileIsObject(node);
         break;

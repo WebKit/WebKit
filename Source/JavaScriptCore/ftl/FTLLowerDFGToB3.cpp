@@ -1510,12 +1510,6 @@ private:
         case NumberIsInteger:
             compileNumberIsInteger();
             break;
-        case GlobalIsNaN:
-            compileGlobalIsNaN();
-            break;
-        case NumberIsNaN:
-            compileNumberIsNaN();
-            break;
         case IsCellWithType:
             compileIsCellWithType();
             break;
@@ -13169,75 +13163,6 @@ IGNORE_CLANG_WARNINGS_END
 
         m_out.appendTo(continuation, lastNext);
         setBoolean(m_out.phi(Int32, trueResult, falseResult, patchpointResult));
-    }
-
-    void compileGlobalIsNaN()
-    {
-        switch (m_node->child1().useKind()) {
-        case DoubleRepUse: {
-            LValue argument = lowDouble(m_node->child1());
-            setBoolean(m_out.doubleNotEqualOrUnordered(argument, argument));
-            break;
-        }
-        case UntypedUse: {
-            JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
-            LValue argument = lowJSValue(m_node->child1());
-            bool mayBeInt32 = abstractValue(m_node->child1()).m_type & SpecInt32Only;
-            if (mayBeInt32) {
-                LBasicBlock notInt32NumberCase = m_out.newBlock();
-                LBasicBlock continuation = m_out.newBlock();
-
-                ValueFromBlock fastResult = m_out.anchor(m_out.constInt32(0));
-                m_out.branch(isInt32(argument, provenType(m_node->child1())), unsure(continuation), unsure(notInt32NumberCase));
-
-                LBasicBlock lastNext = m_out.appendTo(notInt32NumberCase, continuation);
-                ValueFromBlock slowResult = m_out.anchor(m_out.castToInt32(vmCall(Int64, operationIsNaN, weakPointer(globalObject), argument)));
-                m_out.jump(continuation);
-
-                m_out.appendTo(continuation, lastNext);
-                setBoolean(m_out.phi(Int32, fastResult, slowResult));
-            } else
-                setBoolean(m_out.castToInt32(vmCall(Int64, operationIsNaN, weakPointer(globalObject), argument)));
-            break;
-        }
-        default:
-            DFG_CRASH(m_graph, m_node, "Bad use kind");
-            break;
-        }
-    }
-
-    void compileNumberIsNaN()
-    {
-        switch (m_node->child1().useKind()) {
-        case DoubleRepUse: {
-            LValue argument = lowDouble(m_node->child1());
-            setBoolean(m_out.doubleNotEqualOrUnordered(argument, argument));
-            break;
-        }
-        case UntypedUse: {
-            LValue argument = lowJSValue(m_node->child1());
-            bool mayBeInt32 = abstractValue(m_node->child1()).m_type & SpecInt32Only;
-            if (mayBeInt32) {
-                LBasicBlock notInt32NumberCase = m_out.newBlock();
-                LBasicBlock continuation = m_out.newBlock();
-
-                ValueFromBlock fastResult = m_out.anchor(m_out.constInt32(0));
-                m_out.branch(isInt32(argument, provenType(m_node->child1())), unsure(continuation), unsure(notInt32NumberCase));
-
-                LBasicBlock lastNext = m_out.appendTo(notInt32NumberCase, continuation);
-                ValueFromBlock slowResult = m_out.anchor(m_out.castToInt32(vmCall(Int64, operationNumberIsNaN, argument)));
-                m_out.jump(continuation);
-
-                m_out.appendTo(continuation, lastNext);
-                setBoolean(m_out.phi(Int32, fastResult, slowResult));
-            } else
-                setBoolean(m_out.castToInt32(vmCall(Int64, operationNumberIsNaN, argument)));
-            break;
-        }
-        default:
-            DFG_CRASH(m_graph, m_node, "Bad use kind");
-            break;
-        }
     }
 
 #if USE(BIGINT32)

@@ -36,3 +36,10 @@ function isFinite(value)
 
     return value !== @Infinity && value !== -@Infinity;
 }
+
+function isNaN(value)
+{
+    "use strict";
+
+    return value !== value;
+}

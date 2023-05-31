@@ -431,8 +431,6 @@ namespace JSC { namespace DFG {
     macro(IsNumber, NodeResultBoolean) \
     /* IsBigInt is only used when USE_BIGINT32. Otherwise we emit IsCellWithType */\
     macro(IsBigInt, NodeResultBoolean) \
-    macro(GlobalIsNaN, NodeMustGenerate | NodeResultBoolean) \
-    macro(NumberIsNaN, NodeResultBoolean) \
     macro(NumberIsInteger, NodeResultBoolean) \
     macro(IsObject, NodeResultBoolean) \
     macro(IsCallable, NodeResultBoolean) \

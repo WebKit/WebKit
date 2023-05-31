@@ -35,3 +35,12 @@ function isFinite(value)
         return false;
     return numberValue !== @Infinity && numberValue !== -@Infinity;
 }
+
+@linkTimeConstant
+function isNaN(value)
+{
+    "use strict";
+
+    var numberValue = @toNumber(value);
+    return numberValue !== numberValue;
+}

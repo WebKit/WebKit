@@ -28,7 +28,6 @@
 
 namespace JSC {
 
-static JSC_DECLARE_HOST_FUNCTION(numberConstructorFuncIsNaN);
 static JSC_DECLARE_HOST_FUNCTION(numberConstructorFuncIsInteger);
 static JSC_DECLARE_HOST_FUNCTION(numberConstructorFuncIsSafeInteger);
 
@@ -45,7 +44,7 @@ const ClassInfo NumberConstructor::s_info = { "Function"_s, &Base::s_info, &numb
 /* Source for NumberConstructor.lut.h
 @begin numberConstructorTable
   isFinite       JSBuiltin                           DontEnum|Function 1
-  isNaN          numberConstructorFuncIsNaN          DontEnum|Function 1 NumberIsNaNIntrinsic
+  isNaN          JSBuiltin                           DontEnum|Function 1
   isSafeInteger  numberConstructorFuncIsSafeInteger  DontEnum|Function 1
 @end
 */
@@ -151,14 +150,6 @@ JSC_DEFINE_HOST_FUNCTION(numberConstructorFuncIsSafeInteger, (JSGlobalObject*, C
     if (!argument.isDouble())
         return JSValue::encode(jsBoolean(false));
     return JSValue::encode(jsBoolean(isSafeInteger(argument.asDouble())));
-}
-
-JSC_DEFINE_HOST_FUNCTION(numberConstructorFuncIsNaN, (JSGlobalObject*, CallFrame* callFrame))
-{
-    JSValue argument = callFrame->argument(0);
-    if (!argument.isNumber())
-        return JSValue::encode(jsBoolean(false));
-    return JSValue::encode(jsBoolean(std::isnan(argument.asNumber())));
 }
 
 } // namespace JSC
