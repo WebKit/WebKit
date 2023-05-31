@@ -147,9 +147,10 @@ void MediaDevices::getUserMedia(StreamConstraints&& constraints, Promise&& promi
 
     bool isUserGesturePriviledged = false;
 
-    if (audioConstraints.isValid)
+    if (audioConstraints.isValid) {
         isUserGesturePriviledged |= computeUserGesturePriviledge(GestureAllowedRequest::Microphone);
-
+        audioConstraints.setDefaultAudioConstraints();
+    }
     if (videoConstraints.isValid) {
         isUserGesturePriviledged |= computeUserGesturePriviledge(GestureAllowedRequest::Camera);
         videoConstraints.setDefaultVideoConstraints();
