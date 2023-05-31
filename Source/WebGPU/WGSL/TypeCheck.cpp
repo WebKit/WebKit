@@ -52,6 +52,15 @@ public:
     void visit(AST::Variable&) override;
     void visit(AST::Function&) override;
 
+    // Attributes
+    void visit(AST::AlignAttribute&) override;
+    void visit(AST::BindingAttribute&) override;
+    void visit(AST::GroupAttribute&) override;
+    void visit(AST::IdAttribute&) override;
+    void visit(AST::LocationAttribute&) override;
+    void visit(AST::SizeAttribute&) override;
+    void visit(AST::WorkgroupSizeAttribute&) override;
+
     // Statements
     void visit(AST::AssignmentStatement&) override;
     void visit(AST::CompoundAssignmentStatement&) override;
@@ -96,6 +105,7 @@ private:
     void visitStructMembers(AST::Structure&);
     void visitVariable(AST::Variable&, VariableKind);
     Type* vectorFieldAccess(const Types::Vector&, AST::FieldAccessExpression&);
+    void visitAttributes(AST::Attribute::List&);
 
     template<typename... Arguments>
     void typeError(const SourceSpan&, Arguments&&...);
@@ -186,6 +196,7 @@ void TypeChecker::visitStructMembers(AST::Structure& structure)
 
     auto& structType = std::get<Types::Struct>(**type);
     for (auto& member : structure.members()) {
+        visitAttributes(member.attributes());
         auto* memberType = resolve(member.type());
         auto result = structType.fields.add(member.name().id(), memberType);
         ASSERT_UNUSED(result, result.isNewEntry);
@@ -199,6 +210,8 @@ void TypeChecker::visit(AST::Variable& variable)
 
 void TypeChecker::visitVariable(AST::Variable& variable, VariableKind variableKind)
 {
+    visitAttributes(variable.attributes());
+
     Type* result = nullptr;
     if (variable.maybeTypeName())
         result = resolve(*variable.maybeTypeName());
@@ -239,6 +252,8 @@ void TypeChecker::visitVariable(AST::Variable& variable, VariableKind variableKi
 
 void TypeChecker::visit(AST::Function& function)
 {
+    visitAttributes(function.attributes());
+
     Vector<Type*> parameters;
     Type* result;
     parameters.reserveInitialCapacity(function.parameters().size());
@@ -262,6 +277,86 @@ void TypeChecker::visitFunctionBody(AST::Function& function)
     }
 
     AST::Visitor::visit(function.body());
+}
+
+// Attributes
+void TypeChecker::visit(AST::AlignAttribute& attribute)
+{
+    auto* type = infer(attribute.alignment());
+    if (!satisfies(type, Constraints::ConcreteInteger))
+        typeError(InferBottom::No, attribute.span(), "@align must be an i32 or u32 value");
+}
+
+void TypeChecker::visit(AST::BindingAttribute& attribute)
+{
+    auto* type = infer(attribute.binding());
+    if (!satisfies(type, Constraints::ConcreteInteger))
+        typeError(InferBottom::No, attribute.span(), "@binding must be an i32 or u32 value");
+}
+
+void TypeChecker::visit(AST::GroupAttribute& attribute)
+{
+    auto* type = infer(attribute.group());
+    if (!satisfies(type, Constraints::ConcreteInteger))
+        typeError(InferBottom::No, attribute.span(), "@group must be an i32 or u32 value");
+}
+
+void TypeChecker::visit(AST::IdAttribute& attribute)
+{
+    auto* type = infer(attribute.value());
+    if (!satisfies(type, Constraints::ConcreteInteger))
+        typeError(InferBottom::No, attribute.span(), "@id must be an i32 or u32 value");
+}
+
+void TypeChecker::visit(AST::LocationAttribute& attribute)
+{
+    auto* type = infer(attribute.location());
+    if (!satisfies(type, Constraints::ConcreteInteger))
+        typeError(InferBottom::No, attribute.span(), "@location must be an i32 or u32 value");
+}
+
+void TypeChecker::visit(AST::SizeAttribute& attribute)
+{
+    auto* type = infer(attribute.size());
+    if (!satisfies(type, Constraints::ConcreteInteger))
+        typeError(InferBottom::No, attribute.span(), "@size must be an i32 or u32 value");
+}
+
+void TypeChecker::visit(AST::WorkgroupSizeAttribute& attribute)
+{
+    auto* xType = infer(attribute.x());
+    if (!satisfies(xType, Constraints::ConcreteInteger)) {
+        typeError(InferBottom::No, attribute.span(), "@workgroup_size x dimension must be an i32 or u32 value");
+        return;
+    }
+
+    Type* yType = nullptr;
+    Type* zType = nullptr;
+    if (auto* y = attribute.maybeY()) {
+        yType = infer(*y);
+        if (!satisfies(yType, Constraints::ConcreteInteger)) {
+            typeError(InferBottom::No, attribute.span(), "@workgroup_size y dimension must be an i32 or u32 value");
+            return;
+        }
+
+        if (auto* z = attribute.maybeZ()) {
+            zType = infer(*z);
+            if (!satisfies(zType, Constraints::ConcreteInteger)) {
+                typeError(InferBottom::No, attribute.span(), "@workgroup_size z dimension must be an i32 or u32 value");
+                return;
+            }
+        }
+
+    }
+
+    const auto& satisfies = [&](Type* type) {
+        return unify(type, xType)
+            && (!yType || unify(type, yType))
+            && (!zType || unify(type, zType));
+    };
+
+    if (!satisfies(m_types.i32Type()) && !satisfies(m_types.u32Type()))
+        typeError(InferBottom::No, attribute.span(), "@workgroup_size arguments must be of the same type, either i32 or u32");
 }
 
 // Statements
@@ -682,6 +777,12 @@ void TypeChecker::visit(AST::ReferenceTypeName&)
 {
     // FIXME: we don't yet parse reference types
     ASSERT_NOT_REACHED();
+}
+
+void TypeChecker::visitAttributes(AST::Attribute::List& attributes)
+{
+    for (auto& attribute : attributes)
+        AST::Visitor::visit(attribute);
 }
 
 // Private helpers
