@@ -902,7 +902,7 @@
     (iokit-user-client-class "AppleJPEGDriverUserClient"))
 
 #if ENABLE(WEBCONTENT_GPU_SANDBOX_EXTENSIONS_BLOCKING)
-(deny iokit-open-service)
+(deny iokit-open-service (with no-report))
 #elif HAVE(SANDBOX_STATE_FLAGS)
 ;; This rule enables the WebContent process to enable the "BlockIOKitInWebContentSandbox" sandbox variable
 ;; by reading a preference from the domain "com.apple.WebKit.WebContent.BlockIOKitInWebContentSandbox".
