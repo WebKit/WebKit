@@ -231,7 +231,7 @@ class TimeControl extends LayoutItem
         this.scrubber.x = (() => {
             if (this._loading)
                 return this.activityIndicator.width + scrubberMargin;
-            if (this._timeLabelsDisplayOnScrubberSide && this.elapsedTimeLabel.visible)
+            if (this._timeLabelsDisplayOnScrubberSide)
                 return this.elapsedTimeLabel.width + scrubberMargin;
             return 0;
         })();
