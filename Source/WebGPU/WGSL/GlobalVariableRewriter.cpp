@@ -78,7 +78,7 @@ private:
     static AST::Identifier argumentBufferParameterName(unsigned group);
     static AST::Identifier argumentBufferStructName(unsigned group);
 
-    void def(const String&);
+    void def(const String&, AST::Variable*);
     Global* read(const String&);
 
     void collectGlobals();
@@ -96,7 +96,7 @@ private:
     HashMap<String, Global> m_globals;
     IndexMap<Vector<std::pair<unsigned, Global*>>> m_groupBindingMap;
     IndexMap<Type*> m_structTypes;
-    HashSet<String> m_defs;
+    HashMap<String, AST::Variable*> m_defs;
     HashSet<String> m_reads;
     Reflection::EntryPointInformation* m_entryPointInformation { nullptr };
 };
@@ -144,7 +144,7 @@ void RewriteGlobalVariables::visitCallee(const CallGraph::Callee& callee)
 void RewriteGlobalVariables::visit(AST::Function& function)
 {
     for (auto& parameter : function.parameters())
-        def(parameter.name());
+        def(parameter.name(), nullptr);
 
     // FIXME: detect when we shadow a global that a callee needs
     AST::Visitor::visit(function.body());
@@ -155,7 +155,7 @@ void RewriteGlobalVariables::visit(AST::Function& function)
 
 void RewriteGlobalVariables::visit(AST::Variable& variable)
 {
-    def(variable.name());
+    def(variable.name(), &variable);
     AST::Visitor::visit(variable);
 }
 
@@ -419,15 +419,21 @@ void RewriteGlobalVariables::insertLocalDefinitions(AST::Function& function, con
     }
 }
 
-void RewriteGlobalVariables::def(const String& name)
+void RewriteGlobalVariables::def(const String& name, AST::Variable* variable)
 {
-    m_defs.add(name);
+    m_defs.add(name, variable);
 }
 
 auto RewriteGlobalVariables::read(const String& name) -> Global*
 {
-    if (m_defs.contains(name))
+    auto def = m_defs.find(name);
+    if (def != m_defs.end()) {
+        auto* variable = def->value;
+        if (variable && variable->flavor() == AST::VariableFlavor::Const)
+            m_callGraph.ast().replace(&variable->flavor(), AST::VariableFlavor::Let);
         return nullptr;
+    }
+
     auto it = m_globals.find(name);
     if (it == m_globals.end())
         return nullptr;

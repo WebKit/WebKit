@@ -291,6 +291,9 @@ void FunctionDefinitionWriter::visitGlobal(AST::Variable& variable)
 
 void FunctionDefinitionWriter::serializeVariable(AST::Variable& variable)
 {
+    if (variable.flavor() == AST::VariableFlavor::Const)
+        return;
+
     const Type* type = variable.storeType();
     if (isPrimitiveReference(type, Types::Primitive::TextureExternal)) {
         ASSERT(variable.maybeInitializer());
