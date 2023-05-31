@@ -938,7 +938,12 @@ window.webkit.messageHandlers.regularPage.postMessage("PASS");
 </script>
 )SWRESOURCE"_s;
 
+// fix me when rdar://110012082 is resolved
+#if PLATFORM(MAC)
+TEST(ServiceWorkers, DISABLED_SWProcessConnectionCreation)
+#else
 TEST(ServiceWorkers, SWProcessConnectionCreation)
+#endif
 {
     [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
 
