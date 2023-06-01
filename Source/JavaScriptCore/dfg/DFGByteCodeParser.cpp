@@ -1975,7 +1975,11 @@ ByteCodeParser::CallOptimizationResult ByteCodeParser::handleCallVariant(Node* c
             m_currentIndex = osrExitIndex;
             m_exitOK = true;
             processSetLocalQueue();
-            addJumpTo(continuationBlock);
+            if (m_currentBlock->terminal()) {
+                ASSERT(continuationBlock->isEmpty());
+                m_currentBlock->didLink();
+            } else
+                addJumpTo(continuationBlock);
         }
     };
 
