@@ -2,6 +2,7 @@
 set -e
 cd "$(dirname "$0")/../../Source/ThirdParty/ANGLE"
 ANGLE_DIR="$PWD"
+ANGLE_TARGET_COMMIT="origin/main"
 
 regenerate_changes_diff() {
     echo "Regenerating changes.diff."
@@ -42,11 +43,12 @@ regenerate_program_version_id() {
 
 usage() {
     SCRIPT_NAME=$(basename "$0")
-    echo "USAGE: $SCRIPT_NAME [-h|--help] -[--regenerate-changes-diff[-main]]"
+    echo "USAGE: $SCRIPT_NAME [-h|--help] -[--regenerate-changes-diff[-main]] [commit]"
     echo "  -h | --help                      Print this help message."
     echo "  --regenerate-changes-diff        Regenerate ANGLE changes.diff to last upstream merge."
     echo "  --regenerate-changes-diff-main   Regenerate ANGLE changes.diff to upstream origin/main."
     echo "  --regenerate-program-version-id  Regenerate ANGLE ANGLEShaderProgramVersion.h."
+    echo "  commit                           The ANGLE commit to update to. Defaults to origin/main"
 }
 
 if [ ! -z "$1" ] ; then
@@ -90,10 +92,14 @@ if [ ! -z "$1" ] ; then
         echo
         echo "Success."
         exit 0
+    
+    elif [ "${1:0:2}" = -- ]; then
+        echo "ERROR: Unrecognized argument: $1"
+        usage
+        exit 1
+    else
+        ANGLE_TARGET_COMMIT="$1"
     fi
-    echo "ERROR: Unrecognized argument: $1"
-    usage
-    exit 1
 fi
 
 echo "This script helps you update the copy of ANGLE in Source/ThirdParty/ANGLE"
@@ -136,7 +142,7 @@ wait_for_rebase_to_complete() {
 cleanup_after_successful_rebase_and_exit() {
     cd "$ANGLE_DIR"
     echo
-    regenerate_changes_diff "origin/main"
+    regenerate_changes_diff "$ANGLE_TARGET_COMMIT"
     git --no-pager diff -b --cached "$LAST_ROLL_COMMIT_HASH" -- Compiler.cmake GLESv2.cmake
     echo
     echo "Rebase complete!"
@@ -155,7 +161,7 @@ cleanup_after_successful_rebase_and_exit() {
     echo "Press Enter to continue after fixing build:"
     read -r
     regenerate_program_version_id
-    regenerate_changes_diff "origin/main"
+    regenerate_changes_diff "$ANGLE_TARGET_COMMIT"
     echo "Generating contents of commit message into commit-message.txt."
     echo "Be sure to copy out this file's contents and delete it before committing."
     echo "Update ANGLE to $(git log -1 ${COMMIT_HASH} --format=%cs) (${COMMIT_HASH}))" > commit-message.txt
@@ -196,8 +202,9 @@ cd "$ANGLE_DIR"
 echo "Downloading latest ANGLE via git clone."
 # Remove all files including hidden ones, but not . or ..
 rm -rf ..?* .[!.]* ./*
-git clone --branch main https://chromium.googlesource.com/angle/angle .
+git clone https://chromium.googlesource.com/angle/angle .
 echo "Successfully downloaded latest ANGLE."
+git checkout -q "$ANGLE_TARGET_COMMIT"
 echo "Commit hash: "
 COMMIT_HASH=$(git rev-parse HEAD)
 echo "$COMMIT_HASH"
@@ -222,7 +229,7 @@ sed -i.bak -e "s/<string>[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]<\/string>/<s
 rm ANGLE.plist.bak
 
 echo "Translating gni build files to cmake."
-git checkout origin/main -- src/compiler.gni src/libGLESv2.gni src/libANGLE/renderer/d3d/BUILD.gn
+git checkout "$ANGLE_TARGET_COMMIT" -- src/compiler.gni src/libGLESv2.gni src/libANGLE/renderer/d3d/BUILD.gn
 ./gni-to-cmake.py src/compiler.gni Compiler.cmake
 ./gni-to-cmake.py src/libGLESv2.gni GLESv2.cmake
 ./gni-to-cmake.py src/libANGLE/renderer/d3d/BUILD.gn D3D.cmake --prepend 'src/libANGLE/renderer/d3d/'
@@ -244,7 +251,7 @@ git replace --graft "$LAST_ROLL_COMMIT_HASH" "$PREVIOUS_ANGLE_COMMIT_HASH"
 git checkout -b rebased-webkit-changes
 
 echo "Rebasing WebKit's local changes on latest ANGLE main."
-if ! git rebase origin/main; then
+if ! git rebase "$ANGLE_TARGET_COMMIT"; then
     echo
     echo "There is now a temporary git repo in Source/ThirdParty/ANGLE with a"
     echo "rebase in progress. You must resolve the merge conflict and continue"
