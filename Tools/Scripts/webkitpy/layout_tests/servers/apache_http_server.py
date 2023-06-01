@@ -190,8 +190,8 @@ class LayoutTestApacheHttpd(http_server_base.HttpServerBase):
             if int(parsed_line[5]) == 0:
                 stale_segments.append(parsed_line[1].decode('utf-8'))
 
-        if stale_segments:
-            ipcrm_cmd = ['ipcrm', '-m', ' '.join(stale_segments)]
+        for segment in stale_segments:
+            ipcrm_cmd = ['ipcrm', '-m', segment]
             process = self._executive.popen(ipcrm_cmd)
             process.wait()
 
