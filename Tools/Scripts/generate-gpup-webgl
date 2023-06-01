@@ -562,8 +562,9 @@ class webkit_ipc_msg(object):
     in_args: cpp_arg_list
     out_args: cpp_arg_list
 
-    def __init__(self, func: cpp_func):
+    def __init__(self, func: cpp_func, is_forced_sync: bool):
         self.name = webkit_ipc_msg_name(func)
+        self.is_forced_sync = is_forced_sync
         in_args, out_args = func.get_args_categories()
         ipc_in_args = [cpp_arg(webkit_ipc_types[a.type], a.name) for a in in_args]
         ipc_out_args = []
@@ -577,13 +578,14 @@ class webkit_ipc_msg(object):
         self.out_args = cpp_arg_list(ipc_out_args)
 
     def __str__(self):
-        if len(self.out_args.args):
+        if len(self.out_args.args) or self.is_forced_sync:
             return f"\n    void {self.name}({str(self.in_args)}) -> ({str(self.out_args)}) Synchronous"
         return f"\n    void {self.name}({str(self.in_args)})"
 
 
 class webkit_ipc_cpp_proxy_impl(object):
     name: str
+    is_forced_sync: bool
     msg_name: str
     return_type: cpp_type
     args: cpp_arg_list
@@ -595,8 +597,9 @@ class webkit_ipc_cpp_proxy_impl(object):
     in_exprs: List[cpp_expr]
     out_exprs: List[cpp_expr]
 
-    def __init__(self, cpp_func: cpp_func):
+    def __init__(self, cpp_func: cpp_func, is_forced_sync: bool):
         self.name = cpp_func.name
+        self.is_forced_sync = is_forced_sync
         self.msg_name = webkit_ipc_msg_name(cpp_func)
         self.return_type = cpp_func.return_type
         self.args = cpp_func.args
@@ -615,7 +618,7 @@ class webkit_ipc_cpp_proxy_impl(object):
     def process_call(self):
         in_exprs = ", ".join([str(i) for i in self.in_exprs])
         out_exprs = ", ".join(str(o) for o in self.out_exprs)
-        is_async = self.return_type.is_void() and len(out_exprs) == 0
+        is_async = self.return_type.is_void() and len(out_exprs) == 0 and not self.is_forced_sync
         self.call_stmts += [ "if (isContextLost())" ]
         if self.return_type.is_void():
             self.call_stmts += [ "    return;" ]
@@ -731,13 +734,16 @@ class webkit_ipc_cpp_proxy_placeholder(object):
         return f"\n{str(self.return_type)} RemoteGraphicsContextGLProxy::{self.name}({str(self.args)}){nolint}{body}"
 
 
+def context_is_forced_sync(cpp_func: cpp_func):
+    return cpp_func.name in ['flush', 'finish']
+
 class context_proxy_cpp_webkit_ipc_generator(object):
     "RemoteGraphicsContextGLProxy C++ implementation generator."
     impls: List[webkit_ipc_cpp_proxy_impl]
     unimpls: List[webkit_ipc_cpp_proxy_placeholder]
 
     def __init__(self, funcs: Iterable[cpp_func], unimplemented: Iterable[cpp_func]):
-        self.impls = [webkit_ipc_cpp_proxy_impl(f) for f in funcs]
+        self.impls = [webkit_ipc_cpp_proxy_impl(f, is_forced_sync=context_is_forced_sync(f)) for f in funcs]
         self.unimpls = [webkit_ipc_cpp_proxy_placeholder(f) for f in unimplemented]
 
     def get_functions(self):
@@ -752,6 +758,7 @@ class context_proxy_cpp_webkit_ipc_generator(object):
 
 class webkit_ipc_cpp_impl(object):
     name: str
+    is_forced_sync: bool
     args: cpp_arg_list
     pre_call_stmts: List[str]
     call_stmts: List[str]
@@ -760,8 +767,9 @@ class webkit_ipc_cpp_impl(object):
     out_exprs: List[cpp_expr]
     return_value_expr: Optional[cpp_expr]
 
-    def __init__(self, cpp_func: cpp_func):
+    def __init__(self, cpp_func: cpp_func, is_forced_sync: bool):
         self.name = cpp_func.name
+        self.is_forced_sync = is_forced_sync
         self.overload_suffix = cpp_func.overload_suffix
         self.args = cpp_arg_list([])
         self.pre_call_stmts = []
@@ -780,7 +788,7 @@ class webkit_ipc_cpp_impl(object):
         self.call_stmts += [ "assertIsCurrent(workQueue());" ]
 
         in_exprs = ", ".join(str(e) for e in self.in_exprs)
-        is_async = len(self.out_exprs) == 0
+        is_async = len(self.out_exprs) == 0 and not self.is_forced_sync
 
         call_expr = f"m_context->{self.name}({in_exprs})"
         if not self.return_value_expr:
@@ -799,7 +807,7 @@ class webkit_ipc_cpp_impl(object):
                 self.process_in_arg(a)
             else:
                 self.process_out_arg(a)
-        if self.out_exprs:
+        if self.out_exprs or self.is_forced_sync:
             out_arg_decls = ", ".join(f"{str(e.type)}" for e in self.out_exprs)
             self.args.args += [cpp_arg(get_cpp_type(f"CompletionHandler<void({out_arg_decls})>&&"), "completionHandler")]
 
@@ -876,7 +884,7 @@ class context_cpp_webkit_ipc_generator(object):
     impls: List[webkit_ipc_cpp_impl]
 
     def __init__(self, funcs: Iterable[cpp_func]):
-        self.impls = [webkit_ipc_cpp_impl(f) for f in funcs]
+        self.impls = [webkit_ipc_cpp_impl(f, is_forced_sync=context_is_forced_sync(f)) for f in funcs]
 
     def get_functions(self):
         return "\n".join(str(i) for i in self.impls)
@@ -893,7 +901,7 @@ class context_msg_webkit_ipc_generator(object):
     msgs: List[webkit_ipc_msg]
 
     def __init__(self, funcs: Iterable[cpp_func]):
-        self.msgs = [webkit_ipc_msg(f) for f in funcs]
+        self.msgs = [webkit_ipc_msg(f, is_forced_sync=context_is_forced_sync(f)) for f in funcs]
 
     def get_messages(self):
         return "".join(str(m) for m in self.msgs)
