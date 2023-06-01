@@ -290,7 +290,8 @@ bool SecurityOrigin::canRequest(const URL& url, const OriginAccessPatterns& patt
     if (m_universalAccess)
         return true;
 
-    if (getCachedOrigin(url) == this)
+    auto cachedOriginForURL = getCachedOrigin(url);
+    if (cachedOriginForURL && isSameOriginAs(*cachedOriginForURL))
         return true;
 
     if (isOpaque())

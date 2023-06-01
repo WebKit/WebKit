@@ -52,29 +52,38 @@
 
 namespace WebCore {
 
-typedef HashMap<String, RefPtr<SecurityOrigin>> BlobUrlOriginMap;
+using BlobURLOriginMap = HashMap<String, RefPtr<SecurityOrigin>>;
 
-static ThreadSpecific<BlobUrlOriginMap>& originMap()
+static BlobURLOriginMap& originMap()
 {
-    static std::once_flag onceFlag;
-    static ThreadSpecific<BlobUrlOriginMap>* map;
-    std::call_once(onceFlag, [] {
-        map = new ThreadSpecific<BlobUrlOriginMap>;
-    });
-
-    return *map;
+    static MainThreadNeverDestroyed<BlobURLOriginMap> map;
+    return map;
 }
 
-static ThreadSpecific<HashCountedSet<String>>& blobURLReferencesMap()
+static HashCountedSet<String>& blobURLReferencesMap()
 {
-    static std::once_flag onceFlag;
-    static ThreadSpecific<HashCountedSet<String>>* map;
-    std::call_once(onceFlag, [] {
-        map = new ThreadSpecific<HashCountedSet<String>>;
-    });
-
-    return *map;
+    static MainThreadNeverDestroyed<HashCountedSet<String>> map;
+    return map;
 }
+
+static inline bool isBlobURLContainsNullOrigin(const URL& url)
+{
+    ASSERT(url.protocolIsBlob());
+    unsigned startIndex = url.pathStart();
+    unsigned endIndex = url.pathAfterLastSlash();
+    return StringView(url.string()).substring(startIndex, endIndex - startIndex - 1) == "null"_s;
+}
+
+// If the blob URL contains null origin, as in the context with unique security origin or file URL, save the mapping between url and origin so that the origin can be retrived when doing security origin check.
+static void addToOriginMapIfNecessary(const URL& url, RefPtr<SecurityOrigin>&& origin)
+{
+    if (!origin || !isBlobURLContainsNullOrigin(url))
+        return;
+
+    auto urlWithoutFragment = url.stringWithoutFragmentIdentifier();
+    originMap().add(urlWithoutFragment, WTFMove(origin));
+    blobURLReferencesMap().add(urlWithoutFragment);
+};
 
 void ThreadableBlobRegistry::registerFileBlobURL(const URL& url, const String& path, const String& replacementPath, const String& contentType)
 {
@@ -103,39 +112,31 @@ void ThreadableBlobRegistry::registerBlobURL(const URL& url, Vector<BlobPart>&& 
     });
 }
 
-static inline bool isBlobURLContainsNullOrigin(const URL& url)
+static void unregisterBlobURLOriginIfNecessaryOnMainThread(const URL& url)
 {
-    ASSERT(url.protocolIsBlob());
-    unsigned startIndex = url.pathStart();
-    unsigned endIndex = url.pathAfterLastSlash();
-    return StringView(url.string()).substring(startIndex, endIndex - startIndex - 1) == "null"_s;
-}
-
-static void unregisterBlobURLOriginIfNecessary(const URL& url)
-{
+    ASSERT(isMainThread());
     if (!isBlobURLContainsNullOrigin(url))
         return;
 
     auto urlWithoutFragment = url.stringWithoutFragmentIdentifier();
-    if (blobURLReferencesMap()->remove(urlWithoutFragment))
-        originMap()->remove(urlWithoutFragment);
+    if (blobURLReferencesMap().remove(urlWithoutFragment))
+        originMap().remove(urlWithoutFragment);
 }
 
 void ThreadableBlobRegistry::registerBlobURL(SecurityOrigin* origin, PolicyContainer&& policyContainer, const URL& url, const URL& srcURL)
 {
-    // If the blob URL contains null origin, as in the context with unique security origin or file URL, save the mapping between url and origin so that the origin can be retrived when doing security origin check.
-    if (origin && isBlobURLContainsNullOrigin(url)) {
-        auto urlWithoutFragment = url.stringWithoutFragmentIdentifier();
-        originMap()->add(urlWithoutFragment, origin);
-        blobURLReferencesMap()->add(urlWithoutFragment);
-    }
-
     if (isMainThread()) {
+        addToOriginMapIfNecessary(url, origin);
         blobRegistry().registerBlobURL(url, srcURL, policyContainer);
         return;
     }
 
-    callOnMainThread([url = url.isolatedCopy(), srcURL = srcURL.isolatedCopy(), policyContainer = crossThreadCopy(WTFMove(policyContainer))] {
+    RefPtr<SecurityOrigin> strongOrigin;
+    if (origin)
+        strongOrigin = origin->isolatedCopy();
+
+    callOnMainThread([url = url.isolatedCopy(), srcURL = srcURL.isolatedCopy(), policyContainer = crossThreadCopy(WTFMove(policyContainer)), strongOrigin = WTFMove(strongOrigin)]() mutable {
+        addToOriginMapIfNecessary(url, WTFMove(strongOrigin));
         blobRegistry().registerBlobURL(url, srcURL, policyContainer);
     });
 }
@@ -177,35 +178,40 @@ unsigned long long ThreadableBlobRegistry::blobSize(const URL& url)
 
 void ThreadableBlobRegistry::unregisterBlobURL(const URL& url)
 {
-    unregisterBlobURLOriginIfNecessary(url);
-
     ensureOnMainThread([url = url.isolatedCopy()] {
+        unregisterBlobURLOriginIfNecessaryOnMainThread(url);
         blobRegistry().unregisterBlobURL(url);
     });
 }
 
 void ThreadableBlobRegistry::registerBlobURLHandle(const URL& url)
 {
-    if (isBlobURLContainsNullOrigin(url))
-        blobURLReferencesMap()->add(url.stringWithoutFragmentIdentifier());
-
     ensureOnMainThread([url = url.isolatedCopy()] {
+        if (isBlobURLContainsNullOrigin(url))
+            blobURLReferencesMap().add(url.stringWithoutFragmentIdentifier());
+
         blobRegistry().registerBlobURLHandle(url);
     });
 }
 
 void ThreadableBlobRegistry::unregisterBlobURLHandle(const URL& url)
 {
-    unregisterBlobURLOriginIfNecessary(url);
-
     ensureOnMainThread([url = url.isolatedCopy()] {
+        unregisterBlobURLOriginIfNecessaryOnMainThread(url);
         blobRegistry().unregisterBlobURLHandle(url);
     });
 }
 
 RefPtr<SecurityOrigin> ThreadableBlobRegistry::getCachedOrigin(const URL& url)
 {
-    if (auto cachedOrigin = originMap()->get<StringViewHashTranslator>(url.viewWithoutFragmentIdentifier()))
+    RefPtr<SecurityOrigin> cachedOrigin;
+
+    bool wasOnMainThread = isMainThread();
+    callOnMainThreadAndWait([url = url.isolatedCopy(), wasOnMainThread, &cachedOrigin] {
+        if (auto* origin = originMap().get<StringViewHashTranslator>(url.viewWithoutFragmentIdentifier()))
+            cachedOrigin = wasOnMainThread ? Ref { *origin } : origin->isolatedCopy();
+    });
+    if (cachedOrigin)
         return cachedOrigin;
 
     if (!url.protocolIsBlob() || !isBlobURLContainsNullOrigin(url))

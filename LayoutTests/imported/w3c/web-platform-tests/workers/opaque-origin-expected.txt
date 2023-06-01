@@ -1,9 +1,9 @@
 
 
 PASS Worker has an opaque origin.
-FAIL Worker can read its own blobs. assert_equals: expected (string) "from worker" but got (object) null
-FAIL Worker can read its owners blobs. assert_equals: expected (string) "from page" but got (object) null
-FAIL Worker can XHR fetch a blob. assert_equals: expected "from page" but got ""
-FAIL Worker can fetch a blob. promise_test: Unhandled rejection with value: object "TypeError: Load failed"
+PASS Worker can read its own blobs.
+PASS Worker can read its owners blobs.
+PASS Worker can XHR fetch a blob.
+PASS Worker can fetch a blob.
 PASS Worker can access BroadcastChannel
 
