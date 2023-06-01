@@ -56,51 +56,51 @@ using namespace HTMLNames;
 
 struct EntityDescription {
     const char* characters;
-    unsigned char length;
-    unsigned char mask;
+    uint8_t length;
+    std::optional<EntityMask> mask;
 };
 
 static const EntityDescription entitySubstitutionList[] = {
-    { "", 0 , 0 },
-    { "&amp;", 5 , EntityAmp },
-    { "&lt;", 4, EntityLt },
-    { "&gt;", 4, EntityGt },
-    { "&quot;", 6, EntityQuot },
-    { "&nbsp;", 6, EntityNbsp },
-    { "&#9;", 4, EntityTab },
-    { "&#10;", 5, EntityLineFeed },
-    { "&#13;", 5, EntityCarriageReturn },
+    { "", 0, std::nullopt },
+    { "&amp;", 5, EntityMask::Amp },
+    { "&lt;", 4, EntityMask::Lt },
+    { "&gt;", 4, EntityMask::Gt },
+    { "&quot;", 6, EntityMask::Quot },
+    { "&nbsp;", 6, EntityMask::Nbsp },
+    { "&#9;", 4, EntityMask::Tab },
+    { "&#10;", 5, EntityMask::LineFeed },
+    { "&#13;", 5, EntityMask::CarriageReturn },
 };
 
-enum EntitySubstitutionIndex {
-    EntitySubstitutionNullIndex = 0,
-    EntitySubstitutionAmpIndex = 1,
-    EntitySubstitutionLtIndex = 2,
-    EntitySubstitutionGtIndex = 3,
-    EntitySubstitutionQuotIndex = 4,
-    EntitySubstitutionNbspIndex = 5,
-    EntitySubstitutionTabIndex = 6,
-    EntitySubstitutionLineFeedIndex = 7,
-    EntitySubstitutionCarriageReturnIndex = 8,
+namespace EntitySubstitutionIndex {
+constexpr uint8_t Null = 0;
+constexpr uint8_t Amp = 1;
+constexpr uint8_t Lt = 2;
+constexpr uint8_t Gt = 3;
+constexpr uint8_t Quot = 4;
+constexpr uint8_t Nbsp = 5;
+constexpr uint8_t Tab = 6;
+constexpr uint8_t LineFeed = 7;
+constexpr uint8_t CarriageReturn = 8;
 };
 
 static const unsigned maximumEscapedentityCharacter = noBreakSpace;
 static const uint8_t entityMap[maximumEscapedentityCharacter + 1] = {
     0, 0, 0, 0, 0, 0, 0, 0, 0,
-    EntitySubstitutionTabIndex, // '\t'.
-    EntitySubstitutionLineFeedIndex, // '\n'.
+    EntitySubstitutionIndex::Tab, // '\t'.
+    EntitySubstitutionIndex::LineFeed, // '\n'.
     0, 0,
-    EntitySubstitutionCarriageReturnIndex, // '\r'.
+    EntitySubstitutionIndex::CarriageReturn, // '\r'.
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    EntitySubstitutionQuotIndex, // '"'.
+    EntitySubstitutionIndex::Quot, // '"'.
     0, 0, 0,
-    EntitySubstitutionAmpIndex, // '&'.
+    EntitySubstitutionIndex::Amp, // '&'.
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    EntitySubstitutionLtIndex, // '<'.
+    EntitySubstitutionIndex::Lt, // '<'.
     0,
-    EntitySubstitutionGtIndex, // '>'.
+    EntitySubstitutionIndex::Gt, // '>'.
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    EntitySubstitutionNbspIndex // noBreakSpace.
+    EntitySubstitutionIndex::Nbsp // noBreakSpace.
 };
 
 static bool elementCannotHaveEndTag(const Node& node)
@@ -155,15 +155,15 @@ static bool shouldSelfClose(const Element& element, SerializationSyntax syntax)
 }
 
 template<typename CharacterType>
-static inline void appendCharactersReplacingEntitiesInternal(StringBuilder& result, const String& source, unsigned offset, unsigned length, EntityMask entityMask)
+static inline void appendCharactersReplacingEntitiesInternal(StringBuilder& result, const String& source, unsigned offset, unsigned length, OptionSet<EntityMask> entityMask)
 {
     const CharacterType* text = source.characters<CharacterType>() + offset;
 
     size_t positionAfterLastEntity = 0;
     for (size_t i = 0; i < length; ++i) {
         CharacterType character = text[i];
-        uint8_t substitution = character < std::size(entityMap) ? entityMap[character] : static_cast<uint8_t>(EntitySubstitutionNullIndex);
-        if (UNLIKELY(substitution != EntitySubstitutionNullIndex) && entitySubstitutionList[substitution].mask & entityMask) {
+        uint8_t substitution = character < std::size(entityMap) ? entityMap[character] : static_cast<uint8_t>(EntitySubstitutionIndex::Null);
+        if (UNLIKELY(substitution != EntitySubstitutionIndex::Null) && entityMask.contains(*entitySubstitutionList[substitution].mask)) {
             result.appendSubstring(source, offset + positionAfterLastEntity, i - positionAfterLastEntity);
             result.appendCharacters(entitySubstitutionList[substitution].characters, entitySubstitutionList[substitution].length);
             positionAfterLastEntity = i + 1;
@@ -172,7 +172,7 @@ static inline void appendCharactersReplacingEntitiesInternal(StringBuilder& resu
     result.appendSubstring(source, offset + positionAfterLastEntity, length - positionAfterLastEntity);
 }
 
-void MarkupAccumulator::appendCharactersReplacingEntities(StringBuilder& result, const String& source, unsigned offset, unsigned length, EntityMask entityMask)
+void MarkupAccumulator::appendCharactersReplacingEntities(StringBuilder& result, const String& source, unsigned offset, unsigned length, OptionSet<EntityMask> entityMask)
 {
     ASSERT(offset + length <= source.length());
 
@@ -370,7 +370,7 @@ static inline bool isScriptEnabled(Node& node)
     return frame && frame->script().canExecuteScripts(ReasonForCallingCanExecuteScripts::NotAboutToExecuteScript);
 }
 
-EntityMask MarkupAccumulator::entityMaskForText(const Text& text) const
+OptionSet<EntityMask> MarkupAccumulator::entityMaskForText(const Text& text) const
 {
     using namespace ElementNames;
 
