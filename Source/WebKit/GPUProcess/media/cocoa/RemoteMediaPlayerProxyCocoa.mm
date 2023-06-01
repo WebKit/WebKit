@@ -56,7 +56,7 @@ void RemoteMediaPlayerProxy::setVideoInlineSizeIfPossible(const WebCore::FloatSi
 void RemoteMediaPlayerProxy::mediaPlayerFirstVideoFrameAvailable()
 {
     ALWAYS_LOG(LOGIDENTIFIER);
-    setVideoInlineSizeIfPossible(m_videoInlineSize);
+    setVideoInlineSizeIfPossible(m_configuration.videoInlineSize);
     m_webProcessConnection->send(Messages::MediaPlayerPrivateRemote::FirstVideoFrameAvailable(), m_id);
 }
 
@@ -86,7 +86,7 @@ void RemoteMediaPlayerProxy::setVideoInlineSizeFenced(const WebCore::FloatSize& 
     if (m_inlineLayerHostingContext)
         m_inlineLayerHostingContext->setFencePort(machSendRight.sendRight());
 
-    m_videoInlineSize = size;
+    m_configuration.videoInlineSize = size;
     setVideoInlineSizeIfPossible(size);
 }
 

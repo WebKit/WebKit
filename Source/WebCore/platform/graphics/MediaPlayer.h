@@ -295,6 +295,8 @@ public:
 
     virtual bool mediaPlayerShouldDisableHDR() const { return false; }
 
+    virtual FloatSize mediaPlayerVideoInlineSize() const { return { }; }
+
 #if !RELEASE_LOG_DISABLED
     virtual const void* mediaPlayerLogIdentifier() { return nullptr; }
     virtual const Logger& mediaPlayerLogger() = 0;

@@ -8505,13 +8505,15 @@ FloatSize HTMLMediaElement::naturalSize()
 
 FloatSize HTMLMediaElement::videoInlineSize() const
 {
-    if (m_player)
-        return m_player->videoInlineSize();
-    return { };
+    return m_videoInlineSize;
 }
 
 void HTMLMediaElement::setVideoInlineSizeFenced(const FloatSize& size, const WTF::MachSendRight& fence)
 {
+    if (m_videoInlineSize == size)
+        return;
+
+    m_videoInlineSize = size;
     if (m_player)
         m_player->setVideoInlineSizeFenced(size, fence);
 }

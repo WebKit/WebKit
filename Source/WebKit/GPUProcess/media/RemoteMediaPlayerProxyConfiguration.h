@@ -54,6 +54,7 @@ struct RemoteMediaPlayerProxyConfiguration {
 #endif
     WebCore::SecurityOriginData documentSecurityOrigin;
     WebCore::IntSize presentationSize { };
+    WebCore::FloatSize videoInlineSize { };
     uint64_t logIdentifier { 0 };
     bool shouldUsePersistentCache { false };
     bool isVideo { false };

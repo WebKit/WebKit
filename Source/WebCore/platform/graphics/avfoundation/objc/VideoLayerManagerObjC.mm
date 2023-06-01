@@ -61,7 +61,7 @@ PlatformLayer* VideoLayerManagerObjC::videoInlineLayer() const
     return m_videoInlineLayer.get();
 }
 
-void VideoLayerManagerObjC::setVideoLayer(PlatformLayer *videoLayer, IntSize contentSize)
+void VideoLayerManagerObjC::setVideoLayer(PlatformLayer *videoLayer, FloatSize contentSize)
 {
     ALWAYS_LOG(LOGIDENTIFIER, contentSize.width(), ", ", contentSize.height());
 

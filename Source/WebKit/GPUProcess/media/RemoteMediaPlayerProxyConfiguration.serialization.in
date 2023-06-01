@@ -39,6 +39,7 @@ struct WebKit::RemoteMediaPlayerProxyConfiguration {
 #endif
     WebCore::SecurityOriginData documentSecurityOrigin;
     WebCore::IntSize presentationSize;
+    WebCore::FloatSize videoInlineSize;
     uint64_t logIdentifier;
     bool shouldUsePersistentCache;
     bool isVideo;

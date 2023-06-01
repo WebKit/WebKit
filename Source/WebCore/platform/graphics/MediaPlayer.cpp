@@ -918,7 +918,7 @@ bool MediaPlayer::isVideoFullscreenStandby() const
 
 FloatSize MediaPlayer::videoInlineSize() const
 {
-    return m_private->videoInlineSize();
+    return client().mediaPlayerVideoInlineSize();
 }
 
 void MediaPlayer::setVideoInlineSizeFenced(const FloatSize& size, const WTF::MachSendRight& fence)

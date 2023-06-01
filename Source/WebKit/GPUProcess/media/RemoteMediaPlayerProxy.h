@@ -345,6 +345,7 @@ private:
     void currentTimeChanged(const MediaTime&);
 
 #if PLATFORM(COCOA)
+    WebCore::FloatSize mediaPlayerVideoInlineSize() const final { return m_configuration.videoInlineSize; }
     void setVideoInlineSizeIfPossible(const WebCore::FloatSize&);
     void nativeImageForCurrentTime(CompletionHandler<void(std::optional<WTF::MachSendRight>&&, WebCore::DestinationColorSpace)>&&);
     void colorSpace(CompletionHandler<void(WebCore::DestinationColorSpace)>&&);
@@ -391,7 +392,6 @@ private:
     Seconds m_videoPlaybackMetricsUpdateInterval;
     MonotonicTime m_nextPlaybackQualityMetricsUpdateTime;
 
-    WebCore::FloatSize m_videoInlineSize;
     float m_videoContentScale { 1.0 };
     WebCore::LayoutRect m_playerContentBoxRect;
 
