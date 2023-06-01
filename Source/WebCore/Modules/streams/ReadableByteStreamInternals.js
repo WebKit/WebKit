@@ -45,7 +45,7 @@ function privateInitializeReadableByteStreamController(stream, underlyingByteSou
     @putByIdDirectPrivate(this, "closeRequested", false);
 
     let hwm = @toNumber(highWaterMark);
-    if (@isNaN(hwm) || hwm < 0)
+    if (hwm !== hwm || hwm < 0)
         @throwRangeError("highWaterMark value is negative or not a number");
     @putByIdDirectPrivate(this, "strategyHWM", hwm);
 
@@ -379,7 +379,7 @@ function readableByteStreamControllerRespond(controller, bytesWritten)
 
     bytesWritten = @toNumber(bytesWritten);
 
-    if (@isNaN(bytesWritten) || bytesWritten === @Infinity || bytesWritten < 0 )
+    if (bytesWritten !== bytesWritten || bytesWritten === @Infinity || bytesWritten < 0 )
         @throwRangeError("bytesWritten has an incorrect value");
 
     @assert(@getByIdDirectPrivate(controller, "pendingPullIntos").length > 0);

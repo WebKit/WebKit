@@ -353,6 +353,8 @@ JSC_DECLARE_JIT_OPERATION(operationConvertBoxedDoubleToInt52, int64_t, (EncodedJ
 JSC_DECLARE_JIT_OPERATION(operationConvertDoubleToInt52, int64_t, (double));
 
 JSC_DECLARE_JIT_OPERATION(operationNumberIsInteger, size_t, (JSGlobalObject*, EncodedJSValue));
+JSC_DECLARE_JIT_OPERATION(operationNumberIsNaN, UCPUStrictInt32, (EncodedJSValue));
+JSC_DECLARE_JIT_OPERATION(operationIsNaN, UCPUStrictInt32, (JSGlobalObject*, EncodedJSValue));
 
 JSC_DECLARE_JIT_OPERATION(operationNewRawObject, char*, (VM*, Structure*, int32_t, Butterfly*));
 JSC_DECLARE_JIT_OPERATION(operationNewObjectWithButterfly, JSCell*, (VM*, Structure*, Butterfly*));

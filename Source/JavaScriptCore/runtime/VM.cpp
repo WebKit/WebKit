@@ -599,6 +599,10 @@ static ThunkGenerator thunkGeneratorForIntrinsic(Intrinsic intrinsic)
         return clz32ThunkGenerator;
     case FromCharCodeIntrinsic:
         return fromCharCodeThunkGenerator;
+    case GlobalIsNaNIntrinsic:
+        return globalIsNaNThunkGenerator;
+    case NumberIsNaNIntrinsic:
+        return numberIsNaNThunkGenerator;
     case SqrtIntrinsic:
         return sqrtThunkGenerator;
     case AbsIntrinsic:
