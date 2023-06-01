@@ -664,7 +664,6 @@ $(PROJECT_DIR)/Modules/streams/ReadableStreamSink.idl
 $(PROJECT_DIR)/Modules/streams/ReadableStreamSource.idl
 $(PROJECT_DIR)/Modules/streams/StreamInternals.js
 $(PROJECT_DIR)/Modules/streams/TransformStream.idl
-$(PROJECT_DIR)/Modules/streams/TransformStream.js
 $(PROJECT_DIR)/Modules/streams/TransformStreamDefaultController.idl
 $(PROJECT_DIR)/Modules/streams/TransformStreamDefaultController.js
 $(PROJECT_DIR)/Modules/streams/TransformStreamInternals.js

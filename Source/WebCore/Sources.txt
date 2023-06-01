@@ -305,6 +305,7 @@ Modules/storage/StorageManager.cpp
 Modules/storage/WorkerStorageConnection.cpp
 Modules/streams/ReadableStreamSink.cpp
 Modules/streams/ReadableStreamSource.cpp
+Modules/streams/TransformStream.cpp
 Modules/streams/WritableStream.cpp
 Modules/web-locks/WebLock.cpp
 Modules/web-locks/WebLockManager.cpp

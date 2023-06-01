@@ -2365,7 +2365,6 @@ WebCore_BUILTINS_SOURCES = \
     $(WebCore)/Modules/streams/ReadableStreamBYOBReader.js \
     $(WebCore)/Modules/streams/ReadableStreamDefaultReader.js \
     $(WebCore)/Modules/streams/StreamInternals.js \
-    $(WebCore)/Modules/streams/TransformStream.js \
     $(WebCore)/Modules/streams/TransformStreamDefaultController.js \
     $(WebCore)/Modules/streams/TransformStreamInternals.js \
     $(WebCore)/Modules/streams/WritableStreamDefaultController.js \

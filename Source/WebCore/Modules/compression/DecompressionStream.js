@@ -83,8 +83,10 @@ function initializeDecompressionStream(format)
         return @Promise.@resolve();
     };
 
-    const transform = @createTransformStream(startAlgorithm, transformAlgorithm, flushAlgorithm);
+    const [transform, readable, writable] = @createTransformStream(startAlgorithm, transformAlgorithm, flushAlgorithm);
     @putByIdDirectPrivate(this, "DecompressionStreamTransform", transform);
+    @putByIdDirectPrivate(this, "readable", readable);
+    @putByIdDirectPrivate(this, "writable", writable);
     @putByIdDirectPrivate(this, "DecompressionStreamDecoder", new @DecompressionStreamDecoder(index));
     return this;
 }
@@ -98,7 +100,7 @@ function readable()
     if (!transform)
         throw @makeThisTypeError("DecompressionStreamDecoder", "readable");
 
-    return @getByIdDirectPrivate(transform, "readable");
+    return @getByIdDirectPrivate(this, "readable");
 }
 
 @getter
@@ -110,5 +112,5 @@ function writable()
     if (!transform)
         throw @makeThisTypeError("DecompressionStreamDecoder", "writable");
 
-    return @getByIdDirectPrivate(transform, "writable");
+    return @getByIdDirectPrivate(this, "writable");
 }

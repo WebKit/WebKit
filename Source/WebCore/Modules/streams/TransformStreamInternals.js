@@ -29,7 +29,7 @@ function isTransformStream(stream)
 {
     "use strict";
 
-    return @isObject(stream) && !!@getByIdDirectPrivate(stream, "readable");
+    return @isObject(stream) && !!@getByIdDirectPrivate(stream, "internalWritable");
 }
 
 function isTransformStreamDefaultController(controller)
@@ -37,6 +37,67 @@ function isTransformStreamDefaultController(controller)
     "use strict";
 
     return @isObject(controller) && !!@getByIdDirectPrivate(controller, "transformAlgorithm");
+}
+
+function createInternalTransformStreamFromTransformer(transformer, writableStrategy, readableStrategy)
+{
+    if (transformer === @undefined)
+        transformer = null;
+
+    if (readableStrategy === @undefined)
+        readableStrategy = { };
+
+    if (writableStrategy === @undefined)
+        writableStrategy = { };
+
+    let transformerDict = { };
+    if (transformer !== null) {
+        if ("start" in transformer) {
+            transformerDict["start"] = transformer["start"];
+            if (typeof transformerDict["start"] !== "function")
+                @throwTypeError("transformer.start should be a function");
+        }
+        if ("transform" in transformer) {
+            transformerDict["transform"] = transformer["transform"];
+            if (typeof transformerDict["transform"] !== "function")
+                @throwTypeError("transformer.transform should be a function");
+        }
+        if ("flush" in transformer) {
+            transformerDict["flush"] = transformer["flush"];
+            if (typeof transformerDict["flush"] !== "function")
+                @throwTypeError("transformer.flush should be a function");
+        }
+
+        if ("readableType" in transformer)
+            @throwRangeError("TransformStream transformer has a readableType");
+        if ("writableType" in transformer)
+            @throwRangeError("TransformStream transformer has a writableType");
+    }
+
+    const readableHighWaterMark = @extractHighWaterMark(readableStrategy, 0);
+    const readableSizeAlgorithm = @extractSizeAlgorithm(readableStrategy);
+
+    const writableHighWaterMark = @extractHighWaterMark(writableStrategy, 1);
+    const writableSizeAlgorithm = @extractSizeAlgorithm(writableStrategy);
+
+    const internalTransformStream = {};
+    const startPromiseCapability = @newPromiseCapability(@Promise);
+    const [readable, writable] = @initializeTransformStream(internalTransformStream, startPromiseCapability.@promise, writableHighWaterMark, writableSizeAlgorithm, readableHighWaterMark, readableSizeAlgorithm);
+    @setUpTransformStreamDefaultControllerFromTransformer(internalTransformStream, transformer, transformerDict);
+
+    if ("start" in transformerDict) {
+        const controller = @getByIdDirectPrivate(internalTransformStream, "controller");
+        const startAlgorithm = () => @promiseInvokeOrNoopMethodNoCatch(transformer, transformerDict["start"], [controller]);
+        startAlgorithm().@then(() => {
+            // FIXME: We probably need to resolve start promise with the result of the start algorithm.
+            startPromiseCapability.@resolve.@call();
+        }, (error) => {
+            startPromiseCapability.@reject.@call(@undefined, error);
+        });
+    } else
+        startPromiseCapability.@resolve.@call();
+
+    return [internalTransformStream, readable, writable];
 }
 
 function createTransformStream(startAlgorithm, transformAlgorithm, flushAlgorithm, writableHighWaterMark, writableSizeAlgorithm, readableHighWaterMark, readableSizeAlgorithm)
@@ -52,12 +113,9 @@ function createTransformStream(startAlgorithm, transformAlgorithm, flushAlgorith
     @assert(writableHighWaterMark >= 0);
     @assert(readableHighWaterMark >= 0);
 
-    const transform = {};
-    @putByIdDirectPrivate(transform, "TransformStream", true);
-
-    const stream = new @TransformStream(transform);
+    const stream = {};
     const startPromiseCapability = @newPromiseCapability(@Promise);
-    @initializeTransformStream(stream, startPromiseCapability.@promise, writableHighWaterMark, writableSizeAlgorithm, readableHighWaterMark, readableSizeAlgorithm);
+    const [readable, writable] = @initializeTransformStream(stream, startPromiseCapability.@promise, writableHighWaterMark, writableSizeAlgorithm, readableHighWaterMark, readableSizeAlgorithm);
 
     const controller = new @TransformStreamDefaultController(@isTransformStream);
     @setUpTransformStreamDefaultController(stream, controller, transformAlgorithm, flushAlgorithm);
@@ -68,7 +126,7 @@ function createTransformStream(startAlgorithm, transformAlgorithm, flushAlgorith
         startPromiseCapability.@reject.@call(@undefined, error);
     });
 
-    return stream;
+    return [stream, readable, writable];
 }
 
 function initializeTransformStream(stream, startPromise, writableHighWaterMark, writableSizeAlgorithm, readableHighWaterMark, readableSizeAlgorithm)
@@ -95,17 +153,18 @@ function initializeTransformStream(stream, startPromise, writableHighWaterMark, 
     @putByIdDirectPrivate(options, "highWaterMark", readableHighWaterMark);
     const readable = new @ReadableStream(underlyingSource, options);
 
-    // The writable to expose to JS through writable getter.
-    @putByIdDirectPrivate(stream, "writable", writable);
     // The writable to use for the actual transform algorithms.
     @putByIdDirectPrivate(stream, "internalWritable", @getInternalWritableStream(writable));
 
     @putByIdDirectPrivate(stream, "readable", readable);
+
     @putByIdDirectPrivate(stream, "backpressure", @undefined);
     @putByIdDirectPrivate(stream, "backpressureChangePromise", @undefined);
 
     @transformStreamSetBackpressure(stream, true);
     @putByIdDirectPrivate(stream, "controller", @undefined);
+
+    return [readable, writable];
 }
 
 function transformStreamError(stream, e)
