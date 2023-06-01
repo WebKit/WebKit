@@ -147,6 +147,7 @@ private:
     void reenqueueCurrentVideoFrameIfNeeded();
     void requestNotificationWhenReadyForVideoData();
 
+    void setPresentationSize(const IntSize&) final;
     void paint(GraphicsContext&, const FloatRect&) override;
     void paintCurrentFrameInContext(GraphicsContext&, const FloatRect&) override;
     RefPtr<VideoFrame> videoFrameForCurrentTime() override;

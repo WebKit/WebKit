@@ -278,7 +278,6 @@ void MediaPlayerPrivateMediaStreamAVFObjC::enqueueVideoFrame(VideoFrame& videoFr
     }
     if (m_shouldUpdateDisplayLayer) {
         m_sampleBufferDisplayLayer->updateAffineTransform(videoTransformationMatrix(videoFrame));
-        m_sampleBufferDisplayLayer->updateBoundsAndPosition(m_sampleBufferDisplayLayer->rootLayer().bounds, m_videoRotation);
         m_shouldUpdateDisplayLayer = false;
     }
 
@@ -398,6 +397,10 @@ void MediaPlayerPrivateMediaStreamAVFObjC::ensureLayers()
     if (!activeVideoTrack || !activeVideoTrack->enabled())
         return;
 
+    auto size = m_player->presentationSize();
+    if (size.isEmpty() || m_intrinsicSize.isEmpty())
+        return;
+
     m_canEnqueueDisplayLayer = false;
     m_sampleBufferDisplayLayer = SampleBufferDisplayLayer::create(*this);
     ERROR_LOG_IF(!m_sampleBufferDisplayLayer, LOGIDENTIFIER, "Creating the SampleBufferDisplayLayer failed.");
@@ -410,11 +413,16 @@ void MediaPlayerPrivateMediaStreamAVFObjC::ensureLayers()
     if (activeVideoTrack->source().isCaptureSource())
         m_sampleBufferDisplayLayer->setRenderPolicy(SampleBufferDisplayLayer::RenderPolicy::Immediately);
 
-    auto size = m_player->presentationSize();
     m_sampleBufferDisplayLayer->initialize(hideRootLayer(), size, [weakThis = WeakPtr { *this }, size](auto didSucceed) {
         if (weakThis)
             weakThis->layersAreInitialized(size, didSucceed);
     });
+}
+
+void MediaPlayerPrivateMediaStreamAVFObjC::setPresentationSize(const IntSize& newSize)
+{
+    if (!m_sampleBufferDisplayLayer && !newSize.isEmpty())
+        updateLayersAsNeeded();
 }
 
 void MediaPlayerPrivateMediaStreamAVFObjC::layersAreInitialized(IntSize size, bool didSucceed)
@@ -429,7 +437,6 @@ void MediaPlayerPrivateMediaStreamAVFObjC::layersAreInitialized(IntSize size, bo
     scheduleRenderingModeChanged();
 
     m_sampleBufferDisplayLayer->setLogIdentifier(makeString(hex(reinterpret_cast<uintptr_t>(logIdentifier()))));
-    m_sampleBufferDisplayLayer->updateBoundsAndPosition(m_sampleBufferDisplayLayer->rootLayer().bounds, m_videoRotation);
     m_sampleBufferDisplayLayer->updateDisplayMode(m_displayMode < PausedImage, hideRootLayer());
     m_shouldUpdateDisplayLayer = true;
 
@@ -781,6 +788,8 @@ void MediaPlayerPrivateMediaStreamAVFObjC::characteristicsChanged()
         if (sizeChanged) {
             m_player->sizeChanged();
         }
+        if (!m_sampleBufferDisplayLayer && !m_intrinsicSize.isEmpty())
+            updateLayersAsNeeded();
     });
 }
 
@@ -1176,7 +1185,7 @@ LayerHostingContextID MediaPlayerPrivateMediaStreamAVFObjC::hostingContextID() c
 
 void MediaPlayerPrivateMediaStreamAVFObjC::setVideoInlineSizeFenced(const FloatSize& size, const WTF::MachSendRight& fence)
 {
-    if (!m_sampleBufferDisplayLayer)
+    if (!m_sampleBufferDisplayLayer || size.isEmpty())
         return;
     CGRect bounds = m_sampleBufferDisplayLayer->rootLayer().bounds;
     bounds.size = size;
