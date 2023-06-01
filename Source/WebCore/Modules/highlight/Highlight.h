@@ -32,7 +32,6 @@
 
 namespace WebCore {
 
-class AbstractRange;
 class CSSStyleDeclaration;
 class DOMSetAdapter;
 class PropertySetCSSStyleDeclaration;
@@ -63,7 +62,7 @@ private:
 
 class Highlight : public RefCounted<Highlight> {
 public:
-    WEBCORE_EXPORT static Ref<Highlight> create(FixedVector<std::reference_wrapper<WebCore::AbstractRange>>&&);
+    WEBCORE_EXPORT static Ref<Highlight> create(FixedVector<std::reference_wrapper<AbstractRange>>&&);
     void clearFromSetLike();
     bool addToSetLike(AbstractRange&);
     bool removeFromSetLike(const AbstractRange&);
@@ -81,7 +80,7 @@ public:
 
     // FIXME: Add WEBCORE_EXPORT CSSStyleDeclaration& style();
 private:
-    explicit Highlight(FixedVector<std::reference_wrapper<WebCore::AbstractRange>>&&);
+    explicit Highlight(FixedVector<std::reference_wrapper<AbstractRange>>&&);
 
     Vector<Ref<HighlightRangeData>> m_rangesData;
     Type m_type { Type::Highlight };
