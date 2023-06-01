@@ -54,6 +54,8 @@ private:
     void waitForDidUpdateActivityState(ActivityStateChangeID, WebProcessProxy&) override;
     void dispatchPresentationCallbacksAfterFlushingLayers(IPC::Connection&, Vector<IPC::AsyncReplyID>&&) final;
 
+    std::optional<WebCore::FramesPerSecond> displayNominalFramesPerSecond() final;
+
     void willSendUpdateGeometry();
 
     WTF::MachSendRight createFence() override;

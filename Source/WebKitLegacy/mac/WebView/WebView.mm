@@ -146,6 +146,7 @@
 #import <WebCore/DeprecatedGlobalSettings.h>
 #import <WebCore/DictationAlternative.h>
 #import <WebCore/DictionaryLookup.h>
+#import <WebCore/DisplayRefreshMonitorManager.h>
 #import <WebCore/Document.h>
 #import <WebCore/DocumentLoader.h>
 #import <WebCore/DragController.h>
@@ -5622,8 +5623,13 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
 #if !PLATFORM(IOS_FAMILY)
 - (void)doWindowDidChangeScreen
 {
-    if (_private && _private->page)
-        _private->page->chrome().windowScreenDidChange(WebCore::displayID(self.window.screen), std::nullopt);
+    if (_private && _private->page) {
+        // Try to find the refresh rate from the display refresh monitor, since
+        // we don't have any other easy way to access it from here.
+        auto displayID = WebCore::displayID(self.window.screen);
+        auto nominalFramesPerSecond = WebCore::DisplayRefreshMonitorManager::sharedManager().nominalFramesPerSecondForDisplay(displayID, _private->page->chrome().client().displayRefreshMonitorFactory());
+        _private->page->chrome().windowScreenDidChange(displayID, nominalFramesPerSecond);
+    }
 }
 
 - (void)_windowChangedKeyState

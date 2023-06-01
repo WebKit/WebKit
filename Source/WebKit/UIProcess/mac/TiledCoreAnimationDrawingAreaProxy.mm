@@ -214,6 +214,13 @@ void TiledCoreAnimationDrawingAreaProxy::dispatchPresentationCallbacksAfterFlush
     }
 }
 
+std::optional<WebCore::FramesPerSecond> TiledCoreAnimationDrawingAreaProxy::displayNominalFramesPerSecond()
+{
+    if (!m_webPageProxy.displayID())
+        return std::nullopt;
+    return m_webPageProxy.process().nominalFramesPerSecondForDisplay(*m_webPageProxy.displayID());
+}
+
 } // namespace WebKit
 
 #endif // !PLATFORM(IOS_FAMILY)

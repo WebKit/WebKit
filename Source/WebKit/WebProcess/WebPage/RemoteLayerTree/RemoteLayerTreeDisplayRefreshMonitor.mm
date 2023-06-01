@@ -113,9 +113,4 @@ void RemoteLayerTreeDisplayRefreshMonitor::updateDrawingArea(RemoteLayerTreeDraw
     m_drawingArea = drawingArea;
 }
 
-std::optional<FramesPerSecond> RemoteLayerTreeDisplayRefreshMonitor::displayNominalFramesPerSecond()
-{
-    return m_preferredFramesPerSecond;
-}
-
 } // namespace WebKit

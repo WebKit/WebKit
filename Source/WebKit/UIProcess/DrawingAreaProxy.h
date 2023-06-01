@@ -76,7 +76,8 @@ public:
 
     virtual void deviceScaleFactorDidChange() = 0;
     virtual void colorSpaceDidChange() { }
-    virtual void windowScreenDidChange(WebCore::PlatformDisplayID, std::optional<WebCore::FramesPerSecond> /* nominalFramesPerSecond */) { }
+    virtual void windowScreenDidChange(WebCore::PlatformDisplayID) { }
+    virtual std::optional<WebCore::FramesPerSecond> displayNominalFramesPerSecond() { return std::nullopt; }
 
     // FIXME: These should be pure virtual.
     virtual void setBackingStoreIsDiscardable(bool) { }

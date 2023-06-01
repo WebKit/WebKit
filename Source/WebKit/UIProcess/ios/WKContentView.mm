@@ -207,7 +207,7 @@ static NSArray *keyCommandsPlaceholderHackForEvernote(id self, SEL _cmd)
     _page->setUseFixedLayout(true);
     _page->setScreenIsBeingCaptured([[[self window] screen] isCaptured]);
 
-    _page->windowScreenDidChange(_page->generateDisplayIDFromPageID(), std::nullopt);
+    _page->windowScreenDidChange(_page->generateDisplayIDFromPageID());
 
 #if ENABLE(FULLSCREEN_API)
     _page->setFullscreenClient(makeUnique<WebKit::FullscreenClient>(self.webView));

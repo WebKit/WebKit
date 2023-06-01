@@ -1394,11 +1394,6 @@ void Page::windowScreenDidChange(PlatformDisplayID displayID, std::optional<Fram
 
     m_displayID = displayID;
     m_displayNominalFramesPerSecond = nominalFramesPerSecond;
-    if (!m_displayNominalFramesPerSecond) {
-        // If the caller didn't give us a refresh rate, maybe the relevant DisplayRefreshMonitor can? This happens in WebKitLegacy
-        // because WebView doesn't have a convenient way to access the display refresh rate.
-        m_displayNominalFramesPerSecond = DisplayRefreshMonitorManager::sharedManager().nominalFramesPerSecondForDisplay(m_displayID, chrome().client().displayRefreshMonitorFactory());
-    }
 
     forEachDocument([&] (Document& document) {
         document.windowScreenDidChange(displayID);

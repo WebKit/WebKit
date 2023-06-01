@@ -47,6 +47,8 @@ private:
     void scheduleDisplayRefreshCallbacks() override;
     void pauseDisplayRefreshCallbacks() override;
 
+    std::optional<WebCore::FramesPerSecond> displayNominalFramesPerSecond() override;
+
     WKDisplayLinkHandler *displayLinkHandler();
 
     RetainPtr<WKDisplayLinkHandler> m_displayLinkHandler;
