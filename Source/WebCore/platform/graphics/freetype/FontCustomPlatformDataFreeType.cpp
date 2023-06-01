@@ -150,7 +150,7 @@ bool FontCustomPlatformData::supportsFormat(const String& format)
 {
     return equalLettersIgnoringASCIICase(format, "truetype"_s)
         || equalLettersIgnoringASCIICase(format, "opentype"_s)
-#if USE(WOFF2)
+#if HAVE(WOFF_SUPPORT) || USE(WOFF2)
         || equalLettersIgnoringASCIICase(format, "woff2"_s)
 #if ENABLE(VARIATION_FONTS)
         || equalLettersIgnoringASCIICase(format, "woff2-variations"_s)

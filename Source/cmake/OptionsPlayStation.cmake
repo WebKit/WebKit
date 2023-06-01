@@ -263,6 +263,12 @@ if (ENABLE_WEBCORE)
     WEBKIT_CHECK_HAVE_SYMBOL(USE_BORINGSSL OPENSSL_IS_BORINGSSL openssl/ssl.h)
     cmake_pop_check_state()
 
+    # See if FreeType implementation supports WOFF2 fonts
+    include(WOFF2Checks)
+    if (FREETYPE_WOFF2_SUPPORT_IS_AVAILABLE)
+        SET_AND_EXPOSE_TO_BUILD(HAVE_WOFF_SUPPORT ON)
+    endif ()
+
     # Rendering options
     SET_AND_EXPOSE_TO_BUILD(USE_EGL ON)
     SET_AND_EXPOSE_TO_BUILD(USE_OPENGL_ES ON)

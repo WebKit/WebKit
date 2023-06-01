@@ -55,6 +55,9 @@ int main(int argc, char** argv)
 #if defined(WebP_LOAD_AT)
     loadLibraryOrExit(WebP_LOAD_AT);
 #endif
+#if defined(Brotli_LOAD_AT)
+    loadLibraryOrExit(Brotli_LOAD_AT);
+#endif
     loadLibraryOrExit(Freetype_LOAD_AT);
     loadLibraryOrExit(Fontconfig_LOAD_AT);
     loadLibraryOrExit(HarfBuzz_LOAD_AT);
