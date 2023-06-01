@@ -85,6 +85,15 @@
 #include "DeviceOrientationUpdateProvider.h"
 #endif
 
+#if USE(COORDINATED_GRAPHICS)
+#include <wtf/RunLoop.h>
+#if ENABLE(VIDEO) && USE(GSTREAMER_GL)
+#include "GRefPtrGStreamer.h"
+
+typedef struct _GstGLContext GstGLContext;
+#endif
+#endif
+
 namespace JSC {
 class Debugger;
 }
@@ -1054,6 +1063,20 @@ public:
     const WeakHashSet<LocalFrame>& rootFrames() const { return m_rootFrames; }
     WEBCORE_EXPORT void addRootFrame(LocalFrame&);
 
+#if USE(COORDINATED_GRAPHICS)
+    void setCompositingRunLoop(RunLoop* runLoop)
+    {
+        m_compositingRunLoop = runLoop;
+#if ENABLE(VIDEO) && USE(GSTREAMER_GL)
+        m_gstGLContext = nullptr;
+#endif
+    }
+    RunLoop* compositingRunLoop() const { return m_compositingRunLoop.get(); }
+#if ENABLE(VIDEO) && USE(GSTREAMER_GL)
+    GstGLContext* gstGLContext();
+#endif
+#endif
+
 private:
     struct Navigation {
         RegistrableDomain domain;
@@ -1426,6 +1449,13 @@ private:
     Ref<BadgeClient> m_badgeClient;
 
     HashMap<RegistrableDomain, uint64_t> m_noiseInjectionHashSalts;
+
+#if USE(COORDINATED_GRAPHICS)
+    RefPtr<RunLoop> m_compositingRunLoop;
+#if ENABLE(VIDEO) && USE(GSTREAMER_GL)
+    GRefPtr<GstGLContext> m_gstGLContext;
+#endif
+#endif
 };
 
 inline PageGroup& Page::group()

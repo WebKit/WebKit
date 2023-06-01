@@ -48,6 +48,8 @@ loader/soup/ResourceLoaderSoup.cpp
 page/linux/ResourceUsageOverlayLinux.cpp
 page/linux/ResourceUsageThreadLinux.cpp
 
+page/gstreamer/PageGStreamer.cpp @no-unify
+
 page/scrolling/nicosia/ScrollingCoordinatorNicosia.cpp
 page/scrolling/nicosia/ScrollingStateNodeNicosia.cpp
 page/scrolling/nicosia/ScrollingTreeFixedNodeNicosia.cpp

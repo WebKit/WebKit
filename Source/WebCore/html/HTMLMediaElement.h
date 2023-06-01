@@ -802,6 +802,10 @@ private:
     void mediaPlayerGetRawCookies(const URL&, MediaPlayerClient::GetRawCookiesCallback&&) const final;
 #endif
 
+#if USE(COORDINATED_GRAPHICS) && USE(GSTREAMER_GL)
+    GstGLContext* mediaPlayerGstGLContext() const final;
+#endif
+
     void mediaPlayerEngineFailedToLoad() const final;
 
     double mediaPlayerRequestedPlaybackRate() const final;

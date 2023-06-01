@@ -1629,6 +1629,13 @@ void MediaPlayer::simulateAudioInterruption()
 
     m_private->simulateAudioInterruption();
 }
+
+#if USE(COORDINATED_GRAPHICS) && USE(GSTREAMER_GL)
+GstGLContext* MediaPlayer::gstGLContext()
+{
+    return client().mediaPlayerGstGLContext();
+}
+#endif
 #endif
 
 void MediaPlayer::beginSimulatedHDCPError()

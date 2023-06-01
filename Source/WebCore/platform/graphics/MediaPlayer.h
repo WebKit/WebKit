@@ -58,6 +58,10 @@ OBJC_CLASS NSArray;
 typedef struct __CVBuffer* CVPixelBufferRef;
 #endif
 
+#if USE(COORDINATED_GRAPHICS) && USE(GSTREAMER_GL)
+typedef struct _GstGLContext GstGLContext;
+#endif
+
 namespace WTF {
 class MachSendRight;
 }
@@ -289,6 +293,10 @@ public:
 
 #if PLATFORM(COCOA)
     virtual void mediaPlayerOnNewVideoFrameMetadata(VideoFrameMetadata&&, RetainPtr<CVPixelBufferRef>&&) { }
+#endif
+
+#if USE(COORDINATED_GRAPHICS) && USE(GSTREAMER_GL)
+    virtual GstGLContext* mediaPlayerGstGLContext() const { return nullptr; }
 #endif
 
     virtual bool mediaPlayerPrefersSandboxedParsing() const { return false; }
@@ -619,6 +627,9 @@ public:
 
 #if USE(GSTREAMER)
     void simulateAudioInterruption();
+#if USE(COORDINATED_GRAPHICS) && USE(GSTREAMER_GL)
+    GstGLContext* gstGLContext();
+#endif
 #endif
 
     void beginSimulatedHDCPError();

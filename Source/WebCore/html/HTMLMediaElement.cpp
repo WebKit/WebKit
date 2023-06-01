@@ -7816,6 +7816,17 @@ void HTMLMediaElement::mediaPlayerGetRawCookies(const URL& url, MediaPlayerClien
 
 #endif
 
+#if USE(COORDINATED_GRAPHICS) && USE(GSTREAMER_GL)
+GstGLContext* HTMLMediaElement::mediaPlayerGstGLContext() const
+{
+    auto* page = document().page();
+    if (!page)
+        return nullptr;
+
+    return page->gstGLContext();
+}
+#endif
+
 void HTMLMediaElement::mediaPlayerEngineFailedToLoad() const
 {
     if (!m_player)

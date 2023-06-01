@@ -51,7 +51,6 @@ typedef struct _GdkDisplay GdkDisplay;
 #if ENABLE(VIDEO) && USE(GSTREAMER_GL)
 #include "GRefPtrGStreamer.h"
 
-typedef struct _GstGLContext GstGLContext;
 typedef struct _GstGLDisplay GstGLDisplay;
 #endif // ENABLE(VIDEO) && USE(GSTREAMER_GL)
 
@@ -125,7 +124,6 @@ public:
 
 #if ENABLE(VIDEO) && USE(GSTREAMER_GL)
     GstGLDisplay* gstGLDisplay() const;
-    GstGLContext* gstGLContext() const;
 #endif
 
 #if USE(LCMS)
@@ -189,10 +187,7 @@ private:
 #endif
 
 #if ENABLE(VIDEO) && USE(GSTREAMER_GL)
-    bool tryEnsureGstGLContext() const;
-
     mutable GRefPtr<GstGLDisplay> m_gstGLDisplay;
-    mutable GRefPtr<GstGLContext> m_gstGLContext;
 #endif
 };
 

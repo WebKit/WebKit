@@ -42,6 +42,7 @@
 #include "MIMETypeRegistry.h"
 #include "NotImplemented.h"
 #include "OriginAccessPatterns.h"
+#include "PlatformDisplay.h"
 #include "SecurityOrigin.h"
 #include "TimeRanges.h"
 #include "VideoSinkGStreamer.h"
@@ -1561,6 +1562,27 @@ bool MediaPlayerPrivateGStreamer::handleNeedContextMessage(GstMessage* message)
         gst_element_set_context(GST_ELEMENT(GST_MESSAGE_SRC(message)), context.get());
         return true;
     }
+
+#if USE(GSTREAMER_GL)
+    if (!g_strcmp0(contextType, GST_GL_DISPLAY_CONTEXT_TYPE)) {
+        if (auto* gstGLDisplay = PlatformDisplay::sharedDisplayForCompositing().gstGLDisplay()) {
+            GRefPtr<GstContext> context = adoptGRef(gst_context_new(GST_GL_DISPLAY_CONTEXT_TYPE, TRUE));
+            gst_context_set_gl_display(context.get(), gstGLDisplay);
+            gst_element_set_context(GST_ELEMENT(GST_MESSAGE_SRC(message)), context.get());
+        }
+        return true;
+    }
+
+    if (!g_strcmp0(contextType, "gst.gl.app_context")) {
+        if (auto* gstGLContext = m_player->gstGLContext()) {
+            GRefPtr<GstContext> context = adoptGRef(gst_context_new("gst.gl.app_context", TRUE));
+            GstStructure* structure = gst_context_writable_structure(context.get());
+            gst_structure_set(structure, "context", GST_TYPE_GL_CONTEXT, gstGLContext, nullptr);
+            gst_element_set_context(GST_ELEMENT(GST_MESSAGE_SRC(message)), context.get());
+        }
+        return true;
+    }
+#endif
 
 #if ENABLE(ENCRYPTED_MEDIA)
     if (!g_strcmp0(contextType, "drm-preferred-decryption-system-id")) {
@@ -3925,7 +3947,7 @@ GstElement* MediaPlayerPrivateGStreamer::createVideoSinkGL()
     if (desiredVideoSink)
         return makeGStreamerElement(desiredVideoSink, nullptr);
 
-    if (!webKitGLVideoSinkProbePlatform()) {
+    if (!webKitGLVideoSinkProbePlatform() || !m_player->gstGLContext()) {
         g_warning("WebKit wasn't able to find the GL video sink dependencies. Hardware-accelerated zero-copy video rendering can't be enabled without this plugin.");
         return nullptr;
     }

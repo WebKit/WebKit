@@ -45,6 +45,8 @@ editing/gtk/WebContentReaderGtk.cpp
 
 loader/soup/ResourceLoaderSoup.cpp
 
+page/gstreamer/PageGStreamer.cpp @no-unify
+
 page/gtk/DragControllerGtk.cpp
 
 page/linux/ResourceUsageOverlayLinux.cpp
