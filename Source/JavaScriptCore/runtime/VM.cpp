@@ -1264,6 +1264,9 @@ void VM::promiseRejected(JSPromise* promise)
 
 void VM::drainMicrotasks()
 {
+    if (UNLIKELY(m_drainMicrotaskDelayScopeCount))
+        return;
+
     if (UNLIKELY(executionForbidden()))
         m_microtaskQueue.clear();
     else {
@@ -1666,5 +1669,58 @@ void VM::registerWasmInstance(Wasm::Instance& instance)
     m_wasmInstances.add(instance);
 }
 #endif
+
+
+VM::DrainMicrotaskDelayScope::DrainMicrotaskDelayScope(VM& vm)
+    : m_vm(&vm)
+{
+    increment();
+}
+
+VM::DrainMicrotaskDelayScope::~DrainMicrotaskDelayScope()
+{
+    decrement();
+}
+
+VM::DrainMicrotaskDelayScope::DrainMicrotaskDelayScope(const VM::DrainMicrotaskDelayScope& other)
+    : m_vm(other.m_vm)
+{
+    increment();
+}
+
+VM::DrainMicrotaskDelayScope& VM::DrainMicrotaskDelayScope::operator=(const VM::DrainMicrotaskDelayScope& other)
+{
+    if (this == &other)
+        return *this;
+    decrement();
+    m_vm = other.m_vm;
+    increment();
+    return *this;
+}
+
+VM::DrainMicrotaskDelayScope& VM::DrainMicrotaskDelayScope::operator=(VM::DrainMicrotaskDelayScope&& other)
+{
+    decrement();
+    m_vm = std::exchange(other.m_vm, nullptr);
+    increment();
+    return *this;
+}
+
+void VM::DrainMicrotaskDelayScope::increment()
+{
+    if (m_vm)
+        ++m_vm->m_drainMicrotaskDelayScopeCount;
+}
+
+void VM::DrainMicrotaskDelayScope::decrement()
+{
+    if (!m_vm)
+        return;
+    ASSERT(m_vm->m_drainMicrotaskDelayScopeCount);
+    if (!--m_vm->m_drainMicrotaskDelayScopeCount) {
+        JSLockHolder locker(*m_vm);
+        m_vm->drainMicrotasks();
+    }
+}
 
 } // namespace JSC

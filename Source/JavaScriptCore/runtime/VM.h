@@ -891,6 +891,24 @@ public:
     bool enableControlFlowProfiler();
     bool disableControlFlowProfiler();
 
+    class JS_EXPORT_PRIVATE DrainMicrotaskDelayScope {
+    public:
+        explicit DrainMicrotaskDelayScope(VM&);
+        ~DrainMicrotaskDelayScope();
+
+        DrainMicrotaskDelayScope(DrainMicrotaskDelayScope&&) = default;
+        DrainMicrotaskDelayScope& operator=(DrainMicrotaskDelayScope&&);
+        DrainMicrotaskDelayScope(const DrainMicrotaskDelayScope&);
+        DrainMicrotaskDelayScope& operator=(const DrainMicrotaskDelayScope&);
+
+    private:
+        void increment();
+        void decrement();
+
+        RefPtr<VM> m_vm;
+    };
+
+    DrainMicrotaskDelayScope drainMicrotaskDelayScope() { return DrainMicrotaskDelayScope { *this }; }
     void queueMicrotask(QueuedTask&&);
     JS_EXPORT_PRIVATE void drainMicrotasks();
     void setOnEachMicrotaskTick(WTF::Function<void(VM&)>&& func) { m_onEachMicrotaskTick = WTFMove(func); }
@@ -1080,6 +1098,7 @@ private:
     std::unique_ptr<FuzzerAgent> m_fuzzerAgent;
     std::unique_ptr<ShadowChicken> m_shadowChicken;
     std::unique_ptr<BytecodeIntrinsicRegistry> m_bytecodeIntrinsicRegistry;
+    uint64_t m_drainMicrotaskDelayScopeCount { 0 };
 
     // FIXME: We should remove handled promises from this list at GC flip. <https://webkit.org/b/201005>
     Vector<Strong<JSPromise>> m_aboutToBeNotifiedRejectedPromises;

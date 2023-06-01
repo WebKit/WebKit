@@ -180,12 +180,11 @@ AudioWorkletThread& AudioWorkletGlobalScope::thread() const
 
 void AudioWorkletGlobalScope::handlePreRenderTasks()
 {
-    // We grab the JS API lock at the beginning of rendering and release it at the end of rendering.
     // This makes sure that we only drain the MicroTask queue after each render quantum.
     // It is only safe to grab the lock if we are on the context thread. We might get called on
     // another thread if audio rendering started before the audio worklet got started.
     if (isContextThread())
-        m_lockDuringRendering.emplace(script()->vm());
+        m_delayMicrotaskDrainingDuringRendering = script()->vm().drainMicrotaskDelayScope();
 }
 
 void AudioWorkletGlobalScope::handlePostRenderTasks(size_t currentFrame)
@@ -197,7 +196,7 @@ void AudioWorkletGlobalScope::handlePostRenderTasks(size_t currentFrame)
         // explicitly allow the following allocation(s).
         DisableMallocRestrictionsForCurrentThreadScope disableMallocRestrictions;
         // This takes care of processing the MicroTask queue after rendering.
-        m_lockDuringRendering = std::nullopt;
+        m_delayMicrotaskDrainingDuringRendering = std::nullopt;
     }
 }
 
