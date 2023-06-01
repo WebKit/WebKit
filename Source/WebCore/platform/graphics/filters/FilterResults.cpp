@@ -40,8 +40,33 @@ FilterImage* FilterResults::effectResult(FilterEffect& effect) const
     return m_results.get(effect);
 }
 
+size_t FilterResults::memoryCost() const
+{
+    CheckedSize memoryCost;
+
+    for (auto& result : m_results.values())
+        memoryCost += result->memoryCost();
+
+    return memoryCost;
+}
+
+bool FilterResults::canCacheResult(const FilterImage& result) const
+{
+    static constexpr size_t maxAllowedMemoryCost = 100 * MB;
+    CheckedSize totalMemoryCost = memoryCost();
+
+    totalMemoryCost += result.memoryCost();
+    if (totalMemoryCost.hasOverflowed())
+        return false;
+
+    return totalMemoryCost <= maxAllowedMemoryCost;
+}
+
 void FilterResults::setEffectResult(FilterEffect& effect, const FilterImageVector& inputs, Ref<FilterImage>&& result)
 {
+    if (!canCacheResult(result))
+        return;
+
     m_results.set({ effect }, WTFMove(result));
 
     for (auto& input : inputs)

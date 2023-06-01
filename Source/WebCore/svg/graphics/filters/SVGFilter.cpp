@@ -33,7 +33,6 @@
 
 namespace WebCore {
 
-static constexpr unsigned maxTotalNumberFilterEffects = 100;
 static constexpr unsigned maxCountChildNodes = 200;
 
 RefPtr<SVGFilter> SVGFilter::create(SVGFilterElement& filterElement, OptionSet<FilterRenderingMode> preferredFilterRenderingModes, const FloatSize& filterScale, const FloatRect& filterRegion, const FloatRect& targetBoundingBox, const GraphicsContext& destinationContext, std::optional<RenderingResourceIdentifier> renderingResourceIdentifier)
@@ -137,10 +136,10 @@ std::optional<std::tuple<SVGFilterExpression, FilterEffectVector>> SVGFilter::bu
         ASSERT(index != notFound);
         expression.append({ static_cast<unsigned>(index), level, effectGeometry(effect) });
     });
-    
-    if (!success || expression.size() > maxTotalNumberFilterEffects)
+
+    if (!success)
         return std::nullopt;
-    
+
     expression.reverse();
     expression.shrinkToFit();
     return { { WTFMove(expression), WTFMove(effects) } };

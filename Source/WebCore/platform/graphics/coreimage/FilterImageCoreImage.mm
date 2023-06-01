@@ -48,6 +48,12 @@ void FilterImage::setCIImage(RetainPtr<CIImage>&& ciImage)
     m_ciImage = WTFMove(ciImage);
 }
 
+size_t FilterImage::memoryCostOfCIImage() const
+{
+    ASSERT(m_ciImage);
+    return FloatSize([m_ciImage.get() extent].size).area() * 4;
+}
+
 ImageBuffer* FilterImage::imageBufferFromCIImage()
 {
     ASSERT(m_ciImage);
