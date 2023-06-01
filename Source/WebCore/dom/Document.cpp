@@ -8984,9 +8984,18 @@ void Document::keyframesRuleDidChange(const String& name)
 void Document::addTopLayerElement(Element& element)
 {
     RELEASE_ASSERT(&element.document() == this && element.isConnected() && !element.isInTopLayer());
-    // To add an element to a top layer, remove it from top layer and then append it to top layer.
     auto result = m_topLayerElements.add(element);
     RELEASE_ASSERT(result.isNewEntry);
+    if (auto* candidatePopover = dynamicDowncast<HTMLElement>(element); candidatePopover && candidatePopover->popoverState() == PopoverState::Auto) {
+#if ENABLE(FULLSCREEN_API)
+        if (candidatePopover->hasFullscreenFlag())
+            return;
+#endif
+        if (is<HTMLDialogElement>(*candidatePopover) && downcast<HTMLDialogElement>(*candidatePopover).isModal())
+            return;
+        auto result = m_autoPopoverList.add(*candidatePopover);
+        RELEASE_ASSERT(result.isNewEntry);
+    }
 }
 
 void Document::removeTopLayerElement(Element& element)
@@ -8994,6 +9003,10 @@ void Document::removeTopLayerElement(Element& element)
     RELEASE_ASSERT(&element.document() == this && element.isInTopLayer());
     auto didRemove = m_topLayerElements.remove(element);
     RELEASE_ASSERT(didRemove);
+    if (auto* candidatePopover = dynamicDowncast<HTMLElement>(element); candidatePopover && candidatePopover->isPopoverShowing() && candidatePopover->popoverState() == PopoverState::Auto) {
+        auto didRemove = m_autoPopoverList.remove(*candidatePopover);
+        RELEASE_ASSERT(didRemove);
+    }
 }
 
 HTMLDialogElement* Document::activeModalDialog() const
@@ -9008,22 +9021,13 @@ HTMLDialogElement* Document::activeModalDialog() const
 
 HTMLElement* Document::topmostAutoPopover() const
 {
-    for (auto& element : makeReversedRange(m_topLayerElements)) {
-#if ENABLE(FULLSCREEN_API)
-        if (element->hasFullscreenFlag())
-            continue;
-#endif
-        if (auto* candidate = dynamicDowncast<HTMLElement>(element.get()); candidate && candidate->popoverState() == PopoverState::Auto) {
-            if (!is<HTMLDialogElement>(candidate) || !downcast<HTMLDialogElement>(candidate)->isOpen())
-                return candidate;
-        }
-    }
-
-    return nullptr;
+    if (m_autoPopoverList.isEmpty())
+        return nullptr;
+    return m_autoPopoverList.last().ptr();
 }
 
 // https://html.spec.whatwg.org/#hide-all-popovers-until
-void Document::hideAllPopoversUntil(Element* endpoint, FocusPreviousElement focusPreviousElement, FireEvents fireEvents)
+void Document::hideAllPopoversUntil(HTMLElement* endpoint, FocusPreviousElement focusPreviousElement, FireEvents fireEvents)
 {
     auto closeAllOpenPopovers = [&]() {
         while (RefPtr popover = topmostAutoPopover())
@@ -9031,14 +9035,6 @@ void Document::hideAllPopoversUntil(Element* endpoint, FocusPreviousElement focu
     };
     if (!endpoint)
         return closeAllOpenPopovers();
-    auto autoPopoverList = [&]()  {
-        Vector<Ref<HTMLElement>> popovers;
-        for (auto& item : m_topLayerElements) {
-            if (auto* candidate = dynamicDowncast<HTMLElement>(item.get()); candidate && candidate->popoverState() == PopoverState::Auto)
-                popovers.append(*candidate);
-        }
-        return popovers;
-    };
 
     bool repeatingHide = false;
     do {
@@ -9060,7 +9056,7 @@ void Document::hideAllPopoversUntil(Element* endpoint, FocusPreviousElement focu
                 break;
             topmostAutoPopover->hidePopoverInternal(focusPreviousElement, fireEvents);
         }
-        repeatingHide = m_topLayerElements.contains(*endpoint) && topmostAutoPopover() != endpoint;
+        repeatingHide = m_autoPopoverList.contains(*endpoint) && topmostAutoPopover() != endpoint;
         if (repeatingHide)
             fireEvents = FireEvents::No;
     } while (repeatingHide);
@@ -9104,9 +9100,9 @@ void Document::handlePopoverLightDismiss(const PointerEvent& event, Node& target
                 return second;
             if (!second)
                 return first;
-            for (auto& element : makeReversedRange(m_topLayerElements)) {
+            for (auto& element : makeReversedRange(m_autoPopoverList)) {
                 if (element.ptr() == first || element.ptr() == second)
-                    return downcast<HTMLElement>(element.ptr());
+                    return element.ptr();
             }
             ASSERT_NOT_REACHED();
             return nullptr;

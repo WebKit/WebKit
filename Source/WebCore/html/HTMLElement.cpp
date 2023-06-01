@@ -1265,16 +1265,13 @@ static ExceptionOr<bool> checkPopoverValidity(HTMLElement& element, PopoverVisib
 // https://html.spec.whatwg.org/#topmost-popover-ancestor
 // Consider both DOM ancestors and popovers where the given popover was invoked from as ancestors.
 // Use top layer positions to disambiguate the topmost one when both exist.
-static HTMLElement* topmostPopoverAncestor(Element& newPopover)
+static HTMLElement* topmostPopoverAncestor(HTMLElement& newPopover)
 {
     // Store positions to avoid having to do O(n) search for every popover invoker.
-    HashMap<Ref<Element>, size_t> topLayerPositions;
+    HashMap<Ref<const HTMLElement>, size_t> topLayerPositions;
     size_t i = 0;
-    for (auto& element : newPopover.document().topLayerElements()) {
-        if (!is<HTMLElement>(element) || downcast<HTMLElement>(element.get()).popoverState() != PopoverState::Auto)
-            continue;
+    for (auto& element : newPopover.document().autoPopoverList())
         topLayerPositions.add(element, i++);
-    }
 
     topLayerPositions.add(newPopover, i);
 

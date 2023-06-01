@@ -1630,10 +1630,12 @@ public:
     const ListHashSet<Ref<Element>>& topLayerElements() const { return m_topLayerElements; }
     bool hasTopLayerElement() const { return !m_topLayerElements.isEmpty(); }
 
+    const ListHashSet<Ref<HTMLElement>>& autoPopoverList() const { return m_autoPopoverList; }
+
     HTMLDialogElement* activeModalDialog() const;
     HTMLElement* topmostAutoPopover() const;
 
-    void hideAllPopoversUntil(Element*, FocusPreviousElement, FireEvents);
+    void hideAllPopoversUntil(HTMLElement*, FocusPreviousElement, FireEvents);
     void handlePopoverLightDismiss(const PointerEvent&, Node&);
 
 #if ENABLE(ATTACHMENT_ELEMENT)
@@ -2207,10 +2209,11 @@ private:
     Ref<UndoManager> m_undoManager;
     UniqueRef<Editor> m_editor;
     UniqueRef<FrameSelection> m_selection;
-        
+
     String m_fragmentDirective;
 
     ListHashSet<Ref<Element>> m_topLayerElements;
+    ListHashSet<Ref<HTMLElement>> m_autoPopoverList;
 
     WeakPtr<HTMLElement, WeakPtrImplWithEventTargetData> m_popoverPointerDownTarget;
 
