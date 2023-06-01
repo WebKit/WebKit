@@ -1931,7 +1931,7 @@ void WebProcessPool::processForNavigationInternal(WebPageProxy& page, const API:
     if (!m_configuration->processSwapsOnNavigationWithinSameNonHTTPFamilyProtocol() && !sourceURL.protocolIsInHTTPFamily() && sourceURL.protocol() == targetURL.protocol())
         return completionHandler(WTFMove(sourceProcess), nullptr, "Navigation within the same non-HTTP(s) protocol"_s);
 
-    if (!sourceURL.isValid() || !targetURL.isValid() || sourceURL.isEmpty() || sourceURL.protocolIsAbout() || targetRegistrableDomain.matches(sourceURL))
+    if (!sourceURL.isValid() || !targetURL.isValid() || sourceURL.isEmpty() || (sourceURL.protocolIsAbout() && (!sourceProcess->hasCommittedAnyMeaningfulProvisionalLoads() || sourceProcess->registrableDomain().matches(targetURL))) || targetRegistrableDomain.matches(sourceURL))
         return completionHandler(WTFMove(sourceProcess), nullptr, "Navigation is same-site"_s);
 
     String reason = "Navigation is cross-site"_s;

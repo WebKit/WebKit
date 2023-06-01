@@ -8619,6 +8619,70 @@ TEST(ProcessSwap, ContentModeInCaseOfPSONThenCoopProcessSwap)
 }
 #endif // PLATFORM(IOS_FAMILY)
 
+TEST(ProcessSwap, NewProcessAfterNavigatingToCrossOriginThroughAboutPage)
+{
+    using namespace TestWebKitAPI;
+
+    HTTPServer server({
+        { "/source.html"_s, { ""_s } },
+        { "/destination.html"_s, { ""_s } },
+    });
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600)]);
+
+    [webView synchronouslyLoadRequest:server.request("/source.html"_s)];
+    [webView synchronouslyLoadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"about:blank"]]];
+
+    auto pid1 = [webView _webProcessIdentifier];
+
+    [webView synchronouslyLoadRequest:server.requestWithLocalhost("/destination.html"_s)];
+
+    auto pid2 = [webView _webProcessIdentifier];
+    EXPECT_NE(pid1, pid2);
+}
+
+TEST(ProcessSwap, ReuseProcessAfterNavigatingToSameOriginThroughAboutPage)
+{
+    using namespace TestWebKitAPI;
+
+    HTTPServer server({
+        { "/source.html"_s, { ""_s } },
+        { "/destination.html"_s, { ""_s } },
+    });
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600)]);
+
+    [webView synchronouslyLoadRequest:server.request("/source.html"_s)];
+    [webView synchronouslyLoadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"about:blank"]]];
+
+    auto pid1 = [webView _webProcessIdentifier];
+
+    [webView synchronouslyLoadRequest:server.request("/destination.html"_s)];
+
+    auto pid2 = [webView _webProcessIdentifier];
+    EXPECT_EQ(pid1, pid2);
+}
+
+TEST(ProcessSwap, ReuseProcessAfterNavigatingFromAboutPage)
+{
+    using namespace TestWebKitAPI;
+
+    HTTPServer server({
+        { "/destination.html"_s, { ""_s } },
+    });
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600)]);
+
+    [webView synchronouslyLoadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"about:blank"]]];
+
+    auto pid1 = [webView _webProcessIdentifier];
+
+    [webView synchronouslyLoadRequest:server.request("/destination.html"_s)];
+
+    auto pid2 = [webView _webProcessIdentifier];
+    EXPECT_EQ(pid1, pid2);
+}
+
 // The WebProcess cache cannot be enabled on devices with too little RAM so we need to disable
 // tests relying on it on iOS. The WebProcess cache is disabled by default on iOS anyway.
 #if !PLATFORM(IOS_FAMILY)
