@@ -49,12 +49,12 @@ using AbstractType = std::variant<
     AbstractMatrix,
     AbstractTexture,
     TypeVariable,
-    Type*
+    const Type*
 >;
 
 using AbstractScalarType = std::variant<
     TypeVariable,
-    Type*
+    const Type*
 >;
 
 struct AbstractVector {
@@ -81,11 +81,11 @@ struct OverloadCandidate {
 };
 
 struct SelectedOverload {
-    FixedVector<Type*> parameters;
-    Type* result;
+    FixedVector<const Type*> parameters;
+    const Type* result;
 };
 
-std::optional<SelectedOverload> resolveOverloads(TypeStore&, const Vector<OverloadCandidate>&, const Vector<Type*>& valueArguments, const Vector<Type*>& typeArguments);
+std::optional<SelectedOverload> resolveOverloads(TypeStore&, const Vector<OverloadCandidate>&, const Vector<const Type*>& valueArguments, const Vector<const Type*>& typeArguments);
 
 } // namespace WGSL
 

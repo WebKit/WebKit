@@ -62,7 +62,7 @@ bool satisfies(const Type* type, Constraint constraint)
     }
 }
 
-Type* satisfyOrPromote(Type* type, Constraint constraint, const TypeStore& types)
+const Type* satisfyOrPromote(const Type* type, Constraint constraint, const TypeStore& types)
 {
     auto* primitive = std::get_if<Types::Primitive>(type);
     if (!primitive) {

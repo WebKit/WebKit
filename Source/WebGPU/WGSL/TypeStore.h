@@ -43,66 +43,66 @@ class TypeStore {
 public:
     TypeStore();
 
-    Type* bottomType() const { return m_bottom; }
-    Type* voidType() const { return m_void; }
-    Type* boolType() const { return m_bool; }
+    const Type* bottomType() const { return m_bottom; }
+    const Type* voidType() const { return m_void; }
+    const Type* boolType() const { return m_bool; }
 
-    Type* abstractIntType() const { return m_abstractInt; }
-    Type* i32Type() const { return m_i32; }
-    Type* u32Type() const { return m_u32; }
+    const Type* abstractIntType() const { return m_abstractInt; }
+    const Type* i32Type() const { return m_i32; }
+    const Type* u32Type() const { return m_u32; }
 
-    Type* abstractFloatType() const { return m_abstractFloat; }
-    Type* f32Type() const { return m_f32; }
-    Type* samplerType() const { return m_sampler; }
-    Type* textureExternalType() const { return m_textureExternal; }
+    const Type* abstractFloatType() const { return m_abstractFloat; }
+    const Type* f32Type() const { return m_f32; }
+    const Type* samplerType() const { return m_sampler; }
+    const Type* textureExternalType() const { return m_textureExternal; }
 
-    Type* structType(AST::Structure&);
-    Type* arrayType(Type*, std::optional<unsigned>);
-    Type* vectorType(Type*, uint8_t);
-    Type* matrixType(Type*, uint8_t columns, uint8_t rows);
-    Type* textureType(Type*, Types::Texture::Kind);
-    Type* functionType(Vector<Type*>&&, Type*);
-    Type* referenceType(AddressSpace, Type*, AccessMode);
+    const Type* structType(AST::Structure&);
+    const Type* arrayType(const Type*, std::optional<unsigned>);
+    const Type* vectorType(const Type*, uint8_t);
+    const Type* matrixType(const Type*, uint8_t columns, uint8_t rows);
+    const Type* textureType(const Type*, Types::Texture::Kind);
+    const Type* functionType(Vector<const Type*>&&, const Type*);
+    const Type* referenceType(AddressSpace, const Type*, AccessMode);
 
-    Type* constructType(AST::ParameterizedTypeName::Base, Type*);
+    const Type* constructType(AST::ParameterizedTypeName::Base, const Type*);
 
 private:
     class TypeCache {
     public:
         template<typename Key>
-        Type* find(const Key&) const;
+        const Type* find(const Key&) const;
 
         template<typename Key>
-        void insert(const Key&, Type*);
+        void insert(const Key&, const Type*);
 
     private:
-        HashMap<std::pair<Type*, uint64_t>, Type*> m_storage;
+        HashMap<std::pair<const Type*, uint64_t>, const Type*> m_storage;
     };
 
     template<typename TypeKind, typename... Arguments>
-    Type* allocateType(Arguments&&...);
+    const Type* allocateType(Arguments&&...);
 
     template<typename TargetConstructor, typename Base, typename... Arguments>
     void allocateConstructor(TargetConstructor, Base, Arguments&&...);
 
     struct TypeConstructor {
-        std::function<Type*(Type*)> construct;
+        std::function<const Type*(const Type*)> construct;
     };
 
-    Vector<std::unique_ptr<Type>> m_types;
+    Vector<std::unique_ptr<const Type>> m_types;
     FixedVector<TypeConstructor> m_typeConstrutors;
     TypeCache m_cache;
 
-    Type* m_bottom;
-    Type* m_abstractInt;
-    Type* m_abstractFloat;
-    Type* m_void;
-    Type* m_bool;
-    Type* m_i32;
-    Type* m_u32;
-    Type* m_f32;
-    Type* m_sampler;
-    Type* m_textureExternal;
+    const Type* m_bottom;
+    const Type* m_abstractInt;
+    const Type* m_abstractFloat;
+    const Type* m_void;
+    const Type* m_bool;
+    const Type* m_i32;
+    const Type* m_u32;
+    const Type* m_f32;
+    const Type* m_sampler;
+    const Type* m_textureExternal;
 };
 
 } // namespace WGSL

@@ -69,7 +69,7 @@ private:
     Vector<MemberOrParameter> m_builtins;
     Vector<MemberOrParameter> m_parameters;
     AST::Statement::List m_materializations;
-    Type* m_structType;
+    const Type* m_structType;
     String m_structTypeName;
     String m_structParameterName;
     Reflection::EntryPointInformation m_information;

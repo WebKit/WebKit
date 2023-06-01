@@ -129,7 +129,7 @@ constexpr unsigned primitivePair(Types::Primitive::Kind first, Types::Primitive:
 }
 
 // https://www.w3.org/TR/WGSL/#conversion-rank
-ConversionRank conversionRank(Type* from, Type* to)
+ConversionRank conversionRank(const Type* from, const Type* to)
 {
     using namespace WGSL::Types;
 

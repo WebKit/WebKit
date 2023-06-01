@@ -65,6 +65,6 @@ constexpr Constraint Number = Float | Integer;
 }
 
 bool satisfies(const Type*, Constraint);
-Type* satisfyOrPromote(Type*, Constraint, const TypeStore&);
+const Type* satisfyOrPromote(const Type*, Constraint, const TypeStore&);
 
 } // namespace WGSL

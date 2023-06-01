@@ -88,40 +88,40 @@ struct Texture {
         TextureStorage3d,
     };
 
-    Type* element;
+    const Type* element;
     Kind kind;
 };
 
 struct Vector {
-    Type* element;
+    const Type* element;
     uint8_t size;
 };
 
 struct Matrix {
-    Type* element;
+    const Type* element;
     uint8_t columns;
     uint8_t rows;
 };
 
 struct Array {
-    Type* element;
+    const Type* element;
     std::optional<unsigned> size;
 };
 
 struct Struct {
     AST::Structure& structure;
-    HashMap<String, Type*> fields { };
+    HashMap<String, const Type*> fields { };
 };
 
 struct Function {
-    WTF::Vector<Type*> parameters;
-    Type* result;
+    WTF::Vector<const Type*> parameters;
+    const Type* result;
 };
 
 struct Reference {
     AddressSpace addressSpace;
     AccessMode accessMode;
-    Type* element;
+    const Type* element;
 };
 
 struct Bottom {
@@ -158,7 +158,7 @@ struct Type : public std::variant<
 };
 
 using ConversionRank = Markable<unsigned, IntegralMarkableTraits<unsigned, std::numeric_limits<unsigned>::max()>>;
-ConversionRank conversionRank(Type* from, Type* to);
+ConversionRank conversionRank(const Type* from, const Type* to);
 
 bool isPrimitive(const Type*, Types::Primitive::Kind);
 bool isPrimitiveReference(const Type*, Types::Primitive::Kind);

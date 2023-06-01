@@ -95,7 +95,7 @@ private:
     PrepareResult& m_result;
     HashMap<String, Global> m_globals;
     IndexMap<Vector<std::pair<unsigned, Global*>>> m_groupBindingMap;
-    IndexMap<Type*> m_structTypes;
+    IndexMap<const Type*> m_structTypes;
     HashMap<String, AST::Variable*> m_defs;
     HashSet<String> m_reads;
     Reflection::EntryPointInformation* m_entryPointInformation { nullptr };

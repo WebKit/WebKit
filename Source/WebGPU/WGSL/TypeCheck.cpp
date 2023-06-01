@@ -41,7 +41,7 @@ namespace WGSL {
 
 static constexpr bool shouldDumpInferredTypes = false;
 
-class TypeChecker : public AST::Visitor, public ContextProvider<Type*> {
+class TypeChecker : public AST::Visitor, public ContextProvider<const Type*> {
 public:
     TypeChecker(ShaderModule&);
 
@@ -104,7 +104,7 @@ private:
     void visitFunctionBody(AST::Function&);
     void visitStructMembers(AST::Structure&);
     void visitVariable(AST::Variable&, VariableKind);
-    Type* vectorFieldAccess(const Types::Vector&, AST::FieldAccessExpression&);
+    const Type* vectorFieldAccess(const Types::Vector&, AST::FieldAccessExpression&);
     void visitAttributes(AST::Attribute::List&);
 
     template<typename... Arguments>
@@ -114,17 +114,17 @@ private:
     template<typename... Arguments>
     void typeError(InferBottom, const SourceSpan&, Arguments&&...);
 
-    Type* infer(AST::Expression&);
-    Type* resolve(AST::TypeName&);
-    void inferred(Type*);
-    bool unify(Type*, Type*) WARN_UNUSED_RETURN;
+    const Type* infer(AST::Expression&);
+    const Type* resolve(AST::TypeName&);
+    void inferred(const Type*);
+    bool unify(const Type*, const Type*) WARN_UNUSED_RETURN;
     bool isBottom(const Type*) const;
 
     template<typename CallArguments>
-    Type* chooseOverload(const char*, const SourceSpan&, const String&, CallArguments&& valueArguments, const Vector<Type*>& typeArguments);
+    const Type* chooseOverload(const char*, const SourceSpan&, const String&, CallArguments&& valueArguments, const Vector<const Type*>& typeArguments);
 
     ShaderModule& m_shaderModule;
-    Type* m_inferredType { nullptr };
+    const Type* m_inferredType { nullptr };
 
     TypeStore& m_types;
     Vector<Error> m_errors;
@@ -184,7 +184,7 @@ std::optional<FailedCheck> TypeChecker::check()
 // Declarations
 void TypeChecker::visit(AST::Structure& structure)
 {
-    Type* structType = m_types.structType(structure);
+    const Type* structType = m_types.structType(structure);
     introduceVariable(structure.name(), structType);
 }
 
@@ -194,11 +194,20 @@ void TypeChecker::visitStructMembers(AST::Structure& structure)
     ASSERT(type);
     ASSERT(std::holds_alternative<Types::Struct>(**type));
 
+    // This is the only place we need to modify a type.
+    // Since struct fields can reference other structs declared later in the
+    // program, the creation of struct types is a 2-step process:
+    // - First, we create an empty struct type for all structs in the program,
+    //   and expose them in the global context
+    // - Then, in a second pass, we populate the structs' fields.
+    // This way, the type of all structs will be available at the time we populate
+    // struct fields, even the ones defiend later in the program.
     auto& structType = std::get<Types::Struct>(**type);
+    auto& fields = const_cast<HashMap<String, const Type*>&>(structType.fields);
     for (auto& member : structure.members()) {
         visitAttributes(member.attributes());
         auto* memberType = resolve(member.type());
-        auto result = structType.fields.add(member.name().id(), memberType);
+        auto result = fields.add(member.name().id(), memberType);
         ASSERT_UNUSED(result, result.isNewEntry);
     }
 }
@@ -212,7 +221,7 @@ void TypeChecker::visitVariable(AST::Variable& variable, VariableKind variableKi
 {
     visitAttributes(variable.attributes());
 
-    Type* result = nullptr;
+    const Type* result = nullptr;
     if (variable.maybeTypeName())
         result = resolve(*variable.maybeTypeName());
     if (variable.maybeInitializer()) {
@@ -254,8 +263,8 @@ void TypeChecker::visit(AST::Function& function)
 {
     visitAttributes(function.attributes());
 
-    Vector<Type*> parameters;
-    Type* result;
+    Vector<const Type*> parameters;
+    const Type* result;
     parameters.reserveInitialCapacity(function.parameters().size());
     for (auto& parameter : function.parameters())
         parameters.append(resolve(parameter.typeName()));
@@ -263,7 +272,7 @@ void TypeChecker::visit(AST::Function& function)
         result = resolve(*function.maybeReturnType());
     else
         result = m_types.voidType();
-    Type* functionType = m_types.functionType(WTFMove(parameters), result);
+    const Type* functionType = m_types.functionType(WTFMove(parameters), result);
     introduceVariable(function.name(), functionType);
 }
 
@@ -330,8 +339,8 @@ void TypeChecker::visit(AST::WorkgroupSizeAttribute& attribute)
         return;
     }
 
-    Type* yType = nullptr;
-    Type* zType = nullptr;
+    const Type* yType = nullptr;
+    const Type* zType = nullptr;
     if (auto* y = attribute.maybeY()) {
         yType = infer(*y);
         if (!satisfies(yType, Constraints::ConcreteInteger)) {
@@ -349,7 +358,7 @@ void TypeChecker::visit(AST::WorkgroupSizeAttribute& attribute)
 
     }
 
-    const auto& satisfies = [&](Type* type) {
+    const auto& satisfies = [&](const Type* type) {
         return unify(type, xType)
             && (!yType || unify(type, yType))
             && (!zType || unify(type, zType));
@@ -479,9 +488,9 @@ void TypeChecker::visit(AST::Expression&)
 
 void TypeChecker::visit(AST::FieldAccessExpression& access)
 {
-    const auto& accessImpl = [&](const Type* baseType) -> Type* {
+    const auto& accessImpl = [&](const Type* baseType) -> const Type* {
         if (isBottom(baseType))
-            return const_cast<Type*>(m_types.bottomType());
+            return m_types.bottomType();
 
         if (std::holds_alternative<Types::Struct>(*baseType)) {
             auto& structType = std::get<Types::Struct>(*baseType);
@@ -504,22 +513,22 @@ void TypeChecker::visit(AST::FieldAccessExpression& access)
 
     auto* baseType = infer(access.base());
     if (const auto* reference = std::get_if<Types::Reference>(baseType)) {
-        if (Type* result = accessImpl(reference->element)) {
+        if (const Type* result = accessImpl(reference->element)) {
             result = m_types.referenceType(reference->addressSpace, result, reference->accessMode);
             inferred(result);
         }
         return;
     }
 
-    if (Type* result = accessImpl(baseType))
+    if (const Type* result = accessImpl(baseType))
         inferred(result);
 }
 
 void TypeChecker::visit(AST::IndexAccessExpression& access)
 {
-    const auto& accessImpl = [&](Type* base) -> Type* {
+    const auto& accessImpl = [&](const Type* base) -> const Type* {
         if (isBottom(base))
-            return const_cast<Type*>(m_types.bottomType());
+            return m_types.bottomType();
 
         if (std::holds_alternative<Types::Array>(*base)) {
             // FIXME: check bounds if index is constant
@@ -547,14 +556,14 @@ void TypeChecker::visit(AST::IndexAccessExpression& access)
     }
 
     if (const auto* reference = std::get_if<Types::Reference>(base)) {
-        if (Type* result = accessImpl(reference->element)) {
+        if (const Type* result = accessImpl(reference->element)) {
             result = m_types.referenceType(reference->addressSpace, result, reference->accessMode);
             inferred(result);
         }
         return;
     }
 
-    if (Type* result = accessImpl(base))
+    if (const Type* result = accessImpl(base))
         inferred(result);
 }
 
@@ -580,7 +589,7 @@ void TypeChecker::visit(AST::CallExpression& call)
     bool isNamedType = is<AST::NamedTypeName>(target);
     bool isParameterizedType = is<AST::ParameterizedTypeName>(target);
     if (isNamedType || isParameterizedType) {
-        Vector<Type*> typeArguments;
+        Vector<const Type*> typeArguments;
         String targetName = [&]() -> String {
             if (isNamedType)
                 return downcast<AST::NamedTypeName>(target).name();
@@ -624,7 +633,7 @@ void TypeChecker::visit(AST::CallExpression& call)
 
     if (is<AST::ArrayTypeName>(target)) {
         AST::ArrayTypeName& array = downcast<AST::ArrayTypeName>(target);
-        Type* elementType = nullptr;
+        const Type* elementType = nullptr;
         unsigned elementCount;
 
         if (array.maybeElementType()) {
@@ -786,7 +795,7 @@ void TypeChecker::visitAttributes(AST::Attribute::List& attributes)
 }
 
 // Private helpers
-Type* TypeChecker::vectorFieldAccess(const Types::Vector& vector, AST::FieldAccessExpression& access)
+const Type* TypeChecker::vectorFieldAccess(const Types::Vector& vector, AST::FieldAccessExpression& access)
 {
     const auto& fieldName = access.fieldName().id();
     auto length = fieldName.length();
@@ -865,13 +874,13 @@ Type* TypeChecker::vectorFieldAccess(const Types::Vector& vector, AST::FieldAcce
 }
 
 template<typename CallArguments>
-Type* TypeChecker::chooseOverload(const char* kind, const SourceSpan& span, const String& target, CallArguments&& callArguments, const Vector<Type*>& typeArguments)
+const Type* TypeChecker::chooseOverload(const char* kind, const SourceSpan& span, const String& target, CallArguments&& callArguments, const Vector<const Type*>& typeArguments)
 {
     auto it = m_overloadedOperations.find(target);
     if (it == m_overloadedOperations.end())
         return nullptr;
 
-    Vector<Type*> valueArguments;
+    Vector<const Type*> valueArguments;
     valueArguments.reserveInitialCapacity(callArguments.size());
     for (unsigned i = 0; i < callArguments.size(); ++i) {
         auto* type = infer(callArguments[i]);
@@ -915,7 +924,7 @@ Type* TypeChecker::chooseOverload(const char* kind, const SourceSpan& span, cons
     return m_types.bottomType();
 }
 
-Type* TypeChecker::infer(AST::Expression& expression)
+const Type* TypeChecker::infer(AST::Expression& expression)
 {
     ASSERT(!m_inferredType);
     AST::Visitor::visit(expression);
@@ -929,13 +938,13 @@ Type* TypeChecker::infer(AST::Expression& expression)
     }
 
     expression.m_inferredType = m_inferredType;
-    Type* inferredType = m_inferredType;
+    const Type* inferredType = m_inferredType;
     m_inferredType = nullptr;
 
     return inferredType;
 }
 
-Type* TypeChecker::resolve(AST::TypeName& type)
+const Type* TypeChecker::resolve(AST::TypeName& type)
 {
     ASSERT(!m_inferredType);
     AST::Visitor::visit(type);
@@ -949,20 +958,20 @@ Type* TypeChecker::resolve(AST::TypeName& type)
     }
 
     type.m_resolvedType = m_inferredType;
-    Type* inferredType = m_inferredType;
+    const Type* inferredType = m_inferredType;
     m_inferredType = nullptr;
 
     return inferredType;
 }
 
-void TypeChecker::inferred(Type* type)
+void TypeChecker::inferred(const Type* type)
 {
     ASSERT(type);
     ASSERT(!m_inferredType);
     m_inferredType = type;
 }
 
-bool TypeChecker::unify(Type* lhs, Type* rhs)
+bool TypeChecker::unify(const Type* lhs, const Type* rhs)
 {
     if (shouldDumpInferredTypes)
         dataLogLn("[unify] '", *lhs, "' <", RawPointer(lhs), ">  and '", *rhs, "' <", RawPointer(rhs), ">");
