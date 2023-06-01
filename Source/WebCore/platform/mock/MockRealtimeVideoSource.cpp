@@ -76,7 +76,7 @@ static HashSet<MockRealtimeVideoSource*>& allMockRealtimeVideoSource()
 MockRealtimeVideoSource::MockRealtimeVideoSource(String&& deviceID, AtomString&& name, MediaDeviceHashSalts&& hashSalts, PageIdentifier pageIdentifier)
     : RealtimeVideoCaptureSource(CaptureDevice { WTFMove(deviceID), CaptureDevice::DeviceType::Camera, WTFMove(name) }, WTFMove(hashSalts), pageIdentifier)
     , m_emitFrameTimer(RunLoop::current(), this, &MockRealtimeVideoSource::generateFrame)
-    , m_deviceOrientation { VideoFrame::Rotation::None }
+    , m_deviceOrientation { VideoFrameRotation::None }
 {
     allMockRealtimeVideoSource().add(this);
 
@@ -240,6 +240,11 @@ void MockRealtimeVideoSource::setFrameRateAndZoomWithPreset(double frameRate, do
 IntSize MockRealtimeVideoSource::captureSize() const
 {
     return m_preset ? m_preset->size() : this->size();
+}
+
+VideoFrameRotation MockRealtimeVideoSource::videoFrameRotation() const
+{
+    return m_deviceOrientation;
 }
 
 void MockRealtimeVideoSource::settingsDidChange(OptionSet<RealtimeMediaSourceSettings::Flag> settings)

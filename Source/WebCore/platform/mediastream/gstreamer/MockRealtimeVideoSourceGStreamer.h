@@ -49,6 +49,10 @@ public:
     void setMuted(bool isMuted) final;
     const IntSize size() const final { return m_source->size(); }
 
+#if !RELEASE_LOG_DISABLED
+    const char* logClassName() const final { return "MockDisplayCaptureSourceGStreamer"; }
+#endif
+
 protected:
     // RealtimeMediaSource::VideoFrameObserver
     void videoFrameAvailable(VideoFrame&, VideoFrameTimeMetadata) final;
@@ -67,10 +71,6 @@ private:
     const RealtimeMediaSourceCapabilities& capabilities() final;
     const RealtimeMediaSourceSettings& settings() final;
     CaptureDevice::DeviceType deviceType() const final { return m_deviceType; }
-
-#if !RELEASE_LOG_DISABLED
-    const char* logClassName() const final { return "MockDisplayCaptureSourceGStreamer"; }
-#endif
 
     Vector<VideoPreset> m_presets;
     Ref<MockRealtimeVideoSourceGStreamer> m_source;
