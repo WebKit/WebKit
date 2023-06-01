@@ -2507,6 +2507,9 @@ http/tests/media/modern-media-controls/time-control/10-hours-or-more.html [ Skip
 http/tests/media/modern-media-controls/time-control/less-than-10-minutes.html [ Skip ]
 http/tests/media/modern-media-controls/time-control/10-minutes-to-1-hour.html [ Skip ]
 
+# DASH media playback support is disabled in the GStreamer ports.
+platform/glib/media/media-can-play-dash.html [ Skip ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of UNSUPPORTED tests.
 #////////////////////////////////////////////////////////////////////////////////////////
