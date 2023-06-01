@@ -34,6 +34,7 @@
 #include "WGSLShaderModule.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
+#include <wtf/SetForScope.h>
 
 namespace WGSL {
 
@@ -52,6 +53,7 @@ public:
     void visit(AST::Function&) override;
     void visit(AST::Variable&) override;
     void visit(AST::IdentifierExpression&) override;
+    void visit(AST::CompoundStatement&) override;
 
 private:
     struct Global {
@@ -75,11 +77,15 @@ private:
         UsedPrivateGlobals privateGlobals;
     };
 
+    struct Insertion {
+        AST::Statement* statement;
+        unsigned index;
+    };
+
     static AST::Identifier argumentBufferParameterName(unsigned group);
     static AST::Identifier argumentBufferStructName(unsigned group);
 
     void def(const String&, AST::Variable*);
-    Global* read(const String&);
 
     void collectGlobals();
     void visitEntryPoint(AST::Function&, AST::StageAttribute::Stage, PipelineLayout&);
@@ -90,6 +96,8 @@ private:
     void insertParameters(AST::Function&, const UsedResources&);
     void insertMaterializations(AST::Function&, const UsedResources&);
     void insertLocalDefinitions(AST::Function&, const UsedPrivateGlobals&);
+    void readVariable(AST::IdentifierExpression&, AST::Variable&);
+    void insertBeforeCurrentStatement(AST::Statement&);
 
     CallGraph& m_callGraph;
     PrepareResult& m_result;
@@ -99,6 +107,9 @@ private:
     HashMap<String, AST::Variable*> m_defs;
     HashSet<String> m_reads;
     Reflection::EntryPointInformation* m_entryPointInformation { nullptr };
+    unsigned m_constantId { 0 };
+    unsigned m_currentStatementIndex { 0 };
+    Vector<Insertion> m_pendingInsertions;
 };
 
 void RewriteGlobalVariables::run()
@@ -147,7 +158,7 @@ void RewriteGlobalVariables::visit(AST::Function& function)
         def(parameter.name(), nullptr);
 
     // FIXME: detect when we shadow a global that a callee needs
-    AST::Visitor::visit(function.body());
+    visit(function.body());
 
     for (auto& callee : m_callGraph.callees(function))
         visitCallee(callee);
@@ -161,7 +172,34 @@ void RewriteGlobalVariables::visit(AST::Variable& variable)
 
 void RewriteGlobalVariables::visit(AST::IdentifierExpression& identifier)
 {
-    read(identifier.identifier());
+    auto def = m_defs.find(identifier.identifier());
+    if (def != m_defs.end()) {
+        if (def->value)
+            readVariable(identifier, *def->value);
+        return;
+    }
+
+    auto it = m_globals.find(identifier.identifier());
+    if (it == m_globals.end())
+        return;
+    readVariable(identifier, *it->value.declaration);
+}
+
+void RewriteGlobalVariables::visit(AST::CompoundStatement& statement)
+{
+    auto indexScope = SetForScope(m_currentStatementIndex, 0);
+    auto insertionScope = SetForScope(m_pendingInsertions, Vector<Insertion>());
+
+    for (auto& statement : statement.statements()) {
+        AST::Visitor::visit(statement);
+        ++m_currentStatementIndex;
+    }
+
+    unsigned offset = 0;
+    for (auto& insertion : m_pendingInsertions) {
+        m_callGraph.ast().insert(statement.statements(), insertion.index + offset, AST::Statement::Ref(*insertion.statement));
+        ++offset;
+    }
 }
 
 void RewriteGlobalVariables::collectGlobals()
@@ -411,8 +449,6 @@ void RewriteGlobalVariables::insertLocalDefinitions(AST::Function& function, con
 {
     for (auto* global : usedPrivateGlobals) {
         auto& variable = *global->declaration;
-        if (variable.flavor() == AST::VariableFlavor::Const)
-            m_callGraph.ast().replace(&variable.flavor(), AST::VariableFlavor::Let);
         auto& variableStatement = m_callGraph.ast().astBuilder().construct<AST::VariableStatement>(SourceSpan::empty(), variable);
         m_callGraph.ast().insert(function.body().statements(), 0, std::reference_wrapper<AST::Statement>(variableStatement));
     }
@@ -423,21 +459,41 @@ void RewriteGlobalVariables::def(const String& name, AST::Variable* variable)
     m_defs.add(name, variable);
 }
 
-auto RewriteGlobalVariables::read(const String& name) -> Global*
+void RewriteGlobalVariables::readVariable(AST::IdentifierExpression& identifier, AST::Variable& variable)
 {
-    auto def = m_defs.find(name);
-    if (def != m_defs.end()) {
-        auto* variable = def->value;
-        if (variable && variable->flavor() == AST::VariableFlavor::Const)
-            m_callGraph.ast().replace(&variable->flavor(), AST::VariableFlavor::Let);
-        return nullptr;
+    if (variable.flavor() != AST::VariableFlavor::Const) {
+        m_reads.add(identifier.identifier());
+        return;
     }
 
-    auto it = m_globals.find(name);
-    if (it == m_globals.end())
-        return nullptr;
-    m_reads.add(name);
-    return &it->value;
+    String newName = makeString("__const", String::number(++m_constantId));
+    auto& newInitializer = m_callGraph.ast().astBuilder().construct<AST::IdentityExpression>(
+        variable.maybeInitializer()->span(),
+        *variable.maybeInitializer()
+    );
+    newInitializer.m_inferredType = identifier.inferredType();
+    auto& newVariable = m_callGraph.ast().astBuilder().construct<AST::Variable>(
+        variable.span(),
+        AST::VariableFlavor::Let,
+        AST::Identifier::make(newName),
+        nullptr,
+        variable.maybeTypeName(),
+        &newInitializer,
+        AST::Attribute::List { }
+    );
+
+    m_callGraph.ast().replace(&identifier.identifier(), AST::Identifier::make(newName));
+
+    auto& statement = m_callGraph.ast().astBuilder().construct<AST::VariableStatement>(
+        SourceSpan::empty(),
+        newVariable
+    );
+    insertBeforeCurrentStatement(statement);
+}
+
+void RewriteGlobalVariables::insertBeforeCurrentStatement(AST::Statement& statement)
+{
+    m_pendingInsertions.append({ &statement, m_currentStatementIndex });
 }
 
 AST::Identifier RewriteGlobalVariables::argumentBufferParameterName(unsigned group)

@@ -68,20 +68,22 @@ public:
     void visit(AST::Structure&) override;
     void visit(AST::Variable&) override;
 
+    void visit(const Type*, AST::Expression&);
+    void visit(const Type*, AST::CallExpression&);
+
     void visit(AST::BoolLiteral&) override;
     void visit(AST::AbstractFloatLiteral&) override;
     void visit(AST::AbstractIntegerLiteral&) override;
     void visit(AST::BinaryExpression&) override;
-    void visit(AST::CallExpression&) override;
     void visit(AST::Expression&) override;
     void visit(AST::FieldAccessExpression&) override;
     void visit(AST::Float32Literal&) override;
     void visit(AST::IdentifierExpression&) override;
     void visit(AST::IndexAccessExpression&) override;
     void visit(AST::PointerDereferenceExpression&) override;
+    void visit(AST::UnaryExpression&) override;
     void visit(AST::Signed32Literal&) override;
     void visit(AST::Unsigned32Literal&) override;
-    void visit(AST::UnaryExpression&) override;
 
     void visit(AST::Statement&) override;
     void visit(AST::AssignmentStatement&) override;
@@ -313,7 +315,7 @@ void FunctionDefinitionWriter::serializeVariable(AST::Variable& variable)
     m_stringBuilder.append(" ", variable.name());
     if (variable.maybeInitializer()) {
         m_stringBuilder.append(" = ");
-        visit(*variable.maybeInitializer());
+        visit(type, *variable.maybeInitializer());
     }
 }
 
@@ -599,7 +601,22 @@ void FunctionDefinitionWriter::visitArgumentBufferParameter(AST::Parameter& para
 
 void FunctionDefinitionWriter::visit(AST::Expression& expression)
 {
-    AST::Visitor::visit(expression);
+    visit(expression.inferredType(), expression);
+}
+
+void FunctionDefinitionWriter::visit(const Type* type, AST::Expression& expression)
+{
+    switch (expression.kind()) {
+    case AST::NodeKind::CallExpression:
+        visit(type, downcast<AST::CallExpression>(expression));
+        break;
+    case AST::NodeKind::IdentityExpression:
+        visit(type, downcast<AST::IdentityExpression>(expression).expression());
+        break;
+    default:
+        AST::Visitor::visit(expression);
+        break;
+    }
 }
 
 static void visitArguments(FunctionDefinitionWriter* writer, AST::CallExpression& call, unsigned startOffset = 0)
@@ -613,24 +630,34 @@ static void visitArguments(FunctionDefinitionWriter* writer, AST::CallExpression
         first = false;
     }
     writer->stringBuilder().append(")");
-};
+}
 
-void FunctionDefinitionWriter::visit(AST::CallExpression& call)
+void FunctionDefinitionWriter::visit(const Type* type, AST::CallExpression& call)
 {
     auto isArray = is<AST::ArrayTypeName>(call.target());
     auto isStruct = !isArray && std::holds_alternative<Types::Struct>(*call.target().resolvedType());
     if (isArray || isStruct) {
         if (isStruct) {
-            visit(call.target().resolvedType());
+            visit(type);
             m_stringBuilder.append(" ");
         }
+        const Type* arrayElementType = nullptr;
+        if (isArray)
+            arrayElementType = std::get<Types::Array>(*type).element;
+
+        const auto& visitArgument = [&](auto& argument) {
+            if (isStruct)
+                visit(argument);
+            else
+                visit(arrayElementType, argument);
+        };
 
         m_stringBuilder.append("{\n");
         {
             IndentationScope scope(m_indent);
             for (auto& argument : call.arguments()) {
                 m_stringBuilder.append(m_indent);
-                visit(argument);
+                visitArgument(argument);
                 m_stringBuilder.append(",\n");
             }
         }
@@ -744,7 +771,7 @@ void FunctionDefinitionWriter::visit(AST::CallExpression& call)
         static constexpr SortedArrayMap baseTypes { baseTypesMappings };
 
         if (AST::ParameterizedTypeName::stringViewToKind(targetName).has_value())
-            visit(call.inferredType());
+            visit(type);
         else if (auto mappedName = baseTypes.get(targetName))
             m_stringBuilder.append(mappedName);
         else
@@ -753,7 +780,7 @@ void FunctionDefinitionWriter::visit(AST::CallExpression& call)
         return;
     }
 
-    visit(call.inferredType());
+    visit(type);
     visitArguments(this, call);
 }
 
