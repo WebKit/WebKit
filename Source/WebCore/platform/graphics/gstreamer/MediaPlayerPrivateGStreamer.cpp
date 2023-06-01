@@ -108,9 +108,6 @@
 
 #if USE(GSTREAMER_GL)
 #include "GLVideoSinkGStreamer.h"
-#include "VideoTextureCopierGStreamer.h"
-
-#define TEXTURE_COPIER_COLOR_CONVERT_FLAG VideoTextureCopierGStreamer::ColorConversion::NoConvert
 #endif // USE(GSTREAMER_GL)
 
 #if USE(TEXTURE_MAPPER_GL)
@@ -3830,43 +3827,6 @@ DestinationColorSpace MediaPlayerPrivateGStreamer::colorSpace()
 {
     return DestinationColorSpace::SRGB();
 }
-
-#if USE(GSTREAMER_GL)
-bool MediaPlayerPrivateGStreamer::copyVideoTextureToPlatformTexture(GraphicsContextGL* context, PlatformGLObject outputTexture, GCGLenum outputTarget, GCGLint level, GCGLenum internalFormat, GCGLenum format, GCGLenum type, bool premultiplyAlpha, bool flipY)
-{
-    UNUSED_PARAM(context);
-
-    if (m_isUsingFallbackVideoSink)
-        return false;
-
-    Locker sampleLocker { m_sampleMutex };
-
-    if (!GST_IS_SAMPLE(m_sample.get()))
-        return false;
-
-    std::unique_ptr<GstVideoFrameHolder> frameHolder = makeUnique<GstVideoFrameHolder>(m_sample.get(), m_videoDecoderPlatform, m_textureMapperFlags, true);
-
-    std::unique_ptr<TextureMapperPlatformLayerBuffer> layerBuffer = frameHolder->platformLayerBuffer();
-    if (!layerBuffer)
-        return false;
-
-    auto size = frameHolder->size();
-    if (m_videoSourceOrientation.usesWidthAsHeight())
-        size = size.transposedSize();
-
-    if (!m_videoTextureCopier)
-        m_videoTextureCopier = makeUnique<VideoTextureCopierGStreamer>(TEXTURE_COPIER_COLOR_CONVERT_FLAG);
-
-    frameHolder->waitForCPUSync();
-
-    return m_videoTextureCopier->copyVideoTextureToPlatformTexture(*layerBuffer.get(), size, outputTexture, outputTarget, level, internalFormat, format, type, flipY, m_videoSourceOrientation, premultiplyAlpha);
-}
-
-RefPtr<NativeImage> MediaPlayerPrivateGStreamer::nativeImageForCurrentTime()
-{
-    return nullptr;
-}
-#endif // USE(GSTREAMER_GL)
 
 RefPtr<VideoFrame> MediaPlayerPrivateGStreamer::videoFrameForCurrentTime()
 {

@@ -195,7 +195,6 @@ if (ENABLE_VIDEO)
         endif ()
         list(APPEND WebCore_SOURCES
             platform/graphics/gstreamer/PlatformDisplayGStreamer.cpp
-            platform/graphics/gstreamer/VideoTextureCopierGStreamer.cpp
         )
     endif ()
 

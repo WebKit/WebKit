@@ -82,7 +82,6 @@ class GraphicsContext;
 class GraphicsContextGL;
 class IntSize;
 class IntRect;
-class VideoTextureCopierGStreamer;
 
 #if USE(TEXTURE_MAPPER_GL)
 class TextureMapperPlatformLayerProxy;
@@ -206,10 +205,6 @@ public:
     void handleProtectionEvent(GstEvent*);
 #endif
 
-#if USE(GSTREAMER_GL)
-    bool copyVideoTextureToPlatformTexture(GraphicsContextGL*, PlatformGLObject, GCGLenum, GCGLint, GCGLenum, GCGLenum, GCGLenum, bool, bool) override;
-    RefPtr<NativeImage> nativeImageForCurrentTime() override;
-#endif
     RefPtr<VideoFrame> videoFrameForCurrentTime() override;
 
     void updateEnabledVideoTrack();
@@ -378,10 +373,6 @@ protected:
     bool m_canRenderingBeAccelerated { false };
 
     bool m_isBeingDestroyed WTF_GUARDED_BY_LOCK(m_drawLock) { false };
-
-#if USE(GSTREAMER_GL)
-    std::unique_ptr<VideoTextureCopierGStreamer> m_videoTextureCopier;
-#endif
 
     ImageOrientation m_videoSourceOrientation;
 
