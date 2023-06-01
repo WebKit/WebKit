@@ -90,7 +90,6 @@ NetworkDataTaskCurl::NetworkDataTaskCurl(NetworkSession& session, NetworkDataTas
         m_curlRequest->setUserPass(m_initialCredential.user(), m_initialCredential.password());
         m_curlRequest->setAuthenticationScheme(ProtectionSpace::AuthenticationScheme::HTTPBasic);
     }
-    m_curlRequest->start();
 }
 
 NetworkDataTaskCurl::~NetworkDataTaskCurl()
@@ -145,7 +144,7 @@ Ref<CurlRequest> NetworkDataTaskCurl::createCurlRequest(ResourceRequest&& reques
     // Creates a CurlRequest in suspended state.
     // Then, NetworkDataTaskCurl::resume() will be called and communication resumes.
     const auto captureMetrics = shouldCaptureExtraNetworkLoadMetrics() ? CurlRequest::CaptureNetworkLoadMetrics::Extended : CurlRequest::CaptureNetworkLoadMetrics::Basic;
-    return CurlRequest::create(request, *this, CurlRequest::ShouldSuspend::Yes, CurlRequest::EnableMultipart::No, captureMetrics);
+    return CurlRequest::create(request, *this, CurlRequest::EnableMultipart::No, captureMetrics);
 }
 
 void NetworkDataTaskCurl::curlDidSendData(CurlRequest&, unsigned long long totalBytesSent, unsigned long long totalBytesExpectedToSend)
@@ -397,7 +396,6 @@ void NetworkDataTaskCurl::willPerformHTTPRedirection()
             m_curlRequest->setUserPass(m_initialCredential.user(), m_initialCredential.password());
             m_curlRequest->setAuthenticationScheme(ProtectionSpace::AuthenticationScheme::HTTPBasic);
         }
-        m_curlRequest->start();
 
         if (m_state != State::Suspended) {
             m_state = State::Suspended;
@@ -517,7 +515,6 @@ void NetworkDataTaskCurl::restartWithCredential(const ProtectionSpace& protectio
     m_curlRequest->setUserPass(credential.user(), credential.password());
     if (shouldDisableServerTrustEvaluation)
         m_curlRequest->disableServerTrustEvaluation();
-    m_curlRequest->start();
 
     if (m_state != State::Suspended) {
         m_state = State::Suspended;

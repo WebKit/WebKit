@@ -41,11 +41,10 @@
 
 namespace WebCore {
 
-CurlRequest::CurlRequest(const ResourceRequest&request, CurlRequestClient* client, ShouldSuspend shouldSuspend, EnableMultipart enableMultipart, CaptureNetworkLoadMetrics captureExtraMetrics)
+CurlRequest::CurlRequest(const ResourceRequest&request, CurlRequestClient* client, EnableMultipart enableMultipart, CaptureNetworkLoadMetrics captureExtraMetrics)
     : m_client(client)
     , m_request(request.isolatedCopy())
     , m_enableMultipart(enableMultipart == EnableMultipart::Yes)
-    , m_startState(shouldSuspend == ShouldSuspend::Yes ? StartState::StartSuspended : StartState::WaitingForStart)
     , m_formDataStream(m_request.httpBody())
     , m_captureExtraMetrics(captureExtraMetrics == CaptureNetworkLoadMetrics::Extended)
 {
@@ -94,7 +93,7 @@ void CurlRequest::setUserPass(const String& user, const String& password)
     m_password = password.isolatedCopy();
 }
 
-void CurlRequest::start()
+void CurlRequest::resume()
 {
     // The pausing of transfer does not work with protocols, like file://.
     // Therefore, PAUSE can not be done in didReceiveData().
@@ -107,16 +106,10 @@ void CurlRequest::start()
 
     ASSERT(isMainThread());
 
-    switch (m_startState) {
-    case StartState::DidStart:
-        ASSERT(false);
-        [[fallthrough]];
-    case StartState::StartSuspended:
+    if (m_didStartTransfer)
         return;
-    case StartState::WaitingForStart:
-        m_startState = StartState::DidStart;
-        break;
-    }
+
+    m_didStartTransfer = true;
 
     if (m_request.url().protocolIsFile())
         invokeDidReceiveResponseForFile(m_request.url());
@@ -149,7 +142,7 @@ void CurlRequest::cancel()
         runOnWorkerThreadIfRequired([this, protectedThis = Ref { *this }]() {
             didCancelTransfer();
         });
-    } else if (m_startState == StartState::DidStart)
+    } else if (m_didStartTransfer)
         scheduler.cancel(this);
 
     invalidateClient();
@@ -165,41 +158,6 @@ bool CurlRequest::isCompletedOrCancelled()
 {
     Locker locker { m_statusMutex };
     return m_completed || m_cancelled;
-}
-
-void CurlRequest::suspend()
-{
-    ASSERT(isMainThread());
-
-    switch (m_startState) {
-    case StartState::StartSuspended:
-        ASSERT(false);
-        [[fallthrough]];
-    case StartState::WaitingForStart:
-        m_startState = StartState::StartSuspended;
-        break;
-    case StartState::DidStart:
-        setRequestPaused(true);
-        break;
-    }
-}
-
-void CurlRequest::resume()
-{
-    ASSERT(isMainThread());
-
-    switch (m_startState) {
-    case StartState::WaitingForStart:
-        ASSERT(false);
-        [[fallthrough]];
-    case StartState::StartSuspended:
-        m_startState = StartState::WaitingForStart;
-        start();
-        break;
-    case StartState::DidStart:
-        setRequestPaused(false);
-        break;
-    }
 }
 
 /* `this` is protected inside this method. */
@@ -249,9 +207,8 @@ CURL* CurlRequest::setupTransfer()
         setupPUT();
     }
 
-    if (!m_user.isEmpty() || !m_password.isEmpty()) {
+    if (!m_user.isEmpty() || !m_password.isEmpty())
         m_curlHandle->setHttpAuthUserPass(m_user, m_password, m_authType);
-    }
 
     if (m_shouldDisableServerTrustEvaluation)
         m_curlHandle->disableServerTrustEvaluation();
@@ -398,11 +355,7 @@ size_t CurlRequest::didReceiveData(const SharedBuffer& buffer)
 
     if (needToInvokeDidReceiveResponse()) {
         // Pause until completeDidReceiveResponse() is called.
-        setCallbackPaused(true);
         invokeDidReceiveResponse(m_response, Action::ReceiveData);
-        // Because libcurl pauses the handle after returning this CURL_WRITEFUNC_PAUSE,
-        // we need to update its state here.
-        updateHandlePauseState(true);
         return CURL_WRITEFUNC_PAUSE;
     }
 
@@ -640,8 +593,13 @@ void CurlRequest::completeDidReceiveResponse()
     m_didReturnFromNotify = true;
 
     if (m_actionAfterInvoke == Action::ReceiveData) {
-        // Resume transfer
-        setCallbackPaused(false);
+        // Unpause a connection
+        runOnWorkerThreadIfRequired([this, protectedThis = Ref { *this }]() {
+            if (isCompletedOrCancelled() || !m_curlHandle)
+                return;
+
+            m_curlHandle->pause(CURLPAUSE_CONT);
+        });
     } else if (m_actionAfterInvoke == Action::StartTransfer) {
         // Start transfer for file scheme
         startWithJobManager();
@@ -650,88 +608,6 @@ void CurlRequest::completeDidReceiveResponse()
             didCompleteTransfer(finishedResultCode);
         });
     }
-}
-
-void CurlRequest::setRequestPaused(bool paused)
-{
-    {
-        Locker locker { m_pauseStateMutex };
-
-        auto savedState = shouldBePaused();
-        m_isPausedOfRequest = paused;
-        if (shouldBePaused() == savedState)
-            return;
-    }
-
-    pausedStatusChanged();
-}
-
-void CurlRequest::setCallbackPaused(bool paused)
-{
-    {
-        Locker locker { m_pauseStateMutex };
-
-        auto savedState = shouldBePaused();
-        m_isPausedOfCallback = paused;
-
-        // If pause is requested, it is called within didReceiveData() which means
-        // actual change happens inside libcurl. No need to update manually here.
-        if (shouldBePaused() == savedState || paused)
-            return;
-    }
-
-    pausedStatusChanged();
-}
-
-void CurlRequest::invokeCancel()
-{
-    // There's no need to extract this method. This is a workaround for MSVC's bug
-    // which happens when using lambda inside other lambda. The compiler loses context
-    // of `this` which prevent makeRef.
-    runOnMainThread([this, protectedThis = Ref { *this }]() {
-        cancel();
-    });
-}
-
-void CurlRequest::pausedStatusChanged()
-{
-    if (isCompletedOrCancelled())
-        return;
-
-    runOnWorkerThreadIfRequired([this, protectedThis = Ref { *this }]() {
-        if (isCompletedOrCancelled() || !m_curlHandle)
-            return;
-
-        bool needCancel { false };
-        {
-            Locker locker { m_pauseStateMutex };
-            bool paused = shouldBePaused();
-
-            if (isHandlePaused() == paused)
-                return;
-
-            auto error = m_curlHandle->pause(paused ? CURLPAUSE_ALL : CURLPAUSE_CONT);
-            if (error == CURLE_OK)
-                updateHandlePauseState(paused);
-
-            needCancel = (error != CURLE_OK && !paused);
-        }
-
-        if (needCancel)
-            invokeCancel();
-    });
-}
-
-void CurlRequest::updateHandlePauseState(bool paused)
-{
-    ASSERT(!isMainThread());
-    m_isHandlePaused = paused;
-}
-
-bool CurlRequest::isHandlePaused() const
-{
-    ASSERT(!isMainThread());
-    return m_isHandlePaused;
 }
 
 NetworkLoadMetrics CurlRequest::networkLoadMetrics()
