@@ -1,0 +1,15 @@
+
+FAIL e.style['scrollbar-color'] = "initial" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['scrollbar-color'] = "inherit" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['scrollbar-color'] = "unset" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['scrollbar-color'] = "revert" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['scrollbar-color'] = "auto" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['scrollbar-color'] = "red green" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['scrollbar-color'] = "#FF0000 #00FF00" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['scrollbar-color'] = "currentcolor currentcolor" should set the property value assert_not_equals: property should be set got disallowed value ""
+PASS e.style['scrollbar-color'] = "" should not set the property value
+PASS e.style['scrollbar-color'] = "auto auto" should not set the property value
+PASS e.style['scrollbar-color'] = "auto currentcolor" should not set the property value
+PASS e.style['scrollbar-color'] = "red" should not set the property value
+PASS e.style['scrollbar-color'] = "#FF0000" should not set the property value
+

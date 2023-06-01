@@ -2931,6 +2931,7 @@
         "web-platform-tests/css/css-scroll-snap/support/scroll-target-margin-001-iframe.html",
         "web-platform-tests/css/css-scroll-snap/support/scroll-target-padding-001-iframe.html",
         "web-platform-tests/css/css-scroll-snap/support/scroll-target-snap-001-iframe.html",
+        "web-platform-tests/css/css-scrollbars/input-scrollbar-color-ref.html",
         "web-platform-tests/css/css-scrollbars/scrollbar-width-paint-001-ref.html",
         "web-platform-tests/css/css-scrollbars/scrollbar-width-paint-002-ref.html",
         "web-platform-tests/css/css-scrollbars/scrollbar-width-paint-003-ref.html",
