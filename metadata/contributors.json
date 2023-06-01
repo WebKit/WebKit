@@ -3768,6 +3768,16 @@
    },
    {
       "emails" : [
+         "jcheung23@apple.com",
+         "cheungje@usc.edu"
+      ],
+      "name" : "Jessica Cheung",
+      "nicks" : [
+         "jesxilin"
+      ]
+   },
+   {
+      "emails" : [
          "jberlin@webkit.org",
          "jberlin@apple.com"
       ],
