@@ -124,7 +124,25 @@
                   { "name": "wpe-linux-bot-13", "platform": "wpe" },
                   { "name": "wpe-linux-bot-14", "platform": "wpe" },
                   { "name": "wpe-linux-bot-15", "platform": "wpe" },
-                  { "name": "wpe-linux-bot-16", "platform": "wpe" }
+                  { "name": "wpe-linux-bot-16", "platform": "wpe" },
+                  { "name": "wpe-linux-bot-17", "platform": "wpe" },
+                  { "name": "wpe-linux-bot-18", "platform": "wpe" },
+                  { "name": "wpe-linux-bot-19", "platform": "wpe" },
+                  { "name": "wpe-linux-bot-20", "platform": "wpe" },
+                  { "name": "wpe-linux-bot-21", "platform": "wpe" },
+                  { "name": "wpe-linux-bot-22", "platform": "wpe" },
+                  { "name": "wpe-linux-bot-23", "platform": "wpe" },
+                  { "name": "wpe-linux-bot-24", "platform": "wpe" },
+                  { "name": "wpe-linux-bot-25", "platform": "wpe" },
+                  { "name": "wpe-linux-bot-26", "platform": "wpe" },
+                  { "name": "wpe-linux-bot-27", "platform": "wpe" },
+                  { "name": "wpe-linux-bot-28", "platform": "wpe" },
+                  { "name": "wpe-linux-bot-29", "platform": "wpe" },
+                  { "name": "wpe-linux-bot-30", "platform": "wpe" },
+                  { "name": "wpe-linux-bot-31", "platform": "wpe" },
+                  { "name": "wpe-linux-bot-32", "platform": "wpe" },
+                  { "name": "wpe-linux-bot-33", "platform": "wpe" },
+                  { "name": "wpe-linux-bot-34", "platform": "wpe" }
                 ],
 
   "builders":   [
@@ -405,19 +423,19 @@
                     "workernames": ["gtk-linux-bot-9"]
                   },
                   {
-                    "name": "GTK-Linux-64-bit-Release-Debian-Stable-Build", "factory": "BuildFactory",
+                    "name": "GTK-Linux-64-bit-Release-Debian-Stable-Build", "factory": "NoInstallDependenciesBuildFactory",
                     "platform": "gtk", "configuration": "release", "architectures": ["x86_64"],
                     "additionalArguments": ["--no-experimental-features"],
                     "workernames": ["gtk-linux-bot-10"]
                   },
                   {
-                    "name": "GTK-Linux-64-bit-Release-Ubuntu-2004-Build", "factory": "BuildFactory",
+                    "name": "GTK-Linux-64-bit-Release-Ubuntu-2004-Build", "factory": "NoInstallDependenciesBuildFactory",
                     "platform": "gtk", "configuration": "release", "architectures": ["x86_64"],
                     "additionalArguments": ["--no-experimental-features"],
                     "workernames": ["gtk-linux-bot-11"]
                   },
                   {
-                    "name": "GTK-Linux-64-bit-Release-Ubuntu-LTS-Build", "factory": "BuildFactory",
+                    "name": "GTK-Linux-64-bit-Release-Ubuntu-LTS-Build", "factory": "NoInstallDependenciesBuildFactory",
                     "platform": "gtk", "configuration": "release", "architectures": ["x86_64"],
                     "additionalArguments": ["--no-experimental-features"],
                     "workernames": ["gtk-linux-bot-21"]
@@ -556,13 +574,13 @@
                     "workernames": ["wpe-linux-bot-9"]
                   },
                   {
-                    "name": "WPE-Linux-64-bit-Release-Ubuntu-2004-Build", "factory": "BuildFactory",
+                    "name": "WPE-Linux-64-bit-Release-Ubuntu-2004-Build", "factory": "NoInstallDependenciesBuildFactory",
                     "platform": "wpe", "configuration": "release", "architectures": ["x86_64"],
                     "additionalArguments": ["--no-experimental-features"],
                     "workernames": ["wpe-linux-bot-10"]
                   },
                   {
-                    "name": "WPE-Linux-64-bit-Release-Ubuntu-LTS-Build", "factory": "BuildFactory",
+                    "name": "WPE-Linux-64-bit-Release-Ubuntu-LTS-Build", "factory": "NoInstallDependenciesBuildFactory",
                     "platform": "wpe", "configuration": "release", "architectures": ["x86_64"],
                     "additionalArguments": ["--no-experimental-features"],
                     "workernames": ["wpe-linux-bot-11"]
@@ -583,17 +601,41 @@
                     "workernames": ["wpe-linux-bot-14"]
                   },
                   {
-                    "name": "WPE-Linux-ARM64-bit-Release-Debian-Stable-Build", "factory": "BuildFactory",
+                    "name": "WPE-Linux-ARM64-bit-Release-Debian-Stable-Build", "factory": "NoInstallDependenciesBuildFactory",
                     "platform": "wpe", "configuration": "release", "architectures": ["arm64"],
                     "additionalArguments": ["--no-experimental-features"],
                     "workernames": ["wpe-linux-bot-15"]
                   },
                   {
-                    "name": "WPE-Linux-ARM32-bit-Release-Debian-Stable-Build", "factory": "BuildFactory",
+                    "name": "WPE-Linux-ARM32-bit-Release-Debian-Stable-Build", "factory": "NoInstallDependenciesBuildFactory",
                     "platform": "wpe", "configuration": "release", "architectures": ["armv7"],
                     "additionalArguments": ["--no-experimental-features"],
                     "workernames": ["wpe-linux-bot-16"]
-                  }
+                  },
+                  {
+                    "name": "WPE-Linux-RPi4-32bits-Mesa-Release-Perf-Build", "factory": "CrossTargetBuildFactory",
+                    "platform": "wpe", "configuration": "release", "architectures": ["armv7"],
+                    "additionalArguments": ["--cross-target=rpi4-32bits-mesa"],
+                    "triggers": ["wpe-linux-rpi4-32-mesa-release-perf-tests"],
+                    "workernames": ["wpe-linux-bot-17"]
+                  },
+                  {
+                    "name": "WPE-Linux-RPi4-64bits-Mesa-Release-Perf-Build", "factory": "CrossTargetBuildFactory",
+                    "platform": "wpe", "configuration": "release", "architectures": ["arm64"],
+                    "additionalArguments": ["--cross-target=rpi4-64bits-mesa"],
+                    "triggers": ["wpe-linux-rpi4-64-mesa-release-perf-tests"],
+                    "workernames": ["wpe-linux-bot-18"]
+                  },
+                  {
+                    "name": "WPE-Linux-RPi4-32bits-Mesa-Release-Perf-Tests", "factory": "CrossTargetDownloadAndPerfTestFactory",
+                    "platform": "wpe", "configuration": "release", "architectures": ["armv7"],
+                    "workernames": ["wpe-linux-bot-19", "wpe-linux-bot-20", "wpe-linux-bot-21", "wpe-linux-bot-22", "wpe-linux-bot-23", "wpe-linux-bot-24", "wpe-linux-bot-25", "wpe-linux-bot-26"]
+                  },
+                  {
+                    "name": "WPE-Linux-RPi4-64bits-Mesa-Release-Perf-Tests", "factory": "CrossTargetDownloadAndPerfTestFactory",
+                    "platform": "wpe", "configuration": "release", "architectures": ["arm64"],
+                    "workernames": ["wpe-linux-bot-27", "wpe-linux-bot-28", "wpe-linux-bot-29", "wpe-linux-bot-30", "wpe-linux-bot-31", "wpe-linux-bot-32", "wpe-linux-bot-33", "wpe-linux-bot-34"]
+                   }
                 ],
 
   "schedulers": [ { "type": "AnyBranchScheduler", "name": "main", "change_filter": "main_filter", "treeStableTimer": 45.0,
@@ -605,6 +647,8 @@
                                      "GTK-Linux-64-bit-Release-GTK4-Tests",
                                      "WPE-Linux-64-bit-Release-Ubuntu-2004-Build",
                                      "WPE-Linux-64-bit-Release-Ubuntu-LTS-Build",
+                                     "WPE-Linux-RPi4-32bits-Mesa-Release-Perf-Build",
+                                     "WPE-Linux-RPi4-64bits-Mesa-Release-Perf-Build",
                                      "JSCOnly-Linux-AArch64-Release",
                                      "JSCOnly-Linux-ARMv7-Thumb2-Release",
                                      "JSCOnly-Linux-MIPS32el-Release", "PlayStation-Release-Build", "PlayStation-Debug-Build",
@@ -787,6 +831,12 @@
                   },
                   { "type": "Triggerable", "name": "wpe-linux-64-debug-tests-webdriver",
                     "builderNames": ["WPE-Linux-64-bit-Debug-WebDriver-Tests"]
+                  },
+                  { "type": "Triggerable", "name": "wpe-linux-rpi4-32-mesa-release-perf-tests",
+                    "builderNames": ["WPE-Linux-RPi4-32bits-Mesa-Release-Perf-Tests"]
+                  },
+                  { "type": "Triggerable", "name": "wpe-linux-rpi4-64-mesa-release-perf-tests",
+                    "builderNames": ["WPE-Linux-RPi4-64bits-Mesa-Release-Perf-Tests"]
                   },
                   { "type": "Nightly", "name": "NightlyScheduler", "change_filter": "main_filter",
                     "branch": "main", "hour": 22, "minute": 0,

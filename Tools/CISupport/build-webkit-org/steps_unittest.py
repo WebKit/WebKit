@@ -1518,3 +1518,90 @@ class TestGenerateUploadBundleSteps(BuildStepMixinAdditions, unittest.TestCase):
         )
         self.expectOutcome(result=SUCCESS, state_string='uploaded jsc bundle via sftp')
         return self.runStep()
+
+
+class TestCheckIfNeededUpdateCrossTargetImageSteps(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        def fakeaddStepsAfterCurrentStep(self, step_factories):
+            self.addedStepsAfterCurrentStep = step_factories
+
+        FakeBuild.addedStepsAfterCurrentStep = []
+        FakeBuild.addStepsAfterCurrentStep = fakeaddStepsAfterCurrentStep
+        self.longMessage = True
+        return self.setUpBuildStep()
+
+    def tearDown(self):
+        return self.tearDownBuildStep()
+
+    def setUpPropertiesForTest(self):
+        self.setProperty('fullPlatform', 'wpe')
+        self.setProperty('configuration', 'release')
+        self.setProperty('buildername', 'WPE-Linux-RPi4-64bits-Mesa-Release-Perf-Build')
+        self.setProperty('archive_revision', '265300@main')
+        self.setProperty('additionalArguments', ['--cross-target=rpi4-64bits-mesa'])
+
+    def test_success_check_if_deployed_cross_target_image_is_updated(self):
+        self.setupStep(CheckIfNeededUpdateDeployedCrossTargetImage())
+        self.setUpPropertiesForTest()
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        command=['python3', 'Tools/Scripts/cross-toolchain-helper', '--check-if-image-is-updated', 'deployed', '--cross-target=rpi4-64bits-mesa'],
+                        logEnviron=True,
+                        timeout=1200,
+                        )
+            + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='deployed cross target image is updated')
+        rc = self.runStep()
+        self.assertTrue(BuildAndDeployCrossTargetImage() not in self.build.addedStepsAfterCurrentStep)
+        return rc
+
+    def test_failure_check_if_deployed_cross_target_image_is_updated(self):
+        self.setupStep(CheckIfNeededUpdateDeployedCrossTargetImage())
+        self.setUpPropertiesForTest()
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        command=['python3', 'Tools/Scripts/cross-toolchain-helper', '--check-if-image-is-updated', 'deployed', '--cross-target=rpi4-64bits-mesa'],
+                        logEnviron=True,
+                        timeout=1200,
+                        )
+            + 1,
+        )
+        self.expectOutcome(result=FAILURE, state_string='deployed cross target image is updated (failure)')
+        self.assertTrue(BuildAndDeployCrossTargetImage() not in self.build.addedStepsAfterCurrentStep)
+        rc = self.runStep()
+        self.assertTrue(BuildAndDeployCrossTargetImage() in self.build.addedStepsAfterCurrentStep)
+        return rc
+
+    def test_success_check_if_running_cross_target_image_is_updated(self):
+        self.setupStep(CheckIfNeededUpdateRunningCrossTargetImage())
+        self.setUpPropertiesForTest()
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        command=['python3', 'Tools/Scripts/cross-toolchain-helper', '--check-if-image-is-updated', 'running'],
+                        logEnviron=True,
+                        timeout=1200,
+                        )
+            + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='running cross target image is updated')
+        rc = self.runStep()
+        self.assertTrue(RebootWithUpdatedCrossTargetImage() not in self.build.addedStepsAfterCurrentStep)
+        return rc
+
+    def test_failure_check_if_running_cross_target_image_is_updated(self):
+        self.setupStep(CheckIfNeededUpdateRunningCrossTargetImage())
+        self.setUpPropertiesForTest()
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        command=['python3', 'Tools/Scripts/cross-toolchain-helper', '--check-if-image-is-updated', 'running'],
+                        logEnviron=True,
+                        timeout=1200,
+                        )
+            + 1,
+        )
+        self.expectOutcome(result=FAILURE, state_string='running cross target image is updated (failure)')
+        self.assertTrue(RebootWithUpdatedCrossTargetImage() not in self.build.addedStepsAfterCurrentStep)
+        rc = self.runStep()
+        self.assertTrue(RebootWithUpdatedCrossTargetImage() in self.build.addedStepsAfterCurrentStep)
+        return rc
