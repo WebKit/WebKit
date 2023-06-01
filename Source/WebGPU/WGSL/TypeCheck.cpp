@@ -597,15 +597,11 @@ void TypeChecker::visit(AST::CallExpression& call)
             typeArguments.append(resolve(parameterizedType.elementType()));
             return AST::ParameterizedTypeName::baseToString(parameterizedType.base());
         }();
-        auto* result = chooseOverload("initializer", call.span(), targetName, call.arguments(), typeArguments);
-        if (result) {
-            target.m_resolvedType = result;
-            return;
-        }
 
-        if (isNamedType) {
-            auto* targetType = resolve(target);
-            if (auto* structType = std::get_if<Types::Struct>(targetType)) {
+        auto* targetType = isNamedType ? readVariable(targetName) : nullptr;
+        if (targetType) {
+            target.m_resolvedType = *targetType;
+            if (auto* structType = std::get_if<Types::Struct>(*targetType)) {
                 auto numberOfArguments = call.arguments().size();
                 auto numberOfFields = structType->fields.size();
                 if (numberOfArguments != numberOfFields) {
@@ -625,10 +621,42 @@ void TypeChecker::visit(AST::CallExpression& call)
                     }
                     argument.m_inferredType = fieldType;
                 }
-                inferred(targetType);
+                inferred(*targetType);
+                return;
+            }
+
+            if (auto* functionType = std::get_if<Types::Function>(*targetType)) {
+                auto numberOfArguments = call.arguments().size();
+                auto numberOfParameters = functionType->parameters.size();
+                if (numberOfArguments != numberOfParameters) {
+                    const char* errorKind = numberOfArguments < numberOfParameters ? "few" : "many";
+                    typeError(call.span(), "funtion call has too ", errorKind, " arguments: expected ", String::number(numberOfParameters), ", found ", String::number(numberOfArguments));
+                    return;
+                }
+
+                for (unsigned i = 0; i < numberOfArguments; ++i) {
+                    auto& argument = call.arguments()[i];
+                    auto* parameterType = functionType->parameters[i];
+                    auto* argumentType = infer(argument);
+                    if (!unify(parameterType, argumentType)) {
+                        typeError(argument.span(), "type in function call does not match parameter type: expected '", *parameterType, "', found '", *argumentType, "'");
+                        return;
+                    }
+                    argument.m_inferredType = parameterType;
+                }
+                inferred(functionType->result);
                 return;
             }
         }
+
+        auto* result = chooseOverload("initializer", call.span(), targetName, call.arguments(), typeArguments);
+        if (result) {
+            target.m_resolvedType = result;
+            return;
+        }
+
+        typeError(target.span(), "Cannot call value of type: '", **targetType, "'");
+        return;
     }
 
     if (is<AST::ArrayTypeName>(target)) {
@@ -690,7 +718,7 @@ void TypeChecker::visit(AST::CallExpression& call)
         return;
     }
 
-    // FIXME: add support for user-defined function calls
+    // FIXME: Ensure we can remove this workaround
     auto* result = resolve(target);
     inferred(result);
 }
