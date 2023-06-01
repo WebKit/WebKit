@@ -362,8 +362,6 @@ size_t CurlRequest::didReceiveData(const SharedBuffer& buffer)
     auto receiveBytes = buffer.size();
     m_totalReceivedSize += receiveBytes;
 
-    writeDataToDownloadFileIfEnabled(buffer);
-
     if (receiveBytes) {
         if (m_multipartHandle)
             m_multipartHandle->didReceiveData(buffer);
@@ -458,12 +456,10 @@ void CurlRequest::didCompleteTransfer(CURLcode result)
 void CurlRequest::didCancelTransfer()
 {
     finalizeTransfer();
-    cleanupDownloadFile();
 }
 
 void CurlRequest::finalizeTransfer()
 {
-    closeDownloadFile();
     m_formDataStream.clean();
     m_multipartHandle = nullptr;
     m_curlHandle = nullptr;
@@ -627,55 +623,6 @@ NetworkLoadMetrics CurlRequest::networkLoadMetrics()
     }
 
     return WTFMove(*networkLoadMetrics);
-}
-
-void CurlRequest::enableDownloadToFile()
-{
-    Locker locker { m_downloadMutex };
-    m_isEnabledDownloadToFile = true;
-}
-
-const String& CurlRequest::getDownloadedFilePath()
-{
-    Locker locker { m_downloadMutex };
-    return m_downloadFilePath;
-}
-
-void CurlRequest::writeDataToDownloadFileIfEnabled(const FragmentedSharedBuffer& buffer)
-{
-    {
-        Locker locker { m_downloadMutex };
-
-        if (!m_isEnabledDownloadToFile)
-            return;
-
-        if (m_downloadFilePath.isEmpty())
-            m_downloadFilePath = FileSystem::openTemporaryFile("download"_s, m_downloadFileHandle);
-    }
-
-    if (m_downloadFileHandle != FileSystem::invalidPlatformFileHandle)
-        FileSystem::writeToFile(m_downloadFileHandle, buffer.makeContiguous()->data(), buffer.size());
-}
-
-void CurlRequest::closeDownloadFile()
-{
-    Locker locker { m_downloadMutex };
-
-    if (m_downloadFileHandle == FileSystem::invalidPlatformFileHandle)
-        return;
-
-    FileSystem::closeFile(m_downloadFileHandle);
-    m_downloadFileHandle = FileSystem::invalidPlatformFileHandle;
-}
-
-void CurlRequest::cleanupDownloadFile()
-{
-    Locker locker { m_downloadMutex };
-
-    if (!m_downloadFilePath.isEmpty()) {
-        FileSystem::deleteFile(m_downloadFilePath);
-        m_downloadFilePath = String();
-    }
 }
 
 size_t CurlRequest::willSendDataCallback(char* ptr, size_t blockSize, size_t numberOfBlocks, void* userData)
