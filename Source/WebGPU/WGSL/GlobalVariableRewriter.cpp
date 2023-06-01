@@ -154,14 +154,14 @@ void RewriteGlobalVariables::visitCallee(const CallGraph::Callee& callee)
 
 void RewriteGlobalVariables::visit(AST::Function& function)
 {
+    for (auto& callee : m_callGraph.callees(function))
+        visitCallee(callee);
+
     for (auto& parameter : function.parameters())
         def(parameter.name(), nullptr);
 
     // FIXME: detect when we shadow a global that a callee needs
     visit(function.body());
-
-    for (auto& callee : m_callGraph.callees(function))
-        visitCallee(callee);
 }
 
 void RewriteGlobalVariables::visit(AST::Variable& variable)
