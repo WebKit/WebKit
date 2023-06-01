@@ -1635,12 +1635,16 @@ public:
     // Returns zero if format or type is an invalid enum.
     static unsigned computeBytesPerGroup(GCGLenum format, GCGLenum type);
 
-    // Computes the image size in bytes. If paddingInBytes is not null, padding
-    // is also calculated in return. Returns NO_ERROR if succeed, otherwise
-    // return the suggested GL error indicating the cause of the failure:
-    //   INVALID_VALUE if width/height is negative or overflow happens.
-    //   INVALID_ENUM if format/type is illegal.
-    static GCGLenum computeImageSizeInBytes(GCGLenum format, GCGLenum type, GCGLsizei width, GCGLsizei height, GCGLsizei depth, const PixelStoreParameters&, unsigned* imageSizeInBytes, unsigned* paddingInBytes, unsigned* skipSizeInBytes);
+
+    struct PixelRectangleSizes {
+        unsigned initialSkipBytes { 0 };
+        unsigned imageBytes { 0 }; // Size for the tightly packed image, does not include initial skip, alignment, row length skip.
+        unsigned alignedRowBytes { 0 }; // Row bytes including alignment, image, row length skips (rows 0..height-2)
+        unsigned lastRowBytes { 0 }; // Row bytes of the last row, i.e. of the tightly packed image (last row, height - 1).
+    };
+    // Returns nullopt if width/height is negative or overflow happens or if format and type are invalid.
+    // Also validates total bytes (imageBytes + initialSkipBytes)
+    static std::optional<PixelRectangleSizes> computeImageSize(GCGLenum format, GCGLenum type, IntSize, GCGLsizei depth, const PixelStoreParameters&);
 
     // Extracts the contents of the given PixelBuffer into the passed Vector,
     // packing the pixel data according to the given format and type,

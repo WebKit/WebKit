@@ -24,11 +24,14 @@
  */
 
 #include "config.h"
-#include <wtf/StdLibExtras.h>
 
 #include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/MathExtras.h>
+#include <wtf/StdLibExtras.h>
 
+#if !USE(CAIRO)
+#include <bmalloc/Algorithm.h>
+#endif
 namespace TestWebKitAPI {
 
 template<typename WordType>
@@ -125,6 +128,55 @@ TEST(WTF_StdLibExtras, MakeUniqueFunctionLocalTypeCompiles)
     };
     auto s = makeUnique<LocalStruct>();
     auto c = makeUnique<LocalClass>();
+}
+
+
+TEST(WTF_StdLibExtras, RoundUpToMultipleOfWorks)
+{
+    EXPECT_EQ(2u, roundUpToMultipleOf(static_cast<uint8_t>(2), static_cast<uint8_t>(1)));
+    EXPECT_EQ(254u, roundUpToMultipleOf(static_cast<uint8_t>(2), static_cast<uint8_t>(254)));
+}
+
+TEST(WTF_StdLibExtras, RoundUpToMultipleOfNonPowerOfTwoWorks)
+{
+    {
+        uint16_t x = 65534;
+        uint16_t divisor = 7;
+        EXPECT_EQ(x, roundUpToMultipleOfNonPowerOfTwo(divisor, x));
+        EXPECT_EQ(x, roundUpToMultipleOfNonPowerOfTwo(CheckedUint16 { divisor }, CheckedUint16 { x }));
+    }
+    {
+        uint32_t x = std::numeric_limits<uint32_t>::max() - 2;
+        uint32_t divisor = 9241;
+        EXPECT_EQ(x, roundUpToMultipleOfNonPowerOfTwo(divisor, x));
+        EXPECT_EQ(x, roundUpToMultipleOfNonPowerOfTwo(CheckedUint32 { divisor }, CheckedUint32 { x }));
+    }
+    {
+        uint64_t x = std::numeric_limits<uint64_t>::max() - 2;
+        uint64_t divisor = 13;
+        EXPECT_EQ(x, roundUpToMultipleOfNonPowerOfTwo(divisor, x));
+        EXPECT_EQ(x, roundUpToMultipleOfNonPowerOfTwo(CheckedUint64 { divisor }, CheckedUint64 { x }));
+    }
+
+#if !USE(CAIRO)
+    // Test that bmalloc::roundUpToMultipleOfNonPowerOfTwo does not have the bug. The function uses size_t.
+    {
+        size_t x = std::numeric_limits<size_t>::max() - 2;
+        size_t divisor = sizeof(size_t) == 4 ? 9241 : 13;
+        EXPECT_EQ(x, roundUpToMultipleOfNonPowerOfTwo(divisor, x));
+        EXPECT_EQ(x, roundUpToMultipleOfNonPowerOfTwo(CheckedSize { divisor }, CheckedSize { x }));
+        EXPECT_EQ(x, bmalloc::roundUpToMultipleOfNonPowerOfTwo(divisor, x));
+    }
+#endif
+
+    {
+        size_t x = std::numeric_limits<size_t>::max();
+        EXPECT_TRUE(roundUpToMultipleOfNonPowerOfTwo(CheckedSize { 2 }, CheckedSize { x }).hasOverflowed());
+    }
+
+    EXPECT_TRUE(roundUpToMultipleOfNonPowerOfTwo(CheckedSize { WTF::ResultOverflowed }, CheckedSize { 78 }).hasOverflowed());
+    EXPECT_TRUE(roundUpToMultipleOfNonPowerOfTwo(CheckedSize { 78 }, CheckedSize { WTF::ResultOverflowed }).hasOverflowed());
+
 }
 
 } // namespace TestWebKitAPI

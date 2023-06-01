@@ -206,6 +206,26 @@ template<size_t divisor, typename T> inline constexpr T* roundUpToMultipleOf(T* 
 }
 
 template<typename T, typename U>
+inline constexpr T roundUpToMultipleOfNonPowerOfTwo(U divisor, T x)
+{
+    T remainder = x % divisor;
+    if (!remainder)
+        return x;
+    return x + static_cast<T>(divisor - remainder);
+}
+
+template<typename T, typename C>
+inline constexpr Checked<T, C> roundUpToMultipleOfNonPowerOfTwo(Checked<T, C> divisor, Checked<T, C> x)
+{
+    if (x.hasOverflowed() || divisor.hasOverflowed())
+        return ResultOverflowed;
+    T remainder = x % divisor;
+    if (!remainder)
+        return x;
+    return x + static_cast<T>(divisor.value() - remainder);
+}
+
+template<typename T, typename U>
 inline constexpr T roundDownToMultipleOf(U divisor, T x)
 {
     ASSERT_UNDER_CONSTEXPR_CONTEXT(divisor && isPowerOfTwo(divisor));
@@ -677,6 +697,7 @@ using WTF::makeUnique;
 using WTF::makeUniqueWithoutFastMallocCheck;
 using WTF::mergeDeduplicatedSorted;
 using WTF::roundUpToMultipleOf;
+using WTF::roundUpToMultipleOfNonPowerOfTwo;
 using WTF::roundDownToMultipleOf;
 using WTF::safeCast;
 using WTF::tryBinarySearch;

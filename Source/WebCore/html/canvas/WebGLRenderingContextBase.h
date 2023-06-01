@@ -926,6 +926,9 @@ protected:
         GCGLint border,
         GCGLenum format, GCGLenum type);
 
+    // Helper function to validate pixel transfer format and type.
+    bool validateImageFormatAndType(const char* functionName, GCGLenum format, GCGLenum type);
+
     // Helper function to validate that the given ArrayBufferView
     // is of the correct type and contains enough data for the texImage call.
     // Generates GL error and returns false if parameters are invalid.

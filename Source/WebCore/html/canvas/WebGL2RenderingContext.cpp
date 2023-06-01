@@ -3381,6 +3381,8 @@ void WebGL2RenderingContext::readPixels(GCGLint x, GCGLint y, GCGLsizei width, G
         synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "readPixels", "invalid type UNSIGNED_INT_24_8");
         return;
     }
+    if (!validateImageFormatAndType("readPixels", format, type))
+        return;
 
     // Due to WebGL's same-origin restrictions, it is not possible to
     // taint the origin using the WebGL API.

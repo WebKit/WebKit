@@ -3362,6 +3362,9 @@ void WebGLRenderingContextBase::readPixels(GCGLint x, GCGLint y, GCGLsizei width
     if (!validateTypeAndArrayBufferType("readPixels", ArrayBufferViewFunctionType::ReadPixels, type, &pixels))
         return;
 
+    if (!validateImageFormatAndType("readPixels", format, type))
+        return;
+
     clearIfComposited(CallerTypeOther);
     m_context->readPixels(IntRect { x, y, width, height }, format, type, std::span(static_cast<uint8_t*>(pixels.baseAddress()), pixels.byteLength()));
 }
@@ -4216,6 +4219,15 @@ bool WebGLRenderingContextBase::validateTypeAndArrayBufferType(const char* funct
     return false;
 }
 
+bool WebGLRenderingContextBase::validateImageFormatAndType(const char* functionName, GCGLenum format, GCGLenum type)
+{
+    if (!GraphicsContextGL::computeBytesPerGroup(format, type)) {
+        synthesizeGLError(GraphicsContextGL::INVALID_ENUM, functionName, "invalid format or type");
+        return false;
+    }
+    return true;
+}
+
 std::optional<std::span<const uint8_t>> WebGLRenderingContextBase::validateTexFuncData(const char* functionName, TexImageDimension texDimension, GCGLsizei width, GCGLsizei height, GCGLsizei depth, GCGLenum format, GCGLenum type, ArrayBufferView* pixels, NullDisposition disposition, GCGLuint srcOffset)
 {
     // All calling functions check isContextLost, so a duplicate check is not
@@ -4235,14 +4247,16 @@ std::optional<std::span<const uint8_t>> WebGLRenderingContextBase::validateTexFu
     if (!validateTypeAndArrayBufferType(functionName, ArrayBufferViewFunctionType::TexImage, type, pixels))
         return std::nullopt;
 
-    unsigned totalBytesRequired, skipBytes;
-    GCGLenum error = m_context->computeImageSizeInBytes(format, type, width, height, depth, computeUnpackPixelStoreParameters(texDimension), &totalBytesRequired, nullptr, &skipBytes);
-    if (error != GraphicsContextGL::NO_ERROR) {
-        synthesizeGLError(error, functionName, "invalid texture dimensions");
+    if (!validateImageFormatAndType(functionName, format, type))
+        return std::nullopt;
+
+    auto packSizes = m_context->computeImageSize(format, type, { width, height }, depth, computeUnpackPixelStoreParameters(texDimension));
+    if (!packSizes) {
+        synthesizeGLError(GraphicsContextGL::INVALID_VALUE, functionName, "invalid texture dimensions");
         return std::nullopt;
     }
 
-    auto dataLength = CheckedSize { totalBytesRequired } + skipBytes;
+    auto dataLength = CheckedSize { packSizes->imageBytes } + packSizes->initialSkipBytes;
     auto offset = CheckedSize { pixels ? JSC::elementSize(pixels->getType()) : 0 } * srcOffset;
     auto total = offset + dataLength;
     if (total.hasOverflowed() || !isInBounds<GCGLsizei>(dataLength)) {

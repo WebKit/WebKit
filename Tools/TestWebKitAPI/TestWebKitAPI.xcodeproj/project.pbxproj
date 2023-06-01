@@ -1255,7 +1255,7 @@
 		F6D67D3826F90206006E0349 /* Int128.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F6D67D3626F90206006E0349 /* Int128.cpp */; };
 		F6F49C6B15545CA70007F39D /* DOMWindowExtensionNoCache_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F6F49C6615545C8D0007F39D /* DOMWindowExtensionNoCache_Bundle.cpp */; };
 		F6FDDDD614241C6F004F1729 /* push-state.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F6FDDDD514241C48004F1729 /* push-state.html */; };
-		FE2BCDC72470FDA300DEC33B /* StdLibExtras.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE2BCDC62470FC7000DEC33B /* StdLibExtras.cpp */; };
+		FE2BCDC72470FDA300DEC33B /* StdLibExtrasTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE2BCDC62470FC7000DEC33B /* StdLibExtrasTests.cpp */; };
 		FE2D9474245EB2F400E48135 /* Bitmap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE2D9473245EB2DF00E48135 /* Bitmap.cpp */; };
 		FEC2A85424CE975F00ADBC35 /* DisallowVMEntry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FEC2A85324CE974E00ADBC35 /* DisallowVMEntry.cpp */; };
 		FEC2A85624CEB65F00ADBC35 /* PropertySlot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FEC2A85524CEB65F00ADBC35 /* PropertySlot.cpp */; };
@@ -3572,7 +3572,7 @@
 		F6F49C6715545C8D0007F39D /* DOMWindowExtensionNoCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMWindowExtensionNoCache.cpp; sourceTree = "<group>"; };
 		F6FDDDD214241AD4004F1729 /* PrivateBrowsingPushStateNoHistoryCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PrivateBrowsingPushStateNoHistoryCallback.cpp; sourceTree = "<group>"; };
 		F6FDDDD514241C48004F1729 /* push-state.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "push-state.html"; sourceTree = "<group>"; };
-		FE2BCDC62470FC7000DEC33B /* StdLibExtras.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StdLibExtras.cpp; sourceTree = "<group>"; };
+		FE2BCDC62470FC7000DEC33B /* StdLibExtrasTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StdLibExtrasTests.cpp; sourceTree = "<group>"; };
 		FE2D9473245EB2DF00E48135 /* Bitmap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Bitmap.cpp; sourceTree = "<group>"; };
 		FEB6F74E1B2BA44E009E4922 /* NakedPtr.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NakedPtr.cpp; sourceTree = "<group>"; };
 		FEC2A85324CE974E00ADBC35 /* DisallowVMEntry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DisallowVMEntry.cpp; sourceTree = "<group>"; };
@@ -5211,7 +5211,7 @@
 				33C2C9C02651F5B900E407F6 /* SmallSet.cpp */,
 				93FCDB33263631560046DD7D /* SortedArrayMap.cpp */,
 				7BF5017028E55F7A0008BB16 /* StackTraceTest.cpp */,
-				FE2BCDC62470FC7000DEC33B /* StdLibExtras.cpp */,
+				FE2BCDC62470FC7000DEC33B /* StdLibExtrasTests.cpp */,
 				81B50192140F232300D9EB58 /* StringBuilder.cpp */,
 				E3DE273B28A8D67700873DF2 /* StringCommon.cpp */,
 				7CD4C26C1E2C0E6E00929470 /* StringConcatenate.cpp */,
@@ -6182,7 +6182,7 @@
 				33C2C9C12651F5B900E407F6 /* SmallSet.cpp in Sources */,
 				93FCDB34263631560046DD7D /* SortedArrayMap.cpp in Sources */,
 				7BF5017828E55F7A0008BB16 /* StackTraceTest.cpp in Sources */,
-				FE2BCDC72470FDA300DEC33B /* StdLibExtras.cpp in Sources */,
+				FE2BCDC72470FDA300DEC33B /* StdLibExtrasTests.cpp in Sources */,
 				7C83DF321D0A590C00FEBCF3 /* StringBuilder.cpp in Sources */,
 				E3DE273C28A8D67800873DF2 /* StringCommon.cpp in Sources */,
 				7CD4C26E1E2C0E6E00929470 /* StringConcatenate.cpp in Sources */,
