@@ -3612,6 +3612,14 @@
    },
    {
       "emails" : [
+         "jasmine.mok@sony.com",
+         "jasminemok@ucla.edu"
+      ],
+      "github" : "mokjasmine",
+      "name" : "Jasmine Mok"
+   },
+   {
+      "emails" : [
          "lawrence.j@apple.com"
       ],
       "name" : "Jason Lawrence",
