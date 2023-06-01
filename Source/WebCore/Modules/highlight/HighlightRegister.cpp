@@ -74,7 +74,7 @@ void HighlightRegister::addAnnotationHighlightWithRange(Ref<StaticRange>&& value
     if (m_map.contains(annotationHighlightKey()))
         m_map.get(annotationHighlightKey())->addToSetLike(value);
     else
-        setFromMapLike(annotationHighlightKey(), Highlight::create(FixedVector<std::reference_wrapper<AbstractRange>>({ WTFMove(value) })));
+        setFromMapLike(annotationHighlightKey(), Highlight::create({ std::ref<AbstractRange>(value.get()) }));
 }
 
 }
