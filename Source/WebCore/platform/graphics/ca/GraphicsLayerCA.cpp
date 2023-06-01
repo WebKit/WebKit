@@ -974,6 +974,15 @@ void GraphicsLayerCA::setContentsRectClipsDescendants(bool contentsRectClipsDesc
     noteLayerPropertyChanged(ChildrenChanged | ContentsRectsChanged);
 }
 
+void GraphicsLayerCA::setVideoGravity(MediaPlayerVideoGravity gravity)
+{
+    if (gravity == m_videoGravity)
+        return;
+
+    GraphicsLayer::setVideoGravity(gravity);
+    noteLayerPropertyChanged(VideoGravityChanged);
+}
+
 void GraphicsLayerCA::setShapeLayerPath(const Path& path)
 {
     // FIXME: need to check for path equality. No bool Path::operator==(const Path&)!.
@@ -1310,6 +1319,7 @@ void GraphicsLayerCA::setContentsToVideoElement(HTMLVideoElement& videoElement, 
         }
         m_contentsLayerPurpose = purpose;
         m_contentsDisplayDelegate = nullptr;
+        updateVideoGravity();
         noteSublayersChanged();
         noteLayerPropertyChanged(ContentsPlatformLayerChanged);
         return;
@@ -2038,6 +2048,9 @@ void GraphicsLayerCA::commitLayerChangesBeforeSublayers(CommitState& commitState
         updateBlendMode();
 #endif
 
+    if (m_uncommittedChanges & VideoGravityChanged)
+        updateVideoGravity();
+
     if (m_uncommittedChanges & ShapeChanged)
         updateShape();
 
@@ -2532,6 +2545,12 @@ void GraphicsLayerCA::updateBlendMode()
     }
 }
 #endif
+
+void GraphicsLayerCA::updateVideoGravity()
+{
+    if (m_contentsLayer)
+        m_contentsLayer->setVideoGravity(m_videoGravity);
+}
 
 void GraphicsLayerCA::updateShape()
 {
@@ -4333,6 +4352,7 @@ const char* GraphicsLayerCA::layerChangeAsString(LayerChange layerChange)
 #endif
 #endif
     case LayerChange::ContentsScalingFiltersChanged: return "ContentsScalingFiltersChanged";
+    case LayerChange::VideoGravityChanged: return "VideoGravityChanged";
     }
     ASSERT_NOT_REACHED();
     return "";

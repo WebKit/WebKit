@@ -38,6 +38,7 @@
 #include <WebCore/FloatSize.h>
 #include <WebCore/HTMLMediaElementIdentifier.h>
 #include <WebCore/LayoutMilestone.h>
+#include <WebCore/MediaPlayerEnums.h>
 #include <WebCore/Model.h>
 #include <WebCore/PlatformCALayer.h>
 #include <WebCore/ScrollTypes.h>
@@ -110,6 +111,7 @@ enum class LayerChange : uint64_t {
     DescendentOfSeparatedPortalChanged  = 1LLU << 42,
 #endif
 #endif
+    VideoGravityChanged                 = 1LLU << 44,
 };
 
 class RemoteLayerTreeTransaction {
@@ -204,6 +206,7 @@ public:
         WebCore::PlatformCALayer::FilterType magnificationFilter { WebCore::PlatformCALayer::FilterType::Linear };
         WebCore::BlendMode blendMode { WebCore::BlendMode::Normal };
         WebCore::WindRule windRule { WebCore::WindRule::NonZero };
+        WebCore::MediaPlayerVideoGravity videoGravity { WebCore::MediaPlayerVideoGravity::ResizeAspect };
         bool antialiasesEdges { true };
         bool hidden { false };
         bool backingStoreAttached { true };

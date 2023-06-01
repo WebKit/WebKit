@@ -45,6 +45,7 @@ public:
 
 protected:
     void layout() override;
+    void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
 
     void visibleInViewportStateChanged() override { }
 
@@ -57,8 +58,6 @@ private:
     bool isMedia() const final { return true; }
     bool isImage() const final { return false; }
     void paintReplaced(PaintInfo&, const LayoutPoint&) override;
-
-    void styleDidChange(StyleDifference, const RenderStyle* oldStyle) final;
 };
 
 inline RenderMedia* HTMLMediaElement::renderer() const

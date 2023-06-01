@@ -56,7 +56,7 @@ class AcceleratedEffect;
 struct AcceleratedEffectValues;
 #endif
 
-
+enum class MediaPlayerVideoGravity : uint8_t;
 
 class WEBCORE_EXPORT PlatformCALayer : public ThreadSafeRefCounted<PlatformCALayer, WTF::DestructionThread::Main> {
     friend class PlatformCALayerCocoa;
@@ -245,7 +245,10 @@ public:
     virtual void setCornerRadius(float) = 0;
 
     virtual void setAntialiasesEdges(bool) = 0;
-    
+
+    virtual MediaPlayerVideoGravity videoGravity() const = 0;
+    virtual void setVideoGravity(MediaPlayerVideoGravity) = 0;
+
     // Only used by LayerTypeShapeLayer.
     virtual FloatRoundedRect shapeRoundedRect() const = 0;
     virtual void setShapeRoundedRect(const FloatRoundedRect&) = 0;
@@ -313,7 +316,7 @@ public:
     static CGRect frameForLayer(const PlatformLayer*);
 
     void moveToLayerPool();
-    
+
     virtual void dumpAdditionalProperties(TextStream&, OptionSet<PlatformLayerTreeAsTextFlags>);
 
 protected:

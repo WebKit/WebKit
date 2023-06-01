@@ -1963,6 +1963,22 @@ String convertEnumerationToString(MediaPlayer::SupportsType enumerationValue)
     return values[static_cast<size_t>(enumerationValue)];
 }
 
+WTF::TextStream& operator<<(TextStream& ts, MediaPlayerEnums::VideoGravity gravity)
+{
+    switch (gravity) {
+    case MediaPlayerEnums::VideoGravity::Resize:
+        ts << "resize";
+        break;
+    case MediaPlayerEnums::VideoGravity::ResizeAspect:
+        ts << "resize-aspect";
+        break;
+    case MediaPlayerEnums::VideoGravity::ResizeAspectFill:
+        ts << "resize-aspect-fill";
+        break;
+    }
+    return ts;
+}
+
 String convertEnumerationToString(MediaPlayer::BufferingPolicy enumerationValue)
 {
     static const NeverDestroyed<String> values[] = {

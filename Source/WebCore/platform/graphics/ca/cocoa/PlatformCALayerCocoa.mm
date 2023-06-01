@@ -32,6 +32,7 @@
 #import "IOSurface.h"
 #import "LengthFunctions.h"
 #import "LocalCurrentGraphicsContext.h"
+#import "MediaPlayerEnumsCocoa.h"
 #import "Model.h"
 #import "PlatformCAAnimationCocoa.h"
 #import "PlatformCAFilters.h"
@@ -954,6 +955,23 @@ void PlatformCALayerCocoa::setAntialiasesEdges(bool antialiases)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     [m_layer setEdgeAntialiasingMask:antialiases ? (kCALayerLeftEdge | kCALayerRightEdge | kCALayerBottomEdge | kCALayerTopEdge) : 0];
+    END_BLOCK_OBJC_EXCEPTIONS
+}
+
+MediaPlayerVideoGravity PlatformCALayerCocoa::videoGravity() const
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
+    if ([m_layer respondsToSelector:@selector(videoGravity)])
+        return convertAVLayerToMediaPlayerVideoGravity([(AVPlayerLayer *)m_layer videoGravity]);
+    END_BLOCK_OBJC_EXCEPTIONS
+    return MediaPlayerVideoGravity::ResizeAspect;
+}
+
+void PlatformCALayerCocoa::setVideoGravity(MediaPlayerVideoGravity gravity)
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
+    if ([m_layer respondsToSelector:@selector(setVideoGravity:)])
+        [(AVPlayerLayer *)m_layer setVideoGravity:convertMediaPlayerToAVLayerVideoGravity(gravity)];
     END_BLOCK_OBJC_EXCEPTIONS
 }
 

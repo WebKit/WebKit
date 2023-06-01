@@ -130,6 +130,8 @@ public:
     WEBCORE_EXPORT void setContentsClippingRect(const FloatRoundedRect&) override;
     WEBCORE_EXPORT void setContentsRectClipsDescendants(bool) override;
 
+    WEBCORE_EXPORT void setVideoGravity(MediaPlayerVideoGravity) override;
+
     WEBCORE_EXPORT void setShapeLayerPath(const Path&) override;
     WEBCORE_EXPORT void setShapeLayerWindRule(WindRule) override;
 
@@ -480,6 +482,7 @@ private:
     void updateBlendMode();
 #endif
 
+    void updateVideoGravity();
     void updateShape();
     void updateWindRule();
 
@@ -603,6 +606,7 @@ private:
 #endif
 #endif
         ContentsScalingFiltersChanged           = 1LLU << 43,
+        VideoGravityChanged                     = 1LLU << 44,
     };
     typedef uint64_t LayerChangeFlags;
     static const char* layerChangeAsString(LayerChange);

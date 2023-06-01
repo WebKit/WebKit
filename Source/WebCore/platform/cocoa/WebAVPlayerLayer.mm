@@ -318,14 +318,16 @@ static bool areFramesEssentiallyEqualWithTolerance(const FloatRect& a, const Flo
     _videoGravity = videoGravity;
 
     MediaPlayerEnums::VideoGravity gravity = MediaPlayerEnums::VideoGravity::ResizeAspect;
-    if (videoGravity == AVLayerVideoGravityResize)
+    if ([videoGravity isEqualToString:AVLayerVideoGravityResize])
         gravity = MediaPlayerEnums::VideoGravity::Resize;
-    if (videoGravity == AVLayerVideoGravityResizeAspect)
+    else if ([videoGravity isEqualToString:AVLayerVideoGravityResizeAspect])
         gravity = MediaPlayerEnums::VideoGravity::ResizeAspect;
-    else if (videoGravity == AVLayerVideoGravityResizeAspectFill)
+    else if ([videoGravity isEqualToString:AVLayerVideoGravityResizeAspectFill])
         gravity = MediaPlayerEnums::VideoGravity::ResizeAspectFill;
     else
         ASSERT_NOT_REACHED();
+
+    OBJC_INFO_LOG(OBJC_LOGIDENTIFIER, videoGravity.UTF8String);
 
     if (_fullscreenModel)
         _fullscreenModel->setVideoLayerGravity(gravity);

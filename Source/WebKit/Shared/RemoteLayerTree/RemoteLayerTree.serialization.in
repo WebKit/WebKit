@@ -69,6 +69,7 @@ header: "RemoteLayerTreeTransaction.h"
     DescendentOfSeparatedPortalChanged
 #endif
     ScrollingNodeIDChanged
+    VideoGravityChanged
 };
 #endif
 

@@ -572,6 +572,9 @@ void RenderLayerBacking::createPrimaryGraphicsLayer()
 #if ENABLE(CSS_COMPOSITING)
     updateBlendMode(style);
 #endif
+#if ENABLE(VIDEO)
+    updateVideoGravity(style);
+#endif
     updateContentsScalingFilters(style);
 }
 
@@ -826,6 +829,32 @@ void RenderLayerBacking::updateBlendMode(const RenderStyle& style)
 }
 #endif
 
+#if ENABLE(VIDEO)
+void RenderLayerBacking::updateVideoGravity(const RenderStyle& style)
+{
+    if (!renderer().isVideo())
+        return;
+
+    MediaPlayerVideoGravity videoGravity;
+    switch (style.objectFit()) {
+    case ObjectFit::None:
+    case ObjectFit::ScaleDown:
+        // FIXME: Add support for "None" and "ScaleDown" with video gravity modes
+        FALLTHROUGH;
+    case ObjectFit::Fill:
+        videoGravity = MediaPlayerVideoGravity::Resize;
+        break;
+    case ObjectFit::Contain:
+        videoGravity = MediaPlayerVideoGravity::ResizeAspect;
+        break;
+    case ObjectFit::Cover:
+        videoGravity = MediaPlayerVideoGravity::ResizeAspectFill;
+        break;
+    }
+    m_graphicsLayer->setVideoGravity(videoGravity);
+}
+#endif
+
 void RenderLayerBacking::updateContentsScalingFilters(const RenderStyle& style)
 {
     if (!renderer().isCanvas() || canvasCompositingStrategy(renderer()) != CanvasAsLayerContents)
@@ -1026,6 +1055,10 @@ void RenderLayerBacking::updateConfigurationAfterStyleChange()
     updateBlendMode(style);
 #endif
     updateContentsScalingFilters(style);
+
+#if ENABLE(VIDEO)
+    updateVideoGravity(style);
+#endif
 }
 
 bool RenderLayerBacking::updateConfiguration(const RenderLayer* compositingAncestor)
@@ -1381,6 +1414,10 @@ void RenderLayerBacking::updateGeometry(const RenderLayer* compositedAncestor)
     updateBlendMode(style);
 #endif
     updateContentsScalingFilters(style);
+
+#if ENABLE(VIDEO)
+    updateVideoGravity(style);
+#endif
 
     ASSERT(compositedAncestor == m_owningLayer.ancestorCompositingLayer());
     LayoutRect parentGraphicsLayerRect = computeParentGraphicsLayerRect(compositedAncestor);

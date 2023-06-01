@@ -158,6 +158,7 @@ RemoteLayerTreeTransaction::LayerProperties::LayerProperties(const LayerProperti
     , magnificationFilter(other.magnificationFilter)
     , blendMode(other.blendMode)
     , windRule(other.windRule)
+    , videoGravity(other.videoGravity)
     , antialiasesEdges(other.antialiasesEdges)
     , hidden(other.hidden)
     , backingStoreAttached(other.backingStoreAttached)
@@ -334,6 +335,9 @@ void RemoteLayerTreeTransaction::LayerProperties::encode(IPC::Encoder& encoder) 
         encoder << isDescendentOfSeparatedPortal;
 #endif
 #endif
+
+    if (changedProperties & LayerChange::VideoGravityChanged)
+        encoder << videoGravity;
 }
 
 bool RemoteLayerTreeTransaction::LayerProperties::decode(IPC::Decoder& decoder, LayerProperties& result)
@@ -597,6 +601,11 @@ bool RemoteLayerTreeTransaction::LayerProperties::decode(IPC::Decoder& decoder, 
     }
 #endif
 #endif
+
+    if (result.changedProperties & LayerChange::VideoGravityChanged) {
+        if (!decoder.decode(result.videoGravity))
+            return false;
+    }
 
     return true;
 }
@@ -1005,6 +1014,9 @@ static void dumpChangedLayers(TextStream& ts, const RemoteLayerTreeTransaction::
             ts.dumpProperty("isDescendentOfSeparatedPortal", layerProperties.isDescendentOfSeparatedPortal);
 #endif
 #endif
+
+        if (layerProperties.changedProperties & LayerChange::VideoGravityChanged)
+            ts.dumpProperty("videoGravity", layerProperties.videoGravity);
     }
 }
 

@@ -31,8 +31,10 @@
 #import "RemoteLayerTreeHost.h"
 #import "RemoteLayerTreeInteractionRegionLayers.h"
 #import <QuartzCore/QuartzCore.h>
+#import <WebCore/MediaPlayerEnumsCocoa.h>
 #import <WebCore/PlatformCAFilters.h>
 #import <WebCore/ScrollbarThemeMac.h>
+#import <WebCore/WebAVPlayerLayer.h>
 #import <WebCore/WebCoreCALayerExtras.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/BlockObjCExceptions.h>
@@ -296,6 +298,13 @@ void RemoteLayerTreePropertyApplier::applyPropertiesToLayer(CALayer *layer, Remo
         // FIXME: Implement DescendentOfSeparatedPortalChanged.
     }
 #endif
+#endif
+
+#if HAVE(AVKIT)
+    if (properties.changedProperties & LayerChange::VideoGravityChanged) {
+        if ([layer respondsToSelector:@selector(setVideoGravity:)])
+            [(WebAVPlayerLayer*)layer setVideoGravity:convertMediaPlayerToAVLayerVideoGravity(properties.videoGravity)];
+    }
 #endif
 }
 

@@ -267,7 +267,14 @@ void RenderVideo::layout()
     RenderMedia::layout();
     updatePlayer();
 }
-    
+
+void RenderVideo::styleDidChange(StyleDifference difference, const RenderStyle* oldStyle)
+{
+    RenderMedia::styleDidChange(difference, oldStyle);
+    if (!oldStyle || style().objectFit() != oldStyle->objectFit())
+        setNeedsLayout();
+}
+
 HTMLVideoElement& RenderVideo::videoElement() const
 {
     return downcast<HTMLVideoElement>(RenderMedia::mediaElement());

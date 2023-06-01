@@ -362,6 +362,9 @@ private:
 #if ENABLE(CSS_COMPOSITING)
     void updateBlendMode(const RenderStyle&);
 #endif
+#if ENABLE(VIDEO)
+    void updateVideoGravity(const RenderStyle&);
+#endif
     void updateContentsScalingFilters(const RenderStyle&);
 
     // Return the opacity value that this layer should use for compositing.

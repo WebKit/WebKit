@@ -156,6 +156,9 @@ public:
 
     void setAntialiasesEdges(bool) override;
 
+    MediaPlayerVideoGravity videoGravity() const override;
+    void setVideoGravity(MediaPlayerVideoGravity) override;
+
     FloatRoundedRect shapeRoundedRect() const override;
     void setShapeRoundedRect(const FloatRoundedRect&) override;
 

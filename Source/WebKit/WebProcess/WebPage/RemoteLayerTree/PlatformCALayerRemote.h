@@ -174,6 +174,9 @@ public:
 
     void setAntialiasesEdges(bool) override;
 
+    WebCore::MediaPlayerVideoGravity videoGravity() const override;
+    void setVideoGravity(WebCore::MediaPlayerVideoGravity) override;
+
     // FIXME: Having both shapeRoundedRect and shapePath is redundant. We could use shapePath for everything.
     WebCore::FloatRoundedRect shapeRoundedRect() const override;
     void setShapeRoundedRect(const WebCore::FloatRoundedRect&) override;

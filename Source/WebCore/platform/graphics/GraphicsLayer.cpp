@@ -32,6 +32,7 @@
 #include "GraphicsContext.h"
 #include "GraphicsLayerContentsDisplayDelegate.h"
 #include "LayoutRect.h"
+#include "MediaPlayerEnums.h"
 #include "RotateTransformOperation.h"
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
@@ -419,6 +420,24 @@ void GraphicsLayer::setMaskLayer(RefPtr<GraphicsLayer>&& layer)
     }
     
     m_maskLayer = WTFMove(layer);
+}
+
+MediaPlayerVideoGravity GraphicsLayer::videoGravity() const
+{
+#if USE(CA)
+    return m_videoGravity;
+#else
+    return MediaPlayerVideoGravity::ResizeAspect;
+#endif
+}
+
+void GraphicsLayer::setVideoGravity(MediaPlayerVideoGravity gravity)
+{
+#if USE(CA)
+    m_videoGravity = gravity;
+#else
+    UNUSED_PARAM(gravity);
+#endif
 }
 
 Path GraphicsLayer::shapeLayerPath() const
