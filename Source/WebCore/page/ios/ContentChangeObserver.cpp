@@ -40,6 +40,7 @@
 #include "Page.h"
 #include "Quirks.h"
 #include "RenderDescendantIterator.h"
+#include "RenderStyleInlines.h"
 #include "Settings.h"
 
 namespace WebCore {
