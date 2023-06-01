@@ -7,6 +7,9 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 Click enabled option
 PASS $("listbox").selectedIndex is 1
 
+Click on optgroup, should not deselect selectedIndex
+PASS $("listbox").selectedIndex is 1
+
 Click disabled option - doesn't change selectedIndex
 PASS $("listbox").selectedIndex is 1
 
