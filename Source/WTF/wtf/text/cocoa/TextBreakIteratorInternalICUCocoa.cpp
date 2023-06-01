@@ -31,21 +31,21 @@ namespace WTF {
 // Buffer sized to hold ASCII locale ID strings up to 32 characters long.
 using LocaleIDBuffer = std::array<char, 33>;
 
-TextBreakIterator::Backing TextBreakIterator::mapModeToBackingIterator(StringView string, TextBreakIterator::Mode mode, const AtomString& locale)
+TextBreakIterator::Backing TextBreakIterator::mapModeToBackingIterator(StringView string, const UChar* priorContext, unsigned priorContextLength, TextBreakIterator::Mode mode, const AtomString& locale)
 {
-    return switchOn(mode, [string, &locale](TextBreakIterator::LineMode lineMode) -> TextBreakIterator::Backing {
-        return TextBreakIteratorICU(string, nullptr, 0, TextBreakIteratorICU::LineMode { lineMode.behavior }, locale);
-    }, [string, &locale](TextBreakIterator::CaretMode) -> TextBreakIterator::Backing {
-        return TextBreakIteratorCF(string, { }, TextBreakIteratorCF::Mode::ComposedCharacter, locale);
-    }, [string, &locale](TextBreakIterator::DeleteMode) -> TextBreakIterator::Backing {
-        return TextBreakIteratorCF(string, { }, TextBreakIteratorCF::Mode::BackwardDeletion, locale);
-    }, [string, &locale](TextBreakIterator::CharacterMode) -> TextBreakIterator::Backing {
-        return TextBreakIteratorCF(string, { }, TextBreakIteratorCF::Mode::ComposedCharacter, locale);
+    return switchOn(mode, [string, priorContext, priorContextLength, &locale](TextBreakIterator::LineMode lineMode) -> TextBreakIterator::Backing {
+        return TextBreakIteratorICU(string, priorContext, priorContextLength, TextBreakIteratorICU::LineMode { lineMode.behavior }, locale);
+    }, [string, priorContext, priorContextLength, &locale](TextBreakIterator::CaretMode) -> TextBreakIterator::Backing {
+        return TextBreakIteratorCF(string, { priorContext, priorContextLength }, TextBreakIteratorCF::Mode::ComposedCharacter, locale);
+    }, [string, priorContext, priorContextLength, &locale](TextBreakIterator::DeleteMode) -> TextBreakIterator::Backing {
+        return TextBreakIteratorCF(string, { priorContext, priorContextLength }, TextBreakIteratorCF::Mode::BackwardDeletion, locale);
+    }, [string, priorContext, priorContextLength, &locale](TextBreakIterator::CharacterMode) -> TextBreakIterator::Backing {
+        return TextBreakIteratorCF(string, { priorContext, priorContextLength }, TextBreakIteratorCF::Mode::ComposedCharacter, locale);
     });
 }
 
-TextBreakIterator::TextBreakIterator(StringView string, Mode mode, const AtomString& locale)
-    : m_backing(mapModeToBackingIterator(string, mode, locale))
+TextBreakIterator::TextBreakIterator(StringView string, const UChar* priorContext, unsigned priorContextLength, Mode mode, const AtomString& locale)
+    : m_backing(mapModeToBackingIterator(string, priorContext, priorContextLength, mode, locale))
     , m_mode(mode)
     , m_locale(locale)
 {

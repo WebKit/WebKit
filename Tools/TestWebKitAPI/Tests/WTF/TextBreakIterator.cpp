@@ -152,17 +152,17 @@ TEST(WTF_TextBreakIterator, Behaviors)
     {
         auto string = u"ぁぁ"_str;
         auto locale = AtomString("ja"_str);
-        CachedTextBreakIterator strictIterator({ string }, TextBreakIterator::LineMode { TextBreakIterator::LineMode::Behavior::Strict }, locale);
+        CachedTextBreakIterator strictIterator({ string }, nullptr, 0, TextBreakIterator::LineMode { TextBreakIterator::LineMode::Behavior::Strict }, locale);
         EXPECT_EQ(strictIterator.following(0), 2);
-        CachedTextBreakIterator looseIterator({ string }, TextBreakIterator::LineMode { TextBreakIterator::LineMode::Behavior::Loose }, locale);
+        CachedTextBreakIterator looseIterator({ string }, nullptr, 0, TextBreakIterator::LineMode { TextBreakIterator::LineMode::Behavior::Loose }, locale);
         EXPECT_EQ(looseIterator.following(0), 1);
     }
     {
         auto string = u"中〜"_str;
         auto locale = AtomString("zh-Hans"_str);
-        CachedTextBreakIterator strictIterator({ string }, TextBreakIterator::LineMode { TextBreakIterator::LineMode::Behavior::Strict }, locale);
+        CachedTextBreakIterator strictIterator({ string }, nullptr, 0, TextBreakIterator::LineMode { TextBreakIterator::LineMode::Behavior::Strict }, locale);
         EXPECT_EQ(strictIterator.following(0), 2);
-        CachedTextBreakIterator looseIterator({ string }, TextBreakIterator::LineMode { TextBreakIterator::LineMode::Behavior::Loose }, locale);
+        CachedTextBreakIterator looseIterator({ string }, nullptr, 0, TextBreakIterator::LineMode { TextBreakIterator::LineMode::Behavior::Loose }, locale);
         EXPECT_EQ(looseIterator.following(0), 1);
     }
 }
@@ -184,7 +184,7 @@ TEST(WTF_TextBreakIterator, LazyLineBreakIteratorPriorContext)
     EXPECT_EQ(0U, priorContext.length());
 }
 
-TEST(WTF_TextBreakIterator, Line)
+TEST(WTF_TextBreakIterator, ICULine)
 {
     auto context = u"th"_str;
     auto string = u"is is some text"_str;
@@ -245,7 +245,7 @@ TEST(WTF_TextBreakIterator, Line)
     }
 }
 
-TEST(WTF_TextBreakIterator, Character)
+TEST(WTF_TextBreakIterator, ICUCharacter)
 {
     auto context = u"==>"_str;
     auto string = u" कि <=="_str;
@@ -272,6 +272,46 @@ TEST(WTF_TextBreakIterator, Character)
         EXPECT_TRUE(iterator.isBoundary(5));
         EXPECT_TRUE(iterator.isBoundary(6));
         EXPECT_TRUE(iterator.isBoundary(7));
+    }
+}
+
+TEST(WTF_TextBreakIterator, Line)
+{
+    auto context = u"th"_str;
+    auto string = u"is is some text"_str;
+    ASSERT(!context.is8Bit());
+    WTF::CachedTextBreakIterator iterator(string, context.characters16(), context.length(), WTF::TextBreakIterator::LineMode { WTF::TextBreakIterator::LineMode::Behavior::Default }, AtomString("en_US"_str));
+
+    {
+        unsigned wordBoundaries[] = { 3, 6, 11, 15 };
+        unsigned index = 0;
+        for (unsigned i = 0; i < string.length(); ++i) {
+            auto result = iterator.following(i);
+            if (i == wordBoundaries[index]) {
+                EXPECT_TRUE(iterator.isBoundary(i));
+                ++index;
+            } else
+                EXPECT_FALSE(iterator.isBoundary(i));
+            ASSERT_TRUE(result.has_value());
+            EXPECT_EQ(*result, wordBoundaries[index]);
+        }
+        EXPECT_FALSE(iterator.following(string.length()).has_value());
+        EXPECT_FALSE(iterator.following(string.length() + 1).has_value());
+    }
+    {
+        unsigned wordBoundaries[] = { 11, 6, 3, 0 };
+        unsigned index = 0;
+        for (unsigned i = string.length(); i > 0; --i) {
+            auto result = iterator.preceding(i);
+            if (i == wordBoundaries[index])
+                ++index;
+            ASSERT_TRUE(result.has_value());
+            EXPECT_EQ(*result, wordBoundaries[index]);
+        }
+        EXPECT_FALSE(iterator.preceding(0).has_value());
+        auto result = iterator.preceding(string.length() + 1);
+        ASSERT_TRUE(result.has_value());
+        EXPECT_EQ(*result, string.length());
     }
 }
 

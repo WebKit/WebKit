@@ -70,6 +70,7 @@ public:
 
     TextBreakIteratorICU(TextBreakIteratorICU&& other)
         : m_iterator(other.m_iterator)
+        , m_priorContextLength(other.m_priorContextLength)
     {
         other.m_iterator = nullptr;
     }

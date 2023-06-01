@@ -94,12 +94,12 @@ private:
 
     using Backing = std::variant<TextBreakIteratorICU, TextBreakIteratorPlatform>;
 
-    static Backing mapModeToBackingIterator(StringView, TextBreakIterator::Mode, const AtomString& locale);
+    static Backing mapModeToBackingIterator(StringView, const UChar* priorContext, unsigned priorContextLength, TextBreakIterator::Mode, const AtomString& locale);
 
     // Use CachedTextBreakIterator instead of constructing one of these directly.
-    WTF_EXPORT_PRIVATE TextBreakIterator(StringView, Mode, const AtomString& locale);
+    WTF_EXPORT_PRIVATE TextBreakIterator(StringView, const UChar* priorContext, unsigned priorContextLength, Mode, const AtomString& locale);
 
-    void setText(StringView string, const UChar* priorContext = nullptr, unsigned priorContextLength = 0)
+    void setText(StringView string, const UChar* priorContext, unsigned priorContextLength)
     {
         return switchOn(m_backing, [&](auto& iterator) {
             return iterator.setText(string, priorContext, priorContextLength);
@@ -137,18 +137,17 @@ private:
     TextBreakIteratorCache& operator=(const TextBreakIteratorCache&) = delete;
     TextBreakIteratorCache& operator=(TextBreakIteratorCache&&) = delete;
 
-    TextBreakIterator take(StringView string, TextBreakIterator::Mode mode, const AtomString& locale)
+    TextBreakIterator take(StringView string, const UChar* priorContext, unsigned priorContextLength, TextBreakIterator::Mode mode, const AtomString& locale)
     {
         auto iter = std::find_if(m_unused.begin(), m_unused.end(), [&](TextBreakIterator& candidate) {
             return candidate.mode() == mode && candidate.locale() == locale;
         });
         if (iter == m_unused.end())
-            return TextBreakIterator(string, mode, locale);
+            return TextBreakIterator(string, priorContext, priorContextLength, mode, locale);
         auto result = WTFMove(*iter);
         m_unused.remove(iter - m_unused.begin());
-        result.setText(string);
+        result.setText(string, priorContext, priorContextLength);
         return result;
-        
     }
 
     void put(TextBreakIterator&& iterator)
@@ -169,8 +168,8 @@ private:
 class CachedTextBreakIterator {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    CachedTextBreakIterator(StringView string, TextBreakIterator::Mode mode, const AtomString& locale)
-        : m_backing(TextBreakIteratorCache::singleton().take(string, mode, locale))
+    CachedTextBreakIterator(StringView string, const UChar* priorContext, unsigned priorContextLength, TextBreakIterator::Mode mode, const AtomString& locale)
+        : m_backing(TextBreakIteratorCache::singleton().take(string, priorContext, priorContextLength, mode, locale))
     {
     }
 

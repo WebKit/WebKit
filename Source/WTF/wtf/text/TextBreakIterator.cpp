@@ -43,21 +43,21 @@ TextBreakIteratorCache& TextBreakIteratorCache::singleton()
 
 #if !PLATFORM(COCOA)
 
-TextBreakIterator::Backing TextBreakIterator::mapModeToBackingIterator(StringView string, TextBreakIterator::Mode mode, const AtomString& locale)
+TextBreakIterator::Backing TextBreakIterator::mapModeToBackingIterator(StringView string, const UChar* priorContext, unsigned priorContextLength, TextBreakIterator::Mode mode, const AtomString& locale)
 {
-    return switchOn(mode, [string, &locale](TextBreakIterator::LineMode lineMode) -> TextBreakIterator::Backing {
-        return TextBreakIteratorICU(string, nullptr, 0, TextBreakIteratorICU::LineMode { lineMode.behavior }, locale);
-    }, [string, &locale](TextBreakIterator::CaretMode) -> TextBreakIterator::Backing {
-        return TextBreakIteratorICU(string, nullptr, 0, TextBreakIteratorICU::CharacterMode { }, locale);
-    }, [string, &locale](TextBreakIterator::DeleteMode) -> TextBreakIterator::Backing {
-        return TextBreakIteratorICU(string, nullptr, 0, TextBreakIteratorICU::CharacterMode { }, locale);
-    }, [string, &locale](TextBreakIterator::CharacterMode) -> TextBreakIterator::Backing {
-        return TextBreakIteratorICU(string, nullptr, 0, TextBreakIteratorICU::CharacterMode { }, locale);
+    return switchOn(mode, [string, priorContext, priorContextLength, &locale](TextBreakIterator::LineMode lineMode) -> TextBreakIterator::Backing {
+        return TextBreakIteratorICU(string, priorContext, priorContextLength, TextBreakIteratorICU::LineMode { lineMode.behavior }, locale);
+    }, [string, priorContext, priorContextLength, &locale](TextBreakIterator::CaretMode) -> TextBreakIterator::Backing {
+        return TextBreakIteratorICU(string, priorContext, priorContextLength, TextBreakIteratorICU::CharacterMode { }, locale);
+    }, [string, priorContext, priorContextLength, &locale](TextBreakIterator::DeleteMode) -> TextBreakIterator::Backing {
+        return TextBreakIteratorICU(string, priorContext, priorContextLength, TextBreakIteratorICU::CharacterMode { }, locale);
+    }, [string, priorContext, priorContextLength, &locale](TextBreakIterator::CharacterMode) -> TextBreakIterator::Backing {
+        return TextBreakIteratorICU(string, priorContext, priorContextLength, TextBreakIteratorICU::CharacterMode { }, locale);
     });
 }
 
-TextBreakIterator::TextBreakIterator(StringView string, Mode mode, const AtomString& locale)
-    : m_backing(mapModeToBackingIterator(string, mode, locale))
+TextBreakIterator::TextBreakIterator(StringView string, const UChar* priorContext, unsigned priorContextLength, Mode mode, const AtomString& locale)
+    : m_backing(mapModeToBackingIterator(string, priorContext, priorContextLength, mode, locale))
     , m_mode(mode)
     , m_locale(locale)
 {

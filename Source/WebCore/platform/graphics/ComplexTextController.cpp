@@ -211,7 +211,7 @@ unsigned ComplexTextController::offsetForPosition(float h, bool includePartialGl
                 }
 
                 unsigned stringLength = complexTextRun.stringLength();
-                CachedTextBreakIterator cursorPositionIterator(StringView(complexTextRun.characters(), stringLength), TextBreakIterator::CaretMode { }, nullAtom());
+                CachedTextBreakIterator cursorPositionIterator(StringView(complexTextRun.characters(), stringLength), nullptr, 0, TextBreakIterator::CaretMode { }, nullAtom());
                 unsigned clusterStart;
                 if (cursorPositionIterator.isBoundary(hitIndex))
                     clusterStart = hitIndex;
@@ -354,7 +354,7 @@ void ComplexTextController::collectComplexTextRuns()
     const Font* synthesizedFont = nullptr;
     const Font* smallSynthesizedFont = nullptr;
 
-    CachedTextBreakIterator graphemeClusterIterator(m_run.text(), TextBreakIterator::CharacterMode { }, m_font.fontDescription().computedLocale());
+    CachedTextBreakIterator graphemeClusterIterator(m_run.text(), nullptr, 0, TextBreakIterator::CharacterMode { }, m_font.fontDescription().computedLocale());
 
     unsigned markCount;
     UChar32 baseCharacter;
