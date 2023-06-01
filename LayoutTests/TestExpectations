@@ -3110,6 +3110,7 @@ fast/table/colspanMinWidth-vertical.html [ Skip ]
 # Test only works on iOS WK2. webkit.org/b/165535
 fast/forms/range/range-remove-on-drag.html [ Skip ]
 
+webkit.org/b/257582 fast/forms/input-textarea-padding-match.html [ ImageOnlyFailure ]
 
 # text-justify
 webkit.org/b/99945 fast/css3-text/css3-text-justify/text-justify-none.html [ ImageOnlyFailure ]
