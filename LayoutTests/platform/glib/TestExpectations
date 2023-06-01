@@ -1663,6 +1663,22 @@ webgl/2.0.y/conformance/extensions/s3tc-and-rgtc.html [ Pass Failure ]
 
 webgl/tex-2d-video-no-change-wrap.html [ Failure ]
 
+# WEBGL2 flakies
+webkit.org/b/251107 webgl/1.0.x/conformance/offscreencanvas/context-creation-worker.html [ Failure Pass ]
+webkit.org/b/251106 webgl/1.0.x/conformance/offscreencanvas/context-lost-restored-worker.html [ Pass Timeout ]
+webkit.org/b/251106 webgl/1.0.x/conformance/offscreencanvas/context-lost-worker.html [ Pass Timeout ]
+webkit.org/b/251106 webgl/1.0.x/conformance/offscreencanvas/methods-worker.html [ Failure Pass ]
+webkit.org/b/251106 webgl/1.0.x/conformance/offscreencanvas/offscreencanvas-timer-query.html [ Pass Timeout ]
+webkit.org/b/251106 webgl/2.0.y/conformance2/offscreencanvas/context-creation-worker.html [ Failure Pass ]
+webkit.org/b/251106 webgl/2.0.y/conformance2/offscreencanvas/methods-2-worker.html [ Failure Pass ]
+webkit.org/b/251106 webgl/2.0.y/conformance2/offscreencanvas/offscreencanvas-query.html [ Failure Pass Timeout ]
+webkit.org/b/251106 webgl/2.0.y/conformance/offscreencanvas/context-creation-worker.html [ Failure Pass ]
+webkit.org/b/251106 webgl/2.0.y/conformance/offscreencanvas/context-lost-restored-worker.html [ Pass Timeout ]
+webkit.org/b/251106 webgl/2.0.y/conformance/offscreencanvas/context-lost-worker.html [ Pass Timeout ]
+webkit.org/b/251106 webgl/2.0.y/conformance/offscreencanvas/methods-worker.html [ Failure Pass ]
+webkit.org/b/251106 webgl/2.0.y/conformance/offscreencanvas/offscreencanvas-timer-query.html [ Pass Timeout ]
+
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of WebGL-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -2226,7 +2242,6 @@ imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-setmediakeys-at-sam
 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-setmediakeys.https.html [ Pass ]
 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-setmediakeys-multiple-times-with-different-mediakeys.https.html [ Pass ]
 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-setmediakeys-multiple-times-with-the-same-mediakeys.https.html [ Pass ]
-imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-setmediakeys-to-multiple-video-elements.https.html [ Pass ]
 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-syntax-mediakeysession.https.html [ Pass ]
 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-syntax-mediakeys.https.html [ Pass ]
 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-syntax-mediakeysystemaccess.https.html [ Pass ]
@@ -3335,6 +3350,18 @@ imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/tall-
 imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/wide--contain--height.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/wide--contain--width.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/wide--cover--width.html [ ImageOnlyFailure ]
+
+# Flaky tests detected both on GTK and WPE on May2023
+webkit.org/b/257624 animations/background-position.html [ ImageOnlyFailure Pass ]
+webkit.org/b/257624 fast/dom/SelectorAPI/caseID.html [ Failure Pass ]
+webkit.org/b/257624 fast/mediastream/RTCSessionDescription.html [ Crash Pass ]
+webkit.org/b/257624 fast/text/text-indent-inside-float.html [ ImageOnlyFailure Pass ]
+webkit.org/b/257624 http/tests/workers/service/postmessage-after-terminating-hung-worker.html [ Crash Pass ]
+webkit.org/b/257624 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-setmediakeys-to-multiple-video-elements.https.html [ Crash Pass ]
+webkit.org/b/257624 imported/w3c/web-platform-tests/navigation-timing/nav2_test_redirect_xserver.html [ Failure Pass ]
+webkit.org/b/257624 webanimations/accelerated-translate-animation-additional-animation-added-in-flight.html [ ImageOnlyFailure Pass ]
+webkit.org/b/257624 webrtc/audio-replace-track.html [ Failure Pass Timeout ]
+webkit.org/b/257624 webrtc/negotiatedneeded-event-addStream.html [ Failure Pass ]
 
 # End: Common failures between GTK and WPE.
 
