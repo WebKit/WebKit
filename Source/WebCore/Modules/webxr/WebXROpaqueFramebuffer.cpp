@@ -249,7 +249,7 @@ void WebXROpaqueFramebuffer::endFrame()
     if (m_ioSurfaceTextureHandle) {
         if (m_ioSurfaceTextureHandleIsShared) {
 #if !PLATFORM(IOS_FAMILY_SIMULATOR)
-            gl.destroyExternalImage(m_ioSurfaceTextureHandle);
+            gl.destroyEGLImage(m_ioSurfaceTextureHandle);
 #else
             ASSERT_NOT_REACHED();
 #endif
