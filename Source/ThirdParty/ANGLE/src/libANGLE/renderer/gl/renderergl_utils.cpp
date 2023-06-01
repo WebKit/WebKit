@@ -1569,8 +1569,12 @@ void GenerateCaps(const FunctionsGL *functions,
     extensions->unpackSubimageEXT  = functions->standard == STANDARD_GL_DESKTOP ||
                                     functions->isAtLeastGLES(gl::Version(3, 0)) ||
                                     functions->hasGLESExtension("GL_EXT_unpack_subimage");
-    extensions->shaderNoperspectiveInterpolationNV = functions->isAtLeastGL(gl::Version(3, 0));
-    extensions->packSubimageNV                     = functions->standard == STANDARD_GL_DESKTOP ||
+    // Some drivers do not support this extension in ESSL 3.00, so ESSL 3.10 is required on ES.
+    extensions->shaderNoperspectiveInterpolationNV =
+        functions->isAtLeastGL(gl::Version(3, 0)) ||
+        (functions->isAtLeastGLES(gl::Version(3, 1)) &&
+         functions->hasGLESExtension("GL_NV_shader_noperspective_interpolation"));
+    extensions->packSubimageNV = functions->standard == STANDARD_GL_DESKTOP ||
                                  functions->isAtLeastGLES(gl::Version(3, 0)) ||
                                  functions->hasGLESExtension("GL_NV_pack_subimage");
     extensions->vertexArrayObjectOES = functions->isAtLeastGL(gl::Version(3, 0)) ||

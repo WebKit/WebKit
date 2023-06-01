@@ -390,6 +390,8 @@
 		7B24C80A28D9A20D00E2DDB1 /* ImmutableString_ESSL_autogen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B24C80928D9A20D00E2DDB1 /* ImmutableString_ESSL_autogen.cpp */; };
 		7B24C80D28D9A25100E2DDB1 /* SymbolTable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B24C80B28D9A25000E2DDB1 /* SymbolTable.cpp */; };
 		7B24C80E28D9A25100E2DDB1 /* SymbolTable_ESSL_autogen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B24C80C28D9A25000E2DDB1 /* SymbolTable_ESSL_autogen.cpp */; };
+		7B3F6C9E2A272E2300683352 /* GlobalMutex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B3F6C9C2A272E1D00683352 /* GlobalMutex.cpp */; };
+		7B3F6CA12A272E6400683352 /* RewriteInterpolants.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B3F6C9F2A272E5E00683352 /* RewriteInterpolants.cpp */; };
 		7B7608312898322F000012A1 /* loadimage_astc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B7608302898322F000012A1 /* loadimage_astc.cpp */; };
 		7B7608342898326C000012A1 /* RewritePixelLocalStorage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B7608322898326C000012A1 /* RewritePixelLocalStorage.cpp */; };
 		7B7608352898326C000012A1 /* RewritePixelLocalStorage.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B7608332898326C000012A1 /* RewritePixelLocalStorage.h */; };
@@ -1446,6 +1448,10 @@
 		7B24C80928D9A20D00E2DDB1 /* ImmutableString_ESSL_autogen.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ImmutableString_ESSL_autogen.cpp; sourceTree = "<group>"; };
 		7B24C80B28D9A25000E2DDB1 /* SymbolTable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SymbolTable.cpp; sourceTree = "<group>"; };
 		7B24C80C28D9A25000E2DDB1 /* SymbolTable_ESSL_autogen.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SymbolTable_ESSL_autogen.cpp; sourceTree = "<group>"; };
+		7B3F6C9C2A272E1D00683352 /* GlobalMutex.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GlobalMutex.cpp; sourceTree = "<group>"; };
+		7B3F6C9D2A272E1D00683352 /* GlobalMutex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GlobalMutex.h; sourceTree = "<group>"; };
+		7B3F6C9F2A272E5E00683352 /* RewriteInterpolants.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RewriteInterpolants.cpp; sourceTree = "<group>"; };
+		7B3F6CA02A272E5E00683352 /* RewriteInterpolants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RewriteInterpolants.h; sourceTree = "<group>"; };
 		7B7608302898322F000012A1 /* loadimage_astc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = loadimage_astc.cpp; sourceTree = "<group>"; };
 		7B7608322898326C000012A1 /* RewritePixelLocalStorage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RewritePixelLocalStorage.cpp; sourceTree = "<group>"; };
 		7B7608332898326C000012A1 /* RewritePixelLocalStorage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RewritePixelLocalStorage.h; sourceTree = "<group>"; };
@@ -2200,6 +2206,8 @@
 				5CCD59542284F7950018F2D8 /* GLES1State.h */,
 				FF62F68E27448D6900AD6EDC /* gles_extensions_autogen.cpp */,
 				FF62F69527448D6900AD6EDC /* gles_extensions_autogen.h */,
+				7B3F6C9C2A272E1D00683352 /* GlobalMutex.cpp */,
+				7B3F6C9D2A272E1D00683352 /* GlobalMutex.h */,
 				5C1DBC6F1B0438D200235552 /* HandleAllocator.cpp */,
 				5C1DBC701B0438D200235552 /* HandleAllocator.h */,
 				5C1DBC711B0438D200235552 /* histogram_macros.h */,
@@ -3146,6 +3154,8 @@
 				FF81FF4B2581919700894E24 /* Reference.h */,
 				FF81FF582581919700894E24 /* RewriteCaseDeclarations.cpp */,
 				FF81FF592581919700894E24 /* RewriteCaseDeclarations.h */,
+				7B3F6C9F2A272E5E00683352 /* RewriteInterpolants.cpp */,
+				7B3F6CA02A272E5E00683352 /* RewriteInterpolants.h */,
 				FF81FF362581919700894E24 /* RewriteOutArgs.cpp */,
 				FF81FF2E2581919700894E24 /* RewriteOutArgs.h */,
 				FF81FF3C2581919700894E24 /* RewritePipelines.cpp */,
@@ -3850,6 +3860,7 @@
 				DF83E2ED2639FE17000825EF /* GLES1State.cpp in Sources */,
 				FF62F69A27448D6A00AD6EDC /* gles_extensions_autogen.cpp in Sources */,
 				DF83E3412639FE2A000825EF /* global_state.cpp in Sources */,
+				7B3F6C9E2A272E2300683352 /* GlobalMutex.cpp in Sources */,
 				DF83E2B62639FD83000825EF /* glslang_lex_autogen.cpp in Sources */,
 				DF83E2C02639FD83000825EF /* glslang_tab_autogen.cpp in Sources */,
 				DF83E2E32639FE17000825EF /* HandleAllocator.cpp in Sources */,
@@ -3987,6 +3998,7 @@
 				DF83E2472639FCD5000825EF /* RewriteCaseDeclarations.cpp in Sources */,
 				DF83E2732639FD33000825EF /* RewriteCubeMapSamplersAs2DArray.cpp in Sources */,
 				DF83E2632639FD33000825EF /* RewriteDfdy.cpp in Sources */,
+				7B3F6CA12A272E6400683352 /* RewriteInterpolants.cpp in Sources */,
 				DF83E2342639FCD5000825EF /* RewriteOutArgs.cpp in Sources */,
 				DF83E2432639FCD5000825EF /* RewritePipelines.cpp in Sources */,
 				7B7608342898326C000012A1 /* RewritePixelLocalStorage.cpp in Sources */,

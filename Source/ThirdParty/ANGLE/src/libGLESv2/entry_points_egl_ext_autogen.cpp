@@ -41,6 +41,7 @@ void EGLAPIENTRY EGL_SetBlobCacheFuncsANDROID(EGLDisplay dpy,
         SetBlobCacheFuncsANDROID(thread, dpyPacked, set, get);
         ANGLE_CAPTURE_EGL(SetBlobCacheFuncsANDROID, true, thread, dpyPacked, set, get);
     }
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
 }
 
 // EGL_ANDROID_create_native_client_buffer
@@ -63,6 +64,7 @@ EGLClientBuffer EGLAPIENTRY EGL_CreateNativeClientBufferANDROID(const EGLint *at
         ANGLE_CAPTURE_EGL(CreateNativeClientBufferANDROID, true, thread, attrib_listPacked,
                           returnValue);
     }
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     return returnValue;
 }
 
@@ -93,6 +95,7 @@ EGLBoolean EGLAPIENTRY EGL_GetCompositorTimingSupportedANDROID(EGLDisplay dpy,
         ANGLE_CAPTURE_EGL(GetCompositorTimingSupportedANDROID, true, thread, dpyPacked,
                           surfacePacked, namePacked, returnValue);
     }
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     return returnValue;
 }
 
@@ -124,6 +127,7 @@ EGLBoolean EGLAPIENTRY EGL_GetCompositorTimingANDROID(EGLDisplay dpy,
         ANGLE_CAPTURE_EGL(GetCompositorTimingANDROID, true, thread, dpyPacked, surfacePacked,
                           numTimestamps, names, values, returnValue);
     }
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     return returnValue;
 }
 
@@ -151,6 +155,7 @@ EGLBoolean EGLAPIENTRY EGL_GetNextFrameIdANDROID(EGLDisplay dpy,
         ANGLE_CAPTURE_EGL(GetNextFrameIdANDROID, true, thread, dpyPacked, surfacePacked, frameId,
                           returnValue);
     }
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     return returnValue;
 }
 
@@ -179,6 +184,7 @@ EGLBoolean EGLAPIENTRY EGL_GetFrameTimestampSupportedANDROID(EGLDisplay dpy,
         ANGLE_CAPTURE_EGL(GetFrameTimestampSupportedANDROID, true, thread, dpyPacked, surfacePacked,
                           timestampPacked, returnValue);
     }
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     return returnValue;
 }
 
@@ -213,6 +219,7 @@ EGLBoolean EGLAPIENTRY EGL_GetFrameTimestampsANDROID(EGLDisplay dpy,
         ANGLE_CAPTURE_EGL(GetFrameTimestampsANDROID, true, thread, dpyPacked, surfacePacked,
                           frameId, numTimestamps, timestamps, values, returnValue);
     }
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     return returnValue;
 }
 
@@ -231,6 +238,7 @@ EGLClientBuffer EGLAPIENTRY EGL_GetNativeClientBufferANDROID(const struct AHardw
         returnValue = GetNativeClientBufferANDROID(thread, buffer);
         ANGLE_CAPTURE_EGL(GetNativeClientBufferANDROID, true, thread, buffer, returnValue);
     }
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     return returnValue;
 }
 
@@ -255,6 +263,7 @@ EGLint EGLAPIENTRY EGL_DupNativeFenceFDANDROID(EGLDisplay dpy, EGLSyncKHR sync)
         ANGLE_CAPTURE_EGL(DupNativeFenceFDANDROID, true, thread, dpyPacked, syncPacked,
                           returnValue);
     }
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     return returnValue;
 }
 
@@ -282,6 +291,7 @@ EGLBoolean EGLAPIENTRY EGL_PresentationTimeANDROID(EGLDisplay dpy,
         ANGLE_CAPTURE_EGL(PresentationTimeANDROID, true, thread, dpyPacked, surfacePacked, time,
                           returnValue);
     }
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     return returnValue;
 }
 
@@ -307,6 +317,7 @@ EGLDeviceEXT EGLAPIENTRY EGL_CreateDeviceANGLE(EGLint device_type,
         ANGLE_CAPTURE_EGL(CreateDeviceANGLE, true, thread, device_type, native_device, attrib_list,
                           returnValue);
     }
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     return returnValue;
 }
 
@@ -326,6 +337,7 @@ EGLBoolean EGLAPIENTRY EGL_ReleaseDeviceANGLE(EGLDeviceEXT device)
         returnValue = ReleaseDeviceANGLE(thread, devicePacked);
         ANGLE_CAPTURE_EGL(ReleaseDeviceANGLE, true, thread, devicePacked, returnValue);
     }
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     return returnValue;
 }
 
@@ -348,6 +360,7 @@ const char *EGLAPIENTRY EGL_QueryStringiANGLE(EGLDisplay dpy, EGLint name, EGLin
         returnValue = QueryStringiANGLE(thread, dpyPacked, name, index);
         ANGLE_CAPTURE_EGL(QueryStringiANGLE, true, thread, dpyPacked, name, index, returnValue);
     }
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     return returnValue;
 }
 
@@ -373,6 +386,7 @@ EGLBoolean EGLAPIENTRY EGL_QueryDisplayAttribANGLE(EGLDisplay dpy,
         ANGLE_CAPTURE_EGL(QueryDisplayAttribANGLE, true, thread, dpyPacked, attribute, value,
                           returnValue);
     }
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     return returnValue;
 }
 
@@ -397,6 +411,7 @@ void *EGLAPIENTRY EGL_CopyMetalSharedEventANGLE(EGLDisplay dpy, EGLSyncKHR sync)
         ANGLE_CAPTURE_EGL(CopyMetalSharedEventANGLE, true, thread, dpyPacked, syncPacked,
                           returnValue);
     }
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     return returnValue;
 }
 
@@ -419,6 +434,7 @@ void EGLAPIENTRY EGL_ReleaseHighPowerGPUANGLE(EGLDisplay dpy, EGLContext ctx)
         ReleaseHighPowerGPUANGLE(thread, dpyPacked, ctxPacked);
         ANGLE_CAPTURE_EGL(ReleaseHighPowerGPUANGLE, true, thread, dpyPacked, ctxPacked);
     }
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
 }
 
 void EGLAPIENTRY EGL_ReacquireHighPowerGPUANGLE(EGLDisplay dpy, EGLContext ctx)
@@ -439,6 +455,7 @@ void EGLAPIENTRY EGL_ReacquireHighPowerGPUANGLE(EGLDisplay dpy, EGLContext ctx)
         ReacquireHighPowerGPUANGLE(thread, dpyPacked, ctxPacked);
         ANGLE_CAPTURE_EGL(ReacquireHighPowerGPUANGLE, true, thread, dpyPacked, ctxPacked);
     }
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
 }
 
 void EGLAPIENTRY EGL_HandleGPUSwitchANGLE(EGLDisplay dpy)
@@ -457,6 +474,7 @@ void EGLAPIENTRY EGL_HandleGPUSwitchANGLE(EGLDisplay dpy)
         HandleGPUSwitchANGLE(thread, dpyPacked);
         ANGLE_CAPTURE_EGL(HandleGPUSwitchANGLE, true, thread, dpyPacked);
     }
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
 }
 
 void EGLAPIENTRY EGL_ForceGPUSwitchANGLE(EGLDisplay dpy, EGLint gpuIDHigh, EGLint gpuIDLow)
@@ -476,6 +494,7 @@ void EGLAPIENTRY EGL_ForceGPUSwitchANGLE(EGLDisplay dpy, EGLint gpuIDHigh, EGLin
         ForceGPUSwitchANGLE(thread, dpyPacked, gpuIDHigh, gpuIDLow);
         ANGLE_CAPTURE_EGL(ForceGPUSwitchANGLE, true, thread, dpyPacked, gpuIDHigh, gpuIDLow);
     }
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
 }
 
 // EGL_ANGLE_prepare_swap_buffers
@@ -503,6 +522,7 @@ EGLint EGLAPIENTRY EGL_ProgramCacheGetAttribANGLE(EGLDisplay dpy, EGLenum attrib
         returnValue = ProgramCacheGetAttribANGLE(thread, dpyPacked, attrib);
         ANGLE_CAPTURE_EGL(ProgramCacheGetAttribANGLE, true, thread, dpyPacked, attrib, returnValue);
     }
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     return returnValue;
 }
 
@@ -533,6 +553,7 @@ void EGLAPIENTRY EGL_ProgramCacheQueryANGLE(EGLDisplay dpy,
         ANGLE_CAPTURE_EGL(ProgramCacheQueryANGLE, true, thread, dpyPacked, index, key, keysize,
                           binary, binarysize);
     }
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
 }
 
 void EGLAPIENTRY EGL_ProgramCachePopulateANGLE(EGLDisplay dpy,
@@ -559,6 +580,7 @@ void EGLAPIENTRY EGL_ProgramCachePopulateANGLE(EGLDisplay dpy,
         ANGLE_CAPTURE_EGL(ProgramCachePopulateANGLE, true, thread, dpyPacked, key, keysize, binary,
                           binarysize);
     }
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
 }
 
 EGLint EGLAPIENTRY EGL_ProgramCacheResizeANGLE(EGLDisplay dpy, EGLint limit, EGLint mode)
@@ -580,6 +602,7 @@ EGLint EGLAPIENTRY EGL_ProgramCacheResizeANGLE(EGLDisplay dpy, EGLint limit, EGL
         ANGLE_CAPTURE_EGL(ProgramCacheResizeANGLE, true, thread, dpyPacked, limit, mode,
                           returnValue);
     }
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     return returnValue;
 }
 
@@ -609,6 +632,7 @@ EGLBoolean EGLAPIENTRY EGL_QuerySurfacePointerANGLE(EGLDisplay dpy,
         ANGLE_CAPTURE_EGL(QuerySurfacePointerANGLE, true, thread, dpyPacked, surfacePacked,
                           attribute, value, returnValue);
     }
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     return returnValue;
 }
 
@@ -640,6 +664,7 @@ EGLBoolean EGLAPIENTRY EGL_CreateStreamProducerD3DTextureANGLE(EGLDisplay dpy,
         ANGLE_CAPTURE_EGL(CreateStreamProducerD3DTextureANGLE, true, thread, dpyPacked,
                           streamPacked, attrib_listPacked, returnValue);
     }
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     return returnValue;
 }
 
@@ -670,6 +695,7 @@ EGLBoolean EGLAPIENTRY EGL_StreamPostD3DTextureANGLE(EGLDisplay dpy,
         ANGLE_CAPTURE_EGL(StreamPostD3DTextureANGLE, true, thread, dpyPacked, streamPacked, texture,
                           attrib_listPacked, returnValue);
     }
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     return returnValue;
 }
 
@@ -697,6 +723,7 @@ EGLBoolean EGLAPIENTRY EGL_SwapBuffersWithFrameTokenANGLE(EGLDisplay dpy,
         ANGLE_CAPTURE_EGL(SwapBuffersWithFrameTokenANGLE, true, thread, dpyPacked, surfacePacked,
                           frametoken, returnValue);
     }
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     return returnValue;
 }
 
@@ -726,6 +753,7 @@ EGLBoolean EGLAPIENTRY EGL_GetMscRateANGLE(EGLDisplay dpy,
         ANGLE_CAPTURE_EGL(GetMscRateANGLE, true, thread, dpyPacked, surfacePacked, numerator,
                           denominator, returnValue);
     }
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     return returnValue;
 }
 
@@ -757,6 +785,7 @@ EGLBoolean EGLAPIENTRY EGL_ExportVkImageANGLE(EGLDisplay dpy,
         ANGLE_CAPTURE_EGL(ExportVkImageANGLE, true, thread, dpyPacked, imagePacked, vk_image,
                           vk_image_create_info, returnValue);
     }
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     return returnValue;
 }
 
@@ -777,6 +806,7 @@ void EGLAPIENTRY EGL_WaitUntilWorkScheduledANGLE(EGLDisplay dpy)
         WaitUntilWorkScheduledANGLE(thread, dpyPacked);
         ANGLE_CAPTURE_EGL(WaitUntilWorkScheduledANGLE, true, thread, dpyPacked);
     }
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
 }
 
 // EGL_CHROMIUM_sync_control
@@ -807,6 +837,7 @@ EGLBoolean EGLAPIENTRY EGL_GetSyncValuesCHROMIUM(EGLDisplay dpy,
         ANGLE_CAPTURE_EGL(GetSyncValuesCHROMIUM, true, thread, dpyPacked, surfacePacked, ust, msc,
                           sbc, returnValue);
     }
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     return returnValue;
 }
 
@@ -833,6 +864,7 @@ EGLBoolean EGLAPIENTRY EGL_QueryDeviceAttribEXT(EGLDeviceEXT device,
         ANGLE_CAPTURE_EGL(QueryDeviceAttribEXT, true, thread, devicePacked, attribute, value,
                           returnValue);
     }
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     return returnValue;
 }
 
@@ -853,6 +885,7 @@ const char *EGLAPIENTRY EGL_QueryDeviceStringEXT(EGLDeviceEXT device, EGLint nam
         returnValue = QueryDeviceStringEXT(thread, devicePacked, name);
         ANGLE_CAPTURE_EGL(QueryDeviceStringEXT, true, thread, devicePacked, name, returnValue);
     }
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     return returnValue;
 }
 
@@ -876,6 +909,7 @@ EGLBoolean EGLAPIENTRY EGL_QueryDisplayAttribEXT(EGLDisplay dpy, EGLint attribut
         ANGLE_CAPTURE_EGL(QueryDisplayAttribEXT, true, thread, dpyPacked, attribute, value,
                           returnValue);
     }
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     return returnValue;
 }
 
@@ -904,6 +938,7 @@ EGLBoolean EGLAPIENTRY EGL_QueryDmaBufFormatsEXT(EGLDisplay dpy,
         ANGLE_CAPTURE_EGL(QueryDmaBufFormatsEXT, true, thread, dpyPacked, max_formats, formats,
                           num_formats, returnValue);
     }
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     return returnValue;
 }
 
@@ -937,6 +972,7 @@ EGLBoolean EGLAPIENTRY EGL_QueryDmaBufModifiersEXT(EGLDisplay dpy,
         ANGLE_CAPTURE_EGL(QueryDmaBufModifiersEXT, true, thread, dpyPacked, format, max_modifiers,
                           modifiers, external_only, num_modifiers, returnValue);
     }
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     return returnValue;
 }
 
@@ -969,6 +1005,7 @@ EGLSurface EGLAPIENTRY EGL_CreatePlatformPixmapSurfaceEXT(EGLDisplay dpy,
         ANGLE_CAPTURE_EGL(CreatePlatformPixmapSurfaceEXT, true, thread, dpyPacked, configPacked,
                           native_pixmap, attrib_listPacked, returnValue);
     }
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     return returnValue;
 }
 
@@ -1000,6 +1037,7 @@ EGLSurface EGLAPIENTRY EGL_CreatePlatformWindowSurfaceEXT(EGLDisplay dpy,
         ANGLE_CAPTURE_EGL(CreatePlatformWindowSurfaceEXT, true, thread, dpyPacked, configPacked,
                           native_window, attrib_listPacked, returnValue);
     }
+    egl::Display::GetCurrentThreadUnlockedTailCall()->run();
     return returnValue;
 }
 
@@ -1026,6 +1064,7 @@ EGLDisplay EGLAPIENTRY EGL_GetPlatformDisplayEXT(EGLenum platform,
         ANGLE_CAPTURE_EGL(GetPlatformDisplayEXT, true, thread, platform, native_display,
                           attrib_listPacked, returnValue);
     }
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     return returnValue;
 }
 
@@ -1051,6 +1090,7 @@ EGLint EGLAPIENTRY EGL_DebugMessageControlKHR(EGLDEBUGPROCKHR callback,
         ANGLE_CAPTURE_EGL(DebugMessageControlKHR, true, thread, callback, attrib_listPacked,
                           returnValue);
     }
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     return returnValue;
 }
 
@@ -1079,6 +1119,7 @@ EGLint EGLAPIENTRY EGL_LabelObjectKHR(EGLDisplay display,
         ANGLE_CAPTURE_EGL(LabelObjectKHR, true, thread, displayPacked, objectTypePacked, object,
                           label, returnValue);
     }
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     return returnValue;
 }
 
@@ -1097,6 +1138,7 @@ EGLBoolean EGLAPIENTRY EGL_QueryDebugKHR(EGLint attribute, EGLAttrib *value)
         returnValue = QueryDebugKHR(thread, attribute, value);
         ANGLE_CAPTURE_EGL(QueryDebugKHR, true, thread, attribute, value, returnValue);
     }
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     return returnValue;
 }
 
@@ -1125,6 +1167,7 @@ EGLint EGLAPIENTRY EGL_ClientWaitSyncKHR(EGLDisplay dpy,
         ANGLE_CAPTURE_EGL(ClientWaitSyncKHR, true, thread, dpyPacked, syncPacked, flags, timeout,
                           returnValue);
     }
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     return returnValue;
 }
 
@@ -1149,6 +1192,7 @@ EGLSyncKHR EGLAPIENTRY EGL_CreateSyncKHR(EGLDisplay dpy, EGLenum type, const EGL
         ANGLE_CAPTURE_EGL(CreateSyncKHR, true, thread, dpyPacked, type, attrib_listPacked,
                           returnValue);
     }
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     return returnValue;
 }
 
@@ -1171,6 +1215,7 @@ EGLBoolean EGLAPIENTRY EGL_DestroySyncKHR(EGLDisplay dpy, EGLSyncKHR sync)
         returnValue = DestroySyncKHR(thread, dpyPacked, syncPacked);
         ANGLE_CAPTURE_EGL(DestroySyncKHR, true, thread, dpyPacked, syncPacked, returnValue);
     }
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     return returnValue;
 }
 
@@ -1199,6 +1244,7 @@ EGLBoolean EGLAPIENTRY EGL_GetSyncAttribKHR(EGLDisplay dpy,
         ANGLE_CAPTURE_EGL(GetSyncAttribKHR, true, thread, dpyPacked, syncPacked, attribute, value,
                           returnValue);
     }
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     return returnValue;
 }
 
@@ -1232,6 +1278,7 @@ EGLImageKHR EGLAPIENTRY EGL_CreateImageKHR(EGLDisplay dpy,
         ANGLE_CAPTURE_EGL(CreateImageKHR, true, thread, dpyPacked, ctxPacked, target, buffer,
                           attrib_listPacked, returnValue);
     }
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     return returnValue;
 }
 
@@ -1254,6 +1301,7 @@ EGLBoolean EGLAPIENTRY EGL_DestroyImageKHR(EGLDisplay dpy, EGLImageKHR image)
         returnValue = DestroyImageKHR(thread, dpyPacked, imagePacked);
         ANGLE_CAPTURE_EGL(DestroyImageKHR, true, thread, dpyPacked, imagePacked, returnValue);
     }
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     return returnValue;
 }
 
@@ -1283,6 +1331,7 @@ EGLBoolean EGLAPIENTRY EGL_LockSurfaceKHR(EGLDisplay dpy,
         ANGLE_CAPTURE_EGL(LockSurfaceKHR, true, thread, dpyPacked, surfacePacked, attrib_listPacked,
                           returnValue);
     }
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     return returnValue;
 }
 
@@ -1311,6 +1360,7 @@ EGLBoolean EGLAPIENTRY EGL_QuerySurface64KHR(EGLDisplay dpy,
         ANGLE_CAPTURE_EGL(QuerySurface64KHR, true, thread, dpyPacked, surfacePacked, attribute,
                           value, returnValue);
     }
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     return returnValue;
 }
 
@@ -1333,6 +1383,7 @@ EGLBoolean EGLAPIENTRY EGL_UnlockSurfaceKHR(EGLDisplay dpy, EGLSurface surface)
         returnValue = UnlockSurfaceKHR(thread, dpyPacked, surfacePacked);
         ANGLE_CAPTURE_EGL(UnlockSurfaceKHR, true, thread, dpyPacked, surfacePacked, returnValue);
     }
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     return returnValue;
 }
 
@@ -1362,6 +1413,7 @@ EGLBoolean EGLAPIENTRY EGL_SetDamageRegionKHR(EGLDisplay dpy,
         ANGLE_CAPTURE_EGL(SetDamageRegionKHR, true, thread, dpyPacked, surfacePacked, rects,
                           n_rects, returnValue);
     }
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     return returnValue;
 }
 
@@ -1385,6 +1437,7 @@ EGLBoolean EGLAPIENTRY EGL_SignalSyncKHR(EGLDisplay dpy, EGLSyncKHR sync, EGLenu
         returnValue = SignalSyncKHR(thread, dpyPacked, syncPacked, mode);
         ANGLE_CAPTURE_EGL(SignalSyncKHR, true, thread, dpyPacked, syncPacked, mode, returnValue);
     }
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     return returnValue;
 }
 
@@ -1416,6 +1469,7 @@ EGLStreamKHR EGLAPIENTRY EGL_CreateStreamKHR(EGLDisplay dpy, const EGLint *attri
         returnValue = CreateStreamKHR(thread, dpyPacked, attrib_listPacked);
         ANGLE_CAPTURE_EGL(CreateStreamKHR, true, thread, dpyPacked, attrib_listPacked, returnValue);
     }
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     return returnValue;
 }
 
@@ -1438,6 +1492,7 @@ EGLBoolean EGLAPIENTRY EGL_DestroyStreamKHR(EGLDisplay dpy, EGLStreamKHR stream)
         returnValue = DestroyStreamKHR(thread, dpyPacked, streamPacked);
         ANGLE_CAPTURE_EGL(DestroyStreamKHR, true, thread, dpyPacked, streamPacked, returnValue);
     }
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     return returnValue;
 }
 
@@ -1466,6 +1521,7 @@ EGLBoolean EGLAPIENTRY EGL_QueryStreamKHR(EGLDisplay dpy,
         ANGLE_CAPTURE_EGL(QueryStreamKHR, true, thread, dpyPacked, streamPacked, attribute, value,
                           returnValue);
     }
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     return returnValue;
 }
 
@@ -1494,6 +1550,7 @@ EGLBoolean EGLAPIENTRY EGL_QueryStreamu64KHR(EGLDisplay dpy,
         ANGLE_CAPTURE_EGL(QueryStreamu64KHR, true, thread, dpyPacked, streamPacked, attribute,
                           value, returnValue);
     }
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     return returnValue;
 }
 
@@ -1522,6 +1579,7 @@ EGLBoolean EGLAPIENTRY EGL_StreamAttribKHR(EGLDisplay dpy,
         ANGLE_CAPTURE_EGL(StreamAttribKHR, true, thread, dpyPacked, streamPacked, attribute, value,
                           returnValue);
     }
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     return returnValue;
 }
 
@@ -1546,6 +1604,7 @@ EGLBoolean EGLAPIENTRY EGL_StreamConsumerAcquireKHR(EGLDisplay dpy, EGLStreamKHR
         ANGLE_CAPTURE_EGL(StreamConsumerAcquireKHR, true, thread, dpyPacked, streamPacked,
                           returnValue);
     }
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     return returnValue;
 }
 
@@ -1570,6 +1629,7 @@ EGLBoolean EGLAPIENTRY EGL_StreamConsumerGLTextureExternalKHR(EGLDisplay dpy, EG
         ANGLE_CAPTURE_EGL(StreamConsumerGLTextureExternalKHR, true, thread, dpyPacked, streamPacked,
                           returnValue);
     }
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     return returnValue;
 }
 
@@ -1593,6 +1653,7 @@ EGLBoolean EGLAPIENTRY EGL_StreamConsumerReleaseKHR(EGLDisplay dpy, EGLStreamKHR
         ANGLE_CAPTURE_EGL(StreamConsumerReleaseKHR, true, thread, dpyPacked, streamPacked,
                           returnValue);
     }
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     return returnValue;
 }
 
@@ -1622,6 +1683,7 @@ EGLBoolean EGLAPIENTRY EGL_SwapBuffersWithDamageKHR(EGLDisplay dpy,
         ANGLE_CAPTURE_EGL(SwapBuffersWithDamageKHR, true, thread, dpyPacked, surfacePacked, rects,
                           n_rects, returnValue);
     }
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     return returnValue;
 }
 
@@ -1645,6 +1707,7 @@ EGLint EGLAPIENTRY EGL_WaitSyncKHR(EGLDisplay dpy, EGLSyncKHR sync, EGLint flags
         returnValue = WaitSyncKHR(thread, dpyPacked, syncPacked, flags);
         ANGLE_CAPTURE_EGL(WaitSyncKHR, true, thread, dpyPacked, syncPacked, flags, returnValue);
     }
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     return returnValue;
 }
 
@@ -1676,6 +1739,7 @@ EGLBoolean EGLAPIENTRY EGL_PostSubBufferNV(EGLDisplay dpy,
         ANGLE_CAPTURE_EGL(PostSubBufferNV, true, thread, dpyPacked, surfacePacked, x, y, width,
                           height, returnValue);
     }
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     return returnValue;
 }
 
@@ -1707,6 +1771,7 @@ EGLBoolean EGLAPIENTRY EGL_StreamConsumerGLTextureExternalAttribsNV(EGLDisplay d
         ANGLE_CAPTURE_EGL(StreamConsumerGLTextureExternalAttribsNV, true, thread, dpyPacked,
                           streamPacked, attrib_listPacked, returnValue);
     }
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     return returnValue;
 }
 

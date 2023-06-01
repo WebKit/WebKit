@@ -77,6 +77,7 @@ VkResult AllocateAndBindMemoryForImage(VmaAllocator allocator,
                                        VkImage *pImage,
                                        VkMemoryPropertyFlags requiredFlags,
                                        VkMemoryPropertyFlags preferredFlags,
+                                       bool allocateDedicatedMemory,
                                        VmaAllocation *pAllocationOut,
                                        uint32_t *pMemoryTypeIndexOut,
                                        VkDeviceSize *sizeOut);

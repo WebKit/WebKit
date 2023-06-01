@@ -485,6 +485,9 @@ void SetTexParameterBase(Context *context, Texture *texture, GLenum pname, const
         case GL_TEXTURE_PROTECTED_EXT:
             texture->setProtectedContent(context, (params[0] == GL_TRUE));
             break;
+        case GL_RENDERABILITY_VALIDATION_ANGLE:
+            texture->setRenderabilityValidation(context, (params[0] == GL_TRUE));
+            break;
         default:
             UNREACHABLE();
             break;
@@ -3075,6 +3078,7 @@ unsigned int GetTexParameterCount(GLenum pname)
         case GL_DEPTH_STENCIL_TEXTURE_MODE:
         case GL_TEXTURE_NATIVE_ID_ANGLE:
         case GL_REQUIRED_TEXTURE_IMAGE_UNITS_OES:
+        case GL_RENDERABILITY_VALIDATION_ANGLE:
             return 1;
         default:
             return 0;

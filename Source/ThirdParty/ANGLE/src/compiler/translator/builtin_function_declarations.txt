@@ -1223,10 +1223,11 @@ GROUP BEGIN ShaderInvocationGroup
 GROUP END ShaderInvocationGroup
 
 // MSL fragment functions
-GROUP BEGIN MetalFragmentSample
+GROUP BEGIN MetalFragmentSample {"shader_type": "FRAGMENT"}
   DEFAULT METADATA {"essl_level": "ESSL_INTERNAL_BACKEND_BUILTINS", "hasSideEffects": "false"}
     uint numSamples();
     vec2 samplePosition(uint);
+    genType interpolateAtCenter(genType);
 GROUP END MetalFragmentSample
 
 // MSL common functions

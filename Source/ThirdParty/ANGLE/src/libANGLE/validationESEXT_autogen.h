@@ -336,6 +336,8 @@ bool ValidateProvokingVertexANGLE(const Context *context,
                                   angle::EntryPoint entryPoint,
                                   ProvokingVertexConvention provokeModePacked);
 
+// GL_ANGLE_renderability_validation
+
 // GL_ANGLE_request_extension
 bool ValidateRequestExtensionANGLE(const Context *context,
                                    angle::EntryPoint entryPoint,

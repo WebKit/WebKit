@@ -1016,6 +1016,30 @@ void DisplayMtl::initializeExtensions() const
 
     mNativeExtensions.sampleVariablesOES = true;
 
+    if (ANGLE_APPLE_AVAILABLE_XCI(11.0, 14.0, 14.0))
+    {
+        mNativeExtensions.shaderMultisampleInterpolationOES =
+            [mMetalDevice supportsPullModelInterpolation];
+        if (mNativeExtensions.shaderMultisampleInterpolationOES)
+        {
+            mNativeCaps.subPixelInterpolationOffsetBits = 4;
+            if (supportsAppleGPUFamily(1))
+            {
+                mNativeCaps.minInterpolationOffset = -0.5f;
+                mNativeCaps.maxInterpolationOffset = +0.5f;
+            }
+            else
+            {
+                // On non-Apple GPUs, the actual range is usually
+                // [-0.5, +0.4375] but due to framebuffer Y-flip
+                // the effective range for the Y direction will be
+                // [-0.4375, +0.5] when the default FBO is bound.
+                mNativeCaps.minInterpolationOffset = -0.4375f;  // -0.5 + (2 ^ -4)
+                mNativeCaps.maxInterpolationOffset = +0.4375f;  // +0.5 - (2 ^ -4)
+            }
+        }
+    }
+
     mNativeExtensions.shaderNoperspectiveInterpolationNV = true;
 
     mNativeExtensions.shaderTextureLodEXT = true;

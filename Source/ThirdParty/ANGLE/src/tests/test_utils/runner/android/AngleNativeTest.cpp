@@ -171,6 +171,15 @@ Java_com_android_angle_test_AngleNativeTest_nativeRunTests(JNIEnv *env,
 
     dup2(STDOUT_FILENO, STDERR_FILENO);
 
+    // When using a temp path on `/data`, performance is good enough we can line buffer
+    // stdout/stderr.  This makes e.g. FATAL() << "message"; show up in the logs in CI
+    // or local runs. Do *not* enable this on /sdcard/ (see https://crrev.com/c/3615081)
+    if (stdoutFilePath.rfind("/data/", 0) == 0)
+    {
+        setlinebuf(stdout);
+        setlinebuf(stderr);
+    }
+
     std::vector<char *> argv;
     size_t argc = ArgsToArgv(args, &argv);
 

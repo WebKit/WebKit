@@ -38,12 +38,12 @@ namespace gl
 
 void Context::alphaFunc(AlphaTestFunc func, GLfloat ref)
 {
-    mState.gles1().setAlphaFunc(func, ref);
+    mState.gles1().setAlphaTestParameters(func, ref);
 }
 
 void Context::alphaFuncx(AlphaTestFunc func, GLfixed ref)
 {
-    mState.gles1().setAlphaFunc(func, ConvertFixedToFloat(ref));
+    mState.gles1().setAlphaTestParameters(func, ConvertFixedToFloat(ref));
 }
 
 void Context::clearColorx(GLfixed red, GLfixed green, GLfixed blue, GLfixed alpha)

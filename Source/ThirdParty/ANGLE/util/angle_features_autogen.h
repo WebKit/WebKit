@@ -207,6 +207,7 @@ enum class Feature
     PreferSkippingInvalidateForEmulatedFormats,
     PreferSubmitAtFBOBoundary,
     PreferSubmitOnAnySamplesPassedQueryEnd,
+    PrintMetalShaders,
     PromotePackedFormatsTo8BitPerChannel,
     ProvokingVertex,
     QueryCounterBitsGeneratesErrors,

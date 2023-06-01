@@ -466,14 +466,11 @@ angle::Result MemoryProperties::findCompatibleMemoryIndex(
     }
 
     // We did not find a compatible memory type. When importing external memory, there may be
-    // additional restrictions on memoryType. Fallback to requesting device local memory.
+    // additional restrictions on memoryType. Find the first available memory type that Vulkan
+    // driver decides being compatible with external memory import.
     if (isExternalMemory)
     {
-        // The Vulkan spec says the following -
-        //     There must be at least one memory type with the VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT
-        //     bit set in its propertyFlags
-        if (FindCompatibleMemory(mMemoryProperties, memoryRequirements,
-                                 VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, memoryPropertyFlagsOut,
+        if (FindCompatibleMemory(mMemoryProperties, memoryRequirements, 0, memoryPropertyFlagsOut,
                                  typeIndexOut))
         {
             return angle::Result::Continue;

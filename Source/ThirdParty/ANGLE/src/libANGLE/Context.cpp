@@ -23,6 +23,7 @@
 #include "common/platform.h"
 #include "common/string_utils.h"
 #include "common/system_utils.h"
+#include "common/tls.h"
 #include "common/utilities.h"
 #include "image_util/loadimage.h"
 #include "libANGLE/Buffer.h"
@@ -420,31 +421,49 @@ bool CanSupportAEP(const gl::Version &version, const gl::Extensions &extensions)
 // TODO(angleproject:6479): Due to a bug in Apple's dyld loader, `thread_local` will cause
 // excessive memory use. Temporarily avoid it by using pthread's thread
 // local storage instead.
-static TLSIndex GetCurrentValidContextTLSIndex()
+static angle::TLSIndex GetCurrentValidContextTLSIndex()
 {
-    static TLSIndex CurrentValidContextIndex = TLS_INVALID_INDEX;
+    static angle::TLSIndex CurrentValidContextIndex = TLS_INVALID_INDEX;
     static dispatch_once_t once;
     dispatch_once(&once, ^{
       ASSERT(CurrentValidContextIndex == TLS_INVALID_INDEX);
-      CurrentValidContextIndex = CreateTLSIndex(nullptr);
+      CurrentValidContextIndex = angle::CreateTLSIndex(nullptr);
     });
     return CurrentValidContextIndex;
 }
 Context *GetCurrentValidContextTLS()
 {
-    TLSIndex CurrentValidContextIndex = GetCurrentValidContextTLSIndex();
+    angle::TLSIndex CurrentValidContextIndex = GetCurrentValidContextTLSIndex();
     ASSERT(CurrentValidContextIndex != TLS_INVALID_INDEX);
-    return static_cast<Context *>(GetTLSValue(CurrentValidContextIndex));
+    return static_cast<Context *>(angle::GetTLSValue(CurrentValidContextIndex));
 }
 void SetCurrentValidContextTLS(Context *context)
 {
-    TLSIndex CurrentValidContextIndex = GetCurrentValidContextTLSIndex();
+    angle::TLSIndex CurrentValidContextIndex = GetCurrentValidContextTLSIndex();
     ASSERT(CurrentValidContextIndex != TLS_INVALID_INDEX);
-    SetTLSValue(CurrentValidContextIndex, context);
+    angle::SetTLSValue(CurrentValidContextIndex, context);
 }
 #else
 thread_local Context *gCurrentValidContext = nullptr;
 #endif
+
+// Handle setting the current context in TLS on different platforms
+extern void SetCurrentValidContext(Context *context)
+{
+#if defined(ANGLE_USE_ANDROID_TLS_SLOT)
+    if (angle::gUseAndroidOpenGLTlsSlot)
+    {
+        ANGLE_ANDROID_GET_GL_TLS()[angle::kAndroidOpenGLTlsSlot] = static_cast<void *>(context);
+        return;
+    }
+#endif
+
+#if defined(ANGLE_PLATFORM_APPLE)
+    SetCurrentValidContextTLS(context);
+#else
+    gCurrentValidContext = context;
+#endif
+}
 
 Context::Context(egl::Display *display,
                  const egl::Config *config,
@@ -2990,11 +3009,7 @@ void Context::setContextLost()
     mSkipValidation = false;
 
     // Make sure we update TLS.
-#if defined(ANGLE_PLATFORM_APPLE)
-    SetCurrentValidContextTLS(nullptr);
-#else
-    gCurrentValidContext = nullptr;
-#endif
+    SetCurrentValidContext(nullptr);
 }
 
 GLenum Context::getGraphicsResetStatus()
@@ -3789,6 +3804,12 @@ Extensions Context::generateSupportedExtensions() const
         // non-conformant in ES 3.0 and superseded by EXT_color_buffer_float.
         supportedExtensions.colorBufferFloatRgbCHROMIUM  = false;
         supportedExtensions.colorBufferFloatRgbaCHROMIUM = false;
+    }
+
+    if (getClientVersion() >= ES_3_0)
+    {
+        // Enable this extension for GLES3+.
+        supportedExtensions.renderabilityValidationANGLE = true;
     }
 
     if (getFrontendFeatures().disableDrawBuffersIndexed.enabled)

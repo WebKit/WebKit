@@ -26,7 +26,7 @@
 
 // Version number for shader translation API.
 // It is incremented every time the API changes.
-#define ANGLE_SH_VERSION 327
+#define ANGLE_SH_VERSION 328
 
 enum ShShaderSpec
 {
@@ -1013,8 +1013,8 @@ extern const char kInputAttachmentName[];
 
 namespace mtl
 {
-// Specialization constant to enable sample mask output.
-extern const char kSampleMaskEnabledConstName[];
+// Specialization constant to enable multisampled rendering behavior.
+extern const char kMultisampledRenderingConstName[];
 
 // Specialization constant to emulate rasterizer discard.
 extern const char kRasterizerDiscardEnabledConstName[];

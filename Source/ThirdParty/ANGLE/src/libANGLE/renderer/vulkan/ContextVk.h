@@ -20,6 +20,7 @@
 #include "libANGLE/renderer/vulkan/OverlayVk.h"
 #include "libANGLE/renderer/vulkan/PersistentCommandPool.h"
 #include "libANGLE/renderer/vulkan/RendererVk.h"
+#include "libANGLE/renderer/vulkan/ShareGroupVk.h"
 #include "libANGLE/renderer/vulkan/vk_helpers.h"
 
 namespace angle
@@ -446,6 +447,7 @@ class ContextVk : public ContextImpl, public vk::Context, public MultisampleText
     void updateMissingOutputsMask();
     void updateBlendFuncsAndEquations();
     void updateSampleMaskWithRasterizationSamples(const uint32_t rasterizationSamples);
+    void updateAlphaToCoverageWithRasterizationSamples(const uint32_t rasterizationSamples);
     void updateFrameBufferFetchSamples(const uint32_t prevSamples, const uint32_t curSamples);
 
     void handleError(VkResult errorCode,
@@ -790,6 +792,7 @@ class ContextVk : public ContextImpl, public vk::Context, public MultisampleText
     }
 
     const QueueSerial &getLastSubmittedQueueSerial() const { return mLastSubmittedQueueSerial; }
+    const vk::ResourceUse &getSubmittedResourceUse() const { return mSubmittedResourceUse; }
 
     // Uploading mutable mipmap textures is currently restricted to single-context applications.
     bool isEligibleForMutableTextureFlush() const
@@ -1658,7 +1661,9 @@ ANGLE_INLINE angle::Result ContextVk::onVertexAttributeChange(size_t attribIndex
 
 ANGLE_INLINE bool ContextVk::hasUnsubmittedUse(const vk::ResourceUse &use) const
 {
-    return mCurrentQueueSerialIndex != kInvalidQueueSerialIndex && use > mLastSubmittedQueueSerial;
+    return mCurrentQueueSerialIndex != kInvalidQueueSerialIndex &&
+           use > QueueSerial(mCurrentQueueSerialIndex,
+                             mRenderer->getLastSubmittedSerial(mCurrentQueueSerialIndex));
 }
 
 ANGLE_INLINE bool UseLineRaster(const ContextVk *contextVk, gl::PrimitiveMode mode)

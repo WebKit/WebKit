@@ -65,6 +65,8 @@ vulkan_backend_sources = [
   "ShaderInterfaceVariableInfoMap.h",
   "ShaderVk.cpp",
   "ShaderVk.h",
+  "ShareGroupVk.cpp",
+  "ShareGroupVk.h",
   "Suballocation.cpp",
   "Suballocation.h",
   "SurfaceVk.cpp",

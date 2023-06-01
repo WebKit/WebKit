@@ -5028,6 +5028,26 @@ void CaptureMidExecutionSetup(const gl::Context *context,
         {
             cap(CaptureMatrixMode(replayState, true, currentMatrixMode));
         }
+
+        // Alpha Test state
+        const bool currentAlphaTestState = apiState.getEnableFeature(GL_ALPHA_TEST);
+        const bool defaultAlphaTestState = replayState.getEnableFeature(GL_ALPHA_TEST);
+
+        if (currentAlphaTestState != defaultAlphaTestState)
+        {
+            capCap(GL_ALPHA_TEST, currentAlphaTestState);
+        }
+
+        const gl::AlphaTestParameters currentAlphaTestParameters =
+            apiState.gles1().getAlphaTestParameters();
+        const gl::AlphaTestParameters defaultAlphaTestParameters =
+            replayState.gles1().getAlphaTestParameters();
+
+        if (currentAlphaTestParameters != defaultAlphaTestParameters)
+        {
+            cap(CaptureAlphaFunc(replayState, true, currentAlphaTestParameters.func,
+                                 currentAlphaTestParameters.ref));
+        }
     }
 
     // Rasterizer state. Missing ES 3.x features.

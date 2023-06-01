@@ -1200,7 +1200,12 @@
             <require>
                 <enum name="GL_DEPTH_STENCIL_TEXTURE_MODE_ANGLE"/>
             </require>
-        </extension>
+          </extension>
+          <extension name="GL_ANGLE_renderability_validation" supported='gles2'>
+            <require>
+                <enum name="GL_RENDERABILITY_VALIDATION_ANGLE"/>
+            </require>
+          </extension>
         <extension name="GL_CHROMIUM_lose_context" supported='gles2'>
             <require>
                 <enum name="GL_GUILTY_CONTEXT_RESET"/>
@@ -1354,6 +1359,10 @@
     <enums namespace="GL" vendor="ANGLE">
         <enum value="0x90EA" name="GL_DEPTH_STENCIL_TEXTURE_MODE_ANGLE" group="TextureParameterName"/>
     </enums>
+
+    <enums namespace="GL" vendor="ANGLE">
+        <enum value="0x9EA0" name="GL_RENDERABILITY_VALIDATION_ANGLE" group="TextureParameterName"/>
+      </enums>
 
     <enums namespace="GL" start="0x93A7" end="0x93A7" vendor="ANGLE">
         <enum value="0x93A7" name="GL_ROBUST_RESOURCE_INITIALIZATION_ANGLE"/>

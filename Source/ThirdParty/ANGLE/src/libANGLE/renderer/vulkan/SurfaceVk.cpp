@@ -932,17 +932,36 @@ void WindowSurfaceVk::destroy(const egl::Display *display)
     }
     mOldSwapchains.clear();
 
-    if (mSurface)
-    {
-        vkDestroySurfaceKHR(instance, mSurface, nullptr);
-        mSurface = VK_NULL_HANDLE;
-    }
-
     mPresentSemaphoreRecycler.destroy(device);
     mPresentFenceRecycler.destroy(device);
 
     // Call parent class to destroy any resources parent owns.
     SurfaceVk::destroy(display);
+
+    // Destroy the surface without holding the EGL lock.  This works around a specific deadlock
+    // in Android.  On this platform:
+    //
+    // - For EGL applications, parts of surface creation and destruction are handled by the
+    //   platform, and parts of it are done by the native EGL driver.  Namely, on surface
+    //   destruction, native_window_api_disconnect is called outside the EGL driver.
+    // - For Vulkan applications, vkDestroySurfaceKHR takes full responsibility for destroying
+    //   the surface, including calling native_window_api_disconnect.
+    //
+    // Unfortunately, native_window_api_disconnect may use EGL sync objects and can lead to
+    // calling into the EGL driver.  For ANGLE, this is particularly problematic because it is
+    // simultaneously a Vulkan application and the EGL driver, causing `vkDestroySurfaceKHR` to
+    // call back into ANGLE and attempt to reacquire the EGL lock.
+    //
+    // Since there are no users of the surface when calling vkDestroySurfaceKHR, it is safe for
+    // ANGLE to destroy it without holding the EGL lock, effectively simulating the situation
+    // for EGL applications, where native_window_api_disconnect is called after the EGL driver
+    // has returned.
+    if (mSurface)
+    {
+        egl::Display::GetCurrentThreadUnlockedTailCall()->add(
+            [surface = mSurface, instance]() { vkDestroySurfaceKHR(instance, surface, nullptr); });
+        mSurface = VK_NULL_HANDLE;
+    }
 }
 
 egl::Error WindowSurfaceVk::initialize(const egl::Display *display)
@@ -965,10 +984,10 @@ egl::Error WindowSurfaceVk::unMakeCurrent(const gl::Context *context)
     DisplayVk *displayVk = vk::GetImpl(context->getDisplay());
 
     angle::Result result = contextVk->onSurfaceUnMakeCurrent(this);
-    // Even though all swap chain images are tracked individually, the semaphores are not tracked by
-    // ResourceUse. This propagates context's queue serial to surface when it detaches from context
-    // so that surface will always wait until context is finished.
-    mUse.setQueueSerial(contextVk->getLastSubmittedQueueSerial());
+    // Even though all swap chain images are tracked individually, the semaphores are not
+    // tracked by ResourceUse. This propagates context's queue serial to surface when it
+    // detaches from context so that surface will always wait until context is finished.
+    mUse.merge(contextVk->getSubmittedResourceUse());
 
     return angle::ToEGL(result, displayVk, EGL_BAD_CURRENT_SURFACE);
 }
@@ -1295,7 +1314,7 @@ angle::Result WindowSurfaceVk::recreateSwapchain(ContextVk *contextVk, const gl:
     static constexpr size_t kMaxOldSwapchains = 5;
     if (mOldSwapchains.size() > kMaxOldSwapchains)
     {
-        mUse.setQueueSerial(contextVk->getLastSubmittedQueueSerial());
+        mUse.merge(contextVk->getSubmittedResourceUse());
         ANGLE_TRY(finish(contextVk));
         for (SwapchainCleanupData &oldSwapchain : mOldSwapchains)
         {
@@ -1329,7 +1348,7 @@ angle::Result WindowSurfaceVk::recreateSwapchain(ContextVk *contextVk, const gl:
     if (lastSwapchain &&
         contextVk->getRenderer()->getFeatures().waitIdleBeforeSwapchainRecreation.enabled)
     {
-        mUse.setQueueSerial(contextVk->getLastSubmittedQueueSerial());
+        mUse.merge(contextVk->getSubmittedResourceUse());
         ANGLE_TRY(finish(contextVk));
     }
     angle::Result result = createSwapChain(contextVk, swapchainExtents, lastSwapchain);

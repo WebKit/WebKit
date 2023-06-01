@@ -136,6 +136,13 @@ AutoObjCPtr<id<MTLLibrary>> LibraryCache::getOrCompileShaderLibrary(
         return entry.library;
     }
 
+    if (features.printMetalShaders.enabled)
+    {
+        auto cache_key = GenerateBlobCacheKeyForShaderLibrary(source, macros, enableFastMath);
+        NSLog(@"Loading metal shader, key=%@ source=%s",
+              [NSData dataWithBytes:cache_key.data() length:cache_key.size()], source.c_str());
+    }
+
     if (features.compileMetalShaders.enabled)
     {
         if (features.enableParallelMtlLibraryCompilation.enabled)
@@ -167,6 +174,7 @@ AutoObjCPtr<id<MTLLibrary>> LibraryCache::getOrCompileShaderLibrary(
             entry.library = NewMetalLibraryFromMetallib(context, value.data(), value.size());
         }
         ANGLE_HISTOGRAM_BOOLEAN("GPU.ANGLE.MetalShaderInBlobCache", entry.library);
+        ANGLEPlatformCurrent()->recordShaderCacheUse(entry.library);
         if (entry.library)
         {
             return entry.library;

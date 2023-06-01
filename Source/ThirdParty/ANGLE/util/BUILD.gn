@@ -238,6 +238,13 @@ if (angle_has_frame_capture) {
 
   angle_source_set("angle_frame_capture_test_utils") {
     testonly = true
+
+    if (restricted_traces_outside_of_apk) {
+      # On Android, if we are building the entire trace library,
+      # we need to load the libraries from outside the APK
+      defines = [ "ANGLE_TRACE_EXTERNAL_BINARIES" ]
+    }
+
     sources = [
       "capture/frame_capture_test_utils.cpp",
       "capture/frame_capture_test_utils.h",

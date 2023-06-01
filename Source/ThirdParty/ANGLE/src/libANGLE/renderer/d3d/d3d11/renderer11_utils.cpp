@@ -1678,6 +1678,14 @@ void GenerateCaps(ID3D11Device *device,
     extensions->textureStorageMultisample2dArrayOES = true;
     extensions->textureMirrorClampToEdgeEXT         = true;
     extensions->shaderNoperspectiveInterpolationNV  = (featureLevel >= D3D_FEATURE_LEVEL_10_0);
+    extensions->sampleVariablesOES                  = (featureLevel >= D3D_FEATURE_LEVEL_11_0);
+    extensions->shaderMultisampleInterpolationOES   = (featureLevel >= D3D_FEATURE_LEVEL_11_0);
+    if (extensions->shaderMultisampleInterpolationOES)
+    {
+        caps->subPixelInterpolationOffsetBits = 4;
+        caps->minInterpolationOffset          = -0.5f;
+        caps->maxInterpolationOffset          = +0.4375f;  // +0.5 - (2 ^ -4)
+    }
     extensions->multiviewMultisampleANGLE =
         ((extensions->multiviewOVR || extensions->multiview2OVR) &&
          extensions->textureStorageMultisample2dArrayOES);

@@ -81,6 +81,8 @@ set(metal_backend_sources
     "src/libANGLE/renderer/metal/mtl_state_cache.mm"
     "src/libANGLE/renderer/metal/mtl_utils.h"
     "src/libANGLE/renderer/metal/mtl_utils.mm"
+    "src/libANGLE/renderer/metal/process.cpp"
+    "src/libANGLE/renderer/metal/process.h"
     "src/libANGLE/renderer/metal/renderermtl_utils.cpp"
     "src/libANGLE/renderer/metal/renderermtl_utils.h"
     "src/libANGLE/renderer/metal/shaders/constants.h"

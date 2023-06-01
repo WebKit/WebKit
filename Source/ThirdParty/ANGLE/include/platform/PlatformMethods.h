@@ -243,6 +243,11 @@ constexpr PostWorkerTaskFunc DefaultPostWorkerTask = nullptr;
 using PlaceholderCallbackFunc = void (*)(...);
 inline void DefaultPlaceholderCallback(...) {}
 
+// The boolean indicates whether the shader was in the cache or not. A value of true indicates it
+// was, where as false means it was not and needed to be compiled.
+using RecordShaderCacheUseFunc = void (*)(bool);
+inline void DefaultRecordShaderCacheUse(bool) {}
+
 // Platform methods are enumerated here once.
 #define ANGLE_PLATFORM_OP(OP)                                    \
     OP(currentTime, CurrentTime)                                 \
@@ -261,7 +266,8 @@ inline void DefaultPlaceholderCallback(...) {}
     OP(placeholder2, PlaceholderCallback)                        \
     OP(cacheProgram, CacheProgram)                               \
     OP(placeholder3, PlaceholderCallback)                        \
-    OP(postWorkerTask, PostWorkerTask)
+    OP(postWorkerTask, PostWorkerTask)                           \
+    OP(recordShaderCacheUse, RecordShaderCacheUse)
 
 #define ANGLE_PLATFORM_METHOD_DEF(Name, CapsName) CapsName##Func Name = Default##CapsName;
 
@@ -287,7 +293,7 @@ constexpr unsigned int g_NumPlatformMethods = (sizeof(PlatformMethods) / sizeof(
 // No further uses of platform methods is allowed.  EGL extensions should be used instead.  While
 // methods are being removed, use PlaceholderCallback to keep the layout of PlatformMethods
 // constant.
-static_assert(g_NumPlatformMethods == 17, "Avoid adding methods to PlatformMethods");
+static_assert(g_NumPlatformMethods == 18, "Avoid adding methods to PlatformMethods");
 
 #define ANGLE_PLATFORM_METHOD_STRING(Name) #Name
 #define ANGLE_PLATFORM_METHOD_STRING2(Name, CapsName) ANGLE_PLATFORM_METHOD_STRING(Name),

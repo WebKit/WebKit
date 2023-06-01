@@ -401,7 +401,7 @@ index cf1d101e072dde3449f44e8da33226f7be1735f3..641d4319b2c9914a7c3738124a0407f6
  {
  
 diff --git a/src/libANGLE/State.cpp b/src/libANGLE/State.cpp
-index 19ce708bea32d0ff14670c7af369061c48258b3b..b68b61ee6df8fa58536a5296284709bb7b4dbffb 100644
+index 396d83b1947cbc732a99b3350e534aab763a18a0..64ae01bcaa63f54f37189cd042db26f95b9a8600 100644
 --- a/src/libANGLE/State.cpp
 +++ b/src/libANGLE/State.cpp
 @@ -6,6 +6,9 @@
@@ -428,10 +428,10 @@ index 744a5b14dbae742db62b06ca4d28314d0f7affdf..f560fa7a45e42b79bd2cfb2d607a7a9a
  #if ANGLE_PLATFORM_IOS_FAMILY
      return true;
 diff --git a/src/libANGLE/renderer/gl/renderergl_utils.cpp b/src/libANGLE/renderer/gl/renderergl_utils.cpp
-index 14ceccc3f308105cdedd1f091c32eb64a34d39c0..bf016d3b2d30976f3bf61b60b743444229cf67b6 100644
+index e8056b86787bbd4f37ac24fc5f682aa1eeb3fe5c..fbb1380519fd56047b1022e4a622e1694f1bd933 100644
 --- a/src/libANGLE/renderer/gl/renderergl_utils.cpp
 +++ b/src/libANGLE/renderer/gl/renderergl_utils.cpp
-@@ -2287,7 +2287,7 @@ void InitializeFeatures(const FunctionsGL *functions, angle::FeaturesGL *feature
+@@ -2291,7 +2291,7 @@ void InitializeFeatures(const FunctionsGL *functions, angle::FeaturesGL *feature
      // crbug.com/1202928
      ANGLE_FEATURE_CONDITION(features, disableWorkerContexts,
                              (IsWindows() && (isIntel || isAMD)) || (IsLinux() && isNvidia) ||
@@ -482,10 +482,10 @@ index 0b5efd4a1a68d2168dead6f5b9fe740b628d8cc2..886c25104c770afd8f2d35fbd3e42f25
      return angle::Result::Continue;
  }
 diff --git a/src/libANGLE/renderer/metal/DisplayMtl.mm b/src/libANGLE/renderer/metal/DisplayMtl.mm
-index 95b596dfa874c001ff974d83da67fd6c9370e178..3c84b77ef9cb33564e6033a9b3e4035f4ca185bb 100644
+index 9d18d8bf63862ff9808b94719678ebf582169a95..98b6f6d0111a84026caa80b455105551b3fc8112 100644
 --- a/src/libANGLE/renderer/metal/DisplayMtl.mm
 +++ b/src/libANGLE/renderer/metal/DisplayMtl.mm
-@@ -1381,8 +1381,7 @@ bool DisplayMtl::supportsEitherGPUFamily(uint8_t iOSFamily, uint8_t macFamily) c
+@@ -1405,8 +1405,7 @@ bool DisplayMtl::supportsEitherGPUFamily(uint8_t iOSFamily, uint8_t macFamily) c
  bool DisplayMtl::supports32BitFloatFiltering() const
  {
  #if (defined(__MAC_11_0) && __MAC_OS_X_VERSION_MIN_REQUIRED >= __MAC_11_0) ||        \
@@ -512,7 +512,7 @@ index 4fbf873140d0911f9c903b2dc9749891c9556f1a..1560806d94b304ecce8b0d6a69eedbdb
  
      BufferMtl *packBufferMtl = mtl::GetImpl(packPixelsParams.packBuffer);
 diff --git a/src/libANGLE/renderer/metal/ProgramMtl.mm b/src/libANGLE/renderer/metal/ProgramMtl.mm
-index a323c1aa1519902ca8a951ff6378752b6d1ef898..7d9a3a7ec7bcfca994a5a8fc027bd63ce0b980a7 100644
+index f96bb97b51cdd56f4bc6437231261fe99ac593f8..1ec871bc17fda40a7ad90be5dc04c59ac5adb1cd 100644
 --- a/src/libANGLE/renderer/metal/ProgramMtl.mm
 +++ b/src/libANGLE/renderer/metal/ProgramMtl.mm
 @@ -1540,7 +1540,7 @@ angle::Result ProgramMtl::setupDraw(const gl::Context *glContext,
@@ -611,7 +611,7 @@ index 3247043cb4ca7c52ee9f79f3a7dd27cac8cbb2cd..5afc2f3c3c7f7df5bc2b9ec9ddc41baf
  }
  
 diff --git a/src/libANGLE/renderer/metal/mtl_render_utils.mm b/src/libANGLE/renderer/metal/mtl_render_utils.mm
-index 4b854d589c5c7042ba8ab2e32960425c4070eb2a..026f89274298dbb041083b5cfea53e3df443164a 100644
+index 462b17e8f8f7362b12782c125a5bfe5ea510a9a3..595e26b5942e480956596b25e1b80d88171b8017 100644
 --- a/src/libANGLE/renderer/metal/mtl_render_utils.mm
 +++ b/src/libANGLE/renderer/metal/mtl_render_utils.mm
 @@ -712,7 +712,8 @@ void DispatchCompute(ContextMtl *contextMtl,
@@ -624,7 +624,7 @@ index 4b854d589c5c7042ba8ab2e32960425c4070eb2a..026f89274298dbb041083b5cfea53e3d
      MTLSize threadsPerThreadgroup = MTLSizeMake(w, 1, 1);
  
      if (contextMtl->getDisplay()->getFeatures().hasNonUniformDispatch.enabled)
-@@ -2540,45 +2541,13 @@ angle::Result MipmapUtils::generateMipmapCS(ContextMtl *contextMtl,
+@@ -2548,45 +2549,13 @@ angle::Result MipmapUtils::generateMipmapCS(ContextMtl *contextMtl,
                                              bool sRGBMipmap,
                                              NativeTexLevelArray *mipmapOutputViews)
  {
@@ -670,7 +670,7 @@ index 4b854d589c5c7042ba8ab2e32960425c4070eb2a..026f89274298dbb041083b5cfea53e3d
      ComputeCommandEncoder *cmdEncoder = contextMtl->getComputeCommandEncoder();
      ASSERT(cmdEncoder);
  
-@@ -2615,8 +2584,29 @@ angle::Result MipmapUtils::generateMipmapCS(ContextMtl *contextMtl,
+@@ -2623,8 +2592,29 @@ angle::Result MipmapUtils::generateMipmapCS(ContextMtl *contextMtl,
              UNREACHABLE();
      }
  
@@ -822,10 +822,10 @@ index ee5937e7415daa63126373d09a8f4124257d383f..d1df5110ef55a7d8eb83345d7e079f0d
          if (!ValidateRenderPipelineState(objCDesc, context, metalDevice))
          {
 diff --git a/src/libANGLE/renderer/metal/mtl_utils.mm b/src/libANGLE/renderer/metal/mtl_utils.mm
-index 2d2ee6c966ad1722706fa77079c1aba68768058a..4101d204cb48181579dcafbd708f554fd81c7fad 100644
+index a94d4e2ac3b8e826962b77d74c95477ece09e539..2253f501239378f1bc9728bdb9dfe0aaf93fed80 100644
 --- a/src/libANGLE/renderer/metal/mtl_utils.mm
 +++ b/src/libANGLE/renderer/metal/mtl_utils.mm
-@@ -1466,6 +1466,24 @@ bool SupportsAppleGPUFamily(id<MTLDevice> device, uint8_t appleFamily)
+@@ -1468,6 +1468,24 @@ bool SupportsAppleGPUFamily(id<MTLDevice> device, uint8_t appleFamily)
  #endif      // TARGET_OS_IOS || TARGET_OS_TV
  }
  
@@ -850,7 +850,7 @@ index 2d2ee6c966ad1722706fa77079c1aba68768058a..4101d204cb48181579dcafbd708f554f
  bool SupportsMacGPUFamily(id<MTLDevice> device, uint8_t macFamily)
  {
  #if TARGET_OS_OSX || TARGET_OS_MACCATALYST
-@@ -1480,10 +1498,10 @@ bool SupportsMacGPUFamily(id<MTLDevice> device, uint8_t macFamily)
+@@ -1482,10 +1500,10 @@ bool SupportsMacGPUFamily(id<MTLDevice> device, uint8_t macFamily)
  #        if TARGET_OS_MACCATALYST
              ANGLE_APPLE_ALLOW_DEPRECATED_BEGIN
              case 1:
@@ -863,7 +863,7 @@ index 2d2ee6c966ad1722706fa77079c1aba68768058a..4101d204cb48181579dcafbd708f554f
                  break;
                  ANGLE_APPLE_ALLOW_DEPRECATED_END
  #        else   // TARGET_OS_MACCATALYST
-@@ -1506,7 +1524,7 @@ bool SupportsMacGPUFamily(id<MTLDevice> device, uint8_t macFamily)
+@@ -1508,7 +1526,7 @@ bool SupportsMacGPUFamily(id<MTLDevice> device, uint8_t macFamily)
  
      // If device doesn't support [MTLDevice supportsFamily:], then use
      // [MTLDevice supportsFeatureSet:].

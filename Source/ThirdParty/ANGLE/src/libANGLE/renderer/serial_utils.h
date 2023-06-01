@@ -264,10 +264,12 @@ class QueueSerial final
 
     bool operator>(const AtomicQueueSerialFixedArray &serials) const
     {
+        ASSERT(mIndex != kInvalidQueueSerialIndex);
         return mSerial > serials[mIndex];
     }
     bool operator<=(const AtomicQueueSerialFixedArray &serials) const
     {
+        ASSERT(mIndex != kInvalidQueueSerialIndex);
         return mSerial <= serials[mIndex];
     }
 

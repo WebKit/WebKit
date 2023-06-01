@@ -2641,7 +2641,7 @@ void State::getFloatv(GLenum pname, GLfloat *params) const
             params[0] = static_cast<GLfloat>(mCoverageModulation);
             break;
         case GL_ALPHA_TEST_REF:
-            *params = mGLES1State.mAlphaTestRef;
+            *params = mGLES1State.mAlphaTestParameters.ref;
             break;
         case GL_CURRENT_COLOR:
         {
@@ -3121,7 +3121,7 @@ angle::Result State::getIntegerv(const Context *context, GLenum pname, GLint *pa
             *params = mBoundBuffers[BufferBinding::DispatchIndirect].id().value;
             break;
         case GL_ALPHA_TEST_FUNC:
-            *params = ToGLenum(mGLES1State.mAlphaTestFunc);
+            *params = ToGLenum(mGLES1State.mAlphaTestParameters.func);
             break;
         case GL_CLIENT_ACTIVE_TEXTURE:
             *params = mGLES1State.mClientActiveTexture + GL_TEXTURE0;

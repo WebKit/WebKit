@@ -337,6 +337,8 @@ angle::CallCapture CaptureProvokingVertexANGLE(const State &glState,
                                                bool isCallValid,
                                                ProvokingVertexConvention provokeModePacked);
 
+// GL_ANGLE_renderability_validation
+
 // GL_ANGLE_request_extension
 angle::CallCapture CaptureRequestExtensionANGLE(const State &glState,
                                                 bool isCallValid,

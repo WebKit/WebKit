@@ -74,6 +74,13 @@ declare_args() {
     # Use Android TLS slot to store current context.
     angle_use_android_tls_slot = !build_with_chromium
   }
+
+  angle_enable_global_mutex_recursion = is_android && angle_enable_vulkan
+
+  # Potentially can be enabled for other platforms, but limiting to Android platform for now.
+  # Chromium may have problems (requires verification), disabled for safety.
+  angle_enable_global_mutex_load_time_allocate =
+      is_android && !build_with_chromium
 }
 
 if (angle_build_all) {
@@ -159,6 +166,14 @@ config("internal_config") {
     if (angle_use_android_tls_slot) {
       defines += [ "ANGLE_USE_ANDROID_TLS_SLOT=1" ]
     }
+  }
+
+  if (angle_enable_global_mutex_recursion) {
+    defines += [ "ANGLE_ENABLE_GLOBAL_MUTEX_RECURSION=1" ]
+  }
+
+  if (angle_enable_global_mutex_load_time_allocate) {
+    defines += [ "ANGLE_ENABLE_GLOBAL_MUTEX_LOAD_TIME_ALLOCATE=1" ]
   }
 
   # Enables debug/trace-related functionality, including logging every GLES/EGL API command to the

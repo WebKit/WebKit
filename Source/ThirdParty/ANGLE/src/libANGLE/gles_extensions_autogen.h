@@ -676,6 +676,9 @@ struct Extensions
     // GL_ANGLE_relaxed_vertex_attribute_type
     bool relaxedVertexAttributeTypeANGLE = false;
 
+    // GL_ANGLE_renderability_validation
+    bool renderabilityValidationANGLE = false;
+
     // GL_ANGLE_request_extension
     bool requestExtensionANGLE = false;
 

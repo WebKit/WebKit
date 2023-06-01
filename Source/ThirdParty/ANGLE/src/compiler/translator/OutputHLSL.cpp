@@ -19,6 +19,7 @@
 #include "compiler/translator/ImageFunctionHLSL.h"
 #include "compiler/translator/InfoSink.h"
 #include "compiler/translator/ResourcesHLSL.h"
+#include "compiler/translator/StaticType.h"
 #include "compiler/translator/StructureHLSL.h"
 #include "compiler/translator/TextureFunctionHLSL.h"
 #include "compiler/translator/TranslatorHLSL.h"
@@ -193,6 +194,12 @@ std::string GetZeroInitializer(size_t size)
     return ss.str();
 }
 
+bool IsFlatInterpolant(TIntermTyped *node)
+{
+    TIntermTyped *interpolant = node->getAsBinaryNode() ? node->getAsBinaryNode()->getLeft() : node;
+    return interpolant->getType().getQualifier() == EvqFlatIn;
+}
+
 }  // anonymous namespace
 
 TReferencedBlock::TReferencedBlock(const TInterfaceBlock *aBlock,
@@ -351,6 +358,11 @@ OutputHLSL::OutputHLSL(sh::GLenum shaderType,
     mUsesViewID                  = false;
     mUsesVertexID                = false;
     mUsesFragDepth               = false;
+    mUsesSampleID                = false;
+    mUsesSamplePosition          = false;
+    mUsesSampleMaskIn            = false;
+    mUsesSampleMask              = false;
+    mUsesNumSamples              = false;
     mUsesNumWorkGroups           = false;
     mUsesWorkGroupID             = false;
     mUsesLocalInvocationID       = false;
@@ -700,6 +712,22 @@ void OutputHLSL::header(TInfoSinkBase &out,
             out << constructIntoFunction.functionDefinition << "\n";
         }
     }
+    if (!mFlatEvaluateFunctions.empty())
+    {
+        out << "\n// Evaluate* functions for flat inputs\n\n";
+        for (const auto &flatEvaluateFunction : mFlatEvaluateFunctions)
+        {
+            out << flatEvaluateFunction.functionDefinition << "\n";
+        }
+    }
+    if (!mSampleEvaluateFunctions.empty())
+    {
+        out << "\n// EvaluateAttributeAtSample functions\n\n";
+        for (const auto &sampleEvaluateFunction : mSampleEvaluateFunctions)
+        {
+            out << sampleEvaluateFunction.functionDefinition << "\n";
+        }
+    }
 
     if (mUsesDiscardRewriting)
     {
@@ -797,6 +825,31 @@ void OutputHLSL::header(TInfoSinkBase &out,
         if (mUsesFragDepth)
         {
             out << "static float gl_Depth = 0.0;\n";
+        }
+
+        if (mUsesSampleID)
+        {
+            out << "static int gl_SampleID = 0;\n";
+        }
+
+        if (mUsesSamplePosition)
+        {
+            out << "static float2 gl_SamplePosition = float2(0.0, 0.0);\n";
+        }
+
+        if (mUsesSampleMaskIn)
+        {
+            out << "static int gl_SampleMaskIn[1] = {0};\n";
+        }
+
+        if (mUsesSampleMask)
+        {
+            out << "static int gl_SampleMask[1] = {0};\n";
+        }
+
+        if (mUsesNumSamples)
+        {
+            out << "static int gl_NumSamples = GetRenderTargetSampleCount();\n";
         }
 
         if (mUsesFragCoord)
@@ -1202,6 +1255,26 @@ void OutputHLSL::header(TInfoSinkBase &out,
         out << "#define GL_USES_VIEW_ID\n";
     }
 
+    if (mUsesSampleID)
+    {
+        out << "#define GL_USES_SAMPLE_ID\n";
+    }
+
+    if (mUsesSamplePosition)
+    {
+        out << "#define GL_USES_SAMPLE_POSITION\n";
+    }
+
+    if (mUsesSampleMaskIn)
+    {
+        out << "#define GL_USES_SAMPLE_MASK_IN\n";
+    }
+
+    if (mUsesSampleMask)
+    {
+        out << "#define GL_USES_SAMPLE_MASK_OUT\n";
+    }
+
     if (mUsesFragDepth)
     {
         switch (mDepthLayout)
@@ -1259,6 +1332,11 @@ void OutputHLSL::visitSymbol(TIntermSymbol *node)
     if (name == "gl_DepthRange")
     {
         mUsesDepthRange = true;
+        out << name;
+    }
+    else if (name == "gl_NumSamples")
+    {
+        mUsesNumSamples = true;
         out << name;
     }
     else if (IsAtomicCounter(variable.getType().getBasicType()))
@@ -1398,6 +1476,26 @@ void OutputHLSL::visitSymbol(TIntermSymbol *node)
             mUsesFragDepth = true;
             mDepthLayout   = variableType.getLayoutQualifier().depth;
             out << "gl_Depth";
+        }
+        else if (qualifier == EvqSampleID)
+        {
+            mUsesSampleID = true;
+            out << name;
+        }
+        else if (qualifier == EvqSamplePosition)
+        {
+            mUsesSamplePosition = true;
+            out << name;
+        }
+        else if (qualifier == EvqSampleMaskIn)
+        {
+            mUsesSampleMaskIn = true;
+            out << name;
+        }
+        else if (qualifier == EvqSampleMask)
+        {
+            mUsesSampleMask = true;
+            out << name;
         }
         else if (qualifier == EvqNumWorkGroups)
         {
@@ -2716,6 +2814,41 @@ bool OutputHLSL::visitAggregate(Visit visit, TIntermAggregate *node)
                 outputTriplet(out, visit, "fwidth(", "", ")");
             }
             break;
+        case EOpInterpolateAtCentroid:
+        {
+            TIntermTyped *interpolantNode = (*(node->getSequence()))[0]->getAsTyped();
+            if (!IsFlatInterpolant(interpolantNode))
+            {
+                outputTriplet(out, visit, "EvaluateAttributeCentroid(", "", ")");
+            }
+            break;
+        }
+        case EOpInterpolateAtSample:
+        {
+            TIntermTyped *interpolantNode = (*(node->getSequence()))[0]->getAsTyped();
+            const TString &functionName =
+                IsFlatInterpolant(interpolantNode)
+                    ? addFlatEvaluateFunction(interpolantNode->getType(),
+                                              *StaticType::GetBasic<EbtInt, EbpUndefined, 1>())
+                    : addSampleEvaluateFunction(interpolantNode->getType());
+            outputTriplet(out, visit, (functionName + "(").c_str(), ", ", ")");
+            break;
+        }
+        case EOpInterpolateAtOffset:
+        {
+            TIntermTyped *interpolantNode = (*(node->getSequence()))[0]->getAsTyped();
+            if (!IsFlatInterpolant(interpolantNode))
+            {
+                outputTriplet(out, visit, "EvaluateAttributeSnapped(", ", int2((", ") * 16.0))");
+            }
+            else
+            {
+                const TString &functionName = addFlatEvaluateFunction(
+                    interpolantNode->getType(), *StaticType::GetBasic<EbtFloat, EbpUndefined, 2>());
+                outputTriplet(out, visit, (functionName + "(").c_str(), ", ", ")");
+            }
+            break;
+        }
         case EOpBarrier:
             // barrier() is translated to GroupMemoryBarrierWithGroupSync(), which is the
             // cheapest *WithGroupSync() function, without any functionality loss, but
@@ -3742,6 +3875,80 @@ TString OutputHLSL::addArrayConstructIntoFunction(const TType &type)
     function.functionDefinition = fnOut.c_str();
 
     mArrayConstructIntoFunctions.push_back(function);
+
+    return function.functionName;
+}
+
+TString OutputHLSL::addFlatEvaluateFunction(const TType &type, const TType &parameterType)
+{
+    for (const auto &flatEvaluateFunction : mFlatEvaluateFunctions)
+    {
+        if (flatEvaluateFunction.type == type &&
+            flatEvaluateFunction.parameterType == parameterType)
+        {
+            return flatEvaluateFunction.functionName;
+        }
+    }
+
+    FlatEvaluateFunction function;
+    function.type          = type;
+    function.parameterType = parameterType;
+
+    const TString &typeName          = TypeString(type);
+    const TString &parameterTypeName = TypeString(parameterType);
+
+    function.functionName = "angle_eval_flat_" + typeName + "_" + parameterTypeName;
+
+    // If <interpolant> is declared with a "flat" qualifier, the interpolated
+    // value will have the same value everywhere for a single primitive, so
+    // the location used for the interpolation has no effect and the functions
+    // just return that same value.
+    TInfoSinkBase fnOut;
+    fnOut << typeName << " " << function.functionName << "(" << typeName << " i, "
+          << parameterTypeName << " p)\n";
+    fnOut << "{\n"
+          << "    return i;\n"
+          << "}\n";
+    function.functionDefinition = fnOut.c_str();
+
+    mFlatEvaluateFunctions.push_back(function);
+
+    return function.functionName;
+}
+
+TString OutputHLSL::addSampleEvaluateFunction(const TType &type)
+{
+    for (const auto &sampleEvaluateFunction : mSampleEvaluateFunctions)
+    {
+        if (sampleEvaluateFunction.type == type)
+        {
+            return sampleEvaluateFunction.functionName;
+        }
+    }
+
+    SampleEvaluateFunction function;
+    function.type = type;
+
+    const TString &typeName = TypeString(type);
+
+    function.functionName = "angle_eval_sample_" + typeName;
+
+    // If multisample buffers are not available, the input varying
+    // must be evaluated at the center of the pixel. Direct3D does
+    // not support single-sampled rendering, thus specializing the
+    // function is needed.
+    TInfoSinkBase fnOut;
+    fnOut << typeName << " " << function.functionName << "(" << typeName << " i, uint s)\n";
+    fnOut << "{\n"
+          << "#ifdef ANGLE_MULTISAMPLING\n"
+          << "    return EvaluateAttributeAtSample(i, s);\n"
+          << "#else\n"
+          << "    return i;\n"
+          << "#endif\n"
+          << "}\n";
+    function.functionDefinition = fnOut.c_str();
+
+    mSampleEvaluateFunctions.push_back(function);
 
     return function.functionName;
 }

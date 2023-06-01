@@ -555,6 +555,15 @@ static const char *GetOperatorString(TOperator op,
         case TOperator::EOpInverse:
             return "ANGLE_inverse";
 
+        case TOperator::EOpInterpolateAtCentroid:
+            return "ANGLE_interpolateAtCentroid";
+        case TOperator::EOpInterpolateAtSample:
+            return "ANGLE_interpolateAtSample";
+        case TOperator::EOpInterpolateAtOffset:
+            return "ANGLE_interpolateAtOffset";
+        case TOperator::EOpInterpolateAtCenter:
+            return "ANGLE_interpolateAtCenter";
+
         case TOperator::EOpFloatBitsToInt:
         case TOperator::EOpFloatBitsToUint:
         case TOperator::EOpIntBitsToFloat:
@@ -1026,6 +1035,11 @@ void GenMetalTraverser::emitType(const TType &type, const EmitTypeConfig &etConf
         }
     }
 
+    if (type.isInterpolant())
+    {
+        mOut << "metal::interpolant<";
+    }
+
     if (type.isVector() || type.isMatrix())
     {
         mOut << "metal::";
@@ -1046,6 +1060,22 @@ void GenMetalTraverser::emitType(const TType &type, const EmitTypeConfig &etConf
     {
         mOut << static_cast<uint32_t>(type.getCols()) << "x"
              << static_cast<uint32_t>(type.getRows());
+    }
+
+    if (type.isInterpolant())
+    {
+        mOut << ", metal::interpolation::";
+        switch (type.getQualifier())
+        {
+            case EvqNoPerspectiveIn:
+            case EvqNoPerspectiveCentroidIn:
+            case EvqNoPerspectiveSampleIn:
+                mOut << "no_";
+                break;
+            default:
+                break;
+        }
+        mOut << "perspective>";
     }
 
     if (!isUBO)
@@ -1115,23 +1145,37 @@ void GenMetalTraverser::emitFieldDeclaration(const TField &field,
             break;
 
         case TQualifier::EvqNoPerspectiveIn:
-            if (mPipelineStructs.fragmentIn.external == &parent)
+            if (mPipelineStructs.fragmentIn.external == &parent && !type.isInterpolant())
             {
                 mOut << " [[center_no_perspective]]";
             }
             break;
 
         case TQualifier::EvqCentroidIn:
-            if (mPipelineStructs.fragmentIn.external == &parent)
+            if (mPipelineStructs.fragmentIn.external == &parent && !type.isInterpolant())
             {
                 mOut << " [[centroid_perspective]]";
             }
             break;
 
+        case TQualifier::EvqSampleIn:
+            if (mPipelineStructs.fragmentIn.external == &parent && !type.isInterpolant())
+            {
+                mOut << " [[sample_perspective]]";
+            }
+            break;
+
         case TQualifier::EvqNoPerspectiveCentroidIn:
-            if (mPipelineStructs.fragmentIn.external == &parent)
+            if (mPipelineStructs.fragmentIn.external == &parent && !type.isInterpolant())
             {
                 mOut << " [[centroid_no_perspective]]";
+            }
+            break;
+
+        case TQualifier::EvqNoPerspectiveSampleIn:
+            if (mPipelineStructs.fragmentIn.external == &parent && !type.isInterpolant())
+            {
+                mOut << " [[sample_no_perspective]]";
             }
             break;
 
@@ -1213,8 +1257,8 @@ void GenMetalTraverser::emitFieldDeclaration(const TField &field,
         case TQualifier::EvqSampleMask:
             if (field.symbolType() == SymbolType::AngleInternal)
             {
-                mOut << " [[sample_mask, function_constant(" << sh::mtl::kSampleMaskEnabledConstName
-                     << ")]]";
+                mOut << " [[sample_mask, function_constant("
+                     << sh::mtl::kMultisampledRenderingConstName << ")]]";
             }
             break;
 

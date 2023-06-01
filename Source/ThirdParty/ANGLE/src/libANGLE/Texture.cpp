@@ -16,6 +16,7 @@
 #include "libANGLE/State.h"
 #include "libANGLE/Surface.h"
 #include "libANGLE/formatutils.h"
+#include "libANGLE/renderer/ContextImpl.h"
 #include "libANGLE/renderer/GLImplFactory.h"
 #include "libANGLE/renderer/TextureImpl.h"
 
@@ -129,6 +130,7 @@ TextureState::TextureState(TextureType type)
       mImmutableLevels(0),
       mUsage(GL_NONE),
       mHasProtectedContent(false),
+      mRenderabilityValidation(true),
       mImageDescs((IMPLEMENTATION_MAX_TEXTURE_LEVELS + 1) * (type == TextureType::CubeMap ? 6 : 1)),
       mCropRect(0, 0, 0, 0),
       mGenerateMipmapHint(GL_FALSE),
@@ -1103,6 +1105,12 @@ bool Texture::hasProtectedContent() const
     return mState.mHasProtectedContent;
 }
 
+void Texture::setRenderabilityValidation(Context *context, bool renderabilityValidation)
+{
+    mState.mRenderabilityValidation = renderabilityValidation;
+    signalDirtyState(DIRTY_BIT_RENDERABILITY_VALIDATION_ANGLE);
+}
+
 const TextureState &Texture::getTextureState() const
 {
     return mState;
@@ -2009,6 +2017,19 @@ bool Texture::isRenderable(const Context *context,
     // Surfaces bound to textures are always renderable. This avoids issues with surfaces with ES3+
     // formats not being renderable when bound to textures in ES2 contexts.
     if (mBoundSurface)
+    {
+        return true;
+    }
+
+    // Skip the renderability checks if it is set via glTexParameteri and current
+    // context is less than GLES3. Note that we should not skip the check if the
+    // texture is not renderable at all. Otherwise we would end up rendering to
+    // textures like compressed textures that are not really renderable.
+    if (context->getImplementation()
+            ->getNativeTextureCaps()
+            .get(getAttachmentFormat(binding, imageIndex).info->sizedInternalFormat)
+            .textureAttachment &&
+        !mState.renderabilityValidation() && context->getClientMajorVersion() < 3)
     {
         return true;
     }

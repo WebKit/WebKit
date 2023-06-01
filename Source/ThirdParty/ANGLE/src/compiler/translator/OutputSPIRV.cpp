@@ -6100,9 +6100,9 @@ bool OutputSPIRVTraverser::visitDeclaration(Visit visit, TIntermDeclaration *nod
         if (type.getQualifier() == EvqBuffer && !memoryQualifier.restrictQualifier &&
             mCompileOptions.aliasedSSBOUnlessRestrict)
         {
-            // Temporary workaround for issuetracker.google.com/266235549
             // If GLSL does not specify the SSBO has restrict memory qualifier, assume the memory
             // qualifier is aliased
+            // issuetracker.google.com/266235549
             spirv::WriteDecorate(mBuilder.getSpirvDecorations(), variableId, spv::DecorationAliased,
                                  {});
         }

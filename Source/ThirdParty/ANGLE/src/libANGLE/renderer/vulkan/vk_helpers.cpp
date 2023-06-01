@@ -7070,6 +7070,7 @@ angle::Result ImageHelper::generateMipmapsWithBlit(ContextVk *contextVk,
                                 VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT, barrier);
     // [baseLevel:maxLevel-1] from TRANSFER_SRC to SHADER_READ
     barrier.oldLayout                     = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
+    barrier.srcAccessMask                 = VK_ACCESS_TRANSFER_READ_BIT;
     barrier.subresourceRange.baseMipLevel = baseLevel.get();
     barrier.subresourceRange.levelCount   = maxLevel.get() - baseLevel.get();
     commandBuffer->imageBarrier(VK_PIPELINE_STAGE_TRANSFER_BIT,
@@ -10519,10 +10520,11 @@ ImageSubresourceRange MakeImageSubresourceDrawRange(gl::LevelIndex level,
 }
 
 // BufferViewHelper implementation.
-BufferViewHelper::BufferViewHelper() : mOffset(0), mSize(0) {}
+BufferViewHelper::BufferViewHelper() : mInitialized(false), mOffset(0), mSize(0) {}
 
 BufferViewHelper::BufferViewHelper(BufferViewHelper &&other) : Resource(std::move(other))
 {
+    std::swap(mInitialized, other.mInitialized);
     std::swap(mOffset, other.mOffset);
     std::swap(mSize, other.mSize);
     std::swap(mViews, other.mViews);
@@ -10542,10 +10544,17 @@ void BufferViewHelper::init(RendererVk *renderer, VkDeviceSize offset, VkDeviceS
     {
         mViewSerial = renderer->getResourceSerialFactory().generateImageOrBufferViewSerial();
     }
+
+    mInitialized = true;
 }
 
 void BufferViewHelper::release(ContextVk *contextVk)
 {
+    if (!mInitialized)
+    {
+        return;
+    }
+
     contextVk->flushDescriptorSetUpdates();
 
     GarbageList garbage;
@@ -10568,8 +10577,9 @@ void BufferViewHelper::release(ContextVk *contextVk)
 
     mUse.reset();
     mViews.clear();
-    mOffset = 0;
-    mSize   = 0;
+    mOffset      = 0;
+    mSize        = 0;
+    mInitialized = false;
 }
 
 void BufferViewHelper::destroy(VkDevice device)

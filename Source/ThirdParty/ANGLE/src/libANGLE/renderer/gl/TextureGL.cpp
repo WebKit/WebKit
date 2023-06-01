@@ -1701,6 +1701,7 @@ angle::Result TextureGL::syncState(const gl::Context *context,
                 break;
             }
             case gl::Texture::DIRTY_BIT_USAGE:
+            case gl::Texture::DIRTY_BIT_RENDERABILITY_VALIDATION_ANGLE:
                 break;
 
             case gl::Texture::DIRTY_BIT_IMPLEMENTATION:

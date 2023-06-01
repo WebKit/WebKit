@@ -493,6 +493,41 @@ if (build_angle_perftests) {
 }
 
 if (build_angle_trace_tests) {
+  _angle_trace_common_sources = [
+    "angle_trace_tests_main.cpp",
+    "perf_tests/TracePerfTest.cpp",
+  ]
+  _angle_trace_common_deps = [
+    ":angle_perftests_shared",
+    "$angle_root:angle_compression",
+    "$angle_root/util:angle_frame_capture_test_utils",
+    "$angle_root/util:angle_png_utils",
+  ]
+
+  # These go together, either inside or outside of the APK depending on the config
+  _angle_trace_libs = [
+    "$angle_root/util:angle_trace_interpreter",
+    "restricted_traces:angle_restricted_traces",
+  ]
+
+  # Allows us to edit traces and remove chunks of code without compile warnings.
+  _angle_trace_common_clang_flags = [ "-Wno-unused-const-variable" ]
+
+  if (restricted_traces_outside_of_apk) {
+    # If this flag is set, we want to build the trace libraries independent of the APK, i.e. not packaged.
+    # We're doing this for size reasons - the APK is too large if you include all the traces.
+    # We've repurposed the `angle_test` template for this, although we don't plan to run `restricted_traces_outside_of_apk` as a test itself.
+    # It will be used in conjunction with `angle_trace_tests`.
+    angle_test("angle_trace_tests_android_binaries") {
+      use_raw_android_executable = true
+
+      sources = _angle_trace_common_sources
+      deps = _angle_trace_common_deps +
+             [ "$angle_root/util:angle_trace_fixture" ] + _angle_trace_libs
+      cflags_cc = _angle_trace_common_clang_flags
+    }
+  }
+
   angle_test("angle_trace_tests") {
     # http://anglebug.com/6009: Traces with long shaders are hitting string literal
     # limit in MSVC, so only compile them when using clang
@@ -502,26 +537,21 @@ if (build_angle_trace_tests) {
       # shared libraries are hidden inside ios_framework_bundle, but we include headers from them
       check_includes = false
     }
-    sources = [
-      "angle_trace_tests_main.cpp",
-      "perf_tests/TracePerfTest.cpp",
-    ]
-    deps = [
-      ":angle_perftests_shared",
-      "$angle_root:angle_compression",
-      "$angle_root/util:angle_frame_capture_test_utils",
-      "$angle_root/util:angle_png_utils",
-      "$angle_root/util:angle_trace_interpreter",
-      "restricted_traces:angle_restricted_traces",
-    ]
+
+    sources = _angle_trace_common_sources
+
+    deps = _angle_trace_common_deps
+    if (restricted_traces_outside_of_apk) {
+      deps += [ "$angle_root/util:angle_trace_loader" ]
+    } else {
+      deps += _angle_trace_libs
+    }
 
     data = [ "$angle_root/src/tests/py_utils/android_helper.py" ]
-
     data_deps = [ "${angle_root}:angle" ]
 
     if (is_clang) {
-      # Allows us to edit traces and remove chunks of code without compile warnings.
-      cflags_cc = [ "-Wno-unused-const-variable" ]
+      cflags_cc = _angle_trace_common_clang_flags
     }
   }
 
@@ -539,6 +569,10 @@ if (build_angle_trace_tests) {
       ":angle_trace_tests",
       "//testing:run_perf_test",
     ]
+
+    if (restricted_traces_outside_of_apk) {
+      data_deps += [ ":angle_trace_tests_android_binaries" ]
+    }
   }
 
   group("angle_trace_interpreter_tests") {
@@ -547,7 +581,7 @@ if (build_angle_trace_tests) {
       "restricted_traces/gen_restricted_traces.py",
       "restricted_traces/retrace_restricted_traces.py",
     ]
-    data_deps = [ ":angle_trace_tests" ]
+    data_deps = [ ":angle_trace_perf_tests" ]
   }
 }
 
@@ -1214,6 +1248,17 @@ if (build_angle_deqp_tests && !is_fuchsia) {
       "$deqp_path/framework/delibs/deutil",
       "$deqp_path/framework/delibs/destream",
     ]
+
+    # https://github.com/KhronosGroup/VK-GL-CTS/commit/9f306457b48b3f8258ca44462003ef39b80a7515
+    if (is_clang) {
+      if (target_cpu == "arm") {
+        defines = [ "DE_FENV_ACCESS_ON=" ]
+      } else {
+        defines = [ "DE_FENV_ACCESS_ON=_Pragma(\"STDC FENV_ACCESS ON\")" ]
+      }
+    } else if (is_win) {
+      defines = [ "DE_FENV_ACCESS_ON=__pragma(fenv_access (on))" ]
+    }
   }
 
   angle_deqp_source_set("angle_deqp_framework_delibs") {
@@ -1695,7 +1740,7 @@ group("angle_tests") {
     deps += [ ":angle_perftests" ]
   }
   if (build_angle_trace_tests) {
-    deps += [ ":angle_trace_tests" ]
+    deps += [ ":angle_trace_perf_tests" ]
   }
   if (is_clang) {
     deps += [ "capture_replay_tests" ]

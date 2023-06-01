@@ -772,18 +772,6 @@
       }
     },
 
-    'angle_trace_interpreter_isolated_scripts': {
-      'angle_trace_interpreter_tests': {
-        'args': [
-          '--log=debug',
-          'interpret',
-          'among_us:catalyst_black:cut_the_rope:dota_underlords:fishdom:genshin_impact:harry_potter_hogwarts_mystery:manhattan_10:trex_200',
-          '-L=2',
-          '--show-test-stdout',
-        ],
-      },
-    },
-
     'angle_trace_perf_native_isolated_scripts': {
       'angle_trace_perf_native_tests': {
         'android_args': {
@@ -1189,7 +1177,6 @@
       'angle_perf_smoke_isolated_scripts',
       'angle_restricted_trace_gold_isolated_scripts',
       'angle_restricted_trace_gold_interpreted_isolated_scripts',
-      'angle_trace_interpreter_isolated_scripts',
       'angle_trace_perf_native_smoke_isolated_scripts',
       'angle_trace_perf_vulkan_smoke_isolated_scripts',
     ],

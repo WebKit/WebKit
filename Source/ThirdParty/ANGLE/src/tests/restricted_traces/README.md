@@ -52,12 +52,14 @@ When that is working, add the following GN arg to your setup:
 ```
 build_angle_trace_perf_tests = true
 ```
-### (Optional) Reducing the trace count
+### Selecting which traces to build
 
-Since the traces are numerous, you can limit compilation to a subset with the following GN arg:
+Since the traces are numerous, you should limit compilation to a subset with the following GN arg:
 ```
-angle_restricted_traces = ["world_of_kings 5", "worms_zone_io 5"]
+angle_restricted_traces = ["among_us 5", "street_fighter_duel 1"]
 ```
+If you choose not to pick any traces and build them all, you must follow different steps for Android. Skip ahead to [Building and running all traces for Android](#building-and-running-all-traces-for-android)
+
 To build the trace tests:
 ```
 autoninja -C out/<config> angle_trace_tests
@@ -80,6 +82,18 @@ Common options used are:
 
 # Use the system's native GLES driver
 --use-gl=native
+```
+
+### Building and running all traces for Android
+Our trace library has gotten large enough that they no longer fit in a single APK.  To support building and running the entire library, we can compile the libraries by themselves, outside of the APK, and push them to locations accessible by the test harness.
+
+To do so, remove `angle_restricted_traces` from your GN args, then compile with:
+```
+autoninja -C out/<config> angle_trace_perf_tests
+```
+and run with (including recommended options):
+```
+(cd out/<config>; ../../src/tests/run_angle_android_test.py angle_trace_tests --filter='*among_us*' --verbose --local-output --verbose-logging --fixed-test-time-with-warmup 10)
 ```
 
 # Capturing and adding new Android traces

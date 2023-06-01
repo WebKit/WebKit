@@ -283,19 +283,20 @@ class DepthStencilBlitUtils final : angle::NonCopyable
                                            const StencilBlitViaBufferParams &params);
 
   private:
-    void ensureRenderPipelineStateCacheInitialized(ContextMtl *ctx,
-                                                   int sourceDepthTextureType,
-                                                   int sourceStencilTextureType,
-                                                   RenderPipelineCache *cacheOut);
+    angle::Result ensureRenderPipelineStateCacheInitialized(ContextMtl *ctx,
+                                                            int sourceDepthTextureType,
+                                                            int sourceStencilTextureType,
+                                                            RenderPipelineCache *cacheOut);
 
     angle::Result setupDepthStencilBlitWithDraw(const gl::Context *context,
                                                 RenderCommandEncoder *cmdEncoder,
                                                 const DepthStencilBlitParams &params);
 
-    id<MTLRenderPipelineState> getDepthStencilBlitRenderPipelineState(
+    angle::Result getDepthStencilBlitRenderPipelineState(
         const gl::Context *context,
         RenderCommandEncoder *cmdEncoder,
-        const DepthStencilBlitParams &params);
+        const DepthStencilBlitParams &params,
+        id<MTLRenderPipelineState> *outRenderPipelineState);
 
     id<MTLComputePipelineState> getStencilToBufferComputePipelineState(
         ContextMtl *ctx,

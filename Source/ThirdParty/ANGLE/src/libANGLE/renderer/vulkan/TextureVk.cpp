@@ -1617,7 +1617,11 @@ void TextureVk::releaseAndDeleteImageAndViews(ContextVk *contextVk)
         contextVk->getShareGroup()->onTextureRelease(this);
     }
 
-    mBufferViews.release(contextVk);
+    if (mBufferViews.isInitialized())
+    {
+        mBufferViews.release(contextVk);
+        onStateChange(angle::SubjectMessage::SubjectChanged);
+    }
     mRedefinedLevels.reset();
     mDescriptorSetCacheManager.releaseKeys(contextVk);
 }

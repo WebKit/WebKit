@@ -323,6 +323,14 @@
                 "generate shaders."
             ],
             "issue": "http://crbug.com/1423136"
+        },
+        {
+            "name": "print_metal_shaders",
+            "category": "Features",
+            "description": [
+                "Prints the source to a shader before it's compiled."
+            ],
+            "issue": "http://crbug.com/1423136"
         }
     ]
 }

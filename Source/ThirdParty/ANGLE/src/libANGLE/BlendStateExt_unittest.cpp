@@ -4,7 +4,7 @@
 // found in the LICENSE file.
 //
 
-// angletypes_unittest.cpp: Unit tests of the BlendStateExt class.
+// BlendStateExt_unittest.cpp: Unit tests of the BlendStateExt class.
 
 #include <gtest/gtest.h>
 

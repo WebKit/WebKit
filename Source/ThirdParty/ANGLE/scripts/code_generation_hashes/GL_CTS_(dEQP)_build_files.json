@@ -18,7 +18,7 @@
   "third_party/VK-GL-CTS/src/external/glslang/CMakeLists.txt":
     "323b44bb52b08f5a937d6e7827667d34",
   "third_party/VK-GL-CTS/src/external/jsoncpp/CMakeLists.txt":
-    "7eb4055df9b15690be98a0c7e7e9c1d2",
+    "80cd4f898f759cebdeaa46552fcedddb",
   "third_party/VK-GL-CTS/src/external/libpng/CMakeLists.txt":
     "f0a31a5d1edcf912eea4668abf8c9c27",
   "third_party/VK-GL-CTS/src/external/openglcts/CMakeLists.txt":
@@ -66,7 +66,7 @@
   "third_party/VK-GL-CTS/src/external/vulkancts/modules/vulkan/device_group/CMakeLists.txt":
     "dc2350de183748b11006ac8f701dd6b8",
   "third_party/VK-GL-CTS/src/external/vulkancts/modules/vulkan/draw/CMakeLists.txt":
-    "55f37c07dc5f599f3ea5b91c360a3609",
+    "c406fab7b4489e3d3f4316ffb0ad81dd",
   "third_party/VK-GL-CTS/src/external/vulkancts/modules/vulkan/dynamic_state/CMakeLists.txt":
     "40f463e1affae54d26fd999177cffe14",
   "third_party/VK-GL-CTS/src/external/vulkancts/modules/vulkan/fragment_ops/CMakeLists.txt":

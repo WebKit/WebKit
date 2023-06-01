@@ -39,7 +39,7 @@ group("angle_restricted_trace_gold_tests") {
   data_deps = [
     ":goldctl",
     "$angle_root/src/tests:angle_system_info_test",
-    "$angle_root/src/tests:angle_trace_tests",
+    "$angle_root/src/tests:angle_trace_perf_tests",
   ]
   data = [
     "restricted_trace_gold_tests.py",

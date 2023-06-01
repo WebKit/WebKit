@@ -62,6 +62,7 @@ angle_requestable_extensions = [
     "GL_ANGLE_multiview_multisample",
     "GL_ANGLE_provoking_vertex",
     "GL_ANGLE_read_only_depth_stencil_feedback_loops",
+    "GL_ANGLE_renderability_validation",
     "GL_ANGLE_robust_fragment_shader_output",
     "GL_ANGLE_semaphore_fuchsia",
     "GL_ANGLE_shader_pixel_local_storage",

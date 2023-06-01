@@ -2760,6 +2760,8 @@ const char *GLenumToString(GLESEnum enumGroup, unsigned int value)
                     return "GL_PIXEL_LOCAL_CLEAR_VALUE_INT_ANGLE";
                 case 0x96EE:
                     return "GL_PIXEL_LOCAL_CLEAR_VALUE_UNSIGNED_INT_ANGLE";
+                case 0x9EA0:
+                    return "GL_RENDERABILITY_VALIDATION_ANGLE";
                 case 0xFFFFFFFF:
                     return "GL_INVALID_INDEX";
                 default:
@@ -7453,6 +7455,8 @@ const char *GLenumToString(GLESEnum enumGroup, unsigned int value)
                     return "GL_DEPTH_STENCIL_TEXTURE_MODE";
                 case 0x9580:
                     return "GL_TEXTURE_TILING_EXT";
+                case 0x9EA0:
+                    return "GL_RENDERABILITY_VALIDATION_ANGLE";
                 default:
                     return UnknownEnumToString(value);
             }
@@ -22918,6 +22922,7 @@ static StringEnumEntry g_stringEnumTable[] = {
     {"GL_RELATIVE_VERTICAL_LINE_TO_NV", 0x0009},
     {"GL_RELEASED_APPLE", 0x8A19},
     {"GL_RENDER", 0x1C00},
+    {"GL_RENDERABILITY_VALIDATION_ANGLE", 0x9EA0},
     {"GL_RENDERBUFFER", 0x8D41},
     {"GL_RENDERBUFFER_ALPHA_SIZE", 0x8D53},
     {"GL_RENDERBUFFER_ALPHA_SIZE_EXT", 0x8D53},

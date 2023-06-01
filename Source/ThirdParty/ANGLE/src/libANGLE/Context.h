@@ -911,6 +911,8 @@ extern void SetCurrentValidContextTLS(Context *context);
 extern thread_local Context *gCurrentValidContext;
 #endif
 
+extern void SetCurrentValidContext(Context *context);
+
 }  // namespace gl
 
 #endif  // LIBANGLE_CONTEXT_H_

@@ -851,6 +851,8 @@ b/273271471 WIN INTEL VULKAN : ShaderAlgorithmTest.rgb_to_hsl_vertex_shader/* = 
 7994 IOS METAL : PixelLocalStorageTest.R32/ES3_Metal_EmulatePixelLocalStorage_DisableRasterOrderGroups = SKIP
 7994 IOS METAL : PixelLocalStorageTest.RGBA8/ES3_Metal_EmulatePixelLocalStorage = SKIP
 7994 IOS METAL : PixelLocalStorageTest.RGBA8/ES3_Metal_EmulatePixelLocalStorage_DisableRasterOrderGroups = SKIP
+7994 IOS METAL : PixelLocalStorageTest.TextureLevelsAndLayers/ES3_Metal_EmulatePixelLocalStorage = SKIP
+7994 IOS METAL : PixelLocalStorageTest.TextureLevelsAndLayers/ES3_Metal_EmulatePixelLocalStorage_DisableRasterOrderGroups = SKIP
 7994 IOS METAL : PointSpritesTest.PointSizeAboveMaxIsClamped/ES2_Metal = SKIP
 7994 IOS METAL : RobustBufferAccessWebGL2ValidationStateChangeTest.BindZeroSizeBufferThenDeleteBufferBug/ES3_Metal = SKIP
 7994 IOS METAL : SamplerTypeMixTestES3.SamplerTypeMixDraw/ES3_Metal = SKIP
@@ -1106,14 +1108,11 @@ b/273271471 WIN INTEL VULKAN : ShaderAlgorithmTest.rgb_to_hsl_vertex_shader/* = 
 5466 GLES : ClipCullDistanceTest.ClipDistanceInteractWithGeometryShader/* = SKIP
 5466 GLES : ClipCullDistanceTest.CullDistanceInteractWithGeometryShader/* = SKIP
 
-// ReadPixels returns zeros on Red and Red-Green snorm color buffers
-8048 WIN INTEL OPENGL : FramebufferTest_ES3.RenderSnorm* = SKIP
-
-// ReadPixels returns zeros on snorm color buffers
+// ReadPixels clamps snorm color values to [0, 1]; fixed in Mesa 21.3.0
 8048 LINUX INTEL OPENGL : FramebufferTest_ES3.RenderSnorm* = SKIP
 
-// ReadPixels returns zeros on Red and Red-Green 16-bit snorm color buffers
-8048 NVIDIA OPENGL : FramebufferTest_ES3.RenderSnorm16* = SKIP
+// ReadPixels clamps Red and Red-Green 16-bit snorm
+// color values to [0, 1] when using GL_RGBA format
 8048 NVIDIA GLES : FramebufferTest_ES3.RenderSnorm16* = SKIP
 
 // D3D needs a workaround to follow OpenGL rules
@@ -1152,10 +1151,6 @@ b/273271471 WIN INTEL VULKAN : ShaderAlgorithmTest.rgb_to_hsl_vertex_shader/* = 
 
 // gl_PointCoord origin is flipped for non-default framebuffers
 8066 WIN INTEL OPENGL : ClipControlTest.OriginPointCoord/* = SKIP
-
-// Sample coverage must not affect single sample render targets
-8102 D3D11 : SimpleOperationTest.DrawSingleSampleWithCoverage/* = SKIP
-8102 D3D11 : StateChangeTestES3.SampleCoverageFramebufferAttachmentSwitch/* = SKIP
 
 // Sample coverage is ignored when replacing a single-sample attachment with a multi-sample one
 8114 MAC INTEL OPENGL : StateChangeTestES3.SampleCoverageFramebufferAttachmentSwitch/* = SKIP

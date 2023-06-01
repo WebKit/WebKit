@@ -645,7 +645,7 @@ class RendererVk : angle::NonCopyable
     }
 
     angle::Result allocateScopedQueueSerialIndex(vk::ScopedQueueSerialIndex *indexOut);
-    angle::Result allocateQueueSerialIndex(QueueSerial *queueSerialOut);
+    angle::Result allocateQueueSerialIndex(SerialIndex *serialIndexOut);
     size_t getLargestQueueSerialIndexEverAllocated() const
     {
         return mQueueSerialIndexAllocator.getLargestIndexEverAllocated();
@@ -659,6 +659,7 @@ class RendererVk : angle::NonCopyable
     // Return true if all serials in ResourceUse have been submitted.
     bool hasResourceUseSubmitted(const vk::ResourceUse &use) const;
     bool hasQueueSerialSubmitted(const QueueSerial &queueSerial) const;
+    Serial getLastSubmittedSerial(SerialIndex index) const;
     // Return true if all serials in ResourceUse have been finished.
     bool hasResourceUseFinished(const vk::ResourceUse &use) const;
     bool hasQueueSerialFinished(const QueueSerial &queueSerial) const;
@@ -759,8 +760,6 @@ class RendererVk : angle::NonCopyable
                                        vk::SecondaryCommandMemoryAllocator *commandsAllocator,
                                        RecyclerT *recycler,
                                        CommandBufferHelperT **commandBufferHelperOut);
-
-    angle::Result allocateQueueSerialIndexImpl(SerialIndex *indexOut);
 
     egl::Display *mDisplay;
 
@@ -1031,6 +1030,18 @@ ANGLE_INLINE bool RendererVk::hasQueueSerialSubmitted(const QueueSerial &queueSe
     else
     {
         return mCommandQueue.hasQueueSerialSubmitted(queueSerial);
+    }
+}
+
+ANGLE_INLINE Serial RendererVk::getLastSubmittedSerial(SerialIndex index) const
+{
+    if (isAsyncCommandQueueEnabled())
+    {
+        return mCommandProcessor.getLastEnqueuedSerial(index);
+    }
+    else
+    {
+        return mCommandQueue.getLastSubmittedSerial(index);
     }
 }
 

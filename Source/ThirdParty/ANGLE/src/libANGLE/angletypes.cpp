@@ -1039,3 +1039,27 @@ GLsizeiptr GetBoundBufferAvailableSize(const OffsetBindingPointer<Buffer> &bindi
 }
 
 }  // namespace gl
+   //
+namespace angle
+{
+UnlockedTailCall::UnlockedTailCall() = default;
+
+UnlockedTailCall::~UnlockedTailCall()
+{
+    ASSERT(mCalls.empty());
+}
+
+void UnlockedTailCall::add(CallType &&call)
+{
+    mCalls.push_back(std::move(call));
+}
+
+void UnlockedTailCall::runImpl()
+{
+    for (CallType &call : mCalls)
+    {
+        call();
+    }
+    mCalls.clear();
+}
+}  // namespace angle

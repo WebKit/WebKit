@@ -174,6 +174,7 @@ VkResult SharedFence::wait(VkDevice device, uint64_t timeout) const
 {
     if (mRefCountedFence != nullptr)
     {
+        ANGLE_TRACE_EVENT0("gpu.angle", "SharedFence::wait");
         return mRefCountedFence->get().wait(device, timeout);
     }
     return VK_SUCCESS;

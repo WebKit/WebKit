@@ -534,6 +534,8 @@ EXPORTS
     ; GL_ANGLE_provoking_vertex
     glProvokingVertexANGLE
 
+    ; GL_ANGLE_renderability_validation
+
     ; GL_ANGLE_request_extension
     glDisableExtensionANGLE
     glRequestExtensionANGLE

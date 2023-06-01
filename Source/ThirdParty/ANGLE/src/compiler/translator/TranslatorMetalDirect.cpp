@@ -21,6 +21,7 @@
 #include "compiler/translator/TranslatorMetalDirect/NameEmbeddedUniformStructsMetal.h"
 #include "compiler/translator/TranslatorMetalDirect/ReduceInterfaceBlocks.h"
 #include "compiler/translator/TranslatorMetalDirect/RewriteCaseDeclarations.h"
+#include "compiler/translator/TranslatorMetalDirect/RewriteInterpolants.h"
 #include "compiler/translator/TranslatorMetalDirect/RewriteOutArgs.h"
 #include "compiler/translator/TranslatorMetalDirect/RewritePipelines.h"
 #include "compiler/translator/TranslatorMetalDirect/RewriteUnaddressableReferences.h"
@@ -333,20 +334,36 @@ void AddFragDepthEXTDeclaration(TCompiler &compiler, TIntermBlock &root, TSymbol
 
 [[nodiscard]] bool AddSamplePositionDeclaration(TCompiler &compiler,
                                                 TIntermBlock &root,
-                                                TSymbolTable &symbolTable)
+                                                TSymbolTable &symbolTable,
+                                                const DriverUniformMetal *driverUniforms)
 {
     const TVariable *glSamplePosition = BuiltInVariable::gl_SamplePosition();
     DeclareRightBeforeMain(root, *glSamplePosition);
 
-    // gl_SamplePosition = metal::get_sample_position(uint(gl_SampleID))
-    TIntermBinary *assignment = new TIntermBinary(
+    // When rendering to a default FBO, gl_SamplePosition should
+    // be Y-flipped to match the actual sample location
+    // gl_SamplePosition = metal::get_sample_position(uint(gl_SampleID));
+    // gl_SamplePosition -= 0.5;
+    // gl_SamplePosition *= flipXY;
+    // gl_SamplePosition += 0.5;
+    TIntermBlock *block = new TIntermBlock;
+    block->appendStatement(new TIntermBinary(
         TOperator::EOpAssign, new TIntermSymbol(glSamplePosition),
         CreateBuiltInFunctionCallNode("samplePosition",
                                       {TIntermAggregate::CreateConstructor(
                                           *StaticType::GetBasic<EbtUInt, EbpHigh>(),
                                           {new TIntermSymbol(BuiltInVariable::gl_SampleID())})},
-                                      symbolTable, kESSLInternalBackendBuiltIns));
-    return RunAtTheBeginningOfShader(&compiler, &root, assignment);
+                                      symbolTable, kESSLInternalBackendBuiltIns)));
+    block->appendStatement(new TIntermBinary(TOperator::EOpSubAssign,
+                                             new TIntermSymbol(glSamplePosition),
+                                             CreateFloatNode(0.5f, EbpHigh)));
+    block->appendStatement(
+        new TIntermBinary(EOpMulAssign, new TIntermSymbol(glSamplePosition),
+                          driverUniforms->getFlipXY(&symbolTable, DriverUniformFlip::Fragment)));
+    block->appendStatement(new TIntermBinary(TOperator::EOpAddAssign,
+                                             new TIntermSymbol(glSamplePosition),
+                                             CreateFloatNode(0.5f, EbpHigh)));
+    return RunAtTheBeginningOfShader(&compiler, &root, block);
 }
 
 [[nodiscard]] bool AddSampleMaskInDeclaration(TCompiler &compiler,
@@ -392,7 +409,7 @@ void AddFragDepthEXTDeclaration(TCompiler &compiler, TIntermBlock &root, TSymbol
     // Bits in the sample mask corresponding to covered samples
     // that will be unset due to SAMPLE_COVERAGE or SAMPLE_MASK
     // will not be set (section 4.1.3).
-    // if (ANGLESampleMaskEnabled)
+    // if (ANGLEMultisampledRendering)
     // {
     //      gl_SampleMaskIn[0] &= ANGLE_angleUniforms.coverageMask;
     // }
@@ -401,7 +418,7 @@ void AddFragDepthEXTDeclaration(TCompiler &compiler, TIntermBlock &root, TSymbol
         EOpBitwiseAndAssign, glSampleMaskIn0->deepCopy(), driverUniforms->getCoverageMaskField()));
 
     TVariable *sampleMaskEnabledVar = new TVariable(
-        &symbolTable, sh::ImmutableString(mtl::kSampleMaskEnabledConstName),
+        &symbolTable, sh::ImmutableString(mtl::kMultisampledRenderingConstName),
         StaticType::Get<EbtBool, EbpUndefined, EvqSpecConst, 1, 1>(), SymbolType::AngleInternal);
     block->appendStatement(
         new TIntermIfElse(new TIntermSymbol(sampleMaskEnabledVar), coverageBlock, nullptr));
@@ -602,9 +619,9 @@ void AddFragDepthEXTDeclaration(TCompiler &compiler, TIntermBlock &root, TSymbol
             new TIntermIfElse(driverUniforms->getAlphaToCoverage(), alphaBlock, nullptr));
     }
 
-    // Sample mask output assignment is guarded by ANGLESampleMaskEnabled specialization constant
+    // Sample mask assignment is guarded by ANGLEMultisampledRendering specialization constant
     TVariable *sampleMaskEnabledVar = new TVariable(
-        &symbolTable, sh::ImmutableString(mtl::kSampleMaskEnabledConstName),
+        &symbolTable, sh::ImmutableString(mtl::kMultisampledRenderingConstName),
         StaticType::Get<EbtBool, EbpUndefined, EvqSpecConst, 1, 1>(), SymbolType::AngleInternal);
     return RunAtTheEndOfShader(
         &compiler, &root,
@@ -1203,14 +1220,25 @@ bool TranslatorMetalDirect::translateImpl(TInfoSinkBase &sink,
             }
         }
 
-        if (usesSampleID)
+        bool usesSampleInterpolation = false;
+        bool usesSampleInterpolant   = false;
+        if ((getShaderVersion() >= 320 ||
+             IsExtensionEnabled(getExtensionBehavior(),
+                                TExtension::OES_shader_multisample_interpolation)) &&
+            !RewriteInterpolants(*this, *root, symbolTable, driverUniforms,
+                                 &usesSampleInterpolation, &usesSampleInterpolant))
+        {
+            return false;
+        }
+
+        if (usesSampleID || (usesSampleMaskIn && usesSampleInterpolation) || usesSampleInterpolant)
         {
             DeclareRightBeforeMain(*root, *BuiltInVariable::gl_SampleID());
         }
 
         if (usesSamplePosition)
         {
-            if (!AddSamplePositionDeclaration(*this, *root, symbolTable))
+            if (!AddSamplePositionDeclaration(*this, *root, symbolTable, driverUniforms))
             {
                 return false;
             }
@@ -1219,7 +1247,7 @@ bool TranslatorMetalDirect::translateImpl(TInfoSinkBase &sink,
         if (usesSampleMaskIn)
         {
             if (!AddSampleMaskInDeclaration(*this, *root, symbolTable, driverUniforms,
-                                            usesSampleID))
+                                            usesSampleID || usesSampleInterpolation))
             {
                 return false;
             }

@@ -4,9 +4,9 @@
   "scripts/gen_interpreter_utils.py":
     "10ba16ee78604763fc883525dd275de8",
   "scripts/gl_angle_ext.xml":
-    "796894fd74d141b88000669104a663ea",
+    "56be6b22acdf4e24ad2721965c14e264",
   "scripts/registry_xml.py":
-    "8dc1bcf2e8324094c19c41613897b212",
+    "2b9d83efcf1941169b6c043e501b9b05",
   "third_party/EGL-Registry/src/api/egl.xml":
     "2056d54ea07156f1988ca1366bdee21a",
   "third_party/OpenCL-Docs/src/xml/cl.xml":
