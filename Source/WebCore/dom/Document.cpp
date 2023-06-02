@@ -3374,12 +3374,12 @@ void Document::implicitClose()
 
 void Document::setParsing(bool b)
 {
-    m_bParsing = b;
+    m_isParsing = b;
 
-    if (m_bParsing && !m_sharedObjectPool)
+    if (m_isParsing && !m_sharedObjectPool)
         m_sharedObjectPool = makeUnique<DocumentSharedObjectPool>();
 
-    if (!m_bParsing && view() && !view()->needsLayout())
+    if (!m_isParsing && view() && !view()->needsLayout())
         view()->fireLayoutRelatedMilestonesIfNeeded();
 }
 

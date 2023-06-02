@@ -813,7 +813,7 @@ public:
 
     void setReadyState(ReadyState);
     void setParsing(bool);
-    bool parsing() const { return m_bParsing; }
+    bool parsing() const { return m_isParsing; }
 
     bool shouldScheduleLayout() const;
     bool isLayoutPending() const;
@@ -2322,7 +2322,7 @@ private:
     bool m_loadEventFinished { false };
 
     bool m_visuallyOrdered { false };
-    bool m_bParsing { false }; // FIXME: rename
+    bool m_isParsing { false };
 
     bool m_needsFullStyleRebuild { false };
     bool m_inStyleRecalc { false };
