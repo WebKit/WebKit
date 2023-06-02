@@ -12202,6 +12202,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 - (void)_contextMenuInteraction:(UIContextMenuInteraction *)interaction configurationForMenuAtLocation:(CGPoint)location completion:(void(^)(UIContextMenuConfiguration *))completion
 {
     _useCompactMenuForContextMenuInteraction = NO;
+    _useContextMenuInteractionDismissalPreview = YES;
 
 #if ENABLE(IMAGE_ANALYSIS)
     BOOL triggeredByImageAnalysisTimeout = std::exchange(_contextMenuWasTriggeredByImageAnalysisTimeout, NO);
@@ -12550,6 +12551,11 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 - (UITargetedPreview *)contextMenuInteraction:(UIContextMenuInteraction *)interaction previewForDismissingMenuWithConfiguration:(UIContextMenuConfiguration *)configuration
 #endif
 {
+    if (!_useContextMenuInteractionDismissalPreview) {
+        _contextMenuInteractionTargetedPreview = nil;
+        return nil;
+    }
+
     return std::exchange(_contextMenuInteractionTargetedPreview, nil).autorelease();
 }
 
@@ -12581,7 +12587,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (!_webView)
         return;
 
-    [self _stopSuppressingSelectionAssistantForReason:WebKit::InteractionIsHappening];
+    _useContextMenuInteractionDismissalPreview = NO;
 
     auto uiDelegate = static_cast<id<WKUIDelegatePrivate>>(self.webView.UIDelegate);
     if (!uiDelegate)
@@ -12646,6 +12652,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
         if (shouldExpandPreview) {
             animator.preferredCommitStyle = UIContextMenuInteractionCommitStylePop;
+            _useContextMenuInteractionDismissalPreview = YES;
 
             // We will re-present modally on the same VC that is currently presenting the preview in a context menu.
             RetainPtr<UIViewController> presentingViewController = animator.previewViewController.presentingViewController;
@@ -12658,6 +12665,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
         if (NSURL *interactionURL = ddConfiguration.interactionURL) {
             animator.preferredCommitStyle = UIContextMenuInteractionCommitStylePop;
+            _useContextMenuInteractionDismissalPreview = YES;
 
             [animator addAnimations:^{
                 [[UIApplication sharedApplication] openURL:interactionURL withCompletionHandler:nil];
@@ -12672,8 +12680,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 {
     if (!_webView)
         return;
-
-    [self _stopSuppressingSelectionAssistantForReason:WebKit::InteractionIsHappening];
 
     // FIXME: This delegate is being called more than once by UIKit. <rdar://problem/51550291>
     // This conditional avoids the WKUIDelegate being called twice too.
@@ -12695,7 +12701,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     _contextMenuHasRequestedLegacyData = NO;
     _contextMenuElementInfo = nullptr;
 
-    [animator addCompletion:[weakSelf = WeakObjCPtr<WKContentView>(self)] () {
+    auto contextFinalizer = [weakSelf = WeakObjCPtr<WKContentView>(self)] () {
         auto strongSelf = weakSelf.get();
         if (!strongSelf)
             return;
@@ -12703,7 +12709,14 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         strongSelf->_isDisplayingContextMenuWithAnimation = NO;
         [strongSelf _removeContextMenuHintContainerIfPossible];
         [strongSelf->_webView _didDismissContextMenu];
-    }];
+
+        [strongSelf _stopSuppressingSelectionAssistantForReason:WebKit::InteractionIsHappening];
+    };
+
+    if (animator)
+        [animator addCompletion:contextFinalizer];
+    else
+        contextFinalizer();
 }
 
 #endif // USE(UICONTEXTMENU)
