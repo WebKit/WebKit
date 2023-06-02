@@ -23,7 +23,10 @@
 #include "config.h"
 
 #if ENABLE(MEDIA_STREAM) && USE(GSTREAMER)
+
 #include "GStreamerVideoCapturer.h"
+
+#include <wtf/glib/WTFGType.h>
 
 GST_DEBUG_CATEGORY(webkit_video_capturer_debug);
 #define GST_CAT_DEFAULT webkit_video_capturer_debug
@@ -257,6 +260,20 @@ static std::optional<double> getMaxFractionValueFromStructure(const GstStructure
     return (maxFraction > -G_MAXDOUBLE) ? std::make_optional<>(maxFraction) : std::nullopt;
 }
 
+struct DeviceCapsProcessHolder {
+    DeviceCapsProcessHolder()
+        : aggregatedCaps(adoptGRef(gst_caps_new_empty()))
+    {
+    }
+
+    int targetWidth = 0;
+    int targetHeight = 0;
+    double targetFrameRate = 0;
+    Vector<String> mimeTypes;
+    GRefPtr<GstCaps> aggregatedCaps;
+};
+WEBKIT_DEFINE_ASYNC_DATA_STRUCT(DeviceCapsProcessHolder);
+
 void GStreamerVideoCapturer::reconfigure()
 {
     if (isCapturingDisplay()) {
@@ -268,92 +285,87 @@ void GStreamerVideoCapturer::reconfigure()
     if (!m_videoSrcMIMETypeFilter)
         return;
 
-    struct MimeTypeSelector {
-        const char* mimeType = "video/x-raw";
-        const char* format = nullptr;
-        int maxWidth = 0;
-        int maxHeight = 0;
-        double maxFrameRate = 0;
-
-        struct {
-            int width = 0;
-            int height = 0;
-            double frameRate = 0;
-        } stopCondition;
-    } selector;
+    auto* holder = createDeviceCapsProcessHolder();
 
     // If nothing has been specified by the user, we target at least an arbitrary resolution of 1920x1080@24fps.
     const GstStructure* capsStruct = gst_caps_get_structure(m_caps.get(), 0);
-    if (!gst_structure_get_int(capsStruct, "width", &selector.stopCondition.width))
-        selector.stopCondition.width = 1920;
+    if (!gst_structure_get_int(capsStruct, "width", &holder->targetWidth))
+        holder->targetWidth = 1920;
 
-    if (!gst_structure_get_int(capsStruct, "height", &selector.stopCondition.height))
-        selector.stopCondition.height = 1080;
+    if (!gst_structure_get_int(capsStruct, "height", &holder->targetHeight))
+        holder->targetHeight = 1080;
 
     int numerator = 0;
     int denominator = 1;
     if (gst_structure_get_fraction(capsStruct, "framerate", &numerator, &denominator))
-        gst_util_fraction_to_double(numerator, denominator, &selector.stopCondition.frameRate);
+        gst_util_fraction_to_double(numerator, denominator, &holder->targetFrameRate);
     else
-        selector.stopCondition.frameRate = 24;
+        holder->targetFrameRate = 24;
 
     GST_DEBUG_OBJECT(m_pipeline.get(), "Searching best video capture device mime type for resolution %dx%d@%.3f",
-        selector.stopCondition.width, selector.stopCondition.height, selector.stopCondition.frameRate);
+        holder->targetHeight, holder->targetHeight, holder->targetFrameRate);
 
     auto deviceCaps = adoptGRef(gst_device_get_caps(m_device.get()));
-    gst_caps_foreach(deviceCaps.get(),
-        reinterpret_cast<GstCapsForeachFunc>(+[](GstCapsFeatures*, GstStructure* structure, MimeTypeSelector* selector) -> gboolean {
-            auto width = getMaxIntValueFromStructure(structure, "width");
-            if (!width.has_value())
-                return TRUE;
 
-            auto height = getMaxIntValueFromStructure(structure, "height");
-            if (!height.has_value())
-                return TRUE;
-
-            auto frameRate = getMaxFractionValueFromStructure(structure, "framerate");
-            if (!frameRate.has_value())
-                return TRUE;
-
-            if (*width >= selector->stopCondition.width && *height >= selector->stopCondition.height
-                && *frameRate >= selector->stopCondition.frameRate) {
-                selector->maxWidth = *width;
-                selector->maxHeight = *height;
-                selector->maxFrameRate = *frameRate;
-                selector->mimeType = gst_structure_get_name(structure);
-                selector->format = nullptr;
-                if (gst_structure_has_name(structure, "video/x-raw")) {
-                    if (gst_structure_has_field(structure, "format"))
-                        selector->format = gst_structure_get_string(structure, "format");
-                    else
-                        return TRUE;
-                }
-                return FALSE;
-            }
-
-            if (*width >= selector->maxWidth && *height >= selector->maxHeight && *frameRate >= selector->maxFrameRate) {
-                selector->maxWidth = *width;
-                selector->maxHeight = *height;
-                selector->maxFrameRate = *frameRate;
-                selector->mimeType = gst_structure_get_name(structure);
-                selector->format = nullptr;
-                if (gst_structure_has_name(structure, "video/x-raw")) {
-                    if (gst_structure_has_field(structure, "format"))
-                        selector->format = gst_structure_get_string(structure, "format");
-                    else
-                        return TRUE;
-                }
-            }
-
+    // Collect all formats fitting with the requested constraints and store them in the holder aggregatedCaps.
+    gst_caps_foreach(deviceCaps.get(), reinterpret_cast<GstCapsForeachFunc>(+[](GstCapsFeatures*, GstStructure* structure, DeviceCapsProcessHolder* holder) -> gboolean {
+        auto width = getMaxIntValueFromStructure(structure, "width");
+        if (!width.has_value())
             return TRUE;
-        }), &selector);
 
-    auto caps = adoptGRef(gst_caps_new_simple(selector.mimeType, "width", G_TYPE_INT, selector.maxWidth,
-        "height", G_TYPE_INT, selector.maxHeight, nullptr));
+        auto height = getMaxIntValueFromStructure(structure, "height");
+        if (!height.has_value())
+            return TRUE;
 
-    // Workaround for https://gitlab.freedesktop.org/pipewire/pipewire/-/issues/1793.
-    if (selector.format)
-        gst_caps_set_simple(caps.get(), "format", G_TYPE_STRING, selector.format, nullptr);
+        auto frameRate = getMaxFractionValueFromStructure(structure, "framerate");
+        if (!frameRate.has_value())
+            return TRUE;
+
+        if (*width < holder->targetWidth || *height < holder->targetHeight || *frameRate < holder->targetFrameRate)
+            return TRUE;
+
+        auto mimeType = makeString(gst_structure_get_name(structure));
+        if (holder->mimeTypes.contains(mimeType))
+            return TRUE;
+
+        holder->mimeTypes.append(mimeType);
+
+        int frameRateNumerator, frameRateDenominator;
+        gst_util_double_to_fraction(*frameRate, &frameRateNumerator, &frameRateDenominator);
+        GUniquePtr<GstStructure> candidate(gst_structure_new(mimeType.ascii().data(), "width", G_TYPE_INT, *width, "height", G_TYPE_INT, *height, "framerate", GST_TYPE_FRACTION, frameRateNumerator, frameRateDenominator, nullptr));
+        // Workaround for https://gitlab.freedesktop.org/pipewire/pipewire/-/issues/1793.
+        if (gst_structure_has_name(structure, "video/x-raw")) {
+            if (gst_structure_has_field(structure, "format"))
+                gst_structure_set(candidate.get(), "format", G_TYPE_STRING, gst_structure_get_string(structure, "format"), nullptr);
+        }
+        gst_caps_append_structure(holder->aggregatedCaps.get(), candidate.release());
+        return TRUE;
+    }), holder);
+
+    auto caps = adoptGRef(gst_caps_new_empty());
+
+    // Prefer video/x-raw over other formats.
+    GST_DEBUG_OBJECT(m_pipeline.get(), "Candidates: %" GST_PTR_FORMAT, holder->aggregatedCaps.get());
+    unsigned candidatesSize = gst_caps_get_size(holder->aggregatedCaps.get());
+    for (unsigned i = 0; i < candidatesSize; i++) {
+        const auto* structure = gst_caps_get_structure(holder->aggregatedCaps.get(), i);
+        if (g_str_equal(gst_structure_get_name(structure), "video/x-raw")) {
+            gst_caps_append_structure(caps.get(), gst_structure_copy(structure));
+            break;
+        }
+    }
+
+    // Fallback to first non video/x-raw format.
+    if (gst_caps_is_empty(caps.get())) {
+        gst_caps_foreach(holder->aggregatedCaps.get(), +[](GstCapsFeatures*, GstStructure* structure, gpointer userData) -> gboolean {
+            if (g_str_equal(gst_structure_get_name(structure), "video/x-raw"))
+                return TRUE;
+
+            gst_caps_append_structure(GST_CAPS_CAST(userData), gst_structure_copy(structure));
+            return FALSE;
+        }, caps.get());
+    }
+    destroyDeviceCapsProcessHolder(holder);
 
     GST_INFO_OBJECT(m_pipeline.get(), "Setting video capture device caps to %" GST_PTR_FORMAT, caps.get());
     g_object_set(m_videoSrcMIMETypeFilter.get(), "caps", caps.get(), nullptr);
