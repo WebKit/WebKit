@@ -137,7 +137,6 @@ set(webrtc_SOURCES
     Source/third_party/abseil-cpp/absl/synchronization/internal/create_thread_identity.cc
     Source/third_party/abseil-cpp/absl/synchronization/internal/graphcycles.cc
     Source/third_party/abseil-cpp/absl/synchronization/internal/per_thread_sem.cc
-    Source/third_party/abseil-cpp/absl/synchronization/internal/waiter.cc
     Source/third_party/abseil-cpp/absl/synchronization/mutex.cc
     Source/third_party/abseil-cpp/absl/synchronization/notification.cc
     Source/third_party/abseil-cpp/absl/time/civil_time.cc
