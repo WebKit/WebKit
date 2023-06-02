@@ -174,9 +174,8 @@ WI.DOMStorageContentView = class DOMStorageContentView extends WI.ContentView
                 this._dataGrid.appendChild(node);
             }
 
-            this._sortDataGrid();
             this._dataGrid.addPlaceholderNode();
-            this._dataGrid.updateLayout();
+            this._sortDataGrid();
         }.bind(this));
     }
 
