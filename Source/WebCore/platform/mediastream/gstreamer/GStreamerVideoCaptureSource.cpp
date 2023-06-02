@@ -35,7 +35,7 @@ namespace WebCore {
 GST_DEBUG_CATEGORY(webkit_video_capture_source_debug);
 #define GST_CAT_DEFAULT webkit_video_capture_source_debug
 
-static void initializeDebugCategory()
+static void initializeVideoCaptureSourceDebugCategory()
 {
     ensureGStreamerInitialized();
 
@@ -110,7 +110,7 @@ GStreamerVideoCaptureSource::GStreamerVideoCaptureSource(String&& deviceID, Atom
     , m_capturer(makeUnique<GStreamerVideoCapturer>(sourceFactory, deviceType))
     , m_deviceType(deviceType)
 {
-    initializeDebugCategory();
+    initializeVideoCaptureSourceDebugCategory();
     m_capturer->setPipewireNodeAndFD(nodeAndFd);
     m_capturer->addObserver(*this);
 }
@@ -120,7 +120,7 @@ GStreamerVideoCaptureSource::GStreamerVideoCaptureSource(GStreamerCaptureDevice 
     , m_capturer(makeUnique<GStreamerVideoCapturer>(device))
     , m_deviceType(CaptureDevice::DeviceType::Camera)
 {
-    initializeDebugCategory();
+    initializeVideoCaptureSourceDebugCategory();
     m_capturer->addObserver(*this);
 }
 
@@ -309,6 +309,8 @@ void GStreamerVideoCaptureSource::generatePresets()
 
     setSupportedPresets(WTFMove(presets));
 }
+
+#undef GST_CAT_DEFAULT
 
 } // namespace WebCore
 

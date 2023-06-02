@@ -73,10 +73,10 @@ platform/graphics/egl/GLContextLibWPE.cpp
 
 platform/graphics/gbm/GBMBufferSwapchain.cpp
 platform/graphics/gbm/GBMDevice.cpp
-platform/graphics/gbm/GraphicsContextGLANGLELinux.cpp
-platform/graphics/gbm/GraphicsContextGLFallback.cpp
-platform/graphics/gbm/GraphicsContextGLGBM.cpp
-platform/graphics/gbm/GraphicsContextGLGBMTextureMapper.cpp
+platform/graphics/gbm/GraphicsContextGLANGLELinux.cpp @no-unify
+platform/graphics/gbm/GraphicsContextGLFallback.cpp @no-unify
+platform/graphics/gbm/GraphicsContextGLGBM.cpp @no-unify
+platform/graphics/gbm/GraphicsContextGLGBMTextureMapper.cpp @no-unify
 
 platform/graphics/libwpe/PlatformDisplayLibWPE.cpp
 

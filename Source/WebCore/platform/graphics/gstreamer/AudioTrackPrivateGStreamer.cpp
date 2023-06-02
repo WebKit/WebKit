@@ -169,6 +169,8 @@ void AudioTrackPrivateGStreamer::setEnabled(bool enabled)
         m_player->updateEnabledAudioTrack();
 }
 
+#undef GST_CAT_DEFAULT
+
 } // namespace WebCore
 
 #endif // ENABLE(VIDEO) && USE(GSTREAMER)

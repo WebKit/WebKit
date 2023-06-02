@@ -235,4 +235,6 @@ bool webKitGLVideoSinkProbePlatform()
     return isGStreamerPluginAvailable("app") && isGStreamerPluginAvailable("opengl");
 }
 
+#undef GST_CAT_DEFAULT
+
 #endif

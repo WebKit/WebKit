@@ -195,4 +195,6 @@ void webKitDMABufVideoSinkSetMediaPlayerPrivate(WebKitDMABufVideoSink* sink, Med
     webKitVideoSinkSetMediaPlayerPrivate(priv->appSink.get(), priv->mediaPlayerPrivate);
 }
 
+#undef GST_CAT_DEFAULT
+
 #endif // ENABLE(VIDEO)

@@ -90,6 +90,8 @@ void MediaSourceTrackGStreamer::remove()
     m_isRemoved = true;
 }
 
-}
+#undef GST_CAT_DEFAULT
 
-#endif
+} // namespace WebCore
+
+#endif // ENABLE(MEDIA_SOURCE) && USE(GSTREAMER)

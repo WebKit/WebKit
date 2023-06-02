@@ -222,5 +222,8 @@ WTFLogChannel& MediaSourcePrivateGStreamer::logChannel() const
 
 #endif
 
-}
-#endif
+#undef GST_CAT_DEFAULT
+
+} // namespace WebCore
+
+#endif // ENABLE(MEDIA_SOURCE) && USE(GSTREAMER)

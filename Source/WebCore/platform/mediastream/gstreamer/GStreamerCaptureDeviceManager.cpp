@@ -196,6 +196,8 @@ void GStreamerCaptureDeviceManager::refreshCaptureDevices()
     }
 }
 
+#undef GST_CAT_DEFAULT
+
 } // namespace WebCore
 
 #endif // ENABLE(MEDIA_STREAM) && USE(GSTREAMER)

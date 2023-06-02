@@ -1091,5 +1091,8 @@ Vector<RTCRtpCapabilities::HeaderExtensionCapability> GStreamerRegistryScanner::
 
 #endif // USE(GSTREAMER_WEBRTC)
 
-}
-#endif
+#undef GST_CAT_DEFAULT
+
+} // namespace WebCore
+
+#endif // USE(GSTREAMER)

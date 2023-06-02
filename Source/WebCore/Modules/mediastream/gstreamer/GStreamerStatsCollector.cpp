@@ -472,6 +472,8 @@ void GStreamerStatsCollector::getStats(CollectorCallback&& callback, GstPad* pad
     }, holder, reinterpret_cast<GDestroyNotify>(destroyCallbackHolder)));
 }
 
-}; // namespace WebCore
+#undef GST_CAT_DEFAULT
+
+} // namespace WebCore
 
 #endif // ENABLE(WEB_RTC) && USE(GSTREAMER_WEBRTC)

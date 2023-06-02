@@ -401,6 +401,8 @@ bool MediaPlayerPrivateGStreamerMSE::currentMediaTimeMayProgress() const
     return m_mediaSourcePrivate->hasFutureTime(currentMediaTime(), durationMediaTime(), buffered());
 }
 
+#undef GST_CAT_DEFAULT
+
 } // namespace WebCore.
 
 #endif // USE(GSTREAMER)

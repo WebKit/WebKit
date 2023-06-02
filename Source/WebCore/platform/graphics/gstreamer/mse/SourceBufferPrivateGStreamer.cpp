@@ -380,5 +380,8 @@ size_t SourceBufferPrivateGStreamer::platformMaximumBufferSize() const
     return 0;
 }
 
-}
-#endif
+#undef GST_CAT_DEFAULT
+
+} // namespace WebCore
+
+#endif // ENABLE(MEDIA_SOURCE) && USE(GSTREAMER)

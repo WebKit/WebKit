@@ -30,7 +30,7 @@ GST_DEBUG_CATEGORY(webkit_video_capturer_debug);
 
 namespace WebCore {
 
-static void initializeDebugCategory()
+static void initializeVideoCapturerDebugCategory()
 {
     ensureGStreamerInitialized();
 
@@ -43,13 +43,13 @@ static void initializeDebugCategory()
 GStreamerVideoCapturer::GStreamerVideoCapturer(GStreamerCaptureDevice device)
     : GStreamerCapturer(device, adoptGRef(gst_caps_new_empty_simple("video/x-raw")))
 {
-    initializeDebugCategory();
+    initializeVideoCapturerDebugCategory();
 }
 
 GStreamerVideoCapturer::GStreamerVideoCapturer(const char* sourceFactory, CaptureDevice::DeviceType deviceType)
     : GStreamerCapturer(sourceFactory, adoptGRef(gst_caps_new_empty_simple("video/x-raw")), deviceType)
 {
-    initializeDebugCategory();
+    initializeVideoCapturerDebugCategory();
 }
 
 GstElement* GStreamerVideoCapturer::createSource()
@@ -358,6 +358,8 @@ void GStreamerVideoCapturer::reconfigure()
     GST_INFO_OBJECT(m_pipeline.get(), "Setting video capture device caps to %" GST_PTR_FORMAT, caps.get());
     g_object_set(m_videoSrcMIMETypeFilter.get(), "caps", caps.get(), nullptr);
 }
+
+#undef GST_CAT_DEFAULT
 
 } // namespace WebCore
 

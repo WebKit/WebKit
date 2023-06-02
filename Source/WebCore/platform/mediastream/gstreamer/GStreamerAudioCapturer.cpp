@@ -40,7 +40,7 @@ static constexpr size_t s_audioCaptureSampleRate = 48000;
 GST_DEBUG_CATEGORY(webkit_audio_capturer_debug);
 #define GST_CAT_DEFAULT webkit_audio_capturer_debug
 
-static void initializeDebugCategory()
+static void initializeAudioCapturerDebugCategory()
 {
     static std::once_flag debugRegisteredFlag;
     std::call_once(debugRegisteredFlag, [] {
@@ -51,13 +51,13 @@ static void initializeDebugCategory()
 GStreamerAudioCapturer::GStreamerAudioCapturer(GStreamerCaptureDevice device)
     : GStreamerCapturer(device, adoptGRef(gst_caps_new_simple("audio/x-raw", "rate", G_TYPE_INT, s_audioCaptureSampleRate, nullptr)))
 {
-    initializeDebugCategory();
+    initializeAudioCapturerDebugCategory();
 }
 
 GStreamerAudioCapturer::GStreamerAudioCapturer()
     : GStreamerCapturer("appsrc", adoptGRef(gst_caps_new_simple("audio/x-raw", "rate", G_TYPE_INT, s_audioCaptureSampleRate, nullptr)), CaptureDevice::DeviceType::Microphone)
 {
-    initializeDebugCategory();
+    initializeAudioCapturerDebugCategory();
 }
 
 GstElement* GStreamerAudioCapturer::createConverter()
@@ -100,6 +100,8 @@ bool GStreamerAudioCapturer::setSampleRate(int sampleRate)
     g_object_set(m_capsfilter.get(), "caps", m_caps.get(), nullptr);
     return true;
 }
+
+#undef GST_CAT_DEFAULT
 
 } // namespace WebCore
 

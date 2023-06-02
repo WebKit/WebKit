@@ -1613,4 +1613,6 @@ struct LogArgument<WebCore::RTCStatsLogger> {
 }; // namespace WTF
 #endif // !RELEASE_LOG_DISABLED
 
+#undef GST_CAT_DEFAULT
+
 #endif // USE(GSTREAMER_WEBRTC)

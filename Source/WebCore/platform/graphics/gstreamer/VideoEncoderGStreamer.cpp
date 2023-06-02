@@ -41,7 +41,7 @@ namespace WebCore {
 GST_DEBUG_CATEGORY(webkit_video_encoder_debug);
 #define GST_CAT_DEFAULT webkit_video_encoder_debug
 
-static WorkQueue& gstWorkQueue()
+static WorkQueue& gstEncoderWorkQueue()
 {
     static NeverDestroyed<Ref<WorkQueue>> queue(WorkQueue::create("GStreamer VideoEncoder Queue"));
     return queue.get();
@@ -86,7 +86,7 @@ void GStreamerVideoEncoder::create(const String& codecName, const VideoEncoder::
     registerWebKitGStreamerVideoEncoder();
     auto& scanner = GStreamerRegistryScanner::singleton();
     if (!scanner.isCodecSupported(GStreamerRegistryScanner::Configuration::Encoding, codecName)) {
-        gstWorkQueue().dispatch([callback = WTFMove(callback), codecName]() mutable {
+        gstEncoderWorkQueue().dispatch([callback = WTFMove(callback), codecName]() mutable {
             callback(makeUnexpected(makeString("No GStreamer encoder found for codec ", codecName)));
         });
         return;
@@ -94,7 +94,7 @@ void GStreamerVideoEncoder::create(const String& codecName, const VideoEncoder::
 
     auto encoder = makeUniqueRef<GStreamerVideoEncoder>(codecName, WTFMove(outputCallback), WTFMove(postTaskCallback));
     auto error = encoder->initialize(config);
-    gstWorkQueue().dispatch([callback = WTFMove(callback), descriptionCallback = WTFMove(descriptionCallback), encoder = WTFMove(encoder), error]() mutable {
+    gstEncoderWorkQueue().dispatch([callback = WTFMove(callback), descriptionCallback = WTFMove(descriptionCallback), encoder = WTFMove(encoder), error]() mutable {
         auto internalEncoder = encoder->m_internalEncoder;
         internalEncoder->postTask([callback = WTFMove(callback), descriptionCallback = WTFMove(descriptionCallback), encoder = WTFMove(encoder), error]() mutable {
             if (!error.isEmpty()) {
@@ -132,7 +132,7 @@ String GStreamerVideoEncoder::initialize(const VideoEncoder::Config& config)
 
 void GStreamerVideoEncoder::encode(RawFrame&& frame, bool shouldGenerateKeyFrame, EncodeCallback&& callback)
 {
-    gstWorkQueue().dispatch([frame = WTFMove(frame), shouldGenerateKeyFrame, encoder = m_internalEncoder, callback = WTFMove(callback)]() mutable {
+    gstEncoderWorkQueue().dispatch([frame = WTFMove(frame), shouldGenerateKeyFrame, encoder = m_internalEncoder, callback = WTFMove(callback)]() mutable {
         auto result = encoder->encode(WTFMove(frame), shouldGenerateKeyFrame, WTFMove(callback));
         if (encoder->isClosed())
             return;
@@ -148,7 +148,7 @@ void GStreamerVideoEncoder::encode(RawFrame&& frame, bool shouldGenerateKeyFrame
 
 void GStreamerVideoEncoder::flush(Function<void()>&& callback)
 {
-    gstWorkQueue().dispatch([encoder = m_internalEncoder, callback = WTFMove(callback)]() mutable {
+    gstEncoderWorkQueue().dispatch([encoder = m_internalEncoder, callback = WTFMove(callback)]() mutable {
         encoder->flush(WTFMove(callback));
     });
 }
@@ -305,6 +305,8 @@ void GStreamerInternalVideoEncoder::flush(Function<void()> && callback)
     m_postTaskCallback(WTFMove(callback));
 }
 
-}
+#undef GST_CAT_DEFAULT
+
+} // namespace WebCore
 
 #endif // ENABLE(WEB_CODECS) && USE(GSTREAMER)

@@ -334,4 +334,6 @@ GstElement* webkitAudioSinkNew()
     return sink;
 }
 
+#undef GST_CAT_DEFAULT
+
 #endif // USE(GSTREAMER)

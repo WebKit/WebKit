@@ -1019,6 +1019,8 @@ bool gstObjectHasProperty(GstPad* pad, const char* name)
     return gstObjectHasProperty(GST_OBJECT_CAST(pad), name);
 }
 
+#undef GST_CAT_DEFAULT
+
 } // namespace WebCore
 
 #undef IS_GST_FULL_1_18

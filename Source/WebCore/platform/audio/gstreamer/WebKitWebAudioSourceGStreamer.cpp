@@ -475,4 +475,6 @@ void webkitWebAudioSourceSetDispatchToRenderThreadFunction(WebKitWebAudioSrc* sr
     src->priv->dispatchToRenderThreadFunction = WTFMove(function);
 }
 
+#undef GST_CAT_DEFAULT
+
 #endif // ENABLE(WEB_AUDIO) && USE(GSTREAMER)

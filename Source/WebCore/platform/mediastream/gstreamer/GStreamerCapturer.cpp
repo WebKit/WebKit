@@ -38,7 +38,7 @@ GST_DEBUG_CATEGORY(webkit_capturer_debug);
 
 namespace WebCore {
 
-static void initializeDebugCategory()
+static void initializeCapturerDebugCategory()
 {
     ensureGStreamerInitialized();
 
@@ -54,7 +54,7 @@ GStreamerCapturer::GStreamerCapturer(GStreamerCaptureDevice device, GRefPtr<GstC
     , m_sourceFactory(nullptr)
     , m_deviceType(device.type())
 {
-    initializeDebugCategory();
+    initializeCapturerDebugCategory();
 }
 
 GStreamerCapturer::GStreamerCapturer(const char* sourceFactory, GRefPtr<GstCaps> caps, CaptureDevice::DeviceType deviceType)
@@ -63,7 +63,7 @@ GStreamerCapturer::GStreamerCapturer(const char* sourceFactory, GRefPtr<GstCaps>
     , m_sourceFactory(sourceFactory)
     , m_deviceType(deviceType)
 {
-    initializeDebugCategory();
+    initializeCapturerDebugCategory();
 }
 
 GStreamerCapturer::~GStreamerCapturer()
@@ -217,6 +217,8 @@ void GStreamerCapturer::setInterrupted(bool isInterrupted)
 {
     g_object_set(m_valve.get(), "drop", isInterrupted, nullptr);
 }
+
+#undef GST_CAT_DEFAULT
 
 } // namespace WebCore
 

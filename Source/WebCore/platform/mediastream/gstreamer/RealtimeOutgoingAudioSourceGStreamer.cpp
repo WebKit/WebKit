@@ -195,6 +195,8 @@ void RealtimeOutgoingAudioSourceGStreamer::linkOutgoingSource()
     g_object_set(m_inputSelector.get(), "active-pad", sinkPad.get(), nullptr);
 }
 
+#undef GST_CAT_DEFAULT
+
 } // namespace WebCore
 
 #endif // USE(GSTREAMER_WEBRTC)

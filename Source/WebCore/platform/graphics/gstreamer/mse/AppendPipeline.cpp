@@ -1130,6 +1130,8 @@ static GstPadProbeReturn matroskademuxForceSegmentStartToEqualZero(GstPad*, GstP
     return GST_PAD_PROBE_OK;
 }
 
+#undef GST_CAT_DEFAULT
+
 } // namespace WebCore.
 
-#endif // USE(GSTREAMER)
+#endif // ENABLE(VIDEO) && USE(GSTREAMER) && ENABLE(MEDIA_SOURCE)

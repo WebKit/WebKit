@@ -515,4 +515,6 @@ static void setContext(GstElement* element, GstContext* context)
     GST_ELEMENT_CLASS(parent_class)->set_context(element, context);
 }
 
+#undef GST_CAT_DEFAULT
+
 #endif // ENABLE(ENCRYPTED_MEDIA) && USE(GSTREAMER)

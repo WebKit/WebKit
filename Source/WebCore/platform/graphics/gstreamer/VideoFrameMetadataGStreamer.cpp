@@ -176,4 +176,6 @@ VideoFrameMetadata webkitGstBufferGetVideoFrameMetadata(GstBuffer* buffer)
     return videoFrameMetadata;
 }
 
+#undef GST_CAT_DEFAULT
+
 #endif

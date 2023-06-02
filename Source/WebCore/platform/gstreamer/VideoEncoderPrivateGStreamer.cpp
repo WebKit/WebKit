@@ -767,5 +767,6 @@ static void webkit_video_encoder_class_init(WebKitVideoEncoderClass* klass)
 }
 
 #undef NUMBER_OF_THREADS
+#undef GST_CAT_DEFAULT
 
 #endif // ENABLE(VIDEO) && USE(GSTREAMER)

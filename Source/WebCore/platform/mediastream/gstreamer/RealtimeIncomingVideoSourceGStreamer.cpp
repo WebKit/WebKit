@@ -117,6 +117,8 @@ const GstStructure* RealtimeIncomingVideoSourceGStreamer::stats()
     return m_stats.get();
 }
 
+#undef GST_CAT_DEFAULT
+
 } // namespace WebCore
 
 #endif // USE(GSTREAMER_WEBRTC)

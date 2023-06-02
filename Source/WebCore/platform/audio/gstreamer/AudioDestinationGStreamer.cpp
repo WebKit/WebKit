@@ -42,7 +42,7 @@ namespace WebCore {
 GST_DEBUG_CATEGORY(webkit_audio_destination_debug);
 #define GST_CAT_DEFAULT webkit_audio_destination_debug
 
-static void initializeDebugCategory()
+static void initializeAudioDestinationDebugCategory()
 {
     ensureGStreamerInitialized();
     registerWebKitGStreamerElements();
@@ -55,7 +55,7 @@ static void initializeDebugCategory()
 
 static unsigned long maximumNumberOfOutputChannels()
 {
-    initializeDebugCategory();
+    initializeAudioDestinationDebugCategory();
 
     static int count = 0;
     static std::once_flag onceFlag;
@@ -90,7 +90,7 @@ static unsigned long maximumNumberOfOutputChannels()
 
 Ref<AudioDestination> AudioDestination::create(AudioIOCallback& callback, const String&, unsigned numberOfInputChannels, unsigned numberOfOutputChannels, float sampleRate)
 {
-    initializeDebugCategory();
+    initializeAudioDestinationDebugCategory();
     // FIXME: make use of inputDeviceId as appropriate.
 
     // FIXME: Add support for local/live audio input.
@@ -292,6 +292,8 @@ void AudioDestinationGStreamer::notifyIsPlaying(bool isPlaying)
     if (m_callback)
         m_callback->isPlayingDidChange();
 }
+
+#undef GST_CAT_DEFAULT
 
 } // namespace WebCore
 

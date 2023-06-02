@@ -139,14 +139,6 @@ using namespace std;
 static const FloatSize s_holePunchDefaultFrameSize(1280, 720);
 #endif
 
-static void initializeDebugCategory()
-{
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [] {
-        GST_DEBUG_CATEGORY_INIT(webkit_media_player_debug, "webkitmediaplayer", 0, "WebKit media player");
-    });
-}
-
 MediaPlayerPrivateGStreamer::MediaPlayerPrivateGStreamer(MediaPlayer* player)
     : m_notifier(MainThreadNotifier<MainThreadNotification>::create())
     , m_player(player)
@@ -289,7 +281,10 @@ private:
 
 void MediaPlayerPrivateGStreamer::registerMediaEngine(MediaEngineRegistrar registrar)
 {
-    initializeDebugCategory();
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+        GST_DEBUG_CATEGORY_INIT(webkit_media_player_debug, "webkitmediaplayer", 0, "WebKit media player");
+    });
     registrar(makeUnique<MediaPlayerFactoryGStreamer>());
 }
 
@@ -4384,6 +4379,8 @@ String MediaPlayerPrivateGStreamer::codecForStreamId(const String& streamId)
     return m_codecs.get(streamId);
 }
 
-}
+#undef GST_CAT_DEFAULT
 
-#endif // USE(GSTREAMER)
+} // namespace WebCore
+
+#endif //  ENABLE(VIDEO) && USE(GSTREAMER)

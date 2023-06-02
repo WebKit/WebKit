@@ -1200,4 +1200,6 @@ bool webKitSrcIsCrossOrigin(WebKitWebSrc* src, const SecurityOrigin& origin)
     return false;
 }
 
+#undef GST_CAT_DEFAULT
+
 #endif // ENABLE(VIDEO) && USE(GSTREAMER)

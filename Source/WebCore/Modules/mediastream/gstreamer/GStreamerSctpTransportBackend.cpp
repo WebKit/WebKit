@@ -100,6 +100,8 @@ void GStreamerSctpTransportBackend::stateChanged()
     });
 }
 
+#undef GST_CAT_DEFAULT
+
 } // namespace WebCore
 
 #endif // ENABLE(WEB_RTC) && USE(GSTREAMER_WEBRTC)

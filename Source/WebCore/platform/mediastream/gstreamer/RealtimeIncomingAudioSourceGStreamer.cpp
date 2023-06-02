@@ -61,6 +61,8 @@ void RealtimeIncomingAudioSourceGStreamer::dispatchSample(GRefPtr<GstSample>&& s
     audioSamplesAvailable(presentationTime, frames, description, 0);
 }
 
-}
+#undef GST_CAT_DEFAULT
+
+} // namespace WebCore
 
 #endif // USE(GSTREAMER_WEBRTC)

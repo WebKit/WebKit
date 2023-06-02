@@ -270,4 +270,6 @@ void webKitFliteSrcSetUtterance(WebKitFliteSrc* src, const PlatformSpeechSynthes
     priv->text = text;
 }
 
+#undef GST_CAT_DEFAULT
+
 #endif // ENABLE(SPEECH_SYNTHESIS) && USE(GSTREAMER)

@@ -333,4 +333,6 @@ static void webkit_app_sink_with_workarounds_class_init(WebKitAppSinkWithWorkaro
     gobjectClass->constructed = webkitAppSinkWithWorkAroundsConstructed;
 }
 
+#undef GST_CAT_DEFAULT
+
 #endif // USE(GSTREAMER)

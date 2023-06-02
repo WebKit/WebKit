@@ -240,6 +240,8 @@ void RealtimeOutgoingMediaSourceGStreamer::setSinkPad(GRefPtr<GstPad>&& pad)
     g_object_get(m_transceiver.get(), "sender", &m_sender.outPtr(), nullptr);
 }
 
+#undef GST_CAT_DEFAULT
+
 } // namespace WebCore
 
 #endif // USE(GSTREAMER_WEBRTC)

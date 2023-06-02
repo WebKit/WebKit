@@ -47,7 +47,7 @@ GST_DEBUG_CATEGORY(webkit_video_frame_debug);
 
 namespace WebCore {
 
-static void ensureDebugCategoryInitialized()
+static void ensureVideoFrameDebugCategoryInitialized()
 {
     static std::once_flag debugRegisteredFlag;
     std::call_once(debugRegisteredFlag, [] {
@@ -73,7 +73,7 @@ private:
 
 GstSampleColorConverter& GstSampleColorConverter::singleton()
 {
-    ensureDebugCategoryInitialized();
+    ensureVideoFrameDebugCategoryInitialized();
     static NeverDestroyed<GstSampleColorConverter> sharedInstance;
     return sharedInstance;
 }
@@ -366,7 +366,7 @@ VideoFrameGStreamer::VideoFrameGStreamer(GRefPtr<GstSample>&& sample, const Floa
     , m_sample(WTFMove(sample))
     , m_presentationSize(presentationSize)
 {
-    ensureDebugCategoryInitialized();
+    ensureVideoFrameDebugCategoryInitialized();
     ASSERT(m_sample);
     GstBuffer* buffer = gst_sample_get_buffer(m_sample.get());
     RELEASE_ASSERT(buffer);
@@ -380,7 +380,7 @@ VideoFrameGStreamer::VideoFrameGStreamer(const GRefPtr<GstSample>& sample, const
     , m_sample(sample)
     , m_presentationSize(presentationSize)
 {
-    ensureDebugCategoryInitialized();
+    ensureVideoFrameDebugCategoryInitialized();
 }
 
 static void copyPlane(uint8_t* destination, const uint8_t* source, uint64_t sourceStride, const ComputedPlaneLayout& spanPlaneLayout)
@@ -549,6 +549,8 @@ RefPtr<ImageGStreamer> VideoFrameGStreamer::convertToImage()
 {
     return GstSampleColorConverter::singleton().convertSampleToImage(m_sample);
 }
+
+#undef GST_CAT_DEFAULT
 
 } // namespace WebCore
 

@@ -226,4 +226,6 @@ GstElement* webkitTextCombinerNew()
     return GST_ELEMENT(g_object_new(WEBKIT_TYPE_TEXT_COMBINER, nullptr));
 }
 
+#undef GST_CAT_DEFAULT
+
 #endif // ENABLE(VIDEO) && USE(GSTREAMER)

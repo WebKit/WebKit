@@ -1025,4 +1025,6 @@ GstElement* webkitMediaStreamSrcNew()
     return GST_ELEMENT_CAST(g_object_new(webkit_media_stream_src_get_type(), nullptr));
 }
 
+#undef GST_CAT_DEFAULT
+
 #endif // ENABLE(VIDEO) && ENABLE(MEDIA_STREAM) && USE(GSTREAMER)
