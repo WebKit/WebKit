@@ -292,6 +292,10 @@ std::optional<InteractionRegion> interactionRegionForRenderedRegion(RenderObject
             bounds.move(IntSize(borderBoxRect.location() - contentBoxRect.location()));
             bounds.expand(IntSize(borderBoxRect.size() - contentBoxRect.size()));
         }
+
+        const auto& marginBox = renderBox->marginBox();
+        bounds.move(-marginBox.left(), -marginBox.top());
+        bounds.expand(marginBox.left() + marginBox.right(), marginBox.top() + marginBox.bottom());
     }
 
     if (!regionRenderer.hasVisibleBoxDecorations() && !renderer.hasVisibleBoxDecorations()) {
