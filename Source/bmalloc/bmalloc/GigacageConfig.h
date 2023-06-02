@@ -44,7 +44,7 @@ extern "C" Slot g_config[];
 namespace Gigacage {
 
 struct Config {
-    void* basePtr(Kind kind) const
+    BINLINE BPURE_FUNCTION void* basePtr(Kind kind) const
     {
         RELEASE_BASSERT(kind < NumberOfKinds);
         return basePtrs[kind];

@@ -74,7 +74,7 @@ constexpr bool hasCapacityToUseLargeGigacage = BOS_EFFECTIVE_ADDRESS_WIDTH > 36;
 constexpr size_t primitiveGigacageSize = (hasCapacityToUseLargeGigacage ? 32 : 2) * bmalloc::Sizes::GB;
 constexpr size_t jsValueGigacageSize = (hasCapacityToUseLargeGigacage ? 16 : 2) * bmalloc::Sizes::GB;
 #if BENABLE(SMALL_HEAP)
-constexpr size_t smallHeapGigacageSize = (hasCapacityToUseLargeGigacage ? 64 : 0) * bmalloc::Sizes::GB;
+constexpr size_t smallHeapGigacageSize = 4 * bmalloc::Sizes::GB;
 #endif
 constexpr size_t maximumCageSizeReductionForSlide = hasCapacityToUseLargeGigacage ? 4 * bmalloc::Sizes::GB : bmalloc::Sizes::GB / 4;
 
@@ -95,9 +95,6 @@ static_assert(!hasCapacityToUseLargeGigacage || bmalloc::isPowerOfTwo(smallHeapG
 #endif
 static_assert(primitiveGigacageSize > maximumCageSizeReductionForSlide);
 static_assert(jsValueGigacageSize > maximumCageSizeReductionForSlide);
-#if BENABLE(SMALL_HEAP)
-static_assert(smallHeapGigacageSize > maximumCageSizeReductionForSlide);
-#endif
 
 constexpr size_t gigacageSizeToMask(size_t size) { return size - 1; }
 
@@ -237,7 +234,7 @@ BEXPORT bool shouldBeEnabled();
 #if BENABLE(SMALL_HEAP)
 struct SmallHeapAllocatorInfo {
     constexpr static uint64_t heapAddressMask = smallHeapGigacageMask;
-    static inline uintptr_t baseAddress() { return reinterpret_cast<uintptr_t>(allocBase(SmallHeap)); }
+    BINLINE BPURE_FUNCTION static uintptr_t baseAddress() { return reinterpret_cast<uintptr_t>(g_gigacageConfig.basePtr(SmallHeap)); }
 };
 #endif
 

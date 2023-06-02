@@ -270,7 +270,6 @@ protected:
     bool isSubstring() const;
 
 #if USE(JSVALUE64)
-    // Note: note atomic on 32-bit.
     struct AtomicFiberData {
         uint32_t lengthAndFlag = 0;
         CompactPtr<JSString> fiber = nullptr; // This is either a JSRopeString or a StringImpl
@@ -279,8 +278,8 @@ protected:
         static_assert(std::is_same_v<JSString::AllocatorInfo, StringImpl::AllocatorInfo>);
 #endif
 
-        uint32_t length() { return lengthAndFlag & (~isRopeInPointer); };
-        void setLength(uint32_t length)
+        ALWAYS_INLINE uint32_t length() { return lengthAndFlag & (~isRopeInPointer); };
+        ALWAYS_INLINE void setLength(uint32_t length)
         {
             ASSERT(reinterpret_cast<void*>(JSString::CompactPtrTypeTraits::decode(0x1234)) 
                 == reinterpret_cast<void*>(StringImpl::CompactPtrTypeTraits::decode(0x1234)));
@@ -291,23 +290,23 @@ protected:
         };
 
         template<typename T>
-        inline T* fiberAs() { return reinterpret_cast<T*>(fiber.get()); }
+        ALWAYS_INLINE T* fiberAs() { return reinterpret_cast<T*>(fiber.get()); }
 
         template<typename T>
-        inline void setFiber(T* f)
+        ALWAYS_INLINE void setFiber(T* f)
         {
             ASSERT(reinterpret_cast<void*>(JSString::CompactPtrTypeTraits::decode(0x1234)) 
                 == reinterpret_cast<void*>(StringImpl::CompactPtrTypeTraits::decode(0x1234)));
             fiber = reinterpret_cast<JSString*>(f);
         }
 
-        bool isRope() const { return lengthAndFlag & isRopeInPointer; }
-        void setIsRope() { lengthAndFlag |= isRopeInPointer; }
-        void unsetIsRope() { lengthAndFlag &= ~isRopeInPointer; }
+        ALWAYS_INLINE bool isRope() const { return lengthAndFlag & isRopeInPointer; }
+        ALWAYS_INLINE void setIsRope() { lengthAndFlag |= isRopeInPointer; }
+        ALWAYS_INLINE void unsetIsRope() { lengthAndFlag &= ~isRopeInPointer; }
     };
     static_assert(sizeof(AtomicFiberData) == sizeof(uint64_t));
 
-    AtomicFiberData fiberConcurrently() const
+    ALWAYS_INLINE AtomicFiberData fiberConcurrently() const
     {
         AtomicFiberData result;
         uint64_t data = m_fiberAndLength;
@@ -316,7 +315,7 @@ protected:
         return result;
     }
 
-    void setFiberConcurrently(AtomicFiberData data)
+    ALWAYS_INLINE void setFiberConcurrently(AtomicFiberData data)
     {
         m_fiberAndLength = (static_cast<uint64_t>(data.fiber.storage()) << 32) | static_cast<uint64_t>(data.lengthAndFlag);
     }
