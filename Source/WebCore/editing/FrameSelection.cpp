@@ -1882,7 +1882,7 @@ void CaretBase::invalidateCaretRect(Node* node, bool caretRectChanged, CaretAnim
 void FrameSelection::paintCaret(GraphicsContext& context, const LayoutPoint& paintOffset)
 {
     if (m_selection.isCaret() && m_selection.start().deprecatedNode())
-        CaretBase::paintCaret(*m_selection.start().deprecatedNode(), context, paintOffset, m_caretAnimator.ptr());
+        CaretBase::paintCaret(*m_selection.start().deprecatedNode(), context, paintOffset, m_caretAnimator.ptr(), this->selection());
 }
 
 Color CaretBase::computeCaretColor(const RenderStyle& elementStyle, const Node* node)
@@ -1908,7 +1908,7 @@ Color CaretBase::computeCaretColor(const RenderStyle& elementStyle, const Node* 
 #endif
 }
 
-void CaretBase::paintCaret(const Node& node, GraphicsContext& context, const LayoutPoint& paintOffset, CaretAnimator* caretAnimator) const
+void CaretBase::paintCaret(const Node& node, GraphicsContext& context, const LayoutPoint& paintOffset, CaretAnimator* caretAnimator, const std::optional<VisibleSelection>& selection) const
 {
 #if ENABLE(TEXT_CARET)
     auto caretPresentationProperties = caretAnimator ? caretAnimator->presentationProperties() : CaretAnimator::PresentationProperties();
@@ -1929,7 +1929,7 @@ void CaretBase::paintCaret(const Node& node, GraphicsContext& context, const Lay
 
     auto pixelSnappedCaretRect = snapRectToDevicePixels(caret, node.document().deviceScaleFactor());
     if (caretAnimator)
-        caretAnimator->paint(node, context, pixelSnappedCaretRect, caretColor, paintOffset);
+        caretAnimator->paint(node, context, pixelSnappedCaretRect, caretColor, paintOffset, selection);
     else
         context.fillRect(pixelSnappedCaretRect, caretColor);
 #else
@@ -1937,6 +1937,7 @@ void CaretBase::paintCaret(const Node& node, GraphicsContext& context, const Lay
     UNUSED_PARAM(context);
     UNUSED_PARAM(paintOffset);
     UNUSED_PARAM(caretAnimator);
+    UNUSED_PARAM(selection);
 #endif
 }
 
@@ -2368,7 +2369,7 @@ void DragCaretController::paintDragCaret(LocalFrame* frame, GraphicsContext& p, 
 {
 #if ENABLE(TEXT_CARET)
     if (m_position.deepEquivalent().deprecatedNode() && m_position.deepEquivalent().deprecatedNode()->document().frame() == frame)
-        paintCaret(*m_position.deepEquivalent().deprecatedNode(), p, paintOffset);
+        paintCaret(*m_position.deepEquivalent().deprecatedNode(), p, paintOffset, nullptr, std::nullopt);
 #else
     UNUSED_PARAM(frame);
     UNUSED_PARAM(p);

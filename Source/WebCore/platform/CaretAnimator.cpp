@@ -61,7 +61,7 @@ void CaretAnimator::scheduleAnimation()
         page->scheduleRenderingUpdate(RenderingUpdateStep::CaretAnimation);
 }
 
-void CaretAnimator::paint(const Node&, GraphicsContext& context, const FloatRect& caret, const Color& color, const LayoutPoint&) const
+void CaretAnimator::paint(const Node&, GraphicsContext& context, const FloatRect& caret, const Color& color, const LayoutPoint&, const std::optional<VisibleSelection>&) const
 {
     context.fillRect(caret, color);
 }

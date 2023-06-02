@@ -38,6 +38,7 @@ class FloatRect;
 class GraphicsContext;
 class Node;
 class Page;
+class VisibleSelection;
 
 enum class CaretAnimatorType : uint8_t {
     Default,
@@ -89,7 +90,7 @@ public:
     virtual void setVisible(bool) = 0;
 
     PresentationProperties presentationProperties() const { return m_presentationProperties; }
-    virtual void paint(const Node&, GraphicsContext&, const FloatRect&, const Color&, const LayoutPoint&) const;
+    virtual void paint(const Node&, GraphicsContext&, const FloatRect&, const Color&, const LayoutPoint&, const std::optional<VisibleSelection>&) const;
     virtual LayoutRect caretRepaintRectForLocalRect(LayoutRect) const;
 
 protected:

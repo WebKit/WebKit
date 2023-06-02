@@ -67,7 +67,7 @@ protected:
     void clearCaretRect();
     bool updateCaretRect(Document&, const VisiblePosition& caretPosition);
     bool shouldRepaintCaret(const RenderView*, bool isContentEditable) const;
-    void paintCaret(const Node&, GraphicsContext&, const LayoutPoint&, CaretAnimator* = nullptr) const;
+    void paintCaret(const Node&, GraphicsContext&, const LayoutPoint&, CaretAnimator*, const std::optional<VisibleSelection>&) const;
 
     const LayoutRect& localCaretRectWithoutUpdate() const { return m_caretLocalRect; }
 
