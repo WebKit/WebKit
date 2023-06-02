@@ -1019,6 +1019,9 @@ http/tests/websocket/tests/hybi/inspector/binary.html [ Pass Failure ]
 http/tests/websocket/tests/hybi/inspector/send-and-receive.html [ Pass Failure ]
 http/tests/websocket/tests/hybi/send-object-tostring-check.html [ Pass Failure ]
 
+http/tests/websocket/tests/hybi/websocket-blocked-sending-cookie-as-third-party-after-ws-redirect.html [ Failure ]
+http/tests/websocket/tests/hybi/websocket-blocked-sending-cookie-as-third-party.html [ Failure ]
+
 # Needs curl download support
 http/tests/workers/service/service-worker-download-async-delegates.https.html [ Failure Timeout ]
 http/tests/workers/service/service-worker-download.https.html [ Failure Timeout ]
@@ -2815,3 +2818,14 @@ webkit.org/b/177687 http/tests/inspector/network/resource-sizes-memory-cache.htm
 
 webkit.org/b/157592 fast/images/composited-animated-gif-outside-viewport.html [ Pass Timeout ]
 webkit.org/b/230504 css3/masking/reference-clip-path-animate-transform-repaint.html [ Pass Failure ]
+
+fast/css/caret-color-fallback-to-color.html [ ImageOnlyFailure ]
+fast/css/caret-color-inherit.html [ ImageOnlyFailure ]
+fast/css/caret-color-span-inside-editable-parent.html [ ImageOnlyFailure ]
+fast/css/caret-color.html [ ImageOnlyFailure ]
+
+# ImageOnlyFailure only on Buildbot
+fast/forms/placeholder-with-positioned-element.html [ ImageOnlyFailure Pass ]
+fast/forms/input-placeholder-text-indent.html [ ImageOnlyFailure Pass ]
+
+fast/forms/placeholder-content-clipping-padding-box.html [ ImageOnlyFailure ]
