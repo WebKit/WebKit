@@ -437,9 +437,8 @@ void AcceleratedBackingStoreDMABuf::ensureGLContext()
     if (!m_gdkGLContext)
         g_error("GDK is not able to create a GL context: %s.", error->message);
 
-#if USE(OPENGL_ES)
-    gdk_gl_context_set_use_es(m_gdkGLContext.get(), TRUE);
-#endif
+    if (WebCore::PlatformDisplay::glAPI() == WebCore::PlatformDisplay::OpenGLAPI::OpenGLES)
+        gdk_gl_context_set_use_es(m_gdkGLContext.get(), TRUE);
 
     if (!gdk_gl_context_realize(m_gdkGLContext.get(), &error.outPtr()))
         g_error("GDK failed to realize the GL context: %s.", error->message);

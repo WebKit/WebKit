@@ -128,8 +128,8 @@ TextureMapperGLData::~TextureMapperGLData()
     for (auto& entry : m_vbos)
         glDeleteBuffers(1, &entry.value);
 
-#if !USE(OPENGL_ES)
-    if (GLContext::current()->version() >= 320 && m_vao)
+#if USE(OPENGL)
+    if (PlatformDisplay::glAPI() == PlatformDisplay::OpenGLAPI::OpenGL && GLContext::current()->version() >= 320 && m_vao)
         glDeleteVertexArrays(1, &m_vao);
 #endif
 }
@@ -164,8 +164,8 @@ GLuint TextureMapperGLData::getStaticVBO(GLenum target, GLsizeiptr size, const v
 
 GLuint TextureMapperGLData::getVAO()
 {
-#if !USE(OPENGL_ES)
-    if (GLContext::current()->version() >= 320 && !m_vao)
+#if USE(OPENGL)
+    if (PlatformDisplay::glAPI() == PlatformDisplay::OpenGLAPI::OpenGL && GLContext::current()->version() >= 320 && !m_vao)
         glGenVertexArrays(1, &m_vao);
 #endif
 
@@ -212,8 +212,8 @@ void TextureMapperGL::beginPainting(PaintFlags flags, BitmapTexture* surface)
     data().PaintFlags = flags;
     bindSurface(surface);
 
-#if !USE(OPENGL_ES)
-    if (GLContext::current()->version() >= 320) {
+#if USE(OPENGL)
+    if (PlatformDisplay::glAPI() == PlatformDisplay::OpenGLAPI::OpenGL && GLContext::current()->version() >= 320) {
         glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &data().previousVAO);
         glBindVertexArray(data().getVAO());
     }
@@ -240,8 +240,8 @@ void TextureMapperGL::endPainting()
     else
         glDisable(GL_DEPTH_TEST);
 
-#if !USE(OPENGL_ES)
-    if (GLContext::current()->version() >= 320)
+#if USE(OPENGL)
+    if (PlatformDisplay::glAPI() == PlatformDisplay::OpenGLAPI::OpenGL && GLContext::current()->version() >= 320)
         glBindVertexArray(data().previousVAO);
 #endif
 }

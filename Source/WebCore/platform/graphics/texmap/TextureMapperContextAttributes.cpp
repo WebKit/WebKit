@@ -28,6 +28,7 @@
 
 #if USE(TEXTURE_MAPPER_GL)
 
+#include "PlatformDisplay.h"
 #include "TextureMapperGLHeaders.h"
 #include <mutex>
 #include <wtf/ThreadSpecific.h>
@@ -51,17 +52,21 @@ const TextureMapperContextAttributes& TextureMapperContextAttributes::get()
     auto& attributes = *threadSpecificAttributes();
     if (!attributes.initialized) {
         attributes.initialized = true;
-#if USE(OPENGL_ES)
-        attributes.isGLES2Compliant = true;
+        switch (PlatformDisplay::glAPI()) {
+        case PlatformDisplay::OpenGLAPI::OpenGLES: {
+            attributes.isGLES2Compliant = true;
 
-        auto extensionsString = String::fromLatin1(reinterpret_cast<const char*>(glGetString(GL_EXTENSIONS)));
-        attributes.supportsNPOTTextures = extensionsString.contains("GL_OES_texture_npot"_s);
-        attributes.supportsUnpackSubimage = extensionsString.contains("GL_EXT_unpack_subimage"_s);
-#else
-        attributes.isGLES2Compliant = false;
-        attributes.supportsNPOTTextures = true;
-        attributes.supportsUnpackSubimage = true;
-#endif
+            auto extensionsString = String::fromLatin1(reinterpret_cast<const char*>(glGetString(GL_EXTENSIONS)));
+            attributes.supportsNPOTTextures = extensionsString.contains("GL_OES_texture_npot"_s);
+            attributes.supportsUnpackSubimage = extensionsString.contains("GL_EXT_unpack_subimage"_s);
+            break;
+        }
+        case PlatformDisplay::OpenGLAPI::OpenGL:
+            attributes.isGLES2Compliant = false;
+            attributes.supportsNPOTTextures = true;
+            attributes.supportsUnpackSubimage = true;
+            break;
+        }
     }
     return attributes;
 }

@@ -29,9 +29,6 @@ find_package(Unifdef REQUIRED)
 find_package(ZLIB REQUIRED)
 find_package(WebP REQUIRED COMPONENTS demux)
 find_package(ATSPI 2.5.3)
-find_package(EGL)
-find_package(OpenGL)
-find_package(OpenGLES2)
 
 include(GStreamerDefinitions)
 
@@ -45,7 +42,7 @@ if (WTF_CPU_ARM OR WTF_CPU_MIPS)
     SET_AND_EXPOSE_TO_BUILD(USE_CAPSTONE ${DEVELOPER_MODE})
 endif ()
 
-if (OPENGLES2_FOUND AND (NOT OPENGL_FOUND OR WTF_CPU_ARM OR WTF_CPU_ARM64))
+if (WTF_CPU_ARM OR WTF_CPU_ARM64)
     set(ENABLE_GLES2_DEFAULT ON)
 else ()
     set(ENABLE_GLES2_DEFAULT OFF)
@@ -343,28 +340,21 @@ endif ()
 SET_AND_EXPOSE_TO_BUILD(USE_TEXTURE_MAPPER TRUE)
 
 if (USE_OPENGL_OR_ES)
-    # USE_OPENGL is the opposite of ENABLE_GLES2.
+    SET_AND_EXPOSE_TO_BUILD(USE_ANGLE ${ENABLE_WEBGL})
+    SET_AND_EXPOSE_TO_BUILD(USE_COORDINATED_GRAPHICS ON)
+    SET_AND_EXPOSE_TO_BUILD(USE_NICOSIA ON)
+    SET_AND_EXPOSE_TO_BUILD(USE_TEXTURE_MAPPER_GL ON)
+    SET_AND_EXPOSE_TO_BUILD(USE_EGL ON)
+    SET_AND_EXPOSE_TO_BUILD(USE_OPENGL ON)
+    SET_AND_EXPOSE_TO_BUILD(USE_OPENGL_ES ON)
+    SET_AND_EXPOSE_TO_BUILD(HAVE_OPENGL_ES_3 ON)
     if (ENABLE_GLES2)
-        find_package(OpenGLES2 REQUIRED)
-        SET_AND_EXPOSE_TO_BUILD(USE_OPENGL_ES TRUE)
-        SET_AND_EXPOSE_TO_BUILD(USE_OPENGL FALSE)
-
-        if (OpenGLES2_API_VERSION VERSION_GREATER_EQUAL 3.0)
-            SET_AND_EXPOSE_TO_BUILD(HAVE_OPENGL_ES_3 ON)
-        endif ()
+        add_definitions(-DDEFAULT_GL_API="opengl-es")
     else ()
-        SET_AND_EXPOSE_TO_BUILD(USE_OPENGL TRUE)
+        add_definitions(-DDEFAULT_GL_API="opengl")
     endif ()
 
-    if (NOT EGL_FOUND)
-        message(FATAL_ERROR "EGL is needed for USE_OPENGL_OR_ES.")
-    endif ()
-
-    SET_AND_EXPOSE_TO_BUILD(USE_TEXTURE_MAPPER_GL TRUE)
-
-    SET_AND_EXPOSE_TO_BUILD(USE_EGL ${EGL_FOUND})
-
-    if (ENABLE_WAYLAND_TARGET AND EGL_FOUND)
+    if (ENABLE_WAYLAND_TARGET)
         find_package(WPE 1.3.0)
         if (NOT WPE_FOUND)
             message(FATAL_ERROR "libwpe is required for ENABLE_WAYLAND_TARGET")
@@ -377,10 +367,6 @@ if (USE_OPENGL_OR_ES)
 
         SET_AND_EXPOSE_TO_BUILD(USE_WPE_RENDERER ON)
     endif ()
-
-    SET_AND_EXPOSE_TO_BUILD(USE_COORDINATED_GRAPHICS TRUE)
-    SET_AND_EXPOSE_TO_BUILD(USE_NICOSIA TRUE)
-    SET_AND_EXPOSE_TO_BUILD(USE_ANGLE ${ENABLE_WEBGL})
 
     if (USE_GBM)
         # ANGLE-backed WebGL depends on DMABuf support, which at the moment is leveraged
@@ -397,7 +383,7 @@ if (USE_OPENGL_OR_ES)
             message(FATAL_ERROR "libdrm is required for USE_GBM")
         endif ()
 
-        SET_AND_EXPOSE_TO_BUILD(USE_TEXTURE_MAPPER_DMABUF TRUE)
+        SET_AND_EXPOSE_TO_BUILD(USE_TEXTURE_MAPPER_DMABUF ON)
     endif ()
 endif ()
 
@@ -441,10 +427,6 @@ endif ()
 if (ENABLE_WAYLAND_TARGET)
     if (NOT GTK_SUPPORTS_WAYLAND)
         message(FATAL_ERROR "Recompile GTK with Wayland backend to use ENABLE_WAYLAND_TARGET")
-    endif ()
-
-    if (NOT EGL_FOUND)
-        message(FATAL_ERROR "EGL is required to use ENABLE_WAYLAND_TARGET")
     endif ()
 
     find_package(Wayland 1.15 REQUIRED)

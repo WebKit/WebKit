@@ -76,13 +76,18 @@ static bool initializeOpenGLShimsIfNeeded()
 #endif
 }
 
-#if USE(OPENGL_ES)
-static const char* gEGLAPIName = "OpenGL ES";
-static const EGLenum gEGLAPIVersion = EGL_OPENGL_ES_API;
-#else
-static const char* gEGLAPIName = "OpenGL";
-static const EGLenum gEGLAPIVersion = EGL_OPENGL_API;
-#endif
+static const char* glAPIName(EGLenum version)
+{
+    switch (version) {
+    case EGL_OPENGL_API:
+        return "OpenGL";
+    case EGL_OPENGL_ES_API:
+        return "OpenGL ES";
+    default:
+        break;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
 
 const char* GLContext::errorString(int statusCode)
 {
@@ -129,11 +134,7 @@ bool GLContext::getEGLConfig(PlatformDisplay& platformDisplay, EGLConfig* config
     }
 
     EGLint attributeList[] = {
-#if USE(OPENGL_ES)
-        EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
-#else
-        EGL_RENDERABLE_TYPE, EGL_OPENGL_BIT,
-#endif
+        EGL_RENDERABLE_TYPE, EGL_NONE,
         EGL_RED_SIZE, rgbaSize[0],
         EGL_GREEN_SIZE, rgbaSize[1],
         EGL_BLUE_SIZE, rgbaSize[2],
@@ -143,6 +144,15 @@ bool GLContext::getEGLConfig(PlatformDisplay& platformDisplay, EGLConfig* config
         EGL_DEPTH_SIZE, 0,
         EGL_NONE
     };
+
+    switch (PlatformDisplay::glAPI()) {
+    case PlatformDisplay::OpenGLAPI::OpenGL:
+        attributeList[1] = EGL_OPENGL_BIT;
+        break;
+    case PlatformDisplay::OpenGLAPI::OpenGLES:
+        attributeList[1] = EGL_OPENGL_ES2_BIT;
+        break;
+    }
 
     switch (surfaceType) {
     case GLContext::Surfaceless:
@@ -361,8 +371,9 @@ std::unique_ptr<GLContext> GLContext::create(GLNativeWindowType window, Platform
         return nullptr;
     }
 
-    if (eglBindAPI(gEGLAPIVersion) == EGL_FALSE) {
-        WTFLogAlways("Cannot create EGL context: error binding %s API (%s)\n", gEGLAPIName, lastErrorString());
+    auto glAPI = PlatformDisplay::eglAPI();
+    if (eglBindAPI(glAPI) == EGL_FALSE) {
+        WTFLogAlways("Cannot create EGL context: error binding %s API (%s)\n", glAPIName(glAPI), lastErrorString());
         return nullptr;
     }
 
@@ -383,8 +394,9 @@ std::unique_ptr<GLContext> GLContext::createOffscreen(PlatformDisplay& platformD
         return nullptr;
     }
 
-    if (eglBindAPI(gEGLAPIVersion) == EGL_FALSE) {
-        WTFLogAlways("Cannot create EGL context: error binding %s API (%s)\n", gEGLAPIName, lastErrorString());
+    auto glAPI = PlatformDisplay::eglAPI();
+    if (eglBindAPI(glAPI) == EGL_FALSE) {
+        WTFLogAlways("Cannot create EGL context: error binding %s API (%s)\n", glAPIName(glAPI), lastErrorString());
         return nullptr;
     }
 
@@ -434,8 +446,9 @@ std::unique_ptr<GLContext> GLContext::createSharing(PlatformDisplay& platformDis
         return nullptr;
     }
 
-    if (eglBindAPI(gEGLAPIVersion) == EGL_FALSE) {
-        WTFLogAlways("Cannot create EGL sharing context: error binding %s API (%s)\n", gEGLAPIName, lastErrorString());
+    auto glAPI = PlatformDisplay::eglAPI();
+    if (eglBindAPI(glAPI) == EGL_FALSE) {
+        WTFLogAlways("Cannot create EGL sharing context: error binding %s API (%s)\n", glAPIName(glAPI), lastErrorString());
         return nullptr;
     }
 
@@ -517,52 +530,56 @@ EGLContext GLContext::createContextForEGLVersion(PlatformDisplay& platformDispla
     if (!contextAttributesInitialized) {
         contextAttributesInitialized = true;
 
-#if USE(OPENGL_ES)
-        // GLES case. Not much to do here besides requesting a GLES2 version.
-        contextAttributes[0] = EGL_CONTEXT_CLIENT_VERSION;
-        contextAttributes[1] = 2;
-        contextAttributes[2] = EGL_NONE;
-#else
-        // OpenGL case. We want to request an OpenGL version >= 3.2 with a core profile. If that's not possible,
-        // we'll use whatever is available. In order to request a concrete version of OpenGL we need EGL version
-        // 1.5 or EGL version 1.4 with the extension EGL_KHR_create_context.
-        EGLContext context = EGL_NO_CONTEXT;
+        switch (PlatformDisplay::glAPI()) {
+        case PlatformDisplay::OpenGLAPI::OpenGLES:
+            // GLES case. Not much to do here besides requesting a GLES2 version.
+            contextAttributes[0] = EGL_CONTEXT_CLIENT_VERSION;
+            contextAttributes[1] = 2;
+            contextAttributes[2] = EGL_NONE;
+            break;
+        case PlatformDisplay::OpenGLAPI::OpenGL: {
+            // OpenGL case. We want to request an OpenGL version >= 3.2 with a core profile. If that's not possible,
+            // we'll use whatever is available. In order to request a concrete version of OpenGL we need EGL version
+            // 1.5 or EGL version 1.4 with the extension EGL_KHR_create_context.
+            EGLContext context = EGL_NO_CONTEXT;
 
-        if (platformDisplay.eglCheckVersion(1, 5)) {
-            contextAttributes[0] = EGL_CONTEXT_MAJOR_VERSION;
-            contextAttributes[1] = 3;
-            contextAttributes[2] = EGL_CONTEXT_MINOR_VERSION;
-            contextAttributes[3] = 2;
-            contextAttributes[4] = EGL_CONTEXT_OPENGL_PROFILE_MASK;
-            contextAttributes[5] = EGL_CONTEXT_OPENGL_CORE_PROFILE_BIT;
-            contextAttributes[6] = EGL_NONE;
-
-            // Try to create a context with this configuration.
-            context = eglCreateContext(platformDisplay.eglDisplay(), config, sharingContext, contextAttributes);
-        } else if (platformDisplay.eglCheckVersion(1, 4)) {
-            const char* extensions = eglQueryString(platformDisplay.eglDisplay(), EGL_EXTENSIONS);
-            if (GLContext::isExtensionSupported(extensions, "EGL_KHR_create_context")) {
-                contextAttributes[0] = EGL_CONTEXT_MAJOR_VERSION_KHR;
+            if (platformDisplay.eglCheckVersion(1, 5)) {
+                contextAttributes[0] = EGL_CONTEXT_MAJOR_VERSION;
                 contextAttributes[1] = 3;
-                contextAttributes[2] = EGL_CONTEXT_MINOR_VERSION_KHR;
+                contextAttributes[2] = EGL_CONTEXT_MINOR_VERSION;
                 contextAttributes[3] = 2;
-                contextAttributes[4] = EGL_CONTEXT_OPENGL_PROFILE_MASK_KHR;
-                contextAttributes[5] = EGL_CONTEXT_OPENGL_CORE_PROFILE_BIT_KHR;
+                contextAttributes[4] = EGL_CONTEXT_OPENGL_PROFILE_MASK;
+                contextAttributes[5] = EGL_CONTEXT_OPENGL_CORE_PROFILE_BIT;
                 contextAttributes[6] = EGL_NONE;
 
                 // Try to create a context with this configuration.
                 context = eglCreateContext(platformDisplay.eglDisplay(), config, sharingContext, contextAttributes);
+            } else if (platformDisplay.eglCheckVersion(1, 4)) {
+                const char* extensions = eglQueryString(platformDisplay.eglDisplay(), EGL_EXTENSIONS);
+                if (GLContext::isExtensionSupported(extensions, "EGL_KHR_create_context")) {
+                    contextAttributes[0] = EGL_CONTEXT_MAJOR_VERSION_KHR;
+                    contextAttributes[1] = 3;
+                    contextAttributes[2] = EGL_CONTEXT_MINOR_VERSION_KHR;
+                    contextAttributes[3] = 2;
+                    contextAttributes[4] = EGL_CONTEXT_OPENGL_PROFILE_MASK_KHR;
+                    contextAttributes[5] = EGL_CONTEXT_OPENGL_CORE_PROFILE_BIT_KHR;
+                    contextAttributes[6] = EGL_NONE;
+
+                    // Try to create a context with this configuration.
+                    context = eglCreateContext(platformDisplay.eglDisplay(), config, sharingContext, contextAttributes);
+                }
             }
+
+            // If the context creation worked, just return it.
+            if (context != EGL_NO_CONTEXT)
+                return context;
+
+            // Legacy case: the required EGL version is not present, or we haven't been able to create a >= 3.2 OpenGL
+            // context, so just request whatever is available.
+            contextAttributes[0] = EGL_NONE;
+            break;
         }
-
-        // If the context creation worked, just return it.
-        if (context != EGL_NO_CONTEXT)
-            return context;
-
-        // Legacy case: the required EGL version is not present, or we haven't been able to create a >= 3.2 OpenGL
-        // context, so just request whatever is available.
-        contextAttributes[0] = EGL_NONE;
-#endif
+        }
     }
 
     return eglCreateContext(platformDisplay.eglDisplay(), config, sharingContext, contextAttributes);

@@ -94,11 +94,16 @@ public:
     virtual Type type() const = 0;
 
 #if USE(EGL)
+    enum class OpenGLAPI {
+        OpenGL,
+        OpenGLES,
+    };
+    static OpenGLAPI glAPI();
+    static EGLenum eglAPI();
+
     WEBCORE_EXPORT GLContext* sharingGLContext();
     void clearSharingGLContext();
-#endif
 
-#if USE(EGL)
     EGLDisplay eglDisplay() const;
     bool eglCheckVersion(int major, int minor) const;
 

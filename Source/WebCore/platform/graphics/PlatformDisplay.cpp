@@ -262,6 +262,51 @@ void PlatformDisplay::clearSharingGLContext()
 #endif
 
 #if USE(EGL)
+PlatformDisplay::OpenGLAPI PlatformDisplay::glAPI()
+{
+    static OpenGLAPI api;
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+#if PLATFORM(GTK)
+        const char* envAPI = getenv("WEBKIT_GL_API_VERSION");
+        if (envAPI && *envAPI) {
+            if (!strcmp(envAPI, "opengl")) {
+                api = OpenGLAPI::OpenGL;
+                return;
+            }
+
+            if (!strcmp(envAPI, "opengl-es")) {
+                api = OpenGLAPI::OpenGLES;
+                return;
+            }
+        }
+
+        if (!strcmp(DEFAULT_GL_API, "opengl"))
+            api = OpenGLAPI::OpenGL;
+        else if (!strcmp(DEFAULT_GL_API, "opengl-es"))
+            api = OpenGLAPI::OpenGLES;
+        else
+            RELEASE_ASSERT_NOT_REACHED();
+#elif USE(OPENGL_ES)
+        api = OpenGLAPI::OpenGLES;
+#else
+        api = OpenGLAPI::OpenGL;
+#endif
+    });
+    return api;
+}
+
+EGLenum PlatformDisplay::eglAPI()
+{
+    switch (glAPI()) {
+    case OpenGLAPI::OpenGL:
+        return EGL_OPENGL_API;
+    case OpenGLAPI::OpenGLES:
+        return EGL_OPENGL_ES_API;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
 EGLDisplay PlatformDisplay::eglDisplay() const
 {
     if (!m_eglDisplayInitialized)

@@ -46,11 +46,15 @@ GstGLContext* PlatformDisplay::gstGLContext() const
     if (!m_gstGLContext) {
         if (auto* gstDisplay = gstGLDisplay()) {
             if (auto* context = const_cast<PlatformDisplay*>(this)->sharingGLContext()) {
-#if USE(OPENGL_ES)
-                GstGLAPI glAPI = GST_GL_API_GLES2;
-#elif USE(OPENGL)
-                GstGLAPI glAPI = GST_GL_API_OPENGL;
-#endif
+                GstGLAPI glAPI;
+                switch (PlatformDisplay::glAPI()) {
+                case PlatformDisplay::OpenGLAPI::OpenGLES:
+                    glAPI = GST_GL_API_GLES2;
+                    break;
+                case PlatformDisplay::OpenGLAPI::OpenGL:
+                    glAPI = GST_GL_API_OPENGL;
+                    break;
+                }
                 m_gstGLContext = adoptGRef(gst_gl_context_new_wrapped(gstDisplay, reinterpret_cast<guintptr>(context->platformContext()), GST_GL_PLATFORM_EGL, glAPI));
             }
         }

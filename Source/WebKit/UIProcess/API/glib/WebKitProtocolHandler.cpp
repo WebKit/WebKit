@@ -153,9 +153,17 @@ static bool uiProcessContextIsEGL()
 
 static const char* openGLAPI()
 {
-    if (epoxy_is_desktop_gl())
-        return "OpenGL (libepoxy)";
-    return "OpenGL ES 2 (libepoxy)";
+#if USE(EGL)
+    switch (PlatformDisplay::glAPI()) {
+    case PlatformDisplay::OpenGLAPI::OpenGL:
+        return "OpenGL";
+    case PlatformDisplay::OpenGLAPI::OpenGLES:
+        return "OpenGL ES";
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+#else
+    return "Unknown";
+#endif
 }
 
 void WebKitProtocolHandler::handleGPU(WebKitURISchemeRequest* request)
@@ -198,19 +206,23 @@ void WebKitProtocolHandler::handleGPU(WebKitURISchemeRequest* request)
         addTableRow(jsonObject, "GL_VERSION"_s, String::fromUTF8(reinterpret_cast<const char*>(glGetString(GL_VERSION))));
         addTableRow(jsonObject, "GL_SHADING_LANGUAGE_VERSION"_s, String::fromUTF8(reinterpret_cast<const char*>(glGetString(GL_SHADING_LANGUAGE_VERSION))));
 
-#if USE(OPENGL_ES)
-        addTableRow(jsonObject, "GL_EXTENSIONS"_s, String::fromUTF8(reinterpret_cast<const char*>(glGetString(GL_EXTENSIONS))));
-#else
-        StringBuilder extensionsBuilder;
-        GLint numExtensions = 0;
-        glGetIntegerv(GL_NUM_EXTENSIONS, &numExtensions);
-        for (GLint i = 0; i < numExtensions; ++i) {
-            if (i)
-                extensionsBuilder.append(' ');
-            extensionsBuilder.append(reinterpret_cast<const char*>(glGetStringi(GL_EXTENSIONS, i)));
+        switch (PlatformDisplay::glAPI()) {
+        case PlatformDisplay::OpenGLAPI::OpenGLES:
+            addTableRow(jsonObject, "GL_EXTENSIONS"_s, String::fromUTF8(reinterpret_cast<const char*>(glGetString(GL_EXTENSIONS))));
+            break;
+        case PlatformDisplay::OpenGLAPI::OpenGL: {
+            StringBuilder extensionsBuilder;
+            GLint numExtensions = 0;
+            glGetIntegerv(GL_NUM_EXTENSIONS, &numExtensions);
+            for (GLint i = 0; i < numExtensions; ++i) {
+                if (i)
+                    extensionsBuilder.append(' ');
+                extensionsBuilder.append(reinterpret_cast<const char*>(glGetStringi(GL_EXTENSIONS, i)));
+            }
+            addTableRow(jsonObject, "GL_EXTENSIONS"_s, extensionsBuilder.toString());
+            break;
         }
-        addTableRow(jsonObject, "GL_EXTENSIONS"_s, extensionsBuilder.toString());
-#endif
+        }
 
         auto eglDisplay = eglGetCurrentDisplay();
         addTableRow(jsonObject, "EGL_VERSION"_s, String::fromUTF8(eglQueryString(eglDisplay, EGL_VERSION)));

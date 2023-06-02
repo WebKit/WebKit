@@ -58,12 +58,9 @@ using namespace WebCore;
 enum class WaylandImpl { Unsupported, EGL, SHM };
 static std::optional<WaylandImpl> s_waylandImpl;
 
-static bool isEGLImageAvailable(bool useIndexedGetString)
+static bool isEGLImageAvailable()
 {
-#if USE(OPENGL_ES)
-    UNUSED_PARAM(useIndexedGetString);
-#else
-    if (useIndexedGetString) {
+    if (PlatformDisplay::glAPI() == PlatformDisplay::OpenGLAPI::OpenGL && GLContext::current()->version() >= 320) {
         GLint numExtensions = 0;
         ::glGetIntegerv(GL_NUM_EXTENSIONS, &numExtensions);
         for (GLint i = 0; i < numExtensions; ++i) {
@@ -71,9 +68,7 @@ static bool isEGLImageAvailable(bool useIndexedGetString)
             if (extension == "GL_OES_EGL_image"_s || extension == "GL_OES_EGL_image_external"_s)
                 return true;
         }
-    } else
-#endif
-    {
+    } else {
         String extensionsString = String::fromLatin1(reinterpret_cast<const char*>(::glGetString(GL_EXTENSIONS)));
         for (auto& extension : extensionsString.split(' ')) {
             if (extension == "GL_OES_EGL_image"_s || extension == "GL_OES_EGL_image_external"_s)
@@ -101,12 +96,7 @@ static bool tryInitializeEGL()
     if (!eglContext->makeContextCurrent())
         return false;
 
-#if USE(OPENGL_ES)
-    if (!isEGLImageAvailable(false))
-        return false;
-#else
-    if (!isEGLImageAvailable(GLContext::current()->version() >= 320))
-#endif
+    if (!isEGLImageAvailable())
         return false;
 
     s_waylandImpl = WaylandImpl::EGL;
@@ -244,9 +234,8 @@ void AcceleratedBackingStoreWayland::ensureGLContext()
     if (!m_gdkGLContext)
         g_error("GDK is not able to create a GL context: %s.", error->message);
 
-#if USE(OPENGL_ES)
-    gdk_gl_context_set_use_es(m_gdkGLContext.get(), TRUE);
-#endif
+    if (PlatformDisplay::glAPI() == PlatformDisplay::OpenGLAPI::OpenGLES)
+        gdk_gl_context_set_use_es(m_gdkGLContext.get(), TRUE);
 
     if (!gdk_gl_context_realize(m_gdkGLContext.get(), &error.outPtr()))
         g_error("GDK failed to relaize the GLK context: %s.", error->message);
