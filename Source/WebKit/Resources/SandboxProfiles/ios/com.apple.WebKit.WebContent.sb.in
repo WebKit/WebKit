@@ -1380,19 +1380,24 @@
     (deny syscall-mach (with telemetry) (with message "Lockdown mode")
         (syscall-mach-blocked-in-lockdown-mode)))
 
+#if PLATFORM(WATCHOS)
 (define (kernel-mig-routine-in-use-watchos)
     (kernel-mig-routine
         io_connect_set_notification_port
+        io_server_version
         mach_make_memory_entry
         mach_make_memory_entry_64
         vm_copy
         vm_remap_external))
+#endif
 
 (define (kernel-mig-routine-only-in-use-during-launch)
     (kernel-mig-routine
         host_get_special_port
         host_info
+#if !PLATFORM(WATCHOS)
         io_server_version
+#endif
         (when (defined? 'mach_vm_range_create) mach_vm_range_create) ;; <rdar://105161083>
         task_restartable_ranges_register
         task_set_special_port))
