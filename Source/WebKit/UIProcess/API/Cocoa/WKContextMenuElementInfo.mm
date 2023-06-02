@@ -32,6 +32,14 @@
 
 @implementation WKContextMenuElementInfo
 
+- (void)dealloc
+{
+    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(WKContextMenuElementInfo.class, self))
+        return;
+    _elementInfo->API::ContextMenuElementInfo::~ContextMenuElementInfo();
+    [super dealloc];
+}
+
 - (NSURL *)linkURL
 {
     return _elementInfo->url();
