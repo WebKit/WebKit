@@ -743,10 +743,12 @@ void RemoteLayerBackingStoreProperties::applyBackingStoreToLayer(CALayer *layer,
     layer.contents = contents.get();
     if ([CALayer instancesRespondToSelector:@selector(contentsDirtyRect)]) {
         if (m_paintedRect) {
-            CGRect dirty = *m_paintedRect;
+            // We should only set the dirty rect for a layer once per commit. CA resets the dirty rect to null after a commit.
+            ASSERT(CGRectIsNull(layer.contentsDirtyRect));
+
             FloatRect painted = *m_paintedRect;
             painted.scale(layer.contentsScale);
-            layer.contentsDirtyRect = dirty;
+            layer.contentsDirtyRect = painted;
         } else
             layer.contentsDirtyRect = CGRectNull;
     }
