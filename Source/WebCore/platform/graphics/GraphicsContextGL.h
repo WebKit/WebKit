@@ -1559,6 +1559,11 @@ public:
     // GL_EXT_polygon_offset_clamp
     virtual void polygonOffsetClampEXT(GCGLfloat factor, GCGLfloat units, GCGLfloat clamp) = 0;
 
+    // ========== Internal use for WebXR on WebGL1 contexts.
+    virtual void renderbufferStorageMultisampleANGLE(GCGLenum target, GCGLsizei samples, GCGLenum internalformat, GCGLsizei width, GCGLsizei height) = 0;
+    virtual void blitFramebufferANGLE(GCGLint srcX0, GCGLint srcY0, GCGLint srcX1, GCGLint srcY1, GCGLint dstX0, GCGLint dstY0, GCGLint dstX1, GCGLint dstY1, GCGLbitfield mask, GCGLenum filter) = 0;
+
+
     // ========== Other functions.
     GCGLfloat getFloat(GCGLenum pname);
     GCGLboolean getBoolean(GCGLenum pname);

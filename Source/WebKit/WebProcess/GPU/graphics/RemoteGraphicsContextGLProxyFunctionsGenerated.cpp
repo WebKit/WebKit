@@ -3014,6 +3014,28 @@ void RemoteGraphicsContextGLProxy::polygonOffsetClampEXT(GCGLfloat factor, GCGLf
     }
 }
 
+void RemoteGraphicsContextGLProxy::renderbufferStorageMultisampleANGLE(GCGLenum target, GCGLsizei samples, GCGLenum internalformat, GCGLsizei width, GCGLsizei height)
+{
+    if (isContextLost())
+        return;
+    auto sendResult = send(Messages::RemoteGraphicsContextGL::RenderbufferStorageMultisampleANGLE(target, samples, internalformat, width, height));
+    if (!sendResult) {
+        markContextLost();
+        return;
+    }
+}
+
+void RemoteGraphicsContextGLProxy::blitFramebufferANGLE(GCGLint srcX0, GCGLint srcY0, GCGLint srcX1, GCGLint srcY1, GCGLint dstX0, GCGLint dstY0, GCGLint dstX1, GCGLint dstY1, GCGLbitfield mask, GCGLenum filter)
+{
+    if (isContextLost())
+        return;
+    auto sendResult = send(Messages::RemoteGraphicsContextGL::BlitFramebufferANGLE(srcX0, srcY0, srcX1, srcY1, dstX0, dstY0, dstX1, dstY1, mask, filter));
+    if (!sendResult) {
+        markContextLost();
+        return;
+    }
+}
+
 void RemoteGraphicsContextGLProxy::getInternalformativ(GCGLenum target, GCGLenum internalformat, GCGLenum pname, std::span<GCGLint> params)
 {
     if (isContextLost())

@@ -223,7 +223,7 @@ void WebXROpaqueFramebuffer::endFrame()
 
         gl.bindFramebuffer(GL::READ_FRAMEBUFFER, m_framebuffer->object());
         gl.bindFramebuffer(GL::DRAW_FRAMEBUFFER, m_resolvedFBO);
-        gl.blitFramebuffer(0, 0, m_width, m_height, 0, 0, m_width, m_height, GL::COLOR_BUFFER_BIT, GL::NEAREST);
+        gl.blitFramebufferANGLE(0, 0, m_width, m_height, 0, 0, m_width, m_height, GL::COLOR_BUFFER_BIT, GL::NEAREST);
     }
 
 #if USE(MTLSHAREDEVENT_FOR_XR_FRAME_COMPLETION)
@@ -282,22 +282,22 @@ bool WebXROpaqueFramebuffer::setupFramebuffer()
 
     // Set up color, depth and stencil formats
     const bool hasDepthOrStencil = m_attributes.stencil || m_attributes.depth;
-    const bool isAntialias = m_attributes.antialias && m_context.isWebGL2();
 
     // Set up recommended samples for WebXR.
-    auto maxSamples = [](GraphicsContextGL& gl) {
+    auto sampleCount = [](GraphicsContextGL& gl, bool isAntialias) {
+        if (!isAntialias)
+            return 0;
+
         // FIXME: check if we can get recommended values from each device platform.
         GCGLint maxSampleCount;
         gl.getIntegerv(GL::MAX_SAMPLES, std::span(&maxSampleCount, 1));
         // Cap the maximum multisample count at 4. Any more than this is likely overkill and will impact performance.
         return std::min(4, maxSampleCount);
-    };
-    int sampleCount = (isAntialias) ? maxSamples(gl) : 0;
+    }(gl, m_attributes.antialias);
 
     gl.bindFramebuffer(GL::FRAMEBUFFER, m_framebuffer->object());
 
-    // FIXME: WebXR spec enable antialiasing on WebGL1 contexts
-    if (isAntialias) {
+    if (m_attributes.antialias) {
         m_resolvedFBO.ensure(gl);
 
         auto colorBuffer = allocateColorStorage(gl, sampleCount, m_width, m_height);
@@ -322,12 +322,7 @@ PlatformGLObject WebXROpaqueFramebuffer::allocateRenderbufferStorage(GraphicsCon
     PlatformGLObject renderbuffer = gl.createRenderbuffer();
     ASSERT(renderbuffer);
     gl.bindRenderbuffer(GL::RENDERBUFFER, renderbuffer);
-    if (m_context.isWebGL2())
-        gl.renderbufferStorageMultisample(GL::RENDERBUFFER, samples, internalFormat, width, height);
-    else {
-        ASSERT(!samples);
-        gl.renderbufferStorage(GL::RENDERBUFFER, internalFormat, width, height);
-    }
+    gl.renderbufferStorageMultisampleANGLE(GL::RENDERBUFFER, samples, internalFormat, width, height);
 
     return renderbuffer;
 }

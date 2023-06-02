@@ -407,11 +407,15 @@ bool GraphicsContextGLCocoa::platformInitialize()
     }
 #endif // PLATFORM(MAC) || PLATFORM(MACCATALYST)
 #if ENABLE(WEBXR) && !PLATFORM(IOS_FAMILY_SIMULATOR)
-    if (attributes.xrCompatible)
+    if (attributes.xrCompatible) {
         requiredExtensions.append("GL_OES_EGL_image"_s);
+        requiredExtensions.append("GL_EXT_sRGB"_s);
+        requiredExtensions.append("GL_ANGLE_framebuffer_multisample"_s);
+    }
 #endif
     if (m_isForWebGL2)
         requiredExtensions.append("GL_ANGLE_framebuffer_multisample"_s);
+
     for (auto& extension : requiredExtensions) {
         if (!supportsExtension(extension)) {
             LOG(WebGL, "Missing required extension. %s", extension.characters());

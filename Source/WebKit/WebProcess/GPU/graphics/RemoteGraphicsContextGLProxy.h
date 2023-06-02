@@ -361,6 +361,8 @@ public:
     void drawElementsInstancedBaseVertexBaseInstanceANGLE(GCGLenum mode, GCGLsizei count, GCGLenum type, GCGLintptr offset, GCGLsizei instanceCount, GCGLint baseVertex, GCGLuint baseInstance) final;
     void provokingVertexANGLE(GCGLenum provokeMode) final;
     void polygonOffsetClampEXT(GCGLfloat factor, GCGLfloat units, GCGLfloat clamp) final;
+    void renderbufferStorageMultisampleANGLE(GCGLenum target, GCGLsizei samples, GCGLenum internalformat, GCGLsizei width, GCGLsizei height) final;
+    void blitFramebufferANGLE(GCGLint srcX0, GCGLint srcY0, GCGLint srcX1, GCGLint srcY1, GCGLint dstX0, GCGLint dstY0, GCGLint dstX1, GCGLint dstY1, GCGLbitfield mask, GCGLenum filter) final;
     void getInternalformativ(GCGLenum target, GCGLenum internalformat, GCGLenum pname, std::span<GCGLint> params) final;
     void setDrawingBufferColorSpace(const WebCore::DestinationColorSpace&) final;
     RefPtr<WebCore::PixelBuffer> paintRenderingResultsToPixelBuffer() final;
