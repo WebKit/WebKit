@@ -8,15 +8,13 @@ jsTestIsAsync = true;
 
 context = new AudioContext({ sampleRate: 384000 });
 shouldBe("context.sampleRate", "384000");
-
+context.addEventListener("statechange", () => {
+    shouldBeEqualToString("context.state", "running");
+    finishJSTest();
+}, {once: true});
 node = new ConstantSourceNode(context, { offset: 0.5 });
 node.connect(context.destination);
 node.start();
-
-setTimeout(() => {
-    shouldBeEqualToString("context.state", "running");
-    finishJSTest();
-}, 100);
 </script>
 </body>
 </html>
