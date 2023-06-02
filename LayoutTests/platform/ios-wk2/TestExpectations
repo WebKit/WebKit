@@ -2401,8 +2401,6 @@ fast/forms/date/date-validity-badinput.html [ Skip ]
 fast/forms/datetimelocal/datetimelocal-validity-badinput.html [ Skip ]
 fast/forms/time/time-validity-badinput.html [ Skip ]
 
-webkit.org/b/256613 imported/w3c/web-platform-tests/screen-orientation/fullscreen-interactions.html [ DumpJSConsoleLogInStdErr ]
-
 # Skipping scrollbar-width tests that don't work with overlay scrollbars
 imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-width-001.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-width-002.html [ Skip ]
