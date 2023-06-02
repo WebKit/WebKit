@@ -3370,7 +3370,6 @@ imported/w3c/web-platform-tests/css/css-overflow/webkit-line-clamp-011.html [ Im
 imported/w3c/web-platform-tests/css/css-overflow/webkit-line-clamp-012.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-overflow/webkit-line-clamp-013.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-overflow/webkit-line-clamp-018.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-overflow/webkit-line-clamp-024.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-overflow/webkit-line-clamp-025.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-overflow/webkit-line-clamp-026.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-overflow/webkit-line-clamp-027.html [ ImageOnlyFailure ]

@@ -91,7 +91,7 @@ layer at (326,75) size 102x56 clip at (327,76) size 100x54 scrollHeight 162
       RenderText {#text} at (0,0) size 0x0
 layer at (432,93) size 102x38 clip at (433,94) size 100x36 scrollHeight 144
   RenderDeprecatedFlexibleBox {DIV} at (424,85) size 102x38 [border: (1px solid #808080)]
-    RenderBlock (anonymous) at (1,1) size 100x144
+    RenderBlock (anonymous) at (1,1) size 100x36
       RenderText {#text} at (0,0) size 96x144
         text run at (0,0) width 30: "30%"
         text run at (0,18) width 73: "truncation. "
@@ -104,7 +104,7 @@ layer at (432,93) size 102x38 clip at (433,94) size 100x36 scrollHeight 144
         text run at (0,126) width 96: "multi-line text."
 layer at (538,75) size 102x56 clip at (539,76) size 100x54 scrollHeight 108
   RenderDeprecatedFlexibleBox {DIV} at (530,67) size 102x56 [border: (1px solid #808080)]
-    RenderBlock (anonymous) at (1,1) size 100x108
+    RenderBlock (anonymous) at (1,1) size 100x54
       RenderText {#text} at (0,0) size 99x108
         text run at (0,0) width 51: "3 lines. "
         text run at (50,0) width 49: "No link"
