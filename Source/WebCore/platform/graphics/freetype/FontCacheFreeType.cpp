@@ -30,6 +30,7 @@
 #include "Font.h"
 #include "FontDescription.h"
 #include "FontCacheFreeType.h"
+#include "FontCustomPlatformData.h"
 #include FT_SFNT_NAMES_H
 #include FT_TRUETYPE_IDS_H
 #include "RefPtrCairo.h"
@@ -413,6 +414,10 @@ std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDe
             break;
         }
     }
+
+    FcChar8* fontFile = nullptr;
+    FcPatternGetString(resultPattern.get(), FC_FILE, 0, &fontFile);
+    auto fontFaceData = SharedBuffer::createWithContentsOfFile(String::fromLatin1((char*)fontFile));
 #else
     // Loop through each font family of the result to see if it fits the one we requested.
     bool matchedFontFamily = false;
@@ -464,7 +469,7 @@ std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDe
 #endif
 
     auto size = fontDescription.adjustedSizeForFontFace(fontCreationContext.sizeAdjust());
-    FontPlatformData platformData(fontFace.get(), WTFMove(resultPattern), size, fixedWidth, syntheticBold, syntheticOblique, fontDescription.orientation());
+    FontPlatformData platformData(fontFace.get(), WTFMove(resultPattern), size, fixedWidth, syntheticBold, syntheticOblique, fontDescription.orientation(), createFontCustomPlatformData(*fontFaceData, ""_s).get());
 
     platformData.updateSizeWithFontSizeAdjust(fontDescription.fontSizeAdjust(), fontDescription.computedPixelSize());
     auto platformDataUniquePtr = makeUnique<FontPlatformData>(platformData);
