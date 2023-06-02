@@ -355,7 +355,16 @@ size_t CurlRequest::didReceiveData(const SharedBuffer& buffer)
 
     if (needToInvokeDidReceiveResponse()) {
         // Pause until completeDidReceiveResponse() is called.
-        invokeDidReceiveResponse(m_response, Action::ReceiveData);
+        invokeDidReceiveResponse(m_response, [this] {
+            runOnWorkerThreadIfRequired([this, protectedThis = Ref { *this }]() {
+                if (isCompletedOrCancelled() || !m_curlHandle)
+                    return;
+
+                // Unpause a connection
+                m_curlHandle->pause(CURLPAUSE_CONT);
+            });
+        });
+
         return CURL_WRITEFUNC_PAUSE;
     }
 
@@ -387,7 +396,7 @@ void CurlRequest::didReceiveHeaderFromMultipart(const Vector<String>& headers)
     for (auto header : headers)
         response.headers.append(header);
 
-    invokeDidReceiveResponse(response, Action::None);
+    invokeDidReceiveResponse(response);
 }
 
 void CurlRequest::didReceiveDataFromMultipart(const SharedBuffer& buffer)
@@ -414,10 +423,13 @@ void CurlRequest::didCompleteTransfer(CURLcode result)
     if (result == CURLE_OK) {
         if (needToInvokeDidReceiveResponse()) {
             // Processing of didReceiveResponse() has not been completed. (For example, HEAD method)
-            // When completeDidReceiveResponse() is called, didCompleteTransfer() will be called again.
-
-            m_finishedResultCode = result;
-            invokeDidReceiveResponse(m_response, Action::FinishTransfer);
+            m_mustInvokeCancelTransfer = true;
+            invokeDidReceiveResponse(m_response, [this, result]() mutable {
+                m_mustInvokeCancelTransfer = false;
+                runOnWorkerThreadIfRequired([this, protectedThis = Ref { *this }, result]() {
+                    didCompleteTransfer(result);
+                });
+            });
             return;
         }
 
@@ -560,16 +572,19 @@ void CurlRequest::invokeDidReceiveResponseForFile(const URL& url)
         response.statusCode = 200;
         response.headers.append("Content-Type: " + mimeType);
 
-        invokeDidReceiveResponse(response, Action::StartTransfer);
+        invokeDidReceiveResponse(response, [this] {
+            startWithJobManager();
+        });
     });
 }
 
-void CurlRequest::invokeDidReceiveResponse(const CurlResponse& response, Action behaviorAfterInvoke)
+void CurlRequest::invokeDidReceiveResponse(const CurlResponse& response, Function<void()>&& completionHandler)
 {
+    ASSERT(!m_responseCompletionHandler);
     ASSERT(!m_didNotifyResponse || m_multipartHandle);
 
     m_didNotifyResponse = true;
-    m_actionAfterInvoke = behaviorAfterInvoke;
+    m_responseCompletionHandler = WTFMove(completionHandler);
 
     // FIXME: Replace this isolatedCopy with WTFMove.
     callClient([response = response.isolatedCopy()](CurlRequest& request, CurlRequestClient& client) mutable {
@@ -588,22 +603,8 @@ void CurlRequest::completeDidReceiveResponse()
 
     m_didReturnFromNotify = true;
 
-    if (m_actionAfterInvoke == Action::ReceiveData) {
-        // Unpause a connection
-        runOnWorkerThreadIfRequired([this, protectedThis = Ref { *this }]() {
-            if (isCompletedOrCancelled() || !m_curlHandle)
-                return;
-
-            m_curlHandle->pause(CURLPAUSE_CONT);
-        });
-    } else if (m_actionAfterInvoke == Action::StartTransfer) {
-        // Start transfer for file scheme
-        startWithJobManager();
-    } else if (m_actionAfterInvoke == Action::FinishTransfer) {
-        runOnWorkerThreadIfRequired([this, protectedThis = Ref { *this }, finishedResultCode = m_finishedResultCode]() {
-            didCompleteTransfer(finishedResultCode);
-        });
-    }
+    if (auto responseCompletionHandler = WTFMove(m_responseCompletionHandler))
+        responseCompletionHandler();
 }
 
 NetworkLoadMetrics CurlRequest::networkLoadMetrics()

@@ -84,13 +84,6 @@ public:
     WEBCORE_EXPORT void completeDidReceiveResponse();
 
 private:
-    enum class Action {
-        None,
-        ReceiveData,
-        StartTransfer,
-        FinishTransfer
-    };
-
     WEBCORE_EXPORT CurlRequest(const ResourceRequest&, CurlRequestClient*, EnableMultipart, CaptureNetworkLoadMetrics);
 
     void retain() override { ref(); }
@@ -125,9 +118,9 @@ private:
 
     // Processing for DidReceiveResponse
     bool needToInvokeDidReceiveResponse() const { return m_didReceiveResponse && !m_didNotifyResponse; }
-    bool needToInvokeDidCancelTransfer() const { return m_didNotifyResponse && !m_didReturnFromNotify && m_actionAfterInvoke == Action::FinishTransfer; }
+    bool needToInvokeDidCancelTransfer() const { return m_didNotifyResponse && !m_didReturnFromNotify && m_mustInvokeCancelTransfer; }
     void invokeDidReceiveResponseForFile(const URL&);
-    void invokeDidReceiveResponse(const CurlResponse&, Action);
+    void invokeDidReceiveResponse(const CurlResponse&, Function<void()>&& completionHandler = { });
 
     NetworkLoadMetrics networkLoadMetrics();
 
@@ -159,8 +152,8 @@ private:
     bool m_didReceiveResponse { false };
     bool m_didNotifyResponse { false };
     bool m_didReturnFromNotify { false };
-    Action m_actionAfterInvoke { Action::None };
-    CURLcode m_finishedResultCode { CURLE_OK };
+    bool m_mustInvokeCancelTransfer { false };
+    Function<void()> m_responseCompletionHandler;
 
     bool m_captureExtraMetrics;
     HTTPHeaderMap m_requestHeaders;
