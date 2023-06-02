@@ -5255,7 +5255,16 @@
     "imported/w3c/web-platform-tests/pointerevents/pointerlock/pointerevent_movementxy.html": [
         "slow"
     ],
-    "imported/w3c/web-platform-tests/quirks/hashless-hex-color.html": [
+    "imported/w3c/web-platform-tests/quirks/hashless-hex-color/limited-quirks.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/quirks/hashless-hex-color/no-quirks.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/quirks/hashless-hex-color/quirks.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/quirks/unitless-length/no-quirks.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/requestidlecallback/callback-iframe.html": [

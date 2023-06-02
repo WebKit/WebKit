@@ -4,7 +4,7 @@
 </head>
 <body>
 <script>
-shouldBeTrue("CSS.supports('color', '-webkit-focus-ring-color')");
+shouldBeFalse("CSS.supports('color', '-webkit-focus-ring-color')");
 window.parent.document.test2 = CSS.supports('color', '-webkit-focus-ring-color');
 </script>
 <script src="../../resources/js-test-post.js"></script>
