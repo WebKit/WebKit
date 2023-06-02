@@ -140,8 +140,6 @@ public:
     }
 
 private:
-    friend class LineBreakIteratorPool;
-
     static AtomString makeLocaleWithBreakKeyword(const AtomString& locale, LineMode::Behavior behavior)
     {
         if (behavior == LineMode::Behavior::Default)

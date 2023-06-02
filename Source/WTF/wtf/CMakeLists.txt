@@ -381,7 +381,6 @@ set(WTF_PUBLIC_HEADERS
     text/ExternalStringImpl.h
     text/IntegerToStringConversion.h
     text/LChar.h
-    text/LineBreakIteratorPoolICU.h
     text/LineEnding.h
     text/NullTextBreakIterator.h
     text/OrdinalNumber.h
@@ -545,7 +544,6 @@ set(WTF_SOURCES
     text/Base64.cpp
     text/CString.cpp
     text/ExternalStringImpl.cpp
-    text/LineBreakIteratorPoolICU.cpp
     text/LineEnding.cpp
     text/StringBuffer.cpp
     text/StringBuilder.cpp

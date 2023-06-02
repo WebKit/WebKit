@@ -102,17 +102,8 @@ inline unsigned nextBreakablePosition(LazyLineBreakIterator& lazyBreakIterator, 
             if (!nextBreak || nextBreak.value() < i) {
                 // Don't break if positioned at start of primary context and there is no prior context.
                 if (i || priorContextLength) {
-                    UBreakIterator* breakIterator = lazyBreakIterator.get();
-                    if (breakIterator) {
-                        int candidate = ubrk_following(breakIterator, i - 1 + priorContextLength);
-                        if (candidate == UBRK_DONE)
-                            nextBreak = std::nullopt;
-                        else {
-                            unsigned result = candidate;
-                            ASSERT(result >= priorContextLength);
-                            nextBreak = result - priorContextLength;
-                        }
-                    }
+                    auto& breakIterator = lazyBreakIterator.get();
+                    nextBreak = breakIterator.following(i - 1);
                 }
             }
             if (i == nextBreak && !isBreakableSpace<nonBreakingSpaceBehavior>(lastCharacter))
