@@ -24,7 +24,7 @@
 #include "Shared/Sandbox/iOS/common.sb"
 
 (define (lockdown-mode)
-    (require-not (require-entitlement "com.apple.private.verified-jit")))
+    (require-entitlement "com.apple.private.webkit.lockdown-mode"))
 
 #if USE(SANDBOX_VERSION_3)
 (allow dynamic-code-generation)

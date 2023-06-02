@@ -393,6 +393,8 @@ function ios_family_process_webcontent_entitlements()
 
 function ios_family_process_webcontent_captiveportal_entitlements()
 {
+    plistbuddy Add :com.apple.private.webkit.lockdown-mode bool YES
+
     plistbuddy Add :com.apple.developer.kernel.extended-virtual-addressing bool YES
 
     plistbuddy Add :com.apple.imageio.allowabletypes array
