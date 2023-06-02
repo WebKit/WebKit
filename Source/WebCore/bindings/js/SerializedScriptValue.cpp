@@ -433,13 +433,14 @@ const uint8_t cryptoKeyOKPOpNameTagMaximumValue = 1;
  * Version 12. added support for agent cluster ID.
  * Version 13. added support for ErrorInstance objects.
  */
-static const unsigned CurrentVersion = 13;
-static const unsigned TerminatorTag = 0xFFFFFFFF;
-static const unsigned StringPoolTag = 0xFFFFFFFE;
-static const unsigned NonIndexPropertiesTag = 0xFFFFFFFD;
+static constexpr unsigned CurrentVersion = 13;
+static constexpr unsigned TerminatorTag = 0xFFFFFFFF;
+static constexpr unsigned StringPoolTag = 0xFFFFFFFE;
+static constexpr unsigned NonIndexPropertiesTag = 0xFFFFFFFD;
+static constexpr uint32_t ImageDataPoolTag = 0xFFFFFFFE;
 
 // The high bit of a StringData's length determines the character size.
-static const unsigned StringDataIs8BitFlag = 0x80000000;
+static constexpr unsigned StringDataIs8BitFlag = 0x80000000;
 
 /*
  * Object serialization is performed according to the following grammar, all tags
@@ -1424,8 +1425,14 @@ private:
             }
             if (auto* data = JSImageData::toWrapped(vm, obj)) {
                 write(ImageDataTag);
-                write(data->width());
-                write(data->height());
+                auto addResult = m_imageDataPool.add(*data, m_imageDataPool.size());
+                if (!addResult.isNewEntry) {
+                    write(ImageDataPoolTag);
+                    writeImageDataIndex(addResult.iterator->value);
+                    return true;
+                }
+                write(static_cast<uint32_t>(data->width()));
+                write(static_cast<uint32_t>(data->height()));
                 CheckedUint32 dataLength = data->data().length();
                 if (dataLength.hasOverflowed()) {
                     code = SerializationReturnCode::DataCloneError;
@@ -1789,6 +1796,11 @@ private:
     void writeStringIndex(unsigned i)
     {
         writeConstantPoolIndex(m_constantPool, i);
+    }
+
+    void writeImageDataIndex(unsigned i)
+    {
+        writeConstantPoolIndex(m_imageDataPool, i);
     }
     
     void writeObjectIndex(unsigned i)
@@ -2178,6 +2190,8 @@ private:
 #endif
     typedef HashMap<RefPtr<UniquedStringImpl>, uint32_t, IdentifierRepHash> StringConstantPool;
     StringConstantPool m_constantPool;
+    using ImageDataPool = HashMap<Ref<ImageData>, uint32_t>;
+    ImageDataPool m_imageDataPool;
     Identifier m_emptyIdentifier;
     SerializationContext m_context;
     ArrayBufferContentsArray& m_sharedBuffers;
@@ -2748,28 +2762,34 @@ private:
         return readLittleEndian(i);
     }
 
-    bool readStringIndex(uint32_t& i)
+    std::optional<uint32_t> readStringIndex()
     {
-        return readConstantPoolIndex(m_constantPool, i);
+        return readConstantPoolIndex(m_constantPool);
     }
 
-    template <class T> bool readConstantPoolIndex(const T& constantPool, uint32_t& i)
+    std::optional<uint32_t> readImageDataIndex()
+    {
+        return readConstantPoolIndex(m_imageDataPool);
+    }
+
+    template<typename T> std::optional<uint32_t> readConstantPoolIndex(const T& constantPool)
     {
         if (constantPool.size() <= 0xFF) {
             uint8_t i8;
             if (!read(i8))
-                return false;
-            i = i8;
-            return true;
+                return std::nullopt;
+            return i8;
         }
         if (constantPool.size() <= 0xFFFF) {
             uint16_t i16;
             if (!read(i16))
-                return false;
-            i = i16;
-            return true;
+                return std::nullopt;
+            return i16;
         }
-        return read(i);
+        uint32_t i;
+        if (!read(i))
+            return std::nullopt;
+        return i;
     }
 
     static bool readString(const uint8_t*& ptr, const uint8_t* end, String& str, unsigned length, bool is8Bit)
@@ -2836,16 +2856,12 @@ private:
             return false;
         }
         if (length == StringPoolTag) {
-            unsigned index = 0;
-            if (!readStringIndex(index)) {
+            auto index = readStringIndex();
+            if (!index || *index >= m_constantPool.size()) {
                 fail();
                 return false;
             }
-            if (index >= m_constantPool.size()) {
-                fail();
-                return false;
-            }
-            cachedString = CachedStringRef(&m_constantPool, index);
+            cachedString = CachedStringRef(&m_constantPool, *index);
             return true;
         }
         bool is8Bit = length & StringDataIs8BitFlag;
@@ -4072,6 +4088,14 @@ private:
             uint32_t width;
             if (!read(width))
                 return JSValue();
+            if (width == ImageDataPoolTag) {
+                auto index = readImageDataIndex();
+                if (!index || *index >= m_imageDataPool.size()) {
+                    fail();
+                    return JSValue();
+                }
+                return getJSValue(m_imageDataPool[*index]);
+            }
             uint32_t height;
             if (!read(height))
                 return JSValue();
@@ -4108,6 +4132,7 @@ private:
                 memcpy(result.returnValue()->data().data(), bufferStart, length);
             else
                 result.returnValue()->data().zeroFill();
+            m_imageDataPool.append(result.returnValue().copyRef());
             return getJSValue(result.releaseReturnValue());
         }
         case BlobTag: {
@@ -4196,12 +4221,12 @@ private:
             return ErrorInstance::create(m_lexicalGlobalObject, WTFMove(message), toErrorType(serializedErrorType), line, column, WTFMove(sourceURL), WTFMove(stackString));
         }
         case ObjectReferenceTag: {
-            unsigned index = 0;
-            if (!readConstantPoolIndex(m_gcBuffer, index)) {
+            auto index = readConstantPoolIndex(m_gcBuffer);
+            if (!index) {
                 fail();
                 return JSValue();
             }
-            return m_gcBuffer.at(index);
+            return m_gcBuffer.at(*index);
         }
         case MessagePortReferenceTag: {
             uint32_t index;
@@ -4436,6 +4461,7 @@ private:
     const uint8_t* const m_end;
     unsigned m_version;
     Vector<CachedString> m_constantPool;
+    Vector<Ref<ImageData>> m_imageDataPool;
     const Vector<RefPtr<MessagePort>>& m_messagePorts;
     ArrayBufferContentsArray* m_arrayBufferContents;
     Vector<RefPtr<JSC::ArrayBuffer>> m_arrayBuffers;
