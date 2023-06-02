@@ -254,6 +254,9 @@ GLContext* PlatformDisplay::sharingGLContext()
 
 void PlatformDisplay::clearSharingGLContext()
 {
+#if ENABLE(VIDEO) && USE(GSTREAMER_GL)
+    m_gstGLContext = nullptr;
+#endif
     m_sharingGLContext = nullptr;
 }
 #endif
@@ -351,7 +354,6 @@ void PlatformDisplay::terminateEGLDisplay()
 {
 #if ENABLE(VIDEO) && USE(GSTREAMER_GL)
     m_gstGLDisplay = nullptr;
-    m_gstGLContext = nullptr;
 #endif
     clearSharingGLContext();
     ASSERT(m_eglDisplayInitialized);
