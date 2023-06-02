@@ -258,6 +258,11 @@ void BindGroup::setLabel(String&& label)
 
 #pragma mark WGPU Stubs
 
+void wgpuBindGroupReference(WGPUBindGroup bindGroup)
+{
+    WebGPU::fromAPI(bindGroup).ref();
+}
+
 void wgpuBindGroupRelease(WGPUBindGroup bindGroup)
 {
     WebGPU::fromAPI(bindGroup).deref();

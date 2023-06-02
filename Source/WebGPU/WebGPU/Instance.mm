@@ -190,6 +190,11 @@ void Instance::requestAdapter(const WGPURequestAdapterOptions& options, Completi
 
 #pragma mark WGPU Stubs
 
+void wgpuInstanceReference(WGPUInstance instance)
+{
+    WebGPU::fromAPI(instance).ref();
+}
+
 void wgpuInstanceRelease(WGPUInstance instance)
 {
     WebGPU::fromAPI(instance).deref();

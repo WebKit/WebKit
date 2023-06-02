@@ -407,6 +407,11 @@ const WGSL::Reflection::EntryPointInformation* ShaderModule::entryPointInformati
 
 #pragma mark WGPU Stubs
 
+void wgpuShaderModuleReference(WGPUShaderModule shaderModule)
+{
+    WebGPU::fromAPI(shaderModule).ref();
+}
+
 void wgpuShaderModuleRelease(WGPUShaderModule shaderModule)
 {
     WebGPU::fromAPI(shaderModule).deref();

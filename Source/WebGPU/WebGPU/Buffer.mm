@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (c) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -271,7 +271,7 @@ void Buffer::mapAsync(WGPUMapModeFlags mode, size_t offset, size_t size, Complet
         m_device->generateAValidationError("Validation failure."_s);
 
         m_device->instance().scheduleWork([callback = WTFMove(callback)]() mutable {
-            callback(WGPUBufferMapAsyncStatus_Error);
+            callback(WGPUBufferMapAsyncStatus_ValidationError);
         });
         return;
     }
@@ -294,7 +294,7 @@ void Buffer::mapAsync(WGPUMapModeFlags mode, size_t offset, size_t size, Complet
             callback(WGPUBufferMapAsyncStatus_Success);
             return;
         case WGPUQueueWorkDoneStatus_Error:
-            callback(WGPUBufferMapAsyncStatus_Error);
+            callback(WGPUBufferMapAsyncStatus_ValidationError);
             return;
         case WGPUQueueWorkDoneStatus_Unknown:
             callback(WGPUBufferMapAsyncStatus_Unknown);
@@ -304,7 +304,7 @@ void Buffer::mapAsync(WGPUMapModeFlags mode, size_t offset, size_t size, Complet
             return;
         case WGPUQueueWorkDoneStatus_Force32:
             ASSERT_NOT_REACHED();
-            callback(WGPUBufferMapAsyncStatus_Error);
+            callback(WGPUBufferMapAsyncStatus_ValidationError);
             return;
         }
     });
@@ -355,6 +355,11 @@ uint64_t Buffer::size() const
 } // namespace WebGPU
 
 #pragma mark WGPU Stubs
+
+void wgpuBufferReference(WGPUBuffer buffer)
+{
+    WebGPU::fromAPI(buffer).ref();
+}
 
 void wgpuBufferRelease(WGPUBuffer buffer)
 {

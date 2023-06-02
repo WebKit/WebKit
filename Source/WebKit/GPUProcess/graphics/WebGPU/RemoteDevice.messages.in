@@ -43,7 +43,6 @@ messages -> RemoteDevice NotRefCounted Stream {
     void CreateQuerySet(WebKit::WebGPU::QuerySetDescriptor descriptor, WebKit::WebGPUIdentifier identifier)
     void PushErrorScope(PAL::WebGPU::ErrorFilter errorFilter)
     void PopErrorScope() -> (std::optional<WebKit::WebGPU::Error> error)
-    void ResolveDeviceLostPromise() -> (PAL::WebGPU::DeviceLostReason reason)
     void SetLabel(String label)
 }
 

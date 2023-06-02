@@ -342,15 +342,6 @@ void RemoteDeviceProxy::setLabelInternal(const String& label)
     UNUSED_VARIABLE(sendResult);
 }
 
-void RemoteDeviceProxy::resolveDeviceLostPromise(CompletionHandler<void(PAL::WebGPU::DeviceLostReason)>&& callback)
-{
-    auto sendResult = sendWithAsyncReply(Messages::RemoteDevice::ResolveDeviceLostPromise(), [callback = WTFMove(callback)] (PAL::WebGPU::DeviceLostReason reason) mutable {
-        callback(reason);
-    });
-
-    UNUSED_PARAM(sendResult);
-}
-
 } // namespace WebKit::WebGPU
 
 #endif // ENABLE(GPU_PROCESS)

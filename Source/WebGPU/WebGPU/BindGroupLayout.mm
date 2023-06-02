@@ -331,6 +331,11 @@ WGPUBindGroupLayoutEntry BindGroupLayout::createEntryFromStructMember(MTLStructM
 
 #pragma mark WGPU Stubs
 
+void wgpuBindGroupLayoutReference(WGPUBindGroupLayout bindGroupLayout)
+{
+    WebGPU::fromAPI(bindGroupLayout).ref();
+}
+
 void wgpuBindGroupLayoutRelease(WGPUBindGroupLayout bindGroupLayout)
 {
     WebGPU::fromAPI(bindGroupLayout).deref();

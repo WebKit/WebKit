@@ -592,6 +592,11 @@ bool RenderPipeline::validateDepthStencilState(bool depthReadOnly, bool stencilR
 
 #pragma mark WGPU Stubs
 
+void wgpuRenderPipelineReference(WGPURenderPipeline renderPipeline)
+{
+    WebGPU::fromAPI(renderPipeline).ref();
+}
+
 void wgpuRenderPipelineRelease(WGPURenderPipeline renderPipeline)
 {
     WebGPU::fromAPI(renderPipeline).deref();

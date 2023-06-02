@@ -659,21 +659,6 @@ void DeviceImpl::popErrorScope(CompletionHandler<void(std::optional<Error>&&)>&&
     }).get());
 }
 
-void DeviceImpl::resolveDeviceLostPromise(CompletionHandler<void(PAL::WebGPU::DeviceLostReason)>&& callback)
-{
-    wgpuDeviceSetDeviceLostCallbackWithBlock(m_backing, makeBlockPtr([callback = WTFMove(callback)](WGPUDeviceLostReason reason, const char*) mutable {
-        switch (reason) {
-        case WGPUDeviceLostReason_Undefined:
-        case WGPUDeviceLostReason_Force32:
-            callback(PAL::WebGPU::DeviceLostReason::Unknown);
-            return;
-        case WGPUDeviceLostReason_Destroyed:
-            callback(PAL::WebGPU::DeviceLostReason::Destroyed);
-            return;
-        }
-    }).get());
-}
-
 void DeviceImpl::setLabelInternal(const String& label)
 {
     wgpuDeviceSetLabel(m_backing, label.utf8().data());

@@ -118,13 +118,8 @@ GPUDevice::LostPromise& GPUDevice::lost()
         return m_lostPromise;
 
     m_waitingForDeviceLostPromise = true;
-    m_backing->resolveDeviceLostPromise([weakThis = WeakPtr { *this }](PAL::WebGPU::DeviceLostReason reason) {
-        if (!weakThis)
-            return;
 
-        auto ref = GPUDeviceLostInfo::create(PAL::WebGPU::DeviceLostInfo::create(reason, ""_s));
-        weakThis->m_lostPromise->resolve(WTFMove(ref));
-    });
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=257656 Implement this.
 
     return m_lostPromise;
 }

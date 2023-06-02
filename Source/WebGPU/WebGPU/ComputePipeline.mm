@@ -178,6 +178,11 @@ void ComputePipeline::setLabel(String&&)
 
 #pragma mark WGPU Stubs
 
+void wgpuComputePipelineReference(WGPUComputePipeline computePipeline)
+{
+    WebGPU::fromAPI(computePipeline).ref();
+}
+
 void wgpuComputePipelineRelease(WGPUComputePipeline computePipeline)
 {
     WebGPU::fromAPI(computePipeline).deref();

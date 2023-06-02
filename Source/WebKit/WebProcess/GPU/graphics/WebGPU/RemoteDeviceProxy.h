@@ -108,7 +108,6 @@ private:
     void popErrorScope(CompletionHandler<void(std::optional<PAL::WebGPU::Error>&&)>&&) final;
 
     void setLabelInternal(const String&) final;
-    void resolveDeviceLostPromise(CompletionHandler<void(PAL::WebGPU::DeviceLostReason)>&&) final;
 
     Deque<CompletionHandler<void(Ref<PAL::WebGPU::ComputePipeline>&&)>> m_createComputePipelineAsyncCallbacks;
     Deque<CompletionHandler<void(Ref<PAL::WebGPU::RenderPipeline>&&)>> m_createRenderPipelineAsyncCallbacks;

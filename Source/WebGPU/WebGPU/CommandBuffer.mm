@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (c) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -51,6 +51,11 @@ void CommandBuffer::setLabel(String&& label)
 } // namespace WebGPU
 
 #pragma mark WGPU Stubs
+
+void wgpuCommandBufferReference(WGPUCommandBuffer commandBuffer)
+{
+    WebGPU::fromAPI(commandBuffer).ref();
+}
 
 void wgpuCommandBufferRelease(WGPUCommandBuffer commandBuffer)
 {

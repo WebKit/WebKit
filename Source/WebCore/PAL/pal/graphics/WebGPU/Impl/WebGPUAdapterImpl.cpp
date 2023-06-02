@@ -82,6 +82,9 @@ static Ref<SupportedFeatures> supportedFeatures(const Vector<WGPUFeatureName>& f
         case WGPUFeatureName_BGRA8UnormStorage:
             result.append("bgra8unorm-storage"_s);
             break;
+        case WGPUFeatureName_Float32Filterable:
+            result.append("float32-filterable"_s);
+            break;
         case WGPUFeatureName_Force32:
             ASSERT_NOT_REACHED();
             continue;
@@ -306,7 +309,9 @@ void AdapterImpl::requestDevice(const DeviceDescriptor& descriptor, CompletionHa
         &requiredLimits, {
             { },
             "queue"
-        }
+        },
+        nullptr, // FIXME: Implement device lost callback.
+        nullptr,
     };
 
     auto requestedLimits = SupportedLimits::create(limits.maxTextureDimension1D,

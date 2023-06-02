@@ -127,7 +127,6 @@ private:
 
     void pushErrorScope(PAL::WebGPU::ErrorFilter);
     void popErrorScope(CompletionHandler<void(std::optional<WebGPU::Error>&&)>&&);
-    void resolveDeviceLostPromise(CompletionHandler<void(PAL::WebGPU::DeviceLostReason)>&&);
 
     void setLabel(String&&);
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (c) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -74,6 +74,11 @@ bool PipelineLayout::operator==(const PipelineLayout& other) const
 } // namespace WebGPU
 
 #pragma mark WGPU Stubs
+
+void wgpuPipelineLayoutReference(WGPUPipelineLayout pipelineLayout)
+{
+    WebGPU::fromAPI(pipelineLayout).ref();
+}
 
 void wgpuPipelineLayoutRelease(WGPUPipelineLayout pipelineLayout)
 {
