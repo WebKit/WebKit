@@ -218,7 +218,7 @@ static bool areFramesEssentiallyEqualWithTolerance(const FloatRect& a, const Flo
     }
 
     FloatRect sourceVideoFrame = self.videoSublayer.bounds;
-    FloatRect targetVideoFrame = [self calculateTargetVideoFrame];
+    _targetVideoFrame = [self calculateTargetVideoFrame];
 
     float videoAspectRatio = self.videoDimensions.width / self.videoDimensions.height;
 
@@ -233,25 +233,24 @@ static bool areFramesEssentiallyEqualWithTolerance(const FloatRect& a, const Flo
         // The initial resize will have an empty videoLayerFrame, which makes
         // the subsequent calculations incorrect. When this happens, just do
         // the synchronous resize step instead.
-        _targetVideoFrame = targetVideoFrame;
         OBJC_INFO_LOG(OBJC_LOGIDENTIFIER, "sourceVideoFrame is empty; calling -resolveBounds");
         [self resolveBounds];
         return;
     }
 
-    if (sourceVideoFrame == targetVideoFrame && CGAffineTransformIsIdentity([_videoSublayer affineTransform])) {
-        OBJC_DEBUG_LOG(OBJC_LOGIDENTIFIER, "targetVideoFrame (", _targetVideoFrame.size(), ") is equal to sourceVideoFrame, and affineTransform is identity, bailing");
+    if (sourceVideoFrame == _targetVideoFrame && CGAffineTransformIsIdentity([_videoSublayer affineTransform])) {
+        OBJC_DEBUG_LOG(OBJC_LOGIDENTIFIER, "targetVideoFrame (", _targetVideoFrame, ") is equal to sourceVideoFrame, and affineTransform is identity, bailing");
         return;
     }
 
     // CALayer -frame will take the -position, -bounds, and -affineTransform into account,
     // so bail out if the current -frame is essentially equal to the targetVideoFrame.
-    if (areFramesEssentiallyEqualWithTolerance(self.videoSublayer.frame, targetVideoFrame)) {
-        OBJC_DEBUG_LOG(OBJC_LOGIDENTIFIER, "targetVideoFrame (", _targetVideoFrame.size(), ") is essentially equal to videoSublayer.frame, bailing");
+    if (areFramesEssentiallyEqualWithTolerance(self.videoSublayer.frame, _targetVideoFrame)) {
+        OBJC_DEBUG_LOG(OBJC_LOGIDENTIFIER, "targetVideoFrame (", _targetVideoFrame, ") is essentially equal to videoSublayer.frame, bailing");
         return;
     }
 
-    CGAffineTransform transform = CGAffineTransformMakeScale(targetVideoFrame.width() / sourceVideoFrame.width(), targetVideoFrame.height() / sourceVideoFrame.height());
+    CGAffineTransform transform = CGAffineTransformMakeScale(_targetVideoFrame.width() / sourceVideoFrame.width(), _targetVideoFrame.height() / sourceVideoFrame.height());
 
     [CATransaction begin];
     [_videoSublayer setAnchorPoint:CGPointMake(0.5, 0.5)];
@@ -259,8 +258,7 @@ static bool areFramesEssentiallyEqualWithTolerance(const FloatRect& a, const Flo
     [_videoSublayer setPosition:CGPointMake(CGRectGetMidX(self.bounds), CGRectGetMidY(self.bounds))];
     [CATransaction commit];
 
-    _targetVideoFrame = targetVideoFrame;
-    OBJC_DEBUG_LOG(OBJC_LOGIDENTIFIER, "targetVideoFrame: ", targetVideoFrame.size(), ", transform: [", transform.a, ", ", transform.d, "]");
+    OBJC_DEBUG_LOG(OBJC_LOGIDENTIFIER, "self.bounds: ", FloatRect(self.bounds), ", targetVideoFrame: ", _targetVideoFrame, ", transform: [", transform.a, ", ", transform.d, "]");
 
     NSTimeInterval animationDuration = [CATransaction animationDuration];
     RunLoop::main().dispatch([self, strongSelf = retainPtr(self), animationDuration] {
@@ -279,7 +277,7 @@ static bool areFramesEssentiallyEqualWithTolerance(const FloatRect& a, const Flo
     }
 
     if (areFramesEssentiallyEqualWithTolerance(self.videoSublayer.frame, _targetVideoFrame) && CGAffineTransformIsIdentity([_videoSublayer affineTransform])) {
-        OBJC_INFO_LOG(OBJC_LOGIDENTIFIER, "targetVideoFrame (", _targetVideoFrame.size(), ") is equal to videoSublayer.bounds, and affineTransform is identity, bailing");
+        OBJC_INFO_LOG(OBJC_LOGIDENTIFIER, "targetVideoFrame (", _targetVideoFrame, ") is equal to videoSublayer.bounds, and affineTransform is identity, bailing");
         return;
     }
 
@@ -287,7 +285,7 @@ static bool areFramesEssentiallyEqualWithTolerance(const FloatRect& a, const Flo
     [CATransaction setAnimationDuration:0];
     [CATransaction setDisableActions:YES];
 
-    OBJC_DEBUG_LOG(OBJC_LOGIDENTIFIER, _targetVideoFrame.size());
+    OBJC_DEBUG_LOG(OBJC_LOGIDENTIFIER, _targetVideoFrame);
 
     if (_fullscreenModel) {
         FloatRect targetVideoBounds { { }, _targetVideoFrame.size() };

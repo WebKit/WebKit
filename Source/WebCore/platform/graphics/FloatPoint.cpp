@@ -95,4 +95,19 @@ TextStream& operator<<(TextStream& ts, const FloatPoint& p)
     return ts << "(" << TextStream::FormatNumberRespectingIntegers(p.x()) << "," << TextStream::FormatNumberRespectingIntegers(p.y()) << ")";
 }
 
+Ref<JSON::Object> FloatPoint::toJSONObject() const
+{
+    auto object = JSON::Object::create();
+
+    object->setDouble("x"_s, m_x);
+    object->setDouble("y"_s, m_y);
+
+    return object;
+}
+
+String FloatPoint::toJSONString() const
+{
+    return toJSONObject()->toJSONString();
+}
+
 }

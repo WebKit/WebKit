@@ -281,4 +281,19 @@ TextStream& operator<<(TextStream& ts, const FloatRect &r)
     return ts << r.location() << " " << r.size();
 }
 
+Ref<JSON::Object> FloatRect::toJSONObject() const
+{
+    auto object = JSON::Object::create();
+
+    object->setObject("location"_s, m_location.toJSONObject());
+    object->setObject("size"_s, m_size.toJSONObject());
+
+    return object;
+}
+
+String FloatRect::toJSONString() const
+{
+    return toJSONObject()->toJSONString();
+}
+
 }

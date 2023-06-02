@@ -220,7 +220,7 @@ void VideoFullscreenModelContext::requestFullscreenMode(HTMLMediaElementEnums::V
 
 void VideoFullscreenModelContext::setVideoLayerFrame(WebCore::FloatRect frame)
 {
-    ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, frame.size());
+    ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, frame);
     if (m_manager)
         m_manager->setVideoLayerFrame(m_contextId, frame);
 }
