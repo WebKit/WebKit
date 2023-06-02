@@ -56,6 +56,8 @@ public:
     void visit(AST::CompoundStatement&) override;
 
 private:
+    enum class Context : uint8_t { Local, Global };
+
     struct Global {
         struct Resource {
             unsigned group;
@@ -96,7 +98,7 @@ private:
     void insertParameters(AST::Function&, const UsedResources&);
     void insertMaterializations(AST::Function&, const UsedResources&);
     void insertLocalDefinitions(AST::Function&, const UsedPrivateGlobals&);
-    void readVariable(AST::IdentifierExpression&, AST::Variable&);
+    void readVariable(AST::IdentifierExpression&, AST::Variable&, Context);
     void insertBeforeCurrentStatement(AST::Statement&);
 
     CallGraph& m_callGraph;
@@ -175,14 +177,14 @@ void RewriteGlobalVariables::visit(AST::IdentifierExpression& identifier)
     auto def = m_defs.find(identifier.identifier());
     if (def != m_defs.end()) {
         if (def->value)
-            readVariable(identifier, *def->value);
+            readVariable(identifier, *def->value, Context::Local);
         return;
     }
 
     auto it = m_globals.find(identifier.identifier());
     if (it == m_globals.end())
         return;
-    readVariable(identifier, *it->value.declaration);
+    readVariable(identifier, *it->value.declaration, Context::Global);
 }
 
 void RewriteGlobalVariables::visit(AST::CompoundStatement& statement)
@@ -459,10 +461,11 @@ void RewriteGlobalVariables::def(const String& name, AST::Variable* variable)
     m_defs.add(name, variable);
 }
 
-void RewriteGlobalVariables::readVariable(AST::IdentifierExpression& identifier, AST::Variable& variable)
+void RewriteGlobalVariables::readVariable(AST::IdentifierExpression& identifier, AST::Variable& variable, Context context)
 {
     if (variable.flavor() != AST::VariableFlavor::Const) {
-        m_reads.add(identifier.identifier());
+        if (context == Context::Global)
+            m_reads.add(identifier.identifier());
         return;
     }
 
