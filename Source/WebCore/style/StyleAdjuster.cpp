@@ -485,9 +485,9 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
     // FIXME: Eventually table sections will support auto and scroll.
     if (style.display() == DisplayType::Table || style.display() == DisplayType::InlineTable
         || style.display() == DisplayType::TableRowGroup || style.display() == DisplayType::TableRow) {
-        if (style.overflowX() != Overflow::Visible && style.overflowX() != Overflow::Hidden)
+        if (style.overflowX() != Overflow::Visible && style.overflowX() != Overflow::Hidden && style.overflowX() != Overflow::Clip)
             style.setOverflowX(Overflow::Visible);
-        if (style.overflowY() != Overflow::Visible && style.overflowY() != Overflow::Hidden)
+        if (style.overflowY() != Overflow::Visible && style.overflowY() != Overflow::Hidden && style.overflowY() != Overflow::Clip)
             style.setOverflowY(Overflow::Visible);
     }
 
