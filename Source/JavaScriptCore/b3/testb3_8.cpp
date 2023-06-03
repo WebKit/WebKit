@@ -1354,4 +1354,74 @@ void testStoreAfterClobberExitsSidewaysSuccessor()
     delete[] memory;
 }
 
+void testNarrowLoad()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    auto* value1 = root->appendNew<MemoryValue>(proc, Load, Int64, Origin(), root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+    auto* value2 = root->appendNew<MemoryValue>(proc, Load, Int32, Origin(), root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+    root->appendNewControlValue(proc, Return, Origin(), root->appendNew<Value>(proc, Add, Int64, Origin(), value1, root->appendNew<Value>(proc, ZExt32, Int64, Origin(), value2)));
+
+    uint64_t value = 0x1000000010000000ULL;
+    CHECK_EQ(compileAndRun<uint64_t>(proc, &value), 0x1000000020000000ULL);
+}
+
+void testNarrowLoadClobber()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    auto* address = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    auto* value1 = root->appendNew<MemoryValue>(proc, Load, Int64, Origin(), address);
+    root->appendNew<MemoryValue>(proc, Store, Origin(), root->appendNew<Const64Value>(proc, Origin(), 0), address, 0);
+    auto* value2 = root->appendNew<MemoryValue>(proc, Load, Int32, Origin(), root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+    root->appendNewControlValue(proc, Return, Origin(), root->appendNew<Value>(proc, Add, Int64, Origin(), value1, root->appendNew<Value>(proc, ZExt32, Int64, Origin(), value2)));
+
+    uint64_t value = 0x1000000010000000ULL;
+    CHECK_EQ(compileAndRun<uint64_t>(proc, &value), 0x1000000010000000ULL);
+    CHECK_EQ(value, 0x0000000000000000ULL);
+}
+
+void testNarrowLoadClobberNarrow()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    auto* address = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    auto* value1 = root->appendNew<MemoryValue>(proc, Load, Int64, Origin(), address);
+    root->appendNew<MemoryValue>(proc, Store, Origin(), root->appendNew<Const32Value>(proc, Origin(), 0), address, 0);
+    auto* value2 = root->appendNew<MemoryValue>(proc, Load, Int32, Origin(), root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+    root->appendNewControlValue(proc, Return, Origin(), root->appendNew<Value>(proc, Add, Int64, Origin(), value1, root->appendNew<Value>(proc, ZExt32, Int64, Origin(), value2)));
+
+    uint64_t value = 0x1000000010000000ULL;
+    CHECK_EQ(compileAndRun<uint64_t>(proc, &value), 0x1000000010000000ULL);
+    CHECK_EQ(value, 0x1000000000000000ULL);
+}
+
+void testNarrowLoadNotClobber()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    auto* address = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    auto* value1 = root->appendNew<MemoryValue>(proc, Load, Int64, Origin(), address);
+    root->appendNew<MemoryValue>(proc, Store, Origin(), root->appendNew<Const32Value>(proc, Origin(), 0), address, 4);
+    auto* value2 = root->appendNew<MemoryValue>(proc, Load, Int32, Origin(), root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0));
+    root->appendNewControlValue(proc, Return, Origin(), root->appendNew<Value>(proc, Add, Int64, Origin(), value1, root->appendNew<Value>(proc, ZExt32, Int64, Origin(), value2)));
+
+    uint64_t value = 0x1000000010000000ULL;
+    CHECK_EQ(compileAndRun<uint64_t>(proc, &value), 0x1000000020000000ULL);
+    CHECK_EQ(value, 0x0000000010000000ULL);
+}
+
+void testNarrowLoadUpper()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    auto* address = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    auto* value1 = root->appendNew<MemoryValue>(proc, Load, Int64, Origin(), address);
+    auto* value2 = root->appendNew<MemoryValue>(proc, Load, Int32, Origin(), address, 4);
+    root->appendNewControlValue(proc, Return, Origin(), root->appendNew<Value>(proc, Add, Int64, Origin(), value1, root->appendNew<Value>(proc, ZExt32, Int64, Origin(), value2)));
+
+    uint64_t value = 0x2000000010000000ULL;
+    CHECK_EQ(compileAndRun<uint64_t>(proc, &value), 0x2000000030000000ULL);
+}
+
 #endif // ENABLE(B3_JIT)

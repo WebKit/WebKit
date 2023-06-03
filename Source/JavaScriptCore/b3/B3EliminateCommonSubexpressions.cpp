@@ -433,27 +433,53 @@ private:
             handleMemoryValue(
                 ptr, range,
                 [&] (MemoryValue* candidate) -> bool {
-                    if (B3EliminateCommonSubexpressionsInternal::verbose)
-                        dataLog("        Consdering ", pointerDump(candidate), "\n");
+                    dataLogLnIf(B3EliminateCommonSubexpressionsInternal::verbose, "        Consdering ", pointerDump(candidate));
                     if (candidate->offset() != offset)
                         return false;
-                    
-                    if (B3EliminateCommonSubexpressionsInternal::verbose)
-                        dataLog("            offset ok.\n");
-                    
-                    if (candidate->opcode() == Load && candidate->type() == type)
-                        return true;
 
-                    if (B3EliminateCommonSubexpressionsInternal::verbose)
-                        dataLog("            not a load with ok type.\n");
-                    
-                    if (candidate->opcode() == Store && candidate->child(0)->type() == type)
-                        return true;
+                    dataLogLnIf(B3EliminateCommonSubexpressionsInternal::verbose, "            offset ok.");
+                    if (candidate->opcode() == Load) {
+                        if (candidate->type() == type)
+                            return true;
+                        if (candidate->type() == Int64 && type == Int32)
+                            return true;
+                    }
 
-                    if (B3EliminateCommonSubexpressionsInternal::verbose)
-                        dataLog("            not a store with ok type.\n");
+                    dataLogLnIf(B3EliminateCommonSubexpressionsInternal::verbose, "            not a load with ok type.");
+                    if (candidate->opcode() == Store) {
+                        if (candidate->child(0)->type() == type)
+                            return true;
+                        if (candidate->child(0)->type() == Int64 && type == Int32)
+                            return true;
+                    }
 
+                    dataLogLnIf(B3EliminateCommonSubexpressionsInternal::verbose, "            not a store with ok type.");
                     return false;
+                },
+                [&] (MemoryValue* match, Vector<Value*>& fixups) -> Value* {
+                    if (match->opcode() == Load) {
+                        if (match->type() == type)
+                            return nullptr;
+
+                        if (match->type() == Int64 && type == Int32) {
+                            Value* trunc = m_proc.add<Value>(Trunc, m_value->origin(), match);
+                            fixups.append(trunc);
+                            return trunc;
+                        }
+                    }
+
+                    if (match->opcode() == Store) {
+                        if (match->child(0)->type() == type)
+                            return nullptr;
+
+                        if (match->child(0)->type() == Int64 && type == Int32) {
+                            Value* trunc = m_proc.add<Value>(Trunc, m_value->origin(), match->child(0));
+                            fixups.append(trunc);
+                            return trunc;
+                        }
+                    }
+
+                    return nullptr;
                 });
             break;
         }

@@ -1,3 +1,4 @@
+//@ skip if $memoryLimited
 //@ requireOptions("--jitPolicyScale=0")
 function foo(a0, a1) {
     try {

@@ -1215,6 +1215,11 @@ void testStoreAfterClobberExitsSideways();
 void testStoreAfterClobberDifferentWidth();
 void testStoreAfterClobberDifferentWidthSuccessor();
 void testStoreAfterClobberExitsSidewaysSuccessor();
+void testNarrowLoad();
+void testNarrowLoadClobber();
+void testNarrowLoadClobberNarrow();
+void testNarrowLoadNotClobber();
+void testNarrowLoadUpper();
 
 void testVectorOrConstants(v128_t, v128_t);
 void testVectorAndConstants(v128_t, v128_t);

@@ -550,6 +550,11 @@ void run(const TestConfig* config)
     RUN(testStoreAfterClobberExitsSideways());
     RUN(testStoreAfterClobberDifferentWidthSuccessor());
     RUN(testStoreAfterClobberExitsSidewaysSuccessor());
+    RUN(testNarrowLoad());
+    RUN(testNarrowLoadClobber());
+    RUN(testNarrowLoadClobberNarrow());
+    RUN(testNarrowLoadNotClobber());
+    RUN(testNarrowLoadUpper());
 
     RUN(testInt32ToDoublePartialRegisterStall());
     RUN(testInt32ToDoublePartialRegisterWithoutStall());
