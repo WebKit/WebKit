@@ -10,6 +10,7 @@ TESTS = \
     TestWithStreamBatched \
     TestWithStreamBuffer \
     TestWithCVPixelBuffer \
+    TestWithStreamServerConnectionHandle \
 #
 
 all:

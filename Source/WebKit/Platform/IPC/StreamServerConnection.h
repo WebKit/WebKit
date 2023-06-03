@@ -54,9 +54,18 @@ class StreamServerConnection final : public ThreadSafeRefCounted<StreamServerCon
 public:
     using AsyncReplyID = Connection::AsyncReplyID;
     struct Handle {
+        WTF_MAKE_NONCOPYABLE(Handle);
+        Handle() = default;
+        Handle(Connection::Handle&& connection, StreamConnectionBuffer::Handle&& bufferHandle)
+            : outOfStreamConnection(WTFMove(connection))
+            , buffer(WTFMove(bufferHandle))
+        { }
+        Handle(Handle&&) = default;
+        Handle& operator=(Handle&&) = default;
+
         Connection::Handle outOfStreamConnection;
         StreamConnectionBuffer::Handle buffer;
-        void encode(Encoder&) const;
+        void encode(Encoder&) &&;
         static std::optional<Handle> decode(Decoder&);
     };
     static Ref<StreamServerConnection> create(Handle&&);
@@ -154,9 +163,9 @@ void StreamServerConnection::sendAsyncReply(AsyncReplyID asyncReplyID, Arguments
     m_connection->sendSyncReply(WTFMove(encoder));
 }
 
-inline void StreamServerConnection::Handle::encode(Encoder& encoder) const
+inline void StreamServerConnection::Handle::encode(Encoder& encoder) &&
 {
-    encoder << outOfStreamConnection << buffer;
+    encoder << WTFMove(outOfStreamConnection) << buffer;
 }
 
 inline std::optional<StreamServerConnection::Handle> StreamServerConnection::Handle::decode(Decoder& decoder)
@@ -165,7 +174,7 @@ inline std::optional<StreamServerConnection::Handle> StreamServerConnection::Han
     auto buffer = decoder.decode<StreamConnectionBuffer::Handle>();
     if (UNLIKELY(!decoder.isValid()))
         return std::nullopt;
-    return Handle { WTFMove(*outOfStreamConnection), WTFMove(*buffer) };
+    return Handle(WTFMove(*outOfStreamConnection), WTFMove(*buffer));
 }
 
 }

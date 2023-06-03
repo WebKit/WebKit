@@ -132,6 +132,12 @@ def surround_in_condition(string, condition):
     return '#if %s\n%s#endif\n' % (condition, string)
 
 
+def types_that_must_be_moved():
+    return frozenset([
+        'IPC::StreamServerConnection::Handle',
+    ])
+
+
 def function_parameter_type(type, kind):
     # Don't use references for built-in types.
     builtin_types = frozenset([
@@ -152,15 +158,26 @@ def function_parameter_type(type, kind):
     if type in builtin_types:
         return type
 
+    if type in types_that_must_be_moved():
+        return '%s&&' % type
+
     if kind.startswith('enum:'):
         return type
 
     return 'const %s&' % type
 
 
+def arguments_constructor_name(type, name):
+    if type in types_that_must_be_moved():
+        return 'WTFMove(%s)' % name
+
+    return name
+
 def message_to_struct_declaration(receiver, message):
     result = []
     function_parameters = [(function_parameter_type(x.type, x.kind), x.name) for x in message.parameters]
+
+    arguments_constructor_parameters = [arguments_constructor_name(x.type, x.name) for x in message.parameters]
 
     result.append('class %s {\n' % message.name)
     result.append('public:\n')
@@ -189,12 +206,12 @@ def message_to_struct_declaration(receiver, message):
 
     if len(function_parameters):
         result.append('    %s%s(%s)' % (len(function_parameters) == 1 and 'explicit ' or '', message.name, ', '.join([' '.join(x) for x in function_parameters])))
-        result.append('\n        : m_arguments(%s)\n' % ', '.join([x[1] for x in function_parameters]))
+        result.append('\n        : m_arguments(%s)\n' % ', '.join(arguments_constructor_parameters))
         result.append('    {\n')
         result.append('    }\n\n')
-    result.append('    const auto& arguments() const\n')
+    result.append('    auto&& arguments()\n')
     result.append('    {\n')
-    result.append('        return m_arguments;\n')
+    result.append('        return WTFMove(m_arguments);\n')
     result.append('    }\n')
     result.append('\n')
     result.append('private:\n')

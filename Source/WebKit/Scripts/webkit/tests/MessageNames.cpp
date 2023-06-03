@@ -75,6 +75,7 @@ const MessageDescription messageDescriptions[static_cast<size_t>(MessageName::Co
     { "TestWithSemaphore_SendSemaphore", ReceiverName::TestWithSemaphore, false, false },
     { "TestWithStreamBatched_SendString", ReceiverName::TestWithStreamBatched, true, false },
     { "TestWithStreamBuffer_SendStreamBuffer", ReceiverName::TestWithStreamBuffer, false, false },
+    { "TestWithStreamServerConnectionHandle_SendStreamServerConnection", ReceiverName::TestWithStreamServerConnectionHandle, false, false },
     { "TestWithStream_CallWithIdentifier", ReceiverName::TestWithStream, true, false },
 #if PLATFORM(COCOA)
     { "TestWithStream_SendMachSendRight", ReceiverName::TestWithStream, true, false },

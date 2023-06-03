@@ -124,7 +124,7 @@ public:
     JSObjectRef createJSWrapper(JSContextRef);
     static JSIPCConnectionHandle* toWrapped(JSContextRef, JSValueRef);
 
-    void encode(IPC::Encoder& encoder) const { encoder << m_handle; }
+    void encode(IPC::Encoder& encoder) { encoder << WTFMove(m_handle); }
 
 private:
     JSIPCConnectionHandle(IPC::Connection::Handle&& handle)
@@ -243,7 +243,7 @@ public:
     }
     JSObjectRef createJSWrapper(JSContextRef);
     static JSIPCStreamServerConnectionHandle* toWrapped(JSContextRef, JSValueRef);
-    void encode(IPC::Encoder& encoder) const { encoder << m_handle; }
+    void encode(IPC::Encoder& encoder) { encoder << WTFMove(m_handle); }
 private:
     JSIPCStreamServerConnectionHandle(IPC::StreamServerConnection::Handle&& handle)
         : m_handle { WTFMove(handle) }

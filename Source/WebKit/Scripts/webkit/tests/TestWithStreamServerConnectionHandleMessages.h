@@ -27,29 +27,28 @@
 #include "ArgumentCoders.h"
 #include "Connection.h"
 #include "MessageNames.h"
+#include "StreamServerConnection.h"
 #include <wtf/Forward.h>
 #include <wtf/ThreadSafeRefCounted.h>
-#include <wtf/text/WTFString.h>
 
 
 namespace Messages {
-namespace TestWithIfMessage {
+namespace TestWithStreamServerConnectionHandle {
 
 static inline IPC::ReceiverName messageReceiverName()
 {
-    return IPC::ReceiverName::TestWithIfMessage;
+    return IPC::ReceiverName::TestWithStreamServerConnectionHandle;
 }
 
-#if PLATFORM(COCOA)
-class LoadURL {
+class SendStreamServerConnection {
 public:
-    using Arguments = std::tuple<String>;
+    using Arguments = std::tuple<IPC::StreamServerConnection::Handle>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithIfMessage_LoadURL; }
+    static IPC::MessageName name() { return IPC::MessageName::TestWithStreamServerConnectionHandle_SendStreamServerConnection; }
     static constexpr bool isSync = false;
 
-    explicit LoadURL(const String& url)
-        : m_arguments(url)
+    explicit SendStreamServerConnection(IPC::StreamServerConnection::Handle&& handle)
+        : m_arguments(WTFMove(handle))
     {
     }
 
@@ -59,32 +58,8 @@ public:
     }
 
 private:
-    std::tuple<const String&> m_arguments;
+    std::tuple<IPC::StreamServerConnection::Handle&&> m_arguments;
 };
-#endif
 
-#if PLATFORM(GTK)
-class LoadURL {
-public:
-    using Arguments = std::tuple<String, int64_t>;
-
-    static IPC::MessageName name() { return IPC::MessageName::TestWithIfMessage_LoadURL; }
-    static constexpr bool isSync = false;
-
-    LoadURL(const String& url, int64_t value)
-        : m_arguments(url, value)
-    {
-    }
-
-    auto&& arguments()
-    {
-        return WTFMove(m_arguments);
-    }
-
-private:
-    std::tuple<const String&, int64_t> m_arguments;
-};
-#endif
-
-} // namespace TestWithIfMessage
+} // namespace TestWithStreamServerConnectionHandle
 } // namespace Messages

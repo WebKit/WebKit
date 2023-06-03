@@ -112,7 +112,6 @@ RemoteGraphicsContextGLProxy::RemoteGraphicsContextGLProxy(IPC::Connection& conn
 void RemoteGraphicsContextGLProxy::initializeIPC(IPC::StreamServerConnection::Handle&& serverConnectionHandle, RemoteRenderingBackendProxy& renderingBackend)
 {
     m_connection->send(Messages::GPUConnectionToWebProcess::CreateGraphicsContextGL(contextAttributes(), m_graphicsContextGLIdentifier, renderingBackend.ensureBackendCreated(), WTFMove(serverConnectionHandle)), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
-    serverConnectionHandle = { }; // FIXME(https://bugs.webkit.org/show_bug.cgi?id=257528): Support real rvalue semantics for send
     m_streamConnection->open(*this, renderingBackend.dispatcher());
     // TODO: We must wait until initialized, because at the moment we cannot receive IPC messages
     // during wait while in synchronous stream send. Should be fixed as part of https://bugs.webkit.org/show_bug.cgi?id=217211.
