@@ -224,11 +224,12 @@ void wgpuInstanceProcessEvents(WGPUInstance instance)
     WebGPU::fromAPI(instance).processEvents();
 }
 
-void wgpuInstanceRequestAdapter(WGPUInstance instance, const WGPURequestAdapterOptions* options, WGPURequestAdapterCallback callback, void* userdata)
+void wgpuInstanceRequestAdapter(WGPUInstance apiInstance, const WGPURequestAdapterOptions* options, WGPURequestAdapterCallback callback, void* userdata)
 {
-    WebGPU::fromAPI(instance).requestAdapter(*options, [callback, userdata](WGPURequestAdapterStatus status, Ref<WebGPU::Adapter>&& adapter, String&& message) {
+    auto& instance = WebGPU::fromAPI(apiInstance);
+    instance.requestAdapter(*options, [callback, userdata, instance = Ref { instance }](WGPURequestAdapterStatus status, Ref<WebGPU::Adapter>&& adapter, String&& message) {
         if (status != WGPURequestAdapterStatus_Success) {
-            callback(status, nullptr, message.utf8().data(), userdata);
+            callback(status, WebGPU::releaseToAPI(WebGPU::Adapter::createInvalid(instance)), message.utf8().data(), userdata);
             return;
         }
 
