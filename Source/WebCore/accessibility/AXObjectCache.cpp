@@ -1547,8 +1547,10 @@ void AXObjectCache::onSelectedChanged(Node* node)
     else if (auto* axObject = getOrCreate(node)) {
         if (auto* ancestor = Accessibility::findAncestor<AccessibilityObject>(*axObject, false, [] (const auto& object) {
             return object.canHaveSelectedChildren();
-        }))
+        })) {
             selectedChildrenChanged(ancestor->node());
+            postNotification(axObject, &node->document(), AXSelectedStateChanged);
+        }
     }
 
     handleMenuItemSelected(node);

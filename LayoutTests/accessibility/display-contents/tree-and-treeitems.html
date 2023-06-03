@@ -84,30 +84,31 @@ if (window.accessibilityController) {
     output += expect("treeitem3.subrole", "'AXSubrole: AXOutlineRow'");
     output += expect("treeitem3.isExpanded", "true");
 
+    var selectedRow, treeitem4, treeitem5, treeitem6;
     // Test that the row can be selected correctly.
     output += expect("treeitem3.isSelected", "false");
     document.getElementById("treeitem3").setAttribute("aria-selected", true);
-    output += expect("treeitem3.isSelected", "true");
-
-    // Test that the tree reports the right selected row (treeitem3)
-    var selectedRow = tree.selectedRowAtIndex(0);
-    output += expect("selectedRow.isEqual(treeitem3)", "true");
-
-    // Test that hierarchicalLevel can be computed automatically, and that it's consistent with the ARIA level.
-    var treeitem4 = accessibilityController.accessibleElementById("treeitem4");
-    output += expect("treeitem4.hierarchicalLevel", "0");
-
-    var treeitem5 = accessibilityController.accessibleElementById("treeitem5");
-    output += expect("treeitem5.hierarchicalLevel", "1");
-
-    var treeitem6 = accessibilityController.accessibleElementById("treeitem6");
-    output += expect("treeitem6.hierarchicalLevel", "1");
-
-    output += "\nUpdating aria-level of #treeitem2 to 3.\n";
-    document.getElementById("treeitem2").setAttribute("aria-level", "3");
     setTimeout(async function() {
-        await waitFor(() => treeitem2.hierarchicalLevel === 2);
-        output += expect("treeitem2.hierarchicalLevel", "2");
+        output += await expectAsync("treeitem3.isSelected", "true");
+
+        // Test that the tree reports the right selected row (treeitem3)
+        selectedRow = tree.selectedRowAtIndex(0);
+        output += expect("selectedRow.isEqual(treeitem3)", "true");
+
+        // Test that hierarchicalLevel can be computed automatically, and that it's consistent with the ARIA level.
+        treeitem4 = accessibilityController.accessibleElementById("treeitem4");
+        output += expect("treeitem4.hierarchicalLevel", "0");
+
+        treeitem5 = accessibilityController.accessibleElementById("treeitem5");
+        output += expect("treeitem5.hierarchicalLevel", "1");
+
+        treeitem6 = accessibilityController.accessibleElementById("treeitem6");
+        output += expect("treeitem6.hierarchicalLevel", "1");
+
+        output += "\nUpdating aria-level of #treeitem2 to 3.\n";
+        document.getElementById("treeitem2").setAttribute("aria-level", "3");
+
+        output += await expectAsync("treeitem2.hierarchicalLevel", "2");
 
         debug(output);
         finishJSTest();
