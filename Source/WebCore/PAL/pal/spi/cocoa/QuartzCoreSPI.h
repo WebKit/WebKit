@@ -30,12 +30,6 @@
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <wtf/spi/cocoa/IOSurfaceSPI.h>
 
-#ifdef __OBJC__
-@interface CALayer(Staging_109168036)
-@property CGRect contentsDirtyRect;
-@end
-#endif
-
 #if USE(APPLE_INTERNAL_SDK)
 
 #import <QuartzCore/CABackingStore.h>
