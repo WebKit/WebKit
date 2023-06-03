@@ -100,17 +100,15 @@
 namespace WebKit {
 using namespace WebCore;
 
+#if PLATFORM(COCOA)
 static bool isSmallLayerBacking(const ImageBufferBackendParameters& parameters)
 {
-#if PLATFORM(COCOA)
     const unsigned maxSmallLayerBackingArea = 64u * 64u; // 4096 == 16kb backing store which equals 1 page on AS.
     return parameters.purpose == RenderingPurpose::LayerBacking
         && ImageBufferBackend::calculateBackendSize(parameters).area() <= maxSmallLayerBackingArea
         && (parameters.pixelFormat == PixelFormat::BGRA8 || parameters.pixelFormat == PixelFormat::BGRX8);
-#else
-    return false;
-#endif
 }
+#endif
 
 Ref<RemoteRenderingBackend> RemoteRenderingBackend::create(GPUConnectionToWebProcess& gpuConnectionToWebProcess, RemoteRenderingBackendCreationParameters&& creationParameters, IPC::StreamServerConnection::Handle&& connectionHandle)
 {
