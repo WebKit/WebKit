@@ -28,6 +28,8 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "RemoteQueue.h"
+#include "RemoteVideoFrameIdentifier.h"
+#include "SharedVideoFrame.h"
 #include "StreamMessageReceiver.h"
 #include "WebGPUError.h"
 #include "WebGPUIdentifier.h"
@@ -36,6 +38,8 @@
 #include <wtf/CompletionHandler.h>
 #include <wtf/Ref.h>
 #include <wtf/text/WTFString.h>
+
+typedef struct __CVBuffer* CVPixelBufferRef;
 
 namespace PAL::WebGPU {
 class Device;
@@ -48,6 +52,7 @@ class StreamServerConnection;
 
 namespace WebCore {
 class MediaPlayer;
+class VideoFrame;
 }
 
 namespace WebKit {
@@ -71,8 +76,11 @@ struct ShaderModuleDescriptor;
 struct TextureDescriptor;
 }
 
-using MediaPlayerAccessor = Function<void(WebCore::MediaPlayer&)>;
-using PerformWithMediaPlayerOnMainThread = Function<void(WebCore::MediaPlayerIdentifier, MediaPlayerAccessor&&)>;
+#if ENABLE(VIDEO) && PLATFORM(COCOA)
+using PerformWithMediaPlayerOnMainThread = Function<void(std::variant<WebCore::MediaPlayerIdentifier, WebKit::RemoteVideoFrameReference>, Function<void(RefPtr<WebCore::VideoFrame>)>&&)>;
+#else
+using PerformWithMediaPlayerOnMainThread = Function<void()>;
+#endif
 
 class RemoteDevice final : public IPC::StreamMessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
@@ -109,6 +117,9 @@ private:
     void createTexture(const WebGPU::TextureDescriptor&, WebGPUIdentifier);
     void createSampler(const WebGPU::SamplerDescriptor&, WebGPUIdentifier);
     void importExternalTexture(const WebGPU::ExternalTextureDescriptor&, WebGPUIdentifier);
+#if PLATFORM(COCOA) && ENABLE(VIDEO)
+    void importExternalTextureFromPixelBuffer(const WebGPU::ExternalTextureDescriptor&, std::optional<WebKit::SharedVideoFrame::Buffer>, WebGPUIdentifier);
+#endif
 
     void createBindGroupLayout(const WebGPU::BindGroupLayoutDescriptor&, WebGPUIdentifier);
     void createPipelineLayout(const WebGPU::PipelineLayoutDescriptor&, WebGPUIdentifier);
@@ -129,6 +140,8 @@ private:
     void popErrorScope(CompletionHandler<void(std::optional<WebGPU::Error>&&)>&&);
 
     void setLabel(String&&);
+    void setSharedVideoFrameSemaphore(IPC::Semaphore&&);
+    void setSharedVideoFrameMemory(SharedMemory::Handle&&);
 
     Ref<PAL::WebGPU::Device> m_backing;
     WebGPU::ObjectHeap& m_objectHeap;
@@ -136,6 +149,9 @@ private:
     WebGPUIdentifier m_identifier;
     Ref<RemoteQueue> m_queue;
     PerformWithMediaPlayerOnMainThread& m_performWithMediaPlayerOnMainThread;
+#if PLATFORM(COCOA) && ENABLE(VIDEO)
+    SharedVideoFrameReader m_sharedVideoFrameReader;
+#endif
 };
 
 } // namespace WebKit

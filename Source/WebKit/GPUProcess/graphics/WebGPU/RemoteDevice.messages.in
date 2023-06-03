@@ -44,6 +44,11 @@ messages -> RemoteDevice NotRefCounted Stream {
     void PushErrorScope(PAL::WebGPU::ErrorFilter errorFilter)
     void PopErrorScope() -> (std::optional<WebKit::WebGPU::Error> error)
     void SetLabel(String label)
+#if PLATFORM(COCOA) && ENABLE(VIDEO)
+    void SetSharedVideoFrameSemaphore(IPC::Semaphore semaphore) NotStreamEncodable
+    void SetSharedVideoFrameMemory(WebKit::SharedMemory::Handle storageHandle) NotStreamEncodable
+    void ImportExternalTextureFromPixelBuffer(WebKit::WebGPU::ExternalTextureDescriptor descriptor, std::optional<WebKit::SharedVideoFrame::Buffer> sharedBuffer, WebKit::WebGPUIdentifier identifier) NotStreamEncodable
+#endif
 }
 
 #endif

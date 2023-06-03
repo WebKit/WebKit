@@ -21,8 +21,18 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #if ENABLE(GPU_PROCESS)
+header: <pal/graphics/WebGPU/WebGPUExternalTextureDescriptor.h>
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] struct PAL::WebGPU::HTMLVideoElementIdentifier {
+    uint64_t identifier;
+};
+
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] struct PAL::WebGPU::WebCodecsVideoFrameIdentifier {
+    std::pair<uint64_t, uint64_t> identifier;
+};
+
+header: "WebGPUExternalTextureDescriptor.h"
 [AdditionalEncoder=StreamConnectionEncoder] struct WebKit::WebGPU::ExternalTextureDescriptor : WebKit::WebGPU::ObjectDescriptorBase {
-    WebCore::MediaPlayerIdentifier mediaIdentifier;
+    PAL::WebGPU::VideoSourceIdentifier mediaIdentifier;
     PAL::WebGPU::PredefinedColorSpace colorSpace;
 };
 #endif

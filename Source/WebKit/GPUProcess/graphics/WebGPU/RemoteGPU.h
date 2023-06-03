@@ -28,6 +28,7 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "RemoteGPURequestAdapterResponse.h"
+#include "RemoteVideoFrameIdentifier.h"
 #include "StreamConnectionWorkQueue.h"
 #include "StreamMessageReceiver.h"
 #include "StreamServerConnection.h"
@@ -52,6 +53,7 @@ class StreamServerConnection;
 
 namespace WebCore {
 class MediaPlayer;
+class VideoFrame;
 }
 
 namespace WebKit {
@@ -64,8 +66,11 @@ class ObjectHeap;
 struct RequestAdapterOptions;
 }
 
-using MediaPlayerAccessor = Function<void(WebCore::MediaPlayer&)>;
-using PerformWithMediaPlayerOnMainThread = Function<void(WebCore::MediaPlayerIdentifier, MediaPlayerAccessor&&)>;
+#if ENABLE(VIDEO) && PLATFORM(COCOA)
+using PerformWithMediaPlayerOnMainThread = Function<void(std::variant<WebCore::MediaPlayerIdentifier, WebKit::RemoteVideoFrameReference>, Function<void(RefPtr<WebCore::VideoFrame>)>&&)>;
+#else
+using PerformWithMediaPlayerOnMainThread = Function<void()>;
+#endif
 
 class RemoteGPU final : public IPC::StreamMessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;

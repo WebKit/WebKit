@@ -90,6 +90,7 @@ public:
     bool isRemoteProxy() const final { return true; }
 #if PLATFORM(COCOA)
     CVPixelBufferRef pixelBuffer() const final;
+    VideoFrame::ResourceIdentifier resourceIdentifier() const final;
 #endif
 
 private:

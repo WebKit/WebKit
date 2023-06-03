@@ -46,6 +46,7 @@
 #include "RemoteSampler.h"
 #include "RemoteShaderModule.h"
 #include "RemoteTexture.h"
+#include "RemoteVideoFrameIdentifier.h"
 #include "StreamServerConnection.h"
 #include "WebGPUCommandEncoderDescriptor.h"
 #include "WebGPUObjectHeap.h"
@@ -152,24 +153,61 @@ void RemoteDevice::createSampler(const WebGPU::SamplerDescriptor& descriptor, We
     m_objectHeap.addObject(identifier, remoteSampler);
 }
 
+static void populateConvertedDescriptor(auto mediaIdentifier, auto& convertedDescriptor, auto& performWithMediaPlayerOnMainThread)
+{
+#if ENABLE(VIDEO) && PLATFORM(COCOA)
+    using MediaPlayerOrVideoFrameResult = std::variant<WebCore::MediaPlayerIdentifier, WebKit::RemoteVideoFrameReference>;
+    MediaPlayerOrVideoFrameResult result = WTF::switchOn(mediaIdentifier, [] (PAL::WebGPU::HTMLVideoElementIdentifier i) -> MediaPlayerOrVideoFrameResult {
+        return WebCore::MediaPlayerIdentifier(i.identifier);
+    }, [] (PAL::WebGPU::WebCodecsVideoFrameIdentifier i) -> MediaPlayerOrVideoFrameResult {
+        return RemoteVideoFrameReference(RemoteVideoFrameIdentifier(i.identifier.first), i.identifier.second);
+    });
+
+    performWithMediaPlayerOnMainThread(result, [&convertedDescriptor](RefPtr<WebCore::VideoFrame> videoFrame) mutable {
+        convertedDescriptor->pixelBuffer = videoFrame ? videoFrame->pixelBuffer() : nullptr;
+    });
+#else
+    UNUSED_PARAM(mediaIdentifier);
+    UNUSED_PARAM(convertedDescriptor);
+    UNUSED_PARAM(performWithMediaPlayerOnMainThread);
+#endif
+}
+
+#if ENABLE(VIDEO) && PLATFORM(COCOA)
+void RemoteDevice::setSharedVideoFrameSemaphore(IPC::Semaphore&& semaphore)
+{
+    m_sharedVideoFrameReader.setSemaphore(WTFMove(semaphore));
+}
+
+void RemoteDevice::setSharedVideoFrameMemory(SharedMemory::Handle&& handle)
+{
+    m_sharedVideoFrameReader.setSharedMemory(WTFMove(handle));
+}
+#endif
+
 void RemoteDevice::importExternalTexture(const WebGPU::ExternalTextureDescriptor& descriptor, WebGPUIdentifier identifier)
 {
+#if PLATFORM(COCOA) && ENABLE(VIDEO)
+    importExternalTextureFromPixelBuffer(descriptor, std::nullopt, identifier);
+}
+
+void RemoteDevice::importExternalTextureFromPixelBuffer(const WebGPU::ExternalTextureDescriptor& descriptor, std::optional<WebKit::SharedVideoFrame::Buffer> sharedBuffer, WebGPUIdentifier identifier)
+{
+#endif
     auto convertedDescriptor = m_objectHeap.convertFromBacking(descriptor);
     ASSERT(convertedDescriptor);
-    if (!convertedDescriptor || !convertedDescriptor->mediaIdentifier)
+    if (!convertedDescriptor)
         return;
 
-    m_performWithMediaPlayerOnMainThread(WebCore::MediaPlayerIdentifier(convertedDescriptor->mediaIdentifier), [&convertedDescriptor](auto& player) mutable {
-        auto videoFrame = player.videoFrameForCurrentTime();
-        if (!videoFrame)
-            return;
-
-#if PLATFORM(COCOA)
-        CVPixelBufferRef pixelBuffer = videoFrame->pixelBuffer();
-        ASSERT(pixelBuffer);
-        convertedDescriptor->pixelBuffer = pixelBuffer;
+#if PLATFORM(COCOA) && ENABLE(VIDEO)
+    if (sharedBuffer)
+        convertedDescriptor->pixelBuffer = m_sharedVideoFrameReader.readBuffer(WTFMove(*sharedBuffer));
+    else
 #endif
-    });
+        populateConvertedDescriptor(descriptor.mediaIdentifier, convertedDescriptor, m_performWithMediaPlayerOnMainThread);
+
+    if (!convertedDescriptor->pixelBuffer)
+        return;
 
     auto externalTexture = m_backing->importExternalTexture(*convertedDescriptor);
     auto remoteExternalTexture = RemoteExternalTexture::create(externalTexture, m_objectHeap, m_streamConnection.copyRef(), identifier);

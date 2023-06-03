@@ -28,25 +28,64 @@
 #include "GPUObjectDescriptorBase.h"
 #include "GPUPredefinedColorSpace.h"
 #include "HTMLVideoElement.h"
+#include "WebCodecsVideoFrame.h"
 #include <pal/graphics/WebGPU/WebGPUExternalTextureDescriptor.h>
 #include <wtf/RefPtr.h>
+
+typedef struct __CVBuffer* CVPixelBufferRef;
 
 namespace WebCore {
 
 class HTMLVideoElement;
+#if ENABLE(WEB_CODECS)
+using GPUVideoSource = std::variant<RefPtr<HTMLVideoElement>, RefPtr<WebCodecsVideoFrame>>;
+#else
+using GPUVideoSource = RefPtr<HTMLVideoElement>;
+#endif
 
 struct GPUExternalTextureDescriptor : public GPUObjectDescriptorBase {
+
+    static PAL::WebGPU::VideoSourceIdentifier mediaIdentifierForSource(const GPUVideoSource& videoSource, CVPixelBufferRef& outPixelBuffer)
+    {
+#if ENABLE(WEB_CODECS)
+        return WTF::switchOn(videoSource, [] (const RefPtr<HTMLVideoElement> videoElement) -> PAL::WebGPU::VideoSourceIdentifier {
+            auto playerIdentifier = videoElement->playerIdentifier();
+            return PAL::WebGPU::HTMLVideoElementIdentifier { playerIdentifier ? playerIdentifier->toUInt64() : 0 };
+        }
+        , [&outPixelBuffer] (const RefPtr<WebCodecsVideoFrame> videoFrame) -> PAL::WebGPU::VideoSourceIdentifier {
+#if PLATFORM(COCOA)
+            if (auto internalFrame = videoFrame->internalFrame()) {
+                if (internalFrame->isRemoteProxy())
+                    return PAL::WebGPU::WebCodecsVideoFrameIdentifier { internalFrame->resourceIdentifier() };
+
+                outPixelBuffer = internalFrame->pixelBuffer();
+            }
+#else
+            UNUSED_PARAM(videoFrame);
+            UNUSED_PARAM(outPixelBuffer);
+#endif
+            return PAL::WebGPU::WebCodecsVideoFrameIdentifier { };
+        });
+#else
+        UNUSED_PARAM(outPixelBuffer);
+        auto playerIdentifier = videoSource->playerIdentifier();
+        return PAL::WebGPU::HTMLVideoElementIdentifier { playerIdentifier ? playerIdentifier->toUInt64() : 0 };
+#endif
+    }
+
     PAL::WebGPU::ExternalTextureDescriptor convertToBacking() const
     {
-        auto playerIdentifier = source->playerIdentifier();
+        CVPixelBufferRef pixelBuffer = nullptr;
+        auto mediaIdentifier = mediaIdentifierForSource(source, pixelBuffer);
         return {
             { label },
-            playerIdentifier.has_value() ? playerIdentifier->toUInt64() : 0,
+            mediaIdentifier,
             WebCore::convertToBacking(colorSpace),
+            pixelBuffer
         };
     }
 
-    HTMLVideoElement* source { nullptr };
+    GPUVideoSource source;
     GPUPredefinedColorSpace colorSpace { GPUPredefinedColorSpace::SRGB };
 };
 

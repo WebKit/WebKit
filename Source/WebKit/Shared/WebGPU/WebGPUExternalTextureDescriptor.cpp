@@ -40,7 +40,7 @@ std::optional<ExternalTextureDescriptor> ConvertToBackingContext::convertToBacki
     if (!base)
         return std::nullopt;
 
-    return { { WTFMove(*base), WebCore::MediaPlayerIdentifier(externalTextureDescriptor.mediaIdentifier), externalTextureDescriptor.colorSpace } };
+    return { { WTFMove(*base), externalTextureDescriptor.mediaIdentifier, externalTextureDescriptor.colorSpace } };
 }
 
 std::optional<PAL::WebGPU::ExternalTextureDescriptor> ConvertFromBackingContext::convertFromBacking(const ExternalTextureDescriptor& externalTextureDescriptor)
@@ -49,7 +49,7 @@ std::optional<PAL::WebGPU::ExternalTextureDescriptor> ConvertFromBackingContext:
     if (!base)
         return std::nullopt;
 
-    return { { WTFMove(*base), externalTextureDescriptor.mediaIdentifier.toUInt64(), externalTextureDescriptor.colorSpace } };
+    return { { WTFMove(*base), externalTextureDescriptor.mediaIdentifier, externalTextureDescriptor.colorSpace } };
 }
 
 } // namespace WebKit

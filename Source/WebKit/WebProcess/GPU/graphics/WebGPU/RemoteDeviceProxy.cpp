@@ -43,6 +43,7 @@
 #include "RemoteSamplerProxy.h"
 #include "RemoteShaderModuleProxy.h"
 #include "RemoteTextureProxy.h"
+#include "SharedVideoFrame.h"
 #include "WebGPUCommandEncoderDescriptor.h"
 #include "WebGPUConvertToBackingContext.h"
 
@@ -128,8 +129,28 @@ Ref<PAL::WebGPU::ExternalTexture> RemoteDeviceProxy::importExternalTexture(const
     }
 
     auto identifier = WebGPUIdentifier::generate();
+#if PLATFORM(COCOA) && ENABLE(VIDEO)
+    if (auto pixelBuffer = descriptor.pixelBuffer) {
+        WebKit::SharedVideoFrameWriter sharedVideoFrameWriter;
+        constexpr bool canSendIOSurface = false;
+        auto sharedVideoFrameBuffer = sharedVideoFrameWriter.writeBuffer(pixelBuffer.get(), [&](auto& semaphore) {
+            auto sendResult = send(Messages::RemoteDevice::SetSharedVideoFrameSemaphore { semaphore });
+            UNUSED_VARIABLE(sendResult);
+        }, [&](auto&& handle) {
+            auto sendResult = send(Messages::RemoteDevice::SetSharedVideoFrameMemory { WTFMove(handle) });
+            UNUSED_VARIABLE(sendResult);
+        }, canSendIOSurface);
+
+        auto sendResult = send(Messages::RemoteDevice::ImportExternalTextureFromPixelBuffer(*convertedDescriptor, sharedVideoFrameBuffer, identifier));
+        UNUSED_VARIABLE(sendResult);
+    }  else {
+        auto sendResult = send(Messages::RemoteDevice::ImportExternalTexture(*convertedDescriptor, identifier));
+        UNUSED_VARIABLE(sendResult);
+    }
+#else
     auto sendResult = send(Messages::RemoteDevice::ImportExternalTexture(*convertedDescriptor, identifier));
     UNUSED_VARIABLE(sendResult);
+#endif
 
     return RemoteExternalTextureProxy::create(*this, m_convertToBackingContext, identifier);
 }

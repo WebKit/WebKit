@@ -42,7 +42,6 @@
 #import "Sampler.h"
 #import "ShaderModule.h"
 #import "Texture.h"
-#import <CoreVideo/CVPixelBuffer.h>
 #import <algorithm>
 #import <notify.h>
 #import <wtf/StdLibExtras.h>

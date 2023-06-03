@@ -166,7 +166,7 @@ Ref<ExternalTexture> DeviceImpl::importExternalTexture(const ExternalTextureDesc
     WGPUExternalTextureDescriptor backingDescriptor {
         .nextInChain = nullptr,
         label.data(),
-        .pixelBuffer = descriptor.pixelBuffer,
+        .pixelBuffer = descriptor.pixelBuffer.get(),
         .colorSpace = convertToWGPUColorSpace(descriptor.colorSpace),
     };
     return ExternalTextureImpl::create(wgpuDeviceImportExternalTexture(backing(), &backingDescriptor), descriptor, m_convertToBackingContext);
