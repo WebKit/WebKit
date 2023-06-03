@@ -1103,7 +1103,6 @@ void RenderElement::clearChildNeedsLayout()
     setNormalChildNeedsLayoutBit(false);
     setPosChildNeedsLayoutBit(false);
     setNeedsSimplifiedNormalFlowLayoutBit(false);
-    setNormalChildNeedsLayoutBit(false);
     setNeedsPositionedMovementLayoutBit(false);
 }
 
