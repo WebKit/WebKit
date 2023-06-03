@@ -121,6 +121,7 @@ public:
     Element* actionElement() const override;
     Element* mouseButtonListener(MouseButtonListenerResultFilter = ExcludeBodyElement) const;
     Element* anchorElement() const override;
+    Element* popoverTargetElement() const final;
     AccessibilityObject* internalLinkElement() const;
     void addRadioButtonGroupMembers(AccessibilityChildrenVector& linkedUIElements) const;
     void addRadioButtonGroupChildren(AXCoreObject&, AccessibilityChildrenVector&) const;

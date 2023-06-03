@@ -395,11 +395,20 @@ void HTMLFormControlElement::handlePopoverTargetAction() const
 
     auto action = popoverTargetAction();
     bool canHide = action == hideAtom() || action == toggleAtom();
+    bool shouldHide = canHide && target->popoverData()->visibilityState() == PopoverVisibilityState::Showing;
     bool canShow = action == showAtom() || action == toggleAtom();
-    if (canHide && target->popoverData()->visibilityState() == PopoverVisibilityState::Showing)
+    bool shouldShow = canShow && target->popoverData()->visibilityState() == PopoverVisibilityState::Hidden;
+
+    if (shouldHide)
         target->hidePopover();
-    else if (canShow && target->popoverData()->visibilityState() == PopoverVisibilityState::Hidden)
+    else if (shouldShow)
         target->showPopover(this);
+
+    if (shouldHide || shouldShow) {
+        // Accessibility needs to know that the invoker (this) toggled popover visibility state.
+        if (auto* cache = document().existingAXObjectCache())
+            cache->onPopoverTargetToggle(*this);
+    }
 }
 
 // FIXME: We should remove the quirk once <rdar://problem/47334655> is fixed.

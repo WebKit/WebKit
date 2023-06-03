@@ -3269,6 +3269,10 @@ bool AccessibilityObject::supportsPressed() const
     
 bool AccessibilityObject::supportsExpanded() const
 {
+    // If this object can toggle an HTML popover, it supports the reporting of its expanded state (which is based on the expanded / collapsed state of that popover).
+    if (popoverTargetElement())
+        return true;
+
     switch (roleValue()) {
     case AccessibilityRole::Button:
     case AccessibilityRole::CheckBox:
@@ -3322,8 +3326,11 @@ bool AccessibilityObject::isExpanded() const
             return parent->isExpanded();
     }
 
-    if (supportsExpanded())
+    if (supportsExpanded()) {
+        if (WeakPtr popoverTargetElement = this->popoverTargetElement())
+            return popoverTargetElement->isPopoverShowing();
         return equalLettersIgnoringASCIICase(getAttribute(aria_expandedAttr), "true"_s);
+    }
 
     return false;  
 }

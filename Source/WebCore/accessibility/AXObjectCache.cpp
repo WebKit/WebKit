@@ -1472,6 +1472,11 @@ void AXObjectCache::onFocusChange(Node* oldNode, Node* newNode)
         handleFocusedUIElementChanged(oldNode, newNode);
 }
 
+void AXObjectCache::onPopoverTargetToggle(const HTMLFormControlElement& popoverInvokerElement)
+{
+    postNotification(get(const_cast<HTMLFormControlElement*>(&popoverInvokerElement)), &document(), AXExpandedChanged);
+}
+
 void AXObjectCache::deferMenuListValueChange(Element* element)
 {
     if (!element)

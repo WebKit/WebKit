@@ -423,6 +423,7 @@ public:
     static AccessibilityObject* anchorElementForNode(Node*);
     static AccessibilityObject* headingElementForNode(Node*);
     virtual Element* anchorElement() const { return nullptr; }
+    virtual Element* popoverTargetElement() const { return nullptr; }
     bool supportsPressAction() const override;
     Element* actionElement() const override { return nullptr; }
     virtual LayoutRect boundingBoxRect() const { return { }; }
