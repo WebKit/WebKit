@@ -1326,11 +1326,12 @@ JSValue Graph::tryGetConstantProperty(
     // incompatible with the getDirect we're trying to do. The easiest way to do that is to
     // determine if the structure belongs to the proven set.
 
+    Locker cellLock { object->cellLock() };
     Structure* structure = object->structure();
     if (!structureSet.toStructureSet().contains(structure))
         return JSValue();
 
-    return object->getDirectConcurrently(structure, offset);
+    return object->getDirectConcurrently(cellLock, structure, offset);
 }
 
 JSValue Graph::tryGetConstantProperty(JSValue base, Structure* structure, PropertyOffset offset)

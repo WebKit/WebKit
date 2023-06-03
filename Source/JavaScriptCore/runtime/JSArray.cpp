@@ -1033,6 +1033,7 @@ bool JSArray::unshiftCountWithArrayStorage(JSGlobalObject* globalObject, unsigne
         Structure* structure = this->structure();
         ConcurrentJSLocker structureLock(structure->lock());
         Butterfly* newButterfly = storage->butterfly()->unshift(structure, count);
+
         storage = newButterfly->arrayStorage();
         storage->m_indexBias -= count;
         storage->setVectorLength(vectorLength + count);
