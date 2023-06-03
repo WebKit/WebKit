@@ -825,8 +825,8 @@ public:
 
     // Fast access to known property offsets.
     ALWAYS_INLINE JSValue getDirect(PropertyOffset offset) const { return locationForOffset(offset)->get(); }
-    JSValue getDirect(Concurrency, Structure* expectedStructure, PropertyOffset) const;
-    JSValue getDirectConcurrently(Structure* expectedStructure, PropertyOffset) const;
+    JSValue getDirect(Locker<JSCellLock>&, Concurrency, Structure* expectedStructure, PropertyOffset) const;
+    JSValue getDirectConcurrently(Locker<JSCellLock>&, Structure* expectedStructure, PropertyOffset) const;
     void putDirectOffset(VM& vm, PropertyOffset offset, JSValue value) { locationForOffset(offset)->set(vm, this, value); }
     void putDirectWithoutBarrier(PropertyOffset offset, JSValue value) { locationForOffset(offset)->setWithoutWriteBarrier(value); }
 
@@ -1394,22 +1394,25 @@ inline JSValue JSObject::getPrototype(VM&, JSGlobalObject* globalObject)
 // shrink the butterfly when we are holding the Structure's ConcurrentJSLock, such as when we
 // flatten an object.
 IGNORE_RETURN_TYPE_WARNINGS_BEGIN
-ALWAYS_INLINE JSValue JSObject::getDirect(Concurrency concurrency, Structure* expectedStructure, PropertyOffset offset) const
+ALWAYS_INLINE JSValue JSObject::getDirect(Locker<JSCellLock>& cellLock, Concurrency concurrency, Structure* expectedStructure, PropertyOffset offset) const
 {
     switch (concurrency) {
     case Concurrency::MainThread:
         ASSERT(!isCompilationThread() && !Thread::mayBeGCThread());
         return getDirect(offset);
     case Concurrency::ConcurrentThread:
-        return getDirectConcurrently(expectedStructure, offset);
+        return getDirectConcurrently(cellLock, expectedStructure, offset);
     }
 }
 IGNORE_RETURN_TYPE_WARNINGS_END
 
-inline JSValue JSObject::getDirectConcurrently(Structure* structure, PropertyOffset offset) const
+inline JSValue JSObject::getDirectConcurrently(Locker<JSCellLock>&, Structure* expectedStructure, PropertyOffset offset) const
 {
-    ConcurrentJSLocker locker(structure->lock());
-    if (!structure->isValidOffset(offset))
+    // We always take the cell lock before the structure lock.
+    // We must take the cell lock to prevent places like JSArray::unshiftCountWithArrayStorage
+    // from changing the butterfly out from under us.
+    ConcurrentJSLocker locker { expectedStructure->lock() };
+    if (!expectedStructure->isValidOffset(offset))
         return { };
     return getDirect(offset);
 }
