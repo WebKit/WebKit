@@ -132,11 +132,15 @@ AffineTransform* SVGGraphicsElement::ensureSupplementalTransform()
 
 void SVGGraphicsElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
-    SVGTests::parseAttribute(name, newValue);
-    SVGElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
-
+    // Updating the SVG transform baseVal needs to happen before calling attributeChanged().
+    // attributeChanged() invokes svgAttributeChanged(), which calls RenderLayerModelObjects
+    // repaintOrRelayoutAfterSVGTransformChange() method, if LBSE is activated. To determine
+    // if the SVG transform changed, m_transform has to be updated before.
     if (name == SVGNames::transformAttr)
         m_transform->baseVal()->parse(newValue);
+
+    SVGTests::parseAttribute(name, newValue);
+    SVGElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 }
 
 void SVGGraphicsElement::svgAttributeChanged(const QualifiedName& attrName)
