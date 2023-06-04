@@ -335,6 +335,9 @@ static BOOL areEssentiallyEqual(double a, double b)
     preferences.punchOutWhiteBackgroundsInDarkMode = settings.punchOutWhiteBackgroundsInDarkMode;
     preferences.mockCaptureDevicesEnabled = settings.useMockCaptureDevices;
 
+    preferences.serviceControlsEnabled = settings.dataDetectorsEnabled;
+    // There is no WebKitLegacy API on macOS for telephone number detection.
+
     _webView._useSystemAppearance = settings.useSystemAppearance;
 
     [self setWebViewFillsWindow:settings.webViewFillsWindow];

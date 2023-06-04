@@ -66,6 +66,7 @@ static NSString * const AnimatedImageAsyncDecodingEnabledPreferenceKey = @"Anima
 static NSString * const AppleColorFilterEnabledPreferenceKey = @"AppleColorFilterEnabled";
 static NSString * const PunchOutWhiteBackgroundsInDarkModePreferenceKey = @"PunchOutWhiteBackgroundsInDarkMode";
 static NSString * const UseSystemAppearancePreferenceKey = @"UseSystemAppearance";
+static NSString * const DataDetectorsEnabledPreferenceKey = @"DataDetectorsEnabled";
 static NSString * const UseMockCaptureDevicesPreferenceKey = @"UseMockCaptureDevices";
 
 // This default name intentionally overlaps with the key that WebKit2 checks when creating a view.
@@ -182,6 +183,7 @@ static NSMenu *addSubmenuToMenu(NSMenu *menu, NSString *title)
     addItem(@"Enable color-filter", @selector(toggleAppleColorFilterEnabled:));
     addItem(@"Punch Out White Backgrounds in Dark Mode", @selector(togglePunchOutWhiteBackgroundsInDarkMode:));
     addItem(@"Use System Appearance", @selector(toggleUseSystemAppearance:));
+    addItem(@"Enable Data Detectors", @selector(toggleDataDetectorsEnabled:));
     addItem(@"Use Mock Capture Devices", @selector(toggleUseMockCaptureDevices:));
 
     addSeparator();
@@ -365,6 +367,8 @@ static NSMenu *addSubmenuToMenu(NSMenu *menu, NSString *title)
         [menuItem setState:[self punchOutWhiteBackgroundsInDarkMode] ? NSControlStateValueOn : NSControlStateValueOff];
     else if (action == @selector(toggleUseSystemAppearance:))
         [menuItem setState:[self useSystemAppearance] ? NSControlStateValueOn : NSControlStateValueOff];
+    else if (action == @selector(toggleDataDetectorsEnabled:))
+        [menuItem setState:[self dataDetectorsEnabled] ? NSControlStateValueOn : NSControlStateValueOff];
     else if (action == @selector(toggleUseMockCaptureDevices:))
         [menuItem setState:[self useMockCaptureDevices] ? NSControlStateValueOn : NSControlStateValueOff];
     else if (action == @selector(toggleReserveSpaceForBanners:))
@@ -686,6 +690,16 @@ static NSMenu *addSubmenuToMenu(NSMenu *menu, NSString *title)
 - (BOOL)useSystemAppearance
 {
     return [[NSUserDefaults standardUserDefaults] boolForKey:UseSystemAppearancePreferenceKey];
+}
+
+- (void)toggleDataDetectorsEnabled:(id)sender
+{
+    [self _toggleBooleanDefault:DataDetectorsEnabledPreferenceKey];
+}
+
+- (BOOL)dataDetectorsEnabled
+{
+    return [[NSUserDefaults standardUserDefaults] boolForKey:DataDetectorsEnabledPreferenceKey];
 }
 
 - (void)toggleUseMockCaptureDevices:(id)sender

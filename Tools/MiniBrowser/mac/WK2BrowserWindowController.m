@@ -497,6 +497,9 @@ static BOOL areEssentiallyEqual(double a, double b)
     preferences._punchOutWhiteBackgroundsInDarkMode = settings.punchOutWhiteBackgroundsInDarkMode;
     preferences._mockCaptureDevicesEnabled = settings.useMockCaptureDevices;
 
+    preferences._serviceControlsEnabled = settings.dataDetectorsEnabled;
+    preferences._telephoneNumberDetectionIsEnabled = settings.dataDetectorsEnabled;
+
     _webView.configuration.websiteDataStore._resourceLoadStatisticsEnabled = settings.resourceLoadStatisticsEnabled;
 
     [self setWebViewFillsWindow:settings.webViewFillsWindow];
