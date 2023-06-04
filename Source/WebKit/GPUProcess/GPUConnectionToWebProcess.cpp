@@ -343,6 +343,10 @@ void GPUConnectionToWebProcess::didClose(IPC::Connection& connection)
         m_audioSessionProxy = nullptr;
     }
 #endif
+#if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
+    if (auto userMediaCaptureManagerProxy = std::exchange(m_userMediaCaptureManagerProxy, { }))
+        userMediaCaptureManagerProxy->close();
+#endif
 #if ENABLE(VIDEO)
     m_videoFrameObjectHeap->close();
     m_remoteMediaPlayerManagerProxy->clear();

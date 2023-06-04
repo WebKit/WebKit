@@ -72,6 +72,7 @@ public:
     explicit UserMediaCaptureManagerProxy(UniqueRef<ConnectionProxy>&&);
     ~UserMediaCaptureManagerProxy();
 
+    void close();
     void clear();
 
     void setOrientation(WebCore::IntDegrees);
