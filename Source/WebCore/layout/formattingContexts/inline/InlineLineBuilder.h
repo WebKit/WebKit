@@ -102,15 +102,6 @@ public:
     };
     LayoutResult layoutInlineContent(const LineInput&, const std::optional<PreviousLine>&);
 
-    struct IntrinsicContent {
-        InlineItemRange committedRange;
-        std::optional<InlineLayoutUnit> trailingOverflowingContentWidth { };
-        InlineLayoutUnit contentLogicalWidth { 0 };
-        PlacedFloatList placedFloats;
-        SuspendedFloatList suspendedFloats;
-    };
-    IntrinsicContent computedIntrinsicWidth(const LineInput&, const std::optional<PreviousLine>&);
-
 private:
     void candidateContentForLine(LineCandidate&, size_t inlineItemIndex, const InlineItemRange& needsLayoutRange, InlineLayoutUnit currentLogicalRight);
     InlineLayoutUnit leadingPunctuationWidthForLineCandiate(size_t firstInlineTextItemIndex, size_t candidateContentStartIndex) const;

@@ -351,6 +351,16 @@ LineBuilder::LayoutResult LineBuilder::layoutInlineContent(const LineInput& line
     auto previousLineEndsWithLineBreak = !previousLine ? std::nullopt : std::make_optional(previousLine->endsWithLineBreak);
     initialize(lineInput.initialLogicalRect, initialConstraintsForLine(lineInput.initialLogicalRect, previousLineEndsWithLineBreak), lineInput.needsLayoutRange, previousLine);
     auto lineContent = placeInlineAndFloatContent(lineInput.needsLayoutRange);
+
+    if (isInIntrinsicWidthMode()) {
+        return { lineContent.range
+            , m_line.runs()
+            , { WTFMove(m_placedFloats), WTFMove(m_suspendedFloats), { } }
+            , { { }, m_line.contentLogicalWidth(), { }, lineContent.overflowLogicalWidth }
+            , { m_lineLogicalRect.topLeft(), { }, { } }
+        };
+    }
+
     auto isLastLine = isLastLineWithInlineContent(lineContent.range, lineInput.needsLayoutRange.endIndex(), lineContent.partialTrailingContentLength);
     auto inlineBaseDirection = m_line.runs().isEmpty() ? TextDirection::LTR : inlineBaseDirectionForLineContent();
     auto contentLogicalLeft = horizontalAlignmentOffset(isLastLine);
@@ -365,17 +375,6 @@ LineBuilder::LayoutResult LineBuilder::layoutInlineContent(const LineInput& line
         , { isFirstFormattedLine() ? LayoutResult::IsFirstLast::FirstFormattedLine::WithinIFC : LayoutResult::IsFirstLast::FirstFormattedLine::No, isLastLine }
         , m_line.nonSpanningInlineLevelBoxCount()
     };
-}
-
-LineBuilder::IntrinsicContent LineBuilder::computedIntrinsicWidth(const LineInput& lineInput, const std::optional<PreviousLine>& previousLine)
-{
-    ASSERT(isInIntrinsicWidthMode());
-    auto previousLineEndsWithLineBreak = !previousLine ? std::nullopt : std::make_optional(previousLine->endsWithLineBreak);
-    auto lineConstraints = initialConstraintsForLine(lineInput.initialLogicalRect, previousLineEndsWithLineBreak);
-    initialize(lineInput.initialLogicalRect, lineConstraints, lineInput.needsLayoutRange, previousLine);
-    auto lineContent = placeInlineAndFloatContent(lineInput.needsLayoutRange);
-    auto contentWidth = lineConstraints.logicalRect.left() + lineConstraints.marginStart + m_line.contentLogicalWidth();
-    return { lineContent.range, lineContent.overflowLogicalWidth, contentWidth, WTFMove(m_placedFloats), WTFMove(m_suspendedFloats) };
 }
 
 void LineBuilder::initialize(const InlineRect& initialLineLogicalRect, const UsedConstraints& lineConstraints, const InlineItemRange& needsLayoutRange, const std::optional<PreviousLine>& previousLine)

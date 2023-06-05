@@ -428,11 +428,11 @@ InlineLayoutUnit InlineFormattingContext::computedIntrinsicWidthForConstraint(In
     auto lineIndex = 0lu;
 
     while (!layoutRange.isEmpty()) {
-        auto intrinsicContent = lineBuilder.computedIntrinsicWidth({ layoutRange, { 0.f, 0.f, horizontalConstraints.logicalWidth, 0.f } }, previousLine);
+        auto lineLayoutResult = lineBuilder.layoutInlineContent({ layoutRange, { 0.f, 0.f, horizontalConstraints.logicalWidth, 0.f } }, previousLine);
         auto floatContentWidth = [&] {
             auto leftWidth = LayoutUnit { };
             auto rightWidth = LayoutUnit { };
-            for (auto& floatItem : intrinsicContent.placedFloats) {
+            for (auto& floatItem : lineLayoutResult.floatContent.placedFloats) {
                 auto marginBoxRect = BoxGeometry::marginBoxRect(floatItem.boxGeometry());
                 if (floatItem.isLeftPositioned())
                     leftWidth = std::max(leftWidth, marginBoxRect.right());
@@ -441,11 +441,11 @@ InlineLayoutUnit InlineFormattingContext::computedIntrinsicWidthForConstraint(In
             }
             return InlineLayoutUnit { leftWidth + rightWidth };
         };
-        maximumContentWidth = std::max(maximumContentWidth, intrinsicContent.contentLogicalWidth + floatContentWidth());
+        maximumContentWidth = std::max(maximumContentWidth, lineLayoutResult.lineGeometry.logicalTopLeft.x() + lineLayoutResult.contentGeometry.logicalWidth + floatContentWidth());
 
-        layoutRange.start = leadingInlineItemPositionForNextLine(intrinsicContent.committedRange.end, previousLineEnd, layoutRange.end);
+        layoutRange.start = leadingInlineItemPositionForNextLine(lineLayoutResult.inlineItemRange.end, previousLineEnd, layoutRange.end);
         previousLineEnd = layoutRange.start;
-        previousLine = PreviousLine { lineIndex++, intrinsicContent.trailingOverflowingContentWidth, { }, { }, WTFMove(intrinsicContent.suspendedFloats) };
+        previousLine = PreviousLine { lineIndex++, lineLayoutResult.contentGeometry.trailingOverflowingContentWidth, { }, { }, WTFMove(lineLayoutResult.floatContent.suspendedFloats) };
     }
     return maximumContentWidth;
 }
