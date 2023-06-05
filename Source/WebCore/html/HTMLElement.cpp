@@ -1251,8 +1251,8 @@ static ExceptionOr<bool> checkPopoverValidity(HTMLElement& element, PopoverVisib
     if (expectedDocument && element.document() != *expectedDocument)
         return Exception { InvalidStateError, "Invalid when the document changes while showing or hiding a popover element"_s };
 
-    if (is<HTMLDialogElement>(element) && element.hasAttributeWithoutSynchronization(HTMLNames::openAttr))
-        return Exception { InvalidStateError, "Element is an open <dialog> element"_s };
+    if (is<HTMLDialogElement>(element) && downcast<HTMLDialogElement>(element).isModal())
+        return Exception { InvalidStateError, "Element is a modal <dialog> element"_s };
 
 #if ENABLE(FULLSCREEN_API)
     if (element.hasFullscreenFlag())

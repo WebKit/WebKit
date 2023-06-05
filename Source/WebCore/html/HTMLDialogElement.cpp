@@ -59,9 +59,6 @@ ExceptionOr<void> HTMLDialogElement::show()
         return Exception { InvalidStateError, "Cannot call show() on an open modal dialog."_s };
     }
 
-    if (isPopoverShowing())
-        return Exception { InvalidStateError, "Element is already an open popover."_s };
-
     setBooleanAttribute(openAttr, true);
 
     m_previouslyFocusedElement = document().focusedElement();
@@ -114,13 +111,13 @@ void HTMLDialogElement::close(const String& result)
 
     setBooleanAttribute(openAttr, false);
 
+    if (isModal())
+        removeFromTopLayer();
+
     setIsModal(false);
 
     if (!result.isNull())
         m_returnValue = result;
-
-    if (isInTopLayer())
-        removeFromTopLayer();
 
     if (RefPtr element = std::exchange(m_previouslyFocusedElement, nullptr).get()) {
         FocusOptions options;
