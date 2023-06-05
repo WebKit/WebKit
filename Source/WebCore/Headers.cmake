@@ -1773,6 +1773,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/PathUtilities.h
     platform/graphics/Pattern.h
     platform/graphics/PixelBuffer.h
+    platform/graphics/PixelBufferConversion.h
     platform/graphics/PixelBufferFormat.h
     platform/graphics/PixelFormat.h
     platform/graphics/PlatformAudioTrackConfiguration.h

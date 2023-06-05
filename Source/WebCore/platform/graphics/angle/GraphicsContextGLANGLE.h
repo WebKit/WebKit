@@ -145,8 +145,8 @@ public:
     void linkProgram(PlatformGLObject) final;
     void pixelStorei(GCGLenum pname, GCGLint param) final;
     void polygonOffset(GCGLfloat factor, GCGLfloat units) final;
-    void readPixels(IntRect, GCGLenum format, GCGLenum type, std::span<uint8_t> data) final;
-    void readPixelsBufferObject(IntRect, GCGLenum format, GCGLenum type, GCGLintptr offset) final;
+    void readPixels(IntRect, GCGLenum format, GCGLenum type, std::span<uint8_t> data, GCGLint alignment, GCGLint rowLength) final;
+    void readPixelsBufferObject(IntRect, GCGLenum format, GCGLenum type, GCGLintptr offset, GCGLint alignment, GCGLint rowLength) final;
     void renderbufferStorage(GCGLenum target, GCGLenum internalformat, GCGLsizei width, GCGLsizei height) final;
     void sampleCoverage(GCGLclampf value, GCGLboolean invert) final;
     void scissor(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height) final;
@@ -353,8 +353,9 @@ public:
     virtual void withDrawingBufferAsNativeImage(Function<void(NativeImage&)>);
     virtual void withDisplayBufferAsNativeImage(Function<void(NativeImage&)>);
 
-    // Returns true on success.
-    bool readPixelsWithStatus(IntRect, GCGLenum format, GCGLenum type, std::span<uint8_t> data);
+    // Reads pixels from positive pixel coordinates with tight packing.
+    // Returns columns, rows of executed read on success.
+    std::optional<IntSize> readPixelsWithStatus(IntRect, GCGLenum format, GCGLenum type, std::span<uint8_t> data);
 
     void addError(GCGLErrorCode);
 protected:
@@ -381,7 +382,7 @@ protected:
     void validateDepthStencil(ASCIILiteral packedDepthStencilExtension);
     void validateAttributes();
 
-    bool readPixelsImpl(IntRect, GCGLenum format, GCGLenum type, GCGLsizei bufSize, uint8_t* data, bool readingToPixelBufferObject);
+    std::optional<IntSize> readPixelsImpl(IntRect, GCGLenum format, GCGLenum type, GCGLsizei bufSize, uint8_t* data, bool readingToPixelBufferObject);
 
     // Did the most recent drawing operation leave the GPU in an acceptable state?
     void checkGPUStatus();
@@ -405,6 +406,7 @@ protected:
 
     // Only for non-WebGL 2.0 contexts.
     GCGLenum adjustWebGL1TextureInternalFormat(GCGLenum internalformat, GCGLenum format, GCGLenum type);
+    void setPackParameters(GCGLint alignment, GCGLint rowLength);
 
     HashSet<String> m_availableExtensions;
     HashSet<String> m_requestableExtensions;
@@ -433,6 +435,8 @@ protected:
     GCGLDisplay m_displayObj { nullptr };
     GCGLContext m_contextObj { nullptr };
     GCGLConfig m_configObj { nullptr };
+    GCGLint m_packAlignment { 4 };
+    GCGLint m_packRowLength { 0 };
 };
 
 

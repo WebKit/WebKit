@@ -1342,8 +1342,8 @@ public:
     virtual void bufferData(GCGLenum target, std::span<const uint8_t> data, GCGLenum usage) = 0;
     virtual void bufferSubData(GCGLenum target, GCGLintptr offset, std::span<const uint8_t> data) = 0;
 
-    virtual void readPixels(IntRect, GCGLenum format, GCGLenum type, std::span<uint8_t> data) = 0;
-    virtual void readPixelsBufferObject(IntRect, GCGLenum format, GCGLenum type, GCGLintptr offset) = 0;
+    virtual void readPixels(IntRect, GCGLenum format, GCGLenum type, std::span<uint8_t> data, GCGLint alignment, GCGLint rowLength) = 0;
+    virtual void readPixelsBufferObject(IntRect, GCGLenum format, GCGLenum type, GCGLintptr offset, GCGLint alignment, GCGLint rowLength) = 0;
 
     virtual void texImage2D(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLenum format, GCGLenum type,  std::span<const uint8_t> pixels) = 0;
     virtual void texImage2D(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLenum format, GCGLenum type, GCGLintptr offset) = 0;
@@ -1638,7 +1638,7 @@ public:
 
     // Computes the bytes per image element for a format and type.
     // Returns zero if format or type is an invalid enum.
-    static unsigned computeBytesPerGroup(GCGLenum format, GCGLenum type);
+    WEBCORE_EXPORT static unsigned computeBytesPerGroup(GCGLenum format, GCGLenum type);
 
 
     struct PixelRectangleSizes {

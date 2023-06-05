@@ -116,8 +116,8 @@ messages -> RemoteGraphicsContextGL NotRefCounted Stream {{
     void PaintCompositedResultsToVideoFrame() -> (std::optional<WebKit::RemoteVideoFrameProxy::Properties> properties) Synchronous
 #endif
     void SimulateEventForTesting(WebCore::GraphicsContextGL::SimulatedEventForTesting event)
-    void ReadPixelsInline(WebCore::IntRect rect, uint32_t format, uint32_t type, IPC::ArrayReference<uint8_t> data) -> (IPC::ArrayReference<uint8_t> data) Synchronous
-    void ReadPixelsSharedMemory(WebCore::IntRect rect, uint32_t format, uint32_t type, WebKit::SharedMemory::Handle handle) -> (bool success) Synchronous NotStreamEncodable
+    void ReadPixelsInline(WebCore::IntRect rect, uint32_t format, uint32_t type) -> (std::optional<WebCore::IntSize> readArea, IPC::ArrayReference<uint8_t> data) Synchronous
+    void ReadPixelsSharedMemory(WebCore::IntRect rect, uint32_t format, uint32_t type, WebKit::SharedMemory::Handle handle) -> (std::optional<WebCore::IntSize> readArea) Synchronous NotStreamEncodable
     void MultiDrawArraysANGLE(uint32_t mode, IPC::ArrayReferenceTuple<int32_t, int32_t> firstsAndCounts)
     void MultiDrawArraysInstancedANGLE(uint32_t mode, IPC::ArrayReferenceTuple<int32_t, int32_t, int32_t> firstsCountsAandInstanceCounts)
     void MultiDrawElementsANGLE(uint32_t mode, IPC::ArrayReferenceTuple<int32_t, int32_t> countsAndOffsets, uint32_t type)

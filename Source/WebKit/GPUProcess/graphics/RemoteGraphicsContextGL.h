@@ -136,8 +136,8 @@ protected:
     virtual void createEGLSync(WTF::MachSendRight syncEvent, uint64_t signalValue, CompletionHandler<void(uint64_t)>&&) = 0;
 #endif
     void simulateEventForTesting(WebCore::GraphicsContextGL::SimulatedEventForTesting);
-    void readPixelsInline(WebCore::IntRect, uint32_t format, uint32_t type, IPC::ArrayReference<uint8_t>&& data, CompletionHandler<void(IPC::ArrayReference<uint8_t>)>&&);
-    void readPixelsSharedMemory(WebCore::IntRect, uint32_t format, uint32_t type, SharedMemory::Handle, CompletionHandler<void(bool)>&&);
+    void readPixelsInline(WebCore::IntRect, uint32_t format, uint32_t type, CompletionHandler<void(std::optional<WebCore::IntSize>, IPC::ArrayReference<uint8_t>)>&&);
+    void readPixelsSharedMemory(WebCore::IntRect, uint32_t format, uint32_t type, SharedMemory::Handle, CompletionHandler<void(std::optional<WebCore::IntSize>)>&&);
     void multiDrawArraysANGLE(uint32_t mode, IPC::ArrayReferenceTuple<int32_t, int32_t>&& firstsAndCounts);
     void multiDrawArraysInstancedANGLE(uint32_t mode, IPC::ArrayReferenceTuple<int32_t, int32_t, int32_t>&& firstsCountsAndInstanceCounts);
     void multiDrawElementsANGLE(uint32_t mode, IPC::ArrayReferenceTuple<int32_t, int32_t>&& countsAndOffsets, uint32_t type);

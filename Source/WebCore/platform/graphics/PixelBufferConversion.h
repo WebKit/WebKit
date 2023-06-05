@@ -26,6 +26,7 @@
 #pragma once
 
 #include "PixelBufferFormat.h"
+#include <span>
 
 namespace WebCore {
 
@@ -44,5 +45,28 @@ struct ConstPixelBufferConversionView {
 };
 
 void convertImagePixels(const ConstPixelBufferConversionView& source, const PixelBufferConversionView& destination, const IntSize&);
+
+WEBCORE_EXPORT void copyRows(unsigned sourceBytesPerRow, const uint8_t* source, unsigned destinationBytesPerRow, uint8_t* destination, unsigned rows, unsigned copyBytesPerRow);
+
+inline void copyRows(unsigned sourceBytesPerRow, std::span<const uint8_t> source, unsigned destinationBytesPerRow, std::span<uint8_t> destination, unsigned rows, unsigned copyBytesPerRow)
+{
+    if (!rows || !copyBytesPerRow)
+        return;
+    unsigned requiredSourceBytes = sourceBytesPerRow * (rows - 1) + copyBytesPerRow;
+    if (source.size() < requiredSourceBytes) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+    unsigned requiredDestinationBytes = destinationBytesPerRow * (rows - 1) + copyBytesPerRow;
+    if (destination.size() < requiredDestinationBytes) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+    if (rows > 1 && (sourceBytesPerRow < copyBytesPerRow || destinationBytesPerRow < copyBytesPerRow)) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+    copyRows(sourceBytesPerRow, source.data(), destinationBytesPerRow, destination.data(), rows, copyBytesPerRow);
+}
 
 }

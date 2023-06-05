@@ -523,7 +523,7 @@ void WebGL2RenderingContext::pixelStorei(GCGLenum pname, GCGLint param)
     switch (pname) {
     case GraphicsContextGL::PACK_ROW_LENGTH:
         m_packParameters.rowLength = param;
-        break;
+        return; // Not sent to context, handled locally.
     case GraphicsContextGL::PACK_SKIP_PIXELS:
         m_packParameters.skipPixels = param;
         return; // Not sent to context, handled locally.
@@ -3404,7 +3404,7 @@ void WebGL2RenderingContext::readPixels(GCGLint x, GCGLint y, GCGLsizei width, G
 
     clearIfComposited(CallerTypeOther);
 
-    m_context->readPixelsBufferObject(rect, format, type, offsetAndSkip.value());
+    m_context->readPixelsBufferObject(rect, format, type, offsetAndSkip.value(), m_packParameters.alignment, m_packParameters.rowLength);
 }
 
 void WebGL2RenderingContext::readPixels(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, ArrayBufferView& dstData, GCGLuint dstOffset)

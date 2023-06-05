@@ -39,6 +39,7 @@
 #include <WebCore/BitmapImage.h>
 #include <WebCore/GCGLSpan.h>
 #include <WebCore/ImageBuffer.h>
+#include <WebCore/PixelBufferConversion.h>
 #include <wtf/StdLibExtras.h>
 
 #if ENABLE(VIDEO)
@@ -50,8 +51,6 @@
 namespace WebKit {
 
 using namespace WebCore;
-
-static constexpr size_t readPixelsInlineSizeLimit = 64 * KB;
 
 namespace {
 
@@ -341,45 +340,80 @@ void RemoteGraphicsContextGLProxy::simulateEventForTesting(SimulatedEventForTest
     }
 }
 
-void RemoteGraphicsContextGLProxy::readPixels(IntRect rect, GCGLenum format, GCGLenum type, std::span<uint8_t> data)
+void RemoteGraphicsContextGLProxy::readPixels(IntRect rect, GCGLenum format, GCGLenum type, std::span<uint8_t> dataStore, GCGLint alignment, GCGLint rowLength)
 {
     if (isContextLost())
         return;
-    if (data.size() > readPixelsInlineSizeLimit) {
-        readPixelsSharedMemory(rect, format, type, data);
-        return;
-    }
-    auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::ReadPixelsInline(rect, format, type, IPC::ArrayReference<uint8_t>(reinterpret_cast<uint8_t*>(data.data()), data.size())));
-    if (!sendResult) {
-        markContextLost();
-        return;
-    }
-    auto [dataReply] = sendResult.takeReply();
-    memcpy(data.data(), dataReply.data(), data.size());
-}
+    // The structure of `dataStore` is defined by rect, format, type, alignment, rowLength.
+    // We know that `rect.position() < { 0, 0 }` is out of bounds, and thus should not be touched.
+    // ANGLE will return which of the pixels > 0 are out of bounds, and thus should not be touched.
+    // Alignment, rowLength - width should not be touched.
+    // Each `dataStore` row is [oob1*][image][oob2*][remaining rowLength*][alignment*] == dataStoreRowBytes.
+    // GPUP reply row is [image][oob2*].
+    // The calculations here are all non-overflowing, as the caller has validated that.
 
-void RemoteGraphicsContextGLProxy::readPixelsSharedMemory(IntRect rect, GCGLenum format, GCGLenum type, std::span<uint8_t> data)
-{
-    auto buffer = SharedMemory::allocate(data.size());
-    if (!buffer) {
-        markContextLost();
+    unsigned bytesPerGroup = computeBytesPerGroup(format, type);
+    unsigned dataStoreWidth = rowLength > 0 ? rowLength : rect.width();
+    unsigned dataStoreRowBytes = roundUpToMultipleOf(alignment, dataStoreWidth * bytesPerGroup);
+
+    IntSize bottomLeftOutOfBounds;
+    if (rect.x() < 0) {
+        bottomLeftOutOfBounds.setWidth(-rect.x());
+        rect.shiftXEdgeTo(0);
+    }
+    if (rect.y() < 0) {
+        bottomLeftOutOfBounds.setHeight(-rect.y());
+        rect.shiftYEdgeTo(0);
+    }
+
+    unsigned replyRowBytes = rect.width() * bytesPerGroup;
+    unsigned replyImageBytes = rect.height() * replyRowBytes;
+
+    if (!rect.isEmpty() && !bottomLeftOutOfBounds.isZero()) {
+        // Will not overflow, because rect.size() * { dataStoreRowBytes, bytesPerGroup } is validated and it will fit to the uint32_t.
+        // bottomLeftOutOfBounds must be smaller than rect.size() in case adjusted rect is non-empty.
+        unsigned skipRowBytes = bottomLeftOutOfBounds.width() * bytesPerGroup;
+        dataStore = dataStore.subspan(dataStoreRowBytes * bottomLeftOutOfBounds.height() + skipRowBytes);
+    }
+
+    static constexpr size_t readPixelsInlineSizeLimit = 64 * KB; // NOTE: when changing, change the value in RemoteGraphicsContextGL too.
+
+    auto copyToData = [&](std::span<const uint8_t> replyData, IntSize readArea) {
+        if (readArea.isEmpty())
+            return;
+        unsigned copyRowBytes = readArea.width() * bytesPerGroup;
+        copyRows(replyRowBytes, replyData, dataStoreRowBytes, dataStore, readArea.height(), copyRowBytes);
+    };
+
+    if (replyImageBytes > readPixelsInlineSizeLimit) {
+        RefPtr<SharedMemory> replyBuffer = SharedMemory::allocate(replyImageBytes);
+        if (!replyBuffer)
+            goto inlineCase;
+        auto handle = replyBuffer->createHandle(SharedMemory::Protection::ReadWrite);
+        if (!handle || handle->isNull())
+            goto inlineCase;
+        auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::ReadPixelsSharedMemory(rect, format, type, WTFMove(*handle)));
+        if (!sendResult) {
+            markContextLost();
+            return;
+        }
+        auto [readArea] = sendResult.takeReply();
+        if (!readArea)
+            return;
+        std::span<const uint8_t> replyData { reinterpret_cast<uint8_t*>(replyBuffer->data()), replyBuffer->size() };
+        copyToData(replyData, *readArea);
         return;
     }
-    auto handle = buffer->createHandle(SharedMemory::Protection::ReadWrite);
-    if (!handle || handle->isNull()) {
-        markContextLost();
-        return;
-    }
-    memcpy(buffer->data(), data.data(), data.size());
-    auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::ReadPixelsSharedMemory(rect, format, type, WTFMove(*handle)));
+inlineCase:
+    auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::ReadPixelsInline(rect, format, type));
     if (!sendResult) {
         markContextLost();
         return;
     }
-    auto [success] = sendResult.takeReply();
-    if (!success)
+    auto [readArea, inlineReply] = sendResult.takeReply();
+    if (!readArea)
         return;
-    memcpy(data.data(), buffer->data(), data.size());
+    copyToData(inlineReply, *readArea);
 }
 
 void RemoteGraphicsContextGLProxy::multiDrawArraysANGLE(GCGLenum mode, GCGLSpanTuple<const GCGLint, const GCGLsizei> firstsAndCounts)

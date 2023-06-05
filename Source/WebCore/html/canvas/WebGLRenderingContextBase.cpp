@@ -2373,7 +2373,7 @@ WebGLAny WebGLRenderingContextBase::getParameter(GCGLenum pname)
     case GraphicsContextGL::NUM_SHADER_BINARY_FORMATS:
         return getIntParameter(pname);
     case GraphicsContextGL::PACK_ALIGNMENT:
-        return getIntParameter(pname);
+        return m_packParameters.alignment;
     case GraphicsContextGL::POLYGON_OFFSET_FACTOR:
         return getFloatParameter(pname);
     case GraphicsContextGL::POLYGON_OFFSET_FILL:
@@ -3315,11 +3315,13 @@ void WebGLRenderingContextBase::pixelStorei(GCGLenum pname, GCGLint param)
     case GraphicsContextGL::PACK_ALIGNMENT:
     case GraphicsContextGL::UNPACK_ALIGNMENT:
         if (param == 1 || param == 2 || param == 4 || param == 8) {
-            if (pname == GraphicsContextGL::PACK_ALIGNMENT)
+            if (pname == GraphicsContextGL::PACK_ALIGNMENT) {
                 m_packParameters.alignment = param;
-            else // GraphicsContextGL::UNPACK_ALIGNMENT:
+                // PACK parameters are client only, not sent to the m_context.
+            } else {
                 m_unpackParameters.alignment = param;
-            m_context->pixelStorei(pname, param);
+                m_context->pixelStorei(pname, param);
+            }
         } else {
             synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "pixelStorei", "invalid parameter for alignment");
             return;
@@ -3375,7 +3377,7 @@ void WebGLRenderingContextBase::readPixels(GCGLint x, GCGLint y, GCGLsizei width
     }
     clearIfComposited(CallerTypeOther);
     std::span<uint8_t> data { static_cast<uint8_t*>(pixels.baseAddress()) + packSizes->initialSkipBytes, packSizes->imageBytes };
-    m_context->readPixels(rect, format, type, data);
+    m_context->readPixels(rect, format, type, data, m_packParameters.alignment, m_packParameters.rowLength);
 }
 
 void WebGLRenderingContextBase::renderbufferStorage(GCGLenum target, GCGLenum internalformat, GCGLsizei width, GCGLsizei height)

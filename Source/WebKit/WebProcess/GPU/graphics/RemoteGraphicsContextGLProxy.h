@@ -94,7 +94,7 @@ public:
 #endif
 
     void simulateEventForTesting(SimulatedEventForTesting) final;
-    void readPixels(WebCore::IntRect, GCGLenum format, GCGLenum type, std::span<uint8_t> data) final;
+    void readPixels(WebCore::IntRect, GCGLenum format, GCGLenum type, std::span<uint8_t> data, GCGLint alignment, GCGLint rowLength) final;
     void multiDrawArraysANGLE(GCGLenum mode, GCGLSpanTuple<const GCGLint, const GCGLsizei> firstsAndCounts) final;
     void multiDrawArraysInstancedANGLE(GCGLenum mode, GCGLSpanTuple<const GCGLint, const GCGLsizei, const GCGLsizei> firstsCountsAndInstanceCounts) final;
     void multiDrawElementsANGLE(GCGLenum mode, GCGLSpanTuple<const GCGLsizei, const GCGLsizei> countsAndOffsets, GCGLenum type) final;
@@ -238,7 +238,7 @@ public:
     void bufferData(GCGLenum target, GCGLsizeiptr arg1, GCGLenum usage) final;
     void bufferData(GCGLenum target, std::span<const uint8_t> data, GCGLenum usage) final;
     void bufferSubData(GCGLenum target, GCGLintptr offset, std::span<const uint8_t> data) final;
-    void readPixelsBufferObject(WebCore::IntRect, GCGLenum format, GCGLenum type, GCGLintptr offset) final;
+    void readPixelsBufferObject(WebCore::IntRect, GCGLenum format, GCGLenum type, GCGLintptr offset, GCGLint alignment, GCGLint rowLength) final;
     void texImage2D(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLenum format, GCGLenum type, std::span<const uint8_t> pixels) final;
     void texImage2D(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLsizei width, GCGLsizei height, GCGLint border, GCGLenum format, GCGLenum type, GCGLintptr offset) final;
     void texSubImage2D(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, std::span<const uint8_t> pixels) final;

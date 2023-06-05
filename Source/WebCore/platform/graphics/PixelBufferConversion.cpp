@@ -290,4 +290,17 @@ void convertImagePixels(const ConstPixelBufferConversionView& source, const Pixe
 #endif
 }
 
+void copyRows(unsigned sourceBytesPerRow, const uint8_t* source, unsigned destinationBytesPerRow, uint8_t* destination, unsigned rows, unsigned copyBytesPerRow)
+{
+    if (sourceBytesPerRow == destinationBytesPerRow && copyBytesPerRow == sourceBytesPerRow)
+        std::copy(source, source + copyBytesPerRow * rows, destination);
+    else {
+        for (unsigned row = 0; row < rows; ++row) {
+            std::copy(source, source + copyBytesPerRow, destination);
+            source += sourceBytesPerRow;
+            destination += destinationBytesPerRow;
+        }
+    }
+}
+
 }

@@ -783,10 +783,10 @@
         assertIsCurrent(workQueue());
         m_context->bufferSubData(target, static_cast<GCGLintptr>(offset), std::span(reinterpret_cast<const uint8_t*>(data.data()), data.size()));
     }
-    void readPixelsBufferObject(WebCore::IntRect&& arg0, uint32_t format, uint32_t type, uint64_t offset)
+    void readPixelsBufferObject(WebCore::IntRect&& arg0, uint32_t format, uint32_t type, uint64_t offset, int32_t alignment, int32_t rowLength)
     {
         assertIsCurrent(workQueue());
-        m_context->readPixelsBufferObject(arg0, format, type, static_cast<GCGLintptr>(offset));
+        m_context->readPixelsBufferObject(arg0, format, type, static_cast<GCGLintptr>(offset), alignment, rowLength);
     }
     void texImage2D0(uint32_t target, int32_t level, uint32_t internalformat, int32_t width, int32_t height, int32_t border, uint32_t format, uint32_t type, IPC::ArrayReference<uint8_t>&& pixels)
     {
