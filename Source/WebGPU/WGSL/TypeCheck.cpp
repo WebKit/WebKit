@@ -226,6 +226,11 @@ void TypeChecker::visitVariable(AST::Variable& variable, VariableKind variableKi
         result = resolve(*variable.maybeTypeName());
     if (variable.maybeInitializer()) {
         auto* initializerType = infer(*variable.maybeInitializer());
+        if (auto* reference = std::get_if<Types::Reference>(initializerType)) {
+            initializerType = reference->element;
+            variable.maybeInitializer()->m_inferredType = initializerType;
+        }
+
         if (!result)
             result = initializerType;
         else if (unify(result, initializerType))
