@@ -384,6 +384,14 @@ void registerWebKitGStreamerElements()
                 gst_plugin_feature_set_rank(GST_PLUGIN_FEATURE_CAST(factory.get()), GST_RANK_NONE);
         }
 
+        // Prevent decodebin(3) from auto-plugging dashdemux if it was disabled. UAs should be able
+        // to fallback to MSE when this happens.
+        const char* dashSupport = g_getenv("WEBKIT_GST_ENABLE_DASH_SUPPORT");
+        if (!dashSupport || !g_strcmp0(dashSupport, "0")) {
+            if (auto factory = adoptGRef(gst_element_factory_find("dashdemux")))
+                gst_plugin_feature_set_rank(GST_PLUGIN_FEATURE_CAST(factory.get()), GST_RANK_NONE);
+        }
+
         // The new demuxers based on adaptivedemux2 cannot be used in WebKit yet because this new
         // base class does not abstract away network access. They can't work in a sandboxed
         // media process, so demote their rank in order to prevent decodebin3 from auto-plugging them.
