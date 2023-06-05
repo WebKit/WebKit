@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All right reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -63,13 +64,13 @@ public:
 
     static RenderPtr<RenderRubyRun> staticCreateRubyRun(const RenderObject* parentRuby);
     
-    void updatePriorContextFromCachedBreakIterator(LazyLineBreakIterator&) const;
+    void updatePriorContextFromCachedBreakIterator(CachedLineBreakIteratorFactory&) const;
     void setCachedPriorCharacters(UChar last, UChar secondToLast)
     {
         m_lastCharacter = last;
         m_secondToLastCharacter = secondToLast;
     }
-    bool canBreakBefore(const LazyLineBreakIterator&) const;
+    bool canBreakBefore(const CachedLineBreakIteratorFactory&) const;
 
     std::pair<LayoutUnit, LayoutUnit> annotationsAboveAndBelow() const;
 

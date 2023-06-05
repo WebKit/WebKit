@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2003-2017 Apple Inc. All right reserved.
+ * Copyright (C) 2003-2023 Apple Inc. All right reserved.
  * Copyright (C) 2010 Google Inc. All rights reserved.
  * Copyright (C) 2013 ChangSeok Oh <shivamidow@gmail.com>
  * Copyright (C) 2013 Adobe Systems Inc. All right reserved.
@@ -36,7 +36,7 @@ class TextLayout;
 struct RenderTextInfo {
     RenderText* text { nullptr };
     std::unique_ptr<TextLayout, TextLayoutDeleter> layout;
-    LazyLineBreakIterator lineBreakIterator;
+    CachedLineBreakIteratorFactory lineBreakIteratorFactory;
     const FontCascade* font { nullptr };
 };
 

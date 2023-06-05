@@ -1130,7 +1130,7 @@ void RenderText::computePreferredLogicalWidths(float leadWidth, HashSet<const Fo
     auto& string = text();
     unsigned length = string.length();
     auto iteratorMode = mapLineBreakToIteratorMode(style.lineBreak());
-    LazyLineBreakIterator breakIterator(string, style.computedLocale(), iteratorMode);
+    CachedLineBreakIteratorFactory lineBreakIteratorFactory(string, style.computedLocale(), iteratorMode);
     bool needsWordSpacing = false;
     bool ignoringSpaces = false;
     bool isSpace = false;
@@ -1212,7 +1212,7 @@ void RenderText::computePreferredLogicalWidths(float leadWidth, HashSet<const Fo
             continue;
         }
 
-        bool hasBreak = breakAll || isBreakable(breakIterator, i, nextBreakable, breakNBSP, canUseLineBreakShortcut, keepAllWords, breakAnywhere);
+        bool hasBreak = breakAll || isBreakable(lineBreakIteratorFactory, i, nextBreakable, breakNBSP, canUseLineBreakShortcut, keepAllWords, breakAnywhere);
         bool betweenWords = true;
         unsigned j = i;
         while (c != '\n' && !isSpaceAccordingToStyle(c, style) && c != '\t' && (c != softHyphen || style.hyphens() == Hyphens::None)) {
@@ -1223,7 +1223,7 @@ void RenderText::computePreferredLogicalWidths(float leadWidth, HashSet<const Fo
             c = string[j];
             if (U_IS_LEAD(previousCharacter) && U_IS_TRAIL(c))
                 continue;
-            if (isBreakable(breakIterator, j, nextBreakable, breakNBSP, canUseLineBreakShortcut, keepAllWords, breakAnywhere) && characterAt(j - 1) != softHyphen)
+            if (isBreakable(lineBreakIteratorFactory, j, nextBreakable, breakNBSP, canUseLineBreakShortcut, keepAllWords, breakAnywhere) && characterAt(j - 1) != softHyphen)
                 break;
             if (breakAll) {
                 // FIXME: This code is ultra wrong.

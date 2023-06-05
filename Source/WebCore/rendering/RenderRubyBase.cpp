@@ -88,11 +88,11 @@ void RenderRubyBase::adjustInlineDirectionLineBounds(int expansionOpportunityCou
     logicalWidth -= inset;
 }
 
-void RenderRubyBase::cachePriorCharactersIfNeeded(const LazyLineBreakIterator& lineBreakIterator)
+void RenderRubyBase::cachePriorCharactersIfNeeded(const CachedLineBreakIteratorFactory& lineBreakIteratorFactory)
 {
     auto* run = rubyRun();
     if (run)
-        run->setCachedPriorCharacters(lineBreakIterator.priorContext().lastCharacter(), lineBreakIterator.priorContext().secondToLastCharacter());
+        run->setCachedPriorCharacters(lineBreakIteratorFactory.priorContext().lastCharacter(), lineBreakIteratorFactory.priorContext().secondToLastCharacter());
 }
 
 bool RenderRubyBase::isEmptyOrHasInFlowContent() const

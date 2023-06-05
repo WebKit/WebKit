@@ -220,10 +220,7 @@ WTF_EXPORT_PRIVATE UBreakIterator* sentenceBreakIterator(StringView);
 
 WTF_EXPORT_PRIVATE bool isWordTextBreak(UBreakIterator*);
 
-// FIXME: This should be named "CachedTextBreakIteratorFactory" or "CachedTextBreakIteratorContext".
-// The purpose of this class is to hold the parameters of the CachedTextBreakIterator() constructor,
-// so we can create one lazily when it's needed.
-class LazyLineBreakIterator {
+class CachedLineBreakIteratorFactory {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     class PriorContext {
@@ -283,9 +280,9 @@ public:
         std::array<UChar, Length> m_priorContext;
     };
 
-    LazyLineBreakIterator() = default;
+    CachedLineBreakIteratorFactory() = default;
 
-    explicit LazyLineBreakIterator(StringView stringView, const AtomString& locale = AtomString(), LineBreakIteratorMode mode = LineBreakIteratorMode::Default)
+    explicit CachedLineBreakIteratorFactory(StringView stringView, const AtomString& locale = AtomString(), LineBreakIteratorMode mode = LineBreakIteratorMode::Default)
         : m_stringView(stringView)
         , m_locale(locale)
         , m_mode(mode)
@@ -369,7 +366,7 @@ WTF_EXPORT_PRIVATE unsigned numCodeUnitsInGraphemeClusters(StringView, unsigned)
 }
 
 using WTF::CachedTextBreakIterator;
-using WTF::LazyLineBreakIterator;
+using WTF::CachedLineBreakIteratorFactory;
 using WTF::LineBreakIteratorMode;
 using WTF::NonSharedCharacterBreakIterator;
 using WTF::TextBreakIterator;

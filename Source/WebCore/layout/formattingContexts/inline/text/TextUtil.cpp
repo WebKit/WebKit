@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -312,26 +312,26 @@ TextUtil::WordBreakLeft TextUtil::breakWord(const InlineTextBox& inlineTextBox, 
     return leftSide;
 }
 
-unsigned TextUtil::findNextBreakablePosition(LazyLineBreakIterator& lineBreakIterator, unsigned startPosition, const RenderStyle& style)
+unsigned TextUtil::findNextBreakablePosition(CachedLineBreakIteratorFactory& lineBreakIteratorFactory, unsigned startPosition, const RenderStyle& style)
 {
     auto keepAllWordsForCJK = style.wordBreak() == WordBreak::KeepAll;
     auto breakNBSP = style.autoWrap() && style.nbspMode() == NBSPMode::Space;
 
     if (keepAllWordsForCJK) {
         if (breakNBSP)
-            return nextBreakablePositionKeepingAllWords(lineBreakIterator, startPosition);
-        return nextBreakablePositionKeepingAllWordsIgnoringNBSP(lineBreakIterator, startPosition);
+            return nextBreakablePositionKeepingAllWords(lineBreakIteratorFactory, startPosition);
+        return nextBreakablePositionKeepingAllWordsIgnoringNBSP(lineBreakIteratorFactory, startPosition);
     }
 
-    if (lineBreakIterator.mode() == LineBreakIteratorMode::Default) {
+    if (lineBreakIteratorFactory.mode() == LineBreakIteratorMode::Default) {
         if (breakNBSP)
-            return WebCore::nextBreakablePosition(lineBreakIterator, startPosition);
-        return nextBreakablePositionIgnoringNBSP(lineBreakIterator, startPosition);
+            return WebCore::nextBreakablePosition(lineBreakIteratorFactory, startPosition);
+        return nextBreakablePositionIgnoringNBSP(lineBreakIteratorFactory, startPosition);
     }
 
     if (breakNBSP)
-        return nextBreakablePositionWithoutShortcut(lineBreakIterator, startPosition);
-    return nextBreakablePositionIgnoringNBSPWithoutShortcut(lineBreakIterator, startPosition);
+        return nextBreakablePositionWithoutShortcut(lineBreakIteratorFactory, startPosition);
+    return nextBreakablePositionIgnoringNBSPWithoutShortcut(lineBreakIteratorFactory, startPosition);
 }
 
 bool TextUtil::shouldPreserveSpacesAndTabs(const Box& layoutBox)

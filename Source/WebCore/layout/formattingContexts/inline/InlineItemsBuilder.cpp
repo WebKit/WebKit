@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -63,12 +63,12 @@ static std::optional<WhitespaceContent> moveToNextNonWhitespacePosition(StringVi
     return nextNonWhiteSpacePosition == startPosition ? std::nullopt : std::make_optional(WhitespaceContent { nextNonWhiteSpacePosition - startPosition, hasWordSeparatorCharacter });
 }
 
-static unsigned moveToNextBreakablePosition(unsigned startPosition, LazyLineBreakIterator& lineBreakIterator, const RenderStyle& style)
+static unsigned moveToNextBreakablePosition(unsigned startPosition, CachedLineBreakIteratorFactory& lineBreakIteratorFactory, const RenderStyle& style)
 {
-    auto textLength = lineBreakIterator.stringView().length();
+    auto textLength = lineBreakIteratorFactory.stringView().length();
     auto startPositionForNextBreakablePosition = startPosition;
     while (startPositionForNextBreakablePosition < textLength) {
-        auto nextBreakablePosition = TextUtil::findNextBreakablePosition(lineBreakIterator, startPositionForNextBreakablePosition, style);
+        auto nextBreakablePosition = TextUtil::findNextBreakablePosition(lineBreakIteratorFactory, startPositionForNextBreakablePosition, style);
         // Oftentimes the next breakable position comes back as the start position (most notably hyphens).
         if (nextBreakablePosition != startPosition)
             return nextBreakablePosition - startPosition;
@@ -637,7 +637,7 @@ void InlineItemsBuilder::handleTextContent(const InlineTextBox& inlineTextBox, I
     auto& style = inlineTextBox.style();
     auto shouldPreserveSpacesAndTabs = TextUtil::shouldPreserveSpacesAndTabs(inlineTextBox);
     auto shouldPreserveNewline = TextUtil::shouldPreserveNewline(inlineTextBox);
-    auto lineBreakIterator = LazyLineBreakIterator { text, style.computedLocale(), TextUtil::lineBreakIteratorMode(style.lineBreak()) };
+    auto lineBreakIteratorFactory = CachedLineBreakIteratorFactory { text, style.computedLocale(), TextUtil::lineBreakIteratorMode(style.lineBreak()) };
     auto currentPosition = partialContentOffset.value_or(0lu);
     ASSERT(currentPosition <= contentLength);
 
@@ -702,11 +702,11 @@ void InlineItemsBuilder::handleTextContent(const InlineTextBox& inlineTextBox, I
             if (style.hyphens() == Hyphens::None) {
                 // Let's merge candidate InlineTextItems separated by soft hyphen when the style says so.
                 do {
-                    endPosition += moveToNextBreakablePosition(endPosition, lineBreakIterator, style);
+                    endPosition += moveToNextBreakablePosition(endPosition, lineBreakIteratorFactory, style);
                     ASSERT(startPosition < endPosition);
                 } while (endPosition < contentLength && text[endPosition - 1] == softHyphen);
             } else {
-                endPosition += moveToNextBreakablePosition(startPosition, lineBreakIterator, style);
+                endPosition += moveToNextBreakablePosition(startPosition, lineBreakIteratorFactory, style);
                 ASSERT(startPosition < endPosition);
                 hasTrailingSoftHyphen = text[endPosition - 1] == softHyphen;
             }

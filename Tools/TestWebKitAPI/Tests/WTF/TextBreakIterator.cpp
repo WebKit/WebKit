@@ -167,13 +167,13 @@ TEST(WTF_TextBreakIterator, Behaviors)
     }
 }
 
-TEST(WTF_TextBreakIterator, LazyLineBreakIteratorPriorContext)
+TEST(WTF_TextBreakIterator, CachedLineBreakIteratorFactoryPriorContext)
 {
-    LazyLineBreakIterator::PriorContext priorContext;
+    CachedLineBreakIteratorFactory::PriorContext priorContext;
     EXPECT_EQ(0U, priorContext.length());
     priorContext.set({ 'a', 'b' });
     EXPECT_EQ(2U, priorContext.length());
-    LazyLineBreakIterator::PriorContext priorContext2;
+    CachedLineBreakIteratorFactory::PriorContext priorContext2;
     EXPECT_FALSE(priorContext == priorContext2);
     priorContext2.set({ 'a', 'b' });
     EXPECT_TRUE(priorContext == priorContext2);

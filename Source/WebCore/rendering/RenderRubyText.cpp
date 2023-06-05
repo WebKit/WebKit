@@ -94,14 +94,14 @@ bool RenderRubyText::avoidsFloats() const
     return true;
 }
 
-bool RenderRubyText::canBreakBefore(const LazyLineBreakIterator& iterator) const
+bool RenderRubyText::canBreakBefore(const CachedLineBreakIteratorFactory& lineBreakIteratorFactory) const
 {
     // FIXME: It would be nice to improve this so that it isn't just hard-coded, but lookahead in this
     // case is particularly problematic.
 
-    if (!iterator.priorContext().length())
+    if (!lineBreakIteratorFactory.priorContext().length())
         return true;
-    UChar ch = iterator.priorContext().lastCharacter();
+    UChar ch = lineBreakIteratorFactory.priorContext().lastCharacter();
     ULineBreak lineBreak = (ULineBreak)u_getIntPropertyValue(ch, UCHAR_LINE_BREAK);
     // UNICODE LINE BREAKING ALGORITHM
     // http://www.unicode.org/reports/tr14/

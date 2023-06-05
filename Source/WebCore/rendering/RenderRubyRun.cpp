@@ -276,17 +276,17 @@ std::pair<float, float> RenderRubyRun::startAndEndOverhang(bool forFirstLine) co
     return { std::min(startOverhang, halfWidthOfFontSize), std::min(endOverhang, halfWidthOfFontSize) };
 }
 
-void RenderRubyRun::updatePriorContextFromCachedBreakIterator(LazyLineBreakIterator& iterator) const
+void RenderRubyRun::updatePriorContextFromCachedBreakIterator(CachedLineBreakIteratorFactory& lineBreakIteratorFactory) const
 {
-    iterator.priorContext().set({ m_secondToLastCharacter, m_lastCharacter });
+    lineBreakIteratorFactory.priorContext().set({ m_secondToLastCharacter, m_lastCharacter });
 }
 
-bool RenderRubyRun::canBreakBefore(const LazyLineBreakIterator& iterator) const
+bool RenderRubyRun::canBreakBefore(const CachedLineBreakIteratorFactory& lineBreakIteratorFactory) const
 {
     RenderRubyText* rubyText = this->rubyText();
     if (!rubyText)
         return true;
-    return rubyText->canBreakBefore(iterator);
+    return rubyText->canBreakBefore(lineBreakIteratorFactory);
 }
 
 std::pair<LayoutUnit, LayoutUnit> RenderRubyRun::annotationsAboveAndBelow() const

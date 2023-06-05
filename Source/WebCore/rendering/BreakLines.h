@@ -85,13 +85,13 @@ inline bool needsLineBreakIterator(UChar character)
 
 // When in non-loose mode, we can use the ASCII shortcut table.
 template<typename CharacterType, NonBreakingSpaceBehavior nonBreakingSpaceBehavior, CanUseShortcut canUseShortcut>
-inline unsigned nextBreakablePosition(LazyLineBreakIterator& lazyBreakIterator, const CharacterType* string, unsigned length, unsigned startPosition)
+inline unsigned nextBreakablePosition(CachedLineBreakIteratorFactory& lineBreakIteratorFactory, const CharacterType* string, unsigned length, unsigned startPosition)
 {
     std::optional<unsigned> nextBreak;
 
-    CharacterType lastLastCharacter = startPosition > 1 ? string[startPosition - 2] : static_cast<CharacterType>(lazyBreakIterator.priorContext().secondToLastCharacter());
-    CharacterType lastCharacter = startPosition > 0 ? string[startPosition - 1] : static_cast<CharacterType>(lazyBreakIterator.priorContext().lastCharacter());
-    unsigned priorContextLength = lazyBreakIterator.priorContext().length();
+    CharacterType lastLastCharacter = startPosition > 1 ? string[startPosition - 2] : static_cast<CharacterType>(lineBreakIteratorFactory.priorContext().secondToLastCharacter());
+    CharacterType lastCharacter = startPosition > 0 ? string[startPosition - 1] : static_cast<CharacterType>(lineBreakIteratorFactory.priorContext().lastCharacter());
+    unsigned priorContextLength = lineBreakIteratorFactory.priorContext().length();
     for (unsigned i = startPosition; i < length; i++) {
         CharacterType character = string[i];
 
@@ -102,7 +102,7 @@ inline unsigned nextBreakablePosition(LazyLineBreakIterator& lazyBreakIterator, 
             if (!nextBreak || nextBreak.value() < i) {
                 // Don't break if positioned at start of primary context and there is no prior context.
                 if (i || priorContextLength) {
-                    auto& breakIterator = lazyBreakIterator.get();
+                    auto& breakIterator = lineBreakIteratorFactory.get();
                     nextBreak = breakIterator.following(i - 1);
                 }
             }
@@ -133,57 +133,57 @@ inline unsigned nextBreakablePositionKeepingAllWords(const CharacterType* string
     return length;
 }
 
-inline unsigned nextBreakablePositionKeepingAllWords(LazyLineBreakIterator& lazyBreakIterator, unsigned startPosition)
+inline unsigned nextBreakablePositionKeepingAllWords(CachedLineBreakIteratorFactory& lineBreakIteratorFactory, unsigned startPosition)
 {
-    auto stringView = lazyBreakIterator.stringView();
+    auto stringView = lineBreakIteratorFactory.stringView();
     if (stringView.is8Bit())
         return nextBreakablePositionKeepingAllWords<LChar, NonBreakingSpaceBehavior::TreatNonBreakingSpaceAsBreak>(stringView.characters8(), stringView.length(), startPosition);
     return nextBreakablePositionKeepingAllWords<UChar, NonBreakingSpaceBehavior::TreatNonBreakingSpaceAsBreak>(stringView.characters16(), stringView.length(), startPosition);
 }
 
-inline unsigned nextBreakablePositionKeepingAllWordsIgnoringNBSP(LazyLineBreakIterator& iterator, unsigned startPosition)
+inline unsigned nextBreakablePositionKeepingAllWordsIgnoringNBSP(CachedLineBreakIteratorFactory& lineBreakIteratorFactory, unsigned startPosition)
 {
-    auto stringView = iterator.stringView();
+    auto stringView = lineBreakIteratorFactory.stringView();
     if (stringView.is8Bit())
         return nextBreakablePositionKeepingAllWords<LChar, NonBreakingSpaceBehavior::IgnoreNonBreakingSpace>(stringView.characters8(), stringView.length(), startPosition);
     return nextBreakablePositionKeepingAllWords<UChar, NonBreakingSpaceBehavior::IgnoreNonBreakingSpace>(stringView.characters16(), stringView.length(), startPosition);
 }
 
-inline unsigned nextBreakablePosition(LazyLineBreakIterator& iterator, unsigned startPosition)
+inline unsigned nextBreakablePosition(CachedLineBreakIteratorFactory& lineBreakIteratorFactory, unsigned startPosition)
 {
-    auto stringView = iterator.stringView();
+    auto stringView = lineBreakIteratorFactory.stringView();
     if (stringView.is8Bit())
-        return nextBreakablePosition<LChar, NonBreakingSpaceBehavior::TreatNonBreakingSpaceAsBreak, CanUseShortcut::Yes>(iterator, stringView.characters8(), stringView.length(), startPosition);
-    return nextBreakablePosition<UChar, NonBreakingSpaceBehavior::TreatNonBreakingSpaceAsBreak, CanUseShortcut::Yes>(iterator, stringView.characters16(), stringView.length(), startPosition);
+        return nextBreakablePosition<LChar, NonBreakingSpaceBehavior::TreatNonBreakingSpaceAsBreak, CanUseShortcut::Yes>(lineBreakIteratorFactory, stringView.characters8(), stringView.length(), startPosition);
+    return nextBreakablePosition<UChar, NonBreakingSpaceBehavior::TreatNonBreakingSpaceAsBreak, CanUseShortcut::Yes>(lineBreakIteratorFactory, stringView.characters16(), stringView.length(), startPosition);
 }
 
-inline unsigned nextBreakablePositionIgnoringNBSP(LazyLineBreakIterator& lazyBreakIterator, unsigned startPosition)
+inline unsigned nextBreakablePositionIgnoringNBSP(CachedLineBreakIteratorFactory& lineBreakIteratorFactory, unsigned startPosition)
 {
-    auto stringView = lazyBreakIterator.stringView();
+    auto stringView = lineBreakIteratorFactory.stringView();
     if (stringView.is8Bit())
-        return nextBreakablePosition<LChar, NonBreakingSpaceBehavior::IgnoreNonBreakingSpace, CanUseShortcut::Yes>(lazyBreakIterator, stringView.characters8(), stringView.length(), startPosition);
-    return nextBreakablePosition<UChar, NonBreakingSpaceBehavior::IgnoreNonBreakingSpace, CanUseShortcut::Yes>(lazyBreakIterator, stringView.characters16(), stringView.length(), startPosition);
+        return nextBreakablePosition<LChar, NonBreakingSpaceBehavior::IgnoreNonBreakingSpace, CanUseShortcut::Yes>(lineBreakIteratorFactory, stringView.characters8(), stringView.length(), startPosition);
+    return nextBreakablePosition<UChar, NonBreakingSpaceBehavior::IgnoreNonBreakingSpace, CanUseShortcut::Yes>(lineBreakIteratorFactory, stringView.characters16(), stringView.length(), startPosition);
 }
 
-inline unsigned nextBreakablePositionWithoutShortcut(LazyLineBreakIterator& lazyBreakIterator, unsigned startPosition)
+inline unsigned nextBreakablePositionWithoutShortcut(CachedLineBreakIteratorFactory& lineBreakIteratorFactory, unsigned startPosition)
 {
-    auto stringView = lazyBreakIterator.stringView();
+    auto stringView = lineBreakIteratorFactory.stringView();
     if (stringView.is8Bit())
-        return nextBreakablePosition<LChar, NonBreakingSpaceBehavior::TreatNonBreakingSpaceAsBreak, CanUseShortcut::No>(lazyBreakIterator, stringView.characters8(), stringView.length(), startPosition);
-    return nextBreakablePosition<UChar, NonBreakingSpaceBehavior::TreatNonBreakingSpaceAsBreak, CanUseShortcut::No>(lazyBreakIterator, stringView.characters16(), stringView.length(), startPosition);
+        return nextBreakablePosition<LChar, NonBreakingSpaceBehavior::TreatNonBreakingSpaceAsBreak, CanUseShortcut::No>(lineBreakIteratorFactory, stringView.characters8(), stringView.length(), startPosition);
+    return nextBreakablePosition<UChar, NonBreakingSpaceBehavior::TreatNonBreakingSpaceAsBreak, CanUseShortcut::No>(lineBreakIteratorFactory, stringView.characters16(), stringView.length(), startPosition);
 }
 
-inline unsigned nextBreakablePositionIgnoringNBSPWithoutShortcut(LazyLineBreakIterator& lazyBreakIterator, unsigned startPosition)
+inline unsigned nextBreakablePositionIgnoringNBSPWithoutShortcut(CachedLineBreakIteratorFactory& lineBreakIteratorFactory, unsigned startPosition)
 {
-    auto stringView = lazyBreakIterator.stringView();
+    auto stringView = lineBreakIteratorFactory.stringView();
     if (stringView.is8Bit())
-        return nextBreakablePosition<LChar, NonBreakingSpaceBehavior::IgnoreNonBreakingSpace, CanUseShortcut::No>(lazyBreakIterator, stringView.characters8(), stringView.length(), startPosition);
-    return nextBreakablePosition<UChar, NonBreakingSpaceBehavior::IgnoreNonBreakingSpace, CanUseShortcut::No>(lazyBreakIterator, stringView.characters16(), stringView.length(), startPosition);
+        return nextBreakablePosition<LChar, NonBreakingSpaceBehavior::IgnoreNonBreakingSpace, CanUseShortcut::No>(lineBreakIteratorFactory, stringView.characters8(), stringView.length(), startPosition);
+    return nextBreakablePosition<UChar, NonBreakingSpaceBehavior::IgnoreNonBreakingSpace, CanUseShortcut::No>(lineBreakIteratorFactory, stringView.characters16(), stringView.length(), startPosition);
 }
 
-inline unsigned nextBreakablePositionBreakCharacter(LazyLineBreakIterator& lazyBreakIterator, unsigned startPosition)
+inline unsigned nextBreakablePositionBreakCharacter(CachedLineBreakIteratorFactory& lineBreakIteratorFactory, unsigned startPosition)
 {
-    auto stringView = lazyBreakIterator.stringView();
+    auto stringView = lineBreakIteratorFactory.stringView();
     ASSERT(startPosition <= stringView.length());
     // FIXME: Can/Should we implement this using a Shared Iterator (performance issue)
     // https://bugs.webkit.org/show_bug.cgi?id=197876
@@ -192,28 +192,28 @@ inline unsigned nextBreakablePositionBreakCharacter(LazyLineBreakIterator& lazyB
     return next.value_or(stringView.length());
 }
 
-inline bool isBreakable(LazyLineBreakIterator& lazyBreakIterator, unsigned startPosition, std::optional<unsigned>& nextBreakable, bool breakNBSP, bool canUseShortcut, bool keepAllWords, bool breakAnywhere)
+inline bool isBreakable(CachedLineBreakIteratorFactory& lineBreakIteratorFactory, unsigned startPosition, std::optional<unsigned>& nextBreakable, bool breakNBSP, bool canUseShortcut, bool keepAllWords, bool breakAnywhere)
 {
     if (nextBreakable && nextBreakable.value() >= startPosition)
         return startPosition == nextBreakable;
 
     if (breakAnywhere)
-        nextBreakable = nextBreakablePositionBreakCharacter(lazyBreakIterator, startPosition);
+        nextBreakable = nextBreakablePositionBreakCharacter(lineBreakIteratorFactory, startPosition);
     else if (keepAllWords) {
         if (breakNBSP)
-            nextBreakable = nextBreakablePositionKeepingAllWords(lazyBreakIterator, startPosition);
+            nextBreakable = nextBreakablePositionKeepingAllWords(lineBreakIteratorFactory, startPosition);
         else
-            nextBreakable = nextBreakablePositionKeepingAllWordsIgnoringNBSP(lazyBreakIterator, startPosition);
+            nextBreakable = nextBreakablePositionKeepingAllWordsIgnoringNBSP(lineBreakIteratorFactory, startPosition);
     } else if (!canUseShortcut) {
         if (breakNBSP)
-            nextBreakable = nextBreakablePositionWithoutShortcut(lazyBreakIterator, startPosition);
+            nextBreakable = nextBreakablePositionWithoutShortcut(lineBreakIteratorFactory, startPosition);
         else
-            nextBreakable = nextBreakablePositionIgnoringNBSPWithoutShortcut(lazyBreakIterator, startPosition);
+            nextBreakable = nextBreakablePositionIgnoringNBSPWithoutShortcut(lineBreakIteratorFactory, startPosition);
     } else {
         if (breakNBSP)
-            nextBreakable = nextBreakablePosition(lazyBreakIterator, startPosition);
+            nextBreakable = nextBreakablePosition(lineBreakIteratorFactory, startPosition);
         else
-            nextBreakable = nextBreakablePositionIgnoringNBSP(lazyBreakIterator, startPosition);
+            nextBreakable = nextBreakablePositionIgnoringNBSP(lineBreakIteratorFactory, startPosition);
     }
     return startPosition == nextBreakable;
 }

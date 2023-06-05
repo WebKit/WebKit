@@ -1426,8 +1426,8 @@ void LegacyLineLayout::layoutRunsAndFloatsInRange(LineLayoutState& layoutState, 
 
         WordMeasurements wordMeasurements;
         end = lineBreaker.nextLineBreak(resolver, layoutState.lineInfo(), renderTextInfo, lastFloatFromPreviousLine, consecutiveHyphenatedLines, wordMeasurements);
-        m_flow.cachePriorCharactersIfNeeded(renderTextInfo.lineBreakIterator);
-        renderTextInfo.lineBreakIterator.priorContext().reset();
+        m_flow.cachePriorCharactersIfNeeded(renderTextInfo.lineBreakIteratorFactory);
+        renderTextInfo.lineBreakIteratorFactory.priorContext().reset();
         if (resolver.position().atEnd()) {
             // FIXME: We shouldn't be creating any runs in nextLineBreak to begin with!
             // Once BidiRunList is separated from BidiResolver this will not be needed.
