@@ -27,12 +27,14 @@
 
 #include "IPCUtilities.h"
 #include "ObjectIdentifierReferenceTracker.h"
+#include "Timeout.h"
+#include <optional>
 #include <wtf/Condition.h>
 #include <wtf/HashMap.h>
 #include <wtf/Lock.h>
 #include <wtf/ThreadAssertions.h>
 
-namespace WebKit {
+namespace IPC {
 
 // Container that holds identifier -> object mapping between two processes.
 // Used in scenarios where the holder process processes messages with the object references in multiple
@@ -55,13 +57,13 @@ public:
 
     // Waits until a write creates the reference and then retires the read or
     // times out.
-    HeldType retire(ReadReference&&, IPC::Timeout);
+    HeldType retire(ReadReference&&, Timeout);
 
     // Inserts a new version of the object or removes an old one and then retires the write or
     // times out.
     // If timeout is passed, waits until pending reads are done.
     // It is a caller error to not wait and mutate the old object.
-    void retire(WriteReference&&, std::optional<HeldType>&& newObject, std::optional<IPC::Timeout>);
+    void retire(WriteReference&&, std::optional<HeldType>&& newObject, std::optional<Timeout>);
 
     void retireRemove(WriteReference&&);
 
@@ -89,7 +91,7 @@ private:
 };
 
 template<typename Identifier, typename HeldType>
-HeldType ThreadSafeObjectHeap<Identifier, HeldType>::retire(ReadReference&& read, IPC::Timeout timeout)
+HeldType ThreadSafeObjectHeap<Identifier, HeldType>::retire(ReadReference&& read, Timeout timeout)
 {
     Locker locker { m_objectsLock };
     do {
@@ -115,7 +117,7 @@ HeldType ThreadSafeObjectHeap<Identifier, HeldType>::retire(ReadReference&& read
 }
 
 template<typename Identifier, typename HeldType>
-void ThreadSafeObjectHeap<Identifier, HeldType>::retire(WriteReference&& write, std::optional<HeldType>&& object, std::optional<IPC::Timeout> timeout)
+void ThreadSafeObjectHeap<Identifier, HeldType>::retire(WriteReference&& write, std::optional<HeldType>&& object, std::optional<Timeout> timeout)
 {
     const bool waitForPendingReads = timeout.has_value();
     Locker locker { m_objectsLock };

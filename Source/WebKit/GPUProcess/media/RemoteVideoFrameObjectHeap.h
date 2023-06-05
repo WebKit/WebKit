@@ -75,7 +75,7 @@ private:
     void createPixelConformerIfNeeded();
 
     const Ref<IPC::Connection> m_connection;
-    ThreadSafeObjectHeap<RemoteVideoFrameIdentifier, RefPtr<WebCore::VideoFrame>> m_heap;
+    IPC::ThreadSafeObjectHeap<RemoteVideoFrameIdentifier, RefPtr<WebCore::VideoFrame>> m_heap;
 #if PLATFORM(COCOA)
     SharedVideoFrameWriter m_sharedVideoFrameWriter;
     SharedVideoFrameReader m_sharedVideoFrameReader;

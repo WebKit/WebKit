@@ -212,7 +212,7 @@ public:
 
     void lowMemoryHandler(WTF::Critical, WTF::Synchronous);
 
-    ThreadSafeObjectHeap<RemoteSerializedImageBufferIdentifier, RefPtr<RemoteImageBuffer>>& serializedImageBufferHeap() { return m_remoteSerializedImageBufferObjectHeap; }
+    IPC::ThreadSafeObjectHeap<RemoteSerializedImageBufferIdentifier, RefPtr<RemoteImageBuffer>>& serializedImageBufferHeap() { return m_remoteSerializedImageBufferObjectHeap; }
 
 #if ENABLE(WEBGL)
     void releaseGraphicsContextGLForTesting(GraphicsContextGLIdentifier);
@@ -361,7 +361,7 @@ private:
     using RemoteGraphicsContextGLMap = HashMap<GraphicsContextGLIdentifier, IPC::ScopedActiveMessageReceiveQueue<RemoteGraphicsContextGL>>;
     RemoteGraphicsContextGLMap m_remoteGraphicsContextGLMap;
 #endif
-    ThreadSafeObjectHeap<RemoteSerializedImageBufferIdentifier, RefPtr<RemoteImageBuffer>> m_remoteSerializedImageBufferObjectHeap;
+    IPC::ThreadSafeObjectHeap<RemoteSerializedImageBufferIdentifier, RefPtr<RemoteImageBuffer>> m_remoteSerializedImageBufferObjectHeap;
     using RemoteGPUMap = HashMap<WebGPUIdentifier, IPC::ScopedActiveMessageReceiveQueue<RemoteGPU>>;
     RemoteGPUMap m_remoteGPUMap;
 #if ENABLE(ENCRYPTED_MEDIA)
