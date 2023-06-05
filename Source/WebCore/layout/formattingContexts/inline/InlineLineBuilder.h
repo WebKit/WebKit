@@ -36,7 +36,7 @@
 namespace WebCore {
 namespace Layout {
 
-struct CommittedContent;
+struct LineContent;
 struct LineCandidate;
 
 class LineBuilder {
@@ -143,8 +143,7 @@ private:
     size_t rebuildLineForTrailingSoftHyphen(const InlineItemRange& layoutRange);
     void commitPartialContent(const InlineContentBreaker::ContinuousContent::RunList&, const InlineContentBreaker::Result::PartialTrailingContent&);
     void initialize(const InlineRect& initialLineLogicalRect, const UsedConstraints&, const InlineItemRange& needsLayoutRange, const std::optional<PreviousLine>&);
-    CommittedContent placeInlineContent(const InlineItemRange&);
-    InlineItemRange close(const InlineItemRange& needsLayoutRange, const CommittedContent&);
+    LineContent placeInlineAndFloatContent(const InlineItemRange&);
     struct InitialLetterOffsets {
         LayoutUnit capHeightOffset;
         LayoutUnit sunkenBelowFirstLineOffset;

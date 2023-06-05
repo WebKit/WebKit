@@ -51,6 +51,7 @@ struct InlineItemPosition {
 struct InlineItemRange {
     InlineItemRange(InlineItemPosition start, InlineItemPosition end);
     InlineItemRange(size_t startIndex, size_t endIndex);
+    InlineItemRange() = default;
 
     size_t startIndex() const { return start.index; }
     size_t endIndex() const { return end.index; }
