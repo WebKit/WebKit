@@ -63,6 +63,11 @@
                 testValue('calc(tan(30deg + 15deg) * 100px)', '100');
                 testValue('calc(sin(pi/2) * 100px)', '100');
                 testValue('calc(cos(e - e) * 100px)', '100');
+                testValue('round(117px, 25px)', '125')
+                testValue('round(nearest, 117px, 25px)', '125')
+                testValue('round(up, 117px, 25px)', '125')
+                testValue('round(down, 117px, 25px)', '100')
+                testValue('round(to-zero, 117px, 25px)', '100')
 
                 // Non-parsing expressions.
                 testExpression('calc(100px, 200px)', '999px', '999px');
@@ -99,6 +104,9 @@
                 testExpression('calc(sin(piiii/4) * 100px)', '999px', '999px');
                 testExpression('calc(sin(e e/4) * 100px)', '999px', '999px');
                 testExpression('calc(sin() * 100px)', '999px', '999px');
+                testExpression('round(dummy, 117px, 25px)', '999px', '999px');
+                testExpression('round(nearest)', '999px', '999px');
+                testExpression('round(1px, 2px, 3px)', '999px', '999px');
             }
 
             testProperty("width");
