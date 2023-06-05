@@ -420,19 +420,20 @@ void CurlRequest::didCompleteTransfer(CURLcode result)
         return;
     }
 
-    if (result == CURLE_OK) {
-        if (needToInvokeDidReceiveResponse()) {
-            // Processing of didReceiveResponse() has not been completed. (For example, HEAD method)
-            m_mustInvokeCancelTransfer = true;
-            invokeDidReceiveResponse(m_response, [this, result]() mutable {
-                m_mustInvokeCancelTransfer = false;
-                runOnWorkerThreadIfRequired([this, protectedThis = Ref { *this }, result]() {
-                    didCompleteTransfer(result);
-                });
+    bool isProxyAuthenticationRequired = result == CURLE_RECV_ERROR && m_response.httpConnectCode == 407;
+    if (needToInvokeDidReceiveResponse() && (result == CURLE_OK || isProxyAuthenticationRequired)) {
+        // Processing of didReceiveResponse() has not been completed. (For example, HEAD Method, Proxy authentication, etc.)
+        m_mustInvokeCancelTransfer = true;
+        invokeDidReceiveResponse(m_response, [this, result]() mutable {
+            m_mustInvokeCancelTransfer = false;
+            runOnWorkerThreadIfRequired([this, protectedThis = Ref { *this }, result]() {
+                didCompleteTransfer(result);
             });
-            return;
-        }
+        });
+        return;
+    }
 
+    if (result == CURLE_OK) {
         if (m_multipartHandle)
             m_multipartHandle->didComplete();
 
