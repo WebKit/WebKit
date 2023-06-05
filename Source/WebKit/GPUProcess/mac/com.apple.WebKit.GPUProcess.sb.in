@@ -553,7 +553,8 @@
 (if (equal? (param "CPU") "arm64")
     (with-filter (iokit-registry-entry-class "IOService")
         (allow iokit-get-properties
-            (iokit-property "chip-id"
+            (iokit-property "apple-coprocessor-version"
+                            "chip-id"
                             "display-rotation"
                             "display-scale"))))
 
