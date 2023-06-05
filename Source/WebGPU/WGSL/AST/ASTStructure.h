@@ -39,6 +39,8 @@ enum class StructureRole : uint8_t {
     ComputeInput,
     VertexOutput,
     BindGroup,
+    UserDefinedResource,
+    PackedResource,
 };
 
 class Structure final : public Declaration {

@@ -195,7 +195,7 @@ void FunctionDefinitionWriter::visit(AST::Structure& structDecl)
         unsigned alignment = 0;
         unsigned size = 0;
         unsigned paddingID = 0;
-        bool shouldPack = structDecl.role() == AST::StructureRole::UserDefined;
+        bool shouldPack = structDecl.role() == AST::StructureRole::PackedResource;
         const auto& addPadding = [&](unsigned paddingSize) {
             ASSERT(shouldPack);
             m_stringBuilder.append(m_indent, "uint8_t __padding", ++paddingID, "[", String::number(paddingSize), "]; \n");
@@ -405,6 +405,8 @@ void FunctionDefinitionWriter::visit(AST::LocationAttribute& location)
         case AST::StructureRole::BindGroup:
         case AST::StructureRole::UserDefined:
         case AST::StructureRole::ComputeInput:
+        case AST::StructureRole::UserDefinedResource:
+        case AST::StructureRole::PackedResource:
             return;
         case AST::StructureRole::VertexInput:
             m_stringBuilder.append("[[attribute(", *AST::extractInteger(location.location()), ")]]");
@@ -454,7 +456,7 @@ void FunctionDefinitionWriter::visit(const Type* type)
         },
         [&](const Vector& vector) {
             auto* primitive = std::get_if<Primitive>(vector.element);
-            if (primitive && m_structRole.has_value() && *m_structRole == AST::StructureRole::UserDefined) {
+            if (primitive && m_structRole.has_value() && *m_structRole == AST::StructureRole::PackedResource) {
                 switch (primitive->kind) {
                 case Types::Primitive::AbstractInt:
                 case Types::Primitive::I32:

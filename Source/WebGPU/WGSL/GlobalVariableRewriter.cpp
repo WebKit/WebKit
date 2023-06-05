@@ -100,6 +100,7 @@ private:
     void insertLocalDefinitions(AST::Function&, const UsedPrivateGlobals&);
     void readVariable(AST::IdentifierExpression&, AST::Variable&, Context);
     void insertBeforeCurrentStatement(AST::Statement&);
+    void packResourceStruct(AST::Variable&);
 
     CallGraph& m_callGraph;
     PrepareResult& m_result;
@@ -112,6 +113,7 @@ private:
     unsigned m_constantId { 0 };
     unsigned m_currentStatementIndex { 0 };
     Vector<Insertion> m_pendingInsertions;
+    HashMap<const Types::Struct*, const Type*> m_packedStructTypes;
 };
 
 void RewriteGlobalVariables::run()
@@ -237,8 +239,67 @@ void RewriteGlobalVariables::collectGlobals()
             Global& global = result.iterator->value;
             auto result = m_groupBindingMap.add(resource->group, Vector<std::pair<unsigned, Global*>>());
             result.iterator->value.append({ resource->binding, &global });
+            packResourceStruct(globalVar);
         }
     }
+}
+
+void RewriteGlobalVariables::packResourceStruct(AST::Variable& global)
+{
+    auto* type = global.maybeTypeName();
+    ASSERT(type);
+    if (!is<AST::NamedTypeName>(*type))
+        return;
+
+    auto& namedTypeName = downcast<AST::NamedTypeName>(*type);
+    auto* structType = std::get_if<Types::Struct>(namedTypeName.resolvedType());
+    if (!structType)
+        return;
+
+    String packedStructName = makeString("__", structType->structure.name(), "_Packed");
+
+    const Type* packedStructType = nullptr;
+    if (structType->structure.role() != AST::StructureRole::UserDefinedResource) {
+        ASSERT(structType->structure.role() == AST::StructureRole::UserDefined);
+        m_callGraph.ast().replace(&structType->structure.role(), AST::StructureRole::UserDefinedResource);
+
+        auto& packedStruct = m_callGraph.ast().astBuilder().construct<AST::Structure>(
+            SourceSpan::empty(),
+            AST::Identifier::make(packedStructName),
+            AST::StructureMember::List(structType->structure.members()),
+            AST::Attribute::List { },
+            AST::StructureRole::PackedResource
+
+        );
+        m_callGraph.ast().append(m_callGraph.ast().structures(), packedStruct);
+        packedStructType = m_callGraph.ast().types().structType(packedStruct);
+        m_packedStructTypes.add(structType, packedStructType);
+    } else
+        packedStructType = m_packedStructTypes.get(structType);
+
+    auto& packedType = m_callGraph.ast().astBuilder().construct<AST::NamedTypeName>(
+        SourceSpan::empty(),
+        AST::Identifier::make(packedStructName)
+    );
+    packedType.m_resolvedType = packedStructType;
+    m_callGraph.ast().replace(namedTypeName, packedType);
+
+    auto* maybeReference = global.maybeReferenceType();
+    ASSERT(maybeReference);
+    ASSERT(is<AST::ReferenceTypeName>(*maybeReference));
+    auto& reference = downcast<AST::ReferenceTypeName>(*maybeReference);
+    auto* referenceType = std::get_if<Types::Reference>(reference.resolvedType());
+    ASSERT(referenceType);
+    auto& packedTypeReference = m_callGraph.ast().astBuilder().construct<AST::ReferenceTypeName>(
+        SourceSpan::empty(),
+        packedType
+    );
+    packedTypeReference.m_resolvedType = m_callGraph.ast().types().referenceType(
+        referenceType->addressSpace,
+        packedType.resolvedType(),
+        referenceType->accessMode
+    );
+    m_callGraph.ast().replace(reference, packedTypeReference);
 }
 
 void RewriteGlobalVariables::visitEntryPoint(AST::Function& function, AST::StageAttribute::Stage stage, PipelineLayout& pipelineLayout)
