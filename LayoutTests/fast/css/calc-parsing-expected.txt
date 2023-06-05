@@ -128,6 +128,21 @@ PASS 100 is 100
 element.style["width"] = "calc(cos(e - e) * 100px)"
 PASS 100 is 100
 
+element.style["width"] = "round(117px, 25px)"
+PASS 125 is 125
+
+element.style["width"] = "round(nearest, 117px, 25px)"
+PASS 125 is 125
+
+element.style["width"] = "round(up, 117px, 25px)"
+PASS 125 is 125
+
+element.style["width"] = "round(down, 117px, 25px)"
+PASS 100 is 100
+
+element.style["width"] = "round(to-zero, 117px, 25px)"
+PASS 100 is 100
+
 element.style["width"] = "calc(100px, 200px)"
 PASS element.style['width'] is "999px"
 PASS getComputedStyle(element).getPropertyValue('width') is "999px"
@@ -264,6 +279,18 @@ element.style["width"] = "calc(sin() * 100px)"
 PASS element.style['width'] is "999px"
 PASS getComputedStyle(element).getPropertyValue('width') is "999px"
 
+element.style["width"] = "round(dummy, 117px, 25px)"
+PASS element.style['width'] is "999px"
+PASS getComputedStyle(element).getPropertyValue('width') is "999px"
+
+element.style["width"] = "round(nearest)"
+PASS element.style['width'] is "999px"
+PASS getComputedStyle(element).getPropertyValue('width') is "999px"
+
+element.style["width"] = "round(1px, 2px, 3px)"
+PASS element.style['width'] is "999px"
+PASS getComputedStyle(element).getPropertyValue('width') is "999px"
+
 element.style["min-width"] = "calc(100px)"
 PASS element.style['min-width'] is "calc(100px)"
 PASS getComputedStyle(element).getPropertyValue('min-width') is "100px"
@@ -386,6 +413,21 @@ element.style["min-width"] = "calc(sin(pi/2) * 100px)"
 PASS 100 is 100
 
 element.style["min-width"] = "calc(cos(e - e) * 100px)"
+PASS 100 is 100
+
+element.style["min-width"] = "round(117px, 25px)"
+PASS 125 is 125
+
+element.style["min-width"] = "round(nearest, 117px, 25px)"
+PASS 125 is 125
+
+element.style["min-width"] = "round(up, 117px, 25px)"
+PASS 125 is 125
+
+element.style["min-width"] = "round(down, 117px, 25px)"
+PASS 100 is 100
+
+element.style["min-width"] = "round(to-zero, 117px, 25px)"
 PASS 100 is 100
 
 element.style["min-width"] = "calc(100px, 200px)"
@@ -521,6 +563,18 @@ PASS element.style['min-width'] is "999px"
 PASS getComputedStyle(element).getPropertyValue('min-width') is "999px"
 
 element.style["min-width"] = "calc(sin() * 100px)"
+PASS element.style['min-width'] is "999px"
+PASS getComputedStyle(element).getPropertyValue('min-width') is "999px"
+
+element.style["min-width"] = "round(dummy, 117px, 25px)"
+PASS element.style['min-width'] is "999px"
+PASS getComputedStyle(element).getPropertyValue('min-width') is "999px"
+
+element.style["min-width"] = "round(nearest)"
+PASS element.style['min-width'] is "999px"
+PASS getComputedStyle(element).getPropertyValue('min-width') is "999px"
+
+element.style["min-width"] = "round(1px, 2px, 3px)"
 PASS element.style['min-width'] is "999px"
 PASS getComputedStyle(element).getPropertyValue('min-width') is "999px"
 PASS successfullyParsed is true

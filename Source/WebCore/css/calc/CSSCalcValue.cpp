@@ -222,16 +222,14 @@ static RefPtr<CSSCalcExpressionNode> createCSS(const CalcExpressionNode& node, c
         }
         case CalcOperator::Mod:
         case CalcOperator::Rem:
-        case CalcOperator::Round: {
-            auto children = createCSS(operationChildren, style);
-            if (children.size() != 2)
-                return nullptr;
-            return CSSCalcOperationNode::createStep(op, WTFMove(children));
-        }
+        case CalcOperator::Round:
         case CalcOperator::Nearest:
         case CalcOperator::ToZero:
         case CalcOperator::Up:
         case CalcOperator::Down: {
+            auto children = createCSS(operationChildren, style);
+            if (children.size() == 2)
+                return CSSCalcOperationNode::createStep(op, WTFMove(children));
             return CSSCalcOperationNode::createRoundConstant(op);
         }
         }
