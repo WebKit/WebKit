@@ -2761,15 +2761,14 @@ bool isMediaDiskCacheDisabled()
 #if PLATFORM(WPE)
     static std::once_flag once;
     std::call_once(once, []() {
-        auto s = String::fromLatin1(std::getenv("WPE_SHELL_DISABLE_MEDIA_DISK_CACHE"));
-        if (!s.isEmpty()) {
-            // FIXME: should this use StringView and equalLettersIgnoringASCIICase? Or even strcmp?
-            // https://github.com/WebKit/WebKit/pull/14233#discussion_r1202410966
-            auto value = s.trim(deprecatedIsSpaceOrNewline).convertToLowercaseWithoutLocale();
-            result = (value == "1"_s || value == "t"_s || value == "true"_s);
+        auto shouldDisableMediaDiskCache = StringView::fromLatin1(std::getenv("WPE_SHELL_DISABLE_MEDIA_DISK_CACHE"));
+        if (!shouldDisableMediaDiskCache.isEmpty()) {
+            result = shouldDisableMediaDiskCache == "1"_s || equalLettersIgnoringASCIICase(shouldDisableMediaDiskCache, "true"_s)
+                || equalLettersIgnoringASCIICase(shouldDisableMediaDiskCache, "t"_s);
         }
     });
 #endif
+    GST_DEBUG("Should disable media disk cache: %s", boolForPrinting(result));
     return result;
 }
 
