@@ -310,11 +310,6 @@ void RemoteLayerTreeDrawingArea::triggerRenderingUpdate()
     startRenderingUpdateTimer();
 }
 
-void RemoteLayerTreeDrawingArea::setNextRenderingUpdateRequiresSynchronousImageDecoding()
-{
-    m_remoteLayerTreeContext->setNextRenderingUpdateRequiresSynchronousImageDecoding();
-}
-
 void RemoteLayerTreeDrawingArea::updateRendering()
 {
     if (m_isRenderingSuspended) {
@@ -346,12 +341,6 @@ void RemoteLayerTreeDrawingArea::updateRendering()
         if (auto exposedRect = mainFrameView->viewExposedRect())
             visibleRect.intersect(*exposedRect);
     }
-
-    OptionSet<FinalizeRenderingUpdateFlags> flags;
-    if (m_remoteLayerTreeContext->nextRenderingUpdateRequiresSynchronousImageDecoding())
-        flags.add(FinalizeRenderingUpdateFlags::InvalidateImagesWithAsyncDecodes);
-
-    m_webPage.finalizeRenderingUpdate(flags);
 
     willStartRenderingUpdateDisplay();
 
@@ -519,7 +508,6 @@ void RemoteLayerTreeDrawingArea::activityStateDidChange(OptionSet<WebCore::Activ
     // FIXME: Should we suspend painting while not visible, like TiledCoreAnimationDrawingArea? Probably.
 
     if (activityStateChangeID != ActivityStateChangeAsynchronous) {
-        m_remoteLayerTreeContext->setNextRenderingUpdateRequiresSynchronousImageDecoding();
         m_activityStateChangeID = activityStateChangeID;
         startRenderingUpdateTimer();
     }
@@ -531,10 +519,6 @@ void RemoteLayerTreeDrawingArea::activityStateDidChange(OptionSet<WebCore::Activ
 
 void RemoteLayerTreeDrawingArea::dispatchAfterEnsuringDrawing(IPC::AsyncReplyID callbackID)
 {
-    // Assume that if someone is listening for this transaction's completion, that they want it to
-    // be a "complete" paint (including images that would normally be asynchronously decoding).
-    m_remoteLayerTreeContext->setNextRenderingUpdateRequiresSynchronousImageDecoding();
-
     m_pendingCallbackIDs.append(callbackID);
     triggerRenderingUpdate();
 }

@@ -32,7 +32,6 @@ namespace WebCore {
 enum class NullGraphicsContextPaintInvalidationReasons : uint8_t {
     None,
     InvalidatingControlTints,
-    InvalidatingImagesWithAsyncDecodes,
     DetectingContentfulPaint
 };
 
@@ -55,7 +54,6 @@ private:
     bool paintingDisabled() const final { return true; }
     bool performingPaintInvalidation() const final { return m_paintInvalidationReasons != PaintInvalidationReasons::None; }
     bool invalidatingControlTints() const final { return m_paintInvalidationReasons == PaintInvalidationReasons::InvalidatingControlTints; }
-    bool invalidatingImagesWithAsyncDecodes() const final { return m_paintInvalidationReasons == PaintInvalidationReasons::InvalidatingImagesWithAsyncDecodes; }
     bool detectingContentfulPaint() const final { return m_paintInvalidationReasons == PaintInvalidationReasons::DetectingContentfulPaint; }
 
     void didUpdateState(GraphicsContextState&) final { }

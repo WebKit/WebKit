@@ -3762,7 +3762,7 @@ void RenderLayerBacking::paintDebugOverlays(const GraphicsLayer* graphicsLayer, 
 }
 
 // Up-call from compositing layer drawing callback.
-void RenderLayerBacking::paintContents(const GraphicsLayer* graphicsLayer, GraphicsContext& context, const FloatRect& clip, OptionSet<GraphicsLayerPaintBehavior> layerPaintBehavior)
+void RenderLayerBacking::paintContents(const GraphicsLayer* graphicsLayer, GraphicsContext& context, const FloatRect& clip)
 {
 #ifndef NDEBUG
     renderer().page().setIsPainting(true);
@@ -3777,11 +3777,6 @@ void RenderLayerBacking::paintContents(const GraphicsLayer* graphicsLayer, Graph
     adjustedClipRect.move(m_subpixelOffsetFromRenderer);
     IntRect dirtyRect = enclosingIntRect(adjustedClipRect);
 
-    if (!layerPaintBehavior.contains(GraphicsLayerPaintBehavior::ForceSynchronousImageDecode)) {
-        if (!graphicsLayer->repaintCount())
-            layerPaintBehavior.add(GraphicsLayerPaintBehavior::DefaultAsynchronousImageDecode);
-    }
-
     if (graphicsLayer == m_graphicsLayer.get()
         || graphicsLayer == m_foregroundLayer.get()
         || graphicsLayer == m_backgroundLayer.get()
@@ -3792,13 +3787,7 @@ void RenderLayerBacking::paintContents(const GraphicsLayer* graphicsLayer, Graph
             dirtyRect.intersect(enclosingIntRect(compositedBoundsIncludingMargin()));
 
         // We have to use the same root as for hit testing, because both methods can compute and cache clipRects.
-        OptionSet<PaintBehavior> behavior = PaintBehavior::Normal;
-        if (layerPaintBehavior.contains(GraphicsLayerPaintBehavior::ForceSynchronousImageDecode))
-            behavior.add(PaintBehavior::ForceSynchronousImageDecode);
-        else if (layerPaintBehavior.contains(GraphicsLayerPaintBehavior::DefaultAsynchronousImageDecode))
-            behavior.add(PaintBehavior::DefaultAsynchronousImageDecode);
-
-        paintIntoLayer(graphicsLayer, context, dirtyRect, behavior);
+        paintIntoLayer(graphicsLayer, context, dirtyRect, PaintBehavior::Normal);
 
         auto visibleDebugOverlayRegions = OptionSet<DebugOverlayRegions>::fromRaw(renderer().settings().visibleDebugOverlayRegions());
         if (visibleDebugOverlayRegions.containsAny({ DebugOverlayRegions::TouchActionRegion, DebugOverlayRegions::EditableElementRegion, DebugOverlayRegions::WheelEventHandlerRegion, DebugOverlayRegions::InteractionRegion }))

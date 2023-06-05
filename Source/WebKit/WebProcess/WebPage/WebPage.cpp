@@ -4818,9 +4818,6 @@ void WebPage::willDestroyDecodedDataForAllImages()
     if (m_remoteRenderingBackendProxy)
         m_remoteRenderingBackendProxy->remoteResourceCacheProxy().releaseAllImageResources();
 #endif
-
-    if (m_drawingArea)
-        m_drawingArea->setNextRenderingUpdateRequiresSynchronousImageDecoding();
 }
 
 unsigned WebPage::remoteImagesCountForTesting() const

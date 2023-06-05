@@ -602,19 +602,15 @@ void RemoteLayerBackingStore::drawInContext(GraphicsContext& context, WTF::Funct
         context.fillRect(layerBounds, SRGBA<uint8_t> { 255, 47, 146 });
 #endif
 
-    OptionSet<WebCore::GraphicsLayerPaintBehavior> paintBehavior;
-    if (m_layer->context() && m_layer->context()->nextRenderingUpdateRequiresSynchronousImageDecoding())
-        paintBehavior.add(GraphicsLayerPaintBehavior::ForceSynchronousImageDecode);
-    
     // FIXME: This should be moved to PlatformCALayerRemote for better layering.
     switch (m_layer->layerType()) {
     case PlatformCALayer::LayerTypeSimpleLayer:
     case PlatformCALayer::LayerTypeTiledBackingTileLayer:
-        m_layer->owner()->platformCALayerPaintContents(m_layer, context, dirtyBounds, paintBehavior);
+        m_layer->owner()->platformCALayerPaintContents(m_layer, context, dirtyBounds);
         break;
     case PlatformCALayer::LayerTypeWebLayer:
     case PlatformCALayer::LayerTypeBackdropLayer:
-        PlatformCALayer::drawLayerContents(context, m_layer, m_paintingRects, paintBehavior);
+        PlatformCALayer::drawLayerContents(context, m_layer, m_paintingRects);
         break;
     case PlatformCALayer::LayerTypeLayer:
     case PlatformCALayer::LayerTypeTransformLayer:

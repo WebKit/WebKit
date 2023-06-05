@@ -645,7 +645,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (auto* parentFrame = dynamicDowncast<WebCore::LocalFrame>(_private->coreFrame->tree().parent())) {
         // For subframes, we need to inherit the paint behavior from our parent
         if (auto* parentView = parentFrame ? parentFrame->view() : nullptr) {
-            constexpr OptionSet<WebCore::PaintBehavior> flagsToCopy { WebCore::PaintBehavior::FlattenCompositingLayers, WebCore::PaintBehavior::Snapshotting, WebCore::PaintBehavior::DefaultAsynchronousImageDecode, WebCore::PaintBehavior::ForceSynchronousImageDecode };
+            constexpr OptionSet<WebCore::PaintBehavior> flagsToCopy { WebCore::PaintBehavior::FlattenCompositingLayers, WebCore::PaintBehavior::Snapshotting };
             paintBehavior.add(parentView->paintBehavior() & flagsToCopy);
         }
     } else

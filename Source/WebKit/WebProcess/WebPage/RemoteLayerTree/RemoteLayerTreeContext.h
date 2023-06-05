@@ -81,9 +81,6 @@ public:
 
     RemoteLayerBackingStoreCollection& backingStoreCollection() { return *m_backingStoreCollection; }
     
-    void setNextRenderingUpdateRequiresSynchronousImageDecoding() { m_nextRenderingUpdateRequiresSynchronousImageDecoding = true; }
-    bool nextRenderingUpdateRequiresSynchronousImageDecoding() const { return m_nextRenderingUpdateRequiresSynchronousImageDecoding; }
-
     void adoptLayersFromContext(RemoteLayerTreeContext&);
 
     RemoteRenderingBackendProxy& ensureRemoteRenderingBackendProxy();
@@ -123,7 +120,6 @@ private:
 
     RemoteLayerTreeTransaction* m_currentTransaction { nullptr };
 
-    bool m_nextRenderingUpdateRequiresSynchronousImageDecoding { false };
     bool m_useCGDisplayListsForDOMRendering { false };
     bool m_useCGDisplayListImageCache { false };
 };

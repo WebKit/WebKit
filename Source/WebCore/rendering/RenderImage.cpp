@@ -482,11 +482,6 @@ static bool isDeferredImage(Element* element)
 void RenderImage::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
     GraphicsContext& context = paintInfo.context();
-    if (context.invalidatingImagesWithAsyncDecodes()) {
-        if (cachedImage() && cachedImage()->isClientWaitingForAsyncDecoding(*this))
-            cachedImage()->removeAllClientsWaitingForAsyncDecoding();
-        return;
-    }
 
     auto contentSize = this->contentSize();
     float deviceScaleFactor = document().deviceScaleFactor();

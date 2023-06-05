@@ -191,12 +191,6 @@ void BackgroundPainter::paintFillLayer(const Color& color, const FillLayer& bgLa
         }
     }
 
-    if (context.invalidatingImagesWithAsyncDecodes()) {
-        if (shouldPaintBackgroundImage && bgImage->cachedImage()->isClientWaitingForAsyncDecoding(m_renderer))
-            bgImage->cachedImage()->removeAllClientsWaitingForAsyncDecoding();
-        return;
-    }
-
     bool forceBackgroundToWhite = false;
     if (document().printing()) {
         if (style.printColorAdjust() == PrintColorAdjust::Economy)

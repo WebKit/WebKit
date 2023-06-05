@@ -53,10 +53,7 @@
     if (layer) {
         WebCore::GraphicsContextCG graphicsContext(context, WebCore::GraphicsContextCG::CGContextFromCALayer);
         WebCore::PlatformCALayer::RepaintRectList rectsToPaint = WebCore::PlatformCALayer::collectRectsToPaint(graphicsContext, layer.get());
-        OptionSet<WebCore::GraphicsLayerPaintBehavior> paintBehavior;
-        if (self.isRenderingInContext)
-            paintBehavior.add(WebCore::GraphicsLayerPaintBehavior::ForceSynchronousImageDecode);
-        WebCore::PlatformCALayer::drawLayerContents(graphicsContext, layer.get(), rectsToPaint, paintBehavior);
+        WebCore::PlatformCALayer::drawLayerContents(graphicsContext, layer.get(), rectsToPaint);
     }
 }
 
@@ -140,10 +137,7 @@
     if (layer && layer->owner()) {
         WebCore::GraphicsContextCG graphicsContext(context, WebCore::GraphicsContextCG::CGContextFromCALayer);
         WebCore::FloatRect clipBounds = CGContextGetClipBoundingBox(context);
-        OptionSet<WebCore::GraphicsLayerPaintBehavior> paintBehavior;
-        if (self.isRenderingInContext)
-            paintBehavior.add(WebCore::GraphicsLayerPaintBehavior::ForceSynchronousImageDecode);
-        layer->owner()->platformCALayerPaintContents(layer.get(), graphicsContext, clipBounds, paintBehavior);
+        layer->owner()->platformCALayerPaintContents(layer.get(), graphicsContext, clipBounds);
     }
 }
 

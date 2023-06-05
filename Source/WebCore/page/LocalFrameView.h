@@ -706,7 +706,6 @@ public:
     void setSpeculativeTilingDelayDisabledForTesting(bool disabled) { m_speculativeTilingDelayDisabledForTesting = disabled; }
 
     WEBCORE_EXPORT void invalidateControlTints();
-    void invalidateImagesWithAsyncDecodes();
     void updateAccessibilityObjectRegions();
     AXObjectCache* axObjectCache() const;
 

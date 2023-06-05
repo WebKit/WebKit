@@ -3261,10 +3261,6 @@ void RenderLayer::paintLayerContents(GraphicsContext& context, const LayerPainti
         else if (localPaintFlags.contains(PaintLayerFlag::PaintingRootBackgroundOnly))
             paintBehavior.add(PaintBehavior::RootBackgroundOnly);
 
-        // FIXME: This seems wrong. We should retain the DefaultAsynchronousImageDecode flag for all RenderLayers painted into the root tile cache.
-        if ((paintingInfo.paintBehavior & PaintBehavior::DefaultAsynchronousImageDecode) && isRenderViewLayer())
-            paintBehavior.add(PaintBehavior::DefaultAsynchronousImageDecode);
-
         if (isPaintingOverflowContents)
             paintBehavior.add(PaintBehavior::CompositedOverflowScrollContent);
 
@@ -3718,7 +3714,7 @@ void RenderLayer::paintForegroundForFragments(const LayerFragments& layerFragmen
         localPaintBehavior = paintBehavior;
 
     // FIXME: It's unclear if this flag copying is necessary.
-    constexpr OptionSet<PaintBehavior> flagsToCopy { PaintBehavior::ExcludeSelection, PaintBehavior::Snapshotting, PaintBehavior::DefaultAsynchronousImageDecode, PaintBehavior::CompositedOverflowScrollContent, PaintBehavior::ForceSynchronousImageDecode };
+    constexpr OptionSet<PaintBehavior> flagsToCopy { PaintBehavior::ExcludeSelection, PaintBehavior::Snapshotting, PaintBehavior::CompositedOverflowScrollContent };
     localPaintBehavior.add(localPaintingInfo.paintBehavior & flagsToCopy);
 
     GraphicsContextStateSaver stateSaver(context, false);
@@ -5791,8 +5787,6 @@ TextStream& operator<<(TextStream& ts, PaintBehavior behavior)
     case PaintBehavior::SelectionAndBackgroundsOnly: ts << "SelectionAndBackgroundsOnly"; break;
     case PaintBehavior::ExcludeSelection: ts << "ExcludeSelection"; break;
     case PaintBehavior::FlattenCompositingLayers: ts << "FlattenCompositingLayers"; break;
-    case PaintBehavior::ForceSynchronousImageDecode: ts << "ForceSynchronousImageDecode"; break;
-    case PaintBehavior::DefaultAsynchronousImageDecode: ts << "DefaultAsynchronousImageDecode"; break;
     case PaintBehavior::CompositedOverflowScrollContent: ts << "CompositedOverflowScrollContent"; break;
     case PaintBehavior::AnnotateLinks: ts << "AnnotateLinks"; break;
     case PaintBehavior::EventRegionIncludeForeground: ts << "EventRegionIncludeForeground"; break;

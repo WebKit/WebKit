@@ -1983,9 +1983,6 @@ void Page::finalizeRenderingUpdateForRootFrame(LocalFrame& rootFrame, OptionSet<
     if (!view)
         return;
 
-    if (flags.contains(FinalizeRenderingUpdateFlags::InvalidateImagesWithAsyncDecodes))
-        view->invalidateImagesWithAsyncDecodes();
-
     m_renderingUpdateRemainingSteps.last().remove(RenderingUpdateStep::LayerFlush);
 
     view->flushCompositingStateIncludingSubframes();

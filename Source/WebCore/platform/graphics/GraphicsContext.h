@@ -83,7 +83,6 @@ public:
     virtual bool paintingDisabled() const { return false; }
     virtual bool performingPaintInvalidation() const { return false; }
     virtual bool invalidatingControlTints() const { return false; }
-    virtual bool invalidatingImagesWithAsyncDecodes() const { return false; }
     virtual bool detectingContentfulPaint() const { return false; }
 
     // Context State

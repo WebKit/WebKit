@@ -79,7 +79,7 @@ private:
     private:
         // GraphicsLayerClient implementation
         void notifyFlushRequired(const GraphicsLayer*) final;
-        void paintContents(const GraphicsLayer*, GraphicsContext&, const FloatRect&, OptionSet<GraphicsLayerPaintBehavior>) final;
+        void paintContents(const GraphicsLayer*, GraphicsContext&, const FloatRect&) final;
         float deviceScaleFactor() const final;
 
         LayerController& m_layerController;

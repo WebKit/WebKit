@@ -70,12 +70,6 @@ enum class PlatformLayerTreeAsTextFlags : uint8_t {
     IncludeModels = 1 << 2,
 };
 
-// See WebCore::PaintBehavior.
-enum class GraphicsLayerPaintBehavior : uint8_t {
-    DefaultAsynchronousImageDecode = 1 << 0,
-    ForceSynchronousImageDecode = 1 << 1,
-};
-    
 class GraphicsLayerClient {
 public:
     virtual ~GraphicsLayerClient() = default;
@@ -93,7 +87,7 @@ public:
     // Notification that this layer requires a flush on the next display refresh.
     virtual void notifySubsequentFlushRequired(const GraphicsLayer*) { }
 
-    virtual void paintContents(const GraphicsLayer*, GraphicsContext&, const FloatRect& /* inClip */, OptionSet<GraphicsLayerPaintBehavior>) { }
+    virtual void paintContents(const GraphicsLayer*, GraphicsContext&, const FloatRect& /* inClip */) { }
     virtual void didChangePlatformLayerForLayer(const GraphicsLayer*) { }
 
     // Provides current transform (taking transform-origin and animations into account). Input matrix has been

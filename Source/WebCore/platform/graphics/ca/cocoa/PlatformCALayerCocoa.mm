@@ -1205,16 +1205,11 @@ PlatformCALayer::RepaintRectList PlatformCALayer::collectRectsToPaint(GraphicsCo
     return dirtyRects;
 }
 
-void PlatformCALayer::drawLayerContents(GraphicsContext& graphicsContext, WebCore::PlatformCALayer* platformCALayer, RepaintRectList& dirtyRects, OptionSet<GraphicsLayerPaintBehavior> layerPaintBehavior)
+void PlatformCALayer::drawLayerContents(GraphicsContext& graphicsContext, WebCore::PlatformCALayer* platformCALayer, RepaintRectList& dirtyRects)
 {
     WebCore::PlatformCALayerClient* layerContents = platformCALayer->owner();
     if (!layerContents)
         return;
-
-    if (!layerPaintBehavior.contains(GraphicsLayerPaintBehavior::ForceSynchronousImageDecode)) {
-        if (!layerContents->platformCALayerRepaintCount(platformCALayer))
-            layerPaintBehavior.add(GraphicsLayerPaintBehavior::DefaultAsynchronousImageDecode);
-    }
 
     {
         GraphicsContextStateSaver saver(graphicsContext);
@@ -1242,12 +1237,12 @@ void PlatformCALayer::drawLayerContents(GraphicsContext& graphicsContext, WebCor
             ThemeMac::setFocusRingClipRect(graphicsContext.clipBounds());
 #endif
             if (dirtyRects.size() == 1)
-                layerContents->platformCALayerPaintContents(platformCALayer, graphicsContext, dirtyRects[0], layerPaintBehavior);
+                layerContents->platformCALayerPaintContents(platformCALayer, graphicsContext, dirtyRects[0]);
             else {
                 for (const auto& rect : dirtyRects) {
                     GraphicsContextStateSaver stateSaver(graphicsContext);
                     graphicsContext.clip(rect);
-                    layerContents->platformCALayerPaintContents(platformCALayer, graphicsContext, rect, layerPaintBehavior);
+                    layerContents->platformCALayerPaintContents(platformCALayer, graphicsContext, rect);
                 }
             }
 

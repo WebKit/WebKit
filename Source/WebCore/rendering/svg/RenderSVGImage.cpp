@@ -195,13 +195,6 @@ ImageDrawResult RenderSVGImage::paintIntoRect(PaintInfo& paintInfo, const FloatR
 
 void RenderSVGImage::paintForeground(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
-    GraphicsContext& context = paintInfo.context();
-    if (context.invalidatingImagesWithAsyncDecodes()) {
-        if (cachedImage() && cachedImage()->isClientWaitingForAsyncDecoding(*this))
-            cachedImage()->removeAllClientsWaitingForAsyncDecoding();
-        return;
-    }
-
     if (!imageResource().cachedImage()) {
         page().addRelevantUnpaintedObject(this, visualOverflowRectEquivalent());
         return;

@@ -311,7 +311,7 @@ public:
         
     // Functions allows us to share implementation across WebTiledLayer and WebLayer
     static RepaintRectList collectRectsToPaint(GraphicsContext&, PlatformCALayer*);
-    static void drawLayerContents(GraphicsContext&, PlatformCALayer*, RepaintRectList&, OptionSet<GraphicsLayerPaintBehavior>);
+    static void drawLayerContents(GraphicsContext&, PlatformCALayer*, RepaintRectList&);
     static void drawRepaintIndicator(GraphicsContext&, PlatformCALayer*, int repaintCount, Color customBackgroundColor = { });
     static CGRect frameForLayer(const PlatformLayer*);
 

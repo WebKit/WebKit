@@ -690,17 +690,12 @@ void TileGrid::drawTileMapContents(CGContextRef context, CGRect layerBounds) con
     }
 }
 
-void TileGrid::platformCALayerPaintContents(PlatformCALayer* platformCALayer, GraphicsContext& context, const FloatRect&, OptionSet<GraphicsLayerPaintBehavior> layerPaintBehavior)
+void TileGrid::platformCALayerPaintContents(PlatformCALayer* platformCALayer, GraphicsContext& context, const FloatRect&)
 {
 #if PLATFORM(IOS_FAMILY)
     if (pthread_main_np())
         WebThreadLock();
 #endif
-
-    if (!layerPaintBehavior.contains(GraphicsLayerPaintBehavior::ForceSynchronousImageDecode)) {
-        if (!platformCALayerRepaintCount(platformCALayer))
-            layerPaintBehavior.add(GraphicsLayerPaintBehavior::DefaultAsynchronousImageDecode);
-    }
 
     {
         GraphicsContextStateSaver stateSaver(context);
@@ -710,7 +705,7 @@ void TileGrid::platformCALayerPaintContents(PlatformCALayer* platformCALayer, Gr
         context.scale(m_scale);
 
         PlatformCALayer::RepaintRectList dirtyRects = PlatformCALayer::collectRectsToPaint(context, platformCALayer);
-        PlatformCALayer::drawLayerContents(context, &m_controller.rootLayer(), dirtyRects, layerPaintBehavior);
+        PlatformCALayer::drawLayerContents(context, &m_controller.rootLayer(), dirtyRects);
     }
 
     int repaintCount = platformCALayerIncrementRepaintCount(platformCALayer);
