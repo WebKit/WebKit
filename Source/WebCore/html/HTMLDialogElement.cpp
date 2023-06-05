@@ -111,7 +111,9 @@ void HTMLDialogElement::close(const String& result)
 
     setBooleanAttribute(openAttr, false);
 
-    if (isModal())
+    bool isClosingModal = isModal();
+
+    if (isClosingModal)
         removeFromTopLayer();
 
     setIsModal(false);
@@ -120,9 +122,11 @@ void HTMLDialogElement::close(const String& result)
         m_returnValue = result;
 
     if (RefPtr element = std::exchange(m_previouslyFocusedElement, nullptr).get()) {
-        FocusOptions options;
-        options.preventScroll = true;
-        element->focus(options);
+        if (containsIncludingShadowDOM(document().focusedElement()) || isClosingModal) {
+            FocusOptions options;
+            options.preventScroll = true;
+            element->focus(options);
+        }
     }
 
     queueTaskToDispatchEvent(TaskSource::UserInteraction, Event::create(eventNames().closeEvent, Event::CanBubble::No, Event::IsCancelable::No));
@@ -142,7 +146,7 @@ void HTMLDialogElement::queueCancelTask()
 void HTMLDialogElement::runFocusingSteps()
 {
     RefPtr<Element> control;
-    if (m_isModal && hasAttributeWithoutSynchronization(HTMLNames::autofocusAttr))
+    if (hasAttributeWithoutSynchronization(HTMLNames::autofocusAttr))
         control = this;
     if (!control)
         control = findFocusDelegate();
