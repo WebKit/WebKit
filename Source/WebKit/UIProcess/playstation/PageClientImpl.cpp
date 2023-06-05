@@ -349,7 +349,7 @@ void PageClientImpl::requestDOMPasteAccess(WebCore::DOMPasteAccessCategory, cons
 #if USE(WPE_RENDERER)
 UnixFileDescriptor PageClientImpl::hostFileDescriptor()
 {
-    return UnixFileDescriptor { 1, UnixFileDescriptor::Adopt };
+    return UnixFileDescriptor { wpe_view_backend_get_renderer_host_fd(m_view.backend()), UnixFileDescriptor::Adopt };
 }
 #endif
 

@@ -36,7 +36,11 @@ namespace WebKit {
 class PlayStationWebView : public API::ObjectImpl<API::Object::Type::View> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
+#if USE(WPE_BACKEND_PLAYSTATION)
+    static RefPtr<PlayStationWebView> create(struct wpe_view_backend*, const API::PageConfiguration&);
+#else
     static RefPtr<PlayStationWebView> create(const API::PageConfiguration&);
+#endif
     virtual ~PlayStationWebView();
 
     void setClient(std::unique_ptr<API::ViewClient>&&);
@@ -48,6 +52,10 @@ public:
 
     void setViewState(OptionSet<WebCore::ActivityState>);
     OptionSet<WebCore::ActivityState> viewState() const { return m_viewStateFlags; }
+
+#if USE(WPE_BACKEND_PLAYSTATION)
+    struct wpe_view_backend* backend() { return m_backend; }
+#endif
 
 #if ENABLE(FULLSCREEN_API)
     void willEnterFullScreen();
@@ -70,7 +78,11 @@ public:
     void setCursor(const WebCore::Cursor&);
 
 private:
+#if USE(WPE_BACKEND_PLAYSTATION)
+    PlayStationWebView(struct wpe_view_backend*, const API::PageConfiguration&);
+#else
     PlayStationWebView(const API::PageConfiguration&);
+#endif
 
     std::unique_ptr<API::ViewClient> m_client;
     std::unique_ptr<WebKit::PageClientImpl> m_pageClient;
@@ -78,6 +90,9 @@ private:
     OptionSet<WebCore::ActivityState> m_viewStateFlags;
 
     WebCore::IntSize m_viewSize;
+#if USE(WPE_BACKEND_PLAYSTATION)
+    struct wpe_view_backend* m_backend;
+#endif
 #if ENABLE(FULLSCREEN_API)
     bool m_isFullScreen { false };
 #endif
