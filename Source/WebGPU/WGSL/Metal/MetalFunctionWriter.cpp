@@ -34,7 +34,7 @@
 #include "Constraints.h"
 #include "Types.h"
 #include "WGSLShaderModule.h"
-
+#include <wtf/HashSet.h>
 #include <wtf/SortedArrayMap.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -114,6 +114,7 @@ private:
     std::optional<AST::StageAttribute::Stage> m_entryPointStage;
     std::optional<String> m_suffix;
     unsigned m_functionConstantIndex { 0 };
+    HashSet<AST::Function*> m_visitedFunctions;
 };
 
 void FunctionDefinitionWriter::write()
@@ -140,6 +141,9 @@ void FunctionDefinitionWriter::write()
 
 void FunctionDefinitionWriter::visit(AST::Function& functionDefinition)
 {
+    if (!m_visitedFunctions.add(&functionDefinition).isNewEntry)
+        return;
+
     for (auto& callee : m_callGraph.callees(functionDefinition))
         visit(*callee.target);
 

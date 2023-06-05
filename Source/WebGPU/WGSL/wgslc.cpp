@@ -131,7 +131,7 @@ static int runWGSL(const CommandLine& options)
         WGSL::AST::dumpAST(shaderModule);
 
     if (options.dumpGeneratedCode())
-        dataLog(prepareResult.msl);
+        printf("%s", prepareResult.msl.utf8().data());
 
     return EXIT_SUCCESS;
 }
