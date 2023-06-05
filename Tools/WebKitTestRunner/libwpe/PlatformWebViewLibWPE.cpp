@@ -38,7 +38,11 @@ PlatformWebView::PlatformWebView(WKPageConfigurationRef configuration, const Tes
     , m_options(options)
 {
     m_window = new WPEToolingBackends::HeadlessViewBackend(800, 600);
+#if USE(WPE_BACKEND_PLAYSTATION)
+    m_view = WKViewCreateWPE(m_window->backend(), configuration);
+#else
     m_view = WKViewCreate(m_window->backend(), configuration);
+#endif
 }
 
 PlatformWebView::~PlatformWebView()
