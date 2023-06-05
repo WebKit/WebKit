@@ -526,10 +526,10 @@ void WebGL2RenderingContext::pixelStorei(GCGLenum pname, GCGLint param)
         break;
     case GraphicsContextGL::PACK_SKIP_PIXELS:
         m_packParameters.skipPixels = param;
-        break;
+        return; // Not sent to context, handled locally.
     case GraphicsContextGL::PACK_SKIP_ROWS:
         m_packParameters.skipRows = param;
-        break;
+        return; // Not sent to context, handled locally.
     case GraphicsContextGL::UNPACK_ROW_LENGTH:
         m_unpackParameters.rowLength = param;
         break;
@@ -3384,13 +3384,27 @@ void WebGL2RenderingContext::readPixels(GCGLint x, GCGLint y, GCGLsizei width, G
     if (!validateImageFormatAndType("readPixels", format, type))
         return;
 
+    if (!validateReadPixelsDimensions(width, height))
+        return;
+
+    IntRect rect { x, y, width, height };
+    auto packSizes = GraphicsContextGL::computeImageSize(format, type, rect.size(), 1, m_packParameters);
+    if (!packSizes) {
+        synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "readPixels", "invalid texture dimensions");
+        return;
+    }
+    auto offsetAndSkip = checkedSum<GCGLintptr>(offset, packSizes->initialSkipBytes);
+    if (offsetAndSkip.hasOverflowed()) {
+        synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "readPixels", "invalid pack parameters");
+        return;
+    }
     // Due to WebGL's same-origin restrictions, it is not possible to
     // taint the origin using the WebGL API.
     ASSERT(canvasBase().originClean());
 
     clearIfComposited(CallerTypeOther);
 
-    m_context->readPixelsBufferObject(IntRect { x, y, width, height }, format, type, offset);
+    m_context->readPixelsBufferObject(rect, format, type, offsetAndSkip.value());
 }
 
 void WebGL2RenderingContext::readPixels(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, ArrayBufferView& dstData, GCGLuint dstOffset)

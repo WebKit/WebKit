@@ -3338,16 +3338,6 @@ void WebGLRenderingContextBase::polygonOffset(GCGLfloat factor, GCGLfloat units)
     m_context->polygonOffset(factor, units);
 }
 
-enum class InternalFormatTheme {
-    None,
-    NormalizedFixedPoint,
-    Packed,
-    SignedNormalizedFixedPoint,
-    FloatingPoint,
-    SignedInteger,
-    UnsignedInteger
-};
-
 void WebGLRenderingContextBase::readPixels(GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height, GCGLenum format, GCGLenum type, RefPtr<ArrayBufferView>&& maybePixels)
 {
     if (isContextLost())
@@ -3370,8 +3360,22 @@ void WebGLRenderingContextBase::readPixels(GCGLint x, GCGLint y, GCGLsizei width
     if (!validateImageFormatAndType("readPixels", format, type))
         return;
 
+    if (!validateReadPixelsDimensions(width, height))
+        return;
+
+    IntRect rect { x, y, width, height };
+    auto packSizes = GraphicsContextGL::computeImageSize(format, type, rect.size(), 1, m_packParameters);
+    if (!packSizes) {
+        synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "readPixels", "invalid dimensions");
+        return;
+    }
+    if (pixels.byteLength() < packSizes->initialSkipBytes + packSizes->imageBytes) {
+        synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "readPixels", "size too large");
+        return;
+    }
     clearIfComposited(CallerTypeOther);
-    m_context->readPixels(IntRect { x, y, width, height }, format, type, std::span(static_cast<uint8_t*>(pixels.baseAddress()), pixels.byteLength()));
+    std::span<uint8_t> data { static_cast<uint8_t*>(pixels.baseAddress()) + packSizes->initialSkipBytes, packSizes->imageBytes };
+    m_context->readPixels(rect, format, type, data);
 }
 
 void WebGLRenderingContextBase::renderbufferStorage(GCGLenum target, GCGLenum internalformat, GCGLsizei width, GCGLsizei height)
@@ -4035,6 +4039,25 @@ WebGLRenderingContextBase::TexImageFunctionType WebGLRenderingContextBase::texIm
     if (functionID == TexImageFunctionID::TexImage2D || functionID == TexImageFunctionID::TexImage3D)
         return TexImageFunctionType::TexImage;
     return TexImageFunctionType::TexSubImage;
+}
+
+bool WebGLRenderingContextBase::validateReadPixelsDimensions(GCGLint width, GCGLint height)
+{
+    if (width < 0 || height < 0) {
+        synthesizeGLError(GraphicsContextGL::INVALID_VALUE, "readPixels", "invalid dimensions");
+        return false;
+    }
+    GCGLint dataStoreWidth = m_packParameters.rowLength ? m_packParameters.rowLength : width;
+    if (dataStoreWidth < width) {
+        synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "readPixels", "invalid pack parameters");
+        return false;
+    }
+    auto skipAndWidth = Checked<GCGLint> { m_packParameters.skipPixels } + width;
+    if (skipAndWidth.hasOverflowed() || skipAndWidth > dataStoreWidth) {
+        synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "readPixels", "invalid pack parameters");
+        return false;
+    }
+    return true;
 }
 
 bool WebGLRenderingContextBase::validateTexImageSubRectangle(TexImageFunctionID functionID, const IntRect& imageSize, const IntRect& subRect, GCGLsizei depth, GCGLint unpackImageHeight, bool* selectingSubRectangle)

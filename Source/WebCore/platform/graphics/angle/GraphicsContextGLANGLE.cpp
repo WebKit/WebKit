@@ -181,8 +181,6 @@ RefPtr<PixelBuffer> GraphicsContextGLANGLE::readPixelsForPaintResults()
     if (packAlignment > 4)
         packAlignment.pixelStore(4);
     ScopedPixelStorageMode packRowLength(GL_PACK_ROW_LENGTH, 0, m_isForWebGL2);
-    ScopedPixelStorageMode packSkipRows(GL_PACK_SKIP_ROWS, 0, m_isForWebGL2);
-    ScopedPixelStorageMode packSkipPixels(GL_PACK_SKIP_PIXELS, 0, m_isForWebGL2);
     ScopedBufferBinding scopedPixelPackBufferReset(GL_PIXEL_PACK_BUFFER, 0, m_isForWebGL2);
 
     GL_ReadnPixelsRobustANGLE(0, 0, pixelBuffer->size().width(), pixelBuffer->size().height(), GL_RGBA, GL_UNSIGNED_BYTE, pixelBuffer->sizeInBytes(), nullptr, nullptr, nullptr, pixelBuffer->bytes());
