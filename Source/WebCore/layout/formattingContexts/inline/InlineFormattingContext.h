@@ -85,7 +85,7 @@ private:
     void computeWidthAndMargin(const Box&, const HorizontalConstraints&);
 
     void collectContentIfNeeded();
-    InlineRect createDisplayContentForLine(size_t lineIndex, const LineBuilder::LineContent&, const ConstraintsForInlineContent&, const InlineLayoutState&, InlineDisplay::Content&);
+    InlineRect createDisplayContentForLine(size_t lineIndex, const LineBuilder::LayoutResult&, const ConstraintsForInlineContent&, const InlineLayoutState&, InlineDisplay::Content&);
     void resetGeometryForClampedContent(const InlineItemRange& needsDisplayContentRange, const LineBuilder::SuspendedFloatList& suspendedFloats, LayoutPoint topleft);
 
     const InlineDamage* m_lineDamage { nullptr };

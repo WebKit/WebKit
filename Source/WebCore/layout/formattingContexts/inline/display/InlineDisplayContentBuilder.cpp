@@ -89,17 +89,17 @@ InlineDisplayContentBuilder::InlineDisplayContentBuilder(const InlineFormattingC
 {
 }
 
-InlineDisplay::Boxes InlineDisplayContentBuilder::build(const LineBuilder::LineContent& lineContent, const LineBox& lineBox)
+InlineDisplay::Boxes InlineDisplayContentBuilder::build(const LineBuilder::LayoutResult& lineLayoutResult, const LineBox& lineBox)
 {
     auto boxes = InlineDisplay::Boxes { };
-    boxes.reserveInitialCapacity(lineContent.runs.size() + lineBox.nonRootInlineLevelBoxes().size() + 1);
+    boxes.reserveInitialCapacity(lineLayoutResult.inlineContent.size() + lineBox.nonRootInlineLevelBoxes().size() + 1);
 
-    auto contentNeedsBidiReordering = !lineContent.visualOrderList.isEmpty();
+    auto contentNeedsBidiReordering = !lineLayoutResult.directionality.visualOrderList.isEmpty();
     if (contentNeedsBidiReordering)
-        processBidiContent(lineContent, lineBox, boxes);
+        processBidiContent(lineLayoutResult, lineBox, boxes);
     else
-        processNonBidiContent(lineContent, lineBox, boxes);
-    processFloatBoxes(lineContent);
+        processNonBidiContent(lineLayoutResult, lineBox, boxes);
+    processFloatBoxes(lineLayoutResult);
 
     collectInkOverflowForTextDecorations(boxes);
     collectInkOverflowForInlineBoxes(boxes);
@@ -435,20 +435,20 @@ void InlineDisplayContentBuilder::appendInlineDisplayBoxAtBidiBoundary(const Box
     });
 }
 
-void InlineDisplayContentBuilder::processNonBidiContent(const LineBuilder::LineContent& lineContent, const LineBox& lineBox, InlineDisplay::Boxes& boxes)
+void InlineDisplayContentBuilder::processNonBidiContent(const LineBuilder::LayoutResult& lineLayoutResult, const LineBox& lineBox, InlineDisplay::Boxes& boxes)
 {
 #ifndef NDEBUG
     auto hasContent = false;
-    for (auto& lineRun : lineContent.runs)
+    for (auto& lineRun : lineLayoutResult.inlineContent)
         hasContent = hasContent || lineRun.isContentful();
-    ASSERT(lineContent.inlineBaseDirection == TextDirection::LTR || !hasContent);
+    ASSERT(lineLayoutResult.directionality.inlineBaseDirection == TextDirection::LTR || !hasContent);
 #endif
     auto writingMode = root().style().writingMode();
     auto contentStartInVisualOrder = m_displayLine.topLeft();
 
     appendRootInlineBoxDisplayBox(flipRootInlineBoxRectToVisualForWritingMode(lineBox.logicalRectForRootInlineBox(), writingMode), lineBox.rootInlineBox().hasContent(), boxes);
 
-    for (auto& lineRun : lineContent.runs) {
+    for (auto& lineRun : lineLayoutResult.inlineContent) {
         auto& layoutBox = lineRun.layoutBox();
 
         auto visualRectRelativeToRoot = [&](auto logicalRect) {
@@ -655,9 +655,9 @@ void InlineDisplayContentBuilder::adjustVisualGeometryForDisplayBox(size_t displ
         displayBox.setHasContent();
 }
 
-void InlineDisplayContentBuilder::processBidiContent(const LineBuilder::LineContent& lineContent, const LineBox& lineBox, InlineDisplay::Boxes& boxes)
+void InlineDisplayContentBuilder::processBidiContent(const LineBuilder::LayoutResult& lineLayoutResult, const LineBox& lineBox, InlineDisplay::Boxes& boxes)
 {
-    ASSERT(lineContent.visualOrderList.size() <= lineContent.runs.size());
+    ASSERT(lineLayoutResult.directionality.visualOrderList.size() <= lineLayoutResult.inlineContent.size());
 
     AncestorStack ancestorStack;
     auto displayBoxTree = DisplayBoxTree { };
@@ -677,11 +677,11 @@ void InlineDisplayContentBuilder::processBidiContent(const LineBuilder::LineCont
         appendRootInlineBoxDisplayBox(flipRootInlineBoxRectToVisualForWritingMode(rootInlineBoxVidsualRectInInlineDirection, root().style().writingMode()), lineBox.rootInlineBox().hasContent(), boxes);
 
         auto contentRightInInlineDirectionVisualOrder = contentStartInInlineDirectionVisualOrder;
-        auto& runs = lineContent.runs;
-        for (auto visualOrder : lineContent.visualOrderList) {
-            ASSERT(runs[visualOrder].bidiLevel() != InlineItem::opaqueBidiLevel);
+        auto& inlineContent = lineLayoutResult.inlineContent;
+        for (auto visualOrder : lineLayoutResult.directionality.visualOrderList) {
+            ASSERT(inlineContent[visualOrder].bidiLevel() != InlineItem::opaqueBidiLevel);
 
-            auto& lineRun = runs[visualOrder];
+            auto& lineRun = inlineContent[visualOrder];
             auto& layoutBox = lineRun.layoutBox();
 
             auto needsDisplayBox = !lineRun.isWordBreakOpportunity() && !lineRun.isInlineBoxEnd();
@@ -802,7 +802,7 @@ void InlineDisplayContentBuilder::processBidiContent(const LineBuilder::LineCont
     handleInlineBoxes();
 
     auto handleTrailingOpenInlineBoxes = [&] {
-        for (auto& lineRun : makeReversedRange(lineContent.runs)) {
+        for (auto& lineRun : makeReversedRange(lineLayoutResult.inlineContent)) {
             if (!lineRun.isInlineBoxStart() || lineRun.bidiLevel() != InlineItem::opaqueBidiLevel)
                 break;
             // These are trailing inline box start runs (without the closing inline box end <span> <-line breaks here</span>).
@@ -820,7 +820,7 @@ void InlineDisplayContentBuilder::processBidiContent(const LineBuilder::LineCont
     handleTrailingOpenInlineBoxes();
 }
 
-void InlineDisplayContentBuilder::processFloatBoxes(const LineBuilder::LineContent&)
+void InlineDisplayContentBuilder::processFloatBoxes(const LineBuilder::LayoutResult&)
 {
     // Float boxes are not part of the inline content so we don't construct inline display boxes for them.
     // However box geometry still needs flipping from logical to visual.

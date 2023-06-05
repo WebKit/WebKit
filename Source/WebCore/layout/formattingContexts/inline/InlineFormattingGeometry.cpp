@@ -47,15 +47,15 @@ InlineFormattingGeometry::InlineFormattingGeometry(const InlineFormattingContext
 {
 }
 
-InlineLayoutUnit InlineFormattingGeometry::logicalTopForNextLine(const LineBuilder::LineContent& lineContent, const InlineRect& lineLogicalRect, const FloatingContext& floatingContext) const
+InlineLayoutUnit InlineFormattingGeometry::logicalTopForNextLine(const LineBuilder::LayoutResult& lineLayoutResult, const InlineRect& lineLogicalRect, const FloatingContext& floatingContext) const
 {
-    auto didManageToPlaceInlineContentOrFloat = !lineContent.committedRange.isEmpty();
+    auto didManageToPlaceInlineContentOrFloat = !lineLayoutResult.inlineItemRange.isEmpty();
     if (didManageToPlaceInlineContentOrFloat) {
         // Normally the next line's logical top is the previous line's logical bottom, but when the line ends
         // with the clear property set, the next line needs to clear the existing floats.
-        if (lineContent.runs.isEmpty())
+        if (lineLayoutResult.inlineContent.isEmpty())
             return lineLogicalRect.bottom();
-        auto& lastRunLayoutBox = lineContent.runs.last().layoutBox();
+        auto& lastRunLayoutBox = lineLayoutResult.inlineContent.last().layoutBox();
         if (!lastRunLayoutBox.hasFloatClear())
             return lineLogicalRect.bottom();
         auto positionWithClearance = floatingContext.verticalPositionWithClearance(lastRunLayoutBox, formattingContext().geometryForBox(lastRunLayoutBox));
@@ -67,8 +67,8 @@ InlineLayoutUnit InlineFormattingGeometry::logicalTopForNextLine(const LineBuild
     auto intrusiveFloatBottom = [&]() -> InlineLayoutUnit {
         // Floats must have prevented us placing any content on the line.
         // Move the next line below the intrusive float(s).
-        ASSERT(lineContent.runs.isEmpty() || lineContent.runs[0].isLineSpanningInlineBoxStart());
-        ASSERT(lineContent.hasIntrusiveFloat);
+        ASSERT(lineLayoutResult.inlineContent.isEmpty() || lineLayoutResult.inlineContent[0].isLineSpanningInlineBoxStart());
+        ASSERT(lineLayoutResult.floatContent.hasIntrusiveFloat);
         // FIXME: Moving the bottom position by the initial line height may be too much meaning that we miss vertical positions where atomic inline content could very well fit.
         // The spec is unclear of how much we should move down at this point and while 1px should be the most precise it's also rather expensive.
         auto inflatedLineRectBottom = lineLogicalRect.top() + formattingContext().root().style().computedLineHeight();

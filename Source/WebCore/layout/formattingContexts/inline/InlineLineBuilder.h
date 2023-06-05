@@ -49,36 +49,58 @@ public:
     };
     using PlacedFloatList = FloatingState::FloatList;
     using SuspendedFloatList = Vector<const Box*>;
-    struct LineContent {
-        InlineItemRange committedRange;
-        std::optional<InlineLayoutUnit> trailingOverflowingContentWidth { };
-        PlacedFloatList placedFloats;
-        SuspendedFloatList suspendedFloats;
-        bool hasIntrusiveFloat { false };
-        InlineLayoutUnit lineInitialLogicalLeftIncludingIntrusiveFloats { 0.f };
-        InlineLayoutPoint lineLogicalTopLeft;
-        InlineLayoutUnit lineLogicalWidth { 0.f };
-        InlineLayoutUnit contentLogicalLeft { 0.f };
-        InlineLayoutUnit contentLogicalWidth { 0.f };
-        InlineLayoutUnit contentLogicalRightIncludingNegativeMargin { 0.f }; // Note that with negative horizontal margin value, contentLogicalLeft + contentLogicalWidth is not necessarily contentLogicalRight.
+    struct LayoutResult {
+        InlineItemRange inlineItemRange;
+        const Line::RunList& inlineContent;
+
+        struct FloatContent {
+            PlacedFloatList placedFloats;
+            SuspendedFloatList suspendedFloats;
+            bool hasIntrusiveFloat { false };
+        };
+        FloatContent floatContent { };
+
+        struct ContentGeometry {
+            InlineLayoutUnit logicalLeft { 0.f };
+            InlineLayoutUnit logicalWidth { 0.f };
+            InlineLayoutUnit logicalRightIncludingNegativeMargin { 0.f }; // Note that with negative horizontal margin value, contentLogicalLeft + contentLogicalWidth is not necessarily contentLogicalRight.
+            std::optional<InlineLayoutUnit> trailingOverflowingContentWidth { };
+        };
+        ContentGeometry contentGeometry { };
+
+        struct LineGeometry {
+            InlineLayoutPoint logicalTopLeft;
+            InlineLayoutUnit logicalWidth { 0.f };
+            InlineLayoutUnit initialLogicalLeftIncludingIntrusiveFloats { 0.f };
+        };
+        LineGeometry lineGeometry { };
+
         struct HangingContent {
             bool shouldContributeToScrollableOverflow { false };
-            InlineLayoutUnit width { 0.f };
+            InlineLayoutUnit logicalWidth { 0.f };
         };
-        HangingContent hangingContent;
-        enum class FirstFormattedLine : uint8_t {
-            No,
-            WithinIFC,
-            WithinBFC
+        HangingContent hangingContent { };
+
+        struct Directionality {
+            Vector<int32_t> visualOrderList;
+            TextDirection inlineBaseDirection { TextDirection::LTR };
         };
-        FirstFormattedLine isFirstFormattedLine { FirstFormattedLine::WithinIFC };
-        bool isLastLineWithInlineContent { true };
+        Directionality directionality { };
+
+        struct IsFirstLast {
+            enum class FirstFormattedLine : uint8_t {
+                No,
+                WithinIFC,
+                WithinBFC
+            };
+            FirstFormattedLine isFirstFormattedLine { FirstFormattedLine::WithinIFC };
+            bool isLastLineWithInlineContent { true };
+        };
+        IsFirstLast isFirstLast { };
+        // Misc
         size_t nonSpanningInlineLevelBoxCount { 0 };
-        Vector<int32_t> visualOrderList;
-        TextDirection inlineBaseDirection { TextDirection::LTR };
-        const Line::RunList& runs;
     };
-    LineContent layoutInlineContent(const LineInput&, const std::optional<PreviousLine>&);
+    LayoutResult layoutInlineContent(const LineInput&, const std::optional<PreviousLine>&);
 
     struct IntrinsicContent {
         InlineItemRange committedRange;

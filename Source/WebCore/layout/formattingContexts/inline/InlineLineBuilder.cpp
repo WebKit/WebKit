@@ -346,7 +346,7 @@ LineBuilder::LineBuilder(const InlineFormattingContext& inlineFormattingContext,
 {
 }
 
-LineBuilder::LineContent LineBuilder::layoutInlineContent(const LineInput& lineInput, const std::optional<PreviousLine>& previousLine)
+LineBuilder::LayoutResult LineBuilder::layoutInlineContent(const LineInput& lineInput, const std::optional<PreviousLine>& previousLine)
 {
     auto previousLineEndsWithLineBreak = !previousLine ? std::nullopt : std::make_optional(previousLine->endsWithLineBreak);
     initialize(lineInput.initialLogicalRect, initialConstraintsForLine(lineInput.initialLogicalRect, previousLineEndsWithLineBreak), lineInput.needsLayoutRange, previousLine);
@@ -359,23 +359,15 @@ LineBuilder::LineContent LineBuilder::layoutInlineContent(const LineInput& lineI
     auto contentLogicalLeft = horizontalAlignmentOffset(isLastLine);
 
     return { committedRange
-        , committedContent.overflowLogicalWidth
-        , WTFMove(m_placedFloats)
-        , WTFMove(m_suspendedFloats)
-        , m_lineIsConstrainedByFloat
-        , m_lineInitialLogicalRect.left() + m_initialIntrusiveFloatsWidth
-        , m_lineLogicalRect.topLeft()
-        , m_lineLogicalRect.width()
-        , contentLogicalLeft
-        , m_line.contentLogicalWidth()
-        , contentLogicalLeft + m_line.contentLogicalRight()
+        , m_line.runs()
+        , { WTFMove(m_placedFloats), WTFMove(m_suspendedFloats), m_lineIsConstrainedByFloat }
+        , { contentLogicalLeft, m_line.contentLogicalWidth(), contentLogicalLeft + m_line.contentLogicalRight(), committedContent.overflowLogicalWidth }
+        , { m_lineLogicalRect.topLeft(), m_lineLogicalRect.width(), m_lineInitialLogicalRect.left() + m_initialIntrusiveFloatsWidth }
         , { !m_line.isHangingTrailingContentWhitespace(), m_line.hangingTrailingContentWidth() }
-        , isFirstFormattedLine() ? LineContent::FirstFormattedLine::WithinIFC : LineContent::FirstFormattedLine::No
-        , isLastLine
+        , { computedVisualOrder(m_line), inlineBaseDirection }
+        , { isFirstFormattedLine() ? LayoutResult::IsFirstLast::FirstFormattedLine::WithinIFC : LayoutResult::IsFirstLast::FirstFormattedLine::No, isLastLine }
         , m_line.nonSpanningInlineLevelBoxCount()
-        , computedVisualOrder(m_line)
-        , inlineBaseDirection
-        , m_line.runs() };
+    };
 }
 
 LineBuilder::IntrinsicContent LineBuilder::computedIntrinsicWidth(const LineInput& lineInput, const std::optional<PreviousLine>& previousLine)

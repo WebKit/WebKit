@@ -36,20 +36,20 @@
 namespace WebCore {
 namespace Layout {
 
-LineBoxBuilder::LineBoxBuilder(const InlineFormattingContext& inlineFormattingContext, const InlineLayoutState& inlineLayoutState, const LineBuilder::LineContent& lineContent)
+LineBoxBuilder::LineBoxBuilder(const InlineFormattingContext& inlineFormattingContext, const InlineLayoutState& inlineLayoutState, const LineBuilder::LayoutResult& lineLayoutResult)
     : m_inlineFormattingContext(inlineFormattingContext)
     , m_inlineLayoutState(inlineLayoutState)
-    , m_lineContent(lineContent)
+    , m_lineLayoutResult(lineLayoutResult)
 {
 }
 
 LineBox LineBoxBuilder::build(size_t lineIndex)
 {
-    auto& lineContent = this->lineContent();
+    auto& lineLayoutResult = this->lineLayoutResult();
     // FIXME: The overflowing hanging content should be part of the ink overflow.
     auto contentLogicalWidth = [&] {
-        if (lineContent.inlineBaseDirection == TextDirection::LTR)
-            return lineContent.contentLogicalWidth - lineContent.hangingContent.width;
+        if (lineLayoutResult.directionality.inlineBaseDirection == TextDirection::LTR)
+            return lineLayoutResult.contentGeometry.logicalWidth - lineLayoutResult.hangingContent.logicalWidth;
         // FIXME: Currently clients of the inline iterator interface (editing, selection, DOM etc) can't deal with
         // hanging content offsets when they affect the rest of the content.
         // In left-to-right inline direction, hanging content is always trailing hence the width does not impose offset on the rest of the content
@@ -57,9 +57,9 @@ LineBox LineBoxBuilder::build(size_t lineIndex)
         // What's missing is a way to tell that while the content starts at the left side of the (visually leading) hanging content
         // the root inline box has an offset, the width of the hanging content (essentially decoupling the content and the root inline box visual left).
         // For now just include the hanging content in the root inline box as if it was not hanging (this is how legacy line layout works).
-        return lineContent.contentLogicalWidth;
+        return lineLayoutResult.contentGeometry.logicalWidth;
     };
-    auto lineBox = LineBox { rootBox(), lineContent.contentLogicalLeft, contentLogicalWidth(), lineIndex, lineContent.nonSpanningInlineLevelBoxCount };
+    auto lineBox = LineBox { rootBox(), lineLayoutResult.contentGeometry.logicalLeft, contentLogicalWidth(), lineIndex, lineLayoutResult.nonSpanningInlineLevelBoxCount };
     constructInlineLevelBoxes(lineBox);
     adjustIdeographicBaselineIfApplicable(lineBox);
     adjustInlineBoxHeightsForLineBoxContainIfApplicable(lineBox);
@@ -330,9 +330,9 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox)
     };
 
     auto lineHasContent = false;
-    auto& runs = lineContent().runs;
-    for (size_t index = 0; index < runs.size(); ++index) {
-        auto& run = runs[index];
+    auto& inlineContent = lineLayoutResult().inlineContent;
+    for (size_t index = 0; index < inlineContent.size(); ++index) {
+        auto& run = inlineContent[index];
         auto& layoutBox = run.layoutBox();
         auto& style = styleToUse(layoutBox);
         auto runHasContent = [&] () -> bool {
@@ -386,7 +386,7 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox)
             auto marginStart = formattingContext().geometryForBox(layoutBox).marginStart();
             logicalLeft += std::max(0_lu, marginStart);
             auto initialLogicalWidth = rootInlineBox.logicalRight() - logicalLeft;
-            ASSERT(initialLogicalWidth >= 0 || lineContent().hangingContent.width || std::isnan(initialLogicalWidth));
+            ASSERT(initialLogicalWidth >= 0 || lineLayoutResult().hangingContent.logicalWidth || std::isnan(initialLogicalWidth));
             initialLogicalWidth = std::max(initialLogicalWidth, 0.f);
             auto inlineBox = InlineLevelBox::createInlineBox(layoutBox, style, logicalLeft, initialLogicalWidth);
             inlineBox.setIsFirstBox();
@@ -506,7 +506,7 @@ void LineBoxBuilder::adjustInlineBoxHeightsForLineBoxContainIfApplicable(LineBox
 
     if (lineBoxContain.contains(LineBoxContain::Glyphs)) {
         // Compute text content (glyphs) hugging inline box layout bounds.
-        for (auto run : lineContent().runs) {
+        for (auto run : lineLayoutResult().inlineContent) {
             if (!run.isText())
                 continue;
 
@@ -531,7 +531,7 @@ void LineBoxBuilder::adjustInlineBoxHeightsForLineBoxContainIfApplicable(LineBox
         InlineLayoutUnit initialLetterAscent = fontMetrics.capHeight();
         auto initialLetterDescent = InlineLayoutUnit { };
 
-        for (auto run : lineContent().runs) {
+        for (auto run : lineLayoutResult().inlineContent) {
             // We really should only have one text run for initial letter.
             if (!run.isText())
                 continue;
@@ -691,7 +691,7 @@ void LineBoxBuilder::computeLineBoxGeometry(LineBox& lineBox) const
         for (auto& nonRootInlineLevelBox : lineBox.nonRootInlineLevelBoxes())
             nonRootInlineLevelBox.setLogicalTop(nonRootInlineLevelBox.logicalTop() - textBoxEdgeOverHeight);
     }
-    lineBox.setLogicalRect({ lineContent().lineLogicalTopLeft, lineContent().lineLogicalWidth, lineBoxLogicalHeight });
+    lineBox.setLogicalRect({ lineLayoutResult().lineGeometry.logicalTopLeft, lineLayoutResult().lineGeometry.logicalWidth, lineBoxLogicalHeight });
 }
 
 void LineBoxBuilder::adjustOutsideListMarkersPosition(LineBox& lineBox)
@@ -701,11 +701,11 @@ void LineBoxBuilder::adjustOutsideListMarkersPosition(LineBox& lineBox)
     auto lineBoxRect = lineBox.logicalRect();
     auto floatConstraints = floatingContext.constraints(LayoutUnit { lineBoxRect.top() }, LayoutUnit { lineBoxRect.bottom() }, FloatingContext::MayBeAboveLastFloat::No);
 
-    auto lineBoxOffset = lineBoxRect.left() - lineContent().lineInitialLogicalLeftIncludingIntrusiveFloats;
+    auto lineBoxOffset = lineBoxRect.left() - lineLayoutResult().lineGeometry.initialLogicalLeftIncludingIntrusiveFloats;
     auto rootInlineBoxLogicalLeft = lineBox.logicalRectForRootInlineBox().left();
     auto rootInlineBoxOffsetFromContentBoxOrIntrusiveFloat = lineBoxOffset + rootInlineBoxLogicalLeft;
     for (auto listMarkerBoxIndex : m_outsideListMarkers) {
-        auto& listMarkerRun = lineContent().runs[listMarkerBoxIndex];
+        auto& listMarkerRun = lineLayoutResult().inlineContent[listMarkerBoxIndex];
         ASSERT(listMarkerRun.isListMarkerOutside());
         auto& listMarkerBox = downcast<ElementBox>(listMarkerRun.layoutBox());
         auto& listMarkerInlineLevelBox = lineBox.inlineLevelBoxFor(listMarkerRun);

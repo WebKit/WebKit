@@ -44,15 +44,15 @@ class InlineDisplayContentBuilder {
 public:
     InlineDisplayContentBuilder(const InlineFormattingContext&, InlineFormattingState&, const InlineDisplay::Line&, size_t lineIndex);
 
-    InlineDisplay::Boxes build(const LineBuilder::LineContent&, const LineBox&);
+    InlineDisplay::Boxes build(const LineBuilder::LayoutResult&, const LineBox&);
 
 private:
-    void processNonBidiContent(const LineBuilder::LineContent&, const LineBox&, InlineDisplay::Boxes&);
-    void processBidiContent(const LineBuilder::LineContent&, const LineBox&, InlineDisplay::Boxes&);
-    void processFloatBoxes(const LineBuilder::LineContent&);
+    void processNonBidiContent(const LineBuilder::LayoutResult&, const LineBox&, InlineDisplay::Boxes&);
+    void processBidiContent(const LineBuilder::LayoutResult&, const LineBox&, InlineDisplay::Boxes&);
+    void processFloatBoxes(const LineBuilder::LayoutResult&);
     void collectInkOverflowForInlineBoxes(InlineDisplay::Boxes&);
     void collectInkOverflowForTextDecorations(InlineDisplay::Boxes&);
-    void truncateForEllipsisPolicy(LineEndingEllipsisPolicy, const LineBuilder::LineContent&, InlineDisplay::Boxes&);
+    void truncateForEllipsisPolicy(LineEndingEllipsisPolicy, const LineBuilder::LayoutResult&, InlineDisplay::Boxes&);
 
     void appendTextDisplayBox(const Line::Run&, const InlineRect&, InlineDisplay::Boxes&);
     void appendSoftLineBreakDisplayBox(const Line::Run&, const InlineRect&, InlineDisplay::Boxes&);
