@@ -378,17 +378,15 @@ LineBuilder::LineContent LineBuilder::layoutInlineContent(const LineInput& lineI
         , m_line.runs() };
 }
 
-LineBuilder::IntrinsicContent LineBuilder::computedIntrinsicWidth(const InlineItemRange& needsLayoutRange, const std::optional<PreviousLine>& previousLine)
+LineBuilder::IntrinsicContent LineBuilder::computedIntrinsicWidth(const LineInput& lineInput, const std::optional<PreviousLine>& previousLine)
 {
     ASSERT(isInIntrinsicWidthMode());
-    auto lineLogicalWidth = *intrinsicWidthMode() == IntrinsicWidthMode::Maximum ? maxInlineLayoutUnit() : 0.f;
     auto previousLineEndsWithLineBreak = !previousLine ? std::nullopt : std::make_optional(previousLine->endsWithLineBreak);
-    auto initialRect = InlineRect { 0, 0, lineLogicalWidth, 0 };
-    auto lineConstraints = initialConstraintsForLine(initialRect, previousLineEndsWithLineBreak);
-    initialize(initialRect, lineConstraints, needsLayoutRange, previousLine);
+    auto lineConstraints = initialConstraintsForLine(lineInput.initialLogicalRect, previousLineEndsWithLineBreak);
+    initialize(lineInput.initialLogicalRect, lineConstraints, lineInput.needsLayoutRange, previousLine);
 
-    auto committedContent = placeInlineContent(needsLayoutRange);
-    auto committedRange = close(needsLayoutRange, committedContent);
+    auto committedContent = placeInlineContent(lineInput.needsLayoutRange);
+    auto committedRange = close(lineInput.needsLayoutRange, committedContent);
     auto contentWidth = lineConstraints.logicalRect.left() + lineConstraints.marginStart + m_line.contentLogicalWidth();
     return { committedRange, committedContent.overflowLogicalWidth, contentWidth, WTFMove(m_placedFloats), WTFMove(m_suspendedFloats) };
 }

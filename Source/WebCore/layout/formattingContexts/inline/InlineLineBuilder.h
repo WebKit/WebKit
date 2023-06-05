@@ -87,7 +87,7 @@ public:
         PlacedFloatList placedFloats;
         SuspendedFloatList suspendedFloats;
     };
-    IntrinsicContent computedIntrinsicWidth(const InlineItemRange&, const std::optional<PreviousLine>&);
+    IntrinsicContent computedIntrinsicWidth(const LineInput&, const std::optional<PreviousLine>&);
 
 private:
     void candidateContentForLine(LineCandidate&, size_t inlineItemIndex, const InlineItemRange& needsLayoutRange, InlineLayoutUnit currentLogicalRight);

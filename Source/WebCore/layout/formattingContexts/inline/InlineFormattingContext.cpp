@@ -428,7 +428,7 @@ InlineLayoutUnit InlineFormattingContext::computedIntrinsicWidthForConstraint(In
     auto lineIndex = 0lu;
 
     while (!layoutRange.isEmpty()) {
-        auto intrinsicContent = lineBuilder.computedIntrinsicWidth(layoutRange, previousLine);
+        auto intrinsicContent = lineBuilder.computedIntrinsicWidth({ layoutRange, { 0.f, 0.f, horizontalConstraints.logicalWidth, 0.f } }, previousLine);
         auto floatContentWidth = [&] {
             auto leftWidth = LayoutUnit { };
             auto rightWidth = LayoutUnit { };
