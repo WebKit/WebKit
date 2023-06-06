@@ -551,28 +551,44 @@ Ref<RenderPipeline> DeviceImpl::createRenderPipeline(const RenderPipelineDescrip
     });
 }
 
+static void createComputePipelineAsyncCallback(WGPUCreatePipelineAsyncStatus status, WGPUComputePipeline pipeline, const char* message, void* userdata)
+{
+    auto block = reinterpret_cast<void(^)(WGPUCreatePipelineAsyncStatus, WGPUComputePipeline, const char*)>(userdata);
+    block(status, pipeline, message);
+    Block_release(block); // Block_release is matched with Block_copy below in DeviceImpl::createComputePipelineAsync().
+}
+
 void DeviceImpl::createComputePipelineAsync(const ComputePipelineDescriptor& descriptor, CompletionHandler<void(RefPtr<ComputePipeline>&&)>&& callback)
 {
     convertToBacking(descriptor, m_convertToBackingContext, [backing = m_backing.copyRef(), &convertToBackingContext = m_convertToBackingContext.get(), callback = WTFMove(callback)](const WGPUComputePipelineDescriptor& backingDescriptor) mutable {
-        wgpuDeviceCreateComputePipelineAsyncWithBlock(backing.get(), &backingDescriptor, makeBlockPtr([convertToBackingContext = Ref { convertToBackingContext }, callback = WTFMove(callback)](WGPUCreatePipelineAsyncStatus status, WGPUComputePipeline pipeline, const char*) mutable {
+        auto blockPtr = makeBlockPtr([convertToBackingContext = Ref { convertToBackingContext }, callback = WTFMove(callback)](WGPUCreatePipelineAsyncStatus status, WGPUComputePipeline pipeline, const char*) mutable {
             if (status == WGPUCreatePipelineAsyncStatus_Success)
                 callback(ComputePipelineImpl::create(adoptWebGPU(pipeline), convertToBackingContext));
             else
                 callback(nullptr);
-        }).get());
+        });
+        wgpuDeviceCreateComputePipelineAsync(backing.get(), &backingDescriptor, &createComputePipelineAsyncCallback, Block_copy(blockPtr.get())); // Block_copy is matched with Block_release above in createComputePipelineAsyncCallback().
     });
+}
+
+static void createRenderPipelineAsyncCallback(WGPUCreatePipelineAsyncStatus status, WGPURenderPipeline pipeline, const char* message, void* userdata)
+{
+    auto block = reinterpret_cast<void(^)(WGPUCreatePipelineAsyncStatus, WGPURenderPipeline, const char*)>(userdata);
+    block(status, pipeline, message);
+    Block_release(block); // Block_release is matched with Block_copy below in DeviceImpl::createRenderPipelineAsync().
 }
 
 void DeviceImpl::createRenderPipelineAsync(const RenderPipelineDescriptor& descriptor, CompletionHandler<void(RefPtr<RenderPipeline>&&)>&& callback)
 {
     bool depthClipControlIsEnabled = wgpuDeviceHasFeature(m_backing.get(), WGPUFeatureName_DepthClipControl);
     convertToBacking(descriptor, depthClipControlIsEnabled, m_convertToBackingContext, [backing = m_backing.copyRef(), convertToBackingContext = m_convertToBackingContext.copyRef(), callback = WTFMove(callback)](const WGPURenderPipelineDescriptor& backingDescriptor) mutable {
-        wgpuDeviceCreateRenderPipelineAsyncWithBlock(backing.get(), &backingDescriptor, makeBlockPtr([convertToBackingContext = convertToBackingContext.copyRef(), callback = WTFMove(callback)](WGPUCreatePipelineAsyncStatus status, WGPURenderPipeline pipeline, const char*) mutable {
+        auto blockPtr = makeBlockPtr([convertToBackingContext = convertToBackingContext.copyRef(), callback = WTFMove(callback)](WGPUCreatePipelineAsyncStatus status, WGPURenderPipeline pipeline, const char*) mutable {
             if (status == WGPUCreatePipelineAsyncStatus_Success)
                 callback(RenderPipelineImpl::create(adoptWebGPU(pipeline), convertToBackingContext));
             else
                 callback(nullptr);
-        }).get());
+        });
+        wgpuDeviceCreateRenderPipelineAsync(backing.get(), &backingDescriptor, &createRenderPipelineAsyncCallback, Block_copy(blockPtr.get())); // Block_copy is matched with Block_release above in createRenderPipelineAsyncCallback().
     });
 }
 
@@ -631,9 +647,16 @@ void DeviceImpl::pushErrorScope(ErrorFilter errorFilter)
     wgpuDevicePushErrorScope(m_backing.get(), m_convertToBackingContext->convertToBacking(errorFilter));
 }
 
+static void popErrorScopeCallback(WGPUErrorType type, const char* message, void* userdata)
+{
+    auto block = reinterpret_cast<void(^)(WGPUErrorType, const char*)>(userdata);
+    block(type, message);
+    Block_release(block); // Block_release is matched with Block_copy below in DeviceImpl::popErrorScope().
+}
+
 void DeviceImpl::popErrorScope(CompletionHandler<void(std::optional<Error>&&)>&& callback)
 {
-    wgpuDevicePopErrorScopeWithBlock(m_backing.get(), makeBlockPtr([callback = WTFMove(callback)](WGPUErrorType errorType, const char* message) mutable {
+    auto blockPtr = makeBlockPtr([callback = WTFMove(callback)](WGPUErrorType errorType, const char* message) mutable {
         std::optional<Error> error;
         switch (errorType) {
         case WGPUErrorType_NoError:
@@ -655,7 +678,8 @@ void DeviceImpl::popErrorScope(CompletionHandler<void(std::optional<Error>&&)>&&
         }
 
         callback(WTFMove(error));
-    }).get());
+    });
+    wgpuDevicePopErrorScope(m_backing.get(), &popErrorScopeCallback, Block_copy(blockPtr.get())); // Block_copy is matched with Block_release above in popErrorScopeCallback().
 }
 
 void DeviceImpl::setLabelInternal(const String& label)

@@ -51,15 +51,23 @@ static Size64 getMappedSize(WGPUBuffer buffer, std::optional<Size64> size, Size6
     return bufferSize > offset ? (bufferSize - offset) : 0;
 }
 
+static void mapAsyncCallback(WGPUBufferMapAsyncStatus status, void* userdata)
+{
+    auto block = reinterpret_cast<void(^)(WGPUBufferMapAsyncStatus)>(userdata);
+    block(status);
+    Block_release(block); // Block_release is matched with Block_copy below in BufferImpl::mapAsync().
+}
+
 void BufferImpl::mapAsync(MapModeFlags mapModeFlags, Size64 offset, std::optional<Size64> size, CompletionHandler<void(bool)>&& callback)
 {
     auto backingMapModeFlags = m_convertToBackingContext->convertMapModeFlagsToBacking(mapModeFlags);
     auto usedSize = getMappedSize(m_backing.get(), size, offset);
 
     // FIXME: Check the casts.
-    wgpuBufferMapAsyncWithBlock(m_backing.get(), backingMapModeFlags, static_cast<size_t>(offset), static_cast<size_t>(usedSize), makeBlockPtr([callback = WTFMove(callback)](WGPUBufferMapAsyncStatus status) mutable {
+    auto blockPtr = makeBlockPtr([callback = WTFMove(callback)](WGPUBufferMapAsyncStatus status) mutable {
         callback(status == WGPUBufferMapAsyncStatus_Success ? true : false);
-    }).get());
+    });
+    wgpuBufferMapAsync(m_backing.get(), backingMapModeFlags, static_cast<size_t>(offset), static_cast<size_t>(usedSize), &mapAsyncCallback, Block_copy(blockPtr.get())); // Block_copy is matched with Block_release above in mapAsyncCallback().
 }
 
 auto BufferImpl::getMappedRange(Size64 offset, std::optional<Size64> size) -> MappedRange

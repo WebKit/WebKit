@@ -46,6 +46,13 @@ GPUImpl::GPUImpl(WebGPUPtr<WGPUInstance>&& instance, ConvertToBackingContext& co
 
 GPUImpl::~GPUImpl() = default;
 
+static void requestAdapterCallback(WGPURequestAdapterStatus status, WGPUAdapter adapter, const char* message, void* userdata)
+{
+    auto block = reinterpret_cast<void(^)(WGPURequestAdapterStatus, WGPUAdapter, const char*)>(userdata);
+    block(status, adapter, message);
+    Block_release(block); // Block_release is matched with Block_copy below in GPUImpl::requestAdapter().
+}
+
 void GPUImpl::requestAdapter(const RequestAdapterOptions& options, CompletionHandler<void(RefPtr<Adapter>&&)>&& callback)
 {
     WGPURequestAdapterOptions backingOptions {
@@ -55,12 +62,13 @@ void GPUImpl::requestAdapter(const RequestAdapterOptions& options, CompletionHan
         options.forceFallbackAdapter,
     };
 
-    wgpuInstanceRequestAdapterWithBlock(m_backing.get(), &backingOptions, makeBlockPtr([convertToBackingContext = m_convertToBackingContext.copyRef(), callback = WTFMove(callback)](WGPURequestAdapterStatus status, WGPUAdapter adapter, const char*) mutable {
+    auto blockPtr = makeBlockPtr([convertToBackingContext = m_convertToBackingContext.copyRef(), callback = WTFMove(callback)](WGPURequestAdapterStatus status, WGPUAdapter adapter, const char*) mutable {
         if (status == WGPURequestAdapterStatus_Success)
             callback(AdapterImpl::create(adoptWebGPU(adapter), convertToBackingContext));
         else
             callback(nullptr);
-    }).get());
+    });
+    wgpuInstanceRequestAdapter(m_backing.get(), &backingOptions, &requestAdapterCallback, Block_copy(blockPtr.get())); // Block_copy is matched with Block_release above in requestAdapterCallback().
 }
 
 static WTF::Function<void(CompletionHandler<void()>&&)> convert(WGPUOnSubmittedWorkScheduledCallback&& onSubmittedWorkScheduledCallback)

@@ -269,6 +269,7 @@
 		1C5ACAEA273A560D0095F8D5 /* TextureView.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = TextureView.mm; sourceTree = "<group>"; };
 		1C9F7CDD29762F51006B5BE9 /* PresentationContext.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PresentationContext.mm; sourceTree = "<group>"; };
 		1C9F7CDE29762F51006B5BE9 /* PresentationContext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PresentationContext.h; sourceTree = "<group>"; };
+		1CA7CDB12A2B284A0094071F /* WebGPUInternal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPUInternal.h; sourceTree = "<group>"; };
 		1CBAB0912718CCA0006080BB /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = JavaScriptCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		1CBD2E922977DAC900BBF52C /* PresentationContextCoreAnimation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PresentationContextCoreAnimation.h; sourceTree = "<group>"; };
 		1CBD2E932977DAC900BBF52C /* PresentationContextCoreAnimation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PresentationContextCoreAnimation.mm; sourceTree = "<group>"; };
@@ -534,6 +535,7 @@
 				1CEBD7E62716AFBA00A5254D /* WebGPU.h */,
 				1CC0C8C9273A7D8900D0B481 /* WebGPU.modulemap */,
 				1C5ACAD2273A4C860095F8D5 /* WebGPUExt.h */,
+				1CA7CDB12A2B284A0094071F /* WebGPUInternal.h */,
 			);
 			path = WebGPU;
 			sourceTree = "<group>";

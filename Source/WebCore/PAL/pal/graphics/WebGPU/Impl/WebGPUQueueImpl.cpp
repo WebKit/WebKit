@@ -54,11 +54,19 @@ void QueueImpl::submit(Vector<std::reference_wrapper<CommandBuffer>>&& commandBu
     wgpuQueueSubmit(m_backing.get(), backingCommandBuffers.size(), backingCommandBuffers.data());
 }
 
+static void onSubmittedWorkDoneCallback(WGPUQueueWorkDoneStatus status, void* userdata)
+{
+    auto block = reinterpret_cast<void(^)(WGPUQueueWorkDoneStatus)>(userdata);
+    block(status);
+    Block_release(block); // Block_release is matched with Block_copy below in QueueImpl::submit().
+}
+
 void QueueImpl::onSubmittedWorkDone(CompletionHandler<void()>&& callback)
 {
-    wgpuQueueOnSubmittedWorkDoneWithBlock(m_backing.get(), makeBlockPtr([callback = WTFMove(callback)](WGPUQueueWorkDoneStatus) mutable {
+    auto blockPtr = makeBlockPtr([callback = WTFMove(callback)](WGPUQueueWorkDoneStatus) mutable {
         callback();
-    }).get());
+    });
+    wgpuQueueOnSubmittedWorkDone(m_backing.get(), &onSubmittedWorkDoneCallback, Block_copy(blockPtr.get())); // Block_copy is matched with Block_release above in onSubmittedWorkDoneCallback().
 }
 
 void QueueImpl::writeBuffer(

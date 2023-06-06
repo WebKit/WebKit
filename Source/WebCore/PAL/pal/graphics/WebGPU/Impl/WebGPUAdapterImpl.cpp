@@ -194,6 +194,13 @@ static bool setAlignmentIntegerValue(uint32_t& limitValue, uint64_t i, uint32_t 
     return true;
 }
 
+static void requestDeviceCallback(WGPURequestDeviceStatus status, WGPUDevice device, const char* message, void* userdata)
+{
+    auto block = reinterpret_cast<void(^)(WGPURequestDeviceStatus, WGPUDevice, const char*)>(userdata);
+    block(status, device, message);
+    Block_release(block); // Block_release is matched with Block_copy below in AdapterImpl::requestDevice().
+}
+
 void AdapterImpl::requestDevice(const DeviceDescriptor& descriptor, CompletionHandler<void(RefPtr<Device>&&)>&& callback)
 {
     auto label = descriptor.label.utf8();
@@ -344,9 +351,10 @@ void AdapterImpl::requestDevice(const DeviceDescriptor& descriptor, CompletionHa
         limits.maxComputeWorkgroupsPerDimension);
 
     auto requestedFeatures = supportedFeatures(features);
-    wgpuAdapterRequestDeviceWithBlock(m_backing.get(), &backingDescriptor, makeBlockPtr([protectedThis = Ref { *this }, convertToBackingContext = m_convertToBackingContext.copyRef(), callback = WTFMove(callback), requestedLimits, requestedFeatures](WGPURequestDeviceStatus, WGPUDevice device, const char*) mutable {
+    auto blockPtr = makeBlockPtr([protectedThis = Ref { *this }, convertToBackingContext = m_convertToBackingContext.copyRef(), callback = WTFMove(callback), requestedLimits, requestedFeatures](WGPURequestDeviceStatus, WGPUDevice device, const char*) mutable {
         callback(DeviceImpl::create(adoptWebGPU(device), WTFMove(requestedFeatures), WTFMove(requestedLimits), convertToBackingContext));
-    }).get());
+    });
+    wgpuAdapterRequestDevice(m_backing.get(), &backingDescriptor, &requestDeviceCallback, Block_copy(blockPtr.get())); // Block_copy is matched with Block_release above in requestDeviceCallback().
 }
 
 } // namespace PAL::WebGPU
