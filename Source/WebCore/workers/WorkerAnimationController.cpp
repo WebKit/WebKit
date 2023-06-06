@@ -37,24 +37,13 @@
 
 namespace WebCore {
 
-Ref<WorkerAnimationController> WorkerAnimationController::create(WorkerGlobalScope& workerGlobalScope)
-{
-    auto controller = adoptRef(*new WorkerAnimationController(workerGlobalScope));
-    controller->suspendIfNeeded();
-    return controller;
-}
-
 WorkerAnimationController::WorkerAnimationController(WorkerGlobalScope& workerGlobalScope)
     : ActiveDOMObject(&workerGlobalScope)
     , m_workerGlobalScope(workerGlobalScope)
-    , m_animationTimer(*this, &WorkerAnimationController::animationTimerFired)
 {
 }
 
-WorkerAnimationController::~WorkerAnimationController()
-{
-    ASSERT(!hasPendingActivity());
-}
+WorkerAnimationController::~WorkerAnimationController() = default;
 
 const char* WorkerAnimationController::activeDOMObjectName() const
 {
@@ -63,12 +52,12 @@ const char* WorkerAnimationController::activeDOMObjectName() const
 
 bool WorkerAnimationController::virtualHasPendingActivity() const
 {
-    return m_animationTimer.isActive();
+    return isActive();
 }
 
 void WorkerAnimationController::stop()
 {
-    m_animationTimer.stop();
+    stopAnimation();
 }
 
 void WorkerAnimationController::suspend(ReasonForSuspension)
@@ -110,17 +99,6 @@ void WorkerAnimationController::cancelAnimationFrame(CallbackId callbackId)
     }
 }
 
-void WorkerAnimationController::scheduleAnimation()
-{
-    if (m_animationTimer.isActive())
-        return;
-
-    Seconds animationInterval = RequestAnimationFrameCallback::fullSpeedAnimationInterval;
-    Seconds scheduleDelay = std::max(animationInterval - Seconds::fromMilliseconds(m_workerGlobalScope.performance().now() - m_lastAnimationFrameTimestamp), 0_s);
-
-    m_animationTimer.startOneShot(scheduleDelay);
-}
-
 void WorkerAnimationController::animationTimerFired()
 {
     m_lastAnimationFrameTimestamp = m_workerGlobalScope.performance().now();
@@ -151,6 +129,46 @@ void WorkerAnimationController::serviceRequestAnimationFrameCallbacks(DOMHighRes
     if (m_animationCallbacks.size())
         scheduleAnimation();
 }
+
+TimerWorkerAnimationController::TimerWorkerAnimationController(WorkerGlobalScope& workerGlobalScope)
+    : WorkerAnimationController(workerGlobalScope)
+    , m_animationTimer(*this, &TimerWorkerAnimationController::animationTimerFired)
+{
+}
+
+TimerWorkerAnimationController::~TimerWorkerAnimationController()
+{
+    ASSERT(!hasPendingActivity());
+}
+
+bool TimerWorkerAnimationController::isActive() const
+{
+    return m_animationTimer.isActive();
+}
+
+void TimerWorkerAnimationController::stopAnimation()
+{
+    m_animationTimer.stop();
+}
+
+void TimerWorkerAnimationController::scheduleAnimation()
+{
+    if (m_animationTimer.isActive())
+        return;
+
+    Seconds animationInterval = RequestAnimationFrameCallback::fullSpeedAnimationInterval;
+    Seconds scheduleDelay = std::max(animationInterval - Seconds::fromMilliseconds(m_workerGlobalScope.performance().now() - m_lastAnimationFrameTimestamp), 0_s);
+
+    m_animationTimer.startOneShot(scheduleDelay);
+}
+
+Ref<WorkerAnimationController> TimerWorkerAnimationController::create(WorkerGlobalScope& workerGlobalScope)
+{
+    auto controller = adoptRef(*new TimerWorkerAnimationController(workerGlobalScope));
+    controller->suspendIfNeeded();
+    return controller;
+}
+
 
 } // namespace WebCore
 

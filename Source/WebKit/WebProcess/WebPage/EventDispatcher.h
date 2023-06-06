@@ -29,16 +29,19 @@
 #include "MessageReceiver.h"
 #include "MomentumEventDispatcher.h"
 #include "WebEvent.h"
+#include <WebCore/AnimationFrameRate.h>
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/PlatformWheelEvent.h>
 #include <WebCore/RectEdges.h>
 #include <WebCore/ScrollingCoordinatorTypes.h>
+#include <WebCore/Timer.h>
 #include <WebCore/WheelEventDeltaFilter.h>
 #include <memory>
 #include <wtf/HashMap.h>
 #include <wtf/Lock.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RefPtr.h>
+#include <wtf/RunLoop.h>
 #include <wtf/ThreadingPrimitives.h>
 #include <wtf/WorkQueue.h>
 
@@ -90,6 +93,25 @@ public:
 
     void notifyScrollingTreesDisplayDidRefresh(WebCore::PlatformDisplayID);
 
+#if HAVE(CVDISPLAYLINK)
+    // Observes displayDidRefresh at the same rate that the WebCore::Page's
+    // RenderingUpdateScheduler does, but without blocking on the main thread.
+    // Automatically adjusts to throttling rate changes, and the page moving
+    // to a different screen.
+    class AsyncRenderingRefreshObserver : public ThreadSafeRefCounted< AsyncRenderingRefreshObserver> {
+    public:
+        // Dispatched on the FunctionDispatcher passed when the observer
+        // is added.
+        virtual void displayDidRefresh() = 0;
+
+        virtual ~AsyncRenderingRefreshObserver() = default;
+    };
+    void addAsyncRenderingRefreshObserver(WebCore::PageIdentifier, FunctionDispatcher&, AsyncRenderingRefreshObserver&);
+    void removeAsyncRenderingRefreshObserver(WebCore::PageIdentifier, AsyncRenderingRefreshObserver&);
+#endif
+
+    void renderingUpdateFrequencyChanged(WebCore::PageIdentifier);
+
 private:
     // IPC::MessageReceiver overrides.
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
@@ -123,7 +145,7 @@ private:
     static void sendDidReceiveEvent(WebCore::PageIdentifier, WebEventType, bool didHandleEvent);
 
 #if PLATFORM(MAC)
-    void displayDidRefresh(WebCore::PlatformDisplayID, const WebCore::DisplayUpdate&, bool sendToMainThread);
+    void displayDidRefresh(WebCore::PlatformDisplayID, const WebCore::DisplayUpdate&, bool wantsFullSpeedUpdates, bool anyObserverWantsCallback);
 #endif
 
 #if ENABLE(SCROLLING_THREAD)
@@ -143,7 +165,54 @@ private:
 
     void pageScreenDidChange(WebCore::PageIdentifier, WebCore::PlatformDisplayID, std::optional<unsigned> nominalFramesPerSecond);
 
+    template <typename T>
+    void dispatchToQueue(T&& function)
+    {
+        m_queue->dispatch([this, function = WTFMove(function)] () {
+            assertIsCurrent(m_queue.get());
+            function();
+        });
+    }
+
+    template <typename T>
+    static void dispatchToMainRunLoop(T&& function)
+    {
+        RunLoop::main().dispatch([function = WTFMove(function)] () {
+            assertIsMainRunLoop();
+            function();
+        });
+    }
+
     Ref<WorkQueue> m_queue;
+
+#if HAVE(CVDISPLAYLINK)
+    struct ObserverAndDispatcher {
+        FunctionDispatcher& m_dispatcher;
+        Ref<AsyncRenderingRefreshObserver> m_observer;
+    };
+
+    struct PageObservers {
+        PageObservers();
+        PageObservers(PageObservers&&) = default;
+        PageObservers& operator=(PageObservers&&) = default;
+
+        DisplayLinkObserverID m_observerID;
+        std::optional<WebCore::PlatformDisplayID> m_displayID;
+        std::optional<WebCore::FramesPerSecond> m_framesPerSecond;
+        std::optional<Seconds> m_updateInterval;
+        Vector<ObserverAndDispatcher> m_observers;
+
+        std::unique_ptr<WebCore::Timer> m_timer;
+    };
+    Lock m_pageObserversLock;
+    HashMap<WebCore::PageIdentifier, PageObservers> m_pageObservers WTF_GUARDED_BY_LOCK(m_pageObserversLock);
+
+    void updateAsyncRenderingRefreshObservers(WebCore::PageIdentifier) WTF_REQUIRES_CAPABILITY(mainRunLoop);
+    void notifyAsyncRenderingRefreshObserversDisplayDidRefresh(WebCore::PlatformDisplayID, const WebCore::DisplayUpdate&) WTF_REQUIRES_CAPABILITY(m_queue.get());
+    void notifyPageObserversDisplayDidRefresh(PageObservers&) WTF_REQUIRES_LOCK(m_pageObserversLock) WTF_REQUIRES_CAPABILITY(m_queue.get());
+    void startTimerForPage(WebCore::PageIdentifier) WTF_REQUIRES_CAPABILITY(m_queue.get());
+    void stopTimerForPage(WebCore::PageIdentifier) WTF_REQUIRES_CAPABILITY(m_queue.get());
+#endif
 
 #if ENABLE(ASYNC_SCROLLING) && ENABLE(SCROLLING_THREAD)
     Lock m_scrollingTreesLock;
