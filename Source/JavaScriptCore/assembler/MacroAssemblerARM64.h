@@ -869,20 +869,20 @@ public:
         m_assembler.illegalInstruction();
     }
 
-    void countPopulation32(RegisterID src, RegisterID dst)
+    void countPopulation32(RegisterID src, RegisterID dst, FPRegisterID temp)
     {
-        move32ToFloat(src, fpTempRegister);
-        m_assembler.vectorCnt(fpTempRegister, fpTempRegister, SIMDLane::i8x16);
-        m_assembler.addv(fpTempRegister, fpTempRegister, SIMDLane::i8x16);
-        moveFloatTo32(fpTempRegister, dst);
+        move32ToFloat(src, temp);
+        m_assembler.vectorCnt(temp, temp, SIMDLane::i8x16);
+        m_assembler.addv(temp, temp, SIMDLane::i8x16);
+        moveFloatTo32(temp, dst);
     }
 
-    void countPopulation64(RegisterID src, RegisterID dst)
+    void countPopulation64(RegisterID src, RegisterID dst, FPRegisterID temp)
     {
-        move64ToDouble(src, fpTempRegister);
-        m_assembler.vectorCnt(fpTempRegister, fpTempRegister, SIMDLane::i8x16);
-        m_assembler.addv(fpTempRegister, fpTempRegister, SIMDLane::i8x16);
-        moveDoubleTo64(fpTempRegister, dst);
+        move64ToDouble(src, temp);
+        m_assembler.vectorCnt(temp, temp, SIMDLane::i8x16);
+        m_assembler.addv(temp, temp, SIMDLane::i8x16);
+        moveDoubleTo64(temp, dst);
     }
 
     void lshift32(RegisterID src, RegisterID shiftAmount, RegisterID dest)

@@ -409,6 +409,18 @@ public:
         m_assembler.popcnt_rr(src, dst);
     }
 
+    void countPopulation32(Address src, RegisterID dst, FPRegisterID)
+    {
+        ASSERT(supportsCountPopulation());
+        m_assembler.popcnt_mr(src.offset, src.base, dst);
+    }
+
+    void countPopulation32(RegisterID src, RegisterID dst, FPRegisterID)
+    {
+        ASSERT(supportsCountPopulation());
+        m_assembler.popcnt_rr(src, dst);
+    }
+
     void byteSwap32(RegisterID dst)
     {
         m_assembler.bswapl_r(dst);

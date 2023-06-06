@@ -5201,9 +5201,16 @@ auto B3IRGenerator::addI32Popcnt(ExpressionType argVar, ExpressionType& result) 
     if (MacroAssembler::supportsCountPopulation()) {
         PatchpointValue* patchpoint = m_currentBlock->appendNew<PatchpointValue>(m_proc, Int32, origin());
         patchpoint->append(arg, ValueRep::SomeRegister);
+#if CPU(X86_64)
         patchpoint->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
             jit.countPopulation32(params[1].gpr(), params[0].gpr());
         });
+#else
+        patchpoint->numFPScratchRegisters = 1;
+        patchpoint->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+            jit.countPopulation32(params[1].gpr(), params[0].gpr(), params.fpScratch(0));
+        });
+#endif
         patchpoint->effects = Effects::none();
         result = push(patchpoint);
         return { };
@@ -5221,9 +5228,16 @@ auto B3IRGenerator::addI64Popcnt(ExpressionType argVar, ExpressionType& result) 
     if (MacroAssembler::supportsCountPopulation()) {
         PatchpointValue* patchpoint = m_currentBlock->appendNew<PatchpointValue>(m_proc, Int64, origin());
         patchpoint->append(arg, ValueRep::SomeRegister);
+#if CPU(X86_64)
         patchpoint->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
             jit.countPopulation64(params[1].gpr(), params[0].gpr());
         });
+#else
+        patchpoint->numFPScratchRegisters = 1;
+        patchpoint->setGenerator([=] (CCallHelpers& jit, const StackmapGenerationParams& params) {
+            jit.countPopulation64(params[1].gpr(), params[0].gpr(), params.fpScratch(0));
+        });
+#endif
         patchpoint->effects = Effects::none();
         result = push(patchpoint);
         return { };

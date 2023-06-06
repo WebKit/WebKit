@@ -6047,7 +6047,7 @@ public:
             BLOCK(Value::fromI32(__builtin_popcount(operand.asI32()))),
             BLOCK(
                 if (m_jit.supportsCountPopulation())
-                    m_jit.countPopulation32(operandLocation.asGPR(), resultLocation.asGPR());
+                    m_jit.countPopulation32(operandLocation.asGPR(), resultLocation.asGPR(), wasmScratchFPR);
                 else {
                     // The EMIT_UNARY(...) macro will already assign result to the top value on the stack and give it a register,
                     // so it should be able to be passed in. However, this creates a somewhat nasty tacit dependency - emitCCall
@@ -6071,7 +6071,7 @@ public:
             BLOCK(Value::fromI64(__builtin_popcountll(operand.asI64()))),
             BLOCK(
                 if (m_jit.supportsCountPopulation())
-                    m_jit.countPopulation64(operandLocation.asGPR(), resultLocation.asGPR());
+                    m_jit.countPopulation64(operandLocation.asGPR(), resultLocation.asGPR(), wasmScratchFPR);
                 else {
                     // The EMIT_UNARY(...) macro will already assign result to the top value on the stack and give it a register,
                     // so it should be able to be passed in. However, this creates a somewhat nasty tacit dependency - emitCCall
