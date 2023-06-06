@@ -25,6 +25,7 @@
 #include "config.h"
 #include "HTMLFormControlElement.h"
 
+#include "AXObjectCache.h"
 #include "Autofill.h"
 #include "ControlStates.h"
 #include "ElementInlines.h"

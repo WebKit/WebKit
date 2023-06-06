@@ -32,6 +32,7 @@
 #include "ElementChildIteratorInlines.h"
 #include "GenericCachedHTMLCollection.h"
 #include "HTMLNames.h"
+#include "HTMLParserIdioms.h"
 #include "HTMLTableCaptionElement.h"
 #include "HTMLTableRowElement.h"
 #include "HTMLTableRowsCollection.h"

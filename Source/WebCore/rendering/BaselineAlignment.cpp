@@ -25,6 +25,9 @@
 #include "config.h"
 #include "BaselineAlignment.h"
 
+#include "BaselineAlignmentInlines.h"
+#include "RenderBox.h"
+
 namespace WebCore {
 
 BaselineGroup::BaselineGroup(WritingMode blockFlow, ItemPosition childPreference)

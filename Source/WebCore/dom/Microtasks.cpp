@@ -28,6 +28,7 @@
 #include "RejectedPromiseTracker.h"
 #include "ScriptExecutionContext.h"
 #include "WorkerGlobalScope.h"
+#include <JavaScriptCore/CatchScope.h>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/SetForScope.h>
@@ -53,7 +54,7 @@ void MicrotaskQueue::performMicrotaskCheckpoint()
         return;
 
     SetForScope change(m_performingMicrotaskCheckpoint, true);
-    VM& vm = this->vm();
+    JSC::VM& vm = this->vm();
     JSC::JSLockHolder locker(vm);
     auto catchScope = DECLARE_CATCH_SCOPE(vm);
 

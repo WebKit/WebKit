@@ -32,6 +32,7 @@
 #include "Logging.h"
 #include "RemoteImageBufferProxy.h"
 #include "RemoteRenderingBackendProxy.h"
+#include "WebProcess.h"
 #include <WebCore/FontCustomPlatformData.h>
 
 namespace WebKit {

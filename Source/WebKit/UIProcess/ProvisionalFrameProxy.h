@@ -28,6 +28,7 @@
 #include "WebPageProxyIdentifier.h"
 #include <WebCore/LayerHostingContextIdentifier.h>
 #include <WebCore/PageIdentifier.h>
+#include <wtf/CheckedRef.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {

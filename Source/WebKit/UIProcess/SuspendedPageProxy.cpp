@@ -27,6 +27,7 @@
 #include "SuspendedPageProxy.h"
 
 #include "DrawingAreaProxy.h"
+#include "HandleMessage.h"
 #include "Logging.h"
 #include "MessageSenderInlines.h"
 #include "WebBackForwardCache.h"

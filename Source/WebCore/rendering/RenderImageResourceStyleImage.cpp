@@ -30,6 +30,7 @@
 
 #include "CachedImage.h"
 #include "RenderElement.h"
+#include "RenderStyleInlines.h"
 #include "StyleCachedImage.h"
 #include <wtf/IsoMallocInlines.h>
 

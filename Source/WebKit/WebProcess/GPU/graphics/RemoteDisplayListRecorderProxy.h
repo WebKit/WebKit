@@ -34,6 +34,7 @@
 #include <wtf/WeakPtr.h>
 
 namespace IPC {
+class Semaphore;
 class StreamClientConnection;
 }
 

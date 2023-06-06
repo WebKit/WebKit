@@ -47,6 +47,7 @@ enum class DeviceLostReason : uint8_t;
 }
 
 namespace IPC {
+class Semaphore;
 class StreamServerConnection;
 }
 
@@ -58,6 +59,7 @@ class VideoFrame;
 namespace WebKit {
 
 class RemoteGPU;
+class SharedMemoryHandle;
 
 namespace WebGPU {
 struct BindGroupDescriptor;
@@ -141,7 +143,7 @@ private:
 
     void setLabel(String&&);
     void setSharedVideoFrameSemaphore(IPC::Semaphore&&);
-    void setSharedVideoFrameMemory(SharedMemory::Handle&&);
+    void setSharedVideoFrameMemory(SharedMemoryHandle&&);
 
     Ref<PAL::WebGPU::Device> m_backing;
     WebGPU::ObjectHeap& m_objectHeap;

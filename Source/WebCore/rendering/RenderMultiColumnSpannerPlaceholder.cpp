@@ -30,6 +30,8 @@
 #include "config.h"
 #include "RenderMultiColumnSpannerPlaceholder.h"
 
+#include "RenderBoxInlines.h"
+#include "RenderBoxModelObjectInlines.h"
 #include "RenderMultiColumnFlow.h"
 #include <wtf/IsoMallocInlines.h>
 

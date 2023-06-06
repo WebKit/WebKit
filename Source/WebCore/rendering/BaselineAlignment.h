@@ -24,6 +24,10 @@
  */
 #pragma once
 
+#include "LayoutUnit.h"
+#include "RenderStyleConstants.h"
+#include "WritingMode.h"
+#include <wtf/WeakHashSet.h>
 
 namespace WebCore {
 

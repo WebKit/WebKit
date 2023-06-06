@@ -37,6 +37,7 @@
 #include "FilterTargetSwitcher.h"
 #include "Logging.h"
 #include "RenderSVGResourceFilter.h"
+#include "RenderStyleInlines.h"
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {

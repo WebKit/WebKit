@@ -49,8 +49,10 @@
 #include "HTMLMarqueeElement.h"
 #include "HTMLNames.h"
 #include "LocalFrameView.h"
+#include "RenderBoxModelObjectInlines.h"
 #include "RenderLayer.h"
 #include "RenderLayerScrollableArea.h"
+#include "RenderStyleInlines.h"
 #include "RenderView.h"
 
 namespace WebCore {

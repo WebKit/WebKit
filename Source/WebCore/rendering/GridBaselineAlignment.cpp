@@ -31,6 +31,7 @@
 #include "config.h"
 #include "GridBaselineAlignment.h"
 
+#include "BaselineAlignmentInlines.h"
 #include "RenderBoxInlines.h"
 #include "RenderStyleConstants.h"
 

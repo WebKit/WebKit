@@ -25,6 +25,8 @@
 #include "RenderFrame.h"
 
 #include "HTMLFrameElement.h"
+#include "RenderBoxInlines.h"
+#include "RenderBoxModelObjectInlines.h"
 #include "RenderFrameSet.h"
 #include <wtf/IsoMallocInlines.h>
 

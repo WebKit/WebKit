@@ -36,6 +36,7 @@
 #include "MessageSenderInlines.h"
 #include "NetworkProcessMessages.h"
 #include "SubframePageProxy.h"
+#include "VisitedLinkStore.h"
 #include "WebFrameProxy.h"
 #include "WebPageMessages.h"
 #include "WebPageProxy.h"

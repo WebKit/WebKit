@@ -27,8 +27,8 @@
 #include "WebDocumentLoader.h"
 
 #include "WebFrame.h"
-
 #include <WebCore/FrameDestructionObserverInlines.h>
+#include <WebCore/FrameLoader.h>
 
 namespace WebKit {
 using namespace WebCore;

@@ -36,6 +36,8 @@
 #include "LocalFrameView.h"
 #include "MouseEvent.h"
 #include "PaintInfo.h"
+#include "RenderBoxInlines.h"
+#include "RenderBoxModelObjectInlines.h"
 #include "RenderFrame.h"
 #include "RenderIterator.h"
 #include "RenderLayer.h"

@@ -31,6 +31,7 @@
 #include "HTMLEntitySearch.h"
 #include "HTMLEntityTable.h"
 #include "SegmentedString.h"
+#include <wtf/text/StringParsingBuffer.h>
 #include <wtf/unicode/CharacterNames.h>
 
 namespace WebCore {

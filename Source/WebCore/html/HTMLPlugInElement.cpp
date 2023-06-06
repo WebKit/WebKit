@@ -42,6 +42,7 @@
 #include "PluginViewBase.h"
 #include "RenderEmbeddedObject.h"
 #include "RenderLayer.h"
+#include "RenderStyleInlines.h"
 #include "RenderView.h"
 #include "RenderWidget.h"
 #include "ScriptController.h"

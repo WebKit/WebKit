@@ -36,7 +36,10 @@
 #include "LocalFrameView.h"
 #include "Page.h"
 #include "PaintInfo.h"
+#include "RenderBoxInlines.h"
+#include "RenderBoxModelObjectInlines.h"
 #include "RenderLayer.h"
+#include "RenderStyleInlines.h"
 #include "RenderView.h"
 #include <wtf/IsoMallocInlines.h>
 

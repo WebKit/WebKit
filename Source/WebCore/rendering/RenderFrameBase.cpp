@@ -29,6 +29,8 @@
 #include "HTMLFrameElementBase.h"
 #include "LocalFrame.h"
 #include "LocalFrameView.h"
+#include "RenderBoxInlines.h"
+#include "RenderBoxModelObjectInlines.h"
 #include "RenderView.h"
 #include "ScriptDisallowedScope.h"
 #include <wtf/IsoMallocInlines.h>

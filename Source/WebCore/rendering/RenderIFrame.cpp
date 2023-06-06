@@ -30,6 +30,9 @@
 #include "HTMLNames.h"
 #include "LocalFrame.h"
 #include "LocalFrameView.h"
+#include "RenderBoxInlines.h"
+#include "RenderBoxModelObjectInlines.h"
+#include "RenderStyleInlines.h"
 #include "RenderView.h"
 #include "Settings.h"
 #include <wtf/IsoMallocInlines.h>

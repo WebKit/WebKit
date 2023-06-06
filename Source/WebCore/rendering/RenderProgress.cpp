@@ -22,6 +22,8 @@
 #include "RenderProgress.h"
 
 #include "HTMLProgressElement.h"
+#include "RenderBoxModelObjectInlines.h"
+#include "RenderStyleInlines.h"
 #include "RenderTheme.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/RefPtr.h>

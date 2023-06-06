@@ -31,7 +31,7 @@
 #include "Path.h"
 #include "RenderAncestorIterator.h"
 #include "RenderBox.h"
-#include "RenderStyle.h"
+#include "RenderStyleInlines.h"
 #include "SimpleRange.h"
 #include "WindRule.h"
 #include <wtf/text/TextStream.h>

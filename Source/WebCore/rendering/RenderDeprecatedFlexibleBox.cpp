@@ -27,10 +27,15 @@
 #include "InlineIteratorLineBox.h"
 #include "LayoutRepainter.h"
 #include "LineClampValue.h"
+#include "RenderBoxInlines.h"
+#include "RenderBoxModelObjectInlines.h"
 #include "RenderDescendantIterator.h"
+#include "RenderElementInlines.h"
 #include "RenderIterator.h"
 #include "RenderLayer.h"
 #include "RenderLayoutState.h"
+#include "RenderObjectInlines.h"
+#include "RenderStyleInlines.h"
 #include "RenderView.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/Scope.h>
