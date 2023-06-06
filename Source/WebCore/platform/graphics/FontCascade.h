@@ -263,13 +263,11 @@ public:
     {
         // https://drafts.csswg.org/css-text-3/#white-space-processing
         // "Unsupported Default_ignorable characters must be ignored for text rendering."
-        return (character == objectReplacementCharacter
-            || isControlCharacter(character)
-            || isDefaultIgnorableCodePoint(character));
+        return isControlCharacter(character) || isDefaultIgnorableCodePoint(character);
     }
     // FIXME: Callers of treatAsZeroWidthSpace() and treatAsZeroWidthSpaceInComplexScript() should probably be calling isCharacterWhoseGlyphsShouldBeDeletedForTextRendering() instead.
     static bool treatAsZeroWidthSpace(UChar32 c) { return treatAsZeroWidthSpaceInComplexScript(c) || c == zeroWidthNonJoiner || c == zeroWidthJoiner; }
-    static bool treatAsZeroWidthSpaceInComplexScript(UChar32 c) { return c < space || (c >= deleteCharacter && c < noBreakSpace) || c == softHyphen || c == zeroWidthSpace || (c >= leftToRightMark && c <= rightToLeftMark) || (c >= leftToRightEmbed && c <= rightToLeftOverride) || c == zeroWidthNoBreakSpace || c == objectReplacementCharacter; }
+    static bool treatAsZeroWidthSpaceInComplexScript(UChar32 c) { return c < space || (c >= deleteCharacter && c < noBreakSpace) || c == softHyphen || c == zeroWidthSpace || (c >= leftToRightMark && c <= rightToLeftMark) || (c >= leftToRightEmbed && c <= rightToLeftOverride) || c == zeroWidthNoBreakSpace; }
     static bool canReceiveTextEmphasis(UChar32);
 
     static inline UChar normalizeSpaces(UChar character)
