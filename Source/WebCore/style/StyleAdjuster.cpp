@@ -8,7 +8,7 @@
  * Copyright (C) 2008, 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  * Copyright (c) 2011, Code Aurora Forum. All rights reserved.
  * Copyright (C) Research In Motion Limited 2011. All rights reserved.
- * Copyright (C) 2012, 2013 Google Inc. All rights reserved.
+ * Copyright (C) 2012-2015 Google Inc. All rights reserved.
  * Copyright (C) 2014, 2020, 2022 Igalia S.L.
  *
  * This library is free software; you can redistribute it and/or
@@ -155,6 +155,11 @@ static DisplayType equivalentBlockDisplay(const RenderStyle& style)
     return DisplayType::Block;
 }
 
+static bool isOutermostSVGElement(const Element* element)
+{
+    return element && element->isSVGElement() && downcast<SVGElement>(*element).isOutermostSVGSVGElement();
+}
+
 static bool shouldInheritTextDecorationsInEffect(const RenderStyle& style, const Element* element)
 {
     if (style.isFloating() || style.hasOutOfFlowPosition())
@@ -166,6 +171,10 @@ static bool shouldInheritTextDecorationsInEffect(const RenderStyle& style, const
         auto* parentNode = element->parentNode();
         return parentNode && parentNode->isUserAgentShadowRoot();
     }();
+
+    // Outermost <svg> roots are considered to be atomic inline-level.
+    if (isOutermostSVGElement(element))
+        return false;
 
     // There is no other good way to prevent decorations from affecting user agent shadow trees.
     if (isAtUserAgentShadowBoundary)
