@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,16 +33,13 @@
 
 namespace PAL::WebGPU {
 
-ShaderModuleImpl::ShaderModuleImpl(WGPUShaderModule shaderModule, ConvertToBackingContext& convertToBackingContext)
-    : m_backing(shaderModule)
+ShaderModuleImpl::ShaderModuleImpl(WebGPUPtr<WGPUShaderModule>&& shaderModule, ConvertToBackingContext& convertToBackingContext)
+    : m_backing(WTFMove(shaderModule))
     , m_convertToBackingContext(convertToBackingContext)
 {
 }
 
-ShaderModuleImpl::~ShaderModuleImpl()
-{
-    wgpuShaderModuleRelease(m_backing);
-}
+ShaderModuleImpl::~ShaderModuleImpl() = default;
 
 void ShaderModuleImpl::compilationInfo(CompletionHandler<void(Ref<CompilationInfo>&&)>&&)
 {
@@ -51,7 +48,7 @@ void ShaderModuleImpl::compilationInfo(CompletionHandler<void(Ref<CompilationInf
 
 void ShaderModuleImpl::setLabelInternal(const String& label)
 {
-    wgpuShaderModuleSetLabel(m_backing, label.utf8().data());
+    wgpuShaderModuleSetLabel(m_backing.get(), label.utf8().data());
 }
 
 } // namespace PAL::WebGPU

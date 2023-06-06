@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,42 +37,39 @@
 
 namespace PAL::WebGPU {
 
-ComputePassEncoderImpl::ComputePassEncoderImpl(WGPUComputePassEncoder computePassEncoder, ConvertToBackingContext& convertToBackingContext)
-    : m_backing(computePassEncoder)
+ComputePassEncoderImpl::ComputePassEncoderImpl(WebGPUPtr<WGPUComputePassEncoder>&& computePassEncoder, ConvertToBackingContext& convertToBackingContext)
+    : m_backing(WTFMove(computePassEncoder))
     , m_convertToBackingContext(convertToBackingContext)
 {
 }
 
-ComputePassEncoderImpl::~ComputePassEncoderImpl()
-{
-    wgpuComputePassEncoderRelease(m_backing);
-}
+ComputePassEncoderImpl::~ComputePassEncoderImpl() = default;
 
 void ComputePassEncoderImpl::setPipeline(const ComputePipeline& computePipeline)
 {
-    wgpuComputePassEncoderSetPipeline(m_backing, m_convertToBackingContext->convertToBacking(computePipeline));
+    wgpuComputePassEncoderSetPipeline(m_backing.get(), m_convertToBackingContext->convertToBacking(computePipeline));
 }
 
 void ComputePassEncoderImpl::dispatch(Size32 workgroupCountX, Size32 workgroupCountY, Size32 workgroupCountZ)
 {
-    wgpuComputePassEncoderDispatchWorkgroups(m_backing, workgroupCountX, workgroupCountY, workgroupCountZ);
+    wgpuComputePassEncoderDispatchWorkgroups(m_backing.get(), workgroupCountX, workgroupCountY, workgroupCountZ);
 }
 
 void ComputePassEncoderImpl::dispatchIndirect(const Buffer& indirectBuffer, Size64 indirectOffset)
 {
-    wgpuComputePassEncoderDispatchWorkgroupsIndirect(m_backing, m_convertToBackingContext->convertToBacking(indirectBuffer), indirectOffset);
+    wgpuComputePassEncoderDispatchWorkgroupsIndirect(m_backing.get(), m_convertToBackingContext->convertToBacking(indirectBuffer), indirectOffset);
 }
 
 void ComputePassEncoderImpl::end()
 {
-    wgpuComputePassEncoderEnd(m_backing);
+    wgpuComputePassEncoderEnd(m_backing.get());
 }
 
 void ComputePassEncoderImpl::setBindGroup(Index32 index, const BindGroup& bindGroup,
     std::optional<Vector<BufferDynamicOffset>>&& offsets)
 {
     auto backingOffsets = valueOrDefault(offsets);
-    wgpuComputePassEncoderSetBindGroup(m_backing, index, m_convertToBackingContext->convertToBacking(bindGroup), static_cast<uint32_t>(backingOffsets.size()), backingOffsets.data());
+    wgpuComputePassEncoderSetBindGroup(m_backing.get(), index, m_convertToBackingContext->convertToBacking(bindGroup), static_cast<uint32_t>(backingOffsets.size()), backingOffsets.data());
 }
 
 void ComputePassEncoderImpl::setBindGroup(Index32 index, const BindGroup& bindGroup,
@@ -83,27 +80,27 @@ void ComputePassEncoderImpl::setBindGroup(Index32 index, const BindGroup& bindGr
 {
     UNUSED_PARAM(dynamicOffsetsArrayBufferLength);
     // FIXME: Use checked algebra.
-    wgpuComputePassEncoderSetBindGroup(m_backing, index, m_convertToBackingContext->convertToBacking(bindGroup), dynamicOffsetsDataLength, dynamicOffsetsArrayBuffer + dynamicOffsetsDataStart);
+    wgpuComputePassEncoderSetBindGroup(m_backing.get(), index, m_convertToBackingContext->convertToBacking(bindGroup), dynamicOffsetsDataLength, dynamicOffsetsArrayBuffer + dynamicOffsetsDataStart);
 }
 
 void ComputePassEncoderImpl::pushDebugGroup(String&& groupLabel)
 {
-    wgpuComputePassEncoderPushDebugGroup(m_backing, groupLabel.utf8().data());
+    wgpuComputePassEncoderPushDebugGroup(m_backing.get(), groupLabel.utf8().data());
 }
 
 void ComputePassEncoderImpl::popDebugGroup()
 {
-    wgpuComputePassEncoderPopDebugGroup(m_backing);
+    wgpuComputePassEncoderPopDebugGroup(m_backing.get());
 }
 
 void ComputePassEncoderImpl::insertDebugMarker(String&& markerLabel)
 {
-    wgpuComputePassEncoderInsertDebugMarker(m_backing, markerLabel.utf8().data());
+    wgpuComputePassEncoderInsertDebugMarker(m_backing.get(), markerLabel.utf8().data());
 }
 
 void ComputePassEncoderImpl::setLabelInternal(const String& label)
 {
-    wgpuComputePassEncoderSetLabel(m_backing, label.utf8().data());
+    wgpuComputePassEncoderSetLabel(m_backing.get(), label.utf8().data());
 }
 
 } // namespace PAL::WebGPU

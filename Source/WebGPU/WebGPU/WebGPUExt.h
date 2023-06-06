@@ -163,7 +163,6 @@ WGPU_EXPORT void wgpuAdapterRequestDeviceWithBlock(WGPUAdapter adapter, WGPUDevi
 WGPU_EXPORT void wgpuBufferMapAsyncWithBlock(WGPUBuffer buffer, WGPUMapModeFlags mode, size_t offset, size_t size, WGPUBufferMapBlockCallback callback);
 WGPU_EXPORT void wgpuDeviceCreateComputePipelineAsyncWithBlock(WGPUDevice device, WGPUComputePipelineDescriptor const * descriptor, WGPUCreateComputePipelineAsyncBlockCallback callback);
 WGPU_EXPORT void wgpuDeviceCreateRenderPipelineAsyncWithBlock(WGPUDevice device, WGPURenderPipelineDescriptor const * descriptor, WGPUCreateRenderPipelineAsyncBlockCallback callback);
-WGPU_EXPORT WGPUExternalTexture wgpuDeviceImportExternalTexture(WGPUDevice device, const WGPUExternalTextureDescriptor* descriptor);
 WGPU_EXPORT void wgpuDevicePopErrorScopeWithBlock(WGPUDevice device, WGPUErrorBlockCallback callback);
 WGPU_EXPORT void wgpuDeviceSetUncapturedErrorCallbackWithBlock(WGPUDevice device, WGPUErrorBlockCallback callback);
 WGPU_EXPORT void wgpuInstanceRequestAdapterWithBlock(WGPUInstance instance, WGPURequestAdapterOptions const * options, WGPURequestAdapterBlockCallback callback);
@@ -172,6 +171,11 @@ WGPU_EXPORT void wgpuShaderModuleGetCompilationInfoWithBlock(WGPUShaderModule sh
 
 // FIXME: https://github.com/webgpu-native/webgpu-headers/issues/89 is about moving this from WebGPUExt.h to WebGPU.h
 WGPU_EXPORT WGPUTexture wgpuSwapChainGetCurrentTexture(WGPUSwapChain swapChain);
+
+WGPU_EXPORT WGPUExternalTexture wgpuDeviceImportExternalTexture(WGPUDevice device, const WGPUExternalTextureDescriptor* descriptor);
+
+WGPU_EXPORT void wgpuExternalTextureReference(WGPUExternalTexture externalTexture);
+WGPU_EXPORT void wgpuExternalTextureRelease(WGPUExternalTexture externalTexture);
 
 #endif  // !defined(WGPU_SKIP_DECLARATIONS)
 

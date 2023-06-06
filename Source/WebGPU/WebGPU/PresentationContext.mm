@@ -106,13 +106,7 @@ void wgpuSwapChainReference(WGPUSwapChain swapChain)
 
 void wgpuSwapChainRelease(WGPUSwapChain swapChain)
 {
-    auto& presentationContext = WebGPU::fromAPI(swapChain);
-
-    // FIXME: This is almost certainly the wrong thing to do,
-    // now that WGPU objects are reference-counted.
-    presentationContext.unconfigure(); // It doesn't make sense to have multiple swap chains targetting a single surface.
-
-    presentationContext.deref();
+    WebGPU::fromAPI(swapChain).deref();
 }
 
 WGPUTextureFormat wgpuSurfaceGetPreferredFormat(WGPUSurface surface, WGPUAdapter adapter)

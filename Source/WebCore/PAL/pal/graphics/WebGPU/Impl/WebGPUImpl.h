@@ -28,6 +28,7 @@
 #if HAVE(WEBGPU_IMPLEMENTATION)
 
 #include "WebGPU.h"
+#include "WebGPUPtr.h"
 #include <WebGPU/WebGPU.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Deque.h>
@@ -40,9 +41,9 @@ class ConvertToBackingContext;
 class GPUImpl final : public GPU {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<GPUImpl> create(WGPUInstance instance, ConvertToBackingContext& convertToBackingContext)
+    static Ref<GPUImpl> create(WebGPUPtr<WGPUInstance>&& instance, ConvertToBackingContext& convertToBackingContext)
     {
-        return adoptRef(*new GPUImpl(instance, convertToBackingContext));
+        return adoptRef(*new GPUImpl(WTFMove(instance), convertToBackingContext));
     }
 
     virtual ~GPUImpl();
@@ -50,14 +51,14 @@ public:
 private:
     friend class DowncastConvertToBackingContext;
 
-    GPUImpl(WGPUInstance, ConvertToBackingContext&);
+    GPUImpl(WebGPUPtr<WGPUInstance>&&, ConvertToBackingContext&);
 
     GPUImpl(const GPUImpl&) = delete;
     GPUImpl(GPUImpl&&) = delete;
     GPUImpl& operator=(const GPUImpl&) = delete;
     GPUImpl& operator=(GPUImpl&&) = delete;
 
-    WGPUInstance backing() const { return m_backing; }
+    WGPUInstance backing() const { return m_backing.get(); }
 
     void requestAdapter(const RequestAdapterOptions&, CompletionHandler<void(RefPtr<Adapter>&&)>&&) final;
 
@@ -65,7 +66,7 @@ private:
 
     Ref<CompositorIntegration> createCompositorIntegration() final;
 
-    WGPUInstance m_backing { nullptr };
+    WebGPUPtr<WGPUInstance> m_backing;
     Ref<ConvertToBackingContext> m_convertToBackingContext;
 };
 

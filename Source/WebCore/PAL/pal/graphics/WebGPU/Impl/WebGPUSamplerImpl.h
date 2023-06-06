@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +27,7 @@
 
 #if HAVE(WEBGPU_IMPLEMENTATION)
 
+#include "WebGPUPtr.h"
 #include "WebGPUSampler.h"
 #include <WebGPU/WebGPU.h>
 
@@ -37,9 +38,9 @@ class ConvertToBackingContext;
 class SamplerImpl final : public Sampler {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<SamplerImpl> create(WGPUSampler sampler, ConvertToBackingContext& convertToBackingContext)
+    static Ref<SamplerImpl> create(WebGPUPtr<WGPUSampler>&& sampler, ConvertToBackingContext& convertToBackingContext)
     {
-        return adoptRef(*new SamplerImpl(sampler, convertToBackingContext));
+        return adoptRef(*new SamplerImpl(WTFMove(sampler), convertToBackingContext));
     }
 
     virtual ~SamplerImpl();
@@ -47,18 +48,18 @@ public:
 private:
     friend class DowncastConvertToBackingContext;
 
-    SamplerImpl(WGPUSampler, ConvertToBackingContext&);
+    SamplerImpl(WebGPUPtr<WGPUSampler>&&, ConvertToBackingContext&);
 
     SamplerImpl(const SamplerImpl&) = delete;
     SamplerImpl(SamplerImpl&&) = delete;
     SamplerImpl& operator=(const SamplerImpl&) = delete;
     SamplerImpl& operator=(SamplerImpl&&) = delete;
 
-    WGPUSampler backing() const { return m_backing; }
+    WGPUSampler backing() const { return m_backing.get(); }
 
     void setLabelInternal(const String&) final;
 
-    WGPUSampler m_backing { nullptr };
+    WebGPUPtr<WGPUSampler> m_backing;
     Ref<ConvertToBackingContext> m_convertToBackingContext;
 };
 

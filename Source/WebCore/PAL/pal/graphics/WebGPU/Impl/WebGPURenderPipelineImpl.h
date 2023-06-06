@@ -27,6 +27,7 @@
 
 #if HAVE(WEBGPU_IMPLEMENTATION)
 
+#include "WebGPUPtr.h"
 #include "WebGPURenderPipeline.h"
 #include <WebGPU/WebGPU.h>
 #include <wtf/HashMap.h>
@@ -39,9 +40,9 @@ class ConvertToBackingContext;
 class RenderPipelineImpl final : public RenderPipeline {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<RenderPipelineImpl> create(WGPURenderPipeline renderPipeline, ConvertToBackingContext& convertToBackingContext)
+    static Ref<RenderPipelineImpl> create(WebGPUPtr<WGPURenderPipeline>&& renderPipeline, ConvertToBackingContext& convertToBackingContext)
     {
-        return adoptRef(*new RenderPipelineImpl(renderPipeline, convertToBackingContext));
+        return adoptRef(*new RenderPipelineImpl(WTFMove(renderPipeline), convertToBackingContext));
     }
 
     virtual ~RenderPipelineImpl();
@@ -49,20 +50,20 @@ public:
 private:
     friend class DowncastConvertToBackingContext;
 
-    RenderPipelineImpl(WGPURenderPipeline, ConvertToBackingContext&);
+    RenderPipelineImpl(WebGPUPtr<WGPURenderPipeline>&&, ConvertToBackingContext&);
 
     RenderPipelineImpl(const RenderPipelineImpl&) = delete;
     RenderPipelineImpl(RenderPipelineImpl&&) = delete;
     RenderPipelineImpl& operator=(const RenderPipelineImpl&) = delete;
     RenderPipelineImpl& operator=(RenderPipelineImpl&&) = delete;
 
-    WGPURenderPipeline backing() const { return m_backing; }
+    WGPURenderPipeline backing() const { return m_backing.get(); }
 
     Ref<BindGroupLayout> getBindGroupLayout(uint32_t index) final;
 
     void setLabelInternal(const String&) final;
 
-    WGPURenderPipeline m_backing { nullptr };
+    WebGPUPtr<WGPURenderPipeline> m_backing;
     Ref<ConvertToBackingContext> m_convertToBackingContext;
 };
 

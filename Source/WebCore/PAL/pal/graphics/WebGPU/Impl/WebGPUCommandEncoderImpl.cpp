@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,16 +40,13 @@
 
 namespace PAL::WebGPU {
 
-CommandEncoderImpl::CommandEncoderImpl(WGPUCommandEncoder CommandEncoder, ConvertToBackingContext& convertToBackingContext)
-    : m_backing(CommandEncoder)
+CommandEncoderImpl::CommandEncoderImpl(WebGPUPtr<WGPUCommandEncoder>&& commandEncoder, ConvertToBackingContext& convertToBackingContext)
+    : m_backing(WTFMove(commandEncoder))
     , m_convertToBackingContext(convertToBackingContext)
 {
 }
 
-CommandEncoderImpl::~CommandEncoderImpl()
-{
-    wgpuCommandEncoderRelease(m_backing);
-}
+CommandEncoderImpl::~CommandEncoderImpl() = default;
 
 Ref<RenderPassEncoder> CommandEncoderImpl::beginRenderPass(const RenderPassDescriptor& descriptor)
 {
@@ -110,7 +107,7 @@ Ref<RenderPassEncoder> CommandEncoderImpl::beginRenderPass(const RenderPassDescr
         timestampWrites.data(),
     };
 
-    return RenderPassEncoderImpl::create(wgpuCommandEncoderBeginRenderPass(m_backing, &backingDescriptor), m_convertToBackingContext);
+    return RenderPassEncoderImpl::create(adoptWebGPU(wgpuCommandEncoderBeginRenderPass(m_backing.get(), &backingDescriptor)), m_convertToBackingContext);
 }
 
 Ref<ComputePassEncoder> CommandEncoderImpl::beginComputePass(const std::optional<ComputePassDescriptor>& descriptor)
@@ -135,7 +132,7 @@ Ref<ComputePassEncoder> CommandEncoderImpl::beginComputePass(const std::optional
         timestampWrites.data(),
     };
 
-    return ComputePassEncoderImpl::create(wgpuCommandEncoderBeginComputePass(m_backing, &backingDescriptor), m_convertToBackingContext);
+    return ComputePassEncoderImpl::create(adoptWebGPU(wgpuCommandEncoderBeginComputePass(m_backing.get(), &backingDescriptor)), m_convertToBackingContext);
 }
 
 void CommandEncoderImpl::copyBufferToBuffer(
@@ -145,7 +142,7 @@ void CommandEncoderImpl::copyBufferToBuffer(
     Size64 destinationOffset,
     Size64 size)
 {
-    wgpuCommandEncoderCopyBufferToBuffer(m_backing, m_convertToBackingContext->convertToBacking(source), sourceOffset, m_convertToBackingContext->convertToBacking(destination), destinationOffset, size);
+    wgpuCommandEncoderCopyBufferToBuffer(m_backing.get(), m_convertToBackingContext->convertToBacking(source), sourceOffset, m_convertToBackingContext->convertToBacking(destination), destinationOffset, size);
 }
 
 void CommandEncoderImpl::copyBufferToTexture(
@@ -173,7 +170,7 @@ void CommandEncoderImpl::copyBufferToTexture(
 
     WGPUExtent3D backingCopySize = m_convertToBackingContext->convertToBacking(copySize);
 
-    wgpuCommandEncoderCopyBufferToTexture(m_backing, &backingSource, &backingDestination, &backingCopySize);
+    wgpuCommandEncoderCopyBufferToTexture(m_backing.get(), &backingSource, &backingDestination, &backingCopySize);
 }
 
 void CommandEncoderImpl::copyTextureToBuffer(
@@ -201,7 +198,7 @@ void CommandEncoderImpl::copyTextureToBuffer(
 
     WGPUExtent3D backingCopySize = m_convertToBackingContext->convertToBacking(copySize);
 
-    wgpuCommandEncoderCopyTextureToBuffer(m_backing, &backingSource, &backingDestination, &backingCopySize);
+    wgpuCommandEncoderCopyTextureToBuffer(m_backing.get(), &backingSource, &backingDestination, &backingCopySize);
 }
 
 void CommandEncoderImpl::copyTextureToTexture(
@@ -227,7 +224,7 @@ void CommandEncoderImpl::copyTextureToTexture(
 
     WGPUExtent3D backingCopySize = m_convertToBackingContext->convertToBacking(copySize);
 
-    wgpuCommandEncoderCopyTextureToTexture(m_backing, &backingSource, &backingDestination, &backingCopySize);
+    wgpuCommandEncoderCopyTextureToTexture(m_backing.get(), &backingSource, &backingDestination, &backingCopySize);
 }
 
 void CommandEncoderImpl::clearBuffer(
@@ -235,27 +232,27 @@ void CommandEncoderImpl::clearBuffer(
     Size64 offset,
     std::optional<Size64> size)
 {
-    wgpuCommandEncoderClearBuffer(m_backing, m_convertToBackingContext->convertToBacking(buffer), offset, size.value_or(WGPU_WHOLE_SIZE));
+    wgpuCommandEncoderClearBuffer(m_backing.get(), m_convertToBackingContext->convertToBacking(buffer), offset, size.value_or(WGPU_WHOLE_SIZE));
 }
 
 void CommandEncoderImpl::pushDebugGroup(String&& groupLabel)
 {
-    wgpuCommandEncoderPushDebugGroup(m_backing, groupLabel.utf8().data());
+    wgpuCommandEncoderPushDebugGroup(m_backing.get(), groupLabel.utf8().data());
 }
 
 void CommandEncoderImpl::popDebugGroup()
 {
-    wgpuCommandEncoderPopDebugGroup(m_backing);
+    wgpuCommandEncoderPopDebugGroup(m_backing.get());
 }
 
 void CommandEncoderImpl::insertDebugMarker(String&& markerLabel)
 {
-    wgpuCommandEncoderInsertDebugMarker(m_backing, markerLabel.utf8().data());
+    wgpuCommandEncoderInsertDebugMarker(m_backing.get(), markerLabel.utf8().data());
 }
 
 void CommandEncoderImpl::writeTimestamp(const QuerySet& querySet, Size32 queryIndex)
 {
-    wgpuCommandEncoderWriteTimestamp(m_backing, m_convertToBackingContext->convertToBacking(querySet), queryIndex);
+    wgpuCommandEncoderWriteTimestamp(m_backing.get(), m_convertToBackingContext->convertToBacking(querySet), queryIndex);
 }
 
 void CommandEncoderImpl::resolveQuerySet(
@@ -265,7 +262,7 @@ void CommandEncoderImpl::resolveQuerySet(
     const Buffer& destination,
     Size64 destinationOffset)
 {
-    wgpuCommandEncoderResolveQuerySet(m_backing, m_convertToBackingContext->convertToBacking(querySet), firstQuery, queryCount, m_convertToBackingContext->convertToBacking(destination), destinationOffset);
+    wgpuCommandEncoderResolveQuerySet(m_backing.get(), m_convertToBackingContext->convertToBacking(querySet), firstQuery, queryCount, m_convertToBackingContext->convertToBacking(destination), destinationOffset);
 }
 
 Ref<CommandBuffer> CommandEncoderImpl::finish(const CommandBufferDescriptor& descriptor)
@@ -277,12 +274,12 @@ Ref<CommandBuffer> CommandEncoderImpl::finish(const CommandBufferDescriptor& des
         label.data(),
     };
 
-    return CommandBufferImpl::create(wgpuCommandEncoderFinish(m_backing, &backingDescriptor), m_convertToBackingContext);
+    return CommandBufferImpl::create(adoptWebGPU(wgpuCommandEncoderFinish(m_backing.get(), &backingDescriptor)), m_convertToBackingContext);
 }
 
 void CommandEncoderImpl::setLabelInternal(const String& label)
 {
-    wgpuCommandEncoderSetLabel(m_backing, label.utf8().data());
+    wgpuCommandEncoderSetLabel(m_backing.get(), label.utf8().data());
 }
 
 } // namespace PAL::WebGPU

@@ -36,30 +36,15 @@
 
 namespace PAL::WebGPU {
 
-TextureImpl::TextureImpl(WGPUTexture texture, TextureFormat format, TextureDimension dimension, ConvertToBackingContext& convertToBackingContext)
+TextureImpl::TextureImpl(WebGPUPtr<WGPUTexture>&& texture, TextureFormat format, TextureDimension dimension, ConvertToBackingContext& convertToBackingContext)
     : m_format(format)
     , m_dimension(dimension)
-    , m_backing(texture)
+    , m_backing(WTFMove(texture))
     , m_convertToBackingContext(convertToBackingContext)
 {
 }
 
-TextureImpl::TextureImpl(WGPUTexture texture, TextureFormat format, TextureDimension dimension, ConvertToBackingContext& convertToBackingContext, Ref<SwapChainWrapper>&& swapChainWrapper)
-    : m_format(format)
-    , m_dimension(dimension)
-    , m_backing(texture)
-    , m_convertToBackingContext(convertToBackingContext)
-    , m_swapChainWrapper(WTFMove(swapChainWrapper))
-{
-}
-
-TextureImpl::~TextureImpl()
-{
-    // For Textures owned by PresentationContexts, the PresentationContext will automatically release the texture when the PresentationContext is released.
-    // m_swapChainWrapper's purpose is just for such textures, to keep the swap chain alive as long as we are alive.
-    if (!m_swapChainWrapper)
-        wgpuTextureRelease(m_backing);
-}
+TextureImpl::~TextureImpl() = default;
 
 Ref<TextureView> TextureImpl::createView(const std::optional<TextureViewDescriptor>& descriptor)
 {
@@ -88,17 +73,17 @@ Ref<TextureView> TextureImpl::createView(const std::optional<TextureViewDescript
         descriptor ? m_convertToBackingContext->convertToBacking(descriptor->aspect) : WGPUTextureAspect_All,
     };
 
-    return TextureViewImpl::create(wgpuTextureCreateView(m_backing, &backingDescriptor), m_convertToBackingContext);
+    return TextureViewImpl::create(adoptWebGPU(wgpuTextureCreateView(m_backing.get(), &backingDescriptor)), m_convertToBackingContext);
 }
 
 void TextureImpl::destroy()
 {
-    wgpuTextureDestroy(m_backing);
+    wgpuTextureDestroy(m_backing.get());
 }
 
 void TextureImpl::setLabelInternal(const String& label)
 {
-    wgpuTextureSetLabel(m_backing, label.utf8().data());
+    wgpuTextureSetLabel(m_backing.get(), label.utf8().data());
 }
 
 } // namespace PAL::WebGPU

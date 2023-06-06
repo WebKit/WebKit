@@ -27,7 +27,7 @@
 
 #if HAVE(WEBGPU_IMPLEMENTATION)
 
-#include "WebGPUDeviceWrapper.h"
+#include "WebGPUPtr.h"
 #include "WebGPUQueue.h"
 #include <WebGPU/WebGPU.h>
 #include <wtf/Deque.h>
@@ -39,13 +39,9 @@ class ConvertToBackingContext;
 class QueueImpl final : public Queue {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<QueueImpl> create(WGPUQueue queue, ConvertToBackingContext& convertToBackingContext)
+    static Ref<QueueImpl> create(WebGPUPtr<WGPUQueue>&& queue, ConvertToBackingContext& convertToBackingContext)
     {
-        return adoptRef(*new QueueImpl(queue, convertToBackingContext));
-    }
-    static Ref<QueueImpl> create(WGPUQueue queue, ConvertToBackingContext& convertToBackingContext, Ref<DeviceWrapper>&& deviceWrapper)
-    {
-        return adoptRef(*new QueueImpl(queue, convertToBackingContext, WTFMove(deviceWrapper)));
+        return adoptRef(*new QueueImpl(WTFMove(queue), convertToBackingContext));
     }
 
     virtual ~QueueImpl();
@@ -53,15 +49,14 @@ public:
 private:
     friend class DowncastConvertToBackingContext;
 
-    QueueImpl(WGPUQueue, ConvertToBackingContext&);
-    QueueImpl(WGPUQueue, ConvertToBackingContext&, Ref<DeviceWrapper>&&);
+    QueueImpl(WebGPUPtr<WGPUQueue>&&, ConvertToBackingContext&);
 
     QueueImpl(const QueueImpl&) = delete;
     QueueImpl(QueueImpl&&) = delete;
     QueueImpl& operator=(const QueueImpl&) = delete;
     QueueImpl& operator=(QueueImpl&&) = delete;
 
-    WGPUQueue backing() const { return m_backing; }
+    WGPUQueue backing() const { return m_backing.get(); }
 
     void submit(Vector<std::reference_wrapper<CommandBuffer>>&&) final;
 
@@ -89,14 +84,8 @@ private:
 
     void setLabelInternal(const String&) final;
 
-    WGPUQueue m_backing { nullptr };
+    WebGPUPtr<WGPUQueue> m_backing;
     Ref<ConvertToBackingContext> m_convertToBackingContext;
-
-    // Some queues (actually, all queues, for now) are internally owned by their WGPUDevice, and wgpuDeviceGetQueue() is
-    // supposed to return the same object each time it's called. This means that both DeviceImpl and QueueImpl need to
-    // have strong references to the same WGPUDevice. However, WGPUDevices aren't reference counted, so we use a reference
-    // counted wrapper around it.
-    RefPtr<DeviceWrapper> m_deviceWrapper;
 };
 
 } // namespace PAL::WebGPU

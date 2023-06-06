@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +27,7 @@
 
 #if HAVE(WEBGPU_IMPLEMENTATION)
 
+#include "WebGPUPtr.h"
 #include "WebGPURenderBundleEncoder.h"
 #include <WebGPU/WebGPU.h>
 
@@ -37,9 +38,9 @@ class ConvertToBackingContext;
 class RenderBundleEncoderImpl final : public RenderBundleEncoder {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<RenderBundleEncoderImpl> create(WGPURenderBundleEncoder renderBundleEncoder, ConvertToBackingContext& convertToBackingContext)
+    static Ref<RenderBundleEncoderImpl> create(WebGPUPtr<WGPURenderBundleEncoder>&& renderBundleEncoder, ConvertToBackingContext& convertToBackingContext)
     {
-        return adoptRef(*new RenderBundleEncoderImpl(renderBundleEncoder, convertToBackingContext));
+        return adoptRef(*new RenderBundleEncoderImpl(WTFMove(renderBundleEncoder), convertToBackingContext));
     }
 
     virtual ~RenderBundleEncoderImpl();
@@ -47,14 +48,14 @@ public:
 private:
     friend class DowncastConvertToBackingContext;
 
-    RenderBundleEncoderImpl(WGPURenderBundleEncoder, ConvertToBackingContext&);
+    RenderBundleEncoderImpl(WebGPUPtr<WGPURenderBundleEncoder>&&, ConvertToBackingContext&);
 
     RenderBundleEncoderImpl(const RenderBundleEncoderImpl&) = delete;
     RenderBundleEncoderImpl(RenderBundleEncoderImpl&&) = delete;
     RenderBundleEncoderImpl& operator=(const RenderBundleEncoderImpl&) = delete;
     RenderBundleEncoderImpl& operator=(RenderBundleEncoderImpl&&) = delete;
 
-    WGPURenderBundleEncoder backing() const { return m_backing; }
+    WGPURenderBundleEncoder backing() const { return m_backing.get(); }
 
     void setPipeline(const RenderPipeline&) final;
 
@@ -88,7 +89,7 @@ private:
 
     void setLabelInternal(const String&) final;
 
-    WGPURenderBundleEncoder m_backing { nullptr };
+    WebGPUPtr<WGPURenderBundleEncoder> m_backing;
     Ref<ConvertToBackingContext> m_convertToBackingContext;
 };
 

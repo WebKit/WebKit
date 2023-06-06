@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +28,7 @@
 #if HAVE(WEBGPU_IMPLEMENTATION)
 
 #include "WebGPUBindGroup.h"
+#include "WebGPUPtr.h"
 #include <WebGPU/WebGPU.h>
 
 namespace PAL::WebGPU {
@@ -37,9 +38,9 @@ class ConvertToBackingContext;
 class BindGroupImpl final : public BindGroup {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<BindGroupImpl> create(WGPUBindGroup bindGroup, ConvertToBackingContext& convertToBackingContext)
+    static Ref<BindGroupImpl> create(WebGPUPtr<WGPUBindGroup>&& bindGroup, ConvertToBackingContext& convertToBackingContext)
     {
-        return adoptRef(*new BindGroupImpl(bindGroup, convertToBackingContext));
+        return adoptRef(*new BindGroupImpl(WTFMove(bindGroup), convertToBackingContext));
     }
 
     virtual ~BindGroupImpl();
@@ -47,18 +48,18 @@ public:
 private:
     friend class DowncastConvertToBackingContext;
 
-    BindGroupImpl(WGPUBindGroup, ConvertToBackingContext&);
+    BindGroupImpl(WebGPUPtr<WGPUBindGroup>&&, ConvertToBackingContext&);
 
     BindGroupImpl(const BindGroupImpl&) = delete;
     BindGroupImpl(BindGroupImpl&&) = delete;
     BindGroupImpl& operator=(const BindGroupImpl&) = delete;
     BindGroupImpl& operator=(BindGroupImpl&&) = delete;
 
-    WGPUBindGroup backing() const { return m_backing; }
+    WGPUBindGroup backing() const { return m_backing.get(); }
 
     void setLabelInternal(const String&) final;
 
-    WGPUBindGroup m_backing { nullptr };
+    WebGPUPtr<WGPUBindGroup> m_backing;
     Ref<ConvertToBackingContext> m_convertToBackingContext;
 };
 

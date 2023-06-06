@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +28,7 @@
 #if HAVE(WEBGPU_IMPLEMENTATION)
 
 #include "WebGPUAdapter.h"
+#include "WebGPUPtr.h"
 #include <WebGPU/WebGPU.h>
 #include <wtf/Deque.h>
 
@@ -38,9 +39,9 @@ class ConvertToBackingContext;
 class AdapterImpl final : public Adapter {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<AdapterImpl> create(WGPUAdapter adapter, ConvertToBackingContext& convertToBackingContext)
+    static Ref<AdapterImpl> create(WebGPUPtr<WGPUAdapter>&& adapter, ConvertToBackingContext& convertToBackingContext)
     {
-        return adoptRef(*new AdapterImpl(adapter, convertToBackingContext));
+        return adoptRef(*new AdapterImpl(WTFMove(adapter), convertToBackingContext));
     }
 
     virtual ~AdapterImpl();
@@ -48,18 +49,18 @@ public:
 private:
     friend class DowncastConvertToBackingContext;
 
-    AdapterImpl(WGPUAdapter, ConvertToBackingContext&);
+    AdapterImpl(WebGPUPtr<WGPUAdapter>&&, ConvertToBackingContext&);
 
     AdapterImpl(const AdapterImpl&) = delete;
     AdapterImpl(AdapterImpl&&) = delete;
     AdapterImpl& operator=(const AdapterImpl&) = delete;
     AdapterImpl& operator=(AdapterImpl&&) = delete;
 
-    WGPUAdapter backing() const { return m_backing; }
+    WGPUAdapter backing() const { return m_backing.get(); }
 
     void requestDevice(const DeviceDescriptor&, CompletionHandler<void(RefPtr<Device>&&)>&&) final;
 
-    WGPUAdapter m_backing { nullptr };
+    WebGPUPtr<WGPUAdapter> m_backing;
     Ref<ConvertToBackingContext> m_convertToBackingContext;
 };
 

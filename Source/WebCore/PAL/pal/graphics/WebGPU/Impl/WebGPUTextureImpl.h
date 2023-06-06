@@ -28,7 +28,7 @@
 #if HAVE(WEBGPU_IMPLEMENTATION)
 
 #include "WebGPUIntegralTypes.h"
-#include "WebGPUSwapChainWrapper.h"
+#include "WebGPUPtr.h"
 #include "WebGPUTexture.h"
 #include "WebGPUTextureDimension.h"
 #include "WebGPUTextureFormat.h"
@@ -41,13 +41,9 @@ class ConvertToBackingContext;
 class TextureImpl final : public Texture {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<TextureImpl> create(WGPUTexture texture, TextureFormat format, TextureDimension dimension, ConvertToBackingContext& convertToBackingContext)
+    static Ref<TextureImpl> create(WebGPUPtr<WGPUTexture>&& texture, TextureFormat format, TextureDimension dimension, ConvertToBackingContext& convertToBackingContext)
     {
-        return adoptRef(*new TextureImpl(texture, format, dimension, convertToBackingContext));
-    }
-    static Ref<TextureImpl> create(WGPUTexture texture, TextureFormat format, TextureDimension dimension, ConvertToBackingContext& convertToBackingContext, Ref<SwapChainWrapper>&& swapChainWrapper)
-    {
-        return adoptRef(*new TextureImpl(texture, format, dimension, convertToBackingContext, WTFMove(swapChainWrapper)));
+        return adoptRef(*new TextureImpl(WTFMove(texture), format, dimension, convertToBackingContext));
     }
 
     virtual ~TextureImpl();
@@ -55,15 +51,14 @@ public:
 private:
     friend class DowncastConvertToBackingContext;
 
-    TextureImpl(WGPUTexture, TextureFormat, TextureDimension, ConvertToBackingContext&);
-    TextureImpl(WGPUTexture, TextureFormat, TextureDimension, ConvertToBackingContext&, Ref<SwapChainWrapper>&&);
+    TextureImpl(WebGPUPtr<WGPUTexture>&&, TextureFormat, TextureDimension, ConvertToBackingContext&);
 
     TextureImpl(const TextureImpl&) = delete;
     TextureImpl(TextureImpl&&) = delete;
     TextureImpl& operator=(const TextureImpl&) = delete;
     TextureImpl& operator=(TextureImpl&&) = delete;
 
-    WGPUTexture backing() const { return m_backing; }
+    WGPUTexture backing() const { return m_backing.get(); }
 
     Ref<TextureView> createView(const std::optional<TextureViewDescriptor>&) final;
 
@@ -74,14 +69,8 @@ private:
     TextureFormat m_format { TextureFormat::Rgba8unorm };
     TextureDimension m_dimension { TextureDimension::_2d };
 
-    WGPUTexture m_backing { nullptr };
+    WebGPUPtr<WGPUTexture> m_backing;
     Ref<ConvertToBackingContext> m_convertToBackingContext;
-
-    // Some textures are internally owned by their WGPUSwapChain, and wgpuSwapChainGetCurrentTexture() is
-    // supposed to return the same object each time it's called within the same frame. This means that both PresentationContextImpl and TextureImpl need to
-    // have strong references to the same WGPUSwapChain. However, WGPUSwapChains aren't reference counted, so we use a reference
-    // counted wrapper around it.
-    RefPtr<SwapChainWrapper> m_swapChainWrapper;
 };
 
 } // namespace PAL::WebGPU

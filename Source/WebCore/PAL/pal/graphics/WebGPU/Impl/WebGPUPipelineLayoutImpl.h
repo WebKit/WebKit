@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +28,7 @@
 #if HAVE(WEBGPU_IMPLEMENTATION)
 
 #include "WebGPUPipelineLayout.h"
+#include "WebGPUPtr.h"
 #include <WebGPU/WebGPU.h>
 
 namespace PAL::WebGPU {
@@ -37,9 +38,9 @@ class ConvertToBackingContext;
 class PipelineLayoutImpl final : public PipelineLayout {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<PipelineLayoutImpl> create(WGPUPipelineLayout pipelineLayout, ConvertToBackingContext& convertToBackingContext)
+    static Ref<PipelineLayoutImpl> create(WebGPUPtr<WGPUPipelineLayout>&& pipelineLayout, ConvertToBackingContext& convertToBackingContext)
     {
-        return adoptRef(*new PipelineLayoutImpl(pipelineLayout, convertToBackingContext));
+        return adoptRef(*new PipelineLayoutImpl(WTFMove(pipelineLayout), convertToBackingContext));
     }
 
     virtual ~PipelineLayoutImpl();
@@ -47,18 +48,18 @@ public:
 private:
     friend class DowncastConvertToBackingContext;
 
-    PipelineLayoutImpl(WGPUPipelineLayout, ConvertToBackingContext&);
+    PipelineLayoutImpl(WebGPUPtr<WGPUPipelineLayout>&&, ConvertToBackingContext&);
 
     PipelineLayoutImpl(const PipelineLayoutImpl&) = delete;
     PipelineLayoutImpl(PipelineLayoutImpl&&) = delete;
     PipelineLayoutImpl& operator=(const PipelineLayoutImpl&) = delete;
     PipelineLayoutImpl& operator=(PipelineLayoutImpl&&) = delete;
 
-    WGPUPipelineLayout backing() const { return m_backing; }
+    WGPUPipelineLayout backing() const { return m_backing.get(); }
 
     void setLabelInternal(const String&) final;
 
-    WGPUPipelineLayout m_backing { nullptr };
+    WebGPUPtr<WGPUPipelineLayout> m_backing;
     Ref<ConvertToBackingContext> m_convertToBackingContext;
 };
 

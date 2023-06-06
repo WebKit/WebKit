@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +27,7 @@
 
 #if HAVE(WEBGPU_IMPLEMENTATION)
 
+#include "WebGPUPtr.h"
 #include "WebGPURenderBundle.h"
 #include <WebGPU/WebGPU.h>
 
@@ -37,9 +38,9 @@ class ConvertToBackingContext;
 class RenderBundleImpl final : public RenderBundle {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<RenderBundleImpl> create(WGPURenderBundle renderBundle, ConvertToBackingContext& convertToBackingContext)
+    static Ref<RenderBundleImpl> create(WebGPUPtr<WGPURenderBundle>&& renderBundle, ConvertToBackingContext& convertToBackingContext)
     {
-        return adoptRef(*new RenderBundleImpl(renderBundle, convertToBackingContext));
+        return adoptRef(*new RenderBundleImpl(WTFMove(renderBundle), convertToBackingContext));
     }
 
     virtual ~RenderBundleImpl();
@@ -47,18 +48,18 @@ public:
 private:
     friend class DowncastConvertToBackingContext;
 
-    RenderBundleImpl(WGPURenderBundle, ConvertToBackingContext&);
+    RenderBundleImpl(WebGPUPtr<WGPURenderBundle>&&, ConvertToBackingContext&);
 
     RenderBundleImpl(const RenderBundleImpl&) = delete;
     RenderBundleImpl(RenderBundleImpl&&) = delete;
     RenderBundleImpl& operator=(const RenderBundleImpl&) = delete;
     RenderBundleImpl& operator=(RenderBundleImpl&&) = delete;
 
-    WGPURenderBundle backing() const { return m_backing; }
+    WGPURenderBundle backing() const { return m_backing.get(); }
 
     void setLabelInternal(const String&) final;
 
-    WGPURenderBundle m_backing { nullptr };
+    WebGPUPtr<WGPURenderBundle> m_backing;
     Ref<ConvertToBackingContext> m_convertToBackingContext;
 };
 

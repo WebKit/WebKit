@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,16 +34,13 @@
 
 namespace PAL::WebGPU {
 
-BufferImpl::BufferImpl(WGPUBuffer buffer, ConvertToBackingContext& convertToBackingContext)
-    : m_backing(buffer)
+BufferImpl::BufferImpl(WebGPUPtr<WGPUBuffer>&& buffer, ConvertToBackingContext& convertToBackingContext)
+    : m_backing(WTFMove(buffer))
     , m_convertToBackingContext(convertToBackingContext)
 {
 }
 
-BufferImpl::~BufferImpl()
-{
-    wgpuBufferRelease(m_backing);
-}
+BufferImpl::~BufferImpl() = default;
 
 static Size64 getMappedSize(WGPUBuffer buffer, std::optional<Size64> size, Size64 offset)
 {
@@ -57,22 +54,22 @@ static Size64 getMappedSize(WGPUBuffer buffer, std::optional<Size64> size, Size6
 void BufferImpl::mapAsync(MapModeFlags mapModeFlags, Size64 offset, std::optional<Size64> size, CompletionHandler<void(bool)>&& callback)
 {
     auto backingMapModeFlags = m_convertToBackingContext->convertMapModeFlagsToBacking(mapModeFlags);
-    auto usedSize = getMappedSize(m_backing, size, offset);
+    auto usedSize = getMappedSize(m_backing.get(), size, offset);
 
     // FIXME: Check the casts.
-    wgpuBufferMapAsyncWithBlock(m_backing, backingMapModeFlags, static_cast<size_t>(offset), static_cast<size_t>(usedSize), makeBlockPtr([callback = WTFMove(callback)](WGPUBufferMapAsyncStatus status) mutable {
+    wgpuBufferMapAsyncWithBlock(m_backing.get(), backingMapModeFlags, static_cast<size_t>(offset), static_cast<size_t>(usedSize), makeBlockPtr([callback = WTFMove(callback)](WGPUBufferMapAsyncStatus status) mutable {
         callback(status == WGPUBufferMapAsyncStatus_Success ? true : false);
     }).get());
 }
 
 auto BufferImpl::getMappedRange(Size64 offset, std::optional<Size64> size) -> MappedRange
 {
-    auto usedSize = getMappedSize(m_backing, size, offset);
+    auto usedSize = getMappedSize(m_backing.get(), size, offset);
 
     // FIXME: Check the casts.
-    auto* pointer = wgpuBufferGetMappedRange(m_backing, static_cast<size_t>(offset), static_cast<size_t>(usedSize));
+    auto* pointer = wgpuBufferGetMappedRange(m_backing.get(), static_cast<size_t>(offset), static_cast<size_t>(usedSize));
     // FIXME: Check the type narrowing.
-    auto bufferSize = wgpuBufferGetSize(m_backing);
+    auto bufferSize = wgpuBufferGetSize(m_backing.get());
     size_t actualSize = pointer ? static_cast<size_t>(bufferSize) : 0;
     size_t actualOffset = pointer ? static_cast<size_t>(offset) : 0;
     return { static_cast<uint8_t*>(pointer) - actualOffset, actualSize };
@@ -80,17 +77,17 @@ auto BufferImpl::getMappedRange(Size64 offset, std::optional<Size64> size) -> Ma
 
 void BufferImpl::unmap()
 {
-    wgpuBufferUnmap(m_backing);
+    wgpuBufferUnmap(m_backing.get());
 }
 
 void BufferImpl::destroy()
 {
-    wgpuBufferDestroy(m_backing);
+    wgpuBufferDestroy(m_backing.get());
 }
 
 void BufferImpl::setLabelInternal(const String& label)
 {
-    wgpuBufferSetLabel(m_backing, label.utf8().data());
+    wgpuBufferSetLabel(m_backing.get(), label.utf8().data());
 }
 
 } // namespace PAL::WebGPU

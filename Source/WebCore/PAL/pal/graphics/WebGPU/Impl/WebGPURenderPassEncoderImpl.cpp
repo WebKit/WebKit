@@ -38,36 +38,33 @@
 
 namespace PAL::WebGPU {
 
-RenderPassEncoderImpl::RenderPassEncoderImpl(WGPURenderPassEncoder renderPassEncoder, ConvertToBackingContext& convertToBackingContext)
-    : m_backing(renderPassEncoder)
+RenderPassEncoderImpl::RenderPassEncoderImpl(WebGPUPtr<WGPURenderPassEncoder>&& renderPassEncoder, ConvertToBackingContext& convertToBackingContext)
+    : m_backing(WTFMove(renderPassEncoder))
     , m_convertToBackingContext(convertToBackingContext)
 {
 }
 
-RenderPassEncoderImpl::~RenderPassEncoderImpl()
-{
-    wgpuRenderPassEncoderRelease(m_backing);
-}
+RenderPassEncoderImpl::~RenderPassEncoderImpl() = default;
 
 void RenderPassEncoderImpl::setPipeline(const RenderPipeline& renderPipeline)
 {
-    wgpuRenderPassEncoderSetPipeline(m_backing, m_convertToBackingContext->convertToBacking(renderPipeline));
+    wgpuRenderPassEncoderSetPipeline(m_backing.get(), m_convertToBackingContext->convertToBacking(renderPipeline));
 }
 
 void RenderPassEncoderImpl::setIndexBuffer(const Buffer& buffer, IndexFormat indexFormat, std::optional<Size64> offset, std::optional<Size64> size)
 {
-    wgpuRenderPassEncoderSetIndexBuffer(m_backing, m_convertToBackingContext->convertToBacking(buffer), m_convertToBackingContext->convertToBacking(indexFormat), offset.value_or(0), size.value_or(WGPU_WHOLE_SIZE));
+    wgpuRenderPassEncoderSetIndexBuffer(m_backing.get(), m_convertToBackingContext->convertToBacking(buffer), m_convertToBackingContext->convertToBacking(indexFormat), offset.value_or(0), size.value_or(WGPU_WHOLE_SIZE));
 }
 
 void RenderPassEncoderImpl::setVertexBuffer(Index32 slot, const Buffer& buffer, std::optional<Size64> offset, std::optional<Size64> size)
 {
-    wgpuRenderPassEncoderSetVertexBuffer(m_backing, slot, m_convertToBackingContext->convertToBacking(buffer), offset.value_or(0), size.value_or(WGPU_WHOLE_SIZE));
+    wgpuRenderPassEncoderSetVertexBuffer(m_backing.get(), slot, m_convertToBackingContext->convertToBacking(buffer), offset.value_or(0), size.value_or(WGPU_WHOLE_SIZE));
 }
 
 void RenderPassEncoderImpl::draw(Size32 vertexCount, std::optional<Size32> instanceCount,
     std::optional<Size32> firstVertex, std::optional<Size32> firstInstance)
 {
-    wgpuRenderPassEncoderDraw(m_backing, vertexCount, instanceCount.value_or(1), firstVertex.value_or(0), firstInstance.value_or(0));
+    wgpuRenderPassEncoderDraw(m_backing.get(), vertexCount, instanceCount.value_or(1), firstVertex.value_or(0), firstInstance.value_or(0));
 }
 
 void RenderPassEncoderImpl::drawIndexed(Size32 indexCount, std::optional<Size32> instanceCount,
@@ -75,24 +72,24 @@ void RenderPassEncoderImpl::drawIndexed(Size32 indexCount, std::optional<Size32>
     std::optional<SignedOffset32> baseVertex,
     std::optional<Size32> firstInstance)
 {
-    wgpuRenderPassEncoderDrawIndexed(m_backing, indexCount, instanceCount.value_or(1), firstIndex.value_or(0), baseVertex.value_or(0), firstInstance.value_or(0));
+    wgpuRenderPassEncoderDrawIndexed(m_backing.get(), indexCount, instanceCount.value_or(1), firstIndex.value_or(0), baseVertex.value_or(0), firstInstance.value_or(0));
 }
 
 void RenderPassEncoderImpl::drawIndirect(const Buffer& indirectBuffer, Size64 indirectOffset)
 {
-    wgpuRenderPassEncoderDrawIndirect(m_backing, m_convertToBackingContext->convertToBacking(indirectBuffer), indirectOffset);
+    wgpuRenderPassEncoderDrawIndirect(m_backing.get(), m_convertToBackingContext->convertToBacking(indirectBuffer), indirectOffset);
 }
 
 void RenderPassEncoderImpl::drawIndexedIndirect(const Buffer& indirectBuffer, Size64 indirectOffset)
 {
-    wgpuRenderPassEncoderDrawIndexedIndirect(m_backing, m_convertToBackingContext->convertToBacking(indirectBuffer), indirectOffset);
+    wgpuRenderPassEncoderDrawIndexedIndirect(m_backing.get(), m_convertToBackingContext->convertToBacking(indirectBuffer), indirectOffset);
 }
 
 void RenderPassEncoderImpl::setBindGroup(Index32 index, const BindGroup& bindGroup,
     std::optional<Vector<BufferDynamicOffset>>&& dynamicOffsets)
 {
     auto backingOffsets = valueOrDefault(dynamicOffsets);
-    wgpuRenderPassEncoderSetBindGroup(m_backing, index, m_convertToBackingContext->convertToBacking(bindGroup), backingOffsets.size(), backingOffsets.data());
+    wgpuRenderPassEncoderSetBindGroup(m_backing.get(), index, m_convertToBackingContext->convertToBacking(bindGroup), backingOffsets.size(), backingOffsets.data());
 }
 
 void RenderPassEncoderImpl::setBindGroup(Index32 index, const BindGroup& bindGroup,
@@ -103,57 +100,57 @@ void RenderPassEncoderImpl::setBindGroup(Index32 index, const BindGroup& bindGro
 {
     UNUSED_PARAM(dynamicOffsetsArrayBufferLength);
     // FIXME: Use checked algebra.
-    wgpuRenderPassEncoderSetBindGroup(m_backing, index, m_convertToBackingContext->convertToBacking(bindGroup), dynamicOffsetsDataLength, dynamicOffsetsArrayBuffer + dynamicOffsetsDataStart);
+    wgpuRenderPassEncoderSetBindGroup(m_backing.get(), index, m_convertToBackingContext->convertToBacking(bindGroup), dynamicOffsetsDataLength, dynamicOffsetsArrayBuffer + dynamicOffsetsDataStart);
 }
 
 void RenderPassEncoderImpl::pushDebugGroup(String&& groupLabel)
 {
-    wgpuRenderPassEncoderPushDebugGroup(m_backing, groupLabel.utf8().data());
+    wgpuRenderPassEncoderPushDebugGroup(m_backing.get(), groupLabel.utf8().data());
 }
 
 void RenderPassEncoderImpl::popDebugGroup()
 {
-    wgpuRenderPassEncoderPopDebugGroup(m_backing);
+    wgpuRenderPassEncoderPopDebugGroup(m_backing.get());
 }
 
 void RenderPassEncoderImpl::insertDebugMarker(String&& markerLabel)
 {
-    wgpuRenderPassEncoderInsertDebugMarker(m_backing, markerLabel.utf8().data());
+    wgpuRenderPassEncoderInsertDebugMarker(m_backing.get(), markerLabel.utf8().data());
 }
 
 void RenderPassEncoderImpl::setViewport(float x, float y,
     float width, float height,
     float minDepth, float maxDepth)
 {
-    wgpuRenderPassEncoderSetViewport(m_backing, x, y, width, height, minDepth, maxDepth);
+    wgpuRenderPassEncoderSetViewport(m_backing.get(), x, y, width, height, minDepth, maxDepth);
 }
 
 void RenderPassEncoderImpl::setScissorRect(IntegerCoordinate x, IntegerCoordinate y,
     IntegerCoordinate width, IntegerCoordinate height)
 {
-    wgpuRenderPassEncoderSetScissorRect(m_backing, x, y, width, height);
+    wgpuRenderPassEncoderSetScissorRect(m_backing.get(), x, y, width, height);
 }
 
 void RenderPassEncoderImpl::setBlendConstant(Color color)
 {
     auto backingColor = m_convertToBackingContext->convertToBacking(color);
 
-    wgpuRenderPassEncoderSetBlendConstant(m_backing, &backingColor);
+    wgpuRenderPassEncoderSetBlendConstant(m_backing.get(), &backingColor);
 }
 
 void RenderPassEncoderImpl::setStencilReference(StencilValue stencilValue)
 {
-    wgpuRenderPassEncoderSetStencilReference(m_backing, stencilValue);
+    wgpuRenderPassEncoderSetStencilReference(m_backing.get(), stencilValue);
 }
 
 void RenderPassEncoderImpl::beginOcclusionQuery(Size32 queryIndex)
 {
-    wgpuRenderPassEncoderBeginOcclusionQuery(m_backing, queryIndex);
+    wgpuRenderPassEncoderBeginOcclusionQuery(m_backing.get(), queryIndex);
 }
 
 void RenderPassEncoderImpl::endOcclusionQuery()
 {
-    wgpuRenderPassEncoderEndOcclusionQuery(m_backing);
+    wgpuRenderPassEncoderEndOcclusionQuery(m_backing.get());
 }
 
 void RenderPassEncoderImpl::executeBundles(Vector<std::reference_wrapper<RenderBundle>>&& renderBundles)
@@ -162,17 +159,17 @@ void RenderPassEncoderImpl::executeBundles(Vector<std::reference_wrapper<RenderB
         return convertToBackingContext.convertToBacking(renderBundle.get());
     });
 
-    wgpuRenderPassEncoderExecuteBundles(m_backing, backingBundles.size(), backingBundles.data());
+    wgpuRenderPassEncoderExecuteBundles(m_backing.get(), backingBundles.size(), backingBundles.data());
 }
 
 void RenderPassEncoderImpl::end()
 {
-    wgpuRenderPassEncoderEnd(m_backing);
+    wgpuRenderPassEncoderEnd(m_backing.get());
 }
 
 void RenderPassEncoderImpl::setLabelInternal(const String& label)
 {
-    wgpuRenderPassEncoderSetLabel(m_backing, label.utf8().data());
+    wgpuRenderPassEncoderSetLabel(m_backing.get(), label.utf8().data());
 }
 
 } // namespace PAL::WebGPU

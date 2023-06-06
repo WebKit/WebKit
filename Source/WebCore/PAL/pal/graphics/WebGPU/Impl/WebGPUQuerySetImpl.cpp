@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,25 +33,22 @@
 
 namespace PAL::WebGPU {
 
-QuerySetImpl::QuerySetImpl(WGPUQuerySet querySet, ConvertToBackingContext& convertToBackingContext)
-    : m_backing(querySet)
+QuerySetImpl::QuerySetImpl(WebGPUPtr<WGPUQuerySet>&& querySet, ConvertToBackingContext& convertToBackingContext)
+    : m_backing(WTFMove(querySet))
     , m_convertToBackingContext(convertToBackingContext)
 {
 }
 
-QuerySetImpl::~QuerySetImpl()
-{
-    wgpuQuerySetRelease(m_backing);
-}
+QuerySetImpl::~QuerySetImpl() = default;
 
 void QuerySetImpl::destroy()
 {
-    wgpuQuerySetDestroy(m_backing);
+    wgpuQuerySetDestroy(m_backing.get());
 }
 
 void QuerySetImpl::setLabelInternal(const String& label)
 {
-    wgpuQuerySetSetLabel(m_backing, label.utf8().data());
+    wgpuQuerySetSetLabel(m_backing.get(), label.utf8().data());
 }
 
 } // namespace PAL::WebGPU

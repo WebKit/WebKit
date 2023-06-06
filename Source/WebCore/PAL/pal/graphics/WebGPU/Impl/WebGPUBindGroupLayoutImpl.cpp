@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,20 +33,17 @@
 
 namespace PAL::WebGPU {
 
-BindGroupLayoutImpl::BindGroupLayoutImpl(WGPUBindGroupLayout bindGroupLayout, ConvertToBackingContext& convertToBackingContext)
-    : m_backing(bindGroupLayout)
+BindGroupLayoutImpl::BindGroupLayoutImpl(WebGPUPtr<WGPUBindGroupLayout>&& bindGroupLayout, ConvertToBackingContext& convertToBackingContext)
+    : m_backing(WTFMove(bindGroupLayout))
     , m_convertToBackingContext(convertToBackingContext)
 {
 }
 
-BindGroupLayoutImpl::~BindGroupLayoutImpl()
-{
-    wgpuBindGroupLayoutRelease(m_backing);
-}
+BindGroupLayoutImpl::~BindGroupLayoutImpl() = default;
 
 void BindGroupLayoutImpl::setLabelInternal(const String& label)
 {
-    wgpuBindGroupLayoutSetLabel(m_backing, label.utf8().data());
+    wgpuBindGroupLayoutSetLabel(m_backing.get(), label.utf8().data());
 }
 
 } // namespace PAL::WebGPU

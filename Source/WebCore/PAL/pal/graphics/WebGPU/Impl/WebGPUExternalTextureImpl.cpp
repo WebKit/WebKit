@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,19 +34,18 @@
 
 namespace PAL::WebGPU {
 
-ExternalTextureImpl::ExternalTextureImpl(WGPUExternalTexture externalTexture, const ExternalTextureDescriptor& descriptor, ConvertToBackingContext& convertToBackingContext)
+ExternalTextureImpl::ExternalTextureImpl(WebGPUPtr<WGPUExternalTexture>&& externalTexture, const ExternalTextureDescriptor& descriptor, ConvertToBackingContext& convertToBackingContext)
     : m_convertToBackingContext(convertToBackingContext)
-    , m_backing(externalTexture)
+    , m_backing(WTFMove(externalTexture))
     , m_colorSpace(descriptor.colorSpace)
 {
 }
 
-ExternalTextureImpl::~ExternalTextureImpl()
-{
-}
+ExternalTextureImpl::~ExternalTextureImpl() = default;
 
 void ExternalTextureImpl::setLabelInternal(const String&)
 {
+    // FIXME: Implement this.
 }
 
 } // namespace PAL::WebGPU

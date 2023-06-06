@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +27,7 @@
 
 #if HAVE(WEBGPU_IMPLEMENTATION)
 
+#include "WebGPUPtr.h"
 #include "WebGPUQuerySet.h"
 #include <WebGPU/WebGPU.h>
 
@@ -37,9 +38,9 @@ class ConvertToBackingContext;
 class QuerySetImpl final : public QuerySet {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<QuerySetImpl> create(WGPUQuerySet querySet, ConvertToBackingContext& convertToBackingContext)
+    static Ref<QuerySetImpl> create(WebGPUPtr<WGPUQuerySet>&& querySet, ConvertToBackingContext& convertToBackingContext)
     {
-        return adoptRef(*new QuerySetImpl(querySet, convertToBackingContext));
+        return adoptRef(*new QuerySetImpl(WTFMove(querySet), convertToBackingContext));
     }
 
     virtual ~QuerySetImpl();
@@ -47,20 +48,20 @@ public:
 private:
     friend class DowncastConvertToBackingContext;
 
-    QuerySetImpl(WGPUQuerySet, ConvertToBackingContext&);
+    QuerySetImpl(WebGPUPtr<WGPUQuerySet>&&, ConvertToBackingContext&);
 
     QuerySetImpl(const QuerySetImpl&) = delete;
     QuerySetImpl(QuerySetImpl&&) = delete;
     QuerySetImpl& operator=(const QuerySetImpl&) = delete;
     QuerySetImpl& operator=(QuerySetImpl&&) = delete;
 
-    WGPUQuerySet backing() const { return m_backing; }
+    WGPUQuerySet backing() const { return m_backing.get(); }
 
     void destroy() final;
 
     void setLabelInternal(const String&) final;
 
-    WGPUQuerySet m_backing { nullptr };
+    WebGPUPtr<WGPUQuerySet> m_backing;
     Ref<ConvertToBackingContext> m_convertToBackingContext;
 };
 

@@ -38,16 +38,13 @@
 
 namespace PAL::WebGPU {
 
-GPUImpl::GPUImpl(WGPUInstance instance, ConvertToBackingContext& convertToBackingContext)
-    : m_backing(instance)
+GPUImpl::GPUImpl(WebGPUPtr<WGPUInstance>&& instance, ConvertToBackingContext& convertToBackingContext)
+    : m_backing(WTFMove(instance))
     , m_convertToBackingContext(convertToBackingContext)
 {
 }
 
-GPUImpl::~GPUImpl()
-{
-    wgpuInstanceRelease(m_backing);
-}
+GPUImpl::~GPUImpl() = default;
 
 void GPUImpl::requestAdapter(const RequestAdapterOptions& options, CompletionHandler<void(RefPtr<Adapter>&&)>&& callback)
 {
@@ -58,9 +55,9 @@ void GPUImpl::requestAdapter(const RequestAdapterOptions& options, CompletionHan
         options.forceFallbackAdapter,
     };
 
-    wgpuInstanceRequestAdapterWithBlock(m_backing, &backingOptions, makeBlockPtr([convertToBackingContext = m_convertToBackingContext.copyRef(), callback = WTFMove(callback)](WGPURequestAdapterStatus status, WGPUAdapter adapter, const char*) mutable {
+    wgpuInstanceRequestAdapterWithBlock(m_backing.get(), &backingOptions, makeBlockPtr([convertToBackingContext = m_convertToBackingContext.copyRef(), callback = WTFMove(callback)](WGPURequestAdapterStatus status, WGPUAdapter adapter, const char*) mutable {
         if (status == WGPURequestAdapterStatus_Success)
-            callback(AdapterImpl::create(adapter, convertToBackingContext));
+            callback(AdapterImpl::create(adoptWebGPU(adapter), convertToBackingContext));
         else
             callback(nullptr);
     }).get());
@@ -94,7 +91,7 @@ Ref<PresentationContext> GPUImpl::createPresentationContext(const PresentationCo
         nullptr,
     };
 
-    auto result = PresentationContextImpl::create(wgpuInstanceCreateSurface(m_backing, &surfaceDescriptor), m_convertToBackingContext);
+    auto result = PresentationContextImpl::create(adoptWebGPU(wgpuInstanceCreateSurface(m_backing.get(), &surfaceDescriptor)), m_convertToBackingContext);
     compositorIntegration.setPresentationContext(result);
     return result;
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +27,7 @@
 
 #if HAVE(WEBGPU_IMPLEMENTATION)
 
+#include "WebGPUPtr.h"
 #include "WebGPUShaderModule.h"
 #include <WebGPU/WebGPU.h>
 
@@ -37,9 +38,9 @@ class ConvertToBackingContext;
 class ShaderModuleImpl final : public ShaderModule {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<ShaderModuleImpl> create(WGPUShaderModule shaderModule, ConvertToBackingContext& convertToBackingContext)
+    static Ref<ShaderModuleImpl> create(WebGPUPtr<WGPUShaderModule>&& shaderModule, ConvertToBackingContext& convertToBackingContext)
     {
-        return adoptRef(*new ShaderModuleImpl(shaderModule, convertToBackingContext));
+        return adoptRef(*new ShaderModuleImpl(WTFMove(shaderModule), convertToBackingContext));
     }
 
     virtual ~ShaderModuleImpl();
@@ -47,20 +48,20 @@ public:
 private:
     friend class DowncastConvertToBackingContext;
 
-    ShaderModuleImpl(WGPUShaderModule, ConvertToBackingContext&);
+    ShaderModuleImpl(WebGPUPtr<WGPUShaderModule>&&, ConvertToBackingContext&);
 
     ShaderModuleImpl(const ShaderModuleImpl&) = delete;
     ShaderModuleImpl(ShaderModuleImpl&&) = delete;
     ShaderModuleImpl& operator=(const ShaderModuleImpl&) = delete;
     ShaderModuleImpl& operator=(ShaderModuleImpl&&) = delete;
 
-    WGPUShaderModule backing() const { return m_backing; }
+    WGPUShaderModule backing() const { return m_backing.get(); }
 
     void compilationInfo(CompletionHandler<void(Ref<CompilationInfo>&&)>&&) final;
 
     void setLabelInternal(const String&) final;
 
-    WGPUShaderModule m_backing { nullptr };
+    WebGPUPtr<WGPUShaderModule> m_backing;
     Ref<ConvertToBackingContext> m_convertToBackingContext;
 };
 

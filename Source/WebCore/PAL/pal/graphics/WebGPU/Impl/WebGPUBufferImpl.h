@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +28,7 @@
 #if HAVE(WEBGPU_IMPLEMENTATION)
 
 #include "WebGPUBuffer.h"
+#include "WebGPUPtr.h"
 #include <WebGPU/WebGPU.h>
 #include <wtf/Deque.h>
 
@@ -38,9 +39,9 @@ class ConvertToBackingContext;
 class BufferImpl final : public Buffer {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<BufferImpl> create(WGPUBuffer buffer, ConvertToBackingContext& convertToBackingContext)
+    static Ref<BufferImpl> create(WebGPUPtr<WGPUBuffer>&& buffer, ConvertToBackingContext& convertToBackingContext)
     {
-        return adoptRef(*new BufferImpl(buffer, convertToBackingContext));
+        return adoptRef(*new BufferImpl(WTFMove(buffer), convertToBackingContext));
     }
 
     virtual ~BufferImpl();
@@ -48,14 +49,14 @@ public:
 private:
     friend class DowncastConvertToBackingContext;
 
-    BufferImpl(WGPUBuffer, ConvertToBackingContext&);
+    BufferImpl(WebGPUPtr<WGPUBuffer>&&, ConvertToBackingContext&);
 
     BufferImpl(const BufferImpl&) = delete;
     BufferImpl(BufferImpl&&) = delete;
     BufferImpl& operator=(const BufferImpl&) = delete;
     BufferImpl& operator=(BufferImpl&&) = delete;
 
-    WGPUBuffer backing() const { return m_backing; }
+    WGPUBuffer backing() const { return m_backing.get(); }
 
     void mapAsync(MapModeFlags, Size64 offset, std::optional<Size64> sizeForMap, CompletionHandler<void(bool)>&&) final;
     MappedRange getMappedRange(Size64 offset, std::optional<Size64>) final;
@@ -65,7 +66,7 @@ private:
 
     void setLabelInternal(const String&) final;
 
-    WGPUBuffer m_backing { nullptr };
+    WebGPUPtr<WGPUBuffer> m_backing;
     Ref<ConvertToBackingContext> m_convertToBackingContext;
 };
 

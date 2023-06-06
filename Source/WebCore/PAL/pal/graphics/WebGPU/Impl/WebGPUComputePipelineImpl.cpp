@@ -34,26 +34,23 @@
 
 namespace PAL::WebGPU {
 
-ComputePipelineImpl::ComputePipelineImpl(WGPUComputePipeline computePipeline, ConvertToBackingContext& convertToBackingContext)
-    : m_backing(computePipeline)
+ComputePipelineImpl::ComputePipelineImpl(WebGPUPtr<WGPUComputePipeline>&& computePipeline, ConvertToBackingContext& convertToBackingContext)
+    : m_backing(WTFMove(computePipeline))
     , m_convertToBackingContext(convertToBackingContext)
 {
 }
 
-ComputePipelineImpl::~ComputePipelineImpl()
-{
-    wgpuComputePipelineRelease(m_backing);
-}
+ComputePipelineImpl::~ComputePipelineImpl() = default;
 
 Ref<BindGroupLayout> ComputePipelineImpl::getBindGroupLayout(uint32_t index)
 {
     // "A new GPUBindGroupLayout wrapper is returned each time"
-    return BindGroupLayoutImpl::create(wgpuComputePipelineGetBindGroupLayout(m_backing, index), m_convertToBackingContext);
+    return BindGroupLayoutImpl::create(adoptWebGPU(wgpuComputePipelineGetBindGroupLayout(m_backing.get(), index)), m_convertToBackingContext);
 }
 
 void ComputePipelineImpl::setLabelInternal(const String& label)
 {
-    wgpuComputePipelineSetLabel(m_backing, label.utf8().data());
+    wgpuComputePipelineSetLabel(m_backing.get(), label.utf8().data());
 }
 
 } // namespace PAL::WebGPU

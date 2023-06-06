@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +28,7 @@
 #if HAVE(WEBGPU_IMPLEMENTATION)
 
 #include "WebGPUCommandEncoder.h"
+#include "WebGPUPtr.h"
 #include <WebGPU/WebGPU.h>
 
 namespace PAL::WebGPU {
@@ -37,9 +38,9 @@ class ConvertToBackingContext;
 class CommandEncoderImpl final : public CommandEncoder {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<CommandEncoderImpl> create(WGPUCommandEncoder CommandEncoder, ConvertToBackingContext& convertToBackingContext)
+    static Ref<CommandEncoderImpl> create(WebGPUPtr<WGPUCommandEncoder>&& commandEncoder, ConvertToBackingContext& convertToBackingContext)
     {
-        return adoptRef(*new CommandEncoderImpl(CommandEncoder, convertToBackingContext));
+        return adoptRef(*new CommandEncoderImpl(WTFMove(commandEncoder), convertToBackingContext));
     }
 
     virtual ~CommandEncoderImpl();
@@ -47,14 +48,14 @@ public:
 private:
     friend class DowncastConvertToBackingContext;
 
-    CommandEncoderImpl(WGPUCommandEncoder, ConvertToBackingContext&);
+    CommandEncoderImpl(WebGPUPtr<WGPUCommandEncoder>&&, ConvertToBackingContext&);
 
     CommandEncoderImpl(const CommandEncoderImpl&) = delete;
     CommandEncoderImpl(CommandEncoderImpl&&) = delete;
     CommandEncoderImpl& operator=(const CommandEncoderImpl&) = delete;
     CommandEncoderImpl& operator=(CommandEncoderImpl&&) = delete;
 
-    WGPUCommandEncoder backing() const { return m_backing; }
+    WGPUCommandEncoder backing() const { return m_backing.get(); }
 
     Ref<RenderPassEncoder> beginRenderPass(const RenderPassDescriptor&) final;
     Ref<ComputePassEncoder> beginComputePass(const std::optional<ComputePassDescriptor>&) final;
@@ -103,7 +104,7 @@ private:
 
     void setLabelInternal(const String&) final;
 
-    WGPUCommandEncoder m_backing { nullptr };
+    WebGPUPtr<WGPUCommandEncoder> m_backing;
     Ref<ConvertToBackingContext> m_convertToBackingContext;
 };
 

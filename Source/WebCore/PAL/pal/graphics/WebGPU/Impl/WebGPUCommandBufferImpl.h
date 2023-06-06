@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +28,7 @@
 #if HAVE(WEBGPU_IMPLEMENTATION)
 
 #include "WebGPUCommandBuffer.h"
+#include "WebGPUPtr.h"
 #include <WebGPU/WebGPU.h>
 
 namespace PAL::WebGPU {
@@ -37,9 +38,9 @@ class ConvertToBackingContext;
 class CommandBufferImpl final : public CommandBuffer {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<CommandBufferImpl> create(WGPUCommandBuffer commandBuffer, ConvertToBackingContext& convertToBackingContext)
+    static Ref<CommandBufferImpl> create(WebGPUPtr<WGPUCommandBuffer>&& commandBuffer, ConvertToBackingContext& convertToBackingContext)
     {
-        return adoptRef(*new CommandBufferImpl(commandBuffer, convertToBackingContext));
+        return adoptRef(*new CommandBufferImpl(WTFMove(commandBuffer), convertToBackingContext));
     }
 
     virtual ~CommandBufferImpl();
@@ -47,18 +48,18 @@ public:
 private:
     friend class DowncastConvertToBackingContext;
 
-    CommandBufferImpl(WGPUCommandBuffer, ConvertToBackingContext&);
+    CommandBufferImpl(WebGPUPtr<WGPUCommandBuffer>&&, ConvertToBackingContext&);
 
     CommandBufferImpl(const CommandBufferImpl&) = delete;
     CommandBufferImpl(CommandBufferImpl&&) = delete;
     CommandBufferImpl& operator=(const CommandBufferImpl&) = delete;
     CommandBufferImpl& operator=(CommandBufferImpl&&) = delete;
 
-    WGPUCommandBuffer backing() const { return m_backing; }
+    WGPUCommandBuffer backing() const { return m_backing.get(); }
 
     void setLabelInternal(const String&) final;
 
-    WGPUCommandBuffer m_backing { nullptr };
+    WebGPUPtr<WGPUCommandBuffer> m_backing;
     Ref<ConvertToBackingContext> m_convertToBackingContext;
 };
 

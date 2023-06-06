@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +28,7 @@
 #if HAVE(WEBGPU_IMPLEMENTATION)
 
 #include "WebGPUBindGroupLayout.h"
+#include "WebGPUPtr.h"
 #include <WebGPU/WebGPU.h>
 
 namespace PAL::WebGPU {
@@ -37,9 +38,9 @@ class ConvertToBackingContext;
 class BindGroupLayoutImpl final : public BindGroupLayout {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<BindGroupLayoutImpl> create(WGPUBindGroupLayout bindGroupLayout, ConvertToBackingContext& convertToBackingContext)
+    static Ref<BindGroupLayoutImpl> create(WebGPUPtr<WGPUBindGroupLayout>&& bindGroupLayout, ConvertToBackingContext& convertToBackingContext)
     {
-        return adoptRef(*new BindGroupLayoutImpl(bindGroupLayout, convertToBackingContext));
+        return adoptRef(*new BindGroupLayoutImpl(WTFMove(bindGroupLayout), convertToBackingContext));
     }
 
     virtual ~BindGroupLayoutImpl();
@@ -47,18 +48,18 @@ public:
 private:
     friend class DowncastConvertToBackingContext;
 
-    BindGroupLayoutImpl(WGPUBindGroupLayout, ConvertToBackingContext&);
+    BindGroupLayoutImpl(WebGPUPtr<WGPUBindGroupLayout>&&, ConvertToBackingContext&);
 
     BindGroupLayoutImpl(const BindGroupLayoutImpl&) = delete;
     BindGroupLayoutImpl(BindGroupLayoutImpl&&) = delete;
     BindGroupLayoutImpl& operator=(const BindGroupLayoutImpl&) = delete;
     BindGroupLayoutImpl& operator=(BindGroupLayoutImpl&&) = delete;
 
-    WGPUBindGroupLayout backing() const { return m_backing; }
+    WGPUBindGroupLayout backing() const { return m_backing.get(); }
 
     void setLabelInternal(const String&) final;
 
-    WGPUBindGroupLayout m_backing { nullptr };
+    WebGPUPtr<WGPUBindGroupLayout> m_backing;
     Ref<ConvertToBackingContext> m_convertToBackingContext;
 };
 

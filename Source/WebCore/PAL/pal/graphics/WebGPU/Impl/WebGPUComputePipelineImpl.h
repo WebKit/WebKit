@@ -28,6 +28,7 @@
 #if HAVE(WEBGPU_IMPLEMENTATION)
 
 #include "WebGPUComputePipeline.h"
+#include "WebGPUPtr.h"
 #include <WebGPU/WebGPU.h>
 #include <wtf/HashMap.h>
 
@@ -39,9 +40,9 @@ class ConvertToBackingContext;
 class ComputePipelineImpl final : public ComputePipeline {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<ComputePipelineImpl> create(WGPUComputePipeline computePipeline, ConvertToBackingContext& convertToBackingContext)
+    static Ref<ComputePipelineImpl> create(WebGPUPtr<WGPUComputePipeline>&& computePipeline, ConvertToBackingContext& convertToBackingContext)
     {
-        return adoptRef(*new ComputePipelineImpl(computePipeline, convertToBackingContext));
+        return adoptRef(*new ComputePipelineImpl(WTFMove(computePipeline), convertToBackingContext));
     }
 
     virtual ~ComputePipelineImpl();
@@ -49,20 +50,20 @@ public:
 private:
     friend class DowncastConvertToBackingContext;
 
-    ComputePipelineImpl(WGPUComputePipeline, ConvertToBackingContext&);
+    ComputePipelineImpl(WebGPUPtr<WGPUComputePipeline>&&, ConvertToBackingContext&);
 
     ComputePipelineImpl(const ComputePipelineImpl&) = delete;
     ComputePipelineImpl(ComputePipelineImpl&&) = delete;
     ComputePipelineImpl& operator=(const ComputePipelineImpl&) = delete;
     ComputePipelineImpl& operator=(ComputePipelineImpl&&) = delete;
 
-    WGPUComputePipeline backing() const { return m_backing; }
+    WGPUComputePipeline backing() const { return m_backing.get(); }
 
     Ref<BindGroupLayout> getBindGroupLayout(uint32_t index) final;
 
     void setLabelInternal(const String&) final;
 
-    WGPUComputePipeline m_backing { nullptr };
+    WebGPUPtr<WGPUComputePipeline> m_backing;
     Ref<ConvertToBackingContext> m_convertToBackingContext;
 };
 

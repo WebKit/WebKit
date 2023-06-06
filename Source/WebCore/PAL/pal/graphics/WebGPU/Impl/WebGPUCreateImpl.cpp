@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,6 +31,7 @@
 #include "WebGPUAdapterImpl.h"
 #include "WebGPUDowncastConvertToBackingContext.h"
 #include "WebGPUImpl.h"
+#include "WebGPUPtr.h"
 #include <WebGPU/WebGPUExt.h>
 #include <wtf/BlockPtr.h>
 
@@ -59,11 +60,11 @@ RefPtr<GPU> create(ScheduleWorkFunction&& scheduleWorkFunction)
 
     if (!&wgpuCreateInstance)
         return nullptr;
-    auto instance = wgpuCreateInstance(&descriptor);
+    auto instance = adoptWebGPU(wgpuCreateInstance(&descriptor));
     if (!instance)
         return nullptr;
     auto convertToBackingContext = DowncastConvertToBackingContext::create();
-    return GPUImpl::create(instance, convertToBackingContext);
+    return GPUImpl::create(WTFMove(instance), convertToBackingContext);
 }
 
 } // namespace PAL::WebGPU

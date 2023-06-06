@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +28,7 @@
 #if HAVE(WEBGPU_IMPLEMENTATION)
 
 #include "WebGPUComputePassEncoder.h"
+#include "WebGPUPtr.h"
 #include <WebGPU/WebGPU.h>
 
 namespace PAL::WebGPU {
@@ -37,9 +38,9 @@ class ConvertToBackingContext;
 class ComputePassEncoderImpl final : public ComputePassEncoder {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<ComputePassEncoderImpl> create(WGPUComputePassEncoder computePassEncoder, ConvertToBackingContext& convertToBackingContext)
+    static Ref<ComputePassEncoderImpl> create(WebGPUPtr<WGPUComputePassEncoder>&& computePassEncoder, ConvertToBackingContext& convertToBackingContext)
     {
-        return adoptRef(*new ComputePassEncoderImpl(computePassEncoder, convertToBackingContext));
+        return adoptRef(*new ComputePassEncoderImpl(WTFMove(computePassEncoder), convertToBackingContext));
     }
 
     virtual ~ComputePassEncoderImpl();
@@ -47,14 +48,14 @@ public:
 private:
     friend class DowncastConvertToBackingContext;
 
-    ComputePassEncoderImpl(WGPUComputePassEncoder, ConvertToBackingContext&);
+    ComputePassEncoderImpl(WebGPUPtr<WGPUComputePassEncoder>&&, ConvertToBackingContext&);
 
     ComputePassEncoderImpl(const ComputePassEncoderImpl&) = delete;
     ComputePassEncoderImpl(ComputePassEncoderImpl&&) = delete;
     ComputePassEncoderImpl& operator=(const ComputePassEncoderImpl&) = delete;
     ComputePassEncoderImpl& operator=(ComputePassEncoderImpl&&) = delete;
 
-    WGPUComputePassEncoder backing() const { return m_backing; }
+    WGPUComputePassEncoder backing() const { return m_backing.get(); }
 
     void setPipeline(const ComputePipeline&) final;
     void dispatch(Size32 workgroupCountX, Size32 workgroupCountY, Size32 workgroupCountZ) final;
@@ -77,7 +78,7 @@ private:
 
     void setLabelInternal(const String&) final;
 
-    WGPUComputePassEncoder m_backing { nullptr };
+    WebGPUPtr<WGPUComputePassEncoder> m_backing;
     Ref<ConvertToBackingContext> m_convertToBackingContext;
 };
 

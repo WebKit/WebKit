@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +27,7 @@
 
 #if HAVE(WEBGPU_IMPLEMENTATION)
 
+#include "WebGPUPtr.h"
 #include "WebGPURenderPassEncoder.h"
 #include <WebGPU/WebGPU.h>
 
@@ -37,9 +38,9 @@ class ConvertToBackingContext;
 class RenderPassEncoderImpl final : public RenderPassEncoder {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<RenderPassEncoderImpl> create(WGPURenderPassEncoder renderPassEncoder, ConvertToBackingContext& convertToBackingContext)
+    static Ref<RenderPassEncoderImpl> create(WebGPUPtr<WGPURenderPassEncoder>&& renderPassEncoder, ConvertToBackingContext& convertToBackingContext)
     {
-        return adoptRef(*new RenderPassEncoderImpl(renderPassEncoder, convertToBackingContext));
+        return adoptRef(*new RenderPassEncoderImpl(WTFMove(renderPassEncoder), convertToBackingContext));
     }
 
     virtual ~RenderPassEncoderImpl();
@@ -47,14 +48,14 @@ public:
 private:
     friend class DowncastConvertToBackingContext;
 
-    RenderPassEncoderImpl(WGPURenderPassEncoder, ConvertToBackingContext&);
+    RenderPassEncoderImpl(WebGPUPtr<WGPURenderPassEncoder>&&, ConvertToBackingContext&);
 
     RenderPassEncoderImpl(const RenderPassEncoderImpl&) = delete;
     RenderPassEncoderImpl(RenderPassEncoderImpl&&) = delete;
     RenderPassEncoderImpl& operator=(const RenderPassEncoderImpl&) = delete;
     RenderPassEncoderImpl& operator=(RenderPassEncoderImpl&&) = delete;
 
-    WGPURenderPassEncoder backing() const { return m_backing; }
+    WGPURenderPassEncoder backing() const { return m_backing.get(); }
 
     void setPipeline(const RenderPipeline&) final;
 
@@ -102,7 +103,7 @@ private:
 
     void setLabelInternal(const String&) final;
 
-    WGPURenderPassEncoder m_backing { nullptr };
+    WebGPUPtr<WGPURenderPassEncoder> m_backing;
     Ref<ConvertToBackingContext> m_convertToBackingContext;
 };
 

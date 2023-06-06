@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,20 +33,17 @@
 
 namespace PAL::WebGPU {
 
-CommandBufferImpl::CommandBufferImpl(WGPUCommandBuffer commandBuffer, ConvertToBackingContext& convertToBackingContext)
-    : m_backing(commandBuffer)
+CommandBufferImpl::CommandBufferImpl(WebGPUPtr<WGPUCommandBuffer>&& commandBuffer, ConvertToBackingContext& convertToBackingContext)
+    : m_backing(WTFMove(commandBuffer))
     , m_convertToBackingContext(convertToBackingContext)
 {
 }
 
-CommandBufferImpl::~CommandBufferImpl()
-{
-    wgpuCommandBufferRelease(m_backing);
-}
+CommandBufferImpl::~CommandBufferImpl() = default;
 
 void CommandBufferImpl::setLabelInternal(const String& label)
 {
-    wgpuCommandBufferSetLabel(m_backing, label.utf8().data());
+    wgpuCommandBufferSetLabel(m_backing.get(), label.utf8().data());
 }
 
 } // namespace PAL::WebGPU
