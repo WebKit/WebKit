@@ -129,7 +129,7 @@ void RemoteScrollingTreeMac::didCommitTree()
 {
     ASSERT(isMainRunLoop());
 
-    if (m_nodesWithPendingScrollAnimations.isEmpty())
+    if (m_nodesWithPendingScrollAnimations.isEmpty() && m_nodesWithPendingKeyboardScrollAnimations.isEmpty())
         return;
 
     ScrollingThread::dispatch([protectedThis = Ref { *this }]() {
