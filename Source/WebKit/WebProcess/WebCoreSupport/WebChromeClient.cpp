@@ -1063,6 +1063,11 @@ void WebChromeClient::triggerRenderingUpdate()
         m_page.drawingArea()->triggerRenderingUpdate();
 }
 
+void WebChromeClient::renderingUpdateFrequencyChanged()
+{
+    WebProcess::singleton().eventDispatcher().renderingUpdateFrequencyChanged(m_page.identifier());
+}
+
 unsigned WebChromeClient::remoteImagesCountForTesting() const
 {
     return m_page.remoteImagesCountForTesting();

@@ -40,10 +40,9 @@ namespace WebCore {
 class RequestAnimationFrameCallback;
 class WorkerGlobalScope;
 
-class WorkerAnimationController final : public ThreadSafeRefCounted<WorkerAnimationController>, public ActiveDOMObject {
+class WorkerAnimationController : public ThreadSafeRefCounted<WorkerAnimationController>, public ActiveDOMObject {
 public:
-    static Ref<WorkerAnimationController> create(WorkerGlobalScope&);
-    ~WorkerAnimationController();
+    WEBCORE_EXPORT ~WorkerAnimationController();
 
     int requestAnimationFrame(Ref<RequestAnimationFrameCallback>&&);
     void cancelAnimationFrame(int);
@@ -51,31 +50,48 @@ public:
     using ThreadSafeRefCounted::ref;
     using ThreadSafeRefCounted::deref;
 
-private:
-    WorkerAnimationController(WorkerGlobalScope&);
+protected:
+    virtual void scheduleAnimation() = 0;
+    virtual void stopAnimation() = 0;
+    virtual bool isActive() const = 0;
+    WEBCORE_EXPORT void animationTimerFired();
 
-    const char* activeDOMObjectName() const final;
-
-    bool virtualHasPendingActivity() const final;
-    void stop() final;
-    void suspend(ReasonForSuspension) final;
-    void resume() final;
-
-    void scheduleAnimation();
-    void animationTimerFired();
-    void serviceRequestAnimationFrameCallbacks(DOMHighResTimeStamp timestamp);
+    WEBCORE_EXPORT WorkerAnimationController(WorkerGlobalScope&);
 
     WorkerGlobalScope& m_workerGlobalScope;
+    DOMHighResTimeStamp m_lastAnimationFrameTimestamp { 0 };
+
+private:
+    WEBCORE_EXPORT const char* activeDOMObjectName() const final;
+
+    WEBCORE_EXPORT bool virtualHasPendingActivity() const final;
+    WEBCORE_EXPORT void stop() final;
+    WEBCORE_EXPORT void suspend(ReasonForSuspension) final;
+    WEBCORE_EXPORT void resume() final;
+
+    void serviceRequestAnimationFrameCallbacks(DOMHighResTimeStamp timestamp);
 
     typedef Vector<RefPtr<RequestAnimationFrameCallback>> CallbackList;
     CallbackList m_animationCallbacks;
     typedef int CallbackId;
     CallbackId m_nextAnimationCallbackId { 0 };
 
-    Timer m_animationTimer;
-    DOMHighResTimeStamp m_lastAnimationFrameTimestamp { 0 };
-
     bool m_savedIsActive { false };
+};
+
+class TimerWorkerAnimationController final : public WorkerAnimationController {
+public:
+    static Ref<WorkerAnimationController> create(WorkerGlobalScope&);
+
+private:
+    TimerWorkerAnimationController(WorkerGlobalScope&);
+    ~TimerWorkerAnimationController();
+
+    void scheduleAnimation() final;
+    void stopAnimation() final;
+    bool isActive() const final;
+
+    Timer m_animationTimer;
 };
 
 } // namespace WebCore

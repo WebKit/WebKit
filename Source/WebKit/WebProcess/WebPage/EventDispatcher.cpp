@@ -35,11 +35,11 @@
 #include "WebProcessProxyMessages.h"
 #include "WebTouchEvent.h"
 #include "WebWheelEvent.h"
+#include <WebCore/Chrome.h>
 #include <WebCore/DisplayUpdate.h>
 #include <WebCore/Page.h>
 #include <WebCore/WheelEventTestMonitor.h>
 #include <wtf/MainThread.h>
-#include <wtf/RunLoop.h>
 #include <wtf/SystemTracing.h>
 
 #if ENABLE(ASYNC_SCROLLING)
@@ -306,19 +306,21 @@ void EventDispatcher::notifyScrollingTreesDisplayDidRefresh(PlatformDisplayID di
 }
 
 #if HAVE(CVDISPLAYLINK)
-void EventDispatcher::displayDidRefresh(PlatformDisplayID displayID, const DisplayUpdate& displayUpdate, bool sendToMainThread)
+void EventDispatcher::displayDidRefresh(PlatformDisplayID displayID, const DisplayUpdate& displayUpdate, bool wantsFullSpeedUpdates, bool anyObserverWantsCallback)
 {
-    tracePoint(DisplayRefreshDispatchingToMainThread, displayID, sendToMainThread);
+    assertIsCurrent(m_queue.get());
+    tracePoint(DisplayRefreshDispatchingToMainThread, displayID, anyObserverWantsCallback);
 
-    ASSERT(!RunLoop::isMain());
-
+    if (wantsFullSpeedUpdates) {
 #if ENABLE(MOMENTUM_EVENT_DISPATCHER)
-    m_momentumEventDispatcher->displayDidRefresh(displayID);
+        m_momentumEventDispatcher->displayDidRefresh(displayID);
 #endif
+    }
 
     notifyScrollingTreesDisplayDidRefresh(displayID);
+    notifyAsyncRenderingRefreshObserversDisplayDidRefresh(displayID, displayUpdate);
 
-    if (!sendToMainThread)
+    if (!anyObserverWantsCallback)
         return;
 
     RunLoop::main().dispatch([displayID, displayUpdate]() {
@@ -335,6 +337,20 @@ void EventDispatcher::pageScreenDidChange(PageIdentifier pageID, PlatformDisplay
     UNUSED_PARAM(pageID);
     UNUSED_PARAM(displayID);
 #endif
+
+#if HAVE(CVDISPLAYLINK)
+    dispatchToMainRunLoop([this, pageID] () WTF_REQUIRES_CAPABILITY(mainRunLoop) {
+        updateAsyncRenderingRefreshObservers(pageID);
+    });
+#endif
+}
+
+void EventDispatcher::renderingUpdateFrequencyChanged(PageIdentifier pageIdentifier)
+{
+    assertIsMainRunLoop();
+#if HAVE(CVDISPLAYLINK)
+    updateAsyncRenderingRefreshObservers(pageIdentifier);
+#endif
 }
 
 #if ENABLE(MOMENTUM_EVENT_DISPATCHER)
@@ -350,13 +366,177 @@ void EventDispatcher::handleSyntheticWheelEvent(WebCore::PageIdentifier pageIden
 
 void EventDispatcher::startDisplayDidRefreshCallbacks(WebCore::PlatformDisplayID displayID)
 {
-    WebProcess::singleton().parentProcessConnection()->send(Messages::WebProcessProxy::StartDisplayLink(m_observerID, displayID, WebCore::FullSpeedFramesPerSecond), 0);
+    WebProcess::singleton().parentProcessConnection()->send(Messages::WebProcessProxy::StartDisplayLink(m_observerID, displayID, WebCore::FullSpeedFramesPerSecond, false), 0);
 }
 
 void EventDispatcher::stopDisplayDidRefreshCallbacks(WebCore::PlatformDisplayID displayID)
 {
-    WebProcess::singleton().parentProcessConnection()->send(Messages::WebProcessProxy::StopDisplayLink(m_observerID, displayID), 0);
+    WebProcess::singleton().parentProcessConnection()->send(Messages::WebProcessProxy::StopDisplayLink(m_observerID, displayID, false), 0);
 }
+
+#if HAVE(CVDISPLAYLINK)
+EventDispatcher::PageObservers::PageObservers()
+    : m_observerID(DisplayLinkObserverID::generate())
+{ }
+
+void EventDispatcher::updateAsyncRenderingRefreshObservers(PageIdentifier pageIdentifier)
+{
+    assertIsMainRunLoop();
+    Locker locker { m_pageObserversLock };
+    auto it = m_pageObservers.find(pageIdentifier);
+
+    // All observers for this Page might have been removed before
+    // this task ran.
+    if (it == m_pageObservers.end())
+        return;
+
+    std::optional<PlatformDisplayID> displayID;
+    std::optional<FramesPerSecond> framesPerSecond;
+    std::optional<Seconds> updateInterval;
+    if (auto* webPage = WebProcess::singleton().webPage(pageIdentifier)) {
+        displayID = webPage->corePage()->chrome().displayID();
+        framesPerSecond = webPage->corePage()->preferredRenderingUpdateFramesPerSecond();
+        if (!framesPerSecond)
+            updateInterval = webPage->corePage()->preferredRenderingUpdateInterval();
+    }
+
+    if (it->value.m_displayID == displayID && it->value.m_framesPerSecond == framesPerSecond)
+        return;
+
+    if (it->value.m_displayID) {
+        if (it->value.m_framesPerSecond)
+            WebProcess::singleton().parentProcessConnection()->send(Messages::WebProcessProxy::StopDisplayLink(it->value.m_observerID, *it->value.m_displayID, false), 0);
+        if (it->value.m_updateInterval) {
+            dispatchToQueue([this, pageIdentifier] () WTF_REQUIRES_CAPABILITY(m_queue.get()) {
+                stopTimerForPage(pageIdentifier);
+            });
+        }
+    }
+
+    it->value.m_displayID = displayID;
+    it->value.m_framesPerSecond = framesPerSecond;
+    it->value.m_updateInterval = updateInterval;
+
+    if (!displayID)
+        return;
+
+    if (framesPerSecond)
+        WebProcess::singleton().parentProcessConnection()->send(Messages::WebProcessProxy::StartDisplayLink(it->value.m_observerID, *displayID, *framesPerSecond, true), 0);
+    else if (updateInterval) {
+        dispatchToQueue([this, pageIdentifier] () WTF_REQUIRES_CAPABILITY(m_queue.get()) {
+            startTimerForPage(pageIdentifier);
+        });
+    }
+}
+
+void EventDispatcher::startTimerForPage(PageIdentifier pageIdentifier)
+{
+    assertIsCurrent(m_queue.get());
+    Locker locker { m_pageObserversLock };
+    auto it = m_pageObservers.find(pageIdentifier);
+
+    if (it == m_pageObservers.end())
+        return;
+
+    if (!it->value.m_displayID || !it->value.m_updateInterval)
+        return;
+
+    it->value.m_timer = makeUnique<Timer>([this, pageIdentifier] {
+        assertIsCurrent(m_queue.get());
+        Locker locker { m_pageObserversLock };
+        auto it = m_pageObservers.find(pageIdentifier);
+
+        if (it == m_pageObservers.end())
+            return;
+
+        if (!it->value.m_displayID || !it->value.m_updateInterval)
+            return;
+
+        notifyPageObserversDisplayDidRefresh(it->value);
+    });
+    it->value.m_timer->startRepeating(*it->value.m_updateInterval);
+}
+
+void EventDispatcher::stopTimerForPage(PageIdentifier pageIdentifier)
+{
+    assertIsCurrent(m_queue.get());
+
+    Locker locker { m_pageObserversLock };
+    auto it = m_pageObservers.find(pageIdentifier);
+
+    if (it == m_pageObservers.end())
+        return;
+
+    if (it->value.m_timer)
+        it->value.m_timer->stop();
+    it->value.m_timer = nullptr;
+}
+
+void EventDispatcher::notifyAsyncRenderingRefreshObserversDisplayDidRefresh(WebCore::PlatformDisplayID displayID, const WebCore::DisplayUpdate& displayUpdate)
+{
+    assertIsCurrent(m_queue.get());
+    Locker locker { m_pageObserversLock };
+
+    for (auto& pageObserver : m_pageObservers) {
+        if (!pageObserver.value.m_displayID || !pageObserver.value.m_framesPerSecond || *pageObserver.value.m_displayID != displayID)
+            continue;
+        if (!displayUpdate.relevantForUpdateFrequency(*pageObserver.value.m_framesPerSecond))
+            continue;
+
+        notifyPageObserversDisplayDidRefresh(pageObserver.value);
+    }
+}
+
+void EventDispatcher::notifyPageObserversDisplayDidRefresh(PageObservers& pageObservers)
+{
+    assertIsCurrent(m_queue.get());
+    for (auto& ob : pageObservers.m_observers) {
+        auto observer = ob.m_observer;
+        ob.m_dispatcher.dispatch([observer] () {
+            observer->displayDidRefresh();
+        });
+    }
+}
+
+void EventDispatcher::addAsyncRenderingRefreshObserver(PageIdentifier pageIdentifier, FunctionDispatcher& dispatcher, AsyncRenderingRefreshObserver& observer)
+{
+    Locker locker { m_pageObserversLock };
+
+    auto addResult = m_pageObservers.add(pageIdentifier, PageObservers());
+
+    ASSERT(!addResult.iterator->value.m_observers.containsIf([&] (auto& observerAndDispatcher) {
+        return observerAndDispatcher.m_observer.ptr() == &observer;
+    }));
+    addResult.iterator->value.m_observers.append({ dispatcher, observer });
+
+    if (addResult.isNewEntry) {
+        dispatchToMainRunLoop([this, pageIdentifier] () WTF_REQUIRES_CAPABILITY(mainRunLoop) {
+            updateAsyncRenderingRefreshObservers(pageIdentifier);
+        });
+    }
+}
+
+void EventDispatcher::removeAsyncRenderingRefreshObserver(PageIdentifier pageIdentifier, AsyncRenderingRefreshObserver& observer)
+{
+    Locker locker { m_pageObserversLock };
+    auto it = m_pageObservers.find(pageIdentifier);
+    RELEASE_ASSERT(it != m_pageObservers.end());
+
+#if ASSERT_ENABLED
+    unsigned removedCount =
+#endif
+    it->value.m_observers.removeFirstMatching([&] (auto& observerAndDispatcher) {
+        return observerAndDispatcher.m_observer.ptr() == &observer;
+    });
+    ASSERT(removedCount == 1);
+
+    if (it->value.m_observers.isEmpty()) {
+        if (it->value.m_displayID)
+            WebProcess::singleton().parentProcessConnection()->send(Messages::WebProcessProxy::StopDisplayLink(it->value.m_observerID, *it->value.m_displayID, false), 0);
+        m_pageObservers.remove(it);
+    }
+}
+#endif
 
 #if ENABLE(MOMENTUM_EVENT_DISPATCHER_TEMPORARY_LOGGING)
 void EventDispatcher::flushMomentumEventLoggingSoon()

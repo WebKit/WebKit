@@ -43,12 +43,14 @@ public:
     ~DisplayLinkProcessProxyClient() = default;
     
     void setConnection(RefPtr<IPC::Connection>&&);
+    void setSendToEventDispatcher(bool);
 
 private:
     void displayLinkFired(WebCore::PlatformDisplayID, WebCore::DisplayUpdate, bool wantsFullSpeedUpdates, bool anyObserverWantsCallback) override;
 
     Lock m_connectionLock;
     RefPtr<IPC::Connection> m_connection;
+    bool m_sendToEventDispatcher { false };
 };
 
 }

@@ -41,6 +41,11 @@ void DisplayLinkProcessProxyClient::setConnection(RefPtr<IPC::Connection>&& conn
     m_connection = WTFMove(connection);
 }
 
+void DisplayLinkProcessProxyClient::setSendToEventDispatcher(bool sendToEventDispatcher)
+{
+    m_sendToEventDispatcher = sendToEventDispatcher;
+}
+
 // This is called off the main thread.
 void DisplayLinkProcessProxyClient::displayLinkFired(WebCore::PlatformDisplayID displayID, WebCore::DisplayUpdate displayUpdate, bool wantsFullSpeedUpdates, bool anyObserverWantsCallback)
 {
@@ -53,8 +58,8 @@ void DisplayLinkProcessProxyClient::displayLinkFired(WebCore::PlatformDisplayID 
     if (!connection)
         return;
 
-    if (wantsFullSpeedUpdates)
-        connection->send(Messages::EventDispatcher::DisplayDidRefresh(displayID, displayUpdate, anyObserverWantsCallback), 0, { }, Thread::QOS::UserInteractive);
+    if (wantsFullSpeedUpdates || m_sendToEventDispatcher)
+        connection->send(Messages::EventDispatcher::DisplayDidRefresh(displayID, displayUpdate, wantsFullSpeedUpdates, anyObserverWantsCallback), 0, { }, Thread::QOS::UserInteractive);
     else if (anyObserverWantsCallback)
         connection->send(Messages::WebProcess::DisplayDidRefresh(displayID, displayUpdate), 0, { }, Thread::QOS::UserInteractive);
 }

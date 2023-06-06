@@ -30,6 +30,6 @@
 namespace WebKit {
 
 struct DisplayLinkObserverIDType;
-using DisplayLinkObserverID = ObjectIdentifier<DisplayLinkObserverIDType>;
+using DisplayLinkObserverID = AtomicObjectIdentifier<DisplayLinkObserverIDType>;
 
 } // namespace WebKit
