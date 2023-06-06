@@ -31,9 +31,6 @@ struct WebKit::WebProcessCreationParameters {
 #if PLATFORM(COCOA) && ENABLE(REMOTE_INSPECTOR)
     Vector<WebKit::SandboxExtension::Handle> enableRemoteWebInspectorExtensionHandles;
 #endif
-#if ENABLE(MEDIA_STREAM)
-    WebKit::SandboxExtension::Handle audioCaptureExtensionHandle;
-#endif
 
     Vector<String> urlSchemesRegisteredAsEmptyDocument;
     Vector<String> urlSchemesRegisteredAsSecure;

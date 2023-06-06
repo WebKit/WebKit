@@ -273,9 +273,6 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
 
 #if ENABLE(SANDBOX_EXTENSIONS)
     SandboxExtension::consumePermanently(parameters.uiProcessBundleResourcePathExtensionHandle);
-#if ENABLE(MEDIA_STREAM)
-    SandboxExtension::consumePermanently(parameters.audioCaptureExtensionHandle);
-#endif
 #if PLATFORM(COCOA) && ENABLE(REMOTE_INSPECTOR)
     Inspector::RemoteInspector::setNeedMachSandboxExtension(!SandboxExtension::consumePermanently(parameters.enableRemoteWebInspectorExtensionHandles));
 #endif

@@ -448,31 +448,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     }
     parameters.networkATSContext = adoptCF(_CFNetworkCopyATSContext());
 
-#if ENABLE(MEDIA_STREAM)
-    // Allow microphone access if either preference is set because WebRTC requires microphone access.
-    bool mediaDevicesEnabled = m_defaultPageGroup->preferences().mediaDevicesEnabled();
-
-    bool isSafari = false;
-#if PLATFORM(IOS_FAMILY)
-    if (WebCore::IOSApplication::isMobileSafari())
-        isSafari = true;
-#elif PLATFORM(MAC)
-    if (WebCore::MacApplication::isSafari())
-        isSafari = true;
-#endif
-
-#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
-    // FIXME: Remove this and related parameter when <rdar://problem/29448368> is fixed.
-    if (isSafari && mediaDevicesEnabled && !m_defaultPageGroup->preferences().captureAudioInUIProcessEnabled() && !m_defaultPageGroup->preferences().captureAudioInGPUProcessEnabled()) {
-        if (auto handle = SandboxExtension::createHandleForGenericExtension("com.apple.webkit.microphone"_s))
-            parameters.audioCaptureExtensionHandle = WTFMove(*handle);
-    }
-#else
-    UNUSED_VARIABLE(mediaDevicesEnabled);
-    UNUSED_VARIABLE(isSafari);
-#endif
-#endif
-
 #if ENABLE(TRACKING_PREVENTION) && !RELEASE_LOG_DISABLED
     parameters.shouldLogUserInteraction = [defaults boolForKey:WebKitLogCookieInformationDefaultsKey];
 #endif
