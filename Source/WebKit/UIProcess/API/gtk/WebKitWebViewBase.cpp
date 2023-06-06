@@ -1647,6 +1647,9 @@ static void webkitWebViewBaseLeave(WebKitWebViewBase* webViewBase, GdkCrossingMo
         return;
 #endif
 
+    if (!priv->lastMotionEvent)
+        return;
+
     // We need to synthesize a fake mouse event here to let WebCore know that the mouse has left the
     // web view. Let's compute a point outside the web view that is close to the previous
     // coordinates of the pointer before it left the web view. First we'll figure out which
@@ -1654,7 +1657,6 @@ static void webkitWebViewBaseLeave(WebKitWebViewBase* webViewBase, GdkCrossingMo
     // pixel outside the view. This is not necessarily the closest point outside the web view, but
     // it's simple to calculate and surely good enough.
 
-    ASSERT(priv->lastMotionEvent);
     int previousX = std::round(priv->lastMotionEvent->position.x());
     int previousY = std::round(priv->lastMotionEvent->position.y());
     int width = gtk_widget_get_width(GTK_WIDGET(webViewBase));
