@@ -92,7 +92,7 @@ protected:
 
     WEBCORE_EXPORT void willCommitTree() override;
     void synchronizeStateFromScrollingTree();
-    WEBCORE_EXPORT void scheduleRenderingUpdate();
+    void scheduleRenderingUpdate();
 
     bool eventTrackingRegionsDirty() const { return m_eventTrackingRegionsDirty; }
 
