@@ -4395,16 +4395,10 @@ URL Page::allowedLookalikeCharacters(const URL& url) const
 
 void Page::willBeginScrolling()
 {
-#if USE(APPKIT)
-    editorClient().setCaretDecorationVisibility(false);
-#endif
 }
 
 void Page::didFinishScrolling()
 {
-#if USE(APPKIT)
-    editorClient().setCaretDecorationVisibility(true);
-#endif
 }
 
 void Page::addRootFrame(LocalFrame& frame)

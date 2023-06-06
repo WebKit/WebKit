@@ -3152,40 +3152,16 @@ void WebViewImpl::capitalizeWord()
     m_page->capitalizeWord();
 }
 
-#if USE(APPLE_INTERNAL_SDK)
-#include <WebKitAdditions/WebViewImplAdditions.mm>
-#else
-static Vector<WebCore::CompositionUnderline> extractInitialUnderlines(NSAttributedString *)
-{
-    return { };
-}
-
-bool WebViewImpl::markedTextInputEnabled() const
-{
-    return false;
-}
-
-void WebViewImpl::showMarkedTextForCandidate(NSTextCheckingResult *, NSRange, NSRange)
-{
-}
-
-void WebViewImpl::showMarkedTextForCandidates(NSArray<NSTextCheckingResult *> *)
-{
-}
-
 NSTextCheckingTypes WebViewImpl::getTextCheckingTypes() const
 {
-    return NSTextCheckingTypeSpelling | NSTextCheckingTypeReplacement | NSTextCheckingTypeCorrection;
-}
+    NSTextCheckingTypes types = NSTextCheckingTypeSpelling | NSTextCheckingTypeReplacement | NSTextCheckingTypeCorrection;
+#if HAVE(INLINE_PREDICTIONS)
+    if (allowsInlinePredictions())
+        types |= (NSTextCheckingType)_NSTextCheckingTypeSingleCompletion;
 #endif
 
-#ifndef WEB_VIEW_IMPL_ADDITIONS_SUSCRIBE_TO_TEXT_INPUT_NOTIFICATIONS_DEFINED
-static RetainPtr<NSObject> subscribeToTextInputNotifications(WebViewImpl*)
-{
-    return nullptr;
+    return types;
 }
-#endif //  WEB_VIEW_IMPL_ADDITIONS_SUSCRIBE_TO_TEXT_INPUT_NOTIFICATIONS_DEFINED
-
 
 void WebViewImpl::requestCandidatesForSelectionIfNeeded()
 {
@@ -3240,15 +3216,17 @@ void WebViewImpl::handleRequestedCandidates(NSInteger sequenceNumber, NSArray<NS
     if (m_lastStringForCandidateRequest != postLayoutData->stringForCandidateRequest)
         return;
 
-#if HAVE(TOUCH_BAR)
+#if HAVE(TOUCH_BAR) || HAVE(INLINE_PREDICTIONS)
     NSRange selectedRange = NSMakeRange(postLayoutData->candidateRequestStartPosition, postLayoutData->selectedTextLength);
     WebCore::IntRect offsetSelectionRect = postLayoutData->selectionBoundingRect;
     offsetSelectionRect.move(0, offsetSelectionRect.height());
 
     [candidateListTouchBarItem() setCandidates:candidates forSelectedRange:selectedRange inString:postLayoutData->paragraphContextForCandidateRequest rect:offsetSelectionRect view:m_view.getAutoreleased() completionHandler:nil];
 
-    if (markedTextInputEnabled())
-        showMarkedTextForCandidates(candidates);
+#if HAVE(INLINE_PREDICTIONS)
+    if (allowsInlinePredictions())
+        showInlinePredictionsForCandidates(candidates);
+#endif
 #else
     UNUSED_PARAM(candidates);
 #endif
@@ -4719,31 +4697,6 @@ NSArray *WebViewImpl::validAttributesForMarkedText()
     return validAttributes.get().get();
 }
 
-static Vector<WebCore::CompositionUnderline> extractUnderlines(NSAttributedString *string)
-{
-    Vector<WebCore::CompositionUnderline> result;
-    int length = string.string.length;
-
-    for (int i = 0; i < length;) {
-        NSRange range;
-        NSDictionary *attrs = [string attributesAtIndex:i longestEffectiveRange:&range inRange:NSMakeRange(i, length - i)];
-
-        if (NSNumber *style = [attrs objectForKey:NSUnderlineStyleAttributeName]) {
-            WebCore::Color color = WebCore::Color::black;
-            WebCore::CompositionUnderlineColor compositionUnderlineColor = WebCore::CompositionUnderlineColor::TextColor;
-            if (NSColor *colorAttribute = [attrs objectForKey:NSUnderlineColorAttributeName]) {
-                color = WebCore::colorFromCocoaColor(colorAttribute);
-                compositionUnderlineColor = WebCore::CompositionUnderlineColor::GivenColor;
-            }
-            result.append(WebCore::CompositionUnderline(range.location, NSMaxRange(range), compositionUnderlineColor, color, style.intValue > 1));
-        }
-
-        i = range.location + range.length;
-    }
-
-    return result;
-}
-
 static bool eventKeyCodeIsZeroOrNumLockOrFn(NSEvent *event)
 {
     unsigned short keyCode = [event keyCode];
@@ -5004,6 +4957,7 @@ void WebViewImpl::unmarkText()
     m_page->confirmCompositionAsync();
 }
 
+#if HAVE(REDESIGNED_TEXT_CURSOR)
 static BOOL shouldUseHighlightsForMarkedText(NSAttributedString *string)
 {
     __block BOOL result = NO;
@@ -5069,6 +5023,68 @@ static Vector<WebCore::CompositionHighlight> compositionHighlights(NSAttributedS
     mergedHighlights.shrinkToFit();
     return mergedHighlights;
 }
+#endif
+
+static Vector<WebCore::CompositionUnderline> compositionUnderlines(NSAttributedString *string)
+{
+    if (!string.length)
+        return { };
+
+    Vector<WebCore::CompositionUnderline> mergedUnderlines;
+
+#if HAVE(INLINE_PREDICTIONS) || HAVE(REDESIGNED_TEXT_CURSOR)
+    Vector<WebCore::CompositionUnderline> underlines;
+
+    [string enumerateAttributesInRange:NSMakeRange(0, string.length) options:0 usingBlock:[&underlines](NSDictionary<NSAttributedStringKey, id> *attributes, NSRange range, BOOL *) {
+        NSNumber *style = [attributes objectForKey:NSUnderlineStyleAttributeName];
+        if (!style)
+            return;
+
+        NSColor *underlineColor = attributes[NSUnderlineColorAttributeName];
+        bool isClear = [underlineColor isEqual:NSColor.clearColor];
+
+        if (!isClear)
+            underlines.append({ static_cast<unsigned>(range.location), static_cast<unsigned>(NSMaxRange(range)), WebCore::CompositionUnderlineColor::GivenColor, WebCore::Color::black, style.intValue > 1 });
+    }];
+
+    std::sort(underlines.begin(), underlines.end(), [](auto& a, auto& b) {
+        if (a.startOffset < b.startOffset)
+            return true;
+        if (a.startOffset > b.startOffset)
+            return false;
+        return a.endOffset < b.endOffset;
+    });
+
+    if (!underlines.isEmpty())
+        mergedUnderlines.append({ underlines.first().startOffset, underlines.last().endOffset, WebCore::CompositionUnderlineColor::GivenColor, WebCore::Color::black, false });
+
+    for (auto& underline : underlines) {
+        if (underline.thick)
+            mergedUnderlines.append(underline);
+    }
+#else
+    int length = string.string.length;
+
+    for (int i = 0; i < length;) {
+        NSRange range;
+        NSDictionary *attrs = [string attributesAtIndex:i longestEffectiveRange:&range inRange:NSMakeRange(i, length - i)];
+
+        if (NSNumber *style = [attrs objectForKey:NSUnderlineStyleAttributeName]) {
+            WebCore::Color color = WebCore::Color::black;
+            WebCore::CompositionUnderlineColor compositionUnderlineColor = WebCore::CompositionUnderlineColor::TextColor;
+            if (NSColor *colorAttribute = [attrs objectForKey:NSUnderlineColorAttributeName]) {
+                color = WebCore::colorFromCocoaColor(colorAttribute);
+                compositionUnderlineColor = WebCore::CompositionUnderlineColor::GivenColor;
+            }
+            mergedUnderlines.append(WebCore::CompositionUnderline(range.location, NSMaxRange(range), compositionUnderlineColor, color, style.intValue > 1));
+        }
+
+        i = range.location + range.length;
+    }
+#endif
+
+    return mergedUnderlines;
+}
 
 void WebViewImpl::setMarkedText(id string, NSRange selectedRange, NSRange replacementRange)
 {
@@ -5084,12 +5100,12 @@ void WebViewImpl::setMarkedText(id string, NSRange selectedRange, NSRange replac
     if (isAttributedString) {
         // FIXME: We ignore most attributes from the string, so an input method cannot specify e.g. a font or a glyph variation.
         text = [string string];
+#if HAVE(REDESIGNED_TEXT_CURSOR)
         if (shouldUseHighlightsForMarkedText(string))
             highlights = compositionHighlights(string);
-        else {
-            auto initialUnderlines = extractInitialUnderlines(string);
-            underlines = !initialUnderlines.isEmpty() ? initialUnderlines : extractUnderlines(string);
-        }
+        else
+#endif
+            underlines = compositionUnderlines(string);
     } else {
         text = string;
         underlines.append(WebCore::CompositionUnderline(0, [text length], WebCore::CompositionUnderlineColor::TextColor, WebCore::Color::black, false));
@@ -5110,6 +5126,110 @@ void WebViewImpl::setMarkedText(id string, NSRange selectedRange, NSRange replac
 
     m_page->setCompositionAsync(text, WTFMove(underlines), WTFMove(highlights), selectedRange, replacementRange);
 }
+
+#if HAVE(INLINE_PREDICTIONS)
+bool WebViewImpl::allowsInlinePredictions() const
+{
+    return m_page->preferences().inlinePredictionsEnabled() && [NSSpellChecker respondsToSelector:@selector(isAutomaticInlineCompletionEnabled)] && NSSpellChecker.isAutomaticInlineCompletionEnabled;
+}
+
+void WebViewImpl::showInlinePredictionsForCandidate(NSTextCheckingResult *candidate, NSRange absoluteSelectedRange, NSRange oldRelativeSelectedRange)
+{
+    if (!candidate)
+        return;
+
+    auto postLayoutData = postLayoutDataForContentEditable();
+    if (!postLayoutData)
+        return;
+
+    if (m_lastStringForCandidateRequest != postLayoutData->stringForCandidateRequest)
+        return;
+
+    NSRange relativeSelectedRange = NSMakeRange(postLayoutData->candidateRequestStartPosition, postLayoutData->selectedTextLength);
+    if (absoluteSelectedRange.location < relativeSelectedRange.location || absoluteSelectedRange.length != relativeSelectedRange.length)
+        return;
+
+    // Make sure the selected range didn’t change while we were making an asynchronous call to get it.
+    if (!NSEqualRanges(oldRelativeSelectedRange, relativeSelectedRange))
+        return;
+
+    NSString *paragraphContextForCandidateRequest = postLayoutData->paragraphContextForCandidateRequest;
+    auto offsetSelectionRect = postLayoutData->selectionBoundingRect;
+    offsetSelectionRect.move(0, offsetSelectionRect.height());
+
+    NSUInteger offset = absoluteSelectedRange.location - relativeSelectedRange.location;
+    NSTextCheckingResult *adjustedCandidate = [candidate resultByAdjustingRangesWithOffset:offset];
+
+    NSSpellChecker *spellChecker = [NSSpellChecker sharedSpellChecker];
+
+    if (![spellChecker respondsToSelector:@selector(showCompletionForCandidate:selectedRange:offset:inString:rect:view:completionHandler:)])
+        return;
+
+    WeakPtr weakThis { *this };
+    [spellChecker
+        showCompletionForCandidate:adjustedCandidate
+        selectedRange:absoluteSelectedRange
+        offset:offset
+        inString:paragraphContextForCandidateRequest
+        rect:offsetSelectionRect
+        view:m_view.getAutoreleased()
+        completionHandler:[weakThis](NSDictionary<NSString *, id> *resultDictionary) {
+        if (!weakThis)
+            return;
+
+        // FIXME: rdar://105809280 Adopt NSTextCheckingSoftSpaceRangeKey once it is in more builds.
+        NSValue *softSpaceRangeValue = resultDictionary[@"SoftSpaceRange"];
+        if (!softSpaceRangeValue)
+            return;
+
+        NSRange absoluteSoftSpaceRange = softSpaceRangeValue.rangeValue;
+        weakThis->selectedRangeWithCompletionHandler([weakThis, absoluteSoftSpaceRange](NSRange absoluteSelectedRange) {
+            if (!weakThis)
+                return;
+
+            auto postLayoutData = weakThis->postLayoutDataForContentEditable();
+            if (!postLayoutData)
+                return;
+
+            NSRange relativeSelectedRange = NSMakeRange(postLayoutData->candidateRequestStartPosition, postLayoutData->selectedTextLength);
+
+            if (absoluteSoftSpaceRange.location + absoluteSoftSpaceRange.length != absoluteSelectedRange.location)
+                return;
+
+            NSUInteger offset = absoluteSelectedRange.location - relativeSelectedRange.location;
+            NSRange relativeSoftSpaceRange = NSMakeRange(absoluteSoftSpaceRange.location - offset, absoluteSoftSpaceRange.length);
+
+            weakThis->m_softSpaceRange = relativeSoftSpaceRange;
+        });
+    }];
+}
+
+void WebViewImpl::showInlinePredictionsForCandidates(NSArray<NSTextCheckingResult *> *candidates)
+{
+    auto postLayoutData = postLayoutDataForContentEditable();
+    if (!postLayoutData)
+        return;
+
+    if (m_lastStringForCandidateRequest != postLayoutData->stringForCandidateRequest)
+        return;
+
+    NSSpellChecker *spellChecker = [NSSpellChecker sharedSpellChecker];
+
+    NSTextCheckingResult *candidate = [spellChecker completionCandidateFromCandidates:candidates];
+    if (!candidate)
+        return;
+
+    NSRange relativeSelectedRange = NSMakeRange(postLayoutData->candidateRequestStartPosition, postLayoutData->selectedTextLength);
+
+    WeakPtr weakThis { *this };
+    selectedRangeWithCompletionHandler([weakThis, retainedCandidate = retainPtr(candidate), relativeSelectedRange](NSRange absoluteSelectedRange) {
+        if (!weakThis)
+            return;
+
+        weakThis->showInlinePredictionsForCandidate(retainedCandidate.get(), absoluteSelectedRange, relativeSelectedRange);
+    });
+}
+#endif
 
 // Synchronous NSTextInputClient is still implemented to catch spurious sync calls. Remove when that is no longer needed.
 
@@ -5912,7 +6032,15 @@ bool WebViewImpl::shouldRequestCandidates() const
     if (m_page->editorState().isInPasswordField)
         return false;
 
-    return candidateListTouchBarItem().candidateListVisible || markedTextInputEnabled();
+    if (candidateListTouchBarItem().candidateListVisible)
+        return true;
+
+#if HAVE(INLINE_PREDICTIONS)
+    if (allowsInlinePredictions())
+        return true;
+#endif
+
+    return false;
 }
 
 void WebViewImpl::setEditableElementIsFocused(bool editableElementIsFocused)
@@ -5942,13 +6070,16 @@ void WebViewImpl::setEditableElementIsFocused(bool editableElementIsFocused)
 
 #endif // HAVE(TOUCH_BAR)
 
-#if !USE(APPLE_INTERNAL_SDK)
-void WebViewImpl::setCaretDecorationVisibility(bool)
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/WebViewImplAdditions.mm>
+#else
+void WebViewImpl::updateCaretDecorationPlacement()
 {
 }
 
-void WebViewImpl::updateCaretDecorationPlacement()
+static RetainPtr<NSObject> subscribeToTextInputNotifications(WebViewImpl*)
 {
+    return nullptr;
 }
 #endif
 

@@ -2227,10 +2227,6 @@ public:
     void didCreateSleepDisabler(WebCore::SleepDisablerIdentifier, const String& reason, bool display);
     void didDestroySleepDisabler(WebCore::SleepDisablerIdentifier);
 
-#if PLATFORM(MAC)
-    void setCaretDecorationVisibility(bool);
-#endif
-
 #if ENABLE(NETWORK_ISSUE_REPORTING)
     void reportNetworkIssue(const URL&);
 #endif

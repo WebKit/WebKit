@@ -3108,6 +3108,17 @@ InlineMediaPlaybackRequiresPlaysInlineAttribute:
       "PLATFORM(IOS_FAMILY)": true
       default: false
 
+InlinePredictionsEnabled:
+  type: bool
+  status: embedder
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 InputTypeColorEnabled:
   type: bool
   status: embedder
@@ -3966,17 +3977,6 @@ ManagedMediaSourceNeedsAirPlay:
       default: false
     WebKit:
       default: WebKit::defaultManagedMediaSourceNeedsAirPlay()
-    WebCore:
-      default: false
-
-MarkedTextInputEnabled:
-  type: bool
-  status: embedder
-  defaultValue:
-    WebKitLegacy:
-      default: false
-    WebKit:
-      default: false
     WebCore:
       default: false
 

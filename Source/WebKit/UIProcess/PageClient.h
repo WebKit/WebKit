@@ -463,8 +463,6 @@ public:
     virtual void registerInsertionUndoGrouping() = 0;
 
     virtual void setEditableElementIsFocused(bool) = 0;
-
-    virtual void setCaretDecorationVisibility(bool) = 0;
 #endif // PLATFORM(MAC)
 
 #if PLATFORM(COCOA)

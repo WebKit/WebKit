@@ -199,8 +199,6 @@ private:
 
     void setEditableElementIsFocused(bool) override;
 
-    void setCaretDecorationVisibility(bool) override;
-
     void didCommitLayerTree(const RemoteLayerTreeTransaction&) override;
     void layerTreeCommitComplete() override;
 

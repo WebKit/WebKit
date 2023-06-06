@@ -757,11 +757,6 @@ void PageClientImpl::setEditableElementIsFocused(bool editableElementIsFocused)
     m_impl->setEditableElementIsFocused(editableElementIsFocused);
 }
 
-void PageClientImpl::setCaretDecorationVisibility(bool visibility)
-{
-    m_impl->setCaretDecorationVisibility(visibility);
-}
-
 void PageClientImpl::didCommitLayerTree(const RemoteLayerTreeTransaction& layerTreeTransaction)
 {
 }

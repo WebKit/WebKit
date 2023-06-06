@@ -598,7 +598,9 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
     pageConfiguration->preferences()->setVideoFullscreenRequiresElementFullscreen(WebKit::defaultVideoFullscreenRequiresElementFullscreen());
 #endif
 
-    pageConfiguration->preferences()->setMarkedTextInputEnabled(!![_configuration _markedTextInputEnabled]);
+#if HAVE(INLINE_PREDICTIONS)
+    pageConfiguration->preferences()->setInlinePredictionsEnabled(!![_configuration allowsInlinePredictions]);
+#endif
 }
 
 - (instancetype)initWithFrame:(CGRect)frame configuration:(WKWebViewConfiguration *)configuration

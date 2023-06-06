@@ -185,7 +185,7 @@ static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview()
 #endif
     double _sampledPageTopColorMaxDifference;
     double _sampledPageTopColorMinHeight;
-    BOOL _markedTextInputEnabled;
+    BOOL _allowsInlinePredictions;
 
     RetainPtr<NSString> _mediaContentTypesRequiringHardwareSupport;
     RetainPtr<NSArray<NSString *>> _additionalSupportedImageTypes;
@@ -287,7 +287,7 @@ static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview()
     _sampledPageTopColorMaxDifference = DEFAULT_VALUE_FOR_SampledPageTopColorMaxDifference;
     _sampledPageTopColorMinHeight = DEFAULT_VALUE_FOR_SampledPageTopColorMinHeight;
 
-    _markedTextInputEnabled = NO;
+    _allowsInlinePredictions = NO;
 
     return self;
 }
@@ -481,7 +481,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     configuration->_sampledPageTopColorMaxDifference = self->_sampledPageTopColorMaxDifference;
     configuration->_sampledPageTopColorMinHeight = self->_sampledPageTopColorMinHeight;
 
-    configuration->_markedTextInputEnabled = self->_markedTextInputEnabled;
+    configuration->_allowsInlinePredictions = self->_allowsInlinePredictions;
 
     return configuration;
 }
@@ -650,10 +650,6 @@ static NSString *defaultApplicationNameForUserAgent()
 
     return static_cast<WebKit::WebURLSchemeHandlerCocoa*>(handler.get())->apiHandler();
 }
-
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/WKWebViewConfigurationAdditions.mm>
-#endif
 
 #if PLATFORM(IOS_FAMILY)
 - (BOOL)limitsNavigationsToAppBoundDomains
@@ -1492,14 +1488,25 @@ static WebKit::AttributionOverrideTesting toAttributionOverrideTesting(_WKAttrib
     return WebKit::toWKContentSecurityPolicyModeForExtension(_pageConfiguration->contentSecurityPolicyModeForExtension());
 }
 
+// FIXME: Remove this SPI once rdar://110277838 is resolved and all clients adopt the API.
 - (void)_setMarkedTextInputEnabled:(BOOL)enabled
 {
-    _markedTextInputEnabled = enabled;
+    _allowsInlinePredictions = enabled;
 }
 
 - (BOOL)_markedTextInputEnabled
 {
-    return _markedTextInputEnabled;
+    return _allowsInlinePredictions;
+}
+
+- (void)setAllowsInlinePredictions:(BOOL)enabled
+{
+    _allowsInlinePredictions = enabled;
+}
+
+- (BOOL)allowsInlinePredictions
+{
+    return _allowsInlinePredictions;
 }
 
 @end

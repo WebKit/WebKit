@@ -373,7 +373,6 @@ public:
     bool validateUserInterfaceItem(id <NSValidatedUserInterfaceItem>);
     void setEditableElementIsFocused(bool);
 
-    void setCaretDecorationVisibility(bool);
     void updateCaretDecorationPlacement();
 
     void startSpeaking();
@@ -571,7 +570,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     void keyUp(NSEvent *);
     void keyDown(NSEvent *);
     void flagsChanged(NSEvent *);
-    bool markedTextInputEnabled() const;
 
     // Override this so that AppKit will send us arrow keys as key down events so we can
     // support them via the key bindings mechanism.
@@ -762,8 +760,13 @@ private:
     bool mightBeginScrollWhileInactive();
 
     void handleRequestedCandidates(NSInteger sequenceNumber, NSArray<NSTextCheckingResult *> *candidates);
-    void showMarkedTextForCandidates(NSArray<NSTextCheckingResult *> *);
-    void showMarkedTextForCandidate(NSTextCheckingResult *, NSRange, NSRange);
+
+#if HAVE(INLINE_PREDICTIONS)
+    bool allowsInlinePredictions() const;
+    void showInlinePredictionsForCandidates(NSArray<NSTextCheckingResult *> *);
+    void showInlinePredictionsForCandidate(NSTextCheckingResult *, NSRange, NSRange);
+#endif
+
     NSTextCheckingTypes getTextCheckingTypes() const;
 
     void flushPendingMouseEventCallbacks();
