@@ -42,6 +42,7 @@
 #include "HTMLElementTypeHelpers.h"
 #include "HTMLImageElement.h"
 #include "HTMLNames.h"
+#include "HTMLSpanElement.h"
 #include "HTMLStyleElement.h"
 #include "LocalFrame.h"
 #include "MIMETypeRegistry.h"
@@ -259,6 +260,11 @@ void HTMLAttachmentElement::ensureModernShadowTree(ShadowRoot& root)
     m_subtitleElement = createContainedElement<HTMLDivElement>(*m_informationBlock, attachmentSubtitleIdentifier(), String { attachmentSubtitleForDisplay() });
 
     updateSaveButton(!attributeWithoutSynchronization(saveAttr).isNull());
+
+    auto selectable = HTMLSpanElement::create(document());
+    selectable->setIdAttribute("attachment-selectable-overlay"_s);
+    selectable->setInnerHTML("&nbsp;"_s);
+    root.appendChild(selectable);
 }
 
 class AttachmentSaveEventListener final : public EventListener {

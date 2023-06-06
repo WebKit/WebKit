@@ -1738,7 +1738,7 @@ bool RenderThemeIOS::paintAttachment(const RenderObject& renderer, const PaintIn
 String RenderThemeIOS::attachmentStyleSheet() const
 {
     ASSERT(DeprecatedGlobalSettings::attachmentElementEnabled());
-    return "attachment { appearance: auto; color: -apple-system-blue; }"_s;
+    return "attachment { appearance: auto; position: relative; color: -apple-system-blue; }"_s;
 }
 
 #endif // ENABLE(ATTACHMENT_ELEMENT)
