@@ -2368,7 +2368,6 @@ imported/w3c/web-platform-tests/screen-orientation/event-before-promise.html [ P
 imported/w3c/web-platform-tests/screen-orientation/lock-basic.html [ Pass Failure ]
 imported/w3c/web-platform-tests/screen-orientation/lock-unlock-check.html [ Pass Failure ]
 imported/w3c/web-platform-tests/screen-orientation/onchange-event-subframe.html [ Pass Failure ]
-imported/w3c/web-platform-tests/screen-orientation/orientation-reading.html [ Pass Failure ]
 imported/w3c/web-platform-tests/screen-orientation/onchange-event.html [ Pass Failure ]
 
 # UserActivation tests rely on test_driver.click() which is not supported on iOS
