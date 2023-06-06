@@ -6,6 +6,7 @@
     "webserver_benchmark_patch": "data/patches/webserver/MotionMark.patch",
     "webdriver_benchmark_patch": "data/patches/webdriver/MotionMark.patch",
     "entry_point": "index.html",
+    "subtest_entry_point": "developer.html",
     "config": {
         "orientation": "landscape"
     },
@@ -152,6 +153,100 @@
             {"path": "tests/text/design-6.js", "mode": "100644", "type": "blob"},
             {"path": "tests/text/design.html", "mode": "100644", "type": "blob"},
             {"path": "tests/text/design.js", "mode": "100644", "type": "blob"}
+        ]
+    },
+    "subtest_url_format": "suite-name=${SUITE}&test-name=${TEST}",
+    "subtests": {
+        "MotionMark": [
+            "Multiply",
+            "CanvasArcs",
+            "Leaves",
+            "Paths",
+            "CanvasLines",
+            "Images",
+            "Design",
+            "Suits"
+        ],
+        "HTMLSuite": [
+            "CSSBouncingCircles",
+            "CSSBouncingClippedRects",
+            "CSSBouncingGradientCircles",
+            "CSSBouncingBlendCircles",
+            "CSSBouncingFilterCircles",
+            "CSSBouncingSVGimages",
+            "CSSBouncingTaggedImages",
+            "Focus20",
+            "DOMParticlesSVGMasks",
+            "CompositedTransforms"
+        ],
+        "CanvasSuite": [
+            "CanvasBouncingClippedRects",
+            "CanvasBouncingGradientCircles",
+            "CanvasBouncingSVGImages",
+            "CanvasBouncingPNGImages",
+            "StrokeShapes",
+            "FillShapes",
+            "CanvasPutGetImageData"
+        ],
+        "SVGSuite": [
+            "SVGBouncingCircles",
+            "SVGBouncingClippedRects",
+            "SVGBouncingGradientCircles",
+            "SVGBouncingSVGImages",
+            "SVGBouncingPNGiImages"
+        ],
+        "LeavesSuite": [
+            "TranslateonlyLeaves",
+            "TranslateScaleLeaves",
+            "TranslateOpacityLeaves"
+        ],
+        "MultiplySuite": [
+            "MultiplyCSSOpacityOnly",
+            "MultiplyCSSDisplayOnly",
+            "MultiplyCSSVisibilityOnly"
+        ],
+        "TextSuite": [
+            "DesignLatinOnly12Items",
+            "DesignCJKOnly12Items",
+            "DesignRTLandComplexScriptsOnly12Items",
+            "DesignLatinOnly6Items",
+            "DesignCJKOnly6Items",
+            "DesignRTLAndComplexScriptsOnly6Items"
+        ],
+        "SuitsSuite": [
+            "SuitsClipOnly",
+            "SuitsShapeOnly",
+            "SuitsClipShapeRotation",
+            "SuitsClipShapeGradient",
+            "SuitsStatic"
+        ],
+        "3DGraphics": [
+            "TrianglesWebGL",
+            "TrianglesWebGPU"
+        ],
+        "BasicCanvasPathSuite": [
+            "CanvasLineSegmentsButtCaps",
+            "CanvasLineSegmentsRoundCaps",
+            "CanvasLineSegmentsSquareCaps",
+            "CanvasLinePathBevelJoin",
+            "CanvasLinePathRoundJoin",
+            "CanvasLinePathMiterJoin",
+            "CanvasLinePathWithDashPattern",
+            "CanvasQuadraticSegments",
+            "CanvasQuadraticPath",
+            "CanvasBezierSegments",
+            "CanvasBezierPath",
+            "CanvasArcToSegments",
+            "CanvasArcSegments",
+            "CanvasRects",
+            "CanvasEllipses",
+            "CanvasLinePathFill",
+            "CanvasQuadraticPathFill",
+            "CanvasBezierPathFill",
+            "CanvasArcToSegmentsFill",
+            "CanvasArcSegmentsFill",
+            "CanvasRectsFill",
+            "CanvasEllipsesFill"
         ]
     }
 }

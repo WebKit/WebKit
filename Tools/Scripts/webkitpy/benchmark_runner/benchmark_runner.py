@@ -151,9 +151,12 @@ class BenchmarkRunner(object):
                 _log.info('Start the iteration {current_iteration} of {iterations} for current benchmark'.format(current_iteration=iteration, iterations=count))
                 try:
                     self._browser_driver.prepare_env(self._config)
-
                     if 'entry_point' in self._plan:
-                        result = self._run_one_test(web_root, self._plan['entry_point'], iteration)
+                        if 'subtest_entry_point' in self._plan and self._subtests:
+                            entry_point = self._plan['subtest_entry_point']
+                        else:
+                            entry_point = self._plan['entry_point']
+                        result = self._run_one_test(web_root, entry_point, iteration)
                         debug_outputs.append(result.pop('debugOutput', None))
                         assert(result)
                         results.append(result)
