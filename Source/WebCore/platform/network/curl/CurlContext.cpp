@@ -323,16 +323,10 @@ const String CurlHandle::errorDescription(CURLcode errorCode)
     return String::fromLatin1(curl_easy_strerror(errorCode));
 }
 
-void CurlHandle::enableSSLForHost(const String& host)
+void CurlHandle::enableSSL()
 {
     auto& sslHandle = CurlContext::singleton().sslHandle();
-    if (auto sslClientCertificate = sslHandle.getSSLClientCertificate(host)) {
-        setSslCert(sslClientCertificate->first.utf8().data());
-        setSslCertType("P12");
-        setSslKeyPassword(sslClientCertificate->second.utf8().data());
-    }
-
-    if (sslHandle.canIgnoreAnyHTTPSCertificatesForHost(host) || sslHandle.shouldIgnoreSSLErrors()) {
+    if (sslHandle.shouldIgnoreSSLErrors()) {
         setSslVerifyPeer(CurlHandle::VerifyPeer::Disable);
         setSslVerifyHost(CurlHandle::VerifyHost::LooseNameCheck);
     } else {
@@ -414,7 +408,7 @@ void CurlHandle::setUrl(const URL& url)
     curl_easy_setopt(m_handle, CURLOPT_URL, curlUrl.string().latin1().data());
 
     if (url.protocolIs("https"_s))
-        enableSSLForHost(m_url.host().toString());
+        enableSSL();
 }
 
 void CurlHandle::appendRequestHeaders(const HTTPHeaderMap& headers)
@@ -592,21 +586,6 @@ void CurlHandle::setSslVerifyPeer(VerifyPeer verifyPeer)
 void CurlHandle::setSslVerifyHost(VerifyHost verifyHost)
 {
     curl_easy_setopt(m_handle, CURLOPT_SSL_VERIFYHOST, static_cast<long>(verifyHost));
-}
-
-void CurlHandle::setSslCert(const char* cert)
-{
-    curl_easy_setopt(m_handle, CURLOPT_SSLCERT, cert);
-}
-
-void CurlHandle::setSslCertType(const char* type)
-{
-    curl_easy_setopt(m_handle, CURLOPT_SSLCERTTYPE, type);
-}
-
-void CurlHandle::setSslKeyPassword(const char* password)
-{
-    curl_easy_setopt(m_handle, CURLOPT_KEYPASSWD, password);
 }
 
 void CurlHandle::setSslCipherList(const char* cipherList)

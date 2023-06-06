@@ -249,7 +249,7 @@ public:
     void enableShareHandle();
 
     void setUrl(const URL&);
-    void enableSSLForHost(const String&);
+    void enableSSL();
 
     void appendRequestHeaders(const HTTPHeaderMap&);
     void appendRequestHeader(const String& name, const String& value);
@@ -278,9 +278,6 @@ public:
     void setCACertBlob(void*, size_t);
     void setSslVerifyPeer(VerifyPeer);
     void setSslVerifyHost(VerifyHost);
-    void setSslCert(const char*);
-    void setSslCertType(const char*);
-    void setSslKeyPassword(const char*);
     void setSslCipherList(const char*);
     void setSslECCurves(const char*);
 
