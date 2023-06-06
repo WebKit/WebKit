@@ -29,7 +29,7 @@
 #include <wtf/MathExtras.h>
 #include <wtf/StdLibExtras.h>
 
-#if !USE(CAIRO)
+#if !USE(SYSTEM_MALLOC)
 #include <bmalloc/Algorithm.h>
 #endif
 namespace TestWebKitAPI {
@@ -158,7 +158,7 @@ TEST(WTF_StdLibExtras, RoundUpToMultipleOfNonPowerOfTwoWorks)
         EXPECT_EQ(x, roundUpToMultipleOfNonPowerOfTwo(CheckedUint64 { divisor }, CheckedUint64 { x }));
     }
 
-#if !USE(CAIRO)
+#if !USE(SYSTEM_MALLOC)
     // Test that bmalloc::roundUpToMultipleOfNonPowerOfTwo does not have the bug. The function uses size_t.
     {
         size_t x = std::numeric_limits<size_t>::max() - 2;
