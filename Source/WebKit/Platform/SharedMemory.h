@@ -113,6 +113,7 @@ public:
 #if USE(UNIX_DOMAIN_SOCKETS)
     static RefPtr<SharedMemory> wrapMap(void*, size_t, int fileDescriptor);
 #elif OS(DARWIN)
+    static RefPtr<SharedMemory> createReadOnlyVirtualCopy(const void*, size_t);
     static RefPtr<SharedMemory> wrapMap(void*, size_t, Protection);
 #endif
 #if OS(WINDOWS)

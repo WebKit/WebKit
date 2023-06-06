@@ -136,11 +136,9 @@ RefPtr<ShareableBitmap> ShareableBitmap::createFromImagePixels(NativeImage& imag
         return nullptr;
     }
 
-    RefPtr<SharedMemory> sharedMemory = SharedMemory::allocate(sizeInBytes);
+    RefPtr<SharedMemory> sharedMemory = SharedMemory::createReadOnlyVirtualCopy(bytes, sizeInBytes);
     if (!sharedMemory)
         return nullptr;
-
-    memcpy(sharedMemory->data(), bytes, sizeInBytes);
 
     return adoptRef(new ShareableBitmap(configuration, sharedMemory.releaseNonNull()));
 }

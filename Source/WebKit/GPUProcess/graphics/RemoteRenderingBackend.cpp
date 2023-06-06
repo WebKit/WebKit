@@ -366,7 +366,7 @@ void RemoteRenderingBackend::cacheNativeImageWithQualifiedIdentifier(ShareableBi
 {
     ASSERT(!RunLoop::isMain());
 
-    auto bitmap = ShareableBitmap::create(WTFMove(handle));
+    auto bitmap = ShareableBitmap::create(WTFMove(handle), SharedMemory::Protection::ReadOnly);
     if (!bitmap)
         return;
 

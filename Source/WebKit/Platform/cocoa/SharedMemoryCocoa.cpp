@@ -33,6 +33,7 @@
 #include <WebCore/SharedBuffer.h>
 #include <mach/mach_error.h>
 #include <mach/mach_port.h>
+#include <mach/mach_vm.h>
 #include <mach/vm_map.h>
 #include <wtf/MachSendRight.h>
 #include <wtf/RefPtr.h>
@@ -118,6 +119,46 @@ RefPtr<SharedMemory> SharedMemory::allocate(size_t size)
     sharedMemory->m_data = toPointer(address);
     sharedMemory->m_protection = Protection::ReadWrite;
     return WTFMove(sharedMemory);
+}
+
+RefPtr<SharedMemory> SharedMemory::createReadOnlyVirtualCopy(const void* data, size_t size)
+{
+    if (!data || !size)
+        return nullptr;
+
+    if (size < vm_page_size) {
+        auto sharedMemory = SharedMemory::allocate(size);
+        if (sharedMemory)
+            memcpy(sharedMemory->data(), data, size);
+        return sharedMemory;
+    }
+
+    mach_vm_address_t dataValue = toVMAddress(const_cast<void*>(data));
+    mach_vm_address_t pageAlignedSourceBegin = trunc_page(dataValue);
+    mach_vm_address_t pageAlignedSize = round_page(dataValue + size) - pageAlignedSourceBegin;
+    mach_vm_address_t offset = dataValue - pageAlignedSourceBegin;
+
+    auto sharedMemory = SharedMemory::allocate(pageAlignedSize);
+    if (!sharedMemory)
+        return nullptr;
+
+    auto copyResult = mach_vm_copy(mach_task_self(), pageAlignedSourceBegin, pageAlignedSize, toVMAddress(sharedMemory->data()));
+    void* adjustedData = toPointer(toVMAddress(sharedMemory->data()) + offset);
+
+    if (copyResult != KERN_SUCCESS) {
+        RELEASE_LOG_ERROR(VirtualMemory, "SharedMemory::createReadOnlyVirtualCopy: failed to virtually copy %zu bytes: %d", size, copyResult);
+        memcpy(adjustedData, data, size);
+    }
+
+    auto protectResult = mach_vm_protect(mach_task_self(), toVMAddress(sharedMemory->data()), pageAlignedSize, true, VM_PROT_READ);
+    RELEASE_LOG_ERROR_IF(protectResult != KERN_SUCCESS, VirtualMemory, "SharedMemory::createReadOnlyVirtualCopy: failed to change protection to read-only: %d", protectResult);
+
+    // Adjust the allocation in case the source pointer wasn't page aligned.
+    // mach_vm_deallocate will handle expanding this back out to page boundaries at deallocation time.
+    sharedMemory->m_size = size;
+    sharedMemory->m_data = adjustedData;
+    sharedMemory->m_protection = Protection::ReadOnly;
+    return sharedMemory;
 }
 
 static inline vm_prot_t machProtection(SharedMemory::Protection protection)
