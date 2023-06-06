@@ -822,7 +822,6 @@ void HTMLInputElement::attributeChanged(const QualifiedName& name, const AtomStr
         m_maxResults = newValue.isNull() ? -1 : std::min(parseHTMLInteger(newValue).value_or(0), maxSavedResults);
         break;
     case AttributeNames::autosaveAttr:
-    case AttributeNames::incrementalAttr:
         invalidateStyleForSubtree();
         break;
     case AttributeNames::maxAttr:

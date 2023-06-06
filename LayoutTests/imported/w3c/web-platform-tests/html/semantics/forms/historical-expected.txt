@@ -12,6 +12,6 @@ PASS form.namedItem should not be supported
 FAIL window.onsearch should not be supported assert_false: expected false got true
 FAIL document.onsearch should not be supported assert_false: expected false got true
 FAIL input.onsearch should not be supported assert_false: expected false got true
-FAIL input.incremental should not be supported assert_false: expected false got true
+PASS input.incremental should not be supported
 PASS <input name=isindex> should not be supported
 

@@ -575,18 +575,6 @@
     IMPL->setAttributeWithoutSynchronization(WebCore::HTMLNames::usemapAttr, newUseMap);
 }
 
-- (BOOL)incremental
-{
-    WebCore::JSMainThreadNullState state;
-    return IMPL->hasAttributeWithoutSynchronization(WebCore::HTMLNames::incrementalAttr);
-}
-
-- (void)setIncremental:(BOOL)newIncremental
-{
-    WebCore::JSMainThreadNullState state;
-    IMPL->setBooleanAttribute(WebCore::HTMLNames::incrementalAttr, newIncremental);
-}
-
 - (NSString *)accessKey
 {
     WebCore::JSMainThreadNullState state;
