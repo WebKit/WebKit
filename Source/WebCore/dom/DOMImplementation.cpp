@@ -196,8 +196,7 @@ Ref<Document> DOMImplementation::createDocument(const String& contentType, Local
 
     // The following is the relatively costly lookup that requires initializing the plug-in database.
     if (frame && frame->page()) {
-        auto allowedPluginTypes = frame->arePluginsEnabled()
-            ? PluginData::AllPlugins : PluginData::OnlyApplicationPlugins;
+        auto allowedPluginTypes = frame->arePluginsEnabled() ? AllPlugins : OnlyApplicationPlugins;
         if (frame->page()->pluginData().supportsWebVisibleMimeType(contentType, allowedPluginTypes))
             return PluginDocument::create(*frame, url);
     }

@@ -963,8 +963,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     if (WebCore::MIMETypeRegistry::isTextMIMEType(mimeType)
         || WebCore::Image::supportsType(mimeType)
-        || (pluginData && pluginData->supportsWebVisibleMimeType(mimeType, WebCore::PluginData::AllPlugins) && frame->arePluginsEnabled())
-        || (pluginData && pluginData->supportsWebVisibleMimeType(mimeType, WebCore::PluginData::OnlyApplicationPlugins)))
+        || (pluginData && pluginData->supportsWebVisibleMimeType(mimeType, WebCore::AllPlugins) && frame->arePluginsEnabled())
+        || (pluginData && pluginData->supportsWebVisibleMimeType(mimeType, WebCore::OnlyApplicationPlugins)))
         return NO;
 
     return YES;

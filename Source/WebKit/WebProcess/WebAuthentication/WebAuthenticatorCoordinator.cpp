@@ -106,7 +106,7 @@ bool WebAuthenticatorCoordinator::processingUserGesture(const LocalFrame& frame,
     auto processingUserGesture = UserGestureIndicator::processingUserGestureForMedia();
     bool processingUserGestureOrFreebie = processingUserGesture || !m_requireUserGesture;
     if (!processingUserGestureOrFreebie)
-        m_webPage.addConsoleMessage(frameID, MessageSource::Other, MessageLevel::Warning, "User gesture is not detected. To use the WebAuthn API, call 'navigator.credentials.create' or 'navigator.credentials.get' within user activated events."_s);
+        m_webPage.addConsoleMessage(frameID, MessageSource::Other, MessageLevel::Warning, "User gesture is not detected. To use the WebAuthn API, call 'navigator.credentials.create' or 'navigator.credentials.get' within user activated events."_s, std::nullopt);
 
     if (processingUserGesture && m_requireUserGesture)
         m_requireUserGesture = false;

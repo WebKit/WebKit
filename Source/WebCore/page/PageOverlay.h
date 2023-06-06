@@ -42,6 +42,8 @@ class Page;
 class PageOverlayController;
 class PlatformMouseEvent;
 
+using PageOverlayID = uint64_t;
+
 class PageOverlay final : public RefCounted<PageOverlay> {
     WTF_MAKE_NONCOPYABLE(PageOverlay);
     WTF_MAKE_FAST_ALLOCATED;
@@ -77,7 +79,7 @@ public:
 
     WEBCORE_EXPORT PageOverlayController* controller() const;
 
-    typedef uint64_t PageOverlayID;
+    using PageOverlayID = WebCore::PageOverlayID;
     virtual PageOverlayID pageOverlayID() const { return m_pageOverlayID; }
 
     void setPage(Page*);

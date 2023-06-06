@@ -38,7 +38,6 @@
 #include <wtf/RetainPtr.h>
 #include <wtf/Seconds.h>
 #include <wtf/ThreadSafetyAnalysis.h>
-#include <wtf/ThreadSpecific.h>
 #include <wtf/Threading.h>
 #include <wtf/ThreadingPrimitives.h>
 #include <wtf/WeakHashSet.h>
@@ -217,10 +216,9 @@ public:
 
     WTF_EXPORT_PRIVATE Ref<RunLoop::DispatchTimer> dispatchAfter(Seconds, Function<void()>&&);
 
-private:
     class Holder;
-    static ThreadSpecific<Holder>& runLoopHolder();
 
+private:
     RunLoop();
 
     void performWork();

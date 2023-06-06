@@ -34,6 +34,7 @@
 #import "WKWebProcessPlugInNodeHandleInternal.h"
 #import "WKWebProcessPlugInRangeHandleInternal.h"
 #import "WKWebProcessPlugInScriptWorldInternal.h"
+#import "WebPage.h"
 #import "WebProcess.h"
 #import "_WKFrameHandleInternal.h"
 #import <JavaScriptCore/JSValue.h>

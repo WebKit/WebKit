@@ -29,6 +29,7 @@
 #if USE(WPE_RENDERER)
 
 #include "WebPage.h"
+#include <WebCore/PageIdentifier.h>
 #include <WebCore/PlatformDisplayLibWPE.h>
 #include <wpe/wpe-egl.h>
 #include <wtf/UniStdExtras.h>

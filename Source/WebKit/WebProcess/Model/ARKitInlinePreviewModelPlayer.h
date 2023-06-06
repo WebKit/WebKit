@@ -28,7 +28,6 @@
 #if ENABLE(ARKIT_INLINE_PREVIEW)
 
 #import "ModelIdentifier.h"
-#import "WebPage.h"
 #import "WebPageProxyMessages.h"
 #import <WebCore/ModelPlayer.h>
 #import <WebCore/ModelPlayerClient.h>

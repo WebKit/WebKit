@@ -31,7 +31,6 @@
 #include "JSWebExtensionWrappable.h"
 #include "WebExtensionAPIObject.h"
 #include "WebExtensionEventListenerType.h"
-#include "WebPage.h"
 
 OBJC_CLASS JSValue;
 OBJC_CLASS NSDictionary;

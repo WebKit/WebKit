@@ -25,14 +25,13 @@
 
 #pragma once
 
-#include "RemoteLayerTreeDrawingArea.h"
 #include <WebCore/AnimationFrameRate.h>
 #include <WebCore/DisplayRefreshMonitor.h>
 
 namespace WebKit {
 
 class RemoteLayerTreeDisplayRefreshMonitor : public WebCore::DisplayRefreshMonitor {
-friend class RemoteLayerTreeDrawingArea;
+    friend class RemoteLayerTreeDrawingArea;
 public:
     static Ref<RemoteLayerTreeDisplayRefreshMonitor> create(WebCore::PlatformDisplayID displayID, RemoteLayerTreeDrawingArea& drawingArea)
     {

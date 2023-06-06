@@ -22,6 +22,11 @@
 
 #include "APIString.h"
 #include "InjectedBundle.h"
+#include "InjectedBundlePageContextMenuClient.h"
+#include "InjectedBundlePageFormClient.h"
+#include "InjectedBundlePageLoaderClient.h"
+#include "InjectedBundlePageResourceLoadClient.h"
+#include "InjectedBundlePageUIClient.h"
 #include "MessageSenderInlines.h"
 #include "WebContextMenuItem.h"
 #include "WebKitContextMenuPrivate.h"

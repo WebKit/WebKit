@@ -26,14 +26,15 @@
 #import "config.h"
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)
+
 #import "TextTrackRepresentationCocoa.h"
 
 #import "VideoFullscreenManager.h"
 #import "VideoFullscreenManagerProxyMessages.h"
 #import "WebPage.h"
-
 #import <WebCore/GraphicsContext.h>
 #import <WebCore/HTMLVideoElement.h>
+#import <WebCore/Page.h>
 
 namespace WebKit {
 
@@ -99,4 +100,3 @@ void WebTextTrackRepresentationCocoa::setHidden(bool hidden) const
 } // namespace WebKit
 
 #endif
-

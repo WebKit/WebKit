@@ -29,6 +29,7 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Ref.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/ThreadSpecific.h>
 #include <wtf/threads/BinarySemaphore.h>
 
 namespace WTF {
@@ -64,9 +65,9 @@ void RunLoop::initializeMain()
     s_mainRunLoop = &RunLoop::current();
 }
 
-auto RunLoop::runLoopHolder() -> ThreadSpecific<Holder>&
+static ThreadSpecific<RunLoop::Holder>& runLoopHolder()
 {
-    static LazyNeverDestroyed<ThreadSpecific<Holder>> runLoopHolder;
+    static LazyNeverDestroyed<ThreadSpecific<RunLoop::Holder>> runLoopHolder;
     static std::once_flag onceKey;
     std::call_once(onceKey, [&] {
         runLoopHolder.construct();

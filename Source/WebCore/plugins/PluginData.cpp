@@ -86,12 +86,14 @@ Vector<MimeClassInfo> PluginData::webVisibleMimeTypes() const
     return result;
 }
 
-static bool supportsMimeTypeForPlugins(const String& mimeType, const PluginData::AllowedPluginTypes allowedPluginTypes, const Vector<PluginInfo>& plugins)
+static bool supportsType(const String& type, AllowedPluginTypes allowedPluginTypes, const Vector<PluginInfo>& plugins)
 {
     for (auto& plugin : plugins) {
-        for (auto& type : plugin.mimes) {
-            if (type.type == mimeType && (allowedPluginTypes == PluginData::AllPlugins || plugin.isApplicationPlugin))
-                return true;
+        if (allowedPluginTypes == AllPlugins || plugin.isApplicationPlugin) {
+            for (auto& info : plugin.mimes) {
+                if (info.type == type)
+                    return true;
+            }
         }
     }
     return false;
@@ -99,12 +101,12 @@ static bool supportsMimeTypeForPlugins(const String& mimeType, const PluginData:
 
 bool PluginData::supportsMimeType(const String& mimeType, const AllowedPluginTypes allowedPluginTypes) const
 {
-    return supportsMimeTypeForPlugins(mimeType, allowedPluginTypes, plugins());
+    return supportsType(mimeType, allowedPluginTypes, plugins());
 }
 
 bool PluginData::supportsWebVisibleMimeType(const String& mimeType, const AllowedPluginTypes allowedPluginTypes) const
 {
-    return supportsMimeTypeForPlugins(mimeType, allowedPluginTypes, webVisiblePlugins());
+    return supportsType(mimeType, allowedPluginTypes, webVisiblePlugins());
 }
 
 bool PluginData::supportsWebVisibleMimeTypeForURL(const String& mimeType, const AllowedPluginTypes allowedPluginTypes, const URL& url) const
@@ -113,7 +115,7 @@ bool PluginData::supportsWebVisibleMimeTypeForURL(const String& mimeType, const 
         m_cachedVisiblePlugins = { url, m_page.pluginInfoProvider().webVisiblePluginInfo(m_page, url) };
     if (!m_cachedVisiblePlugins.pluginList)
         return false;
-    return supportsMimeTypeForPlugins(mimeType, allowedPluginTypes, *m_cachedVisiblePlugins.pluginList);
+    return supportsType(mimeType, allowedPluginTypes, *m_cachedVisiblePlugins.pluginList);
 }
 
 String PluginData::pluginFileForWebVisibleMimeType(const String& mimeType) const

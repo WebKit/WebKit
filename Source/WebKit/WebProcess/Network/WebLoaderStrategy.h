@@ -32,6 +32,7 @@
 #include <WebCore/ResourceLoader.h>
 #include <WebCore/ResourceResponse.h>
 #include <wtf/HashSet.h>
+#include <wtf/ObjectIdentifier.h>
 #include <wtf/RunLoop.h>
 
 namespace WebCore {
@@ -75,7 +76,7 @@ public:
 
     void setCaptureExtraNetworkLoadMetricsEnabled(bool) final;
 
-    WebResourceLoader* webResourceLoaderForIdentifier(WebCore::ResourceLoaderIdentifier identifier) const { return m_webResourceLoaders.get(identifier); }
+    WebResourceLoader* webResourceLoaderForIdentifier(WebCore::ResourceLoaderIdentifier) const;
     void schedulePluginStreamLoad(WebCore::LocalFrame&, WebCore::NetscapePlugInStreamLoaderClient&, WebCore::ResourceRequest&&, CompletionHandler<void(RefPtr<WebCore::NetscapePlugInStreamLoader>&&)>&&);
 
     void networkProcessCrashed();
@@ -123,12 +124,7 @@ private:
     void setResourceLoadSchedulingMode(WebCore::Page&, WebCore::LoadSchedulingMode) final;
     void prioritizeResourceLoads(const Vector<WebCore::SubresourceLoader*>&) final;
 
-    Vector<WebCore::ResourceLoaderIdentifier> ongoingLoads() const final
-    {
-        return WTF::map(m_webResourceLoaders, [](auto&& keyValue) -> WebCore::ResourceLoaderIdentifier {
-            return keyValue.key;
-        });
-    }
+    Vector<WebCore::ResourceLoaderIdentifier> ongoingLoads() const final;
 
     HashSet<RefPtr<WebCore::ResourceLoader>> m_internallyFailedResourceLoaders;
     RunLoop::Timer m_internallyFailedLoadTimer;

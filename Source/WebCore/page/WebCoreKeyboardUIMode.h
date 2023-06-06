@@ -27,7 +27,7 @@
 
 namespace WebCore {
 
-enum KeyboardUIMode {
+enum KeyboardUIMode : uint32_t {
     KeyboardAccessDefault     = 0x00000000,
     KeyboardAccessFull        = 0x00000001,
     // this flag may be or'ed with either of the two above

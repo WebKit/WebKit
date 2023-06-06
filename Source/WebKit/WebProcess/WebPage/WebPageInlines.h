@@ -26,8 +26,6 @@
 #pragma once
 
 #include "WebPage.h"
-
-#include "WebPageProxyIdentifier.h"
 #include "WebUserContentController.h"
 #include <WebCore/ActivityState.h>
 #include <WebCore/IntPoint.h>
@@ -41,29 +39,26 @@ inline WebCore::IntRect WebPage::bounds() const
     return WebCore::IntRect(WebCore::IntPoint(), size());
 }
 
-inline StorageNamespaceIdentifier WebPage::sessionStorageNamespaceIdentifier() const
-{
-    return ObjectIdentifier<StorageNamespaceIdentifierType>(m_webPageProxyIdentifier.toUInt64());
-}
-
 inline void WebPage::setHiddenPageDOMTimerThrottlingIncreaseLimit(Seconds limit)
 {
     m_page->setDOMTimerAlignmentIntervalIncreaseLimit(limit);
 }
 
-inline bool WebPage::isVisible() const
-{
-    return m_activityState.contains(WebCore::ActivityState::IsVisible);
-}
-
-inline bool WebPage::isVisibleOrOccluded() const
-{
-    return m_activityState.contains(WebCore::ActivityState::IsVisibleOrOccluded);
-}
-
 inline UserContentControllerIdentifier WebPage::userContentControllerIdentifier() const
 {
     return m_userContentController->identifier();
+}
+
+template<typename T> inline auto WebPage::sendSyncWithDelayedReply(T&& message, OptionSet<IPC::SendSyncOption> options) -> SendSyncResult<T>
+{
+    cancelCurrentInteractionInformationRequest();
+    return sendSync(WTFMove(message), Seconds::infinity(), options | IPC::SendSyncOption::InformPlatformProcessWillSuspend);
+}
+
+template<typename T> inline auto WebPage::sendSyncWithDelayedReply(T&& message) -> SendSyncResult<T>
+{
+    cancelCurrentInteractionInformationRequest();
+    return sendSync(WTFMove(message), Seconds::infinity(), IPC::SendSyncOption::InformPlatformProcessWillSuspend);
 }
 
 } // namespace WebKit

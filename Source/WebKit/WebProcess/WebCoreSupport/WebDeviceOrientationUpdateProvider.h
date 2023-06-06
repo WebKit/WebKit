@@ -25,17 +25,17 @@
 
 #pragma once
 
+#if PLATFORM(IOS_FAMILY) && ENABLE(DEVICE_ORIENTATION)
+
 #include "MessageReceiver.h"
-#include "WebPage.h"
-
 #include <WebCore/DeviceOrientationUpdateProvider.h>
-
+#include <WebCore/PageIdentifier.h>
 #include <wtf/WeakHashSet.h>
 #include <wtf/WeakPtr.h>
 
-#if PLATFORM(IOS_FAMILY) && ENABLE(DEVICE_ORIENTATION)
-
 namespace WebKit {
+
+class WebPage;
 
 class WebDeviceOrientationUpdateProvider final : public WebCore::DeviceOrientationUpdateProvider, private IPC::MessageReceiver {
 public:

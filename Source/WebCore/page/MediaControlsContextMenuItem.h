@@ -32,8 +32,10 @@
 
 namespace WebCore {
 
+using MediaControlsContextMenuItemID = uint64_t;
+
 struct MediaControlsContextMenuItem {
-    using ID = uint64_t;
+    using ID = MediaControlsContextMenuItemID;
     static constexpr ID invalidID = 0;
 
     ID id { invalidID };

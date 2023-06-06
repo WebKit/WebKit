@@ -28,6 +28,7 @@
 
 #if PLATFORM(MAC)
 
+#import "APIInjectedBundlePageContextMenuClient.h"
 #import "ContextMenuContextData.h"
 #import "DataReference.h"
 #import "EditingRange.h"
@@ -49,6 +50,7 @@
 #import "WebInspector.h"
 #import "WebKeyboardEvent.h"
 #import "WebMouseEvent.h"
+#import "WebPageInternals.h"
 #import "WebPageOverlay.h"
 #import "WebPageProxyMessages.h"
 #import "WebPasteboardOverrides.h"
@@ -286,7 +288,7 @@ bool WebPage::executeKeypressCommandsInternal(const Vector<WebCore::KeypressComm
                     eventWasHandled |= performedNonEditingBehavior;
                 }
             } else {
-                auto sendResult = WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPageProxy::ExecuteSavedCommandBySelector(commands[i].commandName), m_identifier);
+                auto sendResult = WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPageProxy::ExecuteSavedCommandBySelector(commands[i].commandName), identifier());
                 auto [commandWasHandledByUIProcess] = sendResult.takeReplyOr(false);
                 eventWasHandled |= commandWasHandledByUIProcess;
             }
@@ -471,7 +473,7 @@ bool WebPage::performNonEditingBehaviorForSelector(const String& selector, Keybo
     return didPerformAction;
 }
 
-void WebPage::registerUIProcessAccessibilityTokens(const IPC::DataReference& elementToken, const IPC::DataReference& windowToken)
+void WebPage::registerUIProcessAccessibilityTokens(std::span<const uint8_t> elementToken, std::span<const uint8_t> windowToken)
 {
     NSData *elementTokenData = [NSData dataWithBytes:elementToken.data() length:elementToken.size()];
     NSData *windowTokenData = [NSData dataWithBytes:windowToken.data() length:windowToken.size()];
@@ -1093,7 +1095,7 @@ void WebPage::setAccentColor(WebCore::Color color)
 
 void WebPage::zoomPDFIn(PDFPluginIdentifier identifier)
 {
-    auto pdfPlugin = m_pdfPlugInsWithHUD.get(identifier);
+    auto pdfPlugin = internals().pdfPlugInsWithHUD.get(identifier);
     if (!pdfPlugin)
         return;
     pdfPlugin->zoomIn();
@@ -1101,23 +1103,23 @@ void WebPage::zoomPDFIn(PDFPluginIdentifier identifier)
 
 void WebPage::zoomPDFOut(PDFPluginIdentifier identifier)
 {
-    auto pdfPlugin = m_pdfPlugInsWithHUD.get(identifier);
+    auto pdfPlugin = internals().pdfPlugInsWithHUD.get(identifier);
     if (!pdfPlugin)
         return;
     pdfPlugin->zoomOut();
 }
 
-void WebPage::savePDF(PDFPluginIdentifier identifier, CompletionHandler<void(const String&, const URL&, const IPC::DataReference&)>&& completionHandler)
+void WebPage::savePDF(PDFPluginIdentifier identifier, CompletionHandler<void(const String&, const URL&, std::span<const uint8_t>)>&& completionHandler)
 {
-    auto pdfPlugin = m_pdfPlugInsWithHUD.get(identifier);
+    auto pdfPlugin = internals().pdfPlugInsWithHUD.get(identifier);
     if (!pdfPlugin)
         return completionHandler({ }, { }, { });
     pdfPlugin->save(WTFMove(completionHandler));
 }
 
-void WebPage::openPDFWithPreview(PDFPluginIdentifier identifier, CompletionHandler<void(const String&, FrameInfoData&&, const IPC::DataReference&, const String&)>&& completionHandler)
+void WebPage::openPDFWithPreview(PDFPluginIdentifier identifier, CompletionHandler<void(const String&, FrameInfoData&&, std::span<const uint8_t>, const String&)>&& completionHandler)
 {
-    auto pdfPlugin = m_pdfPlugInsWithHUD.get(identifier);
+    auto pdfPlugin = internals().pdfPlugInsWithHUD.get(identifier);
     if (!pdfPlugin)
         return completionHandler({ }, { }, { }, { });
     pdfPlugin->openWithPreview(WTFMove(completionHandler));
@@ -1125,20 +1127,20 @@ void WebPage::openPDFWithPreview(PDFPluginIdentifier identifier, CompletionHandl
 
 void WebPage::createPDFHUD(PDFPlugin& plugin, const IntRect& boundingBox)
 {
-    auto addResult = m_pdfPlugInsWithHUD.add(plugin.identifier(), plugin);
+    auto addResult = internals().pdfPlugInsWithHUD.add(plugin.identifier(), plugin);
     if (addResult.isNewEntry)
         send(Messages::WebPageProxy::CreatePDFHUD(plugin.identifier(), boundingBox));
 }
 
 void WebPage::updatePDFHUDLocation(PDFPlugin& plugin, const IntRect& boundingBox)
 {
-    if (m_pdfPlugInsWithHUD.contains(plugin.identifier()))
+    if (internals().pdfPlugInsWithHUD.contains(plugin.identifier()))
         send(Messages::WebPageProxy::UpdatePDFHUDLocation(plugin.identifier(), boundingBox));
 }
 
 void WebPage::removePDFHUD(PDFPlugin& plugin)
 {
-    if (m_pdfPlugInsWithHUD.remove(plugin.identifier()))
+    if (internals().pdfPlugInsWithHUD.remove(plugin.identifier()))
         send(Messages::WebPageProxy::RemovePDFHUD(plugin.identifier()));
 }
 

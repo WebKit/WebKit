@@ -89,6 +89,8 @@ struct SupportedPluginIdentifier {
     String pluginIdentifier;
 };
 
+enum AllowedPluginTypes : bool { AllPlugins, OnlyApplicationPlugins };
+
 // FIXME: merge with PluginDatabase in the future
 class PluginData : public RefCounted<PluginData> {
 public:
@@ -98,10 +100,6 @@ public:
     WEBCORE_EXPORT const Vector<PluginInfo>& webVisiblePlugins() const;
     WEBCORE_EXPORT Vector<MimeClassInfo> webVisibleMimeTypes() const;
 
-    enum AllowedPluginTypes {
-        AllPlugins,
-        OnlyApplicationPlugins
-    };
     WEBCORE_EXPORT bool supportsMimeType(const String& mimeType, const AllowedPluginTypes) const;
     WEBCORE_EXPORT bool supportsWebVisibleMimeType(const String& mimeType, const AllowedPluginTypes) const;
     WEBCORE_EXPORT bool supportsWebVisibleMimeTypeForURL(const String& mimeType, const AllowedPluginTypes, const URL&) const;

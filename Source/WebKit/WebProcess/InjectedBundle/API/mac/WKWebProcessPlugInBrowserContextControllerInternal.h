@@ -24,11 +24,11 @@
  */
 
 #import "WKWebProcessPlugInBrowserContextControllerPrivate.h"
-
 #import "WKObject.h"
-#import "WebPage.h"
 
 namespace WebKit {
+
+class WebPage;
 
 template<> struct WrapperTraits<WebPage> {
     using WrapperClass = WKWebProcessPlugInBrowserContextController;
