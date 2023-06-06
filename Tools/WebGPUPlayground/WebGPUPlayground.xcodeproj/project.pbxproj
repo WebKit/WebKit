@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1C346E102A0F4285005EC88A /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C346E0F2A0F4285005EC88A /* main.swift */; };
 		1CC7E81229763E3600479E7B /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 1CC7E81129763E3600479E7B /* main.c */; };
 		1CC7E81D29763E4100479E7B /* AppPlaygroundApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CC7E81C29763E4100479E7B /* AppPlaygroundApp.swift */; };
 		1CC7E81F29763E4100479E7B /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CC7E81E29763E4100479E7B /* ContentView.swift */; };
@@ -22,6 +23,15 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		1C346E0B2A0F4285005EC88A /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
 		1CC7E80D29763E3500479E7B /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -56,6 +66,9 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		1C346E0D2A0F4285005EC88A /* CommandLinePlayground */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = CommandLinePlayground; sourceTree = BUILT_PRODUCTS_DIR; };
+		1C346E0F2A0F4285005EC88A /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
+		1C346E142A0F4300005EC88A /* CommandLinePlaygroundSwift.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = CommandLinePlaygroundSwift.xcconfig; sourceTree = "<group>"; };
 		1CC7E80F29763E3500479E7B /* CommandLinePlayground */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = CommandLinePlayground; sourceTree = BUILT_PRODUCTS_DIR; };
 		1CC7E81129763E3600479E7B /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
 		1CC7E81A29763E4100479E7B /* AppPlayground.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AppPlayground.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -78,6 +91,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		1C346E0A2A0F4285005EC88A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		1CC7E80C29763E3500479E7B /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -97,11 +117,20 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		1C346E0E2A0F4285005EC88A /* CommandLinePlaygroundSwift */ = {
+			isa = PBXGroup;
+			children = (
+				1C346E0F2A0F4285005EC88A /* main.swift */,
+			);
+			path = CommandLinePlaygroundSwift;
+			sourceTree = "<group>";
+		};
 		1CC7E7F029763DB900479E7B = {
 			isa = PBXGroup;
 			children = (
 				1CC7E82929763E4E00479E7B /* Configurations */,
 				1CC7E81029763E3600479E7B /* CommandLinePlayground */,
+				1C346E0E2A0F4285005EC88A /* CommandLinePlaygroundSwift */,
 				1CC7E81B29763E4100479E7B /* AppPlayground */,
 				1CC7E7FA29763DBA00479E7B /* Products */,
 				1CC7E83B29765EA200479E7B /* Frameworks */,
@@ -113,6 +142,7 @@
 			children = (
 				1CC7E80F29763E3500479E7B /* CommandLinePlayground */,
 				1CC7E81A29763E4100479E7B /* AppPlayground.app */,
+				1C346E0D2A0F4285005EC88A /* CommandLinePlayground */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -157,6 +187,7 @@
 				1CC7E82A29763EB500479E7B /* AppPlayground.xcconfig */,
 				1CC7E82E29763F0500479E7B /* Base.xcconfig */,
 				1CC7E82C29763EE800479E7B /* CommandLinePlayground.xcconfig */,
+				1C346E142A0F4300005EC88A /* CommandLinePlaygroundSwift.xcconfig */,
 				1CC7E82B29763EBD00479E7B /* DebugRelease.xcconfig */,
 			);
 			path = Configurations;
@@ -173,6 +204,23 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		1C346E0C2A0F4285005EC88A /* CommandLinePlaygroundSwift */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1C346E132A0F4285005EC88A /* Build configuration list for PBXNativeTarget "CommandLinePlaygroundSwift" */;
+			buildPhases = (
+				1C346E092A0F4285005EC88A /* Sources */,
+				1C346E0A2A0F4285005EC88A /* Frameworks */,
+				1C346E0B2A0F4285005EC88A /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = CommandLinePlaygroundSwift;
+			productName = CommandLinePlaygroundSwift;
+			productReference = 1C346E0D2A0F4285005EC88A /* CommandLinePlayground */;
+			productType = "com.apple.product-type.tool";
+		};
 		1CC7E80E29763E3500479E7B /* CommandLinePlayground */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 1CC7E81329763E3600479E7B /* Build configuration list for PBXNativeTarget "CommandLinePlayground" */;
@@ -219,6 +267,9 @@
 				LastSwiftUpdateCheck = 1500;
 				LastUpgradeCheck = 1500;
 				TargetAttributes = {
+					1C346E0C2A0F4285005EC88A = {
+						CreatedOnToolsVersion = 15.0;
+					};
 					1CC7E80E29763E3500479E7B = {
 						CreatedOnToolsVersion = 15.0;
 					};
@@ -243,6 +294,7 @@
 			targets = (
 				1CC7E80E29763E3500479E7B /* CommandLinePlayground */,
 				1CC7E81929763E4100479E7B /* AppPlayground */,
+				1C346E0C2A0F4285005EC88A /* CommandLinePlaygroundSwift */,
 			);
 		};
 /* End PBXProject section */
@@ -260,6 +312,14 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		1C346E092A0F4285005EC88A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1C346E102A0F4285005EC88A /* main.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		1CC7E80B29763E3500479E7B /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -283,6 +343,20 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
+		1C346E112A0F4285005EC88A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 1C346E142A0F4300005EC88A /* CommandLinePlaygroundSwift.xcconfig */;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		1C346E122A0F4285005EC88A /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 1C346E142A0F4300005EC88A /* CommandLinePlaygroundSwift.xcconfig */;
+			buildSettings = {
+			};
+			name = Release;
+		};
 		1CC7E80629763DBB00479E7B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 1CC7E82B29763EBD00479E7B /* DebugRelease.xcconfig */;
@@ -335,6 +409,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		1C346E132A0F4285005EC88A /* Build configuration list for PBXNativeTarget "CommandLinePlaygroundSwift" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1C346E112A0F4285005EC88A /* Debug */,
+				1C346E122A0F4285005EC88A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		1CC7E7F429763DB900479E7B /* Build configuration list for PBXProject "WebGPUPlayground" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

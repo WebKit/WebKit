@@ -12,6 +12,30 @@
 		0D30F93B29F1FBE40055D9F1 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D30F93A29F1FBE40055D9F1 /* CoreVideo.framework */; };
 		1C0F41EE280940650005886D /* HardwareCapabilities.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1C0F41EC280940650005886D /* HardwareCapabilities.mm */; };
 		1C2CEDEE271E8A7300EDC16F /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1C2CEDED271E8A7300EDC16F /* Metal.framework */; };
+		1C346E032A0F34C6005EC88A /* Adapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C346E022A0F34C6005EC88A /* Adapter.swift */; };
+		1C346E162A0F45D7005EC88A /* Instance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C346E152A0F45D7005EC88A /* Instance.swift */; };
+		1C346E182A0F48F2005EC88A /* Surface.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C346E172A0F48F2005EC88A /* Surface.swift */; };
+		1C346E1A2A0F4FCF005EC88A /* Device.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C346E192A0F4FCF005EC88A /* Device.swift */; };
+		1C346E1C2A0F523D005EC88A /* BindGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C346E1B2A0F523D005EC88A /* BindGroup.swift */; };
+		1C346E1E2A0F525B005EC88A /* BindGroupLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C346E1D2A0F525B005EC88A /* BindGroupLayout.swift */; };
+		1C346E202A0F52B6005EC88A /* Buffer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C346E1F2A0F52B6005EC88A /* Buffer.swift */; };
+		1C346E222A0F52DA005EC88A /* CommandEncoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C346E212A0F52DA005EC88A /* CommandEncoder.swift */; };
+		1C346E242A0F52FB005EC88A /* ComputePipeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C346E232A0F52FB005EC88A /* ComputePipeline.swift */; };
+		1C346E262A0F5329005EC88A /* PipelineLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C346E252A0F5329005EC88A /* PipelineLayout.swift */; };
+		1C346E282A0F5350005EC88A /* QuerySet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C346E272A0F5350005EC88A /* QuerySet.swift */; };
+		1C346E2A2A0F5378005EC88A /* RenderBundleEncoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C346E292A0F5378005EC88A /* RenderBundleEncoder.swift */; };
+		1C346E2C2A0F5399005EC88A /* RenderPipeline.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C346E2B2A0F5399005EC88A /* RenderPipeline.swift */; };
+		1C346E2E2A0F53B9005EC88A /* Sampler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C346E2D2A0F53B9005EC88A /* Sampler.swift */; };
+		1C346E302A0F53D9005EC88A /* ShaderModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C346E2F2A0F53D9005EC88A /* ShaderModule.swift */; };
+		1C346E322A0F53F8005EC88A /* SwapChain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C346E312A0F53F8005EC88A /* SwapChain.swift */; };
+		1C346E342A0F540D005EC88A /* Texture.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C346E332A0F540D005EC88A /* Texture.swift */; };
+		1C346E362A0F5BA9005EC88A /* CommandBuffer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C346E352A0F5BA9005EC88A /* CommandBuffer.swift */; };
+		1C346E382A0F5C34005EC88A /* ComputePassEncoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C346E372A0F5C34005EC88A /* ComputePassEncoder.swift */; };
+		1C346E3A2A0F5C97005EC88A /* RenderPassEncoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C346E392A0F5C97005EC88A /* RenderPassEncoder.swift */; };
+		1C346E3C2A0F6256005EC88A /* Queue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C346E3B2A0F6256005EC88A /* Queue.swift */; };
+		1C346E3E2A0F6571005EC88A /* RenderBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C346E3D2A0F6571005EC88A /* RenderBundle.swift */; };
+		1C346E402A0F67AD005EC88A /* TextureView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C346E3F2A0F67AD005EC88A /* TextureView.swift */; };
+		1C346E422A0F7702005EC88A /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C346E412A0F7702005EC88A /* Utilities.swift */; };
 		1C582FF927E04131009B40F0 /* CommandsMixin.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1C582FF727E04131009B40F0 /* CommandsMixin.mm */; };
 		1C5ACA94273A41C20095F8D5 /* Instance.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1C5ACA92273A41C20095F8D5 /* Instance.mm */; };
 		1C5ACAB6273A426D0095F8D5 /* RenderPipeline.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1C5ACA98273A426D0095F8D5 /* RenderPipeline.mm */; };
@@ -222,6 +246,30 @@
 		1C0F41ED280940650005886D /* HardwareCapabilities.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HardwareCapabilities.h; sourceTree = "<group>"; };
 		1C2CEDED271E8A7300EDC16F /* Metal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Metal.framework; path = System/Library/Frameworks/Metal.framework; sourceTree = SDKROOT; };
 		1C33755D27FA23B8002F1644 /* IsValidToUseWith.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IsValidToUseWith.h; sourceTree = "<group>"; };
+		1C346E022A0F34C6005EC88A /* Adapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Adapter.swift; sourceTree = "<group>"; };
+		1C346E152A0F45D7005EC88A /* Instance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Instance.swift; sourceTree = "<group>"; };
+		1C346E172A0F48F2005EC88A /* Surface.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Surface.swift; sourceTree = "<group>"; };
+		1C346E192A0F4FCF005EC88A /* Device.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Device.swift; sourceTree = "<group>"; };
+		1C346E1B2A0F523D005EC88A /* BindGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BindGroup.swift; sourceTree = "<group>"; };
+		1C346E1D2A0F525B005EC88A /* BindGroupLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BindGroupLayout.swift; sourceTree = "<group>"; };
+		1C346E1F2A0F52B6005EC88A /* Buffer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Buffer.swift; sourceTree = "<group>"; };
+		1C346E212A0F52DA005EC88A /* CommandEncoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommandEncoder.swift; sourceTree = "<group>"; };
+		1C346E232A0F52FB005EC88A /* ComputePipeline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComputePipeline.swift; sourceTree = "<group>"; };
+		1C346E252A0F5329005EC88A /* PipelineLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PipelineLayout.swift; sourceTree = "<group>"; };
+		1C346E272A0F5350005EC88A /* QuerySet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuerySet.swift; sourceTree = "<group>"; };
+		1C346E292A0F5378005EC88A /* RenderBundleEncoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RenderBundleEncoder.swift; sourceTree = "<group>"; };
+		1C346E2B2A0F5399005EC88A /* RenderPipeline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RenderPipeline.swift; sourceTree = "<group>"; };
+		1C346E2D2A0F53B9005EC88A /* Sampler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sampler.swift; sourceTree = "<group>"; };
+		1C346E2F2A0F53D9005EC88A /* ShaderModule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShaderModule.swift; sourceTree = "<group>"; };
+		1C346E312A0F53F8005EC88A /* SwapChain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwapChain.swift; sourceTree = "<group>"; };
+		1C346E332A0F540D005EC88A /* Texture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Texture.swift; sourceTree = "<group>"; };
+		1C346E352A0F5BA9005EC88A /* CommandBuffer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommandBuffer.swift; sourceTree = "<group>"; };
+		1C346E372A0F5C34005EC88A /* ComputePassEncoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComputePassEncoder.swift; sourceTree = "<group>"; };
+		1C346E392A0F5C97005EC88A /* RenderPassEncoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RenderPassEncoder.swift; sourceTree = "<group>"; };
+		1C346E3B2A0F6256005EC88A /* Queue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Queue.swift; sourceTree = "<group>"; };
+		1C346E3D2A0F6571005EC88A /* RenderBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RenderBundle.swift; sourceTree = "<group>"; };
+		1C346E3F2A0F67AD005EC88A /* TextureView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextureView.swift; sourceTree = "<group>"; };
+		1C346E412A0F7702005EC88A /* Utilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utilities.swift; sourceTree = "<group>"; };
 		1C582FF727E04131009B40F0 /* CommandsMixin.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = CommandsMixin.mm; sourceTree = "<group>"; };
 		1C582FF827E04131009B40F0 /* CommandsMixin.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CommandsMixin.h; sourceTree = "<group>"; };
 		1C58301727E16823009B40F0 /* APIConversions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = APIConversions.h; sourceTree = "<group>"; };
@@ -445,6 +493,37 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		1C346E012A0F3452005EC88A /* Swift Interface */ = {
+			isa = PBXGroup;
+			children = (
+				1C346E022A0F34C6005EC88A /* Adapter.swift */,
+				1C346E1B2A0F523D005EC88A /* BindGroup.swift */,
+				1C346E1D2A0F525B005EC88A /* BindGroupLayout.swift */,
+				1C346E1F2A0F52B6005EC88A /* Buffer.swift */,
+				1C346E352A0F5BA9005EC88A /* CommandBuffer.swift */,
+				1C346E212A0F52DA005EC88A /* CommandEncoder.swift */,
+				1C346E372A0F5C34005EC88A /* ComputePassEncoder.swift */,
+				1C346E232A0F52FB005EC88A /* ComputePipeline.swift */,
+				1C346E192A0F4FCF005EC88A /* Device.swift */,
+				1C346E152A0F45D7005EC88A /* Instance.swift */,
+				1C346E252A0F5329005EC88A /* PipelineLayout.swift */,
+				1C346E272A0F5350005EC88A /* QuerySet.swift */,
+				1C346E3B2A0F6256005EC88A /* Queue.swift */,
+				1C346E3D2A0F6571005EC88A /* RenderBundle.swift */,
+				1C346E292A0F5378005EC88A /* RenderBundleEncoder.swift */,
+				1C346E392A0F5C97005EC88A /* RenderPassEncoder.swift */,
+				1C346E2B2A0F5399005EC88A /* RenderPipeline.swift */,
+				1C346E2D2A0F53B9005EC88A /* Sampler.swift */,
+				1C346E2F2A0F53D9005EC88A /* ShaderModule.swift */,
+				1C346E172A0F48F2005EC88A /* Surface.swift */,
+				1C346E312A0F53F8005EC88A /* SwapChain.swift */,
+				1C346E332A0F540D005EC88A /* Texture.swift */,
+				1C346E3F2A0F67AD005EC88A /* TextureView.swift */,
+				1C346E412A0F7702005EC88A /* Utilities.swift */,
+			);
+			path = "Swift Interface";
+			sourceTree = "<group>";
+		};
 		1CEBD7D92716AFBA00A5254D = {
 			isa = PBXGroup;
 			children = (
@@ -452,6 +531,7 @@
 				1CEBD7F92716B38600A5254D /* Configurations */,
 				1CEBD7F62716B33100A5254D /* WGSL */,
 				1CEBD7E52716AFBA00A5254D /* WebGPU */,
+				1C346E012A0F3452005EC88A /* Swift Interface */,
 				1CEBD7E42716AFBA00A5254D /* Products */,
 				1CEBD8252716CACC00A5254D /* Frameworks */,
 			);
@@ -890,6 +970,7 @@
 				TargetAttributes = {
 					1CEBD7E22716AFBA00A5254D = {
 						CreatedOnToolsVersion = 13.3;
+						LastSwiftMigration = 1500;
 					};
 					1CEBD7F12716B2CC00A5254D = {
 						CreatedOnToolsVersion = 13.3;
@@ -956,33 +1037,57 @@
 			buildActionMask = 2147483647;
 			files = (
 				1C5ACAC7273A426D0095F8D5 /* Adapter.mm in Sources */,
+				1C346E032A0F34C6005EC88A /* Adapter.swift in Sources */,
 				1C5ACADF273A55AF0095F8D5 /* BindGroup.mm in Sources */,
+				1C346E1C2A0F523D005EC88A /* BindGroup.swift in Sources */,
 				1C5ACAE1273A55C10095F8D5 /* BindGroupLayout.mm in Sources */,
+				1C346E1E2A0F525B005EC88A /* BindGroupLayout.swift in Sources */,
 				1C5ACABB273A426D0095F8D5 /* Buffer.mm in Sources */,
+				1C346E202A0F52B6005EC88A /* Buffer.swift in Sources */,
 				1C5ACAE3273A55CD0095F8D5 /* CommandBuffer.mm in Sources */,
+				1C346E362A0F5BA9005EC88A /* CommandBuffer.swift in Sources */,
 				1C5ACAC9273A426E0095F8D5 /* CommandEncoder.mm in Sources */,
+				1C346E222A0F52DA005EC88A /* CommandEncoder.swift in Sources */,
 				1C582FF927E04131009B40F0 /* CommandsMixin.mm in Sources */,
 				1C5ACAC6273A426D0095F8D5 /* ComputePassEncoder.mm in Sources */,
+				1C346E382A0F5C34005EC88A /* ComputePassEncoder.swift in Sources */,
 				1C5ACAC0273A426D0095F8D5 /* ComputePipeline.mm in Sources */,
+				1C346E242A0F52FB005EC88A /* ComputePipeline.swift in Sources */,
 				1C5ACAC1273A426D0095F8D5 /* Device.mm in Sources */,
 				0D30F93729F1F94A0055D9F1 /* ExternalTexture.mm in Sources */,
+				1C346E1A2A0F4FCF005EC88A /* Device.swift in Sources */,
 				1C0F41EE280940650005886D /* HardwareCapabilities.mm in Sources */,
 				1C5ACA94273A41C20095F8D5 /* Instance.mm in Sources */,
+				1C346E162A0F45D7005EC88A /* Instance.swift in Sources */,
 				973F784829C8A78200166C66 /* Pipeline.mm in Sources */,
 				1C5ACAE5273A55DD0095F8D5 /* PipelineLayout.mm in Sources */,
+				1C346E262A0F5329005EC88A /* PipelineLayout.swift in Sources */,
 				1C9F7CDF29762F51006B5BE9 /* PresentationContext.mm in Sources */,
 				1CBD2E972977DAC900BBF52C /* PresentationContextCoreAnimation.mm in Sources */,
 				1CBD2E992977DAC900BBF52C /* PresentationContextIOSurface.mm in Sources */,
 				1C5ACABD273A426D0095F8D5 /* QuerySet.mm in Sources */,
+				1C346E282A0F5350005EC88A /* QuerySet.swift in Sources */,
 				1C5ACACB273A426E0095F8D5 /* Queue.mm in Sources */,
+				1C346E3C2A0F6256005EC88A /* Queue.swift in Sources */,
 				1C5ACAE7273A55EF0095F8D5 /* RenderBundle.mm in Sources */,
+				1C346E3E2A0F6571005EC88A /* RenderBundle.swift in Sources */,
 				1C5ACACC273A426E0095F8D5 /* RenderBundleEncoder.mm in Sources */,
+				1C346E2A2A0F5378005EC88A /* RenderBundleEncoder.swift in Sources */,
 				1C5ACAC2273A426D0095F8D5 /* RenderPassEncoder.mm in Sources */,
+				1C346E3A2A0F5C97005EC88A /* RenderPassEncoder.swift in Sources */,
 				1C5ACAB6273A426D0095F8D5 /* RenderPipeline.mm in Sources */,
+				1C346E2C2A0F5399005EC88A /* RenderPipeline.swift in Sources */,
 				1C5ACAE9273A55FD0095F8D5 /* Sampler.mm in Sources */,
+				1C346E2E2A0F53B9005EC88A /* Sampler.swift in Sources */,
 				1C5ACACE273A426E0095F8D5 /* ShaderModule.mm in Sources */,
+				1C346E302A0F53D9005EC88A /* ShaderModule.swift in Sources */,
+				1C346E182A0F48F2005EC88A /* Surface.swift in Sources */,
+				1C346E322A0F53F8005EC88A /* SwapChain.swift in Sources */,
 				1C5ACACF273A426E0095F8D5 /* Texture.mm in Sources */,
+				1C346E342A0F540D005EC88A /* Texture.swift in Sources */,
 				1C5ACAEB273A560D0095F8D5 /* TextureView.mm in Sources */,
+				1C346E402A0F67AD005EC88A /* TextureView.swift in Sources */,
+				1C346E422A0F7702005EC88A /* Utilities.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
