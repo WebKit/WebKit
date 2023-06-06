@@ -943,6 +943,7 @@ void VideoFullscreenInterfaceAVKit::cleanupFullscreen()
     if (m_viewController)
         [m_playerViewController removeFromParentViewController];
 
+    [m_playerLayerView setVideoView:nil];
     [m_playerLayerView removeFromSuperview];
     [[m_viewController view] removeFromSuperview];
 

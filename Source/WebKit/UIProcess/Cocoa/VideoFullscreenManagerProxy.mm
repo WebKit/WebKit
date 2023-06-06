@@ -50,6 +50,7 @@
 #if PLATFORM(IOS_FAMILY)
 #import "RemoteLayerTreeDrawingAreaProxy.h"
 #import "UIKitSPI.h"
+#import <UIKit/UIView.h>
 #import <pal/spi/cocoa/AVKitSPI.h>
 #endif
 
@@ -57,7 +58,11 @@
 @property (nonatomic, assign) uint32_t contextID;
 @end
 
-@implementation WKLayerHostView
+@implementation WKLayerHostView {
+#if PLATFORM(IOS_FAMILY)
+    WeakObjCPtr<UIWindow> _window;
+#endif
+}
 
 #if PLATFORM(IOS_FAMILY)
 + (Class)layerClass {
@@ -85,6 +90,20 @@
 - (BOOL)clipsToBounds {
     return NO;
 }
+
+#if PLATFORM(IOS_FAMILY)
+- (void)willMoveToWindow:(UIWindow *)newWindow {
+    _window = newWindow;
+    [super willMoveToWindow:newWindow];
+}
+
+- (UIWindow *)window {
+    if (!_window)
+        return nil;
+    return [super window];
+}
+#endif
+
 @end
 
 #if PLATFORM(IOS_FAMILY)
@@ -1001,8 +1020,7 @@ void VideoFullscreenManagerProxy::returnVideoView(PlaybackSessionContextIdentifi
     auto *playerView = model.playerView();
     auto *videoView = model.layerHostView();
     if (playerView && videoView) {
-        auto *playerLayer = (WebAVPlayerLayer *)[model.playerView() layer];
-        [playerLayer addSublayer:[videoView layer]];
+        [playerView addSubview:videoView];
         [playerView setNeedsLayout];
         [playerView layoutIfNeeded];
     }
