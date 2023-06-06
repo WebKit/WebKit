@@ -119,10 +119,10 @@ unsigned startWordBoundary(StringView, unsigned, BoundarySearchContextAvailabili
 unsigned endWordBoundary(StringView, unsigned, BoundarySearchContextAvailability, bool&);
 unsigned startSentenceBoundary(StringView, unsigned, BoundarySearchContextAvailability, bool&);
 unsigned endSentenceBoundary(StringView, unsigned, BoundarySearchContextAvailability, bool&);
-unsigned suffixLengthForRange(const SimpleRange&, Vector<UChar, 1024>&);
-unsigned prefixLengthForRange(const SimpleRange&, Vector<UChar, 1024>&);
-unsigned backwardSearchForBoundaryWithTextIterator(SimplifiedBackwardsTextIterator&, Vector<UChar, 1024>&, unsigned, BoundarySearchFunction);
-unsigned forwardSearchForBoundaryWithTextIterator(TextIterator&, Vector<UChar, 1024>&, unsigned, BoundarySearchFunction);
+unsigned suffixLengthForRange(const SimpleRange&, WTF::StringImplVector<UChar, 1024>&);
+unsigned prefixLengthForRange(const SimpleRange&, WTF::StringImplVector<UChar, 1024>&);
+unsigned backwardSearchForBoundaryWithTextIterator(SimplifiedBackwardsTextIterator&, WTF::StringImplVector<UChar, 1024>&, unsigned, BoundarySearchFunction);
+unsigned forwardSearchForBoundaryWithTextIterator(TextIterator&, WTF::StringImplVector<UChar, 1024>&, unsigned, BoundarySearchFunction);
 Node* findStartOfParagraph(Node*, Node*, Node*, int&, Position::AnchorType&, EditingBoundaryCrossingRule);
 Node* findEndOfParagraph(Node*, Node*, Node*, int&, Position::AnchorType&, EditingBoundaryCrossingRule);
 

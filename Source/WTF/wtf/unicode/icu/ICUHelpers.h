@@ -29,6 +29,7 @@
 #include <unicode/utypes.h>
 #include <wtf/Forward.h>
 #include <wtf/FunctionTraits.h>
+#include <wtf/text/StringImpl.h>
 
 namespace WTF {
 
@@ -63,7 +64,7 @@ constexpr bool needsToGrowToProduceCString(UErrorCode errorCode)
 
 namespace CallBufferProducingFunction {
 
-template<typename CharacterType, size_t inlineCapacity, typename ...ArgumentTypes> auto& findVector(Vector<CharacterType, inlineCapacity>& buffer, ArgumentTypes&&...)
+template<typename CharacterType, size_t inlineCapacity, typename ...ArgumentTypes> auto& findVector(StringImplVector<CharacterType, inlineCapacity>& buffer, ArgumentTypes&&...)
 {
     return buffer;
 }
@@ -77,7 +78,7 @@ constexpr std::tuple<> argumentTuple() { return { }; }
 
 template<typename FirstArgumentType, typename ...OtherArgumentTypes> auto argumentTuple(FirstArgumentType&&, OtherArgumentTypes&&...);
 
-template<typename CharacterType, size_t inlineCapacity, typename ...OtherArgumentTypes> auto argumentTuple(Vector<CharacterType, inlineCapacity>& buffer, OtherArgumentTypes&&... otherArguments)
+template<typename CharacterType, size_t inlineCapacity, typename ...OtherArgumentTypes> auto argumentTuple(StringImplVector<CharacterType, inlineCapacity>& buffer, OtherArgumentTypes&&... otherArguments)
 {
     return tuple_cat(std::make_tuple(buffer.data(), buffer.size()), argumentTuple(std::forward<OtherArgumentTypes>(otherArguments)...));
 }

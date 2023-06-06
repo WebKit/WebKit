@@ -115,7 +115,7 @@ private:
     Ref<TextResourceDecoder> m_decoder;
     RefPtr<ThreadableLoader> m_loader;
     SuspendableTimer m_connectTimer;
-    Vector<UChar> m_receiveBuffer;
+    WTF::StringImplVector<UChar> m_receiveBuffer;
     bool m_discardTrailingNewline { false };
     bool m_requestInFlight { false };
     bool m_isSuspendedForBackForwardCache { false };
@@ -123,7 +123,7 @@ private:
     bool m_shouldReconnectOnResume { false };
 
     AtomString m_eventName;
-    Vector<UChar> m_data;
+    WTF::StringImplVector<UChar> m_data;
     String m_currentlyParsedEventId;
     String m_lastEventId;
     uint64_t m_reconnectDelay { defaultReconnectDelay };

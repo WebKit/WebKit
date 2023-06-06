@@ -328,7 +328,7 @@ static WARN_UNUSED_RETURN bool decodeKey(const uint8_t*& data, const uint8_t* en
         if (static_cast<uint64_t>(end - data) < length * 2)
             return false;
 
-        Vector<UChar> buffer;
+        WTF::StringImplVector<UChar> buffer;
         buffer.reserveInitialCapacity(length);
         for (size_t i = 0; i < length; i++) {
             uint16_t ch;

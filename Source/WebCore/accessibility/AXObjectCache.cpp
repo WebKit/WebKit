@@ -3144,7 +3144,7 @@ CharacterOffset AXObjectCache::nextBoundary(const CharacterOffset& characterOffs
 
     auto searchRange = rangeForNodeContents(*boundary);
 
-    Vector<UChar, 1024> string;
+    WTF::StringImplVector<UChar, 1024> string;
     unsigned prefixLength = 0;
     
     if (requiresContextForWordBoundary(characterAfter(characterOffset))) {
@@ -3189,7 +3189,7 @@ CharacterOffset AXObjectCache::previousBoundary(const CharacterOffset& character
         return CharacterOffset();
     
     auto searchRange = rangeForNodeContents(*boundary);
-    Vector<UChar, 1024> string;
+    WTF::StringImplVector<UChar, 1024> string;
     unsigned suffixLength = 0;
 
     if (needsContextAtParagraphStart == NeedsContextAtParagraphStart::Yes && startCharacterOffsetOfParagraph(characterOffset).isEqual(characterOffset)) {

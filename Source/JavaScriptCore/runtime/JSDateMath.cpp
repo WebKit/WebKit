@@ -386,13 +386,13 @@ String DateCache::timeZoneDisplayName(bool isDST)
         auto& timeZoneCache = *this->timeZoneCache();
         CString language = defaultLanguage().utf8();
         {
-            Vector<UChar, 32> standardDisplayNameBuffer;
+            WTF::StringImplVector<UChar, 32> standardDisplayNameBuffer;
             auto status = callBufferProducingFunction(ucal_getTimeZoneDisplayName, timeZoneCache.m_calendar.get(), UCAL_STANDARD, language.data(), standardDisplayNameBuffer);
             if (U_SUCCESS(status))
                 m_timeZoneStandardDisplayNameCache = String::adopt(WTFMove(standardDisplayNameBuffer));
         }
         {
-            Vector<UChar, 32> dstDisplayNameBuffer;
+            WTF::StringImplVector<UChar, 32> dstDisplayNameBuffer;
             auto status = callBufferProducingFunction(ucal_getTimeZoneDisplayName, timeZoneCache.m_calendar.get(), UCAL_DST, language.data(), dstDisplayNameBuffer);
             if (U_SUCCESS(status))
                 m_timeZoneDSTDisplayNameCache = String::adopt(WTFMove(dstDisplayNameBuffer));
@@ -448,7 +448,7 @@ void DateCache::timeZoneCacheSlow()
 {
     ASSERT(!m_timeZoneCache);
 
-    Vector<UChar, 32> timeZoneID;
+    WTF::StringImplVector<UChar, 32> timeZoneID;
     getTimeZoneOverride(timeZoneID);
 #if HAVE(ICU_C_TIMEZONE_API)
     auto* cache = new OpaqueICUTimeZone;
@@ -460,7 +460,7 @@ void DateCache::timeZoneCacheSlow()
         ASSERT_UNUSED(status, U_SUCCESS(status));
     }
     if (U_SUCCESS(status)) {
-        Vector<UChar, 32> canonicalBuffer;
+        WTF::StringImplVector<UChar, 32> canonicalBuffer;
         auto status = callBufferProducingFunction(ucal_getCanonicalTimeZoneID, timeZoneID.data(), timeZoneID.size(), canonicalBuffer, nullptr);
         if (U_SUCCESS(status))
             canonical = String(canonicalBuffer);

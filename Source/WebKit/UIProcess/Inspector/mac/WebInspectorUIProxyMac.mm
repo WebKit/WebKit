@@ -689,7 +689,7 @@ void WebInspectorUIProxy::platformSave(Vector<InspectorFrontendClient::SaveData>
 
 void WebInspectorUIProxy::platformLoad(const String& path, CompletionHandler<void(const String&)>&& completionHandler)
 {
-    if (auto contents = FileSystem::readEntireFile(path))
+    if (auto contents = FileSystem::readEntireFileToString(path))
         completionHandler(String::adopt(WTFMove(*contents)));
     else
         completionHandler(nullString());

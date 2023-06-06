@@ -31,18 +31,22 @@
 #include <limits>
 #include <unicode/utypes.h>
 #include <wtf/Assertions.h>
+#include <wtf/CompactPtr.h>
 #include <wtf/DebugHeap.h>
+#include <wtf/FastMalloc.h>
 #include <wtf/MallocPtr.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/Nonmovable.h>
 
 namespace WTF {
 
-DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StringBuffer);
+DECLARE_SMALLHEAP_ALLOCATOR_WITH_HEAP_IDENTIFIER(StringBuffer);
 
 template <typename CharType>
 class StringBuffer {
     WTF_MAKE_NONCOPYABLE(StringBuffer);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_NONMOVABLE(StringBuffer);
+    WTF_MAKE_STRUCT_SMALLHEAP_ALLOCATED_WITH_HEAP_IDENTIFIER(StringBuffer);
 public:
     explicit StringBuffer(unsigned length)
         : m_length(length)

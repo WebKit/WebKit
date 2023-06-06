@@ -388,7 +388,7 @@ static Vector<Element> collectElements(JSGlobalObject* globalObject, const IntlD
                 auto scope = DECLARE_THROW_SCOPE(vm);
 
                 UErrorCode status = U_ZERO_ERROR;
-                Vector<UChar, 32> buffer;
+                WTF::StringImplVector<UChar, 32> buffer;
                 status = callBufferProducingFunction(unumf_resultToString, formattedNumber, buffer);
                 if (U_FAILURE(status)) {
                     throwTypeError(globalObject, scope, "Failed to format a number."_s);
@@ -528,7 +528,7 @@ JSValue IntlDurationFormat::format(JSGlobalObject* globalObject, ISO8601::Durati
 
     ListFormatInput input(WTFMove(stringList));
 
-    Vector<UChar, 32> result;
+    WTF::StringImplVector<UChar, 32> result;
     auto status = callBufferProducingFunction(ulistfmt_format, m_listFormat.get(), input.stringPointers(), input.stringLengths(), input.size(), result);
     if (U_FAILURE(status))
         return throwTypeError(globalObject, scope, "failed to format list of strings"_s);

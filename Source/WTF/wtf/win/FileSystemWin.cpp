@@ -151,7 +151,7 @@ CString fileSystemRepresentation(const String& path)
 
 static String storageDirectory(DWORD pathIdentifier)
 {
-    Vector<UChar> buffer(MAX_PATH);
+    WTF::StringImplVector<UChar> buffer(MAX_PATH);
     if (FAILED(SHGetFolderPathW(nullptr, pathIdentifier | CSIDL_FLAG_CREATE, nullptr, 0, wcharFrom(buffer.data()))))
         return String();
 

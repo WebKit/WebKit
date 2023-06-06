@@ -187,7 +187,7 @@ JSValue IntlDisplayNames::of(JSGlobalObject* globalObject, JSValue codeValue) co
         return { };
     };
 
-    Vector<UChar, 32> buffer;
+    WTF::StringImplVector<UChar, 32> buffer;
     UErrorCode status = U_ZERO_ERROR;
     CString canonicalCode;
     switch (m_type) {

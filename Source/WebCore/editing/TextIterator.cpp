@@ -115,15 +115,15 @@ private:
     const StringView::UpconvertedCharacters m_targetCharacters;
     FindOptions m_options;
 
-    Vector<UChar> m_buffer;
+    WTF::StringImplVector<UChar> m_buffer;
     size_t m_overlap;
     size_t m_prefixLength;
     bool m_atBreak;
     bool m_needsMoreContext;
 
     const bool m_targetRequiresKanaWorkaround;
-    Vector<UChar> m_normalizedTarget;
-    mutable Vector<UChar> m_normalizedMatch;
+    WTF::StringImplVector<UChar> m_normalizedTarget;
+    mutable WTF::StringImplVector<UChar> m_normalizedMatch;
 
 #else
 
@@ -134,7 +134,7 @@ private:
     String m_target;
     FindOptions m_options;
 
-    Vector<UChar> m_buffer;
+    WTF::StringImplVector<UChar> m_buffer;
     Vector<bool> m_isCharacterStartBuffer;
     bool m_isBufferFull;
     size_t m_cursor;
@@ -1926,7 +1926,7 @@ static inline bool containsKanaLetters(const String& pattern)
     return false;
 }
 
-static void normalizeCharacters(const UChar* characters, unsigned length, Vector<UChar>& buffer)
+static void normalizeCharacters(const UChar* characters, unsigned length, WTF::StringImplVector<UChar>& buffer)
 {
     UErrorCode status = U_ZERO_ERROR;
     auto* normalizer = unorm2_getNFCInstance(&status);

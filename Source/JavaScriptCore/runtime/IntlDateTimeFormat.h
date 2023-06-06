@@ -83,7 +83,7 @@ public:
     static IntlDateTimeFormat* unwrapForOldFunctions(JSGlobalObject*, JSValue);
 
     enum class HourCycle : uint8_t { None, H11, H12, H23, H24 };
-    static HourCycle hourCycleFromPattern(const Vector<UChar, 32>&);
+    static HourCycle hourCycleFromPattern(const WTF::StringImplVector<UChar, 32>&);
 
 private:
     IntlDateTimeFormat(VM&, Structure*);
@@ -124,8 +124,8 @@ private:
 
     static HourCycle hourCycleFromSymbol(UChar);
     static HourCycle parseHourCycle(const String&);
-    static void replaceHourCycleInSkeleton(Vector<UChar, 32>&, bool hour12);
-    static void replaceHourCycleInPattern(Vector<UChar, 32>&, HourCycle);
+    static void replaceHourCycleInSkeleton(WTF::StringImplVector<UChar, 32>&, bool hour12);
+    static void replaceHourCycleInPattern(WTF::StringImplVector<UChar, 32>&, HourCycle);
 
     using UDateFormatDeleter = ICUDeleter<udat_close>;
 

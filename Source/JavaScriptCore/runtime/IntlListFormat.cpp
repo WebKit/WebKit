@@ -183,7 +183,7 @@ JSValue IntlListFormat::format(JSGlobalObject* globalObject, JSValue list) const
 
     ListFormatInput input(WTFMove(stringList));
 
-    Vector<UChar, 32> result;
+    WTF::StringImplVector<UChar, 32> result;
     auto status = callBufferProducingFunction(ulistfmt_format, m_listFormat.get(), input.stringPointers(), input.stringLengths(), input.size(), result);
     if (U_FAILURE(status))
         return throwTypeError(globalObject, scope, "failed to format list of strings"_s);

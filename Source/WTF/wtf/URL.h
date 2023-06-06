@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <wtf/text/StringImpl.h>
 #include <wtf/text/WTFString.h>
 
 #if USE(GLIB) && HAVE(GURI)

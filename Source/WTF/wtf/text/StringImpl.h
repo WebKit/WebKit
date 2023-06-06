@@ -256,6 +256,7 @@ public:
     ALWAYS_INLINE static Ref<StringImpl> create(const char* characters, unsigned length) { return create(reinterpret_cast<const LChar*>(characters), length); }
     WTF_EXPORT_PRIVATE static Ref<StringImpl> create8BitIfPossible(const UChar*, unsigned length);
     template<size_t inlineCapacity> static Ref<StringImpl> create8BitIfPossible(const Vector<UChar, inlineCapacity>&);
+    template<size_t inlineCapacity> static Ref<StringImpl> create8BitIfPossible(const Vector<UChar, inlineCapacity, CrashOnOverflow, 16, StringImplMalloc>&);
 
     // Not using create() naming to encourage developers to call create(ASCIILiteral) when they have a string literal.
     ALWAYS_INLINE static Ref<StringImpl> createFromCString(const char* characters) { return create(characters, strlen(characters)); }
@@ -553,6 +554,10 @@ private:
 public:
     void assertHashIsCorrect() const;
 };
+
+// Use this to avoid copying vectors of chars when making strings.
+template<typename T, size_t inlineCapacity = 0>
+using StringImplVector = Vector<T, inlineCapacity, CrashOnOverflow, 16, StringImplMalloc>;
 
 using StaticStringImpl = StringImpl::StaticStringImpl;
 
@@ -909,6 +914,10 @@ template<typename Malloc>
 inline StringImpl::StringImpl(MallocPtr<LChar, Malloc> characters, unsigned length)
     : StringImplShape(s_refCountIncrement, length, static_cast<const LChar*>(nullptr), s_hashFlag8BitBuffer | StringNormal | BufferOwned)
 {
+#if ENABLE(SMALL_HEAP)
+    // This is not required for correctness, but you almost certainly want this for performance.
+    static_assert(std::is_same_v<Malloc, StringImplMalloc>);
+#endif
     if constexpr (std::is_same_v<Malloc, StringImplMalloc>)
         m_data8 = characters.leakPtr();
     else {
@@ -945,6 +954,10 @@ template<typename Malloc>
 inline StringImpl::StringImpl(MallocPtr<UChar, Malloc> characters, unsigned length)
     : StringImplShape(s_refCountIncrement, length, static_cast<const UChar*>(nullptr), s_hashZeroValue | StringNormal | BufferOwned)
 {
+#if ENABLE(SMALL_HEAP)
+    // This is not required for correctness, but you almost certainly want this for performance.
+    static_assert(std::is_same_v<Malloc, StringImplMalloc>);
+#endif
     if constexpr (std::is_same_v<Malloc, StringImplMalloc>)
         m_data16 = characters.leakPtr();
     else {
@@ -986,6 +999,11 @@ inline StringImpl::StringImpl(const UChar* characters, unsigned length, Ref<Stri
 }
 
 template<size_t inlineCapacity> inline Ref<StringImpl> StringImpl::create8BitIfPossible(const Vector<UChar, inlineCapacity>& vector)
+{
+    return create8BitIfPossible(vector.data(), vector.size());
+}
+
+template<size_t inlineCapacity> inline Ref<StringImpl> StringImpl::create8BitIfPossible(const StringImplVector<UChar, inlineCapacity>& vector)
 {
     return create8BitIfPossible(vector.data(), vector.size());
 }
@@ -1042,6 +1060,7 @@ template<typename CharacterType> ALWAYS_INLINE RefPtr<StringImpl> StringImpl::tr
 template<typename CharacterType, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity, typename Malloc>
 inline Ref<StringImpl> StringImpl::adopt(Vector<CharacterType, inlineCapacity, OverflowHandler, minCapacity, Malloc>&& vector)
 {
+    static_assert(std::is_same_v<Malloc, StringImplMalloc>);
     if constexpr (std::is_same_v<Malloc, StringImplMalloc>) {
         auto length = vector.size();
         if (!length)

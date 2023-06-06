@@ -287,7 +287,7 @@ private:
     TextIteratorCopyableText m_previousText;
 
     // Many chunks from text iterator concatenated.
-    Vector<UChar> m_buffer;
+    WTF::StringImplVector<UChar> m_buffer;
 
     // Did we have to look ahead in the text iterator to confirm the current chunk?
     bool m_didLookAhead { true };

@@ -489,7 +489,7 @@ void IntlCollator::checkICULocaleInvariants(const LocaleSet& locales)
         // Contractions and Expansions are defined as a rule. If there is no tailoring rule, then they should be UCA DUCET's default.
 
         auto ensureNotIncludingASCII = [&](USet& set) {
-            Vector<UChar, 32> buffer;
+            WTF::StringImplVector<UChar, 32> buffer;
             for (int32_t index = 0, count = uset_getItemCount(&set); index < count; ++index) {
                 // start and end are inclusive.
                 UChar32 start = 0;

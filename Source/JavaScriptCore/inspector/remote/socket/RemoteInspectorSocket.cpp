@@ -261,7 +261,7 @@ String RemoteInspector::backendCommands() const
     if (m_backendCommandsPath.isEmpty())
         return { };
 
-    auto contents = FileSystem::readEntireFile(m_backendCommandsPath);
+    auto contents = FileSystem::readEntireFileToString(m_backendCommandsPath);
 
     return contents ? String::adopt(WTFMove(*contents)) : emptyString();
 }

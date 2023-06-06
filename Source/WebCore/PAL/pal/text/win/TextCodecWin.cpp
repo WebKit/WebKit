@@ -240,7 +240,7 @@ String TextCodecWin::decode(const char* bytes, size_t length, bool flush, bool s
     }
 
     size_t left;
-    Vector<UChar, 8192> result;
+    WTF::StringImplVector<UChar, 8192> result;
     for (;;) {
         decodeInternal(result, m_codePage, bytes, length, &left);
         if (!left)

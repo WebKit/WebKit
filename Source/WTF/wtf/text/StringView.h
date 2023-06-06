@@ -35,6 +35,7 @@
 #include <wtf/text/ConversionMode.h>
 #include <wtf/text/LChar.h>
 #include <wtf/text/StringCommon.h>
+#include <wtf/text/StringImpl.h>
 #include <wtf/text/UTF8ConversionError.h>
 
 // FIXME: Enabling the StringView lifetime checking causes the MSVC build to fail. Figure out why.
@@ -239,7 +240,7 @@ private:
 #endif
 };
 
-template<typename CharacterType, size_t inlineCapacity> void append(Vector<CharacterType, inlineCapacity>&, StringView);
+template<typename CharacterType, size_t inlineCapacity> void append(StringImplVector<CharacterType, inlineCapacity>&, StringView);
 
 bool equal(StringView, StringView);
 bool equal(StringView, const LChar* b);
@@ -707,7 +708,7 @@ private:
     StringView m_string;
 };
 
-template<typename CharacterType, size_t inlineCapacity> void append(Vector<CharacterType, inlineCapacity>& buffer, StringView string)
+template<typename CharacterType, size_t inlineCapacity> void append(StringImplVector<CharacterType, inlineCapacity>& buffer, StringView string)
 {
     unsigned oldSize = buffer.size();
     buffer.grow(oldSize + string.length());

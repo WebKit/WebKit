@@ -93,7 +93,7 @@ public:
     static String adopt(StringBuffer<LChar>&& buffer) { return StringImpl::adopt(WTFMove(buffer)); }
     static String adopt(StringBuffer<UChar>&& buffer) { return StringImpl::adopt(WTFMove(buffer)); }
     template<typename CharacterType, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity>
-    static String adopt(Vector<CharacterType, inlineCapacity, OverflowHandler, minCapacity>&& vector) { return StringImpl::adopt(WTFMove(vector)); }
+    static String adopt(Vector<CharacterType, inlineCapacity, OverflowHandler, minCapacity, WTF::StringImplMalloc>&& vector) { return StringImpl::adopt(WTFMove(vector)); }
 
     bool isNull() const { return !m_impl; }
     bool isEmpty() const { return !m_impl || m_impl->isEmpty(); }

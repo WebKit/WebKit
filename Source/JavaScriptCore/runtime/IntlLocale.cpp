@@ -36,6 +36,7 @@
 #include <unicode/udatpg.h>
 #include <unicode/uloc.h>
 #include <unicode/unumsys.h>
+#include <wtf/text/StringImpl.h>
 #include <wtf/unicode/icu/ICUHelpers.h>
 
 namespace JSC {
@@ -83,7 +84,7 @@ public:
     void setKeywordValue(ASCIILiteral key, StringView value);
 
 private:
-    Vector<char, 32> m_buffer;
+    WTF::StringImplVector<char, 32> m_buffer;
 };
 
 bool LocaleIDBuilder::initialize(const String& tag)
@@ -144,7 +145,7 @@ void LocaleIDBuilder::overrideLanguageScriptRegion(StringView language, StringVi
             subtags.insert(index, region);
     }
 
-    Vector<char, 32> buffer;
+    WTF::StringImplVector<char, 32> buffer;
     bool hasAppended = false;
     for (auto subtag : subtags) {
         if (hasAppended)
@@ -178,7 +179,7 @@ void LocaleIDBuilder::setKeywordValue(ASCIILiteral key, StringView value)
     ASSERT(m_buffer.size());
 
     ASSERT(value.containsOnlyASCII());
-    Vector<char, 32> rawValue(value.length() + 1);
+    WTF::StringImplVector<char, 32> rawValue(value.length() + 1);
     value.getCharacters(reinterpret_cast<LChar*>(rawValue.data()));
     rawValue[value.length()] = '\0';
 
@@ -196,7 +197,7 @@ void LocaleIDBuilder::setKeywordValue(ASCIILiteral key, StringView value)
 String IntlLocale::keywordValue(ASCIILiteral key, bool isBoolean) const
 {
     UErrorCode status = U_ZERO_ERROR;
-    Vector<char, 32> buffer(32);
+    WTF::StringImplVector<char, 32> buffer(32);
     auto bufferLength = uloc_getKeywordValue(m_localeID.data(), key.characters(), buffer.data(), buffer.size(), &status);
     if (needsToGrowToProduceCString(status)) {
         buffer.grow(bufferLength + 1);
@@ -328,7 +329,7 @@ const String& IntlLocale::maximal()
         // Note that ICU locale ID consists of Language, Script, Country (unicode language tag's region.
         // FIXME: ICU tracking bug https://unicode-org.atlassian.net/browse/ICU-21639.
         UErrorCode status = U_ZERO_ERROR;
-        Vector<char, 32> buffer(32);
+        WTF::StringImplVector<char, 32> buffer(32);
         auto bufferLength = uloc_addLikelySubtags(m_localeID.data(), buffer.data(), buffer.size(), &status);
         if (needsToGrowToProduceCString(status)) {
             buffer.grow(bufferLength + 1);
@@ -340,7 +341,7 @@ const String& IntlLocale::maximal()
             m_maximal = languageTagForLocaleID(buffer.data());
         else {
             status = U_ZERO_ERROR;
-            Vector<char, 32> baseNameID;
+            WTF::StringImplVector<char, 32> baseNameID;
             auto bufferLength = uloc_getBaseName(m_localeID.data(), baseNameID.data(), baseNameID.size(), &status);
             if (needsToGrowToProduceCString(status)) {
                 baseNameID.grow(bufferLength + 1);
@@ -349,7 +350,7 @@ const String& IntlLocale::maximal()
             }
             ASSERT(U_SUCCESS(status));
 
-            Vector<char, 32> maximal;
+            WTF::StringImplVector<char, 32> maximal;
             status = callBufferProducingFunction(uloc_addLikelySubtags, baseNameID.data(), maximal);
             // We fail if,
             // 1. uloc_addLikelySubtags still fails.
@@ -379,7 +380,7 @@ const String& IntlLocale::minimal()
         // Note that ICU locale ID consists of Language, Script, Country (unicode language tag's region.
         // FIXME: ICU tracking bug https://unicode-org.atlassian.net/browse/ICU-21639.
         UErrorCode status = U_ZERO_ERROR;
-        Vector<char, 32> buffer(32);
+        WTF::StringImplVector<char, 32> buffer(32);
         auto bufferLength = uloc_minimizeSubtags(m_localeID.data(), buffer.data(), buffer.size(), &status);
         if (needsToGrowToProduceCString(status)) {
             buffer.grow(bufferLength + 1);
@@ -391,7 +392,7 @@ const String& IntlLocale::minimal()
             m_minimal = languageTagForLocaleID(buffer.data());
         else {
             status = U_ZERO_ERROR;
-            Vector<char, 32> baseNameID;
+            WTF::StringImplVector<char, 32> baseNameID;
             auto bufferLength = uloc_getBaseName(m_localeID.data(), baseNameID.data(), baseNameID.size(), &status);
             if (needsToGrowToProduceCString(status)) {
                 baseNameID.grow(bufferLength + 1);
@@ -400,7 +401,7 @@ const String& IntlLocale::minimal()
             }
             ASSERT(U_SUCCESS(status));
 
-            Vector<char, 32> minimal;
+            WTF::StringImplVector<char, 32> minimal;
             auto status = callBufferProducingFunction(uloc_minimizeSubtags, baseNameID.data(), minimal);
             // We fail if,
             // 1. uloc_minimizeSubtags still fails.
@@ -433,7 +434,7 @@ const String& IntlLocale::baseName()
 {
     if (m_baseName.isNull()) {
         UErrorCode status = U_ZERO_ERROR;
-        Vector<char, 32> buffer(32);
+        WTF::StringImplVector<char, 32> buffer(32);
         auto bufferLength = uloc_getBaseName(m_localeID.data(), buffer.data(), buffer.size(), &status);
         if (needsToGrowToProduceCString(status)) {
             buffer.grow(bufferLength + 1);
@@ -451,7 +452,7 @@ const String& IntlLocale::baseName()
 const String& IntlLocale::language()
 {
     if (m_language.isNull()) {
-        Vector<char, 8> buffer;
+        WTF::StringImplVector<char, 8> buffer;
         auto status = callBufferProducingFunction(uloc_getLanguage, m_localeID.data(), buffer);
         ASSERT_UNUSED(status, U_SUCCESS(status));
         m_language = String(buffer.data(), buffer.size());
@@ -463,7 +464,7 @@ const String& IntlLocale::language()
 const String& IntlLocale::script()
 {
     if (m_script.isNull()) {
-        Vector<char, 4> buffer;
+        WTF::StringImplVector<char, 4> buffer;
         auto status = callBufferProducingFunction(uloc_getScript, m_localeID.data(), buffer);
         ASSERT_UNUSED(status, U_SUCCESS(status));
         m_script = String(buffer.data(), buffer.size());
@@ -475,7 +476,7 @@ const String& IntlLocale::script()
 const String& IntlLocale::region()
 {
     if (m_region.isNull()) {
-        Vector<char, 3> buffer;
+        WTF::StringImplVector<char, 3> buffer;
         auto status = callBufferProducingFunction(uloc_getCountry, m_localeID.data(), buffer);
         ASSERT_UNUSED(status, U_SUCCESS(status));
         m_region = String(buffer.data(), buffer.size());
@@ -633,7 +634,7 @@ JSArray* IntlLocale::hourCycles(JSGlobalObject* globalObject)
 
     // Use "j" skeleton and parse pattern to retrieve the configured hour-cycle information.
     constexpr const UChar skeleton[] = { 'j', 0 };
-    Vector<UChar, 32> pattern;
+    WTF::StringImplVector<UChar, 32> pattern;
     status = callBufferProducingFunction(udatpg_getBestPatternWithOptions, generator.get(), skeleton, 1, UDATPG_MATCH_HOUR_FIELD_LENGTH, pattern);
     if (!U_SUCCESS(status)) {
         throwTypeError(globalObject, scope, "invalid locale"_s);

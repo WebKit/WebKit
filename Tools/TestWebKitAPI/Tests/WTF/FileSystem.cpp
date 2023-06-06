@@ -949,7 +949,7 @@ TEST_F(FileSystemTest, readEntireFile)
     EXPECT_FALSE(FileSystem::readEntireFile(FileSystem::pathByAppendingComponent(tempEmptyFolderPath(), "does-not-exist"_s)));
     EXPECT_FALSE(FileSystem::readEntireFile(tempEmptyFilePath()));
 
-    auto buffer = FileSystem::readEntireFile(tempFilePath());
+    auto buffer = FileSystem::readEntireFileToString(tempFilePath());
     EXPECT_TRUE(buffer);
     auto contents = String::adopt(WTFMove(buffer.value()));
     EXPECT_STREQ(contents.utf8().data(), FileSystemTestData);

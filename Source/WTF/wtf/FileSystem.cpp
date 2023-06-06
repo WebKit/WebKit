@@ -527,7 +527,8 @@ std::optional<Salt> readOrMakeSalt(const String& path)
     return salt;
 }
 
-std::optional<Vector<uint8_t>> readEntireFile(PlatformFileHandle handle)
+template<typename V>
+static std::optional<V> readEntireFileImpl(PlatformFileHandle handle)
 {
     if (!FileSystem::isHandleValid(handle))
         return std::nullopt;
@@ -540,7 +541,7 @@ std::optional<Vector<uint8_t>> readEntireFile(PlatformFileHandle handle)
     if (!WTF::convertSafely(size, bytesToRead))
         return std::nullopt;
 
-    Vector<uint8_t> buffer(bytesToRead);
+    V buffer(bytesToRead);
     size_t totalBytesRead = 0;
     int bytesRead;
 
@@ -553,10 +554,30 @@ std::optional<Vector<uint8_t>> readEntireFile(PlatformFileHandle handle)
     return buffer;
 }
 
+std::optional<Vector<uint8_t>> readEntireFile(PlatformFileHandle handle)
+{
+    return readEntireFileImpl<Vector<uint8_t>>(handle);
+}
+
+std::optional<StringImplVector<uint8_t>> readEntireFileToString(PlatformFileHandle handle)
+{
+    return readEntireFileImpl<StringImplVector<uint8_t>>(handle);
+}
+
 std::optional<Vector<uint8_t>> readEntireFile(const String& path)
 {
     auto handle = FileSystem::openFile(path, FileSystem::FileOpenMode::Read);
     auto contents = readEntireFile(handle);
+    FileSystem::closeFile(handle);
+
+    return contents;
+}
+
+
+std::optional<StringImplVector<uint8_t>> readEntireFileToString(const String& path)
+{
+    auto handle = FileSystem::openFile(path, FileSystem::FileOpenMode::Read);
+    auto contents = readEntireFileToString(handle);
     FileSystem::closeFile(handle);
 
     return contents;

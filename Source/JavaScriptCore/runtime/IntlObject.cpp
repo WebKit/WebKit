@@ -309,13 +309,13 @@ static Vector<StringView> unicodeExtensionComponents(StringView extension)
     return subtags;
 }
 
-Vector<char, 32> localeIDBufferForLanguageTagWithNullTerminator(const CString& tag)
+WTF::StringImplVector<char, 32> localeIDBufferForLanguageTagWithNullTerminator(const CString& tag)
 {
     if (!tag.length())
         return { };
 
     UErrorCode status = U_ZERO_ERROR;
-    Vector<char, 32> buffer(32);
+    WTF::StringImplVector<char, 32> buffer(32);
     int32_t parsedLength;
     auto bufferLength = uloc_forLanguageTag(tag.data(), buffer.data(), buffer.size(), &parsedLength, &status);
     if (needsToGrowToProduceCString(status)) {
@@ -331,7 +331,7 @@ Vector<char, 32> localeIDBufferForLanguageTagWithNullTerminator(const CString& t
     return buffer;
 }
 
-Vector<char, 32> canonicalizeUnicodeExtensionsAfterICULocaleCanonicalization(Vector<char, 32>&& buffer)
+WTF::StringImplVector<char, 32> canonicalizeUnicodeExtensionsAfterICULocaleCanonicalization(WTF::StringImplVector<char, 32>&& buffer)
 {
     StringView locale(buffer.data(), buffer.size());
     ASSERT(locale.is8Bit());
@@ -354,7 +354,7 @@ Vector<char, 32> canonicalizeUnicodeExtensionsAfterICULocaleCanonicalization(Vec
         end++;
     }
 
-    Vector<char, 32> result;
+    WTF::StringImplVector<char, 32> result;
     result.append(buffer.data(), extensionIndex + 2); // "-u" is included.
     StringView extension = locale.substring(extensionIndex, extensionLength);
     ASSERT(extension.is8Bit());
@@ -398,12 +398,12 @@ Vector<char, 32> canonicalizeUnicodeExtensionsAfterICULocaleCanonicalization(Vec
 
 String languageTagForLocaleID(const char* localeID, bool isImmortal)
 {
-    Vector<char, 32> buffer;
+    WTF::StringImplVector<char, 32> buffer;
     auto status = callBufferProducingFunction(uloc_toLanguageTag, localeID, buffer, false);
     if (U_FAILURE(status))
         return String();
 
-    auto createResult = [&](Vector<char, 32>&& buffer) -> String {
+    auto createResult = [&](WTF::StringImplVector<char, 32>&& buffer) -> String {
         // This is used to store into static variables that may be shared across JSC execution threads.
         // This must be immortal to make concurrent ref/deref safe.
         if (isImmortal)
@@ -1537,10 +1537,10 @@ bool isWellFormedCurrencyCode(StringView currency)
     return currency.length() == 3 && currency.containsOnly<isASCIIAlpha>();
 }
 
-std::optional<Vector<char, 32>> canonicalizeLocaleIDWithoutNullTerminator(const char* localeID)
+std::optional<WTF::StringImplVector<char, 32>> canonicalizeLocaleIDWithoutNullTerminator(const char* localeID)
 {
     ASSERT(localeID);
-    Vector<char, 32> buffer;
+    WTF::StringImplVector<char, 32> buffer;
 #if U_ICU_VERSION_MAJOR_NUM >= 68 && USE(APPLE_INTERNAL_SDK)
     // Use ualoc_canonicalForm AppleICU SPI, which can perform mapping of aliases.
     // ICU-21506 is a bug upstreaming this SPI to ICU.

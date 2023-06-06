@@ -837,7 +837,7 @@ static String escapeUnsafeCharacters(const String& sourceBuffer)
     if (i == length)
         return sourceBuffer;
 
-    Vector<UChar, urlBytesBufferLength> outBuffer;
+    StringImplVector<UChar, urlBytesBufferLength> outBuffer;
 
     outBuffer.grow(i);
     if (sourceBuffer.is8Bit())

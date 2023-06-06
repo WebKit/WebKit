@@ -390,7 +390,7 @@ inline double timeToMS(double hour, double min, double sec, double ms)
 
 WTF_EXPORT_PRIVATE bool isTimeZoneValid(StringView);
 WTF_EXPORT_PRIVATE bool setTimeZoneOverride(StringView);
-WTF_EXPORT_PRIVATE void getTimeZoneOverride(Vector<UChar, 32>& timeZoneID);
+WTF_EXPORT_PRIVATE void getTimeZoneOverride(WTF::StringImplVector<UChar, 32>& timeZoneID);
 
 // Returns combined offset in millisecond (UTC + DST).
 WTF_EXPORT_PRIVATE LocalTimeOffset calculateLocalTimeOffset(double utcInMilliseconds, TimeType = UTCTime);

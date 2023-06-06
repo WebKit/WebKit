@@ -1501,7 +1501,7 @@ static EncodedJSValue toLocaleCase(JSGlobalObject* globalObject, CallFrame* call
     // 17. Let L be a String whose elements are, in order, the elements of cuList.
 
     // Most strings lower/upper case will be the same size as original, so try that first.
-    Vector<UChar> buffer;
+    WTF::StringImplVector<UChar> buffer;
     buffer.reserveInitialCapacity(s.length());
     auto convertCase = mode == CaseConversionMode::Lower ? u_strToLower : u_strToUpper;
     auto status = callBufferProducingFunction(convertCase, buffer, StringView { s }.upconvertedCharacters().get(), s.length(), locale.utf8().data());
@@ -1919,7 +1919,7 @@ JSC_DEFINE_HOST_FUNCTION(stringProtoFuncToWellFormed, (JSGlobalObject* globalObj
     if (!firstIllFormedIndex)
         return JSValue::encode(stringValue);
 
-    Vector<UChar> buffer;
+    WTF::StringImplVector<UChar> buffer;
     buffer.reserveInitialCapacity(length);
     buffer.append(characters, firstIllFormedIndex.value());
     for (unsigned index = firstIllFormedIndex.value(); index < length; ++index) {

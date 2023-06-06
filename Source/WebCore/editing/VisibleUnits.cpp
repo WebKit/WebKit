@@ -243,7 +243,7 @@ static const InlineIterator::LeafBoxIterator logicallyNextBox(const VisiblePosit
 }
 
 static UBreakIterator* wordBreakIteratorForMinOffsetBoundary(const VisiblePosition& visiblePosition, InlineIterator::TextBoxIterator textBox,
-    unsigned& previousBoxLength, bool& previousBoxInDifferentLine, Vector<UChar, 1024>& string)
+    unsigned& previousBoxLength, bool& previousBoxInDifferentLine, WTF::StringImplVector<UChar, 1024>& string)
 {
     previousBoxInDifferentLine = false;
 
@@ -268,7 +268,7 @@ static UBreakIterator* wordBreakIteratorForMinOffsetBoundary(const VisiblePositi
 }
 
 static UBreakIterator* wordBreakIteratorForMaxOffsetBoundary(const VisiblePosition& visiblePosition, InlineIterator::TextBoxIterator textBox,
-    bool& nextBoxInDifferentLine, Vector<UChar, 1024>& string)
+    bool& nextBoxInDifferentLine, WTF::StringImplVector<UChar, 1024>& string)
 {
     nextBoxInDifferentLine = false;
 
@@ -324,7 +324,7 @@ static VisiblePosition visualWordPosition(const VisiblePosition& visiblePosition
     std::optional<VisiblePosition> previousPosition;
     UBreakIterator* iter = nullptr;
 
-    Vector<UChar, 1024> string;
+    WTF::StringImplVector<UChar, 1024> string;
 
     while (1) {
         VisiblePosition adjacentCharacterPosition = direction == MoveRight ? current.right(true) : current.left(true); 
@@ -417,7 +417,7 @@ VisiblePosition rightWordPosition(const VisiblePosition& visiblePosition, bool s
 }
 
 
-static void prepend(Vector<UChar, 1024>& buffer, StringView string)
+static void prepend(WTF::StringImplVector<UChar, 1024>& buffer, StringView string)
 {
     unsigned oldSize = buffer.size();
     unsigned length = string.length();
@@ -427,7 +427,7 @@ static void prepend(Vector<UChar, 1024>& buffer, StringView string)
         buffer[i] = string[i];
 }
 
-static void prependRepeatedCharacter(Vector<UChar, 1024>& buffer, UChar character, unsigned count)
+static void prependRepeatedCharacter(WTF::StringImplVector<UChar, 1024>& buffer, UChar character, unsigned count)
 {
     unsigned oldSize = buffer.size();
     buffer.grow(oldSize + count);
@@ -436,7 +436,7 @@ static void prependRepeatedCharacter(Vector<UChar, 1024>& buffer, UChar characte
         buffer[i] = character;
 }
 
-static void appendRepeatedCharacter(Vector<UChar, 1024>& buffer, UChar character, unsigned count)
+static void appendRepeatedCharacter(WTF::StringImplVector<UChar, 1024>& buffer, UChar character, unsigned count)
 {
     unsigned oldSize = buffer.size();
     buffer.grow(oldSize + count);
@@ -444,7 +444,7 @@ static void appendRepeatedCharacter(Vector<UChar, 1024>& buffer, UChar character
         buffer[oldSize + i] = character;
 }
 
-unsigned suffixLengthForRange(const SimpleRange& forwardsScanRange, Vector<UChar, 1024>& string)
+unsigned suffixLengthForRange(const SimpleRange& forwardsScanRange, WTF::StringImplVector<UChar, 1024>& string)
 {
     unsigned suffixLength = 0;
     TextIterator forwardsIterator(forwardsScanRange);
@@ -460,7 +460,7 @@ unsigned suffixLengthForRange(const SimpleRange& forwardsScanRange, Vector<UChar
     return suffixLength;
 }
 
-unsigned prefixLengthForRange(const SimpleRange& backwardsScanRange, Vector<UChar, 1024>& string)
+unsigned prefixLengthForRange(const SimpleRange& backwardsScanRange, WTF::StringImplVector<UChar, 1024>& string)
 {
     unsigned prefixLength = 0;
     SimplifiedBackwardsTextIterator backwardsIterator(backwardsScanRange);
@@ -476,7 +476,7 @@ unsigned prefixLengthForRange(const SimpleRange& backwardsScanRange, Vector<UCha
     return prefixLength;
 }
 
-unsigned backwardSearchForBoundaryWithTextIterator(SimplifiedBackwardsTextIterator& it, Vector<UChar, 1024>& string, unsigned suffixLength, BoundarySearchFunction searchFunction)
+unsigned backwardSearchForBoundaryWithTextIterator(SimplifiedBackwardsTextIterator& it, WTF::StringImplVector<UChar, 1024>& string, unsigned suffixLength, BoundarySearchFunction searchFunction)
 {
     unsigned next = 0;
     bool needMoreContext = false;
@@ -506,7 +506,7 @@ unsigned backwardSearchForBoundaryWithTextIterator(SimplifiedBackwardsTextIterat
     return next;
 }
 
-unsigned forwardSearchForBoundaryWithTextIterator(TextIterator& it, Vector<UChar, 1024>& string, unsigned prefixLength, BoundarySearchFunction searchFunction)
+unsigned forwardSearchForBoundaryWithTextIterator(TextIterator& it, WTF::StringImplVector<UChar, 1024>& string, unsigned prefixLength, BoundarySearchFunction searchFunction)
 {
     unsigned next = 0;
     bool needMoreContext = false;
@@ -545,7 +545,7 @@ static VisiblePosition previousBoundary(const VisiblePosition& position, Boundar
     if (!boundary)
         return { };
 
-    Vector<UChar, 1024> string;
+    WTF::StringImplVector<UChar, 1024> string;
     unsigned suffixLength = 0;
 
     auto searchRange = makeSimpleRange(makeBoundaryPointBeforeNodeContents(*boundary), position);
@@ -593,7 +593,7 @@ static VisiblePosition nextBoundary(const VisiblePosition& c, BoundarySearchFunc
 
     Document& boundaryDocument = boundary->document();
 
-    Vector<UChar, 1024> string;
+    WTF::StringImplVector<UChar, 1024> string;
     unsigned prefixLength = 0;
 
     if (requiresContextForWordBoundary(c.characterAfter())) {

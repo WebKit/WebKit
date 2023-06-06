@@ -40,25 +40,25 @@ UDateTimePatternGenerator* IntlCache::cacheSharedPatternGenerator(const CString&
     return m_cachedDateTimePatternGenerator.get();
 }
 
-Vector<UChar, 32> IntlCache::getBestDateTimePattern(const CString& locale, const UChar* skeleton, unsigned skeletonSize, UErrorCode& status)
+WTF::StringImplVector<UChar, 32> IntlCache::getBestDateTimePattern(const CString& locale, const UChar* skeleton, unsigned skeletonSize, UErrorCode& status)
 {
     // Always use ICU date format generator, rather than our own pattern list and matcher.
     auto sharedGenerator = getSharedPatternGenerator(locale, status);
     if (U_FAILURE(status))
         return { };
-    Vector<UChar, 32> patternBuffer;
+    WTF::StringImplVector<UChar, 32> patternBuffer;
     status = callBufferProducingFunction(udatpg_getBestPatternWithOptions, sharedGenerator, skeleton, skeletonSize, UDATPG_MATCH_HOUR_FIELD_LENGTH, patternBuffer);
     if (U_FAILURE(status))
         return { };
     return patternBuffer;
 }
 
-Vector<UChar, 32> IntlCache::getFieldDisplayName(const CString& locale, UDateTimePatternField field, UDateTimePGDisplayWidth width, UErrorCode& status)
+WTF::StringImplVector<UChar, 32> IntlCache::getFieldDisplayName(const CString& locale, UDateTimePatternField field, UDateTimePGDisplayWidth width, UErrorCode& status)
 {
     auto sharedGenerator = getSharedPatternGenerator(locale, status);
     if (U_FAILURE(status))
         return { };
-    Vector<UChar, 32> buffer;
+    WTF::StringImplVector<UChar, 32> buffer;
     status = callBufferProducingFunction(udatpg_getFieldDisplayName, sharedGenerator, field, width, buffer);
     if (U_FAILURE(status))
         return { };

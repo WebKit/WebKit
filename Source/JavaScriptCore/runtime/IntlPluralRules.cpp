@@ -250,7 +250,7 @@ JSValue IntlPluralRules::select(JSGlobalObject* globalObject, double value) cons
     unumf_formatDouble(m_numberFormatter.get(), value, formattedNumber.get(), &status);
     if (U_FAILURE(status))
         return throwTypeError(globalObject, scope, "failed to select plural value"_s);
-    Vector<UChar, 32> buffer;
+    WTF::StringImplVector<UChar, 32> buffer;
     status = callBufferProducingFunction(uplrules_selectFormatted, m_pluralRules.get(), formattedNumber.get(), buffer);
     if (U_FAILURE(status))
         return throwTypeError(globalObject, scope, "failed to select plural value"_s);
@@ -285,7 +285,7 @@ JSValue IntlPluralRules::selectRange(JSGlobalObject* globalObject, double start,
     if (U_FAILURE(status))
         return throwTypeError(globalObject, scope, "failed to select range of plural value"_s);
 
-    Vector<UChar, 32> buffer;
+    WTF::StringImplVector<UChar, 32> buffer;
     status = callBufferProducingFunction(uplrules_selectForRange, m_pluralRules.get(), range.get(), buffer);
     if (U_FAILURE(status))
         return throwTypeError(globalObject, scope, "failed to select plural value"_s);

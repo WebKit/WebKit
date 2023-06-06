@@ -1035,11 +1035,11 @@ String makeRFC2822DateString(unsigned dayOfWeek, unsigned day, unsigned month, u
     return stringBuilder.toString();
 }
 
-static std::optional<Vector<UChar, 32>> validateTimeZone(StringView timeZone)
+static std::optional<StringImplVector<UChar, 32>> validateTimeZone(StringView timeZone)
 {
     auto buffer = timeZone.upconvertedCharacters();
     const UChar* characters = buffer;
-    Vector<UChar, 32> canonicalBuffer;
+    StringImplVector<UChar, 32> canonicalBuffer;
     auto status = callBufferProducingFunction(ucal_getCanonicalTimeZoneID, characters, timeZone.length(), canonicalBuffer, nullptr);
     if (!U_SUCCESS(status))
         return std::nullopt;
@@ -1070,7 +1070,7 @@ bool setTimeZoneOverride(StringView timeZone)
     return true;
 }
 
-void getTimeZoneOverride(Vector<UChar, 32>& timeZoneID)
+void getTimeZoneOverride(WTF::StringImplVector<UChar, 32>& timeZoneID)
 {
     Locker locker { innerTimeZoneOverrideLock };
     timeZoneID = innerTimeZoneOverride();

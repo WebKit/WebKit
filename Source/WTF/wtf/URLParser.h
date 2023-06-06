@@ -29,6 +29,7 @@
 #include <wtf/Expected.h>
 #include <wtf/Forward.h>
 #include <wtf/URL.h>
+#include <wtf/text/StringImpl.h>
 
 struct UIDNA;
 
@@ -77,7 +78,7 @@ private:
     friend class URL;
 
     URL m_url;
-    Vector<LChar> m_asciiBuffer;
+    StringImplVector<LChar> m_asciiBuffer;
     bool m_urlIsSpecial { false };
     bool m_urlIsFile { false };
     bool m_hostHasPercentOrNonASCII { false };
@@ -86,7 +87,7 @@ private:
     const void* m_inputBegin { nullptr };
 
     static constexpr size_t defaultInlineBufferSize = 2048;
-    using LCharBuffer = Vector<LChar, defaultInlineBufferSize>;
+    using LCharBuffer = StringImplVector<LChar, defaultInlineBufferSize>;
 
     template<typename CharacterType> void parse(const CharacterType*, const unsigned length, const URL&, const URLTextEncoding*);
     template<typename CharacterType> void parseAuthority(CodePointIterator<CharacterType>);

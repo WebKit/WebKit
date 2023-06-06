@@ -762,7 +762,7 @@ JSValue IntlNumberFormat::format(JSGlobalObject* globalObject, double value) con
 
     value = purifyNaN(value);
 
-    Vector<UChar, 32> buffer;
+    WTF::StringImplVector<UChar, 32> buffer;
 #if HAVE(ICU_U_NUMBER_FORMATTER)
     ASSERT(m_numberFormatter);
     UErrorCode status = U_ZERO_ERROR;
@@ -793,7 +793,7 @@ JSValue IntlNumberFormat::format(JSGlobalObject* globalObject, IntlMathematicalV
     value.ensureNonDouble();
     const auto& string = value.getString();
 
-    Vector<UChar, 32> buffer;
+    WTF::StringImplVector<UChar, 32> buffer;
 #if HAVE(ICU_U_NUMBER_FORMATTER)
     ASSERT(m_numberFormatter);
     UErrorCode status = U_ZERO_ERROR;
@@ -1523,7 +1523,7 @@ JSValue IntlNumberFormat::formatToParts(JSGlobalObject* globalObject, double val
     if (U_FAILURE(status))
         return throwTypeError(globalObject, scope, "failed to open field position iterator"_s);
 
-    Vector<UChar, 32> result;
+    WTF::StringImplVector<UChar, 32> result;
 #if HAVE(ICU_U_NUMBER_FORMATTER)
     ASSERT(m_numberFormatter);
     auto formattedNumber = std::unique_ptr<UFormattedNumber, ICUDeleter<unumf_closeResult>>(unumf_openResult(&status));
@@ -1573,7 +1573,7 @@ JSValue IntlNumberFormat::formatToParts(JSGlobalObject* globalObject, IntlMathem
     if (U_FAILURE(status))
         return throwTypeError(globalObject, scope, "failed to open field position iterator"_s);
 
-    Vector<UChar, 32> result;
+    WTF::StringImplVector<UChar, 32> result;
     ASSERT(m_numberFormatter);
     auto formattedNumber = std::unique_ptr<UFormattedNumber, ICUDeleter<unumf_closeResult>>(unumf_openResult(&status));
     if (U_FAILURE(status))

@@ -37,6 +37,7 @@
 #include <unicode/uenum.h>
 #include <wtf/Range.h>
 #include <wtf/text/StringBuilder.h>
+#include <wtf/text/StringImpl.h>
 #include <wtf/unicode/CharacterNames.h>
 #include <wtf/unicode/icu/ICUHelpers.h>
 
@@ -131,7 +132,7 @@ static String canonicalizeTimeZoneName(const String& timeZoneName)
         // 1. Let ianaTimeZone be the Zone or Link name of the IANA Time Zone Database such that timeZone, converted to upper case as described in 6.1, is equal to ianaTimeZone, converted to upper case as described in 6.1.
         // 2. If ianaTimeZone is a Link name, then let ianaTimeZone be the corresponding Zone name as specified in the “backward” file of the IANA Time Zone Database.
 
-        Vector<UChar, 32> buffer;
+        WTF::StringImplVector<UChar, 32> buffer;
         auto status = callBufferProducingFunction(ucal_getCanonicalTimeZoneID, ianaTimeZone, ianaTimeZoneLength, buffer, nullptr);
         ASSERT_UNUSED(status, U_SUCCESS(status));
         canonical = String(buffer);
@@ -497,7 +498,7 @@ inline IntlDateTimeFormat::HourCycle IntlDateTimeFormat::hourCycleFromSymbol(UCh
     return HourCycle::None;
 }
 
-IntlDateTimeFormat::HourCycle IntlDateTimeFormat::hourCycleFromPattern(const Vector<UChar, 32>& pattern)
+IntlDateTimeFormat::HourCycle IntlDateTimeFormat::hourCycleFromPattern(const WTF::StringImplVector<UChar, 32>& pattern)
 {
     for (unsigned i = 0, length = pattern.size(); i < length; ++i) {
         auto character = pattern[i];
@@ -518,7 +519,7 @@ IntlDateTimeFormat::HourCycle IntlDateTimeFormat::hourCycleFromPattern(const Vec
     return HourCycle::None;
 }
 
-inline void IntlDateTimeFormat::replaceHourCycleInSkeleton(Vector<UChar, 32>& skeleton, bool isHour12)
+inline void IntlDateTimeFormat::replaceHourCycleInSkeleton(WTF::StringImplVector<UChar, 32>& skeleton, bool isHour12)
 {
     UChar skeletonCharacter = 'H';
     if (isHour12)
@@ -543,7 +544,7 @@ inline void IntlDateTimeFormat::replaceHourCycleInSkeleton(Vector<UChar, 32>& sk
     }
 }
 
-inline void IntlDateTimeFormat::replaceHourCycleInPattern(Vector<UChar, 32>& pattern, HourCycle hourCycle)
+inline void IntlDateTimeFormat::replaceHourCycleInPattern(WTF::StringImplVector<UChar, 32>& pattern, HourCycle hourCycle)
 {
     UChar hourFromHourCycle = 'H';
     switch (hourCycle) {
@@ -885,7 +886,7 @@ void IntlDateTimeFormat::initializeDateTimeFormat(JSGlobalObject* globalObject, 
     m_timeStyle = intlOption<DateTimeStyle>(globalObject, options, vm.propertyNames->timeStyle, { { "full"_s, DateTimeStyle::Full }, { "long"_s, DateTimeStyle::Long }, { "medium"_s, DateTimeStyle::Medium }, { "short"_s, DateTimeStyle::Short } }, "timeStyle must be \"full\", \"long\", \"medium\", or \"short\""_s, DateTimeStyle::None);
     RETURN_IF_EXCEPTION(scope, void());
 
-    Vector<UChar, 32> patternBuffer;
+    WTF::StringImplVector<UChar, 32> patternBuffer;
     if (m_dateStyle != DateTimeStyle::None || m_timeStyle != DateTimeStyle::None) {
         // 30. For each row in Table 1, except the header row, do
         //     i. Let prop be the name given in the Property column of the row.
@@ -952,7 +953,7 @@ void IntlDateTimeFormat::initializeDateTimeFormat(JSGlobalObject* globalObject, 
                 specifiedHour12 = isHour12(hourCycle);
             HourCycle extractedHourCycle = hourCycleFromPattern(patternBuffer);
             if (extractedHourCycle != HourCycle::None && isHour12(extractedHourCycle) != specifiedHour12) {
-                Vector<UChar, 32> skeleton;
+                WTF::StringImplVector<UChar, 32> skeleton;
                 auto status = callBufferProducingFunction(udatpg_getSkeleton, nullptr, patternBuffer.data(), patternBuffer.size(), skeleton);
                 if (U_FAILURE(status)) {
                     throwTypeError(globalObject, scope, "failed to initialize DateTimeFormat"_s);
@@ -1300,7 +1301,7 @@ JSValue IntlDateTimeFormat::format(JSGlobalObject* globalObject, double value) c
     if (!std::isfinite(value))
         return throwRangeError(globalObject, scope, "date value is not finite in DateTimeFormat format()"_s);
 
-    Vector<UChar, 32> result;
+    WTF::StringImplVector<UChar, 32> result;
     auto status = callBufferProducingFunction(udat_format, m_dateFormat.get(), value, result, nullptr);
     if (U_FAILURE(status))
         return throwTypeError(globalObject, scope, "failed to format date value"_s);
@@ -1388,7 +1389,7 @@ JSValue IntlDateTimeFormat::formatToParts(JSGlobalObject* globalObject, double v
     if (U_FAILURE(status))
         return throwTypeError(globalObject, scope, "failed to open field position iterator"_s);
 
-    Vector<UChar, 32> result;
+    WTF::StringImplVector<UChar, 32> result;
     status = callBufferProducingFunction(udat_formatForFields, m_dateFormat.get(), value, result, fields.get());
     if (U_FAILURE(status))
         return throwTypeError(globalObject, scope, "failed to format date value"_s);
@@ -1448,7 +1449,7 @@ UDateIntervalFormat* IntlDateTimeFormat::createDateIntervalFormatIfNecessary(JSG
     if (m_dateIntervalFormat)
         return m_dateIntervalFormat.get();
 
-    Vector<UChar, 32> pattern;
+    WTF::StringImplVector<UChar, 32> pattern;
     {
         auto status = callBufferProducingFunction(udat_toPattern, m_dateFormat.get(), false, pattern);
         if (U_FAILURE(status)) {
@@ -1457,7 +1458,7 @@ UDateIntervalFormat* IntlDateTimeFormat::createDateIntervalFormatIfNecessary(JSG
         }
     }
 
-    Vector<UChar, 32> skeleton;
+    WTF::StringImplVector<UChar, 32> skeleton;
     {
         auto status = callBufferProducingFunction(udatpg_getSkeleton, nullptr, pattern.data(), pattern.size(), skeleton);
         if (U_FAILURE(status)) {
@@ -1620,12 +1621,12 @@ JSValue IntlDateTimeFormat::formatRange(JSGlobalObject* globalObject, double sta
         throwTypeError(globalObject, scope, "Failed to format date interval"_s);
         return { };
     }
-    Vector<UChar, 32> buffer(formattedStringPointer, formattedStringLength);
+    WTF::StringImplVector<UChar, 32> buffer(formattedStringPointer, formattedStringLength);
     replaceNarrowNoBreakSpaceOrThinSpaceWithNormalSpace(buffer);
 
     return jsString(vm, String(WTFMove(buffer)));
 #else
-    Vector<UChar, 32> buffer;
+    WTF::StringImplVector<UChar, 32> buffer;
     auto status = callBufferProducingFunction(udtitvfmt_format, dateIntervalFormat, startDate, endDate, buffer, nullptr);
     if (U_FAILURE(status)) {
         throwTypeError(globalObject, scope, "Failed to format date interval"_s);
@@ -1736,7 +1737,7 @@ JSValue IntlDateTimeFormat::formatRangeToParts(JSGlobalObject* globalObject, dou
         throwTypeError(globalObject, scope, "Failed to format date interval"_s);
         return { };
     }
-    Vector<UChar, 32> buffer(formattedStringPointer, formattedStringLength);
+    WTF::StringImplVector<UChar, 32> buffer(formattedStringPointer, formattedStringLength);
     replaceNarrowNoBreakSpaceOrThinSpaceWithNormalSpace(buffer);
 
     StringView resultStringView(buffer.data(), buffer.size());

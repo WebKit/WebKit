@@ -126,7 +126,7 @@ TriState intlBooleanOption(JSGlobalObject*, JSObject* options, PropertyName);
 String intlStringOption(JSGlobalObject*, JSObject* options, PropertyName, std::initializer_list<ASCIILiteral> values, ASCIILiteral notFound, ASCIILiteral fallback);
 unsigned intlNumberOption(JSGlobalObject*, JSObject* options, PropertyName, unsigned minimum, unsigned maximum, unsigned fallback);
 unsigned intlDefaultNumberOption(JSGlobalObject*, JSValue, PropertyName, unsigned minimum, unsigned maximum, unsigned fallback);
-Vector<char, 32> localeIDBufferForLanguageTagWithNullTerminator(const CString&);
+WTF::StringImplVector<char, 32> localeIDBufferForLanguageTagWithNullTerminator(const CString&);
 String languageTagForLocaleID(const char*, bool isImmortal = false);
 Vector<String> canonicalizeLocaleList(JSGlobalObject*, JSValue locales);
 
@@ -145,7 +145,7 @@ String bestAvailableLocale(const LocaleSet& availableLocales, const String& requ
 template<typename Predicate> String bestAvailableLocale(const String& requestedLocale, Predicate);
 Vector<String> numberingSystemsForLocale(const String& locale);
 
-Vector<char, 32> canonicalizeUnicodeExtensionsAfterICULocaleCanonicalization(Vector<char, 32>&&);
+WTF::StringImplVector<char, 32> canonicalizeUnicodeExtensionsAfterICULocaleCanonicalization(WTF::StringImplVector<char, 32>&&);
 
 bool isUnicodeLocaleIdentifierType(StringView);
 
@@ -159,7 +159,7 @@ String canonicalizeUnicodeLocaleID(const CString& languageTag);
 
 bool isWellFormedCurrencyCode(StringView);
 
-std::optional<Vector<char, 32>> canonicalizeLocaleIDWithoutNullTerminator(const char* localeID);
+std::optional<WTF::StringImplVector<char, 32>> canonicalizeLocaleIDWithoutNullTerminator(const char* localeID);
 
 struct UFieldPositionIteratorDeleter {
     void operator()(UFieldPositionIterator*) const;

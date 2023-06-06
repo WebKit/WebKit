@@ -33,8 +33,8 @@ namespace WebCore {
 struct DoctypeData {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    Vector<UChar> publicIdentifier;
-    Vector<UChar> systemIdentifier;
+    WTF::StringImplVector<UChar> publicIdentifier;
+    WTF::StringImplVector<UChar> systemIdentifier;
     bool hasPublicIdentifier { false };
     bool hasSystemIdentifier { false };
     bool forceQuirks { false };
@@ -54,12 +54,12 @@ public:
     };
 
     struct Attribute {
-        Vector<UChar, 32> name;
-        Vector<UChar, 64> value;
+        WTF::StringImplVector<UChar, 32> name;
+        WTF::StringImplVector<UChar, 64> value;
     };
 
-    typedef Vector<Attribute, 10> AttributeList;
-    typedef Vector<UChar, 256> DataVector;
+    typedef WTF::StringImplVector<Attribute, 10> AttributeList;
+    typedef WTF::StringImplVector<UChar, 256> DataVector;
 
     HTMLToken() = default;
 

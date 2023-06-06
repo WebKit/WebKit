@@ -2179,7 +2179,7 @@ String JSBigInt::toStringBasePowerOfTwo(VM& vm, JSGlobalObject* nullOrGlobalObje
         return String();
     }
 
-    Vector<LChar> resultString(charsRequired);
+    WTF::StringImplVector<LChar> resultString(charsRequired);
     Digit digit = 0;
     // Keeps track of how many unprocessed bits there are in {digit}.
     unsigned availableBits = 0;
@@ -2218,7 +2218,7 @@ String JSBigInt::toStringGeneric(VM& vm, JSGlobalObject* nullOrGlobalObjectForOO
 {
     // FIXME: [JSC] Revisit usage of Vector into JSBigInt::toString
     // https://bugs.webkit.org/show_bug.cgi?id=180671
-    Vector<LChar> resultString;
+    WTF::StringImplVector<LChar> resultString;
 
     ASSERT(radix >= 2 && radix <= 36);
     ASSERT(!x->isZero());

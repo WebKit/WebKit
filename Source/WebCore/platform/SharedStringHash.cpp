@@ -84,7 +84,7 @@ static inline bool containsColonSlashSlash(const CharacterType* characters, unsi
 }
 
 template <typename CharacterType>
-static inline void squeezeOutNullCharacters(Vector<CharacterType, 512>& string)
+static inline void squeezeOutNullCharacters(WTF::StringImplVector<CharacterType, 512>& string)
 {
     size_t size = string.size();
     size_t i = 0;
@@ -104,7 +104,7 @@ static inline void squeezeOutNullCharacters(Vector<CharacterType, 512>& string)
 }
 
 template <typename CharacterType>
-static void cleanSlashDotDotSlashes(Vector<CharacterType, 512>& path, size_t firstSlash)
+static void cleanSlashDotDotSlashes(WTF::StringImplVector<CharacterType, 512>& path, size_t firstSlash)
 {
     size_t slash = firstSlash;
     do {
@@ -124,7 +124,7 @@ static void cleanSlashDotDotSlashes(Vector<CharacterType, 512>& path, size_t fir
 }
 
 template <typename CharacterType>
-static void mergeDoubleSlashes(Vector<CharacterType, 512>& path, size_t firstSlash)
+static void mergeDoubleSlashes(WTF::StringImplVector<CharacterType, 512>& path, size_t firstSlash)
 {
     size_t refPos = find(path.data(), path.size(), '#');
     if (!refPos || refPos == notFound)
@@ -143,7 +143,7 @@ static void mergeDoubleSlashes(Vector<CharacterType, 512>& path, size_t firstSla
 }
 
 template <typename CharacterType>
-static void cleanSlashDotSlashes(Vector<CharacterType, 512>& path, size_t firstSlash)
+static void cleanSlashDotSlashes(WTF::StringImplVector<CharacterType, 512>& path, size_t firstSlash)
 {
     size_t slash = firstSlash;
     do {
@@ -155,7 +155,7 @@ static void cleanSlashDotSlashes(Vector<CharacterType, 512>& path, size_t firstS
 }
 
 template <typename CharacterType>
-static inline void cleanPath(Vector<CharacterType, 512>& path)
+static inline void cleanPath(WTF::StringImplVector<CharacterType, 512>& path)
 {
     // FIXME: Should not do this in the query or anchor part of the URL.
     size_t firstSlash = findSlashDotDotSlash(path.data(), path.size(), 0);
@@ -222,7 +222,7 @@ SharedStringHash computeSharedStringHash(const UChar* url, unsigned length)
 }
 
 template <typename CharacterType>
-static ALWAYS_INLINE void computeSharedStringHashInline(const URL& base, const CharacterType* characters, unsigned length, Vector<CharacterType, 512>& buffer)
+static ALWAYS_INLINE void computeSharedStringHashInline(const URL& base, const CharacterType* characters, unsigned length, WTF::StringImplVector<CharacterType, 512>& buffer)
 {
     if (!length)
         return;
@@ -286,7 +286,7 @@ SharedStringHash computeVisitedLinkHash(const URL& base, const AtomString& attri
         return 0;
 
     if (!base.string().isEmpty() && base.string().is8Bit() && attributeURL.is8Bit()) {
-        Vector<LChar, 512> url;
+        WTF::StringImplVector<LChar, 512> url;
         computeSharedStringHashInline(base, attributeURL.characters8(), attributeURL.length(), url);
         if (url.isEmpty())
             return 0;
@@ -294,7 +294,7 @@ SharedStringHash computeVisitedLinkHash(const URL& base, const AtomString& attri
         return computeSharedStringHashInline(url.data(), url.size());
     }
 
-    Vector<UChar, 512> url;
+    WTF::StringImplVector<UChar, 512> url;
     auto upconvertedCharacters = StringView(attributeURL.string()).upconvertedCharacters();
     const UChar* characters = upconvertedCharacters;
     computeSharedStringHashInline(base, characters, attributeURL.length(), url);

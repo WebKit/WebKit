@@ -51,6 +51,11 @@ void* tryRealloc(Kind, void* pointer, size_t size)
     return FastMalloc::tryRealloc(pointer, size);
 }
 
+void* realloc(Kind, void* pointer, size_t size)
+{
+    return FastMalloc::realloc(pointer, size);
+}
+
 void* tryAllocateZeroedVirtualPages(Kind, size_t requestedSize)
 {
     size_t size = roundUpToMultipleOf(WTF::pageSize(), requestedSize);
@@ -106,6 +111,13 @@ void* tryMalloc(Kind kind, size_t size)
 void* tryRealloc(Kind kind, void* pointer, size_t size)
 {
     void* result = bmalloc::api::tryRealloc(pointer, size, bmalloc::heapKind(kind));
+    WTF::compilerFence();
+    return result;
+}
+
+void* realloc(Kind kind, void* pointer, size_t size)
+{
+    void* result = bmalloc::api::realloc(pointer, size, bmalloc::heapKind(kind));
     WTF::compilerFence();
     return result;
 }
