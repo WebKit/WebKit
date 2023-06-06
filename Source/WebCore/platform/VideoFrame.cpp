@@ -56,6 +56,12 @@ RefPtr<VideoFrame> VideoFrame::fromNativeImage(NativeImage&)
     return nullptr;
 }
 
+RefPtr<VideoFrame> createFromPixelBuffer(Ref<PixelBuffer>&&, PlatformVideoColorSpace&&)
+{
+    // FIXME: Add support.
+    return nullptr;
+}
+
 RefPtr<VideoFrame> VideoFrame::createNV12(std::span<const uint8_t>, size_t, size_t, const ComputedPlaneLayout&, const ComputedPlaneLayout&, PlatformVideoColorSpace&&)
 {
     // FIXME: Add support.

@@ -55,6 +55,11 @@ static void ensureVideoFrameDebugCategoryInitialized()
     });
 }
 
+RefPtr<VideoFrame> VideoFrame::createFromPixelBuffer(Ref<PixelBuffer>&& pixelBuffer, PlatformVideoColorSpace&& colorSpace)
+{
+    return RefPtr { VideoFrameGStreamer::createFromPixelBuffer(WTFMove(pixelBuffer), VideoFrameGStreamer::CanvasContentType::Canvas2D, VideoFrame::Rotation::None, MediaTime::invalidTime(), { }, 1, false, { }, WTFMove(colorSpace)) };
+}
+
 class GstSampleColorConverter {
 public:
     static GstSampleColorConverter& singleton();
@@ -294,7 +299,7 @@ Ref<VideoFrameGStreamer> VideoFrameGStreamer::createWrappedSample(const GRefPtr<
     return adoptRef(*new VideoFrameGStreamer(sample, *presentationSize, presentationTime, videoRotation, WTFMove(colorSpace)));
 }
 
-Ref<VideoFrameGStreamer> VideoFrameGStreamer::createFromPixelBuffer(Ref<PixelBuffer>&& pixelBuffer, CanvasContentType canvasContentType, Rotation videoRotation, const MediaTime& presentationTime, const IntSize& destinationSize, double frameRate, bool videoMirrored, std::optional<VideoFrameTimeMetadata>&& metadata)
+Ref<VideoFrameGStreamer> VideoFrameGStreamer::createFromPixelBuffer(Ref<PixelBuffer>&& pixelBuffer, CanvasContentType canvasContentType, Rotation videoRotation, const MediaTime& presentationTime, const IntSize& destinationSize, double frameRate, bool videoMirrored, std::optional<VideoFrameTimeMetadata>&& metadata, PlatformVideoColorSpace&& colorSpace)
 {
     ensureGStreamerInitialized();
 
@@ -358,7 +363,7 @@ Ref<VideoFrameGStreamer> VideoFrameGStreamer::createFromPixelBuffer(Ref<PixelBuf
         sample = adoptGRef(gst_sample_new(buffer.get(), caps.get(), nullptr, nullptr));
     }
 
-    return adoptRef(*new VideoFrameGStreamer(WTFMove(sample), FloatSize(width, height), presentationTime, videoRotation, videoMirrored, WTFMove(metadata)));
+    return adoptRef(*new VideoFrameGStreamer(WTFMove(sample), FloatSize(width, height), presentationTime, videoRotation, videoMirrored, WTFMove(metadata), WTFMove(colorSpace)));
 }
 
 VideoFrameGStreamer::VideoFrameGStreamer(GRefPtr<GstSample>&& sample, const FloatSize& presentationSize, const MediaTime& presentationTime, Rotation videoRotation, bool videoMirrored, std::optional<VideoFrameTimeMetadata>&& metadata, PlatformVideoColorSpace&& colorSpace)

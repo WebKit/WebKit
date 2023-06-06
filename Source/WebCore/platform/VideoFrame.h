@@ -42,12 +42,15 @@ namespace WebCore {
 
 class FloatRect;
 class GraphicsContext;
-struct ImageOrientation;
 class NativeImage;
+class PixelBuffer;
 class ProcessIdentity;
 #if USE(AVFOUNDATION) && PLATFORM(COCOA)
 class VideoFrameCV;
 #endif
+
+struct ImageOrientation;
+struct PlatformVideoColorSpace;
 
 struct ComputedPlaneLayout {
     size_t destinationOffset { 0 };
@@ -71,6 +74,7 @@ public:
     virtual ~VideoFrame() = default;
 
     static RefPtr<VideoFrame> fromNativeImage(NativeImage&);
+    static RefPtr<VideoFrame> createFromPixelBuffer(Ref<PixelBuffer>&&, PlatformVideoColorSpace&& = { });
     static RefPtr<VideoFrame> createNV12(std::span<const uint8_t>, size_t width, size_t height, const ComputedPlaneLayout&, const ComputedPlaneLayout&, PlatformVideoColorSpace&&);
     static RefPtr<VideoFrame> createRGBA(std::span<const uint8_t>, size_t width, size_t height, const ComputedPlaneLayout&, PlatformVideoColorSpace&&);
     static RefPtr<VideoFrame> createBGRA(std::span<const uint8_t>, size_t width, size_t height, const ComputedPlaneLayout&, PlatformVideoColorSpace&&);

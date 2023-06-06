@@ -420,7 +420,7 @@ Ref<VideoFrameCV> VideoFrameCV::create(MediaTime presentationTime, bool isMirror
     return adoptRef(*new VideoFrameCV(presentationTime, isMirrored, rotation, WTFMove(pixelBuffer), WTFMove(colorSpace)));
 }
 
-RefPtr<VideoFrameCV> VideoFrameCV::createFromPixelBuffer(Ref<PixelBuffer>&& pixelBuffer)
+RefPtr<VideoFrame> VideoFrame::createFromPixelBuffer(Ref<PixelBuffer>&& pixelBuffer, PlatformVideoColorSpace&& colorSpace)
 {
     auto size = pixelBuffer->size();
     auto width = size.width();
@@ -442,7 +442,7 @@ RefPtr<VideoFrameCV> VideoFrameCV::createFromPixelBuffer(Ref<PixelBuffer>&& pixe
         return nullptr;
     }
     ASSERT_UNUSED(status, !status);
-    return create({ }, false, Rotation::None, WTFMove(cvPixelBuffer));
+    return RefPtr { VideoFrameCV::create({ }, false, Rotation::None, WTFMove(cvPixelBuffer), WTFMove(colorSpace)) };
 }
 
 static PlatformVideoColorSpace computeVideoFrameColorSpace(CVPixelBufferRef pixelBuffer)

@@ -1,4 +1,6 @@
 
-FAIL Encoding and decoding cycle assert_not_equals: colorSpace.primaries got disallowed value null
-FAIL Encoding and decoding cycle w/ stripped color space assert_not_equals: colorSpace.primaries got disallowed value null
+Harness Error (FAIL), message = TypeError: undefined is not an object (evaluating 'encoder_color_space.primaries')
+
+FAIL Encoding and decoding cycle assert_equals: frames_decoded expected 16 but got 0
+FAIL Encoding and decoding cycle w/ stripped color space assert_equals: frames_decoded expected 16 but got 0
 

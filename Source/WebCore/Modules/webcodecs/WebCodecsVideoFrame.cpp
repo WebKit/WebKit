@@ -241,12 +241,7 @@ ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::create(ScriptExecutio
     if (!pixelBuffer)
         return Exception { InvalidStateError,  "Buffer has no frame"_s };
 
-    RefPtr<VideoFrame> videoFrame;
-#if PLATFORM(COCOA)
-    videoFrame = VideoFrameCV::createFromPixelBuffer(pixelBuffer.releaseNonNull());
-#elif USE(GSTREAMER)
-    videoFrame = VideoFrameGStreamer::createFromPixelBuffer(pixelBuffer.releaseNonNull(), VideoFrameGStreamer::CanvasContentType::Canvas2D);
-#endif
+    auto videoFrame = VideoFrame::createFromPixelBuffer(pixelBuffer.releaseNonNull(), { PlatformVideoColorPrimaries::Bt709, PlatformVideoTransferCharacteristics::Iec6196621, PlatformVideoMatrixCoefficients::Rgb, true });
 
     if (!videoFrame)
         return Exception { InvalidStateError,  "Unable to create frame from buffer"_s };

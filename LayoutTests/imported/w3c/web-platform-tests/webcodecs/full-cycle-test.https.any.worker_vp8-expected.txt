@@ -1,4 +1,4 @@
 
-FAIL Encoding and decoding cycle assert_not_equals: colorSpace.primaries got disallowed value null
+PASS Encoding and decoding cycle
 PASS Encoding and decoding cycle w/ stripped color space
 
