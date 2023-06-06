@@ -70,6 +70,7 @@ extern "C" void vmEntryToCSSJITAfter(void);
 JSC_ANNOTATE_JIT_OPERATION_RETURN(vmEntryToCSSJITAfter);
 #endif
 
+#if !ENABLE(C_LOOP)
 static void neuterOpcodeMaps()
 {
 #if CPU(ARM64E)
@@ -92,7 +93,7 @@ static void neuterOpcodeMaps()
     }
 #undef SET_CRASH_TARGET
 }
-
+#endif
 
 void initialize()
 {
