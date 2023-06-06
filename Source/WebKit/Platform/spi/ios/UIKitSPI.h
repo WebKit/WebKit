@@ -101,7 +101,6 @@
 #import <UIKit/_UINavigationInteractiveTransition.h>
 #import <UIKit/_UINavigationParallaxTransition.h>
 #import <UIKit/_UISheetPresentationController.h>
-#import <WebKitAdditions/UIKitSPIAdditions.h>
 
 #if HAVE(LINK_PREVIEW)
 #import <UIKit/UIPreviewAction_Private.h>
