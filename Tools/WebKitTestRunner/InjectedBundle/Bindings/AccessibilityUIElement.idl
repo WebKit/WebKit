@@ -63,6 +63,7 @@
     readonly attribute DOMString orientation;
     readonly attribute long insertionPointLineNumber;
     readonly attribute DOMString selectedTextRange;
+    readonly attribute DOMString textInputMarkedRange;
 
     DOMString stringDescriptionOfAttributeValue(DOMString attr);
     DOMString stringAttributeValue(DOMString attr);

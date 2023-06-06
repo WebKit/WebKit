@@ -1345,6 +1345,12 @@ static JSValueRef getSelectedTextRangeCallback(JSContextRef context, JSObjectRef
     return JSValueMakeString(context, selectedTextRange.get());
 }
 
+static JSValueRef getTextInputMarkedRangeCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
+{
+    auto textInputMarkedRange = toAXElement(thisObject)->textInputMarkedRange();
+    return JSValueMakeString(context, textInputMarkedRange.get());
+}
+
 static JSValueRef getIsAtomicLiveRegionCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
 {
     return JSValueMakeBoolean(context, toAXElement(thisObject)->isAtomicLiveRegion());
@@ -1983,6 +1989,7 @@ JSClassRef AccessibilityUIElement::getJSClass()
         { "columnCount", columnCountCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "insertionPointLineNumber", getInsertionPointLineNumberCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "selectedTextRange", getSelectedTextRangeCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "textInputMarkedRange", getTextInputMarkedRangeCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "isAtomicLiveRegion", getIsAtomicLiveRegionCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "isBusy", getIsBusyCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "isEnabled", getIsEnabledCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },

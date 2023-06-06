@@ -81,6 +81,10 @@
 #define NSAccessibilitySelectedTextMarkerRangeAttribute @"AXSelectedTextMarkerRange"
 #endif
 
+#ifndef NSAccessibilityTextInputMarkedRangeAttribute
+#define NSAccessibilityTextInputMarkedRangeAttribute @"AXTextInputMarkedRange"
+#endif
+
 typedef void (*AXPostedNotificationCallback)(id element, NSString* notification, void* context);
 
 @interface NSObject (WebKitAccessibilityAdditions)
@@ -628,6 +632,10 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::allAttributes()
             continue;
 
         auto value = descriptionOfValue(attributeValue(attribute).get());
+
+        if ([attribute isEqualToString:NSAccessibilityTextInputMarkedRangeAttribute] && !value)
+            continue;
+
         [values appendFormat:@"%@: %@\n", attribute, value.get()];
     }
 
@@ -1525,6 +1533,16 @@ bool AccessibilityUIElement::setSelectedTextRange(unsigned location, unsigned le
     setAttributeValue(m_element.getAutoreleased(), NSAccessibilitySelectedTextRangeAttribute, textRangeValue);
 
     return true;
+}
+
+JSRetainPtr<JSStringRef> AccessibilityUIElement::textInputMarkedRange() const
+{
+    BEGIN_AX_OBJC_EXCEPTIONS
+    auto value = attributeValue(NSAccessibilityTextInputMarkedRangeAttribute);
+    if (value)
+        return [NSStringFromRange([value rangeValue]) createJSStringRef];
+    END_AX_OBJC_EXCEPTIONS
+    return nullptr;
 }
 
 void AccessibilityUIElement::dismiss()

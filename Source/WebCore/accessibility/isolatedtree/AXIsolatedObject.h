@@ -456,6 +456,7 @@ private:
     bool hasSameStyle(const AXCoreObject&) const override;
     bool hasUnderline() const override { return boolAttributeValue(AXPropertyName::HasUnderline); }
     bool hasHighlighting() const override { return boolAttributeValue(AXPropertyName::HasHighlighting); }
+    std::optional<CharacterRange> textInputMarkedRange() const final { return optionalAttributeValue<CharacterRange>(AXPropertyName::TextInputMarkedRange); }
     Element* element() const override;
     Node* node() const override;
     RenderObject* renderer() const override;

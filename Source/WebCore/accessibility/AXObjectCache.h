@@ -188,6 +188,7 @@ public:
     void onTextSecurityChanged(HTMLInputElement&);
     void onTitleChange(Document&);
     void onValidityChange(Element&);
+    void onTextCompositionChange(Node&);
     void valueChanged(Element*);
     void checkedStateChanged(Node*);
     void autofillTypeChanged(Node*);
@@ -379,6 +380,7 @@ public:
         AXRequiredStatusChanged,
         AXSortDirectionChanged,
         AXTextChanged,
+        AXTextCompositionChanged,
         AXTextSecurityChanged,
         AXElementBusyChanged,
         AXDraggingStarted,
@@ -445,6 +447,8 @@ public:
     // Returns the IDs of the objects that relate to the given object with the specified relationship.
     std::optional<Vector<AXID>> relatedObjectIDsFor(const AXCoreObject&, AXRelationType);
     void updateRelations(Element&, const QualifiedName&);
+
+    AccessibilityObject* textCompositionObjectForNode(Node&);
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     void scheduleObjectRegionsUpdate(bool scheduleImmediately = false) { m_geometryManager->scheduleObjectRegionsUpdate(scheduleImmediately); }

@@ -240,6 +240,7 @@ public:
     bool hasSameStyle(const AXCoreObject&) const override { return false; }
     bool hasUnderline() const override { return false; }
     bool hasHighlighting() const override;
+    std::optional<CharacterRange> textInputMarkedRange() const final;
 
     bool supportsDatetimeAttribute() const override;
     String datetimeAttributeValue() const override;
@@ -811,6 +812,8 @@ private:
 
     // Special handling of click point for links.
     IntPoint linkClickPoint();
+
+    bool isNodeForComposition(const Editor&) const;
 
 protected: // FIXME: Make the data members private.
     AccessibilityChildrenVector m_children;

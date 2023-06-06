@@ -147,6 +147,7 @@ public:
     JSRetainPtr<JSStringRef> valueDescription();
     int insertionPointLineNumber();
     JSRetainPtr<JSStringRef> selectedTextRange();
+    JSRetainPtr<JSStringRef> textInputMarkedRange() const;
     bool isAtomicLiveRegion() const;
     bool isBusy() const;
     bool isEnabled();

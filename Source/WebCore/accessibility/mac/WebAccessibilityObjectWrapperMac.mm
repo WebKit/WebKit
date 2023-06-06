@@ -483,6 +483,10 @@ using namespace WebCore;
 #define AXHasWebApplicationAncestorAttribute @"AXHasWebApplicationAncestor"
 #endif
 
+#ifndef NSAccessibilityTextInputMarkedRangeAttribute
+#define NSAccessibilityTextInputMarkedRangeAttribute @"AXTextInputMarkedRange"
+#endif
+
 @implementation WebAccessibilityObjectWrapper
 
 - (void)detach
@@ -913,6 +917,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         NSAccessibilityFocusableAncestorAttribute,
         NSAccessibilityEditableAncestorAttribute,
         NSAccessibilityHighestEditableAncestorAttribute,
+        NSAccessibilityTextInputMarkedRangeAttribute,
     ];
     static NeverDestroyed spinButtonCommonAttributes = [] {
         auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:attributes.get().get()]);
@@ -2241,6 +2246,11 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
     if ([attributeName isEqualToString:@"AXIsIndeterminate"])
         return [NSNumber numberWithBool: backingObject->isIndeterminate()];
+
+    if ([attributeName isEqualToString:NSAccessibilityTextInputMarkedRangeAttribute]) {
+        auto range = backingObject->textInputMarkedRange();
+        return range ? [NSValue valueWithRange:*range] : nil;
+    }
 
     return nil;
 }

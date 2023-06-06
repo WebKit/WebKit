@@ -1437,6 +1437,11 @@ bool AccessibilityUIElement::setSelectedTextRange(unsigned location, unsigned le
     return true;
 }
 
+JSRetainPtr<JSStringRef> AccessibilityUIElement::textInputMarkedRange() const
+{
+    return nullptr;
+}
+
 void AccessibilityUIElement::increment()
 {
     if (!m_element->interfaces().contains(WebCore::AccessibilityObjectAtspi::Interface::Value))

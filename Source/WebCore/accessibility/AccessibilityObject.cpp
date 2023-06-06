@@ -405,6 +405,41 @@ std::optional<SimpleRange> AccessibilityObject::misspellingRange(const SimpleRan
     return std::nullopt;
 }
 
+bool AccessibilityObject::isNodeForComposition(const Editor& editor) const
+{
+    WeakPtr compositionNode = editor.compositionNode();
+    if (!compositionNode)
+        return false;
+
+    WeakPtr cache = axObjectCache();
+    if (!cache)
+        return false;
+
+    if (auto* compositionObject = cache->textCompositionObjectForNode(*compositionNode))
+        return compositionObject->objectID() == objectID();
+
+    return false;
+}
+
+std::optional<CharacterRange> AccessibilityObject::textInputMarkedRange() const
+{
+    WeakPtr node = this->node();
+    if (!node)
+        return std::nullopt;
+
+    auto* frame = node->document().frame();
+    if (!frame)
+        return std::nullopt;
+
+    auto& editor = frame->editor();
+    auto range = editor.compositionRange();
+    if (!range || !isNodeForComposition(editor))
+        return std::nullopt;
+
+    auto scope = makeRangeSelectingNodeContents(*node);
+    return characterRange(scope, *range);
+}
+
 unsigned AccessibilityObject::blockquoteLevel() const
 {
     unsigned level = 0;

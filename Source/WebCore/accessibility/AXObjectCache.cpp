@@ -1580,6 +1580,15 @@ void AXObjectCache::onValidityChange(Element& element)
     postNotification(get(&element), nullptr, AXInvalidStatusChanged);
 }
 
+void AXObjectCache::onTextCompositionChange(Node& node)
+{
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    updateIsolatedTree(textCompositionObjectForNode(node), AXTextCompositionChanged);
+#else
+    UNUSED_PARAM(node);
+#endif
+}
+
 #ifndef NDEBUG
 void AXObjectCache::showIntent(const AXTextStateChangeIntent &intent)
 {
@@ -3865,6 +3874,9 @@ void AXObjectCache::updateIsolatedTree(const Vector<std::pair<RefPtr<Accessibili
         case AXTableHeadersChanged:
             tree->updateNodeProperty(*notification.first, AXPropertyName::ColumnHeaders);
             break;
+        case AXTextCompositionChanged:
+            tree->updateNodeProperty(*notification.first, AXPropertyName::TextInputMarkedRange);
+            break;
         case AXURLChanged:
             tree->updateNodeProperty(*notification.first, AXPropertyName::URL);
             break;
@@ -4440,7 +4452,21 @@ AXTextChange AXObjectCache::textChangeForEditType(AXTextEditType type)
     return AXTextInserted;
 }
 #endif
-    
+
+AccessibilityObject* AXObjectCache::textCompositionObjectForNode(Node& node)
+{
+    WeakPtr object = get(&node);
+    if (object)
+        object = object->observableObject();
+
+#if PLATFORM(MAC)
+    // In our Mac implementations for posting text notifications, we fall back on the web area if the observable object is nullptr.
+    if (!object)
+        object = rootWebArea();
+#endif
+    return object.get();
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(ACCESSIBILITY)

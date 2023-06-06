@@ -2145,9 +2145,13 @@ void Editor::setComposition(const String& text, SetCompositionMode mode)
     else
         selectComposition();
 
+    auto* previousCompositionNode = compositionNode();
     m_compositionNode = nullptr;
     m_customCompositionUnderlines.clear();
     m_customCompositionHighlights.clear();
+
+    if (auto* cache = m_document.existingAXObjectCache(); cache && previousCompositionNode)
+        cache->onTextCompositionChange(*previousCompositionNode);
 
     if (m_document.selection().isNone())
         return;
@@ -2239,6 +2243,7 @@ void Editor::setComposition(const String& text, const Vector<CompositionUnderlin
             target->dispatchEvent(CompositionEvent::create(eventNames().compositionendEvent, document().windowProxy(), text));
     }
 
+    auto* previousCompositionNode = compositionNode();
     m_compositionNode = nullptr;
     m_customCompositionUnderlines.clear();
     m_customCompositionHighlights.clear();
@@ -2277,6 +2282,14 @@ void Editor::setComposition(const String& text, const Vector<CompositionUnderlin
             auto range = SimpleRange { { *baseNode, start }, { *baseNode, end } };
             m_document.selection().setSelectedRange(range, Affinity::Downstream, FrameSelection::ShouldCloseTyping::No);
         }
+    }
+
+    if (auto* cache = m_document.existingAXObjectCache()) {
+        auto* currentCompositionNode = compositionNode();
+        if (previousCompositionNode && previousCompositionNode != currentCompositionNode)
+            cache->onTextCompositionChange(*previousCompositionNode);
+        if (currentCompositionNode)
+            cache->onTextCompositionChange(*currentCompositionNode);
     }
 
 #if PLATFORM(IOS_FAMILY)        
