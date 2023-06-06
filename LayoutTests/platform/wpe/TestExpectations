@@ -1585,9 +1585,7 @@ webgl/1.0.x/conformance/extensions/oes-texture-half-float-with-video.html [ Fail
 
 # Timing out since 259143@main.
 webkit.org/b/251554 imported/w3c/web-platform-tests/html/user-activation/consumption-crossorigin.sub.html [ Skip ]
-webkit.org/b/251554 imported/w3c/web-platform-tests/html/user-activation/consumption-crossorigin.sub.tentative.html [ Skip ]
 webkit.org/b/251554 imported/w3c/web-platform-tests/html/user-activation/consumption-sameorigin.html [ Skip ]
-webkit.org/b/251554 imported/w3c/web-platform-tests/html/user-activation/consumption-sameorigin.tentative.html [ Skip ]
 
 ######################################################
 # Test failures from turning GPU Process on by default

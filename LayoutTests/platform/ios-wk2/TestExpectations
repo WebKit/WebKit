@@ -2378,7 +2378,6 @@ imported/w3c/web-platform-tests/html/user-activation/navigation-state-reset-cros
 imported/w3c/web-platform-tests/html/user-activation/navigation-state-reset-sameorigin.html [ Skip ]
 imported/w3c/web-platform-tests/html/user-activation/user-activation-interface.html [ Skip ]
 imported/w3c/web-platform-tests/html/user-activation/activation-same-and-cross-origin.sub.html [ Skip ]
-imported/w3c/web-platform-tests/html/user-activation/consumption-crossorigin.sub.tentative.html
 
 # WebGL in OffscreenCanvas requires the GPUP.
 imported/w3c/web-platform-tests/html/canvas/offscreen/manual/the-offscreen-canvas/offscreencanvas.getcontext.worker.html [ Skip ]

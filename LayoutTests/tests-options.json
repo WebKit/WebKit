@@ -4538,9 +4538,6 @@
     "imported/w3c/web-platform-tests/html/user-activation/activation-thru-contextmenu-event.html": [
         "slow"
     ],
-    "imported/w3c/web-platform-tests/html/user-activation/consumption-crossorigin.sub.tentative.html": [
-        "slow"
-    ],
     "imported/w3c/web-platform-tests/html/user-activation/no-activation-thru-escape-key.html": [
         "slow"
     ],
