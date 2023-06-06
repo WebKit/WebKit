@@ -256,7 +256,9 @@ public:
     ALWAYS_INLINE static Ref<StringImpl> create(const char* characters, unsigned length) { return create(reinterpret_cast<const LChar*>(characters), length); }
     WTF_EXPORT_PRIVATE static Ref<StringImpl> create8BitIfPossible(const UChar*, unsigned length);
     template<size_t inlineCapacity> static Ref<StringImpl> create8BitIfPossible(const Vector<UChar, inlineCapacity>&);
+#if ENABLE(SMALL_HEAP)
     template<size_t inlineCapacity> static Ref<StringImpl> create8BitIfPossible(const Vector<UChar, inlineCapacity, CrashOnOverflow, 16, StringImplMalloc>&);
+#endif
 
     // Not using create() naming to encourage developers to call create(ASCIILiteral) when they have a string literal.
     ALWAYS_INLINE static Ref<StringImpl> createFromCString(const char* characters) { return create(characters, strlen(characters)); }
