@@ -61,6 +61,8 @@ namespace Namespace { class ConditionalCommonClass; }
 #endif
 namespace Namespace { class CommonClass; }
 namespace Namespace { class AnotherCommonClass; }
+namespace WebCore { class MoveOnlyBaseClass; }
+namespace WebCore { class MoveOnlyDerivedClass; }
 
 namespace IPC {
 
@@ -152,6 +154,16 @@ template<> struct ArgumentCoder<Namespace::CommonClass> {
 template<> struct ArgumentCoder<Namespace::AnotherCommonClass> {
     static void encode(Encoder&, const Namespace::AnotherCommonClass&);
     static std::optional<Ref<Namespace::AnotherCommonClass>> decode(Decoder&);
+};
+
+template<> struct ArgumentCoder<WebCore::MoveOnlyBaseClass> {
+    static void encode(Encoder&, WebCore::MoveOnlyBaseClass&&);
+    static std::optional<WebCore::MoveOnlyBaseClass> decode(Decoder&);
+};
+
+template<> struct ArgumentCoder<WebCore::MoveOnlyDerivedClass> {
+    static void encode(Encoder&, WebCore::MoveOnlyDerivedClass&&);
+    static std::optional<WebCore::MoveOnlyDerivedClass> decode(Decoder&);
 };
 
 } // namespace IPC

@@ -156,3 +156,12 @@ headers: "CommonHeader.h"
     int value;
     [NotSerialized] double notSerialized;
 }
+
+[RValue] class WebCore::MoveOnlyBaseClass subclasses {
+    WebCore::MoveOnlyDerivedClass,
+}
+
+[RValue] class WebCore::MoveOnlyDerivedClass {
+    [Nullable] int firstMember;
+    int secondMember;
+}

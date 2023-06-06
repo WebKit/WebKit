@@ -36,6 +36,7 @@ import sys
 # CustomMemberLayout - member memory layout doesn't match serialization layout, so don't static_assert that the members are in order.
 # LegacyPopulateFromEmptyConstructor - instead of calling a constructor with the members, call the empty constructor then insert the members one at a time.
 # OptionSet - for enum classes, instead of only allowing deserialization of the exact values, allow deserialization of any bit combination of the values.
+# RValue - serializer takes an rvalue reference, instead of an lvalue.
 #
 # Supported member attributes:
 #
@@ -60,6 +61,7 @@ class SerializedType(object):
         self.create_using = False
         self.populate_from_empty_constructor = False
         self.nested = False
+        self.rvalue = False
         self.members_are_subclasses = False
         self.custom_member_layout = False
         if attributes is not None:
@@ -77,6 +79,8 @@ class SerializedType(object):
                         self.nested = True
                     elif attribute == 'RefCounted':
                         self.return_ref = True
+                    elif attribute == 'RValue':
+                        self.rvalue = True
                     elif attribute == 'CustomMemberLayout':
                         self.custom_member_layout = True
                     elif attribute == 'LegacyPopulateFromEmptyConstructor':
@@ -226,7 +230,10 @@ def argument_coder_declarations(serialized_types, skip_nested):
             result.append('#if ' + type.condition)
         result.append('template<> struct ArgumentCoder<' + type.namespace_and_name() + '> {')
         for encoder in type.encoders:
-            result.append('    static void encode(' + encoder + '&, const ' + type.namespace_and_name() + '&);')
+            if type.rvalue:
+                result.append('    static void encode(' + encoder + '&, ' + type.namespace_and_name() + '&&);')
+            else:
+                result.append('    static void encode(' + encoder + '&, const ' + type.namespace_and_name() + '&);')
         if type.return_ref:
             result.append('    static std::optional<Ref<' + type.namespace_and_name() + '>> decode(Decoder&);')
         else:
@@ -381,14 +388,23 @@ def encode_type(type):
         if 'Nullable' in member.attributes:
             result.append('    encoder << !!instance.' + member.name + ';')
             result.append('    if (!!instance.' + member.name + ')')
-            result.append('        encoder << instance.' + member.name + ';')
+            if type.rvalue:
+                result.append('        encoder << WTFMove(instance.' + member.name + ');')
+            else:
+                result.append('        encoder << instance.' + member.name + ';')
         elif member.is_subclass:
             result.append('    if (auto* subclass = dynamicDowncast<' + member.namespace + "::" + member.name + '>(instance)) {')
             result.append('        encoder << ' + type.subclass_enum_name() + "::" + member.name + ";")
-            result.append('        encoder << *subclass;')
+            if type.rvalue:
+                result.append('        encoder << WTFMove(*subclass);')
+            else:
+                result.append('        encoder << *subclass;')
             result.append('    }')
         else:
-            result.append('    encoder << instance.' + member.name + ('()' if type.serialize_with_function_calls else '') + ';')
+            if type.rvalue and not type.serialize_with_function_calls:
+                result.append('    encoder << WTFMove(instance.' + member.name + ('()' if type.serialize_with_function_calls else '') + ');')
+            else:
+                result.append('    encoder << instance.' + member.name + ('()' if type.serialize_with_function_calls else '') + ';')
         if member.condition is not None:
             result.append('#endif')
 
@@ -590,7 +606,10 @@ def generate_impl(serialized_types, serialized_enums, headers):
             result.append('};')
         for encoder in type.encoders:
             result.append('')
-            result.append('void ArgumentCoder<' + type.namespace_and_name() + '>::encode(' + encoder + '& encoder, const ' + type.namespace_and_name() + '& instance)')
+            if type.rvalue:
+                result.append('void ArgumentCoder<' + type.namespace_and_name() + '>::encode(' + encoder + '& encoder, ' + type.namespace_and_name() + '&& instance)')
+            else:
+                result.append('void ArgumentCoder<' + type.namespace_and_name() + '>::encode(' + encoder + '& encoder, const ' + type.namespace_and_name() + '& instance)')
             result.append('{')
             if not type.members_are_subclasses:
                 result = result + check_type_members(type, False)

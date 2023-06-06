@@ -45,6 +45,8 @@
 #include <WebCore/FloatBoxExtent.h>
 #include <WebCore/InheritanceGrandchild.h>
 #include <WebCore/InheritsFrom.h>
+#include <WebCore/MoveOnlyBaseClass.h>
+#include <WebCore/MoveOnlyDerivedClass.h>
 #include <WebCore/TimingFunction.h>
 #include <wtf/CreateUsingClass.h>
 #include <wtf/Seconds.h>
@@ -195,6 +197,18 @@ Vector<SerializedTypeInfo> allSerializedTypes()
             {
                 "int"_s,
                 "value"_s
+            }
+        } },
+        { "WebCore::MoveOnlyBaseClass"_s, {
+            { "std::variant<WebCore::MoveOnlyDerivedClass>"_s, "subclasses"_s }
+        } },
+        { "WebCore::MoveOnlyDerivedClass"_s, {
+            {
+                "std::optional<int>"_s,
+                "firstMember"_s
+            }, {
+                "int"_s,
+                "secondMember"_s
             }
         } },
         { "WebCore::SharedStringHash"_s, {

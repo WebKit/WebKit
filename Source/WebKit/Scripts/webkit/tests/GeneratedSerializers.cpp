@@ -45,6 +45,8 @@
 #include <WebCore/FloatBoxExtent.h>
 #include <WebCore/InheritanceGrandchild.h>
 #include <WebCore/InheritsFrom.h>
+#include <WebCore/MoveOnlyBaseClass.h>
+#include <WebCore/MoveOnlyDerivedClass.h>
 #include <WebCore/TimingFunction.h>
 #include <wtf/CreateUsingClass.h>
 #include <wtf/Seconds.h>
@@ -815,6 +817,82 @@ std::optional<Ref<Namespace::AnotherCommonClass>> ArgumentCoder<Namespace::Anoth
     };
 }
 
+enum class WebCore_MoveOnlyBaseClass_Subclass : IPC::EncodedVariantIndex {
+    MoveOnlyDerivedClass
+};
+
+void ArgumentCoder<WebCore::MoveOnlyBaseClass>::encode(Encoder& encoder, WebCore::MoveOnlyBaseClass&& instance)
+{
+    if (auto* subclass = dynamicDowncast<WebCore::MoveOnlyDerivedClass>(instance)) {
+        encoder << WebCore_MoveOnlyBaseClass_Subclass::MoveOnlyDerivedClass;
+        encoder << WTFMove(*subclass);
+    }
+}
+
+std::optional<WebCore::MoveOnlyBaseClass> ArgumentCoder<WebCore::MoveOnlyBaseClass>::decode(Decoder& decoder)
+{
+    std::optional<WebCore_MoveOnlyBaseClass_Subclass> type;
+    decoder >> type;
+    if (!type)
+        return std::nullopt;
+
+    if (type == WebCore_MoveOnlyBaseClass_Subclass::MoveOnlyDerivedClass) {
+        std::optional<Ref<WebCore::MoveOnlyDerivedClass>> result;
+        decoder >> result;
+        if (!result)
+            return std::nullopt;
+        return WTFMove(*result);
+    }
+
+    ASSERT_NOT_REACHED();
+    return std::nullopt;
+}
+
+
+void ArgumentCoder<WebCore::MoveOnlyDerivedClass>::encode(Encoder& encoder, WebCore::MoveOnlyDerivedClass&& instance)
+{
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.firstMember)>, int>);
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.secondMember)>, int>);
+    struct ShouldBeSameSizeAsMoveOnlyDerivedClass : public VirtualTableAndRefCountOverhead<std::is_polymorphic_v<WebCore::MoveOnlyDerivedClass>, false> {
+        int firstMember;
+        int secondMember;
+    };
+    static_assert(sizeof(ShouldBeSameSizeAsMoveOnlyDerivedClass) == sizeof(WebCore::MoveOnlyDerivedClass));
+    static_assert(MembersInCorrectOrder<0
+        , offsetof(WebCore::MoveOnlyDerivedClass, firstMember)
+        , offsetof(WebCore::MoveOnlyDerivedClass, secondMember)
+    >::value);
+    encoder << !!instance.firstMember;
+    if (!!instance.firstMember)
+        encoder << WTFMove(instance.firstMember);
+    encoder << WTFMove(instance.secondMember);
+}
+
+std::optional<WebCore::MoveOnlyDerivedClass> ArgumentCoder<WebCore::MoveOnlyDerivedClass>::decode(Decoder& decoder)
+{
+    auto hasfirstMember = decoder.decode<bool>();
+    if (!hasfirstMember)
+        return std::nullopt;
+    std::optional<int> firstMember;
+    if (*hasfirstMember) {
+        firstMember = decoder.decode<int>();
+        if (!firstMember)
+            return std::nullopt;
+    } else
+        firstMember = std::optional<int> { int { } };
+
+    auto secondMember = decoder.decode<int>();
+    if (!secondMember)
+        return std::nullopt;
+
+    return {
+        WebCore::MoveOnlyDerivedClass {
+            WTFMove(*firstMember),
+            WTFMove(*secondMember)
+        }
+    };
+}
+
 } // namespace IPC
 
 namespace WTF {
@@ -826,6 +904,16 @@ template<> bool isValidEnum<IPC::WebCore_TimingFunction_Subclass, void>(IPC::Enc
     case IPC::WebCore_TimingFunction_Subclass::CubicBezierTimingFunction:
     case IPC::WebCore_TimingFunction_Subclass::StepsTimingFunction:
     case IPC::WebCore_TimingFunction_Subclass::SpringTimingFunction:
+        return true;
+    default:
+        return false;
+    }
+}
+
+template<> bool isValidEnum<IPC::WebCore_MoveOnlyBaseClass_Subclass, void>(IPC::EncodedVariantIndex value)
+{
+    switch (static_cast<IPC::WebCore_MoveOnlyBaseClass_Subclass>(value)) {
+    case IPC::WebCore_MoveOnlyBaseClass_Subclass::MoveOnlyDerivedClass:
         return true;
     default:
         return false;
