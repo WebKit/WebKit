@@ -1,0 +1,60 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<script src="../../../resources/ui-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+.scroller {
+    overflow-y: scroll;
+    width: 100%;
+    height: 400px;
+    font-size: 80px;
+    border: 1px solid tomato;
+    padding-top: 200px;
+}
+
+.tall-content {
+    height: 5000px;
+}
+</style>
+<script>
+jsTestIsAsync = true;
+
+addEventListener("load", async () => {
+    description("This test verifies that selection rects are hidden when scrolling an overflow scrollable container. To manually test, select the text below and scroll the red box; the selection should hide when scrolling and reappear when scrolling ends.")
+    if (!window.testRunner)
+        return;
+
+    await UIHelper.longPressElement(document.getElementById("target"));
+    await UIHelper.waitForSelectionToAppear();
+    testPassed("Waited for initial selection to appear");
+    await UIHelper.sendEventStream(new UIHelper.EventStreamBuilder()
+        .begin(150, 300)
+        .move(150, 100, 0.2)
+        .wait(0.1)
+        .takeResult());
+    testPassed("Scrolled down without ending touch");
+    await UIHelper.waitForSelectionToDisappear();
+    testPassed("Waited for selection to disappear");
+    await UIHelper.sendEventStream(new UIHelper.EventStreamBuilder()
+        .wait(0.1)
+        .move(150, 300, 0.2)
+        .end(150, 300)
+        .takeResult());
+    testPassed("Scrolled back up and ending touch");
+    await UIHelper.waitForSelectionToAppear();
+    testPassed("Waited for selection to reappear");
+    finishJSTest();
+});
+</script>
+</head>
+<body>
+    <div class="scroller">
+        <span id="target">Select</span> me
+        <div class="tall-content"></div>
+    </div>
+    <pre id="description"></pre>
+    <pre id="console"></pre>
+</body>
+</html>
