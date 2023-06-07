@@ -126,6 +126,7 @@
     "web-platform-tests/css/css-grid/layout-algorithm": "import",
     "web-platform-tests/css/css-grid/layout-algorithm/": "import",
     "web-platform-tests/css/css-grid/parsing/": "import",
+    "web-platform-tests/css/css-highlight-api": "import",
     "web-platform-tests/css/css-images": "import",
     "web-platform-tests/css/css-lists": "import",
     "web-platform-tests/css/css-lists/parsing": "import",

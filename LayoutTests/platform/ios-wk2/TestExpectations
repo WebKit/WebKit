@@ -2433,3 +2433,7 @@ webkit.org/b/257182 imported/w3c/web-platform-tests/css/css-text/white-space/tra
 webkit.org/b/257182 imported/w3c/web-platform-tests/css/css-text/white-space/trailing-space-and-text-alignment-005.html [ ImageOnlyFailure ]
 webkit.org/b/257182 imported/w3c/web-platform-tests/css/css-text/white-space/trailing-space-and-text-alignment-rtl-001.html [ ImageOnlyFailure ]
 webkit.org/b/257182 imported/w3c/web-platform-tests/css/css-text/white-space/trailing-space-and-text-alignment-rtl-005.html [ ImageOnlyFailure ]
+
+# Layout tests that fail for iOS only for css-highlights 
+imported/w3c/web-platform-tests/css/css-highlight-api/painting/custom-highlight-painting-iframe-003.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-highlight-api/painting/custom-highlight-painting-iframe-004.html [ ImageOnlyFailure ]
