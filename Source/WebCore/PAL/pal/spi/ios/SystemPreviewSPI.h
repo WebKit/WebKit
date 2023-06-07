@@ -37,7 +37,7 @@
 #import <AssetViewer/ASVInlinePreview.h>
 #endif
 
-#if HAVE(UIKIT_WEBKIT_INTERNALS)
+#if PLATFORM(VISION)
 #import <AssetViewer/ASVLaunchPreview.h>
 #endif
 

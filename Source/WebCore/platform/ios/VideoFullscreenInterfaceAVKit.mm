@@ -54,7 +54,7 @@
 #import <AVKit/AVPictureInPictureController.h>
 #endif
 
-#if HAVE(UIKIT_WEBKIT_INTERNALS)
+#if PLATFORM(VISION)
 #import <WebKitAdditions/VideoFullscreenInterfaceAVKitAdditions.h>
 #endif
 

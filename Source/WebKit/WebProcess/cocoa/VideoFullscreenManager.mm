@@ -258,7 +258,7 @@ bool VideoFullscreenManager::supportsVideoFullscreen(WebCore::HTMLMediaElementEn
 #if PLATFORM(IOS_FAMILY)
     UNUSED_PARAM(mode);
 #if HAVE(AVKIT)
-#if HAVE(UIKIT_WEBKIT_INTERNALS)
+#if PLATFORM(VISION)
     return true;
 #else
     return true;

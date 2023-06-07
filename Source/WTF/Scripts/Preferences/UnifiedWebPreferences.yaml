@@ -421,7 +421,7 @@ AlternateFullScreenControlDesignEnabled:
     WebKitLegacy:
       default: false
     WebKit:
-      "HAVE(UIKIT_WEBKIT_INTERNALS)": true
+      "PLATFORM(VISION)": true
       default: false
     WebCore:
       default: false
@@ -668,15 +668,15 @@ AudioControlsScaleWithPageZoom:
   category: media
   defaultValue:
     WebKitLegacy:
-      "HAVE(UIKIT_WEBKIT_INTERNALS)": true
+      "PLATFORM(VISION)": true
       "PLATFORM(IOS_FAMILY)": false
       default: true
     WebKit:
-      "HAVE(UIKIT_WEBKIT_INTERNALS)": true
+      "PLATFORM(VISION)": true
       "PLATFORM(IOS_FAMILY)": false
       default: true
     WebCore:
-      "HAVE(UIKIT_WEBKIT_INTERNALS)": true
+      "PLATFORM(VISION)": true
       "PLATFORM(IOS_FAMILY)": false
       default: true
 
@@ -718,7 +718,7 @@ AutomaticLiveResizeEnabled:
   exposed: [ WebKit ]
   defaultValue:
     WebKit:
-      "HAVE(UIKIT_WEBKIT_INTERNALS)": true
+      "PLATFORM(VISION)": true
       default: false
 
 BackgroundFetchAPIEnabled:
@@ -5149,10 +5149,10 @@ RemotePlaybackEnabled:
     WebKitLegacy:
       default: false
     WebKit:
-      "HAVE(UIKIT_WEBKIT_INTERNALS)" : false
+      "PLATFORM(VISION)" : false
       default: true
     WebCore:
-      "HAVE(UIKIT_WEBKIT_INTERNALS)" : false
+      "PLATFORM(VISION)" : false
       default: true
 
 RemoveBackgroundEnabled:
@@ -5643,7 +5643,7 @@ SelectionFlippingEnabled:
   webcoreBinding: none
   defaultValue:
     WebKit:
-      "HAVE(UIKIT_WEBKIT_INTERNALS)" : false
+      "PLATFORM(VISION)" : false
       default: true
 
 SendMouseEventsToDisabledFormControlsEnabled:
@@ -6405,7 +6405,7 @@ TextAutosizingUsesIdempotentMode:
     WebKitLegacy:
       default: false
     WebKit:
-      "PLATFORM(IOS_FAMILY) && !HAVE(UIKIT_WEBKIT_INTERNALS)": defaultTextAutosizingUsesIdempotentMode()
+      "PLATFORM(IOS_FAMILY) && !PLATFORM(VISION)": defaultTextAutosizingUsesIdempotentMode()
       default: false
     WebCore:
       default: false
@@ -6923,13 +6923,13 @@ VideoPresentationModeAPIEnabled:
   status: embedder
   defaultValue:
     WebKitLegacy:
-      "HAVE(UIKIT_WEBKIT_INTERNALS)" : false
+      "PLATFORM(VISION)" : false
       default: true
     WebKit:
-      "HAVE(UIKIT_WEBKIT_INTERNALS)" : false
+      "PLATFORM(VISION)" : false
       default: true
     WebCore:
-      "HAVE(UIKIT_WEBKIT_INTERNALS)" : false
+      "PLATFORM(VISION)" : false
       default: true
 
 VideoQualityIncludesDisplayCompositingEnabled:
@@ -7798,13 +7798,13 @@ WirelessPlaybackTargetAPIEnabled:
   status: embedder
   defaultValue:
     WebKitLegacy:
-      "HAVE(UIKIT_WEBKIT_INTERNALS)" : false
+      "PLATFORM(VISION)" : false
       default: true
     WebKit:
-      "HAVE(UIKIT_WEBKIT_INTERNALS)" : false
+      "PLATFORM(VISION)" : false
       default: true
     WebCore:
-      "HAVE(UIKIT_WEBKIT_INTERNALS)" : false
+      "PLATFORM(VISION)" : false
       default: true
 
 ZoomOnDoubleTapWhenRoot:

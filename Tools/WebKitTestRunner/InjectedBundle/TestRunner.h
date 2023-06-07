@@ -59,7 +59,7 @@ public:
 
     bool isKeyboardImmediatelyAvailable()
     {
-#if HAVE(UIKIT_WEBKIT_INTERNALS)
+#if PLATFORM(VISION)
         return true;
 #else
         return false;

@@ -204,7 +204,7 @@
 {
     UIColor *backgroundColor = PDFHostViewController.backgroundColor;
 
-#if HAVE(UIKIT_WEBKIT_INTERNALS)
+#if PLATFORM(VISION)
     if (_isShowingPasswordView)
         backgroundColor = UIColor.clearColor;
 #endif

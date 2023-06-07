@@ -152,7 +152,7 @@ private:
     WKFullScreenViewControllerPlaybackSessionModelClient _playbackClient;
     CGFloat _nonZeroStatusBarHeight;
     std::optional<UIInterfaceOrientationMask> _supportedOrientations;
-#if HAVE(UIKIT_WEBKIT_INTERNALS)
+#if PLATFORM(VISION)
     BOOL m_shouldHideCancelAndPIPButtons;
 #endif
 }
@@ -177,7 +177,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     _playbackClient.setParent(self);
     _valid = YES;
-#if HAVE(UIKIT_WEBKIT_INTERNALS)
+#if PLATFORM(VISION)
     m_shouldHideCancelAndPIPButtons = NO;
 #endif
 
@@ -321,7 +321,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (auto page = [self._webView _page])
         isPiPEnabled = page->preferences().pictureInPictureAPIEnabled() && page->preferences().allowsPictureInPictureMediaPlayback();
     bool isPiPSupported = playbackSessionModel && playbackSessionModel->isPictureInPictureSupported();
-#if HAVE(UIKIT_WEBKIT_INTERNALS)
+#if PLATFORM(VISION)
     [_cancelButton setHidden:m_shouldHideCancelAndPIPButtons];
     isPiPEnabled = !m_shouldHideCancelAndPIPButtons && isPiPEnabled;
 #endif
@@ -336,7 +336,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     }];
 }
 
-#if HAVE(UIKIT_WEBKIT_INTERNALS)
+#if PLATFORM(VISION)
 - (void)hideCancelAndPIPButtons:(BOOL)hidden
 {
     if (m_shouldHideCancelAndPIPButtons == hidden)
@@ -345,7 +345,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     m_shouldHideCancelAndPIPButtons = hidden;
     [self videoControlsManagerDidChange];
 }
-#endif // HAVE(UIKIT_WEBKIT_INTERNALS)
+#endif // PLATFORM(VISION)
 
 - (void)setPrefersStatusBarHidden:(BOOL)value
 {
@@ -568,7 +568,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     [super viewWillAppear:animated];
 }
 
-#if HAVE(UIKIT_WEBKIT_INTERNALS)
+#if PLATFORM(VISION)
 - (void)viewIsAppearing:(BOOL)animated
 {
     self.view.clipsToBounds = YES;
@@ -599,7 +599,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     }];
 }
 
-#if !HAVE(UIKIT_WEBKIT_INTERNALS)
+#if !PLATFORM(VISION)
 - (UIStatusBarStyle)preferredStatusBarStyle
 {
     return UIStatusBarStyleLightContent;

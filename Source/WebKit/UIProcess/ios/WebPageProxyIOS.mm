@@ -90,7 +90,7 @@
 
 #define WEBPAGEPROXY_RELEASE_LOG(channel, fmt, ...) RELEASE_LOG(channel, "%p - [pageProxyID=%llu, webPageID=%llu, PID=%i] WebPageProxy::" fmt, this, identifier().toUInt64(), webPageID().toUInt64(), m_process->processIdentifier(), ##__VA_ARGS__)
 
-#if HAVE(UIKIT_WEBKIT_INTERNALS)
+#if PLATFORM(VISION)
 static constexpr CGFloat kTargetFullscreenAspectRatio = 1.7778;
 #endif
 
@@ -844,7 +844,7 @@ FloatSize WebPageProxy::screenSize()
     return WebCore::screenSize();
 }
 
-#if HAVE(UIKIT_WEBKIT_INTERNALS)
+#if PLATFORM(VISION)
 static FloatSize fullscreenPreferencesScreenSize(CGFloat preferredWidth)
 {
     CGFloat preferredHeight = preferredWidth / kTargetFullscreenAspectRatio;
@@ -854,7 +854,7 @@ static FloatSize fullscreenPreferencesScreenSize(CGFloat preferredWidth)
 
 FloatSize WebPageProxy::availableScreenSize()
 {
-#if HAVE(UIKIT_WEBKIT_INTERNALS)
+#if PLATFORM(VISION)
     return fullscreenPreferencesScreenSize(m_preferences->mediaPreferredFullscreenWidth());
 #else
     return WebCore::availableScreenSize();
@@ -863,7 +863,7 @@ FloatSize WebPageProxy::availableScreenSize()
 
 FloatSize WebPageProxy::overrideScreenSize()
 {
-#if HAVE(UIKIT_WEBKIT_INTERNALS)
+#if PLATFORM(VISION)
     return fullscreenPreferencesScreenSize(m_preferences->mediaPreferredFullscreenWidth());
 #else
     return WebCore::overrideScreenSize();

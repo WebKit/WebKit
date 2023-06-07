@@ -60,7 +60,7 @@
 SOFT_LINK_PRIVATE_FRAMEWORK_OPTIONAL(LinkPresentation)
 #endif
 
-#if HAVE(UIKIT_WEBKIT_INTERNALS)
+#if PLATFORM(VISION)
 #include <WebKitAdditions/WKFullscreenWindowControllerAdditions.h>
 #endif
 
@@ -159,7 +159,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 } // namespace WebKit
 
 static constexpr NSTimeInterval kAnimationDuration = 0.2;
-#if HAVE(UIKIT_WEBKIT_INTERNALS)
+#if PLATFORM(VISION)
 static constexpr CGFloat kFullScreenWindowCornerRadius = 12;
 #endif
 
@@ -602,7 +602,7 @@ static constexpr CGFloat kFullScreenWindowCornerRadius = 12;
     [_fullscreenViewController setTarget:self];
     [_fullscreenViewController setExitFullScreenAction:@selector(requestExitFullScreen)];
     _fullscreenViewController.get().view.frame = _rootViewController.get().view.bounds;
-#if HAVE(UIKIT_WEBKIT_INTERNALS)
+#if PLATFORM(VISION)
     [_fullscreenViewController hideCancelAndPIPButtons:manager->isVideoElement()];
 #endif
     [self _updateLocationInfo];

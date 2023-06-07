@@ -88,3 +88,9 @@
 #if defined(TARGET_OS_WATCH) && TARGET_OS_WATCH
 #define WTF_PLATFORM_WATCHOS 1
 #endif
+
+/* PLATFORM(VISION) */
+/* FIXME: PLATFORM(IOS) should not be true for PLATFORM(VISION) */
+#if defined(TARGET_OS_XR) && TARGET_OS_XR
+#define WTF_PLATFORM_VISION 1
+#endif
