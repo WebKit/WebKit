@@ -5719,13 +5719,15 @@ void WebPage::beginPrinting(FrameIdentifier frameID, const PrintInfo& printInfo)
 #endif
 }
 
-void WebPage::endPrinting()
+void WebPage::endPrinting(CompletionHandler<void()>&& completionHandler)
 {
     if (m_inActivePrintContextAccessScope) {
         m_shouldEndPrintingImmediately = true;
+        completionHandler();
         return;
     }
     endPrintingImmediately();
+    completionHandler();
 }
 
 void WebPage::endPrintingImmediately()

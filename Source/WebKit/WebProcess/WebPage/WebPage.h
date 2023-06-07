@@ -1069,8 +1069,8 @@ public:
 
     void beginPrinting(WebCore::FrameIdentifier, const PrintInfo&);
     void beginPrintingDuringDOMPrintOperation(WebCore::FrameIdentifier frameID, const PrintInfo& printInfo) { beginPrinting(frameID, printInfo); }
-    void endPrinting();
-    void endPrintingDuringDOMPrintOperation() { endPrinting(); }
+    void endPrinting(CompletionHandler<void()>&& = [] { });
+    void endPrintingDuringDOMPrintOperation(CompletionHandler<void()>&& completionHandler) { endPrinting(WTFMove(completionHandler)); }
     void computePagesForPrinting(WebCore::FrameIdentifier, const PrintInfo&, CompletionHandler<void(const Vector<WebCore::IntRect>&, double, const WebCore::FloatBoxExtent&)>&&);
     void computePagesForPrintingDuringDOMPrintOperation(WebCore::FrameIdentifier frameID, const PrintInfo& printInfo, CompletionHandler<void(const Vector<WebCore::IntRect>&, double, const WebCore::FloatBoxExtent&)>&& completionHandler) { computePagesForPrinting(frameID, printInfo, WTFMove(completionHandler)); }
     void computePagesForPrintingImpl(WebCore::FrameIdentifier, const PrintInfo&, Vector<WebCore::IntRect>& pageRects, double& totalScaleFactor, WebCore::FloatBoxExtent& computedMargin);
