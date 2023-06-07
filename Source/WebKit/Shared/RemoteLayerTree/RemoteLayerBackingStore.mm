@@ -218,7 +218,7 @@ void RemoteLayerBackingStore::encode(IPC::Encoder& encoder) const
     if (m_displayListBuffer)
         displayListHandle = handleFromBuffer(*m_displayListBuffer);
 
-    encoder << displayListHandle;
+    encoder << WTFMove(displayListHandle);
 #endif
 }
 
