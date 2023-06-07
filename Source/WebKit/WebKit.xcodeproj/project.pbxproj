@@ -23,7 +23,6 @@
 				65DC53C128CA583A008DABD5 /* PBXTargetDependency */,
 				BC8283D516B4C01F00A278FE /* PBXTargetDependency */,
 				2D9FB22C2375245C0049F936 /* PBXTargetDependency */,
-				DD56E9562A2ACCD7002CC72E /* PBXTargetDependency */,
 			);
 			name = "Framework, XPC Services, and daemons";
 			productName = WebKit2;
@@ -2079,7 +2078,6 @@
 		DD4DB789280F9471001700D4 /* FindNodes.js in Headers */ = {isa = PBXBuildFile; fileRef = 990657311F323CBF00944F9C /* FindNodes.js */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD4DB78A280F9471001700D4 /* FormElementClear.js in Headers */ = {isa = PBXBuildFile; fileRef = 990657321F323CBF00944F9C /* FormElementClear.js */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD4DB78B280F9471001700D4 /* FormSubmit.js in Headers */ = {isa = PBXBuildFile; fileRef = 990657351F323CBF00944F9C /* FormSubmit.js */; settings = {ATTRIBUTES = (Private, ); }; };
-		DD56E9582A2AD901002CC72E /* libWTF.a in Product Dependencies */ = {isa = PBXBuildFile; fileRef = 57A9FF15252C6AEF006A2040 /* libWTF.a */; };
 		DD8CD363296D03A400C04CA1 /* _WKFeature.h in Headers */ = {isa = PBXBuildFile; fileRef = DD8CD360296D03A300C04CA1 /* _WKFeature.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD8CD364296D03A400C04CA1 /* _WKFeatureInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = DD8CD361296D03A400C04CA1 /* _WKFeatureInternal.h */; };
 		DD8CD365296D097300C04CA1 /* APIFeature.h in Headers */ = {isa = PBXBuildFile; fileRef = 317FE7C21C487A6600A0CA89 /* APIFeature.h */; };
@@ -2565,13 +2563,6 @@
 			remoteGlobalIDString = CD95493426159004008372D9;
 			remoteInfo = WebKitSwift;
 		};
-		DD56E9552A2ACCD7002CC72E /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = DD387DCA2A1EEC020002ED62;
-			remoteInfo = "Sandbox Profiles";
-		};
 		DFBD8A3B2718B38C00BEC5B0 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
@@ -2733,8 +2724,8 @@
 		};
 		DD387DC92A1EEC020002ED62 /* Process Profiles */ = {
 			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 12;
-			dstPath = "$(WK_BUILT_PRODUCTS_PREFIX)$(INSTALL_PATH)";
+			buildActionMask = 8;
+			dstPath = "$(INSTALL_PATH)";
 			dstSubfolderSpec = 0;
 			files = (
 				DD387DD52A1EEC7A0002ED62 /* com.apple.WebKit.adattributiond.sb.in in Process Profiles */,
@@ -2744,18 +2735,7 @@
 				DD387DD92A1EEC7A0002ED62 /* com.apple.WebKit.webpushd.sb.in in Process Profiles */,
 			);
 			name = "Process Profiles";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		DD56E9572A2AD8EE002CC72E /* Product Dependencies */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 16;
-			files = (
-				DD56E9582A2AD901002CC72E /* libWTF.a in Product Dependencies */,
-			);
-			name = "Product Dependencies";
-			runOnlyForDeploymentPostprocessing = 0;
+			runOnlyForDeploymentPostprocessing = 1;
 		};
 		DDB04F3C278E55D0008D3678 /* Product Dependencies */ = {
 			isa = PBXCopyFilesBuildPhase;
@@ -15761,6 +15741,7 @@
 				2E16B6F42019BC25008996D6 /* Copy Additional Resources */,
 				8DC2EF520486A6940098B216 /* Resources */,
 				372589431C1E496800C92CA9 /* Copy Shims */,
+				37E531011B2391090074F0DF /* Copy iOS Sandbox Profiles for Manual Sandboxing */,
 				1A07D2F71919B36500ECDA16 /* Copy Message Generation Scripts */,
 				8DC2EF540486A6940098B216 /* Sources */,
 				8DC2EF560486A6940098B216 /* Frameworks */,
@@ -15883,7 +15864,6 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = DD387DD42A1EEC030002ED62 /* Build configuration list for PBXNativeTarget "Sandbox Profiles" */;
 			buildPhases = (
-				DD56E9572A2AD8EE002CC72E /* Product Dependencies */,
 				DD387DC92A1EEC020002ED62 /* Process Profiles */,
 			);
 			buildRules = (
@@ -16153,6 +16133,25 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "if [ \"${ACTION}\" = \"installhdrs\" ] || [ \"${ACTION}\" = \"installapi\" ]; then\n    exit 0;\nfi\n\nif [ -f ../../Tools/Scripts/check-for-inappropriate-objc-class-names ]; then\n    ../../Tools/Scripts/check-for-inappropriate-objc-class-names WK _WK || exit $?\nfi\n";
+		};
+		37E531011B2391090074F0DF /* Copy iOS Sandbox Profiles for Manual Sandboxing */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/Resources/SandboxProfiles/ios/com.apple.WebKit.Networking.sb",
+				"$(SRCROOT)/Resources/SandboxProfiles/ios/com.apple.WebKit.GPU.sb",
+				"$(SRCROOT)/Resources/SandboxProfiles/ios/com.apple.WebKit.WebAuthn.sb",
+				"$(SRCROOT)/Resources/SandboxProfiles/ios/com.apple.WebKit.adattributiond.sb",
+				"$(SRCROOT)/Resources/SandboxProfiles/ios/com.apple.WebKit.webpushd.sb",
+			);
+			name = "Copy iOS Sandbox Profiles for Manual Sandboxing";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if [[ \"${WK_MANUAL_SANDBOXING_ENABLED}\" != \"YES\" || \"${WK_PLATFORM_NAME}\" == \"macosx\" || \"${WK_PLATFORM_NAME}\" == \"maccatalyst\" ]]; then\n    exit\nfi\n\nif [[ \"${ACTION}\" == \"analyze\" || \"${ACTION}\" == \"build\" || \"${ACTION}\" == \"install\" ]]; then\n    for ((i = 0; i < ${SCRIPT_INPUT_FILE_COUNT}; ++i)); do\n        eval SANDBOX_PROFILE=\\${SCRIPT_INPUT_FILE_${i}}\n        ditto \"${SANDBOX_PROFILE}\" \"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/${SANDBOX_PROFILE##*/}\"\n    done\nfi\n";
 		};
 		3AB34B6228D4F01C009DAAB6 /* Update Info.plist for RunningBoard management */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -17649,12 +17648,6 @@
 			isa = PBXTargetDependency;
 			target = CD95493426159004008372D9 /* WebKitSwift */;
 			targetProxy = CD0C36DC2639D3B4004E35D8 /* PBXContainerItemProxy */;
-		};
-		DD56E9562A2ACCD7002CC72E /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			platformFilter = ios;
-			target = DD387DCA2A1EEC020002ED62 /* Sandbox Profiles */;
-			targetProxy = DD56E9552A2ACCD7002CC72E /* PBXContainerItemProxy */;
 		};
 		DFBD8A3C2718B38C00BEC5B0 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
