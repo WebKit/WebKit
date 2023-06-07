@@ -2656,6 +2656,8 @@ webkit.org/b/242804 media/track/track-forced-subtitles-in-band.html [ Pass Failu
 
 webkit.org/b/251051 [ Monterey+ Debug ] storage/indexeddb/modern/deleteindex-4-private.html [ Crash ]
 
+webkit.org/b/257832 imported/w3c/web-platform-tests/html/rendering/the-details-element/summary-text-decoration.html [ ImageOnlyFailure ]
+
 webkit.org/b/245686 [ Ventura+ ] fast/text/system-font-fallback.html [ ImageOnlyFailure ]
 
 webkit.org/b/251099 [ Ventura+ ] fast/images/avif-image-document.html [ Pass Crash ]
