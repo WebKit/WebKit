@@ -283,9 +283,6 @@
                 "settings-flag": "accentColorEnabled",
                 "parser-grammar": "auto | <color>"
             },
-            "status": {
-                "status": "experimental"
-            },
             "specification": {
                 "category": "css-ui",
                 "url": "https://www.w3.org/TR/css-ui-4/#widget-accent"
@@ -4959,9 +4956,6 @@
                 ],
                 "settings-flag": "overscrollBehaviorEnabled"
             },
-            "status": {
-                "status": "in development"
-            },
             "specification": {
                 "url": "https://drafts.csswg.org/css-overscroll-1/#propdef-overscroll-behavior"
             }
@@ -4980,9 +4974,6 @@
                 },
                 "parser-grammar": "<<values>>",
                 "parser-exported": true
-            },
-            "status": {
-                "status": "in development"
             },
             "specification": {
                 "url": "https://drafts.csswg.org/css-overscroll-1/#propdef-overscroll-behavior-x"
@@ -5003,9 +4994,6 @@
                 "parser-grammar": "<<values>>",
                 "parser-exported": true
             },
-            "status": {
-                "status": "in development"
-            },
             "specification": {
                 "url": "https://drafts.csswg.org/css-overscroll-1/#propdef-overscroll-behavior-y"
             }
@@ -5025,9 +5013,6 @@
                 },
                 "parser-grammar": "<<values>>"
             },
-            "status": {
-                "status": "in development"
-            },
             "specification": {
                 "url": "https://drafts.csswg.org/css-overscroll-1/#propdef-overscroll-behavior-x"
             }
@@ -5046,9 +5031,6 @@
                     "resolver": "block"
                 },
                 "parser-grammar": "<<values>>"
-            },
-            "status": {
-                "status": "in development"
             },
             "specification": {
                 "url": "https://drafts.csswg.org/css-overscroll-1/#propdef-overscroll-behavior-x"
@@ -6506,9 +6488,6 @@
                 "parser-function": "consumeAspectRatio",
                 "parser-grammar-unused": "auto || <ratio>",
                 "parser-grammar-unused-reason": "Needs support for '||' groups."
-            },
-            "status": {
-                "status": "experimental"
             },
             "specification": {
                 "category": "css-sizing",
@@ -8935,9 +8914,6 @@
                 "name-for-methods": "UseSmoothScrolling",
                 "parser-grammar": "<<values>>"
             },
-            "status": {
-                "status": "experimental"
-            },
             "specification": {
                 "url": "https://drafts.csswg.org/cssom-view/#propdef-scroll-behavior"
             }
@@ -9314,6 +9290,9 @@
             "specification": {
                 "category": "css-overflow",
                 "url": "https://drafts.csswg.org/css-overflow/#scrollbar-gutter-property"
+            },
+            "status": {
+                "status": "in development"
             }
         },
         "scrollbar-width": {
@@ -9324,6 +9303,9 @@
             "specification": {
                 "category": "css-scrollbars",
                 "url": "https://drafts.csswg.org/css-scrollbars/#scrollbar-width"
+            },
+            "status": {
+                "status": "in development"
             }
         },
         "shape-outside": {
