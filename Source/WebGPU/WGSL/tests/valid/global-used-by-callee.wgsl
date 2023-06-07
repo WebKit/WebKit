@@ -25,6 +25,13 @@ fn h() -> i32
     return 0;
 }
 
+// CHECK: int i\(int parameter\d\)
+fn i() -> i32
+{
+    // CHECK: f\(parameter\d\)
+    _ = f();
+}
+
 @compute @workgroup_size(1)
 fn main()
 {
@@ -40,4 +47,7 @@ fn main()
 
     // CHECK: h\(local\d\)
     _ = h();
+
+    // CHECK: i\(local\d\)
+    _ = i();
 }

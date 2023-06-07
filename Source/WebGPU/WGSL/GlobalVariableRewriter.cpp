@@ -112,6 +112,7 @@ private:
     IndexMap<const Type*> m_structTypes;
     HashMap<String, AST::Variable*> m_defs;
     HashSet<String> m_reads;
+    HashMap<AST::Function*, HashSet<String>> m_visitedFunctions;
     Reflection::EntryPointInformation* m_entryPointInformation { nullptr };
     unsigned m_constantId { 0 };
     unsigned m_currentStatementIndex { 0 };
@@ -140,29 +141,47 @@ void RewriteGlobalVariables::run()
 
 void RewriteGlobalVariables::visitCallee(const CallGraph::Callee& callee)
 {
+    const auto& updateCallee = [&] {
+        for (auto& read : m_reads) {
+            auto it = m_globals.find(read);
+            RELEASE_ASSERT(it != m_globals.end());
+            auto& global = it->value;
+            m_callGraph.ast().append(callee.target->parameters(), m_callGraph.ast().astBuilder().construct<AST::Parameter>(
+                SourceSpan::empty(),
+                AST::Identifier::make(read),
+                *global.declaration->maybeReferenceType(),
+                AST::Attribute::List { },
+                AST::ParameterRole::UserDefined
+            ));
+        }
+    };
+
+    const auto& updateCallSites = [&] {
+        for (auto& read : m_reads) {
+            for (auto& call : callee.callSites) {
+                m_callGraph.ast().append(call->arguments(), m_callGraph.ast().astBuilder().construct<AST::IdentifierExpression>(
+                    SourceSpan::empty(),
+                    AST::Identifier::make(read)
+                ));
+            }
+        }
+    };
+
+    auto it = m_visitedFunctions.find(callee.target);
+    if (it != m_visitedFunctions.end()) {
+        dataLogLnIf(shouldLogGlobalVariableRewriting, "> Already visited callee: ", callee.target->name());
+        m_reads = it->value;
+        updateCallSites();
+        return;
+    }
+
     dataLogLnIf(shouldLogGlobalVariableRewriting, "> Visiting callee: ", callee.target->name());
 
     visit(*callee.target);
+    updateCallee();
+    updateCallSites();
 
-    for (auto& read : m_reads) {
-        auto it = m_globals.find(read);
-        RELEASE_ASSERT(it != m_globals.end());
-        auto& global = it->value;
-        m_callGraph.ast().append(callee.target->parameters(), m_callGraph.ast().astBuilder().construct<AST::Parameter>(
-            SourceSpan::empty(),
-            AST::Identifier::make(read),
-            *global.declaration->maybeReferenceType(),
-            AST::Attribute::List { },
-            AST::ParameterRole::UserDefined
-        ));
-
-        for (auto& call : callee.callSites) {
-            m_callGraph.ast().append(call->arguments(), m_callGraph.ast().astBuilder().construct<AST::IdentifierExpression>(
-                SourceSpan::empty(),
-                AST::Identifier::make(read)
-            ));
-        }
-    }
+    m_visitedFunctions.add(callee.target, m_reads);
 }
 
 void RewriteGlobalVariables::visit(AST::Function& function)
