@@ -30,6 +30,7 @@
 
 #import <mach-o/dyld.h>
 #import <wtf/Vector.h>
+#import <wtf/spi/cocoa/AppServerSupportSPI.h>
 
 NS_ASSUME_NONNULL_BEGIN
 

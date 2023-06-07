@@ -30,6 +30,7 @@
 #import <optional>
 #import <wtf/MainThread.h>
 #import <wtf/WTFProcess.h>
+#import <wtf/spi/cocoa/AppServerSupportSPI.h>
 
 using WebKit::WebPushD::PushMessageForTesting;
 
