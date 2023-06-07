@@ -3,17 +3,41 @@
 var<private> x: i32;
 var<private> y: i32;
 
-// CHECK: void f\(int parameter\d\)
-fn f() {
+// CHECK: int f\(int parameter\d\)
+fn f() -> i32
+{
     //CHECK: parameter\d
     _ = y;
+    return 0;
+}
+
+// CHECK: int g\(\)
+fn g() -> i32
+{
+    let y = 42;
+    return 0;
+}
+
+// CHECK: int h\(int parameter\d\)
+fn h() -> i32
+{
+    _ = y;
+    return 0;
 }
 
 @compute @workgroup_size(1)
-fn main() {
+fn main()
+{
     // CHECK: int local\d;
     // CHECK: int local\d;
     _ = x;
+
     // CHECK: f\(local\d\)
     _ = f();
+
+    // CHECK: g\(\)
+    _ = g();
+
+    // CHECK: h\(local\d\)
+    _ = h();
 }

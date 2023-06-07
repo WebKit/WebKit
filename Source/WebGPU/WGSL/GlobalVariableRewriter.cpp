@@ -32,11 +32,14 @@
 #include "CallGraph.h"
 #include "WGSL.h"
 #include "WGSLShaderModule.h"
+#include <wtf/DataLog.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/SetForScope.h>
 
 namespace WGSL {
+
+constexpr bool shouldLogGlobalVariableRewriting = false;
 
 class RewriteGlobalVariables : public AST::Visitor {
 public:
@@ -87,7 +90,7 @@ private:
     static AST::Identifier argumentBufferParameterName(unsigned group);
     static AST::Identifier argumentBufferStructName(unsigned group);
 
-    void def(const String&, AST::Variable*);
+    void def(const AST::Identifier&, AST::Variable*);
 
     void collectGlobals();
     void visitEntryPoint(AST::Function&, AST::StageAttribute::Stage, PipelineLayout&);
@@ -118,6 +121,8 @@ private:
 
 void RewriteGlobalVariables::run()
 {
+    dataLogLnIf(shouldLogGlobalVariableRewriting, "BEGIN: GlobalVariableRewriter");
+
     collectGlobals();
     for (auto& entryPoint : m_callGraph.entrypoints()) {
         PipelineLayout pipelineLayout;
@@ -129,10 +134,14 @@ void RewriteGlobalVariables::run()
 
         m_entryPointInformation->defaultLayout = WTFMove(pipelineLayout);
     }
+
+    dataLogLnIf(shouldLogGlobalVariableRewriting, "END: GlobalVariableRewriter");
 }
 
 void RewriteGlobalVariables::visitCallee(const CallGraph::Callee& callee)
 {
+    dataLogLnIf(shouldLogGlobalVariableRewriting, "> Visiting callee: ", callee.target->name());
+
     visit(*callee.target);
 
     for (auto& read : m_reads) {
@@ -158,8 +167,13 @@ void RewriteGlobalVariables::visitCallee(const CallGraph::Callee& callee)
 
 void RewriteGlobalVariables::visit(AST::Function& function)
 {
-    for (auto& callee : m_callGraph.callees(function))
+    HashSet<String> reads;
+    for (auto& callee : m_callGraph.callees(function)) {
         visitCallee(callee);
+        reads.formUnion(WTFMove(m_reads));
+    }
+    m_reads = WTFMove(reads);
+    m_defs.clear();
 
     for (auto& parameter : function.parameters())
         def(parameter.name(), nullptr);
@@ -228,6 +242,8 @@ void RewriteGlobalVariables::collectGlobals()
             RELEASE_ASSERT(binding.has_value());
             resource = { *group, *binding };
         }
+
+        dataLogLnIf(shouldLogGlobalVariableRewriting, "> Found global: ", globalVar.name(), ", isResource: ", resource.has_value() ? "yes" : "no");
 
         auto result = m_globals.add(globalVar.name(), Global {
             resource,
@@ -305,8 +321,9 @@ void RewriteGlobalVariables::packResourceStruct(AST::Variable& global)
 void RewriteGlobalVariables::visitEntryPoint(AST::Function& function, AST::StageAttribute::Stage stage, PipelineLayout& pipelineLayout)
 {
     m_reads.clear();
-    m_defs.clear();
     m_structTypes.clear();
+
+    dataLogLnIf(shouldLogGlobalVariableRewriting, "> Visiting entrypoint: ", function.name());
 
     visit(function);
     if (m_reads.isEmpty())
@@ -517,16 +534,19 @@ void RewriteGlobalVariables::insertLocalDefinitions(AST::Function& function, con
     }
 }
 
-void RewriteGlobalVariables::def(const String& name, AST::Variable* variable)
+void RewriteGlobalVariables::def(const AST::Identifier& name, AST::Variable* variable)
 {
+    dataLogLnIf(shouldLogGlobalVariableRewriting, "> def: ", name, " at line:", name.span().line, " column: ", name.span().lineOffset);
     m_defs.add(name, variable);
 }
 
 void RewriteGlobalVariables::readVariable(AST::IdentifierExpression& identifier, AST::Variable& variable, Context context)
 {
     if (variable.flavor() != AST::VariableFlavor::Const) {
-        if (context == Context::Global)
+        if (context == Context::Global) {
+            dataLogLnIf(shouldLogGlobalVariableRewriting, "> read global: ", identifier.identifier(), " at line:", identifier.span().line, " column: ", identifier.span().lineOffset);
             m_reads.add(identifier.identifier());
+        }
         return;
     }
 
