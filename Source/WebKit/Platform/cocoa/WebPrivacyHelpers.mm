@@ -58,7 +58,8 @@ SOFT_LINK_OPTIONAL(libnetwork, nw_context_set_tracker_lookup_callback, void, __c
     if (!(self = [super init]))
         return nil;
 
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didUpdate:) name:PAL::get_WebPrivacy_WPResourceDataChangedNotificationName() object:nil];
+    if (PAL::isWebPrivacyFrameworkAvailable())
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didUpdate:) name:PAL::get_WebPrivacy_WPResourceDataChangedNotificationName() object:nil];
     return self;
 }
 
@@ -69,12 +70,14 @@ SOFT_LINK_OPTIONAL(libnetwork, nw_context_set_tracker_lookup_callback, void, __c
 
 - (void)dealloc
 {
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:PAL::get_WebPrivacy_WPResourceDataChangedNotificationName() object:nil];
+    if (PAL::isWebPrivacyFrameworkAvailable())
+        [[NSNotificationCenter defaultCenter] removeObserver:self name:PAL::get_WebPrivacy_WPResourceDataChangedNotificationName() object:nil];
     [super dealloc];
 }
 
 - (void)didUpdate:(NSNotification *)notification
 {
+    ASSERT(PAL::isWebPrivacyFrameworkAvailable());
     auto type = dynamic_objc_cast<NSNumber>([notification.userInfo objectForKey:PAL::get_WebPrivacy_WPNotificationUserInfoResourceTypeKey()]);
     if (!type)
         return;
