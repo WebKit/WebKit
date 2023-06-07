@@ -186,8 +186,7 @@ void WebXROpaqueFramebuffer::startFrame(const PlatformXR::Device::FrameData::Lay
 #endif
 
 #if USE(MTLSHAREDEVENT_FOR_XR_FRAME_COMPLETION)
-    m_completionEvent = gCGL->newSharedEventWithMachPort(data.completionPort.sendRight());
-    m_renderingFrameIndex = data.renderingFrameIndex;
+    m_completionSyncEvent = data.completionSyncEvent;
 #endif
 }
 
@@ -227,13 +226,12 @@ void WebXROpaqueFramebuffer::endFrame()
     }
 
 #if USE(MTLSHAREDEVENT_FOR_XR_FRAME_COMPLETION)
-    if (m_completionEvent) {
-        auto gCGL = static_cast<GraphicsContextGLCocoa*>(&gl);
-        auto completionSync = gCGL->createSyncWithSharedEvent(m_completionEvent.get(), m_renderingFrameIndex);
+    if (std::get<0>(m_completionSyncEvent)) {
+        auto completionSync = gl.createEGLSync(m_completionSyncEvent);
         ASSERT(completionSync);
         constexpr uint64_t kTimeout = 1'000'000'000; // 1 second
-        gCGL->clientWaitSyncWithFlush(completionSync, kTimeout);
-        gCGL->destroySync(completionSync);
+        gl.clientWaitEGLSyncWithFlush(completionSync, kTimeout);
+        gl.destroyEGLSync(completionSync);
     } else
         gl.finish();
 #else

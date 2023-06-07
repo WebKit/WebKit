@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2020 Igalia S.L. All rights reserved.
- * Copyright (C) 2021 Apple, Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple, Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -90,8 +90,7 @@ private:
     PlatformGLObject m_opaqueTexture;
 #endif
 #if USE(MTLSHAREDEVENT_FOR_XR_FRAME_COMPLETION)
-    RetainPtr<id> m_completionEvent { nullptr };
-    uint64_t m_renderingFrameIndex { 0 };
+    GraphicsContextGL::ExternalEGLSyncEvent m_completionSyncEvent;
 #endif
 };
 

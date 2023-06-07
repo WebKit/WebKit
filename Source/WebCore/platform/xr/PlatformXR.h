@@ -297,8 +297,7 @@ public:
             PlatformGLObject opaqueTexture { 0 };
 #endif
 #if USE(MTLSHAREDEVENT_FOR_XR_FRAME_COMPLETION)
-            MachSendRight completionPort { };
-            uint64_t renderingFrameIndex { 0 };
+            std::tuple<MachSendRight, uint64_t> completionSyncEvent;
 #endif
 
             template<class Encoder> void encode(Encoder&) const;
@@ -586,8 +585,7 @@ void Device::FrameData::LayerData::encode(Encoder& encoder) const
     encoder << opaqueTexture;
 #endif
 #if USE(MTLSHAREDEVENT_FOR_XR_FRAME_COMPLETION)
-    encoder << completionPort;
-    encoder << renderingFrameIndex;
+    encoder << completionSyncEvent;
 #endif
 }
 
@@ -607,9 +605,7 @@ std::optional<Device::FrameData::LayerData> Device::FrameData::LayerData::decode
         return std::nullopt;
 #endif
 #if USE(MTLSHAREDEVENT_FOR_XR_FRAME_COMPLETION)
-    if (!decoder.decode(layerData.completionPort))
-        return std::nullopt;
-    if (!decoder.decode(layerData.renderingFrameIndex))
+    if (!decoder.decode(layerData.completionSyncEvent))
         return std::nullopt;
 #endif
     return layerData;
