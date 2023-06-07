@@ -48,8 +48,8 @@ public:
     Element& element() { return m_element; }
     const Element& element() const { return m_element; }
 
-    enum LegacyTypeSupport { DisallowLegacyTypeInTypeAttribute, AllowLegacyTypeInTypeAttribute };
-    bool prepareScript(const TextPosition& scriptStartPosition = TextPosition(), LegacyTypeSupport = DisallowLegacyTypeInTypeAttribute);
+    enum class LegacyTypeSupport : bool { Disallow, Allow };
+    bool prepareScript(const TextPosition& scriptStartPosition = TextPosition(), LegacyTypeSupport = LegacyTypeSupport::Disallow);
 
     String scriptCharset() const { return m_characterEncoding; }
     WEBCORE_EXPORT String scriptContent() const;

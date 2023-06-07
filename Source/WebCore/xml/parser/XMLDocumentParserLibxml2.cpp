@@ -906,7 +906,7 @@ void XMLDocumentParser::endElementNs()
     m_requestingScript = true;
 
     auto& scriptElement = downcastScriptElement(element);
-    if (scriptElement.prepareScript(m_scriptStartPosition, ScriptElement::AllowLegacyTypeInTypeAttribute)) {
+    if (scriptElement.prepareScript(m_scriptStartPosition, ScriptElement::LegacyTypeSupport::Allow)) {
         // FIXME: Script execution should be shared between
         // the libxml2 and Qt XMLDocumentParser implementations.
 

@@ -154,7 +154,7 @@ std::optional<ScriptType> ScriptElement::determineScriptType(LegacyTypeSupport s
 
     if (MIMETypeRegistry::isSupportedJavaScriptMIMEType(type.trim(deprecatedIsSpaceOrNewline)))
         return ScriptType::Classic;
-    if (supportLegacyTypes == AllowLegacyTypeInTypeAttribute && isLegacySupportedJavaScriptLanguage(type))
+    if (supportLegacyTypes == LegacyTypeSupport::Allow && isLegacySupportedJavaScriptLanguage(type))
         return ScriptType::Classic;
 
     // FIXME: XHTML spec defines "defer" attribute. But WebKit does not implement it for a long time.
