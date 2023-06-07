@@ -5,6 +5,7 @@
     "github_source": "https://github.com/WebKit/WebKit/tree/86daf4fcece9d2dafe67ef0de1e23bda72b56378/PerformanceTests/MotionMark",
     "webserver_benchmark_patch": "data/patches/webserver/MotionMark.patch",
     "webdriver_benchmark_patch": "data/patches/webdriver/MotionMark.patch",
+    "signpost_patch": "data/patches/signposts/MotionMark.patch",
     "entry_point": "index.html",
     "subtest_entry_point": "developer.html",
     "config": {
