@@ -56,7 +56,8 @@ private:
 
     CallGraph m_callGraph;
     const HashMap<String, std::optional<PipelineLayout>>& m_pipelineLayouts;
-    HashMap<AST::Function*, Vector<AST::CallExpression*>> m_calleeBuildingMap;
+    HashMap<AST::Function*, unsigned> m_calleeBuildingMap;
+    Vector<CallGraph::Callee>* m_callees;
     Deque<AST::Function*> m_queue;
 };
 
@@ -98,11 +99,11 @@ void CallGraphBuilder::visit(AST::Function& function)
     if (!result.isNewEntry)
         return;
 
+    ASSERT(!m_callees);
+    m_callees = &result.iterator->value;
     AST::Visitor::visit(function);
-    auto& callees = result.iterator->value;
-    for (auto& [target, callSites] : m_calleeBuildingMap)
-        callees.append(CallGraph::Callee { target, WTFMove(callSites) });
     m_calleeBuildingMap.clear();
+    m_callees = nullptr;
 }
 
 void CallGraphBuilder::visit(AST::CallExpression& call)
@@ -116,8 +117,11 @@ void CallGraphBuilder::visit(AST::CallExpression& call)
         return;
 
     m_queue.append(it->value);
-    auto result = m_calleeBuildingMap.add(it->value, Vector<AST::CallExpression*>());
-    result.iterator->value.append(&call);
+    auto result = m_calleeBuildingMap.add(it->value, m_callees->size());
+    if (result.isNewEntry)
+        m_callees->append(CallGraph::Callee { it->value, { &call } });
+    else
+        m_callees->at(result.iterator->value).callSites.append(&call);
 }
 
 CallGraph buildCallGraph(ShaderModule& shaderModule, const HashMap<String, std::optional<PipelineLayout>>& pipelineLayouts)
