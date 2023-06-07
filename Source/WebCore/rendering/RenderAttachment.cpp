@@ -47,6 +47,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(RenderAttachment);
 
 RenderAttachment::RenderAttachment(HTMLAttachmentElement& element, RenderStyle&& style)
     : RenderReplaced(element, WTFMove(style), LayoutSize())
+    , m_isWideLayout(element.isWideLayout())
 {
 #if ENABLE(SERVICE_CONTROLS)
     m_hasShadowControls = element.isImageMenuEnabled();
@@ -58,8 +59,29 @@ HTMLAttachmentElement& RenderAttachment::attachmentElement() const
     return downcast<HTMLAttachmentElement>(nodeForNonAnonymous());
 }
 
+LayoutSize RenderAttachment::layoutWideLayoutAttachmentOnly()
+{
+    if (auto* wideLayoutShadowElement = attachmentElement().wideLayoutShadowContainer()) {
+        if (auto* wideLayoutShadowRenderer = downcast<RenderBox>(wideLayoutShadowElement->renderer())) {
+            if (wideLayoutShadowRenderer->needsLayout())
+                wideLayoutShadowRenderer->layout();
+            ASSERT(!wideLayoutShadowRenderer->needsLayout());
+            return wideLayoutShadowRenderer->size();
+        }
+    }
+    return { };
+}
+
 void RenderAttachment::layout()
 {
+    if (auto size = layoutWideLayoutAttachmentOnly(); !size.isEmpty()) {
+        setIntrinsicSize(size);
+        RenderReplaced::layout();
+        if (hasShadowContent())
+            layoutShadowContent(intrinsicSize());
+        return;
+    }
+
     LayoutSize newIntrinsicSize = theme().attachmentIntrinsicSize(*this);
 
     if (!theme().attachmentShouldAllowWidthToShrink(*this)) {
@@ -107,6 +129,24 @@ void RenderAttachment::layoutShadowContent(const LayoutSize& size)
         renderBox.setNeedsLayout(MarkOnlyThis);
         renderBox.layout();
     }
+}
+
+bool RenderAttachment::paintWideLayoutAttachmentOnly(const PaintInfo& paintInfo, const LayoutPoint& offset) const
+{
+    if (paintInfo.phase != PaintPhase::Foreground && paintInfo.phase != PaintPhase::Selection)
+        return false;
+
+    if (auto* wideLayoutShadowElement = attachmentElement().wideLayoutShadowContainer()) {
+        if (auto* wideLayoutShadowRenderer = wideLayoutShadowElement->renderer()) {
+            auto shadowPaintInfo = paintInfo;
+            for (PaintPhase phase : { PaintPhase::BlockBackground, PaintPhase::ChildBlockBackgrounds, PaintPhase::Float, PaintPhase::Foreground, PaintPhase::Outline }) {
+                shadowPaintInfo.phase = phase;
+                wideLayoutShadowRenderer->paint(shadowPaintInfo, offset);
+            }
+        }
+        return true;
+    }
+    return false;
 }
 
 } // namespace WebCore

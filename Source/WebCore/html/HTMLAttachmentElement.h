@@ -90,6 +90,9 @@ public:
 
     bool isImageOnly() const { return m_implementation == Implementation::ImageOnly; }
 
+    bool isWideLayout() const { return m_implementation == Implementation::Modern; }
+    HTMLElement* wideLayoutShadowContainer() const { return m_containerElement.get(); }
+
 private:
     friend class AttachmentSaveEventListener;
 
