@@ -27,7 +27,6 @@
 
 #ifdef __cplusplus
 
-#include "WKDeclarationSpecifiers.h"
 #include <wtf/OSObjectPtr.h>
 #include <wtf/spi/darwin/XPCSPI.h>
 
@@ -35,12 +34,12 @@ namespace WebKit {
 
 class XPCEndpoint {
 public:
-    WK_EXPORT XPCEndpoint();
-    WK_EXPORT virtual ~XPCEndpoint() = default;
+    XPCEndpoint();
+    virtual ~XPCEndpoint() = default;
 
-    WK_EXPORT void sendEndpointToConnection(xpc_connection_t);
+    void sendEndpointToConnection(xpc_connection_t);
 
-    WK_EXPORT OSObjectPtr<xpc_endpoint_t> endpoint() const;
+    OSObjectPtr<xpc_endpoint_t> endpoint() const;
 
     static constexpr auto xpcMessageNameKey = "message-name";
 

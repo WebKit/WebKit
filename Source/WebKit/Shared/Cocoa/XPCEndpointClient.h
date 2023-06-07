@@ -27,7 +27,6 @@
 
 #ifdef __cplusplus
 
-#include "WKDeclarationSpecifiers.h"
 #include <wtf/Lock.h>
 #include <wtf/OSObjectPtr.h>
 #include <wtf/spi/darwin/XPCSPI.h>
@@ -38,10 +37,10 @@ class XPCEndpointClient {
 public:
     virtual ~XPCEndpointClient() { }
 
-    WK_EXPORT void setEndpoint(xpc_endpoint_t);
+    void setEndpoint(xpc_endpoint_t);
 
 protected:
-    WK_EXPORT OSObjectPtr<xpc_connection_t> connection();
+    OSObjectPtr<xpc_connection_t> connection();
 
 private:
     virtual void handleEvent(xpc_object_t) = 0;

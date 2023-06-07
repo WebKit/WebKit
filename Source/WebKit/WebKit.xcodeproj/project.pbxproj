@@ -1963,8 +1963,8 @@
 		C14D37FE24ACE086007FF014 /* LaunchServicesDatabaseManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = C14D37FD24ACE086007FF014 /* LaunchServicesDatabaseManager.mm */; };
 		C15CBB3623F3777100300CC7 /* PreferenceObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = C145CC0E23DCA427003A5EEB /* PreferenceObserver.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C15CBB3723F37ECB00300CC7 /* PreferenceObserver.mm in Sources */ = {isa = PBXBuildFile; fileRef = C15CBB3323F34C3800300CC7 /* PreferenceObserver.mm */; };
-		C15E6CB324B7BE6F00E501A2 /* XPCEndpoint.h in Headers */ = {isa = PBXBuildFile; fileRef = C14D306724B794E700480387 /* XPCEndpoint.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		C15E6CB424B7BE7600E501A2 /* XPCEndpointClient.h in Headers */ = {isa = PBXBuildFile; fileRef = C14D306824B794E700480387 /* XPCEndpointClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		C15E6CB324B7BE6F00E501A2 /* XPCEndpoint.h in Headers */ = {isa = PBXBuildFile; fileRef = C14D306724B794E700480387 /* XPCEndpoint.h */; };
+		C15E6CB424B7BE7600E501A2 /* XPCEndpointClient.h in Headers */ = {isa = PBXBuildFile; fileRef = C14D306824B794E700480387 /* XPCEndpointClient.h */; };
 		C1663E5B24AEAA2F00C6A3B2 /* LaunchServicesDatabaseXPCConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = C1663E5A24AEA74200C6A3B2 /* LaunchServicesDatabaseXPCConstants.h */; };
 		C1710CF724AA643200D7C112 /* LaunchServicesDatabaseObserver.mm in Sources */ = {isa = PBXBuildFile; fileRef = C1710CF624AA643200D7C112 /* LaunchServicesDatabaseObserver.mm */; };
 		C18173612058424700DFDA65 /* DisplayLink.h in Headers */ = {isa = PBXBuildFile; fileRef = C18173602058424700DFDA65 /* DisplayLink.h */; };
