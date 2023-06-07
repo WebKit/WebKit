@@ -2531,9 +2531,10 @@ LayoutUnit RenderFlexibleBox::computeGap(RenderFlexibleBox::GapType gapType) con
 
 void RenderFlexibleBox::layoutUsingFlexFormattingContext()
 {
-    auto flexLayout = LayoutIntegration::FlexLayout { *this };
+    if (!m_modernFlexLayout)
+        m_modernFlexLayout = makeUnique<LayoutIntegration::FlexLayout>(*this);
 
-    flexLayout.updateFormattingRootGeometryAndInvalidate();
+    m_modernFlexLayout->updateFormattingRootGeometryAndInvalidate();
 
     resetHasDefiniteHeight();
     for (auto& flexItem : childrenOfType<RenderBlock>(*this)) {
@@ -2543,10 +2544,10 @@ void RenderFlexibleBox::layoutUsingFlexFormattingContext()
         flexItem.layoutIfNeeded();
 
         auto minMaxContentSize = computeFlexItemMinMaxSizes(flexItem);
-        flexLayout.updateFlexItemDimensions(flexItem, minMaxContentSize.first, minMaxContentSize.second);
+        m_modernFlexLayout->updateFlexItemDimensions(flexItem, minMaxContentSize.first, minMaxContentSize.second);
     }
-    flexLayout.layout();
-    setLogicalHeight(std::max(logicalHeight(), borderBefore() + paddingBefore() + flexLayout.contentLogicalHeight() + borderAfter() + paddingAfter()));
+    m_modernFlexLayout->layout();
+    setLogicalHeight(std::max(logicalHeight(), borderBefore() + paddingBefore() + m_modernFlexLayout->contentLogicalHeight() + borderAfter() + paddingAfter()));
     updateLogicalHeight();
 }
 

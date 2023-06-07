@@ -36,6 +36,9 @@
 namespace WebCore {
 
 class FlexItem;
+namespace LayoutIntegration {
+class FlexLayout;
+}
     
 class RenderFlexibleBox : public RenderBlock {
     WTF_MAKE_ISO_ALLOCATED(RenderFlexibleBox);
@@ -261,6 +264,8 @@ private:
     bool m_inLayout { false };
     bool m_shouldResetChildLogicalHeightBeforeLayout { false };
     bool m_isComputingFlexBaseSizes { false };
+
+    std::unique_ptr<LayoutIntegration::FlexLayout> m_modernFlexLayout;
 };
 
 } // namespace WebCore
