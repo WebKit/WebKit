@@ -193,7 +193,7 @@ void RemoteRenderingBackend::didCreateImageBuffer(Ref<RemoteImageBuffer> imageBu
     send(Messages::RemoteRenderingBackendProxy::DidCreateImageBufferBackend(WTFMove(handle), renderingResourceIdentifier.object()), m_renderingBackendIdentifier);
 }
 
-void RemoteRenderingBackend::moveToSerializedBuffer(WebCore::RenderingResourceIdentifier identifier, RemoteSerializedImageBufferWriteReference&& reference)
+void RemoteRenderingBackend::moveToSerializedBuffer(WebCore::RenderingResourceIdentifier identifier)
 {
     assertIsCurrent(workQueue());
     QualifiedRenderingResourceIdentifier qualifiedIdentifier { identifier, m_gpuConnectionToWebProcess->webProcessIdentifier() };
@@ -205,20 +205,25 @@ void RemoteRenderingBackend::moveToSerializedBuffer(WebCore::RenderingResourceId
         ASSERT_IS_TESTING_IPC();
         return;
     }
-    m_gpuConnectionToWebProcess->serializedImageBufferHeap().retire(WTFMove(reference), WTFMove(imageBuffer), std::nullopt);
+    m_gpuConnectionToWebProcess->serializedImageBufferHeap().add(identifier, WTFMove(imageBuffer));
 }
 
-void RemoteRenderingBackend::moveToImageBuffer(RemoteSerializedImageBufferWriteReference&& reference, WebCore::RenderingResourceIdentifier identifier)
+void RemoteRenderingBackend::moveToImageBuffer(WebCore::RenderingResourceIdentifier identifier)
 {
     assertIsCurrent(workQueue());
-    QualifiedRenderingResourceIdentifier qualifiedIdentifier { identifier, m_gpuConnectionToWebProcess->webProcessIdentifier() };
-    RemoteSerializedImageBufferReadReference readReference(reference.reference());
-    auto imageBuffer = m_gpuConnectionToWebProcess->serializedImageBufferHeap().retire(WTFMove(readReference), IPC::Timeout::infinity());
-    m_gpuConnectionToWebProcess->serializedImageBufferHeap().retireRemove(WTFMove(reference));
+    auto& serializedImageBuffers = m_gpuConnectionToWebProcess->serializedImageBufferHeap();
+    // FIXME: Currently the ThreadSafeObjectHeap does not return the object on remove or write. Thus
+    // we manually construct a state where only one read is able to obtain the object.
+    RemoteSerializedImageBufferReadReference read { { identifier, 0 } };
+    RemoteSerializedImageBufferWriteReference remove { read.reference(), 1 }; // Remove after one read, i.e. the read above.
+    serializedImageBuffers.retireRemove(WTFMove(remove)); // The object will not be available to multiple readers.
+    auto imageBuffer = serializedImageBuffers.retire(WTFMove(read), IPC::Timeout::infinity());
     if (!imageBuffer) {
         ASSERT_IS_TESTING_IPC();
         return;
     }
+    QualifiedRenderingResourceIdentifier qualifiedIdentifier { identifier, m_gpuConnectionToWebProcess->webProcessIdentifier() };
+
     WebCore::ImageBufferCreationContext creationContext { nullptr };
 #if HAVE(IOSURFACE)
     creationContext.surfacePool = &ioSurfacePool();

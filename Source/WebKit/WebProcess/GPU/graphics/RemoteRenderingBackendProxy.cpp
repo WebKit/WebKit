@@ -153,14 +153,14 @@ RefPtr<ImageBuffer> RemoteRenderingBackendProxy::createImageBuffer(const FloatSi
     return nullptr;
 }
 
-void RemoteRenderingBackendProxy::moveToSerializedBuffer(WebCore::RenderingResourceIdentifier identifier, RemoteSerializedImageBufferWriteReference&& reference)
+void RemoteRenderingBackendProxy::moveToSerializedBuffer(WebCore::RenderingResourceIdentifier identifier)
 {
-    send(Messages::RemoteRenderingBackend::MoveToSerializedBuffer(identifier, reference));
+    send(Messages::RemoteRenderingBackend::MoveToSerializedBuffer(identifier));
 }
 
-void RemoteRenderingBackendProxy::moveToImageBuffer(RemoteSerializedImageBufferWriteReference&& reference, WebCore::RenderingResourceIdentifier identifier)
+void RemoteRenderingBackendProxy::moveToImageBuffer(WebCore::RenderingResourceIdentifier identifier)
 {
-    send(Messages::RemoteRenderingBackend::MoveToImageBuffer(reference, identifier));
+    send(Messages::RemoteRenderingBackend::MoveToImageBuffer(identifier));
 }
 
 bool RemoteRenderingBackendProxy::getPixelBufferForImageBuffer(RenderingResourceIdentifier imageBuffer, const PixelBufferFormat& destinationFormat, const IntRect& srcRect, std::span<uint8_t> result)

@@ -132,11 +132,8 @@ private:
 
     bool isRemoteSerializedImageBufferProxy() const final { return true; }
 
-    RemoteSerializedImageBufferReferenceTracker m_referenceTracker;
-
     WebCore::ImageBufferBackend::Parameters m_parameters;
     WebCore::ImageBufferBackend::Info m_info;
-
     WebCore::RenderingResourceIdentifier m_renderingResourceIdentifier;
     RefPtr<IPC::Connection> m_connection;
 };

@@ -97,4 +97,21 @@ TEST_F(ThreadSafeObjectHeapTest, AddAndGetWorks)
     EXPECT_EQ(0u, TestedObject::instances());
 }
 
+TEST_F(ThreadSafeObjectHeapTest, CompleteReadAfterRemoveWithPendingRead)
+{
+    IPC::ThreadSafeObjectHeap<TestedObjectIdentifier, RefPtr<TestedObject>> heap;
+    std::optional<TestedObjectReadReference> read1;
+    std::optional<TestedObjectWriteReference> remove;
+    {
+        auto obj1 = TestedObject::create(345);
+        heap.retire(obj1->newWriteReference(), { obj1 }, std::nullopt);
+        read1 = obj1->newReadReference();
+        remove = obj1->newWriteReference();
+    }
+    heap.retireRemove(WTFMove(*remove)); // Non-blocking remove.
+    EXPECT_EQ(1u, TestedObject::instances());
+    EXPECT_EQ(345, heap.retire(WTFMove(*read1), 0_s)->value());
+    EXPECT_EQ(0u, TestedObject::instances());
+}
+
 }

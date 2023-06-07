@@ -376,24 +376,19 @@ std::unique_ptr<SerializedImageBuffer> RemoteImageBufferProxy::sinkIntoSerialize
 }
 
 RemoteSerializedImageBufferProxy::RemoteSerializedImageBufferProxy(const WebCore::ImageBufferBackend::Parameters& parameters, const WebCore::ImageBufferBackend::Info& info, const WebCore::RenderingResourceIdentifier& renderingResourceIdentifier, RemoteRenderingBackendProxy& backend)
-    : m_referenceTracker(RemoteSerializedImageBufferIdentifier::generate())
-    , m_parameters(parameters)
+    : m_parameters(parameters)
     , m_info(info)
     , m_renderingResourceIdentifier(renderingResourceIdentifier)
     , m_connection(backend.connection())
 {
     backend.remoteResourceCacheProxy().forgetImageBuffer(m_renderingResourceIdentifier);
-    backend.moveToSerializedBuffer(m_renderingResourceIdentifier, m_referenceTracker.write());
+    backend.moveToSerializedBuffer(m_renderingResourceIdentifier);
 }
 
 RefPtr<ImageBuffer> RemoteSerializedImageBufferProxy::sinkIntoImageBuffer(std::unique_ptr<RemoteSerializedImageBufferProxy> buffer, RemoteRenderingBackendProxy& backend)
 {
     auto result = adoptRef(new RemoteImageBufferProxy(buffer->m_parameters, buffer->m_info, backend, nullptr, buffer->m_renderingResourceIdentifier));
-
-    // Record an implicit read, since we always do a read+write (to get+remove) as a single
-    // operation.
-    buffer->m_referenceTracker.read();
-    backend.moveToImageBuffer(buffer->m_referenceTracker.write(), result->renderingResourceIdentifier());
+    backend.moveToImageBuffer(result->renderingResourceIdentifier());
     buffer->m_connection = nullptr;
     return result;
 }
@@ -401,7 +396,7 @@ RefPtr<ImageBuffer> RemoteSerializedImageBufferProxy::sinkIntoImageBuffer(std::u
 RemoteSerializedImageBufferProxy::~RemoteSerializedImageBufferProxy()
 {
     if (m_connection)
-        m_connection->send(Messages::GPUConnectionToWebProcess::ReleaseSerializedImageBuffer(m_referenceTracker.write()), 0);
+        m_connection->send(Messages::GPUConnectionToWebProcess::ReleaseSerializedImageBuffer(m_renderingResourceIdentifier), 0);
 }
 
 } // namespace WebKit
