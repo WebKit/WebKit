@@ -486,4 +486,16 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebUserContentControllerMessageRecei
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebUserContentControllerMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebUserContentControllerProxyMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebUserContentControllerProxyMessages.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/com.apple.WebKit.GPU.sb
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/com.apple.WebKit.GPUProcess.sb
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/com.apple.WebKit.NetworkProcess.sb
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/com.apple.WebKit.Networking.sb
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/com.apple.WebKit.WebAuthn.sb
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/com.apple.WebKit.WebAuthnProcess.sb
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/com.apple.WebKit.WebContent.sb
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/com.apple.WebKit.adattributiond.sb
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/com.apple.WebKit.plugin-common.sb
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/com.apple.WebKit.webpushd.mac.sb
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/com.apple.WebKit.webpushd.sb
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/com.apple.WebProcess.sb
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/module.private.modulemap
