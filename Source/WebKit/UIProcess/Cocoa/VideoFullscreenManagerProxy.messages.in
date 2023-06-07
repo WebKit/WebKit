@@ -24,7 +24,7 @@
 messages -> VideoFullscreenManagerProxy {
     SetHasVideo(WebKit::PlaybackSessionContextIdentifier contextId, bool hasVideo)
     SetVideoDimensions(WebKit::PlaybackSessionContextIdentifier contextId, WebCore::FloatSize videoDimensions)
-    SetupFullscreenWithID(WebKit::PlaybackSessionContextIdentifier contextId, WebKit::LayerHostingContextID videoLayerID, WebCore::FloatRect initialRect, WebCore::FloatSize videoDimensions, float hostingScaleFactor, WebCore::HTMLMediaElementEnums::VideoFullscreenMode videoFullscreenMode, bool allowsPictureInPicture, bool standby, bool blocksReturnToFullscreenFromPictureInPicture)
+    SetupFullscreenWithID(WebKit::PlaybackSessionContextIdentifier contextId, WebKit::LayerHostingContextID videoLayerID, WebCore::FloatRect screenRect, WebCore::FloatSize initialSize, WebCore::FloatSize videoDimensions, float hostingScaleFactor, WebCore::HTMLMediaElementEnums::VideoFullscreenMode videoFullscreenMode, bool allowsPictureInPicture, bool standby, bool blocksReturnToFullscreenFromPictureInPicture)
     SetPlayerIdentifier(WebKit::PlaybackSessionContextIdentifier contextId, std::optional<WebCore::MediaPlayerIdentifier> playerIdentifier)
 #if !PLATFORM(IOS_FAMILY)
     EnterFullscreen(WebKit::PlaybackSessionContextIdentifier contextId)
