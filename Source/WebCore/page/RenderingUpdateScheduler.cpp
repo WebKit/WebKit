@@ -138,11 +138,6 @@ void RenderingUpdateScheduler::displayRefreshFired()
     }
 }
 
-void RenderingUpdateScheduler::triggerRenderingUpdateForTesting()
-{
-    triggerRenderingUpdate();
-}
-
 void RenderingUpdateScheduler::triggerRenderingUpdate()
 {
     m_page.chrome().client().triggerRenderingUpdate();

@@ -647,7 +647,6 @@
 		2D1E8223216FFF5100A15265 /* WKWebEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D1E8221216FFF5000A15265 /* WKWebEvent.h */; };
 		2D279E1926955768004B3EEB /* PrototypeToolsSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D279E1826955768004B3EEB /* PrototypeToolsSPI.h */; };
 		2D28A4971AF965A100F190C9 /* WKViewLayoutStrategy.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D28A4951AF965A100F190C9 /* WKViewLayoutStrategy.h */; };
-		2D29ECD0192F2C2E00984B78 /* RemoteLayerTreeDisplayRefreshMonitor.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D29ECCE192F2C2E00984B78 /* RemoteLayerTreeDisplayRefreshMonitor.h */; };
 		2D3A65DB1A7C3A1F00CAC637 /* WKNavigationActionRef.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D3A65D91A7C3A1F00CAC637 /* WKNavigationActionRef.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2D3A65DF1A7C3A7D00CAC637 /* WKNavigationResponseRef.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D3A65DD1A7C3A7D00CAC637 /* WKNavigationResponseRef.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2D3A65E31A7C3A9300CAC637 /* WKNavigationRef.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D3A65E11A7C3A9300CAC637 /* WKNavigationRef.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3966,8 +3965,6 @@
 		2D28F3E01885CCC1004B9EAE /* WebChromeClientIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WebChromeClientIOS.mm; path = ios/WebChromeClientIOS.mm; sourceTree = "<group>"; };
 		2D28F3E21885CCC1004B9EAE /* WebEditorClientIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WebEditorClientIOS.mm; path = ios/WebEditorClientIOS.mm; sourceTree = "<group>"; };
 		2D28F3E31885CCC1004B9EAE /* WebLocalFrameLoaderClientIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WebLocalFrameLoaderClientIOS.mm; path = ios/WebLocalFrameLoaderClientIOS.mm; sourceTree = "<group>"; };
-		2D29ECCE192F2C2E00984B78 /* RemoteLayerTreeDisplayRefreshMonitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteLayerTreeDisplayRefreshMonitor.h; sourceTree = "<group>"; };
-		2D29ECCF192F2C2E00984B78 /* RemoteLayerTreeDisplayRefreshMonitor.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RemoteLayerTreeDisplayRefreshMonitor.mm; sourceTree = "<group>"; };
 		2D2ADF021636243500197E47 /* PDFPluginAnnotation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PDFPluginAnnotation.h; path = PDF/PDFPluginAnnotation.h; sourceTree = "<group>"; };
 		2D2ADF031636243500197E47 /* PDFPluginAnnotation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PDFPluginAnnotation.mm; path = PDF/PDFPluginAnnotation.mm; sourceTree = "<group>"; };
 		2D2ADF0516362DC700197E47 /* PDFPluginTextAnnotation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PDFPluginTextAnnotation.h; path = PDF/PDFPluginTextAnnotation.h; sourceTree = "<group>"; };
@@ -9159,8 +9156,6 @@
 				2D8949EF182044F600E898AA /* PlatformCALayerRemoteTiledBacking.h */,
 				1AB16AE8164B3A8800290D62 /* RemoteLayerTreeContext.h */,
 				1AB16AE7164B3A8800290D62 /* RemoteLayerTreeContext.mm */,
-				2D29ECCE192F2C2E00984B78 /* RemoteLayerTreeDisplayRefreshMonitor.h */,
-				2D29ECCF192F2C2E00984B78 /* RemoteLayerTreeDisplayRefreshMonitor.mm */,
 				1AB16ADC1648598400290D62 /* RemoteLayerTreeDrawingArea.h */,
 				1AB16ADB1648598400290D62 /* RemoteLayerTreeDrawingArea.mm */,
 				1AC009E229E0E28B00E696C4 /* RemoteScrollbarsController.h */,
@@ -14669,7 +14664,6 @@
 				2D47B56D1810714E003A3AEE /* RemoteLayerBackingStore.h in Headers */,
 				2DDF731518E95060004F5A66 /* RemoteLayerBackingStoreCollection.h in Headers */,
 				1AB16AEA164B3A8800290D62 /* RemoteLayerTreeContext.h in Headers */,
-				2D29ECD0192F2C2E00984B78 /* RemoteLayerTreeDisplayRefreshMonitor.h in Headers */,
 				1AB16ADE1648598400290D62 /* RemoteLayerTreeDrawingArea.h in Headers */,
 				1AB16AE21648656D00290D62 /* RemoteLayerTreeDrawingAreaProxy.h in Headers */,
 				0FF24A2E1879E4BC003ABF0C /* RemoteLayerTreeDrawingAreaProxyMessages.h in Headers */,

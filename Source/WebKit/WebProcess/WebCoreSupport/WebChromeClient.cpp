@@ -1063,6 +1063,19 @@ void WebChromeClient::triggerRenderingUpdate()
         m_page.drawingArea()->triggerRenderingUpdate();
 }
 
+bool WebChromeClient::scheduleRenderingUpdate()
+{
+    if (m_page.drawingArea())
+        return m_page.drawingArea()->scheduleRenderingUpdate();
+    return false;
+}
+
+void WebChromeClient::renderingUpdateFramesPerSecondChanged()
+{
+    if (m_page.drawingArea())
+        m_page.drawingArea()->renderingUpdateFramesPerSecondChanged();
+}
+
 unsigned WebChromeClient::remoteImagesCountForTesting() const
 {
     return m_page.remoteImagesCountForTesting();

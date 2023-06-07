@@ -47,8 +47,6 @@ public:
     void adjustRenderingUpdateFrequency();
     void scheduleRenderingUpdate();
 
-    void triggerRenderingUpdateForTesting();
-
     void windowScreenDidChange(PlatformDisplayID);
 
 private:

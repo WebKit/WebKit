@@ -1411,7 +1411,9 @@ void Page::windowScreenDidChange(PlatformDisplayID displayID, std::optional<Fram
     if (m_scrollingCoordinator)
         m_scrollingCoordinator->windowScreenDidChange(displayID, m_displayNominalFramesPerSecond);
 
-    renderingUpdateScheduler().windowScreenDidChange(displayID);
+    if (auto *scheduler = existingRenderingUpdateScheduler())
+        scheduler->windowScreenDidChange(displayID);
+    chrome().client().renderingUpdateFramesPerSecondChanged();
 
     setNeedsRecalcStyleInAllFrames();
 }
@@ -1694,7 +1696,7 @@ void Page::computeUnfulfilledRenderingSteps(OptionSet<RenderingUpdateStep> reque
 void Page::triggerRenderingUpdateForTesting()
 {
     LOG_WITH_STREAM(EventLoop, stream << "Page " << this << " triggerRenderingUpdateForTesting()");
-    renderingUpdateScheduler().triggerRenderingUpdateForTesting();
+    chrome().client().triggerRenderingUpdate();
 }
 
 void Page::startTrackingRenderingUpdates()
@@ -2160,7 +2162,9 @@ void Page::resumeScriptedAnimations()
 
 void Page::timelineControllerMaximumAnimationFrameRateDidChange(DocumentTimelinesController&)
 {
-    renderingUpdateScheduler().adjustRenderingUpdateFrequency();
+    if (auto *scheduler = existingRenderingUpdateScheduler())
+        scheduler->adjustRenderingUpdateFrequency();
+    chrome().client().renderingUpdateFramesPerSecondChanged();
 }
 
 std::optional<FramesPerSecond> Page::preferredRenderingUpdateFramesPerSecond(OptionSet<PreferredRenderingUpdateOption> flags) const
@@ -2207,7 +2211,9 @@ void Page::setIsVisuallyIdleInternal(bool isVisuallyIdle)
         return;
 
     m_throttlingReasons.set(ThrottlingReason::VisuallyIdle, isVisuallyIdle);
-    renderingUpdateScheduler().adjustRenderingUpdateFrequency();
+    if (auto *scheduler = existingRenderingUpdateScheduler())
+        scheduler->adjustRenderingUpdateFrequency();
+    chrome().client().renderingUpdateFramesPerSecondChanged();
 }
 
 void Page::handleLowModePowerChange(bool isLowPowerModeEnabled)
@@ -2219,7 +2225,9 @@ void Page::handleLowModePowerChange(bool isLowPowerModeEnabled)
         return;
 
     m_throttlingReasons.set(ThrottlingReason::LowPowerMode, isLowPowerModeEnabled);
-    renderingUpdateScheduler().adjustRenderingUpdateFrequency();
+    if (auto *scheduler = existingRenderingUpdateScheduler())
+        scheduler->adjustRenderingUpdateFrequency();
+    chrome().client().renderingUpdateFramesPerSecondChanged();
 
     updateDOMTimerAlignmentInterval();
 }
@@ -3751,6 +3759,11 @@ RenderingUpdateScheduler& Page::renderingUpdateScheduler()
     if (!m_renderingUpdateScheduler)
         m_renderingUpdateScheduler = RenderingUpdateScheduler::create(*this);
     return *m_renderingUpdateScheduler;
+}
+
+RenderingUpdateScheduler* Page::existingRenderingUpdateScheduler()
+{
+    return m_renderingUpdateScheduler.get();
 }
 
 void Page::forEachDocumentFromMainFrame(const LocalFrame& mainFrame, const Function<void(Document&)>& functor)
