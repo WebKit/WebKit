@@ -2363,7 +2363,6 @@ imported/w3c/web-platform-tests/IndexedDB/structured-clone.any.html?101-last [ F
 imported/w3c/web-platform-tests/IndexedDB/structured-clone.any.worker.html?101-last [ Failure ]
 
 # webkit.org/b/246701 Flaky failure only on iOS
-imported/w3c/web-platform-tests/screen-orientation/active-lock.html [ Pass Failure ]
 imported/w3c/web-platform-tests/screen-orientation/event-before-promise.html [ Pass Failure ]
 imported/w3c/web-platform-tests/screen-orientation/lock-unlock-check.html [ Pass Failure ]
 imported/w3c/web-platform-tests/screen-orientation/onchange-event-subframe.html [ Pass Failure ]
