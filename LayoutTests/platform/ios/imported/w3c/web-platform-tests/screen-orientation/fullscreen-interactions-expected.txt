@@ -1,4 +1,7 @@
 
-PASS fullscreen and orientation support
-PASS Iframe can't itself know if it's parent is fullscreen when changing orientation
+
+PASS Fully unlocking the screen orientation causes a pending lock to be aborted
+FAIL Fully unlocking the screen orientation causes a pending lock in a nested browsing context to be aborted promise_rejects_dom: function "function () { throw e }" threw object "SecurityError: Locking the screen orientation is only allowed when in fullscreen" that is not a DOMException AbortError: property "code" is equal to 18, expected 20
+PASS Exiting fullscreen causes a pending lock to be aborted
+PASS Exiting fullscreen from an iframe causes a pending lock to be aborted
 
