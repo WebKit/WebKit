@@ -653,6 +653,8 @@ public:
     bool establishesIndependentFormattingContext() const override;
     bool establishesBlockFormattingContext() const;
 
+    void updateFloatPainterAfterSelfPaintingLayerChange();
+
 protected:
     RenderBox(Element&, RenderStyle&&, BaseTypeFlags);
     RenderBox(Document&, RenderStyle&&, BaseTypeFlags);
