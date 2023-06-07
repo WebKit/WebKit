@@ -75,6 +75,7 @@
     (require-all
         (socket-option-level SOL_SOCKET)
         (socket-option-name
+            131072
             SO_MARK_KNOWN_TRACKER
             SO_NECP_LISTENUUID
             SO_NOSIGPIPE

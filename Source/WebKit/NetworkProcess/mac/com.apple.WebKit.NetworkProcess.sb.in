@@ -78,6 +78,7 @@
     (require-all
         (socket-option-level SOL_SOCKET)
         (socket-option-name
+            131072
             SO_DELEGATED
             SO_DELEGATED_UUID
             SO_MARK_KNOWN_TRACKER
