@@ -714,6 +714,7 @@ inline void AXObjectCache::onSelectedChanged(Node*) { }
 inline void AXObjectCache::onTextSecurityChanged(HTMLInputElement&) { }
 inline void AXObjectCache::onTitleChange(Document&) { }
 inline void AXObjectCache::onValidityChange(Element&) { }
+inline void AXObjectCache::onTextCompositionChange(Node&) { }
 inline void AXObjectCache::valueChanged(Element*) { }
 inline void AXObjectCache::onFocusChange(Node*, Node*) { }
 inline void AXObjectCache::onPopoverTargetToggle(const HTMLFormControlElement&) { }
@@ -762,6 +763,7 @@ inline void AXObjectCache::updateLoadingProgress(double) { }
 inline SimpleRange AXObjectCache::rangeForNodeContents(Node& node) { return makeRangeSelectingNodeContents(node); }
 inline std::optional<Vector<AXID>> AXObjectCache::relatedObjectIDsFor(const AXCoreObject&, AXRelationType) { return std::nullopt; }
 inline void AXObjectCache::updateRelations(Element&, const QualifiedName&) { }
+inline AccessibilityObject* AXObjectCache::textCompositionObjectForNode(Node&) { return nullptr; }
 inline void AXObjectCache::remove(AXID) { }
 inline void AXObjectCache::remove(RenderObject*) { }
 inline void AXObjectCache::remove(Node&) { }
