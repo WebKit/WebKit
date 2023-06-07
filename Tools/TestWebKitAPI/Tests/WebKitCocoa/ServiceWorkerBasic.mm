@@ -2383,7 +2383,7 @@ TEST(ServiceWorkers, ChangeOfServerCertificate)
 }
 
 // FIXME when rdar://109725221 is resolved
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
 TEST(ServiceWorkers, DISABLED_ClearDOMCacheAlsoIncludesServiceWorkerRegistrations)
 #else
 TEST(ServiceWorkers, ClearDOMCacheAlsoIncludesServiceWorkerRegistrations)

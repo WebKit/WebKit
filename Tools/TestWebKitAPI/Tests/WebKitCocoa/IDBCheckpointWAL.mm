@@ -74,7 +74,7 @@ long long fileSizeAtPath(NSString *path)
 }
 
 // FIXME when rdar://109725221 is resolved
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
 TEST(IndexedDB, DISABLED_CheckpointsWALAutomatically)
 #else
 TEST(IndexedDB, CheckpointsWALAutomatically)

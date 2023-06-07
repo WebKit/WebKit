@@ -25,7 +25,7 @@
 
 #import "config.h"
 
-#if ENABLE(NOTIFICATIONS) && !PLATFORM(IOS)
+#if ENABLE(NOTIFICATIONS) && !(PLATFORM(IOS) || PLATFORM(VISION))
 #import "DeprecatedGlobalValues.h"
 #import "PlatformUtilities.h"
 #import "TestWKWebView.h"
@@ -171,4 +171,4 @@ TEST(Notification, ParallelPermissionRequestsGranted)
 
 } // namespace TestWebKitAPI
 
-#endif // ENABLE(NOTIFICATIONS) && !PLATFORM(IOS)
+#endif // ENABLE(NOTIFICATIONS) && !(PLATFORM(IOS) || PLATFORM(VISION))

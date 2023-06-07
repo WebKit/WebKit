@@ -268,7 +268,7 @@ static void runWebsiteDataStoreCustomPaths(ShouldEnableProcessPrewarming shouldE
 }
 
 // FIXME when rdar://109725221 is resolved
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
 TEST(WebKit, DISABLED_WebsiteDataStoreCustomPathsWithoutPrewarming)
 #else
 TEST(WebKit, WebsiteDataStoreCustomPathsWithoutPrewarming)
@@ -278,7 +278,7 @@ TEST(WebKit, WebsiteDataStoreCustomPathsWithoutPrewarming)
 }
 
 // FIXME when rdar://109725221 is resolved
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
 TEST(WebKit, DISABLED_WebsiteDataStoreCustomPathsWithPrewarming)
 #else
 TEST(WebKit, WebsiteDataStoreCustomPathsWithPrewarming)
@@ -497,7 +497,7 @@ TEST(WebKit, WebsiteDataStoreIfExists)
 }
 
 // FIXME when rdar://109725221 is resolved
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
 TEST(WebKit, DISABLED_WebsiteDataStoreRenameOriginForIndexedDatabase)
 #else
 TEST(WebKit, WebsiteDataStoreRenameOriginForIndexedDatabase)

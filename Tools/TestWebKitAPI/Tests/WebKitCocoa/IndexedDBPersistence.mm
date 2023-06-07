@@ -57,7 +57,7 @@
 @end
 
 // FIXME when rdar://109725221 is resolved
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
 TEST(IndexedDB, DISABLED_IndexedDBPersistence)
 #else
 TEST(IndexedDB, IndexedDBPersistence)
@@ -253,7 +253,7 @@ static void loadThirdPartyPageInWebView(WKWebView *webView, NSString *expectedRe
 }
 
 // FIXME when rdar://109725221 is resolved
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
 TEST(IndexedDB, DISABLED_IndexedDBThirdPartyFrameHasAccess)
 #else
 TEST(IndexedDB, IndexedDBThirdPartyFrameHasAccess)
@@ -287,7 +287,7 @@ TEST(IndexedDB, IndexedDBThirdPartyFrameHasAccess)
 }
 
 // FIXME when rdar://109725221 is resolved
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
 TEST(IndexedDB, DISABLED_IndexedDBThirdPartyDataRemoval)
 #else
 TEST(IndexedDB, IndexedDBThirdPartyDataRemoval)
@@ -342,7 +342,7 @@ TEST(IndexedDB, IndexedDBThirdPartyDataRemoval)
 }
 
 // FIXME when rdar://109725221 is resolved
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
 TEST(IndexedDB, DISABLED_IndexedDBThirdPartyStorageLayout)
 #else
 TEST(IndexedDB, IndexedDBThirdPartyStorageLayout)
@@ -496,7 +496,7 @@ static const char* workerFrameBytes = R"TESTRESOURCE(
 )TESTRESOURCE";
 
 // FIXME when rdar://109725221 is resolved
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
 TEST(IndexedDB, DISABLED_IndexedDBThirdPartyWorkerHasAccess)
 #else
 TEST(IndexedDB, IndexedDBThirdPartyWorkerHasAccess)
@@ -579,7 +579,7 @@ indexedDB.databases().then(postDatabases);
 )TESTRESOURCE";
 
 // FIXME when rdar://109725221 is resolved
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
 TEST(IndexedDB, DISABLED_IndexedDBGetDatabases)
 #else
 TEST(IndexedDB, IndexedDBGetDatabases)

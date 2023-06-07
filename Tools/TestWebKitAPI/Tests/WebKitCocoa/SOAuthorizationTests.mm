@@ -257,7 +257,7 @@ private:
     });
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
 - (UIViewController *)_presentingViewControllerForWebView:(WKWebView *)webView
 {
     return nil;
@@ -268,7 +268,7 @@ private:
 
 #if PLATFORM(MAC)
 @interface TestSOAuthorizationViewController : NSViewController
-#elif PLATFORM(IOS)
+#elif PLATFORM(IOS) || PLATFORM(VISION)
 @interface TestSOAuthorizationViewController : UIViewController
 #endif
 @end
@@ -605,7 +605,7 @@ TEST(SOAuthorizationRedirect, InterceptionSucceed1)
     EXPECT_FALSE(policyForAppSSOPerformed); // The delegate isn't registered, so this won't be set.
 #if PLATFORM(MAC)
     EXPECT_TRUE(gAuthorization.enableEmbeddedAuthorizationViewController);
-#elif PLATFORM(IOS)
+#elif PLATFORM(IOS) || PLATFORM(VISION)
     EXPECT_FALSE(gAuthorization.enableEmbeddedAuthorizationViewController);
 #endif
 
@@ -613,7 +613,7 @@ TEST(SOAuthorizationRedirect, InterceptionSucceed1)
     auto response = adoptNS([[NSHTTPURLResponse alloc] initWithURL:testURL.get() statusCode:302 HTTPVersion:@"HTTP/1.1" headerFields:@{ @"Location" : [redirectURL absoluteString] }]);
     [gDelegate authorization:gAuthorization didCompleteWithHTTPResponse:response.get() httpBody:adoptNS([[NSData alloc] init]).get()];
     Util::run(&navigationCompleted);
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
     navigationCompleted = false;
     Util::run(&navigationCompleted);
 #endif
@@ -634,14 +634,14 @@ TEST(SOAuthorizationRedirect, InterceptionSucceed2)
     URL testURL { "https://www.example.com"_str };
 #if PLATFORM(MAC)
     [webView _loadRequest:[NSURLRequest requestWithURL:testURL] shouldOpenExternalURLs:YES];
-#elif PLATFORM(IOS)
+#elif PLATFORM(IOS) || PLATFORM(VISION)
     // Here we force RedirectSOAuthorizationSession to go to the with user gestures route.
     [webView evaluateJavaScript: [NSString stringWithFormat:@"location = '%@'", (id)testURL.string()] completionHandler:nil];
 #endif
     Util::run(&authorizationPerformed);
 #if PLATFORM(MAC)
     checkAuthorizationOptions(false, emptyString(), 0);
-#elif PLATFORM(IOS)
+#elif PLATFORM(IOS) || PLATFORM(VISION)
     checkAuthorizationOptions(true, "null"_s, 0);
 #endif
     EXPECT_FALSE(policyForAppSSOPerformed); // The delegate isn't registered, so this won't be set.
@@ -667,7 +667,7 @@ TEST(SOAuthorizationRedirect, InterceptionSucceed3)
     URL testURL { "https://www.example.com"_str };
 #if PLATFORM(MAC)
     [webView _loadRequest:[NSURLRequest requestWithURL:testURL] shouldOpenExternalURLs:YES];
-#elif PLATFORM(IOS)
+#elif PLATFORM(IOS) || PLATFORM(VISION)
     // Here we force RedirectSOAuthorizationSession to go to the with user gestures route.
     [webView evaluateJavaScript: [NSString stringWithFormat:@"location = '%@'", (id)testURL.string()] completionHandler:nil];
 #endif
@@ -675,7 +675,7 @@ TEST(SOAuthorizationRedirect, InterceptionSucceed3)
     EXPECT_TRUE(gAuthorization.enableEmbeddedAuthorizationViewController);
 #if PLATFORM(MAC)
     checkAuthorizationOptions(false, emptyString(), 0);
-#elif PLATFORM(IOS)
+#elif PLATFORM(IOS) || PLATFORM(VISION)
     checkAuthorizationOptions(true, "null"_s, 0);
 #endif
     EXPECT_TRUE(policyForAppSSOPerformed);
@@ -710,7 +710,7 @@ TEST(SOAuthorizationRedirect, InterceptionSucceed4)
     auto response = adoptNS([[NSHTTPURLResponse alloc] initWithURL:testURL.get() statusCode:302 HTTPVersion:@"HTTP/1.1" headerFields:@{ @"Location" : [redirectURL absoluteString] }]);
     [gDelegate authorization:gAuthorization didCompleteWithHTTPResponse:response.get() httpBody:adoptNS([[NSData alloc] init]).get()];
     Util::run(&navigationCompleted);
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
     navigationCompleted = false;
     Util::run(&navigationCompleted);
 #endif
@@ -760,7 +760,7 @@ TEST(SOAuthorizationRedirect, InterceptionSucceedWithCookie)
     auto response = adoptNS([[NSHTTPURLResponse alloc] initWithURL:testURL.get() statusCode:302 HTTPVersion:@"HTTP/1.1" headerFields:@{ @"Set-Cookie" : @"sessionid=38afes7a8;", @"Location" : [redirectURL absoluteString] }]);
     [gDelegate authorization:gAuthorization didCompleteWithHTTPResponse:response.get() httpBody:adoptNS([[NSData alloc] init]).get()];
     Util::run(&navigationCompleted);
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
     navigationCompleted = false;
     Util::run(&navigationCompleted);
 #endif
@@ -794,7 +794,7 @@ TEST(SOAuthorizationRedirect, InterceptionSucceedWithCookies)
     auto response = adoptNS([[NSHTTPURLResponse alloc] initWithURL:testURL.get() statusCode:302 HTTPVersion:@"HTTP/1.1" headerFields:@{ @"Set-Cookie" : @"sessionid=38afes7a8, qwerty=219ffwef9w0f, id=a3fWa;", @"Location" : [redirectURL absoluteString] }]);
     [gDelegate authorization:gAuthorization didCompleteWithHTTPResponse:response.get() httpBody:adoptNS([[NSData alloc] init]).get()];
     Util::run(&navigationCompleted);
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
     navigationCompleted = false;
     Util::run(&navigationCompleted);
 #endif
@@ -821,14 +821,14 @@ TEST(SOAuthorizationRedirect, InterceptionSucceedWithRedirectionAndCookie)
     URL testURL { "https://www.example.com"_str };
 #if PLATFORM(MAC)
     [webView loadRequest:[NSURLRequest requestWithURL:testURL]];
-#elif PLATFORM(IOS)
+#elif PLATFORM(IOS) || PLATFORM(VISION)
     // Here we force RedirectSOAuthorizationSession to go to the with user gestures route.
     [webView evaluateJavaScript: [NSString stringWithFormat:@"location = '%@'", (id)testURL.string()] completionHandler:nil];
 #endif
     Util::run(&authorizationPerformed);
 #if PLATFORM(MAC)
     checkAuthorizationOptions(false, emptyString(), 0);
-#elif PLATFORM(IOS)
+#elif PLATFORM(IOS) || PLATFORM(VISION)
     checkAuthorizationOptions(true, "null"_s, 0);
 #endif
     EXPECT_TRUE(policyForAppSSOPerformed);
@@ -898,7 +898,7 @@ TEST(SOAuthorizationRedirect, InterceptionSucceedWithWaitingSession)
     auto response = adoptNS([[NSHTTPURLResponse alloc] initWithURL:testURL.get() statusCode:302 HTTPVersion:@"HTTP/1.1" headerFields:@{ @"Location" : [redirectURL absoluteString] }]);
     [gDelegate authorization:gAuthorization didCompleteWithHTTPResponse:response.get() httpBody:adoptNS([[NSData alloc] init]).get()];
     Util::run(&navigationCompleted);
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
     navigationCompleted = false;
     Util::run(&navigationCompleted);
 #endif
@@ -957,7 +957,7 @@ TEST(SOAuthorizationRedirect, InterceptionSucceedWithActiveSessionDidMoveWindow)
     auto response = adoptNS([[NSHTTPURLResponse alloc] initWithURL:testURL.get() statusCode:302 HTTPVersion:@"HTTP/1.1" headerFields:@{ @"Location" : [redirectURL absoluteString] }]);
     [gDelegate authorization:gAuthorization didCompleteWithHTTPResponse:response.get() httpBody:adoptNS([[NSData alloc] init]).get()];
     Util::run(&navigationCompleted);
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
     navigationCompleted = false;
     Util::run(&navigationCompleted);
 #endif
@@ -988,7 +988,7 @@ TEST(SOAuthorizationRedirect, InterceptionSucceedTwice)
         auto response = adoptNS([[NSHTTPURLResponse alloc] initWithURL:testURL.get() statusCode:302 HTTPVersion:@"HTTP/1.1" headerFields:@{ @"Location" : [redirectURL absoluteString] }]);
         [gDelegate authorization:gAuthorization didCompleteWithHTTPResponse:response.get() httpBody:adoptNS([[NSData alloc] init]).get()];
         Util::run(&navigationCompleted);
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
         navigationCompleted = false;
         Util::run(&navigationCompleted);
 #endif
@@ -1025,7 +1025,7 @@ TEST(SOAuthorizationRedirect, InterceptionSucceedSuppressActiveSession)
     auto response = adoptNS([[NSHTTPURLResponse alloc] initWithURL:testURL.get() statusCode:302 HTTPVersion:@"HTTP/1.1" headerFields:@{ @"Location" : [redirectURL absoluteString] }]);
     [gDelegate authorization:gAuthorization didCompleteWithHTTPResponse:response.get() httpBody:adoptNS([[NSData alloc] init]).get()];
     Util::run(&navigationCompleted);
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
     navigationCompleted = false;
     Util::run(&navigationCompleted);
 #endif
@@ -1067,7 +1067,7 @@ TEST(SOAuthorizationRedirect, InterceptionSucceedSuppressWaitingSession)
     auto response = adoptNS([[NSHTTPURLResponse alloc] initWithURL:testURL.get() statusCode:302 HTTPVersion:@"HTTP/1.1" headerFields:@{ @"Location" : [redirectURL absoluteString] }]);
     [gDelegate authorization:gAuthorization didCompleteWithHTTPResponse:response.get() httpBody:adoptNS([[NSData alloc] init]).get()];
     Util::run(&navigationCompleted);
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
     navigationCompleted = false;
     Util::run(&navigationCompleted);
 #endif
@@ -1239,7 +1239,7 @@ TEST(SOAuthorizationRedirect, SOAuthorizationLoadPolicyAllowAsync)
     auto response = adoptNS([[NSHTTPURLResponse alloc] initWithURL:testURL.get() statusCode:302 HTTPVersion:@"HTTP/1.1" headerFields:@{ @"Location" : [redirectURL absoluteString] }]);
     [gDelegate authorization:gAuthorization didCompleteWithHTTPResponse:response.get() httpBody:adoptNS([[NSData alloc] init]).get()];
     Util::run(&navigationCompleted);
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
     navigationCompleted = false;
     Util::run(&navigationCompleted);
 #endif
@@ -1681,7 +1681,7 @@ TEST(SOAuthorizationPopUp, NoInterceptions)
     navigationCompleted = false;
 #if PLATFORM(MAC)
     [webView sendClicksAtPoint:NSMakePoint(200, 200) numberOfClicks:1];
-#elif PLATFORM(IOS)
+#elif PLATFORM(IOS) || PLATFORM(VISION)
     [webView evaluateJavaScript: @"clickMe()" completionHandler:nil];
 #endif
     Util::run(&newWindowCreated);
@@ -1755,7 +1755,7 @@ TEST(SOAuthorizationPopUp, InterceptionError)
     [delegate setShouldOpenExternalSchemes:true];
 #if PLATFORM(MAC)
     [webView sendClicksAtPoint:NSMakePoint(200, 200) numberOfClicks:1];
-#elif PLATFORM(IOS)
+#elif PLATFORM(IOS) || PLATFORM(VISION)
     [webView evaluateJavaScript: @"clickMe()" completionHandler:nil];
 #endif
     Util::run(&authorizationPerformed);
@@ -1795,7 +1795,7 @@ TEST(SOAuthorizationPopUp, InterceptionCancel)
 
 #if PLATFORM(MAC)
     [webView sendClicksAtPoint:NSMakePoint(200, 200) numberOfClicks:1];
-#elif PLATFORM(IOS)
+#elif PLATFORM(IOS) || PLATFORM(VISION)
     [webView evaluateJavaScript: @"clickMe()" completionHandler:nil];
 #endif
     Util::run(&authorizationPerformed);
@@ -1831,7 +1831,7 @@ TEST(SOAuthorizationPopUp, InterceptionSucceedCloseByItself)
 
 #if PLATFORM(MAC)
     [webView sendClicksAtPoint:NSMakePoint(200, 200) numberOfClicks:1];
-#elif PLATFORM(IOS)
+#elif PLATFORM(IOS) || PLATFORM(VISION)
     [webView evaluateJavaScript: @"clickMe()" completionHandler:nil];
 #endif
     Util::run(&authorizationPerformed);
@@ -1869,7 +1869,7 @@ TEST(SOAuthorizationPopUp, InterceptionSucceedCloseByParent)
 
 #if PLATFORM(MAC)
     [webView sendClicksAtPoint:NSMakePoint(200, 200) numberOfClicks:1];
-#elif PLATFORM(IOS)
+#elif PLATFORM(IOS) || PLATFORM(VISION)
     [webView evaluateJavaScript: @"clickMe()" completionHandler:nil];
 #endif
     Util::run(&authorizationPerformed);
@@ -1907,7 +1907,7 @@ TEST(SOAuthorizationPopUp, InterceptionSucceedCloseByWebKit)
 
 #if PLATFORM(MAC)
     [webView sendClicksAtPoint:NSMakePoint(200, 200) numberOfClicks:1];
-#elif PLATFORM(IOS)
+#elif PLATFORM(IOS) || PLATFORM(VISION)
     [webView evaluateJavaScript: @"clickMe()" completionHandler:nil];
 #endif
     Util::run(&authorizationPerformed);
@@ -1942,7 +1942,7 @@ TEST(SOAuthorizationPopUp, InterceptionSucceedWithOtherHttpStatusCode)
     [delegate setShouldOpenExternalSchemes:true];
 #if PLATFORM(MAC)
     [webView sendClicksAtPoint:NSMakePoint(200, 200) numberOfClicks:1];
-#elif PLATFORM(IOS)
+#elif PLATFORM(IOS) || PLATFORM(VISION)
     [webView evaluateJavaScript: @"clickMe()" completionHandler:nil];
 #endif
     Util::run(&authorizationPerformed);
@@ -1986,7 +1986,7 @@ TEST(SOAuthorizationPopUp, InterceptionSucceedWithCookie)
 
 #if PLATFORM(MAC)
     [webView sendClicksAtPoint:NSMakePoint(200, 200) numberOfClicks:1];
-#elif PLATFORM(IOS)
+#elif PLATFORM(IOS) || PLATFORM(VISION)
     [webView evaluateJavaScript: @"clickMe()" completionHandler:nil];
 #endif
     Util::run(&authorizationPerformed);
@@ -2027,7 +2027,7 @@ TEST(SOAuthorizationPopUp, InterceptionSucceedTwice)
         policyForAppSSOPerformed = false;
 #if PLATFORM(MAC)
         [webView sendClicksAtPoint:NSMakePoint(200, 200) numberOfClicks:1];
-#elif PLATFORM(IOS)
+#elif PLATFORM(IOS) || PLATFORM(VISION)
         [webView evaluateJavaScript: @"clickMe()" completionHandler:nil];
 #endif
         Util::run(&authorizationPerformed);
@@ -2064,7 +2064,7 @@ TEST(SOAuthorizationPopUp, InterceptionSucceedSuppressActiveSession)
 
 #if PLATFORM(MAC)
     [webView sendClicksAtPoint:NSMakePoint(200, 200) numberOfClicks:1];
-#elif PLATFORM(IOS)
+#elif PLATFORM(IOS) || PLATFORM(VISION)
     [webView evaluateJavaScript: @"clickMe()" completionHandler:nil];
 #endif
     Util::run(&authorizationPerformed);
@@ -2088,7 +2088,7 @@ TEST(SOAuthorizationPopUp, InterceptionSucceedSuppressActiveSession)
     policyForAppSSOPerformed = false;
 #if PLATFORM(MAC)
     [newWebView sendClicksAtPoint:NSMakePoint(200, 200) numberOfClicks:1];
-#elif PLATFORM(IOS)
+#elif PLATFORM(IOS) || PLATFORM(VISION)
     [newWebView evaluateJavaScript: @"clickMe()" completionHandler:nil];
 #endif
     Util::run(&authorizationCancelled);
@@ -2134,7 +2134,7 @@ TEST(SOAuthorizationPopUp, InterceptionSucceedNewWindowNavigation)
 
 #if PLATFORM(MAC)
     [webView sendClicksAtPoint:NSMakePoint(200, 200) numberOfClicks:1];
-#elif PLATFORM(IOS)
+#elif PLATFORM(IOS) || PLATFORM(VISION)
     [webView evaluateJavaScript: @"clickMe()" completionHandler:nil];
 #endif
     Util::run(&authorizationPerformed);
@@ -2167,7 +2167,7 @@ TEST(SOAuthorizationPopUp, AuthorizationOptions)
 
 #if PLATFORM(MAC)
     [webView sendClicksAtPoint:NSMakePoint(200, 200) numberOfClicks:1];
-#elif PLATFORM(IOS)
+#elif PLATFORM(IOS) || PLATFORM(VISION)
     [webView evaluateJavaScript: @"clickMe()" completionHandler:nil];
 #endif
     Util::run(&authorizationPerformed);
@@ -2193,7 +2193,7 @@ TEST(SOAuthorizationPopUp, SOAuthorizationLoadPolicyIgnore)
 
 #if PLATFORM(MAC)
     [webView sendClicksAtPoint:NSMakePoint(200, 200) numberOfClicks:1];
-#elif PLATFORM(IOS)
+#elif PLATFORM(IOS) || PLATFORM(VISION)
     [webView evaluateJavaScript: @"clickMe()" completionHandler:nil];
 #endif
     Util::run(&newWindowCreated);
@@ -2224,7 +2224,7 @@ TEST(SOAuthorizationPopUp, SOAuthorizationLoadPolicyAllowAsync)
 
 #if PLATFORM(MAC)
     [webView sendClicksAtPoint:NSMakePoint(200, 200) numberOfClicks:1];
-#elif PLATFORM(IOS)
+#elif PLATFORM(IOS) || PLATFORM(VISION)
     [webView evaluateJavaScript: @"clickMe()" completionHandler:nil];
 #endif
     Util::run(&authorizationPerformed);
@@ -2260,7 +2260,7 @@ TEST(SOAuthorizationPopUp, SOAuthorizationLoadPolicyIgnoreAsync)
 
 #if PLATFORM(MAC)
     [webView sendClicksAtPoint:NSMakePoint(200, 200) numberOfClicks:1];
-#elif PLATFORM(IOS)
+#elif PLATFORM(IOS) || PLATFORM(VISION)
     [webView evaluateJavaScript: @"clickMe()" completionHandler:nil];
 #endif
     Util::run(&newWindowCreated);
@@ -2552,7 +2552,7 @@ TEST(SOAuthorizationSubFrame, SOAuthorizationLoadPolicyIgnore)
 }
 
 // FIX ME WHEN rdar://107855114 is resolved. 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
 TEST(SOAuthorizationSubFrame, DISABLED_SOAuthorizationLoadPolicyAllowAsync)
 #else
 TEST(SOAuthorizationSubFrame, SOAuthorizationLoadPolicyAllowAsync)

@@ -43,14 +43,14 @@
 #import <Carbon/Carbon.h>
 #endif
 
-#if PLATFORM(IOS) || PLATFORM(MAC)
+#if PLATFORM(IOS) || PLATFORM(MAC) || PLATFORM(VISION)
 static NSData *pdfData()
 {
     return [NSData dataWithContentsOfURL:[[NSBundle mainBundle] URLForResource:@"test" withExtension:@"pdf" subdirectory:@"TestWebKitAPI.resources"]];
 }
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
 
 @interface PDFHostViewController : UIViewController
 + (void)createHostView:(void(^)(id hostViewController))callback forExtensionIdentifier:(NSString *)extensionIdentifier;

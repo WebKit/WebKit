@@ -156,7 +156,7 @@ TEST(AVFoundationSoftLink, Constants)
     EXPECT_TRUE([AVContentKeyRequestProtocolVersionsKey isEqualToString:@"ProtocolVersionsKey"]);
 #endif
 
-#if PLATFORM(MAC) || PLATFORM(IOS) || PLATFORM(WATCHOS) || PLATFORM(APPLETV)
+#if PLATFORM(MAC) || PLATFORM(IOS) || PLATFORM(WATCHOS) || PLATFORM(APPLETV) || PLATFORM(VISION)
     EXPECT_TRUE(PAL::canLoad_AVFoundation_AVVideoCodecTypeHEVCWithAlpha());
     EXPECT_TRUE([AVVideoCodecTypeHEVCWithAlpha isEqualToString:@"muxa"]);
 #endif

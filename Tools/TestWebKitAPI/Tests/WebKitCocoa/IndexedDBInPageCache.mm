@@ -52,7 +52,7 @@
 @end
 
 // FIXME when rdar://109725221 is resolved
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
 TEST(IndexedDB, DISABLED_IndexedDBInPageCache)
 #else
 TEST(IndexedDB, IndexedDBInPageCache)

@@ -57,7 +57,7 @@ static bool masterKeyCalled = false;
 namespace TestWebKitAPI {
 
 // FIXME when rdar://109725221 is resolved
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
 TEST(WebKit, DISABLED_WebCryptoNilMasterKey)
 #else
 TEST(WebKit, WebCryptoNilMasterKey)

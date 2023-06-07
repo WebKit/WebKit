@@ -402,7 +402,7 @@ public:
 
     void handleQueryPermission(WKStringRef, WKSecurityOriginRef, WKQueryPermissionResultCallbackRef);
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
     void lockScreenOrientation(WKScreenOrientationType);
     void unlockScreenOrientation();
 #endif

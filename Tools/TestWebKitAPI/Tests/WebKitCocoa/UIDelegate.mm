@@ -50,7 +50,7 @@
 #import <Carbon/Carbon.h>
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
 #import "ClassMethodSwizzler.h"
 #import "UIKitSPI.h"
 #endif
@@ -395,7 +395,7 @@ TEST(WebKit, InjectedBundleNodeHandleIsSelectElement)
     TestWebKitAPI::Util::run(&done);
 }
 
-#if PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 160000
+#if (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 160000) || PLATFORM(VISION)
 
 static int presentViewControllerCallCount = 0;
 
@@ -550,7 +550,7 @@ TEST(WebKit, LockdownModeAskAgainFirstUseMessage)
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:WebKitLockdownModeAlertShownKey];
 }
 
-#endif // PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 160000
+#endif // (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 160000) || PLATFORM(VISION)
 
 #if PLATFORM(IOS_FAMILY)
 

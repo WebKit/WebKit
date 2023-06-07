@@ -6947,7 +6947,7 @@ static bool hasOverlay(CALayer *layer)
 #endif
 
 // FIXME when rdar://106098852 is resolved
-#if PLATFORM(MAC) && (__MAC_OS_X_VERSION_MIN_REQUIRED > 130000) || PLATFORM(IOS)
+#if PLATFORM(MAC) && (__MAC_OS_X_VERSION_MIN_REQUIRED > 130000) || PLATFORM(IOS) || PLATFORM(VISION)
 TEST(ProcessSwap, DISABLED_PageOverlayLayerPersistence)
 #else
 TEST(ProcessSwap, PageOverlayLayerPersistence)
@@ -7002,7 +7002,7 @@ TEST(ProcessSwap, PageOverlayLayerPersistence)
 #endif
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
 
 #if __IPHONE_OS_VERSION_MIN_REQUIRED > 130400
 TEST(ProcessSwap, QuickLookRequestsPasswordAfterSwap)
@@ -8224,7 +8224,7 @@ TEST(ProcessSwap, MemoryPressureDuringProcessSwap)
         TestWebKitAPI::Util::spinRunLoop(10);
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
 
 TEST(ProcessSwap, CannotDisableLockdownModeWithoutBrowserEntitlement)
 {

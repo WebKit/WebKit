@@ -52,7 +52,7 @@
 @end
 
 // FIXME when rdar://109725221 is resolved
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
 TEST(IndexedDB, DISABLED_IndexUpgradeToV2)
 #else
 TEST(IndexedDB, IndexUpgradeToV2)
@@ -118,7 +118,7 @@ static void runMultipleIndicesTestWithDatabase(NSString* databaseName)
 }
 
 // FIXME when rdar://109725221 is resolved
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
 TEST(IndexedDB, DISABLED_IndexUpgradeToV2WithMultipleIndices)
 #else
 TEST(IndexedDB, IndexUpgradeToV2WithMultipleIndices)
@@ -128,7 +128,7 @@ TEST(IndexedDB, IndexUpgradeToV2WithMultipleIndices)
 }
 
 // FIXME when rdar://109725221 is resolved
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
 TEST(IndexedDB, DISABLED_IndexUpgradeToV2WithMultipleIndicesHaveSameID)
 #else
 TEST(IndexedDB, IndexUpgradeToV2WithMultipleIndicesHaveSameID)

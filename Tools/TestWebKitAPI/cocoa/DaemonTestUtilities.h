@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if PLATFORM(MAC) || PLATFORM(IOS)
+#if PLATFORM(MAC) || PLATFORM(IOS) || PLATFORM(VISION)
 
 #import <wtf/RetainPtr.h>
 #import <wtf/spi/darwin/XPCSPI.h>
@@ -45,5 +45,5 @@ void registerPlistWithLaunchD(NSDictionary<NSString *, id> *plist, NSURL *tempDi
 
 } // namespace TestWebKitAPI
 
-#endif // PLATFORM(MAC) || PLATFORM(IOS)
+#endif // PLATFORM(MAC) || PLATFORM(IOS) || PLATFORM(VISION)
 

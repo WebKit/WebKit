@@ -25,7 +25,7 @@
 
 #import "config.h"
 
-#if PLATFORM(IOS) && USE(SYSTEM_PREVIEW)
+#if (PLATFORM(IOS) || PLATFORM(VISION)) && USE(SYSTEM_PREVIEW)
 
 #import "TestWKWebView.h"
 #import "Utilities.h"
@@ -175,4 +175,4 @@ TEST(WebKit, SystemPreviewTriggeredOnDetachedElement)
 
 }
 
-#endif // PLATFORM(IOS) && USE(SYSTEM_PREVIEW)
+#endif // (PLATFORM(IOS) || PLATFORM(VISION)) && USE(SYSTEM_PREVIEW)

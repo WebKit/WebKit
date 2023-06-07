@@ -58,13 +58,13 @@ IGNORE_WARNINGS_BEGIN("deprecated-implementations")
 #import <UIKit/UIWebView_Private.h>
 IGNORE_WARNINGS_END
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
 @protocol UIDragSession;
 @class UIDragInteraction;
 @class UIDragItem;
 #import <UIKit/NSItemProvider+UIKitAdditions_Private.h>
 #import <UIKit/UIDragInteraction_Private.h>
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS) || PLATFORM(VISION)
 
 #else // USE(APPLE_INTERNAL_SDK)
 
@@ -336,13 +336,13 @@ typedef NS_ENUM(NSInteger, _UITextSearchMatchMethod) {
 - (BOOL)_shouldSuppressSoftwareKeyboard;
 @end
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
 
 @protocol UIDropInteractionDelegate_Private <UIDropInteractionDelegate>
 - (void)_dropInteraction:(UIDropInteraction *)interaction delayedPreviewProviderForDroppingItem:(UIDragItem *)item previewProvider:(void(^)(UITargetedDragPreview *preview))previewProvider;
 @end
 
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS) || PLATFORM(VISION)
 
 typedef NS_ENUM(NSUInteger, _UIClickInteractionEvent) {
     _UIClickInteractionEventBegan = 0,

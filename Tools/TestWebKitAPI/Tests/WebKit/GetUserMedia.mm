@@ -488,7 +488,7 @@ TEST(WebKit, InterruptionBetweenSameProcessPages)
     TestWebKitAPI::Util::run(&done);
 
     done = false;
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
     [webView1 stringByEvaluatingJavaScript:@"checkIsNotPlaying()"];
 #else
     [webView1 stringByEvaluatingJavaScript:@"checkIsPlaying()"];

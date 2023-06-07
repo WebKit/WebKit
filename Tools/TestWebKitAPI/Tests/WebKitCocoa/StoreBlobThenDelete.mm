@@ -52,7 +52,7 @@
 @end
 
 // FIXME when rdar://109725221 is resolved
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
 TEST(IndexedDB, DISABLED_StoreBlobThenRemoveData)
 #else
 TEST(IndexedDB, StoreBlobThenRemoveData)
@@ -137,7 +137,7 @@ TEST(IndexedDB, StoreBlobThenRemoveData)
 }
 
 // FIXME when rdar://109725221 is resolved
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
 TEST(IndexedDB, DISABLED_StoreBlobThenDeleteDatabase)
 #else
 TEST(IndexedDB, StoreBlobThenDeleteDatabase)

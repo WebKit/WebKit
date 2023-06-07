@@ -351,7 +351,7 @@ static void checkFrameInfo(WKFrameInfo *frame, bool isMainFrame, NSString *url, 
     EXPECT_EQ(frame.webView, webView);
 }
 
-#if USE(APPLE_INTERNAL_SDK) || PLATFORM(IOS)
+#if USE(APPLE_INTERNAL_SDK) || PLATFORM(IOS) || PLATFORM(VISION)
 
 bool addKeyToKeychain(const String& privateKeyBase64, const String& rpId, const String& userHandleBase64, bool synchronizable = false)
 {
@@ -401,7 +401,7 @@ void cleanUpKeychain(const String& rpId)
     SecItemDelete((__bridge CFDictionaryRef)deleteQuery);
 }
 
-#endif // USE(APPLE_INTERNAL_SDK) || PLATFORM(IOS)
+#endif // USE(APPLE_INTERNAL_SDK) || PLATFORM(IOS) || PLATFORM(VISION)
 
 } // namesapce;
 
@@ -1269,7 +1269,7 @@ TEST(WebAuthenticationPanel, MultipleAccounts)
 
 // For macOS, only internal builds can sign keychain entitlemnets
 // which are required to run local authenticator tests.
-#if USE(APPLE_INTERNAL_SDK) || PLATFORM(IOS)
+#if USE(APPLE_INTERNAL_SDK) || PLATFORM(IOS) || PLATFORM(VISION)
 
 TEST(WebAuthenticationPanel, LAError)
 {
@@ -1478,7 +1478,7 @@ TEST(WebAuthenticationPanel, LAGetAssertionMultipleOrder)
 
 #endif // PLATFORM(MAC)
 
-#endif // USE(APPLE_INTERNAL_SDK) || PLATFORM(IOS)
+#endif // USE(APPLE_INTERNAL_SDK) || PLATFORM(IOS) || PLATFORM(VISION)
 
 TEST(WebAuthenticationPanel, PublicKeyCredentialCreationOptionsMinimum)
 {
@@ -1738,7 +1738,7 @@ TEST(WebAuthenticationPanel, MakeCredentialSPITimeout)
 
 // For macOS, only internal builds can sign keychain entitlemnets
 // which are required to run local authenticator tests.
-#if USE(APPLE_INTERNAL_SDK) || PLATFORM(IOS)
+#if USE(APPLE_INTERNAL_SDK) || PLATFORM(IOS) || PLATFORM(VISION)
 TEST(WebAuthenticationPanel, MakeCredentialLA)
 {
     reset();
@@ -1946,7 +1946,7 @@ TEST(WebAuthenticationPanel, GetAssertionSPITimeout)
 
 // For macOS, only internal builds can sign keychain entitlemnets
 // which are required to run local authenticator tests.
-#if USE(APPLE_INTERNAL_SDK) || PLATFORM(IOS)
+#if USE(APPLE_INTERNAL_SDK) || PLATFORM(IOS) || PLATFORM(VISION)
 TEST(WebAuthenticationPanel, GetAssertionLA)
 {
     reset();
@@ -2427,7 +2427,7 @@ TEST(WebAuthenticationPanel, DeleteOneCredential)
     EXPECT_NOT_NULL(credentials);
     EXPECT_EQ([credentials count], 0lu);
 }
-#endif // USE(APPLE_INTERNAL_SDK) || PLATFORM(IOS)
+#endif // USE(APPLE_INTERNAL_SDK) || PLATFORM(IOS) || PLATFORM(VISION)
 
 } // namespace TestWebKitAPI
 

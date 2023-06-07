@@ -128,7 +128,7 @@ TEST(WKWebViewCloseAllMediaPresentationsInternal, PictureInPicture)
 #if ENABLE(FULLSCREEN_API)
 
 // FIXME rdar://109155883 is resolved.
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
 TEST(WKWebViewCloseAllMediaPresentations, DISABLED_VideoFullscreen)
 # else
 TEST(WKWebViewCloseAllMediaPresentations, VideoFullscreen)

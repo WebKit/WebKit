@@ -90,7 +90,7 @@ static RetainPtr<WKWebView> createdWebView;
 @end
 
 // FIXME when rdar://109725221 is resolved
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
 TEST(WKWebView, DISABLED_LocalStorageProcessCrashes)
 #else
 TEST(WKWebView, LocalStorageProcessCrashes)

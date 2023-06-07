@@ -52,7 +52,7 @@
 @end
 
 // FIXME when rdar://109725221 is resolved
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
 TEST(IndexedDB, DISABLED_WebProcessKillIDBCleanup)
 #else
 TEST(IndexedDB, WebProcessKillIDBCleanup)
@@ -94,7 +94,7 @@ TEST(IndexedDB, WebProcessKillIDBCleanup)
 }
 
 // FIXME when rdar://109725221 is resolved
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
 TEST(IndexedDB, DISABLED_KillWebProcessWithOpenConnection)
 #else
 TEST(IndexedDB, KillWebProcessWithOpenConnection)

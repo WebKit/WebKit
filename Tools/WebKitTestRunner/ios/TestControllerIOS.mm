@@ -515,7 +515,7 @@ UIPasteboardConsistencyEnforcer *TestController::pasteboardConsistencyEnforcer()
     return m_pasteboardConsistencyEnforcer.get();
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
 void TestController::lockScreenOrientation(WKScreenOrientationType orientation)
 {
     TestRunnerWKWebView *webView = mainWebView()->platformView();

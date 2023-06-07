@@ -140,7 +140,7 @@ void installFakeHelvetica(WKStringRef configuration)
     NSURL *resourceURL = [resourcesDirectoryURL() URLByAppendingPathComponent:[NSString stringWithFormat:@"FakeHelvetica-%@.ttf", configurationString.get()] isDirectory:NO];
     CFErrorRef error = nullptr;
     if (!CTFontManagerRegisterFontsForURL((__bridge CFURLRef)resourceURL, kCTFontManagerScopeProcess, &error)) {
-#if PLATFORM(MAC) || (PLATFORM(IOS) && !PLATFORM(IOS_FAMILY_SIMULATOR))
+#if PLATFORM(MAC) || ((PLATFORM(IOS) || PLATFORM(VISION)) && !PLATFORM(IOS_FAMILY_SIMULATOR))
         // Registering shadow fonts is only supported on macOS Mojave and iOS 12 or newer, but not iOS Simulator. See Bugs 180062 & 194761.
         NSLog(@"Failed to activate fake Helvetica: %@", error);
 #endif
