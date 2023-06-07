@@ -142,7 +142,7 @@ private:
     void finalizeRenderingUpdate(RenderingUpdateID);
     void markSurfacesVolatile(MarkSurfacesAsVolatileRequestIdentifier, const Vector<WebCore::RenderingResourceIdentifier>&);
 #if PLATFORM(COCOA)
-    void prepareBuffersForDisplay(Vector<PrepareBackingStoreBuffersInputData> swapBuffersInput, CompletionHandler<void(const Vector<PrepareBackingStoreBuffersOutputData>&)>&&);
+    void prepareBuffersForDisplay(Vector<PrepareBackingStoreBuffersInputData> swapBuffersInput, CompletionHandler<void(Vector<PrepareBackingStoreBuffersOutputData>&&)>&&);
 #endif
     
     // Received messages translated to use QualifiedRenderingResourceIdentifier.

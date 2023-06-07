@@ -665,7 +665,7 @@ bool WebPageProxy::updateIconForDirectory(NSFileWrapper *fileWrapper, const Stri
     auto handle = convertedImage->createHandle();
     if (!handle)
         return false;
-    send(Messages::WebPage::UpdateAttachmentIcon(identifier, *handle, iconSize));
+    send(Messages::WebPage::UpdateAttachmentIcon(identifier, WTFMove(*handle), iconSize));
     return true;
 }
 

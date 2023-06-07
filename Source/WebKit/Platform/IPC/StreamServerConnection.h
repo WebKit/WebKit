@@ -165,7 +165,7 @@ void StreamServerConnection::sendAsyncReply(AsyncReplyID asyncReplyID, Arguments
 
 inline void StreamServerConnection::Handle::encode(Encoder& encoder) &&
 {
-    encoder << WTFMove(outOfStreamConnection) << buffer;
+    encoder << WTFMove(outOfStreamConnection) << WTFMove(buffer);
 }
 
 inline std::optional<StreamServerConnection::Handle> StreamServerConnection::Handle::decode(Decoder& decoder)

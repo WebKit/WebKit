@@ -11366,7 +11366,7 @@ void WebPageProxy::requestAttachmentIcon(const String& identifier, const String&
                 handle = WTFMove(*iconHandle);
 #endif
 
-        send(Messages::WebPage::UpdateAttachmentIcon(identifier, handle, size));
+        send(Messages::WebPage::UpdateAttachmentIcon(identifier, WTFMove(handle), size));
     };
 
 #if PLATFORM(MAC)

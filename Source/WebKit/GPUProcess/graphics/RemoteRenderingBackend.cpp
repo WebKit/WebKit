@@ -492,7 +492,7 @@ static std::optional<ImageBufferBackendHandle> handleFromBuffer(ImageBuffer& buf
     return std::nullopt;
 }
 
-void RemoteRenderingBackend::prepareBuffersForDisplay(Vector<PrepareBackingStoreBuffersInputData> swapBuffersInput, CompletionHandler<void(const Vector<PrepareBackingStoreBuffersOutputData>&)>&& completionHandler)
+void RemoteRenderingBackend::prepareBuffersForDisplay(Vector<PrepareBackingStoreBuffersInputData> swapBuffersInput, CompletionHandler<void(Vector<PrepareBackingStoreBuffersOutputData>&&)>&& completionHandler)
 {
     Vector<PrepareBackingStoreBuffersOutputData> outputData;
     outputData.resizeToFit(swapBuffersInput.size());

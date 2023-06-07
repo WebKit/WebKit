@@ -465,7 +465,7 @@ std::unique_ptr<Entry> Cache::makeRedirectEntry(const WebCore::ResourceRequest& 
     return makeUnique<Entry>(makeCacheKey(request), response, WTFMove(cachedRedirectRequest), WebCore::collectVaryingRequestHeaders(networkProcess().storageSession(m_sessionID), request, response));
 }
 
-std::unique_ptr<Entry> Cache::store(const WebCore::ResourceRequest& request, const WebCore::ResourceResponse& response, PrivateRelayed privateRelayed, RefPtr<WebCore::FragmentedSharedBuffer>&& responseData, Function<void(MappedBody&)>&& completionHandler)
+std::unique_ptr<Entry> Cache::store(const WebCore::ResourceRequest& request, const WebCore::ResourceResponse& response, PrivateRelayed privateRelayed, RefPtr<WebCore::FragmentedSharedBuffer>&& responseData, Function<void(MappedBody&&)>&& completionHandler)
 {
     ASSERT(responseData);
 
@@ -495,7 +495,7 @@ std::unique_ptr<Entry> Cache::store(const WebCore::ResourceRequest& request, con
             mappedBody.shareableResource = ShareableResource::create(sharedMemory.releaseNonNull(), 0, bodyData.size());
             if (!mappedBody.shareableResource) {
                 if (completionHandler)
-                    completionHandler(mappedBody);
+                    completionHandler(WTFMove(mappedBody));
                 return;
             }
             if (auto handle = mappedBody.shareableResource->createHandle())
@@ -503,7 +503,7 @@ std::unique_ptr<Entry> Cache::store(const WebCore::ResourceRequest& request, con
         }
 #endif
         if (completionHandler)
-            completionHandler(mappedBody);
+            completionHandler(WTFMove(mappedBody));
         LOG(NetworkCache, "(NetworkProcess) stored");
     });
 

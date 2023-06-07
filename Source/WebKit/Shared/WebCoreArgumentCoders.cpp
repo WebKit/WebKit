@@ -1438,7 +1438,7 @@ void ArgumentCoder<WebCore::ScriptBuffer>::encode(Encoder& encoder, const WebCor
     bool isShareableResourceHandle = !handle.isNull();
     encoder << isShareableResourceHandle;
     if (isShareableResourceHandle) {
-        encoder << handle;
+        encoder << WTFMove(handle);
         return;
     }
 #endif

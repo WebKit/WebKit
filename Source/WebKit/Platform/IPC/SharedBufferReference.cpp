@@ -54,7 +54,7 @@ void SharedBufferReference::encode(Encoder& encoder) const
         if (auto memoryHandle = sharedMemoryBuffer->createHandle(SharedMemory::Protection::ReadOnly))
             handle = WTFMove(*memoryHandle);
     }
-    encoder << handle;
+    encoder << WTFMove(handle);
 #endif
 }
 

@@ -48,9 +48,9 @@ StreamConnectionBuffer::Handle StreamConnectionBuffer::createHandle()
     return { WTFMove(*handle) };
 }
 
-void StreamConnectionBuffer::Handle::encode(Encoder& encoder) const
+void StreamConnectionBuffer::Handle::encode(Encoder& encoder) &&
 {
-    encoder << memory;
+    encoder << WTFMove(memory);
 }
 
 std::optional<StreamConnectionBuffer::Handle> StreamConnectionBuffer::Handle::decode(Decoder& decoder)

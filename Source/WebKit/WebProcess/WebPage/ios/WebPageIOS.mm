@@ -5115,7 +5115,7 @@ void WebPage::didFinishLoadForQuickLookDocumentInMainFrame(const FragmentedShare
     if (!handle)
         return;
 
-    send(Messages::WebPageProxy::DidFinishLoadForQuickLookDocumentInMainFrame(*handle));
+    send(Messages::WebPageProxy::DidFinishLoadForQuickLookDocumentInMainFrame(WTFMove(*handle)));
 }
 
 void WebPage::requestPasswordForQuickLookDocumentInMainFrame(const String& fileName, CompletionHandler<void(const String&)>&& completionHandler)

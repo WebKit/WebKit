@@ -32,7 +32,7 @@
 
 namespace WebKit {
 
-void UpdateInfo::encode(IPC::Encoder& encoder) const
+void UpdateInfo::encode(IPC::Encoder& encoder) &&
 {
     encoder << viewSize;
     encoder << deviceScaleFactor;
@@ -41,7 +41,7 @@ void UpdateInfo::encode(IPC::Encoder& encoder) const
     encoder << updateRectBounds;
     encoder << updateRects;
     encoder << updateScaleFactor;
-    encoder << bitmapHandle;
+    encoder << WTFMove(bitmapHandle);
     encoder << bitmapOffset;
 }
 

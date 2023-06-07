@@ -214,7 +214,7 @@ void UserData::encode(IPC::Encoder& encoder, const API::Object& object)
         // Initial true indicates a bitmap was allocated and is shareable.
         encoder << true;
         encoder << image.parameters();
-        encoder << handle;
+        encoder << WTFMove(handle);
         break;
     }
 

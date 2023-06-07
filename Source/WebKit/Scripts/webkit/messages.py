@@ -133,9 +133,16 @@ def surround_in_condition(string, condition):
 
 
 def types_that_must_be_moved():
-    return frozenset([
+    return [
         'IPC::StreamServerConnection::Handle',
-    ])
+        'Vector<WebKit::SharedMemory::Handle>',
+        'WebKit::ConsumerSharedCARingBuffer::Handle',
+        'WebKit::ImageBufferBackendHandle',
+        'WebKit::ShareableBitmap::Handle',
+        'WebKit::ShareableResource::Handle',
+        'WebKit::SharedMemory::Handle',
+        'WebKit::UpdateInfo',
+    ]
 
 
 def function_parameter_type(type, kind):
@@ -399,7 +406,7 @@ def types_that_cannot_be_forward_declared():
         'WebKit::WCContentBufferIdentifier',
         'WebKit::WebExtensionEventListenerType',
         'WebKit::XRDeviceIdentifier',
-    ] + serialized_identifiers())
+    ] + serialized_identifiers() + types_that_must_be_moved())
 
 
 def conditions_for_header(header):

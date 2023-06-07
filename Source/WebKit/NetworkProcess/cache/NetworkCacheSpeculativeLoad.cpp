@@ -142,7 +142,7 @@ void SpeculativeLoad::didFinishLoading(const WebCore::NetworkLoadMetrics&)
     if (m_didComplete)
         return;
     if (!m_cacheEntry && m_bufferedDataForCache) {
-        m_cacheEntry = m_cache->store(m_originalRequest, m_response, m_privateRelayed, m_bufferedDataForCache.get(), [](auto& mappedBody) { });
+        m_cacheEntry = m_cache->store(m_originalRequest, m_response, m_privateRelayed, m_bufferedDataForCache.get(), [](auto&& mappedBody) { });
         // Create a synthetic cache entry if we can't store.
         if (!m_cacheEntry && isStatusCodeCacheableByDefault(m_response.httpStatusCode()))
             m_cacheEntry = m_cache->makeEntry(m_originalRequest, m_response, m_privateRelayed, m_bufferedDataForCache.take());

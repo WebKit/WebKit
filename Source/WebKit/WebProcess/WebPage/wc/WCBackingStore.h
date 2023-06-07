@@ -53,7 +53,7 @@ public:
                 if (is<ImageBufferBackendHandleSharing>(sharing))
                     handle = downcast<ImageBufferBackendHandleSharing>(*sharing).createBackendHandle();
             }
-            encoder << handle;
+            encoder << WTFMove(handle);
         }
     }
 

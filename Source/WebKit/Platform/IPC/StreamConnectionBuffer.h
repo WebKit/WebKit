@@ -76,7 +76,7 @@ public:
 
     struct Handle {
         WebKit::SharedMemory::Handle memory;
-        void encode(Encoder&) const;
+        void encode(Encoder&) &&;
         static std::optional<Handle> decode(Decoder&);
     };
     Handle createHandle();

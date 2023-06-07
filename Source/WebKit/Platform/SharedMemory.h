@@ -96,7 +96,7 @@ private:
     friend class IPC::Connection;
 #endif
 
-    mutable Type m_handle;
+    Type m_handle;
     size_t m_size { 0 };
 };
 
@@ -166,7 +166,6 @@ private:
 namespace IPC {
 
 template<> struct ArgumentCoder<WebKit::SharedMemoryHandle, void> {
-    static void encode(Encoder&, const WebKit::SharedMemoryHandle&);
     static void encode(Encoder&, WebKit::SharedMemoryHandle&&);
     static std::optional<WebKit::SharedMemoryHandle> decode(Decoder&);
 };

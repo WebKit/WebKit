@@ -89,12 +89,6 @@ void SharedMemoryHandle::setOwnershipOfMemory(const ProcessIdentity&, MemoryLedg
 
 namespace IPC {
 
-void ArgumentCoder<WebKit::SharedMemoryHandle>::encode(Encoder& encoder, const WebKit::SharedMemoryHandle& handle)
-{
-    encoder << WTFMove(handle.m_handle);
-    encoder << handle.m_size;
-}
-
 void ArgumentCoder<WebKit::SharedMemoryHandle>::encode(Encoder& encoder, WebKit::SharedMemoryHandle&& handle)
 {
     encoder << WTFMove(handle.m_handle);

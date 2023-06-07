@@ -168,7 +168,7 @@ public:
     };
     using RetrieveCompletionHandler = Function<void(std::unique_ptr<Entry>, const RetrieveInfo&)>;
     void retrieve(const WebCore::ResourceRequest&, const GlobalFrameID&, std::optional<NavigatingToAppBoundDomain>, bool allowPrivacyProxy, OptionSet<WebCore::NetworkConnectionIntegrity> networkConnectionIntegrityPolicy, RetrieveCompletionHandler&&);
-    std::unique_ptr<Entry> store(const WebCore::ResourceRequest&, const WebCore::ResourceResponse&, PrivateRelayed, RefPtr<WebCore::FragmentedSharedBuffer>&&, Function<void(MappedBody&)>&& = nullptr);
+    std::unique_ptr<Entry> store(const WebCore::ResourceRequest&, const WebCore::ResourceResponse&, PrivateRelayed, RefPtr<WebCore::FragmentedSharedBuffer>&&, Function<void(MappedBody&&)>&& = nullptr);
     std::unique_ptr<Entry> storeRedirect(const WebCore::ResourceRequest&, const WebCore::ResourceResponse&, const WebCore::ResourceRequest& redirectRequest, std::optional<Seconds> maxAgeCap);
     std::unique_ptr<Entry> update(const WebCore::ResourceRequest&, const Entry&, const WebCore::ResourceResponse& validatingResponse, PrivateRelayed);
 

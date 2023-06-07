@@ -371,7 +371,7 @@ void FindController::getImageForFindMatch(uint32_t matchIndex)
     if (handle.isNull())
         return;
 
-    m_webPage->send(Messages::WebPageProxy::DidGetImageForFindMatch(selectionSnapshot->parameters(), handle, matchIndex));
+    m_webPage->send(Messages::WebPageProxy::DidGetImageForFindMatch(selectionSnapshot->parameters(), WTFMove(handle), matchIndex));
 }
 
 void FindController::selectFindMatch(uint32_t matchIndex)
