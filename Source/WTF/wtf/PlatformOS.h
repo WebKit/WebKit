@@ -52,12 +52,12 @@
 #define WTF_OS_AIX 1
 #endif
 
-/* OS(DARWIN) - Any Darwin-based OS, including macOS, iOS, macCatalyst, tvOS, and watchOS */
+/* OS(DARWIN) - Any Darwin-based OS, including macOS, iOS, iPadOS, macCatalyst, tvOS, watchOS and visionOS */
 #if defined(__APPLE__)
 #define WTF_OS_DARWIN 1
 #endif
 
-/* OS(IOS_FAMILY) - iOS family, including iOS, iPadOS, macCatalyst, tvOS, watchOS */
+/* OS(IOS_FAMILY) - iOS family, including iOS, iPadOS, macCatalyst, tvOS, watchOS, and visionOS */
 #if OS(DARWIN) && TARGET_OS_IPHONE
 #define WTF_OS_IOS_FAMILY 1
 #endif
