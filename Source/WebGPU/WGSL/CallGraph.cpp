@@ -57,7 +57,7 @@ private:
     CallGraph m_callGraph;
     const HashMap<String, std::optional<PipelineLayout>>& m_pipelineLayouts;
     HashMap<AST::Function*, unsigned> m_calleeBuildingMap;
-    Vector<CallGraph::Callee>* m_callees;
+    Vector<CallGraph::Callee>* m_callees { nullptr };
     Deque<AST::Function*> m_queue;
 };
 
