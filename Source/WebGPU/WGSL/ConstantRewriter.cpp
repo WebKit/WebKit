@@ -41,7 +41,7 @@ namespace WGSL {
 
 constexpr bool shouldDumpConstantValues = false;
 
-class ConstantRewriter : public AST::Visitor, public ContextProvider<ConstantValue> {
+class ConstantRewriter : public AST::Visitor, public ContextProvider<std::optional<ConstantValue>> {
 public:
     ConstantRewriter(ShaderModule&);
 
@@ -50,6 +50,7 @@ public:
     // Declarations
     void visit(AST::Structure&) override;
     void visit(AST::Variable&) override;
+    void visit(AST::Function&) override;
 
     // Statements
     void visit(AST::CompoundStatement&) override;
@@ -101,7 +102,7 @@ std::optional<FailedCheck> ConstantRewriter::rewrite()
         visit(variable);
 
     for (auto& function : m_shaderModule.functions())
-        AST::Visitor::visit(function);
+        visit(function);
 
     if (m_errors.isEmpty())
         return std::nullopt;
@@ -120,6 +121,7 @@ void ConstantRewriter::visit(AST::Structure& structure)
 void ConstantRewriter::visit(AST::Variable& variable)
 {
     if (variable.flavor() != AST::VariableFlavor::Const) {
+        introduceVariable(variable.name(), std::nullopt);
         AST::Visitor::visit(variable);
         return;
     }
@@ -128,6 +130,15 @@ void ConstantRewriter::visit(AST::Variable& variable)
     auto value = evaluate(*variable.maybeInitializer());
     ASSERT(value.has_value());
     introduceVariable(variable.name(), *value);
+}
+
+void ConstantRewriter::visit(AST::Function& function)
+{
+    ContextScope functionScope(this);
+    for (auto& parameter : function.parameters())
+        introduceVariable(parameter.name(), std::nullopt);
+
+    AST::Visitor::visit(function);
 }
 
 // Statements
@@ -141,13 +152,13 @@ void ConstantRewriter::visit(AST::CompoundStatement& statement)
 void ConstantRewriter::visit(AST::IdentifierExpression& identifier)
 {
     auto* constant = readVariable(identifier.identifier());
-    if (!constant)
+    if (!constant || !constant->has_value())
         return;
 
     if (shouldDumpConstantValues)
         dataLogLn("> Replacing identifier '", identifier.identifier(), "' with constant: ", *constant);
 
-    materialize(identifier, *constant);
+    materialize(identifier, constant->value());
 }
 
 // Private helpers
