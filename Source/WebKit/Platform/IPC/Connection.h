@@ -177,19 +177,48 @@ public:
         virtual ~Client() { }
     };
 
+    struct Identifier;
+    struct Handle {
+        friend struct Identifier;
+        WTF_MAKE_NONCOPYABLE(Handle);
+        Handle() = default;
+        Handle(Handle&&) = default;
+        Handle& operator=(Handle&&) = default;
+
 #if USE(UNIX_DOMAIN_SOCKETS)
-    using Handle = UnixFileDescriptor;
+        Handle(UnixFileDescriptor&& inHandle)
+            : handle(WTFMove(inHandle))
+        { }
+        explicit operator bool() const { return !!handle; }
 #elif OS(WINDOWS)
-    using Handle = Win32Handle;
+        Handle(Win32Handle&& inHandle)
+            : handle(WTFMove(inHandle))
+        { }
+        explicit operator bool() const { return !!handle; }
 #elif OS(DARWIN)
-    using Handle = MachSendRight;
+        Handle(MachSendRight&& sendRight)
+            : handle(WTFMove(sendRight))
+        { }
+        explicit operator bool() const { return MACH_PORT_VALID(handle.sendRight()); }
 #endif
+        void encode(Encoder&);
+        static std::optional<Handle> decode(Decoder&);
+
+    private:
+#if USE(UNIX_DOMAIN_SOCKETS)
+        UnixFileDescriptor handle;
+#elif OS(WINDOWS)
+        Win32Handle handle;
+#elif OS(DARWIN)
+        MachSendRight handle;
+#endif
+    };
 
     struct Identifier {
         Identifier() = default;
 #if USE(UNIX_DOMAIN_SOCKETS)
         explicit Identifier(Handle&& handle)
-            : Identifier(handle.release())
+            : Identifier(handle.handle.release())
         {
         }
         explicit Identifier(int handle)
@@ -200,7 +229,7 @@ public:
         int handle { -1 };
 #elif OS(WINDOWS)
         explicit Identifier(Handle&& handle)
-            : Identifier(handle.leak())
+            : Identifier(handle.handle.leak())
         {
         }
         explicit Identifier(HANDLE handle)
@@ -211,7 +240,7 @@ public:
         HANDLE handle { 0 };
 #elif OS(DARWIN)
         explicit Identifier(Handle&& handle)
-            : Identifier(handle.leakSendRight())
+            : Identifier(handle.handle.leakSendRight())
         {
         }
         explicit Identifier(mach_port_t port)
@@ -223,7 +252,7 @@ public:
             , xpcConnection(WTFMove(xpcConnection))
         {
         }
-        operator bool() const { return MACH_PORT_VALID(port); }
+        explicit operator bool() const { return MACH_PORT_VALID(port); }
         mach_port_t port { MACH_PORT_NULL };
         OSObjectPtr<xpc_connection_t> xpcConnection;
 #endif

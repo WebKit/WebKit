@@ -134,6 +134,7 @@ def surround_in_condition(string, condition):
 
 def types_that_must_be_moved():
     return [
+        'IPC::Connection::Handle',
         'IPC::StreamServerConnection::Handle',
         'Vector<WebKit::SharedMemory::Handle>',
         'WebKit::ConsumerSharedCARingBuffer::Handle',

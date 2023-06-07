@@ -50,7 +50,7 @@ void ConnectionTestBase::setupBase()
         return;
     }
     m_connections[0].connection = IPC::Connection::createServerConnection(WTFMove(identifiers->server));
-    m_connections[1].connection = IPC::Connection::createClientConnection(IPC::Connection::Identifier { identifiers->client.leakSendRight() });
+    m_connections[1].connection = IPC::Connection::createClientConnection(IPC::Connection::Identifier { WTFMove(identifiers->client) });
 }
 
 void ConnectionTestBase::teardownBase()

@@ -39,12 +39,12 @@ static constexpr Seconds kWaitForAbsenceTimeout = 300_ms;
 struct MockTestMessageWithConnection {
     static constexpr bool isSync = false;
     static constexpr IPC::MessageName name()  { return static_cast<IPC::MessageName>(123); }
-    const auto& arguments() { return m_arguments; }
-    MockTestMessageWithConnection(const IPC::Connection::Handle& handle)
-        : m_arguments(handle)
+    auto&& arguments() { return WTFMove(m_arguments); }
+    MockTestMessageWithConnection(IPC::Connection::Handle&& handle)
+        : m_arguments(WTFMove(handle))
     {
     }
-    std::tuple<const IPC::Connection::Handle&> m_arguments;
+    std::tuple<IPC::Connection::Handle&&> m_arguments;
 };
 
 namespace {
@@ -72,7 +72,7 @@ TEST_F(SimpleConnectionTest, CreateClientConnection)
 {
     auto identifiers = IPC::Connection::createConnectionIdentifierPair();
     ASSERT_NE(identifiers, std::nullopt);
-    Ref<IPC::Connection> connection = IPC::Connection::createClientConnection(IPC::Connection::Identifier { identifiers->client.leakSendRight() });
+    Ref<IPC::Connection> connection = IPC::Connection::createClientConnection(IPC::Connection::Identifier { WTFMove(identifiers->client) });
     connection->invalidate();
 }
 
@@ -81,7 +81,7 @@ TEST_F(SimpleConnectionTest, ConnectLocalConnection)
     auto identifiers = IPC::Connection::createConnectionIdentifierPair();
     ASSERT_NE(identifiers, std::nullopt);
     Ref<IPC::Connection> serverConnection = IPC::Connection::createServerConnection(WTFMove(identifiers->server));
-    Ref<IPC::Connection> clientConnection = IPC::Connection::createClientConnection(IPC::Connection::Identifier { identifiers->client.leakSendRight() });
+    Ref<IPC::Connection> clientConnection = IPC::Connection::createClientConnection(IPC::Connection::Identifier { WTFMove(identifiers->client) });
     serverConnection->open(m_mockServerClient);
     clientConnection->open(m_mockClientClient);
     serverConnection->invalidate();
@@ -285,7 +285,7 @@ TEST_P(ConnectionTestABBA, ReceiveAlreadyInvalidatedClientNoAssert)
         auto handle = decoder.decode<IPC::Connection::Handle>();
         if (!handle)
             return false;
-        Ref<IPC::Connection> clientConnection = IPC::Connection::createClientConnection(IPC::Connection::Identifier { handle->leakSendRight() });
+        Ref<IPC::Connection> clientConnection = IPC::Connection::createClientConnection(IPC::Connection::Identifier { WTFMove(*handle) });
         MockConnectionClient mockClientClient;
         clientConnection->open(mockClientClient);
         EXPECT_TRUE(mockClientClient.waitForDidClose(kDefaultWaitForTimeout)) << destinationID;
