@@ -34,7 +34,7 @@
 #include "RemoteWCLayerTreeHostMessages.h"
 #include "StreamConnectionWorkQueue.h"
 #include "WCScene.h"
-#include "WCUpateInfo.h"
+#include "WCUpdateInfo.h"
 
 namespace WebKit {
 
@@ -96,7 +96,7 @@ uint64_t RemoteWCLayerTreeHost::messageSenderDestinationID() const
     return m_identifier.toUInt64();
 }
 
-void RemoteWCLayerTreeHost::update(WCUpateInfo&& update, CompletionHandler<void(std::optional<WebKit::UpdateInfo>)>&& completionHandler)
+void RemoteWCLayerTreeHost::update(WCUpdateInfo&& update, CompletionHandler<void(std::optional<WebKit::UpdateInfo>)>&& completionHandler)
 {
     remoteGraphicsStreamWorkQueue().dispatch([this, weakThis = WeakPtr(*this), scene = m_scene.get(), update = WTFMove(update), completionHandler = WTFMove(completionHandler)]() mutable {
         auto updateInfo = scene->update(WTFMove(update));

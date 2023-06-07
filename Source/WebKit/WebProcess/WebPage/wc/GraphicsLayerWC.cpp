@@ -42,7 +42,7 @@ public:
     WCTiledBacking(GraphicsLayerWC& owner)
         : m_owner(owner) { }
 
-    bool paintAndFlush(WCLayerUpateInfo& update)
+    bool paintAndFlush(WCLayerUpdateInfo& update)
     {
         bool repainted = false;
         for (auto& entry : m_tileGrid.tiles()) {
@@ -510,7 +510,7 @@ void GraphicsLayerWC::flushCompositingStateForThisLayerOnly()
 {
     if (!m_uncommittedChanges)
         return;
-    WCLayerUpateInfo update;
+    WCLayerUpdateInfo update;
     update.id = primaryLayerID();
     update.changes = std::exchange(m_uncommittedChanges, { });
     if (update.changes & WCLayerChange::Children) {
@@ -591,7 +591,7 @@ void GraphicsLayerWC::flushCompositingStateForThisLayerOnly()
             update.contentBufferIdentifiers = static_cast<WCPlatformLayerGCGL*>(m_platformLayer)->takeContentBufferIdentifiers();
 #endif
     }
-    m_observer->commitLayerUpateInfo(WTFMove(update));
+    m_observer->commitLayerUpdateInfo(WTFMove(update));
 }
 
 TiledBacking* GraphicsLayerWC::tiledBacking() const

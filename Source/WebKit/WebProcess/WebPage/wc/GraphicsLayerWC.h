@@ -27,7 +27,7 @@
 
 #if USE(GRAPHICS_LAYER_WC)
 
-#include "WCUpateInfo.h"
+#include "WCUpdateInfo.h"
 #include <WebCore/GraphicsLayerContentsDisplayDelegate.h>
 #include <wtf/DoublyLinkedList.h>
 
@@ -43,7 +43,7 @@ public:
     struct Observer {
         virtual void graphicsLayerAdded(GraphicsLayerWC&) = 0;
         virtual void graphicsLayerRemoved(GraphicsLayerWC&) = 0;
-        virtual void commitLayerUpateInfo(WCLayerUpateInfo&&) = 0;
+        virtual void commitLayerUpdateInfo(WCLayerUpdateInfo&&) = 0;
         virtual RefPtr<WebCore::ImageBuffer> createImageBuffer(WebCore::FloatSize) = 0;
     };
 

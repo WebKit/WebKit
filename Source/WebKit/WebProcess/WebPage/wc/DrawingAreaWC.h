@@ -67,7 +67,7 @@ private:
     // GraphicsLayerWC::Observer
     void graphicsLayerAdded(GraphicsLayerWC&) override;
     void graphicsLayerRemoved(GraphicsLayerWC&) override;
-    void commitLayerUpateInfo(WCLayerUpateInfo&&) override;
+    void commitLayerUpdateInfo(WCLayerUpdateInfo&&) override;
     RefPtr<WebCore::ImageBuffer> createImageBuffer(WebCore::FloatSize) override;
 
     bool isCompositingMode();
@@ -86,7 +86,7 @@ private:
     bool m_inUpdateRendering { false };
     bool m_waitDidUpdate { false };
     bool m_isForceRepaintCompletionHandlerDeferred { false };
-    WCUpateInfo m_updateInfo;
+    WCUpdateInfo m_updateInfo;
     Ref<WebCore::GraphicsLayer> m_rootLayer;
     RefPtr<WebCore::GraphicsLayer> m_contentLayer;
     RefPtr<WebCore::GraphicsLayer> m_viewOverlayRootLayer;

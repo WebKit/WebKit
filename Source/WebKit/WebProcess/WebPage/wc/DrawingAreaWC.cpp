@@ -193,7 +193,7 @@ void DrawingAreaWC::triggerRenderingUpdate()
     m_updateRenderingTimer.startOneShot(0_s);
 }
 
-static void flushLayerImageBuffers(WCUpateInfo& info)
+static void flushLayerImageBuffers(WCUpdateInfo& info)
 {
     for (auto& layerInfo : info.changedLayers) {
         if (layerInfo.changes & WCLayerChange::Background) {
@@ -363,7 +363,7 @@ void DrawingAreaWC::graphicsLayerRemoved(GraphicsLayerWC& layer)
     m_updateInfo.removedLayers.append(layer.primaryLayerID());
 }
 
-void DrawingAreaWC::commitLayerUpateInfo(WCLayerUpateInfo&& info)
+void DrawingAreaWC::commitLayerUpdateInfo(WCLayerUpdateInfo&& info)
 {
     m_updateInfo.changedLayers.append(WTFMove(info));
 }

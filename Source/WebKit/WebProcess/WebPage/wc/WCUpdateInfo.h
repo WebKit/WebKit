@@ -93,7 +93,7 @@ enum class WCLayerChange : uint32_t {
     PlatformLayer           = 1 << 19,
 };
 
-struct WCLayerUpateInfo {
+struct WCLayerUpdateInfo {
     WebCore::PlatformLayerIdentifier id;
     OptionSet<WCLayerChange> changes;
     Vector<WebCore::PlatformLayerIdentifier> children;
@@ -178,7 +178,7 @@ struct WCLayerUpateInfo {
     }
 
     template <class Decoder>
-    static WARN_UNUSED_RETURN bool decode(Decoder& decoder, WCLayerUpateInfo& result)
+    static WARN_UNUSED_RETURN bool decode(Decoder& decoder, WCLayerUpdateInfo& result)
     {
         if (!decoder.decode(result.id))
             return false;
@@ -290,11 +290,11 @@ struct WCLayerUpateInfo {
     }
 };
 
-struct WCUpateInfo {
+struct WCUpdateInfo {
     WebCore::PlatformLayerIdentifier rootLayer;
     Vector<WebCore::PlatformLayerIdentifier> addedLayers;
     Vector<WebCore::PlatformLayerIdentifier> removedLayers;
-    Vector<WCLayerUpateInfo> changedLayers;
+    Vector<WCLayerUpdateInfo> changedLayers;
 
     template<class Encoder>
     void encode(Encoder& encoder) const
@@ -306,7 +306,7 @@ struct WCUpateInfo {
     }
 
     template <class Decoder>
-    static WARN_UNUSED_RETURN bool decode(Decoder& decoder, WCUpateInfo& result)
+    static WARN_UNUSED_RETURN bool decode(Decoder& decoder, WCUpdateInfo& result)
     {
         if (!decoder.decode(result.rootLayer))
             return false;

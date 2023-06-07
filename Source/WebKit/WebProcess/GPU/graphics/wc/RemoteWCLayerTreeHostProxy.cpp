@@ -31,7 +31,7 @@
 #include "GPUConnectionToWebProcess.h"
 #include "MessageSenderInlines.h"
 #include "RemoteWCLayerTreeHostMessages.h"
-#include "WCUpateInfo.h"
+#include "WCUpdateInfo.h"
 #include "WebPage.h"
 #include "WebProcess.h"
 
@@ -84,7 +84,7 @@ uint64_t RemoteWCLayerTreeHostProxy::messageSenderDestinationID() const
     return wcLayerTreeHostIdentifier().toUInt64();
 }
 
-void RemoteWCLayerTreeHostProxy::update(WCUpateInfo&& updateInfo, CompletionHandler<void(std::optional<WebKit::UpdateInfo>)>&& completionHandler)
+void RemoteWCLayerTreeHostProxy::update(WCUpdateInfo&& updateInfo, CompletionHandler<void(std::optional<WebKit::UpdateInfo>)>&& completionHandler)
 {
     sendWithAsyncReply(Messages::RemoteWCLayerTreeHost::Update(updateInfo), WTFMove(completionHandler));
 }

@@ -35,7 +35,7 @@
 
 namespace WebKit {
 
-struct WCUpateInfo;
+struct WCUpdateInfo;
 
 class RemoteWCLayerTreeHostProxy
     : private IPC::MessageSender
@@ -46,7 +46,7 @@ public:
     RemoteWCLayerTreeHostProxy(WebPage&, bool usesOffscreenRendering);
     ~RemoteWCLayerTreeHostProxy();
 
-    void update(WCUpateInfo&&, CompletionHandler<void(std::optional<WebKit::UpdateInfo>)>&&);
+    void update(WCUpdateInfo&&, CompletionHandler<void(std::optional<WebKit::UpdateInfo>)>&&);
 
     void ref() const final { return ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<RemoteWCLayerTreeHostProxy>::ref(); }
     void deref() const final { return ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<RemoteWCLayerTreeHostProxy>::deref(); }

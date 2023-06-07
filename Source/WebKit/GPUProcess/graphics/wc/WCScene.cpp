@@ -32,7 +32,7 @@
 #include "WCContentBuffer.h"
 #include "WCContentBufferManager.h"
 #include "WCSceneContext.h"
-#include "WCUpateInfo.h"
+#include "WCUpdateInfo.h"
 #include <WebCore/TextureMapperGLHeaders.h>
 #include <WebCore/TextureMapperLayer.h>
 #include <WebCore/TextureMapperPlatformLayer.h>
@@ -83,7 +83,7 @@ WCScene::~WCScene()
     m_textureMapper = nullptr;
 }
 
-std::optional<UpdateInfo> WCScene::update(WCUpateInfo&& update)
+std::optional<UpdateInfo> WCScene::update(WCUpdateInfo&& update)
 {
     if (!m_context->makeContextCurrent())
         return std::nullopt;
