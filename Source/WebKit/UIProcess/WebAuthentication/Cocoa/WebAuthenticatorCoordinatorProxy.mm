@@ -500,7 +500,7 @@ void WebAuthenticatorCoordinatorProxy::performRequest(RetainPtr<ASCCredentialReq
         return;
     }
 #endif // PLATFORM(MAC) || PLATFORM(MACCATALYST)
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
     requestContext.get().windowSceneIdentifier = m_webPageProxy.pageClient().sceneID();
 
     [m_proxy performAuthorizationRequestsForContext:requestContext.get() withCompletionHandler:makeBlockPtr([weakThis = WeakPtr { *this }, handler = WTFMove(handler)](id<ASCCredentialProtocol> credential, NSError *error) mutable {

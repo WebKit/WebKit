@@ -274,7 +274,7 @@ struct WebPageCreationParameters {
     
     bool httpsUpgradeEnabled { true };
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
     bool allowsDeprecatedSynchronousXMLHttpRequestDuringUnload { false };
 #endif
     

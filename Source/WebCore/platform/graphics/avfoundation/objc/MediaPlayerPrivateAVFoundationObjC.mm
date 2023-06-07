@@ -1686,7 +1686,7 @@ double MediaPlayerPrivateAVFoundationObjC::effectiveRate() const
 
 double MediaPlayerPrivateAVFoundationObjC::seekableTimeRangesLastModifiedTime() const
 {
-#if PLATFORM(MAC) || PLATFORM(IOS) || PLATFORM(MACCATALYST)
+#if PLATFORM(MAC) || PLATFORM(IOS) || PLATFORM(MACCATALYST) || PLATFORM(VISION)
     if (!m_cachedSeekableTimeRangesLastModifiedTime)
         m_cachedSeekableTimeRangesLastModifiedTime = [m_avPlayerItem seekableTimeRangesLastModifiedTime];
     return *m_cachedSeekableTimeRangesLastModifiedTime;
@@ -1697,7 +1697,7 @@ double MediaPlayerPrivateAVFoundationObjC::seekableTimeRangesLastModifiedTime() 
 
 double MediaPlayerPrivateAVFoundationObjC::liveUpdateInterval() const
 {
-#if PLATFORM(MAC) || PLATFORM(IOS) || PLATFORM(MACCATALYST)
+#if PLATFORM(MAC) || PLATFORM(IOS) || PLATFORM(MACCATALYST) || PLATFORM(VISION)
     if (!m_cachedLiveUpdateInterval)
         m_cachedLiveUpdateInterval = [m_avPlayerItem liveUpdateInterval];
     return *m_cachedLiveUpdateInterval;

@@ -74,7 +74,7 @@ void RedirectSOAuthorizationSession::completeInternal(const ResourceResponse& re
     }
     invokeCallback(true);
     if (response.httpStatusCode() == 302) {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
         // MobileSafari has a WBSURLSpoofingMitigator, which will not display the provisional URL for navigations without user gestures.
         // For slow loads that are initiated from the MobileSafari Favorites screen, the aforementioned behavior will create a period
         // after authentication completion where the new request to the application site loads with a blank URL and blank page. To

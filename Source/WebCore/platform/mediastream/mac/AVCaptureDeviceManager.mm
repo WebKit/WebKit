@@ -176,7 +176,7 @@ Vector<CaptureDevice> AVCaptureDeviceManager::retrieveCaptureDevices()
 #endif
         defaultVideoDevice = [PAL::getAVCaptureDeviceClass() defaultDeviceWithMediaType: AVMediaTypeVideo];
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
     ([&] {
 #if HAVE(CONTINUITY_CAMERA)
         if (haveSystemPreferredCamera && defaultVideoDevice)

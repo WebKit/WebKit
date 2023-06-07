@@ -50,7 +50,7 @@ WebsiteDataStoreConfiguration::WebsiteDataStoreConfiguration(IsPersistent isPers
         initializePaths();
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
         setPCMMachServiceName("com.apple.webkit.adattributiond.service"_s);
 #endif
     }
@@ -68,7 +68,7 @@ WebsiteDataStoreConfiguration::WebsiteDataStoreConfiguration(const UUID& identif
     , m_originQuotaRatio(WebsiteDataStore::defaultOriginQuotaRatio())
     , m_totalQuotaRatio(WebsiteDataStore::defaultTotalQuotaRatio())
     , m_standardVolumeCapacity(WebsiteDataStore::defaultStandardVolumeCapacity())
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
     , m_pcmMachServiceName("com.apple.webkit.adattributiond.service"_s)
 #endif
 {

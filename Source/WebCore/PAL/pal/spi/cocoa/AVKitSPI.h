@@ -67,7 +67,7 @@ IGNORE_WARNINGS_END
 #import <AVKit/AVPlayerViewController_WebKitOnly.h>
 #endif
 
-#if PLATFORM(IOS) || PLATFORM(MACCATALYST)
+#if PLATFORM(IOS) || PLATFORM(MACCATALYST) || PLATFORM(VISION)
 #import <AVKit/AVBackgroundView.h>
 #endif
 

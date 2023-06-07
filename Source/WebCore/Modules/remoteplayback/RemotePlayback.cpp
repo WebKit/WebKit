@@ -216,7 +216,7 @@ void RemotePlayback::prompt(Ref<DeferredPromise>&& promise)
 
         // 5. OPTIONALLY, if the user agent knows a priori that showing the UI for this particular media element
         //    is not feasible, reject promise with a NotSupportedError and abort all remaining steps.
-#if !PLATFORM(IOS)
+#if !(PLATFORM(IOS) || PLATFORM(VISION))
         if (m_mediaElement->readyState() < HTMLMediaElementEnums::HAVE_METADATA) {
             ERROR_LOG(identifier, "promise rejected, readyState = ", m_mediaElement->readyState());
             promise->reject(NotSupportedError);

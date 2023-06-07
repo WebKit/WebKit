@@ -202,7 +202,7 @@ void UserMediaPermissionRequestProxy::doDefaultAction()
 
 bool UserMediaPermissionRequestProxy::canRequestDisplayCapturePermission()
 {
-#if ENABLE(MEDIA_STREAM) && PLATFORM(IOS)
+#if ENABLE(MEDIA_STREAM) && (PLATFORM(IOS) || PLATFORM(VISION))
     return true;
 #else
     return false;

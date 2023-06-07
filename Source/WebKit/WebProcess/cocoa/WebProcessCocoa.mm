@@ -435,7 +435,7 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
     scrollerStylePreferenceChanged(parameters.useOverlayScrollbars);
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
     SandboxExtension::consumePermanently(parameters.compilerServiceExtensionHandles);
 #endif
 

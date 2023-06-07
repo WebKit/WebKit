@@ -290,7 +290,7 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
 
     updateBackForwardCacheCapacity();
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
     if (WebCore::IOSApplication::isLutron() && !linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::SharedNetworkProcess)) {
         callOnMainRunLoop([] {
             if (WebsiteDataStore::defaultDataStoreExists())
@@ -714,7 +714,7 @@ void WebProcessPool::registerDisplayConfigurationCallback()
 }
 #endif // !PLATFORM(MAC)
 
-#if !PLATFORM(MAC) && !PLATFORM(IOS)
+#if !PLATFORM(MAC) && !PLATFORM(IOS) && !PLATFORM(VISION)
 void WebProcessPool::registerHighDynamicRangeChangeCallback()
 {
 }

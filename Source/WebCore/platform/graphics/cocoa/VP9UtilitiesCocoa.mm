@@ -143,7 +143,7 @@ bool isVP9DecoderAvailable()
     if (auto disabledForTesting = VP9TestingOverrides::singleton().vp9DecoderDisabled())
         return !*disabledForTesting;
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
     return canLoad_VideoToolbox_VTIsHardwareDecodeSupported() && VTIsHardwareDecodeSupported(kCMVideoCodecType_VP9);
 #else
     if (!VideoToolboxLibrary(true))

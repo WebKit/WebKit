@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
 #if USE(APPLE_INTERNAL_SDK)
 
 #import <InstallCoordination/IXAppInstallCoordinator.h>
@@ -107,4 +107,4 @@ typedef void (^IXAppInstallCoordinatorErrorCompletion)(NSError * _Nullable error
 NS_ASSUME_NONNULL_END
 
 #endif // USE(APPLE_INTERNAL_SDK)
-#endif // PLATFORM(IOS)
+#endif // PLATFORM(IOS) || PLATFORM(VISION)

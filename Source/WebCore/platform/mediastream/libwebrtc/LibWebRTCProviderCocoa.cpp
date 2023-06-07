@@ -102,7 +102,7 @@ void LibWebRTCProviderCocoa::setActive(bool value)
 
 bool WebRTCProvider::webRTCAvailable()
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
     return true;
 #else
     return !!webrtc::setApplicationStatus;

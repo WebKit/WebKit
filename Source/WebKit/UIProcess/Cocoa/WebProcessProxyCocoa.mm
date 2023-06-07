@@ -302,7 +302,7 @@ bool WebProcessProxy::messageSourceIsValidWebContentProcess()
     }
 
 #if USE(APPLE_INTERNAL_SDK)
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
     // FIXME(rdar://80908833): On iOS, we can only perform the below checks for platform binaries until rdar://80908833 is fixed.
     if (!currentProcessIsPlatformBinary())
         return true;

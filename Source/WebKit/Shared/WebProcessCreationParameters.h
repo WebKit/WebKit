@@ -180,7 +180,7 @@ struct WebProcessCreationParameters {
 
     std::optional<WebProcessDataStoreParameters> websiteDataStoreParameters;
     
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
     Vector<SandboxExtension::Handle> compilerServiceExtensionHandles;
 #endif
 

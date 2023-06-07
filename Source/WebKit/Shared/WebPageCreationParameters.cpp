@@ -184,7 +184,7 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << canUseCredentialStorage;
 
     encoder << httpsUpgradeEnabled;
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
     encoder << allowsDeprecatedSynchronousXMLHttpRequestDuringUnload;
 #endif
 
@@ -626,7 +626,7 @@ std::optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::
     if (!decoder.decode(parameters.httpsUpgradeEnabled))
         return std::nullopt;
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
     if (!decoder.decode(parameters.allowsDeprecatedSynchronousXMLHttpRequestDuringUnload))
         return std::nullopt;
 #endif

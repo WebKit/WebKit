@@ -237,7 +237,7 @@ void SOAuthorizationSession::continueStartAfterDecidePolicy(const SOAuthorizatio
     };
     [m_soAuthorization setAuthorizationOptions:authorizationOptions];
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
     if (![[m_page->cocoaView() UIDelegate] respondsToSelector:@selector(_presentingViewControllerForWebView:)])
         [m_soAuthorization setEnableEmbeddedAuthorizationViewController:NO];
 #endif
@@ -370,7 +370,7 @@ void SOAuthorizationSession::presentViewController(SOAuthorizationViewController
 
     AUTHORIZATIONSESSION_RELEASE_LOG("presentViewController: Calling beginSheet on %p for sheet %p.", presentingWindow, m_sheetWindow.get());
     [presentingWindow beginSheet:m_sheetWindow.get() completionHandler:nil];
-#elif PLATFORM(IOS)
+#elif PLATFORM(IOS) || PLATFORM(VISION)
     UIViewController *presentingViewController = m_page->uiClient().presentingViewController();
     if (!presentingViewController) {
         uiCallback(NO, adoptNS([[NSError alloc] initWithDomain:SOErrorDomain code:kSOErrorAuthorizationPresentationFailed userInfo:nil]).get());
@@ -454,7 +454,7 @@ void SOAuthorizationSession::dismissViewController()
 
     dismissModalSheetIfNecessary();
     AUTHORIZATIONSESSION_RELEASE_LOG("dismissViewController: Finished call with deminiaturized observer (%p) and Hidden observer (%p)", m_presentingWindowDidDeminiaturizeObserver.get(), m_applicationDidUnhideObserver.get());
-#elif PLATFORM(IOS)
+#elif PLATFORM(IOS) || PLATFORM(VISION)
     [[m_viewController presentingViewController] dismissViewControllerAnimated:YES completion:nil];
 #endif
 

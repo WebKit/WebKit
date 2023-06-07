@@ -135,7 +135,7 @@ struct WebKit::WebProcessCreationParameters {
 
     std::optional<WebKit::WebProcessDataStoreParameters> websiteDataStoreParameters;
     
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
     Vector<WebKit::SandboxExtension::Handle> compilerServiceExtensionHandles;
 #endif
 

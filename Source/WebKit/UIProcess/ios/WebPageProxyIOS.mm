@@ -1643,7 +1643,7 @@ Color WebPageProxy::platformUnderPageBackgroundColor() const
 
 void WebPageProxy::statusBarWasTapped()
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
     RELEASE_LOG_INFO(WebRTC, "WebPageProxy::statusBarWasTapped");
 
 #if USE(APPLE_INTERNAL_SDK)

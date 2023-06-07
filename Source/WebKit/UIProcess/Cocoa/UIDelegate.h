@@ -242,7 +242,7 @@ private:
 #endif
         bool webViewDecideDatabaseQuotaForSecurityOriginCurrentQuotaCurrentOriginUsageCurrentDatabaseUsageExpectedUsageDecisionHandler : 1;
         bool webViewDecideDatabaseQuotaForSecurityOriginDatabaseNameDisplayNameCurrentQuotaCurrentOriginUsageCurrentDatabaseUsageExpectedUsageDecisionHandler : 1;
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
         bool webViewLockScreenOrientation : 1;
         bool webViewUnlockScreenOrientation : 1;
 #endif

@@ -29,7 +29,7 @@
 #include "ObjectPrototypeInlines.h"
 #include "PropertySlot.h"
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
 #include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #endif
 

@@ -29,7 +29,7 @@
 #import <AssetViewer/ARQuickLookWebKitItem.h>
 #endif
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
 #import <AssetViewer/ASVThumbnailView.h>
 #endif
 
@@ -45,7 +45,7 @@
 
 #import <UIKit/UIKit.h>
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
 #import <pal/spi/ios/QuickLookSPI.h>
 
 @class ASVThumbnailView;

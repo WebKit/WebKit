@@ -700,7 +700,7 @@ bool Quirks::needsFullscreenDisplayNoneQuirk() const
 // FIXME: weChat <rdar://problem/74377902>
 bool Quirks::needsWeChatScrollingQuirk() const
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
     return needsQuirks() && !linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::NoWeChatScrollingQuirk) && IOSApplication::isWechat();
 #else
     return false;
@@ -720,7 +720,7 @@ bool Quirks::shouldOmitHTMLDocumentSupportedPropertyNames()
 
 bool Quirks::shouldSilenceWindowResizeEvents() const
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
     if (!needsQuirks())
         return false;
 
@@ -741,7 +741,7 @@ bool Quirks::shouldSilenceWindowResizeEvents() const
 
 bool Quirks::shouldSilenceMediaQueryListChangeEvents() const
 {
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
     if (!needsQuirks())
         return false;
 
@@ -1411,7 +1411,7 @@ bool Quirks::shouldAllowNavigationToCustomProtocolWithoutUserGesture(StringView 
     return protocol == "msteams"_s && (requesterOrigin.host() == "teams.live.com"_s || requesterOrigin.host() == "teams.microsoft.com"_s);
 }
 
-#if PLATFORM(IOS)
+#if PLATFORM(IOS) || PLATFORM(VISION)
 bool Quirks::allowLayeredFullscreenVideos() const
 {
     if (!needsQuirks())

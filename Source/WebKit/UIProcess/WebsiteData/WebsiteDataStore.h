@@ -388,7 +388,7 @@ public:
     static constexpr uint64_t defaultStandardVolumeCapacity() {
 #if PLATFORM(MAC)
         return 128 * GB;
-#elif PLATFORM(IOS)
+#elif PLATFORM(IOS) || PLATFORM(VISION)
         return 64 * GB;
 #else
         return 16 * GB;
