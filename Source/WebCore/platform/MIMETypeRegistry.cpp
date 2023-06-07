@@ -110,7 +110,7 @@ constexpr ComparableCaseFoldingASCIILiteral supportedImageMIMETypeArray[] = {
     "image/jpeg2000",
 #endif
     "image/jpg",
-#if USE(JPEGXL)
+#if HAVE(JPEGXL) || USE(JPEGXL)
     "image/jxl",
 #endif
 #if PLATFORM(IOS_FAMILY)

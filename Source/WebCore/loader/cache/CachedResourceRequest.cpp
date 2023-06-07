@@ -148,7 +148,7 @@ static constexpr ASCIILiteral acceptHeaderValueForAVIFImageResource()
 
 static constexpr ASCIILiteral acceptHeaderValueForJPEGXLImageResource()
 {
-#if USE(JPEGXL)
+#if HAVE(JPEGXL) || USE(JPEGXL)
     return "image/jxl,"_s;
 #else
     return ""_s;
