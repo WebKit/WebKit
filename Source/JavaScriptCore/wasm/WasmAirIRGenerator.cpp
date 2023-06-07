@@ -601,8 +601,18 @@ private:
                 switch (patch->resultConstraints[i].kind()) {
                 case B3::ValueRep::StackArgument: {
                     Arg arg = Arg::callArg(patch->resultConstraints[i].offsetFromSP());
+                    B3::Air::Opcode opcode = moveForType(m_proc.typeAtOffset(patch->type(), i));
+                    Width width = widthForBytes(sizeofType(m_proc.typeAtOffset(patch->type(), i)));
+                    if (arg.isValidForm(opcode, width))
+                        resultMovs.append(Inst(opcode, nullptr, arg, toTmp(results[i])));
+                    else {
+                        auto immTmp = self().gPtr();
+                        auto newPtr = self().gPtr();
+                        resultMovs.append(Inst(Move, nullptr, Arg::bigImm(arg.offset()), immTmp));
+                        resultMovs.append(Inst(Derived::AddPtr, nullptr, Tmp(MacroAssembler::stackPointerRegister), immTmp, newPtr));
+                        resultMovs.append(Inst(opcode, nullptr, Arg::addr(newPtr), toTmp(results[i])));
+                    }
                     inst.args.append(arg);
-                    resultMovs.append(Inst(B3::Air::moveForType(m_proc.typeAtOffset(patch->type(), i)), nullptr, arg, toTmp(results[i])));
                     break;
                 }
                 case B3::ValueRep::Register: {
@@ -3367,14 +3377,25 @@ auto AirIRGenerator::addReturn(const ControlData& data, const Stack& returnValue
         TypedTmp tmp = returnValues[offset + i];
 
         if (rep.isStack()) {
-            append(moveForType(toB3Type(tmp.type())), tmp, Arg::addr(Tmp(GPRInfo::callFrameRegister), rep.offsetFromFP()));
+            Arg arg = Arg::addr(Tmp(GPRInfo::callFrameRegister), rep.offsetFromFP());
+            B3::Air::Opcode opcode = moveForType(toB3Type(tmp.type()));
+            Width width = tmp.type().width();
+            if (arg.isValidForm(opcode, width))
+                append(opcode, tmp, arg);
+            else {
+                auto immTmp = self().gPtr();
+                auto newPtr = self().gPtr();
+                append(Move, Arg::bigImm(arg.offset()), immTmp);
+                append(AddPtr, Tmp(GPRInfo::callFrameRegister), immTmp, newPtr);
+                append(opcode, tmp, Arg::addr(newPtr));
+            }
             continue;
         }
 
         ASSERT(rep.isReg());
         if (data.signature()->returnType(i).isI32())
             append(Move32, tmp, tmp);
-        returnConstraints.append(ConstrainedTmp(tmp, wasmCallInfo.results[i]));
+        returnConstraints.append(ConstrainedTmp(tmp, rep));
     }
 
     emitPatchpoint(m_currentBlock, patch, ResultList { }, WTFMove(returnConstraints));
