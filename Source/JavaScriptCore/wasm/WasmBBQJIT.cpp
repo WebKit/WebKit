@@ -7872,9 +7872,9 @@ public:
         saveValuesAcrossCallAndPassArguments(arguments, callInfo);
 
         if (m_info.isImportedFunctionFromFunctionIndexSpace(functionIndex)) {
-            m_jit.move(TrustedImmPtr(Instance::offsetOfImportFunctionStub(functionIndex)), wasmScratchGPR);
-            m_jit.addPtr(GPRInfo::wasmContextInstancePointer, wasmScratchGPR);
-            m_jit.loadPtr(Address(wasmScratchGPR), wasmScratchGPR);
+            static_assert(sizeof(Instance::ImportFunctionInfo) * maxImports < std::numeric_limits<int32_t>::max());
+            RELEASE_ASSERT(Instance::offsetOfImportFunctionStub(functionIndex) < std::numeric_limits<int32_t>::max());
+            m_jit.loadPtr(Address(GPRInfo::wasmContextInstancePointer, Instance::offsetOfImportFunctionStub(functionIndex)), wasmScratchGPR);
 
             m_jit.call(wasmScratchGPR, WasmEntryPtrTag);
         } else {
