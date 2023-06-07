@@ -299,14 +299,14 @@ bool WebXROpaqueFramebuffer::setupFramebuffer()
         m_resolvedFBO.ensure(gl);
 
         auto colorBuffer = allocateColorStorage(gl, sampleCount, m_width, m_height);
-        bindColor(gl, colorBuffer);
+        bindColorBuffer(gl, colorBuffer);
 
         m_multisampleColorBuffer.adopt(gl, colorBuffer);
     }
 
     if (hasDepthOrStencil) {
         auto [depthBuffer, stencilBuffer] = allocateDepthStencilStorage(gl, sampleCount, m_width, m_height);
-        bindDepthStencil(gl, depthBuffer, stencilBuffer);
+        bindDepthStencilBuffer(gl, depthBuffer, stencilBuffer);
 
         m_depthStencilBuffer.adopt(gl, depthBuffer);
         m_stencilBuffer.adopt(gl, stencilBuffer != depthBuffer ? stencilBuffer : 0);
@@ -356,12 +356,12 @@ std::tuple<PlatformGLObject, PlatformGLObject> WebXROpaqueFramebuffer::allocateD
     return std::make_tuple(depthBuffer, stencilBuffer);
 }
 
-void WebXROpaqueFramebuffer::bindColor(GraphicsContextGL& gl, PlatformGLObject colorBuffer)
+void WebXROpaqueFramebuffer::bindColorBuffer(GraphicsContextGL& gl, PlatformGLObject colorBuffer)
 {
     gl.framebufferRenderbuffer(GL::FRAMEBUFFER, GL::COLOR_ATTACHMENT0, GL::RENDERBUFFER, colorBuffer);
 }
 
-void WebXROpaqueFramebuffer::bindDepthStencil(GraphicsContextGL& gl, PlatformGLObject depthBuffer, PlatformGLObject stencilBuffer)
+void WebXROpaqueFramebuffer::bindDepthStencilBuffer(GraphicsContextGL& gl, PlatformGLObject depthBuffer, PlatformGLObject stencilBuffer)
 {
     if (depthBuffer == stencilBuffer && !m_context.isWebGL2()) {
         ASSERT(m_attributes.stencil || m_attributes.depth);

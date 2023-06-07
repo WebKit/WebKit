@@ -69,8 +69,8 @@ private:
     PlatformGLObject allocateRenderbufferStorage(GraphicsContextGL&, GCGLsizei, GCGLenum, GCGLsizei, GCGLsizei);
     PlatformGLObject allocateColorStorage(GraphicsContextGL&, GCGLsizei, GCGLsizei, GCGLsizei);
     std::tuple<PlatformGLObject, PlatformGLObject> allocateDepthStencilStorage(GraphicsContextGL&, GCGLsizei, GCGLsizei, GCGLsizei);
-    void bindColor(GraphicsContextGL&, PlatformGLObject);
-    void bindDepthStencil(GraphicsContextGL&, PlatformGLObject, PlatformGLObject);
+    void bindColorBuffer(GraphicsContextGL&, PlatformGLObject);
+    void bindDepthStencilBuffer(GraphicsContextGL&, PlatformGLObject, PlatformGLObject);
 
     PlatformXR::LayerHandle m_handle;
     Ref<WebGLFramebuffer> m_framebuffer;
