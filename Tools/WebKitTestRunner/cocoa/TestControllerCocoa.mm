@@ -122,6 +122,9 @@ void TestController::cocoaPlatformInitialize(const Options& options)
 
     if (options.webKitLogChannels.length())
         [[NSUserDefaults standardUserDefaults] setValue:[NSString stringWithUTF8String:options.webKitLogChannels.c_str()] forKey:@"WebKit2Logging"];
+
+    if (options.lockdownModeEnabled)
+        [WKProcessPool _setCaptivePortalModeEnabledGloballyForTesting:YES];
 }
 
 WKContextRef TestController::platformContext()

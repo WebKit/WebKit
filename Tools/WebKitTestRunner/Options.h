@@ -50,6 +50,7 @@ struct Options {
     bool checkForWorldLeaks { false };
     bool allowAnyHTTPSCertificateForAllowedHosts { false };
     bool enableAllExperimentalFeatures { true };
+    bool lockdownModeEnabled { false };
     std::vector<std::string> paths;
     std::set<std::string> allowedHosts;
     std::set<std::string> localhostAliases;
