@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <wtf/CompactRefPtrTuple.h>
 #include <wtf/Lock.h>
 #include <wtf/MainThread.h>
 #include <wtf/RefPtr.h>
@@ -100,13 +101,13 @@ public:
     }
 
     template<typename T>
-    RefPtr<T> makeStrongReferenceIfPossible(const T* objectOfCorrectType) const
+    RefPtr<T> makeStrongReferenceIfPossible(uint16_t objectOffset) const
     {
         Locker locker { m_lock };
         if (m_object) {
             // Calling the RefPtr constructor would call strongRef() and deadlock.
             ++m_strongReferenceCount;
-            return adoptRef(const_cast<T*>(objectOfCorrectType));
+            return adoptRef(reinterpret_cast<T*>(reinterpret_cast<size_t>(m_object) + objectOffset));
         }
         return nullptr;
     }
@@ -115,6 +116,17 @@ public:
     {
         Locker locker { m_lock };
         return !m_object;
+    }
+
+    template<typename T>
+    uint16_t objectOffset(T* pointerMaybeToSubclass)
+    {
+        Locker locker { m_lock };
+        if (!m_object)
+            return 0;
+        auto offset = reinterpret_cast<size_t>(pointerMaybeToSubclass) - reinterpret_cast<size_t>(m_object);
+        ASSERT(offset <= std::numeric_limits<uint16_t>::max());
+        return static_cast<uint16_t>(offset);
     }
 
 private:
@@ -153,107 +165,94 @@ public:
     ThreadSafeWeakPtr(std::nullptr_t) { }
 
     ThreadSafeWeakPtr(const ThreadSafeWeakPtr<T>& other)
-        : m_controlBlock(other.m_controlBlock)
-        , m_objectOfCorrectType(other.m_objectOfCorrectType) { }
+        : m_controlBlockAndObjectOffset(other.m_controlBlockAndObjectOffset) { }
 
     template<typename U, std::enable_if_t<!std::is_pointer_v<U>>* = nullptr>
     ThreadSafeWeakPtr(const U& retainedReference)
-        : m_controlBlock(controlBlock(retainedReference))
-        , m_objectOfCorrectType(static_cast<const T*>(&retainedReference))
+        : m_controlBlockAndObjectOffset(controlBlockAndObjectOffset(retainedReference))
     {
-        RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!m_controlBlock->objectHasBeenDeleted());
+        RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!m_controlBlockAndObjectOffset.pointer()->objectHasBeenDeleted());
     }
 
     template<typename U>
     ThreadSafeWeakPtr(const U* retainedPointer)
-        : m_controlBlock(retainedPointer ? controlBlock(*retainedPointer) : nullptr)
-        , m_objectOfCorrectType(static_cast<const T*>(retainedPointer))
+        : m_controlBlockAndObjectOffset(retainedPointer ? controlBlockAndObjectOffset(*retainedPointer) : CompactRefPtrTuple<ThreadSafeWeakPtrControlBlock, uint16_t> { })
     {
-        RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!retainedPointer || !m_controlBlock->objectHasBeenDeleted());
+        RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!retainedPointer || !m_controlBlockAndObjectOffset.pointer()->objectHasBeenDeleted());
     }
 
     template<typename U>
     ThreadSafeWeakPtr(const Ref<U>& strongReference)
-        : m_controlBlock(controlBlock(strongReference))
-        , m_objectOfCorrectType(static_cast<const T*>(strongReference.ptr())) { }
+        : m_controlBlockAndObjectOffset(controlBlockAndObjectOffset(strongReference)) { }
 
     template<typename U>
     ThreadSafeWeakPtr(const RefPtr<U>& strongReference)
-        : m_controlBlock(strongReference ? controlBlock(*strongReference) : nullptr)
-        , m_objectOfCorrectType(static_cast<const T*>(strongReference.get())) { }
+        : m_controlBlockAndObjectOffset(strongReference ? controlBlockAndObjectOffset(*strongReference) : CompactRefPtrTuple<ThreadSafeWeakPtrControlBlock, uint16_t> { }) { }
 
     ThreadSafeWeakPtr(ThreadSafeWeakPtr&& other)
-        : m_controlBlock(std::exchange(other.m_controlBlock, nullptr))
-        , m_objectOfCorrectType(std::exchange(other.m_objectOfCorrectType, nullptr)) { }
+        : m_controlBlockAndObjectOffset(std::exchange(other.m_controlBlockAndObjectOffset, { })) { }
 
     ThreadSafeWeakPtr& operator=(ThreadSafeWeakPtr&& other)
     {
-        m_controlBlock = std::exchange(other.m_controlBlock, nullptr);
-        m_objectOfCorrectType = std::exchange(other.m_objectOfCorrectType, nullptr);
+        m_controlBlockAndObjectOffset = std::exchange(other.m_controlBlockAndObjectOffset, { });
         return *this;
     }
 
     template<typename U, std::enable_if_t<!std::is_pointer_v<U>>* = nullptr>
     ThreadSafeWeakPtr& operator=(const U& retainedReference)
     {
-        m_controlBlock = controlBlock(retainedReference);
-        const U* retainedPointer = static_cast<const U*>(&retainedReference);
-        m_objectOfCorrectType = static_cast<const T*>(retainedPointer);
-        RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!m_controlBlock->objectHasBeenDeleted());
+        m_controlBlockAndObjectOffset = controlBlockAndObjectOffset(retainedReference);
+        RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!m_controlBlockAndObjectOffset.pointer()->objectHasBeenDeleted());
         return *this;
     }
 
     template<typename U>
     ThreadSafeWeakPtr& operator=(const U* retainedPointer)
     {
-        m_controlBlock = retainedPointer ? controlBlock(*retainedPointer) : nullptr;
-        m_objectOfCorrectType = static_cast<const T*>(retainedPointer);
-        RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!retainedPointer || !m_controlBlock->objectHasBeenDeleted());
+        m_controlBlockAndObjectOffset = retainedPointer ? controlBlockAndObjectOffset(*retainedPointer) : CompactRefPtrTuple<ThreadSafeWeakPtrControlBlock, uint16_t> { };
+        RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!retainedPointer || !m_controlBlockAndObjectOffset.pointer()->objectHasBeenDeleted());
         return *this;
     }
 
     ThreadSafeWeakPtr& operator=(std::nullptr_t)
     {
-        m_controlBlock = nullptr;
-        m_objectOfCorrectType = nullptr;
+        m_controlBlockAndObjectOffset = { };
         return *this;
     }
 
     template<typename U>
     ThreadSafeWeakPtr& operator=(const Ref<U>& strongReference)
     {
-        m_controlBlock = controlBlock(strongReference);
-        m_objectOfCorrectType = static_cast<const T*>(strongReference.ptr());
+        m_controlBlockAndObjectOffset = controlBlockAndObjectOffset(strongReference);
         return *this;
     }
 
     template<typename U>
     ThreadSafeWeakPtr& operator=(const RefPtr<U>& strongReference)
     {
-        m_controlBlock = strongReference ? controlBlock(*strongReference) : nullptr;
-        m_objectOfCorrectType = static_cast<const T*>(strongReference.get());
+        m_controlBlockAndObjectOffset = strongReference ? controlBlockAndObjectOffset(*strongReference) : CompactRefPtrTuple<ThreadSafeWeakPtrControlBlock, uint16_t> { };
         return *this;
     }
 
-    RefPtr<T> get() const { return m_controlBlock ? m_controlBlock->template makeStrongReferenceIfPossible<T>(m_objectOfCorrectType) : nullptr; }
+    RefPtr<T> get() const { return m_controlBlockAndObjectOffset.pointer() ? m_controlBlockAndObjectOffset.pointer()->template makeStrongReferenceIfPossible<T>(m_controlBlockAndObjectOffset.type()) : nullptr; }
 
 private:
     template<typename U, std::enable_if_t<std::is_convertible_v<U*, T*>>* = nullptr>
-    ThreadSafeWeakPtrControlBlock* controlBlock(const U& classOrChildClass)
+    CompactRefPtrTuple<ThreadSafeWeakPtrControlBlock, uint16_t> controlBlockAndObjectOffset(const U& classOrChildClass)
     {
-        return &classOrChildClass.controlBlock();
+        CompactRefPtrTuple<ThreadSafeWeakPtrControlBlock, uint16_t> result;
+        auto& controlBlock = classOrChildClass.controlBlock();
+        result.setPointer(&controlBlock);
+        result.setType(controlBlock.objectOffset(&classOrChildClass));
+        return result;
     }
 
     template<typename, DestructionThread> friend class ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr;
     template<typename> friend class ThreadSafeWeakHashSet;
-    explicit ThreadSafeWeakPtr(ThreadSafeWeakPtrControlBlock& controlBlock)
-        : m_controlBlock(&controlBlock) { }
+    explicit ThreadSafeWeakPtr(CompactRefPtrTuple<ThreadSafeWeakPtrControlBlock, uint16_t>&& controlBlockAndObjectOffset)
+        : m_controlBlockAndObjectOffset(WTFMove(controlBlockAndObjectOffset)) { }
 
-    // FIXME: Either remove ThreadSafeWeakPtrControlBlock::m_object as redundant information,
-    // or use CompactRefPtrTuple to reduce sizeof(ThreadSafeWeakPtr) by storing just an offset
-    // from ThreadSafeWeakPtrControlBlock::m_object and don't support structs larger than 65535.
-    RefPtr<ThreadSafeWeakPtrControlBlock> m_controlBlock;
-    const T* m_objectOfCorrectType { nullptr };
+    CompactRefPtrTuple<ThreadSafeWeakPtrControlBlock, uint16_t> m_controlBlockAndObjectOffset;
 };
 
 template<class T> ThreadSafeWeakPtr(const T&) -> ThreadSafeWeakPtr<T>;
