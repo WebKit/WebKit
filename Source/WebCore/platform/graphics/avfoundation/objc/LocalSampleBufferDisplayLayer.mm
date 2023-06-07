@@ -315,9 +315,9 @@ void LocalSampleBufferDisplayLayer::updateRootLayerBoundsAndPosition(CGRect boun
         auto layerBounds = bounds;
         if (rotation == VideoFrame::Rotation::Right || rotation == VideoFrame::Rotation::Left)
             std::swap(layerBounds.size.width, layerBounds.size.height);
-        CGPoint position { bounds.size.width / 2, bounds.size.height / 2 };
-        m_sampleBufferDisplayLayer.get().position = position;
-        m_sampleBufferDisplayLayer.get().bounds = bounds;
+        CGPoint layerPosition { layerBounds.size.width / 2, layerBounds.size.height / 2 };
+        m_sampleBufferDisplayLayer.get().position = layerPosition;
+        m_sampleBufferDisplayLayer.get().bounds = layerBounds;
 
         m_processingQueue->dispatch([this, weakThis = WTFMove(weakThis), newLayer = m_sampleBufferDisplayLayer, oldLayer = WTFMove(oldLayer), shouldUpdateRootLayer, bounds, rotation]() mutable {
             assertIsCurrent(workQueue());
