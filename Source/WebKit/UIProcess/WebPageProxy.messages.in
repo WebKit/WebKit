@@ -631,5 +631,5 @@ messages -> WebPageProxy {
 
     RequestCookieConsent() -> (enum:uint8_t WebCore::CookieConsentDecisionResult result)
 
-    DidChangeLookalikeCharacters(URL originalURL, URL adjustedURL)
+    DidApplyLinkDecorationFiltering(URL originalURL, URL adjustedURL)
 }

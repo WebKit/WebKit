@@ -1,0 +1,150 @@
+<!DOCTYPE>
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<head>
+<style>
+body, html {
+    font-family: monospace;
+    font-size: 16px;
+}
+
+button {
+    font-size: 16px;
+}
+
+.container {
+    padding: 1em;
+    margin: 4px;
+    border: 1px solid black;
+}
+
+.button-container {
+    margin-bottom: 1em;
+}
+
+.audio-fp-result {
+    font-size: 20px;
+    display: block;
+    margin-bottom: 6px;
+}
+</style>
+</head>
+<script>
+function combineSamples(samples) {
+    let result = 0;
+    for (const value of samples)
+        result += value;
+    return result;
+}
+
+function waitForAudioProcess(scriptProcessor) {
+    return new Promise(resolve => {
+        scriptProcessor.addEventListener("audioprocess", event => {
+            resolve(event);
+        }, { once: true });
+    });
+}
+
+async function testOscillatorCompressor() {
+    const context = new OfflineAudioContext(1, 5000, 44100);
+    const oscillator = context.createOscillator();
+    oscillator.type = "triangle";
+    oscillator.frequency.value = 1000;
+
+    const compressor = context.createDynamicsCompressor();
+    compressor.threshold.value = -50;
+    compressor.knee.value = 40;
+    compressor.ratio.value = 12;
+    compressor.reduction.value = 20;
+    compressor.attack.value = 0;
+    compressor.release.value = 0.2;
+
+    oscillator.connect(compressor);
+    compressor.connect(context.destination);
+
+    oscillator.start();
+    const renderedBuffer = await context.startRendering();
+    oscillator.disconnect();
+    compressor.disconnect();
+
+    return combineSamples(renderedBuffer.getChannelData(0));
+}
+
+function testOscillatorCompressorWorklet() {
+    return new Promise(async resolve => {
+        const context = new AudioContext;
+
+        await context.audioWorklet.addModule("fingerprint-audio-worklet.js");
+        const workletNode = new AudioWorkletNode(context, "fingerprint-processor");
+
+        let gotFingerprint = false;
+        workletNode.port.onmessage = event => {
+            const fingerprint = event?.data?.fingerprint || 0;
+            if (!fingerprint || gotFingerprint)
+                return;
+
+            gotFingerprint = true;
+            oscillator.disconnect();
+            compressor.disconnect();
+            workletNode.disconnect();
+            resolve(fingerprint);
+        };
+
+        const oscillator = context.createOscillator();
+        oscillator.type = "triangle";
+        oscillator.frequency.value = 1000;
+
+        const compressor = context.createDynamicsCompressor();
+        compressor.threshold.value = -100;
+        compressor.knee.value = 50;
+        compressor.ratio.value = 8;
+        compressor.reduction.value = 10;
+        compressor.attack.value = 0.1;
+        compressor.release.value = 0.12;
+
+        oscillator.connect(compressor).connect(workletNode).connect(context.destination);
+        oscillator.start();
+        context.resume();
+    });
+}
+
+async function testOscillatorCompressorAnalyzer() {
+    const context = new AudioContext;
+    const oscillator = context.createOscillator();
+    const analyzer = context.createAnalyser();
+    const gain = context.createGain();
+    const scriptProcessor = context.createScriptProcessor(4096, 1, 1);
+    const compressor = context.createDynamicsCompressor();
+
+    compressor.threshold.value = -50;
+    compressor.knee.value = 40;
+    compressor.ratio.value = 12;
+    compressor.reduction.value = 20;
+    compressor.attack.value = 0;
+    compressor.release.value = 0.2;
+
+    gain.gain.value = 0;
+    oscillator.type = "triangle";
+    oscillator.frequency.value = 1000;
+    oscillator.connect(compressor);
+    compressor.connect(analyzer);
+    analyzer.connect(scriptProcessor);
+    scriptProcessor.connect(gain);
+    gain.connect(context.destination);
+
+    oscillator.start(0);
+
+    await waitForAudioProcess(scriptProcessor);
+    const bins = new Float32Array(analyzer.frequencyBinCount);
+    analyzer.getFloatFrequencyData(bins);
+    oscillator.disconnect();
+    compressor.disconnect();
+    analyzer.disconnect();
+    scriptProcessor.disconnect();
+    gain.disconnect();
+
+    return combineSamples(bins);
+}
+</script>
+</body>
+</html>

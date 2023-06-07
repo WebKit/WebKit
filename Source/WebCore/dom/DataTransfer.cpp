@@ -158,7 +158,7 @@ static String readURLsFromPasteboardAsString(Page* page, Pasteboard& pasteboard,
     auto urlStrings = pasteboard.readAllStrings("text/uri-list"_s);
     if (page) {
         urlStrings = urlStrings.map([&](auto& string) {
-            return page->sanitizeLookalikeCharacters(string, LookalikeCharacterSanitizationTrigger::Paste);
+            return page->applyLinkDecorationFiltering(string, LinkDecorationFilteringTrigger::Paste);
         });
     }
 
@@ -227,7 +227,7 @@ String DataTransfer::readStringFromPasteboard(Document& document, const String& 
 
     auto string = m_pasteboard->readString(lowercaseType);
     if (auto* page = document.page())
-        return page->sanitizeLookalikeCharacters(string, LookalikeCharacterSanitizationTrigger::Paste);
+        return page->applyLinkDecorationFiltering(string, LinkDecorationFilteringTrigger::Paste);
 
     return string;
 }
@@ -280,7 +280,7 @@ void DataTransfer::setDataFromItemList(Document& document, const String& type, c
 
     if (type == "text/uri-list"_s || type == textPlainContentTypeAtom()) {
         if (auto* page = document.page())
-            sanitizedData = page->sanitizeLookalikeCharacters(sanitizedData, LookalikeCharacterSanitizationTrigger::Copy);
+            sanitizedData = page->applyLinkDecorationFiltering(sanitizedData, LinkDecorationFilteringTrigger::Copy);
     }
 
     if (sanitizedData != data)

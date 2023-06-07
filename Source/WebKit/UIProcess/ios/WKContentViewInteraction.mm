@@ -12406,8 +12406,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if ([(NSURL *)linkURL iTunesStoreURL]) {
         _useCompactMenuForContextMenuInteraction = !_page->websiteDataStore().isPersistent();
 
-#if ENABLE(NETWORK_CONNECTION_INTEGRITY)
-        if (_page->networkConnectionIntegrityPolicies().contains(WebCore::NetworkConnectionIntegrity::Enabled))
+#if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
+        if (_page->advancedPrivacyProtectionsPolicies().contains(WebCore::AdvancedPrivacyProtections::BaselineProtections))
             _useCompactMenuForContextMenuInteraction = YES;
 #endif
 

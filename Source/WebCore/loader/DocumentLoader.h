@@ -29,6 +29,7 @@
 
 #pragma once
 
+#include "AdvancedPrivacyProtections.h"
 #include "CachedRawResourceClient.h"
 #include "CachedResourceHandle.h"
 #include "ContentFilterClient.h"
@@ -40,7 +41,6 @@
 #include "FrameDestructionObserver.h"
 #include "LinkIcon.h"
 #include "NavigationAction.h"
-#include "NetworkConnectionIntegrity.h"
 #include "ResourceError.h"
 #include "ResourceLoaderIdentifier.h"
 #include "ResourceLoaderOptions.h"
@@ -313,7 +313,7 @@ public:
     bool isLoadingMainResource() const { return m_loadingMainResource; }
     bool isLoadingMultipartContent() const { return m_isLoadingMultipartContent; }
 
-    bool isLoadingInHeadlessMode() const;
+    bool fingerprintingProtectionsEnabled() const;
 
     void stopLoadingPlugIns();
     void stopLoadingSubresources();
@@ -451,11 +451,11 @@ public:
     void setAllowContentChangeObserverQuirk(bool allow) { m_allowContentChangeObserverQuirk = allow; }
     bool allowContentChangeObserverQuirk() const { return m_allowContentChangeObserverQuirk; }
 
-    void setNetworkConnectionIntegrityPolicy(OptionSet<NetworkConnectionIntegrity> policy) { m_networkConnectionIntegrityPolicy = policy; }
-    OptionSet<NetworkConnectionIntegrity> networkConnectionIntegrityPolicy() const { return m_networkConnectionIntegrityPolicy; }
+    void setAdvancedPrivacyProtections(OptionSet<AdvancedPrivacyProtections> policy) { m_advancedPrivacyProtections = policy; }
+    OptionSet<AdvancedPrivacyProtections> advancedPrivacyProtections() const { return m_advancedPrivacyProtections; }
 
-    void setOriginatorNetworkConnectionIntegrityPolicy(OptionSet<NetworkConnectionIntegrity> policy) { m_originatorNetworkConnectionIntegrityPolicy = policy; }
-    OptionSet<NetworkConnectionIntegrity> originatorNetworkConnectionIntegrityPolicy() const { return m_originatorNetworkConnectionIntegrityPolicy; }
+    void setOriginatorAdvancedPrivacyProtections(OptionSet<AdvancedPrivacyProtections> policy) { m_originatorAdvancedPrivacyProtections = policy; }
+    OptionSet<AdvancedPrivacyProtections> originatorAdvancedPrivacyProtections() const { return m_originatorAdvancedPrivacyProtections; }
 
     void setIdempotentModeAutosizingOnlyHonorsPercentages(bool idempotentModeAutosizingOnlyHonorsPercentages) { m_idempotentModeAutosizingOnlyHonorsPercentages = idempotentModeAutosizingOnlyHonorsPercentages; }
     bool idempotentModeAutosizingOnlyHonorsPercentages() const { return m_idempotentModeAutosizingOnlyHonorsPercentages; }
@@ -696,8 +696,8 @@ private:
     DeviceOrientationOrMotionPermissionState m_deviceOrientationAndMotionAccessState { DeviceOrientationOrMotionPermissionState::Prompt };
 #endif
 
-    OptionSet<NetworkConnectionIntegrity> m_networkConnectionIntegrityPolicy;
-    OptionSet<NetworkConnectionIntegrity> m_originatorNetworkConnectionIntegrityPolicy;
+    OptionSet<AdvancedPrivacyProtections> m_advancedPrivacyProtections;
+    OptionSet<AdvancedPrivacyProtections> m_originatorAdvancedPrivacyProtections;
     AutoplayPolicy m_autoplayPolicy { AutoplayPolicy::Default };
     OptionSet<AutoplayQuirk> m_allowedAutoplayQuirks;
     PopUpPolicy m_popUpPolicy { PopUpPolicy::Default };

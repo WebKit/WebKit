@@ -5451,17 +5451,6 @@ SampledPageTopColorMinHeight:
     WebCore:
       default: 0
 
-SanitizeLookalikeCharactersInLinksEnabled:
-  type: bool
-  status: embedder
-  humanReadableName: "Sanitize Lookalike Characters in Links"
-  humanReadableDescription: "Enable Sanitization for Lookalike Characters in Links"
-  webcoreBinding: none
-  condition: ENABLE(NETWORK_CONNECTION_INTEGRITY)
-  defaultValue:
-    WebKit:
-      default: true
-
 SansSerifFontFamily:
   type: String
   status: embedder

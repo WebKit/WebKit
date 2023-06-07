@@ -1305,12 +1305,12 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/ImageAnalysisQueue.h
     page/InteractionRegion.h
     page/LayoutMilestone.h
+    page/LinkDecorationFilteringData.h
     page/LocalDOMWindow.h
     page/LocalDOMWindowProperty.h
     page/LocalFrame.h
     page/LocalFrameView.h
     page/LocalFrameViewLayoutContext.h
-    page/LookalikeCharactersSanitizationData.h
     page/MediaCanStartListener.h
     page/MediaControlsContextMenuItem.h
     page/MediaProducer.h
@@ -1996,6 +1996,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/mock/MockRealtimeMediaSourceCenter.h
     platform/mock/MockRealtimeVideoSource.h
 
+    platform/network/AdvancedPrivacyProtections.h
     platform/network/AuthenticationChallengeBase.h
     platform/network/AuthenticationClient.h
     platform/network/BlobData.h
@@ -2019,7 +2020,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/network/HTTPHeaderMap.h
     platform/network/HTTPHeaderValues.h
     platform/network/HTTPParsers.h
-    platform/network/NetworkConnectionIntegrity.h
     platform/network/NetworkLoadInformation.h
     platform/network/NetworkLoadMetrics.h
     platform/network/NetworkStateNotifier.h

@@ -359,8 +359,8 @@ static void addParametersShared(const LocalFrame* frame, NetworkResourceLoadPara
         }
     }
 
-    auto networkConnectionIntegrityPolicy = policySourceDocumentLoader ? policySourceDocumentLoader->networkConnectionIntegrityPolicy() : OptionSet<NetworkConnectionIntegrity> { };
-    parameters.networkConnectionIntegrityPolicy = networkConnectionIntegrityPolicy;
+    auto advancedPrivacyProtections = policySourceDocumentLoader ? policySourceDocumentLoader->advancedPrivacyProtections() : OptionSet<AdvancedPrivacyProtections> { };
+    parameters.advancedPrivacyProtections = advancedPrivacyProtections;
 
     if (isMainFrameNavigation)
         parameters.linkPreconnectEarlyHintsEnabled = mainFrame->settings().linkPreconnectEarlyHintsEnabled();
@@ -930,7 +930,7 @@ void WebLoaderStrategy::preconnectTo(WebCore::ResourceRequest&& request, WebPage
     parameters.isNavigatingToAppBoundDomain = webFrame.isTopFrameNavigatingToAppBoundDomain();
 #endif
     if (RefPtr loader = policySourceDocumentLoaderForFrame(*webFrame.coreLocalFrame()))
-        parameters.networkConnectionIntegrityPolicy = loader->networkConnectionIntegrityPolicy();
+        parameters.advancedPrivacyProtections = loader->advancedPrivacyProtections();
 
     std::optional<WebCore::ResourceLoaderIdentifier> preconnectionIdentifier;
     if (completionHandler) {

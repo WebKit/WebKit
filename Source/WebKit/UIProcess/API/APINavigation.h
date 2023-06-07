@@ -33,7 +33,7 @@
 #include "ProcessThrottler.h"
 #include "WebBackForwardListItem.h"
 #include "WebContentMode.h"
-#include <WebCore/NetworkConnectionIntegrity.h>
+#include <WebCore/AdvancedPrivacyProtections.h>
 #include <WebCore/PrivateClickMeasurement.h>
 #include <WebCore/ProcessIdentifier.h>
 #include <WebCore/ResourceRequest.h>
@@ -167,8 +167,8 @@ public:
     void setWebsitePolicies(RefPtr<API::WebsitePolicies>&& policies) { m_websitePolicies = WTFMove(policies); }
     API::WebsitePolicies* websitePolicies() { return m_websitePolicies.get(); }
 
-    void setOriginatorNetworkConnectionIntegrityPolicy(OptionSet<WebCore::NetworkConnectionIntegrity> networkConnectionIntegrityPolicy) { m_originatorNetworkConnectionIntegrityPolicy = networkConnectionIntegrityPolicy; }
-    OptionSet<WebCore::NetworkConnectionIntegrity> originatorNetworkConnectionIntegrityPolicy() const { return m_originatorNetworkConnectionIntegrityPolicy; }
+    void setOriginatorAdvancedPrivacyProtections(OptionSet<WebCore::AdvancedPrivacyProtections> advancedPrivacyProtections) { m_originatorAdvancedPrivacyProtections = advancedPrivacyProtections; }
+    OptionSet<WebCore::AdvancedPrivacyProtections> originatorAdvancedPrivacyProtections() const { return m_originatorAdvancedPrivacyProtections; }
 
     WebCore::ProcessIdentifier processID() const { return m_processID; }
     void setProcessID(WebCore::ProcessIdentifier processID) { m_processID = processID; }
@@ -201,7 +201,7 @@ private:
     WebKit::ProcessThrottler::TimedActivity m_clientNavigationActivity;
     bool m_isLoadedWithNavigationShared { false };
     RefPtr<API::WebsitePolicies> m_websitePolicies;
-    OptionSet<WebCore::NetworkConnectionIntegrity> m_originatorNetworkConnectionIntegrityPolicy;
+    OptionSet<WebCore::AdvancedPrivacyProtections> m_originatorAdvancedPrivacyProtections;
 };
 
 } // namespace API

@@ -142,7 +142,7 @@ NetworkResourceLoader::NetworkResourceLoader(NetworkResourceLoadParameters&& par
 
     if (synchronousReply || m_parameters.shouldRestrictHTTPResponseAccess || m_parameters.options.keepAlive) {
         NetworkLoadChecker::LoadType requestLoadType = isMainFrameLoad() ? NetworkLoadChecker::LoadType::MainFrame : NetworkLoadChecker::LoadType::Other;
-        m_networkLoadChecker = makeUnique<NetworkLoadChecker>(connection.networkProcess(), this,  &connection.schemeRegistry(), FetchOptions { m_parameters.options }, sessionID(), m_parameters.webPageProxyID, HTTPHeaderMap { m_parameters.originalRequestHeaders }, URL { m_parameters.request.url() }, URL { m_parameters.documentURL }, m_parameters.sourceOrigin.copyRef(), m_parameters.topOrigin.copyRef(), m_parameters.parentOrigin(), m_parameters.preflightPolicy, originalRequest().httpReferrer(), m_parameters.allowPrivacyProxy, m_parameters.networkConnectionIntegrityPolicy, shouldCaptureExtraNetworkLoadMetrics(), requestLoadType);
+        m_networkLoadChecker = makeUnique<NetworkLoadChecker>(connection.networkProcess(), this,  &connection.schemeRegistry(), FetchOptions { m_parameters.options }, sessionID(), m_parameters.webPageProxyID, HTTPHeaderMap { m_parameters.originalRequestHeaders }, URL { m_parameters.request.url() }, URL { m_parameters.documentURL }, m_parameters.sourceOrigin.copyRef(), m_parameters.topOrigin.copyRef(), m_parameters.parentOrigin(), m_parameters.preflightPolicy, originalRequest().httpReferrer(), m_parameters.allowPrivacyProxy, m_parameters.advancedPrivacyProtections, shouldCaptureExtraNetworkLoadMetrics(), requestLoadType);
         if (m_parameters.cspResponseHeaders)
             m_networkLoadChecker->setCSPResponseHeaders(ContentSecurityPolicyResponseHeaders { m_parameters.cspResponseHeaders.value() });
         m_networkLoadChecker->setParentCrossOriginEmbedderPolicy(m_parameters.parentCrossOriginEmbedderPolicy);
@@ -293,7 +293,7 @@ void NetworkResourceLoader::retrieveCacheEntry(const ResourceRequest& request)
     }
 
     LOADER_RELEASE_LOG("retrieveCacheEntry: Checking the HTTP disk cache");
-    m_cache->retrieve(request, globalFrameID(), m_parameters.isNavigatingToAppBoundDomain, m_parameters.allowPrivacyProxy, m_parameters.networkConnectionIntegrityPolicy, [this, weakThis = WeakPtr { *this }, request = ResourceRequest { request }](auto entry, auto info) mutable {
+    m_cache->retrieve(request, globalFrameID(), m_parameters.isNavigatingToAppBoundDomain, m_parameters.allowPrivacyProxy, m_parameters.advancedPrivacyProtections, [this, weakThis = WeakPtr { *this }, request = ResourceRequest { request }](auto entry, auto info) mutable {
         if (!weakThis)
             return;
 
@@ -1107,9 +1107,9 @@ void NetworkResourceLoader::didFailLoading(const ResourceError& error)
 
     if (m_parameters.pageHasResourceLoadClient)
         m_connection->networkProcess().parentProcessConnection()->send(Messages::NetworkProcessProxy::ResourceLoadDidCompleteWithError(m_parameters.webPageProxyID, resourceLoadInfo(), { }, error), 0);
-#if ENABLE(NETWORK_CONNECTION_INTEGRITY)
-    if (error.compromisedNetworkConnectionIntegrity())
-        m_connection->networkProcess().parentProcessConnection()->send(Messages::NetworkProcessProxy::DidFailLoadDueToNetworkConnectionIntegrity(m_parameters.webPageProxyID, error.failingURL()), 0);
+#if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
+    if (error.blockedKnownTracker())
+        m_connection->networkProcess().parentProcessConnection()->send(Messages::NetworkProcessProxy::DidBlockLoadToKnownTracker(m_parameters.webPageProxyID, error.failingURL()), 0);
 #endif
     cleanup(LoadResult::Failure);
 }

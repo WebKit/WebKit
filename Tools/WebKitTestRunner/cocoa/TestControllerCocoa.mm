@@ -568,7 +568,10 @@ static WKContentMode contentMode(const TestOptions& options)
 void TestController::configureWebpagePreferences(WKWebViewConfiguration *configuration, const TestOptions& options)
 {
     auto webpagePreferences = adoptNS([[WKWebpagePreferences alloc] init]);
-    [webpagePreferences _setNetworkConnectionIntegrityEnabled:options.networkConnectionIntegrityEnabled()];
+    if (options.advancedPrivacyProtectionsEnabled())
+        [webpagePreferences _setNetworkConnectionIntegrityPolicy:_WKWebsiteNetworkConnectionIntegrityPolicyEnabled];
+    else
+        [webpagePreferences _setNetworkConnectionIntegrityPolicy:_WKWebsiteNetworkConnectionIntegrityPolicyNone];
 #if PLATFORM(IOS_FAMILY)
     [webpagePreferences setPreferredContentMode:contentMode(options)];
 #endif

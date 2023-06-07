@@ -338,13 +338,13 @@ static bool inline canRequestUseSpeculativeRevalidation(const WebCore::ResourceR
 #endif
 
 #if ENABLE(NETWORK_CACHE_STALE_WHILE_REVALIDATE)
-void Cache::startAsyncRevalidationIfNeeded(const WebCore::ResourceRequest& request, const NetworkCache::Key& key, std::unique_ptr<Entry>&& entry, const GlobalFrameID& frameID, std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, bool allowPrivacyProxy, OptionSet<WebCore::NetworkConnectionIntegrity> networkConnectionIntegrityPolicy)
+void Cache::startAsyncRevalidationIfNeeded(const WebCore::ResourceRequest& request, const NetworkCache::Key& key, std::unique_ptr<Entry>&& entry, const GlobalFrameID& frameID, std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, bool allowPrivacyProxy, OptionSet<WebCore::AdvancedPrivacyProtections> advancedPrivacyProtections)
 {
     m_pendingAsyncRevalidations.ensure(key, [&] {
         auto addResult = m_pendingAsyncRevalidationByPage.ensure(frameID, [] {
             return WeakHashSet<AsyncRevalidation>();
         });
-        auto revalidation = makeUnique<AsyncRevalidation>(*this, frameID, request, WTFMove(entry), isNavigatingToAppBoundDomain, allowPrivacyProxy, networkConnectionIntegrityPolicy, [this, key](auto result) {
+        auto revalidation = makeUnique<AsyncRevalidation>(*this, frameID, request, WTFMove(entry), isNavigatingToAppBoundDomain, allowPrivacyProxy, advancedPrivacyProtections, [this, key](auto result) {
             ASSERT(m_pendingAsyncRevalidations.contains(key));
             m_pendingAsyncRevalidations.remove(key);
             LOG(NetworkCache, "(NetworkProcess) revalidation completed for '%s' with result %d", key.identifier().utf8().data(), static_cast<int>(result));
@@ -364,7 +364,7 @@ void Cache::browsingContextRemoved(WebPageProxyIdentifier webPageProxyID, WebCor
 #endif
 }
 
-void Cache::retrieve(const WebCore::ResourceRequest& request, const GlobalFrameID& frameID, std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, bool allowPrivacyProxy, OptionSet<WebCore::NetworkConnectionIntegrity> networkConnectionIntegrityPolicy, RetrieveCompletionHandler&& completionHandler)
+void Cache::retrieve(const WebCore::ResourceRequest& request, const GlobalFrameID& frameID, std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, bool allowPrivacyProxy, OptionSet<WebCore::AdvancedPrivacyProtections> advancedPrivacyProtections, RetrieveCompletionHandler&& completionHandler)
 {
     ASSERT(request.url().protocolIsInHTTPFamily());
 
@@ -380,7 +380,7 @@ void Cache::retrieve(const WebCore::ResourceRequest& request, const GlobalFrameI
 #if ENABLE(NETWORK_CACHE_SPECULATIVE_REVALIDATION)
     bool canUseSpeculativeRevalidation = m_speculativeLoadManager && canRequestUseSpeculativeRevalidation(request);
     if (canUseSpeculativeRevalidation)
-        m_speculativeLoadManager->registerLoad(frameID, request, storageKey, isNavigatingToAppBoundDomain, allowPrivacyProxy, networkConnectionIntegrityPolicy);
+        m_speculativeLoadManager->registerLoad(frameID, request, storageKey, isNavigatingToAppBoundDomain, allowPrivacyProxy, advancedPrivacyProtections);
 #endif
 
     auto retrieveDecision = makeRetrieveDecision(request);
@@ -402,7 +402,7 @@ void Cache::retrieve(const WebCore::ResourceRequest& request, const GlobalFrameI
     }
 #endif
 
-    m_storage->retrieve(storageKey, priority, [this, protectedThis = Ref { *this }, request, completionHandler = WTFMove(completionHandler), info = WTFMove(info), storageKey, networkProcess = Ref { networkProcess() }, sessionID = m_sessionID, frameID, isNavigatingToAppBoundDomain, allowPrivacyProxy, networkConnectionIntegrityPolicy](auto record, auto timings) mutable {
+    m_storage->retrieve(storageKey, priority, [this, protectedThis = Ref { *this }, request, completionHandler = WTFMove(completionHandler), info = WTFMove(info), storageKey, networkProcess = Ref { networkProcess() }, sessionID = m_sessionID, frameID, isNavigatingToAppBoundDomain, allowPrivacyProxy, advancedPrivacyProtections](auto record, auto timings) mutable {
         info.storageTimings = timings;
 
         if (!record) {
@@ -421,7 +421,7 @@ void Cache::retrieve(const WebCore::ResourceRequest& request, const GlobalFrameI
 #if ENABLE(NETWORK_CACHE_STALE_WHILE_REVALIDATE)
             auto entryCopy = makeUnique<Entry>(*entry);
             entryCopy->setNeedsValidation(true);
-            startAsyncRevalidationIfNeeded(request, storageKey, WTFMove(entryCopy), frameID, isNavigatingToAppBoundDomain, allowPrivacyProxy, networkConnectionIntegrityPolicy);
+            startAsyncRevalidationIfNeeded(request, storageKey, WTFMove(entryCopy), frameID, isNavigatingToAppBoundDomain, allowPrivacyProxy, advancedPrivacyProtections);
 #else
             UNUSED_PARAM(frameID);
             UNUSED_PARAM(this);

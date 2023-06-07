@@ -42,7 +42,7 @@ struct ResourceRequestPlatformData {
     std::optional<bool> m_isAppInitiated;
     std::optional<ResourceRequestRequester> m_requester;
     bool m_privacyProxyFailClosedForUnreachableNonMainHosts { false };
-    bool m_useNetworkConnectionIntegrity { false };
+    bool m_useAdvancedPrivacyProtections { false };
 };
 
 using ResourceRequestData = std::variant<ResourceRequestBase::RequestData, ResourceRequestPlatformData>;

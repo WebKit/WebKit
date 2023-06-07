@@ -464,8 +464,8 @@ private:
     void textAutosizingUsesIdempotentModeChanged() final;
 #endif
 
-    URL sanitizeLookalikeCharacters(const URL&, WebCore::LookalikeCharacterSanitizationTrigger) const final;
-    URL allowedLookalikeCharacters(const URL&) const final;
+    URL applyLinkDecorationFiltering(const URL&, WebCore::LinkDecorationFilteringTrigger) const final;
+    URL allowedQueryParametersForAdvancedPrivacyProtections(const URL&) const final;
 
 #if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS) && USE(UICONTEXTMENU)
     void showMediaControlsContextMenu(WebCore::FloatRect&&, Vector<WebCore::MediaControlsContextMenuItem>&&, CompletionHandler<void(WebCore::MediaControlsContextMenuItem::ID)>&&) final;

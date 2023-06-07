@@ -1143,7 +1143,7 @@ std::optional<NavigatingToAppBoundDomain> WebFrame::isTopFrameNavigatingToAppBou
 }
 #endif
 
-OptionSet<WebCore::NetworkConnectionIntegrity> WebFrame::networkConnectionIntegrityPolicy() const
+OptionSet<WebCore::AdvancedPrivacyProtections> WebFrame::advancedPrivacyProtections() const
 {
     auto* coreFrame = this->coreLocalFrame();
     if (!coreFrame)
@@ -1161,7 +1161,7 @@ OptionSet<WebCore::NetworkConnectionIntegrity> WebFrame::networkConnectionIntegr
     if (!policySourceDocumentLoader->request().url().hasSpecialScheme() && document->url().protocolIsInHTTPFamily())
         policySourceDocumentLoader = document->loader();
 
-    return policySourceDocumentLoader->networkConnectionIntegrityPolicy();
+    return policySourceDocumentLoader->advancedPrivacyProtections();
 }
 
 } // namespace WebKit

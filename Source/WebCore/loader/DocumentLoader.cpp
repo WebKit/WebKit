@@ -136,15 +136,6 @@
 
 #if USE(APPLE_INTERNAL_SDK)
 #include <WebKitAdditions/DocumentLoaderAdditions.cpp>
-#else
-namespace WebCore {
-
-bool DocumentLoader::isLoadingInHeadlessMode() const
-{
-    return false;
-}
-
-} // namespace WebCore
 #endif
 
 namespace WebCore {
@@ -2580,6 +2571,11 @@ bool DocumentLoader::allowsActiveContentRuleListActionsForURL(const String& cont
             return true;
     }
     return false;
+}
+
+bool DocumentLoader::fingerprintingProtectionsEnabled() const
+{
+    return m_advancedPrivacyProtections.contains(AdvancedPrivacyProtections::FingerprintingProtections);
 }
 
 } // namespace WebCore

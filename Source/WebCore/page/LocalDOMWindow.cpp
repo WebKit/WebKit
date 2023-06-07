@@ -1280,7 +1280,7 @@ int LocalDOMWindow::outerHeight() const
     if (!page)
         return 0;
 
-    if (page->isLoadingInHeadlessMode())
+    if (page->fingerprintingProtectionsEnabled())
         return innerHeight();
 
 #if PLATFORM(IOS_FAMILY)
@@ -1308,7 +1308,7 @@ int LocalDOMWindow::outerWidth() const
     if (!page)
         return 0;
 
-    if (page->isLoadingInHeadlessMode())
+    if (page->fingerprintingProtectionsEnabled())
         return innerWidth();
 
 #if PLATFORM(IOS_FAMILY)
@@ -1373,7 +1373,7 @@ int LocalDOMWindow::screenX() const
         return 0;
 
     Page* page = frame->page();
-    if (!page || page->isLoadingInHeadlessMode())
+    if (!page || page->fingerprintingProtectionsEnabled())
         return 0;
 
     return static_cast<int>(page->chrome().windowRect().x());
@@ -1386,7 +1386,7 @@ int LocalDOMWindow::screenY() const
         return 0;
 
     Page* page = frame->page();
-    if (!page || page->isLoadingInHeadlessMode())
+    if (!page || page->fingerprintingProtectionsEnabled())
         return 0;
 
     return static_cast<int>(page->chrome().windowRect().y());

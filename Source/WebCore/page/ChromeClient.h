@@ -555,8 +555,8 @@ public:
     virtual void handlePDFServiceClick(const IntPoint&, HTMLAttachmentElement&) { }
 #endif
 
-    virtual URL sanitizeLookalikeCharacters(const URL& url, LookalikeCharacterSanitizationTrigger) const { return url; }
-    virtual URL allowedLookalikeCharacters(const URL& url) const { return url; }
+    virtual URL applyLinkDecorationFiltering(const URL& url, LinkDecorationFilteringTrigger) const { return url; }
+    virtual URL allowedQueryParametersForAdvancedPrivacyProtections(const URL& url) const { return url; }
 
     virtual bool shouldDispatchFakeMouseMoveEvents() const { return true; }
 

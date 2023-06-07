@@ -3571,7 +3571,7 @@ const URL& Document::urlForBindings() const
         if (policySourceLoader && !policySourceLoader->request().url().hasSpecialScheme() && url().protocolIsInHTTPFamily())
             policySourceLoader = loader();
 
-        if (!policySourceLoader || !policySourceLoader->originatorNetworkConnectionIntegrityPolicy().contains(NetworkConnectionIntegrity::Enabled))
+        if (!policySourceLoader || !policySourceLoader->originatorAdvancedPrivacyProtections().contains(AdvancedPrivacyProtections::BaselineProtections))
             return false;
 
         auto preNavigationURL = URL { loader()->originalRequest().httpReferrer() };
@@ -3617,7 +3617,7 @@ const URL& Document::urlForBindings() const
 
 URL Document::adjustedURL() const
 {
-    return page() ? page()->chrome().client().allowedLookalikeCharacters(m_url.url()) : m_url.url();
+    return page() ? page()->chrome().client().allowedQueryParametersForAdvancedPrivacyProtections(m_url.url()) : m_url.url();
 }
 
 // https://html.spec.whatwg.org/#fallback-base-url
@@ -5655,7 +5655,7 @@ String Document::referrerForBindings()
     if (!policySourceLoader->request().url().hasSpecialScheme() && url().protocolIsInHTTPFamily())
         policySourceLoader = loader();
 
-    if (policySourceLoader && policySourceLoader->originatorNetworkConnectionIntegrityPolicy().contains(NetworkConnectionIntegrity::Enabled)
+    if (policySourceLoader && policySourceLoader->originatorAdvancedPrivacyProtections().contains(AdvancedPrivacyProtections::BaselineProtections)
         && !RegistrableDomain { URL { frame()->loader().referrer() } }.matches(securityOrigin().data()))
         return String();
     return referrer();
@@ -9717,14 +9717,14 @@ void Document::resetObservationSizeForContainIntrinsicSize(Element& target)
     m_resizeObserverForContainIntrinsicSize->resetObservationSize(target);
 }
 
-#if __has_include(<WebKitAdditions/DocumentAdditions.cpp>)
-#include <WebKitAdditions/DocumentAdditions.cpp>
-#else
 NoiseInjectionPolicy Document::noiseInjectionPolicy() const
 {
+    if (auto* loader = topDocument().loader()) {
+        if (loader->advancedPrivacyProtections().contains(AdvancedPrivacyProtections::FingerprintingProtections))
+            return NoiseInjectionPolicy::Minimal;
+    }
     return NoiseInjectionPolicy::None;
 }
-#endif
 
 std::optional<uint64_t> Document::noiseInjectionHashSalt() const
 {

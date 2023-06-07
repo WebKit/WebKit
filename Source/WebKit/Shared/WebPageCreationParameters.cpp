@@ -203,9 +203,9 @@ void WebPageCreationParameters::encode(IPC::Encoder& encoder) const
     encoder << contentSecurityPolicyModeForExtension;
     encoder << subframeProcessFrameTreeCreationParameters;
 
-#if ENABLE(NETWORK_CONNECTION_INTEGRITY)
-    encoder << lookalikeCharacterStrings;
-    encoder << allowedLookalikeCharacterStrings;
+#if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
+    encoder << linkDecorationFilteringData;
+    encoder << allowedQueryParametersForAdvancedPrivacyProtections;
 #endif
 
 #if HAVE(MACH_BOOTSTRAP_EXTENSION)
@@ -652,18 +652,18 @@ std::optional<WebPageCreationParameters> WebPageCreationParameters::decode(IPC::
     if (!decoder.decode(parameters.subframeProcessFrameTreeCreationParameters))
         return std::nullopt;
 
-#if ENABLE(NETWORK_CONNECTION_INTEGRITY)
-    std::optional<Vector<WebCore::LookalikeCharactersSanitizationData>> lookalikeCharacterStrings;
-    decoder >> lookalikeCharacterStrings;
-    if (!lookalikeCharacterStrings)
+#if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
+    std::optional<Vector<WebCore::LinkDecorationFilteringData>> linkDecorationFilteringData;
+    decoder >> linkDecorationFilteringData;
+    if (!linkDecorationFilteringData)
         return std::nullopt;
-    parameters.lookalikeCharacterStrings = WTFMove(*lookalikeCharacterStrings);
+    parameters.linkDecorationFilteringData = WTFMove(*linkDecorationFilteringData);
 
-    std::optional<Vector<WebCore::LookalikeCharactersSanitizationData>> allowedLookalikeCharacterStrings;
-    decoder >> allowedLookalikeCharacterStrings;
-    if (!allowedLookalikeCharacterStrings)
+    std::optional<Vector<WebCore::LinkDecorationFilteringData>> allowedQueryParametersForAdvancedPrivacyProtections;
+    decoder >> allowedQueryParametersForAdvancedPrivacyProtections;
+    if (!allowedQueryParametersForAdvancedPrivacyProtections)
         return std::nullopt;
-    parameters.allowedLookalikeCharacterStrings = WTFMove(*allowedLookalikeCharacterStrings);
+    parameters.allowedQueryParametersForAdvancedPrivacyProtections = WTFMove(*allowedQueryParametersForAdvancedPrivacyProtections);
 #endif
 
 #if HAVE(MACH_BOOTSTRAP_EXTENSION)

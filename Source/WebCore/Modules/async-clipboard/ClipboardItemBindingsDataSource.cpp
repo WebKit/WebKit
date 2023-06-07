@@ -300,7 +300,7 @@ void ClipboardItemBindingsDataSource::ClipboardItemTypeLoader::sanitizeDataIfNee
         if (urlStringToSanitize.isEmpty())
             return;
 
-        m_data = { page->sanitizeLookalikeCharacters(urlStringToSanitize, LookalikeCharacterSanitizationTrigger::Copy) };
+        m_data = { page->applyLinkDecorationFiltering(urlStringToSanitize, LinkDecorationFilteringTrigger::Copy) };
     }
 
     if (m_type == "text/html"_s) {

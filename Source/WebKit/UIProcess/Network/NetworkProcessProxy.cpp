@@ -553,10 +553,10 @@ void NetworkProcessProxy::didNegotiateModernTLS(WebPageProxyIdentifier pageID, c
         page->didNegotiateModernTLS(url);
 }
 
-void NetworkProcessProxy::didFailLoadDueToNetworkConnectionIntegrity(WebPageProxyIdentifier pageID, const URL& url) 
+void NetworkProcessProxy::didBlockLoadToKnownTracker(WebPageProxyIdentifier pageID, const URL& url)
 {
     if (auto page = pageID ? WebProcessProxy::webPage(pageID) : nullptr)
-        page->didFailLoadDueToNetworkConnectionIntegrity(url);
+        page->didBlockLoadToKnownTracker(url);
 }
 
 void NetworkProcessProxy::triggerBrowsingContextGroupSwitchForNavigation(WebPageProxyIdentifier pageID, uint64_t navigationID, BrowsingContextGroupSwitchDecision browsingContextGroupSwitchDecision, const WebCore::RegistrableDomain& responseDomain, NetworkResourceLoadIdentifier existingNetworkResourceLoadIdentifierToResume, CompletionHandler<void(bool success)>&& completionHandler)

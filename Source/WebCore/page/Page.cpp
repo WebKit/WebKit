@@ -2921,7 +2921,7 @@ void Page::setCurrentKeyboardScrollingAnimator(KeyboardScrollingAnimator* animat
     m_currentKeyboardScrollingAnimator = animator;
 }
 
-bool Page::isLoadingInHeadlessMode() const
+bool Page::fingerprintingProtectionsEnabled() const
 {
     auto* localMainFrame = dynamicDowncast<LocalFrame>(mainFrame());
     RefPtr document = localMainFrame ? localMainFrame->document() : nullptr;
@@ -2929,7 +2929,7 @@ bool Page::isLoadingInHeadlessMode() const
         return false;
 
     RefPtr loader = document->loader();
-    return loader && loader->isLoadingInHeadlessMode();
+    return loader && loader->fingerprintingProtectionsEnabled();
 }
 
 #if ENABLE(REMOTE_INSPECTOR)
@@ -4387,23 +4387,23 @@ ScreenOrientationManager* Page::screenOrientationManager() const
     return m_screenOrientationManager.get();
 }
 
-URL Page::sanitizeLookalikeCharacters(const URL& url, LookalikeCharacterSanitizationTrigger trigger) const
+URL Page::applyLinkDecorationFiltering(const URL& url, LinkDecorationFilteringTrigger trigger) const
 {
-    return chrome().client().sanitizeLookalikeCharacters(url, trigger);
+    return chrome().client().applyLinkDecorationFiltering(url, trigger);
 }
 
-String Page::sanitizeLookalikeCharacters(const String& urlString, LookalikeCharacterSanitizationTrigger trigger) const
+String Page::applyLinkDecorationFiltering(const String& urlString, LinkDecorationFilteringTrigger trigger) const
 {
     if (auto url = URL { urlString }; url.isValid()) {
-        if (auto sanitizedURL = sanitizeLookalikeCharacters(WTFMove(url), trigger); sanitizedURL != url)
+        if (auto sanitizedURL = applyLinkDecorationFiltering(WTFMove(url), trigger); sanitizedURL != url)
             return sanitizedURL.string();
     }
     return urlString;
 }
 
-URL Page::allowedLookalikeCharacters(const URL& url) const
+URL Page::allowedQueryParametersForAdvancedPrivacyProtections(const URL& url) const
 {
-    return chrome().client().allowedLookalikeCharacters(url);
+    return chrome().client().allowedQueryParametersForAdvancedPrivacyProtections(url);
 }
 
 void Page::willBeginScrolling()

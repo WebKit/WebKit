@@ -1034,7 +1034,7 @@ ResourceErrorOr<CachedResourceHandle<CachedResource>> CachedResourceLoader::requ
                 return resource;
             }
             if (RefPtr document = this->document()) {
-                if (auto message = ContentExtensions::customLoadBlockingMessageForConsole(results, resourceRequest.url()))
+                if (auto message = ContentExtensions::customTrackerBlockingMessageForConsole(results, resourceRequest.url()))
                     document->addConsoleMessage(MessageSource::ContentBlocker, MessageLevel::Info, WTFMove(*message));
             }
             return makeUnexpected(ResourceError { errorDomainWebKitInternal, 0, url, "Resource blocked by content blocker"_s, ResourceError::Type::AccessControl });

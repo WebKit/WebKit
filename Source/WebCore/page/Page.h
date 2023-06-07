@@ -244,7 +244,7 @@ enum class RenderingUpdateStep : uint32_t {
     RestoreScrollPositionAndViewState = 1 << 21,
 };
 
-enum class LookalikeCharacterSanitizationTrigger : uint8_t {
+enum class LinkDecorationFilteringTrigger : uint8_t {
     Unspecified,
     Navigation,
     Copy,
@@ -352,7 +352,7 @@ public:
     void setCurrentKeyboardScrollingAnimator(KeyboardScrollingAnimator*);
     KeyboardScrollingAnimator* currentKeyboardScrollingAnimator() const { return m_currentKeyboardScrollingAnimator.get(); }
 
-    bool isLoadingInHeadlessMode() const;
+    bool fingerprintingProtectionsEnabled() const;
 
 #if ENABLE(REMOTE_INSPECTOR)
     WEBCORE_EXPORT bool inspectable() const;
@@ -999,9 +999,9 @@ public:
 
     bool httpsUpgradeEnabled() const { return m_httpsUpgradeEnabled; }
 
-    URL sanitizeLookalikeCharacters(const URL&, LookalikeCharacterSanitizationTrigger) const;
-    String sanitizeLookalikeCharacters(const String&, LookalikeCharacterSanitizationTrigger) const;
-    URL allowedLookalikeCharacters(const URL&) const;
+    URL applyLinkDecorationFiltering(const URL&, LinkDecorationFilteringTrigger) const;
+    String applyLinkDecorationFiltering(const String&, LinkDecorationFilteringTrigger) const;
+    URL allowedQueryParametersForAdvancedPrivacyProtections(const URL&) const;
 
     LoadSchedulingMode loadSchedulingMode() const { return m_loadSchedulingMode; }
     void setLoadSchedulingMode(LoadSchedulingMode);

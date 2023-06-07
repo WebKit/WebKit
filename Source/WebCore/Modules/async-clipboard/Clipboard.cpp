@@ -255,7 +255,7 @@ void Clipboard::getType(ClipboardItem& item, const String& type, Ref<DeferredPro
     }
 
     if (auto* page = frame->page())
-        resultAsString = page->sanitizeLookalikeCharacters(resultAsString, LookalikeCharacterSanitizationTrigger::Paste);
+        resultAsString = page->applyLinkDecorationFiltering(resultAsString, LinkDecorationFilteringTrigger::Paste);
 
     promise->resolve<IDLInterface<Blob>>(ClipboardItem::blobFromString(frame->document(), resultAsString, type));
 }

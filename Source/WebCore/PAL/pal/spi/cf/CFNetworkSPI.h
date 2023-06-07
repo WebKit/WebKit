@@ -203,6 +203,10 @@ typedef enum {
 #if ENABLE(TRACKER_DISPOSITION)
 @property (setter=_setNeedsNetworkTrackingPrevention:) BOOL _needsNetworkTrackingPrevention;
 #endif
+#if HAVE(SYSTEM_SUPPORT_FOR_ADVANCED_PRIVACY_PROTECTIONS)
+@property (setter=_setUseEnhancedPrivacyMode:) BOOL _useEnhancedPrivacyMode;
+@property (setter=_setBlockTrackers:) BOOL _blockTrackers;
+#endif
 @end
 
 @interface NSURLProtocol ()
@@ -342,6 +346,9 @@ typedef NS_ENUM(NSInteger, NSURLSessionCompanionProxyPreference) {
 + (void)_strictTrustEvaluate:(NSURLAuthenticationChallenge *)challenge queue:(dispatch_queue_t)queue completionHandler:(void (^)(NSURLAuthenticationChallenge *challenge, OSStatus trustResult))cb;
 #if HAVE(APP_SSO)
 + (void)_disableAppSSO;
+#endif
+#if HAVE(SYSTEM_SUPPORT_FOR_ADVANCED_PRIVACY_PROTECTIONS)
+@property (readonly) nw_context_t _networkContext;
 #endif
 @end
 

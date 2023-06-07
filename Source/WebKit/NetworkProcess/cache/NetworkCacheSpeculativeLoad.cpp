@@ -42,7 +42,7 @@ namespace NetworkCache {
 
 using namespace WebCore;
 
-SpeculativeLoad::SpeculativeLoad(Cache& cache, const GlobalFrameID& globalFrameID, const ResourceRequest& request, std::unique_ptr<NetworkCache::Entry> cacheEntryForValidation, std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, bool allowPrivacyProxy, OptionSet<NetworkConnectionIntegrity> networkConnectionIntegrityPolicy, RevalidationCompletionHandler&& completionHandler)
+SpeculativeLoad::SpeculativeLoad(Cache& cache, const GlobalFrameID& globalFrameID, const ResourceRequest& request, std::unique_ptr<NetworkCache::Entry> cacheEntryForValidation, std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, bool allowPrivacyProxy, OptionSet<AdvancedPrivacyProtections> advancedPrivacyProtections, RevalidationCompletionHandler&& completionHandler)
     : m_cache(cache)
     , m_completionHandler(WTFMove(completionHandler))
     , m_originalRequest(request)
@@ -69,7 +69,7 @@ SpeculativeLoad::SpeculativeLoad(Cache& cache, const GlobalFrameID& globalFrameI
     parameters.request = m_originalRequest;
     parameters.isNavigatingToAppBoundDomain = isNavigatingToAppBoundDomain;
     parameters.allowPrivacyProxy = allowPrivacyProxy;
-    parameters.networkConnectionIntegrityPolicy = networkConnectionIntegrityPolicy;
+    parameters.advancedPrivacyProtections = advancedPrivacyProtections;
     m_networkLoad = makeUnique<NetworkLoad>(*this, nullptr, WTFMove(parameters), *networkSession);
     m_networkLoad->startWithScheduling();
 }

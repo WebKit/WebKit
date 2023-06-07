@@ -132,6 +132,7 @@ enum ScrollDirection : uint8_t;
 enum ScrollbarOverlayStyle : uint8_t;
 
 enum class ActivityState : uint16_t;
+enum class AdvancedPrivacyProtections : uint16_t;
 enum class AlternativeTextType : uint8_t;
 enum class AutocorrectionResponse : uint8_t;
 enum class AutoplayEvent : uint8_t;
@@ -166,7 +167,6 @@ enum class MediaProducerMutedState : uint8_t;
 enum class ModalContainerControlType : uint8_t;
 enum class ModalContainerDecision : uint8_t;
 enum class MouseEventPolicy : uint8_t;
-enum class NetworkConnectionIntegrity : uint16_t;
 enum class PermissionState : uint8_t;
 enum class PolicyAction : uint8_t;
 enum class ReasonForDismissingAlternativeText : uint8_t;
@@ -221,7 +221,7 @@ struct HTMLModelElementCamera;
 struct ImageBufferBackendParameters;
 struct InspectorOverlayHighlight;
 struct LinkIcon;
-struct LookalikeCharactersSanitizationData;
+struct LinkDecorationFilteringData;
 struct MediaControlsContextMenuItem;
 struct MediaDeviceHashSalts;
 struct MediaKeySystemRequestIdentifierType;
@@ -318,7 +318,7 @@ class DrawingAreaProxy;
 class GamepadData;
 class GeolocationPermissionRequestManagerProxy;
 class LayerTreeContext;
-class LookalikeCharactersObserver;
+class LinkDecorationFilteringDataObserver;
 class MediaKeySystemPermissionRequestManagerProxy;
 class MediaSessionCoordinatorProxyPrivate;
 class MediaUsageManager;
@@ -1606,8 +1606,8 @@ public:
     void negotiatedLegacyTLS();
     void didNegotiateModernTLS(const URL&);
 
-    void didFailLoadDueToNetworkConnectionIntegrity(const URL&);
-    void didChangeLookalikeCharacters(const URL&, const URL&);
+    void didBlockLoadToKnownTracker(const URL&);
+    void didApplyLinkDecorationFiltering(const URL&, const URL&);
 
     SpellDocumentTag spellDocumentTag();
 
@@ -2249,8 +2249,8 @@ public:
 
     WebPopupMenuProxyClient& popupMenuClient();
 
-#if ENABLE(NETWORK_CONNECTION_INTEGRITY)
-    OptionSet<WebCore::NetworkConnectionIntegrity> networkConnectionIntegrityPolicies() const { return m_networkConnectionIntegrityPolicies; }
+#if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
+    OptionSet<WebCore::AdvancedPrivacyProtections> advancedPrivacyProtectionsPolicies() const { return m_advancedPrivacyProtectionsPolicies; }
 #endif
 
 private:
@@ -2763,11 +2763,11 @@ private:
     static bool isInHardwareKeyboardMode();
 #endif
 
-    void waitForInitialLookalikeCharacterStrings(WebFramePolicyListenerProxy&);
-    void sendCachedLookalikeCharacterStrings();
-#if ENABLE(NETWORK_CONNECTION_INTEGRITY)
-    static Vector<WebCore::LookalikeCharactersSanitizationData>& cachedAllowedLookalikeStrings();
-    void updateAllowedLookalikeCharacterStringsIfNeeded();
+    void waitForInitialLinkDecorationFilteringData(WebFramePolicyListenerProxy&);
+    void sendCachedLinkDecorationFilteringData();
+#if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
+    static Vector<WebCore::LinkDecorationFilteringData>& cachedAllowedQueryParametersForAdvancedPrivacyProtections();
+    void updateAllowedQueryParametersForAdvancedPrivacyProtectionsIfNeeded();
 #endif
 
     void clearAudibleActivity();
@@ -3278,11 +3278,11 @@ private:
     bool m_isSuspended { false };
     bool m_isLockdownModeExplicitlySet { false };
 
-#if ENABLE(NETWORK_CONNECTION_INTEGRITY)
-    RefPtr<LookalikeCharactersObserver> m_lookalikeCharacterUpdateObserver;
-    bool m_needsInitialLookalikeCharacterStrings { true };
-    bool m_shouldUpdateAllowedLookalikeCharacterStrings { false };
-    OptionSet<WebCore::NetworkConnectionIntegrity> m_networkConnectionIntegrityPolicies;
+#if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
+    RefPtr<LinkDecorationFilteringDataObserver> m_linkDecorationFilteringDataUpdateObserver;
+    bool m_needsInitialLinkDecorationFilteringData { true };
+    bool m_shouldUpdateAllowedQueryParametersForAdvancedPrivacyProtections { false };
+    OptionSet<WebCore::AdvancedPrivacyProtections> m_advancedPrivacyProtectionsPolicies;
 #endif
 
 #if ENABLE(APP_HIGHLIGHTS)

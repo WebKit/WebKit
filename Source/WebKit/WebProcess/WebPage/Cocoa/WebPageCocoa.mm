@@ -705,19 +705,89 @@ void WebPage::readSelectionFromPasteboard(const String& pasteboardName, Completi
     completionHandler(true);
 }
 
-#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/WebPageCocoaAdditions.mm>)
-#include <WebKitAdditions/WebPageCocoaAdditions.mm>
-#else
-URL WebPage::sanitizeLookalikeCharacters(const URL& url, LookalikeCharacterSanitizationTrigger)
+URL WebPage::applyLinkDecorationFiltering(const URL& url, LinkDecorationFilteringTrigger trigger)
 {
+#if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
+    if (m_linkDecorationFilteringData.isEmpty() && m_domainScopedLinkDecorationFilteringData.isEmpty()) {
+        RELEASE_LOG_ERROR(ResourceLoadStatistics, "Unable to filter tracking query parameters (missing data)");
+        return url;
+    }
+
+    RefPtr mainFrame = m_mainFrame->coreLocalFrame();
+    if (!mainFrame)
+        return url;
+
+    auto isLinkDecorationFilteringEnabled = [&](const DocumentLoader* loader) {
+        if (!loader)
+            return false;
+        auto effectivePolicies = trigger == LinkDecorationFilteringTrigger::Navigation ? loader->originatorAdvancedPrivacyProtections() : loader->advancedPrivacyProtections();
+        return effectivePolicies.contains(AdvancedPrivacyProtections::LinkDecorationFiltering);
+    };
+
+    bool shouldApplyLinkDecorationFiltering = [&] {
+        if (isLinkDecorationFilteringEnabled(mainFrame->loader().documentLoader()))
+            return true;
+
+        if (isLinkDecorationFilteringEnabled(mainFrame->loader().provisionalDocumentLoader()))
+            return true;
+
+        return isLinkDecorationFilteringEnabled(mainFrame->loader().policyDocumentLoader());
+    }();
+
+    if (!shouldApplyLinkDecorationFiltering)
+        return url;
+
+    if (!url.hasQuery())
+        return url;
+
+    auto sanitizedURL = url;
+
+    auto domainScopedQueryParameters = m_domainScopedLinkDecorationFilteringData.get(RegistrableDomain { sanitizedURL });
+    auto removedParameters = WTF::removeQueryParameters(sanitizedURL, [&](auto& parameter) {
+        return m_linkDecorationFilteringData.contains(parameter) || domainScopedQueryParameters.contains(parameter);
+    });
+
+    if (!removedParameters.isEmpty() && trigger != LinkDecorationFilteringTrigger::Unspecified) {
+        if (trigger == LinkDecorationFilteringTrigger::Navigation)
+            send(Messages::WebPageProxy::DidApplyLinkDecorationFiltering(url, sanitizedURL));
+        auto removedParametersString = makeStringByJoining(removedParameters, ", "_s);
+        WEBPAGE_RELEASE_LOG(ResourceLoadStatistics, "Blocked known tracking query parameters: %s", removedParametersString.utf8().data());
+    }
+
+    return sanitizedURL;
+#else
     return url;
+#endif
 }
 
-URL WebPage::allowedLookalikeCharacters(const URL& url)
+URL WebPage::allowedQueryParametersForAdvancedPrivacyProtections(const URL& url)
 {
+#if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
+    if (m_allowedQueryParametersForAdvancedPrivacyProtections.isEmpty()) {
+        RELEASE_LOG_ERROR(ResourceLoadStatistics, "Unable to allow query parameters (missing data)");
+        return url;
+    }
+
+    if (!url.hasQuery() && !url.hasFragmentIdentifier())
+        return url;
+
+    auto sanitizedURL = url;
+
+    auto allowedParameters = m_allowedQueryParametersForAdvancedPrivacyProtections.get(RegistrableDomain { sanitizedURL });
+
+    if (!allowedParameters.contains("#"_s))
+        sanitizedURL.removeFragmentIdentifier();
+
+    WTF::removeQueryParameters(sanitizedURL, [&](auto& parameter) {
+        return !allowedParameters.contains(parameter);
+    });
+
+    return sanitizedURL;
+#else
     return url;
-}
 #endif
+}
+
 } // namespace WebKit
 
 #endif // PLATFORM(COCOA)

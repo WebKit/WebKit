@@ -324,7 +324,7 @@ Page* WebChromeClient::createWindow(LocalFrame& frame, const WindowFeatures& win
         { }, /* clientRedirectSourceForHistory */
         0, /* effectiveSandboxFlags */
         navigationAction.privateClickMeasurement(),
-        { }, /* networkConnectionIntegrityPolicy */
+        { }, /* advancedPrivacyProtections */
 #if PLATFORM(MAC) || HAVE(UIKIT_WITH_MOUSE_SUPPORT)
         std::nullopt, /* webHitTestResultData */
 #endif
@@ -1634,14 +1634,14 @@ void WebChromeClient::requestTextRecognition(Element& element, TextRecognitionOp
 
 #endif
 
-URL WebChromeClient::sanitizeLookalikeCharacters(const URL& url, LookalikeCharacterSanitizationTrigger trigger) const
+URL WebChromeClient::applyLinkDecorationFiltering(const URL& url, LinkDecorationFilteringTrigger trigger) const
 {
-    return m_page.sanitizeLookalikeCharacters(url, trigger);
+    return m_page.applyLinkDecorationFiltering(url, trigger);
 }
 
-URL WebChromeClient::allowedLookalikeCharacters(const URL& url) const
+URL WebChromeClient::allowedQueryParametersForAdvancedPrivacyProtections(const URL& url) const
 {
-    return m_page.allowedLookalikeCharacters(url);
+    return m_page.allowedQueryParametersForAdvancedPrivacyProtections(url);
 }
 
 #if ENABLE(TEXT_AUTOSIZING)

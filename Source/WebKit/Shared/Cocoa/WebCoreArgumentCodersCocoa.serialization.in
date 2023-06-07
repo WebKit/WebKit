@@ -47,7 +47,7 @@ header: <WebCore/ResourceRequest.h>
     std::optional<bool> m_isAppInitiated;
     std::optional<WebCore::ResourceRequestRequester> m_requester;
     bool m_privacyProxyFailClosedForUnreachableNonMainHosts;
-    bool m_useNetworkConnectionIntegrity;
+    bool m_useAdvancedPrivacyProtections;
 };
 
 [Nested] struct WebCore::AttributedString::AttributeValue {

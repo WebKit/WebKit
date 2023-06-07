@@ -98,7 +98,7 @@ void ResourceRequestBase::setAsIsolatedCopy(const ResourceRequest& other)
     setAllowCookies(other.m_requestData.m_allowCookies);
     setIsAppInitiated(other.isAppInitiated());
     setPrivacyProxyFailClosedForUnreachableNonMainHosts(other.privacyProxyFailClosedForUnreachableNonMainHosts());
-    setUseNetworkConnectionIntegrity(other.useNetworkConnectionIntegrity());
+    setUseAdvancedPrivacyProtections(other.useAdvancedPrivacyProtections());
 }
 
 bool ResourceRequestBase::isEmpty() const
@@ -646,14 +646,14 @@ void ResourceRequestBase::setPrivacyProxyFailClosedForUnreachableNonMainHosts(bo
     m_platformRequestUpdated = false;
 }
 
-void ResourceRequestBase::setUseNetworkConnectionIntegrity(bool useNetworkConnectionIntegrity)
+void ResourceRequestBase::setUseAdvancedPrivacyProtections(bool useAdvancedPrivacyProtections)
 {
     updateResourceRequest();
 
-    if (m_requestData.m_useNetworkConnectionIntegrity == useNetworkConnectionIntegrity)
+    if (m_requestData.m_useAdvancedPrivacyProtections == useAdvancedPrivacyProtections)
         return;
 
-    m_requestData.m_useNetworkConnectionIntegrity = useNetworkConnectionIntegrity;
+    m_requestData.m_useAdvancedPrivacyProtections = useAdvancedPrivacyProtections;
 
     m_platformRequestUpdated = false;
 }

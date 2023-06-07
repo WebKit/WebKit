@@ -80,11 +80,11 @@ GPUProcess/webrtc/RemoteAudioMediaStreamTrackRendererInternalUnitManager.cpp
 Platform/classifier/cocoa/ResourceLoadStatisticsClassifierCocoa.cpp
 Platform/classifier/ResourceLoadStatisticsClassifier.cpp
 
-Platform/cocoa/NetworkConnectionIntegrityHelpers.mm
 Platform/cocoa/PaymentAuthorizationPresenter.mm
 Platform/cocoa/PaymentAuthorizationViewController.mm
 Platform/cocoa/WKPaymentAuthorizationDelegate.mm
 Platform/cocoa/WebKitAdditions.mm @no-unify
+Platform/cocoa/WebPrivacyHelpers.mm
 
 Platform/ios/PaymentAuthorizationController.mm
 

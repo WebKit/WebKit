@@ -1012,9 +1012,9 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 #if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
     updateImageAnimationEnabled();
 #endif
-#if ENABLE(NETWORK_CONNECTION_INTEGRITY)
-    setLookalikeCharacterStrings(WTFMove(parameters.lookalikeCharacterStrings));
-    setAllowedLookalikeCharacterStrings(WTFMove(parameters.allowedLookalikeCharacterStrings));
+#if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
+    setLinkDecorationFilteringData(WTFMove(parameters.linkDecorationFilteringData));
+    setAllowedQueryParametersForAdvancedPrivacyProtections(WTFMove(parameters.allowedQueryParametersForAdvancedPrivacyProtections));
 #endif
 }
 
@@ -1896,7 +1896,7 @@ void WebPage::loadRequest(LoadParameters&& loadParameters)
     frameLoadRequest.setLockBackForwardList(loadParameters.lockBackForwardList);
     frameLoadRequest.setClientRedirectSourceForHistory(loadParameters.clientRedirectSourceForHistory);
     frameLoadRequest.setIsRequestFromClientOrUserInput();
-    frameLoadRequest.setNetworkConnectionIntegrityPolicy(loadParameters.networkConnectionIntegrityPolicy);
+    frameLoadRequest.setAdvancedPrivacyProtections(loadParameters.advancedPrivacyProtections);
 
     if (loadParameters.effectiveSandboxFlags) {
         if (auto* localMainFrame = dynamicDowncast<LocalFrame>(corePage()->mainFrame()))
@@ -8825,40 +8825,42 @@ bool WebPage::isUsingUISideCompositing() const
 #endif
 }
 
-#if ENABLE(NETWORK_CONNECTION_INTEGRITY)
-void WebPage::setLookalikeCharacterStrings(Vector<WebCore::LookalikeCharactersSanitizationData>&& strings)
+#if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
+
+void WebPage::setLinkDecorationFilteringData(Vector<WebCore::LinkDecorationFilteringData>&& strings)
 {
-    m_lookalikeCharacterStrings.clear();
-    m_domainScopedLookalikeCharacterStrings.clear();
+    m_linkDecorationFilteringData.clear();
+    m_domainScopedLinkDecorationFilteringData.clear();
 
     for (auto& data : strings) {
         if (data.domain.isEmpty()) {
-            m_lookalikeCharacterStrings.add(data.lookalikeCharacters);
+            m_linkDecorationFilteringData.add(data.linkDecoration);
             continue;
         }
 
-        if (!m_domainScopedLookalikeCharacterStrings.isValidKey(data.domain))
+        if (!m_domainScopedLinkDecorationFilteringData.isValidKey(data.domain))
             continue;
 
-        m_domainScopedLookalikeCharacterStrings.ensure(data.domain, [&] {
+        m_domainScopedLinkDecorationFilteringData.ensure(data.domain, [&] {
             return HashSet<String> { };
-        }).iterator->value.add(data.lookalikeCharacters);
+        }).iterator->value.add(data.linkDecoration);
     }
 }
 
-void WebPage::setAllowedLookalikeCharacterStrings(Vector<LookalikeCharactersSanitizationData>&& allowStrings)
+void WebPage::setAllowedQueryParametersForAdvancedPrivacyProtections(Vector<LinkDecorationFilteringData>&& allowStrings)
 {
-    m_allowedLookalikeCharacterStrings.clear();
+    m_allowedQueryParametersForAdvancedPrivacyProtections.clear();
     for (auto& data : allowStrings) {
-        if (!m_allowedLookalikeCharacterStrings.isValidKey(data.domain))
+        if (!m_allowedQueryParametersForAdvancedPrivacyProtections.isValidKey(data.domain))
             continue;
 
-        m_allowedLookalikeCharacterStrings.ensure(data.domain, [&] {
+        m_allowedQueryParametersForAdvancedPrivacyProtections.ensure(data.domain, [&] {
             return HashSet<String> { };
-        }).iterator->value.add(data.lookalikeCharacters);
+        }).iterator->value.add(data.linkDecoration);
     }
 }
-#endif // ENABLE(NETWORK_CONNECTION_INTEGRITY)
+
+#endif // ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
 
 bool WebPage::shouldSkipDecidePolicyForResponse(const WebCore::ResourceResponse& response, const WebCore::ResourceRequest& request) const
 {

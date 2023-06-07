@@ -647,7 +647,7 @@ void Editor::pasteAsPlainText(const String& pastingText, bool smartReplace)
         return;
     auto sanitizedText = pastingText;
     if (auto* page = m_document.page())
-        sanitizedText = page->sanitizeLookalikeCharacters(sanitizedText, LookalikeCharacterSanitizationTrigger::Paste);
+        sanitizedText = page->applyLinkDecorationFiltering(sanitizedText, LinkDecorationFilteringTrigger::Paste);
     target->dispatchEvent(TextEvent::createForPlainTextPaste(document().windowProxy(), WTFMove(sanitizedText), smartReplace));
 }
 
@@ -1685,7 +1685,7 @@ void Editor::copyURL(const URL& url, const String& title, Pasteboard& pasteboard
 {
     auto sanitizedURL = url;
     if (auto* page = m_document.page())
-        sanitizedURL = page->sanitizeLookalikeCharacters(url, LookalikeCharacterSanitizationTrigger::Copy);
+        sanitizedURL = page->applyLinkDecorationFiltering(url, LinkDecorationFilteringTrigger::Copy);
 
     PasteboardURL pasteboardURL;
     pasteboardURL.url = sanitizedURL;

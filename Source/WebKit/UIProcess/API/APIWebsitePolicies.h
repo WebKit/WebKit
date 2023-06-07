@@ -35,12 +35,12 @@
 #include "WebsiteMetaViewportPolicy.h"
 #include "WebsitePopUpPolicy.h"
 #include "WebsiteSimulatedMouseEventsDispatchPolicy.h"
+#include <WebCore/AdvancedPrivacyProtections.h>
 #include <WebCore/CustomHeaderFields.h>
 #include <WebCore/DeviceOrientationOrMotionPermissionState.h>
 #include <WebCore/DocumentLoader.h>
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/HTTPHeaderField.h>
-#include <WebCore/NetworkConnectionIntegrity.h>
 #include <wtf/OptionSet.h>
 #include <wtf/Vector.h>
 
@@ -139,8 +139,8 @@ public:
     WebCore::ModalContainerObservationPolicy modalContainerObservationPolicy() const { return m_modalContainerObservationPolicy; }
     void setModalContainerObservationPolicy(WebCore::ModalContainerObservationPolicy policy) { m_modalContainerObservationPolicy = policy; }
 
-    OptionSet<WebCore::NetworkConnectionIntegrity> networkConnectionIntegrityPolicy() const { return m_networkConnectionIntegrityPolicy; }
-    void setNetworkConnectionIntegrityPolicy(OptionSet<WebCore::NetworkConnectionIntegrity> policy) { m_networkConnectionIntegrityPolicy = policy; }
+    OptionSet<WebCore::AdvancedPrivacyProtections> advancedPrivacyProtections() const { return m_advancedPrivacyProtections; }
+    void setAdvancedPrivacyProtections(OptionSet<WebCore::AdvancedPrivacyProtections> policy) { m_advancedPrivacyProtections = policy; }
 
     bool idempotentModeAutosizingOnlyHonorsPercentages() const { return m_idempotentModeAutosizingOnlyHonorsPercentages; }
     void setIdempotentModeAutosizingOnlyHonorsPercentages(bool idempotentModeAutosizingOnlyHonorsPercentages) { m_idempotentModeAutosizingOnlyHonorsPercentages = idempotentModeAutosizingOnlyHonorsPercentages; }
@@ -175,7 +175,7 @@ private:
     WebCore::AllowsContentJavaScript m_allowsContentJavaScript { WebCore::AllowsContentJavaScript::Yes };
     WebCore::MouseEventPolicy m_mouseEventPolicy { WebCore::MouseEventPolicy::Default };
     WebCore::ModalContainerObservationPolicy m_modalContainerObservationPolicy { WebCore::ModalContainerObservationPolicy::Disabled };
-    OptionSet<WebCore::NetworkConnectionIntegrity> m_networkConnectionIntegrityPolicy;
+    OptionSet<WebCore::AdvancedPrivacyProtections> m_advancedPrivacyProtections;
     bool m_idempotentModeAutosizingOnlyHonorsPercentages { false };
     std::optional<bool> m_lockdownModeEnabled;
     WebCore::ColorSchemePreference m_colorSchemePreference { WebCore::ColorSchemePreference::NoPreference };

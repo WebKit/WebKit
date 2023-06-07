@@ -766,7 +766,7 @@ void NavigationState::NavigationClient::didFailProvisionalNavigationWithError(We
     if (!navigationDelegate)
         return;
 
-    bool isHTTPSOnlyEnabled = navigation && navigation->websitePolicies() && navigation->websitePolicies()->networkConnectionIntegrityPolicy().contains(WebCore::NetworkConnectionIntegrity::HTTPSOnly) && !navigation->websitePolicies()->networkConnectionIntegrityPolicy().contains(WebCore::NetworkConnectionIntegrity::HTTPSOnlyExplicitlyBypassedForDomain);
+    bool isHTTPSOnlyEnabled = navigation && navigation->websitePolicies() && navigation->websitePolicies()->advancedPrivacyProtections().contains(WebCore::AdvancedPrivacyProtections::HTTPSOnly) && !navigation->websitePolicies()->advancedPrivacyProtections().contains(WebCore::AdvancedPrivacyProtections::HTTPSOnlyExplicitlyBypassedForDomain);
     bool isHTTPSOnlyError = isHTTPSOnlyEnabled && error.errorRecoveryMethod() == ResourceError::ErrorRecoveryMethod::HTTPFallback && frameInfo.isMainFrame;
     auto errorWithRecoveryAttempter = createErrorWithRecoveryAttempter(m_navigationState->m_webView, frameInfo, error, isHTTPSOnlyError);
 
@@ -866,7 +866,7 @@ void NavigationState::NavigationClient::didFinishLoadForFrame(WebPageProxy& page
         [(id <WKNavigationDelegatePrivate>)navigationDelegate _webView:m_navigationState->m_webView didFinishLoadWithRequest:request.nsURLRequest(HTTPBodyUpdatePolicy::DoNotUpdateHTTPBody) inFrame:wrapper(API::FrameInfo::create(WTFMove(frameInfo), &page))];
 }
 
-void NavigationState::NavigationClient::didFailLoadDueToNetworkConnectionIntegrity(WebPageProxy& page, const URL& url)
+void NavigationState::NavigationClient::didBlockLoadToKnownTracker(WebPageProxy& page, const URL& url)
 {
     if (!m_navigationState)
         return;
@@ -879,7 +879,7 @@ void NavigationState::NavigationClient::didFailLoadDueToNetworkConnectionIntegri
         [(id<WKNavigationDelegatePrivate>)navigationDelegate _webView:m_navigationState->m_webView didFailLoadDueToNetworkConnectionIntegrityWithURL:url];
 }
 
-void NavigationState::NavigationClient::didChangeLookalikeCharacters(WebPageProxy& page, const URL& originalURL, const URL& adjustedURL)
+void NavigationState::NavigationClient::didApplyLinkDecorationFiltering(WebPageProxy& page, const URL& originalURL, const URL& adjustedURL)
 {
     if (!m_navigationState)
         return;

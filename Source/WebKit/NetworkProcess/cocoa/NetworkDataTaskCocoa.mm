@@ -33,13 +33,13 @@
 #import "DownloadProxyMessages.h"
 #import "Logging.h"
 #import "NWSPI.h"
-#import "NetworkConnectionIntegrityHelpers.h"
 #import "NetworkIssueReporter.h"
 #import "NetworkProcess.h"
 #import "NetworkSessionCocoa.h"
 #import "WebCoreArgumentCoders.h"
+#import "WebPrivacyHelpers.h"
+#import <WebCore/AdvancedPrivacyProtections.h>
 #import <WebCore/AuthenticationChallenge.h>
-#import <WebCore/NetworkConnectionIntegrity.h>
 #import <WebCore/NetworkStorageSession.h>
 #import <WebCore/NotImplemented.h>
 #import <WebCore/OriginAccessPatterns.h>
@@ -60,15 +60,41 @@
 #import <pal/spi/cocoa/NSURLConnectionSPI.h>
 #endif
 
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/NetworkDataTaskCocoaAdditions.h>
-#else
 namespace WebKit {
-void enableNetworkConnectionIntegrity(NSMutableURLRequest *, OptionSet<WebCore::NetworkConnectionIntegrity>) { }
-}
-#endif
 
-namespace WebKit {
+#if HAVE(SYSTEM_SUPPORT_FOR_ADVANCED_PRIVACY_PROTECTIONS)
+
+inline static bool shouldBlockTrackersForThirdPartyCloaking(NSURLRequest *request)
+{
+    auto requestURL = request.URL;
+    auto mainDocumentURL = request.mainDocumentURL;
+    if (!requestURL || !mainDocumentURL)
+        return false;
+
+    if (!WebCore::areRegistrableDomainsEqual(requestURL, mainDocumentURL))
+        return false;
+
+    if ([requestURL.host isEqualToString:mainDocumentURL.host])
+        return false;
+
+    return true;
+}
+
+#endif // HAVE(SYSTEM_SUPPORT_FOR_ADVANCED_PRIVACY_PROTECTIONS)
+
+void enableAdvancedPrivacyProtections(NSMutableURLRequest *request, OptionSet<WebCore::AdvancedPrivacyProtections> policy)
+{
+#if HAVE(SYSTEM_SUPPORT_FOR_ADVANCED_PRIVACY_PROTECTIONS)
+    if (policy.contains(WebCore::AdvancedPrivacyProtections::EnhancedNetworkPrivacy))
+        request._useEnhancedPrivacyMode = YES;
+
+    if (policy.contains(WebCore::AdvancedPrivacyProtections::BaselineProtections) && shouldBlockTrackersForThirdPartyCloaking(request))
+        request._blockTrackers = YES;
+#else
+    UNUSED_PARAM(request);
+    UNUSED_PARAM(policy);
+#endif
+}
 
 void setPCMDataCarriedOnRequest(WebCore::PrivateClickMeasurement::PcmDataCarried pcmDataCarried, NSMutableURLRequest *request)
 {
@@ -212,20 +238,20 @@ NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataT
         [mutableRequest _setProhibitPrivacyProxy:YES];
 #endif
 
-    auto networkConnectionIntegrityPolicy = parameters.networkConnectionIntegrityPolicy;
-#if ENABLE(NETWORK_CONNECTION_INTEGRITY)
-    if (networkConnectionIntegrityPolicy.contains(WebCore::NetworkConnectionIntegrity::Enabled) && parameters.isMainFrameNavigation)
-        configureForNetworkConnectionIntegrity(m_sessionWrapper->session.get());
+    auto advancedPrivacyProtections = parameters.advancedPrivacyProtections;
+#if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
+    if (advancedPrivacyProtections.contains(WebCore::AdvancedPrivacyProtections::BaselineProtections) && parameters.isMainFrameNavigation)
+        configureForAdvancedPrivacyProtections(m_sessionWrapper->session.get());
 
-    enableNetworkConnectionIntegrity(mutableRequest.get(), networkConnectionIntegrityPolicy);
+    enableAdvancedPrivacyProtections(mutableRequest.get(), advancedPrivacyProtections);
 #endif
 
 #if HAVE(PRIVACY_PROXY_FAIL_CLOSED_FOR_UNREACHABLE_HOSTS)
-    if ([mutableRequest respondsToSelector:@selector(_setPrivacyProxyFailClosedForUnreachableHosts:)] && networkConnectionIntegrityPolicy.contains(WebCore::NetworkConnectionIntegrity::FailClosed))
+    if ([mutableRequest respondsToSelector:@selector(_setPrivacyProxyFailClosedForUnreachableHosts:)] && advancedPrivacyProtections.contains(WebCore::AdvancedPrivacyProtections::FailClosed))
         [mutableRequest _setPrivacyProxyFailClosedForUnreachableHosts:YES];
 #endif
 
-    if ([mutableRequest respondsToSelector:@selector(_setWebSearchContent:)] && networkConnectionIntegrityPolicy.contains(WebCore::NetworkConnectionIntegrity::WebSearchContent))
+    if ([mutableRequest respondsToSelector:@selector(_setWebSearchContent:)] && advancedPrivacyProtections.contains(WebCore::AdvancedPrivacyProtections::WebSearchContent))
         [mutableRequest _setWebSearchContent:YES];
 
 #if ENABLE(APP_PRIVACY_REPORT)

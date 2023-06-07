@@ -967,6 +967,10 @@
     (apply subpath issue-extension-secondary-paths))
 #endif
 
-#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/com.apple.WebKit.NetworkingAdditions.sb.in>)
-#include <WebKitAdditions/com.apple.WebKit.NetworkingAdditions.sb.in>
+#if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
+
+(allow mach-lookup
+    (global-name "com.apple.webprivacyd")
+    (global-name "com.apple.WebPrivacy.Service"))
+
 #endif

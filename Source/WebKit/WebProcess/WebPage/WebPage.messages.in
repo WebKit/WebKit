@@ -725,9 +725,9 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 
     GenerateTestReport(String message, String group);
 
-#if ENABLE(NETWORK_CONNECTION_INTEGRITY)
-    SetLookalikeCharacterStrings(Vector<WebCore::LookalikeCharactersSanitizationData> strings);
-    SetAllowedLookalikeCharacterStrings(Vector<WebCore::LookalikeCharactersSanitizationData> allowedStrings);
+#if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
+    SetLinkDecorationFilteringData(Vector<WebCore::LinkDecorationFilteringData> strings);
+    SetAllowedQueryParametersForAdvancedPrivacyProtections(Vector<WebCore::LinkDecorationFilteringData> allowedStrings);
 #endif
 
 #if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)

@@ -110,11 +110,11 @@ private:
         void didFinishDocumentLoad(WebPageProxy&, API::Navigation*, API::Object*) override;
         void didFinishNavigation(WebPageProxy&, API::Navigation*, API::Object*) override;
         void didFinishLoadForFrame(WebPageProxy&, WebCore::ResourceRequest&&, FrameInfoData&&) override;
-        void didFailLoadDueToNetworkConnectionIntegrity(WebPageProxy&, const URL&) override;
+        void didBlockLoadToKnownTracker(WebPageProxy&, const URL&) override;
         void didFailNavigationWithError(WebPageProxy&, const FrameInfoData&, API::Navigation*, const WebCore::ResourceError&, API::Object*) override;
         void didFailLoadWithErrorForFrame(WebPageProxy&, WebCore::ResourceRequest&&, const WebCore::ResourceError&, FrameInfoData&&) override;
         void didSameDocumentNavigation(WebPageProxy&, API::Navigation*, SameDocumentNavigationType, API::Object*) override;
-        void didChangeLookalikeCharacters(WebPageProxy&, const URL&, const URL&) override;
+        void didApplyLinkDecorationFiltering(WebPageProxy&, const URL&, const URL&) override;
 
         void renderingProgressDidChange(WebPageProxy&, OptionSet<WebCore::LayoutMilestone>) override;
 

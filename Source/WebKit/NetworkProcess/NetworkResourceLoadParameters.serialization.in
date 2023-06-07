@@ -52,7 +52,7 @@ class WebKit::NetworkLoadParameters {
     std::optional<WebKit::NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain;
     bool hadMainFrameMainResourcePrivateRelayed;
     bool allowPrivacyProxy;
-    OptionSet<WebCore::NetworkConnectionIntegrity> networkConnectionIntegrityPolicy;
+    OptionSet<WebCore::AdvancedPrivacyProtections> advancedPrivacyProtections;
 }
 
 class WebKit::NetworkResourceLoadParameters : WebKit::NetworkLoadParameters {

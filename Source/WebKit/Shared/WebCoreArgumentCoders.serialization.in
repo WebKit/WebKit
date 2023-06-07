@@ -1397,7 +1397,7 @@ header: <WebCore/ResourceRequest.h>
     [BitField] bool m_isTopSite;
     [BitField] bool m_isAppInitiated;
     [BitField] bool m_privacyProxyFailClosedForUnreachableNonMainHosts;
-    [BitField] bool m_useNetworkConnectionIntegrity;
+    [BitField] bool m_useAdvancedPrivacyProtections;
 };
 
 #if USE(SOUP)
@@ -4530,16 +4530,16 @@ enum class WebCore::ModalContainerObservationPolicy : bool
 
 enum class WebCore::AllowsContentJavaScript : bool
 
-[OptionSet] enum class WebCore::NetworkConnectionIntegrity : uint16_t {
-    Enabled,
+[OptionSet] enum class WebCore::AdvancedPrivacyProtections : uint16_t {
+    BaselineProtections,
     HTTPSFirst,
     HTTPSOnly,
     HTTPSOnlyExplicitlyBypassedForDomain,
     FailClosed,
     WebSearchContent,
-    EnhancedTelemetry,
-    RequestValidation,
-    SanitizeLookalikeCharacters,
+    FingerprintingProtections,
+    EnhancedNetworkPrivacy,
+    LinkDecorationFiltering,
 };
 
 enum class WebCore::ViolationReportType : uint8_t {

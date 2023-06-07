@@ -440,9 +440,9 @@ bool FrameLoader::upgradeRequestforHTTPSOnlyIfNeeded(const URL& originalURL, Res
     auto& newURL = request.url();
     const auto& isSameSiteBypassEnabled = (originalURL.isEmpty()
         || (originalURL.protocolIs("http"_s) && RegistrableDomain(newURL) == RegistrableDomain(originalURL)))
-        && documentLoader->networkConnectionIntegrityPolicy().contains(NetworkConnectionIntegrity::HTTPSOnlyExplicitlyBypassedForDomain);
+        && documentLoader->advancedPrivacyProtections().contains(AdvancedPrivacyProtections::HTTPSOnlyExplicitlyBypassedForDomain);
 
-    if (documentLoader && documentLoader->networkConnectionIntegrityPolicy().contains(NetworkConnectionIntegrity::HTTPSOnly)
+    if (documentLoader && documentLoader->advancedPrivacyProtections().contains(AdvancedPrivacyProtections::HTTPSOnly)
         && newURL.protocolIs("http"_s)
         && !isSameSiteBypassEnabled) {
         FRAMELOADER_RELEASE_LOG(ResourceLoading, "upgradeRequestforHTTPSOnlyIfNeeded: upgrading navigation request");
@@ -1537,7 +1537,7 @@ void FrameLoader::load(FrameLoadRequest&& request)
     Ref<DocumentLoader> loader = m_client->createDocumentLoader(request.resourceRequest(), request.substituteData());
     loader->setIsRequestFromClientOrUserInput(request.isRequestFromClientOrUserInput());
     loader->setIsContinuingLoadAfterProvisionalLoadStarted(request.shouldTreatAsContinuingLoad() == ShouldTreatAsContinuingLoad::YesAfterProvisionalLoadStarted);
-    loader->setOriginatorNetworkConnectionIntegrityPolicy(request.networkConnectionIntegrityPolicy());
+    loader->setOriginatorAdvancedPrivacyProtections(request.advancedPrivacyProtections());
     addSameSiteInfoToRequestIfNeeded(loader->request());
     applyShouldOpenExternalURLsPolicyToNewDocumentLoader(m_frame, loader, request);
 
@@ -2630,7 +2630,7 @@ void FrameLoader::checkLoadCompleteForThisFrame()
             }
         }
 
-        bool isHTTPSFirstApplicable = protector->networkConnectionIntegrityPolicy().contains(NetworkConnectionIntegrity::HTTPSFirst) && !protector->networkConnectionIntegrityPolicy().contains(NetworkConnectionIntegrity::HTTPSOnly) && !isHTTPFallbackInProgress() && (!protector->mainResourceLoader() || !protector->mainResourceLoader()->redirectCount());
+        bool isHTTPSFirstApplicable = protector->advancedPrivacyProtections().contains(AdvancedPrivacyProtections::HTTPSFirst) && !protector->advancedPrivacyProtections().contains(AdvancedPrivacyProtections::HTTPSOnly) && !isHTTPFallbackInProgress() && (!protector->mainResourceLoader() || !protector->mainResourceLoader()->redirectCount());
 
         // Only reset if we aren't already going to a new provisional item.
         bool shouldReset = !history().provisionalItem();
@@ -3144,7 +3144,7 @@ void FrameLoader::updateRequestAndAddExtraFields(ResourceRequest& request, IsMai
         request.setIsAppInitiated(localFrame->loader().documentLoader()->lastNavigationWasAppInitiated());
 
     if (page && isMainResource)
-        request.setURL(page->chrome().client().sanitizeLookalikeCharacters(request.url(), LookalikeCharacterSanitizationTrigger::Navigation));
+        request.setURL(page->chrome().client().applyLinkDecorationFiltering(request.url(), LinkDecorationFilteringTrigger::Navigation));
 }
 
 void FrameLoader::scheduleRefreshIfNeeded(Document& document, const String& content, IsMetaRefresh isMetaRefresh)

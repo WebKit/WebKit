@@ -1823,7 +1823,7 @@ TEST(WebpagePreferences, ContentRuleListEnablement)
     EXPECT_TRUE(canLoadImage(@"./sunset-in-cupertino-100px.tiff"));
 }
 
-TEST(WebpagePreferences, ToggleNetworkConnectionIntegrity)
+TEST(WebpagePreferences, ToggleAdvancedPrivacyProtections)
 {
     auto preferences = adoptNS([WKWebpagePreferences new]);
     EXPECT_FALSE([preferences _networkConnectionIntegrityEnabled]);
@@ -1998,7 +1998,7 @@ TEST(WebpagePreferences, ExtensionPageContentBlockers)
     [[WKContentRuleListStore defaultStore] _removeAllContentRuleLists];
 }
 
-TEST(WebpagePreferences, ExtensionPageNetworkConnectionIntegrityReferrer)
+TEST(WebpagePreferences, ExtensionPageAdvancedPrivacyProtectionsReferrer)
 {
     auto *store = WKWebsiteDataStore.nonPersistentDataStore;
     store._resourceLoadStatisticsEnabled = YES;

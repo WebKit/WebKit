@@ -187,7 +187,7 @@
 #include <WebCore/GlobalFrameIdentifier.h>
 #include <WebCore/GlobalWindowIdentifier.h>
 #include <WebCore/LengthBox.h>
-#include <WebCore/LookalikeCharactersSanitizationData.h>
+#include <WebCore/LinkDecorationFilteringData.h>
 #include <WebCore/MIMETypeRegistry.h>
 #include <WebCore/MediaDeviceHashSalts.h>
 #include <WebCore/MediaStreamRequest.h>
@@ -241,13 +241,13 @@
 
 #if PLATFORM(COCOA)
 #include "InsertTextOptions.h"
-#include "NetworkConnectionIntegrityHelpers.h"
 #include "NetworkIssueReporter.h"
 #include "RemoteLayerTreeDrawingAreaProxy.h"
 #include "RemoteLayerTreeScrollingPerformanceData.h"
 #include "UserMediaCaptureManagerProxy.h"
 #include "VideoFullscreenManagerProxy.h"
 #include "VideoFullscreenManagerProxyMessages.h"
+#include "WebPrivacyHelpers.h"
 #include <WebCore/AttributedString.h>
 #include <WebCore/CoreAudioCaptureDeviceManager.h>
 #include <WebCore/RunLoopObserver.h>
@@ -697,10 +697,10 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, Ref
 
     m_pageToCloneSessionStorageFrom = m_configuration->pageToCloneSessionStorageFrom();
 
-#if ENABLE(NETWORK_CONNECTION_INTEGRITY)
-    m_lookalikeCharacterUpdateObserver = LookalikeCharacters::shared().observeUpdates([weakThis = WeakPtr { *this }] {
+#if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
+    m_linkDecorationFilteringDataUpdateObserver = LinkDecorationFilteringController::shared().observeUpdates([weakThis = WeakPtr { *this }] {
         if (RefPtr protectedThis = weakThis.get())
-            protectedThis->sendCachedLookalikeCharacterStrings();
+            protectedThis->sendCachedLinkDecorationFilteringData();
     });
 #endif
 }
@@ -1326,9 +1326,9 @@ void WebPageProxy::initializeWebPage()
 
     m_process->addVisitedLinkStoreUser(visitedLinkStore(), internals().identifier);
 
-#if ENABLE(NETWORK_CONNECTION_INTEGRITY)
-    m_needsInitialLookalikeCharacterStrings = LookalikeCharacters::shared().cachedStrings().isEmpty();
-    m_shouldUpdateAllowedLookalikeCharacterStrings = cachedAllowedLookalikeStrings().isEmpty();
+#if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
+    m_needsInitialLinkDecorationFilteringData = LinkDecorationFilteringController::shared().cachedStrings().isEmpty();
+    m_shouldUpdateAllowedQueryParametersForAdvancedPrivacyProtections = cachedAllowedQueryParametersForAdvancedPrivacyProtections().isEmpty();
 #endif
 }
 
@@ -1630,7 +1630,7 @@ void WebPageProxy::loadRequestWithNavigationShared(Ref<WebProcessProxy>&& proces
     loadParameters.effectiveSandboxFlags = navigation.effectiveSandboxFlags();
     loadParameters.isNavigatingToAppBoundDomain = isNavigatingToAppBoundDomain;
     loadParameters.existingNetworkResourceLoadIdentifierToResume = existingNetworkResourceLoadIdentifierToResume;
-    loadParameters.networkConnectionIntegrityPolicy = navigation.originatorNetworkConnectionIntegrityPolicy();
+    loadParameters.advancedPrivacyProtections = navigation.originatorAdvancedPrivacyProtections();
     maybeInitializeSandboxExtensionHandle(process, url, internals().pageLoadState.resourceDirectoryURL(), loadParameters.sandboxExtensionHandle);
 
     prepareToLoadWebPage(process, loadParameters);
@@ -5737,10 +5737,10 @@ void WebPageProxy::didCommitLoadForFrame(FrameIdentifier frameID, FrameInfoData&
 #if USE(APPKIT)
         closeSharedPreviewPanelIfNecessary();
 #endif
-#if ENABLE(NETWORK_CONNECTION_INTEGRITY)
-        updateAllowedLookalikeCharacterStringsIfNeeded();
+#if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
+        updateAllowedQueryParametersForAdvancedPrivacyProtectionsIfNeeded();
         if (navigation && navigation->websitePolicies())
-            m_networkConnectionIntegrityPolicies = navigation->websitePolicies()->networkConnectionIntegrityPolicy();
+            m_advancedPrivacyProtectionsPolicies = navigation->websitePolicies()->advancedPrivacyProtections();
 #endif
     }
 
@@ -6248,7 +6248,7 @@ void WebPageProxy::decidePolicyForNavigationAction(Ref<WebProcessProxy>&& proces
     navigation->setLastNavigationAction(navigationActionData);
     navigation->setOriginatingFrameInfo(originatingFrameInfoData);
     navigation->setDestinationFrameSecurityOrigin(frameInfo.securityOrigin);
-    navigation->setOriginatorNetworkConnectionIntegrityPolicy(navigationActionData.networkConnectionIntegrityPolicy);
+    navigation->setOriginatorAdvancedPrivacyProtections(navigationActionData.advancedPrivacyProtections);
 
     API::Navigation* mainFrameNavigation = frame.isMainFrame() ? navigation.get() : nullptr;
     auto* originatingFrame = originatingFrameInfoData.frameID ? WebFrameProxy::webFrame(*originatingFrameInfoData.frameID) : nullptr;
@@ -6299,14 +6299,12 @@ void WebPageProxy::decidePolicyForNavigationAction(Ref<WebProcessProxy>&& proces
     shouldExpectAppBoundDomainResult = ShouldExpectAppBoundDomainResult::Yes;
 #endif
 
-    auto shouldWaitForInitialLookalikeCharacterStrings = ShouldWaitForInitialLookalikeCharacterStrings::No;
-#if ENABLE(NETWORK_CONNECTION_INTEGRITY)
-    if (preferences().sanitizeLookalikeCharactersInLinksEnabled()) {
-        if (LookalikeCharacters::shared().cachedStrings().isEmpty())
-            shouldWaitForInitialLookalikeCharacterStrings = ShouldWaitForInitialLookalikeCharacterStrings::Yes;
-        else if (m_needsInitialLookalikeCharacterStrings)
-            sendCachedLookalikeCharacterStrings();
-    }
+    auto shouldWaitForInitialLinkDecorationFilteringData = ShouldWaitForInitialLinkDecorationFilteringData::No;
+#if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
+    if (LinkDecorationFilteringController::shared().cachedStrings().isEmpty())
+        shouldWaitForInitialLinkDecorationFilteringData = ShouldWaitForInitialLinkDecorationFilteringData::Yes;
+    else if (m_needsInitialLinkDecorationFilteringData)
+        sendCachedLinkDecorationFilteringData();
 #endif
     Ref listener = frame.setUpPolicyListenerProxy([this, protectedThis = Ref { *this }, sourceProcessForNavigation = Ref { frame.process() }, frame = Ref { frame }, sender = WTFMove(sender), navigation, navigationAction, frameInfo] (PolicyAction policyAction, API::WebsitePolicies* policies, ProcessSwapRequestedByClient processSwapRequestedByClient, RefPtr<SafeBrowsingWarning>&& safeBrowsingWarning, std::optional<NavigatingToAppBoundDomain> isAppBoundDomain) mutable {
         WEBPAGEPROXY_RELEASE_LOG(Loading, "decidePolicyForNavigationAction: listener called: frameID=%llu, isMainFrame=%d, navigationID=%llu, policyAction=%u, safeBrowsingWarning=%d, isAppBoundDomain=%d", frame->frameID().object().toUInt64(), frame->isMainFrame(), navigation ? navigation->navigationID() : 0, (unsigned)policyAction, !!safeBrowsingWarning, !!isAppBoundDomain);
@@ -6338,9 +6336,9 @@ void WebPageProxy::decidePolicyForNavigationAction(Ref<WebProcessProxy>&& proces
         }
 #endif
 
-#if ENABLE(NETWORK_CONNECTION_INTEGRITY)
-        if (m_needsInitialLookalikeCharacterStrings)
-            sendCachedLookalikeCharacterStrings();
+#if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
+        if (m_needsInitialLinkDecorationFilteringData)
+            sendCachedLinkDecorationFilteringData();
 #endif
 
         if (!m_pageClient)
@@ -6384,11 +6382,11 @@ void WebPageProxy::decidePolicyForNavigationAction(Ref<WebProcessProxy>&& proces
         }
         completionHandler(policyAction);
 
-    }, shouldExpectSafeBrowsingResult, shouldExpectAppBoundDomainResult, shouldWaitForInitialLookalikeCharacterStrings);
+    }, shouldExpectSafeBrowsingResult, shouldExpectAppBoundDomainResult, shouldWaitForInitialLinkDecorationFilteringData);
     if (shouldExpectSafeBrowsingResult == ShouldExpectSafeBrowsingResult::Yes)
         beginSafeBrowsingCheck(request.url(), frame.isMainFrame(), listener);
-    if (shouldWaitForInitialLookalikeCharacterStrings == ShouldWaitForInitialLookalikeCharacterStrings::Yes)
-        waitForInitialLookalikeCharacterStrings(listener);
+    if (shouldWaitForInitialLinkDecorationFilteringData == ShouldWaitForInitialLinkDecorationFilteringData::Yes)
+        waitForInitialLinkDecorationFilteringData(listener);
 #if ENABLE(APP_BOUND_DOMAINS)
     bool shouldSendSecurityOriginData = !frame.isMainFrame() && shouldTreatURLProtocolAsAppBound(request.url(), websiteDataStore().configuration().enableInAppBrowserPrivacyForTesting());
     auto host = shouldSendSecurityOriginData ? frameInfo.securityOrigin.host() : request.url().host();
@@ -6525,7 +6523,7 @@ void WebPageProxy::decidePolicyForNewWindowAction(FrameIdentifier frameID, Frame
         });
 
         receivedPolicyDecision(policyAction, nullptr, nullptr, WTFMove(navigationAction), WTFMove(sender), WillContinueLoadInNewProcess::No, std::nullopt);
-    }, ShouldExpectSafeBrowsingResult::No, ShouldExpectAppBoundDomainResult::No, ShouldWaitForInitialLookalikeCharacterStrings::No);
+    }, ShouldExpectSafeBrowsingResult::No, ShouldExpectAppBoundDomainResult::No, ShouldWaitForInitialLinkDecorationFilteringData::No);
 
     if (m_policyClient)
         m_policyClient->decidePolicyForNewWindowAction(*this, *frame, navigationAction.get(), request, frameName, WTFMove(listener));
@@ -6571,7 +6569,7 @@ void WebPageProxy::decidePolicyForResponseShared(Ref<WebProcessProxy>&& process,
             policyAction = PolicyAction::Download;
 #endif
         receivedPolicyDecision(policyAction, navigation.get(), nullptr, WTFMove(navigationResponse), WTFMove(sender), WillContinueLoadInNewProcess::No, std::nullopt);
-    }, ShouldExpectSafeBrowsingResult::No, ShouldExpectAppBoundDomainResult::No, ShouldWaitForInitialLookalikeCharacterStrings::No);
+    }, ShouldExpectSafeBrowsingResult::No, ShouldExpectAppBoundDomainResult::No, ShouldWaitForInitialLinkDecorationFilteringData::No);
 
     if (m_policyClient)
         m_policyClient->decidePolicyForResponse(*this, *frame, response, request, canShowMIMEType, WTFMove(listener));
@@ -6769,9 +6767,9 @@ void WebPageProxy::createNewPage(FrameInfoData&& originatingFrameInfoData, WebPa
 #if HAVE(APP_SSO)
         newPage->m_shouldSuppressSOAuthorizationInNextNavigationPolicyDecision = true;
 #endif
-#if ENABLE(NETWORK_CONNECTION_INTEGRITY)
-        newPage->m_needsInitialLookalikeCharacterStrings = LookalikeCharacters::shared().cachedStrings().isEmpty();
-        newPage->m_shouldUpdateAllowedLookalikeCharacterStrings = cachedAllowedLookalikeStrings().isEmpty();
+#if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
+        newPage->m_needsInitialLinkDecorationFilteringData = LinkDecorationFilteringController::shared().cachedStrings().isEmpty();
+        newPage->m_shouldUpdateAllowedQueryParametersForAdvancedPrivacyProtections = cachedAllowedQueryParametersForAdvancedPrivacyProtections().isEmpty();
 #endif
     };
 
@@ -9031,8 +9029,8 @@ void WebPageProxy::resetState(ResetStateReason resetStateReason)
     internals().lastSentScrollingAccelerationCurve = std::nullopt;
 #endif
 
-#if ENABLE(NETWORK_CONNECTION_INTEGRITY)
-    m_networkConnectionIntegrityPolicies = { };
+#if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
+    m_advancedPrivacyProtectionsPolicies = { };
 #endif
 }
 
@@ -9417,11 +9415,9 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
     parameters.hasResizableWindows = pageClient().hasResizableWindows();
 #endif
 
-#if ENABLE(NETWORK_CONNECTION_INTEGRITY)
-    if (preferences().sanitizeLookalikeCharactersInLinksEnabled())
-        parameters.lookalikeCharacterStrings = LookalikeCharacters::shared().cachedStrings();
-
-    parameters.allowedLookalikeCharacterStrings = cachedAllowedLookalikeStrings();
+#if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
+    parameters.linkDecorationFilteringData = LinkDecorationFilteringController::shared().cachedStrings();
+    parameters.allowedQueryParametersForAdvancedPrivacyProtections = cachedAllowedQueryParametersForAdvancedPrivacyProtections();
 #endif
 
 #if HAVE(MACH_BOOTSTRAP_EXTENSION)
@@ -9511,14 +9507,14 @@ void WebPageProxy::didNegotiateModernTLS(const URL& url)
     m_navigationClient->didNegotiateModernTLS(url);
 }
 
-void WebPageProxy::didFailLoadDueToNetworkConnectionIntegrity(const URL& url) 
+void WebPageProxy::didBlockLoadToKnownTracker(const URL& url)
 {
-    m_navigationClient->didFailLoadDueToNetworkConnectionIntegrity(*this, url);
+    m_navigationClient->didBlockLoadToKnownTracker(*this, url);
 }
 
-void WebPageProxy::didChangeLookalikeCharacters(const URL& originalURL, const URL& adjustedURL)
+void WebPageProxy::didApplyLinkDecorationFiltering(const URL& originalURL, const URL& adjustedURL)
 {
-    m_navigationClient->didChangeLookalikeCharacters(*this, originalURL, adjustedURL);
+    m_navigationClient->didApplyLinkDecorationFiltering(*this, originalURL, adjustedURL);
 }
 
 void WebPageProxy::exceededDatabaseQuota(FrameIdentifier frameID, const String& originIdentifier, const String& databaseName, const String& displayName, uint64_t currentQuota, uint64_t currentOriginUsage, uint64_t currentDatabaseUsage, uint64_t expectedUsage, CompletionHandler<void(uint64_t)>&& reply)
@@ -12588,61 +12584,61 @@ SubframePageProxy* WebPageProxy::subpageFrameProxyForRegistrableDomain(WebCore::
     return internals().domainToSubframePageProxyMap.get(domain).get();
 }
 
-#if ENABLE(NETWORK_CONNECTION_INTEGRITY)
+#if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
 
-Vector<WebCore::LookalikeCharactersSanitizationData>& WebPageProxy::cachedAllowedLookalikeStrings()
+Vector<LinkDecorationFilteringData>& WebPageProxy::cachedAllowedQueryParametersForAdvancedPrivacyProtections()
 {
-    static NeverDestroyed cachedAllowedStrings = [] {
-        return Vector<WebCore::LookalikeCharactersSanitizationData> { };
+    static NeverDestroyed cachedParameters = [] {
+        return Vector<LinkDecorationFilteringData> { };
     }();
-    return cachedAllowedStrings.get();
+    return cachedParameters.get();
 }
 
-void WebPageProxy::updateAllowedLookalikeCharacterStringsIfNeeded()
+void WebPageProxy::updateAllowedQueryParametersForAdvancedPrivacyProtectionsIfNeeded()
 {
-    if (!m_shouldUpdateAllowedLookalikeCharacterStrings)
+    if (!m_shouldUpdateAllowedQueryParametersForAdvancedPrivacyProtections)
         return;
 
-    m_shouldUpdateAllowedLookalikeCharacterStrings = false;
+    m_shouldUpdateAllowedQueryParametersForAdvancedPrivacyProtections = false;
 
-    if (!cachedAllowedLookalikeStrings().isEmpty())
+    if (!cachedAllowedQueryParametersForAdvancedPrivacyProtections().isEmpty())
         return;
 
-    requestAllowedLookalikeCharacterStrings([weakPage = WeakPtr { *this }](auto&& data) mutable {
-        if (cachedAllowedLookalikeStrings().isEmpty()) {
-            cachedAllowedLookalikeStrings() = WTFMove(data);
-            cachedAllowedLookalikeStrings().shrinkToFit();
+    requestLinkDecorationFilteringData([weakPage = WeakPtr { *this }](auto&& data) mutable {
+        if (cachedAllowedQueryParametersForAdvancedPrivacyProtections().isEmpty()) {
+            cachedAllowedQueryParametersForAdvancedPrivacyProtections() = WTFMove(data);
+            cachedAllowedQueryParametersForAdvancedPrivacyProtections().shrinkToFit();
         }
 
         if (RefPtr page = weakPage.get(); page && page->hasRunningProcess())
-            page->send(Messages::WebPage::SetAllowedLookalikeCharacterStrings(cachedAllowedLookalikeStrings()));
+            page->send(Messages::WebPage::SetAllowedQueryParametersForAdvancedPrivacyProtections(cachedAllowedQueryParametersForAdvancedPrivacyProtections()));
     });
 }
 
-#endif // ENABLE(NETWORK_CONNECTION_INTEGRITY)
+#endif // ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
 
-void WebPageProxy::sendCachedLookalikeCharacterStrings()
+void WebPageProxy::sendCachedLinkDecorationFilteringData()
 {
-#if ENABLE(NETWORK_CONNECTION_INTEGRITY)
+#if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
     if (!hasRunningProcess())
         return;
 
-    if (LookalikeCharacters::shared().cachedStrings().isEmpty())
+    if (LinkDecorationFilteringController::shared().cachedStrings().isEmpty())
         return;
 
-    m_needsInitialLookalikeCharacterStrings = false;
-    send(Messages::WebPage::SetLookalikeCharacterStrings(LookalikeCharacters::shared().cachedStrings()));
-#endif // ENABLE(NETWORK_CONNECTION_INTEGRITY)
+    m_needsInitialLinkDecorationFilteringData = false;
+    send(Messages::WebPage::SetLinkDecorationFilteringData(LinkDecorationFilteringController::shared().cachedStrings()));
+#endif // ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
 }
 
-void WebPageProxy::waitForInitialLookalikeCharacterStrings(WebFramePolicyListenerProxy& listener)
+void WebPageProxy::waitForInitialLinkDecorationFilteringData(WebFramePolicyListenerProxy& listener)
 {
-#if ENABLE(NETWORK_CONNECTION_INTEGRITY)
-    LookalikeCharacters::shared().updateStrings([listener = Ref { listener }] {
-        listener->didReceiveInitialLookalikeCharacterStrings();
+#if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
+    LinkDecorationFilteringController::shared().updateStrings([listener = Ref { listener }] {
+        listener->didReceiveInitialLinkDecorationFilteringData();
     });
 #else
-    listener.didReceiveInitialLookalikeCharacterStrings();
+    listener.didReceiveInitialLinkDecorationFilteringData();
 #endif
 }
 

@@ -18,7 +18,6 @@ list(APPEND PAL_PUBLIC_HEADERS
     cocoa/DataDetectorsCoreSoftLink.h
     cocoa/MediaToolboxSoftLink.h
     cocoa/NaturalLanguageSoftLink.h
-    cocoa/NetworkConnectionIntegritySoftLink.h
     cocoa/OpenGLSoftLinkCocoa.h
     cocoa/PassKitSoftLink.h
     cocoa/QuartzCoreSoftLink.h
@@ -28,6 +27,7 @@ list(APPEND PAL_PUBLIC_HEADERS
     cocoa/UsageTrackingSoftLink.h
     cocoa/VisionKitCoreSoftLink.h
     cocoa/VisionSoftLink.h
+    cocoa/WebPrivacySoftLink.h
 
     mac/DataDetectorsSoftLink.h
     mac/LookupSoftLink.h
@@ -176,7 +176,6 @@ list(APPEND PAL_SOURCES
     cocoa/Gunzip.cpp
     cocoa/MediaToolboxSoftLink.cpp
     cocoa/NaturalLanguageSoftLink.mm
-    cocoa/NetworkConnectionIntegritySoftLink.mm
     cocoa/OpenGLSoftLinkCocoa.mm
     cocoa/PassKitSoftLink.mm
     cocoa/QuartzCoreSoftLink.mm
@@ -185,6 +184,7 @@ list(APPEND PAL_SOURCES
     cocoa/TranslationUIServicesSoftLink.mm
     cocoa/UsageTrackingSoftLink.mm
     cocoa/VisionKitCoreSoftLink.mm
+    cocoa/WebPrivacySoftLink.mm
 
     crypto/commoncrypto/CryptoDigestCommonCrypto.cpp
 
