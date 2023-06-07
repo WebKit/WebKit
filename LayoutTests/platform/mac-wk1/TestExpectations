@@ -1945,8 +1945,6 @@ webkit.org/b/215033 imported/w3c/web-platform-tests/websockets/cookies/third-par
 
 webkit.org/b/215296 media/modern-media-controls/placard/placard-ltr.html [ Pass Timeout ]
 
-webkit.org/b/215299 imported/w3c/web-platform-tests/css/css-logical/parsing/margin-block-inline-computed.html [ Pass Failure ]
-
 webkit.org/b/215336 [ Release ] svg/text/hidpi-text-selection-rect-position.html [ Pass Failure ]
 
 webkit.org/b/215392 webaudio/oscillator-sawtooth.html [ Pass Failure ]

@@ -1746,7 +1746,6 @@ imported/w3c/web-platform-tests/css/css-sizing/percentage-height-in-flexbox.html
 [ BigSur+ ] imported/w3c/web-platform-tests/dom/events/Event-dispatch-redispatch.html [ Pass Failure ]
 
 # rdar://66841102 ([AS Layout Tests] REGRESSION (r264522): [ MacOS wk1 ] 2 css-logical/parsing tests are a flaky failure)
-imported/w3c/web-platform-tests/css/css-logical/parsing/margin-block-inline-computed.html [ Pass Failure ]
 imported/w3c/web-platform-tests/css/css-logical/parsing/padding-block-inline-computed.html [ Pass Failure ]
 
 # <rdar://problem/62848940> [ Mac Debug ] imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/media_fragment_seek.html is flaky failing.

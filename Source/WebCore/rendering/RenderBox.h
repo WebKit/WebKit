@@ -367,16 +367,9 @@ public:
     void clearOverridingLogicalHeightLength();
     void clearOverridingLogicalWidthLength();
 
-    // Mapping is done according to the table in section 6.4 (Abstract-to-Physical Mappings)
-    // in CSS Writing Modes Level 4. It the writing-mode of the box establishes an orthogonal flow,
-    // then the writing-mode that is used for the mapping is determined on the value of LayoutCalculationPhase
-    // as specified in section 7.3 (Orhotonal Flows) in CSS Writing Modes Level 4.
-    FlowRelativeDirection physicalToFlowRelativeDirectionMapping(PhysicalDirection) const;
-
     void markMarginAsTrimmed(MarginTrimType);
     void clearTrimmedMarginsMarkings();
     bool hasTrimmedMargin(std::optional<MarginTrimType>) const;
-    bool hasTrimmedMargin(PhysicalDirection) const;
 
     LayoutSize offsetFromContainer(RenderElement&, const LayoutPoint&, bool* offsetDependsOnPoint = nullptr) const override;
     

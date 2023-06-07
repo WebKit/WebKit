@@ -1393,63 +1393,6 @@ void RenderBox::clearOverridingLogicalWidthLength()
         gOverridingLogicalWidthLengthMap->remove(this);
 }
 
-FlowRelativeDirection RenderBox::physicalToFlowRelativeDirectionMapping(PhysicalDirection direction) const
-{
-    auto determineFormattingContextRootStyle = [&]() -> const RenderStyle& {
-        if (auto* ancestorToUse =  (isFlexItem() || isGridItem()) ? parent() : containingBlock())
-            return ancestorToUse->style();
-	ASSERT_NOT_REACHED();
-	return style();
-    };
-    auto& formattingContextRootStyle = determineFormattingContextRootStyle();
-    auto isHorizontalWritingMode = formattingContextRootStyle.isHorizontalWritingMode();
-    auto isLeftToRightDirection = formattingContextRootStyle.isLeftToRightDirection();
-    // vertical-rl and horizontal-bt writing modes
-    auto isFlippedBlocksWritingMode = formattingContextRootStyle.isFlippedBlocksWritingMode();
-
-    if (isHorizontalWritingMode == formattingContextRootStyle.isHorizontalWritingMode()) {
-        switch (direction) {
-        case PhysicalDirection::Top:
-            if (isHorizontalWritingMode)
-                return FlowRelativeDirection::BlockStart;
-            return isLeftToRightDirection ? FlowRelativeDirection::InlineStart : FlowRelativeDirection::InlineEnd;
-        case PhysicalDirection::Right:
-            if (isHorizontalWritingMode)
-                return isLeftToRightDirection ? FlowRelativeDirection::InlineEnd : FlowRelativeDirection::InlineStart;
-            return isFlippedBlocksWritingMode ? FlowRelativeDirection::BlockStart : FlowRelativeDirection::BlockEnd;
-        case PhysicalDirection::Bottom:
-            if (isHorizontalWritingMode)
-                return FlowRelativeDirection::BlockEnd;
-            return isLeftToRightDirection ? FlowRelativeDirection::InlineEnd : FlowRelativeDirection::InlineStart;
-        case PhysicalDirection::Left:
-            if (isHorizontalWritingMode)
-                return isLeftToRightDirection ? FlowRelativeDirection::InlineStart : FlowRelativeDirection::InlineEnd;
-            return isFlippedBlocksWritingMode ? FlowRelativeDirection::BlockEnd : FlowRelativeDirection::BlockStart;
-        default:
-            ASSERT_NOT_IMPLEMENTED_YET();
-        } 
-    } else
-        ASSERT_NOT_IMPLEMENTED_YET();
-    return { };
-}
-
-static MarginTrimType flowRelativeDirectionToMarginTrimType(FlowRelativeDirection direction)
-{
-    switch (direction) {
-    case FlowRelativeDirection::BlockStart:
-        return MarginTrimType::BlockStart;
-    case FlowRelativeDirection::BlockEnd:
-        return MarginTrimType::BlockEnd;
-    case FlowRelativeDirection::InlineStart:
-        return MarginTrimType::InlineStart;
-    case FlowRelativeDirection::InlineEnd:
-        return MarginTrimType::InlineEnd;
-    default:
-        ASSERT_NOT_REACHED();
-        return { };
-    }
-}
-
 void RenderBox::markMarginAsTrimmed(MarginTrimType newTrimmedMargin)
 {
     ensureRareData().setTrimmedMargins(rareData().trimmedMargins() | static_cast<unsigned>(newTrimmedMargin));
@@ -1468,12 +1411,6 @@ bool RenderBox::hasTrimmedMargin(std::optional<MarginTrimType> marginTrimType) c
     if (!hasRareData())
         return false;
     return marginTrimType ? (rareData().trimmedMargins() & static_cast<unsigned>(*marginTrimType)) : rareData().trimmedMargins();
-}
-
-bool RenderBox::hasTrimmedMargin(PhysicalDirection physicalDirection) const
-{
-    ASSERT(!needsLayout());
-    return hasTrimmedMargin(flowRelativeDirectionToMarginTrimType(physicalToFlowRelativeDirectionMapping(physicalDirection)));
 }
 
 LayoutUnit RenderBox::adjustBorderBoxLogicalWidthForBoxSizing(const Length& logicalWidth) const
