@@ -67,9 +67,9 @@ CaptureSourceOrError MockRealtimeVideoSource::create(String&& deviceID, AtomStri
 }
 #endif
 
-static HashSet<MockRealtimeVideoSource*>& allMockRealtimeVideoSource()
+static ThreadSafeWeakHashSet<MockRealtimeVideoSource>& allMockRealtimeVideoSource()
 {
-    static MainThreadNeverDestroyed<HashSet<MockRealtimeVideoSource*>> videoSources;
+    static NeverDestroyed<ThreadSafeWeakHashSet<MockRealtimeVideoSource>> videoSources;
     return videoSources;
 }
 
@@ -78,7 +78,7 @@ MockRealtimeVideoSource::MockRealtimeVideoSource(String&& deviceID, AtomString&&
     , m_emitFrameTimer(RunLoop::current(), this, &MockRealtimeVideoSource::generateFrame)
     , m_deviceOrientation { VideoFrameRotation::None }
 {
-    allMockRealtimeVideoSource().add(this);
+    allMockRealtimeVideoSource().add(*this);
 
     auto device = MockRealtimeMediaSourceCenter::mockDeviceWithPersistentID(persistentID());
     ASSERT(device);
@@ -104,7 +104,7 @@ MockRealtimeVideoSource::MockRealtimeVideoSource(String&& deviceID, AtomString&&
 
 MockRealtimeVideoSource::~MockRealtimeVideoSource()
 {
-    allMockRealtimeVideoSource().remove(this);
+    allMockRealtimeVideoSource().remove(*this);
 }
 
 bool MockRealtimeVideoSource::supportsSizeFrameRateAndZoom(std::optional<int> width, std::optional<int> height, std::optional<double> frameRate, std::optional<double> zoom)
@@ -555,14 +555,14 @@ void MockRealtimeVideoSource::monitorOrientation(OrientationNotifier& notifier)
 
 void MockRealtimeVideoSource::setIsInterrupted(bool isInterrupted)
 {
-    for (auto* source : allMockRealtimeVideoSource()) {
-        if (!source->isProducingData())
+    for (auto& source : allMockRealtimeVideoSource()) {
+        if (!source.isProducingData())
             continue;
         if (isInterrupted)
-            source->m_emitFrameTimer.stop();
+            source.m_emitFrameTimer.stop();
         else
-            source->startCaptureTimer();
-        source->notifyMutedChange(isInterrupted);
+            source.startCaptureTimer();
+        source.notifyMutedChange(isInterrupted);
     }
 }
 

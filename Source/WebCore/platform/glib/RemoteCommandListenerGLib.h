@@ -24,11 +24,14 @@
 
 namespace WebCore {
 
-class RemoteCommandListenerGLib : public RemoteCommandListener {
+class RemoteCommandListenerGLib : public RemoteCommandListener, public RefCounted<RemoteCommandListenerGLib> {
 public:
-    static std::unique_ptr<RemoteCommandListenerGLib> create(RemoteCommandListenerClient&);
+    static Ref<RemoteCommandListenerGLib> create(RemoteCommandListenerClient&);
     explicit RemoteCommandListenerGLib(RemoteCommandListenerClient&);
     virtual ~RemoteCommandListenerGLib();
+
+    void ref() const final { return RefCounted<RemoteCommandListenerGLib>::ref(); }
+    void deref() const { return RefCounted<RemoteCommandListenerGLib>::deref(); }
 
 private:
     void updateSupportedCommands() final;

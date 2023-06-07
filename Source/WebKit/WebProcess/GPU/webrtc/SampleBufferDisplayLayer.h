@@ -44,7 +44,7 @@ class SampleBufferDisplayLayerManager;
 
 class SampleBufferDisplayLayer final : public WebCore::SampleBufferDisplayLayer, public IPC::MessageReceiver, public GPUProcessConnection::Client {
 public:
-    static std::unique_ptr<SampleBufferDisplayLayer> create(SampleBufferDisplayLayerManager&, WebCore::SampleBufferDisplayLayer::Client&);
+    static Ref<SampleBufferDisplayLayer> create(SampleBufferDisplayLayerManager&, WebCore::SampleBufferDisplayLayer::Client&);
     ~SampleBufferDisplayLayer();
 
     SampleBufferDisplayLayerIdentifier identifier() const { return m_identifier; }
@@ -53,13 +53,12 @@ public:
 
     WebCore::LayerHostingContextID hostingContextID() const final { return m_hostingContextID; }
 
-    using GPUProcessConnection::Client::weakPtrFactory;
-    using GPUProcessConnection::Client::WeakValueType;
-    using GPUProcessConnection::Client::WeakPtrImplType;
+    void ref() const final { return ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<WebCore::SampleBufferDisplayLayer>::ref(); }
+    void deref() const final { return ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<WebCore::SampleBufferDisplayLayer>::deref(); }
+    ThreadSafeWeakPtrControlBlock& controlBlock() const final { return ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<WebCore::SampleBufferDisplayLayer>::controlBlock(); }
 
 private:
     SampleBufferDisplayLayer(SampleBufferDisplayLayerManager&, WebCore::SampleBufferDisplayLayer::Client&);
-    void disconnectGPUProcessConnectionIfNeeded();
 
     // WebCore::SampleBufferDisplayLayer
     void initialize(bool hideRootLayer, WebCore::IntSize, CompletionHandler<void(bool)>&&) final;
@@ -84,7 +83,7 @@ private:
 
     void setDidFail(bool);
 
-    GPUProcessConnection* m_gpuProcessConnection;
+    ThreadSafeWeakPtr<GPUProcessConnection> m_gpuProcessConnection;
     WeakPtr<SampleBufferDisplayLayerManager> m_manager;
     Ref<IPC::Connection> m_connection;
     SampleBufferDisplayLayerIdentifier m_identifier;

@@ -143,7 +143,7 @@ static void runWithoutAnimations(const WTF::Function<void()>& function)
     [CATransaction commit];
 }
 
-std::unique_ptr<LocalSampleBufferDisplayLayer> LocalSampleBufferDisplayLayer::create(Client& client)
+RefPtr<LocalSampleBufferDisplayLayer> LocalSampleBufferDisplayLayer::create(Client& client)
 {
     RetainPtr<AVSampleBufferDisplayLayer> sampleBufferDisplayLayer;
     @try {
@@ -154,7 +154,7 @@ std::unique_ptr<LocalSampleBufferDisplayLayer> LocalSampleBufferDisplayLayer::cr
     if (!sampleBufferDisplayLayer)
         return nullptr;
 
-    return makeUnique<LocalSampleBufferDisplayLayer>(WTFMove(sampleBufferDisplayLayer), client);
+    return adoptRef(*new LocalSampleBufferDisplayLayer(WTFMove(sampleBufferDisplayLayer), client));
 }
 
 LocalSampleBufferDisplayLayer::LocalSampleBufferDisplayLayer(RetainPtr<AVSampleBufferDisplayLayer>&& sampleBufferDisplayLayer, Client& client)

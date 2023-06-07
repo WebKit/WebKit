@@ -77,10 +77,8 @@ struct CaptureSourceOrError;
 struct VideoFrameAdaptor;
 
 class WEBCORE_EXPORT RealtimeMediaSource
-    : public ThreadSafeRefCounted<RealtimeMediaSource, WTF::DestructionThread::MainRunLoop>
-    , public CanMakeWeakPtr<RealtimeMediaSource>
 #if !RELEASE_LOG_DISABLED
-    , public LoggerHelper
+    : public LoggerHelper
 #endif
 {
 public:
@@ -195,6 +193,9 @@ public:
 
     virtual const RealtimeMediaSourceCapabilities& capabilities() = 0;
     virtual const RealtimeMediaSourceSettings& settings() = 0;
+    virtual void ref() const = 0;
+    virtual void deref() const = 0;
+    virtual ThreadSafeWeakPtrControlBlock& controlBlock() const = 0;
 
     struct ApplyConstraintsError {
         String badConstraint;

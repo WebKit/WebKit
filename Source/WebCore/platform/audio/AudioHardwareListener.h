@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef AudioHardwareListener_h
-#define AudioHardwareListener_h
+#pragma once
 
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
@@ -37,7 +36,7 @@ enum class AudioHardwareActivityType {
     IsInactive
 };
 
-class AudioHardwareListener : public RefCounted<AudioHardwareListener> {
+class AudioHardwareListener {
 public:
     class Client {
     public:
@@ -46,6 +45,9 @@ public:
         virtual void audioHardwareDidBecomeInactive() = 0;
         virtual void audioOutputDeviceChanged() = 0;
     };
+
+    virtual void ref() const = 0;
+    virtual void deref() const = 0;
 
     using CreationFunction = Function<Ref<AudioHardwareListener>(AudioHardwareListener::Client&)>;
     WEBCORE_EXPORT static void setCreationFunction(CreationFunction&&);
@@ -76,5 +78,3 @@ protected:
 };
 
 }
-
-#endif // AudioHardwareListener_h

@@ -107,8 +107,8 @@ private:
     WebCore::OrientationNotifier m_orientationNotifier { 0 };
 
     struct PageSources {
-        WeakPtr<WebCore::RealtimeMediaSource> microphoneSource;
-        WeakHashSet<WebCore::RealtimeMediaSource> cameraSources;
+        ThreadSafeWeakPtr<WebCore::RealtimeMediaSource> microphoneSource;
+        ThreadSafeWeakHashSet<WebCore::RealtimeMediaSource> cameraSources;
     };
     HashMap<WebCore::PageIdentifier, PageSources> m_pageSources;
 };

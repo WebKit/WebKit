@@ -47,7 +47,7 @@ enum class VideoFrameRotation : uint16_t;
 class WEBCORE_EXPORT LocalSampleBufferDisplayLayer final : public SampleBufferDisplayLayer, public CanMakeWeakPtr<LocalSampleBufferDisplayLayer, WeakPtrFactoryInitialization::Eager> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static std::unique_ptr<LocalSampleBufferDisplayLayer> create(Client&);
+    static RefPtr<LocalSampleBufferDisplayLayer> create(Client&);
 
     LocalSampleBufferDisplayLayer(RetainPtr<AVSampleBufferDisplayLayer>&&, Client&);
     ~LocalSampleBufferDisplayLayer();

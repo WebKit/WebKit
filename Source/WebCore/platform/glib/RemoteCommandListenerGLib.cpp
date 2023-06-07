@@ -23,9 +23,9 @@
 
 namespace WebCore {
 
-std::unique_ptr<RemoteCommandListenerGLib> RemoteCommandListenerGLib::create(RemoteCommandListenerClient& client)
+Ref<RemoteCommandListenerGLib> RemoteCommandListenerGLib::create(RemoteCommandListenerClient& client)
 {
-    return makeUnique<RemoteCommandListenerGLib>(client);
+    return adoptRef(*new RemoteCommandListenerGLib(client));
 }
 
 void RemoteCommandListenerGLib::updateSupportedCommands()

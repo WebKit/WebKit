@@ -38,11 +38,13 @@ class CompositorIntegration;
 class PresentationContext;
 struct PresentationContextDescriptor;
 
-class GPU : public RefCounted<GPU> {
+class GPU {
 public:
     virtual ~GPU() = default;
 
     virtual void requestAdapter(const RequestAdapterOptions&, CompletionHandler<void(RefPtr<Adapter>&&)>&&) = 0;
+    virtual void ref() const = 0;
+    virtual void deref() const = 0;
 
     virtual Ref<PresentationContext> createPresentationContext(const PresentationContextDescriptor&) = 0;
 

@@ -93,7 +93,7 @@ private:
     SampleBufferDisplayLayerIdentifier m_identifier;
     Ref<IPC::Connection> m_connection;
     std::unique_ptr<WebCore::ImageTransferSessionVT> m_imageTransferSession;
-    std::unique_ptr<WebCore::LocalSampleBufferDisplayLayer> m_sampleBufferDisplayLayer;
+    RefPtr<WebCore::LocalSampleBufferDisplayLayer> m_sampleBufferDisplayLayer;
     std::unique_ptr<LayerHostingContext> m_layerHostingContext;
     SharedVideoFrameReader m_sharedVideoFrameReader;
     ThreadLikeAssertion m_consumeThread NO_UNIQUE_ADDRESS;

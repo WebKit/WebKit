@@ -26,8 +26,12 @@
 
 namespace WebCore {
 
-class RealtimeIncomingSourceGStreamer : public RealtimeMediaSource {
+class RealtimeIncomingSourceGStreamer : public RealtimeMediaSource, public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<RealtimeIncomingSourceGStreamer> {
 public:
+    void ref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<RealtimeIncomingSourceGStreamer>::ref(); }
+    void deref() const final { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<RealtimeIncomingSourceGStreamer>::deref(); }
+    ThreadSafeWeakPtrControlBlock& controlBlock() const final { return ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<RealtimeIncomingSourceGStreamer>::controlBlock(); }
+
     GstElement* bin() { return m_bin.get(); }
 
     int registerClient(GRefPtr<GstElement>&&);

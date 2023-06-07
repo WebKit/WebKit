@@ -330,7 +330,7 @@ CaptureSourceOrError UserMediaCaptureManagerProxy::createMicrophoneSource(const 
     auto& perPageSources = m_pageSources.ensure(pageIdentifier, [] { return PageSources { }; }).iterator->value;
 
     // FIXME: Support multiple microphones simultaneously.
-    if (auto* microphoneSource = perPageSources.microphoneSource.get()) {
+    if (auto microphoneSource = perPageSources.microphoneSource.get()) {
         if (microphoneSource->persistentID() != device.persistentId() && !microphoneSource->isEnded()) {
             RELEASE_LOG_ERROR(WebRTC, "Ending microphone source as new source is using a different device.");
             // FIXME: We should probably fail the capture in a way that shows a specific console log message.
@@ -339,7 +339,7 @@ CaptureSourceOrError UserMediaCaptureManagerProxy::createMicrophoneSource(const 
     }
 
     auto source = sourceOrError.source();
-    perPageSources.microphoneSource = WeakPtr { source.get() };
+    perPageSources.microphoneSource = ThreadSafeWeakPtr { source.get() };
     return source;
 }
 

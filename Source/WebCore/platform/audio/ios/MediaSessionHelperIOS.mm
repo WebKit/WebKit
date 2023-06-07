@@ -117,9 +117,9 @@ private:
 #endif
 };
 
-static std::unique_ptr<MediaSessionHelper>& sharedHelperInstance()
+static RefPtr<MediaSessionHelper>& sharedHelperInstance()
 {
-    static NeverDestroyed<std::unique_ptr<MediaSessionHelper>> helper;
+    static NeverDestroyed<RefPtr<MediaSessionHelper>> helper;
     return helper;
 }
 
@@ -135,12 +135,12 @@ MediaSessionHelper& MediaSessionHelper::sharedHelper()
 
 void MediaSessionHelper::resetSharedHelper()
 {
-    sharedHelperInstance() = makeUnique<MediaSessionHelperiOS>();
+    sharedHelperInstance() = adoptRef(*new MediaSessionHelperiOS());
 }
 
-void MediaSessionHelper::setSharedHelper(UniqueRef<MediaSessionHelper>&& helper)
+void MediaSessionHelper::setSharedHelper(Ref<MediaSessionHelper>&& helper)
 {
-    sharedHelperInstance() = helper.moveToUniquePtr();
+    sharedHelperInstance() = WTFMove(helper);
 }
 
 void MediaSessionHelper::addClient(MediaSessionHelperClient& client)

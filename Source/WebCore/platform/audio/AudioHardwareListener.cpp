@@ -52,7 +52,14 @@ void AudioHardwareListener::resetCreationFunction()
 #if PLATFORM(MAC)
         return AudioHardwareListenerMac::create(client);
 #else
-        return adoptRef(*new AudioHardwareListener(client));
+        class RefCountedAudioHardwareListener : public AudioHardwareListener, public RefCounted<RefCountedAudioHardwareListener> {
+        public:
+            RefCountedAudioHardwareListener(AudioHardwareListener::Client& client)
+                : AudioHardwareListener(client) { }
+            void ref() const final { RefCounted<RefCountedAudioHardwareListener>::ref(); }
+            void deref() const final { RefCounted<RefCountedAudioHardwareListener>::deref(); }
+        };
+        return adoptRef(*new RefCountedAudioHardwareListener(client));
 #endif
     };
 }

@@ -155,6 +155,10 @@ public:
     void setHasVP9ExtensionSupport(bool);
     bool hasVP9ExtensionSupport() const { return m_hasVP9ExtensionSupport; }
 
+    void ref() const final { return IPC::WorkQueueMessageReceiver::ref(); }
+    void deref() const final { return IPC::WorkQueueMessageReceiver::deref(); }
+    ThreadSafeWeakPtrControlBlock& controlBlock() const final { return IPC::WorkQueueMessageReceiver::controlBlock(); }
+
 private:
     LibWebRTCCodecs();
     void ensureGPUProcessConnectionAndDispatchToThread(Function<void()>&&);

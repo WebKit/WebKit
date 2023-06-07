@@ -38,7 +38,7 @@ namespace PAL::WebGPU {
 
 class ConvertToBackingContext;
 
-class GPUImpl final : public GPU {
+class GPUImpl final : public GPU, public RefCounted<GPUImpl> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<GPUImpl> create(WebGPUPtr<WGPUInstance>&& instance, ConvertToBackingContext& convertToBackingContext)
@@ -47,6 +47,9 @@ public:
     }
 
     virtual ~GPUImpl();
+
+    void ref() const final { RefCounted<GPUImpl>::ref(); }
+    void deref() const final { RefCounted<GPUImpl>::deref(); }
 
 private:
     friend class DowncastConvertToBackingContext;

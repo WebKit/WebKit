@@ -33,11 +33,14 @@
 
 namespace WebCore {
 
-class RemoteCommandListenerCocoa : public RemoteCommandListener, public CanMakeWeakPtr<RemoteCommandListenerCocoa> {
+class RemoteCommandListenerCocoa : public RemoteCommandListener, public CanMakeWeakPtr<RemoteCommandListenerCocoa>, public RefCounted<RemoteCommandListenerCocoa> {
 public:
-    static std::unique_ptr<RemoteCommandListenerCocoa> create(RemoteCommandListenerClient&);
+    static Ref<RemoteCommandListenerCocoa> create(RemoteCommandListenerClient&);
     RemoteCommandListenerCocoa(RemoteCommandListenerClient&);
     virtual ~RemoteCommandListenerCocoa();
+
+    void ref() const final { return RefCounted<RemoteCommandListenerCocoa>::ref(); }
+    void deref() const { return RefCounted<RemoteCommandListenerCocoa>::deref(); }
 
 private:
     void updateSupportedCommands() final;
@@ -50,4 +53,4 @@ private:
 
 }
 
-#endif // PLATFORM(MAC)
+#endif // PLATFORM(COCOA)

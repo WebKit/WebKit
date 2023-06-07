@@ -38,9 +38,9 @@ namespace WebKit {
 
 using namespace WebCore;
 
-std::unique_ptr<RemoteRemoteCommandListener> RemoteRemoteCommandListener::create(RemoteCommandListenerClient& client, WebProcess& webProcess)
+Ref<RemoteRemoteCommandListener> RemoteRemoteCommandListener::create(RemoteCommandListenerClient& client, WebProcess& webProcess)
 {
-    return makeUnique<RemoteRemoteCommandListener>(client, webProcess);
+    return adoptRef(*new RemoteRemoteCommandListener(client, webProcess));
 }
 
 RemoteRemoteCommandListener::RemoteRemoteCommandListener(RemoteCommandListenerClient& client, WebProcess& webProcess)
@@ -53,26 +53,27 @@ RemoteRemoteCommandListener::RemoteRemoteCommandListener(RemoteCommandListenerCl
 
 RemoteRemoteCommandListener::~RemoteRemoteCommandListener()
 {
-    if (m_gpuProcessConnection) {
-        m_gpuProcessConnection->messageReceiverMap().removeMessageReceiver(*this);
-        m_gpuProcessConnection->connection().send(Messages::GPUConnectionToWebProcess::ReleaseRemoteCommandListener(m_identifier), 0);
+    if (auto gpuProcessConnection = m_gpuProcessConnection.get()) {
+        gpuProcessConnection->messageReceiverMap().removeMessageReceiver(*this);
+        gpuProcessConnection->connection().send(Messages::GPUConnectionToWebProcess::ReleaseRemoteCommandListener(m_identifier), 0);
     }
 }
 
 GPUProcessConnection& RemoteRemoteCommandListener::ensureGPUProcessConnection()
 {
-    if (!m_gpuProcessConnection) {
-        m_gpuProcessConnection = m_process.ensureGPUProcessConnection();
-        m_gpuProcessConnection->addClient(*this);
-        m_gpuProcessConnection->messageReceiverMap().addMessageReceiver(Messages::RemoteRemoteCommandListener::messageReceiverName(), m_identifier.toUInt64(), *this);
-        m_gpuProcessConnection->connection().send(Messages::GPUConnectionToWebProcess::CreateRemoteCommandListener(m_identifier), { });
+    auto gpuProcessConnection = m_gpuProcessConnection.get();
+    if (!gpuProcessConnection) {
+        gpuProcessConnection = &WebProcess::singleton().ensureGPUProcessConnection();
+        m_gpuProcessConnection = gpuProcessConnection;
+        gpuProcessConnection->addClient(*this);
+        gpuProcessConnection->messageReceiverMap().addMessageReceiver(Messages::RemoteRemoteCommandListener::messageReceiverName(), m_identifier.toUInt64(), *this);
+        gpuProcessConnection->connection().send(Messages::GPUConnectionToWebProcess::CreateRemoteCommandListener(m_identifier), { });
     }
-    return *m_gpuProcessConnection;
+    return *gpuProcessConnection;
 }
 
 void RemoteRemoteCommandListener::gpuProcessConnectionDidClose(GPUProcessConnection& gpuProcessConnection)
 {
-    gpuProcessConnection.removeClient(*this);
     gpuProcessConnection.messageReceiverMap().removeMessageReceiver(*this);
     m_gpuProcessConnection = nullptr;
 

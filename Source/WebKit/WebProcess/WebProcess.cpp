@@ -2197,7 +2197,7 @@ void WebProcess::setUseGPUProcessForMedia(bool useGPUProcessForMedia)
 
 #if PLATFORM(IOS_FAMILY)
     if (useGPUProcessForMedia)
-        MediaSessionHelper::setSharedHelper(makeUniqueRef<RemoteMediaSessionHelper>(*this));
+        MediaSessionHelper::setSharedHelper(adoptRef(*new RemoteMediaSessionHelper(*this)));
     else
         MediaSessionHelper::resetSharedHelper();
 #endif

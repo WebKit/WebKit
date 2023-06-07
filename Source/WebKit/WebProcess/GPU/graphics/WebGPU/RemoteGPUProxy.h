@@ -46,7 +46,7 @@ class ConvertToBackingContext;
 class DowncastConvertToBackingContext;
 }
 
-class RemoteGPUProxy final : public PAL::WebGPU::GPU, private IPC::Connection::Client, private GPUProcessConnection::Client {
+class RemoteGPUProxy final : public PAL::WebGPU::GPU, private IPC::Connection::Client, private GPUProcessConnection::Client, public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<RemoteGPUProxy> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static RefPtr<RemoteGPUProxy> create(GPUProcessConnection&, WebGPU::ConvertToBackingContext&, WebGPUIdentifier, RenderingBackendIdentifier);
@@ -56,6 +56,10 @@ public:
     RemoteGPUProxy& root() { return *this; }
 
     IPC::StreamClientConnection& streamClientConnection() { return *m_streamConnection; }
+
+    void ref() const final { return ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<RemoteGPUProxy>::ref(); }
+    void deref() const final { return ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<RemoteGPUProxy>::deref(); }
+    ThreadSafeWeakPtrControlBlock& controlBlock() const final { return ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<RemoteGPUProxy>::controlBlock(); }
 
 private:
     friend class WebGPU::DowncastConvertToBackingContext;
@@ -94,7 +98,7 @@ private:
     {
         return root().streamClientConnection().sendSync(WTFMove(message), backing(), defaultSendTimeout);
     }
-    IPC::Connection& connection() const { return m_gpuProcessConnection->connection(); }
+    IPC::Connection& connection() const { return m_gpuProcessConnection.get()->connection(); }
 
     void requestAdapter(const PAL::WebGPU::RequestAdapterOptions&, CompletionHandler<void(RefPtr<PAL::WebGPU::Adapter>&&)>&&) final;
 
@@ -109,7 +113,7 @@ private:
 
     WebGPUIdentifier m_backing;
     Ref<WebGPU::ConvertToBackingContext> m_convertToBackingContext;
-    GPUProcessConnection* m_gpuProcessConnection;
+    ThreadSafeWeakPtr<GPUProcessConnection> m_gpuProcessConnection;
     bool m_didInitialize { false };
     bool m_lost { false };
     RefPtr<IPC::StreamClientConnection> m_streamConnection;

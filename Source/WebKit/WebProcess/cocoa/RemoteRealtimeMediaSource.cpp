@@ -68,14 +68,6 @@ void RemoteRealtimeMediaSource::createRemoteMediaSource()
     }, m_proxy.shouldCaptureInGPUProcess() && m_manager.shouldUseGPUProcessRemoteFrames());
 }
 
-void RemoteRealtimeMediaSource::removeAsClient()
-{
-    if (m_proxy.shouldCaptureInGPUProcess()) {
-        if (auto* connection = WebProcess::singleton().existingGPUProcessConnection())
-            connection->removeClient(*this);
-    }
-}
-
 void RemoteRealtimeMediaSource::setCapabilities(RealtimeMediaSourceCapabilities&& capabilities)
 {
     m_capabilities = WTFMove(capabilities);

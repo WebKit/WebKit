@@ -174,9 +174,10 @@ void GPUProcessConnection::didClose(IPC::Connection&)
         arbitrator->leaveRoutingAbritration();
 #endif
 
-    auto clients = m_clients;
-    for (auto& client : clients)
+    m_clients.forEach([this] (auto& client) {
         client.gpuProcessConnectionDidClose(*this);
+    });
+    m_clients.clear();
 }
 
 void GPUProcessConnection::didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName)

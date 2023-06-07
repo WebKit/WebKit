@@ -102,11 +102,13 @@ void RemoteAudioDestinationProxy::stopRenderingThread()
 
 IPC::Connection* RemoteAudioDestinationProxy::connection()
 {
-    if (!m_gpuProcessConnection) {
-        m_gpuProcessConnection = WebProcess::singleton().ensureGPUProcessConnection();
-        m_gpuProcessConnection->addClient(*this);
+    auto gpuProcessConnection = m_gpuProcessConnection.get();
+    if (!gpuProcessConnection) {
+        gpuProcessConnection = &WebProcess::singleton().ensureGPUProcessConnection();
+        m_gpuProcessConnection = gpuProcessConnection;
+        gpuProcessConnection->addClient(*this);
         m_destinationID = RemoteAudioDestinationIdentifier::generate();
-        m_gpuProcessConnection->connection().send(Messages::RemoteAudioDestinationManager::CreateAudioDestination(m_destinationID, m_inputDeviceId, m_numberOfInputChannels, m_outputBus->numberOfChannels(), sampleRate(), m_remoteSampleRate, m_renderSemaphore), 0);
+        gpuProcessConnection->connection().send(Messages::RemoteAudioDestinationManager::CreateAudioDestination(m_destinationID, m_inputDeviceId, m_numberOfInputChannels, m_outputBus->numberOfChannels(), sampleRate(), m_remoteSampleRate, m_renderSemaphore), 0);
 
 #if PLATFORM(COCOA)
         m_currentFrame = 0;
@@ -114,25 +116,26 @@ IPC::Connection* RemoteAudioDestinationProxy::connection()
         size_t numberOfFrames = m_remoteSampleRate * ringBufferSizeInSecond;
         auto [ringBuffer, handle] = ProducerSharedCARingBuffer::allocate(streamFormat, numberOfFrames);
         m_ringBuffer = WTFMove(ringBuffer);
-        m_gpuProcessConnection->connection().send(Messages::RemoteAudioDestinationManager::AudioSamplesStorageChanged { m_destinationID, WTFMove(handle) }, 0);
+        gpuProcessConnection->connection().send(Messages::RemoteAudioDestinationManager::AudioSamplesStorageChanged { m_destinationID, WTFMove(handle) }, 0);
         m_audioBufferList = makeUnique<WebCore::WebAudioBufferList>(streamFormat);
         m_audioBufferList->setSampleCount(maxAudioBufferListSampleCount);
 #endif
 
         startRenderingThread();
     }
-    return m_destinationID ? &m_gpuProcessConnection->connection() : nullptr;
+    return m_destinationID ? &gpuProcessConnection->connection() : nullptr;
 }
 
 IPC::Connection* RemoteAudioDestinationProxy::existingConnection()
 {
-    return m_gpuProcessConnection && m_destinationID ? &m_gpuProcessConnection->connection() : nullptr;
+    auto gpuProcessConnection = m_gpuProcessConnection.get();
+    return gpuProcessConnection && m_destinationID ? &gpuProcessConnection->connection() : nullptr;
 }
 
 RemoteAudioDestinationProxy::~RemoteAudioDestinationProxy()
 {
-    if (m_gpuProcessConnection && m_destinationID)
-        m_gpuProcessConnection->connection().send(Messages::RemoteAudioDestinationManager::DeleteAudioDestination(m_destinationID), 0);
+    if (auto gpuProcessConnection = m_gpuProcessConnection.get(); gpuProcessConnection && m_destinationID)
+        gpuProcessConnection->connection().send(Messages::RemoteAudioDestinationManager::DeleteAudioDestination(m_destinationID), 0);
     stopRenderingThread();
 }
 
@@ -216,8 +219,6 @@ void RemoteAudioDestinationProxy::renderAudio(unsigned frameCount)
 
 void RemoteAudioDestinationProxy::gpuProcessConnectionDidClose(GPUProcessConnection& oldConnection)
 {
-    oldConnection.removeClient(*this);
-
     stopRenderingThread();
     m_gpuProcessConnection = nullptr;
     m_destinationID = { };

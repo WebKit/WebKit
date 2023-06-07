@@ -263,7 +263,7 @@ private:
     PlaybackState m_playbackState { PlaybackState::None };
 
     // Used on both main thread and sample thread.
-    std::unique_ptr<SampleBufferDisplayLayer> m_sampleBufferDisplayLayer;
+    RefPtr<SampleBufferDisplayLayer> m_sampleBufferDisplayLayer;
     Lock m_sampleBufferDisplayLayerLock;
     bool m_shouldUpdateDisplayLayer { true };
     // Written on main thread, read on sample thread.

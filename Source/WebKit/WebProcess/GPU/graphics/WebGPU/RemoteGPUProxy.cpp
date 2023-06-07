@@ -70,8 +70,10 @@ RemoteGPUProxy::~RemoteGPUProxy()
 
 void RemoteGPUProxy::initializeIPC(IPC::StreamServerConnection::Handle&& serverConnectionHandle, RenderingBackendIdentifier renderingBackend)
 {
-    m_gpuProcessConnection->addClient(*this);
-    m_gpuProcessConnection->connection().send(Messages::GPUConnectionToWebProcess::CreateRemoteGPU(m_backing, renderingBackend, WTFMove(serverConnectionHandle)), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
+    if (auto gpuProcessConnection = m_gpuProcessConnection.get()) {
+        gpuProcessConnection->addClient(*this);
+        gpuProcessConnection->connection().send(Messages::GPUConnectionToWebProcess::CreateRemoteGPU(m_backing, renderingBackend, WTFMove(serverConnectionHandle)), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
+    }
     m_streamConnection->open(*this);
     // TODO: We must wait until initialized, because at the moment we cannot receive IPC messages
     // during wait while in synchronous stream send. Should be fixed as part of https://bugs.webkit.org/show_bug.cgi?id=217211.
@@ -80,17 +82,17 @@ void RemoteGPUProxy::initializeIPC(IPC::StreamServerConnection::Handle&& serverC
 
 void RemoteGPUProxy::disconnectGpuProcessIfNeeded()
 {
-    if (m_gpuProcessConnection) {
+    if (auto gpuProcessConnection = m_gpuProcessConnection.get()) {
         m_streamConnection->invalidate();
-        m_gpuProcessConnection->connection().send(Messages::GPUConnectionToWebProcess::ReleaseRemoteGPU(m_backing), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
+        gpuProcessConnection->connection().send(Messages::GPUConnectionToWebProcess::ReleaseRemoteGPU(m_backing), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
         m_gpuProcessConnection = nullptr;
     }
 }
 
 void RemoteGPUProxy::gpuProcessConnectionDidClose(GPUProcessConnection& connection)
 {
-    ASSERT(m_gpuProcessConnection);
-    ASSERT(&connection == m_gpuProcessConnection);
+    ASSERT(m_gpuProcessConnection.get());
+    ASSERT(&connection == m_gpuProcessConnection.get());
     abandonGPUProcess();
 }
 

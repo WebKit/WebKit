@@ -44,12 +44,17 @@ class WebProcess;
 class RemoteRemoteCommandListener final
     : public WebCore::RemoteCommandListener
     , private GPUProcessConnection::Client
-    , private IPC::MessageReceiver {
+    , private IPC::MessageReceiver
+    , public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<RemoteRemoteCommandListener> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static std::unique_ptr<RemoteRemoteCommandListener> create(WebCore::RemoteCommandListenerClient&, WebProcess&);
+    static Ref<RemoteRemoteCommandListener> create(WebCore::RemoteCommandListenerClient&, WebProcess&);
     RemoteRemoteCommandListener(WebCore::RemoteCommandListenerClient&, WebProcess&);
     ~RemoteRemoteCommandListener();
+
+    void ref() const final { return ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<RemoteRemoteCommandListener>::ref(); }
+    void deref() const final { return ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<RemoteRemoteCommandListener>::deref(); }
+    ThreadSafeWeakPtrControlBlock& controlBlock() const final { return ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<RemoteRemoteCommandListener>::controlBlock(); }
 
 private:
     // IPC::MessageReceiver
@@ -70,7 +75,7 @@ private:
     RemoteRemoteCommandListenerIdentifier m_identifier;
     WebCore::RemoteCommandListener::RemoteCommandsSet m_currentCommands;
     bool m_currentSupportSeeking { false };
-    WeakPtr<GPUProcessConnection> m_gpuProcessConnection;
+    ThreadSafeWeakPtr<GPUProcessConnection> m_gpuProcessConnection;
 };
 
 }

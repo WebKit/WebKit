@@ -54,10 +54,7 @@ RemoteRealtimeVideoSource::RemoteRealtimeVideoSource(RemoteRealtimeMediaSourcePr
     ASSERT(this->pageIdentifier());
 }
 
-RemoteRealtimeVideoSource::~RemoteRealtimeVideoSource()
-{
-    removeAsClient();
-}
+RemoteRealtimeVideoSource::~RemoteRealtimeVideoSource() = default;
 
 void RemoteRealtimeVideoSource::endProducingData()
 {

@@ -266,7 +266,7 @@ void RemoteMediaPlayerManager::setUseGPUProcess(bool useGPUProcess)
 
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
     if (useGPUProcess) {
-        WebCore::SampleBufferDisplayLayer::setCreator([](auto& client) {
+        WebCore::SampleBufferDisplayLayer::setCreator([](auto& client) -> RefPtr<WebCore::SampleBufferDisplayLayer> {
             return WebProcess::singleton().ensureGPUProcessConnection().sampleBufferDisplayLayerManager().createLayer(client);
         });
         WebCore::MediaPlayerPrivateMediaStreamAVFObjC::setNativeImageCreator([](auto& videoFrame) {
@@ -276,20 +276,22 @@ void RemoteMediaPlayerManager::setUseGPUProcess(bool useGPUProcess)
 #endif
 }
 
-GPUProcessConnection& RemoteMediaPlayerManager::gpuProcessConnection() const
+GPUProcessConnection& RemoteMediaPlayerManager::gpuProcessConnection()
 {
-    if (!m_gpuProcessConnection) {
-        m_gpuProcessConnection = &WebProcess::singleton().ensureGPUProcessConnection();
-        m_gpuProcessConnection->addClient(*this);
+    auto gpuProcessConnection = m_gpuProcessConnection.get();
+    if (!gpuProcessConnection) {
+        gpuProcessConnection = &WebProcess::singleton().ensureGPUProcessConnection();
+        m_gpuProcessConnection = gpuProcessConnection;
+        gpuProcessConnection = &WebProcess::singleton().ensureGPUProcessConnection();
+        gpuProcessConnection->addClient(*this);
     }
 
-    return *m_gpuProcessConnection;
+    return *gpuProcessConnection;
 }
 
 void RemoteMediaPlayerManager::gpuProcessConnectionDidClose(GPUProcessConnection& connection)
 {
-    ASSERT(m_gpuProcessConnection == &connection);
-    connection.removeClient(*this);
+    ASSERT(m_gpuProcessConnection.get() == &connection);
 
     m_gpuProcessConnection = nullptr;
 

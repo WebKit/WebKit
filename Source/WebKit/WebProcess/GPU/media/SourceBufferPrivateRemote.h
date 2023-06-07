@@ -127,7 +127,7 @@ private:
     MediaTime minimumUpcomingPresentationTimeForTrackID(const AtomString&) override;
     void setMaximumQueueDepthForTrackID(const AtomString&, uint64_t) override;
 
-    WeakPtr<GPUProcessConnection> m_gpuProcessConnection;
+    ThreadSafeWeakPtr<GPUProcessConnection> m_gpuProcessConnection;
     RemoteSourceBufferIdentifier m_remoteSourceBufferIdentifier;
     WeakPtr<MediaSourcePrivateRemote> m_mediaSourcePrivate;
     WeakPtr<MediaPlayerPrivateRemote> m_mediaPlayerPrivate;
@@ -139,7 +139,7 @@ private:
     bool m_isActive { false };
     uint64_t m_totalTrackBufferSizeInBytes = { 0 };
 
-    bool isGPURunning() const { return !m_disconnected && m_gpuProcessConnection; }
+    bool isGPURunning() const { return !m_disconnected && m_gpuProcessConnection.get(); }
     bool m_disconnected { false };
 
 #if !RELEASE_LOG_DISABLED

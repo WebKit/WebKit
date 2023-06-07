@@ -52,6 +52,10 @@ public:
     using SupportsAirPlayVideo = WebCore::MediaSessionHelperClient::SupportsAirPlayVideo;
     using SuspendedUnderLock = WebCore::MediaSessionHelperClient::SuspendedUnderLock;
 
+    void ref() const final { return ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<WebCore::MediaSessionHelper>::ref(); }
+    void deref() const final { return ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<WebCore::MediaSessionHelper>::deref(); }
+    ThreadSafeWeakPtrControlBlock& controlBlock() const final { return ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<WebCore::MediaSessionHelper>::controlBlock(); }
+
 private:
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
@@ -68,7 +72,7 @@ private:
     void activeVideoRouteDidChange(SupportsAirPlayVideo, WebCore::MediaPlaybackTargetContext&&);
 
     WebProcess& m_process;
-    WeakPtr<GPUProcessConnection> m_gpuProcessConnection;
+    ThreadSafeWeakPtr<GPUProcessConnection> m_gpuProcessConnection;
 };
 
 }

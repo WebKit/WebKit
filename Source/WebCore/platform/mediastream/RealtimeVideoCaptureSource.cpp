@@ -42,8 +42,21 @@ RealtimeVideoCaptureSource::RealtimeVideoCaptureSource(const CaptureDevice& devi
 {
 }
 
-RealtimeVideoCaptureSource::~RealtimeVideoCaptureSource()
+RealtimeVideoCaptureSource::~RealtimeVideoCaptureSource() = default;
+
+void RealtimeVideoCaptureSource::ref() const
 {
+    ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<RealtimeVideoCaptureSource, WTF::DestructionThread::MainRunLoop>::ref();
+}
+
+void RealtimeVideoCaptureSource::deref() const
+{
+    ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<RealtimeVideoCaptureSource, WTF::DestructionThread::MainRunLoop>::deref();
+}
+
+ThreadSafeWeakPtrControlBlock& RealtimeVideoCaptureSource::controlBlock() const
+{
+    return ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<RealtimeVideoCaptureSource, WTF::DestructionThread::MainRunLoop>::controlBlock();
 }
 
 const Vector<VideoPreset>& RealtimeVideoCaptureSource::presets()

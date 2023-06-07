@@ -39,7 +39,7 @@ class ImageTransferSessionVT;
 
 enum class VideoFrameRotation : uint16_t;
 
-class WEBCORE_EXPORT RealtimeVideoCaptureSource : public RealtimeMediaSource {
+class WEBCORE_EXPORT RealtimeVideoCaptureSource : public RealtimeMediaSource, public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<RealtimeVideoCaptureSource, WTF::DestructionThread::MainRunLoop> {
 public:
     virtual ~RealtimeVideoCaptureSource();
 
@@ -54,6 +54,10 @@ public:
     void ensureIntrinsicSizeMaintainsAspectRatio();
 
     const std::optional<VideoPreset> currentPreset() const { return m_currentPreset; }
+
+    void ref() const final;
+    void deref() const final;
+    ThreadSafeWeakPtrControlBlock& controlBlock() const final;
 
 protected:
     RealtimeVideoCaptureSource(const CaptureDevice&, MediaDeviceHashSalts&&, PageIdentifier);

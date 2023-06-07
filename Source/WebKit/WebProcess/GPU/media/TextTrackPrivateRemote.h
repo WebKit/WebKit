@@ -97,7 +97,7 @@ public:
 private:
     TextTrackPrivateRemote(GPUProcessConnection&, WebCore::MediaPlayerIdentifier, TrackPrivateRemoteIdentifier, TextTrackPrivateRemoteConfiguration&&);
 
-    WeakPtr<GPUProcessConnection> m_gpuProcessConnection;
+    ThreadSafeWeakPtr<GPUProcessConnection> m_gpuProcessConnection;
     AtomString m_id;
     AtomString m_label;
     AtomString m_language;

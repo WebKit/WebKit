@@ -45,11 +45,16 @@ class RemoteAudioSession final
     : public WebCore::AudioSession
     , public WebCore::AudioSession::InterruptionObserver
     , public GPUProcessConnection::Client
-    , IPC::MessageReceiver {
+    , IPC::MessageReceiver
+    , public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<RemoteAudioSession> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static UniqueRef<RemoteAudioSession> create(WebProcess&);
     ~RemoteAudioSession();
+
+    void ref() const final { return ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<RemoteAudioSession>::ref(); }
+    void deref() const final { return ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<RemoteAudioSession>::deref(); }
+    ThreadSafeWeakPtrControlBlock& controlBlock() const final { return ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<RemoteAudioSession>::controlBlock(); }
 
 private:
     friend UniqueRef<RemoteAudioSession> WTF::makeUniqueRefWithoutFastMallocCheck<RemoteAudioSession>(WebProcess&);
@@ -114,7 +119,7 @@ private:
     WebCore::RouteSharingPolicy m_routeSharingPolicy { WebCore::RouteSharingPolicy::Default };
     bool m_isPlayingToBluetoothOverrideChanged { false };
     std::optional<RemoteAudioSessionConfiguration> m_configuration;
-    WeakPtr<GPUProcessConnection> m_gpuProcessConnection;
+    ThreadSafeWeakPtr<GPUProcessConnection> m_gpuProcessConnection;
 };
 
 }

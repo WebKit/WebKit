@@ -67,7 +67,7 @@ void SpeechRecognitionRemoteRealtimeMediaSourceManager::addSource(SpeechRecognit
 void SpeechRecognitionRemoteRealtimeMediaSourceManager::removeSource(SpeechRecognitionRemoteRealtimeMediaSource& source)
 {
     auto identifier = source.identifier();
-    ASSERT(m_sources.get(identifier) == &source);
+    ASSERT(!m_sources.get(identifier).get().get() || m_sources.get(identifier).get().get() == &source);
     m_sources.remove(identifier);
 
 #if ENABLE(SANDBOX_EXTENSIONS)
@@ -82,19 +82,19 @@ void SpeechRecognitionRemoteRealtimeMediaSourceManager::removeSource(SpeechRecog
 
 void SpeechRecognitionRemoteRealtimeMediaSourceManager::remoteAudioSamplesAvailable(WebCore::RealtimeMediaSourceIdentifier identifier, const WTF::MediaTime& time, uint64_t numberOfFrames)
 {
-    if (auto source = m_sources.get(identifier))
+    if (auto source = m_sources.get(identifier).get())
         source->remoteAudioSamplesAvailable(time, numberOfFrames);
 }
 
 void SpeechRecognitionRemoteRealtimeMediaSourceManager::remoteCaptureFailed(WebCore::RealtimeMediaSourceIdentifier identifier)
 {
-    if (auto source = m_sources.get(identifier))
+    if (auto source = m_sources.get(identifier).get())
         source->remoteCaptureFailed();
 }
 
 void SpeechRecognitionRemoteRealtimeMediaSourceManager::remoteSourceStopped(WebCore::RealtimeMediaSourceIdentifier identifier)
 {
-    if (auto source = m_sources.get(identifier))
+    if (auto source = m_sources.get(identifier).get())
         source->remoteSourceStopped();
 }
 
@@ -112,7 +112,7 @@ uint64_t SpeechRecognitionRemoteRealtimeMediaSourceManager::messageSenderDestina
 
 void SpeechRecognitionRemoteRealtimeMediaSourceManager::setStorage(WebCore::RealtimeMediaSourceIdentifier identifier, ConsumerSharedCARingBuffer::Handle&& handle, const WebCore::CAAudioStreamDescription& description)
 {
-    if (auto source = m_sources.get(identifier))
+    if (auto source = m_sources.get(identifier).get())
         source->setStorage(WTFMove(handle), description);
 }
 

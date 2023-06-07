@@ -48,18 +48,19 @@ RemoteMediaSessionHelper::RemoteMediaSessionHelper(WebProcess& process)
 
 IPC::Connection& RemoteMediaSessionHelper::ensureConnection()
 {
-    if (!m_gpuProcessConnection) {
-        m_gpuProcessConnection = m_process.ensureGPUProcessConnection();
-        m_gpuProcessConnection->addClient(*this);
-        m_gpuProcessConnection->messageReceiverMap().addMessageReceiver(Messages::RemoteMediaSessionHelper::messageReceiverName(), *this);
-        m_gpuProcessConnection->connection().send(Messages::GPUConnectionToWebProcess::EnsureMediaSessionHelper(), { });
+    auto gpuProcessConnection = m_gpuProcessConnection.get();
+    if (!gpuProcessConnection) {
+        gpuProcessConnection = &m_process.ensureGPUProcessConnection();
+        m_gpuProcessConnection = gpuProcessConnection;
+        gpuProcessConnection->addClient(*this);
+        gpuProcessConnection->messageReceiverMap().addMessageReceiver(Messages::RemoteMediaSessionHelper::messageReceiverName(), *this);
+        gpuProcessConnection->connection().send(Messages::GPUConnectionToWebProcess::EnsureMediaSessionHelper(), { });
     }
-    return m_gpuProcessConnection->connection();
+    return gpuProcessConnection->connection();
 }
 
 void RemoteMediaSessionHelper::gpuProcessConnectionDidClose(GPUProcessConnection& gpuProcessConnection)
 {
-    gpuProcessConnection.removeClient(*this);
     gpuProcessConnection.messageReceiverMap().removeMessageReceiver(*this);
     m_gpuProcessConnection = nullptr;
 }
