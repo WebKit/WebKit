@@ -126,6 +126,8 @@ public:
     virtual void addRootFrame(WebCore::FrameIdentifier) { }
     // FIXME: Add a corresponding removeRootFrame.
     virtual void triggerRenderingUpdate() = 0;
+    virtual bool scheduleRenderingUpdate() { return false; }
+    virtual void renderingUpdateFramesPerSecondChanged() { }
 
     virtual void willStartRenderingUpdateDisplay();
     virtual void didCompleteRenderingUpdateDisplay();
