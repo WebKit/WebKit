@@ -1252,6 +1252,9 @@ void FrameLoader::completed()
         if (auto* localParent = dynamicDowncast<LocalFrame>(parent))
             localParent->loader().checkCompleted();
     }
+
+    if (m_frame.view())
+        m_frame.view()->maintainScrollPositionAtAnchor(nullptr);
 }
 
 void FrameLoader::started()

@@ -3646,6 +3646,11 @@ bool LocalFrameView::safeToPropagateScrollToParent() const
 
 void LocalFrameView::scheduleScrollToAnchorAndTextFragment()
 {
+    RefPtr<ContainerNode> anchorNode = m_maintainScrollPositionAnchor;
+    if (!anchorNode)
+        return;
+    m_scheduledMaintainScrollPositionAnchor = anchorNode;
+
     if (m_scheduledToScrollToAnchor)
         return;
 
@@ -3657,7 +3662,12 @@ void LocalFrameView::scheduleScrollToAnchorAndTextFragment()
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
-        protectedThis->scrollToAnchorAndTextFragmentNowIfNeeded();
+        if (!protectedThis->m_maintainScrollPositionAnchor) {
+            SetForScope scrollPositionAnchor(protectedThis->m_maintainScrollPositionAnchor, protectedThis->m_scheduledMaintainScrollPositionAnchor);
+            protectedThis->scrollToAnchorAndTextFragmentNowIfNeeded();
+        } else
+            protectedThis->scrollToAnchorAndTextFragmentNowIfNeeded();
+        protectedThis->m_scheduledMaintainScrollPositionAnchor = nullptr;
     });
 }
 

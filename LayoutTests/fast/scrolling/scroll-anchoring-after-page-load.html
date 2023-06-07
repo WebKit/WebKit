@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<body>
+<div id="tallContent"></div>
+<a name="target">This test should not be visible.</a>
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+let content = '';
+let contentIndex = 0;
+setTimeout(() => {
+    tallContent.style.height = '2000px';
+    requestAnimationFrame(() => {
+        setTimeout(() => {
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }, 0);
+    });
+}, 0);
+location.href = '#target';
+</script>
+</body>
+</html>
