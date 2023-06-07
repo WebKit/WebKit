@@ -1710,6 +1710,9 @@ bool RenderThemeIOS::paintAttachment(const RenderObject& renderer, const PaintIn
 
     const RenderAttachment& attachment = downcast<RenderAttachment>(renderer);
 
+    if (attachment.paintWideLayoutAttachmentOnly(paintInfo, paintRect.location()))
+        return true;
+
     AttachmentLayout info(attachment);
 
     GraphicsContext& context = paintInfo.context();

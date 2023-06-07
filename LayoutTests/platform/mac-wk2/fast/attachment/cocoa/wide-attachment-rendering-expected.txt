@@ -4,46 +4,46 @@ layer at (0,0) size 785x672
   RenderBlock {HTML} at (0,0) size 785x672
     RenderBody {BODY} at (8,8) size 769x656
       RenderBlock {DIV} at (0,0) size 769x82
-        RenderText {#text} at (0,53) size 47x18
-          text run at (0,53) width 47: "Blank: "
-        RenderBlock {ATTACHMENT} at (46,0) size 269x82
-          RenderGrid {DIV} at (1,1) size 266x80 [bgcolor=#0000000D]
+        RenderText {#text} at (0,54) size 47x18
+          text run at (0,54) width 47: "Blank: "
+        RenderAttachment {ATTACHMENT} at (47,1) size 267x80
+          RenderGrid {DIV} at (0,0) size 266x80 [bgcolor=#0000000D]
             RenderGrid {DIV} at (0,0) size 68x80
               RenderAttachment {ATTACHMENT} at (8,14) size 52x52
             RenderGrid {DIV} at (68,0) size 198x80
               RenderGrid {DIV} at (4,40) size 170x0
       RenderBlock {DIV} at (0,82) size 769x82
-        RenderText {#text} at (0,53) size 39x18
-          text run at (0,53) width 39: "Title: "
-        RenderBlock {ATTACHMENT} at (38,0) size 269x82
-          RenderGrid {DIV} at (1,1) size 266x80 [bgcolor=#0000000D]
+        RenderText {#text} at (0,54) size 39x18
+          text run at (0,54) width 39: "Title: "
+        RenderAttachment {ATTACHMENT} at (39,1) size 267x80
+          RenderGrid {DIV} at (0,0) size 266x80 [bgcolor=#0000000D]
             RenderGrid {DIV} at (0,0) size 68x80
               RenderAttachment {ATTACHMENT} at (8,14) size 52x52
             RenderGrid {DIV} at (68,0) size 198x80
               RenderGrid {DIV} at (4,26) size 170x28
       RenderBlock {DIV} at (0,164) size 769x82
-        RenderText {#text} at (0,53) size 83x18
-          text run at (0,53) width 83: "and subtitle: "
-        RenderBlock {ATTACHMENT} at (82,0) size 269x82
-          RenderGrid {DIV} at (1,1) size 266x80 [bgcolor=#0000000D]
+        RenderText {#text} at (0,54) size 83x18
+          text run at (0,54) width 83: "and subtitle: "
+        RenderAttachment {ATTACHMENT} at (83,1) size 267x80
+          RenderGrid {DIV} at (0,0) size 266x80 [bgcolor=#0000000D]
             RenderGrid {DIV} at (0,0) size 68x80
               RenderAttachment {ATTACHMENT} at (8,14) size 52x52
             RenderGrid {DIV} at (68,0) size 198x80
               RenderGrid {DIV} at (4,26) size 170x28
       RenderBlock {DIV} at (0,246) size 769x82
-        RenderText {#text} at (0,53) size 52x18
-          text run at (0,53) width 52: "Action: "
-        RenderBlock {ATTACHMENT} at (51,0) size 269x82
-          RenderGrid {DIV} at (1,1) size 266x80 [bgcolor=#0000000D]
+        RenderText {#text} at (0,54) size 52x18
+          text run at (0,54) width 52: "Action: "
+        RenderAttachment {ATTACHMENT} at (52,1) size 267x80
+          RenderGrid {DIV} at (0,0) size 266x80 [bgcolor=#0000000D]
             RenderGrid {DIV} at (0,0) size 68x80
               RenderAttachment {ATTACHMENT} at (8,14) size 52x52
             RenderGrid {DIV} at (68,0) size 198x80
               RenderGrid {DIV} at (4,18) size 170x44
       RenderBlock {DIV} at (0,328) size 769x82
-        RenderText {#text} at (0,53) size 40x18
-          text run at (0,53) width 40: "Save: "
-        RenderBlock {ATTACHMENT} at (39,0) size 269x82
-          RenderGrid {DIV} at (1,1) size 266x80 [bgcolor=#0000000D]
+        RenderText {#text} at (0,54) size 40x18
+          text run at (0,54) width 40: "Save: "
+        RenderAttachment {ATTACHMENT} at (40,1) size 267x80
+          RenderGrid {DIV} at (0,0) size 266x80 [bgcolor=#0000000D]
             RenderGrid {DIV} at (0,0) size 68x80
               RenderAttachment {ATTACHMENT} at (8,14) size 52x52
             RenderGrid {DIV} at (68,0) size 198x80
@@ -52,29 +52,29 @@ layer at (0,0) size 785x672
                   RenderButton {BUTTON} at (0,0) size 28x28 [color=#00000019] [border: (1px solid #00000019)]
                     RenderBlock (anonymous) at (7,3) size 14x21
       RenderBlock {DIV} at (0,410) size 769x82
-        RenderText {#text} at (0,47) size 97x18
-          text run at (0,47) width 97: "Zero progress: "
-        RenderBlock {ATTACHMENT} at (96,0) size 269x82
-          RenderGrid {DIV} at (1,1) size 266x80 [bgcolor=#0000000D]
+        RenderText {#text} at (0,54) size 97x18
+          text run at (0,54) width 97: "Zero progress: "
+        RenderAttachment {ATTACHMENT} at (97,1) size 267x80
+          RenderGrid {DIV} at (0,0) size 266x80 [bgcolor=#0000000D]
             RenderGrid {DIV} at (0,0) size 68x80
               RenderBlock {DIV} at (14,20) size 40x40
             RenderGrid {DIV} at (68,0) size 198x80
               RenderGrid {DIV} at (4,32) size 170x16
       RenderBlock {DIV} at (0,492) size 769x82
-        RenderText {#text} at (0,47) size 96x18
-          text run at (0,47) width 96: "75% progress: "
-        RenderBlock {ATTACHMENT} at (95,0) size 269x82
-          RenderGrid {DIV} at (1,1) size 266x80 [bgcolor=#0000000D]
+        RenderText {#text} at (0,54) size 96x18
+          text run at (0,54) width 96: "75% progress: "
+        RenderAttachment {ATTACHMENT} at (96,1) size 267x80
+          RenderGrid {DIV} at (0,0) size 266x80 [bgcolor=#0000000D]
             RenderGrid {DIV} at (0,0) size 68x80
               RenderBlock {DIV} at (14,20) size 40x40 [color=#0000007F]
                 RenderBlock {DIV} at (0,0) size 40x40 [border: (4px solid #0000007F)]
             RenderGrid {DIV} at (68,0) size 198x80
               RenderGrid {DIV} at (4,32) size 170x16
       RenderBlock {DIV} at (0,574) size 769x82
-        RenderText {#text} at (0,47) size 104x18
-          text run at (0,47) width 104: "100% progress: "
-        RenderBlock {ATTACHMENT} at (103,0) size 269x82
-          RenderGrid {DIV} at (1,1) size 266x80 [bgcolor=#0000000D]
+        RenderText {#text} at (0,54) size 104x18
+          text run at (0,54) width 104: "100% progress: "
+        RenderAttachment {ATTACHMENT} at (104,1) size 267x80
+          RenderGrid {DIV} at (0,0) size 266x80 [bgcolor=#0000000D]
             RenderGrid {DIV} at (0,0) size 68x80
               RenderBlock {DIV} at (14,20) size 40x40 [color=#0000007F]
                 RenderBlock {DIV} at (0,0) size 40x40 [border: (4px solid #0000007F)]

@@ -1597,6 +1597,10 @@ bool RenderThemeMac::paintAttachment(const RenderObject& renderer, const PaintIn
         return false;
 
     const RenderAttachment& attachment = downcast<RenderAttachment>(renderer);
+
+    if (attachment.paintWideLayoutAttachmentOnly(paintInfo, paintRect.location()))
+        return true;
+
     HTMLAttachmentElement& element = attachment.attachmentElement();
 
     auto layoutStyle = AttachmentLayoutStyle::NonSelected;

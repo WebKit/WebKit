@@ -36,16 +36,11 @@ div#attachment-container {
     height: 80px;
     background-color: -apple-system-tertiary-fill;
 #endif
-    margin: 1px;
     border-radius: 8px;
     font: caption;
     pointer-events: none;
     user-select: none;
     -webkit-user-select: none;
-}
-
-div#attachment-container::selection {
-    background-color: -apple-system-selected-content-background;
 }
 
 div#attachment-preview-area {
