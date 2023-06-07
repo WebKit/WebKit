@@ -804,7 +804,11 @@ bool MediaPlayerPrivateMediaSourceAVFObjC::shouldEnsureLayer() const
             return true;
         if (m_sampleBufferDisplayLayer)
             return !CGRectIsEmpty([m_sampleBufferDisplayLayer bounds]);
-        return !m_player->playerContentBoxRect().isEmpty();
+        if (!m_player->videoInlineSize().isEmpty())
+            return true;
+        if (!m_player->playerContentBoxRect().isEmpty())
+            return true;
+        return false;
     }();
 #else
     return !m_hasBeenAskedToPaintGL && !m_isGatheringVideoFrameMetadata;
@@ -812,6 +816,12 @@ bool MediaPlayerPrivateMediaSourceAVFObjC::shouldEnsureLayer() const
 }
 
 void MediaPlayerPrivateMediaSourceAVFObjC::setPresentationSize(const IntSize& newSize)
+{
+    if (!m_sampleBufferDisplayLayer && !newSize.isEmpty())
+        updateDisplayLayerAndDecompressionSession();
+}
+
+void MediaPlayerPrivateMediaSourceAVFObjC::setVideoInlineSizeFenced(const FloatSize& newSize, const WTF::MachSendRight&)
 {
     if (!m_sampleBufferDisplayLayer && !newSize.isEmpty())
         updateDisplayLayerAndDecompressionSession();

@@ -88,6 +88,8 @@ void RemoteMediaPlayerProxy::setVideoInlineSizeFenced(const WebCore::FloatSize& 
 
     m_configuration.videoInlineSize = size;
     setVideoInlineSizeIfPossible(size);
+
+    m_player->setVideoInlineSizeFenced(size, machSendRight);
 }
 
 void RemoteMediaPlayerProxy::mediaPlayerOnNewVideoFrameMetadata(VideoFrameMetadata&& metadata, RetainPtr<CVPixelBufferRef>&& buffer)
