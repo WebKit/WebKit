@@ -405,6 +405,7 @@ NSUInteger GetMaxSampleRate(const webrtc::H264ProfileLevelId &profile_level_id) 
   _frameCount = 0;
   _lastFrameRateEstimationTime = 0;
   _useAnnexB = true;
+  _needsToSendDescription = true;
   return self;
 }
 
@@ -450,7 +451,6 @@ NSUInteger GetMaxSampleRate(const webrtc::H264ProfileLevelId &profile_level_id) 
 - (void)setUseAnnexB:(bool)useAnnexB
 {
     _useAnnexB = useAnnexB;
-    _needsToSendDescription = !useAnnexB;
 }
 
 - (void)setDescriptionCallback:(RTCVideoEncoderDescriptionCallback)callback
@@ -1003,6 +1003,10 @@ NSUInteger GetMaxSampleRate(const webrtc::H264ProfileLevelId &profile_level_id) 
     if (!webrtc::H264CMSampleBufferToAnnexBBuffer(sampleBuffer, isKeyframe, buffer.get())) {
       RTC_LOG(LS_WARNING) << "Unable to parse H264 encoded buffer";
       return;
+    }
+    if (_descriptionCallback && _needsToSendDescription) {
+      _needsToSendDescription = false;
+      _descriptionCallback(nullptr, 0);
     }
   } else {
     buffer->SetSize(0);

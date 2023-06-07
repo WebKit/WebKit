@@ -39,6 +39,7 @@
 #include "VideoDecoderIdentifier.h"
 #include "VideoEncoderIdentifier.h"
 #include "WorkQueueMessageReceiver.h"
+#include <WebCore/VideoEncoderActiveConfiguration.h>
 #include <map>
 #include <wtf/Deque.h>
 #include <wtf/HashMap.h>
@@ -102,7 +103,7 @@ public:
     void registerDecodeFrameCallback(Decoder&, void* decodedImageCallback);
     void registerDecodedVideoFrameCallback(Decoder&, DecoderCallback&&);
 
-    using DescriptionCallback = Function<void(std::span<const uint8_t>&&)>;
+    using DescriptionCallback = Function<void(WebCore::VideoEncoderActiveConfiguration&&)>;
     using EncoderCallback = Function<void(std::span<const uint8_t>&&, bool isKeyFrame, int64_t timestamp)>;
     struct EncoderInitializationData {
         uint16_t width;
@@ -172,7 +173,7 @@ private:
     void completedDecodingCV(VideoDecoderIdentifier, int64_t timeStamp, int64_t timeStampNs, RetainPtr<CVPixelBufferRef>&&);
     void completedEncoding(VideoEncoderIdentifier, IPC::DataReference&&, const webrtc::WebKitEncodedFrameInfo&);
     void flushEncoderCompleted(VideoEncoderIdentifier);
-    void setEncodingDescription(WebKit::VideoEncoderIdentifier, IPC::DataReference&&);
+    void setEncodingConfiguration(WebKit::VideoEncoderIdentifier, IPC::DataReference&&, std::optional<WebCore::PlatformVideoColorSpace>);
     RetainPtr<CVPixelBufferRef> convertToBGRA(CVPixelBufferRef);
 
     // GPUProcessConnection::Client

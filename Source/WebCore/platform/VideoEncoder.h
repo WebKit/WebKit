@@ -27,7 +27,7 @@
 
 #if ENABLE(WEB_CODECS)
 
-#include "PlatformVideoColorSpace.h"
+#include "VideoEncoderActiveConfiguration.h"
 #include "VideoFrame.h"
 #include <span>
 #include <wtf/CompletionHandler.h>
@@ -47,15 +47,7 @@ public:
         double frameRate { 0 };
         bool isRealtime { true };
     };
-    struct ActiveConfiguration {
-        String codec;
-        std::optional<size_t> visibleWidth;
-        std::optional<size_t> visibleHeight;
-        std::optional<size_t> displayWidth;
-        std::optional<size_t> displayHeight;
-        std::optional<Vector<uint8_t>> description;
-        std::optional<PlatformVideoColorSpace> colorSpace;
-    };
+    using ActiveConfiguration = VideoEncoderActiveConfiguration;
     struct EncodedFrame {
         Vector<uint8_t> data;
         bool isKeyFrame { false };

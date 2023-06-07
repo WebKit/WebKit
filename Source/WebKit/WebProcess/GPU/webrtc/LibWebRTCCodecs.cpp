@@ -719,7 +719,7 @@ void LibWebRTCCodecs::completedEncoding(VideoEncoderIdentifier identifier, IPC::
     webrtc::encoderVideoTaskComplete(encoder->encodedImageCallback, toWebRTCCodecType(encoder->type), data.data(), data.size(), info);
 }
 
-void LibWebRTCCodecs::setEncodingDescription(WebKit::VideoEncoderIdentifier identifier, IPC::DataReference&& data)
+void LibWebRTCCodecs::setEncodingConfiguration(WebKit::VideoEncoderIdentifier identifier, IPC::DataReference&& description, std::optional<WebCore::PlatformVideoColorSpace> colorSpace)
 {
     assertIsCurrent(workQueue());
 
@@ -733,8 +733,12 @@ void LibWebRTCCodecs::setEncodingDescription(WebKit::VideoEncoderIdentifier iden
 
     Locker locker { AdoptLock, encoder->encodedImageCallbackLock };
 
-    if (encoder->descriptionCallback)
-        encoder->descriptionCallback({ data.data(), data.size() });
+    if (encoder->descriptionCallback) {
+        std::optional<Vector<uint8_t>> decoderDescriptionData;
+        if (description.size())
+            decoderDescriptionData = Vector<uint8_t> { description.data(), description.size() };
+        encoder->descriptionCallback(WebCore::VideoEncoderActiveConfiguration { { }, { }, { }, { }, { }, WTFMove(decoderDescriptionData), WTFMove(colorSpace) });
+    }
 }
 
 CVPixelBufferPoolRef LibWebRTCCodecs::pixelBufferPool(size_t width, size_t height, OSType type)

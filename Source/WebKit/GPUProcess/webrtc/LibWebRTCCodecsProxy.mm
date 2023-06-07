@@ -247,8 +247,11 @@ void LibWebRTCCodecsProxy::createEncoder(VideoEncoderIdentifier identifier, Vide
         connection->send(Messages::LibWebRTCCodecs::CompletedEncoding { identifier, IPC::DataReference { buffer, size }, info }, 0);
     });
     auto newConfigurationBlock = makeBlockPtr([connection = m_connection, identifier](const uint8_t* buffer, size_t size) {
-        connection->send(Messages::LibWebRTCCodecs::SetEncodingDescription { identifier, IPC::DataReference { buffer, size } }, 0);
+        // Current encoders are limited to this configuration. We might want in the future to let encoders notify which colorSpace they are selecting.
+        PlatformVideoColorSpace colorSpace { PlatformVideoColorPrimaries::Bt709, PlatformVideoTransferCharacteristics::Iec6196621, PlatformVideoMatrixCoefficients::Bt709, true };
+        connection->send(Messages::LibWebRTCCodecs::SetEncodingConfiguration { identifier, IPC::DataReference { buffer, size }, colorSpace }, 0);
     });
+
     auto* encoder = webrtc::createLocalEncoder(webrtc::SdpVideoFormat { codecType == VideoCodecType::H264 ? "H264" : "H265", rtcParameters }, useAnnexB, newFrameBlock.get(), newConfigurationBlock.get());
     webrtc::setLocalEncoderLowLatency(encoder, useLowLatency);
     auto result = m_encoders.add(identifier, Encoder { encoder, makeUnique<SharedVideoFrameReader>(Ref { m_videoFrameObjectHeap }, m_resourceOwner) });
