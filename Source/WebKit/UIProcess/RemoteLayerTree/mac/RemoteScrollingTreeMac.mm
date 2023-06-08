@@ -54,7 +54,7 @@ RemoteScrollingTreeMac::RemoteScrollingTreeMac(RemoteScrollingCoordinatorProxy& 
 {
     ASSERT(isMainRunLoop());
     ScrollingThread::dispatch([protectedThis = Ref { *this }]() {
-        if ([CATransaction instancesRespondToSelector:@selector(setDisableImplicitTransactionMainThreadAssert:)])
+        if ([CATransaction respondsToSelector:@selector(setDisableImplicitTransactionMainThreadAssert:)])
             [CATransaction setDisableImplicitTransactionMainThreadAssert:YES];
     });
 }
