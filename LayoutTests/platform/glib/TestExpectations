@@ -1137,18 +1137,6 @@ webkit.org/b/239750 media/media-source/media-mp4-xhe-aac.html [ Skip ]
 media/media-hevc-video-as-img.html [ ImageOnlyFailure ]
 
 imported/w3c/web-platform-tests/webcodecs/videoFrame-createImageBitmap.any.worker.html [ Pass ]
-imported/w3c/web-platform-tests/webcodecs/full-cycle-test.https.any.html?av [ Failure ]
-imported/w3c/web-platform-tests/webcodecs/full-cycle-test.https.any.html?h264_annexb [ Failure ]
-imported/w3c/web-platform-tests/webcodecs/full-cycle-test.https.any.html?h264_avc [ Failure ]
-imported/w3c/web-platform-tests/webcodecs/full-cycle-test.https.any.html?vp8 [ Failure ]
-imported/w3c/web-platform-tests/webcodecs/full-cycle-test.https.any.html?vp9_p0 [ Failure ]
-imported/w3c/web-platform-tests/webcodecs/full-cycle-test.https.any.html?vp9_p2 [ Failure ]
-imported/w3c/web-platform-tests/webcodecs/full-cycle-test.https.any.worker.html?av1 [ Failure ]
-imported/w3c/web-platform-tests/webcodecs/full-cycle-test.https.any.worker.html?h264_annexb [ Failure ]
-imported/w3c/web-platform-tests/webcodecs/full-cycle-test.https.any.worker.html?h264_avc [ Failure ]
-imported/w3c/web-platform-tests/webcodecs/full-cycle-test.https.any.worker.html?vp8 [ Failure ]
-imported/w3c/web-platform-tests/webcodecs/full-cycle-test.https.any.worker.html?vp9_p0 [ Failure ]
-imported/w3c/web-platform-tests/webcodecs/full-cycle-test.https.any.worker.html?vp9_p2 [ Failure ]
 
 # Likely bugs related with dav1ddec.
 imported/w3c/web-platform-tests/webcodecs/videoDecoder-codec-specific.https.any.html?av1 [ Failure ]

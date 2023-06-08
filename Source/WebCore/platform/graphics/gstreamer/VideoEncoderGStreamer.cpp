@@ -108,7 +108,7 @@ void GStreamerVideoEncoder::create(const String& codecName, const VideoEncoder::
 
             VideoEncoder::ActiveConfiguration configuration;
             // FIXME: How to properly fill configuration.colorspace?
-            configuration.colorSpace = PlatformVideoColorSpace { PlatformVideoColorPrimaries::Bt709, PlatformVideoTransferCharacteristics::Iec6196621, PlatformVideoMatrixCoefficients::Smpte170m, false };
+            configuration.colorSpace = PlatformVideoColorSpace { PlatformVideoColorPrimaries::Smpte170m, PlatformVideoTransferCharacteristics::Smpte170m, PlatformVideoMatrixCoefficients::Smpte170m, false };
             descriptionCallback(WTFMove(configuration));
         });
     });

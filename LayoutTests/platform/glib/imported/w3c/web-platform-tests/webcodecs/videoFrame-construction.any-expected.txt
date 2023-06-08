@@ -1,6 +1,6 @@
 
 PASS Test we can construct a VideoFrame.
-FAIL Test closed VideoFrame. assert_equals: timestamp expected 10 but got 0
+FAIL Test closed VideoFrame. null is not an object (evaluating 'frame.colorSpace.primaries')
 PASS Test we can construct a VideoFrame with a negative timestamp.
 PASS Test that timestamp is required when constructing VideoFrame from ImageBitmap
 PASS Test that timestamp is required when constructing VideoFrame from OffscreenCanvas
