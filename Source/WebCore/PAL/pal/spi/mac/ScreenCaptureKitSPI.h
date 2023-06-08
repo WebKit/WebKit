@@ -37,10 +37,6 @@
 #if __has_include(<ScreenCaptureKit/SCContentSharingPicker.h>)
 #import <ScreenCaptureKit/SCContentSharingPicker.h>
 #endif
-
-#if __has_include(<ScreenCaptureKit/SCContentSharingPicker_Private.h>)
-#import <ScreenCaptureKit/SCContentSharingPicker_Private.h>
-#endif
 #endif // HAVE(SC_CONTENT_SHARING_PICKER)
 
 #else // USE(APPLE_INTERNAL_SDK)
@@ -94,6 +90,16 @@ typedef NS_ENUM(NSInteger, SCContentFilterType) {
 - (instancetype)initWithSharingSession:(SCContentSharingSession *)session captureOutputProperties:(SCStreamConfiguration *)streamConfig delegate:(id<SCStreamDelegate>)delegate;
 @end
 
+NS_ASSUME_NONNULL_END
+
+#endif // USE(APPLE_INTERNAL_SDK)
+
+#if HAVE(SC_CONTENT_SHARING_PICKER)
+
+// FIXME: Remove this section once the updated SDK is more widely available.
+
+NS_ASSUME_NONNULL_BEGIN
+
 @protocol SCContentSharingPickerDelegate <NSObject>
 @required
 @optional
@@ -109,11 +115,11 @@ typedef NS_OPTIONS(NSUInteger, SCContentSharingAllowedPickerModes) {
     SCContentSharingPickerAllowedModeSingleDisplay         = 1 << 3,
 };
 
-@interface SCContentSharingPickerConfiguration : NSObject
+@interface SCContentSharingPickerConfiguration (Staging_110281298)
 @property (nonatomic, assign) SCContentSharingAllowedPickerModes allowedPickingModes;
 @end
 
-@interface SCContentSharingPicker : NSObject
+@interface SCContentSharingPicker (Staging_110281298)
 @property (nonatomic, weak, nullable) id<SCContentSharingPickerDelegate> delegate;
 @property (nonatomic, nullable, strong) NSNumber *maxStreamCount;
 @property (nonatomic, nullable, copy) SCContentSharingPickerConfiguration *configuration;
@@ -121,6 +127,6 @@ typedef NS_OPTIONS(NSUInteger, SCContentSharingAllowedPickerModes) {
 
 NS_ASSUME_NONNULL_END
 
-#endif // USE(APPLE_INTERNAL_SDK)
+#endif // HAVE(SC_CONTENT_SHARING_PICKER)
 
 #endif // HAVE(SCREEN_CAPTURE_KIT)
