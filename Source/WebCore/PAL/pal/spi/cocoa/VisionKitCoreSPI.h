@@ -76,6 +76,12 @@ typedef NS_OPTIONS(NSUInteger, VKAnalysisTypes) {
     VKAnalysisTypeAll = NSUIntegerMax,
 };
 
+typedef NS_ENUM(NSUInteger, VKImageAnalyzerRequestImageSource) {
+    VKImageAnalyzerRequestImageSourceDefault,
+    VKImageAnalyzerRequestImageSourceScreenshot,
+    VKImageAnalyzerRequestImageSourceVideoFrame,
+};
+
 #if PLATFORM(IOS_FAMILY)
 
 typedef UIImage VKImageClass;
@@ -263,6 +269,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface VKCImageAnalyzerRequest : NSObject <NSCopying, VKFeedbackAssetsProvider>
 @property (nonatomic, copy, nullable) NSURL *imageURL;
 @property (nonatomic, copy, nullable) NSURL *pageURL;
+@property (nonatomic) VKImageAnalyzerRequestImageSource imageSource;
 - (instancetype)init NS_UNAVAILABLE;
 - (instancetype)initWithCGImage:(CGImageRef)image orientation:(VKImageOrientation)orientation requestType:(VKAnalysisTypes)analysisType;
 @end
