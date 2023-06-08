@@ -117,6 +117,8 @@ private:
     Packing pack(Packing, AST::Expression&);
     Packing getPacking(AST::IdentifierExpression&);
     Packing getPacking(AST::FieldAccessExpression&);
+    Packing getPacking(AST::BinaryExpression&);
+    Packing getPacking(AST::UnaryExpression&);
     Packing packingForType(const Type*);
 
     CallGraph& m_callGraph;
@@ -306,6 +308,10 @@ auto RewriteGlobalVariables::pack(Packing expectedPacking, AST::Expression& expr
         return visitAndReplace(downcast<AST::IdentifierExpression>(expression));
     case AST::NodeKind::FieldAccessExpression:
         return visitAndReplace(downcast<AST::FieldAccessExpression>(expression));
+    case AST::NodeKind::BinaryExpression:
+        return visitAndReplace(downcast<AST::BinaryExpression>(expression));
+    case AST::NodeKind::UnaryExpression:
+        return visitAndReplace(downcast<AST::UnaryExpression>(expression));
     default:
         AST::Visitor::visit(expression);
         return Packing::Unpacked;
@@ -348,6 +354,19 @@ auto RewriteGlobalVariables::getPacking(AST::FieldAccessExpression& expression) 
     auto& structType = std::get<Types::Struct>(*baseType);
     auto* fieldType = structType.fields.get(expression.fieldName());
     return packingForType(fieldType);
+}
+
+auto RewriteGlobalVariables::getPacking(AST::BinaryExpression& expression) -> Packing
+{
+    pack(Packing::Unpacked, expression.leftExpression());
+    pack(Packing::Unpacked, expression.rightExpression());
+    return Packing::Unpacked;
+}
+
+auto RewriteGlobalVariables::getPacking(AST::UnaryExpression& expression) -> Packing
+{
+    pack(Packing::Unpacked, expression.expression());
+    return Packing::Unpacked;
 }
 
 auto RewriteGlobalVariables::packingForType(const Type* type) -> Packing
