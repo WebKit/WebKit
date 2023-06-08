@@ -215,6 +215,10 @@ if (USE_GRAPHICS_LAYER_WC)
     list(APPEND WebKit_MESSAGES_IN_FILES
         GPUProcess/graphics/wc/RemoteWCLayerTreeHost
     )
+
+    list(APPEND WebKit_SERIALIZATION_IN_FILES
+        WebProcess/WebPage/wc/WCUpdateInfo.serialization.in
+    )
 endif ()
 
 if (USE_WPE_BACKEND_PLAYSTATION)

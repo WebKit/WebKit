@@ -171,6 +171,10 @@ list(APPEND WebKit_MESSAGES_IN_FILES
     GPUProcess/graphics/wc/RemoteWCLayerTreeHost
 )
 
+list(APPEND WebKit_SERIALIZATION_IN_FILES
+    WebProcess/WebPage/wc/WCUpdateInfo.serialization.in
+)
+
 list(APPEND WebKit_PRIVATE_LIBRARIES
     comctl32
 )

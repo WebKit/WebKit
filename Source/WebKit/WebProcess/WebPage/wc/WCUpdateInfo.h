@@ -43,31 +43,6 @@ struct WCTileUpdate {
     bool willRemove { false };
     WCBackingStore backingStore;
     WebCore::IntRect dirtyRect;
-
-    template<class Encoder>
-    void encode(Encoder& encoder) const
-    {
-        encoder << index << willRemove;
-        if (!willRemove)
-            encoder << backingStore << dirtyRect;
-    }
-
-    template <class Decoder>
-    static std::optional<WCTileUpdate> decode(Decoder& decoder)
-    {
-        WCTileUpdate result;
-        if (!decoder.decode(result.index))
-            return std::nullopt;
-        if (!decoder.decode(result.willRemove))
-            return std::nullopt;
-        if (!result.willRemove) {
-            if (!decoder.decode(result.backingStore))
-                return std::nullopt;
-            if (!decoder.decode(result.dirtyRect))
-                return std::nullopt;
-        }
-        return result;
-    }
 };
 
 enum class WCLayerChange : uint32_t {
@@ -295,29 +270,6 @@ struct WCUpdateInfo {
     Vector<WebCore::PlatformLayerIdentifier> addedLayers;
     Vector<WebCore::PlatformLayerIdentifier> removedLayers;
     Vector<WCLayerUpdateInfo> changedLayers;
-
-    template<class Encoder>
-    void encode(Encoder& encoder) const
-    {
-        encoder << rootLayer;
-        encoder << addedLayers;
-        encoder << removedLayers;
-        encoder << changedLayers;
-    }
-
-    template <class Decoder>
-    static WARN_UNUSED_RETURN bool decode(Decoder& decoder, WCUpdateInfo& result)
-    {
-        if (!decoder.decode(result.rootLayer))
-            return false;
-        if (!decoder.decode(result.addedLayers))
-            return false;
-        if (!decoder.decode(result.removedLayers))
-            return false;
-        if (!decoder.decode(result.changedLayers))
-            return false;
-        return true;
-    }
 };
 
 } // namespace WebKit
