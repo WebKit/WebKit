@@ -145,8 +145,6 @@ class Subprocess(ContextStack):
             for completion in current.completions:
                 if completion.args[0] == program:
                     candidates.append(completion)
-                if current.ordered:
-                    break
             current = current.previous
 
         if candidates:

@@ -47,6 +47,7 @@ from webkitcorepy.file_lock import FileLock
 from webkitcorepy.null_context import NullContext
 from webkitcorepy.filtered_call import filtered_call
 from webkitcorepy.partial_proxy import PartialProxy
+from webkitcorepy.docker import Docker
 
 version = Version(0, 14, 6)
 
