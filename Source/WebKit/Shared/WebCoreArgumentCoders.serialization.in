@@ -3674,6 +3674,7 @@ struct WebCore::NavigationRequester {
     WebCore::PolicyContainer policyContainer;
     WebCore::ScriptExecutionContextIdentifier documentIdentifier;
     std::optional<WebCore::GlobalFrameIdentifier> globalFrameIdentifier;
+    WebCore::SandboxFlags sandboxFlags;
 };
 
 struct WebCore::PolicyContainer {

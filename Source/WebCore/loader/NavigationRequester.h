@@ -27,6 +27,7 @@
 
 #include "GlobalFrameIdentifier.h"
 #include "PolicyContainer.h"
+#include "SecurityContext.h"
 #include "SecurityOrigin.h"
 
 namespace WebCore {
@@ -42,6 +43,8 @@ struct NavigationRequester {
     PolicyContainer policyContainer;
     ScriptExecutionContextIdentifier documentIdentifier;
     std::optional<GlobalFrameIdentifier> globalFrameIdentifier;
+    SandboxFlags sandboxFlags;
+
 };
 
 } // namespace WebCore
