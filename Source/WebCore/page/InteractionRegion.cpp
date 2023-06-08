@@ -159,6 +159,27 @@ static bool shouldAllowNonPointerCursorForElement(const Element& element)
     return false;
 }
 
+static bool isOverlay(const RenderElement& renderer)
+{
+    if (renderer.style().specifiedZIndex() > 0)
+        return true;
+
+    if (renderer.isFixedPositioned())
+        return true;
+
+    if (auto* renderBox = dynamicDowncast<RenderBox>(renderer)) {
+        auto refContentBox = renderBox->absoluteContentBox();
+        for (auto& ancestor : ancestorsOfType<RenderBox>(renderer)) {
+            if (ancestor.absoluteContentBox() != refContentBox)
+                return false;
+            if (ancestor.isFixedPositioned())
+                return true;
+        }
+    }
+
+    return false;
+}
+
 std::optional<InteractionRegion> interactionRegionForRenderedRegion(RenderObject& regionRenderer, const Region& region)
 {
     if (!regionRenderer.node())
@@ -243,8 +264,7 @@ std::optional<InteractionRegion> interactionRegionForRenderedRegion(RenderObject
     }
 
     if (!hasListener || !(hasPointer || detectedHoverRules) || isTooBigForInteraction) {
-        bool isOverlay = renderer.style().specifiedZIndex() > 0 || renderer.isFixedPositioned();
-        if (isOverlay && isOriginalMatch) {
+        if (isOriginalMatch && isOverlay(renderer)) {
             return { {
                 InteractionRegion::Type::Occlusion,
                 elementIdentifier,
