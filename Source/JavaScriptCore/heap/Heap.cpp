@@ -2183,6 +2183,7 @@ void Heap::finalize()
         vm().jsonAtomStringCache.clear();
     vm().keyAtomStringCache.clear();
     vm().stringSplitCache.clear();
+    vm().stringReplaceCache.clear();
     vm().numericStrings.clearOnGarbageCollection();
 
     m_possiblyAccessedStringsFromConcurrentThreads.clear();

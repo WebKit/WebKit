@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2019-2021 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2012 the V8 project authors. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,43 +26,40 @@
 
 #pragma once
 
-#include "RegExpCachedResult.h"
+#include <array>
 
 namespace JSC {
 
-class JSGlobalObject;
+DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StringReplaceCache);
 
-class RegExpGlobalData {
+class JSImmutableButterfly;
+class RegExp;
+
+class StringReplaceCache {
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_NONCOPYABLE(StringReplaceCache);
 public:
-    RegExpCachedResult& cachedResult() { return m_cachedResult; }
+    static constexpr unsigned cacheSize = 64;
 
-    void setMultiline(bool multiline) { m_multiline = multiline; }
-    bool multiline() const { return m_multiline; }
+    StringReplaceCache() = default;
 
-    void setInput(JSGlobalObject*, JSString*);
-    JSString* input() { return m_cachedResult.input(); }
+    struct Entry {
+        RefPtr<AtomStringImpl> m_subject { nullptr };
+        RegExp* m_regExp { nullptr };
+        JSImmutableButterfly* m_result { nullptr }; // We use JSImmutableButterfly since we would like to keep all entries alive while repeatedly calling a JS function.
+        Vector<int> m_lastMatch { };
+    };
 
-    DECLARE_VISIT_AGGREGATE;
+    Entry* get(const String& subject, RegExp*);
+    void set(const String& subject, RegExp*, JSImmutableButterfly*, const Vector<int>&);
 
-    JSValue getBackref(JSGlobalObject*, unsigned);
-    JSValue getLastParen(JSGlobalObject*);
-    JSValue getLeftContext(JSGlobalObject*);
-    JSValue getRightContext(JSGlobalObject*);
-
-    MatchResult performMatch(JSGlobalObject*, RegExp*, JSString*, const String&, int startOffset, int** ovector);
-    MatchResult performMatch(JSGlobalObject*, RegExp*, JSString*, const String&, int startOffset);
-    void recordMatch(VM&, JSGlobalObject*, RegExp*, JSString*, const MatchResult&);
-
-    static ptrdiff_t offsetOfCachedResult() { return OBJECT_OFFSETOF(RegExpGlobalData, m_cachedResult); }
-
-    const Vector<int>& ovector() const { return m_ovector; }
-
-    void resetResultFromCache(JSGlobalObject* owner, RegExp*, JSString*, Vector<int>&&);
+    void clear()
+    {
+        m_entries.fill(Entry { });
+    }
 
 private:
-    RegExpCachedResult m_cachedResult;
-    bool m_multiline { false };
-    Vector<int> m_ovector;
+    std::array<Entry, cacheSize> m_entries { };
 };
 
-}
+} // namespace JSC

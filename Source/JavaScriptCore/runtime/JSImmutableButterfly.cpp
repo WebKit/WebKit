@@ -236,4 +236,14 @@ JSImmutableButterfly* JSImmutableButterfly::createFromString(JSGlobalObject* glo
     return result;
 }
 
+JSImmutableButterfly* JSImmutableButterfly::tryCreateFromArgList(VM& vm, ArgList argList)
+{
+    JSImmutableButterfly* result = JSImmutableButterfly::tryCreate(vm, vm.immutableButterflyStructures[arrayIndexFromIndexingType(CopyOnWriteArrayWithContiguous) - NumberOfIndexingShapes].get(), argList.size());
+    if (UNLIKELY(!result))
+        return nullptr;
+    gcSafeMemcpy(bitwise_cast<EncodedJSValue*>(result->toButterfly()->contiguous().data()), argList.data(), argList.size() * sizeof(EncodedJSValue));
+    vm.writeBarrier(result);
+    return result;
+}
+
 } // namespace JSC

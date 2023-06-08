@@ -39,6 +39,7 @@
 #include "RegExpConstructor.h"
 #include "RegExpGlobalDataInlines.h"
 #include "StringPrototypeInlines.h"
+#include "StringReplaceCacheInlines.h"
 #include "StringSplitCacheInlines.h"
 #include "SuperSampler.h"
 #include "VMEntryScopeInlines.h"
@@ -394,6 +395,135 @@ static ALWAYS_INLINE JSString* removeUsingRegExpSearch(VM& vm, JSGlobalObject* g
     RELEASE_AND_RETURN(scope, jsSpliceSubstrings(globalObject, string, source, sourceRanges.data(), sourceRanges.size()));
 }
 
+static ALWAYS_INLINE JSString* replaceUsingRegExpSearchWithCache(VM& vm, JSGlobalObject* globalObject, JSString* string, const String& source, RegExp* regExp, JSFunction* replaceFunction)
+{
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    SuperSamplerScope superSamplerScope(true);
+
+    ASSERT(source.length() >= Options::thresholdForStringReplaceCache());
+    // Currently not caching results when named captures are specified.
+    ASSERT(!regExp->hasNamedCaptures());
+
+    unsigned sourceLen = source.length();
+    unsigned cachedCount = regExp->numSubpatterns() + 2;
+    unsigned argCount = cachedCount + 1;
+
+    JSImmutableButterfly* result = nullptr;
+
+    auto* entry = vm.stringReplaceCache.get(source, regExp);
+    if (!entry) {
+        // This is either a loop (if global is set) or a one-way (if not).
+        // regExp->numSubpatterns() + 1 for pattern args, + 2 for match start and string
+        size_t lastIndex = 0;
+        unsigned startPosition = 0;
+        MarkedArgumentBuffer results;
+        while (true) {
+            int* ovector;
+            MatchResult result = globalObject->regExpGlobalData().performMatch(globalObject, regExp, string, source, startPosition, &ovector);
+            RETURN_IF_EXCEPTION(scope, nullptr);
+            if (!result)
+                break;
+
+            for (unsigned i = 0; i < regExp->numSubpatterns() + 1; ++i) {
+                int matchStart = ovector[i * 2];
+                int matchLen = ovector[i * 2 + 1] - matchStart;
+
+                JSValue patternValue;
+
+                if (matchStart < 0)
+                    patternValue = jsUndefined();
+                else {
+                    patternValue = jsSubstring(globalObject, string, matchStart, matchLen);
+                    RETURN_IF_EXCEPTION(scope, { });
+                }
+
+                results.append(patternValue);
+            }
+
+            results.append(jsNumber(result.start));
+
+            lastIndex = result.end;
+            startPosition = lastIndex;
+
+            // special case of empty match
+            if (result.empty()) {
+                startPosition++;
+                if (startPosition > sourceLen)
+                    break;
+                if (U16_IS_LEAD(source[startPosition - 1]) && U16_IS_TRAIL(source[startPosition])) {
+                    startPosition++;
+                    if (startPosition > sourceLen)
+                        break;
+                }
+            }
+        }
+
+        // Nothing matches.
+        if (results.isEmpty())
+            return string;
+
+        result = JSImmutableButterfly::tryCreateFromArgList(vm, results);
+        if (UNLIKELY(!result)) {
+            throwOutOfMemoryError(globalObject, scope);
+            return nullptr;
+        }
+
+        vm.stringReplaceCache.set(source, regExp, result, globalObject->regExpGlobalData().ovector());
+    } else {
+        result = entry->m_result;
+        auto lastMatch = entry->m_lastMatch;
+        globalObject->regExpGlobalData().resetResultFromCache(globalObject, regExp, string, WTFMove(lastMatch));
+    }
+
+    // regExp->numSubpatterns() + 1 for pattern args, + 2 for match start and string
+    unsigned length = result->length();
+    unsigned items = length / cachedCount;
+    size_t lastIndex = 0;
+    Vector<Range<int32_t>, 16> sourceRanges;
+    Vector<String, 16> replacements;
+
+    if (UNLIKELY(!sourceRanges.tryReserveCapacity(items + 1))) {
+        throwOutOfMemoryError(globalObject, scope);
+        return nullptr;
+    }
+    if (UNLIKELY(!replacements.tryReserveCapacity(items))) {
+        throwOutOfMemoryError(globalObject, scope);
+        return nullptr;
+    }
+
+    CachedCall cachedCall(globalObject, replaceFunction, argCount);
+    RETURN_IF_EXCEPTION(scope, nullptr);
+    for (unsigned cursor = 0; cursor < length; cursor += cachedCount) {
+        cachedCall.clearArguments();
+        for (unsigned i = 0; i < cachedCount; ++i)
+            cachedCall.appendArgument(result->get(cursor + i));
+        cachedCall.appendArgument(string);
+
+        int32_t start = result->get(cursor + cachedCount - 1).asInt32();
+        int32_t end = start + asString(result->get(cursor))->length();
+
+        sourceRanges.uncheckedConstructAndAppend(lastIndex, start);
+
+        cachedCall.setThis(jsUndefined());
+        if (UNLIKELY(cachedCall.hasOverflowedArguments())) {
+            throwOutOfMemoryError(globalObject, scope);
+            return nullptr;
+        }
+
+        JSValue jsResult = cachedCall.call();
+        RETURN_IF_EXCEPTION(scope, nullptr);
+        auto string = jsResult.toWTFString(globalObject);
+        RETURN_IF_EXCEPTION(scope, nullptr);
+        replacements.uncheckedAppend(WTFMove(string));
+
+        lastIndex = end;
+    }
+
+    if (static_cast<unsigned>(lastIndex) < sourceLen)
+        sourceRanges.uncheckedConstructAndAppend(lastIndex, sourceLen);
+    RELEASE_AND_RETURN(scope, jsSpliceSubstringsWithSeparators(globalObject, string, source, sourceRanges.data(), sourceRanges.size(), replacements.data(), replacements.size()));
+}
+
 static ALWAYS_INLINE JSString* replaceUsingRegExpSearch(
     VM& vm, JSGlobalObject* globalObject, JSString* string, JSValue searchValue, const CallData& callData,
     String& replacementString, JSValue replaceValue)
@@ -402,8 +532,8 @@ static ALWAYS_INLINE JSString* replaceUsingRegExpSearch(
 
     String source = string->value(globalObject);
     RETURN_IF_EXCEPTION(scope, nullptr);
+
     unsigned sourceLen = source.length();
-    RETURN_IF_EXCEPTION(scope, nullptr);
     RegExpObject* regExpObject = jsCast<RegExpObject*>(searchValue);
     RegExp* regExp = regExpObject->regExp();
     bool global = regExp->global();
@@ -416,6 +546,9 @@ static ALWAYS_INLINE JSString* replaceUsingRegExpSearch(
 
         if (callData.type == CallData::Type::None && !replacementString.length())
             RELEASE_AND_RETURN(scope, removeUsingRegExpSearch(vm, globalObject, string, source, regExp));
+
+        if (callData.type == CallData::Type::JS && !hasNamedCaptures && sourceLen >= Options::thresholdForStringReplaceCache())
+            RELEASE_AND_RETURN(scope, replaceUsingRegExpSearchWithCache(vm, globalObject, string, source, regExp, jsCast<JSFunction*>(replaceValue)));
     }
 
     size_t lastIndex = 0;

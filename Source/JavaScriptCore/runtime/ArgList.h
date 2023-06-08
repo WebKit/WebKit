@@ -273,9 +273,9 @@ public:
         
     JS_EXPORT_PRIVATE void getSlice(int startIndex, ArgList& result) const;
 
-private:
     EncodedJSValue* data() const { return m_args; }
 
+private:
     EncodedJSValue* m_args { nullptr };
     int m_argCount { 0 };
 };
