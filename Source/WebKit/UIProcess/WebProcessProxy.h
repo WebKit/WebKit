@@ -485,6 +485,8 @@ public:
     static void permissionChanged(WebCore::PermissionName, const WebCore::SecurityOriginData&);
     void sendPermissionChanged(WebCore::PermissionName, const WebCore::SecurityOriginData&);
 
+    void resetState();
+
 protected:
     WebProcessProxy(WebProcessPool&, WebsiteDataStore*, IsPrewarmed, WebCore::CrossOriginMode, LockdownMode);
 
