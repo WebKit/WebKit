@@ -878,6 +878,8 @@ public:
 
     bool setIsOpportunisticStackingContext(bool);
 
+    void setIsHiddenByOverflowTruncation(bool);
+
 private:
 
     void setNextSibling(RenderLayer* next) { m_next = next; }
@@ -1251,6 +1253,7 @@ private:
 
     bool m_insideSVGForeignObject : 1;
     bool m_shouldPaintUsingCompositeCopy : 1;
+    bool m_isHiddenByOverflowTruncation : 1 { false };
 
     unsigned m_indirectCompositingReason : 4; // IndirectCompositingReason
     unsigned m_viewportConstrainedNotCompositedReason : 2; // ViewportConstrainedNotCompositedReason
@@ -1347,6 +1350,14 @@ inline void RenderLayer::updateZOrderLists()
 inline RenderLayer* RenderLayer::paintOrderParent() const
 {
     return m_isNormalFlowOnly ? m_parent : stackingContext();
+}
+
+inline void RenderLayer::setIsHiddenByOverflowTruncation(bool isHidden)
+{
+    if (m_isHiddenByOverflowTruncation == isHidden)
+        return;
+    m_isHiddenByOverflowTruncation = isHidden;
+    m_visibleContentStatusDirty = true;
 }
 
 #if ASSERT_ENABLED

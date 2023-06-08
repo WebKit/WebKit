@@ -1654,6 +1654,9 @@ bool RenderLayer::computeHasVisibleContent() const
     if (renderer().document().settings().layerBasedSVGEngineEnabled() && lineageOfType<RenderSVGHiddenContainer>(renderer()).first())
         return false;
 #endif
+    if (m_isHiddenByOverflowTruncation)
+        return false;
+
     if (renderer().style().visibility() == Visibility::Visible)
         return true;
 

@@ -631,6 +631,9 @@ void LineLayout::updateRenderTreePositions(const Vector<LineAdjustment>& lineAdj
             continue;
 
         auto& renderer = downcast<RenderBox>(m_boxTree.rendererForLayoutBox(layoutBox));
+        if (auto* layer = renderer.layer())
+            layer->setIsHiddenByOverflowTruncation(box.isFullyTruncated());
+
         auto& logicalGeometry = m_inlineFormattingState.boxGeometry(layoutBox);
 
         auto logicalOffset = lineAdjustments.isEmpty() ? LayoutSize { } : LayoutSize { 0_lu, lineAdjustments[box.lineIndex()].offset };
