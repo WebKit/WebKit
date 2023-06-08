@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 52;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -92,6 +92,8 @@
 		5C7C787423AC3E770065F47E /* ManagedConfigurationSoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C7C787223AC3E770065F47E /* ManagedConfigurationSoftLink.mm */; };
 		5CB898B2286274FA00CA3485 /* QuarantineSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CB898B1286274FA00CA3485 /* QuarantineSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5CF869ED29D266AE0045F0D2 /* NSKeyedUnarchiverSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CF869EC29D266AE0045F0D2 /* NSKeyedUnarchiverSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7A46A8112A3265C8007BDD04 /* LockdownModeSoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = 7A46A80F2A3265C8007BDD04 /* LockdownModeSoftLink.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		7A46A8122A3265E2007BDD04 /* LockdownModeSoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7A46A80E2A3265C7007BDD04 /* LockdownModeSoftLink.mm */; };
 		7AA1E2CE29EF5921002D4455 /* DataDetectorsUISoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = 7AA1E2CD29EF5921002D4455 /* DataDetectorsUISoftLink.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7AA1E2D029EF5947002D4455 /* DataDetectorsUISoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7AA1E2CF29EF5946002D4455 /* DataDetectorsUISoftLink.mm */; };
 		7B47F2A328587B9700E793C8 /* CoreGraphicsSoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B47F2A128587B9700E793C8 /* CoreGraphicsSoftLink.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -944,6 +946,8 @@
 		72C9483A2959517C006ECB96 /* NSSearchFieldCellSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NSSearchFieldCellSPI.h; sourceTree = "<group>"; };
 		7A36D0F8223AD9AB00B0522E /* CommonCryptoSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommonCryptoSPI.h; sourceTree = "<group>"; };
 		7A3A6A7F20CADB4600317AAE /* NSImageSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSImageSPI.h; sourceTree = "<group>"; };
+		7A46A80E2A3265C7007BDD04 /* LockdownModeSoftLink.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LockdownModeSoftLink.mm; sourceTree = "<group>"; };
+		7A46A80F2A3265C8007BDD04 /* LockdownModeSoftLink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LockdownModeSoftLink.h; sourceTree = "<group>"; };
 		7AA1E2CD29EF5921002D4455 /* DataDetectorsUISoftLink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataDetectorsUISoftLink.h; sourceTree = "<group>"; };
 		7AA1E2CF29EF5946002D4455 /* DataDetectorsUISoftLink.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DataDetectorsUISoftLink.mm; sourceTree = "<group>"; };
 		7B47F2A128587B9700E793C8 /* CoreGraphicsSoftLink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoreGraphicsSoftLink.h; sourceTree = "<group>"; };
@@ -1434,6 +1438,8 @@
 				F4DDD019264DC69E00EF1B91 /* DataDetectorsCoreSoftLink.mm */,
 				F44291661FA52705002CC93E /* FileSizeFormatterCocoa.mm */,
 				1C022EFC22CFE8E0006DF01B /* Gunzip.cpp */,
+				7A46A80F2A3265C8007BDD04 /* LockdownModeSoftLink.h */,
+				7A46A80E2A3265C7007BDD04 /* LockdownModeSoftLink.mm */,
 				CDACB35E23873E480018D7CE /* MediaToolboxSoftLink.cpp */,
 				CDACB35F23873E480018D7CE /* MediaToolboxSoftLink.h */,
 				F47221F5276FC32300B984C7 /* NaturalLanguageSoftLink.h */,
@@ -1847,6 +1853,7 @@
 				DD20DDE927BC90D70093D175 /* IOPSLibSPI.h in Headers */,
 				DD20DE4F27BC90D80093D175 /* KillRing.h in Headers */,
 				DD20DDED27BC90D70093D175 /* LaunchServicesSPI.h in Headers */,
+				7A46A8112A3265C8007BDD04 /* LockdownModeSoftLink.h in Headers */,
 				DD20DE6227BC90D80093D175 /* Logging.h in Headers */,
 				DD20DDC627BC90D70093D175 /* LookupSoftLink.h in Headers */,
 				DD20DE2127BC90D80093D175 /* LookupSPI.h in Headers */,
@@ -2249,6 +2256,7 @@
 				1C022EFE22CFE8E1006DF01B /* Gunzip.cpp in Sources */,
 				A30D41221F0DD0EA00B71954 /* KillRing.cpp in Sources */,
 				A30D41251F0DD12D00B71954 /* KillRingMac.mm in Sources */,
+				7A46A8122A3265E2007BDD04 /* LockdownModeSoftLink.mm in Sources */,
 				1C4876D81F8D7F4E00CCEEBD /* Logging.cpp in Sources */,
 				44E1A8B021FA54EB00C3048E /* LookupSoftLink.mm in Sources */,
 				5C7C787423AC3E770065F47E /* ManagedConfigurationSoftLink.mm in Sources */,
