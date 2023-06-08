@@ -26,6 +26,7 @@
 #pragma once
 
 #include "Element.h"
+#include "StyleInvalidator.h"
 
 namespace WebCore {
 
@@ -38,11 +39,14 @@ public:
 
 private:
     void invalidateStyle(const AtomString&);
+    void invalidateStyleWithRuleSets();
 
     const bool m_isEnabled;
     Element& m_element;
 
     AtomString m_newId;
+
+    Invalidator::MatchElementRuleSets m_matchElementRuleSets;
 };
 
 inline IdChangeInvalidation::IdChangeInvalidation(Element& element, const AtomString& oldId, const AtomString& newId)
@@ -54,7 +58,9 @@ inline IdChangeInvalidation::IdChangeInvalidation(Element& element, const AtomSt
     if (oldId == newId)
         return;
     m_newId = newId;
+
     invalidateStyle(oldId);
+    invalidateStyleWithRuleSets();
 }
 
 inline IdChangeInvalidation::~IdChangeInvalidation()
@@ -62,6 +68,7 @@ inline IdChangeInvalidation::~IdChangeInvalidation()
     if (!m_isEnabled)
         return;
     invalidateStyle(m_newId);
+    invalidateStyleWithRuleSets();
 }
 
 }

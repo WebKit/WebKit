@@ -224,7 +224,7 @@ void RuleFeatureSet::recursivelyCollectFeaturesFromSelector(SelectorFeatures& se
             idsInRules.add(selector->value());
             if (matchElement == MatchElement::Parent || matchElement == MatchElement::Ancestor)
                 idsMatchingAncestorsInRules.add(selector->value());
-            else if (isHasPseudoClassMatchElement(matchElement))
+            else if (isHasPseudoClassMatchElement(matchElement) || matchElement == MatchElement::AnySibling)
                 selectorFeatures.ids.append({ selector, matchElement, isNegation });
         } else if (selector->match() == CSSSelector::Class)
             selectorFeatures.classes.append({ selector, matchElement, isNegation });
