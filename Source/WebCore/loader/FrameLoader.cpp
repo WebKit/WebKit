@@ -3557,7 +3557,14 @@ void FrameLoader::executeJavaScriptURL(const URL& url, const NavigationAction& a
         ownerDocument->incrementLoadEventDelayCount();
 
     bool didReplaceDocument = false;
-    m_frame.script().executeJavaScriptURL(url, action.requester() ? action.requester()->securityOrigin.ptr() : nullptr, action.shouldReplaceDocumentIfJavaScriptURL(), didReplaceDocument);
+    bool requesterSandboxedFromScripts = action.requester() ? (action.requester()->sandboxFlags & SandboxScripts) : false;
+    if (requesterSandboxedFromScripts) {
+        // FIXME: This message should be moved off the console once a solution to https://bugs.webkit.org/show_bug.cgi?id=103274 exists.
+        // This message is identical to the message in ScriptController::canExecuteScripts.
+        if (auto* document = m_frame.document())
+            document->addConsoleMessage(MessageSource::Security, MessageLevel::Error, "Blocked script execution in '" + action.requester()->url.stringCenterEllipsizedToLength() + "' because the document's frame is sandboxed and the 'allow-scripts' permission is not set.");
+    } else
+        m_frame.script().executeJavaScriptURL(url, action.requester() ? action.requester()->securityOrigin.ptr() : nullptr, action.shouldReplaceDocumentIfJavaScriptURL(), didReplaceDocument);
 
     // We need to communicate that a load happened, even if the JavaScript URL execution didn't end up replacing the document.
     if (auto* document = m_frame.document(); isFirstNavigationInFrame && !didReplaceDocument)
