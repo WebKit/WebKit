@@ -2316,6 +2316,12 @@ void WebProcessProxy::sendPermissionChanged(WebCore::PermissionName permissionNa
     send(Messages::WebPermissionController::permissionChanged(permissionName, topOrigin), 0);
 }
 
+void WebProcessProxy::resetState()
+{
+    m_hasCommittedAnyProvisionalLoads = false;
+    m_hasCommittedAnyMeaningfulProvisionalLoads = false;
+}
+
 TextStream& operator<<(TextStream& ts, const WebProcessProxy& process)
 {
     auto appendCount = [&ts](unsigned value, ASCIILiteral description) {
