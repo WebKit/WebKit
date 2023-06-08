@@ -1744,7 +1744,7 @@ struct WebCore::DataListSuggestionInformation {
 
 struct WebCore::ClientOrigin {
     [Validator='!topOrigin->isNull()'] WebCore::SecurityOriginData topOrigin;
-    [Validator='!topOrigin->isNull()'] WebCore::SecurityOriginData clientOrigin;
+    [Validator='!clientOrigin->isNull()'] WebCore::SecurityOriginData clientOrigin;
 };
 
 enum class WebCore::AlphaPremultiplication : uint8_t {
