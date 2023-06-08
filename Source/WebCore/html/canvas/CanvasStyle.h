@@ -79,7 +79,6 @@ bool isCurrentColorString(const String& colorString);
 
 Color currentColor(CanvasBase&);
 Color parseColor(const String& colorString, CanvasBase&);
-Color parseColor(const String& colorString);
 Color parseColorOrCurrentColor(const String& colorString, CanvasBase&);
 
 inline CanvasStyle::CanvasStyle()

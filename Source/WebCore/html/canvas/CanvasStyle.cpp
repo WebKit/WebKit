@@ -69,14 +69,6 @@ Color parseColor(const String& colorString, CanvasBase& canvasBase)
     return CSSParser::parseSystemColor(colorString);
 }
 
-Color parseColor(const String& colorString)
-{
-    Color color = CSSParser::parseColorWithoutContext(colorString);
-    if (color.isValid())
-        return color;
-    return CSSParser::parseSystemColor(colorString);
-}
-
 Color currentColor(CanvasBase& canvasBase)
 {
     if (!is<HTMLCanvasElement>(canvasBase))

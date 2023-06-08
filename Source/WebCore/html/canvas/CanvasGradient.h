@@ -52,7 +52,7 @@ private:
     CanvasGradient(const FloatPoint& centerPoint, float angleInRadians, CanvasRenderingContext&);
 
     Ref<Gradient> m_gradient;
-    WeakPtr<CanvasRenderingContext> m_context;
+    Ref<CanvasRenderingContext> m_context;
 };
 
 }

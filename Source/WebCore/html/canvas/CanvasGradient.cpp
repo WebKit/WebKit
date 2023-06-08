@@ -74,14 +74,7 @@ ExceptionOr<void> CanvasGradient::addColorStop(double value, const String& color
         return Exception { IndexSizeError };
 
     // Treat currentColor as black, as required by the standard.
-    Color color;
-    if (isCurrentColorString(colorString))
-        color = Color::black;
-    else if (m_context)
-        color = parseColor(colorString, m_context->canvasBase());
-    else
-        color = parseColor(colorString);
-
+    Color color = isCurrentColorString(colorString) ? Color::black : parseColor(colorString, m_context->canvasBase());
     if (!color.isValid())
         return Exception { SyntaxError };
 
