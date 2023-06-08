@@ -106,6 +106,7 @@ private:
     void visit(const Type*);
     void visitGlobal(AST::Variable&);
     void serializeVariable(AST::Variable&);
+    void generatePackingHelpers(AST::Structure&);
 
     StringBuilder& m_stringBuilder;
     CallGraph& m_callGraph;
@@ -133,6 +134,8 @@ void FunctionDefinitionWriter::write()
     }
     for (auto& structure : m_callGraph.ast().structures())
         visit(structure);
+    for (auto& structure : m_callGraph.ast().structures())
+        generatePackingHelpers(structure);
     for (auto& variable : m_callGraph.ast().variables())
         visitGlobal(variable);
     for (auto& entryPoint : m_callGraph.entrypoints())
@@ -278,6 +281,41 @@ void FunctionDefinitionWriter::visit(AST::Structure& structDecl)
     }
     m_stringBuilder.append(m_indent, "};\n\n");
     m_structRole = std::nullopt;
+}
+
+void FunctionDefinitionWriter::generatePackingHelpers(AST::Structure& structure)
+{
+    if (structure.role() != AST::StructureRole::PackedResource)
+        return;
+
+    const String& packedName = structure.name();
+    auto unpackedName = structure.original()->name();
+
+    m_stringBuilder.append(m_indent, packedName, " __pack(", unpackedName, " unpacked)\n");
+    m_stringBuilder.append(m_indent, "{\n");
+    {
+        IndentationScope scope(m_indent);
+        m_stringBuilder.append(m_indent, packedName, " packed;\n");
+        for (auto& member : structure.members()) {
+            auto& name = member.name();
+            m_stringBuilder.append(m_indent, "packed.", name, " = unpacked.", name, ";\n");
+        }
+        m_stringBuilder.append(m_indent, "return packed;\n");
+    }
+    m_stringBuilder.append(m_indent, "}\n\n");
+
+    m_stringBuilder.append(m_indent, unpackedName, " __unpack(", packedName, " packed)\n");
+    m_stringBuilder.append(m_indent, "{\n");
+    {
+        IndentationScope scope(m_indent);
+        m_stringBuilder.append(m_indent, unpackedName, " unpacked;\n");
+        for (auto& member : structure.members()) {
+            auto& name = member.name();
+            m_stringBuilder.append(m_indent, "unpacked.", name, " = packed.", name, ";\n");
+        }
+        m_stringBuilder.append(m_indent, "return unpacked;\n");
+    }
+    m_stringBuilder.append(m_indent, "}\n\n");
 }
 
 void FunctionDefinitionWriter::visit(AST::Variable& variable)

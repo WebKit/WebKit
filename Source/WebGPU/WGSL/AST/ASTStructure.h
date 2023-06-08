@@ -55,22 +55,25 @@ public:
     Identifier& name() { return m_name; }
     Attribute::List& attributes() { return m_attributes; }
     StructureMember::List& members() { return m_members; }
+    Structure* original() const { return m_original; }
 
     void setRole(StructureRole role) { m_role = role; }
 
 private:
-    Structure(SourceSpan span, Identifier&& name, StructureMember::List&& members, Attribute::List&& attributes, StructureRole role)
+    Structure(SourceSpan span, Identifier&& name, StructureMember::List&& members, Attribute::List&& attributes, StructureRole role, Structure* original = nullptr)
         : Declaration(span)
         , m_name(WTFMove(name))
         , m_attributes(WTFMove(attributes))
         , m_members(WTFMove(members))
         , m_role(role)
+        , m_original(original)
     { }
 
     Identifier m_name;
     Attribute::List m_attributes;
     StructureMember::List m_members;
     StructureRole m_role;
+    Structure* m_original;
 };
 
 } // namespace WGSL::AST

@@ -55,8 +55,11 @@ public:
 
     void visit(AST::Function&) override;
     void visit(AST::Variable&) override;
-    void visit(AST::IdentifierExpression&) override;
+
     void visit(AST::CompoundStatement&) override;
+    void visit(AST::AssignmentStatement&) override;
+
+    void visit(AST::Expression&) override;
 
 private:
     enum class Context : uint8_t { Local, Global };
@@ -104,6 +107,15 @@ private:
     void readVariable(AST::IdentifierExpression&, AST::Variable&, Context);
     void insertBeforeCurrentStatement(AST::Statement&);
     void packResourceStruct(AST::Variable&);
+
+    enum Packing : uint8_t {
+        Packed   = 1 << 0,
+        Unpacked = 1 << 1,
+        Either   = Packed | Unpacked,
+    };
+
+    Packing pack(Packing, AST::Expression&);
+    Packing getPacking(AST::IdentifierExpression&);
 
     CallGraph& m_callGraph;
     PrepareResult& m_result;
@@ -207,21 +219,6 @@ void RewriteGlobalVariables::visit(AST::Variable& variable)
     AST::Visitor::visit(variable);
 }
 
-void RewriteGlobalVariables::visit(AST::IdentifierExpression& identifier)
-{
-    auto def = m_defs.find(identifier.identifier());
-    if (def != m_defs.end()) {
-        if (def->value)
-            readVariable(identifier, *def->value, Context::Local);
-        return;
-    }
-
-    auto it = m_globals.find(identifier.identifier());
-    if (it == m_globals.end())
-        return;
-    readVariable(identifier, *it->value.declaration, Context::Global);
-}
-
 void RewriteGlobalVariables::visit(AST::CompoundStatement& statement)
 {
     auto indexScope = SetForScope(m_currentStatementIndex, 0);
@@ -237,6 +234,87 @@ void RewriteGlobalVariables::visit(AST::CompoundStatement& statement)
         m_callGraph.ast().insert(statement.statements(), insertion.index + offset, AST::Statement::Ref(*insertion.statement));
         ++offset;
     }
+}
+
+void RewriteGlobalVariables::visit(AST::AssignmentStatement& statement)
+{
+    Packing lhsPacking = pack(Packing::Either, statement.lhs());
+    ASSERT(lhsPacking != Packing::Either);
+    Packing rhsPacking = pack(lhsPacking, statement.rhs());
+    ASSERT_UNUSED(rhsPacking, lhsPacking == rhsPacking);
+}
+
+void RewriteGlobalVariables::visit(AST::Expression& expression)
+{
+    pack(Packing::Unpacked, expression);
+}
+
+auto RewriteGlobalVariables::pack(Packing expectedPacking, AST::Expression& expression) -> Packing
+{
+    const auto& visitAndReplace = [&](auto& expression) -> Packing {
+        auto packing = getPacking(expression);
+        if (expectedPacking & packing)
+            return packing;
+
+        constexpr auto pack = "__pack"_s;
+        constexpr auto unpack = "__unpack"_s;
+        auto operation = packing == Packing::Packed ? unpack : pack;
+        auto& callee = m_callGraph.ast().astBuilder().construct<AST::NamedTypeName>(
+            SourceSpan::empty(),
+            AST::Identifier::make(operation)
+        );
+        callee.m_resolvedType = m_callGraph.ast().types().bottomType();
+        auto& argument = m_callGraph.ast().astBuilder().construct<std::remove_cvref_t<decltype(expression)>>(expression);
+        auto& call = m_callGraph.ast().astBuilder().construct<AST::CallExpression>(
+            SourceSpan::empty(),
+            callee,
+            AST::Expression::List { argument }
+        );
+        call.m_inferredType = argument.inferredType();
+        m_callGraph.ast().replace(expression, call);
+        return static_cast<Packing>(Packing::Either ^ packing);
+    };
+
+    switch (expression.kind()) {
+    case AST::NodeKind::IdentifierExpression:
+        return visitAndReplace(downcast<AST::IdentifierExpression>(expression));
+    default:
+        AST::Visitor::visit(expression);
+        return Packing::Unpacked;
+    }
+}
+
+auto RewriteGlobalVariables::getPacking(AST::IdentifierExpression& identifier) -> Packing
+{
+    auto packing = Packing::Unpacked;
+
+    auto def = m_defs.find(identifier.identifier());
+    if (def != m_defs.end()) {
+        if (def->value)
+            readVariable(identifier, *def->value, Context::Local);
+        return packing;
+    }
+
+    auto it = m_globals.find(identifier.identifier());
+    if (it == m_globals.end())
+        return packing;
+    readVariable(identifier, *it->value.declaration, Context::Global);
+
+    if (it->value.resource.has_value()) {
+        // FIXME: stop changing inferred types after inference
+        auto* type = identifier.inferredType();
+        if (auto* referenceType = std::get_if<Types::Reference>(type))
+            type = referenceType->element;
+        if (auto* structType = std::get_if<Types::Struct>(type)) {
+            if (structType->structure.role() == AST::StructureRole::UserDefinedResource)
+                packing = Packing::Packed;
+        } else if (auto* vectorType = std::get_if<Types::Vector>(type)) {
+            if (vectorType->size == 3)
+                packing = Packing::Packed;
+        }
+    }
+
+    return packing;
 }
 
 void RewriteGlobalVariables::collectGlobals()
@@ -303,8 +381,8 @@ void RewriteGlobalVariables::packResourceStruct(AST::Variable& global)
             AST::Identifier::make(packedStructName),
             AST::StructureMember::List(structType->structure.members()),
             AST::Attribute::List { },
-            AST::StructureRole::PackedResource
-
+            AST::StructureRole::PackedResource,
+            &structType->structure
         );
         m_callGraph.ast().append(m_callGraph.ast().structures(), packedStruct);
         packedStructType = m_callGraph.ast().types().structType(packedStruct);
