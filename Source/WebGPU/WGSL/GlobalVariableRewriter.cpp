@@ -116,6 +116,8 @@ private:
 
     Packing pack(Packing, AST::Expression&);
     Packing getPacking(AST::IdentifierExpression&);
+    Packing getPacking(AST::FieldAccessExpression&);
+    Packing packingForType(const Type*);
 
     CallGraph& m_callGraph;
     PrepareResult& m_result;
@@ -256,9 +258,33 @@ auto RewriteGlobalVariables::pack(Packing expectedPacking, AST::Expression& expr
         if (expectedPacking & packing)
             return packing;
 
-        constexpr auto pack = "__pack"_s;
-        constexpr auto unpack = "__unpack"_s;
-        auto operation = packing == Packing::Packed ? unpack : pack;
+        auto* type = expression.inferredType();
+        if (auto* referenceType = std::get_if<Types::Reference>(type))
+            type = referenceType->element;
+        ASCIILiteral operation;
+        if (std::holds_alternative<Types::Struct>(*type))
+            operation = packing == Packing::Packed ? "__unpack"_s : "__pack"_s;
+        else {
+            ASSERT(std::holds_alternative<Types::Vector>(*type));
+            auto& vector = std::get<Types::Vector>(*type);
+            ASSERT(std::holds_alternative<Types::Primitive>(*vector.element));
+            switch (std::get<Types::Primitive>(*vector.element).kind) {
+            case Types::Primitive::AbstractInt:
+            case Types::Primitive::I32:
+                operation = packing == Packing::Packed ? "int3"_s : "packed_int3"_s;
+                break;
+            case Types::Primitive::U32:
+                operation = packing == Packing::Packed ? "uint3"_s : "packed_uint3"_s;
+                break;
+            case Types::Primitive::AbstractFloat:
+            case Types::Primitive::F32:
+                operation = packing == Packing::Packed ? "float3"_s : "packed_float3"_s;
+                break;
+            default:
+                RELEASE_ASSERT_NOT_REACHED();
+            }
+        }
+        RELEASE_ASSERT(!operation.isNull());
         auto& callee = m_callGraph.ast().astBuilder().construct<AST::NamedTypeName>(
             SourceSpan::empty(),
             AST::Identifier::make(operation)
@@ -278,6 +304,8 @@ auto RewriteGlobalVariables::pack(Packing expectedPacking, AST::Expression& expr
     switch (expression.kind()) {
     case AST::NodeKind::IdentifierExpression:
         return visitAndReplace(downcast<AST::IdentifierExpression>(expression));
+    case AST::NodeKind::FieldAccessExpression:
+        return visitAndReplace(downcast<AST::FieldAccessExpression>(expression));
     default:
         AST::Visitor::visit(expression);
         return Packing::Unpacked;
@@ -300,21 +328,41 @@ auto RewriteGlobalVariables::getPacking(AST::IdentifierExpression& identifier) -
         return packing;
     readVariable(identifier, *it->value.declaration, Context::Global);
 
-    if (it->value.resource.has_value()) {
-        // FIXME: stop changing inferred types after inference
-        auto* type = identifier.inferredType();
-        if (auto* referenceType = std::get_if<Types::Reference>(type))
-            type = referenceType->element;
-        if (auto* structType = std::get_if<Types::Struct>(type)) {
-            if (structType->structure.role() == AST::StructureRole::UserDefinedResource)
-                packing = Packing::Packed;
-        } else if (auto* vectorType = std::get_if<Types::Vector>(type)) {
-            if (vectorType->size == 3)
-                packing = Packing::Packed;
-        }
-    }
+    if (it->value.resource.has_value())
+        return packingForType(identifier.inferredType());
 
     return packing;
+}
+
+auto RewriteGlobalVariables::getPacking(AST::FieldAccessExpression& expression) -> Packing
+{
+    auto basePacking = pack(Packing::Either, expression.base());
+    if (basePacking & Packing::Unpacked)
+        return Packing::Unpacked;
+    auto* baseType = expression.base().inferredType();
+    if (auto* referenceType = std::get_if<Types::Reference>(baseType))
+        baseType = referenceType->element;
+    if (std::holds_alternative<Types::Vector>(*baseType))
+        return Packing::Unpacked;
+    ASSERT(std::holds_alternative<Types::Struct>(*baseType));
+    auto& structType = std::get<Types::Struct>(*baseType);
+    auto* fieldType = structType.fields.get(expression.fieldName());
+    return packingForType(fieldType);
+}
+
+auto RewriteGlobalVariables::packingForType(const Type* type) -> Packing
+{
+    if (auto* referenceType = std::get_if<Types::Reference>(type))
+        type = referenceType->element;
+    if (auto* structType = std::get_if<Types::Struct>(type)) {
+        if (structType->structure.role() == AST::StructureRole::UserDefinedResource)
+            return Packing::Packed;
+    } else if (auto* vectorType = std::get_if<Types::Vector>(type)) {
+        if (vectorType->size == 3)
+            return Packing::Packed;
+    }
+
+    return Packing::Unpacked;
 }
 
 void RewriteGlobalVariables::collectGlobals()
