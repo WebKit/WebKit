@@ -44,6 +44,56 @@ struct NavigationRequester {
     ScriptExecutionContextIdentifier documentIdentifier;
     std::optional<GlobalFrameIdentifier> globalFrameIdentifier;
     SandboxFlags sandboxFlags;
+
+    template<class Encoder> void encode(Encoder&) const;
+    template<class Decoder> static std::optional<NavigationRequester> decode(Decoder&);
 };
+
+template<class Encoder>
+void NavigationRequester::encode(Encoder& encoder) const
+{
+    encoder << url << securityOrigin.get() << topOrigin.get() << policyContainer << documentIdentifier << globalFrameIdentifier << sandboxFlags;
+}
+
+template<class Decoder>
+std::optional<NavigationRequester> NavigationRequester::decode(Decoder& decoder)
+{
+    std::optional<URL> url;
+    decoder >> url;
+    if (!url)
+        return std::nullopt;
+
+    std::optional<Ref<SecurityOrigin>> securityOrigin;
+    decoder >> securityOrigin;
+    if (!securityOrigin)
+        return std::nullopt;
+
+    std::optional<Ref<SecurityOrigin>> topOrigin;
+    decoder >> topOrigin;
+    if (!topOrigin)
+        return std::nullopt;
+
+    std::optional<PolicyContainer> policyContainer;
+    decoder >> policyContainer;
+    if (!policyContainer)
+        return std::nullopt;
+
+    std::optional<ScriptExecutionContextIdentifier> documentIdentifier;
+    decoder >> documentIdentifier;
+    if (!documentIdentifier)
+        return std::nullopt;
+
+    std::optional<std::optional<GlobalFrameIdentifier>> globalFrameIdentifier;
+    decoder >> globalFrameIdentifier;
+    if (!globalFrameIdentifier)
+        return std::nullopt;
+
+    std::optional<SandboxFlags> sandboxFlags;
+    decoder >> sandboxFlags;
+    if (!sandboxFlags)
+        return std::nullopt;
+
+    return NavigationRequester { WTFMove(*url), WTFMove(*securityOrigin), WTFMove(*topOrigin), WTFMove(*policyContainer), *documentIdentifier, *globalFrameIdentifier, *sandboxFlags };
+}
 
 } // namespace WebCore
