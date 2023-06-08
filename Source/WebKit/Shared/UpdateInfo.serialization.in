@@ -1,4 +1,4 @@
-# Copyright (C) 2010-2020 Apple Inc. All rights reserved.
+# Copyright (C) 2023 Sony Interactive Entertainment Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -20,14 +20,18 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-messages -> DrawingAreaProxy NotRefCounted {
-    EnterAcceleratedCompositingMode(uint64_t backingStoreStateID, WebKit::LayerTreeContext context)
-    UpdateAcceleratedCompositingMode(uint64_t backingStoreStateID, WebKit::LayerTreeContext context)
-    DidFirstLayerFlush(uint64_t backingStoreStateID, WebKit::LayerTreeContext context)
-    DispatchPresentationCallbacksAfterFlushingLayers(Vector<IPC::AsyncReplyID> callbackIDs);
-
 #if USE(COORDINATED_GRAPHICS) || USE(TEXTURE_MAPPER)
-    Update(uint64_t stateID, struct WebKit::UpdateInfo updateInfo)
-    ExitAcceleratedCompositingMode(uint64_t backingStoreStateID, struct WebKit::UpdateInfo updateInfo)
-#endif
+
+[RValue] struct WebKit::UpdateInfo {
+    WebCore::IntSize viewSize;
+    float deviceScaleFactor;
+    WebCore::IntRect scrollRect;
+    WebCore::IntSize scrollOffset;
+    WebCore::IntRect updateRectBounds;
+    Vector<WebCore::IntRect> updateRects;
+    float updateScaleFactor;
+    WebKit::ShareableBitmapHandle bitmapHandle;
+    WebCore::IntPoint bitmapOffset;
 }
+
+#endif

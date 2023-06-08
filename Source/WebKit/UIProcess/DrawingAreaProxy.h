@@ -56,7 +56,7 @@ class WebPageProxy;
 class WebProcessProxy;
 
 #if USE(COORDINATED_GRAPHICS) || USE(TEXTURE_MAPPER)
-class UpdateInfo;
+struct UpdateInfo;
 #endif
 
 class DrawingAreaProxy : public IPC::MessageReceiver {

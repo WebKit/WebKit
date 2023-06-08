@@ -36,8 +36,8 @@
 
 namespace WebKit {
 class GPUConnectionToWebProcess;
-class UpdateInfo;
 class WCScene;
+struct UpdateInfo;
 struct WCUpdateInfo;
 
 class RemoteWCLayerTreeHost : public IPC::MessageReceiver, private IPC::MessageSender {

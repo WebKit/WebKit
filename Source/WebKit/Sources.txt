@@ -240,7 +240,6 @@ Shared/SharedStringHashTable.cpp
 Shared/TouchBarMenuData.cpp
 Shared/TouchBarMenuItemData.cpp
 Shared/URLSchemeTaskParameters.cpp
-Shared/UpdateInfo.cpp
 Shared/UserData.cpp
 Shared/UserContentControllerParameters.cpp
 Shared/WebBackForwardListItem.cpp

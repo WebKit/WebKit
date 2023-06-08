@@ -381,6 +381,7 @@ set(WebKit_SERIALIZATION_IN_FILES
     Shared/ShareableBitmap.serialization.in
     Shared/TextFlags.serialization.in
     Shared/TextRecognitionResult.serialization.in
+    Shared/UpdateInfo.serialization.in
     Shared/WTFArgumentCoders.serialization.in
     Shared/WebCoreArgumentCoders.serialization.in
     Shared/WebEvent.serialization.in

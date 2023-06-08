@@ -3087,7 +3087,6 @@
 		1A64230612DD09EB00CAAE2C /* DrawingAreaProxyMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DrawingAreaProxyMessageReceiver.cpp; sourceTree = "<group>"; };
 		1A64230712DD09EB00CAAE2C /* DrawingAreaProxyMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DrawingAreaProxyMessages.h; sourceTree = "<group>"; };
 		1A64245C12DE29A100CAAE2C /* UpdateInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UpdateInfo.h; sourceTree = "<group>"; };
-		1A64245D12DE29A100CAAE2C /* UpdateInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UpdateInfo.cpp; sourceTree = "<group>"; };
 		1A6509CD18B4146200614332 /* WKProcessPoolPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKProcessPoolPrivate.h; sourceTree = "<group>"; };
 		1A6563E21B7A8C50009CF787 /* APIWindowFeatures.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = APIWindowFeatures.cpp; sourceTree = "<group>"; };
 		1A6563E31B7A8C50009CF787 /* APIWindowFeatures.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIWindowFeatures.h; sourceTree = "<group>"; };
@@ -8059,7 +8058,6 @@
 				86D1968329A517A20083B077 /* TouchBarMenuItemData.serialization.in */,
 				0F11781422E39BE6008BD570 /* TransactionID.h */,
 				5C4B9D8A210A8C46008F14D1 /* UndoOrRedo.h */,
-				1A64245D12DE29A100CAAE2C /* UpdateInfo.cpp */,
 				1A64245C12DE29A100CAAE2C /* UpdateInfo.h */,
 				5C19A51E1FD0B14600EEA323 /* URLSchemeTaskParameters.cpp */,
 				5C19A51F1FD0B14700EEA323 /* URLSchemeTaskParameters.h */,
