@@ -407,11 +407,19 @@ String CSSSelector::selectorText(StringView separator, StringView rightSide) con
 {
     StringBuilder builder;
 
-    if (match() == CSSSelector::Tag && !m_tagIsForNamespaceRule) {
-        if (tagQName().prefix().isNull())
-            builder.append(tagQName().localName());
+    auto serializeIdentifierOrStar = [&] (const AtomString& identifier) {
+        if (identifier == starAtom())
+            builder.append('*');
         else
-            builder.append(tagQName().prefix().string(), '|', tagQName().localName());
+            serializeIdentifier(identifier, builder);
+    };
+
+    if (match() == CSSSelector::Tag && !m_tagIsForNamespaceRule) {
+        if (auto& prefix = tagQName().prefix(); !prefix.isNull()) {
+            serializeIdentifierOrStar(prefix);
+            builder.append('|');
+        }
+        serializeIdentifierOrStar(tagQName().localName());
     }
 
     const CSSSelector* cs = this;
@@ -780,9 +788,11 @@ String CSSSelector::selectorText(StringView separator, StringView rightSide) con
             }
         } else if (cs->isAttributeSelector()) {
             builder.append('[');
-            if (auto& prefix = cs->attribute().prefix(); !prefix.isEmpty())
-                builder.append(prefix, '|');
-            builder.append(cs->attribute().localName());
+            if (auto& prefix = cs->attribute().prefix(); !prefix.isEmpty()) {
+                serializeIdentifierOrStar(prefix);
+                builder.append('|');
+            }
+            serializeIdentifierOrStar(cs->attribute().localName());
             switch (cs->match()) {
                 case CSSSelector::Exact:
                     builder.append('=');
