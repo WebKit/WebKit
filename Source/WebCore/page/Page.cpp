@@ -2687,8 +2687,9 @@ void Page::setActivityState(OptionSet<ActivityState> activityState)
         setIsInWindowInternal(activityState.contains(ActivityState::IsInWindow));
     if (changed & ActivityState::IsVisuallyIdle)
         setIsVisuallyIdleInternal(activityState.contains(ActivityState::IsVisuallyIdle));
+
+    WeakPtr localMainFrame = dynamicDowncast<LocalFrame>(m_mainFrame.get());
     if (changed & ActivityState::WindowIsActive) {
-        auto* localMainFrame = dynamicDowncast<LocalFrame>(m_mainFrame.get());
         if (auto* view = localMainFrame ? localMainFrame->view() : nullptr)
             view->updateTiledBackingAdaptiveSizing();
     }
@@ -2702,6 +2703,11 @@ void Page::setActivityState(OptionSet<ActivityState> activityState)
     if (wasVisibleAndActive != isVisibleAndActive()) {
         PlatformMediaSessionManager::updateNowPlayingInfoIfNecessary();
         stopKeyboardScrollAnimation();
+    }
+
+    if (auto* document = localMainFrame ? localMainFrame->document() : nullptr) {
+        if (auto* cache = document->existingAXObjectCache())
+            cache->onPageActivityStateChange(m_activityState);
     }
 
     if (m_performanceMonitor)

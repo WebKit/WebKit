@@ -5719,10 +5719,7 @@ bool WebPage::windowIsFocused() const
 
 bool WebPage::windowAndWebPageAreFocused() const
 {
-    if (!isVisible())
-        return false;
-
-    return m_page->focusController().isFocused() && m_page->focusController().isActive();
+    return isVisible() && m_page->focusController().isFocused() && m_page->focusController().isActive();
 }
 
 void WebPage::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)

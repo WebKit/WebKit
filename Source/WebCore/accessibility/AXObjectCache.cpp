@@ -256,6 +256,8 @@ AXObjectCache::AXObjectCache(Document& document)
         loadingProgress = 1;
     m_loadingProgress = loadingProgress;
 
+    if (m_pageID)
+        m_pageActivityState = m_document.page()->activityState();
     AXTreeStore::add(m_id, WeakPtr { this });
 }
 
@@ -271,8 +273,11 @@ AXObjectCache::~AXObjectCache()
         object->detach(AccessibilityDetachmentType::CacheDestroyed);
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-    if (m_pageID)
+    if (m_pageID) {
+        if (auto tree = AXIsolatedTree::treeForPageID(*m_pageID))
+            tree->setPageActivityState({ });
         AXIsolatedTree::removeTreeForPageID(*m_pageID);
+    }
 #endif
 
     AXTreeStore::remove(m_id);
@@ -1445,6 +1450,17 @@ void AXObjectCache::handleRowCountChanged(AccessibilityObject* axObject, Documen
     postNotification(axObject, document, AXRowCountChanged);
 }
 
+void AXObjectCache::onPageActivityStateChange(OptionSet<ActivityState> newState)
+{
+    ASSERT(m_pageID);
+
+    m_pageActivityState = newState;
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    if (auto tree = AXIsolatedTree::treeForPageID(m_pageID))
+        tree->setPageActivityState(newState);
+#endif
+}
+
 void AXObjectCache::onFocusChange(Node* oldNode, Node* newNode)
 {
     if (nodeAndRendererAreValid(newNode) && rendererNeedsDeferredUpdate(*newNode->renderer())) {
@@ -1510,7 +1526,7 @@ void AXObjectCache::handleFocusedUIElementChanged(Node* oldNode, Node* newNode, 
 #endif
     platformHandleFocusedUIElementChanged(oldNode, newNode);
 }
-    
+
 void AXObjectCache::selectedChildrenChanged(Node* node)
 {
     postNotification(node, AXSelectedChildrenChanged);

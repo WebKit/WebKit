@@ -310,6 +310,7 @@ void AXIsolatedObject::initializeProperties(const Ref<AccessibilityObject>& axOb
         // For the ScrollView and WebArea objects, cache the TitleAttributeValue and DescriptionAttributeValue eagerly to avoid hitting the main thread in getOrRetrievePropertyValue during the construction of the isolated tree.
         setProperty(AXPropertyName::TitleAttributeValue, object.titleAttributeValue().isolatedCopy());
         setProperty(AXPropertyName::DescriptionAttributeValue, object.descriptionAttributeValue().isolatedCopy());
+        setProperty(AXPropertyName::HelpText, object.helpTextAttributeValue().isolatedCopy());
     }
 
     if (isRoot == IsRoot::Yes) {

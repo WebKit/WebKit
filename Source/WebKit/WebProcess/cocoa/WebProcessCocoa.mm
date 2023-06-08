@@ -58,6 +58,11 @@
 #import <JavaScriptCore/ConfigFile.h>
 #import <JavaScriptCore/Options.h>
 #import <WebCore/AVAssetMIMETypeCache.h>
+
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+#import <WebCore/AXIsolatedObject.h>
+#import <WebCore/AXIsolatedTree.h>
+#endif
 #import <WebCore/AXObjectCache.h>
 #import <WebCore/CPUMonitor.h>
 #import <WebCore/DeprecatedGlobalSettings.h>
@@ -204,12 +209,37 @@ void WebProcess::platformSetCacheModel(CacheModel)
 
 id WebProcess::accessibilityFocusedUIElement()
 {
-    return Accessibility::retrieveAutoreleasedValueFromMainThread<id>([] () -> RetainPtr<id> {
-        WebPage* page = WebProcess::singleton().focusedWebPage();
-        if (!page || !page->accessibilityRemoteObject())
-            return nil;
-        return [page->accessibilityRemoteObject() accessibilityFocusedUIElement];
-    });
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    if (!isMainRunLoop()) {
+        // Avoid hitting the main thread by getting the focused object from the focused isolated tree.
+        auto tree = findAXTree([] (AXTreePtr tree) -> bool {
+            OptionSet<ActivityState> state;
+            switchOn(tree,
+                [&state] (RefPtr<AXIsolatedTree>& typedTree) {
+                    if (typedTree)
+                        state = typedTree->lockedPageActivityState();
+                }
+                , [] (auto&) { }
+            );
+            return state.containsAll({ ActivityState::IsVisible, ActivityState::IsFocused, ActivityState::WindowIsActive });
+        });
+
+        RefPtr object = switchOn(tree,
+            [] (RefPtr<AXIsolatedTree>& typedTree) -> RefPtr<AXIsolatedObject> {
+                return typedTree ? typedTree->focusedNode() : nullptr;
+            }
+            , [] (auto&) -> RefPtr<AXIsolatedObject> {
+                return nullptr;
+            }
+        );
+        return object ? object->wrapper() : nil;
+    }
+#endif
+
+    WebPage* page = WebProcess::singleton().focusedWebPage();
+    if (!page || !page->accessibilityRemoteObject())
+        return nil;
+    return [page->accessibilityRemoteObject() accessibilityFocusedUIElement];
 }
 
 #if USE(APPKIT)

@@ -46,6 +46,7 @@ HashMap<PageIdentifier, Ref<AXIsolatedTree>>& AXIsolatedTree::treePageCache()
 AXIsolatedTree::AXIsolatedTree(AXObjectCache& axObjectCache)
     : AXTreeStore(axObjectCache.treeID())
     , m_axObjectCache(&axObjectCache)
+    , m_pageActivityState(axObjectCache.pageActivityState())
     , m_geometryManager(axObjectCache.m_geometryManager.ptr())
     , m_usedOnAXThread(axObjectCache.usedOnAXThread())
 {
@@ -719,6 +720,26 @@ void AXIsolatedTree::updateChildren(AccessibilityObject& axObject, ResolveNodeCh
     updateNodeAndDependentProperties(*axAncestor);
 }
 
+void AXIsolatedTree::setPageActivityState(OptionSet<ActivityState> state)
+{
+    ASSERT(isMainThread());
+
+    Locker locker { s_storeLock };
+    m_pageActivityState = state;
+}
+
+OptionSet<ActivityState> AXIsolatedTree::pageActivityState() const
+{
+    Locker locker { s_storeLock };
+    return m_pageActivityState;
+}
+
+OptionSet<ActivityState> AXIsolatedTree::lockedPageActivityState() const
+{
+    ASSERT(s_storeLock.isLocked());
+    return m_pageActivityState;
+}
+
 RefPtr<AXIsolatedObject> AXIsolatedTree::focusedNode()
 {
     AXTRACE("AXIsolatedTree::focusedNode"_s);
@@ -964,6 +985,33 @@ void AXIsolatedTree::applyPendingChanges()
         }
     }
     m_pendingPropertyChanges.clear();
+}
+
+AXTreePtr findAXTree(Function<bool(AXTreePtr)>&& match)
+{
+    if (isMainThread()) {
+        for (WeakPtr tree : AXTreeStore<AXObjectCache>::liveTreeMap().values()) {
+            if (!tree)
+                continue;
+
+            if (match(tree))
+                return tree;
+        }
+        return nullptr;
+    }
+
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    Locker locker { AXTreeStore<AXIsolatedTree>::s_storeLock };
+    for (auto it = AXTreeStore<AXIsolatedTree>::isolatedTreeMap().begin(); it != AXTreeStore<AXIsolatedTree>::isolatedTreeMap().end(); ++it) {
+        RefPtr tree = it->value.get();
+        if (!tree)
+            continue;
+
+        if (match(tree))
+            return tree;
+    }
+    return nullptr;
+#endif
 }
 
 } // namespace WebCore

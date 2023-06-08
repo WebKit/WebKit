@@ -268,7 +268,7 @@ public:
     constexpr AXGeometryManager* geometryManager() const { return m_geometryManager.get(); }
 
     RefPtr<AXIsolatedObject> rootNode();
-    RefPtr<AXIsolatedObject> focusedNode();
+    WEBCORE_EXPORT RefPtr<AXIsolatedObject> focusedNode();
 
     RefPtr<AXIsolatedObject> objectForID(const AXID) const;
     Vector<RefPtr<AXCoreObject>> objectsForIDs(const Vector<AXID>&);
@@ -316,6 +316,10 @@ public:
     void applyPendingChanges();
 
     AXID treeID() const { return m_id; }
+    void setPageActivityState(OptionSet<ActivityState>);
+    OptionSet<ActivityState> pageActivityState() const;
+    // Use only if the s_storeLock is already held like in findAXTree.
+    WEBCORE_EXPORT OptionSet<ActivityState> lockedPageActivityState() const;
 
 private:
     AXIsolatedTree(AXObjectCache&);
@@ -344,6 +348,7 @@ private:
 
     unsigned m_maxTreeDepth { 0 };
     WeakPtr<AXObjectCache> m_axObjectCache;
+    OptionSet<ActivityState> m_pageActivityState;
     RefPtr<AXGeometryManager> m_geometryManager;
     bool m_usedOnAXThread { true };
 

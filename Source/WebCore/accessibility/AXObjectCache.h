@@ -178,6 +178,10 @@ private:
     void attachWrapper(AccessibilityObject*);
 
 public:
+    void onPageActivityStateChange(OptionSet<ActivityState>);
+    void setPageActivityState(OptionSet<ActivityState> state) { m_pageActivityState = state; }
+    OptionSet<ActivityState> pageActivityState() const { return m_pageActivityState; }
+
     void childrenChanged(Node*, Node* newChild = nullptr);
     void childrenChanged(RenderObject*, RenderObject* newChild = nullptr);
     void childrenChanged(AccessibilityObject*);
@@ -592,6 +596,7 @@ private:
 
     Document& m_document;
     const std::optional<PageIdentifier> m_pageID; // constant for object's lifetime.
+    OptionSet<ActivityState> m_pageActivityState;
     HashMap<AXID, RefPtr<AccessibilityObject>> m_objects;
     HashMap<RenderObject*, AXID> m_renderObjectMapping;
     HashMap<Widget*, AXID> m_widgetObjectMapping;
@@ -720,6 +725,7 @@ inline void AXObjectCache::onValidityChange(Element&) { }
 inline void AXObjectCache::onTextCompositionChange(Node&) { }
 inline void AXObjectCache::valueChanged(Element*) { }
 inline void AXObjectCache::onFocusChange(Node*, Node*) { }
+inline void AXObjectCache::onPageActivityStateChange(OptionSet<ActivityState>) { }
 inline void AXObjectCache::onPopoverTargetToggle(const HTMLFormControlElement&) { }
 inline void AXObjectCache::onScrollbarFrameRectChange(const Scrollbar&) { }
 inline void AXObjectCache::deferRecomputeIsIgnoredIfNeeded(Element*) { }
