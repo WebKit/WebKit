@@ -2541,6 +2541,11 @@ Logger& WebProcessProxy::logger()
         m_logger->setEnabled(this, alwaysOnLoggingAllowed);
     }
     return *m_logger;
+
+void WebProcessProxy::resetState()
+{
+    m_hasCommittedAnyProvisionalLoads = false;
+    m_hasCommittedAnyMeaningfulProvisionalLoads = false;
 }
 
 TextStream& operator<<(TextStream& ts, const WebProcessProxy& process)
