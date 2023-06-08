@@ -116,15 +116,13 @@ SUPPORTS_MACCATALYST = YES;
 
 OTHER_CPLUSPLUSFLAGS = $(inherited) -isystem $(SDKROOT)/System/Library/Frameworks/System.framework/PrivateHeaders;
 
+SUPPORTS_TEXT_BASED_API = $(TAPI_USE_SRCROOT);
 SUPPORTS_TEXT_BASED_API[sdk=iphone*] = YES;
-SUPPORTS_TEXT_BASED_API[sdk=appletv*] = NO;
-SUPPORTS_TEXT_BASED_API[sdk=watch*] = NO;
 
-OTHER_TAPI_FLAGS = $(OTHER_TAPI_FLAGS_$(WK_COCOA_TOUCH));
-OTHER_TAPI_FLAGS_cocoatouch = -x objective-c++ -std=c++2a -fno-rtti -DRELEASE_WITHOUT_OPTIMIZATIONS;
+OTHER_TAPI_FLAGS = -x objective-c++ -std=c++2a -fno-rtti -DRELEASE_WITHOUT_OPTIMIZATIONS;
 TAPI_USE_SRCROOT = $(TAPI_USE_SRCROOT$(WK_XCODE_15));
 TAPI_USE_SRCROOT_XCODE_SINCE_15 = YES;
-TAPI_VERIFY_MODE[sdk=iphone*] = Pedantic;
+TAPI_VERIFY_MODE = Pedantic;
 
 // This is required to make LLVM_TARGET_TRIPLE_SUFFIX propagate into scripts.
 LLVM_TARGET_TRIPLE_SUFFIX = $(inherited);

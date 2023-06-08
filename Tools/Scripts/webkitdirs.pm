@@ -1227,8 +1227,9 @@ sub XcodeOptions
     push @options, @baseProductDirOption;
     push @options, "ARCHS=$architecture" if $architecture;
     push @options, "SDKROOT=$xcodeSDK" if $xcodeSDK;
-    if (xcodeVersion() lt "15.0") {
-        push @options, "TAPI_USE_SRCROOT=YES" if $ENV{UseSRCROOTSupportForTAPI};
+    if (xcodeVersion() ge "14.0" && xcodeVersion() lt "15.0") {
+        # TAPI_USE_SRCROOT is not recognized by Xcode 14.x, but the feature flag is.
+        push @options, ("-UseSRCROOTSupportForTAPI=YES", "TAPI_USE_SRCROOT=YES");
     }
 
     my @features = webkitperl::FeatureList::getFeatureOptionList();
