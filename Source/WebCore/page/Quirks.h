@@ -139,6 +139,7 @@ public:
 
     WEBCORE_EXPORT bool blocksReturnToFullscreenFromPictureInPictureQuirk() const;
     bool shouldDisableEndFullscreenEventWhenEnteringPictureInPictureFromFullscreenQuirk() const;
+    bool shouldDelayFullscreenEventWhenExitingPictureInPictureQuirk() const;
 
 #if ENABLE(TRACKING_PREVENTION)
     static bool isMicrosoftTeamsRedirectURL(const URL&);
@@ -208,7 +209,8 @@ private:
 #endif
     mutable std::optional<bool> m_blocksReturnToFullscreenFromPictureInPictureQuirk;
     mutable std::optional<bool> m_shouldDisableEndFullscreenEventWhenEnteringPictureInPictureFromFullscreenQuirk;
-#if PLATFORM(IOS)
+    mutable std::optional<bool> m_shouldDelayFullscreenEventWhenExitingPictureInPictureQuirk;
+#if PLATFORM(IOS) || PLATFORM(VISION)
     mutable std::optional<bool> m_allowLayeredFullscreenVideos;
 #endif
 #if PLATFORM(IOS_FAMILY)

@@ -43,6 +43,7 @@
 #include "Page.h"
 #include "PseudoClassChangeInvalidation.h"
 #include "QualifiedName.h"
+#include "Quirks.h"
 #include "Settings.h"
 #include <wtf/LoggerHelper.h>
 
@@ -491,13 +492,17 @@ bool FullscreenManager::willEnterFullscreen(Element& element)
     if (is<HTMLIFrameElement>(element))
         element.setIFrameFullscreenFlag(true);
 
-    notifyAboutFullscreenChangeOrError();
+    if (!document().quirks().shouldDelayFullscreenEventWhenExitingPictureInPictureQuirk())
+        notifyAboutFullscreenChangeOrError();
 
     return true;
 }
 
 bool FullscreenManager::didEnterFullscreen()
 {
+    if (document().quirks().shouldDelayFullscreenEventWhenExitingPictureInPictureQuirk())
+        notifyAboutFullscreenChangeOrError();
+
     if (!m_fullscreenElement) {
         ERROR_LOG(LOGIDENTIFIER, "No fullscreenElement; bailing");
         return false;
