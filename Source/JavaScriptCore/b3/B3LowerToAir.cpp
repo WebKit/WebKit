@@ -4306,6 +4306,26 @@ private:
         }
 
         case Select: {
+            if (m_value->type().isVector()) {
+                // Conditional moves aren't available for vectors on currently
+                // supported architectures, so we lower vector Select to a
+                // branching construct.
+
+                auto ifTrueBlock = newBlock();
+                Air::BasicBlock* beginBlock;
+                Air::BasicBlock* doneBlock;
+                splitBlock(beginBlock, doneBlock);
+
+                append(Air::MoveVector, tmp(m_value->child(2)), tmp(m_value));
+                append(createBranch(m_value->child(0)));
+                beginBlock->setSuccessors(ifTrueBlock, doneBlock);
+
+                ifTrueBlock->append(Air::MoveVector, m_value, tmp(m_value->child(1)), tmp(m_value));
+                ifTrueBlock->append(Air::Jump, m_value);
+                ifTrueBlock->setSuccessors(doneBlock);
+                return;
+            }
+
             MoveConditionallyConfig config;
             if (m_value->type().isInt()) {
                 config.moveConditionally32 = MoveConditionally32;
