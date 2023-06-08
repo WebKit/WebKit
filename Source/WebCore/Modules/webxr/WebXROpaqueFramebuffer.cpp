@@ -44,22 +44,21 @@ namespace WebCore {
 
 using GL = GraphicsContextGL;
 
-std::unique_ptr<WebXROpaqueFramebuffer> WebXROpaqueFramebuffer::create(PlatformXR::LayerHandle handle, WebGLRenderingContextBase& context, Attributes&& attributes, uint32_t width, uint32_t height)
+std::unique_ptr<WebXROpaqueFramebuffer> WebXROpaqueFramebuffer::create(PlatformXR::LayerHandle handle, WebGLRenderingContextBase& context, Attributes&& attributes, IntSize framebufferSize)
 {
     auto framebuffer = WebGLFramebuffer::createOpaque(context);
-    auto opaque = std::unique_ptr<WebXROpaqueFramebuffer>(new WebXROpaqueFramebuffer(handle, WTFMove(framebuffer), context, WTFMove(attributes), width, height));
+    auto opaque = std::unique_ptr<WebXROpaqueFramebuffer>(new WebXROpaqueFramebuffer(handle, WTFMove(framebuffer), context, WTFMove(attributes), framebufferSize));
     if (!opaque->setupFramebuffer())
         return nullptr;
     return opaque;
 }
 
-WebXROpaqueFramebuffer::WebXROpaqueFramebuffer(PlatformXR::LayerHandle handle, Ref<WebGLFramebuffer>&& framebuffer, WebGLRenderingContextBase& context, Attributes&& attributes, uint32_t width, uint32_t height)
+WebXROpaqueFramebuffer::WebXROpaqueFramebuffer(PlatformXR::LayerHandle handle, Ref<WebGLFramebuffer>&& framebuffer, WebGLRenderingContextBase& context, Attributes&& attributes, IntSize framebufferSize)
     : m_handle(handle)
     , m_framebuffer(WTFMove(framebuffer))
     , m_context(context)
     , m_attributes(WTFMove(attributes))
-    , m_width(width)
-    , m_height(height)
+    , m_framebufferSize(framebufferSize)
 {
 }
 
@@ -158,9 +157,8 @@ void WebXROpaqueFramebuffer::startFrame(const PlatformXR::Device::FrameData::Lay
 
     // The drawing target can change size at any point during the session. If this happens, we need
     // to recreate the framebuffer.
-    if (static_cast<uint32_t>(bufferSize.width()) != m_width || static_cast<uint32_t>(bufferSize.height()) != m_height) {
-        m_width = bufferSize.width();
-        m_height = bufferSize.height();
+    if (m_framebufferSize != bufferSize) {
+        m_framebufferSize = bufferSize;
         if (!setupFramebuffer())
             return;
     }
@@ -222,7 +220,7 @@ void WebXROpaqueFramebuffer::endFrame()
 
         gl.bindFramebuffer(GL::READ_FRAMEBUFFER, m_framebuffer->object());
         gl.bindFramebuffer(GL::DRAW_FRAMEBUFFER, m_resolvedFBO);
-        gl.blitFramebufferANGLE(0, 0, m_width, m_height, 0, 0, m_width, m_height, GL::COLOR_BUFFER_BIT, GL::NEAREST);
+        gl.blitFramebufferANGLE(0, 0, width(), height(), 0, 0, width(), height(), GL::COLOR_BUFFER_BIT, GL::NEAREST);
     }
 
 #if USE(MTLSHAREDEVENT_FOR_XR_FRAME_COMPLETION)
@@ -298,14 +296,14 @@ bool WebXROpaqueFramebuffer::setupFramebuffer()
     if (m_attributes.antialias) {
         m_resolvedFBO.ensure(gl);
 
-        auto colorBuffer = allocateColorStorage(gl, sampleCount, m_width, m_height);
+        auto colorBuffer = allocateColorStorage(gl, sampleCount, m_framebufferSize);
         bindColorBuffer(gl, colorBuffer);
 
         m_multisampleColorBuffer.adopt(gl, colorBuffer);
     }
 
     if (hasDepthOrStencil) {
-        auto [depthBuffer, stencilBuffer] = allocateDepthStencilStorage(gl, sampleCount, m_width, m_height);
+        auto [depthBuffer, stencilBuffer] = allocateDepthStencilStorage(gl, sampleCount, m_framebufferSize);
         bindDepthStencilBuffer(gl, depthBuffer, stencilBuffer);
 
         m_depthStencilBuffer.adopt(gl, depthBuffer);
@@ -315,17 +313,17 @@ bool WebXROpaqueFramebuffer::setupFramebuffer()
     return gl.checkFramebufferStatus(GL::FRAMEBUFFER) == GL::FRAMEBUFFER_COMPLETE;
 }
 
-PlatformGLObject WebXROpaqueFramebuffer::allocateRenderbufferStorage(GraphicsContextGL& gl, GCGLsizei samples, GCGLenum internalFormat, GCGLsizei width, GCGLsizei height)
+PlatformGLObject WebXROpaqueFramebuffer::allocateRenderbufferStorage(GraphicsContextGL& gl, GCGLsizei samples, GCGLenum internalFormat, IntSize size)
 {
     PlatformGLObject renderbuffer = gl.createRenderbuffer();
     ASSERT(renderbuffer);
     gl.bindRenderbuffer(GL::RENDERBUFFER, renderbuffer);
-    gl.renderbufferStorageMultisampleANGLE(GL::RENDERBUFFER, samples, internalFormat, width, height);
+    gl.renderbufferStorageMultisampleANGLE(GL::RENDERBUFFER, samples, internalFormat, size.width(), size.height());
 
     return renderbuffer;
 }
 
-PlatformGLObject WebXROpaqueFramebuffer::allocateColorStorage(GraphicsContextGL& gl, GCGLsizei samples, GCGLsizei width, GCGLsizei height)
+PlatformGLObject WebXROpaqueFramebuffer::allocateColorStorage(GraphicsContextGL& gl, GCGLsizei samples, IntSize size)
 {
 #if USE(IOSURFACE_FOR_XR_LAYER_DATA) && !PLATFORM(IOS_FAMILY_SIMULATOR)
     constexpr auto colorFormat = GL::SRGB8_ALPHA8;
@@ -333,10 +331,10 @@ PlatformGLObject WebXROpaqueFramebuffer::allocateColorStorage(GraphicsContextGL&
     constexpr auto colorFormat = GL::RGBA8;
 #endif
 
-    return allocateRenderbufferStorage(gl, samples, colorFormat, width, height);
+    return allocateRenderbufferStorage(gl, samples, colorFormat, size);
 }
 
-std::tuple<PlatformGLObject, PlatformGLObject> WebXROpaqueFramebuffer::allocateDepthStencilStorage(GraphicsContextGL& gl, GCGLsizei samples, GCGLsizei width, GCGLsizei height)
+std::tuple<PlatformGLObject, PlatformGLObject> WebXROpaqueFramebuffer::allocateDepthStencilStorage(GraphicsContextGL& gl, GCGLsizei samples, IntSize size)
 {
     PlatformGLObject depthBuffer = 0;
     PlatformGLObject stencilBuffer = 0;
@@ -344,13 +342,13 @@ std::tuple<PlatformGLObject, PlatformGLObject> WebXROpaqueFramebuffer::allocateD
     // FIXME: Does this need to be optional?
     bool platformSupportsPackedDepthStencil = true;
     if (platformSupportsPackedDepthStencil) {
-        depthBuffer = allocateRenderbufferStorage(gl, samples, GL::DEPTH24_STENCIL8, width, height);
+        depthBuffer = allocateRenderbufferStorage(gl, samples, GL::DEPTH24_STENCIL8, size);
         stencilBuffer = depthBuffer;
     } else {
         if (m_attributes.stencil)
-            stencilBuffer = allocateRenderbufferStorage(gl, samples, GL::STENCIL_INDEX8, width, height);
+            stencilBuffer = allocateRenderbufferStorage(gl, samples, GL::STENCIL_INDEX8, size);
         if (m_attributes.depth)
-            depthBuffer = allocateRenderbufferStorage(gl, samples, GL::DEPTH_COMPONENT, width, height);
+            depthBuffer = allocateRenderbufferStorage(gl, samples, GL::DEPTH_COMPONENT, size);
     }
 
     return std::make_tuple(depthBuffer, stencilBuffer);

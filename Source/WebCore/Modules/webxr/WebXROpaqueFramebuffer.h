@@ -51,24 +51,24 @@ public:
         bool stencil { false };
     };
 
-    static std::unique_ptr<WebXROpaqueFramebuffer> create(PlatformXR::LayerHandle, WebGLRenderingContextBase&, Attributes&&, uint32_t width, uint32_t height);
+    static std::unique_ptr<WebXROpaqueFramebuffer> create(PlatformXR::LayerHandle, WebGLRenderingContextBase&, Attributes&&, IntSize);
     ~WebXROpaqueFramebuffer();
 
     PlatformXR::LayerHandle handle() const { return m_handle; }
     const WebGLFramebuffer& framebuffer() const { return m_framebuffer.get(); }
-    uint32_t width() const { return m_width; }
-    uint32_t height() const { return m_height; }
+    GCGLint width() const { return m_framebufferSize.width(); }
+    GCGLint height() const { return m_framebufferSize.height(); }
 
     void startFrame(const PlatformXR::Device::FrameData::LayerData&);
     void endFrame();
 
 private:
-    WebXROpaqueFramebuffer(PlatformXR::LayerHandle, Ref<WebGLFramebuffer>&&, WebGLRenderingContextBase&, Attributes&&, uint32_t width, uint32_t height);
+    WebXROpaqueFramebuffer(PlatformXR::LayerHandle, Ref<WebGLFramebuffer>&&, WebGLRenderingContextBase&, Attributes&&, IntSize);
 
     bool setupFramebuffer();
-    PlatformGLObject allocateRenderbufferStorage(GraphicsContextGL&, GCGLsizei, GCGLenum, GCGLsizei, GCGLsizei);
-    PlatformGLObject allocateColorStorage(GraphicsContextGL&, GCGLsizei, GCGLsizei, GCGLsizei);
-    std::tuple<PlatformGLObject, PlatformGLObject> allocateDepthStencilStorage(GraphicsContextGL&, GCGLsizei, GCGLsizei, GCGLsizei);
+    PlatformGLObject allocateRenderbufferStorage(GraphicsContextGL&, GCGLsizei, GCGLenum, IntSize);
+    PlatformGLObject allocateColorStorage(GraphicsContextGL&, GCGLsizei, IntSize);
+    std::tuple<PlatformGLObject, PlatformGLObject> allocateDepthStencilStorage(GraphicsContextGL&, GCGLsizei, IntSize);
     void bindColorBuffer(GraphicsContextGL&, PlatformGLObject);
     void bindDepthStencilBuffer(GraphicsContextGL&, PlatformGLObject, PlatformGLObject);
 
@@ -76,8 +76,7 @@ private:
     Ref<WebGLFramebuffer> m_framebuffer;
     WebGLRenderingContextBase& m_context;
     Attributes m_attributes;
-    uint32_t m_width { 0 };
-    uint32_t m_height { 0 };
+    IntSize m_framebufferSize;
     GCGLOwnedRenderbuffer m_depthStencilBuffer;
     GCGLOwnedRenderbuffer m_stencilBuffer;
     GCGLOwnedRenderbuffer m_multisampleColorBuffer;
