@@ -95,15 +95,29 @@ void FlexLayout::updateFormattingRootGeometryAndInvalidate()
 
 void FlexLayout::updateFlexItemDimensions(const RenderBlock& flexItem, LayoutUnit minimumContentSize, LayoutUnit maximumContentSize)
 {
+    auto& rootGeometry = m_layoutState.geometryForBox(flexBox());
     auto& layoutBox = m_boxTree.layoutBoxForRenderer(flexItem);
     auto& boxGeometry = m_layoutState.ensureGeometryForBox(layoutBox);
+    auto& style = flexItem.style();
 
-    boxGeometry.setContentBoxWidth(flexItem.contentWidth());
-    boxGeometry.setContentBoxHeight(flexItem.contentHeight());
     boxGeometry.setVerticalMargin({ flexItem.marginTop(), flexItem.marginBottom() });
     boxGeometry.setHorizontalMargin({ flexItem.marginLeft(), flexItem.marginRight() });
     boxGeometry.setBorder({ { flexItem.borderLeft(), flexItem.borderRight() }, { flexItem.borderTop(), flexItem.borderBottom() } });
     boxGeometry.setPadding(Layout::Edges { { flexItem.paddingLeft(), flexItem.paddingRight() }, { flexItem.paddingTop(), flexItem.paddingBottom() } });
+
+    if (style.width().isFixed() || style.width().isPercentOrCalculated()) {
+        auto widthValue = minimumValueForLength(style.width(), rootGeometry.contentBoxWidth());
+        if (style.boxSizing() == BoxSizing::BorderBox)
+            widthValue = std::max(0_lu, widthValue - boxGeometry.horizontalBorderAndPadding());
+        boxGeometry.setContentBoxWidth(widthValue);
+    }
+
+    if (style.height().isFixed()) {
+        auto heightValue = LayoutUnit { style.height().value() };
+        if (style.boxSizing() == BoxSizing::BorderBox)
+            heightValue = std::max(0_lu, heightValue - boxGeometry.verticalBorderAndPadding());
+        boxGeometry.setContentBoxHeight(heightValue);
+    }
 
     // FIXME: We may need to differentiate preferred and min/max content size.
     // At this point the min/max values are already logical (meaning row -> horizontal min/max, column -> vertical min/max)
