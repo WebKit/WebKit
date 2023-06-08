@@ -55,6 +55,7 @@ public:
     UScriptCode script() const { return static_cast<UScriptCode>(m_script); }
     const AtomString& computedLocale() const { return m_locale; } // This is what you should be using for things like text shaping and font fallback
     const AtomString& specifiedLocale() const { return m_specifiedLocale; } // This is what you should be using for web-exposed things like -webkit-locale
+    const AtomString& languageOverride() const { return m_languageOverride; }
 
     FontOrientation orientation() const { return static_cast<FontOrientation>(m_orientation); }
     NonCJKGlyphOrientation nonCJKGlyphOrientation() const { return static_cast<NonCJKGlyphOrientation>(m_nonCJKGlyphOrientation); }
@@ -117,6 +118,7 @@ public:
     void setNonCJKGlyphOrientation(NonCJKGlyphOrientation orientation) { m_nonCJKGlyphOrientation = static_cast<unsigned>(orientation); }
     void setWidthVariant(FontWidthVariant widthVariant) { m_widthVariant = static_cast<unsigned>(widthVariant); } // Make sure new callers of this sync with FontPlatformData::isForTextCombine()!
     void setSpecifiedLocale(const AtomString&);
+    void setLanguageOverride(const AtomString&);
     void setFeatureSettings(FontFeatureSettings&& settings) { m_featureSettings = WTFMove(settings); }
     void setVariationSettings(FontVariationSettings&& settings) { m_variationSettings = WTFMove(settings); }
     void setFontSynthesisWeight(FontSynthesisLonghandValue value) { m_fontSynthesisWeight =  static_cast<unsigned>(value); }
@@ -161,6 +163,7 @@ private:
     FontSizeAdjust m_sizeAdjust;
     AtomString m_locale;
     AtomString m_specifiedLocale;
+    AtomString m_languageOverride;
 
     FontSelectionRequest m_fontSelectionRequest;
     float m_computedSize { 0 }; // Computed size adjusted for the minimum font size and the zoom factor.

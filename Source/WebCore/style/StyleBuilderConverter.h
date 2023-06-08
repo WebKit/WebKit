@@ -157,6 +157,7 @@ public:
 #endif
     static FontFeatureSettings convertFontFeatureSettings(BuilderState&, const CSSValue&);
     static bool convertSmoothScrolling(BuilderState&, const CSSValue&);
+    static AtomString convertFontLanguageOverride(BuilderState&, const CSSValue&);
     static FontSizeAdjust convertFontSizeAdjust(BuilderState&, const CSSValue&);
     static FontSelectionValue convertFontWeightFromValue(const CSSValue&);
     static FontSelectionValue convertFontStretchFromValue(const CSSValue&);
@@ -1554,6 +1555,26 @@ inline FontVariationSettings BuilderConverter::convertFontVariationSettings(Buil
         settings.insert({ feature.tag(), feature.value() });
     }
     return settings;
+}
+
+inline AtomString BuilderConverter::convertFontLanguageOverride(BuilderState&, const CSSValue& value)
+{
+    auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
+    AtomString languageSystemTag { primitiveValue.stringValue() };
+
+    if (primitiveValue.valueID() == CSSValueNormal)
+        return nullAtom();
+
+    constexpr unsigned maxLanguageSystemTagLength = 4;
+    if (languageSystemTag.length() < maxLanguageSystemTagLength) {
+        StringBuilder builder;
+        builder.append(languageSystemTag);
+
+        unsigned spaceCountToAdd = maxLanguageSystemTagLength - languageSystemTag.length();
+        builder.appendCharacters("   ", spaceCountToAdd);
+        return builder.toAtomString();
+    }
+    return languageSystemTag;
 }
 
 inline FontSizeAdjust BuilderConverter::convertFontSizeAdjust(BuilderState& builderState, const CSSValue& value)

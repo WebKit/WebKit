@@ -3835,7 +3835,6 @@ webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/font-family-na
 webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/math-script-level-and-math-style/math-script-level-auto-and-math-style-002.tentative.html [ ImageOnlyFailure ]
 webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/font-kerning-04.html [ ImageOnlyFailure ]
 webkit.org/b/206882 imported/w3c/web-platform-tests/css/css-fonts/variations/at-font-face-font-matching.html [ Failure ]
-webkit.org/b/214300 imported/w3c/web-platform-tests/css/css-fonts/font-language-override-01.html [ ImageOnlyFailure ]
 webkit.org/b/214300 imported/w3c/web-platform-tests/css/css-fonts/test-synthetic-italic-2.html [ ImageOnlyFailure ]
 webkit.org/b/214300 imported/w3c/web-platform-tests/css/css-fonts/test-synthetic-italic-3.html [ ImageOnlyFailure ]
 webkit.org/b/214300 imported/w3c/web-platform-tests/css/css-fonts/variations/font-slant-1.html [ ImageOnlyFailure ]

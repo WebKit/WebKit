@@ -155,6 +155,7 @@ public:
     static void applyValueAlt(BuilderState&, CSSValue&);
     static void applyValueWillChange(BuilderState&, CSSValue&);
     static void applyValueFontSizeAdjust(BuilderState&, CSSValue&);
+    static void applyValueFontLanguageOverride(BuilderState&, CSSValue&);
 
 #if ENABLE(DARK_MODE_CSS)
     static void applyValueColorScheme(BuilderState&, CSSValue&);
@@ -1783,6 +1784,15 @@ inline float BuilderCustom::determineRubyTextSizeMultiplier(BuilderState& builde
         }
     }
     return 0.25f;
+}
+
+inline void BuilderCustom::applyValueFontLanguageOverride(BuilderState& builderState, CSSValue& value)
+{
+    FontCascadeDescription fontDescription = builderState.fontDescription();
+    AtomString languageSystemTag = BuilderConverter::convertFontLanguageOverride(builderState, value);
+    printf("%s(%d) languageSystemTag: %s.\n", __FUNCTION__, __LINE__, languageSystemTag.string().ascii().data());
+    fontDescription.setLanguageOverride(BuilderConverter::convertFontLanguageOverride(builderState, value));
+    builderState.setFontDescription(WTFMove(fontDescription));
 }
 
 static inline void applyFontStyle(BuilderState& state, std::optional<FontSelectionValue> slope, FontStyleAxis axis)

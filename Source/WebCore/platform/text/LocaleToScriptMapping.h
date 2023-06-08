@@ -37,5 +37,6 @@ namespace WebCore {
 
 UScriptCode localeToScriptCodeForFontSelection(const String&);
 WEBCORE_EXPORT UScriptCode scriptNameToCode(StringView);
+std::optional<String> languageSystemTagToLocale(const String&);
 
 }

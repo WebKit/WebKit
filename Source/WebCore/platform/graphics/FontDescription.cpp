@@ -110,6 +110,14 @@ void FontDescription::setSpecifiedLocale(const AtomString& locale)
     m_locale = m_script == USCRIPT_HAN ? specializedChineseLocale() : m_specifiedLocale;
 }
 
+void FontDescription::setLanguageOverride(const AtomString& languageOverride)
+{
+    ASSERT(isMainThread());
+    m_languageOverride = languageOverride;
+    if (auto locale = languageSystemTagToLocale(m_languageOverride))
+        setSpecifiedLocale(makeAtomString(locale.value()));
+}
+
 #if !PLATFORM(COCOA)
 AtomString FontDescription::platformResolveGenericFamily(UScriptCode, const AtomString&, const AtomString&)
 {

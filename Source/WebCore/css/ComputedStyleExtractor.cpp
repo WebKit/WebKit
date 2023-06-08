@@ -3253,6 +3253,10 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         return fontShorthandValue(style, valueType);
     case CSSPropertyFontFamily:
         return fontFamily(style);
+    case CSSPropertyFontLanguageOverride:
+        if (style.specifiedLocale().isNull())
+            return CSSPrimitiveValue::create(CSSValueNormal);
+        return CSSPrimitiveValue::createCustomIdent(style.fontLanguageOverride());
     case CSSPropertyFontSize:
         return fontSize(style);
     case CSSPropertyFontSizeAdjust:
