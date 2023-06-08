@@ -69,6 +69,10 @@ const MemoryCompactLookupOnlyRobinHoodHashSet<String>& defaultSupportedImageType
             "public.jpegxl"_s,
             "public.jpeg-xl"_s,
 #endif
+#if HAVE(HEIC)
+            "public.heic"_s,
+            "public.heics"_s,
+#endif
         };
 
         auto systemSupportedCFImageTypes = adoptCF(CGImageSourceCopyTypeIdentifiers());

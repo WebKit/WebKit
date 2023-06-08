@@ -98,6 +98,10 @@ constexpr ComparableCaseFoldingASCIILiteral supportedImageMIMETypeArray[] = {
     "image/gi_",
 #endif
     "image/gif",
+#if HAVE(HEIC)
+    "image/heic",
+    "image/heic-sequence",
+#endif
 #if USE(CG) || USE(OPENJPEG)
     "image/jp2",
 #endif

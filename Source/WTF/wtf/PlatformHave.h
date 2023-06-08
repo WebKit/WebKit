@@ -1552,3 +1552,7 @@
     || (PLATFORM(WATCHOS) && __WATCH_OS_VERSION_MIN_REQUIRED >= 100000)
 #define HAVE_JPEGXL 1
 #endif
+
+#if PLATFORM(COCOA)
+#define HAVE_HEIC 1
+#endif
