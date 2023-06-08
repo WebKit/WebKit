@@ -27,7 +27,8 @@
 
 #include "CrossOriginOpenerPolicy.h"
 #include "GlobalFrameIdentifier.h"
-#include "ScriptExecutionContextIdentifier.h"
+#include "PolicyContainer.h"
+#include "SecurityContext.h"
 #include "SecurityOrigin.h"
 
 namespace WebCore {
@@ -43,6 +44,7 @@ struct NavigationRequester {
     CrossOriginOpenerPolicy crossOriginOpenerPolicy;
     ScriptExecutionContextIdentifier documentIdentifier;
     std::optional<GlobalFrameIdentifier> globalFrameIdentifier;
+    SandboxFlags sandboxFlags;
 
     template<class Encoder> void encode(Encoder&) const;
     template<class Decoder> static std::optional<NavigationRequester> decode(Decoder&);
@@ -51,7 +53,7 @@ struct NavigationRequester {
 template<class Encoder>
 void NavigationRequester::encode(Encoder& encoder) const
 {
-    encoder << url << securityOrigin.get() << topOrigin.get() << crossOriginOpenerPolicy << documentIdentifier << globalFrameIdentifier;
+    encoder << url << securityOrigin.get() << topOrigin.get() << policyContainer << documentIdentifier << globalFrameIdentifier << sandboxFlags;
 }
 
 template<class Decoder>
@@ -85,7 +87,12 @@ std::optional<NavigationRequester> NavigationRequester::decode(Decoder& decoder)
     if (!globalFrameIdentifier)
         return std::nullopt;
 
-    return NavigationRequester { WTFMove(*url), securityOrigin.releaseNonNull(), topOrigin.releaseNonNull(), WTFMove(*crossOriginOpenerPolicy), *documentIdentifier, *globalFrameIdentifier };
+    std::optional<SandboxFlags> sandboxFlags;
+    decoder >> sandboxFlags;
+    if (!sandboxFlags)
+        return std::nullopt;
+
+    return NavigationRequester { WTFMove(*url), WTFMove(*securityOrigin), WTFMove(*topOrigin), WTFMove(*policyContainer), *documentIdentifier, *globalFrameIdentifier, *sandboxFlags };
 }
 
 } // namespace WebCore

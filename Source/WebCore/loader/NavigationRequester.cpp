@@ -53,7 +53,8 @@ NavigationRequester NavigationRequester::from(Document& document)
         document.topOrigin(),
         document.crossOriginOpenerPolicy(),
         document.identifier(),
-        createGlobalFrameIdentifier(document)
+        createGlobalFrameIdentifier(document),
+        document.sandboxFlags()
     };
 }
 
