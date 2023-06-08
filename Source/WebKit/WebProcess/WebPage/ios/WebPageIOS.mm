@@ -4951,8 +4951,12 @@ void WebPage::requestDocumentEditingContext(DocumentEditingContextRequest reques
     auto characterRectsForRange = [](const SimpleRange& range, unsigned startOffset) {
         Vector<DocumentEditingContext::TextRectAndRange> rects;
         unsigned offsetSoFar = startOffset;
+        std::optional<SimpleRange> lastTextRange;
         for (TextIterator iterator { range }; !iterator.atEnd(); iterator.advance()) {
             if (iterator.text().isEmpty())
+                continue;
+
+            if (lastTextRange == iterator.range())
                 continue;
 
             Vector<IntRect> absoluteRects;
@@ -4963,17 +4967,27 @@ void WebPage::requestDocumentEditingContext(DocumentEditingContextRequest reques
                     RenderObject::BoundingRectBehavior::IgnoreEmptyTextSelections,
                     RenderObject::BoundingRectBehavior::ComputeIndividualCharacterRects,
                 });
+                if (absoluteRects.isEmpty())
+                    absoluteRects.append({ });
             }
 
             for (auto& absoluteRect : absoluteRects)
                 rects.append({ iterator.range().start.document().view()->contentsToRootView(absoluteRect), { offsetSoFar++, 1 } });
+
+            lastTextRange = iterator.range();
         }
         return rects;
     };
 
     if (wantsRects) {
-        if (auto contextRange = makeSimpleRange(contextBeforeStart, contextAfterEnd))
+        if (auto contextRange = makeSimpleRange(contextBeforeStart, contextAfterEnd)) {
+            // FIXME (257828): We should ideally ASSERT() here that context.textRects.size() is equal to
+            // the combined length of the context and selection strings; however, there are some corner
+            // cases in which this isn't true. In particular, such an assertion would be hit when running
+            // the layout test editing/selection/ios/update-selection-after-overflow-scroll.html.
+            // See also: <https://bugs.webkit.org/show_bug.cgi?id=257828>.
             context.textRects = characterRectsForRange(*contextRange, 0);
+        }
     } else if (wantsMarkedTextRects && compositionRange) {
         unsigned compositionStartOffset = 0;
         if (auto range = makeSimpleRange(contextBeforeStart, compositionRange->start))
