@@ -61,7 +61,7 @@ template<typename ...T> auto makeSimpleRange(T&& ...arguments) -> decltype(makeS
 WEBCORE_EXPORT std::optional<SimpleRange> makeRangeSelectingNode(Node&);
 WEBCORE_EXPORT SimpleRange makeRangeSelectingNodeContents(Node&);
 
-bool operator==(const SimpleRange&, const SimpleRange&);
+WEBCORE_EXPORT bool operator==(const SimpleRange&, const SimpleRange&);
 
 template<TreeType = Tree> Node* commonInclusiveAncestor(const SimpleRange&);
 
