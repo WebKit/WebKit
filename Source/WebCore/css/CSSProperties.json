@@ -318,7 +318,8 @@
             "specification": {
                 "category": "css-grid",
                 "url": "https://drafts.csswg.org/css-grid-3/#tracks-alignment"
-            }
+            },
+            "status": "in development"
         },
         "block-step-size": {
             "codegen-properties": {
@@ -843,10 +844,6 @@
                 "parser-grammar": "<<values>>",
                 "parser-exported": true
             },
-            "status": {
-                "status": "in development",
-                "enabled-by-default": true
-            },
             "specification": {
                 "category": "css-fonts",
                 "url": "https://drafts.csswg.org/css-fonts-3/#propdef-font-variant-position"
@@ -1106,7 +1103,8 @@
             "specification": {
                 "category": "css-grid",
                 "url": "https://drafts.csswg.org/css-grid-3/#tracks-alignment"
-            }
+            },
+            "status": "in development"
         },
         "-webkit-locale": {
             "inherited": true,
@@ -1187,7 +1185,7 @@
                 "parser-grammar-unused": "auto | space-all | trim-all | [ allow-end || space-first ]",
                 "parser-grammar-unused-reason": "Needs support for '||' groups."
             },
-            "status": "experimental",
+            "status": "in development",
             "specification": {
                 "category": "css-text",
                 "non-canonical-url": "https://www.w3.org/TR/css-text-4/#text-spacing-property"
@@ -1206,7 +1204,7 @@
                 "parser-grammar-unused": "normal | auto | no-autospace | [ [ ideograph-alpha || ideograph-numeric || punctuation ] || [ insert | replace ] ]",
                 "parser-grammar-unused-reason": "Needs support for '||' groups."
             },
-            "status": "experimental",
+            "status": "in development",
             "specification": {
                 "category": "css-text",
                 "non-canonical-url": "https://www.w3.org/TR/css-text-4/#text-spacing-property"
@@ -1331,6 +1329,7 @@
                 "comment": "This is a top priority property to ensure that its value can be checked when determining a smart default font size', (<https://trac.webkit.org/browser/trunk/Source/WebCore/ChangeLog?rev=172861>).",
                 "parser-grammar": "<<values>>"
             },
+            "status": "experimental",
             "specification": {
                 "category": "css-ruby",
                 "url": "https://www.w3.org/TR/css-ruby-1/#rubypos"
@@ -1410,9 +1409,6 @@
             "specification": {
                 "category": "css-animations",
                 "url": "https://drafts.csswg.org/css-animations-2/#animation-composition"
-            },
-            "status": {
-                "status": "experimental"
             }
         },
         "animation-delay": {
@@ -4394,9 +4390,7 @@
                     "-webkit-mask-position-y"
                 ]
             },
-            "status": {
-                "status": "experimental"
-            },
+            "status": "non-standard",
             "specification": {
                 "category": "css-masking",
                 "url": "https://www.w3.org/TR/css-masking-1/#propdef-mask-position"
@@ -4409,7 +4403,7 @@
                 "parser-grammar": "<single-webkit-mask-position-x>#"
             },
             "status": {
-                "status": "experimental",
+                "status": "non-standard",
                 "comment": "The unprefixed property should be internal-only"
             },
             "specification": {
@@ -4424,7 +4418,7 @@
                 "parser-grammar": "<single-webkit-mask-position-y>#"
             },
             "status": {
-                "status": "experimental",
+                "status": "non-standard",
                 "comment": "The unprefixed property should be internal-only"
             },
             "specification": {
@@ -4491,7 +4485,8 @@
             "specification": {
                 "category": "css-grid",
                 "url": "https://drafts.csswg.org/css-grid-3/#masonry-auto-flow"
-            }
+            },
+            "status": "experimental"
         },
         "math-style": {
             "values": [
@@ -5785,7 +5780,8 @@
             "specification": {
                 "category": "css-text",
                 "url": "https://drafts.csswg.org/css-text-4/#text-group-align-property"
-            }
+            },
+            "status": "in development"
         },
         "text-indent": {
             "inherited": true,
@@ -6083,7 +6079,8 @@
             "specification": {
                 "category": "css-text",
                 "url": "https://www.w3.org/TR/css-text-4/#text-wrap"
-            }
+            },
+            "status": "in development"
         },
         "top": {
             "values": [
@@ -6298,7 +6295,8 @@
             "specification": {
                 "category": "css-text",
                 "url": "https://www.w3.org/TR/css-text-4/#white-space-collapsing"
-            }
+            },
+            "status": "in development"
         },
         "widows": {
             "inherited": true,
@@ -6470,9 +6468,6 @@
                 ],
                 "parser-grammar": "<<values>>"
             },
-            "status": {
-                "status": "experimental"
-            },
             "specification": {
                 "category": "css-ui",
                 "url": "https://www.w3.org/TR/css-ui-4/#propdef-appearance"
@@ -6502,9 +6497,6 @@
                 ],
                 "settings-flag": "cssContainIntrinsicSizeEnabled"
             },
-            "status": {
-                "status": "in development"
-            },
             "specification": {
                 "category": "css-sizing",
                 "url": "https://www.w3.org/TR/css-sizing-4/#intrinsic-size-override"
@@ -6522,9 +6514,6 @@
                 "parser-grammar-unused": "none | <length> | [ auto && <length> ]",
                 "parser-grammar-unused-reason": "Needs support for '&&' groups.",
                 "comment": "Should ensure generator simplifies to 'none | [ <length> && auto? ]"
-            },
-            "status": {
-                "status": "in development"
             },
             "specification": {
                 "category": "css-sizing",
@@ -6544,9 +6533,6 @@
                 "parser-grammar-unused-reason": "Needs support for '&&' groups.",
                 "comment": "Should ensure generator simplifies to 'none | [ <length> && auto? ]"
             },
-            "status": {
-                "status": "in development"
-            },
             "specification": {
                 "category": "css-sizing",
                 "url": "https://www.w3.org/TR/css-sizing-4/#intrinsic-size-override"
@@ -6564,9 +6550,6 @@
                 "parser-grammar-unused": "none | <length> | [ auto && <length> ]",
                 "parser-grammar-unused-reason": "Needs support for '&&' groups.",
                 "comment": "Should ensure generator simplifies to 'none | [ <length> && auto? ]"
-            },
-            "status": {
-                "status": "in development"
             },
             "specification": {
                 "category": "css-sizing",
@@ -6586,9 +6569,6 @@
                 "parser-grammar-unused-reason": "Needs support for '&&' groups.",
                 "comment": "Should ensure generator simplifies to 'none | [ <length> && auto? ]"
             },
-            "status": {
-                "status": "in development"
-            },
             "specification": {
                 "category": "css-sizing",
                 "url": "https://www.w3.org/TR/css-sizing-4/#intrinsic-size-override"
@@ -6603,9 +6583,6 @@
                 "parser-grammar-unused-reason": "Needs support for '||' groups.",
                 "comment": "Implementation also supports 'inline-size' and 'style'"
             },
-            "status": {
-                "status": "experimental"
-            },
             "specification": {
                 "category": "css-contain",
                 "url": "https://drafts.csswg.org/css-contain-1/"
@@ -6617,9 +6594,6 @@
                     "container-name",
                     "container-type"
                 ]
-            },
-            "status": {
-                "status": "experimental"
             },
             "specification": {
                 "category": "css-contain",
@@ -6635,9 +6609,6 @@
                 "parser-grammar-unused": "none | <custom-ident>+",
                 "parser-grammar-unused-reason": "Needs support for '+' multipliers and applying restrictions to <custom-ident>."
             },
-            "status": {
-                "status": "experimental"
-            },
             "specification": {
                 "category": "css-contain",
                 "url": "https://drafts.csswg.org/css-contain-3/#container-name"
@@ -6652,9 +6623,6 @@
             "codegen-properties": {
                 "settings-flag": "cssContainerQueriesEnabled",
                 "parser-grammar": "<<values>>"
-            },
-            "status": {
-                "status": "experimental"
             },
             "specification": {
                 "category": "css-contain",
@@ -6672,7 +6640,7 @@
                 "parser-grammar": "<<values>>"
             },
             "status": {
-                "status": "experimental"
+                "status": "in development"
             },
             "specification": {
                 "category": "css-content-visibility",
@@ -6883,9 +6851,7 @@
                 "parser-grammar-unused-reason": "Needs support for ordered groups and optionals."
                 
             },
-            "status": {
-                "status": "experimental"
-            }
+            "status": "non-standard"
         },
         "-webkit-box-shadow": {
             "codegen-properties": {
@@ -6911,7 +6877,7 @@
                 "parser-grammar": "<<values>>"
             },
             "status": {
-                "status": "experimental",
+                "status": "non-standard",
                 "comment": "Added in https://bugs.webkit.org/show_bug.cgi?id=71028"
             }
         },
@@ -6921,12 +6887,13 @@
                     "break-after"
                 ]
             },
-            "status": {
-                "status": "experimental"
-            },
             "specification":  {
                 "category": "css-multicol",
                 "url": "https://www.w3.org/TR/css3-multicol/#break-after"
+            },
+            "status": {
+                "status": "non-standard",
+                "comment": "Use break-after instead."
             }
         },
         "-webkit-column-break-before": {
@@ -6935,12 +6902,13 @@
                     "break-before"
                 ]
             },
-            "status": {
-                "status": "experimental"
-            },
             "specification":  {
                 "category": "css-multicol",
                 "url": "https://www.w3.org/TR/css3-multicol/#break-before"
+            },
+            "status": {
+                "status": "non-standard",
+                "comment": "Use break-before instead."
             }
         },
         "-webkit-column-break-inside": {
@@ -6949,12 +6917,13 @@
                     "break-inside"
                 ]
             },
-            "status": {
-                "status": "experimental"
-            },
             "specification":  {
                 "category": "css-multicol",
                 "url": "https://www.w3.org/TR/css3-multicol/#break-inside"
+            },
+            "status": {
+                "status": "non-standard",
+                "comment": "Use break-inside instead."
             }
         },
         "column-count": {
@@ -7040,7 +7009,7 @@
                 "parser-grammar": "<<values>>"
             },
             "status": {
-                "status": "experimental",
+                "status": "non-standard",
                 "comment": "Added in https://bugs.webkit.org/show_bug.cgi?id=89315"
             }
         },
@@ -8568,9 +8537,6 @@
                     "text-emphasis-color"
                 ]
             },
-            "status": {
-                "status": "experimental"
-            },
             "specification": {
                 "category": "css-text-decor",
                 "url": "https://www.w3.org/TR/css-text-decor-3/#text-emphasis"
@@ -8588,9 +8554,6 @@
                 "color-property": true,
                 "parser-grammar": "<color>"
             },
-            "status": {
-                "status": "experimental"
-            },
             "specification": {
                 "category": "css-text-decor",
                 "url": "https://www.w3.org/TR/css-text-decor-3/#text-emphasis-color"
@@ -8606,9 +8569,6 @@
                 "parser-function": "consumeTextEmphasisPosition",
                 "parser-grammar-unused": "[ over | under ] && [ right | left ]?",
                 "parser-grammar-unused-reason": "Needs support for '&&' groups and optionals."
-            },
-            "status": {
-                "status": "experimental"
             },
             "specification": {
                 "category": "css-text-decor",
@@ -8626,9 +8586,6 @@
                 "parser-function": "consumeTextEmphasisStyle",
                 "parser-grammar-unused": "none | [ [ filled | open ] || [ dot | circle | double-circle | triangle | sesame ] ] | <string>",
                 "parser-grammar-unused-reason": "Needs support for '||' groups."
-            },
-            "status": {
-                "status": "experimental"
             },
             "specification": {
                 "category": "css-text-decor",
@@ -10167,8 +10124,7 @@
         "css-logical-props": {
             "shortname": "CSS Logical Properties",
             "longname": "CSS Logical Properties Module",
-            "url": "https://drafts.csswg.org/css-logical-props/",
-            "status": "experimental"
+            "url": "https://drafts.csswg.org/css-logical-props/"
         },
         "css-masking": {
             "shortname": "CSS Masking",
@@ -10178,8 +10134,7 @@
         "css-motion-path": {
             "shortname": "CSS Motion Path",
             "longname": "CSS Motion Path Module",
-            "url": "https://drafts.fxtf.org/motion-1/",
-            "status": "experimental"
+            "url": "https://drafts.fxtf.org/motion-1/"
         },
         "css-multicol": {
             "shortname": "CSS Multi-column Layout",
