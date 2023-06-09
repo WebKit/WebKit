@@ -93,6 +93,8 @@ imported/w3c/web-platform-tests/payment-request/rejects_if_not_active.https.html
 
 http/tests/security/contentSecurityPolicy/manifest-src-allowed.html [ Pass ]
 http/tests/security/contentSecurityPolicy/manifest-src-blocked.html [ Pass ]
+http/wpt/content-security-policy/sandbox-manifest-blocked.html [ Pass ]
+http/wpt/content-security-policy/sandbox-manifest-blocked-cross-origin.sub.html [ Pass ]
 applicationmanifest/ [ Pass ]
 
 webkit.org/b/187183 http/tests/security/pasteboard-file-url.html [ Pass ]
