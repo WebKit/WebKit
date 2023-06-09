@@ -1960,10 +1960,6 @@ void NetworkResourceLoader::serviceWorkerDidNotHandle(ServiceWorkerFetchTask* fe
         if (m_networkLoad)
             m_networkLoad->updateRequestAfterRedirection(newRequest);
 
-#if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
-        m_contentFilter = nullptr;
-#endif
-
         LOADER_RELEASE_LOG("serviceWorkerDidNotHandle: Restarting network load for redirect");
         restartNetworkLoad(WTFMove(newRequest));
         return;
