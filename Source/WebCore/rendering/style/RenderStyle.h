@@ -242,6 +242,8 @@ struct MasonryAutoFlow;
 struct NamedGridAreaMap;
 struct NamedGridLinesMap;
 struct OrderedNamedGridLinesMap;
+enum class PaintBehavior : uint32_t;
+
 struct ScrollSnapAlign;
 struct ScrollSnapType;
 struct ScrollbarGutter;
@@ -1730,8 +1732,8 @@ public:
     // Resolves the currentColor keyword, but must not be used for the "color" property which has a different semantic.
     WEBCORE_EXPORT Color colorResolvingCurrentColor(const StyleColor&) const;
 
-    WEBCORE_EXPORT Color visitedDependentColor(CSSPropertyID) const;
-    WEBCORE_EXPORT Color visitedDependentColorWithColorFilter(CSSPropertyID) const;
+    WEBCORE_EXPORT Color visitedDependentColor(CSSPropertyID, OptionSet<PaintBehavior> paintBehavior = { }) const;
+    WEBCORE_EXPORT Color visitedDependentColorWithColorFilter(CSSPropertyID, OptionSet<PaintBehavior> paintBehavior = { }) const;
 
     WEBCORE_EXPORT Color colorByApplyingColorFilter(const Color&) const;
     WEBCORE_EXPORT Color colorWithColorFilter(const StyleColor&) const;
