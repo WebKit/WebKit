@@ -124,6 +124,12 @@
             },
             "/webkit/WebKitWebProcessExtension/form-controls-associated-signal": {
                 "expected": {"gtk": {"status": ["TIMEOUT", "PASS"], "bug": "webkit.org/b/254002"}}
+            },
+            "/webkit/WebKitWebProcessExtension/isolated-world": {
+                "expected": {"gtk": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/254002"}}
+            },
+            "/webkit/WebKitWebProcessExtension/web-process-crashed": {
+                "expected": {"gtk": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/254002"}}
             }
         }
     },
@@ -423,22 +429,6 @@
             },
             "/webkit/WebKitWebView/tls-errors-redirect-to-http": {
                 "expected": {"gtk": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/224955"}}
-            }
-        }
-    },
-    "TestWebExtensions": {
-        "subtests": {
-            "/webkit/WebKitWebExtension/isolated-world": {
-                "expected": {"gtk": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/254002"}}
-            },
-            "/webkit/WebKitWebExtension/user-messages": {
-                "expected": {"gtk": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/254002"}}
-            },
-            "/webkit/WebKitWebExtension/form-controls-associated-signal": {
-                "expected": {"gtk": {"status": ["TIMEOUT", "PASS"], "bug": "webkit.org/b/254002"}}
-            },
-            "/webkit/WebKitWebView/web-process-crashed": {
-                "expected": {"gtk": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/254002"}}
             }
         }
     },
