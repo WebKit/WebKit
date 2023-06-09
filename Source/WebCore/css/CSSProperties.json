@@ -4869,7 +4869,8 @@
             "specification": {
                 "category": "css-scroll-anchoring",
                 "url": "https://www.w3.org/TR/css-scroll-anchoring-1/#propdef-overflow-anchor"
-            }
+            },
+            "status": "in development"
         },
         "overflow-wrap": {
             "inherited": true,
