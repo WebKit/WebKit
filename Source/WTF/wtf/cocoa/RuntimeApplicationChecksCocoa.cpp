@@ -197,6 +197,7 @@ static SDKAlignedBehaviors computeSDKAlignedBehaviors()
         disableBehavior(SDKAlignedBehavior::RunningBoardThrottling);
         disableBehavior(SDKAlignedBehavior::PopoverAttributeEnabled);
         disableBehavior(SDKAlignedBehavior::LiveRangeSelectionEnabledForAllApps);
+        disableBehavior(SDKAlignedBehavior::DoesNotOverrideUAFromNSUserDefault);
     }
 
     disableAdditionalSDKAlignedBehaviors(behaviors);
