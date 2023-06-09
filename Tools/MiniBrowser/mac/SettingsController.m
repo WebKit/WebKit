@@ -74,7 +74,6 @@ static NSString * const UseRemoteLayerTreeDrawingAreaPreferenceKey = @"WebKit2Us
 
 static NSString * const PerWindowWebProcessesDisabledKey = @"PerWindowWebProcessesDisabled";
 static NSString * const NetworkCacheSpeculativeRevalidationDisabledKey = @"NetworkCacheSpeculativeRevalidationDisabled";
-static NSString * const ProcessSwapOnWindowOpenWithOpenerKey = @"ProcessSwapOnWindowOpenWithOpener";
 
 typedef NS_ENUM(NSInteger, DebugOverylayMenuItemTag) {
     NonFastScrollableRegionOverlayTag = 100,
@@ -196,7 +195,6 @@ static NSMenu *addSubmenuToMenu(NSMenu *menu, NSString *title)
     addItem(@"Load All Site Icons Per-Page", @selector(toggleLoadsAllSiteIcons:));
     addItem(@"Use GameController.framework on macOS (Restart required)", @selector(toggleUsesGameControllerFramework:));
     addItem(@"Disable network cache speculative revalidation", @selector(toggleNetworkCacheSpeculativeRevalidationDisabled:));
-    addItem(@"Enable Process Swap on window.open() with an opener", @selector(toggleProcessSwapOnWindowOpenWithOpener:));
     indent = NO;
 
     NSMenu *debugOverlaysMenu = addSubmenu(@"Debug Overlays");
@@ -383,8 +381,6 @@ static NSMenu *addSubmenuToMenu(NSMenu *menu, NSString *title)
         [menuItem setState:[self usesGameControllerFramework] ? NSControlStateValueOn : NSControlStateValueOff];
     else if (action == @selector(toggleNetworkCacheSpeculativeRevalidationDisabled:))
         [menuItem setState:[self networkCacheSpeculativeRevalidationDisabled] ? NSControlStateValueOn : NSControlStateValueOff];
-    else if (action == @selector(toggleProcessSwapOnWindowOpenWithOpener:))
-        [menuItem setState:[self processSwapOnWindowOpenWithOpenerEnabled] ? NSControlStateValueOn : NSControlStateValueOff];
     else if (action == @selector(toggleUseUISideCompositing:))
         [menuItem setState:[self useUISideCompositing] ? NSControlStateValueOn : NSControlStateValueOff];
     else if (action == @selector(togglePerWindowWebProcessesDisabled:))
@@ -595,16 +591,6 @@ static NSMenu *addSubmenuToMenu(NSMenu *menu, NSString *title)
 - (void)toggleNetworkCacheSpeculativeRevalidationDisabled:(id)sender
 {
     [self _toggleBooleanDefault:NetworkCacheSpeculativeRevalidationDisabledKey];
-}
-
-- (BOOL)processSwapOnWindowOpenWithOpenerEnabled
-{
-    return [[NSUserDefaults standardUserDefaults] boolForKey:ProcessSwapOnWindowOpenWithOpenerKey];
-}
-
-- (void)toggleProcessSwapOnWindowOpenWithOpener:(id)sender
-{
-    [self _toggleBooleanDefault:ProcessSwapOnWindowOpenWithOpenerKey];
 }
 
 - (BOOL)isSpaceReservedForBanners

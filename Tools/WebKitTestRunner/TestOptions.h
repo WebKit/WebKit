@@ -57,7 +57,6 @@ public:
     bool editable() const { return boolTestRunnerFeatureValue("editable"); }
     bool enableInAppBrowserPrivacy() const { return boolTestRunnerFeatureValue("enableInAppBrowserPrivacy"); }
     bool enableProcessSwapOnNavigation() const { return boolTestRunnerFeatureValue("enableProcessSwapOnNavigation"); }
-    bool enableProcessSwapOnWindowOpen() const { return boolTestRunnerFeatureValue("enableProcessSwapOnWindowOpen"); }
     bool findInteractionEnabled() const { return boolTestRunnerFeatureValue("findInteractionEnabled") ; }
     bool ignoreSynchronousMessagingTimeouts() const { return boolTestRunnerFeatureValue("ignoreSynchronousMessagingTimeouts"); }
     bool ignoresViewportScaleLimits() const { return boolTestRunnerFeatureValue("ignoresViewportScaleLimits"); }
@@ -97,7 +96,7 @@ public:
 
     bool shouldEnableProcessSwapOnNavigation() const
     {
-        return enableProcessSwapOnNavigation() || enableProcessSwapOnWindowOpen();
+        return enableProcessSwapOnNavigation();
     }
 
     const std::unordered_map<std::string, bool>& boolWebPreferenceFeatures() const { return m_features.boolWebPreferenceFeatures; }

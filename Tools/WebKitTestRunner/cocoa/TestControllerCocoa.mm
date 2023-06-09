@@ -143,8 +143,6 @@ TestFeatures TestController::platformSpecificFeatureOverridesDefaultsForTest(con
 
     if ([[NSUserDefaults standardUserDefaults] boolForKey:@"EnableProcessSwapOnNavigation"])
         features.boolTestRunnerFeatures.insert({ "enableProcessSwapOnNavigation", true });
-    if ([[NSUserDefaults standardUserDefaults] boolForKey:@"EnableProcessSwapOnWindowOpen"])
-        features.boolTestRunnerFeatures.insert({ "enableProcessSwapOnWindowOpen", true });
 
     return features;
 }

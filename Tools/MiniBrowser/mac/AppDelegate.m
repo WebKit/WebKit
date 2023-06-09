@@ -118,8 +118,6 @@ static WKWebsiteDataStore *persistentDataStore(void)
         _WKProcessPoolConfiguration *processConfiguration = [[_WKProcessPoolConfiguration alloc] init];
         if (_settingsController.perWindowWebProcessesDisabled)
             processConfiguration.usesSingleWebProcess = YES;
-        if (_settingsController.processSwapOnWindowOpenWithOpenerEnabled)
-            processConfiguration.processSwapsOnWindowOpenWithOpener = true;
         
         configuration.processPool = [[WKProcessPool alloc] _initWithConfiguration:processConfiguration];
 

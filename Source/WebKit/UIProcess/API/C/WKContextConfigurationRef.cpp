@@ -199,16 +199,6 @@ void WKContextConfigurationSetAlwaysKeepAndReuseSwappedProcesses(WKContextConfig
     toImpl(configuration)->setAlwaysKeepAndReuseSwappedProcesses(keepAndReuse);
 }
 
-bool WKContextConfigurationProcessSwapsOnWindowOpenWithOpener(WKContextConfigurationRef configuration)
-{
-    return toImpl(configuration)->processSwapsOnWindowOpenWithOpener();
-}
-
-void WKContextConfigurationSetProcessSwapsOnWindowOpenWithOpener(WKContextConfigurationRef configuration, bool swaps)
-{
-    toImpl(configuration)->setProcessSwapsOnWindowOpenWithOpener(swaps);
-}
-
 int64_t WKContextConfigurationDiskCacheSizeOverride(WKContextConfigurationRef configuration)
 {
     return 0;
