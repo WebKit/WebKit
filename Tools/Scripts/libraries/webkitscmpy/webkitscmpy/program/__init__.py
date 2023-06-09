@@ -36,6 +36,7 @@ from .squash import Squash
 from .checkout import Checkout
 from .classify import Classify
 from .credentials import Credentials
+from .file_bugs import FileBugs
 from .find import Find, Info
 from .pickable import Pickable
 from .publish import Publish
@@ -91,7 +92,7 @@ def main(
 
     programs = [
         Blame, Branch, Canonicalize, Checkout,
-        Clean, Find, Info, Land, Log, Pull,
+        Clean, FileBugs, Find, Info, Land, Log, Pull,
         PullRequest, Revert, Setup, InstallGitLFS,
         Credentials, Commit, DeletePRBranches, Squash,
         Pickable, CherryPick, Trace, Track, Show, Publish,
