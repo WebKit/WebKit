@@ -57,7 +57,6 @@ layer at (0,0) size 800x888
         RenderAttachment {ATTACHMENT} at (97,16) size 339x92 [color=#007AFF]
           RenderGrid {DIV} at (0,0) size 338x92 [bgcolor=#74748014]
             RenderGrid {DIV} at (0,0) size 76x92
-              RenderBlock {DIV} at (10,18) size 56x56
             RenderGrid {DIV} at (76,0) size 262x92
               RenderGrid {DIV} at (6,37) size 230x18
       RenderBlock {DIV} at (0,654) size 784x109
@@ -141,3 +140,5 @@ layer at (195,825) size 230x17
         text run at (0,0) width 56: "\x{200E}\x{2068}Title\x{2069}\x{200B}.pdf"
 layer at (332,486) size 18x40
   RenderBlock {DIV} at (0,0) size 18x40 [bgcolor=#007AFF]
+layer at (116,587) size 56x56
+  RenderBlock {DIV} at (10,18) size 56x56 [bgcolor=#000000]
