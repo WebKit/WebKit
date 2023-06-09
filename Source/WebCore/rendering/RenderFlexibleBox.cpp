@@ -2538,8 +2538,8 @@ void RenderFlexibleBox::layoutUsingFlexFormattingContext()
 
     resetHasDefiniteHeight();
     for (auto& flexItem : childrenOfType<RenderBlock>(*this)) {
-        auto minMaxContentSize = computeFlexItemMinMaxSizes(flexItem);
-        m_modernFlexLayout->updateFlexItemDimensions(flexItem, minMaxContentSize.first, minMaxContentSize.second);
+        // FIXME: This should be moved over to flex integration and run min/max size computation for flex items over there.
+        m_modernFlexLayout->updateFlexItemDimensions(flexItem, flexItem.minPreferredLogicalWidth(), flexItem.maxPreferredLogicalWidth());
     }
     m_modernFlexLayout->layout();
     setLogicalHeight(std::max(logicalHeight(), borderBefore() + paddingBefore() + m_modernFlexLayout->contentLogicalHeight() + borderAfter() + paddingAfter()));

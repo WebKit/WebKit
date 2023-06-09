@@ -149,11 +149,9 @@ FlexLayout::LogicalFlexItems FlexFormattingContext::convertFlexItemsToLogicalSpa
 
             switch (direction) {
             case FlexDirection::Row:
-            case FlexDirection::RowReverse: {
-                auto contentBoxLogicalWidth = flexBasis.value_or(flexItemGeometry.contentBoxWidth());
-                logicalSize = { flexItemGeometry.horizontalMarginBorderAndPadding() + contentBoxLogicalWidth, flexItemGeometry.marginBoxHeight() };
+            case FlexDirection::RowReverse:
+                logicalSize = { flexBasis ? *flexBasis + flexItemGeometry.horizontalMarginBorderAndPadding() : formattingState.intrinsicWidthConstraintsForBox(*flexItem)->maximum, flexItemGeometry.marginBoxHeight() };
                 break;
-            }
             case FlexDirection::Column:
             case FlexDirection::ColumnReverse: {
                 auto contentBoxLogicalWidth = flexBasis.value_or(flexItemGeometry.contentBoxHeight());

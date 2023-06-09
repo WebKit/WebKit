@@ -119,12 +119,7 @@ void FlexLayout::updateFlexItemDimensions(const RenderBlock& flexItem, LayoutUni
         boxGeometry.setContentBoxHeight(heightValue);
     }
 
-    // FIXME: We may need to differentiate preferred and min/max content size.
-    // At this point the min/max values are already logical (meaning row -> horizontal min/max, column -> vertical min/max)
-    auto flexDirection = flexBox().style().flexDirection();
-    auto isRowFlow = flexDirection == FlexDirection::Row || flexDirection == FlexDirection::RowReverse;
-    auto marginBorderAndPadding = isRowFlow ? boxGeometry.horizontalMarginBorderAndPadding() : boxGeometry.verticalMarginBorderAndPadding();
-    m_flexFormattingState.setIntrinsicWidthConstraintsForBox(layoutBox, { minimumContentSize + marginBorderAndPadding, maximumContentSize + marginBorderAndPadding });
+    m_flexFormattingState.setIntrinsicWidthConstraintsForBox(layoutBox, { minimumContentSize, maximumContentSize });
 }
 
 void FlexLayout::updateStyle(const RenderBlock&, const RenderStyle&)
