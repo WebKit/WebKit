@@ -47,11 +47,12 @@
 namespace WebCore {
 namespace Style {
 
-RuleSetBuilder::RuleSetBuilder(RuleSet& ruleSet, const MQ::MediaQueryEvaluator& evaluator, Resolver* resolver, ShrinkToFit shrinkToFit)
+RuleSetBuilder::RuleSetBuilder(RuleSet& ruleSet, const MQ::MediaQueryEvaluator& evaluator, Resolver* resolver, ShrinkToFit shrinkToFit, ShouldResolveNesting shouldResolveNesting)
     : m_ruleSet(&ruleSet)
     , m_mediaQueryCollector({ evaluator })
     , m_resolver(resolver)
     , m_shrinkToFit(shrinkToFit)
+    , m_shouldResolveNesting(shouldResolveNesting)
 {
 }
 
@@ -245,7 +246,8 @@ void RuleSetBuilder::addStyleRuleWithSelectorList(const CSSSelectorList& selecto
 
 void RuleSetBuilder::addStyleRule(StyleRuleWithNesting& rule)
 {
-    resolveSelectorListWithNesting(rule);
+    if (m_shouldResolveNesting == ShouldResolveNesting::Yes)
+        resolveSelectorListWithNesting(rule);
 
     auto& selectorList = rule.selectorList();
     addStyleRuleWithSelectorList(selectorList, rule);

@@ -85,7 +85,7 @@ ExceptionOr<unsigned> CSSGroupingRule::insertRule(const String& ruleString, unsi
     }
 
     // Nesting inside style rule only accepts style rule or group rule
-    if (hasStyleRuleAncestor() && !newRule->isStyleRuleWithNesting() && !newRule->isStyleRule() && !newRule->isGroupRule())
+    if (hasStyleRuleAncestor() && !newRule->isStyleRule() && !newRule->isGroupRule())
         return Exception { HierarchyRequestError };
 
     CSSStyleSheet::RuleMutationScope mutationScope(this);

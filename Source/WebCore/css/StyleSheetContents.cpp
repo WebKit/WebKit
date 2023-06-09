@@ -170,8 +170,17 @@ void StyleSheetContents::parserAppendRule(Ref<StyleRuleBase>&& rule)
     }
 
     // NOTE: The selector list has to fit into RuleData. <http://webkit.org/b/118369>
-    // If we're adding a rule with a huge number of selectors, split it up into multiple rules
-    if (is<StyleRule>(rule) && downcast<StyleRule>(rule.get()).selectorList().componentCount() > Style::RuleData::maximumSelectorComponentCount) {
+    auto ruleHasTooManySelectors = [&] {
+        return downcast<StyleRule>(rule.get()).selectorList().componentCount() > Style::RuleData::maximumSelectorComponentCount;
+    };
+
+    if (is<StyleRuleWithNesting>(rule) && ruleHasTooManySelectors()) {
+        // We don't support nested rules with too many selectors
+        return;
+    }
+
+    if (is<StyleRule>(rule) && ruleHasTooManySelectors()) {
+        // If we're adding a rule with a huge number of selectors, split it up into multiple rules
         m_childRules.appendVector(downcast<StyleRule>(rule.get()).splitIntoMultipleRulesWithMaximumSelectorComponentCount(Style::RuleData::maximumSelectorComponentCount));
         return;
     }
@@ -475,6 +484,14 @@ static bool traverseRulesInVector(const Vector<RefPtr<StyleRuleBase>>& rules, co
     for (auto& rule : rules) {
         if (handler(*rule))
             return true;
+        if (auto styleRuleWithNesting = dynamicDowncast<StyleRuleWithNesting>(*rule)) {
+            auto nestedRules = styleRuleWithNesting->nestedRules().map(
+                [](auto& ref) -> RefPtr<StyleRuleBase> {
+                    return ref.ptr();
+                });
+            if (traverseRulesInVector(nestedRules, handler))
+                return true;
+        }
         if (!rule->isGroupRule())
             continue;
         if (traverseRulesInVector(downcast<StyleRuleGroup>(*rule).childRules(), handler))
