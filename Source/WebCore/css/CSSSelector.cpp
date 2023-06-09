@@ -310,34 +310,6 @@ const CSSSelector* CSSSelector::firstInCompound() const
     return selector;
 }
 
-bool CSSSelector::operator==(const CSSSelector& other) const
-{
-    const CSSSelector* sel1 = this;
-    const CSSSelector* sel2 = &other;
-
-    while (sel1 && sel2) {
-        if (sel1->attribute() != sel2->attribute()
-            || sel1->relation() != sel2->relation()
-            || sel1->match() != sel2->match()
-            || sel1->value() != sel2->value()
-            || sel1->m_pseudoType != sel2->m_pseudoType
-            || sel1->argument() != sel2->argument()) {
-            return false;
-        }
-        if (sel1->match() == Tag) {
-            if (sel1->tagQName() != sel2->tagQName())
-                return false;
-        }
-        sel1 = sel1->tagHistory();
-        sel2 = sel2->tagHistory();
-    }
-
-    if (sel1 || sel2)
-        return false;
-
-    return true;
-}
-
 static void appendPseudoClassFunctionTail(StringBuilder& builder, const CSSSelector* selector)
 {
     switch (selector->pseudoClassType()) {

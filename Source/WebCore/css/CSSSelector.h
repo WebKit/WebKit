@@ -56,9 +56,6 @@ struct PossiblyQuotedIdentifier {
         // Re-create selector text from selector's data.
         String selectorText(StringView separator = { }, StringView rightSide = { }) const;
 
-        // Check if the 2 selectors (including sub selectors) agree.
-        bool operator==(const CSSSelector&) const;
-
         unsigned computeSpecificity() const;
         std::array<uint8_t, 3> computeSpecificityTuple() const;
         unsigned specificityForPage() const;
