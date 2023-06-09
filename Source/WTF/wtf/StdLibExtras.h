@@ -245,6 +245,13 @@ template<size_t divisor, typename T> constexpr T roundDownToMultipleOf(T x)
     return roundDownToMultipleOf(divisor, x);
 }
 
+template<typename IntType>
+constexpr IntType toTwosComplement(IntType integer)
+{
+    using UnsignedIntType = typename std::make_unsigned_t<IntType>;
+    return static_cast<IntType>((~static_cast<UnsignedIntType>(integer)) + static_cast<UnsignedIntType>(1));
+}
+
 enum BinarySearchMode {
     KeyMustBePresentInArray,
     KeyMightNotBePresentInArray,
@@ -703,3 +710,4 @@ using WTF::safeCast;
 using WTF::tryBinarySearch;
 using WTF::valueOrCompute;
 using WTF::valueOrDefault;
+using WTF::toTwosComplement;

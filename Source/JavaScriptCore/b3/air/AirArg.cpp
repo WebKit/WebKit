@@ -112,6 +112,7 @@ unsigned Arg::jsHash() const
     case WidthArg:
         result += static_cast<unsigned>(m_offset);
         break;
+    case Imm64:
     case BigImm:
     case BitImm64:
         result += static_cast<unsigned>(m_offset);
@@ -156,6 +157,9 @@ void Arg::dump(PrintStream& out) const
         return;
     case Imm:
         out.print("$", m_offset);
+        return;
+    case Imm64:
+        out.printf("$0x%llx", static_cast<long long unsigned>(m_offset));
         return;
     case BigImm:
         out.printf("$0x%llx", static_cast<long long unsigned>(m_offset));
@@ -245,6 +249,9 @@ void printInternal(PrintStream& out, Arg::Kind kind)
         return;
     case Arg::Imm:
         out.print("Imm");
+        return;
+    case Arg::Imm64:
+        out.print("Imm64");
         return;
     case Arg::BigImm:
         out.print("BigImm");
