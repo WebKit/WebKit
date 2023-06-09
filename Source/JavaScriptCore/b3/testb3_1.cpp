@@ -318,7 +318,10 @@ void run(const TestConfig* config)
     RUN_UNARY(testConvertDoubleToFloatToDouble, floatingPointOperands<double>());
     RUN_UNARY(testConvertDoubleToFloatToDoubleToFloat, floatingPointOperands<double>());
     RUN_UNARY(testConvertDoubleToFloatEqual, floatingPointOperands<double>());
+    RUN_UNARY(testStoreDouble, floatingPointOperands<double>());
+    RUN_UNARY(testStoreDoubleConstant, floatingPointOperands<double>());
     RUN_UNARY(testStoreFloat, floatingPointOperands<double>());
+    RUN_UNARY(testStoreFloatConstant, floatingPointOperands<double>());
     RUN_UNARY(testStoreDoubleConstantAsFloat, floatingPointOperands<double>());
     RUN_UNARY(testLoadFloatConvertDoubleConvertFloatStoreFloat, floatingPointOperands<float>());
     RUN_UNARY(testFroundArg, floatingPointOperands<double>());

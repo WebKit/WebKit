@@ -2165,7 +2165,27 @@ private:
                     m_changed = true;
                 }
             }
-            
+
+            if (m_value->opcode() == Store) {
+                // Turn this: Store(float-constant, address)
+                // Into this: Store(int32-constant, address)
+                if (m_value->child(0)->hasFloat()) {
+                    float value = m_value->child(0)->asFloat();
+                    Value* constant = m_insertionSet.insert<Const32Value>(m_index, m_value->child(0)->origin(), bitwise_cast<int32_t>(value));
+                    m_value->child(0) = constant;
+                    m_changed = true;
+                }
+
+                // Turn this: Store(double-constant, address)
+                // Into this: Store(int64-constant, address)
+                if (m_value->child(0)->hasDouble()) {
+                    double value = m_value->child(0)->asDouble();
+                    Value* constant = m_insertionSet.insert<Const64Value>(m_index, m_value->child(0)->origin(), bitwise_cast<int64_t>(value));
+                    m_value->child(0) = constant;
+                    m_changed = true;
+                }
+            }
+
             break;
         }
 
