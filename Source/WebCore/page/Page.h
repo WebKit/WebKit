@@ -387,10 +387,11 @@ public:
     WEBCORE_EXPORT void settingsDidChange();
 
     Settings& settings() const { return *m_settings; }
-    ProgressTracker& progress() const { return *m_progress; }
+    ProgressTracker& progress() { return m_progress.get(); }
+    const ProgressTracker& progress() const { return m_progress.get(); }
     void progressEstimateChanged(Frame&) const;
     void progressFinished(Frame&) const;
-    BackForwardController& backForward() const { return *m_backForwardController; }
+    BackForwardController& backForward() { return m_backForwardController.get(); }
 
     Seconds domTimerAlignmentInterval() const { return m_domTimerAlignmentInterval; }
 
@@ -1084,14 +1085,15 @@ private:
     RefPtr<ScrollingCoordinator> m_scrollingCoordinator;
 
     const RefPtr<Settings> m_settings;
-    const std::unique_ptr<ProgressTracker> m_progress;
+    UniqueRef<ProgressTracker> m_progress;
 
-    const std::unique_ptr<BackForwardController> m_backForwardController;
+    UniqueRef<BackForwardController> m_backForwardController;
+    WeakHashSet<Frame> m_rootFrames;
+    UniqueRef<EditorClient> m_editorClient;
     Ref<Frame> m_mainFrame;
 
     RefPtr<PluginData> m_pluginData;
 
-    UniqueRef<EditorClient> m_editorClient;
     std::unique_ptr<ValidationMessageClient> m_validationMessageClient;
     std::unique_ptr<DiagnosticLoggingClient> m_diagnosticLoggingClient;
     std::unique_ptr<PerformanceLoggingClient> m_performanceLoggingClient;
