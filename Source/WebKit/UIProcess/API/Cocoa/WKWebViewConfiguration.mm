@@ -292,6 +292,16 @@ static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview()
     return self;
 }
 
+- (void)setAllowsInlinePredictions:(BOOL)enabled
+{
+    _allowsInlinePredictions = enabled;
+}
+
+- (BOOL)allowsInlinePredictions
+{
+    return _allowsInlinePredictions;
+}
+
 - (NSString *)description
 {
     return [NSString stringWithFormat:@"<%@: %p; processPool = %@; preferences = %@>", NSStringFromClass(self.class), self, self.processPool, self.preferences];
@@ -1495,16 +1505,6 @@ static WebKit::AttributionOverrideTesting toAttributionOverrideTesting(_WKAttrib
 }
 
 - (BOOL)_markedTextInputEnabled
-{
-    return _allowsInlinePredictions;
-}
-
-- (void)setAllowsInlinePredictions:(BOOL)enabled
-{
-    _allowsInlinePredictions = enabled;
-}
-
-- (BOOL)allowsInlinePredictions
 {
     return _allowsInlinePredictions;
 }

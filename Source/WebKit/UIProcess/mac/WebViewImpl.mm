@@ -5062,7 +5062,11 @@ static Vector<WebCore::CompositionUnderline> compositionUnderlines(NSAttributedS
         if (underline.thick)
             mergedUnderlines.append(underline);
     }
-#else
+
+    if (mergedUnderlines.size())
+        return mergedUnderlines;
+#endif
+
     int length = string.string.length;
 
     for (int i = 0; i < length;) {
@@ -5081,7 +5085,6 @@ static Vector<WebCore::CompositionUnderline> compositionUnderlines(NSAttributedS
 
         i = range.location + range.length;
     }
-#endif
 
     return mergedUnderlines;
 }
