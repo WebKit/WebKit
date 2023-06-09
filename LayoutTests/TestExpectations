@@ -1654,9 +1654,7 @@ imported/w3c/web-platform-tests/css/selectors/case-insensitive-parent.html [ Ima
 imported/w3c/web-platform-tests/css/selectors/focus-within-004.html [ ImageOnlyFailure ]
 
 # :nth-child(n of S) invalidation
-imported/w3c/web-platform-tests/css/selectors/invalidation/nth-child-of-has.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/selectors/invalidation/nth-child-of-in-ancestor.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/selectors/invalidation/nth-last-child-of-has.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/selectors/invalidation/nth-last-child-of-in-ancestor.html [ ImageOnlyFailure ]
 
 # This test is bit heavy for debug
