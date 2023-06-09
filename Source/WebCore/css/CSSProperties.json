@@ -330,7 +330,8 @@
             "specification": {
                 "category": "css-rhythm",
                 "url": "https://drafts.csswg.org/css-rhythm/#block-step-size"
-            }
+            },
+            "status": "in development"
         },
         "block-step-insert": {
             "values": [
@@ -340,7 +341,12 @@
             "codegen-properties": {
                 "settings-flag": "cssRhythmicSizingEnabled",
                 "parser-grammar": "<<values>>"
-            }
+            },
+            "specification": {
+                "category": "css-rhythm",
+                "url": "https://drafts.csswg.org/css-rhythm/#block-step-size"
+            },
+            "status": "in development"
         },
         "caret-color": {
             "inherited": true,
@@ -695,7 +701,25 @@
             "specification": {
                 "category": "css-inline",
                 "url": "https://www.w3.org/TR/css-inline-3/#text-edges"
-            }
+            },
+            "status": "experimental"
+        },
+        "text-box-trim": {
+            "values": [
+                "none",
+                "start",
+                "end",
+                "both"
+            ],
+            "codegen-properties": {
+                "settings-flag": "cssTextBoxTrimEnabled",
+                "parser-grammar": "<<values>>"
+            },
+            "specification": {
+                "category": "css-inline",
+                "url": "https://www.w3.org/TR/css-inline-3/#leading-trim"
+            },
+            "status": "experimental"
         },
         "text-rendering": {
             "inherited": true,
@@ -3778,22 +3802,6 @@
                 "url": "https://www.w3.org/TR/SVG11/text.html#KerningProperty"
             }
         },
-        "text-box-trim": {
-            "values": [
-                "none",
-                "start",
-                "end",
-                "both"
-            ],
-            "codegen-properties": {
-                "settings-flag": "cssTextBoxTrimEnabled",
-                "parser-grammar": "<<values>>"
-            },
-            "specification": {
-                "category": "css-inline",
-                "url": "https://www.w3.org/TR/css-inline-3/#leading-trim"
-            }
-        },
         "left": {
             "values": [
                 "auto"
@@ -5997,8 +6005,8 @@
                 ]
             },
             "specification": {
-                "category": "css3-text",
-                "url": "https://w3c.github.io/csswg-drafts/css-text/#text-transform-property"
+                "category": "css-text",
+                "url": "https://drafts.csswg.org/css-text/#text-transform-property"
             }
         },
         "text-underline": {
