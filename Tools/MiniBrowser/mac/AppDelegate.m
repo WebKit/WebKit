@@ -125,6 +125,9 @@ static WKWebsiteDataStore *persistentDataStore(void)
 
         NSArray<_WKFeature *> *features = [WKPreferences _features];
         for (_WKFeature *feature in features) {
+            if ([feature.key isEqualToString:@"MediaDevicesEnabled"])
+                continue;
+
             BOOL enabled;
             if ([[NSUserDefaults standardUserDefaults] objectForKey:feature.key])
                 enabled = [[NSUserDefaults standardUserDefaults] boolForKey:feature.key];
