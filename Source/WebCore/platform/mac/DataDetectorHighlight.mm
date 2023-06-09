@@ -76,6 +76,11 @@ DataDetectorHighlight::DataDetectorHighlight(Page& page, DataDetectorHighlightCl
     layer().setOpacity(0);
 }
 
+DataDetectorHighlight::~DataDetectorHighlight()
+{
+    invalidate();
+}
+
 void DataDetectorHighlight::setHighlight(DDHighlightRef highlight)
 {
     if (!PAL::isDataDetectorsFrameworkAvailable())
