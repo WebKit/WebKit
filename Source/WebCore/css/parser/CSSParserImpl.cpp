@@ -1163,7 +1163,7 @@ void CSSParserImpl::consumeDeclarationListOrStyleBlockHelper(CSSParserTokenRange
                 auto rule = consumeQualifiedRule(range, AllowedRulesType::RegularRules);
                 if (!rule)
                     break;
-                if (!rule->isStyleRuleWithNesting())
+                if (!rule->isStyleRule())
                     break;
                 topContext().m_parsedRules.append(*rule);
                 break;

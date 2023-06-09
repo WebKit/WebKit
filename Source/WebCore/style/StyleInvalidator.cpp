@@ -53,6 +53,15 @@ static bool shouldDirtyAllStyle(const Vector<RefPtr<StyleRuleBase>>& rules)
                 return true;
             continue;
         }
+        if (is<StyleRuleWithNesting>(*rule)) {
+            auto childRules = downcast<StyleRuleWithNesting>(*rule).nestedRules().map(
+                [](auto& rule) {
+                    return RefPtr { rule.ptr() };
+                });
+            if (shouldDirtyAllStyle(childRules))
+                return true;
+            continue;
+        }
         // FIXME: At least font faces don't need full recalc in all cases.
         if (!is<StyleRule>(*rule))
             return true;

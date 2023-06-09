@@ -75,7 +75,7 @@ struct RuleFeature : public RuleAndSelector {
     MatchElement matchElement;
     IsNegation isNegation; // Whether the selector is in a (non-paired) :not() context.
 };
-static_assert(sizeof(RuleFeature) <= 16, "RuleFeature is a frquently alocated object. Keep it small.");
+static_assert(sizeof(RuleFeature) <= 16, "RuleFeature is a frequently allocated object. Keep it small.");
 
 struct RuleFeatureWithInvalidationSelector : public RuleFeature {
     RuleFeatureWithInvalidationSelector(const RuleData&, MatchElement, IsNegation, const CSSSelector* invalidationSelector);
