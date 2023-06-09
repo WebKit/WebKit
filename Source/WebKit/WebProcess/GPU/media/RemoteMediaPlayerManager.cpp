@@ -79,17 +79,18 @@ public:
 
     HashSet<SecurityOriginData> originsInMediaCache(const String& path) const final
     {
-        return m_manager.originsInMediaCache(m_remoteEngineIdentifier, path);
+        ASSERT_NOT_REACHED_WITH_MESSAGE("RemoteMediaPlayerManager does not support cache management");
+        return { };
     }
 
     void clearMediaCache(const String& path, WallTime modifiedSince) const final
     {
-        return m_manager.clearMediaCache(m_remoteEngineIdentifier, path, modifiedSince);
+        ASSERT_NOT_REACHED_WITH_MESSAGE("RemoteMediaPlayerManager does not support cache management");
     }
 
     void clearMediaCacheForOrigins(const String& path, const HashSet<SecurityOriginData>& origins) const final
     {
-        return m_manager.clearMediaCacheForOrigins(m_remoteEngineIdentifier, path, origins);
+        ASSERT_NOT_REACHED_WITH_MESSAGE("RemoteMediaPlayerManager does not support cache management");
     }
 
     bool supportsKeySystem(const String& keySystem, const String& mimeType) const final
@@ -230,23 +231,6 @@ MediaPlayer::SupportsType RemoteMediaPlayerManager::supportsTypeAndCodecs(MediaP
 bool RemoteMediaPlayerManager::supportsKeySystem(MediaPlayerEnums::MediaEngineIdentifier, const String& keySystem, const String& mimeType)
 {
     return false;
-}
-
-HashSet<SecurityOriginData> RemoteMediaPlayerManager::originsInMediaCache(MediaPlayerEnums::MediaEngineIdentifier remoteEngineIdentifier, const String& path)
-{
-    auto sendResult = gpuProcessConnection().connection().sendSync(Messages::RemoteMediaPlayerManagerProxy::OriginsInMediaCache(remoteEngineIdentifier, path), 0);
-    auto [originData] = sendResult.takeReplyOr(HashSet<SecurityOriginData> { });
-    return originData;
-}
-
-void RemoteMediaPlayerManager::clearMediaCache(MediaPlayerEnums::MediaEngineIdentifier remoteEngineIdentifier, const String& path, WallTime modifiedSince)
-{
-    gpuProcessConnection().connection().send(Messages::RemoteMediaPlayerManagerProxy::ClearMediaCache(remoteEngineIdentifier, path, modifiedSince), 0);
-}
-
-void RemoteMediaPlayerManager::clearMediaCacheForOrigins(MediaPlayerEnums::MediaEngineIdentifier remoteEngineIdentifier, const String& path, const HashSet<SecurityOriginData>& origins)
-{
-    gpuProcessConnection().connection().send(Messages::RemoteMediaPlayerManagerProxy::ClearMediaCacheForOrigins(remoteEngineIdentifier, path, origins), 0);
 }
 
 void RemoteMediaPlayerManager::didReceivePlayerMessage(IPC::Connection& connection, IPC::Decoder& decoder)
