@@ -366,7 +366,7 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
     setEnhancedAccessibility(parameters.accessibilityEnhancedUserInterfaceEnabled);
 
 #if PLATFORM(IOS_FAMILY)
-    setCurrentUserInterfaceIdiomIsSmallScreen(parameters.currentUserInterfaceIdiomIsSmallScreen);
+    setCurrentUserInterfaceIdiom(parameters.currentUserInterfaceIdiom);
     setLocalizedDeviceModel(parameters.localizedDeviceModel);
     setContentSizeCategory(parameters.contentSizeCategory);
 #if ENABLE(VIDEO_PRESENTATION_MODE)
@@ -1085,9 +1085,9 @@ void WebProcess::releaseSystemMallocMemory()
 
 #if PLATFORM(IOS_FAMILY)
 
-void WebProcess::userInterfaceIdiomDidChange(bool isSmallScreen)
+void WebProcess::userInterfaceIdiomDidChange(UserInterfaceIdiom idiom)
 {
-    WebKit::setCurrentUserInterfaceIdiomIsSmallScreen(isSmallScreen);
+    WebKit::setCurrentUserInterfaceIdiom(idiom);
 }
 
 bool WebProcess::shouldFreezeOnSuspension() const

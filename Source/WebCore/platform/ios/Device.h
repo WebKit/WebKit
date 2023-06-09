@@ -38,6 +38,8 @@ String deviceName(); // Thread-safe.
 // If a check like this is needed, often currentUserInterfaceIdiomIsSmallScreen is preferred.
 WEBCORE_EXPORT bool deviceClassIsSmallScreen();
 
+WEBCORE_EXPORT bool deviceClassIsReality();
+
 // FIXME: How does this differ from !deviceClassIsSmallScreen()?
 WEBCORE_EXPORT bool deviceHasIPadCapability();
 

@@ -32,6 +32,7 @@
 #include "SandboxExtension.h"
 #include "TextCheckerState.h"
 #include "UserData.h"
+#include "UserInterfaceIdiom.h"
 #include "WebProcessDataStoreParameters.h"
 #include <WebCore/CrossOriginMode.h>
 #include <wtf/HashMap.h>
@@ -205,7 +206,7 @@ struct WebProcessCreationParameters {
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-    bool currentUserInterfaceIdiomIsSmallScreen { false };
+    UserInterfaceIdiom currentUserInterfaceIdiom { UserInterfaceIdiom::Default };
     bool supportsPictureInPicture { false };
     WebCore::RenderThemeIOS::CSSValueToSystemColorMap cssValueToSystemColorMap;
     WebCore::Color focusRingColor;

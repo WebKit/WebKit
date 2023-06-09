@@ -160,7 +160,7 @@ struct WebKit::WebProcessCreationParameters {
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-    bool currentUserInterfaceIdiomIsSmallScreen;
+    WebKit::UserInterfaceIdiom currentUserInterfaceIdiom;
     bool supportsPictureInPicture;
     WebCore::RenderThemeIOS::CSSValueToSystemColorMap cssValueToSystemColorMap;
     WebCore::Color focusRingColor;

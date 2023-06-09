@@ -473,7 +473,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     parameters.strictSecureDecodingForAllObjCEnabled = IPC::strictSecureDecodingForAllObjCEnabled();
 
 #if PLATFORM(IOS_FAMILY)
-    parameters.currentUserInterfaceIdiomIsSmallScreen = currentUserInterfaceIdiomIsSmallScreen();
+    parameters.currentUserInterfaceIdiom = currentUserInterfaceIdiom();
     parameters.supportsPictureInPicture = supportsPictureInPicture();
     parameters.cssValueToSystemColorMap = RenderThemeIOS::cssValueToSystemColorMap();
     parameters.focusRingColor = RenderThemeIOS::systemFocusRingColor();
@@ -796,7 +796,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (![UIApplication sharedApplication]) {
         m_applicationLaunchObserver = [[NSNotificationCenter defaultCenter] addObserverForName:UIApplicationDidFinishLaunchingNotification object:nil queue:[NSOperationQueue currentQueue] usingBlock:^(NSNotification *notification) {
             if (WebKit::updateCurrentUserInterfaceIdiom())
-                sendToAllProcesses(Messages::WebProcess::UserInterfaceIdiomDidChange(WebKit::currentUserInterfaceIdiomIsSmallScreen()));
+                sendToAllProcesses(Messages::WebProcess::UserInterfaceIdiomDidChange(WebKit::currentUserInterfaceIdiom()));
         }];
     }
 #endif

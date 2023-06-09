@@ -68,17 +68,15 @@ bool defaultShouldPrintBackgrounds()
     return result;
 }
 
-#if !USE(APPLE_INTERNAL_SDK)
 bool defaultAlternateFormControlDesignEnabled()
 {
-    return false;
+    return currentUserInterfaceIdiomIsReality();
 }
 
 bool defaultVideoFullscreenRequiresElementFullscreen()
 {
-    return false;
+    return currentUserInterfaceIdiomIsReality();
 }
-#endif
 
 #endif
 

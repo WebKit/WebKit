@@ -4189,6 +4189,7 @@
 		2DA049B2180CCCD300AAFA9E /* PlatformCALayerRemote.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformCALayerRemote.h; sourceTree = "<group>"; };
 		2DA049B5180CCD0A00AAFA9E /* GraphicsLayerCARemote.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GraphicsLayerCARemote.mm; sourceTree = "<group>"; };
 		2DA049B6180CCD0A00AAFA9E /* GraphicsLayerCARemote.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GraphicsLayerCARemote.h; sourceTree = "<group>"; };
+		2DA3E37D2A33C98900F7799D /* UserInterfaceIdiom.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = UserInterfaceIdiom.serialization.in; sourceTree = "<group>"; };
 		2DA6731920C754B1003CB401 /* DynamicViewportSizeUpdate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DynamicViewportSizeUpdate.h; path = ios/DynamicViewportSizeUpdate.h; sourceTree = "<group>"; };
 		2DA7FDCB18F88625008DDED0 /* FindIndicatorOverlayClientIOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = FindIndicatorOverlayClientIOS.h; path = ios/FindIndicatorOverlayClientIOS.h; sourceTree = "<group>"; };
 		2DA944971884E4F000ED86DB /* NativeWebKeyboardEventIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = NativeWebKeyboardEventIOS.mm; path = ios/NativeWebKeyboardEventIOS.mm; sourceTree = "<group>"; };
@@ -8066,6 +8067,7 @@
 				5C9C5C022430535800BB6740 /* UserContentControllerParameters.h */,
 				1AC1336518565B5700F3EC05 /* UserData.cpp */,
 				1AC1336618565B5700F3EC05 /* UserData.h */,
+				2DA3E37D2A33C98900F7799D /* UserInterfaceIdiom.serialization.in */,
 				419BD18F28E1A86C0089D7B7 /* VideoCodecType.h */,
 				2684054A18B866FF0022C38B /* VisibleContentRectUpdateInfo.cpp */,
 				2684054218B85A630022C38B /* VisibleContentRectUpdateInfo.h */,

@@ -156,6 +156,7 @@ struct WebsiteData;
 struct WebsiteDataStoreParameters;
 
 enum class RemoteWorkerType : uint8_t;
+enum class UserInterfaceIdiom : uint8_t;
 enum class WebsiteDataType : uint32_t;
 
 #if PLATFORM(IOS_FAMILY)
@@ -590,7 +591,7 @@ private:
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-    void userInterfaceIdiomDidChange(bool);
+    void userInterfaceIdiomDidChange(UserInterfaceIdiom);
 
     bool shouldFreezeOnSuspension() const;
     void updateFreezerStatus();
