@@ -442,7 +442,9 @@ void RemoteLayerTreeEventDispatcher::scheduleDelayedRenderingUpdateDetectionTime
 void RemoteLayerTreeEventDispatcher::delayedRenderingUpdateDetectionTimerFired()
 {
     ASSERT(ScrollingThread::isCurrentThread());
-    scrollingTree()->tryToApplyLayerPositions();
+
+    if (auto scrollingTree = this->scrollingTree())
+        scrollingTree->tryToApplyLayerPositions();
 }
 
 void RemoteLayerTreeEventDispatcher::waitForRenderingUpdateCompletionOrTimeout()
