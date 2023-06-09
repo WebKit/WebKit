@@ -80,6 +80,8 @@ public:
     unsigned audioBitRate() const;
     unsigned videoBitRate() const;
 
+    void close();
+
 private:
     MediaRecorderPrivateWriter(bool hasAudio, bool hasVideo);
 

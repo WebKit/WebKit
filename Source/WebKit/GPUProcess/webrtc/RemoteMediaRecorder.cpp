@@ -62,6 +62,7 @@ RemoteMediaRecorder::RemoteMediaRecorder(GPUConnectionToWebProcess& gpuConnectio
 
 RemoteMediaRecorder::~RemoteMediaRecorder()
 {
+    m_writer->close();
 }
 
 void RemoteMediaRecorder::audioSamplesStorageChanged(ConsumerSharedCARingBuffer::Handle&& handle, const WebCore::CAAudioStreamDescription& description)
