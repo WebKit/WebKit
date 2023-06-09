@@ -123,12 +123,7 @@ NSString *defaultApplicationCacheDirectory()
 #endif
 }
 
-// fix me when rdar://110012066 is resolved
-#if PLATFORM(MAC)
-TEST(WKWebView, DISABLED_ClearAppCache)
-#else
 TEST(WKWebView, ClearAppCache)
-#endif
 {
 #if PLATFORM(IOS_FAMILY)
     // On iOS, MobileSafari and webbookmarksd need to share the same AppCache directory.
