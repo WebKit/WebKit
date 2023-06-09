@@ -1229,11 +1229,6 @@
             F_OFD_SETLKWTIMEOUT))
             
 #if HAVE(SANDBOX_STATE_FLAGS)
-    ;; This rule enables the WebContent process to flip the "AppCacheDisabled" sandbox variable
-    ;; by reading a preference from the domain "com.apple.WebKit.WebContent.AppCacheDisabled".
-    (deny user-preference-read (with enable-state-flag "AppCacheDisabled")
-        (preference-domain "com.apple.WebKit.WebContent.AppCacheDisabled"))
- 
     (with-filter (require-not (state-flag "AppCacheDisabled"))
         (allow system-fcntl (appcache-fcntl-commands)))
     (with-filter (state-flag "AppCacheDisabled")
