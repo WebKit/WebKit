@@ -7,10 +7,10 @@ async function paramForwarder(numParams, paramType, value, imports) {
     let body = "";
     let inlineCheck = "";
     for (let i = 0; i < numParams; ++i) {
-        body += `(get_local ${i + 1}) (call 0)\n`;
-        inlineCheck += `(i32.lt_u (i32.const ${i + 1}) (get_local 0)) (if
-        (then (br_if 0 (${paramType}.ne (get_local ${i + 1}) (${paramType}.const ${value}))))
-        (else (br_if 0 (${paramType}.eq (get_local ${i + 1}) (get_local ${i + 1}))))
+        body += `(local.get ${i + 1}) (call 0)\n`;
+        inlineCheck += `(i32.lt_u (i32.const ${i + 1}) (local.get 0)) (if
+        (then (br_if 0 (${paramType}.ne (local.get ${i + 1}) (${paramType}.const ${value}))))
+        (else (br_if 0 (${paramType}.eq (local.get ${i + 1}) (local.get ${i + 1}))))
       )
 `;
     }
