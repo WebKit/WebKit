@@ -1913,6 +1913,15 @@
    },
    {
       "emails" : [
+         "daniel_liu4@apple.com",
+         "danlliu@umich.edu"
+      ],
+      "expertise" : "JavaScriptCore",
+      "github" : "danlliu",
+      "name" : "Daniel Liu"
+   },
+   {
+      "emails" : [
          "sievers@chromium.org"
       ],
       "name" : "Daniel Sievers"
