@@ -203,7 +203,8 @@ REEXPORTED_FRAMEWORK_NAMES = WebKitLegacy;
 REEXPORTED_FRAMEWORK_NAMES[sdk=macosx*] = $(inherited) WebCore;
 
 // FIXME: Remove -reexport_install_name once rdar://problem/30820233 is fixed.
-OTHER_TAPI_FLAGS = $(inherited) -reexport_install_name $(NORMAL_UMBRELLA_FRAMEWORKS_DIR)/WebKitLegacy.framework/$(WK_FRAMEWORK_VERSION_PREFIX)WebKitLegacy -extra-private-header $(SRCROOT)/Platform/ExtraPrivateSymbolsForTAPI.h -extra-public-header $(SRCROOT)/Platform/ExtraPublicSymbolsForTAPI.h $(OTHER_TAPI_FLAGS_SRCROOT_$(TAPI_USE_SRCROOT));
+OTHER_TAPI_FLAGS = $(OTHER_TAPI_FLAGS_$(WK_COCOA_TOUCH));
+OTHER_TAPI_FLAGS_cocoatouch = $(inherited) -reexport_install_name $(NORMAL_UMBRELLA_FRAMEWORKS_DIR)/WebKitLegacy.framework/WebKitLegacy -extra-private-header $(SRCROOT)/Platform/ExtraPrivateSymbolsForTAPI.h -extra-public-header $(SRCROOT)/Platform/ExtraPublicSymbolsForTAPI.h $(OTHER_TAPI_FLAGS_SRCROOT_$(TAPI_USE_SRCROOT));
 // Workaround for rdar://104248994.
 OTHER_TAPI_FLAGS_SRCROOT_YES = -Xparser -include -Xparser config.h;
 

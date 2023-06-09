@@ -69,6 +69,17 @@
 @protocol WebDeviceOrientationProvider;
 @protocol WebFormDelegate;
 
+#if !TARGET_OS_IPHONE
+extern NSString *_WebCanGoBackKey;
+extern NSString *_WebCanGoForwardKey;
+extern NSString *_WebEstimatedProgressKey;
+extern NSString *_WebIsLoadingKey;
+extern NSString *_WebMainFrameIconKey;
+extern NSString *_WebMainFrameTitleKey;
+extern NSString *_WebMainFrameURLKey;
+extern NSString *_WebMainFrameDocumentKey;
+#endif
+
 #if TARGET_OS_IPHONE
 extern NSString * const WebViewProgressEstimatedProgressKey;
 extern NSString * const WebViewProgressBackgroundColorKey;
@@ -145,7 +156,6 @@ typedef enum {
     WebNotificationPermissionDenied
 } WebNotificationPermission;
 
-#if TARGET_OS_IPHONE
 @interface WebUITextIndicatorData : NSObject
 @property (nonatomic, retain) UIImage *dataInteractionImage;
 @property (nonatomic, assign) CGRect selectionRectInRootViewCoordinates;
@@ -157,6 +167,14 @@ typedef enum {
 @property (nonatomic, retain) UIImage *contentImageWithoutSelection;
 @property (nonatomic, assign) CGRect contentImageWithoutSelectionRectInRootViewCoordinates;
 @property (nonatomic, retain) UIColor *estimatedBackgroundColor;
+@end
+
+#if !TARGET_OS_IPHONE
+@interface WebController : NSTreeController {
+    IBOutlet WebView *webView;
+}
+- (WebView *)webView;
+- (void)setWebView:(WebView *)newWebView;
 @end
 #endif
 

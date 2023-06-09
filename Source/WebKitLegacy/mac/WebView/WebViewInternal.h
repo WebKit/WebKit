@@ -53,17 +53,6 @@
 #import <wtf/NakedRef.h>
 #import <wtf/RetainPtr.h>
 
-#if !TARGET_OS_IPHONE
-extern NSString *_WebCanGoBackKey;
-extern NSString *_WebCanGoForwardKey;
-extern NSString *_WebEstimatedProgressKey;
-extern NSString *_WebIsLoadingKey;
-extern NSString *_WebMainFrameIconKey;
-extern NSString *_WebMainFrameTitleKey;
-extern NSString *_WebMainFrameURLKey;
-extern NSString *_WebMainFrameDocumentKey;
-#endif
-
 namespace WebCore {
 class Element;
 class Event;

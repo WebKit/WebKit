@@ -35,10 +35,7 @@
 #import <WebKitLegacy/WebNSControlExtras.h>
 #import <WebKitLegacy/WebNSWindowExtras.h>
 
-@implementation WebJavaScriptTextInputPanel {
-    IBOutlet NSTextField *prompt;
-    IBOutlet NSTextField *textInput;
-}
+@implementation WebJavaScriptTextInputPanel
 
 - (id)initWithPrompt:(NSString *)p text:(NSString *)t
 {

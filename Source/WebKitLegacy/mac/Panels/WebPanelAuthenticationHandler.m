@@ -36,11 +36,7 @@
 
 static NSString *WebModalDialogPretendWindow = @"WebModalDialogPretendWindow";
 
-@implementation WebPanelAuthenticationHandler {
-    NSMapTable *windowToPanel;
-    NSMapTable *challengeToWindow;
-    NSMapTable *windowToChallengeQueue;
-}
+@implementation WebPanelAuthenticationHandler
 
 WebPanelAuthenticationHandler *sharedHandler;
 

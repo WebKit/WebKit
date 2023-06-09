@@ -26,10 +26,6 @@
 #ifndef WKOpenPanelResultListener_h
 #define WKOpenPanelResultListener_h
 
-#ifdef __APPLE__
-#include <TargetConditionals.h>
-#endif
-
 #include <WebKit/WKBase.h>
 
 #ifdef __cplusplus
@@ -38,9 +34,7 @@ extern "C" {
 
 WK_EXPORT WKTypeID WKOpenPanelResultListenerGetTypeID(void);
 
-#if defined(__APPLE__) && TARGET_OS_IPHONE
 WK_EXPORT void WKOpenPanelResultListenerChooseMediaFiles(WKOpenPanelResultListenerRef listenerRef, WKArrayRef fileURLsRef, WKStringRef displayString, WKDataRef iconImageDataRef);
-#endif
 WK_EXPORT void WKOpenPanelResultListenerChooseFiles(WKOpenPanelResultListenerRef listener, WKArrayRef fileURLs, WKArrayRef allowedMimeTypesRef);
 WK_EXPORT void WKOpenPanelResultListenerCancel(WKOpenPanelResultListenerRef listener);
 
