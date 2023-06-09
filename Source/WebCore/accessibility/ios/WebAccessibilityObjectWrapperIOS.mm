@@ -1918,7 +1918,8 @@ static NSArray *accessibleElementsForObjects(const AXCoreObject::AccessibilityCh
             continue;
 
         Accessibility::enumerateDescendants<AXCoreObject>(*object, true, [&accessibleElements] (AXCoreObject& descendant) {
-            if (descendant.wrapper().isAccessibilityElement)
+            auto* wrapper = descendant.wrapper();
+            if (wrapper && wrapper.isAccessibilityElement)
                 accessibleElements.append(&descendant);
         });
     }
