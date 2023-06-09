@@ -138,6 +138,8 @@ class StyleInheritedData;
 class StyleScrollSnapArea;
 class TransformationMatrix;
 
+enum class PaintBehavior : uint32_t;
+
 struct ScrollSnapAlign;
 struct ScrollSnapType;
 
@@ -1660,8 +1662,8 @@ public:
     // Resolves the currentColor keyword (except for the "color" property which has specific semantic).
     WEBCORE_EXPORT Color colorResolvingCurrentColor(const StyleColor&) const;
 
-    WEBCORE_EXPORT Color visitedDependentColor(CSSPropertyID) const;
-    WEBCORE_EXPORT Color visitedDependentColorWithColorFilter(CSSPropertyID) const;
+    WEBCORE_EXPORT Color visitedDependentColor(CSSPropertyID, OptionSet<PaintBehavior> paintBehavior = { }) const;
+    WEBCORE_EXPORT Color visitedDependentColorWithColorFilter(CSSPropertyID, OptionSet<PaintBehavior> paintBehavior = { }) const;
 
     WEBCORE_EXPORT Color colorByApplyingColorFilter(const Color&) const;
     WEBCORE_EXPORT Color colorWithColorFilter(const StyleColor&) const;

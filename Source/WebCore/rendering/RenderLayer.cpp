@@ -3262,6 +3262,9 @@ void RenderLayer::paintLayerContents(GraphicsContext& context, const LayerPainti
         }
         GraphicsContext& currentContext = filterContext ? *filterContext : context;
 
+        if (filterContext)
+            localPaintingInfo.paintBehavior.add(PaintBehavior::DontShowVisitedLinks);
+
         // If this layer's renderer is a child of the subtreePaintRoot, we render unconditionally, which
         // is done by passing a nil subtreePaintRoot down to our renderer (as if no subtreePaintRoot was ever set).
         // Otherwise, our renderer tree may or may not contain the subtreePaintRoot root, so we pass that root along
@@ -3695,6 +3698,9 @@ void RenderLayer::paintForegroundForFragments(const LayerFragments& layerFragmen
 
     if (localPaintingInfo.paintBehavior & PaintBehavior::CompositedOverflowScrollContent)
         localPaintBehavior.add(PaintBehavior::CompositedOverflowScrollContent);
+
+    if (localPaintingInfo.paintBehavior & PaintBehavior::DontShowVisitedLinks)
+        localPaintBehavior.add(PaintBehavior::DontShowVisitedLinks);
 
     GraphicsContextStateSaver stateSaver(context, false);
     EventRegionContextStateSaver eventRegionStateSaver(localPaintingInfo.eventRegionContext);
@@ -5727,6 +5733,7 @@ TextStream& operator<<(TextStream& ts, PaintBehavior behavior)
     case PaintBehavior::AnnotateLinks: ts << "AnnotateLinks"; break;
     case PaintBehavior::EventRegionIncludeForeground: ts << "EventRegionIncludeForeground"; break;
     case PaintBehavior::EventRegionIncludeBackground: ts << "EventRegionIncludeBackground"; break;
+    case PaintBehavior::DontShowVisitedLinks: ts << "DontShowVisitedLinks"; break;
     }
 
     return ts;
