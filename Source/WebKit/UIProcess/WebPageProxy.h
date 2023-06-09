@@ -342,6 +342,7 @@ class RemoteLayerTreeNode;
 class RemoteLayerTreeScrollingPerformanceData;
 class RemoteLayerTreeTransaction;
 class RemoteMediaSessionCoordinatorProxy;
+class RemotePageProxy;
 class RemoteScrollingCoordinatorProxy;
 class RevealItem;
 class SandboxExtensionHandle;
@@ -352,7 +353,6 @@ class ShareableResourceHandle;
 class SharedMemory;
 class SharedMemoryHandle;
 class SpeechRecognitionPermissionManager;
-class SubframePageProxy;
 class SuspendedPageProxy;
 class SystemPreviewController;
 class TouchBarMenuData;
@@ -2159,9 +2159,9 @@ public:
     WKQuickLookPreviewController *quickLookPreviewController() const { return m_quickLookPreviewController.get(); }
 #endif
 
-    SubframePageProxy* subpageFrameProxyForRegistrableDomain(WebCore::RegistrableDomain) const;
-    void addSubframePageProxy(const WebCore::RegistrableDomain&, WeakPtr<SubframePageProxy>&&);
-    void removeSubpageFrameProxy(const WebCore::RegistrableDomain&);
+    RemotePageProxy* remotePageProxyForRegistrableDomain(WebCore::RegistrableDomain) const;
+    void addRemotePageProxy(const WebCore::RegistrableDomain&, WeakPtr<RemotePageProxy>&&);
+    void removeRemotePageProxy(const WebCore::RegistrableDomain&);
 
     void createRemoteSubframesInOtherProcesses(WebFrameProxy&);
 

@@ -35,7 +35,7 @@
 #include "MessageSenderInlines.h"
 #include "ProvisionalFrameProxy.h"
 #include "ProvisionalPageProxy.h"
-#include "SubframePageProxy.h"
+#include "RemotePageProxy.h"
 #include "WebFramePolicyListenerProxy.h"
 #include "WebNavigationState.h"
 #include "WebPageMessages.h"
@@ -395,14 +395,14 @@ void WebFrameProxy::commitProvisionalFrame(FrameIdentifier frameID, FrameInfoDat
         m_provisionalFrame = nullptr;
 
         RegistrableDomain oldDomain(url());
-        m_subframePageProxy = m_page->subpageFrameProxyForRegistrableDomain(RegistrableDomain(request.url()));
+        m_remotePageProxy = m_page->remotePageProxyForRegistrableDomain(RegistrableDomain(request.url()));
     }
     m_page->didCommitLoadForFrame(frameID, WTFMove(frameInfo), WTFMove(request), navigationID, mimeType, frameHasCustomContentProvider, frameLoadType, certificateInfo, usedLegacyTLS, privateRelayed, containsPluginDocument, hasInsecureContent, mouseEventPolicy, userData);
 }
 
-void WebFrameProxy::setSubframePageProxy(SubframePageProxy& subframePageProxy)
+void WebFrameProxy::setRemotePageProxy(RemotePageProxy& remotePageProxy)
 {
-    m_subframePageProxy = &subframePageProxy;
+    m_remotePageProxy = &remotePageProxy;
 }
 
 void WebFrameProxy::getFrameInfo(CompletionHandler<void(FrameTreeNodeData&&)>&& completionHandler)

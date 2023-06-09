@@ -54,9 +54,9 @@
 #include "OverrideLanguages.h"
 #include "PageLoadState.h"
 #include "PerActivityStateCPUUsageSampler.h"
+#include "RemotePageProxy.h"
 #include "RemoteWorkerType.h"
 #include "SandboxExtension.h"
-#include "SubframePageProxy.h"
 #include "SuspendedPageProxy.h"
 #include "TextChecker.h"
 #include "UIGamepad.h"
@@ -1848,8 +1848,8 @@ void WebProcessPool::processForNavigation(WebPageProxy& page, WebFrameProxy& fra
                 completionHandler(Ref { page.mainFrame()->process() }, nullptr, "Found process for the same registration domain as mainFrame domain"_s, DidCreateNewProcess::No);
                 return;
             }
-            if (auto* subframePageProxy = page.subpageFrameProxyForRegistrableDomain(registrableDomain)) {
-                completionHandler(Ref { subframePageProxy->process() }, nullptr, "Found process for the same registration domain"_s, DidCreateNewProcess::No);
+            if (auto* remotePageProxy = page.remotePageProxyForRegistrableDomain(registrableDomain)) {
+                completionHandler(Ref { remotePageProxy->process() }, nullptr, "Found process for the same registration domain"_s, DidCreateNewProcess::No);
                 return;
             }
         }
@@ -1860,7 +1860,7 @@ void WebProcessPool::processForNavigation(WebPageProxy& page, WebFrameProxy& fra
     if (!frame.isMainFrame() && page.preferences().siteIsolationEnabled()) {
         RegistrableDomain navigationDomain(navigation.currentRequest().url());
         if (!navigationDomain.isEmpty() && navigationDomain != mainFrameDomain)
-            frame.setSubframePageProxy(SubframePageProxy::create(page, process, navigationDomain));
+            frame.setRemotePageProxy(RemotePageProxy::create(page, process, navigationDomain));
     }
 
     // We are process-swapping so automatic process prewarming would be beneficial if the client has not explicitly enabled / disabled it.

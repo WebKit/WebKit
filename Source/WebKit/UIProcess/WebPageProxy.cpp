@@ -100,11 +100,11 @@
 #include "ProcessThrottler.h"
 #include "ProvisionalFrameProxy.h"
 #include "ProvisionalPageProxy.h"
+#include "RemotePageProxy.h"
 #include "SafeBrowsingWarning.h"
 #include "SpeechRecognitionPermissionManager.h"
 #include "SpeechRecognitionRemoteRealtimeMediaSource.h"
 #include "SpeechRecognitionRemoteRealtimeMediaSourceManager.h"
-#include "SubframePageProxy.h"
 #include "SuspendedPageProxy.h"
 #include "SyntheticEditingCommandType.h"
 #include "TextChecker.h"
@@ -5068,8 +5068,8 @@ void WebPageProxy::getAllFrameTrees(CompletionHandler<void(Vector<FrameTreeNodeD
     m_mainFrame->process().sendWithAsyncReply(Messages::WebPage::GetFrameTree(), [aggregator] (auto&& data) {
         aggregator->addFrameTree(WTFMove(data));
     }, webPageID());
-    for (auto& subframePageProxy : internals.domainToSubframePageProxyMap.values()) {
-        subframePageProxy->process().sendWithAsyncReply(Messages::WebPage::GetFrameTree(), [aggregator] (auto&& data) {
+    for (auto& remotePageProxy : internals.domainToRemotePageProxyMap.values()) {
+        remotePageProxy->process().sendWithAsyncReply(Messages::WebPage::GetFrameTree(), [aggregator] (auto&& data) {
             aggregator->addFrameTree(WTFMove(data));
         }, webPageID());
     }
@@ -5292,10 +5292,10 @@ void WebPageProxy::updateRemoteFrameSize(WebCore::FrameIdentifier frameID, WebCo
         ASSERT_NOT_REACHED();
         return;
     }
-    auto subframePageProxy = internals().domainToSubframePageProxyMap.get(RegistrableDomain(frame->url()));
-    if (!subframePageProxy)
+    auto remotePageProxy = internals().domainToRemotePageProxyMap.get(RegistrableDomain(frame->url()));
+    if (!remotePageProxy)
         return;
-    subframePageProxy->send(Messages::WebPage::UpdateFrameSize(frameID, size));
+    remotePageProxy->send(Messages::WebPage::UpdateFrameSize(frameID, size));
 }
 
 void WebPageProxy::preconnectTo(ResourceRequest&& request)
@@ -5801,15 +5801,15 @@ void WebPageProxy::createRemoteSubframesInOtherProcesses(WebFrameProxy& newFrame
     auto& internals = this->internals();
 
     // FIXME: We'll also have to use this pattern to update remoteProcessIdentifier so that postMessage continues to work after an iframe changes processes.
-    for (auto& pair : internals.domainToSubframePageProxyMap) {
-        auto& subframePageProxy = pair.value;
-        if (!subframePageProxy) {
+    for (auto& pair : internals.domainToRemotePageProxyMap) {
+        auto& remotePageProxy = pair.value;
+        if (!remotePageProxy) {
             ASSERT_NOT_REACHED();
             continue;
         }
-        if (&subframePageProxy->process() == &newFrameProcess)
+        if (&remotePageProxy->process() == &newFrameProcess)
             continue;
-        subframePageProxy->send(Messages::WebPage::CreateRemoteSubframe(parent->frameID(), newFrame.frameID(), newFrameProcess.coreProcessIdentifier()));
+        remotePageProxy->send(Messages::WebPage::CreateRemoteSubframe(parent->frameID(), newFrame.frameID(), newFrameProcess.coreProcessIdentifier()));
     }
     if (&newFrameProcess != &mainFrameProcess)
         send(Messages::WebPage::CreateRemoteSubframe(parent->frameID(), newFrame.frameID(), newFrameProcess.coreProcessIdentifier()));
@@ -5845,9 +5845,9 @@ void WebPageProxy::didFinishLoadForFrame(FrameIdentifier frameID, FrameInfoData&
 
         frame->didFinishLoad();
 
-        auto subframePageProxy = internals().domainToSubframePageProxyMap.get(RegistrableDomain(frame->url()));
+        auto remotePageProxy = internals().domainToRemotePageProxyMap.get(RegistrableDomain(frame->url()));
 
-        if (subframePageProxy && frame->parentFrame())
+        if (remotePageProxy && frame->parentFrame())
             frame->parentFrame()->process().send(Messages::WebPage::DidFinishLoadInAnotherProcess(frameID), webPageID());
 
         internals().pageLoadState.commitChanges();
@@ -11092,8 +11092,8 @@ void WebPageProxy::callAfterNextPresentationUpdate(CompletionHandler<void()>&& c
     auto aggregator = CallbackAggregator::create(WTFMove(callback));
     auto drawingAreaIdentifier = m_drawingArea->identifier();
     sendWithAsyncReply(Messages::DrawingArea::DispatchAfterEnsuringDrawing(), [aggregator] { }, drawingAreaIdentifier);
-    for (auto& subframePageProxy : internals().domainToSubframePageProxyMap.values())
-        subframePageProxy->sendWithAsyncReply(Messages::DrawingArea::DispatchAfterEnsuringDrawing(), [aggregator] { }, drawingAreaIdentifier);
+    for (auto& remotePageProxy : internals().domainToRemotePageProxyMap.values())
+        remotePageProxy->sendWithAsyncReply(Messages::DrawingArea::DispatchAfterEnsuringDrawing(), [aggregator] { }, drawingAreaIdentifier);
 #elif USE(COORDINATED_GRAPHICS)
     downcast<DrawingAreaProxyCoordinatedGraphics>(*m_drawingArea).dispatchAfterEnsuringDrawing(WTFMove(callback));
 #else
@@ -12572,19 +12572,19 @@ void WebPageProxy::generateTestReport(const String& message, const String& group
     send(Messages::WebPage::GenerateTestReport(message, group));
 }
 
-void WebPageProxy::addSubframePageProxy(const WebCore::RegistrableDomain& domain, WeakPtr<SubframePageProxy>&& subframePageProxy)
+void WebPageProxy::addRemotePageProxy(const WebCore::RegistrableDomain& domain, WeakPtr<RemotePageProxy>&& remotePageProxy)
 {
-    internals().domainToSubframePageProxyMap.add(domain, WTFMove(subframePageProxy));
+    internals().domainToRemotePageProxyMap.add(domain, WTFMove(remotePageProxy));
 }
 
-void WebPageProxy::removeSubpageFrameProxy(const WebCore::RegistrableDomain& domain)
+void WebPageProxy::removeRemotePageProxy(const WebCore::RegistrableDomain& domain)
 {
-    internals().domainToSubframePageProxyMap.remove(domain);
+    internals().domainToRemotePageProxyMap.remove(domain);
 }
 
-SubframePageProxy* WebPageProxy::subpageFrameProxyForRegistrableDomain(WebCore::RegistrableDomain domain) const
+RemotePageProxy* WebPageProxy::remotePageProxyForRegistrableDomain(WebCore::RegistrableDomain domain) const
 {
-    return internals().domainToSubframePageProxyMap.get(domain).get();
+    return internals().domainToRemotePageProxyMap.get(domain).get();
 }
 
 #if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
