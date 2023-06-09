@@ -549,6 +549,11 @@ $(PROJECT_DIR)/Modules/modern-media-controls/controls/time-control.js
 $(PROJECT_DIR)/Modules/modern-media-controls/controls/time-label.css
 $(PROJECT_DIR)/Modules/modern-media-controls/controls/time-label.js
 $(PROJECT_DIR)/Modules/modern-media-controls/controls/tracks-button.js
+$(PROJECT_DIR)/Modules/modern-media-controls/controls/vision-layout-traits.js
+$(PROJECT_DIR)/Modules/modern-media-controls/controls/vision-media-controls.css
+$(PROJECT_DIR)/Modules/modern-media-controls/controls/vision-media-controls.js
+$(PROJECT_DIR)/Modules/modern-media-controls/controls/vision-slider.css
+$(PROJECT_DIR)/Modules/modern-media-controls/controls/vision-slider.js
 $(PROJECT_DIR)/Modules/modern-media-controls/controls/watchos-activity-indicator.css
 $(PROJECT_DIR)/Modules/modern-media-controls/controls/watchos-activity-indicator.js
 $(PROJECT_DIR)/Modules/modern-media-controls/controls/watchos-layout-traits.js
@@ -1493,7 +1498,6 @@ $(PROJECT_DIR)/mathml/mathtags.in
 $(PROJECT_DIR)/page/BarProp.idl
 $(PROJECT_DIR)/page/Crypto.idl
 $(PROJECT_DIR)/page/DOMSelection.idl
-$(PROJECT_DIR)/page/DOMWindow.idl
 $(PROJECT_DIR)/page/DOMWindow+CSSOM.idl
 $(PROJECT_DIR)/page/DOMWindow+CSSOMView.idl
 $(PROJECT_DIR)/page/DOMWindow+Compat.idl

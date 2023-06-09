@@ -1,0 +1,335 @@
+/*
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+/* Enable container queries */
+
+.media-controls-container {
+    container-type: size;
+}
+
+/* Default values for some constants */
+
+.media-controls.vision,
+.media-controls.vision * {
+    --slider-height: 8px;
+    --inline-controls-bar-height: 32px;
+    --primary-glyph-color: white;
+    --secondary-glyph-color: white;
+    --center-controls-bar-button-zoom: 2;
+}
+
+/* Size class 2 */
+
+@container (min-width: 262px) {
+    .media-controls.vision,
+    .media-controls.vision * {
+        --inline-controls-inside-margin: 12px;
+    }
+}
+
+/* Size class 3, 4 and 5 */
+
+@container (min-width: 390px) {
+    .media-controls.vision,
+    .media-controls.vision * { 
+        --inline-controls-inside-margin: 16px;
+        --inline-controls-bar-margin: 12px;
+    }
+}
+
+/* Size class 5 */
+
+@container (min-width: 640px) {
+    .media-controls.vision,
+    .media-controls.vision * {
+        --center-controls-bar-button-zoom: 2.75;
+    }
+}
+
+/* Fullscreen */
+
+.media-controls.vision.fullscreen,
+.media-controls.vision.fullscreen * {
+    --inline-controls-inside-margin: 24px;
+    --inline-controls-bar-margin: 12px;
+}
+
+.media-controls.vision.fullscreen > .controls-bar.top-right,
+.media-controls.vision.fullscreen > .controls-bar.top-right * {
+    --inline-controls-bar-margin: 2px;
+}
+
+.media-controls.vision.fullscreen > .controls-bar.top-right {
+    padding: 0 0 0 11px;
+}
+
+/* Captions */
+
+:host(video[controls]) .visible-controls-bar:has(+ .vision) {
+    height: calc(100% - 9px - 48px - 2px);
+}
+
+:host(video[controls]) .visible-controls-bar:has(+ .vision.unconstrained) {
+    height: calc(100% - 16px - 48px - 2px);
+}
+
+:host(video[controls]) .visible-controls-bar:has(+ .vision.fullscreen) {
+    height: calc(100% - 24px - 48px - 2px);
+}
+
+/* Backdrop */
+
+.media-controls.vision > .backdrop {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.3);
+}
+
+/* Simple layout controls bar */
+
+.media-controls.vision .controls-bar.simple-layout {
+    display: flex;
+    align-items: center;
+}
+
+.media-controls.vision .controls-bar.simple-layout > *:not(.background-tint) {
+    position: relative;
+    margin-right: var(--inline-controls-bar-margin);
+}
+
+.media-controls.vision .controls-bar.simple-layout > *:last-child {
+    margin-right: 0 !important;
+}
+
+/* Background tint */
+
+.media-controls.vision .background-tint,
+.media-controls.vision .background-tint > div {
+    border-radius: calc(var(--inline-controls-bar-height) * 0.5);
+}
+
+.media-controls.vision:not(.audio) .background-tint > .tint {
+    display: none;
+}
+
+.media-controls.vision:not(.audio) button > .background-tint > .blur {
+    background-color: rgba(255, 255, 255, 0.15);
+    -webkit-backdrop-filter: saturate(20%) blur(50px);
+}
+
+.media-controls.vision:not(.audio) > .controls-bar > .background-tint > .blur {
+    background-color: rgba(149, 149, 149, 0.25);
+    -webkit-backdrop-filter: saturate(64%) blur(50px);
+}
+
+.media-controls.vision:not(.audio) button:active > .background-tint > .tint {
+    display: block;
+    background-color: rgba(255, 255, 255, 0.3);
+    mix-blend-mode: plus-lighter;
+}
+
+.media-controls.vision button.on > .background-tint > .tint {
+    display: block;
+    background-color: rgba(255, 255, 255, 1);
+}
+
+.media-controls.vision button.on > picture {
+    --primary-glyph-color: black;
+    --secondary-glyph-color: black;
+    background-color: var(--secondary-glyph-color) !important; /* overriding a !important in button.css */
+}
+
+/* Button */
+
+.media-controls.vision button > picture {
+    mix-blend-mode: initial;
+    transform: scale(0.9);
+}
+
+/* Center button */
+
+.media-controls.vision button.center {
+    width: 70px !important;
+    height: 70px !important;
+
+    padding: 15px;
+    box-sizing: content-box;
+}
+
+.media-controls.vision button.small-center {
+    padding: 10px;
+    box-sizing: content-box;
+}
+
+.media-controls.vision button.large.center {
+    width: 100px !important;
+    height: 100px !important;
+}
+
+.media-controls.vision button.center > .background-tint,
+.media-controls.vision button.center > .background-tint > div,
+.media-controls.vision button.small-center > .background-tint,
+.media-controls.vision button.small-center > .background-tint > div {
+    display: none;
+}
+
+.media-controls.vision button.center > picture,
+.media-controls.vision button.small-center > picture {
+    position: static;
+}
+
+/* All simple-layout controls bars */
+
+.media-controls.vision > .controls-bar.simple-layout > button {
+    width: auto !important; /* overriding inline style from the controls scaling code */
+    aspect-ratio: 1;
+    border-radius: 50%;
+}
+
+/* Central controls bar */
+
+.media-controls.vision > .controls-bar.center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.media-controls.vision > .controls-bar.simple-layout.center > button {
+    zoom: var(--center-controls-bar-button-zoom);
+    scale: 0.71;
+
+    padding: 4px;
+    box-sizing: content-box;
+}
+
+.media-controls.vision > .controls-bar.simple-layout.center > button.play-pause {
+    scale: 1;
+}
+
+/* Bottom controls bar */
+
+.media-controls.vision > .bottom.controls-bar,
+.media-controls.vision > .bottom.controls-bar * {
+    --inline-controls-bar-height: var(--slider-height);
+}
+
+.media-controls.vision.fullscreen > .bottom.controls-bar,
+.media-controls.vision.fullscreen > .bottom.controls-bar * {
+    --inline-controls-bar-height: 56px;
+}
+
+.media-controls.vision.audio > .bottom.controls-bar,
+.media-controls.vision.audio > .bottom.controls-bar * {
+    --inline-controls-bar-height: 31px;
+}
+
+.media-controls.vision > .bottom.controls-bar {
+    bottom: var(--inline-controls-inside-margin);
+}
+
+.media-controls.vision > .bottom.controls-bar button {
+    border-radius: 50%;
+    padding: 10px;
+    box-sizing: content-box;
+    transform: translateX(-10px);
+}
+
+.media-controls.vision > .controls-bar > .background-tint,
+.media-controls.vision > .controls-bar > .background-tint > div {
+    border-radius: calc(var(--inline-controls-bar-height) * 0.5);
+}
+
+/* Make the slider grow taller when active */
+
+.media-controls.vision:not(.audio) > .bottom.controls-bar .slider:active,
+.media-controls.vision:not(.audio) > .bottom.controls-bar .slider:active * {
+    --slider-height: 20px;
+}
+
+.media-controls.vision:not(.audio) > .bottom.controls-bar,
+.media-controls.vision:not(.audio) > .bottom.controls-bar * {
+    transition: all 350ms;
+}
+
+.media-controls.vision:not(.audio) > .bottom.controls-bar * {
+    transition-property: min-width, height, border-radius !important;
+}
+
+.media-controls.vision:not(.audio) > .bottom.controls-bar .fill:after {
+    --progress-bar-knob-margin: 3px;
+    --progress-bar-knob-size: calc(var(--slider-height) - 2 * var(--progress-bar-knob-margin) - 2 * var(--slider-fill-recessed-margin));
+
+    content: "";
+    position: absolute;
+    width: var(--progress-bar-knob-size);
+    border-radius: var(--progress-bar-knob-size);
+    background-color: white;
+    left: auto;
+    right: var(--progress-bar-knob-margin);
+    top: var(--progress-bar-knob-margin);
+    bottom: var(--progress-bar-knob-margin);
+    opacity: 0;
+    transition-property: width, border-radius, opacity;
+    transition-duration: inherit;
+}
+
+.media-controls.vision:not(.audio) > .bottom.controls-bar .slider:active .fill:after {
+    opacity: 1;
+}
+
+/* Time control and labels */
+
+.media-controls.vision .time-label {
+    font-size: 10px;
+    pointer-events: none;
+}
+
+.media-controls.vision .time-label:first-of-type {
+    text-align: left;
+}
+
+.media-controls.vision:not(.fullscreen):not(.audio) > .bottom.controls-bar .time-label {
+    bottom: calc(var(--slider-height) + 7px);
+    transition-property: bottom !important;
+}
+
+.media-controls.vision:not(.fullscreen):not(.audio) .time-label:first-of-type {
+    left: 0 !important;
+}
+
+.media-controls.vision:not(.fullscreen):not(.audio) .time-label:last-of-type {
+    left: auto !important;
+    right: 0 !important;
+}
+
+/* Optically center play buttons */
+
+.media-controls.vision button.play-pause.paused picture {
+    translate: 8% 0;
+}
