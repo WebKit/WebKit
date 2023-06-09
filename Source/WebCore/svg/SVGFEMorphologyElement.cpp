@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2009 Dirk Schulze <krit@webkit.org>
  * Copyright (C) 2018-2023 Apple Inc. All rights reserved.
- * Copyright (C) 2014 Google Inc. All rights reserved.
+ * Copyright (C) 2014-2015 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -113,7 +113,7 @@ void SVGFEMorphologyElement::svgAttributeChanged(const QualifiedName& attrName)
 
 bool SVGFEMorphologyElement::isIdentity() const
 {
-    return !radiusX() && !radiusY();
+    return !std::max(0.0f, radiusX()) && !std::max(0.0f, radiusY());
 }
 
 IntOutsets SVGFEMorphologyElement::outsets(const FloatRect& targetBoundingBox, SVGUnitTypes::SVGUnitType primitiveUnits) const
@@ -124,9 +124,10 @@ IntOutsets SVGFEMorphologyElement::outsets(const FloatRect& targetBoundingBox, S
 
 RefPtr<FilterEffect> SVGFEMorphologyElement::createFilterEffect(const FilterEffectVector&, const GraphicsContext&) const
 {
-    if (radiusX() < 0 || radiusY() < 0)
-        return nullptr;
-
+    // "A negative or zero value disables the effect of the given filter
+    // primitive (i.e., the result is the filter input image)."
+    // https://drafts.fxtf.org/filters/#element-attrdef-femorphology-radius
+    // This is handled by FEMorphology.
     return FEMorphology::create(svgOperator(), radiusX(), radiusY());
 }
 

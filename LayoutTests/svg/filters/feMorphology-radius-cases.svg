@@ -25,13 +25,13 @@
 
     <!-- negative radius case -->
     <g>
-      <rect x="140" y="10" width="100" height="100" fill="lime"/>
-      <rect x="140" y="10" width="100" height="100" fill="red" filter="url(#Erode-1)"/>
+      <rect x="140" y="10" width="100" height="100" fill="red"/>
+      <rect x="140" y="10" width="100" height="100" fill="lime" filter="url(#Erode-1)"/>
     </g>
 
     <g>
-      <rect x="140" y="130" width="100" height="100" fill="lime"/>
-      <rect x="140" y="130" width="100" height="100" fill="red" filter="url(#Dilate-1)"/>
+      <rect x="140" y="130" width="100" height="100" fill="red"/>
+      <rect x="140" y="130" width="100" height="100" fill="lime" filter="url(#Dilate-1)"/>
     </g>
     
     <!-- zero radius case -->
