@@ -2160,27 +2160,30 @@ void WebPageProxy::setIndicating(bool indicating)
 
 bool WebPageProxy::inspectable() const
 {
-    return m_inspectorDebuggable->inspectable();
+    return m_inspectorDebuggable && m_inspectorDebuggable->inspectable();
 }
 
 void WebPageProxy::setInspectable(bool inspectable)
 {
-    m_inspectorDebuggable->setInspectable(inspectable);
+    if (m_inspectorDebuggable)
+        m_inspectorDebuggable->setInspectable(inspectable);
 }
 
 String WebPageProxy::remoteInspectionNameOverride() const
 {
-    return m_inspectorDebuggable->nameOverride();
+    return m_inspectorDebuggable ? m_inspectorDebuggable->nameOverride() : nullString();
 }
 
 void WebPageProxy::setRemoteInspectionNameOverride(const String& name)
 {
-    m_inspectorDebuggable->setNameOverride(name);
+    if (m_inspectorDebuggable)
+        m_inspectorDebuggable->setNameOverride(name);
 }
 
 void WebPageProxy::remoteInspectorInformationDidChange()
 {
-    m_inspectorDebuggable->update();
+    if (m_inspectorDebuggable)
+        m_inspectorDebuggable->update();
 }
 #endif
 
