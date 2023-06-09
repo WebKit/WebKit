@@ -232,6 +232,7 @@ compositing/shared-backing/clipping-and-shared-backing.html [ Skip ] # Timeout
 compositing/video-page-visibility.html [ Skip ] # Timeout
 compositing/visibility/visibility-simple-video-layer.html [ Skip ] # Timeout
 fast/canvas/canvas-drawImage-hdr-video.html [ Skip ] # Timeout
+fast/events/media-focus-in-standalone-media-document.html [ Skip ]
 http/tests/canvas/webgl/origin-clean-conformance.html [ Skip ] # Timeout
 media/audio-data-url.html [ Skip ]
 media/audio-mpeg-supported.html [ Skip ]
@@ -1121,6 +1122,9 @@ http/wpt/service-workers/form-data-upload.html [ Failure ]
 http/wpt/service-workers/navigate-iframes-window-client.https.html [ Failure ]
 
 http/tests/misc/slow-loading-animated-image.html [ ImageOnlyFailure ]
+
+http/tests/misc/webtiming-one-redirect.py [ Failure Pass ]
+http/tests/misc/webtiming-two-redirects.py [ Failure Pass ]
 
 http/tests/permissions/permission-state-for-notifications-in-ephemeral-session.html [ Timeout ]
 http/tests/workers/service/service-worker-resource-timing.https.html [ Timeout ]
@@ -2089,7 +2093,6 @@ fast/events/input-events-paste-data.html [ Pass Failure ]
 fast/events/key-events-in-input-button.html [ Failure ]
 fast/events/keyboardevent-code.html [ Failure ]
 fast/events/keydown-numpad-keys.html [ Failure ]
-fast/events/media-focus-in-standalone-media-document.html [ Timeout ]
 fast/events/mouseover-button.html [ Failure ]
 fast/events/mouseup-from-button2.html [ Failure ]
 fast/events/option-tab.html [ Failure ]
@@ -2612,7 +2615,6 @@ compositing/hidpi-compositing-vs-non-compositing-check-on-testing-framework.html
 compositing/hidpi-subpixel-transform-origin.html [ ImageOnlyFailure ]
 compositing/hidpi-transform-with-render-layer-on-fractional-pixel-value.html [ ImageOnlyFailure ]
 compositing/layer-creation/deep-tree.html [ ImageOnlyFailure ]
-compositing/overlap-blending/reflection-opacity-huge.html [ Pass ]
 compositing/text-on-scaled-layer.html [ ImageOnlyFailure ]
 compositing/text-on-scaled-surface.html [ ImageOnlyFailure ]
 compositing/child-layer-with-subpixel-gap-needs-repaint-when-parent-moves.html [ ImageOnlyFailure ]
@@ -2829,3 +2831,11 @@ fast/forms/placeholder-with-positioned-element.html [ ImageOnlyFailure Pass ]
 fast/forms/input-placeholder-text-indent.html [ ImageOnlyFailure Pass ]
 
 fast/forms/placeholder-content-clipping-padding-box.html [ ImageOnlyFailure ]
+
+fast/forms/single-text-line-content-clipping.html [ ImageOnlyFailure ]
+http/tests/inspector/network/xhr-request-type.html [ Failure ]
+
+# ImageOnlyFailure only on local PC. Depends on the graphis driver?
+compositing/overlap-blending/reflection-opacity-huge.html [ ImageOnlyFailure Pass ]
+
+fast/css-grid-layout/grid-item-display.html [ Failure Pass ]
