@@ -1833,11 +1833,7 @@ elseif (USE_LIBEPOXY)
     )
     add_definitions(${LIBEPOXY_DEFINITIONS})
 else ()
-    if (USE_OPENGL)
-        list(APPEND WebCore_LIBRARIES OpenGL::OpenGL)
-    elseif (USE_OPENGL_ES)
-        list(APPEND WebCore_LIBRARIES OpenGL::GLES)
-    endif ()
+    list(APPEND WebCore_LIBRARIES OpenGL::GLES)
 
     if (USE_EGL)
         list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES
@@ -2062,10 +2058,6 @@ elseif (USE_ANGLE_EGL)
     list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
         ${WEBCORE_DIR}/platform/graphics/angle
         ${WEBCORE_DIR}/platform/graphics/opengl
-    )
-
-    list(APPEND WebCore_SOURCES
-        platform/graphics/opengl/TemporaryOpenGLSetting.cpp
     )
 endif ()
 

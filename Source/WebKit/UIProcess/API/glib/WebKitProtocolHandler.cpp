@@ -198,19 +198,23 @@ void WebKitProtocolHandler::handleGPU(WebKitURISchemeRequest* request)
         addTableRow(jsonObject, "GL_VERSION"_s, String::fromUTF8(reinterpret_cast<const char*>(glGetString(GL_VERSION))));
         addTableRow(jsonObject, "GL_SHADING_LANGUAGE_VERSION"_s, String::fromUTF8(reinterpret_cast<const char*>(glGetString(GL_SHADING_LANGUAGE_VERSION))));
 
-#if USE(OPENGL_ES)
-        addTableRow(jsonObject, "GL_EXTENSIONS"_s, String::fromUTF8(reinterpret_cast<const char*>(glGetString(GL_EXTENSIONS))));
-#else
-        StringBuilder extensionsBuilder;
-        GLint numExtensions = 0;
-        glGetIntegerv(GL_NUM_EXTENSIONS, &numExtensions);
-        for (GLint i = 0; i < numExtensions; ++i) {
-            if (i)
-                extensionsBuilder.append(' ');
-            extensionsBuilder.append(reinterpret_cast<const char*>(glGetStringi(GL_EXTENSIONS, i)));
+        switch (eglQueryAPI()) {
+        case EGL_OPENGL_ES_API:
+            addTableRow(jsonObject, "GL_EXTENSIONS"_s, String::fromUTF8(reinterpret_cast<const char*>(glGetString(GL_EXTENSIONS))));
+            break;
+        case EGL_OPENGL_API: {
+            StringBuilder extensionsBuilder;
+            GLint numExtensions = 0;
+            glGetIntegerv(GL_NUM_EXTENSIONS, &numExtensions);
+            for (GLint i = 0; i < numExtensions; ++i) {
+                if (i)
+                    extensionsBuilder.append(' ');
+                extensionsBuilder.append(reinterpret_cast<const char*>(glGetStringi(GL_EXTENSIONS, i)));
+            }
+            addTableRow(jsonObject, "GL_EXTENSIONS"_s, extensionsBuilder.toString());
+            break;
         }
-        addTableRow(jsonObject, "GL_EXTENSIONS"_s, extensionsBuilder.toString());
-#endif
+        }
 
         auto eglDisplay = eglGetCurrentDisplay();
         addTableRow(jsonObject, "EGL_VERSION"_s, String::fromUTF8(eglQueryString(eglDisplay, EGL_VERSION)));
@@ -333,10 +337,8 @@ void WebKitProtocolHandler::handleGPU(WebKitURISchemeRequest* request)
         addTableRow(hardwareAccelerationObject, "Native interface"_s, uiProcessContextIsEGL() ? "EGL"_s : "None"_s);
 
 #if USE(EGL)
-        if (uiProcessContextIsEGL()) {
-            GLContext::ScopedGLContext glContext(GLContext::createOffscreen(PlatformDisplay::sharedDisplay()));
+        if (uiProcessContextIsEGL() && eglGetCurrentContext() != EGL_NO_CONTEXT)
             addEGLInfo(hardwareAccelerationObject);
-        }
 #endif // USE(EGL)
     }
 

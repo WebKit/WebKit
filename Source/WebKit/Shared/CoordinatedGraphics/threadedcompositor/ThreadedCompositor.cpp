@@ -40,10 +40,8 @@
 
 #if USE(LIBEPOXY)
 #include <epoxy/gl.h>
-#elif USE(OPENGL_ES)
-#include <GLES2/gl2.h>
 #else
-#include <GL/gl.h>
+#include <GLES2/gl2.h>
 #endif
 
 namespace WebKit {

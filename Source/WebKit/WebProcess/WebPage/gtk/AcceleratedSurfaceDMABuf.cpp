@@ -231,7 +231,7 @@ AcceleratedSurfaceDMABuf::RenderTargetSHMImage::RenderTargetSHMImage(WebCore::Pa
 
 void AcceleratedSurfaceDMABuf::RenderTargetSHMImage::didRenderFrame() const
 {
-    glReadPixels(0, 0, m_backBitmap->size().width(), m_backBitmap->size().height(), GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, m_backBitmap->data());
+    glReadPixels(0, 0, m_backBitmap->size().width(), m_backBitmap->size().height(), GL_BGRA, GL_UNSIGNED_BYTE, m_backBitmap->data());
 }
 
 void AcceleratedSurfaceDMABuf::RenderTargetSHMImage::swap()

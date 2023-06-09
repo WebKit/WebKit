@@ -53,8 +53,6 @@ list(APPEND WebCore_SOURCES
 
     platform/graphics/egl/GLContext.cpp
 
-    platform/graphics/opengl/TemporaryOpenGLSetting.cpp
-
     platform/graphics/opentype/OpenTypeUtilities.cpp
 
     platform/graphics/win/ComplexTextControllerUniscribe.cpp
