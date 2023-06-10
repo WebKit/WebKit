@@ -13,6 +13,7 @@ $(BUILT_PRODUCTS_DIR)/usr/local/include/wtf/PlatformLegacy.h
 $(BUILT_PRODUCTS_DIR)/usr/local/include/wtf/PlatformOS.h
 $(BUILT_PRODUCTS_DIR)/usr/local/include/wtf/PlatformUse.h
 $(BUILT_PRODUCTS_DIR)/usr/local/include/wtf/Scripts/Preferences/UnifiedWebPreferences.yaml
+$(BUILT_PRODUCTS_DIR)/usr/local/include/wtf/Scripts/preference_lib.rb
 $(JAVASCRIPTCORE_PRIVATE_HEADERS_DIR)/UpdateContents.py
 $(JAVASCRIPTCORE_PRIVATE_HEADERS_DIR)/builtins_generate_combined_header.py
 $(JAVASCRIPTCORE_PRIVATE_HEADERS_DIR)/builtins_generate_combined_implementation.py

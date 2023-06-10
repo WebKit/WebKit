@@ -79,5 +79,5 @@ WEB_PREFERENCES_GENERATED_FILES = \
 
 all : $(WEB_PREFERENCES_GENERATED_FILES)
 
-$(WEB_PREFERENCES_GENERATED_FILES) : % : %.erb $(WTF_BUILD_SCRIPTS_DIR)/GeneratePreferences.rb $(WTF_BUILD_SCRIPTS_DIR)/Preferences/UnifiedWebPreferences.yaml
-	$(RUBY) $(WTF_BUILD_SCRIPTS_DIR)/GeneratePreferences.rb --frontend WebKitLegacy --template $< $(WTF_BUILD_SCRIPTS_DIR)/Preferences/UnifiedWebPreferences.yaml
+$(WEB_PREFERENCES_GENERATED_FILES) : % : %.erb $(WTF_BUILD_SCRIPTS_DIR)/GeneratePreferences.rb $(WTF_BUILD_SCRIPTS_DIR)/Preferences/UnifiedWebPreferences.yaml $(WTF_BUILD_SCRIPTS_DIR)/preference_lib.rb
+	$(RUBY) -I$(WTF_BUILD_SCRIPTS_DIR) $(WTF_BUILD_SCRIPTS_DIR)/GeneratePreferences.rb --frontend WebKitLegacy --template $< $(WTF_BUILD_SCRIPTS_DIR)/Preferences/UnifiedWebPreferences.yaml

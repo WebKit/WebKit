@@ -188,6 +188,7 @@
 		CD5497AC15857D0300B5BC30 /* MediaTime.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD5497AA15857D0300B5BC30 /* MediaTime.cpp */; };
 		CEA072AA236FFBF70018839C /* CrashReporter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CEA072A9236FFBF70018839C /* CrashReporter.cpp */; };
 		DCEE22011CEA7551000C2396 /* BlockObjCExceptions.mm in Sources */ = {isa = PBXBuildFile; fileRef = DCEE21FD1CEA7551000C2396 /* BlockObjCExceptions.mm */; };
+		DD00C28B2A3409C500CBB4D9 /* preference_lib.rb in Headers */ = {isa = PBXBuildFile; fileRef = DD00C28A2A3409B300CBB4D9 /* preference_lib.rb */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD03059327B5DA0D00344002 /* SignedPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = 862A8D32278DE74A0014120C /* SignedPtr.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD28468829248DDA0009A61D /* UnifiedWebPreferences.yaml in Headers */ = {isa = PBXBuildFile; fileRef = DD284687292442F30009A61D /* UnifiedWebPreferences.yaml */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD3DC85E27A4BF8E007E5B61 /* WeakHashSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B67F3F12228D5310030DE9C /* WeakHashSet.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1465,6 +1466,7 @@
 		DCEE21FC1CEA7551000C2396 /* BlockObjCExceptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlockObjCExceptions.h; sourceTree = "<group>"; };
 		DCEE21FD1CEA7551000C2396 /* BlockObjCExceptions.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BlockObjCExceptions.mm; sourceTree = "<group>"; };
 		DCEE22041CEB9869000C2396 /* BackwardsGraph.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BackwardsGraph.h; sourceTree = "<group>"; };
+		DD00C28A2A3409B300CBB4D9 /* preference_lib.rb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.ruby; path = preference_lib.rb; sourceTree = "<group>"; };
 		DD284687292442F30009A61D /* UnifiedWebPreferences.yaml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.yaml; path = UnifiedWebPreferences.yaml; sourceTree = "<group>"; };
 		DD28DF2329D368BD00BBB459 /* generate-tapi-filelist.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = "generate-tapi-filelist.py"; sourceTree = "<group>"; };
 		DD3DCA0527A4E176007E5B61 /* generate-unified-source-bundles.rb */ = {isa = PBXFileReference; lastKnownFileType = text.script.ruby; path = "generate-unified-source-bundles.rb"; sourceTree = "<group>"; };
@@ -2560,6 +2562,7 @@
 				DD28DF2329D368BD00BBB459 /* generate-tapi-filelist.py */,
 				DD3DCA0527A4E176007E5B61 /* generate-unified-source-bundles.rb */,
 				DD3DCA0627A4E176007E5B61 /* GeneratePreferences.rb */,
+				DD00C28A2A3409B300CBB4D9 /* preference_lib.rb */,
 			);
 			path = Scripts;
 			sourceTree = "<group>";
@@ -2914,6 +2917,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DD00C28B2A3409C500CBB4D9 /* preference_lib.rb in Headers */,
 				FE6997E129D241630078B9C6 /* AbortWithReasonSPI.h in Headers */,
 				E3B8E6032961EA7600A8AEE3 /* AccessibleAddress.h in Headers */,
 				DD3DC8FA27A4BF8E007E5B61 /* AggregateLogger.h in Headers */,

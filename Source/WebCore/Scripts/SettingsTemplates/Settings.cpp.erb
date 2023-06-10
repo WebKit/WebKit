@@ -168,7 +168,7 @@ void Settings::disableGlobalUnstableFeaturesForModernWebKit()
 <%-   if @setting.condition -%>
 #if <%= @setting.condition %>
 <%-   end -%>
-    <%= @setting.options["webcoreBinding"] %>::<%= @setting.setterFunctionName %>(false);
+    <%= @setting.webcoreBinding %>::<%= @setting.setterFunctionName %>(false);
 <%-   if @setting.condition -%>
 #endif
 <%-   end -%>

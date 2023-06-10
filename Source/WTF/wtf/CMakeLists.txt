@@ -645,6 +645,7 @@ file(COPY
 
 set(WTF_PREFERENCES
     ../Scripts/GeneratePreferences.rb
+    ../Scripts/preference_lib.rb
     ../Scripts/Preferences/UnifiedWebPreferences.yaml
 )
 

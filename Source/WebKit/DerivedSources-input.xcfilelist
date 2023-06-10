@@ -16,6 +16,7 @@ $(BUILT_PRODUCTS_DIR)/usr/local/include/wtf/Scripts/Preferences/WebPreferences.y
 $(BUILT_PRODUCTS_DIR)/usr/local/include/wtf/Scripts/Preferences/WebPreferencesDebug.yaml
 $(BUILT_PRODUCTS_DIR)/usr/local/include/wtf/Scripts/Preferences/WebPreferencesExperimental.yaml
 $(BUILT_PRODUCTS_DIR)/usr/local/include/wtf/Scripts/Preferences/WebPreferencesInternal.yaml
+$(BUILT_PRODUCTS_DIR)/usr/local/include/wtf/Scripts/preference_lib.rb
 $(JAVASCRIPTCORE_PRIVATE_HEADERS_DIR)/cpp_generator.py
 $(JAVASCRIPTCORE_PRIVATE_HEADERS_DIR)/cpp_generator_templates.py
 $(JAVASCRIPTCORE_PRIVATE_HEADERS_DIR)/generate-inspector-protocol-bindings.py

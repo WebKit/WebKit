@@ -2263,8 +2263,8 @@ GENERATE_SETTINGS = \
 
 all : $(GENERATE_SETTINGS)
 
-$(GENERATE_SETTINGS) : % : $(WebCore)/Scripts/SettingsTemplates/%.erb $(WEB_PREFERENCES_INPUT_FILES) $(WebCore)/Scripts/GenerateSettings.rb
-	$(RUBY) $(WebCore)/Scripts/GenerateSettings.rb $(WEB_PREFERENCES_INPUT_FILES) --template $<
+$(GENERATE_SETTINGS) : % : $(WebCore)/Scripts/SettingsTemplates/%.erb $(WEB_PREFERENCES_INPUT_FILES) $(WebCore)/Scripts/GenerateSettings.rb $(WTF_BUILD_SCRIPTS_DIR)/preference_lib.rb
+	$(RUBY) -I$(WTF_BUILD_SCRIPTS_DIR) $(WebCore)/Scripts/GenerateSettings.rb $(WEB_PREFERENCES_INPUT_FILES) --template $<
 
 # --------
 

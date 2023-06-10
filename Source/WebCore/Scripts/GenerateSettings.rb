@@ -28,6 +28,8 @@ require 'erb'
 require 'optparse'
 require 'yaml'
 
+require 'preference_lib'
+
 options = { 
   :outputDirectory => nil,
   :templates => [],
@@ -56,48 +58,20 @@ end
 
 FileUtils.mkdir_p(options[:outputDirectory])
 
-def load(path)
-  parsed = begin
-    YAML.load_file(path)
-  rescue ArgumentError => e
-    puts "ERROR: Could not parse input file: #{e.message}"
-    exit(-1)
-  end
-
-  previousName = nil
-  parsed.keys.each do |name|
-    if previousName != nil and previousName > name
-      puts "ERROR: Input file #{path} is not sorted. First out of order name found is '#{name}'."
-      exit(-1)
-    end
-    previousName = name
-  end
-
-  parsed
-end
-
-class Setting
-  attr_accessor :name
-  attr_accessor :options
-  attr_accessor :type
-  attr_accessor :status
-  attr_accessor :category
-  attr_accessor :defaultValues
+class Setting < Preference
+  attr_accessor :webcoreBinding
   attr_accessor :excludeFromInternalSettings
-  attr_accessor :condition
   attr_accessor :onChange
   attr_accessor :getter
   attr_accessor :inspectorOverride
   attr_accessor :customImplementation
 
-  def initialize(name, options)
+  def initialize(name, options, frontend)
+    super
     @name = normalizeNameForWebCore(name, options)
-    @options = options
     @type = options["refinedType"] || options["type"]
-    @status = options["status"]
-    @defaultValues = options["defaultValue"]["WebCore"]
+    @webcoreBinding = options["webcoreBinding"]
     @excludeFromInternalSettings = options["webcoreExcludeFromInternalSettings"] || false
-    @condition = options["condition"]
     @onChange = options["webcoreOnChange"]
     @getter = options["webcoreGetter"]
     @inspectorOverride = options["inspectorOverride"]
@@ -256,12 +230,12 @@ class Settings
     settingsByName = {}
     globalSettingsByName = {}
     settingsFiles.each do |file|
-      parsedSettings = load(file).each do |name, options|
+      Setting.parse_for_frontend(file, "WebCore").each do |setting|
         # An empty "webcoreBinding" entry indicates this preference uses the default, which is bound to Settings.
-        if !options["webcoreBinding"]
-          settingsByName[name] = Setting.new(name, options)
-        elsif options["webcoreBinding"] == "DeprecatedGlobalSettings"
-          globalSettingsByName[name] = Setting.new(name, options)
+        if !setting.webcoreBinding
+          settingsByName[setting.name] = setting
+        elsif setting.webcoreBinding == "DeprecatedGlobalSettings"
+          globalSettingsByName[setting.name] = setting
         end
       end
     end

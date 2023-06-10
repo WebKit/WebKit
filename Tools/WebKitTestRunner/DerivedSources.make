@@ -52,8 +52,8 @@ WEB_PREFERENCES_PATTERNS = $(subst .erb,,$(WEB_PREFERENCES_FILES))
 
 all : $(WEB_PREFERENCES_FILES)
 
-$(WEB_PREFERENCES_PATTERNS) : $(WTF_BUILD_SCRIPTS_DIR)/GeneratePreferences.rb $(WEB_PREFERENCES_TEMPLATES) $(WTF_BUILD_SCRIPTS_DIR)/Preferences/UnifiedWebPreferences.yaml
-	$(RUBY) $< --frontend WebKit $(addprefix --template , $(WEB_PREFERENCES_TEMPLATES)) $(WTF_BUILD_SCRIPTS_DIR)/Preferences/UnifiedWebPreferences.yaml
+$(WEB_PREFERENCES_PATTERNS) : $(WTF_BUILD_SCRIPTS_DIR)/GeneratePreferences.rb $(WEB_PREFERENCES_TEMPLATES) $(WTF_BUILD_SCRIPTS_DIR)/Preferences/UnifiedWebPreferences.yaml $(WTF_BUILD_SCRIPTS_DIR)/preference_lib.rb
+	$(RUBY) -I$(WTF_BUILD_SCRIPTS_DIR) $< --frontend WebKit $(addprefix --template , $(WEB_PREFERENCES_TEMPLATES)) $(WTF_BUILD_SCRIPTS_DIR)/Preferences/UnifiedWebPreferences.yaml
 
 
 INJECTED_BUNDLE_INTERFACES = \

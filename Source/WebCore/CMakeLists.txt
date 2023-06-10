@@ -2511,8 +2511,8 @@ add_custom_command(
        ${WebCore_DERIVED_SOURCES_DIR}/InternalSettingsGenerated.cpp
        ${WebCore_DERIVED_SOURCES_DIR}/InternalSettingsGenerated.idl
     MAIN_DEPENDENCY ${WEBCORE_DIR}/page/Settings.yaml
-    DEPENDS ${WEBCORE_DIR}/Scripts/GenerateSettings.rb ${SETTINGS_TEMPLATES} WTF_CopyPreferences ${WTF_WEB_PREFERENCES}
-    COMMAND ${RUBY_EXECUTABLE} ${WEBCORE_DIR}/Scripts/GenerateSettings.rb --outputDir ${WebCore_DERIVED_SOURCES_DIR} --template "$<JOIN:${SETTINGS_TEMPLATES},;--template;>" ${WTF_WEB_PREFERENCES} ${WEBCORE_DIR}/page/Settings.yaml
+    DEPENDS ${WEBCORE_DIR}/Scripts/GenerateSettings.rb ${WTF_SCRIPTS_DIR}/preference_lib.rb ${SETTINGS_TEMPLATES} WTF_CopyPreferences ${WTF_WEB_PREFERENCES}
+    COMMAND ${RUBY_EXECUTABLE} -I${WTF_SCRIPTS_DIR} ${WEBCORE_DIR}/Scripts/GenerateSettings.rb --outputDir ${WebCore_DERIVED_SOURCES_DIR} --template "$<JOIN:${SETTINGS_TEMPLATES},;--template;>" ${WTF_WEB_PREFERENCES} ${WEBCORE_DIR}/page/Settings.yaml
     COMMAND_EXPAND_LISTS
     VERBATIM)
 list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES_DIR}/Settings.h)
