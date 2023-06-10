@@ -245,14 +245,6 @@ void RenderImage::styleDidChange(StyleDifference diff, const RenderStyle* oldSty
     }
     if (diff == StyleDifference::Layout && oldStyle && oldStyle->imageOrientation() != style().imageOrientation())
         return repaintOrMarkForLayout(ImageSizeChangeNone);
-
-#if ENABLE(CSS_IMAGE_RESOLUTION)
-    if (diff == StyleDifference::Layout && oldStyle
-        && (oldStyle->imageResolution() != style().imageResolution()
-            || oldStyle->imageResolutionSnap() != style().imageResolutionSnap()
-            || oldStyle->imageResolutionSource() != style().imageResolutionSource()))
-        repaintOrMarkForLayout(ImageSizeChangeNone);
-#endif
 }
 
 bool RenderImage::shouldCollapseToEmpty() const
@@ -346,16 +338,7 @@ void RenderImage::updateInnerContentRect()
 
 void RenderImage::repaintOrMarkForLayout(ImageSizeChangeType imageSizeChange, const IntRect* rect)
 {
-#if ENABLE(CSS_IMAGE_RESOLUTION)
-    double scale = style().imageResolution();
-    if (style().imageResolutionSnap() == ImageResolutionSnap::Pixels)
-        scale = roundForImpreciseConversion<int>(scale);
-    if (scale <= 0)
-        scale = 1;
-    LayoutSize newIntrinsicSize = imageResource().intrinsicSize(style().effectiveZoom() / scale);
-#else
     LayoutSize newIntrinsicSize = imageResource().intrinsicSize(style().effectiveZoom());
-#endif
     LayoutSize oldIntrinsicSize = intrinsicSize();
 
     updateIntrinsicSizeIfNeeded(newIntrinsicSize);

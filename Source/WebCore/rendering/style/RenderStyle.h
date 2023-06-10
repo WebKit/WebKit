@@ -1003,12 +1003,6 @@ public:
     inline ImageOrientation imageOrientation() const;
     inline ImageRendering imageRendering() const;
 
-#if ENABLE(CSS_IMAGE_RESOLUTION)
-    inline ImageResolutionSource imageResolutionSource() const;
-    inline ImageResolutionSnap imageResolutionSnap() const;
-    inline float imageResolution() const;
-#endif
-    
     inline OptionSet<SpeakAs> speakAs() const;
 
     inline FilterOperations& mutableFilter();
@@ -1216,12 +1210,6 @@ public:
 
     inline void setImageOrientation(ImageOrientation);
     inline void setImageRendering(ImageRendering);
-
-#if ENABLE(CSS_IMAGE_RESOLUTION)
-    inline void setImageResolutionSource(ImageResolutionSource);
-    inline void setImageResolutionSnap(ImageResolutionSnap);
-    inline void setImageResolution(float);
-#endif
 
     void setWhiteSpace(WhiteSpace v) { m_inheritedFlags.whiteSpace = static_cast<unsigned>(v); }
     void setWhiteSpaceCollapse(WhiteSpaceCollapse v) { m_inheritedFlags.whiteSpaceCollapse = static_cast<unsigned>(v); }

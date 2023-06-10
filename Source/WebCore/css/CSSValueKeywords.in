@@ -1451,8 +1451,6 @@ NaN
 
 from-image
 
-snap enable-if=ENABLE_CSS_IMAGE_RESOLUTION
-
 // overflow
 -webkit-paged-x
 -webkit-paged-y

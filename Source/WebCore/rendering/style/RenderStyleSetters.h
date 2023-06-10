@@ -349,12 +349,6 @@ inline void RenderStyle::setApplePayButtonType(ApplePayButtonType type) { SET_NE
 inline void RenderStyle::setBoxDecorationBreak(BoxDecorationBreak value) { SET_NESTED(m_nonInheritedData, boxData, m_boxDecorationBreak, static_cast<unsigned>(value)); }
 #endif
 
-#if ENABLE(CSS_IMAGE_RESOLUTION)
-inline void RenderStyle::setImageResolution(float resolution) { SET(m_rareInheritedData, imageResolution, resolution); }
-inline void RenderStyle::setImageResolutionSnap(ImageResolutionSnap value) { SET(m_rareInheritedData, imageResolutionSnap, value); }
-inline void RenderStyle::setImageResolutionSource(ImageResolutionSource value) { SET(m_rareInheritedData, imageResolutionSource, value); }
-#endif
-
 #if ENABLE(DARK_MODE_CSS)
 inline void RenderStyle::setColorScheme(StyleColorScheme scheme) { SET(m_rareInheritedData, colorScheme, scheme); }
 #endif

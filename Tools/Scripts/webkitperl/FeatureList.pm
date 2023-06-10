@@ -250,12 +250,6 @@ my @features = (
     { option => "css-conic-gradients", desc => "Toggle CSS Conic Gradient support",
       define => "ENABLE_CSS_CONIC_GRADIENTS", value => \$cssConicGradientsSupport },
 
-    { option => "css-device-adaptation", desc => "Toggle CSS Device Adaptation support",
-      define => "ENABLE_CSS_DEVICE_ADAPTATION", value => \$cssDeviceAdaptationSupport },
-
-    { option => "css-image-resolution", desc => "Toggle CSS image-resolution support",
-      define => "ENABLE_CSS_IMAGE_RESOLUTION", value => \$cssImageResolutionSupport },
-
     { option => "css-painting-api", desc => "Toggle CSS Painting API support",
       define => "ENABLE_CSS_PAINTING_API", value => \$cssPaintingAPISupport },
 

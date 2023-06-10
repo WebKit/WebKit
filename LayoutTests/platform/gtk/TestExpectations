@@ -877,9 +877,6 @@ webkit.org/b/169531 fast/text/font-selection-font-face-parse.html [ Skip ]
 # CSS image-orientation is not yet enabled.
 webkit.org/b/89052 fast/css/image-orientation [ Skip ]
 
-# CSS image-resolution is not yet enabled.
-webkit.org/b/85262 fast/css/image-resolution [ Skip ]
-
 # Requires CACHE_PARTITIONING or an alternative implementation
 webkit.org/b/168366 http/tests/security/credentials-iframes.html
 webkit.org/b/168366 http/tests/security/credentials-iframes-allowCrossOriginSubresourcesToAskForCredentials.html

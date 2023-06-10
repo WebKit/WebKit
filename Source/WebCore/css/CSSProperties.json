@@ -3643,28 +3643,6 @@
                 "url": "https://drafts.csswg.org/css-images-3/#propdef-image-rendering"
             }
         },
-        "image-resolution": {
-            "inherited": true,
-            "values": [
-                "from-image",
-                "snap"
-            ],
-            "codegen-properties": {
-                "custom": "All",
-                "enable-if": "ENABLE_CSS_IMAGE_RESOLUTION",
-                "parser-function": "consumeImageResolution",
-                "parser-grammar-unused": "[ from-image || <resolution> ] && snap?",
-                "parser-grammar-unused-reason": "Needs support for '||' groups and optionals."
-            },
-            "status": {
-                "status": "under consideration",
-                "enabled-by-default": false
-            },
-            "specification": {
-                "category": "css-images",
-                "url": "https://www.w3.org/TR/css-images-4/#image-resolution"
-            }
-        },
         "inline-size": {
             "codegen-properties": {
                 "aliases": [

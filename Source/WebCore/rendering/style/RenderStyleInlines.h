@@ -736,12 +736,6 @@ inline BlendMode RenderStyle::blendMode() const { return BlendMode::Normal; }
 inline Isolation RenderStyle::isolation() const { return Isolation::Auto; }
 #endif
 
-#if ENABLE(CSS_IMAGE_RESOLUTION)
-inline float RenderStyle::imageResolution() const { return m_rareInheritedData->imageResolution; }
-inline ImageResolutionSnap RenderStyle::imageResolutionSnap() const { return static_cast<ImageResolutionSnap>(m_rareInheritedData->imageResolutionSnap); }
-inline ImageResolutionSource RenderStyle::imageResolutionSource() const { return static_cast<ImageResolutionSource>(m_rareInheritedData->imageResolutionSource); }
-#endif
-
 #if ENABLE(CURSOR_VISIBILITY)
 constexpr CursorVisibility RenderStyle::initialCursorVisibility() { return CursorVisibility::Auto; }
 #endif

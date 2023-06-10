@@ -55,10 +55,6 @@ struct GreaterThanOrSameSizeAsStyleRareInheritedData : public RefCounted<Greater
     TextSizeAdjustment textSizeAdjust;
 #endif
 
-#if ENABLE(CSS_IMAGE_RESOLUTION)
-    float imageResolutionFloats;
-#endif
-
 #if ENABLE(TOUCH_EVENTS)
     StyleColor tapHighlightColor;
 #endif
@@ -121,10 +117,6 @@ StyleRareInheritedData::StyleRareInheritedData()
 #if ENABLE(OVERFLOW_SCROLLING_TOUCH)
     , useTouchOverflowScrolling(RenderStyle::initialUseTouchOverflowScrolling())
 #endif
-#if ENABLE(CSS_IMAGE_RESOLUTION)
-    , imageResolutionSource(RenderStyle::initialImageResolutionSource())
-    , imageResolutionSnap(RenderStyle::initialImageResolutionSnap())
-#endif
     , textAlignLast(static_cast<unsigned>(RenderStyle::initialTextAlignLast()))
     , textJustify(static_cast<unsigned>(RenderStyle::initialTextJustify()))
     , textDecorationSkipInk(static_cast<unsigned>(RenderStyle::initialTextDecorationSkipInk()))
@@ -158,9 +150,6 @@ StyleRareInheritedData::StyleRareInheritedData()
     , tabSize(RenderStyle::initialTabSize())
 #if ENABLE(TEXT_AUTOSIZING)
     , textSizeAdjust(RenderStyle::initialTextSizeAdjust())
-#endif
-#if ENABLE(CSS_IMAGE_RESOLUTION)
-    , imageResolution(RenderStyle::initialImageResolution())
 #endif
 #if ENABLE(TOUCH_EVENTS)
     , tapHighlightColor(RenderStyle::initialTapHighlightColor())
@@ -220,10 +209,6 @@ inline StyleRareInheritedData::StyleRareInheritedData(const StyleRareInheritedDa
 #if ENABLE(OVERFLOW_SCROLLING_TOUCH)
     , useTouchOverflowScrolling(o.useTouchOverflowScrolling)
 #endif
-#if ENABLE(CSS_IMAGE_RESOLUTION)
-    , imageResolutionSource(o.imageResolutionSource)
-    , imageResolutionSnap(o.imageResolutionSnap)
-#endif
     , textAlignLast(o.textAlignLast)
     , textJustify(o.textJustify)
     , textDecorationSkipInk(o.textDecorationSkipInk)
@@ -264,9 +249,6 @@ inline StyleRareInheritedData::StyleRareInheritedData(const StyleRareInheritedDa
     , tabSize(o.tabSize)
 #if ENABLE(TEXT_AUTOSIZING)
     , textSizeAdjust(o.textSizeAdjust)
-#endif
-#if ENABLE(CSS_IMAGE_RESOLUTION)
-    , imageResolution(o.imageResolution)
 #endif
 #if ENABLE(TOUCH_EVENTS)
     , tapHighlightColor(o.tapHighlightColor)
@@ -351,11 +333,6 @@ bool StyleRareInheritedData::operator==(const StyleRareInheritedData& o) const
         && lineGrid == o.lineGrid
         && imageOrientation == o.imageOrientation
         && imageRendering == o.imageRendering
-#if ENABLE(CSS_IMAGE_RESOLUTION)
-        && imageResolutionSource == o.imageResolutionSource
-        && imageResolutionSnap == o.imageResolutionSnap
-        && imageResolution == o.imageResolution
-#endif
         && textAlignLast == o.textAlignLast
         && textJustify == o.textJustify
         && textDecorationSkipInk == o.textDecorationSkipInk

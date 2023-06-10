@@ -134,10 +134,6 @@ public:
 #if ENABLE(OVERFLOW_SCROLLING_TOUCH)
     unsigned useTouchOverflowScrolling: 1;
 #endif
-#if ENABLE(CSS_IMAGE_RESOLUTION)
-    unsigned imageResolutionSource : 1; // ImageResolutionSource
-    unsigned imageResolutionSnap : 1; // ImageResolutionSnap
-#endif
     unsigned textAlignLast : 3; // TextAlignLast
     unsigned textJustify : 2; // TextJustify
     unsigned textDecorationSkipInk : 2; // TextDecorationSkipInk
@@ -195,10 +191,6 @@ public:
 
 #if ENABLE(TEXT_AUTOSIZING)
     TextSizeAdjustment textSizeAdjust;
-#endif
-
-#if ENABLE(CSS_IMAGE_RESOLUTION)
-    float imageResolution;
 #endif
 
 #if ENABLE(TOUCH_EVENTS)

@@ -43,9 +43,6 @@ imported/blink/fast/css/image-orientation [ Skip ]
 # TODO EXIF-resolution is not supported
 imported/w3c/web-platform-tests/density-size-correction/ [ Skip ]
 
-# CSS_IMAGE_RESOLUTION is disabled
-fast/css/image-resolution [ Skip ]
-
 # CSS_SCROLL_SNAP is disabled
 css3/scroll-snap [ Skip ]
 

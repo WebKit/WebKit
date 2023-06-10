@@ -600,9 +600,6 @@ Bug(WPE) fast/fixed-layout [ Skip ]
 # CSS image-orientation is not yet enabled.
 webkit.org/b/89052 fast/css/image-orientation [ Skip ]
 
-# CSS image-resolution is not yet enabled.
-webkit.org/b/85262 fast/css/image-resolution [ Skip ]
-
 # No support for resource load statistics yet
 webkit.org/b/177943 http/tests/resourceLoadStatistics/ [ Skip ]
 
