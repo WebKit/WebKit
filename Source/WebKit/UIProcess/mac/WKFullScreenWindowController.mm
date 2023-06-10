@@ -747,6 +747,7 @@ static CAAnimation *zoomAnimation(const WebCore::FloatRect& initialFrame, const 
         scaleAnimation.toValue = scaleValue;
 
     scaleAnimation.duration = duration;
+    scaleAnimation.speed = speed;
     scaleAnimation.removedOnCompletion = NO;
     scaleAnimation.fillMode = kCAFillModeBoth;
     scaleAnimation.timingFunction = timingFunctionForDuration(duration);
@@ -783,6 +784,7 @@ static CAAnimation *maskAnimation(const WebCore::FloatRect& initialFrame, const 
     CAAnimationGroup *animation = [CAAnimationGroup animation];
     animation.animations = @[boundsAnimation, positionAnimation];
     animation.duration = duration;
+    animation.speed = speed;
     animation.removedOnCompletion = NO;
     animation.fillMode = kCAFillModeBoth;
     animation.timingFunction = timingFunctionForDuration(duration);
