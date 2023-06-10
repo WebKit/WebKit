@@ -3272,18 +3272,6 @@
                 "url": "https://www.w3.org/TR/css-lists-3/#counter-properties"
             }
         },
-        "counter-set": {
-            "codegen-properties": {
-                "skip-codegen": true
-            },
-            "status": {
-                "status": "not implemented"
-            },
-            "specification": {
-                "category": "css-lists",
-                "url": "https://www.w3.org/TR/css-lists-3/#propdef-counter-set"
-            }
-        },
         "cursor": {
             "inherited": true,
             "values": [
@@ -5809,69 +5797,6 @@
                 "url": "https://www.w3.org/TR/css-text-3/#text-justify"
             }
         },
-        "text-line-through": {
-            "codegen-properties": {
-                "skip-codegen": true
-            },
-            "status": "removed",
-            "specification": {
-                "category": "css3-text",
-                "url": "https://www.w3.org/TR/2003/CR-css3-text-20030514/#text-line-through"
-            }
-        },
-        "text-line-through-color": {
-            "codegen-properties": {
-                "skip-codegen": true
-            },
-            "status": "removed",
-            "specification": {
-                "category": "css3-text",
-                "url": "https://www.w3.org/TR/2003/CR-css3-text-20030514/#text-line-through-color"
-            }
-        },
-        "text-line-through-mode": {
-            "values": [
-                "continuous",
-                "skip-white-space"
-            ],
-            "status": "removed",
-            "codegen-properties": {
-                "skip-codegen": true
-            },
-            "specification": {
-                "category": "css3-text",
-                "url": "https://www.w3.org/TR/2003/CR-css3-text-20030514/#text-line-through-mode"
-            }
-        },
-        "text-line-through-style": {
-            "values": [
-                "none",
-                "solid",
-                "double",
-                "dashed",
-                "dot-dash",
-                "dot-dot-dash",
-                "wave"
-            ],
-            "status": "removed",
-            "codegen-properties": {
-                "skip-codegen": true
-            },
-            "specification": {
-                "category": "css3-text",
-                "url": "https://www.w3.org/TR/2003/CR-css3-text-20030514/#text-line-through-style"
-            }
-        },
-        "text-line-through-width": {
-            "codegen-properties": {
-                "skip-codegen": true
-            },
-            "status": "removed",
-            "specification": {
-                "category": "css3-text",
-                "url": "https://www.w3.org/TR/2003/CR-css3-text-20030514/#text-line-through-width"
-            }
-        },
         "text-overflow": {
             "values": [
                 "clip",
@@ -5883,69 +5808,6 @@
             "specification": {
                 "category": "css-ui",
                 "url": "https://www.w3.org/TR/css-ui-3/#propdef-text-overflow"
-            }
-        },
-        "text-overline": {
-            "codegen-properties": {
-                "skip-codegen": true
-            },
-            "status": "removed",
-            "specification": {
-                "category": "css3-text",
-                "url": "https://www.w3.org/TR/2003/CR-css3-text-20030514/#text-overline"
-            }
-        },
-        "text-overline-color": {
-            "codegen-properties": {
-                "skip-codegen": true
-            },
-            "status": "removed",
-            "specification": {
-                "category": "css3-text",
-                "url": "https://www.w3.org/TR/2003/CR-css3-text-20030514/#text-overline-color"
-            }
-        },
-        "text-overline-mode": {
-            "values": [
-                "continuous",
-                "skip-white-space"
-            ],
-            "codegen-properties": {
-                "skip-codegen": true
-            },
-            "status": "removed",
-            "specification": {
-                "category": "css3-text",
-                "url": "https://www.w3.org/TR/2003/CR-css3-text-20030514/#text-overline-mode"
-            }
-        },
-        "text-overline-style": {
-            "values": [
-                "none",
-                "solid",
-                "double",
-                "dashed",
-                "dot-dash",
-                "dot-dot-dash",
-                "wave"
-            ],
-            "codegen-properties": {
-                "skip-codegen": true
-            },
-            "status": "removed",
-            "specification": {
-                "category": "css3-text",
-                "url": "https://www.w3.org/TR/2003/CR-css3-text-20030514/#text-overline-style"
-            }
-        },
-        "text-overline-width": {
-            "codegen-properties": {
-                "skip-codegen": true
-            },
-            "status": "removed",
-            "specification": {
-                "category": "css3-text",
-                "url": "https://www.w3.org/TR/2003/CR-css3-text-20030514/#text-overline-width"
             }
         },
         "text-shadow": {
@@ -5985,69 +5847,6 @@
             "specification": {
                 "category": "css-text",
                 "url": "https://drafts.csswg.org/css-text/#text-transform-property"
-            }
-        },
-        "text-underline": {
-            "codegen-properties": {
-                "skip-codegen": true
-            },
-            "status": "removed",
-            "specification": {
-                "category": "css3-text",
-                "url": "https://www.w3.org/TR/2003/CR-css3-text-20030514/#text-underline"
-            }
-        },
-        "text-underline-color": {
-            "codegen-properties": {
-                "skip-codegen": true
-            },
-            "status": "removed",
-            "specification": {
-                "category": "css3-text",
-                "url": "https://www.w3.org/TR/2003/CR-css3-text-20030514/#text-underline-color"
-            }
-        },
-        "text-underline-mode": {
-            "values": [
-                "continuous",
-                "skip-white-space"
-            ],
-            "codegen-properties": {
-                "skip-codegen": true
-            },
-            "status": "removed",
-            "specification": {
-                "category": "css3-text",
-                "url": "https://www.w3.org/TR/2003/CR-css3-text-20030514/#text-underline-mode"
-            }
-        },
-        "text-underline-style": {
-            "values": [
-                "none",
-                "solid",
-                "double",
-                "dashed",
-                "dot-dash",
-                "dot-dot-dash",
-                "wave"
-            ],
-            "codegen-properties": {
-                "skip-codegen": true
-            },
-            "status": "removed",
-            "specification": {
-                "category": "css3-text",
-                "url": "https://www.w3.org/TR/2003/CR-css3-text-20030514/#text-underline-style"
-            }
-        },
-        "text-underline-width": {
-            "codegen-properties": {
-                "skip-codegen": true
-            },
-            "status": "removed",
-            "specification": {
-                "category": "css3-text",
-                "url": "https://www.w3.org/TR/2003/CR-css3-text-20030514/#text-underline-width"
             }
         },
         "text-wrap": {
@@ -7931,26 +7730,6 @@
                 "url": "https://www.w3.org/TR/css-line-grid-1/#line-snap"
             }
         },
-        "-webkit-box-snap": {
-            "inherited": true,
-            "values": [
-                "block-start",
-                "block-end",
-                "center",
-                "first-baseline",
-                "last-baseline"
-            ],
-            "codegen-properties": {
-                "skip-codegen": true
-            },
-            "status": {
-                "status": "not implemented"
-            },
-            "specification": {
-                "category": "css-line-grid",
-                "url": "https://www.w3.org/TR/css-line-grid-1/#box-snap"
-            }
-        },
         "-webkit-marquee-direction": {
             "values": [
                 "forwards",
@@ -9372,12 +9151,6 @@
             },
             "status": "non-standard"
         },
-        "-apple-trailing-word": {
-            "codegen-properties": {
-                "skip-codegen": true
-            },
-            "status": "removed"
-        },
         "-apple-pay-button-style": {
             "values": [
                 "white",
@@ -9437,51 +9210,6 @@
                 "parser-grammar": "<<values>>"
             },
             "status": "non-standard"
-        },
-        "fill-color": {
-            "codegen-properties": {
-                "skip-codegen": true
-            },
-            "specification": {
-                "category": "css-text-fill-and-stroke",
-                "url": "https://drafts.fxtf.org/paint/#fill-color"
-            }
-        },
-        "fill-image": {
-            "codegen-properties": {
-                "skip-codegen": true
-            },
-            "specification": {
-                "category": "css-text-fill-and-stroke",
-                "url": "https://drafts.fxtf.org/paint/#fill-image"
-            }
-        },
-        "fill-origin": {
-            "codegen-properties": {
-                "skip-codegen": true
-            },
-            "specification": {
-                "category": "css-text-fill-and-stroke",
-                "url": "https://drafts.fxtf.org/paint/#fill-origin"
-            }
-        },
-        "fill-position": {
-            "codegen-properties": {
-                "skip-codegen": true
-            },
-            "specification": {
-                "category": "css-text-fill-and-stroke",
-                "url": "https://drafts.fxtf.org/paint/#fill-position"
-            }
-        },
-        "border-boundary": {
-            "codegen-properties": {
-                "skip-codegen": true
-            },
-            "specification": {
-                "category": "css-round-display",
-                "url": "https://www.w3.org/TR/css-round-display-1/#border-boundary-property"
-            }
         }
     },
     "descriptors": {
@@ -10047,12 +9775,6 @@
             "longname": "CSS Counter Styles Module",
             "url": "https://www.w3.org/TR/css-counter-styles-3"
         },
-        "css-device-adapt": {
-            "shortname": "CSS Device Adaptation",
-            "longname": "CSS Device Adaptation Module",
-            "url": "https://www.w3.org/TR/css-device-adapt-1/",
-            "status": "under consideration"
-        },
         "css-display": {
             "shortname": "CSS Display",
             "longname": "CSS Display Module",
@@ -10148,12 +9870,6 @@
             "longname": "CSS Rhythmic Sizing",
             "url": "https://www.w3.org/TR/css-rhythm-1/"
         },
-        "css-round-display": {
-            "shortname": "CSS Round Display",
-            "longname": "CSS Round Display Module",
-            "url": "https://www.w3.org/TR/css-round-display-1/",
-            "status": "not considering"
-        },
         "css-ruby": {
             "shortname": "CSS Ruby",
             "longname": "CSS Ruby Layout Module",
@@ -10204,12 +9920,6 @@
             "longname": "CSS3 Text Module",
             "url": "https://www.w3.org/TR/2003/CR-css3-text-20030514/",
             "status": "obsolete"
-        },
-        "css-text-fill-and-stroke": {
-            "shortname": "CSS Text Fill and Stroke",
-            "longname": "CSS Text Fill and Stroke Module",
-            "url": "https://drafts.fxtf.org/paint/",
-            "status": "under consideration"
         },
         "css-transforms": {
             "shortname": "CSS Transforms",
