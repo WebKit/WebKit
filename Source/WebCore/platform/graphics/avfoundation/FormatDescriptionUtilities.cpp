@@ -31,8 +31,10 @@
 #import "HEVCUtilities.h"
 #import "PlatformVideoColorSpace.h"
 #import "SharedBuffer.h"
+#import <wtf/cf/TypeCastsCF.h>
 
 #import <pal/cf/CoreMediaSoftLink.h>
+#import <pal/cf/VideoToolboxSoftLink.h>
 
 // Added in macOS 11, iOS 14.
 #if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 110000) || (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED < 140000)
@@ -59,7 +61,28 @@ std::optional<PlatformVideoColorSpace> colorSpaceFromFormatDescription(CMFormatD
         return std::nullopt;
 
     PlatformVideoColorSpace colorSpace;
-    if (auto primaries = static_cast<CFStringRef>(PAL::CMFormatDescriptionGetExtension(formatDescription, PAL::get_CoreMedia_kCMFormatDescriptionExtension_ColorPrimaries()))) {
+    auto primaries = dynamic_cf_cast<CFStringRef>(PAL::CMFormatDescriptionGetExtension(formatDescription, PAL::get_CoreMedia_kCMFormatDescriptionExtension_ColorPrimaries()));
+    auto transfer = dynamic_cf_cast<CFStringRef>(PAL::CMFormatDescriptionGetExtension(formatDescription, PAL::get_CoreMedia_kCMFormatDescriptionExtension_TransferFunction()));
+    auto matrix = dynamic_cf_cast<CFStringRef>(PAL::CMFormatDescriptionGetExtension(formatDescription, PAL::get_CoreMedia_kCMFormatDescriptionExtension_YCbCrMatrix()));
+
+    if (!primaries || !transfer || !matrix) {
+        auto size = presentationSizeFromFormatDescription(formatDescription);
+        auto codecType = PAL::CMFormatDescriptionGetMediaSubType(formatDescription);
+
+        CFStringRef defaultPrimaries = nullptr;
+        CFStringRef defaultTransfer = nullptr;
+        CFStringRef defaultMatrix = nullptr;
+
+        PAL::VTGetDefaultColorAttributesWithHints(codecType, nullptr, size.width(), size.height(), &defaultPrimaries, &defaultTransfer, &defaultMatrix);
+        if (!primaries && defaultPrimaries)
+            primaries = defaultPrimaries;
+        if (!transfer && defaultTransfer)
+            transfer = defaultTransfer;
+        if (!matrix && defaultMatrix)
+            matrix = defaultMatrix;
+    }
+
+    if (primaries) {
         if (safeCFEqual(primaries, PAL::get_CoreMedia_kCMFormatDescriptionColorPrimaries_ITU_R_709_2()))
             colorSpace.primaries = PlatformVideoColorPrimaries::Bt709;
         else if (safeCFEqual(primaries, PAL::get_CoreMedia_kCMFormatDescriptionColorPrimaries_EBU_3213()))
@@ -68,14 +91,14 @@ std::optional<PlatformVideoColorSpace> colorSpaceFromFormatDescription(CMFormatD
             colorSpace.primaries = PlatformVideoColorPrimaries::Smpte170m;
     }
 
-    if (auto transfer = static_cast<CFStringRef>(PAL::CMFormatDescriptionGetExtension(formatDescription, PAL::get_CoreMedia_kCMFormatDescriptionExtension_TransferFunction()))) {
+    if (transfer) {
         if (safeCFEqual(transfer, PAL::get_CoreMedia_kCMFormatDescriptionTransferFunction_ITU_R_709_2()))
             colorSpace.transfer = PlatformVideoTransferCharacteristics::Bt709;
         else if (safeCFEqual(transfer, PAL::get_CoreMedia_kCMFormatDescriptionTransferFunction_sRGB()))
             colorSpace.transfer = PlatformVideoTransferCharacteristics::Iec6196621;
     }
 
-    if (auto matrix = static_cast<CFStringRef>(PAL::CMFormatDescriptionGetExtension(formatDescription, PAL::get_CoreMedia_kCMFormatDescriptionExtension_YCbCrMatrix()))) {
+    if (matrix) {
         if (safeCFEqual(matrix, PAL::get_CoreMedia_kCVImageBufferYCbCrMatrix_ITU_R_709_2()))
             colorSpace.matrix = PlatformVideoMatrixCoefficients::Bt709;
         else if (safeCFEqual(matrix, PAL::get_CoreMedia_kCVImageBufferYCbCrMatrix_ITU_R_601_4()))

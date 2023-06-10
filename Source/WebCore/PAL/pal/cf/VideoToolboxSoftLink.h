@@ -69,6 +69,8 @@ SOFT_LINK_FUNCTION_FOR_HEADER(PAL, VideoToolbox, VTCompressionSessionPrepareToEn
 #define VTCompressionSessionPrepareToEncodeFrames softLink_VideoToolbox_VTCompressionSessionPrepareToEncodeFrames
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, VideoToolbox, VTCompressionSessionInvalidate, void, (VTCompressionSessionRef session), (session))
 #define VTCompressionSessionInvalidate softLink_VideoToolbox_VTCompressionSessionInvalidate
+SOFT_LINK_FUNCTION_FOR_HEADER(PAL, VideoToolbox, VTGetDefaultColorAttributesWithHints, OSStatus, (OSType codecTypeHint, CFStringRef colorSpaceNameHint, size_t widthHint, size_t heightHint, CFStringRef* colorPrimariesOut, CFStringRef* transferFunctionOut, CFStringRef* yCbCrMatrixOut), (codecTypeHint, colorSpaceNameHint, widthHint, heightHint, colorPrimariesOut, transferFunctionOut, yCbCrMatrixOut))
+#define VTGetDefaultColorAttributesWithHints softLink_VideoToolbox_VTGetDefaultColorAttributesWithHints
 
 #if USE(APPLE_INTERNAL_SDK)
 #import <WebKitAdditions/VideoToolboxSoftLinkAdditions.h>
