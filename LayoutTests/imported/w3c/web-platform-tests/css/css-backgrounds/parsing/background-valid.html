@@ -23,6 +23,27 @@ test_valid_value("background",
   'url(https://example.com/) 1px 2px / 3px 4px space round local padding-box content-box, url(https://example.com/) 1px 2px / 3px 4px space round local padding-box content-box rgb(5, 6, 7)' // WebKit omits quotes - https://bugs.webkit.org/show_bug.cgi?id=28869
 ]);
 
+test_shorthand_value('background', 'none', {
+    'background-image': 'none',
+    'background-position': '0% 0%',
+    'background-size': 'auto',
+    'background-repeat': 'repeat',
+    'background-attachment': 'scroll',
+    'background-origin': 'padding-box',
+    'background-clip': 'border-box',
+    'background-color': 'transparent',
+})
+test_shorthand_value('background', 'url("https://example.com/") 1px 2px / 3px 4px space round local padding-box content-box, rgb(5, 6, 7) url("https://example.com/") 1px 2px / 3px 4px space round local padding-box content-box', {
+    'background-image': 'url("https://example.com/"), url("https://example.com/")',
+    'background-position': '1px 2px, 1px 2px',
+    'background-size': '3px 4px, 3px 4px',
+    'background-repeat': 'space round, space round',
+    'background-attachment': 'local, local',
+    'background-origin': 'padding-box, padding-box',
+    'background-clip': 'content-box, content-box',
+    'background-color': 'rgb(5, 6, 7)',
+})
+
 </script>
 </body>
 </html>

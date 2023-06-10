@@ -607,6 +607,29 @@ String ShorthandSerializer::serializeLayered() const
                 }
             }
 
+            // A single background-position value (identifier or numeric) sets the other value to center.
+            // A single mask-position value (identifier or numeric) sets the other value to center.
+            // Order matters when one is numeric, but not when both are identifiers.
+            if (longhand == CSSPropertyBackgroundPositionY || longhand == CSSPropertyWebkitMaskPositionY) {
+                // The previous property is X.
+                ASSERT(j >= 1);
+                ASSERT(longhandProperty(j - 1) == CSSPropertyBackgroundPositionX || longhandProperty(j - 1) == CSSPropertyWebkitMaskPositionX);
+                if (layerValues.valueID(j - 1) == CSSValueCenter && layerValues.isValueID(j)) {
+                    layerValues.skip(j - 1) = true;
+                    layerValues.skip(j) = false;
+                } else if (layerValues.valueID(j) == CSSValueCenter && !layerValues.isPair(j - 1)) {
+                    layerValues.skip(j - 1) = false;
+                    layerValues.skip(j) = true;
+                } else if (length() == 2) {
+                    ASSERT(j == 1);
+                    layerValues.skip(0) = false;
+                    layerValues.skip(1) = false;
+                } else {
+                    if (!layerValues.skip(j - 1))
+                        layerValues.skip(j) = false;
+                }
+            }
+
             if (layerValues.skip(j))
                 continue;
 
@@ -621,22 +644,6 @@ String ShorthandSerializer::serializeLayered() const
                     || longhandProperty(j - 1) == CSSPropertyWebkitMaskPositionY);
                 layerValues.skip(j - 2) = false;
                 layerValues.skip(j - 1) = false;
-            }
-
-            // A single background-position value (identifier or numeric) sets the other value to center.
-            // A single mask-position value (identifier or numeric) sets the other value to center.
-            // Order matters when one is numeric, but not when both are identifiers.
-            if (longhand == CSSPropertyBackgroundPositionY || longhand == CSSPropertyWebkitMaskPositionY) {
-                // The previous property is X.
-                ASSERT(j >= 1);
-                ASSERT(longhandProperty(j - 1) == CSSPropertyBackgroundPositionX
-                    || longhandProperty(j - 1) == CSSPropertyWebkitMaskPositionX);
-                if (layerValues.valueID(j - 1) == CSSValueCenter && layerValues.isValueID(j))
-                    layerValues.skip(j - 1) = true;
-                else if (layerValues.valueID(j) == CSSValueCenter && !layerValues.isPair(j - 1)) {
-                    layerValues.skip(j - 1) = false;
-                    layerValues.skip(j) = true;
-                }
             }
 
             // The first value in each animation shorthand that can be parsed as a time is assigned to

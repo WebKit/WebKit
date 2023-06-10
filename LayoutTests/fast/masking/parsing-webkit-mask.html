@@ -78,6 +78,13 @@ testInner("-webkit-mask-position", "center top 20px", "center top 20px");
 testInner("-webkit-mask-position", "center left 30px", "left 30px center");
 testInner("-webkit-mask-position", "left 20% top", "left 20% top");
 
+testInner("-webkit-mask-position", "0%", "0%");
+testInner("-webkit-mask-position", "0% 0%", "0% 0%");
+testInner("-webkit-mask-position", "0% center", "0%");
+testInner("-webkit-mask-position", "center 0%", "center 0%");
+testInner("-webkit-mask-position", "20% 0%", "20% 0%");
+testInner("-webkit-mask-position", "0% 20%", "0% 20%");
+
 testInner("-webkit-mask-position-x", "left", "left");
 testInner("-webkit-mask-position-y", "top", "top");
 

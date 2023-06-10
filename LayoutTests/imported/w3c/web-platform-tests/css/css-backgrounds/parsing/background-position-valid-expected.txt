@@ -25,4 +25,9 @@ PASS e.style['background-position'] = "top 17px right 18px" should set the prope
 PASS e.style['background-position'] = "bottom center" should set the property value
 PASS e.style['background-position'] = "top left" should set the property value
 PASS e.style['background-position'] = "bottom right 19%" should set the property value
+PASS e.style['background-position'] = "20% 0%" should set the property value
+PASS e.style['background-position'] = "0% 0%" should set the property value
+PASS e.style['background-position'] = "0%" should set the property value
+PASS e.style['background-position'] = "0% center" should set the property value
+PASS e.style['background-position'] = "center 0%" should set the property value
 
