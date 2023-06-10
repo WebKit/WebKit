@@ -1271,6 +1271,7 @@ void HTMLMediaElement::prepareForLoad()
 
         // 6.6 - If the paused attribute is false, then set it to true.
         setPaused(true);
+        setPlaying(false);
 
         // 6.7 - If seeking is true, set it to false.
         clearSeeking();
