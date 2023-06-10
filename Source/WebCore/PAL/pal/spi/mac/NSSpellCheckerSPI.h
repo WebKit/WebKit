@@ -33,6 +33,9 @@
 
 extern NSString *NSTextCheckingInsertionPointKey;
 extern NSString *NSTextCheckingSuppressInitialCapitalizationKey;
+#if HAVE(INLINE_PREDICTIONS)
+extern NSString *NSTextCompletionAttributeName;
+#endif
 
 @interface NSSpellChecker ()
 

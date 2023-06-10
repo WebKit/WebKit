@@ -1553,6 +1553,9 @@ webkit.org/b/243407 accessibility/add-children-pseudo-element.html [ Pass Failur
 # Disabled temporarily since it is causing other tests to fail.
 accessibility/mac/isolated-tree-mode-on-off.html [ Skip ]
 
+# Requires (INLINE_PREDICTIONS)
+accessibility/mac/attributed-string/attributed-string-has-completion-annotation.html [ Skip ]
+
 webkit.org/b/202064 webaudio/silent-audio-interrupted-in-background.html [ Pass Crash ]
 
 webkit.org/b/205756 webgl/2.0.0/conformance2/glsl3/no-attribute-vertex-shader.html [ Pass Failure ]

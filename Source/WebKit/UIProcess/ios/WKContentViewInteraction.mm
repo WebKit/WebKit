@@ -5818,7 +5818,7 @@ static Vector<WebCore::CompositionHighlight> compositionHighlights(NSAttributedS
     _autocorrectionContextNeedsUpdate = YES;
     _candidateViewNeedsUpdate = !self.hasMarkedText;
     _markedText = markedText;
-    _page->setCompositionAsync(markedText, underlines, highlights, selectedRange, { });
+    _page->setCompositionAsync(markedText, underlines, highlights, { }, selectedRange, { });
 }
 
 - (void)unmarkText

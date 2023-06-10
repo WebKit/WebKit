@@ -29,6 +29,8 @@
 #import "AccessibilityLabel.h"
 #import "AccessibilityList.h"
 #import "ColorCocoa.h"
+#import "CompositionHighlight.h"
+#import "CompositionUnderline.h"
 #import "Editor.h"
 #import "ElementAncestorIteratorInlines.h"
 #import "FrameSelection.h"
@@ -48,6 +50,8 @@
 #import "PlatformScreen.h"
 #import "WebAccessibilityObjectWrapperMac.h"
 #import "Widget.h"
+
+#import <pal/spi/mac/NSSpellCheckerSPI.h>
 
 namespace WebCore {
 
@@ -640,6 +644,26 @@ static void attributedStringSetElement(NSMutableAttributedString *attrString, NS
         [attrString addAttribute:attribute value:(__bridge id)axElement.get() range:range];
 }
 
+static void attributedStringSetCompositionAttributes(NSMutableAttributedString *attrString, Node& node)
+{
+#if HAVE(INLINE_PREDICTIONS)
+    auto& editor = node.document().editor();
+    if (&node != editor.compositionNode())
+        return;
+
+    auto& annotations = editor.customCompositionAnnotations();
+    if (auto it = annotations.find(NSTextCompletionAttributeName); it != annotations.end()) {
+        for (auto& range : it->value) {
+            if (attributedStringContainsRange(attrString, range))
+                attributedStringSetNumber(attrString, NSAccessibilityTextCompletionAttribute, @YES, range);
+        }
+    }
+#else
+    UNUSED_PARAM(attrString);
+    UNUSED_PARAM(node);
+#endif
+}
+
 static bool shouldHaveAnySpellCheckAttribute(Node& node)
 {
     // If this node is not inside editable content, do not run the spell checker on the text.
@@ -709,6 +733,7 @@ RetainPtr<NSAttributedString> attributedStringCreate(Node* node, StringView text
     attributedStringSetBlockquoteLevel(result.get(), renderer.get(), range);
     attributedStringSetExpandedText(result.get(), renderer.get(), range);
     attributedStringSetElement(result.get(), NSAccessibilityLinkTextAttribute, AccessibilityObject::anchorElementForNode(node), range);
+    attributedStringSetCompositionAttributes(result.get(), *node);
     // Do spelling last because it tends to break up the range.
     if (spellCheck == AXCoreObject::SpellCheck::Yes) {
         if (AXObjectCache::shouldSpellCheck())

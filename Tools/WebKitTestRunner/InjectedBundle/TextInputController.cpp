@@ -79,11 +79,35 @@ static WKArrayRef createCompositionHighlightData(JSContextRef context, JSValueRe
     return result;
 }
 
-void TextInputController::setMarkedText(JSStringRef text, int from, int length, bool suppressUnderline, JSValueRef jsHighlightsValue)
+static WKArrayRef createCompositionAnnotationData(JSContextRef context, JSValueRef jsAnnotationsValue)
+{
+    if (!jsAnnotationsValue || !JSValueIsObject(context, jsAnnotationsValue))
+        return nullptr;
+
+    auto result = WKMutableArrayCreate();
+    auto array = const_cast<JSObjectRef>(jsAnnotationsValue);
+    unsigned length = arrayLength(context, array);
+    for (unsigned i = 0; i < length; ++i) {
+        auto value = JSObjectGetPropertyAtIndex(context, array, i, nullptr);
+        if (!value || !JSValueIsObject(context, value))
+            continue;
+        auto object = const_cast<JSObjectRef>(value);
+        auto dictionary = adoptWK(WKMutableDictionaryCreate());
+        setValue(dictionary, "from", static_cast<uint64_t>(numericProperty(context, object, "from")));
+        setValue(dictionary, "length", static_cast<uint64_t>(numericProperty(context, object, "length")));
+        setValue(dictionary, "annotation", toWK(stringProperty(context, object, "annotation")));
+        WKArrayAppendItem(result, dictionary.get());
+    }
+    return result;
+}
+
+void TextInputController::setMarkedText(JSStringRef text, int from, int length, bool suppressUnderline, JSValueRef jsHighlightsValue, JSValueRef jsAnnotationsValue)
 {
     auto page = InjectedBundle::singleton().page()->page();
-    auto highlights = adoptWK(createCompositionHighlightData(WKBundleFrameGetJavaScriptContext(WKBundlePageGetMainFrame(page)), jsHighlightsValue));
-    WKBundlePageSetComposition(page, toWK(text).get(), from, length, suppressUnderline, highlights.get());
+    auto context = WKBundleFrameGetJavaScriptContext(WKBundlePageGetMainFrame(page));
+    auto highlights = adoptWK(createCompositionHighlightData(context, jsHighlightsValue));
+    auto annotations = adoptWK(createCompositionAnnotationData(context, jsAnnotationsValue));
+    WKBundlePageSetComposition(page, toWK(text).get(), from, length, suppressUnderline, highlights.get(), annotations.get());
 }
 
 bool TextInputController::hasMarkedText()

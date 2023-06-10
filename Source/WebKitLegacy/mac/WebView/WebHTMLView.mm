@@ -6566,7 +6566,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     if (replacementRange.location != NSNotFound)
         [[self _frame] _selectNSRange:replacementRange];
 
-    coreFrame->editor().setComposition(text, underlines, { }, newSelRange.location, NSMaxRange(newSelRange));
+    coreFrame->editor().setComposition(text, underlines, { }, { }, newSelRange.location, NSMaxRange(newSelRange));
 }
 
 ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN

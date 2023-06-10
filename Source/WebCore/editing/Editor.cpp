@@ -1314,6 +1314,7 @@ void Editor::clear()
     }
     m_customCompositionUnderlines.clear();
     m_customCompositionHighlights.clear();
+    m_customCompositionAnnotations.clear();
     m_shouldStyleWithCSS = false;
     m_defaultParagraphSeparator = EditorParagraphSeparator::div;
     m_mark = { };
@@ -2149,6 +2150,7 @@ void Editor::setComposition(const String& text, SetCompositionMode mode)
     m_compositionNode = nullptr;
     m_customCompositionUnderlines.clear();
     m_customCompositionHighlights.clear();
+    m_customCompositionAnnotations.clear();
 
     if (auto* cache = m_document.existingAXObjectCache(); cache && previousCompositionNode)
         cache->onTextCompositionChange(*previousCompositionNode);
@@ -2173,7 +2175,7 @@ void Editor::setComposition(const String& text, SetCompositionMode mode)
     }
 }
 
-void Editor::setComposition(const String& text, const Vector<CompositionUnderline>& underlines, const Vector<CompositionHighlight>& highlights, unsigned selectionStart, unsigned selectionEnd)
+void Editor::setComposition(const String& text, const Vector<CompositionUnderline>& underlines, const Vector<CompositionHighlight>& highlights, const HashMap<String, Vector<CharacterRange>>& annotations, unsigned selectionStart, unsigned selectionEnd)
 {
     SetCompositionScope setCompositionScope(m_document);
 
@@ -2247,6 +2249,7 @@ void Editor::setComposition(const String& text, const Vector<CompositionUnderlin
     m_compositionNode = nullptr;
     m_customCompositionUnderlines.clear();
     m_customCompositionHighlights.clear();
+    m_customCompositionAnnotations.clear();
 
     if (!text.isEmpty()) {
         TypingCommand::insertText(document(), text, OptionSet { TypingCommand::Option::SelectInsertedText, TypingCommand::Option::PreventSpellChecking }, TypingCommand::TextCompositionType::Pending);
@@ -2272,6 +2275,11 @@ void Editor::setComposition(const String& text, const Vector<CompositionUnderlin
             for (auto& highlight : m_customCompositionHighlights) {
                 highlight.startOffset += baseOffset;
                 highlight.endOffset += baseOffset;
+            }
+            m_customCompositionAnnotations = annotations;
+            for (auto it = m_customCompositionAnnotations.begin(); it != m_customCompositionAnnotations.end(); ++it) {
+                for (auto& range : it->value)
+                    range.location += baseOffset;
             }
 
             if (auto renderer = baseNode->renderer())

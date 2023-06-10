@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../../../resources/accessibility-helper.js"></script>
+    <script src="../../../resources/js-test.js"></script>
+</head>
+<body>
+    <input type="text" id="editable">
+    <script>    
+        description("This tests that custom annotations are applied to the accessibility string");
+        editable.focus();
+        if (window.textInputController && window.accessibilityController) {
+            var element = accessibilityController.accessibleElementById("editable");
+
+            // Test with composition and no attributes
+            textInputController.setMarkedText("testing");
+            var attrString = element.attributedStringForRange(0, 7);
+            shouldBe("attrString.indexOf('AXTextCompletion = 1')", "-1");
+
+            // Test with composition and attributes
+            textInputController.setMarkedText("favorite", 0, 8, false, undefined, [
+                { from: "4", length: "4", annotation: "NSTextCompletion" }
+            ]);
+            attrString = element.attributedStringForRange(0, 8);
+            shouldBeTrue("attrString.indexOf('AXTextCompletion = 1') != -1");
+        }
+    </script>
+</body>
+</html>

@@ -1610,7 +1610,7 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
     
     Vector<WebCore::CompositionUnderline> underlines;
     frame->page()->chrome().client().suppressFormNotifications();
-    frame->editor().setComposition(text, underlines, { }, newSelRange.location, NSMaxRange(newSelRange));
+    frame->editor().setComposition(text, underlines, { }, { }, newSelRange.location, NSMaxRange(newSelRange));
     frame->page()->chrome().client().restoreFormNotifications();
 }
 
@@ -1621,7 +1621,7 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
         return;
         
     Vector<WebCore::CompositionUnderline> underlines;
-    frame->editor().setComposition(text, underlines, { }, 0, [text length]);
+    frame->editor().setComposition(text, underlines, { }, { }, 0, [text length]);
 }
 
 - (void)confirmMarkedText:(NSString *)text

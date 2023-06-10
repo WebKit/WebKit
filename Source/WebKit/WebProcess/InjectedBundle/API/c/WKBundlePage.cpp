@@ -630,7 +630,7 @@ WKArrayRef WKBundlePageCopyTrackedRepaintRects(WKBundlePageRef pageRef)
     return WebKit::toAPI(&WebKit::toImpl(pageRef)->trackedRepaintRects().leakRef());
 }
 
-void WKBundlePageSetComposition(WKBundlePageRef pageRef, WKStringRef text, int from, int length, bool suppressUnderline, WKArrayRef highlightData)
+void WKBundlePageSetComposition(WKBundlePageRef pageRef, WKStringRef text, int from, int length, bool suppressUnderline, WKArrayRef highlightData, WKArrayRef annotationData)
 {
     Vector<WebCore::CompositionHighlight> highlights;
     if (highlightData) {
@@ -656,7 +656,22 @@ void WKBundlePageSetComposition(WKBundlePageRef pageRef, WKStringRef text, int f
             });
         }
     }
-    WebKit::toImpl(pageRef)->setCompositionForTesting(WebKit::toWTFString(text), from, length, suppressUnderline, highlights);
+    HashMap<String, Vector<WebCore::CharacterRange>> annotations;
+    if (annotationData) {
+        auto* annotationDataArray = WebKit::toImpl(annotationData);
+        for (auto dictionary : annotationDataArray->elementsOfType<API::Dictionary>()) {
+            auto location = static_cast<API::UInt64*>(dictionary->get("from"_s))->value();
+            auto length = static_cast<API::UInt64*>(dictionary->get("length"_s))->value();
+            auto name = static_cast<API::String*>(dictionary->get("annotation"_s))->string();
+
+            auto it = annotations.find(name);
+            if (it == annotations.end())
+                it = annotations.add(name, Vector<WebCore::CharacterRange> { }).iterator;
+            it->value.append({ location, length });
+        }
+    }
+
+    WebKit::toImpl(pageRef)->setCompositionForTesting(WebKit::toWTFString(text), from, length, suppressUnderline, highlights, annotations);
 }
 
 bool WKBundlePageHasComposition(WKBundlePageRef pageRef)
