@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src=media-file.js></script>
+        <script src=video-test.js></script>
+        <script>
+            async function runTest() {
+                const video = document.querySelectorAll('video')[0];
+
+                video.onloadedmetadata = endTest;
+                video.onerror = () => {
+                    failTest(`loading failed`);
+                }
+
+                const url = findMediaFile('video', 'content/long-test');
+                const request = new XMLHttpRequest();
+                request.open('GET', url, true);
+                request.responseType = 'blob';
+
+                request.onload = () => {
+                    const reader = new FileReader();
+                    reader.onload = event => {
+                        video.src = event.target.result;
+                    };
+                    reader.readAsDataURL(request.response);
+                };
+                request.send();
+            }
+        </script>
+    </head>
+    <body onload="runTest()">
+        <div>
+            This tests that a video element can load a non-MSE blob URL in an &lt;source> element.
+        </div>
+        <video controls></video>
+    </body>
+</html>

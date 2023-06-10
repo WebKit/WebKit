@@ -5234,7 +5234,7 @@ URL HTMLMediaElement::selectNextSourceChild(ContentType* contentType, String* ke
             parameters.type = ContentType(type);
             parameters.url = mediaURL;
 #if ENABLE(MEDIA_SOURCE)
-            parameters.isMediaSource = mediaURL.protocolIs(mediaSourceBlobProtocol);
+            parameters.isMediaSource = mediaURL.protocolIs(mediaSourceBlobProtocol) && MediaSource::lookup(mediaURL.string());
 #endif
             parameters.requiresRemotePlayback = !!m_remotePlaybackConfiguration;
             if (!document().settings().allowMediaContentTypesRequiringHardwareSupportAsFallback() || Traversal<HTMLSourceElement>::nextSkippingChildren(source))
