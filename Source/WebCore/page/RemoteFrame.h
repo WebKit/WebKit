@@ -38,6 +38,8 @@ class RemoteFrameClient;
 class RemoteFrameView;
 class WeakPtrImplWithEventTargetData;
 
+enum class RenderAsTextFlag : uint16_t;
+
 class RemoteFrame final : public Frame {
 public:
     WEBCORE_EXPORT static Ref<RemoteFrame> createMainFrame(Page&, UniqueRef<RemoteFrameClient>&&, FrameIdentifier, ProcessIdentifier);
@@ -61,6 +63,7 @@ public:
     Markable<LayerHostingContextIdentifier> layerHostingContextIdentifier() const { return m_layerHostingContextIdentifier; }
 
     ProcessIdentifier remoteProcessIdentifier() const { return m_remoteProcessIdentifier; }
+    String renderTreeAsText(size_t baseIndent, OptionSet<RenderAsTextFlag>);
 
 private:
     WEBCORE_EXPORT explicit RemoteFrame(Page&, UniqueRef<RemoteFrameClient>&&, FrameIdentifier, HTMLFrameOwnerElement*, Frame*, Markable<LayerHostingContextIdentifier>, ProcessIdentifier);

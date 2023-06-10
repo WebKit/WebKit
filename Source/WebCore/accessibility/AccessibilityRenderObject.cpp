@@ -2448,7 +2448,7 @@ void AccessibilityRenderObject::addAttachmentChildren()
 
     // LocalFrameView's need to be inserted into the AX hierarchy when encountered.
     Widget* widget = widgetForAttachmentView();
-    if (!widget || !widget->isFrameView())
+    if (!widget || !widget->isLocalFrameView())
         return;
     
     addChild(axObjectCache()->getOrCreate(widget));

@@ -3049,7 +3049,7 @@ AXCoreObject* AccessibilityObject::elementAccessibilityHitTest(const IntPoint& p
     if (isAttachment()) {
         Widget* widget = widgetForAttachmentView();
         // Normalize the point for the widget's bounds.
-        if (widget && widget->isFrameView()) {
+        if (widget && widget->isLocalFrameView()) {
             if (AXObjectCache* cache = axObjectCache())
                 return cache->getOrCreate(widget)->accessibilityHitTest(IntPoint(point - widget->frameRect().location()));
         }

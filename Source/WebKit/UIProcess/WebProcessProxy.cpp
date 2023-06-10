@@ -1359,6 +1359,20 @@ void WebProcessProxy::postMessageToRemote(WebCore::ProcessIdentifier destination
         webProcessProxy->send(Messages::WebProcess::RemotePostMessage(identifier, target, message), 0);
 }
 
+void WebProcessProxy::renderTreeAsText(WebCore::ProcessIdentifier destinationProcessIdentifier, WebCore::FrameIdentifier frameIdentifier, size_t baseIndent, OptionSet<WebCore::RenderAsTextFlag> behavior, CompletionHandler<void(String)>&& completionHandler)
+{
+    auto webProcessProxy = processForIdentifier(destinationProcessIdentifier);
+    if (!webProcessProxy)
+        return completionHandler({ });
+
+    auto reply = webProcessProxy->sendSync(Messages::WebProcess::RenderTreeAsText(frameIdentifier, baseIndent, behavior), 0);
+    if (!reply)
+        return completionHandler({ });
+
+    auto [result] = reply.takeReply();
+    completionHandler(result);
+}
+
 bool WebProcessProxy::canBeAddedToWebProcessCache() const
 {
     if (isRunningServiceWorkers()) {

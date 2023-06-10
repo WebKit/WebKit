@@ -105,4 +105,9 @@ void RemoteFrame::frameDetached()
     m_client->frameDetached();
 }
 
+String RemoteFrame::renderTreeAsText(size_t baseIndent, OptionSet<RenderAsTextFlag> behavior)
+{
+    return m_client->renderTreeAsText(m_remoteProcessIdentifier, frameID(), baseIndent, behavior);
+}
+
 } // namespace WebCore

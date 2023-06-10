@@ -115,7 +115,7 @@ bool AccessibilityObject::accessibilityIgnoreAttachment() const
     // LocalFrameView attachments are now handled by AccessibilityScrollView,
     // so if this is the attachment, it should be ignored.
     Widget* widget = nullptr;
-    if (isAttachment() && (widget = widgetForAttachmentView()) && widget->isFrameView())
+    if (isAttachment() && (widget = widgetForAttachmentView()) && widget->isLocalFrameView())
         return true;
 
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN

@@ -6522,3 +6522,5 @@ imported/w3c/web-platform-tests/css/css-overflow/scrollbar-gutter-vertical-rl-00
 imported/w3c/web-platform-tests/css/css-overflow/scrollbar-gutter-002.html [ Skip ]
 
 webkit.org/b/257336 imported/w3c/web-platform-tests/css/css-tables/visibility-collapse-row-003-dynamic.html [ Pass Failure ]
+
+webkit.org/b/257904 http/tests/site-isolation/basic-iframe.html [ Skip ]

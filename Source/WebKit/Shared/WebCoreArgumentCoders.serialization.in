@@ -5173,3 +5173,18 @@ header: <WebCore/LandmarkTypeInterface.h>
     Nose,
 };
 #endif // GPU_PROCESS
+
+header: <WebCore/RenderTreeAsText.h>
+[OptionSet] enum class WebCore::RenderAsTextFlag : uint16_t {
+    ShowAllLayers,
+    ShowLayerNesting,
+    ShowCompositedLayers,
+    ShowOverflow,
+    ShowSVGGeometry,
+    ShowLayerFragments,
+    ShowAddresses,
+    ShowIDAndClass,
+    PrintingMode,
+    DontUpdateLayout,
+    ShowLayoutState
+};

@@ -96,6 +96,7 @@
 #include "RenderStyleSetters.h"
 #include "RenderText.h"
 #include "RenderTheme.h"
+#include "RenderTreeAsText.h"
 #include "RenderView.h"
 #include "RenderWidget.h"
 #include "ResizeObserver.h"
@@ -6365,6 +6366,14 @@ float LocalFrameView::deviceScaleFactor() const
     if (auto* page = m_frame->page())
         return page->deviceScaleFactor();
     return 1;
+}
+
+void LocalFrameView::writeRenderTreeAsText(TextStream& ts, OptionSet<RenderAsTextFlag> behavior)
+{
+    auto* localFrame = dynamicDowncast<LocalFrame>(frame());
+    if (!localFrame)
+        return;
+    externalRepresentationForLocalFrame(ts, *localFrame, behavior);
 }
 
 } // namespace WebCore

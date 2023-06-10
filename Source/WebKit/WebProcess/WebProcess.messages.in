@@ -217,4 +217,6 @@ messages -> WebProcess LegacyReceiver NotRefCounted {
     ReleaseMemory() -> ()
 
     RemotePostMessage(struct WebCore::FrameIdentifier frameIdentifier, std::optional<WebCore::SecurityOriginData> target, struct WebCore::MessageWithMessagePorts message)
+
+    RenderTreeAsText(struct WebCore::FrameIdentifier frameIdentifier, size_t baseIndent, OptionSet<WebCore::RenderAsTextFlag> behavior) -> (String renderTreeDump) Synchronous
 }

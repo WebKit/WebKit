@@ -2329,7 +2329,7 @@ static bool isFrameElement(const Node* n)
     if (!is<RenderWidget>(renderer))
         return false;
     Widget* widget = downcast<RenderWidget>(*renderer).widget();
-    return widget && widget->isFrameView();
+    return widget && widget->isLocalFrameView();
 }
 
 void FrameSelection::setFocusedElementIfNeeded()
