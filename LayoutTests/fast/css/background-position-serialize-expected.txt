@@ -46,6 +46,36 @@ PASS: t.style.backgroundPositionX should be 20% and is.
 PASS: t.style.backgroundPositionY should be 20% and is.
 PASS: t.style.cssText should be background-position: 20% 20%; and is.
 PASS: t.getAttribute('style') should be background-position: 20% 20%; and is.
+t.style.backgroundPositionY = '0%';
+PASS: t.style.backgroundPosition should be 20% 0% and is.
+PASS: t.style.backgroundPositionX should be 20% and is.
+PASS: t.style.backgroundPositionY should be 0% and is.
+PASS: t.style.cssText should be background-position: 20% 0%; and is.
+PASS: t.getAttribute('style') should be background-position: 20% 0%; and is.
+t.style.backgroundPositionX = '0%';
+PASS: t.style.backgroundPosition should be 0% 0% and is.
+PASS: t.style.backgroundPositionX should be 0% and is.
+PASS: t.style.backgroundPositionY should be 0% and is.
+PASS: t.style.cssText should be background-position: 0% 0%; and is.
+PASS: t.getAttribute('style') should be background-position: 0% 0%; and is.
+t.style.backgroundPosition = 'center';
+PASS: t.style.backgroundPosition should be center and is.
+PASS: t.style.backgroundPositionX should be center and is.
+PASS: t.style.backgroundPositionY should be center and is.
+PASS: t.style.cssText should be background-position: center; and is.
+PASS: t.getAttribute('style') should be background-position: center; and is.
+t.style.backgroundPosition = '0% center';
+PASS: t.style.backgroundPosition should be 0% and is.
+PASS: t.style.backgroundPositionX should be 0% and is.
+PASS: t.style.backgroundPositionY should be center and is.
+PASS: t.style.cssText should be background-position: 0%; and is.
+PASS: t.getAttribute('style') should be background-position: 0%; and is.
+t.style.backgroundPosition = 'center 0%';
+PASS: t.style.backgroundPosition should be center 0% and is.
+PASS: t.style.backgroundPositionX should be center and is.
+PASS: t.style.backgroundPositionY should be 0% and is.
+PASS: t.style.cssText should be background-position: center 0%; and is.
+PASS: t.getAttribute('style') should be background-position: center 0%; and is.
 t.setAttribute('style', 'background-position: 60% 60% !important;');
 PASS: t.style.backgroundPosition should be 60% 60% and is.
 PASS: t.style.backgroundPositionX should be 60% and is.
