@@ -44,5 +44,6 @@ clean:
 installsrc:
 	$(build_target_for_each_module)
 	ditto Configurations "$(SRCROOT)/Configurations"
+	ditto WebKitLibraries/DownlevelFrameworkStubs "$(SRCROOT)/WebKitLibraries/DownlevelFrameworkStubs"
 
 endif # USE_WORKSPACE

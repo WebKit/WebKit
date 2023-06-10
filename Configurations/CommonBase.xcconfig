@@ -26,7 +26,6 @@
 #include "Sanitizers.xcconfig"
 #include "SDKVariant.xcconfig"
 #include "WebKitProjectPaths.xcconfig"
-#include "WebKitTargetConditionals.xcconfig"
 
 // Prefix Definitions
 //

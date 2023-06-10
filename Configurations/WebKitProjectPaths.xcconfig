@@ -1,4 +1,4 @@
-// Copyright (C) 2022 Apple Inc. All rights reserved.
+// Copyright (C) 2022-2023 Apple Inc. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions
@@ -20,6 +20,8 @@
 // OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+#include "WebKitTargetConditionals.xcconfig"
 
 // Includes both Safari Technology Preview and StagedFrameworks cases.
 WK_USE_OVERRIDE_FRAMEWORKS_DIR = $(WK_NOT_$(WK_EMPTY_$(WK_OVERRIDE_FRAMEWORKS_DIR)));
@@ -76,6 +78,9 @@ WK_PRIVATE_FRAMEWORK_STUBS_DIR_[sdk=macos*] = $(PROJECT_DIR)/../../WebKitLibrari
 WK_PRIVATE_FRAMEWORK_STUBS_DIR_[sdk=iphone*] = $(PROJECT_DIR)/../../WebKitLibraries/WebKitPrivateFrameworkStubs/iOS/$(WK_TARGET_IOS_VERSION_MAJOR);
 WK_PRIVATE_FRAMEWORK_STUBS_DIR_[sdk=appletv*] = $(PROJECT_DIR)/../../WebKitLibraries/WebKitPrivateFrameworkStubs/appletvos/$(WK_TARGET_TVOS_VERSION_MAJOR);
 WK_PRIVATE_FRAMEWORK_STUBS_DIR_[sdk=watch*] = $(PROJECT_DIR)/../../WebKitLibraries/WebKitPrivateFrameworkStubs/watchos/$(WK_TARGET_WATCHOS_VERSION_MAJOR);
+
+WK_DOWNLEVEL_FRAMEWORK_STUBS_DIR[sdk=macos*] = $(WK_DOWNLEVEL_FRAMEWORK_STUBS_DIR$(WK_MACOS_1400);
+WK_DOWNLEVEL_FRAMEWORK_STUBS_DIR_MACOS_BEFORE_1400 = $(PROJECT_DIR)/../../WebKitLibraries/DownlevelFrameworkStubs/$(TARGET_MAC_OS_X_VERSION_MAJOR);
 
 WTF_BUILD_SCRIPTS_DIR = $(WTF_BUILD_SCRIPTS_DIR_$(CONFIGURATION));
 WTF_BUILD_SCRIPTS_DIR_Release = $(WTF_BUILD_SCRIPTS_DIR_engineering);

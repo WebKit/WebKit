@@ -33,6 +33,12 @@
 #include "PlatformDisplay.h"
 #endif
 
+#if PLATFORM(COCOA)
+#include <wtf/darwin/WeakLinking.h>
+
+WTF_WEAK_LINK_FORCE_IMPORT(JxlDecoderCreate);
+#endif
+
 namespace WebCore {
 
 static const JxlPixelFormat s_pixelFormat { 4, JXL_TYPE_UINT8, JXL_NATIVE_ENDIAN, 0 };
@@ -42,6 +48,15 @@ static constexpr int s_eventsWanted = JXL_DEC_BASIC_INFO | JXL_DEC_FRAME | JXL_D
 #else
 static constexpr int s_eventsWanted = JXL_DEC_BASIC_INFO | JXL_DEC_FRAME | JXL_DEC_FULL_IMAGE;
 #endif
+
+RefPtr<ScalableImageDecoder> JPEGXLImageDecoder::create(AlphaOption alphaOption, GammaAndColorProfileOption gammaAndColorProfileOption)
+{
+#if PLATFORM(COCOA)
+    if (!&JxlDecoderCreate)
+        return nullptr;
+#endif
+    return adoptRef(*new JPEGXLImageDecoder(alphaOption, gammaAndColorProfileOption));
+}
 
 JPEGXLImageDecoder::JPEGXLImageDecoder(AlphaOption alphaOption, GammaAndColorProfileOption gammaAndColorProfileOption)
     : ScalableImageDecoder(alphaOption, gammaAndColorProfileOption)

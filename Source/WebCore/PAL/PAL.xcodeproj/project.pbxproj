@@ -71,6 +71,7 @@
 		1C8D6C962A2ADE4F00DAE18F /* WebGPUPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C8D6C952A2ADE4F00DAE18F /* WebGPUPtr.h */; };
 		1CCA5EFF280FABB4008A6F78 /* WebGPUCreateImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1CCA5EFD280FABB4008A6F78 /* WebGPUCreateImpl.cpp */; };
 		1CCA5F00280FABB4008A6F78 /* WebGPUCreateImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CCA5EFE280FABB4008A6F78 /* WebGPUCreateImpl.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		1CD50E0F2A33EA1300032F1A /* AppleJPEGXLSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CD50E0E2A33E9FA00032F1A /* AppleJPEGXLSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1D2B413425F05E3500A3F70A /* ClockGeneric.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1D2B413225F05E3400A3F70A /* ClockGeneric.cpp */; };
 		293EE4A824154F8F0047493D /* AccessibilitySupportSoftLink.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 293EE4A624154F8F0047493D /* AccessibilitySupportSoftLink.cpp */; };
 		297CB482288B11D700BB7971 /* AccessibilitySoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = 297CB480288B11D700BB7971 /* AccessibilitySoftLink.h */; };
@@ -889,6 +890,7 @@
 		1CCA5EFE280FABB4008A6F78 /* WebGPUCreateImpl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPUCreateImpl.h; sourceTree = "<group>"; };
 		1CCEE4F420D871930047B097 /* CoreUISPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoreUISPI.h; sourceTree = "<group>"; };
 		1CCEE4F620D8743F0047B097 /* NSAppearanceSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSAppearanceSPI.h; sourceTree = "<group>"; };
+		1CD50E0E2A33E9FA00032F1A /* AppleJPEGXLSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppleJPEGXLSPI.h; sourceTree = "<group>"; };
 		1CEF45AA27BB101F00C3A6BC /* WebGPUShaderModuleCompilationHint.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPUShaderModuleCompilationHint.h; sourceTree = "<group>"; };
 		1D12CC4A2411BCAE00FDA0A3 /* FeatureFlagsSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FeatureFlagsSPI.h; sourceTree = "<group>"; };
 		1D2B413225F05E3400A3F70A /* ClockGeneric.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ClockGeneric.cpp; sourceTree = "<group>"; };
@@ -1110,6 +1112,7 @@
 		0C2DA1201F3BE9E700DBC317 /* cocoa */ = {
 			isa = PBXGroup;
 			children = (
+				1CD50E0D2A33E9B500032F1A /* AppleJPEGXL */,
 				293EE4A624154F8F0047493D /* AccessibilitySupportSoftLink.cpp */,
 				293EE4A724154F8F0047493D /* AccessibilitySupportSoftLink.h */,
 				C037494124127CCB00D9A36E /* AccessibilitySupportSPI.h */,
@@ -1624,6 +1627,14 @@
 			path = WebGPU;
 			sourceTree = "<group>";
 		};
+		1CD50E0D2A33E9B500032F1A /* AppleJPEGXL */ = {
+			isa = PBXGroup;
+			children = (
+				1CD50E0E2A33E9FA00032F1A /* AppleJPEGXLSPI.h */,
+			);
+			path = AppleJPEGXL;
+			sourceTree = "<group>";
+		};
 		2E87C06E215A993100D6CD32 /* ios */ = {
 			isa = PBXGroup;
 			children = (
@@ -1786,6 +1797,7 @@
 				297CB482288B11D700BB7971 /* AccessibilitySoftLink.h in Headers */,
 				DD20DDD527BC90D70093D175 /* AccessibilitySupportSoftLink.h in Headers */,
 				DD20DDD627BC90D70093D175 /* AccessibilitySupportSPI.h in Headers */,
+				1CD50E0F2A33EA1300032F1A /* AppleJPEGXLSPI.h in Headers */,
 				DD20DD1A27BC90D60093D175 /* AppSSOSoftLink.h in Headers */,
 				DD20DDD727BC90D70093D175 /* AppSSOSPI.h in Headers */,
 				DD20DD1527BC90D60093D175 /* AudioToolboxSoftLink.h in Headers */,

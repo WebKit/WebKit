@@ -41,10 +41,7 @@ namespace WebCore {
 // This class decodes the JPEG XL image format.
 class JPEGXLImageDecoder final : public ScalableImageDecoder {
 public:
-    static Ref<ScalableImageDecoder> create(AlphaOption alphaOption, GammaAndColorProfileOption gammaAndColorProfileOption)
-    {
-        return adoptRef(*new JPEGXLImageDecoder(alphaOption, gammaAndColorProfileOption));
-    }
+    static RefPtr<ScalableImageDecoder> create(AlphaOption, GammaAndColorProfileOption);
 
     virtual ~JPEGXLImageDecoder();
 
