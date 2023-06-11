@@ -6123,6 +6123,22 @@
                 "url": "https://www.w3.org/TR/css-will-change/#propdef-will-change"
             }
         },
+        "word-boundary-detection": {
+            "inherited": true,
+            "codegen-properties": {
+                "settings-flag": "wordBoundaryDetectionEnabled",
+                "converter": "WordBoundaryDetection",
+                "parser-function": "consumeWordBoundaryDetection",
+                "parser-grammar-unused": "normal | auto(<lang>)",
+                "parser-grammar-unused-reason": "Only KeywordTerm, ReferenceTerm and UnboundedRepetitionTerm terms are supported inside MatchOneTerm at this time: '[ normal | auto(<lang>) ]' - auto(<lang>)",
+                "parser-grammar-comment": "There is also a 'manual' value which we don't implement yet."
+            },
+            "specification": {
+                "category": "css-text",
+                "url": "https://drafts.csswg.org/css-text-4/#propdef-word-boundary-detection"
+            },
+            "status": "in development"
+        },
         "word-break": {
             "inherited": true,
             "values": [

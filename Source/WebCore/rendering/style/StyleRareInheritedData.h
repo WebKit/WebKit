@@ -2,7 +2,7 @@
  * Copyright (C) 2000 Lars Knoll (knoll@kde.org)
  *           (C) 2000 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2003, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Graham Dennis (graham.dennis@gmail.com)
  *
  * This library is free software; you can redistribute it and/or
@@ -34,6 +34,7 @@
 #include "TextSpacing.h"
 #include "TextUnderlineOffset.h"
 #include "TouchAction.h"
+#include "WordBoundaryDetection.h"
 #include <wtf/DataRef.h>
 #include <wtf/OptionSet.h>
 #include <wtf/RefCounted.h>
@@ -200,6 +201,8 @@ public:
     TextAutospace textAutospace;
 
     ListStyleType listStyleType;
+
+    WordBoundaryDetection wordBoundaryDetection;
 
 private:
     StyleRareInheritedData();

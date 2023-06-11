@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2004-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2011 Adobe Systems Incorporated. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -904,7 +904,8 @@ static bool rareInheritedDataChangeRequiresLayout(const StyleRareInheritedData& 
         || first.useTouchOverflowScrolling != second.useTouchOverflowScrolling
 #endif
         || first.listStyleType != second.listStyleType
-        || first.listStyleImage != second.listStyleImage) // FIXME: needs arePointingToEqualData()?
+        || first.listStyleImage != second.listStyleImage
+        || first.wordBoundaryDetection != second.wordBoundaryDetection)
         return true;
 
     if (first.textStrokeWidth != second.textStrokeWidth)

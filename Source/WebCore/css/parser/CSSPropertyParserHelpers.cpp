@@ -80,6 +80,7 @@
 #include "CSSValuePool.h"
 #include "CSSVariableData.h"
 #include "CSSVariableParser.h"
+#include "CSSWordBoundaryDetectionValue.h"
 #include "CalculationCategory.h"
 #include "ColorConversion.h"
 #include "ColorInterpolation.h"
@@ -94,6 +95,7 @@
 #include "StyleColor.h"
 #include "TimingFunction.h"
 #include "WebKitFontFamilyNames.h"
+#include "WordBoundaryDetection.h"
 #include <wtf/SortedArrayMap.h>
 #include <wtf/text/StringConcatenateNumbers.h>
 #include <wtf/text/TextStream.h>
@@ -8497,6 +8499,34 @@ RefPtr<CSSValue> consumeTextAutospace(CSSParserTokenRange& range)
         return value;
     }
     return nullptr;
+}
+
+RefPtr<CSSPrimitiveValue> consumeLang(CSSParserTokenRange& range)
+{
+    // https://drafts.csswg.org/css-text-4/#typedef-word-boundary-detection-lang
+    if (auto ident = consumeCustomIdent(range))
+        return ident;
+    return consumeString(range);
+}
+
+RefPtr<CSSWordBoundaryDetectionValue> consumeWordBoundaryDetection(CSSParserTokenRange& range)
+{
+    // https://drafts.csswg.org/css-text-4/#propdef-word-boundary-detection
+    // normal | auto(<lang>)
+    if (auto value = consumeIdent<CSSValueNormal>(range))
+        return CSSWordBoundaryDetectionValue::create(WordBoundaryDetectionNormal { });
+
+    if (range.peek().functionId() != CSSValueAuto)
+        return nullptr;
+
+    auto args = consumeFunction(range);
+
+    auto lang = consumeLang(args);
+    if (!lang || !args.atEnd())
+        return nullptr;
+
+    ASSERT(lang->isString() || lang->isCustomIdent());
+    return CSSWordBoundaryDetectionValue::create(WordBoundaryDetectionAuto { lang->stringValue() });
 }
 
 } // namespace CSSPropertyParserHelpers

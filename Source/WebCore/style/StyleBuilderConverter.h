@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2013 Google Inc. All rights reserved.
- * Copyright (C) 2014-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2023 ChangSeok Oh <changseok@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -48,6 +48,7 @@
 #include "CSSReflectValue.h"
 #include "CSSSubgridValue.h"
 #include "CSSValuePair.h"
+#include "CSSWordBoundaryDetectionValue.h"
 #include "CalcExpressionLength.h"
 #include "CalcExpressionOperation.h"
 #include "CalculationValue.h"
@@ -74,6 +75,7 @@
 #include "TextSpacing.h"
 #include "TouchAction.h"
 #include "TransformFunctions.h"
+#include "WordBoundaryDetection.h"
 
 namespace WebCore {
 namespace Style {
@@ -202,6 +204,8 @@ public:
     static TextAutospace convertTextAutospace(BuilderState&, const CSSValue&);
 
     static std::optional<Length> convertBlockStepSize(BuilderState&, const CSSValue&);
+
+    static WordBoundaryDetection convertWordBoundaryDetection(BuilderState&, const CSSValue&);
     
 private:
     friend class BuilderCustom;
@@ -1939,6 +1943,11 @@ inline std::optional<Length> BuilderConverter::convertBlockStepSize(BuilderState
     if (downcast<CSSPrimitiveValue>(value).valueID() == CSSValueNone)
         return { };
     return convertLength(builderState, value);
+}
+
+inline WordBoundaryDetection BuilderConverter::convertWordBoundaryDetection(BuilderState&, const CSSValue& value)
+{
+    return downcast<CSSWordBoundaryDetectionValue>(value).value();
 }
 
 } // namespace Style

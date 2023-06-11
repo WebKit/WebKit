@@ -339,6 +339,7 @@ inline void RenderStyle::setVisitedLinkTextFillColor(const StyleColor& value) { 
 inline void RenderStyle::setVisitedLinkTextStrokeColor(const StyleColor& value) { SET(m_rareInheritedData, visitedLinkTextStrokeColor, value); }
 inline void RenderStyle::setWidth(Length&& length) { SET_NESTED(m_nonInheritedData, boxData, m_width, WTFMove(length)); }
 inline void RenderStyle::setWordBreak(WordBreak rule) { SET(m_rareInheritedData, wordBreak, static_cast<unsigned>(rule)); }
+inline void RenderStyle::setWordBoundaryDetection(const WordBoundaryDetection& wordBoundaryDetection) { SET(m_rareInheritedData, wordBoundaryDetection, wordBoundaryDetection); }
 
 #if ENABLE(APPLE_PAY)
 inline void RenderStyle::setApplePayButtonStyle(ApplePayButtonStyle style) { SET_NESTED(m_nonInheritedData, rareData, applePayButtonStyle, static_cast<unsigned>(style)); }

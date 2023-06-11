@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2004 Zack Rusin <zack@kde.org>
- * Copyright (C) 2004-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Alexey Proskuryakov <ap@webkit.org>
  * Copyright (C) 2007 Nicholas Shanks <webkit@nickshanks.com>
  * Copyright (C) 2011 Sencha, Inc. All rights reserved.
@@ -52,6 +52,7 @@
 #include "CSSValueList.h"
 #include "CSSValuePair.h"
 #include "CSSValuePool.h"
+#include "CSSWordBoundaryDetectionValue.h"
 #include "ComposedTreeAncestorIterator.h"
 #include "ContentData.h"
 #include "CursorList.h"
@@ -2085,6 +2086,11 @@ static Ref<CSSValue> counterToCSSValue(const RenderStyle& style, CSSPropertyID p
     if (!list.isEmpty())
         return CSSValueList::createSpaceSeparated(WTFMove(list));
     return CSSPrimitiveValue::create(CSSValueNone);
+}
+
+static Ref<CSSValue> wordBoundaryDetection(WordBoundaryDetection wordBoundaryDetection)
+{
+    return CSSWordBoundaryDetectionValue::create(WTFMove(wordBoundaryDetection));
 }
 
 static Ref<CSSValueList> fontFamilyList(const RenderStyle& style)
@@ -4256,6 +4262,9 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
 
     case CSSPropertyQuotes:
         return valueForQuotes(style.quotes());
+
+    case CSSPropertyWordBoundaryDetection:
+        return wordBoundaryDetection(style.wordBoundaryDetection());
 
     // Unimplemented CSS 3 properties (including CSS3 shorthand properties).
     case CSSPropertyAll:

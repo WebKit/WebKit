@@ -35,6 +35,7 @@
 #include "CSSPrimitiveValue.h"
 #include "CSSShadowValue.h"
 #include "CSSValuePool.h"
+#include "CSSWordBoundaryDetectionValue.h"
 #include "GridArea.h"
 #include "Length.h"
 #include "StyleColor.h"
@@ -315,6 +316,8 @@ RefPtr<CSSValue> consumeColorScheme(CSSParserTokenRange&);
 RefPtr<CSSValue> consumeOffsetRotate(CSSParserTokenRange&, CSSParserMode);
 RefPtr<CSSValue> consumeTextSpacingTrim(CSSParserTokenRange&);
 RefPtr<CSSValue> consumeTextAutospace(CSSParserTokenRange&);
+RefPtr<CSSPrimitiveValue> consumeLang(CSSParserTokenRange&);
+RefPtr<CSSWordBoundaryDetectionValue> consumeWordBoundaryDetection(CSSParserTokenRange&);
 
 RefPtr<CSSValue> consumeDeclarationValue(CSSParserTokenRange&, const CSSParserContext&);
 

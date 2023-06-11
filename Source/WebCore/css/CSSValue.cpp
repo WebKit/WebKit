@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2011 Andreas Kling (kling@webkit.org)
  * Copyright (C) 2013 Adobe Systems Incorporated. All rights reserved.
- * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -77,6 +77,7 @@
 #include "CSSValueList.h"
 #include "CSSValuePair.h"
 #include "CSSVariableReferenceValue.h"
+#include "CSSWordBoundaryDetectionValue.h"
 #include "DeprecatedCSSOMPrimitiveValue.h"
 #include "DeprecatedCSSOMValueList.h"
 #include "EventTarget.h"
@@ -215,6 +216,8 @@ template<typename Visitor> constexpr decltype(auto) CSSValue::visitDerived(Visit
         return std::invoke(std::forward<Visitor>(visitor), downcast<CSSValuePair>(*this));
     case VariableReferenceClass:
         return std::invoke(std::forward<Visitor>(visitor), downcast<CSSVariableReferenceValue>(*this));
+    case WordBoundaryDetectionClass:
+        return std::invoke(std::forward<Visitor>(visitor), downcast<CSSWordBoundaryDetectionValue>(*this));
 #if ENABLE(CSS_PAINTING_API)
     case PaintImageClass:
         return std::invoke(std::forward<Visitor>(visitor), downcast<CSSPaintImageValue>(*this));
