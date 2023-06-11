@@ -9926,16 +9926,15 @@
             "longname": "CSS Text Module",
             "url": "https://www.w3.org/TR/css-text-3/"
         },
+        "css-text-fill-and-stroke": {
+            "shortname": "CSS Text Fill and Stroke",
+            "longname": "CSS Text Fill and Stroke Module",
+            "url": "https://drafts.fxtf.org/paint/"
+        },
         "css-text-decor": {
             "shortname": "CSS Text Decoration",
             "longname": "CSS Text Decoration Module",
             "url": "https://www.w3.org/TR/css-text-decor-3/"
-        },
-        "css3-text": {
-            "shortname": "CSS3 Text",
-            "longname": "CSS3 Text Module",
-            "url": "https://www.w3.org/TR/2003/CR-css3-text-20030514/",
-            "status": "obsolete"
         },
         "css-transforms": {
             "shortname": "CSS Transforms",
