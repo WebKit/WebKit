@@ -63,6 +63,11 @@ public:
     };
     using Mode = std::variant<LineMode, CaretMode, DeleteMode, CharacterMode>;
 
+    enum class ContentAnalysis : bool {
+        Linguistic,
+        Mechanical,
+    };
+
     TextBreakIterator() = delete;
     TextBreakIterator(const TextBreakIterator&) = delete;
     TextBreakIterator(TextBreakIterator&&) = default;
@@ -95,10 +100,10 @@ private:
 
     using Backing = std::variant<TextBreakIteratorICU, TextBreakIteratorPlatform>;
 
-    static Backing mapModeToBackingIterator(StringView, const UChar* priorContext, unsigned priorContextLength, TextBreakIterator::Mode, const AtomString& locale);
+    static Backing mapModeToBackingIterator(StringView, const UChar* priorContext, unsigned priorContextLength, Mode, ContentAnalysis, const AtomString& locale);
 
     // Use CachedTextBreakIterator instead of constructing one of these directly.
-    WTF_EXPORT_PRIVATE TextBreakIterator(StringView, const UChar* priorContext, unsigned priorContextLength, Mode, const AtomString& locale);
+    WTF_EXPORT_PRIVATE TextBreakIterator(StringView, const UChar* priorContext, unsigned priorContextLength, Mode, ContentAnalysis, const AtomString& locale);
 
     void setText(StringView string, const UChar* priorContext, unsigned priorContextLength)
     {
@@ -112,6 +117,11 @@ private:
         return m_mode;
     }
 
+    ContentAnalysis contentAnalysis() const
+    {
+        return m_contentAnalysis;
+    }
+
     const AtomString& locale() const
     {
         return m_locale;
@@ -119,6 +129,7 @@ private:
 
     Backing m_backing;
     Mode m_mode;
+    ContentAnalysis m_contentAnalysis { ContentAnalysis::Mechanical };
     AtomString m_locale;
 };
 
@@ -138,13 +149,13 @@ private:
     TextBreakIteratorCache& operator=(const TextBreakIteratorCache&) = delete;
     TextBreakIteratorCache& operator=(TextBreakIteratorCache&&) = delete;
 
-    TextBreakIterator take(StringView string, const UChar* priorContext, unsigned priorContextLength, TextBreakIterator::Mode mode, const AtomString& locale)
+    TextBreakIterator take(StringView string, const UChar* priorContext, unsigned priorContextLength, TextBreakIterator::Mode mode, TextBreakIterator::ContentAnalysis contentAnalysis, const AtomString& locale)
     {
         auto iter = std::find_if(m_unused.begin(), m_unused.end(), [&](TextBreakIterator& candidate) {
-            return candidate.mode() == mode && candidate.locale() == locale;
+            return candidate.mode() == mode && candidate.contentAnalysis() == contentAnalysis && candidate.locale() == locale;
         });
         if (iter == m_unused.end())
-            return TextBreakIterator(string, priorContext, priorContextLength, mode, locale);
+            return TextBreakIterator(string, priorContext, priorContextLength, mode, contentAnalysis, locale);
         auto result = WTFMove(*iter);
         m_unused.remove(iter - m_unused.begin());
         result.setText(string, priorContext, priorContextLength);
@@ -169,8 +180,8 @@ private:
 class CachedTextBreakIterator {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    CachedTextBreakIterator(StringView string, const UChar* priorContext, unsigned priorContextLength, TextBreakIterator::Mode mode, const AtomString& locale)
-        : m_backing(TextBreakIteratorCache::singleton().take(string, priorContext, priorContextLength, mode, locale))
+    CachedTextBreakIterator(StringView string, const UChar* priorContext, unsigned priorContextLength, TextBreakIterator::Mode mode, const AtomString& locale, TextBreakIterator::ContentAnalysis contentAnalysis = TextBreakIterator::ContentAnalysis::Mechanical)
+        : m_backing(TextBreakIteratorCache::singleton().take(string, priorContext, priorContextLength, mode, contentAnalysis, locale))
     {
     }
 
@@ -282,36 +293,39 @@ public:
 
     CachedLineBreakIteratorFactory() = default;
 
-    explicit CachedLineBreakIteratorFactory(StringView stringView, const AtomString& locale = AtomString(), LineBreakIteratorMode mode = LineBreakIteratorMode::Default)
+    explicit CachedLineBreakIteratorFactory(StringView stringView, const AtomString& locale = AtomString(), LineBreakIteratorMode mode = LineBreakIteratorMode::Default, TextBreakIterator::ContentAnalysis contentAnalysis = TextBreakIterator::ContentAnalysis::Mechanical)
         : m_stringView(stringView)
         , m_locale(locale)
         , m_mode(mode)
+        , m_contentAnalysis(contentAnalysis)
     {
     }
 
     StringView stringView() const { return m_stringView; }
     LineBreakIteratorMode mode() const { return m_mode; }
+    TextBreakIterator::ContentAnalysis contentAnalysis() const { return m_contentAnalysis; }
 
     CachedTextBreakIterator& get()
     {
         const UChar* priorContext = m_priorContext.characters();
         if (!m_iterator) {
-            m_iterator = CachedTextBreakIterator(m_stringView, priorContext, m_priorContext.length(), WTF::TextBreakIterator::LineMode { m_mode }, m_locale);
+            m_iterator = CachedTextBreakIterator(m_stringView, priorContext, m_priorContext.length(), WTF::TextBreakIterator::LineMode { m_mode }, m_locale, m_contentAnalysis);
             m_cachedPriorContext = priorContext;
         } else if (priorContext != m_cachedPriorContext) {
-            resetStringAndReleaseIterator(m_stringView, m_locale, m_mode);
+            resetStringAndReleaseIterator(m_stringView, m_locale, m_mode, m_contentAnalysis);
             return get();
         }
         return *m_iterator;
     }
 
-    void resetStringAndReleaseIterator(StringView stringView, const AtomString& locale, LineBreakIteratorMode mode)
+    void resetStringAndReleaseIterator(StringView stringView, const AtomString& locale, LineBreakIteratorMode mode, TextBreakIterator::ContentAnalysis contentAnalysis = TextBreakIterator::ContentAnalysis::Mechanical)
     {
         m_stringView = stringView;
         m_locale = locale;
         m_iterator = std::nullopt;
         m_cachedPriorContext = nullptr;
         m_mode = mode;
+        m_contentAnalysis = contentAnalysis;
     }
 
     const PriorContext& priorContext() const
@@ -330,6 +344,7 @@ private:
     std::optional<CachedTextBreakIterator> m_iterator;
     const UChar* m_cachedPriorContext { nullptr };
     LineBreakIteratorMode m_mode { LineBreakIteratorMode::Default };
+    TextBreakIterator::ContentAnalysis m_contentAnalysis { TextBreakIterator::ContentAnalysis::Mechanical };
     PriorContext m_priorContext;
 };
 

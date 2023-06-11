@@ -42,7 +42,7 @@ TextBreakIteratorCache& TextBreakIteratorCache::singleton()
 
 #if !PLATFORM(COCOA)
 
-TextBreakIterator::Backing TextBreakIterator::mapModeToBackingIterator(StringView string, const UChar* priorContext, unsigned priorContextLength, TextBreakIterator::Mode mode, const AtomString& locale)
+TextBreakIterator::Backing TextBreakIterator::mapModeToBackingIterator(StringView string, const UChar* priorContext, unsigned priorContextLength, Mode mode, ContentAnalysis, const AtomString& locale)
 {
     return switchOn(mode, [string, priorContext, priorContextLength, &locale](TextBreakIterator::LineMode lineMode) -> TextBreakIterator::Backing {
         return TextBreakIteratorICU(string, priorContext, priorContextLength, TextBreakIteratorICU::LineMode { lineMode.behavior }, locale);
@@ -55,8 +55,8 @@ TextBreakIterator::Backing TextBreakIterator::mapModeToBackingIterator(StringVie
     });
 }
 
-TextBreakIterator::TextBreakIterator(StringView string, const UChar* priorContext, unsigned priorContextLength, Mode mode, const AtomString& locale)
-    : m_backing(mapModeToBackingIterator(string, priorContext, priorContextLength, mode, locale))
+TextBreakIterator::TextBreakIterator(StringView string, const UChar* priorContext, unsigned priorContextLength, Mode mode, ContentAnalysis contentAnalysis, const AtomString& locale)
+    : m_backing(mapModeToBackingIterator(string, priorContext, priorContextLength, mode, contentAnalysis, locale))
     , m_mode(mode)
     , m_locale(locale)
 {

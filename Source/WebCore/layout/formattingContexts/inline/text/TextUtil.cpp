@@ -36,6 +36,7 @@
 #include "SurrogatePairAwareTextIterator.h"
 #include "TextRun.h"
 #include "WidthIterator.h"
+#include "WordBoundaryDetection.h"
 #include <unicode/ubidi.h>
 #include <wtf/text/TextBreakIterator.h>
 
@@ -370,6 +371,17 @@ LineBreakIteratorMode TextUtil::lineBreakIteratorMode(LineBreak lineBreak)
     }
     ASSERT_NOT_REACHED();
     return LineBreakIteratorMode::Default;
+}
+
+TextBreakIterator::ContentAnalysis TextUtil::contentAnalysis(const WordBoundaryDetection& wordBoundaryDetection)
+{
+    return WTF::switchOn(wordBoundaryDetection, [](WordBoundaryDetectionNormal) {
+        return TextBreakIterator::ContentAnalysis::Mechanical;
+    }, [](WordBoundaryDetectionManual) {
+        return TextBreakIterator::ContentAnalysis::Mechanical;
+    }, [](const WordBoundaryDetectionAuto&) {
+        return TextBreakIterator::ContentAnalysis::Linguistic;
+    });
 }
 
 bool TextUtil::containsStrongDirectionalityText(StringView text)

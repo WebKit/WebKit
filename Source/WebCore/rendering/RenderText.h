@@ -1,7 +1,7 @@
 /*
  * (C) 1999 Lars Knoll (knoll@kde.org)
  * (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2023 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -33,6 +33,7 @@ namespace WebCore {
 class Font;
 class LegacyInlineTextBox;
 struct GlyphOverflow;
+class WordBoundaryDetection;
 struct WordTrailingSpace;
 
 namespace LayoutIntegration {
@@ -261,6 +262,7 @@ private:
 String applyTextTransform(const RenderStyle&, const String&, UChar previousCharacter);
 String capitalize(const String&, UChar previousCharacter);
 LineBreakIteratorMode mapLineBreakToIteratorMode(LineBreak);
+TextBreakIterator::ContentAnalysis mapWordBoundaryDetectionToContentAnalysis(const WordBoundaryDetection&);
 
 inline UChar RenderText::characterAt(unsigned i) const
 {

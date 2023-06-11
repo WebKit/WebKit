@@ -1039,6 +1039,17 @@ LineBreakIteratorMode mapLineBreakToIteratorMode(LineBreak lineBreak)
     return LineBreakIteratorMode::Default;
 }
 
+TextBreakIterator::ContentAnalysis mapWordBoundaryDetectionToContentAnalysis(const WordBoundaryDetection& wordBoundaryDetection)
+{
+    return WTF::switchOn(wordBoundaryDetection, [](WordBoundaryDetectionNormal) {
+        return TextBreakIterator::ContentAnalysis::Mechanical;
+    }, [](WordBoundaryDetectionManual) {
+        return TextBreakIterator::ContentAnalysis::Mechanical;
+    }, [](const WordBoundaryDetectionAuto&) {
+        return TextBreakIterator::ContentAnalysis::Linguistic;
+    });
+}
+
 void RenderText::computePreferredLogicalWidths(float leadWidth, bool forcedMinMaxWidthComputation)
 {
     HashSet<const Font*> fallbackFonts;
@@ -1130,7 +1141,8 @@ void RenderText::computePreferredLogicalWidths(float leadWidth, HashSet<const Fo
     auto& string = text();
     unsigned length = string.length();
     auto iteratorMode = mapLineBreakToIteratorMode(style.lineBreak());
-    CachedLineBreakIteratorFactory lineBreakIteratorFactory(string, style.computedLocale(), iteratorMode);
+    auto contentAnalysis = mapWordBoundaryDetectionToContentAnalysis(style.wordBoundaryDetection());
+    CachedLineBreakIteratorFactory lineBreakIteratorFactory(string, style.computedLocale(), iteratorMode, contentAnalysis);
     bool needsWordSpacing = false;
     bool ignoringSpaces = false;
     bool isSpace = false;
