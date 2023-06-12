@@ -416,8 +416,7 @@ TEST(IPCTestingAPI, CanInterceptAlert)
         [webView stringByEvaluatingJavaScript:@"IPC.webPageProxyID.toString()"].intValue);
 }
 
-// FIXME when rdar://108168809 is resolved
-TEST(IPCTestingAPI, DISABLED_CanInterceptHasStorageAccess)
+TEST(IPCTestingAPI, CanInterceptHasStorageAccess)
 {
     auto webView = createWebViewWithIPCTestingAPI();
 
