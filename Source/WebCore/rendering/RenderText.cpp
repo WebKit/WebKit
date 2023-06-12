@@ -1021,22 +1021,22 @@ float RenderText::maxLogicalWidth() const
     return *m_maxWidth;
 }
 
-LineBreakIteratorMode mapLineBreakToIteratorMode(LineBreak lineBreak)
+TextBreakIterator::LineMode::Behavior mapLineBreakToIteratorMode(LineBreak lineBreak)
 {
     switch (lineBreak) {
     case LineBreak::Auto:
     case LineBreak::AfterWhiteSpace:
     case LineBreak::Anywhere:
-        return LineBreakIteratorMode::Default;
+        return TextBreakIterator::LineMode::Behavior::Default;
     case LineBreak::Loose:
-        return LineBreakIteratorMode::Loose;
+        return TextBreakIterator::LineMode::Behavior::Loose;
     case LineBreak::Normal:
-        return LineBreakIteratorMode::Normal;
+        return TextBreakIterator::LineMode::Behavior::Normal;
     case LineBreak::Strict:
-        return LineBreakIteratorMode::Strict;
+        return TextBreakIterator::LineMode::Behavior::Strict;
     }
     ASSERT_NOT_REACHED();
-    return LineBreakIteratorMode::Default;
+    return TextBreakIterator::LineMode::Behavior::Default;
 }
 
 TextBreakIterator::ContentAnalysis mapWordBoundaryDetectionToContentAnalysis(const WordBoundaryDetection& wordBoundaryDetection)
@@ -1178,7 +1178,7 @@ void RenderText::computePreferredLogicalWidths(float leadWidth, HashSet<const Fo
     // word-break, but we support it as though it means break-all.
     bool breakAll = (style.wordBreak() == WordBreak::BreakAll || style.wordBreak() == WordBreak::BreakWord || style.overflowWrap() == OverflowWrap::Anywhere) && style.autoWrap();
     bool keepAllWords = style.wordBreak() == WordBreak::KeepAll;
-    bool canUseLineBreakShortcut = iteratorMode == LineBreakIteratorMode::Default;
+    bool canUseLineBreakShortcut = iteratorMode == TextBreakIterator::LineMode::Behavior::Default;
 
     for (unsigned i = 0; i < length; i++) {
         UChar c = string[i];

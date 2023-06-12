@@ -702,7 +702,7 @@ inline bool BreakingContext::handleText(WordMeasurements& wordMeasurements, bool
     float hyphenWidth = 0;
     auto iteratorMode = mapLineBreakToIteratorMode(m_blockStyle.lineBreak());
     auto contentAnalysis = mapWordBoundaryDetectionToContentAnalysis(m_blockStyle.wordBoundaryDetection());
-    bool canUseLineBreakShortcut = iteratorMode == LineBreakIteratorMode::Default;
+    bool canUseLineBreakShortcut = iteratorMode == TextBreakIterator::LineMode::Behavior::Default;
     bool isLineEmpty = m_lineInfo.isEmpty();
 
     if (isSVGText) {

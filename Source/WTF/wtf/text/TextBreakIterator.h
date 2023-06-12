@@ -224,8 +224,6 @@ private:
     std::optional<TextBreakIterator> m_backing;
 };
 
-using LineBreakIteratorMode = TextBreakIteratorICU::LineMode::Behavior;
-
 WTF_EXPORT_PRIVATE UBreakIterator* wordBreakIterator(StringView);
 WTF_EXPORT_PRIVATE UBreakIterator* sentenceBreakIterator(StringView);
 
@@ -293,7 +291,7 @@ public:
 
     CachedLineBreakIteratorFactory() = default;
 
-    explicit CachedLineBreakIteratorFactory(StringView stringView, const AtomString& locale = AtomString(), LineBreakIteratorMode mode = LineBreakIteratorMode::Default, TextBreakIterator::ContentAnalysis contentAnalysis = TextBreakIterator::ContentAnalysis::Mechanical)
+    explicit CachedLineBreakIteratorFactory(StringView stringView, const AtomString& locale = AtomString(), TextBreakIterator::LineMode::Behavior mode = TextBreakIterator::LineMode::Behavior::Default, TextBreakIterator::ContentAnalysis contentAnalysis = TextBreakIterator::ContentAnalysis::Mechanical)
         : m_stringView(stringView)
         , m_locale(locale)
         , m_mode(mode)
@@ -302,7 +300,7 @@ public:
     }
 
     StringView stringView() const { return m_stringView; }
-    LineBreakIteratorMode mode() const { return m_mode; }
+    TextBreakIterator::LineMode::Behavior mode() const { return m_mode; }
     TextBreakIterator::ContentAnalysis contentAnalysis() const { return m_contentAnalysis; }
 
     CachedTextBreakIterator& get()
@@ -318,7 +316,7 @@ public:
         return *m_iterator;
     }
 
-    void resetStringAndReleaseIterator(StringView stringView, const AtomString& locale, LineBreakIteratorMode mode, TextBreakIterator::ContentAnalysis contentAnalysis = TextBreakIterator::ContentAnalysis::Mechanical)
+    void resetStringAndReleaseIterator(StringView stringView, const AtomString& locale, TextBreakIterator::LineMode::Behavior mode, TextBreakIterator::ContentAnalysis contentAnalysis = TextBreakIterator::ContentAnalysis::Mechanical)
     {
         m_stringView = stringView;
         m_locale = locale;
@@ -343,7 +341,7 @@ private:
     AtomString m_locale;
     std::optional<CachedTextBreakIterator> m_iterator;
     const UChar* m_cachedPriorContext { nullptr };
-    LineBreakIteratorMode m_mode { LineBreakIteratorMode::Default };
+    TextBreakIterator::LineMode::Behavior m_mode { TextBreakIterator::LineMode::Behavior::Default };
     TextBreakIterator::ContentAnalysis m_contentAnalysis { TextBreakIterator::ContentAnalysis::Mechanical };
     PriorContext m_priorContext;
 };
@@ -382,7 +380,6 @@ WTF_EXPORT_PRIVATE unsigned numCodeUnitsInGraphemeClusters(StringView, unsigned)
 
 using WTF::CachedTextBreakIterator;
 using WTF::CachedLineBreakIteratorFactory;
-using WTF::LineBreakIteratorMode;
 using WTF::NonSharedCharacterBreakIterator;
 using WTF::TextBreakIterator;
 using WTF::TextBreakIteratorCache;

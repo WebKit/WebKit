@@ -324,7 +324,7 @@ unsigned TextUtil::findNextBreakablePosition(CachedLineBreakIteratorFactory& lin
         return nextBreakablePositionKeepingAllWordsIgnoringNBSP(lineBreakIteratorFactory, startPosition);
     }
 
-    if (lineBreakIteratorFactory.mode() == LineBreakIteratorMode::Default) {
+    if (lineBreakIteratorFactory.mode() == TextBreakIterator::LineMode::Behavior::Default) {
         if (breakNBSP)
             return WebCore::nextBreakablePosition(lineBreakIteratorFactory, startPosition);
         return nextBreakablePositionIgnoringNBSP(lineBreakIteratorFactory, startPosition);
@@ -355,22 +355,22 @@ bool TextUtil::isWrappingAllowed(const RenderStyle& style)
     return style.whiteSpace() != WhiteSpace::Pre && style.whiteSpace() != WhiteSpace::NoWrap;
 }
 
-LineBreakIteratorMode TextUtil::lineBreakIteratorMode(LineBreak lineBreak)
+TextBreakIterator::LineMode::Behavior TextUtil::lineBreakIteratorMode(LineBreak lineBreak)
 {
     switch (lineBreak) {
     case LineBreak::Auto:
     case LineBreak::AfterWhiteSpace:
     case LineBreak::Anywhere:
-        return LineBreakIteratorMode::Default;
+        return TextBreakIterator::LineMode::Behavior::Default;
     case LineBreak::Loose:
-        return LineBreakIteratorMode::Loose;
+        return TextBreakIterator::LineMode::Behavior::Loose;
     case LineBreak::Normal:
-        return LineBreakIteratorMode::Normal;
+        return TextBreakIterator::LineMode::Behavior::Normal;
     case LineBreak::Strict:
-        return LineBreakIteratorMode::Strict;
+        return TextBreakIterator::LineMode::Behavior::Strict;
     }
     ASSERT_NOT_REACHED();
-    return LineBreakIteratorMode::Default;
+    return TextBreakIterator::LineMode::Behavior::Default;
 }
 
 TextBreakIterator::ContentAnalysis TextUtil::contentAnalysis(const WordBoundaryDetection& wordBoundaryDetection)
