@@ -6249,18 +6249,7 @@ void WebPageProxy::createNewPage(FrameInfoData&& originatingFrameInfoData, WebPa
 #endif
     };
 
-    RefPtr<API::UserInitiatedAction> userInitiatedActivity;
-    
-#if ENABLE(TRACKING_PREVENTION)
-    // WebKit cancels the original gesture to open the BBC radio player so
-    // we can call the Storage Access API first. When we re-initiate the open,
-    // we should make sure the client knows that this was user initiated so it
-    // does not block the popup.
-    if (request.url().string() == Quirks::staticRadioPlayerURLString())
-        userInitiatedActivity = API::UserInitiatedAction::create();
-    else
-#endif
-        userInitiatedActivity = m_process->userInitiatedActivity(navigationActionData.userGestureTokenIdentifier);
+    RefPtr<API::UserInitiatedAction> userInitiatedActivity = m_process->userInitiatedActivity(navigationActionData.userGestureTokenIdentifier);
 
     bool shouldOpenAppLinks = originatingFrameInfo->request().url().host() != request.url().host();
     auto navigationAction = API::NavigationAction::create(WTFMove(navigationActionData), originatingFrameInfo.ptr(), nullptr, std::nullopt, WTFMove(request), URL(), shouldOpenAppLinks, WTFMove(userInitiatedActivity));
