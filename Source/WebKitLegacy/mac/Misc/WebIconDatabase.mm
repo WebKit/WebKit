@@ -46,7 +46,6 @@ NSString *WebIconNotificationUserInfoURLKey =              @"WebIconNotification
 NSString *WebIconDatabaseDidRemoveAllIconsNotification =   @"WebIconDatabaseDidRemoveAllIconsNotification";
 
 NSString *WebIconDatabaseDirectoryDefaultsKey = @"WebIconDatabaseDirectoryDefaultsKey";
-NSString *WebIconDatabaseEnabledDefaultsKey =   @"WebIconDatabaseEnabled";
 
 NSString *WebIconDatabasePath = @"~/Library/Icons";
 

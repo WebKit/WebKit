@@ -25,6 +25,10 @@
 
 #pragma once
 
+#include <wtf/Platform.h>
+
+#if PLATFORM(IOS) || PLATFORM(IOS_SIMULATOR)
+
 // FIXME: Remove these after <rdar://problem/30772200> is fixed.
 #define DECLARE_INSTALL_NAME(major, minor) \
 extern __attribute__((visibility("default"))) const char install_name_ ##major## _ ##minor __asm("$ld$install_name$os" #major "." #minor "$/System/Library/PrivateFrameworks/WebKit.framework/WebKit");
@@ -36,3 +40,5 @@ DECLARE_INSTALL_NAME(6, 0);
 DECLARE_INSTALL_NAME(6, 1);
 DECLARE_INSTALL_NAME(7, 0);
 DECLARE_INSTALL_NAME(7, 1);
+
+#endif
