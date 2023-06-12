@@ -198,7 +198,7 @@ void InspectorTimelineAgent::internalStart(std::optional<int>&& maxCallStackDept
     // FIXME: Abstract away platform-specific code once https://bugs.webkit.org/show_bug.cgi?id=142748 is fixed.
 
 #if PLATFORM(COCOA)
-    m_frameStartObserver = makeUnique<RunLoopObserver>(static_cast<CFIndex>(RunLoopObserver::WellKnownRunLoopOrders::InspectorFrameBegin), [this]() {
+    m_frameStartObserver = makeUnique<RunLoopObserver>(RunLoopObserver::WellKnownOrder::InspectorFrameBegin, [this] {
         if (!m_tracking || m_environment.debugger()->isPaused())
             return;
         if (!m_runLoopNestingLevel) {
@@ -207,7 +207,7 @@ void InspectorTimelineAgent::internalStart(std::optional<int>&& maxCallStackDept
         }
     });
 
-    m_frameStartObserver->schedule(currentRunLoop(), kCFRunLoopEntry | kCFRunLoopAfterWaiting);
+    m_frameStartObserver->schedule(currentRunLoop(), { RunLoopObserver::Activity::Entry, RunLoopObserver::Activity::AfterWaiting });
 
     // Create a runloop record and increment the runloop nesting level, to capture the current turn of the main runloop
     // (which is the outer runloop if recording started while paused in the debugger).

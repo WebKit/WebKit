@@ -279,7 +279,7 @@ platform/cf/KeyedDecoderCF.cpp
 platform/cf/KeyedEncoderCF.cpp
 platform/cf/MainThreadSharedTimerCF.cpp
 platform/cf/MediaAccessibilitySoftLink.cpp
-platform/cf/RunLoopObserver.cpp
+platform/cf/RunLoopObserverCF.cpp
 platform/cf/SharedBufferCF.cpp
 platform/cocoa/ContentFilterUnblockHandlerCocoa.mm @no-unify
 platform/cocoa/CoreLocationGeolocationProvider.mm
