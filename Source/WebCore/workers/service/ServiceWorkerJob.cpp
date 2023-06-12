@@ -173,8 +173,8 @@ void ServiceWorkerJob::notifyFinished()
 {
     ASSERT(m_creationThread.ptr() == &Thread::current());
     ASSERT(m_scriptLoader);
-    
-    auto scriptLoader = WTFMove(m_scriptLoader);
+
+    auto scriptLoader = std::exchange(m_scriptLoader, { });
 
     if (!scriptLoader->failed()) {
         m_client.jobFinishedLoadingScript(*this, scriptLoader->fetchResult());
@@ -189,8 +189,8 @@ void ServiceWorkerJob::notifyFinished()
 
 bool ServiceWorkerJob::cancelPendingLoad()
 {
-    if (auto loader = WTFMove(m_scriptLoader)) {
-        m_scriptLoader->cancel();
+    if (auto loader = std::exchange(m_scriptLoader, { })) {
+        loader->cancel();
         return true;
     }
     return false;
