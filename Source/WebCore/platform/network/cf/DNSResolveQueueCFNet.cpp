@@ -165,10 +165,11 @@ void DNSResolveQueueCFNet::performDNSLookup(const String& hostname, Ref<Completi
 {
     ASSERT(isMainThread());
     DNSServiceRef service { nullptr };
-    DNSServiceErrorType result = DNSServiceGetAddrInfo(&service, kDNSServiceFlagsReturnIntermediates, kDNSServiceInterfaceIndexAny, kDNSServiceProtocol_IPv4 | kDNSServiceProtocol_IPv6, hostname.utf8().data(), dnsLookupCallback, &wrapper.leakRef());
+    auto& leakedWrapper = wrapper.leakRef();
+    DNSServiceErrorType result = DNSServiceGetAddrInfo(&service, kDNSServiceFlagsReturnIntermediates, kDNSServiceInterfaceIndexAny, kDNSServiceProtocol_IPv4 | kDNSServiceProtocol_IPv6, hostname.utf8().data(), dnsLookupCallback, &leakedWrapper);
     if (result != kDNSServiceErr_NoError) {
         ASSERT(!service);
-        return wrapper->complete(DNSError::CannotResolve);
+        return adoptRef(leakedWrapper)->complete(DNSError::CannotResolve);
     }
     result = DNSServiceSetDispatchQueue(service, dispatch_get_main_queue());
     ASSERT(result == kDNSServiceErr_NoError);
