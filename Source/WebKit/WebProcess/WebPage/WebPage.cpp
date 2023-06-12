@@ -484,8 +484,12 @@ Ref<WebPage> WebPage::create(PageIdentifier pageID, WebPageCreationParameters&& 
         WebProcess::singleton().injectedBundle()->didCreatePage(page.ptr());
 
 #if HAVE(SANDBOX_STATE_FLAGS)
-    auto auditToken = WebProcess::singleton().auditTokenForSelf();
-    sandbox_enable_state_flag("WebContentProcessLaunched", *auditToken);
+    static bool hasSetLaunchVariable = false;
+    if (!hasSetLaunchVariable) {
+        auto auditToken = WebProcess::singleton().auditTokenForSelf();
+        sandbox_enable_state_flag("WebContentProcessLaunched", *auditToken);
+        hasSetLaunchVariable = true;
+    };
 #endif
 
     return page;
