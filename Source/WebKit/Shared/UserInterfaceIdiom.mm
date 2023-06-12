@@ -53,7 +53,7 @@ UserInterfaceIdiom currentUserInterfaceIdiom()
 {
     if (!s_currentUserInterfaceIdiom)
         updateCurrentUserInterfaceIdiom();
-    return *s_currentUserInterfaceIdiom;
+    return s_currentUserInterfaceIdiom.value_or(UserInterfaceIdiom::Default);
 }
 
 void setCurrentUserInterfaceIdiom(UserInterfaceIdiom idiom)
