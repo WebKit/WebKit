@@ -507,9 +507,12 @@ static inline IntDegrees sensorOrientation(AVCaptureVideoOrientation videoOrient
 }
 ALLOW_DEPRECATED_DECLARATIONS_END
 
-static inline IntDegrees sensorOrientationFromVideoOutput(AVCaptureVideoDataOutput* videoOutput)
+IntDegrees AVVideoCaptureSource::sensorOrientationFromVideoOutput()
 {
-    AVCaptureConnection* connection = [videoOutput connectionWithMediaType:AVMediaTypeVideo];
+    if (PAL::canLoad_AVFoundation_AVCaptureDeviceTypeExternalUnknown() && [device() deviceType] == AVCaptureDeviceTypeExternalUnknown)
+        return 0;
+
+    AVCaptureConnection* connection = [m_videoOutput connectionWithMediaType:AVMediaTypeVideo];
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     return connection ? sensorOrientation([connection videoOrientation]) : 0;
 ALLOW_DEPRECATED_DECLARATIONS_END
@@ -604,7 +607,7 @@ bool AVVideoCaptureSource::setupCaptureSession()
 
     setSessionSizeFrameRateAndZoom();
 
-    m_sensorOrientation = sensorOrientationFromVideoOutput(m_videoOutput.get());
+    m_sensorOrientation = sensorOrientationFromVideoOutput();
     computeVideoFrameRotation();
 
     return true;
