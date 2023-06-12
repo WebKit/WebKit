@@ -72,6 +72,7 @@ const MemoryCompactLookupOnlyRobinHoodHashSet<String>& defaultSupportedImageType
 #if HAVE(HEIC)
             "public.heic"_s,
             "public.heics"_s,
+            "public.heif"_s,
 #endif
         };
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2008, 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -101,6 +101,8 @@ constexpr ComparableCaseFoldingASCIILiteral supportedImageMIMETypeArray[] = {
 #if HAVE(HEIC)
     "image/heic",
     "image/heic-sequence",
+    "image/heif",
+    "image/heif-sequence",
 #endif
 #if USE(CG) || USE(OPENJPEG)
     "image/jp2",
