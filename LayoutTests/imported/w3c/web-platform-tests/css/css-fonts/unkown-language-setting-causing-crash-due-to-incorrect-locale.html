@@ -1,0 +1,8 @@
+<script>
+  onload = () => {
+    if (window.testRunner)
+       testRunner.dumpAsText();
+    document.body.append('Pass if no crash\x80');
+    document.body.lang = '-' + 'a'.repeat(155);
+  };
+</script>

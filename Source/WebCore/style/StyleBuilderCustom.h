@@ -44,6 +44,7 @@
 #include "FontVariantBuilder.h"
 #include "HTMLElement.h"
 #include "LocalFrame.h"
+#include "LocaleToScriptMapping.h"
 #include "SVGElement.h"
 #include "StyleBuilderConverter.h"
 #include "StyleBuilderStateInlines.h"
@@ -810,7 +811,8 @@ inline void BuilderCustom::applyValueWebkitLocale(BuilderState& builderState, CS
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
 
     FontCascadeDescription fontDescription = builderState.fontDescription();
-    if (primitiveValue.valueID() == CSSValueAuto)
+    if (primitiveValue.valueID() == CSSValueAuto
+        || localeToScriptCodeForFontSelection(primitiveValue.stringValue()) == USCRIPT_COMMON)
         fontDescription.setSpecifiedLocale(nullAtom());
     else
         fontDescription.setSpecifiedLocale(AtomString { primitiveValue.stringValue() });
