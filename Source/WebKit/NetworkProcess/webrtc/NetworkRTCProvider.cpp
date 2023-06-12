@@ -306,10 +306,14 @@ void NetworkRTCProvider::createResolver(LibWebRTCResolverIdentifier identifier, 
         });
         return;
     }
-    WebCore::DNSCompletionHandler completionHandler = [this, identifier](auto&& result) {
+    WebCore::DNSCompletionHandler completionHandler = [connection = m_connection, identifier](auto&& result) {
+        ASSERT(isMainRunLoop());
+        if (!connection)
+            return;
+
         if (!result.has_value()) {
             if (result.error() != WebCore::DNSError::Cancelled)
-                m_connection->connection().send(Messages::WebRTCResolver::ResolvedAddressError(1), identifier);
+                connection->connection().send(Messages::WebRTCResolver::ResolvedAddressError(1), identifier);
             return;
         }
 
@@ -322,7 +326,7 @@ void NetworkRTCProvider::createResolver(LibWebRTCResolverIdentifier identifier, 
                 ipAddresses.uncheckedAppend(rtc::IPAddress { address.ipv6Address() });
         }
 
-        m_connection->connection().send(Messages::WebRTCResolver::SetResolvedAddress(ipAddresses), identifier);
+        connection->connection().send(Messages::WebRTCResolver::SetResolvedAddress(ipAddresses), identifier);
     };
 
     WebCore::resolveDNS(address, identifier.toUInt64(), WTFMove(completionHandler));
