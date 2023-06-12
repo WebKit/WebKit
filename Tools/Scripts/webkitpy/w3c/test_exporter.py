@@ -80,9 +80,12 @@ class WebPlatformTestExporter(object):
         self._linter = WPTLinterClass(self._options.repository_directory, host.filesystem)
 
         self._bugzilla_url = "https://bugs.webkit.org/show_bug.cgi?id=" + str(self._bug_id)
+        if self._bug_id:
+            self._title = self._bugzilla.fetch_bug_dictionary(self._bug_id)["title"].replace("[", "\\[").replace("]", "\\]")
         self._commit_message = options.message
         if not self._commit_message:
-            self._commit_message = 'WebKit export of ' + self._bugzilla_url if self._bug_id else 'Export made from a WebKit repository'
+            self._commit_message = 'WebKit export: ' + self._title if self._title else 'Export made from a WebKit repository'
+            self._commit_message += '\n\nWebKit-Bugzilla: ' + self._bugzilla_url
 
     @property
     def username(self):
@@ -331,10 +334,9 @@ class WebPlatformTestExporter(object):
             return
 
         _log.info('Making pull request')
-        title = self._bugzilla.fetch_bug_dictionary(self._bug_id)["title"].replace("[", "\\[").replace("]", "\\]")
         # NOTE: this should contain the exact string "WebKit export" to match the condition in
         # https://github.com/web-platform-tests/wpt-pr-bot/blob/f53e625c4871010277dc68336b340b5cd86e2a10/lib/metadata/index.js#L87
-        description = "WebKit export from bug: [%s](https://bugs.webkit.org/show_bug.cgi?id=%s)" % (title, self._bug_id)
+        description = "WebKit export from bug: [%s](https://bugs.webkit.org/show_bug.cgi?id=%s)" % (self._title, self._bug_id)
         pr_number = self.create_wpt_pull_request(self._wpt_fork_remote + ':' + self._public_branch_name, self._commit_message, description)
         if pr_number:
             try:
