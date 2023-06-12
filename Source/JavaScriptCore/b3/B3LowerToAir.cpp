@@ -4326,6 +4326,10 @@ private:
             }
             return;
 
+        case B3::VectorRelaxedSwizzle:
+            emitSIMDMonomorphicBinaryOp(Air::VectorSwizzle);
+            return;
+
         case Fence: {
             FenceValue* fence = m_value->as<FenceValue>();
             if (!fence->write && !fence->read)

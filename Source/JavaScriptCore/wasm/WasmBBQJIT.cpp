@@ -9176,6 +9176,9 @@ public:
                 return fixupOutOfBoundsIndicesForSwizzle(leftLocation, rightLocation, resultLocation);
             m_jit.vectorSwizzle(leftLocation.asFPR(), rightLocation.asFPR(), resultLocation.asFPR());
             return { };
+        case SIMDLaneOperation::RelaxedSwizzle:
+            m_jit.vectorSwizzle(leftLocation.asFPR(), rightLocation.asFPR(), resultLocation.asFPR());
+            return { };
         case SIMDLaneOperation::Xor:
             m_jit.vectorXor(info, leftLocation.asFPR(), rightLocation.asFPR(), resultLocation.asFPR());
             return { };

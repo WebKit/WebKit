@@ -520,6 +520,11 @@ public:
         AIR_OP_CASE(SubSat)
         AIR_OP_CASE(Max)
         AIR_OP_CASE(Min)
+
+        // Relaxed SIMD redirecting to non-relaxed:
+
+        else if (op == SIMDLaneOperation::RelaxedSwizzle) airOp = B3::Air::VectorSwizzle;
+
         result = tmpForType(Types::V128);
 
         if (isX86() && airOp == B3::Air::VectorMulSat) {

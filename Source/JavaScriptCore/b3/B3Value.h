@@ -540,6 +540,7 @@ protected:
         case VectorAvgRound:
         case VectorMulByElement:
         case VectorShiftByVector:
+        case VectorRelaxedSwizzle:
             return 2 * sizeof(Value*);
         case Select:
         case AtomicWeakCAS:
@@ -758,6 +759,7 @@ private:
         case VectorAvgRound:
         case VectorMulByElement:
         case VectorShiftByVector:
+        case VectorRelaxedSwizzle:
             if (UNLIKELY(numArgs != 2))
                 badKind(kind, numArgs);
             return Two;

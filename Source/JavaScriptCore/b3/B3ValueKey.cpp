@@ -184,6 +184,7 @@ Value* ValueKey::materialize(Procedure& proc, Origin origin) const
     case VectorMulSat:
     case VectorAvgRound:
     case VectorShiftByVector:
+    case VectorRelaxedSwizzle:
         return proc.add<SIMDValue>(origin, kind(), type(), simdInfo(), child(proc, 0), child(proc, 1));
     case VectorReplaceLane:
     case VectorMulByElement:

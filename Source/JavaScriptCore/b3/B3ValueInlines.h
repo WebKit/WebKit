@@ -230,6 +230,7 @@ namespace JSC { namespace B3 {
     case VectorExtaddPairwise: \
     case VectorMulSat: \
     case VectorSwizzle: \
+    case VectorRelaxedSwizzle: \
     case VectorMulByElement: \
     case VectorShiftByVector: \
         return MACRO(SIMDValue); \

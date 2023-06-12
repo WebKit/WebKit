@@ -95,6 +95,7 @@ public:
         case VectorMulByElement:
         case VectorShiftByVector:
         case VectorDotProduct:
+        case VectorRelaxedSwizzle:
             return true;
         default:
             return false;

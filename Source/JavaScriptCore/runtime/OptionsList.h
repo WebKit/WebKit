@@ -577,6 +577,7 @@ bool canUseWebAssemblyFastMemory();
     v(Bool, useWebAssemblyGC, false, Normal, "Allow gc types from the wasm gc proposal.") \
     v(Bool, forceAllFunctionsToUseSIMD, false, Normal, "Force all functions to act conservatively w.r.t fp/vector registers for testing.") \
     v(Bool, useWebAssemblySIMD, true, Normal, "Allow the new simd instructions and types from the wasm simd spec.") \
+    v(Bool, useWebAssemblyRelaxedSIMD, false, Normal, "Allow the relaxed simd instructions and types from the wasm relaxed simd spec.") \
     v(Bool, useWebAssemblyTailCalls, false, Normal, "Allow the new instructions from the wasm tail calls spec.") \
 
 

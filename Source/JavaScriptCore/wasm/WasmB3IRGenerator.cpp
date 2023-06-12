@@ -535,6 +535,7 @@ public:
         B3_OP_CASE(Pmin)
         B3_OP_CASE(Or)
         B3_OP_CASE(Swizzle)
+        B3_OP_CASE(RelaxedSwizzle)
         B3_OP_CASE(Xor)
         B3_OP_CASE(Narrow)
         B3_OP_CASE(AddSat)

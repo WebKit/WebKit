@@ -109,6 +109,9 @@ enum class SIMDLaneOperation : uint8_t {
     Bitmask,
     Neg,
     MulSat,
+
+    // relaxed SIMD
+    RelaxedSwizzle,
 };
 
 #define FOR_EACH_WASM_EXT_SIMD_REL_OP(macro) \
@@ -350,7 +353,8 @@ macro(I64x2ShrU,                  0xcd,  Shr,                 SIMDLane::i64x2,  
 macro(I64x2ExtmulLowI32x4S,       0xdc,  ExtmulLow,           SIMDLane::i64x2,  SIMDSignMode::Signed) \
 macro(I64x2ExtmulHighI32x4S,      0xdd,  ExtmulHigh,          SIMDLane::i64x2,  SIMDSignMode::Signed) \
 macro(I64x2ExtmulLowI32x4U,       0xde,  ExtmulLow,           SIMDLane::i64x2,  SIMDSignMode::Unsigned) \
-macro(I64x2ExtmulHighI32x4U,      0xdf,  ExtmulHigh,          SIMDLane::i64x2,  SIMDSignMode::Unsigned)
+macro(I64x2ExtmulHighI32x4U,      0xdf,  ExtmulHigh,          SIMDLane::i64x2,  SIMDSignMode::Unsigned) \
+macro(I8x16RelaxedSwizzle,        0x100, RelaxedSwizzle,      SIMDLane::i8x16,  SIMDSignMode::None)
 
 #define FOR_EACH_WASM_EXT_SIMD_OP(macro) \
 FOR_EACH_WASM_EXT_SIMD_REL_OP(macro) \
@@ -436,9 +440,17 @@ static void dumpSIMDLaneOperation(PrintStream& out, SIMDLaneOperation op)
     case SIMDLaneOperation::Bitmask: out.print("Bitmask"); break;
     case SIMDLaneOperation::Neg: out.print("Neg"); break;
     case SIMDLaneOperation::MulSat: out.print("MulSat"); break;
+    case SIMDLaneOperation::RelaxedSwizzle: out.print("RelaxedSwizzle"); break;
     }
 }
 MAKE_PRINT_ADAPTOR(SIMDLaneOperationDump, SIMDLaneOperation, dumpSIMDLaneOperation);
+
+// Relaxed SIMD
+
+inline bool isRelaxedSIMDOperation(SIMDLaneOperation op)
+{
+    return (op == SIMDLaneOperation::RelaxedSwizzle);
+}
 
 }
 #endif // ENABLE(WEBASSEMBLY)

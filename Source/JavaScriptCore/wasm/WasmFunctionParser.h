@@ -691,6 +691,9 @@ auto FunctionParser<Context>::simd(SIMDLaneOperation op, SIMDLane lane, SIMDSign
         return { };
     };
 
+    if (isRelaxedSIMDOperation(op))
+        WASM_PARSER_FAIL_IF(!Options::useWebAssemblyRelaxedSIMD(), "relaxed simd instructions not supported");
+
     switch (op) {
     case SIMDLaneOperation::Const: {
         v128_t constant;
@@ -1144,6 +1147,7 @@ auto FunctionParser<Context>::simd(SIMDLaneOperation op, SIMDLane lane, SIMDSign
     case SIMDLaneOperation::Pmin:
     case SIMDLaneOperation::Or:
     case SIMDLaneOperation::Swizzle:
+    case SIMDLaneOperation::RelaxedSwizzle:
     case SIMDLaneOperation::Xor:
     case SIMDLaneOperation::Narrow:
     case SIMDLaneOperation::AddSat:
