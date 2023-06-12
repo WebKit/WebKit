@@ -1478,15 +1478,18 @@ ExceptionOr<void> HTMLElement::hidePopover()
     return hidePopoverInternal(FocusPreviousElement::Yes, FireEvents::Yes);
 }
 
-ExceptionOr<void> HTMLElement::togglePopover(std::optional<bool> force)
+ExceptionOr<bool> HTMLElement::togglePopover(std::optional<bool> force)
 {
-    if (isPopoverShowing() && !force.value_or(false))
-        return hidePopover();
-
-    if ((!popoverData() || popoverData()->visibilityState() == PopoverVisibilityState::Hidden) && force.value_or(true))
-        return showPopover();
-
-    return { };
+    if (isPopoverShowing() && !force.value_or(false)) {
+        auto returnValue = hidePopover();
+        if (returnValue.hasException())
+            return returnValue.releaseException();
+    } else if (!isPopoverShowing() && force.value_or(true)) {
+        auto returnValue = showPopover();
+        if (returnValue.hasException())
+            return returnValue.releaseException();
+    }
+    return isPopoverShowing();
 }
 
 void HTMLElement::popoverAttributeChanged(const AtomString& value)

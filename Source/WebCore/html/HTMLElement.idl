@@ -53,7 +53,7 @@
     // The popover API
     [EnabledBySetting=PopoverAttributeEnabled, DisabledByQuirk=shouldDisablePopoverAttribute] undefined showPopover();
     [EnabledBySetting=PopoverAttributeEnabled, DisabledByQuirk=shouldDisablePopoverAttribute] undefined hidePopover();
-    [EnabledBySetting=PopoverAttributeEnabled, DisabledByQuirk=shouldDisablePopoverAttribute] undefined togglePopover(optional boolean force);
+    [EnabledBySetting=PopoverAttributeEnabled, DisabledByQuirk=shouldDisablePopoverAttribute] boolean togglePopover(optional boolean force);
     [CEReactions=Needed, EnabledBySetting=PopoverAttributeEnabled, DisabledByQuirk=shouldDisablePopoverAttribute] attribute [AtomString] DOMString? popover;
 
     // Non-standard: IE extension. May get added to the specification (https://github.com/whatwg/html/issues/668).

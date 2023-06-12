@@ -152,7 +152,7 @@ public:
     ExceptionOr<void> showPopover(const HTMLFormControlElement* = nullptr);
     ExceptionOr<void> hidePopover();
     ExceptionOr<void> hidePopoverInternal(FocusPreviousElement, FireEvents);
-    ExceptionOr<void> togglePopover(std::optional<bool> force);
+    ExceptionOr<bool> togglePopover(std::optional<bool> force);
 
     PopoverState popoverState() const;
     const AtomString& popover() const;

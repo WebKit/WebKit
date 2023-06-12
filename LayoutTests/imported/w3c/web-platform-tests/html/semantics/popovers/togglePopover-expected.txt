@@ -1,0 +1,4 @@
+
+PASS togglePopover should toggle the popover and return true or false as specified.
+PASS togglePopover's return value should reflect what the end state is, not just the force parameter.
+
