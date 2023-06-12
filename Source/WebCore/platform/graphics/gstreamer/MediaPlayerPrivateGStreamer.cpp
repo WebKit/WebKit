@@ -4014,8 +4014,7 @@ GstElement* MediaPlayerPrivateGStreamer::createVideoSink()
 
     // Ensure the sink has the max-lateness property set.
     auto exit = makeScopeExit([this] {
-        ASSERT(m_videoSink);
-        if (isMediaStreamPlayer())
+        if (!m_videoSink || isMediaStreamPlayer())
             return;
 
         GstElement* sink = m_videoSink.get();
