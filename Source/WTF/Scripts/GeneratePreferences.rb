@@ -26,7 +26,7 @@
 require "fileutils"
 require 'erb'
 require 'optparse'
-require 'yaml'
+require 'psych'
 
 options = {
   :frontend => nil,
@@ -54,26 +54,6 @@ if options[:preferenceFiles].empty?
 end
 
 FileUtils.mkdir_p(options[:outputDirectory])
-
-def load(path)
-  parsed = begin
-    YAML.load_file(path)
-  rescue ArgumentError => e
-    STDERR.puts "error: Could not parse input file: #{e.message}"
-    exit(1)
-  end
-  if parsed
-    previousName = nil
-    parsed.keys.each do |name|
-      if previousName != nil and previousName > name
-        STDERR.puts "error: Input file #{path} is not sorted. First out of order name found is '#{name}'."
-        exit(1)
-      end
-      previousName = name
-    end
-  end
-  parsed
-end
 
 class Preference
   attr_accessor :name
@@ -233,6 +213,75 @@ class Preference
   def testable?
     %w{ testable preview stable mature }.include? @status
   end
+
+
+  # Corresponds to WebFeatureStatus enum cases. "developer" and up require human-readable names.
+  STATUSES = %w{ embedder unstable internal developer testable preview stable mature }
+
+  # Corresponds to WebFeatureCategory enum cases.
+  CATEGORIES = %w{ animation css dom html javascript media networking privacy security }
+
+  def self.parse_for_frontend(filename, frontend)
+    document = Psych.parse_file(filename)
+    previousName = nil
+    failed = false
+    error = proc { |msg, node| STDERR.puts("#{filename}:#{node.start_line+1}:#{node.start_column+1}: error: #{msg}") ; failed = true }
+    result = []
+
+    document.root.children.each_slice(2) do |key, mapping|
+      # Parse the preference name and check sort order.
+      name = key.value
+      if previousName and previousName > name
+        error.call("#{name}: preference keys not sorted, this preference should come before #{previousName}", key)
+      end
+      previousName = name
+
+      # Form a hash of preference options, but keep the nodes handy for error
+      # reporting.
+      nodes = {}
+      mapping.children.each_slice(2) do |lhs, rhs|
+        nodes[lhs.value] = rhs
+      end
+
+      # Validate the status and default value. WebCore settings do not have a
+      # status.
+      status = nodes["status"]&.value
+      if frontend != "WebCore"
+        error.call("#{name}: missing required status field", mapping) and next unless status
+      end
+      defaultValue = nodes["defaultValue"].to_ruby
+      webcoreSettingOnly = !nodes["webcoreBinding"] && defaultValue.keys == ["WebCore"]
+
+      if status && !STATUSES.include?(status)
+        error.call("#{name}: not one of the known statuses: #{STATUSES}", nodes["status"])
+        next
+      end
+
+      if status && %w{ unstable internal developer testable preview stable }.include?(status)
+        # Reject a user-visible preference without a humanReadableName.
+        error.call("#{name}: status \"#{status}\" indicates this preference may be visible in UI, but it has no humanReadableName", mapping) and next if !nodes["humanReadableName"]
+
+        # Reject a user-visible preference with a default value in SOME
+        # frontends but not others.
+        error.call("#{name}: status \"#{status}\" indicates this preference may be visible in UI, and has a default value bound to WebCore::Settings, so it must have default values for all frontends", nodes["defaultValue"]) and next if webcoreSettingOnly
+
+        if %w{ developer testable preview stable }.include?(status)
+            error.call("#{name}: missing required category field", mapping) and next if !nodes["category"]
+            category = nodes["category"]
+            error.call("#{name}: not one of the known categories: #{CATEGORIES}", category) and next unless CATEGORIES.include?(category.value)
+        end
+      elsif webcoreSettingOnly and frontend != "WebCore"
+        next
+      end
+
+      if defaultValue.include?(frontend)
+        preference = self.new(name, nodes.transform_values(&:to_ruby), frontend)
+        result << preference
+      end
+    end
+    exit 1 if failed
+    result
+  end
 end
 
 class Preferences
@@ -243,7 +292,7 @@ class Preferences
 
     @preferences = []
     preferenceFiles.each do |file|
-      initializeParsedPreferences(load(file))
+      @preferences += Preference.parse_for_frontend(file, frontend)
     end
 
     @preferences.sort_by! { |p| p.humanReadableName.empty? ? p.name : p.humanReadableName }
@@ -256,56 +305,7 @@ class Preferences
     @warning = "THIS FILE WAS AUTOMATICALLY GENERATED, DO NOT EDIT."
   end
 
-  # Corresponds to WebFeatureStatus enum cases. "developer" and up require human-readable names.
-  STATUSES = %w{ embedder unstable internal developer testable preview stable mature }
-
-  # Corresponds to WebFeatureCategory enum cases.
-  CATEGORIES = %w{ animation css dom html javascript media networking privacy security }
-
-  def initializeParsedPreferences(parsedPreferences)
-    result = []
-    failed = false
-    reject = Proc.new do |msg|
-      STDERR.puts("error: " + msg)
-      failed = true
-    end
-
-    if parsedPreferences
-      parsedPreferences.each do |name, options|
-        webcoreSettingOnly = !options["webcoreBinding"] && options["defaultValue"].keys == ["WebCore"]
-        status = options["status"]
-        if !STATUSES.include?(status)
-          reject.call "Preference #{name}'s status \"#{status}\" is not one of the known statuses: #{STATUSES}"
-          next
-        end
-
-        if %w{ unstable internal developer testable preview stable }.include?(status)
-          reject.call "Preference #{name} has no humanReadableName, which is required." if !options["humanReadableName"]
-          reject.call "Preference #{name} is visible in client UI and has a default value bound to WebCore::Settings, so it must have default values for all frontends" if webcoreSettingOnly
-          next if failed
-        elsif webcoreSettingOnly and @frontend != "WebCore"
-          next
-        end
-
-        if %w{ developer testable preview stable }.include?(status)
-            reject.call "Preference #{name} has no category, which is required." if !options["category"]
-            next if failed
-            category = options["category"]
-            if !CATEGORIES.include?(category)
-              reject.call "Preference #{name}\'s category \"#{category}\" is not one of the known categories: #{CATEGORIES}"
-              next
-            end
-        end
-
-        if options["defaultValue"].include?(@frontend)
-          preference = Preference.new(name, options, @frontend)
-          @preferences << preference
-          result << preference
-        end
-      end
-    end
-    exit 1 if failed
-    result
+  def parse(filename)
   end
 
   def createTemplate(templateString)
