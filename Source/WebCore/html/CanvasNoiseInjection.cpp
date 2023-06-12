@@ -40,9 +40,9 @@ void CanvasNoiseInjection::updateDirtyRect(const IntRect& rect)
 
 static inline bool isIndexInBounds(int size, int index)
 {
-    ASSERT(index < size);
+    ASSERT(index <= size);
     return index < size;
-};
+}
 
 static inline void setTightnessBounds(const std::span<uint8_t>& bytes, std::array<int, 4>& tightestBoundingDiff, int index1, int index2)
 {
