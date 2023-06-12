@@ -1620,4 +1620,6 @@ webkit.org/b/238885 imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_key
 webkit.org/b/238885 imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/pbkdf2.https.any.worker.html?7001-8000 [ Failure Timeout ]
 webkit.org/b/238885 imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/pbkdf2.https.any.worker.html?8001-last [ Failure Timeout ]
 
-fast/canvas/offscreen-clipped.html [ Failure ]
+# [WPE] Some reftest fail with only one or two pixel differences in diff image
+webkit.org/b/257969 fast/css3-text/css3-text-justify/text-justify-last-line-simple-line-layout.html [ ImageOnlyFailure ]
+webkit.org/b/257969 fast/inline/hyphen-across-renderers.html [ ImageOnlyFailure ]

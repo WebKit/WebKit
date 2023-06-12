@@ -1248,6 +1248,8 @@ webkit.org/b/227122 imported/w3c/web-platform-tests/mathml/relations/css-styling
 webkit.org/b/203146 fast/canvas/offscreen-enabled.html [ Pass ]
 webkit.org/b/203146 http/wpt/offscreen-canvas [ Pass ]
 webkit.org/b/203146 imported/w3c/web-platform-tests/html/canvas/offscreen [ Pass ]
+# After 263731@main:
+webkit.org/b/257969 fast/canvas/offscreen-clipped.html [ ImageOnlyFailure ]
 
 # Console log lines may appear in a different order so we silence them.
 imported/w3c/web-platform-tests/html/canvas/offscreen/convert-to-blob/offscreencanvas.convert.to.blob.w.html [ DumpJSConsoleLogInStdErr ]
@@ -1630,6 +1632,9 @@ webkit.org/b/172812 webgl/max-active-contexts-webglcontextlost-prevent-default.h
 webkit.org/b/210239 fast/canvas/webgl/out-of-bounds-simulated-vertexAttrib0-drawArrays.html [ Slow ]
 
 webkit.org/b/251195 webgl/1.0.x/conformance/extensions/ext-color-buffer-half-float.html [ Failure ]
+
+# No colorspaces in non-Cocoa WebGL. May be related to 256208@main.
+webkit.org/b/257969 fast/canvas/webgl/match-page-color-space-p3.html [ ImageOnlyFailure ]
 
 # Not applicable.
 webgl/webgl-via-metal-flag-on.html [ Skip ]
@@ -2722,11 +2727,16 @@ media/modern-media-controls/volume-support/volume-support-drag-to-mute.html [ Sk
 webkit.org/b/168191 fast/text/system-font-weight.html [ Failure ]
 webkit.org/b/168370 accessibility/hidden-th-still-column-header.html [ Failure ]
 
-# [GTK] Some reftest fail with only one or two pixel differences in diff image
+# [GTK][WPE] Some reftest fail with only one or two pixel differences in diff image
 webkit.org/b/168426 fast/html/details-comment-crash.html [ ImageOnlyFailure ]
 webkit.org/b/168426 fast/multicol/columns-on-body.html [ ImageOnlyFailure ]
 
 webkit.org/b/168430 fast/inline/outline-corners-with-offset.html [ ImageOnlyFailure ]
+webkit.org/b/257969 fast/inline/box-decoration-clone-with-padding-end.html [ ImageOnlyFailure ]
+webkit.org/b/257969 fast/inline/line-clamp-with-max-height-overflow.html [ ImageOnlyFailure ]
+webkit.org/b/257969 fast/inline/partial-inline-layout-text-append-only-simple.html [ ImageOnlyFailure ]
+webkit.org/b/257969 fast/lists/overlapping-nested-list-markers.html [ ImageOnlyFailure ]
+webkit.org/b/257969 fast/text/fitzpatrick-combination.html [ ImageOnlyFailure ]
 webkit.org/b/168551 http/tests/misc/slow-loading-animated-image.html [ ImageOnlyFailure ]
 webkit.org/b/168719 fast/css/paint-order-shadow.html [ ImageOnlyFailure ]
 webkit.org/b/169909 fast/block/lineboxcontain/block-with-ideographs.xhtml [ Failure ]
@@ -3322,6 +3332,7 @@ webkit.org/b/252878 fast/css/caret-color-span-inside-editable-parent.html [ Imag
 webkit.org/b/252878 fast/css/color-matching-translucent-border-color.html [ ImageOnlyFailure Pass ]
 webkit.org/b/252878 fast/css/computed-image-width-with-percent-height.html [ ImageOnlyFailure Pass ]
 webkit.org/b/252878 fast/hidpi/hidpi-long-page-with-inset-element.html [ ImageOnlyFailure Pass ]
+webkit.org/b/252878 fast/hidpi/filters-drop-shadow.html [ ImageOnlyFailure Pass ] # added March2023 261827@main, flaky like the others here.
 webkit.org/b/252878 http/tests/media/modern-media-controls/skip-back-support/skip-back-support-live-broadcast.html [ Failure Pass Timeout ]
 webkit.org/b/252878 http/tests/workers/service/shownotification-allowed.html [ Pass Timeout ]
 webkit.org/b/252878 imported/w3c/web-platform-tests/fetch/http-cache/split-cache.html [ Failure Pass ]
@@ -3362,6 +3373,8 @@ webkit.org/b/257624 imported/w3c/web-platform-tests/navigation-timing/nav2_test_
 webkit.org/b/257624 webanimations/accelerated-translate-animation-additional-animation-added-in-flight.html [ ImageOnlyFailure Pass ]
 webkit.org/b/257624 webrtc/audio-replace-track.html [ Failure Pass Timeout ]
 webkit.org/b/257624 webrtc/negotiatedneeded-event-addStream.html [ Failure Pass ]
+
+webkit.org/b/257969 fast/images/image-alt-text-vertical.html [ ImageOnlyFailure ]
 
 # End: Common failures between GTK and WPE.
 

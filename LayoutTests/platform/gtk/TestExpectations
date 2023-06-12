@@ -141,7 +141,6 @@ webkit.org/b/235941 accessibility/gtk/caret-offsets.html [ Timeout ]
 # canvas
 webkit.org/b/215462 imported/w3c/web-platform-tests/html/canvas/offscreen/manual/the-offscreen-canvas/offscreencanvas.commit.html [ Failure ]
 webkit.org/b/238208 imported/w3c/web-platform-tests/html/canvas/offscreen/fill-and-stroke-styles/2d.fillStyle.CSSHSL.html [ Failure ]
-fast/canvas/offscreen-clipped.html [ Failure ]
 
 # CSS
 webkit.org/b/216161 imported/w3c/web-platform-tests/css/css-pseudo/text-selection.html [ Failure Pass ]
@@ -704,7 +703,6 @@ webkit.org/b/251107 webgl/2.0.y/conformance/textures/misc/exif-orientation.html 
 # No colorspaces in non-Cocoa WebGL.
 fast/canvas/webgl/colorspaces-test.html [ Failure ]
 fast/canvas/webgl/context-lost-restored-p3.html [ Failure ]
-fast/canvas/webgl/match-page-color-space-p3.html [ ImageOnlyFailure ]
 
 # These tests reference specific fonts on Mac port.
 Bug(GTK) fast/text/font-weights.html [ WontFix ]
