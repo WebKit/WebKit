@@ -153,7 +153,45 @@ AbstractModuleRecord* AbstractModuleRecord::hostResolveImportedModule(JSGlobalOb
     JSValue moduleNameValue = identifierToJSValue(vm, moduleName);
     JSValue entry = m_dependenciesMap->JSMap::get(globalObject, moduleNameValue);
     RETURN_IF_EXCEPTION(scope, nullptr);
-    RELEASE_AND_RETURN(scope, entry.getAs<AbstractModuleRecord*>(globalObject, Identifier::fromString(vm, "module"_s)));
+
+    RELEASE_ASSERT(entry != jsUndefined(), vm.traps().maybeNeedHandling(), vm.exceptionForInspection(), JSValue::encode(entry));
+
+    Identifier moduleID = Identifier::fromString(vm, "module"_s);
+    AbstractModuleRecord* result = entry.getAs<AbstractModuleRecord*>(globalObject, moduleID);
+
+#if CPU(ADDRESS64)
+    if (UNLIKELY(!vm.exceptionForInspection() && result == bitwise_cast<AbstractModuleRecord*>(encodedJSUndefined()))) {
+        bool idEqualsModule = moduleID == "module"_s;
+
+        auto hasSlot = [&] (Identifier id) {
+            PropertySlot slot(entry, PropertySlot::InternalMethodType::Get);
+            return getPropertySlot(globalObject, id, slot);
+        };
+
+        uint64_t fieldBitVector = hasSlot(Identifier::fromString(vm, "key"_s)) << 11 |
+            hasSlot(Identifier::fromString(vm, "state"_s)) << 10 |
+            hasSlot(Identifier::fromString(vm, "fetch"_s)) << 9 |
+            hasSlot(Identifier::fromString(vm, "instantiate"_s)) << 8 |
+            hasSlot(Identifier::fromString(vm, "satisfy"_s)) << 7 |
+            hasSlot(Identifier::fromString(vm, "dependencies"_s)) << 6 |
+            hasSlot(moduleID) << 5 |
+            hasSlot(Identifier::fromString(vm, "linkError"_s)) << 4 |
+            hasSlot(Identifier::fromString(vm, "linkSucceeded"_s)) << 3 |
+            hasSlot(Identifier::fromString(vm, "evaluated"_s)) << 2 |
+            hasSlot(Identifier::fromString(vm, "then"_s)) << 1 |
+            hasSlot(Identifier::fromString(vm, "isAsync"_s));
+
+        RELEASE_ASSERT(vm.exceptionForInspection() || result != bitwise_cast<AbstractModuleRecord*>(encodedJSUndefined()),
+            vm.traps().maybeNeedHandling(),
+            vm.exceptionForInspection(),
+            JSValue::encode(entry),
+            idEqualsModule,
+            fieldBitVector,
+            result);
+    }
+#endif
+
+    RELEASE_AND_RETURN(scope, result);
 }
 
 auto AbstractModuleRecord::resolveImport(JSGlobalObject* globalObject, const Identifier& localName) -> Resolution
