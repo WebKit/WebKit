@@ -558,9 +558,7 @@ private:
     void selectedChildrenChanged(Node*);
     void selectedChildrenChanged(RenderObject*);
     void handleScrollbarUpdate(ScrollView&);
-
-    void handleActiveDescendantChanged(Element&);
-
+    void handleActiveDescendantChange(Element&, const AtomString&, const AtomString&);
     void handleAriaExpandedChange(Node*);
     enum class UpdateModal : bool { No, Yes };
     void handleFocusedUIElementChanged(Node* oldFocusedNode, Node* newFocusedNode, UpdateModal = UpdateModal::Yes);
@@ -740,7 +738,6 @@ inline void AXObjectCache::focusCurrentModal() { }
 inline void AXObjectCache::performCacheUpdateTimerFired() { }
 inline void AXObjectCache::frameLoadingEventNotification(LocalFrame*, AXLoadingEvent) { }
 inline void AXObjectCache::frameLoadingEventPlatformNotification(AccessibilityObject*, AXLoadingEvent) { }
-inline void AXObjectCache::handleActiveDescendantChanged(Element&) { }
 inline void AXObjectCache::handleAriaExpandedChange(Node*) { }
 inline void AXObjectCache::deferModalChange(Element*) { }
 inline void AXObjectCache::handleRoleChanged(AccessibilityObject*) { }

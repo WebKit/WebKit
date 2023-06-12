@@ -2037,7 +2037,7 @@ void AXObjectCache::handleAriaExpandedChange(Node* node)
     }
 }
 
-void AXObjectCache::handleActiveDescendantChanged(Element& element)
+void AXObjectCache::handleActiveDescendantChange(Element& element, const AtomString& oldValue, const AtomString& newValue)
 {
     // Use the element's document instead of the cache's document in case we're inside a frame that's managing focus.
     if (!element.document().frame()->selection().isFocusedAndActive())
@@ -2056,8 +2056,19 @@ void AXObjectCache::handleActiveDescendantChanged(Element& element)
         return;
 
     auto* activeDescendant = object->activeDescendant();
-    if (!activeDescendant)
+    if (!activeDescendant) {
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+        if (object->shouldFocusActiveDescendant()
+            && !oldValue.isEmpty() && newValue.isEmpty()) {
+            // The focused object just lost its active descendant, so set the IsolatedTree focused object back to it.
+            setIsolatedTreeFocusedObject(object);
+        }
+#else
+        UNUSED_PARAM(oldValue);
+        UNUSED_PARAM(newValue);
+#endif
         return;
+    }
 
     // Handle active-descendant changes when the target allows for it, or the controlled object allows for it.
     AccessibilityObject* target = nullptr;
@@ -2092,7 +2103,7 @@ void AXObjectCache::handleActiveDescendantChanged(Element& element)
 #endif
 
         postPlatformNotification(target, AXNotification::AXActiveDescendantChanged);
-        
+
         // Table cell active descendant changes should trigger selected cell changes.
         if (target->isTable() && activeDescendant->isTableCell()) {
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
@@ -2245,7 +2256,7 @@ void AXObjectCache::handleAttributeChange(Element* element, const QualifiedName&
     };
 
     if (attrName == aria_activedescendantAttr)
-        handleActiveDescendantChanged(*element);
+        handleActiveDescendantChange(*element, oldValue, newValue);
     else if (attrName == aria_atomicAttr)
         postNotification(element, AXIsAtomicChanged);
     else if (attrName == aria_busyAttr)
