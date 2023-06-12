@@ -52,6 +52,7 @@ ExitMode mayExitImpl(Graph& graph, Node* node, StateType& state)
     case DoubleConstant:
     case LazyJSConstant:
     case Int52Constant:
+    case ConstantStoragePointer:
     case MovHint:
     case InitializeEntrypointArguments:
     case SetLocal:
@@ -102,8 +103,16 @@ ExitMode mayExitImpl(Graph& graph, Node* node, StateType& state)
     case PutByOffset:
     case PutClosureVar:
     case PutInternalField:
+    case PutGlobalVariable:
+    case GetByOffset:
+    case GetClosureVar:
+    case GetInternalField:
+    case GetGlobalLexicalVariable:
+    case GetGlobalVar:
     case RecordRegExpCachedResult:
     case NukeStructureAndSetButterfly:
+    case GetButterfly:
+    case GetIndexedPropertyStorage:
     case FilterCallLinkStatus:
     case FilterGetByStatus:
     case FilterPutByStatus:
@@ -112,6 +121,9 @@ ExitMode mayExitImpl(Graph& graph, Node* node, StateType& state)
     case FilterCheckPrivateBrandStatus:
     case FilterSetPrivateBrandStatus:
     case ExtractFromTuple:
+    case CompareBelow:
+    case CompareBelowEq:
+    case CompareEqPtr:
         break;
 
     case EnumeratorNextUpdatePropertyName:
@@ -141,11 +153,104 @@ ExitMode mayExitImpl(Graph& graph, Node* node, StateType& state)
     case RegExpExecNonGlobalOrSticky:
     case RegExpMatchFastGlobal:
     case CallWasm:
+    case AllocatePropertyStorage:
+    case ReallocatePropertyStorage:
         result = ExitsForExceptions;
         break;
 
     case SetRegExpObjectLastIndex:
         if (node->ignoreLastIndexIsWritable())
+            break;
+        return Exits;
+
+    case ArithBitNot:
+        if (node->child1().useKind() == Int32Use)
+            break;
+        return Exits;
+
+    case ArithAbs:
+        if (node->arithMode() == Arith::Mode::Unchecked && node->child1().useKind() == Int32Use)
+            break;
+        return Exits;
+
+    case ArithMin:
+    case ArithMax:
+        if (graph.child(node, 0).useKind() == Int32Use)
+            break;
+        if (graph.child(node, 0).useKind() == DoubleRepUse)
+            break;
+        return Exits;
+
+    case ArithBitRShift:
+    case ArithBitLShift:
+    case BitURShift:
+    case ArithBitAnd:
+    case ArithBitOr:
+    case ArithBitXor:
+        if (node->isBinaryUseKind(Int32Use))
+            break;
+        return Exits;
+
+    case ArithClz32:
+        if (node->child1().useKind() == Int32Use || node->child1().useKind() == KnownInt32Use)
+            break;
+        return Exits;
+
+    case ArithAdd:
+    case ArithSub:
+    case ArithMul:
+        if (node->arithMode() == Arith::Mode::Unchecked && node->isBinaryUseKind(Int32Use))
+            break;
+        if (node->isBinaryUseKind(DoubleRepUse))
+            break;
+        return Exits;
+
+    case ArithNegate:
+        if (node->arithMode() == Arith::Mode::Unchecked && node->child1().useKind() == Int32Use)
+            break;
+        if (node->child1().useKind() == DoubleRepUse)
+            break;
+        return Exits;
+
+    case ArithDiv:
+    case ArithMod:
+    case ArithFRound:
+        if (node->isBinaryUseKind(DoubleRepUse))
+            break;
+        return Exits;
+
+    case CompareEq:
+    case CompareStrictEq:
+    case CompareLess:
+    case CompareLessEq:
+    case CompareGreater:
+    case CompareGreaterEq:
+        if (node->isBinaryUseKind(Int32Use))
+            break;
+        if (node->isBinaryUseKind(DoubleRepUse))
+            break;
+        if (node->isBinaryUseKind(Int52RepUse))
+            break;
+        return Exits;
+
+    case ArithPow:
+        if (node->isBinaryUseKind(Int32Use))
+            break;
+        if (node->isBinaryUseKind(DoubleRepUse))
+            break;
+        return Exits;
+
+    case ArithRound:
+    case ArithFloor:
+    case ArithCeil:
+    case ArithTrunc:
+        if (node->child1().useKind() == DoubleRepUse && !producesInteger(node->arithRoundingMode()))
+            break;
+        return Exits;
+
+    case ArithSqrt:
+    case ArithUnary:
+        if (node->child1().useKind() == DoubleRepUse)
             break;
         return Exits;
 
