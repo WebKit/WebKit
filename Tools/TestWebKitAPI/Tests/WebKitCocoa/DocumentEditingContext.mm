@@ -1541,4 +1541,42 @@ TEST(DocumentEditingContext, CharacterRectsInEditableWebView)
     }
 }
 
+#if ENABLE(PLATFORM_DRIVEN_TEXT_CHECKING)
+
+TEST(DocumentEditingContext, RequestAnnotationsForTextChecking)
+{
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    auto loadWebViewAndGetContext = [&] {
+        [webView synchronouslyLoadHTMLString:makeString("<body>"_s, longTextString, "</body>"_s)];
+        [webView objectByEvaluatingJavaScript:@"(() => {"
+            "    let text = document.body.childNodes[0];"
+            "    getSelection().setBaseAndExtent(text, 90, text, 94);"
+            "})()"];
+        [webView waitForNextPresentationUpdate];
+        auto context = [webView synchronouslyRequestDocumentContext:makeRequest(UIWKDocumentRequestText | UIWKDocumentRequestAnnotation, UITextGranularitySentence, 3)];
+        auto annotatedText = String { dynamic_objc_cast<NSAttributedString>(context.annotatedText).string };
+        auto combinedContext = makeString(
+            String { dynamic_objc_cast<NSString>(context.contextBefore) },
+            String { dynamic_objc_cast<NSString>(context.selectedText) },
+            String { dynamic_objc_cast<NSString>(context.contextAfter) }
+        );
+        return std::pair { WTFMove(combinedContext), WTFMove(annotatedText) };
+    };
+    {
+        [webView _setEditable:YES];
+        auto [combinedContext, annotatedText] = loadWebViewAndGetContext();
+        EXPECT_GT(combinedContext.length(), 0U);
+        EXPECT_GT(annotatedText.length(), 0U);
+        EXPECT_WK_STREQ(annotatedText, combinedContext);
+    }
+    {
+        [webView _setEditable:NO];
+        auto [combinedContext, annotatedText] = loadWebViewAndGetContext();
+        EXPECT_GT(combinedContext.length(), 0U);
+        EXPECT_EQ(annotatedText.length(), 0U);
+    }
+}
+
+#endif // ENABLE(PLATFORM_DRIVEN_TEXT_CHECKING)
+
 #endif // PLATFORM(IOS_FAMILY) && HAVE(UI_WK_DOCUMENT_CONTEXT)
