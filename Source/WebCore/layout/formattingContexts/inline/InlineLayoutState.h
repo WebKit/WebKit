@@ -48,8 +48,8 @@ public:
 
 private:
     BlockLayoutState& m_parentBlockLayoutState;
-    InlineLayoutUnit m_clearGapBeforeFirstLine { 0 };
-    InlineLayoutUnit m_clearGapAfterLastLine { 0 };
+    InlineLayoutUnit m_clearGapBeforeFirstLine { 0.f };
+    InlineLayoutUnit m_clearGapAfterLastLine { 0.f };
     // FIXME: This is required by the integaration codepath.
     HashMap<const ElementBox*, LayoutUnit> m_nestedListMarkerOffsets;
 };

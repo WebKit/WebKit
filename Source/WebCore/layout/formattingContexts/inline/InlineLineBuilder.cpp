@@ -357,7 +357,7 @@ LineBuilder::LayoutResult LineBuilder::layoutInlineContent(const LineInput& line
             , m_line.runs()
             , { WTFMove(m_placedFloats), WTFMove(m_suspendedFloats), { } }
             , { { }, m_line.contentLogicalWidth(), { }, lineContent.overflowLogicalWidth }
-            , { m_lineLogicalRect.topLeft(), { }, { } }
+            , { m_lineLogicalRect.topLeft(), { }, { }, { } }
         };
     }
 
@@ -369,7 +369,7 @@ LineBuilder::LayoutResult LineBuilder::layoutInlineContent(const LineInput& line
         , m_line.runs()
         , { WTFMove(m_placedFloats), WTFMove(m_suspendedFloats), m_lineIsConstrainedByFloat }
         , { contentLogicalLeft, m_line.contentLogicalWidth(), contentLogicalLeft + m_line.contentLogicalRight(), lineContent.overflowLogicalWidth }
-        , { m_lineLogicalRect.topLeft(), m_lineLogicalRect.width(), m_lineInitialLogicalRect.left() + m_initialIntrusiveFloatsWidth }
+        , { m_lineLogicalRect.topLeft(), m_lineLogicalRect.width(), m_lineInitialLogicalRect.left() + m_initialIntrusiveFloatsWidth, m_initialLetterClearGap }
         , { !m_line.isHangingTrailingContentWhitespace(), m_line.hangingTrailingContentWidth() }
         , { computedVisualOrder(m_line), inlineBaseDirection }
         , { isFirstFormattedLine() ? LayoutResult::IsFirstLast::FirstFormattedLine::WithinIFC : LayoutResult::IsFirstLast::FirstFormattedLine::No, isLastLine }
@@ -388,6 +388,7 @@ void LineBuilder::initialize(const InlineRect& initialLineLogicalRect, const Use
     m_wrapOpportunityList.clear();
     m_overflowingLogicalWidth = { };
     m_partialLeadingTextItem = { };
+    m_initialLetterClearGap = { };
 
     auto createLineSpanningInlineBoxes = [&] {
         auto isRootLayoutBox = [&](auto& elementBox) {
@@ -992,19 +993,16 @@ std::optional<LineBuilder::InitialLetterOffsets> LineBuilder::adjustLineRectForI
 {
     auto drop = floatBox.style().initialLetterDrop();
     auto isInitialLetter = floatBox.isFloatingPositioned() && floatBox.style().styleType() == PseudoId::FirstLetter && drop;
-    if (!isInitialLetter) {
-        inlineLayoutState().setClearGapBeforeFirstLine({ });
+    if (!isInitialLetter)
         return { };
-    }
+
     // Here we try to set the vertical start position for the float in flush with the adjoining text content's cap height.
     // It's a super premature as at this point we don't normally deal with vertical geometry -other than the incoming vertical constraint.
     auto initialLetterCapHeightOffset = formattingContext().formattingQuirks().initialLetterAlignmentOffset(floatBox, rootStyle());
     // While initial-letter based floats do not set their clear property, intrusive floats from sibling IFCs are supposed to be cleared.
     auto intrusiveBottom = blockLayoutState().intrusiveInitialLetterLogicalBottom();
-    if (!initialLetterCapHeightOffset && !intrusiveBottom) {
-        inlineLayoutState().setClearGapBeforeFirstLine({ });
+    if (!initialLetterCapHeightOffset && !intrusiveBottom)
         return { };
-    }
 
     auto clearGapBeforeFirstLine = InlineLayoutUnit { };
     if (intrusiveBottom) {
@@ -1033,7 +1031,9 @@ std::optional<LineBuilder::InitialLetterOffsets> LineBuilder::adjustLineRectForI
     }
 
     m_lineLogicalRect.moveVertically(clearGapBeforeFirstLine);
-    inlineLayoutState().setClearGapBeforeFirstLine(clearGapBeforeFirstLine);
+    // There should never be multiple initial letters.
+    ASSERT(!m_initialLetterClearGap);
+    m_initialLetterClearGap = clearGapBeforeFirstLine;
     return InitialLetterOffsets { initialLetterCapHeightOffset.value_or(0_lu), sunkenBelowFirstLineOffset };
 }
 

@@ -281,6 +281,12 @@ InlineLayoutResult InlineFormattingContext::lineLayout(const InlineItems& inline
 
         auto lineIndex = previousLine ? (previousLine->lineIndex + 1) : 0lu;
         auto lineLogicalRect = createDisplayContentForLine(lineIndex, lineLayoutResult, constraints, inlineLayoutState, layoutResult.displayContent);
+
+        if (auto firstLineGap = lineLayoutResult.lineGeometry.initialLetterClearGap) {
+            ASSERT(!inlineLayoutState.clearGapBeforeFirstLine());
+            inlineLayoutState.setClearGapBeforeFirstLine(*firstLineGap);
+        }
+
         if (lineLayoutResult.isFirstLast.isLastLineWithInlineContent)
             inlineLayoutState.setClearGapAfterLastLine(formattingGeometry().logicalTopForNextLine(lineLayoutResult, lineLogicalRect, floatingContext) - lineLogicalRect.bottom());
 

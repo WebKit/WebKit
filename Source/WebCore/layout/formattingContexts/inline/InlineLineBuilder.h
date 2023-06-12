@@ -72,6 +72,7 @@ public:
             InlineLayoutPoint logicalTopLeft;
             InlineLayoutUnit logicalWidth { 0.f };
             InlineLayoutUnit initialLogicalLeftIncludingIntrusiveFloats { 0.f };
+            std::optional<InlineLayoutUnit> initialLetterClearGap;
         };
         LineGeometry lineGeometry { };
 
@@ -156,8 +157,7 @@ private:
     bool isFirstFormattedLine() const { return !m_previousLine.has_value(); }
 
     const InlineFormattingContext& formattingContext() const { return m_inlineFormattingContext; }
-    InlineLayoutState& inlineLayoutState() const { return m_inlineLayoutState; }
-    BlockLayoutState& blockLayoutState() const { return inlineLayoutState().parentBlockLayoutState(); }
+    BlockLayoutState& blockLayoutState() const { return m_inlineLayoutState.parentBlockLayoutState(); }
     FloatingState& floatingState() { return blockLayoutState().floatingState(); }
     const FloatingState& floatingState() const { return const_cast<LineBuilder&>(*this).floatingState(); }
     const ElementBox& root() const;
@@ -185,6 +185,7 @@ private:
     Vector<InlineItem> m_lineSpanningInlineBoxes;
     unsigned m_successiveHyphenatedLineCount { 0 };
     bool m_lineIsConstrainedByFloat { false };
+    std::optional<InlineLayoutUnit> m_initialLetterClearGap;
 };
 
 }
