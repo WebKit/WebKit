@@ -32,13 +32,10 @@
 #include <wtf/OptionSet.h>
 
 namespace WebCore {
-
 namespace Layout {
 
 class Box;
 class BoxGeometry;
-class FloatingContext;
-class LayoutState;
 class Rect;
 
 // FloatingState holds the floating boxes for BFC using the BFC's inline direction.
@@ -47,7 +44,7 @@ class Rect;
 class FloatingState {
     WTF_MAKE_ISO_ALLOCATED(FloatingState);
 public:
-    FloatingState(LayoutState&, const ElementBox& blockFormattingContextRoot);
+    FloatingState(const ElementBox& blockFormattingContextRoot);
 
     const ElementBox& root() const { return m_blockFormattingContextRoot; }
 
@@ -101,10 +98,6 @@ public:
     void shrinkToFit();
 
 private:
-    friend class FloatingContext;
-    LayoutState& layoutState() const { return m_layoutState; }
-
-    LayoutState& m_layoutState;
     CheckedRef<const ElementBox> m_blockFormattingContextRoot;
     FloatList m_floats;
     enum class PositionType {

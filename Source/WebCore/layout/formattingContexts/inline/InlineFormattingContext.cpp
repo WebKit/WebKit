@@ -146,7 +146,7 @@ void InlineFormattingContext::layoutInFlowContent(const ConstraintsForInFlowCont
     if (needsInlineItemsUpdate)
         InlineItemsBuilder { root(), inlineFormattingState }.build(needsLayoutStartPosition);
     // FIXME: Let the caller pass in the block layout state. 
-    auto floatingState = FloatingState { layoutState(), FormattingContext::initialContainingBlock(root()) };
+    auto floatingState = FloatingState { FormattingContext::initialContainingBlock(root()) };
     auto parentBlockLayoutState = BlockLayoutState { floatingState, { } };
     auto inlineLayoutState = InlineLayoutState { parentBlockLayoutState, { } };
     auto& inlineItems = inlineFormattingState.inlineItems();
@@ -413,7 +413,7 @@ IntrinsicWidthConstraints InlineFormattingContext::computedIntrinsicWidthConstra
 
 InlineLayoutUnit InlineFormattingContext::computedIntrinsicWidthForConstraint(IntrinsicWidthMode intrinsicWidthMode) const
 {
-    auto floatingState = FloatingState { layoutState(), root() };
+    auto floatingState = FloatingState { root() };
     auto parentBlockLayoutState = BlockLayoutState { floatingState, { } };
     auto inlineLayoutState = InlineLayoutState { parentBlockLayoutState, { } };
     auto horizontalConstraints = HorizontalConstraints { };
