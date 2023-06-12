@@ -491,7 +491,7 @@ private:
 
     bool isInStableState() const final;
 
-    WebCore::FloatSize screenSizeForHeadlessMode(const WebCore::LocalFrame&, WebCore::FloatSize defaultSize) const final;
+    WebCore::FloatSize screenSizeForFingerprintingProtections(const WebCore::LocalFrame&, WebCore::FloatSize defaultSize) const final;
 
     mutable bool m_cachedMainFrameHasHorizontalScrollbar { false };
     mutable bool m_cachedMainFrameHasVerticalScrollbar { false };

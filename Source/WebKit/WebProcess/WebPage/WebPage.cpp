@@ -2658,7 +2658,7 @@ void WebPage::viewportPropertiesDidChange(const ViewportArguments& viewportArgum
 
 #if !PLATFORM(IOS_FAMILY)
 
-FloatSize WebPage::screenSizeForHeadlessMode(const LocalFrame& frame, FloatSize defaultSize) const
+FloatSize WebPage::screenSizeForFingerprintingProtections(const LocalFrame& frame, FloatSize defaultSize) const
 {
     return frame.view() ? FloatSize { frame.view()->unobscuredContentRectIncludingScrollbars().size() } : defaultSize;
 }

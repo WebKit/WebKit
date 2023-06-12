@@ -1258,9 +1258,9 @@ FloatSize WebChromeClient::overrideScreenSize() const
 
 #endif
 
-FloatSize WebChromeClient::screenSizeForHeadlessMode(const LocalFrame& frame, FloatSize defaultSize) const
+FloatSize WebChromeClient::screenSizeForFingerprintingProtections(const LocalFrame& frame, FloatSize defaultSize) const
 {
-    return m_page.screenSizeForHeadlessMode(frame, defaultSize);
+    return m_page.screenSizeForFingerprintingProtections(frame, defaultSize);
 }
 
 void WebChromeClient::dispatchDisabledAdaptationsDidChange(const OptionSet<DisabledAdaptations>& disabledAdaptations) const

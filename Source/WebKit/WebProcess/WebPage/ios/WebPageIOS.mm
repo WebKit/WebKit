@@ -5167,7 +5167,7 @@ void WebPage::animationDidFinishForElement(const WebCore::Element& animatedEleme
         scheduleEditorStateUpdateForStartOrEndContainerNodeIfNeeded(endContainer.get());
 }
 
-FloatSize WebPage::screenSizeForHeadlessMode(const LocalFrame&, FloatSize defaultSize) const
+FloatSize WebPage::screenSizeForFingerprintingProtections(const LocalFrame&, FloatSize defaultSize) const
 {
     if (!currentUserInterfaceIdiomIsSmallScreen())
         return m_viewportConfiguration.minimumLayoutSize();

@@ -1643,7 +1643,7 @@ public:
     bool isInStableState() const { return m_isInStableState; }
 #endif
 
-    WebCore::FloatSize screenSizeForHeadlessMode(const WebCore::LocalFrame&, WebCore::FloatSize defaultSize) const;
+    WebCore::FloatSize screenSizeForFingerprintingProtections(const WebCore::LocalFrame&, WebCore::FloatSize defaultSize) const;
 
     const Logger& logger() const;
     const void* logIdentifier() const;

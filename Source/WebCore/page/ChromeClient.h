@@ -648,7 +648,7 @@ public:
     
     virtual bool isInStableState() const { return true; }
 
-    virtual FloatSize screenSizeForHeadlessMode(const LocalFrame&, FloatSize defaultSize) const { return defaultSize; }
+    virtual FloatSize screenSizeForFingerprintingProtections(const LocalFrame&, FloatSize defaultSize) const { return defaultSize; }
 
     WEBCORE_EXPORT virtual ~ChromeClient();
 
