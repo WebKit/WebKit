@@ -205,19 +205,13 @@ void RemoteRenderingBackend::moveToSerializedBuffer(WebCore::RenderingResourceId
         ASSERT_IS_TESTING_IPC();
         return;
     }
-    m_gpuConnectionToWebProcess->serializedImageBufferHeap().add(identifier, WTFMove(imageBuffer));
+    m_gpuConnectionToWebProcess->serializedImageBufferHeap().add({ identifier, 0 }, WTFMove(imageBuffer));
 }
 
 void RemoteRenderingBackend::moveToImageBuffer(WebCore::RenderingResourceIdentifier identifier)
 {
     assertIsCurrent(workQueue());
-    auto& serializedImageBuffers = m_gpuConnectionToWebProcess->serializedImageBufferHeap();
-    // FIXME: Currently the ThreadSafeObjectHeap does not return the object on remove or write. Thus
-    // we manually construct a state where only one read is able to obtain the object.
-    RemoteSerializedImageBufferReadReference read { { identifier, 0 } };
-    RemoteSerializedImageBufferWriteReference remove { read.reference(), 1 }; // Remove after one read, i.e. the read above.
-    serializedImageBuffers.retireRemove(WTFMove(remove)); // The object will not be available to multiple readers.
-    auto imageBuffer = serializedImageBuffers.retire(WTFMove(read), IPC::Timeout::infinity());
+    auto imageBuffer = m_gpuConnectionToWebProcess->serializedImageBufferHeap().take({ { identifier, 0 }, 0 }, IPC::Timeout::infinity());
     if (!imageBuffer) {
         ASSERT_IS_TESTING_IPC();
         return;

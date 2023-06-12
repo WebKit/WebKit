@@ -40,9 +40,10 @@ using TestedObjectWriteReference = IPC::ObjectIdentifierWriteReference<TestedObj
 using TestedObjectReference = IPC::ObjectIdentifierReference<TestedObjectIdentifier>;
 using TestedObjectReferenceTracker = IPC::ObjectIdentifierReferenceTracker<TestedObjectIdentifier>;
 
+// TestObject instances are the instances that the receiver stores in its object heap.
 class TestedObject : public ThreadSafeRefCounted<TestedObject> {
 public:
-    static RefPtr<TestedObject> create(int value)
+    static Ref<TestedObject> create(int value)
     {
         return adoptRef(*new TestedObject(value));
     }
@@ -52,8 +53,7 @@ public:
     }
     int value() const { return m_value; }
     static size_t instances() { return s_instances; }
-    auto newWriteReference() { return m_referenceTracker.write(); }
-    auto newReadReference() { return m_referenceTracker.read(); }
+
 private:
     TestedObject(int value)
         : m_value(value)
@@ -61,14 +61,13 @@ private:
         s_instances++;
     }
     const int m_value;
-    TestedObjectReferenceTracker m_referenceTracker { TestedObjectIdentifier::generate() };
     static std::atomic<size_t> s_instances;
 };
 
 std::atomic<size_t> TestedObject::s_instances;
 
 class ThreadSafeObjectHeapTest : public testing::Test {
-public:
+protected:
     void SetUp() override
     {
         WTF::initializeMainThread();
@@ -77,6 +76,12 @@ public:
     {
         ASSERT_EQ(TestedObject::instances(), 0u);
     }
+
+    // These are for the reference tracking that happens in the sender.
+    TestedObjectReferenceTracker m_referenceTracker { TestedObjectIdentifier::generate() };
+    auto newAddReference() { return m_referenceTracker.add(); }
+    auto newWriteReference() { return m_referenceTracker.write(); }
+    auto newReadReference() { return m_referenceTracker.read(); }
 };
 
 }
@@ -84,34 +89,207 @@ public:
 TEST_F(ThreadSafeObjectHeapTest, AddAndGetWorks)
 {
     {
-        IPC::ThreadSafeObjectHeap<TestedObjectIdentifier, RefPtr<TestedObject>> heap;
-        std::optional<TestedObjectReadReference> read1;
-        {
-            auto obj1 = TestedObject::create(344);
-            heap.retire(obj1->newWriteReference(), { obj1 }, std::nullopt);
-            read1 = obj1->newReadReference();
-        }
-        EXPECT_EQ(344, heap.retire(WTFMove(*read1), 0_s)->value());
+        IPC::ThreadSafeObjectHeap<TestedObjectIdentifier, Ref<TestedObject>> heap;
+        EXPECT_TRUE(heap.add(newAddReference(), TestedObject::create(344)));
+        auto read1 = newReadReference();
+
+        EXPECT_EQ(344, heap.get(read1, 0_s)->value());
         EXPECT_EQ(1u, TestedObject::instances());
+        EXPECT_EQ(1u, heap.sizeForTesting());
     }
     EXPECT_EQ(0u, TestedObject::instances());
 }
 
 TEST_F(ThreadSafeObjectHeapTest, CompleteReadAfterRemoveWithPendingRead)
 {
-    IPC::ThreadSafeObjectHeap<TestedObjectIdentifier, RefPtr<TestedObject>> heap;
-    std::optional<TestedObjectReadReference> read1;
-    std::optional<TestedObjectWriteReference> remove;
-    {
-        auto obj1 = TestedObject::create(345);
-        heap.retire(obj1->newWriteReference(), { obj1 }, std::nullopt);
-        read1 = obj1->newReadReference();
-        remove = obj1->newWriteReference();
-    }
-    heap.retireRemove(WTFMove(*remove)); // Non-blocking remove.
+    IPC::ThreadSafeObjectHeap<TestedObjectIdentifier, Ref<TestedObject>> heap;
+    EXPECT_TRUE(heap.add(newAddReference(), TestedObject::create(345)));
+    auto read1 = newReadReference();
+    auto remove = newWriteReference();
+
+    heap.remove(WTFMove(remove)); // Non-blocking remove.
     EXPECT_EQ(1u, TestedObject::instances());
-    EXPECT_EQ(345, heap.retire(WTFMove(*read1), 0_s)->value());
+    EXPECT_EQ(345, heap.read(WTFMove(read1), 0_s)->value());
+    EXPECT_EQ(0u, heap.sizeForTesting());
     EXPECT_EQ(0u, TestedObject::instances());
+}
+
+TEST_F(ThreadSafeObjectHeapTest, ReadWriteWorks)
+{
+    IPC::ThreadSafeObjectHeap<TestedObjectIdentifier, Ref<TestedObject>> heap;
+    EXPECT_TRUE(heap.add(newAddReference(), TestedObject::create(1)));
+    auto read1 = newReadReference();
+    auto write1 = newWriteReference();
+
+    EXPECT_EQ(1, heap.read(WTFMove(read1), 0_s)->value());
+    EXPECT_EQ(1, heap.take(WTFMove(write1), 0_s)->value());
+    EXPECT_EQ(0u, TestedObject::instances());
+}
+
+TEST_F(ThreadSafeObjectHeapTest, RemoveWorks)
+{
+    IPC::ThreadSafeObjectHeap<TestedObjectIdentifier, Ref<TestedObject>> heap;
+    EXPECT_TRUE(heap.add(newAddReference(), TestedObject::create(1)));
+    EXPECT_EQ(1, heap.read(newReadReference(), 0_s)->value());
+    auto write1 = newWriteReference();
+
+    EXPECT_EQ(1u, TestedObject::instances());
+    EXPECT_TRUE(heap.remove(WTFMove(write1)));
+    EXPECT_EQ(0u, heap.sizeForTesting());
+    EXPECT_EQ(0u, TestedObject::instances());
+}
+
+TEST_F(ThreadSafeObjectHeapTest, WriteBeforeRetireEarlierReadTimesOut)
+{
+    IPC::ThreadSafeObjectHeap<TestedObjectIdentifier, Ref<TestedObject>> heap;
+    EXPECT_TRUE(heap.add(newAddReference(), TestedObject::create(1)));
+    auto read1 = newReadReference();
+    auto write1 = newWriteReference();
+
+    // Test that take times out.
+    EXPECT_EQ(nullptr, heap.take(WTFMove(write1), 0_s));
+
+    // Ensure that write works after read.
+    EXPECT_EQ(1, heap.read(WTFMove(read1), 0_s)->value());
+    EXPECT_EQ(1, heap.take(WTFMove(write1), 0_s)->value());
+    EXPECT_EQ(0u, TestedObject::instances());
+    EXPECT_EQ(0u, heap.sizeForTesting());
+}
+
+TEST_F(ThreadSafeObjectHeapTest, ReadBeforeRetireEarlierWriteTimesOut)
+{
+    IPC::ThreadSafeObjectHeap<TestedObjectIdentifier, Ref<TestedObject>> heap;
+    heap.add(newAddReference(), TestedObject::create(1));
+    auto write1 = newWriteReference();
+    auto read1 = newReadReference();
+    auto newReference = write1.retiredReference();
+
+    EXPECT_EQ(nullptr, heap.read(WTFMove(read1), 0_s));
+    EXPECT_EQ(1, heap.take(WTFMove(write1), 0_s)->value());
+    EXPECT_TRUE(heap.add(newReference, TestedObject::create(2)));
+    EXPECT_EQ(2, heap.get(read1, 0_s)->value());
+}
+
+TEST_F(ThreadSafeObjectHeapTest, RemoveBeforeAdd)
+{
+    IPC::ThreadSafeObjectHeap<TestedObjectIdentifier, Ref<TestedObject>> heap;
+    auto add1 = newAddReference();
+    auto write1 = newWriteReference();
+
+    EXPECT_TRUE(heap.remove(WTFMove(write1)));
+    EXPECT_EQ(1u, heap.sizeForTesting());
+    EXPECT_TRUE(heap.add(add1, TestedObject::create(1)));
+    EXPECT_EQ(0u, TestedObject::instances());
+    EXPECT_EQ(0u, heap.sizeForTesting());
+}
+
+TEST_F(ThreadSafeObjectHeapTest, RemoveBeforeAddAndReads)
+{
+    IPC::ThreadSafeObjectHeap<TestedObjectIdentifier, Ref<TestedObject>> heap;
+    auto add1 = newAddReference();
+    auto read1 = newReadReference();
+    auto read2 = newReadReference();
+    auto read3 = newReadReference();
+    auto write1 = newWriteReference();
+
+    EXPECT_TRUE(heap.remove(WTFMove(write1)));
+    EXPECT_EQ(1u, heap.sizeForTesting());
+    EXPECT_TRUE(heap.add(add1, TestedObject::create(1)));
+    EXPECT_EQ(1u, TestedObject::instances());
+    EXPECT_EQ(1, heap.read(WTFMove(read1), 0_s)->value());
+    EXPECT_EQ(1u, TestedObject::instances());
+    EXPECT_EQ(1, heap.read(WTFMove(read2), 0_s)->value());
+    EXPECT_EQ(1u, TestedObject::instances());
+    EXPECT_EQ(1, heap.read(WTFMove(read3), 0_s)->value());
+    EXPECT_EQ(0u, TestedObject::instances());
+    EXPECT_EQ(0u, heap.sizeForTesting());
+}
+
+TEST_F(ThreadSafeObjectHeapTest, RemoveBeforeReads)
+{
+    IPC::ThreadSafeObjectHeap<TestedObjectIdentifier, Ref<TestedObject>> heap;
+    auto add1 = newAddReference();
+    auto read1 = newReadReference();
+    auto read2 = newReadReference();
+    auto read3 = newReadReference();
+    auto write1 = newWriteReference();
+
+    EXPECT_TRUE(heap.add(add1, TestedObject::create(1)));
+    EXPECT_EQ(1u, heap.sizeForTesting());
+    EXPECT_TRUE(heap.remove(WTFMove(write1)));
+    EXPECT_EQ(1u, TestedObject::instances());
+    EXPECT_EQ(1, heap.read(WTFMove(read1), 0_s)->value());
+    EXPECT_EQ(1u, TestedObject::instances());
+    EXPECT_EQ(1, heap.read(WTFMove(read2), 0_s)->value());
+    EXPECT_EQ(1u, TestedObject::instances());
+    EXPECT_EQ(1, heap.read(WTFMove(read3), 0_s)->value());
+    EXPECT_EQ(0u, TestedObject::instances());
+    EXPECT_EQ(0u, heap.sizeForTesting());
+}
+
+TEST_F(ThreadSafeObjectHeapTest, RemoveBeforeWritesAndReads)
+{
+    IPC::ThreadSafeObjectHeap<TestedObjectIdentifier, Ref<TestedObject>> heap;
+    auto add1 = newAddReference();
+    auto write1 = newWriteReference();
+    auto add2 = newAddReference();
+    auto read2 = newReadReference();
+    auto write2 = newWriteReference();
+    auto add3 = newAddReference();
+    auto read3 = newReadReference();
+    auto write3 = newWriteReference();
+
+    EXPECT_TRUE(heap.remove(WTFMove(write3)));
+    EXPECT_TRUE(heap.remove(WTFMove(write2)));
+    EXPECT_TRUE(heap.remove(WTFMove(write1)));
+    EXPECT_EQ(3u, heap.sizeForTesting());
+
+    EXPECT_EQ(0u, TestedObject::instances());
+    EXPECT_TRUE(heap.add(add1, TestedObject::create(1)));
+    EXPECT_TRUE(heap.add(add2, TestedObject::create(2)));
+    EXPECT_TRUE(heap.add(add3, TestedObject::create(3)));
+    EXPECT_EQ(2u, TestedObject::instances());
+    EXPECT_EQ(2u, heap.sizeForTesting());
+    EXPECT_EQ(2, heap.read(WTFMove(read2), 0_s)->value());
+    EXPECT_EQ(1u, TestedObject::instances());
+    EXPECT_EQ(3, heap.read(WTFMove(read3), 0_s)->value());
+    EXPECT_EQ(0u, TestedObject::instances());
+}
+
+TEST_F(ThreadSafeObjectHeapTest, InvalidRemoveTwice)
+{
+    IPC::ThreadSafeObjectHeap<TestedObjectIdentifier, Ref<TestedObject>> heap;
+    TestedObjectWriteReference write1 { TestedObjectReference::generateForAdd(), 0 };
+    TestedObjectWriteReference write2 { write1.reference(), 0 };
+    TestedObjectWriteReference write3 { write1.reference(), 0 };
+
+    EXPECT_TRUE(heap.remove(WTFMove(write1)));
+    EXPECT_FALSE(heap.remove(WTFMove(write2)));
+    EXPECT_FALSE(heap.take(WTFMove(write3), 0_s));
+}
+
+TEST_F(ThreadSafeObjectHeapTest, InvalidRemoveTooFewReads)
+{
+    IPC::ThreadSafeObjectHeap<TestedObjectIdentifier, Ref<TestedObject>> heap;
+    auto add1 = newAddReference();
+    auto read1 = newReadReference();
+    EXPECT_TRUE(heap.add(add1, TestedObject::create(1)));
+    EXPECT_EQ(1, heap.read(WTFMove(read1), 0_s)->value());
+
+    // Already read once, but trying to remove with 0 pending reads.
+    TestedObjectWriteReference write1 { add1, 0 };
+    TestedObjectWriteReference write2 { add1, 0 };
+
+    EXPECT_FALSE(heap.remove(WTFMove(write1)));
+    EXPECT_FALSE(heap.take(WTFMove(write2), 0_s));
+}
+
+TEST_F(ThreadSafeObjectHeapTest, InvalidAddTwice)
+{
+    IPC::ThreadSafeObjectHeap<TestedObjectIdentifier, Ref<TestedObject>> heap;
+    auto add1 = newAddReference();
+    EXPECT_TRUE(heap.add(add1, TestedObject::create(1)));
+    EXPECT_FALSE(heap.add(add1, TestedObject::create(1)));
 }
 
 }

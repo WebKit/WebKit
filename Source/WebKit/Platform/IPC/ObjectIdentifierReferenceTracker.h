@@ -51,6 +51,8 @@ public:
     }
     T identifier() const { return m_identifier; }
     uint64_t version() const { return m_version; }
+    static ObjectIdentifierReference<T> generateForAdd() { return { T::generate(), 0 }; }
+
     bool operator==(const ObjectIdentifierReference& other) const
     {
         return other.m_identifier == m_identifier && other.m_version == m_version;
@@ -112,7 +114,6 @@ template<typename T>
 class ObjectIdentifierWriteReference {
 public:
     using Reference = ObjectIdentifierReference<T>;
-    static ObjectIdentifierWriteReference<T> generateForAdd() { return { { T::generate(), 0 }, 0 }; }
 
     ObjectIdentifierWriteReference(Reference reference, uint64_t pendingReads)
         : m_reference(reference)
@@ -175,6 +176,10 @@ public:
     WriteReference write() const
     {
         return { { m_identifier, m_version++ }, m_pendingReads.exchange(0) };
+    }
+    Reference add() const
+    {
+        return { m_identifier, m_version };
     }
     T identifier() const
     {

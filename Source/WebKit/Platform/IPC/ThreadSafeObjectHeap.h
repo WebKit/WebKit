@@ -43,45 +43,55 @@ namespace IPC {
 // Pending reads may block new writes. Alternatively new writes can skip ahead of the reads,
 // for example in copy-on-write scenarios.
 // Pending writes block reads.
-// Currently implemented only for read-only (create-read-destroy) or copy-on-write types,
-// e.g. no two-phase get() operations are not implemented yet.
+// HeldType must be copyable because read() may or may not give out the last instance.
 template<typename Identifier, typename HeldType>
 class ThreadSafeObjectHeap {
+    using MappedTraits = HashTraits<HeldType>;
 public:
     using ReadReference = typename ObjectIdentifierReferenceTracker<Identifier>::ReadReference;
     using WriteReference = typename ObjectIdentifierReferenceTracker<Identifier>::WriteReference;
     using Reference = typename ObjectIdentifierReferenceTracker<Identifier>::Reference;
+    using PeekType = typename MappedTraits::PeekType;
+    using TakeType = typename MappedTraits::TakeType;
     virtual ~ThreadSafeObjectHeap() = default;
 
-    void add(Identifier, HeldType&&);
+    // Establishes a new object in the heap with an initial reference.
+    // Returns true on success.
+    bool add(const Reference&, HeldType);
 
-    // Waits until a write creates the reference and then retires the read or
-    // times out.
-    HeldType retire(ReadReference&&, Timeout);
+    // Waits until a write creates the reference or times out.
+    PeekType get(const ReadReference&, Timeout) const;
 
-    // Inserts a new version of the object or removes an old one and then retires the write or
-    // times out.
-    // If timeout is passed, waits until pending reads are done.
-    // It is a caller error to not wait and mutate the old object.
-    void retire(WriteReference&&, std::optional<HeldType>&& newObject, std::optional<Timeout>);
+    // Waits until a write creates the reference and retires the read or times out.
+    // Return value should be used only if the object is immutable. Otherwise, callers should read
+    // from the object returned by get() and then only retire the read reference via read().
+    TakeType read(ReadReference&&, Timeout);
 
-    void retireRemove(WriteReference&&);
+    // Waits until write is possible and removes the object or times out.
+    // To re-add after modification, the new reference can be obtained with
+    // WriteReference::retiredReference().
+    TakeType take(WriteReference&&, Timeout);
+
+    // Marks the object for removal.
+    bool remove(WriteReference&&);
 
     void clear();
+
+    size_t sizeForTesting() const;
+
 private:
-    Lock m_objectsLock;
-    Condition m_objectsCondition;
+    mutable Lock m_objectsLock;
+    mutable Condition m_objectsCondition;
     struct ReferenceState {
         uint64_t retiredReads { 0 };
         std::optional<uint64_t> finalRead; // Remove after `finalRead` reads.
-        std::optional<HeldType> object; // Object or tombstone.
+        std::optional<HeldType> object; // Object or final read marker.
 
         ReferenceState() = default;
         explicit ReferenceState(HeldType&& object)
             : object(WTFMove(object))
         {
         }
-        // Tombstone constructor.
         explicit ReferenceState(uint64_t finalRead)
             : finalRead(finalRead)
         {
@@ -91,7 +101,46 @@ private:
 };
 
 template<typename Identifier, typename HeldType>
-HeldType ThreadSafeObjectHeap<Identifier, HeldType>::retire(ReadReference&& read, Timeout timeout)
+bool ThreadSafeObjectHeap<Identifier, HeldType>::add(const Reference& ref, HeldType object)
+{
+    Locker locker { m_objectsLock };
+    auto addResult = m_objects.ensure(ref, [&object]() mutable {
+        return ReferenceState { WTFMove(object) };
+    });
+    if (!addResult.isNewEntry) {
+        auto& state = addResult.iterator->value;
+        if (state.finalRead && !*(state.finalRead)) {
+            // `object` will be destroyed without the lock later.
+            m_objects.remove(addResult.iterator);
+            return true; // Reference was already removed, so nobody is waiting. No need to notify.
+        }
+        if (state.object)
+            return false;
+        state.object = WTFMove(object);
+    }
+    m_objectsCondition.notifyAll();
+    return true;
+}
+
+template<typename Identifier, typename HeldType>
+auto ThreadSafeObjectHeap<Identifier, HeldType>::get(const ReadReference& read, IPC::Timeout timeout) const -> PeekType
+{
+    Locker locker { m_objectsLock };
+    do {
+        auto it = m_objects.find(read.reference());
+        if (it != m_objects.end()) {
+            auto& state = it->value;
+            if (state.object)
+                return MappedTraits::peek(*state.object);
+            // Final read marker, write for this reference has not yet happened.
+            return MappedTraits::peek(MappedTraits::emptyValue());
+        }
+    } while (m_objectsCondition.waitUntil(m_objectsLock, timeout.deadline()));
+    return MappedTraits::peek(MappedTraits::emptyValue());
+}
+
+template<typename Identifier, typename HeldType>
+auto ThreadSafeObjectHeap<Identifier, HeldType>::read(ReadReference&& read, Timeout timeout) -> TakeType
 {
     Locker locker { m_objectsLock };
     do {
@@ -99,7 +148,7 @@ HeldType ThreadSafeObjectHeap<Identifier, HeldType>::retire(ReadReference&& read
         if (it != m_objects.end()) {
             auto& state = it->value;
             if (state.object) {
-                HeldType result = *state.object;
+                TakeType result = MappedTraits::peek(*state.object); // Assume PeekType is convertible to TakeType, e.g. the type is copyable.
                 state.retiredReads++;
                 if (state.finalRead) {
                     ASSERT(state.finalRead >= state.retiredReads); // Trusted assert because this is ensured on `finalRead` assignment.
@@ -110,77 +159,57 @@ HeldType ThreadSafeObjectHeap<Identifier, HeldType>::retire(ReadReference&& read
                 return result;
             }
         }
-        if (!m_objectsCondition.waitUntil(m_objectsLock, timeout.deadline()))
-            break;
-    } while (true);
-    return nullptr;
+    } while (m_objectsCondition.waitUntil(m_objectsLock, timeout.deadline()));
+    return MappedTraits::peek(MappedTraits::emptyValue());
 }
 
 template<typename Identifier, typename HeldType>
-void ThreadSafeObjectHeap<Identifier, HeldType>::retire(WriteReference&& write, std::optional<HeldType>&& object, std::optional<Timeout> timeout)
+auto ThreadSafeObjectHeap<Identifier, HeldType>::take(WriteReference&& write, Timeout timeout) -> TakeType
 {
-    const bool waitForPendingReads = timeout.has_value();
     Locker locker { m_objectsLock };
+    auto finalRead = write.pendingReads();
     do {
         auto it = m_objects.find(write.reference());
         if (it != m_objects.end()) {
             auto& state = it->value;
-            if (state.finalRead && state.object) {
-                // Write replay: `finalRead` is assigned on write. Cannot have the same version with writes.
-                ASSERT_IS_TESTING_IPC();
-                return;
-            }
-            if (state.retiredReads > write.pendingReads()) {
-                // Write underflow: more reads have been done than the sender claims is the maximum.
-                ASSERT_IS_TESTING_IPC();
-                return;
-            }
-            // It is likely a caller error to try to add a new reference with the same client object without
-            // waiting for pending reads on the old reference.
-            ASSERT(waitForPendingReads || !state.object || *state.object != object);
+            if (state.finalRead || state.retiredReads > finalRead)
+                return MappedTraits::take(MappedTraits::emptyValue());
 
-            if (state.retiredReads == write.pendingReads() || !waitForPendingReads) {
-                if (state.retiredReads < write.pendingReads())
-                    state.finalRead = write.pendingReads();
-                else if (state.retiredReads == write.pendingReads())
-                    m_objects.remove(it);
-                if (object) {
-                    auto addResult = m_objects.add(WTFMove(write).retiredReference(), ReferenceState { WTFMove(*object) });
-                    if (!addResult.isNewEntry) {
-                        auto& newState = addResult.iterator->value;
-                        // Entry was a tombstone.
-                        if (newState.finalRead && !*newState.finalRead) {
-                            m_objects.remove(addResult.iterator);
-                        } else if (!newState.object) {
-                            newState.object = WTFMove(*object);
-                        } else if (newState.object) {
-                            // Write replay: the retired write already exists, the entry was not a tombstone.
-                            ASSERT_IS_TESTING_IPC();
-                            return;
-                        }
-                    }
-                    m_objectsCondition.notifyAll();
-                }
-                return;
+            if (state.retiredReads == finalRead) {
+                auto result = MappedTraits::take(WTFMove(*state.object));
+                m_objects.remove(it);
+                // Not notifying, as nothing can be waiting on a remove.
+                return result;
             }
-        } else if (!waitForPendingReads || !write.pendingReads()) {
-            // Write the tombstone.
-            m_objects.add(write.reference(), ReferenceState { write.pendingReads() });
-            if (object)
-                m_objects.add(WTFMove(write).retiredReference(), ReferenceState { WTFMove(*object) });
-            m_objectsCondition.notifyAll();
-            return;
         }
-        ASSERT(timeout);
-        if (!m_objectsCondition.waitUntil(m_objectsLock, timeout->deadline()))
-            break;
-    } while (true);
+    } while (m_objectsCondition.waitUntil(m_objectsLock, timeout.deadline()));
+    return MappedTraits::take(MappedTraits::emptyValue());
 }
 
 template<typename Identifier, typename HeldType>
-void ThreadSafeObjectHeap<Identifier, HeldType>::retireRemove(WriteReference&& object)
+bool ThreadSafeObjectHeap<Identifier, HeldType>::remove(WriteReference&& write)
 {
-    retire(WTFMove(object), std::nullopt, std::nullopt);
+    TakeType object;
+
+    Locker locker { m_objectsLock };
+    auto finalRead = write.pendingReads();
+    auto addResult = m_objects.ensure(write.reference(), [finalRead] {
+        return ReferenceState { finalRead };
+    });
+
+    if (addResult.isNewEntry)
+        return true;
+
+    auto& state = addResult.iterator->value;
+    if (state.finalRead || state.retiredReads > finalRead)
+        return false;
+    if (state.retiredReads == finalRead) {
+        object = WTFMove(*state.object); // Destroy the object later without the lock held.
+        m_objects.remove(addResult.iterator);
+    } else
+        state.finalRead = finalRead;
+    // Not notifying, as nothing can be waiting on a remove.
+    return true;
 }
 
 template<typename Identifier, typename HeldType>
@@ -191,12 +220,10 @@ void ThreadSafeObjectHeap<Identifier, HeldType>::clear()
 }
 
 template<typename Identifier, typename HeldType>
-void ThreadSafeObjectHeap<Identifier, HeldType>::add(Identifier identifier, HeldType&& object)
+size_t ThreadSafeObjectHeap<Identifier, HeldType>::sizeForTesting() const
 {
-    Reference reference { identifier, 0 };
     Locker locker { m_objectsLock };
-    ASSERT(!m_objects.contains(reference));
-    m_objects.add(reference, ReferenceState { WTFMove(object) });
+    return m_objects.size();
 }
 
 }

@@ -92,18 +92,17 @@ void RemoteVideoFrameObjectHeap::close()
 
 RemoteVideoFrameProxy::Properties RemoteVideoFrameObjectHeap::add(Ref<WebCore::VideoFrame>&& frame)
 {
-    auto write = RemoteVideoFrameWriteReference::generateForAdd();
-    auto newFrameReference = write.retiredReference();
-    auto properties = RemoteVideoFrameProxy::properties(WTFMove(newFrameReference), frame);
-    m_heap.retire(WTFMove(write), WTFMove(frame), std::nullopt);
+    auto newFrameReference = RemoteVideoFrameReference::generateForAdd();
+    auto properties = RemoteVideoFrameProxy::properties(newFrameReference, frame);
+    auto success = m_heap.add(newFrameReference, WTFMove(frame));
+    ASSERT_UNUSED(success, success);
     return properties;
 }
 
 void RemoteVideoFrameObjectHeap::releaseVideoFrame(RemoteVideoFrameWriteReference&& write)
 {
     assertIsCurrent(remoteVideoFrameObjectHeapQueue());
-
-    m_heap.retireRemove(WTFMove(write));
+    m_heap.remove(WTFMove(write));
 }
 
 #if PLATFORM(COCOA)
