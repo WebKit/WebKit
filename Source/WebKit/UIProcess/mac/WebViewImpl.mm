@@ -5596,6 +5596,9 @@ void WebViewImpl::mouseDown(NSEvent *event)
     if (m_ignoresNonWheelEvents)
         return;
 
+    if (imageAnalysisOverlayViewShouldHandleMouseEvents(event.locationInWindow))
+        return;
+
     for (auto& hud : _pdfHUDViews.values())
         [hud mouseDown:event];
 
@@ -5608,6 +5611,9 @@ void WebViewImpl::mouseDown(NSEvent *event)
 void WebViewImpl::mouseUp(NSEvent *event)
 {
     if (m_ignoresNonWheelEvents)
+        return;
+
+    if (imageAnalysisOverlayViewShouldHandleMouseEvents(event.locationInWindow))
         return;
 
     for (auto& hud : _pdfHUDViews.values())
@@ -6317,7 +6323,25 @@ void WebViewImpl::computeHasVisualSearchResults(const URL& imageURL, ShareableBi
 
 #endif // ENABLE(IMAGE_ANALYSIS)
 
-bool WebViewImpl::imageAnalysisOverlayViewHasCursorAtPoint(NSPoint locationInView) const
+bool WebViewImpl::imageAnalysisOverlayViewShouldHandleMouseEvents(NSPoint locationInWindow) const
+{
+#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+    if (!m_imageAnalysisOverlayView)
+        return false;
+
+    auto interactionPoint = [m_view convertPoint:locationInWindow toView:m_imageAnalysisOverlayView.get()];
+
+    if (!CGRectContainsPoint(m_imageAnalysisInteractionBounds, interactionPoint))
+        return false;
+
+    return imageAnalysisOverlayViewHasInteractableItemAtPoint(interactionPoint) || [m_imageAnalysisOverlayView hasActiveTextSelection];
+#else
+    UNUSED_PARAM(locationInWindow);
+    return false;
+#endif
+}
+
+bool WebViewImpl::imageAnalysisOverlayViewHasInteractableItemAtPoint(NSPoint locationInView) const
 {
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
     return [m_imageAnalysisOverlayView interactableItemExistsAtPoint:locationInView];

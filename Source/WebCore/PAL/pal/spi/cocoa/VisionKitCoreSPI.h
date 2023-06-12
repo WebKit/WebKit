@@ -302,6 +302,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nullable, nonatomic, strong) VKCImageAnalysis *analysis;
 @property (nonatomic, weak) id<VKCImageAnalysisOverlayViewDelegate> delegate;
 @property (nonatomic) BOOL wantsAutomaticContentsRectCalculation;
+@property (nonatomic, readonly) BOOL hasActiveTextSelection;
 
 - (BOOL)interactableItemExistsAtPoint:(CGPoint)point;
 - (void)setActionInfoViewHidden:(BOOL)hidden animated:(BOOL)animated;
@@ -335,6 +336,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readwrite) BOOL highlightSelectableItems;
 @property (nonatomic, readwrite, copy, nullable) UIButtonConfigurationUpdateHandler quickActionConfigurationUpdateHandler;
 @property (nonatomic) BOOL wantsAutomaticContentsRectCalculation;
+
 - (BOOL)interactableItemExistsAtPoint:(CGPoint)point;
 - (void)resetSelection;
 - (void)setActionInfoViewHidden:(BOOL)hidden animated:(BOOL)animated;

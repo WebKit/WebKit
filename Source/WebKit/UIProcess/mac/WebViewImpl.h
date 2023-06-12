@@ -609,7 +609,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     VKCImageAnalysisOverlayView *imageAnalysisOverlayView() const { return m_imageAnalysisOverlayView.get(); }
 #endif
 
-    bool imageAnalysisOverlayViewHasCursorAtPoint(NSPoint locationInView) const;
+    bool imageAnalysisOverlayViewShouldHandleMouseEvents(NSPoint locationInWindow) const;
+    bool imageAnalysisOverlayViewHasInteractableItemAtPoint(NSPoint locationInView) const;
 
     bool acceptsPreviewPanelControl(QLPreviewPanel *);
     void beginPreviewPanelControl(QLPreviewPanel *);

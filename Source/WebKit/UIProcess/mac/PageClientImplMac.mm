@@ -326,7 +326,7 @@ void PageClientImpl::setCursor(const WebCore::Cursor& cursor)
     if ([NSCursor currentCursor] == platformCursor)
         return;
 
-    if (m_impl->imageAnalysisOverlayViewHasCursorAtPoint([m_view convertPoint:mouseLocationInScreen fromView:nil]))
+    if (m_impl->imageAnalysisOverlayViewHasInteractableItemAtPoint([m_view convertPoint:mouseLocationInScreen fromView:nil]))
         return;
 
     [platformCursor set];

@@ -65,6 +65,13 @@ static void swizzledSetAnalysis(VKCImageAnalysisInteraction *, SEL, VKCImageAnal
 {
 }
 
+#if PLATFORM(MAC)
+static BOOL swizzleInteractableItemExistsAtPoint(VKCImageAnalysisOverlayView *, SEL, CGPoint)
+{
+    return YES;
+}
+#endif
+
 @interface FullscreenVideoTextRecognitionWebView : TestWKWebView
 @end
 
@@ -74,7 +81,8 @@ static void swizzledSetAnalysis(VKCImageAnalysisInteraction *, SEL, VKCImageAnal
     std::unique_ptr<InstanceMethodSwizzler> _viewControllerPresentationSwizzler;
     std::unique_ptr<InstanceMethodSwizzler> _imageAnalysisInteractionSwizzler;
 #else
-    std::unique_ptr<InstanceMethodSwizzler> _imageAnalysisOverlaySwizzler;
+    std::unique_ptr<InstanceMethodSwizzler> _imageAnalysisOverlaySetAnalysisSwizzler;
+    std::unique_ptr<InstanceMethodSwizzler> _imageAnalysisOverlayInteractableItemExistsAtPointSwizzler;
 #endif
     bool _doneEnteringFullscreen;
     bool _doneExitingFullscreen;
@@ -115,10 +123,16 @@ static void swizzledSetAnalysis(VKCImageAnalysisInteraction *, SEL, VKCImageAnal
         reinterpret_cast<IMP>(swizzledPresentViewController)
     );
 #else
-    _imageAnalysisOverlaySwizzler = WTF::makeUnique<InstanceMethodSwizzler>(
+    _imageAnalysisOverlaySetAnalysisSwizzler = WTF::makeUnique<InstanceMethodSwizzler>(
         PAL::getVKCImageAnalysisOverlayViewClass(),
         @selector(setAnalysis:),
         reinterpret_cast<IMP>(swizzledSetAnalysis)
+    );
+
+    _imageAnalysisOverlayInteractableItemExistsAtPointSwizzler = WTF::makeUnique<InstanceMethodSwizzler>(
+        PAL::getVKCImageAnalysisOverlayViewClass(),
+        @selector(interactableItemExistsAtPoint:),
+        reinterpret_cast<IMP>(swizzleInteractableItemExistsAtPoint)
     );
 #endif
 
@@ -301,6 +315,41 @@ TEST(FullscreenVideoTextRecognition, DoNotAnalyzeVideoAfterExitingFullscreen)
     });
     Util::run(&doneWaiting);
 }
+
+#if PLATFORM(MAC)
+TEST(FullscreenVideoTextRecognition, ClickEventsInElementFullscreen)
+{
+    auto webView = [FullscreenVideoTextRecognitionWebView create];
+    [webView loadVideoSource:@"test.mp4"];
+
+    [webView objectByEvaluatingJavaScript:@"function eventToMessage(event){window.webkit.messageHandlers.testHandler.postMessage(event.type);} var video = document.querySelector('video'); video.addEventListener('click', eventToMessage);"];
+
+    __block BOOL receivedClickEvent = NO;
+    [webView performAfterReceivingMessage:@"click" action:^{
+        receivedClickEvent = YES;
+    }];
+
+    [webView enterFullscreen];
+    [webView pause];
+    [webView waitForImageAnalysisToBegin];
+
+    auto point = CGPointMake(500, 500);
+
+    NSEvent *mouseDownEvent = [NSEvent mouseEventWithType:NSEventTypeLeftMouseDown location:point modifierFlags:0 timestamp:[webView eventTimestamp] windowNumber:[webView hostWindow].windowNumber context:[NSGraphicsContext currentContext] eventNumber:1 clickCount:1 pressure:NO];
+
+    [webView mouseDown:mouseDownEvent];
+
+    [webView waitForNextPresentationUpdate];
+
+    NSEvent *mouseUpEvent = [NSEvent mouseEventWithType:NSEventTypeLeftMouseUp location:point modifierFlags:0 timestamp:[webView eventTimestamp] windowNumber:[webView hostWindow].windowNumber context:[NSGraphicsContext currentContext] eventNumber:2 clickCount:1 pressure:NO];
+
+    [webView mouseUp:mouseUpEvent];
+
+    [webView waitForNextPresentationUpdate];
+
+    EXPECT_FALSE(receivedClickEvent);
+}
+#endif
 
 } // namespace TestWebKitAPI
 
