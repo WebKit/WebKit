@@ -12,6 +12,8 @@
 // OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
 // CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
+//go:build ignore
+
 // check_imported_libraries.go checks that each of its arguments only imports
 // allowed libraries. This is used to avoid accidental dependencies on
 // libstdc++.so.

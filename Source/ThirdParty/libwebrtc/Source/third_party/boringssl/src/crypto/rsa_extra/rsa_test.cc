@@ -64,6 +64,7 @@
 #include <openssl/bn.h>
 #include <openssl/bytestring.h>
 #include <openssl/crypto.h>
+#include <openssl/digest.h>
 #include <openssl/err.h>
 #include <openssl/nid.h>
 
@@ -396,68 +397,108 @@ struct RSAEncryptParam {
 class RSAEncryptTest : public testing::TestWithParam<RSAEncryptParam> {};
 
 TEST_P(RSAEncryptTest, TestKey) {
+  // Construct an RSA key in different ways.
   const auto &param = GetParam();
-  bssl::UniquePtr<RSA> key(
+  bssl::UniquePtr<RSA> parsed(
       RSA_private_key_from_bytes(param.der, param.der_len));
-  ASSERT_TRUE(key);
+  ASSERT_TRUE(parsed);
+  EXPECT_TRUE(RSA_get0_e(parsed.get()));
+  EXPECT_TRUE(RSA_get0_d(parsed.get()));
 
-  EXPECT_TRUE(RSA_check_key(key.get()));
+  bssl::UniquePtr<RSA> constructed(RSA_new_private_key(
+      RSA_get0_n(parsed.get()), RSA_get0_e(parsed.get()),
+      RSA_get0_d(parsed.get()), RSA_get0_p(parsed.get()),
+      RSA_get0_q(parsed.get()), RSA_get0_dmp1(parsed.get()),
+      RSA_get0_dmq1(parsed.get()), RSA_get0_iqmp(parsed.get())));
+  ASSERT_TRUE(constructed);
+  EXPECT_TRUE(RSA_get0_e(constructed.get()));
+  EXPECT_TRUE(RSA_get0_d(constructed.get()));
 
-  uint8_t ciphertext[256];
+  bssl::UniquePtr<RSA> no_crt(RSA_new_private_key_no_crt(
+      RSA_get0_n(parsed.get()), RSA_get0_e(parsed.get()),
+      RSA_get0_d(parsed.get())));
+  ASSERT_TRUE(no_crt);
+  EXPECT_TRUE(RSA_get0_e(no_crt.get()));
+  EXPECT_TRUE(RSA_get0_d(no_crt.get()));
 
-  // Test that PKCS#1 v1.5 encryption round-trips.
-  size_t ciphertext_len = 0;
-  ASSERT_TRUE(RSA_encrypt(key.get(), &ciphertext_len, ciphertext,
-                          sizeof(ciphertext), kPlaintext, kPlaintextLen,
-                          RSA_PKCS1_PADDING));
-  EXPECT_EQ(RSA_size(key.get()), ciphertext_len);
+  bssl::UniquePtr<RSA> no_e(RSA_new_private_key_no_e(RSA_get0_n(parsed.get()),
+                                                     RSA_get0_d(parsed.get())));
+  ASSERT_TRUE(no_e);
+  EXPECT_FALSE(RSA_get0_e(no_e.get()));
+  EXPECT_TRUE(RSA_get0_d(no_e.get()));
 
-  uint8_t plaintext[256];
-  size_t plaintext_len = 0;
-  ASSERT_TRUE(RSA_decrypt(key.get(), &plaintext_len, plaintext,
-                          sizeof(plaintext), ciphertext, ciphertext_len,
-                          RSA_PKCS1_PADDING));
-  EXPECT_EQ(Bytes(kPlaintext, kPlaintextLen), Bytes(plaintext, plaintext_len));
+  bssl::UniquePtr<RSA> pub(
+      RSA_new_public_key(RSA_get0_n(parsed.get()), RSA_get0_e(parsed.get())));
+  ASSERT_TRUE(pub);
+  EXPECT_TRUE(RSA_get0_e(pub.get()));
+  EXPECT_FALSE(RSA_get0_d(pub.get()));
 
-  // Test that OAEP encryption round-trips.
-  ciphertext_len = 0;
-  ASSERT_TRUE(RSA_encrypt(key.get(), &ciphertext_len, ciphertext,
-                          sizeof(ciphertext), kPlaintext, kPlaintextLen,
-                          RSA_PKCS1_OAEP_PADDING));
-  EXPECT_EQ(RSA_size(key.get()), ciphertext_len);
+  for (RSA *key :
+       {parsed.get(), constructed.get(), no_crt.get(), no_e.get(), pub.get()}) {
+    EXPECT_TRUE(RSA_check_key(key));
 
-  plaintext_len = 0;
-  ASSERT_TRUE(RSA_decrypt(key.get(), &plaintext_len, plaintext,
-                          sizeof(plaintext), ciphertext, ciphertext_len,
-                          RSA_PKCS1_OAEP_PADDING));
-  EXPECT_EQ(Bytes(kPlaintext, kPlaintextLen), Bytes(plaintext, plaintext_len));
+    uint8_t ciphertext[256], plaintext[256];
+    size_t ciphertext_len = 0, plaintext_len = 0;
 
-  // |oaep_ciphertext| should decrypt to |kPlaintext|.
-  plaintext_len = 0;
-  ASSERT_TRUE(RSA_decrypt(key.get(), &plaintext_len, plaintext,
-                          sizeof(plaintext), param.oaep_ciphertext,
-                          param.oaep_ciphertext_len, RSA_PKCS1_OAEP_PADDING));
-  EXPECT_EQ(Bytes(kPlaintext, kPlaintextLen), Bytes(plaintext, plaintext_len));
+    if (RSA_get0_e(key) != nullptr) {
+      // Test that PKCS#1 v1.5 encryption round-trips.
+      ASSERT_TRUE(RSA_encrypt(key, &ciphertext_len, ciphertext,
+                              sizeof(ciphertext), kPlaintext, kPlaintextLen,
+                              RSA_PKCS1_PADDING));
+      EXPECT_EQ(RSA_size(key), ciphertext_len);
 
-  // Try decrypting corrupted ciphertexts.
-  OPENSSL_memcpy(ciphertext, param.oaep_ciphertext, param.oaep_ciphertext_len);
-  for (size_t i = 0; i < param.oaep_ciphertext_len; i++) {
-    SCOPED_TRACE(i);
-    ciphertext[i] ^= 1;
-    EXPECT_FALSE(RSA_decrypt(
-        key.get(), &plaintext_len, plaintext, sizeof(plaintext), ciphertext,
-        param.oaep_ciphertext_len, RSA_PKCS1_OAEP_PADDING));
-    ERR_clear_error();
-    ciphertext[i] ^= 1;
-  }
+      ASSERT_TRUE(RSA_decrypt(parsed.get(), &plaintext_len, plaintext,
+                              sizeof(plaintext), ciphertext, ciphertext_len,
+                              RSA_PKCS1_PADDING));
+      EXPECT_EQ(Bytes(kPlaintext, kPlaintextLen),
+                Bytes(plaintext, plaintext_len));
 
-  // Test truncated ciphertexts.
-  for (size_t len = 0; len < param.oaep_ciphertext_len; len++) {
-    SCOPED_TRACE(len);
-    EXPECT_FALSE(RSA_decrypt(key.get(), &plaintext_len, plaintext,
-                             sizeof(plaintext), ciphertext, len,
-                             RSA_PKCS1_OAEP_PADDING));
-    ERR_clear_error();
+      // Test that OAEP encryption round-trips.
+      ciphertext_len = 0;
+      ASSERT_TRUE(RSA_encrypt(key, &ciphertext_len, ciphertext,
+                              sizeof(ciphertext), kPlaintext, kPlaintextLen,
+                              RSA_PKCS1_OAEP_PADDING));
+      EXPECT_EQ(RSA_size(key), ciphertext_len);
+
+      plaintext_len = 0;
+      ASSERT_TRUE(RSA_decrypt(parsed.get(), &plaintext_len, plaintext,
+                              sizeof(plaintext), ciphertext, ciphertext_len,
+                              RSA_PKCS1_OAEP_PADDING));
+      EXPECT_EQ(Bytes(kPlaintext, kPlaintextLen),
+                Bytes(plaintext, plaintext_len));
+    }
+
+    if (RSA_get0_d(key) != nullptr) {
+      // |oaep_ciphertext| should decrypt to |kPlaintext|.
+      plaintext_len = 0;
+      ASSERT_TRUE(RSA_decrypt(key, &plaintext_len, plaintext, sizeof(plaintext),
+                              param.oaep_ciphertext, param.oaep_ciphertext_len,
+                              RSA_PKCS1_OAEP_PADDING));
+      EXPECT_EQ(Bytes(kPlaintext, kPlaintextLen),
+                Bytes(plaintext, plaintext_len));
+
+      // Try decrypting corrupted ciphertexts.
+      OPENSSL_memcpy(ciphertext, param.oaep_ciphertext,
+                     param.oaep_ciphertext_len);
+      for (size_t i = 0; i < param.oaep_ciphertext_len; i++) {
+        SCOPED_TRACE(i);
+        ciphertext[i] ^= 1;
+        EXPECT_FALSE(RSA_decrypt(
+            key, &plaintext_len, plaintext, sizeof(plaintext), ciphertext,
+            param.oaep_ciphertext_len, RSA_PKCS1_OAEP_PADDING));
+        ERR_clear_error();
+        ciphertext[i] ^= 1;
+      }
+
+      // Test truncated ciphertexts.
+      for (size_t len = 0; len < param.oaep_ciphertext_len; len++) {
+        SCOPED_TRACE(len);
+        EXPECT_FALSE(RSA_decrypt(key, &plaintext_len, plaintext,
+                                 sizeof(plaintext), ciphertext, len,
+                                 RSA_PKCS1_OAEP_PADDING));
+        ERR_clear_error();
+      }
+    }
   }
 }
 
@@ -513,6 +554,7 @@ TEST(RSATest, GenerateFIPS) {
     SCOPED_TRACE(bits);
 
     rsa.reset(RSA_new());
+    ASSERT_TRUE(rsa);
     ASSERT_TRUE(RSA_generate_key_fips(rsa.get(), bits, nullptr));
     EXPECT_EQ(bits, BN_num_bits(rsa->n));
   }
@@ -1021,6 +1063,237 @@ TEST(RSATest, KeygenInternalRetry) {
   EXPECT_TRUE(RSA_generate_key_ex(rsa.get(), 2048, e.get(), &cb));
 }
 
+// Test that, after a key has been used, it can still be modified into another
+// key.
+TEST(RSATest, OverwriteKey) {
+  // Make a key and perform public and private key operations with it, so that
+  // all derived values are filled in.
+  bssl::UniquePtr<RSA> key1(
+      RSA_private_key_from_bytes(kKey1, sizeof(kKey1) - 1));
+  ASSERT_TRUE(key1);
+
+  ASSERT_TRUE(RSA_check_key(key1.get()));
+  size_t len;
+  std::vector<uint8_t> ciphertext(RSA_size(key1.get()));
+  ASSERT_TRUE(RSA_encrypt(key1.get(), &len, ciphertext.data(),
+                          ciphertext.size(), kPlaintext, kPlaintextLen,
+                          RSA_PKCS1_OAEP_PADDING));
+  ciphertext.resize(len);
+
+  std::vector<uint8_t> plaintext(RSA_size(key1.get()));
+  ASSERT_TRUE(RSA_decrypt(key1.get(), &len, plaintext.data(),
+                          plaintext.size(), ciphertext.data(), ciphertext.size(),
+                          RSA_PKCS1_OAEP_PADDING));
+  plaintext.resize(len);
+  EXPECT_EQ(Bytes(plaintext), Bytes(kPlaintext, kPlaintextLen));
+
+  // Overwrite |key1| with the contents of |key2|.
+  bssl::UniquePtr<RSA> key2(
+      RSA_private_key_from_bytes(kKey2, sizeof(kKey2) - 1));
+  ASSERT_TRUE(key2);
+
+  auto copy_rsa_fields = [](RSA *dst, const RSA *src) {
+    bssl::UniquePtr<BIGNUM> n(BN_dup(RSA_get0_n(src)));
+    ASSERT_TRUE(n);
+    bssl::UniquePtr<BIGNUM> e(BN_dup(RSA_get0_e(src)));
+    ASSERT_TRUE(e);
+    bssl::UniquePtr<BIGNUM> d(BN_dup(RSA_get0_d(src)));
+    ASSERT_TRUE(d);
+    bssl::UniquePtr<BIGNUM> p(BN_dup(RSA_get0_p(src)));
+    ASSERT_TRUE(p);
+    bssl::UniquePtr<BIGNUM> q(BN_dup(RSA_get0_q(src)));
+    ASSERT_TRUE(q);
+    bssl::UniquePtr<BIGNUM> dmp1(BN_dup(RSA_get0_dmp1(src)));
+    ASSERT_TRUE(dmp1);
+    bssl::UniquePtr<BIGNUM> dmq1(BN_dup(RSA_get0_dmq1(src)));
+    ASSERT_TRUE(dmq1);
+    bssl::UniquePtr<BIGNUM> iqmp(BN_dup(RSA_get0_iqmp(src)));
+    ASSERT_TRUE(iqmp);
+    ASSERT_TRUE(RSA_set0_key(dst, n.release(), e.release(), d.release()));
+    ASSERT_TRUE(RSA_set0_factors(dst, p.release(), q.release()));
+    ASSERT_TRUE(RSA_set0_crt_params(dst, dmp1.release(), dmq1.release(),
+                                    iqmp.release()));
+  };
+  ASSERT_NO_FATAL_FAILURE(copy_rsa_fields(key1.get(), key2.get()));
+
+  auto check_rsa_compatible = [&](RSA *enc, RSA *dec) {
+    ciphertext.resize(RSA_size(enc));
+    ASSERT_TRUE(RSA_encrypt(enc, &len, ciphertext.data(),
+                            ciphertext.size(), kPlaintext, kPlaintextLen,
+                            RSA_PKCS1_OAEP_PADDING));
+    ciphertext.resize(len);
+
+    plaintext.resize(RSA_size(dec));
+    ASSERT_TRUE(RSA_decrypt(dec, &len, plaintext.data(),
+                            plaintext.size(), ciphertext.data(),
+                            ciphertext.size(), RSA_PKCS1_OAEP_PADDING));
+    plaintext.resize(len);
+    EXPECT_EQ(Bytes(plaintext), Bytes(kPlaintext, kPlaintextLen));
+  };
+
+  ASSERT_NO_FATAL_FAILURE(
+      check_rsa_compatible(/*enc=*/key1.get(), /*dec=*/key2.get()));
+  ASSERT_NO_FATAL_FAILURE(
+      check_rsa_compatible(/*enc=*/key2.get(), /*dec=*/key1.get()));
+
+  // If we generate a new key on top of |key1|, it should be usable and
+  // self-consistent. We test this by making a new key with the same parameters
+  // and checking they behave the same.
+  ASSERT_TRUE(
+      RSA_generate_key_ex(key1.get(), 1024, RSA_get0_e(key2.get()), nullptr));
+  EXPECT_NE(0, BN_cmp(RSA_get0_n(key1.get()), RSA_get0_n(key2.get())));
+
+  key2.reset(RSA_new());
+  ASSERT_TRUE(key2);
+  ASSERT_NO_FATAL_FAILURE(copy_rsa_fields(key2.get(), key1.get()));
+  ASSERT_NO_FATAL_FAILURE(
+      check_rsa_compatible(/*enc=*/key1.get(), /*dec=*/key2.get()));
+  ASSERT_NO_FATAL_FAILURE(
+      check_rsa_compatible(/*enc=*/key2.get(), /*dec=*/key1.get()));
+}
+
+// Test that RSA keys do not support operations will cleanly fail them.
+TEST(RSATest, MissingParameters) {
+  bssl::UniquePtr<RSA> sample(
+      RSA_private_key_from_bytes(kKey1, sizeof(kKey1) - 1));
+  ASSERT_TRUE(sample);
+
+  // Make a sample signature.
+  const uint8_t kZeros[32] = {0};
+  std::vector<uint8_t> sig(RSA_size(sample.get()));
+  unsigned len_u;
+  ASSERT_TRUE(RSA_sign(NID_sha256, kZeros, sizeof(kZeros), sig.data(), &len_u,
+                       sample.get()));
+  sig.resize(len_u);
+
+  // A public key cannot perform private key operations.
+  bssl::UniquePtr<RSA> rsa(
+      RSA_new_public_key(RSA_get0_n(sample.get()), RSA_get0_e(sample.get())));
+  ASSERT_TRUE(rsa);
+  std::vector<uint8_t> out(RSA_size(sample.get()));
+  EXPECT_FALSE(RSA_sign(NID_sha256, kZeros, sizeof(kZeros), out.data(), &len_u,
+                        rsa.get()));
+  size_t len;
+  EXPECT_FALSE(RSA_decrypt(rsa.get(), &len, out.data(), out.size(),
+                           kOAEPCiphertext1, sizeof(kOAEPCiphertext1) - 1,
+                           RSA_PKCS1_OAEP_PADDING));
+
+  // A private key without e cannot perform public key operations.
+  rsa.reset(RSA_new_private_key_no_e(RSA_get0_n(sample.get()),
+                                     RSA_get0_d(sample.get())));
+  ASSERT_TRUE(rsa);
+  EXPECT_FALSE(RSA_verify(NID_sha256, kZeros, sizeof(kZeros), sig.data(),
+                          sig.size(), rsa.get()));
+  EXPECT_FALSE(RSA_encrypt(rsa.get(), &len, out.data(), out.size(), kPlaintext,
+                           kPlaintextLen, RSA_PKCS1_OAEP_PADDING));
+}
+
+TEST(RSATest, Negative) {
+  auto dup_neg = [](const BIGNUM *bn) -> bssl::UniquePtr<BIGNUM> {
+    bssl::UniquePtr<BIGNUM> ret(BN_dup(bn));
+    if (!ret) {
+      return nullptr;
+    }
+    BN_set_negative(ret.get(), 1);
+    return ret;
+  };
+
+  bssl::UniquePtr<RSA> key(
+      RSA_private_key_from_bytes(kFIPSKey, sizeof(kFIPSKey) - 1));
+  ASSERT_TRUE(key);
+  const BIGNUM *n = RSA_get0_n(key.get());
+  bssl::UniquePtr<BIGNUM> neg_n = dup_neg(n);
+  ASSERT_TRUE(neg_n);
+  const BIGNUM *e = RSA_get0_e(key.get());
+  bssl::UniquePtr<BIGNUM> neg_e = dup_neg(e);
+  ASSERT_TRUE(neg_e);
+  const BIGNUM *d = RSA_get0_d(key.get());
+  bssl::UniquePtr<BIGNUM> neg_d = dup_neg(d);
+  ASSERT_TRUE(neg_d);
+  const BIGNUM *p = RSA_get0_p(key.get());
+  bssl::UniquePtr<BIGNUM> neg_p = dup_neg(p);
+  ASSERT_TRUE(neg_p);
+  const BIGNUM *q = RSA_get0_q(key.get());
+  bssl::UniquePtr<BIGNUM> neg_q = dup_neg(q);
+  ASSERT_TRUE(neg_q);
+  const BIGNUM *dmp1 = RSA_get0_dmp1(key.get());
+  bssl::UniquePtr<BIGNUM> neg_dmp1 = dup_neg(dmp1);
+  ASSERT_TRUE(neg_dmp1);
+  const BIGNUM *dmq1 = RSA_get0_dmq1(key.get());
+  bssl::UniquePtr<BIGNUM> neg_dmq1 = dup_neg(dmq1);
+  ASSERT_TRUE(neg_dmq1);
+  const BIGNUM *iqmp = RSA_get0_iqmp(key.get());
+  bssl::UniquePtr<BIGNUM> neg_iqmp = dup_neg(iqmp);
+  ASSERT_TRUE(neg_iqmp);
+
+  EXPECT_FALSE(RSA_new_public_key(neg_n.get(), e));
+  EXPECT_FALSE(RSA_new_public_key(n, neg_e.get()));
+  EXPECT_FALSE(RSA_new_private_key(neg_n.get(), e, d, p, q, dmp1, dmq1, iqmp));
+  EXPECT_FALSE(RSA_new_private_key(n, neg_e.get(), d, p, q, dmp1, dmq1, iqmp));
+  EXPECT_FALSE(RSA_new_private_key(n, e, neg_d.get(), p, q, dmp1, dmq1, iqmp));
+  EXPECT_FALSE(RSA_new_private_key(n, e, d, neg_p.get(), q, dmp1, dmq1, iqmp));
+  EXPECT_FALSE(RSA_new_private_key(n, e, d, p, neg_q.get(), dmp1, dmq1, iqmp));
+  EXPECT_FALSE(RSA_new_private_key(n, e, d, p, q, neg_dmp1.get(), dmq1, iqmp));
+  EXPECT_FALSE(RSA_new_private_key(n, e, d, p, q, dmp1, neg_dmq1.get(), iqmp));
+  EXPECT_FALSE(RSA_new_private_key(n, e, d, p, q, dmp1, dmq1, neg_iqmp.get()));
+}
+
+TEST(RSATest, LargeE) {
+  // Test an RSA key with large e by swapping d and e in kFIPSKey. Since e is
+  // small, e mod (p-1) and e mod (q-1) will simply be e.
+  bssl::UniquePtr<RSA> key(
+      RSA_private_key_from_bytes(kFIPSKey, sizeof(kFIPSKey) - 1));
+  ASSERT_TRUE(key);
+  const BIGNUM *n = RSA_get0_n(key.get());
+  const BIGNUM *e = RSA_get0_e(key.get());
+  const BIGNUM *d = RSA_get0_d(key.get());
+  const BIGNUM *p = RSA_get0_p(key.get());
+  const BIGNUM *q = RSA_get0_q(key.get());
+  const BIGNUM *iqmp = RSA_get0_iqmp(key.get());
+
+  // By default, the large exponent is not allowed as e.
+  bssl::UniquePtr<RSA> pub(RSA_new_public_key(n, /*e=*/d));
+  EXPECT_FALSE(pub);
+  bssl::UniquePtr<RSA> priv(RSA_new_private_key(n, /*e=*/d, /*d=*/e, p, q,
+                                                /*dmp1=*/e, /*dmq1=*/e, iqmp));
+  EXPECT_FALSE(priv);
+
+  // But the "large e" APIs tolerate it.
+  pub.reset(RSA_new_public_key_large_e(n, /*e=*/d));
+  ASSERT_TRUE(pub);
+  priv.reset(RSA_new_private_key_large_e(n, /*e=*/d, /*d=*/e, p, q, /*dmp1=*/e,
+                                         /*dmq1=*/e, iqmp));
+  ASSERT_TRUE(priv);
+
+  // Test that operations work correctly.
+  static const uint8_t kDigest[32] = {0};
+  std::vector<uint8_t> sig(RSA_size(priv.get()));
+  size_t len;
+  ASSERT_TRUE(RSA_sign_pss_mgf1(priv.get(), &len, sig.data(), sig.size(),
+                                kDigest, sizeof(kDigest), EVP_sha256(),
+                                EVP_sha256(), /*salt_len=*/32));
+  sig.resize(len);
+
+  EXPECT_TRUE(RSA_verify_pss_mgf1(pub.get(), kDigest, sizeof(kDigest),
+                                  EVP_sha256(), EVP_sha256(), /*salt_len=*/32,
+                                  sig.data(), sig.size()));
+
+  // e = 1 is still invalid.
+  EXPECT_FALSE(RSA_new_public_key_large_e(n, BN_value_one()));
+
+  // e must still be odd.
+  bssl::UniquePtr<BIGNUM> bad_e(BN_dup(d));
+  ASSERT_TRUE(bad_e);
+  ASSERT_TRUE(BN_add_word(bad_e.get(), 1));
+  EXPECT_FALSE(RSA_new_public_key_large_e(n, bad_e.get()));
+
+  // e must still be bounded by n.
+  bad_e.reset(BN_dup(n));
+  ASSERT_TRUE(bad_e);
+  ASSERT_TRUE(BN_add_word(bad_e.get(), 2));  // Preserve parity.
+  EXPECT_FALSE(RSA_new_public_key_large_e(n, bad_e.get()));
+}
+
 #if !defined(BORINGSSL_SHARED_LIBRARY)
 TEST(RSATest, SqrtTwo) {
   bssl::UniquePtr<BIGNUM> sqrt(BN_new()), pow2(BN_new());
@@ -1125,8 +1398,10 @@ TEST(RSATest, Threads) {
 // platforms when running tests standalone via all_tests.go.
 //
 // Additionally, even when running disabled tests standalone, limit this to
-// x86_64. On other platforms, this test hits resource limits or is too slow.
-#if defined(OPENSSL_X86_64)
+// x86_64. On other platforms, this test hits resource limits or is too slow. We
+// also disable on FreeBSD. See https://crbug.com/boringssl/603.
+#if defined(OPENSSL_TSAN) || \
+    (defined(OPENSSL_X86_64) && !defined(OPENSSL_FREEBSD))
 TEST(RSATest, DISABLED_BlindingCacheConcurrency) {
   bssl::UniquePtr<RSA> rsa(
       RSA_private_key_from_bytes(kKey1, sizeof(kKey1) - 1));
@@ -1161,6 +1436,6 @@ TEST(RSATest, DISABLED_BlindingCacheConcurrency) {
     thread.join();
   }
 }
-#endif  // X86_64
+#endif  // TSAN || (X86_64 && !FREEBSD)
 
 #endif  // THREADS

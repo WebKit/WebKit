@@ -117,12 +117,23 @@ OPENSSL_EXPORT EVP_MD_CTX *EVP_MD_CTX_new(void);
 // freshly initialised state. It does not free |ctx| itself. It returns one.
 OPENSSL_EXPORT int EVP_MD_CTX_cleanup(EVP_MD_CTX *ctx);
 
+// EVP_MD_CTX_cleanse zeros the digest state in |ctx| and then performs the
+// actions of |EVP_MD_CTX_cleanup|. Note that some |EVP_MD_CTX| objects contain
+// more than just a digest (e.g. those resulting from |EVP_DigestSignInit|) but
+// this function does not zero out more than just the digest state even in that
+// case.
+OPENSSL_EXPORT void EVP_MD_CTX_cleanse(EVP_MD_CTX *ctx);
+
 // EVP_MD_CTX_free calls |EVP_MD_CTX_cleanup| and then frees |ctx| itself.
 OPENSSL_EXPORT void EVP_MD_CTX_free(EVP_MD_CTX *ctx);
 
 // EVP_MD_CTX_copy_ex sets |out|, which must already be initialised, to be a
 // copy of |in|. It returns one on success and zero on allocation failure.
 OPENSSL_EXPORT int EVP_MD_CTX_copy_ex(EVP_MD_CTX *out, const EVP_MD_CTX *in);
+
+// EVP_MD_CTX_move sets |out|, which must already be initialised, to the hash
+// state in |in|. |in| is mutated and left in an empty state.
+OPENSSL_EXPORT void EVP_MD_CTX_move(EVP_MD_CTX *out, EVP_MD_CTX *in);
 
 // EVP_MD_CTX_reset calls |EVP_MD_CTX_cleanup| followed by |EVP_MD_CTX_init|. It
 // returns one.
@@ -293,6 +304,9 @@ OPENSSL_EXPORT void EVP_MD_CTX_set_flags(EVP_MD_CTX *ctx, int flags);
 // their needs). Thus this exists only to allow code to compile.
 #define EVP_MD_CTX_FLAG_NON_FIPS_ALLOW 0
 
+// EVP_MD_nid calls |EVP_MD_type|.
+OPENSSL_EXPORT int EVP_MD_nid(const EVP_MD *md);
+
 
 struct evp_md_pctx_ops;
 
@@ -324,8 +338,8 @@ BSSL_NAMESPACE_BEGIN
 BORINGSSL_MAKE_DELETER(EVP_MD_CTX, EVP_MD_CTX_free)
 
 using ScopedEVP_MD_CTX =
-    internal::StackAllocated<EVP_MD_CTX, int, EVP_MD_CTX_init,
-                             EVP_MD_CTX_cleanup>;
+    internal::StackAllocatedMovable<EVP_MD_CTX, int, EVP_MD_CTX_init,
+                                    EVP_MD_CTX_cleanup, EVP_MD_CTX_move>;
 
 BSSL_NAMESPACE_END
 

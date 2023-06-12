@@ -70,7 +70,7 @@ uint16_t bn_mod_u16_consttime(const BIGNUM *bn, uint16_t d) {
   // This operation is not constant-time, but |p| and |d| are public values.
   // Note that |p| is at most 16, so the computation fits in |uint64_t|.
   assert(p <= 16);
-  uint32_t m = ((UINT64_C(1) << (32 + p)) + d - 1) / d;
+  uint32_t m = (uint32_t)(((UINT64_C(1) << (32 + p)) + d - 1) / d);
 
   uint16_t ret = 0;
   for (int i = bn->width - 1; i >= 0; i--) {

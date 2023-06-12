@@ -71,9 +71,20 @@ TEST(ErrTest, PutError) {
 
   EXPECT_STREQ("test", file);
   EXPECT_EQ(4, line);
-  EXPECT_TRUE(flags & ERR_FLAG_STRING);
+  EXPECT_EQ(flags, ERR_FLAG_STRING | ERR_FLAG_MALLOCED);
   EXPECT_EQ(1, ERR_GET_LIB(packed_error));
   EXPECT_EQ(2, ERR_GET_REASON(packed_error));
+  EXPECT_STREQ("testing", data);
+
+  ERR_put_error(1, 0 /* unused */, 2, "test", 4);
+  ERR_set_error_data(const_cast<char *>("testing"), ERR_FLAG_STRING);
+  packed_error = ERR_get_error_line_data(&file, &line, &data, &flags);
+  EXPECT_STREQ("testing", data);
+
+  ERR_put_error(1, 0 /* unused */, 2, "test", 4);
+  bssl::UniquePtr<char> str(OPENSSL_strdup("testing"));
+  ERR_set_error_data(str.release(), ERR_FLAG_STRING | ERR_FLAG_MALLOCED);
+  packed_error = ERR_get_error_line_data(&file, &line, &data, &flags);
   EXPECT_STREQ("testing", data);
 }
 
@@ -156,7 +167,7 @@ TEST(ErrTest, SaveAndRestore) {
   EXPECT_STREQ("test1.c", file);
   EXPECT_EQ(line, 1);
   EXPECT_STREQ(data, "data1");
-  EXPECT_EQ(flags, ERR_FLAG_STRING);
+  EXPECT_EQ(flags, ERR_FLAG_STRING | ERR_FLAG_MALLOCED);
 
   // The state may be restored, both over an empty and non-empty state.
   for (unsigned i = 0; i < 2; i++) {
@@ -169,7 +180,7 @@ TEST(ErrTest, SaveAndRestore) {
     EXPECT_STREQ("test1.c", file);
     EXPECT_EQ(line, 1);
     EXPECT_STREQ(data, "data1");
-    EXPECT_EQ(flags, ERR_FLAG_STRING);
+    EXPECT_EQ(flags, ERR_FLAG_STRING | ERR_FLAG_MALLOCED);
 
     packed_error = ERR_get_error_line_data(&file, &line, &data, &flags);
     EXPECT_EQ(ERR_GET_LIB(packed_error), 2);
@@ -185,7 +196,7 @@ TEST(ErrTest, SaveAndRestore) {
     EXPECT_STREQ("test3.c", file);
     EXPECT_EQ(line, 3);
     EXPECT_STREQ(data, "data3");
-    EXPECT_EQ(flags, ERR_FLAG_STRING);
+    EXPECT_EQ(flags, ERR_FLAG_STRING | ERR_FLAG_MALLOCED);
 
     // The error queue is now empty for the next iteration.
     EXPECT_EQ(0u, ERR_get_error());

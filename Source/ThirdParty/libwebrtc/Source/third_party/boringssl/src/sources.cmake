@@ -11,6 +11,7 @@ set(
   crypto/cipher_extra/test/aes_128_cbc_sha1_tls_tests.txt
   crypto/cipher_extra/test/aes_128_ccm_bluetooth_tests.txt
   crypto/cipher_extra/test/aes_128_ccm_bluetooth_8_tests.txt
+  crypto/cipher_extra/test/aes_128_ccm_matter_tests.txt
   crypto/cipher_extra/test/aes_128_ctr_hmac_sha256.txt
   crypto/cipher_extra/test/aes_128_gcm_randnonce_tests.txt
   crypto/cipher_extra/test/aes_128_gcm_siv_tests.txt
@@ -38,24 +39,35 @@ set(
   crypto/cipher_extra/test/nist_cavp/tdes_cbc.txt
   crypto/cipher_extra/test/nist_cavp/tdes_ecb.txt
   crypto/curve25519/ed25519_tests.txt
-  crypto/cmac/cavp_3des_cmac_tests.txt
-  crypto/cmac/cavp_aes128_cmac_tests.txt
-  crypto/cmac/cavp_aes192_cmac_tests.txt
-  crypto/cmac/cavp_aes256_cmac_tests.txt
   crypto/ecdh_extra/ecdh_tests.txt
   crypto/evp/evp_tests.txt
   crypto/evp/scrypt_tests.txt
   crypto/fipsmodule/aes/aes_tests.txt
-  crypto/fipsmodule/bn/bn_tests.txt
-  crypto/fipsmodule/bn/miller_rabin_tests.txt
+  crypto/fipsmodule/bn/test/exp_tests.txt
+  crypto/fipsmodule/bn/test/gcd_tests.txt
+  crypto/fipsmodule/bn/test/miller_rabin_tests.txt
+  crypto/fipsmodule/bn/test/mod_exp_tests.txt
+  crypto/fipsmodule/bn/test/mod_inv_tests.txt
+  crypto/fipsmodule/bn/test/mod_mul_tests.txt
+  crypto/fipsmodule/bn/test/mod_sqrt_tests.txt
+  crypto/fipsmodule/bn/test/product_tests.txt
+  crypto/fipsmodule/bn/test/quotient_tests.txt
+  crypto/fipsmodule/bn/test/shift_tests.txt
+  crypto/fipsmodule/bn/test/sum_tests.txt
+  crypto/fipsmodule/cmac/cavp_3des_cmac_tests.txt
+  crypto/fipsmodule/cmac/cavp_aes128_cmac_tests.txt
+  crypto/fipsmodule/cmac/cavp_aes192_cmac_tests.txt
+  crypto/fipsmodule/cmac/cavp_aes256_cmac_tests.txt
   crypto/fipsmodule/ec/ec_scalar_base_mult_tests.txt
-  crypto/fipsmodule/ec/p256-x86_64_tests.txt
+  crypto/fipsmodule/ec/p256-nistz_tests.txt
   crypto/fipsmodule/ecdsa/ecdsa_sign_tests.txt
   crypto/fipsmodule/ecdsa/ecdsa_verify_tests.txt
   crypto/fipsmodule/modes/gcm_tests.txt
   crypto/fipsmodule/rand/ctrdrbg_vectors.txt
   crypto/hmac_extra/hmac_tests.txt
   crypto/hpke/hpke_test_vectors.txt
+  crypto/kyber/keccak_tests.txt
+  crypto/kyber/kyber_tests.txt
   crypto/pkcs8/test/empty_password.p12
   crypto/pkcs8/test/no_encryption.p12
   crypto/pkcs8/test/nss.p12
@@ -101,9 +113,58 @@ set(
   crypto/x509/test/many_names1.pem
   crypto/x509/test/many_names2.pem
   crypto/x509/test/many_names3.pem
+  crypto/x509/test/policy_intermediate_any.pem
+  crypto/x509/test/policy_intermediate_duplicate.pem
+  crypto/x509/test/policy_intermediate_invalid.pem
+  crypto/x509/test/policy_intermediate_mapped_any.pem
+  crypto/x509/test/policy_intermediate_mapped_oid3.pem
+  crypto/x509/test/policy_intermediate_mapped.pem
+  crypto/x509/test/policy_intermediate_require_duplicate.pem
+  crypto/x509/test/policy_intermediate_require_no_policies.pem
+  crypto/x509/test/policy_intermediate_require.pem
+  crypto/x509/test/policy_intermediate_require1.pem
+  crypto/x509/test/policy_intermediate_require2.pem
+  crypto/x509/test/policy_intermediate.pem
+  crypto/x509/test/policy_leaf_any.pem
+  crypto/x509/test/policy_leaf_duplicate.pem
+  crypto/x509/test/policy_leaf_invalid.pem
+  crypto/x509/test/policy_leaf_none.pem
+  crypto/x509/test/policy_leaf_oid1.pem
+  crypto/x509/test/policy_leaf_oid2.pem
+  crypto/x509/test/policy_leaf_oid3.pem
+  crypto/x509/test/policy_leaf_oid4.pem
+  crypto/x509/test/policy_leaf_oid5.pem
+  crypto/x509/test/policy_leaf_require.pem
+  crypto/x509/test/policy_leaf_require1.pem
+  crypto/x509/test/policy_leaf.pem
+  crypto/x509/test/policy_root_cross_inhibit_mapping.pem
+  crypto/x509/test/policy_root.pem
+  crypto/x509/test/policy_root2.pem
+  crypto/x509/test/pss_sha1_explicit.pem
+  crypto/x509/test/pss_sha1_mgf1_syntax_error.pem
+  crypto/x509/test/pss_sha1.pem
+  crypto/x509/test/pss_sha224.pem
+  crypto/x509/test/pss_sha256_explicit_trailer.pem
+  crypto/x509/test/pss_sha256_mgf1_sha384.pem
+  crypto/x509/test/pss_sha256_mgf1_syntax_error.pem
+  crypto/x509/test/pss_sha256_omit_nulls.pem
+  crypto/x509/test/pss_sha256_salt_overflow.pem
+  crypto/x509/test/pss_sha256_salt31.pem
+  crypto/x509/test/pss_sha256_unknown_mgf.pem
+  crypto/x509/test/pss_sha256_wrong_trailer.pem
+  crypto/x509/test/pss_sha256.pem
+  crypto/x509/test/pss_sha384.pem
+  crypto/x509/test/pss_sha512.pem
   crypto/x509/test/some_names1.pem
   crypto/x509/test/some_names2.pem
   crypto/x509/test/some_names3.pem
+  crypto/x509/test/trailing_data_leaf_authority_key_identifier.pem
+  crypto/x509/test/trailing_data_leaf_basic_constraints.pem
+  crypto/x509/test/trailing_data_leaf_ext_key_usage.pem
+  crypto/x509/test/trailing_data_leaf_key_usage.pem
+  crypto/x509/test/trailing_data_leaf_name_constraints.pem
+  crypto/x509/test/trailing_data_leaf_subject_alt_name.pem
+  crypto/x509/test/trailing_data_leaf_subject_key_identifier.pem
   third_party/wycheproof_testvectors/aes_cbc_pkcs5_test.txt
   third_party/wycheproof_testvectors/aes_cmac_test.txt
   third_party/wycheproof_testvectors/aes_gcm_siv_test.txt

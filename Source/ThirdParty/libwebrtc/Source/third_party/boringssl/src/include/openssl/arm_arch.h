@@ -53,54 +53,12 @@
 #ifndef OPENSSL_HEADER_ARM_ARCH_H
 #define OPENSSL_HEADER_ARM_ARCH_H
 
-#if !defined(__ARM_ARCH__)
-# if defined(__CC_ARM)
-#  define __ARM_ARCH__ __TARGET_ARCH_ARM
-#  if defined(__BIG_ENDIAN)
-#   define __ARMEB__
-#  else
-#   define __ARMEL__
-#  endif
-# elif defined(__GNUC__)
-#  if defined(__aarch64__)
-#    define __ARM_ARCH__ 8
-#    if __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
-#      define __ARMEB__
-#    else
-#      define __ARMEL__
-#    endif
-  // Why doesn't gcc define __ARM_ARCH__? Instead it defines
-  // bunch of below macros. See all_architectires[] table in
-  // gcc/config/arm/arm.c. On a side note it defines
-  // __ARMEL__/__ARMEB__ for little-/big-endian.
-#  elif	defined(__ARM_ARCH)
-#    define __ARM_ARCH__ __ARM_ARCH
-#  elif	defined(__ARM_ARCH_8A__)
-#    define __ARM_ARCH__ 8
-#  elif	defined(__ARM_ARCH_7__)	|| defined(__ARM_ARCH_7A__)	|| \
-	defined(__ARM_ARCH_7R__)|| defined(__ARM_ARCH_7M__)	|| \
-	defined(__ARM_ARCH_7EM__)
-#   define __ARM_ARCH__ 7
-#  elif	defined(__ARM_ARCH_6__)	|| defined(__ARM_ARCH_6J__)	|| \
-	defined(__ARM_ARCH_6K__)|| defined(__ARM_ARCH_6M__)	|| \
-	defined(__ARM_ARCH_6Z__)|| defined(__ARM_ARCH_6ZK__)	|| \
-	defined(__ARM_ARCH_6T2__)
-#   define __ARM_ARCH__ 6
-#  elif	defined(__ARM_ARCH_5__)	|| defined(__ARM_ARCH_5T__)	|| \
-	defined(__ARM_ARCH_5E__)|| defined(__ARM_ARCH_5TE__)	|| \
-	defined(__ARM_ARCH_5TEJ__)
-#   define __ARM_ARCH__ 5
-#  elif	defined(__ARM_ARCH_4__)	|| defined(__ARM_ARCH_4T__)
-#   define __ARM_ARCH__ 4
-#  else
-#   error "unsupported ARM architecture"
-#  endif
-# endif
-#endif
+// arm_arch.h contains symbols used by ARM assembly, and the C code that calls
+// it. It is included as a public header to simplify the build, but is not
+// intended for external use.
 
-// Even when building for 32-bit ARM, support for aarch64 crypto instructions
-// will be included.
-#define __ARM_MAX_ARCH__ 8
+#if defined(__ARMEL__) || defined(_M_ARM) || defined(__AARCH64EL__) || \
+    defined(_M_ARM64)
 
 // ARMV7_NEON is true when a NEON unit is present in the current CPU.
 #define ARMV7_NEON (1 << 0)
@@ -117,7 +75,27 @@
 // ARMV8_PMULL indicates support for carryless multiplication.
 #define ARMV8_PMULL (1 << 5)
 
+// ARMV8_SHA512 indicates support for hardware SHA-512 instructions.
+#define ARMV8_SHA512 (1 << 6)
+
 #if defined(__ASSEMBLER__)
+
+// We require the ARM assembler provide |__ARM_ARCH| from Arm C Language
+// Extensions (ACLE). This is supported in GCC 4.8+ and Clang 3.2+. MSVC does
+// not implement ACLE, but we require Clang's assembler on Windows.
+#if !defined(__ARM_ARCH)
+#error "ARM assembler must define __ARM_ARCH"
+#endif
+
+// __ARM_ARCH__ is used by OpenSSL assembly to determine the minimum target ARM
+// version.
+//
+// TODO(davidben): Switch the assembly to use |__ARM_ARCH| directly.
+#define __ARM_ARCH__ __ARM_ARCH
+
+// Even when building for 32-bit ARM, support for aarch64 crypto instructions
+// will be included.
+#define __ARM_MAX_ARCH__ 8
 
 // Support macros for
 //   - Armv8.3-A Pointer Authentication and
@@ -235,6 +213,8 @@
 .popsection;
 #endif
 
-#endif  /* defined __ASSEMBLER__ */
+#endif  // __ASSEMBLER__
+
+#endif  // __ARMEL__ || _M_ARM || __AARCH64EL__ || _M_ARM64
 
 #endif  // OPENSSL_HEADER_ARM_ARCH_H

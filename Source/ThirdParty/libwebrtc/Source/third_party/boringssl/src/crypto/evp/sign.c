@@ -56,6 +56,8 @@
 
 #include <openssl/evp.h>
 
+#include <limits.h>
+
 #include <openssl/digest.h>
 #include <openssl/err.h>
 
@@ -74,14 +76,19 @@ int EVP_SignUpdate(EVP_MD_CTX *ctx, const void *data, size_t len) {
   return EVP_DigestUpdate(ctx, data, len);
 }
 
-int EVP_SignFinal(const EVP_MD_CTX *ctx, uint8_t *sig,
-                  unsigned int *out_sig_len, EVP_PKEY *pkey) {
+int EVP_SignFinal(const EVP_MD_CTX *ctx, uint8_t *sig, unsigned *out_sig_len,
+                  EVP_PKEY *pkey) {
   uint8_t m[EVP_MAX_MD_SIZE];
-  unsigned int m_len;
+  unsigned m_len;
   int ret = 0;
   EVP_MD_CTX tmp_ctx;
   EVP_PKEY_CTX *pkctx = NULL;
   size_t sig_len = EVP_PKEY_size(pkey);
+
+  // Ensure the final result will fit in |unsigned|.
+  if (sig_len > UINT_MAX) {
+    sig_len = UINT_MAX;
+  }
 
   *out_sig_len = 0;
   EVP_MD_CTX_init(&tmp_ctx);
@@ -92,19 +99,17 @@ int EVP_SignFinal(const EVP_MD_CTX *ctx, uint8_t *sig,
   EVP_MD_CTX_cleanup(&tmp_ctx);
 
   pkctx = EVP_PKEY_CTX_new(pkey, NULL);
-  if (!pkctx || !EVP_PKEY_sign_init(pkctx) ||
+  if (!pkctx ||  //
+      !EVP_PKEY_sign_init(pkctx) ||
       !EVP_PKEY_CTX_set_signature_md(pkctx, ctx->digest) ||
       !EVP_PKEY_sign(pkctx, sig, &sig_len, m, m_len)) {
     goto out;
   }
-  *out_sig_len = sig_len;
+  *out_sig_len = (unsigned)sig_len;
   ret = 1;
 
 out:
-  if (pkctx) {
-    EVP_PKEY_CTX_free(pkctx);
-  }
-
+  EVP_PKEY_CTX_free(pkctx);
   return ret;
 }
 
@@ -123,7 +128,7 @@ int EVP_VerifyUpdate(EVP_MD_CTX *ctx, const void *data, size_t len) {
 int EVP_VerifyFinal(EVP_MD_CTX *ctx, const uint8_t *sig, size_t sig_len,
                     EVP_PKEY *pkey) {
   uint8_t m[EVP_MAX_MD_SIZE];
-  unsigned int m_len;
+  unsigned m_len;
   int ret = 0;
   EVP_MD_CTX tmp_ctx;
   EVP_PKEY_CTX *pkctx = NULL;

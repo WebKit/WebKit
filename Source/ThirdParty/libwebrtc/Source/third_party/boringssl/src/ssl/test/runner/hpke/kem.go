@@ -69,8 +69,8 @@ func labeledExpand(kdfHash crypto.Hash, prk, suiteID, label, info []byte, length
 	return key
 }
 
-// GenerateKeyPair generates a random key pair.
-func GenerateKeyPair() (publicKey, secretKeyOut []byte, err error) {
+// GenerateKeyPairX25519 generates a random X25519 key pair.
+func GenerateKeyPairX25519() (publicKey, secretKeyOut []byte, err error) {
 	// Generate a new private key.
 	var secretKey [curve25519.ScalarSize]byte
 	_, err = rand.Read(secretKey[:])
@@ -89,10 +89,10 @@ func GenerateKeyPair() (publicKey, secretKeyOut []byte, err error) {
 // and a fixed-length encapsulation of that key |enc| that can be decapsulated
 // by the receiver with the secret key corresponding to |publicKeyR|.
 // Internally, |keygenOptional| is used to generate an ephemeral keypair. If
-// |keygenOptional| is nil, |GenerateKeyPair| will be substituted.
+// |keygenOptional| is nil, |GenerateKeyPairX25519| will be substituted.
 func x25519Encap(publicKeyR []byte, keygen GenerateKeyPairFunc) ([]byte, []byte, error) {
 	if keygen == nil {
-		keygen = GenerateKeyPair
+		keygen = GenerateKeyPairX25519
 	}
 	publicKeyEphem, secretKeyEphem, err := keygen()
 	if err != nil {

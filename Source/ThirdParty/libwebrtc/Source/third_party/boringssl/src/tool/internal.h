@@ -16,6 +16,7 @@
 #define OPENSSL_HEADER_TOOL_INTERNAL_H
 
 #include <openssl/base.h>
+#include <openssl/span.h>
 
 #include <string>
 #include <utility>
@@ -120,10 +121,12 @@ bool GetUnsigned(unsigned *out, const std::string &arg_name,
                  const std::map<std::string, std::string> &args);
 
 bool ReadAll(std::vector<uint8_t> *out, FILE *in);
+bool WriteToFile(const std::string &path, bssl::Span<const uint8_t> in);
 
 bool Ciphers(const std::vector<std::string> &args);
 bool Client(const std::vector<std::string> &args);
 bool DoPKCS12(const std::vector<std::string> &args);
+bool GenerateECH(const std::vector<std::string> &args);
 bool GenerateEd25519Key(const std::vector<std::string> &args);
 bool GenerateRSAKey(const std::vector<std::string> &args);
 bool MD5Sum(const std::vector<std::string> &args);

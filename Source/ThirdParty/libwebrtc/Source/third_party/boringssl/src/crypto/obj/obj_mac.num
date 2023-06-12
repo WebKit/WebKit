@@ -947,7 +947,8 @@ auth_ecdsa		955
 auth_psk		956
 kx_any		957
 auth_any		958
-CECPQ2		959
 ED448		960
 X448		961
 sha512_256		962
+hkdf		963
+X25519Kyber768Draft00		964

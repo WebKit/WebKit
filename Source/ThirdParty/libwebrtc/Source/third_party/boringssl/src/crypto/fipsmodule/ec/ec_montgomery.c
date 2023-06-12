@@ -156,8 +156,8 @@ int ec_GFp_mont_felem_from_bytes(const EC_GROUP *group, EC_FELEM *out,
   return 1;
 }
 
-static void ec_GFp_mont_felem_reduce(const EC_GROUP *group, EC_FELEM *out,
-                                     const BN_ULONG *words, size_t num) {
+void ec_GFp_mont_felem_reduce(const EC_GROUP *group, EC_FELEM *out,
+                              const BN_ULONG *words, size_t num) {
   // Convert "from" Montgomery form so the value is reduced mod p.
   bn_from_montgomery_small(out->words, group->field.width, words, num,
                            group->mont);
@@ -167,15 +167,15 @@ static void ec_GFp_mont_felem_reduce(const EC_GROUP *group, EC_FELEM *out,
   ec_GFp_mont_felem_to_montgomery(group, out, out);
 }
 
-static void ec_GFp_mont_felem_exp(const EC_GROUP *group, EC_FELEM *out,
-                                  const EC_FELEM *a, const BN_ULONG *exp,
-                                  size_t num_exp) {
+void ec_GFp_mont_felem_exp(const EC_GROUP *group, EC_FELEM *out,
+                           const EC_FELEM *a, const BN_ULONG *exp,
+                           size_t num_exp) {
   bn_mod_exp_mont_small(out->words, a->words, group->field.width, exp, num_exp,
                         group->mont);
 }
 
 static int ec_GFp_mont_point_get_affine_coordinates(const EC_GROUP *group,
-                                                    const EC_RAW_POINT *point,
+                                                    const EC_JACOBIAN *point,
                                                     EC_FELEM *x, EC_FELEM *y) {
   if (ec_GFp_simple_is_at_infinity(group, point)) {
     OPENSSL_PUT_ERROR(EC, EC_R_POINT_AT_INFINITY);
@@ -202,7 +202,7 @@ static int ec_GFp_mont_point_get_affine_coordinates(const EC_GROUP *group,
 
 static int ec_GFp_mont_jacobian_to_affine_batch(const EC_GROUP *group,
                                                 EC_AFFINE *out,
-                                                const EC_RAW_POINT *in,
+                                                const EC_JACOBIAN *in,
                                                 size_t num) {
   if (num == 0) {
     return 1;
@@ -246,8 +246,8 @@ static int ec_GFp_mont_jacobian_to_affine_batch(const EC_GROUP *group,
   return 1;
 }
 
-void ec_GFp_mont_add(const EC_GROUP *group, EC_RAW_POINT *out,
-                     const EC_RAW_POINT *a, const EC_RAW_POINT *b) {
+void ec_GFp_mont_add(const EC_GROUP *group, EC_JACOBIAN *out,
+                     const EC_JACOBIAN *a, const EC_JACOBIAN *b) {
   if (a == b) {
     ec_GFp_mont_dbl(group, out, a);
     return;
@@ -357,8 +357,8 @@ void ec_GFp_mont_add(const EC_GROUP *group, EC_RAW_POINT *out,
   ec_felem_select(group, &out->Z, z2nz, &z_out, &a->Z);
 }
 
-void ec_GFp_mont_dbl(const EC_GROUP *group, EC_RAW_POINT *r,
-                     const EC_RAW_POINT *a) {
+void ec_GFp_mont_dbl(const EC_GROUP *group, EC_JACOBIAN *r,
+                     const EC_JACOBIAN *a) {
   if (group->a_is_minus3) {
     // The method is taken from:
     //   http://hyperelliptic.org/EFD/g1p/auto-shortw-jacobian-3.html#doubling-dbl-2001-b
@@ -453,7 +453,7 @@ void ec_GFp_mont_dbl(const EC_GROUP *group, EC_RAW_POINT *r,
 }
 
 static int ec_GFp_mont_cmp_x_coordinate(const EC_GROUP *group,
-                                        const EC_RAW_POINT *p,
+                                        const EC_JACOBIAN *p,
                                         const EC_SCALAR *r) {
   if (!group->field_greater_than_order ||
       group->field.width != group->order.width) {

@@ -22,7 +22,10 @@ use [Gerrit](https://boringssl-review.googlesource.com) for this purpose.
 If you have not done so on this machine, you will need to set up a password for
 Gerrit. Sign in with a Google account, visit
 [this link](https://boringssl.googlesource.com/), and click the "Generate
-Password" link in the top right. You will also need to prepare your checkout to
+Password" link in the top right. You must also have a Gerrit account associated with
+your Google account.  To do this visit the [Gerrit review server](https://boringssl-review.googlesource.com)
+and click "Sign in" (top right).
+You will also need to prepare your checkout to
 [add Change-Ids](https://gerrit-review.googlesource.com/Documentation/cmd-hook-commit-msg.html)
 on commit. Run:
 
@@ -34,8 +37,8 @@ To upload a change, push it to the special `refs/for/master` target:
 
     git push origin HEAD:refs/for/master
 
-The output will then give you a link to the change. Add `agl@google.com` and
-`davidben@google.com` as reviewers.
+The output will then give you a link to the change. Add `agl@google.com`,
+`davidben@google.com`, and `bbe@google.com` as reviewers.
 
 Pushing a commit with the same Change-Id as an existing change will upload a new
 version of it. (Use the `git rebase` or `git commit --amend` commands.)

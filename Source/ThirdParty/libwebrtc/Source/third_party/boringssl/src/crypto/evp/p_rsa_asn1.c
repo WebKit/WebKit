@@ -68,6 +68,7 @@
 
 static int rsa_pub_encode(CBB *out, const EVP_PKEY *key) {
   // See RFC 3279, section 2.3.1.
+  const RSA *rsa = key->pkey;
   CBB spki, algorithm, oid, null, key_bitstring;
   if (!CBB_add_asn1(out, &spki, CBS_ASN1_SEQUENCE) ||
       !CBB_add_asn1(&spki, &algorithm, CBS_ASN1_SEQUENCE) ||
@@ -76,7 +77,7 @@ static int rsa_pub_encode(CBB *out, const EVP_PKEY *key) {
       !CBB_add_asn1(&algorithm, &null, CBS_ASN1_NULL) ||
       !CBB_add_asn1(&spki, &key_bitstring, CBS_ASN1_BITSTRING) ||
       !CBB_add_u8(&key_bitstring, 0 /* padding */) ||
-      !RSA_marshal_public_key(&key_bitstring, key->pkey.rsa) ||
+      !RSA_marshal_public_key(&key_bitstring, rsa) ||
       !CBB_flush(out)) {
     OPENSSL_PUT_ERROR(EVP, EVP_R_ENCODE_ERROR);
     return 0;
@@ -109,11 +110,14 @@ static int rsa_pub_decode(EVP_PKEY *out, CBS *params, CBS *key) {
 }
 
 static int rsa_pub_cmp(const EVP_PKEY *a, const EVP_PKEY *b) {
-  return BN_cmp(b->pkey.rsa->n, a->pkey.rsa->n) == 0 &&
-         BN_cmp(b->pkey.rsa->e, a->pkey.rsa->e) == 0;
+  const RSA *a_rsa = a->pkey;
+  const RSA *b_rsa = b->pkey;
+  return BN_cmp(RSA_get0_n(b_rsa), RSA_get0_n(a_rsa)) == 0 &&
+         BN_cmp(RSA_get0_e(b_rsa), RSA_get0_e(a_rsa)) == 0;
 }
 
 static int rsa_priv_encode(CBB *out, const EVP_PKEY *key) {
+  const RSA *rsa = key->pkey;
   CBB pkcs8, algorithm, oid, null, private_key;
   if (!CBB_add_asn1(out, &pkcs8, CBS_ASN1_SEQUENCE) ||
       !CBB_add_asn1_uint64(&pkcs8, 0 /* version */) ||
@@ -122,7 +126,7 @@ static int rsa_priv_encode(CBB *out, const EVP_PKEY *key) {
       !CBB_add_bytes(&oid, rsa_asn1_meth.oid, rsa_asn1_meth.oid_len) ||
       !CBB_add_asn1(&algorithm, &null, CBS_ASN1_NULL) ||
       !CBB_add_asn1(&pkcs8, &private_key, CBS_ASN1_OCTETSTRING) ||
-      !RSA_marshal_private_key(&private_key, key->pkey.rsa) ||
+      !RSA_marshal_private_key(&private_key, rsa) ||
       !CBB_flush(out)) {
     OPENSSL_PUT_ERROR(EVP, EVP_R_ENCODE_ERROR);
     return 0;
@@ -153,42 +157,55 @@ static int rsa_priv_decode(EVP_PKEY *out, CBS *params, CBS *key) {
 }
 
 static int rsa_opaque(const EVP_PKEY *pkey) {
-  return RSA_is_opaque(pkey->pkey.rsa);
+  const RSA *rsa = pkey->pkey;
+  return RSA_is_opaque(rsa);
 }
 
 static int int_rsa_size(const EVP_PKEY *pkey) {
-  return RSA_size(pkey->pkey.rsa);
+  const RSA *rsa = pkey->pkey;
+  return RSA_size(rsa);
 }
 
 static int rsa_bits(const EVP_PKEY *pkey) {
-  return RSA_bits(pkey->pkey.rsa);
+  const RSA *rsa = pkey->pkey;
+  return RSA_bits(rsa);
 }
 
-static void int_rsa_free(EVP_PKEY *pkey) { RSA_free(pkey->pkey.rsa); }
+static void int_rsa_free(EVP_PKEY *pkey) {
+  RSA_free(pkey->pkey);
+  pkey->pkey = NULL;
+}
 
 const EVP_PKEY_ASN1_METHOD rsa_asn1_meth = {
-  EVP_PKEY_RSA,
-  // 1.2.840.113549.1.1.1
-  {0x2a, 0x86, 0x48, 0x86, 0xf7, 0x0d, 0x01, 0x01, 0x01}, 9,
+    EVP_PKEY_RSA,
+    // 1.2.840.113549.1.1.1
+    {0x2a, 0x86, 0x48, 0x86, 0xf7, 0x0d, 0x01, 0x01, 0x01},
+    9,
 
-  rsa_pub_decode,
-  rsa_pub_encode,
-  rsa_pub_cmp,
+    &rsa_pkey_meth,
 
-  rsa_priv_decode,
-  rsa_priv_encode,
+    rsa_pub_decode,
+    rsa_pub_encode,
+    rsa_pub_cmp,
 
-  NULL /* set_priv_raw */,
-  NULL /* set_pub_raw */,
-  NULL /* get_priv_raw */,
-  NULL /* get_pub_raw */,
+    rsa_priv_decode,
+    rsa_priv_encode,
 
-  rsa_opaque,
+    /*set_priv_raw=*/NULL,
+    /*set_pub_raw=*/NULL,
+    /*get_priv_raw=*/NULL,
+    /*get_pub_raw=*/NULL,
+    /*set1_tls_encodedpoint=*/NULL,
+    /*get1_tls_encodedpoint=*/NULL,
 
-  int_rsa_size,
-  rsa_bits,
+    rsa_opaque,
 
-  0,0,0,
+    int_rsa_size,
+    rsa_bits,
 
-  int_rsa_free,
+    0,
+    0,
+    0,
+
+    int_rsa_free,
 };

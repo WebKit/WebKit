@@ -99,8 +99,7 @@ TEST(HMACTest, TestVectors) {
     ASSERT_EQ(EVP_MD_size(digest), output.size());
 
     // Test using the one-shot API.
-    unsigned expected_mac_len = EVP_MD_size(digest);
-    std::unique_ptr<uint8_t[]> mac(new uint8_t[expected_mac_len]);
+    std::unique_ptr<uint8_t[]> mac(new uint8_t[EVP_MD_size(digest)]);
     unsigned mac_len;
     ASSERT_TRUE(HMAC(digest, key.data(), key.size(), input.data(), input.size(),
                      mac.get(), &mac_len));

@@ -12,6 +12,8 @@
 // OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
 // CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
+//go:build ignore
+
 package main
 
 import (
@@ -188,28 +190,13 @@ type assignment struct {
 	value int
 }
 
-type assignmentsSlice []assignment
-
-func (a assignmentsSlice) Len() int {
-	return len(a)
-}
-
-func (a assignmentsSlice) Less(i, j int) bool {
-	return a[i].value < a[j].value
-}
-
-func (a assignmentsSlice) Swap(i, j int) {
-	a[i], a[j] = a[j], a[i]
-}
-
 func outputAssignments(w io.Writer, assignments map[string]int) {
-	var sorted assignmentsSlice
-
+	sorted := make([]assignment, 0, len(assignments))
 	for key, value := range assignments {
 		sorted = append(sorted, assignment{key, value})
 	}
 
-	sort.Sort(sorted)
+	sort.Slice(sorted, func(i, j int) bool { return sorted[i].value < sorted[j].value })
 
 	for _, assignment := range sorted {
 		fmt.Fprintf(w, "#define %s %d\n", assignment.key, assignment.value)

@@ -49,6 +49,8 @@ The other commands are as follows. (Note that you only need to implement the com
 | 3DES/encrypt         | Key, input block, num iterations¹ | Result, Previous result |
 | AES-CBC/decrypt      | Key, ciphertext, IV, num iterations¹ | Result, Previous result |
 | AES-CBC/encrypt      | Key, plaintext, IV, num iterations¹ | Result, Previous result |
+| AES-CBC-CS3/decrypt  | Key, ciphertext, IV, num iterations² | Result |
+| AES-CBC-CS3/encrypt  | Key, plaintext, IV, num iterations²  | Result |
 | AES-CCM/open         | Tag length, key, ciphertext, nonce, ad | One-byte success flag, plaintext or empty |
 | AES-CCM/seal         | Tag length, key, plaintext, nonce, ad | Ciphertext |
 | AES-CTR/decrypt      | Key, ciphertext, initial counter, constant 1 | Plaintext |
@@ -66,18 +68,26 @@ The other commands are as follows. (Note that you only need to implement the com
 | CMAC-AES             | Number output bytes, key, message | MAC |
 | CMAC-AES/verify      | Key, message, claimed MAC | One-byte success flag |
 | ctrDRBG/AES-256      | Output length, entropy, personalisation, ad1, ad2, nonce | Output |
+| ctrDRBG-reseed/AES-256| Output length, entropy, personalisation, reseedAD, reseedEntropy, ad1, ad2, nonce | Output |
+| ctrDRBG-pr/AES-256   | Output length, entropy, personalisation, ad1, entropy1, ad2, entropy2, nonce | Output |
 | ECDH/&lt;CURVE&gt;   | X, Y, private key | X, Y, shared key |
 | ECDSA/keyGen         | Curve name | Private key, X, Y |
 | ECDSA/keyVer         | Curve name, X, Y | Single-byte valid flag |
 | ECDSA/sigGen         | Curve name, private key, hash name, message | R, S |
 | ECDSA/sigVer         | Curve name, hash name, message, X, Y, R, S | Single-byte validity flag |
 | FFDH                 | p, q, g, peer public key, local private key (or empty),  local public key (or empty) | Local public key, shared key |
+| HKDF/&lt;HASH&gt;    | key, salt, info, num output bytes | Key |
+| HKDFExtract          | secret, salt | Key |
+| HKDFExpandLabel      | Output length, secret, label, transcript hash | Key |
 | HMAC-SHA-1           | Value to hash, key        | Digest  |
 | HMAC-SHA2-224        | Value to hash, key        | Digest  |
 | HMAC-SHA2-256        | Value to hash, key        | Digest  |
 | HMAC-SHA2-384        | Value to hash, key        | Digest  |
 | HMAC-SHA2-512        | Value to hash, key        | Digest  |
 | HMAC-SHA2-512/256    | Value to hash, key        | Digest  |
+| hmacDRBG/&lt;HASH&gt;| Output length, entropy, personalisation, ad1, ad2, nonce | Output |
+| hmacDRBG-reseed/&lt;HASH&gt;| Output length, entropy, personalisation, reseedAD, reseedEntropy, ad1, ad2, nonce | Output |
+| hmacDRBG-pr/&lt;HASH&gt;| Output length, entropy, personalisation, ad1, entropy1, ad2, entropy2, nonce | Output |
 | KDF-counter          | Number output bytes, PRF name, counter location string, key, number of counter bits | Counter, output |
 | RSA/keyGen           | Modulus bit-size | e, p, q, n, d |
 | RSA/sigGen/&lt;HASH&gt;/pkcs1v1.5 | Modulus bit-size | n, e, signature |
@@ -96,9 +106,17 @@ The other commands are as follows. (Note that you only need to implement the com
 | SHA2-384/MCT         | Initial seed¹             | Digest  |
 | SHA2-512/MCT         | Initial seed¹             | Digest  |
 | SHA2-512/256/MCT     | Initial seed¹             | Digest  |
-| TLSKDF/&lt;1.0\|1.2&gt;/&lt;HASH&gt; | Number output bytes, secret, label, seed1, seed2 | Output |
+| TLSKDF/1.2/&lt;HASH&gt; | Number output bytes, secret, label, seed1, seed2 | Output |
 
 ¹ The iterated tests would result in excessive numbers of round trips if the module wrapper handled only basic operations. Thus some ACVP logic is pushed down for these tests so that the inner loop can be handled locally. Either read the NIST documentation ([block-ciphers](https://pages.nist.gov/ACVP/draft-celi-acvp-symmetric.html#name-monte-carlo-tests-for-block) [hashes](https://pages.nist.gov/ACVP/draft-celi-acvp-sha.html#name-monte-carlo-tests-for-sha-1)) to understand the iteration count and return values or, probably more fruitfully, see how these functions are handled in the `modulewrapper` directory.
+
+² Will always be one because MCT tests are not supported for CS3.
+
+### Batching
+
+Requests are written without waiting for responses. Implementations can run a read-execute-reply loop without worrying about this. However, if batching is useful then implementations may gather up multiple requests before executing them. But this risks deadlock because some requests depend on the result of the previous one. If the `getConfig` result contains a dummy entry for the algorithm `acvptool` it will be filtered out when running with `-regcap`. However, a list of strings called `features` in that block may include the string `batch` to indicate that the implementation would like to receive a `flush` command whenever previous results must be received in order to progress. Implementations that batch can observe this to avoid deadlock.
+
+The `flush` command must not produce a response itself; it only indicates that all previous responses must be received to progress. The `getConfig` command must always be serviced immediately because a flush command will not be sent prior to processing the `getConfig` response.
 
 ## Online operation
 
@@ -239,6 +257,12 @@ The current list of objects is:
 
 ### Running test sessions
 
-In online mode, a given algorithm can be run by using the `-run` option. For example, `-run SHA2-256`. This will fetch a vector set, have the module-under-test answer it, and upload the answer. If you want to just fetch the vector set for later use with the `-json` option (documented above) then you can use `-fetch` instead of `-run`.
+In online mode, a given algorithm can be run by using the `-run` option. For example, `-run SHA2-256`. This will fetch a vector set, have the module-under-test answer it, and upload the answer. If you want to just fetch the vector set for later use with the `-json` option (documented above) then you can use `-fetch` instead of `-run`. The `-fetch` option also supports passing `-expected-out <filename>` to fetch and write the expected results, if the server supports that.
 
-The tool doesn't currently support the sorts of operations that a lab would need, like uploading results from a file.
+After results have been produced with `-json`, they can be uploaded with `-upload`. So `-run` is effectively these three steps combined:
+
+```
+./acvptool -fetch SHA2-256 > request
+./acvptool -json request > result
+./acvptool -upload result
+```

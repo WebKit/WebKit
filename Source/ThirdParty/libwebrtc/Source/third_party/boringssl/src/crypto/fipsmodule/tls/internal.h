@@ -31,6 +31,14 @@ OPENSSL_EXPORT int CRYPTO_tls1_prf(const EVP_MD *digest,
                                    const uint8_t *seed1, size_t seed1_len,
                                    const uint8_t *seed2, size_t seed2_len);
 
+// CRYPTO_tls13_hkdf_expand_label computes the TLS 1.3 KDF function of the same
+// name. See https://www.rfc-editor.org/rfc/rfc8446#section-7.1.
+OPENSSL_EXPORT int CRYPTO_tls13_hkdf_expand_label(
+    uint8_t *out, size_t out_len, const EVP_MD *digest,  //
+    const uint8_t *secret, size_t secret_len,            //
+    const uint8_t *label, size_t label_len,              //
+    const uint8_t *hash, size_t hash_len);
+
 
 #if defined(__cplusplus)
 }

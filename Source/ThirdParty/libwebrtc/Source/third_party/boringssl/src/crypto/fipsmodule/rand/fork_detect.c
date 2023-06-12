@@ -21,18 +21,17 @@
 #include "fork_detect.h"
 
 #if defined(OPENSSL_LINUX)
+#include <assert.h>
 #include <sys/mman.h>
 #include <unistd.h>
 #include <stdlib.h>
-
-#include <openssl/type_check.h>
 
 #include "../delocate.h"
 #include "../../internal.h"
 
 
 #if defined(MADV_WIPEONFORK)
-OPENSSL_STATIC_ASSERT(MADV_WIPEONFORK == 18, "MADV_WIPEONFORK is not 18");
+static_assert(MADV_WIPEONFORK == 18, "MADV_WIPEONFORK is not 18");
 #else
 #define MADV_WIPEONFORK 18
 #endif
@@ -41,10 +40,11 @@ DEFINE_STATIC_ONCE(g_fork_detect_once);
 DEFINE_STATIC_MUTEX(g_fork_detect_lock);
 DEFINE_BSS_GET(volatile char *, g_fork_detect_addr);
 DEFINE_BSS_GET(uint64_t, g_fork_generation);
-DEFINE_BSS_GET(int, g_ignore_madv_wipeonfork);
+DEFINE_BSS_GET(int, g_force_madv_wipeonfork);
+DEFINE_BSS_GET(int, g_force_madv_wipeonfork_enabled);
 
 static void init_fork_detect(void) {
-  if (*g_ignore_madv_wipeonfork_bss_get()) {
+  if (*g_force_madv_wipeonfork_bss_get()) {
     return;
   }
 
@@ -94,7 +94,14 @@ uint64_t CRYPTO_get_fork_generation(void) {
   // not assume that it has exclusive access to it.
   volatile char *const flag_ptr = *g_fork_detect_addr_bss_get();
   if (flag_ptr == NULL) {
-    // Our kernel is too old to support |MADV_WIPEONFORK|.
+    // Our kernel is too old to support |MADV_WIPEONFORK| or
+    // |g_force_madv_wipeonfork| is set.
+    if (*g_force_madv_wipeonfork_bss_get() &&
+        *g_force_madv_wipeonfork_enabled_bss_get()) {
+      // A constant generation number to simulate support, even if the kernel
+      // doesn't support it.
+      return 42;
+    }
     return 0;
   }
 
@@ -126,8 +133,9 @@ uint64_t CRYPTO_get_fork_generation(void) {
   return current_generation;
 }
 
-void CRYPTO_fork_detect_ignore_madv_wipeonfork_for_testing(void) {
-  *g_ignore_madv_wipeonfork_bss_get() = 1;
+void CRYPTO_fork_detect_force_madv_wipeonfork_for_testing(int on) {
+  *g_force_madv_wipeonfork_bss_get() = 1;
+  *g_force_madv_wipeonfork_enabled_bss_get() = on;
 }
 
 #else   // !OPENSSL_LINUX

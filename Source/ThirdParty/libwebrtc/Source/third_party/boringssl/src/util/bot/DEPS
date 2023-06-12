@@ -19,33 +19,26 @@ vars = {
   'checkout_sde': False,
   'checkout_nasm': False,
   'checkout_libcxx': False,
-  'vs_version': '2015',
+  'vs_version': '2019',
 
   # Run the following command to see the latest builds in CIPD:
   #  cipd describe PACKAGE_NAME -version latest
 
   # infra/3pp/tools/cmake/linux-amd64
-  #
-  # TODO(https://crbug.com/1176531): Update to a newer CMake when available
-  # from CIPD. This is currently blocked on the linked bug.
-  'cmake_version': 'version:3.13.5',
+  'cmake_version': 'version:2@3.26.3.chromium.7',
   # infra/3pp/tools/go/linux-amd64
-  'go_version': 'version:1.16',
+  'go_version': 'version:2@1.20.4',
+  # infra/3pp/tools/perl/windows-amd64
+  'perl_version': 'version:2@5.32.1.1',
 
   # Update the following from
-  # https://chromium.googlesource.com/chromium/src/+/master/DEPS
-  'android_sdk_platform-tools_version': 'Jxtur3_L9RzY4q79K-AwIahwFW4oi5uYVD5URx9h62wC',
-  # TODO(davidben): Before updating this, update the builders to specify
-  # ANDROID_ARM_NEON=0. The NDK now defaults armeabi-v7a to assuming NEON, but
-  # we wish to retain test coverage for non-NEON code. (Perhaps worth having
-  # both configurations.)
-  'android_ndk_revision': '27c0a8d090c666a50e40fceb4ee5b40b1a2d3f87',
+  # https://chromium.googlesource.com/chromium/src/+/main/DEPS
+  'android_sdk_platform-tools_version': 'RSI3iwryh7URLGRgJHsCvUxj092woTPnKt4pwFcJ6L8C',
+  'android_ndk_revision': '8388a2be5421311dc75c5f937aae13d821a27f3d',
   'libfuzzer_revision': 'debe7d2d1982e540fbd6bd78604bf001753f9e74',
-
-  # Update the following from
-  # https://chromium.googlesource.com/chromium/src/+/master/buildtools/DEPS
-  'libcxx_revision': 'd9040c75cfea5928c804ab7c235fed06a63f743a',
-  'libcxxabi_revision': '196ba1aaa8ac285d94f4ea8d9836390a45360533',
+  'libcxx_revision': 'f8279b01085b800724f5c5629dc365b9f040dc53',
+  'libcxxabi_revision': 'd5e79e117ce9adfdcfdc5dde56ee8cddd7742854',
+  'ninja_version': 'version:2@1.11.1.chromium.6',
 }
 
 deps = {
@@ -63,21 +56,11 @@ deps = {
     'dep_type': 'cipd',
   },
 
-  'boringssl/util/bot/cmake-linux64': {
+  'boringssl/util/bot/cmake': {
     'packages': [{
-      'package': 'infra/3pp/tools/cmake/linux-amd64',
+      'package': 'infra/3pp/tools/cmake/${{platform}}',
       'version': Var('cmake_version'),
     }],
-    'condition': 'host_os == "linux"',
-    'dep_type': 'cipd',
-  },
-
-  'boringssl/util/bot/cmake-mac': {
-    'packages': [{
-      'package': 'infra/3pp/tools/cmake/mac-amd64',
-      'version': Var('cmake_version'),
-    }],
-    'condition': 'host_os == "mac"',
     'dep_type': 'cipd',
   },
 
@@ -86,6 +69,15 @@ deps = {
       'package': 'infra/3pp/tools/go/${{platform}}',
       'version': Var('go_version'),
     }],
+    'dep_type': 'cipd',
+  },
+
+  'boringssl/util/bot/perl-win32': {
+    'packages': [{
+      'package': 'infra/3pp/tools/perl/${{platform}}',
+      'version': Var('perl_version'),
+    }],
+    'condition': 'host_os == "win"',
     'dep_type': 'cipd',
   },
 
@@ -102,6 +94,14 @@ deps = {
     'url': Var('chromium_git') + '/external/github.com/llvm/llvm-project/libcxxabi.git' + '@' + Var('libcxxabi_revision'),
     'condition': 'checkout_libcxx',
   },
+
+  'boringssl/util/bot/ninja': {
+    'packages': [{
+      'package': 'infra/3pp/tools/ninja/${{platform}}',
+      'version': Var('ninja_version'),
+    }],
+    'dep_type': 'cipd',
+  }
 }
 
 recursedeps = [
@@ -110,52 +110,6 @@ recursedeps = [
 ]
 
 hooks = [
-  # TODO(https://crbug.com/1180257): Use CIPD for CMake on Windows.
-  {
-    'name': 'cmake_win32',
-    'pattern': '.',
-    'condition': 'host_os == "win"',
-    'action': [ 'download_from_google_storage',
-                '--no_resume',
-                '--platform=win32',
-                '--no_auth',
-                '--bucket', 'chromium-tools',
-                '-s', 'boringssl/util/bot/cmake-win32.zip.sha1',
-    ],
-  },
-  {
-    'name': 'cmake_win32_extract',
-    'pattern': '.',
-    'condition': 'host_os == "win"',
-    'action': [ 'python',
-                'boringssl/util/bot/extract.py',
-                'boringssl/util/bot/cmake-win32.zip',
-                'boringssl/util/bot/cmake-win32/',
-    ],
-  },
-  {
-    'name': 'perl_win32',
-    'pattern': '.',
-    'condition': 'host_os == "win"',
-    'action': [ 'download_from_google_storage',
-                '--no_resume',
-                '--platform=win32',
-                '--no_auth',
-                '--bucket', 'chromium-tools',
-                '-s', 'boringssl/util/bot/perl-win32.zip.sha1',
-    ],
-  },
-  {
-    'name': 'perl_win32_extract',
-    'pattern': '.',
-    'condition': 'host_os == "win"',
-    'action': [ 'python',
-                'boringssl/util/bot/extract.py',
-                '--no-prefix',
-                'boringssl/util/bot/perl-win32.zip',
-                'boringssl/util/bot/perl-win32/',
-    ],
-  },
   {
     'name': 'nasm_win32',
     'pattern': '.',
@@ -172,7 +126,7 @@ hooks = [
     'name': 'win_toolchain',
     'pattern': '.',
     'condition': 'host_os == "win"',
-    'action': [ 'python',
+    'action': [ 'python3',
                 'boringssl/util/bot/vs_toolchain.py',
                 'update',
                 Var('vs_version'),
@@ -182,7 +136,7 @@ hooks = [
     'name': 'clang',
     'pattern': '.',
     'condition': 'checkout_clang',
-    'action': [ 'python',
+    'action': [ 'python3',
                 'boringssl/util/bot/update_clang.py',
     ],
   },
@@ -193,16 +147,16 @@ hooks = [
     'action': [ 'download_from_google_storage',
                 '--no_resume',
                 '--bucket', 'chrome-boringssl-sde',
-                '-s', 'boringssl/util/bot/sde-linux64.tar.bz2.sha1'
+                '-s', 'boringssl/util/bot/sde-linux64.tar.xz.sha1'
     ],
   },
   {
     'name': 'sde_linux64_extract',
     'pattern': '.',
     'condition': 'checkout_sde and host_os == "linux"',
-    'action': [ 'python',
+    'action': [ 'python3',
                 'boringssl/util/bot/extract.py',
-                'boringssl/util/bot/sde-linux64.tar.bz2',
+                'boringssl/util/bot/sde-linux64.tar.xz',
                 'boringssl/util/bot/sde-linux64/',
     ],
   },
@@ -213,16 +167,16 @@ hooks = [
     'action': [ 'download_from_google_storage',
                 '--no_resume',
                 '--bucket', 'chrome-boringssl-sde',
-                '-s', 'boringssl/util/bot/sde-win32.tar.bz2.sha1'
+                '-s', 'boringssl/util/bot/sde-win32.tar.xz.sha1'
     ],
   },
   {
     'name': 'sde_win32_extract',
     'pattern': '.',
     'condition': 'checkout_sde and host_os == "win"',
-    'action': [ 'python',
+    'action': [ 'python3',
                 'boringssl/util/bot/extract.py',
-                'boringssl/util/bot/sde-win32.tar.bz2',
+                'boringssl/util/bot/sde-win32.tar.xz',
                 'boringssl/util/bot/sde-win32/',
     ],
   },

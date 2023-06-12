@@ -57,27 +57,49 @@ static void CheckRepresentation(T value) {
 }
 
 TEST(CompilerTest, IntegerRepresentation) {
-  EXPECT_EQ(8, CHAR_BIT);
-  EXPECT_EQ(0xff, static_cast<int>(UCHAR_MAX));
+  static_assert(CHAR_BIT == 8, "BoringSSL only supports 8-bit chars");
+  static_assert(UCHAR_MAX == 0xff, "BoringSSL only supports 8-bit chars");
 
-  // uint8_t is assumed to be unsigned char. I.e., casting to uint8_t should be
-  // as good as unsigned char for strict aliasing purposes.
+  // Require that |unsigned char| and |uint8_t| be the same type. We require
+  // that type-punning through |uint8_t| is not a strict aliasing violation. In
+  // principle, type-punning should be done with |memcpy|, which would make this
+  // moot.
+  //
+  // However, C made too many historical mistakes with the types and signedness
+  // of character strings. As a result, aliasing between all variations on 8-bit
+  // chars are a practical necessity for all real C code. We do not support
+  // toolchains that break this assumption.
+  static_assert(
+      std::is_same<unsigned char, uint8_t>::value,
+      "BoringSSL requires uint8_t and unsigned char be the same type");
   uint8_t u8 = 0;
   unsigned char *ptr = &u8;
   (void)ptr;
 
   // Sized integers have the expected size.
-  EXPECT_EQ(1u, sizeof(uint8_t));
-  EXPECT_EQ(2u, sizeof(uint16_t));
-  EXPECT_EQ(4u, sizeof(uint32_t));
-  EXPECT_EQ(8u, sizeof(uint64_t));
+  static_assert(sizeof(uint8_t) == 1u, "uint8_t has the wrong size");
+  static_assert(sizeof(uint16_t) == 2u, "uint16_t has the wrong size");
+  static_assert(sizeof(uint32_t) == 4u, "uint32_t has the wrong size");
+  static_assert(sizeof(uint64_t) == 8u, "uint64_t has the wrong size");
 
   // size_t does not exceed uint64_t.
-  EXPECT_LE(sizeof(size_t), 8u);
+  static_assert(sizeof(size_t) <= 8u, "size_t must not exceed uint64_t");
 
-  // int must be 32-bit or larger.
-  EXPECT_LE(0x7fffffff, INT_MAX);
-  EXPECT_LE(0xffffffffu, UINT_MAX);
+  // Require that |int| be exactly 32 bits. OpenSSL historically mixed up
+  // |unsigned| and |uint32_t|, so we require it be at least 32 bits. Requiring
+  // at most 32-bits is a bit more subtle. C promotes arithemetic operands to
+  // |int| when they fit. But this means, if |int| is 2N bits wide, multiplying
+  // two maximum-sized |uintN_t|s is undefined by integer overflow!
+  //
+  // We attempt to handle this for |uint16_t|, assuming a 32-bit |int|, but we
+  // make no attempts to correct for this with |uint32_t| for a 64-bit |int|.
+  // Thus BoringSSL does not support ILP64 platforms.
+  //
+  // This test is on |INT_MAX| and |INT32_MAX| rather than sizeof because it is
+  // theoretically allowed for sizeof(int) to be 4 but include padding bits.
+  static_assert(INT_MAX == INT32_MAX, "BoringSSL requires int be 32-bit");
+  static_assert(UINT_MAX == UINT32_MAX,
+                "BoringSSL requires unsigned be 32-bit");
 
   CheckRepresentation(static_cast<signed char>(127));
   CheckRepresentation(static_cast<signed char>(1));

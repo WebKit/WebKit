@@ -20,7 +20,7 @@
 struct TestData {
   const char *data;
   int type;
-  time_t cmp_time;
+  int64_t cmp_time;
   // -1 if asn1_time <= cmp_time, 1 if asn1_time > cmp_time, 0 if error.
   int expected;
 };
@@ -211,6 +211,85 @@ static TestData kX509CmpTests[] = {
         0,
         0,
     },
+    // Test limits and unusual cases.
+    {
+        "99991231235959Z", V_ASN1_GENERALIZEDTIME,
+        // Test a very large positive time with the largest representable time
+        253402300799,
+        -1,  // TODO(bbe): This is *technically* wrong by rfc5280.
+    },
+    {
+        "99991231235959Z", V_ASN1_GENERALIZEDTIME,
+        // one second after the largest possible time should still compare
+        // correctly
+        253402300800,
+        -1,  // TODO(bbe): This is *technically* wrong by rfc5280.
+    },
+    {
+        "99991231235959Z",
+        V_ASN1_GENERALIZEDTIME,
+        // Test one second before the largest time
+        253402300798,
+        1,
+    },
+    {
+        "700101000000Z",
+        V_ASN1_UTCTIME,
+        // The epoch, which should not fail. a time of 0 must be valid.
+        0,
+        -1,
+    },
+    {
+        "700101000000Z",
+        V_ASN1_UTCTIME,
+        // One second before the epoch should compare correctly.
+        -1,
+        1,
+    },
+    {
+        "700101000000Z",
+        V_ASN1_UTCTIME,
+        // One second after the epoch should compare correctly.
+        1,
+        -1,
+    },
+    {
+        "690621025615Z",
+        V_ASN1_UTCTIME,
+        // Test a negative time, we use a time from NASA, close to but not quite
+        // at the epoch.
+        -16751025,
+        -1,
+    },
+    {
+        "690621025615Z",
+        V_ASN1_UTCTIME,
+        // Test one small second before our negative time.
+        -16751026,
+        1,
+    },
+    {
+        "690621025615Z",
+        V_ASN1_UTCTIME,
+        // Test one giant second after our negative time.
+        -16751024,
+        -1,
+    },
+    {
+        "00000101000000Z",
+        V_ASN1_GENERALIZEDTIME,
+        // Test a very large negative time with the earliest representable time
+        -62167219200,
+        -1,
+    },
+    {
+        "00000101000000Z",
+        V_ASN1_GENERALIZEDTIME,
+        // Test one second after the earliest time.
+        -62167219199,
+        -1,
+    },
+
 };
 
 TEST(X509TimeTest, TestCmpTime) {
@@ -224,8 +303,7 @@ TEST(X509TimeTest, TestCmpTime) {
     t.data = (unsigned char*) test.data;
     t.length = strlen(test.data);
 
-    EXPECT_EQ(test.expected,
-              X509_cmp_time(&t, &test.cmp_time));
+    EXPECT_EQ(test.expected, X509_cmp_time_posix(&t, test.cmp_time));
   }
 }
 

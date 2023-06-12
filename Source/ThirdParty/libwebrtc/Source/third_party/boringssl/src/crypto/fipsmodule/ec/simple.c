@@ -152,36 +152,36 @@ int ec_GFp_simple_group_get_curve(const EC_GROUP *group, BIGNUM *p, BIGNUM *a,
   return 1;
 }
 
-void ec_GFp_simple_point_init(EC_RAW_POINT *point) {
+void ec_GFp_simple_point_init(EC_JACOBIAN *point) {
   OPENSSL_memset(&point->X, 0, sizeof(EC_FELEM));
   OPENSSL_memset(&point->Y, 0, sizeof(EC_FELEM));
   OPENSSL_memset(&point->Z, 0, sizeof(EC_FELEM));
 }
 
-void ec_GFp_simple_point_copy(EC_RAW_POINT *dest, const EC_RAW_POINT *src) {
+void ec_GFp_simple_point_copy(EC_JACOBIAN *dest, const EC_JACOBIAN *src) {
   OPENSSL_memcpy(&dest->X, &src->X, sizeof(EC_FELEM));
   OPENSSL_memcpy(&dest->Y, &src->Y, sizeof(EC_FELEM));
   OPENSSL_memcpy(&dest->Z, &src->Z, sizeof(EC_FELEM));
 }
 
 void ec_GFp_simple_point_set_to_infinity(const EC_GROUP *group,
-                                         EC_RAW_POINT *point) {
+                                         EC_JACOBIAN *point) {
   // Although it is strictly only necessary to zero Z, we zero the entire point
   // in case |point| was stack-allocated and yet to be initialized.
   ec_GFp_simple_point_init(point);
 }
 
-void ec_GFp_simple_invert(const EC_GROUP *group, EC_RAW_POINT *point) {
+void ec_GFp_simple_invert(const EC_GROUP *group, EC_JACOBIAN *point) {
   ec_felem_neg(group, &point->Y, &point->Y);
 }
 
 int ec_GFp_simple_is_at_infinity(const EC_GROUP *group,
-                                 const EC_RAW_POINT *point) {
+                                 const EC_JACOBIAN *point) {
   return ec_felem_non_zero_mask(group, &point->Z) == 0;
 }
 
 int ec_GFp_simple_is_on_curve(const EC_GROUP *group,
-                              const EC_RAW_POINT *point) {
+                              const EC_JACOBIAN *point) {
   // We have a curve defined by a Weierstrass equation
   //      y^2 = x^3 + a*x + b.
   // The point to consider is given in Jacobian projective coordinates
@@ -237,8 +237,8 @@ int ec_GFp_simple_is_on_curve(const EC_GROUP *group,
   return 1 & ~(not_infinity & not_equal);
 }
 
-int ec_GFp_simple_points_equal(const EC_GROUP *group, const EC_RAW_POINT *a,
-                               const EC_RAW_POINT *b) {
+int ec_GFp_simple_points_equal(const EC_GROUP *group, const EC_JACOBIAN *a,
+                               const EC_JACOBIAN *b) {
   // This function is implemented in constant-time for two reasons. First,
   // although EC points are usually public, their Jacobian Z coordinates may be
   // secret, or at least are not obviously public. Second, more complex
@@ -285,7 +285,7 @@ int ec_GFp_simple_points_equal(const EC_GROUP *group, const EC_RAW_POINT *a,
 }
 
 int ec_affine_jacobian_equal(const EC_GROUP *group, const EC_AFFINE *a,
-                             const EC_RAW_POINT *b) {
+                             const EC_JACOBIAN *b) {
   // If |b| is not infinity, we have to decide whether
   //     (X_a, Y_a) = (X_b/Z_b^2, Y_b/Z_b^3),
   // or equivalently, whether
@@ -314,7 +314,7 @@ int ec_affine_jacobian_equal(const EC_GROUP *group, const EC_AFFINE *a,
   return equal & 1;
 }
 
-int ec_GFp_simple_cmp_x_coordinate(const EC_GROUP *group, const EC_RAW_POINT *p,
+int ec_GFp_simple_cmp_x_coordinate(const EC_GROUP *group, const EC_JACOBIAN *p,
                                    const EC_SCALAR *r) {
   if (ec_GFp_simple_is_at_infinity(group, p)) {
     // |ec_get_x_coordinate_as_scalar| will check this internally, but this way
@@ -330,9 +330,7 @@ int ec_GFp_simple_cmp_x_coordinate(const EC_GROUP *group, const EC_RAW_POINT *p,
 void ec_GFp_simple_felem_to_bytes(const EC_GROUP *group, uint8_t *out,
                                   size_t *out_len, const EC_FELEM *in) {
   size_t len = BN_num_bytes(&group->field);
-  for (size_t i = 0; i < len; i++) {
-    out[i] = in->bytes[len - 1 - i];
-  }
+  bn_words_to_big_endian(out, len, in->words, group->field.width);
   *out_len = len;
 }
 
@@ -343,10 +341,7 @@ int ec_GFp_simple_felem_from_bytes(const EC_GROUP *group, EC_FELEM *out,
     return 0;
   }
 
-  OPENSSL_memset(out, 0, sizeof(EC_FELEM));
-  for (size_t i = 0; i < len; i++) {
-    out->bytes[i] = in[len - 1 - i];
-  }
+  bn_big_endian_to_words(out->words, group->field.width, in, len);
 
   if (!bn_less_than_words(out->words, group->field.d, group->field.width)) {
     OPENSSL_PUT_ERROR(EC, EC_R_DECODE_ERROR);

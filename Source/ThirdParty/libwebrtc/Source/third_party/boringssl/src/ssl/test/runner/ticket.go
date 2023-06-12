@@ -145,6 +145,11 @@ func (s *sessionState) unmarshal(data []byte) bool {
 }
 
 func (c *Conn) encryptTicket(state *sessionState) ([]byte, error) {
+	key := c.config.SessionTicketKey[:]
+	if c.config.Bugs.EncryptSessionTicketKey != nil {
+		key = c.config.Bugs.EncryptSessionTicketKey[:]
+	}
+
 	serialized := state.marshal()
 	encrypted := make([]byte, aes.BlockSize+len(serialized)+sha256.Size)
 	iv := encrypted[:aes.BlockSize]
@@ -153,13 +158,13 @@ func (c *Conn) encryptTicket(state *sessionState) ([]byte, error) {
 	if _, err := io.ReadFull(c.config.rand(), iv); err != nil {
 		return nil, err
 	}
-	block, err := aes.NewCipher(c.config.SessionTicketKey[:16])
+	block, err := aes.NewCipher(key[:16])
 	if err != nil {
 		return nil, errors.New("tls: failed to create cipher while encrypting ticket: " + err.Error())
 	}
 	cipher.NewCTR(block, iv).XORKeyStream(encrypted[aes.BlockSize:], serialized)
 
-	mac := hmac.New(sha256.New, c.config.SessionTicketKey[16:32])
+	mac := hmac.New(sha256.New, key[16:32])
 	mac.Write(encrypted[:len(encrypted)-sha256.Size])
 	mac.Sum(macBytes[:0])
 

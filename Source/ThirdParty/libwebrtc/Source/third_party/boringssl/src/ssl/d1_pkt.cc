@@ -186,8 +186,8 @@ ssl_open_record_t dtls1_open_app_data(SSL *ssl, Span<uint8_t> *out,
   return ssl_open_record_success;
 }
 
-int dtls1_write_app_data(SSL *ssl, bool *out_needs_handshake, const uint8_t *in,
-                         int len) {
+int dtls1_write_app_data(SSL *ssl, bool *out_needs_handshake,
+                         size_t *out_bytes_written, Span<const uint8_t> in) {
   assert(!SSL_in_init(ssl));
   *out_needs_handshake = false;
 
@@ -196,47 +196,46 @@ int dtls1_write_app_data(SSL *ssl, bool *out_needs_handshake, const uint8_t *in,
     return -1;
   }
 
-  if (len > SSL3_RT_MAX_PLAIN_LENGTH) {
+  // DTLS does not split the input across records.
+  if (in.size() > SSL3_RT_MAX_PLAIN_LENGTH) {
     OPENSSL_PUT_ERROR(SSL, SSL_R_DTLS_MESSAGE_TOO_BIG);
     return -1;
   }
 
-  if (len < 0) {
-    OPENSSL_PUT_ERROR(SSL, SSL_R_BAD_LENGTH);
-    return -1;
+  if (in.empty()) {
+    *out_bytes_written = 0;
+    return 1;
   }
 
-  if (len == 0) {
-    return 0;
-  }
-
-  int ret = dtls1_write_record(ssl, SSL3_RT_APPLICATION_DATA, in, (size_t)len,
+  int ret = dtls1_write_record(ssl, SSL3_RT_APPLICATION_DATA, in,
                                dtls1_use_current_epoch);
   if (ret <= 0) {
     return ret;
   }
-  return len;
+  *out_bytes_written = in.size();
+  return 1;
 }
 
-int dtls1_write_record(SSL *ssl, int type, const uint8_t *in, size_t len,
+int dtls1_write_record(SSL *ssl, int type, Span<const uint8_t> in,
                        enum dtls1_use_epoch_t use_epoch) {
   SSLBuffer *buf = &ssl->s3->write_buffer;
-  assert(len <= SSL3_RT_MAX_PLAIN_LENGTH);
+  assert(in.size() <= SSL3_RT_MAX_PLAIN_LENGTH);
   // There should never be a pending write buffer in DTLS. One can't write half
   // a datagram, so the write buffer is always dropped in
   // |ssl_write_buffer_flush|.
   assert(buf->empty());
 
-  if (len > SSL3_RT_MAX_PLAIN_LENGTH) {
+  if (in.size() > SSL3_RT_MAX_PLAIN_LENGTH) {
     OPENSSL_PUT_ERROR(SSL, ERR_R_INTERNAL_ERROR);
     return -1;
   }
 
   size_t ciphertext_len;
   if (!buf->EnsureCap(ssl_seal_align_prefix_len(ssl),
-                      len + SSL_max_seal_overhead(ssl)) ||
+                      in.size() + SSL_max_seal_overhead(ssl)) ||
       !dtls_seal_record(ssl, buf->remaining().data(), &ciphertext_len,
-                        buf->remaining().size(), type, in, len, use_epoch)) {
+                        buf->remaining().size(), type, in.data(), in.size(),
+                        use_epoch)) {
     buf->Clear();
     return -1;
   }
@@ -250,7 +249,7 @@ int dtls1_write_record(SSL *ssl, int type, const uint8_t *in, size_t len,
 }
 
 int dtls1_dispatch_alert(SSL *ssl) {
-  int ret = dtls1_write_record(ssl, SSL3_RT_ALERT, &ssl->s3->send_alert[0], 2,
+  int ret = dtls1_write_record(ssl, SSL3_RT_ALERT, ssl->s3->send_alert,
                                dtls1_use_current_epoch);
   if (ret <= 0) {
     return ret;

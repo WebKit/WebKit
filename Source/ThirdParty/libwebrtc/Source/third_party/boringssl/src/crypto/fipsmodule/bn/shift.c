@@ -56,10 +56,10 @@
 
 #include <openssl/bn.h>
 
+#include <assert.h>
 #include <string.h>
 
 #include <openssl/err.h>
-#include <openssl/type_check.h>
 
 #include "internal.h"
 
@@ -258,9 +258,9 @@ int BN_clear_bit(BIGNUM *a, int n) {
   return 1;
 }
 
-int bn_is_bit_set_words(const BN_ULONG *a, size_t num, unsigned bit) {
-  unsigned i = bit / BN_BITS2;
-  unsigned j = bit % BN_BITS2;
+int bn_is_bit_set_words(const BN_ULONG *a, size_t num, size_t bit) {
+  size_t i = bit / BN_BITS2;
+  size_t j = bit % BN_BITS2;
   if (i >= num) {
     return 0;
   }
@@ -296,15 +296,14 @@ int BN_mask_bits(BIGNUM *a, int n) {
 }
 
 static int bn_count_low_zero_bits_word(BN_ULONG l) {
-  OPENSSL_STATIC_ASSERT(sizeof(BN_ULONG) <= sizeof(crypto_word_t),
-                        "crypto_word_t is too small");
-  OPENSSL_STATIC_ASSERT(sizeof(int) <= sizeof(crypto_word_t),
-                        "crypto_word_t is too small");
-  OPENSSL_STATIC_ASSERT(BN_BITS2 == sizeof(BN_ULONG) * 8,
-                        "BN_ULONG has padding bits");
+  static_assert(sizeof(BN_ULONG) <= sizeof(crypto_word_t),
+                "crypto_word_t is too small");
+  static_assert(sizeof(int) <= sizeof(crypto_word_t),
+                "crypto_word_t is too small");
+  static_assert(BN_BITS2 == sizeof(BN_ULONG) * 8, "BN_ULONG has padding bits");
   // C has very bizarre rules for types smaller than an int.
-  OPENSSL_STATIC_ASSERT(sizeof(BN_ULONG) >= sizeof(int),
-                        "BN_ULONG gets promoted to int");
+  static_assert(sizeof(BN_ULONG) >= sizeof(int),
+                "BN_ULONG gets promoted to int");
 
   crypto_word_t mask;
   int bits = 0;
@@ -342,10 +341,10 @@ static int bn_count_low_zero_bits_word(BN_ULONG l) {
 }
 
 int BN_count_low_zero_bits(const BIGNUM *bn) {
-  OPENSSL_STATIC_ASSERT(sizeof(BN_ULONG) <= sizeof(crypto_word_t),
-                        "crypto_word_t is too small");
-  OPENSSL_STATIC_ASSERT(sizeof(int) <= sizeof(crypto_word_t),
-                        "crypto_word_t is too small");
+  static_assert(sizeof(BN_ULONG) <= sizeof(crypto_word_t),
+                "crypto_word_t is too small");
+  static_assert(sizeof(int) <= sizeof(crypto_word_t),
+                "crypto_word_t is too small");
 
   int ret = 0;
   crypto_word_t saw_nonzero = 0;

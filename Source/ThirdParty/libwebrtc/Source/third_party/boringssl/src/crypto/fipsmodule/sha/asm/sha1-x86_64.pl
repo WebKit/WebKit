@@ -389,6 +389,7 @@ $code.=<<___;
 	lea		0x40($inp),%r8		# next input block
 	paddd		@MSG[0],$E
 	cmovne		%r8,$inp
+	prefetcht0	512($inp)
 	movdqa		$ABCD,$ABCD_SAVE	# offload $ABCD
 ___
 for($i=0;$i<20-4;$i+=2) {
@@ -1815,6 +1816,7 @@ ___
 }
 }
 $code.=<<___;
+.section .rodata
 .align	64
 K_XX_XX:
 .long	0x5a827999,0x5a827999,0x5a827999,0x5a827999	# K_00_19
@@ -1833,6 +1835,7 @@ ___
 $code.=<<___;
 .asciz	"SHA1 block transform for x86_64, CRYPTOGAMS by <appro\@openssl.org>"
 .align	64
+.text
 ___
 
 # EXCEPTION_DISPOSITION handler (EXCEPTION_RECORD *rec,ULONG64 frame,
@@ -2114,4 +2117,4 @@ foreach (split("\n",$code)) {
 
 	print $_,"\n";
 }
-close STDOUT or die "error closing STDOUT";
+close STDOUT or die "error closing STDOUT: $!";

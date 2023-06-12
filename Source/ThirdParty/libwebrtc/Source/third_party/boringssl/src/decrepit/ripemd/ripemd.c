@@ -59,6 +59,7 @@
 #include <string.h>
 
 #include "../../crypto/internal.h"
+#include "../../crypto/fipsmodule/digest/md32_common.h"
 
 
 #define RIPEMD160_A 0x67452301L
@@ -80,32 +81,29 @@ int RIPEMD160_Init(RIPEMD160_CTX *ctx) {
 static void ripemd160_block_data_order(uint32_t h[5], const uint8_t *data,
                                        size_t num);
 
-#define DATA_ORDER_IS_LITTLE_ENDIAN
+void RIPEMD160_Transform(RIPEMD160_CTX *c,
+                         const uint8_t data[RIPEMD160_CBLOCK]) {
+  ripemd160_block_data_order(c->h, data, 1);
+}
 
-#define HASH_LONG uint32_t
-#define HASH_CTX RIPEMD160_CTX
-#define HASH_CBLOCK RIPEMD160_CBLOCK
-#define HASH_DIGEST_LENGTH RIPEMD160_DIGEST_LENGTH
-#define HASH_UPDATE RIPEMD160_Update
-#define HASH_TRANSFORM RIPEMD160_Transform
-#define HASH_FINAL RIPEMD160_Final
-#define HASH_MAKE_STRING(c, s)           \
-  do {                                   \
-    CRYPTO_store_u32_le((s), (c)->h[0]); \
-    (s) += 4;                            \
-    CRYPTO_store_u32_le((s), (c)->h[1]); \
-    (s) += 4;                            \
-    CRYPTO_store_u32_le((s), (c)->h[2]); \
-    (s) += 4;                            \
-    CRYPTO_store_u32_le((s), (c)->h[3]); \
-    (s) += 4;                            \
-    CRYPTO_store_u32_le((s), (c)->h[4]); \
-    (s) += 4;                            \
-  } while (0)
+int RIPEMD160_Update(RIPEMD160_CTX *c, const void *data, size_t len) {
+  crypto_md32_update(&ripemd160_block_data_order, c->h, c->data,
+                     RIPEMD160_CBLOCK, &c->num, &c->Nh, &c->Nl, data, len);
+  return 1;
+}
 
-#define HASH_BLOCK_DATA_ORDER ripemd160_block_data_order
+int RIPEMD160_Final(uint8_t out[RIPEMD160_DIGEST_LENGTH], RIPEMD160_CTX *c) {
+  crypto_md32_final(&ripemd160_block_data_order, c->h, c->data,
+                    RIPEMD160_CBLOCK, &c->num, c->Nh, c->Nl,
+                    /*is_big_endian=*/0);
 
-#include "../../crypto/fipsmodule/digest/md32_common.h"
+  CRYPTO_store_u32_le(out, c->h[0]);
+  CRYPTO_store_u32_le(out + 4, c->h[1]);
+  CRYPTO_store_u32_le(out + 8, c->h[2]);
+  CRYPTO_store_u32_le(out + 12, c->h[3]);
+  CRYPTO_store_u32_le(out + 16, c->h[4]);
+  return 1;
+}
 
 // Transformed F2 and F4 are courtesy of Wei Dai <weidai@eskimo.com>
 #define F1(x, y, z) ((x) ^ (y) ^ (z))
@@ -114,41 +112,39 @@ static void ripemd160_block_data_order(uint32_t h[5], const uint8_t *data,
 #define F4(x, y, z) ((((x) ^ (y)) & (z)) ^ (y))
 #define F5(x, y, z) (((~(z)) | (y)) ^ (x))
 
-#define ROTATE(a, n) (((a) << (n)) | (((a)&0xffffffff) >> (32 - (n))))
-
-#define RIP1(a, b, c, d, e, w, s) \
-  {                               \
-    a += F1(b, c, d) + X(w);      \
-    a = ROTATE(a, s) + e;         \
-    c = ROTATE(c, 10);            \
+#define RIP1(a, b, c, d, e, w, s)  \
+  {                                \
+    a += F1(b, c, d) + X(w);       \
+    a = CRYPTO_rotl_u32(a, s) + e; \
+    c = CRYPTO_rotl_u32(c, 10);    \
   }
 
 #define RIP2(a, b, c, d, e, w, s, K) \
   {                                  \
     a += F2(b, c, d) + X(w) + K;     \
-    a = ROTATE(a, s) + e;            \
-    c = ROTATE(c, 10);               \
+    a = CRYPTO_rotl_u32(a, s) + e;   \
+    c = CRYPTO_rotl_u32(c, 10);      \
   }
 
 #define RIP3(a, b, c, d, e, w, s, K) \
   {                                  \
     a += F3(b, c, d) + X(w) + K;     \
-    a = ROTATE(a, s) + e;            \
-    c = ROTATE(c, 10);               \
+    a = CRYPTO_rotl_u32(a, s) + e;   \
+    c = CRYPTO_rotl_u32(c, 10);      \
   }
 
 #define RIP4(a, b, c, d, e, w, s, K) \
   {                                  \
     a += F4(b, c, d) + X(w) + K;     \
-    a = ROTATE(a, s) + e;            \
-    c = ROTATE(c, 10);               \
+    a = CRYPTO_rotl_u32(a, s) + e;   \
+    c = CRYPTO_rotl_u32(c, 10);      \
   }
 
 #define RIP5(a, b, c, d, e, w, s, K) \
   {                                  \
     a += F5(b, c, d) + X(w) + K;     \
-    a = ROTATE(a, s) + e;            \
-    c = ROTATE(c, 10);               \
+    a = CRYPTO_rotl_u32(a, s) + e;   \
+    c = CRYPTO_rotl_u32(c, 10);      \
   }
 
 #define KL0 0x00000000L

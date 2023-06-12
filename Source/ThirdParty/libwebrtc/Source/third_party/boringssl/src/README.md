@@ -30,13 +30,13 @@ Project links:
 
 There are other files in this directory which might be helpful:
 
-  * [PORTING.md](/PORTING.md): how to port OpenSSL-using code to BoringSSL.
-  * [BUILDING.md](/BUILDING.md): how to build BoringSSL
-  * [INCORPORATING.md](/INCORPORATING.md): how to incorporate BoringSSL into a project.
-  * [API-CONVENTIONS.md](/API-CONVENTIONS.md): general API conventions for BoringSSL consumers and developers.
-  * [STYLE.md](/STYLE.md): rules and guidelines for coding style.
+  * [PORTING.md](./PORTING.md): how to port OpenSSL-using code to BoringSSL.
+  * [BUILDING.md](./BUILDING.md): how to build BoringSSL
+  * [INCORPORATING.md](./INCORPORATING.md): how to incorporate BoringSSL into a project.
+  * [API-CONVENTIONS.md](./API-CONVENTIONS.md): general API conventions for BoringSSL consumers and developers.
+  * [STYLE.md](./STYLE.md): rules and guidelines for coding style.
   * include/openssl: public headers with API documentation in comments. Also [available online](https://commondatastorage.googleapis.com/chromium-boringssl-docs/headers.html).
-  * [FUZZING.md](/FUZZING.md): information about fuzzing BoringSSL.
-  * [CONTRIBUTING.md](/CONTRIBUTING.md): how to contribute to BoringSSL.
-  * [BREAKING-CHANGES.md](/BREAKING-CHANGES.md): notes on potentially-breaking changes.
-  * [SANDBOXING.md](/SANDBOXING.md): notes on using BoringSSL in a sandboxed environment.
+  * [FUZZING.md](./FUZZING.md): information about fuzzing BoringSSL.
+  * [CONTRIBUTING.md](./CONTRIBUTING.md): how to contribute to BoringSSL.
+  * [BREAKING-CHANGES.md](./BREAKING-CHANGES.md): notes on potentially-breaking changes.
+  * [SANDBOXING.md](./SANDBOXING.md): notes on using BoringSSL in a sandboxed environment.

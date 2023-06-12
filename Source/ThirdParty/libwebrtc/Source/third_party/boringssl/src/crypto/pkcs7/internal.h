@@ -32,14 +32,23 @@ extern "C" {
 // NULL.
 int pkcs7_parse_header(uint8_t **der_bytes, CBS *out, CBS *cbs);
 
-// pkcs7_bundle writes a PKCS#7, SignedData structure to |out| and then calls
-// |cb| with a CBB to which certificate or CRL data can be written, and the
-// opaque context pointer, |arg|. The callback can return zero to indicate an
-// error.
+// pkcs7_add_signed_data writes a PKCS#7, SignedData structure to |out|. While
+// doing so it makes callbacks to let the caller fill in parts of the structure.
+// All callbacks are ignored if NULL and return one on success or zero on error.
 //
-// pkcs7_bundle returns one on success or zero on error.
-int pkcs7_bundle(CBB *out, int (*cb)(CBB *out, const void *arg),
-                 const void *arg);
+//   digest_algos_cb: may write AlgorithmIdentifiers into the given CBB, which
+//       is a SET of digest algorithms.
+//   cert_crl_cb: may write the |certificates| or |crls| fields.
+//       (See https://datatracker.ietf.org/doc/html/rfc2315#section-9.1)
+//   signer_infos_cb: may write the contents of the |signerInfos| field.
+//       (See https://datatracker.ietf.org/doc/html/rfc2315#section-9.1)
+//
+// pkcs7_add_signed_data returns one on success or zero on error.
+int pkcs7_add_signed_data(CBB *out,
+                          int (*digest_algos_cb)(CBB *out, const void *arg),
+                          int (*cert_crl_cb)(CBB *out, const void *arg),
+                          int (*signer_infos_cb)(CBB *out, const void *arg),
+                          const void *arg);
 
 
 #if defined(__cplusplus)

@@ -556,6 +556,19 @@ static void TestQuotient(BIGNUMFileTest *t, BN_CTX *ctx) {
   EXPECT_BIGNUMS_EQUAL("A / B", quotient.get(), ret.get());
   EXPECT_BIGNUMS_EQUAL("A % B", remainder.get(), ret2.get());
 
+  ASSERT_TRUE(BN_copy(ret.get(), a.get()));
+  ASSERT_TRUE(BN_copy(ret2.get(), b.get()));
+  ASSERT_TRUE(BN_div(ret.get(), ret2.get(), ret.get(), ret2.get(), ctx));
+  EXPECT_BIGNUMS_EQUAL("A / B (in-place)", quotient.get(), ret.get());
+  EXPECT_BIGNUMS_EQUAL("A % B (in-place)", remainder.get(), ret2.get());
+
+  ASSERT_TRUE(BN_copy(ret2.get(), a.get()));
+  ASSERT_TRUE(BN_copy(ret.get(), b.get()));
+  ASSERT_TRUE(BN_div(ret.get(), ret2.get(), ret2.get(), ret.get(), ctx));
+  EXPECT_BIGNUMS_EQUAL("A / B (in-place, swapped)", quotient.get(), ret.get());
+  EXPECT_BIGNUMS_EQUAL("A % B (in-place, swapped)", remainder.get(),
+                       ret2.get());
+
   ASSERT_TRUE(BN_mul(ret.get(), quotient.get(), b.get(), ctx));
   ASSERT_TRUE(BN_add(ret.get(), ret.get(), remainder.get()));
   EXPECT_BIGNUMS_EQUAL("Quotient * B + Remainder", a.get(), ret.get());
@@ -600,9 +613,17 @@ static void TestQuotient(BIGNUMFileTest *t, BN_CTX *ctx) {
     }
   }
 
-  ASSERT_TRUE(bn_div_consttime(ret.get(), ret2.get(), a.get(), b.get(), ctx));
+  ASSERT_TRUE(bn_div_consttime(ret.get(), ret2.get(), a.get(), b.get(),
+                               /*divisor_min_bits=*/0, ctx));
   EXPECT_BIGNUMS_EQUAL("A / B (constant-time)", quotient.get(), ret.get());
   EXPECT_BIGNUMS_EQUAL("A % B (constant-time)", remainder.get(), ret2.get());
+
+  ASSERT_TRUE(bn_div_consttime(ret.get(), ret2.get(), a.get(), b.get(),
+                               /*divisor_min_bits=*/BN_num_bits(b.get()), ctx));
+  EXPECT_BIGNUMS_EQUAL("A / B (constant-time, public width)", quotient.get(),
+                       ret.get());
+  EXPECT_BIGNUMS_EQUAL("A % B (constant-time, public width)", remainder.get(),
+                       ret2.get());
 }
 
 static void TestModMul(BIGNUMFileTest *t, BN_CTX *ctx) {
@@ -957,7 +978,7 @@ class BNTest : public testing::Test {
   bssl::UniquePtr<BN_CTX> ctx_;
 };
 
-TEST_F(BNTest, TestVectors) {
+static void RunBNFileTest(FileTest *t, BN_CTX *ctx) {
   static const struct {
     const char *name;
     void (*func)(BIGNUMFileTest *t, BN_CTX *ctx);
@@ -978,37 +999,84 @@ TEST_F(BNTest, TestVectors) {
       {"ModInv", TestModInv},
       {"GCD", TestGCD},
   };
-
-  FileTestGTest("crypto/fipsmodule/bn/bn_tests.txt", [&](FileTest *t) {
-    void (*func)(BIGNUMFileTest *t, BN_CTX *ctx) = nullptr;
-    for (const auto &test : kTests) {
-      if (t->GetType() == test.name) {
-        func = test.func;
-        break;
-      }
+  void (*func)(BIGNUMFileTest * t, BN_CTX * ctx) = nullptr;
+  for (const auto &test : kTests) {
+    if (t->GetType() == test.name) {
+      func = test.func;
+      break;
     }
-    if (!func) {
-      FAIL() << "Unknown test type: " << t->GetType();
-      return;
-    }
+  }
+  if (!func) {
+    FAIL() << "Unknown test type: " << t->GetType();
+    return;
+  }
 
-    // Run the test with normalize-sized |BIGNUM|s.
-    BIGNUMFileTest bn_test(t, 0);
-    BN_CTX_start(ctx());
-    func(&bn_test, ctx());
-    BN_CTX_end(ctx());
-    unsigned num_bignums = bn_test.num_bignums();
+  // Run the test with normalize-sized |BIGNUM|s.
+  BIGNUMFileTest bn_test(t, 0);
+  BN_CTX_start(ctx);
+  func(&bn_test, ctx);
+  BN_CTX_end(ctx);
+  unsigned num_bignums = bn_test.num_bignums();
 
-    // Repeat the test with all combinations of large and small |BIGNUM|s.
-    for (unsigned large_mask = 1; large_mask < (1u << num_bignums);
-         large_mask++) {
-      SCOPED_TRACE(large_mask);
-      BIGNUMFileTest bn_test2(t, large_mask);
-      BN_CTX_start(ctx());
-      func(&bn_test2, ctx());
-      BN_CTX_end(ctx());
-    }
-  });
+  // Repeat the test with all combinations of large and small |BIGNUM|s.
+  for (unsigned large_mask = 1; large_mask < (1u << num_bignums);
+       large_mask++) {
+    SCOPED_TRACE(large_mask);
+    BIGNUMFileTest bn_test2(t, large_mask);
+    BN_CTX_start(ctx);
+    func(&bn_test2, ctx);
+    BN_CTX_end(ctx);
+  }
+}
+
+TEST_F(BNTest, ExpTestVectors) {
+  FileTestGTest("crypto/fipsmodule/bn/test/exp_tests.txt",
+                [&](FileTest *t) { RunBNFileTest(t, ctx()); });
+}
+
+TEST_F(BNTest, GCDTestVectors) {
+  FileTestGTest("crypto/fipsmodule/bn/test/gcd_tests.txt",
+                [&](FileTest *t) { RunBNFileTest(t, ctx()); });
+}
+
+TEST_F(BNTest, ModExpTestVectors) {
+  FileTestGTest("crypto/fipsmodule/bn/test/mod_exp_tests.txt",
+                [&](FileTest *t) { RunBNFileTest(t, ctx()); });
+}
+
+TEST_F(BNTest, ModInvTestVectors) {
+  FileTestGTest("crypto/fipsmodule/bn/test/mod_inv_tests.txt",
+                [&](FileTest *t) { RunBNFileTest(t, ctx()); });
+}
+
+TEST_F(BNTest, ModMulTestVectors) {
+  FileTestGTest("crypto/fipsmodule/bn/test/mod_mul_tests.txt",
+                [&](FileTest *t) { RunBNFileTest(t, ctx()); });
+}
+
+TEST_F(BNTest, ModSqrtTestVectors) {
+  FileTestGTest("crypto/fipsmodule/bn/test/mod_sqrt_tests.txt",
+                [&](FileTest *t) { RunBNFileTest(t, ctx()); });
+}
+
+TEST_F(BNTest, ProductTestVectors) {
+  FileTestGTest("crypto/fipsmodule/bn/test/product_tests.txt",
+                [&](FileTest *t) { RunBNFileTest(t, ctx()); });
+}
+
+TEST_F(BNTest, QuotientTestVectors) {
+  FileTestGTest("crypto/fipsmodule/bn/test/quotient_tests.txt",
+                [&](FileTest *t) { RunBNFileTest(t, ctx()); });
+}
+
+TEST_F(BNTest, ShiftTestVectors) {
+  FileTestGTest("crypto/fipsmodule/bn/test/shift_tests.txt",
+                [&](FileTest *t) { RunBNFileTest(t, ctx()); });
+}
+
+TEST_F(BNTest, SumTestVectors) {
+  FileTestGTest("crypto/fipsmodule/bn/test/sum_tests.txt",
+                [&](FileTest *t) { RunBNFileTest(t, ctx()); });
 }
 
 TEST_F(BNTest, BN2BinPadded) {
@@ -2303,7 +2371,7 @@ TEST_F(BNTest, PrimeChecking) {
 
 TEST_F(BNTest, MillerRabinIteration) {
   FileTestGTest(
-      "crypto/fipsmodule/bn/miller_rabin_tests.txt", [&](FileTest *t) {
+      "crypto/fipsmodule/bn/test/miller_rabin_tests.txt", [&](FileTest *t) {
         BIGNUMFileTest bn_test(t, /*large_mask=*/0);
 
         bssl::UniquePtr<BIGNUM> w = bn_test.GetBIGNUM("W");
@@ -2691,6 +2759,78 @@ TEST_F(BNTest, WriteIntoNegative) {
   EXPECT_FALSE(BN_is_negative(r.get()));
 }
 
+TEST_F(BNTest, ModSqrtInvalid) {
+  bssl::UniquePtr<BIGNUM> bn2140141 = ASCIIToBIGNUM("2140141");
+  ASSERT_TRUE(bn2140141);
+  bssl::UniquePtr<BIGNUM> bn2140142 = ASCIIToBIGNUM("2140142");
+  ASSERT_TRUE(bn2140142);
+  bssl::UniquePtr<BIGNUM> bn4588033 = ASCIIToBIGNUM("4588033");
+  ASSERT_TRUE(bn4588033);
+
+  // |BN_mod_sqrt| may fail or return an arbitrary value, so we do not use
+  // |TestModSqrt| or |TestNotModSquare|. We only promise it will not crash or
+  // infinite loop. (For some invalid inputs, it may even be non-deterministic.)
+  // See CVE-2022-0778.
+  BN_free(BN_mod_sqrt(nullptr, bn2140141.get(), bn4588033.get(), ctx()));
+  BN_free(BN_mod_sqrt(nullptr, bn2140142.get(), bn4588033.get(), ctx()));
+}
+
+// Test that constructing Montgomery contexts for large bignums is not possible.
+// Our Montgomery reduction implementation stack-allocates temporaries, so we
+// cap how large of moduli we accept.
+TEST_F(BNTest, MontgomeryLarge) {
+  std::vector<uint8_t> large_bignum_bytes(16 * 1024, 0xff);
+  bssl::UniquePtr<BIGNUM> large_bignum(
+      BN_bin2bn(large_bignum_bytes.data(), large_bignum_bytes.size(), nullptr));
+  ASSERT_TRUE(large_bignum);
+  bssl::UniquePtr<BN_MONT_CTX> mont(
+      BN_MONT_CTX_new_for_modulus(large_bignum.get(), ctx()));
+  EXPECT_FALSE(mont);
+
+  // The same limit should apply when |BN_mod_exp_mont_consttime| internally
+  // constructs a |BN_MONT_CTX|.
+  bssl::UniquePtr<BIGNUM> r(BN_new());
+  ASSERT_TRUE(r);
+  EXPECT_FALSE(BN_mod_exp_mont_consttime(r.get(), BN_value_one(),
+                                         large_bignum.get(), large_bignum.get(),
+                                         ctx(), nullptr));
+}
+
+#if defined(SUPPORTS_ABI_TEST)
+// These functions are not always implemented in assembly, but they sometimes
+// are, so include ABI tests for each.
+TEST_F(BNTest, ArithmeticABI) {
+  EXPECT_EQ(0u, CHECK_ABI(bn_add_words, nullptr, nullptr, nullptr, 0));
+  EXPECT_EQ(0u, CHECK_ABI(bn_sub_words, nullptr, nullptr, nullptr, 0));
+
+  for (size_t num :
+       {1, 2, 3, 4, 5, 6, 7, 8, 9, 15, 16, 17, 31, 32, 33, 63, 64, 65}) {
+    SCOPED_TRACE(num);
+    std::vector<BN_ULONG> a(num, 123456789);
+    std::vector<BN_ULONG> b(num, static_cast<BN_ULONG>(-1));
+    std::vector<BN_ULONG> r(num);
+
+    CHECK_ABI(bn_add_words, r.data(), a.data(), b.data(), num);
+    CHECK_ABI(bn_sub_words, r.data(), a.data(), b.data(), num);
+
+    CHECK_ABI(bn_mul_words, r.data(), a.data(), num, 42);
+    CHECK_ABI(bn_mul_add_words, r.data(), a.data(), num, 42);
+
+    r.resize(2 * num);
+    CHECK_ABI(bn_sqr_words, r.data(), a.data(), num);
+
+    if (num == 4) {
+      CHECK_ABI(bn_mul_comba4, r.data(), a.data(), b.data());
+      CHECK_ABI(bn_sqr_comba4, r.data(), a.data());
+    }
+    if (num == 8) {
+      CHECK_ABI(bn_mul_comba8, r.data(), a.data(), b.data());
+      CHECK_ABI(bn_sqr_comba8, r.data(), a.data());
+    }
+  }
+}
+#endif
+
 #if defined(OPENSSL_BN_ASM_MONT) && defined(SUPPORTS_ABI_TEST)
 TEST_F(BNTest, BNMulMontABI) {
   for (size_t words : {4, 5, 6, 7, 8, 16, 32}) {
@@ -2751,15 +2891,6 @@ TEST_F(BNTest, BNMulMont5ABI) {
                 words, 13);
       CHECK_ABI(bn_power5, r.data(), a.data(), table.data(), m->d, mont->n0,
                 words, 13);
-      EXPECT_EQ(1, CHECK_ABI(bn_from_montgomery, r.data(), r.data(), nullptr,
-                             m->d, mont->n0, words));
-      EXPECT_EQ(1, CHECK_ABI(bn_from_montgomery, r.data(), a.data(), nullptr,
-                             m->d, mont->n0, words));
-    } else {
-      EXPECT_EQ(0, CHECK_ABI(bn_from_montgomery, r.data(), r.data(), nullptr,
-                             m->d, mont->n0, words));
-      EXPECT_EQ(0, CHECK_ABI(bn_from_montgomery, r.data(), a.data(), nullptr,
-                             m->d, mont->n0, words));
     }
   }
 }

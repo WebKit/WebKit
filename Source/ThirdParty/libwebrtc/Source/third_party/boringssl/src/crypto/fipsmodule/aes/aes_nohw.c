@@ -18,6 +18,7 @@
 #include <string.h>
 
 #include "../../internal.h"
+#include "internal.h"
 
 #if defined(OPENSSL_SSE2)
 #include <emmintrin.h>
@@ -151,10 +152,10 @@ static inline aes_word_t aes_nohw_shift_right(aes_word_t a, aes_word_t i) {
 }
 #endif  // OPENSSL_SSE2
 
-OPENSSL_STATIC_ASSERT(AES_NOHW_BATCH_SIZE * 128 == 8 * 8 * sizeof(aes_word_t),
-                      "batch size does not match word size");
-OPENSSL_STATIC_ASSERT(AES_NOHW_WORD_SIZE == sizeof(aes_word_t),
-                      "AES_NOHW_WORD_SIZE is incorrect");
+static_assert(AES_NOHW_BATCH_SIZE * 128 == 8 * 8 * sizeof(aes_word_t),
+              "batch size does not match word size");
+static_assert(AES_NOHW_WORD_SIZE == sizeof(aes_word_t),
+              "AES_NOHW_WORD_SIZE is incorrect");
 
 
 // Block representations.
@@ -1181,29 +1182,27 @@ void aes_nohw_ctr32_encrypt_blocks(const uint8_t *in, uint8_t *out,
   aes_nohw_expand_round_keys(&sched, key);
 
   // Make |AES_NOHW_BATCH_SIZE| copies of |ivec|.
-  alignas(AES_NOHW_WORD_SIZE) union {
-    uint32_t u32[AES_NOHW_BATCH_SIZE * 4];
-    uint8_t u8[AES_NOHW_BATCH_SIZE * 16];
-  } ivs, enc_ivs;
+  alignas(AES_NOHW_WORD_SIZE) uint8_t ivs[AES_NOHW_BATCH_SIZE * 16];
+  alignas(AES_NOHW_WORD_SIZE) uint8_t enc_ivs[AES_NOHW_BATCH_SIZE * 16];
   for (size_t i = 0; i < AES_NOHW_BATCH_SIZE; i++) {
-    memcpy(ivs.u8 + 16 * i, ivec, 16);
+    memcpy(ivs + 16 * i, ivec, 16);
   }
 
-  uint32_t ctr = CRYPTO_bswap4(ivs.u32[3]);
+  uint32_t ctr = CRYPTO_load_u32_be(ivs + 12);
   for (;;) {
     // Update counters.
     for (size_t i = 0; i < AES_NOHW_BATCH_SIZE; i++) {
-      ivs.u32[4 * i + 3] = CRYPTO_bswap4(ctr + i);
+      CRYPTO_store_u32_be(ivs + 16 * i + 12, ctr + (uint32_t)i);
     }
 
     size_t todo = blocks >= AES_NOHW_BATCH_SIZE ? AES_NOHW_BATCH_SIZE : blocks;
     AES_NOHW_BATCH batch;
-    aes_nohw_to_batch(&batch, ivs.u8, todo);
+    aes_nohw_to_batch(&batch, ivs, todo);
     aes_nohw_encrypt_batch(&sched, key->rounds, &batch);
-    aes_nohw_from_batch(enc_ivs.u8, todo, &batch);
+    aes_nohw_from_batch(enc_ivs, todo, &batch);
 
     for (size_t i = 0; i < todo; i++) {
-      aes_nohw_xor_block(out + 16 * i, in + 16 * i, enc_ivs.u8 + 16 * i);
+      aes_nohw_xor_block(out + 16 * i, in + 16 * i, enc_ivs + 16 * i);
     }
 
     blocks -= todo;

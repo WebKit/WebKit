@@ -39,22 +39,6 @@ std::ostream &operator<<(std::ostream &os, const Bytes &in) {
   return os;
 }
 
-static bool FromHexDigit(uint8_t *out, char c) {
-  if ('0' <= c && c <= '9') {
-    *out = c - '0';
-    return true;
-  }
-  if ('a' <= c && c <= 'f') {
-    *out = c - 'a' + 10;
-    return true;
-  }
-  if ('A' <= c && c <= 'F') {
-    *out = c - 'A' + 10;
-    return true;
-  }
-  return false;
-}
-
 bool DecodeHex(std::vector<uint8_t> *out, const std::string &in) {
   out->clear();
   if (in.size() % 2 != 0) {
@@ -63,8 +47,8 @@ bool DecodeHex(std::vector<uint8_t> *out, const std::string &in) {
   out->reserve(in.size() / 2);
   for (size_t i = 0; i < in.size(); i += 2) {
     uint8_t hi, lo;
-    if (!FromHexDigit(&hi, in[i]) ||
-        !FromHexDigit(&lo, in[i + 1])) {
+    if (!OPENSSL_fromxdigit(&hi, in[i]) ||
+        !OPENSSL_fromxdigit(&lo, in[i + 1])) {
       return false;
     }
     out->push_back((hi << 4) | lo);

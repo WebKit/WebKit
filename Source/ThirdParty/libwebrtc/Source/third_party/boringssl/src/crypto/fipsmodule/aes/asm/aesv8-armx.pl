@@ -47,7 +47,7 @@ $0 =~ m/(.*[\/\\])[^\/\\]+$/; $dir=$1;
 ( $xlate="${dir}../../../perlasm/arm-xlate.pl" and -f $xlate) or
 die "can't locate arm-xlate.pl";
 
-open OUT,"| \"$^X\" $xlate $flavour $output";
+open OUT,"| \"$^X\" \"$xlate\" $flavour \"$output\"";
 *STDOUT=*OUT;
 
 $prefix="aes_hw";
@@ -975,6 +975,9 @@ if ($flavour =~ /64/) {			######## 64-bit code
 	s/\.[ui]?64//o and s/\.16b/\.2d/go;
 	s/\.[42]([sd])\[([0-3])\]/\.$1\[$2\]/o;
 
+	# Switch preprocessor checks to aarch64 versions.
+	s/__ARME([BL])__/__AARCH64E$1__/go;
+
 	print $_,"\n";
     }
 } else {				######## 32-bit code
@@ -1044,4 +1047,4 @@ if ($flavour =~ /64/) {			######## 64-bit code
     }
 }
 
-close STDOUT or die "error closing STDOUT";
+close STDOUT or die "error closing STDOUT: $!";

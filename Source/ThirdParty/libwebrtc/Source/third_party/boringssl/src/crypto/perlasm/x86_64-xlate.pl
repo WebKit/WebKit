@@ -59,6 +59,10 @@
 # 9. .init segment is allowed to contain calls to functions only.
 # a. If function accepts more than 4 arguments *and* >4th argument
 #    is declared as non 64-bit value, do clear its upper part.
+#
+# TODO(https://crbug.com/boringssl/259): The dual-ABI mechanism described here
+# does not quite unwind correctly on Windows. The seh_directive logic below has
+# the start of a new mechanism.
 
 
 use strict;
@@ -72,6 +76,7 @@ open STDOUT,">$output" || die "can't open $output: $!"
 
 my $gas=1;	$gas=0 if ($output =~ /\.asm$/);
 my $elf=1;	$elf=0 if (!$gas);
+my $apple=0;
 my $win64=0;
 my $prefix="";
 my $decor=".L";
@@ -91,7 +96,7 @@ if    ($flavour eq "mingw64")	{ $gas=1; $elf=0; $win64=1;
 				  $prefix=`echo __USER_LABEL_PREFIX__ | $ENV{CC} -E -P -`;
 				  $prefix =~ s|\R$||; # Better chomp
 				}
-elsif ($flavour eq "macosx")	{ $gas=1; $elf=0; $prefix="_"; $decor="L\$"; }
+elsif ($flavour eq "macosx")	{ $gas=1; $elf=0; $apple=1; $prefix="_"; $decor="L\$"; }
 elsif ($flavour eq "masm")	{ $gas=0; $elf=0; $masm=$masmref; $win64=1; $decor="\$L\$"; }
 elsif ($flavour eq "nasm")	{ $gas=0; $elf=0; $nasm=$nasmref; $win64=1; $decor="\$L\$"; $PTR=""; }
 elsif (!$gas)			{ die "unknown flavour $flavour"; }
@@ -709,15 +714,351 @@ my %globals;
 	return ($elf ? $self->{value} : undef);
     }
 }
+{ package seh_directive;
+    # This implements directives, like MASM's, for specifying Windows unwind
+    # codes. See https://learn.microsoft.com/en-us/cpp/build/exception-handling-x64?view=msvc-170
+    # for details on the Windows unwind mechanism. Unlike MASM's directives, we
+    # have no .seh_endprolog directive. Instead, the last prolog directive is
+    # implicitly the end of the prolog.
+    #
+    # TODO(https://crbug.com/boringssl/259): For now, SEH directives are ignored
+    # on non-Windows platforms. This means functions need to specify both CFI
+    # and SEH directives, often redundantly. Ideally we'd abstract between the
+    # two. E.g., we can synthesize CFI from SEH prologs, but SEH does not
+    # annotate epilogs, so we'd need to combine parts from both. Or we can
+    # restrict ourselves to a subset of CFI and synthesize SEH from CFI.
+    #
+    # Additionally, this only supports @abi-omnipotent functions. It is
+    # incompatible with the automatic calling convention conversion. The main
+    # complication is the current scheme modifies RDI and RSI (non-volatile on
+    # Windows) at the start of the function, and saves them in the parameter
+    # stack area. This can be expressed with .seh_savereg, but .seh_savereg is
+    # only usable late in the prolog. However, unwind information gives enough
+    # information to locate the parameter stack area at any point in the
+    # function, so we can defer conversion or implement other schemes.
+
+    my $UWOP_PUSH_NONVOL = 0;
+    my $UWOP_ALLOC_LARGE = 1;
+    my $UWOP_ALLOC_SMALL = 2;
+    my $UWOP_SET_FPREG = 3;
+    my $UWOP_SAVE_NONVOL = 4;
+    my $UWOP_SAVE_NONVOL_FAR = 5;
+    my $UWOP_SAVE_XMM128 = 8;
+    my $UWOP_SAVE_XMM128_FAR = 9;
+
+    my %UWOP_REG_TO_NUMBER = ("%rax" => 0, "%rcx" => 1, "%rdx" => 2, "%rbx" => 3,
+			      "%rsp" => 4, "%rbp" => 5, "%rsi" => 6, "%rdi" => 7,
+			      map(("%r$_" => $_), (8..15)));
+    my %UWOP_NUMBER_TO_REG = reverse %UWOP_REG_TO_NUMBER;
+
+    # The contents of the pdata and xdata sections so far.
+    my ($xdata, $pdata) = ("", "");
+
+    my %info;
+
+    my $next_label = 0;
+    my $current_label_func = "";
+
+    # _new_unwind_label allocates a new label, unique to the file.
+    sub _new_unwind_label {
+	my ($name) = (@_);
+	# Labels only need to be unique, but to make diffs easier to read, scope
+	# them all under the current function.
+	my $func = $current_function->{name};
+	if ($func ne $current_label_func) {
+	    $current_label_func = $func;
+	    $next_label = 0;
+	}
+
+	my $num = $next_label++;
+	return ".LSEH_${name}_${func}_${num}";
+    }
+
+    sub _check_in_proc {
+	die "Missing .seh_startproc directive" unless %info;
+    }
+
+    sub _check_not_in_proc {
+	die "Missing .seh_endproc directive" if %info;
+    }
+
+    sub _startproc {
+	_check_not_in_proc();
+	if ($current_function->{abi} eq "svr4") {
+	    die "SEH directives can only be used with \@abi-omnipotent";
+	}
+
+	my $info_label = _new_unwind_label("info");
+	my $start_label = _new_unwind_label("begin");
+	%info = (
+	    # info_label is the label of the function's entry in .xdata.
+	    info_label => $info_label,
+	    # start_label is the start of the function.
+	    start_label => $start_label,
+	    # endprolog is the label of the last unwind code in the function.
+	    endprolog => $start_label,
+	    # unwind_codes contains the textual representation of the
+	    # unwind codes in the function so far.
+	    unwind_codes => "",
+	    # num_codes is the number of 16-bit words in unwind_codes.
+	    num_codes => 0,
+	    # frame_reg is the number of the frame register, or zero if
+	    # there is none.
+	    frame_reg => 0,
+	    # frame_offset is the offset into the fixed part of the stack that
+	    # the frame register points into.
+	    frame_offset => 0,
+	    # has_offset is whether directives taking an offset have
+	    # been used. This is used to check that such directives
+	    # come after the fixed portion of the stack frame is established.
+	    has_offset => 0,
+	    # has_nonpushreg is whether directives other than
+	    # .seh_pushreg have been used. This is used to check that
+	    # .seh_pushreg directives are first.
+	    has_nonpushreg => 0,
+	);
+	return $start_label;
+    }
+
+    sub _add_unwind_code {
+	my ($op, $value, @extra) = @_;
+	_check_in_proc();
+	if ($op != $UWOP_PUSH_NONVOL) {
+	    $info{has_nonpushreg} = 1;
+	} elsif ($info{has_nonpushreg}) {
+	    die ".seh_pushreg directives must appear first in the prolog";
+	}
+
+	my $label = _new_unwind_label("prolog");
+	# Encode an UNWIND_CODE structure. See
+	# https://learn.microsoft.com/en-us/cpp/build/exception-handling-x64?view=msvc-170#struct-unwind_code
+	my $encoded = $op | ($value << 4);
+	my $codes = <<____;
+	.byte	$label-$info{start_label}
+	.byte	$encoded
+____
+	# Some opcodes need additional values to encode themselves.
+	foreach (@extra) {
+	    $codes .= "\t.value\t$_\n";
+	}
+
+	$info{num_codes} += 1 + scalar(@extra);
+	# Unwind codes are listed in reverse order.
+	$info{unwind_codes} = $codes . $info{unwind_codes};
+	# Track the label of the last unwind code. It implicitly is the end of
+	# the prolog. MASM has an endprolog directive, but it seems to be
+	# unnecessary.
+	$info{endprolog} = $label;
+	return $label;
+    }
+
+    sub _updating_fixed_allocation {
+	_check_in_proc();
+	if ($info{frame_reg} != 0) {
+	    # Windows documentation does not explicitly forbid .seh_allocstack
+	    # after .seh_setframe, but it appears to have no effect. Offsets are
+	    # still relative to the fixed allocation when the frame register was
+	    # established.
+	    die "fixed allocation may not be increased after .seh_setframe";
+	}
+	if ($info{has_offset}) {
+	    # Windows documentation does not explicitly forbid .seh_savereg
+	    # before .seh_allocstack, but it does not work very well. Offsets
+	    # are relative to the top of the final fixed allocation, not where
+	    # RSP currently is.
+	    die "directives with an offset must come after the fixed allocation is established.";
+	}
+    }
+
+    sub _endproc {
+	_check_in_proc();
+	if ($info{num_codes} == 0) {
+	    # If a Windows function has no directives (i.e. it doesn't touch the
+	    # stack), it is a leaf function and is not expected to appear in
+	    # .pdata or .xdata.
+	    die ".seh_endproc found with no unwind codes";
+	}
+
+	my $end_label = _new_unwind_label("end");
+	# Encode a RUNTIME_FUNCTION. See
+	# https://learn.microsoft.com/en-us/cpp/build/exception-handling-x64?view=msvc-170#struct-runtime_function
+	$pdata .= <<____;
+	.rva	$info{start_label}
+	.rva	$end_label
+	.rva	$info{info_label}
+
+____
+
+	# Encode an UNWIND_INFO. See
+	# https://learn.microsoft.com/en-us/cpp/build/exception-handling-x64?view=msvc-170#struct-unwind_info
+	my $frame_encoded = $info{frame_reg} | (($info{frame_offset} / 16) << 4);
+	$xdata .= <<____;
+$info{info_label}:
+	.byte	1	# version 1, no flags
+	.byte	$info{endprolog}-$info{start_label}
+	.byte	$info{num_codes}
+	.byte	$frame_encoded
+$info{unwind_codes}
+____
+
+	%info = ();
+	return $end_label;
+    }
+
+    sub re {
+	my ($class, $line) = @_;
+	if ($$line =~ s/^\s*\.seh_(\w+)\s*//) {
+	    my $dir = $1;
+	    if (!$win64) {
+		$$line = "";
+		return;
+	    }
+
+	    my $label;
+	    SWITCH: for ($dir) {
+		/^startproc$/ && do {
+		    $label = _startproc();
+		    last;
+		};
+		/^pushreg$/ && do {
+		    $$line =~ /^(%\w+)\s*$/ or die "could not parse .seh_$dir";
+		    my $reg_num = $UWOP_REG_TO_NUMBER{$1} or die "unknown register $1";
+		    _updating_fixed_allocation();
+		    $label = _add_unwind_code($UWOP_PUSH_NONVOL, $reg_num);
+		    last;
+		};
+		/^allocstack$/ && do {
+		    my $num = eval($$line);
+		    if ($num <= 0 || $num % 8 != 0) {
+			die "invalid stack allocation: $num";
+		    }
+		    _updating_fixed_allocation();
+		    if ($num <= 128) {
+			$label = _add_unwind_code($UWOP_ALLOC_SMALL, ($num - 8) / 8);
+		    } elsif ($num < 512 * 1024) {
+			$label = _add_unwind_code($UWOP_ALLOC_LARGE, 0, $num / 8);
+		    } elsif ($num < 4 * 1024 * 1024 * 1024) {
+			$label = _add_unwind_code($UWOP_ALLOC_LARGE, 1, $num >> 16, $num & 0xffff);
+		    } else {
+			die "stack allocation too large: $num"
+		    }
+		    last;
+		};
+		/^setframe$/ && do {
+		    if ($info{frame_reg} != 0) {
+			die "duplicate .seh_setframe directive";
+		    }
+		    if ($info{has_offset}) {
+			die "directives with with an offset must come after .seh_setframe.";
+		    }
+		    $$line =~ /(%\w+)\s*,\s*(.+)/ or die "could not parse .seh_$dir";
+		    my $reg_num = $UWOP_REG_TO_NUMBER{$1} or die "unknown register $1";
+		    my $offset = eval($2);
+		    if ($offset < 0 || $offset % 16 != 0 || $offset > 240) {
+			die "invalid offset: $offset";
+		    }
+		    $info{frame_reg} = $reg_num;
+		    $info{frame_offset} = $offset;
+		    $label = _add_unwind_code($UWOP_SET_FPREG, 0);
+		    last;
+		};
+		/^savereg$/ && do {
+		    $$line =~ /(%\w+)\s*,\s*(.+)/ or die "could not parse .seh_$dir";
+		    my $reg_num = $UWOP_REG_TO_NUMBER{$1} or die "unknown register $1";
+		    my $offset = eval($2);
+		    if ($offset < 0 || $offset % 8 != 0) {
+			die "invalid offset: $offset";
+		    }
+		    if ($offset < 8 * 65536) {
+			$label = _add_unwind_code($UWOP_SAVE_NONVOL, $reg_num, $offset / 8);
+		    } else {
+			$label = _add_unwind_code($UWOP_SAVE_NONVOL_FAR, $reg_num, $offset >> 16, $offset & 0xffff);
+		    }
+		    $info{has_offset} = 1;
+		    last;
+		};
+		/^savexmm128$/ && do {
+		    $$line =~ /%xmm(\d+)\s*,\s*(.+)/ or die "could not parse .seh_$dir";
+		    my $reg_num = $1;
+		    my $offset = eval($2);
+		    if ($offset < 0 || $offset % 16 != 0) {
+			die "invalid offset: $offset";
+		    }
+		    if ($offset < 16 * 65536) {
+			$label = _add_unwind_code($UWOP_SAVE_XMM128, $reg_num, $offset / 16);
+		    } else {
+			$label = _add_unwind_code($UWOP_SAVE_XMM128_FAR, $reg_num, $offset >> 16, $offset & 0xffff);
+		    }
+		    $info{has_offset} = 1;
+		    last;
+		};
+		/^endproc$/ && do {
+		    $label = _endproc();
+		    last;
+		};
+		die "unknown SEH directive .seh_$dir";
+	    }
+
+	    # All SEH directives compile to labels inline. The other data is
+	    # emitted later.
+	    $$line = "";
+	    $label .= ":";
+	    return label->re(\$label);
+	}
+    }
+
+    sub pdata_and_xdata {
+	return "" unless $win64;
+
+	my $ret = "";
+	if ($pdata ne "") {
+	    $ret .= <<____;
+.section	.pdata
+.align	4
+$pdata
+____
+	}
+	if ($xdata ne "") {
+	    $ret .= <<____;
+.section	.xdata
+.align	4
+$xdata
+____
+	}
+	return $ret;
+    }
+}
 { package directive;	# pick up directives, which start with .
+    my %sections;
+    sub nasm_section {
+	my ($name, $qualifiers) = @_;
+	my $ret = "section\t$name";
+	if (exists $sections{$name}) {
+	    # Work around https://bugzilla.nasm.us/show_bug.cgi?id=3392701. Only
+	    # emit section qualifiers the first time a section is referenced.
+	    # For all subsequent references, require the qualifiers match and
+	    # omit them.
+	    #
+	    # See also https://crbug.com/1422018 and b/270643835.
+	    my $old = $sections{$name};
+	    die "Inconsistent qualifiers: $qualifiers vs $old" if ($qualifiers ne "" && $qualifiers ne $old);
+	} else {
+	    $sections{$name} = $qualifiers;
+	    if ($qualifiers ne "") {
+		$ret .= " $qualifiers";
+	    }
+	}
+	return $ret;
+    }
     sub re {
 	my	($class, $line) = @_;
 	my	$self = {};
 	my	$ret;
 	my	$dir;
 
-	# chain-call to cfi_directive
+	# chain-call to cfi_directive and seh_directive.
 	$ret = cfi_directive->re($line) and return $ret;
+	$ret = seh_directive->re($line) and return $ret;
 
 	if ($$line =~ /^\s*(\.\w+)/) {
 	    bless $self,$class;
@@ -787,6 +1128,9 @@ my %globals;
 		    $self->{value} = ".p2align\t" . (log($$line)/log(2));
 		} elsif ($dir eq ".section") {
 		    $current_segment=$$line;
+		    if (!$elf && $current_segment eq ".rodata") {
+			if	($flavour eq "macosx") { $self->{value} = ".section\t__DATA,__const"; }
+		    }
 		    if (!$elf && $current_segment eq ".init") {
 			if	($flavour eq "macosx")	{ $self->{value} = ".mod_init_func"; }
 			elsif	($flavour eq "mingw64")	{ $self->{value} = ".section\t.ctors"; }
@@ -814,7 +1158,7 @@ my %globals;
 	    SWITCH: for ($dir) {
 		/\.text/    && do { my $v=undef;
 				    if ($nasm) {
-					$v="section	.text code align=64\n";
+					$v=nasm_section(".text", "code align=64")."\n";
 				    } else {
 					$v="$current_segment\tENDS\n" if ($current_segment);
 					$current_segment = ".text\$";
@@ -827,7 +1171,7 @@ my %globals;
 				  };
 		/\.data/    && do { my $v=undef;
 				    if ($nasm) {
-					$v="section	.data data align=8\n";
+					$v=nasm_section(".data", "data align=8")."\n";
 				    } else {
 					$v="$current_segment\tENDS\n" if ($current_segment);
 					$current_segment = "_DATA";
@@ -839,18 +1183,20 @@ my %globals;
 		/\.section/ && do { my $v=undef;
 				    $$line =~ s/([^,]*).*/$1/;
 				    $$line = ".CRT\$XCU" if ($$line eq ".init");
+				    $$line = ".rdata" if ($$line eq ".rodata");
 				    if ($nasm) {
-					$v="section	$$line";
-					if ($$line=~/\.([px])data/) {
-					    $v.=" rdata align=";
-					    $v.=$1 eq "p"? 4 : 8;
+					my $qualifiers = "";
+					if ($$line=~/\.([prx])data/) {
+					    $qualifiers = "rdata align=";
+					    $qualifiers .= $1 eq "p"? 4 : 8;
 					} elsif ($$line=~/\.CRT\$/i) {
-					    $v.=" rdata align=8";
+					    $qualifiers = "rdata align=8";
 					}
+					$v = nasm_section($$line, $qualifiers);
 				    } else {
 					$v="$current_segment\tENDS\n" if ($current_segment);
 					$v.="$$line\tSEGMENT";
-					if ($$line=~/\.([px])data/) {
+					if ($$line=~/\.([prx])data/) {
 					    $v.=" READONLY";
 					    $v.=" ALIGN(".($1 eq "p" ? 4 : 8).")" if ($masm>=$masmref);
 					} elsif ($$line=~/\.CRT\$/i) {
@@ -908,11 +1254,11 @@ my %globals;
 				    map(s/(0b[0-1]+)/oct($1)/eig,@str);
 				    map(s/0x([0-9a-f]+)/0$1h/ig,@str) if ($masm);
 				    while ($#str>15) {
-					$self->{value}.="DB\t"
+					$self->{value}.="\tDB\t"
 						.join(",",@str[0..15])."\n";
 					foreach (0..15) { shift @str; }
 				    }
-				    $self->{value}.="DB\t"
+				    $self->{value}.="\tDB\t"
 						.join(",",@str) if (@str);
 				    last;
 				  };
@@ -1136,7 +1482,7 @@ my $endbranch = sub {
 ########################################################################
 
 {
-  my $comment = "#";
+  my $comment = "//";
   $comment = ";" if ($masm || $nasm);
   print <<___;
 $comment This file is generated from a similarly-named Perl script in the BoringSSL
@@ -1146,15 +1492,17 @@ ___
 }
 
 if ($nasm) {
+    die "unknown target" unless ($win64);
     print <<___;
+\%ifidn __OUTPUT_FORMAT__, win64
 default	rel
-%define XMMWORD
-%define YMMWORD
-%define ZMMWORD
+\%define XMMWORD
+\%define YMMWORD
+\%define ZMMWORD
 
-%ifdef BORINGSSL_PREFIX
-%include "boringssl_prefix_symbols_nasm.inc"
-%endif
+\%ifdef BORINGSSL_PREFIX
+\%include "boringssl_prefix_symbols_nasm.inc"
+\%endif
 ___
 } elsif ($masm) {
     print <<___;
@@ -1163,22 +1511,32 @@ ___
 }
 
 if ($gas) {
-	print <<___;
+    my $target;
+    if ($elf) {
+        # The "elf" target is really ELF with SysV ABI, but every ELF platform
+        # uses the SysV ABI.
+        $target = "defined(__ELF__)";
+    } elsif ($apple) {
+        $target = "defined(__APPLE__)";
+    } else {
+        die "unknown target: $flavour";
+    }
+    print <<___;
 #if defined(__has_feature)
 #if __has_feature(memory_sanitizer) && !defined(OPENSSL_NO_ASM)
 #define OPENSSL_NO_ASM
 #endif
 #endif
 
-#if defined(__x86_64__) && !defined(OPENSSL_NO_ASM)
+#if defined(__x86_64__) && !defined(OPENSSL_NO_ASM) && $target
 #if defined(BORINGSSL_PREFIX)
 #include <boringssl_prefix_symbols_asm.h>
 #endif
 ___
 }
 
-while(defined(my $line=<>)) {
-
+sub process_line {
+    my $line = shift;
     $line =~ s|\R$||;           # Better chomp
 
     if ($nasm) {
@@ -1258,13 +1616,36 @@ while(defined(my $line=<>)) {
     print $line,"\n";
 }
 
-print "\n$current_segment\tENDS\n"	if ($current_segment && $masm);
-print "END\n"				if ($masm);
-print "#endif\n"			if ($gas);
-# See https://www.airs.com/blog/archives/518.
-print ".section\t.note.GNU-stack,\"\",\@progbits\n" if ($elf);
+while(defined(my $line=<>)) {
+    process_line($line);
+}
+foreach my $line (split(/\n/, seh_directive->pdata_and_xdata())) {
+    process_line($line);
+}
 
-close STDOUT;
+print "\n$current_segment\tENDS\n"	if ($current_segment && $masm);
+if ($masm) {
+    print "END\n";
+} elsif ($gas) {
+    print <<___;
+#endif
+#if defined(__ELF__)
+// See https://www.airs.com/blog/archives/518.
+.section .note.GNU-stack,"",\%progbits
+#endif
+___
+} elsif ($nasm) {
+    print <<___;
+\%else
+; Work around https://bugzilla.nasm.us/show_bug.cgi?id=3392738
+ret
+\%endif
+___
+} else {
+    die "unknown assembler";
+}
+
+close STDOUT or die "error closing STDOUT: $!";
 
 #################################################
 # Cross-reference x86_64 ABI "card"

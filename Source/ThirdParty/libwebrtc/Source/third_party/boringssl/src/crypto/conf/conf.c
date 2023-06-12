@@ -68,6 +68,7 @@
 #include "conf_def.h"
 #include "internal.h"
 #include "../internal.h"
+#include "../lhash/internal.h"
 
 
 DEFINE_LHASH_OF(CONF_VALUE)
@@ -76,12 +77,16 @@ struct conf_st {
   LHASH_OF(CONF_VALUE) *data;
 };
 
+static const char kDefaultSectionName[] = "default";
+
 // The maximum length we can grow a value to after variable expansion. 64k
 // should be more than enough for all reasonable uses.
 #define MAX_CONF_VALUE_LENGTH 65536
 
 static uint32_t conf_value_hash(const CONF_VALUE *v) {
-  return (lh_strhash(v->section) << 2) ^ lh_strhash(v->name);
+  const uint32_t section_hash = v->section ? OPENSSL_strhash(v->section) : 0;
+  const uint32_t name_hash = v->name ? OPENSSL_strhash(v->name) : 0;
+  return (section_hash << 2) ^ name_hash;
 }
 
 static int conf_value_cmp(const CONF_VALUE *a, const CONF_VALUE *b) {
@@ -127,7 +132,6 @@ CONF *NCONF_new(void *method) {
 CONF_VALUE *CONF_VALUE_new(void) {
   CONF_VALUE *v = OPENSSL_malloc(sizeof(CONF_VALUE));
   if (!v) {
-    OPENSSL_PUT_ERROR(CONF, ERR_R_MALLOC_FAILURE);
     return NULL;
   }
   OPENSSL_memset(v, 0, sizeof(CONF_VALUE));
@@ -155,12 +159,14 @@ static void value_free(CONF_VALUE *value) {
   OPENSSL_free(value);
 }
 
+static void value_free_arg(CONF_VALUE *value, void *arg) { value_free(value); }
+
 void NCONF_free(CONF *conf) {
   if (conf == NULL || conf->data == NULL) {
     return;
   }
 
-  lh_CONF_VALUE_doall(conf->data, value_free);
+  lh_CONF_VALUE_doall_arg(conf->data, value_free_arg, NULL);
   lh_CONF_VALUE_free(conf->data);
   OPENSSL_free(conf);
 }
@@ -333,7 +339,6 @@ static int str_copy(CONF *conf, char *section, char **pto, char *from) {
         goto err;
       }
       if (!BUF_MEM_grow_clean(buf, newsize)) {
-        OPENSSL_PUT_ERROR(CONF, ERR_R_MALLOC_FAILURE);
         goto err;
       }
       while (*p) {
@@ -378,8 +383,9 @@ static CONF_VALUE *get_section(const CONF *conf, const char *section) {
   return lh_CONF_VALUE_retrieve(conf->data, &template);
 }
 
-STACK_OF(CONF_VALUE) *NCONF_get_section(const CONF *conf, const char *section) {
-  CONF_VALUE *section_value = get_section(conf, section);
+const STACK_OF(CONF_VALUE) *NCONF_get_section(const CONF *conf,
+                                              const char *section) {
+  const CONF_VALUE *section_value = get_section(conf, section);
   if (section_value == NULL) {
     return NULL;
   }
@@ -389,6 +395,10 @@ STACK_OF(CONF_VALUE) *NCONF_get_section(const CONF *conf, const char *section) {
 const char *NCONF_get_string(const CONF *conf, const char *section,
                              const char *name) {
   CONF_VALUE template, *value;
+
+  if (section == NULL) {
+    section = kDefaultSectionName;
+  }
 
   OPENSSL_memset(&template, 0, sizeof(template));
   template.section = (char *) section;
@@ -538,9 +548,8 @@ static int def_load_bio(CONF *conf, BIO *in, long *out_error_line) {
     goto err;
   }
 
-  section = OPENSSL_strdup("default");
+  section = OPENSSL_strdup(kDefaultSectionName);
   if (section == NULL) {
-    OPENSSL_PUT_ERROR(CONF, ERR_R_MALLOC_FAILURE);
     goto err;
   }
 
@@ -675,7 +684,6 @@ static int def_load_bio(CONF *conf, BIO *in, long *out_error_line) {
       }
       v->name = OPENSSL_strdup(pname);
       if (v->name == NULL) {
-        OPENSSL_PUT_ERROR(CONF, ERR_R_MALLOC_FAILURE);
         goto err;
       }
       if (!str_copy(conf, psection, &(v->value), start)) {
@@ -694,7 +702,6 @@ static int def_load_bio(CONF *conf, BIO *in, long *out_error_line) {
         tv = sv;
       }
       if (add_string(conf, tv, v) == 0) {
-        OPENSSL_PUT_ERROR(CONF, ERR_R_MALLOC_FAILURE);
         goto err;
       }
       v = NULL;
@@ -755,7 +762,7 @@ int NCONF_load_bio(CONF *conf, BIO *bio, long *out_error_line) {
 }
 
 int CONF_parse_list(const char *list, char sep, int remove_whitespace,
-                    int (*list_cb)(const char *elem, int len, void *usr),
+                    int (*list_cb)(const char *elem, size_t len, void *usr),
                     void *arg) {
   int ret;
   const char *lstart, *tmpend, *p;
@@ -768,7 +775,7 @@ int CONF_parse_list(const char *list, char sep, int remove_whitespace,
   lstart = list;
   for (;;) {
     if (remove_whitespace) {
-      while (*lstart && isspace((unsigned char)*lstart)) {
+      while (*lstart && OPENSSL_isspace((unsigned char)*lstart)) {
         lstart++;
       }
     }
@@ -782,7 +789,7 @@ int CONF_parse_list(const char *list, char sep, int remove_whitespace,
         tmpend = lstart + strlen(lstart) - 1;
       }
       if (remove_whitespace) {
-        while (isspace((unsigned char)*tmpend)) {
+        while (OPENSSL_isspace((unsigned char)*tmpend)) {
           tmpend--;
         }
       }

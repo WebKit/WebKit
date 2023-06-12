@@ -286,7 +286,6 @@ BIGNUM *BN_mod_inverse(BIGNUM *out, const BIGNUM *a, const BIGNUM *n,
   if (out == NULL) {
     new_out = BN_new();
     if (new_out == NULL) {
-      OPENSSL_PUT_ERROR(BN, ERR_R_MALLOC_FAILURE);
       return NULL;
     }
     out = new_out;

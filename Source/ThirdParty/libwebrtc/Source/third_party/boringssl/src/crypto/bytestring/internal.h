@@ -54,8 +54,8 @@ OPENSSL_EXPORT int CBS_asn1_ber_to_der(CBS *in, CBS *out,
 // It returns one on success and zero otherwise.
 OPENSSL_EXPORT int CBS_get_asn1_implicit_string(CBS *in, CBS *out,
                                                 uint8_t **out_storage,
-                                                unsigned outer_tag,
-                                                unsigned inner_tag);
+                                                CBS_ASN1_TAG outer_tag,
+                                                CBS_ASN1_TAG inner_tag);
 
 // CBB_finish_i2d calls |CBB_finish| on |cbb| which must have been initialized
 // with |CBB_init|. If |outp| is not NULL then the result is written to |*outp|

@@ -112,6 +112,45 @@ struct evp_aead_st {
                     size_t extra_in_len);
 };
 
+struct evp_cipher_st {
+  // type contains a NID identifying the cipher. (e.g. NID_aes_128_gcm.)
+  int nid;
+
+  // block_size contains the block size, in bytes, of the cipher, or 1 for a
+  // stream cipher.
+  unsigned block_size;
+
+  // key_len contains the key size, in bytes, for the cipher. If the cipher
+  // takes a variable key size then this contains the default size.
+  unsigned key_len;
+
+  // iv_len contains the IV size, in bytes, or zero if inapplicable.
+  unsigned iv_len;
+
+  // ctx_size contains the size, in bytes, of the per-key context for this
+  // cipher.
+  unsigned ctx_size;
+
+  // flags contains the OR of a number of flags. See |EVP_CIPH_*|.
+  uint32_t flags;
+
+  // app_data is a pointer to opaque, user data.
+  void *app_data;
+
+  int (*init)(EVP_CIPHER_CTX *ctx, const uint8_t *key, const uint8_t *iv,
+              int enc);
+
+  int (*cipher)(EVP_CIPHER_CTX *ctx, uint8_t *out, const uint8_t *in,
+                size_t inl);
+
+  // cleanup, if non-NULL, releases memory associated with the context. It is
+  // called if |EVP_CTRL_INIT| succeeds. Note that |init| may not have been
+  // called at this point.
+  void (*cleanup)(EVP_CIPHER_CTX *);
+
+  int (*ctrl)(EVP_CIPHER_CTX *, int type, int arg, void *ptr);
+};
+
 // aes_ctr_set_key initialises |*aes_key| using |key_bytes| bytes from |key|,
 // where |key_bytes| must either be 16, 24 or 32. If not NULL, |*out_block| is
 // set to a function that encrypts single blocks. If not NULL, |*gcm_key| is

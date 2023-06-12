@@ -12,9 +12,16 @@
 # OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
 # CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE. */
 
-# This is a rough parser for x86-64 and ppc64le assembly designed to work with
+# This is a rough parser for x86-64 and aarch64 assembly designed to work with
 # https://github.com/pointlander/peg. delocate.go has a go:generate line for
 # rebuilding delocate.peg.go from this file.
+
+# To regenerate delocate.peg.go:
+#
+# go install github.com/pointlander/peg@latest
+# ~/go/bin/peg <path-to-this-file>
+#
+# this will generate delocate.peg.go next to delocate.peg.
 
 package main
 
@@ -44,7 +51,7 @@ SymbolShift <- ('<<' / '>>') WS? [0-9]+
 SymbolArg <- (OpenParen WS?)? (
                Offset /
                SymbolType /
-               (Offset / LocalSymbol / SymbolName / Dot) WS? Operator WS? (Offset / LocalSymbol / SymbolName) /
+               (Offset / LocalSymbol / SymbolName / Dot) (WS? Operator WS? (Offset / LocalSymbol / SymbolName))* /
                LocalSymbol TCMarker? /
                SymbolName Offset /
                SymbolName TCMarker?)
@@ -77,8 +84,8 @@ RegisterOrConstant <- (('%'[[A-Z]][[A-Z0-9]]*) /
                        ('#' '~'? '(' [0-9] WS? "<<" WS? [0-9] ')' ) /
                        ARMRegister)
                       ![fb:(+\-]
-ARMConstantTweak <- ("lsl" / "sxtw" / "uxtw" / "uxtb" / "lsr" / "ror" / "asr") (WS '#' Offset)?
-ARMRegister <- "sp" / ([xwdqs] [0-9] [0-9]?) / "xzr" / "wzr" / ARMVectorRegister / ('{' WS? ARMVectorRegister (',' WS? ARMVectorRegister)* WS? '}' ('[' [0-9] [0-9]? ']')? )
+ARMConstantTweak <- (([us] "xt" [xwhb]) / "lsl" / "lsr" / "ror" / "asr") (WS '#' Offset)?
+ARMRegister <- "sp" / ([xwdqshb] [0-9] [0-9]?) / "xzr" / "wzr" / "NZCV" / ARMVectorRegister / ('{' WS? ARMVectorRegister (',' WS? ARMVectorRegister)* WS? '}' ('[' [0-9] [0-9]? ']')? )
 ARMVectorRegister <- "v" [0-9] [0-9]? ('.' [0-9]* [bsdhq] ('[' [0-9] [0-9]? ']')? )?
 # Compilers only output a very limited number of expression forms. Rather than
 # implement a full expression parser, this enumerate those forms plus a few
@@ -94,7 +101,7 @@ MemoryRef <- (SymbolRef BaseIndexScale /
               BaseIndexScale)
 SymbolRef <- (Offset* '+')? (LocalSymbol / SymbolName) Offset* ('@' Section Offset*)?
 Low12BitsSymbolRef <- ":lo12:" (LocalSymbol / SymbolName) Offset?
-ARMBaseIndexScale <- '[' ARMRegister (',' WS? (('#' Offset ('*' [0-9]+)? ) / ARMGOTLow12 / Low12BitsSymbolRef / ARMRegister) (',' WS? ARMConstantTweak)?)? ']' ARMPostincrement?
+ARMBaseIndexScale <- '[' ARMRegister (',' WS? (('#' Offset (('*' [0-9]+) / ('*' '(' [0-9]+ Operator [0-9]+ ')') / (('+' [0-9]+)*))? ) / ARMGOTLow12 / Low12BitsSymbolRef / ARMRegister) (',' WS? ARMConstantTweak)?)? ']' ARMPostincrement?
 ARMGOTLow12 <- ":got_lo12:" SymbolName
 ARMPostincrement <- '!'
 BaseIndexScale <- '(' RegisterOrConstant? WS? (',' WS? RegisterOrConstant WS? (',' [0-9]+)? )? ')'

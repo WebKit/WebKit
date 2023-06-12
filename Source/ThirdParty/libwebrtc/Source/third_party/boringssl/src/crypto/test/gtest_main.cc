@@ -17,7 +17,6 @@
 
 #include <gtest/gtest.h>
 
-#include <openssl/cpu.h>
 #include <openssl/rand.h>
 
 #include "abi_test.h"

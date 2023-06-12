@@ -41,7 +41,6 @@ struct TestState {
   // packeted_bio is the packeted BIO which simulates read timeouts.
   BIO *packeted_bio = nullptr;
   std::unique_ptr<MockQuicTransport> quic_transport;
-  bssl::UniquePtr<EVP_PKEY> channel_id;
   bool cert_ready = false;
   bssl::UniquePtr<SSL_SESSION> session;
   bssl::UniquePtr<SSL_SESSION> pending_session;

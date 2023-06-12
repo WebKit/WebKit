@@ -79,7 +79,22 @@ extern "C" {
 // documented, functions which take a |const| pointer are non-mutating and
 // functions which take a non-|const| pointer are mutating.
 
-// RSA_new returns a new, empty |RSA| object or NULL on error.
+// RSA_new_public_key returns a new |RSA| object containing a public key with
+// the specified parameters, or NULL on error or invalid input.
+OPENSSL_EXPORT RSA *RSA_new_public_key(const BIGNUM *n, const BIGNUM *e);
+
+// RSA_new_private_key returns a new |RSA| object containing a private key with
+// the specified parameters, or NULL on error or invalid input. All parameters
+// are mandatory and may not be NULL.
+//
+// This function creates standard RSA private keys with CRT parameters.
+OPENSSL_EXPORT RSA *RSA_new_private_key(const BIGNUM *n, const BIGNUM *e,
+                                        const BIGNUM *d, const BIGNUM *p,
+                                        const BIGNUM *q, const BIGNUM *dmp1,
+                                        const BIGNUM *dmq1, const BIGNUM *iqmp);
+
+// RSA_new returns a new, empty |RSA| object or NULL on error. Prefer using
+// |RSA_new_public_key| or |RSA_new_private_key| to import an RSA key.
 OPENSSL_EXPORT RSA *RSA_new(void);
 
 // RSA_new_method acts the same as |RSA_new| but takes an explicit |ENGINE|.
@@ -147,6 +162,20 @@ OPENSSL_EXPORT void RSA_get0_factors(const RSA *rsa, const BIGNUM **out_p,
 OPENSSL_EXPORT void RSA_get0_crt_params(const RSA *rsa, const BIGNUM **out_dmp1,
                                         const BIGNUM **out_dmq1,
                                         const BIGNUM **out_iqmp);
+
+
+// Setting individual properties.
+//
+// These functions allow setting individual properties of an |RSA| object. This
+// is typically used with |RSA_new| to construct an RSA key field by field.
+// Prefer instead to use |RSA_new_public_key| and |RSA_new_private_key|. These
+// functions defer some initialization to the first use of an |RSA| object. This
+// means invalid inputs may be caught late.
+//
+// TODO(crbug.com/boringssl/316): This deferred initialization also causes
+// performance problems in multi-threaded applications. The preferred APIs
+// currently have the same issues, but they will initialize eagerly in the
+// future.
 
 // RSA_set0_key sets |rsa|'s modulus, public exponent, and private exponent to
 // |n|, |e|, and |d| respectively, if non-NULL. On success, it takes ownership
@@ -298,8 +327,8 @@ OPENSSL_EXPORT int RSA_private_decrypt(size_t flen, const uint8_t *from,
 // |hash_nid|. Passing unhashed inputs will not result in a secure signature
 // scheme.
 OPENSSL_EXPORT int RSA_sign(int hash_nid, const uint8_t *digest,
-                            unsigned digest_len, uint8_t *out,
-                            unsigned *out_len, RSA *rsa);
+                            size_t digest_len, uint8_t *out, unsigned *out_len,
+                            RSA *rsa);
 
 // RSA_sign_pss_mgf1 signs |digest_len| bytes from |digest| with the public key
 // from |rsa| using RSASSA-PSS with MGF1 as the mask generation function. It
@@ -400,7 +429,7 @@ OPENSSL_EXPORT int RSA_verify_pss_mgf1(RSA *rsa, const uint8_t *digest,
 // result for the signature scheme being implemented.
 //
 // WARNING: This function is a building block for a signature scheme, not a
-// complete one. Checking for arbitary strings in |out| will not result in a
+// complete one. Checking for arbitrary strings in |out| will not result in a
 // secure signature scheme.
 OPENSSL_EXPORT int RSA_verify_raw(RSA *rsa, size_t *out_len, uint8_t *out,
                                   size_t max_out, const uint8_t *in,
@@ -526,48 +555,90 @@ OPENSSL_EXPORT int RSA_add_pkcs1_prefix(uint8_t **out_msg, size_t *out_msg_len,
 
 // ASN.1 functions.
 
-// RSA_parse_public_key parses a DER-encoded RSAPublicKey structure (RFC 3447)
+// RSA_parse_public_key parses a DER-encoded RSAPublicKey structure (RFC 8017)
 // from |cbs| and advances |cbs|. It returns a newly-allocated |RSA| or NULL on
 // error.
 OPENSSL_EXPORT RSA *RSA_parse_public_key(CBS *cbs);
 
 // RSA_public_key_from_bytes parses |in| as a DER-encoded RSAPublicKey structure
-// (RFC 3447). It returns a newly-allocated |RSA| or NULL on error.
+// (RFC 8017). It returns a newly-allocated |RSA| or NULL on error.
 OPENSSL_EXPORT RSA *RSA_public_key_from_bytes(const uint8_t *in, size_t in_len);
 
 // RSA_marshal_public_key marshals |rsa| as a DER-encoded RSAPublicKey structure
-// (RFC 3447) and appends the result to |cbb|. It returns one on success and
+// (RFC 8017) and appends the result to |cbb|. It returns one on success and
 // zero on failure.
 OPENSSL_EXPORT int RSA_marshal_public_key(CBB *cbb, const RSA *rsa);
 
 // RSA_public_key_to_bytes marshals |rsa| as a DER-encoded RSAPublicKey
-// structure (RFC 3447) and, on success, sets |*out_bytes| to a newly allocated
+// structure (RFC 8017) and, on success, sets |*out_bytes| to a newly allocated
 // buffer containing the result and returns one. Otherwise, it returns zero. The
 // result should be freed with |OPENSSL_free|.
 OPENSSL_EXPORT int RSA_public_key_to_bytes(uint8_t **out_bytes, size_t *out_len,
                                            const RSA *rsa);
 
-// RSA_parse_private_key parses a DER-encoded RSAPrivateKey structure (RFC 3447)
+// RSA_parse_private_key parses a DER-encoded RSAPrivateKey structure (RFC 8017)
 // from |cbs| and advances |cbs|. It returns a newly-allocated |RSA| or NULL on
 // error.
 OPENSSL_EXPORT RSA *RSA_parse_private_key(CBS *cbs);
 
 // RSA_private_key_from_bytes parses |in| as a DER-encoded RSAPrivateKey
-// structure (RFC 3447). It returns a newly-allocated |RSA| or NULL on error.
+// structure (RFC 8017). It returns a newly-allocated |RSA| or NULL on error.
 OPENSSL_EXPORT RSA *RSA_private_key_from_bytes(const uint8_t *in,
                                                size_t in_len);
 
 // RSA_marshal_private_key marshals |rsa| as a DER-encoded RSAPrivateKey
-// structure (RFC 3447) and appends the result to |cbb|. It returns one on
+// structure (RFC 8017) and appends the result to |cbb|. It returns one on
 // success and zero on failure.
 OPENSSL_EXPORT int RSA_marshal_private_key(CBB *cbb, const RSA *rsa);
 
 // RSA_private_key_to_bytes marshals |rsa| as a DER-encoded RSAPrivateKey
-// structure (RFC 3447) and, on success, sets |*out_bytes| to a newly allocated
+// structure (RFC 8017) and, on success, sets |*out_bytes| to a newly allocated
 // buffer containing the result and returns one. Otherwise, it returns zero. The
 // result should be freed with |OPENSSL_free|.
 OPENSSL_EXPORT int RSA_private_key_to_bytes(uint8_t **out_bytes,
                                             size_t *out_len, const RSA *rsa);
+
+
+// Obscure RSA variants.
+//
+// These functions allow creating RSA keys with obscure combinations of
+// parameters.
+
+// RSA_new_private_key_no_crt behaves like |RSA_new_private_key| but constructs
+// an RSA key without CRT coefficients.
+//
+// Keys created by this function will be less performant and cannot be
+// serialized.
+OPENSSL_EXPORT RSA *RSA_new_private_key_no_crt(const BIGNUM *n, const BIGNUM *e,
+                                               const BIGNUM *d);
+
+// RSA_new_private_key_no_e behaves like |RSA_new_private_key| but constructs an
+// RSA key without CRT parameters or public exponent.
+//
+// Keys created by this function will be less performant, cannot be serialized,
+// and lack hardening measures that protect against side channels and fault
+// attacks.
+OPENSSL_EXPORT RSA *RSA_new_private_key_no_e(const BIGNUM *n, const BIGNUM *d);
+
+// RSA_new_public_key_large_e behaves like |RSA_new_public_key| but allows any
+// |e| up to |n|.
+//
+// BoringSSL typically bounds public exponents as a denial-of-service
+// mitigation. Keys created by this function may perform worse than those
+// created by |RSA_new_public_key|.
+OPENSSL_EXPORT RSA *RSA_new_public_key_large_e(const BIGNUM *n,
+                                               const BIGNUM *e);
+
+// RSA_new_private_key_large_e behaves like |RSA_new_private_key| but allows any
+// |e| up to |n|.
+//
+// BoringSSL typically bounds public exponents as a denial-of-service
+// mitigation. Keys created by this function may perform worse than those
+// created by |RSA_new_private_key|.
+OPENSSL_EXPORT RSA *RSA_new_private_key_large_e(
+    const BIGNUM *n, const BIGNUM *e, const BIGNUM *d, const BIGNUM *p,
+    const BIGNUM *q, const BIGNUM *dmp1, const BIGNUM *dmq1,
+    const BIGNUM *iqmp);
 
 
 // ex_data functions.
@@ -600,6 +671,17 @@ OPENSSL_EXPORT void *RSA_get_ex_data(const RSA *rsa, int idx);
 // RSA_FLAG_EXT_PKEY is deprecated and ignored.
 #define RSA_FLAG_EXT_PKEY 0x20
 
+// RSA_FLAG_NO_PUBLIC_EXPONENT indicates that private keys without a public
+// exponent are allowed. This is an internal constant. Use
+// |RSA_new_private_key_no_e| to construct such keys.
+#define RSA_FLAG_NO_PUBLIC_EXPONENT 0x40
+
+// RSA_FLAG_LARGE_PUBLIC_EXPONENT indicates that keys with a large public
+// exponent are allowed. This is an internal constant. Use
+// |RSA_new_public_key_large_e| and |RSA_new_private_key_large_e| to construct
+// such keys.
+#define RSA_FLAG_LARGE_PUBLIC_EXPONENT 0x80
+
 
 // RSA public exponent values.
 
@@ -615,6 +697,9 @@ OPENSSL_EXPORT void *RSA_get_ex_data(const RSA *rsa, int idx);
 // constants.
 OPENSSL_EXPORT int RSA_flags(const RSA *rsa);
 
+// RSA_test_flags returns the subset of flags in |flags| which are set in |rsa|.
+OPENSSL_EXPORT int RSA_test_flags(const RSA *rsa, int flags);
+
 // RSA_blinding_on returns one.
 OPENSSL_EXPORT int RSA_blinding_on(RSA *rsa, BN_CTX *ctx);
 
@@ -622,35 +707,31 @@ OPENSSL_EXPORT int RSA_blinding_on(RSA *rsa, BN_CTX *ctx);
 // should use instead. It returns NULL on error, or a newly-allocated |RSA| on
 // success. This function is provided for compatibility only. The |callback|
 // and |cb_arg| parameters must be NULL.
-OPENSSL_EXPORT RSA *RSA_generate_key(int bits, unsigned long e, void *callback,
+OPENSSL_EXPORT RSA *RSA_generate_key(int bits, uint64_t e, void *callback,
                                      void *cb_arg);
 
-// d2i_RSAPublicKey parses an ASN.1, DER-encoded, RSA public key from |len|
-// bytes at |*inp|. If |out| is not NULL then, on exit, a pointer to the result
-// is in |*out|. Note that, even if |*out| is already non-NULL on entry, it
-// will not be written to. Rather, a fresh |RSA| is allocated and the previous
-// one is freed. On successful exit, |*inp| is advanced past the DER structure.
-// It returns the result or NULL on error.
+// d2i_RSAPublicKey parses a DER-encoded RSAPublicKey structure (RFC 8017) from
+// |len| bytes at |*inp|, as described in |d2i_SAMPLE|.
+//
+// Use |RSA_parse_public_key| instead.
 OPENSSL_EXPORT RSA *d2i_RSAPublicKey(RSA **out, const uint8_t **inp, long len);
 
-// i2d_RSAPublicKey marshals |in| to an ASN.1, DER structure. If |outp| is not
-// NULL then the result is written to |*outp| and |*outp| is advanced just past
-// the output. It returns the number of bytes in the result, whether written or
-// not, or a negative value on error.
+// i2d_RSAPublicKey marshals |in| to a DER-encoded RSAPublicKey structure (RFC
+// 8017), as described in |i2d_SAMPLE|.
+//
+// Use |RSA_marshal_public_key| instead.
 OPENSSL_EXPORT int i2d_RSAPublicKey(const RSA *in, uint8_t **outp);
 
-// d2i_RSAPrivateKey parses an ASN.1, DER-encoded, RSA private key from |len|
-// bytes at |*inp|. If |out| is not NULL then, on exit, a pointer to the result
-// is in |*out|. Note that, even if |*out| is already non-NULL on entry, it
-// will not be written to. Rather, a fresh |RSA| is allocated and the previous
-// one is freed. On successful exit, |*inp| is advanced past the DER structure.
-// It returns the result or NULL on error.
+// d2i_RSAPrivateKey parses a DER-encoded RSAPrivateKey structure (RFC 8017)
+// from |len| bytes at |*inp|, as described in |d2i_SAMPLE|.
+//
+// Use |RSA_parse_private_key| instead.
 OPENSSL_EXPORT RSA *d2i_RSAPrivateKey(RSA **out, const uint8_t **inp, long len);
 
-// i2d_RSAPrivateKey marshals |in| to an ASN.1, DER structure. If |outp| is not
-// NULL then the result is written to |*outp| and |*outp| is advanced just past
-// the output. It returns the number of bytes in the result, whether written or
-// not, or a negative value on error.
+// i2d_RSAPrivateKey marshals |in| to a DER-encoded RSAPrivateKey structure (RFC
+// 8017), as described in |i2d_SAMPLE|.
+//
+// Use |RSA_marshal_private_key| instead.
 OPENSSL_EXPORT int i2d_RSAPrivateKey(const RSA *in, uint8_t **outp);
 
 // RSA_padding_add_PKCS1_PSS acts like |RSA_padding_add_PKCS1_PSS_mgf1| but the
@@ -683,6 +764,19 @@ OPENSSL_EXPORT int RSA_padding_add_PKCS1_OAEP(uint8_t *to, size_t to_len,
 // RSA_print prints a textual representation of |rsa| to |bio|. It returns one
 // on success or zero otherwise.
 OPENSSL_EXPORT int RSA_print(BIO *bio, const RSA *rsa, int indent);
+
+// RSA_get0_pss_params returns NULL. In OpenSSL, this function retries RSA-PSS
+// parameters associated with |RSA| objects, but BoringSSL does not support
+// the id-RSASSA-PSS key encoding.
+OPENSSL_EXPORT const RSA_PSS_PARAMS *RSA_get0_pss_params(const RSA *rsa);
+
+// RSA_new_method_no_e returns a newly-allocated |RSA| object backed by
+// |engine|, with a public modulus of |n| and no known public exponent.
+//
+// Do not use this function. It exists only to support Conscrypt, whose use
+// should be replaced with a more sound mechanism. See
+// https://crbug.com/boringssl/602.
+OPENSSL_EXPORT RSA *RSA_new_method_no_e(const ENGINE *engine, const BIGNUM *n);
 
 
 struct rsa_meth_st {
@@ -771,7 +865,7 @@ struct rsa_st {
   // num_blindings contains the size of the |blindings| and |blindings_inuse|
   // arrays. This member and the |blindings_inuse| array are protected by
   // |lock|.
-  unsigned num_blindings;
+  size_t num_blindings;
   // blindings is an array of BN_BLINDING structures that can be reserved by a
   // thread by locking |lock| and changing the corresponding element in
   // |blindings_inuse| from 0 to 1.

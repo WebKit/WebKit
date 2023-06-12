@@ -163,7 +163,7 @@ static void TestDigest(const DigestTestVector *test) {
   bssl::ScopedEVP_MD_CTX ctx;
 
   // Test the input provided.
-  ASSERT_TRUE(EVP_DigestInit_ex(ctx.get(), test->md.func(), NULL));
+  ASSERT_TRUE(EVP_DigestInit_ex(ctx.get(), test->md.func(), nullptr));
   for (size_t i = 0; i < test->repeat; i++) {
     ASSERT_TRUE(EVP_DigestUpdate(ctx.get(), test->input, strlen(test->input)));
   }
@@ -173,8 +173,8 @@ static void TestDigest(const DigestTestVector *test) {
   CompareDigest(test, digest.get(), digest_len);
 
   // Test the input one character at a time.
-  ASSERT_TRUE(EVP_DigestInit_ex(ctx.get(), test->md.func(), NULL));
-  ASSERT_TRUE(EVP_DigestUpdate(ctx.get(), NULL, 0));
+  ASSERT_TRUE(EVP_DigestInit_ex(ctx.get(), test->md.func(), nullptr));
+  ASSERT_TRUE(EVP_DigestUpdate(ctx.get(), nullptr, 0));
   for (size_t i = 0; i < test->repeat; i++) {
     for (const char *p = test->input; *p; p++) {
       ASSERT_TRUE(EVP_DigestUpdate(ctx.get(), p, 1));
@@ -185,7 +185,7 @@ static void TestDigest(const DigestTestVector *test) {
   CompareDigest(test, digest.get(), digest_len);
 
   // Test with unaligned input.
-  ASSERT_TRUE(EVP_DigestInit_ex(ctx.get(), test->md.func(), NULL));
+  ASSERT_TRUE(EVP_DigestInit_ex(ctx.get(), test->md.func(), nullptr));
   std::vector<char> unaligned(strlen(test->input) + 1);
   char *ptr = unaligned.data();
   if ((reinterpret_cast<uintptr_t>(ptr) & 1) == 0) {
@@ -199,7 +199,7 @@ static void TestDigest(const DigestTestVector *test) {
   CompareDigest(test, digest.get(), digest_len);
 
   // Make a copy of the digest in the initial state.
-  ASSERT_TRUE(EVP_DigestInit_ex(ctx.get(), test->md.func(), NULL));
+  ASSERT_TRUE(EVP_DigestInit_ex(ctx.get(), test->md.func(), nullptr));
   bssl::ScopedEVP_MD_CTX copy;
   ASSERT_TRUE(EVP_MD_CTX_copy_ex(copy.get(), ctx.get()));
   for (size_t i = 0; i < test->repeat; i++) {
@@ -212,6 +212,27 @@ static void TestDigest(const DigestTestVector *test) {
   size_t half = strlen(test->input) / 2;
   ASSERT_TRUE(EVP_DigestUpdate(ctx.get(), test->input, half));
   ASSERT_TRUE(EVP_MD_CTX_copy_ex(copy.get(), ctx.get()));
+  ASSERT_TRUE(EVP_DigestUpdate(copy.get(), test->input + half,
+                               strlen(test->input) - half));
+  for (size_t i = 1; i < test->repeat; i++) {
+    ASSERT_TRUE(EVP_DigestUpdate(copy.get(), test->input, strlen(test->input)));
+  }
+  ASSERT_TRUE(EVP_DigestFinal_ex(copy.get(), digest.get(), &digest_len));
+  CompareDigest(test, digest.get(), digest_len);
+
+  // Move the digest from the initial state.
+  ASSERT_TRUE(EVP_DigestInit_ex(ctx.get(), test->md.func(), nullptr));
+  copy = std::move(ctx);
+  for (size_t i = 0; i < test->repeat; i++) {
+    ASSERT_TRUE(EVP_DigestUpdate(copy.get(), test->input, strlen(test->input)));
+  }
+  ASSERT_TRUE(EVP_DigestFinal_ex(copy.get(), digest.get(), &digest_len));
+  CompareDigest(test, digest.get(), digest_len);
+
+  // Move the digest with half the input provided.
+  ASSERT_TRUE(EVP_DigestInit_ex(ctx.get(), test->md.func(), nullptr));
+  ASSERT_TRUE(EVP_DigestUpdate(ctx.get(), test->input, half));
+  copy = std::move(ctx);
   ASSERT_TRUE(EVP_DigestUpdate(copy.get(), test->input + half,
                                strlen(test->input) - half));
   for (size_t i = 1; i < test->repeat; i++) {

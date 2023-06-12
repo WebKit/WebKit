@@ -4,7 +4,7 @@
 #endif
 #endif
 
-#if defined(__arm__) && !defined(OPENSSL_NO_ASM) && !defined(__APPLE__)
+#if defined(__ARMEL__) && !defined(OPENSSL_NO_ASM) && defined(__ELF__)
 
 #if defined(BORINGSSL_PREFIX)
 #include <boringssl_prefix_symbols_asm.h>
@@ -2022,7 +2022,7 @@ vst1.8 d4,[r0,: 64]
 add sp,sp,#0
 bx lr
 
-#endif  /* __arm__ && !OPENSSL_NO_ASM && !__APPLE__ */
+#endif  /* __ARMEL__ && !OPENSSL_NO_ASM && __ELF__ */
 
 #if defined(__ELF__)
 .section	.note.GNU-stack,"",%progbits

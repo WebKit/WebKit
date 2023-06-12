@@ -29,6 +29,7 @@
 #include <openssl/bn.h>
 #include <openssl/cipher.h>
 #include <openssl/cmac.h>
+#include <openssl/ctrdrbg.h>
 #include <openssl/dh.h>
 #include <openssl/digest.h>
 #include <openssl/ec.h>
@@ -36,6 +37,7 @@
 #include <openssl/ecdh.h>
 #include <openssl/ecdsa.h>
 #include <openssl/err.h>
+#include <openssl/hkdf.h>
 #include <openssl/hmac.h>
 #include <openssl/obj.h>
 #include <openssl/rsa.h>
@@ -54,6 +56,7 @@ namespace acvp {
 #if defined(OPENSSL_TRUSTY)
 #include <trusty_log.h>
 #define LOG_ERROR(...) TLOGE(__VA_ARGS__)
+#define TLOG_TAG "modulewrapper"
 #else
 #define LOG_ERROR(...) fprintf(stderr, __VA_ARGS__)
 #endif  // OPENSSL_TRUSTY
@@ -162,8 +165,51 @@ Span<const Span<const uint8_t>> ParseArgsFromFd(int fd,
   return Span<const Span<const uint8_t>>(buffer->args, num_args);
 }
 
+// g_reply_buffer contains buffered replies which will be flushed when acvp
+// requests.
+static std::vector<uint8_t> g_reply_buffer;
+
+bool WriteReplyToBuffer(const std::vector<Span<const uint8_t>> &spans) {
+  if (spans.size() > kMaxArgs) {
+    abort();
+  }
+
+  uint8_t buf[4];
+  CRYPTO_store_u32_le(buf, spans.size());
+  g_reply_buffer.insert(g_reply_buffer.end(), buf, buf + sizeof(buf));
+  for (const auto &span : spans) {
+    CRYPTO_store_u32_le(buf, span.size());
+    g_reply_buffer.insert(g_reply_buffer.end(), buf, buf + sizeof(buf));
+  }
+  for (const auto &span : spans) {
+    g_reply_buffer.insert(g_reply_buffer.end(), span.begin(), span.end());
+  }
+
+  return true;
+}
+
+bool FlushBuffer(int fd) {
+  size_t done = 0;
+
+  while (done < g_reply_buffer.size()) {
+    ssize_t n;
+    do {
+      n = write(fd, g_reply_buffer.data() + done, g_reply_buffer.size() - done);
+    } while (n < 0 && errno == EINTR);
+
+    if (n < 0) {
+      return false;
+    }
+    done += static_cast<size_t>(n);
+  }
+
+  g_reply_buffer.clear();
+
+  return true;
+}
+
 bool WriteReplyToFd(int fd, const std::vector<Span<const uint8_t>> &spans) {
-  if (spans.empty() || spans.size() > kMaxArgs) {
+  if (spans.size() > kMaxArgs) {
     abort();
   }
 
@@ -224,6 +270,10 @@ bool WriteReplyToFd(int fd, const std::vector<Span<const uint8_t>> &spans) {
 static bool GetConfig(const Span<const uint8_t> args[], ReplyCallback write_reply) {
   static constexpr char kConfig[] =
       R"([
+      {
+        "algorithm": "acvptool",
+        "features": ["batch"]
+      },
       {
         "algorithm": "SHA2-224",
         "revision": "1.0",
@@ -296,10 +346,10 @@ static bool GetConfig(const Span<const uint8_t> args[], ReplyCallback write_repl
         "direction": ["encrypt", "decrypt"],
         "keyLen": [128, 192, 256],
         "payloadLen": [{
-          "min": 0, "max": 256, "increment": 8
+          "min": 0, "max": 65536, "increment": 8
         }],
         "aadLen": [{
-          "min": 0, "max": 320, "increment": 8
+          "min": 0, "max": 65536, "increment": 8
         }],
         "tagLen": [32, 64, 96, 104, 112, 120, 128],
         "ivLen": [96],
@@ -311,10 +361,10 @@ static bool GetConfig(const Span<const uint8_t> args[], ReplyCallback write_repl
         "direction": ["encrypt", "decrypt"],
         "keyLen": [128, 192, 256],
         "payloadLen": [{
-          "min": 0, "max": 256, "increment": 8
+          "min": 0, "max": 65536, "increment": 8
         }],
         "aadLen": [{
-          "min": 0, "max": 320, "increment": 8
+          "min": 0, "max": 65536, "increment": 8
         }],
         "tagLen": [32, 64, 96, 104, 112, 120, 128],
         "ivLen": [96],
@@ -333,7 +383,7 @@ static bool GetConfig(const Span<const uint8_t> args[], ReplyCallback write_repl
         "keyLen": [
             128, 192, 256
         ],
-        "payloadLen": [{"min": 128, "max": 1024, "increment": 64}]
+        "payloadLen": [{"min": 128, "max": 4096, "increment": 64}]
       },
       {
         "algorithm": "ACVP-AES-KWP",
@@ -362,28 +412,14 @@ static bool GetConfig(const Span<const uint8_t> args[], ReplyCallback write_repl
         ],
         "payloadLen": [{"min": 0, "max": 256, "increment": 8}],
         "ivLen": [104],
-        "tagLen": [32],
-        "aadLen": [{"min": 0, "max": 1024, "increment": 8}]
-      },
-      {
-        "algorithm": "ACVP-TDES-ECB",
-        "revision": "1.0",
-        "direction": ["encrypt", "decrypt"],
-        "keyLen": [192],
-        "keyingOption": [1]
-      },
-      {
-        "algorithm": "ACVP-TDES-CBC",
-        "revision": "1.0",
-        "direction": ["encrypt", "decrypt"],
-        "keyLen": [192],
-        "keyingOption": [1]
+        "tagLen": [32, 64],
+        "aadLen": [{"min": 0, "max": 524288, "increment": 8}]
       },
       {
         "algorithm": "HMAC-SHA-1",
         "revision": "1.0",
         "keyLen": [{
-          "min": 8, "max": 2048, "increment": 8
+          "min": 8, "max": 524288, "increment": 8
         }],
         "macLen": [{
           "min": 32, "max": 160, "increment": 8
@@ -393,7 +429,7 @@ static bool GetConfig(const Span<const uint8_t> args[], ReplyCallback write_repl
         "algorithm": "HMAC-SHA2-224",
         "revision": "1.0",
         "keyLen": [{
-          "min": 8, "max": 2048, "increment": 8
+          "min": 8, "max": 524288, "increment": 8
         }],
         "macLen": [{
           "min": 32, "max": 224, "increment": 8
@@ -403,7 +439,7 @@ static bool GetConfig(const Span<const uint8_t> args[], ReplyCallback write_repl
         "algorithm": "HMAC-SHA2-256",
         "revision": "1.0",
         "keyLen": [{
-          "min": 8, "max": 2048, "increment": 8
+          "min": 8, "max": 524288, "increment": 8
         }],
         "macLen": [{
           "min": 32, "max": 256, "increment": 8
@@ -413,7 +449,7 @@ static bool GetConfig(const Span<const uint8_t> args[], ReplyCallback write_repl
         "algorithm": "HMAC-SHA2-384",
         "revision": "1.0",
         "keyLen": [{
-          "min": 8, "max": 2048, "increment": 8
+          "min": 8, "max": 524288, "increment": 8
         }],
         "macLen": [{
           "min": 32, "max": 384, "increment": 8
@@ -423,17 +459,27 @@ static bool GetConfig(const Span<const uint8_t> args[], ReplyCallback write_repl
         "algorithm": "HMAC-SHA2-512",
         "revision": "1.0",
         "keyLen": [{
-          "min": 8, "max": 2048, "increment": 8
+          "min": 8, "max": 524288, "increment": 8
         }],
         "macLen": [{
           "min": 32, "max": 512, "increment": 8
         }]
       },
       {
+        "algorithm": "HMAC-SHA2-512/256",
+        "revision": "1.0",
+        "keyLen": [{
+          "min": 8, "max": 524288, "increment": 8
+        }],
+        "macLen": [{
+          "min": 32, "max": 256, "increment": 8
+        }]
+      },
+      {
         "algorithm": "ctrDRBG",
         "revision": "1.0",
         "predResistanceEnabled": [false],
-        "reseedImplemented": false,
+        "reseedImplemented": true,
         "capabilities": [{
           "mode": "AES-256",
           "derFuncEnabled": false,
@@ -486,7 +532,8 @@ static bool GetConfig(const Span<const uint8_t> args[], ReplyCallback write_repl
             "SHA2-224",
             "SHA2-256",
             "SHA2-384",
-            "SHA2-512"
+            "SHA2-512",
+            "SHA2-512/256"
           ]
         }]
       },
@@ -506,7 +553,8 @@ static bool GetConfig(const Span<const uint8_t> args[], ReplyCallback write_repl
             "SHA2-224",
             "SHA2-256",
             "SHA2-384",
-            "SHA2-512"
+            "SHA2-512",
+            "SHA2-512/256"
           ]
         }]
       },
@@ -600,6 +648,9 @@ static bool GetConfig(const Span<const uint8_t> args[], ReplyCallback write_repl
             }, {
               "hashAlg": "SHA2-512",
               "saltLen": 64
+            }, {
+              "hashAlg": "SHA2-512/256",
+              "saltLen": 32
             }]
           }]
         },{
@@ -618,6 +669,9 @@ static bool GetConfig(const Span<const uint8_t> args[], ReplyCallback write_repl
             }, {
               "hashAlg": "SHA2-512",
               "saltLen": 64
+            }, {
+              "hashAlg": "SHA2-512/256",
+              "saltLen": 32
             }]
           }]
         },{
@@ -636,6 +690,9 @@ static bool GetConfig(const Span<const uint8_t> args[], ReplyCallback write_repl
             }, {
               "hashAlg": "SHA2-512",
               "saltLen": 64
+            }, {
+              "hashAlg": "SHA2-512/256",
+              "saltLen": 32
             }]
           }]
         }]
@@ -713,6 +770,27 @@ static bool GetConfig(const Span<const uint8_t> args[], ReplyCallback write_repl
         },{
           "sigType": "pss",
           "properties": [{
+            "modulo": 1024,
+            "hashPair": [{
+              "hashAlg": "SHA2-224",
+              "saltLen": 28
+            }, {
+              "hashAlg": "SHA2-256",
+              "saltLen": 32
+            }, {
+              "hashAlg": "SHA2-384",
+              "saltLen": 48
+            }, {
+              "hashAlg": "SHA2-512/256",
+              "saltLen": 32
+            }, {
+              "hashAlg": "SHA-1",
+              "saltLen": 20
+            }]
+          }]
+        },{
+          "sigType": "pss",
+          "properties": [{
             "modulo": 2048,
             "hashPair": [{
               "hashAlg": "SHA2-224",
@@ -726,6 +804,9 @@ static bool GetConfig(const Span<const uint8_t> args[], ReplyCallback write_repl
             }, {
               "hashAlg": "SHA2-512",
               "saltLen": 64
+            }, {
+              "hashAlg": "SHA2-512/256",
+              "saltLen": 32
             }, {
               "hashAlg": "SHA-1",
               "saltLen": 20
@@ -748,6 +829,9 @@ static bool GetConfig(const Span<const uint8_t> args[], ReplyCallback write_repl
               "hashAlg": "SHA2-512",
               "saltLen": 64
             }, {
+              "hashAlg": "SHA2-512/256",
+              "saltLen": 32
+            }, {
               "hashAlg": "SHA-1",
               "saltLen": 20
             }]
@@ -769,6 +853,9 @@ static bool GetConfig(const Span<const uint8_t> args[], ReplyCallback write_repl
               "hashAlg": "SHA2-512",
               "saltLen": 64
             }, {
+              "hashAlg": "SHA2-512/256",
+              "saltLen": 32
+            }, {
               "hashAlg": "SHA-1",
               "saltLen": 20
             }]
@@ -783,30 +870,16 @@ static bool GetConfig(const Span<const uint8_t> args[], ReplyCallback write_repl
           "direction": ["gen", "ver"],
           "msgLen": [{
             "min": 0,
-            "max": 65536,
+            "max": 524288,
             "increment": 8
           }],
           "keyLen": [128, 256],
           "macLen": [{
-            "min": 32,
+            "min": 8,
             "max": 128,
             "increment": 8
           }]
         }]
-      },
-      {
-        "algorithm": "kdf-components",
-        "revision": "1.0",
-        "mode": "tls",
-        "tlsVersion": [
-          "v1.0/1.1",
-          "v1.2"
-        ],
-        "hashAlg": [
-          "SHA2-256",
-          "SHA2-384",
-          "SHA2-512"
-        ]
       },
       {
         "algorithm": "KAS-ECC-SSC",
@@ -846,10 +919,70 @@ static bool GetConfig(const Span<const uint8_t> args[], ReplyCallback write_repl
           "FB",
           "FC"
         ]
+      },
+      {
+        "algorithm": "KDA",
+        "mode": "HKDF",
+        "revision": "Sp800-56Cr1",
+        "fixedInfoPattern": "uPartyInfo||vPartyInfo",
+        "encoding": [
+          "concatenation"
+        ],
+        "hmacAlg": [
+          "SHA2-224",
+          "SHA2-256",
+          "SHA2-384",
+          "SHA2-512",
+          "SHA2-512/256"
+        ],
+        "macSaltMethods": [
+          "default",
+          "random"
+        ],
+        "l": 2048,
+        "z": [
+          {
+            "min": 224,
+            "max": 65336,
+            "increment": 8
+          }
+        ]
+      },
+      {
+        "algorithm": "TLS-v1.2",
+        "mode": "KDF",
+        "revision": "RFC7627",
+        "hashAlg": [
+          "SHA2-256",
+          "SHA2-384",
+          "SHA2-512"
+        ]
+      },
+      {
+        "algorithm": "TLS-v1.3",
+        "mode": "KDF",
+        "revision": "RFC8446",
+        "hmacAlg": [
+          "SHA2-256",
+          "SHA2-384"
+        ],
+        "runningMode": [
+          "DHE",
+          "PSK",
+          "PSK-DHE"
+        ]
       }
     ])";
   return write_reply({Span<const uint8_t>(
       reinterpret_cast<const uint8_t *>(kConfig), sizeof(kConfig) - 1)});
+}
+
+static bool Flush(const Span<const uint8_t> args[], ReplyCallback write_reply) {
+  fprintf(
+      stderr,
+      "modulewrapper code processed a `flush` command but this must be handled "
+      "at a higher-level. See the example in main.cc in BoringSSL\n");
+  abort();
 }
 
 template <uint8_t *(*OneShotHash)(const uint8_t *, size_t, uint8_t *),
@@ -1058,10 +1191,21 @@ static bool AESCCMSetup(EVP_AEAD_CTX *ctx, Span<const uint8_t> tag_len_span,
     return false;
   }
   memcpy(&tag_len_32, tag_len_span.data(), sizeof(tag_len_32));
-  if (tag_len_32 != 4) {
-    LOG_ERROR("AES-CCM only supports 4-byte tags, but %u was requested\n",
-              static_cast<unsigned>(tag_len_32));
-    return false;
+  const EVP_AEAD *aead;
+  switch (tag_len_32) {
+    case 4:
+      aead = EVP_aead_aes_128_ccm_bluetooth();
+      break;
+
+    case 8:
+      aead = EVP_aead_aes_128_ccm_bluetooth_8();
+      break;
+
+    default:
+      LOG_ERROR(
+          "AES-CCM only supports 4- and 8-byte tags, but %u was requested\n",
+          static_cast<unsigned>(tag_len_32));
+      return false;
   }
 
   if (key.size() != 16) {
@@ -1070,8 +1214,8 @@ static bool AESCCMSetup(EVP_AEAD_CTX *ctx, Span<const uint8_t> tag_len_span,
     return false;
   }
 
-  if (!EVP_AEAD_CTX_init(ctx, EVP_aead_aes_128_ccm_bluetooth(), key.data(),
-                         key.size(), tag_len_32, nullptr)) {
+  if (!EVP_AEAD_CTX_init(ctx, aead, key.data(), key.size(), tag_len_32,
+                         nullptr)) {
     LOG_ERROR("Failed to setup AES-CCM with tag length %u\n",
               static_cast<unsigned>(tag_len_32));
     return false;
@@ -1381,17 +1525,98 @@ static bool HMAC(const Span<const uint8_t> args[], ReplyCallback write_reply) {
   return write_reply({Span<const uint8_t>(digest, digest_len)});
 }
 
+template <const EVP_MD *HashFunc()>
+static bool HKDF(const Span<const uint8_t> args[], ReplyCallback write_reply) {
+  const EVP_MD *const md = HashFunc();
+  const auto key = args[0];
+  const auto salt = args[1];
+  const auto info = args[2];
+  const auto out_len_bytes = args[3];
+
+  if (out_len_bytes.size() != sizeof(uint32_t)) {
+    return false;
+  }
+  const uint32_t out_len = CRYPTO_load_u32_le(out_len_bytes.data());
+  if (out_len > (1 << 24)) {
+    return false;
+  }
+
+  std::vector<uint8_t> out(out_len);
+  if (!::HKDF(out.data(), out_len, md, key.data(), key.size(), salt.data(),
+              salt.size(), info.data(), info.size())) {
+    return false;
+  }
+  return write_reply({out});
+}
+
+template <const EVP_MD *HashFunc()>
+static bool HKDFExtract(const Span<const uint8_t> args[],
+                        ReplyCallback write_reply) {
+  const EVP_MD *const md = HashFunc();
+  const auto secret = args[0];
+  const auto salt = args[1];
+
+  std::vector<uint8_t> out(EVP_MD_size(md));
+  size_t out_len;
+  if (!HKDF_extract(out.data(), &out_len, md, secret.data(), secret.size(),
+                    salt.data(), salt.size())) {
+    return false;
+  }
+  assert(out_len == out.size());
+  return write_reply({out});
+}
+
+template <const EVP_MD *HashFunc()>
+static bool HKDFExpandLabel(const Span<const uint8_t> args[],
+                            ReplyCallback write_reply) {
+  const EVP_MD *const md = HashFunc();
+  const auto out_len_bytes = args[0];
+  const auto secret = args[1];
+  const auto label = args[2];
+  const auto hash = args[3];
+
+  if (out_len_bytes.size() != sizeof(uint32_t)) {
+    return false;
+  }
+  const uint32_t out_len = CRYPTO_load_u32_le(out_len_bytes.data());
+  if (out_len > (1 << 24)) {
+    return false;
+  }
+
+  std::vector<uint8_t> out(out_len);
+  if (!CRYPTO_tls13_hkdf_expand_label(out.data(), out_len, md, secret.data(),
+                                      secret.size(), label.data(), label.size(),
+                                      hash.data(), hash.size())) {
+    return false;
+  }
+  return write_reply({out});
+}
+
+template <bool WithReseed>
 static bool DRBG(const Span<const uint8_t> args[], ReplyCallback write_reply) {
   const auto out_len_bytes = args[0];
   const auto entropy = args[1];
   const auto personalisation = args[2];
-  const auto additional_data1 = args[3];
-  const auto additional_data2 = args[4];
-  const auto nonce = args[5];
+
+  Span<const uint8_t> reseed_additional_data, reseed_entropy, additional_data1,
+      additional_data2, nonce;
+  if (!WithReseed) {
+    additional_data1 = args[3];
+    additional_data2 = args[4];
+    nonce = args[5];
+  } else {
+    reseed_additional_data = args[3];
+    reseed_entropy = args[4];
+    additional_data1 = args[5];
+    additional_data2 = args[6];
+    nonce = args[7];
+  }
 
   uint32_t out_len;
   if (out_len_bytes.size() != sizeof(out_len) ||
       entropy.size() != CTR_DRBG_ENTROPY_LEN ||
+      (!reseed_entropy.empty() &&
+       reseed_entropy.size() != CTR_DRBG_ENTROPY_LEN) ||
       // nonces are not supported
       nonce.size() != 0) {
     return false;
@@ -1405,6 +1630,10 @@ static bool DRBG(const Span<const uint8_t> args[], ReplyCallback write_reply) {
   CTR_DRBG_STATE drbg;
   if (!CTR_DRBG_init(&drbg, entropy.data(), personalisation.data(),
                      personalisation.size()) ||
+      (!reseed_entropy.empty() &&
+       !CTR_DRBG_reseed(&drbg, reseed_entropy.data(),
+                        reseed_additional_data.data(),
+                        reseed_additional_data.size())) ||
       !CTR_DRBG_generate(&drbg, out.data(), out_len, additional_data1.data(),
                          additional_data1.size()) ||
       !CTR_DRBG_generate(&drbg, out.data(), out_len, additional_data2.data(),
@@ -1490,12 +1719,8 @@ static bool ECDSAKeyVer(const Span<const uint8_t> args[], ReplyCallback write_re
   bssl::UniquePtr<BIGNUM> x(BytesToBIGNUM(args[1]));
   bssl::UniquePtr<BIGNUM> y(BytesToBIGNUM(args[2]));
 
-  bssl::UniquePtr<EC_POINT> point(EC_POINT_new(EC_KEY_get0_group(key.get())));
   uint8_t reply[1];
-  if (!EC_POINT_set_affine_coordinates_GFp(EC_KEY_get0_group(key.get()),
-                                           point.get(), x.get(), y.get(),
-                                           /*ctx=*/nullptr) ||
-      !EC_KEY_set_public_key(key.get(), point.get()) ||
+  if (!EC_KEY_set_public_key_affine_coordinates(key.get(), x.get(), y.get()) ||
       !EC_KEY_check_fips(key.get())) {
     reply[0] = 0;
   } else {
@@ -1516,6 +1741,8 @@ static const EVP_MD *HashFromName(Span<const uint8_t> name) {
     return EVP_sha384();
   } else if (StringEq(name, "SHA2-512")) {
     return EVP_sha512();
+  } else if (StringEq(name, "SHA2-512/256")) {
+    return EVP_sha512_256();
   } else {
     return nullptr;
   }
@@ -1566,12 +1793,8 @@ static bool ECDSASigVer(const Span<const uint8_t> args[], ReplyCallback write_re
     return false;
   }
 
-  bssl::UniquePtr<EC_POINT> point(EC_POINT_new(EC_KEY_get0_group(key.get())));
   uint8_t reply[1];
-  if (!EC_POINT_set_affine_coordinates_GFp(EC_KEY_get0_group(key.get()),
-                                           point.get(), x.get(), y.get(),
-                                           /*ctx=*/nullptr) ||
-      !EC_KEY_set_public_key(key.get(), point.get()) ||
+  if (!EC_KEY_set_public_key_affine_coordinates(key.get(), x.get(), y.get()) ||
       !EC_KEY_check_fips(key.get()) ||
       !ECDSA_do_verify(digest, digest_len, &sig, key.get())) {
     reply[0] = 0;
@@ -1879,6 +2102,7 @@ static constexpr struct {
   bool (*handler)(const Span<const uint8_t> args[], ReplyCallback write_reply);
 } kFunctions[] = {
     {"getConfig", 0, GetConfig},
+    {"flush", 0, Flush},
     {"SHA-1", 1, Hash<SHA1, SHA_DIGEST_LENGTH>},
     {"SHA2-224", 1, Hash<SHA224, SHA224_DIGEST_LENGTH>},
     {"SHA2-256", 1, Hash<SHA256, SHA256_DIGEST_LENGTH>},
@@ -1909,12 +2133,23 @@ static constexpr struct {
     {"3DES-ECB/decrypt", 3, TDES<false>},
     {"3DES-CBC/encrypt", 4, TDES_CBC<true>},
     {"3DES-CBC/decrypt", 4, TDES_CBC<false>},
+    {"HKDF/SHA2-224", 4, HKDF<EVP_sha224>},
+    {"HKDF/SHA2-256", 4, HKDF<EVP_sha256>},
+    {"HKDF/SHA2-384", 4, HKDF<EVP_sha384>},
+    {"HKDF/SHA2-512", 4, HKDF<EVP_sha512>},
+    {"HKDF/SHA2-512/256", 4, HKDF<EVP_sha512_256>},
+    {"HKDFExpandLabel/SHA2-256", 4, HKDFExpandLabel<EVP_sha256>},
+    {"HKDFExpandLabel/SHA2-384", 4, HKDFExpandLabel<EVP_sha384>},
+    {"HKDFExtract/SHA2-256", 2, HKDFExtract<EVP_sha256>},
+    {"HKDFExtract/SHA2-384", 2, HKDFExtract<EVP_sha384>},
     {"HMAC-SHA-1", 2, HMAC<EVP_sha1>},
     {"HMAC-SHA2-224", 2, HMAC<EVP_sha224>},
     {"HMAC-SHA2-256", 2, HMAC<EVP_sha256>},
     {"HMAC-SHA2-384", 2, HMAC<EVP_sha384>},
     {"HMAC-SHA2-512", 2, HMAC<EVP_sha512>},
-    {"ctrDRBG/AES-256", 6, DRBG},
+    {"HMAC-SHA2-512/256", 2, HMAC<EVP_sha512_256>},
+    {"ctrDRBG/AES-256", 6, DRBG<false>},
+    {"ctrDRBG-reseed/AES-256", 8, DRBG<true>},
     {"ECDSA/keyGen", 1, ECDSAKeyGen},
     {"ECDSA/keyVer", 3, ECDSAKeyVer},
     {"ECDSA/sigGen", 4, ECDSASigGen},
@@ -1931,6 +2166,7 @@ static constexpr struct {
     {"RSA/sigGen/SHA2-256/pss", 2, RSASigGen<EVP_sha256, true>},
     {"RSA/sigGen/SHA2-384/pss", 2, RSASigGen<EVP_sha384, true>},
     {"RSA/sigGen/SHA2-512/pss", 2, RSASigGen<EVP_sha512, true>},
+    {"RSA/sigGen/SHA2-512/256/pss", 2, RSASigGen<EVP_sha512_256, true>},
     {"RSA/sigGen/SHA-1/pss", 2, RSASigGen<EVP_sha1, true>},
     {"RSA/sigVer/SHA2-224/pkcs1v1.5", 4, RSASigVer<EVP_sha224, false>},
     {"RSA/sigVer/SHA2-256/pkcs1v1.5", 4, RSASigVer<EVP_sha256, false>},
@@ -1941,8 +2177,8 @@ static constexpr struct {
     {"RSA/sigVer/SHA2-256/pss", 4, RSASigVer<EVP_sha256, true>},
     {"RSA/sigVer/SHA2-384/pss", 4, RSASigVer<EVP_sha384, true>},
     {"RSA/sigVer/SHA2-512/pss", 4, RSASigVer<EVP_sha512, true>},
+    {"RSA/sigVer/SHA2-512/256/pss", 4, RSASigVer<EVP_sha512_256, true>},
     {"RSA/sigVer/SHA-1/pss", 4, RSASigVer<EVP_sha1, true>},
-    {"TLSKDF/1.0/SHA-1", 5, TLSKDF<EVP_md5_sha1>},
     {"TLSKDF/1.2/SHA2-256", 5, TLSKDF<EVP_sha256>},
     {"TLSKDF/1.2/SHA2-384", 5, TLSKDF<EVP_sha384>},
     {"TLSKDF/1.2/SHA2-512", 5, TLSKDF<EVP_sha512>},

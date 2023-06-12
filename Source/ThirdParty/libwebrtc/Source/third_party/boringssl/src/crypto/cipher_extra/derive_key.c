@@ -69,12 +69,12 @@ int EVP_BytesToKey(const EVP_CIPHER *type, const EVP_MD *md,
                    unsigned count, uint8_t *key, uint8_t *iv) {
   EVP_MD_CTX c;
   uint8_t md_buf[EVP_MAX_MD_SIZE];
-  unsigned niv, nkey, addmd = 0;
+  unsigned addmd = 0;
   unsigned mds = 0, i;
   int rv = 0;
 
-  nkey = type->key_len;
-  niv = type->iv_len;
+  unsigned nkey = EVP_CIPHER_key_length(type);
+  unsigned niv = EVP_CIPHER_iv_length(type);
 
   assert(nkey <= EVP_MAX_KEY_LENGTH);
   assert(niv <= EVP_MAX_IV_LENGTH);
@@ -143,7 +143,7 @@ int EVP_BytesToKey(const EVP_CIPHER *type, const EVP_MD *md,
       break;
     }
   }
-  rv = type->key_len;
+  rv = EVP_CIPHER_key_length(type);
 
 err:
   EVP_MD_CTX_cleanup(&c);

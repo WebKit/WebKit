@@ -81,13 +81,11 @@ int ECDSA_sign(int type, const uint8_t *digest, size_t digest_len, uint8_t *sig,
   }
 
   CBB cbb;
-  CBB_zero(&cbb);
+  CBB_init_fixed(&cbb, sig, ECDSA_size(eckey));
   size_t len;
-  if (!CBB_init_fixed(&cbb, sig, ECDSA_size(eckey)) ||
-      !ECDSA_SIG_marshal(&cbb, s) ||
+  if (!ECDSA_SIG_marshal(&cbb, s) ||
       !CBB_finish(&cbb, NULL, &len)) {
     OPENSSL_PUT_ERROR(ECDSA, ECDSA_R_ENCODE_ERROR);
-    CBB_cleanup(&cbb);
     *sig_len = 0;
     goto err;
   }

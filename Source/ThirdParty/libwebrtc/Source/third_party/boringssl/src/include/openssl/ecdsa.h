@@ -197,19 +197,17 @@ ECDSA_sign_with_nonce_and_leak_private_key_for_testing(const uint8_t *digest,
 
 // Deprecated functions.
 
-// d2i_ECDSA_SIG parses an ASN.1, DER-encoded, signature from |len| bytes at
-// |*inp|. If |out| is not NULL then, on exit, a pointer to the result is in
-// |*out|. Note that, even if |*out| is already non-NULL on entry, it will not
-// be written to. Rather, a fresh |ECDSA_SIG| is allocated and the previous one
-// is freed. On successful exit, |*inp| is advanced past the DER structure. It
-// returns the result or NULL on error.
+// d2i_ECDSA_SIG parses aa DER-encoded ECDSA-Sig-Value structure from |len|
+// bytes at |*inp|, as described in |d2i_SAMPLE|.
+//
+// Use |ECDSA_SIG_parse| instead.
 OPENSSL_EXPORT ECDSA_SIG *d2i_ECDSA_SIG(ECDSA_SIG **out, const uint8_t **inp,
                                         long len);
 
-// i2d_ECDSA_SIG marshals a signature from |sig| to an ASN.1, DER
-// structure. If |outp| is not NULL then the result is written to |*outp| and
-// |*outp| is advanced just past the output. It returns the number of bytes in
-// the result, whether written or not, or a negative value on error.
+// i2d_ECDSA_SIG marshals |sig| as a DER-encoded ECDSA-Sig-Value, as described
+// in |i2d_SAMPLE|.
+//
+// Use |ECDSA_SIG_marshal| instead.
 OPENSSL_EXPORT int i2d_ECDSA_SIG(const ECDSA_SIG *sig, uint8_t **outp);
 
 
@@ -234,5 +232,6 @@ BSSL_NAMESPACE_END
 #define ECDSA_R_NOT_IMPLEMENTED 103
 #define ECDSA_R_RANDOM_NUMBER_GENERATION_FAILED 104
 #define ECDSA_R_ENCODE_ERROR 105
+#define ECDSA_R_TOO_MANY_ITERATIONS 106
 
 #endif  // OPENSSL_HEADER_ECDSA_H

@@ -72,7 +72,7 @@ type ecdsa struct {
 	primitives map[string]primitive
 }
 
-func (e *ecdsa) Process(vectorSet []byte, m Transactable) (interface{}, error) {
+func (e *ecdsa) Process(vectorSet []byte, m Transactable) (any, error) {
 	var parsed ecdsaTestVectorSet
 	if err := json.Unmarshal(vectorSet, &parsed); err != nil {
 		return nil, err
@@ -94,19 +94,20 @@ func (e *ecdsa) Process(vectorSet []byte, m Transactable) (interface{}, error) {
 
 		for _, test := range group.Tests {
 			var testResp ecdsaTestResponse
+			testResp.ID = test.ID
 
 			switch parsed.Mode {
 			case "keyGen":
 				if group.SecretGenerationMode != "testing candidates" {
 					return nil, fmt.Errorf("invalid secret generation mode in test group %d: %q", group.ID, group.SecretGenerationMode)
 				}
-				result, err := m.Transact(e.algo+"/"+"keyGen", 3, []byte(group.Curve))
-				if err != nil {
-					return nil, fmt.Errorf("key generation failed for test case %d/%d: %s", group.ID, test.ID, err)
-				}
-				testResp.DHex = hex.EncodeToString(result[0])
-				testResp.QxHex = hex.EncodeToString(result[1])
-				testResp.QyHex = hex.EncodeToString(result[2])
+				m.TransactAsync(e.algo+"/"+"keyGen", 3, [][]byte{[]byte(group.Curve)}, func(result [][]byte) error {
+					testResp.DHex = hex.EncodeToString(result[0])
+					testResp.QxHex = hex.EncodeToString(result[1])
+					testResp.QyHex = hex.EncodeToString(result[2])
+					response.Tests = append(response.Tests, testResp)
+					return nil
+				})
 
 			case "keyVer":
 				qx, err := hex.DecodeString(test.QxHex)
@@ -117,21 +118,21 @@ func (e *ecdsa) Process(vectorSet []byte, m Transactable) (interface{}, error) {
 				if err != nil {
 					return nil, fmt.Errorf("failed to decode qy in test case %d/%d: %s", group.ID, test.ID, err)
 				}
-				result, err := m.Transact(e.algo+"/"+"keyVer", 1, []byte(group.Curve), qx, qy)
-				if err != nil {
-					return nil, fmt.Errorf("key verification failed for test case %d/%d: %s", group.ID, test.ID, err)
-				}
-				// result[0] should be a single byte: zero if false, one if true
-				switch {
-				case bytes.Equal(result[0], []byte{00}):
-					f := false
-					testResp.Passed = &f
-				case bytes.Equal(result[0], []byte{01}):
-					t := true
-					testResp.Passed = &t
-				default:
-					return nil, fmt.Errorf("key verification returned unexpected result: %q", result[0])
-				}
+				m.TransactAsync(e.algo+"/"+"keyVer", 1, [][]byte{[]byte(group.Curve), qx, qy}, func(result [][]byte) error {
+					// result[0] should be a single byte: zero if false, one if true
+					switch {
+					case bytes.Equal(result[0], []byte{00}):
+						f := false
+						testResp.Passed = &f
+					case bytes.Equal(result[0], []byte{01}):
+						t := true
+						testResp.Passed = &t
+					default:
+						return fmt.Errorf("key verification returned unexpected result: %q", result[0])
+					}
+					response.Tests = append(response.Tests, testResp)
+					return nil
+				})
 
 			case "sigGen":
 				p := e.primitives[group.HashAlgo]
@@ -163,12 +164,12 @@ func (e *ecdsa) Process(vectorSet []byte, m Transactable) (interface{}, error) {
 					}
 					op += "/componentTest"
 				}
-				result, err := m.Transact(op, 2, []byte(group.Curve), sigGenPrivateKey, []byte(group.HashAlgo), msg)
-				if err != nil {
-					return nil, fmt.Errorf("signature generation failed for test case %d/%d: %s", group.ID, test.ID, err)
-				}
-				testResp.RHex = hex.EncodeToString(result[0])
-				testResp.SHex = hex.EncodeToString(result[1])
+				m.TransactAsync(op, 2, [][]byte{[]byte(group.Curve), sigGenPrivateKey, []byte(group.HashAlgo), msg}, func(result [][]byte) error {
+					testResp.RHex = hex.EncodeToString(result[0])
+					testResp.SHex = hex.EncodeToString(result[1])
+					response.Tests = append(response.Tests, testResp)
+					return nil
+				})
 
 			case "sigVer":
 				p := e.primitives[group.HashAlgo]
@@ -197,31 +198,34 @@ func (e *ecdsa) Process(vectorSet []byte, m Transactable) (interface{}, error) {
 				if err != nil {
 					return nil, fmt.Errorf("failed to decode S in test case %d/%d: %s", group.ID, test.ID, err)
 				}
-				result, err := m.Transact(e.algo+"/"+"sigVer", 1, []byte(group.Curve), []byte(group.HashAlgo), msg, qx, qy, r, s)
-				if err != nil {
-					return nil, fmt.Errorf("signature verification failed for test case %d/%d: %s", group.ID, test.ID, err)
-				}
-				// result[0] should be a single byte: zero if false, one if true
-				switch {
-				case bytes.Equal(result[0], []byte{00}):
-					f := false
-					testResp.Passed = &f
-				case bytes.Equal(result[0], []byte{01}):
-					t := true
-					testResp.Passed = &t
-				default:
-					return nil, fmt.Errorf("signature verification returned unexpected result: %q", result[0])
-				}
+				m.TransactAsync(e.algo+"/"+"sigVer", 1, [][]byte{[]byte(group.Curve), []byte(group.HashAlgo), msg, qx, qy, r, s}, func(result [][]byte) error {
+					// result[0] should be a single byte: zero if false, one if true
+					switch {
+					case bytes.Equal(result[0], []byte{00}):
+						f := false
+						testResp.Passed = &f
+					case bytes.Equal(result[0], []byte{01}):
+						t := true
+						testResp.Passed = &t
+					default:
+						return fmt.Errorf("signature verification returned unexpected result: %q", result[0])
+					}
+					response.Tests = append(response.Tests, testResp)
+					return nil
+				})
 
 			default:
 				return nil, fmt.Errorf("invalid mode %q in ECDSA vector set", parsed.Mode)
 			}
-
-			testResp.ID = test.ID
-			response.Tests = append(response.Tests, testResp)
 		}
 
-		ret = append(ret, response)
+		m.Barrier(func() {
+			ret = append(ret, response)
+		})
+	}
+
+	if err := m.Flush(); err != nil {
+		return nil, err
 	}
 
 	return ret, nil

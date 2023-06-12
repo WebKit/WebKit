@@ -23,7 +23,7 @@
 // The TLS client and server fuzzers coordinate with bssl_shim on a common
 // format to encode configuration parameters in a fuzzer file. To add a new
 // configuration, define a tag, update |SetupTest| in fuzzer.h to parse it, and
-// update |WriteSettings| in bssl_shim to serialize it. Finally, record
+// update |SettingsWriter| in bssl_shim to serialize it. Finally, record
 // transcripts from a test run, and use the BORINGSSL_FUZZER_DEBUG environment
 // variable to confirm the transcripts are compatible.
 
