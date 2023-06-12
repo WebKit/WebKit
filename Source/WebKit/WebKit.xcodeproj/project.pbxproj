@@ -15708,6 +15708,7 @@
 				0FB94836239F31B700926A8F /* Copy Testing Headers */,
 				6577FFB92769C1460011AEC8 /* Create Symlink to Alt Root Path */,
 				EBE4D2AD28A2F3BD00C0FAE7 /* Copy Signpost Plists */,
+				DD00C28D2A37908400CBB4D9 /* Work around rdar://109484516 */,
 			);
 			buildRules = (
 				DD4DB777280F91CA001700D4 /* PBXBuildRule */,
@@ -16744,6 +16745,25 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "Scripts/generate-derived-sources.sh\n";
+		};
+		DD00C28D2A37908400CBB4D9 /* Work around rdar://109484516 */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Work around rdar://109484516";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/worked_around_109484516",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "rm -vf \"${OBJROOT}/EagerLinkingTBDs/${CONFIGURATION}${EFFECTIVE_PLATFORM_NAME}/${CONTENTS_FOLDER_PATH}/${EXECUTABLE_PREFIX}${PRODUCT_NAME}${EXECUTABLE_VARIANT_SUFFIX}.tbd\" &&\ntouch \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 		};
 		DDC907B5298B2DE800ECA4D6 /* Migrate WebCore and WebKitLegacy Headers */ = {
 			isa = PBXShellScriptBuildPhase;
