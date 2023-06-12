@@ -52,9 +52,6 @@ SVGGradientElement::SVGGradientElement(const QualifiedName& tagName, Document& d
 
 void SVGGradientElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
-    SVGURIReference::parseAttribute(name, newValue);
-    SVGElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
-
     switch (name.nodeName()) {
     case AttributeNames::gradientUnitsAttr: {
         auto propertyValue = SVGPropertyTraits<SVGUnitTypes::SVGUnitType>::fromString(newValue);
@@ -74,6 +71,9 @@ void SVGGradientElement::attributeChanged(const QualifiedName& name, const AtomS
     default:
         break;
     }
+
+    SVGURIReference::parseAttribute(name, newValue);
+    SVGElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 }
 
 void SVGGradientElement::svgAttributeChanged(const QualifiedName& attrName)

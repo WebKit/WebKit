@@ -165,9 +165,6 @@ bool SVGAnimationElement::attributeContainsJavaScriptURL(const Attribute& attrib
 
 void SVGAnimationElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
-    SVGTests::parseAttribute(name, newValue);
-    SVGSMILElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
-
     switch (name.nodeName()) {
     case AttributeNames::valuesAttr:
         // Per the SMIL specification, leading and trailing white space,
@@ -209,6 +206,9 @@ void SVGAnimationElement::attributeChanged(const QualifiedName& name, const Atom
     default:
         break;
     }
+
+    SVGTests::parseAttribute(name, newValue);
+    SVGSMILElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 }
 
 void SVGAnimationElement::svgAttributeChanged(const QualifiedName& attrName)

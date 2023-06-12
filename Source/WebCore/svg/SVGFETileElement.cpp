@@ -48,10 +48,10 @@ Ref<SVGFETileElement> SVGFETileElement::create(const QualifiedName& tagName, Doc
 
 void SVGFETileElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
-    SVGFilterPrimitiveStandardAttributes::attributeChanged(name, oldValue, newValue, attributeModificationReason);
-
     if (name == SVGNames::inAttr)
         m_in1->setBaseValInternal(newValue);
+
+    SVGFilterPrimitiveStandardAttributes::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 }
 
 void SVGFETileElement::svgAttributeChanged(const QualifiedName& attrName)

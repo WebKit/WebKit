@@ -116,11 +116,11 @@ void SVGFEImageElement::buildPendingResource()
 
 void SVGFEImageElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
-    SVGURIReference::parseAttribute(name, newValue);
-    SVGFilterPrimitiveStandardAttributes::attributeChanged(name, oldValue, newValue, attributeModificationReason);
-
     if (name == SVGNames::preserveAspectRatioAttr)
         m_preserveAspectRatio->setBaseValInternal(SVGPreserveAspectRatioValue { newValue });
+
+    SVGURIReference::parseAttribute(name, newValue);
+    SVGFilterPrimitiveStandardAttributes::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 }
 
 void SVGFEImageElement::svgAttributeChanged(const QualifiedName& attrName)

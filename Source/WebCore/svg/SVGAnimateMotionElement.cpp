@@ -101,12 +101,12 @@ bool SVGAnimateMotionElement::hasValidAttributeName() const
 
 void SVGAnimateMotionElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
-    SVGAnimationElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
-
     if (name == SVGNames::pathAttr) {
         m_path = buildPathFromString(newValue);
         updateAnimationPath();
     }
+
+    SVGAnimationElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 }
     
 SVGAnimateMotionElement::RotateMode SVGAnimateMotionElement::rotateMode() const

@@ -135,13 +135,13 @@ bool SVGGeometryElement::isPointInStroke(DOMPointInit&& pointInit)
 
 void SVGGeometryElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
-    SVGGraphicsElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
-
     if (name == SVGNames::pathLengthAttr) {
         m_pathLength->setBaseValInternal(newValue.toFloat());
         if (m_pathLength->baseVal() < 0)
             document().accessSVGExtensions().reportError("A negative value for path attribute <pathLength> is not allowed"_s);
     }
+
+    SVGGraphicsElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 }
 
 void SVGGeometryElement::svgAttributeChanged(const QualifiedName& attrName)

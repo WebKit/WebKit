@@ -67,10 +67,6 @@ Ref<SVGMaskElement> SVGMaskElement::create(const QualifiedName& tagName, Documen
 
 void SVGMaskElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
-    SVGTests::parseAttribute(name, newValue);
-    SVGElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
-
-
     SVGParsingError parseError = NoError;
     switch (name.nodeName()) {
     case AttributeNames::maskUnitsAttr: {
@@ -101,6 +97,9 @@ void SVGMaskElement::attributeChanged(const QualifiedName& name, const AtomStrin
         break;
     }
     reportAttributeParsingError(parseError, name, newValue);
+
+    SVGTests::parseAttribute(name, newValue);
+    SVGElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 }
 
 void SVGMaskElement::svgAttributeChanged(const QualifiedName& attrName)

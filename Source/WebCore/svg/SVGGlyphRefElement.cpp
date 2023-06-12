@@ -63,9 +63,6 @@ static float parseFloat(const AtomString& value)
 
 void SVGGlyphRefElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
-    SVGURIReference::parseAttribute(name, newValue);
-    SVGElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
-
     // FIXME: Is the error handling in parseFloat correct for these attributes?
     switch (name.nodeName()) {
     case AttributeNames::xAttr:
@@ -83,6 +80,9 @@ void SVGGlyphRefElement::attributeChanged(const QualifiedName& name, const AtomS
     default:
         break;
     }
+
+    SVGURIReference::parseAttribute(name, newValue);
+    SVGElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 }
 
 void SVGGlyphRefElement::setX(float x)

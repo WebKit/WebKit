@@ -92,9 +92,6 @@ bool SVGImageElement::renderingTaintsOrigin() const
 
 void SVGImageElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
-    SVGURIReference::parseAttribute(name, newValue);
-    SVGGraphicsElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
-
     SVGParsingError parseError = NoError;
     switch (name.nodeName()) {
     case AttributeNames::preserveAspectRatioAttr:
@@ -116,6 +113,9 @@ void SVGImageElement::attributeChanged(const QualifiedName& name, const AtomStri
         break;
     }
     reportAttributeParsingError(parseError, name, newValue);
+
+    SVGURIReference::parseAttribute(name, newValue);
+    SVGGraphicsElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 }
 
 void SVGImageElement::svgAttributeChanged(const QualifiedName& attrName)

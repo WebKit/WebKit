@@ -80,8 +80,6 @@ String SVGAElement::title() const
 
 void SVGAElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
-    SVGURIReference::parseAttribute(name, newValue);
-    SVGGraphicsElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
     if (name == SVGNames::targetAttr) {
         m_target->setBaseValInternal(newValue);
         return;
@@ -89,6 +87,9 @@ void SVGAElement::attributeChanged(const QualifiedName& name, const AtomString& 
         if (m_relList)
             m_relList->associatedAttributeValueChanged(newValue);
     }
+
+    SVGURIReference::parseAttribute(name, newValue);
+    SVGGraphicsElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 }
 
 void SVGAElement::svgAttributeChanged(const QualifiedName& attrName)

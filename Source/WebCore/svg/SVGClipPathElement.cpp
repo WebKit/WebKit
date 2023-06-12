@@ -52,13 +52,13 @@ Ref<SVGClipPathElement> SVGClipPathElement::create(const QualifiedName& tagName,
 
 void SVGClipPathElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
-    SVGGraphicsElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
-
     if (name == SVGNames::clipPathUnitsAttr) {
         auto propertyValue = SVGPropertyTraits<SVGUnitTypes::SVGUnitType>::fromString(newValue);
         if (propertyValue > 0)
             m_clipPathUnits->setBaseValInternal<SVGUnitTypes::SVGUnitType>(propertyValue);
     }
+
+    SVGGraphicsElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 }
 
 void SVGClipPathElement::svgAttributeChanged(const QualifiedName& attrName)

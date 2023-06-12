@@ -51,8 +51,6 @@ Ref<SVGFEOffsetElement> SVGFEOffsetElement::create(const QualifiedName& tagName,
 
 void SVGFEOffsetElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
-    SVGFilterPrimitiveStandardAttributes::attributeChanged(name, oldValue, newValue, attributeModificationReason);
-
     switch (name.nodeName()) {
     case AttributeNames::dxAttr:
         m_dx->setBaseValInternal(newValue.toFloat());
@@ -66,6 +64,8 @@ void SVGFEOffsetElement::attributeChanged(const QualifiedName& name, const AtomS
     default:
         break;
     }
+
+    SVGFilterPrimitiveStandardAttributes::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 }
 
 void SVGFEOffsetElement::svgAttributeChanged(const QualifiedName& attrName)
