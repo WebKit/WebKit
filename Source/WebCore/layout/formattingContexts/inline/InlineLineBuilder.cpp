@@ -336,10 +336,11 @@ InlineLayoutUnit LineBuilder::inlineItemWidth(const InlineItem& inlineItem, Inli
     return boxGeometry.marginBoxWidth();
 }
 
-LineBuilder::LineBuilder(const InlineFormattingContext& inlineFormattingContext, InlineLayoutState& inlineLayoutState, HorizontalConstraints rootHorizontalConstraints, const InlineItems& inlineItems, std::optional<IntrinsicWidthMode> intrinsicWidthMode)
+LineBuilder::LineBuilder(const InlineFormattingContext& inlineFormattingContext, const InlineLayoutState& inlineLayoutState, FloatingState& floatingState, HorizontalConstraints rootHorizontalConstraints, const InlineItems& inlineItems, std::optional<IntrinsicWidthMode> intrinsicWidthMode)
     : m_intrinsicWidthMode(intrinsicWidthMode)
     , m_inlineFormattingContext(inlineFormattingContext)
     , m_inlineLayoutState(inlineLayoutState)
+    , m_floatingState(floatingState)
     , m_rootHorizontalConstraints(rootHorizontalConstraints)
     , m_line(inlineFormattingContext)
     , m_inlineItems(inlineItems)
@@ -1122,6 +1123,7 @@ bool LineBuilder::tryPlacingFloatBox(const Box& floatBox, MayOverConstrainLine m
 
     auto placeFloatBox = [&] {
         auto floatItem = floatingContext.toFloatItem(floatBox, boxGeometry);
+        // FIXME: Maybe FloatingContext should be able to preserve FloatItems and the caller should mutate the FloatingState instead.
         floatingState().append(floatItem);
         m_placedFloats.append(floatItem);
     };

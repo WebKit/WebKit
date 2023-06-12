@@ -268,12 +268,13 @@ InlineLayoutResult InlineFormattingContext::lineLayout(const InlineItems& inline
         layoutResult.displayContent.boxes.reserveInitialCapacity(inlineItems.size());
 
     auto isPartialLayout = m_lineDamage && m_lineDamage->start();
-    auto floatingContext = FloatingContext { *this, inlineLayoutState.parentBlockLayoutState().floatingState() };
+    auto& floatingState = inlineLayoutState.parentBlockLayoutState().floatingState();
+    auto floatingContext = FloatingContext { *this, floatingState };
     auto lineLogicalTop = InlineLayoutUnit { constraints.logicalTop() };
     auto previousLineEnd = std::optional<InlineItemPosition> { };
     auto leadingInlineItemPosition = needsLayoutRange.start;
 
-    auto lineBuilder = LineBuilder { *this, inlineLayoutState, constraints.horizontal(), inlineItems };
+    auto lineBuilder = LineBuilder { *this, inlineLayoutState, floatingState, constraints.horizontal(), inlineItems };
     while (true) {
 
         auto lineInitialRect = InlineRect { lineLogicalTop, constraints.horizontal().logicalLeft, constraints.horizontal().logicalWidth, formattingGeometry().initialLineHeight(!previousLine.has_value()) };
@@ -426,7 +427,7 @@ InlineLayoutUnit InlineFormattingContext::computedIntrinsicWidthForConstraint(In
     if (intrinsicWidthMode == IntrinsicWidthMode::Maximum)
         horizontalConstraints.logicalWidth = maxInlineLayoutUnit();
     auto& inlineItems = formattingState().inlineItems();
-    auto lineBuilder = LineBuilder { *this, inlineLayoutState, horizontalConstraints, inlineItems, intrinsicWidthMode };
+    auto lineBuilder = LineBuilder { *this, inlineLayoutState, floatingState, horizontalConstraints, inlineItems, intrinsicWidthMode };
     auto layoutRange = InlineItemRange { 0 , inlineItems.size() };
     auto maximumContentWidth = InlineLayoutUnit { };
     auto previousLineEnd = std::optional<InlineItemPosition> { };
