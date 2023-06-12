@@ -1074,33 +1074,6 @@ bool Quirks::hasStorageAccessForAllLoginDomains(const HashSet<RegistrableDomain>
     return true;
 }
 
-const String& Quirks::BBCRadioPlayerURLString()
-{
-    static NeverDestroyed<String> BBCRadioPlayerURLString = "https://www.bbc.co.uk/sounds/player/bbc_world_service"_s;
-    return BBCRadioPlayerURLString;
-}
-
-const String& Quirks::staticRadioPlayerURLString()
-{
-    static NeverDestroyed<String> staticRadioPlayerURLString = "https://static.radioplayer.co.uk/"_s;
-    return staticRadioPlayerURLString;
-}
-
-static bool isBBCDomain(const RegistrableDomain& domain)
-{
-    static NeverDestroyed<RegistrableDomain> BBCDomain = RegistrableDomain(URL { Quirks::BBCRadioPlayerURLString() });
-    return domain == BBCDomain;
-}
-
-static bool isBBCPopUpPlayerElement(const Element& element)
-{
-    auto* parentElement = element.parentElement();
-    if (!element.parentElement() || !element.parentElement()->hasClass() || !parentElement->parentElement() || !parentElement->parentElement()->hasClass())
-        return false;
-
-    return element.parentElement()->classNames().contains("p_audioButton_buttonInner"_s) && parentElement->parentElement()->classNames().contains("hidden"_s);
-}
-
 Quirks::StorageAccessResult Quirks::requestStorageAccessAndHandleClick(CompletionHandler<void(ShouldDispatchClick)>&& completionHandler) const
 {
     auto firstPartyDomain = RegistrableDomain(m_document->topDocument().url());
@@ -1221,32 +1194,6 @@ Quirks::StorageAccessResult Quirks::triggerOptionalStorageAccessQuirk(Element& e
 
                 if (shouldDispatchClick == ShouldDispatchClick::Yes)
                     protectedElement->dispatchMouseEvent(platformEvent, eventType, detail, relatedTarget, IsSyntheticClick::Yes);
-            });
-        }
-
-        static NeverDestroyed<String> BBCRadioPlayerPopUpWindowFeatureString = "featurestring width=400,height=730"_s;
-        static NeverDestroyed<UserScript> BBCUserScript { "function triggerRedirect() { document.location.href = \"https://www.bbc.co.uk/sounds/player/bbc_world_service\"; } window.addEventListener('load', function () { triggerRedirect(); })"_s, URL(aboutBlankURL()), Vector<String>(), Vector<String>(), UserScriptInjectionTime::DocumentEnd, UserContentInjectedFrames::InjectInTopFrameOnly, WaitForNotificationBeforeInjecting::Yes };
-
-        // BBC RadioPlayer case.
-        if (isBBCDomain(domain) && isBBCPopUpPlayerElement(element)) {
-            return requestStorageAccessAndHandleClick([document = m_document] (ShouldDispatchClick shouldDispatchClick) mutable {
-                if (!document || shouldDispatchClick == ShouldDispatchClick::No)
-                    return;
-
-                auto domWindow = document->domWindow();
-                if (domWindow) {
-                    ExceptionOr<RefPtr<WindowProxy>> proxyOrException = domWindow->open(*domWindow, *domWindow, staticRadioPlayerURLString(), emptyAtom(), BBCRadioPlayerPopUpWindowFeatureString);
-                    if (proxyOrException.hasException())
-                        return;
-                    auto proxy = proxyOrException.releaseReturnValue();
-                    auto* abstractFrame = proxy->frame();
-                    if (is<Frame>(abstractFrame)) {
-                        auto* frame = downcast<Frame>(abstractFrame);
-                        auto world = ScriptController::createWorld("bbcRadioPlayerWorld"_s, ScriptController::WorldType::User);
-                        frame->addUserScriptAwaitingNotification(world.get(), BBCUserScript);
-                        return;
-                    }
-                }
             });
         }
     }
