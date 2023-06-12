@@ -32,13 +32,24 @@
 #include "TrackPrivateBaseClient.h"
 #include <wtf/LoggerHelper.h>
 #include <wtf/MediaTime.h>
+#if COMPILER(MSVC)
 #include <wtf/ThreadSafeRefCounted.h>
+#else
+#include <wtf/ThreadSafeWeakPtr.h>
+#endif
 #include <wtf/text/AtomString.h>
 
 namespace WebCore {
 
 class WEBCORE_EXPORT TrackPrivateBase
-    : public ThreadSafeRefCounted<TrackPrivateBase, WTF::DestructionThread::Main>
+    :
+#if COMPILER(MSVC)
+    // FIXME: TrackPrivateBase inheriting from ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr does not
+    // compile when using MSVC
+    public ThreadSafeRefCounted<TrackPrivateBase, WTF::DestructionThread::Main>
+#else
+    public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<TrackPrivateBase, WTF::DestructionThread::Main>
+#endif
 #if !RELEASE_LOG_DISABLED
     , public LoggerHelper
 #endif
