@@ -26,6 +26,7 @@
 
 #pragma once
 
+#include <span>
 #include <wtf/Forward.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
@@ -58,6 +59,7 @@ class SharedBuffer;
 namespace WebKit {
 
 enum class MemoryLedger { None, Default, Network, Media, Graphics, Neural };
+enum class SharedMemoryProtection : bool { ReadOnly, ReadWrite };
 
 class SharedMemoryHandle {
     WTF_MAKE_NONCOPYABLE(SharedMemoryHandle);
@@ -70,6 +72,15 @@ public:
 #elif OS(WINDOWS)
         Win32Handle;
 #endif
+
+#if PLATFORM(COCOA)
+    // Note: this function should not be used to share writable arbitrary malloc memory to
+    // another process, as a misbehaving process needs to be destroyed before the memory
+    // can be reused by malloc. Typically this is not possible to guarantee.
+    // The memory objects must be controllable by the caller.
+    static std::optional<SharedMemoryHandle> create(std::span<uint8_t>, SharedMemoryProtection);
+#endif
+    static std::optional<SharedMemoryHandle> createCopy(std::span<const uint8_t>, SharedMemoryProtection);
 
     SharedMemoryHandle() = default;
     SharedMemoryHandle(SharedMemoryHandle&&) = default;
@@ -103,8 +114,7 @@ private:
 class SharedMemory : public ThreadSafeRefCounted<SharedMemory> {
 public:
     using Handle = SharedMemoryHandle;
-
-    enum class Protection : bool { ReadOnly, ReadWrite };
+    using Protection = SharedMemoryProtection;
 
     // FIXME: Change these factory functions to return Ref<SharedMemory> and crash on failure.
     static RefPtr<SharedMemory> allocate(size_t);
@@ -141,10 +151,6 @@ public:
     Ref<WebCore::SharedBuffer> createSharedBuffer(size_t) const;
 
 private:
-#if OS(DARWIN)
-    WTF::MachSendRight createSendRight(Protection) const;
-#endif
-
     size_t m_size;
     void* m_data;
 #if PLATFORM(COCOA)

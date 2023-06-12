@@ -64,6 +64,70 @@ static int toVMMemoryLedger(MemoryLedger memoryLedger)
 }
 #endif
 
+static inline void* toPointer(mach_vm_address_t address)
+{
+    return reinterpret_cast<void*>(static_cast<uintptr_t>(address));
+}
+
+static inline mach_vm_address_t toVMAddress(void* pointer)
+{
+    return static_cast<mach_vm_address_t>(reinterpret_cast<uintptr_t>(pointer));
+}
+
+static inline vm_prot_t machProtection(SharedMemory::Protection protection)
+{
+    switch (protection) {
+    case SharedMemory::Protection::ReadOnly:
+        return VM_PROT_READ;
+    case SharedMemory::Protection::ReadWrite:
+        return VM_PROT_READ | VM_PROT_WRITE;
+    }
+
+    ASSERT_NOT_REACHED();
+    return VM_PROT_NONE;
+}
+
+static WTF::MachSendRight makeMemoryEntry(void* data, size_t size, SharedMemory::Protection protection)
+{
+    constexpr mach_port_t parentEntry = MACH_PORT_NULL;
+#if HAVE(MEMORY_ATTRIBUTION_VM_SHARE_SUPPORT)
+    constexpr bool vmShareSupportsOwnerAttribution = true;
+#else
+    constexpr bool vmShareSupportsOwnerAttribution = false;
+#endif
+    const memory_object_offset_t offset = reinterpret_cast<uintptr_t>(data);
+
+    if constexpr(!vmShareSupportsOwnerAttribution) {
+        // First try without MAP_MEM_VM_SHARE because it prevents memory ownership transfer. We only pass the MAP_MEM_VM_SHARE flag as a fallback.
+        memory_object_size_t memoryObjectSize = size;
+        mach_port_t port = MACH_PORT_NULL;
+        kern_return_t kr = mach_make_memory_entry_64(mach_task_self(), &memoryObjectSize, offset, machProtection(protection) | VM_PROT_IS_MASK | MAP_MEM_USE_DATA_ADDR, &port, parentEntry);
+        if (kr != KERN_SUCCESS) {
+            RELEASE_LOG_ERROR(VirtualMemory, "Failed to create memory entry for shared memory. Error: %" PUBLIC_LOG_STRING " (%x)", mach_error_string(kr), kr);
+            return { };
+        }
+        auto result = WTF::MachSendRight::adopt(port);
+        // Not passing MAP_MEM_VM_SHARE makes the entry use the existing memory object. If the address range spans multiple memory objects, we would need to
+        // use multiple handles. Current WebKit SHM implementation does not support this. Instead, use MAP_MEM_VM_SHARE and lose the memory attribution.
+        if (memoryObjectSize >= size)
+            return result;
+    }
+    memory_object_size_t memoryObjectSize = size;
+    mach_port_t port = MACH_PORT_NULL;
+    kern_return_t kr = mach_make_memory_entry_64(mach_task_self(), &memoryObjectSize, offset, machProtection(protection) | VM_PROT_IS_MASK | MAP_MEM_VM_SHARE | MAP_MEM_USE_DATA_ADDR, &port, parentEntry);
+    if (kr != KERN_SUCCESS) {
+        RELEASE_LOG_ERROR(VirtualMemory, "Failed to create memory entry for shared memory. Error: %" PUBLIC_LOG_STRING " (%x)", mach_error_string(kr), kr);
+        return { };
+    }
+    auto result = WTF::MachSendRight::adopt(port);
+    if (memoryObjectSize < size) {
+        RELEASE_LOG_ERROR(VirtualMemory, "Failed to create memory entry for shared memory. Unexpected memory object size with MAP_MEM_VM_SHARE: %lld < %zu at %llx", memoryObjectSize, size, offset);
+        ASSERT_WITH_MESSAGE(memoryObjectSize >= size, "Unexpected memory object size with MAP_MEM_VM_SHARE: %lld < %zu at %llx", memoryObjectSize, size, offset);
+        return { };
+    }
+    return result;
+}
+
 void SharedMemoryHandle::takeOwnershipOfMemory(MemoryLedger memoryLedger) const
 {
 #if HAVE(MACH_MEMORY_ENTRY)
@@ -91,16 +155,47 @@ void SharedMemoryHandle::setOwnershipOfMemory(const WebCore::ProcessIdentity& pr
 #endif
 }
 
-static inline void* toPointer(mach_vm_address_t address)
+std::optional<SharedMemoryHandle> SharedMemoryHandle::create(std::span<uint8_t> data, SharedMemoryProtection protection)
 {
-    return reinterpret_cast<void*>(static_cast<uintptr_t>(address));
+    // Creating a handle to an existing memory range implies that the ownership is never transferred.
+    memory_object_size_t memoryObjectSize = data.size();
+    mach_port_t port = MACH_PORT_NULL;
+    const memory_object_offset_t offset = reinterpret_cast<uintptr_t>(data.data());
+    kern_return_t kr = mach_make_memory_entry_64(mach_task_self(), &memoryObjectSize, offset, machProtection(protection) | VM_PROT_IS_MASK | MAP_MEM_VM_SHARE | MAP_MEM_USE_DATA_ADDR, &port, MACH_PORT_NULL);
+    if (kr != KERN_SUCCESS) {
+        RELEASE_LOG_ERROR(VirtualMemory, "Failed to create memory entry for shared memory. Error: %" PUBLIC_LOG_STRING " (%x)", mach_error_string(kr), kr);
+        return std::nullopt;
+    }
+    auto result = WTF::MachSendRight::adopt(port);
+    if (memoryObjectSize < data.size()) {
+        RELEASE_LOG_ERROR(VirtualMemory, "Failed to create memory entry for shared memory. Unexpected memory object size with MAP_MEM_VM_SHARE: %lld < %zu at %llx", memoryObjectSize, data.size(), offset);
+        ASSERT_WITH_MESSAGE(memoryObjectSize >= data.size(), "Unexpected memory object size with MAP_MEM_VM_SHARE: %lld < %zu at %llx", memoryObjectSize, data.size(), offset);
+        return std::nullopt;
+    }
+    if (!result)
+        return std::nullopt;
+    return std::optional<SharedMemoryHandle> { std::in_place, WTFMove(result), data.size() };
 }
 
-static inline mach_vm_address_t toVMAddress(void* pointer)
+std::optional<SharedMemoryHandle> SharedMemoryHandle::createCopy(std::span<const uint8_t> data, SharedMemoryProtection protection)
 {
-    return static_cast<mach_vm_address_t>(reinterpret_cast<uintptr_t>(pointer));
+    memory_object_size_t memoryObjectSize = data.size();
+    mach_port_t port = MACH_PORT_NULL;
+    const memory_object_offset_t offset = reinterpret_cast<uintptr_t>(data.data());
+    kern_return_t kr = mach_make_memory_entry_64(mach_task_self(), &memoryObjectSize, offset, machProtection(protection) | VM_PROT_IS_MASK | MAP_MEM_VM_COPY | MAP_MEM_USE_DATA_ADDR, &port, MACH_PORT_NULL);
+    if (kr != KERN_SUCCESS) {
+        RELEASE_LOG_ERROR(VirtualMemory, "Failed to create memory entry for copy. Error: %" PUBLIC_LOG_STRING " (%x)", mach_error_string(kr), kr);
+        return std::nullopt;
+    }
+    auto result = WTF::MachSendRight::adopt(port);
+    if (memoryObjectSize < data.size()) {
+        RELEASE_LOG_ERROR(VirtualMemory, "Failed to create memory entry for copy.");
+        ASSERT_WITH_MESSAGE(memoryObjectSize >= data.size(), "Unexpected memory object size with copy: %lld < %zu at %llx", memoryObjectSize, data.size(), offset);
+        return std::nullopt;
+    }
+    return std::optional<SharedMemoryHandle> { std::in_place, WTFMove(result), data.size() };
 }
-    
+
 RefPtr<SharedMemory> SharedMemory::allocate(size_t size)
 {
     ASSERT(size);
@@ -120,53 +215,10 @@ RefPtr<SharedMemory> SharedMemory::allocate(size_t size)
     return WTFMove(sharedMemory);
 }
 
-static inline vm_prot_t machProtection(SharedMemory::Protection protection)
-{
-    switch (protection) {
-    case SharedMemory::Protection::ReadOnly:
-        return VM_PROT_READ;
-    case SharedMemory::Protection::ReadWrite:
-        return VM_PROT_READ | VM_PROT_WRITE;
-    }
-
-    ASSERT_NOT_REACHED();
-    return VM_PROT_NONE;
-}
-
-static WTF::MachSendRight makeMemoryEntry(size_t size, vm_offset_t offset, SharedMemory::Protection protection, mach_port_t parentEntry)
-{
-    memory_object_size_t memoryObjectSize = size;
-    mach_port_t port = MACH_PORT_NULL;
-
-#if HAVE(MEMORY_ATTRIBUTION_VM_SHARE_SUPPORT)
-    kern_return_t kr = mach_make_memory_entry_64(mach_task_self(), &memoryObjectSize, offset, machProtection(protection) | VM_PROT_IS_MASK | MAP_MEM_VM_SHARE | MAP_MEM_USE_DATA_ADDR, &port, parentEntry);
-    if (kr != KERN_SUCCESS) {
-        RELEASE_LOG_ERROR(VirtualMemory, "SharedMemory::makeMemoryEntry: Failed to create a mach port for shared memory. Error: %" PUBLIC_LOG_STRING " (%x)", mach_error_string(kr), kr);
-        return { };
-    }
-#else
-    // First try without MAP_MEM_VM_SHARE because it prevents memory ownership transfer. We only pass the MAP_MEM_VM_SHARE flag as a fallback.
-    kern_return_t kr = mach_make_memory_entry_64(mach_task_self(), &memoryObjectSize, offset, machProtection(protection) | VM_PROT_IS_MASK | MAP_MEM_USE_DATA_ADDR, &port, parentEntry);
-    if (kr != KERN_SUCCESS) {
-        RELEASE_LOG(VirtualMemory, "SharedMemory::makeMemoryEntry: Failed to create a mach port for shared memory, will try again with MAP_MEM_VM_SHARE flag. Error: %" PUBLIC_LOG_STRING " (%x)", mach_error_string(kr), kr);
-        kr = mach_make_memory_entry_64(mach_task_self(), &memoryObjectSize, offset, machProtection(protection) | VM_PROT_IS_MASK | MAP_MEM_VM_SHARE | MAP_MEM_USE_DATA_ADDR, &port, parentEntry);
-        if (kr != KERN_SUCCESS) {
-            RELEASE_LOG_ERROR(VirtualMemory, "SharedMemory::makeMemoryEntry: Failed to create a mach port for shared memory with MAP_MEM_VM_SHARE flag. Error: %" PUBLIC_LOG_STRING " (%x)", mach_error_string(kr), kr);
-            return { };
-        }
-    }
-#endif // HAVE(MEMORY_ATTRIBUTION_VM_SHARE_SUPPORT)
-
-    RELEASE_ASSERT(memoryObjectSize >= size);
-
-    return WTF::MachSendRight::adopt(port);
-}
-
 RefPtr<SharedMemory> SharedMemory::wrapMap(void* data, size_t size, Protection protection)
 {
     ASSERT(size);
-
-    auto sendRight = makeMemoryEntry(size, toVMAddress(data), protection, MACH_PORT_NULL);
+    auto sendRight = makeMemoryEntry(data, size, protection);
     if (!sendRight)
         return nullptr;
 
@@ -211,33 +263,17 @@ SharedMemory::~SharedMemory()
         }
     }
 }
-    
+
 auto SharedMemory::createHandle(Protection protection) -> std::optional<Handle>
-{
-    Handle handle;
-    ASSERT(!handle.m_handle);
-    ASSERT(!handle.m_size);
-
-    auto sendRight = createSendRight(protection);
-    if (!sendRight)
-        return std::nullopt;
-
-    handle.m_handle = WTFMove(sendRight);
-    handle.m_size = m_size;
-
-    return WTFMove(handle);
-}
-
-WTF::MachSendRight SharedMemory::createSendRight(Protection protection) const
 {
     ASSERT(m_protection == protection || m_protection == Protection::ReadWrite && protection == Protection::ReadOnly);
     ASSERT(!!m_data ^ !!m_sendRight);
-
     if (m_sendRight && m_protection == protection)
-        return m_sendRight;
-
-    ASSERT(m_data);
-    return makeMemoryEntry(m_size, toVMAddress(m_data), protection, MACH_PORT_NULL);
+        return std::optional<Handle> { std::in_place, MachSendRight { m_sendRight }, m_size };
+    auto sendRight = makeMemoryEntry(m_data, m_size, protection);
+    if (!sendRight)
+        return std::nullopt;
+    return std::optional<Handle> { std::in_place, WTFMove(sendRight), m_size };
 }
 
 } // namespace WebKit
