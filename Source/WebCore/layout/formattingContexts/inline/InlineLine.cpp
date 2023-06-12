@@ -510,12 +510,6 @@ void Line::appendTextContent(const InlineTextItem& inlineTextItem, const RenderS
             m_trimmableTrailingContent.addFullyTrimmableContent(lastRunIndex, trimmableContentOffset, trimmableWidth);
             return true;
         }
-        // FIXME: Move it to InlineTextItem after removing the integration codepath check.
-        auto isPartiallyTrimmable = !inlineTextItem.isWhitespace() && style.letterSpacing() > 0 && !formattingContext().layoutState().shouldIgnoreTrailingLetterSpacing();
-        if (isPartiallyTrimmable) {
-            m_trimmableTrailingContent.addPartiallyTrimmableContent(lastRunIndex, style.letterSpacing());
-            return true;
-        }
         m_trimmableTrailingContent.reset();
         return false;
     };

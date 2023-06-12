@@ -99,7 +99,6 @@ public:
 
     void setViewportSize(const LayoutSize&);
     LayoutSize viewportSize() const;
-    bool shouldIgnoreTrailingLetterSpacing() const;
     bool shouldNotSynthesizeInlineBlockBaseline() const;
 
 private:

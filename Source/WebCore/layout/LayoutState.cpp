@@ -208,11 +208,6 @@ LayoutSize LayoutState::viewportSize() const
     return m_viewportSize;
 }
 
-bool LayoutState::shouldIgnoreTrailingLetterSpacing() const
-{
-    return isInlineFormattingContextIntegration();
-}
-
 bool LayoutState::shouldNotSynthesizeInlineBlockBaseline() const
 {
     return isInlineFormattingContextIntegration();

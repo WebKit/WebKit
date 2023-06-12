@@ -32,7 +32,6 @@
 #include "InlineFormattingQuirks.h"
 #include "LayoutBox.h"
 #include "LayoutBoxGeometry.h"
-#include "LayoutState.h"
 #include "RenderStyleInlines.h"
 #include "Shape.h"
 #include "TextUtil.h"
@@ -197,13 +196,10 @@ static inline bool isAtSoftWrapOpportunity(const InlineItem& current, const Inli
 }
 
 struct LineCandidate {
-    LineCandidate(bool ignoreTrailingLetterSpacing);
 
     void reset();
 
     struct InlineContent {
-        InlineContent(bool ignoreTrailingLetterSpacing);
-
         const InlineContentBreaker::ContinuousContent& continuousContent() const { return m_continuousContent; }
         const InlineItem* trailingLineBreak() const { return m_trailingLineBreak; }
         const InlineItem* trailingWordBreakOpportunity() const { return m_trailingWordBreakOpportunity; }
@@ -220,7 +216,8 @@ struct LineCandidate {
         void setHangingContentWidth(InlineLayoutUnit logicalWidth) { m_continuousContent.setHangingContentWidth(logicalWidth); }
 
     private:
-        bool m_ignoreTrailingLetterSpacing { false };
+        // FIXME: Enable this when we stop feature-matching legacy line layout.
+        bool m_ignoreTrailingLetterSpacing { true };
 
         InlineContentBreaker::ContinuousContent m_continuousContent;
         const InlineItem* m_trailingLineBreak { nullptr };
@@ -232,16 +229,6 @@ struct LineCandidate {
     InlineContent inlineContent;
     const InlineItem* floatItem { nullptr };
 };
-
-LineCandidate::LineCandidate(bool ignoreTrailingLetterSpacing)
-    : inlineContent(ignoreTrailingLetterSpacing)
-{
-}
-
-LineCandidate::InlineContent::InlineContent(bool ignoreTrailingLetterSpacing)
-    : m_ignoreTrailingLetterSpacing(ignoreTrailingLetterSpacing)
-{
-}
 
 inline void LineCandidate::InlineContent::appendInlineItem(const InlineItem& inlineItem, const RenderStyle& style, InlineLayoutUnit logicalWidth)
 {
@@ -479,7 +466,7 @@ LineContent LineBuilder::placeInlineAndFloatContent(const InlineItemRange& needs
     size_t placedInlineItemCount = 0;
 
     auto layoutInlineAndFloatContent = [&] {
-        auto lineCandidate = LineCandidate { layoutState().shouldIgnoreTrailingLetterSpacing() };
+        auto lineCandidate = LineCandidate { };
         auto inlineContentBreaker = InlineContentBreaker { intrinsicWidthMode() };
 
         auto currentItemIndex = needsLayoutRange.startIndex();
@@ -1420,11 +1407,6 @@ InlineLayoutUnit LineBuilder::horizontalAlignmentOffset(bool isLastLine) const
 const ElementBox& LineBuilder::root() const
 {
     return formattingContext().root();
-}
-
-const LayoutState& LineBuilder::layoutState() const
-{
-    return formattingContext().layoutState();
 }
 
 const RenderStyle& LineBuilder::rootStyle() const

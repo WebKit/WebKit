@@ -161,7 +161,6 @@ private:
     FloatingState& floatingState() { return m_floatingState; }
     const FloatingState& floatingState() const { return const_cast<LineBuilder&>(*this).floatingState(); }
     const ElementBox& root() const;
-    const LayoutState& layoutState() const;
     const RenderStyle& rootStyle() const;
 
 private:
