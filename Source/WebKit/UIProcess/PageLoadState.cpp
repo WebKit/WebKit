@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -42,7 +42,7 @@ PageLoadState::PageLoadState(WebPageProxy& webPageProxy)
 
 PageLoadState::~PageLoadState()
 {
-    ASSERT(m_observers.isEmpty());
+    ASSERT(m_observers.isEmptyIgnoringNullReferences());
 }
 
 PageLoadState::Transaction::Transaction(PageLoadState& pageLoadState)
@@ -67,14 +67,14 @@ PageLoadState::Transaction::~Transaction()
 
 void PageLoadState::addObserver(Observer& observer)
 {
-    ASSERT(!m_observers.contains(&observer));
+    ASSERT(!m_observers.contains(observer));
 
-    m_observers.append(&observer);
+    m_observers.add(observer);
 }
 
 void PageLoadState::removeObserver(Observer& observer)
 {
-    bool removed = m_observers.removeFirst(&observer);
+    bool removed = m_observers.remove(observer);
     ASSERT_UNUSED(removed, removed);
 }
 
@@ -490,14 +490,13 @@ void PageLoadState::callObserverCallback(void (Observer::*callback)())
 {
     Ref protectedPage { m_webPageProxy };
 
-    auto observerCopy = m_observers;
-    for (auto* observer : observerCopy) {
+    for (auto& observer : copyToVector(m_observers)) {
         // This appears potentially inefficient on the surface (searching in a Vector)
         // but in practice - using only API - there will only ever be (1) observer.
-        if (!m_observers.contains(observer))
+        if (!observer || !m_observers.contains(*observer))
             continue;
 
-        (observer->*callback)();
+        ((*observer).*callback)();
     }
 }
 

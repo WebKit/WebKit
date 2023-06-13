@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -76,7 +76,13 @@
 #import <wtf/BlockPtr.h>
 #import <wtf/cocoa/Entitlements.h>
 
-#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, m_webView.get()->_page->process().connection())
+#define MESSAGE_CHECK(assertion) do { \
+    if (auto webView = this->webView()) { \
+        MESSAGE_CHECK_BASE(assertion, webView->_page->process().connection()); \
+    } else { \
+        ASSERT_NOT_REACHED(); \
+    } \
+while (0)
 
 @interface UIWindow ()
 - (BOOL)_isHostedInAnotherProcess;
@@ -137,17 +143,21 @@ bool PageClientImpl::isViewFocused()
 
 bool PageClientImpl::isViewVisible()
 {
-    if (isViewInWindow() && ![m_webView _isBackground])
+    auto webView = this->webView();
+    if (!webView)
+        return false;
+
+    if (isViewInWindow() && ![webView _isBackground])
         return true;
     
-    if ([m_webView _isShowingVideoPictureInPicture])
+    if ([webView _isShowingVideoPictureInPicture])
         return true;
     
-    if ([m_webView _mayAutomaticallyShowVideoPictureInPicture])
+    if ([webView _mayAutomaticallyShowVideoPictureInPicture])
         return true;
 
 #if ENABLE(WEBXR) && !USE(OPENXR)
-    auto page = m_webView.get()->_page;
+    auto page = webView->_page;
     if (page && page->xrSystem() && page->xrSystem()->hasActiveSession())
         return true;
 #endif
@@ -172,7 +182,7 @@ bool PageClientImpl::canTakeForegroundAssertions()
 bool PageClientImpl::isViewInWindow()
 {
     // FIXME: in WebKitTestRunner, m_webView is nil, so check the content view instead.
-    if (auto webView = m_webView.get())
+    if (auto webView = this->webView())
         return [webView window];
 
     return [m_contentView window];
@@ -255,25 +265,30 @@ void PageClientImpl::didCompleteSyntheticClick()
 
 void PageClientImpl::decidePolicyForGeolocationPermissionRequest(WebFrameProxy& frame, const FrameInfoData& frameInfo, Function<void(bool)>& completionHandler)
 {
-    [[wrapper(m_webView.get()->_page->process().processPool()) _geolocationProvider] decidePolicyForGeolocationRequestFromOrigin:FrameInfoData { frameInfo } completionHandler:std::exchange(completionHandler, nullptr) view:m_webView.get().get()];
+    if (auto webView = this->webView()) {
+        auto* geolocationProvider = [wrapper(webView->_page->process().processPool()) _geolocationProvider];
+        [geolocationProvider decidePolicyForGeolocationRequestFromOrigin:FrameInfoData { frameInfo } completionHandler:std::exchange(completionHandler, nullptr) view:webView.get()];
+    }
 }
 
 void PageClientImpl::didStartProvisionalLoadForMainFrame()
 {
-    [m_webView _didStartProvisionalLoadForMainFrame];
+    auto webView = this->webView();
+    [webView _didStartProvisionalLoadForMainFrame];
     [m_contentView _didStartProvisionalLoadForMainFrame];
-    [m_webView _hidePasswordView];
+    [webView _hidePasswordView];
 }
 
 void PageClientImpl::didFailProvisionalLoadForMainFrame()
 {
-    [m_webView _hidePasswordView];
+    [webView() _hidePasswordView];
 }
 
 void PageClientImpl::didCommitLoadForMainFrame(const String& mimeType, bool useCustomContentProvider)
 {
-    [m_webView _hidePasswordView];
-    [m_webView _setHasCustomContentView:useCustomContentProvider loadedMIMEType:mimeType];
+    auto webView = this->webView();
+    [webView _hidePasswordView];
+    [webView _setHasCustomContentView:useCustomContentProvider loadedMIMEType:mimeType];
     [m_contentView _didCommitLoadForMainFrame];
 }
 
@@ -294,7 +309,7 @@ void PageClientImpl::handleSmartMagnificationInformationForPotentialTap(WebKit::
 
 double PageClientImpl::minimumZoomScale() const
 {
-    if (UIScrollView *scroller = [m_webView scrollView])
+    if (UIScrollView *scroller = [webView() scrollView])
         return scroller.minimumZoomScale;
 
     return 1;
@@ -521,7 +536,7 @@ void PageClientImpl::makeViewBlank(bool makeBlank)
 
 void PageClientImpl::showSafeBrowsingWarning(const SafeBrowsingWarning& warning, CompletionHandler<void(std::variant<WebKit::ContinueUnsafeLoad, URL>&&)>&& completionHandler)
 {
-    if (auto webView = m_webView.get())
+    if (auto webView = this->webView())
         [webView _showSafeBrowsingWarning:warning completionHandler:WTFMove(completionHandler)];
     else
         completionHandler(ContinueUnsafeLoad::No);
@@ -529,12 +544,12 @@ void PageClientImpl::showSafeBrowsingWarning(const SafeBrowsingWarning& warning,
 
 void PageClientImpl::clearSafeBrowsingWarning()
 {
-    [m_webView _clearSafeBrowsingWarning];
+    [webView() _clearSafeBrowsingWarning];
 }
 
 void PageClientImpl::clearSafeBrowsingWarningIfForMainFrameNavigation()
 {
-    [m_webView _clearSafeBrowsingWarningIfForMainFrameNavigation];
+    [webView() _clearSafeBrowsingWarningIfForMainFrameNavigation];
 }
 
 void PageClientImpl::exitAcceleratedCompositingMode()
@@ -557,12 +572,12 @@ void PageClientImpl::didPerformDictionaryLookup(const DictionaryPopupInfo& dicti
 
 bool PageClientImpl::effectiveAppearanceIsDark() const
 {
-    return [m_webView _effectiveAppearanceIsDark];
+    return [webView() _effectiveAppearanceIsDark];
 }
 
 bool PageClientImpl::effectiveUserInterfaceLevelIsElevated() const
 {
-    return [m_webView _effectiveUserInterfaceLevelIsElevated];
+    return [webView() _effectiveUserInterfaceLevelIsElevated];
 }
 
 void PageClientImpl::setRemoteLayerTreeRootNode(RemoteLayerTreeNode* rootNode)
@@ -578,7 +593,7 @@ CALayer *PageClientImpl::acceleratedCompositingRootLayer() const
 
 RefPtr<ViewSnapshot> PageClientImpl::takeViewSnapshot(std::optional<WebCore::IntRect>&&)
 {
-    return [m_webView _takeViewSnapshot];
+    return [webView() _takeViewSnapshot];
 }
 
 void PageClientImpl::wheelEventWasNotHandledByWebCore(const NativeWebWheelEvent& event)
@@ -608,17 +623,17 @@ void PageClientImpl::layerTreeCommitComplete()
 
 void PageClientImpl::couldNotRestorePageState()
 {
-    [m_webView _couldNotRestorePageState];
+    [webView() _couldNotRestorePageState];
 }
 
 void PageClientImpl::restorePageState(std::optional<WebCore::FloatPoint> scrollPosition, const WebCore::FloatPoint& scrollOrigin, const WebCore::FloatBoxExtent& obscuredInsetsOnSave, double scale)
 {
-    [m_webView _restorePageScrollPosition:scrollPosition scrollOrigin:scrollOrigin previousObscuredInset:obscuredInsetsOnSave scale:scale];
+    [webView() _restorePageScrollPosition:scrollPosition scrollOrigin:scrollOrigin previousObscuredInset:obscuredInsetsOnSave scale:scale];
 }
 
 void PageClientImpl::restorePageCenterAndScale(std::optional<WebCore::FloatPoint> center, double scale)
 {
-    [m_webView _restorePageStateToUnobscuredCenter:center scale:scale];
+    [webView() _restorePageStateToUnobscuredCenter:center scale:scale];
 }
 
 void PageClientImpl::elementDidFocus(const FocusedElementInformation& nodeInformation, bool userIsInteracting, bool blurPreviousNode, OptionSet<WebCore::ActivityState> activityStateChanges, API::Object* userData)
@@ -715,25 +730,26 @@ WebFullScreenManagerProxyClient& PageClientImpl::fullScreenManagerProxyClient()
 
 void PageClientImpl::closeFullScreenManager()
 {
-    [m_webView closeFullScreenWindowController];
+    [webView() closeFullScreenWindowController];
 }
 
 bool PageClientImpl::isFullScreen()
 {
-    if (![m_webView hasFullScreenWindowController])
+    auto webView = this->webView();
+    if (![webView hasFullScreenWindowController])
         return false;
 
-    return [m_webView fullScreenWindowController].isFullScreen;
+    return [webView fullScreenWindowController].isFullScreen;
 }
 
 void PageClientImpl::enterFullScreen(FloatSize videoDimensions)
 {
-    [[m_webView fullScreenWindowController] enterFullScreen:videoDimensions];
+    [[webView() fullScreenWindowController] enterFullScreen:videoDimensions];
 }
 
 void PageClientImpl::exitFullScreen()
 {
-    [[m_webView fullScreenWindowController] exitFullScreen];
+    [[webView() fullScreenWindowController] exitFullScreen];
 }
 
 static UIInterfaceOrientationMask toUIInterfaceOrientationMask(WebCore::ScreenOrientationType orientation)
@@ -754,23 +770,23 @@ static UIInterfaceOrientationMask toUIInterfaceOrientationMask(WebCore::ScreenOr
 
 bool PageClientImpl::lockFullscreenOrientation(WebCore::ScreenOrientationType orientation)
 {
-    [[m_webView fullScreenWindowController] setSupportedOrientations:toUIInterfaceOrientationMask(orientation)];
+    [[webView() fullScreenWindowController] setSupportedOrientations:toUIInterfaceOrientationMask(orientation)];
     return true;
 }
 
 void PageClientImpl::unlockFullscreenOrientation()
 {
-    [[m_webView fullScreenWindowController] resetSupportedOrientations];
+    [[webView() fullScreenWindowController] resetSupportedOrientations];
 }
 
 void PageClientImpl::beganEnterFullScreen(const IntRect& initialFrame, const IntRect& finalFrame)
 {
-    [[m_webView fullScreenWindowController] beganEnterFullScreenWithInitialFrame:initialFrame finalFrame:finalFrame];
+    [[webView() fullScreenWindowController] beganEnterFullScreenWithInitialFrame:initialFrame finalFrame:finalFrame];
 }
 
 void PageClientImpl::beganExitFullScreen(const IntRect& initialFrame, const IntRect& finalFrame)
 {
-    [[m_webView fullScreenWindowController] beganExitFullScreenWithInitialFrame:initialFrame finalFrame:finalFrame];
+    [[webView() fullScreenWindowController] beganExitFullScreenWithInitialFrame:initialFrame finalFrame:finalFrame];
 }
 
 #endif // ENABLE(FULLSCREEN_API)
@@ -778,7 +794,7 @@ void PageClientImpl::beganExitFullScreen(const IntRect& initialFrame, const IntR
 void PageClientImpl::didFinishLoadingDataForCustomContentProvider(const String& suggestedFilename, const IPC::DataReference& dataReference)
 {
     RetainPtr<NSData> data = adoptNS([[NSData alloc] initWithBytes:dataReference.data() length:dataReference.size()]);
-    [m_webView _didFinishLoadingDataForCustomContentProviderWithSuggestedFilename:suggestedFilename data:data.get()];
+    [webView() _didFinishLoadingDataForCustomContentProviderWithSuggestedFilename:suggestedFilename data:data.get()];
 }
 
 void PageClientImpl::scrollingNodeScrollViewWillStartPanGesture(ScrollingNodeID)
@@ -803,24 +819,33 @@ void PageClientImpl::scrollingNodeScrollDidEndScroll(ScrollingNodeID nodeID)
 
 Vector<String> PageClientImpl::mimeTypesWithCustomContentProviders()
 {
-    return [m_webView _contentProviderRegistry]._mimeTypesWithCustomContentProviders;
+    return [webView() _contentProviderRegistry]._mimeTypesWithCustomContentProviders;
 }
 
 void PageClientImpl::navigationGestureDidBegin()
 {
-    [m_webView _navigationGestureDidBegin];
-    NavigationState::fromWebPage(*m_webView.get()->_page).navigationGestureDidBegin();
+    if (auto webView = this->webView()) {
+        [webView _navigationGestureDidBegin];
+        if (auto* navigationState = NavigationState::fromWebPage(*webView->_page))
+            navigationState->navigationGestureDidBegin();
+    }
 }
 
 void PageClientImpl::navigationGestureWillEnd(bool willNavigate, WebBackForwardListItem& item)
 {
-    NavigationState::fromWebPage(*m_webView.get()->_page).navigationGestureWillEnd(willNavigate, item);
+    if (auto webView = this->webView()) {
+        if (auto* navigationState = NavigationState::fromWebPage(*webView->_page))
+            navigationState->navigationGestureWillEnd(willNavigate, item);
+    }
 }
 
 void PageClientImpl::navigationGestureDidEnd(bool willNavigate, WebBackForwardListItem& item)
 {
-    NavigationState::fromWebPage(*m_webView.get()->_page).navigationGestureDidEnd(willNavigate, item);
-    [m_webView _navigationGestureDidEnd];
+    if (auto webView = this->webView()) {
+        if (auto* navigationState = NavigationState::fromWebPage(*webView->_page))
+            navigationState->navigationGestureDidEnd(willNavigate, item);
+        [webView _navigationGestureDidEnd];
+    }
 }
 
 void PageClientImpl::navigationGestureDidEnd()
@@ -830,12 +855,18 @@ void PageClientImpl::navigationGestureDidEnd()
 
 void PageClientImpl::willRecordNavigationSnapshot(WebBackForwardListItem& item)
 {
-    NavigationState::fromWebPage(*m_webView.get()->_page).willRecordNavigationSnapshot(item);
+    if (auto webView = this->webView()) {
+        if (auto* navigationState = NavigationState::fromWebPage(*webView->_page))
+            navigationState->willRecordNavigationSnapshot(item);
+    }
 }
 
 void PageClientImpl::didRemoveNavigationGestureSnapshot()
 {
-    NavigationState::fromWebPage(*m_webView.get()->_page).navigationGestureSnapshotWasRemoved();
+    if (auto webView = this->webView()) {
+        if (auto* navigationState = NavigationState::fromWebPage(*webView->_page))
+            navigationState->navigationGestureSnapshotWasRemoved();
+    }
 }
 
 void PageClientImpl::didFirstVisuallyNonEmptyLayoutForMainFrame()
@@ -844,27 +875,27 @@ void PageClientImpl::didFirstVisuallyNonEmptyLayoutForMainFrame()
 
 void PageClientImpl::didFinishNavigation(API::Navigation* navigation)
 {
-    [m_webView _didFinishNavigation:navigation];
+    [webView() _didFinishNavigation:navigation];
 }
 
 void PageClientImpl::didFailNavigation(API::Navigation* navigation)
 {
-    [m_webView _didFailNavigation:navigation];
+    [webView() _didFailNavigation:navigation];
 }
 
 void PageClientImpl::didSameDocumentNavigationForMainFrame(SameDocumentNavigationType navigationType)
 {
-    [m_webView _didSameDocumentNavigationForMainFrame:navigationType];
+    [webView() _didSameDocumentNavigationForMainFrame:navigationType];
 }
 
 void PageClientImpl::didChangeBackgroundColor()
 {
-    [m_webView _updateScrollViewBackground];
+    [webView() _updateScrollViewBackground];
 }
 
 void PageClientImpl::videoControlsManagerDidChange()
 {
-    [m_webView _videoControlsManagerDidChange];
+    [webView() _videoControlsManagerDidChange];
 }
 
 void PageClientImpl::refView()

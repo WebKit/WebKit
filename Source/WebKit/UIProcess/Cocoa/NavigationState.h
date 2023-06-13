@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -54,22 +54,22 @@ namespace WebKit {
 
 struct WebNavigationDataStore;
 
-class NavigationState final : private PageLoadState::Observer, public CanMakeWeakPtr<NavigationState> {
+class NavigationState final : public PageLoadState::Observer {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit NavigationState(WKWebView *);
     ~NavigationState();
 
-    static NavigationState& fromWebPage(WebPageProxy&);
+    static NavigationState* fromWebPage(WebPageProxy&);
 
     UniqueRef<API::NavigationClient> createNavigationClient();
     UniqueRef<API::HistoryClient> createHistoryClient();
 
-    RetainPtr<id <WKNavigationDelegate> > navigationDelegate();
-    void setNavigationDelegate(id <WKNavigationDelegate>);
+    RetainPtr<id<WKNavigationDelegate>> navigationDelegate() const;
+    void setNavigationDelegate(id<WKNavigationDelegate>);
 
-    RetainPtr<id <WKHistoryDelegatePrivate> > historyDelegate();
-    void setHistoryDelegate(id <WKHistoryDelegatePrivate>);
+    RetainPtr<id<WKHistoryDelegatePrivate>> historyDelegate() const;
+    void setHistoryDelegate(id<WKHistoryDelegatePrivate>);
 
     // Called by the page client.
     void navigationGestureDidBegin();
@@ -201,8 +201,10 @@ private:
     void releaseNetworkActivityAfterLoadCompletion() { releaseNetworkActivity(NetworkActivityReleaseReason::LoadCompleted); }
 #endif
 
-    WKWebView *m_webView;
-    WeakObjCPtr<id <WKNavigationDelegate> > m_navigationDelegate;
+    RetainPtr<WKWebView> webView() const { return m_webView.get(); }
+
+    WeakObjCPtr<WKWebView> m_webView;
+    WeakObjCPtr<id<WKNavigationDelegate>> m_navigationDelegate;
 
     struct {
         bool webViewDecidePolicyForNavigationActionDecisionHandler : 1;
@@ -270,7 +272,7 @@ private:
 #endif
     } m_navigationDelegateMethods;
 
-    WeakObjCPtr<id <WKHistoryDelegatePrivate> > m_historyDelegate;
+    WeakObjCPtr<id<WKHistoryDelegatePrivate>> m_historyDelegate;
     struct {
         bool webViewDidNavigateWithNavigationData : 1;
         bool webViewDidPerformClientRedirectFromURLToURL : 1;
