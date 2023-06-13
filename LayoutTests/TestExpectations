@@ -3705,25 +3705,12 @@ webkit.org/b/203583 imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio-
 # wpt css-text-decor failures
 webkit.org/b/230041 imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-color-selection-001.html [ ImageOnlyFailure ]
 webkit.org/b/230041 imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-color-selection-pseudo-01.html [ ImageOnlyFailure ]
-webkit.org/b/203530 imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-line-recalc.html [ ImageOnlyFailure ]
 webkit.org/b/203528 imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-thickness-linethrough-001.html [ ImageOnlyFailure ]
-webkit.org/b/203528 imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-thickness-overline-001.html [ ImageOnlyFailure ]
-webkit.org/b/203528 imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-thickness-scroll-001.html [ ImageOnlyFailure ]
-webkit.org/b/203528 imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-thickness-underline-001.html [ ImageOnlyFailure ]
-webkit.org/b/203528 imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-thickness-vertical-001.html [ ImageOnlyFailure ]
 webkit.org/b/203528 imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-thickness-vertical-002.html [ ImageOnlyFailure ]
-webkit.org/b/203528 imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-thickness-percent-001.html [ ImageOnlyFailure ]
 webkit.org/b/203529 imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-underline-position-vertical-ja.html [ ImageOnlyFailure ]
 webkit.org/b/203529 imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-underline-position-vertical.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-propagation-display-contents.html [ ImageOnlyFailure ]
-webkit.org/b/230083 imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-skip-ink-001.html [ ImageOnlyFailure ]
-webkit.org/b/230083 imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-skip-ink-004.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-skip-ink-005.html [ ImageOnlyFailure ]
-webkit.org/b/230083 imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-skip-ink-sidewayslr-001.html [ ImageOnlyFailure ]
-webkit.org/b/230083 imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-skip-ink-sidewaysrl-001.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-skip-ink-upright-001.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-skip-ink-vertical-001.html [ ImageOnlyFailure ]
-webkit.org/b/230083 imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-thickness-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-text-decor/text-emphasis-position-over-left-001.xht [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-text-decor/text-emphasis-position-over-left-002.xht [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-text-decor/text-emphasis-position-over-right-001.xht [ ImageOnlyFailure ]
@@ -3743,7 +3730,6 @@ imported/w3c/web-platform-tests/css/css-text-decor/text-emphasis-style-filled-00
 imported/w3c/web-platform-tests/css/css-text-decor/text-emphasis-style-open-001.xht [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-text-decor/text-emphasis-style-shape-001.xht [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-text-decor/text-emphasis-style-string-001.xht [ ImageOnlyFailure ]
-webkit.org/b/230083 imported/w3c/web-platform-tests/css/css-text-decor/text-underline-offset-001.html [ ImageOnlyFailure ]
 
 # wpt css-position failures
 webkit.org/b/203445 [ Debug ] imported/w3c/web-platform-tests/css/css-position/position-absolute-container-dynamic-002.html [ Skip ]
@@ -4805,8 +4791,17 @@ webkit.org/b/214463 imported/w3c/web-platform-tests/css/css-sizing/intrinsic-per
 webkit.org/b/214463 imported/w3c/web-platform-tests/css/css-sizing/intrinsic-percent-replaced-dynamic-009.html [ ImageOnlyFailure ]
 webkit.org/b/214463 imported/w3c/web-platform-tests/css/css-sizing/intrinsic-percent-replaced-dynamic-010.html [ ImageOnlyFailure ]
 
+# Bugs with text-decoration-thickness
 webkit.org/b/214464 imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-thickness-fixed.html [ ImageOnlyFailure ]
 webkit.org/b/214464 imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-thickness-ink-skip-dilation.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-thickness-overline-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-thickness-underline-001.html [ ImageOnlyFailure ]
+
+# writing-mode: sideways-lr not supported
+imported/w3c/web-platform-tests/css/css-text-decor/text-underline-offset-vertical-002.html [ ImageOnlyFailure ]
+
+# text-underline-position: right; not supported
+webkit.org/b/112615 imported/w3c/web-platform-tests/css/css-text-decor/text-underline-offset-vertical-003.html [ ImageOnlyFailure ]
 
 webkit.org/b/214465 imported/w3c/web-platform-tests/css/mediaqueries/prefers-color-scheme-svg-image.html [ ImageOnlyFailure ]
 webkit.org/b/214465 imported/w3c/web-platform-tests/css/mediaqueries/prefers-color-scheme-svg-image-normal-with-meta-dark.html [ ImageOnlyFailure ]
@@ -5166,7 +5161,9 @@ webkit.org/b/230004 imported/w3c/web-platform-tests/css/css-pseudo/selection-int
 webkit.org/b/230004 imported/w3c/web-platform-tests/css/css-pseudo/selection-overlay-and-grammar-001.html [ ImageOnlyFailure ]
 webkit.org/b/230004 imported/w3c/web-platform-tests/css/css-pseudo/selection-overlay-and-spelling-001.html [ ImageOnlyFailure ]
 webkit.org/b/230004 imported/w3c/web-platform-tests/css/css-pseudo/selection-textarea-011.html [ ImageOnlyFailure ]
-
+webkit.org/b/233927 imported/w3c/web-platform-tests/css/css-pseudo/highlight-painting-003.html [ ImageOnlyFailure ]
+webkit.org/b/233927 imported/w3c/web-platform-tests/css/css-pseudo/highlight-painting-004.html [ ImageOnlyFailure ]
+webkit.org/b/233927 imported/w3c/web-platform-tests/css/css-pseudo/selection-originating-decoration-color.html [ ImageOnlyFailure ]
 
 # css/filter-effects
 imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-basic-background-color.html [ ImageOnlyFailure ]

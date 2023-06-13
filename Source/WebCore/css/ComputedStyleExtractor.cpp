@@ -3612,11 +3612,9 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
     case CSSPropertyTextAlignLast:
         return createConvertingToCSSValueID(style.textAlignLast());
     case CSSPropertyTextDecoration:
-        return renderTextDecorationLineFlagsToCSSValue(style.textDecorationLine());
+        return textDecorationShorthandValue(style);
     case CSSPropertyTextJustify:
         return createConvertingToCSSValueID(style.textJustify());
-    case CSSPropertyWebkitTextDecoration:
-        return getCSSPropertyValuesForShorthandProperties(webkitTextDecorationShorthand());
     case CSSPropertyTextDecorationLine:
         return renderTextDecorationLineFlagsToCSSValue(style.textDecorationLine());
     case CSSPropertyTextDecorationStyle:
@@ -4482,6 +4480,36 @@ RefPtr<CSSValueList> ComputedStyleExtractor::getCSSPropertyValuesFor4SidesShorth
         list.append(bottomValue.releaseNonNull());
     if (showLeft)
         list.append(leftValue.releaseNonNull());
+    return CSSValueList::createSpaceSeparated(WTFMove(list));
+}
+
+Ref<CSSValueList> ComputedStyleExtractor::textDecorationShorthandValue(const RenderStyle& style)
+{
+    auto shorthand = textDecorationShorthand();
+    CSSValueListBuilder list;
+    for (size_t i = 0; i < shorthand.length(); ++i) {
+        auto property = shorthand.properties()[i];
+        switch (property) {
+        case CSSPropertyTextDecorationColor:
+            list.append(propertyValue(property, UpdateLayout::No).releaseNonNull());
+            break;
+        case CSSPropertyTextDecorationLine:
+            if (style.textDecorationLine() != RenderStyle::initialTextDecorationLine())
+                list.append(propertyValue(property, UpdateLayout::No).releaseNonNull());
+            break;
+        case CSSPropertyTextDecorationThickness:
+            if (style.textDecorationThickness() != RenderStyle::initialTextDecorationThickness())
+                list.append(propertyValue(property, UpdateLayout::No).releaseNonNull());
+            break;
+        case CSSPropertyTextDecorationStyle:
+            if (style.textDecorationStyle() != RenderStyle::initialTextDecorationStyle())
+                list.append(propertyValue(property, UpdateLayout::No).releaseNonNull());
+            break;
+        default:
+            ASSERT_NOT_REACHED();
+            break;
+        }
+    }
     return CSSValueList::createSpaceSeparated(WTFMove(list));
 }
 

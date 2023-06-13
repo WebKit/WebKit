@@ -102,6 +102,7 @@ private:
     Ref<CSSValue> getMaskShorthandValue();
     Ref<CSSValueList> getCSSPropertyValuesForGridShorthand(const StylePropertyShorthand&);
     Ref<CSSValue> fontVariantShorthandValue();
+    Ref<CSSValueList> textDecorationShorthandValue(const RenderStyle&);
 
     RefPtr<Element> m_element;
     PseudoId m_pseudoElementSpecifier;

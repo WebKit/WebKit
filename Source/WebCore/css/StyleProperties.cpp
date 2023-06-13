@@ -218,7 +218,6 @@ static constexpr bool canUseShorthandForLonghand(CSSPropertyID shorthandID, CSSP
     case CSSPropertyWebkitColumnBreakInside:
     case CSSPropertyWebkitMaskPosition:
     case CSSPropertyWebkitPerspective:
-    case CSSPropertyWebkitTextDecoration:
     case CSSPropertyWebkitTextOrientation:
         return false;
 

@@ -58,6 +58,7 @@
 #include "RenderStyle.h"
 #include "SimpleRange.h"
 #include "StyleFontSizeFunctions.h"
+#include "StylePropertyShorthand.h"
 #include "StyleResolver.h"
 #include "StyleRule.h"
 #include "StyledElement.h"
@@ -97,10 +98,13 @@ static constexpr CSSPropertyID editingProperties[] = {
     // Non-inheritable properties
     CSSPropertyBackgroundColor,
     CSSPropertyTextDecorationLine,
+    CSSPropertyTextDecorationThickness,
+    CSSPropertyTextDecorationStyle,
+    CSSPropertyTextDecorationColor,
 };
 
 const unsigned numAllEditingProperties = std::size(editingProperties);
-const unsigned numInheritableEditingProperties = numAllEditingProperties - 2;
+const unsigned numInheritableEditingProperties = numAllEditingProperties - 5;
 
 enum EditingPropertiesToInclude { OnlyInheritableEditingProperties, AllEditingProperties };
 template <class StyleDeclarationType>
@@ -228,7 +232,7 @@ void HTMLElementEquivalent::addToStyle(Element*, EditingStyle* style) const
 class HTMLTextDecorationEquivalent : public HTMLElementEquivalent {
 public:
     HTMLTextDecorationEquivalent(CSSValueID primitiveValue, const QualifiedName& tagName)
-        : HTMLElementEquivalent(CSSPropertyTextDecorationLine, primitiveValue, tagName)
+        : HTMLElementEquivalent(CSSPropertyTextDecoration, primitiveValue, tagName)
         , m_isUnderline(primitiveValue == CSSValueUnderline)
     {
     }
@@ -545,7 +549,7 @@ void EditingStyle::init(Node* node, PropertiesToInclude propertiesToInclude)
         if (RefPtr<CSSValue> value = backgroundColorInEffect(node))
             m_mutableStyle->setProperty(CSSPropertyBackgroundColor, value->cssText());
         if (RefPtr<CSSValue> value = computedStyleAtPosition.propertyValue(CSSPropertyWebkitTextDecorationsInEffect)) {
-            m_mutableStyle->setProperty(CSSPropertyTextDecorationLine, value->cssText());
+            m_mutableStyle->setProperty(CSSPropertyTextDecoration, value->cssText());
             m_mutableStyle->removeProperty(CSSPropertyWebkitTextDecorationsInEffect);
         }
     }
@@ -629,6 +633,10 @@ Ref<MutableStyleProperties> EditingStyle::styleWithResolvedTextDecorations() con
         style->setProperty(CSSPropertyTextDecorationLine, CSSPrimitiveValue::create(CSSValueNone));
     else
         style->setProperty(CSSPropertyTextDecorationLine, CSSValueList::createSpaceSeparated(WTFMove(valueList)));
+
+    style->setProperty(CSSPropertyTextDecorationThickness, CSSValueInitial);
+    style->setProperty(CSSPropertyTextDecorationStyle, CSSValueInitial);
+    style->setProperty(CSSPropertyTextDecorationColor, CSSValueInitial);
 
     return style;
 }
@@ -826,9 +834,9 @@ void EditingStyle::collapseTextDecorationProperties()
         return;
 
     if (textDecorationsInEffect->isValueList())
-        m_mutableStyle->setProperty(CSSPropertyTextDecorationLine, textDecorationsInEffect->cssText(), m_mutableStyle->propertyIsImportant(CSSPropertyTextDecorationLine));
+        m_mutableStyle->setProperty(CSSPropertyTextDecoration, textDecorationsInEffect->cssText(), m_mutableStyle->propertyIsImportant(CSSPropertyTextDecorationLine));
     else
-        m_mutableStyle->removeProperty(CSSPropertyTextDecorationLine);
+        m_mutableStyle->removeProperty(CSSPropertyTextDecoration);
     m_mutableStyle->removeProperty(CSSPropertyWebkitTextDecorationsInEffect);
 }
 
@@ -938,12 +946,16 @@ bool EditingStyle::conflictsWithInlineStyleOfElement(StyledElement& element, Ref
             if (!extractedValueList.isEmpty()) {
                 conflicts = true;
                 if (newValueList.isEmpty())
-                    newInlineStyle->removeProperty(CSSPropertyTextDecorationLine);
-                else
+                    newInlineStyle->removeProperty(CSSPropertyTextDecoration);
+                else {
+                    newInlineStyle->setProperty(CSSPropertyTextDecorationThickness, CSSValueInitial);
+                    newInlineStyle->setProperty(CSSPropertyTextDecorationStyle, CSSValueInitial);
+                    newInlineStyle->setProperty(CSSPropertyTextDecorationColor, CSSValueInitial);
                     newInlineStyle->setProperty(CSSPropertyTextDecorationLine, CSSValueList::createSpaceSeparated(WTFMove(newValueList)));
+                }
                 if (extractedStyle) {
                     bool isImportant = inlineStyle->propertyIsImportant(CSSPropertyTextDecorationLine);
-                    extractedStyle->setProperty(CSSPropertyTextDecorationLine, CSSValueList::createSpaceSeparated(extractedValueList)->cssText(), isImportant);
+                    extractedStyle->setProperty(CSSPropertyTextDecoration, CSSValueList::createSpaceSeparated(extractedValueList)->cssText(), isImportant);
                 }
             }
         }
@@ -963,9 +975,9 @@ bool EditingStyle::conflictsWithInlineStyleOfElement(StyledElement& element, Ref
             if (!newInlineStyle)
                 return true;
             conflicts = true;
-            newInlineStyle->removeProperty(CSSPropertyTextDecorationLine);
+            newInlineStyle->removeProperty(CSSPropertyTextDecoration);
             if (extractedStyle)
-                extractedStyle->setProperty(CSSPropertyTextDecorationLine, inlineStyle->getPropertyValue(CSSPropertyTextDecorationLine), inlineStyle->propertyIsImportant(CSSPropertyTextDecorationLine));
+                extractedStyle->setProperty(CSSPropertyTextDecoration, inlineStyle->getPropertyValue(CSSPropertyTextDecorationLine), inlineStyle->propertyIsImportant(CSSPropertyTextDecorationLine));
         }
 
         if (!inlineStyle->getPropertyCSSValue(propertyID))
@@ -1482,9 +1494,39 @@ template<typename T>
 void EditingStyle::removeEquivalentProperties(T& style)
 {
     Vector<CSSPropertyID> propertiesToRemove;
+    HashSet<CSSPropertyID> alreadyHandled;
     for (auto& property : m_mutableStyle->m_propertyVector) {
-        if (style.propertyMatches(property.id(), property.value()))
+        CSSPropertyID id = property.id();
+        if (alreadyHandled.contains(id))
+            continue;
+        if (!style.propertyMatches(id, property.value()))
+            continue;
+
+        // Only the text-decoration longhands support serializing with the shorthand in all editing properties.
+        CSSPropertyID shorthandID = property.shorthandID();
+        if (!property.isSetFromShorthand() || shorthandID != CSSPropertyTextDecoration) {
             propertiesToRemove.append(property.id());
+            continue;
+        }
+
+        // Do not remove equivalent properties when they share a shorthand with non-equivalent ones, and the removal would prevent them from being serialized with the shorthand.
+        if (m_mutableStyle->getPropertyValue(shorthandID).isEmpty()) {
+            propertiesToRemove.append(property.id());
+            continue;
+        }
+        auto shorthand = shorthandForProperty(shorthandID);
+        bool canRemoveAllLonghands = true;
+        for (CSSPropertyID longhandID : shorthand) {
+            if (id != longhandID && !style.propertyMatches(longhandID, m_mutableStyle->getPropertyCSSValue(longhandID).get())) {
+                canRemoveAllLonghands = false;
+                break;
+            }
+        }
+        for (CSSPropertyID longhandID : shorthand) {
+            if (canRemoveAllLonghands)
+                propertiesToRemove.append(longhandID);
+            alreadyHandled.add(longhandID);
+        }
     }
     // FIXME: This should use mass removal.
     for (auto& property : propertiesToRemove)
@@ -1709,14 +1751,14 @@ static void reconcileTextDecorationProperties(MutableStyleProperties& style)
     // We shouldn't have both text-decoration and -webkit-text-decorations-in-effect because that wouldn't make sense.
     ASSERT(!textDecorationsInEffect || !textDecoration);
     if (textDecorationsInEffect) {
-        style.setProperty(CSSPropertyTextDecorationLine, textDecorationsInEffect->cssText());
+        style.setProperty(CSSPropertyTextDecoration, textDecorationsInEffect->cssText());
         style.removeProperty(CSSPropertyWebkitTextDecorationsInEffect);
         textDecoration = textDecorationsInEffect;
     }
 
     // If text-decoration is set to "none", remove the property because we don't want to add redundant "text-decoration: none".
     if (textDecoration && !textDecoration->isValueList())
-        style.removeProperty(CSSPropertyTextDecorationLine);
+        style.removeProperty(CSSPropertyTextDecoration);
 }
 
 StyleChange::StyleChange(EditingStyle* style, const Position& position)
@@ -1764,7 +1806,7 @@ StyleChange::StyleChange(EditingStyle* style, const Position& position)
                 valueList.append(CSSPrimitiveValue::create(CSSValueUnderline));
             if (shouldAddStrikeThrough && !hasLineThrough)
                 valueList.append(CSSPrimitiveValue::create(CSSValueLineThrough));
-            mutableStyle->setProperty(CSSPropertyTextDecorationLine, CSSValueList::createSpaceSeparated(WTFMove(valueList)));
+            mutableStyle->setProperty(CSSPropertyTextDecoration, CSSValueList::createSpaceSeparated(WTFMove(valueList)));
         } else {
             m_applyUnderline = shouldAddUnderline && !hasUnderline;
             m_applyLineThrough = shouldAddStrikeThrough && !hasLineThrough;
@@ -1805,9 +1847,10 @@ bool StyleChange::operator==(const StyleChange& other)
 
 static void setTextDecorationProperty(MutableStyleProperties& style, const CSSValueList& newTextDecoration, CSSPropertyID propertyID)
 {
-    if (newTextDecoration.length())
-        style.setProperty(propertyID, newTextDecoration.cssText(), style.propertyIsImportant(propertyID));
-    else {
+    if (newTextDecoration.length()) {
+        bool isImportant = style.propertyIsImportant(propertyID == CSSPropertyTextDecoration ? CSSPropertyTextDecorationLine : propertyID);
+        style.setProperty(propertyID, newTextDecoration.cssText(), isImportant);
+    } else {
         // text-decoration: none is redundant since it does not remove any text decorations.
         style.removeProperty(propertyID);
     }
@@ -1837,7 +1880,7 @@ void StyleChange::extractTextStyles(Document& document, MutableStyleProperties& 
             m_applyLineThrough = true;
 
         // If trimTextDecorations, delete underline and line-through
-        setTextDecorationProperty(style, CSSValueList::createSpaceSeparated(WTFMove(newTextDecoration)), CSSPropertyTextDecorationLine);
+        setTextDecorationProperty(style, CSSValueList::createSpaceSeparated(WTFMove(newTextDecoration)), CSSPropertyTextDecoration);
     }
 
     int verticalAlign = identifierForStyleProperty(style, CSSPropertyVerticalAlign);
@@ -1877,7 +1920,7 @@ void StyleChange::extractTextStyles(Document& document, MutableStyleProperties& 
 
 static void diffTextDecorations(MutableStyleProperties& style, CSSPropertyID propertyID, CSSValue* refTextDecoration)
 {
-    auto textDecoration = style.getPropertyCSSValue(propertyID);
+    auto textDecoration = style.getPropertyCSSValue(propertyID == CSSPropertyTextDecoration ? CSSPropertyTextDecorationLine : propertyID);
     if (!is<CSSValueList>(textDecoration) || !is<CSSValueList>(refTextDecoration))
         return;
     auto newTextDecoration = downcast<CSSValueList>(*textDecoration).copyValues();
@@ -1902,7 +1945,7 @@ static Ref<MutableStyleProperties> extractPropertiesNotIn(StyleProperties& style
     Ref mutableStyle = *result->style();
 
     auto baseTextDecorationsInEffect = extractPropertyValue(baseStyle, CSSPropertyWebkitTextDecorationsInEffect);
-    diffTextDecorations(mutableStyle.get(), CSSPropertyTextDecorationLine, baseTextDecorationsInEffect.get());
+    diffTextDecorations(mutableStyle.get(), CSSPropertyTextDecoration, baseTextDecorationsInEffect.get());
     diffTextDecorations(mutableStyle.get(), CSSPropertyWebkitTextDecorationsInEffect, baseTextDecorationsInEffect.get());
 
     if (extractPropertyValue(baseStyle, CSSPropertyFontWeight) && fontWeightIsBold(mutableStyle.get()) == fontWeightIsBold(baseStyle))

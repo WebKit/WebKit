@@ -2567,17 +2567,8 @@ bool CSSPropertyParser::parseShorthand(CSSPropertyID property, bool important)
         return consumeAnimationShorthand(animationShorthandForParsing(), important);
     case CSSPropertyTransition:
         return consumeAnimationShorthand(transitionShorthandForParsing(), important);
-    case CSSPropertyTextDecoration: {
-        auto line = consumeTextDecorationLine(m_range);
-        if (!line || !m_range.atEnd())
-            return false;
-        addProperty(CSSPropertyTextDecorationLine, property, line.releaseNonNull(), important);
-        return true;
-    }
-    case CSSPropertyWebkitTextDecoration:
-        // FIXME-NEWPARSER: We need to unprefix -line/-style/-color ASAP and get rid
-        // of -webkit-text-decoration completely.
-        return consumeShorthandGreedily(webkitTextDecorationShorthand(), important);
+    case CSSPropertyTextDecoration:
+        return consumeShorthandGreedily(textDecorationShorthand(), important);
     case CSSPropertyInset:
         return consume4ValueShorthand(insetShorthand(), important);
     case CSSPropertyInsetBlock:
