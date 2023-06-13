@@ -109,6 +109,7 @@ private:
     void visitGlobal(AST::Variable&);
     void serializeVariable(AST::Variable&);
     void generatePackingHelpers(AST::Structure&);
+    bool emitPackedVector(const Types::Vector&);
 
     StringBuilder& m_stringBuilder;
     CallGraph& m_callGraph;
@@ -320,6 +321,39 @@ void FunctionDefinitionWriter::generatePackingHelpers(AST::Structure& structure)
     m_stringBuilder.append(m_indent, "}\n\n");
 }
 
+bool FunctionDefinitionWriter::emitPackedVector(const Types::Vector& vector)
+{
+    if (!m_structRole.has_value())
+        return false;
+    if (*m_structRole != AST::StructureRole::PackedResource)
+        return false;
+    // The only vectors that need to be packed are the vectors with 3 elements,
+    // because their size differs between Metal and WGSL (4 * element size vs
+    // 3 * element size, respectively)
+    if (vector.size != 3)
+        return false;
+    auto& primitive = std::get<Types::Primitive>(*vector.element);
+    switch (primitive.kind) {
+    case Types::Primitive::AbstractInt:
+    case Types::Primitive::I32:
+        m_stringBuilder.append("packed_int", String::number(vector.size));
+        break;
+    case Types::Primitive::U32:
+        m_stringBuilder.append("packed_uint", String::number(vector.size));
+        break;
+    case Types::Primitive::AbstractFloat:
+    case Types::Primitive::F32:
+        m_stringBuilder.append("packed_float", String::number(vector.size));
+        break;
+    case Types::Primitive::Bool:
+    case Types::Primitive::Void:
+    case Types::Primitive::Sampler:
+    case Types::Primitive::TextureExternal:
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+    return true;
+}
+
 void FunctionDefinitionWriter::visit(AST::Variable& variable)
 {
     serializeVariable(variable);
@@ -507,27 +541,8 @@ void FunctionDefinitionWriter::visit(const Type* type)
             }
         },
         [&](const Vector& vector) {
-            auto* primitive = std::get_if<Primitive>(vector.element);
-            if (primitive && m_structRole.has_value() && *m_structRole == AST::StructureRole::PackedResource) {
-                switch (primitive->kind) {
-                case Types::Primitive::AbstractInt:
-                case Types::Primitive::I32:
-                    m_stringBuilder.append("packed_int", String::number(vector.size));
-                    return;
-                case Types::Primitive::U32:
-                    m_stringBuilder.append("packed_uint", String::number(vector.size));
-                    return;
-                case Types::Primitive::AbstractFloat:
-                case Types::Primitive::F32:
-                    m_stringBuilder.append("packed_float", String::number(vector.size));
-                    return;
-                case Types::Primitive::Bool:
-                case Types::Primitive::Void:
-                case Types::Primitive::Sampler:
-                case Types::Primitive::TextureExternal:
-                    RELEASE_ASSERT_NOT_REACHED();
-                }
-            }
+            if (emitPackedVector(vector))
+                return;
             m_stringBuilder.append("vec<");
             visit(vector.element);
             m_stringBuilder.append(", ", vector.size, ">");

@@ -13,7 +13,8 @@ struct T {
 }
 
 var<private> t: T;
-var<private> m: mat3x3<f32>;
+var<private> m2: mat2x2<f32>;
+var<private> m3: mat3x3<f32>;
 
 @group(0) @binding(0) var<storage, read_write> t1: T;
 @group(0) @binding(1) var<storage, read_write> t2: T;
@@ -23,8 +24,11 @@ var<private> m: mat3x3<f32>;
 
 fn testUnpacked() -> i32
 {
-    _ = t.v3f * m;
-    _ = m * t.v3f;
+    _ = t.v3f * m3;
+    _ = m3 * t.v3f;
+
+    _ = t1.v2f * m2;
+    _ = m2 * t1.v2f;
     return 0;
 }
 
