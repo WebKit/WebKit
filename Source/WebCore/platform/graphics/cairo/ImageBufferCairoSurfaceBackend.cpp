@@ -118,6 +118,13 @@ void ImageBufferCairoSurfaceBackend::putPixelBuffer(const PixelBuffer& pixelBuff
     cairo_surface_mark_dirty_rectangle(m_surface.get(), destPointScaled.x(), destPointScaled.y(), srcRectScaled.width(), srcRectScaled.height());
 }
 
+String ImageBufferCairoSurfaceBackend::debugDescription() const
+{
+    TextStream stream;
+    stream << "ImageBufferCairoSurfaceBackend " << this << " " << m_surface.get();
+    return stream.release();
+}
+
 } // namespace WebCore
 
 #endif // USE(CAIRO)

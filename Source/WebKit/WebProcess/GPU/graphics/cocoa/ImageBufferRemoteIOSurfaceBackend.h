@@ -78,6 +78,8 @@ private:
     void clearBackendHandle() final;
     bool hasBackendHandle() const final;
 
+    String debugDescription() const final;
+
     ImageBufferBackendHandle m_handle;
 
     WebCore::VolatilityState m_volatilityState { WebCore::VolatilityState::NonVolatile };

@@ -579,7 +579,7 @@ std::unique_ptr<ThreadSafeImageBufferFlusher> ImageBuffer::createFlusher()
 String ImageBuffer::debugDescription() const
 {
     TextStream stream;
-    stream << "ImageBuffer " << this << " " << renderingResourceIdentifier() << " " << logicalSize() << " " << resolutionScale() << "x " << renderingMode();
+    stream << "ImageBuffer " << this << " " << renderingResourceIdentifier() << " " << logicalSize() << " " << resolutionScale() << "x " << renderingMode() << " backend " << ValueOrNull(m_backend.get());
     return stream.release();
 }
 

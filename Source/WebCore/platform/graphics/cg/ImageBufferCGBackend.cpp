@@ -36,6 +36,7 @@
 #include "RuntimeApplicationChecks.h"
 #include <CoreGraphics/CoreGraphics.h>
 #include <pal/spi/cg/CoreGraphicsSPI.h>
+#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 
@@ -78,6 +79,13 @@ void ImageBufferCGBackend::applyBaseTransform(GraphicsContextCG& context) const
 {
     context.applyDeviceScaleFactor(m_parameters.resolutionScale);
     context.setCTM(calculateBaseTransform(m_parameters, originAtBottomLeftCorner()));
+}
+
+String ImageBufferCGBackend::debugDescription() const
+{
+    TextStream stream;
+    stream << "ImageBufferCGBackend " << this;
+    return stream.release();
 }
 
 } // namespace WebCore

@@ -47,6 +47,8 @@ protected:
 
     std::unique_ptr<ThreadSafeImageBufferFlusher> createFlusher() override;
 
+    String debugDescription() const override;
+
     bool originAtBottomLeftCorner() const override;
     mutable std::unique_ptr<GraphicsContextCG> m_context;
 };

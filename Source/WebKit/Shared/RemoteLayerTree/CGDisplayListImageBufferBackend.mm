@@ -191,6 +191,13 @@ void CGDisplayListImageBufferBackend::putPixelBuffer(const WebCore::PixelBuffer&
     ASSERT_NOT_REACHED();
 }
 
+String CGDisplayListImageBufferBackend::debugDescription() const
+{
+    TextStream stream;
+    stream << "CGDisplayListImageBufferBackend " << this;
+    return stream.release();
+}
+
 #pragma mark - CGDisplayListAcceleratedImageBufferBackend
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(CGDisplayListAcceleratedImageBufferBackend);

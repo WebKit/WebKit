@@ -44,6 +44,10 @@
 #include <cairo.h>
 #endif
 
+namespace WTF {
+class TextStream;
+}
+
 namespace WebCore {
 
 struct ImageBufferCreationContext;
@@ -165,6 +169,8 @@ public:
         return t;
     }
 
+    WEBCORE_EXPORT virtual String debugDescription() const = 0;
+
 protected:
     WEBCORE_EXPORT ImageBufferBackend(const Parameters&);
 
@@ -185,5 +191,8 @@ protected:
 
     Parameters m_parameters;
 };
+
+WEBCORE_EXPORT TextStream& operator<<(TextStream&, VolatilityState);
+WEBCORE_EXPORT TextStream& operator<<(TextStream&, const ImageBufferBackend&);
 
 } // namespace WebCore
