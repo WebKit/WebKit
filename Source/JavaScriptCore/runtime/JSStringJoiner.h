@@ -197,7 +197,10 @@ ALWAYS_INLINE void JSStringJoiner::appendNumber(VM& vm, int32_t value)
 
 ALWAYS_INLINE void JSStringJoiner::appendNumber(VM& vm, double value)
 {
-    append8Bit(vm.numericStrings.add(value));
+    if (canBeStrictInt32(value))
+        appendNumber(vm, static_cast<int32_t>(value));
+    else
+        append8Bit(vm.numericStrings.add(value));
 }
 
 } // namespace JSC

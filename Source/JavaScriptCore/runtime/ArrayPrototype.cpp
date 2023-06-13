@@ -526,7 +526,7 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoFuncToString, (JSGlobalObject* globalObject, 
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     Integrity::auditStructureID(thisObject->structureID());
-    if (!canUseDefaultArrayJoinForToString(thisObject)) {
+    if (UNLIKELY(!canUseDefaultArrayJoinForToString(thisObject))) {
         // 2. Let func be the result of calling the [[Get]] internal method of array with argument "join".
         JSValue function = thisObject->get(globalObject, vm.propertyNames->join);
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
