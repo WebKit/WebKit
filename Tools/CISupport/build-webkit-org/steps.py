@@ -438,7 +438,7 @@ class ArchiveBuiltProduct(shell.ShellCommandNewStyle, CustomFlagsMixin):
 class ArchiveMinifiedBuiltProduct(ArchiveBuiltProduct):
     name = 'archive-minified-built-product'
     command = ["python3", "Tools/CISupport/built-product-archive",
-               WithProperties("--platform=%(fullPlatform)s"), WithProperties("--%(configuration)s"), "archive", "--minify"]
+               WithProperties("--platform=%(fullPlatform)s"), WithProperties("--%(configuration)s"), "--minify"]
 
 
 # UploadBuiltProductViaSftp() is still unused. Check HOWTO_config_SFTP_uploads.md about how to enable it.
