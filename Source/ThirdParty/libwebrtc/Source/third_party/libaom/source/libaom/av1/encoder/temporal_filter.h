@@ -287,7 +287,7 @@ double av1_estimate_noise_from_single_plane(const YV12_BUFFER_CONFIG *frame,
 * \param[in]   mb_row                Macroblock row to be filtered
 filtering
 *
-* \return Nothing will be returned, but the contents of td->diff will be
+* \remark Nothing will be returned, but the contents of td->diff will be
 modified.
 */
 void av1_tf_do_filtering_row(struct AV1_COMP *cpi, struct ThreadData *td,

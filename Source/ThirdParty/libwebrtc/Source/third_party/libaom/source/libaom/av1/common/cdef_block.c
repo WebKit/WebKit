@@ -292,7 +292,7 @@ static INLINE int adjust_strength(int strength, int32_t var) {
   return var ? (strength * (4 + i) + 8) >> 4 : 0;
 }
 
-static AOM_INLINE void aom_cdef_find_dir(uint16_t *in, cdef_list *dlist,
+static AOM_INLINE void aom_cdef_find_dir(const uint16_t *in, cdef_list *dlist,
                                          int var[CDEF_NBLOCKS][CDEF_NBLOCKS],
                                          int cdef_count, int coeff_shift,
                                          int dir[CDEF_NBLOCKS][CDEF_NBLOCKS]) {
@@ -321,7 +321,7 @@ static AOM_INLINE void aom_cdef_find_dir(uint16_t *in, cdef_list *dlist,
 }
 
 void av1_cdef_filter_fb(uint8_t *dst8, uint16_t *dst16, int dstride,
-                        uint16_t *in, int xdec, int ydec,
+                        const uint16_t *in, int xdec, int ydec,
                         int dir[CDEF_NBLOCKS][CDEF_NBLOCKS], int *dirinit,
                         int var[CDEF_NBLOCKS][CDEF_NBLOCKS], int pli,
                         cdef_list *dlist, int cdef_count, int level,

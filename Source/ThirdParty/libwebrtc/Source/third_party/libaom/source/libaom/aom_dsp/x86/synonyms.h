@@ -85,6 +85,16 @@ static INLINE __m128i xx_set1_64_from_32i(int32_t a) {
 #endif
 }
 
+// Fill an SSE register using an interleaved pair of values, ie. set the
+// 8 channels to {a, b, a, b, a, b, a, b}, using the same channel ordering
+// as when a register is stored to / loaded from memory.
+//
+// This is useful for rearranging filter kernels for use with the _mm_madd_epi16
+// instruction
+static INLINE __m128i xx_set2_epi16(int16_t a, int16_t b) {
+  return _mm_setr_epi16(a, b, a, b, a, b, a, b);
+}
+
 static INLINE __m128i xx_round_epu16(__m128i v_val_w) {
   return _mm_avg_epu16(v_val_w, _mm_setzero_si128());
 }

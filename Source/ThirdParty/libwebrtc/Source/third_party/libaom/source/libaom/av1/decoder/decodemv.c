@@ -279,7 +279,7 @@ int av1_neg_deinterleave(int diff, int ref, int max) {
 static int read_segment_id(AV1_COMMON *const cm, const MACROBLOCKD *const xd,
                            aom_reader *r, int skip) {
   int cdf_num;
-  const int pred = av1_get_spatial_seg_pred(cm, xd, &cdf_num, 0);
+  const uint8_t pred = av1_get_spatial_seg_pred(cm, xd, &cdf_num, 0);
   if (skip) return pred;
 
   FRAME_CONTEXT *ec_ctx = xd->tile_ctx;
@@ -310,16 +310,6 @@ static int dec_get_segment_id(const AV1_COMMON *cm, const uint8_t *segment_ids,
   return segment_id;
 }
 
-static void set_segment_id(AV1_COMMON *cm, int mi_offset, int x_mis, int y_mis,
-                           int segment_id) {
-  assert(segment_id >= 0 && segment_id < MAX_SEGMENTS);
-
-  for (int y = 0; y < y_mis; y++)
-    for (int x = 0; x < x_mis; x++)
-      cm->cur_frame->seg_map[mi_offset + y * cm->mi_params.mi_cols + x] =
-          segment_id;
-}
-
 static int read_intra_segment_id(AV1_COMMON *const cm,
                                  const MACROBLOCKD *const xd, int bsize,
                                  aom_reader *r, int skip) {
@@ -330,13 +320,15 @@ static int read_intra_segment_id(AV1_COMMON *const cm,
   const CommonModeInfoParams *const mi_params = &cm->mi_params;
   const int mi_row = xd->mi_row;
   const int mi_col = xd->mi_col;
-  const int mi_offset = mi_row * mi_params->mi_cols + mi_col;
+  const int mi_stride = cm->mi_params.mi_cols;
+  const int mi_offset = mi_row * mi_stride + mi_col;
   const int bw = mi_size_wide[bsize];
   const int bh = mi_size_high[bsize];
   const int x_mis = AOMMIN(mi_params->mi_cols - mi_col, bw);
   const int y_mis = AOMMIN(mi_params->mi_rows - mi_row, bh);
   const int segment_id = read_segment_id(cm, xd, r, skip);
-  set_segment_id(cm, mi_offset, x_mis, y_mis, segment_id);
+  set_segment_id(cm->cur_frame->seg_map, mi_offset, x_mis, y_mis, mi_stride,
+                 segment_id);
   return segment_id;
 }
 
@@ -344,12 +336,20 @@ static void copy_segment_id(const CommonModeInfoParams *const mi_params,
                             const uint8_t *last_segment_ids,
                             uint8_t *current_segment_ids, int mi_offset,
                             int x_mis, int y_mis) {
-  for (int y = 0; y < y_mis; y++)
-    for (int x = 0; x < x_mis; x++)
-      current_segment_ids[mi_offset + y * mi_params->mi_cols + x] =
-          last_segment_ids
-              ? last_segment_ids[mi_offset + y * mi_params->mi_cols + x]
-              : 0;
+  const int stride = mi_params->mi_cols;
+  if (last_segment_ids) {
+    assert(last_segment_ids != current_segment_ids);
+    for (int y = 0; y < y_mis; y++) {
+      memcpy(&current_segment_ids[mi_offset + y * stride],
+             &last_segment_ids[mi_offset + y * stride],
+             sizeof(current_segment_ids[0]) * x_mis);
+    }
+  } else {
+    for (int y = 0; y < y_mis; y++) {
+      memset(&current_segment_ids[mi_offset + y * stride], 0,
+             sizeof(current_segment_ids[0]) * x_mis);
+    }
+  }
 }
 
 static int get_predicted_segment_id(AV1_COMMON *const cm, int mi_offset,
@@ -382,7 +382,8 @@ static int read_inter_segment_id(AV1_COMMON *const cm, MACROBLOCKD *const xd,
     return get_predicted_segment_id(cm, mi_offset, x_mis, y_mis);
   }
 
-  int segment_id;
+  uint8_t segment_id;
+  const int mi_stride = cm->mi_params.mi_cols;
   if (preskip) {
     if (!seg->segid_preskip) return 0;
   } else {
@@ -391,13 +392,14 @@ static int read_inter_segment_id(AV1_COMMON *const cm, MACROBLOCKD *const xd,
         mbmi->seg_id_predicted = 0;
       }
       segment_id = read_segment_id(cm, xd, r, 1);
-      set_segment_id(cm, mi_offset, x_mis, y_mis, segment_id);
+      set_segment_id(cm->cur_frame->seg_map, mi_offset, x_mis, y_mis, mi_stride,
+                     segment_id);
       return segment_id;
     }
   }
 
   if (seg->temporal_update) {
-    const int ctx = av1_get_pred_context_seg_id(xd);
+    const uint8_t ctx = av1_get_pred_context_seg_id(xd);
     FRAME_CONTEXT *ec_ctx = xd->tile_ctx;
     struct segmentation_probs *const segp = &ec_ctx->seg;
     aom_cdf_prob *pred_cdf = segp->pred_cdf[ctx];
@@ -410,7 +412,8 @@ static int read_inter_segment_id(AV1_COMMON *const cm, MACROBLOCKD *const xd,
   } else {
     segment_id = read_segment_id(cm, xd, r, 0);
   }
-  set_segment_id(cm, mi_offset, x_mis, y_mis, segment_id);
+  set_segment_id(cm->cur_frame->seg_map, mi_offset, x_mis, y_mis, mi_stride,
+                 segment_id);
   return segment_id;
 }
 
@@ -1204,7 +1207,9 @@ static INLINE int assign_mv(AV1_COMMON *cm, MACROBLOCKD *xd,
                          .as_int;
       break;
     }
-    default: { return 0; }
+    default: {
+      return 0;
+    }
   }
 
   int ret = is_mv_valid(&mv[0].as_mv);

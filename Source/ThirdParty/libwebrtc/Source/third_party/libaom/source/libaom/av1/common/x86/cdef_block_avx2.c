@@ -255,38 +255,101 @@ void cdef_find_dir_dual_avx2(const uint16_t *img1, const uint16_t *img2,
 }
 
 void cdef_copy_rect8_8bit_to_16bit_avx2(uint16_t *dst, int dstride,
-                                        const uint8_t *src, int sstride, int v,
-                                        int h) {
-  int i = 0, j = 0;
-  int remaining_width = h;
+                                        const uint8_t *src, int sstride,
+                                        int width, int height) {
+  int j = 0;
+  int remaining_width = width;
+  assert(height % 2 == 0);
+  assert(height > 0);
+  assert(width > 0);
 
-  // Process multiple 16 pixels at a time.
-  if (h > 15) {
-    for (i = 0; i < v; i++) {
-      for (j = 0; j < h - 15; j += 16) {
-        __m128i row = _mm_loadu_si128((__m128i *)&src[i * sstride + j]);
-        _mm256_storeu_si256((__m256i *)&dst[i * dstride + j],
-                            _mm256_cvtepu8_epi16(row));
-      }
-    }
-    remaining_width = h & 0xe;
+  // Process multiple 32 pixels at a time.
+  if (remaining_width > 31) {
+    int i = 0;
+    do {
+      j = 0;
+      do {
+        __m128i row00 =
+            _mm_loadu_si128((const __m128i *)&src[(i + 0) * sstride + (j + 0)]);
+        __m128i row01 = _mm_loadu_si128(
+            (const __m128i *)&src[(i + 0) * sstride + (j + 16)]);
+        __m128i row10 =
+            _mm_loadu_si128((const __m128i *)&src[(i + 1) * sstride + (j + 0)]);
+        __m128i row11 = _mm_loadu_si128(
+            (const __m128i *)&src[(i + 1) * sstride + (j + 16)]);
+        _mm256_storeu_si256((__m256i *)&dst[(i + 0) * dstride + (j + 0)],
+                            _mm256_cvtepu8_epi16(row00));
+        _mm256_storeu_si256((__m256i *)&dst[(i + 0) * dstride + (j + 16)],
+                            _mm256_cvtepu8_epi16(row01));
+        _mm256_storeu_si256((__m256i *)&dst[(i + 1) * dstride + (j + 0)],
+                            _mm256_cvtepu8_epi16(row10));
+        _mm256_storeu_si256((__m256i *)&dst[(i + 1) * dstride + (j + 16)],
+                            _mm256_cvtepu8_epi16(row11));
+        j += 32;
+      } while (j <= width - 32);
+      i += 2;
+    } while (i < height);
+    remaining_width = width & 31;
   }
 
-  // Process multiple 8 pixels at a time.
+  // Process 16 pixels at a time.
+  if (remaining_width > 15) {
+    int i = 0;
+    do {
+      __m128i row0 =
+          _mm_loadu_si128((const __m128i *)&src[(i + 0) * sstride + j]);
+      __m128i row1 =
+          _mm_loadu_si128((const __m128i *)&src[(i + 1) * sstride + j]);
+      _mm256_storeu_si256((__m256i *)&dst[(i + 0) * dstride + j],
+                          _mm256_cvtepu8_epi16(row0));
+      _mm256_storeu_si256((__m256i *)&dst[(i + 1) * dstride + j],
+                          _mm256_cvtepu8_epi16(row1));
+      i += 2;
+    } while (i < height);
+    remaining_width = width & 15;
+    j += 16;
+  }
+
+  // Process 8 pixels at a time.
   if (remaining_width > 7) {
-    for (i = 0; i < v; i++) {
-      __m128i row = _mm_loadl_epi64((__m128i *)&src[i * sstride + j]);
-      _mm_storeu_si128((__m128i *)&dst[i * dstride + j],
-                       _mm_unpacklo_epi8(row, _mm_setzero_si128()));
-    }
-    remaining_width = h & 0x7;
+    int i = 0;
+    do {
+      __m128i row0 =
+          _mm_loadl_epi64((const __m128i *)&src[(i + 0) * sstride + j]);
+      __m128i row1 =
+          _mm_loadl_epi64((const __m128i *)&src[(i + 1) * sstride + j]);
+      _mm_storeu_si128((__m128i *)&dst[(i + 0) * dstride + j],
+                       _mm_unpacklo_epi8(row0, _mm_setzero_si128()));
+      _mm_storeu_si128((__m128i *)&dst[(i + 1) * dstride + j],
+                       _mm_unpacklo_epi8(row1, _mm_setzero_si128()));
+      i += 2;
+    } while (i < height);
+    remaining_width = width & 7;
     j += 8;
+  }
+
+  // Process 4 pixels at a time.
+  if (remaining_width > 3) {
+    int i = 0;
+    do {
+      __m128i row0 =
+          _mm_cvtsi32_si128(*((const int32_t *)&src[(i + 0) * sstride + j]));
+      __m128i row1 =
+          _mm_cvtsi32_si128(*((const int32_t *)&src[(i + 1) * sstride + j]));
+      _mm_storel_epi64((__m128i *)&dst[(i + 0) * dstride + j],
+                       _mm_unpacklo_epi8(row0, _mm_setzero_si128()));
+      _mm_storel_epi64((__m128i *)&dst[(i + 1) * dstride + j],
+                       _mm_unpacklo_epi8(row1, _mm_setzero_si128()));
+      i += 2;
+    } while (i < height);
+    remaining_width = width & 3;
+    j += 4;
   }
 
   // Process the remaining pixels.
   if (remaining_width) {
-    for (i = 0; i < v; i++) {
-      for (int k = j; k < h; k++) {
+    for (int i = 0; i < height; i++) {
+      for (int k = j; k < width; k++) {
         dst[i * dstride + k] = src[i * sstride + k];
       }
     }

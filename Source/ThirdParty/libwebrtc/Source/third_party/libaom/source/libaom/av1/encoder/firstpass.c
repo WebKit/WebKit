@@ -36,6 +36,7 @@
 #include "av1/encoder/encodemb.h"
 #include "av1/encoder/encodemv.h"
 #include "av1/encoder/encoder.h"
+#include "av1/encoder/encoder_utils.h"
 #include "av1/encoder/encode_strategy.h"
 #include "av1/encoder/ethread.h"
 #include "av1/encoder/extend.h"
@@ -92,6 +93,8 @@ void av1_twopass_zero_stats(FIRSTPASS_STATS *section) {
   section->intra_error = 0.0;
   section->frame_avg_wavelet_energy = 0.0;
   section->coded_error = 0.0;
+  section->log_intra_error = 0.0;
+  section->log_coded_error = 0.0;
   section->sr_coded_error = 0.0;
   section->pcnt_inter = 0.0;
   section->pcnt_motion = 0.0;
@@ -120,6 +123,8 @@ void av1_accumulate_stats(FIRSTPASS_STATS *section,
   section->frame += frame->frame;
   section->weight += frame->weight;
   section->intra_error += frame->intra_error;
+  section->log_intra_error += log1p(frame->intra_error);
+  section->log_coded_error += log1p(frame->coded_error);
   section->frame_avg_wavelet_energy += frame->frame_avg_wavelet_energy;
   section->coded_error += frame->coded_error;
   section->sr_coded_error += frame->sr_coded_error;
@@ -473,8 +478,10 @@ static int firstpass_intra_prediction(
 
   set_mi_offsets(mi_params, xd, unit_row * unit_scale, unit_col * unit_scale);
   xd->plane[0].dst.buf = this_frame->y_buffer + y_offset;
-  xd->plane[1].dst.buf = this_frame->u_buffer + uv_offset;
-  xd->plane[2].dst.buf = this_frame->v_buffer + uv_offset;
+  if (num_planes > 1) {
+    xd->plane[1].dst.buf = this_frame->u_buffer + uv_offset;
+    xd->plane[2].dst.buf = this_frame->v_buffer + uv_offset;
+  }
   xd->left_available = (unit_col != 0);
   xd->mi[0]->bsize = bsize;
   xd->mi[0]->ref_frame[0] = INTRA_FRAME;
@@ -511,7 +518,7 @@ static int firstpass_intra_prediction(
     stats->image_data_start_row = unit_row;
   }
 
-  double log_intra = log(this_intra_error + 1.0);
+  double log_intra = log1p(this_intra_error);
   if (log_intra < 10.0) {
     stats->intra_factor += 1.0 + ((10.0 - log_intra) * 0.05);
   } else {
@@ -731,40 +738,40 @@ static int firstpass_inter_prediction(
         mv = tmp_mv;
       }
     }
+  }
 
-    // Motion search in 2nd reference frame.
-    int gf_motion_error = motion_error;
-    if ((current_frame->frame_number > 1) && golden_frame != NULL) {
-      FULLPEL_MV tmp_mv = kZeroFullMv;
-      // Assume 0,0 motion with no mv overhead.
-      xd->plane[0].pre[0].buf = golden_frame->y_buffer + recon_yoffset;
-      xd->plane[0].pre[0].stride = golden_frame->y_stride;
-      gf_motion_error =
-          get_prediction_error_bitdepth(is_high_bitdepth, bitdepth, bsize,
-                                        &x->plane[0].src, &xd->plane[0].pre[0]);
-      first_pass_motion_search(cpi, x, &kZeroMv, &tmp_mv, &gf_motion_error);
-    }
-    if (gf_motion_error < motion_error && gf_motion_error < this_intra_error) {
-      ++stats->second_ref_count;
-    }
-    // In accumulating a score for the 2nd reference frame take the
-    // best of the motion predicted score and the intra coded error
-    // (just as will be done for) accumulation of "coded_error" for
-    // the last frame.
-    if ((current_frame->frame_number > 1) && golden_frame != NULL) {
-      stats->sr_coded_error += AOMMIN(gf_motion_error, this_intra_error);
-    } else {
-      // TODO(chengchen): I believe logically this should also be changed to
-      // stats->sr_coded_error += AOMMIN(gf_motion_error, this_intra_error).
-      stats->sr_coded_error += motion_error;
-    }
+  // Motion search in 2nd reference frame.
+  int gf_motion_error = motion_error;
+  if ((current_frame->frame_number > 1) && golden_frame != NULL) {
+    FULLPEL_MV tmp_mv = kZeroFullMv;
+    // Assume 0,0 motion with no mv overhead.
+    xd->plane[0].pre[0].buf = golden_frame->y_buffer + recon_yoffset;
+    xd->plane[0].pre[0].stride = golden_frame->y_stride;
+    gf_motion_error =
+        get_prediction_error_bitdepth(is_high_bitdepth, bitdepth, bsize,
+                                      &x->plane[0].src, &xd->plane[0].pre[0]);
+    first_pass_motion_search(cpi, x, &kZeroMv, &tmp_mv, &gf_motion_error);
+  }
+  if (gf_motion_error < motion_error && gf_motion_error < this_intra_error) {
+    ++stats->second_ref_count;
+  }
+  // In accumulating a score for the 2nd reference frame take the
+  // best of the motion predicted score and the intra coded error
+  // (just as will be done for) accumulation of "coded_error" for
+  // the last frame.
+  if ((current_frame->frame_number > 1) && golden_frame != NULL) {
+    stats->sr_coded_error += AOMMIN(gf_motion_error, this_intra_error);
+  } else {
+    // TODO(chengchen): I believe logically this should also be changed to
+    // stats->sr_coded_error += AOMMIN(gf_motion_error, this_intra_error).
+    stats->sr_coded_error += motion_error;
+  }
 
-    // Reset to last frame as reference buffer.
-    xd->plane[0].pre[0].buf = last_frame->y_buffer + recon_yoffset;
+  // Reset to last frame as reference buffer.
+  xd->plane[0].pre[0].buf = last_frame->y_buffer + recon_yoffset;
+  if (av1_num_planes(&cpi->common) > 1) {
     xd->plane[1].pre[0].buf = last_frame->u_buffer + recon_uvoffset;
     xd->plane[2].pre[0].buf = last_frame->v_buffer + recon_uvoffset;
-  } else {
-    stats->sr_coded_error += motion_error;
   }
 
   // Start by assuming that intra mode is best.
@@ -824,7 +831,8 @@ static void normalize_firstpass_stats(FIRSTPASS_STATS *fps,
   fps->sr_coded_error /= num_mbs_16x16;
   fps->intra_error /= num_mbs_16x16;
   fps->frame_avg_wavelet_energy /= num_mbs_16x16;
-
+  fps->log_coded_error = log1p(fps->coded_error);
+  fps->log_intra_error = log1p(fps->intra_error);
   fps->MVr /= f_h;
   fps->mvr_abs /= f_h;
   fps->MVc /= f_w;
@@ -884,11 +892,13 @@ static void update_firstpass_stats(AV1_COMP *cpi,
   fps.pcnt_neutral = (double)stats->neutral_count / num_mbs;
   fps.intra_skip_pct = (double)stats->intra_skip_count / num_mbs;
   fps.inactive_zone_rows = (double)stats->image_data_start_row;
-  fps.inactive_zone_cols = (double)0;  // Placeholder: not currently supported.
+  fps.inactive_zone_cols = 0.0;  // Placeholder: not currently supported.
   fps.raw_error_stdev = raw_err_stdev;
   fps.is_flash = 0;
-  fps.noise_var = (double)0;
-  fps.cor_coeff = (double)1.0;
+  fps.noise_var = 0.0;
+  fps.cor_coeff = 1.0;
+  fps.log_coded_error = 0.0;
+  fps.log_intra_error = 0.0;
 
   if (stats->mv_count > 0) {
     fps.MVr = (double)stats->sum_mvr / stats->mv_count;
@@ -1196,8 +1206,10 @@ void av1_first_pass_row(AV1_COMP *cpi, ThreadData *td, TileDataEnc *tile_data,
 
     // Adjust to the next column of MBs.
     x->plane[0].src.buf += fp_block_size_width;
-    x->plane[1].src.buf += uv_mb_height;
-    x->plane[2].src.buf += uv_mb_height;
+    if (num_planes > 1) {
+      x->plane[1].src.buf += uv_mb_height;
+      x->plane[2].src.buf += uv_mb_height;
+    }
 
     recon_yoffset += fp_block_size_width;
     src_yoffset += fp_block_size_width;
@@ -1213,8 +1225,18 @@ void av1_noop_first_pass_frame(AV1_COMP *cpi, const int64_t ts_duration) {
   AV1_COMMON *const cm = &cpi->common;
   CurrentFrame *const current_frame = &cm->current_frame;
   const CommonModeInfoParams *const mi_params = &cm->mi_params;
-  const int unit_rows = get_unit_rows(BLOCK_16X16, mi_params->mb_rows);
-  const int unit_cols = get_unit_cols(BLOCK_16X16, mi_params->mb_cols);
+  int max_mb_rows = mi_params->mb_rows;
+  int max_mb_cols = mi_params->mb_cols;
+  if (cpi->oxcf.frm_dim_cfg.forced_max_frame_width) {
+    int max_mi_cols = size_in_mi(cpi->oxcf.frm_dim_cfg.forced_max_frame_width);
+    max_mb_cols = ROUND_POWER_OF_TWO(max_mi_cols, 2);
+  }
+  if (cpi->oxcf.frm_dim_cfg.forced_max_frame_height) {
+    int max_mi_rows = size_in_mi(cpi->oxcf.frm_dim_cfg.forced_max_frame_height);
+    max_mb_rows = ROUND_POWER_OF_TWO(max_mi_rows, 2);
+  }
+  const int unit_rows = get_unit_rows(BLOCK_16X16, max_mb_rows);
+  const int unit_cols = get_unit_cols(BLOCK_16X16, max_mb_cols);
   setup_firstpass_data(cm, &cpi->firstpass_data, unit_rows, unit_cols);
   FRAME_STATS *mb_stats = cpi->firstpass_data.mb_stats;
   FRAME_STATS stats = accumulate_frame_stats(mb_stats, unit_rows, unit_cols);
@@ -1248,10 +1270,21 @@ void av1_first_pass(AV1_COMP *cpi, const int64_t ts_duration) {
   const BLOCK_SIZE fp_block_size =
       get_fp_block_size(cpi->is_screen_content_type);
 
+  int max_mb_rows = mi_params->mb_rows;
+  int max_mb_cols = mi_params->mb_cols;
+  if (cpi->oxcf.frm_dim_cfg.forced_max_frame_width) {
+    int max_mi_cols = size_in_mi(cpi->oxcf.frm_dim_cfg.forced_max_frame_width);
+    max_mb_cols = ROUND_POWER_OF_TWO(max_mi_cols, 2);
+  }
+  if (cpi->oxcf.frm_dim_cfg.forced_max_frame_height) {
+    int max_mi_rows = size_in_mi(cpi->oxcf.frm_dim_cfg.forced_max_frame_height);
+    max_mb_rows = ROUND_POWER_OF_TWO(max_mi_rows, 2);
+  }
+
   // Number of rows in the unit size.
-  // Note mi_params->mb_rows and mi_params->mb_cols are in the unit of 16x16.
-  const int unit_rows = get_unit_rows(fp_block_size, mi_params->mb_rows);
-  const int unit_cols = get_unit_cols(fp_block_size, mi_params->mb_cols);
+  // Note max_mb_rows and max_mb_cols are in the unit of 16x16.
+  const int unit_rows = get_unit_rows(fp_block_size, max_mb_rows);
+  const int unit_cols = get_unit_cols(fp_block_size, max_mb_cols);
 
   // Set fp_block_size, for the convenience of multi-thread usage.
   cpi->fp_block_size = fp_block_size;
@@ -1267,7 +1300,6 @@ void av1_first_pass(AV1_COMP *cpi, const int64_t ts_duration) {
   const int tile_cols = cm->tiles.cols;
   const int tile_rows = cm->tiles.rows;
   if (cpi->allocated_tiles < tile_cols * tile_rows) {
-    av1_row_mt_mem_dealloc(cpi);
     av1_alloc_tile_data(cpi);
   }
 

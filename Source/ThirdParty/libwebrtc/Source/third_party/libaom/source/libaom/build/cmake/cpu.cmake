@@ -20,33 +20,19 @@ if("${AOM_TARGET_CPU}" MATCHES "^arm")
     set(HAVE_NEON 0)
     set(AOM_RTCD_FLAGS ${AOM_RTCD_FLAGS} --disable-neon)
   endif()
-elseif("${AOM_TARGET_CPU}" MATCHES "^mips")
-  set(ARCH_MIPS 1)
-  set(RTCD_ARCH_MIPS "yes")
 
-  if("${AOM_TARGET_CPU}" STREQUAL "mips32")
-    set(HAVE_MIPS32 1)
-    set(RTCD_HAVE_MIPS32 "yes")
-  elseif("${AOM_TARGET_CPU}" STREQUAL "mips64")
-    set(HAVE_MIPS64 1)
-    set(RTCD_HAVE_MIPS64 "yes")
-  endif()
-
-  # HAVE_DSPR2 is set by mips toolchain files.
-  if(ENABLE_DSPR2 AND HAVE_DSPR2)
-    set(RTCD_HAVE_DSPR2 "yes")
+  check_c_source_compiles("
+    #if !defined(__ARM_FEATURE_CRC32) || __ARM_FEATURE_CRC32 != 1
+    #error \"CRC32 is unavailable.\"
+    #endif
+    int main(void) { return 0; }" HAVE_CRC32)
+  if(HAVE_CRC32)
+    set(HAVE_ARM_CRC32 1)
   else()
-    set(HAVE_DSPR2 0)
-    set(AOM_RTCD_FLAGS ${AOM_RTCD_FLAGS} --disable-dspr2)
+    set(HAVE_ARM_CRC32 0)
+    set(AOM_RTCD_FLAGS ${AOM_RTCD_FLAGS} --disable-arm_crc32)
   endif()
 
-  # HAVE_MSA is set by mips toolchain files.
-  if(ENABLE_MSA AND HAVE_MSA)
-    set(RTCD_HAVE_MSA "yes")
-  else()
-    set(HAVE_MSA 0)
-    set(AOM_RTCD_FLAGS ${AOM_RTCD_FLAGS} --disable-msa)
-  endif()
 elseif("${AOM_TARGET_CPU}" MATCHES "ppc")
   set(ARCH_PPC 1)
   set(RTCD_ARCH_PPC "yes")

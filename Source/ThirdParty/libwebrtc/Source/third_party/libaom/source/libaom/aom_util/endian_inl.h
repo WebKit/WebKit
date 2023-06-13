@@ -64,11 +64,6 @@
 #define HAVE_BUILTIN_BSWAP64
 #endif
 
-#if HAVE_MIPS32 && defined(__mips__) && !defined(__mips64) && \
-    defined(__mips_isa_rev) && (__mips_isa_rev >= 2) && (__mips_isa_rev < 6)
-#define AOM_USE_MIPS32_R2
-#endif
-
 static INLINE uint16_t BSwap16(uint16_t x) {
 #if defined(HAVE_BUILTIN_BSWAP16)
   return __builtin_bswap16(x);
@@ -81,15 +76,7 @@ static INLINE uint16_t BSwap16(uint16_t x) {
 }
 
 static INLINE uint32_t BSwap32(uint32_t x) {
-#if defined(AOM_USE_MIPS32_R2)
-  uint32_t ret;
-  __asm__ volatile(
-      "wsbh   %[ret], %[x]          \n\t"
-      "rotr   %[ret], %[ret],  16   \n\t"
-      : [ret] "=r"(ret)
-      : [x] "r"(x));
-  return ret;
-#elif defined(HAVE_BUILTIN_BSWAP32)
+#if defined(HAVE_BUILTIN_BSWAP32)
   return __builtin_bswap32(x);
 #elif defined(__i386__) || defined(__x86_64__)
   uint32_t swapped_bytes;

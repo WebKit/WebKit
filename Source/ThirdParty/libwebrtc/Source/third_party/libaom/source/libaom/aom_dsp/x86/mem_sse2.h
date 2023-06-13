@@ -19,20 +19,20 @@
 
 #include "aom/aom_integer.h"
 
-static INLINE uint16_t loadu_uint16(const void *src) {
-  uint16_t v;
+static INLINE int16_t loadu_int16(const void *src) {
+  int16_t v;
   memcpy(&v, src, sizeof(v));
   return v;
 }
 
-static INLINE uint32_t loadu_uint32(const void *src) {
-  uint32_t v;
+static INLINE int32_t loadu_int32(const void *src) {
+  int32_t v;
   memcpy(&v, src, sizeof(v));
   return v;
 }
 
-static INLINE uint64_t loadu_uint64(const void *src) {
-  uint64_t v;
+static INLINE int64_t loadu_int64(const void *src) {
+  int64_t v;
   memcpy(&v, src, sizeof(v));
   return v;
 }
@@ -48,10 +48,10 @@ static INLINE __m128i loadh_epi64(const void *const src, const __m128i s) {
 
 static INLINE __m128i load_8bit_4x4_to_1_reg_sse2(const void *const src,
                                                   const int byte_stride) {
-  return _mm_setr_epi32(loadu_uint32((int8_t *)src + 0 * byte_stride),
-                        loadu_uint32((int8_t *)src + 1 * byte_stride),
-                        loadu_uint32((int8_t *)src + 2 * byte_stride),
-                        loadu_uint32((int8_t *)src + 3 * byte_stride));
+  return _mm_setr_epi32(loadu_int32((int8_t *)src + 0 * byte_stride),
+                        loadu_int32((int8_t *)src + 1 * byte_stride),
+                        loadu_int32((int8_t *)src + 2 * byte_stride),
+                        loadu_int32((int8_t *)src + 3 * byte_stride));
 }
 
 static INLINE __m128i load_8bit_8x2_to_1_reg_sse2(const void *const src,

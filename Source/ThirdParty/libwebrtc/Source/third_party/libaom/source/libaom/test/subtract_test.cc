@@ -31,124 +31,65 @@ typedef void (*SubtractFunc)(int rows, int cols, int16_t *diff_ptr,
 
 namespace {
 
-class AV1SubtractBlockTest : public ::testing::TestWithParam<SubtractFunc> {
- public:
-  virtual void TearDown() {}
-};
-
-using libaom_test::ACMRandom;
-
-TEST_P(AV1SubtractBlockTest, SimpleSubtract) {
-  ACMRandom rnd(ACMRandom::DeterministicSeed());
-
-  // FIXME(rbultje) split in its own file
-  for (BLOCK_SIZE bsize = BLOCK_4X4; bsize < BLOCK_SIZES;
-       bsize = static_cast<BLOCK_SIZE>(static_cast<int>(bsize) + 1)) {
-    const int block_width = block_size_wide[bsize];
-    const int block_height = block_size_high[bsize];
-    int16_t *diff = reinterpret_cast<int16_t *>(
-        aom_memalign(16, sizeof(*diff) * block_width * block_height * 2));
-    ASSERT_NE(diff, nullptr);
-    uint8_t *pred = reinterpret_cast<uint8_t *>(
-        aom_memalign(16, block_width * block_height * 2));
-    ASSERT_NE(pred, nullptr);
-    uint8_t *src = reinterpret_cast<uint8_t *>(
-        aom_memalign(16, block_width * block_height * 2));
-    ASSERT_NE(src, nullptr);
-
-    for (int n = 0; n < 100; n++) {
-      for (int r = 0; r < block_height; ++r) {
-        for (int c = 0; c < block_width * 2; ++c) {
-          src[r * block_width * 2 + c] = rnd.Rand8();
-          pred[r * block_width * 2 + c] = rnd.Rand8();
-        }
-      }
-
-      GetParam()(block_height, block_width, diff, block_width, src, block_width,
-                 pred, block_width);
-
-      for (int r = 0; r < block_height; ++r) {
-        for (int c = 0; c < block_width; ++c) {
-          EXPECT_EQ(diff[r * block_width + c],
-                    (src[r * block_width + c] - pred[r * block_width + c]))
-              << "r = " << r << ", c = " << c << ", bs = " << bsize;
-        }
-      }
-
-      GetParam()(block_height, block_width, diff, block_width * 2, src,
-                 block_width * 2, pred, block_width * 2);
-
-      for (int r = 0; r < block_height; ++r) {
-        for (int c = 0; c < block_width; ++c) {
-          EXPECT_EQ(
-              diff[r * block_width * 2 + c],
-              (src[r * block_width * 2 + c] - pred[r * block_width * 2 + c]))
-              << "r = " << r << ", c = " << c << ", bs = " << bsize;
-        }
-      }
-    }
-    aom_free(diff);
-    aom_free(pred);
-    aom_free(src);
-  }
-}
-
-INSTANTIATE_TEST_SUITE_P(C, AV1SubtractBlockTest,
-                         ::testing::Values(aom_subtract_block_c));
-
-#if HAVE_SSE2
-INSTANTIATE_TEST_SUITE_P(SSE2, AV1SubtractBlockTest,
-                         ::testing::Values(aom_subtract_block_sse2));
-#endif
-#if HAVE_NEON
-INSTANTIATE_TEST_SUITE_P(NEON, AV1SubtractBlockTest,
-                         ::testing::Values(aom_subtract_block_neon));
-#endif
-#if HAVE_MSA
-INSTANTIATE_TEST_SUITE_P(MSA, AV1SubtractBlockTest,
-                         ::testing::Values(aom_subtract_block_msa));
-#endif
-
-#if CONFIG_AV1_HIGHBITDEPTH
-typedef void (*HBDSubtractFunc)(int rows, int cols, int16_t *diff_ptr,
-                                ptrdiff_t diff_stride, const uint8_t *src_ptr,
-                                ptrdiff_t src_stride, const uint8_t *pred_ptr,
-                                ptrdiff_t pred_stride);
-
 using std::get;
 using std::make_tuple;
 using std::tuple;
 
-// <BLOCK_SIZE, bit_depth, optimized subtract func, reference subtract func>
-typedef tuple<BLOCK_SIZE, int, HBDSubtractFunc, HBDSubtractFunc> Params;
+using libaom_test::ACMRandom;
 
-class AV1HBDSubtractBlockTest : public ::testing::TestWithParam<Params> {
+// <BLOCK_SIZE, optimized subtract func, reference subtract func>
+using Params = tuple<BLOCK_SIZE, SubtractFunc, SubtractFunc>;
+
+class AV1SubtractBlockTestBase : public ::testing::Test {
  public:
-  virtual void SetUp() {
-    block_width_ = block_size_wide[GET_PARAM(0)];
-    block_height_ = block_size_high[GET_PARAM(0)];
-    bit_depth_ = static_cast<aom_bit_depth_t>(GET_PARAM(1));
-    func_ = GET_PARAM(2);
-    ref_func_ = GET_PARAM(3);
+  AV1SubtractBlockTestBase(BLOCK_SIZE bs, int bit_depth, SubtractFunc func,
+                           SubtractFunc ref_func) {
+    block_width_ = block_size_wide[bs];
+    block_height_ = block_size_high[bs];
+    func_ = func;
+    ref_func_ = ref_func;
+    if (bit_depth == -1) {
+      hbd_ = 0;
+      bit_depth_ = AOM_BITS_8;
+    } else {
+      hbd_ = 1;
+      bit_depth_ = static_cast<aom_bit_depth_t>(bit_depth);
+    }
+  }
 
+  virtual void SetUp() {
     rnd_.Reset(ACMRandom::DeterministicSeed());
 
     const size_t max_width = 128;
     const size_t max_block_size = max_width * max_width;
-    src_ = CONVERT_TO_BYTEPTR(reinterpret_cast<uint16_t *>(
-        aom_memalign(16, max_block_size * sizeof(uint16_t))));
-    ASSERT_NE(src_, nullptr);
-    pred_ = CONVERT_TO_BYTEPTR(reinterpret_cast<uint16_t *>(
-        aom_memalign(16, max_block_size * sizeof(uint16_t))));
-    ASSERT_NE(pred_, nullptr);
+    if (hbd_) {
+      src_ = CONVERT_TO_BYTEPTR(reinterpret_cast<uint16_t *>(
+          aom_memalign(16, max_block_size * sizeof(uint16_t))));
+      ASSERT_NE(src_, nullptr);
+      pred_ = CONVERT_TO_BYTEPTR(reinterpret_cast<uint16_t *>(
+          aom_memalign(16, max_block_size * sizeof(uint16_t))));
+      ASSERT_NE(pred_, nullptr);
+    } else {
+      src_ = reinterpret_cast<uint8_t *>(
+          aom_memalign(16, max_block_size * sizeof(uint8_t)));
+      ASSERT_NE(src_, nullptr);
+      pred_ = reinterpret_cast<uint8_t *>(
+          aom_memalign(16, max_block_size * sizeof(uint8_t)));
+      ASSERT_NE(pred_, nullptr);
+    }
     diff_ = reinterpret_cast<int16_t *>(
-        aom_memalign(16, max_block_size * sizeof(int16_t)));
+        aom_memalign(32, max_block_size * sizeof(int16_t)));
     ASSERT_NE(diff_, nullptr);
   }
 
   virtual void TearDown() {
-    aom_free(CONVERT_TO_SHORTPTR(src_));
-    aom_free(CONVERT_TO_SHORTPTR(pred_));
+    if (hbd_) {
+      aom_free(CONVERT_TO_SHORTPTR(src_));
+      aom_free(CONVERT_TO_SHORTPTR(pred_));
+    } else {
+      aom_free(src_);
+      aom_free(pred_);
+    }
     aom_free(diff_);
   }
 
@@ -157,60 +98,78 @@ class AV1HBDSubtractBlockTest : public ::testing::TestWithParam<Params> {
   void RunForSpeed();
 
  private:
+  void FillInputs();
+
   ACMRandom rnd_;
   int block_height_;
   int block_width_;
+  bool hbd_;
   aom_bit_depth_t bit_depth_;
-  HBDSubtractFunc func_;
-  HBDSubtractFunc ref_func_;
+  SubtractFunc func_;
+  SubtractFunc ref_func_;
   uint8_t *src_;
   uint8_t *pred_;
   int16_t *diff_;
 };
-GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(AV1HBDSubtractBlockTest);
 
-void AV1HBDSubtractBlockTest::CheckResult() {
-  const int test_num = 100;
+void AV1SubtractBlockTestBase::FillInputs() {
   const size_t max_width = 128;
   const int max_block_size = max_width * max_width;
-  const int mask = (1 << bit_depth_) - 1;
-  int i, j;
+  if (hbd_) {
+    const int mask = (1 << bit_depth_) - 1;
+    for (int i = 0; i < max_block_size; ++i) {
+      CONVERT_TO_SHORTPTR(src_)[i] = rnd_.Rand16() & mask;
+      CONVERT_TO_SHORTPTR(pred_)[i] = rnd_.Rand16() & mask;
+    }
+  } else {
+    if (src_ == nullptr) {
+      std::cerr << "gadfg" << std::endl;
+    }
+    for (int i = 0; i < max_block_size; ++i) {
+      src_[i] = rnd_.Rand8();
+      pred_[i] = rnd_.Rand8();
+    }
+  }
+}
+
+void AV1SubtractBlockTestBase::CheckResult() {
+  const int test_num = 100;
+  int i;
 
   for (i = 0; i < test_num; ++i) {
-    for (j = 0; j < max_block_size; ++j) {
-      CONVERT_TO_SHORTPTR(src_)[j] = rnd_.Rand16() & mask;
-      CONVERT_TO_SHORTPTR(pred_)[j] = rnd_.Rand16() & mask;
-    }
+    FillInputs();
 
     func_(block_height_, block_width_, diff_, block_width_, src_, block_width_,
           pred_, block_width_);
 
-    for (int r = 0; r < block_height_; ++r) {
-      for (int c = 0; c < block_width_; ++c) {
-        EXPECT_EQ(diff_[r * block_width_ + c],
-                  (CONVERT_TO_SHORTPTR(src_)[r * block_width_ + c] -
-                   CONVERT_TO_SHORTPTR(pred_)[r * block_width_ + c]))
-            << "r = " << r << ", c = " << c << ", test: " << i;
+    if (hbd_)
+      for (int r = 0; r < block_height_; ++r) {
+        for (int c = 0; c < block_width_; ++c) {
+          EXPECT_EQ(diff_[r * block_width_ + c],
+                    (CONVERT_TO_SHORTPTR(src_)[r * block_width_ + c] -
+                     CONVERT_TO_SHORTPTR(pred_)[r * block_width_ + c]))
+              << "r = " << r << ", c = " << c << ", test: " << i;
+        }
+      }
+    else {
+      for (int r = 0; r < block_height_; ++r) {
+        for (int c = 0; c < block_width_; ++c) {
+          EXPECT_EQ(diff_[r * block_width_ + c],
+                    src_[r * block_width_ + c] - pred_[r * block_width_ + c])
+              << "r = " << r << ", c = " << c << ", test: " << i;
+        }
       }
     }
   }
 }
 
-TEST_P(AV1HBDSubtractBlockTest, CheckResult) { CheckResult(); }
-
-void AV1HBDSubtractBlockTest::RunForSpeed() {
+void AV1SubtractBlockTestBase::RunForSpeed() {
   const int test_num = 200000;
-  const size_t max_width = 128;
-  const int max_block_size = max_width * max_width;
-  const int mask = (1 << bit_depth_) - 1;
-  int i, j;
+  int i;
 
   if (ref_func_ == func_) GTEST_SKIP();
 
-  for (j = 0; j < max_block_size; ++j) {
-    CONVERT_TO_SHORTPTR(src_)[j] = rnd_.Rand16() & mask;
-    CONVERT_TO_SHORTPTR(pred_)[j] = rnd_.Rand16() & mask;
-  }
+  FillInputs();
 
   aom_usec_timer ref_timer;
   aom_usec_timer_start(&ref_timer);
@@ -221,10 +180,7 @@ void AV1HBDSubtractBlockTest::RunForSpeed() {
   aom_usec_timer_mark(&ref_timer);
   const int64_t ref_elapsed_time = aom_usec_timer_elapsed(&ref_timer);
 
-  for (j = 0; j < max_block_size; ++j) {
-    CONVERT_TO_SHORTPTR(src_)[j] = rnd_.Rand16() & mask;
-    CONVERT_TO_SHORTPTR(pred_)[j] = rnd_.Rand16() & mask;
-  }
+  FillInputs();
 
   aom_usec_timer timer;
   aom_usec_timer_start(&timer);
@@ -245,7 +201,17 @@ void AV1HBDSubtractBlockTest::RunForSpeed() {
           static_cast<double>(elapsed_time));
 }
 
-TEST_P(AV1HBDSubtractBlockTest, DISABLED_Speed) { RunForSpeed(); }
+class AV1SubtractBlockTest : public ::testing::WithParamInterface<Params>,
+                             public AV1SubtractBlockTestBase {
+ public:
+  AV1SubtractBlockTest()
+      : AV1SubtractBlockTestBase(GET_PARAM(0), -1, GET_PARAM(1), GET_PARAM(2)) {
+  }
+};
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(AV1SubtractBlockTest);
+
+TEST_P(AV1SubtractBlockTest, CheckResult) { CheckResult(); }
+TEST_P(AV1SubtractBlockTest, DISABLED_Speed) { RunForSpeed(); }
 
 const BLOCK_SIZE kValidBlockSize[] = { BLOCK_4X4,    BLOCK_4X8,    BLOCK_8X4,
                                        BLOCK_8X8,    BLOCK_8X16,   BLOCK_16X8,
@@ -253,6 +219,50 @@ const BLOCK_SIZE kValidBlockSize[] = { BLOCK_4X4,    BLOCK_4X8,    BLOCK_8X4,
                                        BLOCK_32X32,  BLOCK_32X64,  BLOCK_64X32,
                                        BLOCK_64X64,  BLOCK_64X128, BLOCK_128X64,
                                        BLOCK_128X128 };
+
+INSTANTIATE_TEST_SUITE_P(
+    C, AV1SubtractBlockTest,
+    ::testing::Combine(::testing::ValuesIn(kValidBlockSize),
+                       ::testing::Values(&aom_subtract_block_c),
+                       ::testing::Values(&aom_subtract_block_c)));
+
+#if HAVE_SSE2
+INSTANTIATE_TEST_SUITE_P(
+    SSE2, AV1SubtractBlockTest,
+    ::testing::Combine(::testing::ValuesIn(kValidBlockSize),
+                       ::testing::Values(&aom_subtract_block_sse2),
+                       ::testing::Values(&aom_subtract_block_c)));
+#endif
+#if HAVE_AVX2
+INSTANTIATE_TEST_SUITE_P(
+    AVX2, AV1SubtractBlockTest,
+    ::testing::Combine(::testing::ValuesIn(kValidBlockSize),
+                       ::testing::Values(&aom_subtract_block_avx2),
+                       ::testing::Values(&aom_subtract_block_c)));
+
+#endif
+#if HAVE_NEON
+INSTANTIATE_TEST_SUITE_P(
+    NEON, AV1SubtractBlockTest,
+    ::testing::Combine(::testing::ValuesIn(kValidBlockSize),
+                       ::testing::Values(&aom_subtract_block_neon),
+                       ::testing::Values(&aom_subtract_block_c)));
+
+#endif
+
+#if CONFIG_AV1_HIGHBITDEPTH
+
+// <BLOCK_SIZE, bit_depth, optimized subtract func, reference subtract func>
+using ParamsHBD = tuple<BLOCK_SIZE, int, SubtractFunc, SubtractFunc>;
+
+class AV1HBDSubtractBlockTest : public ::testing::WithParamInterface<ParamsHBD>,
+                                public AV1SubtractBlockTestBase {
+ public:
+  AV1HBDSubtractBlockTest()
+      : AV1SubtractBlockTestBase(GET_PARAM(0), GET_PARAM(1), GET_PARAM(2),
+                                 GET_PARAM(3)) {}
+};
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(AV1HBDSubtractBlockTest);
 
 INSTANTIATE_TEST_SUITE_P(
     C, AV1HBDSubtractBlockTest,

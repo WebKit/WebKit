@@ -1,3 +1,167 @@
+2023-05-08 v3.6.1
+  This release includes several bug fixes. This release is ABI
+  compatible with the last release. See
+  https://aomedia.googlesource.com/aom/+log/v3.6.0..v3.6.1 for all the
+  commits in this release.
+
+  - Bug Fixes
+    * aomedia:2871: Guard the support of the 7.x and 8.x levels for AV1
+      under the CONFIG_CWG_C013 config flag, and only output the 7.x and
+      8.x levels when explicitly requested.
+    * aomedia:3382: Choose sb_size by ppi instead of svc.
+    * aomedia:3384: Fix fullpel search limits.
+    * aomedia:3388: Replace left shift of xq_active by multiplication.
+    * aomedia:3389: Fix MV clamping in av1_mv_pred.
+    * aomedia:3390: set_ld_layer_depth: cap max_layer_depth to
+      MAX_ARF_LAYERS.
+    * aomedia:3418: Fix MV clamping in av1_int_pro_motion_estimation.
+    * aomedia:3429: Move lpf thread data init to lpf_pipeline_mt_init().
+    * b:266719111: Fix undefined behavior in Arm Neon code.
+    * b:269840681: nonrd_opt: align scan tables.
+    * rtc: Fix is_key_frame setting in variance partition.
+    * Build: Fix build with clang-cl and Visual Studio.
+    * Build: Fix module definition file for MinGW/MSYS.
+
+2023-02-03 v3.6.0
+  This release includes compression efficiency and perceptual quality
+  improvements, speedup and memory optimizations, and some new features.
+  This release is ABI compatible with the last release.
+
+  - New Features
+    * New values 20-27 (corresponding to levels 7.0-7.3 and 8.0-8.3) for
+      the encoder control AV1E_SET_TARGET_SEQ_LEVEL_IDX (note that the
+      proposal to add the new levels are still in draft status). The
+      original special value 24 (keep level stats only for level
+      monitoring) is renumbered as 32.
+    * New encoder control AV1E_SET_SKIP_POSTPROC_FILTERING to skip the
+      application of post-processing filters on reconstructed frame in
+      all intra mode.
+    * New encoder option "kf-max-pyr-height": Maximum height of pyramid
+      structure used for the GOP starting with a key frame (-1 to 5).
+    * Make SVC work for screen content.
+    * Rate control improvements to reduce frame-size spikes for screen
+      content coding.
+    * RISC-V architecture support with gcc toolchain.
+
+  - Compression Efficiency Improvements
+    * Peak compression efficiency in VOD setting is improved by 1%.
+    * 0.7% - 2.2% RTC encoding BDrate gains for real time speed 8 to 10.
+    * 15% RTC encoding BDrate gains for screen content speed 10.
+
+  - Perceptual Quality Improvements
+    * Resolved a visual quality issue that was reported for high
+      resolution clips (2K) for speed 4 and above in VOD use case.
+    * Visual quality improvements to screen content coding.
+    * Quality improvements to temporal layer RTC coding.
+
+  - Speedup and Memory Optimizations
+    * RTC single-thread encoder speedup:
+      o ~6% instruction count reduction for speed 5 and 6.
+      o ~15% instruction count reduction for speed 7.
+      o ~10% instruction count reduction for speed 8 to 10 (>=360p
+        resolutions).
+    * RTC multi-thread encoder speedup (beyond single-thread speedup):
+      o 5-8% encode time reduction for speed 7 to 10.
+    * RTC screen-content encoder speedup:
+      o 11% instruction count reduction for speed 9 and 10 (>=720p
+        resolutions).
+    * ~5% reduction in heap memory requirements for RTC, speed 6 to 10.
+    * AVIF:
+      o 4-5% speedup for speed 9 in still-picture encoding mode.
+      o 3-4% heap memory reduction in still-picture encoding mode for
+        360p-720p resolutions with multiple threads.
+
+  - Bug Fixes
+    * Added a workaround for an AV1 specification bug which makes
+      TRANSLATION type global motion models unusable.
+    * Fixed AddressSanitizer global-buffer-overflow errors in
+      av1/encoder/arm/neon/av1_fwd_txfm2d_neon.c.
+    * Fixed AddressSanitizer heap-buffer-overflow error in
+      av1_wiener_convolve_add_src_neon().
+    * chromium:1393384 Avoid scene detection on spatial resize.
+    * aomedia:3308 Remove color artifacts under high motion.
+    * aomedia:3310 Avoid out of memory failures with Visual Studio 2017,
+      2019, and 2022 for Win32 x86 builds.
+    * aomedia:3346 Make SVC work properly for screen content.
+    * aomedia:3348 Fix a bug where an uninitialized search_site is used.
+    * aomedia:3365 Work around what seems like a Visual Studio 2022
+      compiler optimization bug.
+    * aomedia:3369 Incorrect PSNR values reported by libaom for 12-bit
+      encode.
+
+2022-08-31 v3.5.0
+  This release is ABI compatible with the last one, including speedup and memory
+  optimizations, and new APIs and features.
+
+  - New Features
+    * Support for frame parallel encode for larger number of threads. --fp-mt
+      flag is available for all build configurations.
+    * New codec control AV1E_GET_NUM_OPERATING_POINTS
+
+  - Speedup and Memory Optimizations
+    * Speed-up multithreaded encoding for good quality mode for larger number of
+      threads through frame parallel encoding:
+      o 30-34% encode time reduction for 1080p, 16 threads, 1x1 tile
+        configuration (tile_rows x tile_columns)
+      o 18-28% encode time reduction for 1080p, 16 threads, 2x4 tile
+        configuration
+      o 18-20% encode time reduction for 2160p, 32 threads, 2x4 tile
+        configuration
+    * 16-20% speed-up for speed=6 to 8 in still-picture encoding mode
+    * 5-6% heap memory reduction for speed=6 to 10 in real-time encoding mode
+    * Improvements to the speed for speed=7, 8 in real-time encoding mode
+    * Improvements to the speed for speed=9, 10 in real-time screen encoding
+      mode
+    * Optimizations to improve multi-thread efficiency in real-time encoding
+      mode
+    * 10-15% speed up for SVC with temporal layers
+    * SIMD optimizations:
+      o Improve av1_quantize_fp_32x32_neon() 1.05x to 1.24x faster
+      o Add aom_highbd_quantize_b{,_32x32,_64x64}_adaptive_neon() 3.15x to 5.6x
+        faster than "C"
+      o Improve av1_quantize_fp_64x64_neon() 1.17x to 1.66x faster
+      o Add aom_quantize_b_avx2() 1.4x to 1.7x faster than aom_quantize_b_avx()
+      o Add aom_quantize_b_32x32_avx2() 1.4x to 2.3x faster than
+        aom_quantize_b_32x32_avx()
+      o Add aom_quantize_b_64x64_avx2() 2.0x to 2.4x faster than
+        aom_quantize_b_64x64_ssse3()
+      o Add aom_highbd_quantize_b_32x32_avx2() 9.0x to 10.5x faster than
+        aom_highbd_quantize_b_32x32_c()
+      o Add aom_highbd_quantize_b_64x64_avx2() 7.3x to 9.7x faster than
+        aom_highbd_quantize_b_64x64_c()
+      o Improve aom_highbd_quantize_b_avx2() 1.07x to 1.20x faster
+      o Improve av1_quantize_fp_avx2() 1.13x to 1.49x faster
+      o Improve av1_quantize_fp_32x32_avx2() 1.07x to 1.54x faster
+      o Improve av1_quantize_fp_64x64_avx2()  1.03x to 1.25x faster
+      o Improve av1_quantize_lp_avx2() 1.07x to 1.16x faster
+
+  - Bug fixes including but not limited to
+    * aomedia:3206 Assert that skip_width > 0 for deconvolve function
+    * aomedia:3278 row_mt enc: Delay top-right sync when intraBC is enabled
+    * aomedia:3282 blend_a64_*_neon: fix bus error in armv7
+    * aomedia:3283 FRAME_PARALLEL: Propagate border size to all cpis
+    * aomedia:3283 RESIZE_MODE: Fix incorrect strides being used for motion
+      search
+    * aomedia:3286 rtc-svc: Fix to dynamic_enable spatial layers
+    * aomedia:3289 rtc-screen: Fix to skipping inter-mode test in nonrd
+    * aomedia:3289 rtc-screen: Fix for skip newmv on flat blocks
+    * aomedia:3299 Fix build failure with CONFIG_TUNE_VMAF=1
+    * aomedia:3296 Fix the conflict --enable-tx-size-search=0 with nonrd mode
+      --enable-tx-size-search will be ignored in non-rd pick mode
+    * aomedia:3304 Fix off-by-one error of max w/h in validate_config
+    * aomedia:3306 Do not use pthread_setname_np on GNU/Hurd
+    * aomedia:3325 row-multithreading produces invalid bitstream in some cases
+    * chromium:1346938, chromium:1338114
+    * compiler_flags.cmake: fix flag detection w/cmake 3.17-3.18.2
+    * tools/*.py: update to python3
+    * aom_configure.cmake: detect PIE and set CONFIG_PIC
+    * test/simd_cmp_impl: use explicit types w/CompareSimd*
+    * rtc: Fix to disable segm for aq-mode=3
+    * rtc: Fix to color_sensitivity in variance partition
+    * rtc-screen: Fix bsize in model rd computation for intra chroma
+    * Fixes to ensure the correct behavior of the encoder algorithms (like
+      segmentation, computation of statistics, etc.)
+
 2022-06-17 v3.4.0
   This release includes compression efficiency and perceptual quality
   improvements, speedup and memory optimizations, and some new features.

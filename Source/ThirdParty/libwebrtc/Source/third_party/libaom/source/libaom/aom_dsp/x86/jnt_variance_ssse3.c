@@ -49,13 +49,12 @@ void aom_dist_wtd_comp_avg_pred_ssse3(uint8_t *comp_pred, const uint8_t *pred,
                                       int ref_stride,
                                       const DIST_WTD_COMP_PARAMS *jcp_param) {
   int i;
-  const uint8_t w0 = (uint8_t)jcp_param->fwd_offset;
-  const uint8_t w1 = (uint8_t)jcp_param->bck_offset;
+  const int8_t w0 = (int8_t)jcp_param->fwd_offset;
+  const int8_t w1 = (int8_t)jcp_param->bck_offset;
   const __m128i w = _mm_set_epi8(w1, w0, w1, w0, w1, w0, w1, w0, w1, w0, w1, w0,
                                  w1, w0, w1, w0);
-  const uint16_t round = ((1 << DIST_PRECISION_BITS) >> 1);
-  const __m128i r =
-      _mm_set_epi16(round, round, round, round, round, round, round, round);
+  const int16_t round = (int16_t)((1 << DIST_PRECISION_BITS) >> 1);
+  const __m128i r = _mm_set1_epi16(round);
 
   if (width >= 16) {
     // Read 16 pixels one row at a time
@@ -95,10 +94,10 @@ void aom_dist_wtd_comp_avg_pred_ssse3(uint8_t *comp_pred, const uint8_t *pred,
     assert(!(width & 3));
     assert(!(height & 3));
     for (i = 0; i < height; i += 4) {
-      const uint8_t *row0 = ref + 0 * ref_stride;
-      const uint8_t *row1 = ref + 1 * ref_stride;
-      const uint8_t *row2 = ref + 2 * ref_stride;
-      const uint8_t *row3 = ref + 3 * ref_stride;
+      const int8_t *row0 = (const int8_t *)ref + 0 * ref_stride;
+      const int8_t *row1 = (const int8_t *)ref + 1 * ref_stride;
+      const int8_t *row2 = (const int8_t *)ref + 2 * ref_stride;
+      const int8_t *row3 = (const int8_t *)ref + 3 * ref_stride;
 
       __m128i p0 =
           _mm_setr_epi8(row0[0], row0[1], row0[2], row0[3], row1[0], row1[1],

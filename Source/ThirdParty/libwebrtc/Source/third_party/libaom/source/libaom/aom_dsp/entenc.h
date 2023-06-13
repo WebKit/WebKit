@@ -13,10 +13,13 @@
 #define AOM_AOM_DSP_ENTENC_H_
 #include <stddef.h>
 #include "aom_dsp/entcode.h"
+#include "aom_ports/bitops.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+typedef uint64_t od_ec_enc_window;
 
 typedef struct od_ec_enc od_ec_enc;
 
@@ -30,14 +33,10 @@ struct od_ec_enc {
   unsigned char *buf;
   /*The size of the buffer.*/
   uint32_t storage;
-  /*A buffer for output bytes with their associated carry flags.*/
-  uint16_t *precarry_buf;
-  /*The size of the pre-carry buffer.*/
-  uint32_t precarry_storage;
   /*The offset at which the next entropy-coded byte will be written.*/
   uint32_t offs;
   /*The low end of the current range.*/
-  od_ec_window low;
+  od_ec_enc_window low;
   /*The number of values in the current range.*/
   uint16_t rng;
   /*The number of bits of data in the current value.*/
@@ -77,6 +76,32 @@ OD_WARN_UNUSED_RESULT uint32_t od_ec_enc_tell_frac(const od_ec_enc *enc)
 
 void od_ec_enc_checkpoint(od_ec_enc *dst, const od_ec_enc *src);
 void od_ec_enc_rollback(od_ec_enc *dst, const od_ec_enc *src);
+
+// buf is the frame bitbuffer, offs is where carry to be added
+static AOM_INLINE void propagate_carry_bwd(unsigned char *buf, uint32_t offs) {
+  uint16_t sum, carry = 1;
+  do {
+    sum = (uint16_t)buf[offs] + 1;
+    buf[offs--] = (unsigned char)sum;
+    carry = sum >> 8;
+  } while (carry);
+}
+
+// Reverse byte order and write data to buffer adding the carry-bit
+static AOM_INLINE void write_enc_data_to_out_buf(unsigned char *out,
+                                                 uint32_t offs, uint64_t output,
+                                                 uint64_t carry,
+                                                 uint32_t *enc_offs,
+                                                 uint8_t num_bytes_ready) {
+  const uint64_t reg = get_byteswap64(output) >> ((8 - num_bytes_ready) << 3);
+  memcpy(&out[offs], &reg, 8);
+  // Propagate carry backwards if exists
+  if (carry) {
+    assert(offs > 0);
+    propagate_carry_bwd(out, offs - 1);
+  }
+  *enc_offs = offs + num_bytes_ready;
+}
 
 #ifdef __cplusplus
 }  // extern "C"

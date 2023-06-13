@@ -186,11 +186,7 @@ SIMD_INLINE c_v64 c_v64_sadd_u8(c_v64 a, c_v64 b) {
   c_v64 t;
   int c;
   for (c = 0; c < 8; c++)
-    t.u8[c] = (int16_t)a.u8[c] + (int16_t)b.u8[c] > 255
-                  ? 255
-                  : (int16_t)a.u8[c] + (int16_t)b.u8[c] < 0
-                        ? 0
-                        : (int16_t)a.u8[c] + (int16_t)b.u8[c];
+    t.u8[c] = SIMD_CLAMP((int16_t)a.u8[c] + (int16_t)b.u8[c], 0, 255);
   return t;
 }
 
@@ -198,11 +194,7 @@ SIMD_INLINE c_v64 c_v64_sadd_s8(c_v64 a, c_v64 b) {
   c_v64 t;
   int c;
   for (c = 0; c < 8; c++)
-    t.s8[c] = (int16_t)a.s8[c] + (int16_t)b.s8[c] > 127
-                  ? 127
-                  : (int16_t)a.s8[c] + (int16_t)b.s8[c] < -128
-                        ? -128
-                        : (int16_t)a.s8[c] + (int16_t)b.s8[c];
+    t.s8[c] = SIMD_CLAMP((int16_t)a.s8[c] + (int16_t)b.s8[c], -128, 127);
   return t;
 }
 
@@ -210,11 +202,7 @@ SIMD_INLINE c_v64 c_v64_sadd_s16(c_v64 a, c_v64 b) {
   c_v64 t;
   int c;
   for (c = 0; c < 4; c++)
-    t.s16[c] = (int32_t)a.s16[c] + (int32_t)b.s16[c] > 32767
-                   ? 32767
-                   : (int32_t)a.s16[c] + (int32_t)b.s16[c] < -32768
-                         ? -32768
-                         : (int32_t)a.s16[c] + (int32_t)b.s16[c];
+    t.s16[c] = SIMD_CLAMP((int32_t)a.s16[c] + (int32_t)b.s16[c], -32768, 32767);
   return t;
 }
 
@@ -244,7 +232,7 @@ SIMD_INLINE c_v64 c_v64_ssub_s8(c_v64 a, c_v64 b) {
   int c;
   for (c = 0; c < 8; c++) {
     int16_t d = (int16_t)a.s8[c] - (int16_t)b.s8[c];
-    t.s8[c] = d > 127 ? 127 : (d < -128 ? -128 : d);
+    t.s8[c] = SIMD_CLAMP(d, -128, 127);
   }
   return t;
 }
@@ -260,11 +248,7 @@ SIMD_INLINE c_v64 c_v64_ssub_s16(c_v64 a, c_v64 b) {
   c_v64 t;
   int c;
   for (c = 0; c < 4; c++)
-    t.s16[c] = (int32_t)a.s16[c] - (int32_t)b.s16[c] < -32768
-                   ? -32768
-                   : (int32_t)a.s16[c] - (int32_t)b.s16[c] > 32767
-                         ? 32767
-                         : (int32_t)a.s16[c] - (int32_t)b.s16[c];
+    t.s16[c] = SIMD_CLAMP((int32_t)a.s16[c] - (int32_t)b.s16[c], -32768, 32767);
   return t;
 }
 
@@ -481,10 +465,10 @@ SIMD_INLINE c_v64 c_v64_pack_s32_s16(c_v64 a, c_v64 b) {
     a = b;
     b = u;
   }
-  t.s16[3] = a.s32[1] > 32767 ? 32767 : a.s32[1] < -32768 ? -32768 : a.s32[1];
-  t.s16[2] = a.s32[0] > 32767 ? 32767 : a.s32[0] < -32768 ? -32768 : a.s32[0];
-  t.s16[1] = b.s32[1] > 32767 ? 32767 : b.s32[1] < -32768 ? -32768 : b.s32[1];
-  t.s16[0] = b.s32[0] > 32767 ? 32767 : b.s32[0] < -32768 ? -32768 : b.s32[0];
+  t.s16[3] = SIMD_CLAMP(a.s32[1], -32768, 32767);
+  t.s16[2] = SIMD_CLAMP(a.s32[0], -32768, 32767);
+  t.s16[1] = SIMD_CLAMP(b.s32[1], -32768, 32767);
+  t.s16[0] = SIMD_CLAMP(b.s32[0], -32768, 32767);
   return t;
 }
 
@@ -495,10 +479,10 @@ SIMD_INLINE c_v64 c_v64_pack_s32_u16(c_v64 a, c_v64 b) {
     a = b;
     b = u;
   }
-  t.u16[3] = a.s32[1] > 65535 ? 65535 : a.s32[1] < 0 ? 0 : a.s32[1];
-  t.u16[2] = a.s32[0] > 65535 ? 65535 : a.s32[0] < 0 ? 0 : a.s32[0];
-  t.u16[1] = b.s32[1] > 65535 ? 65535 : b.s32[1] < 0 ? 0 : b.s32[1];
-  t.u16[0] = b.s32[0] > 65535 ? 65535 : b.s32[0] < 0 ? 0 : b.s32[0];
+  t.u16[3] = SIMD_CLAMP(a.s32[1], 0, 65535);
+  t.u16[2] = SIMD_CLAMP(a.s32[0], 0, 65535);
+  t.u16[1] = SIMD_CLAMP(b.s32[1], 0, 65535);
+  t.u16[0] = SIMD_CLAMP(b.s32[0], 0, 65535);
   return t;
 }
 
@@ -509,14 +493,14 @@ SIMD_INLINE c_v64 c_v64_pack_s16_u8(c_v64 a, c_v64 b) {
     a = b;
     b = u;
   }
-  t.u8[7] = a.s16[3] > 255 ? 255 : a.s16[3] < 0 ? 0 : a.s16[3];
-  t.u8[6] = a.s16[2] > 255 ? 255 : a.s16[2] < 0 ? 0 : a.s16[2];
-  t.u8[5] = a.s16[1] > 255 ? 255 : a.s16[1] < 0 ? 0 : a.s16[1];
-  t.u8[4] = a.s16[0] > 255 ? 255 : a.s16[0] < 0 ? 0 : a.s16[0];
-  t.u8[3] = b.s16[3] > 255 ? 255 : b.s16[3] < 0 ? 0 : b.s16[3];
-  t.u8[2] = b.s16[2] > 255 ? 255 : b.s16[2] < 0 ? 0 : b.s16[2];
-  t.u8[1] = b.s16[1] > 255 ? 255 : b.s16[1] < 0 ? 0 : b.s16[1];
-  t.u8[0] = b.s16[0] > 255 ? 255 : b.s16[0] < 0 ? 0 : b.s16[0];
+  t.u8[7] = SIMD_CLAMP(a.s16[3], 0, 255);
+  t.u8[6] = SIMD_CLAMP(a.s16[2], 0, 255);
+  t.u8[5] = SIMD_CLAMP(a.s16[1], 0, 255);
+  t.u8[4] = SIMD_CLAMP(a.s16[0], 0, 255);
+  t.u8[3] = SIMD_CLAMP(b.s16[3], 0, 255);
+  t.u8[2] = SIMD_CLAMP(b.s16[2], 0, 255);
+  t.u8[1] = SIMD_CLAMP(b.s16[1], 0, 255);
+  t.u8[0] = SIMD_CLAMP(b.s16[0], 0, 255);
   return t;
 }
 
@@ -527,14 +511,14 @@ SIMD_INLINE c_v64 c_v64_pack_s16_s8(c_v64 a, c_v64 b) {
     a = b;
     b = u;
   }
-  t.u8[7] = (uint8_t)(a.s16[3] > 127 ? 127 : a.s16[3] < -128 ? 128 : a.s16[3]);
-  t.u8[6] = (uint8_t)(a.s16[2] > 127 ? 127 : a.s16[2] < -128 ? 128 : a.s16[2]);
-  t.u8[5] = (uint8_t)(a.s16[1] > 127 ? 127 : a.s16[1] < -128 ? 128 : a.s16[1]);
-  t.u8[4] = (uint8_t)(a.s16[0] > 127 ? 127 : a.s16[0] < -128 ? 128 : a.s16[0]);
-  t.u8[3] = (uint8_t)(b.s16[3] > 127 ? 127 : b.s16[3] < -128 ? 128 : b.s16[3]);
-  t.u8[2] = (uint8_t)(b.s16[2] > 127 ? 127 : b.s16[2] < -128 ? 128 : b.s16[2]);
-  t.u8[1] = (uint8_t)(b.s16[1] > 127 ? 127 : b.s16[1] < -128 ? 128 : b.s16[1]);
-  t.u8[0] = (uint8_t)(b.s16[0] > 127 ? 127 : b.s16[0] < -128 ? 128 : b.s16[0]);
+  t.s8[7] = SIMD_CLAMP(a.s16[3], -128, 127);
+  t.s8[6] = SIMD_CLAMP(a.s16[2], -128, 127);
+  t.s8[5] = SIMD_CLAMP(a.s16[1], -128, 127);
+  t.s8[4] = SIMD_CLAMP(a.s16[0], -128, 127);
+  t.s8[3] = SIMD_CLAMP(b.s16[3], -128, 127);
+  t.s8[2] = SIMD_CLAMP(b.s16[2], -128, 127);
+  t.s8[1] = SIMD_CLAMP(b.s16[1], -128, 127);
+  t.s8[0] = SIMD_CLAMP(b.s16[0], -128, 127);
   return t;
 }
 
@@ -702,13 +686,13 @@ SIMD_INLINE c_v64 c_v64_madd_us8(c_v64 a, c_v64 b) {
   c_v64 t;
   int32_t u;
   u = a.u8[0] * b.s8[0] + a.u8[1] * b.s8[1];
-  t.s16[0] = u > 32767 ? 32767 : u < -32768 ? -32768 : u;
+  t.s16[0] = SIMD_CLAMP(u, -32768, 32767);
   u = a.u8[2] * b.s8[2] + a.u8[3] * b.s8[3];
-  t.s16[1] = u > 32767 ? 32767 : u < -32768 ? -32768 : u;
+  t.s16[1] = SIMD_CLAMP(u, -32768, 32767);
   u = a.u8[4] * b.s8[4] + a.u8[5] * b.s8[5];
-  t.s16[2] = u > 32767 ? 32767 : u < -32768 ? -32768 : u;
+  t.s16[2] = SIMD_CLAMP(u, -32768, 32767);
   u = a.u8[6] * b.s8[6] + a.u8[7] * b.s8[7];
-  t.s16[3] = u > 32767 ? 32767 : u < -32768 ? -32768 : u;
+  t.s16[3] = SIMD_CLAMP(u, -32768, 32767);
   return t;
 }
 

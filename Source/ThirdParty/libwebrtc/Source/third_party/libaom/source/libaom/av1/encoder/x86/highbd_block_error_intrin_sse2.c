@@ -33,7 +33,7 @@ int64_t av1_highbd_block_error_sse2(const tran_low_t *coeff,
     __m128i mm_dqcoeff2 = _mm_load_si128((__m128i *)(dqcoeff + i + 4));
     // Check if any values require more than 15 bit
     max = _mm_set1_epi32(0x3fff);
-    min = _mm_set1_epi32(0xffffc000);
+    min = _mm_set1_epi32((int)0xffffc000);
     cmp0 = _mm_xor_si128(_mm_cmpgt_epi32(mm_coeff, max),
                          _mm_cmplt_epi32(mm_coeff, min));
     cmp1 = _mm_xor_si128(_mm_cmpgt_epi32(mm_coeff2, max),

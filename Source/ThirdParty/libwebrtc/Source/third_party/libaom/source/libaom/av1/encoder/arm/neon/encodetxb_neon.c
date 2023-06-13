@@ -19,20 +19,20 @@
 
 void av1_txb_init_levels_neon(const tran_low_t *const coeff, const int width,
                               const int height, uint8_t *const levels) {
-  const int stride = width + TX_PAD_HOR;
+  const int stride = height + TX_PAD_HOR;
   memset(levels - TX_PAD_TOP * stride, 0,
          sizeof(*levels) * TX_PAD_TOP * stride);
-  memset(levels + stride * height, 0,
+  memset(levels + stride * width, 0,
          sizeof(*levels) * (TX_PAD_BOTTOM * stride + TX_PAD_END));
 
   const int32x4_t zeros = vdupq_n_s32(0);
   int i = 0;
   uint8_t *ls = levels;
   const tran_low_t *cf = coeff;
-  if (width == 4) {
+  if (height == 4) {
     do {
       const int32x4_t coeffA = vld1q_s32(cf);
-      const int32x4_t coeffB = vld1q_s32(cf + width);
+      const int32x4_t coeffB = vld1q_s32(cf + height);
       const int16x8_t coeffAB =
           vcombine_s16(vqmovn_s32(coeffA), vqmovn_s32(coeffB));
       const int16x8_t absAB = vqabsq_s16(coeffAB);
@@ -50,10 +50,10 @@ void av1_txb_init_levels_neon(const tran_low_t *const coeff, const int width,
 #endif
       vst1q_u8(ls, lsAB);
       ls += (stride << 1);
-      cf += (width << 1);
+      cf += (height << 1);
       i += 2;
-    } while (i < height);
-  } else if (width == 8) {
+    } while (i < width);
+  } else if (height == 8) {
     do {
       const int32x4_t coeffA = vld1q_s32(cf);
       const int32x4_t coeffB = vld1q_s32(cf + 4);
@@ -64,9 +64,9 @@ void av1_txb_init_levels_neon(const tran_low_t *const coeff, const int width,
           vqmovn_s16(absAB), vreinterpret_s8_s32(vget_low_s32(zeros))));
       vst1q_u8(ls, absAB8);
       ls += stride;
-      cf += width;
+      cf += height;
       i += 1;
-    } while (i < height);
+    } while (i < width);
   } else {
     do {
       int j = 0;
@@ -86,18 +86,18 @@ void av1_txb_init_levels_neon(const tran_low_t *const coeff, const int width,
         vst1q_u8((ls + j), absABCD);
         j += 16;
         cf += 16;
-      } while (j < width);
-      *(int32_t *)(ls + width) = 0;
+      } while (j < height);
+      *(int32_t *)(ls + height) = 0;
       ls += stride;
       i += 1;
-    } while (i < height);
+    } while (i < width);
   }
 }
 
 // get_4_nz_map_contexts_2d coefficients:
 static const DECLARE_ALIGNED(16, uint8_t, c_4_po_2d[2][16]) = {
   { 0, 1, 6, 6, 1, 6, 6, 21, 6, 6, 21, 21, 6, 21, 21, 21 },
-  { 0, 11, 11, 11, 11, 11, 11, 11, 6, 6, 21, 21, 6, 21, 21, 21 }
+  { 0, 16, 16, 16, 16, 16, 16, 16, 6, 6, 21, 21, 6, 21, 21, 21 }
 };
 
 // get_4_nz_map_contexts_hor coefficients:
@@ -108,7 +108,7 @@ static const DECLARE_ALIGNED(16, uint8_t, c_4_po_2d[2][16]) = {
 /* clang-format on */
 
 // get_4_nz_map_contexts_ver coefficients:
-static const DECLARE_ALIGNED(16, uint8_t, c_4_po_ver[16]) = {
+static const DECLARE_ALIGNED(16, uint8_t, c_4_po_hor[16]) = {
   SIG_COEF_CONTEXTS_2D + 0,  SIG_COEF_CONTEXTS_2D + 0,
   SIG_COEF_CONTEXTS_2D + 0,  SIG_COEF_CONTEXTS_2D + 0,
   SIG_COEF_CONTEXTS_2D + 5,  SIG_COEF_CONTEXTS_2D + 5,
@@ -120,25 +120,25 @@ static const DECLARE_ALIGNED(16, uint8_t, c_4_po_ver[16]) = {
 };
 
 // get_8_coeff_contexts_2d coefficients:
-// if (height == 8)
+// if (width == 8)
 static const DECLARE_ALIGNED(16, uint8_t, c_8_po_2d_8[2][16]) = {
   { 0, 1, 6, 6, 21, 21, 21, 21, 1, 6, 6, 21, 21, 21, 21, 21 },
   { 6, 6, 21, 21, 21, 21, 21, 21, 6, 21, 21, 21, 21, 21, 21, 21 }
 };
-// if (height < 8)
+// if (width < 8)
 static const DECLARE_ALIGNED(16, uint8_t, c_8_po_2d_l[2][16]) = {
-  { 0, 16, 6, 6, 21, 21, 21, 21, 16, 16, 6, 21, 21, 21, 21, 21 },
-  { 16, 16, 21, 21, 21, 21, 21, 21, 16, 16, 21, 21, 21, 21, 21, 21 }
+  { 0, 11, 6, 6, 21, 21, 21, 21, 11, 11, 6, 21, 21, 21, 21, 21 },
+  { 11, 11, 21, 21, 21, 21, 21, 21, 11, 11, 21, 21, 21, 21, 21, 21 }
 };
 
-// if (height > 8)
+// if (width > 8)
 static const DECLARE_ALIGNED(16, uint8_t, c_8_po_2d_g[2][16]) = {
-  { 0, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11 },
+  { 0, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16 },
   { 6, 6, 21, 21, 21, 21, 21, 21, 6, 21, 21, 21, 21, 21, 21, 21 }
 };
 
 // get_4_nz_map_contexts_ver coefficients:
-static const DECLARE_ALIGNED(16, uint8_t, c_8_po_hor[16]) = {
+static const DECLARE_ALIGNED(16, uint8_t, c_8_po_ver[16]) = {
   SIG_COEF_CONTEXTS_2D + 0,  SIG_COEF_CONTEXTS_2D + 5,
   SIG_COEF_CONTEXTS_2D + 10, SIG_COEF_CONTEXTS_2D + 10,
   SIG_COEF_CONTEXTS_2D + 10, SIG_COEF_CONTEXTS_2D + 10,
@@ -158,22 +158,22 @@ static const DECLARE_ALIGNED(16, uint8_t, c_16_po_2d_e[4][16]) = {
   { 6, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21 }
 };
 
-// real_width > real_height
+// real_width < real_height
 static const DECLARE_ALIGNED(16, uint8_t, c_16_po_2d_g[3][16]) = {
-  { 0, 16, 6, 6, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21 },
-  { 16, 16, 6, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21 },
-  { 16, 16, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21 }
+  { 0, 11, 6, 6, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21 },
+  { 11, 11, 6, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21 },
+  { 11, 11, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21 }
 };
 
-// real_width < real_height
+// real_width > real_height
 static const DECLARE_ALIGNED(16, uint8_t, c_16_po_2d_l[3][16]) = {
-  { 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11 },
+  { 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16 },
   { 6, 6, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21 },
   { 6, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21, 21 }
 };
 
 // get_16n_coeff_contexts_hor coefficients:
-static const DECLARE_ALIGNED(16, uint8_t, c_16_po_hor[16]) = {
+static const DECLARE_ALIGNED(16, uint8_t, c_16_po_ver[16]) = {
   SIG_COEF_CONTEXTS_2D + 0,  SIG_COEF_CONTEXTS_2D + 5,
   SIG_COEF_CONTEXTS_2D + 10, SIG_COEF_CONTEXTS_2D + 10,
   SIG_COEF_CONTEXTS_2D + 10, SIG_COEF_CONTEXTS_2D + 10,
@@ -273,22 +273,22 @@ static INLINE uint8x16_t get_coeff_contexts_kernel(uint8x16_t *const level) {
 }
 
 static INLINE void get_4_nz_map_contexts_2d(const uint8_t *levels,
-                                            const int height,
+                                            const int width,
                                             const ptrdiff_t *const offsets,
                                             uint8_t *const coeff_contexts) {
   const int stride = 4 + TX_PAD_HOR;
   const uint8x16_t pos_to_offset_large = vdupq_n_u8(21);
 
   uint8x16_t pos_to_offset =
-      vld1q_u8((height == 4) ? c_4_po_2d[0] : c_4_po_2d[1]);
+      vld1q_u8((width == 4) ? c_4_po_2d[0] : c_4_po_2d[1]);
 
   uint8x16_t count;
   uint8x16_t level[5];
   uint8_t *cc = coeff_contexts;
 
-  assert(!(height % 4));
+  assert(!(width % 4));
 
-  int row = height;
+  int col = width;
   do {
     load_levels_4x4x5(levels, stride, offsets, level);
     count = get_coeff_contexts_kernel(level);
@@ -297,14 +297,14 @@ static INLINE void get_4_nz_map_contexts_2d(const uint8_t *levels,
     pos_to_offset = pos_to_offset_large;
     levels += 4 * stride;
     cc += 16;
-    row -= 4;
-  } while (row);
+    col -= 4;
+  } while (col);
 
   coeff_contexts[0] = 0;
 }
 
-static INLINE void get_4_nz_map_contexts_hor(const uint8_t *levels,
-                                             const int height,
+static INLINE void get_4_nz_map_contexts_ver(const uint8_t *levels,
+                                             const int width,
                                              const ptrdiff_t *const offsets,
                                              uint8_t *coeff_contexts) {
   const int stride = 4 + TX_PAD_HOR;
@@ -315,9 +315,9 @@ static INLINE void get_4_nz_map_contexts_hor(const uint8_t *levels,
   uint8x16_t count;
   uint8x16_t level[5];
 
-  assert(!(height % 4));
+  assert(!(width % 4));
 
-  int row = height;
+  int col = width;
   do {
     load_levels_4x4x5(levels, stride, offsets, level);
     count = get_coeff_contexts_kernel(level);
@@ -325,25 +325,25 @@ static INLINE void get_4_nz_map_contexts_hor(const uint8_t *levels,
     vst1q_u8(coeff_contexts, count);
     levels += 4 * stride;
     coeff_contexts += 16;
-    row -= 4;
-  } while (row);
+    col -= 4;
+  } while (col);
 }
 
-static INLINE void get_4_nz_map_contexts_ver(const uint8_t *levels,
-                                             const int height,
+static INLINE void get_4_nz_map_contexts_hor(const uint8_t *levels,
+                                             const int width,
                                              const ptrdiff_t *const offsets,
                                              uint8_t *coeff_contexts) {
   const int stride = 4 + TX_PAD_HOR;
   const uint8x16_t pos_to_offset_large = vdupq_n_u8(SIG_COEF_CONTEXTS_2D + 10);
 
-  uint8x16_t pos_to_offset = vld1q_u8(c_4_po_ver);
+  uint8x16_t pos_to_offset = vld1q_u8(c_4_po_hor);
 
   uint8x16_t count;
   uint8x16_t level[5];
 
-  assert(!(height % 4));
+  assert(!(width % 4));
 
-  int row = height;
+  int col = width;
   do {
     load_levels_4x4x5(levels, stride, offsets, level);
     count = get_coeff_contexts_kernel(level);
@@ -352,12 +352,12 @@ static INLINE void get_4_nz_map_contexts_ver(const uint8_t *levels,
     pos_to_offset = pos_to_offset_large;
     levels += 4 * stride;
     coeff_contexts += 16;
-    row -= 4;
-  } while (row);
+    col -= 4;
+  } while (col);
 }
 
 static INLINE void get_8_coeff_contexts_2d(const uint8_t *levels,
-                                           const int height,
+                                           const int width,
                                            const ptrdiff_t *const offsets,
                                            uint8_t *coeff_contexts) {
   const int stride = 8 + TX_PAD_HOR;
@@ -366,12 +366,12 @@ static INLINE void get_8_coeff_contexts_2d(const uint8_t *levels,
   uint8x16_t level[5];
   uint8x16_t pos_to_offset[3];
 
-  assert(!(height % 2));
+  assert(!(width % 2));
 
-  if (height == 8) {
+  if (width == 8) {
     pos_to_offset[0] = vld1q_u8(c_8_po_2d_8[0]);
     pos_to_offset[1] = vld1q_u8(c_8_po_2d_8[1]);
-  } else if (height < 8) {
+  } else if (width < 8) {
     pos_to_offset[0] = vld1q_u8(c_8_po_2d_l[0]);
     pos_to_offset[1] = vld1q_u8(c_8_po_2d_l[1]);
   } else {
@@ -380,7 +380,7 @@ static INLINE void get_8_coeff_contexts_2d(const uint8_t *levels,
   }
   pos_to_offset[2] = vdupq_n_u8(21);
 
-  int row = height;
+  int col = width;
   do {
     load_levels_8x2x5(levels, stride, offsets, level);
     count = get_coeff_contexts_kernel(level);
@@ -390,26 +390,26 @@ static INLINE void get_8_coeff_contexts_2d(const uint8_t *levels,
     pos_to_offset[1] = pos_to_offset[2];
     levels += 2 * stride;
     cc += 16;
-    row -= 2;
-  } while (row);
+    col -= 2;
+  } while (col);
 
   coeff_contexts[0] = 0;
 }
 
-static INLINE void get_8_coeff_contexts_hor(const uint8_t *levels,
-                                            const int height,
+static INLINE void get_8_coeff_contexts_ver(const uint8_t *levels,
+                                            const int width,
                                             const ptrdiff_t *const offsets,
                                             uint8_t *coeff_contexts) {
   const int stride = 8 + TX_PAD_HOR;
 
-  const uint8x16_t pos_to_offset = vld1q_u8(c_8_po_hor);
+  const uint8x16_t pos_to_offset = vld1q_u8(c_8_po_ver);
 
   uint8x16_t count;
   uint8x16_t level[5];
 
-  assert(!(height % 2));
+  assert(!(width % 2));
 
-  int row = height;
+  int col = width;
   do {
     load_levels_8x2x5(levels, stride, offsets, level);
     count = get_coeff_contexts_kernel(level);
@@ -417,12 +417,12 @@ static INLINE void get_8_coeff_contexts_hor(const uint8_t *levels,
     vst1q_u8(coeff_contexts, count);
     levels += 2 * stride;
     coeff_contexts += 16;
-    row -= 2;
-  } while (row);
+    col -= 2;
+  } while (col);
 }
 
-static INLINE void get_8_coeff_contexts_ver(const uint8_t *levels,
-                                            const int height,
+static INLINE void get_8_coeff_contexts_hor(const uint8_t *levels,
+                                            const int width,
                                             const ptrdiff_t *const offsets,
                                             uint8_t *coeff_contexts) {
   const int stride = 8 + TX_PAD_HOR;
@@ -434,9 +434,9 @@ static INLINE void get_8_coeff_contexts_ver(const uint8_t *levels,
   uint8x16_t count;
   uint8x16_t level[5];
 
-  assert(!(height % 2));
+  assert(!(width % 2));
 
-  int row = height;
+  int col = width;
   do {
     load_levels_8x2x5(levels, stride, offsets, level);
     count = get_coeff_contexts_kernel(level);
@@ -445,8 +445,8 @@ static INLINE void get_8_coeff_contexts_ver(const uint8_t *levels,
     pos_to_offset = pos_to_offset_large;
     levels += 2 * stride;
     coeff_contexts += 16;
-    row -= 2;
-  } while (row);
+    col -= 2;
+  } while (col);
 }
 
 static INLINE void get_16n_coeff_contexts_2d(const uint8_t *levels,
@@ -455,15 +455,15 @@ static INLINE void get_16n_coeff_contexts_2d(const uint8_t *levels,
                                              const int width, const int height,
                                              const ptrdiff_t *const offsets,
                                              uint8_t *coeff_contexts) {
-  const int stride = width + TX_PAD_HOR;
+  const int stride = height + TX_PAD_HOR;
   uint8_t *cc = coeff_contexts;
-  int row = height;
+  int col = width;
   uint8x16_t pos_to_offset[5];
   uint8x16_t pos_to_offset_large[3];
   uint8x16_t count;
   uint8x16_t level[5];
 
-  assert(!(width % 16));
+  assert(!(height % 16));
 
   pos_to_offset_large[2] = vdupq_n_u8(21);
   if (real_width == real_height) {
@@ -473,22 +473,22 @@ static INLINE void get_16n_coeff_contexts_2d(const uint8_t *levels,
     pos_to_offset[3] = vld1q_u8(c_16_po_2d_e[3]);
     pos_to_offset[4] = pos_to_offset_large[0] = pos_to_offset_large[1] =
         pos_to_offset_large[2];
-  } else if (real_width > real_height) {
+  } else if (real_width < real_height) {
     pos_to_offset[0] = vld1q_u8(c_16_po_2d_g[0]);
     pos_to_offset[1] = vld1q_u8(c_16_po_2d_g[1]);
     pos_to_offset[2] = pos_to_offset[3] = pos_to_offset[4] =
         vld1q_u8(c_16_po_2d_g[2]);
     pos_to_offset_large[0] = pos_to_offset_large[1] = pos_to_offset_large[2];
-  } else {  // real_width < real_height
+  } else {  // real_width > real_height
     pos_to_offset[0] = pos_to_offset[1] = vld1q_u8(c_16_po_2d_l[0]);
     pos_to_offset[2] = vld1q_u8(c_16_po_2d_l[1]);
     pos_to_offset[3] = vld1q_u8(c_16_po_2d_l[2]);
     pos_to_offset[4] = pos_to_offset_large[2];
-    pos_to_offset_large[0] = pos_to_offset_large[1] = vdupq_n_u8(11);
+    pos_to_offset_large[0] = pos_to_offset_large[1] = vdupq_n_u8(16);
   }
 
   do {
-    int w = width;
+    int h = height;
 
     do {
       load_levels_16x1x5(levels, stride, offsets, level);
@@ -497,9 +497,9 @@ static INLINE void get_16n_coeff_contexts_2d(const uint8_t *levels,
       vst1q_u8(cc, count);
       levels += 16;
       cc += 16;
-      w -= 16;
+      h -= 16;
       pos_to_offset[0] = pos_to_offset_large[0];
-    } while (w);
+    } while (h);
 
     pos_to_offset[0] = pos_to_offset[1];
     pos_to_offset[1] = pos_to_offset[2];
@@ -508,29 +508,29 @@ static INLINE void get_16n_coeff_contexts_2d(const uint8_t *levels,
     pos_to_offset_large[0] = pos_to_offset_large[1];
     pos_to_offset_large[1] = pos_to_offset_large[2];
     levels += TX_PAD_HOR;
-  } while (--row);
+  } while (--col);
 
   coeff_contexts[0] = 0;
 }
 
-static INLINE void get_16n_coeff_contexts_hor(const uint8_t *levels,
+static INLINE void get_16n_coeff_contexts_ver(const uint8_t *levels,
                                               const int width, const int height,
                                               const ptrdiff_t *const offsets,
                                               uint8_t *coeff_contexts) {
-  const int stride = width + TX_PAD_HOR;
+  const int stride = height + TX_PAD_HOR;
 
   const uint8x16_t pos_to_offset_large = vdupq_n_u8(SIG_COEF_CONTEXTS_2D + 10);
 
   uint8x16_t count;
   uint8x16_t level[5];
 
-  assert(!(width % 16));
+  assert(!(height % 16));
 
-  int row = height;
+  int col = width;
   do {
-    uint8x16_t pos_to_offset = vld1q_u8(c_16_po_hor);
+    uint8x16_t pos_to_offset = vld1q_u8(c_16_po_ver);
 
-    int w = width;
+    int h = height;
     do {
       load_levels_16x1x5(levels, stride, offsets, level);
       count = get_coeff_contexts_kernel(level);
@@ -539,32 +539,32 @@ static INLINE void get_16n_coeff_contexts_hor(const uint8_t *levels,
       pos_to_offset = pos_to_offset_large;
       levels += 16;
       coeff_contexts += 16;
-      w -= 16;
-    } while (w);
+      h -= 16;
+    } while (h);
 
     levels += TX_PAD_HOR;
-  } while (--row);
+  } while (--col);
 }
 
-static INLINE void get_16n_coeff_contexts_ver(const uint8_t *levels,
+static INLINE void get_16n_coeff_contexts_hor(const uint8_t *levels,
                                               const int width, const int height,
                                               const ptrdiff_t *const offsets,
                                               uint8_t *coeff_contexts) {
-  const int stride = width + TX_PAD_HOR;
+  const int stride = height + TX_PAD_HOR;
 
   uint8x16_t pos_to_offset[3];
   uint8x16_t count;
   uint8x16_t level[5];
 
-  assert(!(width % 16));
+  assert(!(height % 16));
 
   pos_to_offset[0] = vdupq_n_u8(SIG_COEF_CONTEXTS_2D + 0);
   pos_to_offset[1] = vdupq_n_u8(SIG_COEF_CONTEXTS_2D + 5);
   pos_to_offset[2] = vdupq_n_u8(SIG_COEF_CONTEXTS_2D + 10);
 
-  int row = height;
+  int col = width;
   do {
-    int w = width;
+    int h = height;
     do {
       load_levels_16x1x5(levels, stride, offsets, level);
       count = get_coeff_contexts_kernel(level);
@@ -572,13 +572,13 @@ static INLINE void get_16n_coeff_contexts_ver(const uint8_t *levels,
       vst1q_u8(coeff_contexts, count);
       levels += 16;
       coeff_contexts += 16;
-      w -= 16;
-    } while (w);
+      h -= 16;
+    } while (h);
 
     pos_to_offset[0] = pos_to_offset[1];
     pos_to_offset[1] = pos_to_offset[2];
     levels += TX_PAD_HOR;
-  } while (--row);
+  } while (--col);
 }
 
 // Note: levels[] must be in the range [0, 127], inclusive.
@@ -599,7 +599,7 @@ void av1_get_nz_map_contexts_neon(const uint8_t *const levels,
   const int real_height = tx_size_high[tx_size];
   const int width = get_txb_wide(tx_size);
   const int height = get_txb_high(tx_size);
-  const int stride = width + TX_PAD_HOR;
+  const int stride = height + TX_PAD_HOR;
   ptrdiff_t offsets[3];
 
   /* coeff_contexts must be 16 byte aligned. */
@@ -610,43 +610,43 @@ void av1_get_nz_map_contexts_neon(const uint8_t *const levels,
     offsets[1] = 1 * stride + 1;
     offsets[2] = 2 * stride + 0;
 
-    if (width == 4) {
-      get_4_nz_map_contexts_2d(levels, height, offsets, coefficients);
-    } else if (width == 8) {
-      get_8_coeff_contexts_2d(levels, height, offsets, coefficients);
+    if (height == 4) {
+      get_4_nz_map_contexts_2d(levels, width, offsets, coefficients);
+    } else if (height == 8) {
+      get_8_coeff_contexts_2d(levels, width, offsets, coefficients);
     } else {
       get_16n_coeff_contexts_2d(levels, real_width, real_height, width, height,
                                 offsets, coefficients);
     }
   } else if (tx_class == TX_CLASS_HORIZ) {
-    offsets[0] = 2;
-    offsets[1] = 3;
-    offsets[2] = 4;
-    if (width == 4) {
-      get_4_nz_map_contexts_hor(levels, height, offsets, coefficients);
-    } else if (width == 8) {
-      get_8_coeff_contexts_hor(levels, height, offsets, coefficients);
+    offsets[0] = 2 * stride;
+    offsets[1] = 3 * stride;
+    offsets[2] = 4 * stride;
+    if (height == 4) {
+      get_4_nz_map_contexts_hor(levels, width, offsets, coefficients);
+    } else if (height == 8) {
+      get_8_coeff_contexts_hor(levels, width, offsets, coefficients);
     } else {
       get_16n_coeff_contexts_hor(levels, width, height, offsets, coefficients);
     }
   } else {  // TX_CLASS_VERT
-    offsets[0] = 2 * stride;
-    offsets[1] = 3 * stride;
-    offsets[2] = 4 * stride;
-    if (width == 4) {
-      get_4_nz_map_contexts_ver(levels, height, offsets, coefficients);
-    } else if (width == 8) {
-      get_8_coeff_contexts_ver(levels, height, offsets, coefficients);
+    offsets[0] = 2;
+    offsets[1] = 3;
+    offsets[2] = 4;
+    if (height == 4) {
+      get_4_nz_map_contexts_ver(levels, width, offsets, coefficients);
+    } else if (height == 8) {
+      get_8_coeff_contexts_ver(levels, width, offsets, coefficients);
     } else {
       get_16n_coeff_contexts_ver(levels, width, height, offsets, coefficients);
     }
   }
 
-  const int bwl = get_txb_bwl(tx_size);
+  const int bhl = get_txb_bhl(tx_size);
   const int pos = scan[last_idx];
-  if (last_idx <= (height << bwl) / 8)
+  if (last_idx <= (width << bhl) / 8)
     coeff_contexts[pos] = 1;
-  else if (last_idx <= (height << bwl) / 4)
+  else if (last_idx <= (width << bhl) / 4)
     coeff_contexts[pos] = 2;
   else
     coeff_contexts[pos] = 3;

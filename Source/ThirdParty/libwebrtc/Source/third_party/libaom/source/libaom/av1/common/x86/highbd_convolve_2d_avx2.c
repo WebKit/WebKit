@@ -80,7 +80,7 @@ void av1_highbd_convolve_2d_sr_avx2(const uint16_t *src, int src_stride,
       for (i = 0; i < im_h; i += 2) {
         const __m256i row0 =
             _mm256_loadu_si256((__m256i *)&src_ptr[i * src_stride + j]);
-        __m256i row1 = _mm256_set1_epi16(0);
+        __m256i row1 = _mm256_setzero_si256();
         if (i + 1 < im_h)
           row1 =
               _mm256_loadu_si256((__m256i *)&src_ptr[(i + 1) * src_stride + j]);
@@ -181,9 +181,9 @@ void av1_highbd_convolve_2d_sr_avx2(const uint16_t *src, int src_stride,
           res_a_round = _mm256_min_epi16(res_a_round, clip_pixel);
           res_a_round = _mm256_max_epi16(res_a_round, zero);
 
-          xx_storel_32((__m128i *)&dst[i * dst_stride + j],
+          xx_storel_32(&dst[i * dst_stride + j],
                        _mm256_castsi256_si128(res_a_round));
-          xx_storel_32((__m128i *)&dst[i * dst_stride + j + dst_stride],
+          xx_storel_32(&dst[i * dst_stride + j + dst_stride],
                        _mm256_extracti128_si256(res_a_round, 1));
         }
 

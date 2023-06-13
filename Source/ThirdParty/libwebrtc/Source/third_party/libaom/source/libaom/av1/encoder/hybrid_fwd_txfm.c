@@ -18,7 +18,9 @@
 #include "av1/encoder/hybrid_fwd_txfm.h"
 
 /* 4-point reversible, orthonormal Walsh-Hadamard in 3.5 adds, 0.5 shifts per
-   pixel. */
+   pixel.
+   Shared for both high and low bit depth.
+ */
 void av1_fwht4x4_c(const int16_t *input, tran_low_t *output, int stride) {
   int i;
   tran_high_t a1, b1, c1, d1, e1;
@@ -40,21 +42,21 @@ void av1_fwht4x4_c(const int16_t *input, tran_low_t *output, int stride) {
     a1 -= c1;
     d1 += b1;
     op[0] = (tran_low_t)a1;
-    op[4] = (tran_low_t)c1;
-    op[8] = (tran_low_t)d1;
-    op[12] = (tran_low_t)b1;
+    op[1] = (tran_low_t)c1;
+    op[2] = (tran_low_t)d1;
+    op[3] = (tran_low_t)b1;
 
     ip_pass0++;
-    op++;
+    op += 4;
   }
   ip = output;
   op = output;
 
   for (i = 0; i < 4; i++) {
-    a1 = ip[0];
-    b1 = ip[1];
-    c1 = ip[2];
-    d1 = ip[3];
+    a1 = ip[4 * 0];
+    b1 = ip[4 * 1];
+    c1 = ip[4 * 2];
+    d1 = ip[4 * 3];
 
     a1 += b1;
     d1 -= c1;
@@ -63,19 +65,14 @@ void av1_fwht4x4_c(const int16_t *input, tran_low_t *output, int stride) {
     c1 = e1 - c1;
     a1 -= c1;
     d1 += b1;
-    op[0] = (tran_low_t)(a1 * UNIT_QUANT_FACTOR);
-    op[1] = (tran_low_t)(c1 * UNIT_QUANT_FACTOR);
-    op[2] = (tran_low_t)(d1 * UNIT_QUANT_FACTOR);
-    op[3] = (tran_low_t)(b1 * UNIT_QUANT_FACTOR);
+    op[4 * 0] = (tran_low_t)(a1 * UNIT_QUANT_FACTOR);
+    op[4 * 1] = (tran_low_t)(c1 * UNIT_QUANT_FACTOR);
+    op[4 * 2] = (tran_low_t)(d1 * UNIT_QUANT_FACTOR);
+    op[4 * 3] = (tran_low_t)(b1 * UNIT_QUANT_FACTOR);
 
-    ip += 4;
-    op += 4;
+    ip++;
+    op++;
   }
-}
-
-void av1_highbd_fwht4x4_c(const int16_t *input, tran_low_t *output,
-                          int stride) {
-  av1_fwht4x4_c(input, output, stride);
 }
 
 static void highbd_fwd_txfm_4x4(const int16_t *src_diff, tran_low_t *coeff,
@@ -85,7 +82,7 @@ static void highbd_fwd_txfm_4x4(const int16_t *src_diff, tran_low_t *coeff,
   const int bd = txfm_param->bd;
   if (txfm_param->lossless) {
     assert(tx_type == DCT_DCT);
-    av1_highbd_fwht4x4(src_diff, coeff, diff_stride);
+    av1_fwht4x4(src_diff, coeff, diff_stride);
     return;
   }
   av1_fwd_txfm2d_4x4(src_diff, dst_coeff, diff_stride, tx_type, bd);

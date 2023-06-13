@@ -503,7 +503,7 @@ HIGHBD_SMOOTH_NXM(8, 32)
     /* Precompute weighted values that don't vary with |y|. */                 \
     uint32x4_t weighted_tr_low[(W) >> 3];                                      \
     uint32x4_t weighted_tr_high[(W) >> 3];                                     \
-    for (int i = 0; i<(W)>> 3; ++i) {                                          \
+    for (int i = 0; i < (W) >> 3; ++i) {                                       \
       const int x = i << 3;                                                    \
       const uint16x4_t weights_x_low =                                         \
           vld1_u16(smooth_weights_u16 + (W)-4 + x);                            \
@@ -518,7 +518,7 @@ HIGHBD_SMOOTH_NXM(8, 32)
       const uint32x4_t weighted_bl =                                           \
           vmull_n_u16(bottom_left_v, 256 - weights_y[y]);                      \
       uint16_t *dst_x = dst;                                                   \
-      for (int i = 0; i<(W)>> 3; ++i) {                                        \
+      for (int i = 0; i < (W) >> 3; ++i) {                                     \
         const int x = i << 3;                                                  \
         const uint16x4x2_t top_vals = { { vld1_u16(top_row + x),               \
                                           vld1_u16(top_row + x + 4) } };       \
@@ -644,7 +644,7 @@ HIGHBD_SMOOTH_V_NXM(8, 32)
     const uint16_t *const weights_y = smooth_weights_u16 + height - 4;       \
                                                                              \
     uint16x4x2_t top_vals[(W) >> 3];                                         \
-    for (int i = 0; i<(W)>> 3; ++i) {                                        \
+    for (int i = 0; i < (W) >> 3; ++i) {                                     \
       const int x = i << 3;                                                  \
       top_vals[i].val[0] = vld1_u16(top_row + x);                            \
       top_vals[i].val[1] = vld1_u16(top_row + x + 4);                        \
@@ -656,7 +656,7 @@ HIGHBD_SMOOTH_V_NXM(8, 32)
           vmull_n_u16(bottom_left_v, 256 - weights_y[y]);                    \
                                                                              \
       uint16_t *dst_x = dst;                                                 \
-      for (int i = 0; i<(W)>> 3; ++i) {                                      \
+      for (int i = 0; i < (W) >> 3; ++i) {                                   \
         const uint32x4_t weighted_top_low =                                  \
             vmlal_n_u16(weighted_bl, top_vals[i].val[0], weights_y[y]);      \
         vst1_u16(dst_x,                                                      \
@@ -776,7 +776,7 @@ HIGHBD_SMOOTH_H_NXM(8, 32)
     uint16x4_t weights_x_high[(W) >> 3];                                      \
     uint32x4_t weighted_tr_low[(W) >> 3];                                     \
     uint32x4_t weighted_tr_high[(W) >> 3];                                    \
-    for (int i = 0; i<(W)>> 3; ++i) {                                         \
+    for (int i = 0; i < (W) >> 3; ++i) {                                      \
       const int x = i << 3;                                                   \
       weights_x_low[i] = vld1_u16(smooth_weights_u16 + (W)-4 + x);            \
       weighted_tr_low[i] =                                                    \
@@ -789,7 +789,7 @@ HIGHBD_SMOOTH_H_NXM(8, 32)
     for (int y = 0; y < height; ++y) {                                        \
       uint16_t *dst_x = dst;                                                  \
       const uint16_t left_y = left_column[y];                                 \
-      for (int i = 0; i<(W)>> 3; ++i) {                                       \
+      for (int i = 0; i < (W) >> 3; ++i) {                                    \
         const uint32x4_t weighted_left_low =                                  \
             vmlal_n_u16(weighted_tr_low[i], weights_x_low[i], left_y);        \
         vst1_u16(dst_x,                                                       \

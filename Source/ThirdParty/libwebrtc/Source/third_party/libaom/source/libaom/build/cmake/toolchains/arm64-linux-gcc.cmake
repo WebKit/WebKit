@@ -17,13 +17,20 @@ set(CMAKE_SYSTEM_NAME "Linux")
 
 if("${CROSS}" STREQUAL "")
 
-  # Default the cross compiler prefix to something known to work.
+  # Default the cross compiler prefix to one used by Debian and other package
+  # management systems.
   set(CROSS aarch64-linux-gnu-)
 endif()
 
-set(CMAKE_C_COMPILER ${CROSS}gcc)
-set(CMAKE_CXX_COMPILER ${CROSS}g++)
-set(AS_EXECUTABLE ${CROSS}as)
+if(NOT CMAKE_C_COMPILER)
+  set(CMAKE_C_COMPILER ${CROSS}gcc)
+endif()
+if(NOT CMAKE_CXX_COMPILER)
+  set(CMAKE_CXX_COMPILER ${CROSS}g++)
+endif()
+if(NOT CMAKE_ASM_COMPILER)
+  set(CMAKE_ASM_COMPILER ${CROSS}as)
+endif()
 set(CMAKE_C_FLAGS_INIT "-march=armv8-a")
 set(CMAKE_CXX_FLAGS_INIT "-march=armv8-a")
 set(AOM_AS_FLAGS "-march=armv8-a")

@@ -52,12 +52,12 @@ const char *aom_codec_err_to_string(aom_codec_err_t err) {
   return "Unrecognized error code";
 }
 
-const char *aom_codec_error(aom_codec_ctx_t *ctx) {
+const char *aom_codec_error(const aom_codec_ctx_t *ctx) {
   return (ctx) ? aom_codec_err_to_string(ctx->err)
                : aom_codec_err_to_string(AOM_CODEC_INVALID_PARAM);
 }
 
-const char *aom_codec_error_detail(aom_codec_ctx_t *ctx) {
+const char *aom_codec_error_detail(const aom_codec_ctx_t *ctx) {
   if (ctx && ctx->err)
     return ctx->priv ? ctx->priv->err_detail : ctx->err_detail;
 
@@ -81,7 +81,7 @@ aom_codec_err_t aom_codec_destroy(aom_codec_ctx_t *ctx) {
 }
 
 aom_codec_caps_t aom_codec_get_caps(aom_codec_iface_t *iface) {
-  return (iface) ? iface->caps : 0;
+  return iface ? iface->caps : 0;
 }
 
 aom_codec_err_t aom_codec_control(aom_codec_ctx_t *ctx, int ctrl_id, ...) {

@@ -84,7 +84,7 @@ uint64_t aom_sum_squares_2d_i16_4xn_sse2(const int16_t *src, int stride,
     src += stride << 2;
     r += 4;
   } while (r < height);
-  const __m128i v_zext_mask_q = xx_set1_64_from_32i(0xffffffff);
+  const __m128i v_zext_mask_q = xx_set1_64_from_32i(~0);
   __m128i v_acc_64 = _mm_add_epi64(_mm_srli_epi64(v_acc_q, 32),
                                    _mm_and_si128(v_acc_q, v_zext_mask_q));
   v_acc_64 = _mm_add_epi64(v_acc_64, _mm_srli_si128(v_acc_64, 8));
@@ -116,7 +116,7 @@ aom_sum_squares_2d_i16_nxn_sse2(const int16_t *src, int stride, int width,
                                 int height) {
   int r = 0;
 
-  const __m128i v_zext_mask_q = xx_set1_64_from_32i(0xffffffff);
+  const __m128i v_zext_mask_q = xx_set1_64_from_32i(~0);
   __m128i v_acc_q = _mm_setzero_si128();
 
   do {
@@ -254,7 +254,7 @@ uint64_t aom_sum_sse_2d_i16_sse2(const int16_t *src, int src_stride, int width,
 //////////////////////////////////////////////////////////////////////////////
 
 static uint64_t aom_sum_squares_i16_64n_sse2(const int16_t *src, uint32_t n) {
-  const __m128i v_zext_mask_q = xx_set1_64_from_32i(0xffffffff);
+  const __m128i v_zext_mask_q = xx_set1_64_from_32i(~0);
   __m128i v_acc0_q = _mm_setzero_si128();
   __m128i v_acc1_q = _mm_setzero_si128();
 
@@ -306,7 +306,7 @@ uint64_t aom_sum_squares_i16_sse2(const int16_t *src, uint32_t n) {
   if (n % 64 == 0) {
     return aom_sum_squares_i16_64n_sse2(src, n);
   } else if (n > 64) {
-    int k = n & ~(64 - 1);
+    const uint32_t k = n & ~63u;
     return aom_sum_squares_i16_64n_sse2(src, k) +
            aom_sum_squares_i16_c(src + k, n - k);
   } else {

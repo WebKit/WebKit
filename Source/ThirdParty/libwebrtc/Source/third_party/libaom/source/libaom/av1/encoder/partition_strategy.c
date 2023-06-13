@@ -187,7 +187,7 @@ void av1_intra_mode_cnn_partition(const AV1_COMMON *const cm, MACROBLOCK *x,
     const int bit_depth = xd->bd;
     const int dc_q =
         av1_dc_quant_QTX(x->qindex, 0, bit_depth) >> (bit_depth - 8);
-    part_info->log_q = logf(1.0f + (float)(dc_q * dc_q) / 256.0f);
+    part_info->log_q = log1pf((float)(dc_q * dc_q) / 256.0f);
     part_info->log_q =
         (part_info->log_q - av1_intra_mode_cnn_partition_mean[0]) /
         av1_intra_mode_cnn_partition_std[0];
@@ -602,21 +602,21 @@ static AOM_INLINE void simple_motion_search_prune_part_features(
   int f_idx = 0;
   if (features_to_get & FEATURE_SMS_NONE_FLAG) {
     for (int sub_idx = 0; sub_idx < 2; sub_idx++) {
-      features[f_idx++] = logf(1.0f + sms_tree->sms_none_feat[sub_idx]);
+      features[f_idx++] = log1pf((float)sms_tree->sms_none_feat[sub_idx]);
     }
   }
 
   if (features_to_get & FEATURE_SMS_SPLIT_FLAG) {
     for (int sub_idx = 0; sub_idx < SUB_PARTITIONS_SPLIT; sub_idx++) {
       SIMPLE_MOTION_DATA_TREE *sub_tree = sms_tree->split[sub_idx];
-      features[f_idx++] = logf(1.0f + sub_tree->sms_none_feat[0]);
-      features[f_idx++] = logf(1.0f + sub_tree->sms_none_feat[1]);
+      features[f_idx++] = log1pf((float)sub_tree->sms_none_feat[0]);
+      features[f_idx++] = log1pf((float)sub_tree->sms_none_feat[1]);
     }
   }
 
   if (features_to_get & FEATURE_SMS_RECT_FLAG) {
     for (int sub_idx = 0; sub_idx < 8; sub_idx++) {
-      features[f_idx++] = logf(1.0f + sms_tree->sms_rect_feat[sub_idx]);
+      features[f_idx++] = log1pf((float)sms_tree->sms_rect_feat[sub_idx]);
     }
   }
 
@@ -625,7 +625,7 @@ static AOM_INLINE void simple_motion_search_prune_part_features(
 
   // Q_INDEX
   const int dc_q = av1_dc_quant_QTX(x->qindex, 0, xd->bd) >> (xd->bd - 8);
-  features[f_idx++] = logf(1.0f + (float)(dc_q * dc_q) / 256.0f);
+  features[f_idx++] = log1pf((float)(dc_q * dc_q) / 256.0f);
 
   // Neighbor stuff
   const int has_above = !!xd->above_mbmi;
@@ -742,9 +742,9 @@ void av1_simple_motion_search_early_term_none(
                                            FEATURE_SMS_PRUNE_PART_FLAG);
   int f_idx = FEATURE_SIZE_SMS_PRUNE_PART;
 
-  features[f_idx++] = logf(1.0f + (float)none_rdc->rate);
-  features[f_idx++] = logf(1.0f + (float)none_rdc->dist);
-  features[f_idx++] = logf(1.0f + (float)none_rdc->rdcost);
+  features[f_idx++] = log1pf((float)none_rdc->rate);
+  features[f_idx++] = log1pf((float)none_rdc->dist);
+  features[f_idx++] = log1pf((float)none_rdc->rdcost);
 
   assert(f_idx == FEATURE_SIZE_SMS_TERM_NONE);
 
@@ -809,7 +809,7 @@ void av1_get_max_min_partition_features(AV1_COMP *const cpi, MACROBLOCK *x,
   int f_idx = 0;
 
   const int dc_q = av1_dc_quant_QTX(x->qindex, 0, xd->bd) >> (xd->bd - 8);
-  const float log_q_sq = logf(1.0f + (float)(dc_q * dc_q) / 256.0f);
+  const float log_q_sq = log1pf((float)(dc_q * dc_q) / 256.0f);
 
   // Perform full-pixel single motion search in Y plane of 16x16 mbs in the sb
   float sum_mv_row_sq = 0;
@@ -845,7 +845,7 @@ void av1_get_max_min_partition_features(AV1_COMP *const cpi, MACROBLOCK *x,
 
       const float mv_row = (float)(best_mv.as_mv.row / 8);
       const float mv_col = (float)(best_mv.as_mv.col / 8);
-      const float log_sse = logf(1.0f + (float)sse);
+      const float log_sse = log1pf((float)sse);
       const float abs_mv_row = fabsf(mv_row);
       const float abs_mv_col = fabsf(mv_col);
 
@@ -1056,8 +1056,8 @@ void av1_ml_early_term_after_split(AV1_COMP *const cpi, MACROBLOCK *const x,
   int f_idx = 0;
   float features[FEATURES] = { 0.0f };
 
-  features[f_idx++] = logf(1.0f + (float)dc_q / 4.0f);
-  features[f_idx++] = logf(1.0f + (float)best_rd / bs / bs / 1024.0f);
+  features[f_idx++] = log1pf((float)dc_q / 4.0f);
+  features[f_idx++] = log1pf((float)best_rd / bs / bs / 1024.0f);
 
   add_rd_feature(part_none_rd, best_rd, features, &f_idx);
   add_rd_feature(part_split_rd, best_rd, features, &f_idx);
@@ -1075,17 +1075,17 @@ void av1_ml_early_term_after_split(AV1_COMP *const cpi, MACROBLOCK *const x,
                                            bsize, NULL,
                                            FEATURE_SMS_PRUNE_PART_FLAG);
 
-  features[f_idx++] = logf(1.0f + (float)sms_tree->sms_none_feat[1]);
+  features[f_idx++] = log1pf((float)sms_tree->sms_none_feat[1]);
 
-  features[f_idx++] = logf(1.0f + (float)sms_tree->split[0]->sms_none_feat[1]);
-  features[f_idx++] = logf(1.0f + (float)sms_tree->split[1]->sms_none_feat[1]);
-  features[f_idx++] = logf(1.0f + (float)sms_tree->split[2]->sms_none_feat[1]);
-  features[f_idx++] = logf(1.0f + (float)sms_tree->split[3]->sms_none_feat[1]);
+  features[f_idx++] = log1pf((float)sms_tree->split[0]->sms_none_feat[1]);
+  features[f_idx++] = log1pf((float)sms_tree->split[1]->sms_none_feat[1]);
+  features[f_idx++] = log1pf((float)sms_tree->split[2]->sms_none_feat[1]);
+  features[f_idx++] = log1pf((float)sms_tree->split[3]->sms_none_feat[1]);
 
-  features[f_idx++] = logf(1.0f + (float)sms_tree->sms_rect_feat[1]);
-  features[f_idx++] = logf(1.0f + (float)sms_tree->sms_rect_feat[3]);
-  features[f_idx++] = logf(1.0f + (float)sms_tree->sms_rect_feat[5]);
-  features[f_idx++] = logf(1.0f + (float)sms_tree->sms_rect_feat[7]);
+  features[f_idx++] = log1pf((float)sms_tree->sms_rect_feat[1]);
+  features[f_idx++] = log1pf((float)sms_tree->sms_rect_feat[3]);
+  features[f_idx++] = log1pf((float)sms_tree->sms_rect_feat[5]);
+  features[f_idx++] = log1pf((float)sms_tree->sms_rect_feat[7]);
 
   assert(f_idx == FEATURES);
 
@@ -1767,11 +1767,10 @@ int evaluate_ab_partition_based_on_split(
   // Threshold for number of winners
   // Conservative pruning for high quantizers
   const int num_win_thresh = AOMMIN(3 * (2 * (MAXQ - qindex) / MAXQ), 3);
-  int sub_part_win = (rect_part_win_info == NULL)
-                         ? (pc_tree->partitioning == rect_part)
-                         : (rect_part == PARTITION_HORZ)
-                               ? rect_part_win_info->rect_part_win[HORZ]
-                               : rect_part_win_info->rect_part_win[VERT];
+  int sub_part_win =
+      (rect_part_win_info == NULL)    ? (pc_tree->partitioning == rect_part)
+      : (rect_part == PARTITION_HORZ) ? rect_part_win_info->rect_part_win[HORZ]
+                                      : rect_part_win_info->rect_part_win[VERT];
   num_win += (sub_part_win) ? 1 : 0;
   if (pc_tree->split[split_idx1]) {
     num_win +=

@@ -14,6 +14,7 @@
 #if defined(_WIN32)
 #undef NOMINMAX
 #define NOMINMAX
+#undef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #endif
@@ -215,7 +216,7 @@ class DummyVideoSource : public VideoSource {
     aom_img_free(img_);
     img_ = aom_img_alloc(nullptr, format_, width_, height_, 32);
     ASSERT_NE(img_, nullptr);
-    raw_sz_ = ((img_->w + 31) & ~31) * img_->h * img_->bps / 8;
+    raw_sz_ = ((img_->w + 31) & ~31u) * img_->h * img_->bps / 8;
   }
 
   aom_image_t *img_;
@@ -232,7 +233,6 @@ class RandomVideoSource : public DummyVideoSource {
   RandomVideoSource(int seed = ACMRandom::DeterministicSeed())
       : rnd_(seed), seed_(seed) {}
 
- protected:
   // Reset the RNG to get a matching stream for the second pass
   virtual void Begin() {
     frame_ = 0;
@@ -240,6 +240,7 @@ class RandomVideoSource : public DummyVideoSource {
     FillFrame();
   }
 
+ protected:
   // 15 frames of noise, followed by 15 static frames. Reset to 0 rather
   // than holding previous frames to encourage keyframes to be thrown.
   virtual void FillFrame() {

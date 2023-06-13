@@ -128,7 +128,7 @@ void aom_quantize_b_avx2(const tran_low_t *coeff_ptr, intptr_t n_coeffs,
                          const int16_t *iscan) {
   (void)scan;
   __m256i v_zbin, v_round, v_quant, v_dequant, v_quant_shift;
-  __m256i v_eobmax = _mm256_set1_epi16(0);
+  __m256i v_eobmax = _mm256_setzero_si256();
 
   load_b_values_avx2(zbin_ptr, &v_zbin, round_ptr, &v_round, quant_ptr,
                      &v_quant, dequant_ptr, &v_dequant, quant_shift_ptr,
@@ -211,7 +211,7 @@ static AOM_FORCE_INLINE void quantize_b_no_qmatrix_avx2(
     tran_low_t *dqcoeff_ptr, const int16_t *dequant_ptr, uint16_t *eob_ptr,
     const int16_t *iscan, int log_scale) {
   __m256i v_zbin, v_round, v_quant, v_dequant, v_quant_shift;
-  __m256i v_eobmax = _mm256_set1_epi16(0);
+  __m256i v_eobmax = _mm256_setzero_si256();
 
   load_b_values_avx2(zbin_ptr, &v_zbin, round_ptr, &v_round, quant_ptr,
                      &v_quant, dequant_ptr, &v_dequant, quant_shift_ptr,

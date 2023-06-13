@@ -86,19 +86,21 @@ static INLINE void blend_4x4(uint8_t *dst, uint32_t dst_stride,
                              const int16x8_t vec_round_bits) {
   int16x8_t src0_0, src0_1;
   int16x8_t src1_0, src1_1;
-  uint64x2_t tu0 = vdupq_n_u64(0), tu1 = vdupq_n_u64(0), tu2 = vdupq_n_u64(0),
-             tu3 = vdupq_n_u64(0);
+  uint16x8_t tu0 = vdupq_n_u16(0);
+  uint16x8_t tu1 = vdupq_n_u16(0);
+  uint16x8_t tu2 = vdupq_n_u16(0);
+  uint16x8_t tu3 = vdupq_n_u16(0);
   int16x8_t mask0_1, mask2_3;
   int16x8_t res0, res1;
 
   load_unaligned_u16_4x4(src0, src0_stride, &tu0, &tu1);
   load_unaligned_u16_4x4(src1, src1_stride, &tu2, &tu3);
 
-  src0_0 = vreinterpretq_s16_u64(tu0);
-  src0_1 = vreinterpretq_s16_u64(tu1);
+  src0_0 = vreinterpretq_s16_u16(tu0);
+  src0_1 = vreinterpretq_s16_u16(tu1);
 
-  src1_0 = vreinterpretq_s16_u64(tu2);
-  src1_1 = vreinterpretq_s16_u64(tu3);
+  src1_0 = vreinterpretq_s16_u16(tu2);
+  src1_1 = vreinterpretq_s16_u16(tu3);
 
   mask0_1 = vcombine_s16(mask0, mask1);
   mask2_3 = vcombine_s16(mask2, mask3);
@@ -150,9 +152,10 @@ void aom_lowbd_blend_a64_d16_mask_neon(
   assert(IS_POWER_OF_TWO(h));
   assert(IS_POWER_OF_TWO(w));
 
-  uint8x8_t s0, s1, s2, s3;
-  uint32x2_t tu0 = vdup_n_u32(0), tu1 = vdup_n_u32(0), tu2 = vdup_n_u32(0),
-             tu3 = vdup_n_u32(0);
+  uint8x8_t s0 = vdup_n_u8(0);
+  uint8x8_t s1 = vdup_n_u8(0);
+  uint8x8_t s2 = vdup_n_u8(0);
+  uint8x8_t s3 = vdup_n_u8(0);
   uint8x16_t t0, t1, t2, t3, t4, t5, t6, t7;
   int16x8_t mask0, mask1, mask2, mask3;
   int16x8_t mask4, mask5, mask6, mask7;
@@ -197,10 +200,10 @@ void aom_lowbd_blend_a64_d16_mask_neon(
       } while (i < h);
     } else {
       do {
-        load_unaligned_u8_4x4(mask_tmp, mask_stride, &tu0, &tu1);
+        load_unaligned_u8_4x4(mask_tmp, mask_stride, &s0, &s1);
 
-        mask0 = vreinterpretq_s16_u16(vmovl_u8(vreinterpret_u8_u32(tu0)));
-        mask1 = vreinterpretq_s16_u16(vmovl_u8(vreinterpret_u8_u32(tu1)));
+        mask0 = vreinterpretq_s16_u16(vmovl_u8(s0));
+        mask1 = vreinterpretq_s16_u16(vmovl_u8(s1));
 
         mask0_low = vget_low_s16(mask0);
         mask1_low = vget_high_s16(mask0);
@@ -412,14 +415,9 @@ void aom_lowbd_blend_a64_d16_mask_neon(
       } while (i < h);
     } else {
       do {
-        load_unaligned_u8_4x4(mask_tmp, 2 * mask_stride, &tu0, &tu1);
-        load_unaligned_u8_4x4(mask_tmp + mask_stride, 2 * mask_stride, &tu2,
-                              &tu3);
-
-        s0 = vreinterpret_u8_u32(tu0);
-        s1 = vreinterpret_u8_u32(tu1);
-        s2 = vreinterpret_u8_u32(tu2);
-        s3 = vreinterpret_u8_u32(tu3);
+        load_unaligned_u8_4x4(mask_tmp, 2 * mask_stride, &s0, &s1);
+        load_unaligned_u8_4x4(mask_tmp + mask_stride, 2 * mask_stride, &s2,
+                              &s3);
 
         mask0 = vreinterpretq_s16_u16(vaddl_u8(s0, s2));
         mask1 = vreinterpretq_s16_u16(vaddl_u8(s1, s3));

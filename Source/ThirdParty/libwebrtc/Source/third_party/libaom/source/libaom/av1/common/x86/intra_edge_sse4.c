@@ -33,7 +33,7 @@ void av1_filter_intra_edge_sse4_1(uint8_t *p, int sz, int strength) {
 
   // Extend the first and last samples to simplify the loop for the 5-tap case
   p[-1] = p[0];
-  __m128i last = _mm_set1_epi8(p[sz - 1]);
+  __m128i last = _mm_set1_epi8((char)p[sz - 1]);
   _mm_storeu_si128((__m128i *)&p[sz], last);
 
   // Adjust input pointer for filter support area

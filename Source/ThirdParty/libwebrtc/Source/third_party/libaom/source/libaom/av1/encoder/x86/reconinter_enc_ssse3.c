@@ -48,13 +48,12 @@ void aom_dist_wtd_comp_avg_upsampled_pred_ssse3(
   assert(!(width * height & 15));
   n = width * height >> 4;
 
-  const uint8_t w0 = (uint8_t)jcp_param->fwd_offset;
-  const uint8_t w1 = (uint8_t)jcp_param->bck_offset;
+  const int8_t w0 = (int8_t)jcp_param->fwd_offset;
+  const int8_t w1 = (int8_t)jcp_param->bck_offset;
   const __m128i w = _mm_set_epi8(w1, w0, w1, w0, w1, w0, w1, w0, w1, w0, w1, w0,
                                  w1, w0, w1, w0);
-  const uint16_t round = ((1 << DIST_PRECISION_BITS) >> 1);
-  const __m128i r =
-      _mm_set_epi16(round, round, round, round, round, round, round, round);
+  const int16_t round = (int16_t)((1 << DIST_PRECISION_BITS) >> 1);
+  const __m128i r = _mm_set1_epi16(round);
 
   for (i = 0; i < n; i++) {
     __m128i p0 = xx_loadu_128(comp_pred);

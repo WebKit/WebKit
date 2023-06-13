@@ -9,6 +9,8 @@
  * PATENTS file, you can obtain it at www.aomedia.org/license/patent.
  */
 
+#include <assert.h>
+
 #include "config/aom_config.h"
 
 #if CONFIG_TFLITE
@@ -22,29 +24,42 @@
 #include "av1/common/reconinter.h"
 #include "av1/encoder/allintra_vis.h"
 #include "av1/encoder/encoder.h"
+#include "av1/encoder/ethread.h"
 #include "av1/encoder/hybrid_fwd_txfm.h"
 #include "av1/encoder/model_rd.h"
 #include "av1/encoder/rdopt_utils.h"
 
-// Process the wiener variance in 16x16 block basis.
-static int qsort_comp(const void *elem1, const void *elem2) {
-  int a = *((const int *)elem1);
-  int b = *((const int *)elem2);
-  if (a > b) return 1;
-  if (a < b) return -1;
-  return 0;
-}
-
 void av1_init_mb_wiener_var_buffer(AV1_COMP *cpi) {
   AV1_COMMON *cm = &cpi->common;
 
+  // This block size is also used to determine number of workers in
+  // multi-threading. If it is changed, one needs to change it accordingly in
+  // "compute_num_ai_workers()".
   cpi->weber_bsize = BLOCK_8X8;
 
-  if (cpi->mb_weber_stats) return;
+  if (cpi->oxcf.enable_rate_guide_deltaq) {
+    if (cpi->mb_weber_stats && cpi->prep_rate_estimates &&
+        cpi->ext_rate_distribution)
+      return;
+  } else {
+    if (cpi->mb_weber_stats) return;
+  }
 
   CHECK_MEM_ERROR(cm, cpi->mb_weber_stats,
                   aom_calloc(cpi->frame_info.mi_rows * cpi->frame_info.mi_cols,
                              sizeof(*cpi->mb_weber_stats)));
+
+  if (cpi->oxcf.enable_rate_guide_deltaq) {
+    CHECK_MEM_ERROR(
+        cm, cpi->prep_rate_estimates,
+        aom_calloc(cpi->frame_info.mi_rows * cpi->frame_info.mi_cols,
+                   sizeof(*cpi->prep_rate_estimates)));
+
+    CHECK_MEM_ERROR(
+        cm, cpi->ext_rate_distribution,
+        aom_calloc(cpi->frame_info.mi_rows * cpi->frame_info.mi_cols,
+                   sizeof(*cpi->ext_rate_distribution)));
+  }
 }
 
 static int64_t get_satd(AV1_COMP *const cpi, BLOCK_SIZE bsize, int mi_row,
@@ -202,121 +217,246 @@ static int get_var_perceptual_ai(AV1_COMP *const cpi, BLOCK_SIZE bsize,
   return sb_wiener_var;
 }
 
-static double calc_src_mean_var(const uint8_t *const src_buffer,
-                                const int buf_stride, const int block_size,
-                                const int use_hbd, double *mean) {
-  double src_mean = 0.0;
-  double src_variance = 0.0;
-  for (int pix_row = 0; pix_row < block_size; ++pix_row) {
-    for (int pix_col = 0; pix_col < block_size; ++pix_col) {
-      int src_pix;
-      if (use_hbd) {
-        const uint16_t *src = CONVERT_TO_SHORTPTR(src_buffer);
-        src_pix = src[pix_row * buf_stride + pix_col];
-      } else {
-        src_pix = src_buffer[pix_row * buf_stride + pix_col];
-      }
-      src_mean += src_pix;
-      src_variance += src_pix * src_pix;
-    }
+static int rate_estimator(const tran_low_t *qcoeff, int eob, TX_SIZE tx_size) {
+  const SCAN_ORDER *const scan_order = &av1_scan_orders[tx_size][DCT_DCT];
+
+  assert((1 << num_pels_log2_lookup[txsize_to_bsize[tx_size]]) >= eob);
+  int rate_cost = 1;
+
+  for (int idx = 0; idx < eob; ++idx) {
+    int abs_level = abs(qcoeff[scan_order->scan[idx]]);
+    rate_cost += (int)(log1p(abs_level) / log(2.0)) + 1 + (abs_level > 0);
   }
-  const int pix_num = block_size * block_size;
-  src_variance -= (src_mean * src_mean) / pix_num;
-  src_variance /= pix_num;
-  *mean = src_mean / pix_num;
-  return src_variance;
+
+  return (rate_cost << AV1_PROB_COST_SHIFT);
 }
 
-static BLOCK_SIZE pick_block_size(AV1_COMP *cpi,
-                                  const BLOCK_SIZE orig_block_size) {
-  const BLOCK_SIZE sub_block_size =
-      get_partition_subsize(orig_block_size, PARTITION_SPLIT);
-  const int mb_step = mi_size_wide[orig_block_size];
-  const int sub_step = mb_step >> 1;
-  const TX_SIZE tx_size = max_txsize_lookup[orig_block_size];
+void av1_calc_mb_wiener_var_row(AV1_COMP *const cpi, MACROBLOCK *x,
+                                MACROBLOCKD *xd, const int mi_row,
+                                int16_t *src_diff, tran_low_t *coeff,
+                                tran_low_t *qcoeff, tran_low_t *dqcoeff,
+                                double *sum_rec_distortion,
+                                double *sum_est_rate) {
+  AV1_COMMON *const cm = &cpi->common;
+  uint8_t *buffer = cpi->source->y_buffer;
+  int buf_stride = cpi->source->y_stride;
+  MB_MODE_INFO mbmi;
+  memset(&mbmi, 0, sizeof(mbmi));
+  MB_MODE_INFO *mbmi_ptr = &mbmi;
+  xd->mi = &mbmi_ptr;
+  const BLOCK_SIZE bsize = cpi->weber_bsize;
+  const TX_SIZE tx_size = max_txsize_lookup[bsize];
   const int block_size = tx_size_wide[tx_size];
-  const int split_block_size = block_size >> 1;
-  assert(split_block_size >= 8);
-  const uint8_t *const buffer = cpi->source->y_buffer;
-  const int buf_stride = cpi->source->y_stride;
-  const int use_hbd = cpi->source->flags & YV12_FLAG_HIGHBITDEPTH;
+  const int coeff_count = block_size * block_size;
+  const int mb_step = mi_size_wide[bsize];
+  const BitDepthInfo bd_info = get_bit_depth_info(xd);
+  const AV1EncAllIntraMultiThreadInfo *const intra_mt = &cpi->mt_info.intra_mt;
+  AV1EncRowMultiThreadSync *const intra_row_mt_sync =
+      &cpi->ppi->intra_row_mt_sync;
+  const int mi_cols = cm->mi_params.mi_cols;
+  const int mt_thread_id = mi_row / mb_step;
+  // TODO(chengchen): test different unit step size
+  const int mt_unit_step = mi_size_wide[BLOCK_64X64];
+  const int mt_unit_cols = (mi_cols + (mt_unit_step >> 1)) / mt_unit_step;
+  int mt_unit_col = 0;
+  const int is_high_bitdepth = is_cur_buf_hbd(xd);
 
-  double vote = 0.0;
-  for (int mi_row = 0; mi_row < cpi->frame_info.mi_rows; mi_row += mb_step) {
-    for (int mi_col = 0; mi_col < cpi->frame_info.mi_cols; mi_col += mb_step) {
-      const uint8_t *mb_buffer =
-          buffer + mi_row * MI_SIZE * buf_stride + mi_col * MI_SIZE;
-      // (1). Calculate mean and var using the original block size
-      double mean = 0.0;
-      const double orig_var =
-          calc_src_mean_var(mb_buffer, buf_stride, block_size, use_hbd, &mean);
-      // (2). Calculate mean and var using the split block size
-      double split_var[4] = { 0 };
-      double split_mean[4] = { 0 };
-      int sub_idx = 0;
-      for (int row = mi_row; row < mi_row + mb_step; row += sub_step) {
-        for (int col = mi_col; col < mi_col + mb_step; col += sub_step) {
-          mb_buffer = buffer + row * MI_SIZE * buf_stride + col * MI_SIZE;
-          split_var[sub_idx] =
-              calc_src_mean_var(mb_buffer, buf_stride, split_block_size,
-                                use_hbd, &split_mean[sub_idx]);
-          ++sub_idx;
-        }
-      }
-      // (3). Determine whether to use the original or the split block size.
-      // If use original, vote += 1.0.
-      // If use split, vote -= 1.0.
-      double max_split_mean = 0.0;
-      double max_split_var = 0.0;
-      double geo_split_var = 0.0;
-      for (int i = 0; i < 4; ++i) {
-        max_split_mean = AOMMAX(max_split_mean, split_mean[i]);
-        max_split_var = AOMMAX(max_split_var, split_var[i]);
-        geo_split_var += log(0.1 + split_var[i]);
-      }
-      geo_split_var = exp(geo_split_var / 4);
-      const double param_1 = 1.5;
-      const double param_2 = 1.0;
-      // If the variance of the large block size is considerably larger than the
-      // geometric mean of vars of small blocks;
-      // Or if the variance of the large block size is larger than the local
-      // variance;
-      // Or if the variance of the large block size is considerably larger
-      // than the mean.
-      // It indicates that the source block is not a flat area, therefore we
-      // might want to split into smaller block sizes to capture the
-      // local characteristics.
-      if (orig_var > param_1 * geo_split_var || orig_var > max_split_var ||
-          sqrt(orig_var) > param_2 * mean) {
-        vote -= 1.0;
-      } else {
-        vote += 1.0;
-      }
-    }
+  // We use a scratch buffer to store the prediction.
+  // The stride is the max block size (128).
+  uint8_t *pred_buffer;
+  const int dst_buffer_stride = 128;
+  const int buf_width = 128;
+  const int buf_height = 128;
+  const size_t buf_size = (buf_width * buf_height * sizeof(*pred_buffer))
+                          << is_high_bitdepth;
+  CHECK_MEM_ERROR(cm, pred_buffer, aom_memalign(32, buf_size));
+  uint8_t *dst_buffer = pred_buffer;
+  if (is_high_bitdepth) {
+    uint16_t *pred_buffer_16 = (uint16_t *)pred_buffer;
+    dst_buffer = CONVERT_TO_BYTEPTR(pred_buffer_16);
   }
 
-  return vote > 0.0 ? orig_block_size : sub_block_size;
+  for (int mi_col = 0; mi_col < mi_cols; mi_col += mb_step) {
+    if (mi_col % mt_unit_step == 0) {
+      intra_mt->intra_sync_read_ptr(intra_row_mt_sync, mt_thread_id,
+                                    mt_unit_col);
+    }
+
+    PREDICTION_MODE best_mode = DC_PRED;
+    int best_intra_cost = INT_MAX;
+    const int mi_width = mi_size_wide[bsize];
+    const int mi_height = mi_size_high[bsize];
+    set_mode_info_offsets(&cpi->common.mi_params, &cpi->mbmi_ext_info, x, xd,
+                          mi_row, mi_col);
+    set_mi_row_col(xd, &xd->tile, mi_row, mi_height, mi_col, mi_width,
+                   AOMMIN(mi_row + mi_height, cm->mi_params.mi_rows),
+                   AOMMIN(mi_col + mi_width, cm->mi_params.mi_cols));
+    set_plane_n4(xd, mi_size_wide[bsize], mi_size_high[bsize],
+                 av1_num_planes(cm));
+    xd->mi[0]->bsize = bsize;
+    xd->mi[0]->motion_mode = SIMPLE_TRANSLATION;
+    // Set above and left mbmi to NULL as they are not available in the
+    // preprocessing stage.
+    // They are used to detemine intra edge filter types in intra prediction.
+    if (xd->up_available) {
+      xd->above_mbmi = NULL;
+    }
+    if (xd->left_available) {
+      xd->left_mbmi = NULL;
+    }
+    uint8_t *mb_buffer =
+        buffer + mi_row * MI_SIZE * buf_stride + mi_col * MI_SIZE;
+    for (PREDICTION_MODE mode = INTRA_MODE_START; mode < INTRA_MODE_END;
+         ++mode) {
+      // TODO(chengchen): Here we use src instead of reconstructed frame as
+      // the intra predictor to make single and multithread version match.
+      // Ideally we want to use the reconstructed.
+      av1_predict_intra_block(
+          xd, cm->seq_params->sb_size, cm->seq_params->enable_intra_edge_filter,
+          block_size, block_size, tx_size, mode, 0, 0, FILTER_INTRA_MODES,
+          mb_buffer, buf_stride, dst_buffer, dst_buffer_stride, 0, 0, 0);
+      av1_subtract_block(bd_info, block_size, block_size, src_diff, block_size,
+                         mb_buffer, buf_stride, dst_buffer, dst_buffer_stride);
+      av1_quick_txfm(0, tx_size, bd_info, src_diff, block_size, coeff);
+      int intra_cost = aom_satd(coeff, coeff_count);
+      if (intra_cost < best_intra_cost) {
+        best_intra_cost = intra_cost;
+        best_mode = mode;
+      }
+    }
+
+    av1_predict_intra_block(
+        xd, cm->seq_params->sb_size, cm->seq_params->enable_intra_edge_filter,
+        block_size, block_size, tx_size, best_mode, 0, 0, FILTER_INTRA_MODES,
+        mb_buffer, buf_stride, dst_buffer, dst_buffer_stride, 0, 0, 0);
+    av1_subtract_block(bd_info, block_size, block_size, src_diff, block_size,
+                       mb_buffer, buf_stride, dst_buffer, dst_buffer_stride);
+    av1_quick_txfm(0, tx_size, bd_info, src_diff, block_size, coeff);
+
+    const struct macroblock_plane *const p = &x->plane[0];
+    uint16_t eob;
+    const SCAN_ORDER *const scan_order = &av1_scan_orders[tx_size][DCT_DCT];
+    QUANT_PARAM quant_param;
+    int pix_num = 1 << num_pels_log2_lookup[txsize_to_bsize[tx_size]];
+    av1_setup_quant(tx_size, 0, AV1_XFORM_QUANT_FP, 0, &quant_param);
+#if CONFIG_AV1_HIGHBITDEPTH
+    if (is_cur_buf_hbd(xd)) {
+      av1_highbd_quantize_fp_facade(coeff, pix_num, p, qcoeff, dqcoeff, &eob,
+                                    scan_order, &quant_param);
+    } else {
+      av1_quantize_fp_facade(coeff, pix_num, p, qcoeff, dqcoeff, &eob,
+                             scan_order, &quant_param);
+    }
+#else
+    av1_quantize_fp_facade(coeff, pix_num, p, qcoeff, dqcoeff, &eob, scan_order,
+                           &quant_param);
+#endif  // CONFIG_AV1_HIGHBITDEPTH
+
+    if (cpi->oxcf.enable_rate_guide_deltaq) {
+      const int rate_cost = rate_estimator(qcoeff, eob, tx_size);
+      cpi->prep_rate_estimates[(mi_row / mb_step) * cpi->frame_info.mi_cols +
+                               (mi_col / mb_step)] = rate_cost;
+    }
+
+    av1_inverse_transform_block(xd, dqcoeff, 0, DCT_DCT, tx_size, dst_buffer,
+                                dst_buffer_stride, eob, 0);
+    WeberStats *weber_stats =
+        &cpi->mb_weber_stats[(mi_row / mb_step) * cpi->frame_info.mi_cols +
+                             (mi_col / mb_step)];
+
+    weber_stats->rec_pix_max = 1;
+    weber_stats->rec_variance = 0;
+    weber_stats->src_pix_max = 1;
+    weber_stats->src_variance = 0;
+    weber_stats->distortion = 0;
+
+    int64_t src_mean = 0;
+    int64_t rec_mean = 0;
+    int64_t dist_mean = 0;
+
+    for (int pix_row = 0; pix_row < block_size; ++pix_row) {
+      for (int pix_col = 0; pix_col < block_size; ++pix_col) {
+        int src_pix, rec_pix;
+#if CONFIG_AV1_HIGHBITDEPTH
+        if (is_cur_buf_hbd(xd)) {
+          uint16_t *src = CONVERT_TO_SHORTPTR(mb_buffer);
+          uint16_t *rec = CONVERT_TO_SHORTPTR(dst_buffer);
+          src_pix = src[pix_row * buf_stride + pix_col];
+          rec_pix = rec[pix_row * dst_buffer_stride + pix_col];
+        } else {
+          src_pix = mb_buffer[pix_row * buf_stride + pix_col];
+          rec_pix = dst_buffer[pix_row * dst_buffer_stride + pix_col];
+        }
+#else
+        src_pix = mb_buffer[pix_row * buf_stride + pix_col];
+        rec_pix = dst_buffer[pix_row * dst_buffer_stride + pix_col];
+#endif
+        src_mean += src_pix;
+        rec_mean += rec_pix;
+        dist_mean += src_pix - rec_pix;
+        weber_stats->src_variance += src_pix * src_pix;
+        weber_stats->rec_variance += rec_pix * rec_pix;
+        weber_stats->src_pix_max = AOMMAX(weber_stats->src_pix_max, src_pix);
+        weber_stats->rec_pix_max = AOMMAX(weber_stats->rec_pix_max, rec_pix);
+        weber_stats->distortion += (src_pix - rec_pix) * (src_pix - rec_pix);
+      }
+    }
+
+    if (cpi->oxcf.intra_mode_cfg.auto_intra_tools_off) {
+      *sum_rec_distortion += weber_stats->distortion;
+      int est_block_rate = 0;
+      int64_t est_block_dist = 0;
+      model_rd_sse_fn[MODELRD_LEGACY](cpi, x, bsize, 0, weber_stats->distortion,
+                                      pix_num, &est_block_rate,
+                                      &est_block_dist);
+      *sum_est_rate += est_block_rate;
+    }
+
+    weber_stats->src_variance -= (src_mean * src_mean) / pix_num;
+    weber_stats->rec_variance -= (rec_mean * rec_mean) / pix_num;
+    weber_stats->distortion -= (dist_mean * dist_mean) / pix_num;
+    weber_stats->satd = best_intra_cost;
+
+    qcoeff[0] = 0;
+    int max_scale = 0;
+    for (int idx = 1; idx < coeff_count; ++idx) {
+      const int abs_qcoeff = abs(qcoeff[idx]);
+      max_scale = AOMMAX(max_scale, abs_qcoeff);
+    }
+    weber_stats->max_scale = max_scale;
+
+    if ((mi_col + mb_step) % mt_unit_step == 0 ||
+        (mi_col + mb_step) >= mi_cols) {
+      intra_mt->intra_sync_write_ptr(intra_row_mt_sync, mt_thread_id,
+                                     mt_unit_col, mt_unit_cols);
+      ++mt_unit_col;
+    }
+  }
+  // Set the pointer to null since mbmi is only allocated inside this function.
+  xd->mi = NULL;
+  aom_free(pred_buffer);
 }
 
-static int64_t pick_norm_factor_and_block_size(AV1_COMP *const cpi,
-                                               BLOCK_SIZE *best_block_size) {
-  const AV1_COMMON *const cm = &cpi->common;
-  const BLOCK_SIZE sb_size = cm->seq_params->sb_size;
-  BLOCK_SIZE last_block_size;
-  BLOCK_SIZE this_block_size = sb_size;
-  *best_block_size = sb_size;
-  // Pick from block size 128x128, 64x64, 32x32 and 16x16.
-  do {
-    last_block_size = this_block_size;
-    assert(this_block_size >= BLOCK_16X16 && this_block_size <= BLOCK_128X128);
-    const int block_size = block_size_wide[this_block_size];
-    if (block_size < 32) break;
-    this_block_size = pick_block_size(cpi, last_block_size);
-  } while (this_block_size != last_block_size);
-  *best_block_size = this_block_size;
+static void calc_mb_wiener_var(AV1_COMP *const cpi, double *sum_rec_distortion,
+                               double *sum_est_rate) {
+  MACROBLOCK *x = &cpi->td.mb;
+  MACROBLOCKD *xd = &x->e_mbd;
+  const BLOCK_SIZE bsize = cpi->weber_bsize;
+  const int mb_step = mi_size_wide[bsize];
+  DECLARE_ALIGNED(32, int16_t, src_diff[32 * 32]);
+  DECLARE_ALIGNED(32, tran_low_t, coeff[32 * 32]);
+  DECLARE_ALIGNED(32, tran_low_t, qcoeff[32 * 32]);
+  DECLARE_ALIGNED(32, tran_low_t, dqcoeff[32 * 32]);
+  for (int mi_row = 0; mi_row < cpi->frame_info.mi_rows; mi_row += mb_step) {
+    av1_calc_mb_wiener_var_row(cpi, x, xd, mi_row, src_diff, coeff, qcoeff,
+                               dqcoeff, sum_rec_distortion, sum_est_rate);
+  }
+}
 
+static int64_t estimate_wiener_var_norm(AV1_COMP *const cpi,
+                                        const BLOCK_SIZE norm_block_size) {
+  const AV1_COMMON *const cm = &cpi->common;
   int64_t norm_factor = 1;
-  const BLOCK_SIZE norm_block_size = this_block_size;
   assert(norm_block_size >= BLOCK_16X16 && norm_block_size <= BLOCK_128X128);
   const int norm_step = mi_size_wide[norm_block_size];
   double sb_wiener_log = 0;
@@ -364,193 +504,109 @@ static void automatic_intra_tools_off(AV1_COMP *cpi,
   }
 }
 
+static void ext_rate_guided_quantization(AV1_COMP *cpi) {
+  // Calculation uses 8x8.
+  const int mb_step = mi_size_wide[cpi->weber_bsize];
+  // Accumulate to 16x16, step size is in the unit of mi.
+  const int block_step = 4;
+
+  const char *filename = cpi->oxcf.rate_distribution_info;
+  FILE *pfile = fopen(filename, "r");
+  if (pfile == NULL) {
+    assert(pfile != NULL);
+    return;
+  }
+
+  double ext_rate_sum = 0.0;
+  for (int row = 0; row < cpi->frame_info.mi_rows; row += block_step) {
+    for (int col = 0; col < cpi->frame_info.mi_cols; col += block_step) {
+      float val;
+      const int fields_converted = fscanf(pfile, "%f", &val);
+      if (fields_converted != 1) {
+        assert(fields_converted == 1);
+        fclose(pfile);
+        return;
+      }
+      ext_rate_sum += val;
+      cpi->ext_rate_distribution[(row / mb_step) * cpi->frame_info.mi_cols +
+                                 (col / mb_step)] = val;
+    }
+  }
+  fclose(pfile);
+
+  int uniform_rate_sum = 0;
+  for (int row = 0; row < cpi->frame_info.mi_rows; row += block_step) {
+    for (int col = 0; col < cpi->frame_info.mi_cols; col += block_step) {
+      int rate_sum = 0;
+      for (int r = 0; r < block_step; r += mb_step) {
+        for (int c = 0; c < block_step; c += mb_step) {
+          const int mi_row = row + r;
+          const int mi_col = col + c;
+          rate_sum += cpi->prep_rate_estimates[(mi_row / mb_step) *
+                                                   cpi->frame_info.mi_cols +
+                                               (mi_col / mb_step)];
+        }
+      }
+      uniform_rate_sum += rate_sum;
+    }
+  }
+
+  const double scale = uniform_rate_sum / ext_rate_sum;
+  cpi->ext_rate_scale = scale;
+}
+
 void av1_set_mb_wiener_variance(AV1_COMP *cpi) {
   AV1_COMMON *const cm = &cpi->common;
-  uint8_t *buffer = cpi->source->y_buffer;
-  int buf_stride = cpi->source->y_stride;
-  ThreadData *td = &cpi->td;
-  MACROBLOCK *x = &td->mb;
-  MACROBLOCKD *xd = &x->e_mbd;
-  MB_MODE_INFO mbmi;
-  memset(&mbmi, 0, sizeof(mbmi));
-  MB_MODE_INFO *mbmi_ptr = &mbmi;
-  xd->mi = &mbmi_ptr;
-
   const SequenceHeader *const seq_params = cm->seq_params;
   if (aom_realloc_frame_buffer(
           &cm->cur_frame->buf, cm->width, cm->height, seq_params->subsampling_x,
           seq_params->subsampling_y, seq_params->use_highbitdepth,
           cpi->oxcf.border_in_pixels, cm->features.byte_alignment, NULL, NULL,
-          NULL, cpi->oxcf.tool_cfg.enable_global_motion, 0))
+          NULL, cpi->image_pyramid_levels, 0))
     aom_internal_error(cm->error, AOM_CODEC_MEM_ERROR,
                        "Failed to allocate frame buffer");
+  cpi->norm_wiener_variance = 0;
 
+  MACROBLOCK *x = &cpi->td.mb;
+  MACROBLOCKD *xd = &x->e_mbd;
+  // xd->mi needs to be setup since it is used in av1_frame_init_quantizer.
+  MB_MODE_INFO mbmi;
+  memset(&mbmi, 0, sizeof(mbmi));
+  MB_MODE_INFO *mbmi_ptr = &mbmi;
+  xd->mi = &mbmi_ptr;
   cm->quant_params.base_qindex = cpi->oxcf.rc_cfg.cq_level;
   av1_frame_init_quantizer(cpi);
 
-  DECLARE_ALIGNED(32, int16_t, src_diff[32 * 32]);
-  DECLARE_ALIGNED(32, tran_low_t, coeff[32 * 32]);
-  DECLARE_ALIGNED(32, tran_low_t, qcoeff[32 * 32]);
-  DECLARE_ALIGNED(32, tran_low_t, dqcoeff[32 * 32]);
-
-  int mi_row, mi_col;
-
-  BLOCK_SIZE bsize = cpi->weber_bsize;
-  const TX_SIZE tx_size = max_txsize_lookup[bsize];
-  const int block_size = tx_size_wide[tx_size];
-  const int coeff_count = block_size * block_size;
-
-  const BitDepthInfo bd_info = get_bit_depth_info(xd);
-  cpi->norm_wiener_variance = 0;
-  int mb_step = mi_size_wide[bsize];
-
   double sum_rec_distortion = 0.0;
   double sum_est_rate = 0.0;
-  for (mi_row = 0; mi_row < cpi->frame_info.mi_rows; mi_row += mb_step) {
-    for (mi_col = 0; mi_col < cpi->frame_info.mi_cols; mi_col += mb_step) {
-      PREDICTION_MODE best_mode = DC_PRED;
-      int best_intra_cost = INT_MAX;
 
-      xd->up_available = mi_row > 0;
-      xd->left_available = mi_col > 0;
-
-      const int mi_width = mi_size_wide[bsize];
-      const int mi_height = mi_size_high[bsize];
-      set_mode_info_offsets(&cpi->common.mi_params, &cpi->mbmi_ext_info, x, xd,
-                            mi_row, mi_col);
-      set_mi_row_col(xd, &xd->tile, mi_row, mi_height, mi_col, mi_width,
-                     cm->mi_params.mi_rows, cm->mi_params.mi_cols);
-      set_plane_n4(xd, mi_size_wide[bsize], mi_size_high[bsize],
-                   av1_num_planes(cm));
-      xd->mi[0]->bsize = bsize;
-      xd->mi[0]->motion_mode = SIMPLE_TRANSLATION;
-
-      av1_setup_dst_planes(xd->plane, bsize, &cm->cur_frame->buf, mi_row,
-                           mi_col, 0, av1_num_planes(cm));
-
-      int dst_buffer_stride = xd->plane[0].dst.stride;
-      uint8_t *dst_buffer = xd->plane[0].dst.buf;
-      uint8_t *mb_buffer =
-          buffer + mi_row * MI_SIZE * buf_stride + mi_col * MI_SIZE;
-
-      for (PREDICTION_MODE mode = INTRA_MODE_START; mode < INTRA_MODE_END;
-           ++mode) {
-        av1_predict_intra_block(
-            xd, cm->seq_params->sb_size,
-            cm->seq_params->enable_intra_edge_filter, block_size, block_size,
-            tx_size, mode, 0, 0, FILTER_INTRA_MODES, dst_buffer,
-            dst_buffer_stride, dst_buffer, dst_buffer_stride, 0, 0, 0);
-
-        av1_subtract_block(bd_info, block_size, block_size, src_diff,
-                           block_size, mb_buffer, buf_stride, dst_buffer,
-                           dst_buffer_stride);
-        av1_quick_txfm(0, tx_size, bd_info, src_diff, block_size, coeff);
-        int intra_cost = aom_satd(coeff, coeff_count);
-        if (intra_cost < best_intra_cost) {
-          best_intra_cost = intra_cost;
-          best_mode = mode;
-        }
-      }
-
-      int idx;
-      av1_predict_intra_block(xd, cm->seq_params->sb_size,
-                              cm->seq_params->enable_intra_edge_filter,
-                              block_size, block_size, tx_size, best_mode, 0, 0,
-                              FILTER_INTRA_MODES, dst_buffer, dst_buffer_stride,
-                              dst_buffer, dst_buffer_stride, 0, 0, 0);
-      av1_subtract_block(bd_info, block_size, block_size, src_diff, block_size,
-                         mb_buffer, buf_stride, dst_buffer, dst_buffer_stride);
-      av1_quick_txfm(0, tx_size, bd_info, src_diff, block_size, coeff);
-
-      const struct macroblock_plane *const p = &x->plane[0];
-      uint16_t eob;
-      const SCAN_ORDER *const scan_order = &av1_scan_orders[tx_size][DCT_DCT];
-      QUANT_PARAM quant_param;
-      int pix_num = 1 << num_pels_log2_lookup[txsize_to_bsize[tx_size]];
-      av1_setup_quant(tx_size, 0, AV1_XFORM_QUANT_FP, 0, &quant_param);
-#if CONFIG_AV1_HIGHBITDEPTH
-      if (is_cur_buf_hbd(xd)) {
-        av1_highbd_quantize_fp_facade(coeff, pix_num, p, qcoeff, dqcoeff, &eob,
-                                      scan_order, &quant_param);
-      } else {
-        av1_quantize_fp_facade(coeff, pix_num, p, qcoeff, dqcoeff, &eob,
-                               scan_order, &quant_param);
-      }
-#else
-      av1_quantize_fp_facade(coeff, pix_num, p, qcoeff, dqcoeff, &eob,
-                             scan_order, &quant_param);
-#endif  // CONFIG_AV1_HIGHBITDEPTH
-      av1_inverse_transform_block(xd, dqcoeff, 0, DCT_DCT, tx_size, dst_buffer,
-                                  dst_buffer_stride, eob, 0);
-      WeberStats *weber_stats =
-          &cpi->mb_weber_stats[(mi_row / mb_step) * cpi->frame_info.mi_cols +
-                               (mi_col / mb_step)];
-
-      weber_stats->rec_pix_max = 1;
-      weber_stats->rec_variance = 0;
-      weber_stats->src_pix_max = 1;
-      weber_stats->src_variance = 0;
-      weber_stats->distortion = 0;
-
-      int64_t src_mean = 0;
-      int64_t rec_mean = 0;
-      int64_t dist_mean = 0;
-
-      for (int pix_row = 0; pix_row < block_size; ++pix_row) {
-        for (int pix_col = 0; pix_col < block_size; ++pix_col) {
-          int src_pix, rec_pix;
-#if CONFIG_AV1_HIGHBITDEPTH
-          if (is_cur_buf_hbd(xd)) {
-            uint16_t *src = CONVERT_TO_SHORTPTR(mb_buffer);
-            uint16_t *rec = CONVERT_TO_SHORTPTR(dst_buffer);
-            src_pix = src[pix_row * buf_stride + pix_col];
-            rec_pix = rec[pix_row * dst_buffer_stride + pix_col];
-          } else {
-            src_pix = mb_buffer[pix_row * buf_stride + pix_col];
-            rec_pix = dst_buffer[pix_row * dst_buffer_stride + pix_col];
-          }
-#else
-          src_pix = mb_buffer[pix_row * buf_stride + pix_col];
-          rec_pix = dst_buffer[pix_row * dst_buffer_stride + pix_col];
-#endif
-          src_mean += src_pix;
-          rec_mean += rec_pix;
-          dist_mean += src_pix - rec_pix;
-          weber_stats->src_variance += src_pix * src_pix;
-          weber_stats->rec_variance += rec_pix * rec_pix;
-          weber_stats->src_pix_max = AOMMAX(weber_stats->src_pix_max, src_pix);
-          weber_stats->rec_pix_max = AOMMAX(weber_stats->rec_pix_max, rec_pix);
-          weber_stats->distortion += (src_pix - rec_pix) * (src_pix - rec_pix);
-        }
-      }
-
-      sum_rec_distortion += weber_stats->distortion;
-      int est_block_rate = 0;
-      int64_t est_block_dist = 0;
-      model_rd_sse_fn[MODELRD_LEGACY](cpi, x, bsize, 0, weber_stats->distortion,
-                                      pix_num, &est_block_rate,
-                                      &est_block_dist);
-      sum_est_rate += est_block_rate;
-
-      weber_stats->src_variance -= (src_mean * src_mean) / pix_num;
-      weber_stats->rec_variance -= (rec_mean * rec_mean) / pix_num;
-      weber_stats->distortion -= (dist_mean * dist_mean) / pix_num;
-      weber_stats->satd = best_intra_cost;
-
-      qcoeff[0] = 0;
-      for (idx = 1; idx < coeff_count; ++idx) qcoeff[idx] = abs(qcoeff[idx]);
-      qsort(qcoeff, coeff_count, sizeof(*coeff), qsort_comp);
-
-      weber_stats->max_scale = (double)qcoeff[coeff_count - 1];
-    }
+  MultiThreadInfo *const mt_info = &cpi->mt_info;
+  const int num_workers =
+      AOMMIN(mt_info->num_mod_workers[MOD_AI], mt_info->num_workers);
+  AV1EncAllIntraMultiThreadInfo *const intra_mt = &mt_info->intra_mt;
+  intra_mt->intra_sync_read_ptr = av1_row_mt_sync_read_dummy;
+  intra_mt->intra_sync_write_ptr = av1_row_mt_sync_write_dummy;
+  // Calculate differential contrast for each block for the entire image.
+  // TODO(chengchen): properly accumulate the distortion and rate in
+  // av1_calc_mb_wiener_var_mt(). Until then, call calc_mb_wiener_var() if
+  // auto_intra_tools_off is true.
+  if (num_workers > 1 && !cpi->oxcf.intra_mode_cfg.auto_intra_tools_off) {
+    intra_mt->intra_sync_read_ptr = av1_row_mt_sync_read;
+    intra_mt->intra_sync_write_ptr = av1_row_mt_sync_write;
+    av1_calc_mb_wiener_var_mt(cpi, num_workers, &sum_rec_distortion,
+                              &sum_est_rate);
+  } else {
+    calc_mb_wiener_var(cpi, &sum_rec_distortion, &sum_est_rate);
   }
 
   // Determine whether to turn off several intra coding tools.
   automatic_intra_tools_off(cpi, sum_rec_distortion, sum_est_rate);
 
-  BLOCK_SIZE norm_block_size = BLOCK_16X16;
-  cpi->norm_wiener_variance =
-      pick_norm_factor_and_block_size(cpi, &norm_block_size);
+  // Read external rate distribution and use it to guide delta quantization
+  if (cpi->oxcf.enable_rate_guide_deltaq) ext_rate_guided_quantization(cpi);
+
+  const BLOCK_SIZE norm_block_size = cm->seq_params->sb_size;
+  cpi->norm_wiener_variance = estimate_wiener_var_norm(cpi, norm_block_size);
   const int norm_step = mi_size_wide[norm_block_size];
 
   double sb_wiener_log = 0;
@@ -558,17 +614,20 @@ void av1_set_mb_wiener_variance(AV1_COMP *cpi) {
   for (int its_cnt = 0; its_cnt < 2; ++its_cnt) {
     sb_wiener_log = 0;
     sb_count = 0;
-    for (mi_row = 0; mi_row < cm->mi_params.mi_rows; mi_row += norm_step) {
-      for (mi_col = 0; mi_col < cm->mi_params.mi_cols; mi_col += norm_step) {
+    for (int mi_row = 0; mi_row < cm->mi_params.mi_rows; mi_row += norm_step) {
+      for (int mi_col = 0; mi_col < cm->mi_params.mi_cols;
+           mi_col += norm_step) {
         int sb_wiener_var =
             get_var_perceptual_ai(cpi, norm_block_size, mi_row, mi_col);
 
         double beta = (double)cpi->norm_wiener_variance / sb_wiener_var;
         double min_max_scale = AOMMAX(
             1.0, get_max_scale(cpi, cm->seq_params->sb_size, mi_row, mi_col));
-        beta = 1.0 / AOMMIN(1.0 / beta, min_max_scale);
+
         beta = AOMMIN(beta, 4);
         beta = AOMMAX(beta, 0.25);
+
+        if (beta < 1 / min_max_scale) continue;
 
         sb_wiener_var = (int)(cpi->norm_wiener_variance / beta);
 
@@ -585,11 +644,72 @@ void av1_set_mb_wiener_variance(AV1_COMP *cpi) {
     cpi->norm_wiener_variance = AOMMAX(1, cpi->norm_wiener_variance);
   }
 
+  // Set the pointer to null since mbmi is only allocated inside this function.
+  xd->mi = NULL;
   aom_free_frame_buffer(&cm->cur_frame->buf);
+}
+
+static int get_rate_guided_quantizer(AV1_COMP *const cpi, BLOCK_SIZE bsize,
+                                     int mi_row, int mi_col) {
+  // Calculation uses 8x8.
+  const int mb_step = mi_size_wide[cpi->weber_bsize];
+  // Accumulate to 16x16
+  const int block_step = mi_size_wide[BLOCK_16X16];
+  double sb_rate_hific = 0.0;
+  double sb_rate_uniform = 0.0;
+  for (int row = mi_row; row < mi_row + mi_size_wide[bsize];
+       row += block_step) {
+    for (int col = mi_col; col < mi_col + mi_size_high[bsize];
+         col += block_step) {
+      sb_rate_hific +=
+          cpi->ext_rate_distribution[(row / mb_step) * cpi->frame_info.mi_cols +
+                                     (col / mb_step)];
+
+      for (int r = 0; r < block_step; r += mb_step) {
+        for (int c = 0; c < block_step; c += mb_step) {
+          const int this_row = row + r;
+          const int this_col = col + c;
+          sb_rate_uniform +=
+              cpi->prep_rate_estimates[(this_row / mb_step) *
+                                           cpi->frame_info.mi_cols +
+                                       (this_col / mb_step)];
+        }
+      }
+    }
+  }
+  sb_rate_hific *= cpi->ext_rate_scale;
+
+  const double weight = 1.0;
+  const double rate_diff =
+      weight * (sb_rate_hific - sb_rate_uniform) / sb_rate_uniform;
+  double scale = pow(2, rate_diff);
+
+  scale = scale * scale;
+  double min_max_scale = AOMMAX(1.0, get_max_scale(cpi, bsize, mi_row, mi_col));
+  scale = 1.0 / AOMMIN(1.0 / scale, min_max_scale);
+
+  AV1_COMMON *const cm = &cpi->common;
+  const int base_qindex = cm->quant_params.base_qindex;
+  int offset =
+      av1_get_deltaq_offset(cm->seq_params->bit_depth, base_qindex, scale);
+  const DeltaQInfo *const delta_q_info = &cm->delta_q_info;
+  const int max_offset = delta_q_info->delta_q_res * 10;
+  offset = AOMMIN(offset, max_offset - 1);
+  offset = AOMMAX(offset, -max_offset + 1);
+  int qindex = cm->quant_params.base_qindex + offset;
+  qindex = AOMMIN(qindex, MAXQ);
+  qindex = AOMMAX(qindex, MINQ);
+  if (base_qindex > MINQ) qindex = AOMMAX(qindex, MINQ + 1);
+
+  return qindex;
 }
 
 int av1_get_sbq_perceptual_ai(AV1_COMP *const cpi, BLOCK_SIZE bsize, int mi_row,
                               int mi_col) {
+  if (cpi->oxcf.enable_rate_guide_deltaq) {
+    return get_rate_guided_quantizer(cpi, bsize, mi_row, mi_col);
+  }
+
   AV1_COMMON *const cm = &cpi->common;
   const int base_qindex = cm->quant_params.base_qindex;
   int sb_wiener_var = get_var_perceptual_ai(cpi, bsize, mi_row, mi_col);

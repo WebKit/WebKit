@@ -30,6 +30,7 @@ using libaom_test::compute_avg_abs_error;
 using libaom_test::input_base;
 using libaom_test::InvTxfm2dFunc;
 using libaom_test::LbdInvTxfm2dFunc;
+using libaom_test::tx_type_name;
 
 using ::testing::Combine;
 using ::testing::Range;
@@ -41,25 +42,6 @@ typedef TX_TYPE TxType;
 typedef TX_SIZE TxSize;
 
 namespace {
-
-static const char *tx_type_name[] = {
-  "DCT_DCT",
-  "ADST_DCT",
-  "DCT_ADST",
-  "ADST_ADST",
-  "FLIPADST_DCT",
-  "DCT_FLIPADST",
-  "FLIPADST_FLIPADST",
-  "ADST_FLIPADST",
-  "FLIPADST_ADST",
-  "IDTX",
-  "V_DCT",
-  "H_DCT",
-  "V_ADST",
-  "H_ADST",
-  "V_FLIPADST",
-  "H_FLIPADST",
-};
 
 // AV1InvTxfm2dParam argument list:
 // tx_type_, tx_size_, max_error_, max_avg_error_
@@ -139,7 +121,8 @@ class AV1InvTxfm2d : public ::testing::TestWithParam<AV1InvTxfm2dParam> {
         actual_max_error = AOMMAX(actual_max_error, this_error);
       }
       EXPECT_GE(max_error_, actual_max_error)
-          << " tx_w: " << tx_w << " tx_h " << tx_h << " tx_type: " << tx_type_;
+          << " tx_w: " << tx_w << " tx_h " << tx_h
+          << " tx_type: " << tx_type_name[tx_type_];
       if (actual_max_error > max_error_) {  // exit early.
         break;
       }
@@ -149,7 +132,8 @@ class AV1InvTxfm2d : public ::testing::TestWithParam<AV1InvTxfm2dParam> {
 
     avg_abs_error /= count;
     EXPECT_GE(max_avg_error_, avg_abs_error)
-        << " tx_w: " << tx_w << " tx_h " << tx_h << " tx_type: " << tx_type_;
+        << " tx_w: " << tx_w << " tx_h " << tx_h
+        << " tx_type: " << tx_type_name[tx_type_];
   }
 
  private:
@@ -345,9 +329,9 @@ void AV1LbdInvTxfm2d::RunAV1InvTxfm2dTest(TxType tx_type, TxSize tx_size,
           printf(" ");
         }
         ASSERT_EQ(ref_value, output[r * stride + c])
-            << "[" << r << "," << c << "] " << cnt
-            << " tx_size: " << static_cast<int>(tx_size)
-            << " tx_type: " << tx_type_name[tx_type] << " eob " << eob;
+            << "[" << r << "," << c << "] " << cnt << " tx_size: " << cols
+            << "x" << rows << " tx_type: " << tx_type_name[tx_type] << " eob "
+            << eob;
       }
     }
   }
@@ -391,11 +375,12 @@ TEST_P(AV1LbdInvTxfm2d, DISABLED_Speed) {
 }
 
 #if HAVE_SSSE3
-#if defined(_MSC_VER) || defined(__SSSE3__)
-#include "av1/common/x86/av1_inv_txfm_ssse3.h"
+extern "C" void av1_lowbd_inv_txfm2d_add_ssse3(const int32_t *input,
+                                               uint8_t *output, int stride,
+                                               TxType tx_type, TxSize tx_size,
+                                               int eob);
 INSTANTIATE_TEST_SUITE_P(SSSE3, AV1LbdInvTxfm2d,
                          ::testing::Values(av1_lowbd_inv_txfm2d_add_ssse3));
-#endif  // _MSC_VER || __SSSE3__
 #endif  // HAVE_SSSE3
 
 #if HAVE_AVX2

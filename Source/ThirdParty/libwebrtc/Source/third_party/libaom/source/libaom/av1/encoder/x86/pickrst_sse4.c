@@ -11,6 +11,7 @@
 
 #include <assert.h>
 #include <emmintrin.h>
+#include "aom_dsp/x86/mem_sse2.h"
 #include "aom_dsp/x86/synonyms.h"
 
 #include "config/av1_rtcd.h"
@@ -62,7 +63,7 @@ static INLINE void acc_stat_win7_one_line_sse4_1(
         M_int[k][l] += D1 * X1 + D2 * X2;
 
         const __m128i kl =
-            _mm_cvtepu8_epi16(_mm_set1_epi16(*((uint16_t *)(dgd_ijk + l))));
+            _mm_cvtepu8_epi16(_mm_set1_epi16(loadu_int16(dgd_ijk + l)));
         acc_stat_sse41(H_ + 0 * 8, dgd_ij + 0 * dgd_stride, shuffle, &kl);
         acc_stat_sse41(H_ + 1 * 8, dgd_ij + 1 * dgd_stride, shuffle, &kl);
         acc_stat_sse41(H_ + 2 * 8, dgd_ij + 2 * dgd_stride, shuffle, &kl);
@@ -91,7 +92,7 @@ static INLINE void acc_stat_win7_one_line_sse4_1(
         // are (effectively) used as inputs to a multiply-accumulate.
         // So if we set the extra pixel slot to 0, then it is effectively
         // ignored.
-        const __m128i kl = _mm_cvtepu8_epi16(_mm_set1_epi16((uint16_t)D1));
+        const __m128i kl = _mm_cvtepu8_epi16(_mm_set1_epi16((int16_t)D1));
         acc_stat_sse41(H_ + 0 * 8, dgd_ij + 0 * dgd_stride, shuffle, &kl);
         acc_stat_sse41(H_ + 1 * 8, dgd_ij + 1 * dgd_stride, shuffle, &kl);
         acc_stat_sse41(H_ + 2 * 8, dgd_ij + 2 * dgd_stride, shuffle, &kl);
@@ -265,7 +266,7 @@ static INLINE void acc_stat_highbd_win7_one_line_sse4_1(
 
         // Load two u16 values from dgd as a single u32
         // Then broadcast to 4x u32 slots of a 128
-        const __m128i dgd_ijkl = _mm_set1_epi32(*((uint32_t *)(dgd_ijk + l)));
+        const __m128i dgd_ijkl = _mm_set1_epi32(loadu_int32(dgd_ijk + l));
         // dgd_ijkl = [y x y x y x y x] as u16
 
         acc_stat_highbd_sse41(H_ + 0 * 8, dgd_ij + 0 * dgd_stride, shuffle,
@@ -302,7 +303,7 @@ static INLINE void acc_stat_highbd_win7_one_line_sse4_1(
         // interleaved copies of two pixels, but we only have one. However, the
         // pixels are (effectively) used as inputs to a multiply-accumulate. So
         // if we set the extra pixel slot to 0, then it is effectively ignored.
-        const __m128i dgd_ijkl = _mm_set1_epi32((uint32_t)D1);
+        const __m128i dgd_ijkl = _mm_set1_epi32((int)D1);
 
         acc_stat_highbd_sse41(H_ + 0 * 8, dgd_ij + 0 * dgd_stride, shuffle,
                               &dgd_ijkl);
@@ -414,7 +415,7 @@ static INLINE void acc_stat_highbd_win5_one_line_sse4_1(
 
         // Load two u16 values from dgd as a single u32
         // then broadcast to 4x u32 slots of a 128
-        const __m128i dgd_ijkl = _mm_set1_epi32(*((uint32_t *)(dgd_ijk + l)));
+        const __m128i dgd_ijkl = _mm_set1_epi32(loadu_int32(dgd_ijk + l));
         // dgd_ijkl = [y x y x y x y x] as u16
 
         acc_stat_highbd_sse41(H_ + 0 * 8, dgd_ij + 0 * dgd_stride, shuffle,
@@ -447,7 +448,7 @@ static INLINE void acc_stat_highbd_win5_one_line_sse4_1(
         // interleaved copies of two pixels, but we only have one. However, the
         // pixels are (effectively) used as inputs to a multiply-accumulate. So
         // if we set the extra pixel slot to 0, then it is effectively ignored.
-        const __m128i dgd_ijkl = _mm_set1_epi32((uint32_t)D1);
+        const __m128i dgd_ijkl = _mm_set1_epi32((int)D1);
 
         acc_stat_highbd_sse41(H_ + 0 * 8, dgd_ij + 0 * dgd_stride, shuffle,
                               &dgd_ijkl);
@@ -574,7 +575,7 @@ static INLINE void acc_stat_win5_one_line_sse4_1(
         M_int[k][l] += D1 * X1 + D2 * X2;
 
         const __m128i kl =
-            _mm_cvtepu8_epi16(_mm_set1_epi16(*((uint16_t *)(dgd_ijk + l))));
+            _mm_cvtepu8_epi16(_mm_set1_epi16(loadu_int16(dgd_ijk + l)));
         acc_stat_sse41(H_ + 0 * 8, dgd_ij + 0 * dgd_stride, shuffle, &kl);
         acc_stat_sse41(H_ + 1 * 8, dgd_ij + 1 * dgd_stride, shuffle, &kl);
         acc_stat_sse41(H_ + 2 * 8, dgd_ij + 2 * dgd_stride, shuffle, &kl);
@@ -601,7 +602,7 @@ static INLINE void acc_stat_win5_one_line_sse4_1(
         // are (effectively) used as inputs to a multiply-accumulate.
         // So if we set the extra pixel slot to 0, then it is effectively
         // ignored.
-        const __m128i kl = _mm_cvtepu8_epi16(_mm_set1_epi16((uint16_t)D1));
+        const __m128i kl = _mm_cvtepu8_epi16(_mm_set1_epi16((int16_t)D1));
         acc_stat_sse41(H_ + 0 * 8, dgd_ij + 0 * dgd_stride, shuffle, &kl);
         acc_stat_sse41(H_ + 1 * 8, dgd_ij + 1 * dgd_stride, shuffle, &kl);
         acc_stat_sse41(H_ + 2 * 8, dgd_ij + 2 * dgd_stride, shuffle, &kl);
@@ -703,7 +704,8 @@ static INLINE void compute_stats_win5_opt_sse4_1(
   }
 }
 void av1_compute_stats_sse4_1(int wiener_win, const uint8_t *dgd,
-                              const uint8_t *src, int h_start, int h_end,
+                              const uint8_t *src, int16_t *dgd_avg,
+                              int16_t *src_avg, int h_start, int h_end,
                               int v_start, int v_end, int dgd_stride,
                               int src_stride, int64_t *M, int64_t *H,
                               int use_downsampled_wiener_stats) {
@@ -716,8 +718,8 @@ void av1_compute_stats_sse4_1(int wiener_win, const uint8_t *dgd,
                                   dgd_stride, src_stride, M, H,
                                   use_downsampled_wiener_stats);
   } else {
-    av1_compute_stats_c(wiener_win, dgd, src, h_start, h_end, v_start, v_end,
-                        dgd_stride, src_stride, M, H,
+    av1_compute_stats_c(wiener_win, dgd, src, dgd_avg, src_avg, h_start, h_end,
+                        v_start, v_end, dgd_stride, src_stride, M, H,
                         use_downsampled_wiener_stats);
   }
 }
@@ -780,7 +782,7 @@ int64_t av1_lowbd_pixel_proj_error_sse4_1(
   } else if (params->r[0] > 0 || params->r[1] > 0) {
     const int xq_active = (params->r[0] > 0) ? xq[0] : xq[1];
     const __m128i xq_coeff =
-        pair_set_epi16(xq_active, -(xq_active << SGRPROJ_RST_BITS));
+        pair_set_epi16(xq_active, -xq_active * (1 << SGRPROJ_RST_BITS));
     const int32_t *flt = (params->r[0] > 0) ? flt0 : flt1;
     const int flt_stride = (params->r[0] > 0) ? flt0_stride : flt1_stride;
     for (i = 0; i < height; ++i) {

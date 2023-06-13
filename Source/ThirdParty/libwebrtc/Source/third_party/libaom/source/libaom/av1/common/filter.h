@@ -294,6 +294,25 @@ static INLINE uint8_t get_interp_filter_allowed_mask(
   return (allow_interp_mask >> filt_type) & 1;
 }
 
+static AOM_INLINE int get_filter_tap(
+    const InterpFilterParams *const filter_params, int subpel_qn) {
+  const int16_t *const filter = av1_get_interp_filter_subpel_kernel(
+      filter_params, subpel_qn & SUBPEL_MASK);
+  if (filter_params->taps == 12) {
+    return 12;
+  }
+  if (filter[0] | filter[7]) {
+    return 8;
+  }
+  if (filter[1] | filter[6]) {
+    return 6;
+  }
+  if (filter[2] | filter[5]) {
+    return 4;
+  }
+  return 2;
+}
+
 #ifdef __cplusplus
 }  // extern "C"
 #endif

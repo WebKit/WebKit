@@ -71,6 +71,8 @@
 
 #define ALIGN_POWER_OF_TWO(value, n) \
   (((value) + ((1 << (n)) - 1)) & ~((1 << (n)) - 1))
+#define ALIGN_POWER_OF_TWO_UNSIGNED(value, n) \
+  (((value) + ((1u << (n)) - 1)) & ~((1u << (n)) - 1))
 
 #define DIVIDE_AND_ROUND(x, y) (((x) + ((y) >> 1)) / (y))
 

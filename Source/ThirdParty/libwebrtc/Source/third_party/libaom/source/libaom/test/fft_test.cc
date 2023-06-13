@@ -82,7 +82,8 @@ struct FFTTestArg {
 };
 
 std::ostream &operator<<(std::ostream &os, const FFTTestArg &test_arg) {
-  return os << "fft_arg { n:" << test_arg.n << " fft:" << test_arg.fft << " }";
+  return os << "fft_arg { n:" << test_arg.n
+            << " fft:" << reinterpret_cast<const void *>(test_arg.fft) << " }";
 }
 
 class FFT2DTest : public ::testing::TestWithParam<FFTTestArg> {
@@ -171,8 +172,8 @@ struct IFFTTestArg {
 };
 
 std::ostream &operator<<(std::ostream &os, const IFFTTestArg &test_arg) {
-  return os << "ifft_arg { n:" << test_arg.n << " fft:" << test_arg.ifft
-            << " }";
+  return os << "ifft_arg { n:" << test_arg.n
+            << " fft:" << reinterpret_cast<const void *>(test_arg.ifft) << " }";
 }
 
 class IFFT2DTest : public ::testing::TestWithParam<IFFTTestArg> {

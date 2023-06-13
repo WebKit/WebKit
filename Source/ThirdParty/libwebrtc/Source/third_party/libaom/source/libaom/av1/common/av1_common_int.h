@@ -16,6 +16,7 @@
 #include "config/av1_rtcd.h"
 
 #include "aom/internal/aom_codec_internal.h"
+#include "aom_dsp/flow_estimation/corner_detect.h"
 #include "aom_util/aom_thread.h"
 #include "av1/common/alloccommon.h"
 #include "av1/common/av1_loopfilter.h"
@@ -184,7 +185,8 @@ typedef struct BufferPool {
   aom_get_frame_buffer_cb_fn_t get_fb_cb;
   aom_release_frame_buffer_cb_fn_t release_fb_cb;
 
-  RefCntBuffer frame_bufs[FRAME_BUFFERS];
+  RefCntBuffer *frame_bufs;
+  uint8_t num_frame_bufs;
 
   // Frame buffers allocated internally by the codec.
   InternalFrameBufferList int_frame_buffers;
@@ -301,7 +303,7 @@ typedef struct SequenceHeader {
   aom_bit_depth_t bit_depth;  // AOM_BITS_8 in profile 0 or 1,
                               // AOM_BITS_10 or AOM_BITS_12 in profile 2 or 3.
   uint8_t use_highbitdepth;   // If true, we need to use 16bit frame buffers.
-  uint8_t monochrome;         // Monochorme video
+  uint8_t monochrome;         // Monochrome video
   aom_color_primaries_t color_primaries;
   aom_transfer_characteristics_t transfer_characteristics;
   aom_matrix_coefficients_t matrix_coefficients;
@@ -461,11 +463,11 @@ typedef struct CommonTileParams {
    */
   int min_log2_rows;
   /*!
-   * Min num of tile columns possible based on frame width.
+   * Max num of tile columns possible based on frame width.
    */
   int max_log2_cols;
   /*!
-   * Max num of tile columns possible based on frame width.
+   * Max num of tile rows possible based on frame height.
    */
   int max_log2_rows;
   /*!
@@ -660,7 +662,7 @@ struct CommonQuantParams {
    */
   /**@{*/
   /*!
-   * Global dquantization matrix table.
+   * Global dequantization matrix table.
    */
   const qm_val_t *giqmatrix[NUM_QM_LEVELS][3][TX_SIZES_ALL];
   /*!
@@ -760,7 +762,7 @@ typedef struct AV1Common {
   /*!
    * AV1 allows two types of frame scaling operations:
    * 1. Frame super-resolution: that allows coding a frame at lower resolution
-   * and after decoding the frame, normatively uscales and restores the frame --
+   * and after decoding the frame, normatively scales and restores the frame --
    * inside the coding loop.
    * 2. Frame resize: that allows coding frame at lower/higher resolution, and
    * then non-normatively upscale the frame at the time of rendering -- outside
@@ -1092,10 +1094,11 @@ static INLINE int get_free_fb(AV1_COMMON *cm) {
   int i;
 
   lock_buffer_pool(cm->buffer_pool);
-  for (i = 0; i < FRAME_BUFFERS; ++i)
+  const int num_frame_bufs = cm->buffer_pool->num_frame_bufs;
+  for (i = 0; i < num_frame_bufs; ++i)
     if (frame_bufs[i].ref_count == 0) break;
 
-  if (i != FRAME_BUFFERS) {
+  if (i != num_frame_bufs) {
     if (frame_bufs[i].buf.use_external_reference_buffers) {
       // If this frame buffer's y_buffer, u_buffer, and v_buffer point to the
       // external reference buffers. Restore the buffer pointers to point to the
@@ -1132,7 +1135,10 @@ static INLINE RefCntBuffer *assign_cur_frame_new_fb(AV1_COMMON *const cm) {
   if (new_fb_idx == INVALID_IDX) return NULL;
 
   cm->cur_frame = &cm->buffer_pool->frame_bufs[new_fb_idx];
-  cm->cur_frame->buf.buf_8bit_valid = 0;
+#if CONFIG_AV1_ENCODER && !CONFIG_REALTIME_ONLY
+  aom_invalidate_pyramid(cm->cur_frame->buf.y_pyramid);
+  av1_invalidate_corner_list(cm->cur_frame->buf.corners);
+#endif  // CONFIG_AV1_ENCODER && !CONFIG_REALTIME_ONLY
   av1_zero(cm->cur_frame->interp_filter_selected);
   return cm->cur_frame;
 }
@@ -1237,10 +1243,8 @@ static INLINE void ensure_mv_buffer(RefCntBuffer *buf, AV1_COMMON *cm) {
 
   const int mem_size =
       ((mi_params->mi_rows + MAX_MIB_SIZE) >> 1) * (mi_params->mi_stride >> 1);
-  int realloc = cm->tpl_mvs == NULL;
-  if (cm->tpl_mvs) realloc |= cm->tpl_mvs_mem_size < mem_size;
 
-  if (realloc) {
+  if (cm->tpl_mvs == NULL || cm->tpl_mvs_mem_size < mem_size) {
     aom_free(cm->tpl_mvs);
     CHECK_MEM_ERROR(cm, cm->tpl_mvs,
                     (TPL_MV_REF *)aom_calloc(mem_size, sizeof(*cm->tpl_mvs)));
@@ -1374,7 +1378,7 @@ static INLINE void set_mi_row_col(MACROBLOCKD *xd, const TileInfo *const tile,
   xd->is_chroma_ref = chroma_ref;
   if (chroma_ref) {
     // To help calculate the "above" and "left" chroma blocks, note that the
-    // current block may cover multiple luma blocks (eg, if partitioned into
+    // current block may cover multiple luma blocks (e.g., if partitioned into
     // 4x4 luma blocks).
     // First, find the top-left-most luma block covered by this chroma block
     MB_MODE_INFO **base_mi =
@@ -1612,18 +1616,6 @@ static INLINE void av1_zero_left_context(MACROBLOCKD *const xd) {
   memset(xd->left_txfm_context_buffer, tx_size_high[TX_SIZES_LARGEST],
          sizeof(xd->left_txfm_context_buffer));
 }
-
-// Disable array-bounds checks as the TX_SIZE enum contains values larger than
-// TX_SIZES_ALL (TX_INVALID) which make extending the array as a workaround
-// infeasible. The assert is enough for static analysis and this or other tools
-// asan, valgrind would catch oob access at runtime.
-#if defined(__GNUC__) && __GNUC__ >= 4
-#pragma GCC diagnostic ignored "-Warray-bounds"
-#endif
-
-#if defined(__GNUC__) && __GNUC__ >= 4
-#pragma GCC diagnostic warning "-Warray-bounds"
-#endif
 
 static INLINE void set_txfm_ctx(TXFM_CONTEXT *txfm_ctx, uint8_t txs, int len) {
   int i;
@@ -1871,9 +1863,14 @@ static INLINE int is_valid_seq_level_idx(AV1_LEVEL seq_level_idx) {
           // The following levels are currently undefined.
           seq_level_idx != SEQ_LEVEL_2_2 && seq_level_idx != SEQ_LEVEL_2_3 &&
           seq_level_idx != SEQ_LEVEL_3_2 && seq_level_idx != SEQ_LEVEL_3_3 &&
-          seq_level_idx != SEQ_LEVEL_4_2 && seq_level_idx != SEQ_LEVEL_4_3 &&
-          seq_level_idx != SEQ_LEVEL_7_0 && seq_level_idx != SEQ_LEVEL_7_1 &&
-          seq_level_idx != SEQ_LEVEL_7_2 && seq_level_idx != SEQ_LEVEL_7_3);
+          seq_level_idx != SEQ_LEVEL_4_2 && seq_level_idx != SEQ_LEVEL_4_3
+#if !CONFIG_CWG_C013
+          && seq_level_idx != SEQ_LEVEL_7_0 && seq_level_idx != SEQ_LEVEL_7_1 &&
+          seq_level_idx != SEQ_LEVEL_7_2 && seq_level_idx != SEQ_LEVEL_7_3 &&
+          seq_level_idx != SEQ_LEVEL_8_0 && seq_level_idx != SEQ_LEVEL_8_1 &&
+          seq_level_idx != SEQ_LEVEL_8_2 && seq_level_idx != SEQ_LEVEL_8_3
+#endif
+         );
 }
 
 /*!\endcond */

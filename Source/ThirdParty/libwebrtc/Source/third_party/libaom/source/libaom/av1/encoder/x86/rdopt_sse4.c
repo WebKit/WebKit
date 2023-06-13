@@ -29,10 +29,10 @@ INLINE static void horver_correlation_4x4(const int16_t *diff, int stride,
   //                      [ i j k l ]
   //                      [ m n o p ]
 
-  const __m128i pixelsa = _mm_set_epi64x(*(uint64_t *)&diff[0 * stride],
-                                         *(uint64_t *)&diff[2 * stride]);
-  const __m128i pixelsb = _mm_set_epi64x(*(uint64_t *)&diff[1 * stride],
-                                         *(uint64_t *)&diff[3 * stride]);
+  const __m128i pixelsa = _mm_set_epi64x(*(int64_t *)&diff[0 * stride],
+                                         *(int64_t *)&diff[2 * stride]);
+  const __m128i pixelsb = _mm_set_epi64x(*(int64_t *)&diff[1 * stride],
+                                         *(int64_t *)&diff[3 * stride]);
   // pixelsa = [d c b a l k j i] as i16
   // pixelsb = [h g f e p o n m] as i16
 

@@ -403,10 +403,7 @@ static void encode_block(int plane, int block, int blk_row, int blk_col,
   l = &args->tl[blk_row];
 
   TX_TYPE tx_type = DCT_DCT;
-  const int blk_skip_idx =
-      (cpi->sf.rt_sf.use_nonrd_pick_mode && is_inter_block(mbmi))
-          ? blk_row * bw / 4 + blk_col / 2
-          : blk_row * bw + blk_col;
+  const int blk_skip_idx = blk_row * bw + blk_col;
   if (!is_blk_skip(x->txfm_search_info.blk_skip, plane, blk_skip_idx) &&
       !mbmi->skip_mode) {
     tx_type = av1_get_tx_type(xd, pd->plane_type, blk_row, blk_col, tx_size,
@@ -556,6 +553,13 @@ void av1_foreach_transformed_block_in_plane(
   // 4x4=0, 8x8=2, 16x16=4, 32x32=6, 64x64=8
   // transform size varies per plane, look it up in a common way.
   const TX_SIZE tx_size = av1_get_tx_size(plane, xd);
+  const BLOCK_SIZE tx_bsize = txsize_to_bsize[tx_size];
+  // Call visit() directly with zero offsets if the current block size is the
+  // same as the transform block size.
+  if (plane_bsize == tx_bsize) {
+    visit(plane, 0, 0, 0, plane_bsize, tx_size, arg);
+    return;
+  }
   const uint8_t txw_unit = tx_size_wide_unit[tx_size];
   const uint8_t txh_unit = tx_size_high_unit[tx_size];
   const int step = txw_unit * txh_unit;
@@ -588,6 +592,8 @@ void av1_foreach_transformed_block_in_plane(
       }
     }
   }
+  // Check if visit() is invoked at least once.
+  assert(i >= 1);
 }
 
 typedef struct encode_block_pass1_args {

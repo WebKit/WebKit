@@ -45,11 +45,11 @@ if(ANDROID_ABI MATCHES "^armeabi")
 endif()
 
 if(ANDROID_ABI MATCHES "^arm")
-  set(AS_EXECUTABLE as)
+  set(CMAKE_ASM_COMPILER as)
   # No runtime cpu detect for arm targets.
   set(CONFIG_RUNTIME_CPU_DETECT 0 CACHE STRING "")
 elseif(ANDROID_ABI MATCHES "^x86")
-  set(AS_EXECUTABLE yasm)
+  set(CMAKE_ASM_NASM_COMPILER yasm)
 endif()
 
 set(CMAKE_SYSTEM_NAME "Android")

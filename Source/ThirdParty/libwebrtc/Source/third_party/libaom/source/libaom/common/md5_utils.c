@@ -150,10 +150,17 @@ void MD5Final(md5byte digest[16], struct MD5Context *ctx) {
 #define AOM_NO_UNSIGNED_OVERFLOW_CHECK \
   __attribute__((no_sanitize("unsigned-integer-overflow")))
 #endif
-#endif
+#if __clang_major__ >= 12
+#define VPX_NO_UNSIGNED_SHIFT_CHECK \
+  __attribute__((no_sanitize("unsigned-shift-base")))
+#endif  // __clang__ >= 12
+#endif  // __clang__
 
 #ifndef AOM_NO_UNSIGNED_OVERFLOW_CHECK
 #define AOM_NO_UNSIGNED_OVERFLOW_CHECK
+#endif
+#ifndef AOM_NO_UNSIGNED_SHIFT_CHECK
+#define AOM_NO_UNSIGNED_SHIFT_CHECK
 #endif
 
 /*
@@ -161,8 +168,8 @@ void MD5Final(md5byte digest[16], struct MD5Context *ctx) {
  * reflect the addition of 16 longwords of new data.  MD5Update blocks
  * the data and converts bytes into longwords for this routine.
  */
-AOM_NO_UNSIGNED_OVERFLOW_CHECK void MD5Transform(UWORD32 buf[4],
-                                                 UWORD32 const in[16]) {
+AOM_NO_UNSIGNED_OVERFLOW_CHECK AOM_NO_UNSIGNED_SHIFT_CHECK void MD5Transform(
+    UWORD32 buf[4], UWORD32 const in[16]) {
   register UWORD32 a, b, c, d;
 
   a = buf[0];
@@ -245,5 +252,6 @@ AOM_NO_UNSIGNED_OVERFLOW_CHECK void MD5Transform(UWORD32 buf[4],
 }
 
 #undef AOM_NO_UNSIGNED_OVERFLOW_CHECK
+#undef AOM_NO_UNSIGNED_SHIFT_CHECK
 
 #endif

@@ -9,6 +9,8 @@
  * PATENTS file, you can obtain it at www.aomedia.org/license/patent.
  */
 
+#include <cstdlib>
+
 #include "test/codec_factory.h"
 #include "test/encode_test_driver.h"
 #include "test/i420_video_source.h"
@@ -84,7 +86,7 @@ class CpuUsedFirstpassTest
     first_pass_cpu_used_ = GET_PARAM(1);
     if (first_pass_cpu_used_ == second_pass_cpu_used_) return;
     ASSERT_NO_FATAL_FAILURE(RunLoop(&video));
-    psnr_diff = abs(ref_psnr - GetAveragePsnr());
+    psnr_diff = std::abs(ref_psnr - GetAveragePsnr());
     EXPECT_LT(psnr_diff, GetPsnrDiffThreshold())
         << "first pass cpu used = " << first_pass_cpu_used_
         << ", second pass cpu used = " << second_pass_cpu_used_;

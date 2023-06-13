@@ -58,8 +58,8 @@ static void dec_set_mb_mi(CommonModeInfoParams *mi_params, int width,
   mi_params->mi_rows = aligned_height >> MI_SIZE_LOG2;
   mi_params->mi_stride = calc_mi_size(mi_params->mi_cols);
 
-  mi_params->mb_cols = (mi_params->mi_cols + 2) >> 2;
-  mi_params->mb_rows = (mi_params->mi_rows + 2) >> 2;
+  mi_params->mb_cols = ROUND_POWER_OF_TWO(mi_params->mi_cols, 2);
+  mi_params->mb_rows = ROUND_POWER_OF_TWO(mi_params->mi_rows, 2);
   mi_params->MBs = mi_params->mb_rows * mi_params->mb_cols;
 
   mi_params->mi_alloc_bsize = BLOCK_4X4;
@@ -183,10 +183,12 @@ void av1_decoder_remove(AV1Decoder *pbi) {
   aom_free(pbi->lf_worker.data1);
 
   if (pbi->thread_data) {
-    for (int worker_idx = 1; worker_idx < pbi->max_threads; worker_idx++) {
+    for (int worker_idx = 1; worker_idx < pbi->num_workers; worker_idx++) {
       DecWorkerData *const thread_data = pbi->thread_data + worker_idx;
-      av1_free_mc_tmp_buf(thread_data->td);
-      aom_free(thread_data->td);
+      if (thread_data->td != NULL) {
+        av1_free_mc_tmp_buf(thread_data->td);
+        aom_free(thread_data->td);
+      }
     }
     aom_free(pbi->thread_data);
   }
@@ -225,6 +227,7 @@ void av1_decoder_remove(AV1Decoder *pbi) {
 #endif
   av1_free_mc_tmp_buf(&pbi->td);
   aom_img_metadata_array_free(pbi->metadata);
+  av1_remove_common(&pbi->common);
   aom_free(pbi);
 }
 

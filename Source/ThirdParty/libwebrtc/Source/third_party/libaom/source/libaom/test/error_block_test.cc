@@ -288,14 +288,6 @@ INSTANTIATE_TEST_SUITE_P(AVX2, ErrorBlockTest,
                          ::testing::ValuesIn(kErrorBlockTestParamsAvx2));
 #endif  // HAVE_AVX2
 
-#if (HAVE_MSA)
-INSTANTIATE_TEST_SUITE_P(
-    MSA, ErrorBlockTest,
-    ::testing::Values(make_tuple(&BlockError8BitWrapper<av1_block_error_msa>,
-                                 &BlockError8BitWrapper<av1_block_error_c>,
-                                 AOM_BITS_8)));
-#endif  // HAVE_MSA
-
 #if (HAVE_NEON)
 const ErrorBlockParam kErrorBlockTestParamsNeon[] = {
   make_tuple(&BlockError8BitWrapper<av1_block_error_neon>,

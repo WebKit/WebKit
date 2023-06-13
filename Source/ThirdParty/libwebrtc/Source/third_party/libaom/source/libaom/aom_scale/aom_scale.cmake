@@ -20,19 +20,11 @@ list(APPEND AOM_SCALE_SOURCES "${AOM_ROOT}/aom_scale/aom_scale.h"
             "${AOM_ROOT}/aom_scale/generic/yv12extend.c"
             "${AOM_ROOT}/aom_scale/yv12config.h")
 
-list(APPEND AOM_SCALE_INTRIN_DSPR2
-            "${AOM_ROOT}/aom_scale/mips/dspr2/yv12extend_dspr2.c")
-
 # Creates the aom_scale build target and makes libaom depend on it. The libaom
 # target must exist before this function is called.
 function(setup_aom_scale_targets)
   add_library(aom_scale OBJECT ${AOM_SCALE_SOURCES})
   target_sources(aom PRIVATE $<TARGET_OBJECTS:aom_scale>)
-
-  if(HAVE_DSPR2)
-    add_intrinsics_object_library("" "dspr2" "aom_scale"
-                                  "AOM_SCALE_INTRIN_DSPR2")
-  endif()
 
   target_sources(aom PRIVATE $<TARGET_OBJECTS:aom_scale>)
   if(BUILD_SHARED_LIBS)

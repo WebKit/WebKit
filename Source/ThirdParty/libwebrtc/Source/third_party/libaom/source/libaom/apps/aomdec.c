@@ -9,7 +9,6 @@
  * PATENTS file, you can obtain it at www.aomedia.org/license/patent.
  */
 
-#include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
@@ -118,10 +117,18 @@ static const arg_def_t *all_args[] = {
 };
 
 #if CONFIG_LIBYUV
-static INLINE int libyuv_scale(aom_image_t *src, aom_image_t *dst,
+// Returns 0 on success and returns -1 on failure.
+static INLINE int libyuv_scale(const aom_image_t *src, aom_image_t *dst,
                                FilterModeEnum mode) {
+  if (src->fmt != dst->fmt) {
+    fprintf(stderr,
+            "%s failed to scale output frame because format changed from %s to "
+            "%s\n",
+            exec_name, image_format_to_string(dst->fmt),
+            image_format_to_string(src->fmt));
+    return -1;
+  }
   if (src->fmt == AOM_IMG_FMT_I42016) {
-    assert(dst->fmt == AOM_IMG_FMT_I42016);
     return I420Scale_16(
         (uint16_t *)src->planes[AOM_PLANE_Y], src->stride[AOM_PLANE_Y] / 2,
         (uint16_t *)src->planes[AOM_PLANE_U], src->stride[AOM_PLANE_U] / 2,
@@ -131,15 +138,18 @@ static INLINE int libyuv_scale(aom_image_t *src, aom_image_t *dst,
         dst->stride[AOM_PLANE_U] / 2, (uint16_t *)dst->planes[AOM_PLANE_V],
         dst->stride[AOM_PLANE_V] / 2, dst->d_w, dst->d_h, mode);
   }
-  assert(src->fmt == AOM_IMG_FMT_I420);
-  assert(dst->fmt == AOM_IMG_FMT_I420);
-  return I420Scale(src->planes[AOM_PLANE_Y], src->stride[AOM_PLANE_Y],
-                   src->planes[AOM_PLANE_U], src->stride[AOM_PLANE_U],
-                   src->planes[AOM_PLANE_V], src->stride[AOM_PLANE_V], src->d_w,
-                   src->d_h, dst->planes[AOM_PLANE_Y], dst->stride[AOM_PLANE_Y],
-                   dst->planes[AOM_PLANE_U], dst->stride[AOM_PLANE_U],
-                   dst->planes[AOM_PLANE_V], dst->stride[AOM_PLANE_V], dst->d_w,
-                   dst->d_h, mode);
+  if (src->fmt == AOM_IMG_FMT_I420) {
+    return I420Scale(src->planes[AOM_PLANE_Y], src->stride[AOM_PLANE_Y],
+                     src->planes[AOM_PLANE_U], src->stride[AOM_PLANE_U],
+                     src->planes[AOM_PLANE_V], src->stride[AOM_PLANE_V],
+                     src->d_w, src->d_h, dst->planes[AOM_PLANE_Y],
+                     dst->stride[AOM_PLANE_Y], dst->planes[AOM_PLANE_U],
+                     dst->stride[AOM_PLANE_U], dst->planes[AOM_PLANE_V],
+                     dst->stride[AOM_PLANE_V], dst->d_w, dst->d_h, mode);
+  }
+  fprintf(stderr, "%s cannot scale output frame of format %s\n", exec_name,
+          image_format_to_string(src->fmt));
+  return -1;
 }
 #endif
 
@@ -181,13 +191,15 @@ void usage_exit(void) {
   exit(EXIT_FAILURE);
 }
 
-static int raw_read_frame(FILE *infile, uint8_t **buffer, size_t *bytes_read,
-                          size_t *buffer_size) {
-  char raw_hdr[RAW_FRAME_HDR_SZ];
+static int raw_read_frame(struct AvxInputContext *input_ctx, uint8_t **buffer,
+                          size_t *bytes_read, size_t *buffer_size) {
+  unsigned char raw_hdr[RAW_FRAME_HDR_SZ];
   size_t frame_size = 0;
 
-  if (fread(raw_hdr, RAW_FRAME_HDR_SZ, 1, infile) != 1) {
-    if (!feof(infile)) aom_tools_warn("Failed to read RAW frame size\n");
+  if (read_from_input(input_ctx, RAW_FRAME_HDR_SZ, raw_hdr) !=
+      RAW_FRAME_HDR_SZ) {
+    if (!input_eof(input_ctx))
+      aom_tools_warn("Failed to read RAW frame size\n");
   } else {
     const size_t kCorruptFrameThreshold = 256 * 1024 * 1024;
     const size_t kFrameTooSmallThreshold = 256 * 1024;
@@ -217,8 +229,8 @@ static int raw_read_frame(FILE *infile, uint8_t **buffer, size_t *bytes_read,
     }
   }
 
-  if (!feof(infile)) {
-    if (fread(*buffer, 1, frame_size, infile) != frame_size) {
+  if (!input_eof(input_ctx)) {
+    if (read_from_input(input_ctx, frame_size, *buffer) != frame_size) {
       aom_tools_warn("Failed to read full frame\n");
       return 1;
     }
@@ -237,10 +249,10 @@ static int read_frame(struct AvxDecInputContext *input, uint8_t **buf,
                              buffer_size);
 #endif
     case FILE_TYPE_RAW:
-      return raw_read_frame(input->aom_input_ctx->file, buf, bytes_in_buffer,
+      return raw_read_frame(input->aom_input_ctx, buf, bytes_in_buffer,
                             buffer_size);
     case FILE_TYPE_IVF:
-      return ivf_read_frame(input->aom_input_ctx->file, buf, bytes_in_buffer,
+      return ivf_read_frame(input->aom_input_ctx, buf, bytes_in_buffer,
                             buffer_size, NULL);
     case FILE_TYPE_OBU:
       return obudec_read_temporal_unit(input->obu_ctx, buf, bytes_in_buffer,
@@ -255,7 +267,7 @@ static int file_is_raw(struct AvxInputContext *input) {
   aom_codec_stream_info_t si;
   memset(&si, 0, sizeof(si));
 
-  if (fread(buf, 1, 32, input->file) == 32) {
+  if (buffer_input(input, 32, buf, /*buffered=*/true) == 32) {
     int i;
 
     if (mem_get_le32(buf) < 256 * 1024 * 1024) {
@@ -274,7 +286,7 @@ static int file_is_raw(struct AvxInputContext *input) {
     }
   }
 
-  rewind(input->file);
+  rewind_detect(input);
   return is_raw;
 }
 
@@ -599,11 +611,13 @@ static int main_loop(int argc, const char **argv_) {
     fprintf(stderr, "No input file specified!\n");
     usage_exit();
   }
+
+  const bool using_file = strcmp(fn, "-") != 0;
   /* Open file */
-  infile = strcmp(fn, "-") ? fopen(fn, "rb") : set_binary_mode(stdin);
+  infile = using_file ? fopen(fn, "rb") : set_binary_mode(stdin);
 
   if (!infile) {
-    fatal("Failed to open input file '%s'", strcmp(fn, "-") ? fn : "stdin");
+    fatal("Failed to open input file '%s'", using_file ? fn : "stdin");
   }
 #if CONFIG_OS_SUPPORT
   /* Make sure we don't dump to the terminal, unless forced to with -o - */
@@ -617,21 +631,30 @@ static int main_loop(int argc, const char **argv_) {
 #endif
   input.aom_input_ctx->filename = fn;
   input.aom_input_ctx->file = infile;
-  if (file_is_ivf(input.aom_input_ctx)) {
-    input.aom_input_ctx->file_type = FILE_TYPE_IVF;
-    is_ivf = 1;
-  }
+
+  // TODO(https://crbug.com/aomedia/1706): webm type does not support reading
+  // from stdin yet, and file_is_webm is not using the detect buffer when
+  // determining the type. Therefore it should only be checked when using a file
+  // and needs to be checked prior to other types.
+  if (false) {
 #if CONFIG_WEBM_IO
-  else if (file_is_webm(input.webm_ctx, input.aom_input_ctx))
+  } else if (using_file && file_is_webm(input.webm_ctx, input.aom_input_ctx)) {
     input.aom_input_ctx->file_type = FILE_TYPE_WEBM;
 #endif
-  else if (file_is_obu(&obu_ctx))
+  } else if (file_is_ivf(input.aom_input_ctx)) {
+    input.aom_input_ctx->file_type = FILE_TYPE_IVF;
+    is_ivf = 1;
+  } else if (file_is_obu(&obu_ctx)) {
     input.aom_input_ctx->file_type = FILE_TYPE_OBU;
-  else if (file_is_raw(input.aom_input_ctx))
+  } else if (file_is_raw(input.aom_input_ctx)) {
     input.aom_input_ctx->file_type = FILE_TYPE_RAW;
-  else {
+  } else {
     fprintf(stderr, "Unrecognized input file type.\n");
-#if !CONFIG_WEBM_IO
+#if CONFIG_WEBM_IO
+    if (!using_file) {
+      fprintf(stderr, "aomdec does not support piped WebM input.\n");
+    }
+#else
     fprintf(stderr, "aomdec was built without WebM container support.\n");
 #endif
     free(argv);
@@ -865,7 +888,7 @@ static int main_loop(int argc, const char **argv_) {
 
           if (img->d_w != scaled_img->d_w || img->d_h != scaled_img->d_h) {
 #if CONFIG_LIBYUV
-            libyuv_scale(img, scaled_img, kFilterBox);
+            if (libyuv_scale(img, scaled_img, kFilterBox) != 0) goto fail;
             img = scaled_img;
 #else
             fprintf(

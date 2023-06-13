@@ -131,4 +131,11 @@ INSTANTIATE_TEST_SUITE_P(
                        ::testing::ValuesIn(kValidBlockSize)));
 #endif
 
+#if HAVE_ARM_CRC32
+INSTANTIATE_TEST_SUITE_P(
+    ARM_CRC32, AV1Crc32cHashTest,
+    ::testing::Combine(::testing::Values(&av1_get_crc32c_value_arm_crc32),
+                       ::testing::ValuesIn(kValidBlockSize)));
+#endif
+
 }  // namespace

@@ -20,11 +20,11 @@
 
 void av1_txb_init_levels_sse4_1(const tran_low_t *const coeff, const int width,
                                 const int height, uint8_t *const levels) {
-  const int stride = width + TX_PAD_HOR;
+  const int stride = height + TX_PAD_HOR;
   const __m128i zeros = _mm_setzero_si128();
 
   const int32_t bottom_len = sizeof(*levels) * (TX_PAD_BOTTOM * stride);
-  uint8_t *bottom_buf = levels + stride * height;
+  uint8_t *bottom_buf = levels + stride * width;
   uint8_t *bottom_buf_end = bottom_buf + bottom_len;
   do {
     _mm_storeu_si128((__m128i *)(bottom_buf), zeros);
@@ -34,7 +34,7 @@ void av1_txb_init_levels_sse4_1(const tran_low_t *const coeff, const int width,
   int i = 0;
   uint8_t *ls = levels;
   const tran_low_t *cf = coeff;
-  if (width == 4) {
+  if (height == 4) {
     do {
       const __m128i coeffA = xx_loadu_128(cf);
       const __m128i coeffB = xx_loadu_128(cf + 4);
@@ -44,10 +44,10 @@ void av1_txb_init_levels_sse4_1(const tran_low_t *const coeff, const int width,
       const __m128i lsAB = _mm_unpacklo_epi32(absAB8, zeros);
       xx_storeu_128(ls, lsAB);
       ls += (stride << 1);
-      cf += (width << 1);
+      cf += (height << 1);
       i += 2;
-    } while (i < height);
-  } else if (width == 8) {
+    } while (i < width);
+  } else if (height == 8) {
     do {
       const __m128i coeffA = xx_loadu_128(cf);
       const __m128i coeffB = xx_loadu_128(cf + 4);
@@ -56,9 +56,9 @@ void av1_txb_init_levels_sse4_1(const tran_low_t *const coeff, const int width,
       const __m128i absAB8 = _mm_packs_epi16(absAB, zeros);
       xx_storeu_128(ls, absAB8);
       ls += stride;
-      cf += width;
+      cf += height;
       i += 1;
-    } while (i < height);
+    } while (i < width);
   } else {
     do {
       int j = 0;
@@ -75,10 +75,10 @@ void av1_txb_init_levels_sse4_1(const tran_low_t *const coeff, const int width,
         xx_storeu_128(ls + j, absABCD);
         j += 16;
         cf += 16;
-      } while (j < width);
-      *(int32_t *)(ls + width) = 0;
+      } while (j < height);
+      *(int32_t *)(ls + height) = 0;
       ls += stride;
       i += 1;
-    } while (i < height);
+    } while (i < width);
   }
 }

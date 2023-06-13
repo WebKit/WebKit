@@ -76,7 +76,7 @@ static void idct4_w4_sse2(const __m128i *input, __m128i *output) {
   btf_16_adds_subs_out_sse2(output[1], output[2], x[1], x[2]);
 }
 
-static void idct8_low1_ssse3(const __m128i *input, __m128i *output) {
+void av1_idct8_low1_ssse3(const __m128i *input, __m128i *output) {
   const int32_t *cospi = cospi_arr(INV_COS_BIT);
 
   // stage 1
@@ -99,7 +99,7 @@ static void idct8_low1_ssse3(const __m128i *input, __m128i *output) {
   output[4] = x[0];
 }
 
-static void idct8_sse2(const __m128i *input, __m128i *output) {
+void av1_idct8_sse2(const __m128i *input, __m128i *output) {
   const int8_t cos_bit = INV_COS_BIT;
   const int32_t *cospi = cospi_arr(INV_COS_BIT);
   const __m128i __rounding = _mm_set1_epi32(1 << (INV_COS_BIT - 1));
@@ -1698,7 +1698,7 @@ static void iadst4_w4_sse2(const __m128i *input, __m128i *output) {
   }
 }
 
-static void iadst8_low1_ssse3(const __m128i *input, __m128i *output) {
+void av1_iadst8_low1_ssse3(const __m128i *input, __m128i *output) {
   const int8_t cos_bit = INV_COS_BIT;
   const int32_t *cospi = cospi_arr(INV_COS_BIT);
   const __m128i __zero = _mm_setzero_si128();
@@ -1744,7 +1744,7 @@ static void iadst8_low1_ssse3(const __m128i *input, __m128i *output) {
   output[7] = _mm_subs_epi16(__zero, x[1]);
 }
 
-static void iadst8_sse2(const __m128i *input, __m128i *output) {
+void av1_iadst8_sse2(const __m128i *input, __m128i *output) {
   const int8_t cos_bit = INV_COS_BIT;
   const int32_t *cospi = cospi_arr(INV_COS_BIT);
   const __m128i __zero = _mm_setzero_si128();
@@ -2246,7 +2246,7 @@ static INLINE void lowbd_write_buffer_4xn_sse2(__m128i *in, uint8_t *output,
   const int step = flipud ? -1 : 1;
   const __m128i zero = _mm_setzero_si128();
   for (int i = 0; i < height; ++i, j += step) {
-    const __m128i v = _mm_cvtsi32_si128(*((uint32_t *)(output + i * stride)));
+    const __m128i v = _mm_cvtsi32_si128(*((int *)(output + i * stride)));
     __m128i u = _mm_adds_epi16(in[j], _mm_unpacklo_epi8(v, zero));
     u = _mm_packus_epi16(u, zero);
     *((int *)(output + i * stride)) = _mm_cvtsi128_si32(u);
@@ -2269,7 +2269,7 @@ static INLINE void lowbd_write_buffer_8xn_sse2(__m128i *in, uint8_t *output,
 static const transform_1d_ssse3
     lowbd_txfm_all_1d_w8_arr[TX_SIZES][ITX_TYPES_1D] = {
       { idct4_sse2, iadst4_sse2, iidentity4_ssse3 },
-      { idct8_sse2, iadst8_sse2, iidentity8_sse2 },
+      { av1_idct8_sse2, av1_iadst8_sse2, iidentity8_sse2 },
       { idct16_sse2, iadst16_sse2, iidentity16_ssse3 },
       { idct32_sse2, NULL, NULL },
       { idct64_low32_ssse3, NULL, NULL },
@@ -2284,8 +2284,8 @@ static const transform_1d_ssse3
           { iadst4_sse2, iadst4_sse2, NULL, NULL },
           { iidentity4_ssse3, iidentity4_ssse3, NULL, NULL },
       },
-      { { idct8_low1_ssse3, idct8_sse2, NULL, NULL },
-        { iadst8_low1_ssse3, iadst8_sse2, NULL, NULL },
+      { { av1_idct8_low1_ssse3, av1_idct8_sse2, NULL, NULL },
+        { av1_iadst8_low1_ssse3, av1_iadst8_sse2, NULL, NULL },
         { iidentity8_sse2, iidentity8_sse2, NULL, NULL } },
       {
           { idct16_low1_ssse3, idct16_low8_ssse3, idct16_sse2, NULL },
@@ -2382,24 +2382,27 @@ static INLINE void iidentity_col_8xn_ssse3(uint8_t *output, int stride,
   }
 }
 
-static INLINE void lowbd_inv_txfm2d_add_idtx_ssse3(const int32_t *input,
-                                                   uint8_t *output, int stride,
-                                                   TX_SIZE tx_size) {
+void av1_lowbd_inv_txfm2d_add_idtx_ssse3(const int32_t *input, uint8_t *output,
+                                         int stride, TX_SIZE tx_size) {
   const int8_t *shift = av1_inv_txfm_shift_ls[tx_size];
   const int txw_idx = get_txw_idx(tx_size);
   const int txh_idx = get_txh_idx(tx_size);
   const int txfm_size_col = tx_size_wide[tx_size];
   const int txfm_size_row = tx_size_high[tx_size];
-  const int input_stride = AOMMIN(32, txfm_size_col);
+  const int col_max = AOMMIN(32, txfm_size_col);
   const int row_max = AOMMIN(32, txfm_size_row);
+  const int input_stride = row_max;
   const int rect_type = get_rect_tx_log_ratio(txfm_size_col, txfm_size_row);
-  __m128i buf[32];
 
-  for (int i = 0; i < (input_stride >> 3); ++i) {
-    iidentity_row_8xn_ssse3(buf, input + 8 * i, input_stride, shift[0], row_max,
-                            txw_idx, rect_type);
-    iidentity_col_8xn_ssse3(output + 8 * i, stride, buf, shift[1], row_max,
-                            txh_idx);
+  for (int i = 0; i < (col_max >> 3); ++i) {
+    for (int j = 0; j < (row_max >> 3); j++) {
+      __m128i buf[8];
+      iidentity_row_8xn_ssse3(buf, input + j * 8 + i * 8 * input_stride,
+                              row_max, shift[0], 8, txw_idx, rect_type);
+      transpose_16bit_8x8(buf, buf);
+      iidentity_col_8xn_ssse3(output + i * 8 + j * 8 * stride, stride, buf,
+                              shift[1], 8, txh_idx);
+    }
   }
 }
 
@@ -2424,8 +2427,7 @@ static void lowbd_inv_txfm2d_add_4x4_ssse3(const int32_t *input,
 
   int ud_flip, lr_flip;
   get_flip_cfg(tx_type, &ud_flip, &lr_flip);
-  load_buffer_32bit_to_16bit_w4(input, txfm_size_col, buf, txfm_size_row);
-  transpose_16bit_4x4(buf, buf);
+  load_buffer_32bit_to_16bit_w4(input, txfm_size_row, buf, txfm_size_col);
   row_txfm(buf, buf);
   if (lr_flip) {
     __m128i temp[4];
@@ -2481,9 +2483,9 @@ static INLINE void lowbd_inv_txfm2d_add_no_identity_ssse3(
   const int txfm_size_col = tx_size_wide[tx_size];
   const int txfm_size_row = tx_size_high[tx_size];
   const int buf_size_w_div8 = txfm_size_col >> 3;
-  const int buf_size_nonzero_w_div8 = (eobx + 8) >> 3;
+  const int buf_size_nonzero_w = ((eobx + 8) >> 3) << 3;
   const int buf_size_nonzero_h_div8 = (eoby + 8) >> 3;
-  const int input_stride = AOMMIN(32, txfm_size_col);
+  const int input_stride = AOMMIN(32, txfm_size_row);
   const int rect_type = get_rect_tx_log_ratio(txfm_size_col, txfm_size_row);
 
   const int fun_idx_x = lowbd_txfm_all_1d_zeros_idx[eobx];
@@ -2499,14 +2501,10 @@ static INLINE void lowbd_inv_txfm2d_add_no_identity_ssse3(
   get_flip_cfg(tx_type, &ud_flip, &lr_flip);
   for (int i = 0; i < buf_size_nonzero_h_div8; i++) {
     __m128i buf0[64];
-    const int32_t *input_row = input + i * input_stride * 8;
-    for (int j = 0; j < buf_size_nonzero_w_div8; ++j) {
-      __m128i *buf0_cur = buf0 + j * 8;
-      load_buffer_32bit_to_16bit(input_row + j * 8, input_stride, buf0_cur, 8);
-      transpose_16bit_8x8(buf0_cur, buf0_cur);
-    }
+    load_buffer_32bit_to_16bit(input + 8 * i, input_stride, buf0,
+                               buf_size_nonzero_w);
     if (rect_type == 1 || rect_type == -1) {
-      round_shift_ssse3(buf0, buf0, input_stride);  // rect special code
+      round_shift_ssse3(buf0, buf0, buf_size_nonzero_w);  // rect special code
     }
     row_txfm(buf0, buf0);
     round_shift_16bit_ssse3(buf0, txfm_size_col, shift[0]);
@@ -2540,9 +2538,10 @@ static INLINE void lowbd_inv_txfm2d_add_no_identity_ssse3(
   }
 }
 
-static INLINE void lowbd_inv_txfm2d_add_h_identity_ssse3(
-    const int32_t *input, uint8_t *output, int stride, TX_TYPE tx_type,
-    TX_SIZE tx_size, int eob) {
+void av1_lowbd_inv_txfm2d_add_h_identity_ssse3(const int32_t *input,
+                                               uint8_t *output, int stride,
+                                               TX_TYPE tx_type, TX_SIZE tx_size,
+                                               int eob) {
   const int8_t *shift = av1_inv_txfm_shift_ls[tx_size];
   int eobx, eoby;
   get_eobx_eoby_scan_h_identity(&eobx, &eoby, tx_size, eob);
@@ -2551,7 +2550,8 @@ static INLINE void lowbd_inv_txfm2d_add_h_identity_ssse3(
   const int txfm_size_col = tx_size_wide[tx_size];
   const int txfm_size_row = tx_size_high[tx_size];
   const int buf_size_w_div8 = (eobx + 8) >> 3;
-  const int input_stride = AOMMIN(32, txfm_size_col);
+  const int buf_size_h_div8 = (eoby + 8) >> 3;
+  const int input_stride = AOMMIN(32, txfm_size_row);
   const int rect_type = get_rect_tx_log_ratio(txfm_size_col, txfm_size_row);
 
   const int fun_idx = lowbd_txfm_all_1d_zeros_idx[eoby];
@@ -2565,8 +2565,13 @@ static INLINE void lowbd_inv_txfm2d_add_h_identity_ssse3(
   get_flip_cfg(tx_type, &ud_flip, &lr_flip);
   for (int i = 0; i < buf_size_w_div8; i++) {
     __m128i buf0[64];
-    iidentity_row_8xn_ssse3(buf0, input + 8 * i, input_stride, shift[0],
-                            eoby + 1, txw_idx, rect_type);
+    for (int j = 0; j < buf_size_h_div8; j++) {
+      __m128i *buf0_cur = buf0 + j * 8;
+      const int32_t *input_cur = input + i * 8 * input_stride + j * 8;
+      iidentity_row_8xn_ssse3(buf0_cur, input_cur, input_stride, shift[0], 8,
+                              txw_idx, rect_type);
+      transpose_16bit_8x8(buf0_cur, buf0_cur);
+    }
     col_txfm(buf0, buf0);
     __m128i mshift = _mm_set1_epi16(1 << (15 + shift[1]));
     int k = ud_flip ? (txfm_size_row - 1) : 0;
@@ -2582,9 +2587,10 @@ static INLINE void lowbd_inv_txfm2d_add_h_identity_ssse3(
   }
 }
 
-static INLINE void lowbd_inv_txfm2d_add_v_identity_ssse3(
-    const int32_t *input, uint8_t *output, int stride, TX_TYPE tx_type,
-    TX_SIZE tx_size, int eob) {
+void av1_lowbd_inv_txfm2d_add_v_identity_ssse3(const int32_t *input,
+                                               uint8_t *output, int stride,
+                                               TX_TYPE tx_type, TX_SIZE tx_size,
+                                               int eob) {
   __m128i buf1[64];
   int eobx, eoby;
   get_eobx_eoby_scan_v_identity(&eobx, &eoby, tx_size, eob);
@@ -2594,8 +2600,9 @@ static INLINE void lowbd_inv_txfm2d_add_v_identity_ssse3(
   const int txfm_size_col = tx_size_wide[tx_size];
   const int txfm_size_row = tx_size_high[tx_size];
   const int buf_size_w_div8 = txfm_size_col >> 3;
+  const int buf_size_nonzero_w = ((eobx + 8) >> 3) << 3;
   const int buf_size_h_div8 = (eoby + 8) >> 3;
-  const int input_stride = AOMMIN(32, txfm_size_col);
+  const int input_stride = AOMMIN(32, txfm_size_row);
   const int rect_type = get_rect_tx_log_ratio(txfm_size_col, txfm_size_row);
 
   const int fun_idx = lowbd_txfm_all_1d_zeros_idx[eobx];
@@ -2607,14 +2614,10 @@ static INLINE void lowbd_inv_txfm2d_add_v_identity_ssse3(
   get_flip_cfg(tx_type, &ud_flip, &lr_flip);
   for (int i = 0; i < buf_size_h_div8; i++) {
     __m128i buf0[64];
-    const int32_t *input_row = input + i * input_stride * 8;
-    for (int j = 0; j < AOMMIN(4, buf_size_w_div8); ++j) {
-      __m128i *buf0_cur = buf0 + j * 8;
-      load_buffer_32bit_to_16bit(input_row + j * 8, input_stride, buf0_cur, 8);
-      transpose_16bit_8x8(buf0_cur, buf0_cur);
-    }
+    load_buffer_32bit_to_16bit(input + i * 8, input_stride, buf0,
+                               buf_size_nonzero_w);
     if (rect_type == 1 || rect_type == -1) {
-      round_shift_ssse3(buf0, buf0, input_stride);  // rect special code
+      round_shift_ssse3(buf0, buf0, buf_size_nonzero_w);  // rect special code
     }
     row_txfm(buf0, buf0);
     round_shift_16bit_ssse3(buf0, txfm_size_col, shift[0]);
@@ -2648,19 +2651,19 @@ static INLINE void lowbd_inv_txfm2d_add_universe_ssse3(
                                              tx_size, eob);
       break;
     case IDTX:
-      lowbd_inv_txfm2d_add_idtx_ssse3(input, output, stride, tx_size);
+      av1_lowbd_inv_txfm2d_add_idtx_ssse3(input, output, stride, tx_size);
       break;
     case V_DCT:
     case V_ADST:
     case V_FLIPADST:
-      lowbd_inv_txfm2d_add_h_identity_ssse3(input, output, stride, tx_type,
-                                            tx_size, eob);
+      av1_lowbd_inv_txfm2d_add_h_identity_ssse3(input, output, stride, tx_type,
+                                                tx_size, eob);
       break;
     case H_DCT:
     case H_ADST:
     case H_FLIPADST:
-      lowbd_inv_txfm2d_add_v_identity_ssse3(input, output, stride, tx_type,
-                                            tx_size, eob);
+      av1_lowbd_inv_txfm2d_add_v_identity_ssse3(input, output, stride, tx_type,
+                                                tx_size, eob);
       break;
     default:
       lowbd_inv_txfm2d_add_no_identity_ssse3(input, output, stride, tx_type,
@@ -2690,8 +2693,7 @@ static void lowbd_inv_txfm2d_add_4x8_ssse3(const int32_t *input,
 
   int ud_flip, lr_flip;
   get_flip_cfg(tx_type, &ud_flip, &lr_flip);
-  load_buffer_32bit_to_16bit_w4(input, txfm_size_col, buf, txfm_size_row);
-  transpose_16bit_4x8(buf, buf);
+  load_buffer_32bit_to_16bit(input, txfm_size_row, buf, txfm_size_col);
   round_shift_ssse3(buf, buf, txfm_size_col);  // rect special code
   row_txfm(buf, buf);
   // round_shift_16bit_ssse3(buf, txfm_size_col, shift[0]);// shift[0] is 0
@@ -2728,8 +2730,7 @@ static void lowbd_inv_txfm2d_add_8x4_ssse3(const int32_t *input,
 
   int ud_flip, lr_flip;
   get_flip_cfg(tx_type, &ud_flip, &lr_flip);
-  load_buffer_32bit_to_16bit(input, txfm_size_col, buf, txfm_size_row);
-  transpose_16bit_8x4(buf, buf);
+  load_buffer_32bit_to_16bit_w4(input, txfm_size_row, buf, txfm_size_col);
   round_shift_ssse3(buf, buf, txfm_size_col);  // rect special code
   row_txfm(buf, buf);
   // round_shift_16bit_ssse3(buf, txfm_size_col, shift[0]); // shift[0] is 0
@@ -2769,11 +2770,10 @@ static void lowbd_inv_txfm2d_add_4x16_ssse3(const int32_t *input,
 
   const int row_one_loop = 8;
   for (int i = 0; i < 2; ++i) {
-    const int32_t *input_cur = input + i * txfm_size_col * row_one_loop;
+    const int32_t *input_cur = input + i * row_one_loop;
     __m128i *buf_cur = buf + i * row_one_loop;
-    load_buffer_32bit_to_16bit_w4(input_cur, txfm_size_col, buf_cur,
-                                  row_one_loop);
-    transpose_16bit_4x8(buf_cur, buf_cur);
+    load_buffer_32bit_to_16bit(input_cur, txfm_size_row, buf_cur,
+                               txfm_size_col);
     if (row_txfm == iidentity4_ssse3) {
       const __m128i scale = pair_set_epi16(NewSqrt2, 3 << (NewSqrt2Bits - 1));
       const __m128i ones = _mm_set1_epi16(1);
@@ -2826,13 +2826,7 @@ static void lowbd_inv_txfm2d_add_16x4_ssse3(const int32_t *input,
   int ud_flip, lr_flip;
   get_flip_cfg(tx_type, &ud_flip, &lr_flip);
   const int row_one_loop = 8;
-  for (int i = 0; i < buf_size_w_div8; ++i) {
-    const int32_t *input_cur = input + i * row_one_loop;
-    __m128i *buf_cur = buf + i * row_one_loop;
-    load_buffer_32bit_to_16bit(input_cur, txfm_size_col, buf_cur,
-                               txfm_size_row);
-    transpose_16bit_8x4(buf_cur, buf_cur);
-  }
+  load_buffer_32bit_to_16bit_w4(input, txfm_size_row, buf, txfm_size_col);
   if (row_txfm == iidentity16_ssse3) {
     const __m128i scale = pair_set_epi16(2 * NewSqrt2, 3 << (NewSqrt2Bits - 1));
     const __m128i ones = _mm_set1_epi16(1);

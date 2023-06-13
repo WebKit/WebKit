@@ -238,6 +238,13 @@ INSTANTIATE_TEST_SUITE_P(SSE2, SumSquares1DTest,
 
 #endif  // HAVE_SSE2
 
+#if HAVE_NEON
+INSTANTIATE_TEST_SUITE_P(NEON, SumSquares1DTest,
+                         ::testing::Values(TestFuncs1D(
+                             aom_sum_squares_i16_c, aom_sum_squares_i16_neon)));
+
+#endif  // HAVE_NEON
+
 typedef int64_t (*sse_func)(const uint8_t *a, int a_stride, const uint8_t *b,
                             int b_stride, int width, int height);
 typedef libaom_test::FuncParam<sse_func> TestSSEFuncs;
@@ -708,6 +715,14 @@ INSTANTIATE_TEST_SUITE_P(AVX2, Lowbd2dVarTest,
 
 #endif  // HAVE_SSE2
 
+#if HAVE_NEON
+
+INSTANTIATE_TEST_SUITE_P(NEON, Lowbd2dVarTest,
+                         ::testing::Values(TestFuncVar2D(&aom_var_2d_u8_c,
+                                                         &aom_var_2d_u8_neon)));
+
+#endif  // HAVE_NEON
+
 class Highbd2dVarTest : public ::testing::TestWithParam<TestFuncVar2D> {
  public:
   virtual ~Highbd2dVarTest() {}
@@ -837,4 +852,12 @@ INSTANTIATE_TEST_SUITE_P(
     ::testing::Values(TestFuncVar2D(&aom_var_2d_u16_c, &aom_var_2d_u16_avx2)));
 
 #endif  // HAVE_SSE2
+
+#if HAVE_NEON
+
+INSTANTIATE_TEST_SUITE_P(
+    NEON, Highbd2dVarTest,
+    ::testing::Values(TestFuncVar2D(&aom_var_2d_u16_c, &aom_var_2d_u16_neon)));
+
+#endif  // HAVE_NEON
 }  // namespace

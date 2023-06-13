@@ -10,6 +10,7 @@
 #
 
 list(APPEND AOM_TEST_DATA_FILE_NAMES
+            "desktopqvga2.320_240.yuv"
             "desktop1.320_180.yuv"
             "hantro_collage_w176h144.yuv"
             "hantro_collage_w352h288.yuv"
@@ -37,9 +38,8 @@ list(APPEND AOM_TEST_DATA_FILE_NAMES
             "niklas_640_480_30.yuv"
             "vase10x10.yuv"
             "vase10x10_tiles.txt"
-            "firstpass_stats"
-            "tpl_stats"
-            "bus_352x288_420_f20_b8.yuv")
+            "bus_352x288_420_f20_b8.yuv"
+            "test_input_w1h1.yuv")
 
 if(ENABLE_DECODE_PERF_TESTS AND CONFIG_AV1_ENCODER)
   list(APPEND AOM_TEST_DATA_FILE_NAMES "niklas_1280_720_30.yuv")
@@ -519,6 +519,8 @@ if(CONFIG_AV1_DECODER)
               "av1-1-b8-05-mv.ivf.md5"
               "av1-1-b8-06-mfmv.ivf"
               "av1-1-b8-06-mfmv.ivf.md5"
+              "av1-1-b8-16-intra_only-intrabc-extreme-dv.ivf"
+              "av1-1-b8-16-intra_only-intrabc-extreme-dv.ivf.md5"
               "av1-1-b8-22-svc-L2T1.ivf"
               "av1-1-b8-22-svc-L2T1.ivf.md5"
               "av1-1-b8-22-svc-L1T2.ivf"
@@ -551,6 +553,7 @@ if(CONFIG_AV1_DECODER)
               "invalid-oss-fuzz-10705.ivf.res"
               "invalid-oss-fuzz-10723.ivf"
               "invalid-oss-fuzz-10723.ivf.res.2"
+              "invalid-oss-fuzz-10723.ivf.res.3"
               "invalid-oss-fuzz-10779.ivf"
               "invalid-oss-fuzz-10779.ivf.res"
               "invalid-oss-fuzz-11477.ivf"

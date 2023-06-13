@@ -53,12 +53,12 @@ std::ostream &operator<<(std::ostream &os, const TestVideoParam &test_arg) {
 
 const TestVideoParam kTestVideoVectors[] = {
   { "park_joy_90p_8_420.y4m", AOM_IMG_FMT_I420, AOM_BITS_8, 0, 5, 0, 25.3,
-    45.0 },
+    44.7 },
 #if CONFIG_AV1_HIGHBITDEPTH
   { "park_joy_90p_10_444.y4m", AOM_IMG_FMT_I44416, AOM_BITS_10, 1, 5, 0, 27.0,
-    48.0 },
+    46.8 },
 #endif
-  { "screendata.y4m", AOM_IMG_FMT_I420, AOM_BITS_8, 0, 4, 1, 23.0, 56.0 },
+  { "screendata.y4m", AOM_IMG_FMT_I420, AOM_BITS_8, 0, 4, 1, 23.0, 52.5 },
   // Image coding (single frame).
   { "niklas_1280_720_30.y4m", AOM_IMG_FMT_I420, AOM_BITS_8, 0, 1, 0, 32.0,
     49.0 },

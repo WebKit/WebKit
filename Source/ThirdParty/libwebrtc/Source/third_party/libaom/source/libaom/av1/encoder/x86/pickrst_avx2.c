@@ -19,179 +19,6 @@
 #include "av1/common/restoration.h"
 #include "av1/encoder/pickrst.h"
 
-static INLINE void acc_stat_avx2(int32_t *dst, const uint8_t *src,
-                                 const __m128i *shuffle, const __m256i *kl) {
-  const __m128i s = _mm_shuffle_epi8(xx_loadu_128(src), *shuffle);
-  const __m256i d0 = _mm256_madd_epi16(*kl, _mm256_cvtepu8_epi16(s));
-  const __m256i dst0 = yy_load_256(dst);
-  const __m256i r0 = _mm256_add_epi32(dst0, d0);
-  yy_store_256(dst, r0);
-}
-
-static INLINE void acc_stat_win7_one_line_avx2(
-    const uint8_t *dgd, const uint8_t *src, int h_start, int h_end,
-    int dgd_stride, const __m128i *shuffle, int32_t *sumX,
-    int32_t sumY[WIENER_WIN][WIENER_WIN], int32_t M_int[WIENER_WIN][WIENER_WIN],
-    int32_t H_int[WIENER_WIN2][WIENER_WIN * 8]) {
-  int j, k, l;
-  const int wiener_win = WIENER_WIN;
-  // Main loop handles two pixels at a time
-  // We can assume that h_start is even, since it will always be aligned to
-  // a tile edge + some number of restoration units, and both of those will
-  // be 64-pixel aligned.
-  // However, at the edge of the image, h_end may be odd, so we need to handle
-  // that case correctly.
-  assert(h_start % 2 == 0);
-  const int h_end_even = h_end & ~1;
-  const int has_odd_pixel = h_end & 1;
-  for (j = h_start; j < h_end_even; j += 2) {
-    const uint8_t X1 = src[j];
-    const uint8_t X2 = src[j + 1];
-    *sumX += X1 + X2;
-    const uint8_t *dgd_ij = dgd + j;
-    for (k = 0; k < wiener_win; k++) {
-      const uint8_t *dgd_ijk = dgd_ij + k * dgd_stride;
-      for (l = 0; l < wiener_win; l++) {
-        int32_t *H_ = &H_int[(l * wiener_win + k)][0];
-        const uint8_t D1 = dgd_ijk[l];
-        const uint8_t D2 = dgd_ijk[l + 1];
-        sumY[k][l] += D1 + D2;
-        M_int[k][l] += D1 * X1 + D2 * X2;
-
-        const __m256i kl =
-            _mm256_cvtepu8_epi16(_mm_set1_epi16(loadu_uint16(dgd_ijk + l)));
-        acc_stat_avx2(H_ + 0 * 8, dgd_ij + 0 * dgd_stride, shuffle, &kl);
-        acc_stat_avx2(H_ + 1 * 8, dgd_ij + 1 * dgd_stride, shuffle, &kl);
-        acc_stat_avx2(H_ + 2 * 8, dgd_ij + 2 * dgd_stride, shuffle, &kl);
-        acc_stat_avx2(H_ + 3 * 8, dgd_ij + 3 * dgd_stride, shuffle, &kl);
-        acc_stat_avx2(H_ + 4 * 8, dgd_ij + 4 * dgd_stride, shuffle, &kl);
-        acc_stat_avx2(H_ + 5 * 8, dgd_ij + 5 * dgd_stride, shuffle, &kl);
-        acc_stat_avx2(H_ + 6 * 8, dgd_ij + 6 * dgd_stride, shuffle, &kl);
-      }
-    }
-  }
-  // If the width is odd, add in the final pixel
-  if (has_odd_pixel) {
-    const uint8_t X1 = src[j];
-    *sumX += X1;
-    const uint8_t *dgd_ij = dgd + j;
-    for (k = 0; k < wiener_win; k++) {
-      const uint8_t *dgd_ijk = dgd_ij + k * dgd_stride;
-      for (l = 0; l < wiener_win; l++) {
-        int32_t *H_ = &H_int[(l * wiener_win + k)][0];
-        const uint8_t D1 = dgd_ijk[l];
-        sumY[k][l] += D1;
-        M_int[k][l] += D1 * X1;
-
-        // The `acc_stat_avx2` function wants its input to have interleaved
-        // copies of two pixels, but we only have one. However, the pixels
-        // are (effectively) used as inputs to a multiply-accumulate.
-        // So if we set the extra pixel slot to 0, then it is effectively
-        // ignored.
-        const __m256i kl = _mm256_cvtepu8_epi16(_mm_set1_epi16((uint16_t)D1));
-        acc_stat_avx2(H_ + 0 * 8, dgd_ij + 0 * dgd_stride, shuffle, &kl);
-        acc_stat_avx2(H_ + 1 * 8, dgd_ij + 1 * dgd_stride, shuffle, &kl);
-        acc_stat_avx2(H_ + 2 * 8, dgd_ij + 2 * dgd_stride, shuffle, &kl);
-        acc_stat_avx2(H_ + 3 * 8, dgd_ij + 3 * dgd_stride, shuffle, &kl);
-        acc_stat_avx2(H_ + 4 * 8, dgd_ij + 4 * dgd_stride, shuffle, &kl);
-        acc_stat_avx2(H_ + 5 * 8, dgd_ij + 5 * dgd_stride, shuffle, &kl);
-        acc_stat_avx2(H_ + 6 * 8, dgd_ij + 6 * dgd_stride, shuffle, &kl);
-      }
-    }
-  }
-}
-
-static INLINE void compute_stats_win7_opt_avx2(
-    const uint8_t *dgd, const uint8_t *src, int h_start, int h_end, int v_start,
-    int v_end, int dgd_stride, int src_stride, int64_t *M, int64_t *H,
-    int use_downsampled_wiener_stats) {
-  int i, j, k, l, m, n;
-  const int wiener_win = WIENER_WIN;
-  const int pixel_count = (h_end - h_start) * (v_end - v_start);
-  const int wiener_win2 = wiener_win * wiener_win;
-  const int wiener_halfwin = (wiener_win >> 1);
-  uint8_t avg = find_average(dgd, h_start, h_end, v_start, v_end, dgd_stride);
-
-  int32_t M_int32[WIENER_WIN][WIENER_WIN] = { { 0 } };
-  int64_t M_int64[WIENER_WIN][WIENER_WIN] = { { 0 } };
-  int32_t M_int32_row[WIENER_WIN][WIENER_WIN] = { { 0 } };
-
-  DECLARE_ALIGNED(32, int32_t,
-                  H_int32[WIENER_WIN2][WIENER_WIN * 8]) = { { 0 } };
-  DECLARE_ALIGNED(32, int32_t,
-                  H_int32_row[WIENER_WIN2][WIENER_WIN * 8]) = { { 0 } };
-  int64_t H_int64[WIENER_WIN2][WIENER_WIN * 8] = { { 0 } };
-  int32_t sumY[WIENER_WIN][WIENER_WIN] = { { 0 } };
-  int32_t sumX = 0;
-  const uint8_t *dgd_win = dgd - wiener_halfwin * dgd_stride - wiener_halfwin;
-  int downsample_factor =
-      use_downsampled_wiener_stats ? WIENER_STATS_DOWNSAMPLE_FACTOR : 1;
-  int32_t sumX_row = 0;
-  int32_t sumY_row[WIENER_WIN][WIENER_WIN] = { { 0 } };
-
-  const __m128i shuffle = xx_loadu_128(g_shuffle_stats_data);
-  for (j = v_start; j < v_end; j += 64) {
-    const int vert_end = AOMMIN(64, v_end - j) + j;
-    for (i = j; i < vert_end; i = i + downsample_factor) {
-      if (use_downsampled_wiener_stats &&
-          (vert_end - i < WIENER_STATS_DOWNSAMPLE_FACTOR)) {
-        downsample_factor = vert_end - i;
-      }
-      sumX_row = 0;
-      memset(sumY_row, 0, sizeof(int32_t) * WIENER_WIN * WIENER_WIN);
-      memset(M_int32_row, 0, sizeof(int32_t) * WIENER_WIN * WIENER_WIN);
-      memset(H_int32_row, 0, sizeof(int32_t) * WIENER_WIN2 * (WIENER_WIN * 8));
-      acc_stat_win7_one_line_avx2(
-          dgd_win + i * dgd_stride, src + i * src_stride, h_start, h_end,
-          dgd_stride, &shuffle, &sumX_row, sumY_row, M_int32_row, H_int32_row);
-      sumX += sumX_row * downsample_factor;
-
-      // Scale M matrix based on the downsampling factor
-      for (k = 0; k < wiener_win; ++k) {
-        for (l = 0; l < wiener_win; ++l) {
-          sumY[k][l] += (sumY_row[k][l] * downsample_factor);
-          M_int32[k][l] += (M_int32_row[k][l] * downsample_factor);
-        }
-      }
-      // Scale H matrix based on the downsampling factor
-      for (k = 0; k < WIENER_WIN2; ++k) {
-        for (l = 0; l < WIENER_WIN * 8; ++l) {
-          H_int32[k][l] += (H_int32_row[k][l] * downsample_factor);
-        }
-      }
-    }
-    for (k = 0; k < wiener_win; ++k) {
-      for (l = 0; l < wiener_win; ++l) {
-        M_int64[k][l] += M_int32[k][l];
-        M_int32[k][l] = 0;
-      }
-    }
-    for (k = 0; k < WIENER_WIN2; ++k) {
-      for (l = 0; l < WIENER_WIN * 8; ++l) {
-        H_int64[k][l] += H_int32[k][l];
-        H_int32[k][l] = 0;
-      }
-    }
-  }
-
-  const int64_t avg_square_sum = (int64_t)avg * (int64_t)avg * pixel_count;
-  for (k = 0; k < wiener_win; k++) {
-    for (l = 0; l < wiener_win; l++) {
-      const int32_t idx0 = l * wiener_win + k;
-      M[idx0] =
-          M_int64[k][l] + (avg_square_sum - (int64_t)avg * (sumX + sumY[k][l]));
-      int64_t *H_ = H + idx0 * wiener_win2;
-      int64_t *H_int_ = &H_int64[idx0][0];
-      for (m = 0; m < wiener_win; m++) {
-        for (n = 0; n < wiener_win; n++) {
-          H_[m * wiener_win + n] = H_int_[n * 8 + m] + avg_square_sum -
-                                   (int64_t)avg * (sumY[k][l] + sumY[n][m]);
-        }
-      }
-    }
-  }
-}
-
 #if CONFIG_AV1_HIGHBITDEPTH
 static INLINE void acc_stat_highbd_avx2(int64_t *dst, const uint16_t *dgd,
                                         const __m256i *shuffle,
@@ -260,7 +87,7 @@ static INLINE void acc_stat_highbd_win7_one_line_avx2(
 
         // Load two u16 values from dgd_ijkl combined as a u32,
         // then broadcast to 8x u32 slots of a 256
-        const __m256i dgd_ijkl = _mm256_set1_epi32(loadu_uint32(dgd_ijk + l));
+        const __m256i dgd_ijkl = _mm256_set1_epi32(loadu_int32(dgd_ijk + l));
         // dgd_ijkl = [y x y x y x y x] [y x y x y x y x] where each is a u16
 
         acc_stat_highbd_avx2(H_ + 0 * 8, dgd_ij + 0 * dgd_stride, shuffle,
@@ -297,7 +124,7 @@ static INLINE void acc_stat_highbd_win7_one_line_avx2(
         // interleaved copies of two pixels, but we only have one. However, the
         // pixels are (effectively) used as inputs to a multiply-accumulate. So
         // if we set the extra pixel slot to 0, then it is effectively ignored.
-        const __m256i dgd_ijkl = _mm256_set1_epi32((uint32_t)D1);
+        const __m256i dgd_ijkl = _mm256_set1_epi32((int)D1);
 
         acc_stat_highbd_avx2(H_ + 0 * 8, dgd_ij + 0 * dgd_stride, shuffle,
                              &dgd_ijkl);
@@ -408,7 +235,7 @@ static INLINE void acc_stat_highbd_win5_one_line_avx2(
 
         // Load two u16 values from dgd_ijkl combined as a u32,
         // then broadcast to 8x u32 slots of a 256
-        const __m256i dgd_ijkl = _mm256_set1_epi32(loadu_uint32(dgd_ijk + l));
+        const __m256i dgd_ijkl = _mm256_set1_epi32(loadu_int32(dgd_ijk + l));
         // dgd_ijkl = [x y x y x y x y] [x y x y x y x y] where each is a u16
 
         acc_stat_highbd_avx2(H_ + 0 * 8, dgd_ij + 0 * dgd_stride, shuffle,
@@ -441,7 +268,7 @@ static INLINE void acc_stat_highbd_win5_one_line_avx2(
         // interleaved copies of two pixels, but we only have one. However, the
         // pixels are (effectively) used as inputs to a multiply-accumulate. So
         // if we set the extra pixel slot to 0, then it is effectively ignored.
-        const __m256i dgd_ijkl = _mm256_set1_epi32((uint32_t)D1);
+        const __m256i dgd_ijkl = _mm256_set1_epi32((int)D1);
 
         acc_stat_highbd_avx2(H_ + 0 * 8, dgd_ij + 0 * dgd_stride, shuffle,
                              &dgd_ijkl);
@@ -537,188 +364,1173 @@ void av1_compute_stats_highbd_avx2(int wiener_win, const uint8_t *dgd8,
 }
 #endif  // CONFIG_AV1_HIGHBITDEPTH
 
-static INLINE void acc_stat_win5_one_line_avx2(
-    const uint8_t *dgd, const uint8_t *src, int h_start, int h_end,
-    int dgd_stride, const __m128i *shuffle, int32_t *sumX,
-    int32_t sumY[WIENER_WIN_CHROMA][WIENER_WIN_CHROMA],
-    int32_t M_int[WIENER_WIN_CHROMA][WIENER_WIN_CHROMA],
-    int32_t H_int[WIENER_WIN2_CHROMA][WIENER_WIN_CHROMA * 8]) {
-  int j, k, l;
-  const int wiener_win = WIENER_WIN_CHROMA;
-  // Main loop handles two pixels at a time
-  // We can assume that h_start is even, since it will always be aligned to
-  // a tile edge + some number of restoration units, and both of those will
-  // be 64-pixel aligned.
-  // However, at the edge of the image, h_end may be odd, so we need to handle
-  // that case correctly.
-  assert(h_start % 2 == 0);
-  const int h_end_even = h_end & ~1;
-  const int has_odd_pixel = h_end & 1;
-  for (j = h_start; j < h_end_even; j += 2) {
-    const uint8_t X1 = src[j];
-    const uint8_t X2 = src[j + 1];
-    *sumX += X1 + X2;
-    const uint8_t *dgd_ij = dgd + j;
-    for (k = 0; k < wiener_win; k++) {
-      const uint8_t *dgd_ijk = dgd_ij + k * dgd_stride;
-      for (l = 0; l < wiener_win; l++) {
-        int32_t *H_ = &H_int[(l * wiener_win + k)][0];
-        const uint8_t D1 = dgd_ijk[l];
-        const uint8_t D2 = dgd_ijk[l + 1];
-        sumY[k][l] += D1 + D2;
-        M_int[k][l] += D1 * X1 + D2 * X2;
+static INLINE void madd_and_accum_avx2(__m256i src, __m256i dgd, __m256i *sum) {
+  *sum = _mm256_add_epi32(*sum, _mm256_madd_epi16(src, dgd));
+}
 
-        const __m256i kl =
-            _mm256_cvtepu8_epi16(_mm_set1_epi16(loadu_uint16(dgd_ijk + l)));
-        acc_stat_avx2(H_ + 0 * 8, dgd_ij + 0 * dgd_stride, shuffle, &kl);
-        acc_stat_avx2(H_ + 1 * 8, dgd_ij + 1 * dgd_stride, shuffle, &kl);
-        acc_stat_avx2(H_ + 2 * 8, dgd_ij + 2 * dgd_stride, shuffle, &kl);
-        acc_stat_avx2(H_ + 3 * 8, dgd_ij + 3 * dgd_stride, shuffle, &kl);
-        acc_stat_avx2(H_ + 4 * 8, dgd_ij + 4 * dgd_stride, shuffle, &kl);
-      }
-    }
+static INLINE __m256i convert_and_add_avx2(__m256i src) {
+  const __m256i s0 = _mm256_cvtepi32_epi64(_mm256_castsi256_si128(src));
+  const __m256i s1 = _mm256_cvtepi32_epi64(_mm256_extracti128_si256(src, 1));
+  return _mm256_add_epi64(s0, s1);
+}
+
+static INLINE __m256i hadd_four_32_to_64_avx2(__m256i src0, __m256i src1,
+                                              __m256i *src2, __m256i *src3) {
+  // 00 01 10 11 02 03 12 13
+  const __m256i s_0 = _mm256_hadd_epi32(src0, src1);
+  // 20 21 30 31 22 23 32 33
+  const __m256i s_1 = _mm256_hadd_epi32(*src2, *src3);
+  // 00+01 10+11 20+21 30+31 02+03 12+13 22+23 32+33
+  const __m256i s_2 = _mm256_hadd_epi32(s_0, s_1);
+  return convert_and_add_avx2(s_2);
+}
+
+static INLINE __m128i add_64bit_lvl_avx2(__m256i src0, __m256i src1) {
+  // 00 10 02 12
+  const __m256i t0 = _mm256_unpacklo_epi64(src0, src1);
+  // 01 11 03 13
+  const __m256i t1 = _mm256_unpackhi_epi64(src0, src1);
+  // 00+01 10+11 02+03 12+13
+  const __m256i sum = _mm256_add_epi64(t0, t1);
+  // 00+01 10+11
+  const __m128i sum0 = _mm256_castsi256_si128(sum);
+  // 02+03 12+13
+  const __m128i sum1 = _mm256_extracti128_si256(sum, 1);
+  // 00+01+02+03 10+11+12+13
+  return _mm_add_epi64(sum0, sum1);
+}
+
+static INLINE __m128i convert_32_to_64_add_avx2(__m256i src0, __m256i src1) {
+  // 00 01 02 03
+  const __m256i s0 = convert_and_add_avx2(src0);
+  // 10 11 12 13
+  const __m256i s1 = convert_and_add_avx2(src1);
+  return add_64bit_lvl_avx2(s0, s1);
+}
+
+static INLINE int32_t calc_sum_of_register(__m256i src) {
+  const __m128i src_l = _mm256_castsi256_si128(src);
+  const __m128i src_h = _mm256_extracti128_si256(src, 1);
+  const __m128i sum = _mm_add_epi32(src_l, src_h);
+  const __m128i dst0 = _mm_add_epi32(sum, _mm_srli_si128(sum, 8));
+  const __m128i dst1 = _mm_add_epi32(dst0, _mm_srli_si128(dst0, 4));
+  return _mm_cvtsi128_si32(dst1);
+}
+
+static INLINE void transpose_64bit_4x4_avx2(const __m256i *const src,
+                                            __m256i *const dst) {
+  // Unpack 64 bit elements. Goes from:
+  // src[0]: 00 01 02 03
+  // src[1]: 10 11 12 13
+  // src[2]: 20 21 22 23
+  // src[3]: 30 31 32 33
+  // to:
+  // reg0:    00 10 02 12
+  // reg1:    20 30 22 32
+  // reg2:    01 11 03 13
+  // reg3:    21 31 23 33
+  const __m256i reg0 = _mm256_unpacklo_epi64(src[0], src[1]);
+  const __m256i reg1 = _mm256_unpacklo_epi64(src[2], src[3]);
+  const __m256i reg2 = _mm256_unpackhi_epi64(src[0], src[1]);
+  const __m256i reg3 = _mm256_unpackhi_epi64(src[2], src[3]);
+
+  // Unpack 64 bit elements resulting in:
+  // dst[0]: 00 10 20 30
+  // dst[1]: 01 11 21 31
+  // dst[2]: 02 12 22 32
+  // dst[3]: 03 13 23 33
+  dst[0] = _mm256_inserti128_si256(reg0, _mm256_castsi256_si128(reg1), 1);
+  dst[1] = _mm256_inserti128_si256(reg2, _mm256_castsi256_si128(reg3), 1);
+  dst[2] = _mm256_inserti128_si256(reg1, _mm256_extracti128_si256(reg0, 1), 0);
+  dst[3] = _mm256_inserti128_si256(reg3, _mm256_extracti128_si256(reg2, 1), 0);
+}
+
+// When we load 32 values of int8_t type and need less than 32 values for
+// processing, the below mask is used to make the extra values zero.
+static const int8_t mask_8bit[32] = {
+  -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,  // 16 bytes
+  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,   // 16 bytes
+};
+
+// When we load 16 values of int16_t type and need less than 16 values for
+// processing, the below mask is used to make the extra values zero.
+static const int16_t mask_16bit[32] = {
+  -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,  // 16 bytes
+  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,   // 16 bytes
+};
+
+static INLINE uint8_t calc_dgd_buf_avg_avx2(const uint8_t *src, int32_t h_start,
+                                            int32_t h_end, int32_t v_start,
+                                            int32_t v_end, int32_t stride) {
+  const uint8_t *src_temp = src + v_start * stride + h_start;
+  const __m256i zero = _mm256_setzero_si256();
+  const int32_t width = h_end - h_start;
+  const int32_t height = v_end - v_start;
+  const int32_t wd_beyond_mul32 = width & 31;
+  const int32_t wd_mul32 = width - wd_beyond_mul32;
+  __m128i mask_low, mask_high;
+  __m256i ss = zero;
+
+  // When width is not multiple of 32, it still loads 32 and to make the data
+  // which is extra (beyond required) as zero using the below mask.
+  if (wd_beyond_mul32 >= 16) {
+    mask_low = _mm_set1_epi8(-1);
+    mask_high = _mm_loadu_si128((__m128i *)(&mask_8bit[32 - wd_beyond_mul32]));
+  } else {
+    mask_low = _mm_loadu_si128((__m128i *)(&mask_8bit[16 - wd_beyond_mul32]));
+    mask_high = _mm_setzero_si128();
   }
-  // If the width is odd, add in the final pixel
-  if (has_odd_pixel) {
-    const uint8_t X1 = src[j];
-    *sumX += X1;
-    const uint8_t *dgd_ij = dgd + j;
-    for (k = 0; k < wiener_win; k++) {
-      const uint8_t *dgd_ijk = dgd_ij + k * dgd_stride;
-      for (l = 0; l < wiener_win; l++) {
-        int32_t *H_ = &H_int[(l * wiener_win + k)][0];
-        const uint8_t D1 = dgd_ijk[l];
-        sumY[k][l] += D1;
-        M_int[k][l] += D1 * X1;
+  const __m256i mask =
+      _mm256_inserti128_si256(_mm256_castsi128_si256(mask_low), mask_high, 1);
 
-        // The `acc_stat_avx2` function wants its input to have interleaved
-        // copies of two pixels, but we only have one. However, the pixels
-        // are (effectively) used as inputs to a multiply-accumulate.
-        // So if we set the extra pixel slot to 0, then it is effectively
-        // ignored.
-        const __m256i kl = _mm256_cvtepu8_epi16(_mm_set1_epi16((uint16_t)D1));
-        acc_stat_avx2(H_ + 0 * 8, dgd_ij + 0 * dgd_stride, shuffle, &kl);
-        acc_stat_avx2(H_ + 1 * 8, dgd_ij + 1 * dgd_stride, shuffle, &kl);
-        acc_stat_avx2(H_ + 2 * 8, dgd_ij + 2 * dgd_stride, shuffle, &kl);
-        acc_stat_avx2(H_ + 3 * 8, dgd_ij + 3 * dgd_stride, shuffle, &kl);
-        acc_stat_avx2(H_ + 4 * 8, dgd_ij + 4 * dgd_stride, shuffle, &kl);
-      }
+  int32_t proc_ht = 0;
+  do {
+    // Process width in multiple of 32.
+    int32_t proc_wd = 0;
+    while (proc_wd < wd_mul32) {
+      const __m256i s_0 = _mm256_loadu_si256((__m256i *)(src_temp + proc_wd));
+      const __m256i sad_0 = _mm256_sad_epu8(s_0, zero);
+      ss = _mm256_add_epi32(ss, sad_0);
+      proc_wd += 32;
+    }
+
+    // Process the remaining width.
+    if (wd_beyond_mul32) {
+      const __m256i s_0 = _mm256_loadu_si256((__m256i *)(src_temp + proc_wd));
+      const __m256i s_m_0 = _mm256_and_si256(s_0, mask);
+      const __m256i sad_0 = _mm256_sad_epu8(s_m_0, zero);
+      ss = _mm256_add_epi32(ss, sad_0);
+    }
+    src_temp += stride;
+    proc_ht++;
+  } while (proc_ht < height);
+
+  const uint32_t sum = calc_sum_of_register(ss);
+  const uint8_t avg = sum / (width * height);
+  return avg;
+}
+
+// Fill (src-avg) or (dgd-avg) buffers. Note that when n = (width % 16) is not
+// 0, it writes (16 - n) more data than required.
+static INLINE void sub_avg_block_avx2(const uint8_t *src, int32_t src_stride,
+                                      uint8_t avg, int32_t width,
+                                      int32_t height, int16_t *dst,
+                                      int32_t dst_stride,
+                                      int use_downsampled_wiener_stats) {
+  const __m256i avg_reg = _mm256_set1_epi16(avg);
+
+  int32_t proc_ht = 0;
+  do {
+    int ds_factor =
+        use_downsampled_wiener_stats ? WIENER_STATS_DOWNSAMPLE_FACTOR : 1;
+    if (use_downsampled_wiener_stats &&
+        (height - proc_ht < WIENER_STATS_DOWNSAMPLE_FACTOR)) {
+      ds_factor = height - proc_ht;
+    }
+
+    int32_t proc_wd = 0;
+    while (proc_wd < width) {
+      const __m128i s = _mm_loadu_si128((__m128i *)(src + proc_wd));
+      const __m256i ss = _mm256_cvtepu8_epi16(s);
+      const __m256i d = _mm256_sub_epi16(ss, avg_reg);
+      _mm256_storeu_si256((__m256i *)(dst + proc_wd), d);
+      proc_wd += 16;
+    }
+
+    src += ds_factor * src_stride;
+    dst += ds_factor * dst_stride;
+    proc_ht += ds_factor;
+  } while (proc_ht < height);
+}
+
+// Fills lower-triangular elements of H buffer from upper triangular elements of
+// the same
+static INLINE void fill_lower_triag_elements_avx2(const int32_t wiener_win2,
+                                                  int64_t *const H) {
+  for (int32_t i = 0; i < wiener_win2 - 1; i += 4) {
+    __m256i in[4], out[4];
+
+    in[0] = _mm256_loadu_si256((__m256i *)(H + (i + 0) * wiener_win2 + i + 1));
+    in[1] = _mm256_loadu_si256((__m256i *)(H + (i + 1) * wiener_win2 + i + 1));
+    in[2] = _mm256_loadu_si256((__m256i *)(H + (i + 2) * wiener_win2 + i + 1));
+    in[3] = _mm256_loadu_si256((__m256i *)(H + (i + 3) * wiener_win2 + i + 1));
+
+    transpose_64bit_4x4_avx2(in, out);
+
+    _mm_storel_epi64((__m128i *)(H + (i + 1) * wiener_win2 + i),
+                     _mm256_castsi256_si128(out[0]));
+    _mm_storeu_si128((__m128i *)(H + (i + 2) * wiener_win2 + i),
+                     _mm256_castsi256_si128(out[1]));
+    _mm256_storeu_si256((__m256i *)(H + (i + 3) * wiener_win2 + i), out[2]);
+    _mm256_storeu_si256((__m256i *)(H + (i + 4) * wiener_win2 + i), out[3]);
+
+    for (int32_t j = i + 5; j < wiener_win2; j += 4) {
+      in[0] = _mm256_loadu_si256((__m256i *)(H + (i + 0) * wiener_win2 + j));
+      in[1] = _mm256_loadu_si256((__m256i *)(H + (i + 1) * wiener_win2 + j));
+      in[2] = _mm256_loadu_si256((__m256i *)(H + (i + 2) * wiener_win2 + j));
+      in[3] = _mm256_loadu_si256((__m256i *)(H + (i + 3) * wiener_win2 + j));
+
+      transpose_64bit_4x4_avx2(in, out);
+
+      _mm256_storeu_si256((__m256i *)(H + (j + 0) * wiener_win2 + i), out[0]);
+      _mm256_storeu_si256((__m256i *)(H + (j + 1) * wiener_win2 + i), out[1]);
+      _mm256_storeu_si256((__m256i *)(H + (j + 2) * wiener_win2 + i), out[2]);
+      _mm256_storeu_si256((__m256i *)(H + (j + 3) * wiener_win2 + i), out[3]);
     }
   }
 }
 
-static INLINE void compute_stats_win5_opt_avx2(
-    const uint8_t *dgd, const uint8_t *src, int h_start, int h_end, int v_start,
-    int v_end, int dgd_stride, int src_stride, int64_t *M, int64_t *H,
-    int use_downsampled_wiener_stats) {
-  int i, j, k, l, m, n;
-  const int wiener_win = WIENER_WIN_CHROMA;
-  const int pixel_count = (h_end - h_start) * (v_end - v_start);
-  const int wiener_win2 = wiener_win * wiener_win;
-  const int wiener_halfwin = (wiener_win >> 1);
-  uint8_t avg = find_average(dgd, h_start, h_end, v_start, v_end, dgd_stride);
-
-  int32_t M_int32[WIENER_WIN_CHROMA][WIENER_WIN_CHROMA] = { { 0 } };
-  int32_t M_int32_row[WIENER_WIN_CHROMA][WIENER_WIN_CHROMA] = { { 0 } };
-  int64_t M_int64[WIENER_WIN_CHROMA][WIENER_WIN_CHROMA] = { { 0 } };
-  DECLARE_ALIGNED(
-      32, int32_t,
-      H_int32[WIENER_WIN2_CHROMA][WIENER_WIN_CHROMA * 8]) = { { 0 } };
-  DECLARE_ALIGNED(
-      32, int32_t,
-      H_int32_row[WIENER_WIN2_CHROMA][WIENER_WIN_CHROMA * 8]) = { { 0 } };
-  int64_t H_int64[WIENER_WIN2_CHROMA][WIENER_WIN_CHROMA * 8] = { { 0 } };
-  int32_t sumY[WIENER_WIN_CHROMA][WIENER_WIN_CHROMA] = { { 0 } };
-  int32_t sumX = 0;
-  const uint8_t *dgd_win = dgd - wiener_halfwin * dgd_stride - wiener_halfwin;
-  int downsample_factor =
-      use_downsampled_wiener_stats ? WIENER_STATS_DOWNSAMPLE_FACTOR : 1;
-  int32_t sumX_row = 0;
-  int32_t sumY_row[WIENER_WIN_CHROMA][WIENER_WIN_CHROMA] = { { 0 } };
-
-  const __m128i shuffle = xx_loadu_128(g_shuffle_stats_data);
-  for (j = v_start; j < v_end; j += 64) {
-    const int vert_end = AOMMIN(64, v_end - j) + j;
-    for (i = j; i < vert_end; i = i + downsample_factor) {
-      if (use_downsampled_wiener_stats &&
-          (vert_end - i < WIENER_STATS_DOWNSAMPLE_FACTOR)) {
-        downsample_factor = vert_end - i;
-      }
-      sumX_row = 0;
-      memset(sumY_row, 0,
-             sizeof(int32_t) * WIENER_WIN_CHROMA * WIENER_WIN_CHROMA);
-      memset(M_int32_row, 0,
-             sizeof(int32_t) * WIENER_WIN_CHROMA * WIENER_WIN_CHROMA);
-      memset(H_int32_row, 0,
-             sizeof(int32_t) * WIENER_WIN2_CHROMA * (WIENER_WIN_CHROMA * 8));
-      acc_stat_win5_one_line_avx2(
-          dgd_win + i * dgd_stride, src + i * src_stride, h_start, h_end,
-          dgd_stride, &shuffle, &sumX_row, sumY_row, M_int32_row, H_int32_row);
-      sumX += sumX_row * downsample_factor;
-
-      // Scale M matrix based on the downsampling factor
-      for (k = 0; k < wiener_win; ++k) {
-        for (l = 0; l < wiener_win; ++l) {
-          sumY[k][l] += (sumY_row[k][l] * downsample_factor);
-          M_int32[k][l] += (M_int32_row[k][l] * downsample_factor);
-        }
-      }
-      // Scale H matrix based on the downsampling factor
-      for (k = 0; k < WIENER_WIN2_CHROMA; ++k) {
-        for (l = 0; l < WIENER_WIN_CHROMA * 8; ++l) {
-          H_int32[k][l] += (H_int32_row[k][l] * downsample_factor);
-        }
-      }
-    }
-    for (k = 0; k < wiener_win; ++k) {
-      for (l = 0; l < wiener_win; ++l) {
-        M_int64[k][l] += M_int32[k][l];
-        M_int32[k][l] = 0;
-      }
-    }
-    for (k = 0; k < WIENER_WIN2_CHROMA; ++k) {
-      for (l = 0; l < WIENER_WIN_CHROMA * 8; ++l) {
-        H_int64[k][l] += H_int32[k][l];
-        H_int32[k][l] = 0;
-      }
-    }
+// Fill H buffer based on loop_count.
+#define INIT_H_VALUES(d, loop_count)                           \
+  for (int g = 0; g < (loop_count); g++) {                     \
+    const __m256i dgd0 =                                       \
+        _mm256_loadu_si256((__m256i *)((d) + (g * d_stride))); \
+    madd_and_accum_avx2(dgd_mul_df, dgd0, &sum_h[g]);          \
   }
 
-  const int64_t avg_square_sum = (int64_t)avg * (int64_t)avg * pixel_count;
-  for (k = 0; k < wiener_win; k++) {
-    for (l = 0; l < wiener_win; l++) {
-      const int32_t idx0 = l * wiener_win + k;
-      M[idx0] =
-          M_int64[k][l] + (avg_square_sum - (int64_t)avg * (sumX + sumY[k][l]));
-      int64_t *H_ = H + idx0 * wiener_win2;
-      int64_t *H_int_ = &H_int64[idx0][0];
-      for (m = 0; m < wiener_win; m++) {
-        for (n = 0; n < wiener_win; n++) {
-          H_[m * wiener_win + n] = H_int_[n * 8 + m] + avg_square_sum -
-                                   (int64_t)avg * (sumY[k][l] + sumY[n][m]);
-        }
-      }
-    }
+// Fill M & H buffer.
+#define INIT_MH_VALUES(d)                                      \
+  for (int g = 0; g < wiener_win; g++) {                       \
+    const __m256i dgds_0 =                                     \
+        _mm256_loadu_si256((__m256i *)((d) + (g * d_stride))); \
+    madd_and_accum_avx2(src_mul_df, dgds_0, &sum_m[g]);        \
+    madd_and_accum_avx2(dgd_mul_df, dgds_0, &sum_h[g]);        \
   }
+
+// Update the dgd pointers appropriately.
+#define INITIALIZATION(wiener_window_sz)                                 \
+  j = i / (wiener_window_sz);                                            \
+  const int16_t *d_window = d + j;                                       \
+  const int16_t *d_current_row =                                         \
+      d + j + ((i % (wiener_window_sz)) * d_stride);                     \
+  int proc_ht = v_start;                                                 \
+  downsample_factor =                                                    \
+      use_downsampled_wiener_stats ? WIENER_STATS_DOWNSAMPLE_FACTOR : 1; \
+  __m256i sum_h[wiener_window_sz];                                       \
+  memset(sum_h, 0, sizeof(sum_h));
+
+// Update the downsample factor appropriately.
+#define UPDATE_DOWNSAMPLE_FACTOR                              \
+  int proc_wd = 0;                                            \
+  if (use_downsampled_wiener_stats &&                         \
+      ((v_end - proc_ht) < WIENER_STATS_DOWNSAMPLE_FACTOR)) { \
+    downsample_factor = v_end - proc_ht;                      \
+  }                                                           \
+  const __m256i df_reg = _mm256_set1_epi16(downsample_factor);
+
+#define CALCULATE_REMAINING_H_WIN5                                             \
+  while (j < wiener_win) {                                                     \
+    d_window = d;                                                              \
+    d_current_row = d + (i / wiener_win) + ((i % wiener_win) * d_stride);      \
+    const __m256i zero = _mm256_setzero_si256();                               \
+    sum_h[0] = zero;                                                           \
+    sum_h[1] = zero;                                                           \
+    sum_h[2] = zero;                                                           \
+    sum_h[3] = zero;                                                           \
+    sum_h[4] = zero;                                                           \
+                                                                               \
+    proc_ht = v_start;                                                         \
+    downsample_factor =                                                        \
+        use_downsampled_wiener_stats ? WIENER_STATS_DOWNSAMPLE_FACTOR : 1;     \
+    do {                                                                       \
+      UPDATE_DOWNSAMPLE_FACTOR;                                                \
+                                                                               \
+      /* Process the amount of width multiple of 16.*/                         \
+      while (proc_wd < wd_mul16) {                                             \
+        const __m256i dgd =                                                    \
+            _mm256_loadu_si256((__m256i *)(d_current_row + proc_wd));          \
+        const __m256i dgd_mul_df = _mm256_mullo_epi16(dgd, df_reg);            \
+        INIT_H_VALUES(d_window + j + proc_wd, 5)                               \
+                                                                               \
+        proc_wd += 16;                                                         \
+      };                                                                       \
+                                                                               \
+      /* Process the remaining width here. */                                  \
+      if (wd_beyond_mul16) {                                                   \
+        const __m256i dgd =                                                    \
+            _mm256_loadu_si256((__m256i *)(d_current_row + proc_wd));          \
+        const __m256i dgd_mask = _mm256_and_si256(dgd, mask);                  \
+        const __m256i dgd_mul_df = _mm256_mullo_epi16(dgd_mask, df_reg);       \
+        INIT_H_VALUES(d_window + j + proc_wd, 5)                               \
+      }                                                                        \
+      proc_ht += downsample_factor;                                            \
+      d_window += downsample_factor * d_stride;                                \
+      d_current_row += downsample_factor * d_stride;                           \
+    } while (proc_ht < v_end);                                                 \
+    const __m256i s_h0 =                                                       \
+        hadd_four_32_to_64_avx2(sum_h[0], sum_h[1], &sum_h[2], &sum_h[3]);     \
+    _mm256_storeu_si256((__m256i *)(H + (i * wiener_win2) + (wiener_win * j)), \
+                        s_h0);                                                 \
+    const __m256i s_m_h = convert_and_add_avx2(sum_h[4]);                      \
+    const __m128i s_m_h0 = add_64bit_lvl_avx2(s_m_h, s_m_h);                   \
+    _mm_storel_epi64(                                                          \
+        (__m128i *)(H + (i * wiener_win2) + (wiener_win * j) + 4), s_m_h0);    \
+    j++;                                                                       \
+  }
+
+#define CALCULATE_REMAINING_H_WIN7                                             \
+  while (j < wiener_win) {                                                     \
+    d_window = d;                                                              \
+    d_current_row = d + (i / wiener_win) + ((i % wiener_win) * d_stride);      \
+    const __m256i zero = _mm256_setzero_si256();                               \
+    sum_h[0] = zero;                                                           \
+    sum_h[1] = zero;                                                           \
+    sum_h[2] = zero;                                                           \
+    sum_h[3] = zero;                                                           \
+    sum_h[4] = zero;                                                           \
+    sum_h[5] = zero;                                                           \
+    sum_h[6] = zero;                                                           \
+                                                                               \
+    proc_ht = v_start;                                                         \
+    downsample_factor =                                                        \
+        use_downsampled_wiener_stats ? WIENER_STATS_DOWNSAMPLE_FACTOR : 1;     \
+    do {                                                                       \
+      UPDATE_DOWNSAMPLE_FACTOR;                                                \
+                                                                               \
+      /* Process the amount of width multiple of 16.*/                         \
+      while (proc_wd < wd_mul16) {                                             \
+        const __m256i dgd =                                                    \
+            _mm256_loadu_si256((__m256i *)(d_current_row + proc_wd));          \
+        const __m256i dgd_mul_df = _mm256_mullo_epi16(dgd, df_reg);            \
+        INIT_H_VALUES(d_window + j + proc_wd, 7)                               \
+                                                                               \
+        proc_wd += 16;                                                         \
+      };                                                                       \
+                                                                               \
+      /* Process the remaining width here. */                                  \
+      if (wd_beyond_mul16) {                                                   \
+        const __m256i dgd =                                                    \
+            _mm256_loadu_si256((__m256i *)(d_current_row + proc_wd));          \
+        const __m256i dgd_mask = _mm256_and_si256(dgd, mask);                  \
+        const __m256i dgd_mul_df = _mm256_mullo_epi16(dgd_mask, df_reg);       \
+        INIT_H_VALUES(d_window + j + proc_wd, 7)                               \
+      }                                                                        \
+      proc_ht += downsample_factor;                                            \
+      d_window += downsample_factor * d_stride;                                \
+      d_current_row += downsample_factor * d_stride;                           \
+    } while (proc_ht < v_end);                                                 \
+    const __m256i s_h1 =                                                       \
+        hadd_four_32_to_64_avx2(sum_h[0], sum_h[1], &sum_h[2], &sum_h[3]);     \
+    _mm256_storeu_si256((__m256i *)(H + (i * wiener_win2) + (wiener_win * j)), \
+                        s_h1);                                                 \
+    const __m256i s_h2 =                                                       \
+        hadd_four_32_to_64_avx2(sum_h[4], sum_h[5], &sum_h[6], &sum_h[6]);     \
+    _mm256_storeu_si256(                                                       \
+        (__m256i *)(H + (i * wiener_win2) + (wiener_win * j) + 4), s_h2);      \
+    j++;                                                                       \
+  }
+
+// The buffers H(auto-covariance) and M(cross-correlation) are used to estimate
+// the filter tap values required for wiener filtering. Here, the buffer H is of
+// size ((wiener_window_size^2)*(wiener_window_size^2)) and M is of size
+// (wiener_window_size*wiener_window_size). H is a symmetric matrix where the
+// value above the diagonal (upper triangle) are equal to the values below the
+// diagonal (lower triangle). The calculation of elements/stats of H(upper
+// triangle) and M is done in steps as described below where each step fills
+// specific values of H and M.
+// Once the upper triangular elements of H matrix are derived, the same will be
+// copied to lower triangular using the function
+// fill_lower_triag_elements_avx2().
+// Example: Wiener window size =
+// WIENER_WIN_CHROMA (5) M buffer = [M0 M1 M2 ---- M23 M24] H buffer = Hxy
+// (x-row, y-column) [H00 H01 H02 ---- H023 H024] [H10 H11 H12 ---- H123 H124]
+// [H30 H31 H32 ---- H323 H324]
+// [H40 H41 H42 ---- H423 H424]
+// [H50 H51 H52 ---- H523 H524]
+// [H60 H61 H62 ---- H623 H624]
+//            ||
+//            ||
+// [H230 H231 H232 ---- H2323 H2324]
+// [H240 H241 H242 ---- H2423 H2424]
+// In Step 1, whole M buffers (i.e., M0 to M24) and the first row of H (i.e.,
+// H00 to H024) is filled. The remaining rows of H buffer are filled through
+// steps 2 to 6.
+static void compute_stats_win5_avx2(const int16_t *const d, int32_t d_stride,
+                                    const int16_t *const s, int32_t s_stride,
+                                    int32_t width, int v_start, int v_end,
+                                    int64_t *const M, int64_t *const H,
+                                    int use_downsampled_wiener_stats) {
+  const int32_t wiener_win = WIENER_WIN_CHROMA;
+  const int32_t wiener_win2 = wiener_win * wiener_win;
+  // Amount of width which is beyond multiple of 16. This case is handled
+  // appropriately to process only the required width towards the end.
+  const int32_t wd_mul16 = width & ~15;
+  const int32_t wd_beyond_mul16 = width - wd_mul16;
+  const __m256i mask =
+      _mm256_loadu_si256((__m256i *)(&mask_16bit[16 - wd_beyond_mul16]));
+  int downsample_factor;
+
+  // Step 1: Full M (i.e., M0 to M24) and first row H (i.e., H00 to H024)
+  // values are filled here. Here, the loop over 'j' is executed for values 0
+  // to 4 (wiener_win-1). When the loop executed for a specific 'j', 5 values of
+  // M and H are filled as shown below.
+  // j=0: M0-M4 and H00-H04, j=1: M5-M9 and H05-H09 are filled etc,.
+  int j = 0;
+  do {
+    const int16_t *s_t = s;
+    const int16_t *d_t = d;
+    __m256i sum_m[WIENER_WIN_CHROMA] = { _mm256_setzero_si256() };
+    __m256i sum_h[WIENER_WIN_CHROMA] = { _mm256_setzero_si256() };
+    downsample_factor =
+        use_downsampled_wiener_stats ? WIENER_STATS_DOWNSAMPLE_FACTOR : 1;
+    int proc_ht = v_start;
+    do {
+      UPDATE_DOWNSAMPLE_FACTOR
+
+      // Process the amount of width multiple of 16.
+      while (proc_wd < wd_mul16) {
+        const __m256i src = _mm256_loadu_si256((__m256i *)(s_t + proc_wd));
+        const __m256i dgd = _mm256_loadu_si256((__m256i *)(d_t + proc_wd));
+        const __m256i src_mul_df = _mm256_mullo_epi16(src, df_reg);
+        const __m256i dgd_mul_df = _mm256_mullo_epi16(dgd, df_reg);
+        INIT_MH_VALUES(d_t + j + proc_wd)
+
+        proc_wd += 16;
+      }
+
+      // Process the remaining width here.
+      if (wd_beyond_mul16) {
+        const __m256i src = _mm256_loadu_si256((__m256i *)(s_t + proc_wd));
+        const __m256i dgd = _mm256_loadu_si256((__m256i *)(d_t + proc_wd));
+        const __m256i src_mask = _mm256_and_si256(src, mask);
+        const __m256i dgd_mask = _mm256_and_si256(dgd, mask);
+        const __m256i src_mul_df = _mm256_mullo_epi16(src_mask, df_reg);
+        const __m256i dgd_mul_df = _mm256_mullo_epi16(dgd_mask, df_reg);
+        INIT_MH_VALUES(d_t + j + proc_wd)
+      }
+      proc_ht += downsample_factor;
+      s_t += downsample_factor * s_stride;
+      d_t += downsample_factor * d_stride;
+    } while (proc_ht < v_end);
+
+    const __m256i s_m =
+        hadd_four_32_to_64_avx2(sum_m[0], sum_m[1], &sum_m[2], &sum_m[3]);
+    const __m128i s_m_h = convert_32_to_64_add_avx2(sum_m[4], sum_h[4]);
+    _mm256_storeu_si256((__m256i *)(M + wiener_win * j), s_m);
+    _mm_storel_epi64((__m128i *)&M[wiener_win * j + 4], s_m_h);
+
+    const __m256i s_h =
+        hadd_four_32_to_64_avx2(sum_h[0], sum_h[1], &sum_h[2], &sum_h[3]);
+    _mm256_storeu_si256((__m256i *)(H + wiener_win * j), s_h);
+    _mm_storeh_epi64((__m128i *)&H[wiener_win * j + 4], s_m_h);
+  } while (++j < wiener_win);
+
+  // The below steps are designed to fill remaining rows of H buffer. Here, aim
+  // is to fill only upper triangle elements correspond to each row and lower
+  // triangle elements are copied from upper-triangle elements. Also, as
+  // mentioned in Step 1, the core function is designed to fill 5
+  // elements/stats/values of H buffer.
+  //
+  // Step 2: Here, the rows 1, 6, 11, 16 and 21 are filled. As we need to fill
+  // only upper-triangle elements, H10 from row1, H60-H64 and H65 from row6,etc,
+  // are need not be filled. As the core function process 5 values, in first
+  // iteration of 'j' only 4 values to be filled i.e., H11-H14 from row1,H66-H69
+  // from row6, etc.
+  for (int i = 1; i < wiener_win2; i += wiener_win) {
+    // Update the dgd pointers appropriately and also derive the 'j'th iteration
+    // from where the H buffer filling needs to be started.
+    INITIALIZATION(WIENER_WIN_CHROMA)
+
+    do {
+      UPDATE_DOWNSAMPLE_FACTOR
+
+      // Process the amount of width multiple of 16.
+      while (proc_wd < wd_mul16) {
+        const __m256i dgd =
+            _mm256_loadu_si256((__m256i *)(d_current_row + proc_wd));
+        const __m256i dgd_mul_df = _mm256_mullo_epi16(dgd, df_reg);
+        INIT_H_VALUES(d_window + proc_wd + (1 * d_stride), 4)
+
+        proc_wd += 16;
+      }
+
+      // Process the remaining width here.
+      if (wd_beyond_mul16) {
+        const __m256i dgd =
+            _mm256_loadu_si256((__m256i *)(d_current_row + proc_wd));
+        const __m256i dgd_mask = _mm256_and_si256(dgd, mask);
+        const __m256i dgd_mul_df = _mm256_mullo_epi16(dgd_mask, df_reg);
+        INIT_H_VALUES(d_window + proc_wd + (1 * d_stride), 4)
+      }
+      proc_ht += downsample_factor;
+      d_window += downsample_factor * d_stride;
+      d_current_row += downsample_factor * d_stride;
+    } while (proc_ht < v_end);
+    const __m256i s_h =
+        hadd_four_32_to_64_avx2(sum_h[0], sum_h[1], &sum_h[2], &sum_h[3]);
+    _mm256_storeu_si256((__m256i *)(H + (i * wiener_win2) + i), s_h);
+
+    // process the remaining 'j' iterations.
+    j++;
+    CALCULATE_REMAINING_H_WIN5
+  }
+
+  // Step 3: Here, the rows 2, 7, 12, 17 and 22 are filled. As we need to fill
+  // only upper-triangle elements, H20-H21 from row2, H70-H74 and H75-H76 from
+  // row7, etc, are need not be filled. As the core function process 5 values,
+  // in first iteration of 'j' only 3 values to be filled i.e., H22-H24 from
+  // row2, H77-H79 from row7, etc.
+  for (int i = 2; i < wiener_win2; i += wiener_win) {
+    // Update the dgd pointers appropriately and also derive the 'j'th iteration
+    // from where the H buffer filling needs to be started.
+    INITIALIZATION(WIENER_WIN_CHROMA)
+
+    do {
+      UPDATE_DOWNSAMPLE_FACTOR
+
+      // Process the amount of width multiple of 16.
+      while (proc_wd < wd_mul16) {
+        const __m256i dgd =
+            _mm256_loadu_si256((__m256i *)(d_current_row + proc_wd));
+        const __m256i dgd_mul_df = _mm256_mullo_epi16(dgd, df_reg);
+        INIT_H_VALUES(d_window + proc_wd + (2 * d_stride), 3)
+
+        proc_wd += 16;
+      }
+
+      // Process the remaining width here.
+      if (wd_beyond_mul16) {
+        const __m256i dgd =
+            _mm256_loadu_si256((__m256i *)(d_current_row + proc_wd));
+        const __m256i dgd_mask = _mm256_and_si256(dgd, mask);
+        const __m256i dgd_mul_df = _mm256_mullo_epi16(dgd_mask, df_reg);
+        INIT_H_VALUES(d_window + proc_wd + (2 * d_stride), 3)
+      }
+      proc_ht += downsample_factor;
+      d_window += downsample_factor * d_stride;
+      d_current_row += downsample_factor * d_stride;
+    } while (proc_ht < v_end);
+    const __m256i s_h =
+        hadd_four_32_to_64_avx2(sum_h[0], sum_h[1], &sum_h[2], &sum_h[3]);
+    _mm256_storeu_si256((__m256i *)(H + (i * wiener_win2) + i), s_h);
+
+    // process the remaining 'j' iterations.
+    j++;
+    CALCULATE_REMAINING_H_WIN5
+  }
+
+  // Step 4: Here, the rows 3, 8, 13, 18 and 23 are filled. As we need to fill
+  // only upper-triangle elements, H30-H32 from row3, H80-H84 and H85-H87 from
+  // row8, etc, are need not be filled. As the core function process 5 values,
+  // in first iteration of 'j' only 2 values to be filled i.e., H33-H34 from
+  // row3, H88-89 from row8, etc.
+  for (int i = 3; i < wiener_win2; i += wiener_win) {
+    // Update the dgd pointers appropriately and also derive the 'j'th iteration
+    // from where the H buffer filling needs to be started.
+    INITIALIZATION(WIENER_WIN_CHROMA)
+
+    do {
+      UPDATE_DOWNSAMPLE_FACTOR
+
+      // Process the amount of width multiple of 16.
+      while (proc_wd < wd_mul16) {
+        const __m256i dgd =
+            _mm256_loadu_si256((__m256i *)(d_current_row + proc_wd));
+        const __m256i dgd_mul_df = _mm256_mullo_epi16(dgd, df_reg);
+        INIT_H_VALUES(d_window + proc_wd + (3 * d_stride), 2)
+
+        proc_wd += 16;
+      }
+
+      // Process the remaining width here.
+      if (wd_beyond_mul16) {
+        const __m256i dgd =
+            _mm256_loadu_si256((__m256i *)(d_current_row + proc_wd));
+        const __m256i dgd_mask = _mm256_and_si256(dgd, mask);
+        const __m256i dgd_mul_df = _mm256_mullo_epi16(dgd_mask, df_reg);
+        INIT_H_VALUES(d_window + proc_wd + (3 * d_stride), 2)
+      }
+      proc_ht += downsample_factor;
+      d_window += downsample_factor * d_stride;
+      d_current_row += downsample_factor * d_stride;
+    } while (proc_ht < v_end);
+    const __m128i s_h = convert_32_to_64_add_avx2(sum_h[0], sum_h[1]);
+    _mm_storeu_si128((__m128i *)(H + (i * wiener_win2) + i), s_h);
+
+    // process the remaining 'j' iterations.
+    j++;
+    CALCULATE_REMAINING_H_WIN5
+  }
+
+  // Step 5: Here, the rows 4, 9, 14, 19 and 24 are filled. As we need to fill
+  // only upper-triangle elements, H40-H43 from row4, H90-H94 and H95-H98 from
+  // row9, etc, are need not be filled. As the core function process 5 values,
+  // in first iteration of 'j' only 1 values to be filled i.e., H44 from row4,
+  // H99 from row9, etc.
+  for (int i = 4; i < wiener_win2; i += wiener_win) {
+    // Update the dgd pointers appropriately and also derive the 'j'th iteration
+    // from where the H buffer filling needs to be started.
+    INITIALIZATION(WIENER_WIN_CHROMA)
+    do {
+      UPDATE_DOWNSAMPLE_FACTOR
+
+      // Process the amount of width multiple of 16.
+      while (proc_wd < wd_mul16) {
+        const __m256i dgd =
+            _mm256_loadu_si256((__m256i *)(d_current_row + proc_wd));
+        const __m256i dgd_mul_df = _mm256_mullo_epi16(dgd, df_reg);
+        INIT_H_VALUES(d_window + proc_wd + (4 * d_stride), 1)
+
+        proc_wd += 16;
+      }
+
+      // Process the remaining width here.
+      if (wd_beyond_mul16) {
+        const __m256i dgd =
+            _mm256_loadu_si256((__m256i *)(d_current_row + proc_wd));
+        const __m256i dgd_mask = _mm256_and_si256(dgd, mask);
+        const __m256i dgd_mul_df = _mm256_mullo_epi16(dgd_mask, df_reg);
+        INIT_H_VALUES(d_window + proc_wd + (4 * d_stride), 1)
+      }
+      proc_ht += downsample_factor;
+      d_window += downsample_factor * d_stride;
+      d_current_row += downsample_factor * d_stride;
+    } while (proc_ht < v_end);
+    const __m128i s_h = convert_32_to_64_add_avx2(sum_h[0], sum_h[1]);
+    _mm_storeu_si128((__m128i *)(H + (i * wiener_win2) + i), s_h);
+
+    // process the remaining 'j' iterations.
+    j++;
+    CALCULATE_REMAINING_H_WIN5
+  }
+
+  // Step 6: Here, the rows 5, 10, 15 and 20 are filled. As we need to fill only
+  // upper-triangle elements, H50-H54 from row5, H100-H104 and H105-H109 from
+  // row10,etc, are need not be filled. The first iteration of 'j' fills H55-H59
+  // from row5 and H1010-H1014 from row10, etc.
+  for (int i = 5; i < wiener_win2; i += wiener_win) {
+    // Derive j'th iteration from where the H buffer filling needs to be
+    // started.
+    j = i / wiener_win;
+    int shift = 0;
+    do {
+      // Update the dgd pointers appropriately.
+      int proc_ht = v_start;
+      const int16_t *d_window = d + (i / wiener_win);
+      const int16_t *d_current_row =
+          d + (i / wiener_win) + ((i % wiener_win) * d_stride);
+      downsample_factor =
+          use_downsampled_wiener_stats ? WIENER_STATS_DOWNSAMPLE_FACTOR : 1;
+      __m256i sum_h[WIENER_WIN_CHROMA] = { _mm256_setzero_si256() };
+      do {
+        UPDATE_DOWNSAMPLE_FACTOR
+
+        // Process the amount of width multiple of 16.
+        while (proc_wd < wd_mul16) {
+          const __m256i dgd =
+              _mm256_loadu_si256((__m256i *)(d_current_row + proc_wd));
+          const __m256i dgd_mul_df = _mm256_mullo_epi16(dgd, df_reg);
+          INIT_H_VALUES(d_window + shift + proc_wd, 5)
+
+          proc_wd += 16;
+        }
+
+        // Process the remaining width here.
+        if (wd_beyond_mul16) {
+          const __m256i dgd =
+              _mm256_loadu_si256((__m256i *)(d_current_row + proc_wd));
+          const __m256i dgd_mask = _mm256_and_si256(dgd, mask);
+          const __m256i dgd_mul_df = _mm256_mullo_epi16(dgd_mask, df_reg);
+          INIT_H_VALUES(d_window + shift + proc_wd, 5)
+        }
+        proc_ht += downsample_factor;
+        d_window += downsample_factor * d_stride;
+        d_current_row += downsample_factor * d_stride;
+      } while (proc_ht < v_end);
+
+      const __m256i s_h =
+          hadd_four_32_to_64_avx2(sum_h[0], sum_h[1], &sum_h[2], &sum_h[3]);
+      _mm256_storeu_si256((__m256i *)(H + (i * wiener_win2) + (wiener_win * j)),
+                          s_h);
+      const __m256i s_m_h = convert_and_add_avx2(sum_h[4]);
+      const __m128i s_m_h0 = add_64bit_lvl_avx2(s_m_h, s_m_h);
+      _mm_storel_epi64(
+          (__m128i *)(H + (i * wiener_win2) + (wiener_win * j) + 4), s_m_h0);
+      shift++;
+    } while (++j < wiener_win);
+  }
+
+  fill_lower_triag_elements_avx2(wiener_win2, H);
+}
+
+// The buffers H(auto-covariance) and M(cross-correlation) are used to estimate
+// the filter tap values required for wiener filtering. Here, the buffer H is of
+// size ((wiener_window_size^2)*(wiener_window_size^2)) and M is of size
+// (wiener_window_size*wiener_window_size). H is a symmetric matrix where the
+// value above the diagonal (upper triangle) are equal to the values below the
+// diagonal (lower triangle). The calculation of elements/stats of H(upper
+// triangle) and M is done in steps as described below where each step fills
+// specific values of H and M.
+// Example:
+// Wiener window size = WIENER_WIN (7)
+// M buffer = [M0 M1 M2 ---- M47 M48]
+// H buffer = Hxy (x-row, y-column)
+// [H00 H01 H02 ---- H047 H048]
+// [H10 H11 H12 ---- H147 H148]
+// [H30 H31 H32 ---- H347 H348]
+// [H40 H41 H42 ---- H447 H448]
+// [H50 H51 H52 ---- H547 H548]
+// [H60 H61 H62 ---- H647 H648]
+//            ||
+//            ||
+// [H470 H471 H472 ---- H4747 H4748]
+// [H480 H481 H482 ---- H4847 H4848]
+// In Step 1, whole M buffers (i.e., M0 to M48) and the first row of H (i.e.,
+// H00 to H048) is filled. The remaining rows of H buffer are filled through
+// steps 2 to 8.
+static void compute_stats_win7_avx2(const int16_t *const d, int32_t d_stride,
+                                    const int16_t *const s, int32_t s_stride,
+                                    int32_t width, int v_start, int v_end,
+                                    int64_t *const M, int64_t *const H,
+                                    int use_downsampled_wiener_stats) {
+  const int32_t wiener_win = WIENER_WIN;
+  const int32_t wiener_win2 = wiener_win * wiener_win;
+  // Amount of width which is beyond multiple of 16. This case is handled
+  // appropriately to process only the required width towards the end.
+  const int32_t wd_mul16 = width & ~15;
+  const int32_t wd_beyond_mul16 = width - wd_mul16;
+  const __m256i mask =
+      _mm256_loadu_si256((__m256i *)(&mask_16bit[16 - wd_beyond_mul16]));
+  int downsample_factor;
+
+  // Step 1: Full M (i.e., M0 to M48) and first row H (i.e., H00 to H048)
+  // values are filled here. Here, the loop over 'j' is executed for values 0
+  // to 6. When the loop executed for a specific 'j', 7 values of M and H are
+  // filled as shown below.
+  // j=0: M0-M6 and H00-H06, j=1: M7-M13 and H07-H013 are filled etc,.
+  int j = 0;
+  do {
+    const int16_t *s_t = s;
+    const int16_t *d_t = d;
+    __m256i sum_m[WIENER_WIN] = { _mm256_setzero_si256() };
+    __m256i sum_h[WIENER_WIN] = { _mm256_setzero_si256() };
+    downsample_factor =
+        use_downsampled_wiener_stats ? WIENER_STATS_DOWNSAMPLE_FACTOR : 1;
+    int proc_ht = v_start;
+    do {
+      UPDATE_DOWNSAMPLE_FACTOR
+
+      // Process the amount of width multiple of 16.
+      while (proc_wd < wd_mul16) {
+        const __m256i src = _mm256_loadu_si256((__m256i *)(s_t + proc_wd));
+        const __m256i dgd = _mm256_loadu_si256((__m256i *)(d_t + proc_wd));
+        const __m256i src_mul_df = _mm256_mullo_epi16(src, df_reg);
+        const __m256i dgd_mul_df = _mm256_mullo_epi16(dgd, df_reg);
+        INIT_MH_VALUES(d_t + j + proc_wd)
+
+        proc_wd += 16;
+      }
+
+      if (wd_beyond_mul16) {
+        const __m256i src = _mm256_loadu_si256((__m256i *)(s_t + proc_wd));
+        const __m256i dgd = _mm256_loadu_si256((__m256i *)(d_t + proc_wd));
+        const __m256i src_mask = _mm256_and_si256(src, mask);
+        const __m256i dgd_mask = _mm256_and_si256(dgd, mask);
+        const __m256i src_mul_df = _mm256_mullo_epi16(src_mask, df_reg);
+        const __m256i dgd_mul_df = _mm256_mullo_epi16(dgd_mask, df_reg);
+        INIT_MH_VALUES(d_t + j + proc_wd)
+      }
+      proc_ht += downsample_factor;
+      s_t += downsample_factor * s_stride;
+      d_t += downsample_factor * d_stride;
+    } while (proc_ht < v_end);
+
+    const __m256i s_m0 =
+        hadd_four_32_to_64_avx2(sum_m[0], sum_m[1], &sum_m[2], &sum_m[3]);
+    const __m256i s_m1 =
+        hadd_four_32_to_64_avx2(sum_m[4], sum_m[5], &sum_m[6], &sum_m[6]);
+    _mm256_storeu_si256((__m256i *)(M + wiener_win * j + 0), s_m0);
+    _mm_storeu_si128((__m128i *)(M + wiener_win * j + 4),
+                     _mm256_castsi256_si128(s_m1));
+    _mm_storel_epi64((__m128i *)&M[wiener_win * j + 6],
+                     _mm256_extracti128_si256(s_m1, 1));
+
+    const __m256i sh_0 =
+        hadd_four_32_to_64_avx2(sum_h[0], sum_h[1], &sum_h[2], &sum_h[3]);
+    const __m256i sh_1 =
+        hadd_four_32_to_64_avx2(sum_h[4], sum_h[5], &sum_h[6], &sum_h[6]);
+    _mm256_storeu_si256((__m256i *)(H + wiener_win * j + 0), sh_0);
+    _mm_storeu_si128((__m128i *)(H + wiener_win * j + 4),
+                     _mm256_castsi256_si128(sh_1));
+    _mm_storel_epi64((__m128i *)&H[wiener_win * j + 6],
+                     _mm256_extracti128_si256(sh_1, 1));
+  } while (++j < wiener_win);
+
+  // The below steps are designed to fill remaining rows of H buffer. Here, aim
+  // is to fill only upper triangle elements correspond to each row and lower
+  // triangle elements are copied from upper-triangle elements. Also, as
+  // mentioned in Step 1, the core function is designed to fill 7
+  // elements/stats/values of H buffer.
+  //
+  // Step 2: Here, the rows 1, 8, 15, 22, 29, 36 and 43 are filled. As we need
+  // to fill only upper-triangle elements, H10 from row1, H80-H86 and H87 from
+  // row8, etc. are need not be filled. As the core function process 7 values,
+  // in first iteration of 'j' only 6 values to be filled i.e., H11-H16 from
+  // row1 and H88-H813 from row8, etc.
+  for (int i = 1; i < wiener_win2; i += wiener_win) {
+    // Update the dgd pointers appropriately and also derive the 'j'th iteration
+    // from where the H buffer filling needs to be started.
+    INITIALIZATION(WIENER_WIN)
+
+    do {
+      UPDATE_DOWNSAMPLE_FACTOR
+
+      // Process the amount of width multiple of 16.
+      while (proc_wd < wd_mul16) {
+        const __m256i dgd =
+            _mm256_loadu_si256((__m256i *)(d_current_row + proc_wd));
+        const __m256i dgd_mul_df = _mm256_mullo_epi16(dgd, df_reg);
+        INIT_H_VALUES(d_window + proc_wd + (1 * d_stride), 6)
+
+        proc_wd += 16;
+      }
+
+      // Process the remaining width here.
+      if (wd_beyond_mul16) {
+        const __m256i dgd =
+            _mm256_loadu_si256((__m256i *)(d_current_row + proc_wd));
+        const __m256i dgd_mask = _mm256_and_si256(dgd, mask);
+        const __m256i dgd_mul_df = _mm256_mullo_epi16(dgd_mask, df_reg);
+        INIT_H_VALUES(d_window + proc_wd + (1 * d_stride), 6)
+      }
+      proc_ht += downsample_factor;
+      d_window += downsample_factor * d_stride;
+      d_current_row += downsample_factor * d_stride;
+    } while (proc_ht < v_end);
+    const __m256i s_h =
+        hadd_four_32_to_64_avx2(sum_h[0], sum_h[1], &sum_h[2], &sum_h[3]);
+    _mm256_storeu_si256((__m256i *)(H + (i * wiener_win2) + i), s_h);
+    const __m128i s_h0 = convert_32_to_64_add_avx2(sum_h[4], sum_h[5]);
+    _mm_storeu_si128((__m128i *)(H + (i * wiener_win2) + i + 4), s_h0);
+
+    // process the remaining 'j' iterations.
+    j++;
+    CALCULATE_REMAINING_H_WIN7
+  }
+
+  // Step 3: Here, the rows 2, 9, 16, 23, 30, 37 and 44 are filled. As we need
+  // to fill only upper-triangle elements, H20-H21 from row2, H90-H96 and
+  // H97-H98 from row9, etc. are need not be filled. As the core function
+  // process 7 values, in first iteration of 'j' only 5 values to be filled
+  // i.e., H22-H26 from row2 and H99-H913 from row9, etc.
+  for (int i = 2; i < wiener_win2; i += wiener_win) {
+    // Update the dgd pointers appropriately and also derive the 'j'th iteration
+    // from where the H buffer filling needs to be started.
+    INITIALIZATION(WIENER_WIN)
+    do {
+      UPDATE_DOWNSAMPLE_FACTOR
+
+      // Process the amount of width multiple of 16.
+      while (proc_wd < wd_mul16) {
+        const __m256i dgd =
+            _mm256_loadu_si256((__m256i *)(d_current_row + proc_wd));
+        const __m256i dgd_mul_df = _mm256_mullo_epi16(dgd, df_reg);
+        INIT_H_VALUES(d_window + proc_wd + (2 * d_stride), 5)
+
+        proc_wd += 16;
+      }
+
+      // Process the remaining width here.
+      if (wd_beyond_mul16) {
+        const __m256i dgd =
+            _mm256_loadu_si256((__m256i *)(d_current_row + proc_wd));
+        const __m256i dgd_mask = _mm256_and_si256(dgd, mask);
+        const __m256i dgd_mul_df = _mm256_mullo_epi16(dgd_mask, df_reg);
+        INIT_H_VALUES(d_window + proc_wd + (2 * d_stride), 5)
+      }
+      proc_ht += downsample_factor;
+      d_window += downsample_factor * d_stride;
+      d_current_row += downsample_factor * d_stride;
+    } while (proc_ht < v_end);
+    const __m256i s_h =
+        hadd_four_32_to_64_avx2(sum_h[0], sum_h[1], &sum_h[2], &sum_h[3]);
+    _mm256_storeu_si256((__m256i *)(H + (i * wiener_win2) + i), s_h);
+    const __m256i s_m_h = convert_and_add_avx2(sum_h[4]);
+    const __m128i s_m_h0 = add_64bit_lvl_avx2(s_m_h, s_m_h);
+    _mm_storel_epi64((__m128i *)(H + (i * wiener_win2) + i + 4), s_m_h0);
+
+    // process the remaining 'j' iterations.
+    j++;
+    CALCULATE_REMAINING_H_WIN7
+  }
+
+  // Step 4: Here, the rows 3, 10, 17, 24, 31, 38 and 45 are filled. As we need
+  // to fill only upper-triangle elements, H30-H32 from row3, H100-H106 and
+  // H107-H109 from row10, etc. are need not be filled. As the core function
+  // process 7 values, in first iteration of 'j' only 4 values to be filled
+  // i.e., H33-H36 from row3 and H1010-H1013 from row10, etc.
+  for (int i = 3; i < wiener_win2; i += wiener_win) {
+    // Update the dgd pointers appropriately and also derive the 'j'th iteration
+    // from where the H buffer filling needs to be started.
+    INITIALIZATION(WIENER_WIN)
+
+    do {
+      UPDATE_DOWNSAMPLE_FACTOR
+
+      // Process the amount of width multiple of 16.
+      while (proc_wd < wd_mul16) {
+        const __m256i dgd =
+            _mm256_loadu_si256((__m256i *)(d_current_row + proc_wd));
+        const __m256i dgd_mul_df = _mm256_mullo_epi16(dgd, df_reg);
+        INIT_H_VALUES(d_window + proc_wd + (3 * d_stride), 4)
+
+        proc_wd += 16;
+      }
+
+      // Process the remaining width here.
+      if (wd_beyond_mul16) {
+        const __m256i dgd =
+            _mm256_loadu_si256((__m256i *)(d_current_row + proc_wd));
+        const __m256i dgd_mask = _mm256_and_si256(dgd, mask);
+        const __m256i dgd_mul_df = _mm256_mullo_epi16(dgd_mask, df_reg);
+        INIT_H_VALUES(d_window + proc_wd + (3 * d_stride), 4)
+      }
+      proc_ht += downsample_factor;
+      d_window += downsample_factor * d_stride;
+      d_current_row += downsample_factor * d_stride;
+    } while (proc_ht < v_end);
+    const __m256i s_h =
+        hadd_four_32_to_64_avx2(sum_h[0], sum_h[1], &sum_h[2], &sum_h[3]);
+    _mm256_storeu_si256((__m256i *)(H + (i * wiener_win2) + i), s_h);
+
+    // process the remaining 'j' iterations.
+    j++;
+    CALCULATE_REMAINING_H_WIN7
+  }
+
+  // Step 5: Here, the rows 4, 11, 18, 25, 32, 39 and 46 are filled. As we need
+  // to fill only upper-triangle elements, H40-H43 from row4, H110-H116 and
+  // H117-H1110 from row10, etc. are need not be filled. As the core function
+  // process 7 values, in first iteration of 'j' only 3 values to be filled
+  // i.e., H44-H46 from row4 and H1111-H1113 from row11, etc.
+  for (int i = 4; i < wiener_win2; i += wiener_win) {
+    // Update the dgd pointers appropriately and also derive the 'j'th iteration
+    // from where the H buffer filling needs to be started.
+    INITIALIZATION(WIENER_WIN)
+
+    do {
+      UPDATE_DOWNSAMPLE_FACTOR
+
+      // Process the amount of width multiple of 16.
+      while (proc_wd < wd_mul16) {
+        const __m256i dgd =
+            _mm256_loadu_si256((__m256i *)(d_current_row + proc_wd));
+        const __m256i dgd_mul_df = _mm256_mullo_epi16(dgd, df_reg);
+        INIT_H_VALUES(d_window + proc_wd + (4 * d_stride), 3)
+
+        proc_wd += 16;
+      }
+
+      // Process the remaining width here.
+      if (wd_beyond_mul16) {
+        const __m256i dgd =
+            _mm256_loadu_si256((__m256i *)(d_current_row + proc_wd));
+        const __m256i dgd_mask = _mm256_and_si256(dgd, mask);
+        const __m256i dgd_mul_df = _mm256_mullo_epi16(dgd_mask, df_reg);
+        INIT_H_VALUES(d_window + proc_wd + (4 * d_stride), 3)
+      }
+      proc_ht += downsample_factor;
+      d_window += downsample_factor * d_stride;
+      d_current_row += downsample_factor * d_stride;
+    } while (proc_ht < v_end);
+    const __m256i s_h =
+        hadd_four_32_to_64_avx2(sum_h[0], sum_h[1], &sum_h[2], &sum_h[3]);
+    _mm256_storeu_si256((__m256i *)(H + (i * wiener_win2) + i), s_h);
+
+    // process the remaining 'j' iterations.
+    j++;
+    CALCULATE_REMAINING_H_WIN7
+  }
+
+  // Step 6: Here, the rows 5, 12, 19, 26, 33, 40 and 47 are filled. As we need
+  // to fill only upper-triangle elements, H50-H54 from row5, H120-H126 and
+  // H127-H1211 from row12, etc. are need not be filled. As the core function
+  // process 7 values, in first iteration of 'j' only 2 values to be filled
+  // i.e., H55-H56 from row5 and H1212-H1213 from row12, etc.
+  for (int i = 5; i < wiener_win2; i += wiener_win) {
+    // Update the dgd pointers appropriately and also derive the 'j'th iteration
+    // from where the H buffer filling needs to be started.
+    INITIALIZATION(WIENER_WIN)
+    do {
+      UPDATE_DOWNSAMPLE_FACTOR
+
+      // Process the amount of width multiple of 16.
+      while (proc_wd < wd_mul16) {
+        const __m256i dgd =
+            _mm256_loadu_si256((__m256i *)(d_current_row + proc_wd));
+        const __m256i dgd_mul_df = _mm256_mullo_epi16(dgd, df_reg);
+        INIT_H_VALUES(d_window + proc_wd + (5 * d_stride), 2)
+
+        proc_wd += 16;
+      }
+
+      // Process the remaining width here.
+      if (wd_beyond_mul16) {
+        const __m256i dgd =
+            _mm256_loadu_si256((__m256i *)(d_current_row + proc_wd));
+        const __m256i dgd_mask = _mm256_and_si256(dgd, mask);
+        const __m256i dgd_mul_df = _mm256_mullo_epi16(dgd_mask, df_reg);
+        INIT_H_VALUES(d_window + proc_wd + (5 * d_stride), 2)
+      }
+      proc_ht += downsample_factor;
+      d_window += downsample_factor * d_stride;
+      d_current_row += downsample_factor * d_stride;
+    } while (proc_ht < v_end);
+    const __m256i s_h =
+        hadd_four_32_to_64_avx2(sum_h[0], sum_h[1], &sum_h[2], &sum_h[3]);
+    _mm256_storeu_si256((__m256i *)(H + (i * wiener_win2) + i), s_h);
+
+    // process the remaining 'j' iterations.
+    j++;
+    CALCULATE_REMAINING_H_WIN7
+  }
+
+  // Step 7: Here, the rows 6, 13, 20, 27, 34, 41 and 48 are filled. As we need
+  // to fill only upper-triangle elements, H60-H65 from row6, H130-H136 and
+  // H137-H1312 from row13, etc. are need not be filled. As the core function
+  // process 7 values, in first iteration of 'j' only 1 value to be filled
+  // i.e., H66 from row6 and H1313 from row13, etc.
+  for (int i = 6; i < wiener_win2; i += wiener_win) {
+    // Update the dgd pointers appropriately and also derive the 'j'th iteration
+    // from where the H buffer filling needs to be started.
+    INITIALIZATION(WIENER_WIN)
+    do {
+      UPDATE_DOWNSAMPLE_FACTOR
+
+      // Process the amount of width multiple of 16.
+      while (proc_wd < wd_mul16) {
+        const __m256i dgd =
+            _mm256_loadu_si256((__m256i *)(d_current_row + proc_wd));
+        const __m256i dgd_mul_df = _mm256_mullo_epi16(dgd, df_reg);
+        INIT_H_VALUES(d_window + proc_wd + (6 * d_stride), 1)
+
+        proc_wd += 16;
+      }
+
+      // Process the remaining width here.
+      if (wd_beyond_mul16) {
+        const __m256i dgd =
+            _mm256_loadu_si256((__m256i *)(d_current_row + proc_wd));
+        const __m256i dgd_mask = _mm256_and_si256(dgd, mask);
+        const __m256i dgd_mul_df = _mm256_mullo_epi16(dgd_mask, df_reg);
+        INIT_H_VALUES(d_window + proc_wd + (6 * d_stride), 1)
+      }
+      proc_ht += downsample_factor;
+      d_window += downsample_factor * d_stride;
+      d_current_row += downsample_factor * d_stride;
+    } while (proc_ht < v_end);
+    const __m256i s_h =
+        hadd_four_32_to_64_avx2(sum_h[0], sum_h[1], &sum_h[2], &sum_h[3]);
+    xx_storel_64(&H[(i * wiener_win2) + i], _mm256_castsi256_si128(s_h));
+
+    // process the remaining 'j' iterations.
+    j++;
+    CALCULATE_REMAINING_H_WIN7
+  }
+
+  // Step 8: Here, the rows 7, 14, 21, 28, 35 and 42 are filled. As we need
+  // to fill only upper-triangle elements, H70-H75 from row7, H140-H146 and
+  // H147-H1413 from row14, etc. are need not be filled. The first iteration of
+  // 'j' fills H77-H713 from row7 and H1414-H1420 from row14, etc.
+  for (int i = 7; i < wiener_win2; i += wiener_win) {
+    // Derive j'th iteration from where the H buffer filling needs to be
+    // started.
+    j = i / wiener_win;
+    int shift = 0;
+    do {
+      // Update the dgd pointers appropriately.
+      int proc_ht = v_start;
+      const int16_t *d_window = d + (i / WIENER_WIN);
+      const int16_t *d_current_row =
+          d + (i / WIENER_WIN) + ((i % WIENER_WIN) * d_stride);
+      downsample_factor =
+          use_downsampled_wiener_stats ? WIENER_STATS_DOWNSAMPLE_FACTOR : 1;
+      __m256i sum_h[WIENER_WIN] = { _mm256_setzero_si256() };
+      do {
+        UPDATE_DOWNSAMPLE_FACTOR
+
+        // Process the amount of width multiple of 16.
+        while (proc_wd < wd_mul16) {
+          const __m256i dgd =
+              _mm256_loadu_si256((__m256i *)(d_current_row + proc_wd));
+          const __m256i dgd_mul_df = _mm256_mullo_epi16(dgd, df_reg);
+          INIT_H_VALUES(d_window + shift + proc_wd, 7)
+
+          proc_wd += 16;
+        }
+
+        // Process the remaining width here.
+        if (wd_beyond_mul16) {
+          const __m256i dgd =
+              _mm256_loadu_si256((__m256i *)(d_current_row + proc_wd));
+          const __m256i dgd_mask = _mm256_and_si256(dgd, mask);
+          const __m256i dgd_mul_df = _mm256_mullo_epi16(dgd_mask, df_reg);
+          INIT_H_VALUES(d_window + shift + proc_wd, 7)
+        }
+        proc_ht += downsample_factor;
+        d_window += downsample_factor * d_stride;
+        d_current_row += downsample_factor * d_stride;
+      } while (proc_ht < v_end);
+
+      const __m256i sh_0 =
+          hadd_four_32_to_64_avx2(sum_h[0], sum_h[1], &sum_h[2], &sum_h[3]);
+      const __m256i sh_1 =
+          hadd_four_32_to_64_avx2(sum_h[4], sum_h[5], &sum_h[6], &sum_h[6]);
+      _mm256_storeu_si256((__m256i *)(H + (i * wiener_win2) + (wiener_win * j)),
+                          sh_0);
+      _mm_storeu_si128(
+          (__m128i *)(H + (i * wiener_win2) + (wiener_win * j) + 4),
+          _mm256_castsi256_si128(sh_1));
+      _mm_storel_epi64((__m128i *)&H[(i * wiener_win2) + (wiener_win * j) + 6],
+                       _mm256_extracti128_si256(sh_1, 1));
+      shift++;
+    } while (++j < wiener_win);
+  }
+
+  fill_lower_triag_elements_avx2(wiener_win2, H);
 }
 
 void av1_compute_stats_avx2(int wiener_win, const uint8_t *dgd,
-                            const uint8_t *src, int h_start, int h_end,
+                            const uint8_t *src, int16_t *dgd_avg,
+                            int16_t *src_avg, int h_start, int h_end,
                             int v_start, int v_end, int dgd_stride,
                             int src_stride, int64_t *M, int64_t *H,
                             int use_downsampled_wiener_stats) {
-  if (wiener_win == WIENER_WIN) {
-    compute_stats_win7_opt_avx2(dgd, src, h_start, h_end, v_start, v_end,
-                                dgd_stride, src_stride, M, H,
-                                use_downsampled_wiener_stats);
-  } else if (wiener_win == WIENER_WIN_CHROMA) {
-    compute_stats_win5_opt_avx2(dgd, src, h_start, h_end, v_start, v_end,
-                                dgd_stride, src_stride, M, H,
-                                use_downsampled_wiener_stats);
-  } else {
-    av1_compute_stats_c(wiener_win, dgd, src, h_start, h_end, v_start, v_end,
-                        dgd_stride, src_stride, M, H,
+  if (wiener_win != WIENER_WIN && wiener_win != WIENER_WIN_CHROMA) {
+    // Currently, libaom supports Wiener filter processing with window sizes as
+    // WIENER_WIN_CHROMA(5) and WIENER_WIN(7). For any other window size, SIMD
+    // support is not facilitated. Hence, invoke C function for the same.
+    av1_compute_stats_c(wiener_win, dgd, src, dgd_avg, src_avg, h_start, h_end,
+                        v_start, v_end, dgd_stride, src_stride, M, H,
                         use_downsampled_wiener_stats);
+    return;
+  }
+
+  const int32_t wiener_halfwin = wiener_win >> 1;
+  const uint8_t avg =
+      calc_dgd_buf_avg_avx2(dgd, h_start, h_end, v_start, v_end, dgd_stride);
+  const int32_t width = h_end - h_start;
+  const int32_t height = v_end - v_start;
+  const int32_t d_stride = (width + 2 * wiener_halfwin + 15) & ~15;
+  const int32_t s_stride = (width + 15) & ~15;
+
+  // Based on the sf 'use_downsampled_wiener_stats', process either once for
+  // UPDATE_DOWNSAMPLE_FACTOR or for each row.
+  sub_avg_block_avx2(src + v_start * src_stride + h_start, src_stride, avg,
+                     width, height, src_avg, s_stride,
+                     use_downsampled_wiener_stats);
+
+  // Compute (dgd-avg) buffer here which is used to fill H buffer.
+  sub_avg_block_avx2(
+      dgd + (v_start - wiener_halfwin) * dgd_stride + h_start - wiener_halfwin,
+      dgd_stride, avg, width + 2 * wiener_halfwin, height + 2 * wiener_halfwin,
+      dgd_avg, d_stride, 0);
+  if (wiener_win == WIENER_WIN) {
+    compute_stats_win7_avx2(dgd_avg, d_stride, src_avg, s_stride, width,
+                            v_start, v_end, M, H, use_downsampled_wiener_stats);
+  } else if (wiener_win == WIENER_WIN_CHROMA) {
+    compute_stats_win5_avx2(dgd_avg, d_stride, src_avg, s_stride, width,
+                            v_start, v_end, M, H, use_downsampled_wiener_stats);
   }
 }
 
@@ -789,7 +1601,7 @@ int64_t av1_lowbd_pixel_proj_error_avx2(
   } else if (params->r[0] > 0 || params->r[1] > 0) {
     const int xq_active = (params->r[0] > 0) ? xq[0] : xq[1];
     const __m256i xq_coeff =
-        pair_set_epi16(xq_active, (-xq_active * (1 << SGRPROJ_RST_BITS)));
+        pair_set_epi16(xq_active, -xq_active * (1 << SGRPROJ_RST_BITS));
     const int32_t *flt = (params->r[0] > 0) ? flt0 : flt1;
     const int flt_stride = (params->r[0] > 0) ? flt0_stride : flt1_stride;
     for (i = 0; i < height; ++i) {

@@ -47,6 +47,7 @@ static const struct arg_enum_list tuning_enum[] = {
   { "vmaf", AOM_TUNE_VMAF_MAX_GAIN },
   { "vmaf_neg", AOM_TUNE_VMAF_NEG_MAX_GAIN },
   { "butteraugli", AOM_TUNE_BUTTERAUGLI },
+  { "vmaf_saliency_map", AOM_TUNE_VMAF_SALIENCY_MAP },
   { NULL, 0 }
 };
 
@@ -137,6 +138,12 @@ static const struct arg_enum_list color_primaries_enum[] = {
   { "smpte431", AOM_CICP_CP_SMPTE_431 },
   { "smpte432", AOM_CICP_CP_SMPTE_432 },
   { "ebu3213", AOM_CICP_CP_EBU_3213 },
+  { NULL, 0 }
+};
+
+static const struct arg_enum_list global_motion_method_enum[] = {
+  { "feature-match", GLOBAL_MOTION_METHOD_FEATURE_MATCH },
+  { "disflow", GLOBAL_MOTION_METHOD_DISFLOW },
   { NULL, 0 }
 };
 #endif  // CONFIG_AV1_ENCODER
@@ -427,8 +434,9 @@ const av1_codec_arg_definitions_t g_av1_codec_arg_defs = {
               "Enable diagonal (D45 to D203) intra prediction modes, which are "
               "a subset of directional modes; has no effect if "
               "enable-directional-intra is 0 (0: false, 1: true (default))"),
-  .force_video_mode = ARG_DEF(NULL, "force-video-mode", 1,
-                              "Force video mode (0: false, 1: true (default))"),
+  .force_video_mode = ARG_DEF(
+      NULL, "force-video-mode", 1,
+      "Force video mode even for a single frame (0: false (default), 1: true)"),
   .enable_obmc = ARG_DEF(NULL, "enable-obmc", 1,
                          "Enable OBMC (0: false, 1: true (default))"),
   .enable_overlay =
@@ -494,6 +502,16 @@ const av1_codec_arg_definitions_t g_av1_codec_arg_defs = {
 #endif
   .partition_info_path = ARG_DEF(NULL, "partition-info-path", 1,
                                  "Partition information read and write path"),
+  .enable_rate_guide_deltaq =
+      ARG_DEF(NULL, "enable-rate-guide-deltaq", 1,
+              "Enable rate guide deltaq (1), by default off (0). "
+              "It requires --deltaq-mode=3. "
+              "If turned on, it requires an input file specified "
+              "by --rate-distribution-info."),
+  .rate_distribution_info =
+      ARG_DEF(NULL, "rate-distribution-info", 1,
+              "Rate distribution information input."
+              "It requires --enable-rate-guide-deltaq=1."),
   .film_grain_test = ARG_DEF(
       NULL, "film-grain-test", 1,
       "Film grain test vectors (0: none (default), 1: test-1  2: test-2, "
@@ -672,5 +690,19 @@ const av1_codec_arg_definitions_t g_av1_codec_arg_defs = {
       ARG_DEF(NULL, "strict-level-conformance", 1,
               "When set to 1, exit the encoder when it fails to encode "
               "to a given target level"),
+  .kf_max_pyr_height = ARG_DEF(
+      NULL, "kf-max-pyr-height", 1,
+      "Maximum height of pyramid structure used for the GOP starting with a "
+      "key frame (-1 to 5). When set to -1 (default), it does not have any "
+      "effect. The actual maximum pyramid height will be the minimum of this "
+      "value and the value of gf_max_pyr_height."),
+  .sb_qp_sweep =
+      ARG_DEF(NULL, "sb-qp-sweep", 1,
+              "When set to 1, enable the superblock level qp sweep for a "
+              "given lambda to minimize the rdcost."),
+  .global_motion_method = ARG_DEF_ENUM(NULL, "global-motion-method", 1,
+                                       "Global motion search method "
+                                       "(default: disflow):",
+                                       global_motion_method_enum),
 #endif  // CONFIG_AV1_ENCODER
 };

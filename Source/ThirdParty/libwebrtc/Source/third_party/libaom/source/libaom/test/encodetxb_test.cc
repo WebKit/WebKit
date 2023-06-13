@@ -66,17 +66,17 @@ class EncodeTxbTest : public ::testing::TestWithParam<GetNzMapContextsFunc> {
       for (int tx_type = DCT_DCT; tx_type < TX_TYPES; ++tx_type) {
         const TX_CLASS tx_class = tx_type_to_class[tx_type];
         for (int tx_size = TX_4X4; tx_size < TX_SIZES_ALL; ++tx_size) {
-          const int bwl = get_txb_bwl((TX_SIZE)tx_size);
+          const int bhl = get_txb_bhl((TX_SIZE)tx_size);
           const int width = get_txb_wide((TX_SIZE)tx_size);
           const int height = get_txb_high((TX_SIZE)tx_size);
           const int real_width = tx_size_wide[tx_size];
           const int real_height = tx_size_high[tx_size];
           const int16_t *const scan = av1_scan_orders[tx_size][tx_type].scan;
 
-          levels_ = set_levels(levels_buf_, width);
+          levels_ = set_levels(levels_buf_, height);
           for (int i = 0; i < kNumTests && !result; ++i) {
             for (int eob = 1; eob <= width * height && !result; ++eob) {
-              InitDataWithEob(scan, bwl, eob);
+              InitDataWithEob(scan, bhl, eob);
 
               av1_get_nz_map_contexts_c(levels_, scan, eob, (TX_SIZE)tx_size,
                                         tx_class, coeff_contexts_ref_);
@@ -86,7 +86,7 @@ class EncodeTxbTest : public ::testing::TestWithParam<GetNzMapContextsFunc> {
               result = Compare(scan, eob);
 
               EXPECT_EQ(result, 0)
-                  << " tx_class " << tx_class << " width " << real_width
+                  << " tx_class " << (int)tx_class << " width " << real_width
                   << " height " << real_height << " eob " << eob;
             }
           }
@@ -102,7 +102,7 @@ class EncodeTxbTest : public ::testing::TestWithParam<GetNzMapContextsFunc> {
 
     printf("Note: Only test the largest possible eob case!\n");
     for (int tx_size = TX_4X4; tx_size < TX_SIZES_ALL; ++tx_size) {
-      const int bwl = get_txb_bwl((TX_SIZE)tx_size);
+      const int bhl = get_txb_bhl((TX_SIZE)tx_size);
       const int width = get_txb_wide((TX_SIZE)tx_size);
       const int height = get_txb_high((TX_SIZE)tx_size);
       const int real_width = tx_size_wide[tx_size];
@@ -113,8 +113,8 @@ class EncodeTxbTest : public ::testing::TestWithParam<GetNzMapContextsFunc> {
       const int eob = width * height;
       const int numTests = kNumTests / (width * height);
 
-      levels_ = set_levels(levels_buf_, width);
-      InitDataWithEob(scan, bwl, eob);
+      levels_ = set_levels(levels_buf_, height);
+      InitDataWithEob(scan, bhl, eob);
 
       aom_usec_timer_start(&timer_ref);
       for (int i = 0; i < numTests; ++i) {
@@ -123,8 +123,8 @@ class EncodeTxbTest : public ::testing::TestWithParam<GetNzMapContextsFunc> {
       }
       aom_usec_timer_mark(&timer_ref);
 
-      levels_ = set_levels(levels_buf_, width);
-      InitDataWithEob(scan, bwl, eob);
+      levels_ = set_levels(levels_buf_, height);
+      InitDataWithEob(scan, bhl, eob);
 
       aom_usec_timer_start(&timer);
       for (int i = 0; i < numTests; ++i) {
@@ -145,13 +145,13 @@ class EncodeTxbTest : public ::testing::TestWithParam<GetNzMapContextsFunc> {
   }
 
  private:
-  void InitDataWithEob(const int16_t *const scan, const int bwl,
+  void InitDataWithEob(const int16_t *const scan, const int bhl,
                        const int eob) {
     memset(levels_buf_, 0, sizeof(levels_buf_));
     memset(coeff_contexts_, 0, sizeof(*coeff_contexts_) * MAX_TX_SQUARE);
 
     for (int c = 0; c < eob; ++c) {
-      levels_[get_padded_idx(scan[c], bwl)] =
+      levels_[get_padded_idx(scan[c], bhl)] =
           static_cast<uint8_t>(clamp(rnd_.Rand8(), 0, INT8_MAX));
       coeff_contexts_[scan[c]] = static_cast<int8_t>(rnd_.Rand16() >> 1);
     }
@@ -224,12 +224,12 @@ void EncodeTxbInitLevelTest::RunTest(av1_txb_init_levels_func test_func,
   tran_low_t coeff[MAX_TX_SQUARE];
 
   uint8_t levels_buf[2][TX_PAD_2D];
-  uint8_t *const levels0 = set_levels(levels_buf[0], width);
-  uint8_t *const levels1 = set_levels(levels_buf[1], width);
+  uint8_t *const levels0 = set_levels(levels_buf[0], height);
+  uint8_t *const levels1 = set_levels(levels_buf[1], height);
 
   ACMRandom rnd(ACMRandom::DeterministicSeed());
   for (int i = 0; i < width * height; i++) {
-    coeff[i] = rnd.Rand15Signed() + rnd.Rand15Signed();
+    coeff[i] = rnd.Rand16Signed();
   }
   for (int i = 0; i < TX_PAD_2D; i++) {
     levels_buf[0][i] = rnd.Rand8();

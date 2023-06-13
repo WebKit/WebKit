@@ -90,6 +90,7 @@ typedef struct aom_variance_vtable {
   aom_subpixvariance_fn_t svf;
   aom_subp_avg_variance_fn_t svaf;
   aom_sad_multi_d_fn_t sdx4df;
+  aom_sad_multi_d_fn_t sdx3df;
   // Same as sadx4, but downsample the rows by a factor of 2.
   aom_sad_multi_d_fn_t sdsx4df;
   aom_masked_sad_fn_t msdf;

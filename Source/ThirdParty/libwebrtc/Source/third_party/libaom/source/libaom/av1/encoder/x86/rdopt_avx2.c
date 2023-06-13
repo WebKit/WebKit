@@ -31,8 +31,8 @@ INLINE static void horver_correlation_4x4(const int16_t *diff, int stride,
   //                      [ m n o p ]
 
   const __m256i pixels = _mm256_set_epi64x(
-      loadu_uint64(&diff[0 * stride]), loadu_uint64(&diff[1 * stride]),
-      loadu_uint64(&diff[2 * stride]), loadu_uint64(&diff[3 * stride]));
+      loadu_int64(&diff[0 * stride]), loadu_int64(&diff[1 * stride]),
+      loadu_int64(&diff[2 * stride]), loadu_int64(&diff[3 * stride]));
   // pixels = [d c b a h g f e] [l k j i p o n m] as i16
 
   const __m256i slli = _mm256_slli_epi64(pixels, 16);

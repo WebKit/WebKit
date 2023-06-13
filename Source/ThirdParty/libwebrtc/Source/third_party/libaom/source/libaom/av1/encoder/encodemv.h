@@ -27,6 +27,9 @@ void av1_update_mv_stats(const MV *mv, const MV *ref, nmv_context *mvctx,
 void av1_build_nmv_cost_table(int *mvjoint, int *mvcost[2],
                               const nmv_context *mvctx,
                               MvSubpelPrecision precision);
+void av1_build_nmv_component_cost_table(int *mvcost,
+                                        const nmv_component *const mvcomp,
+                                        MvSubpelPrecision precision);
 
 void av1_update_mv_count(ThreadData *td);
 
