@@ -40,16 +40,21 @@ std::optional<PipelineLayoutDescriptor> ConvertToBackingContext::convertToBackin
     if (!base)
         return std::nullopt;
 
+    std::optional<Vector<WebGPUIdentifier>> optionalBindGroupLayouts = std::nullopt;
     Vector<WebGPUIdentifier> bindGroupLayouts;
-    bindGroupLayouts.reserveInitialCapacity(pipelineLayoutDescriptor.bindGroupLayouts.size());
-    for (auto backingBindGroupLayout : pipelineLayoutDescriptor.bindGroupLayouts) {
-        auto entry = convertToBacking(backingBindGroupLayout);
-        if (!entry)
-            return std::nullopt;
-        bindGroupLayouts.uncheckedAppend(entry);
+    if (pipelineLayoutDescriptor.bindGroupLayouts) {
+        bindGroupLayouts.reserveInitialCapacity(pipelineLayoutDescriptor.bindGroupLayouts->size());
+        for (auto backingBindGroupLayout : *pipelineLayoutDescriptor.bindGroupLayouts) {
+            auto entry = convertToBacking(backingBindGroupLayout);
+            if (!entry)
+                return std::nullopt;
+            bindGroupLayouts.uncheckedAppend(entry);
+        }
+
+        optionalBindGroupLayouts = bindGroupLayouts;
     }
 
-    return { { WTFMove(*base), WTFMove(bindGroupLayouts) } };
+    return { { WTFMove(*base), bindGroupLayouts } };
 }
 
 std::optional<PAL::WebGPU::PipelineLayoutDescriptor> ConvertFromBackingContext::convertFromBacking(const PipelineLayoutDescriptor& pipelineLayoutDescriptor)
@@ -58,16 +63,21 @@ std::optional<PAL::WebGPU::PipelineLayoutDescriptor> ConvertFromBackingContext::
     if (!base)
         return std::nullopt;
 
+    std::optional<Vector<std::reference_wrapper<PAL::WebGPU::BindGroupLayout>>> optionalBindGroupLayouts = std::nullopt;
     Vector<std::reference_wrapper<PAL::WebGPU::BindGroupLayout>> bindGroupLayouts;
-    bindGroupLayouts.reserveInitialCapacity(pipelineLayoutDescriptor.bindGroupLayouts.size());
-    for (const auto& backingBindGroupLayout : pipelineLayoutDescriptor.bindGroupLayouts) {
-        auto* entry = convertBindGroupLayoutFromBacking(backingBindGroupLayout);
-        if (!entry)
-            return std::nullopt;
-        bindGroupLayouts.uncheckedAppend(*entry);
+    if (pipelineLayoutDescriptor.bindGroupLayouts) {
+        bindGroupLayouts.reserveInitialCapacity(pipelineLayoutDescriptor.bindGroupLayouts->size());
+        for (const auto& backingBindGroupLayout : *pipelineLayoutDescriptor.bindGroupLayouts) {
+            auto* entry = convertBindGroupLayoutFromBacking(backingBindGroupLayout);
+            if (!entry)
+                return std::nullopt;
+            bindGroupLayouts.uncheckedAppend(*entry);
+        }
+
+        optionalBindGroupLayouts = bindGroupLayouts;
     }
 
-    return { { WTFMove(*base), WTFMove(bindGroupLayouts) } };
+    return { { WTFMove(*base), optionalBindGroupLayouts } };
 }
 
 } // namespace WebKit

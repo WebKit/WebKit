@@ -136,6 +136,7 @@ private:
     // ActiveDOMObject.
     // FIXME: We probably need to override more methods to make this work properly.
     const char* activeDOMObjectName() const final { return "GPUDevice"; }
+    Ref<GPUPipelineLayout> createAutoPipelineLayout();
 
     // EventTarget.
     EventTargetInterface eventTargetInterface() const final { return GPUDeviceEventTargetInterfaceType; }

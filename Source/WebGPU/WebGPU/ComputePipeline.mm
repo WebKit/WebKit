@@ -86,9 +86,7 @@ Ref<ComputePipeline> Device::createComputePipeline(const WGPUComputePipelineDesc
     if (!function)
         return ComputePipeline::createInvalid(*this);
 
-    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=257947 - GPUAutoLayout should not rely on the only
-    // layout with zero bind group layouts
-    if (!pipelineLayout.numberOfBindGroupLayouts() && entryPointInformation.defaultLayout) {
+    if (pipelineLayout.isAutoLayout() && entryPointInformation.defaultLayout) {
         Vector<Vector<WGPUBindGroupLayoutEntry>> bindGroupEntries;
         addPipelineLayouts(bindGroupEntries, entryPointInformation.defaultLayout);
 

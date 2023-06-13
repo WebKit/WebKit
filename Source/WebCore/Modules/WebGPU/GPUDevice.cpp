@@ -76,7 +76,7 @@ GPUDevice::GPUDevice(ScriptExecutionContext* scriptExecutionContext, Ref<PAL::We
     , m_lostPromise(makeUniqueRef<LostPromise>())
     , m_backing(WTFMove(backing))
     , m_queue(GPUQueue::create(Ref { m_backing->queue() }))
-    , m_autoPipelineLayout(createPipelineLayout({ { "autoLayout"_s, }, { } }))
+    , m_autoPipelineLayout(createAutoPipelineLayout())
 {
 }
 
@@ -171,6 +171,14 @@ Ref<GPUExternalTexture> GPUDevice::importExternalTexture(const GPUExternalTextur
 Ref<GPUBindGroupLayout> GPUDevice::createBindGroupLayout(const GPUBindGroupLayoutDescriptor& bindGroupLayoutDescriptor)
 {
     return GPUBindGroupLayout::create(m_backing->createBindGroupLayout(bindGroupLayoutDescriptor.convertToBacking()));
+}
+
+Ref<GPUPipelineLayout> GPUDevice::createAutoPipelineLayout()
+{
+    return GPUPipelineLayout::create(m_backing->createPipelineLayout(PAL::WebGPU::PipelineLayoutDescriptor {
+        { "autoLayout"_s, },
+        std::nullopt
+    }));
 }
 
 Ref<GPUPipelineLayout> GPUDevice::createPipelineLayout(const GPUPipelineLayoutDescriptor& pipelineLayoutDescriptor)

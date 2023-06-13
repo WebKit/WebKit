@@ -551,9 +551,7 @@ Ref<RenderPipeline> Device::createRenderPipeline(const WGPURenderPipelineDescrip
     const PipelineLayout* pipelineLayout = nullptr;
     Vector<Vector<WGPUBindGroupLayoutEntry>> bindGroupEntries;
     if (descriptor.layout) {
-        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=257947 - GPUAutoLayout should not rely on the only
-        // layout with zero bind group layouts
-        if (auto& layout = WebGPU::fromAPI(descriptor.layout); layout.numberOfBindGroupLayouts())
+        if (auto& layout = WebGPU::fromAPI(descriptor.layout); layout.isValid() && !layout.isAutoLayout())
             pipelineLayout = &layout;
     }
 

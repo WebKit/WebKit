@@ -229,15 +229,18 @@ Ref<PipelineLayout> DeviceImpl::createPipelineLayout(const PipelineLayoutDescrip
 {
     auto label = descriptor.label.utf8();
 
-    auto backingBindGroupLayouts = descriptor.bindGroupLayouts.map([&convertToBackingContext = m_convertToBackingContext.get()](auto bindGroupLayout) {
-        return convertToBackingContext.convertToBacking(bindGroupLayout.get());
-    });
+    Vector<WGPUBindGroupLayout> backingBindGroupLayouts;
+    if (descriptor.bindGroupLayouts) {
+        backingBindGroupLayouts = descriptor.bindGroupLayouts->map([&convertToBackingContext = m_convertToBackingContext.get()](auto bindGroupLayout) {
+            return convertToBackingContext.convertToBacking(bindGroupLayout.get());
+        });
+    }
 
     WGPUPipelineLayoutDescriptor backingDescriptor {
         nullptr,
         label.data(),
-        static_cast<uint32_t>(backingBindGroupLayouts.size()),
-        backingBindGroupLayouts.data(),
+        descriptor.bindGroupLayouts ? static_cast<uint32_t>(backingBindGroupLayouts.size()) : 0,
+        descriptor.bindGroupLayouts ? backingBindGroupLayouts.data() : nullptr,
     };
 
     return PipelineLayoutImpl::create(adoptWebGPU(wgpuDeviceCreatePipelineLayout(m_backing.get(), &backingDescriptor)), m_convertToBackingContext);
