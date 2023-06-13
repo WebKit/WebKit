@@ -63,6 +63,8 @@ public:
     void visit(AST::GroupAttribute&) override;
     void visit(AST::BindingAttribute&) override;
     void visit(AST::WorkgroupSizeAttribute&) override;
+    void visit(AST::SizeAttribute&) override;
+    void visit(AST::AlignAttribute&) override;
 
     void visit(AST::Function&) override;
     void visit(AST::Structure&) override;
@@ -457,6 +459,18 @@ void FunctionDefinitionWriter::visit(AST::WorkgroupSizeAttribute&)
 {
     // This attribute shouldn't generate any code. The workgroup size is passed
     // to the API through the EntryPointInformation.
+}
+
+void FunctionDefinitionWriter::visit(AST::SizeAttribute&)
+{
+    // This attribute shouldn't generate any code. The size is used when serializing
+    // structs.
+}
+
+void FunctionDefinitionWriter::visit(AST::AlignAttribute&)
+{
+    // This attribute shouldn't generate any code. The alignment is used when
+    // serializing structs.
 }
 
 // Types
