@@ -214,7 +214,6 @@ ExitMode mayExitImpl(Graph& graph, Node* node, StateType& state)
 
     case ArithDiv:
     case ArithMod:
-    case ArithFRound:
         if (node->isBinaryUseKind(DoubleRepUse))
             break;
         return Exits;
@@ -250,6 +249,7 @@ ExitMode mayExitImpl(Graph& graph, Node* node, StateType& state)
 
     case ArithSqrt:
     case ArithUnary:
+    case ArithFRound:
         if (node->child1().useKind() == DoubleRepUse)
             break;
         return Exits;
