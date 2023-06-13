@@ -375,7 +375,8 @@ TextBreakIterator::LineMode::Behavior TextUtil::lineBreakIteratorMode(LineBreak 
 
 TextBreakIterator::ContentAnalysis TextUtil::contentAnalysis(const WordBoundaryDetection& wordBoundaryDetection)
 {
-    return WTF::switchOn(wordBoundaryDetection, [](WordBoundaryDetectionNormal) {
+    // FIXME: Explicit static_cast to work around issue on libstdc++-10. Undo when upgrading GCC from 10 to 11.
+    return WTF::switchOn(static_cast<WordBoundaryDetectionType>(wordBoundaryDetection), [](WordBoundaryDetectionNormal) {
         return TextBreakIterator::ContentAnalysis::Mechanical;
     }, [](WordBoundaryDetectionManual) {
         return TextBreakIterator::ContentAnalysis::Mechanical;

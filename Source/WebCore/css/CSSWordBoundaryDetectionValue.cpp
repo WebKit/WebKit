@@ -40,7 +40,8 @@ CSSWordBoundaryDetectionValue::CSSWordBoundaryDetectionValue(WordBoundaryDetecti
 String CSSWordBoundaryDetectionValue::customCSSText() const
 {
     TextStream ts;
-    WTF::switchOn(value(), [&ts](WordBoundaryDetectionNormal) {
+    // FIXME: Explicit static_cast to work around issue on libstdc++-10. Undo when upgrading GCC from 10 to 11.
+    WTF::switchOn(static_cast<WordBoundaryDetectionType>(value()), [&ts](WordBoundaryDetectionNormal) {
         ts << "normal";
     }, [&ts](WordBoundaryDetectionManual) {
         ts << "manual";

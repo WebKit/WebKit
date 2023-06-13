@@ -48,9 +48,12 @@ public:
     bool operator==(const WordBoundaryDetection&) const = default;
 };
 
+typedef std::variant<WordBoundaryDetectionNormal, WordBoundaryDetectionManual, WordBoundaryDetectionAuto> WordBoundaryDetectionType;
+
 inline WTF::TextStream& operator<<(TextStream& ts, WordBoundaryDetection wordBoundaryDetection)
 {
-    WTF::switchOn(wordBoundaryDetection, [&ts](WordBoundaryDetectionNormal) {
+    // FIXME: Explicit static_cast to work around issue on libstdc++-10. Undo when upgrading GCC from 10 to 11.
+    WTF::switchOn(static_cast<WordBoundaryDetectionType>(wordBoundaryDetection), [&ts](WordBoundaryDetectionNormal) {
         ts << "normal";
     }, [&ts](WordBoundaryDetectionManual) {
         ts << "manual";
