@@ -399,6 +399,10 @@ private:
             String leftString = m_node->child1()->tryGetString(m_graph);
             if (!leftString)
                 break;
+            if (!m_node->child2()) {
+                ASSERT(!m_node->child3());
+                break;
+            }
             String rightString = m_node->child2()->tryGetString(m_graph);
             if (!rightString)
                 break;
