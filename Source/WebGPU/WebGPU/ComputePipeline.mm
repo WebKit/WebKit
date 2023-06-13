@@ -35,7 +35,7 @@
 
 namespace WebGPU {
 
-static id<MTLComputePipelineState> createComputePipelineState(id<MTLDevice> device, id<MTLFunction> function, const PipelineLayout& pipelineLayout, const WGSL::Reflection::Compute& computeInformation, NSString *label, MTLComputePipelineReflection **reflection, MTLPipelineOption pipelineOptions)
+static id<MTLComputePipelineState> createComputePipelineState(id<MTLDevice> device, id<MTLFunction> function, const PipelineLayout& pipelineLayout, const WGSL::Reflection::Compute& computeInformation, NSString *label)
 {
     auto computePipelineDescriptor = [MTLComputePipelineDescriptor new];
     computePipelineDescriptor.computeFunction = function;
@@ -48,7 +48,7 @@ static id<MTLComputePipelineState> createComputePipelineState(id<MTLDevice> devi
     computePipelineDescriptor.label = label;
     NSError *error = nil;
     // FIXME: Run the asynchronous version of this
-    id<MTLComputePipelineState> computePipelineState = [device newComputePipelineStateWithDescriptor:computePipelineDescriptor options:pipelineOptions reflection:reflection error:&error];
+    id<MTLComputePipelineState> computePipelineState = [device newComputePipelineStateWithDescriptor:computePipelineDescriptor options:MTLPipelineOptionNone reflection:nil error:&error];
 
     if (error)
         WTFLogAlways("Pipeline state creation error: %@", error);
@@ -69,7 +69,7 @@ Ref<ComputePipeline> Device::createComputePipeline(const WGPUComputePipelineDesc
     if (!shaderModule.isValid())
         return ComputePipeline::createInvalid(*this);
 
-    const PipelineLayout& pipelineLayout = WebGPU::fromAPI(descriptor.layout);
+    PipelineLayout& pipelineLayout = WebGPU::fromAPI(descriptor.layout);
     auto label = fromAPI(descriptor.label);
     auto libraryCreationResult = createLibrary(m_device, shaderModule, &pipelineLayout, fromAPI(descriptor.compute.entryPoint), label);
     if (!libraryCreationResult)
@@ -86,14 +86,19 @@ Ref<ComputePipeline> Device::createComputePipeline(const WGPUComputePipelineDesc
     if (!function)
         return ComputePipeline::createInvalid(*this);
 
-    MTLComputePipelineReflection *reflection;
-    bool hasBindGroups = pipelineLayout.numberOfBindGroupLayouts() > 0;
-    auto computePipelineState = createComputePipelineState(m_device, function, pipelineLayout, computeInformation, label, &reflection, hasBindGroups ? MTLPipelineOptionNone : MTLPipelineOptionArgumentInfo);
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=257947 - GPUAutoLayout should not rely on the only
+    // layout with zero bind group layouts
+    if (!pipelineLayout.numberOfBindGroupLayouts() && entryPointInformation.defaultLayout) {
+        Vector<Vector<WGPUBindGroupLayoutEntry>> bindGroupEntries;
+        addPipelineLayouts(bindGroupEntries, entryPointInformation.defaultLayout);
 
-    if (hasBindGroups)
-        return ComputePipeline::create(computePipelineState, pipelineLayout, metalSize(computeInformation.workgroupSize), *this);
+        auto computePipelineState = createComputePipelineState(m_device, function, generatePipelineLayout(bindGroupEntries), computeInformation, label);
+        return ComputePipeline::create(computePipelineState, generatePipelineLayout(bindGroupEntries), metalSize(computeInformation.workgroupSize), *this);
+    }
 
-    return ComputePipeline::create(computePipelineState, reflection, metalSize(computeInformation.workgroupSize), *this);
+    auto computePipelineState = createComputePipelineState(m_device, function, pipelineLayout, computeInformation, label);
+
+    return ComputePipeline::create(computePipelineState, pipelineLayout, metalSize(computeInformation.workgroupSize), *this);
 }
 
 void Device::createComputePipelineAsync(const WGPUComputePipelineDescriptor& descriptor, CompletionHandler<void(WGPUCreatePipelineAsyncStatus, Ref<ComputePipeline>&&, String&& message)>&& callback)
@@ -104,30 +109,18 @@ void Device::createComputePipelineAsync(const WGPUComputePipelineDescriptor& des
     });
 }
 
-ComputePipeline::ComputePipeline(id<MTLComputePipelineState> computePipelineState, const PipelineLayout& pipelineLayout, MTLSize threadsPerThreadgroup, Device& device)
+ComputePipeline::ComputePipeline(id<MTLComputePipelineState> computePipelineState, Ref<PipelineLayout>&& pipelineLayout, MTLSize threadsPerThreadgroup, Device& device)
     : m_computePipelineState(computePipelineState)
-    , m_pipelineLayout(&pipelineLayout)
     , m_device(device)
     , m_threadsPerThreadgroup(threadsPerThreadgroup)
+    , m_pipelineLayout(WTFMove(pipelineLayout))
 {
-}
-
-ComputePipeline::ComputePipeline(id<MTLComputePipelineState> computePipelineState, MTLComputePipelineReflection *reflection, MTLSize threadsPerThreadgroup, Device& device)
-    : m_computePipelineState(computePipelineState)
-#if HAVE(METAL_BUFFER_BINDING_REFLECTION)
-    , m_reflection(reflection)
-#endif
-    , m_device(device)
-    , m_threadsPerThreadgroup(threadsPerThreadgroup)
-{
-#if !HAVE(METAL_BUFFER_BINDING_REFLECTION)
-    UNUSED_PARAM(reflection);
-#endif
 }
 
 ComputePipeline::ComputePipeline(Device& device)
     : m_device(device)
     , m_threadsPerThreadgroup(MTLSizeMake(0, 0, 0))
+    , m_pipelineLayout(PipelineLayout::createInvalid(device))
 {
 }
 
@@ -135,38 +128,7 @@ ComputePipeline::~ComputePipeline() = default;
 
 RefPtr<BindGroupLayout> ComputePipeline::getBindGroupLayout(uint32_t groupIndex)
 {
-    if (m_pipelineLayout)
-        return const_cast<BindGroupLayout*>(&m_pipelineLayout->bindGroupLayout(groupIndex));
-
-    auto it = m_cachedBindGroupLayouts.find(groupIndex);
-    if (it != m_cachedBindGroupLayouts.end())
-        return it->value.ptr();
-
-#if HAVE(METAL_BUFFER_BINDING_REFLECTION)
-    uint32_t bindingIndex = 0;
-    Vector<WGPUBindGroupLayoutEntry> entries;
-    for (id<MTLBufferBinding> binding in m_reflection.bindings) {
-        if (binding.index != groupIndex)
-            continue;
-
-        ASSERT(binding.type == MTLBindingTypeBuffer);
-        for (MTLStructMember *structMember in binding.bufferStructType.members)
-            entries.append(BindGroupLayout::createEntryFromStructMember(structMember, bindingIndex, WGPUShaderStage_Compute));
-    }
-
-    WGPUBindGroupLayoutDescriptor bindGroupLayoutDescriptor = { };
-    bindGroupLayoutDescriptor.label = "getBindGroup() generated layout";
-    bindGroupLayoutDescriptor.entryCount = entries.size();
-    bindGroupLayoutDescriptor.entries = entries.size() ? &entries[0] : nullptr;
-    auto bindGroupLayout = m_device->createBindGroupLayout(bindGroupLayoutDescriptor);
-    m_cachedBindGroupLayouts.add(groupIndex, bindGroupLayout);
-
-    return bindGroupLayout.ptr();
-#else
-    UNUSED_PARAM(groupIndex);
-    // FIXME: Return an invalid object instead of nullptr.
-    return nullptr;
-#endif
+    return const_cast<BindGroupLayout*>(&m_pipelineLayout->bindGroupLayout(groupIndex));
 }
 
 void ComputePipeline::setLabel(String&&)

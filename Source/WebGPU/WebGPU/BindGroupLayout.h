@@ -25,8 +25,10 @@
 
 #pragma once
 
+#import <wtf/EnumeratedArray.h>
 #import <wtf/FastMalloc.h>
 #import <wtf/HashMap.h>
+#import <wtf/HashTraits.h>
 #import <wtf/Ref.h>
 #import <wtf/RefCounted.h>
 #import <wtf/Vector.h>
@@ -55,7 +57,9 @@ public:
         BindingLayout bindingLayout;
     };
 
-    static Ref<BindGroupLayout> create(HashMap<uint32_t, WGPUShaderStageFlags>&& stageMapTable, id<MTLArgumentEncoder> vertexArgumentEncoder, id<MTLArgumentEncoder> fragmentArgumentEncoder, id<MTLArgumentEncoder> computeArgumentEncoder, Vector<Entry>&& entries)
+    using StageMapTable = HashMap<uint64_t, NSUInteger, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>>;
+
+    static Ref<BindGroupLayout> create(StageMapTable&& stageMapTable, id<MTLArgumentEncoder> vertexArgumentEncoder, id<MTLArgumentEncoder> fragmentArgumentEncoder, id<MTLArgumentEncoder> computeArgumentEncoder, Vector<Entry>&& entries)
     {
         return adoptRef(*new BindGroupLayout(WTFMove(stageMapTable), vertexArgumentEncoder, fragmentArgumentEncoder, computeArgumentEncoder, WTFMove(entries)));
     }
@@ -68,7 +72,7 @@ public:
 
     void setLabel(String&&);
 
-    bool isValid() const { return m_shaderStageForBinding.size(); }
+    bool isValid() const { return m_valid; }
 
     NSUInteger encodedLength(ShaderStage) const;
 
@@ -76,11 +80,8 @@ public:
     id<MTLArgumentEncoder> fragmentArgumentEncoder() const { return m_fragmentArgumentEncoder; }
     id<MTLArgumentEncoder> computeArgumentEncoder() const { return m_computeArgumentEncoder; }
 
-    bool bindingContainsStage(uint32_t bindingIndex, ShaderStage renderStage) const;
+    std::optional<NSUInteger> indexForBinding(uint32_t bindingIndex, ShaderStage renderStage) const;
 
-#if HAVE(METAL_BUFFER_BINDING_REFLECTION)
-    static WGPUBindGroupLayoutEntry createEntryFromStructMember(MTLStructMember *, uint32_t&, WGPUShaderStage);
-#endif
     static bool isPresent(const WGPUBufferBindingLayout&);
     static bool isPresent(const WGPUSamplerBindingLayout&);
     static bool isPresent(const WGPUTextureBindingLayout&);
@@ -90,16 +91,17 @@ public:
     const Vector<Entry>& entries() const { return m_bindGroupLayoutEntries; }
 
 private:
-    BindGroupLayout(HashMap<uint32_t, WGPUShaderStageFlags>&&, id<MTLArgumentEncoder>, id<MTLArgumentEncoder>, id<MTLArgumentEncoder>, Vector<Entry>&&);
+    BindGroupLayout(StageMapTable&&, id<MTLArgumentEncoder>, id<MTLArgumentEncoder>, id<MTLArgumentEncoder>, Vector<Entry>&&);
     explicit BindGroupLayout();
 
-    const HashMap<uint32_t, WGPUShaderStageFlags> m_shaderStageForBinding;
+    const StageMapTable m_indicesForBinding;
 
     const id<MTLArgumentEncoder> m_vertexArgumentEncoder { nil };
     const id<MTLArgumentEncoder> m_fragmentArgumentEncoder { nil };
     const id<MTLArgumentEncoder> m_computeArgumentEncoder { nil };
 
     const Vector<Entry> m_bindGroupLayoutEntries;
+    const bool m_valid { true };
 };
 
 } // namespace WebGPU

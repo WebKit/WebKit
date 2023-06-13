@@ -415,7 +415,6 @@ Ref<BindGroup> Device::createBindGroup(const WGPUBindGroupDescriptor& descriptor
 
     constexpr ShaderStage stages[] = { ShaderStage::Vertex, ShaderStage::Fragment, ShaderStage::Compute };
     constexpr size_t stageCount = std::size(stages);
-    ShaderStageArray<NSUInteger> bindingIndexForStage = std::array<NSUInteger, stageCount>();
     const auto& bindGroupLayout = WebGPU::fromAPI(descriptor.layout);
     if (!bindGroupLayout.isValid()) {
         generateAValidationError("invalid BindGroupLayout createBindGroup"_s);
@@ -459,23 +458,24 @@ Ref<BindGroup> Device::createBindGroup(const WGPUBindGroupDescriptor& descriptor
             return BindGroup::createInvalid(*this);
 
         for (ShaderStage stage : stages) {
-            if (!bindGroupLayout.bindingContainsStage(entry.binding, stage))
+            auto optionalIndex = bindGroupLayout.indexForBinding(entry.binding, stage);
+            if (!optionalIndex)
                 continue;
 
-            auto& index = bindingIndexForStage[stage];
+            auto index = *optionalIndex;
             if (bufferIsPresent) {
                 id<MTLBuffer> buffer = WebGPU::fromAPI(entry.buffer).buffer();
                 if (entry.offset > buffer.length)
                     return BindGroup::createInvalid(*this);
 
-                [argumentEncoder[stage] setBuffer:buffer offset:entry.offset atIndex:index++];
+                [argumentEncoder[stage] setBuffer:buffer offset:entry.offset atIndex:index];
                 resources.append({ buffer, MTLResourceUsageRead, metalRenderStage(stage) });
             } else if (samplerIsPresent) {
                 id<MTLSamplerState> sampler = WebGPU::fromAPI(entry.sampler).samplerState();
-                [argumentEncoder[stage] setSamplerState:sampler atIndex:index++];
+                [argumentEncoder[stage] setSamplerState:sampler atIndex:index];
             } else if (textureViewIsPresent) {
                 id<MTLTexture> texture = WebGPU::fromAPI(entry.textureView).texture();
-                [argumentEncoder[stage] setTexture:texture atIndex:index++];
+                [argumentEncoder[stage] setTexture:texture atIndex:index];
                 resources.append({ texture, MTLResourceUsageRead, metalRenderStage(stage) });
             } else if (externalTextureIsPresent) {
                 auto& externalTexture = WebGPU::fromAPI(wgpuExternalTexture);

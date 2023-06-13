@@ -500,6 +500,134 @@ void RewriteGlobalVariables::visitEntryPoint(AST::Function& function, AST::Stage
     insertLocalDefinitions(function, usedGlobals.privateGlobals);
 }
 
+static BindGroupLayoutEntry::BindingMember bindingMemberForGlobal(auto& global)
+{
+    auto* variable = global.declaration;
+    ASSERT(variable);
+    auto* type = variable->storeType();
+    ASSERT(type);
+    auto addressSpace = []() {
+        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=257945
+        // properly compute the address space for the buffer binding
+        return BufferBindingType::Uniform;
+    };
+
+    using namespace WGSL::Types;
+    return WTF::switchOn(*type, [&](const Primitive& primitive) -> BindGroupLayoutEntry::BindingMember {
+        switch (primitive.kind) {
+        case Types::Primitive::AbstractInt:
+        case Types::Primitive::I32:
+        case Types::Primitive::U32:
+        case Types::Primitive::AbstractFloat:
+        case Types::Primitive::F32:
+        case Types::Primitive::Void:
+        case Types::Primitive::Bool:
+            return BufferBindingLayout {
+                .type = addressSpace(),
+                .hasDynamicOffset = false,
+                .minBindingSize = 0
+            };
+        case Types::Primitive::Sampler:
+            return SamplerBindingLayout {
+                .type = SamplerBindingType::Filtering
+            };
+        case Types::Primitive::TextureExternal:
+            return ExternalTextureBindingLayout { };
+        }
+    }, [&](const Vector& vector) -> BindGroupLayoutEntry::BindingMember {
+        auto* primitive = std::get_if<Primitive>(vector.element);
+        UNUSED_PARAM(primitive);
+        return BufferBindingLayout {
+            .type = addressSpace(),
+            .hasDynamicOffset = false,
+            .minBindingSize = 0
+        };
+    }, [&](const Matrix& matrix) -> BindGroupLayoutEntry::BindingMember {
+        UNUSED_PARAM(matrix);
+        return BufferBindingLayout {
+            .type = addressSpace(),
+            .hasDynamicOffset = false,
+            .minBindingSize = 0
+        };
+    }, [&](const Array& array) -> BindGroupLayoutEntry::BindingMember {
+        UNUSED_PARAM(array);
+        return BufferBindingLayout {
+            .type = addressSpace(),
+            .hasDynamicOffset = false,
+            .minBindingSize = 0
+        };
+    }, [&](const Struct& structure) -> BindGroupLayoutEntry::BindingMember {
+        UNUSED_PARAM(structure);
+        return BufferBindingLayout {
+            .type = addressSpace(),
+            .hasDynamicOffset = false,
+            .minBindingSize = 0
+        };
+    }, [&](const Texture& texture) -> BindGroupLayoutEntry::BindingMember {
+        TextureViewDimension viewDimension;
+        bool multisampled = false;
+        bool isStorageTexture = false;
+        switch (texture.kind) {
+        case Types::Texture::Kind::Texture1d:
+            viewDimension = TextureViewDimension::OneDimensional;
+            break;
+        case Types::Texture::Kind::Texture2d:
+            viewDimension = TextureViewDimension::TwoDimensional;
+            break;
+        case Types::Texture::Kind::Texture2dArray:
+            viewDimension = TextureViewDimension::TwoDimensionalArray;
+            break;
+        case Types::Texture::Kind::Texture3d:
+            viewDimension = TextureViewDimension::ThreeDimensional;
+            break;
+        case Types::Texture::Kind::TextureCube:
+            viewDimension = TextureViewDimension::Cube;
+            break;
+        case Types::Texture::Kind::TextureCubeArray:
+            viewDimension = TextureViewDimension::CubeArray;
+            break;
+        case Types::Texture::Kind::TextureMultisampled2d:
+            viewDimension = TextureViewDimension::TwoDimensional;
+            multisampled = true;
+            break;
+
+        case Types::Texture::Kind::TextureStorage1d:
+            isStorageTexture = true;
+            viewDimension = TextureViewDimension::OneDimensional;
+            break;
+        case Types::Texture::Kind::TextureStorage2d:
+            isStorageTexture = true;
+            viewDimension = TextureViewDimension::TwoDimensional;
+            break;
+        case Types::Texture::Kind::TextureStorage2dArray:
+            isStorageTexture = true;
+            viewDimension = TextureViewDimension::TwoDimensionalArray;
+            break;
+        case Types::Texture::Kind::TextureStorage3d:
+            isStorageTexture = true;
+            viewDimension = TextureViewDimension::ThreeDimensional;
+            break;
+        }
+
+        if (isStorageTexture) {
+            return StorageTextureBindingLayout {
+                .viewDimension = viewDimension
+            };
+        }
+
+        return TextureBindingLayout {
+            .sampleType = TextureSampleType::Float,
+            .viewDimension = viewDimension,
+            .multisampled = multisampled
+        };
+    }, [&](const Reference&) -> BindGroupLayoutEntry::BindingMember {
+        RELEASE_ASSERT_NOT_REACHED();
+    }, [&](const Function&) -> BindGroupLayoutEntry::BindingMember {
+        RELEASE_ASSERT_NOT_REACHED();
+    }, [&](const Bottom&) -> BindGroupLayoutEntry::BindingMember {
+        RELEASE_ASSERT_NOT_REACHED();
+    });
+}
 
 auto RewriteGlobalVariables::determineUsedGlobals(PipelineLayout& pipelineLayout, AST::StageAttribute::Stage stage) -> UsedGlobals
 {
@@ -542,12 +670,10 @@ auto RewriteGlobalVariables::determineUsedGlobals(PipelineLayout& pipelineLayout
             shaderStage = ShaderStage::Fragment;
             break;
         }
-        // FIXME: we need to check for an existing entry with the same binding
         pipelineLayout.bindGroupLayouts[group].entries.append({
-            global.resource->binding,
-            shaderStage,
-            // FIXME: add the missing bindingMember information
-            { }
+            .binding = global.resource->binding,
+            .visibility = shaderStage,
+            .bindingMember = bindingMemberForGlobal(global)
         });
     }
     return usedGlobals;

@@ -31,6 +31,7 @@
 #include "AbstractMacroAssembler.h"
 #include "JITOperationValidation.h"
 #include <wtf/MathExtras.h>
+#include <wtf/StdLibExtras.h>
 
 namespace JSC {
 

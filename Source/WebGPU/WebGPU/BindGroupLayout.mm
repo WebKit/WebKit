@@ -31,6 +31,11 @@
 
 namespace WebGPU {
 
+static uint64_t makeKey(uint32_t firstInteger, auto secondValue)
+{
+    return firstInteger | (static_cast<uint64_t>(secondValue) << 32);
+}
+
 bool BindGroupLayout::isPresent(const WGPUBufferBindingLayout& buffer)
 {
     return buffer.type != WGPUBufferBindingType_Undefined;
@@ -177,14 +182,14 @@ static bool containsStage(WGPUShaderStageFlags stageBitfield, auto stage)
 
 Ref<BindGroupLayout> Device::createBindGroupLayout(const WGPUBindGroupLayoutDescriptor& descriptor)
 {
-    if (descriptor.nextInChain || !descriptor.entryCount)
+    if (descriptor.nextInChain)
         return BindGroupLayout::createInvalid(*this);
 
-    HashMap<uint32_t, WGPUShaderStageFlags> shaderStageForBinding;
-    constexpr size_t stageCount = 3;
+    BindGroupLayout::StageMapTable indicesForBinding;
+    constexpr uint32_t stageCount = 3;
     static_assert(stageCount == 3, "vertex, fragment, and compute stages supported");
     NSMutableArray<MTLArgumentDescriptor *> *arguments[stageCount];
-    for (size_t i = 0; i < stageCount; ++i)
+    for (uint32_t i = 0; i < stageCount; ++i)
         arguments[i] = [NSMutableArray arrayWithCapacity:descriptor.entryCount];
 
     Vector<BindGroupLayout::Entry> bindGroupLayoutEntries;
@@ -198,7 +203,6 @@ Ref<BindGroupLayout> Device::createBindGroupLayout(const WGPUBindGroupLayoutDesc
                 return BindGroupLayout::createInvalid(*this);
         }
 
-        shaderStageForBinding.add(entry.binding + 1, entry.visibility);
         MTLArgumentDescriptor *descriptor = nil;
 
         BindGroupLayout::Entry::BindingLayout bindingLayout;
@@ -232,9 +236,11 @@ Ref<BindGroupLayout> Device::createBindGroupLayout(const WGPUBindGroupLayoutDesc
         if (!descriptor)
             return BindGroupLayout::createInvalid(*this);
 
-        for (size_t stage = 0; stage < stageCount; ++stage) {
-            if (containsStage(entry.visibility, stage))
+        for (uint32_t stage = 0; stage < stageCount; ++stage) {
+            if (containsStage(entry.visibility, stage)) {
+                indicesForBinding.add(makeKey(entry.binding, stage), arguments[stage].count);
                 addDescriptor(arguments[stage], descriptor);
+            }
         }
 
         bindGroupLayoutEntries.uncheckedAppend({
@@ -253,11 +259,11 @@ Ref<BindGroupLayout> Device::createBindGroupLayout(const WGPUBindGroupLayoutDesc
             return BindGroupLayout::createInvalid(*this);
     }
 
-    return BindGroupLayout::create(WTFMove(shaderStageForBinding), argumentEncoders[0], argumentEncoders[1], argumentEncoders[2], WTFMove(bindGroupLayoutEntries));
+    return BindGroupLayout::create(WTFMove(indicesForBinding), argumentEncoders[0], argumentEncoders[1], argumentEncoders[2], WTFMove(bindGroupLayoutEntries));
 }
 
-BindGroupLayout::BindGroupLayout(HashMap<uint32_t, WGPUShaderStageFlags>&& shaderStageForBinding, id<MTLArgumentEncoder> vertexArgumentEncoder, id<MTLArgumentEncoder> fragmentArgumentEncoder, id<MTLArgumentEncoder> computeArgumentEncoder, Vector<Entry>&& bindGroupLayoutEntries)
-    : m_shaderStageForBinding(WTFMove(shaderStageForBinding))
+BindGroupLayout::BindGroupLayout(StageMapTable&& indicesForBinding, id<MTLArgumentEncoder> vertexArgumentEncoder, id<MTLArgumentEncoder> fragmentArgumentEncoder, id<MTLArgumentEncoder> computeArgumentEncoder, Vector<Entry>&& bindGroupLayoutEntries)
+    : m_indicesForBinding(WTFMove(indicesForBinding))
     , m_vertexArgumentEncoder(vertexArgumentEncoder)
     , m_fragmentArgumentEncoder(fragmentArgumentEncoder)
     , m_computeArgumentEncoder(computeArgumentEncoder)
@@ -265,7 +271,10 @@ BindGroupLayout::BindGroupLayout(HashMap<uint32_t, WGPUShaderStageFlags>&& shade
 {
 }
 
-BindGroupLayout::BindGroupLayout() = default;
+BindGroupLayout::BindGroupLayout()
+    : m_valid(false)
+{
+}
 
 BindGroupLayout::~BindGroupLayout() = default;
 
@@ -289,43 +298,14 @@ NSUInteger BindGroupLayout::encodedLength(ShaderStage shaderStage) const
     }
 }
 
-bool BindGroupLayout::bindingContainsStage(uint32_t bindingIndex, ShaderStage shaderStage) const
+std::optional<NSUInteger> BindGroupLayout::indexForBinding(uint32_t bindingIndex, ShaderStage shaderStage) const
 {
-    ASSERT(m_shaderStageForBinding.contains(bindingIndex + 1));
-    return containsStage(m_shaderStageForBinding.find(bindingIndex + 1)->value, shaderStage);
-}
+    auto it = m_indicesForBinding.find(makeKey(bindingIndex, shaderStage));
+    if (it == m_indicesForBinding.end())
+        return std::nullopt;
 
-#if HAVE(METAL_BUFFER_BINDING_REFLECTION)
-WGPUBindGroupLayoutEntry BindGroupLayout::createEntryFromStructMember(MTLStructMember *structMember, uint32_t& currentBindingIndex, WGPUShaderStage shaderStage)
-{
-    WGPUBindGroupLayoutEntry entry = { };
-    entry.binding = currentBindingIndex++;
-    entry.visibility = shaderStage;
-    switch (structMember.dataType) {
-    case MTLDataTypeTexture:
-        entry.texture.sampleType = WGPUTextureSampleType_Float;
-        entry.texture.viewDimension = WGPUTextureViewDimension_2D;
-        break;
-    case MTLDataTypeSampler:
-        entry.sampler.type = WGPUSamplerBindingType_Filtering;
-        break;
-    case MTLDataTypePointer:
-        entry.buffer.type = WGPUBufferBindingType_Uniform;
-        break;
-    case MTLDataTypeFloat3x2:
-        entry.buffer.type = static_cast<decltype(entry.buffer.type)>(WGPUBufferBindingType_Float3x2);
-        break;
-    case MTLDataTypeFloat4x3:
-        entry.buffer.type = static_cast<decltype(entry.buffer.type)>(WGPUBufferBindingType_Float4x3);
-        break;
-    default:
-        ASSERT_NOT_REACHED();
-        break;
-    }
-
-    return entry;
+    return it->value;
 }
-#endif // HAVE(METAL_BUFFER_BINDING_REFLECTION)
 
 } // namespace WebGPU
 
