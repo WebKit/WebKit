@@ -273,10 +273,15 @@ TimerBase::~TimerBase()
 
 void TimerBase::start(Seconds nextFireInterval, Seconds repeatInterval)
 {
+    startWithBaseTime(nextFireInterval, repeatInterval, MonotonicTime::now());
+}
+
+void TimerBase::startWithBaseTime(Seconds nextFireInterval, Seconds repeatInterval, MonotonicTime baseTime)
+{
     ASSERT(canCurrentThreadAccessThreadLocalData(m_thread));
 
     m_repeatInterval = repeatInterval;
-    setNextFireTime(MonotonicTime::now() + nextFireInterval);
+    setNextFireTime(baseTime + nextFireInterval);
 }
 
 void TimerBase::stop()

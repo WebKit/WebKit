@@ -49,9 +49,11 @@ public:
     WEBCORE_EXPORT virtual ~TimerBase();
 
     WEBCORE_EXPORT void start(Seconds nextFireInterval, Seconds repeatInterval);
+    void startWithBaseTime(Seconds nextFireInterval, Seconds repeatInterval, MonotonicTime baseTime);
 
     void startRepeating(Seconds repeatInterval) { start(repeatInterval, repeatInterval); }
     void startOneShot(Seconds delay) { start(delay, 0_s); }
+    void startOneShotWithBaseTime(Seconds nextFireInterval, MonotonicTime baseTime) { startWithBaseTime(nextFireInterval, 0_s, baseTime); }
 
     WEBCORE_EXPORT void stop();
     bool isActive() const;
