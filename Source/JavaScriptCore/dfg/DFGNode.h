@@ -1037,6 +1037,7 @@ public:
     {
         switch (op()) {
         case MovHint:
+        case ZombieHint:
             return true;
         default:
             return false;
@@ -1079,6 +1080,7 @@ public:
         switch (op()) {
         case ExtractOSREntryLocal:
         case MovHint:
+        case ZombieHint:
         case KillStack:
             return true;
         default:

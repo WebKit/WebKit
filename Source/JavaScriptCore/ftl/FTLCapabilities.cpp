@@ -51,6 +51,7 @@ inline CapabilityLevel canCompile(Node* node)
     case KillStack:
     case GetStack:
     case MovHint:
+    case ZombieHint:
     case ExitOK:
     case Phantom:
     case Flush:

@@ -3118,12 +3118,13 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
-    case MovHint: {
+    case MovHint:
+    case ZombieHint: {
         compileMovHint(m_currentNode);
         noResult(node);
         break;
     }
-        
+
     case ExitOK: {
         noResult(node);
         break;

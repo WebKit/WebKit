@@ -444,6 +444,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
     }
         
+    case ZombieHint:
     case MovHint: {
         // Don't need to do anything. A MovHint only informs us about what would have happened
         // in bytecode, but this code is just concerned with what is actually happening during

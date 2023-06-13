@@ -3083,6 +3083,7 @@ private:
         case LoopHint:
         case MovHint:
         case InitializeEntrypointArguments:
+        case ZombieHint:
         case ExitOK:
         case BottomValue:
         case TypeOf:

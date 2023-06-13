@@ -1535,6 +1535,7 @@ private:
         case NotifyWrite:
         case ConstantStoragePointer:
         case MovHint:
+        case ZombieHint:
         case ExitOK:
         case VarargsLength:
         case LoadVarargs:

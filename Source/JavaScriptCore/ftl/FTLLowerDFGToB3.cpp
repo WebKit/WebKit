@@ -586,6 +586,7 @@ private:
 
         switch (node->op()) {
         case MovHint:
+        case ZombieHint:
         case JSConstant:
         case LazyJSConstant:
         case DoubleConstant:
@@ -1766,6 +1767,7 @@ private:
 
         case PhantomLocal:
         case MovHint:
+        case ZombieHint:
         case ExitOK:
         case PhantomNewObject:
         case PhantomNewFunction:
