@@ -121,62 +121,19 @@ double RayPathOperation::lengthForPath() const
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-double RayPathOperation::lengthForContainPath(const FloatRect& elementRect, double computedPathLength, const FloatPoint& anchor, const OffsetRotation rotation) const
+double RayPathOperation::lengthForContainPath(const FloatRect& elementRect, double computedPathLength) const
 {
-    // Construct vertices of element for determining if they are within the path length
-    // Anchor point as origin
-    auto vertices = verticesForBox(elementRect, anchor);
-    
-    // Rotate vertices depending on offset rotate or angle
-    if (!rotation.hasAuto()) {
-        auto deg = toRelatedAcuteAngle(toPositiveAngle(m_angle - rotation.angle()));
-        auto angle = deg2rad(deg);
-        std::for_each(vertices.begin(), vertices.end(), [angle] (FloatPoint& p) {
-            p.rotate(angle);
-        });
-    }
-    
-    Vector<std::pair<double, double>, 4> bounds;
-    
-    for (const auto& p : vertices) {
-        // Use equation for circle (offset distance + x)^2 + y^2 <= r^2 to find offset distance that satisfies equation
-        // If no solution for above equation, must minimally increase it, otherwise clamp such that
-        // every point is within path
-        double discriminant = computedPathLength * computedPathLength - p.y() * p.y();
-        if (discriminant < 0) {
-            // Need to minimally increase path length
-            break;
-        }
-        bounds.append(std::make_pair(-p.x() - std::sqrt(discriminant), -p.x() + std::sqrt(discriminant)));
-    }
-    
-    if (vertices.size() == bounds.size()) {
-        auto lowerBound = std::max_element(bounds.begin(), bounds.end(),
-            [] (std::pair<double, double> const lhs, std::pair<double, double> const rhs) {
-            return lhs.first < rhs.first;
-        })->first;
-        
-        auto upperBound = std::min_element(bounds.begin(), bounds.end(),
-            [] (std::pair<double, double> const lhs, std::pair<double, double> const rhs) {
-            return lhs.second < rhs.second;
-        })->second;
-        
-        if (lowerBound <= upperBound)
-            return std::max(lowerBound, std::min(upperBound, computedPathLength));
-    }
-    
-    // TODO: Implement minimally increasing path length to allow all vertices to be within such a path length
-    return computedPathLength;
+    return std::max(0.0, computedPathLength - (std::max(elementRect.width(), elementRect.height()) / 2));
 }
 
-const std::optional<Path> RayPathOperation::getPath(const FloatRect& referenceRect, FloatPoint anchor, OffsetRotation rotation) const
+const std::optional<Path> RayPathOperation::getPath(const FloatRect& referenceRect) const
 {
     Path path;
     if (m_containingBlockBoundingRect.isZero())
         return std::nullopt;
     double length = lengthForPath();
     if (m_isContaining)
-        length = lengthForContainPath(referenceRect, length, anchor, rotation);
+        length = lengthForContainPath(referenceRect, length);
     auto radians = deg2rad(toPositiveAngle(m_angle) - 90.0);
     auto point = FloatPoint(std::cos(radians) * length, std::sin(radians) * length);
     path.addLineTo(point);

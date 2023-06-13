@@ -1689,7 +1689,7 @@ void RenderStyle::applyMotionPathTransform(TransformationMatrix& transform, cons
         anchor = floatPointForLengthPoint(offsetAnchor(), boundingBox.size()) + boundingBox.location();
     
     // Shift element to the point on path specified by offset-path and offset-distance.
-    auto path = offsetPath()->getPath(boundingBox, anchor, offsetRotate());
+    auto path = offsetPath()->getPath(boundingBox);
     if (!path)
         return;
     auto traversalState = getTraversalStateAtDistance(*path, offsetDistance());

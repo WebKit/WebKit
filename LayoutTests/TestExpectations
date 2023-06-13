@@ -5271,13 +5271,6 @@ webkit.org/b/233340 imported/w3c/web-platform-tests/css/motion/offset-anchor-tra
 # CSS motion path ray test failing due to getting wrong size from containing block.
 webkit.org/b/233344 imported/w3c/web-platform-tests/css/motion/offset-path-ray-007.html [ ImageOnlyFailure ]
 
-# CSS motion path needs to implement new spec for contain: https://bugs.webkit.org/show_bug.cgi?id=256225.
-webkit.org/b/256225 imported/w3c/web-platform-tests/css/motion/offset-path-ray-contain-001.html [ ImageOnlyFailure ]
-webkit.org/b/256225 imported/w3c/web-platform-tests/css/motion/offset-path-ray-contain-002.html [ ImageOnlyFailure ]
-webkit.org/b/256225 imported/w3c/web-platform-tests/css/motion/offset-path-ray-contain-003.html [ ImageOnlyFailure ]
-webkit.org/b/256225 imported/w3c/web-platform-tests/css/motion/offset-path-ray-contain-004.html [ ImageOnlyFailure ]
-webkit.org/b/256225 imported/w3c/web-platform-tests/css/motion/offset-path-ray-contain-005.html [ ImageOnlyFailure ]
-
 # IPC test failing in Debug mode due to assert.
 [ Debug ] ipc/send-invalid-message.html [ Skip ]
 # mac-only IPC test

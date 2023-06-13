@@ -62,7 +62,7 @@ public:
 
     OperationType type() const { return m_type; }
     bool isSameType(const PathOperation& o) const { return o.type() == m_type; }
-    virtual const std::optional<Path> getPath(const FloatRect& reference = { }, FloatPoint anchor = { }, OffsetRotation rotation = { }) const = 0;
+    virtual const std::optional<Path> getPath(const FloatRect& reference = { }) const = 0;
 protected:
     explicit PathOperation(OperationType type)
         : m_type(type)
@@ -79,7 +79,7 @@ public:
     const String& url() const { return m_url; }
     const AtomString& fragment() const { return m_fragment; }
     const SVGElement* element() const;
-    const std::optional<Path> getPath(const FloatRect&, FloatPoint, OffsetRotation) const final { return m_path; }
+    const std::optional<Path> getPath(const FloatRect&) const final { return m_path; }
     const std::optional<Path> path() const { return m_path; }
 private:
     bool operator==(const PathOperation& other) const override
@@ -134,7 +134,7 @@ public:
 
     void setReferenceBox(CSSBoxType referenceBox) { m_referenceBox = referenceBox; }
     CSSBoxType referenceBox() const { return m_referenceBox; }
-    const std::optional<Path> getPath(const FloatRect& reference, FloatPoint, OffsetRotation) const final { return pathForReferenceRect(reference); }
+    const std::optional<Path> getPath(const FloatRect& reference) const final { return pathForReferenceRect(reference); }
 
 private:
     bool operator==(const PathOperation& other) const override
@@ -195,7 +195,7 @@ public:
         m_path.addRoundedRect(boundingRect);
     }
     
-    const std::optional<Path> getPath(const FloatRect&, FloatPoint, OffsetRotation) const final { return m_path; }
+    const std::optional<Path> getPath(const FloatRect&) const final { return m_path; }
     const Path& path() const { return m_path; }
     CSSBoxType referenceBox() const { return m_referenceBox; }
 
@@ -253,7 +253,7 @@ public:
     WEBCORE_EXPORT RefPtr<PathOperation> blend(const PathOperation*, const BlendingContext&) const final;
 
     double lengthForPath() const;
-    double lengthForContainPath(const FloatRect& elementRect, double computedPathLength, const FloatPoint& anchor, const OffsetRotation rotation) const;
+    double lengthForContainPath(const FloatRect& elementRect, double computedPathLength) const;
     
     void setContainingBlockReferenceRect(const FloatRect& boundingRect)
     {
@@ -263,7 +263,7 @@ public:
     {
         m_position = position;
     }
-    const std::optional<Path> getPath(const FloatRect& referenceRect = { }, FloatPoint anchor = { }, OffsetRotation rotation = { }) const final;
+    const std::optional<Path> getPath(const FloatRect& referenceRect = { }) const final;
 
     const FloatRect& containingBlockBoundingRect() const { return m_containingBlockBoundingRect; }
     const FloatPoint& position() const { return m_position; }
