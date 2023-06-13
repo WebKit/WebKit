@@ -29,6 +29,8 @@
 
 #include "PlatformVideoColorSpace.h"
 
+#include <wtf/text/WTFString.h>
+
 namespace WebCore {
 
 struct VideoEncoderActiveConfiguration {
