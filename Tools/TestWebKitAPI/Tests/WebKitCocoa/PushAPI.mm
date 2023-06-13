@@ -248,6 +248,20 @@ TEST(PushAPI, firePushEvent)
 }
 @end
 
+TEST(PushAPI, notificationPermissionsDelegateInvalidResponse)
+{
+    auto configuration = createConfigurationWithNotificationsEnabled();
+    RetainPtr<FirePushEventDataStoreDelegate> delegate = adoptNS([FirePushEventDataStoreDelegate new]);
+    delegate.get().permissions = @{
+        @":" : @YES
+    };
+    [configuration websiteDataStore]._delegate = delegate.get();
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get() addToWindow:NO]);
+
+    // If the WebView completes the page load successfully, the test passes.
+    [webView synchronouslyLoadHTMLString:@"Hello"];
+}
+
 TEST(PushAPI, firePushEventDataStoreDelegate)
 {
     TestWebKitAPI::HTTPServer server({

@@ -167,8 +167,12 @@ private:
         NSDictionary<NSString *, NSNumber *> *permissions = [m_delegate.getAutoreleased() notificationPermissionsForWebsiteDataStore:m_dataStore.getAutoreleased()];
         for (NSString *key in permissions) {
             NSNumber *value = permissions[key];
-            auto origin = WebCore::SecurityOriginData::fromURL(URL(key));
-            result.set(origin.toString(), value.boolValue);
+            auto originString = WebCore::SecurityOriginData::fromURL(URL(key)).toString();
+            if (originString.isEmpty()) {
+                RELEASE_LOG(Push, "[WKWebsiteDataStoreDelegate notificationPermissionsForWebsiteDataStore:] returned a URL string that could not be parsed into a security origin. Skipping.");
+                continue;
+            }
+            result.set(originString, value.boolValue);
         }
 
         return result;
