@@ -685,6 +685,27 @@ TEST(_WKDataTask, Redirect)
     Util::run(&completed);
 }
 
+TEST(_WKDataTask, CrashDuringCreation)
+{
+    using namespace TestWebKitAPI;
+    HTTPServer server(HTTPServer::respondWithOK);
+    auto webView = adoptNS([WKWebView new]);
+    __block bool done = false;
+    [webView _dataTaskWithRequest:server.request() completionHandler:^(_WKDataTask *task) {
+        auto delegate = adoptNS([TestDataTaskDelegate new]);
+        task.delegate = delegate.get();
+        delegate.get().didCompleteWithError = ^(_WKDataTask *, NSError *error) {
+            EXPECT_NOT_NULL(error);
+            done = true;
+        };
+    }];
+    auto* dataStore = webView.get().configuration.websiteDataStore;
+    while (!dataStore._networkProcessIdentifier)
+        Util::spinRunLoop();
+    [dataStore _terminateNetworkProcess];
+    Util::run(&done);
+}
+
 TEST(_WKDataTask, Crash)
 {
     using namespace TestWebKitAPI;
