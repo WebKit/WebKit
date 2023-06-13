@@ -744,7 +744,6 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     platform/network/cf/AuthenticationChallenge.h
     platform/network/cf/CertificateInfo.h
-    platform/network/cf/DownloadBundle.h
     platform/network/cf/ResourceError.h
     platform/network/cf/ResourceRequest.h
     platform/network/cf/ResourceRequestCFNet.h

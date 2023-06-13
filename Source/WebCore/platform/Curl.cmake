@@ -51,7 +51,6 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/network/curl/CurlStream.h
     platform/network/curl/CurlStreamScheduler.h
     platform/network/curl/DNSResolveQueueCurl.h
-    platform/network/curl/DownloadBundle.h
     platform/network/curl/OpenSSLHelper.h
     platform/network/curl/ProtectionSpaceCurl.h
     platform/network/curl/ResourceError.h

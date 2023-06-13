@@ -85,7 +85,6 @@ list(APPEND WebCore_SOURCES
     platform/graphics/win/TransformationMatrixWin.cpp
 
     platform/network/win/CurlSSLHandleWin.cpp
-    platform/network/win/DownloadBundleWin.cpp
     platform/network/win/NetworkStateNotifierWin.cpp
 
     platform/text/Hyphenation.cpp
