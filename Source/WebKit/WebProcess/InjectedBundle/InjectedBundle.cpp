@@ -140,7 +140,7 @@ void InjectedBundle::postSynchronousMessage(const String& messageName, API::Obje
 {
     auto& webProcess = WebProcess::singleton();
     auto sendResult = webProcess.parentProcessConnection()->sendSync(Messages::WebProcessPool::HandleSynchronousMessage(messageName, UserData(webProcess.transformObjectsToHandles(messageBody))), 0);
-    if (sendResult) {
+    if (sendResult.succeeded()) {
         auto [returnUserData] = sendResult.takeReply();
         returnData = webProcess.transformHandlesToObjects(returnUserData.object());
     } else

@@ -83,7 +83,10 @@ void ServiceWorkerDownloadTask::close()
 
 template<typename Message> bool ServiceWorkerDownloadTask::sendToServiceWorker(Message&& message)
 {
-    return m_serviceWorkerConnection ? m_serviceWorkerConnection->ipcConnection().send(std::forward<Message>(message), 0) : false;
+    if (!m_serviceWorkerConnection)
+        return false;
+
+    return m_serviceWorkerConnection->ipcConnection().send(std::forward<Message>(message), 0) == IPC::Error::NoError;
 }
 
 void ServiceWorkerDownloadTask::dispatch(Function<void()>&& function)

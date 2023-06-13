@@ -228,7 +228,7 @@ void SourceBufferPrivateRemote::evictCodedFrames(uint64_t newDataSize, uint64_t 
         return;
 
     auto sendResult = gpuProcessConnection->connection().sendSync(Messages::RemoteSourceBufferProxy::EvictCodedFrames(newDataSize, maximumBufferSize, currentTime, isEnded), m_remoteSourceBufferIdentifier);
-    if (sendResult) {
+    if (sendResult.succeeded()) {
         PlatformTimeRanges buffered;
         std::tie(buffered, m_totalTrackBufferSizeInBytes) = sendResult.takeReply();
         setBufferedRanges(WTFMove(buffered));

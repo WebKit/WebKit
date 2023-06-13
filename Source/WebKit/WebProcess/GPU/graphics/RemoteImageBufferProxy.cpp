@@ -161,8 +161,11 @@ void RemoteImageBufferProxy::didCreateImageBufferBackend(ImageBufferBackendHandl
 
 ImageBufferBackend* RemoteImageBufferProxy::ensureBackendCreated() const
 {
-    if (!m_remoteRenderingBackendProxy)
+    if (m_backend)
         return m_backend.get();
+
+    if (!m_remoteRenderingBackendProxy)
+        return nullptr;
 
     static constexpr unsigned maximumTimeoutOrFailureCount = 3;
     unsigned numberOfTimeoutsOrFailures = 0;
@@ -172,7 +175,11 @@ ImageBufferBackend* RemoteImageBufferProxy::ensureBackendCreated() const
     }
     if (numberOfTimeoutsOrFailures == maximumTimeoutOrFailureCount) {
         LOG_WITH_STREAM(SharedDisplayLists, stream << "RemoteImageBufferProxy " << m_renderingResourceIdentifier << " ensureBackendCreated: exceeded max number of timeouts");
-        RELEASE_LOG_FAULT(SharedDisplayLists, "Exceeded max number of timeouts waiting for image buffer backend creation in remote rendering backend %" PRIu64 ".", m_remoteRenderingBackendProxy->renderingBackendIdentifier().toUInt64());
+
+        auto& renderingBackendParameters = m_remoteRenderingBackendProxy->parameters();
+        RELEASE_LOG_FAULT(RemoteLayerBuffers, "[pageProxyID=%" PRIu64 ", webPageID=%" PRIu64 ", renderingBackend=%" PRIu64 "] RemoteImageBufferProxy::ensureBackendCreated - exceeded max number of timeouts waiting for backend creaetion for image buffer %" PRIu64,
+            renderingBackendParameters.pageProxyID.toUInt64(), renderingBackendParameters.pageID.toUInt64(), renderingBackendParameters.identifier.toUInt64(),
+            m_renderingResourceIdentifier.toUInt64());
     }
     return m_backend.get();
 }

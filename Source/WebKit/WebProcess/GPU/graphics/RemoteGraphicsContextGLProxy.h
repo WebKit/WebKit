@@ -384,7 +384,7 @@ protected:
 
     static inline Seconds defaultSendTimeout = 30_s;
     template<typename T>
-    WARN_UNUSED_RETURN bool send(T&& message)
+    WARN_UNUSED_RETURN IPC::Error send(T&& message)
     {
         return m_streamConnection->send(WTFMove(message), m_graphicsContextGLIdentifier, defaultSendTimeout);
     }

@@ -118,8 +118,13 @@ void RemoteRenderingBackendProxy::disconnectGPUProcess()
 
 RemoteRenderingBackendProxy::DidReceiveBackendCreationResult RemoteRenderingBackendProxy::waitForDidCreateImageBufferBackend()
 {
-    if (!streamConnection().waitForAndDispatchImmediately<Messages::RemoteRenderingBackendProxy::DidCreateImageBufferBackend>(renderingBackendIdentifier(), 1_s, IPC::WaitForOption::InterruptWaitingIfSyncMessageArrives))
+    auto error = streamConnection().waitForAndDispatchImmediately<Messages::RemoteRenderingBackendProxy::DidCreateImageBufferBackend>(renderingBackendIdentifier(), 1_s, IPC::WaitForOption::InterruptWaitingIfSyncMessageArrives);
+    if (error != IPC::Error::NoError) {
+        RELEASE_LOG(RemoteLayerBuffers, "[pageProxyID=%" PRIu64 ", webPageID=%" PRIu64 ", renderingBackend=%" PRIu64 "] RemoteRenderingBackendProxy::waitForDidCreateImageBufferBackend - waitForAndDispatchImmediately returned error: %" PUBLIC_LOG_STRING,
+            m_parameters.pageProxyID.toUInt64(), m_parameters.pageID.toUInt64(), m_parameters.identifier.toUInt64(), IPC::errorAsString(error));
         return DidReceiveBackendCreationResult::TimeoutOrIPCFailure;
+    }
+
     return DidReceiveBackendCreationResult::ReceivedAnyResponse;
 }
 
@@ -167,13 +172,13 @@ bool RemoteRenderingBackendProxy::getPixelBufferForImageBuffer(RenderingResource
 {
     if (auto handle = updateSharedMemoryForGetPixelBuffer(result.size())) {
         auto sendResult = sendSync(Messages::RemoteRenderingBackend::GetPixelBufferForImageBufferWithNewMemory(imageBuffer, WTFMove(*handle), destinationFormat, srcRect));
-        if (!sendResult)
+        if (!sendResult.succeeded())
             return false;
     } else {
         if (!m_getPixelBufferSharedMemory)
             return false;
         auto sendResult = sendSync(Messages::RemoteRenderingBackend::GetPixelBufferForImageBuffer(imageBuffer, destinationFormat, srcRect));
-        if (!sendResult)
+        if (!sendResult.succeeded())
             return false;
     }
     memcpy(result.data(), m_getPixelBufferSharedMemory->data(), result.size());
@@ -343,8 +348,10 @@ auto RemoteRenderingBackendProxy::prepareBuffersForDisplay(const Vector<LayerPre
 
     Vector<PrepareBackingStoreBuffersOutputData> outputData;
     auto sendResult = sendSync(Messages::RemoteRenderingBackend::PrepareBuffersForDisplay(inputData));
-    if (!sendResult) {
+    if (!sendResult.succeeded()) {
         // GPU Process crashed. Set the output data to all null buffers, requiring a full display.
+        RELEASE_LOG(RemoteLayerBuffers, "[pageProxyID=%" PRIu64 ", webPageID=%" PRIu64 ", renderingBackend=%" PRIu64 "] RemoteRenderingBackendProxy::prepareBuffersForDisplay - prepareBuffersForDisplay returned error: %" PUBLIC_LOG_STRING,
+            m_parameters.pageProxyID.toUInt64(), m_parameters.pageID.toUInt64(), m_parameters.identifier.toUInt64(), IPC::errorAsString(sendResult.error));
         outputData.resize(inputData.size());
         for (auto& perLayerOutputData : outputData)
             perLayerOutputData.displayRequirement = SwapBuffersDisplayRequirement::NeedsFullDisplay;

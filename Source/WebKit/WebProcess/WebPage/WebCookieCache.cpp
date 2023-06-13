@@ -50,7 +50,7 @@ String WebCookieCache::cookiesForDOM(const URL& firstParty, const SameSiteInfo& 
         auto host = url.host().toString();
         bool subscribeToCookieChangeNotifications = true;
         auto sendResult = WebProcess::singleton().ensureNetworkProcessConnection().connection().sendSync(Messages::NetworkConnectionToWebProcess::DomCookiesForHost(url, subscribeToCookieChangeNotifications), 0);
-        if (!sendResult)
+        if (!sendResult.succeeded())
             return { };
 
         auto& [cookies] = sendResult.reply();

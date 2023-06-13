@@ -522,7 +522,7 @@ void WebEditorClient::checkGrammarOfString(StringView text, Vector<WebCore::Gram
     auto sendResult = m_page->sendSync(Messages::WebPageProxy::CheckGrammarOfString(text.toStringWithoutCopying()));
     int32_t resultLocation = -1;
     int32_t resultLength = 0;
-    if (sendResult)
+    if (sendResult.succeeded())
         std::tie(grammarDetails, resultLocation, resultLength) = sendResult.takeReply();
     *badGrammarLocation = resultLocation;
     *badGrammarLength = resultLength;
@@ -571,7 +571,7 @@ bool WebEditorClient::spellingUIIsShowing()
 void WebEditorClient::getGuessesForWord(const String& word, const String& context, const VisibleSelection& currentSelection, Vector<String>& guesses)
 {
     auto sendResult = m_page->sendSync(Messages::WebPageProxy::GetGuessesForWord(word, context, insertionPointFromCurrentSelection(currentSelection)));
-    if (sendResult)
+    if (sendResult.succeeded())
         std::tie(guesses) = sendResult.takeReply();
 }
 

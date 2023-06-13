@@ -305,14 +305,14 @@ TEST_P(StreamMessageTest, Send)
 {
     auto cleanup = localReferenceBarrier();
     for (uint64_t i = 0u; i < 55u; ++i) {
-        auto success = m_clientConnection->send(MockStreamTestMessage1 { }, defaultDestinationID(), defaultSendTimeout);
-        EXPECT_TRUE(success);
+        auto result = m_clientConnection->send(MockStreamTestMessage1 { }, defaultDestinationID(), defaultSendTimeout);
+        EXPECT_EQ(result, IPC::Error::NoError);
     }
     serverQueue().dispatch([&] {
         assertIsCurrent(serverQueue());
         for (uint64_t i = 100u; i < 160u; ++i) {
-            auto success = m_serverConnection->send(MockTestMessage1 { }, ObjectIdentifier<TestObjectIdentifierTag>(i));
-            EXPECT_TRUE(success);
+            auto result = m_serverConnection->send(MockTestMessage1 { }, ObjectIdentifier<TestObjectIdentifierTag>(i));
+            EXPECT_EQ(result, IPC::Error::NoError);
         }
     });
     for (uint64_t i = 100u; i < 160u; ++i) {
@@ -346,11 +346,11 @@ TEST_P(StreamMessageTest, SendWithSwitchingDestinationIDs)
     });
 
     for (uint64_t i = 0u; i < 777u; ++i) {
-        auto success = m_clientConnection->send(MockStreamTestMessage1 { }, defaultDestinationID(), defaultSendTimeout);
-        EXPECT_TRUE(success);
+        auto result = m_clientConnection->send(MockStreamTestMessage1 { }, defaultDestinationID(), defaultSendTimeout);
+        EXPECT_EQ(result, IPC::Error::NoError);
         if (i % 77) {
-            success = m_clientConnection->send(MockStreamTestMessage1 { }, other, defaultSendTimeout);
-            EXPECT_TRUE(success);
+            result = m_clientConnection->send(MockStreamTestMessage1 { }, other, defaultSendTimeout);
+            EXPECT_EQ(result, IPC::Error::NoError);
         }
     }
     for (uint64_t i = 0u; i < 777u; ++i) {

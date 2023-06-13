@@ -88,7 +88,7 @@ RefPtr<Uint8Array> RemoteLegacyCDMSession::generateKeyRequest(const String& mime
     auto sendResult = m_factory->gpuProcessConnection().connection().sendSync(Messages::RemoteLegacyCDMSessionProxy::GenerateKeyRequest(mimeType, ipcInitData), m_identifier);
 
     RefPtr<SharedBuffer> ipcNextMessage;
-    if (sendResult)
+    if (sendResult.succeeded())
         std::tie(ipcNextMessage, destinationURL, errorCode, systemCode) = sendResult.takeReply();
 
     if (!ipcNextMessage)
@@ -116,7 +116,7 @@ bool RemoteLegacyCDMSession::update(Uint8Array* keyData, RefPtr<Uint8Array>& nex
 
     bool succeeded { false };
     RefPtr<SharedBuffer> ipcNextMessage;
-    if (sendResult)
+    if (sendResult.succeeded())
         std::tie(succeeded, ipcNextMessage, errorCode, systemCode) = sendResult.takeReply();
 
     if (ipcNextMessage)

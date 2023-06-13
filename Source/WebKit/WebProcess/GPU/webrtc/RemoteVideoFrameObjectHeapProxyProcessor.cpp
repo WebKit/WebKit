@@ -161,7 +161,7 @@ RefPtr<NativeImage> RemoteVideoFrameObjectHeapProxyProcessor::getNativeImage(con
         return nullptr;
 
     auto sendResult = connection.sendSync(Messages::RemoteVideoFrameObjectHeap::ConvertFrameBuffer { *frame }, 0, GPUProcessConnection::defaultTimeout);
-    if (!sendResult) {
+    if (!sendResult.succeeded()) {
         m_sharedVideoFrameWriter.disable();
         return nullptr;
     }

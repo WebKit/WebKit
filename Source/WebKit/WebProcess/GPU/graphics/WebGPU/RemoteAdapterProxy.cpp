@@ -58,7 +58,7 @@ void RemoteAdapterProxy::requestDevice(const PAL::WebGPU::DeviceDescriptor& desc
     auto identifier = WebGPUIdentifier::generate();
     auto queueIdentifier = WebGPUIdentifier::generate();
     auto sendResult = sendSync(Messages::RemoteAdapter::RequestDevice(*convertedDescriptor, identifier, queueIdentifier));
-    if (!sendResult)
+    if (!sendResult.succeeded())
         return;
 
     auto [supportedFeatures, supportedLimits] = sendResult.takeReply();

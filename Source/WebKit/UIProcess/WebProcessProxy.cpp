@@ -1365,11 +1365,11 @@ void WebProcessProxy::renderTreeAsText(WebCore::ProcessIdentifier destinationPro
     if (!webProcessProxy)
         return completionHandler({ });
 
-    auto reply = webProcessProxy->sendSync(Messages::WebProcess::RenderTreeAsText(frameIdentifier, baseIndent, behavior), 0);
-    if (!reply)
+    auto sendResult = webProcessProxy->sendSync(Messages::WebProcess::RenderTreeAsText(frameIdentifier, baseIndent, behavior), 0);
+    if (!sendResult.succeeded())
         return completionHandler({ });
 
-    auto [result] = reply.takeReply();
+    auto [result] = sendResult.takeReply();
     completionHandler(result);
 }
 

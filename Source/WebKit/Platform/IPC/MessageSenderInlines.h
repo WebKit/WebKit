@@ -43,7 +43,7 @@ template<typename MessageType> inline auto MessageSender::sendSync(MessageType&&
     static_assert(MessageType::isSync);
     if (auto* connection = messageSenderConnection())
         return connection->sendSync(std::forward<MessageType>(message), destinationID, timeout, options);
-    return { };
+    return { nullptr, std::nullopt, Error::NoMessageSenderConnection };
 }
 
 template<typename MessageType, typename C> inline AsyncReplyID MessageSender::sendWithAsyncReply(MessageType&& message, C&& completionHandler, uint64_t destinationID, OptionSet<SendOption> options)

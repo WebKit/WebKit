@@ -7565,7 +7565,7 @@ void WebPage::postSynchronousMessageForTesting(const String& messageName, API::O
     auto& webProcess = WebProcess::singleton();
 
     auto sendResult = sendSync(Messages::WebPageProxy::HandleSynchronousMessage(messageName, UserData(webProcess.transformObjectsToHandles(messageBody))), Seconds::infinity(), IPC::SendSyncOption::UseFullySynchronousModeForTesting);
-    if (sendResult) {
+    if (sendResult.succeeded()) {
         auto& [returnUserData] = sendResult.reply();
         returnData = webProcess.transformHandlesToObjects(returnUserData.object());
     } else

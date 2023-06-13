@@ -553,9 +553,10 @@ static JSValueRef sendSyncMessageWithJSArguments(IPC::Connection& connection, JS
             return JSValueMakeUndefined(context);
     }
 
-    if (auto replyDecoder = connection.sendSyncMessage(syncRequestID, WTFMove(encoder), timeout, { })) {
+    auto replyDecoderOrError = connection.sendSyncMessage(syncRequestID, WTFMove(encoder), timeout, { });
+    if (replyDecoderOrError.decoder) {
         auto scope = DECLARE_CATCH_SCOPE(globalObject->vm());
-        auto* jsResult = jsResultFromReplyDecoder(globalObject, messageName, *replyDecoder);
+        auto* jsResult = jsResultFromReplyDecoder(globalObject, messageName, *replyDecoderOrError.decoder);
         if (scope.exception()) {
             *exception = toRef(globalObject, scope.exception());
             scope.clearException();
@@ -577,9 +578,10 @@ static JSValueRef waitForMessageWithJSArguments(IPC::Connection& connection, JSC
         return JSValueMakeUndefined(context);
 
     auto [destinationID, messageName, timeout] = *info;
-    if (auto decoder = connection.waitForMessageForTesting(messageName, destinationID, timeout, { })) {
+    auto decoderOrError = connection.waitForMessageForTesting(messageName, destinationID, timeout, { });
+    if (decoderOrError.decoder) {
         auto scope = DECLARE_CATCH_SCOPE(globalObject->vm());
-        auto jsResult = jsValueForArguments(globalObject, messageName, *decoder);
+        auto jsResult = jsValueForArguments(globalObject, messageName, *decoderOrError.decoder);
         if (scope.exception()) {
             *exception = toRef(globalObject, scope.exception());
             scope.clearException();
@@ -1028,7 +1030,7 @@ bool JSIPCStreamClientConnection::prepareToSendOutOfStreamMessage(JSContextRef c
             return false;
     }
 
-    if (!streamConnection.trySendDestinationIDIfNeeded(destinationID, timeout))
+    if (streamConnection.trySendDestinationIDIfNeeded(destinationID, timeout) != IPC::Error::NoError)
         return false;
 
     auto span = streamConnection.bufferForTesting().tryAcquire(timeout);
@@ -1090,9 +1092,10 @@ JSValueRef JSIPCStreamClientConnection::sendSyncMessage(JSContextRef context, JS
     if (!prepareToSendOutOfStreamMessage(context, argumentCount, arguments, *jsStreamConnection->m_jsIPC, streamConnection, encoder.get(), destinationID, timeout, exception))
         return JSValueMakeUndefined(context);
 
-    if (auto replyDecoder = connection.sendSyncMessage(syncRequestID, WTFMove(encoder), timeout, { })) {
+    auto replyDecoderOrError = connection.sendSyncMessage(syncRequestID, WTFMove(encoder), timeout, { });
+    if (replyDecoderOrError.decoder) {
         auto scope = DECLARE_CATCH_SCOPE(globalObject->vm());
-        auto* jsResult = jsResultFromReplyDecoder(globalObject, messageName, *replyDecoder);
+        auto* jsResult = jsResultFromReplyDecoder(globalObject, messageName, *replyDecoderOrError.decoder);
         if (scope.exception()) {
             *exception = toRef(globalObject, scope.exception());
             scope.clearException();
@@ -1149,13 +1152,13 @@ JSValueRef JSIPCStreamClientConnection::sendIPCStreamTesterSyncCrashOnZero(JSCon
     enum JSIPCStreamTesterIdentifierType { };
     auto destination = ObjectIdentifier<JSIPCStreamTesterIdentifierType>(*destinationID);
 
-    auto result = streamConnection.sendSync(Messages::IPCStreamTester::SyncCrashOnZero(value), destination, timeoutDuration);
-    if (!result) {
+    auto sendResult = streamConnection.sendSync(Messages::IPCStreamTester::SyncCrashOnZero(value), destination, timeoutDuration);
+    if (!sendResult.succeeded()) {
         *exception = createTypeError(context, "sync send failed"_s);
         return JSValueMakeUndefined(context);
     }
 
-    auto [resultValue] = result.takeReply();
+    auto [resultValue] = sendResult.takeReply();
     return JSValueMakeNumber(context, resultValue);
 }
 

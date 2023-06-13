@@ -130,7 +130,7 @@ void WebPlatformStrategies::getTypes(Vector<String>& types, const String& pasteb
         return;
 
     auto sendResult = WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPasteboardProxy::GetPasteboardTypes(pasteboardName, pageIdentifier(context)), 0);
-    if (sendResult)
+    if (sendResult.succeeded())
         std::tie(types) = sendResult.takeReply();
 }
 
@@ -151,7 +151,7 @@ void WebPlatformStrategies::getPathnamesForType(Vector<String>& pathnames, const
 {
     Vector<SandboxExtension::Handle> sandboxExtensionsHandleArray;
     auto sendResult = WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPasteboardProxy::GetPasteboardPathnamesForType(pasteboardName, pasteboardType, pageIdentifier(context)), 0);
-    if (sendResult)
+    if (sendResult.succeeded())
         std::tie(pathnames, sandboxExtensionsHandleArray) = sendResult.takeReply();
     ASSERT(pathnames.size() == sandboxExtensionsHandleArray.size());
     SandboxExtension::consumePermanently(sandboxExtensionsHandleArray);
@@ -256,7 +256,7 @@ String WebPlatformStrategies::urlStringSuitableForLoading(const String& pasteboa
 {
     String url;
     auto sendResult = WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPasteboardProxy::URLStringSuitableForLoading(pasteboardName, pageIdentifier(context)), 0);
-    if (sendResult)
+    if (sendResult.succeeded())
         std::tie(url, title) = sendResult.takeReply();
     return url;
 }
@@ -351,7 +351,7 @@ int64_t WebPlatformStrategies::changeCount(const String& pasteboardName)
 void WebPlatformStrategies::getTypes(Vector<String>& types)
 {
     auto sendResult = WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPasteboardProxy::GetPasteboardTypes(), 0);
-    if (sendResult)
+    if (sendResult.succeeded())
         std::tie(types) = sendResult.takeReply();
 }
 
@@ -435,7 +435,7 @@ URL WebPlatformStrategies::readURLFromPasteboard(size_t index, const String& pas
 {
     String urlString;
     auto sendResult = WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPasteboardProxy::ReadURLFromPasteboard(index, pasteboardName, pageIdentifier(context)), 0);
-    if (sendResult)
+    if (sendResult.succeeded())
         std::tie(urlString, title) = sendResult.takeReply();
     return URL({ }, urlString);
 }

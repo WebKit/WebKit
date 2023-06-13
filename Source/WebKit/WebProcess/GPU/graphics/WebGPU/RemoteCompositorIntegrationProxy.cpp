@@ -51,7 +51,7 @@ RemoteCompositorIntegrationProxy::~RemoteCompositorIntegrationProxy()
 Vector<MachSendRight> RemoteCompositorIntegrationProxy::recreateRenderBuffers(int height, int width)
 {
     auto sendResult = sendSync(Messages::RemoteCompositorIntegration::RecreateRenderBuffers(height, width));
-    if (!sendResult)
+    if (!sendResult.succeeded())
         return { };
 
     auto [renderBuffers] = sendResult.takeReply();

@@ -204,7 +204,7 @@ void RemoteImageDecoderAVF::setData(const FragmentedSharedBuffer& data, bool all
         return;
 
     auto sendResult = gpuProcessConnection->connection().sendSync(Messages::RemoteImageDecoderAVFProxy::SetData(m_identifier, IPC::SharedBufferReference(data), allDataReceived), 0);
-    if (!sendResult)
+    if (!sendResult.succeeded())
         return;
     auto [frameCount, size, hasTrack, frameInfos] = sendResult.takeReply();
 

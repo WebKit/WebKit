@@ -74,7 +74,7 @@ public:
     void open(Connection::Client&, SerialFunctionDispatcher& = RunLoop::current());
     void invalidate();
 
-    template<typename T, typename U, typename V> bool send(T&& message, ObjectIdentifierGeneric<U, V> destinationID, Timeout);
+    template<typename T, typename U, typename V> Error send(T&& message, ObjectIdentifierGeneric<U, V> destinationID, Timeout);
 
     using AsyncReplyID = Connection::AsyncReplyID;
     template<typename T, typename C, typename U, typename V>
@@ -85,7 +85,7 @@ public:
     SendSyncResult<T> sendSync(T&& message, ObjectIdentifierGeneric<U, V> destinationID, Timeout);
 
     template<typename T, typename U, typename V>
-    bool waitForAndDispatchImmediately(ObjectIdentifierGeneric<U, V> destinationID, Timeout, OptionSet<WaitForOption> = { });
+    Error waitForAndDispatchImmediately(ObjectIdentifierGeneric<U, V> destinationID, Timeout, OptionSet<WaitForOption> = { });
 
     StreamClientConnectionBuffer& bufferForTesting();
     Connection& connectionForTesting();
@@ -97,7 +97,7 @@ private:
     bool trySendStream(std::span<uint8_t>&, T& message, AdditionalData&&...);
     template<typename T>
     std::optional<SendSyncResult<T>> trySendSyncStream(T& message, Timeout, std::span<uint8_t>&);
-    bool trySendDestinationIDIfNeeded(uint64_t destinationID, Timeout);
+    Error trySendDestinationIDIfNeeded(uint64_t destinationID, Timeout);
     void sendProcessOutOfStreamMessage(std::span<uint8_t>&&);
     using WakeUpServer = StreamClientConnectionBuffer::WakeUpServer;
     void wakeUpServerBatched(WakeUpServer);
@@ -126,34 +126,36 @@ private:
 };
 
 template<typename T, typename U, typename V>
-bool StreamClientConnection::send(T&& message, ObjectIdentifierGeneric<U, V> destinationID, Timeout timeout)
+Error StreamClientConnection::send(T&& message, ObjectIdentifierGeneric<U, V> destinationID, Timeout timeout)
 {
     static_assert(!T::isSync, "Message is sync!");
-    if (!trySendDestinationIDIfNeeded(destinationID.toUInt64(), timeout))
-        return false;
+    auto error = trySendDestinationIDIfNeeded(destinationID.toUInt64(), timeout);
+    if (error != Error::NoError)
+        return error;
+
     auto span = m_buffer.tryAcquire(timeout);
     if (!span)
-        return false;
+        return Error::FailedToAcquireBufferSpan;
     if constexpr(T::isStreamEncodable) {
         if (trySendStream(*span, message))
-            return true;
+            return Error::NoError;
     }
     sendProcessOutOfStreamMessage(WTFMove(*span));
-    if (!m_connection->send(WTFMove(message), destinationID, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply))
-        return false;
-    return true;
+    return m_connection->send(WTFMove(message), destinationID, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
 }
 
 template<typename T, typename C, typename U, typename V>
 StreamClientConnection::AsyncReplyID StreamClientConnection::sendWithAsyncReply(T&& message, C&& completionHandler, ObjectIdentifierGeneric<U, V> destinationID, Timeout timeout)
 {
     static_assert(!T::isSync, "Message is sync!");
-    if (!trySendDestinationIDIfNeeded(destinationID.toUInt64(), timeout))
-        return { };
+    auto error = trySendDestinationIDIfNeeded(destinationID.toUInt64(), timeout);
+    if (error != Error::NoError)
+        return { }; // FIXME: Propagate errors.
 
     auto span = m_buffer.tryAcquire(timeout);
     if (!span)
-        return { };
+        return { }; // FIXME: Propagate errors.
+
     auto handler = Connection::makeAsyncReplyHandler<T>(WTFMove(completionHandler));
     auto replyID = handler.replyID;
     m_connection->addAsyncReplyHandler(WTFMove(handler));
@@ -161,11 +163,13 @@ StreamClientConnection::AsyncReplyID StreamClientConnection::sendWithAsyncReply(
         if (trySendStream(*span, message, replyID))
             return replyID;
     }
+
     sendProcessOutOfStreamMessage(WTFMove(*span));
     auto encoder = makeUniqueRef<Encoder>(T::name(), destinationID.toUInt64());
     encoder.get() << message.arguments() << replyID;
-    if (m_connection->sendMessage(WTFMove(encoder), IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply, { }))
+    if (m_connection->sendMessage(WTFMove(encoder), IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply, { }) == Error::NoError)
         return replyID;
+
     // replyHandlerToCancel might be already cancelled if invalidate() happened in-between.
     if (auto replyHandlerToCancel = m_connection->takeAsyncReplyHandler(replyID)) {
         // FIXME(https://bugs.webkit.org/show_bug.cgi?id=248947): Current contract is that completionHandler
@@ -197,11 +201,14 @@ template<typename T, typename U, typename V>
 StreamClientConnection::SendSyncResult<T> StreamClientConnection::sendSync(T&& message, ObjectIdentifierGeneric<U, V> destinationID, Timeout timeout)
 {
     static_assert(T::isSync, "Message is not sync!");
-    if (!trySendDestinationIDIfNeeded(destinationID.toUInt64(), timeout))
-        return { };
+    auto error = trySendDestinationIDIfNeeded(destinationID.toUInt64(), timeout);
+    if (error != Error::NoError)
+        return { nullptr, std::nullopt, error };
+
     auto span = m_buffer.tryAcquire(timeout);
     if (!span)
-        return { };
+        return { nullptr, std::nullopt, Error::FailedToAcquireBufferSpan };
+
     if constexpr(T::isStreamEncodable) {
         auto maybeSendResult = trySendSyncStream(message, timeout, *span);
         if (maybeSendResult)
@@ -212,7 +219,7 @@ StreamClientConnection::SendSyncResult<T> StreamClientConnection::sendSync(T&& m
 }
 
 template<typename T, typename U, typename V>
-bool StreamClientConnection::waitForAndDispatchImmediately(ObjectIdentifierGeneric<U, V> destinationID, Timeout timeout, OptionSet<WaitForOption> waitForOptions)
+Error StreamClientConnection::waitForAndDispatchImmediately(ObjectIdentifierGeneric<U, V> destinationID, Timeout timeout, OptionSet<WaitForOption> waitForOptions)
 {
     return m_connection->waitForAndDispatchImmediately<T>(destinationID, timeout, waitForOptions);
 }
@@ -226,20 +233,22 @@ std::optional<StreamClientConnection::SendSyncResult<T>> StreamClientConnection:
     if (!m_connection->pushPendingSyncRequestID(syncRequestID))
         return SendSyncResult<T> { };
 
-    auto decoderResult = [&]() -> std::optional<std::unique_ptr<Decoder>> {
+    auto decoderResult = [&]() -> std::optional<Connection::DecoderOrError> {
         StreamConnectionEncoder messageEncoder { T::name(), span.data(), span.size() };
         if (!(messageEncoder << syncRequestID << message.arguments()))
             return std::nullopt;
+
         auto wakeUpResult = m_buffer.release(messageEncoder.size());
         wakeUpServer(wakeUpResult);
         if constexpr(T::isReplyStreamEncodable) {
             auto replySpan = m_buffer.tryAcquireAll(timeout);
             if (!replySpan)
-                return std::unique_ptr<Decoder> { };
+                return Connection::DecoderOrError { Error::FailedToAcquireReplyBufferSpan };
+
             auto decoder = std::unique_ptr<Decoder> { new Decoder(replySpan->data(), replySpan->size(), m_currentDestinationID) };
             if (decoder->messageName() != MessageName::ProcessOutOfStreamMessage) {
                 ASSERT(decoder->messageName() == MessageName::SyncMessageReply);
-                return decoder;
+                return Connection::DecoderOrError { WTFMove(decoder) };
             }
         } else
             m_buffer.resetClientOffset();
@@ -252,31 +261,34 @@ std::optional<StreamClientConnection::SendSyncResult<T>> StreamClientConnection:
         return std::nullopt;
 
     SendSyncResult<T> result;
-    if (*decoderResult) {
-        auto& decoder = *decoderResult;
+    if (decoderResult->decoder) {
+        auto& decoder = decoderResult->decoder;
         *decoder >> result.replyArguments;
         if (result.replyArguments)
             result.decoder = WTFMove(decoder);
-    }
+    } else
+        result.error = decoderResult->error;
     return result;
 }
 
-inline bool StreamClientConnection::trySendDestinationIDIfNeeded(uint64_t destinationID, Timeout timeout)
+inline Error StreamClientConnection::trySendDestinationIDIfNeeded(uint64_t destinationID, Timeout timeout)
 {
     if (destinationID == m_currentDestinationID)
-        return true;
+        return Error::NoError;
+
     auto span = m_buffer.tryAcquire(timeout);
     if (!span)
-        return false;
+        return Error::FailedToAcquireBufferSpan;
+
     StreamConnectionEncoder encoder { MessageName::SetStreamDestinationID, span->data(), span->size() };
     if (!(encoder << destinationID)) {
         ASSERT_NOT_REACHED(); // Size of the minimum allocation is incorrect. Likely an alignment issue.
-        return false;
+        return Error::StreamConnectionEncodingError;
     }
     auto wakeUpResult = m_buffer.release(encoder.size());
     wakeUpServer(wakeUpResult);
     m_currentDestinationID = destinationID;
-    return true;
+    return Error::NoError;
 }
 
 inline void StreamClientConnection::sendProcessOutOfStreamMessage(std::span<uint8_t>&& span)

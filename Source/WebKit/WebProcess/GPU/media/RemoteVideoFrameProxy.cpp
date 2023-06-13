@@ -118,7 +118,7 @@ CVPixelBufferRef RemoteVideoFrameProxy::pixelBuffer() const
             semaphore.wait();
         } else {
             auto sendResult = m_connection->sendSync(Messages::RemoteVideoFrameObjectHeap::PixelBuffer(newReadReference()), 0, defaultTimeout);
-            if (sendResult)
+            if (sendResult.succeeded())
                 std::tie(m_pixelBuffer) = sendResult.takeReply();
         }
     }

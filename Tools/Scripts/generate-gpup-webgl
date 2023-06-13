@@ -624,21 +624,21 @@ class webkit_ipc_cpp_proxy_impl(object):
         if is_async:
             self.call_stmts += [
                 f"auto sendResult = send(Messages::RemoteGraphicsContextGL::{self.msg_name}({in_exprs}));",
+                "if (sendResult != IPC::Error::NoError) {",
             ]
         else:
             self.call_stmts += [
-                f"auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::{self.msg_name}({in_exprs}));"
+                f"auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::{self.msg_name}({in_exprs}));",
+                "if (!sendResult.succeeded()) {",
             ]
         if self.return_type.is_void():
             self.call_stmts += [
-                "if (!sendResult) {",
                 "    markContextLost();",
                 "    return;",
                 "}",
             ]
         else:
             self.call_stmts += [
-                "if (!sendResult) {",
                 "    markContextLost();",
                 "    return { };",
                 "}",

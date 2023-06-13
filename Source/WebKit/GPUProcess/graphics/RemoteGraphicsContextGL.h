@@ -101,7 +101,7 @@ protected:
     virtual void platformWorkQueueInitialize(WebCore::GraphicsContextGLAttributes&&) { };
     void workQueueUninitialize();
     template<typename T>
-    bool send(T&& message) const { return m_streamConnection->send(WTFMove(message), m_graphicsContextGLIdentifier); }
+    IPC::Error send(T&& message) const { return m_streamConnection->send(WTFMove(message), m_graphicsContextGLIdentifier); }
 
     // GraphicsContextGL::Client overrides.
     void forceContextLost() final;

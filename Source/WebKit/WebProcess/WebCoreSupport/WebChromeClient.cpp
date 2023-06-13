@@ -333,7 +333,7 @@ Page* WebChromeClient::createWindow(LocalFrame& frame, const WindowFeatures& win
     WebFrame* webFrame = WebFrame::fromCoreFrame(frame);
 
     auto sendResult = webProcess.parentProcessConnection()->sendSync(Messages::WebPageProxy::CreateNewPage(webFrame->info(), webFrame->page()->webPageProxyIdentifier(), navigationAction.resourceRequest(), windowFeatures, navigationActionData), m_page.identifier(), IPC::Timeout::infinity(), { IPC::SendSyncOption::MaintainOrderingWithAsyncMessages, IPC::SendSyncOption::InformPlatformProcessWillSuspend });
-    if (!sendResult)
+    if (!sendResult.succeeded())
         return nullptr;
 
     auto [newPageID, parameters] = sendResult.takeReply();
@@ -547,7 +547,7 @@ bool WebChromeClient::runJavaScriptPrompt(LocalFrame& frame, const String& messa
     IPC::UnboundedSynchronousIPCScope unboundedSynchronousIPCScope;
 
     auto sendResult = m_page.sendSyncWithDelayedReply(Messages::WebPageProxy::RunJavaScriptPrompt(webFrame->frameID(), webFrame->info(), message, defaultValue), IPC::SendSyncOption::MaintainOrderingWithAsyncMessages);
-    if (!sendResult)
+    if (!sendResult.succeeded())
         return false;
 
     std::tie(result) = sendResult.takeReply();
@@ -1397,7 +1397,7 @@ void WebChromeClient::handleAutoplayEvent(AutoplayEvent event, OptionSet<Autopla
 bool WebChromeClient::wrapCryptoKey(const Vector<uint8_t>& key, Vector<uint8_t>& wrappedKey) const
 {
     auto sendResult = WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPageProxy::WrapCryptoKey(key), m_page.identifier());
-    if (!sendResult)
+    if (!sendResult.succeeded())
         return false;
 
     bool succeeded;
@@ -1408,7 +1408,7 @@ bool WebChromeClient::wrapCryptoKey(const Vector<uint8_t>& key, Vector<uint8_t>&
 bool WebChromeClient::unwrapCryptoKey(const Vector<uint8_t>& wrappedKey, Vector<uint8_t>& key) const
 {
     auto sendResult = WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPageProxy::UnwrapCryptoKey(wrappedKey), m_page.identifier());
-    if (!sendResult)
+    if (!sendResult.succeeded())
         return false;
 
     bool succeeded;

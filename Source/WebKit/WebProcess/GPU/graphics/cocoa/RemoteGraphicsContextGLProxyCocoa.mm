@@ -165,7 +165,7 @@ std::optional<WebCore::GraphicsContextGL::ExternalImageAttachResult> RemoteGraph
     if (isContextLost())
         return std::nullopt;
     auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::CreateAndBindExternalImage(target, source));
-    if (!sendResult) {
+    if (!sendResult.succeeded()) {
         markContextLost();
         return std::nullopt;
     }
@@ -181,7 +181,7 @@ GCEGLSync RemoteGraphicsContextGLProxyCocoa::createEGLSync(ExternalEGLSyncEvent 
         return { };
     auto [eventHandle, signalValue] = syncEvent;
     auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::CreateEGLSync(eventHandle, signalValue));
-    if (!sendResult) {
+    if (!sendResult.succeeded()) {
         markContextLost();
         return { };
     }
@@ -195,7 +195,7 @@ void RemoteGraphicsContextGLProxyCocoa::prepareForDisplay()
         return;
     IPC::Semaphore finishedSignaller;
     auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::PrepareForDisplay(finishedSignaller));
-    if (!sendResult) {
+    if (!sendResult.succeeded()) {
         markContextLost();
         return;
     }

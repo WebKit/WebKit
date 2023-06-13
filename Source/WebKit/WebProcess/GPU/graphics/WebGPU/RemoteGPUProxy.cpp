@@ -115,7 +115,7 @@ void RemoteGPUProxy::waitUntilInitialized()
 {
     if (m_didInitialize)
         return;
-    if (m_streamConnection->waitForAndDispatchImmediately<Messages::RemoteGPUProxy::WasCreated>(m_backing, defaultSendTimeout))
+    if (m_streamConnection->waitForAndDispatchImmediately<Messages::RemoteGPUProxy::WasCreated>(m_backing, defaultSendTimeout) == IPC::Error::NoError)
         return;
     m_lost = true;
 }
@@ -136,7 +136,7 @@ void RemoteGPUProxy::requestAdapter(const PAL::WebGPU::RequestAdapterOptions& op
 
     auto identifier = WebGPUIdentifier::generate();
     auto sendResult = sendSync(Messages::RemoteGPU::RequestAdapter(*convertedOptions, identifier));
-    if (!sendResult) {
+    if (!sendResult.succeeded()) {
         m_lost = true;
         callback(nullptr);
         return;

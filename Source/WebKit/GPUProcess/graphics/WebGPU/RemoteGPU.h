@@ -102,7 +102,7 @@ private:
     void workQueueUninitialize();
 
     template<typename T>
-    bool send(T&& message) const
+    IPC::Error send(T&& message) const
     {
         return m_streamConnection->send(WTFMove(message), m_identifier);
     }

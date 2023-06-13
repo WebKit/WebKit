@@ -77,6 +77,8 @@ public:
 
     ~RemoteRenderingBackendProxy();
 
+    const RemoteRenderingBackendCreationParameters& parameters() const { return m_parameters; }
+
     RemoteResourceCacheProxy& remoteResourceCacheProxy() { return m_remoteResourceCacheProxy; }
 
     void transferImageBuffer(std::unique_ptr<RemoteSerializedImageBufferProxy>, WebCore::ImageBuffer&);

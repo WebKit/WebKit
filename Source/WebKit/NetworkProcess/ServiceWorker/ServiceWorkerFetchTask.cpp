@@ -127,12 +127,15 @@ ServiceWorkerFetchTask::~ServiceWorkerFetchTask()
 
 template<typename Message> bool ServiceWorkerFetchTask::sendToServiceWorker(Message&& message)
 {
-    return m_serviceWorkerConnection ? m_serviceWorkerConnection->ipcConnection().send(std::forward<Message>(message), 0) : false;
+    if (!m_serviceWorkerConnection)
+        return false;
+
+    return m_serviceWorkerConnection->ipcConnection().send(std::forward<Message>(message), 0) == IPC::Error::NoError;
 }
 
 template<typename Message> bool ServiceWorkerFetchTask::sendToClient(Message&& message)
 {
-    return m_loader.connectionToWebProcess().connection().send(std::forward<Message>(message), m_loader.coreIdentifier());
+    return m_loader.connectionToWebProcess().connection().send(std::forward<Message>(message), m_loader.coreIdentifier()) == IPC::Error::NoError;
 }
 
 void ServiceWorkerFetchTask::start(WebSWServerToContextConnection& serviceWorkerConnection)

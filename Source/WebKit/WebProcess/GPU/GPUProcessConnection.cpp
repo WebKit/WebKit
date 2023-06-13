@@ -306,8 +306,8 @@ void GPUProcessConnection::didInitialize(std::optional<GPUProcessConnectionInfo>
 bool GPUProcessConnection::waitForDidInitialize()
 {
     if (!m_hasInitialized) {
-        bool result = m_connection->waitForAndDispatchImmediately<Messages::GPUProcessConnection::DidInitialize>(0, defaultTimeout);
-        if (!result) {
+        auto result = m_connection->waitForAndDispatchImmediately<Messages::GPUProcessConnection::DidInitialize>(0, defaultTimeout);
+        if (result != IPC::Error::NoError) {
             invalidate();
             return false;
         }

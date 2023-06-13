@@ -84,11 +84,11 @@ void WebRemoteFrameClient::changeLocation(WebCore::FrameLoadRequest&& request)
 
 String WebRemoteFrameClient::renderTreeAsText(WebCore::ProcessIdentifier processIdentifier, WebCore::FrameIdentifier frameIdentifier, size_t baseIndent, OptionSet<WebCore::RenderAsTextFlag> behavior)
 {
-    auto reply = WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebProcessProxy::RenderTreeAsText(processIdentifier, frameIdentifier, baseIndent, behavior), 0);
-    if (!reply)
+    auto sendResult = WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebProcessProxy::RenderTreeAsText(processIdentifier, frameIdentifier, baseIndent, behavior), 0);
+    if (!sendResult.succeeded())
         return { };
 
-    auto [result] = reply.takeReply();
+    auto [result] = sendResult.takeReply();
     return result;
 }
 
