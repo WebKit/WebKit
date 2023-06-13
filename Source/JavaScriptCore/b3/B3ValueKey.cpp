@@ -137,6 +137,7 @@ Value* ValueKey::materialize(Procedure& proc, Origin origin) const
     case VectorFloor:
     case VectorTrunc:
     case VectorTruncSat:
+    case VectorRelaxedTruncSat:
     case VectorConvert:
     case VectorConvertLow:
     case VectorNearest:

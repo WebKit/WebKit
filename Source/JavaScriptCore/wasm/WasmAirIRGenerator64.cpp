@@ -272,6 +272,8 @@ public:
         AIR_OP_CASE(Not)
         AIR_OP_CASE(Neg)
 
+        else if (op == SIMDLaneOperation::RelaxedTruncSat) airOp = B3::Air::VectorTruncSat;
+
         result = tmpForType(Types::V128);
 
         if (isX86()) {

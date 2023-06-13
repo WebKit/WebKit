@@ -540,6 +540,9 @@ void printInternal(PrintStream& out, Opcode opcode)
     case VectorRelaxedSwizzle:
         out.print("VectorRelaxedSwizzle");
         return;
+    case VectorRelaxedTruncSat:
+        out.print("VectorRelaxedTruncSat");
+        return;
     case Upsilon:
         out.print("Upsilon");
         return;

@@ -75,6 +75,7 @@ public:
         case VectorFloor:
         case VectorTrunc:
         case VectorTruncSat:
+        case VectorRelaxedTruncSat:
         case VectorConvert:
         case VectorConvertLow:
         case VectorNearest:

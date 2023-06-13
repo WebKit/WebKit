@@ -419,6 +419,7 @@ public:
         B3_OP_CASE(ExtendHigh)
         B3_OP_CASE(ExtendLow)
         B3_OP_CASE(TruncSat)
+        B3_OP_CASE(RelaxedTruncSat)
         B3_OP_CASE(Not)
         B3_OP_CASE(Neg)
 

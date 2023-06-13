@@ -4277,6 +4277,7 @@ private:
             emitSIMDUnaryOp(Air::VectorTrunc);
             return;
         case B3::VectorTruncSat:
+        case B3::VectorRelaxedTruncSat:
             if (isX86()) {
                 SIMDValue* value = m_value->as<SIMDValue>();
                 Tmp v = tmp(value->child(0));

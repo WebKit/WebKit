@@ -112,6 +112,7 @@ enum class SIMDLaneOperation : uint8_t {
 
     // relaxed SIMD
     RelaxedSwizzle,
+    RelaxedTruncSat
 };
 
 #define FOR_EACH_WASM_EXT_SIMD_REL_OP(macro) \
@@ -354,7 +355,11 @@ macro(I64x2ExtmulLowI32x4S,       0xdc,  ExtmulLow,           SIMDLane::i64x2,  
 macro(I64x2ExtmulHighI32x4S,      0xdd,  ExtmulHigh,          SIMDLane::i64x2,  SIMDSignMode::Signed) \
 macro(I64x2ExtmulLowI32x4U,       0xde,  ExtmulLow,           SIMDLane::i64x2,  SIMDSignMode::Unsigned) \
 macro(I64x2ExtmulHighI32x4U,      0xdf,  ExtmulHigh,          SIMDLane::i64x2,  SIMDSignMode::Unsigned) \
-macro(I8x16RelaxedSwizzle,        0x100, RelaxedSwizzle,      SIMDLane::i8x16,  SIMDSignMode::None)
+macro(I8x16RelaxedSwizzle,        0x100, RelaxedSwizzle,      SIMDLane::i8x16,  SIMDSignMode::None) \
+macro(I32x4RelaxedTruncF32x4S,    0x101, RelaxedTruncSat,     SIMDLane::f32x4,  SIMDSignMode::Signed) \
+macro(I32x4RelaxedTruncF32x4U,    0x102, RelaxedTruncSat,     SIMDLane::f32x4,  SIMDSignMode::Unsigned) \
+macro(I32x4RelaxedTruncF64x2SZero, 0x103, RelaxedTruncSat,     SIMDLane::f64x2,  SIMDSignMode::Signed) \
+macro(I32x4RelaxedTruncF64x2UZero, 0x104, RelaxedTruncSat,     SIMDLane::f64x2,  SIMDSignMode::Unsigned)
 
 #define FOR_EACH_WASM_EXT_SIMD_OP(macro) \
 FOR_EACH_WASM_EXT_SIMD_REL_OP(macro) \
@@ -441,6 +446,7 @@ static void dumpSIMDLaneOperation(PrintStream& out, SIMDLaneOperation op)
     case SIMDLaneOperation::Neg: out.print("Neg"); break;
     case SIMDLaneOperation::MulSat: out.print("MulSat"); break;
     case SIMDLaneOperation::RelaxedSwizzle: out.print("RelaxedSwizzle"); break;
+    case SIMDLaneOperation::RelaxedTruncSat: out.print("RelaxedTruncSat"); break;
     }
 }
 MAKE_PRINT_ADAPTOR(SIMDLaneOperationDump, SIMDLaneOperation, dumpSIMDLaneOperation);
@@ -449,7 +455,13 @@ MAKE_PRINT_ADAPTOR(SIMDLaneOperationDump, SIMDLaneOperation, dumpSIMDLaneOperati
 
 inline bool isRelaxedSIMDOperation(SIMDLaneOperation op)
 {
-    return (op == SIMDLaneOperation::RelaxedSwizzle);
+    switch (op) {
+    case SIMDLaneOperation::RelaxedSwizzle:
+    case SIMDLaneOperation::RelaxedTruncSat:
+        return true;
+    default:
+        return false;
+    }
 }
 
 }

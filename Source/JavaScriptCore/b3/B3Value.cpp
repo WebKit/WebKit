@@ -717,6 +717,7 @@ Effects Value::effects() const
     case VectorFloor:
     case VectorTrunc:
     case VectorTruncSat:
+    case VectorRelaxedTruncSat:
     case VectorConvert:
     case VectorConvertLow:
     case VectorNearest:
@@ -934,6 +935,7 @@ ValueKey Value::key() const
     case VectorFloor:
     case VectorTrunc:
     case VectorTruncSat:
+    case VectorRelaxedTruncSat:
     case VectorConvert:
     case VectorConvertLow:
     case VectorNearest:

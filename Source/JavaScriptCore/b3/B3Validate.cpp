@@ -550,6 +550,7 @@ public:
             case VectorFloor:
             case VectorTrunc:
             case VectorTruncSat:
+            case VectorRelaxedTruncSat:
             case VectorNearest:
             case VectorSqrt:
                 VALIDATE(!value->kind().hasExtraBits(), ("At ", *value));

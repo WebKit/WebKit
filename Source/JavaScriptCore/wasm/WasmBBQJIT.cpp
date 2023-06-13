@@ -8903,6 +8903,7 @@ public:
             m_jit.vectorExtendLow(info, valueLocation.asFPR(), resultLocation.asFPR());
             return { };
         case JSC::SIMDLaneOperation::TruncSat:
+        case JSC::SIMDLaneOperation::RelaxedTruncSat:
 #if CPU(X86_64)
             switch (info.lane) {
             case SIMDLane::f64x2:

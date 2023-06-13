@@ -1044,6 +1044,7 @@ auto FunctionParser<Context>::simd(SIMDLaneOperation op, SIMDLane lane, SIMDSign
     case SIMDLaneOperation::ExtendHigh:
     case SIMDLaneOperation::ExtendLow:
     case SIMDLaneOperation::TruncSat:
+    case SIMDLaneOperation::RelaxedTruncSat:
     case SIMDLaneOperation::Not:
     case SIMDLaneOperation::Demote:
     case SIMDLaneOperation::Promote:

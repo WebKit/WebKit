@@ -456,6 +456,7 @@ protected:
         case VectorFloor:
         case VectorTrunc:
         case VectorTruncSat:
+        case VectorRelaxedTruncSat:
         case VectorConvert:
         case VectorConvertLow:
         case VectorNearest:
@@ -695,6 +696,7 @@ private:
         case VectorAllTrue:
         case VectorExtaddPairwise:
         case VectorDupElement:
+        case VectorRelaxedTruncSat:
             if (UNLIKELY(numArgs != 1))
                 badKind(kind, numArgs);
             return One;
