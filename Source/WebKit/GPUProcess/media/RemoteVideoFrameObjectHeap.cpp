@@ -40,6 +40,7 @@
 #include <WebCore/PixelBufferConformerCV.h>
 #include <WebCore/VideoFrameCV.h>
 #include <pal/cf/CoreMediaSoftLink.h>
+#include <WebCore/CoreVideoSoftLink.h>
 #endif
 
 namespace WebKit {
@@ -159,16 +160,19 @@ void RemoteVideoFrameObjectHeap::convertFrameBuffer(SharedVideoFrame&& sharedVid
     RetainPtr<CVPixelBufferRef> buffer = frame->pixelBuffer();
     destinationColorSpace = DestinationColorSpace(createCGColorSpaceForCVPixelBuffer(buffer.get()));
 
-    createPixelConformerIfNeeded();
-    auto convertedBuffer = m_pixelBufferConformer->convert(buffer.get());
-    if (!convertedBuffer) {
-        RELEASE_LOG_ERROR(WebRTC, "RemoteVideoFrameObjectHeap::convertFrameBuffer conformer failed");
-        m_connection->send(Messages::RemoteVideoFrameObjectHeapProxyProcessor::NewConvertedVideoFrameBuffer { { } }, 0);
-        return;
+    if (CVPixelBufferGetPixelFormatType(buffer.get()) != kCVPixelFormatType_32BGRA) {
+        createPixelConformerIfNeeded();
+        auto convertedBuffer = m_pixelBufferConformer->convert(buffer.get());
+        if (!convertedBuffer) {
+            RELEASE_LOG_ERROR(WebRTC, "RemoteVideoFrameObjectHeap::convertFrameBuffer conformer failed");
+            m_connection->send(Messages::RemoteVideoFrameObjectHeapProxyProcessor::NewConvertedVideoFrameBuffer { { } }, 0);
+            return;
+        }
+        buffer = WTFMove(convertedBuffer);
     }
 
     bool canSendIOSurface = false;
-    auto result = m_sharedVideoFrameWriter.writeBuffer(convertedBuffer.get(),
+    auto result = m_sharedVideoFrameWriter.writeBuffer(buffer.get(),
         [&](auto& semaphore) { m_connection->send(Messages::RemoteVideoFrameObjectHeapProxyProcessor::SetSharedVideoFrameSemaphore { semaphore }, 0); },
         [&](auto&& handle) { m_connection->send(Messages::RemoteVideoFrameObjectHeapProxyProcessor::SetSharedVideoFrameMemory { WTFMove(handle) }, 0); },
         canSendIOSurface);
