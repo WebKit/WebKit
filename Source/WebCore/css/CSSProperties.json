@@ -309,7 +309,7 @@
             "codegen-properties": {
                 "initial": "initialAlignTracks",
                 "converter": "ContentAlignmentDataList",
-                "settings-flag": "masonryEnabled",
+                "settings-flag": "masonryTrackAlignmentEnabled",
                 "parser-function": "consumeAlignTracks",
                 "parser-grammar-unused": "normal | <baseline-position> | <content-distribution> | [ <overflow-position>? <content-position> ]",
                 "parser-grammar-unused-reason": "Needs support for ordered groups, '&&' groups and optionals",
@@ -1118,7 +1118,7 @@
             "codegen-properties": {
                 "initial": "initialJustifyTracks",
                 "converter": "ContentAlignmentDataList",
-                "settings-flag": "masonryEnabled",
+                "settings-flag": "masonryTrackAlignmentEnabled",
                 "parser-function": "consumeJustifyTracks",
                 "parser-grammar-unused": "normal | <content-distribution> | [ <overflow-position>? [ <content-position> | left | right ] ]",
                 "parser-grammar-unused-reason": "Needs support for ordered groups and optionals.",
