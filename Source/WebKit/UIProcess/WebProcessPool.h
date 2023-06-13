@@ -249,7 +249,7 @@ public:
     void addSupportedPlugin(String&& matchingDomain, String&& name, HashSet<String>&& mimeTypes, HashSet<String> extensions);
     void clearSupportedPlugins();
 
-    ProcessID prewarmedProcessIdentifier();
+    ProcessID prewarmedProcessID();
     void activePagesOriginsInWebProcessForTesting(ProcessID, CompletionHandler<void(Vector<String>&&)>&&);
 
     WebPageGroup& defaultPageGroup() { return m_defaultPageGroup.get(); }

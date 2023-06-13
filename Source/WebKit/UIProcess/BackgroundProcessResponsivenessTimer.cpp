@@ -123,10 +123,10 @@ void BackgroundProcessResponsivenessTimer::setResponsive(bool isResponsive)
     client().didChangeIsResponsive();
 
     if (m_isResponsive) {
-        RELEASE_LOG_ERROR(PerformanceLogging, "Notifying the client that background WebProcess with pid %d has become responsive again", m_webProcessProxy.processIdentifier());
+        RELEASE_LOG_ERROR(PerformanceLogging, "Notifying the client that background WebProcess with pid %d has become responsive again", m_webProcessProxy.processID());
         client().didBecomeResponsive();
     } else {
-        RELEASE_LOG_ERROR(PerformanceLogging, "Notifying the client that background WebProcess with pid %d has become unresponsive", m_webProcessProxy.processIdentifier());
+        RELEASE_LOG_ERROR(PerformanceLogging, "Notifying the client that background WebProcess with pid %d has become unresponsive", m_webProcessProxy.processID());
         client().didBecomeUnresponsive();
     }
 }

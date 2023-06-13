@@ -985,7 +985,7 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
 
 - (pid_t)_networkProcessIdentifier
 {
-    return _websiteDataStore->networkProcess().processIdentifier();
+    return _websiteDataStore->networkProcess().processID();
 }
 
 + (void)_makeNextNetworkProcessLaunchFailForTesting

@@ -106,7 +106,7 @@ public:
     }
 
     bool isLaunching() const { return m_isLaunching; }
-    ProcessID processIdentifier() const { return m_processIdentifier; }
+    ProcessID processID() const { return m_processID; }
 
     void terminateProcess();
     void invalidate();
@@ -135,7 +135,7 @@ private:
 
     const LaunchOptions m_launchOptions;
     bool m_isLaunching { true };
-    ProcessID m_processIdentifier { 0 };
+    ProcessID m_processID { 0 };
 };
 
 } // namespace WebKit

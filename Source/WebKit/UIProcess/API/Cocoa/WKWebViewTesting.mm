@@ -219,7 +219,7 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
 {
     auto* networkProcess = _page->websiteDataStore().networkProcessIfExists();
     RELEASE_ASSERT(networkProcess);
-    return networkProcess->processIdentifier();
+    return networkProcess->processID();
 }
 
 - (void)_setScrollingUpdatesDisabledForTesting:(BOOL)disabled

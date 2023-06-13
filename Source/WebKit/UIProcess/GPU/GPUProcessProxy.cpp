@@ -497,7 +497,7 @@ void GPUProcessProxy::gpuProcessExited(ProcessTerminationReason reason)
         singleton() = nullptr;
 
     for (auto& processPool : WebProcessPool::allProcessPools())
-        processPool->gpuProcessExited(processIdentifier(), reason);
+        processPool->gpuProcessExited(processID(), reason);
 }
 
 void GPUProcessProxy::processIsReadyToExit()
@@ -559,7 +559,7 @@ void GPUProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connect
     beginResponsivenessChecks();
 
     for (auto& processPool : WebProcessPool::allProcessPools())
-        processPool->gpuProcessDidFinishLaunching(processIdentifier());
+        processPool->gpuProcessDidFinishLaunching(processID());
 
 #if HAVE(POWERLOG_TASK_MODE_QUERY)
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), makeBlockPtr([weakThis = WeakPtr { *this }] () mutable {
@@ -732,7 +732,7 @@ void GPUProcessProxy::updateScreenPropertiesIfNeeded()
 
 void GPUProcessProxy::didBecomeUnresponsive()
 {
-    RELEASE_LOG_ERROR(Process, "GPUProcessProxy::didBecomeUnresponsive: GPUProcess with PID %d became unresponsive, terminating it", processIdentifier());
+    RELEASE_LOG_ERROR(Process, "GPUProcessProxy::didBecomeUnresponsive: GPUProcess with PID %d became unresponsive, terminating it", processID());
     terminate();
     gpuProcessExited(ProcessTerminationReason::Unresponsive);
 }

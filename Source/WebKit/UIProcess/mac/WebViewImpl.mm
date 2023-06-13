@@ -3474,7 +3474,7 @@ void WebViewImpl::updateRemoteAccessibilityRegistration(bool registerProcess)
     // away, that information is not present in WebProcess
     pid_t pid = 0;
     if (registerProcess)
-        pid = m_page->process().processIdentifier();
+        pid = m_page->process().processID();
     else if (!registerProcess) {
         pid = [m_remoteAccessibilityChild processIdentifier];
         m_remoteAccessibilityChild = nil;

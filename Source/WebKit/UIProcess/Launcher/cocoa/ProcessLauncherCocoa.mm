@@ -312,11 +312,11 @@ void ProcessLauncher::terminateProcess()
         return;
     }
 
-    if (!m_processIdentifier)
+    if (!m_processID)
         return;
 
-    kill(m_processIdentifier, SIGKILL);
-    m_processIdentifier = 0;
+    kill(m_processID, SIGKILL);
+    m_processID = 0;
 }
 
 void ProcessLauncher::platformInvalidate()

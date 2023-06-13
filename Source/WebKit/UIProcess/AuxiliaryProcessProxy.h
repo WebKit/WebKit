@@ -128,7 +128,7 @@ public:
     bool isLaunching() const { return state() == State::Launching; }
     bool wasTerminated() const;
 
-    ProcessID processIdentifier() const { return m_processLauncher ? m_processLauncher->processIdentifier() : 0; }
+    ProcessID processID() const { return m_processLauncher ? m_processLauncher->processID() : 0; }
 
     bool canSendMessage() const { return state() != State::Terminated;}
     bool sendMessage(UniqueRef<IPC::Encoder>&&, OptionSet<IPC::SendOption>, std::optional<IPC::Connection::AsyncReplyHandler> = std::nullopt, ShouldStartProcessThrottlerActivity = ShouldStartProcessThrottlerActivity::Yes);

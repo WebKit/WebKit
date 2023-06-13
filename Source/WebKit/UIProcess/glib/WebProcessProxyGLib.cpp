@@ -71,7 +71,7 @@ void WebProcessProxy::sendMessageToWebContext(UserMessage&& message)
 
 void WebProcessProxy::platformSuspendProcess()
 {
-    auto id = processIdentifier();
+    auto id = processID();
     if (!id)
         return;
 
@@ -81,7 +81,7 @@ void WebProcessProxy::platformSuspendProcess()
 
 void WebProcessProxy::platformResumeProcess()
 {
-    auto id = processIdentifier();
+    auto id = processID();
     if (!id)
         return;
 

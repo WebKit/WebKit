@@ -1435,9 +1435,9 @@ public:
 
     WebProcessProxy& ensureRunningProcess();
     WebProcessProxy& process() const { return m_process; }
-    ProcessID processIdentifier() const;
+    ProcessID processID() const;
 
-    ProcessID gpuProcessIdentifier() const;
+    ProcessID gpuProcessID() const;
 
     WebBackForwardCache& backForwardCache() const;
 

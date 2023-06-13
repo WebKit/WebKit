@@ -119,8 +119,8 @@
 #define MESSAGE_CHECK_URL(url) MESSAGE_CHECK_BASE(checkURLReceivedFromWebProcess(url), connection())
 #define MESSAGE_CHECK_COMPLETION(assertion, completion) MESSAGE_CHECK_COMPLETION_BASE(assertion, connection(), completion)
 
-#define WEBPROCESSPROXY_RELEASE_LOG(channel, fmt, ...) RELEASE_LOG(channel, "%p - [PID=%i] WebProcessProxy::" fmt, this, processIdentifier(), ##__VA_ARGS__)
-#define WEBPROCESSPROXY_RELEASE_LOG_ERROR(channel, fmt, ...) RELEASE_LOG_ERROR(channel, "%p - [PID=%i] WebProcessProxy::" fmt, this, processIdentifier(), ##__VA_ARGS__)
+#define WEBPROCESSPROXY_RELEASE_LOG(channel, fmt, ...) RELEASE_LOG(channel, "%p - [PID=%i] WebProcessProxy::" fmt, this, processID(), ##__VA_ARGS__)
+#define WEBPROCESSPROXY_RELEASE_LOG_ERROR(channel, fmt, ...) RELEASE_LOG_ERROR(channel, "%p - [PID=%i] WebProcessProxy::" fmt, this, processID(), ##__VA_ARGS__)
 
 namespace WebKit {
 using namespace WebCore;
@@ -1748,7 +1748,7 @@ String WebProcessProxy::environmentIdentifier() const
     if (m_environmentIdentifier.isEmpty()) {
         StringBuilder builder;
         builder.append(clientName());
-        builder.append(processIdentifier());
+        builder.append(processID());
         m_environmentIdentifier = builder.toString();
     }
     return m_environmentIdentifier;
@@ -1766,7 +1766,7 @@ void WebProcessProxy::updateAudibleMediaAssertions()
     if (hasAudibleWebPage) {
         WEBPROCESSPROXY_RELEASE_LOG(ProcessSuspension, "updateAudibleMediaAssertions: Taking MediaPlayback assertion for WebProcess");
         m_audibleMediaActivity = AudibleMediaActivity {
-            ProcessAssertion::create(processIdentifier(), "WebKit Media Playback"_s, ProcessAssertionType::MediaPlayback),
+            ProcessAssertion::create(processID(), "WebKit Media Playback"_s, ProcessAssertionType::MediaPlayback),
             processPool().webProcessWithAudibleMediaToken()
         };
     } else {
@@ -2268,7 +2268,7 @@ void WebProcessProxy::registerRemoteWorkerClientProcess(RemoteWorkerType workerT
     if (!workerInformation)
         return;
 
-    WEBPROCESSPROXY_RELEASE_LOG(Worker, "registerWorkerClientProcess: workerType=%" PUBLIC_LOG_STRING ", clientProcess=%p, clientPID=%d", workerType == RemoteWorkerType::SharedWorker ? "shared" : "service", &proxy, proxy.processIdentifier());
+    WEBPROCESSPROXY_RELEASE_LOG(Worker, "registerWorkerClientProcess: workerType=%" PUBLIC_LOG_STRING ", clientProcess=%p, clientPID=%d", workerType == RemoteWorkerType::SharedWorker ? "shared" : "service", &proxy, proxy.processID());
     workerInformation->clientProcesses.add(proxy);
     updateRemoteWorkerProcessAssertion(workerType);
 }
@@ -2279,7 +2279,7 @@ void WebProcessProxy::unregisterRemoteWorkerClientProcess(RemoteWorkerType worke
     if (!workerInformation)
         return;
 
-    WEBPROCESSPROXY_RELEASE_LOG(Worker, "unregisterWorkerClientProcess: workerType=%" PUBLIC_LOG_STRING ", clientProcess=%p, clientPID=%d", workerType == RemoteWorkerType::SharedWorker ? "shared" : "service", &proxy, proxy.processIdentifier());
+    WEBPROCESSPROXY_RELEASE_LOG(Worker, "unregisterWorkerClientProcess: workerType=%" PUBLIC_LOG_STRING ", clientProcess=%p, clientPID=%d", workerType == RemoteWorkerType::SharedWorker ? "shared" : "service", &proxy, proxy.processID());
     workerInformation->clientProcesses.remove(proxy);
     updateRemoteWorkerProcessAssertion(workerType);
 }
@@ -2514,7 +2514,7 @@ TextStream& operator<<(TextStream& ts, const WebProcessProxy& process)
             ts << ", " << description;
     };
 
-    ts << "pid: " << process.processIdentifier();
+    ts << "pid: " << process.processID();
     appendCount(process.pageCount(), "pages"_s);
     appendCount(process.visiblePageCount(), "visible-pages"_s);
     appendCount(process.provisionalPageCount(), "provisional-pages"_s);

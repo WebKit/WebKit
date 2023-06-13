@@ -443,7 +443,7 @@ static bool shouldReportAuxiliaryProcessCrash(ProcessTerminationReason reason)
 void WebProcessPool::networkProcessDidTerminate(NetworkProcessProxy& networkProcessProxy, ProcessTerminationReason reason)
 {
     if (shouldReportAuxiliaryProcessCrash(reason))
-        m_client.networkProcessDidCrash(this, networkProcessProxy.processIdentifier(), reason);
+        m_client.networkProcessDidCrash(this, networkProcessProxy.processID(), reason);
 
     if (m_automationSession)
         m_automationSession->terminate();
@@ -454,7 +454,7 @@ void WebProcessPool::networkProcessDidTerminate(NetworkProcessProxy& networkProc
 void WebProcessPool::serviceWorkerProcessCrashed(WebProcessProxy& proxy, ProcessTerminationReason reason)
 {
 #if ENABLE(SERVICE_WORKER)
-    m_client.serviceWorkerProcessDidCrash(this, proxy.processIdentifier(), reason);
+    m_client.serviceWorkerProcessDidCrash(this, proxy.processID(), reason);
 #endif
 }
 
@@ -570,7 +570,7 @@ void WebProcessPool::establishRemoteWorkerContextConnectionToNetworkProcess(Remo
 
             useProcessForRemoteWorkers(process);
 
-            WEBPROCESSPOOL_RELEASE_LOG_STATIC(ServiceWorker, "establishRemoteWorkerContextConnectionToNetworkProcess reusing an existing web process (process=%p, workerType=%" PUBLIC_LOG_STRING ", PID=%d)", remoteWorkerProcessProxy, workerType == RemoteWorkerType::ServiceWorker ? "service" : "shared", remoteWorkerProcessProxy->processIdentifier());
+            WEBPROCESSPOOL_RELEASE_LOG_STATIC(ServiceWorker, "establishRemoteWorkerContextConnectionToNetworkProcess reusing an existing web process (process=%p, workerType=%" PUBLIC_LOG_STRING ", PID=%d)", remoteWorkerProcessProxy, workerType == RemoteWorkerType::ServiceWorker ? "service" : "shared", remoteWorkerProcessProxy->processID());
             break;
         }
     }
@@ -579,7 +579,7 @@ void WebProcessPool::establishRemoteWorkerContextConnectionToNetworkProcess(Remo
         auto newProcessProxy = WebProcessProxy::createForRemoteWorkers(workerType, *processPool, RegistrableDomain  { registrableDomain }, *websiteDataStore);
         remoteWorkerProcessProxy = newProcessProxy.ptr();
 
-        WEBPROCESSPOOL_RELEASE_LOG_STATIC(ServiceWorker, "establishRemoteWorkerContextConnectionToNetworkProcess creating a new service worker process (process=%p, workerType=%" PUBLIC_LOG_STRING ", PID=%d)", remoteWorkerProcessProxy, workerType == RemoteWorkerType::ServiceWorker ? "service" : "shared", remoteWorkerProcessProxy->processIdentifier());
+        WEBPROCESSPOOL_RELEASE_LOG_STATIC(ServiceWorker, "establishRemoteWorkerContextConnectionToNetworkProcess creating a new service worker process (process=%p, workerType=%" PUBLIC_LOG_STRING ", PID=%d)", remoteWorkerProcessProxy, workerType == RemoteWorkerType::ServiceWorker ? "service" : "shared", remoteWorkerProcessProxy->processID());
 
         processPool->initializeNewWebProcess(newProcessProxy, websiteDataStore);
         processPool->m_processes.append(WTFMove(newProcessProxy));
@@ -686,7 +686,7 @@ RefPtr<WebProcessProxy> WebProcessPool::tryTakePrewarmedProcess(WebsiteDataStore
     // There is sometimes a delay until we get notified that a prewarmed process has been terminated (e.g. after resuming
     // from suspension) so make sure the process is still running here before deciding to use it.
     if (m_prewarmedProcess->wasTerminated()) {
-        WEBPROCESSPOOL_RELEASE_LOG_ERROR(Process, "tryTakePrewarmedProcess: Not using prewarmed process because it has been terminated (process=%p, PID=%d)", m_prewarmedProcess.get(), m_prewarmedProcess->processIdentifier());
+        WEBPROCESSPOOL_RELEASE_LOG_ERROR(Process, "tryTakePrewarmedProcess: Not using prewarmed process because it has been terminated (process=%p, PID=%d)", m_prewarmedProcess.get(), m_prewarmedProcess->processID());
         m_prewarmedProcess = nullptr;
         return nullptr;
     }
@@ -993,7 +993,7 @@ void WebProcessPool::processDidFinishLaunching(WebProcessProxy& process)
     if (m_memorySamplerEnabled) {
         SandboxExtension::Handle sampleLogSandboxHandle;        
         WallTime now = WallTime::now();
-        auto sampleLogFilePath = makeString("WebProcess", static_cast<unsigned long long>(now.secondsSinceEpoch().seconds()), "pid", process.processIdentifier());
+        auto sampleLogFilePath = makeString("WebProcess", static_cast<unsigned long long>(now.secondsSinceEpoch().seconds()), "pid", process.processID());
         if (auto handleAndFilePath = SandboxExtension::createHandleForTemporaryFile(sampleLogFilePath, SandboxExtension::Type::ReadWrite)) {
             sampleLogSandboxHandle = WTFMove(handleAndFilePath->first);
             sampleLogFilePath = WTFMove(handleAndFilePath->second);
@@ -1049,21 +1049,21 @@ Ref<WebProcessProxy> WebProcessPool::processForRegistrableDomain(WebsiteDataStor
 {
     if (!registrableDomain.isEmpty()) {
         if (auto process = webProcessCache().takeProcess(registrableDomain, websiteDataStore, lockdownMode)) {
-            WEBPROCESSPOOL_RELEASE_LOG(ProcessSwapping, "processForRegistrableDomain: Using WebProcess from WebProcess cache (process=%p, PID=%i)", process.get(), process->processIdentifier());
+            WEBPROCESSPOOL_RELEASE_LOG(ProcessSwapping, "processForRegistrableDomain: Using WebProcess from WebProcess cache (process=%p, PID=%i)", process.get(), process->processID());
             ASSERT(m_processes.containsIf([&](auto& item) { return item.ptr() == process; }));
             return process.releaseNonNull();
         }
 
         // Check if we have a suspended page for the given registrable domain and use its process if we do, for performance reasons.
         if (auto process = SuspendedPageProxy::findReusableSuspendedPageProcess(*this, registrableDomain, websiteDataStore, lockdownMode)) {
-            WEBPROCESSPOOL_RELEASE_LOG(ProcessSwapping, "processForRegistrableDomain: Using WebProcess from a SuspendedPage (process=%p, PID=%i)", process.get(), process->processIdentifier());
+            WEBPROCESSPOOL_RELEASE_LOG(ProcessSwapping, "processForRegistrableDomain: Using WebProcess from a SuspendedPage (process=%p, PID=%i)", process.get(), process->processID());
             ASSERT(m_processes.containsIf([&](auto& item) { return item.ptr() == process; }));
             return process.releaseNonNull();
         }
     }
 
     if (auto process = tryTakePrewarmedProcess(websiteDataStore, lockdownMode)) {
-        WEBPROCESSPOOL_RELEASE_LOG(ProcessSwapping, "processForRegistrableDomain: Using prewarmed process (process=%p, PID=%i)", process.get(), process->processIdentifier());
+        WEBPROCESSPOOL_RELEASE_LOG(ProcessSwapping, "processForRegistrableDomain: Using prewarmed process (process=%p, PID=%i)", process.get(), process->processID());
         if (!registrableDomain.isEmpty())
             tryPrewarmWithDomainInformation(*process, registrableDomain);
         ASSERT(m_processes.containsIf([&](auto& item) { return item.ptr() == process; }));
@@ -1282,15 +1282,15 @@ void WebProcessPool::handleMemoryPressureWarning(Critical)
     ASSERT(!m_prewarmedProcess);
 }
 
-ProcessID WebProcessPool::prewarmedProcessIdentifier()
+ProcessID WebProcessPool::prewarmedProcessID()
 {
-    return m_prewarmedProcess ? m_prewarmedProcess->processIdentifier() : 0;
+    return m_prewarmedProcess ? m_prewarmedProcess->processID() : 0;
 }
 
 void WebProcessPool::activePagesOriginsInWebProcessForTesting(ProcessID pid, CompletionHandler<void(Vector<String>&&)>&& completionHandler)
 {
     for (auto& process : m_processes) {
-        if (process->processIdentifier() == pid)
+        if (process->processID() == pid)
             return process->activePagesDomainsForTesting(WTFMove(completionHandler));
     }
     completionHandler({ });
@@ -1823,14 +1823,14 @@ void WebProcessPool::addProcessToOriginCacheSet(WebProcessProxy& process, const 
     if (!result.isNewEntry)
         result.iterator->value = &process;
 
-    LOG(ProcessSwapping, "(ProcessSwapping) Registrable domain %s just saved a cached process with pid %i", registrableDomain.string().utf8().data(), process.processIdentifier());
+    LOG(ProcessSwapping, "(ProcessSwapping) Registrable domain %s just saved a cached process with pid %i", registrableDomain.string().utf8().data(), process.processID());
     if (!result.isNewEntry)
         LOG(ProcessSwapping, "(ProcessSwapping) Note: It already had one saved");
 }
 
 void WebProcessPool::removeProcessFromOriginCacheSet(WebProcessProxy& process)
 {
-    LOG(ProcessSwapping, "(ProcessSwapping) Removing process with pid %i from the origin cache set", process.processIdentifier());
+    LOG(ProcessSwapping, "(ProcessSwapping) Removing process with pid %i from the origin cache set", process.processID());
 
     // FIXME: This can be very inefficient as the number of remembered origins and processes grows
     m_swappedProcessesPerRegistrableDomain.removeIf([&](auto& entry) {
@@ -1998,7 +1998,7 @@ std::tuple<Ref<WebProcessProxy>, SuspendedPageProxy*, ASCIILiteral> WebProcessPo
 
         if (auto* process = m_swappedProcessesPerRegistrableDomain.get(targetRegistrableDomain)) {
             if (process->websiteDataStore() == dataStore.ptr()) {
-                LOG(ProcessSwapping, "(ProcessSwapping) Reusing a previously cached process with pid %i to continue navigation to URL %s", process->processIdentifier(), targetURL.string().utf8().data());
+                LOG(ProcessSwapping, "(ProcessSwapping) Reusing a previously cached process with pid %i to continue navigation to URL %s", process->processID(), targetURL.string().utf8().data());
 
                 return { *process, nullptr, reason };
             }
@@ -2163,7 +2163,7 @@ void WebProcessPool::updateAudibleMediaAssertions()
     m_audibleMediaActivity = AudibleMediaActivity {
         ProcessAssertion::create(getCurrentProcessID(), "WebKit Media Playback"_s, ProcessAssertionType::MediaPlayback)
 #if ENABLE(GPU_PROCESS)
-        , gpuProcess() ? RefPtr<ProcessAssertion> { ProcessAssertion::create(gpuProcess()->processIdentifier(), "WebKit Media Playback"_s, ProcessAssertionType::MediaPlayback) } : nullptr
+        , gpuProcess() ? RefPtr<ProcessAssertion> { ProcessAssertion::create(gpuProcess()->processID(), "WebKit Media Playback"_s, ProcessAssertionType::MediaPlayback) } : nullptr
 #endif
     };
 }

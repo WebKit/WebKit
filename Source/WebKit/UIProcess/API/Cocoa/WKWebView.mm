@@ -2892,7 +2892,7 @@ static void convertAndAddHighlight(Vector<Ref<WebKit::SharedMemory>>& buffers, N
     if (![self _isValid])
         return 0;
 
-    return _page->processIdentifier();
+    return _page->processID();
 }
 
 - (pid_t)_provisionalWebProcessIdentifier
@@ -2904,7 +2904,7 @@ static void convertAndAddHighlight(Vector<Ref<WebKit::SharedMemory>>& buffers, N
     if (!provisionalPage)
         return 0;
 
-    return provisionalPage->process().processIdentifier();
+    return provisionalPage->process().processID();
 }
 
 - (pid_t)_gpuProcessIdentifier
@@ -2912,7 +2912,7 @@ static void convertAndAddHighlight(Vector<Ref<WebKit::SharedMemory>>& buffers, N
     if (![self _isValid])
         return 0;
 
-    return _page->gpuProcessIdentifier();
+    return _page->gpuProcessID();
 }
 
 - (BOOL)_webProcessIsResponsive

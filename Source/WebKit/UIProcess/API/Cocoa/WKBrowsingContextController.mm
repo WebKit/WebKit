@@ -754,7 +754,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 - (pid_t)processIdentifier
 {
-    return _page->processIdentifier();
+    return _page->processID();
 }
 
 - (BOOL)_webProcessIsResponsive

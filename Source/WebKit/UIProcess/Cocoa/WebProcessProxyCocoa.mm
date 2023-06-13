@@ -244,7 +244,7 @@ void WebProcessProxy::unblockAccessibilityServerIfNeeded()
     if (!_AXSApplicationAccessibilityEnabled())
         return;
 #endif
-    if (!processIdentifier())
+    if (!processID())
         return;
     if (!canSendMessage())
         return;

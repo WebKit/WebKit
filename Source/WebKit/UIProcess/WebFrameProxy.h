@@ -149,7 +149,7 @@ public:
 
     void disconnect();
     void didCreateSubframe(WebCore::FrameIdentifier);
-    ProcessID processIdentifier() const;
+    ProcessID processID() const;
     void swapToProcess(Ref<WebProcessProxy>&&, const WebCore::ResourceRequest&);
 
     void commitProvisionalFrame(WebCore::FrameIdentifier, FrameInfoData&&, WebCore::ResourceRequest&&, uint64_t navigationID, const String& mimeType, bool frameHasCustomContentProvider, WebCore::FrameLoadType, const WebCore::CertificateInfo&, bool usedLegacyTLS, bool privateRelayed, bool containsPluginDocument, WebCore::HasInsecureContent, WebCore::MouseEventPolicy, const UserData&);

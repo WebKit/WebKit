@@ -102,7 +102,7 @@
 - (pid_t)_processIdentifier
 {
     auto* frame = WebKit::WebFrameProxy::webFrame(_frameInfo->handle()->frameID());
-    return frame ? frame->processIdentifier() : 0;
+    return frame ? frame->processID() : 0;
 }
 
 - (BOOL)_isLocalFrame

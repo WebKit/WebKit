@@ -219,7 +219,7 @@ void SuspendedPageProxy::closeWithoutFlashing()
 
 void SuspendedPageProxy::didProcessRequestToSuspend(SuspensionState newSuspensionState)
 {
-    LOG(ProcessSwapping, "SuspendedPageProxy %s from process %i finished transition to suspended", loggingString(), m_process->processIdentifier());
+    LOG(ProcessSwapping, "SuspendedPageProxy %s from process %i finished transition to suspended", loggingString(), m_process->processID());
     RELEASE_LOG(ProcessSwapping, "%p - SuspendedPageProxy::didProcessRequestToSuspend() success? %d", this, newSuspensionState == SuspensionState::Suspended);
 
     ASSERT(m_suspensionState == SuspensionState::Suspending);
