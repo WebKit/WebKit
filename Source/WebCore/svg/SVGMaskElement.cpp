@@ -73,13 +73,13 @@ void SVGMaskElement::attributeChanged(const QualifiedName& name, const AtomStrin
         auto propertyValue = SVGPropertyTraits<SVGUnitTypes::SVGUnitType>::fromString(newValue);
         if (propertyValue > 0)
             m_maskUnits->setBaseValInternal<SVGUnitTypes::SVGUnitType>(propertyValue);
-        return;
+        break;
     }
     case AttributeNames::maskContentUnitsAttr: {
         auto propertyValue = SVGPropertyTraits<SVGUnitTypes::SVGUnitType>::fromString(newValue);
         if (propertyValue > 0)
             m_maskContentUnits->setBaseValInternal<SVGUnitTypes::SVGUnitType>(propertyValue);
-        return;
+        break;
     }
     case AttributeNames::xAttr:
         m_x->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Width, newValue, parseError));
