@@ -97,14 +97,47 @@ public:
     }
 
 private:
-    bool isNotNegZero(Node* node)
+    bool isNotNegZero(Node* node, unsigned timeToLive = 3)
     {
-        if (!node->isNumberConstant())
+        if (!timeToLive)
             return false;
-        double value = node->asNumber();
-        return (value || 1.0 / value > 0.0);
+
+        switch (node->op()) {
+        case DoubleConstant:
+        case JSConstant:
+        case Int52Constant: {
+            if (!node->isNumberConstant())
+                return false;
+            double value = node->asNumber();
+            return (value || 1.0 / value > 0.0);
+        }
+
+        case ValueBitAnd:
+        case ValueBitOr:
+        case ValueBitXor:
+        case ValueBitLShift:
+        case ValueBitRShift:
+        case ArithBitAnd:
+        case ArithBitOr:
+        case ArithBitXor:
+        case ArithBitLShift:
+        case ArithBitRShift:
+        case BitURShift: {
+            return true;
+        }
+
+        case ValueAdd:
+        case ArithAdd: {
+            if (isNotNegZero(node->child1().node(), timeToLive - 1) || isNotNegZero(node->child2().node(), timeToLive - 1))
+                return true;
+            return false;
+        }
+
+        default:
+            return false;
+        }
     }
-    
+
     bool isNotPosZero(Node* node)
     {
         if (!node->isNumberConstant())

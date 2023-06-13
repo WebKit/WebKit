@@ -4092,7 +4092,7 @@ public:
         return Jump(makeBranch(cond));
     }
 
-    Jump branchMul32(ResultCondition cond, RegisterID src1, RegisterID src2, RegisterID scratch1, RegisterID scratch2, RegisterID dest)
+    Jump branchMul32(ResultCondition cond, RegisterID src1, RegisterID src2, RegisterID dest)
     {
         ASSERT(cond != Signed);
 
@@ -4103,19 +4103,9 @@ public:
 
         // This is a signed multiple of two 32-bit values, producing a 64-bit result.
         m_assembler.smull(dest, src1, src2);
-        // Copy bits 63..32 of the result to bits 31..0 of scratch1.
-        m_assembler.asr<64>(scratch1, dest, 32);
-        // Splat bit 31 of the result to bits 31..0 of scratch2.
-        m_assembler.asr<32>(scratch2, dest, 31);
-        // After a mul32 the top 32 bits of the register should be clear.
+        m_assembler.cmp<64>(dest, dest, Assembler::SXTW, 0);
         zeroExtend32ToWord(dest, dest);
-        // Check that bits 31..63 of the original result were all equal.
-        return branch32(NotEqual, scratch2, scratch1);
-    }
-
-    Jump branchMul32(ResultCondition cond, RegisterID src1, RegisterID src2, RegisterID dest)
-    {
-        return branchMul32(cond, src1, src2, getCachedDataTempRegisterIDAndInvalidate(), getCachedMemoryTempRegisterIDAndInvalidate(), dest);
+        return Jump(makeBranch(NotEqual));
     }
 
     Jump branchMul32(ResultCondition cond, RegisterID src, RegisterID dest)
@@ -4129,7 +4119,7 @@ public:
         return branchMul32(cond, dataTempRegister, src, dest);
     }
 
-    Jump branchMul64(ResultCondition cond, RegisterID src1, RegisterID src2, RegisterID scratch1, RegisterID scratch2, RegisterID dest)
+    Jump branchMul64(ResultCondition cond, RegisterID src1, RegisterID src2, RegisterID scratch1, RegisterID dest)
     {
         ASSERT(cond != Signed);
 
@@ -4141,15 +4131,15 @@ public:
 
         // Compute bits 127..64 of the result into scratch1.
         m_assembler.smulh(scratch1, src1, src2);
-        // Splat bit 63 of the result to bits 63..0 of scratch2.
-        m_assembler.asr<64>(scratch2, dest, 63);
+        // Splat bit 63 of the result to bits 63..0 of scratch1.
+        m_assembler.cmp<64>(scratch1, dest, Assembler::ASR, 63);
         // Check that bits 31..63 of the original result were all equal.
-        return branch64(NotEqual, scratch2, scratch1);
+        return Jump(makeBranch(NotEqual));
     }
 
     Jump branchMul64(ResultCondition cond, RegisterID src1, RegisterID src2, RegisterID dest)
     {
-        return branchMul64(cond, src1, src2, getCachedDataTempRegisterIDAndInvalidate(), getCachedMemoryTempRegisterIDAndInvalidate(), dest);
+        return branchMul64(cond, src1, src2, getCachedDataTempRegisterIDAndInvalidate(), dest);
     }
 
     Jump branchMul64(ResultCondition cond, RegisterID src, RegisterID dest)

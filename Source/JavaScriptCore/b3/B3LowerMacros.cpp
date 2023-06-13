@@ -240,36 +240,6 @@ private:
                 break;
             }
 
-            case CheckMul: {
-                if (isARM64() && m_value->child(0)->type() == Int32) {
-                    CheckValue* checkMul = m_value->as<CheckValue>();
-
-                    Value* left = m_insertionSet.insert<Value>(m_index, SExt32, m_origin, m_value->child(0));
-                    Value* right = m_insertionSet.insert<Value>(m_index, SExt32, m_origin, m_value->child(1));
-                    Value* mulResult = m_insertionSet.insert<Value>(m_index, Mul, m_origin, left, right);
-                    Value* mulResult32 = m_insertionSet.insert<Value>(m_index, Trunc, m_origin, mulResult);
-                    Value* upperResult = m_insertionSet.insert<Value>(m_index, Trunc, m_origin,
-                        m_insertionSet.insert<Value>(m_index, SShr, m_origin, mulResult, m_insertionSet.insert<Const32Value>(m_index, m_origin, 32)));
-                    Value* signBit = m_insertionSet.insert<Value>(m_index, SShr, m_origin,
-                        mulResult32,
-                        m_insertionSet.insert<Const32Value>(m_index, m_origin, 31));
-                    Value* hasOverflowed = m_insertionSet.insert<Value>(m_index, NotEqual, m_origin, upperResult, signBit);
-
-                    CheckValue* check = m_insertionSet.insert<CheckValue>(m_index, Check, m_origin, hasOverflowed);
-                    check->setGenerator(checkMul->generator());
-                    check->clobberEarly(checkMul->earlyClobbered());
-                    check->clobberLate(checkMul->lateClobbered());
-                    auto children = checkMul->constrainedChildren();
-                    auto it = children.begin();
-                    for (std::advance(it, 2); it != children.end(); ++it)
-                        check->append(*it);
-
-                    m_value->replaceWithIdentity(mulResult32);
-                    m_changed = true;
-                }
-                break;
-            }
-
             case Switch: {
                 SwitchValue* switchValue = m_value->as<SwitchValue>();
                 Vector<SwitchCase> cases;

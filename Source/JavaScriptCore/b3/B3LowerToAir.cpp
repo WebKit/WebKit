@@ -4718,10 +4718,9 @@ private:
                     sources.append(tmp(right));
                     append(Move, tmp(left), result);
                 }
-            } else if (isValidForm(opcode, Arg::ResCond, Arg::Tmp, Arg::Tmp, Arg::Tmp, Arg::Tmp, Arg::Tmp)) {
+            } else if (isValidForm(opcode, Arg::ResCond, Arg::Tmp, Arg::Tmp, Arg::Tmp, Arg::Tmp)) {
                 sources.append(tmp(left));
                 sources.append(tmp(right));
-                sources.append(m_code.newTmp(m_value->resultBank()));
                 sources.append(m_code.newTmp(m_value->resultBank()));
             }
 

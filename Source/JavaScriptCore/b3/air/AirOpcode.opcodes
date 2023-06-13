@@ -1570,17 +1570,15 @@ x86: BranchMul32 U:G:32, U:G:32, UZD:G:32 /branch
     ResCond, Tmp, Tmp
     ResCond, Addr, Tmp
 
-x86: BranchMul32 U:G:32, U:G:32, U:G:32, ZD:G:32 /branch
-    ResCond, Tmp, Imm, Tmp
-
-arm64: BranchMul32 U:G:32, U:G:32, U:G:32, S:G:32, S:G:32, ZD:G:32 /branch
-    ResCond, Tmp, Tmp, Tmp, Tmp, Tmp
+BranchMul32 U:G:32, U:G:32, U:G:32, ZD:G:32 /branch
+    x86: ResCond, Tmp, Imm, Tmp
+    arm64: ResCond, Tmp, Tmp, Tmp
 
 x86_64: BranchMul64 U:G:32, U:G:64, UZD:G:64 /branch
     ResCond, Tmp, Tmp
 
-arm64: BranchMul64 U:G:32, U:G:64, U:G:64, S:G:64, S:G:64, ZD:G:64 /branch
-    ResCond, Tmp, Tmp, Tmp, Tmp, Tmp
+arm64: BranchMul64 U:G:32, U:G:64, U:G:64, S:G:64, ZD:G:64 /branch
+    ResCond, Tmp, Tmp, Tmp, Tmp
 
 BranchSub32 U:G:32, U:G:32, UZD:G:32 /branch
     ResCond, Tmp, Tmp
