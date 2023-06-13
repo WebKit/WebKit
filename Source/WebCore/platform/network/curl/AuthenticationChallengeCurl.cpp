@@ -34,15 +34,13 @@
 
 namespace WebCore {
 
-AuthenticationChallenge::AuthenticationChallenge(const CurlResponse& curlResponse, unsigned previousFailureCount, const ResourceResponse& response, AuthenticationClient* client)
+AuthenticationChallenge::AuthenticationChallenge(const CurlResponse& curlResponse, unsigned previousFailureCount, const ResourceResponse& response)
     : AuthenticationChallengeBase(protectionSpaceForPasswordBased(curlResponse, response), Credential(), previousFailureCount, response, ResourceError())
-    , m_authenticationClient(client)
 {
 }
 
-AuthenticationChallenge::AuthenticationChallenge(const URL& url, const CertificateInfo& certificateInfo, const ResourceError& resourceError, AuthenticationClient* client)
+AuthenticationChallenge::AuthenticationChallenge(const URL& url, const CertificateInfo& certificateInfo, const ResourceError& resourceError)
     : AuthenticationChallengeBase(protectionSpaceForServerTrust(url, certificateInfo), Credential(), 0, ResourceResponse(), resourceError)
-    , m_authenticationClient(client)
 {
 }
 
