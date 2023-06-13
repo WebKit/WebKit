@@ -34,6 +34,10 @@
 #include "WCSharedSceneContextHolder.h"
 #include <WebCore/ProcessIdentifier.h>
 
+namespace IPC {
+class StreamConnectionWorkQueue;
+}
+
 namespace WebKit {
 class GPUConnectionToWebProcess;
 class WCScene;
@@ -62,6 +66,8 @@ private:
     RefPtr<WCSharedSceneContextHolder::Holder> m_sharedSceneContextHolder;
     std::unique_ptr<WCScene> m_scene;
 };
+
+IPC::StreamConnectionWorkQueue& remoteGraphicsStreamWorkQueue();
 
 } // namespace WebKit
 

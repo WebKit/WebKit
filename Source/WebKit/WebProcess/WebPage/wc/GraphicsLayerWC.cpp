@@ -402,6 +402,14 @@ void GraphicsLayerWC::setContentsToPlatformLayer(PlatformLayer* platformLayer, C
     updateDebugIndicators();
 }
 
+void GraphicsLayerWC::setContentsToPlatformLayerHost(WebCore::LayerHostingContextIdentifier identifier)
+{
+    if (m_hostIdentifier && *m_hostIdentifier == identifier)
+        return;
+    m_hostIdentifier = identifier;
+    noteLayerPropertyChanged(WCLayerChange::RemoteFrame);
+}
+
 void GraphicsLayerWC::setContentsDisplayDelegate(RefPtr<WebCore::GraphicsLayerContentsDisplayDelegate>&& displayDelegate, ContentsLayerPurpose purpose)
 {
     auto platformLayer = displayDelegate ? displayDelegate->platformLayer() : nullptr;
@@ -591,6 +599,8 @@ void GraphicsLayerWC::flushCompositingStateForThisLayerOnly()
             update.contentBufferIdentifiers = static_cast<WCPlatformLayerGCGL*>(m_platformLayer)->takeContentBufferIdentifiers();
 #endif
     }
+    if (update.changes & WCLayerChange::RemoteFrame)
+        update.hostIdentifier = m_hostIdentifier;
     m_observer->commitLayerUpdateInfo(WTFMove(update));
 }
 

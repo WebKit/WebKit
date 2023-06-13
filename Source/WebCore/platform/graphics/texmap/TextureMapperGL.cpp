@@ -205,6 +205,7 @@ void TextureMapperGL::beginPainting(PaintFlags flags, BitmapTexture* surface)
 
 void TextureMapperGL::endPainting()
 {
+    glBindFramebuffer(GL_FRAMEBUFFER, data().targetFrameBuffer);
     if (data().didModifyStencil) {
         glClearStencil(1);
         glClear(GL_STENCIL_BUFFER_BIT);

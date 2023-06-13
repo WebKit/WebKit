@@ -188,6 +188,7 @@ if (USE_GRAPHICS_LAYER_WC)
 
         GPUProcess/graphics/wc/RemoteWCLayerTreeHost.cpp
         GPUProcess/graphics/wc/WCContentBufferManager.cpp
+        GPUProcess/graphics/wc/WCRemoteFrameHostLayerManager.cpp
         GPUProcess/graphics/wc/WCScene.cpp
         GPUProcess/graphics/wc/WCSceneContext.cpp
 

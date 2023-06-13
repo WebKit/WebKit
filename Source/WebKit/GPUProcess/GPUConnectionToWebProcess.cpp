@@ -154,6 +154,7 @@
 #if USE(GRAPHICS_LAYER_WC)
 #include "RemoteWCLayerTreeHost.h"
 #include "WCContentBufferManager.h"
+#include "WCRemoteFrameHostLayerManager.h"
 #endif
 
 #if ENABLE(IPC_TESTING_API)
@@ -359,9 +360,12 @@ void GPUConnectionToWebProcess::didClose(IPC::Connection& connection)
     // RemoteGraphicsContextsGL objects are unneeded after connection closes.
     m_remoteGraphicsContextGLMap.clear();
 #endif
-#if USE(GRAPHICS_LAYER_WC) && ENABLE(WEBGL)
-    remoteGraphicsContextGLStreamWorkQueue().dispatch([webProcessIdentifier = m_webProcessIdentifier] {
+#if USE(GRAPHICS_LAYER_WC)
+    remoteGraphicsStreamWorkQueue().dispatch([webProcessIdentifier = m_webProcessIdentifier] {
+#if ENABLE(WEBGL)
         WCContentBufferManager::singleton().removeAllContentBuffersForProcess(webProcessIdentifier);
+#endif
+        WCRemoteFrameHostLayerManager::singleton().removeAllLayersForProcess(webProcessIdentifier);
     });
 #endif
 #if PLATFORM(COCOA) && USE(LIBWEBRTC)

@@ -32,6 +32,7 @@ header: "WCUpdateInfo.h"
 }
 
 struct WebKit::WCUpdateInfo {
+    Markable<WebCore::LayerHostingContextIdentifier> remoteContextHostedIdentifier;
     WebCore::PlatformLayerIdentifier rootLayer;
     Vector<WebCore::PlatformLayerIdentifier> addedLayers;
     Vector<WebCore::PlatformLayerIdentifier> removedLayers;

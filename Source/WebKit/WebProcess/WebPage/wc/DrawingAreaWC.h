@@ -60,6 +60,7 @@ private:
 #endif
     void updateGeometryWC(uint64_t, WebCore::IntSize) override;
     void setRootCompositingLayer(WebCore::Frame&, WebCore::GraphicsLayer*) override;
+    void addRootFrame(WebCore::FrameIdentifier) override;
     void attachViewOverlayGraphicsLayer(WebCore::FrameIdentifier, WebCore::GraphicsLayer*) override;
     void updatePreferences(const WebPreferencesStore&) override;
     bool shouldUseTiledBackingForFrameView(const WebCore::LocalFrameView&) const override;
@@ -76,6 +77,14 @@ private:
     void sendUpdateNonAC();
     void updateRootLayers();
 
+    struct RootLayerInfo {
+        Ref<WebCore::GraphicsLayer> layer;
+        RefPtr<WebCore::GraphicsLayer> contentLayer;
+        RefPtr<WebCore::GraphicsLayer> viewOverlayRootLayer;
+        WebCore::FrameIdentifier frameID;
+    };
+    RootLayerInfo* rootLayerInfoWithFrameIdentifier(WebCore::FrameIdentifier);
+
     WebCore::GraphicsLayerClient m_rootLayerClient;
     std::unique_ptr<RemoteWCLayerTreeHostProxy> m_remoteWCLayerTreeHostProxy;
     WCLayerFactory m_layerFactory;
@@ -87,9 +96,7 @@ private:
     bool m_waitDidUpdate { false };
     bool m_isForceRepaintCompletionHandlerDeferred { false };
     WCUpdateInfo m_updateInfo;
-    Ref<WebCore::GraphicsLayer> m_rootLayer;
-    RefPtr<WebCore::GraphicsLayer> m_contentLayer;
-    RefPtr<WebCore::GraphicsLayer> m_viewOverlayRootLayer;
+    Vector<RootLayerInfo, 1> m_rootLayers;
     Ref<WorkQueue> m_commitQueue;
     int64_t m_backingStoreStateID { 0 };
     WebCore::Region m_dirtyRegion;

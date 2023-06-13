@@ -66,6 +66,7 @@ enum class WCLayerChange : uint32_t {
     Filters                 = 1 << 17,
     BackdropFilters         = 1 << 18,
     PlatformLayer           = 1 << 19,
+    RemoteFrame             = 1 << 20,
 };
 
 struct WCLayerUpdateInfo {
@@ -100,6 +101,7 @@ struct WCLayerUpdateInfo {
     WebCore::FilterOperations backdropFilters;
     WebCore::FloatRoundedRect backdropFiltersRect;
     WebCore::FloatRoundedRect contentsClippingRect;
+    Markable<WebCore::LayerHostingContextIdentifier> hostIdentifier;
     Vector<WCTileUpdate> tileUpdate;
     Vector<WCContentBufferIdentifier> contentBufferIdentifiers;
 
@@ -150,6 +152,8 @@ struct WCLayerUpdateInfo {
             encoder << backdropFilters << backdropFiltersRect;
         if (changes & WCLayerChange::PlatformLayer)
             encoder << hasPlatformLayer << contentBufferIdentifiers;
+        if (changes & WCLayerChange::RemoteFrame)
+            encoder << hostIdentifier;
     }
 
     template <class Decoder>
@@ -261,11 +265,16 @@ struct WCLayerUpdateInfo {
             if (!decoder.decode(result.contentBufferIdentifiers))
                 return false;
         }
+        if (result.changes & WCLayerChange::RemoteFrame) {
+            if (!decoder.decode(result.hostIdentifier))
+                return false;
+        }
         return true;
     }
 };
 
 struct WCUpdateInfo {
+    Markable<WebCore::LayerHostingContextIdentifier> remoteContextHostedIdentifier;
     WebCore::PlatformLayerIdentifier rootLayer;
     Vector<WebCore::PlatformLayerIdentifier> addedLayers;
     Vector<WebCore::PlatformLayerIdentifier> removedLayers;
@@ -298,7 +307,8 @@ template<> struct EnumTraits<WebKit::WCLayerChange> {
         WebKit::WCLayerChange::ChildrenTransform,
         WebKit::WCLayerChange::Filters,
         WebKit::WCLayerChange::BackdropFilters,
-        WebKit::WCLayerChange::PlatformLayer
+        WebKit::WCLayerChange::PlatformLayer,
+        WebKit::WCLayerChange::RemoteFrame
     >;
 };
 

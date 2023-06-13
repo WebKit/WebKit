@@ -31,6 +31,7 @@
 #include "RemoteGraphicsContextGL.h"
 #include "WCContentBuffer.h"
 #include "WCContentBufferManager.h"
+#include "WCRemoteFrameHostLayerManager.h"
 #include "WCSceneContext.h"
 #include "WCUpdateInfo.h"
 #include <WebCore/TextureMapperGLHeaders.h>
@@ -48,6 +49,8 @@ public:
     {
         if (contentBuffer)
             contentBuffer->setClient(nullptr);
+        if (hostIdentifier)
+            WCRemoteFrameHostLayerManager::singleton().releaseRemoteFrameHostLayer(*hostIdentifier);
     }
 
     // WCContentBuffer::Client
@@ -61,6 +64,7 @@ public:
     std::unique_ptr<WebCore::TextureMapperSparseBackingStore> backingStore;
     std::unique_ptr<WebCore::TextureMapperLayer> backdropLayer;
     WCContentBuffer* contentBuffer { nullptr };
+    Markable<WebCore::LayerHostingContextIdentifier> hostIdentifier;
 };
 
 void WCScene::initialize(WCSceneContext& context)
@@ -211,6 +215,16 @@ std::optional<UpdateInfo> WCScene::update(WCUpdateInfo&& update)
                 }
             }
         }
+        if (layerUpdate.changes & WCLayerChange::RemoteFrame) {
+            if (layerUpdate.hostIdentifier) {
+                auto platformLayer = WCRemoteFrameHostLayerManager::singleton().acquireRemoteFrameHostLayer(*layerUpdate.hostIdentifier, m_webProcessIdentifier);
+                layer->texmapLayer.setContentsLayer(platformLayer);
+            } else {
+                ASSERT(layer->hostIdentifier);
+                WCRemoteFrameHostLayerManager::singleton().releaseRemoteFrameHostLayer(*layer->hostIdentifier);
+            }
+            layer->hostIdentifier = layerUpdate.hostIdentifier;
+        }
     }
 
     for (auto id : update.removedLayers)
@@ -220,24 +234,40 @@ std::optional<UpdateInfo> WCScene::update(WCUpdateInfo&& update)
     rootLayer->applyAnimationsRecursively(MonotonicTime::now());
 
     WebCore::IntSize windowSize = expandedIntSize(rootLayer->size());
-    glViewport(0, 0, windowSize.width(), windowSize.height());
+    if (windowSize.isEmpty())
+        return std::nullopt;
 
     WebCore::BitmapTexture* surface = nullptr;
     RefPtr<WebCore::BitmapTexture> texture;
-    if (m_usesOffscreenRendering) {
+    bool showFPS = true;
+    bool readPixel = false;
+    RefPtr<ShareableBitmap> bitmap;
+
+    if (update.remoteContextHostedIdentifier) {
+        showFPS = false;
         texture = m_textureMapper->acquireTextureFromPool(windowSize);
         surface = texture.get();
-    }
+    } else if (m_usesOffscreenRendering) {
+        readPixel = true;
+        texture = m_textureMapper->acquireTextureFromPool(windowSize);
+        surface = texture.get();
+    } else
+        glViewport(0, 0, windowSize.width(), windowSize.height());
 
     m_textureMapper->beginPainting(0, surface);
     rootLayer->paint(*m_textureMapper);
-    m_fpsCounter.updateFPSAndDisplay(*m_textureMapper);
+    if (showFPS)
+        m_fpsCounter.updateFPSAndDisplay(*m_textureMapper);
+    if (readPixel) {
+        bitmap = ShareableBitmap::create({ windowSize });
+        glReadPixels(0, 0, windowSize.width(), windowSize.height(), GL_BGRA, GL_UNSIGNED_BYTE, bitmap->data());
+    }
     m_textureMapper->endPainting();
 
     std::optional<UpdateInfo> result;
-    if (m_usesOffscreenRendering) {
-        auto bitmap = ShareableBitmap::create({ windowSize });
-        glReadPixels(0, 0, windowSize.width(), windowSize.height(), GL_BGRA, GL_UNSIGNED_BYTE, bitmap->data());
+    if (update.remoteContextHostedIdentifier)
+        WCRemoteFrameHostLayerManager::singleton().updateTexture(*update.remoteContextHostedIdentifier, m_webProcessIdentifier, WTFMove(texture));
+    else if (m_usesOffscreenRendering) {
         if (auto handle = bitmap->createHandle()) {
             result.emplace();
             result->viewSize = windowSize;

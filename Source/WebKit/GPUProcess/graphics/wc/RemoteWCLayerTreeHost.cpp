@@ -38,7 +38,7 @@
 
 namespace WebKit {
 
-static IPC::StreamConnectionWorkQueue& remoteGraphicsStreamWorkQueue()
+IPC::StreamConnectionWorkQueue& remoteGraphicsStreamWorkQueue()
 {
 #if ENABLE(WEBGL)
     return remoteGraphicsContextGLStreamWorkQueue();
