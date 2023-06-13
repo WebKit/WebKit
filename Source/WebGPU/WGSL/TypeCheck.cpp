@@ -41,7 +41,17 @@ namespace WGSL {
 
 static constexpr bool shouldDumpInferredTypes = false;
 
-class TypeChecker : public AST::Visitor, public ContextProvider<const Type*> {
+struct Binding {
+    enum Kind : uint8_t {
+        Value,
+        Type,
+    };
+
+    Kind kind;
+    const struct Type* type;
+};
+
+class TypeChecker : public AST::Visitor, public ContextProvider<Binding> {
 public:
     TypeChecker(ShaderModule&);
 
@@ -119,6 +129,8 @@ private:
     void inferred(const Type*);
     bool unify(const Type*, const Type*) WARN_UNUSED_RETURN;
     bool isBottom(const Type*) const;
+    void introduceType(const String&, const Type*);
+    void introduceValue(const String&, const Type*);
 
     template<typename CallArguments>
     const Type* chooseOverload(const char*, const SourceSpan&, const String&, CallArguments&& valueArguments, const Vector<const Type*>& typeArguments);
@@ -136,13 +148,12 @@ TypeChecker::TypeChecker(ShaderModule& shaderModule)
     : m_shaderModule(shaderModule)
     , m_types(shaderModule.types())
 {
-    introduceVariable(AST::Identifier::make("void"_s), m_types.voidType());
-    introduceVariable(AST::Identifier::make("bool"_s), m_types.boolType());
-    introduceVariable(AST::Identifier::make("i32"_s), m_types.i32Type());
-    introduceVariable(AST::Identifier::make("u32"_s), m_types.u32Type());
-    introduceVariable(AST::Identifier::make("f32"_s), m_types.f32Type());
-    introduceVariable(AST::Identifier::make("sampler"_s), m_types.samplerType());
-    introduceVariable(AST::Identifier::make("texture_external"_s), m_types.textureExternalType());
+    introduceType("bool"_s, m_types.boolType());
+    introduceType("i32"_s, m_types.i32Type());
+    introduceType("u32"_s, m_types.u32Type());
+    introduceType("f32"_s, m_types.f32Type());
+    introduceType("sampler"_s, m_types.samplerType());
+    introduceType("texture_external"_s, m_types.textureExternalType());
 
     // This file contains the declarations generated from `TypeDeclarations.rb`
 #include "TypeDeclarations.h" // NOLINT
@@ -185,14 +196,15 @@ std::optional<FailedCheck> TypeChecker::check()
 void TypeChecker::visit(AST::Structure& structure)
 {
     const Type* structType = m_types.structType(structure);
-    introduceVariable(structure.name(), structType);
+    introduceType(structure.name(), structType);
 }
 
 void TypeChecker::visitStructMembers(AST::Structure& structure)
 {
-    auto* const* type = readVariable(structure.name());
-    ASSERT(type);
-    ASSERT(std::holds_alternative<Types::Struct>(**type));
+    auto* binding = readVariable(structure.name());
+    ASSERT(binding && binding->kind == Binding::Type);
+    auto* type = binding->type;
+    ASSERT(std::holds_alternative<Types::Struct>(*type));
 
     // This is the only place we need to modify a type.
     // Since struct fields can reference other structs declared later in the
@@ -202,7 +214,7 @@ void TypeChecker::visitStructMembers(AST::Structure& structure)
     // - Then, in a second pass, we populate the structs' fields.
     // This way, the type of all structs will be available at the time we populate
     // struct fields, even the ones defiend later in the program.
-    auto& structType = std::get<Types::Struct>(**type);
+    auto& structType = std::get<Types::Struct>(*type);
     auto& fields = const_cast<HashMap<String, const Type*>&>(structType.fields);
     for (auto& member : structure.members()) {
         visitAttributes(member.attributes());
@@ -261,7 +273,7 @@ void TypeChecker::visitVariable(AST::Variable& variable, VariableKind variableKi
             variable.m_referenceType = &referenceType;
         }
     }
-    introduceVariable(variable.name(), result);
+    introduceValue(variable.name(), result);
 }
 
 void TypeChecker::visit(AST::Function& function)
@@ -278,7 +290,7 @@ void TypeChecker::visit(AST::Function& function)
     else
         result = m_types.voidType();
     const Type* functionType = m_types.functionType(WTFMove(parameters), result);
-    introduceVariable(function.name(), functionType);
+    introduceValue(function.name(), functionType);
 }
 
 void TypeChecker::visitFunctionBody(AST::Function& function)
@@ -287,7 +299,7 @@ void TypeChecker::visitFunctionBody(AST::Function& function)
 
     for (auto& parameter : function.parameters()) {
         auto* parameterType = resolve(parameter.typeName());
-        introduceVariable(parameter.name(), parameterType);
+        introduceValue(parameter.name(), parameterType);
     }
 
     AST::Visitor::visit(function.body());
@@ -579,13 +591,18 @@ void TypeChecker::visit(AST::BinaryExpression& binary)
 
 void TypeChecker::visit(AST::IdentifierExpression& identifier)
 {
-    auto* const* type = readVariable(identifier.identifier());
-    if (type) {
-        inferred(*type);
+    auto* binding = readVariable(identifier.identifier());
+    if (!binding) {
+        typeError(identifier.span(), "unresolved identifier '", identifier.identifier(), "'");
         return;
     }
 
-    typeError(identifier.span(), "unknown identifier: '", identifier.identifier(), "'");
+    if (binding->kind != Binding::Value) {
+        typeError(identifier.span(), "cannot use type '", identifier.identifier(), "' as value");
+        return;
+    }
+
+    inferred(binding->type);
 }
 
 void TypeChecker::visit(AST::CallExpression& call)
@@ -603,54 +620,58 @@ void TypeChecker::visit(AST::CallExpression& call)
             return AST::ParameterizedTypeName::baseToString(parameterizedType.base());
         }();
 
-        auto* targetType = isNamedType ? readVariable(targetName) : nullptr;
-        if (targetType) {
-            target.m_resolvedType = *targetType;
-            if (auto* structType = std::get_if<Types::Struct>(*targetType)) {
-                auto numberOfArguments = call.arguments().size();
-                auto numberOfFields = structType->fields.size();
-                if (numberOfArguments && numberOfArguments != numberOfFields) {
-                    const char* errorKind = numberOfArguments < numberOfFields ? "few" : "many";
-                    typeError(call.span(), "struct initializer has too ", errorKind, " inputs: expected ", String::number(numberOfFields), ", found ", String::number(numberOfArguments));
-                    return;
-                }
-
-                for (unsigned i = 0; i < numberOfArguments; ++i) {
-                    auto& argument = call.arguments()[i];
-                    auto& member = structType->structure.members()[i];
-                    auto* fieldType = structType->fields.get(member.name());
-                    auto* argumentType = infer(argument);
-                    if (!unify(fieldType, argumentType)) {
-                        typeError(argument.span(), "type in struct initializer does not match struct member type: expected '", *fieldType, "', found '", *argumentType, "'");
+        auto* targetBinding = isNamedType ? readVariable(targetName) : nullptr;
+        if (targetBinding) {
+            target.m_resolvedType = targetBinding->type;
+            if (targetBinding->kind == Binding::Type) {
+                if (auto* structType = std::get_if<Types::Struct>(targetBinding->type)) {
+                    auto numberOfArguments = call.arguments().size();
+                    auto numberOfFields = structType->fields.size();
+                    if (numberOfArguments && numberOfArguments != numberOfFields) {
+                        const char* errorKind = numberOfArguments < numberOfFields ? "few" : "many";
+                        typeError(call.span(), "struct initializer has too ", errorKind, " inputs: expected ", String::number(numberOfFields), ", found ", String::number(numberOfArguments));
                         return;
                     }
-                    argument.m_inferredType = fieldType;
+
+                    for (unsigned i = 0; i < numberOfArguments; ++i) {
+                        auto& argument = call.arguments()[i];
+                        auto& member = structType->structure.members()[i];
+                        auto* fieldType = structType->fields.get(member.name());
+                        auto* argumentType = infer(argument);
+                        if (!unify(fieldType, argumentType)) {
+                            typeError(argument.span(), "type in struct initializer does not match struct member type: expected '", *fieldType, "', found '", *argumentType, "'");
+                            return;
+                        }
+                        argument.m_inferredType = fieldType;
+                    }
+                    inferred(targetBinding->type);
+                    return;
                 }
-                inferred(*targetType);
-                return;
             }
 
-            if (auto* functionType = std::get_if<Types::Function>(*targetType)) {
-                auto numberOfArguments = call.arguments().size();
-                auto numberOfParameters = functionType->parameters.size();
-                if (numberOfArguments != numberOfParameters) {
-                    const char* errorKind = numberOfArguments < numberOfParameters ? "few" : "many";
-                    typeError(call.span(), "funtion call has too ", errorKind, " arguments: expected ", String::number(numberOfParameters), ", found ", String::number(numberOfArguments));
-                    return;
-                }
-
-                for (unsigned i = 0; i < numberOfArguments; ++i) {
-                    auto& argument = call.arguments()[i];
-                    auto* parameterType = functionType->parameters[i];
-                    auto* argumentType = infer(argument);
-                    if (!unify(parameterType, argumentType)) {
-                        typeError(argument.span(), "type in function call does not match parameter type: expected '", *parameterType, "', found '", *argumentType, "'");
+            if (targetBinding->kind == Binding::Value) {
+                if (auto* functionType = std::get_if<Types::Function>(targetBinding->type)) {
+                    auto numberOfArguments = call.arguments().size();
+                    auto numberOfParameters = functionType->parameters.size();
+                    if (numberOfArguments != numberOfParameters) {
+                        const char* errorKind = numberOfArguments < numberOfParameters ? "few" : "many";
+                        typeError(call.span(), "funtion call has too ", errorKind, " arguments: expected ", String::number(numberOfParameters), ", found ", String::number(numberOfArguments));
                         return;
                     }
-                    argument.m_inferredType = parameterType;
+
+                    for (unsigned i = 0; i < numberOfArguments; ++i) {
+                        auto& argument = call.arguments()[i];
+                        auto* parameterType = functionType->parameters[i];
+                        auto* argumentType = infer(argument);
+                        if (!unify(parameterType, argumentType)) {
+                            typeError(argument.span(), "type in function call does not match parameter type: expected '", *parameterType, "', found '", *argumentType, "'");
+                            return;
+                        }
+                        argument.m_inferredType = parameterType;
+                    }
+                    inferred(functionType->result);
+                    return;
                 }
-                inferred(functionType->result);
-                return;
             }
         }
 
@@ -660,7 +681,7 @@ void TypeChecker::visit(AST::CallExpression& call)
             return;
         }
 
-        typeError(target.span(), "Cannot call value of type: '", **targetType, "'");
+        typeError(target.span(), "cannot call value of type '", *targetBinding->type, "'");
         return;
     }
 
@@ -798,13 +819,18 @@ void TypeChecker::visit(AST::ArrayTypeName& array)
 
 void TypeChecker::visit(AST::NamedTypeName& namedType)
 {
-    auto* const* type = readVariable(namedType.name());
-    if (type) {
-        inferred(*type);
+    auto* binding = readVariable(namedType.name());
+    if (!binding) {
+        typeError(namedType.span(), "unresolved type '", namedType.name(), "'");
         return;
     }
 
-    typeError(namedType.span(), "unknown type: '", namedType.name(), "'");
+    if (binding->kind != Binding::Type) {
+        typeError(namedType.span(), "cannot use value '", namedType.name(), "' as type");
+        return;
+    }
+
+    inferred(binding->type);
 }
 
 void TypeChecker::visit(AST::ParameterizedTypeName& type)
@@ -1024,6 +1050,16 @@ bool TypeChecker::unify(const Type* lhs, const Type* rhs)
 bool TypeChecker::isBottom(const Type* type) const
 {
     return type == m_types.bottomType();
+}
+
+void TypeChecker::introduceType(const String& name, const Type* type)
+{
+    introduceVariable(name, { Binding::Type, type });
+}
+
+void TypeChecker::introduceValue(const String& name, const Type* type)
+{
+    introduceVariable(name, { Binding::Value, type });
 }
 
 template<typename... Arguments>
