@@ -8,7 +8,7 @@ PASS Test undersized buffer.
 PASS Test incorrect plane count.
 PASS Test I420 stride and offset work.
 PASS Test I420 stride and offset with padding.
-FAIL Test I420A stride and offset work. promise_test: Unhandled rejection with value: object "NotSupportedError: VideoPixelFormat is not supported"
+PASS Test I420A stride and offset work.
 PASS Test NV12 stride and offset work.
 PASS Test invalid stride.
 PASS Test address overflow.

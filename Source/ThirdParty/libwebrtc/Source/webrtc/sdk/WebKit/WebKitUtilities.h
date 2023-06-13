@@ -71,6 +71,12 @@ struct I420BufferLayout {
     size_t strideV { 0 };
 };
 
+struct I420ABufferLayout : I420BufferLayout {
+    size_t offsetA { 0 };
+    size_t strideA { 0 };
+};
+
 CVPixelBufferRef pixelBufferFromI420Buffer(const uint8_t* buffer, size_t length, size_t width, size_t height, I420BufferLayout) CF_RETURNS_RETAINED;
+CVPixelBufferRef pixelBufferFromI420ABuffer(const uint8_t* buffer, size_t length, size_t width, size_t height, I420ABufferLayout) CF_RETURNS_RETAINED;
 
 }
