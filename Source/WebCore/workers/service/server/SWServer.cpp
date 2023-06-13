@@ -1045,14 +1045,17 @@ void SWServer::fireInstallEvent(SWServerWorker& worker)
 
 void SWServer::runServiceWorkerAndFireActivateEvent(SWServerWorker& worker)
 {
-    runServiceWorkerIfNecessary(worker, [identifier = worker.identifier()](auto* contextConnection) {
+    runServiceWorkerIfNecessary(worker, [worker = Ref { worker }](auto* contextConnection) {
         if (!contextConnection) {
             RELEASE_LOG_ERROR(ServiceWorker, "Request to fire activate event on a worker whose context connection does not exist");
             return;
         }
 
-        RELEASE_LOG(ServiceWorker, "SWServer::runServiceWorkerAndFireActivateEvent on worker %llu", identifier.toUInt64());
-        contextConnection->fireActivateEvent(identifier);
+        if (worker->state() != ServiceWorkerState::Activating)
+            return;
+
+        RELEASE_LOG(ServiceWorker, "SWServer::runServiceWorkerAndFireActivateEvent on worker %llu", worker->identifier().toUInt64());
+        contextConnection->fireActivateEvent(worker->identifier());
     });
 }
 
