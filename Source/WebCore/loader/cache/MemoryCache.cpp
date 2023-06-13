@@ -222,8 +222,11 @@ void MemoryCache::pruneLiveResources(bool shouldDestroyDecodedDataForAllLiveReso
 void MemoryCache::forEachResource(const Function<void(CachedResource&)>& function)
 {
     for (auto& unprotectedLRUList : m_allResources) {
-        for (auto& resource : copyToVector(*unprotectedLRUList))
+        for (auto& resource : copyToVector(*unprotectedLRUList)) {
+            if (!resource)
+                continue;
             function(*resource);
+        }
     }
 }
 
