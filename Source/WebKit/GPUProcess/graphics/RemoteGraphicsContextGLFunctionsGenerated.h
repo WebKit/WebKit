@@ -264,15 +264,17 @@
         assertIsCurrent(workQueue());
         m_context->enableVertexAttribArray(index);
     }
-    void finish()
+    void finish(CompletionHandler<void()>&& completionHandler)
     {
         assertIsCurrent(workQueue());
         m_context->finish();
+        completionHandler();
     }
-    void flush()
+    void flush(CompletionHandler<void()>&& completionHandler)
     {
         assertIsCurrent(workQueue());
         m_context->flush();
+        completionHandler();
     }
     void framebufferRenderbuffer(uint32_t target, uint32_t attachment, uint32_t renderbuffertarget, uint32_t arg3)
     {

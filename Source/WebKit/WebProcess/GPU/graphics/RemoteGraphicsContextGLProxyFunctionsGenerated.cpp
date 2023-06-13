@@ -543,7 +543,7 @@ void RemoteGraphicsContextGLProxy::finish()
 {
     if (isContextLost())
         return;
-    auto sendResult = send(Messages::RemoteGraphicsContextGL::Finish());
+    auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::Finish());
     if (!sendResult) {
         markContextLost();
         return;
@@ -554,7 +554,7 @@ void RemoteGraphicsContextGLProxy::flush()
 {
     if (isContextLost())
         return;
-    auto sendResult = send(Messages::RemoteGraphicsContextGL::Flush());
+    auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::Flush());
     if (!sendResult) {
         markContextLost();
         return;

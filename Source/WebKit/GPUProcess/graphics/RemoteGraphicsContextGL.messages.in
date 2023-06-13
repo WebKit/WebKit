@@ -110,8 +110,8 @@ messages -> RemoteGraphicsContextGL NotRefCounted Stream {
     void DrawElements(uint32_t mode, int32_t count, uint32_t type, uint64_t offset)
     void Enable(uint32_t cap)
     void EnableVertexAttribArray(uint32_t index)
-    void Finish()
-    void Flush()
+    void Finish() -> () Synchronous
+    void Flush() -> () Synchronous
     void FramebufferRenderbuffer(uint32_t target, uint32_t attachment, uint32_t renderbuffertarget, uint32_t arg3)
     void FramebufferTexture2D(uint32_t target, uint32_t attachment, uint32_t textarget, uint32_t arg3, int32_t level)
     void FrontFace(uint32_t mode)
