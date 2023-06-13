@@ -628,7 +628,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
         && m_shouldPlayMediaInGPUProcess;
 
     if (shouldBlockIOKit) {
-#if HAVE(SANDBOX_STATE_FLAGS)
+#if HAVE(SANDBOX_STATE_FLAGS) && !ENABLE(WEBCONTENT_GPU_SANDBOX_EXTENSIONS_BLOCKING)
         auto auditToken = WebProcess::singleton().auditTokenForSelf();
         sandbox_enable_state_flag("BlockIOKitInWebContentSandbox", *auditToken);
 #endif
