@@ -28,8 +28,6 @@
 
 #include "ResourceResponseBase.h"
 
-typedef struct _CFURLResponse* CFURLResponseRef;
-
 namespace WebCore {
 
 class CurlResponse;
@@ -62,9 +60,6 @@ public:
     bool isNotModified() const;
     bool isUnauthorized() const;
     bool isProxyAuthenticationRequired() const;
-
-    // Needed for compatibility.
-    CFURLResponseRef cfURLResponse() const { return 0; }
 
 private:
     friend class ResourceResponseBase;
