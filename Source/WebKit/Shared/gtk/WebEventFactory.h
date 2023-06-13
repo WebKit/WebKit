@@ -28,6 +28,7 @@
 
 #include "WebKeyboardEvent.h"
 #include "WebMouseEvent.h"
+#include "WebWheelEvent.h"
 
 #if ENABLE(TOUCH_EVENTS)
 #include "WebTouchEvent.h"
@@ -50,6 +51,7 @@ public:
 #if ENABLE(TOUCH_EVENTS)
     static WebTouchEvent createWebTouchEvent(const GdkEvent*, Vector<WebPlatformTouchPoint>&&);
 #endif
+    static WebWheelEvent createWebWheelEvent(const GdkEvent*, const WebCore::IntPoint&, const WebCore::IntPoint&, const WebCore::FloatSize&, const WebCore::FloatSize&, WebWheelEvent::Phase, WebWheelEvent::Phase, bool hasPreciseDeltas);
 };
 
 } // namespace WebKit
