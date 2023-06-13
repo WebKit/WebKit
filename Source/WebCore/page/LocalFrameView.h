@@ -848,7 +848,7 @@ private:
     IntSize sizeForResizeEvent() const;
     void scheduleResizeEventIfNeeded();
     
-    RefPtr<Element> rootElementForCustomScrollbarPartStyle(PseudoId) const;
+    RefPtr<Element> rootElementForCustomScrollbarPartStyle() const;
 
     void adjustScrollbarsForLayout(bool firstLayout);
 

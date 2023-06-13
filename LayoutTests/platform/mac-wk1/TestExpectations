@@ -2538,3 +2538,9 @@ http/tests/resourceLoadStatistics/website-data-removal-for-site-navigated-to-wit
 
 # Site-isolation isn't supported in WK1
 http/tests/site-isolation [ Skip ]
+
+# WebKit Legacy doesn't properly support ::-webkit-scrollbar on viewport
+imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-color-001.html  [ Skip ]
+imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-color-002.html  [ Skip ]
+imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-width-010.html  [ Skip ]
+imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-width-014.html  [ Skip ]

@@ -562,7 +562,7 @@ HostWindow* RenderMenuList::hostWindow() const
 
 Ref<Scrollbar> RenderMenuList::createScrollbar(ScrollableArea& scrollableArea, ScrollbarOrientation orientation, ScrollbarWidth widthStyle)
 {
-    bool hasCustomScrollbarStyle = style().hasPseudoStyle(PseudoId::Scrollbar);
+    bool hasCustomScrollbarStyle = style().hasCustomScrollbarStyle();
     if (hasCustomScrollbarStyle)
         return RenderScrollbar::createCustomScrollbar(scrollableArea, orientation, &selectElement());
     return Scrollbar::createNativeScrollbar(scrollableArea, orientation, widthStyle);

@@ -872,7 +872,7 @@ Ref<Scrollbar> RenderLayerScrollableArea::createScrollbar(ScrollbarOrientation o
     RefPtr<Scrollbar> widget;
     ASSERT(rendererForScrollbar(renderer));
     auto& actualRenderer = *rendererForScrollbar(renderer);
-    bool hasCustomScrollbarStyle = is<RenderBox>(actualRenderer) && downcast<RenderBox>(actualRenderer).style().hasPseudoStyle(PseudoId::Scrollbar);
+    bool hasCustomScrollbarStyle = is<RenderBox>(actualRenderer) && downcast<RenderBox>(actualRenderer).style().hasCustomScrollbarStyle();
     auto element = downcast<RenderBox>(actualRenderer).element();
     if (hasCustomScrollbarStyle && element)
         widget = RenderScrollbar::createCustomScrollbar(*this, orientation, element);

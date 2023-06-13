@@ -1039,6 +1039,8 @@ public:
 
     bool shouldPlaceVerticalScrollbarOnLeft() const;
 
+    inline bool hasCustomScrollbarStyle() const;
+
 #if ENABLE(APPLE_PAY)
     inline ApplePayButtonStyle applePayButtonStyle() const;
     inline ApplePayButtonType applePayButtonType() const;

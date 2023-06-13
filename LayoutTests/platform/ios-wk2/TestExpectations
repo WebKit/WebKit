@@ -2406,6 +2406,20 @@ imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-width-006.html [ Sk
 imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-width-007.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-width-008.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-width-009.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-width-010.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-width-011.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-width-012.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-width-013.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-width-014.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-width-015.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-width-016.html [ Skip ]
+
+# Skipping scrollbar-color tests that don't work with overlay scrollbars
+imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-color-001.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-color-002.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-color-003.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-color-004.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-color-005.html [ Skip ]
 
 # Skipping scrollbar-gutter tests that don't work with overlay scrollbars
 imported/w3c/web-platform-tests/css/css-overflow/overflow-auto-scrollbar-gutter-intrinsic-001.html [ Skip ]
