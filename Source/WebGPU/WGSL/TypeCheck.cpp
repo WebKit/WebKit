@@ -609,7 +609,7 @@ void TypeChecker::visit(AST::CallExpression& call)
             if (auto* structType = std::get_if<Types::Struct>(*targetType)) {
                 auto numberOfArguments = call.arguments().size();
                 auto numberOfFields = structType->fields.size();
-                if (numberOfArguments != numberOfFields) {
+                if (numberOfArguments && numberOfArguments != numberOfFields) {
                     const char* errorKind = numberOfArguments < numberOfFields ? "few" : "many";
                     typeError(call.span(), "struct initializer has too ", errorKind, " inputs: expected ", String::number(numberOfFields), ", found ", String::number(numberOfArguments));
                     return;
@@ -680,7 +680,8 @@ void TypeChecker::visit(AST::CallExpression& call)
                 typeError(call.span(), "array count must be greater than 0");
                 return;
             }
-            if (call.arguments().size() != elementCount) {
+            unsigned numberOfArguments = call.arguments().size();
+            if (numberOfArguments && numberOfArguments != elementCount) {
                 const char* errorKind = call.arguments().size() < elementCount ? "few" : "many";
                 typeError(call.span(), "array constructor has too ", errorKind, " elements: expected ", String::number(elementCount), ", found ", String::number(call.arguments().size()));
                 return;

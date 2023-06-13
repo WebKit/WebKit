@@ -568,6 +568,33 @@ fn testLogicalAnd()
     _ = vec4( true) & vec4( true);
 }
 
+// 16.1. Constructor Built-in Functions
+
+// 16.1.1. Zero Value Built-in Functions
+struct S { x: i32 };
+fn testZeroValueBuiltInFunctions()
+{
+    _ = bool();
+    _ = i32();
+    _ = u32();
+    _ = f32();
+
+    _ = vec2<f32>();
+    _ = vec3<f32>();
+    _ = vec4<f32>();
+
+    _ = mat2x2<f32>();
+    _ = mat2x3<f32>();
+    _ = mat2x4<f32>();
+    _ = mat3x2<f32>();
+    _ = mat3x3<f32>();
+    _ = mat3x4<f32>();
+    _ = mat4x2<f32>();
+    _ = mat4x3<f32>();
+    _ = mat4x4<f32>();
+    _ = S();
+    _ = array<f32, 1>();
+}
 
 // 17.3. Logical Built-in Functions (https://www.w3.org/TR/WGSL/#logical-builtin-functions)
 

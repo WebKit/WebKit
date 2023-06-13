@@ -105,6 +105,38 @@ operator :textureSampleBaseClampToEdge, {
   [].(Texture[F32, Texture2d], Sampler, Vector[F32, 2]) => Vector[F32, 4],
 }
 
+# 16.1. Constructor Built-in Functions
+
+# 16.1.1. Zero Value Built-in Functions
+operator :bool, {
+    [].() => Bool,
+}
+operator :i32, {
+    [].() => I32,
+}
+operator :u32, {
+    [].() => U32,
+}
+operator :f32, {
+    [].() => F32,
+}
+operator :vec2, {
+    [T < ConcreteScalar].() => Vector[T, 2],
+}
+operator :vec3, {
+    [T < ConcreteScalar].() => Vector[T, 3],
+}
+operator :vec4, {
+    [T < ConcreteScalar].() => Vector[T, 4],
+}
+(2..4).each do |columns|
+    (2..4).each do |rows|
+        operator :"mat#{columns}x#{rows}", {
+            [T < ConcreteFloat].() => Matrix[T, columns, rows],
+        }
+    end
+end
+
 operator :vec2, {
     [T < Scalar].(T) => Vector[T, 2],
     [T < ConcreteScalar, S < Scalar].(Vector[S, 2]) => Vector[T, 2],
