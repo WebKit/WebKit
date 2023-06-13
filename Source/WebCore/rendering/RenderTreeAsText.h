@@ -37,6 +37,7 @@ namespace WebCore {
 class Element;
 class LocalFrame;
 class RenderObject;
+class RenderView;
 
 enum class RenderAsTextFlag : uint16_t {
     ShowAllLayers           = 1 << 0, // Dump all layers, not just those that would paint.

@@ -53,6 +53,16 @@ BufferedChangeEvent::BufferedChangeEvent(const AtomString& type, Init&& init)
 
 BufferedChangeEvent::~BufferedChangeEvent() = default;
 
+RefPtr<TimeRanges> BufferedChangeEvent::addedRanges() const
+{
+    return m_added;
+}
+
+RefPtr<TimeRanges> BufferedChangeEvent::removedRanges() const
+{
+    return m_removed;
+}
+
 EventInterface BufferedChangeEvent::eventInterface() const
 {
     return BufferedChangeEventInterfaceType;

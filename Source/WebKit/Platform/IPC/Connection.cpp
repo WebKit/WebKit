@@ -49,6 +49,7 @@
 #endif
 
 #if USE(UNIX_DOMAIN_SOCKETS)
+#include "ArgumentCodersUnix.h"
 #include "UnixMessage.h"
 #endif
 

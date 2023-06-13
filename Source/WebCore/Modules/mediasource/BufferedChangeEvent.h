@@ -53,8 +53,8 @@ public:
         return adoptRef(*new BufferedChangeEvent(type, WTFMove(init)));
     }
 
-    RefPtr<TimeRanges> addedRanges() const { return m_added; }
-    RefPtr<TimeRanges> removedRanges() const { return m_removed; }
+    RefPtr<TimeRanges> addedRanges() const;
+    RefPtr<TimeRanges> removedRanges() const;
 
 private:
     BufferedChangeEvent(RefPtr<TimeRanges>&& added, RefPtr<TimeRanges>&& removed);

@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <wtf/text/TextStream.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {

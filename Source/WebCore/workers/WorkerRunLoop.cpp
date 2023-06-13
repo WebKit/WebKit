@@ -43,6 +43,7 @@
 #include "WorkerOrWorkletScriptController.h"
 #include "WorkerThread.h"
 #include <JavaScriptCore/CatchScope.h>
+#include <JavaScriptCore/JSCJSValueInlines.h>
 #include <JavaScriptCore/JSRunLoopTimer.h>
 
 #if USE(GLIB)
