@@ -403,11 +403,11 @@ inline bool Value::isNegativeZero() const
 {
     if (hasDouble()) {
         double value = asDouble();
-        return !value && std::signbit(value);
+        return value == 0.0 && std::signbit(value);
     }
     if (hasFloat()) {
         float value = asFloat();
-        return !value && std::signbit(value);
+        return value == 0.0f && std::signbit(value);
     }
     return false;
 }

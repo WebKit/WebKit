@@ -1483,6 +1483,12 @@ CompareDouble U:G:32, U:F:64, U:F:64, ZD:G:32
 CompareFloat U:G:32, U:F:32, U:F:32, ZD:G:32
     DoubleCond, Tmp, Tmp, Tmp
 
+arm64: CompareDoubleWithZero U:G:32, U:F:64, ZD:G:32
+    DoubleCond, Tmp, Tmp
+
+arm64: CompareFloatWithZero U:G:32, U:F:32, ZD:G:32
+    DoubleCond, Tmp, Tmp
+
 # Note that branches have some logic in AirOptimizeBlockOrder.cpp. If you add new branches, please make sure
 # you opt them into the block order optimizations.
 
@@ -1543,6 +1549,12 @@ BranchDouble U:G:32, U:F:64, U:F:64 /branch
 
 BranchFloat U:G:32, U:F:32, U:F:32 /branch
     DoubleCond, Tmp, Tmp
+
+arm64: BranchDoubleWithZero U:G:32, U:F:64 /branch
+    DoubleCond, Tmp
+
+arm64: BranchFloatWithZero U:G:32, U:F:32 /branch
+    DoubleCond, Tmp
 
 BranchAdd32 U:G:32, U:G:32, U:G:32, ZD:G:32 /branch
     ResCond, Tmp, Tmp, Tmp
@@ -1634,11 +1646,23 @@ BranchNeg32 U:G:32, UZD:G:32 /branch
 64: MoveConditionallyDouble U:G:32, U:F:64, U:F:64, U:G:Ptr, UD:G:Ptr
     DoubleCond, Tmp, Tmp, Tmp, Tmp
 
+arm64: MoveConditionallyDoubleWithZero U:G:32, U:F:64, U:G:Ptr, U:G:Ptr, D:G:Ptr
+    DoubleCond, Tmp, Tmp, Tmp, Tmp
+
+arm64: MoveConditionallyDoubleWithZero U:G:32, U:F:64, U:G:Ptr, UD:G:Ptr
+    DoubleCond, Tmp, Tmp, Tmp
+
 64: MoveConditionallyFloat U:G:32, U:F:32, U:F:32, U:G:Ptr, U:G:Ptr, D:G:Ptr
     DoubleCond, Tmp, Tmp, Tmp, Tmp, Tmp
 
 64: MoveConditionallyFloat U:G:32, U:F:32, U:F:32, U:G:Ptr, UD:G:Ptr
     DoubleCond, Tmp, Tmp, Tmp, Tmp
+
+arm64: MoveConditionallyFloatWithZero U:G:32, U:F:32, U:G:Ptr, U:G:Ptr, D:G:Ptr
+    DoubleCond, Tmp, Tmp, Tmp, Tmp
+
+arm64: MoveConditionallyFloatWithZero U:G:32, U:F:32, U:G:Ptr, UD:G:Ptr
+    DoubleCond, Tmp, Tmp, Tmp
 
 64: MoveDoubleConditionally32 U:G:32, U:G:32, U:G:32, U:F:64, U:F:64, D:F:64
     RelCond, Tmp, Tmp, Tmp, Tmp, Tmp
@@ -1674,8 +1698,14 @@ BranchNeg32 U:G:32, UZD:G:32 /branch
 64: MoveDoubleConditionallyDouble U:G:32, U:F:64, U:F:64, U:F:64, U:F:64, D:F:64
     DoubleCond, Tmp, Tmp, Tmp, Tmp, Tmp
 
+arm64: MoveDoubleConditionallyDoubleWithZero U:G:32, U:F:64, U:F:64, U:F:64, D:F:64
+    DoubleCond, Tmp, Tmp, Tmp, Tmp
+
 64: MoveDoubleConditionallyFloat U:G:32, U:F:32, U:F:32, U:F:64, U:F:64, D:F:64
     DoubleCond, Tmp, Tmp, Tmp, Tmp, Tmp
+
+arm64: MoveDoubleConditionallyFloatWithZero U:G:32, U:F:32, U:F:64, U:F:64, D:F:64
+    DoubleCond, Tmp, Tmp, Tmp, Tmp
 
 MemoryFence /effects
 StoreFence /effects

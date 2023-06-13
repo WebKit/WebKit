@@ -1806,10 +1806,26 @@ public:
         return makeFPBranch(cond);
     }
 
+    Jump branchFloatWithZero(DoubleCondition cond, FPRegisterID left)
+    {
+        UNUSED_PARAM(cond);
+        UNUSED_PARAM(left);
+        UNREACHABLE_FOR_PLATFORM();
+        return { };
+    }
+
     Jump branchDouble(DoubleCondition cond, FPRegisterID left, FPRegisterID right)
     {
         m_assembler.vcmp(left, right);
         return makeFPBranch(cond);
+    }
+
+    Jump branchDoubleWithZero(DoubleCondition cond, FPRegisterID left)
+    {
+        UNUSED_PARAM(cond);
+        UNUSED_PARAM(left);
+        UNREACHABLE_FOR_PLATFORM();
+        return { };
     }
 
     enum BranchTruncateType { BranchIfTruncateFailed, BranchIfTruncateSuccessful };
@@ -2733,6 +2749,14 @@ public:
         m_assembler.it(armV7Condition(cond), false);
         m_assembler.mov(dest, ARMThumbImmediate::makeUInt16(1));
         m_assembler.mov(dest, ARMThumbImmediate::makeUInt16(0));
+    }
+
+    void compareFloatWithZero(DoubleCondition cond, FPRegisterID left, RegisterID dest)
+    {
+        UNUSED_PARAM(cond);
+        UNUSED_PARAM(left);
+        UNUSED_PARAM(dest);
+        UNREACHABLE_FOR_PLATFORM();
     }
 
     void test32(ResultCondition cond, RegisterID op1, RegisterID op2, RegisterID dest)

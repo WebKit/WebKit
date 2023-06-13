@@ -2528,17 +2528,43 @@ public:
         return jumpAfterFloatingPointCompare(cond);
     }
 
+    Jump branchDoubleWithZero(DoubleCondition cond, FPRegisterID left)
+    {
+        m_assembler.fcmp_0<64>(left);
+        return jumpAfterFloatingPointCompare(cond);
+    }
+
+    Jump branchFloatWithZero(DoubleCondition cond, FPRegisterID left)
+    {
+        m_assembler.fcmp_0<32>(left);
+        return jumpAfterFloatingPointCompare(cond);
+    }
+
     void compareDouble(DoubleCondition cond, FPRegisterID left, FPRegisterID right, RegisterID dest)
     {
-        floatingPointCompare(cond, left, right, dest, [this] (FPRegisterID arg1, FPRegisterID arg2) {
-            m_assembler.fcmp<64>(arg1, arg2);
+        floatingPointCompare(cond, dest, [&]() {
+            m_assembler.fcmp<64>(left, right);
         });
     }
 
     void compareFloat(DoubleCondition cond, FPRegisterID left, FPRegisterID right, RegisterID dest)
     {
-        floatingPointCompare(cond, left, right, dest, [this] (FPRegisterID arg1, FPRegisterID arg2) {
-            m_assembler.fcmp<32>(arg1, arg2);
+        floatingPointCompare(cond, dest, [&]() {
+            m_assembler.fcmp<32>(left, right);
+        });
+    }
+
+    void compareDoubleWithZero(DoubleCondition cond, FPRegisterID left, RegisterID dest)
+    {
+        floatingPointCompare(cond, dest, [&]() {
+            m_assembler.fcmp_0<64>(left);
+        });
+    }
+
+    void compareFloatWithZero(DoubleCondition cond, FPRegisterID left, RegisterID dest)
+    {
+        floatingPointCompare(cond, dest, [&]() {
+            m_assembler.fcmp_0<32>(left);
         });
     }
 
@@ -2805,6 +2831,18 @@ public:
         moveConditionallyAfterFloatingPointCompare<64>(cond, thenCase, elseCase, dest);
     }
 
+    void moveConditionallyDoubleWithZero(DoubleCondition cond, FPRegisterID left, RegisterID src, RegisterID dest)
+    {
+        m_assembler.fcmp_0<64>(left);
+        moveConditionallyAfterFloatingPointCompare<64>(cond, src, dest);
+    }
+
+    void moveConditionallyDoubleWithZero(DoubleCondition cond, FPRegisterID left, RegisterID thenCase, RegisterID elseCase, RegisterID dest)
+    {
+        m_assembler.fcmp_0<64>(left);
+        moveConditionallyAfterFloatingPointCompare<64>(cond, thenCase, elseCase, dest);
+    }
+
     void moveConditionallyFloat(DoubleCondition cond, FPRegisterID left, FPRegisterID right, RegisterID src, RegisterID dest)
     {
         m_assembler.fcmp<32>(left, right);
@@ -2814,6 +2852,18 @@ public:
     void moveConditionallyFloat(DoubleCondition cond, FPRegisterID left, FPRegisterID right, RegisterID thenCase, RegisterID elseCase, RegisterID dest)
     {
         m_assembler.fcmp<32>(left, right);
+        moveConditionallyAfterFloatingPointCompare<64>(cond, thenCase, elseCase, dest);
+    }
+
+    void moveConditionallyFloatWithZero(DoubleCondition cond, FPRegisterID left, RegisterID src, RegisterID dest)
+    {
+        m_assembler.fcmp_0<32>(left);
+        moveConditionallyAfterFloatingPointCompare<64>(cond, src, dest);
+    }
+
+    void moveConditionallyFloatWithZero(DoubleCondition cond, FPRegisterID left, RegisterID thenCase, RegisterID elseCase, RegisterID dest)
+    {
+        m_assembler.fcmp_0<32>(left);
         moveConditionallyAfterFloatingPointCompare<64>(cond, thenCase, elseCase, dest);
     }
 
@@ -2920,9 +2970,21 @@ public:
         moveDoubleConditionallyAfterFloatingPointCompare<64>(cond, thenCase, elseCase, dest);
     }
 
+    void moveDoubleConditionallyDoubleWithZero(DoubleCondition cond, FPRegisterID left, FPRegisterID thenCase, FPRegisterID elseCase, FPRegisterID dest)
+    {
+        m_assembler.fcmp_0<64>(left);
+        moveDoubleConditionallyAfterFloatingPointCompare<64>(cond, thenCase, elseCase, dest);
+    }
+
     void moveDoubleConditionallyFloat(DoubleCondition cond, FPRegisterID left, FPRegisterID right, FPRegisterID thenCase, FPRegisterID elseCase, FPRegisterID dest)
     {
         m_assembler.fcmp<32>(left, right);
+        moveDoubleConditionallyAfterFloatingPointCompare<64>(cond, thenCase, elseCase, dest);
+    }
+
+    void moveDoubleConditionallyFloatWithZero(DoubleCondition cond, FPRegisterID left, FPRegisterID thenCase, FPRegisterID elseCase, FPRegisterID dest)
+    {
+        m_assembler.fcmp_0<32>(left);
         moveDoubleConditionallyAfterFloatingPointCompare<64>(cond, thenCase, elseCase, dest);
     }
 
@@ -6552,12 +6614,12 @@ protected:
     }
 
     template<typename Function>
-    void floatingPointCompare(DoubleCondition cond, FPRegisterID left, FPRegisterID right, RegisterID dest, Function compare)
+    void floatingPointCompare(DoubleCondition cond, RegisterID dest, Function compare)
     {
         if (cond == DoubleNotEqualAndOrdered) {
             // ConditionNE sets 1 if NotEqual *or* unordered - force the unordered cases not to set 1.
             move(TrustedImm32(0), dest);
-            compare(left, right);
+            compare();
             Jump unordered = makeBranch(Assembler::ConditionVS);
             m_assembler.cset<32>(dest, Assembler::ConditionNE);
             unordered.link(this);
@@ -6566,13 +6628,13 @@ protected:
         if (cond == DoubleEqualOrUnordered) {
             // ConditionEQ sets 1 only if Equal - force the unordered cases to set 1 too.
             move(TrustedImm32(1), dest);
-            compare(left, right);
+            compare();
             Jump unordered = makeBranch(Assembler::ConditionVS);
             m_assembler.cset<32>(dest, Assembler::ConditionEQ);
             unordered.link(this);
             return;
         }
-        compare(left, right);
+        compare();
         m_assembler.cset<32>(dest, ARM64Condition(cond));
     }
 

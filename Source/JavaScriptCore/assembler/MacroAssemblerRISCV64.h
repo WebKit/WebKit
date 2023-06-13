@@ -2915,9 +2915,25 @@ public:
         return branchFP<32>(cond, lhs, rhs);
     }
 
+    Jump branchFloatWithZero(DoubleCondition cond, FPRegisterID left)
+    {
+        UNUSED_PARAM(cond);
+        UNUSED_PARAM(left);
+        UNREACHABLE_FOR_PLATFORM();
+        return { };
+    }
+
     Jump branchDouble(DoubleCondition cond, FPRegisterID lhs, FPRegisterID rhs)
     {
         return branchFP<64>(cond, lhs, rhs);
+    }
+
+    Jump branchDoubleWithZero(DoubleCondition cond, FPRegisterID left)
+    {
+        UNUSED_PARAM(cond);
+        UNUSED_PARAM(left);
+        UNREACHABLE_FOR_PLATFORM();
+        return { };
     }
 
     Jump branchDoubleNonZero(FPRegisterID reg, FPRegisterID)
@@ -3280,6 +3296,22 @@ public:
     void compareDouble(DoubleCondition cond, FPRegisterID lhs, FPRegisterID rhs, RegisterID dest)
     {
         compareFP<64>(cond, lhs, rhs, dest);
+    }
+
+    void compareDoubleWithZero(DoubleCondition cond, FPRegisterID left, RegisterID dest)
+    {
+        UNUSED_PARAM(cond);
+        UNUSED_PARAM(left);
+        UNUSED_PARAM(dest);
+        UNREACHABLE_FOR_PLATFORM();
+    }
+
+    void compareFloatWithZero(DoubleCondition cond, FPRegisterID left, RegisterID dest)
+    {
+        UNUSED_PARAM(cond);
+        UNUSED_PARAM(left);
+        UNUSED_PARAM(dest);
+        UNREACHABLE_FOR_PLATFORM();
     }
 
     void convertInt32ToFloat(RegisterID src, FPRegisterID dest)
@@ -3702,6 +3734,25 @@ public:
         end.link(this);
     }
 
+    void moveConditionallyFloatWithZero(DoubleCondition cond, FPRegisterID left, RegisterID src, RegisterID dest)
+    {
+        UNUSED_PARAM(cond);
+        UNUSED_PARAM(left);
+        UNUSED_PARAM(src);
+        UNUSED_PARAM(dest);
+        UNREACHABLE_FOR_PLATFORM();
+    }
+
+    void moveConditionallyFloatWithZero(DoubleCondition cond, FPRegisterID left, RegisterID thenCase, RegisterID elseCase, RegisterID dest)
+    {
+        UNUSED_PARAM(cond);
+        UNUSED_PARAM(left);
+        UNUSED_PARAM(thenCase);
+        UNUSED_PARAM(elseCase);
+        UNUSED_PARAM(dest);
+        UNREACHABLE_FOR_PLATFORM();
+    }
+
     void moveConditionallyDouble(DoubleCondition cond, FPRegisterID lhs, FPRegisterID rhs, RegisterID src, RegisterID dest)
     {
         Jump invcondBranch = branchFP<64, true>(cond, lhs, rhs);
@@ -3717,6 +3768,25 @@ public:
         invcondBranch.link(this);
         m_assembler.addiInsn(dest, falseSrc, Imm::I<0>());
         end.link(this);
+    }
+
+    void moveConditionallyDoubleWithZero(DoubleCondition cond, FPRegisterID left, RegisterID src, RegisterID dest)
+    {
+        UNUSED_PARAM(cond);
+        UNUSED_PARAM(left);
+        UNUSED_PARAM(src);
+        UNUSED_PARAM(dest);
+        UNREACHABLE_FOR_PLATFORM();
+    }
+
+    void moveConditionallyDoubleWithZero(DoubleCondition cond, FPRegisterID left, RegisterID thenCase, RegisterID elseCase, RegisterID dest)
+    {
+        UNUSED_PARAM(cond);
+        UNUSED_PARAM(left);
+        UNUSED_PARAM(thenCase);
+        UNUSED_PARAM(elseCase);
+        UNUSED_PARAM(dest);
+        UNREACHABLE_FOR_PLATFORM();
     }
 
     void moveConditionallyTest32(ResultCondition cond, RegisterID value, RegisterID mask, RegisterID src, RegisterID dest)
@@ -3852,6 +3922,26 @@ public:
         invcondBranch.link(this);
         m_assembler.fsgnjInsn<64>(dest, falseSrc, falseSrc);
         end.link(this);
+    }
+
+    void moveDoubleConditionallyFloatWithZero(DoubleCondition cond, FPRegisterID left, FPRegisterID thenCase, FPRegisterID elseCase, FPRegisterID dest)
+    {
+        UNUSED_PARAM(cond);
+        UNUSED_PARAM(left);
+        UNUSED_PARAM(thenCase);
+        UNUSED_PARAM(elseCase);
+        UNUSED_PARAM(dest);
+        UNREACHABLE_FOR_PLATFORM();
+    }
+
+    void moveDoubleConditionallyDoubleWithZero(DoubleCondition cond, FPRegisterID left, FPRegisterID thenCase, FPRegisterID elseCase, FPRegisterID dest)
+    {
+        UNUSED_PARAM(cond);
+        UNUSED_PARAM(left);
+        UNUSED_PARAM(thenCase);
+        UNUSED_PARAM(elseCase);
+        UNUSED_PARAM(dest);
+        UNREACHABLE_FOR_PLATFORM();
     }
 
     void moveDoubleConditionallyTest32(ResultCondition cond, RegisterID value, RegisterID mask, FPRegisterID trueSrc, FPRegisterID falseSrc, FPRegisterID dest)
