@@ -32,6 +32,7 @@
 #include <optional>
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/Lock.h>
+#include <wtf/SequenceLocked.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/Vector.h>
 
@@ -77,11 +78,7 @@ protected:
     WEBCORE_EXPORT static CheckedSize computeSizeForBuffers(size_t bytesPerFrame, size_t frameCount, uint32_t numChannelStreams);
 
     virtual void* data() = 0;
-    static constexpr unsigned boundsBufferSize { 32 };
-    struct TimeBoundsBuffer {
-        TimeBounds buffer[boundsBufferSize];
-        Atomic<unsigned> index { 0 };
-    };
+    using TimeBoundsBuffer = SequenceLocked<TimeBounds>;
     virtual TimeBoundsBuffer& timeBoundsBuffer() = 0;
 
 private:
@@ -120,6 +117,8 @@ class InProcessCARingBuffer final : public CARingBuffer {
 public:
     WEBCORE_EXPORT static std::unique_ptr<InProcessCARingBuffer> allocate(const WebCore::CAAudioStreamDescription& format, size_t frameCount);
     WEBCORE_EXPORT ~InProcessCARingBuffer();
+
+    TimeBoundsBuffer& timeBoundsBufferForTesting() { return timeBoundsBuffer(); }
 
 protected:
     WEBCORE_EXPORT InProcessCARingBuffer(size_t bytesPerFrame, size_t frameCount, uint32_t numChannelStreams, Vector<uint8_t>&& buffer);

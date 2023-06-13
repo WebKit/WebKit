@@ -30,10 +30,18 @@
 #include "Test.h"
 #include <WebCore/CAAudioStreamDescription.h>
 #include <WebCore/CARingBuffer.h>
+#include <atomic>
 #include <wtf/MainThread.h>
+#include <wtf/Scope.h>
 
 using namespace WebCore;
 
+namespace WebCore {
+inline std::ostream& operator<<(std::ostream& os, const WebCore::CARingBuffer::TimeBounds& value)
+{
+    return os << "{ " << value.startFrame << ", " << value.endFrame << " }";
+}
+}
 namespace TestWebKitAPI {
 
 class CARingBufferTest : public testing::Test {
@@ -72,7 +80,7 @@ public:
 
     const CAAudioStreamDescription& description() const { return *m_description; }
     AudioBufferList& bufferList() const { return *m_bufferList.get(); }
-    CARingBuffer& ringBuffer() const { return *m_ringBuffer.get(); }
+    InProcessCARingBuffer& ringBuffer() const { return *m_ringBuffer.get(); }
     size_t capacity() const { return m_capacity; }
 
 private:
@@ -167,6 +175,90 @@ TEST_F(CARingBufferTest, SmallBufferListForFetch)
     EXPECT_LE(bufferList().mBuffers[0].mDataByteSize, listDataByteSizeBeforeFetch);
 }
 
+TEST_F(CARingBufferTest, FetchTimeBoundsInMiddleCorrect)
+{
+    const size_t capacity = 32;
+    setup(44100, 1, CAAudioStreamDescription::PCMFormat::Float32, true, capacity);
+    float sourceBuffer[capacity] { };
+    setListDataBuffer(reinterpret_cast<uint8_t*>(sourceBuffer), capacity);
+    EXPECT_EQ(makeBounds(0u, 0u), ringBuffer().getFetchTimeBounds());
+
+    ringBuffer().store(&bufferList(), 32, 55);
+    EXPECT_EQ(makeBounds(55u, 55u + 32u), ringBuffer().getFetchTimeBounds());
+
+    ringBuffer().store(&bufferList(), 5, 57);
+    EXPECT_EQ(makeBounds(55u, 57u + 5u), ringBuffer().getFetchTimeBounds());
+
+    ringBuffer().store(&bufferList(), 32, 60);
+    EXPECT_EQ(makeBounds(60u, 60u + 32u), ringBuffer().getFetchTimeBounds());
+}
+
+TEST_F(CARingBufferTest, FetchTimeBoundsInvalid)
+{
+    const size_t capacity = 32;
+    setup(44100, 1, CAAudioStreamDescription::PCMFormat::Float32, true, capacity);
+    float sourceBuffer[capacity] { };
+    setListDataBuffer(reinterpret_cast<uint8_t*>(sourceBuffer), capacity);
+    EXPECT_EQ(makeBounds(0u, 0u), ringBuffer().getFetchTimeBounds());
+
+    ringBuffer().store(&bufferList(), 8, 0);
+    EXPECT_EQ(makeBounds(0u, 8u), ringBuffer().getFetchTimeBounds());
+
+    auto& boundsBuffer = ringBuffer().timeBoundsBufferForTesting();
+    boundsBuffer.store({ 1u, 3u });
+    EXPECT_EQ(makeBounds(1u, 3u), ringBuffer().getFetchTimeBounds());
+
+    boundsBuffer.store({ 3u, 3u });
+    EXPECT_EQ(makeBounds(3u, 3u), ringBuffer().getFetchTimeBounds());
+
+    boundsBuffer.store({ 4u, 3u });
+    EXPECT_EQ(makeBounds(4u, 4u), ringBuffer().getFetchTimeBounds());
+
+    boundsBuffer.store({ 5u, 5u + 32u });
+    EXPECT_EQ(makeBounds(5u, 5u + 32u), ringBuffer().getFetchTimeBounds());
+
+    boundsBuffer.store({ 5u, 5u + 33u });
+    EXPECT_EQ(makeBounds(5u, 5u + 32u), ringBuffer().getFetchTimeBounds());
+
+    boundsBuffer.store({ 5u, 5u + 34u });
+    EXPECT_EQ(makeBounds(5u, 5u + 32u), ringBuffer().getFetchTimeBounds());
+
+    boundsBuffer.store({ 5u, std::numeric_limits<uint64_t>::max() - 1u });
+    EXPECT_EQ(makeBounds(5u, 5u + 32u), ringBuffer().getFetchTimeBounds());
+
+    boundsBuffer.store({ std::numeric_limits<uint64_t>::max() - 1u, std::numeric_limits<uint64_t>::max() });
+    EXPECT_EQ(makeBounds(std::numeric_limits<uint64_t>::max() - 32u, std::numeric_limits<uint64_t>::max()), ringBuffer().getFetchTimeBounds());
+}
+
+TEST_F(CARingBufferTest, FetchTimeBoundsConsistent)
+{
+    const size_t capacity = 32;
+    setup(44100, 1, CAAudioStreamDescription::PCMFormat::Float32, true, capacity);
+    float sourceBuffer[capacity] { };
+    setListDataBuffer(reinterpret_cast<uint8_t*>(sourceBuffer), capacity);
+
+    std::atomic<bool> done = false;
+    auto thread = Thread::create("FetchTimeBoundsConsistent test", [&] {
+        uint64_t i = 0;
+        while (!done) {
+            ringBuffer().store(&bufferList(), 1, i);
+            i += 1;
+        }
+    }, ThreadType::Audio, Thread::QOS::UserInteractive);
+    auto threadCleanup = makeScopeExit([&] {
+        thread->waitForCompletion();
+    });
+    CARingBuffer::TimeBounds maxBounds { };
+    for (int i = 0; i < 10000000; ++i) {
+        auto fetchBounds = ringBuffer().getFetchTimeBounds();
+        EXPECT_LE(fetchBounds.startFrame, fetchBounds.endFrame);
+        EXPECT_LE(maxBounds.startFrame, fetchBounds.startFrame);
+        EXPECT_LE(maxBounds.endFrame, fetchBounds.endFrame);
+        maxBounds = fetchBounds;
+    }
+    done = true;
+}
+
 template <typename type>
 class MixingTest {
 public:
@@ -215,7 +307,7 @@ public:
 
         for (int i = 0; i < sampleCount; i++)
             referenceBuffer[i] += sourceBuffer[i] * 3;
-        
+
         for (int i = 0; i < sampleCount; i++)
             EXPECT_EQ(readBuffer[i], referenceBuffer[i]) << "Ring buffer value differs at index " << i;
 
