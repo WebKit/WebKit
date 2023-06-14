@@ -115,9 +115,6 @@ public:
 #elif OS(DARWIN)
     static RefPtr<SharedMemory> wrapMap(void*, size_t, Protection);
 #endif
-#if OS(WINDOWS)
-    static RefPtr<SharedMemory> adopt(HANDLE, size_t, Protection);
-#endif
 
     ~SharedMemory();
 

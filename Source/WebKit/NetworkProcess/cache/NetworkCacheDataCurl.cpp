@@ -117,7 +117,7 @@ RefPtr<SharedMemory> Data::tryCreateSharedMemory() const
     if (!newHandle)
         return nullptr;
 
-    return SharedMemory::adopt(newHandle.leak(), m_size, SharedMemory::Protection::ReadOnly);
+    return SharedMemory::map({ WTFMove(newHandle), m_size }, SharedMemory::Protection::ReadOnly);
 }
 #endif
 
