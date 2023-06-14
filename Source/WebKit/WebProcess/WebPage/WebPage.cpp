@@ -1009,9 +1009,6 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 #if HAVE(MACH_BOOTSTRAP_EXTENSION)
     SandboxExtension::consumePermanently(parameters.machBootstrapHandle);
 #endif
-
-    if (WebProcess::singleton().isLockdownModeEnabled())
-        sandbox_enable_state_flag("LockdownModeEnabled", *auditToken);
 #endif // HAVE(SANDBOX_STATE_FLAGS)
 
     updateThrottleState();
