@@ -109,6 +109,7 @@ enum class SDKAlignedBehavior {
     PopoverAttributeEnabled,
     LiveRangeSelectionEnabledForAllApps,
     DoesNotOverrideUAFromNSUserDefault,
+    EvaluateJavaScriptWithoutTransientActivation,
 
     NumberOfBehaviors
 };

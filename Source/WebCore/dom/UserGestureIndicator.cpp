@@ -101,6 +101,11 @@ bool UserGestureToken::isValidForDocument(const Document& document) const
     return m_documentsImpactedByUserGesture.contains(document);
 }
 
+void UserGestureToken::forEachImpactedDocument(Function<void(Document&)>&& function)
+{
+    m_documentsImpactedByUserGesture.forEach(function);
+}
+
 UserGestureIndicator::UserGestureIndicator(std::optional<ProcessingUserGestureState> state, Document* document, UserGestureType gestureType, ProcessInteractionStyle processInteractionStyle, std::optional<UUID> authorizationToken)
     : m_previousToken { currentToken() }
 {
