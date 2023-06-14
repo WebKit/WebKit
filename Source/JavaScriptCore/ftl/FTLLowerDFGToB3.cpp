@@ -2080,11 +2080,12 @@ private:
                     m_node->child1(), lowJSValue(m_node->child1(), ManualOperandSpeculation)));
             return;
             
-        case DoubleRepAnyIntUse:
-            setStrictInt52(
-                doubleToStrictInt52(
-                    m_node->child1(), lowDouble(m_node->child1())));
+        case DoubleRepAnyIntUse: {
+            LValue result = doubleToStrictInt52(Int52Overflow, m_node->child1(), lowDouble(m_node->child1()));
+            m_interpreter.filter(m_node->child1(), SpecAnyIntAsDouble);
+            setStrictInt52(result);
             return;
+        }
             
         default:
             RELEASE_ASSERT_NOT_REACHED();
@@ -20664,13 +20665,13 @@ IGNORE_CLANG_WARNINGS_END
     {
         return m_out.sub(m_out.bitCast(doubleValue, Int64), m_numberTag);
     }
-    
+
     LValue jsValueToStrictInt52(Edge edge, LValue boxedValue)
     {
         LBasicBlock intCase = m_out.newBlock();
         LBasicBlock doubleCase = m_out.newBlock();
         LBasicBlock continuation = m_out.newBlock();
-            
+
         LValue isNotInt32;
         if (!m_interpreter.needsTypeCheck(edge, SpecInt32Only))
             isNotInt32 = m_out.booleanFalse;
@@ -20679,34 +20680,28 @@ IGNORE_CLANG_WARNINGS_END
         else
             isNotInt32 = this->isNotInt32(boxedValue);
         m_out.branch(isNotInt32, unsure(doubleCase), unsure(intCase));
-            
+
         LBasicBlock lastNext = m_out.appendTo(intCase, doubleCase);
-            
-        ValueFromBlock intToInt52 = m_out.anchor(
-            m_out.signExt32To64(unboxInt32(boxedValue)));
+        ValueFromBlock intToInt52 = m_out.anchor(m_out.signExt32To64(unboxInt32(boxedValue)));
         m_out.jump(continuation);
-            
+
         m_out.appendTo(doubleCase, continuation);
-        
-        LValue possibleResult = m_out.callWithoutSideEffects(Int64, operationConvertBoxedDoubleToInt52, boxedValue);
-        FTL_TYPE_CHECK(
-            jsValueValue(boxedValue), edge, SpecInt32Only | SpecAnyIntAsDouble,
-            m_out.equal(possibleResult, m_out.constInt64(JSValue::notInt52)));
-            
-        ValueFromBlock doubleToInt52 = m_out.anchor(possibleResult);
+        speculate(BadType, jsValueValue(boxedValue), edge.node(), isNotNumber(boxedValue, provenType(edge) & ~SpecInt32Only));
+        LValue doubleValue = unboxDouble(boxedValue);
+        ValueFromBlock doubleToInt52 = m_out.anchor(doubleToStrictInt52(BadType, edge, doubleValue));
         m_out.jump(continuation);
-            
+
         m_out.appendTo(continuation, lastNext);
-            
+        m_interpreter.filter(edge, SpecInt32Only | SpecAnyIntAsDouble);
         return m_out.phi(Int64, intToInt52, doubleToInt52);
     }
 
-    LValue doubleToStrictInt52(Edge edge, LValue value)
+    LValue doubleToStrictInt52(ExitKind exitKind, Edge edge, LValue value)
     {
         LValue integerValue = m_out.doubleToInt64(value);
         LValue integerValueConvertedToDouble = m_out.intToDouble(integerValue);
         LValue valueNotConvertibleToInteger = m_out.doubleNotEqualOrUnordered(value, integerValueConvertedToDouble);
-        speculate(Int52Overflow, doubleValue(value), edge.node(), valueNotConvertibleToInteger);
+        speculate(exitKind, doubleValue(value), edge.node(), valueNotConvertibleToInteger);
 
         LBasicBlock valueIsZero = m_out.newBlock();
         LBasicBlock valueIsNotZero = m_out.newBlock();
@@ -20715,17 +20710,16 @@ IGNORE_CLANG_WARNINGS_END
 
         LBasicBlock lastNext = m_out.appendTo(valueIsZero, valueIsNotZero);
         LValue doubleBitcastToInt64 = m_out.bitCast(value, Int64);
-        LValue signBitSet = m_out.lessThan(doubleBitcastToInt64, m_out.constInt64(0));
-        speculate(Int52Overflow, doubleValue(value), edge.node(), signBitSet);
+        speculate(exitKind, doubleValue(value), edge.node(), m_out.testNonZero64(doubleBitcastToInt64, m_out.constInt64(1ULL << 63)));
         m_out.jump(continuation);
 
         m_out.appendTo(valueIsNotZero, continuation);
-        speculate(Int52Overflow, doubleValue(value), edge.node(), m_out.greaterThanOrEqual(integerValue, m_out.constInt64(static_cast<int64_t>(1) << (JSValue::numberOfInt52Bits - 1))));
-        speculate(Int52Overflow, doubleValue(value), edge.node(), m_out.lessThan(integerValue, m_out.constInt64(-(static_cast<int64_t>(1) << (JSValue::numberOfInt52Bits - 1)))));
+        LValue added = m_out.add(m_out.constInt64(0xfff8000000000000ULL), integerValue);
+        LValue shifted = m_out.lShr(added, m_out.constInt32(52));
+        speculate(exitKind, doubleValue(value), edge.node(), m_out.belowOrEqual(shifted, m_out.constInt64(4094)));
         m_out.jump(continuation);
 
         m_out.appendTo(continuation, lastNext);
-        m_interpreter.filter(edge, SpecAnyIntAsDouble);
         return integerValue;
     }
 
@@ -21835,7 +21829,8 @@ IGNORE_CLANG_WARNINGS_END
         if (!m_interpreter.needsTypeCheck(edge))
             return;
         
-        doubleToStrictInt52(edge, lowDouble(edge));
+        doubleToStrictInt52(BadType, edge, lowDouble(edge));
+        m_interpreter.filter(edge, SpecAnyIntAsDouble);
     }
     
     void speculateBoolean(Edge edge)

@@ -3403,19 +3403,6 @@ JSC_DEFINE_JIT_OPERATION(operationStringFromCharCodeUntyped, EncodedJSValue, (JS
     return JSValue::encode(JSC::stringFromCharCode(globalObject, chInt));
 }
 
-JSC_DEFINE_JIT_OPERATION(operationConvertBoxedDoubleToInt52, int64_t, (EncodedJSValue encodedValue))
-{
-    JSValue value = JSValue::decode(encodedValue);
-    if (!value.isDouble())
-        return JSValue::notInt52;
-    return tryConvertToInt52(value.asDouble());
-}
-
-JSC_DEFINE_JIT_OPERATION(operationConvertDoubleToInt52, int64_t, (double value))
-{
-    return tryConvertToInt52(value);
-}
-
 JSC_DEFINE_JIT_OPERATION(operationNewRawObject, char*, (VM* vmPointer, Structure* structure, int32_t length, Butterfly* butterfly))
 {
     VM& vm = *vmPointer;

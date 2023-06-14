@@ -349,9 +349,6 @@ JSC_DECLARE_JIT_OPERATION(operationGetDynamicVar, EncodedJSValue, (JSGlobalObjec
 JSC_DECLARE_JIT_OPERATION(operationPutDynamicVarStrict, void, (JSGlobalObject*, JSObject* scope, EncodedJSValue, UniquedStringImpl*, unsigned));
 JSC_DECLARE_JIT_OPERATION(operationPutDynamicVarSloppy, void, (JSGlobalObject*, JSObject* scope, EncodedJSValue, UniquedStringImpl*, unsigned));
 
-JSC_DECLARE_JIT_OPERATION(operationConvertBoxedDoubleToInt52, int64_t, (EncodedJSValue));
-JSC_DECLARE_JIT_OPERATION(operationConvertDoubleToInt52, int64_t, (double));
-
 JSC_DECLARE_JIT_OPERATION(operationNumberIsInteger, size_t, (JSGlobalObject*, EncodedJSValue));
 JSC_DECLARE_JIT_OPERATION(operationNumberIsNaN, UCPUStrictInt32, (EncodedJSValue));
 JSC_DECLARE_JIT_OPERATION(operationIsNaN, UCPUStrictInt32, (JSGlobalObject*, EncodedJSValue));
