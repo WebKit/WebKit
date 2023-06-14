@@ -13,6 +13,17 @@ fn testCallee()
     _ = f2(global);
 }
 
+struct S { x: u32 };
+fn testLiteral() -> i32
+{
+    // FIXME: this still fails
+    // _ = S(abs(0));
+
+    // We generate struct initialization with braces, so no narrowing allowed
+    _ = S(abs(0u));
+    return 0;
+}
+
 @compute @workgroup_size(1)
 fn main() {
     // - Simple assignment promotion
@@ -45,4 +56,5 @@ fn main() {
     }
 
     _ = testCallee();
+    _ = testLiteral();
 }
