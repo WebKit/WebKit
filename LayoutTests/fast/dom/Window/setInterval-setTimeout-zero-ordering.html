@@ -10,19 +10,22 @@ let setInterval0Called = false;
 let setInterval1Called = false;
 let setTimeout0Called = false;
 
-setInterval1Handle = setInterval(() => {
-    debug("* setInterval(1)");
-    shouldBeTrue("setInterval0Called");
-    shouldBeTrue("setTimeout0Called");
-    setInterval1Called = true;
-}, 1);
+function runNonZeroDelayTests()
+{
+    setInterval1Handle = setInterval(() => {
+        debug("* setInterval(1)");
+        shouldBeTrue("setInterval0Called");
+        shouldBeTrue("setTimeout0Called");
+        setInterval1Called = true;
+    }, 1);
 
-setTimeout(() => {
-    debug("* setTimeout(1)");
-    shouldBeTrue("setInterval1Called");
-    clearInterval(setInterval1Handle);
-    finishJSTest();
-}, 1);
+    setTimeout(() => {
+        debug("* setTimeout(1)");
+        shouldBeTrue("setInterval1Called");
+        clearInterval(setInterval1Handle);
+        finishJSTest();
+    }, 1);
+}
 
 setInterval0Handle = setInterval(() => {
     debug("* setInterval(0)");
@@ -34,6 +37,7 @@ setTimeout(() => {
     shouldBeTrue("setInterval0Called");
     clearInterval(setInterval0Handle);
     setTimeout0Called = true;
+    runNonZeroDelayTests();
 }, 0);
 </script>
 </body>
