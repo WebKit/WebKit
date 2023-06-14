@@ -61,9 +61,10 @@ public:
 
     bool isAutoLayout() const { return !m_bindGroupLayouts.has_value(); }
     size_t numberOfBindGroupLayouts() const { return m_bindGroupLayouts->size(); }
-    const BindGroupLayout& bindGroupLayout(size_t) const;
+    BindGroupLayout& bindGroupLayout(size_t) const;
 
     Device& device() const { return m_device; }
+    void makeInvalid();
 
 private:
     PipelineLayout(std::optional<Vector<Ref<BindGroupLayout>>>&&, Device&);
@@ -72,7 +73,7 @@ private:
     std::optional<Vector<Ref<BindGroupLayout>>> m_bindGroupLayouts;
 
     const Ref<Device> m_device;
-    const bool m_isValid { true };
+    bool m_isValid { true };
 };
 
 } // namespace WebGPU

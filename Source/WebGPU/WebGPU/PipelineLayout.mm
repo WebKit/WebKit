@@ -78,10 +78,16 @@ bool PipelineLayout::operator==(const PipelineLayout& other) const
     return false;
 }
 
-const BindGroupLayout& PipelineLayout::bindGroupLayout(size_t i) const
+BindGroupLayout& PipelineLayout::bindGroupLayout(size_t i) const
 {
     RELEASE_ASSERT(m_bindGroupLayouts.has_value());
     return (*m_bindGroupLayouts)[i];
+}
+
+void PipelineLayout::makeInvalid()
+{
+    m_isValid = false;
+    m_bindGroupLayouts->clear();
 }
 
 } // namespace WebGPU

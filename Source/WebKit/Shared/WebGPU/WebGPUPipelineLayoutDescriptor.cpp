@@ -54,7 +54,7 @@ std::optional<PipelineLayoutDescriptor> ConvertToBackingContext::convertToBackin
         optionalBindGroupLayouts = bindGroupLayouts;
     }
 
-    return { { WTFMove(*base), bindGroupLayouts } };
+    return { { WTFMove(*base), WTFMove(optionalBindGroupLayouts) } };
 }
 
 std::optional<PAL::WebGPU::PipelineLayoutDescriptor> ConvertFromBackingContext::convertFromBacking(const PipelineLayoutDescriptor& pipelineLayoutDescriptor)
@@ -77,7 +77,7 @@ std::optional<PAL::WebGPU::PipelineLayoutDescriptor> ConvertFromBackingContext::
         optionalBindGroupLayouts = bindGroupLayouts;
     }
 
-    return { { WTFMove(*base), optionalBindGroupLayouts } };
+    return { { WTFMove(*base), WTFMove(optionalBindGroupLayouts) } };
 }
 
 } // namespace WebKit

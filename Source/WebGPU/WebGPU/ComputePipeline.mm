@@ -126,7 +126,19 @@ ComputePipeline::~ComputePipeline() = default;
 
 RefPtr<BindGroupLayout> ComputePipeline::getBindGroupLayout(uint32_t groupIndex)
 {
-    return const_cast<BindGroupLayout*>(&m_pipelineLayout->bindGroupLayout(groupIndex));
+    if (!isValid()) {
+        m_device->generateAValidationError("getBindGroupLayout: ComputePipeline is invalid"_s);
+        m_pipelineLayout->makeInvalid();
+        return nullptr;
+    }
+
+    if (groupIndex >= m_pipelineLayout->numberOfBindGroupLayouts()) {
+        m_device->generateAValidationError("getBindGroupLayout: groupIndex is out of range"_s);
+        m_pipelineLayout->makeInvalid();
+        return nullptr;
+    }
+
+    return &m_pipelineLayout->bindGroupLayout(groupIndex);
 }
 
 void ComputePipeline::setLabel(String&&)
