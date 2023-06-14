@@ -9881,7 +9881,7 @@ private:
                     minIndex = i;
                 }
             }
-            ASSERT(minIndex >= 0, "No allocatable registers in LRU");
+            RELEASE_ASSERT(minIndex >= 0, "No allocatable registers in LRU");
             return static_cast<Register>(minIndex);
         }
 
@@ -10034,6 +10034,7 @@ private:
         {
             if (!m_generator.m_validGPRs.contains(reg, IgnoreVectors))
                 return reg;
+            m_generator.m_gprLRU.lock(reg);
             RegisterBinding& binding = m_generator.m_gprBindings[reg];
             if (m_preserved.contains(reg, IgnoreVectors) && !binding.isNone()) {
                 if (UNLIKELY(Options::verboseBBQJITAllocation()))
@@ -10043,7 +10044,6 @@ private:
             ASSERT(binding.isNone());
             binding = RegisterBinding::scratch();
             m_generator.m_gprSet.remove(reg);
-            m_generator.m_gprLRU.lock(reg);
             if (UNLIKELY(Options::verboseBBQJITAllocation()))
                 dataLogLn("BBQ\tReserving scratch GPR ", MacroAssembler::gprName(reg));
             return reg;
@@ -10053,6 +10053,7 @@ private:
         {
             if (!m_generator.m_validFPRs.contains(reg, Width::Width128))
                 return reg;
+            m_generator.m_fprLRU.lock(reg);
             RegisterBinding& binding = m_generator.m_fprBindings[reg];
             if (m_preserved.contains(reg, Width::Width128) && !binding.isNone()) {
                 if (UNLIKELY(Options::verboseBBQJITAllocation()))
@@ -10062,7 +10063,6 @@ private:
             ASSERT(binding.isNone());
             binding = RegisterBinding::scratch();
             m_generator.m_fprSet.remove(reg);
-            m_generator.m_fprLRU.lock(reg);
             if (UNLIKELY(Options::verboseBBQJITAllocation()))
                 dataLogLn("BBQ\tReserving scratch FPR ", MacroAssembler::fprName(reg));
             return reg;
@@ -10072,6 +10072,7 @@ private:
         {
             if (!m_generator.m_validGPRs.contains(reg, IgnoreVectors))
                 return;
+            m_generator.m_gprLRU.unlock(reg);
             RegisterBinding& binding = m_generator.m_gprBindings[reg];
             if (UNLIKELY(Options::verboseBBQJITAllocation()))
                 dataLogLn("BBQ\tReleasing GPR ", MacroAssembler::gprName(reg));
@@ -10080,13 +10081,13 @@ private:
             ASSERT(binding.isScratch());
             binding = RegisterBinding::none();
             m_generator.m_gprSet.add(reg, IgnoreVectors);
-            m_generator.m_gprLRU.unlock(reg);
         }
 
         void unbindFPRFromScratch(FPRReg reg)
         {
             if (!m_generator.m_validFPRs.contains(reg, Width::Width128))
                 return;
+            m_generator.m_fprLRU.unlock(reg);
             RegisterBinding& binding = m_generator.m_fprBindings[reg];
             if (UNLIKELY(Options::verboseBBQJITAllocation()))
                 dataLogLn("BBQ\tReleasing FPR ", MacroAssembler::fprName(reg));
@@ -10095,7 +10096,6 @@ private:
             ASSERT(binding.isScratch());
             binding = RegisterBinding::none();
             m_generator.m_fprSet.add(reg, Width::Width128);
-            m_generator.m_fprLRU.unlock(reg);
         }
 
         template<typename... Args>
