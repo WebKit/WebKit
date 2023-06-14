@@ -87,7 +87,9 @@ void RemoteRenderingBackendProxy::ensureGPUProcessConnection()
         if (!streamConnection)
             CRASH();
         m_streamConnection = WTFMove(streamConnection);
-        m_streamConnection->open(*this, m_dispatcher);
+        // RemoteRenderingBackendProxy behaves as the dispatcher for the connection to obtain isolated state for its
+        // connection. This prevents waits on RemoteRenderingBackendProxy to process messages from other connections.
+        m_streamConnection->open(*this, *this);
 
         callOnMainRunLoopAndWait([this, serverHandle = WTFMove(serverHandle)]() mutable {
             m_connection = &WebProcess::singleton().ensureGPUProcessConnection().connection();
@@ -471,7 +473,7 @@ IPC::StreamClientConnection& RemoteRenderingBackendProxy::streamConnection()
 {
     ensureGPUProcessConnection();
     if (UNLIKELY(!m_streamConnection->hasSemaphores()))
-        m_streamConnection->waitForAndDispatchImmediately<Messages::RemoteRenderingBackendProxy::DidInitialize>(renderingBackendIdentifier(), 3_s, IPC::WaitForOption::InterruptWaitingIfSyncMessageArrives);
+        m_streamConnection->waitForAndDispatchImmediately<Messages::RemoteRenderingBackendProxy::DidInitialize>(renderingBackendIdentifier(), defaultTimeout);
     return *m_streamConnection;
 }
 
