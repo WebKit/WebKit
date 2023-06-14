@@ -89,6 +89,9 @@ WI.SingleSidebar = class SingleSidebar extends WI.Sidebar
         console.assert(sidebarPanel.navigationItem);
         this._navigationBar.insertNavigationItem(sidebarPanel.navigationItem, index);
 
+        if (this.collapsed)
+            return;
+
         this._recalculateWidth();   
     }
 
@@ -99,6 +102,9 @@ WI.SingleSidebar = class SingleSidebar extends WI.Sidebar
 
         console.assert(sidebarPanel.navigationItem);
         this._navigationBar.removeNavigationItem(sidebarPanel.navigationItem);
+
+        if (this.collapsed)
+            return;
 
         this._recalculateWidth();
     }
@@ -174,6 +180,8 @@ WI.SingleSidebar = class SingleSidebar extends WI.Sidebar
 
     _recalculateWidth(newWidth = this.width)
     {
+        console.assert(newWidth);
+
         // Need to add 1 because of the 1px border-inline-start or border-inline-end.
         newWidth = Math.ceil(Number.constrain(newWidth, this.minimumWidth + 1, this.maximumWidth));
         this.element.style.width = `${newWidth}px`;
