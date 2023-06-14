@@ -1866,12 +1866,6 @@ void RenderLayerBacking::updateDrawsContent(PaintedContentsInfo& contentsInfo)
 
     bool hasPaintedContent = containsPaintedContent(contentsInfo);
 
-#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
-    // We need to clean-up existing Interaction Regions since we won't repaint.
-    if (!hasPaintedContent)
-        clearInteractionRegions();
-#endif
-
     // FIXME: we could refine this to only allocate backing for one of these layers if possible.
     m_graphicsLayer->setDrawsContent(hasPaintedContent);
     if (m_foregroundLayer)
@@ -2010,7 +2004,7 @@ void RenderLayerBacking::updateEventRegion()
 void RenderLayerBacking::clearInteractionRegions()
 {
     auto clearInteractionRegionsForLayer = [&](GraphicsLayer& graphicsLayer) {
-        if (graphicsLayer.eventRegion().isEmpty())
+        if (graphicsLayer.eventRegion().interactionRegions().isEmpty())
             return;
 
         EventRegion eventRegion = graphicsLayer.eventRegion();
@@ -3371,6 +3365,11 @@ void RenderLayerBacking::setRequiresOwnBackingStore(bool requiresOwnBacking)
     m_owningLayer.computeRepaintRectsIncludingDescendants();
 
     compositor().repaintInCompositedAncestor(m_owningLayer, compositedBounds());
+
+#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+    if (!requiresOwnBacking)
+        clearInteractionRegions();
+#endif
 }
 
 void RenderLayerBacking::setContentsNeedDisplay(GraphicsLayer::ShouldClipToLayer shouldClip)
