@@ -23,6 +23,10 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
+          npm dist-tag add bun-webkit-linux-amd64-debug@0.0.1-${{github.sha}} latest
+          npm dist-tag add bun-webkit-linux-arm64-debug@0.0.1-${{github.sha}} latest
+          npm dist-tag add bun-webkit-macos-arm64-debug@0.0.1-${{github.sha}} latest
+          npm dist-tag add bun-webkit-macos-amd64-debug@0.0.1-${{github.sha}} latest
           npm dist-tag add bun-webkit-linux-amd64-lto@0.0.1-${{github.sha}} latest
           npm dist-tag add bun-webkit-linux-arm64-lto@0.0.1-${{github.sha}} latest
           npm dist-tag add bun-webkit-macos-arm64-lto@0.0.1-${{github.sha}} latest
@@ -33,3 +37,4 @@ jobs:
           npm dist-tag add bun-webkit-macos-amd64@0.0.1-${{github.sha}} latest
           npm dist-tag add bun-webkit@0.0.1-${{github.sha}} latest
           npm dist-tag add bun-webkit-lto@0.0.1-${{github.sha}} latest
+          npm dist-tag add bun-webkit-debug@0.0.1-${{github.sha}} latest

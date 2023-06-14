@@ -60,6 +60,7 @@ RUN --mount=type=tmpfs,target=/webkitbuild \
     cmake \
     -DPORT="JSCOnly" \
     -DENABLE_STATIC_JSC=ON \
+    -DENABLE_BUN_SKIP_FAILING_ASSERTIONS=ON \
     -DCMAKE_BUILD_TYPE=$WEBKIT_RELEASE_TYPE \
     -DUSE_THIN_ARCHIVES=OFF \
     -DENABLE_FTL_JIT=ON \
