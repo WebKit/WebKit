@@ -125,6 +125,7 @@ private:
     Packing getPacking(AST::IndexAccessExpression&);
     Packing getPacking(AST::BinaryExpression&);
     Packing getPacking(AST::UnaryExpression&);
+    Packing getPacking(AST::CallExpression&);
     Packing packingForType(const Type*);
 
     CallGraph& m_callGraph;
@@ -328,6 +329,8 @@ auto RewriteGlobalVariables::pack(Packing expectedPacking, AST::Expression& expr
         return visitAndReplace(downcast<AST::BinaryExpression>(expression));
     case AST::NodeKind::UnaryExpression:
         return visitAndReplace(downcast<AST::UnaryExpression>(expression));
+    case AST::NodeKind::CallExpression:
+        return visitAndReplace(downcast<AST::CallExpression>(expression));
     default:
         AST::Visitor::visit(expression);
         return Packing::Unpacked;
@@ -397,6 +400,13 @@ auto RewriteGlobalVariables::getPacking(AST::BinaryExpression& expression) -> Pa
 auto RewriteGlobalVariables::getPacking(AST::UnaryExpression& expression) -> Packing
 {
     pack(Packing::Unpacked, expression.expression());
+    return Packing::Unpacked;
+}
+
+auto RewriteGlobalVariables::getPacking(AST::CallExpression& call) -> Packing
+{
+    for (auto& argument : call.arguments())
+        pack(Packing::Unpacked, argument);
     return Packing::Unpacked;
 }
 

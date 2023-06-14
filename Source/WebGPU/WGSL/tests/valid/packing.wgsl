@@ -304,6 +304,98 @@ fn testUnaryOperations() -> i32
     return 0;
 }
 
+fn testCall() -> i32
+{
+    // CHECK: parameter\d+\.v2f\.x = abs\(parameter\d+\.v2f\.x\);
+    // CHECK-NEXT: parameter\d+\.v3f\.x = abs\(parameter\d+\.v3f\.x\);
+    // CHECK-NEXT: parameter\d+\.v4f\.x = abs\(parameter\d+\.v4f\.x\);
+    // CHECK-NEXT: parameter\d+\.v2u\.x = abs\(parameter\d+\.v2u\.x\);
+    // CHECK-NEXT: parameter\d+\.v3u\.x = abs\(parameter\d+\.v3u\.x\);
+    // CHECK-NEXT: parameter\d+\.v4u\.x = abs\(parameter\d+\.v4u\.x\);
+    // CHECK-NEXT: parameter\d+\.v2f = abs\(parameter\d+\.v2f\);
+    // CHECK-NEXT: parameter\d+\.v3f = abs\(float3\(parameter\d+\.v3f\)\);
+    // CHECK-NEXT: parameter\d+\.v4f = abs\(parameter\d+\.v4f\);
+    // CHECK-NEXT: parameter\d+\.v2u = abs\(parameter\d+\.v2u\);
+    // CHECK-NEXT: parameter\d+\.v3u = abs\(uint3\(parameter\d+\.v3u\)\);
+    // CHECK-NEXT: parameter\d+\.v4u = abs\(parameter\d+\.v4u\);
+    // CHECK-NEXT: parameter\d+\.f = abs\(parameter\d+\.f\);
+    // CHECK-NEXT: parameter\d+\.u = abs\(parameter\d+\.u\);
+    t.v2f.x = abs(t1.v2f.x);
+    t.v3f.x = abs(t1.v3f.x);
+    t.v4f.x = abs(t1.v4f.x);
+    t.v2u.x = abs(t1.v2u.x);
+    t.v3u.x = abs(t1.v3u.x);
+    t.v4u.x = abs(t1.v4u.x);
+    t.v2f   = abs(t1.v2f);
+    t.v3f   = abs(t1.v3f);
+    t.v4f   = abs(t1.v4f);
+    t.v2u   = abs(t1.v2u);
+    t.v3u   = abs(t1.v3u);
+    t.v4u   = abs(t1.v4u);
+    t.f     = abs(t1.f);
+    t.u     = abs(t1.u);
+
+    // CHECK-NEXT: parameter\d+\.v2f\.x = abs\(parameter\d+\.v2f\.x\);
+    // CHECK-NEXT: parameter\d+\.v3f\.x = abs\(parameter\d+\.v3f\.x\);
+    // CHECK-NEXT: parameter\d+\.v4f\.x = abs\(parameter\d+\.v4f\.x\);
+    // CHECK-NEXT: parameter\d+\.v2u\.x = abs\(parameter\d+\.v2u\.x\);
+    // CHECK-NEXT: parameter\d+\.v3u\.x = abs\(parameter\d+\.v3u\.x\);
+    // CHECK-NEXT: parameter\d+\.v4u\.x = abs\(parameter\d+\.v4u\.x\);
+    // CHECK-NEXT: parameter\d+\.v2f = abs\(parameter\d+\.v2f\);
+    // CHECK-NEXT: parameter\d+\.v3f = packed_float3\(abs\(float3\(parameter\d+\.v3f\)\)\);
+    // CHECK-NEXT: parameter\d+\.v4f = abs\(parameter\d+\.v4f\);
+    // CHECK-NEXT: parameter\d+\.v2u = abs\(parameter\d+\.v2u\);
+    // CHECK-NEXT: parameter\d+\.v3u = packed_uint3\(abs\(uint3\(parameter\d+\.v3u\)\)\);
+    // CHECK-NEXT: parameter\d+\.v4u = abs\(parameter\d+\.v4u\);
+    // CHECK-NEXT: parameter\d+\.f = abs\(parameter\d+\.f\);
+    // CHECK-NEXT: parameter\d+\.u = abs\(parameter\d+\.u\);
+    t1.v2f.x = abs(t2.v2f.x);
+    t1.v3f.x = abs(t2.v3f.x);
+    t1.v4f.x = abs(t2.v4f.x);
+    t1.v2u.x = abs(t2.v2u.x);
+    t1.v3u.x = abs(t2.v3u.x);
+    t1.v4u.x = abs(t2.v4u.x);
+    t1.v2f   = abs(t2.v2f);
+    t1.v3f   = abs(t2.v3f);
+    t1.v4f   = abs(t2.v4f);
+    t1.v2u   = abs(t2.v2u);
+    t1.v3u   = abs(t2.v3u);
+    t1.v4u   = abs(t2.v4u);
+    t1.f     = abs(t2.f);
+    t1.u     = abs(t2.u);
+
+    // CHECK-NEXT: parameter\d+\.v2f\.x = abs\(parameter\d+\.v2f\.x\);
+    // CHECK-NEXT: parameter\d+\.v3f\.x = abs\(parameter\d+\.v3f\.x\);
+    // CHECK-NEXT: parameter\d+\.v4f\.x = abs\(parameter\d+\.v4f\.x\);
+    // CHECK-NEXT: parameter\d+\.v2u\.x = abs\(parameter\d+\.v2u\.x\);
+    // CHECK-NEXT: parameter\d+\.v3u\.x = abs\(parameter\d+\.v3u\.x\);
+    // CHECK-NEXT: parameter\d+\.v4u\.x = abs\(parameter\d+\.v4u\.x\);
+    // CHECK-NEXT: parameter\d+\.v2f = abs\(parameter\d+\.v2f\);
+    // CHECK-NEXT: parameter\d+\.v3f = packed_float3\(abs\(parameter\d+\.v3f\)\);
+    // CHECK-NEXT: parameter\d+\.v4f = abs\(parameter\d+\.v4f\);
+    // CHECK-NEXT: parameter\d+\.v2u = abs\(parameter\d+\.v2u\);
+    // CHECK-NEXT: parameter\d+\.v3u = packed_uint3\(abs\(parameter\d+\.v3u\)\);
+    // CHECK-NEXT: parameter\d+\.v4u = abs\(parameter\d+\.v4u\);
+    // CHECK-NEXT: parameter\d+\.f = abs\(parameter\d+\.f\);
+    // CHECK-NEXT: parameter\d+\.u = abs\(parameter\d+\.u\);
+    t2.v2f.x = abs(t.v2f.x);
+    t2.v3f.x = abs(t.v3f.x);
+    t2.v4f.x = abs(t.v4f.x);
+    t2.v2u.x = abs(t.v2u.x);
+    t2.v3u.x = abs(t.v3u.x);
+    t2.v4u.x = abs(t.v4u.x);
+    t2.v2f   = abs(t.v2f);
+    t2.v3f   = abs(t.v3f);
+    t2.v4f   = abs(t.v4f);
+    t2.v2u   = abs(t.v2u);
+    t2.v3u   = abs(t.v3u);
+    t2.v4u   = abs(t.v4u);
+    t2.f     = abs(t.f);
+    t2.u     = abs(t.u);
+
+    return 0;
+}
+
 @compute @workgroup_size(1)
 fn main()
 {
@@ -313,4 +405,5 @@ fn main()
     _ = testIndexAccess();
     _ = testBinaryOperations();
     _ = testUnaryOperations();
+    _ = testCall();
 }
