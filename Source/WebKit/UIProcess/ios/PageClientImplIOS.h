@@ -324,6 +324,8 @@ private:
     void didExitFullscreen() final;
 #endif
 
+    RetainPtr<WKContentView> contentView() const { return m_contentView.get(); }
+
     WeakObjCPtr<WKContentView> m_contentView;
     RetainPtr<WKEditorUndoTarget> m_undoTarget;
 };
