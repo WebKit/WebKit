@@ -93,6 +93,9 @@ static std::optional<Exception> checkImageUsability(ScriptExecutionContext& cont
         return { };
     },
     [] (const RefPtr<SVGImageElement>& imageElement) -> std::optional<Exception> {
+        if (imageElement->renderingTaintsOrigin())
+            return Exception { SecurityError, "Image element is tainted"_s };
+
         auto* image = imageElement->cachedImage() ? imageElement->cachedImage()->image() : nullptr;
         if (!image)
             return Exception { InvalidStateError,  "Image element has no data"_s };

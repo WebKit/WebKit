@@ -86,8 +86,17 @@ bool SVGImageElement::renderingTaintsOrigin() const
     if (!cachedImage)
         return false;
 
-    auto* image = cachedImage->image();
-    return image && image->renderingTaintsOrigin();
+    RefPtr image = cachedImage->image();
+    if (!image)
+        return false;
+
+    if (image->renderingTaintsOrigin())
+        return true;
+
+    if (image->sourceURL().protocolIsData())
+        return false;
+
+    return cachedImage->isCORSCrossOrigin();
 }
 
 void SVGImageElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)

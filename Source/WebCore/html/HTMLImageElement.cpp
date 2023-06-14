@@ -1080,11 +1080,11 @@ bool HTMLImageElement::originClean(const SecurityOrigin& origin) const
     if (!image)
         return true;
 
-    if (image->sourceURL().protocolIsData())
-        return true;
-
     if (image->renderingTaintsOrigin())
         return false;
+
+    if (image->sourceURL().protocolIsData())
+        return true;
 
     if (cachedImage->isCORSCrossOrigin())
         return false;
