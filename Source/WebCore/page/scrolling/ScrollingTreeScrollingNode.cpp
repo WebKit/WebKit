@@ -125,11 +125,6 @@ bool ScrollingTreeScrollingNode::commitStateAfterChildren(const ScrollingStateNo
     return true;
 }
 
-void ScrollingTreeScrollingNode::didCompleteCommitForNode()
-{
-    m_scrolledSinceLastCommit = false;
-}
-
 bool ScrollingTreeScrollingNode::isLatchedNode() const
 {
     return scrollingTree().latchedNodeID() == scrollingNodeID();
@@ -359,7 +354,6 @@ void ScrollingTreeScrollingNode::scrollTo(const FloatPoint& position, ScrollType
 
 void ScrollingTreeScrollingNode::currentScrollPositionChanged(ScrollType, ScrollingLayerPositionAction action)
 {
-    m_scrolledSinceLastCommit = true;
     scrollingTree().scrollingTreeNodeDidScroll(*this, action);
 }
 

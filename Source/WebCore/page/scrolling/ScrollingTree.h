@@ -300,6 +300,8 @@ private:
 
     RelatedNodesMap m_overflowRelatedNodesMap;
 
+    HashSet<ScrollingNodeID> m_nodesScrolledSinceLastCommit;
+
     HashSet<Ref<ScrollingTreeOverflowScrollProxyNode>> m_activeOverflowScrollProxyNodes;
     HashSet<Ref<ScrollingTreePositionedNode>> m_activePositionedNodes;
 

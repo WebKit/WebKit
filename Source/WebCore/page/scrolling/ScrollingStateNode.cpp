@@ -50,6 +50,7 @@ ScrollingStateNode::ScrollingStateNode(const ScrollingStateNode& stateNode, Scro
     , m_nodeID(stateNode.scrollingNodeID())
     , m_changedProperties(stateNode.changedProperties())
     , m_scrollingStateTree(adoptiveTree)
+    , m_hasDirtyChildNode(stateNode.hasDirtyChildNode())
 {
     if (hasChangedProperty(Property::Layer))
         setLayer(stateNode.layer().toRepresentation(adoptiveTree.preferredLayerRepresentation()));
@@ -66,6 +67,30 @@ void ScrollingStateNode::setPropertyChanged(Property property)
 
     setPropertyChangedInternal(property);
     m_scrollingStateTree.setHasChangedProperties();
+    if (property != Property::HasDirtyChildNode)
+        setDirtyBitForAncestorChain();
+}
+
+void ScrollingStateNode::setDirtyBitForAncestorChain()
+{
+    auto currentNode = m_parent;
+    while (auto node = currentNode.get()) {
+        if (node->hasDirtyChildNode()) {
+//            WTFLogAlways("ScrollingStateNode::setDirty returned early: %llu isDirty: %d", m_nodeID, node->hasDirtyChildNode());
+            return;
+        }
+        node->setHasDirtyChildNode(true);
+//        WTFLogAlways("ScrollingStateNode::setDirty: %llu isDirty: %d", m_nodeID, node->hasDirtyChildNode());
+        currentNode = node->parent();
+    }
+}
+
+void ScrollingStateNode::setHasDirtyChildNode(bool flag)
+{
+    if (m_hasDirtyChildNode == flag)
+        return;
+    m_hasDirtyChildNode = flag;
+    setPropertyChanged(Property::HasDirtyChildNode);
 }
 
 OptionSet<ScrollingStateNode::Property> ScrollingStateNode::applicableProperties() const
@@ -187,6 +212,7 @@ void ScrollingStateNode::setInteractionRegionsLayer(const LayerRepresentation& l
 
 void ScrollingStateNode::dumpProperties(TextStream& ts, OptionSet<ScrollingStateTreeAsTextBehavior> behavior) const
 {
+//    ts.dumpProperty("has dirty children", m_childrenAreDirty);
     if (behavior & ScrollingStateTreeAsTextBehavior::IncludeNodeIDs)
         ts.dumpProperty("nodeID", scrollingNodeID());
     

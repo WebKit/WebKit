@@ -250,6 +250,7 @@ void ScrollingStateTree::unparentChildrenAndDestroyNode(ScrollingNodeID nodeID)
         }
     }
     
+    m_nodesRemovedSinceLastCommit.add(nodeID);
     protectedNode->removeFromParent();
     m_unparentedNodes.remove(nodeID);
     willRemoveNode(*protectedNode);
@@ -300,6 +301,7 @@ std::unique_ptr<ScrollingStateTree> ScrollingStateTree::commit(LayerRepresentati
     // Now the clone tree has changed properties, and the original tree does not.
     treeStateClone->m_hasChangedProperties = std::exchange(m_hasChangedProperties, false);
     treeStateClone->m_hasNewRootStateNode = std::exchange(m_hasNewRootStateNode, false);
+    treeStateClone->m_nodesRemovedSinceLastCommit = std::exchange(m_nodesRemovedSinceLastCommit, { });
 
     return treeStateClone;
 }

@@ -3060,6 +3060,7 @@ header: <WebCore/ScrollingStateNode.h>
 [OptionSet] enum class WebCore::ScrollingStateNodeProperty : uint64_t {
     Layer
     ChildNodes
+    HasDirtyChildNode
     ScrollableAreaSize
     TotalContentsSize
     ReachableContentsSize

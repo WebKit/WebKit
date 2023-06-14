@@ -61,7 +61,6 @@ public:
 
     bool commitStateBeforeChildren(const ScrollingStateNode&) override;
     bool commitStateAfterChildren(const ScrollingStateNode&) override;
-    void didCompleteCommitForNode() final;
 
     virtual bool canHandleWheelEvent(const PlatformWheelEvent&, EventTargeting) const;
     virtual WheelEventHandlingResult handleWheelEvent(const PlatformWheelEvent&, EventTargeting = EventTargeting::Propagate);
@@ -123,8 +122,6 @@ public:
 
     bool eventCanScrollContents(const PlatformWheelEvent&) const;
     
-    bool scrolledSinceLastCommit() const { return m_scrolledSinceLastCommit; }
-
     const LayerRepresentation& scrollContainerLayer() const { return m_scrollContainerLayer; }
     const LayerRepresentation& scrolledContentsLayer() const { return m_scrolledContentsLayer; }
     
@@ -204,7 +201,6 @@ private:
     OptionSet<SynchronousScrollingReason> m_synchronousScrollingReasons;
 #endif
     bool m_isFirstCommit { true };
-    bool m_scrolledSinceLastCommit { false };
 
     LayerRepresentation m_scrollContainerLayer;
     LayerRepresentation m_scrolledContentsLayer;

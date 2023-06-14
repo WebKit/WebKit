@@ -87,6 +87,9 @@ public:
 
     String scrollingStateTreeAsText(OptionSet<ScrollingStateTreeAsTextBehavior>) const;
 
+    HashSet<ScrollingNodeID> nodesRemovedSinceLastCommit() { return m_nodesRemovedSinceLastCommit; }
+    void setNodesRemovedSinceLastCommit(HashSet<ScrollingNodeID> nodes) { m_nodesRemovedSinceLastCommit = nodes; }
+
 private:
     void setRootStateNode(Ref<ScrollingStateFrameScrollingNode>&&);
     void addNode(ScrollingStateNode&);
@@ -101,6 +104,7 @@ private:
     bool isValid() const;
     void traverse(const ScrollingStateNode&, const Function<void(const ScrollingStateNode&)>&) const;
 
+    HashSet<ScrollingNodeID> m_nodesRemovedSinceLastCommit;
     AsyncScrollingCoordinator* m_scrollingCoordinator;
     // Contains all the nodes we know about (those in the m_rootStateNode tree, and in m_unparentedNodes subtrees).
     StateNodeMap m_stateNodeMap;

@@ -153,6 +153,7 @@ void ArgumentCoder<ScrollingStateScrollingNode>::encode(Encoder& encoder, const 
     SCROLLING_NODE_ENCODE(ScrollingStateNode::Property::RequestedScrollPosition, requestedScrollData)
     SCROLLING_NODE_ENCODE(ScrollingStateNode::Property::KeyboardScrollData, keyboardScrollData)
     SCROLLING_NODE_ENCODE(ScrollingStateNode::Property::ContentAreaHoverState, mouseIsOverContentArea)
+    SCROLLING_NODE_ENCODE(ScrollingStateNode::Property::HasDirtyChildNode, hasDirtyChildNode)
 
     if (node.hasChangedProperty(ScrollingStateNode::Property::ScrollContainerLayer))
         encoder << node.scrollContainerLayer().layerIDForEncoding();
@@ -177,6 +178,7 @@ void ArgumentCoder<ScrollingStateScrollingNode>::encode(Encoder& encoder, const 
         encoder << mouseLocationState.locationInHorizontalScrollbar;
         encoder << mouseLocationState.locationInVerticalScrollbar;
     }
+//    WTFLogAlways("ScrollingStateNode::encoder: %llu isDirty:%d", node.scrollingNodeID(), node.hasDirtyChildNode());
 }
 
 void ArgumentCoder<ScrollingStateFrameScrollingNode>::encode(Encoder& encoder, const ScrollingStateFrameScrollingNode& node)
@@ -263,6 +265,8 @@ bool ArgumentCoder<ScrollingStateScrollingNode>::decode(Decoder& decoder, Scroll
 #endif
     SCROLLING_NODE_DECODE(ScrollingStateNode::Property::IsMonitoringWheelEvents, bool, setIsMonitoringWheelEvents);
     SCROLLING_NODE_DECODE(ScrollingStateNode::Property::ScrollableAreaParams, ScrollableAreaParameters, setScrollableAreaParameters);
+    SCROLLING_NODE_DECODE(ScrollingStateNode::Property::HasDirtyChildNode, bool, setHasDirtyChildNode);
+
     if (node.hasChangedProperty(ScrollingStateNode::Property::RequestedScrollPosition)) {
         RequestedScrollData requestedScrollData;
         if (!decoder.decode(requestedScrollData))
@@ -322,6 +326,7 @@ bool ArgumentCoder<ScrollingStateScrollingNode>::decode(Decoder& decoder, Scroll
         node.setMouseMovedInContentArea({ locationInHorizontalScrollbar, locationInVerticalScrollbar });
     }
 
+//    WTFLogAlways("ScrollingStateNode::decoder: %llu isDirty:%d", node.scrollingNodeID(), node.hasDirtyChildNode());
     return true;
 }
 
@@ -531,6 +536,8 @@ void RemoteScrollingCoordinatorTransaction::encode(IPC::Encoder& encoder) const
     bool hasNewRootNode = m_scrollingStateTree ? m_scrollingStateTree->hasNewRootStateNode() : false;
     encoder << hasNewRootNode;
 
+    encoder << m_scrollingStateTree->nodesRemovedSinceLastCommit();
+
     if (m_scrollingStateTree) {
         encoder << m_scrollingStateTree->hasChangedProperties();
 
@@ -560,7 +567,11 @@ bool RemoteScrollingCoordinatorTransaction::decode(IPC::Decoder& decoder)
     bool hasNewRootNode;
     if (!decoder.decode(hasNewRootNode))
         return false;
-    
+
+    HashSet<ScrollingNodeID> nodes;
+    if (!decoder.decode(nodes))
+        return false;
+
     m_scrollingStateTree = makeUnique<ScrollingStateTree>();
 
     bool hasChangedProperties;
@@ -627,7 +638,7 @@ bool RemoteScrollingCoordinatorTransaction::decode(IPC::Decoder& decoder)
     }
 
     m_scrollingStateTree->setHasNewRootStateNode(hasNewRootNode);
-
+    m_scrollingStateTree->setNodesRemovedSinceLastCommit(nodes);
     return true;
 }
 

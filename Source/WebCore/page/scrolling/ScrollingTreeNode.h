@@ -72,7 +72,6 @@ public:
 
     virtual bool commitStateBeforeChildren(const ScrollingStateNode&) = 0;
     virtual bool commitStateAfterChildren(const ScrollingStateNode&) { return true; }
-    virtual void didCompleteCommitForNode() { }
     
     virtual void willBeDestroyed() { }
 
