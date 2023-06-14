@@ -34,6 +34,8 @@
 #import <wtf/Forward.h>
 #import <wtf/HashMap.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/WeakObjCPtr.h>
+#import <wtf/WeakPtr.h>
 #import <wtf/text/StringHash.h>
 #import <wtf/text/WTFString.h>
 
@@ -100,9 +102,9 @@ public:
 private:
     std::unique_ptr<WebCore::InspectorFrontendClientLocal::Settings> createFrontendSettings();
 
-    WebView *m_inspectedWebView { nullptr };
+    WeakObjCPtr<WebView> m_inspectedWebView;
     RetainPtr<WebNodeHighlighter> m_highlighter;
-    WebCore::Page* m_frontendPage { nullptr };
+    WeakPtr<WebCore::Page> m_frontendPage;
     std::unique_ptr<WebInspectorFrontendClient> m_frontendClient;
 };
 
@@ -160,7 +162,7 @@ private:
     void save(Vector<WebCore::InspectorFrontendClient::SaveData>&&, bool base64Encoded) override;
 
 #if !PLATFORM(IOS_FAMILY)
-    WebView *m_inspectedWebView;
+    WeakObjCPtr<WebView> m_inspectedWebView;
     RetainPtr<WebInspectorWindowController> m_frontendWindowController;
     String m_inspectedURL;
     HashMap<String, RetainPtr<NSURL>> m_suggestedToActualURLMap;

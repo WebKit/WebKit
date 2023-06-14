@@ -53,7 +53,7 @@ public:
 private:
     WebOpenPanelResultListener(WebPage&, Ref<WebCore::FileChooser>&&);
 
-    WebPage* m_page;
+    WeakPtr<WebPage> m_page;
     Ref<WebCore::FileChooser> m_fileChooser;
 };
 

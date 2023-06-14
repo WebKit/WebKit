@@ -653,7 +653,7 @@ void WebPageProxy::willPerformPasteCommand(DOMPasteAccessCategory pasteAccessCat
     }
 }
 
-NSView *WebPageProxy::Internals::platformView() const
+RetainPtr<NSView> WebPageProxy::Internals::platformView() const
 {
     return [page.pageClient().platformWindow() contentView];
 }

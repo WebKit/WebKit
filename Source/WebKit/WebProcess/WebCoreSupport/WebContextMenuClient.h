@@ -74,7 +74,7 @@ private:
     void showContextMenu() override;
 #endif
 
-    WebPage* m_page;
+    WeakPtr<WebPage> m_page;
 };
 
 } // namespace WebKit

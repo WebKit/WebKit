@@ -429,8 +429,6 @@ Page::~Page()
         --gNonUtilityPageCount;
         MemoryPressureHandler::setPageCount(gNonUtilityPageCount);
     }
-    
-    m_settings->pageDestroyed();
 
     m_inspectorController->inspectedPageDestroyed();
 

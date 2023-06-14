@@ -54,7 +54,7 @@ public:
 
 private:
     WebCore::ColorChooserClient* m_colorChooserClient;
-    WebPage* m_page;
+    WeakPtr<WebPage> m_page;
 };
 
 } // namespace WebKit

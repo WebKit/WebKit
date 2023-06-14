@@ -167,7 +167,7 @@ private:
         bool m_shouldDeactivateAudioSession;
     };
 
-    Page* m_page;
+    WeakPtr<Page> m_page;
     Backup m_backup;
 };
 

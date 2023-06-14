@@ -367,7 +367,7 @@ struct WebPageProxy::Internals final : WebPopupMenuProxy::Client
     void setShouldPlayToPlaybackTarget(WebCore::PlaybackTargetClientContextIdentifier, bool) final;
     void playbackTargetPickerWasDismissed(WebCore::PlaybackTargetClientContextIdentifier) final;
     bool alwaysOnLoggingAllowed() const final { return page.sessionID().isAlwaysOnLoggingAllowed(); }
-    PlatformView* platformView() const final;
+    RetainPtr<PlatformView> platformView() const final;
 #endif
 };
 

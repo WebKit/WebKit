@@ -362,7 +362,7 @@ void WebEditorClient::textFieldDidBeginEditing(Element& element)
     auto* webFrame = WebFrame::fromCoreFrame(*element.document().frame());
     ASSERT(webFrame);
 
-    m_page->injectedBundleFormClient().textFieldDidBeginEditing(m_page, *inputElement, webFrame);
+    m_page->injectedBundleFormClient().textFieldDidBeginEditing(m_page.get(), *inputElement, webFrame);
 }
 
 void WebEditorClient::textFieldDidEndEditing(Element& element)
@@ -374,7 +374,7 @@ void WebEditorClient::textFieldDidEndEditing(Element& element)
     auto* webFrame = WebFrame::fromCoreFrame(*element.document().frame());
     ASSERT(webFrame);
 
-    m_page->injectedBundleFormClient().textFieldDidEndEditing(m_page, *inputElement, webFrame);
+    m_page->injectedBundleFormClient().textFieldDidEndEditing(m_page.get(), *inputElement, webFrame);
 }
 
 void WebEditorClient::textDidChangeInTextField(Element& element)
@@ -388,7 +388,7 @@ void WebEditorClient::textDidChangeInTextField(Element& element)
     auto* webFrame = WebFrame::fromCoreFrame(*element.document().frame());
     ASSERT(webFrame);
 
-    m_page->injectedBundleFormClient().textDidChangeInTextField(m_page, *inputElement, webFrame, initiatedByUserTyping);
+    m_page->injectedBundleFormClient().textDidChangeInTextField(m_page.get(), *inputElement, webFrame, initiatedByUserTyping);
 }
 
 void WebEditorClient::textDidChangeInTextArea(Element& element)
@@ -400,7 +400,7 @@ void WebEditorClient::textDidChangeInTextArea(Element& element)
     auto* webFrame = WebFrame::fromCoreFrame(*element.document().frame());
     ASSERT(webFrame);
 
-    m_page->injectedBundleFormClient().textDidChangeInTextArea(m_page, *textAreaElement, webFrame);
+    m_page->injectedBundleFormClient().textDidChangeInTextArea(m_page.get(), *textAreaElement, webFrame);
 }
 
 #if !PLATFORM(IOS_FAMILY)
@@ -473,7 +473,7 @@ bool WebEditorClient::doTextFieldCommandFromEvent(Element& element, KeyboardEven
     auto* webFrame = WebFrame::fromCoreFrame(*element.document().frame());
     ASSERT(webFrame);
 
-    return m_page->injectedBundleFormClient().shouldPerformActionInTextField(m_page, *inputElement, toInputFieldAction(actionType), webFrame);
+    return m_page->injectedBundleFormClient().shouldPerformActionInTextField(m_page.get(), *inputElement, toInputFieldAction(actionType), webFrame);
 }
 
 void WebEditorClient::textWillBeDeletedInTextField(Element& element)
@@ -485,7 +485,7 @@ void WebEditorClient::textWillBeDeletedInTextField(Element& element)
     auto* webFrame = WebFrame::fromCoreFrame(*element.document().frame());
     ASSERT(webFrame);
 
-    m_page->injectedBundleFormClient().shouldPerformActionInTextField(m_page, *inputElement, toInputFieldAction(WKInputFieldActionTypeInsertDelete), webFrame);
+    m_page->injectedBundleFormClient().shouldPerformActionInTextField(m_page.get(), *inputElement, toInputFieldAction(WKInputFieldActionTypeInsertDelete), webFrame);
 }
 
 bool WebEditorClient::shouldEraseMarkersAfterChangeSelection(WebCore::TextCheckingType type) const

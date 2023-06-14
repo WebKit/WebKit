@@ -51,7 +51,7 @@ private:
     WebCore::NotificationClient::Permission checkPermission(WebCore::ScriptExecutionContext*) final;
 
     HashSet<WebCore::SecurityOriginData> m_notificationPermissionRequesters;
-    WebPage* m_page { nullptr };
+    WeakPtr<WebPage> m_page;
 };
 
 } // namespace WebKit
