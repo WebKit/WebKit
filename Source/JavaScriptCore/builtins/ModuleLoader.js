@@ -411,7 +411,7 @@ async function loadAndEvaluateModule(moduleName, parameters, fetcher)
     var key = moduleName;
     if (importMap) {
         await importMap;
-        key = this.resolve(moduleName, referrer, fetcher);
+        key = this.resolve(moduleName, @undefined, fetcher);
     }
     key = await this.loadModule(key, parameters, fetcher);
     return await this.linkAndEvaluateModule(key, fetcher);
