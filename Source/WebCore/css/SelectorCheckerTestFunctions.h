@@ -96,7 +96,7 @@ ALWAYS_INLINE bool matchesDisabledPseudoClass(const Element& element)
 // https://html.spec.whatwg.org/multipage/scripting.html#selector-enabled
 ALWAYS_INLINE bool matchesEnabledPseudoClass(const Element& element)
 {
-    return is<HTMLElement>(element) && downcast<HTMLElement>(element).canBeActuallyDisabled() && !element.isDisabledFormControl();
+    return is<HTMLElement>(element) && downcast<HTMLElement>(element).canBeActuallyDisabled() && !downcast<HTMLElement>(element).isActuallyDisabled();
 }
 
 // https://dom.spec.whatwg.org/#concept-element-defined

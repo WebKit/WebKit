@@ -45,6 +45,7 @@ private:
     ~HTMLFieldSetElement();
 
     bool isDisabledFormControl() const final;
+    bool isActuallyDisabled() const final;
     bool isEnumeratable() const final { return true; }
     bool supportsFocus() const final;
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;

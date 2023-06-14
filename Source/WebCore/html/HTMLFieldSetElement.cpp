@@ -73,6 +73,13 @@ bool HTMLFieldSetElement::isDisabledFormControl() const
     return HTMLFormControlElement::isDisabledFormControl();
 }
 
+// https://html.spec.whatwg.org/#concept-element-disabled
+// https://html.spec.whatwg.org/#concept-fieldset-disabled
+bool HTMLFieldSetElement::isActuallyDisabled() const
+{
+    return HTMLFormControlElement::isDisabledFormControl();
+}
+
 static void updateFromControlElementsAncestorDisabledStateUnder(HTMLElement& startNode, bool isDisabled)
 {
     auto range = inclusiveDescendantsOfType<Element>(startNode);
