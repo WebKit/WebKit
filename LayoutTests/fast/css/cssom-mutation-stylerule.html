@@ -1,0 +1,14 @@
+<style>
+    aaa {
+        color: red;
+    }
+</style>
+<script>
+  onload = () => {
+    let cssStyleRule = document.styleSheets[0].cssRules[0];
+    document.styleSheets[0].deleteRule(0);
+    cssStyleRule.insertRule(`.bar { color: black; }`);
+  };
+</script>
+
+Test passes if no crash.
