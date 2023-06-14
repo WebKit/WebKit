@@ -416,9 +416,6 @@ void BackgroundPainter::paintFillLayer(const Color& color, const FillLayer& bgLa
                 ASSERT(bgImage->hasCachedImage());
                 bgImage->cachedImage()->addClientWaitingForAsyncDecoding(m_renderer);
             }
-
-            if (m_renderer.element() && !context.paintingDisabled())
-                m_renderer.element()->setHasEverPaintedImages(true);
         }
     }
 

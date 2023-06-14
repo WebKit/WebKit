@@ -11,7 +11,8 @@
 
                         // Force layout and display so the image gets drawn.
                         document.body.offsetHeight;
-                        testRunner.display();
+                        if (window.testRunner)
+                            testRunner.display();
 
                         image.addEventListener("webkitImageFrameReady", function() {
                             internals.setLargeImageAsyncDecodingEnabledForTesting(image, false);
