@@ -224,19 +224,20 @@ jobs:
           mv ${{runner.temp}}/bun-webkit-linux-amd64-lto/bun-webkit.tar.gz ${{runner.temp}}/bun-webkit-linux-amd64-lto.tar.gz
       - name: Release
         uses: softprops/action-gh-release@v1
+        id: release
         with:
           prerelease: true
           generate_release_notes: true
           tag_name: "autobuild-${{github.sha}}"
           files: |
-            ${{runner.temp}}/bun-webkit-linux-amd64.tar.gz
-            ${{runner.temp}}/bun-webkit-linux-arm64.tar.gz
-            ${{runner.temp}}/bun-webkit-macos-arm64.tar.gz
-            ${{runner.temp}}/bun-webkit-macos-amd64.tar.gz
             ${{runner.temp}}/bun-webkit-linux-amd64-debug.tar.gz
             ${{runner.temp}}/bun-webkit-linux-arm64-debug.tar.gz
             ${{runner.temp}}/bun-webkit-macos-arm64-debug.tar.gz
             ${{runner.temp}}/bun-webkit-macos-amd64-debug.tar.gz
+            ${{runner.temp}}/bun-webkit-linux-amd64.tar.gz
+            ${{runner.temp}}/bun-webkit-linux-arm64.tar.gz
+            ${{runner.temp}}/bun-webkit-macos-arm64.tar.gz
+            ${{runner.temp}}/bun-webkit-macos-amd64.tar.gz
             ${{runner.temp}}/bun-webkit-linux-amd64-lto.tar.gz
             ${{runner.temp}}/bun-webkit-linux-arm64-lto.tar.gz
             ${{runner.temp}}/bun-webkit-macos-arm64-lto.tar.gz
@@ -313,36 +314,12 @@ jobs:
           cd bun-webkit
           npm publish --tag next --access=public
 
-          rm -rf ${{runner.temp}}/bun-webkit
-          cd ${{runner.temp}}
-          tar -xzf bun-webkit-linux-amd64-debug.tar.gz
-          cd bun-webkit
-          npm publish --tag next --access=public
-
-          rm -rf ${{runner.temp}}/bun-webkit
-          cd ${{runner.temp}}
-          tar -xzf bun-webkit-linux-arm64-debug.tar.gz
-          cd bun-webkit
-          npm publish --tag next --access=public
-
-          rm -rf ${{runner.temp}}/bun-webkit
-          cd ${{runner.temp}}
-          tar -xzf bun-webkit-macos-arm64-debug.tar.gz
-          cd bun-webkit
-          npm publish --tag next --access=public
-
-          rm -rf ${{runner.temp}}/bun-webkit
-          cd ${{runner.temp}}
-          tar -xzf bun-webkit-macos-amd64-debug.tar.gz
-          cd bun-webkit
-          npm publish --tag next --access=public
-
           rm -rf ${{runner.temp}}/bun-webkit-lto ${{runner.temp}}/bun-webkit ${{runner.temp}}/bun-webkit-debug
           mkdir -p ${{runner.temp}}/bun-webkit-lto ${{runner.temp}}/bun-webkit ${{runner.temp}}/bun-webkit-debug
 
           echo '{ "name": "bun-webkit", "version": "0.0.1-${{github.sha}}", "repository": "https://github.com/${{github.repository}}", "optionalDependencies": {"bun-webkit-linux-amd64": "0.0.1-${{github.sha}}", "bun-webkit-linux-arm64": "0.0.1-${{github.sha}}", "bun-webkit-macos-arm64": "0.0.1-${{github.sha}}", "bun-webkit-macos-amd64": "0.0.1-${{github.sha}}"} }' > ${{runner.temp}}/bun-webkit/package.json
           echo '{ "name": "bun-webkit-lto", "version": "0.0.1-${{github.sha}}", "repository": "https://github.com/${{github.repository}}", "optionalDependencies": {"bun-webkit-linux-amd64-lto": "0.0.1-${{github.sha}}", "bun-webkit-linux-arm64-lto": "0.0.1-${{github.sha}}", "bun-webkit-macos-arm64-lto": "0.0.1-${{github.sha}}", "bun-webkit-macos-amd64-lto": "0.0.1-${{github.sha}}"} }' > ${{runner.temp}}/bun-webkit-lto/package.json
-          echo '{ "name": "bun-webkit-debug", "version": "0.0.1-${{github.sha}}", "repository": "https://github.com/${{github.repository}}", "optionalDependencies": {"bun-webkit-linux-amd64-debug": "0.0.1-${{github.sha}}", "bun-webkit-linux-arm64-debug": "0.0.1-${{github.sha}}", "bun-webkit-macos-arm64-debug": "0.0.1-${{github.sha}}", "bun-webkit-macos-amd64-debug": "0.0.1-${{github.sha}}"} }' > ${{runner.temp}}/bun-webkit-debug/package.json
+          echo '{ "name": "bun-webkit-debug", "version": "0.0.1-${{github.sha}}", "repository": "https://github.com/${{github.repository}}", "config": {"bun-webkit-linux-amd64-debug": "${{ fromJSON(steps.release.outputs.assets)[0].browser_download_url }}", "bun-webkit-linux-arm64-debug": "${{ fromJSON(steps.release.outputs.assets)[1].browser_download_url }}", "bun-webkit-macos-arm64-debug": "${{ fromJSON(steps.release.outputs.assets)[2].browser_download_url }}", "bun-webkit-macos-amd64-debug": "${{ fromJSON(steps.release.outputs.assets)[3].browser_download_url }}"} }' > ${{runner.temp}}/bun-webkit-debug/package.json
 
           echo "$README_TEXT" > ${{runner.temp}}/bun-webkit/README.md
           echo "$README_TEXT" > ${{runner.temp}}/bun-webkit-lto/README.md
