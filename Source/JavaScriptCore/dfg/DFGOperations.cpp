@@ -3337,12 +3337,9 @@ JSC_DEFINE_JIT_OPERATION(operationArrayIndexOfValueInt32OrContiguous, UCPUStrict
     return toUCPUStrictInt32(-1);
 }
 
-JSC_DEFINE_JIT_OPERATION(operationArrayIndexOfValueDouble, UCPUStrictInt32, (JSGlobalObject* globalObject, Butterfly* butterfly, EncodedJSValue encodedValue, int32_t index))
+JSC_DEFINE_JIT_OPERATION(operationArrayIndexOfValueDouble, UCPUStrictInt32, (Butterfly* butterfly, EncodedJSValue encodedValue, int32_t index))
 {
-    VM& vm = globalObject->vm();
-    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
-    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
-
+    // We do not cause any exceptions, thus we do not need FrameTracers.
     JSValue searchElement = JSValue::decode(encodedValue);
 
     if (!searchElement.isNumber())
@@ -3356,6 +3353,21 @@ JSC_DEFINE_JIT_OPERATION(operationArrayIndexOfValueDouble, UCPUStrictInt32, (JSG
         if (data[index] == number)
             return toUCPUStrictInt32(index);
     }
+    return toUCPUStrictInt32(-1);
+}
+
+JSC_DEFINE_JIT_OPERATION(operationArrayIndexOfNonStringIdentityValueContiguous, UCPUStrictInt32, (Butterfly* butterfly, EncodedJSValue searchElement, int32_t index))
+{
+    // We do not cause any exceptions, thus we do not need FrameTracers.
+    int32_t length = butterfly->publicLength();
+    auto data = butterfly->contiguous().data();
+
+    if (index >= length)
+        return toUCPUStrictInt32(-1);
+
+    auto* result = bitwise_cast<const WriteBarrier<Unknown>*>(WTF::find64(bitwise_cast<const uint64_t*>(data + index), searchElement, length - index));
+    if (result)
+        return toUCPUStrictInt32(result - data);
     return toUCPUStrictInt32(-1);
 }
 

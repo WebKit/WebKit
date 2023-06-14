@@ -7334,9 +7334,6 @@ IGNORE_CLANG_WARNINGS_END
         Edge& searchElementEdge = m_graph.varArgChild(m_node, 1);
         switch (searchElementEdge.useKind()) {
         case Int32Use:
-        case ObjectUse:
-        case SymbolUse:
-        case OtherUse:
         case DoubleRepUse: {
             LBasicBlock loopHeader = m_out.newBlock();
             LBasicBlock loopBody = m_out.newBlock();
@@ -7348,19 +7345,6 @@ IGNORE_CLANG_WARNINGS_END
             switch (searchElementEdge.useKind()) {
             case Int32Use:
                 ASSERT(m_node->arrayMode().type() == Array::Int32);
-                speculate(searchElementEdge);
-                searchElement = lowJSValue(searchElementEdge, ManualOperandSpeculation);
-                break;
-            case ObjectUse:
-                ASSERT(m_node->arrayMode().type() == Array::Contiguous);
-                searchElement = lowObject(searchElementEdge);
-                break;
-            case SymbolUse:
-                ASSERT(m_node->arrayMode().type() == Array::Contiguous);
-                searchElement = lowSymbol(searchElementEdge);
-                break;
-            case OtherUse:
-                ASSERT(m_node->arrayMode().type() == Array::Contiguous);
                 speculate(searchElementEdge);
                 searchElement = lowJSValue(searchElementEdge, ManualOperandSpeculation);
                 break;
@@ -7389,14 +7373,6 @@ IGNORE_CLANG_WARNINGS_END
             case Int32Use: {
                 // Empty value is ignored because of JSValue::NumberTag.
                 LValue value = m_out.load64(m_out.baseIndex(m_heaps.indexedInt32Properties, storage, index));
-                m_out.branch(m_out.equal(value, searchElement), unsure(continuation), unsure(loopNext));
-                break;
-            }
-            case ObjectUse:
-            case SymbolUse:
-            case OtherUse: {
-                // Empty value never matches against non-empty JS values.
-                LValue value = m_out.load64(m_out.baseIndex(m_heaps.indexedContiguousProperties, storage, index));
                 m_out.branch(m_out.equal(value, searchElement), unsure(continuation), unsure(loopNext));
                 break;
             }
@@ -7434,10 +7410,34 @@ IGNORE_CLANG_WARNINGS_END
             setInt32(m_out.castToInt32(vmCall(Int64, operationArrayIndexOfString, weakPointer(globalObject), storage, lowString(searchElementEdge), startIndex)));
             return;
 
+        case OtherUse:
+        case ObjectUse:
+        case SymbolUse: {
+            ASSERT(m_node->arrayMode().type() == Array::Contiguous);
+            LValue searchElement;
+            switch (searchElementEdge.useKind()) {
+            case ObjectUse:
+                searchElement = lowObject(searchElementEdge);
+                break;
+            case SymbolUse:
+                searchElement = lowSymbol(searchElementEdge);
+                break;
+            case OtherUse:
+                speculate(searchElementEdge);
+                searchElement = lowJSValue(searchElementEdge, ManualOperandSpeculation);
+                break;
+            default:
+                RELEASE_ASSERT_NOT_REACHED();
+                break;
+            }
+            setInt32(m_out.castToInt32(vmCall(Int64, operationArrayIndexOfNonStringIdentityValueContiguous, storage, searchElement, startIndex)));
+            return;
+        }
+
         case UntypedUse:
             switch (m_node->arrayMode().type()) {
             case Array::Double:
-                setInt32(m_out.castToInt32(vmCall(Int64, operationArrayIndexOfValueDouble, weakPointer(globalObject), storage, lowJSValue(searchElementEdge), startIndex)));
+                setInt32(m_out.castToInt32(vmCall(Int64, operationArrayIndexOfValueDouble, storage, lowJSValue(searchElementEdge), startIndex)));
                 return;
             case Array::Contiguous:
                 // We have to keep base alive since that keeps content of storage alive.

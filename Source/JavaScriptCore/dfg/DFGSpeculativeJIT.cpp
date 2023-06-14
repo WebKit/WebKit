@@ -10462,10 +10462,7 @@ void SpeculativeJIT::compileArrayIndexOf(Node* node)
 
     Edge& searchElementEdge = m_graph.varArgChild(node, 1);
     switch (searchElementEdge.useKind()) {
-    case Int32Use:
-    case ObjectUse:
-    case SymbolUse:
-    case OtherUse: {
+    case Int32Use: {
         auto emitLoop = [&] (auto emitCompare) {
 #if ENABLE(DFG_REGISTER_ALLOCATION_VALIDATION)
             clearRegisterAllocationOffsets();
@@ -10488,76 +10485,24 @@ void SpeculativeJIT::compileArrayIndexOf(Node* node)
             strictInt32Result(indexGPR, node);
         };
 
-        if (searchElementEdge.useKind() == Int32Use) {
-            ASSERT(node->arrayMode().type() == Array::Int32);
+        ASSERT(node->arrayMode().type() == Array::Int32);
 #if USE(JSVALUE64)
-            JSValueOperand searchElement(this, searchElementEdge, ManualOperandSpeculation);
-            JSValueRegs searchElementRegs = searchElement.jsValueRegs();
-            speculateInt32(searchElementEdge, searchElementRegs);
-            GPRReg searchElementGPR = searchElementRegs.payloadGPR();
+        JSValueOperand searchElement(this, searchElementEdge, ManualOperandSpeculation);
+        JSValueRegs searchElementRegs = searchElement.jsValueRegs();
+        speculateInt32(searchElementEdge, searchElementRegs);
+        GPRReg searchElementGPR = searchElementRegs.payloadGPR();
 #else
-            SpeculateInt32Operand searchElement(this, searchElementEdge);
-            GPRReg searchElementGPR = searchElement.gpr();
-
-            GPRTemporary temp(this);
-            GPRReg tempGPR = temp.gpr();
-#endif
-            emitLoop([&] () {
-#if USE(JSVALUE64)
-                auto found = branch64(Equal, BaseIndex(storageGPR, indexGPR, TimesEight), searchElementGPR);
-#else
-                auto skip = branch32(NotEqual, BaseIndex(storageGPR, indexGPR, TimesEight, TagOffset), TrustedImm32(JSValue::Int32Tag));
-                load32(BaseIndex(storageGPR, indexGPR, TimesEight, PayloadOffset), tempGPR);
-                auto found = branch32(Equal, tempGPR, searchElementGPR);
-                skip.link(this);
-#endif
-                return found;
-            });
-            return;
-        }
-
-        if (searchElementEdge.useKind() == OtherUse) {
-            ASSERT(node->arrayMode().type() == Array::Contiguous);
-            JSValueOperand searchElement(this, searchElementEdge, ManualOperandSpeculation);
-            GPRTemporary temp(this);
-
-            JSValueRegs searchElementRegs = searchElement.jsValueRegs();
-            GPRReg tempGPR = temp.gpr();
-            speculateOther(searchElementEdge, searchElementRegs, tempGPR);
-
-            emitLoop([&] () {
-#if USE(JSVALUE64)
-                auto found = branch64(Equal, BaseIndex(storageGPR, indexGPR, TimesEight), searchElementRegs.payloadGPR());
-#else
-                load32(BaseIndex(storageGPR, indexGPR, TimesEight, TagOffset), tempGPR);
-                auto found = branch32(Equal, tempGPR, searchElementRegs.tagGPR());
-#endif
-                return found;
-            });
-            return;
-        }
-
-        ASSERT(node->arrayMode().type() == Array::Contiguous);
-        SpeculateCellOperand searchElement(this, searchElementEdge);
+        SpeculateInt32Operand searchElement(this, searchElementEdge);
         GPRReg searchElementGPR = searchElement.gpr();
 
-        if (searchElementEdge.useKind() == ObjectUse)
-            speculateObject(searchElementEdge, searchElementGPR);
-        else {
-            ASSERT(searchElementEdge.useKind() == SymbolUse);
-            speculateSymbol(searchElementEdge, searchElementGPR);
-        }
-
-#if USE(JSVALUE32_64)
         GPRTemporary temp(this);
         GPRReg tempGPR = temp.gpr();
 #endif
-
         emitLoop([&] () {
 #if USE(JSVALUE64)
             auto found = branch64(Equal, BaseIndex(storageGPR, indexGPR, TimesEight), searchElementGPR);
 #else
-            auto skip = branchIfNotCell(BaseIndex(storageGPR, indexGPR, TimesEight, TagOffset));
+            auto skip = branch32(NotEqual, BaseIndex(storageGPR, indexGPR, TimesEight, TagOffset), TrustedImm32(JSValue::Int32Tag));
             load32(BaseIndex(storageGPR, indexGPR, TimesEight, PayloadOffset), tempGPR);
             auto found = branch32(Equal, tempGPR, searchElementGPR);
             skip.link(this);
@@ -10613,6 +10558,22 @@ void SpeculativeJIT::compileArrayIndexOf(Node* node)
         return;
     }
 
+    case ObjectUse:
+    case SymbolUse:
+    case OtherUse: {
+        JSValueOperand value(this, searchElementEdge, ManualOperandSpeculation);
+
+        JSValueRegs valueRegs = value.jsValueRegs();
+        speculate(node, searchElementEdge);
+
+        ASSERT(node->arrayMode().type() == Array::Contiguous);
+
+        flushRegisters();
+        callOperation(operationArrayIndexOfNonStringIdentityValueContiguous, lengthGPR, storageGPR, valueRegs, indexGPR);
+        strictInt32Result(lengthGPR, node);
+        return;
+    }
+
     case UntypedUse: {
         JSValueOperand searchElement(this, searchElementEdge);
 
@@ -10621,7 +10582,7 @@ void SpeculativeJIT::compileArrayIndexOf(Node* node)
         flushRegisters();
         switch (node->arrayMode().type()) {
         case Array::Double:
-            callOperation(operationArrayIndexOfValueDouble, lengthGPR, LinkableConstant::globalObject(*this, node), storageGPR, searchElementRegs, indexGPR);
+            callOperation(operationArrayIndexOfValueDouble, lengthGPR, storageGPR, searchElementRegs, indexGPR);
             break;
         case Array::Int32:
         case Array::Contiguous:
