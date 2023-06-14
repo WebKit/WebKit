@@ -71,12 +71,7 @@ static void keepNetworkProcessActive()
     }];
 }
 
-// FIXME when rdar://109725221 is resolved
-#if PLATFORM(IOS) || PLATFORM(VISION)
-TEST(IndexedDB, DISABLED_IndexedDBSuspendImminently)
-#else
 TEST(IndexedDB, IndexedDBSuspendImminently)
-#endif
 {
     readyToContinue = false;
     [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
@@ -144,12 +139,7 @@ try {
 </script>
 )TESTRESOURCE";
 
-// FIXME when rdar://109725221 is resolved
-#if PLATFORM(IOS) || PLATFORM(VISION)
-TEST(IndexedDB, DISABLED_SuspendImminentlyForThirdPartyDatabases)
-#else
 TEST(IndexedDB, SuspendImminentlyForThirdPartyDatabases)
-#endif
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     auto handler = adoptNS([[IndexedDBSuspendImminentlyMessageHandler alloc] init]);

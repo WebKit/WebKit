@@ -73,12 +73,7 @@ long long fileSizeAtPath(NSString *path)
     return [attrs[NSFileSize] longLongValue];
 }
 
-// FIXME when rdar://109725221 is resolved
-#if PLATFORM(IOS) || PLATFORM(VISION)
-TEST(IndexedDB, DISABLED_CheckpointsWALAutomatically)
-#else
 TEST(IndexedDB, CheckpointsWALAutomatically)
-#endif
 {
     auto handler = adoptNS([[IDBCheckpointWALMessageHandler alloc] init]);
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);

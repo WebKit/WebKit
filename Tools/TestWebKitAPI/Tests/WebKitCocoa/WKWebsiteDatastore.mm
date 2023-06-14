@@ -639,12 +639,7 @@ TEST(WKWebsiteDataStore, ListIdentifiers)
     TestWebKitAPI::Util::run(&done);
 }
 
-// FIXME when rdar://109725221 is resolved
-#if PLATFORM(IOS) || PLATFORM(VISION)
-TEST(WKWebsiteDataStorePrivate, DISABLED_FetchWithSize)
-#else
 TEST(WKWebsiteDataStorePrivate, FetchWithSize)
-#endif
 {
     readyToContinue = false;
     [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^{

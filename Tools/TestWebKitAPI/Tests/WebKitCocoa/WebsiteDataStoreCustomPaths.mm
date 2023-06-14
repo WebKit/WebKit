@@ -267,22 +267,12 @@ static void runWebsiteDataStoreCustomPaths(ShouldEnableProcessPrewarming shouldE
     EXPECT_FALSE([WKWebsiteDataStore _defaultDataStoreExists]);
 }
 
-// FIXME when rdar://109725221 is resolved
-#if PLATFORM(IOS) || PLATFORM(VISION)
-TEST(WebKit, DISABLED_WebsiteDataStoreCustomPathsWithoutPrewarming)
-#else
 TEST(WebKit, WebsiteDataStoreCustomPathsWithoutPrewarming)
-#endif
 {
     runWebsiteDataStoreCustomPaths(ShouldEnableProcessPrewarming::No);
 }
 
-// FIXME when rdar://109725221 is resolved
-#if PLATFORM(IOS) || PLATFORM(VISION)
-TEST(WebKit, DISABLED_WebsiteDataStoreCustomPathsWithPrewarming)
-#else
 TEST(WebKit, WebsiteDataStoreCustomPathsWithPrewarming)
-#endif
 {
     runWebsiteDataStoreCustomPaths(ShouldEnableProcessPrewarming::Yes);
 }
@@ -496,12 +486,7 @@ TEST(WebKit, WebsiteDataStoreIfExists)
     EXPECT_TRUE(dataStore._configuration.persistent);
 }
 
-// FIXME when rdar://109725221 is resolved
-#if PLATFORM(IOS) || PLATFORM(VISION)
-TEST(WebKit, DISABLED_WebsiteDataStoreRenameOriginForIndexedDatabase)
-#else
 TEST(WebKit, WebsiteDataStoreRenameOriginForIndexedDatabase)
-#endif
 {
     // Reset defaultDataStore before test.
     __block bool done = false;

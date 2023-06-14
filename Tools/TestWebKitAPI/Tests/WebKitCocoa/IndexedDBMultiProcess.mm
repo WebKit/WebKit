@@ -52,12 +52,7 @@
 
 @end
 
-// FIXME when rdar://109725221 is resolved
-#if PLATFORM(IOS) || PLATFORM(VISION)
-TEST(IndexedDB, DISABLED_IndexedDBMultiProcess)
-#else
 TEST(IndexedDB, IndexedDBMultiProcess)
-#endif
 {
     RetainPtr<IndexedDBMPMessageHandler> handler = adoptNS([[IndexedDBMPMessageHandler alloc] init]);
     RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);

@@ -51,12 +51,7 @@
 
 @end
 
-// FIXME when rdar://109725221 is resolved
-#if PLATFORM(IOS) || PLATFORM(VISION)
-TEST(IndexedDB, DISABLED_IndexUpgradeToV2)
-#else
 TEST(IndexedDB, IndexUpgradeToV2)
-#endif
 {
     RetainPtr<IDBIndexUpgradeToV2MessageHandler> handler = adoptNS([[IDBIndexUpgradeToV2MessageHandler alloc] init]);
     RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -117,22 +112,12 @@ static void runMultipleIndicesTestWithDatabase(NSString* databaseName)
     EXPECT_WK_STREQ(@"Get object: {\"name\":\"apple\",\"color\":\"red\"}", [lastScriptMessage body]);
 }
 
-// FIXME when rdar://109725221 is resolved
-#if PLATFORM(IOS) || PLATFORM(VISION)
-TEST(IndexedDB, DISABLED_IndexUpgradeToV2WithMultipleIndices)
-#else
 TEST(IndexedDB, IndexUpgradeToV2WithMultipleIndices)
-#endif
 {
     runMultipleIndicesTestWithDatabase(@"IndexUpgradeWithMultipleIndices");
 }
 
-// FIXME when rdar://109725221 is resolved
-#if PLATFORM(IOS) || PLATFORM(VISION)
-TEST(IndexedDB, DISABLED_IndexUpgradeToV2WithMultipleIndicesHaveSameID)
-#else
 TEST(IndexedDB, IndexUpgradeToV2WithMultipleIndicesHaveSameID)
-#endif
 {
     runMultipleIndicesTestWithDatabase(@"IndexUpgradeWithMultipleIndicesHaveSameID");
 }

@@ -51,12 +51,7 @@
 
 @end
 
-// FIXME when rdar://109725221 is resolved
-#if PLATFORM(IOS) || PLATFORM(VISION)
-TEST(IndexedDB, DISABLED_IndexedDBUserDelete)
-#else
 TEST(IndexedDB, IndexedDBUserDelete)
-#endif
 {
     auto handler = adoptNS([[IndexedDBUserDeleteMessageHandler alloc] init]);
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
