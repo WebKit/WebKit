@@ -5,7 +5,6 @@
 # -----------------------------------------------------------------------------
 if (NOT HAS_RUN_WEBKIT_COMMON)
     set(HAS_RUN_WEBKIT_COMMON TRUE)
-    set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Choose the type of build." FORCE)
 
     if (NOT CMAKE_BUILD_TYPE)
         message(WARNING "No CMAKE_BUILD_TYPE value specified, defaulting to Release.")
