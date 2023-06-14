@@ -18,29 +18,47 @@ jobs:
       matrix:
         include:
           - runner: macos-11
+            lto_flag: ""
+            cpu: haswell
+            label: bun-webkit-macos-amd64-debug
+            brew_prefix: /usr/local/opt
+            package_json_arch: "x64"
+            CMAKE_BUILD_TYPE: Debug
+          - runner: macOS-arm64
+            lto_flag: ""
+            cpu: native
+            label: bun-webkit-macos-arm64-debug
+            brew_prefix: /opt/homebrew/opt
+            package_json_arch: "arm64"
+            CMAKE_BUILD_TYPE: Debug
+          - runner: macos-11
             lto_flag: -flto='full'
             cpu: haswell
             label: bun-webkit-macos-amd64-lto
             brew_prefix: /usr/local/opt
             package_json_arch: "x64"
+            CMAKE_BUILD_TYPE: Release
           - runner: macos-11
             lto_flag: ""
             cpu: haswell
             label: bun-webkit-macos-amd64
             brew_prefix: /usr/local/opt
             package_json_arch: "x64"
+            CMAKE_BUILD_TYPE: Release
           - runner: macOS-arm64
             lto_flag: -flto='full'
             cpu: native
             label: bun-webkit-macos-arm64-lto
             brew_prefix: /opt/homebrew/opt
             package_json_arch: "arm64"
+            CMAKE_BUILD_TYPE: Release
           - runner: macOS-arm64
             lto_flag: ""
             cpu: native
             label: bun-webkit-macos-arm64
             brew_prefix: /opt/homebrew/opt
             package_json_arch: "arm64"
+            CMAKE_BUILD_TYPE: Release
     steps:
       - uses: actions/checkout@v3
       - name: PATH
@@ -59,6 +77,7 @@ jobs:
           CMAKE_C_FLAGS: "-fuse-ld=lld -fno-exceptions ${{matrix.lto_flag}} -fvisibility=hidden -fvisibility-inlines-hidden -O3"
           CMAKE_CXX_FLAGS: "-fuse-ld=lld -I${{matrix.brew_prefix}}/llvm/include -fno-exceptions ${{matrix.lto_flag}} -fvisibility=hidden -fvisibility-inlines-hidden -O3"
           CMAKE_OSX_DEPLOYMENT_TARGET: "11.0"
+          CMAKE_BUILD_TYPE: ${{matrix.CMAKE_BUILD_TYPE}}
           PACKAGE_JSON_ARCH: ${{matrix.package_json_arch}}
           PACKAGE_JSON_LABEL: ${{matrix.label}}
         run: GITHUB_REPOSITORY=$GITHUB_REPOSITORY bash mac-release.bash
@@ -73,22 +92,36 @@ jobs:
     strategy:
       matrix:
         include:
+          - lto_flag: ""
+            label: bun-webkit-linux-amd64-debug
+            os: big-ubuntu
+            package_json_arch: "x64"
+            CMAKE_BUILD_TYPE: "Debug"
+          - lto_flag: ""
+            label: bun-webkit-linux-arm64-debug
+            os: big-ubuntu
+            package_json_arch: "x64"
+            CMAKE_BUILD_TYPE: "Debug"
           - lto_flag: "-flto='full'"
             label: bun-webkit-linux-arm64-lto
             os: linux-arm64
             package_json_arch: "arm64"
+            CMAKE_BUILD_TYPE: "Release"
           - lto_flag: ""
             label: bun-webkit-linux-arm64
             os: linux-arm64
             package_json_arch: "arm64"
+            CMAKE_BUILD_TYPE: "Release"
           - lto_flag: "-flto='full'"
             label: bun-webkit-linux-amd64-lto
             os: big-ubuntu
             package_json_arch: "x64"
+            CMAKE_BUILD_TYPE: "Release"
           - lto_flag: ""
             label: bun-webkit-linux-amd64
             os: big-ubuntu
             package_json_arch: "x64"
+            CMAKE_BUILD_TYPE: "Release"
 
     timeout-minutes: 90
     steps:
@@ -100,7 +133,7 @@ jobs:
       - name: Run
         run: |
           rm -rf ${{runner.temp}}/bun-webkit ${{runner.temp}}/bun-webkit.tar.gz
-          CPU="native" cpu=native LTO_FLAG=${{matrix.lto_flag}} temp=${{runner.temp}} bash release.sh
+          CMAKE_BUILD_TYPE=${{matrix.CMAKE_BUILD_TYPE}} CPU="native" cpu=native LTO_FLAG=${{matrix.lto_flag}} temp=${{runner.temp}} bash release.sh
           cd ${{runner.temp}}
           echo "#define BUN_WEBKIT_VERSION \"${{github.sha}}\"" >> bun-webkit/include/cmakeconfig.h
           echo '{ "name": "${{matrix.label}}", "version": "0.0.1-${{github.sha}}", "os": ["linux"], "cpu": ["${{matrix.package_json_arch}}"], "repository": "https://github.com/${{github.repository}}" }' > bun-webkit/package.json
@@ -131,8 +164,20 @@ jobs:
           path: ${{runner.temp}}/bun-webkit-linux-arm64
       - uses: actions/download-artifact@v3
         with:
+          name: bun-webkit-linux-amd64-debug
+          path: ${{runner.temp}}/bun-webkit-linux-amd64-debug
+      - uses: actions/download-artifact@v3
+        with:
+          name: bun-webkit-linux-arm64-debug
+          path: ${{runner.temp}}/bun-webkit-linux-arm64-debug
+      - uses: actions/download-artifact@v3
+        with:
           name: bun-webkit-macos-arm64
           path: ${{runner.temp}}/bun-webkit-macos-arm64
+      - uses: actions/download-artifact@v3
+        with:
+          name: bun-webkit-macos-arm64-debug
+          path: ${{runner.temp}}/bun-webkit-macos-arm64-debug
       - uses: actions/download-artifact@v3
         with:
           name: bun-webkit-macos-arm64-lto
@@ -141,6 +186,10 @@ jobs:
         with:
           name: bun-webkit-macos-amd64
           path: ${{runner.temp}}/bun-webkit-macos-amd64
+      - uses: actions/download-artifact@v3
+        with:
+          name: bun-webkit-macos-amd64-debug
+          path: ${{runner.temp}}/bun-webkit-macos-amd64-debug
       - uses: actions/download-artifact@v3
         with:
           name: bun-webkit-macos-amd64-lto
@@ -159,8 +208,12 @@ jobs:
           mv ${{runner.temp}}/bun-webkit-linux-amd64/bun-webkit.tar.gz ${{runner.temp}}/bun-webkit-linux-amd64.tar.gz
           mv ${{runner.temp}}/bun-webkit-linux-arm64/bun-webkit.tar.gz  ${{runner.temp}}/bun-webkit-linux-arm64.tar.gz
           mv ${{runner.temp}}/bun-webkit-macos-arm64/bun-webkit.tar.gz ${{runner.temp}}/bun-webkit-macos-arm64.tar.gz
-          mv ${{runner.temp}}/bun-webkit-macos-arm64-lto/bun-webkit.tar.gz ${{runner.temp}}/bun-webkit-macos-arm64-lto.tar.gz
           mv ${{runner.temp}}/bun-webkit-macos-amd64/bun-webkit.tar.gz  ${{runner.temp}}/bun-webkit-macos-amd64.tar.gz
+          mv ${{runner.temp}}/bun-webkit-linux-amd64-debug/bun-webkit.tar.gz ${{runner.temp}}/bun-webkit-linux-amd64-debug.tar.gz
+          mv ${{runner.temp}}/bun-webkit-linux-arm64-debug/bun-webkit.tar.gz  ${{runner.temp}}/bun-webkit-linux-arm64-debug.tar.gz
+          mv ${{runner.temp}}/bun-webkit-macos-arm64-debug/bun-webkit.tar.gz ${{runner.temp}}/bun-webkit-macos-arm64-debug.tar.gz
+          mv ${{runner.temp}}/bun-webkit-macos-amd64-debug/bun-webkit.tar.gz  ${{runner.temp}}/bun-webkit-macos-amd64-debug.tar.gz
+          mv ${{runner.temp}}/bun-webkit-macos-arm64-lto/bun-webkit.tar.gz ${{runner.temp}}/bun-webkit-macos-arm64-lto.tar.gz
           mv ${{runner.temp}}/bun-webkit-macos-amd64-lto/bun-webkit.tar.gz ${{runner.temp}}/bun-webkit-macos-amd64-lto.tar.gz
           mv ${{runner.temp}}/bun-webkit-linux-arm64-lto/bun-webkit.tar.gz ${{runner.temp}}/bun-webkit-linux-arm64-lto.tar.gz
           mv ${{runner.temp}}/bun-webkit-linux-amd64-lto/bun-webkit.tar.gz ${{runner.temp}}/bun-webkit-linux-amd64-lto.tar.gz
@@ -171,13 +224,17 @@ jobs:
           generate_release_notes: true
           tag_name: "autobuild-${{github.sha}}"
           files: |
-            ${{runner.temp}}/bun-webkit-linux-amd64-lto.tar.gz
-            ${{runner.temp}}/bun-webkit-linux-arm64-lto.tar.gz
             ${{runner.temp}}/bun-webkit-linux-amd64.tar.gz
             ${{runner.temp}}/bun-webkit-linux-arm64.tar.gz
             ${{runner.temp}}/bun-webkit-macos-arm64.tar.gz
-            ${{runner.temp}}/bun-webkit-macos-arm64-lto.tar.gz
             ${{runner.temp}}/bun-webkit-macos-amd64.tar.gz
+            ${{runner.temp}}/bun-webkit-linux-amd64-debug.tar.gz
+            ${{runner.temp}}/bun-webkit-linux-arm64-debug.tar.gz
+            ${{runner.temp}}/bun-webkit-macos-arm64-debug.tar.gz
+            ${{runner.temp}}/bun-webkit-macos-amd64-debug.tar.gz
+            ${{runner.temp}}/bun-webkit-linux-amd64-lto.tar.gz
+            ${{runner.temp}}/bun-webkit-linux-arm64-lto.tar.gz
+            ${{runner.temp}}/bun-webkit-macos-arm64-lto.tar.gz
             ${{runner.temp}}/bun-webkit-macos-amd64-lto.tar.gz
       - name: Canary
         uses: softprops/action-gh-release@v1
@@ -186,13 +243,17 @@ jobs:
           generate_release_notes: true
           tag_name: "canary"
           files: |
-            ${{runner.temp}}/bun-webkit-linux-amd64-lto.tar.gz
-            ${{runner.temp}}/bun-webkit-linux-arm64-lto.tar.gz
             ${{runner.temp}}/bun-webkit-linux-amd64.tar.gz
             ${{runner.temp}}/bun-webkit-linux-arm64.tar.gz
             ${{runner.temp}}/bun-webkit-macos-arm64.tar.gz
-            ${{runner.temp}}/bun-webkit-macos-arm64-lto.tar.gz
             ${{runner.temp}}/bun-webkit-macos-amd64.tar.gz
+            ${{runner.temp}}/bun-webkit-linux-amd64-debug.tar.gz
+            ${{runner.temp}}/bun-webkit-linux-arm64-debug.tar.gz
+            ${{runner.temp}}/bun-webkit-macos-arm64-debug.tar.gz
+            ${{runner.temp}}/bun-webkit-macos-amd64-debug.tar.gz
+            ${{runner.temp}}/bun-webkit-linux-amd64-lto.tar.gz
+            ${{runner.temp}}/bun-webkit-linux-arm64-lto.tar.gz
+            ${{runner.temp}}/bun-webkit-macos-arm64-lto.tar.gz
             ${{runner.temp}}/bun-webkit-macos-amd64-lto.tar.gz
       - uses: actions/setup-node@v3
         with:
@@ -247,19 +308,48 @@ jobs:
           cd bun-webkit
           npm publish --tag next --access=public
 
-          rm -rf ${{runner.temp}}/bun-webkit-lto ${{runner.temp}}/bun-webkit
-          mkdir -p ${{runner.temp}}/bun-webkit-lto ${{runner.temp}}/bun-webkit
+          rm -rf ${{runner.temp}}/bun-webkit
+          cd ${{runner.temp}}
+          tar -xzf bun-webkit-linux-amd64-debug.tar.gz
+          cd bun-webkit
+          npm publish --tag next --access=public
+
+          rm -rf ${{runner.temp}}/bun-webkit
+          cd ${{runner.temp}}
+          tar -xzf bun-webkit-linux-arm64-debug.tar.gz
+          cd bun-webkit
+          npm publish --tag next --access=public
+
+          rm -rf ${{runner.temp}}/bun-webkit
+          cd ${{runner.temp}}
+          tar -xzf bun-webkit-macos-arm64-debug.tar.gz
+          cd bun-webkit
+          npm publish --tag next --access=public
+
+          rm -rf ${{runner.temp}}/bun-webkit
+          cd ${{runner.temp}}
+          tar -xzf bun-webkit-macos-amd64-debug.tar.gz
+          cd bun-webkit
+          npm publish --tag next --access=public
+
+          rm -rf ${{runner.temp}}/bun-webkit-lto ${{runner.temp}}/bun-webkit ${{runner.temp}}/bun-webkit-debug
+          mkdir -p ${{runner.temp}}/bun-webkit-lto ${{runner.temp}}/bun-webkit ${{runner.temp}}/bun-webkit-debug
 
           echo '{ "name": "bun-webkit", "version": "0.0.1-${{github.sha}}", "repository": "https://github.com/${{github.repository}}", "optionalDependencies": {"bun-webkit-linux-amd64": "0.0.1-${{github.sha}}", "bun-webkit-linux-arm64": "0.0.1-${{github.sha}}", "bun-webkit-macos-arm64": "0.0.1-${{github.sha}}", "bun-webkit-macos-amd64": "0.0.1-${{github.sha}}"} }' > ${{runner.temp}}/bun-webkit/package.json
           echo '{ "name": "bun-webkit-lto", "version": "0.0.1-${{github.sha}}", "repository": "https://github.com/${{github.repository}}", "optionalDependencies": {"bun-webkit-linux-amd64-lto": "0.0.1-${{github.sha}}", "bun-webkit-linux-arm64-lto": "0.0.1-${{github.sha}}", "bun-webkit-macos-arm64-lto": "0.0.1-${{github.sha}}", "bun-webkit-macos-amd64-lto": "0.0.1-${{github.sha}}"} }' > ${{runner.temp}}/bun-webkit-lto/package.json
+          echo '{ "name": "bun-webkit-debug", "version": "0.0.1-${{github.sha}}", "repository": "https://github.com/${{github.repository}}", "optionalDependencies": {"bun-webkit-linux-amd64-debug": "0.0.1-${{github.sha}}", "bun-webkit-linux-arm64-debug": "0.0.1-${{github.sha}}", "bun-webkit-macos-arm64-debug": "0.0.1-${{github.sha}}", "bun-webkit-macos-amd64-debug": "0.0.1-${{github.sha}}"} }' > ${{runner.temp}}/bun-webkit-debug/package.json
 
           echo "$README_TEXT" > ${{runner.temp}}/bun-webkit/README.md
           echo "$README_TEXT" > ${{runner.temp}}/bun-webkit-lto/README.md
+          echo "$README_TEXT" > ${{runner.temp}}/bun-webkit-debug/README.md
 
           cd ${{runner.temp}}/bun-webkit
           npm publish --tag next --access=public
 
           cd ${{runner.temp}}/bun-webkit-lto
+          npm publish --tag next --access=public
+
+          cd ${{runner.temp}}/bun-webkit-debug
           npm publish --tag next --access=public
 
         env:

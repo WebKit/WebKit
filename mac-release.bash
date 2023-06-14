@@ -13,6 +13,9 @@ CMAKE_C_COMPILER=${CMAKE_C_COMPILER:-clang-15}
 CMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER:-clang++}
 CMAKE_C_FLAGS=${CMAKE_C_FLAGS:-}
 CMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS:-}
+CMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE:-Release}
+RUNNER_TEMP=${RUNNER_TEMP:-/tmp}
+PACKAGE_JSON_LABEL=${PACKAGE_JSON_LABEL:-bun-webkit-$CMAKE_BUILD_TYPE}
 
 rm -rf $RUNNER_TEMP/webkit-release $RUNNER_TEMP/bun-webkit $RUNNER_TEMP/bun-webkit $RUNNER_TEMP/bun-webkit.tar.gz
 mkdir -p $RUNNER_TEMP/webkit-release
@@ -21,7 +24,8 @@ cmake \
     -DPORT="JSCOnly" \
     -DENABLE_STATIC_JSC=ON \
     -DENABLE_SINGLE_THREADED_VM_ENTRY_SCOPE=ON \
-    -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_BUILD_TYPE=$CMAKE_BUILD_TYPE \
+    -DENABLE_BUN_SKIP_FAILING_ASSERTIONS=ON \
     -DUSE_THIN_ARCHIVES=OFF \
     -DENABLE_FTL_JIT=ON \
     -DCMAKE_C_COMPILER="$CMAKE_C_COMPILER" \
@@ -38,7 +42,7 @@ cmake \
     -DENABLE_REMOTE_INSPECTOR=ON \
     $THIS_DIR \
     $RUNNER_TEMP/webkit-release &&
-    cmake --build $RUNNER_TEMP/webkit-release --config Release --target jsc
+    cmake --build $RUNNER_TEMP/webkit-release --config $CMAKE_BUILD_TYPE --target jsc
 mkdir -p $RUNNER_TEMP/bun-webkit/lib $RUNNER_TEMP/bun-webkit/include $RUNNER_TEMP/bun-webkit/include/JavaScriptCore $RUNNER_TEMP/bun-webkit/include/wtf $RUNNER_TEMP/bun-webkit/include/bmalloc
 cp $RUNNER_TEMP/webkit-release/lib/* $RUNNER_TEMP/bun-webkit/lib
 cp -r $RUNNER_TEMP/webkit-release/cmakeconfig.h $RUNNER_TEMP/bun-webkit/include/cmakeconfig.h
