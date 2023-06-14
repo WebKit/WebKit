@@ -67,6 +67,11 @@ GstElement* GStreamerVideoCapturer::createSource()
 
 GstElement* GStreamerVideoCapturer::createConverter()
 {
+    if (isCapturingDisplay()) {
+        gst_caps_set_features(m_caps.get(), 0, gst_caps_features_new("memory:DMABuf", nullptr));
+        return makeGStreamerElement("identity", nullptr);
+    }
+
     auto* bin = gst_bin_new(nullptr);
     auto* videoscale = makeGStreamerElement("videoscale", "videoscale");
     auto* videoconvert = makeGStreamerElement("videoconvert", nullptr);
@@ -77,28 +82,24 @@ GstElement* GStreamerVideoCapturer::createConverter()
 
     gst_bin_add_many(GST_BIN_CAST(bin), videoscale, videoconvert, videorate, nullptr);
 
-    GstElement* head = videoscale;
-    if (!isCapturingDisplay()) {
-        m_videoSrcMIMETypeFilter = gst_element_factory_make("capsfilter", "mimetype-filter");
-        head = m_videoSrcMIMETypeFilter.get();
+    m_videoSrcMIMETypeFilter = gst_element_factory_make("capsfilter", "mimetype-filter");
 
-        auto caps = adoptGRef(gst_caps_new_empty_simple("video/x-raw"));
-        g_object_set(m_videoSrcMIMETypeFilter.get(), "caps", caps.get(), nullptr);
+    auto caps = adoptGRef(gst_caps_new_empty_simple("video/x-raw"));
+    g_object_set(m_videoSrcMIMETypeFilter.get(), "caps", caps.get(), nullptr);
 
-        auto* decodebin = makeGStreamerElement("decodebin3", nullptr);
-        gst_bin_add_many(GST_BIN_CAST(bin), m_videoSrcMIMETypeFilter.get(), decodebin, nullptr);
-        gst_element_link(m_videoSrcMIMETypeFilter.get(), decodebin);
+    auto* decodebin = makeGStreamerElement("decodebin3", nullptr);
+    gst_bin_add_many(GST_BIN_CAST(bin), m_videoSrcMIMETypeFilter.get(), decodebin, nullptr);
+    gst_element_link(m_videoSrcMIMETypeFilter.get(), decodebin);
 
-        auto sinkPad = adoptGRef(gst_element_get_static_pad(videoscale, "sink"));
-        g_signal_connect_swapped(decodebin, "pad-added", G_CALLBACK(+[](GstPad* sinkPad, GstPad* srcPad) {
-            RELEASE_ASSERT(!gst_pad_is_linked(sinkPad));
-            gst_pad_link(srcPad, sinkPad);
-        }), sinkPad.get());
-    }
+    auto sinkPad = adoptGRef(gst_element_get_static_pad(videoscale, "sink"));
+    g_signal_connect_swapped(decodebin, "pad-added", G_CALLBACK(+[](GstPad* sinkPad, GstPad* srcPad) {
+        RELEASE_ASSERT(!gst_pad_is_linked(sinkPad));
+        gst_pad_link(srcPad, sinkPad);
+    }), sinkPad.get());
 
     gst_element_link_many(videoscale, videoconvert, videorate, nullptr);
 
-    auto sinkPad = adoptGRef(gst_element_get_static_pad(head, "sink"));
+    sinkPad = adoptGRef(gst_element_get_static_pad(m_videoSrcMIMETypeFilter.get(), "sink"));
     gst_element_add_pad(bin, gst_ghost_pad_new("sink", sinkPad.get()));
 
     auto srcPad = adoptGRef(gst_element_get_static_pad(videorate, "src"));
