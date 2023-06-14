@@ -148,6 +148,20 @@ fn testFieldAccess() -> i32
     return 0;
 }
 
+fn testIndexAccess() -> i32
+{
+    // CHECK: local\d+ = __unpack_array\(parameter\d+\);
+    // CHECK-NEXT: local\d+\[0\] = __unpack\(parameter\d+\[0\]\);
+    // CHECK-NEXT: parameter\d+\[0\] = parameter\d+\[0\];
+    // CHECK-NEXT: parameter\d+\[0\] = __pack\(local\d+\[0\]\);
+    var at = at1;
+    at[0] = at1[0];
+    at1[0] = at2[0];
+    at2[0] = at[0];
+    return 0;
+}
+
+
 fn testBinaryOperations() -> i32
 {
     // CHECK: parameter\d+\.v2f\.x = \(2 \* parameter\d+\.v2f\.x\);
@@ -296,6 +310,7 @@ fn main()
     _ = testUnpacked();
     _ = testAssignment();
     _ = testFieldAccess();
+    _ = testIndexAccess();
     _ = testBinaryOperations();
     _ = testUnaryOperations();
 }

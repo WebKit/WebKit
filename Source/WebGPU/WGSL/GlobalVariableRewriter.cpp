@@ -122,6 +122,7 @@ private:
     Packing pack(Packing, AST::Expression&);
     Packing getPacking(AST::IdentifierExpression&);
     Packing getPacking(AST::FieldAccessExpression&);
+    Packing getPacking(AST::IndexAccessExpression&);
     Packing getPacking(AST::BinaryExpression&);
     Packing getPacking(AST::UnaryExpression&);
     Packing packingForType(const Type*);
@@ -321,6 +322,8 @@ auto RewriteGlobalVariables::pack(Packing expectedPacking, AST::Expression& expr
         return visitAndReplace(downcast<AST::IdentifierExpression>(expression));
     case AST::NodeKind::FieldAccessExpression:
         return visitAndReplace(downcast<AST::FieldAccessExpression>(expression));
+    case AST::NodeKind::IndexAccessExpression:
+        return visitAndReplace(downcast<AST::IndexAccessExpression>(expression));
     case AST::NodeKind::BinaryExpression:
         return visitAndReplace(downcast<AST::BinaryExpression>(expression));
     case AST::NodeKind::UnaryExpression:
@@ -367,6 +370,21 @@ auto RewriteGlobalVariables::getPacking(AST::FieldAccessExpression& expression) 
     auto& structType = std::get<Types::Struct>(*baseType);
     auto* fieldType = structType.fields.get(expression.fieldName());
     return packingForType(fieldType);
+}
+
+auto RewriteGlobalVariables::getPacking(AST::IndexAccessExpression& expression) -> Packing
+{
+    auto basePacking = pack(Packing::Either, expression.base());
+    if (basePacking & Packing::Unpacked)
+        return Packing::Unpacked;
+    auto* baseType = expression.base().inferredType();
+    if (auto* referenceType = std::get_if<Types::Reference>(baseType))
+        baseType = referenceType->element;
+    if (std::holds_alternative<Types::Vector>(*baseType))
+        return Packing::Unpacked;
+    ASSERT(std::holds_alternative<Types::Array>(*baseType));
+    auto& arrayType = std::get<Types::Array>(*baseType);
+    return packingForType(arrayType.element);
 }
 
 auto RewriteGlobalVariables::getPacking(AST::BinaryExpression& expression) -> Packing
