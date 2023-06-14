@@ -105,6 +105,7 @@ public:
     Indentation<4>& indent() { return m_indent; }
 
 private:
+    void emitNecessaryHelpers();
     void visit(const Type*);
     void visitGlobal(AST::Variable&);
     void serializeVariable(AST::Variable&);
@@ -123,6 +124,20 @@ private:
 
 void FunctionDefinitionWriter::write()
 {
+    emitNecessaryHelpers();
+
+    for (auto& structure : m_callGraph.ast().structures())
+        visit(structure);
+    for (auto& structure : m_callGraph.ast().structures())
+        generatePackingHelpers(structure);
+    for (auto& variable : m_callGraph.ast().variables())
+        visitGlobal(variable);
+    for (auto& entryPoint : m_callGraph.entrypoints())
+        visit(entryPoint.function);
+}
+
+void FunctionDefinitionWriter::emitNecessaryHelpers()
+{
     if (m_callGraph.ast().usesExternalTextures()) {
         m_callGraph.ast().clearUsesExternalTextures();
         m_stringBuilder.append("struct texture_external {\n");
@@ -135,14 +150,42 @@ void FunctionDefinitionWriter::write()
         }
         m_stringBuilder.append("};\n\n");
     }
-    for (auto& structure : m_callGraph.ast().structures())
-        visit(structure);
-    for (auto& structure : m_callGraph.ast().structures())
-        generatePackingHelpers(structure);
-    for (auto& variable : m_callGraph.ast().variables())
-        visitGlobal(variable);
-    for (auto& entryPoint : m_callGraph.entrypoints())
-        visit(entryPoint.function);
+
+    if (m_callGraph.ast().usesPackArray()) {
+        m_callGraph.ast().clearUsesPackArray();
+        m_stringBuilder.append(m_indent, "template<typename T, size_t N>\n");
+        m_stringBuilder.append(m_indent, "array<typename T::PackedType, N> __pack_array(array<T, N> unpacked)\n");
+        m_stringBuilder.append(m_indent, "{\n");
+        {
+            IndentationScope scope(m_indent);
+            m_stringBuilder.append(m_indent, "array<typename T::PackedType, N> packed;\n");
+            m_stringBuilder.append(m_indent, "for (size_t i = 0; i < N; ++i)\n");
+            {
+                IndentationScope scope(m_indent);
+                m_stringBuilder.append(m_indent, "packed[i] = __pack(unpacked[i]);\n");
+            }
+            m_stringBuilder.append(m_indent, "return packed;\n");
+        }
+        m_stringBuilder.append(m_indent, "}\n\n");
+    }
+
+    if (m_callGraph.ast().usesUnpackArray()) {
+        m_callGraph.ast().clearUsesUnpackArray();
+        m_stringBuilder.append(m_indent, "template<typename T, size_t N>\n");
+        m_stringBuilder.append(m_indent, "array<typename T::UnpackedType, N> __unpack_array(array<T, N> packed)\n");
+        m_stringBuilder.append(m_indent, "{\n");
+        {
+            IndentationScope scope(m_indent);
+            m_stringBuilder.append(m_indent, "array<typename T::UnpackedType, N> unpacked;\n");
+            m_stringBuilder.append(m_indent, "for (size_t i = 0; i < N; ++i)\n");
+            {
+                IndentationScope scope(m_indent);
+                m_stringBuilder.append(m_indent, "unpacked[i] = __unpack(packed[i]);\n");
+            }
+            m_stringBuilder.append(m_indent, "return unpacked;\n");
+        }
+        m_stringBuilder.append(m_indent, "}\n\n");
+    }
 }
 
 void FunctionDefinitionWriter::visit(AST::Function& functionDefinition)
@@ -206,6 +249,11 @@ void FunctionDefinitionWriter::visit(AST::Structure& structDecl)
             ASSERT(shouldPack);
             m_stringBuilder.append(m_indent, "uint8_t __padding", ++paddingID, "[", String::number(paddingSize), "]; \n");
         };
+
+        if (structDecl.role() == AST::StructureRole::PackedResource)
+            m_stringBuilder.append(m_indent, "using UnpackedType = struct ", structDecl.original()->name(), ";\n\n");
+        else if (structDecl.role() == AST::StructureRole::UserDefinedResource)
+            m_stringBuilder.append(m_indent, "using PackedType = struct ", structDecl.packed()->name(), ";\n\n");
 
         for (auto& member : structDecl.members()) {
             auto& name = member.name();

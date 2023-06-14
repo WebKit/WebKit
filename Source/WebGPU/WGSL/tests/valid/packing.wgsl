@@ -22,6 +22,9 @@ var<private> m3: mat3x3<f32>;
 @group(0) @binding(2) var<storage, read_write> v1: vec3<f32>;
 @group(0) @binding(3) var<storage, read_write> v2: vec3<f32>;
 
+@group(0) @binding(4) var<storage, read_write> at1: array<T, 1>;
+@group(0) @binding(5) var<storage, read_write> at2: array<T, 1>;
+
 fn testUnpacked() -> i32
 {
     _ = t.v3f * m3;
@@ -41,6 +44,14 @@ fn testAssignment() -> i32
     t1 = t2;
     // CHECK-NEXT: parameter\d+ = __pack\(local\d+\);
     t2 = t;
+
+    // array of packed structs
+    // CHECK-NEXT: local\d+ = __unpack_array\(parameter\d+\);
+    var at = at1;
+    // CHECK-NEXT: parameter\d+ = parameter\d+;
+    at1 = at2;
+    // CHECK-NEXT: parameter\d+ = __pack_array\(local\d+\);
+    at2 = at;
 
     return 0;
 }
