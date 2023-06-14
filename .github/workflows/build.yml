@@ -62,10 +62,15 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: PATH
+        env:
+          HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK: 1
+          HOMEBREW_NO_AUTO_UPDATE: 1
+          HOMEBREW_NO_INSTALL_CLEANUP: 1
+          HOMEBREW_NO_ANALYTICS_THIS_RUN: 1
         run: |
           echo "${{matrix.brew_prefix}}/llvm@15/bin" >> $GITHUB_PATH
-          brew install llvm@15 python icu4c ninja
-          brew link llvm@15 --overwrite
+          brew install llvm@15 python icu4c ninja -f --overwrite
+          brew link llvm@15 -f --overwrite
       - name: Run
         env:
           ICU_INCLUDE_DIRS: ${{matrix.brew_prefix}}/icu4c/include
