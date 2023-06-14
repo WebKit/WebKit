@@ -191,6 +191,10 @@ fast/mediastream/RTCPeerConnection-stats.html [ Skip ]
 # Asserts in debug.
 [ Debug ] fast/images/large-size-image-crash.html [ Skip ]
 
+# rdar://110799490 2x media/track/ tests are flaky crashes.
+media/track/track-user-stylesheet.html [ Pass Crash ]
+media/track/track-webvtt-snap-to-lines-inline-style.html [ Pass Crash ]
+
 # Perf tests are very flaky, because they run in parallel with other tests.
 perf
 
