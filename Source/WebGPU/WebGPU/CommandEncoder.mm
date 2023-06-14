@@ -250,15 +250,15 @@ static bool isStencilOnlyFormat(MTLPixelFormat format)
 Ref<RenderPassEncoder> CommandEncoder::beginRenderPass(const WGPURenderPassDescriptor& descriptor)
 {
     if (descriptor.nextInChain)
-        return RenderPassEncoder::createInvalid(m_device);
+        return RenderPassEncoder::createInvalid(*this, m_device);
 
     if (!validateRenderPassDescriptor(descriptor))
-        return RenderPassEncoder::createInvalid(m_device);
+        return RenderPassEncoder::createInvalid(*this, m_device);
 
     MTLRenderPassDescriptor* mtlDescriptor = [MTLRenderPassDescriptor new];
 
     if (descriptor.colorAttachmentCount > 8)
-        return RenderPassEncoder::createInvalid(m_device);
+        return RenderPassEncoder::createInvalid(*this, m_device);
 
     finalizeBlitCommandEncoder();
 
@@ -363,7 +363,7 @@ Ref<RenderPassEncoder> CommandEncoder::beginRenderPass(const WGPURenderPassDescr
                 break;
             case WGPURenderPassTimestampLocation_Force32:
                 ASSERT_NOT_REACHED();
-                return RenderPassEncoder::createInvalid(m_device);
+                return RenderPassEncoder::createInvalid(*this, m_device);
             }
 
             fromAPI(timestampWrite.querySet).setOverrideLocation(timestampWrite.queryIndex, dummyQuerySet, otherIndex);
@@ -372,7 +372,8 @@ Ref<RenderPassEncoder> CommandEncoder::beginRenderPass(const WGPURenderPassDescr
 
     auto mtlRenderCommandEncoder = [m_commandBuffer renderCommandEncoderWithDescriptor:mtlDescriptor];
 
-    return RenderPassEncoder::create(mtlRenderCommandEncoder, descriptor, visibilityResultBufferSize, depthReadOnly, stencilReadOnly, m_device);
+    m_state = EncoderState::Locked;
+    return RenderPassEncoder::create(mtlRenderCommandEncoder, descriptor, visibilityResultBufferSize, depthReadOnly, stencilReadOnly, *this, m_device);
 }
 
 bool CommandEncoder::validateCopyBufferToBuffer(const Buffer& source, uint64_t sourceOffset, const Buffer& destination, uint64_t destinationOffset, uint64_t size)

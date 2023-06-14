@@ -27,6 +27,7 @@
 
 #import "CommandsMixin.h"
 #import <wtf/FastMalloc.h>
+#import <wtf/HashSet.h>
 #import <wtf/Ref.h>
 #import <wtf/RefCounted.h>
 #import <wtf/Vector.h>
@@ -38,7 +39,9 @@ namespace WebGPU {
 
 class BindGroup;
 class Buffer;
+class CommandEncoder;
 class Device;
+class PipelineLayout;
 class QuerySet;
 class RenderBundle;
 class RenderPipeline;
@@ -47,13 +50,13 @@ class RenderPipeline;
 class RenderPassEncoder : public WGPURenderPassEncoderImpl, public RefCounted<RenderPassEncoder>, public CommandsMixin {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<RenderPassEncoder> create(id<MTLRenderCommandEncoder> renderCommandEncoder, const WGPURenderPassDescriptor& descriptor, NSUInteger visibilityResultBufferSize, bool depthReadOnly, bool stencilReadOnly, Device& device)
+    static Ref<RenderPassEncoder> create(id<MTLRenderCommandEncoder> renderCommandEncoder, const WGPURenderPassDescriptor& descriptor, NSUInteger visibilityResultBufferSize, bool depthReadOnly, bool stencilReadOnly, Ref<CommandEncoder>&& commandEncoder, Device& device)
     {
-        return adoptRef(*new RenderPassEncoder(renderCommandEncoder, descriptor, visibilityResultBufferSize, depthReadOnly, stencilReadOnly, device));
+        return adoptRef(*new RenderPassEncoder(renderCommandEncoder, descriptor, visibilityResultBufferSize, depthReadOnly, stencilReadOnly, WTFMove(commandEncoder), device));
     }
-    static Ref<RenderPassEncoder> createInvalid(Device& device)
+    static Ref<RenderPassEncoder> createInvalid(Ref<CommandEncoder>&& commandEncoder, Device& device)
     {
-        return adoptRef(*new RenderPassEncoder(device));
+        return adoptRef(*new RenderPassEncoder(WTFMove(commandEncoder), device));
     }
 
     ~RenderPassEncoder();
@@ -84,14 +87,20 @@ public:
     Device& device() const { return m_device; }
 
     bool isValid() const { return m_renderCommandEncoder; }
+    const PipelineLayout* pipelineLayout() const { return m_pipelineLayout.get(); }
+
+    EncoderState state() const { return m_state; }
+    void setState(EncoderState state) { m_state = state; }
 
 private:
-    RenderPassEncoder(id<MTLRenderCommandEncoder>, const WGPURenderPassDescriptor&, NSUInteger, bool depthReadOnly, bool stencilReadOnly, Device&);
-    RenderPassEncoder(Device&);
+    RenderPassEncoder(id<MTLRenderCommandEncoder>, const WGPURenderPassDescriptor&, NSUInteger, bool depthReadOnly, bool stencilReadOnly, Ref<CommandEncoder>&&, Device&);
+    RenderPassEncoder(Ref<CommandEncoder>&&, Device&);
 
     bool validatePopDebugGroup() const;
 
     void makeInvalid();
+    NSUInteger attachmentWidth() const;
+    NSUInteger attachmentHeight() const;
 
     id<MTLRenderCommandEncoder> m_renderCommandEncoder { nil };
 
@@ -103,14 +112,20 @@ private:
     Vector<PendingTimestampWrites> m_pendingTimestampWrites;
 
     const Ref<Device> m_device;
+    HashSet<uint32_t> m_occlusionQueryWrites;
     MTLPrimitiveType m_primitiveType { MTLPrimitiveTypeTriangle };
+    RefPtr<PipelineLayout> m_pipelineLayout;
+    Ref<CommandEncoder> m_commandEncoder;
     id<MTLBuffer> m_indexBuffer { nil };
     MTLIndexType m_indexType { MTLIndexTypeUInt16 };
     NSUInteger m_indexBufferOffset { 0 };
     NSUInteger m_visibilityResultBufferOffset { 0 };
     NSUInteger m_visibilityResultBufferSize { 0 };
+    NSUInteger m_attachmentWidth { 0 };
+    NSUInteger m_attachmentHeight { 0 };
     bool m_depthReadOnly { false };
     bool m_stencilReadOnly { false };
+    bool m_occlusionQueryActive { false };
 };
 
 } // namespace WebGPU

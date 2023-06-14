@@ -44,17 +44,19 @@ Ref<RenderBundleEncoder> Device::createRenderBundleEncoder(const WGPURenderBundl
     icbDescriptor.inheritBuffers = NO;
     icbDescriptor.inheritPipelineState = YES;
 
-    return RenderBundleEncoder::create(icbDescriptor, *this);
+    return RenderBundleEncoder::create(icbDescriptor, descriptor, *this);
 }
 
-RenderBundleEncoder::RenderBundleEncoder(MTLIndirectCommandBufferDescriptor *indirectCommandBufferDescriptor, Device& device)
+RenderBundleEncoder::RenderBundleEncoder(MTLIndirectCommandBufferDescriptor *indirectCommandBufferDescriptor, const WGPURenderBundleEncoderDescriptor& descriptor, Device& device)
     : m_icbDescriptor(indirectCommandBufferDescriptor)
+    , m_descriptor(descriptor)
     , m_device(device)
 {
 }
 
 RenderBundleEncoder::RenderBundleEncoder(Device& device)
-    : m_device(device)
+    : m_descriptor()
+    , m_device(device)
 {
 }
 
@@ -154,7 +156,7 @@ Ref<RenderBundle> RenderBundleEncoder::finish(const WGPURenderBundleDescriptor& 
         m_recordedCommands.clear();
     }
 
-    auto renderBundle = RenderBundle::create(m_indirectCommandBuffer, WTFMove(m_resources), m_device);
+    auto renderBundle = RenderBundle::create(m_indirectCommandBuffer, m_descriptor, WTFMove(m_resources), WTFMove(m_pipelineLayout), m_device);
     renderBundle->setLabel(String::fromUTF8(descriptor.label));
 
     return renderBundle;
@@ -247,9 +249,10 @@ void RenderBundleEncoder::setIndexBuffer(const Buffer& buffer, WGPUIndexFormat f
 
 void RenderBundleEncoder::setPipeline(const RenderPipeline& pipeline)
 {
-    if (id<MTLIndirectRenderCommand> icbCommand = currentRenderCommand())
+    if (id<MTLIndirectRenderCommand> icbCommand = currentRenderCommand()) {
+        m_pipelineLayout = pipeline.pipelineLayout();
         [icbCommand setRenderPipelineState:pipeline.renderPipelineState()];
-    else {
+    } else {
         m_recordedCommands.append([&pipeline, protectedThis = Ref { *this }] {
             protectedThis->setPipeline(pipeline);
         });

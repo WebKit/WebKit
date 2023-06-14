@@ -37,14 +37,15 @@ struct WGPURenderBundleImpl {
 namespace WebGPU {
 
 class Device;
+class PipelineLayout;
 
 // https://gpuweb.github.io/gpuweb/#gpurenderbundle
 class RenderBundle : public WGPURenderBundleImpl, public RefCounted<RenderBundle> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<RenderBundle> create(id<MTLIndirectCommandBuffer> indirectCommandBuffer, Vector<BindableResource>&& resources, Device& device)
+    static Ref<RenderBundle> create(id<MTLIndirectCommandBuffer> indirectCommandBuffer, const WGPURenderBundleEncoderDescriptor& descriptor, Vector<BindableResource>&& resources, RefPtr<PipelineLayout>&& pipelineLayout, Device& device)
     {
-        return adoptRef(*new RenderBundle(indirectCommandBuffer, WTFMove(resources), device));
+        return adoptRef(*new RenderBundle(indirectCommandBuffer, descriptor, WTFMove(resources), WTFMove(pipelineLayout), device));
     }
     static Ref<RenderBundle> createInvalid(Device& device)
     {
@@ -62,14 +63,20 @@ public:
     Device& device() const { return m_device; }
     const Vector<BindableResource>& resources() const { return m_resources; }
 
+    bool depthReadOnly() const;
+    bool stencilReadOnly() const;
+    const PipelineLayout* pipelineLayout() const { return m_pipelineLayout.get(); }
+
 private:
-    RenderBundle(id<MTLIndirectCommandBuffer>, Vector<BindableResource>&&, Device&);
+    RenderBundle(id<MTLIndirectCommandBuffer>, const WGPURenderBundleEncoderDescriptor&, Vector<BindableResource>&&, RefPtr<PipelineLayout>&&, Device&);
     RenderBundle(Device&);
 
     const id<MTLIndirectCommandBuffer> m_indirectCommandBuffer { nil };
 
     const Ref<Device> m_device;
+    const WGPURenderBundleEncoderDescriptor m_descriptor;
     Vector<BindableResource> m_resources;
+    RefPtr<PipelineLayout> m_pipelineLayout;
 };
 
 } // namespace WebGPU

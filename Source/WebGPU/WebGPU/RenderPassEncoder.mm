@@ -29,15 +29,17 @@
 #import "APIConversions.h"
 #import "BindGroup.h"
 #import "Buffer.h"
+#import "CommandEncoder.h"
 #import "QuerySet.h"
 #import "RenderBundle.h"
 #import "RenderPipeline.h"
 
 namespace WebGPU {
 
-RenderPassEncoder::RenderPassEncoder(id<MTLRenderCommandEncoder> renderCommandEncoder, const WGPURenderPassDescriptor& descriptor, NSUInteger visibilityResultBufferSize, bool depthReadOnly, bool stencilReadOnly, Device& device)
+RenderPassEncoder::RenderPassEncoder(id<MTLRenderCommandEncoder> renderCommandEncoder, const WGPURenderPassDescriptor& descriptor, NSUInteger visibilityResultBufferSize, bool depthReadOnly, bool stencilReadOnly, Ref<CommandEncoder>&& commandEncoder, Device& device)
     : m_renderCommandEncoder(renderCommandEncoder)
     , m_device(device)
+    , m_commandEncoder(WTFMove(commandEncoder))
     , m_visibilityResultBufferSize(visibilityResultBufferSize)
     , m_depthReadOnly(depthReadOnly)
     , m_stencilReadOnly(stencilReadOnly)
@@ -58,10 +60,18 @@ RenderPassEncoder::RenderPassEncoder(id<MTLRenderCommandEncoder> renderCommandEn
             }
         }
     }
+
+    if (descriptor.colorAttachmentCount) {
+        const auto& attachment = descriptor.colorAttachments[0];
+        id<MTLTexture> texture = fromAPI(attachment.view).texture();
+        m_attachmentWidth = texture.width;
+        m_attachmentHeight = texture.height;
+    }
 }
 
-RenderPassEncoder::RenderPassEncoder(Device& device)
+RenderPassEncoder::RenderPassEncoder(Ref<CommandEncoder>&& commandEncoder, Device& device)
     : m_device(device)
+    , m_commandEncoder(WTFMove(commandEncoder))
 {
 }
 
@@ -70,8 +80,23 @@ RenderPassEncoder::~RenderPassEncoder()
     [m_renderCommandEncoder endEncoding];
 }
 
+static uint32_t occlusionQuerySetCount()
+{
+    return UINT32_MAX;
+}
+
 void RenderPassEncoder::beginOcclusionQuery(uint32_t queryIndex)
 {
+    if (!prepareTheEncoderState())
+        return;
+
+    if (queryIndex >= occlusionQuerySetCount() || m_occlusionQueryWrites.contains(queryIndex) || m_occlusionQueryActive) {
+        makeInvalid();
+        return;
+    }
+
+    m_occlusionQueryWrites.add(queryIndex);
+    m_occlusionQueryActive = true;
     queryIndex *= sizeof(uint64_t);
     if (queryIndex < m_visibilityResultBufferSize) {
         m_visibilityResultBufferOffset = queryIndex;
@@ -115,17 +140,41 @@ void RenderPassEncoder::drawIndirect(const Buffer& indirectBuffer, uint64_t indi
 
 void RenderPassEncoder::endOcclusionQuery()
 {
+    if (!prepareTheEncoderState())
+        return;
+
+    if (!m_occlusionQueryActive) {
+        makeInvalid();
+        return;
+    }
+
+    m_occlusionQueryActive = false;
     [m_renderCommandEncoder setVisibilityResultMode:MTLVisibilityResultModeDisabled offset:m_visibilityResultBufferOffset];
 }
 
 void RenderPassEncoder::endPass()
 {
+    auto& parentEncoder = m_commandEncoder.get();
+    if (state() != CommandsMixin::EncoderState::Open || parentEncoder.state() != CommandsMixin::EncoderState::Locked) {
+        m_device->generateAValidationError("endPass failed valiation"_s);
+        return;
+    }
+
+    setState(CommandsMixin::EncoderState::Ended);
+    parentEncoder.setState(CommandsMixin::EncoderState::Open);
+
+    if (!isValid() || m_occlusionQueryActive || m_debugGroupStackSize) {
+        parentEncoder.makeInvalid();
+        return;
+    }
+
     ASSERT(m_pendingTimestampWrites.isEmpty() || m_device->baseCapabilities().counterSamplingAPI == HardwareCapabilities::BaseCapabilities::CounterSamplingAPI::CommandBoundary);
     for (const auto& pendingTimestampWrite : m_pendingTimestampWrites)
         [m_renderCommandEncoder sampleCountersInBuffer:pendingTimestampWrite.querySet->counterSampleBuffer() atSampleIndex:pendingTimestampWrite.queryIndex withBarrier:NO];
     m_pendingTimestampWrites.clear();
     [m_renderCommandEncoder endEncoding];
     m_renderCommandEncoder = nil;
+    m_pipelineLayout = nullptr;
 }
 
 void RenderPassEncoder::endPipelineStatisticsQuery()
@@ -133,8 +182,38 @@ void RenderPassEncoder::endPipelineStatisticsQuery()
 
 }
 
+static bool validToUseWith(auto& object, auto& targetObject)
+{
+    if (!object.isValid())
+        return false;
+
+    if (!object.device().isValid())
+        return false;
+
+    if (&object.device() != &targetObject.device())
+        return false;
+
+    return true;
+}
+
+static bool equalLayouts(auto& object, auto& targetObject)
+{
+    return object.pipelineLayout() == targetObject.pipelineLayout();
+}
+
 void RenderPassEncoder::executeBundles(Vector<std::reference_wrapper<const RenderBundle>>&& bundles)
 {
+    if (!prepareTheEncoderState())
+        return;
+
+    for (auto& bundleRef : bundles) {
+        auto& bundle = bundleRef.get();
+        if (!validToUseWith(bundle, *this) || !equalLayouts(bundle, *this) || m_depthReadOnly != bundle.depthReadOnly() || m_stencilReadOnly != bundle.stencilReadOnly()) {
+            makeInvalid();
+            return;
+        }
+    }
+
     for (auto& bundle : bundles) {
         const auto& renderBundle = bundle.get();
         for (const auto& resource : renderBundle.resources())
@@ -210,6 +289,9 @@ void RenderPassEncoder::setBindGroup(uint32_t groupIndex, const BindGroup& group
 
 void RenderPassEncoder::setBlendConstant(const WGPUColor& color)
 {
+    if (!prepareTheEncoderState())
+        return;
+
     [m_renderCommandEncoder setBlendColorRed:color.r green:color.g blue:color.b alpha:color.a];
 }
 
@@ -235,6 +317,7 @@ void RenderPassEncoder::setPipeline(const RenderPipeline& pipeline)
         return;
 
     m_primitiveType = pipeline.primitiveType();
+    m_pipelineLayout = pipeline.pipelineLayout();
 
     if (pipeline.renderPipelineState())
         [m_renderCommandEncoder setRenderPipelineState:pipeline.renderPipelineState()];
@@ -245,14 +328,34 @@ void RenderPassEncoder::setPipeline(const RenderPipeline& pipeline)
     [m_renderCommandEncoder setDepthClipMode:pipeline.depthClipMode()];
 }
 
+NSUInteger RenderPassEncoder::attachmentWidth() const
+{
+    return m_attachmentWidth;
+}
+
+NSUInteger RenderPassEncoder::attachmentHeight() const
+{
+    return m_attachmentHeight;
+}
+
 void RenderPassEncoder::setScissorRect(uint32_t x, uint32_t y, uint32_t width, uint32_t height)
 {
-    // FIXME: Validate according to https://www.w3.org/TR/webgpu/#dom-gpurenderpassencoder-setscissorrect
+    if (!prepareTheEncoderState())
+        return;
+
+    if (x + width > attachmentWidth() || y + height > attachmentHeight()) {
+        makeInvalid();
+        return;
+    }
+
     [m_renderCommandEncoder setScissorRect: { x, y, width, height } ];
 }
 
 void RenderPassEncoder::setStencilReference(uint32_t reference)
 {
+    if (!prepareTheEncoderState())
+        return;
+
     [m_renderCommandEncoder setStencilReferenceValue:reference];
 }
 
@@ -264,6 +367,14 @@ void RenderPassEncoder::setVertexBuffer(uint32_t slot, const Buffer& buffer, uin
 
 void RenderPassEncoder::setViewport(float x, float y, float width, float height, float minDepth, float maxDepth)
 {
+    if (!prepareTheEncoderState())
+        return;
+
+    if (x < 0 || y < 0 || width < 0 || height < 0 || x + width > attachmentWidth() || y + height > attachmentHeight() || minDepth < 0.f || minDepth > 1.f || maxDepth < 0.f || maxDepth > 1.f || minDepth >= maxDepth) {
+        makeInvalid();
+        return;
+    }
+
     [m_renderCommandEncoder setViewport: { x, y, width, height, minDepth, maxDepth } ];
 }
 

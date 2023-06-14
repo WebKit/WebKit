@@ -77,6 +77,11 @@ public:
 
     bool isValid() const { return m_commandBuffer; }
 
+    EncoderState state() const { return m_state; }
+    void setState(EncoderState state) { m_state = state; }
+
+    void makeInvalid() { m_commandBuffer = nil; }
+
 private:
     CommandEncoder(id<MTLCommandBuffer>, Device&);
     CommandEncoder(Device&);
@@ -87,8 +92,6 @@ private:
     bool validatePopDebugGroup() const;
     bool validateComputePassDescriptor(const WGPUComputePassDescriptor&) const;
     bool validateRenderPassDescriptor(const WGPURenderPassDescriptor&) const;
-
-    void makeInvalid() { m_commandBuffer = nil; }
 
     void ensureBlitCommandEncoder();
     void finalizeBlitCommandEncoder();

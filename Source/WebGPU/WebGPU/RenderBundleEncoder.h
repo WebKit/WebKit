@@ -41,6 +41,7 @@ namespace WebGPU {
 class BindGroup;
 class Buffer;
 class Device;
+class PipelineLayout;
 class RenderBundle;
 class RenderPipeline;
 
@@ -48,9 +49,9 @@ class RenderPipeline;
 class RenderBundleEncoder : public WGPURenderBundleEncoderImpl, public RefCounted<RenderBundleEncoder>, public CommandsMixin {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<RenderBundleEncoder> create(MTLIndirectCommandBufferDescriptor *indirectCommandBufferDescriptor, Device& device)
+    static Ref<RenderBundleEncoder> create(MTLIndirectCommandBufferDescriptor *indirectCommandBufferDescriptor, const WGPURenderBundleEncoderDescriptor& descriptor, Device& device)
     {
-        return adoptRef(*new RenderBundleEncoder(indirectCommandBufferDescriptor, device));
+        return adoptRef(*new RenderBundleEncoder(indirectCommandBufferDescriptor, descriptor, device));
     }
     static Ref<RenderBundleEncoder> createInvalid(Device& device)
     {
@@ -78,7 +79,7 @@ public:
     bool isValid() const { return m_indirectCommandBuffer; }
 
 private:
-    RenderBundleEncoder(MTLIndirectCommandBufferDescriptor*, Device&);
+    RenderBundleEncoder(MTLIndirectCommandBufferDescriptor*, const WGPURenderBundleEncoderDescriptor&, Device&);
     RenderBundleEncoder(Device&);
 
     bool validatePopDebugGroup() const;
@@ -97,6 +98,8 @@ private:
     NSUInteger m_indexBufferOffset { 0 };
     Vector<WTF::Function<void(void)>> m_recordedCommands;
     Vector<BindableResource> m_resources;
+    const WGPURenderBundleEncoderDescriptor m_descriptor;
+    RefPtr<PipelineLayout> m_pipelineLayout;
     const Ref<Device> m_device;
 };
 

@@ -30,15 +30,18 @@
 
 namespace WebGPU {
 
-RenderBundle::RenderBundle(id<MTLIndirectCommandBuffer> indirectCommandBuffer, Vector<BindableResource>&& resources, Device& device)
+RenderBundle::RenderBundle(id<MTLIndirectCommandBuffer> indirectCommandBuffer, const WGPURenderBundleEncoderDescriptor& descriptor, Vector<BindableResource>&& resources, RefPtr<PipelineLayout>&& pipelineLayout, Device& device)
     : m_indirectCommandBuffer(indirectCommandBuffer)
     , m_device(device)
+    , m_descriptor(descriptor)
     , m_resources(WTFMove(resources))
+    , m_pipelineLayout(WTFMove(pipelineLayout))
 {
 }
 
 RenderBundle::RenderBundle(Device& device)
     : m_device(device)
+    , m_descriptor()
 {
 }
 
@@ -47,6 +50,16 @@ RenderBundle::~RenderBundle() = default;
 void RenderBundle::setLabel(String&& label)
 {
     m_indirectCommandBuffer.label = label;
+}
+
+bool RenderBundle::depthReadOnly() const
+{
+    return m_descriptor.depthReadOnly;
+}
+
+bool RenderBundle::stencilReadOnly() const
+{
+    return m_descriptor.stencilReadOnly;
 }
 
 } // namespace WebGPU
