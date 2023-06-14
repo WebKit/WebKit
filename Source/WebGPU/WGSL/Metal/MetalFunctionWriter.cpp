@@ -95,6 +95,8 @@ public:
     void visit(AST::PhonyAssignmentStatement&) override;
     void visit(AST::ReturnStatement&) override;
     void visit(AST::ForStatement&) override;
+    void visit(AST::BreakStatement&) override;
+    void visit(AST::ContinueStatement&) override;
 
     void visit(AST::TypeName&) override;
 
@@ -1166,6 +1168,16 @@ void FunctionDefinitionWriter::visit(AST::ForStatement& statement)
     }
     m_stringBuilder.append(") ");
     visit(statement.body());
+}
+
+void FunctionDefinitionWriter::visit(AST::BreakStatement&)
+{
+    m_stringBuilder.append("break");
+}
+
+void FunctionDefinitionWriter::visit(AST::ContinueStatement&)
+{
+    m_stringBuilder.append("continue");
 }
 
 void emitMetalFunctions(StringBuilder& stringBuilder, CallGraph& callGraph)

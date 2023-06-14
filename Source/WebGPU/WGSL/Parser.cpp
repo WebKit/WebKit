@@ -853,6 +853,16 @@ Result<AST::Statement::Ref> Parser<Lexer>::parseStatement()
         // FIXME: Handle attributes attached to statement.
         return parseForStatement();
     }
+    case TokenType::KeywordBreak: {
+        consume();
+        CONSUME_TYPE(Semicolon);
+        RETURN_ARENA_NODE(BreakStatement);
+    }
+    case TokenType::KeywordContinue: {
+        consume();
+        CONSUME_TYPE(Semicolon);
+        RETURN_ARENA_NODE(ContinueStatement);
+    }
     case TokenType::Underbar : {
         consume();
         CONSUME_TYPE(Equal);
