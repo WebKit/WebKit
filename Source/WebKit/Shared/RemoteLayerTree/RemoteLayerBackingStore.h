@@ -63,6 +63,24 @@ enum class BackingStoreNeedsDisplayReason : uint8_t {
     HasDirtyRegion,
 };
 
+struct BufferAndBackendInfo {
+    WebCore::RenderingResourceIdentifier resourceIdentifier;
+    unsigned backendGeneration { 0 };
+
+    BufferAndBackendInfo() = default;
+    BufferAndBackendInfo(const BufferAndBackendInfo&) = default;
+
+    explicit BufferAndBackendInfo(WebCore::ImageBuffer& imageBuffer)
+        : resourceIdentifier(imageBuffer.renderingResourceIdentifier())
+        , backendGeneration(imageBuffer.backendGeneration())
+    { }
+
+    bool operator==(const BufferAndBackendInfo&) const = default;
+
+    void encode(IPC::Encoder&) const;
+    static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, BufferAndBackendInfo&);
+};
+
 class RemoteLayerBackingStore {
     WTF_MAKE_NONCOPYABLE(RemoteLayerBackingStore);
     WTF_MAKE_FAST_ALLOCATED;
@@ -243,21 +261,19 @@ public:
 
     const std::optional<ImageBufferBackendHandle>& bufferHandle() const { return m_bufferHandle; };
 
-    std::optional<WebCore::RenderingResourceIdentifier> frontBufferIdentifier() const { return m_frontBufferIdentifier; }
-    std::optional<WebCore::RenderingResourceIdentifier> backBufferIdentifier() const { return m_backBufferIdentifier; }
-    std::optional<WebCore::RenderingResourceIdentifier> secondaryBackBufferIdentifier() const { return m_secondaryBackBufferIdentifier; }
-
     bool isOpaque() const { return m_isOpaque; }
 
     static RetainPtr<id> layerContentsBufferFromBackendHandle(ImageBufferBackendHandle&&, LayerContentsType);
+
+    void dump(WTF::TextStream&) const;
 
 private:
     std::optional<ImageBufferBackendHandle> m_bufferHandle;
     RetainPtr<id> m_contentsBuffer;
 
-    std::optional<WebCore::RenderingResourceIdentifier> m_frontBufferIdentifier;
-    std::optional<WebCore::RenderingResourceIdentifier> m_backBufferIdentifier;
-    std::optional<WebCore::RenderingResourceIdentifier> m_secondaryBackBufferIdentifier;
+    std::optional<BufferAndBackendInfo> m_frontBufferInfo;
+    std::optional<BufferAndBackendInfo> m_backBufferInfo;
+    std::optional<BufferAndBackendInfo> m_secondaryBackBufferInfo;
 
     std::optional<WebCore::IntRect> m_paintedRect;
 

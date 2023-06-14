@@ -151,12 +151,15 @@ void RemoteImageBufferProxy::didCreateImageBufferBackend(ImageBufferBackendHandl
     if (renderingMode() == RenderingMode::Accelerated && std::holds_alternative<ShareableBitmap::Handle>(handle))
         m_backendInfo = ImageBuffer::populateBackendInfo<UnacceleratedImageBufferShareableBackend>(parameters());
     
+    std::unique_ptr<ImageBufferBackend> backend;
     if (renderingMode() == RenderingMode::Unaccelerated)
-        m_backend = UnacceleratedImageBufferShareableBackend::create(parameters(), WTFMove(handle));
+        backend = UnacceleratedImageBufferShareableBackend::create(parameters(), WTFMove(handle));
     else if (canMapBackingStore())
-        m_backend = AcceleratedImageBufferShareableMappedBackend::create(parameters(), WTFMove(handle));
+        backend = AcceleratedImageBufferShareableMappedBackend::create(parameters(), WTFMove(handle));
     else
-        m_backend = AcceleratedImageBufferRemoteBackend::create(parameters(), WTFMove(handle));
+        backend = AcceleratedImageBufferRemoteBackend::create(parameters(), WTFMove(handle));
+
+    setBackend(WTFMove(backend));
 }
 
 ImageBufferBackend* RemoteImageBufferProxy::ensureBackendCreated() const
