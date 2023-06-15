@@ -44,25 +44,47 @@ static inline bool isIndexInBounds(int size, int index)
     return index < size;
 }
 
-static inline void setTightnessBounds(const std::span<uint8_t>& bytes, std::array<int, 4>& tightestBoundingDiff, int index1, int index2)
+static inline bool setTightnessBounds(const std::span<uint8_t>& bytes, std::array<int, 4>& tightestBoundingDiff, int index1, int index2, int index3)
 {
-    int redDiff = bytes[index1] - bytes[index2];
-    int greenDiff = bytes[index1 + 1] - bytes[index2 + 1];
-    int blueDiff = bytes[index1 + 2] - bytes[index2 + 2];
-    int alphaDiff = bytes[index1 + 3] - bytes[index2 + 3];
+    int boundingRedDiff = std::abs(static_cast<int>(bytes[index1]) - static_cast<int>(bytes[index3]));
+    int boundingGreenDiff = std::abs(static_cast<int>(bytes[index1 + 1]) - static_cast<int>(bytes[index3 + 1]));
+    int boundingBlueDiff = std::abs(static_cast<int>(bytes[index1 + 2]) - static_cast<int>(bytes[index3 + 2]));
+    int boundingAlphaDiff = std::abs(static_cast<int>(bytes[index1 + 3]) - static_cast<int>(bytes[index3 + 3]));
 
-    if (redDiff < tightestBoundingDiff[0]
-        && greenDiff < tightestBoundingDiff[1]
-        && blueDiff < tightestBoundingDiff[2]
-        && alphaDiff < tightestBoundingDiff[3]) {
-        tightestBoundingDiff[0] = redDiff;
-        tightestBoundingDiff[1] = greenDiff;
-        tightestBoundingDiff[2] = blueDiff;
-        tightestBoundingDiff[3] = alphaDiff;
+    int neighborRedDiff1 = std::abs(static_cast<int>(bytes[index1]) - static_cast<int>(bytes[index2]));
+    int neighborGreenDiff1 = std::abs(static_cast<int>(bytes[index1 + 1]) - static_cast<int>(bytes[index2 + 1]));
+    int neighborBlueDiff1 = std::abs(static_cast<int>(bytes[index1 + 2]) - static_cast<int>(bytes[index2 + 2]));
+    int neighborAlphaDiff1 = std::abs(static_cast<int>(bytes[index1 + 3]) - static_cast<int>(bytes[index2 + 3]));
+
+    int neighborRedDiff2 = std::abs(static_cast<int>(bytes[index2]) - static_cast<int>(bytes[index3]));
+    int neighborGreenDiff2 = std::abs(static_cast<int>(bytes[index2 + 1]) - static_cast<int>(bytes[index3 + 1]));
+    int neighborBlueDiff2 = std::abs(static_cast<int>(bytes[index2 + 2]) - static_cast<int>(bytes[index3 + 2]));
+    int neighborAlphaDiff2 = std::abs(static_cast<int>(bytes[index2 + 3]) - static_cast<int>(bytes[index3 + 3]));
+
+    bool updatedTightnessBounds { false };
+
+    if (boundingRedDiff <= 1 && boundingGreenDiff <= 1 && boundingBlueDiff <= 1 && boundingAlphaDiff <= 1
+        && neighborRedDiff1 <= 1 && neighborGreenDiff1 <= 1 && neighborBlueDiff1 <= 1 && neighborAlphaDiff1 <= 1
+        && neighborRedDiff2 <= 1 && neighborGreenDiff2 <= 1 && neighborBlueDiff2 <= 1 && neighborAlphaDiff2 <= 1) {
+        tightestBoundingDiff[0] = 0;
+        tightestBoundingDiff[1] = 0;
+        tightestBoundingDiff[2] = 0;
+        tightestBoundingDiff[3] = 0;
+        updatedTightnessBounds = true;
+    } else if (boundingRedDiff < tightestBoundingDiff[0]
+        && boundingGreenDiff < tightestBoundingDiff[1]
+        && boundingBlueDiff < tightestBoundingDiff[2]
+        && boundingAlphaDiff < tightestBoundingDiff[3]) {
+        tightestBoundingDiff[0] = boundingRedDiff;
+        tightestBoundingDiff[1] = boundingGreenDiff;
+        tightestBoundingDiff[2] = boundingBlueDiff;
+        tightestBoundingDiff[3] = boundingAlphaDiff;
+        updatedTightnessBounds = true;
     }
+    return updatedTightnessBounds;
 }
 
-static std::optional<std::pair<int, int>> getGradientNeighbors(int index, const std::span<uint8_t>& bytes, const IntSize& size)
+static std::pair<std::array<int, 4>, std::array<int, 4>> boundingNeighbors(int index, const std::span<uint8_t>& bytes, const IntSize& size)
 {
     constexpr auto bytesPerPixel = 4U;
     auto bufferSize = bytes.size_bytes();
@@ -75,9 +97,6 @@ static std::optional<std::pair<int, int>> getGradientNeighbors(int index, const 
     bool isInBottomLeftCorner = isInBottomRow && isInLeftColumn;
     bool isInTopRightCorner = isInTopRow && isInRightColumn;
     bool isInBotomRightCorner = isInBottomRow && isInRightColumn;
-
-    if (isInTopLeftCorner || isInBottomLeftCorner || isInTopRightCorner || isInBotomRightCorner)
-        return std::nullopt;
 
     constexpr auto leftOffset = -bytesPerPixel;
     constexpr auto rightOffset = bytesPerPixel;
@@ -97,54 +116,68 @@ static std::optional<std::pair<int, int>> getGradientNeighbors(int index, const 
     const int belowLeftIndex = index + belowLeftOffset;
     const int belowRightIndex = index + belowRightOffset;
 
-    const auto areColorsDescending = [&bytes, bufferSize](int index1, int index2, int index3) {
+    const auto areColorsRelated = [&bytes, bufferSize](int index1, int index2, int index3) {
+        constexpr auto maxDistanceThreshold = 8;
         if (!isIndexInBounds(bufferSize, index1) || !isIndexInBounds(bufferSize, index1 + 3))
             return false;
         if (!isIndexInBounds(bufferSize, index2) || !isIndexInBounds(bufferSize, index2 + 3))
             return false;
         if (!isIndexInBounds(bufferSize, index3) || !isIndexInBounds(bufferSize, index3 + 3))
             return false;
-        return bytes[index1] <= bytes[index2] && bytes[index2] <= bytes[index3]
-            && bytes[index1 + 1] <= bytes[index2 + 1] && bytes[index2 + 1] <= bytes[index3 + 1]
-            && bytes[index1 + 2] <= bytes[index2 + 2] && bytes[index2 + 2] <= bytes[index3 + 2]
-            && bytes[index1 + 3] <= bytes[index2 + 3] && bytes[index2 + 3] <= bytes[index3 + 3];
+        bool isColorNearBoundingColor1 = std::abs(static_cast<int>(bytes[index1]) - static_cast<int>(bytes[index2])) <= maxDistanceThreshold
+            && std::abs(static_cast<int>(bytes[index1 + 1]) - static_cast<int>(bytes[index2 + 1])) <= maxDistanceThreshold
+            && std::abs(static_cast<int>(bytes[index1 + 2]) - static_cast<int>(bytes[index2 + 2])) <= maxDistanceThreshold
+            && std::abs(static_cast<int>(bytes[index1 + 3]) - static_cast<int>(bytes[index2 + 3])) <= maxDistanceThreshold;
+
+        bool isColorNearBoundingColor2 =  std::abs(static_cast<int>(bytes[index3]) - static_cast<int>(bytes[index2])) <= maxDistanceThreshold
+            && std::abs(static_cast<int>(bytes[index3 + 1]) - static_cast<int>(bytes[index2 + 1])) <= maxDistanceThreshold
+            && std::abs(static_cast<int>(bytes[index3 + 2]) - static_cast<int>(bytes[index2 + 2])) <= maxDistanceThreshold
+            && std::abs(static_cast<int>(bytes[index3 + 3]) - static_cast<int>(bytes[index2 + 3])) <= maxDistanceThreshold;
+
+        return isColorNearBoundingColor1 || isColorNearBoundingColor2;
     };
 
-    const auto compareColorsAndSetBounds = [&areColorsDescending](const auto& bytes, auto& tightestBoundingIndices, auto& tightestBoundingDiff, auto colorIndex, auto neighborIndex1, auto neighborIndex2) {
-        if (areColorsDescending(neighborIndex1, colorIndex, neighborIndex2)) {
-            tightestBoundingIndices = { neighborIndex1, neighborIndex2 };
-            setTightnessBounds(bytes, tightestBoundingDiff, neighborIndex1, neighborIndex2);
-        } else if (areColorsDescending(neighborIndex2, colorIndex, neighborIndex1)) {
-            tightestBoundingIndices = { neighborIndex2, neighborIndex1 };
-            setTightnessBounds(bytes, tightestBoundingDiff, neighborIndex2, neighborIndex1);
+    const auto compareColorsAndSetBounds = [&areColorsRelated](const auto& bytes, auto& tightestBoundingColors, auto& tightestBoundingDiff, auto colorIndex, auto neighborIndex1, auto neighborIndex2) {
+        if (areColorsRelated(neighborIndex1, colorIndex, neighborIndex2)) {
+            if (setTightnessBounds(bytes, tightestBoundingDiff, neighborIndex1, colorIndex, neighborIndex2)) {
+                if (WTF::allOf(tightestBoundingDiff, [](auto& item) { return !item; })) {
+                    tightestBoundingColors = {
+                        { bytes[colorIndex], bytes[colorIndex + 1], bytes[colorIndex + 2], bytes[colorIndex + 3] },
+                        { bytes[colorIndex], bytes[colorIndex + 1], bytes[colorIndex + 2], bytes[colorIndex + 3] }
+                    };
+                } else {
+                    tightestBoundingColors = {
+                        { bytes[neighborIndex1], bytes[neighborIndex1 + 1], bytes[neighborIndex1 + 2], bytes[neighborIndex1 + 3] },
+                        { bytes[neighborIndex2], bytes[neighborIndex2 + 1], bytes[neighborIndex2 + 2], bytes[neighborIndex2 + 3] }
+                    };
+                }
+            }
         }
+
+        return tightestBoundingColors;
     };
 
-    if (isInTopRow || isInBottomRow) {
-        if (areColorsDescending(leftIndex, index, rightIndex))
-            return { { leftIndex, rightIndex } };
-        if (areColorsDescending(rightIndex, index, leftIndex))
-            return { { rightIndex, leftIndex } };
-        return std::nullopt;
-    }
-
-    if (isInLeftColumn || isInRightColumn) {
-        if (areColorsDescending(aboveIndex, index, belowIndex))
-            return { { aboveIndex, belowIndex } };
-        if (areColorsDescending(belowIndex, index, aboveIndex))
-            return { { belowIndex, aboveIndex } };
-        return std::nullopt;
-    }
-
-    std::optional<std::pair<int, int>> tightestBoundingIndices;
+    std::pair<std::array<int, 4>, std::array<int, 4>> tightestBoundingColors {
+        { 0, 0, 0, 0 },
+        { 255, 255, 255, 255 }
+    };
     std::array<int, 4> tightestBoundingDiff { 255, 255, 255, 255 };
 
-    compareColorsAndSetBounds(bytes, tightestBoundingIndices, tightestBoundingDiff, index, leftIndex, rightIndex);
-    compareColorsAndSetBounds(bytes, tightestBoundingIndices, tightestBoundingDiff, index, aboveIndex, belowIndex);
-    compareColorsAndSetBounds(bytes, tightestBoundingIndices, tightestBoundingDiff, index, aboveLeftIndex, belowRightIndex);
-    compareColorsAndSetBounds(bytes, tightestBoundingIndices, tightestBoundingDiff, index, aboveRightIndex, belowLeftIndex);
+    if (isInTopLeftCorner || isInBottomLeftCorner || isInTopRightCorner || isInBotomRightCorner)
+        return tightestBoundingColors;
 
-    return tightestBoundingIndices;
+    if (isInTopRow || isInBottomRow)
+        return compareColorsAndSetBounds(bytes, tightestBoundingColors, tightestBoundingDiff, index, leftIndex, rightIndex);
+
+    if (isInLeftColumn || isInRightColumn)
+        return compareColorsAndSetBounds(bytes, tightestBoundingColors, tightestBoundingDiff, index, aboveIndex, belowIndex);
+
+    compareColorsAndSetBounds(bytes, tightestBoundingColors, tightestBoundingDiff, index, leftIndex, rightIndex);
+    compareColorsAndSetBounds(bytes, tightestBoundingColors, tightestBoundingDiff, index, aboveIndex, belowIndex);
+    compareColorsAndSetBounds(bytes, tightestBoundingColors, tightestBoundingDiff, index, aboveLeftIndex, belowRightIndex);
+    compareColorsAndSetBounds(bytes, tightestBoundingColors, tightestBoundingDiff, index, aboveRightIndex, belowLeftIndex);
+
+    return tightestBoundingColors;
 }
 
 void CanvasNoiseInjection::postProcessDirtyCanvasBuffer(ImageBuffer* imageBuffer, NoiseInjectionHashSalt salt)
@@ -163,9 +196,48 @@ void CanvasNoiseInjection::postProcessDirtyCanvasBuffer(ImageBuffer* imageBuffer
         return;
 
     if (postProcessPixelBufferResults(*pixelBuffer, salt)) {
-        imageBuffer->putPixelBuffer(*pixelBuffer, m_postProcessDirtyRect, m_postProcessDirtyRect.location());
+        imageBuffer->putPixelBuffer(*pixelBuffer, { IntPoint::zero(), m_postProcessDirtyRect.size() }, m_postProcessDirtyRect.location());
         m_postProcessDirtyRect = { };
     }
+}
+
+static std::pair<int, int> lowerAndUpperBound(int component1, int component2, int component3)
+{
+    if (component1 <= component3) {
+        if (component1 == component2 || component2 == component3)
+            return { component2, component2 };
+        if (component1 <= component2 && component2 <= component3)
+            return { component1, component3 };
+        if (component1 >= component2 && component2 <= component3)
+            return { component2, component1 };
+        if (component1 <= component2 && component2 >= component3)
+            return { component3, component2 };
+    } else if (component1 > component3) {
+        if (component1 < component2 && component2 > component3)
+            return { component3, component1 };
+        if (component1 > component2 && component2 < component3)
+            return { component2, component3 };
+        if (component1 < component2 && component2 > component3)
+            return { component1, component2 };
+    }
+    return { component2, component2 };
+}
+
+static void adjustNeighborColorBounds(std::array<int, 4>& neighborColor1, const std::array<int, 4>& color, std::array<int, 4>& neighborColor2)
+{
+    auto [redLowerBound, redUpperBound] = lowerAndUpperBound(neighborColor1[0], color[0], neighborColor2[0]);
+    auto [greenLowerBound, greenUpperBound] = lowerAndUpperBound(neighborColor1[1], color[1], neighborColor2[1]);
+    auto [blueLowerBound, blueUpperBound] = lowerAndUpperBound(neighborColor1[2], color[2], neighborColor2[2]);
+    auto [alphaLowerBound, alphaUpperBound] = lowerAndUpperBound(neighborColor1[3], color[3], neighborColor2[3]);
+
+    neighborColor1[0] = redLowerBound;
+    neighborColor2[0] = redUpperBound;
+    neighborColor1[1] = greenLowerBound;
+    neighborColor2[1] = greenUpperBound;
+    neighborColor1[2] = blueLowerBound;
+    neighborColor2[2] = blueUpperBound;
+    neighborColor1[3] = alphaLowerBound;
+    neighborColor2[3] = alphaUpperBound;
 }
 
 bool CanvasNoiseInjection::postProcessPixelBufferResults(PixelBuffer& pixelBuffer, NoiseInjectionHashSalt salt) const
@@ -187,42 +259,45 @@ bool CanvasNoiseInjection::postProcessPixelBufferResults(PixelBuffer& pixelBuffe
         if (!alphaChannel)
             continue;
 
-        const uint64_t pixelHash = computeHash(salt, redChannel, greenChannel, blueChannel, alphaChannel);
-        // +/- 3 is roughly ~1% of the 255 max value.
-        const auto clampedOnePercent = static_cast<int8_t>(((pixelHash * 6) / std::numeric_limits<uint32_t>::max()) - 3);
-
-        const auto clampedColorComponentOffset = [](int colorComponentOffset, int originalComponentValue, int minBoundingColor, int maxBoundingColor) {
-            if (colorComponentOffset + originalComponentValue > maxBoundingColor)
-                return maxBoundingColor - originalComponentValue;
-            if (colorComponentOffset + originalComponentValue < minBoundingColor)
-                return minBoundingColor - originalComponentValue;
+        const auto clampedColorComponentOffset = [](int colorComponentOffset, int originalComponentValue, int minValue, int maxValue) {
+            if (originalComponentValue > maxValue)
+                maxValue = 255;
+            if (originalComponentValue < minValue)
+                minValue = 0;
+            if (colorComponentOffset + originalComponentValue > maxValue)
+                colorComponentOffset = maxValue - originalComponentValue;
+            else if (colorComponentOffset + originalComponentValue < minValue)
+                colorComponentOffset = minValue - originalComponentValue;
             return colorComponentOffset;
         };
 
-        std::array<int, 4> minNeighborColor { 0, 0, 0, 0 };
-        std::array<int, 4> maxNeighborColor { 255, 255, 255, 255 };
-        if (auto neighbors = getGradientNeighbors(i, bytes, pixelBuffer.size())) {
-            auto [minNeighborColorIndex, maxNeighborColorIndex] = *neighbors;
-            minNeighborColor[0] = bytes[minNeighborColorIndex];
-            minNeighborColor[1] = bytes[minNeighborColorIndex + 1];
-            minNeighborColor[2] = bytes[minNeighborColorIndex + 2];
-            minNeighborColor[3] = bytes[minNeighborColorIndex + 3];
+        std::array<int, 4> lowerBoundColor { 0, 0, 0, 0 };
+        std::array<int, 4> upperBoundColor { 255, 255, 255, 255 };
+        auto [neighborColor1, neighborColor2] = boundingNeighbors(i, bytes, pixelBuffer.size());
 
-            maxNeighborColor[0] = bytes[maxNeighborColorIndex];
-            maxNeighborColor[1] = bytes[maxNeighborColorIndex + 1];
-            maxNeighborColor[2] = bytes[maxNeighborColorIndex + 2];
-            maxNeighborColor[3] = bytes[maxNeighborColorIndex + 3];
+        // +/- 1 is roughly ~0.5% of the 255 max value.
+        // +/- 3 is roughly ~1% of the 255 max value.
+        int maxNoiseValue = 3;
+        if (neighborColor1 != neighborColor2 && neighborColor1 != lowerBoundColor && neighborColor2 != upperBoundColor) {
+            maxNoiseValue = 1;
+            adjustNeighborColorBounds(neighborColor1, { redChannel, greenChannel, blueChannel, alphaChannel }, neighborColor2);
         }
+
+        lowerBoundColor = neighborColor1;
+        upperBoundColor = neighborColor2;
+
+        const uint64_t pixelHash = computeHash(salt, redChannel, greenChannel, blueChannel, alphaChannel);
+        auto noiseValue = static_cast<int8_t>(((pixelHash * 2 * maxNoiseValue) / std::numeric_limits<uint32_t>::max()) - maxNoiseValue);
 
         // If alpha is non-zero and the color channels are zero, then only tweak the alpha channel's value;
         if (isBlack)
-            alphaChannel += clampedColorComponentOffset(clampedOnePercent, alphaChannel, minNeighborColor[3], maxNeighborColor[3]);
+            alphaChannel += clampedColorComponentOffset(noiseValue, alphaChannel, lowerBoundColor[3], upperBoundColor[3]);
         else {
             // If alpha and any of the color channels are non-zero, then tweak all of the channels;
-            redChannel += clampedColorComponentOffset(clampedOnePercent, redChannel, minNeighborColor[0], maxNeighborColor[0]);
-            greenChannel += clampedColorComponentOffset(clampedOnePercent, greenChannel, minNeighborColor[1], maxNeighborColor[1]);
-            blueChannel += clampedColorComponentOffset(clampedOnePercent, blueChannel, minNeighborColor[2], maxNeighborColor[2]);
-            alphaChannel += clampedColorComponentOffset(clampedOnePercent, alphaChannel, minNeighborColor[3], maxNeighborColor[3]);
+            redChannel += clampedColorComponentOffset(noiseValue, redChannel, lowerBoundColor[0], upperBoundColor[0]);
+            greenChannel += clampedColorComponentOffset(noiseValue, greenChannel, lowerBoundColor[1], upperBoundColor[1]);
+            blueChannel += clampedColorComponentOffset(noiseValue, blueChannel, lowerBoundColor[2], upperBoundColor[2]);
+            alphaChannel += clampedColorComponentOffset(noiseValue, alphaChannel, lowerBoundColor[3], upperBoundColor[3]);
         }
         wasPixelBufferModified = true;
     }

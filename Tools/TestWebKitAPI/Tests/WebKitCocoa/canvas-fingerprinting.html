@@ -98,15 +98,15 @@ function fullTextCanvasImageData() {
     return ctx.getImageData(0, 0, canvas.width, canvas.height);
 }
 
-function initialCanvasImageDataAsString(imageData, length) {
-    let stringify = "";
+function initialCanvasImageDataAsObject(imageData, length) {
     if (length < 0)
-        return "";
+        return {};
     if (length > imageData.data.length)
         length = imageData.data.length;
-    for (i = 0; i < length; i++)
-        stringify += imageData.data[i] + ",";
-    return stringify;
+    let obj = {};
+    for (let i = 0; i < length; ++i)
+      obj[i] = imageData.data[i];
+    return obj;
 }
 
 function isHorizontalLinearGradientCanvasGradient() {
@@ -134,20 +134,20 @@ function isVerticalLinearGradientCanvasGradient() {
     return true;
 }
 
-function initialTextCanvasImageDataAsString(length) {
-    return initialCanvasImageDataAsString(fullTextCanvasImageData(), length);
+function initialTextCanvasImageDataAsObject(length) {
+    return initialCanvasImageDataAsObject(fullTextCanvasImageData(), length);
 }
 
-function initialHorizontalLinearGradientCanvasImageDataAsString(length) {
-    return initialCanvasImageDataAsString(fullHorizontalLinearGradientCanvasImageData(), length);
+function initialHorizontalLinearGradientCanvasImageDataAsObject(length) {
+    return initialCanvasImageDataAsObject(fullHorizontalLinearGradientCanvasImageData(), length);
 }
 
-function initialVerticalLinearGradientCanvasImageDataAsString(length) {
-    return initialCanvasImageDataAsString(fullVerticalLinearGradientCanvasImageData(), length);
+function initialVerticalLinearGradientCanvasImageDataAsObject(length) {
+    return initialCanvasImageDataAsObject(fullVerticalLinearGradientCanvasImageData(), length);
 }
 
-function initialRadialGradientCanvasImageDataAsString(length) {
-    return initialCanvasImageDataAsString(fullRadialGradientCanvasImageData(), length);
+function initialRadialGradientCanvasImageDataAsObject(length) {
+    return initialCanvasImageDataAsObject(fullRadialGradientCanvasImageData(), length);
 }
 
 async function fullCanvasHash(data) {
