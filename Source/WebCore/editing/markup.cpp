@@ -192,6 +192,7 @@ std::unique_ptr<Page> createPageForSanitizingWebContent()
     page->settings().setHTMLParserScriptingFlagPolicy(HTMLParserScriptingFlagPolicy::Enabled);
     page->settings().setPluginsEnabled(false);
     page->settings().setAcceleratedCompositingEnabled(false);
+    page->settings().setLinkPreloadEnabled(false);
 
     Frame& frame = page->mainFrame();
     frame.setView(FrameView::create(frame, IntSize { 800, 600 }));
