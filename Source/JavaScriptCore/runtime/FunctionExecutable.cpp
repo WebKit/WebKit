@@ -226,6 +226,9 @@ JSString* FunctionExecutable::toStringSlow(JSGlobalObject* globalObject)
     auto name = this->name().string();
     if (name == vm.propertyNames->starDefaultPrivateName.string())
         name = emptyAtom();
+
+    if (!src.is8Bit() && src.isAllASCII())
+        return cacheIfNoException(jsMakeNontrivialString(globalObject, functionHeader, WTFMove(name), String::make8Bit(src.characters16(), src.length())));
     return cacheIfNoException(jsMakeNontrivialString(globalObject, functionHeader, WTFMove(name), src));
 }
 
