@@ -108,6 +108,9 @@ void CallGraphBuilder::visit(AST::Function& function)
 
 void CallGraphBuilder::visit(AST::CallExpression& call)
 {
+    for (auto& argument : call.arguments())
+        AST::Visitor::visit(argument);
+
     if (!is<AST::NamedTypeName>(call.target()))
         return;
 

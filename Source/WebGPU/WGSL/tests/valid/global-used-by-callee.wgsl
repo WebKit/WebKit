@@ -1,3 +1,4 @@
+// RUN: %metal-compile main
 // RUN: %metal main 2>&1 | %check
 
 var<private> x: i32;
@@ -30,6 +31,15 @@ fn i() -> i32
 {
     // CHECK: f\(parameter\d\)
     _ = f();
+    return 0;
+}
+
+// CHECK: float j\(float parameter\d, int parameter\d\)
+fn j(x: f32) -> f32
+{
+    // CHECK: f\(parameter\d\)
+    _ = f();
+    return x;
 }
 
 @compute @workgroup_size(1)
@@ -50,4 +60,7 @@ fn main()
 
     // CHECK: i\(local\d\)
     _ = i();
+
+    // CHECK: j\(j\(42, local\d\), local\d\)
+    _ = j(j(42));
 }
