@@ -119,7 +119,6 @@ private:
     Indentation<4> m_indent { 0 };
     std::optional<AST::StructureRole> m_structRole;
     std::optional<AST::StageAttribute::Stage> m_entryPointStage;
-    std::optional<String> m_suffix;
     unsigned m_functionConstantIndex { 0 };
     HashSet<AST::Function*> m_visitedFunctions;
 };
@@ -291,10 +290,6 @@ void FunctionDefinitionWriter::visit(AST::Structure& structDecl)
             m_stringBuilder.append(m_indent);
             visit(member.type());
             m_stringBuilder.append(" ", name);
-            if (m_suffix.has_value()) {
-                m_stringBuilder.append(*m_suffix);
-                m_suffix.reset();
-            }
             for (auto &attribute : member.attributes()) {
                 m_stringBuilder.append(" ");
                 visit(attribute);
@@ -603,16 +598,9 @@ void FunctionDefinitionWriter::visit(const Type* type)
             m_stringBuilder.append(", ", matrix.columns, ", ", matrix.rows, ">");
         },
         [&](const Array& array) {
-            ASSERT(array.element);
-            if (!array.size.has_value()) {
-                visit(array.element);
-                m_suffix = { "[1]"_s };
-                return;
-            }
-
             m_stringBuilder.append("array<");
             visit(array.element);
-            m_stringBuilder.append(", ", *array.size, ">");
+            m_stringBuilder.append(", ", array.size.value_or(1), ">");
         },
         [&](const Struct& structure) {
             m_stringBuilder.append(structure.structure.name());
