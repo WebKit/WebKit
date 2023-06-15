@@ -100,6 +100,7 @@
 #include "ModelPlayerProvider.h"
 #include "NavigationScheduler.h"
 #include "Navigator.h"
+#include "OpportunisticTaskScheduler.h"
 #include "PageColorSampler.h"
 #include "PageConfiguration.h"
 #include "PageConsoleClient.h"
@@ -366,6 +367,7 @@ Page::Page(PageConfiguration&& pageConfiguration)
 #if ENABLE(ATTACHMENT_ELEMENT)
     , m_attachmentElementClient(WTFMove(pageConfiguration.attachmentElementClient))
 #endif
+    , m_opportunisticTaskScheduler(OpportunisticTaskScheduler::create(*this))
     , m_contentSecurityPolicyModeForExtension(WTFMove(pageConfiguration.contentSecurityPolicyModeForExtension))
     , m_badgeClient(WTFMove(pageConfiguration.badgeClient))
 {
@@ -1473,6 +1475,13 @@ void Page::didCommitLoad()
     if (auto* geolocationController = GeolocationController::from(this))
         geolocationController->didNavigatePage();
 #endif
+
+    m_opportunisticTaskDeferralScopeForFirstPaint = m_opportunisticTaskScheduler->makeDeferralScope();
+}
+
+void Page::didFirstMeaningfulPaint()
+{
+    m_opportunisticTaskDeferralScopeForFirstPaint = nullptr;
 }
 
 void Page::didFinishLoad()
@@ -2013,6 +2022,9 @@ void Page::renderingUpdateCompleted()
         scheduleRenderingUpdateInternal();
         m_unfulfilledRequestedSteps = { };
     }
+
+    if (!isUtilityPage() && m_displayNominalFramesPerSecond)
+        m_opportunisticTaskScheduler->reschedule(m_lastRenderingUpdateTimestamp + Seconds(1. / *m_displayNominalFramesPerSecond));
 }
 
 void Page::willStartRenderingUpdateDisplay()
@@ -4444,6 +4456,13 @@ void Page::reloadExecutionContextsForOrigin(const ClientOrigin& origin, std::opt
         localFrame->navigationScheduler().scheduleRefresh(*document);
         frame = frame->tree().traverseNextSkippingChildren();
     }
+}
+
+void Page::performOpportunisticallyScheduledTasks(MonotonicTime deadline)
+{
+    // FIXME (257622): Call into JavaScriptCore to perform any imminently-scheduled
+    // work prior to the next rendering update.
+    UNUSED_PARAM(deadline);
 }
 
 } // namespace WebCore

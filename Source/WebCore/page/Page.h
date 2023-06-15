@@ -128,6 +128,7 @@ class FormData;
 class HTMLElement;
 class HTMLMediaElement;
 class HistoryItem;
+class OpportunisticTaskScheduler;
 class ImageAnalysisQueue;
 class ImageOverlayController;
 class InspectorClient;
@@ -315,6 +316,8 @@ public:
     WEBCORE_EXPORT PluginData& pluginData();
     void clearPluginData();
 
+    OpportunisticTaskScheduler& opportunisticTaskScheduler() const { return m_opportunisticTaskScheduler.get(); }
+
     WEBCORE_EXPORT void setCanStartMedia(bool);
     bool canStartMedia() const { return m_canStartMedia; }
 
@@ -479,6 +482,7 @@ public:
     void didStartProvisionalLoad();
     void didCommitLoad();
     void didFinishLoad();
+    void didFirstMeaningfulPaint();
 
     bool delegatesScaling() const { return m_delegatesScaling; }
     WEBCORE_EXPORT void setDelegatesScaling(bool);
@@ -1054,6 +1058,8 @@ public:
     const WeakHashSet<LocalFrame>& rootFrames() const { return m_rootFrames; }
     WEBCORE_EXPORT void addRootFrame(LocalFrame&);
 
+    void performOpportunisticallyScheduledTasks(MonotonicTime deadline);
+
 private:
     struct Navigation {
         RegistrableDomain domain;
@@ -1412,6 +1418,9 @@ private:
 #if ENABLE(ATTACHMENT_ELEMENT)
     std::unique_ptr<AttachmentElementClient> m_attachmentElementClient;
 #endif
+
+    std::unique_ptr<OpportunisticTaskDeferralScope> m_opportunisticTaskDeferralScopeForFirstPaint;
+    Ref<OpportunisticTaskScheduler> m_opportunisticTaskScheduler;
 
 #if ENABLE(IMAGE_ANALYSIS)
     using CachedTextRecognitionResult = std::pair<TextRecognitionResult, IntRect>;

@@ -1867,6 +1867,7 @@ page/MouseEventWithHitTestResults.cpp
 page/Navigator.cpp
 page/NavigatorBase.cpp
 page/NavigatorIsLoggedIn.cpp
+page/OpportunisticTaskScheduler.cpp
 page/OriginAccessEntry.cpp
 page/OriginAccessPatterns.cpp
 page/Page.cpp

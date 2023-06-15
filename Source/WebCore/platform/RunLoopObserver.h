@@ -62,9 +62,11 @@ public:
         AfterWaiting    = 1 << 3,
     };
 
-    RunLoopObserver(WellKnownOrder order, RunLoopObserverCallback&& callback)
+    enum class Type : bool { Repeating, OneShot };
+    RunLoopObserver(WellKnownOrder order, RunLoopObserverCallback&& callback, Type type = Type::Repeating)
         : m_order(order)
         , m_callback(WTFMove(callback))
+        , m_type(type)
     { }
 
     WEBCORE_EXPORT ~RunLoopObserver();
@@ -73,6 +75,8 @@ public:
     WEBCORE_EXPORT void schedule(PlatformRunLoop = nullptr, OptionSet<Activity> = defaultActivities);
     WEBCORE_EXPORT void invalidate();
     WEBCORE_EXPORT bool isScheduled() const;
+
+    bool isRepeating() const { return m_type == Type::Repeating; }
 
 #if USE(CF)
     static void runLoopObserverFired(PlatformRunLoopObserver, unsigned long, void*);
@@ -86,6 +90,7 @@ private:
 #if USE(CF)
     RetainPtr<PlatformRunLoopObserver> m_runLoopObserver;
 #endif
+    Type m_type { Type::Repeating };
 };
 
 } // namespace WebCore
