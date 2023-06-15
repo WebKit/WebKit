@@ -1166,8 +1166,10 @@ void RenderBlockFlow::determineLogicalLeftPositionForChild(RenderBox& child, App
 {
     LayoutUnit startPosition = borderStart() + paddingStart();
     LayoutUnit initialStartPosition = startPosition;
-    if (shouldPlaceVerticalScrollbarOnLeft() && isHorizontalWritingMode())
+    if ((shouldPlaceVerticalScrollbarOnLeft() || style().scrollbarGutter().bothEdges) && isHorizontalWritingMode())
         startPosition += (style().isLeftToRightDirection() ? 1 : -1) * verticalScrollbarWidth();
+    if (style().scrollbarGutter().bothEdges && !isHorizontalWritingMode())
+        startPosition += (style().isLeftToRightDirection() ? 1 : -1) * horizontalScrollbarHeight();
     LayoutUnit totalAvailableLogicalWidth = borderAndPaddingLogicalWidth() + availableLogicalWidth();
 
     LayoutUnit childMarginStart = marginStartForChild(child);

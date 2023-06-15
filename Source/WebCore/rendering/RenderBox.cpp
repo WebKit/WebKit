@@ -762,8 +762,9 @@ LayoutRect RenderBox::paddingBoxRect() const
 
 LayoutPoint RenderBox::contentBoxLocation() const
 {
-    LayoutUnit scrollbarSpace = shouldPlaceVerticalScrollbarOnLeft() ? verticalScrollbarWidth() : 0;
-    return { borderLeft() + paddingLeft() + scrollbarSpace, borderTop() + paddingTop() };
+    LayoutUnit verticalScrollbarSpace = (shouldPlaceVerticalScrollbarOnLeft() || style().scrollbarGutter().bothEdges) ? verticalScrollbarWidth() : 0;
+    LayoutUnit horizontalScrollbarSpace = style().scrollbarGutter().bothEdges ? horizontalScrollbarHeight() : 0;
+    return { borderLeft() + paddingLeft() + verticalScrollbarSpace, borderTop() + paddingTop() + horizontalScrollbarSpace };
 }
 
 FloatRect RenderBox::referenceBoxRect(CSSBoxType boxType) const
