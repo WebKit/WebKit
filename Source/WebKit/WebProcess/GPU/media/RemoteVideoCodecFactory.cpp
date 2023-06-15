@@ -30,6 +30,7 @@
 
 #include "LibWebRTCCodecs.h"
 #include "WebProcess.h"
+#include <wtf/StdUnorderedMap.h>
 
 namespace WebKit {
 
@@ -43,7 +44,7 @@ public:
 
     // Must be called on the VideoDecoder thread, or within postTaskCallback.
     void close() { m_isClosed = true; }
-    void addDuration(int64_t timestamp, uint64_t duration) { m_timestampToDuration.add(timestamp + 1, duration); }
+    void addDuration(int64_t timestamp, uint64_t duration) { m_timestampToDuration.insert_or_assign(timestamp, duration); }
 
 private:
     RemoteVideoDecoderCallbacks(VideoDecoder::OutputCallback&&, VideoDecoder::PostTaskCallback&&);
@@ -51,7 +52,7 @@ private:
     VideoDecoder::OutputCallback m_outputCallback;
     VideoDecoder::PostTaskCallback m_postTaskCallback;
     bool m_isClosed { false };
-    HashMap<int64_t, uint64_t> m_timestampToDuration;
+    StdUnorderedMap<int64_t, uint64_t> m_timestampToDuration;
 };
 
 class RemoteVideoDecoder : public WebCore::VideoDecoder {
@@ -84,7 +85,7 @@ public:
 
     // Must be called on the VideoDecoder thread, or within postTaskCallback.
     void close() { m_isClosed = true; }
-    void addDuration(int64_t timestamp, uint64_t duration) { m_timestampToDuration.add(timestamp + 1, duration); }
+    void addDuration(int64_t timestamp, uint64_t duration) { m_timestampToDuration.insert_or_assign(timestamp, duration); }
 
 private:
     RemoteVideoEncoderCallbacks(VideoEncoder::DescriptionCallback&&, VideoEncoder::OutputCallback&&, VideoEncoder::PostTaskCallback&&);
@@ -93,7 +94,7 @@ private:
     VideoEncoder::OutputCallback m_outputCallback;
     VideoEncoder::PostTaskCallback m_postTaskCallback;
     bool m_isClosed { false };
-    HashMap<int64_t, uint64_t> m_timestampToDuration;
+    StdUnorderedMap<int64_t, uint64_t> m_timestampToDuration;
 };
 
 class RemoteVideoEncoder : public WebCore::VideoEncoder {
@@ -223,7 +224,12 @@ void RemoteVideoDecoderCallbacks::notifyDecodingResult(RefPtr<WebCore::VideoFram
             protectedThis->m_outputCallback(makeUnexpected("Decoder failure"_s));
             return;
         }
-        auto duration = protectedThis->m_timestampToDuration.take(timestamp + 1);
+        uint64_t duration = 0;
+        auto iterator = protectedThis->m_timestampToDuration.find(timestamp);
+        if (iterator != protectedThis->m_timestampToDuration.end()) {
+            duration = iterator->second;
+            protectedThis->m_timestampToDuration.erase(iterator);
+        }
         protectedThis->m_outputCallback(VideoDecoder::DecodedFrame { frame.releaseNonNull(), static_cast<int64_t>(timestamp), duration });
     });
 }
@@ -290,7 +296,10 @@ void RemoteVideoEncoderCallbacks::notifyEncodedChunk(Vector<uint8_t>&& data, boo
             return;
 
         // FIXME: Remove from the map.
-        auto duration = protectedThis->m_timestampToDuration.get(timestamp + 1);
+        uint64_t duration = 0;
+        auto iterator = protectedThis->m_timestampToDuration.find(timestamp);
+        if (iterator != protectedThis->m_timestampToDuration.end())
+            duration = iterator->second;
         protectedThis->m_outputCallback({ WTFMove(data), isKeyFrame, static_cast<int64_t>(timestamp), duration });
     });
 }
