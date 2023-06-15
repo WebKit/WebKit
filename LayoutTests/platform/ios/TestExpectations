@@ -3681,6 +3681,9 @@ webkit.org/b/240929 [ Debug ]  resize-observer/resize-observer-with-zoom.html [ 
 
 webkit.org/b/241253 fast/text/bulgarian-system-language-shaping.html [ Pass ]
 
+# webkit.org/b/258095 [ iOS, macOS ]  media/track/video-track-add-remove.html  is a flaky crash.
+[ Debug ] media/track/video-track-add-remove.html [ Pass Crash ]
+
 # These tests have different results on iOS
 imported/w3c/web-platform-tests/css/css-scroll-anchoring/device-pixel-adjustment.html
 imported/w3c/web-platform-tests/css/css-scroll-anchoring/history-restore-anchors.html
