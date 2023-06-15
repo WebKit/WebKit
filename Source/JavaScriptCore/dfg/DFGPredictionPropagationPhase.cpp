@@ -1204,6 +1204,7 @@ private:
         case NewArrayWithSpread:
         case NewArray:
         case NewArrayWithSize:
+        case NewArrayWithConstantSize:
         case CreateRest:
         case NewArrayBuffer:
         case ObjectKeys:

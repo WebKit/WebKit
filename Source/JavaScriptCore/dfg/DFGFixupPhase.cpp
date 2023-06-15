@@ -1804,6 +1804,11 @@ private:
             break;
         }
 
+        case NewArrayWithConstantSize: {
+            watchHavingABadTime(node);
+            break;
+        }
+
         case NewArrayWithSpecies: {
             ArrayMode arrayMode = node->arrayMode().refine(m_graph, node, node->child2()->prediction(), ArrayMode::unusedIndexSpeculatedType);
             node->setArrayMode(arrayMode);

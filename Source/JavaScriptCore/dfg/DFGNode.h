@@ -861,6 +861,7 @@ public:
 
     void convertToNewArrayBuffer(FrozenValue* immutableButterfly);
     void convertToNewArrayWithSize();
+    void convertToNewArrayWithConstantSize(Graph&, uint32_t);
 
     void convertToNewBoundFunction(FrozenValue*);
 
@@ -1314,12 +1315,29 @@ public:
             return m_opInfo2.as<unsigned>();
         return newArrayBufferData().vectorLengthHint;
     }
-    
+
+    unsigned hasNewArraySize()
+    {
+        switch (op()) {
+        case NewArrayWithConstantSize:
+            return true;
+        default:
+            return false;
+        }
+    }
+
+    unsigned newArraySize()
+    {
+        ASSERT(hasNewArraySize());
+        return m_opInfo2.as<unsigned>();
+    }
+
     bool hasIndexingType()
     {
         switch (op()) {
         case NewArray:
         case NewArrayWithSize:
+        case NewArrayWithConstantSize:
         case NewArrayBuffer:
         case PhantomNewArrayBuffer:
         case NewArrayWithSpecies:

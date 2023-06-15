@@ -493,6 +493,7 @@ private:
             
         case NewTypedArray:
         case NewArrayWithSize:
+        case NewArrayWithConstantSize:
         case NewArrayWithSpecies: {
             // Negative zero is not observable. NaN versus undefined are only observable
             // in that you would get a different exception message. So, like, whatever: we

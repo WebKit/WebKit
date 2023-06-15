@@ -1671,6 +1671,12 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         write(HeapObjectCount);
         return;
 
+    case NewArrayWithConstantSize:
+        read(HeapObjectCount);
+        write(HeapObjectCount);
+        def(HeapLocation(ArrayLengthLoc, Butterfly_publicLength, node), LazyNode(graph.freeze(jsNumber(node->newArraySize()))));
+        return;
+
     case NewTypedArray:
         switch (node->child1().useKind()) {
         case Int32Use:

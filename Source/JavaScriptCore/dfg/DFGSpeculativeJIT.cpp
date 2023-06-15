@@ -14992,6 +14992,24 @@ void SpeculativeJIT::compileNewArrayWithSize(Node* node)
     cellResult(resultGPR, node);
 }
 
+void SpeculativeJIT::compileNewArrayWithConstantSize(Node* node)
+{
+    ASSERT(m_graph.isWatchingHavingABadTimeWatchpoint(node));
+    ASSERT(!hasAnyArrayStorage(node->indexingType()));
+
+    GPRTemporary size(this);
+    GPRTemporary result(this);
+
+    GPRReg sizeGPR = size.gpr();
+    GPRReg resultGPR = result.gpr();
+
+    move(TrustedImm32(node->newArraySize()), sizeGPR);
+
+    constexpr bool shouldConvertLargeSizeToArrayStorage = false;
+    compileAllocateNewArrayWithSize(node, resultGPR, sizeGPR, node->indexingType(), shouldConvertLargeSizeToArrayStorage);
+    cellResult(resultGPR, node);
+}
+
 void SpeculativeJIT::compileNewArrayWithSpecies(Node* node)
 {
     if (node->child1().useKind() == Int32Use) {

@@ -266,6 +266,14 @@ void Node::convertToNewArrayWithSize()
     m_opInfo = indexingType;
 }
 
+void Node::convertToNewArrayWithConstantSize(Graph&, uint32_t size)
+{
+    ASSERT(op() == NewArrayWithSize);
+    ASSERT(size < MIN_ARRAY_STORAGE_CONSTRUCTION_LENGTH);
+    setOpAndDefaultFlags(NewArrayWithConstantSize);
+    m_opInfo2 = size;
+}
+
 void Node::convertToNewBoundFunction(FrozenValue* executable)
 {
     m_op = NewBoundFunction;

@@ -148,6 +148,7 @@ ExitMode mayExitImpl(Graph& graph, Node* node, StateType& state)
     case NewStringObject:
     case NewInternalFieldObject:
     case NewRegexp:
+    case NewArrayWithConstantSize:
     case ToNumber:
     case ToNumeric:
     case ToObject:

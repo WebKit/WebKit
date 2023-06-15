@@ -3134,6 +3134,11 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
+    case NewArrayWithConstantSize: {
+        compileNewArrayWithConstantSize(node);
+        break;
+    }
+
     case NewArrayWithSpecies: {
         compileNewArrayWithSpecies(node);
         break;

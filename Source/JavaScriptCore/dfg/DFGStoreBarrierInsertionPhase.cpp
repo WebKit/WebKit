@@ -381,6 +381,7 @@ private:
             case NewAsyncGenerator:
             case NewArray:
             case NewArrayWithSize:
+            case NewArrayWithConstantSize:
             case NewArrayBuffer:
             case NewInternalFieldObject:
             case NewTypedArray:

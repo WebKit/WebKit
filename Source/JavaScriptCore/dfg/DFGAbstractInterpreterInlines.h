@@ -3203,10 +3203,36 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         setTypeForNode(node, SpecObject);
         break;
 
-    case NewArrayWithSize:
-        setTypeForNode(node, SpecArray);
+    case NewArrayWithSize: {
+        bool folding = false;
+        if (m_graph.isWatchingHavingABadTimeWatchpoint(node)) {
+            if (node->child1().useKind() == Int32Use && node->child1()->isInt32Constant()) {
+                int32_t length = node->child1()->asInt32();
+                if (length >= 0 && length < MIN_ARRAY_STORAGE_CONSTRUCTION_LENGTH) {
+                    switch (node->indexingType()) {
+                    case ALL_DOUBLE_INDEXING_TYPES:
+                    case ALL_INT32_INDEXING_TYPES:
+                    case ALL_CONTIGUOUS_INDEXING_TYPES: {
+                        m_state.setShouldTryConstantFolding(true);
+                        setForNode(node, m_graph.globalObjectFor(node->origin.semantic)->arrayStructureForIndexingTypeDuringAllocation(node->indexingMode()));
+                        folding = true;
+                        break;
+                    }
+                    default:
+                        break;
+                    }
+                }
+            }
+        }
+        if (!folding)
+            setTypeForNode(node, SpecArray);
         break;
-        
+    }
+
+    case NewArrayWithConstantSize:
+        setForNode(node, m_graph.globalObjectFor(node->origin.semantic)->arrayStructureForIndexingTypeDuringAllocation(node->indexingMode()));
+        break;
+
     case NewTypedArray: {
         switch (node->child1().useKind()) {
         case Int32Use:

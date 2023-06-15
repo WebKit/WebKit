@@ -240,6 +240,7 @@ inline CapabilityLevel canCompile(Node* node)
     case MakeRope:
     case MakeAtomString:
     case NewArrayWithSize:
+    case NewArrayWithConstantSize:
     case NewArrayWithSpecies:
     case TryGetById:
     case GetById:

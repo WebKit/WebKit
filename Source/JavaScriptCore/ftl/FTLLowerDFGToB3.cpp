@@ -1221,6 +1221,9 @@ private:
         case NewArrayWithSize:
             compileNewArrayWithSize();
             break;
+        case NewArrayWithConstantSize:
+            compileNewArrayWithConstantSize();
+            break;
         case NewArrayWithSpecies:
             compileNewArrayWithSpecies();
             break;
@@ -9092,6 +9095,21 @@ IGNORE_CLANG_WARNINGS_END
             weakStructure(m_graph.registerStructure(globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithArrayStorage))),
             weakStructure(structure));
         setJSValue(vmCall(Int64, operationNewArrayWithSize, weakPointer(globalObject), structureValue, publicLength, m_out.intPtrZero));
+    }
+
+    void compileNewArrayWithConstantSize()
+    {
+        LValue publicLength = m_out.constInt32(m_node->newArraySize());
+
+        JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
+
+        ASSERT(m_graph.isWatchingHavingABadTimeWatchpoint(m_node));
+        ASSERT(!hasAnyArrayStorage(m_node->indexingType()));
+        IndexingType indexingType = m_node->indexingType();
+        setJSValue(
+            allocateJSArray(
+                publicLength, publicLength, weakPointer(globalObject->arrayStructureForIndexingTypeDuringAllocation(indexingType)), m_out.constInt32(indexingType)).array);
+        mutatorFence();
     }
 
     void compileNewArrayWithSpecies()
