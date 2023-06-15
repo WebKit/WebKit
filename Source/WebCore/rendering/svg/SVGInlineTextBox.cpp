@@ -357,8 +357,23 @@ bool SVGInlineTextBox::acquirePaintingResource(GraphicsContext*& context, float 
         }
     }
 
-    if (scalingFactor != 1 && paintingResourceMode().contains(RenderSVGResourceMode::ApplyToStroke))
-        context->setStrokeThickness(context->strokeThickness() * scalingFactor);
+    if (paintingResourceMode().contains(RenderSVGResourceMode::ApplyToStroke)) {
+        if (style.svgStyle().vectorEffect() == VectorEffect::NonScalingStroke) {
+            if (style.fontDescription().textRenderingMode() == TextRenderingMode::GeometricPrecision)
+                scalingFactor = 1.0 / RenderSVGInlineText::computeScalingFactorForRenderer(renderer);
+            else
+                scalingFactor = 1.0;
+
+            if (auto zoomFactor = renderer.style().effectiveZoom(); zoomFactor != 1.0)
+                scalingFactor *= zoomFactor;
+
+            if (auto deviceScaleFactor = renderer.document().deviceScaleFactor(); deviceScaleFactor != 1.0)
+                scalingFactor *= deviceScaleFactor;
+        }
+
+        if (scalingFactor != 1.0)
+            context->setStrokeThickness(context->strokeThickness() * scalingFactor);
+    }
 
     return true;
 }

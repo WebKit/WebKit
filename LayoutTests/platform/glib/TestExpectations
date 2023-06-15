@@ -1541,6 +1541,13 @@ svg/transforms/translation-tiny-element.svg [ ImageOnlyFailure ]
 # The following test only works with LBSE activated -- text transform changes fail to repaint using the legacy engine.
 svg/repaint/text-repainting-after-modifying-transform.html [ ImageOnlyFailure ]
 
+# Gradient+text have placing issues in gtk/wpe.
+webkit.org/b/139322 svg/stroke/non-scaling-stroke-gradient-text.html [ ImageOnlyFailure ]
+
+# 'text-rendering: geometricPrecision' different ligatures/kerning used in actual/expected reftest - probably a different font in the test could help, postponing for further investigation.
+webkit.org/b/139322 svg/zoom/page/non-scaling-stroke-textRendering-geometricPrecision.svg [ ImageOnlyFailure ]
+webkit.org/b/139322 svg/text/non-scaling-stroke-textRendering-geometricPrecision.svg [ ImageOnlyFailure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of SVG-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
