@@ -69,7 +69,8 @@
         {
             layerTreeAsText =  window.internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_REPAINT_RECTS);
             window.internals.stopTrackingRepaints();
-            shouldBeTrue("layerTreeAsText.indexOf('(rect 0.00 0.00 300.00 750.00)') > -1");
+            shouldBeTrue("layerTreeAsText.indexOf('(rect 0.00 0.00 280.00 200.00)') > -1");
+            shouldBeTrue("layerTreeAsText.indexOf('(rect 11.00 11.00 278.00 178.00)') > -1");
 
             finishJSTest();
         }

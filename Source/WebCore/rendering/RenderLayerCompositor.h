@@ -379,9 +379,8 @@ public:
     void startTrackingCompositingUpdates() { m_compositingUpdateCount = 0; }
     unsigned compositingUpdateCount() const { return m_compositingUpdateCount; }
 
-    class BackingSharingState;
-
 private:
+    class BackingSharingState;
     struct CompositingState;
     struct OverlapExtent;
     struct UpdateBackingTraversalState;
