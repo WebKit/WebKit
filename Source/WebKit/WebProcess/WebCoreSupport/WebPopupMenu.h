@@ -26,6 +26,7 @@
 #include <WebCore/PopupMenu.h>
 #include <wtf/Forward.h>
 #include <wtf/Vector.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 class PopupMenuClient;
