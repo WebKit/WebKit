@@ -2339,7 +2339,7 @@ EnterKeyHintEnabled:
 
 EnumeratingAllNetworkInterfacesEnabled:
   type: bool
-  status: embedder
+  status: internal
   humanReadableName: "Enable Enumerating All Network Interfaces"
   webcoreBinding: none
   exposed: [ WebKit ]
