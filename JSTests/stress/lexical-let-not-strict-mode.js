@@ -9,33 +9,23 @@ function assert(cond) {
 }
 noInline(assert);
 
-function shouldThrowTDZ(func) {
-    var hasThrown = false;
-    try {
-        func();
-    } catch(e) {
-        if (e.name.indexOf("ReferenceError") !== -1)
-            hasThrown = true;
-    }
-    assert(hasThrown);
-}
-noInline(shouldThrowTDZ);
-
 ;(function() {
 
-function foo() {
+function foo(i) {
     delete x;
-    let x;
+    let x = i;
+    assert(x === i);
 }
-function bar() {
+function bar(i) {
     delete x;
-    let x;
+    let x = i;
     function capX() { return x; }
+    assert(capX() === i);
 }
 
 for (var i = 0; i < 1000; i++) {
-    shouldThrowTDZ(foo);
-    shouldThrowTDZ(bar);
+    foo(i);
+    bar(i);
 }
 
 })();

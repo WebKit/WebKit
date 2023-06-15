@@ -9,18 +9,6 @@ function assert(cond) {
 }
 noInline(assert);
 
-function shouldThrowTDZ(func) {
-    var hasThrown = false;
-    try {
-        func();
-    } catch(e) {
-        if (e.name.indexOf("ReferenceError") !== -1)
-            hasThrown = true;
-    }
-    assert(hasThrown);
-}
-noInline(shouldThrowTDZ);
-
 
 // Tests
 
@@ -28,19 +16,21 @@ noInline(shouldThrowTDZ);
 const NUM_LOOPS = 1000;
 
 ;(function() {
-function foo() {
+function foo(i) {
     delete x;
-    const x = 20;
+    const x = i;
+    assert(x === i);
 }
-function bar() {
+function bar(i) {
     delete x;
-    const x = 20;
+    const x = i;
     function capX() { return x; }
+    assert(x === i);
 }
 
 for (var i = 0; i < NUM_LOOPS; i++) {
-    shouldThrowTDZ(foo);
-    shouldThrowTDZ(bar);
+    foo(i);
+    bar(i);
 }
 
 })();
