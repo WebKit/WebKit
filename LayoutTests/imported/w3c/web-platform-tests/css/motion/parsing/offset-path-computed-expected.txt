@@ -1,7 +1,7 @@
 
 PASS Property offset-path value 'none'
-FAIL Property offset-path value 'ray(0deg)' assert_true: 'ray(0deg)' is a supported value for offset-path. expected true got false
-FAIL Property offset-path value 'ray(0rad closest-side)' assert_equals: expected "ray(0deg)" but got "ray(0deg closest-side)"
+PASS Property offset-path value 'ray(0deg)'
+PASS Property offset-path value 'ray(0rad closest-side)'
 PASS Property offset-path value 'ray(0.25turn closest-corner contain)'
 PASS Property offset-path value 'ray(200grad farthest-side)'
 PASS Property offset-path value 'ray(270deg farthest-corner contain)'
