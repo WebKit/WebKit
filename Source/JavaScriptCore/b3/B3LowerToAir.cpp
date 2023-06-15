@@ -731,16 +731,6 @@ private:
         return Arg();
     }
 
-    Arg imm64(Value* value)
-    {
-        if (value->hasInt()) {
-            int64_t intValue = value->asInt();
-            if (Arg::isValidImm64Form(intValue))
-                return Arg::imm64(intValue);
-        }
-        return Arg();
-    }
-
     Arg bitImm(Value* value)
     {
         if (value->hasInt()) {
@@ -999,21 +989,6 @@ private:
                 // A non-commutative operation could have an immediate in left.
                 if (imm(left)) {
                     append(opcode, imm(left), tmp(right), result);
-                    return;
-                }
-            }
-        }
-
-        if (isValidForm(opcode, Arg::Imm64, Arg::Tmp, Arg::Tmp)) {
-            if (commutativity == Commutative) {
-                if (imm64(right)) {
-                    append(opcode, imm64(right), tmp(left), result);
-                    return;
-                }
-            } else {
-                // A non-commutative operation could have an immediate in left.
-                if (imm64(left)) {
-                    append(opcode, imm64(left), tmp(right), result);
                     return;
                 }
             }

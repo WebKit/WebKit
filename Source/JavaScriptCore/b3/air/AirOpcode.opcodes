@@ -39,7 +39,6 @@
 # Argument kinds:
 # Tmp => temporary or register
 # Imm => 32-bit immediate int
-# Imm64 => 64-bit immediate int with special-shift
 # BigImm => TrustedImm64 on 64-bit targets, TrustedImm32 on 32-bit targets
 # Addr => address as temporary/register+offset
 # Index => BaseIndex address
@@ -147,7 +146,6 @@ x86: Add16 U:G:16, UD:G:16
     x86: Imm, Addr
     x86: Imm, Index
     Imm, Tmp
-    arm64: Imm64, Tmp
     x86: Addr, Tmp
     x86: Index, Tmp
     x86: Tmp, Addr
@@ -156,7 +154,6 @@ x86: Add16 U:G:16, UD:G:16
 64: Add64 U:G:64, U:G:64, D:G:64
     Imm, Tmp, Tmp
     Tmp, Tmp, Tmp
-    arm64: Imm64, Tmp, Tmp
 
 # note that this pseudoinstruction (and others like it) exist right now because
 # air doesn't track live flags: we do support 64-bit addition on e.g. armv7
@@ -206,7 +203,6 @@ arm: Sub32 U:G:32, U:G:32, ZD:G:32
     x86: Imm, Addr
     x86: Imm, Index
     Imm, Tmp
-    arm64: Imm64, Tmp
     x86: Addr, Tmp
     x86: Index, Tmp
     x86: Tmp, Addr
@@ -215,7 +211,6 @@ arm: Sub32 U:G:32, U:G:32, ZD:G:32
 arm64: Sub64 U:G:64, U:G:64, D:G:64
     Tmp, Tmp, Tmp
     Tmp, Imm, Tmp
-    Tmp, Imm64, Tmp
 
 # note see note above, on Add64
 32: Sub64 U:G:32, U:G:32, U:G:32, U:G:32, D:G:32, D:G:32
@@ -1466,7 +1461,6 @@ Compare32 U:G:32, U:G:32, U:G:32, ZD:G:32
 64: Compare64 U:G:32, U:G:64, U:G:64, ZD:G:32
     RelCond, Tmp, Tmp, Tmp
     RelCond, Tmp, Imm, Tmp
-    arm64: RelCond, Tmp, Imm64, Tmp
 
 Test32 U:G:32, U:G:32, U:G:32, ZD:G:32
     x86: ResCond, Addr, Imm, Tmp
@@ -1511,7 +1505,6 @@ Branch32 U:G:32, U:G:32, U:G:32 /branch
     x86: RelCond, Addr, Tmp
     x86: RelCond, Addr, Imm
     x86: RelCond, Index, Tmp
-    arm64: RelCond, Tmp, Imm64
 
 BranchTest8 U:G:32, U:G:8, U:G:8 /branch
     x86: ResCond, Addr, BitImm
@@ -1622,7 +1615,6 @@ BranchNeg32 U:G:32, UZD:G:32 /branch
 64: MoveConditionally64 U:G:32, U:G:64, U:G:64, U:G:Ptr, U:G:Ptr, D:G:Ptr
     RelCond, Tmp, Tmp, Tmp, Tmp, Tmp
     RelCond, Tmp, Imm, Tmp, Tmp, Tmp
-    arm64: RelCond, Tmp, Imm64, Tmp, Tmp, Tmp
 
 64: MoveConditionallyTest32 U:G:32, U:G:32, U:G:32, U:G:Ptr, UD:G:Ptr
     ResCond, Tmp, Tmp, Tmp, Tmp

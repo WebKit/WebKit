@@ -229,7 +229,7 @@ def isGF(token)
 end
 
 def isKind(token)
-    token =~ /\A((Tmp)|(Imm)|(Imm64)|(BigImm)|(BitImm)|(BitImm64)|(ZeroReg)|(SimpleAddr)|(Addr)|(ExtendedOffsetAddr)|(Index)|(PreIndex)|(PostIndex)|(RelCond)|(ResCond)|(DoubleCond)|(StatusCond)|(SIMDInfo))\Z/
+    token =~ /\A((Tmp)|(Imm)|(BigImm)|(BitImm)|(BitImm64)|(ZeroReg)|(SimpleAddr)|(Addr)|(ExtendedOffsetAddr)|(Index)|(PreIndex)|(PostIndex)|(RelCond)|(ResCond)|(DoubleCond)|(StatusCond)|(SIMDInfo))\Z/
 end
 
 def isArch(token)
@@ -303,7 +303,7 @@ class Parser
 
     def consumeKind
         result = token.string
-        parseError("Expected kind (Imm, Imm64, BigImm, BitImm, BitImm64, ZeroReg, Tmp, SimpleAddr, Addr, ExtendedOffsetAddr, Index, PreIndex, PostIndex, RelCond, ResCond, DoubleCond, or StatusCond)") unless isKind(result)
+        parseError("Expected kind (Imm, BigImm, BitImm, BitImm64, ZeroReg, Tmp, SimpleAddr, Addr, ExtendedOffsetAddr, Index, PreIndex, PostIndex, RelCond, ResCond, DoubleCond, or StatusCond)") unless isKind(result)
         advance
         result
     end
@@ -471,7 +471,7 @@ class Parser
                         parseError("Form has wrong number of arguments for overload") unless kinds.length == signature.length
                         kinds.each_with_index {
                             | kind, index |
-                            if kind.name == "Imm" or kind.name == "Imm64" or kind.name == "BigImm" or kind.name == "BitImm" or kind.name == "BitImm64"
+                            if kind.name == "Imm" or kind.name == "BigImm" or kind.name == "BitImm" or kind.name == "BitImm64"
                                 if signature[index].role != "U"
                                     parseError("Form has an immediate for a non-use argument")
                                 end
@@ -585,14 +585,14 @@ def matchForms(outp, speed, forms, columnIndex, columnGetter, filter, callback)
     outp.puts "switch (#{columnGetter[columnIndex]}) {"
     groups.each_pair {
         | key, value |
-        outp.puts "#if USE(JSVALUE64)" if key == "Imm64" || key == "BitImm64"
+        outp.puts "#if USE(JSVALUE64)" if key == "BitImm64"
         Kind.argKinds(key).each {
             | argKind |
             outp.puts "case Arg::#{argKind}:"
         }
         matchForms(outp, speed, value, columnIndex + 1, columnGetter, filter, callback)
         outp.puts "break;"
-        outp.puts "#endif // USE(JSVALUE64)" if key == "Imm64" || key == "BitImm64"
+        outp.puts "#endif // USE(JSVALUE64)" if key == "BitImm64"
     }
     outp.puts "default:"
     outp.puts "break;"
@@ -936,9 +936,6 @@ writeH("OpcodeGenerated") {
                 when "Imm"
                     outp.puts "if (!Arg::isValidImmForm(args[#{index}].value()))"
                     outp.puts "OPGEN_RETURN(false);"
-                when "Imm64"
-                    outp.puts "if (!Arg::isValidImm64Form(args[#{index}].value()))"
-                    outp.puts "OPGEN_RETURN(false);"
                 when "BitImm"
                     outp.puts "if (!Arg::isValidBitImmForm(args[#{index}].value()))"
                     outp.puts "OPGEN_RETURN(false);"
@@ -1270,7 +1267,7 @@ writeH("OpcodeGenerated") {
                     outp.print "args[#{index}].asTrustedImm32()"
                 when "BigImm"
                     outp.print "args[#{index}].asTrustedBigImm()"
-                when "Imm64", "BitImm64"
+                when "BitImm64"
                     outp.print "args[#{index}].asTrustedImm64()"
                 when "ZeroReg"
                     outp.print "args[#{index}].asZeroReg()"

@@ -68,7 +68,6 @@ public:
         // OSR exit and tail calls.
         // BitImm is an immediate for Bitwise operation (And, Xor, etc).
         Imm,
-        Imm64,
         BigImm,
         BitImm,
         BitImm64,
@@ -525,14 +524,6 @@ public:
         return result;
     }
 
-    static Arg imm64(int64_t value)
-    {
-        Arg result;
-        result.m_kind = Imm64;
-        result.m_offset = value;
-        return result;
-    }
-
     static Arg bigImm(int64_t value)
     {
         if constexpr (is32Bit())
@@ -807,11 +798,6 @@ public:
         return kind() == Imm;
     }
 
-    bool isImm64() const
-    {
-        return kind() == Imm64;
-    }
-
     bool isBigImm() const
     {
         return kind() == BigImm;
@@ -836,7 +822,6 @@ public:
     {
         switch (kind()) {
         case Imm:
-        case Imm64:
         case BigImm:
         case BitImm:
         case BitImm64:
@@ -1138,7 +1123,6 @@ public:
     {
         switch (kind()) {
         case Imm:
-        case Imm64:
         case BigImm:
         case BitImm:
         case BitImm64:
@@ -1172,7 +1156,6 @@ public:
     {
         switch (kind()) {
         case Imm:
-        case Imm64:
         case BitImm:
         case BitImm64:
         case RelCond:
@@ -1205,7 +1188,6 @@ public:
     {
         switch (kind()) {
         case Imm:
-        case Imm64:
         case BitImm:
         case BitImm64:
         case Special:
@@ -1287,15 +1269,6 @@ public:
     {
         if (isX86())
             return B3::isRepresentableAs<int32_t>(value);
-        if (isARM64())
-            return isUInt12(value) || isUInt12(toTwosComplement(value));
-        if (isARM_THUMB2())
-            return isValidARMThumb2Immediate(value);
-        return false;
-    }
-
-    static bool isValidImm64Form(int64_t value)
-    {
         if (isARM64()) {
             if (isUInt12(value) || isUInt12(toTwosComplement(value)))
                 return true;
@@ -1304,6 +1277,8 @@ public:
                 return isUInt12(shifted) || isUInt12(toTwosComplement(shifted));
             return false;
         }
+        if (isARM_THUMB2())
+            return isValidARMThumb2Immediate(value);
         return false;
     }
 
@@ -1415,8 +1390,6 @@ public:
             return true;
         case Imm:
             return isValidImmForm(value());
-        case Imm64:
-            return isValidImm64Form(value());
         case BigImm:
             return true;
         case BitImm:
@@ -1525,7 +1498,7 @@ public:
     {
         if constexpr (is32Bit())
             UNREACHABLE_FOR_PLATFORM();
-        ASSERT(isBigImm() || isImm64() || isBitImm64());
+        ASSERT(isBigImm() || isBitImm64());
         return MacroAssembler::TrustedImm64(value());
     }
 
