@@ -87,7 +87,8 @@ BindGroupLayout& PipelineLayout::bindGroupLayout(size_t i) const
 void PipelineLayout::makeInvalid()
 {
     m_isValid = false;
-    m_bindGroupLayouts->clear();
+    if (m_bindGroupLayouts)
+        m_bindGroupLayouts->clear();
 }
 
 } // namespace WebGPU
