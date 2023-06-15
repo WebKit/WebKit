@@ -412,6 +412,8 @@ public:
         m_entryScopeServices.add(service);
     }
 
+    JS_EXPORT_PRIVATE void performOpportunisticallyScheduledTasks(MonotonicTime deadline);
+
 private:
     VMIdentifier m_identifier;
     RefPtr<JSLock> m_apiLock;

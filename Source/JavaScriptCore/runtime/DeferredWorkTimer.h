@@ -66,6 +66,7 @@ public:
     void doWork(VM&) final;
 
     Ticket addPendingWork(VM&, JSObject* target, Vector<Strong<JSCell>>&& dependencies);
+    bool hasAnyPendingWork() const;
     bool hasPendingWork(Ticket);
     bool hasDependancyInPendingWork(Ticket, JSCell* dependency);
     bool cancelPendingWork(Ticket);

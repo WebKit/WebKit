@@ -58,6 +58,7 @@
 #include "HasOwnPropertyCache.h"
 #include "Heap.h"
 #include "HeapProfiler.h"
+#include "IncrementalSweeper.h"
 #include "Interpreter.h"
 #include "IntlCache.h"
 #include "JITCode.h"
@@ -1620,6 +1621,18 @@ void VM::addDebugger(Debugger& debugger)
 void VM::removeDebugger(Debugger& debugger)
 {
     m_debuggers.remove(&debugger);
+}
+
+void VM::performOpportunisticallyScheduledTasks(MonotonicTime deadline)
+{
+    bool hasPendingWork;
+    {
+        JSLockHolder locker { *this };
+        hasPendingWork = deferredWorkTimer->hasAnyPendingWork();
+    }
+
+    if (!hasPendingWork)
+        heap.sweeper().doWorkUntil(*this, deadline);
 }
 
 void QueuedTask::run()

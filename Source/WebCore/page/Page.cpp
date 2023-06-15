@@ -39,6 +39,7 @@
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "CommonAtomStrings.h"
+#include "CommonVM.h"
 #include "ConstantPropertyMap.h"
 #include "ContextMenuClient.h"
 #include "ContextMenuController.h"
@@ -173,6 +174,7 @@
 #include "WheelEventTestMonitor.h"
 #include "Widget.h"
 #include "WorkerOrWorkletScriptController.h"
+#include <JavaScriptCore/VM.h>
 #include <wtf/FileSystem.h>
 #include <wtf/RefCountedLeakCounter.h>
 #include <wtf/StdLibExtras.h>
@@ -4460,9 +4462,7 @@ void Page::reloadExecutionContextsForOrigin(const ClientOrigin& origin, std::opt
 
 void Page::performOpportunisticallyScheduledTasks(MonotonicTime deadline)
 {
-    // FIXME (257622): Call into JavaScriptCore to perform any imminently-scheduled
-    // work prior to the next rendering update.
-    UNUSED_PARAM(deadline);
+    commonVM().performOpportunisticallyScheduledTasks(deadline);
 }
 
 } // namespace WebCore

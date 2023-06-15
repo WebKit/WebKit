@@ -221,4 +221,10 @@ void DeferredWorkTimer::didResumeScriptExecutionOwner()
         setTimeUntilFire(0_s);
 }
 
+bool DeferredWorkTimer::hasAnyPendingWork() const
+{
+    ASSERT(m_apiLock->vm()->currentThreadIsHoldingAPILock() || (Thread::mayBeGCThread() && m_apiLock->vm()->heap.worldIsStopped()));
+    return !m_pendingTickets.isEmpty();
+}
+
 } // namespace JSC
