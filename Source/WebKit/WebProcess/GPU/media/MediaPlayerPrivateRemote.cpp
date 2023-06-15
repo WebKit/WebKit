@@ -141,6 +141,9 @@ MediaPlayerPrivateRemote::~MediaPlayerPrivateRemote()
     if (m_audioSourceProvider)
         m_audioSourceProvider->close();
 #endif
+
+    for (auto& request : std::exchange(m_layerHostingContextIDRequests, { }))
+        request({ });
 }
 
 void MediaPlayerPrivateRemote::prepareForPlayback(bool privateMode, MediaPlayer::Preload preload, bool preservesPitch, bool prepare)
@@ -1500,6 +1503,20 @@ WTFLogChannel& MediaPlayerPrivateRemote::logChannel() const
 }
 #endif
 
+void MediaPlayerPrivateRemote::requestHostingContextID(LayerHostingContextIDCallback&& completionHandler)
+{
+    if (m_layerHostingContextID) {
+        completionHandler(m_layerHostingContextID);
+        return;
+    }
+
+    m_layerHostingContextIDRequests.append(WTFMove(completionHandler));
+    connection().sendWithAsyncReply(Messages::RemoteMediaPlayerProxy::RequestHostingContextID(), [weakThis = WeakPtr { this }] (auto contextID) {
+        if (weakThis)
+            weakThis->setLayerHostingContextID(contextID);
+    }, m_id);
+}
+
 LayerHostingContextID MediaPlayerPrivateRemote::hostingContextID() const
 {
     return m_layerHostingContextID;
@@ -1514,6 +1531,9 @@ void MediaPlayerPrivateRemote::setLayerHostingContextID(LayerHostingContextID in
 #if PLATFORM(COCOA)
     m_videoLayer = nullptr;
 #endif
+
+    for (auto& request : std::exchange(m_layerHostingContextIDRequests, { }))
+        request(inID);
 }
 
 } // namespace WebKit

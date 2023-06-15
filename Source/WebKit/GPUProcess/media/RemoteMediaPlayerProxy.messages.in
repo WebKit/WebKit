@@ -141,6 +141,8 @@ messages -> RemoteMediaPlayerProxy {
     PlayerContentBoxRectChanged(WebCore::LayoutRect contentRect)
 
     SetShouldDisableHDR(bool shouldDisable)
+
+    RequestHostingContextID() -> (uint32_t contextID)
 }
 
 #endif

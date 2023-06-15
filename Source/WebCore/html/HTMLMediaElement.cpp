@@ -8490,6 +8490,16 @@ bool HTMLMediaElement::shouldOverridePauseDuringRouteChange() const
 #endif
 }
 
+void HTMLMediaElement::requestHostingContextID(Function<void(LayerHostingContextID)>&& completionHandler)
+{
+    if (m_player) {
+        m_player->requestHostingContextID(WTFMove(completionHandler));
+        return;
+    }
+
+    completionHandler({ });
+}
+
 LayerHostingContextID HTMLMediaElement::layerHostingContextID()
 {
     if (m_player)

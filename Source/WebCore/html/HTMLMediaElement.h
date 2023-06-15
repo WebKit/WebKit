@@ -640,6 +640,7 @@ public:
 
     bool hasSource() const { return hasCurrentSrc() || srcObject(); }
 
+    WEBCORE_EXPORT void requestHostingContextID(Function<void(LayerHostingContextID)>&&);
     WEBCORE_EXPORT LayerHostingContextID layerHostingContextID();
     WEBCORE_EXPORT WebCore::FloatSize naturalSize();
 

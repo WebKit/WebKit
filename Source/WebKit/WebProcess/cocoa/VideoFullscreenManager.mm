@@ -393,6 +393,11 @@ void VideoFullscreenManager::enterVideoFullscreenForVideoElement(HTMLVideoElemen
         contextID = videoElement.layerHostingContextID();
         if (!contextID) {
             m_setupFullscreenHandler = WTFMove(setupFullscreen);
+            videoElement.requestHostingContextID([this, protectedThis = Ref { *this }, videoElement = Ref { videoElement }] (auto contextID) {
+                if (!contextID || !m_setupFullscreenHandler)
+                    return;
+                m_setupFullscreenHandler(contextID, FloatSize(videoElement->videoWidth(), videoElement->videoHeight()));
+            });
             return;
         }
     } else

@@ -356,6 +356,8 @@ private:
     void videoFrameForCurrentTimeIfChanged(CompletionHandler<void(std::optional<RemoteVideoFrameProxy::Properties>&&, bool)>&&);
 
     void setShouldDisableHDR(bool);
+    using LayerHostingContextIDCallback = WebCore::MediaPlayer::LayerHostingContextIDCallback;
+    void requestHostingContextID(LayerHostingContextIDCallback&&);
 
 #if !RELEASE_LOG_DISABLED
     const Logger& mediaPlayerLogger() final { return m_logger; }
@@ -374,6 +376,7 @@ private:
     RefPtr<SandboxExtension> m_sandboxExtension;
     Ref<IPC::Connection> m_webProcessConnection;
     RefPtr<WebCore::MediaPlayer> m_player;
+    Vector<LayerHostingContextIDCallback> m_layerHostingContextIDRequests;
     std::unique_ptr<LayerHostingContext> m_inlineLayerHostingContext;
 #if ENABLE(VIDEO_PRESENTATION_MODE)
     std::unique_ptr<LayerHostingContext> m_fullscreenLayerHostingContext;

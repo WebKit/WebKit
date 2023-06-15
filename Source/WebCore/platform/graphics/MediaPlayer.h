@@ -347,6 +347,8 @@ public:
     bool isVideoFullscreenStandby() const;
 #endif
 
+    using LayerHostingContextIDCallback = CompletionHandler<void(LayerHostingContextID)>;
+    void requestHostingContextID(LayerHostingContextIDCallback&&);
     LayerHostingContextID hostingContextID() const;
     FloatSize videoInlineSize() const;
     void setVideoInlineSizeFenced(const FloatSize&, const WTF::MachSendRight&);

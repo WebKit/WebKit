@@ -185,6 +185,8 @@ public:
     const void* mediaPlayerLogIdentifier() { return logIdentifier(); }
     const Logger& mediaPlayerLogger() { return logger(); }
 #endif
+
+    void requestHostingContextID(LayerHostingContextIDCallback&&) override;
     LayerHostingContextID hostingContextID()const override;
     void setLayerHostingContextID(LayerHostingContextID  inID);
 private:
@@ -480,6 +482,8 @@ private:
 #if PLATFORM(COCOA)
     RefPtr<RemoteVideoFrameProxy> m_videoFrameGatheredWithVideoFrameMetadata;
 #endif
+
+    Vector<LayerHostingContextIDCallback> m_layerHostingContextIDRequests;
     LayerHostingContextID m_layerHostingContextID { 0 };
     WebCore::FloatSize m_videoInlineSize;
     std::optional<WebCore::VideoFrameMetadata> m_videoFrameMetadata;
