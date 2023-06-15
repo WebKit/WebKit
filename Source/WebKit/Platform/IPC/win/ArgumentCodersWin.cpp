@@ -34,7 +34,7 @@ namespace IPC {
 
 void ArgumentCoder<Win32Handle>::encode(Encoder& encoder, const Win32Handle& handle)
 {
-    encoder << handle.copy();
+    encoder << Win32Handle { handle };
 }
 
 void ArgumentCoder<Win32Handle>::encode(Encoder& encoder, Win32Handle&& handle)

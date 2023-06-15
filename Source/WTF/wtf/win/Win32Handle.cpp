@@ -74,16 +74,6 @@ Win32Handle::~Win32Handle()
     closeHandle(m_handle);
 }
 
-Win32Handle& Win32Handle::operator=(const Win32Handle& other)
-{
-    if (this != &other) {
-        closeHandle(m_handle);
-        m_handle = duplicateHandle(other.get());
-    }
-
-    return *this;
-}
-
 Win32Handle& Win32Handle::operator=(Win32Handle&& other)
 {
     if (this != &other) {
@@ -92,11 +82,6 @@ Win32Handle& Win32Handle::operator=(Win32Handle&& other)
     }
 
     return *this;
-}
-
-Win32Handle Win32Handle::copy() const
-{
-    return Win32Handle(duplicateHandle(m_handle));
 }
 
 HANDLE Win32Handle::leak()

@@ -113,7 +113,7 @@ RefPtr<SharedMemory> Data::tryCreateSharedMemory() const
     if (isNull() || !isMap())
         return nullptr;
 
-    auto newHandle = std::get<FileSystem::MappedFileData>(*m_buffer).fileMapping();
+    auto newHandle = Win32Handle { std::get<FileSystem::MappedFileData>(*m_buffer).fileMapping() };
     if (!newHandle)
         return nullptr;
 
