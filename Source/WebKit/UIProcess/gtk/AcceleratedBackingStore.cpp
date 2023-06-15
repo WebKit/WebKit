@@ -40,14 +40,14 @@
 #include "AcceleratedBackingStoreX11.h"
 #endif
 
-#if USE(GBM)
+#if PLATFORM(GTK)
 #include "AcceleratedBackingStoreDMABuf.h"
 #endif
 
 namespace WebKit {
 using namespace WebCore;
 
-#if USE(GBM)
+#if PLATFORM(GTK)
 static bool gtkCanUseHardwareAcceleration()
 {
     static bool canUseHardwareAcceleration;
@@ -72,7 +72,7 @@ static bool gtkCanUseHardwareAcceleration()
 
 bool AcceleratedBackingStore::checkRequirements()
 {
-#if USE(GBM)
+#if PLATFORM(GTK)
     if (AcceleratedBackingStoreDMABuf::checkRequirements())
         return gtkCanUseHardwareAcceleration();
 #endif
@@ -93,7 +93,7 @@ std::unique_ptr<AcceleratedBackingStore> AcceleratedBackingStore::create(WebPage
     if (!HardwareAccelerationManager::singleton().canUseHardwareAcceleration())
         return nullptr;
 
-#if USE(GBM)
+#if PLATFORM(GTK)
     if (AcceleratedBackingStoreDMABuf::checkRequirements())
         return AcceleratedBackingStoreDMABuf::create(webPage);
 #endif

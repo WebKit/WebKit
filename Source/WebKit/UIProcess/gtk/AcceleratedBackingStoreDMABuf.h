@@ -27,7 +27,6 @@
 
 #include "AcceleratedBackingStore.h"
 
-#if USE(GBM)
 #include "MessageReceiver.h"
 #include <WebCore/IntSize.h>
 #include <WebCore/RefPtrCairo.h>
@@ -37,7 +36,10 @@
 #include <wtf/unix/UnixFileDescriptor.h>
 
 typedef void *EGLImage;
+
+#if USE(GBM)
 struct gbm_bo;
+#endif
 
 namespace WebCore {
 class IntRect;
@@ -130,7 +132,9 @@ private:
 
     class Surface final : public RenderSource {
     public:
+#if USE(GBM)
         Surface(const WTF::UnixFileDescriptor&, const WTF::UnixFileDescriptor&, const WebCore::IntSize&, uint32_t format, uint32_t offset, uint32_t stride, float deviceScaleFactor);
+#endif
         Surface(RefPtr<ShareableBitmap>&, RefPtr<ShareableBitmap>&, float deviceScaleFactor);
         ~Surface();
 
@@ -145,11 +149,15 @@ private:
         void paint(GtkWidget*, cairo_t*, const WebCore::IntRect&) const override;
 #endif
 
+#if USE(GBM)
         RefPtr<cairo_surface_t> map(struct gbm_bo*) const;
+#endif
         RefPtr<cairo_surface_t> map(RefPtr<ShareableBitmap>&) const;
 
+#if USE(GBM)
         struct gbm_bo* m_backBuffer { nullptr };
         struct gbm_bo* m_frontBuffer { nullptr };
+#endif
         RefPtr<ShareableBitmap> m_backBitmap;
         RefPtr<ShareableBitmap> m_frontBitmap;
         RefPtr<cairo_surface_t> m_surface;
@@ -179,5 +187,3 @@ private:
 };
 
 } // namespace WebKit
-
-#endif // USE(GBM)

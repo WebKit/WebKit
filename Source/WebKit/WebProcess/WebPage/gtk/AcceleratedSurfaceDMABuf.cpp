@@ -26,19 +26,21 @@
 #include "config.h"
 #include "AcceleratedSurfaceDMABuf.h"
 
-#if USE(GBM)
 #include "AcceleratedBackingStoreDMABufMessages.h"
 #include "AcceleratedSurfaceDMABufMessages.h"
 #include "ShareableBitmap.h"
 #include "WebPage.h"
 #include "WebProcess.h"
 #include <WebCore/DMABufFormat.h>
-#include <WebCore/GBMDevice.h>
 #include <WebCore/PlatformDisplay.h>
 #include <array>
 #include <epoxy/egl.h>
-#include <gbm.h>
 #include <wtf/SafeStrerror.h>
+
+#if USE(GBM)
+#include <WebCore/GBMDevice.h>
+#include <gbm.h>
+#endif
 
 namespace WebKit {
 
@@ -49,7 +51,6 @@ std::unique_ptr<AcceleratedSurfaceDMABuf> AcceleratedSurfaceDMABuf::create(WebPa
 
 AcceleratedSurfaceDMABuf::AcceleratedSurfaceDMABuf(WebPage& webPage, Client& client)
     : AcceleratedSurface(webPage, client)
-    , m_isSoftwareRast(WebCore::PlatformDisplay::sharedDisplayForCompositing().type() == WebCore::PlatformDisplay::Type::Surfaceless)
 {
 }
 
@@ -91,6 +92,7 @@ void AcceleratedSurfaceDMABuf::RenderTarget::swap()
     std::swap(m_backColorBuffer, m_frontColorBuffer);
 }
 
+#if USE(GBM)
 std::unique_ptr<AcceleratedSurfaceDMABuf::RenderTarget> AcceleratedSurfaceDMABuf::RenderTargetEGLImage::create(WebCore::PageIdentifier pageID, const WebCore::IntSize& size)
 {
     struct {
@@ -185,6 +187,7 @@ void AcceleratedSurfaceDMABuf::RenderTargetEGLImage::swap()
     std::swap(m_backImage, m_frontImage);
     RenderTarget::swap();
 }
+#endif
 
 std::unique_ptr<AcceleratedSurfaceDMABuf::RenderTarget> AcceleratedSurfaceDMABuf::RenderTargetSHMImage::create(WebCore::PageIdentifier pageID, const WebCore::IntSize& size)
 {
@@ -276,7 +279,19 @@ void AcceleratedSurfaceDMABuf::clientResize(const WebCore::IntSize& size)
     m_target = nullptr;
     if (size.isEmpty())
         return;
-    m_target = m_isSoftwareRast ? RenderTargetSHMImage::create(m_webPage.identifier(), size) : RenderTargetEGLImage::create(m_webPage.identifier(), size);
+
+    switch (WebCore::PlatformDisplay::sharedDisplayForCompositing().type()) {
+    case WebCore::PlatformDisplay::Type::Surfaceless:
+        m_target = RenderTargetSHMImage::create(m_webPage.identifier(), size);
+        break;
+#if USE(GBM)
+    case WebCore::PlatformDisplay::Type::GBM:
+        m_target = RenderTargetEGLImage::create(m_webPage.identifier(), size);
+        break;
+#endif
+    default:
+        break;
+    }
 }
 
 void AcceleratedSurfaceDMABuf::willRenderFrame()
@@ -309,5 +324,3 @@ void AcceleratedSurfaceDMABuf::frameDone()
 }
 
 } // namespace WebKit
-
-#endif // USE(GBM)

@@ -141,11 +141,16 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
     WebCore::GBMDevice::singleton().initialize(parameters.renderDeviceFile);
 #endif
 
-#if PLATFORM(GTK) && USE(GBM)
+#if PLATFORM(GTK)
     if (parameters.useDMABufSurfaceForCompositing) {
-        if (auto* device = WebCore::GBMDevice::singleton().device())
-            m_displayForCompositing = WebCore::PlatformDisplayGBM::create(device);
-        else
+#if USE(GBM)
+        const char* disableGBM = getenv("WEBKIT_DMABUF_RENDERER_DISABLE_GBM");
+        if (!disableGBM || !strcmp(disableGBM, "0")) {
+            if (auto* device = WebCore::GBMDevice::singleton().device())
+                m_displayForCompositing = WebCore::PlatformDisplayGBM::create(device);
+        }
+#endif
+        if (!m_displayForCompositing)
             m_displayForCompositing = WebCore::PlatformDisplaySurfaceless::create();
     }
 #endif

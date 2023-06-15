@@ -26,7 +26,6 @@
 #include "config.h"
 #include "AcceleratedBackingStoreDMABuf.h"
 
-#if USE(GBM)
 #include "AcceleratedBackingStoreDMABufMessages.h"
 #include "AcceleratedSurfaceDMABufMessages.h"
 #include "LayerTreeContext.h"
@@ -38,8 +37,11 @@
 #include <WebCore/IntRect.h>
 #include <WebCore/PlatformDisplay.h>
 #include <epoxy/egl.h>
-#include <gbm.h>
 #include <wtf/glib/GUniquePtr.h>
+
+#if USE(GBM)
+#include <gbm.h>
+#endif
 
 #if PLATFORM(X11) && USE(GTK4)
 #include <gdk/x11/gdkx.h>
@@ -202,6 +204,7 @@ void AcceleratedBackingStoreDMABuf::Texture::paint(GtkWidget* widget, cairo_t* c
 }
 #endif
 
+#if USE(GBM)
 AcceleratedBackingStoreDMABuf::Surface::Surface(const UnixFileDescriptor& backFD, const UnixFileDescriptor& frontFD, const WebCore::IntSize& size, uint32_t format, uint32_t offset, uint32_t stride, float deviceScaleFactor)
     : RenderSource(size, deviceScaleFactor)
 {
@@ -225,6 +228,7 @@ AcceleratedBackingStoreDMABuf::Surface::Surface(const UnixFileDescriptor& backFD
         m_backBuffer = nullptr;
     }
 }
+#endif
 
 AcceleratedBackingStoreDMABuf::Surface::Surface(RefPtr<ShareableBitmap>& backBitmap, RefPtr<ShareableBitmap>& frontBitmap, float deviceScaleFactor)
     : RenderSource(backBitmap ? backBitmap->size() : WebCore::IntSize(), deviceScaleFactor)
@@ -237,12 +241,15 @@ AcceleratedBackingStoreDMABuf::Surface::~Surface()
 {
     m_surface = nullptr;
 
+#if USE(GBM)
     if (m_backBuffer)
         gbm_bo_destroy(m_backBuffer);
     if (m_frontBuffer)
         gbm_bo_destroy(m_frontBuffer);
+#endif
 }
 
+#if USE(GBM)
 RefPtr<cairo_surface_t> AcceleratedBackingStoreDMABuf::Surface::map(struct gbm_bo* buffer) const
 {
     if (!buffer)
@@ -269,6 +276,7 @@ RefPtr<cairo_surface_t> AcceleratedBackingStoreDMABuf::Surface::map(struct gbm_b
     });
     return surface;
 }
+#endif
 
 RefPtr<cairo_surface_t> AcceleratedBackingStoreDMABuf::Surface::map(RefPtr<ShareableBitmap>& bitmap) const
 {
@@ -282,16 +290,20 @@ void AcceleratedBackingStoreDMABuf::Surface::swap()
 {
     if (m_backBitmap && m_frontBitmap)
         std::swap(m_backBitmap, m_frontBitmap);
+#if USE(GBM)
     else
         std::swap(m_backBuffer, m_frontBuffer);
+#endif
 }
 
 bool AcceleratedBackingStoreDMABuf::Surface::prepareForRendering()
 {
     if (m_backBitmap && m_frontBitmap)
         m_surface = map(m_frontBitmap);
+#if USE(GBM)
     else
         m_surface = map(m_frontBuffer);
+#endif
 
     if (m_surface) {
         cairo_surface_mark_dirty(m_surface.get());
@@ -358,8 +370,10 @@ std::unique_ptr<AcceleratedBackingStoreDMABuf::RenderSource> AcceleratedBackingS
     if (m_isSoftwareRast)
         return makeUnique<Surface>(m_surface.backBitmap, m_surface.frontBitmap, m_webPage.deviceScaleFactor());
 
+#if USE(GBM)
     if (!WebCore::PlatformDisplay::sharedDisplay().gtkEGLDisplay())
         return makeUnique<Surface>(m_surface.backFD, m_surface.frontFD, m_surface.size, m_surface.format, m_surface.offset, m_surface.stride, m_webPage.deviceScaleFactor());
+#endif
 
     ensureGLContext();
     return makeUnique<Texture>(m_gdkGLContext.get(), m_surface.backFD, m_surface.frontFD, m_surface.size, m_surface.format, m_surface.offset, m_surface.stride, m_surface.modifier, m_webPage.deviceScaleFactor());
@@ -492,5 +506,3 @@ bool AcceleratedBackingStoreDMABuf::paint(cairo_t* cr, const WebCore::IntRect& c
 #endif
 
 } // namespace WebKit
-
-#endif // USE(GBM)

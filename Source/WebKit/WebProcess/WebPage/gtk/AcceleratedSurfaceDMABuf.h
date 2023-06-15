@@ -27,13 +27,14 @@
 
 #include "AcceleratedSurface.h"
 
-#if USE(GBM)
 #include "MessageReceiver.h"
 #include <WebCore/PageIdentifier.h>
 #include <wtf/unix/UnixFileDescriptor.h>
 
+#if USE(GBM)
 typedef void *EGLImage;
 struct gbm_bo;
+#endif
 
 namespace WebKit {
 
@@ -91,6 +92,7 @@ private:
         unsigned m_depthStencilBuffer { 0 };
     };
 
+#if USE(GBM)
     class RenderTargetEGLImage final : public RenderTarget {
     public:
         static std::unique_ptr<RenderTarget> create(WebCore::PageIdentifier, const WebCore::IntSize&);
@@ -103,6 +105,7 @@ private:
         EGLImage m_backImage { nullptr };
         EGLImage m_frontImage { nullptr };
     };
+#endif
 
     class RenderTargetSHMImage final : public RenderTarget {
     public:
@@ -118,11 +121,8 @@ private:
         Ref<ShareableBitmap> m_frontBitmap;
     };
 
-    bool m_isSoftwareRast { false };
     unsigned m_fbo { 0 };
     std::unique_ptr<RenderTarget> m_target;
 };
 
 } // namespace WebKit
-
-#endif // USE(GBM)
