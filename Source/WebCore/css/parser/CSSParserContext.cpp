@@ -99,7 +99,6 @@ CSSParserContext::CSSParserContext(const Document& document, const URL& sheetBas
 #if ENABLE(CSS_PAINTING_API)
     , cssPaintingAPIEnabled { document.settings().cssPaintingAPIEnabled() }
 #endif
-    , cssTextUnderlinePositionLeftRightEnabled { document.settings().cssTextUnderlinePositionLeftRightEnabled() }
     , propertySettings { CSSPropertySettings { document.settings() } }
 {
 }
@@ -136,7 +135,6 @@ bool operator==(const CSSParserContext& a, const CSSParserContext& b)
         && a.masonryEnabled == b.masonryEnabled
         && a.cssNestingEnabled == b.cssNestingEnabled
         && a.cssPaintingAPIEnabled == b.cssPaintingAPIEnabled
-        && a.cssTextUnderlinePositionLeftRightEnabled == b.cssTextUnderlinePositionLeftRightEnabled
         && a.propertySettings == b.propertySettings
     ;
 }
@@ -167,8 +165,7 @@ void add(Hasher& hasher, const CSSParserContext& context)
         | context.masonryEnabled                            << 19
         | context.cssNestingEnabled                         << 20
         | context.cssPaintingAPIEnabled                     << 21
-        | context.cssTextUnderlinePositionLeftRightEnabled  << 22
-        | (uint64_t)context.mode                            << 23; // This is multiple bits, so keep it last.
+        | (uint64_t)context.mode                            << 22; // This is multiple bits, so keep it last.
     add(hasher, context.baseURL, context.charset, context.propertySettings, bits);
 }
 
