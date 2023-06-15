@@ -18,7 +18,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/motion/animation/reftests/offset-distance-interpolation-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/motion/animation/reftests/offset-path-path-interpolation-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/motion/animation/reftests/offset-path-path-interpolation-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/motion/animation/reftests/offset-path-path-interpolation-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/motion/animation/reftests/offset-path-with-transforms-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/motion/animation/reftests/offset-path-with-transforms-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/motion/animation/reftests/offset-path-with-transforms-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/motion/animation/reftests/offset-rotate-interpolation-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/motion/animation/reftests/offset-rotate-interpolation-001.html

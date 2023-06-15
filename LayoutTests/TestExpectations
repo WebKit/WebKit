@@ -5271,6 +5271,40 @@ webkit.org/b/233340 imported/w3c/web-platform-tests/css/motion/offset-anchor-tra
 # CSS motion path ray test failing due to getting wrong size from containing block.
 webkit.org/b/233344 imported/w3c/web-platform-tests/css/motion/offset-path-ray-007.html [ ImageOnlyFailure ]
 
+# CSS motion path tests for missing <position> support in ray().
+imported/w3c/web-platform-tests/css/motion/offset-path-ray-010.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/motion/offset-path-ray-011.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/motion/offset-path-ray-012.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/motion/offset-path-ray-013.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/motion/offset-path-ray-014.html [ ImageOnlyFailure ]
+
+# CSS motion path tests for missing <coord-box> support.
+imported/w3c/web-platform-tests/css/motion/offset-path-coord-box-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/motion/offset-path-coord-box-002.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/motion/offset-path-coord-box-003.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/motion/offset-path-geometry-box.html [ ImageOnlyFailure ]
+
+# CSS motion path tests for missing <basic-shape> support.
+imported/w3c/web-platform-tests/css/motion/offset-path-shape-circle-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/motion/offset-path-shape-circle-002.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/motion/offset-path-shape-circle-003.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/motion/offset-path-shape-circle-004.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/motion/offset-path-shape-circle-005.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/motion/offset-path-shape-ellipse-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/motion/offset-path-shape-ellipse-002.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/motion/offset-path-shape-ellipse-003.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/motion/offset-path-shape-ellipse-004.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/motion/offset-path-shape-ellipse-005.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/motion/offset-path-shape-inset-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/motion/offset-path-shape-inset-002.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/motion/offset-path-shape-polygon-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/motion/offset-path-shape-polygon-002.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/motion/offset-path-shape-polygon-003.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/motion/offset-path-shape-rect-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/motion/offset-path-shape-rect-002.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/motion/offset-path-shape-xywh-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/motion/offset-path-shape-xywh-002.html [ ImageOnlyFailure ]
+
 # IPC test failing in Debug mode due to assert.
 [ Debug ] ipc/send-invalid-message.html [ Skip ]
 # mac-only IPC test

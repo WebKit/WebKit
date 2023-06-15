@@ -25,6 +25,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/motion/animation/offset-path-interpolation-003.html
 /LayoutTests/imported/w3c/web-platform-tests/css/motion/animation/offset-path-interpolation-004.html
 /LayoutTests/imported/w3c/web-platform-tests/css/motion/animation/offset-path-interpolation-005.html
+/LayoutTests/imported/w3c/web-platform-tests/css/motion/animation/offset-path-interpolation-006.html
 /LayoutTests/imported/w3c/web-platform-tests/css/motion/animation/offset-position-composition.html
 /LayoutTests/imported/w3c/web-platform-tests/css/motion/animation/offset-position-interpolation.html
 /LayoutTests/imported/w3c/web-platform-tests/css/motion/animation/offset-rotate-composition.html
