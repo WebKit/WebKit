@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests that background images with filters scale properly.</title>
+<script src="resources/ensure-hidpi.js"></script>
+<script>
+	if (window.internals)
+    	internals.settings.setCoreImageAcceleratedFilterRenderEnabled(false);
+</script>
+<style>
+  body {
+    margin: 0;
+  }
+
+  div {
+    background-image: filter(url(../replaced/resources/compass.jpg), sepia(1));
+    background-size: 100px 100px;
+    width: 100px;
+    height: 100px;
+  }
+</style>
+</head>
+<body>
+  <div></div>
+</body>
+</html>
