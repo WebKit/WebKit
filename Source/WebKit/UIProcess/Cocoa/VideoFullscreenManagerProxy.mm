@@ -665,6 +665,7 @@ PlatformLayerContainer VideoFullscreenManagerProxy::createLayerWithID(PlaybackSe
             [playerLayer addSublayer:[view layer]];
 
         model->setPlayerLayer(playerLayer.get());
+
         [playerLayer setFrame:CGRectMake(0, 0, initialSize.width(), initialSize.height())];
         [playerLayer setNeedsLayout];
         [playerLayer layoutIfNeeded];
@@ -709,7 +710,7 @@ RetainPtr<WebAVPlayerLayerView> VideoFullscreenManagerProxy::createViewWithID(Pl
         ALWAYS_LOG(LOGIDENTIFIER, model->logIdentifier(), ", Creating AVPlayerLayerView");
         auto playerView = adoptNS([allocWebAVPlayerLayerViewInstance() init]);
 
-        auto *playerLayer = (WebAVPlayerLayer *)[playerView layer];
+        RetainPtr playerLayer { (WebAVPlayerLayer *)[playerView layer] };
 
         [playerLayer setVideoDimensions:nativeSize];
         [playerLayer setFullscreenModel:model.get()];
@@ -721,8 +722,8 @@ RetainPtr<WebAVPlayerLayerView> VideoFullscreenManagerProxy::createViewWithID(Pl
         if (![[view layer] superlayer])
             [playerLayer addSublayer:[view layer]];
 
-        model->setPlayerLayer(playerLayer);
-        model->setPlayerView(WTFMove(playerView));
+        model->setPlayerLayer(WTFMove(playerLayer));
+        model->setPlayerView(playerView.get());
 
         [playerView setFrame:CGRectMake(0, 0, initialSize.width(), initialSize.height())];
         [playerView setNeedsLayout];
