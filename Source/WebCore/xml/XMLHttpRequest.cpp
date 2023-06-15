@@ -190,6 +190,8 @@ ExceptionOr<Document*> XMLHttpRequest::responseXML()
             responseDocument->setSecurityOriginPolicy(context.securityOriginPolicy());
             responseDocument->overrideMIMEType(mimeType);
             responseDocument->setContent(m_responseBuilder.toStringPreserveCapacity());
+            if (m_decoder)
+                responseDocument->setDecoder(m_decoder.copyRef());
 
             if (!responseDocument->wellFormed())
                 m_responseDocument = nullptr;
