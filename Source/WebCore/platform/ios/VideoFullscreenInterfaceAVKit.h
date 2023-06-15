@@ -59,8 +59,6 @@ OBJC_CLASS NSError;
 namespace WebCore {
 class FloatRect;
 class FloatSize;
-class VideoFullscreenModel;
-class VideoFullscreenChangeObserver;
 
 class VideoFullscreenInterfaceAVKit final
     : public VideoFullscreenModelClient
@@ -71,14 +69,12 @@ public:
     WEBCORE_EXPORT static Ref<VideoFullscreenInterfaceAVKit> create(PlaybackSessionInterfaceAVKit&);
     virtual ~VideoFullscreenInterfaceAVKit();
     WEBCORE_EXPORT void setVideoFullscreenModel(VideoFullscreenModel*);
-    WEBCORE_EXPORT void setVideoFullscreenChangeObserver(VideoFullscreenChangeObserver*);
     PlaybackSessionInterfaceAVKit& playbackSessionInterface() const { return m_playbackSessionInterface.get(); }
     PlaybackSessionModel* playbackSessionModel() const { return m_playbackSessionInterface->playbackSessionModel(); }
 
     // VideoFullscreenModelClient
     WEBCORE_EXPORT void hasVideoChanged(bool) final;
     WEBCORE_EXPORT void videoDimensionsChanged(const FloatSize&) final;
-    WEBCORE_EXPORT void modelDestroyed() final;
     WEBCORE_EXPORT void setPlayerIdentifier(std::optional<MediaPlayerIdentifier>) final;
 
     // PlaybackSessionModelClient
@@ -132,7 +128,7 @@ public:
         bool hasVideo() const { return m_mode & (HTMLMediaElementEnums::VideoFullscreenModeStandard | HTMLMediaElementEnums::VideoFullscreenModePictureInPicture); }
     };
 
-    VideoFullscreenModel* videoFullscreenModel() const { return m_videoFullscreenModel; }
+    RefPtr<VideoFullscreenModel> videoFullscreenModel() const { return m_videoFullscreenModel.get(); }
     bool shouldExitFullscreenWithReason(ExitFullScreenReason);
     HTMLMediaElementEnums::VideoFullscreenMode mode() const { return m_currentMode.mode(); }
     bool allowsPictureInPicturePlayback() const { return m_allowsPictureInPicturePlayback; }
@@ -198,8 +194,7 @@ private:
     std::optional<MediaPlayerIdentifier> m_playerIdentifier;
     RetainPtr<WebAVPlayerViewControllerDelegate> m_playerViewControllerDelegate;
     RetainPtr<WebAVPlayerViewController> m_playerViewController;
-    VideoFullscreenModel* m_videoFullscreenModel { nullptr };
-    VideoFullscreenChangeObserver* m_fullscreenChangeObserver { nullptr };
+    ThreadSafeWeakPtr<VideoFullscreenModel> m_videoFullscreenModel;
 
     // These are only used when fullscreen is presented in a separate window.
     RetainPtr<UIWindow> m_window;

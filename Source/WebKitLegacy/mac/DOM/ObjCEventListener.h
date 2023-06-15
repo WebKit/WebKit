@@ -51,8 +51,8 @@ namespace WebCore {
 
         ObjCEventListener(ObjCListener);
         virtual ~ObjCEventListener();
-        virtual bool operator==(const EventListener&) const;
-        virtual void handleEvent(ScriptExecutionContext&, Event&);
+        bool operator==(const EventListener&) const override;
+        void handleEvent(ScriptExecutionContext&, Event&) override;
 
         RetainPtr<ObjCListener> m_listener;
     };

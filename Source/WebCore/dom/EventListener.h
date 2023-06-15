@@ -50,7 +50,8 @@ public:
     };
 
     virtual ~EventListener() = default;
-    virtual bool operator==(const EventListener&) const = 0;
+    virtual bool operator==(const EventListener& other) const { return this == &other; }
+
     virtual void handleEvent(ScriptExecutionContext&, Event&) = 0;
 
     virtual void visitJSFunction(JSC::AbstractSlotVisitor&) { }

@@ -774,7 +774,7 @@ static constexpr CGFloat kFullScreenWindowCornerRadius = 12;
                     if (_returnToFullscreenFromPictureInPicture)
                         videoFullscreenInterface->preparedToReturnToStandby();
                     else if (videoFullscreenInterface->inPictureInPicture()) {
-                        if (auto* model = videoFullscreenInterface->videoFullscreenModel()) {
+                        if (auto model = videoFullscreenInterface->videoFullscreenModel()) {
                             _enterFullscreenNeedsExitPictureInPicture = YES;
                             model->requestFullscreenMode(WebCore::HTMLMediaElementEnums::VideoFullscreenModeNone);
                         }

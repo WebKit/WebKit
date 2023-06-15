@@ -47,36 +47,32 @@ class HTMLVideoElement;
 class TextTrack;
 class PlaybackSessionModelMediaElement;
 
-class VideoFullscreenModelVideoElement : public VideoFullscreenModel, public EventListener {
+class VideoFullscreenModelVideoElement final : public VideoFullscreenModel {
 public:
     static RefPtr<VideoFullscreenModelVideoElement> create()
     {
         return adoptRef(*new VideoFullscreenModelVideoElement());
     }
-    WEBCORE_EXPORT virtual ~VideoFullscreenModelVideoElement();
+    WEBCORE_EXPORT ~VideoFullscreenModelVideoElement();
     WEBCORE_EXPORT void setVideoElement(HTMLVideoElement*);
     HTMLVideoElement* videoElement() const { return m_videoElement.get(); }
     WEBCORE_EXPORT RetainPtr<PlatformLayer> createVideoFullscreenLayer();
     WEBCORE_EXPORT void setVideoFullscreenLayer(PlatformLayer*, Function<void()>&& completionHandler = [] { });
-    WEBCORE_EXPORT void willExitFullscreen();
-    WEBCORE_EXPORT void waitForPreparedForInlineThen(Function<void()>&& completionHandler = [] { });
-    
-    WEBCORE_EXPORT void handleEvent(WebCore::ScriptExecutionContext&, WebCore::Event&) override;
-    void updateForEventName(const AtomString&);
-    bool operator==(const EventListener& rhs) const override { return static_cast<const WebCore::EventListener*>(this) == &rhs; }
+    WEBCORE_EXPORT void willExitFullscreen() final;
+    WEBCORE_EXPORT void waitForPreparedForInlineThen(Function<void()>&& completionHandler);
 
-    WEBCORE_EXPORT void addClient(VideoFullscreenModelClient&) override;
-    WEBCORE_EXPORT void removeClient(VideoFullscreenModelClient&) override;
-    WEBCORE_EXPORT void requestFullscreenMode(HTMLMediaElementEnums::VideoFullscreenMode, bool finishedWithMedia = false) override;
-    WEBCORE_EXPORT void setVideoLayerFrame(FloatRect) override;
-    WEBCORE_EXPORT void setVideoLayerGravity(MediaPlayerEnums::VideoGravity) override;
-    WEBCORE_EXPORT void fullscreenModeChanged(HTMLMediaElementEnums::VideoFullscreenMode) override;
-    FloatSize videoDimensions() const override { return m_videoDimensions; }
-    bool hasVideo() const override { return m_hasVideo; }
+    WEBCORE_EXPORT void addClient(VideoFullscreenModelClient&) final;
+    WEBCORE_EXPORT void removeClient(VideoFullscreenModelClient&) final;
+    WEBCORE_EXPORT void requestFullscreenMode(HTMLMediaElementEnums::VideoFullscreenMode, bool finishedWithMedia = false) final;
+    WEBCORE_EXPORT void setVideoLayerFrame(FloatRect) final;
+    WEBCORE_EXPORT void setVideoLayerGravity(MediaPlayerEnums::VideoGravity) final;
+    WEBCORE_EXPORT void fullscreenModeChanged(HTMLMediaElementEnums::VideoFullscreenMode) final;
+    FloatSize videoDimensions() const final { return m_videoDimensions; }
+    bool hasVideo() const final { return m_hasVideo; }
 
     WEBCORE_EXPORT void setVideoSizeFenced(const FloatSize&, const WTF::MachSendRight&);
 
-    WEBCORE_EXPORT void requestRouteSharingPolicyAndContextUID(CompletionHandler<void(RouteSharingPolicy, String)>&&) override;
+    WEBCORE_EXPORT void requestRouteSharingPolicyAndContextUID(CompletionHandler<void(RouteSharingPolicy, String)>&&) final;
 
 #if !RELEASE_LOG_DISABLED
     const Logger* loggerPtr() const final;
@@ -90,19 +86,36 @@ protected:
     WEBCORE_EXPORT VideoFullscreenModelVideoElement();
 
 private:
+    class VideoListener final : public EventListener {
+    public:
+        static Ref<VideoListener> create(VideoFullscreenModelVideoElement& parent)
+        {
+            return adoptRef(*new VideoListener(parent));
+        }
+        void handleEvent(WebCore::ScriptExecutionContext&, WebCore::Event&) final;
+    private:
+        explicit VideoListener(VideoFullscreenModelVideoElement&);
+
+        ThreadSafeWeakPtr<VideoFullscreenModelVideoElement> m_parent;
+    };
+
     void setHasVideo(bool);
     void setVideoDimensions(const FloatSize&);
     void setPlayerIdentifier(std::optional<MediaPlayerIdentifier>);
 
-    void willEnterPictureInPicture() override;
-    void didEnterPictureInPicture() override;
-    void failedToEnterPictureInPicture() override;
-    void willExitPictureInPicture() override;
-    void didExitPictureInPicture() override;
+    void willEnterPictureInPicture() final;
+    void didEnterPictureInPicture() final;
+    void failedToEnterPictureInPicture() final;
+    void willExitPictureInPicture() final;
+    void didExitPictureInPicture() final;
 
     static std::span<const AtomString> observedEventNames();
     const AtomString& eventNameAll();
+    friend class VideoListener;
+    void updateForEventName(const AtomString&);
+    void cleanVideoListeners();
 
+    Ref<VideoListener> m_videoListener;
     RefPtr<HTMLVideoElement> m_videoElement;
     RetainPtr<PlatformLayer> m_videoFullscreenLayer;
     bool m_isListening { false };

@@ -427,11 +427,6 @@ public:
         return adoptRef(*new MediaControlsContextMenuEventListener(WTFMove(contextMenuProvider)));
     }
 
-    bool operator==(const EventListener& other) const override
-    {
-        return this == &other;
-    }
-
     void handleEvent(ScriptExecutionContext&, Event& event) override
     {
         ASSERT(event.type() == eventNames().contextmenuEvent);

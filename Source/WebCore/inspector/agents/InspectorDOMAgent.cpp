@@ -241,11 +241,6 @@ public:
         return adoptRef(*new EventFiredCallback(domAgent));
     }
 
-    bool operator==(const EventListener& other) const final
-    {
-        return this == &other;
-    }
-
     void handleEvent(ScriptExecutionContext&, Event& event) final
     {
         if (!is<Node>(event.target()) || m_domAgent.m_dispatchedEvents.contains(&event))

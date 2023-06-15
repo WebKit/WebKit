@@ -84,8 +84,6 @@ private:
             return adoptRef(*new PDFPluginAnnotationEventListener(annotation));
         }
 
-        bool operator==(const EventListener& listener) const override { return this == &listener; }
-
         void setAnnotation(PDFPluginAnnotation* annotation) { m_annotation = annotation; }
 
     private:

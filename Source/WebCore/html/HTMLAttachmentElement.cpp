@@ -267,11 +267,6 @@ class AttachmentSaveEventListener final : public EventListener {
 public:
     static Ref<AttachmentSaveEventListener> create(HTMLAttachmentElement& attachment) { return adoptRef(*new AttachmentSaveEventListener(attachment)); }
 
-    bool operator==(const EventListener& other) const final
-    {
-        return this == &other;
-    }
-
     void handleEvent(ScriptExecutionContext&, Event& event) final
     {
         if (event.type() == eventNames().clickEvent) {
