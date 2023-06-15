@@ -61,11 +61,12 @@ AcceleratedSurfaceDMABuf::~AcceleratedSurfaceDMABuf()
 AcceleratedSurfaceDMABuf::RenderTarget::RenderTarget(WebCore::PageIdentifier pageID, const WebCore::IntSize& size)
     : m_pageID(pageID)
 {
-    std::array<unsigned, 3> renderbuffers;
-    glGenRenderbuffers(3, renderbuffers.data());
+    std::array<unsigned, 4> renderbuffers;
+    glGenRenderbuffers(4, renderbuffers.data());
     m_backColorBuffer = renderbuffers[0];
     m_frontColorBuffer = renderbuffers[1];
-    m_depthStencilBuffer = renderbuffers[2];
+    m_displayColorBuffer = renderbuffers[2];
+    m_depthStencilBuffer = renderbuffers[3];
     glBindRenderbuffer(GL_RENDERBUFFER, m_depthStencilBuffer);
     glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8_OES, size.width(), size.height());
 }
@@ -76,6 +77,8 @@ AcceleratedSurfaceDMABuf::RenderTarget::~RenderTarget()
         glDeleteRenderbuffers(1, &m_backColorBuffer);
     if (m_frontColorBuffer)
         glDeleteRenderbuffers(1, &m_frontColorBuffer);
+    if (m_displayColorBuffer)
+        glDeleteRenderbuffers(1, &m_displayColorBuffer);
     if (m_depthStencilBuffer)
         glDeleteRenderbuffers(1, &m_depthStencilBuffer);
 }
@@ -87,9 +90,14 @@ void AcceleratedSurfaceDMABuf::RenderTarget::willRenderFrame() const
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_depthStencilBuffer);
 }
 
-void AcceleratedSurfaceDMABuf::RenderTarget::swap()
+void AcceleratedSurfaceDMABuf::RenderTarget::didRenderFrame()
 {
     std::swap(m_backColorBuffer, m_frontColorBuffer);
+}
+
+void AcceleratedSurfaceDMABuf::RenderTarget::didDisplayFrame()
+{
+    std::swap(m_frontColorBuffer, m_displayColorBuffer);
 }
 
 #if USE(GBM)
@@ -146,22 +154,26 @@ std::unique_ptr<AcceleratedSurfaceDMABuf::RenderTarget> AcceleratedSurfaceDMABuf
 
     auto backImage = createImage();
     auto frontImage = createImage();
-    if (!backImage.second || !frontImage.second) {
-        WTFLogAlways("Failed to create EGL images for DMABufs with file descriptors %d and %d", backImage.first.value(), frontImage.first.value());
+    auto displayImage = createImage();
+    if (!backImage.second || !frontImage.second || !displayImage.second) {
+        WTFLogAlways("Failed to create EGL images for DMABufs with file descriptors %d, %d and %d", backImage.first.value(), frontImage.first.value(), displayImage.first.value());
         if (backImage.second)
             display.destroyEGLImage(backImage.second);
         if (frontImage.second)
             display.destroyEGLImage(frontImage.second);
+        if (displayImage.second)
+            display.destroyEGLImage(displayImage.second);
         return nullptr;
     }
 
-    return makeUnique<RenderTargetEGLImage>(pageID, size, backImage.second, frontImage.second, WTFMove(backImage.first), WTFMove(frontImage.first), metadata.format, metadata.offset, metadata.stride, metadata.modifier);
+    return makeUnique<RenderTargetEGLImage>(pageID, size, backImage.second, WTFMove(backImage.first), frontImage.second, WTFMove(frontImage.first), displayImage.second, WTFMove(displayImage.first), metadata.format, metadata.offset, metadata.stride, metadata.modifier);
 }
 
-AcceleratedSurfaceDMABuf::RenderTargetEGLImage::RenderTargetEGLImage(WebCore::PageIdentifier pageID, const WebCore::IntSize& size, EGLImage backImage, EGLImage frontImage, UnixFileDescriptor&& backFD, UnixFileDescriptor&& frontFD, uint32_t format, uint32_t offset, uint32_t stride, uint64_t modifier)
+AcceleratedSurfaceDMABuf::RenderTargetEGLImage::RenderTargetEGLImage(WebCore::PageIdentifier pageID, const WebCore::IntSize& size, EGLImage backImage, UnixFileDescriptor&& backFD, EGLImage frontImage, UnixFileDescriptor&& frontFD, EGLImage displayImage, UnixFileDescriptor&& displayFD, uint32_t format, uint32_t offset, uint32_t stride, uint64_t modifier)
     : RenderTarget(pageID, size)
     , m_backImage(backImage)
     , m_frontImage(frontImage)
+    , m_displayImage(displayImage)
 {
     glBindRenderbuffer(GL_RENDERBUFFER, m_backColorBuffer);
     glEGLImageTargetRenderbufferStorageOES(GL_RENDERBUFFER, m_backImage);
@@ -169,7 +181,10 @@ AcceleratedSurfaceDMABuf::RenderTargetEGLImage::RenderTargetEGLImage(WebCore::Pa
     glBindRenderbuffer(GL_RENDERBUFFER, m_frontColorBuffer);
     glEGLImageTargetRenderbufferStorageOES(GL_RENDERBUFFER, m_frontImage);
 
-    WebProcess::singleton().parentProcessConnection()->send(Messages::AcceleratedBackingStoreDMABuf::Configure(WTFMove(backFD), WTFMove(frontFD),
+    glBindRenderbuffer(GL_RENDERBUFFER, m_displayColorBuffer);
+    glEGLImageTargetRenderbufferStorageOES(GL_RENDERBUFFER, m_displayImage);
+
+    WebProcess::singleton().parentProcessConnection()->send(Messages::AcceleratedBackingStoreDMABuf::Configure(WTFMove(backFD), WTFMove(frontFD), WTFMove(displayFD),
         size, format, offset, stride, modifier), pageID);
 }
 
@@ -180,12 +195,20 @@ AcceleratedSurfaceDMABuf::RenderTargetEGLImage::~RenderTargetEGLImage()
         display.destroyEGLImage(m_backImage);
     if (m_frontImage)
         display.destroyEGLImage(m_frontImage);
+    if (m_displayImage)
+        display.destroyEGLImage(m_displayImage);
 }
 
-void AcceleratedSurfaceDMABuf::RenderTargetEGLImage::swap()
+void AcceleratedSurfaceDMABuf::RenderTargetEGLImage::didRenderFrame()
 {
     std::swap(m_backImage, m_frontImage);
-    RenderTarget::swap();
+    RenderTarget::didRenderFrame();
+}
+
+void AcceleratedSurfaceDMABuf::RenderTargetEGLImage::didDisplayFrame()
+{
+    std::swap(m_frontImage, m_displayImage);
+    RenderTarget::didDisplayFrame();
 }
 #endif
 
@@ -203,6 +226,12 @@ std::unique_ptr<AcceleratedSurfaceDMABuf::RenderTarget> AcceleratedSurfaceDMABuf
         return nullptr;
     }
 
+    auto displayBuffer = ShareableBitmap::create({ size });
+    if (!displayBuffer) {
+        WTFLogAlways("Failed to allocate shared memory buffer of size %dx%d", size.width(), size.height());
+        return nullptr;
+    }
+
     auto backBufferHandle = backBuffer->createReadOnlyHandle();
     if (!backBufferHandle) {
         WTFLogAlways("Failed to create handle for shared memory buffer");
@@ -215,13 +244,20 @@ std::unique_ptr<AcceleratedSurfaceDMABuf::RenderTarget> AcceleratedSurfaceDMABuf
         return nullptr;
     }
 
-    return makeUnique<RenderTargetSHMImage>(pageID, size, Ref { *backBuffer }, WTFMove(*backBufferHandle), Ref { *frontBuffer }, WTFMove(*frontBufferHandle));
+    auto displayBufferHandle = displayBuffer->createReadOnlyHandle();
+    if (!displayBufferHandle) {
+        WTFLogAlways("Failed to create handle for shared memory buffer");
+        return nullptr;
+    }
+
+    return makeUnique<RenderTargetSHMImage>(pageID, size, Ref { *backBuffer }, WTFMove(*backBufferHandle), Ref { *frontBuffer }, WTFMove(*frontBufferHandle), Ref { *displayBuffer }, WTFMove(*displayBufferHandle));
 }
 
-AcceleratedSurfaceDMABuf::RenderTargetSHMImage::RenderTargetSHMImage(WebCore::PageIdentifier pageID, const WebCore::IntSize& size, Ref<ShareableBitmap>&& backBitmap, ShareableBitmap::Handle&& backBitmapHandle, Ref<ShareableBitmap>&& frontBitmap, ShareableBitmap::Handle&& frontBitmapHandle)
+AcceleratedSurfaceDMABuf::RenderTargetSHMImage::RenderTargetSHMImage(WebCore::PageIdentifier pageID, const WebCore::IntSize& size, Ref<ShareableBitmap>&& backBitmap, ShareableBitmap::Handle&& backBitmapHandle, Ref<ShareableBitmap>&& frontBitmap, ShareableBitmap::Handle&& frontBitmapHandle, Ref<ShareableBitmap>&& displayBitmap, ShareableBitmap::Handle&& displayBitmapHandle)
     : RenderTarget(pageID, size)
     , m_backBitmap(WTFMove(backBitmap))
     , m_frontBitmap(WTFMove(frontBitmap))
+    , m_displayBitmap(WTFMove(displayBitmap))
 {
     glBindRenderbuffer(GL_RENDERBUFFER, m_backColorBuffer);
     glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, size.width(), size.height());
@@ -229,18 +265,23 @@ AcceleratedSurfaceDMABuf::RenderTargetSHMImage::RenderTargetSHMImage(WebCore::Pa
     glBindRenderbuffer(GL_RENDERBUFFER, m_frontColorBuffer);
     glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, size.width(), size.height());
 
-    WebProcess::singleton().parentProcessConnection()->send(Messages::AcceleratedBackingStoreDMABuf::ConfigureSHM(WTFMove(backBitmapHandle), WTFMove(frontBitmapHandle)), m_pageID);
+    glBindRenderbuffer(GL_RENDERBUFFER, m_displayColorBuffer);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, size.width(), size.height());
+
+    WebProcess::singleton().parentProcessConnection()->send(Messages::AcceleratedBackingStoreDMABuf::ConfigureSHM(WTFMove(backBitmapHandle), WTFMove(frontBitmapHandle), WTFMove(displayBitmapHandle)), m_pageID);
 }
 
-void AcceleratedSurfaceDMABuf::RenderTargetSHMImage::didRenderFrame() const
+void AcceleratedSurfaceDMABuf::RenderTargetSHMImage::didRenderFrame()
 {
     glReadPixels(0, 0, m_backBitmap->size().width(), m_backBitmap->size().height(), GL_BGRA, GL_UNSIGNED_BYTE, m_backBitmap->data());
+    std::swap(m_backBitmap, m_frontBitmap);
+    RenderTarget::didRenderFrame();
 }
 
-void AcceleratedSurfaceDMABuf::RenderTargetSHMImage::swap()
+void AcceleratedSurfaceDMABuf::RenderTargetSHMImage::didDisplayFrame()
 {
-    std::swap(m_backBitmap, m_frontBitmap);
-    RenderTarget::swap();
+    std::swap(m_frontBitmap, m_displayBitmap);
+    RenderTarget::didDisplayFrame();
 }
 
 void AcceleratedSurfaceDMABuf::didCreateCompositingRunLoop(RunLoop& runLoop)
@@ -319,7 +360,7 @@ void AcceleratedSurfaceDMABuf::didRenderFrame()
 void AcceleratedSurfaceDMABuf::frameDone()
 {
     if (m_target)
-        m_target->swap();
+        m_target->didDisplayFrame();
     m_client.frameComplete();
 }
 

@@ -80,8 +80,8 @@ private:
         virtual ~RenderTarget();
 
         void willRenderFrame() const;
-        virtual void didRenderFrame() const { }
-        virtual void swap();
+        virtual void didRenderFrame();
+        virtual void didDisplayFrame();
 
     protected:
         explicit RenderTarget(WebCore::PageIdentifier, const WebCore::IntSize&);
@@ -89,6 +89,7 @@ private:
         WebCore::PageIdentifier m_pageID;
         unsigned m_backColorBuffer { 0 };
         unsigned m_frontColorBuffer { 0 };
+        unsigned m_displayColorBuffer { 0 };
         unsigned m_depthStencilBuffer { 0 };
     };
 
@@ -96,29 +97,32 @@ private:
     class RenderTargetEGLImage final : public RenderTarget {
     public:
         static std::unique_ptr<RenderTarget> create(WebCore::PageIdentifier, const WebCore::IntSize&);
-        RenderTargetEGLImage(WebCore::PageIdentifier, const WebCore::IntSize&, EGLImage, EGLImage, WTF::UnixFileDescriptor&&, WTF::UnixFileDescriptor&&, uint32_t format, uint32_t offset, uint32_t stride, uint64_t modifier);
+        RenderTargetEGLImage(WebCore::PageIdentifier, const WebCore::IntSize&, EGLImage, WTF::UnixFileDescriptor&&, EGLImage, WTF::UnixFileDescriptor&&, EGLImage, WTF::UnixFileDescriptor&&, uint32_t format, uint32_t offset, uint32_t stride, uint64_t modifier);
         ~RenderTargetEGLImage();
 
     private:
-        void swap() override;
+        void didRenderFrame() override;
+        void didDisplayFrame() override;
 
         EGLImage m_backImage { nullptr };
         EGLImage m_frontImage { nullptr };
+        EGLImage m_displayImage { nullptr };
     };
 #endif
 
     class RenderTargetSHMImage final : public RenderTarget {
     public:
         static std::unique_ptr<RenderTarget> create(WebCore::PageIdentifier, const WebCore::IntSize&);
-        RenderTargetSHMImage(WebCore::PageIdentifier, const WebCore::IntSize&, Ref<ShareableBitmap>&&, ShareableBitmapHandle&&, Ref<ShareableBitmap>&&, ShareableBitmapHandle&&);
+        RenderTargetSHMImage(WebCore::PageIdentifier, const WebCore::IntSize&, Ref<ShareableBitmap>&&, ShareableBitmapHandle&&, Ref<ShareableBitmap>&&, ShareableBitmapHandle&&, Ref<ShareableBitmap>&&, ShareableBitmapHandle&&);
         ~RenderTargetSHMImage() = default;
 
     private:
-        void didRenderFrame() const override;
-        void swap() override;
+        void didRenderFrame() override;
+        void didDisplayFrame() override;
 
         Ref<ShareableBitmap> m_backBitmap;
         Ref<ShareableBitmap> m_frontBitmap;
+        Ref<ShareableBitmap> m_displayBitmap;
     };
 
     unsigned m_fbo { 0 };
