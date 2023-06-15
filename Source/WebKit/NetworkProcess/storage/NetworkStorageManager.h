@@ -277,7 +277,7 @@ private:
     Seconds m_backupExclusionPeriod;
 #endif
 #if ENABLE(SERVICE_WORKER)
-    std::unique_ptr<ServiceWorkerStorageManager> m_sharedServiceWorkerStorageManager;
+    std::unique_ptr<ServiceWorkerStorageManager> m_sharedServiceWorkerStorageManager WTF_GUARDED_BY_CAPABILITY(workQueue());
 #endif
 };
 

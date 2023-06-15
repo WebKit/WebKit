@@ -174,6 +174,8 @@ NetworkStorageManager::NetworkStorageManager(NetworkProcess& process, PAL::Sessi
     }
 
     m_queue->dispatch([this, weakThis = ThreadSafeWeakPtr { *this }, path = path.isolatedCopy(), customLocalStoragePath = crossThreadCopy(customLocalStoragePath), customIDBStoragePath = crossThreadCopy(customIDBStoragePath), customCacheStoragePath = crossThreadCopy(customCacheStoragePath), customServiceWorkerStoragePath = crossThreadCopy(customServiceWorkerStoragePath), defaultOriginQuota, originQuotaRatio, totalQuotaRatio, standardVolumeCapacity, volumeCapacityOverride, level]() mutable {
+        assertIsCurrent(workQueue());
+
         auto strongThis = weakThis.get();
         if (!strongThis)
             return;
@@ -260,6 +262,9 @@ void NetworkStorageManager::close(CompletionHandler<void()>&& completionHandler)
         m_fileSystemStorageHandleRegistry = nullptr;
         for (auto&& completionHandler : std::exchange(m_persistCompletionHandlers, { }))
             completionHandler.second(false);
+#if ENABLE(SERVICE_WORKER)
+        m_sharedServiceWorkerStorageManager = nullptr;
+#endif
 
         RunLoop::main().dispatch([protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler)]() mutable {
             completionHandler();
@@ -1750,6 +1755,8 @@ void NetworkStorageManager::clearServiceWorkerRegistrations(CompletionHandler<vo
         return completionHandler();
 
     m_queue->dispatch([this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)]() mutable {
+        assertIsCurrent(workQueue());
+
         if (m_sharedServiceWorkerStorageManager)
             m_sharedServiceWorkerStorageManager->clearAllRegistrations();
         else {
@@ -1773,6 +1780,8 @@ void NetworkStorageManager::importServiceWorkerRegistrations(CompletionHandler<v
         return completionHandler(std::nullopt);
 
     m_queue->dispatch([this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)]() mutable {
+        assertIsCurrent(workQueue());
+
         std::optional<Vector<WebCore::ServiceWorkerContextData>> result;
         if (m_sharedServiceWorkerStorageManager)
             result = m_sharedServiceWorkerStorageManager->importRegistrations();
@@ -1804,6 +1813,8 @@ void NetworkStorageManager::updateServiceWorkerRegistrations(Vector<WebCore::Ser
         return completionHandler(std::nullopt);
 
     m_queue->dispatch([this, protectedThis = Ref { *this }, registrationsToUpdate = crossThreadCopy(WTFMove(registrationsToUpdate)), registrationsToDelete = crossThreadCopy(WTFMove(registrationsToDelete)), completionHandler = WTFMove(completionHandler)]() mutable {
+        assertIsCurrent(workQueue());
+
         std::optional<Vector<WebCore::ServiceWorkerScripts>> result;
         if (m_sharedServiceWorkerStorageManager)
             result = m_sharedServiceWorkerStorageManager->updateRegistrations(WTFMove(registrationsToUpdate), WTFMove(registrationsToDelete));
