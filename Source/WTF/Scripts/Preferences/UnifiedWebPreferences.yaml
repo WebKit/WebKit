@@ -1336,9 +1336,9 @@ CSSTextSpacingEnabled:
     WebCore:
       default: false
 
-CSSTextUnderlinePositionLeftRight:
+CSSTextUnderlinePositionLeftRightEnabled:
   type: bool
-  status: testable
+  status: unstable
   category: css
   humanReadableName: "CSS text-underline-position: left right"
   humanReadableDescription: "Enable the property text-underline-position left and right value support"
