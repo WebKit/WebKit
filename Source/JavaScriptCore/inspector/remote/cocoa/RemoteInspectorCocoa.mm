@@ -323,9 +323,7 @@ void RemoteInspector::setupXPCConnectionIfNeeded()
 
     if (m_relayConnection) {
         m_shouldReconnectToRelayOnFailure = true;
-
-        // Send a simple message to make sure the connection is still open.
-        m_relayConnection->sendMessage(@"check", nil);
+        m_relayConnection->sendMessage(WIRPingMessage, nil);
         return;
     }
 
@@ -410,6 +408,8 @@ void RemoteInspector::xpcConnectionReceivedMessage(RemoteInspectorXPCConnection*
         receivedAutomaticInspectionRejectMessage(userInfo);
     else if ([messageName isEqualToString:WIRAutomationSessionRequestMessage])
         receivedAutomationSessionRequestMessage(userInfo);
+    else if ([messageName isEqualToString:WIRPingSuccessMessage])
+        receivedPingSuccessMessage();
     else
         NSLog(@"Unrecognized RemoteInspector XPC Message: %@", messageName);
 }
@@ -833,6 +833,11 @@ void RemoteInspector::receivedAutomationSessionRequestMessage(NSDictionary *user
         return;
 
     m_client->requestAutomationSession(suggestedSessionIdentifier, sessionCapabilities);
+}
+
+void RemoteInspector::receivedPingSuccessMessage()
+{
+    m_shouldReconnectToRelayOnFailure = false;
 }
 
 } // namespace Inspector
