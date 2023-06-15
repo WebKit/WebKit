@@ -454,6 +454,7 @@ void VideoFullscreenManagerProxy::invalidate()
         interface->invalidate();
         [model->layerHostView() removeFromSuperview];
         model->setLayerHostView(nullptr);
+        model->playerLayer().fullscreenModel = nullptr;
     }
 }
 

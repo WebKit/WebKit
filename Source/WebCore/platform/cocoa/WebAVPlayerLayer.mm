@@ -129,7 +129,7 @@ private:
     if (_fullscreenModel)
         _fullscreenModel->addClient(*_fullscreenModelClient);
 
-    self.videoDimensions = _fullscreenModel->videoDimensions();
+    self.videoDimensions = _fullscreenModel ? _fullscreenModel->videoDimensions() : CGSizeZero;
 #if !RELEASE_LOG_DISABLED
     _logIdentifier = _fullscreenModel ? _fullscreenModel->nextChildIdentifier() : nullptr;
 #endif
