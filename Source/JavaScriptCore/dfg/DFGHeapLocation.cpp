@@ -129,9 +129,13 @@ void printInternal(PrintStream& out, LocationKind kind)
     case GlobalVariableLoc:
         out.print("GlobalVariableLoc");
         return;
-        
+
     case HasIndexedPropertyLoc:
         out.print("HasIndexedPorpertyLoc");
+        return;
+
+    case EnumeratorNextUpdateIndexAndModeLoc:
+        out.print("EnumeratorNextUpdateIndexAndModeLoc");
         return;
 
     case IndexedPropertyDoubleLoc:
