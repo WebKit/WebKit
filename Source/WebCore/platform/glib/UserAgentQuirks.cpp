@@ -70,6 +70,10 @@ static bool urlRequiresChromeBrowser(const String& domain, const String& baseDom
     if (baseDomain == "youtube.com"_s)
         return true;
 
+    // https://webcompat.com/issues/123672
+    if (baseDomain == "apple.com"_s)
+        return true;
+
     return false;
 }
 
