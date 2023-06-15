@@ -680,7 +680,7 @@ void FrameLoader::clear(RefPtr<Document>&& newDocument, bool clearWindowProperti
         m_frame.windowProxy().clearJSWindowProxiesNotMatchingDOMWindow(newDocument->domWindow(), m_frame.document()->backForwardCacheState() == Document::AboutToEnterBackForwardCache);
 
         if (shouldClearWindowName(m_frame, *newDocument))
-            m_frame.tree().setName(nullAtom());
+            m_frame.tree().setSpecifiedName(nullAtom());
     }
 
     m_frame.eventHandler().clear();
@@ -3806,7 +3806,7 @@ void FrameLoader::continueLoadAfterNewWindowPolicy(const ResourceRequest& reques
         mainFrame->loader().forceSandboxFlags(sandboxFlags);
 
     if (!isBlankTargetFrameName(frameName))
-        mainFrame->tree().setName(frameName);
+        mainFrame->tree().setSpecifiedName(frameName);
 
     mainFrame->page()->setOpenedByDOM();
     mainFrame->loader().m_client->dispatchShow();
@@ -3969,7 +3969,7 @@ LocalFrame* FrameLoader::findFrameForNavigation(const AtomString& name, Document
     if (!activeDocument)
         return nullptr;
 
-    auto* frame = dynamicDowncast<LocalFrame>(m_frame.tree().find(name, activeDocument->frame() ? *activeDocument->frame() : m_frame));
+    auto* frame = dynamicDowncast<LocalFrame>(m_frame.tree().findBySpecifiedName(name, activeDocument->frame() ? *activeDocument->frame() : m_frame));
 
     if (!activeDocument->canNavigate(frame))
         return nullptr;
@@ -4399,7 +4399,7 @@ RefPtr<LocalFrame> createWindow(LocalFrame& openerFrame, LocalFrame& lookupFrame
         frame->loader().forceSandboxFlags(openerFrame.document()->sandboxFlags());
 
     if (!isBlankTargetFrameName(request.frameName()))
-        frame->tree().setName(request.frameName());
+        frame->tree().setSpecifiedName(request.frameName());
 
     page->chrome().setToolbarsVisible(features.toolBarVisible || features.locationBarVisible);
 

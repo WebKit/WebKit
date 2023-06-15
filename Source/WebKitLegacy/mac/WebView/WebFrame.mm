@@ -308,7 +308,7 @@ WebView *getWebView(WebFrame *webFrame)
     auto coreFrame = WebCore::LocalFrame::createSubframe(page, makeUniqueRef<WebFrameLoaderClient>(frame.get()), WebCore::FrameIdentifier::generate(), ownerElement);
     frame->_private->coreFrame = coreFrame.ptr();
 
-    coreFrame.get().tree().setName(name);
+    coreFrame.get().tree().setSpecifiedName(name);
 
     coreFrame.get().init();
 
@@ -328,7 +328,7 @@ WebView *getWebView(WebFrame *webFrame)
     frame->_private->coreFrame = localMainFrame;
     static_cast<WebFrameLoaderClient&>(localMainFrame->loader().client()).setWebFrame(*frame.get());
 
-    localMainFrame->tree().setName(name);
+    localMainFrame->tree().setSpecifiedName(name);
     localMainFrame->init();
 
     [webView _setZoomMultiplier:[webView _realZoomMultiplier] isTextOnly:[webView _realZoomMultiplierIsTextOnly]];
@@ -2528,7 +2528,7 @@ static NSURL *createUniqueWebDataURL()
     auto coreFrame = _private->coreFrame;
     if (!coreFrame)
         return nil;
-    return kit(dynamicDowncast<WebCore::LocalFrame>(coreFrame->tree().find(name, *coreFrame)));
+    return kit(dynamicDowncast<WebCore::LocalFrame>(coreFrame->tree().findByUniqueName(name, *coreFrame)));
 }
 
 - (WebFrame *)parentFrame

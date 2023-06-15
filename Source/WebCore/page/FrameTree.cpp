@@ -50,20 +50,20 @@ FrameTree::~FrameTree()
     }
 }
 
-void FrameTree::setName(const AtomString& name) 
+void FrameTree::setSpecifiedName(const AtomString& specifiedName)
 {
-    m_name = name;
+    m_specifiedName = specifiedName;
     if (!parent()) {
-        m_uniqueName = name;
+        m_uniqueName = specifiedName;
         return;
     }
     m_uniqueName = nullAtom(); // Remove our old frame name so it's not considered in uniqueChildName.
-    m_uniqueName = parent()->tree().uniqueChildName(name);
+    m_uniqueName = parent()->tree().uniqueChildName(specifiedName);
 }
 
 void FrameTree::clearName()
 {
-    m_name = nullAtom();
+    m_specifiedName = nullAtom();
     m_uniqueName = nullAtom();
 }
 
@@ -105,7 +105,7 @@ void FrameTree::removeChild(Frame& child)
 AtomString FrameTree::uniqueChildName(const AtomString& requestedName) const
 {
     // If the requested name (the frame's "name" attribute) is unique, just use that.
-    if (!requestedName.isEmpty() && !child(requestedName) && !isBlankTargetFrameName(requestedName))
+    if (!requestedName.isEmpty() && !childByUniqueName(requestedName) && !isBlankTargetFrameName(requestedName))
         return requestedName;
 
     // The "name" attribute was not unique or absent. Generate a name based on a counter on the main frame that gets reset
@@ -153,13 +153,13 @@ Frame* FrameTree::scopedChild(unsigned index, TreeScope* scope) const
     return nullptr;
 }
 
-Frame* FrameTree::scopedChild(const AtomString& name, TreeScope* scope) const
+inline Frame* FrameTree::scopedChild(const Function<bool(const FrameTree&)>& isMatch, TreeScope* scope) const
 {
     if (!scope)
         return nullptr;
 
     for (auto* child = firstChild(); child; child = child->tree().nextSibling()) {
-        if (child->tree().uniqueName() == name && inScope(*child, *scope))
+        if (isMatch(child->tree()) && inScope(*child, *scope))
             return child;
     }
     return nullptr;
@@ -187,12 +187,24 @@ Frame* FrameTree::scopedChild(unsigned index) const
     return scopedChild(index, localFrame->document());
 }
 
-Frame* FrameTree::scopedChild(const AtomString& name) const
+Frame* FrameTree::scopedChildByUniqueName(const AtomString& uniqueName) const
 {
     auto* localFrame = dynamicDowncast<LocalFrame>(m_thisFrame);
     if (!localFrame)
         return nullptr;
-    return scopedChild(name, localFrame->document());
+    return scopedChild([&](auto& frameTree) {
+        return frameTree.uniqueName() == uniqueName;
+    }, localFrame->document());
+}
+
+Frame* FrameTree::scopedChildBySpecifiedName(const AtomString& specifiedName) const
+{
+    auto* localFrame = dynamicDowncast<LocalFrame>(m_thisFrame);
+    if (!localFrame)
+        return nullptr;
+    return scopedChild([&](auto& frameTree) {
+        return frameTree.specifiedName() == specifiedName;
+    }, localFrame->document());
 }
 
 unsigned FrameTree::scopedChildCount() const
@@ -228,7 +240,7 @@ Frame* FrameTree::child(unsigned index) const
     return result;
 }
 
-Frame* FrameTree::child(const AtomString& name) const
+Frame* FrameTree::childByUniqueName(const AtomString& name) const
 {
     for (auto* child = firstChild(); child; child = child->tree().nextSibling()) {
         if (child->tree().uniqueName() == name)
@@ -259,14 +271,14 @@ static bool isFrameFamiliarWith(Frame& abstractFrameA, Frame& abstractFrameB)
     return (frameAOpener && frameAOpener->page() == frameB->page()) || (frameBOpener && frameBOpener->page() == frameA->page()) || (frameAOpener && frameBOpener && frameAOpener->page() == frameBOpener->page());
 }
 
-Frame* FrameTree::find(const AtomString& name, Frame& activeFrame) const
+inline Frame* FrameTree::find(const AtomString& name, const Function<const AtomString&(const FrameTree&)>& nameGetter, Frame& activeFrame) const
 {
     if (isSelfTargetFrameName(name))
         return &m_thisFrame;
-    
+
     if (isTopTargetFrameName(name))
         return &top();
-    
+
     if (isParentTargetFrameName(name))
         return parent() ? parent() : &m_thisFrame;
 
@@ -276,14 +288,14 @@ Frame* FrameTree::find(const AtomString& name, Frame& activeFrame) const
 
     // Search subtree starting with this frame first.
     for (auto* frame = &m_thisFrame; frame; frame = frame->tree().traverseNext(&m_thisFrame)) {
-        if (frame->tree().uniqueName() == name)
+        if (nameGetter(frame->tree()) == name)
             return frame;
     }
 
     // Then the rest of the tree.
     auto* localFrame = dynamicDowncast<LocalFrame>(m_thisFrame);
     for (Frame* frame = localFrame ? dynamicDowncast<LocalFrame>(localFrame->mainFrame()) : nullptr; frame; frame = frame->tree().traverseNext()) {
-        if (frame->tree().uniqueName() == name)
+        if (nameGetter(frame->tree()) == name)
             return frame;
     }
 
@@ -291,18 +303,32 @@ Frame* FrameTree::find(const AtomString& name, Frame& activeFrame) const
     Page* page = m_thisFrame.page();
     if (!page)
         return nullptr;
-    
+
     // FIXME: These pages are searched in random order; that doesn't seem good. Maybe use order of creation?
     for (auto& otherPage : page->group().pages()) {
         if (&otherPage == page || otherPage.isClosing())
             continue;
         for (Frame* frame = &otherPage.mainFrame(); frame; frame = frame->tree().traverseNext()) {
-            if (frame->tree().uniqueName() == name && isFrameFamiliarWith(activeFrame, *frame))
+            if (nameGetter(frame->tree()) == name && isFrameFamiliarWith(activeFrame, *frame))
                 return frame;
         }
     }
 
     return nullptr;
+}
+
+Frame* FrameTree::findByUniqueName(const AtomString& uniqueName, Frame& activeFrame) const
+{
+    return find(uniqueName, [&](auto& frameTree) -> const AtomString& {
+        return frameTree.uniqueName();
+    }, activeFrame);
+}
+
+Frame* FrameTree::findBySpecifiedName(const AtomString& specifiedName, Frame& activeFrame) const
+{
+    return find(specifiedName, [&](auto& frameTree) -> const AtomString& {
+        return frameTree.specifiedName();
+    }, activeFrame);
 }
 
 bool FrameTree::isDescendantOf(const Frame* ancestor) const
