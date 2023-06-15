@@ -560,6 +560,9 @@ void WebProcess::initializeProcessName(const AuxiliaryProcessInitializationParam
 
 std::optional<audit_token_t> WebProcess::auditTokenForSelf()
 {
+    if (m_auditTokenForSelf)
+        return m_auditTokenForSelf;
+
     audit_token_t auditToken = { 0 };
     mach_msg_type_number_t info_size = TASK_AUDIT_TOKEN_COUNT;
     kern_return_t kr = task_info(mach_task_self(), TASK_AUDIT_TOKEN, reinterpret_cast<integer_t *>(&auditToken), &info_size);
@@ -567,7 +570,8 @@ std::optional<audit_token_t> WebProcess::auditTokenForSelf()
         WEBPROCESS_RELEASE_LOG_ERROR(Process, "Unable to get audit token for self. Error: %{public}s (%x)", mach_error_string(kr), kr);
         return std::nullopt;
     }
-    return auditToken;
+    m_auditTokenForSelf = auditToken;
+    return m_auditTokenForSelf;
 }
 
 void WebProcess::updateProcessName(IsInProcessInitialization isInProcessInitialization)

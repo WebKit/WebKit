@@ -765,6 +765,7 @@ private:
 
 #if PLATFORM(COCOA)
     HashCountedSet<String> m_pendingPasteboardWriteCounts;
+    std::optional<audit_token_t> m_auditTokenForSelf;
 #endif
 
 #if ENABLE(GPU_PROCESS)
