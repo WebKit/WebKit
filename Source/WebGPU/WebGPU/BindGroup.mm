@@ -405,6 +405,18 @@ Device::ExternalTextureData Device::createExternalTextureFromPixelBuffer(CVPixel
 #endif
 }
 
+static MTLResourceUsage resourceUsageForBindingAcccess(BindGroupLayout::BindingAccess bindingAccess)
+{
+    switch (bindingAccess) {
+    case BindGroupLayout::BindingAccessReadOnly:
+        return MTLResourceUsageRead;
+    case BindGroupLayout::BindingAccessWriteOnly:
+        return MTLResourceUsageWrite;
+    case BindGroupLayout::BindingAccessReadWrite:
+        return MTLResourceUsageRead | MTLResourceUsageWrite;
+    }
+}
+
 Ref<BindGroup> Device::createBindGroup(const WGPUBindGroupDescriptor& descriptor)
 {
     if (descriptor.nextInChain)
@@ -462,21 +474,23 @@ Ref<BindGroup> Device::createBindGroup(const WGPUBindGroupDescriptor& descriptor
             if (!optionalIndex)
                 continue;
 
-            auto index = *optionalIndex;
+            auto index = optionalIndex->first;
+            MTLResourceUsage resourceUsage = resourceUsageForBindingAcccess(optionalIndex->second);
+
             if (bufferIsPresent) {
                 id<MTLBuffer> buffer = WebGPU::fromAPI(entry.buffer).buffer();
                 if (entry.offset > buffer.length)
                     return BindGroup::createInvalid(*this);
 
                 [argumentEncoder[stage] setBuffer:buffer offset:entry.offset atIndex:index];
-                resources.append({ buffer, MTLResourceUsageRead, metalRenderStage(stage) });
+                resources.append({ buffer, resourceUsage, metalRenderStage(stage) });
             } else if (samplerIsPresent) {
                 id<MTLSamplerState> sampler = WebGPU::fromAPI(entry.sampler).samplerState();
                 [argumentEncoder[stage] setSamplerState:sampler atIndex:index];
             } else if (textureViewIsPresent) {
                 id<MTLTexture> texture = WebGPU::fromAPI(entry.textureView).texture();
                 [argumentEncoder[stage] setTexture:texture atIndex:index];
-                resources.append({ texture, MTLResourceUsageRead, metalRenderStage(stage) });
+                resources.append({ texture, resourceUsage, metalRenderStage(stage) });
             } else if (externalTextureIsPresent) {
                 auto& externalTexture = WebGPU::fromAPI(wgpuExternalTexture);
                 auto textureData = createExternalTextureFromPixelBuffer(externalTexture.pixelBuffer(), externalTexture.colorSpace());
@@ -485,9 +499,9 @@ Ref<BindGroup> Device::createBindGroup(const WGPUBindGroupDescriptor& descriptor
                 ASSERT(textureData.texture0);
                 ASSERT(textureData.texture1);
                 if (textureData.texture0)
-                    resources.append({ textureData.texture0, MTLResourceUsageRead, metalRenderStage(stage) });
+                    resources.append({ textureData.texture0, resourceUsage, metalRenderStage(stage) });
                 if (textureData.texture1)
-                    resources.append({ textureData.texture1, MTLResourceUsageRead, metalRenderStage(stage) });
+                    resources.append({ textureData.texture1, resourceUsage, metalRenderStage(stage) });
 
                 auto* uvRemapAddress = static_cast<simd::float3x2*>([argumentEncoder[stage] constantDataAtIndex:index++]);
                 *uvRemapAddress = textureData.uvRemappingMatrix;

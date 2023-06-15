@@ -62,18 +62,10 @@ static MTLArgumentDescriptor *createArgumentDescriptor(const WGPUBufferBindingLa
     switch (bufferType) {
     case WGPUBufferBindingType_Uniform:
     case WGPUBufferBindingType_ReadOnlyStorage:
-#if USE(METAL_ARGUMENT_ACCESS_ENUMS)
-        descriptor.access = MTLArgumentAccessReadOnly;
-#else
-        descriptor.access = MTLBindingAccessReadOnly;
-#endif
+        descriptor.access = BindGroupLayout::BindingAccessReadOnly;
         break;
     case WGPUBufferBindingType_Storage:
-#if USE(METAL_ARGUMENT_ACCESS_ENUMS)
-        descriptor.access = MTLArgumentAccessReadWrite;
-#else
-        descriptor.access = MTLBindingAccessReadWrite;
-#endif
+        descriptor.access = BindGroupLayout::BindingAccessReadWrite;
         break;
     case WGPUBufferBindingType_Undefined:
     case WGPUBufferBindingType_Force32:
@@ -96,11 +88,7 @@ static MTLArgumentDescriptor *createArgumentDescriptor(const WGPUSamplerBindingL
     UNUSED_PARAM(sampler);
     auto descriptor = [MTLArgumentDescriptor new];
     descriptor.dataType = MTLDataTypeSampler;
-#if USE(METAL_ARGUMENT_ACCESS_ENUMS)
-    descriptor.access = MTLArgumentAccessReadOnly;
-#else
-    descriptor.access = MTLBindingAccessReadOnly;
-#endif
+    descriptor.access = BindGroupLayout::BindingAccessReadOnly;
     return descriptor;
 }
 
@@ -117,11 +105,7 @@ static MTLArgumentDescriptor *createArgumentDescriptor(const WGPUTextureBindingL
 
     auto descriptor = [MTLArgumentDescriptor new];
     descriptor.dataType = MTLDataTypeTexture;
-#if USE(METAL_ARGUMENT_ACCESS_ENUMS)
-    descriptor.access = MTLArgumentAccessReadOnly;
-#else
-    descriptor.access = MTLBindingAccessReadOnly;
-#endif
+    descriptor.access = BindGroupLayout::BindingAccessReadOnly;
     return descriptor;
 }
 
@@ -157,13 +141,7 @@ static MTLArgumentDescriptor *createArgumentDescriptor(const WGPUExternalTexture
     // External textures have a bunch of information included in them, not just a single texture.
     auto descriptor = [MTLArgumentDescriptor new];
     descriptor.dataType = MTLDataTypeTexture;
-#if USE(METAL_ARGUMENT_ACCESS_ENUMS)
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    descriptor.access = MTLArgumentAccessReadOnly;
-ALLOW_DEPRECATED_DECLARATIONS_END
-#else
-    descriptor.access = MTLBindingAccessReadOnly;
-#endif
+    descriptor.access = BindGroupLayout::BindingAccessReadOnly;
     return descriptor;
 }
 
@@ -238,7 +216,7 @@ Ref<BindGroupLayout> Device::createBindGroupLayout(const WGPUBindGroupLayoutDesc
 
         for (uint32_t stage = 0; stage < stageCount; ++stage) {
             if (containsStage(entry.visibility, stage)) {
-                indicesForBinding.add(makeKey(entry.binding, stage), arguments[stage].count);
+                indicesForBinding.add(makeKey(entry.binding, stage), std::make_pair(arguments[stage].count, descriptor.access));
                 addDescriptor(arguments[stage], descriptor);
             }
         }
@@ -298,7 +276,7 @@ NSUInteger BindGroupLayout::encodedLength(ShaderStage shaderStage) const
     }
 }
 
-std::optional<NSUInteger> BindGroupLayout::indexForBinding(uint32_t bindingIndex, ShaderStage shaderStage) const
+std::optional<BindGroupLayout::StageMapValue> BindGroupLayout::indexForBinding(uint32_t bindingIndex, ShaderStage shaderStage) const
 {
     auto it = m_indicesForBinding.find(makeKey(bindingIndex, shaderStage));
     if (it == m_indicesForBinding.end())

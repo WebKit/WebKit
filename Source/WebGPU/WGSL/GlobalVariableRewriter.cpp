@@ -587,11 +587,17 @@ static BindGroupLayoutEntry::BindingMember bindingMemberForGlobal(auto& global)
 {
     auto* variable = global.declaration;
     ASSERT(variable);
+    auto* maybeReference = variable->maybeReferenceType();
     auto* type = variable->storeType();
     ASSERT(type);
-    auto addressSpace = []() {
-        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=257945
-        // properly compute the address space for the buffer binding
+    auto addressSpace = [&]() {
+        if (maybeReference) {
+            auto& reference = downcast<AST::ReferenceTypeName>(*maybeReference);
+            auto* referenceType = std::get_if<Types::Reference>(reference.resolvedType());
+            if (referenceType && referenceType->addressSpace == AddressSpace::Storage)
+                return BufferBindingType::Storage;
+        }
+
         return BufferBindingType::Uniform;
     };
 

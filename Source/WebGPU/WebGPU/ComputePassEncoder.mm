@@ -150,6 +150,9 @@ void ComputePassEncoder::pushDebugGroup(String&& groupLabel)
 
 void ComputePassEncoder::setBindGroup(uint32_t groupIndex, const BindGroup& group, uint32_t dynamicOffsetCount, const uint32_t* dynamicOffsets)
 {
+    for (const auto& resource : group.resources())
+        [m_computeCommandEncoder useResource:resource.mtlResource usage:resource.usage];
+
     UNUSED_PARAM(dynamicOffsetCount);
     UNUSED_PARAM(dynamicOffsets);
     [m_computeCommandEncoder setBuffer:group.computeArgumentBuffer() offset:0 atIndex:groupIndex];

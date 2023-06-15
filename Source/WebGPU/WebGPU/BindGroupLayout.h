@@ -57,7 +57,19 @@ public:
         BindingLayout bindingLayout;
     };
 
-    using StageMapTable = HashMap<uint64_t, NSUInteger, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>>;
+#if USE(METAL_ARGUMENT_ACCESS_ENUMS)
+    using BindingAccess = MTLArgumentAccess;
+    static constexpr auto BindingAccessReadOnly = MTLArgumentAccessReadOnly;
+    static constexpr auto BindingAccessReadWrite = MTLArgumentAccessReadWrite;
+    static constexpr auto BindingAccessWriteOnly = MTLArgumentAccessWriteOnly;
+#else
+    using BindingAccess = MTLBindingAccess;
+    static constexpr auto BindingAccessReadOnly = MTLBindingAccessReadOnly;
+    static constexpr auto BindingAccessReadWrite = MTLBindingAccessReadWrite;
+    static constexpr auto BindingAccessWriteOnly = MTLBindingAccessWriteOnly;
+#endif
+    using StageMapValue = std::pair<NSUInteger, BindingAccess>;
+    using StageMapTable = HashMap<uint64_t, StageMapValue, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>>;
 
     static Ref<BindGroupLayout> create(StageMapTable&& stageMapTable, id<MTLArgumentEncoder> vertexArgumentEncoder, id<MTLArgumentEncoder> fragmentArgumentEncoder, id<MTLArgumentEncoder> computeArgumentEncoder, Vector<Entry>&& entries)
     {
@@ -80,7 +92,7 @@ public:
     id<MTLArgumentEncoder> fragmentArgumentEncoder() const { return m_fragmentArgumentEncoder; }
     id<MTLArgumentEncoder> computeArgumentEncoder() const { return m_computeArgumentEncoder; }
 
-    std::optional<NSUInteger> indexForBinding(uint32_t bindingIndex, ShaderStage renderStage) const;
+    std::optional<StageMapValue> indexForBinding(uint32_t bindingIndex, ShaderStage renderStage) const;
 
     static bool isPresent(const WGPUBufferBindingLayout&);
     static bool isPresent(const WGPUSamplerBindingLayout&);
