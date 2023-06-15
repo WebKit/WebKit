@@ -31,21 +31,71 @@
 #import "PlatformCALayerRemote.h"
 #import "RemoteLayerTreeHost.h"
 #import <QuartzCore/QuartzCore.h>
+#import <RealitySystemSupport/RealitySystemSupport.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
+#import <wtf/SoftLinking.h>
 
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/RemoteLayerTreePropertyApplierInteractionRegionAdditions.mm>
-#else
-static Class interactionRegionLayerClass() { return [CALayer class]; }
-static void configureLayerForInteractionRegion(CALayer *, NSString *) { }
-static void configureLayerAsGuard(CALayer *, NSString *) { }
-#endif
+//// FIXME: rdar://105775731
+SOFT_LINK_PRIVATE_FRAMEWORK_OPTIONAL(RealitySystemSupport)
+SOFT_LINK_CLASS_OPTIONAL(RealitySystemSupport, RCPGlowEffectLayer)
+SOFT_LINK_CONSTANT_MAY_FAIL(RealitySystemSupport, RCPAllowedInputTypesUserInfoKey, const NSString *)
+
+@interface CALayer ()
+@property (nonatomic) CGFloat sizeMultiplier;
+@property (nonatomic, copy) void (^effectGroupConfigurator)(CARemoteEffectGroup *group);
+@end
 
 namespace WebKit {
 using namespace WebCore;
 
 NSString *interactionRegionTypeKey = @"WKInteractionRegionType";
 NSString *interactionRegionGroupNameKey = @"WKInteractionRegionGroupName";
+
+static Class interactionRegionLayerClass()
+{
+    if (getRCPGlowEffectLayerClass())
+        return getRCPGlowEffectLayerClass();
+    return [CALayer class];
+}
+
+static NSDictionary *interactionRegionEffectUserInfo()
+{
+    static NeverDestroyed<RetainPtr<NSDictionary>> interactionRegionEffectUserInfo;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        if (canLoadRCPAllowedInputTypesUserInfoKey()) {
+            RCPRemoteEffectInputTypes allowedInputs = RCPRemoteEffectInputTypesAll ^ RCPRemoteEffectInputTypePointer;
+            interactionRegionEffectUserInfo.get() = @{ getRCPAllowedInputTypesUserInfoKey(): @(allowedInputs) };
+        }
+    });
+    return interactionRegionEffectUserInfo.get().get();
+}
+
+static void configureLayerForInteractionRegion(CALayer *layer, NSString *groupName)
+{
+    if (auto multiplier = [[NSUserDefaults standardUserDefaults] floatForKey:@"WKInteractionRegionLayerSizeMultiplier"]) {
+        if ([layer respondsToSelector:@selector(setSizeMultiplier:)])
+            [layer setSizeMultiplier:multiplier];
+    }
+
+    if ([layer respondsToSelector:@selector(setEffectGroupConfigurator:)]) {
+        [layer setEffectGroupConfigurator:^void(CARemoteEffectGroup *group)
+        {
+            group.groupName = groupName;
+            group.matched = YES;
+            group.userInfo = interactionRegionEffectUserInfo();
+        }];
+    }
+}
+
+static void configureLayerAsGuard(CALayer *layer, NSString *groupName)
+{
+    CARemoteEffectGroup *group = [CARemoteEffectGroup groupWithEffects:@[]];
+    group.groupName = groupName;
+    group.matched = YES;
+    group.userInfo = interactionRegionEffectUserInfo();
+    layer.remoteEffects = @[ group ];
+}
 
 static std::optional<WebCore::InteractionRegion::Type> interactionRegionTypeForLayer(CALayer *layer)
 {
