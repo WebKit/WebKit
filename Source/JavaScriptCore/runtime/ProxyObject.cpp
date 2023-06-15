@@ -104,9 +104,7 @@ JSObject* ProxyObject::getHandlerTrap(JSGlobalObject* globalObject, JSObject* ha
         return asObject(value);
     };
 
-    JSValue handlerPrototype = handler->getPrototypeDirect();
-    bool isCacheValid = handler->structureID() == m_handlerStructureID.value() && asObject(handlerPrototype)->structureID() == m_handlerPrototypeStructureID.value();
-    if (isCacheValid) {
+    if (isHandlerTrapsCacheValid(handler)) {
         PropertyOffset offset = m_handlerTrapsOffsetsCache[static_cast<uint8_t>(trap)];
         if (offset == invalidOffset)
             return nullptr;
@@ -121,6 +119,7 @@ JSObject* ProxyObject::getHandlerTrap(JSGlobalObject* globalObject, JSObject* ha
 
     bool isSlotCacheable = slot.isUnset() || (slot.isCacheableValue() && slot.slotBase() == handler);
     if (isSlotCacheable) {
+        JSValue handlerPrototype = handler->getPrototypeDirect();
         bool isHandlerPrototypeChainCacheable = handler->type() == FinalObjectType && !handler->structure()->isDictionary()
             && handlerPrototype.inherits<ObjectPrototype>() && !asObject(handlerPrototype)->structure()->isDictionary();
         if (isHandlerPrototypeChainCacheable) {
@@ -286,9 +285,9 @@ bool ProxyObject::performInternalMethodGetOwnProperty(JSGlobalObject* globalObje
 
     JSObject* handler = jsCast<JSObject*>(handlerValue);
     CallData callData;
-    JSValue getOwnPropertyDescriptorMethod = handler->getMethod(globalObject, callData, makeIdentifier(vm, "getOwnPropertyDescriptor"_s), "'getOwnPropertyDescriptor' property of a Proxy's handler should be callable"_s);
+    JSObject* getOwnPropertyDescriptorMethod = getHandlerTrap(globalObject, handler, callData, vm.propertyNames->getOwnPropertyDescriptor, HandlerTrap::GetOwnPropertyDescriptor);
     RETURN_IF_EXCEPTION(scope, false);
-    if (getOwnPropertyDescriptorMethod.isUndefined())
+    if (!getOwnPropertyDescriptorMethod)
         RELEASE_AND_RETURN(scope, performDefaultGetOwnProperty());
 
     MarkedArgumentBuffer arguments;
@@ -1000,6 +999,26 @@ bool ProxyObject::defineOwnProperty(JSObject* object, JSGlobalObject* globalObje
     return thisObject->performDefineOwnProperty(globalObject, propertyName, descriptor, shouldThrow);
 }
 
+bool ProxyObject::forwardsGetOwnPropertyNamesToTarget(DontEnumPropertiesMode dontEnumPropertiesMode)
+{
+    JSValue handler = this->handler();
+    if (handler.isNull())
+        return false;
+
+    if (!isHandlerTrapsCacheValid(asObject(handler)))
+        return false;
+
+    if (m_handlerTrapsOffsetsCache[static_cast<uint8_t>(HandlerTrap::OwnKeys)] != invalidOffset)
+        return false;
+
+    if (dontEnumPropertiesMode == DontEnumPropertiesMode::Exclude) {
+        if (m_handlerTrapsOffsetsCache[static_cast<uint8_t>(HandlerTrap::GetOwnPropertyDescriptor)] != invalidOffset)
+            return false;
+    }
+
+    return true;
+}
+
 void ProxyObject::performGetOwnPropertyNames(JSGlobalObject* globalObject, PropertyNameArray& propertyNames)
 {
     NO_TAIL_CALLS();
@@ -1018,10 +1037,10 @@ void ProxyObject::performGetOwnPropertyNames(JSGlobalObject* globalObject, Prope
 
     JSObject* handler = jsCast<JSObject*>(handlerValue);
     CallData callData;
-    JSValue ownKeysMethod = handler->getMethod(globalObject, callData, makeIdentifier(vm, "ownKeys"_s), "'ownKeys' property of a Proxy's handler should be callable"_s);
+    JSObject* ownKeysMethod = getHandlerTrap(globalObject, handler, callData, vm.propertyNames->ownKeys, HandlerTrap::OwnKeys);
     RETURN_IF_EXCEPTION(scope, void());
     JSObject* target = this->target();
-    if (ownKeysMethod.isUndefined()) {
+    if (!ownKeysMethod) {
         scope.release();
         target->methodTable()->getOwnPropertyNames(target, globalObject, propertyNames, DontEnumPropertiesMode::Include);
         return;
@@ -1057,6 +1076,9 @@ void ProxyObject::performGetOwnPropertyNames(JSGlobalObject* globalObject, Prope
         return true;
     });
     RETURN_IF_EXCEPTION(scope, void());
+
+    if (!target->structure()->isNonExtensibleOrHasNonConfigurableProperties())
+        return;
 
     bool targetIsExensible = target->isExtensible(globalObject);
     RETURN_IF_EXCEPTION(scope, void());

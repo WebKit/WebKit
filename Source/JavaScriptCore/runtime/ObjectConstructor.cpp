@@ -1044,6 +1044,12 @@ JSArray* ownPropertyKeys(JSGlobalObject* globalObject, JSObject* object, Propert
 
     auto kind = inferCachedPropertyNamesKind(propertyNameMode, dontEnumPropertiesMode);
 
+    if (object->inherits<ProxyObject>()) {
+        ProxyObject* proxy = jsCast<ProxyObject*>(object);
+        if (proxy->forwardsGetOwnPropertyNamesToTarget(dontEnumPropertiesMode))
+            object = proxy->target();
+    }
+
     // We attempt to look up own property keys cache in Object.keys / Object.getOwnPropertyNames cases.
     if (LIKELY(!globalObject->isHavingABadTime())) {
         if (auto* immutableButterfly = object->structure()->cachedPropertyNames(kind)) {
