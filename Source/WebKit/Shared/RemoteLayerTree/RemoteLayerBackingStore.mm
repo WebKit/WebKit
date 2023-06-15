@@ -810,8 +810,6 @@ void RemoteLayerBackingStoreProperties::updateCachedBuffers(RemoteLayerTreeNode&
         if (m_secondaryBackBufferInfo && *m_secondaryBackBufferInfo == current.imageBufferInfo)
             return false;
 
-        if (m_frontBufferInfo)
-            ALWAYS_LOG_WITH_STREAM(stream << "Reomving cached front buffer " << m_frontBufferInfo->resourceIdentifier);
         return true;
     });
 
