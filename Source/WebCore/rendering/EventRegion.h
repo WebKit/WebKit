@@ -69,6 +69,8 @@ private:
     Vector<InteractionRegion> m_interactionRegions;
     HashSet<IntRect> m_interactionRects;
     HashSet<IntRect> m_occlusionRects;
+    HashSet<ElementIdentifier> m_containerRemovalCandidates;
+    HashSet<ElementIdentifier> m_containersToRemove;
     HashMap<ElementIdentifier, Region> m_discoveredRegionsByElement;
 #endif
 };

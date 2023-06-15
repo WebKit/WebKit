@@ -15,6 +15,32 @@
         border-radius: 5px;
         background: blue;
     }
+    .tappable-container {
+        position: relative;
+        cursor: pointer;
+        width: 400px;
+        height: 400px;
+        background: rgba(0, 0, 255, 0.5);
+    }
+    .positioning-x {
+        float: right;
+        width: 50%;
+        height: 100%;
+    }
+    .positioning-y {
+        width: 100%;
+        height: 50%;
+        margin-top: 25%;
+    }
+    .tappable {
+        position: relative;
+        display: flex;
+        align-items: center;
+
+        width: 120px;
+        height: 120px;
+        border: 1px blue dotted;
+    }
 </style>
 <body>
 <div class="nested" style="border-radius: 12px;">
@@ -42,6 +68,16 @@
                 Nested
             </div>
             <a href="#" class="secondary">Secondary</a>
+        </div>
+    </div>
+</div>
+<div class="tappable-container">
+    <div class="positioning-x">
+        <div class="positioning-y">
+            <div class="tappable">
+                Tappable!
+                <a href="#" class="secondary">Secondary</a>
+            </div>
         </div>
     </div>
 </div>
