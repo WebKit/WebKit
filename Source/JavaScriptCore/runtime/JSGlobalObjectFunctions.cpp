@@ -518,9 +518,13 @@ JSC_DEFINE_HOST_FUNCTION(globalFuncParseInt, (JSGlobalObject* globalObject, Call
     JSValue value = callFrame->argument(0);
     JSValue radixValue = callFrame->argument(1);
 
-    if (value.isNumber() && radixValue.isUndefinedOrNull()) {
-        if (auto result = parseIntDouble(value.asNumber()))
-            return JSValue::encode(jsNumber(result.value()));
+    if (value.isNumber()) {
+        if (radixValue.isUndefinedOrNull() || (radixValue.isInt32() && radixValue.asInt32() == 10)) {
+            if (value.isInt32())
+                return JSValue::encode(value);
+            if (auto result = parseIntDouble(value.asDouble()))
+                return JSValue::encode(jsNumber(result.value()));
+        }
     }
 
     // If ToString throws, we shouldn't call ToInt32.
@@ -534,7 +538,16 @@ JSC_DEFINE_HOST_FUNCTION(globalFuncParseFloat, (JSGlobalObject* globalObject, Ca
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* jsString = callFrame->argument(0).toString(globalObject);
+    JSValue value = callFrame->argument(0);
+    if (value.isNumber()) {
+        if (value.isInt32())
+            return JSValue::encode(value);
+        if (value.asDouble() == 0.0) // Makes -0.0 to 0.0 too.
+            return JSValue::encode(jsNumber(0.0));
+        return JSValue::encode(value);
+    }
+
+    auto* jsString = value.toString(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
     auto viewWithString = jsString->viewWithUnderlyingString(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
