@@ -69,11 +69,21 @@ enum class PathElementType : uint8_t {
     AddCurveToPoint, // The points member will contain 3 values.
     CloseSubpath // The points member will contain no values.
 };
+
+enum class EncodedPathElementType : uint8_t {
+    MoveToPoint,
+    AddLineToPoint,
+    AddQuadCurveToPoint,
+    AddCurveToPoint,
+    CloseSubpath,
+    EndOfPath
+};
 }
 
 namespace WTF {
 class TextStream;
 template<> bool isValidEnum<WebCore::PathElementType, void>(uint8_t);
+template<> bool isValidEnum<WebCore::EncodedPathElementType, void>(uint8_t);
 }
 
 namespace WebCore {
@@ -97,38 +107,6 @@ struct PathElement {
 };
 
 using PathApplierFunction = Function<void(const PathElement&)>;
-
-class EncodedPathElementType {
-public:
-    EncodedPathElementType()
-        : m_type(std::nullopt)
-    {
-    }
-
-    EncodedPathElementType(PathElement::Type type)
-        : m_type(type)
-    {
-        ASSERT(isValidPathElementType());
-    }
-
-    EncodedPathElementType(std::optional<PathElement::Type>&& type)
-        : m_type(WTFMove(type))
-    {
-    }
-
-    bool isEndOfPath() const { return !m_type.has_value(); }
-    bool isValidPathElementType() const { return m_type.has_value(); }
-
-    PathElement::Type type() const
-    {
-        ASSERT(isValidPathElementType());
-        return *m_type;
-    }
-
-private:
-    friend struct IPC::ArgumentCoder<EncodedPathElementType, void>;
-    std::optional<PathElement::Type> m_type;
-};
 
 class Path {
     WTF_MAKE_FAST_ALLOCATED;
@@ -272,7 +250,7 @@ private:
     bool isEmptySlowCase() const;
     FloatPoint currentPointSlowCase() const;
     size_t elementCountSlowCase() const;
-    void applySlowCase(const PathApplierFunction&) const;
+    WEBCORE_EXPORT void applyIgnoringInlineData(const PathApplierFunction&) const;
 
 #if USE(CG)
     void createCGPath() const;
@@ -314,31 +292,33 @@ template<class Encoder> void Path::encode(Encoder& encoder) const
     }
 #endif
 
-    apply([&](auto& element) {
-        encoder << EncodedPathElementType(element.type);
+    if (m_path) {
+        applyIgnoringInlineData([&](auto& element) {
+            encoder << static_cast<EncodedPathElementType>(element.type);
 
-        switch (element.type) {
-        case PathElement::Type::MoveToPoint:
-            encoder << element.points[0];
-            break;
-        case PathElement::Type::AddLineToPoint:
-            encoder << element.points[0];
-            break;
-        case PathElement::Type::AddQuadCurveToPoint:
-            encoder << element.points[0];
-            encoder << element.points[1];
-            break;
-        case PathElement::Type::AddCurveToPoint:
-            encoder << element.points[0];
-            encoder << element.points[1];
-            encoder << element.points[2];
-            break;
-        case PathElement::Type::CloseSubpath:
-            break;
-        }
-    });
+            switch (element.type) {
+            case PathElement::Type::MoveToPoint:
+                encoder << element.points[0];
+                break;
+            case PathElement::Type::AddLineToPoint:
+                encoder << element.points[0];
+                break;
+            case PathElement::Type::AddQuadCurveToPoint:
+                encoder << element.points[0];
+                encoder << element.points[1];
+                break;
+            case PathElement::Type::AddCurveToPoint:
+                encoder << element.points[0];
+                encoder << element.points[1];
+                encoder << element.points[2];
+                break;
+            case PathElement::Type::CloseSubpath:
+                break;
+            }
+        });
+    }
 
-    encoder << EncodedPathElementType();
+    encoder << EncodedPathElementType::EndOfPath;
 }
 
 template<class Decoder> std::optional<Path> Path::decode(Decoder& decoder)
@@ -365,10 +345,10 @@ template<class Decoder> std::optional<Path> Path::decode(Decoder& decoder)
         if (!decoder.decode(elementType))
             return std::nullopt;
 
-        if (elementType.isEndOfPath())
+        if (elementType == EncodedPathElementType::EndOfPath)
             break;
 
-        switch (elementType.type()) {
+        switch (static_cast<PathElementType>(elementType)) {
         case PathElement::Type::MoveToPoint: {
             FloatPoint point;
             if (!decoder.decode(point))

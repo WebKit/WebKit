@@ -3585,9 +3585,13 @@ enum class WebCore::PreserveResolution : bool;
     CloseSubpath
 };
 
-header: <WebCore/Path.h>
-[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::EncodedPathElementType {
-    std::optional<WebCore::PathElementType> m_type;
+[AdditionalEncoder=StreamConnectionEncoder] enum class WebCore::EncodedPathElementType : uint8_t {
+    MoveToPoint,
+    AddLineToPoint,
+    AddQuadCurveToPoint,
+    AddCurveToPoint,
+    CloseSubpath,
+    EndOfPath
 };
 
 class WebCore::ProcessIdentity {

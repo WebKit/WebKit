@@ -480,7 +480,7 @@ static void CGPathApplierToPathApplier(void* info, const CGPathElement* element)
     function(pathElement);
 }
 
-void Path::applySlowCase(const PathApplierFunction& function) const
+void Path::applyIgnoringInlineData(const PathApplierFunction& function) const
 {
     CGPathApply(platformPath(), (void*)&function, CGPathApplierToPathApplier);
 }

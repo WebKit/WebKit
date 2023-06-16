@@ -461,7 +461,7 @@ bool Path::strokeContains(const FloatPoint& point, const Function<void(GraphicsC
     return cairo_in_stroke(m_path.get(), point.x(), point.y());
 }
 
-void Path::applySlowCase(const PathApplierFunction& function) const
+void Path::applyIgnoringInlineData(const PathApplierFunction& function) const
 {
     if (m_elements) {
         for (const auto& element : m_elements.value())
