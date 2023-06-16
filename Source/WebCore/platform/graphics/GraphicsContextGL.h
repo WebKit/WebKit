@@ -1476,21 +1476,21 @@ public:
     // ========== EGL related entry points.
 
 #if PLATFORM(COCOA)
-    struct ExternalImageSourceIOSurfaceHandle {
+    struct EGLImageSourceIOSurfaceHandle {
         MachSendRight handle;
     };
-    struct ExternalImageSourceMTLSharedTextureHandle {
+    struct EGLImageSourceMTLSharedTextureHandle {
         MachSendRight handle;
     };
-    using ExternalImageSource = std::variant<
-        ExternalImageSourceIOSurfaceHandle,
-        ExternalImageSourceMTLSharedTextureHandle
+    using EGLImageSource = std::variant<
+        EGLImageSourceIOSurfaceHandle,
+        EGLImageSourceMTLSharedTextureHandle
         >;
 #else
-    using ExternalImageSource = int;
+    using EGLImageSource = int;
 #endif
-    using ExternalImageAttachResult = std::tuple<GCEGLImage, IntSize>;
-    virtual std::optional<ExternalImageAttachResult> createAndBindExternalImage(GCGLenum, ExternalImageSource) = 0;
+    using EGLImageAttachResult = std::tuple<GCEGLImage, IntSize>;
+    virtual std::optional<EGLImageAttachResult> createAndBindEGLImage(GCGLenum, EGLImageSource) = 0;
     virtual void destroyEGLImage(GCEGLImage) = 0;
 
 #if PLATFORM(COCOA)

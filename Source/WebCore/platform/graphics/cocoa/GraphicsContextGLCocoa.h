@@ -68,10 +68,10 @@ public:
     void* createPbufferAndAttachIOSurface(GCGLenum target, PbufferAttachmentUsage, GCGLenum internalFormat, GCGLsizei width, GCGLsizei height, GCGLenum type, IOSurfaceRef, GCGLuint plane);
     void destroyPbufferAndDetachIOSurface(void* handle);
 
-    std::optional<ExternalImageAttachResult> createAndBindExternalImage(GCGLenum, ExternalImageSource) final;
+    std::optional<EGLImageAttachResult> createAndBindEGLImage(GCGLenum, EGLImageSource) final;
 #if !PLATFORM(IOS_FAMILY_SIMULATOR)
     // Short-term support for in-process WebGL.
-    std::optional<ExternalImageAttachResult> createAndBindExternalImage(GCGLenum, IOSurface*);
+    std::optional<EGLImageAttachResult> createAndBindEGLImage(GCGLenum, IOSurface*);
 #endif
 
     RetainPtr<id> newSharedEventWithMachPort(mach_port_t);

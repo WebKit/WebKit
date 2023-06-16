@@ -2832,7 +2832,7 @@ void GraphicsContextGLANGLE::getActiveUniformBlockiv(GCGLuint program, GCGLuint 
     GL_GetActiveUniformBlockivRobustANGLE(program, uniformBlockIndex, pname, params.size(), nullptr, params.data());
 }
 
-std::optional<GraphicsContextGL::ExternalImageAttachResult> GraphicsContextGLANGLE::createAndBindExternalImage(GCGLenum, ExternalImageSource)
+std::optional<GraphicsContextGL::EGLImageAttachResult> GraphicsContextGLANGLE::createAndBindEGLImage(GCGLenum, EGLImageSource)
 {
     notImplemented();
     return std::nullopt;

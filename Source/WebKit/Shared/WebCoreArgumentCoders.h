@@ -505,14 +505,14 @@ template<> struct ArgumentCoder<WebCore::PixelBuffer> {
 
 #if PLATFORM(COCOA) && ENABLE(GPU_PROCESS) && ENABLE(WEBGL)
 
-template<> struct ArgumentCoder<WebCore::GraphicsContextGL::ExternalImageSourceIOSurfaceHandle> {
-    static void encode(Encoder&, const WebCore::GraphicsContextGL::ExternalImageSourceIOSurfaceHandle&);
-    static std::optional<WebCore::GraphicsContextGL::ExternalImageSourceIOSurfaceHandle> decode(Decoder&);
+template<> struct ArgumentCoder<WebCore::GraphicsContextGL::EGLImageSourceIOSurfaceHandle> {
+    static void encode(Encoder&, const WebCore::GraphicsContextGL::EGLImageSourceIOSurfaceHandle&);
+    static std::optional<WebCore::GraphicsContextGL::EGLImageSourceIOSurfaceHandle> decode(Decoder&);
 };
 
-template<> struct ArgumentCoder<WebCore::GraphicsContextGL::ExternalImageSourceMTLSharedTextureHandle> {
-    static void encode(Encoder&, const WebCore::GraphicsContextGL::ExternalImageSourceMTLSharedTextureHandle&);
-    static std::optional<WebCore::GraphicsContextGL::ExternalImageSourceMTLSharedTextureHandle> decode(Decoder&);
+template<> struct ArgumentCoder<WebCore::GraphicsContextGL::EGLImageSourceMTLSharedTextureHandle> {
+    static void encode(Encoder&, const WebCore::GraphicsContextGL::EGLImageSourceMTLSharedTextureHandle&);
+    static std::optional<WebCore::GraphicsContextGL::EGLImageSourceMTLSharedTextureHandle> decode(Decoder&);
 };
 
 #endif

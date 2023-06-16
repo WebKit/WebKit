@@ -133,7 +133,7 @@ void WebXROpaqueFramebuffer::startFrame(const PlatformXR::Device::FrameData::Lay
     // Tell the GraphicsContextGL to use the IOSurface as the backing store for m_opaqueTexture.
     if (data.isShared) {
 #if !PLATFORM(IOS_FAMILY_SIMULATOR)
-        auto surfaceTextureAttachment = gCGL->createAndBindExternalImage(textureTarget, data.surface.get());
+        auto surfaceTextureAttachment = gCGL->createAndBindEGLImage(textureTarget, data.surface.get());
         if (!surfaceTextureAttachment) {
             m_opaqueTexture.release(gl);
             return;

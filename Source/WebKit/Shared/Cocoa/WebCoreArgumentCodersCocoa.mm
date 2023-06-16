@@ -746,27 +746,27 @@ std::optional<RetainPtr<CVPixelBufferRef>> ArgumentCoder<RetainPtr<CVPixelBuffer
 
 #if ENABLE(GPU_PROCESS) && ENABLE(WEBGL)
 
-void ArgumentCoder<WebCore::GraphicsContextGL::ExternalImageSourceIOSurfaceHandle>::encode(Encoder& encoder, const WebCore::GraphicsContextGL::ExternalImageSourceIOSurfaceHandle& source)
+void ArgumentCoder<WebCore::GraphicsContextGL::EGLImageSourceIOSurfaceHandle>::encode(Encoder& encoder, const WebCore::GraphicsContextGL::EGLImageSourceIOSurfaceHandle& source)
 {
     encoder << source.handle;
 }
 
-std::optional<WebCore::GraphicsContextGL::ExternalImageSourceIOSurfaceHandle> ArgumentCoder<WebCore::GraphicsContextGL::ExternalImageSourceIOSurfaceHandle>::decode(Decoder& decoder)
+std::optional<WebCore::GraphicsContextGL::EGLImageSourceIOSurfaceHandle> ArgumentCoder<WebCore::GraphicsContextGL::EGLImageSourceIOSurfaceHandle>::decode(Decoder& decoder)
 {
-    WebCore::GraphicsContextGL::ExternalImageSourceIOSurfaceHandle source;
+    WebCore::GraphicsContextGL::EGLImageSourceIOSurfaceHandle source;
     if (!decoder.decode(source.handle))
         return std::nullopt;
     return source;
 }
 
-void ArgumentCoder<WebCore::GraphicsContextGL::ExternalImageSourceMTLSharedTextureHandle>::encode(Encoder& encoder, const WebCore::GraphicsContextGL::ExternalImageSourceMTLSharedTextureHandle& source)
+void ArgumentCoder<WebCore::GraphicsContextGL::EGLImageSourceMTLSharedTextureHandle>::encode(Encoder& encoder, const WebCore::GraphicsContextGL::EGLImageSourceMTLSharedTextureHandle& source)
 {
     encoder << source.handle;
 }
 
-std::optional<WebCore::GraphicsContextGL::ExternalImageSourceMTLSharedTextureHandle> ArgumentCoder<WebCore::GraphicsContextGL::ExternalImageSourceMTLSharedTextureHandle>::decode(Decoder& decoder)
+std::optional<WebCore::GraphicsContextGL::EGLImageSourceMTLSharedTextureHandle> ArgumentCoder<WebCore::GraphicsContextGL::EGLImageSourceMTLSharedTextureHandle>::decode(Decoder& decoder)
 {
-    WebCore::GraphicsContextGL::ExternalImageSourceMTLSharedTextureHandle source;
+    WebCore::GraphicsContextGL::EGLImageSourceMTLSharedTextureHandle source;
     if (!decoder.decode(source.handle))
         return std::nullopt;
     return source;
