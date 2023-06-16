@@ -216,6 +216,21 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-video-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-video-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-video.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-with-popover-top-layer-000-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-with-popover-top-layer-000.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-with-popover-top-layer-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-with-popover-top-layer-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-with-popover-top-layer-002-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-with-popover-top-layer-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-with-popover-top-layer-003-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-with-popover-top-layer-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-with-popover-top-layer-004-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-with-popover-top-layer-004.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-with-popover-top-layer-005-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-with-popover-top-layer-005.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-with-popover-top-layer-006.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-with-popover-top-layer-hide-after-addition-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-with-popover-top-layer-hide-after-addition.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-with-top-layer-000-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-with-top-layer-000.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-with-top-layer-001-expected.html
@@ -231,6 +246,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-with-top-layer-006.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-with-top-layer-hide-after-addition-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-with-top-layer-hide-after-addition.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-with-popover-top-layer-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-with-top-layer-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/content-visibility/contentvisibility-nestedslot-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/content-visibility/detach-locked-slot-children-crash.html
@@ -277,4 +293,5 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/content-visibility/slot-content-visibility-9-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/content-visibility/spacer-and-container-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/content-visibility/spacer-and-container-scrolled-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/content-visibility/spacer-with-popover-top-layer-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/content-visibility/spacer-with-top-layer-ref.html
