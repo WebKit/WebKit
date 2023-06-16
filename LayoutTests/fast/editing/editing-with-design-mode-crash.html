@@ -1,0 +1,25 @@
+<html>
+<head>
+    <style>
+        :empty {
+            background: #000;
+        }
+
+        * {
+            -webkit-user-modify: read;
+        }
+    </style>
+    <script>
+      onload = () => {
+        if (window.testRunner)
+          testRunner.dumpAsText();
+        let span0 = document.createElement('span');
+        span0.append('PASS if no crash');
+        document.documentElement.prepend(span0);
+        document.designMode = 'on';
+        document.execCommand('SelectAll');
+        document.execCommand('FontSizeDelta', false, '1');
+      };
+    </script>
+</head>
+</html>

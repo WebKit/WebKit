@@ -405,7 +405,7 @@ void ApplyStyleCommand::applyRelativeFontStyleChange(EditingStyle* style)
             auto span = createStyleSpanElement(document());
             if (!surroundNodeRangeWithElement(*node, *node, span))
                 continue;
-            reachedEnd = node->isDescendantOf(beyondEnd.get());
+            reachedEnd = node->isDescendantOf(beyondEnd.get()) || !node->parentElement();
             element = WTFMove(span);
         }  else {
             // Only handle HTML elements and text nodes.
