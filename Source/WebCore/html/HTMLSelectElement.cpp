@@ -314,6 +314,15 @@ void HTMLSelectElement::attributeChanged(const QualifiedName& name, const AtomSt
     case AttributeNames::multipleAttr:
         parseMultipleAttribute(newValue);
         break;
+    case AttributeNames::disabledAttr:
+        HTMLFormControlElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
+#if !PLATFORM(IOS_FAMILY)
+        if (auto* menuList = dynamicDowncast<RenderMenuList>(renderer())) {
+            if (menuList && menuList->popupIsVisible())
+                menuList->hidePopup();
+        }
+#endif
+        break;
     default:
         HTMLFormControlElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
         break;
@@ -1141,7 +1150,7 @@ bool HTMLSelectElement::platformHandleKeydownEvent(KeyboardEvent* event)
             // that our caller doesn't process the event further, but don't set
             // the event as handled.
             auto* renderer = this->renderer();
-            if (!is<RenderMenuList>(renderer))
+            if (!is<RenderMenuList>(renderer) || isDisabledFormControl())
                 return true;
 
             // Save the selection so it can be compared to the new selection
@@ -1240,7 +1249,7 @@ void HTMLSelectElement::menuListDefaultEventHandler(Event& event)
 
                 // Calling focus() may remove the renderer or change the renderer type.
                 auto* renderer = this->renderer();
-                if (!is<RenderMenuList>(renderer))
+                if (!is<RenderMenuList>(renderer) || isDisabledFormControl())
                     return;
 
                 // Save the selection so it can be compared to the new selection
@@ -1258,7 +1267,7 @@ void HTMLSelectElement::menuListDefaultEventHandler(Event& event)
 
                 // Calling focus() may remove the renderer or change the renderer type.
                 auto* renderer = this->renderer();
-                if (!is<RenderMenuList>(renderer))
+                if (!is<RenderMenuList>(renderer) || isDisabledFormControl())
                     return;
 
                 // Save the selection so it can be compared to the new selection
@@ -1286,7 +1295,7 @@ void HTMLSelectElement::menuListDefaultEventHandler(Event& event)
         document().updateStyleIfNeeded();
 
         auto* renderer = this->renderer();
-        if (is<RenderMenuList>(renderer)) {
+        if (is<RenderMenuList>(renderer) && !isDisabledFormControl()) {
             auto& menuList = downcast<RenderMenuList>(*renderer);
             ASSERT(!menuList.popupIsVisible());
             // Save the selection so it can be compared to the new

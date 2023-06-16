@@ -12,13 +12,14 @@ PASS select2.value is "b"
 PASS select2.value is "b"
 PASS select2.value is "b"
 Tests on select disable, popup menu is hidden
-PASS internals.isSelectPopupVisible(select3) is true
+FAIL internals.isSelectPopupVisible(select3) should be true. Was false.
 PASS internals.isSelectPopupVisible(select3) is false
 PASS internals.isSelectPopupVisible(select3) is false
 Tests on select disable, value cannot be changed
 PASS select4.value is "b"
 PASS select4.value is "b"
 PASS successfullyParsed is true
+Some tests failed.
 
 TEST COMPLETE
 

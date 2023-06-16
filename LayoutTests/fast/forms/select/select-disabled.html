@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-<script src="../../../resources/js-test-pre.js"></script>
+<script src="../../../resources/js-test.js"></script>
+<script src="../resources/common.js"></script>
 </head>
 <body>
 
@@ -17,8 +18,21 @@
 <option>c</option>
 </select>
 
+<select id=select3>
+<option selected>a</option>
+</select>
+
+<select id=select4>
+<option selected>a</option>
+<option>b</option>
+<option>c</option>
+</select>
+
+<input id="text"></input>
+
 <script>
 description('Tests that user cannot change disabled select by keyboard');
+jsTestIsAsync = true;
 
 var select1 = document.getElementById('select1');
 select1.focus();
@@ -42,7 +56,26 @@ shouldBeEqualToString('select2.value', 'b');
 eventSender.keyDown('c');
 shouldBeEqualToString('select2.value', 'b');
 
+debug('Tests on select disable, popup menu is hidden');
+var select3 = document.getElementById('select3');
+clickElement(select3);
+shouldBeTrue("internals.isSelectPopupVisible(select3)");
+select3.disabled = true;
+shouldBeFalse("internals.isSelectPopupVisible(select3)");
+select3.offsetLeft;
+setTimeout(() => {shouldBeFalse("internals.isSelectPopupVisible(select3)");
+
+debug('Tests on select disable, value cannot be changed');
+var select4 = document.getElementById('select4');
+select4.focus();
+eventSender.keyDown('b');
+shouldBeEqualToString('select4.value', 'b');
+select4.disabled = true;
+eventSender.keyDown('c');
+shouldBeEqualToString('select4.value', 'b');
+finishJSTest();
+}, 0);
+
 </script>
-<script src="../../../resources/js-test-post.js"></script>
 </body>
 </html>
