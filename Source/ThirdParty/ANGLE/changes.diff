@@ -307,11 +307,11 @@ index 0000000000000000000000000000000000000000..8b96dc01357fa9a2bdc54e5ddb3bbfd4
 +#endif
 diff --git a/src/common/ANGLEShaderProgramVersion.h b/src/common/ANGLEShaderProgramVersion.h
 new file mode 100644
-index 0000000000000000000000000000000000000000..06407afeb0dd3c254b797ecee28b2a2a91edd4b2
+index 0000000000000000000000000000000000000000..1f43ebd21c99481abda24a141a89c472b3faafd0
 --- /dev/null
 +++ b/src/common/ANGLEShaderProgramVersion.h
 @@ -0,0 +1,2 @@
-+#define ANGLE_PROGRAM_VERSION "a069fe5b0e6792a4ee1b2f07b537c3d7"
++#define ANGLE_PROGRAM_VERSION "fcbd6f5c2e75312e4bd4001f421d223b"
 +#define ANGLE_PROGRAM_VERSION_HASH_SIZE 16
 diff --git a/src/common/utilities.cpp b/src/common/utilities.cpp
 index 7a0a706519887e596a18e2dbd3489051c78c7ba0..f11469503fd488b856e448c8ed8385d01cc522f1 100644
@@ -414,6 +414,24 @@ index 396d83b1947cbc732a99b3350e534aab763a18a0..64ae01bcaa63f54f37189cd042db26f9
  #include "libANGLE/State.h"
  
  #include <string.h>
+diff --git a/src/libANGLE/formatutils.cpp b/src/libANGLE/formatutils.cpp
+index f2845dc9f9a81fe072fc4ae790c6bb3dfac5b5d8..e2b5cd91e8ce813c10d42aaf6540422b6cdc984b 100644
+--- a/src/libANGLE/formatutils.cpp
++++ b/src/libANGLE/formatutils.cpp
+@@ -609,6 +609,13 @@ static GLenum EquivalentBlitInternalFormat(GLenum internalformat)
+         return GL_RGB8;
+     }
+ 
++    // Treat ANGLE's BGRA8_SRGB as SRGB8_ALPHA8 since it's just a swizzled version
++    // with the same components.
++    if (internalformat == GL_BGRA8_SRGB_ANGLEX)
++    {
++        return GL_SRGB8_ALPHA8_EXT;
++    }
++
+     return internalformat;
+ }
+ 
 diff --git a/src/libANGLE/renderer/driver_utils.h b/src/libANGLE/renderer/driver_utils.h
 index 744a5b14dbae742db62b06ca4d28314d0f7affdf..f560fa7a45e42b79bd2cfb2d607a7a9ae9276835 100644
 --- a/src/libANGLE/renderer/driver_utils.h

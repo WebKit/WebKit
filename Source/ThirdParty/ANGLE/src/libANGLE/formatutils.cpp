@@ -609,6 +609,13 @@ static GLenum EquivalentBlitInternalFormat(GLenum internalformat)
         return GL_RGB8;
     }
 
+    // Treat ANGLE's BGRA8_SRGB as SRGB8_ALPHA8 since it's just a swizzled version
+    // with the same components.
+    if (internalformat == GL_BGRA8_SRGB_ANGLEX)
+    {
+        return GL_SRGB8_ALPHA8_EXT;
+    }
+
     return internalformat;
 }
 
