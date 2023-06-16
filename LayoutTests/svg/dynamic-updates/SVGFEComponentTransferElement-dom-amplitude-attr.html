@@ -24,12 +24,12 @@ feRFunc.setAttribute("amplitude", "3");
 var feGFunc = createSVGElement("feFuncG");
 feGFunc.setAttribute("id", "fg");
 feGFunc.setAttribute("type", "gamma");
-feRFunc.setAttribute("amplitude", "3");
+feGFunc.setAttribute("amplitude", "3");
 
 var feBFunc = createSVGElement("feFuncB");
 feBFunc.setAttribute("id", "fb");
 feBFunc.setAttribute("type", "gamma");
-feRFunc.setAttribute("amplitude", "3");
+feBFunc.setAttribute("amplitude", "3");
 
 var feAFunc = createSVGElement("feFuncA");
 feAFunc.setAttribute("id", "fb");
@@ -67,9 +67,9 @@ rootSVGElement.setAttribute("width", "400");
 rootSVGElement.setAttribute("height", "200");
 
 shouldBeEqualToString("feRFunc.getAttribute('amplitude')", "3");
-shouldBeEqualToString("feRFunc.getAttribute('amplitude')", "3");
-shouldBeEqualToString("feRFunc.getAttribute('amplitude')", "3");
-shouldBeEqualToString("feRFunc.getAttribute('amplitude')", "3");
+shouldBeEqualToString("feGFunc.getAttribute('amplitude')", "3");
+shouldBeEqualToString("feBFunc.getAttribute('amplitude')", "3");
+shouldBeEqualToString("feAFunc.getAttribute('amplitude')", "3");
 
 function repaintTest() {
     feRFunc.setAttribute("amplitude", "1");
