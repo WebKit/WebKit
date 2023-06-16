@@ -4290,7 +4290,7 @@ MediaSessionPlaylistEnabled:
 
 MediaSourceEnabled:
   type: bool
-  status: stable
+  status: embedder
   category: media
   humanReadableName: "Media Source API"
   humanReadableDescription: "Media Source API"
