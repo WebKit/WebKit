@@ -81,6 +81,8 @@ public:
     void ref();
     void deref();
 
+    static std::optional<ScriptType> determineScriptType(const String& typeAttribute, const String& languageAttribute, bool isHTMLDocument = true, LegacyTypeSupport = DisallowLegacyTypeInTypeAttribute);
+
 protected:
     ScriptElement(Element&, bool createdByParser, bool isEvaluated);
 

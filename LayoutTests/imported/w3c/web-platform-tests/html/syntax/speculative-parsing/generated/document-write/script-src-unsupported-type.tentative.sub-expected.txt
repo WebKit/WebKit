@@ -1,8 +1,8 @@
-CONSOLE MESSAGE: Unhandled Promise Rejection: Error: assert_equals: speculative case incorrectly fetched expected "" but got "param-encodingcheck: %C4%9E\r\n"
 
     <!-- speculative case in document.write -->
-    <script src="/html/syntax/speculative-parsing/resources/stash.py?action=put&amp;uuid=50e634b6-be4d-46fb-80ee-d059827af01d&amp;encodingcheck=&Gbreve;" type=text/plain></script>
+    <script src="/html/syntax/speculative-parsing/resources/stash.py?action=put&amp;uuid=1cf24dbf-e323-4f2a-9f15-f9c92898b850&amp;encodingcheck=&Gbreve;" type=text/plain></script>
 
 
-FAIL Speculative parsing, document.write(): script-src-unsupported-type Unhandled rejection: assert_equals: speculative case incorrectly fetched expected "" but got "param-encodingcheck: %C4%9E\r\n"
+
+PASS Speculative parsing, document.write(): script-src-unsupported-type
 

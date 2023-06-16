@@ -930,7 +930,6 @@ imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/page-l
 imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/page-load/meta-csp-img-src-none.tentative.html [ Failure Pass ]
 imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/page-load/meta-viewport-link-stylesheet-media.tentative.html [ Failure Pass ]
 imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/page-load/picture-source-no-img.tentative.html [ Failure Pass ]
-imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/page-load/script-src-unsupported-type.tentative.html [ Failure Pass ]
 imported/w3c/web-platform-tests/html/syntax/speculative-parsing/generated/page-load/svg-script-src.tentative.html [ Failure Pass ]
 imported/w3c/web-platform-tests/html/browsers/windows/targeting-cross-origin-nested-browsing-contexts.html [ Failure Pass ]
 imported/w3c/web-platform-tests/html/webappapis/update-rendering/child-document-raf-order.html [ Failure Pass ]

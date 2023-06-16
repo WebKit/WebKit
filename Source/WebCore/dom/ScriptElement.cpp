@@ -133,13 +133,11 @@ void ScriptElement::dispatchErrorEvent()
 }
 
 // https://html.spec.whatwg.org/multipage/scripting.html#prepare-a-script
-std::optional<ScriptType> ScriptElement::determineScriptType(LegacyTypeSupport supportLegacyTypes) const
+std::optional<ScriptType> ScriptElement::determineScriptType(const String& type, const String& language, bool isHTMLDocument, LegacyTypeSupport supportLegacyTypes)
 {
     // FIXME: isLegacySupportedJavaScriptLanguage() is not valid HTML5. It is used here to maintain backwards compatibility with existing layout tests. The specific violations are:
     // - Allowing type=javascript. type= should only support MIME types, such as text/javascript.
     // - Allowing a different set of languages for language= and type=. language= supports Javascript 1.1 and 1.4-1.6, but type= does not.
-    String type = typeAttributeValue();
-    String language = languageAttributeValue();
     if (type.isNull()) {
         if (language.isEmpty())
             return ScriptType::Classic; // Assume text/javascript.
@@ -161,7 +159,7 @@ std::optional<ScriptType> ScriptElement::determineScriptType(LegacyTypeSupport s
     // And module tag also uses defer attribute semantics. We disable script type="module" for non HTML document.
     // Once "defer" is implemented, we can reconsider enabling modules in XHTML.
     // https://bugs.webkit.org/show_bug.cgi?id=123387
-    if (!m_element.document().isHTMLDocument())
+    if (!isHTMLDocument)
         return std::nullopt;
 
     // https://html.spec.whatwg.org/multipage/scripting.html#attr-script-type
@@ -175,6 +173,11 @@ std::optional<ScriptType> ScriptElement::determineScriptType(LegacyTypeSupport s
         return ScriptType::ImportMap;
 
     return std::nullopt;
+}
+
+std::optional<ScriptType> ScriptElement::determineScriptType(LegacyTypeSupport supportLegacyTypes) const
+{
+    return determineScriptType(typeAttributeValue(), languageAttributeValue(), m_element.document().isHTMLDocument(), supportLegacyTypes);
 }
 
 // https://html.spec.whatwg.org/multipage/scripting.html#prepare-the-script-element
