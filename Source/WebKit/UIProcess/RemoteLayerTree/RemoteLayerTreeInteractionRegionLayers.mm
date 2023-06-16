@@ -31,9 +31,12 @@
 #import "PlatformCALayerRemote.h"
 #import "RemoteLayerTreeHost.h"
 #import <QuartzCore/QuartzCore.h>
-#import <RealitySystemSupport/RealitySystemSupport.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/SoftLinking.h>
+
+#if PLATFORM(VISION)
+#import <RealitySystemSupport/RealitySystemSupport.h>
+#endif
 
 //// FIXME: rdar://105775731
 SOFT_LINK_PRIVATE_FRAMEWORK_OPTIONAL(RealitySystemSupport)
@@ -51,6 +54,7 @@ using namespace WebCore;
 NSString *interactionRegionTypeKey = @"WKInteractionRegionType";
 NSString *interactionRegionGroupNameKey = @"WKInteractionRegionGroupName";
 
+#if PLATFORM(VISION)
 static Class interactionRegionLayerClass()
 {
     if (getRCPGlowEffectLayerClass())
@@ -87,6 +91,11 @@ static void configureLayerForInteractionRegion(CALayer *layer, NSString *groupNa
         }];
     }
 }
+#else
+static Class interactionRegionLayerClass() { return [CALayer class]; }
+static void configureLayerForInteractionRegion(CALayer *, NSString *) { }
+static void interactionRegionEffectUserInfo() { return @{ }; }
+#endif // !PLATFORM(VISION)
 
 static void configureLayerAsGuard(CALayer *layer, NSString *groupName)
 {
