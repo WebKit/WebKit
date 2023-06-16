@@ -269,10 +269,25 @@ RefPtr<VideoFrame> VideoFrame::createI420(std::span<const uint8_t> span, size_t 
     return VideoFrameGStreamer::create(WTFMove(sample), presentationSize, MediaTime::invalidTime(), Rotation::None, false, std::nullopt, WTFMove(colorSpace));
 }
 
-RefPtr<VideoFrame> VideoFrame::createI420A(std::span<const uint8_t>, size_t, size_t, const ComputedPlaneLayout&, const ComputedPlaneLayout&, const ComputedPlaneLayout&, const ComputedPlaneLayout&, PlatformVideoColorSpace&&)
+RefPtr<VideoFrame> VideoFrame::createI420A(std::span<const uint8_t> span, size_t width, size_t height, const ComputedPlaneLayout& planeY, const ComputedPlaneLayout& planeU, const ComputedPlaneLayout& planeV, const ComputedPlaneLayout& planeA, PlatformVideoColorSpace&& colorSpace)
 {
-    // FIXME: Add support.
-    return nullptr;
+    GstVideoInfo info;
+    gst_video_info_set_format(&info, GST_VIDEO_FORMAT_A420, width, height);
+    fillVideoInfoColorimetryFromColorSpace(&info, colorSpace);
+
+    auto buffer = adoptGRef(gst_buffer_new_allocate(nullptr, GST_VIDEO_INFO_SIZE(&info), nullptr));
+    gst_buffer_memset(buffer.get(), 0, 0, span.size_bytes());
+    GstMappedBuffer mappedBuffer(buffer, GST_MAP_WRITE);
+    copyToGstBufferPlane(mappedBuffer.data(), info, 0, span.data(), height, planeY.sourceWidthBytes);
+    copyToGstBufferPlane(mappedBuffer.data(), info, 1, span.data() + planeU.destinationOffset, height / 2, planeU.sourceWidthBytes);
+    copyToGstBufferPlane(mappedBuffer.data(), info, 2, span.data() + planeV.destinationOffset, height / 2, planeV.sourceWidthBytes);
+    copyToGstBufferPlane(mappedBuffer.data(), info, 3, span.data() + planeA.destinationOffset, height, planeA.sourceWidthBytes);
+    gst_buffer_add_video_meta(buffer.get(), GST_VIDEO_FRAME_FLAG_NONE, GST_VIDEO_FORMAT_A420, width, height);
+
+    auto caps = adoptGRef(gst_video_info_to_caps(&info));
+    auto sample = adoptGRef(gst_sample_new(buffer.get(), caps.get(), nullptr, nullptr));
+    FloatSize presentationSize { static_cast<float>(width), static_cast<float>(height) };
+    return VideoFrameGStreamer::create(WTFMove(sample), presentationSize, MediaTime::invalidTime(), Rotation::None, false, std::nullopt, WTFMove(colorSpace));
 }
 
 static inline void setBufferFields(GstBuffer* buffer, const MediaTime& presentationTime, double frameRate)
@@ -440,7 +455,7 @@ void VideoFrame::copyTo(std::span<uint8_t> destination, VideoPixelFormat pixelFo
         return;
     }
 
-    if (pixelFormat == VideoPixelFormat::I420) {
+    if (pixelFormat == VideoPixelFormat::I420 || pixelFormat == VideoPixelFormat::I420A) {
         auto spanPlaneLayoutY = computedPlaneLayout[0];
         auto widthY = GST_VIDEO_FRAME_COMP_WIDTH(inputFrame.get(), 0);
         PlaneLayout planeLayoutY { spanPlaneLayoutY.destinationOffset, spanPlaneLayoutY.destinationStride ? spanPlaneLayoutY.destinationStride : widthY };
@@ -467,6 +482,17 @@ void VideoFrame::copyTo(std::span<uint8_t> destination, VideoPixelFormat pixelFo
         planeLayouts.append(planeLayoutY);
         planeLayouts.append(planeLayoutU);
         planeLayouts.append(planeLayoutV);
+
+        if (pixelFormat == VideoPixelFormat::I420A) {
+            auto spanPlaneLayoutA = computedPlaneLayout[3];
+            auto widthA = GST_VIDEO_FRAME_COMP_WIDTH(inputFrame.get(), 3);
+            PlaneLayout planeLayoutA { spanPlaneLayoutA.destinationOffset, spanPlaneLayoutA.destinationStride ? spanPlaneLayoutA.destinationStride : widthA };
+            auto planeA = inputFrame.ComponentData(3);
+            auto bytesPerRowA = inputFrame.ComponentStride(3);
+            copyPlane(destination.data(), planeA, bytesPerRowA, spanPlaneLayoutA);
+            planeLayouts.append(planeLayoutA);
+        }
+
         callback(WTFMove(planeLayouts));
         return;
     }
@@ -485,7 +511,7 @@ void VideoFrame::copyTo(std::span<uint8_t> destination, VideoPixelFormat pixelFo
         return;
     }
 
-    // FIXME: Handle I420A, I422, I444, RGBX and BGRX formats.
+    // FIXME: Handle I422, I444, RGBX and BGRX formats.
     callback({ });
 }
 

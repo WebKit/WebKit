@@ -1138,13 +1138,6 @@ webkit.org/b/239750 media/media-source/media-mp4-xhe-aac.html [ Skip ]
 # Apple baseline.
 media/media-hevc-video-as-img.html [ ImageOnlyFailure ]
 
-# I420A support.
-imported/w3c/web-platform-tests/webcodecs/videoFrame-construction.any.html [ Failure ]
-imported/w3c/web-platform-tests/webcodecs/videoFrame-construction.any.worker.html [ Failure ]
-imported/w3c/web-platform-tests/webcodecs/videoFrame-copyTo.any.html [ Failure ]
-imported/w3c/web-platform-tests/webcodecs/videoFrame-copyTo.any.worker.html [ Failure ]
-http/wpt/webcodecs/I420A-and-canvas.html [ Failure ]
-
 imported/w3c/web-platform-tests/webcodecs/videoFrame-createImageBitmap.any.worker.html [ Pass ]
 
 # Likely bugs related with dav1ddec.
