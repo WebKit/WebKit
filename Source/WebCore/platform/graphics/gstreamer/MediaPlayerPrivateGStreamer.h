@@ -34,6 +34,7 @@
 #include "MainThreadNotifier.h"
 #include "MediaPlayerPrivate.h"
 #include "PlatformLayer.h"
+#include "PlatformMediaResourceLoader.h"
 #include "TrackPrivateBaseGStreamer.h"
 #include <glib.h>
 #include <gst/gst.h>
@@ -613,6 +614,8 @@ private:
     HashMap<String, String> m_codecs;
 
     bool isSeamlessSeekingEnabled() const { return m_seekFlags & (1 << GST_SEEK_FLAG_SEGMENT); }
+
+    RefPtr<PlatformMediaResourceLoader> m_loader;
 };
 
 }

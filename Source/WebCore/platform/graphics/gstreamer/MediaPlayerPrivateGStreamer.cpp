@@ -162,6 +162,7 @@ MediaPlayerPrivateGStreamer::MediaPlayerPrivateGStreamer(MediaPlayer* player)
 #if USE(TEXTURE_MAPPER_DMABUF)
     , m_swapchain(adoptRef(new GBMBufferSwapchain(GBMBufferSwapchain::BufferSwapchainSize::Eight)))
 #endif
+    , m_loader(player->createResourceLoader())
 {
 #if USE(GLIB)
     m_readyTimerHandler.setPriority(G_PRIORITY_DEFAULT_IDLE);
@@ -877,7 +878,10 @@ void MediaPlayerPrivateGStreamer::sourceSetup(GstElement* sourceElement)
     m_source = sourceElement;
 
     if (WEBKIT_IS_WEB_SRC(m_source.get())) {
-        webKitWebSrcSetMediaPlayer(WEBKIT_WEB_SRC_CAST(m_source.get()), m_player.get(), m_referrer);
+        auto* source = WEBKIT_WEB_SRC_CAST(m_source.get());
+        webKitWebSrcSetReferrer(source, m_referrer);
+        auto loader = m_player->createResourceLoader();
+        webKitWebSrcSetResourceLoader(source, WTFMove(loader));
 #if ENABLE(MEDIA_STREAM)
     } else if (WEBKIT_IS_MEDIA_STREAM_SRC(sourceElement)) {
         auto stream = m_streamPrivate.get();
@@ -1547,12 +1551,11 @@ bool MediaPlayerPrivateGStreamer::handleNeedContextMessage(GstMessage* message)
 
     GST_DEBUG_OBJECT(pipeline(), "Handling %s need-context message for %s", contextType, GST_MESSAGE_SRC_NAME(message));
 
-    if (!g_strcmp0(contextType, WEBKIT_WEB_SRC_PLAYER_CONTEXT_TYPE_NAME)) {
-        GRefPtr<GstContext> context = adoptGRef(gst_context_new(WEBKIT_WEB_SRC_PLAYER_CONTEXT_TYPE_NAME, FALSE));
+    if (!g_strcmp0(contextType, WEBKIT_WEB_SRC_RESOURCE_LOADER_CONTEXT_TYPE_NAME)) {
+        auto context = adoptGRef(gst_context_new(WEBKIT_WEB_SRC_RESOURCE_LOADER_CONTEXT_TYPE_NAME, FALSE));
         GstStructure* contextStructure = gst_context_writable_structure(context.get());
 
-        ASSERT(m_player);
-        gst_structure_set(contextStructure, "player", G_TYPE_POINTER, m_player.get(), nullptr);
+        gst_structure_set(contextStructure, "loader", G_TYPE_POINTER, m_loader.get(), nullptr);
         gst_element_set_context(GST_ELEMENT(GST_MESSAGE_SRC(message)), context.get());
         return true;
     }
