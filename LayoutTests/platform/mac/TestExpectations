@@ -201,6 +201,10 @@ media/track/track-webvtt-snap-to-lines-inline-style.html [ Pass Crash ]
 # webkit.org/b/258095 [ iOS, macOS ]  media/track/video-track-add-remove.html  is a flaky crash.
 [ Debug ] media/track/video-track-add-remove.html [ Pass Crash ]
 
+# webkit.org/b/258184 [ macOS ] 2x media/track/ tests are flaky crashes. 
+[ Debug ] media/track/track-webvtt-no-snap-to-lines-overlap.html [ Pass Crash ]
+[ Debug ] media/track/track-webvtt-snap-to-lines-left-right.html [ Pass Crash ]
+
 # Perf tests are very flaky, because they run in parallel with other tests.
 perf
 

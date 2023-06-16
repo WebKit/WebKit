@@ -3689,6 +3689,8 @@ imported/w3c/web-platform-tests/css/css-scroll-anchoring/device-pixel-adjustment
 imported/w3c/web-platform-tests/css/css-scroll-anchoring/history-restore-anchors.html
 imported/w3c/web-platform-tests/css/css-scroll-anchoring/infinite-scroll-event.tentative.html
 
+webkit.org/b/258184 [ Debug ] media/track/track-webvtt-no-snap-to-lines-overlap.html [ Pass Crash ]
+
 # Accessibility bold only exists on iOS.
 fast/text/accessibility-bold-system-font [ Pass ]
 
