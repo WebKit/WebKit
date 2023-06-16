@@ -1022,8 +1022,18 @@ void MediaSource::openIfDeferredOpen()
     onReadyStateChange(ReadyState::Closed, ReadyState::Open);
 }
 
+void MediaSource::setAsSrcObject(bool set)
+{
+    m_sourceopenPending = set;
+}
+
 bool MediaSource::virtualHasPendingActivity() const
 {
+    // Mark this object as hasPendingActivity if it has been set as the srcObject
+    // of a HTMLMediaElement, but has not yet fired the "sourceopen" event.
+    if (m_sourceopenPending)
+        return true;
+
     return m_private || m_associatedRegistryCount;
 }
 
@@ -1055,6 +1065,7 @@ void MediaSource::onReadyStateChange(ReadyState oldState, ReadyState newState)
         buffer->readyStateChanged();
 
     if (isOpen()) {
+        m_sourceopenPending = false;
         scheduleEvent(eventNames().sourceopenEvent);
         monitorSourceBuffers();
         return;

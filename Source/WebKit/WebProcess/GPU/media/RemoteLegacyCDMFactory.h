@@ -71,9 +71,7 @@ public:
 
     GPUProcessConnection& gpuProcessConnection();
 
-    void didReceiveSessionMessage(IPC::Connection&, IPC::Decoder&);
-
-    void addSession(RemoteLegacyCDMSessionIdentifier, std::unique_ptr<RemoteLegacyCDMSession>&&);
+    void addSession(RemoteLegacyCDMSessionIdentifier, RemoteLegacyCDMSession&);
     void removeSession(RemoteLegacyCDMSessionIdentifier);
 
     RemoteLegacyCDM* findCDM(WebCore::CDMPrivateInterface*) const;
@@ -83,7 +81,7 @@ private:
     bool supportsKeySystemAndMimeType(const String&, const String&);
     std::unique_ptr<WebCore::CDMPrivateInterface> createCDM(WebCore::LegacyCDM*);
 
-    HashMap<RemoteLegacyCDMSessionIdentifier, std::unique_ptr<RemoteLegacyCDMSession>> m_sessions;
+    HashMap<RemoteLegacyCDMSessionIdentifier, WeakPtr<RemoteLegacyCDMSession>> m_sessions;
     HashMap<RemoteLegacyCDMIdentifier, WeakPtr<RemoteLegacyCDM>> m_cdms;
     HashMap<String, bool> m_supportsKeySystemCache;
     HashMap<std::pair<String, String>, bool> m_supportsKeySystemAndMimeTypeCache;

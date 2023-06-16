@@ -1964,9 +1964,9 @@ webkit.org/b/222422 imported/w3c/web-platform-tests/media-source/mediasource-dur
 
 webkit.org/b/222573 media/media-fullscreen-pause-inline.html [ Pass Failure ]
 
-# webkit.org/b/255294  2 http/tests/media/FairPlay tests are broken.
-http/tests/media/fairplay/legacy-fairplay-mse-v2.html [ Skip ]
-http/tests/media/fairplay/legacy-fairplay-mse-v3.html [ Skip ]
+# webkit.org/b/255294  2 http/tests/media/FairPlay tests are flakey.
+http/tests/media/fairplay/legacy-fairplay-mse-v2.html [ Pass Failure ]
+http/tests/media/fairplay/legacy-fairplay-mse-v3.html [ Pass Failure ]
 
 webkit.org/b/222692 inspector/page/empty-or-missing-resources.html [ Pass Timeout ]
 

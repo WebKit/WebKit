@@ -133,6 +133,8 @@ public:
     void memoryPressure();
 #endif
 
+    void setAsSrcObject(bool);
+
 protected:
     explicit MediaSource(ScriptExecutionContext&);
 
@@ -183,6 +185,7 @@ private:
     MediaTime m_pendingSeekTime;
     ReadyState m_readyState { ReadyState::Closed };
     bool m_openDeferred { false };
+    bool m_sourceopenPending { false };
 #if !RELEASE_LOG_DISABLED
     Ref<const Logger> m_logger;
     const void* m_logIdentifier { nullptr };

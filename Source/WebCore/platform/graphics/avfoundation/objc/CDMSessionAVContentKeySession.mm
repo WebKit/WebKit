@@ -129,10 +129,17 @@ CDMSessionAVContentKeySession::CDMSessionAVContentKeySession(Vector<int>&& proto
 
 CDMSessionAVContentKeySession::~CDMSessionAVContentKeySession()
 {
+    ALWAYS_LOG(LOGIDENTIFIER);
     [m_contentKeySessionDelegate invalidate];
 
-    for (auto& sourceBuffer : m_sourceBuffers)
-        removeParser(sourceBuffer->streamDataParser());
+    if (hasContentKeySession()) {
+        for (auto& sourceBuffer : m_sourceBuffers) {
+            sourceBuffer->flush();
+            removeParser(sourceBuffer->streamDataParser());
+        }
+
+        [contentKeySession() expire];
+    }
 }
 
 bool CDMSessionAVContentKeySession::isAvailable()
