@@ -311,25 +311,22 @@ bool SVGResources::buildCachedResources(const RenderElement& renderer, const Ren
     return foundResources;
 }
 
-void SVGResources::layoutDifferentRootIfNeeded(const LegacyRenderSVGRoot* svgRoot)
+void SVGResources::layoutReferencedRootIfNeeded()
 {
-    if (clipper() && svgRoot != SVGRenderSupport::findTreeRootObject(*clipper()))
-        clipper()->layoutIfNeeded();
-
-    if (masker() && svgRoot != SVGRenderSupport::findTreeRootObject(*masker()))
-        masker()->layoutIfNeeded();
-
-    if (filter() && svgRoot != SVGRenderSupport::findTreeRootObject(*filter()))
-        filter()->layoutIfNeeded();
-
-    if (markerStart() && svgRoot != SVGRenderSupport::findTreeRootObject(*markerStart()))
-        markerStart()->layoutIfNeeded();
-
-    if (markerMid() && svgRoot != SVGRenderSupport::findTreeRootObject(*markerMid()))
-        markerMid()->layoutIfNeeded();
-
-    if (markerEnd() && svgRoot != SVGRenderSupport::findTreeRootObject(*markerEnd()))
-        markerEnd()->layoutIfNeeded();
+    auto layoutDifferentRootIfNeeded = [&](RenderElement* container) {
+        if (!container)
+            return;
+        auto* root = SVGRenderSupport::findTreeRootObject(*container);
+        if (root->isInLayout())
+            return;
+        container->layoutIfNeeded();
+    };
+    layoutDifferentRootIfNeeded(clipper());
+    layoutDifferentRootIfNeeded(masker());
+    layoutDifferentRootIfNeeded(filter());
+    layoutDifferentRootIfNeeded(markerStart());
+    layoutDifferentRootIfNeeded(markerMid());
+    layoutDifferentRootIfNeeded(markerEnd());
 }
 
 bool SVGResources::markerReverseStart() const

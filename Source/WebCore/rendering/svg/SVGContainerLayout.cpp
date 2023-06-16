@@ -218,11 +218,8 @@ void SVGContainerLayout::verifyLayoutLocationConsistency(const RenderLayerModelO
 
 void SVGContainerLayout::layoutDifferentRootIfNeeded(const RenderElement& renderer)
 {
-    if (auto* resources = SVGResourcesCache::cachedResourcesForRenderer(renderer)) {
-        auto* svgRoot = SVGRenderSupport::findTreeRootObject(renderer);
-        ASSERT(svgRoot);
-        resources->layoutDifferentRootIfNeeded(svgRoot);
-    }
+    if (auto* resources = SVGResourcesCache::cachedResourcesForRenderer(renderer))
+        resources->layoutReferencedRootIfNeeded();
 }
 
 void SVGContainerLayout::invalidateResourcesOfChildren(RenderElement& renderer)
