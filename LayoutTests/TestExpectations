@@ -6260,6 +6260,8 @@ imported/w3c/web-platform-tests/webcodecs/videoFrame-createImageBitmap.https.any
 imported/w3c/web-platform-tests/webcodecs/video-encoder.https.any.worker.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/webcodecs/video-encoder.https.any.html [ DumpJSConsoleLogInStdErr ]
 
+webkit.org/b/258192 imported/w3c/web-platform-tests/webcodecs/full-cycle-test.https.any.worker.html?h264_avc [ Pass Failure ]
+
 # These tests crash in debug since their import.
 [ Debug ] imported/w3c/web-platform-tests/html/syntax/parsing/html5lib_entities01.html?run_type=write_single [ Skip ]
 [ Debug ] imported/w3c/web-platform-tests/html/syntax/parsing/html5lib_html5test-com.html?run_type=write_single [ Skip ]
