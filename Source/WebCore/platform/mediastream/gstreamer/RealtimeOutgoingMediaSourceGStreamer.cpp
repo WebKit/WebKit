@@ -93,7 +93,7 @@ const GRefPtr<GstCaps>& RealtimeOutgoingMediaSourceGStreamer::allowedCaps() cons
 
     auto sdpMsIdLine = makeString(m_mediaStreamId, ' ', m_trackId);
     m_allowedCaps = capsFromRtpCapabilities(m_ssrcGenerator, rtpCapabilities(), [&sdpMsIdLine](GstStructure* structure) {
-        gst_structure_set(structure, "a-msid", G_TYPE_STRING, sdpMsIdLine.ascii().data(), nullptr);
+        gst_structure_set(structure, "a-msid", G_TYPE_STRING, sdpMsIdLine.utf8().data(), nullptr);
     });
 
     GST_DEBUG_OBJECT(m_bin.get(), "Allowed caps: %" GST_PTR_FORMAT, m_allowedCaps.get());
@@ -105,7 +105,7 @@ void RealtimeOutgoingMediaSourceGStreamer::setSource(Ref<MediaStreamTrackPrivate
     if (m_source && !m_initialSettings)
         m_initialSettings = m_source.value()->settings();
 
-    GST_DEBUG_OBJECT(m_bin.get(), "Setting source to %s", newSource->id().ascii().data());
+    GST_DEBUG_OBJECT(m_bin.get(), "Setting source to %s", newSource->id().utf8().data());
 
     if (m_source.has_value())
         stopOutgoingSource();

@@ -94,7 +94,7 @@ String GStreamerRtpTransceiverBackend::mid()
 {
     GUniqueOutPtr<char> mid;
     g_object_get(m_rtcTransceiver.get(), "mid", &mid.outPtr(), nullptr);
-    return String::fromLatin1(mid.get());
+    return String::fromUTF8(mid.get());
 }
 
 void GStreamerRtpTransceiverBackend::stop()
