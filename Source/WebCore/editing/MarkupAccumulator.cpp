@@ -145,7 +145,7 @@ static bool elementCannotHaveEndTag(const Node& node)
 // 4. Other elements self-close.
 static bool shouldSelfClose(const Element& element, SerializationSyntax syntax)
 {
-    if (syntax != SerializationSyntax::XML && element.document().isHTMLDocument())
+    if (syntax != SerializationSyntax::XML)
         return false;
     if (element.hasChildNodes())
         return false;
@@ -374,7 +374,7 @@ OptionSet<EntityMask> MarkupAccumulator::entityMaskForText(const Text& text) con
 {
     using namespace ElementNames;
 
-    if (!text.document().isHTMLDocument() || inXMLFragmentSerialization())
+    if (inXMLFragmentSerialization())
         return EntityMaskInPCDATA;
 
     if (auto* element = text.parentElement()) {
@@ -464,7 +464,7 @@ void MarkupAccumulator::appendOpenTag(StringBuilder& result, const Element& elem
         }
     }
     result.append(element.nodeNamePreservingCase());
-    if ((inXMLFragmentSerialization() || !element.document().isHTMLDocument()) && namespaces && shouldAddNamespaceElement(element))
+    if (inXMLFragmentSerialization() && namespaces && shouldAddNamespaceElement(element))
         appendNamespace(result, element.prefix(), element.namespaceURI(), *namespaces, inXMLFragmentSerialization());
 }
 
@@ -536,7 +536,7 @@ QualifiedName MarkupAccumulator::xmlAttributeSerialization(const Attribute& attr
 
 void MarkupAccumulator::appendAttribute(StringBuilder& result, const Element& element, const Attribute& attribute, Namespaces* namespaces)
 {
-    bool isSerializingHTML = element.document().isHTMLDocument() && !inXMLFragmentSerialization();
+    bool isSerializingHTML = !inXMLFragmentSerialization();
 
     std::optional<QualifiedName> effectiveXMLPrefixedName;
 
