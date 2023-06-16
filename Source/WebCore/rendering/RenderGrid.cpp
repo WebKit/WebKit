@@ -1647,6 +1647,11 @@ std::optional<LayoutUnit> RenderGrid::inlineBlockBaseline(LineDirectionMode) con
 
 LayoutUnit RenderGrid::columnAxisBaselineOffsetForChild(const RenderBox& child) const
 {
+    // FIXME : CSS Masonry does not properly handle baseline calculations currently.
+    // We will just skip this running this step if we detect the RenderGrid is Masonry for now.
+    if (isMasonry())
+        return LayoutUnit { };
+
     if (isSubgridRows()) {
         RenderGrid* outer = downcast<RenderGrid>(parent());
         if (GridLayoutFunctions::isOrthogonalChild(*outer, *this))
@@ -1658,6 +1663,11 @@ LayoutUnit RenderGrid::columnAxisBaselineOffsetForChild(const RenderBox& child) 
 
 LayoutUnit RenderGrid::rowAxisBaselineOffsetForChild(const RenderBox& child) const
 {
+    // FIXME : CSS Masonry does not properly handle baseline calculations currently.
+    // We will just skip this running this step if we detect the RenderGrid is Masonry for now.
+    if (isMasonry())
+        return LayoutUnit { };
+
     if (isSubgridColumns()) {
         RenderGrid* outer = downcast<RenderGrid>(parent());
         if (GridLayoutFunctions::isOrthogonalChild(*outer, *this))
