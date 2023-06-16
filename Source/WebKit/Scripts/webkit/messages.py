@@ -143,6 +143,8 @@ def types_that_must_be_moved():
         'WebKit::ShareableResource::Handle',
         'WebKit::SharedMemory::Handle',
         'WebKit::UpdateInfo',
+        'Win32Handle',
+        'std::optional<Win32Handle>'
     ]
 
 

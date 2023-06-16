@@ -34,7 +34,6 @@ class Win32Handle;
 namespace IPC {
 
 template<> struct ArgumentCoder<WTF::Win32Handle> {
-    static void encode(Encoder&, const WTF::Win32Handle&);
     static void encode(Encoder&, WTF::Win32Handle&&);
     static std::optional<WTF::Win32Handle> decode(Decoder&);
 };

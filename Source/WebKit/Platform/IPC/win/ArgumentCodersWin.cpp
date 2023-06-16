@@ -32,11 +32,6 @@
 
 namespace IPC {
 
-void ArgumentCoder<Win32Handle>::encode(Encoder& encoder, const Win32Handle& handle)
-{
-    encoder << Win32Handle { handle };
-}
-
 void ArgumentCoder<Win32Handle>::encode(Encoder& encoder, Win32Handle&& handle)
 {
     encoder << reinterpret_cast<uint64_t>(handle.leak());
