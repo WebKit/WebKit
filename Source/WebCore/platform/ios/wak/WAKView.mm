@@ -209,7 +209,7 @@ static void invalidateGStateCallback(WKViewRef view)
     if (!self)
         return nil;
 
-    viewRef = static_cast<WKViewRef>(const_cast<void*>(WKRetain(viewR)));
+    viewRef = static_cast<WKViewRef>(const_cast<void*>(WAKRetain(viewR)));
     viewRef->wrapper = (void *)self;
 
     return self;
@@ -232,7 +232,7 @@ static void invalidateGStateCallback(WKViewRef view)
         viewContext.willRemoveSubviewCallback = willRemoveSubviewCallback;
         viewContext.invalidateGStateCallback = invalidateGStateCallback;
     }
-    WKRelease(view);
+    WAKRelease(view);
     return self;
 }
 
@@ -243,7 +243,7 @@ static void invalidateGStateCallback(WKViewRef view)
     if (viewRef) {
         _WKViewSetViewContext (viewRef, 0);
         viewRef->wrapper = NULL;
-        WKRelease (viewRef);
+        WAKRelease (viewRef);
     }
     
     [subviewReferences release];
