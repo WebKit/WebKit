@@ -122,8 +122,7 @@ public:
 
     T* get() const
     {
-        // FIXME: Our GC threads currently need to get opaque pointers from WeakPtrs and have to be special-cased.
-        ASSERT(!m_impl || !m_shouldEnableAssertions || Thread::mayBeGCThread() || m_impl->wasConstructedOnMainThread() == isMainThread());
+        ASSERT(canSafelyBeUsed());
         return m_impl ? static_cast<T*>(m_impl->template get<T>()) : nullptr;
     }
 
@@ -136,13 +135,13 @@ public:
 
     T* operator->() const
     {
-        ASSERT(!m_impl || !m_shouldEnableAssertions || m_impl->wasConstructedOnMainThread() == isMainThread());
+        ASSERT(canSafelyBeUsed());
         return get();
     }
 
     T& operator*() const
     {
-        ASSERT(!m_impl || !m_shouldEnableAssertions || m_impl->wasConstructedOnMainThread() == isMainThread());
+        ASSERT(canSafelyBeUsed());
         return *get();
     }
 
@@ -169,6 +168,17 @@ private:
         object.weakPtrFactory().initializeIfNeeded(object);
         return object.weakPtrFactory().m_impl.pointer();
     }
+
+#if ASSERT_ENABLED
+    inline bool canSafelyBeUsed() const
+    {
+        // FIXME: Our GC threads currently need to get opaque pointers from WeakPtrs and have to be special-cased.
+        return !m_impl
+            || !m_shouldEnableAssertions
+            || (m_impl->wasConstructedOnMainThread() && Thread::mayBeGCThread())
+            || m_impl->wasConstructedOnMainThread() == isMainThread();
+    }
+#endif
 
     RefPtr<WeakPtrImpl> m_impl;
 #if ASSERT_ENABLED
