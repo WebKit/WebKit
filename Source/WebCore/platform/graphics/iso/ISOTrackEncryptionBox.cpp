@@ -87,7 +87,7 @@ bool ISOTrackEncryptionBox::parsePayload(DataView& view, unsigned& offset)
 
     if (m_defaultIsProtected == 1 && !m_defaultPerSampleIVSize) {
         int8_t defaultConstantIVSize = 0;
-        if (!checkedRead<int8_t>(defaultConstantIVSize, view, offset, BigEndian))
+        if (!checkedRead<int8_t>(defaultConstantIVSize, view, offset, BigEndian) || defaultConstantIVSize < 0)
             return false;
 
         Vector<uint8_t> defaultConstantIV;
