@@ -87,13 +87,11 @@ void OpportunisticTaskScheduler::runLoopObserverFired()
     if (!deadline)
         return;
 
-    auto currentTime = MonotonicTime::now();
-    auto remainingTime = deadline - currentTime;
-    if (remainingTime <= 0_ms)
+    if (ApproximateTime::now().secondsSinceEpoch() > deadline.secondsSinceEpoch())
         return;
 
     if (auto page = m_page.get())
-        page->performOpportunisticallyScheduledTasks(currentTime + remainingTime);
+        page->performOpportunisticallyScheduledTasks(deadline);
 }
 
 void OpportunisticTaskScheduler::incrementDeferralCount()

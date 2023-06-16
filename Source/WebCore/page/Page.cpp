@@ -2025,8 +2025,8 @@ void Page::renderingUpdateCompleted()
         m_unfulfilledRequestedSteps = { };
     }
 
-    if (!isUtilityPage() && m_displayNominalFramesPerSecond)
-        m_opportunisticTaskScheduler->reschedule(m_lastRenderingUpdateTimestamp + Seconds(1. / *m_displayNominalFramesPerSecond));
+    if (!isUtilityPage())
+        m_opportunisticTaskScheduler->reschedule(m_lastRenderingUpdateTimestamp + preferredRenderingUpdateInterval());
 }
 
 void Page::willStartRenderingUpdateDisplay()

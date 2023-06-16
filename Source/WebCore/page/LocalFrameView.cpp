@@ -5891,11 +5891,6 @@ void LocalFrameView::fireLayoutRelatedMilestonesIfNeeded()
             addPaintPendingMilestones(DidFirstMeaningfulPaint);
             if (requestedMilestones & DidFirstVisuallyNonEmptyLayout)
                 milestonesAchieved.add(DidFirstVisuallyNonEmptyLayout);
-
-            if (m_frame->isMainFrame()) {
-                if (auto* page = m_frame->page())
-                    page->didFirstMeaningfulPaint();
-            }
         }
     }
 
@@ -5934,6 +5929,10 @@ void LocalFrameView::firePaintRelatedMilestonesIfNeeded()
     if (m_milestonesPendingPaint & DidFirstMeaningfulPaint) {
         if (page->requestedLayoutMilestones() & DidFirstMeaningfulPaint)
             milestonesAchieved.add(DidFirstMeaningfulPaint);
+        if (m_frame->isMainFrame()) {
+            if (auto* page = m_frame->page())
+                page->didFirstMeaningfulPaint();
+        }
     }
 
     m_milestonesPendingPaint = { };
