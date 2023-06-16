@@ -106,7 +106,6 @@
 #include "PolicyChecker.h"
 #include "ProgressTracker.h"
 #include "ReportingScope.h"
-#include "ResourceHandle.h"
 #include "ResourceLoadInfo.h"
 #include "ResourceLoadObserver.h"
 #include "ResourceRequest.h"

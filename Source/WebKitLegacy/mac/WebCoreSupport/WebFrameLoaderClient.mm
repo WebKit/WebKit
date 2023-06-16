@@ -109,7 +109,6 @@
 #import <WebCore/PluginViewBase.h>
 #import <WebCore/ProtectionSpace.h>
 #import <WebCore/ResourceError.h>
-#import <WebCore/ResourceHandle.h>
 #import <WebCore/ResourceRequest.h>
 #import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/ScriptController.h>

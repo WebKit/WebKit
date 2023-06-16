@@ -25,10 +25,8 @@ list(APPEND WebCore_SOURCES
     platform/network/curl/ProtectionSpaceCurl.cpp
     platform/network/curl/PublicSuffixCurl.cpp
     platform/network/curl/ResourceErrorCurl.cpp
-    platform/network/curl/ResourceHandleCurl.cpp
     platform/network/curl/ResourceRequestCurl.cpp
     platform/network/curl/ResourceResponseCurl.cpp
-    platform/network/curl/SynchronousLoaderClientCurl.cpp
 )
 
 list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS

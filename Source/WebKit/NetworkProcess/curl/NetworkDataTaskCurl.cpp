@@ -46,7 +46,6 @@
 #include <WebCore/SameSiteInfo.h>
 #include <WebCore/SharedBuffer.h>
 #include <WebCore/ShouldRelaxThirdPartyCookieBlocking.h>
-#include <WebCore/SynchronousLoaderClient.h>
 #include <WebCore/TimingAllowOrigin.h>
 #include <pal/text/TextEncoding.h>
 #include <wtf/FileSystem.h>

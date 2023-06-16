@@ -35,7 +35,6 @@
 #include "CookieRequestHeaderFieldProxy.h"
 #include "GUniquePtrSoup.h"
 #include "HTTPCookieAcceptPolicy.h"
-#include "ResourceHandle.h"
 #include "SoupNetworkSession.h"
 #include "URLSoup.h"
 #include <libsoup/soup.h>
