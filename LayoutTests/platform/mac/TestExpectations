@@ -1206,6 +1206,7 @@ webkit.org/b/158420 http/tests/navigation/redirect-to-fragment2.html [ Failure ]
 
 webkit.org/b/168390 fast/images/slower-animation-than-decoding-image.html [ Pass Failure ]
 
+webkit.org/b/258185 [ Debug ] http/tests/media/hls/track-in-band-ext-x-date-range-start-time.html [ Pass Crash ]
 
 # These tests are iOS-specific
 media/modern-media-controls/audio/audio-controls-styles.html [ Skip ]
