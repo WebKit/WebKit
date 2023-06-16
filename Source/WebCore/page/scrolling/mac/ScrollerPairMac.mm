@@ -260,6 +260,11 @@ bool ScrollerPairMac::useDarkAppearance() const
     return m_scrollingNode.useDarkAppearanceForScrollbars();
 }
 
+ScrollbarWidth ScrollerPairMac::scrollbarWidthStyle() const
+{
+    return m_scrollingNode.scrollbarWidthStyle();
+}
+
 ScrollerPairMac::Values ScrollerPairMac::valuesForOrientation(ScrollbarOrientation orientation)
 {
     float position;
@@ -326,6 +331,14 @@ void ScrollerPairMac::setScrollbarStyle(ScrollbarStyle style)
         m_horizontalScroller.updateScrollbarStyle();
         m_verticalScroller.updateScrollbarStyle();
         [m_scrollerImpPair setScrollerStyle:scrollerStyle];
+    });
+}
+
+void ScrollerPairMac::updateScrollbarWidth()
+{
+    ensureOnMainThreadWithProtectedThis([this] {
+        m_horizontalScroller.updateScrollbarStyle();
+        m_verticalScroller.updateScrollbarStyle();
     });
 }
 

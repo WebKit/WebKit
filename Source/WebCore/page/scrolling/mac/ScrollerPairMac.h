@@ -72,6 +72,7 @@ public:
 
     FloatSize visibleSize() const;
     bool useDarkAppearance() const;
+    ScrollbarWidth scrollbarWidthStyle() const;
 
     struct Values {
         float value;
@@ -96,6 +97,8 @@ public:
 
     ScrollbarStyle scrollbarStyle() const { return m_scrollbarStyle; }
     void setScrollbarStyle(ScrollbarStyle);
+
+    void updateScrollbarWidth();
 
     void setVerticalScrollerImp(NSScrollerImp *);
     void setHorizontalScrollerImp(NSScrollerImp *);

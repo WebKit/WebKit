@@ -81,6 +81,10 @@ void ScrollingTreeScrollingNodeDelegateMac::updateFromStateNode(const ScrollingS
             m_scrollerPair->horizontalScroller().setHostLayer(nullptr);
         if (scrollingStateNode.scrollableAreaParameters().verticalNativeScrollbarVisibility != NativeScrollbarVisibility::Visible)
             m_scrollerPair->verticalScroller().setHostLayer(nullptr);
+
+        // TODO: Find a way to make this not run when UISideCompositing is off because it breaks initial scrollbar rendering
+        // TODO: Potentially should only run this when ScrollbarWidth updates specifically but I don't think we have an old copy of the scrollingStateNode to diff
+        m_scrollerPair->updateScrollbarWidth();
     }
     
     if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::ContentAreaHoverState)) {

@@ -34,6 +34,7 @@
 #import "LocalCurrentGraphicsContext.h"
 #import "NSScrollerImpDetails.h"
 #import "PlatformMouseEvent.h"
+#import "ScrollTypesMac.h"
 #import "ScrollView.h"
 #import "ScrollbarTrackCornerSystemImageMac.h"
 #import <Carbon/Carbon.h>
@@ -141,20 +142,6 @@ static bool gUsesOverlayScrollbars = false;
 
 static ScrollbarButtonsPlacement gButtonPlacement = ScrollbarButtonsDoubleEnd;
 
-static NSControlSize scrollbarWidthToNSControlSize(ScrollbarWidth scrollbarWidth)
-{
-    switch (scrollbarWidth) {
-    case ScrollbarWidth::Auto:
-    case ScrollbarWidth::None:
-        return NSControlSizeRegular;
-    case ScrollbarWidth::Thin:
-        return NSControlSizeSmall;
-    }
-
-    ASSERT_NOT_REACHED();
-    return NSControlSizeRegular;
-}
-
 void ScrollbarThemeMac::didCreateScrollerImp(Scrollbar& scrollbar)
 {
 #if PLATFORM(MAC)
@@ -172,7 +159,7 @@ void ScrollbarThemeMac::registerScrollbar(Scrollbar& scrollbar)
         return;
 
     bool isHorizontal = scrollbar.orientation() == ScrollbarOrientation::Horizontal;
-    auto scrollerImp = retainPtr([NSScrollerImp scrollerImpWithStyle:ScrollerStyle::recommendedScrollerStyle() controlSize:scrollbarWidthToNSControlSize(scrollbar.widthStyle()) horizontal:isHorizontal replacingScrollerImp:nil]);
+    auto scrollerImp = retainPtr([NSScrollerImp scrollerImpWithStyle:ScrollerStyle::recommendedScrollerStyle() controlSize:nsControlSizeFromScrollbarWidth(scrollbar.widthStyle()) horizontal:isHorizontal replacingScrollerImp:nil]);
     scrollbarMap().add(&scrollbar, WTFMove(scrollerImp));
     didCreateScrollerImp(scrollbar);
     updateEnabledState(scrollbar);
@@ -249,7 +236,7 @@ int ScrollbarThemeMac::scrollbarThickness(ScrollbarWidth scrollbarWidth, Scrollb
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     if (scrollbarWidth == ScrollbarWidth::None)
         return 0;
-    NSScrollerImp *scrollerImp = [NSScrollerImp scrollerImpWithStyle:ScrollerStyle::recommendedScrollerStyle() controlSize:scrollbarWidthToNSControlSize(scrollbarWidth) horizontal:NO replacingScrollerImp:nil];
+    NSScrollerImp *scrollerImp = [NSScrollerImp scrollerImpWithStyle:ScrollerStyle::recommendedScrollerStyle() controlSize:nsControlSizeFromScrollbarWidth(scrollbarWidth) horizontal:NO replacingScrollerImp:nil];
     [scrollerImp setExpanded:(expansionState == ScrollbarExpansionState::Expanded)];
     return [scrollerImp trackBoxWidth];
     END_BLOCK_OBJC_EXCEPTIONS

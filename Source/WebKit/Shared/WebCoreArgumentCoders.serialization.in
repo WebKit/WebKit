@@ -1978,6 +1978,13 @@ header: <WebCore/ScrollTypes.h>
     ReplacedByCustomScrollbar
 };
 
+header: <WebCore/ScrollTypes.h>
+[CustomHeader] enum class WebCore::ScrollbarWidth : uint8_t {
+    Auto,
+    Thin,
+    None
+};
+
 header: <WebCore/ScrollingCoordinatorTypes.h>
 [CustomHeader] struct WebCore::ScrollableAreaParameters {
     WebCore::ScrollElasticity horizontalScrollElasticity;
@@ -1991,6 +1998,7 @@ header: <WebCore/ScrollingCoordinatorTypes.h>
     WebCore::NativeScrollbarVisibility horizontalNativeScrollbarVisibility;
     WebCore::NativeScrollbarVisibility verticalNativeScrollbarVisibility;
     bool useDarkAppearanceForScrollbars;
+    WebCore::ScrollbarWidth scrollbarWidthStyle;
 };
 
 header: <WebCore/ScrollingCoordinatorTypes.h>

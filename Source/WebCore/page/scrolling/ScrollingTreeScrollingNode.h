@@ -127,7 +127,9 @@ public:
 
     const LayerRepresentation& scrollContainerLayer() const { return m_scrollContainerLayer; }
     const LayerRepresentation& scrolledContentsLayer() const { return m_scrolledContentsLayer; }
-    
+
+    ScrollbarWidth scrollbarWidthStyle() const { return m_scrollableAreaParameters.scrollbarWidthStyle; }
+
     OverscrollBehavior horizontalOverscrollBehavior() const { return m_scrollableAreaParameters.horizontalOverscrollBehavior; }
     OverscrollBehavior verticalOverscrollBehavior() const { return m_scrollableAreaParameters.verticalOverscrollBehavior; }
     
