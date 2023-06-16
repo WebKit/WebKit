@@ -37,12 +37,7 @@
 
 namespace TestWebKitAPI {
 
-// FIXME when rdar://110536156 is resolved.
-#if PLATFORM(IOS)
-TEST(ApplicationStateTracking, DISABLED_WindowDeallocDoesNotPermanentlyFreezeLayerTree)
-#else
 TEST(ApplicationStateTracking, WindowDeallocDoesNotPermanentlyFreezeLayerTree)
-#endif
 {
     auto configuration = adoptNS([WKWebViewConfiguration new]);
 
