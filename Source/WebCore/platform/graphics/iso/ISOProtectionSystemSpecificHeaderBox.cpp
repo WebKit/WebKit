@@ -69,6 +69,8 @@ bool ISOProtectionSystemSpecificHeaderBox::parse(DataView& view, unsigned& offse
             return false;
         if (buffer->byteLength() - offset < keyIDCount * 16)
             return false;
+        if (!m_keyIDs.tryReserveCapacity(keyIDCount))
+            return false;
         m_keyIDs.resize(keyIDCount);
         for (unsigned keyID = 0; keyID < keyIDCount; keyID++) {
             auto& currentKeyID = m_keyIDs[keyID];
