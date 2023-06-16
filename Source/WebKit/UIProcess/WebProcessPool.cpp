@@ -1887,6 +1887,8 @@ void WebProcessPool::processForNavigation(WebPageProxy& page, WebFrameProxy& fra
         loadedWebArchive = LoadedWebArchive::Yes;
 #endif
 
+    process->addAllowedFirstPartyForCookies(registrableDomain);
+
     auto processIdentifier = process->coreProcessIdentifier();
     auto preventProcessShutdownScope = process->shutdownPreventingScope();
     auto callCompletionHandler = [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler), page = Ref { page }, frame = Ref { frame }, navigation = Ref { navigation }, process = WTFMove(process), preventProcessShutdownScope = WTFMove(preventProcessShutdownScope), reason = reason, dataStore = WTFMove(dataStore), frameInfo, sourceProcess = WTFMove(sourceProcess), sourceURL, lockdownMode, processSwapRequestedByClient](SuspendedPageProxy* suspendedPage) mutable {
@@ -1900,7 +1902,7 @@ void WebProcessPool::processForNavigation(WebPageProxy& page, WebFrameProxy& fra
         completionHandler(WTFMove(process), suspendedPage, reason, DidCreateNewProcess::Yes);
     };
 
-    page.websiteDataStore().networkProcess().sendWithAsyncReply(Messages::NetworkProcess::AddAllowedFirstPartyForCookies(processIdentifier, RegistrableDomain(navigation.currentRequest().url()), loadedWebArchive), [callCompletionHandler = WTFMove(callCompletionHandler), suspendedPage = WeakPtr { suspendedPage }] () mutable {
+    page.websiteDataStore().networkProcess().sendWithAsyncReply(Messages::NetworkProcess::AddAllowedFirstPartyForCookies(processIdentifier, registrableDomain, loadedWebArchive), [callCompletionHandler = WTFMove(callCompletionHandler), suspendedPage = WeakPtr { suspendedPage }] () mutable {
         if (suspendedPage)
             suspendedPage->waitUntilReadyToUnsuspend(WTFMove(callCompletionHandler));
         else

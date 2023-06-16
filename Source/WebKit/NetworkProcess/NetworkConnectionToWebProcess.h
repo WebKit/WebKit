@@ -207,6 +207,8 @@ public:
 #if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
     void logOnBehalfOfWebContent(IPC::DataReference&& logChannel, IPC::DataReference&& logCategory, IPC::DataReference&& logString, uint8_t logType, int32_t pid);
 #endif
+
+    void addAllowedFirstPartyForCookies(const RegistrableDomain&);
 private:
     NetworkConnectionToWebProcess(NetworkProcess&, WebCore::ProcessIdentifier, PAL::SessionID, NetworkProcessConnectionParameters, IPC::Connection::Identifier);
 

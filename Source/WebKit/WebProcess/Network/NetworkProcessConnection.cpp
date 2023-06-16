@@ -349,4 +349,9 @@ void NetworkProcessConnection::connectToRTCDataChannelRemoteSource(WebCore::RTCD
 }
 #endif
 
+void NetworkProcessConnection::addAllowedFirstPartyForCookies(WebCore::RegistrableDomain&& firstPartyForCookies)
+{
+    WebProcess::singleton().addAllowedFirstPartyForCookies(WTFMove(firstPartyForCookies));
+}
+
 } // namespace WebKit

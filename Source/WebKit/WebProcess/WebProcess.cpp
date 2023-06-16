@@ -2346,6 +2346,21 @@ void WebProcess::setNetworkProcessConnectionID(IPC::Connection::UniqueID uniqueI
 
 }
 
+void WebProcess::addAllowedFirstPartyForCookies(WebCore::RegistrableDomain&& firstPartyForCookies)
+{
+    if (!HashSet<WebCore::RegistrableDomain>::isValidValue(firstPartyForCookies))
+        return;
+
+    m_allowedFirstPartiesForCookies.add(WTFMove(firstPartyForCookies));
+}
+
+bool WebProcess::allowsFirstPartyForCookies(const URL& firstParty)
+{
+    return AuxiliaryProcess::allowsFirstPartyForCookies(firstParty, [&] {
+        return AuxiliaryProcess::allowsFirstPartyForCookies(WebCore::RegistrableDomain { firstParty }, m_allowedFirstPartiesForCookies);
+    });
+}
+
 } // namespace WebKit
 
 #undef RELEASE_LOG_SESSION_ID

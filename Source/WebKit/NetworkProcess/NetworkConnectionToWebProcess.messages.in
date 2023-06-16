@@ -118,4 +118,6 @@ messages -> NetworkConnectionToWebProcess LegacyReceiver {
 #if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
     LogOnBehalfOfWebContent(IPC::DataReference logChannel, IPC::DataReference logCategory, IPC::DataReference logString, uint8_t logType, int32_t pid)
 #endif
+
+    AddAllowedFirstPartyForCookies(WebCore::RegistrableDomain firstPartyDomain)
 }

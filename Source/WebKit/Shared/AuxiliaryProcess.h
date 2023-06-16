@@ -48,6 +48,10 @@ namespace IPC {
 class SharedBufferReference;
 }
 
+namespace WebCore {
+class RegistrableDomain;
+}
+
 namespace WebKit {
 
 class SandboxInitializationParameters;
@@ -160,6 +164,9 @@ protected:
 
     // IPC::Connection::Client.
     void didClose(IPC::Connection&) override;
+
+    bool allowsFirstPartyForCookies(const URL&, Function<bool()>&&);
+    bool allowsFirstPartyForCookies(const WebCore::RegistrableDomain&, HashSet<WebCore::RegistrableDomain>&);
 
 private:
     virtual bool shouldOverrideQuarantine() { return true; }

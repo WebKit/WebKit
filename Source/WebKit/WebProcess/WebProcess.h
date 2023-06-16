@@ -409,6 +409,9 @@ public:
 
     void deferNonVisibleProcessEarlyMemoryCleanupTimer();
 
+    void addAllowedFirstPartyForCookies(WebCore::RegistrableDomain&&);
+    bool allowsFirstPartyForCookies(const URL&);
+
 private:
     WebProcess();
     ~WebProcess();
@@ -782,6 +785,8 @@ private:
 #endif
     bool m_hadMainFrameMainResourcePrivateRelayed { false };
     bool m_imageAnimationEnabled { true };
+
+    HashSet<WebCore::RegistrableDomain> m_allowedFirstPartiesForCookies;
 };
 
 } // namespace WebKit

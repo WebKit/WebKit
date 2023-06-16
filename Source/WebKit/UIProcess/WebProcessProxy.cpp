@@ -2493,6 +2493,11 @@ void WebProcessProxy::sendPermissionChanged(WebCore::PermissionName permissionNa
     send(Messages::WebPermissionController::permissionChanged(permissionName, topOrigin), 0);
 }
 
+void WebProcessProxy::addAllowedFirstPartyForCookies(const WebCore::RegistrableDomain& firstPartyDomain)
+{
+    send(Messages::WebProcess::AddAllowedFirstPartyForCookies(firstPartyDomain), 0);
+}
+
 Logger& WebProcessProxy::logger()
 {
     if (!m_logger) {
