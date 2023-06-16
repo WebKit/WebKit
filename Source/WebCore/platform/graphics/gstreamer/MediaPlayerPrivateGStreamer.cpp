@@ -3832,9 +3832,11 @@ RefPtr<VideoFrame> MediaPlayerPrivateGStreamer::videoFrameForCurrentTime()
     if (!GST_IS_SAMPLE(m_sample.get()))
         return nullptr;
 
-    GRefPtr<GstSample> sample = m_sample;
-    auto size = getVideoResolutionFromCaps(gst_sample_get_caps(sample.get())).value_or(FloatSize { 0, 0 });
-    return VideoFrameGStreamer::create(WTFMove(sample), size);
+    auto* buffer = gst_sample_get_buffer(m_sample.get());
+    auto frame = VideoFrameGStreamer::createWrappedSample(m_sample.get(), fromGstClockTime(GST_BUFFER_PTS(buffer)));
+    auto convertedSample = frame->downloadSample(GST_VIDEO_FORMAT_BGRA);
+    auto size = getVideoResolutionFromCaps(gst_sample_get_caps(m_sample.get())).value_or(FloatSize { 0, 0 });
+    return VideoFrameGStreamer::create(WTFMove(convertedSample), size);
 }
 
 bool MediaPlayerPrivateGStreamer::setVideoSourceOrientation(ImageOrientation orientation)

@@ -52,6 +52,8 @@ public:
 
     GRefPtr<GstSample> resizedSample(const IntSize&);
 
+    GRefPtr<GstSample> downloadSample(std::optional<GstVideoFormat> = { });
+
     GstSample* sample() const { return m_sample.get(); }
 
     RefPtr<ImageGStreamer> convertToImage();
@@ -64,6 +66,8 @@ private:
     VideoFrameGStreamer(const GRefPtr<GstSample>&, const FloatSize& presentationSize, const MediaTime& presentationTime, Rotation = Rotation::None, PlatformVideoColorSpace&& = { });
 
     bool isGStreamer() const final { return true; }
+
+    GRefPtr<GstSample> convert(GstVideoFormat, const IntSize&);
 
     GRefPtr<GstSample> m_sample;
     FloatSize m_presentationSize;

@@ -54,7 +54,7 @@ public:
 
     String initialize(const VideoEncoder::Config&);
     void postTask(Function<void()>&& task) { m_postTaskCallback(WTFMove(task)); }
-    bool encode(VideoEncoder::RawFrame&&, bool shouldGenerateKeyFrame, VideoEncoder::EncodeCallback&&);
+    bool encode(VideoEncoder::RawFrame&&, bool shouldGenerateKeyFrame);
     void flush(Function<void()>&&);
     void close() { m_isClosed = true; }
 
@@ -133,7 +133,7 @@ String GStreamerVideoEncoder::initialize(const VideoEncoder::Config& config)
 void GStreamerVideoEncoder::encode(RawFrame&& frame, bool shouldGenerateKeyFrame, EncodeCallback&& callback)
 {
     gstEncoderWorkQueue().dispatch([frame = WTFMove(frame), shouldGenerateKeyFrame, encoder = m_internalEncoder, callback = WTFMove(callback)]() mutable {
-        auto result = encoder->encode(WTFMove(frame), shouldGenerateKeyFrame, WTFMove(callback));
+        auto result = encoder->encode(WTFMove(frame), shouldGenerateKeyFrame);
         if (encoder->isClosed())
             return;
 
@@ -141,7 +141,7 @@ void GStreamerVideoEncoder::encode(RawFrame&& frame, bool shouldGenerateKeyFrame
         if (result)
             encoder->harness()->processOutputBuffers();
         else
-            resultString = makeString("Encoding failed");
+            resultString = "Encoding failed"_s;
         callback(WTFMove(resultString));
     });
 }
@@ -232,7 +232,7 @@ String GStreamerInternalVideoEncoder::initialize(const VideoEncoder::Config& con
     return emptyString();
 }
 
-bool GStreamerInternalVideoEncoder::encode(VideoEncoder::RawFrame&& rawFrame, bool shouldGenerateKeyFrame, VideoEncoder::EncodeCallback&& callback)
+bool GStreamerInternalVideoEncoder::encode(VideoEncoder::RawFrame&& rawFrame, bool shouldGenerateKeyFrame)
 {
     if (!m_isInitialized) {
         GST_WARNING_OBJECT(m_harness->element(), "Encoder not initialized");
@@ -247,56 +247,13 @@ bool GStreamerInternalVideoEncoder::encode(VideoEncoder::RawFrame&& rawFrame, bo
         m_harness->pushEvent(gst_video_event_new_downstream_force_key_unit(GST_CLOCK_TIME_NONE, GST_CLOCK_TIME_NONE, GST_CLOCK_TIME_NONE, FALSE, 1));
     }
 
-    auto sample = downcast<VideoFrameGStreamer>(rawFrame.frame.get()).sample();
+    auto& gstVideoFrame = downcast<VideoFrameGStreamer>(rawFrame.frame.get());
 
-    bool result = false;
-    auto* buffer = gst_sample_get_buffer(sample);
+    auto* buffer = gst_sample_get_buffer(gstVideoFrame.sample());
     GST_BUFFER_PTS(buffer) = m_timestamp;
 
     // FIXME: The WebRTC encoder doesn't support GL memories ingesting yet, so until then we do a conversion here.
-#if USE(GSTREAMER_GL)
-    auto* memory = gst_buffer_peek_memory(buffer, 0);
-    if (gst_is_gl_memory(memory)) {
-        auto* inputCaps = gst_sample_get_caps(sample);
-        auto outputCaps = adoptGRef(gst_caps_copy(inputCaps));
-        auto* features = gst_caps_get_features(outputCaps.get(), 0);
-        gst_caps_features_remove(features, GST_CAPS_FEATURE_MEMORY_GL_MEMORY);
-
-        GstVideoInfo inputInfo, outputInfo;
-        if (!gst_video_info_from_caps(&outputInfo, outputCaps.get()) || !gst_video_info_from_caps(&inputInfo, inputCaps)) {
-            m_postTaskCallback([protectedThis = Ref { *this }, callback = WTFMove(callback)]() mutable {
-                if (protectedThis->m_isClosed)
-                    return;
-
-                callback("Unable to convert GL video frame"_s);
-            });
-            return false;
-        }
-
-        if (!m_colorConvertOutputCaps || !gst_caps_is_equal(m_colorConvertOutputCaps.get(), outputCaps.get())
-            || !m_colorConvertInputCaps || !gst_caps_is_equal(m_colorConvertInputCaps.get(), inputCaps)) {
-            m_colorConvert.reset(gst_video_converter_new(&inputInfo, &outputInfo, nullptr));
-            m_colorConvertInputCaps = adoptGRef(gst_caps_copy(inputCaps));
-            m_colorConvertOutputCaps = outputCaps;
-        }
-
-        auto outputBuffer = adoptGRef(gst_buffer_new_allocate(nullptr, GST_VIDEO_INFO_SIZE(&outputInfo), nullptr));
-        {
-            GstMappedFrame inputFrame(buffer, inputInfo, GST_MAP_READ);
-            GstMappedFrame outputFrame(outputBuffer.get(), outputInfo, GST_MAP_WRITE);
-            gst_video_converter_frame(m_colorConvert.get(), inputFrame.get(), outputFrame.get());
-        }
-
-        GST_BUFFER_PTS(outputBuffer.get()) = GST_BUFFER_PTS(buffer);
-        GST_BUFFER_DTS(outputBuffer.get()) = GST_BUFFER_DTS(buffer);
-        GST_BUFFER_DURATION(outputBuffer.get()) = GST_BUFFER_DURATION(buffer);
-        auto convertedSample = adoptGRef(gst_sample_new(outputBuffer.get(), outputCaps.get(), nullptr, nullptr));
-        result = m_harness->pushSample(WTFMove(convertedSample));
-    } else
-#endif
-        result = m_harness->pushSample(GRefPtr<GstSample>(sample));
-
-    return result;
+    return m_harness->pushSample(gstVideoFrame.downloadSample());
 }
 
 void GStreamerInternalVideoEncoder::flush(Function<void()> && callback)

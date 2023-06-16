@@ -2329,6 +2329,8 @@ webkit.org/b/246766 imported/w3c/web-platform-tests/reporting/generateTestReport
 # vertical form controls
 imported/w3c/web-platform-tests/css/css-writing-modes/forms/progress-appearance-native-computed-style.optional.html [ Failure ]
 
+webkit.org/b/256768 fast/mediastream/captureStream/canvas3d.html [ Failure ]
+
 webkit.org/b/249477 media/audioSession/audioSessionType.html [ Skip ]
 webkit.org/b/253832 media/media-source/media-source-webm-configuration-change.html [ Failure ]
 webkit.org/b/253832 media/media-source/media-source-webm-configuration-vp9-header-color.html [ Failure ]
