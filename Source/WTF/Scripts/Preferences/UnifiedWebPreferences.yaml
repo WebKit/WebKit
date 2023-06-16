@@ -7317,7 +7317,7 @@ WebGLTimerQueriesEnabled:
 
 WebGLUsingMetal:
   type: bool
-  status: stable
+  status: internal
   category: dom
   humanReadableName: "WebGL via Metal"
   humanReadableDescription: "Use the Metal backend for ANGLE"

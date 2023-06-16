@@ -133,6 +133,9 @@ const TestFeatures& TestOptions::defaults()
             { "TextAutosizingUsesIdempotentMode", false },
             { "UsesBackForwardCache", false },
             { "WebAuthenticationEnabled", true },
+#if ENABLE(WEBGL) && PLATFORM(COCOA)
+            { "WebGLUsingMetal", true },
+#endif
             { "WebRTCRemoteVideoFrameEnabled", true },
             { "XSSAuditorEnabled", false },
 #if PLATFORM(IOS_FAMILY_SIMULATOR)
