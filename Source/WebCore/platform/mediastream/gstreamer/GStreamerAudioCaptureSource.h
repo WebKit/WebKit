@@ -47,7 +47,7 @@ public:
     virtual ~GStreamerAudioCaptureSource();
 
 protected:
-    GStreamerAudioCaptureSource(GStreamerCaptureDevice, MediaDeviceHashSalts&&);
+    GStreamerAudioCaptureSource(GStreamerCaptureDevice&&, MediaDeviceHashSalts&&);
     void startProducingData() override;
     void stopProducingData() override;
     CaptureDevice::DeviceType deviceType() const override { return CaptureDevice::DeviceType::Microphone; }
@@ -63,9 +63,6 @@ private:
     void settingsDidChange(OptionSet<RealtimeMediaSourceSettings::Flag>) final;
 
     std::unique_ptr<GStreamerAudioCapturer> m_capturer;
-
-    static GstFlowReturn newSampleCallback(GstElement*, GStreamerAudioCaptureSource*);
-    void triggerSampleAvailable(GstSample*);
 };
 
 } // namespace WebCore

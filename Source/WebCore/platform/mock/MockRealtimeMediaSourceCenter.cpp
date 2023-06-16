@@ -476,7 +476,7 @@ Vector<CaptureDevice>& MockRealtimeMediaSourceCenter::displayDevices()
         Vector<CaptureDevice> displayDevices;
         for (const auto& device : devices()) {
             if (device.isDisplay())
-                displayDevices.append(device.captureDevice());
+                displayDevices.append(toCaptureDevice(device));
         }
         return displayDevices;
     }();

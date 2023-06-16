@@ -26,9 +26,11 @@
 #if ENABLE(MEDIA_STREAM) && USE(GSTREAMER)
 #include "MockRealtimeVideoSourceGStreamer.h"
 
+#include "GStreamerCaptureDeviceManager.h"
 #include "MockRealtimeMediaSourceCenter.h"
 #include "PixelBuffer.h"
 #include "VideoFrameGStreamer.h"
+#include <gst/app/gstappsrc.h>
 
 namespace WebCore {
 
@@ -149,6 +151,36 @@ MockRealtimeVideoSourceGStreamer::MockRealtimeVideoSourceGStreamer(String&& devi
     : MockRealtimeVideoSource(WTFMove(deviceID), WTFMove(name), WTFMove(hashSalts), { })
 {
     ensureGStreamerInitialized();
+    auto& singleton = GStreamerVideoCaptureDeviceManager::singleton();
+    auto device = singleton.gstreamerDeviceWithUID(this->captureDevice().persistentId());
+    ASSERT(device);
+    if (!device)
+        return;
+
+    device->setIsMockDevice(true);
+    m_capturer = makeUnique<GStreamerVideoCapturer>(WTFMove(*device));
+    m_capturer->setupPipeline();
+    m_capturer->setSinkVideoFrameCallback([this](auto&& videoFrame) {
+        if (!isProducingData() || muted())
+            return;
+        dispatchVideoFrameToObservers(WTFMove(videoFrame), { });
+    });
+}
+
+void MockRealtimeVideoSourceGStreamer::startProducingData()
+{
+    if (deviceType() == CaptureDevice::DeviceType::Camera)
+        m_capturer->setSize(size().width(), size().height());
+
+    m_capturer->setFrameRate(frameRate());
+    m_capturer->start();
+    MockRealtimeVideoSource::startProducingData();
+}
+
+void MockRealtimeVideoSourceGStreamer::stopProducingData()
+{
+    m_capturer->stop();
+    MockRealtimeVideoSource::stopProducingData();
 }
 
 void MockRealtimeVideoSourceGStreamer::updateSampleBuffer()
@@ -165,7 +197,10 @@ void MockRealtimeVideoSourceGStreamer::updateSampleBuffer()
     metadata.captureTime = MonotonicTime::now().secondsSinceEpoch();
     auto presentationTime = MediaTime::createWithDouble((elapsedTime()).seconds());
     auto videoFrame = VideoFrameGStreamer::createFromPixelBuffer(pixelBuffer.releaseNonNull(), VideoFrameGStreamer::CanvasContentType::Canvas2D, videoFrameRotation(), presentationTime, size(), frameRate(), false, WTFMove(metadata));
-    dispatchVideoFrameToObservers(videoFrame.get(), { });
+
+    // Mock GstDevice is an appsrc, see webkitMockDeviceCreateElement().
+    ASSERT(GST_IS_APP_SRC(m_capturer->source()));
+    gst_app_src_push_sample(GST_APP_SRC_CAST(m_capturer->source()), videoFrame->sample());
 }
 
 } // namespace WebCore

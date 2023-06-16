@@ -25,6 +25,7 @@
 #include "GStreamerCaptureDeviceManager.h"
 
 #include "GStreamerCommon.h"
+#include "GStreamerMockDeviceProvider.h"
 
 namespace WebCore {
 
@@ -63,29 +64,57 @@ GStreamerVideoCaptureDeviceManager& GStreamerVideoCaptureDeviceManager::singleto
     return manager;
 }
 
+GStreamerCaptureDeviceManager::GStreamerCaptureDeviceManager()
+{
+    RealtimeMediaSourceCenter::singleton().addDevicesChangedObserver(*this);
+}
+
 GStreamerCaptureDeviceManager::~GStreamerCaptureDeviceManager()
 {
-    if (m_deviceMonitor)
-        gst_device_monitor_stop(m_deviceMonitor.get());
+    stopMonitor();
+    RealtimeMediaSourceCenter::singleton().removeDevicesChangedObserver(*this);
+}
+
+void GStreamerCaptureDeviceManager::stopMonitor()
+{
+    if (!m_deviceMonitor)
+        return;
+
+    auto bus = adoptGRef(gst_device_monitor_get_bus(m_deviceMonitor.get()));
+    gst_bus_remove_watch(bus.get());
+    gst_device_monitor_stop(m_deviceMonitor.get());
+    m_deviceMonitor.clear();
+}
+
+void GStreamerCaptureDeviceManager::devicesChanged()
+{
+    GST_INFO("RealtimeMediaSourceCenter notified devices list update, clearing our internal cache");
+    stopMonitor();
+    m_devices.clear();
 }
 
 std::optional<GStreamerCaptureDevice> GStreamerCaptureDeviceManager::gstreamerDeviceWithUID(const String& deviceID)
 {
     captureDevices();
 
+    GST_DEBUG("Looking for device with UID %s", deviceID.ascii().data());
     for (auto& device : m_gstreamerDevices) {
+        GST_LOG("Checking device with persistent ID: %s", device.persistentId().ascii().data());
         if (device.persistentId() == deviceID)
             return device;
     }
+    GST_WARNING("Device not found");
     return std::nullopt;
 }
 
 const Vector<CaptureDevice>& GStreamerCaptureDeviceManager::captureDevices()
 {
     ensureGStreamerInitialized();
+
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
         GST_DEBUG_CATEGORY_INIT(webkitGStreamerCaptureDeviceManagerDebugCategory, "webkitcapturedevicemanager", 0, "WebKit Capture Device Manager");
+        gst_device_provider_register(nullptr, "mock-device-provider", GST_RANK_PRIMARY, GST_TYPE_MOCK_DEVICE_PROVIDER);
     });
     if (m_devices.isEmpty())
         refreshCaptureDevices();
@@ -116,13 +145,16 @@ void GStreamerCaptureDeviceManager::addDevice(GRefPtr<GstDevice>&& device)
     gboolean isDefault = FALSE;
     gst_structure_get_boolean(properties.get(), "is-default", &isDefault);
 
-    String identifier = makeString(isDefault ? "default: " : "", deviceName.get());
+    auto label = makeString(isDefault ? "default: "_s : ""_s, deviceName.get());
+    auto identifier = label;
+    if (const char* persistentId = gst_structure_get_string(properties.get(), "persistent-id"))
+        identifier = String::fromLatin1(persistentId);
 
-    auto gstCaptureDevice = GStreamerCaptureDevice(WTFMove(device), identifier, type, identifier);
+    auto gstCaptureDevice = GStreamerCaptureDevice(WTFMove(device), identifier, type, label);
     gstCaptureDevice.setEnabled(true);
     m_gstreamerDevices.append(WTFMove(gstCaptureDevice));
     // FIXME: We need a CaptureDevice copy in other vector just for captureDevices API.
-    auto captureDevice = CaptureDevice(identifier, type, identifier);
+    auto captureDevice = CaptureDevice(identifier, type, label);
     captureDevice.setEnabled(true);
     m_devices.append(WTFMove(captureDevice));
 }
@@ -130,6 +162,7 @@ void GStreamerCaptureDeviceManager::addDevice(GRefPtr<GstDevice>&& device)
 void GStreamerCaptureDeviceManager::refreshCaptureDevices()
 {
     m_devices.clear();
+    m_gstreamerDevices.clear();
     if (!m_deviceMonitor) {
         m_deviceMonitor = adoptGRef(gst_device_monitor_new());
 
@@ -191,7 +224,7 @@ void GStreamerCaptureDeviceManager::refreshCaptureDevices()
 
     GList* devices = g_list_sort(gst_device_monitor_get_devices(m_deviceMonitor.get()), sortDevices);
     while (devices) {
-        addDevice(GST_DEVICE_CAST(devices->data));
+        addDevice(adoptGRef(GST_DEVICE_CAST(devices->data)));
         devices = g_list_delete_link(devices, devices);
     }
 }

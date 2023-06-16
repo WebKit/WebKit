@@ -25,7 +25,9 @@
 #if ENABLE(MEDIA_STREAM) && USE(GSTREAMER)
 #include "MockRealtimeAudioSourceGStreamer.h"
 
+#include "GStreamerCaptureDeviceManager.h"
 #include "MockRealtimeMediaSourceCenter.h"
+#include <gst/app/gstappsrc.h>
 
 namespace WebCore {
 
@@ -78,11 +80,42 @@ MockRealtimeAudioSourceGStreamer::MockRealtimeAudioSourceGStreamer(String&& devi
 {
     ensureGStreamerInitialized();
     allMockRealtimeAudioSourcesStorage().add(this);
+
+    auto& singleton = GStreamerAudioCaptureDeviceManager::singleton();
+    auto device = singleton.gstreamerDeviceWithUID(this->captureDevice().persistentId());
+    ASSERT(device);
+    if (!device)
+        return;
+
+    device->setIsMockDevice(true);
+    m_capturer = makeUnique<GStreamerAudioCapturer>(WTFMove(*device));
+
+    m_capturer->setupPipeline();
+    m_capturer->setSinkAudioCallback([this](auto&& sample, auto&& presentationTime) {
+        const auto& info = m_streamFormat->getInfo();
+        auto samplesCount = gst_buffer_get_size(gst_sample_get_buffer(sample.get())) / m_streamFormat->bytesPerFrame();
+        GStreamerAudioData data(WTFMove(sample), info);
+        audioSamplesAvailable(presentationTime, data, *m_streamFormat, samplesCount);
+    });
 }
 
 MockRealtimeAudioSourceGStreamer::~MockRealtimeAudioSourceGStreamer()
 {
     allMockRealtimeAudioSourcesStorage().remove(this);
+}
+
+void MockRealtimeAudioSourceGStreamer::startProducingData()
+{
+    m_capturer->start();
+
+    MockRealtimeAudioSource::startProducingData();
+}
+
+void MockRealtimeAudioSourceGStreamer::stopProducingData()
+{
+    MockRealtimeAudioSource::stopProducingData();
+
+    m_capturer->stop();
 }
 
 void MockRealtimeAudioSourceGStreamer::render(Seconds delta)
@@ -120,10 +153,10 @@ void MockRealtimeAudioSourceGStreamer::render(Seconds delta)
         GST_BUFFER_PTS(buffer.get()) = toGstClockTime(presentationTime);
         GST_BUFFER_FLAG_SET(buffer.get(), GST_BUFFER_FLAG_LIVE);
 
-        auto caps = adoptGRef(gst_audio_info_to_caps(&info));
-        auto sample = adoptGRef(gst_sample_new(buffer.get(), caps.get(), nullptr, nullptr));
-        GStreamerAudioData data(WTFMove(sample), info);
-        audioSamplesAvailable(presentationTime, data, *m_streamFormat, bipBopCount);
+        auto sample = adoptGRef(gst_sample_new(buffer.get(), m_caps.get(), nullptr, nullptr));
+        // Mock GstDevice is an appsrc, see webkitMockDeviceCreateElement().
+        ASSERT(GST_IS_APP_SRC(m_capturer->source()));
+        gst_app_src_push_sample(GST_APP_SRC_CAST(m_capturer->source()), sample.get());
     }
 }
 
@@ -146,6 +179,7 @@ void MockRealtimeAudioSourceGStreamer::reconfigure()
     m_maximiumFrameCount = WTF::roundUpToPowerOfTwo(renderInterval().seconds() * sampleRate());
     gst_audio_info_set_format(&info, GST_AUDIO_FORMAT_F32LE, rate, 1, nullptr);
     m_streamFormat = GStreamerAudioStreamDescription(info);
+    m_caps = adoptGRef(gst_audio_info_to_caps(&info));
 
     m_bipBopBuffer.resize(sampleCount);
     m_bipBopBuffer.fill(0);

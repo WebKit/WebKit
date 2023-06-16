@@ -117,6 +117,8 @@ platform/mediastream/gstreamer/GStreamerCapturer.cpp
 platform/mediastream/gstreamer/GStreamerDTMFSenderBackend.cpp
 platform/mediastream/gstreamer/GStreamerDisplayCaptureDeviceManager.cpp
 platform/mediastream/gstreamer/GStreamerMediaStreamSource.cpp @no-unify
+platform/mediastream/gstreamer/GStreamerMockDevice.cpp @no-unify
+platform/mediastream/gstreamer/GStreamerMockDeviceProvider.cpp @no-unify
 platform/mediastream/gstreamer/GStreamerVideoCaptureSource.cpp
 platform/mediastream/gstreamer/GStreamerVideoCapturer.cpp
 platform/mediastream/gstreamer/GStreamerWebRTCProvider.cpp

@@ -25,6 +25,9 @@
 #if ENABLE(MEDIA_STREAM) && USE(GSTREAMER)
 #include "GStreamerVideoCapturer.h"
 
+#include "VideoFrameGStreamer.h"
+#include <gst/app/gstappsink.h>
+
 GST_DEBUG_CATEGORY(webkit_video_capturer_debug);
 #define GST_CAT_DEFAULT webkit_video_capturer_debug
 
@@ -40,8 +43,8 @@ static void initializeVideoCapturerDebugCategory()
     });
 }
 
-GStreamerVideoCapturer::GStreamerVideoCapturer(GStreamerCaptureDevice device)
-    : GStreamerCapturer(device, adoptGRef(gst_caps_new_empty_simple("video/x-raw")))
+GStreamerVideoCapturer::GStreamerVideoCapturer(GStreamerCaptureDevice&& device)
+    : GStreamerCapturer(WTFMove(device), adoptGRef(gst_caps_new_empty_simple("video/x-raw")))
 {
     initializeVideoCapturerDebugCategory();
 }
@@ -50,6 +53,28 @@ GStreamerVideoCapturer::GStreamerVideoCapturer(const char* sourceFactory, Captur
     : GStreamerCapturer(sourceFactory, adoptGRef(gst_caps_new_empty_simple("video/x-raw")), deviceType)
 {
     initializeVideoCapturerDebugCategory();
+}
+
+GStreamerVideoCapturer::~GStreamerVideoCapturer()
+{
+    auto* sink = this->sink();
+    if (!sink)
+        return;
+    g_signal_handlers_disconnect_by_data(sink, this);
+}
+
+void GStreamerVideoCapturer::setSinkVideoFrameCallback(SinkVideoFrameCallback&& callback)
+{
+    if (m_sinkVideoFrameCallback.first)
+        g_signal_handler_disconnect(sink(), m_sinkVideoFrameCallback.first);
+
+    m_sinkVideoFrameCallback.second = WTFMove(callback);
+    m_sinkVideoFrameCallback.first = g_signal_connect_swapped(sink(), "new-sample", G_CALLBACK(+[](GStreamerVideoCapturer* capturer, GstElement* sink) -> GstFlowReturn {
+        auto gstSample = adoptGRef(gst_app_sink_pull_sample(GST_APP_SINK(sink)));
+        auto presentationTime = fromGstClockTime(GST_BUFFER_PTS(gst_sample_get_buffer(gstSample.get())));
+        capturer->m_sinkVideoFrameCallback.second(VideoFrameGStreamer::create(WTFMove(gstSample), WebCore::FloatSize(), presentationTime));
+        return GST_FLOW_OK;
+    }), this);
 }
 
 GstElement* GStreamerVideoCapturer::createSource()
@@ -110,7 +135,7 @@ GstElement* GStreamerVideoCapturer::createConverter()
 
 GstVideoInfo GStreamerVideoCapturer::getBestFormat()
 {
-    GRefPtr<GstCaps> caps = adoptGRef(gst_caps_fixate(gst_device_get_caps(m_device.get())));
+    auto caps = adoptGRef(gst_caps_fixate(gst_device_get_caps(m_device->device())));
     GstVideoInfo info;
     gst_video_info_from_caps(&info, caps.get());
 
@@ -301,7 +326,7 @@ void GStreamerVideoCapturer::reconfigure()
     GST_DEBUG_OBJECT(m_pipeline.get(), "Searching best video capture device mime type for resolution %dx%d@%.3f",
         selector.stopCondition.width, selector.stopCondition.height, selector.stopCondition.frameRate);
 
-    auto deviceCaps = adoptGRef(gst_device_get_caps(m_device.get()));
+    auto deviceCaps = adoptGRef(gst_device_get_caps(m_device->device()));
     gst_caps_foreach(deviceCaps.get(),
         reinterpret_cast<GstCapsForeachFunc>(+[](GstCapsFeatures*, GstStructure* structure, MimeTypeSelector* selector) -> gboolean {
             auto width = getMaxIntValueFromStructure(structure, "width");

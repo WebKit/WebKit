@@ -62,11 +62,13 @@ protected:
     static Seconds renderInterval() { return 60_ms; }
 
 private:
+    friend class MockRealtimeAudioSourceGStreamer;
+
     const RealtimeMediaSourceCapabilities& capabilities() final;
     const RealtimeMediaSourceSettings& settings() final;
 
-    void startProducingData() final;
-    void stopProducingData() final;
+    void startProducingData() override;
+    void stopProducingData() override;
 
     bool isCaptureSource() const final { return true; }
     CaptureDevice::DeviceType deviceType() const final { return CaptureDevice::DeviceType::Microphone; }

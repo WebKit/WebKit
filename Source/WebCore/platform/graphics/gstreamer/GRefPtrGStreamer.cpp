@@ -486,6 +486,28 @@ void derefGPtr<GstDeviceMonitor>(GstDeviceMonitor* ptr)
         gst_object_unref(ptr);
 }
 
+template<>
+GRefPtr<GstDevice> adoptGRef(GstDevice* ptr)
+{
+    return GRefPtr<GstDevice>(ptr, GRefPtrAdopt);
+}
+
+template<>
+GstDevice* refGPtr<GstDevice>(GstDevice* ptr)
+{
+    if (ptr)
+        gst_object_ref(GST_OBJECT_CAST(ptr));
+
+    return ptr;
+}
+
+template<>
+void derefGPtr<GstDevice>(GstDevice* ptr)
+{
+    if (ptr)
+        gst_object_unref(ptr);
+}
+
 template <> GRefPtr<WebKitVideoSink> adoptGRef(WebKitVideoSink* ptr)
 {
     ASSERT(!ptr || !g_object_is_floating(ptr));

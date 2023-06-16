@@ -29,6 +29,8 @@
 #include "LibWebRTCAudioFormat.h"
 #endif
 
+#include <gst/app/gstappsink.h>
+
 namespace WebCore {
 
 #if USE(LIBWEBRTC)
@@ -48,8 +50,8 @@ static void initializeAudioCapturerDebugCategory()
     });
 }
 
-GStreamerAudioCapturer::GStreamerAudioCapturer(GStreamerCaptureDevice device)
-    : GStreamerCapturer(device, adoptGRef(gst_caps_new_simple("audio/x-raw", "rate", G_TYPE_INT, s_audioCaptureSampleRate, nullptr)))
+GStreamerAudioCapturer::GStreamerAudioCapturer(GStreamerCaptureDevice&& device)
+    : GStreamerCapturer(WTFMove(device), adoptGRef(gst_caps_new_simple("audio/x-raw", "rate", G_TYPE_INT, s_audioCaptureSampleRate, nullptr)))
 {
     initializeAudioCapturerDebugCategory();
 }
@@ -58,6 +60,28 @@ GStreamerAudioCapturer::GStreamerAudioCapturer()
     : GStreamerCapturer("appsrc", adoptGRef(gst_caps_new_simple("audio/x-raw", "rate", G_TYPE_INT, s_audioCaptureSampleRate, nullptr)), CaptureDevice::DeviceType::Microphone)
 {
     initializeAudioCapturerDebugCategory();
+}
+
+GStreamerAudioCapturer::~GStreamerAudioCapturer()
+{
+    auto* sink = this->sink();
+    if (!sink)
+        return;
+    g_signal_handlers_disconnect_by_data(sink, this);
+}
+
+void GStreamerAudioCapturer::setSinkAudioCallback(SinkAudioDataCallback&& callback)
+{
+    if (m_sinkAudioDataCallback.first)
+        g_signal_handler_disconnect(sink(), m_sinkAudioDataCallback.first);
+
+    m_sinkAudioDataCallback.second = WTFMove(callback);
+    m_sinkAudioDataCallback.first = g_signal_connect_swapped(sink(), "new-sample", G_CALLBACK(+[](GStreamerAudioCapturer* capturer, GstElement* sink) -> GstFlowReturn {
+        auto gstSample = adoptGRef(gst_app_sink_pull_sample(GST_APP_SINK(sink)));
+        auto presentationTime = fromGstClockTime(GST_BUFFER_PTS(gst_sample_get_buffer(gstSample.get())));
+        capturer->m_sinkAudioDataCallback.second(WTFMove(gstSample), WTFMove(presentationTime));
+        return GST_FLOW_OK;
+    }), this);
 }
 
 GstElement* GStreamerAudioCapturer::createConverter()
@@ -71,8 +95,11 @@ GstElement* GStreamerAudioCapturer::createConverter()
 #if USE(GSTREAMER_WEBRTC)
     if (auto* webrtcdsp = makeGStreamerElement("webrtcdsp", nullptr)) {
         g_object_set(webrtcdsp, "echo-cancel", FALSE, "voice-detection", TRUE, nullptr);
-        gst_bin_add(GST_BIN_CAST(bin), webrtcdsp);
-        gst_element_link(webrtcdsp, audioconvert);
+
+        auto* audioconvert2 = makeGStreamerElement("audioconvert", nullptr);
+        auto* audioresample2 = makeGStreamerElement("audioresample", nullptr);
+        gst_bin_add_many(GST_BIN_CAST(bin), audioconvert2, audioresample2, webrtcdsp, nullptr);
+        gst_element_link_many(audioconvert2, audioresample2, webrtcdsp, audioconvert, nullptr);
     }
 #endif
 

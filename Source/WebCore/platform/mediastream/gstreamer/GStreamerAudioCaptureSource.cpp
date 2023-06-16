@@ -71,7 +71,7 @@ CaptureSourceOrError GStreamerAudioCaptureSource::create(String&& deviceID, Medi
         return CaptureSourceOrError(WTFMove(errorMessage));
     }
 
-    auto source = adoptRef(*new GStreamerAudioCaptureSource(device.value(), WTFMove(hashSalts)));
+    auto source = adoptRef(*new GStreamerAudioCaptureSource(WTFMove(*device), WTFMove(hashSalts)));
 
     if (constraints) {
         if (auto result = source->applyConstraints(*constraints))
@@ -85,9 +85,9 @@ AudioCaptureFactory& GStreamerAudioCaptureSource::factory()
     return libWebRTCAudioCaptureSourceFactory();
 }
 
-GStreamerAudioCaptureSource::GStreamerAudioCaptureSource(GStreamerCaptureDevice device, MediaDeviceHashSalts&& hashSalts)
+GStreamerAudioCaptureSource::GStreamerAudioCaptureSource(GStreamerCaptureDevice&& device, MediaDeviceHashSalts&& hashSalts)
     : RealtimeMediaSource(device, WTFMove(hashSalts))
-    , m_capturer(makeUnique<GStreamerAudioCapturer>(device))
+    , m_capturer(makeUnique<GStreamerAudioCapturer>(WTFMove(device)))
 {
     ensureGStreamerInitialized();
 
@@ -105,27 +105,17 @@ void GStreamerAudioCaptureSource::startProducingData()
 {
     m_capturer->setupPipeline();
     m_capturer->setSampleRate(sampleRate());
-    g_signal_connect(m_capturer->sink(), "new-sample", G_CALLBACK(newSampleCallback), this);
-    m_capturer->play();
-}
-
-GstFlowReturn GStreamerAudioCaptureSource::newSampleCallback(GstElement* sink, GStreamerAudioCaptureSource* source)
-{
-    auto sample = adoptGRef(gst_app_sink_pull_sample(GST_APP_SINK(sink)));
-
-    auto* buffer = gst_sample_get_buffer(sample.get());
-    auto bufferSize = gst_buffer_get_size(buffer);
-    MediaTime presentationTime(GST_TIME_AS_USECONDS(GST_BUFFER_PTS(buffer)), G_USEC_PER_SEC);
-
-    GStreamerAudioData frames(WTFMove(sample));
-    GStreamerAudioStreamDescription description(frames.getAudioInfo());
-    source->audioSamplesAvailable(presentationTime, frames, description, bufferSize / description.getInfo().bpf);
-    return GST_FLOW_OK;
+    m_capturer->setSinkAudioCallback([this](auto&& sample, auto&& presentationTime) {
+        auto bufferSize = gst_buffer_get_size(gst_sample_get_buffer(sample.get()));
+        GStreamerAudioData frames(WTFMove(sample));
+        GStreamerAudioStreamDescription description(frames.getAudioInfo());
+        audioSamplesAvailable(presentationTime, frames, description, bufferSize / description.getInfo().bpf);
+    });
+    m_capturer->start();
 }
 
 void GStreamerAudioCaptureSource::stopProducingData()
 {
-    g_signal_handlers_disconnect_by_func(m_capturer->sink(), reinterpret_cast<gpointer>(newSampleCallback), this);
     m_capturer->stop();
 }
 

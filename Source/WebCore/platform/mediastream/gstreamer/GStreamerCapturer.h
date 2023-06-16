@@ -44,8 +44,8 @@ public:
         virtual void sourceCapsChanged(const GstCaps*) { }
     };
 
-    GStreamerCapturer(GStreamerCaptureDevice, GRefPtr<GstCaps>);
-    GStreamerCapturer(const char* sourceFactory, GRefPtr<GstCaps>, CaptureDevice::DeviceType);
+    GStreamerCapturer(GStreamerCaptureDevice&&, GRefPtr<GstCaps>&&);
+    GStreamerCapturer(const char* sourceFactory, GRefPtr<GstCaps>&&, CaptureDevice::DeviceType);
     virtual ~GStreamerCapturer();
 
     void addObserver(Observer&);
@@ -53,7 +53,7 @@ public:
     void forEachObserver(const Function<void(Observer&)>&);
 
     void setupPipeline();
-    void play();
+    void start();
     void stop();
     GstCaps* caps();
 
@@ -78,7 +78,7 @@ protected:
     GRefPtr<GstElement> m_src;
     GRefPtr<GstElement> m_valve;
     GRefPtr<GstElement> m_capsfilter;
-    GRefPtr<GstDevice> m_device;
+    std::optional<GStreamerCaptureDevice> m_device { };
     GRefPtr<GstCaps> m_caps;
     GRefPtr<GstElement> m_pipeline;
     const char* m_sourceFactory;

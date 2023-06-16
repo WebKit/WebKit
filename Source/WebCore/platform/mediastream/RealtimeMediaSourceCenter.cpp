@@ -205,10 +205,14 @@ void RealtimeMediaSourceCenter::captureDevicesChanged()
 {
     ASSERT(isMainThread());
 
+#if USE(GSTREAMER)
+    triggerDevicesChangedObservers();
+#else
     // When a device with camera and microphone is attached or detached, the CaptureDevice notification for
     // the different devices won't arrive at the same time so delay a bit so we can coalesce the callbacks.
     if (!m_debounceTimer.isActive())
         m_debounceTimer.startOneShot(deviceChangeDebounceTimerInterval);
+#endif
 }
 
 void RealtimeMediaSourceCenter::triggerDevicesChangedObservers()

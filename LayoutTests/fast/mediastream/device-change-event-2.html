@@ -93,6 +93,7 @@
 
             testRunner.addMockMicrophoneDevice("id4", "microphone 3");
             testRunner.addMockMicrophoneDevice("id5", "microphone 4");
+            navigator.mediaDevices.ondevicechange = () => { };
         });
         assert_equals(eventCount, 1, "one event fired");
 
@@ -101,6 +102,7 @@
 
     promise_test(async (test) => {
 
+        navigator.mediaDevices.ondevicechange = () => { };
         await setup(test);
 
         await new Promise((resolve, reject) => {
@@ -135,6 +137,7 @@
     }, "'devicechange' event is not fired when the document doesn't has focus or permission to capture");
 
     promise_test(async (test) => {
+        navigator.mediaDevices.ondevicechange = () => { };
 
         await setup(test);
 
