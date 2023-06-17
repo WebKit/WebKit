@@ -58,6 +58,9 @@ AudioSampleBufferCompressor::AudioSampleBufferCompressor()
 
 AudioSampleBufferCompressor::~AudioSampleBufferCompressor()
 {
+    if (m_outputBufferQueue)
+        PAL::CMBufferQueueRemoveTrigger(m_outputBufferQueue.get(), m_triggerToken);
+
     if (m_converter) {
         PAL::AudioConverterDispose(m_converter);
         m_converter = nullptr;
@@ -79,7 +82,7 @@ bool AudioSampleBufferCompressor::initialize(CMBufferQueueTriggerCallback callba
         return false;
     }
     m_outputBufferQueue = adoptCF(outputBufferQueue);
-    PAL::CMBufferQueueInstallTrigger(m_outputBufferQueue.get(), callback, callbackObject, kCMBufferQueueTrigger_WhenDataBecomesReady, PAL::kCMTimeZero, NULL);
+    PAL::CMBufferQueueInstallTrigger(m_outputBufferQueue.get(), callback, callbackObject, kCMBufferQueueTrigger_WhenDataBecomesReady, PAL::kCMTimeZero, &m_triggerToken);
 
     m_isEncoding = true;
     return true;

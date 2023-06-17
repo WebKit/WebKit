@@ -289,6 +289,8 @@ SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CoreMedia, CMBufferQueueGetEndPresentationTim
 #define CMBufferQueueGetEndPresentationTimeStamp softLink_CoreMedia_CMBufferQueueGetEndPresentationTimeStamp
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CoreMedia, CMBufferQueueInstallTrigger, OSStatus, (CMBufferQueueRef queue, CMBufferQueueTriggerCallback callback, void* refcon, CMBufferQueueTriggerCondition condition, CMTime time, CMBufferQueueTriggerToken* triggerTokenOut), (queue, callback, refcon, condition, time, triggerTokenOut))
 #define CMBufferQueueInstallTrigger softLink_CoreMedia_CMBufferQueueInstallTrigger
+SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CoreMedia, CMBufferQueueRemoveTrigger, OSStatus, (CMBufferQueueRef queue, CMBufferQueueTriggerToken triggerToken), (queue, triggerToken))
+#define CMBufferQueueRemoveTrigger softLink_CoreMedia_CMBufferQueueRemoveTrigger
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CoreMedia, CMBufferQueueInstallTriggerWithIntegerThreshold, OSStatus, (CMBufferQueueRef queue, CMBufferQueueTriggerCallback triggerCallback, void* triggerRefcon, CMBufferQueueTriggerCondition triggerCondition, CMItemCount triggerThreshold, CMBufferQueueTriggerToken* triggerTokenOut), (queue, triggerCallback, triggerRefcon, triggerCondition, triggerThreshold, triggerTokenOut))
 #define CMBufferQueueInstallTriggerWithIntegerThreshold softLink_CoreMedia_CMBufferQueueInstallTriggerWithIntegerThreshold
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CoreMedia, CMBufferQueueMarkEndOfData, OSStatus, (CMBufferQueueRef queue), (queue))

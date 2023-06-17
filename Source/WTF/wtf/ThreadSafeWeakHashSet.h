@@ -94,7 +94,7 @@ public:
     template<typename U, std::enable_if_t<std::is_convertible_v<U*, T*>>* = nullptr>
     typename HashSet<std::pair<RefPtr<ThreadSafeWeakPtrControlBlock>, const T*>>::AddResult add(const U& value)
     {
-        RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!value.controlBlock().objectHasBeenDeleted());
+        RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!value.controlBlock().objectHasStartedDeletion());
         Locker locker { m_lock };
         RefPtr retainedControlBlock { &value.controlBlock() };
         amortizedCleanupIfNeeded();
@@ -132,7 +132,7 @@ public:
         amortizedCleanupIfNeeded();
         for (auto& pair : m_set) {
             auto& controlBlock = pair.first;
-            if (!controlBlock->objectHasBeenDeleted())
+            if (!controlBlock->objectHasStartedDeletion())
                 return false;
         }
         return true;
@@ -178,7 +178,7 @@ private:
     {
         if (++m_operationCountSinceLastCleanup / 2 > m_set.size()) {
             m_set.removeIf([] (auto& pair) {
-                return pair.first->objectHasBeenDeleted();
+                return pair.first->objectHasStartedDeletion();
             });
             m_operationCountSinceLastCleanup = 0;
         }

@@ -111,7 +111,7 @@ public:
         return nullptr;
     }
 
-    bool objectHasBeenDeleted() const
+    bool objectHasStartedDeletion() const
     {
         Locker locker { m_lock };
         return !m_object;
@@ -161,7 +161,6 @@ public:
         : m_controlBlock(controlBlock(retainedReference))
         , m_objectOfCorrectType(static_cast<const T*>(&retainedReference))
     {
-        RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!m_controlBlock->objectHasBeenDeleted());
     }
 
     template<typename U>
@@ -169,7 +168,6 @@ public:
         : m_controlBlock(retainedPointer ? controlBlock(*retainedPointer) : nullptr)
         , m_objectOfCorrectType(static_cast<const T*>(retainedPointer))
     {
-        RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!retainedPointer || !m_controlBlock->objectHasBeenDeleted());
     }
 
     template<typename U>
@@ -199,7 +197,6 @@ public:
         m_controlBlock = controlBlock(retainedReference);
         const U* retainedPointer = static_cast<const U*>(&retainedReference);
         m_objectOfCorrectType = static_cast<const T*>(retainedPointer);
-        RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!m_controlBlock->objectHasBeenDeleted());
         return *this;
     }
 
@@ -208,7 +205,6 @@ public:
     {
         m_controlBlock = retainedPointer ? controlBlock(*retainedPointer) : nullptr;
         m_objectOfCorrectType = static_cast<const T*>(retainedPointer);
-        RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(!retainedPointer || !m_controlBlock->objectHasBeenDeleted());
         return *this;
     }
 
