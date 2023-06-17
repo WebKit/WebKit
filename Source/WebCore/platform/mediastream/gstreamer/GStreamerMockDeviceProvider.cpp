@@ -21,7 +21,7 @@
 #include "config.h"
 #include "GStreamerMockDeviceProvider.h"
 
-#if ENABLE(MEDIA_STREAM) && USE(GSTREAMER_WEBRTC)
+#if ENABLE(MEDIA_STREAM) && USE(GSTREAMER)
 
 #include "GStreamerMockDevice.h"
 #include "MockRealtimeMediaSourceCenter.h"
@@ -70,4 +70,4 @@ static void webkit_mock_device_provider_class_init(GStreamerMockDeviceProviderCl
 
 #undef GST_CAT_DEFAULT
 
-#endif // ENABLE(MEDIA_STREAM) && USE(GSTREAMER_WEBRTC)
+#endif // ENABLE(MEDIA_STREAM) && USE(GSTREAMER)

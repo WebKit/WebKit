@@ -47,4 +47,4 @@ struct _GStreamerMockDeviceProviderClass {
 
 GType webkit_mock_device_provider_get_type(void);
 
-#endif // ENABLE(MEDIA_STREAM) &&  USE(GSTREAMER)
+#endif // ENABLE(MEDIA_STREAM) && USE(GSTREAMER)
