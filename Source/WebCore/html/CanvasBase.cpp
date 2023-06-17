@@ -63,8 +63,9 @@ const InterpolationQuality defaultInterpolationQuality = InterpolationQuality::D
 static std::optional<size_t> maxCanvasAreaForTesting;
 static std::optional<size_t> maxActivePixelMemoryForTesting;
 
-CanvasBase::CanvasBase(IntSize size)
+CanvasBase::CanvasBase(IntSize size, const std::optional<NoiseInjectionHashSalt>& noiseHashSalt)
     : m_size(size)
+    , m_canvasNoiseHashSalt(noiseHashSalt)
 {
 }
 
@@ -73,6 +74,7 @@ CanvasBase::~CanvasBase()
     ASSERT(m_didNotifyObserversCanvasDestroyed);
     ASSERT(m_observers.isEmptyIgnoringNullReferences());
     ASSERT(!m_imageBuffer);
+    m_canvasNoiseHashSalt = std::nullopt;
 }
 
 GraphicsContext* CanvasBase::drawingContext() const
@@ -109,8 +111,8 @@ void CanvasBase::makeRenderingResultsAvailable()
 {
     if (auto* context = renderingContext()) {
         context->paintRenderingResultsToCanvas();
-        if (auto noiseInjectionHashSalt = shouldInjectNoiseBeforeReadback() ? scriptExecutionContext()->noiseInjectionHashSalt() : std::nullopt)
-            m_canvasNoiseInjection.postProcessDirtyCanvasBuffer(buffer(), *noiseInjectionHashSalt);
+        if (m_canvasNoiseHashSalt)
+            m_canvasNoiseInjection.postProcessDirtyCanvasBuffer(buffer(), *m_canvasNoiseHashSalt);
     }
 }
 
@@ -380,13 +382,13 @@ RefPtr<ImageBuffer> CanvasBase::allocateImageBuffer(bool usesDisplayListDrawing,
 bool CanvasBase::shouldInjectNoiseBeforeReadback() const
 {
     // Note, every early-return resulting from this check potentially leaks this state. This is a risk that we're accepting right now.
-    return m_imageBuffer && scriptExecutionContext() && scriptExecutionContext()->noiseInjectionHashSalt();
+    return !!m_canvasNoiseHashSalt;
 }
 
 bool CanvasBase::postProcessPixelBufferResults(Ref<PixelBuffer>&& pixelBuffer) const
 {
-    if (auto noiseInjectionHashSalt = shouldInjectNoiseBeforeReadback() ? scriptExecutionContext()->noiseInjectionHashSalt() : std::nullopt)
-        return m_canvasNoiseInjection.postProcessPixelBufferResults(std::forward<Ref<PixelBuffer>>(pixelBuffer), *noiseInjectionHashSalt);
+    if (m_canvasNoiseHashSalt)
+        return m_canvasNoiseInjection.postProcessPixelBufferResults(std::forward<Ref<PixelBuffer>>(pixelBuffer), *m_canvasNoiseHashSalt);
     return false;
 }
 
