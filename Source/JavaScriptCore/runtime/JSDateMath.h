@@ -160,6 +160,13 @@ private:
         LocalTimeOffsetCache* m_after;
     };
 
+    struct YearMonthDayCache {
+        int32_t m_days { 0 };
+        int32_t m_year { 0 };
+        int32_t m_month { 0 };
+        int32_t m_day { 0 };
+    };
+
     void timeZoneCacheSlow();
     LocalTimeOffset localTimeOffset(int64_t millisecondsFromEpoch, WTF::TimeType inputTimeType = WTF::UTCTime)
     {
@@ -177,8 +184,11 @@ private:
         return m_timeZoneCache.get();
     }
 
+    std::tuple<int32_t, int32_t, int32_t> yearMonthDayFromDaysWithCache(int32_t days);
+
     std::unique_ptr<OpaqueICUTimeZone, OpaqueICUTimeZoneDeleter> m_timeZoneCache;
     std::array<DSTCache, 2> m_caches;
+    std::optional<YearMonthDayCache> m_yearMonthDayCache;
     String m_cachedDateString;
     double m_cachedDateStringValue;
     DateInstanceCache m_dateInstanceCache;

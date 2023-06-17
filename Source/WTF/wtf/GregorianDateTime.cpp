@@ -56,7 +56,7 @@ GregorianDateTime::GregorianDateTime(double ms, LocalTimeOffset localTime)
         setYear(year);
     }
     setIsDST(localTime.isDST);
-    setUTCOffsetInMinute(localTime.offset / WTF::msPerMinute);
+    setUTCOffsetInMinute(localTime.offset / WTF::Int64Milliseconds::msPerMinute);
 }
 
 void GregorianDateTime::setToCurrentLocalTime()

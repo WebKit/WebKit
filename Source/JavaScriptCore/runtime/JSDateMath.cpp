@@ -384,6 +384,25 @@ double DateCache::localTimeToMS(double milliseconds, WTF::TimeType inputTimeType
     return milliseconds;
 }
 
+std::tuple<int32_t, int32_t, int32_t> DateCache::yearMonthDayFromDaysWithCache(int32_t days)
+{
+    if (m_yearMonthDayCache) {
+        // Check conservatively if the given 'days' has
+        // the same year and month as the cached 'days'.
+        int32_t cachedDays = m_yearMonthDayCache->m_days;
+        int32_t newDay = m_yearMonthDayCache->m_day + (days - cachedDays);
+        if (newDay >= 1 && newDay <= 28) {
+            int32_t year = m_yearMonthDayCache->m_year;
+            int32_t month = m_yearMonthDayCache->m_month;
+            m_yearMonthDayCache = { days, year, month, newDay };
+            return std::tuple { year, month, newDay };
+        }
+    }
+    auto [ year, month, day ] = WTF::yearMonthDayFromDays(days);
+    m_yearMonthDayCache = { days, year, month, day };
+    return std::tuple { year, month, day };
+}
+
 // input is UTC
 void DateCache::msToGregorianDateTime(double millisecondsFromEpoch, WTF::TimeType outputTimeType, GregorianDateTime& tm)
 {
@@ -392,7 +411,17 @@ void DateCache::msToGregorianDateTime(double millisecondsFromEpoch, WTF::TimeTyp
         localTime = localTimeOffset(static_cast<int64_t>(millisecondsFromEpoch));
         millisecondsFromEpoch += localTime.offset;
     }
-    tm = GregorianDateTime(millisecondsFromEpoch, localTime);
+    if (std::isfinite(millisecondsFromEpoch)) {
+        WTF::Int64Milliseconds timeClipped(static_cast<int64_t>(millisecondsFromEpoch));
+        int32_t days = WTF::msToDays(timeClipped);
+        int32_t timeInDayMS = WTF::timeInDay(timeClipped, days);
+        auto [year, month, day] = yearMonthDayFromDaysWithCache(days);
+        int32_t hour = timeInDayMS / (60 * 60 * 1000);
+        int32_t minute = (timeInDayMS / (60 * 1000)) % 60;
+        int32_t second = (timeInDayMS / 1000) % 60;
+        tm = GregorianDateTime(year, month, dayInYear(year, month, day), day, WTF::weekDay(days), hour, minute, second, localTime.offset / WTF::Int64Milliseconds::msPerMinute, localTime.isDST);
+    } else
+        tm = GregorianDateTime(millisecondsFromEpoch, localTime);
 }
 
 double DateCache::parseDate(JSGlobalObject* globalObject, VM& vm, const String& date)
@@ -574,6 +603,7 @@ void DateCache::resetIfNecessarySlow()
     m_timeZoneCache.reset();
     for (auto& cache : m_caches)
         cache.reset();
+    m_yearMonthDayCache = std::nullopt;
     m_cachedDateString = String();
     m_cachedDateStringValue = std::numeric_limits<double>::quiet_NaN();
     m_dateInstanceCache.reset();
