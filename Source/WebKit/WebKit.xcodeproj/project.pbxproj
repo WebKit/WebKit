@@ -4696,6 +4696,7 @@
 		4668A0B927AB603F00C720BC /* WebSharedWorkerProvider.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebSharedWorkerProvider.cpp; sourceTree = "<group>"; };
 		4668A0BA27AB604000C720BC /* WebSharedWorkerProvider.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebSharedWorkerProvider.h; sourceTree = "<group>"; };
 		4668A0BB27AB604000C720BC /* WebSharedWorkerObjectConnection.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebSharedWorkerObjectConnection.cpp; sourceTree = "<group>"; };
+		466A4B192A3D293E007E286E /* WebPageCreationParameters.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebPageCreationParameters.serialization.in; sourceTree = "<group>"; };
 		466BC0381FA266C9002FA9C1 /* WebSWContextManagerConnection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebSWContextManagerConnection.cpp; sourceTree = "<group>"; };
 		466BC0391FA266C9002FA9C1 /* WebSWContextManagerConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSWContextManagerConnection.h; sourceTree = "<group>"; };
 		466BC03A1FA266C9002FA9C1 /* WebSWContextManagerConnection.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebSWContextManagerConnection.messages.in; sourceTree = "<group>"; };
@@ -6704,7 +6705,6 @@
 		C0337DD2127A2A0E008FF4F4 /* WebKeyboardEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebKeyboardEvent.cpp; sourceTree = "<group>"; };
 		C0337DD7127A51B6008FF4F4 /* WebTouchEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebTouchEvent.cpp; sourceTree = "<group>"; };
 		C0337DDC127A521C008FF4F4 /* WebPlatformTouchPoint.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebPlatformTouchPoint.cpp; sourceTree = "<group>"; };
-		C06C6093124C14430001682F /* WebPageCreationParameters.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebPageCreationParameters.cpp; sourceTree = "<group>"; };
 		C06C6094124C14430001682F /* WebPageCreationParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPageCreationParameters.h; sourceTree = "<group>"; };
 		C09AE5E8125257C20025825D /* WKNativeEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKNativeEvent.h; sourceTree = "<group>"; };
 		C0CE72581247E4DA00BC0EC4 /* WebPage.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebPage.messages.in; sourceTree = "<group>"; };
@@ -8126,8 +8126,8 @@
 				C0337DAF127A28D0008FF4F4 /* WebMouseEvent.cpp */,
 				0F4000FE2527D6C300E91DA7 /* WebMouseEvent.h */,
 				BCF69F981176CED600471A52 /* WebNavigationDataStore.h */,
-				C06C6093124C14430001682F /* WebPageCreationParameters.cpp */,
 				C06C6094124C14430001682F /* WebPageCreationParameters.h */,
+				466A4B192A3D293E007E286E /* WebPageCreationParameters.serialization.in */,
 				BC7B625112A43C9600D174A4 /* WebPageGroupData.cpp */,
 				BC7B625012A43C9600D174A4 /* WebPageGroupData.h */,
 				5C1B38E02667140700B1545B /* WebPageNetworkParameters.cpp */,

@@ -386,6 +386,7 @@ set(WebKit_SERIALIZATION_IN_FILES
     Shared/WebCoreArgumentCoders.serialization.in
     Shared/WebEvent.serialization.in
     Shared/WebHitTestResultData.serialization.in
+    Shared/WebPageCreationParameters.serialization.in
     Shared/WebPopupItem.serialization.in
     Shared/WebProcessCreationParameters.serialization.in
     Shared/WebProcessDataStoreParameters.serialization.in

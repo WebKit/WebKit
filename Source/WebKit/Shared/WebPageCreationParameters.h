@@ -77,9 +77,6 @@ class Encoder;
 namespace WebKit {
 
 struct WebPageCreationParameters {
-    void encode(IPC::Encoder&) const;
-    static std::optional<WebPageCreationParameters> decode(IPC::Decoder&);
-
     WebCore::IntSize viewSize;
 
     OptionSet<WebCore::ActivityState> activityState;

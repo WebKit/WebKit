@@ -522,6 +522,7 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/WebEvent.serialization.in \
 	Shared/WebExtensionControllerParameters.serialization.in \
 	Shared/WebHitTestResultData.serialization.in \
+	Shared/WebPageCreationParameters.serialization.in \
 	Shared/WebPopupItem.serialization.in \
 	Shared/WebProcessCreationParameters.serialization.in \
 	Shared/WebProcessDataStoreParameters.serialization.in \
