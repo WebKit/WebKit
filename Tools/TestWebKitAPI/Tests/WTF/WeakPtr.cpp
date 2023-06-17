@@ -2753,6 +2753,7 @@ std::atomic<size_t> ThreadSafeInstanceCounter::instanceCount;
 
 TEST(WTF_ThreadSafeWeakPtr, ThreadSafety)
 {
+    static_assert(sizeof(ThreadSafeWeakPtr<ThreadSafeInstanceCounter>) == sizeof(uint64_t));
     RefPtr counter = adoptRef(*new ThreadSafeInstanceCounter());
     ThreadSafeWeakPtr<ThreadSafeInstanceCounter> weakPtr(counter);
     EXPECT_NOT_NULL(weakPtr.get());
