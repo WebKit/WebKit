@@ -37,7 +37,7 @@ struct TextBoxSelectableRange;
 
 struct MarkedText {
     // Sorted by paint order
-    enum Type {
+    enum class Type : uint8_t {
         Unmarked,
         GrammarError,
         Correction,

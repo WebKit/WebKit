@@ -125,7 +125,7 @@ Vector<MarkedText> MarkedText::collectForHighlights(const RenderText& renderer, 
 
                     auto [highlightStart, highlightEnd] = highlightData.rangeForTextBox(renderer, selectableRange);
                     if (highlightStart < highlightEnd)
-                        markedTexts.append({ highlightStart, highlightEnd, MarkedText::Highlight, nullptr, highlight.key });
+                        markedTexts.append({ highlightStart, highlightEnd, MarkedText::Type::Highlight, nullptr, highlight.key });
                 }
             }
         }
@@ -140,7 +140,7 @@ Vector<MarkedText> MarkedText::collectForHighlights(const RenderText& renderer, 
 
                     auto [highlightStart, highlightEnd] = highlightData.rangeForTextBox(renderer, selectableRange);
                     if (highlightStart < highlightEnd)
-                        markedTexts.append({ highlightStart, highlightEnd, MarkedText::FragmentHighlight });
+                        markedTexts.append({ highlightStart, highlightEnd, MarkedText::Type::FragmentHighlight });
                 }
             }
         }
@@ -156,7 +156,7 @@ Vector<MarkedText> MarkedText::collectForHighlights(const RenderText& renderer, 
 
                     auto [highlightStart, highlightEnd] = highlightData.rangeForTextBox(renderer, selectableRange);
                     if (highlightStart < highlightEnd)
-                        markedTexts.append({ highlightStart, highlightEnd, MarkedText::AppHighlight });
+                        markedTexts.append({ highlightStart, highlightEnd, MarkedText::Type::AppHighlight });
                 }
             }
         }
@@ -175,21 +175,21 @@ Vector<MarkedText> MarkedText::collectForDocumentMarkers(const RenderText& rende
     auto markedTextTypeForMarkerType = [] (DocumentMarker::MarkerType type) {
         switch (type) {
         case DocumentMarker::Spelling:
-            return MarkedText::SpellingError;
+            return MarkedText::Type::SpellingError;
         case DocumentMarker::Grammar:
-            return MarkedText::GrammarError;
+            return MarkedText::Type::GrammarError;
         case DocumentMarker::CorrectionIndicator:
-            return MarkedText::Correction;
+            return MarkedText::Type::Correction;
         case DocumentMarker::TextMatch:
-            return MarkedText::TextMatch;
+            return MarkedText::Type::TextMatch;
         case DocumentMarker::DictationAlternatives:
-            return MarkedText::DictationAlternatives;
+            return MarkedText::Type::DictationAlternatives;
 #if PLATFORM(IOS_FAMILY)
         case DocumentMarker::DictationPhraseWithAlternatives:
-            return MarkedText::DictationPhraseWithAlternatives;
+            return MarkedText::Type::DictationPhraseWithAlternatives;
 #endif
         default:
-            return MarkedText::Unmarked;
+            return MarkedText::Type::Unmarked;
         }
     };
 
@@ -275,7 +275,7 @@ Vector<MarkedText> MarkedText::collectForDraggedContent(const RenderText& render
     auto draggedContentRanges = renderer.draggedContentRangesBetweenOffsets(selectableRange.start, selectableRange.start + selectableRange.length);
 
     return draggedContentRanges.map([&](const auto& range) -> MarkedText {
-        return { selectableRange.clamp(range.first), selectableRange.clamp(range.second), MarkedText::DraggedContent };
+        return { selectableRange.clamp(range.first), selectableRange.clamp(range.second), MarkedText::Type::DraggedContent };
     });
 }
 

@@ -148,7 +148,7 @@ MarkedText TextBoxPainter<TextBoxPath>::createMarkedTextFromSelectionInBox()
 {
     auto [selectionStart, selectionEnd] = m_renderer.view().selection().rangeForTextBox(m_renderer, m_selectableRange);
     if (selectionStart < selectionEnd)
-        return { selectionStart, selectionEnd, MarkedText::Selection };
+        return { selectionStart, selectionEnd, MarkedText::Type::Selection };
     return { };
 }
 
@@ -241,7 +241,7 @@ void TextBoxPainter<TextBoxPath>::paintCompositionForeground(const StyledMarkedT
         if (highlight.foregroundColor)
             style.textStyles.fillColor = *highlight.foregroundColor;
 
-        paintForeground({ MarkedText { clampedStart, clampedEnd, MarkedText::Unmarked }, style });
+        paintForeground({ MarkedText { clampedStart, clampedEnd, MarkedText::Type::Unmarked }, style });
 
         if (highlight.endOffset > textBox().end())
             break;
@@ -277,7 +277,7 @@ void TextBoxPainter<TextBoxPath>::paintForegroundAndDecorations()
     };
     if (!contentMayNeedStyledMarkedText()) {
         auto& lineStyle = m_isFirstLine ? m_renderer.firstLineStyle() : m_renderer.style();
-        auto markedText = MarkedText { startPosition(), endPosition(), MarkedText::Unmarked };
+        auto markedText = MarkedText { startPosition(), endPosition(), MarkedText::Type::Unmarked };
         auto styledMarkedText = StyledMarkedText { markedText, StyledMarkedText::computeStyleForUnmarkedMarkedText(m_renderer, lineStyle, m_isFirstLine, m_paintInfo) };
         paintCompositionForeground(styledMarkedText);
         return;
@@ -286,7 +286,7 @@ void TextBoxPainter<TextBoxPath>::paintForegroundAndDecorations()
     Vector<MarkedText> markedTexts;
     if (m_paintInfo.phase != PaintPhase::Selection) {
         // The marked texts for the gaps between document markers and selection are implicitly created by subdividing the entire line.
-        markedTexts.append({ startPosition(), endPosition(), MarkedText::Unmarked });
+        markedTexts.append({ startPosition(), endPosition(), MarkedText::Type::Unmarked });
 
         if (!m_isPrinting) {
             markedTexts.appendVector(MarkedText::collectForDocumentMarkers(m_renderer, m_selectableRange, MarkedText::PaintPhase::Foreground));
@@ -315,7 +315,7 @@ void TextBoxPainter<TextBoxPath>::paintForegroundAndDecorations()
     // ... now remove the selection marked text if we are excluding selection.
     if (!m_isPrinting && m_paintInfo.paintBehavior.contains(PaintBehavior::ExcludeSelection)) {
         styledMarkedTexts.removeAllMatching([] (const StyledMarkedText& markedText) {
-            return markedText.type == MarkedText::Selection;
+            return markedText.type == MarkedText::Type::Selection;
         });
     }
 
@@ -477,8 +477,8 @@ void TextBoxPainter<TextBoxPath>::paintForeground(const StyledMarkedText& marked
     if (auto* debugShadow = debugTextShadow())
         textPainter.setShadow(debugShadow);
 
-    GraphicsContextStateSaver stateSaver(context, markedText.style.textStyles.strokeWidth > 0 || markedText.type == MarkedText::DraggedContent);
-    if (markedText.type == MarkedText::DraggedContent)
+    GraphicsContextStateSaver stateSaver(context, markedText.style.textStyles.strokeWidth > 0 || markedText.type == MarkedText::Type::DraggedContent);
+    if (markedText.type == MarkedText::Type::DraggedContent)
         context.setAlpha(markedText.style.alpha);
     updateGraphicsContext(context, markedText.style.textStyles);
 
@@ -501,7 +501,7 @@ TextDecorationPainter TextBoxPainter<TextBoxPath>::createDecorationPainter(const
     // Note that if the text is truncated, we let the thing being painted in the truncation
     // draw its own decoration.
     GraphicsContextStateSaver stateSaver { context, false };
-    bool isDraggedContent = markedText.type == MarkedText::DraggedContent;
+    bool isDraggedContent = markedText.type == MarkedText::Type::DraggedContent;
     if (isDraggedContent || !clipOutRect.isEmpty()) {
         stateSaver.save();
         if (isDraggedContent)
@@ -829,16 +829,16 @@ void TextBoxPainter<TextBoxPath>::paintPlatformDocumentMarker(const MarkedText& 
 
     auto lineStyleMode = [&] {
         switch (markedText.type) {
-        case MarkedText::SpellingError:
+        case MarkedText::Type::SpellingError:
             return DocumentMarkerLineStyleMode::Spelling;
-        case MarkedText::GrammarError:
+        case MarkedText::Type::GrammarError:
             return DocumentMarkerLineStyleMode::Grammar;
-        case MarkedText::Correction:
+        case MarkedText::Type::Correction:
             return DocumentMarkerLineStyleMode::AutocorrectionReplacement;
-        case MarkedText::DictationAlternatives:
+        case MarkedText::Type::DictationAlternatives:
             return DocumentMarkerLineStyleMode::DictationAlternatives;
 #if PLATFORM(IOS_FAMILY)
-        case MarkedText::DictationPhraseWithAlternatives:
+        case MarkedText::Type::DictationPhraseWithAlternatives:
             // FIXME: Rename DocumentMarkerLineStyle::TextCheckingDictationPhraseWithAlternatives and remove the PLATFORM(IOS_FAMILY)-guard.
             return DocumentMarkerLineStyleMode::TextCheckingDictationPhraseWithAlternatives;
 #endif

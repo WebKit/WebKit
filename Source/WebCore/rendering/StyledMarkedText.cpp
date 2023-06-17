@@ -38,17 +38,17 @@ static StyledMarkedText resolveStyleForMarkedText(const MarkedText& markedText, 
 {
     auto style = baseStyle;
     switch (markedText.type) {
-    case MarkedText::Correction:
-    case MarkedText::DictationAlternatives:
+    case MarkedText::Type::Correction:
+    case MarkedText::Type::DictationAlternatives:
 #if PLATFORM(IOS_FAMILY)
     // FIXME: See <rdar://problem/8933352>. Also, remove the PLATFORM(IOS_FAMILY)-guard.
-    case MarkedText::DictationPhraseWithAlternatives:
+    case MarkedText::Type::DictationPhraseWithAlternatives:
 #endif
-    case MarkedText::GrammarError:
-    case MarkedText::SpellingError:
-    case MarkedText::Unmarked:
+    case MarkedText::Type::GrammarError:
+    case MarkedText::Type::SpellingError:
+    case MarkedText::Type::Unmarked:
         break;
-    case MarkedText::Highlight:
+    case MarkedText::Type::Highlight:
         if (auto renderStyle = renderer.parent()->getUncachedPseudoStyle({ PseudoId::Highlight, markedText.highlightName }, &renderer.style())) {
             style.backgroundColor = renderStyle->colorResolvingCurrentColor(renderStyle->backgroundColor());
             style.textStyles.fillColor = renderStyle->computedStrokeColor();
@@ -72,22 +72,22 @@ static StyledMarkedText resolveStyleForMarkedText(const MarkedText& markedText, 
             }
         }
         break;
-    case MarkedText::FragmentHighlight: {
+    case MarkedText::Type::FragmentHighlight: {
         OptionSet<StyleColorOptions> styleColorOptions = { StyleColorOptions::UseSystemAppearance };
         style.backgroundColor = renderer.theme().annotationHighlightColor(styleColorOptions);
         break;
     }
 #if ENABLE(APP_HIGHLIGHTS)
-    case MarkedText::AppHighlight: {
+    case MarkedText::Type::AppHighlight: {
         OptionSet<StyleColorOptions> styleColorOptions = { StyleColorOptions::UseSystemAppearance };
         style.backgroundColor = renderer.theme().annotationHighlightColor(styleColorOptions);
         break;
     }
 #endif
-    case MarkedText::DraggedContent:
+    case MarkedText::Type::DraggedContent:
         style.alpha = 0.25;
         break;
-    case MarkedText::Selection: {
+    case MarkedText::Type::Selection: {
         style.textStyles = computeTextSelectionPaintStyle(style.textStyles, renderer, lineStyle, paintInfo, style.textShadow);
 
         Color selectionBackgroundColor = renderer.selectionBackgroundColor();
@@ -96,7 +96,7 @@ static StyledMarkedText resolveStyleForMarkedText(const MarkedText& markedText, 
             style.backgroundColor = selectionBackgroundColor.invertedColorWithAlpha(1.0);
         break;
     }
-    case MarkedText::TextMatch: {
+    case MarkedText::Type::TextMatch: {
         // Text matches always use the light system appearance.
         OptionSet<StyleColorOptions> styleColorOptions = { StyleColorOptions::UseSystemAppearance };
 #if PLATFORM(MAC)
@@ -130,7 +130,7 @@ Vector<StyledMarkedText> StyledMarkedText::subdivideAndResolve(const Vector<Mark
     auto& lineStyle = isFirstLine ? renderer.firstLineStyle() : renderer.style();
     auto baseStyle = computeStyleForUnmarkedMarkedText(renderer, lineStyle, isFirstLine, paintInfo);
 
-    if (textsToSubdivide.size() == 1 && textsToSubdivide[0].type == MarkedText::Unmarked) {
+    if (textsToSubdivide.size() == 1 && textsToSubdivide[0].type == MarkedText::Type::Unmarked) {
         StyledMarkedText styledMarkedText = textsToSubdivide[0];
         styledMarkedText.style = WTFMove(baseStyle);
         return { styledMarkedText };
