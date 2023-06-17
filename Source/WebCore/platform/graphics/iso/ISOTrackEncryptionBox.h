@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,6 +31,9 @@ namespace WebCore {
 
 class WEBCORE_EXPORT ISOTrackEncryptionBox final : public ISOFullBox {
 public:
+    ISOTrackEncryptionBox();
+    ~ISOTrackEncryptionBox();
+
     static FourCC boxTypeName() { return "tenc"; }
 
     std::optional<int8_t> defaultCryptByteBlock() const { return m_defaultCryptByteBlock; }
@@ -42,8 +45,9 @@ public:
 
     bool parseWithoutTypeAndSize(JSC::DataView&);
 
-private:
     bool parse(JSC::DataView&, unsigned& offset) override;
+
+private:
     bool parsePayload(JSC::DataView&, unsigned& offset);
 
     std::optional<int8_t> m_defaultCryptByteBlock;

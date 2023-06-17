@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -63,9 +63,9 @@ public:
 
     String toJSONString() const;
 
-private:
-    bool parse(JSC::DataView&, unsigned& offset) override;
+    WEBCORE_EXPORT bool parse(JSC::DataView&, unsigned& offset) override;
 
+private:
     MediaTime m_presentationTime;
     MediaTime m_duration;
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2018 Metrological Group B.V.
  * Copyright (C) 2018 Igalia S.L
  *
@@ -33,6 +33,9 @@
 using JSC::DataView;
 
 namespace WebCore {
+
+ISOProtectionSystemSpecificHeaderBox::ISOProtectionSystemSpecificHeaderBox() = default;
+ISOProtectionSystemSpecificHeaderBox::~ISOProtectionSystemSpecificHeaderBox() = default;
 
 std::optional<Vector<uint8_t>> ISOProtectionSystemSpecificHeaderBox::peekSystemID(JSC::DataView& view, unsigned offset)
 {
