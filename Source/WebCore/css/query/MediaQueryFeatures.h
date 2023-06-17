@@ -60,6 +60,7 @@ const FeatureSchema& scan();
 const FeatureSchema& transform2d();
 const FeatureSchema& transform3d();
 const FeatureSchema& transition();
+const FeatureSchema& update();
 const FeatureSchema& videoPlayableInline();
 const FeatureSchema& width();
 #if ENABLE(APPLICATION_MANIFEST)

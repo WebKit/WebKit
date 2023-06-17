@@ -1270,13 +1270,13 @@ PASS expression_should_be_known: overflow-inline: scroll
 PASS expression_should_be_parseable: overflow-inline: some-random-invalid-thing
 PASS expression_should_be_unknown: overflow-inline: some-random-invalid-thing
 PASS Sanity check for overflow-inline
-FAIL expression_should_be_known: update assert_true: expected true got false
-FAIL expression_should_be_known: update: none assert_true: expected true got false
-FAIL expression_should_be_known: update: slow assert_true: expected true got false
-FAIL expression_should_be_known: update: fast assert_true: expected true got false
+PASS expression_should_be_known: update
+PASS expression_should_be_known: update: none
+PASS expression_should_be_known: update: slow
+PASS expression_should_be_known: update: fast
 PASS expression_should_be_parseable: update: some-random-invalid-thing
 PASS expression_should_be_unknown: update: some-random-invalid-thing
-FAIL Sanity check for update assert_not_equals: update should be equivalent to not (update: none) got disallowed value false
+PASS Sanity check for update
 PASS expression_should_be_known: hover
 PASS expression_should_be_known: hover: hover
 PASS expression_should_be_known: hover: none

@@ -631,6 +631,25 @@ const FeatureSchema& transition()
     return schema;
 }
 
+const FeatureSchema& update()
+{
+    static MainThreadNeverDestroyed<IdentifierSchema> schema {
+        "update"_s,
+        Vector { CSSValueNone, CSSValueSlow, CSSValueFast },
+        [](auto& context) {
+            auto& frame = *context.document.frame();
+            auto* frameView = frame.view();
+
+            if (frameView && frameView->mediaType() == printAtom())
+                return MatchingIdentifiers { CSSValueNone };
+
+            // FIXME: Potentially add a hook for ports to change this value.
+            return MatchingIdentifiers { CSSValueFast };
+        }
+    };
+    return schema;
+}
+
 const FeatureSchema& videoPlayableInline()
 {
     static MainThreadNeverDestroyed<BooleanSchema> schema {
@@ -697,12 +716,14 @@ const FeatureSchema& overflowBlock()
         Vector { CSSValueNone, CSSValueScroll, CSSValuePaged },
         [](auto& context) {
             // FIXME: Match none when scrollEnabled is set to false by UIKit.
-            bool usesPaginatedMode = [&] {
+            bool matchesPaged = [&] {
                 auto& frame = *context.document.frame();
                 auto* frameView = frame.view();
-                return frameView && frameView->pagination().mode != PaginationMode::Unpaginated;
+                if (!frameView)
+                    return false;
+                return frameView->mediaType() == printAtom() || frameView->pagination().mode != PaginationMode::Unpaginated;
             }();
-            return MatchingIdentifiers { usesPaginatedMode ? CSSValuePaged : CSSValueScroll };
+            return MatchingIdentifiers { matchesPaged ? CSSValuePaged : CSSValueScroll };
         }
     };
     return schema;
@@ -771,6 +792,7 @@ Vector<const FeatureSchema*> allSchemas()
         &transform2d(),
         &transform3d(),
         &transition(),
+        &update(),
         &videoPlayableInline(),
         &width(),
 #if ENABLE(APPLICATION_MANIFEST)

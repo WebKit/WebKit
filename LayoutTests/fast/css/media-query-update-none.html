@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<style>
+    :root {
+        color: blue;
+    }
+    @media (update: none) {
+        :root {
+            color: green;
+        }
+    }
+    @media (update: fast) {
+        :root {
+            color: red;
+        }
+    }
+    @media (update: slow) {
+        :root {
+            color: red;
+        }
+    }
+</style>
+<p>This text should be green when printing.</p>
+<script>
+if (window.internals)
+    internals.settings.setMediaTypeOverride("print");
+</script>
+</html>
