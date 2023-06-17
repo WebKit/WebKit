@@ -28,6 +28,7 @@
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/SecurityOriginData.h>
+#include <wtf/ProcessID.h>
 
 namespace WebKit {
 
@@ -41,6 +42,7 @@ struct FrameInfoData {
     String frameName;
     std::optional<WebCore::FrameIdentifier> frameID;
     std::optional<WebCore::FrameIdentifier> parentFrameID;
+    ProcessID processID;
 };
 
 }

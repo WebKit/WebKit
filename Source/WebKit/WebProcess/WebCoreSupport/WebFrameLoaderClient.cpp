@@ -98,6 +98,7 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navigat
         { },
         WTFMove(originatingFrameID),
         WTFMove(parentFrameID),
+        getCurrentProcessID()
     };
 
     std::optional<WebPageProxyIdentifier> originatingPageID;

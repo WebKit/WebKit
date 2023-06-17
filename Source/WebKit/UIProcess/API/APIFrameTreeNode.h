@@ -50,6 +50,7 @@ public:
     const Vector<WebKit::FrameTreeNodeData>& childFrames() const { return m_data.children; }
     Ref<FrameHandle> handle() const;
     RefPtr<FrameHandle> parentFrameHandle() const;
+    ProcessID processID() const { return m_data.info.processID; }
 
 private:
     FrameTreeNode(WebKit::FrameTreeNodeData&& data, WebKit::WebPageProxy& page)

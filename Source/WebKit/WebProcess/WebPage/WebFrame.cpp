@@ -240,6 +240,7 @@ FrameInfoData WebFrame::info() const
         m_coreFrame ? m_coreFrame->tree().specifiedName().string() : String(),
         frameID(),
         parent ? std::optional<WebCore::FrameIdentifier> { parent->frameID() } : std::nullopt,
+        getCurrentProcessID()
     };
 
     return info;
