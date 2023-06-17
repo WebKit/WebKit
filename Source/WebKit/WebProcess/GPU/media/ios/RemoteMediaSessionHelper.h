@@ -41,7 +41,7 @@ class RemoteMediaSessionHelper final
     , public IPC::MessageReceiver
     , public GPUProcessConnection::Client {
 public:
-    RemoteMediaSessionHelper(WebProcess&);
+    RemoteMediaSessionHelper();
     virtual ~RemoteMediaSessionHelper() = default;
 
     IPC::Connection& ensureConnection();
@@ -71,7 +71,6 @@ private:
     // Messages
     void activeVideoRouteDidChange(SupportsAirPlayVideo, WebCore::MediaPlaybackTargetContext&&);
 
-    WebProcess& m_process;
     ThreadSafeWeakPtr<GPUProcessConnection> m_gpuProcessConnection;
 };
 

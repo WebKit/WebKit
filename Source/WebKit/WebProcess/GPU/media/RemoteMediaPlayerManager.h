@@ -55,7 +55,6 @@ public:
     ~RemoteMediaPlayerManager();
 
     static const char* supplementName();
-    WebProcess& parentProcess() const { return m_process; }
 
     void setUseGPUProcess(bool);
 
@@ -91,7 +90,6 @@ private:
     void clearMediaCacheForOrigins(WebCore::MediaPlayerEnums::MediaEngineIdentifier, const String&, const HashSet<WebCore::SecurityOriginData>&);
 
     HashMap<WebCore::MediaPlayerIdentifier, WeakPtr<MediaPlayerPrivateRemote>> m_players;
-    WebProcess& m_process;
     ThreadSafeWeakPtr<GPUProcessConnection> m_gpuProcessConnection;
 };
 

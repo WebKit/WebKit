@@ -102,8 +102,7 @@ private:
     RemoteMediaPlayerManager& m_manager;
 };
 
-RemoteMediaPlayerManager::RemoteMediaPlayerManager(WebProcess& process)
-    : m_process(process)
+RemoteMediaPlayerManager::RemoteMediaPlayerManager(WebProcess&)
 {
 }
 

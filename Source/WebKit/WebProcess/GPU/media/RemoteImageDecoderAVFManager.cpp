@@ -59,8 +59,7 @@ void RemoteImageDecoderAVFManager::deleteRemoteImageDecoder(const ImageDecoderId
         gpuProcessConnection->connection().send(Messages::RemoteImageDecoderAVFProxy::DeleteDecoder(identifier), 0);
 }
 
-RemoteImageDecoderAVFManager::RemoteImageDecoderAVFManager(WebProcess& process)
-    : m_process(process)
+RemoteImageDecoderAVFManager::RemoteImageDecoderAVFManager(WebProcess&)
 {
 }
 

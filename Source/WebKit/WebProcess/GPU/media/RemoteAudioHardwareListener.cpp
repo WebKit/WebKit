@@ -37,12 +37,12 @@ namespace WebKit {
 
 using namespace WebCore;
 
-Ref<RemoteAudioHardwareListener> RemoteAudioHardwareListener::create(AudioHardwareListener::Client& client, WebProcess& webProcess)
+Ref<RemoteAudioHardwareListener> RemoteAudioHardwareListener::create(AudioHardwareListener::Client& client)
 {
-    return adoptRef(*new RemoteAudioHardwareListener(client, webProcess));
+    return adoptRef(*new RemoteAudioHardwareListener(client));
 }
 
-RemoteAudioHardwareListener::RemoteAudioHardwareListener(AudioHardwareListener::Client& client, WebProcess& webProcess)
+RemoteAudioHardwareListener::RemoteAudioHardwareListener(AudioHardwareListener::Client& client)
     : AudioHardwareListener(client)
     , m_identifier(RemoteAudioHardwareListenerIdentifier::generate())
     , m_gpuProcessConnection(WebProcess::singleton().ensureGPUProcessConnection())

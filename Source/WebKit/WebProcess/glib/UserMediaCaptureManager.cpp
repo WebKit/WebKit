@@ -39,14 +39,13 @@ namespace WebKit {
 using namespace WebCore;
 
 UserMediaCaptureManager::UserMediaCaptureManager(WebProcess& process)
-    : m_process(process)
 {
-    m_process.addMessageReceiver(Messages::UserMediaCaptureManager::messageReceiverName(), *this);
+    process.addMessageReceiver(Messages::UserMediaCaptureManager::messageReceiverName(), *this);
 }
 
 UserMediaCaptureManager::~UserMediaCaptureManager()
 {
-    m_process.removeMessageReceiver(Messages::UserMediaCaptureManager::messageReceiverName());
+    WebProcess::singleton().removeMessageReceiver(Messages::UserMediaCaptureManager::messageReceiverName());
 }
 
 void UserMediaCaptureManager::validateUserMediaRequestConstraints(WebCore::MediaStreamRequest request, WebCore::MediaDeviceHashSalts&& deviceIdentifierHashSalts, ValidateUserMediaRequestConstraintsCallback&& completionHandler)

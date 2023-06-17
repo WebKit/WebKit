@@ -1848,11 +1848,6 @@ void WebProcess::seedResourceLoadStatisticsForTesting(const RegistrableDomain& f
 RefPtr<API::Object> WebProcess::transformHandlesToObjects(API::Object* object)
 {
     struct Transformer final : UserData::Transformer {
-        Transformer(WebProcess& webProcess)
-            : m_webProcess(webProcess)
-        {
-        }
-
         bool shouldTransformObject(const API::Object& object) const override
         {
             switch (object.type()) {
@@ -1876,24 +1871,22 @@ RefPtr<API::Object> WebProcess::transformHandlesToObjects(API::Object* object)
         {
             switch (object.type()) {
             case API::Object::Type::FrameHandle:
-                return m_webProcess.webFrame(static_cast<const API::FrameHandle&>(object).frameID());
+                return WebProcess::singleton().webFrame(static_cast<const API::FrameHandle&>(object).frameID());
 
             case API::Object::Type::PageHandle:
-                return m_webProcess.webPage(static_cast<const API::PageHandle&>(object).webPageID());
+                return WebProcess::singleton().webPage(static_cast<const API::PageHandle&>(object).webPageID());
 
 #if PLATFORM(COCOA)
             case API::Object::Type::ObjCObjectGraph:
-                return m_webProcess.transformHandlesToObjects(static_cast<ObjCObjectGraph&>(object));
+                return WebProcess::singleton().transformHandlesToObjects(static_cast<ObjCObjectGraph&>(object));
 #endif
             default:
                 return &object;
             }
         }
-
-        WebProcess& m_webProcess;
     };
 
-    return UserData::transform(object, Transformer(*this));
+    return UserData::transform(object, Transformer());
 }
 
 RefPtr<API::Object> WebProcess::transformObjectsToHandles(API::Object* object)
@@ -2217,14 +2210,14 @@ void WebProcess::setUseGPUProcessForMedia(bool useGPUProcessForMedia)
 
 #if USE(AUDIO_SESSION)
     if (useGPUProcessForMedia)
-        AudioSession::setSharedSession(RemoteAudioSession::create(*this));
+        AudioSession::setSharedSession(RemoteAudioSession::create());
     else
         AudioSession::setSharedSession(AudioSession::create());
 #endif
 
 #if PLATFORM(IOS_FAMILY)
     if (useGPUProcessForMedia)
-        MediaSessionHelper::setSharedHelper(adoptRef(*new RemoteMediaSessionHelper(*this)));
+        MediaSessionHelper::setSharedHelper(adoptRef(*new RemoteMediaSessionHelper()));
     else
         MediaSessionHelper::resetSharedHelper();
 #endif
@@ -2241,14 +2234,18 @@ void WebProcess::setUseGPUProcessForMedia(bool useGPUProcessForMedia)
     else
         MediaEngineConfigurationFactory::resetFactories();
 
-    if (useGPUProcessForMedia)
-        WebCore::AudioHardwareListener::setCreationFunction([this] (WebCore::AudioHardwareListener::Client& client) { return RemoteAudioHardwareListener::create(client, *this); });
-    else
+    if (useGPUProcessForMedia) {
+        WebCore::AudioHardwareListener::setCreationFunction([] (WebCore::AudioHardwareListener::Client& client) {
+            return RemoteAudioHardwareListener::create(client);
+        });
+    } else
         WebCore::AudioHardwareListener::resetCreationFunction();
 
-    if (useGPUProcessForMedia)
-        WebCore::RemoteCommandListener::setCreationFunction([this] (WebCore::RemoteCommandListenerClient& client) { return RemoteRemoteCommandListener::create(client, *this); });
-    else
+    if (useGPUProcessForMedia) {
+        WebCore::RemoteCommandListener::setCreationFunction([] (WebCore::RemoteCommandListenerClient& client) {
+            return RemoteRemoteCommandListener::create(client);
+        });
+    } else
         WebCore::RemoteCommandListener::resetCreationFunction();
 
 #if PLATFORM(COCOA)

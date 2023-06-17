@@ -39,13 +39,12 @@ namespace WebKit {
 
 using namespace WebCore;
 
-UniqueRef<RemoteAudioSession> RemoteAudioSession::create(WebProcess& process)
+UniqueRef<RemoteAudioSession> RemoteAudioSession::create()
 {
-    return makeUniqueRef<RemoteAudioSession>(process);
+    return makeUniqueRef<RemoteAudioSession>();
 }
 
-RemoteAudioSession::RemoteAudioSession(WebProcess& process)
-    : m_process(process)
+RemoteAudioSession::RemoteAudioSession()
 {
     addInterruptionObserver(*this);
 }

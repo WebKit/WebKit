@@ -38,14 +38,13 @@ namespace WebKit {
 
 using namespace WebCore;
 
-Ref<RemoteRemoteCommandListener> RemoteRemoteCommandListener::create(RemoteCommandListenerClient& client, WebProcess& webProcess)
+Ref<RemoteRemoteCommandListener> RemoteRemoteCommandListener::create(RemoteCommandListenerClient& client)
 {
-    return adoptRef(*new RemoteRemoteCommandListener(client, webProcess));
+    return adoptRef(*new RemoteRemoteCommandListener(client));
 }
 
-RemoteRemoteCommandListener::RemoteRemoteCommandListener(RemoteCommandListenerClient& client, WebProcess& webProcess)
+RemoteRemoteCommandListener::RemoteRemoteCommandListener(RemoteCommandListenerClient& client)
     : RemoteCommandListener(client)
-    , m_process(webProcess)
     , m_identifier(RemoteRemoteCommandListenerIdentifier::generate())
 {
     ensureGPUProcessConnection();

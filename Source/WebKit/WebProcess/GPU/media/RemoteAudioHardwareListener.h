@@ -48,7 +48,7 @@ class RemoteAudioHardwareListener final
     , public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<RemoteAudioHardwareListener> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<RemoteAudioHardwareListener> create(WebCore::AudioHardwareListener::Client&, WebProcess&);
+    static Ref<RemoteAudioHardwareListener> create(WebCore::AudioHardwareListener::Client&);
     ~RemoteAudioHardwareListener();
 
     void ref() const final { return ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<RemoteAudioHardwareListener>::ref(); }
@@ -56,7 +56,7 @@ public:
     ThreadSafeWeakPtrControlBlock& controlBlock() const final { return ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<RemoteAudioHardwareListener>::controlBlock(); }
 
 private:
-    RemoteAudioHardwareListener(WebCore::AudioHardwareListener::Client&, WebProcess&);
+    explicit RemoteAudioHardwareListener(WebCore::AudioHardwareListener::Client&);
 
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;

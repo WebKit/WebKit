@@ -49,7 +49,7 @@ class RemoteAudioSession final
     , public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<RemoteAudioSession> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static UniqueRef<RemoteAudioSession> create(WebProcess&);
+    static UniqueRef<RemoteAudioSession> create();
     ~RemoteAudioSession();
 
     void ref() const final { return ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<RemoteAudioSession>::ref(); }
@@ -57,8 +57,8 @@ public:
     ThreadSafeWeakPtrControlBlock& controlBlock() const final { return ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<RemoteAudioSession>::controlBlock(); }
 
 private:
-    friend UniqueRef<RemoteAudioSession> WTF::makeUniqueRefWithoutFastMallocCheck<RemoteAudioSession>(WebProcess&);
-    explicit RemoteAudioSession(WebProcess&);
+    friend UniqueRef<RemoteAudioSession> WTF::makeUniqueRefWithoutFastMallocCheck<RemoteAudioSession>();
+    RemoteAudioSession();
     IPC::Connection& ensureConnection();
 
     // IPC::MessageReceiver
@@ -110,8 +110,6 @@ private:
     // InterruptionObserver
     void beginAudioSessionInterruption() final;
     void endAudioSessionInterruption(WebCore::AudioSession::MayResume) final;
-
-    WebProcess& m_process;
 
     WeakHashSet<ConfigurationChangeObserver> m_configurationChangeObservers;
     CategoryType m_category { CategoryType::None };

@@ -74,7 +74,6 @@ private:
 
     HashMap<WebCore::ImageDecoderIdentifier, WeakPtr<RemoteImageDecoderAVF>> m_remoteImageDecoders;
 
-    WebProcess& m_process;
     ThreadSafeWeakPtr<GPUProcessConnection> m_gpuProcessConnection;
 };
 

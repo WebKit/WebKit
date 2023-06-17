@@ -98,10 +98,9 @@ const char* WebNotificationManager::supplementName()
 }
 
 WebNotificationManager::WebNotificationManager(WebProcess& process)
-    : m_process(process)
 {
 #if ENABLE(NOTIFICATIONS)
-    m_process.addMessageReceiver(Messages::WebNotificationManager::messageReceiverName(), *this);
+    process.addMessageReceiver(Messages::WebNotificationManager::messageReceiverName(), *this);
 #endif
 }
 

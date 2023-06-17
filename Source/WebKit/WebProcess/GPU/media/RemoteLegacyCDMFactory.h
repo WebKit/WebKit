@@ -67,7 +67,6 @@ public:
     void registerFactory();
 
     static const char* supplementName();
-    WebProcess& process() const { return m_process; }
 
     GPUProcessConnection& gpuProcessConnection();
 
@@ -85,7 +84,6 @@ private:
     HashMap<RemoteLegacyCDMIdentifier, WeakPtr<RemoteLegacyCDM>> m_cdms;
     HashMap<String, bool> m_supportsKeySystemCache;
     HashMap<std::pair<String, String>, bool> m_supportsKeySystemAndMimeTypeCache;
-    WebProcess& m_process;
 };
 
 }

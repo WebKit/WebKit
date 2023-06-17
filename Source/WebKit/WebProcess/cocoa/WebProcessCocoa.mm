@@ -989,11 +989,6 @@ void WebProcess::updateCPUMonitorState(CPUMonitorUpdateReason reason)
 RefPtr<ObjCObjectGraph> WebProcess::transformHandlesToObjects(ObjCObjectGraph& objectGraph)
 {
     struct Transformer final : ObjCObjectGraph::Transformer {
-        Transformer(WebProcess& webProcess)
-            : m_webProcess(webProcess)
-        {
-        }
-
         bool shouldTransformObject(id object) const override
         {
             if (dynamic_objc_cast<WKBrowsingContextHandle>(object))
@@ -1009,7 +1004,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         RetainPtr<id> transformObject(id object) const override
         {
             if (auto* handle = dynamic_objc_cast<WKBrowsingContextHandle>(object)) {
-                if (auto* webPage = m_webProcess.webPage(ObjectIdentifier<WebCore::PageIdentifierType>(handle._webPageID)))
+                if (auto* webPage = WebProcess::singleton().webPage(ObjectIdentifier<WebCore::PageIdentifierType>(handle._webPageID)))
                     return wrapper(*webPage);
 
                 return [NSNull null];
@@ -1017,15 +1012,13 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
             if (auto* wrapper = dynamic_objc_cast<WKTypeRefWrapper>(object))
-                return adoptNS([[WKTypeRefWrapper alloc] initWithObject:toAPI(m_webProcess.transformHandlesToObjects(toImpl(wrapper.object)).get())]);
+                return adoptNS([[WKTypeRefWrapper alloc] initWithObject:toAPI(WebProcess::singleton().transformHandlesToObjects(toImpl(wrapper.object)).get())]);
 ALLOW_DEPRECATED_DECLARATIONS_END
             return object;
         }
-
-        WebProcess& m_webProcess;
     };
 
-    return ObjCObjectGraph::create(ObjCObjectGraph::transform(objectGraph.rootObject(), Transformer(*this)).get());
+    return ObjCObjectGraph::create(ObjCObjectGraph::transform(objectGraph.rootObject(), Transformer()).get());
 }
 
 RefPtr<ObjCObjectGraph> WebProcess::transformObjectsToHandles(ObjCObjectGraph& objectGraph)

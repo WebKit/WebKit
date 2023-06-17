@@ -41,16 +41,13 @@ namespace WebKit {
 
 using namespace WebCore;
 
-RemoteMediaSessionHelper::RemoteMediaSessionHelper(WebProcess& process)
-    : m_process(process)
-{
-}
+RemoteMediaSessionHelper::RemoteMediaSessionHelper() = default;
 
 IPC::Connection& RemoteMediaSessionHelper::ensureConnection()
 {
     auto gpuProcessConnection = m_gpuProcessConnection.get();
     if (!gpuProcessConnection) {
-        gpuProcessConnection = &m_process.ensureGPUProcessConnection();
+        gpuProcessConnection = &WebProcess::singleton().ensureGPUProcessConnection();
         m_gpuProcessConnection = gpuProcessConnection;
         gpuProcessConnection->addClient(*this);
         gpuProcessConnection->messageReceiverMap().addMessageReceiver(Messages::RemoteMediaSessionHelper::messageReceiverName(), *this);

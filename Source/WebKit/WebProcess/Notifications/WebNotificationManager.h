@@ -84,8 +84,6 @@ private:
     void didCloseNotifications(const Vector<UUID>& notificationIDs);
     void didRemoveNotificationDecisions(const Vector<String>& originStrings);
 
-    WebProcess& m_process;
-
 #if ENABLE(NOTIFICATIONS)
     HashMap<UUID, WebCore::ScriptExecutionContextIdentifier> m_nonPersistentNotificationsContexts;
     HashMap<String, bool> m_permissionsMap;
