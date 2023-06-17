@@ -41,7 +41,9 @@
 //// FIXME: rdar://105775731
 SOFT_LINK_PRIVATE_FRAMEWORK_OPTIONAL(RealitySystemSupport)
 SOFT_LINK_CLASS_OPTIONAL(RealitySystemSupport, RCPGlowEffectLayer)
+#if PLATFORM(VISION)
 SOFT_LINK_CONSTANT_MAY_FAIL(RealitySystemSupport, RCPAllowedInputTypesUserInfoKey, const NSString *)
+#endif
 
 @interface CALayer ()
 @property (nonatomic) CGFloat sizeMultiplier;
@@ -94,7 +96,7 @@ static void configureLayerForInteractionRegion(CALayer *layer, NSString *groupNa
 #else
 static Class interactionRegionLayerClass() { return [CALayer class]; }
 static void configureLayerForInteractionRegion(CALayer *, NSString *) { }
-static void interactionRegionEffectUserInfo() { return @{ }; }
+static NSDictionary *interactionRegionEffectUserInfo() { return @{ }; }
 #endif // !PLATFORM(VISION)
 
 static void configureLayerAsGuard(CALayer *layer, NSString *groupName)
