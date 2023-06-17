@@ -1,16 +1,7 @@
 
-PASS # AUDIT TASK RUNNER STARTED.
-PASS Executing "constructor-error"
-PASS Executing "process-error"
-PASS Audit report
-PASS > [constructor-error]
-PASS   onprocessorerror argument should be an ErrorEvent when
-                the constructor of AudioWorkletProcessor has an error. is true.
-PASS < [constructor-error] All assertions passed. (total 1 assertions)
-PASS > [process-error]
-PASS   onprocessorerror argument should be an ErrorEvent when
-                the process method of the AudioWorkletProcessor method
-                has an error. is true.
-PASS < [process-error] All assertions passed. (total 1 assertions)
-PASS # AUDIT TASK RUNNER FINISHED: 2 tasks ran successfully.
+Harness Error (TIMEOUT), message = null
+
+PASS Test if |onprocessorerror| is called for an exception thrown from the processor constructor.
+TIMEOUT Test if |onprocessorerror| is called for a transfered object that cannot be deserialized on the AudioWorkletGlobalScope. Test timed out
+NOTRUN Test if |onprocessorerror| is called upon failure of process() method.
 

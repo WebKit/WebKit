@@ -1,4 +1,4 @@
-// Copyright 2016 The Chromium Authors. All rights reserved.
+// Copyright 2016 The Chromium Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -877,8 +877,6 @@ window.Audit = (function() {
       // it is absolute.
       let absExpected = this._expected ? Math.abs(this._expected) : 1;
       let error = Math.abs(this._actual - this._expected) / absExpected;
-
-      // debugger;
 
       return this._assert(
           error <= this._options.threshold,

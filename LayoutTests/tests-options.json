@@ -6185,6 +6185,9 @@
     "imported/w3c/web-platform-tests/webaudio/the-audio-api/the-analysernode-interface/test-analyser-output.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/suspend-with-navigation.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/webrtc-extensions/RTCRtpSynchronizationSource-captureTimestamp.html": [
         "slow"
     ],
