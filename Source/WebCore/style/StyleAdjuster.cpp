@@ -452,7 +452,8 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
             bool isVertical = style.marqueeDirection() == MarqueeDirection::Up || style.marqueeDirection() == MarqueeDirection::Down;
             // Make horizontal marquees not wrap.
             if (!isVertical) {
-                style.setWhiteSpace(WhiteSpace::NoWrap);
+                style.setWhiteSpaceCollapse(WhiteSpaceCollapse::Collapse);
+                style.setTextWrap(TextWrap::NoWrap);
                 style.setTextAlign(TextAlignMode::Start);
             }
             // Apparently this is the expected legacy behavior.

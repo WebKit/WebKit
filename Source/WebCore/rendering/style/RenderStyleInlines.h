@@ -789,7 +789,6 @@ inline bool RenderStyle::InheritedFlags::operator==(const InheritedFlags& other)
         && cursorVisibility == other.cursorVisibility
 #endif
         && direction == other.direction
-        && whiteSpace == other.whiteSpace
         && whiteSpaceCollapse == other.whiteSpaceCollapse
         && textWrap == other.textWrap
         && borderCollapse == other.borderCollapse

@@ -234,8 +234,10 @@ void VTTCueBox::applyCSSProperties(const IntSize& videoSize)
     // alignment:
     setInlineStyleProperty(CSSPropertyTextAlign, cue->getCSSAlignment());
     
-    if (!cue->snapToLines())
-        setInlineStyleProperty(CSSPropertyWhiteSpace, CSSValuePre);
+    if (!cue->snapToLines()) {
+        setInlineStyleProperty(CSSPropertyWhiteSpaceCollapse, CSSValuePreserve);
+        setInlineStyleProperty(CSSPropertyTextWrap, CSSValueNowrap);
+    }
 
     // Make sure shadow or stroke is not clipped.
     setInlineStyleProperty(CSSPropertyOverflow, CSSValueVisible);

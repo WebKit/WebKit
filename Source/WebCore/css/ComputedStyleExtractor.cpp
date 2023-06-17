@@ -575,6 +575,27 @@ static RefPtr<CSSValue> positionOffsetValue(const RenderStyle& style, CSSPropert
     return CSSPrimitiveValue::create(CSSValueAuto);
 }
 
+RefPtr<CSSValue> ComputedStyleExtractor::whiteSpaceShorthandValue(const RenderStyle& style)
+{
+    auto whiteSpaceCollapse = style.whiteSpaceCollapse();
+    auto textWrap = style.textWrap();
+    if (whiteSpaceCollapse == WhiteSpaceCollapse::BreakSpaces && textWrap == TextWrap::Wrap)
+        return CSSPrimitiveValue::create(CSSValueBreakSpaces);
+    if (whiteSpaceCollapse == WhiteSpaceCollapse::Collapse && textWrap == TextWrap::Wrap)
+        return CSSPrimitiveValue::create(CSSValueNormal);
+    if (whiteSpaceCollapse == WhiteSpaceCollapse::Collapse && textWrap == TextWrap::NoWrap)
+        return CSSPrimitiveValue::create(CSSValueNowrap);
+    if (whiteSpaceCollapse == WhiteSpaceCollapse::Preserve && textWrap == TextWrap::NoWrap)
+        return CSSPrimitiveValue::create(CSSValuePre);
+    if (whiteSpaceCollapse == WhiteSpaceCollapse::PreserveBreaks && textWrap == TextWrap::Wrap)
+        return CSSPrimitiveValue::create(CSSValuePreLine);
+    if (whiteSpaceCollapse == WhiteSpaceCollapse::Preserve && textWrap == TextWrap::Wrap)
+        return CSSPrimitiveValue::create(CSSValuePreWrap);
+
+    // The white-space property cannot be properly expressed in terms of its longhands
+    return nullptr;
+}
+
 Ref<CSSPrimitiveValue> ComputedStyleExtractor::currentColorOrValidColor(const RenderStyle& style, const StyleColor& color)
 {
     // This function does NOT look at visited information, so that computed style doesn't expose that.
@@ -2865,7 +2886,10 @@ RefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propertyID,
     if (!styledElement)
         return nullptr;
 
-    if (!isExposed(propertyID, m_element->document().settings())) {
+    // FIXME: For now, we always allow access to white-space longhands.
+    // We should remove this hack once white-space longhands are no longer under a feature flag.
+    bool isWhiteSpaceLonghand = (propertyID == CSSPropertyWhiteSpaceCollapse || propertyID == CSSPropertyTextWrap);
+    if (!isWhiteSpaceLonghand && !isExposed(propertyID, m_element->document().settings())) {
         // Exit quickly, and avoid us ever having to update layout in this case.
         return nullptr;
     }
@@ -2920,7 +2944,9 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
     auto& cssValuePool = CSSValuePool::singleton();
     propertyID = CSSProperty::resolveDirectionAwareProperty(propertyID, style.direction(), style.writingMode());
 
-    ASSERT(isExposed(propertyID, m_element->document().settings()));
+    // FIXME: For now, we always allow access to white-space longhands.
+    // We should remove this hack once white-space longhands are no longer under a feature flag.
+    ASSERT((propertyID == CSSPropertyWhiteSpaceCollapse || propertyID == CSSPropertyTextWrap) || isExposed(propertyID, m_element->document().settings()));
 
     switch (propertyID) {
     case CSSPropertyInvalid:
@@ -3722,7 +3748,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
     case CSSPropertyVisibility:
         return createConvertingToCSSValueID(style.visibility());
     case CSSPropertyWhiteSpace:
-        return createConvertingToCSSValueID(style.whiteSpace());
+        return whiteSpaceShorthandValue(style);
     case CSSPropertyWhiteSpaceCollapse:
         return createConvertingToCSSValueID(style.whiteSpaceCollapse());
     case CSSPropertyWidows:

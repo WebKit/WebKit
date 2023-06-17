@@ -81,7 +81,8 @@ RenderStyle RenderListItem::computeMarkerStyle() const
     markerStyle.setFontDescription(WTFMove(fontDescription));
     markerStyle.fontCascade().update(&document().fontSelector());
     markerStyle.setUnicodeBidi(UnicodeBidi::Isolate);
-    markerStyle.setWhiteSpace(WhiteSpace::Pre);
+    markerStyle.setWhiteSpaceCollapse(WhiteSpaceCollapse::Preserve);
+    markerStyle.setTextWrap(TextWrap::NoWrap);
     markerStyle.setTextTransform({ });
     return markerStyle;
 }

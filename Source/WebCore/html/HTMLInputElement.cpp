@@ -2210,7 +2210,8 @@ RenderStyle HTMLInputElement::createInnerTextStyle(const RenderStyle& style)
     textBlockStyle.inheritFrom(style);
     adjustInnerTextStyle(style, textBlockStyle);
 
-    textBlockStyle.setWhiteSpace(WhiteSpace::Pre);
+    textBlockStyle.setWhiteSpaceCollapse(WhiteSpaceCollapse::Preserve);
+    textBlockStyle.setTextWrap(TextWrap::NoWrap);
     textBlockStyle.setOverflowWrap(OverflowWrap::Normal);
     textBlockStyle.setOverflowX(Overflow::Hidden);
     textBlockStyle.setOverflowY(Overflow::Hidden);

@@ -270,8 +270,10 @@ void RenderTheme::adjustStyle(RenderStyle& style, const Element* element, const 
             style.setPaddingBox(WTFMove(paddingBox));
 
         // Whitespace
-        if (Theme::singleton().controlRequiresPreWhiteSpace(appearance))
-            style.setWhiteSpace(WhiteSpace::Pre);
+        if (Theme::singleton().controlRequiresPreWhiteSpace(appearance)) {
+            style.setWhiteSpaceCollapse(WhiteSpaceCollapse::Preserve);
+            style.setTextWrap(TextWrap::NoWrap);
+        }
 
         // Width / Height
         // The width and height here are affected by the zoom.

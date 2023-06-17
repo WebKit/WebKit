@@ -80,7 +80,8 @@ static constexpr CSSPropertyID editingProperties[] = {
     CSSPropertyTextAlign,
     CSSPropertyTextIndent,
     CSSPropertyTextTransform,
-    CSSPropertyWhiteSpace,
+    CSSPropertyTextWrap,
+    CSSPropertyWhiteSpaceCollapse,
     CSSPropertyWidows,
     CSSPropertyWordSpacing,
 #if ENABLE(TOUCH_EVENTS)
@@ -956,7 +957,7 @@ bool EditingStyle::conflictsWithInlineStyleOfElement(StyledElement& element, Ref
         auto propertyID = property.id();
 
         // We don't override whitespace property of a tab span because that would collapse the tab into a space.
-        if (propertyID == CSSPropertyWhiteSpace && isTabSpanNode(&element))
+        if ((propertyID == CSSPropertyWhiteSpaceCollapse || propertyID == CSSPropertyTextWrap) && isTabSpanNode(&element))
             continue;
 
         if (propertyID == CSSPropertyWebkitTextDecorationsInEffect && inlineStyle->getPropertyCSSValue(CSSPropertyTextDecorationLine)) {
@@ -1430,6 +1431,19 @@ void EditingStyle::removeStyleFromRulesAndContext(StyledElement& element, Node* 
         if (!computedStyle->m_mutableStyle->getPropertyCSSValue(CSSPropertyBackgroundColor))
             computedStyle->m_mutableStyle->setProperty(CSSPropertyBackgroundColor, CSSValueTransparent);
 
+        // If white-space differs from context, do not remove white-space longhand values.
+        // They are necessary for reconstructing the corresponding white-space shorthand value.
+        auto whiteSpaceCollapse = m_mutableStyle->getPropertyCSSValue(CSSPropertyWhiteSpaceCollapse);
+        auto contextWhiteSpaceCollapse = computedStyle->m_mutableStyle->getPropertyCSSValue(CSSPropertyWhiteSpaceCollapse);
+
+        auto textWrap = m_mutableStyle->getPropertyCSSValue(CSSPropertyTextWrap);
+        auto contextTextWrap = computedStyle->m_mutableStyle->getPropertyCSSValue(CSSPropertyTextWrap);
+
+        if (whiteSpaceCollapse != contextWhiteSpaceCollapse || textWrap != contextTextWrap) {
+            computedStyle->m_mutableStyle->removeProperty(CSSPropertyWhiteSpaceCollapse);
+            computedStyle->m_mutableStyle->removeProperty(CSSPropertyTextWrap);
+        }
+
         RefPtr<EditingStyle> computedStyleOfElement;
         auto replaceSemanticColorWithComputedValue = [&](const CSSPropertyID id) {
             auto color = m_mutableStyle->propertyAsColor(id);
@@ -1772,8 +1786,10 @@ StyleChange::StyleChange(EditingStyle* style, const Position& position)
     }
 
     // Changing the whitespace style in a tab span would collapse the tab into a space.
-    if (isTabSpanTextNode(position.deprecatedNode()) || isTabSpanNode((position.deprecatedNode())))
-        mutableStyle->removeProperty(CSSPropertyWhiteSpace);
+    if (isTabSpanTextNode(position.deprecatedNode()) || isTabSpanNode((position.deprecatedNode()))) {
+        mutableStyle->removeProperty(CSSPropertyWhiteSpaceCollapse);
+        mutableStyle->removeProperty(CSSPropertyTextWrap);
+    }
 
     // If unicode-bidi is present in mutableStyle and direction is not, then add direction to mutableStyle.
     // FIXME: Shouldn't this be done in getPropertiesNotIn?

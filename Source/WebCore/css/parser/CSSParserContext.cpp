@@ -66,6 +66,9 @@ CSSParserContext::CSSParserContext(CSSParserMode mode, const URL& baseURL)
 #endif
     }
 
+    propertySettings.cssTextWrapEnabled = true;
+    propertySettings.cssWhiteSpaceCollapseEnabled = true;
+
     StaticCSSValuePool::init();
 }
 

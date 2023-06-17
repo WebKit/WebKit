@@ -1,7 +1,7 @@
 
 PASS `text-wrap: balance` should be set
 PASS `text-wrap` should not be affected by previous `white-space`
-FAIL `white-space` should overwrite previous `text-wrap` assert_equals: expected "wrap" but got "balance"
+PASS `white-space` should overwrite previous `text-wrap`
 PASS `text-wrap` should not be affected by `white-space` on the parent
-FAIL `white-space` should overwrite `text-wrap` on the parent assert_equals: expected "wrap" but got "balance"
+PASS `white-space` should overwrite `text-wrap` on the parent
 

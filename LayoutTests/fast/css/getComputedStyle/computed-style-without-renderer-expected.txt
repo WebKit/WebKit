@@ -201,7 +201,6 @@ unicode-bidi: normal
 vector-effect: none
 vertical-align: baseline
 visibility: visible
-white-space: normal
 widows: auto
 width: 50%
 will-change: auto

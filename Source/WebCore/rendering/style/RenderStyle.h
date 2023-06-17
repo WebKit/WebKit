@@ -565,7 +565,7 @@ public:
     WEBCORE_EXPORT int computedLineHeight() const;
     int computeLineHeight(const Length&) const;
 
-    WhiteSpace whiteSpace() const { return static_cast<WhiteSpace>(m_inheritedFlags.whiteSpace); }
+    WhiteSpace whiteSpace() const;
     static constexpr bool autoWrap(WhiteSpace);
     inline bool autoWrap() const;
     static constexpr bool preserveNewline(WhiteSpace);
@@ -1215,7 +1215,6 @@ public:
     inline void setImageOrientation(ImageOrientation);
     inline void setImageRendering(ImageRendering);
 
-    void setWhiteSpace(WhiteSpace v) { m_inheritedFlags.whiteSpace = static_cast<unsigned>(v); }
     void setWhiteSpaceCollapse(WhiteSpaceCollapse v) { m_inheritedFlags.whiteSpaceCollapse = static_cast<unsigned>(v); }
     void setTextWrap(TextWrap v) { m_inheritedFlags.textWrap = static_cast<unsigned>(v); }
 
@@ -2170,10 +2169,9 @@ private:
         unsigned cursorVisibility : 1; // CursorVisibility
 #endif
         unsigned direction : 1; // TextDirection
-        unsigned whiteSpace : 3; // WhiteSpace
         unsigned whiteSpaceCollapse : 3; // WhiteSpaceCollapse
         unsigned textWrap : 3; // TextWrap
-        // 36 bits
+        // 33 bits
         unsigned borderCollapse : 1; // BorderCollapse
         unsigned boxDirection : 1; // BoxDirection
 
@@ -2183,16 +2181,16 @@ private:
         unsigned pointerEvents : 4; // PointerEvents
         unsigned insideLink : 2; // InsideLink
         unsigned insideDefaultButton : 1;
-        // 47 bits
+        // 44 bits
 
         // CSS Text Layout Module Level 3: Vertical writing support
         unsigned writingMode : 2; // WritingMode
-        // 49 bits
+        // 46 bits
 
 #if ENABLE(TEXT_AUTOSIZING)
         unsigned autosizeStatus : 5;
 #endif
-        // 54 bits
+        // 51 bits
     };
 
     // This constructor is used to implement the replace operation.

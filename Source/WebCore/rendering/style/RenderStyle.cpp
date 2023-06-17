@@ -188,7 +188,8 @@ RenderStyle::RenderStyle(CreateDefaultStyleTag)
     m_inheritedFlags.cursorVisibility = static_cast<unsigned>(initialCursorVisibility());
 #endif
     m_inheritedFlags.direction = static_cast<unsigned>(initialDirection());
-    m_inheritedFlags.whiteSpace = static_cast<unsigned>(initialWhiteSpace());
+    m_inheritedFlags.whiteSpaceCollapse = static_cast<unsigned>(initialWhiteSpaceCollapse());
+    m_inheritedFlags.textWrap = static_cast<unsigned>(initialTextWrap());
     m_inheritedFlags.borderCollapse = static_cast<unsigned>(initialBorderCollapse());
     m_inheritedFlags.rtlOrdering = static_cast<unsigned>(initialRTLOrdering());
     m_inheritedFlags.boxDirection = static_cast<unsigned>(initialBoxDirection());
@@ -1048,7 +1049,8 @@ bool RenderStyle::changeRequiresLayout(const RenderStyle& other, OptionSet<Style
     if (m_inheritedFlags.textAlign != other.m_inheritedFlags.textAlign
         || m_inheritedFlags.textTransform != other.m_inheritedFlags.textTransform
         || m_inheritedFlags.direction != other.m_inheritedFlags.direction
-        || m_inheritedFlags.whiteSpace != other.m_inheritedFlags.whiteSpace
+        || m_inheritedFlags.whiteSpaceCollapse != other.m_inheritedFlags.whiteSpaceCollapse
+        || m_inheritedFlags.textWrap != other.m_inheritedFlags.textWrap
         || m_nonInheritedFlags.clear != other.m_nonInheritedFlags.clear
         || m_nonInheritedFlags.unicodeBidi != other.m_nonInheritedFlags.unicodeBidi)
         return true;
@@ -2105,6 +2107,30 @@ int RenderStyle::computeLineHeight(const Length& lineHeightLength) const
         return minimumValueForLength(lineHeightLength, computedFontPixelSize());
 
     return clampTo<int>(lineHeightLength.value());
+}
+
+// FIXME: Remove this after all old calls to whiteSpace() are replaced with appropriate
+// calls to whiteSpaceCollapse() and textWrap().
+WhiteSpace RenderStyle::whiteSpace() const
+{
+    auto whiteSpaceCollapse = static_cast<WhiteSpaceCollapse>(m_inheritedFlags.whiteSpaceCollapse);
+    auto textWrap = static_cast<TextWrap>(m_inheritedFlags.textWrap);
+    if (whiteSpaceCollapse == WhiteSpaceCollapse::BreakSpaces && textWrap == TextWrap::Wrap)
+        return WhiteSpace::BreakSpaces;
+    if (whiteSpaceCollapse == WhiteSpaceCollapse::Collapse && textWrap == TextWrap::Wrap)
+        return WhiteSpace::Normal;
+    if (whiteSpaceCollapse == WhiteSpaceCollapse::Collapse && textWrap == TextWrap::NoWrap)
+        return WhiteSpace::NoWrap;
+    if (whiteSpaceCollapse == WhiteSpaceCollapse::Preserve && textWrap == TextWrap::NoWrap)
+        return WhiteSpace::Pre;
+    if (whiteSpaceCollapse == WhiteSpaceCollapse::PreserveBreaks && textWrap == TextWrap::Wrap)
+        return WhiteSpace::PreLine;
+    if (whiteSpaceCollapse == WhiteSpaceCollapse::Preserve && textWrap == TextWrap::Wrap)
+        return WhiteSpace::PreWrap;
+
+    // Reachable for combinations that can't be represented with the white-space syntax.
+    // Do nothing for now since this is a temporary function.
+    return WhiteSpace::Normal;
 }
 
 void RenderStyle::setWordSpacing(Length&& value)

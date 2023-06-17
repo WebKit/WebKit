@@ -152,10 +152,13 @@ bool SVGTextContentElement::hasPresentationalHintsForAttribute(const QualifiedNa
 void SVGTextContentElement::collectPresentationalHintsForAttribute(const QualifiedName& name, const AtomString& value, MutableStyleProperties& style)
 {
     if (name.matches(XMLNames::spaceAttr)) {
-        if (value == "preserve"_s)
-            addPropertyToPresentationalHintStyle(style, CSSPropertyWhiteSpace, CSSValuePre);
-        else
-            addPropertyToPresentationalHintStyle(style, CSSPropertyWhiteSpace, CSSValueNowrap);
+        if (value == "preserve"_s) {
+            addPropertyToPresentationalHintStyle(style, CSSPropertyWhiteSpaceCollapse, CSSValuePreserve);
+            addPropertyToPresentationalHintStyle(style, CSSPropertyTextWrap, CSSValueNowrap);
+        } else {
+            addPropertyToPresentationalHintStyle(style, CSSPropertyWhiteSpaceCollapse, CSSValueCollapse);
+            addPropertyToPresentationalHintStyle(style, CSSPropertyTextWrap, CSSValueNowrap);
+        }
         return;
     }
 

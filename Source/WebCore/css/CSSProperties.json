@@ -6048,20 +6048,15 @@
         },
         "white-space": {
             "inherited": true,
-            "values": [
-                "normal",
-                "pre",
-                "pre-wrap",
-                "pre-line",
-                "nowrap",
-                "break-spaces"
-            ],
             "codegen-properties": {
-                "parser-grammar": "<<values>>"
+                "longhands": [
+                    "white-space-collapse",
+                    "text-wrap"
+                ]
             },
             "specification": {
-                "category": "css-22",
-                "url": "https://www.w3.org/TR/CSS22/text.html#propdef-white-space"
+                "category": "css-text",
+                "url": "https://www.w3.org/TR/css-text-4/#white-space-property"
             }
         },
         "white-space-collapse": {

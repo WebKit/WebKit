@@ -1307,6 +1307,7 @@ TextStream& operator<<(TextStream& ts, WhiteSpace whiteSpace)
     }
     return ts;
 }
+
 TextStream& operator<<(TextStream& ts, WhiteSpaceCollapse whiteSpaceCollapse)
 {
     switch (whiteSpaceCollapse) {

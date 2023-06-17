@@ -121,6 +121,7 @@ private:
     String serializeGridTemplate() const;
     String serializeOffset() const;
     String serializePageBreak() const;
+    String serializeWhiteSpace() const;
 
     StylePropertyShorthand m_shorthand;
     RefPtr<CSSValue> m_longhandValues[maxShorthandLength];
@@ -382,6 +383,8 @@ String ShorthandSerializer::serialize()
     case CSSPropertyWebkitColumnBreakAfter:
     case CSSPropertyWebkitColumnBreakBefore:
         return serializeColumnBreak();
+    case CSSPropertyWhiteSpace:
+        return serializeWhiteSpace();
     default:
         ASSERT_NOT_REACHED();
         return String();
@@ -1162,6 +1165,26 @@ String ShorthandSerializer::serializePageBreak() const
     default:
         return String();
     }
+}
+
+String ShorthandSerializer::serializeWhiteSpace() const
+{
+    auto whiteSpaceCollapse = longhandValueID(0);
+    auto textWrap = longhandValueID(1);
+    if (whiteSpaceCollapse == CSSValueBreakSpaces && textWrap == CSSValueWrap)
+        return nameString(CSSValueBreakSpaces);
+    if (whiteSpaceCollapse == CSSValueCollapse && textWrap == CSSValueWrap)
+        return nameString(CSSValueNormal);
+    if (whiteSpaceCollapse == CSSValueCollapse && textWrap == CSSValueNowrap)
+        return nameString(CSSValueNowrap);
+    if (whiteSpaceCollapse == CSSValuePreserve && textWrap == CSSValueNowrap)
+        return nameString(CSSValuePre);
+    if (whiteSpaceCollapse == CSSValuePreserveBreaks && textWrap == CSSValueWrap)
+        return nameString(CSSValuePreLine);
+    if (whiteSpaceCollapse == CSSValuePreserve && textWrap == CSSValueWrap)
+        return nameString(CSSValuePreWrap);
+
+    return String();
 }
 
 String serializeShorthandValue(const StyleProperties& properties, CSSPropertyID shorthand)
