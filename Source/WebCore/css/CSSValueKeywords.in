@@ -1243,6 +1243,11 @@ active
 // scroll
 paged
 
+// (scripting:) media feature.
+enabled
+initial-only
+// none
+
 // blend modes
 // normal
 multiply

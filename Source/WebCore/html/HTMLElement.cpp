@@ -778,11 +778,7 @@ void HTMLElement::setTranslate(bool enable)
 
 bool HTMLElement::rendererIsEverNeeded()
 {
-    if (hasTagName(noscriptTag)) {
-        RefPtr frame { document().frame() };
-        if (frame && frame->script().canExecuteScripts(ReasonForCallingCanExecuteScripts::NotAboutToExecuteScript))
-            return false;
-    } else if (hasTagName(noembedTag)) {
+    if (hasTagName(noembedTag)) {
         RefPtr frame { document().frame() };
         if (frame && frame->arePluginsEnabled())
             return false;

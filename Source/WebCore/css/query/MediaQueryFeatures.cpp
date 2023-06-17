@@ -36,6 +36,7 @@
 #include "RenderLayerCompositor.h"
 #include "RenderView.h"
 #include "ScreenProperties.h"
+#include "ScriptController.h"
 #include "Settings.h"
 #include "Theme.h"
 #include <wtf/Function.h>
@@ -596,6 +597,27 @@ const FeatureSchema& scan()
     return schema;
 }
 
+const FeatureSchema& scripting()
+{
+    static MainThreadNeverDestroyed<IdentifierSchema> schema {
+        "scripting"_s,
+        Vector { CSSValueNone, CSSValueInitialOnly, CSSValueEnabled },
+        [](auto& context) {
+            auto& frame = *context.document.frame();
+
+            if (!frame.script().canExecuteScripts(ReasonForCallingCanExecuteScripts::NotAboutToExecuteScript))
+                return MatchingIdentifiers { CSSValueNone };
+
+            auto* frameView = frame.view();
+            if (frameView && frameView->mediaType() == printAtom())
+                return MatchingIdentifiers { CSSValueInitialOnly };
+
+            return MatchingIdentifiers { CSSValueEnabled };
+        }
+    };
+    return schema;
+}
+
 const FeatureSchema& transform2d()
 {
     static MainThreadNeverDestroyed<BooleanSchema> schema {
@@ -789,6 +811,7 @@ Vector<const FeatureSchema*> allSchemas()
         &prefersReducedMotion(),
         &resolution(),
         &scan(),
+        &scripting(),
         &transform2d(),
         &transform3d(),
         &transition(),

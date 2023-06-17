@@ -1410,7 +1410,13 @@ applet, embed, object, img {
     border-width: 0px;
 }
 
-/* noscript is handled internally, as it depends on settings. */
+/* noscript support */
+
+@media (scripting) {
+    noscript {
+        display: none !important;
+    }
+}
 
 /* Default support for "Smart Invert" where all content color except media is inverted. */ 
 @media (inverted-colors) {

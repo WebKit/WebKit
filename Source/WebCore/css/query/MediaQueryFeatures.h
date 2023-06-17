@@ -57,6 +57,7 @@ const FeatureSchema& prefersDarkInterface();
 const FeatureSchema& prefersReducedMotion();
 const FeatureSchema& resolution();
 const FeatureSchema& scan();
+const FeatureSchema& scripting();
 const FeatureSchema& transform2d();
 const FeatureSchema& transform3d();
 const FeatureSchema& transition();
