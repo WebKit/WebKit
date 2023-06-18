@@ -34,7 +34,9 @@
 #include "LayoutChildIterator.h"
 #include "LayoutContext.h"
 #include "LengthFunctions.h"
+#include "LogicalFlexItem.h"
 #include "RenderStyleInlines.h"
+#include <wtf/FixedVector.h>
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -127,13 +129,15 @@ void FlexFormattingContext::computeIntrinsicWidthConstraintsForFlexItems()
 
 FlexLayout::LogicalFlexItems FlexFormattingContext::convertFlexItemsToLogicalSpace(const ConstraintsForFlexContent& constraints)
 {
+    UNUSED_PARAM(constraints);
+
     struct FlexItem {
-        LayoutSize marginBoxSize;
+        LogicalFlexItem::MainAxisGeometry mainAxis;
+        LogicalFlexItem::CrossAxisGeometry crossAxis;
         int logicalOrder { 0 };
         CheckedPtr<const ElementBox> layoutBox;
     };
 
-    auto& formattingState = this->formattingState();
     Vector<FlexItem> flexItemList;
     auto flexItemsNeedReordering = false;
 
@@ -142,31 +146,24 @@ FlexLayout::LogicalFlexItems FlexFormattingContext::convertFlexItemsToLogicalSpa
         auto previousLogicalOrder = std::optional<int> { };
 
         for (auto* flexItem = root().firstInFlowChild(); flexItem; flexItem = flexItem->nextInFlowSibling()) {
-            auto& flexItemGeometry = formattingState.boxGeometry(*flexItem);
-            auto& flexItemStyle = flexItem->style();
-            auto logicalSize = LayoutSize { };
-            auto flexBasis = flexItemStyle.flexBasis().isAuto() ? std::nullopt : std::make_optional(valueForLength(flexItemStyle.flexBasis(), constraints.horizontal().logicalWidth));
-
             switch (direction) {
             case FlexDirection::Row:
-            case FlexDirection::RowReverse:
-                logicalSize = { flexBasis ? *flexBasis + flexItemGeometry.horizontalMarginBorderAndPadding() : formattingState.intrinsicWidthConstraintsForBox(*flexItem)->maximum, flexItemGeometry.marginBoxHeight() };
+            case FlexDirection::RowReverse: {
                 break;
+            }
             case FlexDirection::Column:
             case FlexDirection::ColumnReverse: {
-                auto contentBoxLogicalWidth = flexBasis.value_or(flexItemGeometry.contentBoxHeight());
-                logicalSize = { flexItemGeometry.verticalMarginBorderAndPadding() + contentBoxLogicalWidth, flexItemGeometry.marginBoxWidth() };
                 break;
             }
             default:
                 ASSERT_NOT_REACHED();
                 break;
             }
-            auto flexItemOrder = flexItemStyle.order();
+            auto flexItemOrder = flexItem->style().order();
             flexItemsNeedReordering = flexItemsNeedReordering || flexItemOrder != previousLogicalOrder.value_or(0);
             previousLogicalOrder = flexItemOrder;
 
-            flexItemList.append({ logicalSize, flexItemOrder, downcast<ElementBox>(flexItem) });
+            flexItemList.append({ { }, { }, flexItemOrder, downcast<ElementBox>(flexItem) });
         }
     };
     convertVisualToLogical();
@@ -181,53 +178,34 @@ FlexLayout::LogicalFlexItems FlexFormattingContext::convertFlexItemsToLogicalSpa
     };
     reorderFlexItemsIfApplicable();
 
-    auto flexDirection = root().style().flexDirection();
-    auto flexDirectionIsInlineAxis = flexDirection == FlexDirection::Row || flexDirection == FlexDirection::RowReverse;
     auto logicalFlexItemList = FlexLayout::LogicalFlexItems(flexItemList.size());
     for (size_t index = 0; index < flexItemList.size(); ++index) {
-        auto& layoutBox = *flexItemList[index].layoutBox;
-        auto logicalTypeValues = [&]() -> FlexLayout::LogicalFlexItem::LogicalTypes {
-            auto& style = layoutBox.style();
-            if (flexDirectionIsInlineAxis) {
-                return { style.width().type()
-                    , style.height().type()
-                    , style.marginStart().type()
-                    , style.marginEnd().type()
-                    , style.marginBefore().type()
-                    , style.marginAfter().type()
-                };
-            }
-            return { style.height().type()
-                , style.width().type()
-                , style.marginBefore().type()
-                , style.marginAfter().type()
-                , style.marginStart().type()
-                , style.marginEnd().type()
-            };
+        auto& flexItem = flexItemList[index];
+        logicalFlexItemList[index] = { *flexItem.layoutBox
+            , flexItem.mainAxis
+            , flexItem.crossAxis
+            , false
+            , false
         };
-        logicalFlexItemList[index] = { flexItemList[index].marginBoxSize
-            , logicalTypeValues()
-            , *formattingState.intrinsicWidthConstraintsForBox(layoutBox)
-            , layoutBox };
     }
     return logicalFlexItemList;
 }
 
-static inline BoxGeometry::HorizontalMargin horizontalMargin(const FlexLayout::FlexItemRect::AutoMargin autoMargin, BoxGeometry::HorizontalMargin computedMargin, FlexDirection flexDirection)
+static inline BoxGeometry::HorizontalMargin horizontalMargin(const FlexRect& rect, FlexDirection flexDirection)
 {
     auto marginValue = BoxGeometry::HorizontalMargin { };
     switch (flexDirection) {
     case FlexDirection::Row:
-        marginValue = { autoMargin.left.value_or(computedMargin.start), autoMargin.right.value_or(computedMargin.end) };
+        marginValue = { rect.marginLeft(), rect.marginRight() };
         break;
     case FlexDirection::RowReverse:
-        marginValue = { autoMargin.right.value_or(computedMargin.start), autoMargin.left.value_or(computedMargin.end) };
+        marginValue = { rect.marginRight(), rect.marginLeft() };
         break;
     case FlexDirection::Column:
-        marginValue = { autoMargin.top.value_or(computedMargin.start), autoMargin.bottom.value_or(computedMargin.end) };
+        marginValue = { rect.marginTop(), rect.marginBottom() };
         break;
     case FlexDirection::ColumnReverse:
-        marginValue = { autoMargin.top.value_or(computedMargin.start), autoMargin.bottom.value_or(computedMargin.end) };
+        marginValue = { rect.marginBottom(), rect.marginTop() };
         break;
     default:
         ASSERT_NOT_REACHED();
@@ -236,21 +214,21 @@ static inline BoxGeometry::HorizontalMargin horizontalMargin(const FlexLayout::F
     return marginValue;
 }
 
-static inline BoxGeometry::VerticalMargin verticalMargin(const FlexLayout::FlexItemRect::AutoMargin autoMargin, BoxGeometry::VerticalMargin computedMargin, FlexDirection flexDirection)
+static inline BoxGeometry::VerticalMargin verticalMargin(const FlexRect& rect, FlexDirection flexDirection)
 {
     auto marginValue = BoxGeometry::VerticalMargin { };
     switch (flexDirection) {
     case FlexDirection::Row:
-        marginValue = { autoMargin.top.value_or(computedMargin.before), autoMargin.bottom.value_or(computedMargin.after) };
+        marginValue = { rect.marginTop(), rect.marginBottom() };
         break;
     case FlexDirection::RowReverse:
-        marginValue = { autoMargin.top.value_or(computedMargin.before), autoMargin.bottom.value_or(computedMargin.after) };
+        marginValue = { rect.marginBottom(), rect.marginTop() };
         break;
     case FlexDirection::Column:
-        marginValue = { autoMargin.left.value_or(computedMargin.before), autoMargin.right.value_or(computedMargin.after) };
+        marginValue = { rect.marginLeft(), rect.marginRight() };
         break;
     case FlexDirection::ColumnReverse:
-        marginValue = { autoMargin.right.value_or(computedMargin.before), autoMargin.left.value_or(computedMargin.after) };
+        marginValue = { rect.marginRight(), rect.marginLeft() };
         break;
     default:
         ASSERT_NOT_REACHED();
@@ -262,7 +240,7 @@ static inline BoxGeometry::VerticalMargin verticalMargin(const FlexLayout::FlexI
 void FlexFormattingContext::setFlexItemsGeometry(const FlexLayout::LogicalFlexItems& logicalFlexItemList, const FlexLayout::LogicalFlexItemRects& logicalRects, const ConstraintsForFlexContent& constraints)
 {
     auto& formattingState = this->formattingState();
-    auto logicalWidth = logicalRects.last().marginRect.right() - logicalRects.first().marginRect.left();
+    auto logicalWidth = logicalRects.last().right() - logicalRects.first().left();
     auto& flexBoxStyle = root().style();
     auto flexDirection = flexBoxStyle.flexDirection();
     auto isMainAxisParallelWithInlineAxis = FlexFormattingGeometry::isMainAxisParallelWithInlineAxis(root());
@@ -275,16 +253,16 @@ void FlexFormattingContext::setFlexItemsGeometry(const FlexLayout::LogicalFlexIt
         }
 
         // Let's use the bottom of the content if flex box does not have a definite height.
-        return constraints.availableVerticalSpace().value_or(logicalRects.last().marginRect.bottom());
+        return constraints.availableVerticalSpace().value_or(logicalRects.last().bottom());
     }();
 
     for (size_t index = 0; index < logicalFlexItemList.size(); ++index) {
         auto& logicalFlexItem = logicalFlexItemList[index];
         auto& flexItemGeometry = formattingState.boxGeometry(logicalFlexItem.layoutBox());
         auto borderBoxTopLeft = LayoutPoint { };
-        auto logicalRect = logicalRects[index].marginRect;
-        auto usedHorizontalMargin = horizontalMargin(logicalRects[index].autoMargin, flexItemGeometry.horizontalMargin(), flexDirection);
-        auto usedVerticalMargin = verticalMargin(logicalRects[index].autoMargin, flexItemGeometry.verticalMargin(), flexDirection);
+        auto logicalRect = logicalRects[index];
+        auto usedHorizontalMargin = horizontalMargin(logicalRects[index], flexDirection);
+        auto usedVerticalMargin = verticalMargin(logicalRects[index], flexDirection);
         auto adjustedLogicalTop = !flexBoxLogicalHeightForWarpReserve ? logicalRect.top() : *flexBoxLogicalHeightForWarpReserve - logicalRect.bottom();
 
         switch (flexDirection) {
@@ -345,8 +323,8 @@ void FlexFormattingContext::layoutInFlowContentForIntegration(const ConstraintsF
         auto flexDirectionIsInlineAxis = flexDirection == FlexDirection::Row || flexDirection == FlexDirection::RowReverse;
         auto logicalVerticalSpace = flexDirectionIsInlineAxis ? constraints.availableVerticalSpace() : std::make_optional(constraints.horizontal().logicalWidth);
         auto logicalHorizontalSpace = flexDirectionIsInlineAxis ? std::make_optional(constraints.horizontal().logicalWidth) : constraints.availableVerticalSpace();
-        auto logicalMinimumHorizontalSpace = flexDirectionIsInlineAxis ? std::nullopt : constraints.minimumVerticalSpace();
-        return FlexLayout::LogicalConstraints { logicalVerticalSpace, { logicalHorizontalSpace, logicalMinimumHorizontalSpace } };
+
+        return FlexLayout::LogicalConstraints { { logicalHorizontalSpace, { }, { }, { }, { }, { } }, { logicalVerticalSpace, { }, { }, { }, { }, { } } };
     };
 
     auto flexItemRects = flexLayout.layout(logicalFlexConstraints(), logicalFlexItems);
