@@ -433,7 +433,6 @@ Ref<BindGroup> Device::createBindGroup(const WGPUBindGroupDescriptor& descriptor
         return BindGroup::createInvalid(*this);
     }
 
-    Vector<BindableResource> resources;
     ShaderStageArray<id<MTLArgumentEncoder>> argumentEncoder = std::array<id<MTLArgumentEncoder>, stageCount>({ bindGroupLayout.vertexArgumentEncoder(), bindGroupLayout.fragmentArgumentEncoder(), bindGroupLayout.computeArgumentEncoder() });
     ShaderStageArray<id<MTLBuffer>> argumentBuffer;
     for (ShaderStage stage : stages) {
@@ -441,6 +440,10 @@ Ref<BindGroup> Device::createBindGroup(const WGPUBindGroupDescriptor& descriptor
         argumentBuffer[stage] = encodedLength ? safeCreateBuffer(encodedLength, MTLStorageModeShared) : nil;
         [argumentEncoder[stage] setArgumentBuffer:argumentBuffer[stage] offset:0];
     }
+
+    constexpr auto maxResourceUsageValue = MTLResourceUsageRead | MTLResourceUsageWrite;
+    static_assert(maxResourceUsageValue == 3, "Code path assumes MTLResourceUsageRead | MTLResourceUsageWrite == 3");
+    Vector<id<MTLResource>> stageResources[stageCount][maxResourceUsageValue];
 
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=257190 The bind group layout determines the layout of what gets put into the bind group.
     // We should probably iterate over the bind group layout here, rather than the bind group.
@@ -483,14 +486,14 @@ Ref<BindGroup> Device::createBindGroup(const WGPUBindGroupDescriptor& descriptor
                     return BindGroup::createInvalid(*this);
 
                 [argumentEncoder[stage] setBuffer:buffer offset:entry.offset atIndex:index];
-                resources.append({ buffer, resourceUsage, metalRenderStage(stage) });
+                stageResources[metalRenderStage(stage)][resourceUsage - 1].append(buffer);
             } else if (samplerIsPresent) {
                 id<MTLSamplerState> sampler = WebGPU::fromAPI(entry.sampler).samplerState();
                 [argumentEncoder[stage] setSamplerState:sampler atIndex:index];
             } else if (textureViewIsPresent) {
                 id<MTLTexture> texture = WebGPU::fromAPI(entry.textureView).texture();
                 [argumentEncoder[stage] setTexture:texture atIndex:index];
-                resources.append({ texture, resourceUsage, metalRenderStage(stage) });
+                stageResources[metalRenderStage(stage)][resourceUsage - 1].append(texture);
             } else if (externalTextureIsPresent) {
                 auto& externalTexture = WebGPU::fromAPI(wgpuExternalTexture);
                 auto textureData = createExternalTextureFromPixelBuffer(externalTexture.pixelBuffer(), externalTexture.colorSpace());
@@ -499,9 +502,9 @@ Ref<BindGroup> Device::createBindGroup(const WGPUBindGroupDescriptor& descriptor
                 ASSERT(textureData.texture0);
                 ASSERT(textureData.texture1);
                 if (textureData.texture0)
-                    resources.append({ textureData.texture0, resourceUsage, metalRenderStage(stage) });
+                    stageResources[metalRenderStage(stage)][resourceUsage - 1].append(textureData.texture0);
                 if (textureData.texture1)
-                    resources.append({ textureData.texture1, resourceUsage, metalRenderStage(stage) });
+                    stageResources[metalRenderStage(stage)][resourceUsage - 1].append(textureData.texture1);
 
                 auto* uvRemapAddress = static_cast<simd::float3x2*>([argumentEncoder[stage] constantDataAtIndex:index++]);
                 *uvRemapAddress = textureData.uvRemappingMatrix;
@@ -512,10 +515,25 @@ Ref<BindGroup> Device::createBindGroup(const WGPUBindGroupDescriptor& descriptor
         }
     }
 
+    Vector<BindableResources> resources;
+    for (ShaderStage stage : stages) {
+        for (size_t i = 0; i < maxResourceUsageValue; ++i) {
+            auto renderStage = metalRenderStage(stage);
+            Vector<id<MTLResource>> &v = stageResources[renderStage][i];
+            if (v.size()) {
+                resources.append(BindableResources {
+                    .mtlResources = WTFMove(v),
+                    .usage = static_cast<MTLResourceUsage>(i + 1),
+                    .renderStages = renderStage
+                });
+            }
+        }
+    }
+
     return BindGroup::create(argumentBuffer[ShaderStage::Vertex], argumentBuffer[ShaderStage::Fragment], argumentBuffer[ShaderStage::Compute], WTFMove(resources), *this);
 }
 
-BindGroup::BindGroup(id<MTLBuffer> vertexArgumentBuffer, id<MTLBuffer> fragmentArgumentBuffer, id<MTLBuffer> computeArgumentBuffer, Vector<BindableResource>&& resources, Device& device)
+BindGroup::BindGroup(id<MTLBuffer> vertexArgumentBuffer, id<MTLBuffer> fragmentArgumentBuffer, id<MTLBuffer> computeArgumentBuffer, Vector<BindableResources>&& resources, Device& device)
     : m_vertexArgumentBuffer(vertexArgumentBuffer)
     , m_fragmentArgumentBuffer(fragmentArgumentBuffer)
     , m_computeArgumentBuffer(computeArgumentBuffer)

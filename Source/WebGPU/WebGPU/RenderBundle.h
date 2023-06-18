@@ -42,7 +42,7 @@ class Device;
 class RenderBundle : public WGPURenderBundleImpl, public RefCounted<RenderBundle> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<RenderBundle> create(id<MTLIndirectCommandBuffer> indirectCommandBuffer, Vector<BindableResource>&& resources, Device& device)
+    static Ref<RenderBundle> create(id<MTLIndirectCommandBuffer> indirectCommandBuffer, Vector<BindableResources>&& resources, Device& device)
     {
         return adoptRef(*new RenderBundle(indirectCommandBuffer, WTFMove(resources), device));
     }
@@ -60,16 +60,16 @@ public:
     id<MTLIndirectCommandBuffer> indirectCommandBuffer() const { return m_indirectCommandBuffer; }
 
     Device& device() const { return m_device; }
-    const Vector<BindableResource>& resources() const { return m_resources; }
+    const Vector<BindableResources>& resources() const { return m_resources; }
 
 private:
-    RenderBundle(id<MTLIndirectCommandBuffer>, Vector<BindableResource>&&, Device&);
+    RenderBundle(id<MTLIndirectCommandBuffer>, Vector<BindableResources>&&, Device&);
     RenderBundle(Device&);
 
     const id<MTLIndirectCommandBuffer> m_indirectCommandBuffer { nil };
 
     const Ref<Device> m_device;
-    Vector<BindableResource> m_resources;
+    Vector<BindableResources> m_resources;
 };
 
 } // namespace WebGPU

@@ -30,7 +30,7 @@
 
 namespace WebGPU {
 
-RenderBundle::RenderBundle(id<MTLIndirectCommandBuffer> indirectCommandBuffer, Vector<BindableResource>&& resources, Device& device)
+RenderBundle::RenderBundle(id<MTLIndirectCommandBuffer> indirectCommandBuffer, Vector<BindableResources>&& resources, Device& device)
     : m_indirectCommandBuffer(indirectCommandBuffer)
     , m_device(device)
     , m_resources(WTFMove(resources))
