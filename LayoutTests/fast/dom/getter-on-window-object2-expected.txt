@@ -3,14 +3,14 @@ This page tests what happens when a getter / setter on the window object conflic
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS function () {
+PASS function() {
     window.__defineGetter__("x", function() { return "window.x __getter__"; });
 } threw exception TypeError: Attempting to change configurable attribute of unconfigurable property..
 PASS window.x is 1
 PASS typeof window.__lookupGetter__('x') is 'undefined'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'x').get is 'undefined'
 
-PASS function () {
+PASS function() {
 window.__defineSetter__("x", function() { debug("window.x __setter__ called"); });
 } threw exception TypeError: Attempting to change configurable attribute of unconfigurable property..
 PASS window.x is 2

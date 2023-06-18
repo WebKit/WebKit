@@ -249,19 +249,19 @@ PASS Window interface: window must inherit property "matchMedia(CSSOMString)" wi
 PASS Window interface: calling matchMedia(CSSOMString) on window with too few arguments must throw TypeError
 PASS Window interface: window must inherit property "screen" with the proper type
 PASS Window interface: window must inherit property "moveTo(long, long)" with the proper type
-FAIL Window interface: calling moveTo(long, long) on window with too few arguments must throw TypeError assert_throws_js: Called with 0 arguments function "function () {
+FAIL Window interface: calling moveTo(long, long) on window with too few arguments must throw TypeError assert_throws_js: Called with 0 arguments function "function() {
             fn.apply(obj, args);
         }" did not throw
 PASS Window interface: window must inherit property "moveBy(long, long)" with the proper type
-FAIL Window interface: calling moveBy(long, long) on window with too few arguments must throw TypeError assert_throws_js: Called with 0 arguments function "function () {
+FAIL Window interface: calling moveBy(long, long) on window with too few arguments must throw TypeError assert_throws_js: Called with 0 arguments function "function() {
             fn.apply(obj, args);
         }" did not throw
 PASS Window interface: window must inherit property "resizeTo(long, long)" with the proper type
-FAIL Window interface: calling resizeTo(long, long) on window with too few arguments must throw TypeError assert_throws_js: Called with 0 arguments function "function () {
+FAIL Window interface: calling resizeTo(long, long) on window with too few arguments must throw TypeError assert_throws_js: Called with 0 arguments function "function() {
             fn.apply(obj, args);
         }" did not throw
 PASS Window interface: window must inherit property "resizeBy(long, long)" with the proper type
-FAIL Window interface: calling resizeBy(long, long) on window with too few arguments must throw TypeError assert_throws_js: Called with 0 arguments function "function () {
+FAIL Window interface: calling resizeBy(long, long) on window with too few arguments must throw TypeError assert_throws_js: Called with 0 arguments function "function() {
             fn.apply(obj, args);
         }" did not throw
 PASS Window interface: window must inherit property "innerWidth" with the proper type

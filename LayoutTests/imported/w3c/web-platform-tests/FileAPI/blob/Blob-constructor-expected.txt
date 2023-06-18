@@ -40,8 +40,8 @@ PASS Passing object "[object Object]" (index 3) for options should use the defau
 PASS Passing object "[object Object]" (index 3) for options should use the defaults (with newlines).
 PASS Passing object "/regex/" (index 4) for options should use the defaults.
 PASS Passing object "/regex/" (index 4) for options should use the defaults (with newlines).
-PASS Passing function "function () {}" (index 5) for options should use the defaults.
-PASS Passing function "function () {}" (index 5) for options should use the defaults (with newlines).
+PASS Passing function "function() {}" (index 5) for options should use the defaults.
+PASS Passing function "function() {}" (index 5) for options should use the defaults (with newlines).
 PASS Passing 123 for options should throw
 PASS Passing 123.4 for options should throw
 PASS Passing true for options should throw

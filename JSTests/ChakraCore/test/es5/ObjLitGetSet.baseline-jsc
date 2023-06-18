@@ -21,6 +21,6 @@ Success: Expected invalid syntax if set keyword is a string (then it is just a n
 Success: Expected invalid syntax if get keyword is a string (then it is just a normal property name) = true, got true
 PASS
  (test 5): Object literal get set function toString
-function () { return _foo; }
-function (value) { _foo = value; }
+get foo() { return _foo; }
+set foo(value) { _foo = value; }
 PASS

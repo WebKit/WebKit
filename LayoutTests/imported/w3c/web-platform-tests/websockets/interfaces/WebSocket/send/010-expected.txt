@@ -8,6 +8,6 @@ PASS WebSockets: sending non-strings ([object HTMLBodyElement])
 PASS WebSockets: sending non-strings ([object Object])
 PASS WebSockets: sending non-strings ()
 PASS WebSockets: sending non-strings ([object WebSocket])
-PASS WebSockets: sending non-strings (function (){})
+PASS WebSockets: sending non-strings (function(){})
 PASS WebSockets: sending non-strings (Error)
 

@@ -1,4 +1,4 @@
-PASS function () {
+PASS function() {
         window.__defineGetter__("window", () => ({ location: "haxored" }));
     } threw exception TypeError: Attempting to change configurable attribute of unconfigurable property..
 PASS result is correctValue

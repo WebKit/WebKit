@@ -1,6 +1,6 @@
 
 PASS TransformStream can be constructed with a transform function
-FAIL TransformStream cannot be constructed with no transform function assert_throws_js: TransformStream cannot be constructed with no arguments function "function () { new TransformStream(); }" did not throw
+FAIL TransformStream cannot be constructed with no transform function assert_throws_js: TransformStream cannot be constructed with no arguments function "function() { new TransformStream(); }" did not throw
 FAIL TransformStream instances must have writable and readable properties of the correct types assert_true: it has a writable property expected true got false
 FAIL TransformStream writable starts in the writable state assert_equals: writable starts writable expected (string) "writable" but got (undefined) undefined
 FAIL Pass-through sync TransformStream: can read from readable what is put into writable ts.writable.write is not a function. (In 'ts.writable.write('a')', 'ts.writable.write' is undefined)

@@ -64,8 +64,8 @@ int testFunctionOverrides()
         "\n"
         "var expectedStr =" "\n"
         "'function f1() { /* Overridden f1 */ }\\n"
-        "function () { /* Overridden f2 */ }\\n"
-        "function () { /* Overridden f3 */ }\\n"
+        "function() { /* Overridden f2 */ }\\n"
+        "function() { /* Overridden f3 */ }\\n"
         "function anonymous() { /* Overridden f4 */ }\\n';"
         "var result = (str == expectedStr);" "\n"
         "result";

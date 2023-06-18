@@ -49,7 +49,7 @@ PASS newTransformFromObject.c is 3
 PASS newTransformFromObject.d is 4
 PASS newTransformFromObject.e is 5
 PASS newTransformFromObject.f is 6
-PASS function () {
+PASS function() {
     ctx.setTransform({a: 1, m11: 11, b: 2, m12: 12, c: 3, m21: 21, d: 4, m22: 22, e: 5, m41: 41, f: 6, m42: 42});
 } threw exception TypeError: init.a and init.m11 do not match.
 PASS newTransformFromInvalidMatrixObject.a is 1
@@ -58,7 +58,7 @@ PASS newTransformFromInvalidMatrixObject.c is 3
 PASS newTransformFromInvalidMatrixObject.d is 4
 PASS newTransformFromInvalidMatrixObject.e is 5
 PASS newTransformFromInvalidMatrixObject.f is 6
-PASS function () {
+PASS function() {
     ctx.setTransform(1);
 } threw exception TypeError: Type error.
 PASS newTransformFromNonObjectNumber.a is 1
@@ -67,7 +67,7 @@ PASS newTransformFromNonObjectNumber.c is 3
 PASS newTransformFromNonObjectNumber.d is 4
 PASS newTransformFromNonObjectNumber.e is 5
 PASS newTransformFromNonObjectNumber.f is 6
-PASS function () {
+PASS function() {
     ctx.setTransform("test");
 } threw exception TypeError: Type error.
 PASS newTransformFromNonObjectString.a is 1
@@ -76,7 +76,7 @@ PASS newTransformFromNonObjectString.c is 3
 PASS newTransformFromNonObjectString.d is 4
 PASS newTransformFromNonObjectString.e is 5
 PASS newTransformFromNonObjectString.f is 6
-PASS function () {
+PASS function() {
     ctx.setTransform(true);
 } threw exception TypeError: Type error.
 PASS newTransformFromNonObjectBoolean.a is 1

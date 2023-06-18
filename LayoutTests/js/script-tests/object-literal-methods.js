@@ -5,7 +5,7 @@ shouldBe("o.foo()", "10");
 shouldBe("typeof o.foo", "'function'");
 shouldBe("o.foo.length", "0");
 shouldBe("o.foo.name", "'foo'");
-shouldBe("o.foo.toString()", "'function foo() { return 10; }'");
+shouldBe("o.foo.toString()", "'foo() { return 10; }'");
 shouldBe("Object.getOwnPropertyDescriptor(o, 'foo').value", "o.foo");
 shouldBeTrue("Object.getOwnPropertyDescriptor(o, 'foo').enumerable");
 shouldBeTrue("Object.getOwnPropertyDescriptor(o, 'foo').configurable");
@@ -16,7 +16,7 @@ shouldBe("o.add(42, -10)", "32");
 shouldBe("typeof o.add", "'function'");
 shouldBe("o.add.length", "2");
 shouldBe("o.add.name", "'add'");
-shouldBe("o.add.toString()", "'function add(x, y) { return x + y; }'");
+shouldBe("o.add.toString()", "'add(x, y) { return x + y; }'");
 
 shouldNotThrow("o = { 'add'(a, b, c) { return a + b + c; } };");
 shouldBe("o.add(1, 2, 3)", "6");

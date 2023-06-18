@@ -3,5 +3,5 @@ fragment
 
 FAIL Performing a fragment navigation must not abort the screen orientation change promise_test: Unhandled rejection with value: object "NotSupportedError: Screen orientation locking is not supported"
 FAIL Performing a fragment navigation within an iframe must not abort the lock promise promise_test: Unhandled rejection with value: object "NotSupportedError: Screen orientation locking is not supported"
-FAIL Unloading an iframe by navigating it must abort the lock promise promise_rejects_dom: function "function () { throw e }" threw object "NotSupportedError: Screen orientation locking is not supported" that is not a DOMException AbortError: property "code" is equal to 9, expected 20
+FAIL Unloading an iframe by navigating it must abort the lock promise promise_rejects_dom: function "function() { throw e }" threw object "NotSupportedError: Screen orientation locking is not supported" that is not a DOMException AbortError: property "code" is equal to 9, expected 20
 

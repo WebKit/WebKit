@@ -386,7 +386,7 @@ ALL PROPERTIES:
 -----------------------------------------------------
 EXPRESSION: window.unboundFunction
 type: function
-description: function () { console.log(arguments); }
+description: function() { console.log(arguments); }
 
 OWN PROPERTIES:
     length

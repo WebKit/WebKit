@@ -17,7 +17,7 @@ return 42
 var gf = GeneratorFunction(`return 42`);
 shouldBe(typeof anonymous, `undefined`);
 shouldBe(gf.toString(),
-`function* anonymous() {
+`function *anonymous() {
 return 42
 }`);
 
@@ -31,6 +31,6 @@ return 42
 var agf = AsyncGeneratorFunction(`return 42`);
 shouldBe(typeof anonymous, `undefined`);
 shouldBe(agf.toString(),
-`async function* anonymous() {
+`async function*anonymous() {
 return 42
 }`);

@@ -210,8 +210,8 @@ section = "object shorthand method";
         prop1() {},
         prop2(x) {}
     };
-    test(o.prop1, "prop1", "function prop1() {}");
-    test(o.prop2, "prop2", "function prop2(x) {}");
+    test(o.prop1, "prop1", "prop1() {}");
+    test(o.prop2, "prop2", "prop2(x) {}");
 
     section = "bound object shorthand method";
     {
@@ -561,7 +561,7 @@ section = "Object computed non-symbol property with shorthand function";
         let o = {    
             [value]() {},
         }
-        test(o[value], toString(value), "function() {}");
+        test(o[value], toString(value), "[value]() {}");
 
         let bound = o[value].bind({});
         test(bound, "bound " + toString(value), "function " + toString(value) + "() { [native code] }");
@@ -580,8 +580,8 @@ section = "Object computed non-symbol property with get/set function";
         }
 
         let desc = Object.getOwnPropertyDescriptor(o, value);
-        test(desc.get, "get " + value, "function() {}");
-        test(desc.set, "set " + value, "function(x) {}");
+        test(desc.get, "get " + value, "get [value]() {}");
+        test(desc.set, "set " + value, "set [value](x) {}");
 
         let bound = desc.get.bind({});
         test(bound, "bound get " + toString(value), "function get " + toString(value) + "() { [native code] }");
@@ -631,7 +631,7 @@ section = "Object computed symbol property with shorthand function";
         let o = {    
             [value]() {},
         }
-        test(o[value], expectedName, "function() {}");
+        test(o[value], expectedName, "[value]() {}");
 
         let bound = o[value].bind({});
         test(bound, "bound " + expectedName, "function " + expectedName + "() { [native code] }");
@@ -650,8 +650,8 @@ section = "Object computed symbol property with get/set function";
         }
 
         let desc = Object.getOwnPropertyDescriptor(o, value);
-        test(desc.get, "get " + expectedName, "function() {}");
-        test(desc.set, "set " + expectedName, "function(x) {}");
+        test(desc.get, "get " + expectedName, "get [value]() {}");
+        test(desc.set, "set " + expectedName, "set [value](x) {}");
 
         let bound = desc.get.bind({});
         test(bound, "bound get " + expectedName, "function get " + expectedName + "() { [native code] }");
@@ -725,23 +725,23 @@ section = "get/set function";
 {
     let o = { get foo() {}, set foo(x){} };
     let desc = Object.getOwnPropertyDescriptor(o, "foo");
-    test(desc.get, "get foo", "function() {}");
-    test(desc.set, "set foo", "function(x) {}");
+    test(desc.get, "get foo", "get foo() {}");
+    test(desc.set, "set foo", "set foo(x) {}");
 
     let o1 = { get "bar"() {}, set "bar"(x){} };
     let desc1 = Object.getOwnPropertyDescriptor(o1, "bar");
-    test(desc1.get, "get bar", "function() {}");
-    test(desc1.set, "set bar", "function(x) {}");
+    test(desc1.get, "get bar", 'get "bar"() {}');
+    test(desc1.set, "set bar", 'set "bar"(x) {}');
 
     let o2 = { get 100() {}, set 100(x){} };
     let desc2 = Object.getOwnPropertyDescriptor(o2, 100);
-    test(desc2.get, "get 100", "function() {}");
-    test(desc2.set, "set 100", "function(x) {}");
+    test(desc2.get, "get 100", "get 100() {}");
+    test(desc2.set, "set 100", "set 100(x) {}");
 
     let o3 = { get [100]() {}, set [100](x){} };
     let desc3 = Object.getOwnPropertyDescriptor(o3, 100);
-    test(desc3.get, "get 100", "function() {}");
-    test(desc3.set, "set 100", "function(x) {}");
+    test(desc3.get, "get 100", "get [100]() {}");
+    test(desc3.set, "set 100", "set [100](x) {}");
 
     section = "bound get/set function";
     {

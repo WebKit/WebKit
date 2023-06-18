@@ -232,8 +232,8 @@ void JSModuleRecord::instantiateDeclarations(JSGlobalObject* globalObject, Modul
             ASSERT(!unlinkedFunctionExecutable->name().isEmpty());
             if (vm.typeProfiler() || vm.controlFlowProfiler()) {
                 vm.functionHasExecutedCache()->insertUnexecutedRange(moduleProgramExecutable->sourceID(),
-                    unlinkedFunctionExecutable->typeProfilingStartOffset(),
-                    unlinkedFunctionExecutable->typeProfilingEndOffset());
+                    unlinkedFunctionExecutable->unlinkedFunctionStart(),
+                    unlinkedFunctionExecutable->unlinkedFunctionEnd());
             }
             JSFunction* function = JSFunction::create(vm, unlinkedFunctionExecutable->link(vm, moduleProgramExecutable, moduleProgramExecutable->source()), moduleEnvironment);
             bool putResult = false;

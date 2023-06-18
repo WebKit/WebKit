@@ -17,7 +17,7 @@ PASS DOMRectReadOnly: [object DOMRectReadOnly]
 PASS ImageData: [object ImageData]
 PASS Blob: [object Blob]
 PASS File: [object File]
-PASS Not serializable: function: function () {}
+PASS Not serializable: function: function() {}
 PASS Not serializable: symbol: Symbol(desc)
 PASS Not serializable: DedicatedWorkerGlobalScope: [object DedicatedWorkerGlobalScope]
 PASS Not serializable: Event: [object Event]

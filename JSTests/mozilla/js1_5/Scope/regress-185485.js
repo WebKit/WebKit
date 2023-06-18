@@ -123,7 +123,7 @@ with (x)
 }
 status = inSection(5);
 actual = x.g.toString();
-expect = (function () {}).toString();
+expect = (function() {}).toString();
 addThis();
 
 

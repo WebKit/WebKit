@@ -48,6 +48,6 @@ PASS Unusual but valid property bag: null
 PASS Unusual but valid property bag: undefined
 PASS Unusual but valid property bag: 1,2,3
 PASS Unusual but valid property bag: /regex/
-PASS Unusual but valid property bag: function () {}
+PASS Unusual but valid property bag: function() {}
 PASS Property bag propagates exceptions
 
