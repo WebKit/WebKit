@@ -1085,7 +1085,7 @@ void HTMLTreeBuilder::processStartTagForInTable(AtomHTMLToken&& token)
         parseError(token);
         if (m_tree.form() && !isParsingTemplateContents())
             return;
-        m_tree.insertHTMLFormElement(WTFMove(token), true);
+        m_tree.insertHTMLFormElement(WTFMove(token));
         m_tree.openElements().pop();
         return;
     case TagName::template_:

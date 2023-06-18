@@ -299,6 +299,11 @@ caption {
     text-align: -webkit-center;
 }
 
+/* for table elements with form inside following rules should apply */
+:is(table, thead, tbody, tfoot, tr) > form:-internal-html-document {
+    display: none !important;
+}
+
 /* lists */
 
 ul, menu, dir {

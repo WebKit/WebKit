@@ -1117,6 +1117,9 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
         case CSSSelector::PseudoClassHasAttachment:
             return hasAttachment(element);
 #endif
+        case CSSSelector::PseudoClassHtmlDocument:
+            return matchesHtmlDocumentPseudoClass(element);
+
         case CSSSelector::PseudoClassPopoverOpen:
             return matchesPopoverOpenPseudoClass(element);
 

@@ -562,6 +562,11 @@ ALWAYS_INLINE bool matchesFocusWithinPseudoClass(const Element& element)
     return element.hasFocusWithin() && isFrameFocused(element);
 }
 
+ALWAYS_INLINE bool matchesHtmlDocumentPseudoClass(const Element& element)
+{
+    return element.document().isHTMLDocument();
+}
+
 ALWAYS_INLINE bool matchesModalPseudoClass(const Element& element)
 {
     if (is<HTMLDialogElement>(element))

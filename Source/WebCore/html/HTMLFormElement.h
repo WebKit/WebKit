@@ -82,8 +82,6 @@ public:
     ExceptionOr<void> requestSubmit(HTMLElement* submitter);
     WEBCORE_EXPORT void reset();
 
-    void setDemoted(bool demoted) { m_wasDemoted = demoted; }
-
     void submitImplicitly(Event&, bool fromImplicitSubmissionTrigger);
     bool formWouldHaveSecureSubmission(const String& url);
 
@@ -131,7 +129,6 @@ public:
 private:
     HTMLFormElement(const QualifiedName&, Document&);
 
-    bool rendererIsNeeded(const RenderStyle&) final;
     InsertedIntoAncestorResult insertedIntoAncestor(InsertionType, ContainerNode&) final;
     void removedFromAncestor(RemovalType, ContainerNode&) final;
     void finishParsingChildren() final;
@@ -142,8 +139,6 @@ private:
     void resumeFromDocumentSuspension() final;
 
     void didMoveToNewDocument(Document& oldDocument, Document& newDocument) final;
-
-    void copyNonAttributePropertiesFromElement(const Element&) final;
 
     void submit(Event*, bool processingUserGesture, FormSubmissionTrigger, HTMLFormControlElement* submitter = nullptr);
 
@@ -194,7 +189,6 @@ private:
 
     bool m_isInResetFunction { false };
 
-    bool m_wasDemoted { false };
     bool m_isConstructingEntryList { false };
 };
 

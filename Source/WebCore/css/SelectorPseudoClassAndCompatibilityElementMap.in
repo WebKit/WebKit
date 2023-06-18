@@ -1,4 +1,5 @@
 -khtml-drag
+-internal-html-document
 -webkit-any
 -webkit-any-link, PseudoClassAnyLinkDeprecated, PseudoElementUnknown
 -webkit-autofill

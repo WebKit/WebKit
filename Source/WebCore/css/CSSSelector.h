@@ -128,6 +128,7 @@ struct PossiblyQuotedIdentifier {
             PseudoClassFullPageMedia,
             PseudoClassDefault,
             PseudoClassDisabled,
+            PseudoClassHtmlDocument, // for internal use only with forms in table case in UA stylesheet
             PseudoClassIs,
             PseudoClassMatches, // obsolete synonym for PseudoClassIs
             PseudoClassWhere,
