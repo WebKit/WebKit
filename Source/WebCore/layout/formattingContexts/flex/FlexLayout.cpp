@@ -133,9 +133,54 @@ void FlexLayout::computeAvailableMainAndCrossSpace(const LogicalConstraints& log
 
 FlexLayout::FlexBaseAndHypotheticalMainSizeList FlexLayout::flexBaseAndHypotheticalMainSizeForFlexItems(const LogicalConstraints::AxisGeometry& mainAxis, const LogicalFlexItems& flexItems) const
 {
-    UNUSED_PARAM(mainAxis);
-    UNUSED_PARAM(flexItems);
-    return { };
+    auto flexBaseAndHypotheticalMainSizeList = FlexBaseAndHypotheticalMainSizeList { };
+    for (auto& flexItem : flexItems) {
+        auto flexBase = LayoutUnit { };
+        // 3. Determine the flex base size and hypothetical main size of each item:
+        auto computeFlexBase = [&] {
+            // A. If the item has a definite used flex basis, that's the flex base size.
+            if (auto definiteFlexBase = flexItem.mainAxis().definiteFlexBasis) {
+                flexBase = *definiteFlexBase;
+                return;
+            }
+            // B. If the flex item has...
+            if (flexItem.hasAspectRatio() && flexItem.hasContentFlexBasis() && flexItem.crossAxis().definiteSize) {
+                // The flex base size is calculated from its inner cross size and the flex item's intrinsic aspect ratio.
+                ASSERT_NOT_IMPLEMENTED_YET();
+                return;
+            }
+            // C. If the used flex basis is content or depends on its available space, and the flex container is being sized under
+            //    a min-content or max-content constraint, size the item under that constraint
+            auto flexBasisContentOrAvailableSpaceDependent = flexItem.hasContentFlexBasis() || flexItem.hasAvailableSpaceDependentFlexBasis();
+            auto flexContainerHasMinMaxConstraints = mainAxis.minimumContentSize || mainAxis.maximumContentSize;
+            if (flexBasisContentOrAvailableSpaceDependent && flexContainerHasMinMaxConstraints) {
+                // Compute flex item's main size.
+                ASSERT_NOT_IMPLEMENTED_YET();
+                return;
+            }
+            // D. If the used flex basis is content or depends on its available space, the available main size is infinite,
+            //    and the flex item's inline axis is parallel to the main axis, lay the item out using the rules for a box in an orthogonal flow.
+            //    The flex base size is the item's max-content main size.
+            if (flexBasisContentOrAvailableSpaceDependent && flexItem.isOrhogonal()) {
+                // Lay the item out using the rules for a box in an orthogonal flow. The flex base size is the item's max-content main size.
+                ASSERT_NOT_IMPLEMENTED_YET();
+                return;
+            }
+            // E. Otherwise, size the item into the available space using its used flex basis in place of its main size, treating a value of content as max-content.
+            ASSERT_NOT_IMPLEMENTED_YET();
+        };
+        computeFlexBase();
+
+        auto hypotheticalMainSize = [&] {
+            // The hypothetical main size is the item's flex base size clamped according to its used min and max main sizes (and flooring the content box size at zero).
+            auto hypotheticalValue = flexBase;
+            auto maximum = flexItem.mainAxis().maximumSize.value_or(hypotheticalValue);
+            auto minimum = flexItem.mainAxis().minimumSize.value_or(hypotheticalValue);
+            return std::max(maximum, std::min(minimum, hypotheticalValue));
+        };
+        flexBaseAndHypotheticalMainSizeList.append({ flexBase, hypotheticalMainSize() });
+    }
+    return flexBaseAndHypotheticalMainSizeList;
 }
 
 LayoutUnit FlexLayout::flexContainerMainSize(const LogicalConstraints::AxisGeometry& mainAxis) const
