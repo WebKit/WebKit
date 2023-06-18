@@ -150,7 +150,7 @@ using MatchingIdentifiers = Vector<CSSValueID, 1>;
 struct IdentifierSchema : public FeatureSchema {
     using ValueFunction = Function<MatchingIdentifiers(const FeatureEvaluationContext&)>;
 
-    IdentifierSchema(const AtomString& name, Vector<CSSValueID>&& valueIdentifiers, ValueFunction&& valueFunction)
+    IdentifierSchema(const AtomString& name, FixedVector<CSSValueID>&& valueIdentifiers, ValueFunction&& valueFunction)
         : FeatureSchema(name, FeatureSchema::Type::Discrete, FeatureSchema::ValueType::Identifier, WTFMove(valueIdentifiers))
         , valueFunction(WTFMove(valueFunction))
     { }
@@ -200,7 +200,7 @@ const FeatureSchema& anyHover()
 {
     static MainThreadNeverDestroyed<IdentifierSchema> schema {
         "any-hover"_s,
-        Vector { CSSValueNone, CSSValueHover },
+        FixedVector { CSSValueNone, CSSValueHover },
         [](auto& context) {
             auto* page = context.document.frame()->page();
             bool isSupported = page && page->chrome().client().hoverSupportedByAnyAvailablePointingDevice();
@@ -214,7 +214,7 @@ const FeatureSchema& anyPointer()
 {
     static MainThreadNeverDestroyed<IdentifierSchema> schema {
         "any-pointer"_s,
-        Vector { CSSValueNone, CSSValueFine, CSSValueCoarse },
+        FixedVector { CSSValueNone, CSSValueFine, CSSValueCoarse },
         [](auto& context) {
             auto* page = context.document.frame()->page();
             auto pointerCharacteristics = page ? page->chrome().client().pointerCharacteristicsOfAllAvailablePointingDevices() : OptionSet<PointerCharacteristics>();
@@ -262,7 +262,7 @@ const FeatureSchema& colorGamut()
 {
     static MainThreadNeverDestroyed<IdentifierSchema> schema {
         "color-gamut"_s,
-        Vector { CSSValueSRGB, CSSValueP3, CSSValueRec2020 },
+        FixedVector { CSSValueSRGB, CSSValueP3, CSSValueRec2020 },
         [](auto& context) {
             auto& frame = *context.document.frame();
 
@@ -343,7 +343,7 @@ const FeatureSchema& dynamicRange()
 {
     static MainThreadNeverDestroyed<IdentifierSchema> schema {
         "dynamic-range"_s,
-        Vector { CSSValueStandard, CSSValueHigh },
+        FixedVector { CSSValueStandard, CSSValueHigh },
         [](auto& context) {
             bool supportsHighDynamicRange = [&] {
                 auto& frame = *context.document.frame();
@@ -369,7 +369,7 @@ const FeatureSchema& forcedColors()
 {
     static MainThreadNeverDestroyed<IdentifierSchema> schema {
         "forced-colors"_s,
-        Vector { CSSValueNone, CSSValueActive },
+        FixedVector { CSSValueNone, CSSValueActive },
         [](auto&) {
             return MatchingIdentifiers { CSSValueNone };
         }
@@ -404,7 +404,7 @@ const FeatureSchema& hover()
 {
     static MainThreadNeverDestroyed<IdentifierSchema> schema {
         "hover"_s,
-        Vector { CSSValueNone, CSSValueHover },
+        FixedVector { CSSValueNone, CSSValueHover },
         [](auto& context) {
             auto* page = context.document.frame()->page();
             bool isSupported =  page && page->chrome().client().hoverSupportedByPrimaryPointingDevice();
@@ -418,7 +418,7 @@ const FeatureSchema& invertedColors()
 {
     static MainThreadNeverDestroyed<IdentifierSchema> schema {
         "inverted-colors"_s,
-        Vector { CSSValueNone, CSSValueInverted },
+        FixedVector { CSSValueNone, CSSValueInverted },
         [](auto& context) {
             bool isInverted = [&] {
                 auto& frame = *context.document.frame();
@@ -462,7 +462,7 @@ const FeatureSchema& orientation()
 {
     static MainThreadNeverDestroyed<IdentifierSchema> schema {
         "orientation"_s,
-        Vector { CSSValueLandscape, CSSValuePortrait },
+        FixedVector { CSSValueLandscape, CSSValuePortrait },
         [](auto& context) {
             auto& view = *context.document.view();
             // Square viewport is portrait.
@@ -477,7 +477,7 @@ const FeatureSchema& pointer()
 {
     static MainThreadNeverDestroyed<IdentifierSchema> schema {
         "pointer"_s,
-        Vector { CSSValueNone, CSSValueFine, CSSValueCoarse },
+        FixedVector { CSSValueNone, CSSValueFine, CSSValueCoarse },
         [](auto& context) {
             auto* page = context.document.frame()->page();
             auto pointerCharacteristics = page ? page->chrome().client().pointerCharacteristicsOfPrimaryPointingDevice() : OptionSet<PointerCharacteristics>();
@@ -505,7 +505,7 @@ const FeatureSchema& prefersContrast()
 {
     static MainThreadNeverDestroyed<IdentifierSchema> schema {
         "prefers-contrast"_s,
-        Vector { CSSValueNoPreference, CSSValueMore, CSSValueLess },
+        FixedVector { CSSValueNoPreference, CSSValueMore, CSSValueLess },
         [](auto& context) {
             bool userPrefersContrast = [&] {
                 auto& frame = *context.document.frame();
@@ -534,7 +534,7 @@ const FeatureSchema& prefersDarkInterface()
 {
     static MainThreadNeverDestroyed<IdentifierSchema> schema {
         "prefers-dark-interface"_s,
-        Vector { CSSValueNoPreference, CSSValuePrefers },
+        FixedVector { CSSValueNoPreference, CSSValuePrefers },
         [](auto& context) {
             auto& frame = *context.document.frame();
             bool prefersDarkInterface = frame.page()->useSystemAppearance() && frame.page()->useDarkAppearance();
@@ -549,7 +549,7 @@ const FeatureSchema& prefersReducedMotion()
 {
     static MainThreadNeverDestroyed<IdentifierSchema> schema {
         "prefers-reduced-motion"_s,
-        Vector { CSSValueNoPreference, CSSValueReduce },
+        FixedVector { CSSValueNoPreference, CSSValueReduce },
         [](auto& context) {
             bool userPrefersReducedMotion = [&] {
                 auto& frame = *context.document.frame();
@@ -589,7 +589,7 @@ const FeatureSchema& scan()
 {
     static MainThreadNeverDestroyed<IdentifierSchema> schema {
         "scan"_s,
-        Vector { CSSValueInterlace, CSSValueProgressive },
+        FixedVector { CSSValueInterlace, CSSValueProgressive },
         [](auto&) {
             return MatchingIdentifiers { };
         }
@@ -601,7 +601,7 @@ const FeatureSchema& scripting()
 {
     static MainThreadNeverDestroyed<IdentifierSchema> schema {
         "scripting"_s,
-        Vector { CSSValueNone, CSSValueInitialOnly, CSSValueEnabled },
+        FixedVector { CSSValueNone, CSSValueInitialOnly, CSSValueEnabled },
         [](auto& context) {
             auto& frame = *context.document.frame();
 
@@ -657,7 +657,7 @@ const FeatureSchema& update()
 {
     static MainThreadNeverDestroyed<IdentifierSchema> schema {
         "update"_s,
-        Vector { CSSValueNone, CSSValueSlow, CSSValueFast },
+        FixedVector { CSSValueNone, CSSValueSlow, CSSValueFast },
         [](auto& context) {
             auto& frame = *context.document.frame();
             auto* frameView = frame.view();
@@ -702,7 +702,7 @@ const FeatureSchema& displayMode()
 {
     static MainThreadNeverDestroyed<IdentifierSchema> schema {
         "display-mode"_s,
-        Vector { CSSValueFullscreen, CSSValueStandalone, CSSValueMinimalUi, CSSValueBrowser },
+        FixedVector { CSSValueFullscreen, CSSValueStandalone, CSSValueMinimalUi, CSSValueBrowser },
         [](auto& context) {
             auto identifier = [&] {
                 auto& frame = *context.document.frame();
@@ -735,7 +735,7 @@ const FeatureSchema& overflowBlock()
 {
     static MainThreadNeverDestroyed<IdentifierSchema> schema {
         "overflow-block"_s,
-        Vector { CSSValueNone, CSSValueScroll, CSSValuePaged },
+        FixedVector { CSSValueNone, CSSValueScroll, CSSValuePaged },
         [](auto& context) {
             // FIXME: Match none when scrollEnabled is set to false by UIKit.
             bool matchesPaged = [&] {
@@ -755,7 +755,7 @@ const FeatureSchema& overflowInline()
 {
     static MainThreadNeverDestroyed<IdentifierSchema> schema {
         "overflow-inline"_s,
-        Vector { CSSValueNone, CSSValueScroll },
+        FixedVector { CSSValueNone, CSSValueScroll },
         [](auto&) {
             // FIXME: Match none when scrollEnabled is set to false by UIKit.
             return MatchingIdentifiers { CSSValueScroll };
@@ -769,7 +769,7 @@ const FeatureSchema& prefersColorScheme()
 {
     static MainThreadNeverDestroyed<IdentifierSchema> schema {
         "prefers-color-scheme"_s,
-        Vector { CSSValueLight, CSSValueDark },
+        FixedVector { CSSValueLight, CSSValueDark },
         [](auto& context) {
             auto& frame = *context.document.frame();
             bool useDarkAppearance = frame.page()->useDarkAppearance();
