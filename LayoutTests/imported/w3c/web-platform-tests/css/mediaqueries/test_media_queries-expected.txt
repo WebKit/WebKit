@@ -1144,9 +1144,11 @@ PASS expression_should_be_known: resolution: 1.5dppx
 PASS expression_should_be_known: resolution: 1.5x
 PASS expression_should_be_known: resolution: 2.0dppx
 PASS expression_should_be_known: resolution: 0dpi
-PASS expression_should_be_known: resolution: -3dpi
 PASS expression_should_be_known: resolution: 0dppx
 PASS expression_should_be_known: resolution: 0x
+PASS expression_should_be_known: resolution: calc(6x / 2)
+PASS expression_should_be_parseable: resolution: -3dpi
+PASS expression_should_be_unknown: resolution: -3dpi
 PASS expression_should_be_known: min-resolution: 3dpi
 PASS expression_should_be_known: min-resolution:3dpi
 PASS expression_should_be_known: min-resolution: 3.0dpi
@@ -1158,9 +1160,11 @@ PASS expression_should_be_known: min-resolution: 1.5dppx
 PASS expression_should_be_known: min-resolution: 1.5x
 PASS expression_should_be_known: min-resolution: 2.0dppx
 PASS expression_should_be_known: min-resolution: 0dpi
-PASS expression_should_be_known: min-resolution: -3dpi
 PASS expression_should_be_known: min-resolution: 0dppx
 PASS expression_should_be_known: min-resolution: 0x
+PASS expression_should_be_known: min-resolution: calc(6x / 2)
+PASS expression_should_be_parseable: min-resolution: -3dpi
+PASS expression_should_be_unknown: min-resolution: -3dpi
 PASS expression_should_be_known: max-resolution: 3dpi
 PASS expression_should_be_known: max-resolution:3dpi
 PASS expression_should_be_known: max-resolution: 3.0dpi
@@ -1172,9 +1176,11 @@ PASS expression_should_be_known: max-resolution: 1.5dppx
 PASS expression_should_be_known: max-resolution: 1.5x
 PASS expression_should_be_known: max-resolution: 2.0dppx
 PASS expression_should_be_known: max-resolution: 0dpi
-PASS expression_should_be_known: max-resolution: -3dpi
 PASS expression_should_be_known: max-resolution: 0dppx
 PASS expression_should_be_known: max-resolution: 0x
+PASS expression_should_be_known: max-resolution: calc(6x / 2)
+PASS expression_should_be_parseable: max-resolution: -3dpi
+PASS expression_should_be_unknown: max-resolution: -3dpi
 PASS find_resolution
 PASS resolution is exact: should_apply: (resolution: ${resolution}dpi)
 PASS resolution is exact: should_apply: (resolution: ${Math.floor(resolution/96)}dppx)
@@ -1260,7 +1266,8 @@ PASS expression_should_be_known: overflow-block
 PASS expression_should_be_known: overflow-block: none
 PASS expression_should_be_known: overflow-block: paged
 PASS expression_should_be_known: overflow-block: scroll
-FAIL expression_should_be_known: overflow-block: optional-paged assert_true: expected true got false
+PASS expression_should_be_parseable: overflow-block: optional-paged
+PASS expression_should_be_unknown: overflow-block: optional-paged
 PASS expression_should_be_parseable: overflow-block: some-random-invalid-thing
 PASS expression_should_be_unknown: overflow-block: some-random-invalid-thing
 PASS Sanity check for overflow-block
