@@ -191,10 +191,31 @@ LayoutUnit FlexLayout::flexContainerMainSize(const LogicalConstraints::AxisGeome
 
 FlexLayout::LineRanges FlexLayout::computeFlexLines(const LogicalFlexItems& flexItems, LayoutUnit flexContainerMainSize, const FlexBaseAndHypotheticalMainSizeList& flexBaseAndHypotheticalMainSizeList) const
 {
-    UNUSED_PARAM(flexItems);
-    UNUSED_PARAM(flexContainerMainSize);
-    UNUSED_PARAM(flexBaseAndHypotheticalMainSizeList);
-    return { };
+    // Collect flex items into flex lines:
+    // If the flex container is single-line, collect all the flex items into a single flex line.
+    // Otherwise, starting from the first uncollected item, collect consecutive items one by one until the first time that the next collected
+    // item would not fit into the flex container's inner main size.
+    // If the very first uncollected item wouldn't fit, collect just it into the line.
+    // For this step, the size of a flex item is its outer hypothetical main size. (Note: This can be negative.)
+    if (isSingleLineFlexContainer())
+        return { 0, flexBaseAndHypotheticalMainSizeList.size() };
+
+    auto lineRanges = LineRanges { };
+    size_t lastWrapIndex = 0;
+    auto flexItemsMainSize = LayoutUnit { };
+    for (size_t flexItemIndex = 0; flexItemIndex < flexBaseAndHypotheticalMainSizeList.size(); ++flexItemIndex) {
+        auto flexItemHypotheticalOuterMainSize = flexItems[flexItemIndex].mainAxis().margin() + flexBaseAndHypotheticalMainSizeList[flexItemIndex].hypotheticalMainSize;
+        auto isFlexLineEmpty = flexItemIndex == lastWrapIndex;
+        if (isFlexLineEmpty || flexItemsMainSize + flexItemHypotheticalOuterMainSize <= flexContainerMainSize) {
+            flexItemsMainSize += flexItemHypotheticalOuterMainSize;
+            continue;
+        }
+        lineRanges.append({ lastWrapIndex, flexItemIndex });
+        flexItemsMainSize = flexItemHypotheticalOuterMainSize;
+        lastWrapIndex = flexItemIndex;
+    }
+    lineRanges.append({ lastWrapIndex, flexBaseAndHypotheticalMainSizeList.size() });
+    return lineRanges;
 }
 
 FlexLayout::SizeList FlexLayout::computeMainSizeForFlexItems(const LogicalFlexItems& flexItems, const LineRanges& lineRanges, LayoutUnit flexContainerMainSize, const FlexBaseAndHypotheticalMainSizeList& flexBaseAndHypotheticalMainSizeList) const
