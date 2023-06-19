@@ -28,7 +28,6 @@
 #include "AcceleratedSurface.h"
 
 #include "MessageReceiver.h"
-#include <WebCore/PageIdentifier.h>
 #include <wtf/unix/UnixFileDescriptor.h>
 
 #if USE(GBM)
@@ -84,9 +83,8 @@ private:
         virtual void didDisplayFrame();
 
     protected:
-        explicit RenderTarget(WebCore::PageIdentifier, const WebCore::IntSize&);
+        explicit RenderTarget(const WebCore::IntSize&);
 
-        WebCore::PageIdentifier m_pageID;
         unsigned m_backColorBuffer { 0 };
         unsigned m_frontColorBuffer { 0 };
         unsigned m_displayColorBuffer { 0 };
@@ -96,8 +94,8 @@ private:
 #if USE(GBM)
     class RenderTargetEGLImage final : public RenderTarget {
     public:
-        static std::unique_ptr<RenderTarget> create(WebCore::PageIdentifier, const WebCore::IntSize&);
-        RenderTargetEGLImage(WebCore::PageIdentifier, const WebCore::IntSize&, EGLImage, WTF::UnixFileDescriptor&&, EGLImage, WTF::UnixFileDescriptor&&, EGLImage, WTF::UnixFileDescriptor&&, uint32_t format, uint32_t offset, uint32_t stride, uint64_t modifier);
+        static std::unique_ptr<RenderTarget> create(uint64_t, const WebCore::IntSize&);
+        RenderTargetEGLImage(uint64_t, const WebCore::IntSize&, EGLImage, WTF::UnixFileDescriptor&&, EGLImage, WTF::UnixFileDescriptor&&, EGLImage, WTF::UnixFileDescriptor&&, uint32_t format, uint32_t offset, uint32_t stride, uint64_t modifier);
         ~RenderTargetEGLImage();
 
     private:
@@ -112,8 +110,8 @@ private:
 
     class RenderTargetSHMImage final : public RenderTarget {
     public:
-        static std::unique_ptr<RenderTarget> create(WebCore::PageIdentifier, const WebCore::IntSize&);
-        RenderTargetSHMImage(WebCore::PageIdentifier, const WebCore::IntSize&, Ref<ShareableBitmap>&&, ShareableBitmapHandle&&, Ref<ShareableBitmap>&&, ShareableBitmapHandle&&, Ref<ShareableBitmap>&&, ShareableBitmapHandle&&);
+        static std::unique_ptr<RenderTarget> create(uint64_t, const WebCore::IntSize&);
+        RenderTargetSHMImage(uint64_t, const WebCore::IntSize&, Ref<ShareableBitmap>&&, ShareableBitmapHandle&&, Ref<ShareableBitmap>&&, ShareableBitmapHandle&&, Ref<ShareableBitmap>&&, ShareableBitmapHandle&&);
         ~RenderTargetSHMImage() = default;
 
     private:
@@ -125,6 +123,7 @@ private:
         Ref<ShareableBitmap> m_displayBitmap;
     };
 
+    uint64_t m_id { 0 };
     unsigned m_fbo { 0 };
     std::unique_ptr<RenderTarget> m_target;
 };

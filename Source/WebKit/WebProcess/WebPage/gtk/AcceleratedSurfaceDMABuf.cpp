@@ -44,6 +44,12 @@
 
 namespace WebKit {
 
+static uint64_t generateID()
+{
+    static uint64_t identifier = 0;
+    return ++identifier;
+}
+
 std::unique_ptr<AcceleratedSurfaceDMABuf> AcceleratedSurfaceDMABuf::create(WebPage& webPage, Client& client)
 {
     return std::unique_ptr<AcceleratedSurfaceDMABuf>(new AcceleratedSurfaceDMABuf(webPage, client));
@@ -51,6 +57,7 @@ std::unique_ptr<AcceleratedSurfaceDMABuf> AcceleratedSurfaceDMABuf::create(WebPa
 
 AcceleratedSurfaceDMABuf::AcceleratedSurfaceDMABuf(WebPage& webPage, Client& client)
     : AcceleratedSurface(webPage, client)
+    , m_id(generateID())
 {
 }
 
@@ -58,8 +65,7 @@ AcceleratedSurfaceDMABuf::~AcceleratedSurfaceDMABuf()
 {
 }
 
-AcceleratedSurfaceDMABuf::RenderTarget::RenderTarget(WebCore::PageIdentifier pageID, const WebCore::IntSize& size)
-    : m_pageID(pageID)
+AcceleratedSurfaceDMABuf::RenderTarget::RenderTarget(const WebCore::IntSize& size)
 {
     std::array<unsigned, 4> renderbuffers;
     glGenRenderbuffers(4, renderbuffers.data());
@@ -101,7 +107,7 @@ void AcceleratedSurfaceDMABuf::RenderTarget::didDisplayFrame()
 }
 
 #if USE(GBM)
-std::unique_ptr<AcceleratedSurfaceDMABuf::RenderTarget> AcceleratedSurfaceDMABuf::RenderTargetEGLImage::create(WebCore::PageIdentifier pageID, const WebCore::IntSize& size)
+std::unique_ptr<AcceleratedSurfaceDMABuf::RenderTarget> AcceleratedSurfaceDMABuf::RenderTargetEGLImage::create(uint64_t surfaceID, const WebCore::IntSize& size)
 {
     struct {
         uint32_t format;
@@ -166,11 +172,11 @@ std::unique_ptr<AcceleratedSurfaceDMABuf::RenderTarget> AcceleratedSurfaceDMABuf
         return nullptr;
     }
 
-    return makeUnique<RenderTargetEGLImage>(pageID, size, backImage.second, WTFMove(backImage.first), frontImage.second, WTFMove(frontImage.first), displayImage.second, WTFMove(displayImage.first), metadata.format, metadata.offset, metadata.stride, metadata.modifier);
+    return makeUnique<RenderTargetEGLImage>(surfaceID, size, backImage.second, WTFMove(backImage.first), frontImage.second, WTFMove(frontImage.first), displayImage.second, WTFMove(displayImage.first), metadata.format, metadata.offset, metadata.stride, metadata.modifier);
 }
 
-AcceleratedSurfaceDMABuf::RenderTargetEGLImage::RenderTargetEGLImage(WebCore::PageIdentifier pageID, const WebCore::IntSize& size, EGLImage backImage, UnixFileDescriptor&& backFD, EGLImage frontImage, UnixFileDescriptor&& frontFD, EGLImage displayImage, UnixFileDescriptor&& displayFD, uint32_t format, uint32_t offset, uint32_t stride, uint64_t modifier)
-    : RenderTarget(pageID, size)
+AcceleratedSurfaceDMABuf::RenderTargetEGLImage::RenderTargetEGLImage(uint64_t surfaceID, const WebCore::IntSize& size, EGLImage backImage, UnixFileDescriptor&& backFD, EGLImage frontImage, UnixFileDescriptor&& frontFD, EGLImage displayImage, UnixFileDescriptor&& displayFD, uint32_t format, uint32_t offset, uint32_t stride, uint64_t modifier)
+    : RenderTarget(size)
     , m_backImage(backImage)
     , m_frontImage(frontImage)
     , m_displayImage(displayImage)
@@ -185,7 +191,7 @@ AcceleratedSurfaceDMABuf::RenderTargetEGLImage::RenderTargetEGLImage(WebCore::Pa
     glEGLImageTargetRenderbufferStorageOES(GL_RENDERBUFFER, m_displayImage);
 
     WebProcess::singleton().parentProcessConnection()->send(Messages::AcceleratedBackingStoreDMABuf::Configure(WTFMove(backFD), WTFMove(frontFD), WTFMove(displayFD),
-        size, format, offset, stride, modifier), pageID);
+        size, format, offset, stride, modifier), surfaceID);
 }
 
 AcceleratedSurfaceDMABuf::RenderTargetEGLImage::~RenderTargetEGLImage()
@@ -212,7 +218,7 @@ void AcceleratedSurfaceDMABuf::RenderTargetEGLImage::didDisplayFrame()
 }
 #endif
 
-std::unique_ptr<AcceleratedSurfaceDMABuf::RenderTarget> AcceleratedSurfaceDMABuf::RenderTargetSHMImage::create(WebCore::PageIdentifier pageID, const WebCore::IntSize& size)
+std::unique_ptr<AcceleratedSurfaceDMABuf::RenderTarget> AcceleratedSurfaceDMABuf::RenderTargetSHMImage::create(uint64_t surfaceID, const WebCore::IntSize& size)
 {
     auto backBuffer = ShareableBitmap::create({ size });
     if (!backBuffer) {
@@ -250,11 +256,11 @@ std::unique_ptr<AcceleratedSurfaceDMABuf::RenderTarget> AcceleratedSurfaceDMABuf
         return nullptr;
     }
 
-    return makeUnique<RenderTargetSHMImage>(pageID, size, Ref { *backBuffer }, WTFMove(*backBufferHandle), Ref { *frontBuffer }, WTFMove(*frontBufferHandle), Ref { *displayBuffer }, WTFMove(*displayBufferHandle));
+    return makeUnique<RenderTargetSHMImage>(surfaceID, size, Ref { *backBuffer }, WTFMove(*backBufferHandle), Ref { *frontBuffer }, WTFMove(*frontBufferHandle), Ref { *displayBuffer }, WTFMove(*displayBufferHandle));
 }
 
-AcceleratedSurfaceDMABuf::RenderTargetSHMImage::RenderTargetSHMImage(WebCore::PageIdentifier pageID, const WebCore::IntSize& size, Ref<ShareableBitmap>&& backBitmap, ShareableBitmap::Handle&& backBitmapHandle, Ref<ShareableBitmap>&& frontBitmap, ShareableBitmap::Handle&& frontBitmapHandle, Ref<ShareableBitmap>&& displayBitmap, ShareableBitmap::Handle&& displayBitmapHandle)
-    : RenderTarget(pageID, size)
+AcceleratedSurfaceDMABuf::RenderTargetSHMImage::RenderTargetSHMImage(uint64_t surfaceID, const WebCore::IntSize& size, Ref<ShareableBitmap>&& backBitmap, ShareableBitmap::Handle&& backBitmapHandle, Ref<ShareableBitmap>&& frontBitmap, ShareableBitmap::Handle&& frontBitmapHandle, Ref<ShareableBitmap>&& displayBitmap, ShareableBitmap::Handle&& displayBitmapHandle)
+    : RenderTarget(size)
     , m_backBitmap(WTFMove(backBitmap))
     , m_frontBitmap(WTFMove(frontBitmap))
     , m_displayBitmap(WTFMove(displayBitmap))
@@ -268,7 +274,7 @@ AcceleratedSurfaceDMABuf::RenderTargetSHMImage::RenderTargetSHMImage(WebCore::Pa
     glBindRenderbuffer(GL_RENDERBUFFER, m_displayColorBuffer);
     glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, size.width(), size.height());
 
-    WebProcess::singleton().parentProcessConnection()->send(Messages::AcceleratedBackingStoreDMABuf::ConfigureSHM(WTFMove(backBitmapHandle), WTFMove(frontBitmapHandle), WTFMove(displayBitmapHandle)), m_pageID);
+    WebProcess::singleton().parentProcessConnection()->send(Messages::AcceleratedBackingStoreDMABuf::ConfigureSHM(WTFMove(backBitmapHandle), WTFMove(frontBitmapHandle), WTFMove(displayBitmapHandle)), surfaceID);
 }
 
 void AcceleratedSurfaceDMABuf::RenderTargetSHMImage::didRenderFrame()
@@ -286,12 +292,12 @@ void AcceleratedSurfaceDMABuf::RenderTargetSHMImage::didDisplayFrame()
 
 void AcceleratedSurfaceDMABuf::didCreateCompositingRunLoop(RunLoop& runLoop)
 {
-    WebProcess::singleton().parentProcessConnection()->addMessageReceiver(runLoop, *this, Messages::AcceleratedSurfaceDMABuf::messageReceiverName(), m_webPage.identifier().toUInt64());
+    WebProcess::singleton().parentProcessConnection()->addMessageReceiver(runLoop, *this, Messages::AcceleratedSurfaceDMABuf::messageReceiverName(), m_id);
 }
 
 void AcceleratedSurfaceDMABuf::willDestroyCompositingRunLoop()
 {
-    WebProcess::singleton().parentProcessConnection()->removeMessageReceiver(Messages::AcceleratedSurfaceDMABuf::messageReceiverName(), m_webPage.identifier().toUInt64());
+    WebProcess::singleton().parentProcessConnection()->removeMessageReceiver(Messages::AcceleratedSurfaceDMABuf::messageReceiverName(), m_id);
 }
 
 void AcceleratedSurfaceDMABuf::didCreateGLContext()
@@ -312,7 +318,7 @@ void AcceleratedSurfaceDMABuf::willDestroyGLContext()
 
 uint64_t AcceleratedSurfaceDMABuf::surfaceID() const
 {
-    return m_webPage.identifier().toUInt64();
+    return m_id;
 }
 
 void AcceleratedSurfaceDMABuf::clientResize(const WebCore::IntSize& size)
@@ -323,11 +329,11 @@ void AcceleratedSurfaceDMABuf::clientResize(const WebCore::IntSize& size)
 
     switch (WebCore::PlatformDisplay::sharedDisplayForCompositing().type()) {
     case WebCore::PlatformDisplay::Type::Surfaceless:
-        m_target = RenderTargetSHMImage::create(m_webPage.identifier(), size);
+        m_target = RenderTargetSHMImage::create(m_id, size);
         break;
 #if USE(GBM)
     case WebCore::PlatformDisplay::Type::GBM:
-        m_target = RenderTargetEGLImage::create(m_webPage.identifier(), size);
+        m_target = RenderTargetEGLImage::create(m_id, size);
         break;
 #endif
     default:
@@ -354,7 +360,7 @@ void AcceleratedSurfaceDMABuf::didRenderFrame()
     glFlush();
 
     m_target->didRenderFrame();
-    WebProcess::singleton().parentProcessConnection()->send(Messages::AcceleratedBackingStoreDMABuf::Frame(), m_webPage.identifier());
+    WebProcess::singleton().parentProcessConnection()->send(Messages::AcceleratedBackingStoreDMABuf::Frame(), m_id);
 }
 
 void AcceleratedSurfaceDMABuf::frameDone()
