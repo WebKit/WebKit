@@ -601,11 +601,91 @@ FlexLayout::PositionAndMarginsList FlexLayout::handleMainAxisAlignment(LayoutUni
 
 FlexLayout::PositionAndMarginsList FlexLayout::handleCrossAxisAlignmentForFlexItems(const LogicalFlexItems& flexItems, const LineRanges& lineRanges, const SizeList& flexItemsCrossSizeList, const LinesCrossSizeList& flexLinesCrossSizeList) const
 {
-    UNUSED_PARAM(flexItems);
-    UNUSED_PARAM(lineRanges);
-    UNUSED_PARAM(flexItemsCrossSizeList);
-    UNUSED_PARAM(flexLinesCrossSizeList);
-    return { };
+    auto crossPositionAndMargins = PositionAndMarginsList { flexItems.size() };
+
+    for (size_t lineIndex = 0; lineIndex < lineRanges.size(); ++lineIndex) {
+        auto lineRange = lineRanges[lineIndex];
+
+        auto resolveMarginAuto = [&] {
+            for (auto flexItemIndex = lineRange.begin(); flexItemIndex < lineRange.end(); ++flexItemIndex) {
+                auto& flexItem = flexItems[flexItemIndex];
+                auto marginStart = flexItem.crossAxis().marginStart;
+                auto marginEnd = flexItem.crossAxis().marginEnd;
+
+                // Resolve cross-axis auto margins. If a flex item has auto cross-axis margins:
+                if (!marginStart || !marginEnd) {
+                    auto flexItemOuterCrossSize = marginStart.value_or(0_lu) + flexItemsCrossSizeList[flexItemIndex] + marginEnd.value_or(0_lu);
+                    auto extraCrossSpace = flexLinesCrossSizeList[lineIndex] - flexItemOuterCrossSize;
+                    // If its outer cross size (treating those auto margins as zero) is less than the cross size of its flex line, distribute
+                    // the difference in those sizes equally to the auto margins.
+                    // Otherwise, if the block-start or inline-start margin (whichever is in the cross axis) is auto, set it to zero.
+                    // Set the opposite margin so that the outer cross size of the item equals the cross size of its flex line.
+                    if (extraCrossSpace > 0) {
+                        if (!marginStart && !marginEnd) {
+                            marginStart = extraCrossSpace / 2;
+                            marginEnd = extraCrossSpace / 2;
+                        } else if (!marginStart)
+                            marginStart = extraCrossSpace;
+                        else
+                            marginEnd = extraCrossSpace;
+                    } else {
+                        auto marginCrossSpace = flexLinesCrossSizeList[lineIndex] - flexItemsCrossSizeList[flexItemIndex];
+                        auto setMargins = [&](auto startValue, auto endValue) {
+                            marginStart = startValue;
+                            marginEnd = endValue;
+                        };
+                        marginStart ? setMargins(marginCrossSpace, 0_lu) : setMargins(0_lu, marginCrossSpace);
+                    }
+                }
+                crossPositionAndMargins[flexItemIndex].marginStart = *marginStart;
+                crossPositionAndMargins[flexItemIndex].marginEnd = *marginEnd;
+            }
+        };
+        resolveMarginAuto();
+
+        auto alignSelf = [&] {
+            // Align all flex items along the cross-axis per align-self, if neither of the item's cross-axis margins are auto.
+            for (auto flexItemIndex = lineRange.begin(); flexItemIndex < lineRange.end(); ++flexItemIndex) {
+                auto& flexItem = flexItems[flexItemIndex];
+                auto flexItemOuterCrossSize = crossPositionAndMargins[flexItemIndex].marginStart + flexItemsCrossSizeList[flexItemIndex] + crossPositionAndMargins[flexItemIndex].marginEnd;
+                auto flexitemOuterCrossPosition = LayoutUnit { };
+
+                auto& flexItemAlignSelf = flexItem.style().alignSelf();
+                auto alignValue = flexItemAlignSelf.position() != ItemPosition::Auto ? flexItemAlignSelf : rootStyle().alignItems();
+                switch (alignValue.position()) {
+                case ItemPosition::Stretch:
+                case ItemPosition::Normal: {
+                    flexitemOuterCrossPosition = { };
+                    auto& crossAxis = flexItems[flexItemIndex].crossAxis();
+                    if (crossAxis.hasSizeAuto && crossAxis.marginStart && crossAxis.marginEnd) {
+                        // If the cross size property of the flex item computes to auto, and neither of the cross-axis margins are auto, the flex item is stretched.
+                        // Its used value is the length necessary to make the cross size of the item's margin box as close to the
+                        // same size as the line as possible, while still respecting the constraints imposed by min-height/min-width/max-height/max-width.
+                        ASSERT_NOT_IMPLEMENTED_YET();
+                    }
+                    break;
+                }
+                case ItemPosition::Center:
+                    flexitemOuterCrossPosition = flexLinesCrossSizeList[lineIndex] / 2 - flexItemOuterCrossSize  / 2;
+                    break;
+                case ItemPosition::Start:
+                case ItemPosition::FlexStart:
+                    flexitemOuterCrossPosition = { };
+                    break;
+                case ItemPosition::End:
+                case ItemPosition::FlexEnd:
+                    flexitemOuterCrossPosition = flexLinesCrossSizeList[lineIndex] - flexItemOuterCrossSize;
+                    break;
+                default:
+                    ASSERT_NOT_IMPLEMENTED_YET();
+                    break;
+                }
+                crossPositionAndMargins[flexItemIndex].position = flexitemOuterCrossPosition + crossPositionAndMargins[flexItemIndex].marginStart;
+            }
+        };
+        alignSelf();
+    }
+    return crossPositionAndMargins;
 }
 
 FlexLayout::LinesCrossPositionList FlexLayout::handleCrossAxisAlignmentForFlexLines(const LogicalConstraints::AxisGeometry& crossAxis, const LineRanges& lineRanges, LinesCrossSizeList& flexLinesCrossSizeList) const
