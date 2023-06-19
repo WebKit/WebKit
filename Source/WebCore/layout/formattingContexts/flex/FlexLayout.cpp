@@ -185,8 +185,11 @@ FlexLayout::FlexBaseAndHypotheticalMainSizeList FlexLayout::flexBaseAndHypotheti
 
 LayoutUnit FlexLayout::flexContainerMainSize(const LogicalConstraints::AxisGeometry& mainAxis) const
 {
+    // 4. Determine the main size of the flex container using the rules of the formatting context in which it participates.
+    //    For this computation, auto margins on flex items are treated as 0.
+    // FIXME: above.
     UNUSED_PARAM(mainAxis);
-    return { };
+    return m_availableMainSpace;
 }
 
 FlexLayout::LineRanges FlexLayout::computeFlexLines(const LogicalFlexItems& flexItems, LayoutUnit flexContainerMainSize, const FlexBaseAndHypotheticalMainSizeList& flexBaseAndHypotheticalMainSizeList) const
@@ -359,8 +362,14 @@ FlexLayout::SizeList FlexLayout::computeMainSizeForFlexItems(const LogicalFlexIt
 
 FlexLayout::SizeList FlexLayout::hypotheticalCrossSizeForFlexItems(const LogicalFlexItems& flexItems) const
 {
-    UNUSED_PARAM(flexItems);
-    return { };
+    // FIXME: This is where layout is called on flex items.
+    SizeList hypotheticalCrossSizeList(flexItems.size());
+    for (size_t index = 0; index < flexItems.size(); ++index) {
+        // FIXME: replace this with the actual layout result. See above.
+        ASSERT(flexItems[index].crossAxis().definiteSize);
+        hypotheticalCrossSizeList[index] = *flexItems[index].crossAxis().definiteSize;
+    }
+    return hypotheticalCrossSizeList;
 }
 
 FlexLayout::LinesCrossSizeList FlexLayout::crossSizeForFlexLines(const LineRanges& lineRanges, const LogicalConstraints::AxisGeometry& crossAxis, const LogicalFlexItems& flexItems, const SizeList& flexItemsHypotheticalCrossSizeList) const
@@ -426,6 +435,9 @@ void FlexLayout::stretchFlexLines(LinesCrossSizeList& flexLinesCrossSizeList, si
 
 bool FlexLayout::collapseNonVisibleFlexItems()
 {
+    // Collapse visibility:collapse items. If any flex items have visibility: collapse,
+    // note the cross size of the line they're in as the item's strut size, and restart layout from the beginning.
+    // FIXME: Not supported yet.
     return false;
 }
 
