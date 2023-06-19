@@ -365,11 +365,41 @@ FlexLayout::SizeList FlexLayout::hypotheticalCrossSizeForFlexItems(const Logical
 
 FlexLayout::LinesCrossSizeList FlexLayout::crossSizeForFlexLines(const LineRanges& lineRanges, const LogicalConstraints::AxisGeometry& crossAxis, const LogicalFlexItems& flexItems, const SizeList& flexItemsHypotheticalCrossSizeList) const
 {
-    UNUSED_PARAM(lineRanges);
-    UNUSED_PARAM(crossAxis);
-    UNUSED_PARAM(flexItems);
-    UNUSED_PARAM(flexItemsHypotheticalCrossSizeList);
-    return { };
+    LinesCrossSizeList flexLinesCrossSizeList(lineRanges.size());
+    // If the flex container is single-line and has a definite cross size, the cross size of the flex line is the flex container's inner cross size.
+    if (isSingleLineFlexContainer() && crossAxis.definiteSize) {
+        ASSERT(flexLinesCrossSizeList.size() == 1);
+        flexLinesCrossSizeList[0] = *crossAxis.definiteSize;
+        return flexLinesCrossSizeList;
+    }
+
+    for (size_t lineIndex = 0; lineIndex < lineRanges.size(); ++lineIndex) {
+        auto maximumAscent = LayoutUnit { };
+        auto maximumDescent = LayoutUnit { };
+        auto maximumHypotheticalOuterCrossSize = LayoutUnit { };
+        for (size_t flexItemIndex = lineRanges[lineIndex].begin(); flexItemIndex < lineRanges[lineIndex].end(); ++flexItemIndex) {
+            // Collect all the flex items whose inline-axis is parallel to the main-axis, whose align-self is baseline, and whose cross-axis margins are both non-auto.
+            auto& flexItem = flexItems[flexItemIndex];
+            if (!flexItem.isOrhogonal() && flexItem.style().alignSelf().position() == ItemPosition::Baseline && flexItem.crossAxis().hasNonAutoMargins()) {
+                // Find the largest of the distances between each item's baseline and its hypothetical outer cross-start edge,
+                // and the largest of the distances between each item's baseline and its hypothetical outer cross-end edge, and sum these two values.
+                maximumAscent = std::max(maximumAscent, flexItem.crossAxis().ascent);
+                maximumDescent = std::max(maximumDescent, flexItem.crossAxis().descent);
+                continue;
+            }
+            // Among all the items not collected by the previous step, find the largest outer hypothetical cross size.
+            maximumHypotheticalOuterCrossSize = std::max(maximumHypotheticalOuterCrossSize, flexItemsHypotheticalCrossSizeList[flexItemIndex]);
+        }
+        // The used cross-size of the flex line is the largest of the numbers found in the previous two steps and zero.
+        // If the flex container is single-line, then clamp the line's cross-size to be within the container's computed min and max cross sizes.
+        flexLinesCrossSizeList[lineIndex] = std::max(maximumHypotheticalOuterCrossSize, maximumAscent + maximumDescent);
+        if (isSingleLineFlexContainer()) {
+            auto minimumCrossSize = crossAxis.minimumSize.value_or(flexLinesCrossSizeList[lineIndex]);
+            auto maximumCrossSize = crossAxis.maximumSize.value_or(flexLinesCrossSizeList[lineIndex]);
+            flexLinesCrossSizeList[lineIndex] = std::max(maximumCrossSize, std::min(minimumCrossSize, flexLinesCrossSizeList[lineIndex]));
+        }
+    }
+    return flexLinesCrossSizeList;
 }
 
 void FlexLayout::stretchFlexLines(LinesCrossSizeList& flexLinesCrossSizeList, size_t numberOfLines, const LogicalConstraints::AxisGeometry& crossAxis) const
