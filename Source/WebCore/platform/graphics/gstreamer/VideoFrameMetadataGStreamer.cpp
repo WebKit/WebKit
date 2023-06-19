@@ -34,7 +34,7 @@ using namespace WebCore;
 struct VideoFrameMetadataPrivate {
     std::optional<VideoFrameTimeMetadata> videoSampleMetadata;
     Lock lock;
-    HashMap<String, std::pair<GstClockTime, GstClockTime>> processingTimes WTF_GUARDED_BY_LOCK(lock);
+    HashMap<GstElement*, std::pair<GstClockTime, GstClockTime>> processingTimes WTF_GUARDED_BY_LOCK(lock);
 };
 
 WEBKIT_DEFINE_ASYNC_DATA_STRUCT(VideoFrameMetadataPrivate);
@@ -125,9 +125,9 @@ void webkitGstTraceProcessingTimeForElement(GstElement* element)
         auto [modifiedBuffer, meta] = ensureVideoFrameMetadata(GST_PAD_PROBE_INFO_BUFFER(info));
         GST_PAD_PROBE_INFO_DATA(info) = modifiedBuffer;
         Locker locker { meta->priv->lock };
-        meta->priv->processingTimes.set(String::fromLatin1(reinterpret_cast<char*>(userData)), std::make_pair(gst_util_get_timestamp(), GST_CLOCK_TIME_NONE));
+        meta->priv->processingTimes.set(GST_ELEMENT_CAST(userData), std::make_pair(gst_util_get_timestamp(), GST_CLOCK_TIME_NONE));
         return GST_PAD_PROBE_OK;
-    }, gst_element_get_name(element), g_free);
+    }, element, nullptr);
 
     auto srcPad = adoptGRef(gst_element_get_static_pad(element, "src"));
     gst_pad_add_probe(srcPad.get(), probeType, [](GstPad*, GstPadProbeInfo* info, gpointer userData) -> GstPadProbeReturn {
@@ -138,11 +138,11 @@ void webkitGstTraceProcessingTimeForElement(GstElement* element)
             return GST_PAD_PROBE_OK;
 
         Locker locker { meta->priv->lock };
-        auto elementName = String::fromLatin1(reinterpret_cast<char*>(userData));
-        auto [startTime, oldStopTime] = meta->priv->processingTimes.get(elementName);
-        meta->priv->processingTimes.set(WTFMove(elementName), std::make_pair(startTime, gst_util_get_timestamp()));
+        auto* key = GST_ELEMENT_CAST(userData);
+        auto [startTime, oldStopTime] = meta->priv->processingTimes.get(key);
+        meta->priv->processingTimes.set(key, std::make_pair(startTime, gst_util_get_timestamp()));
         return GST_PAD_PROBE_OK;
-    }, gst_element_get_name(element), g_free);
+    }, element, nullptr);
 }
 
 VideoFrameMetadata webkitGstBufferGetVideoFrameMetadata(GstBuffer* buffer)
