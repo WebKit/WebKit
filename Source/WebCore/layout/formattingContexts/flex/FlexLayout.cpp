@@ -220,11 +220,141 @@ FlexLayout::LineRanges FlexLayout::computeFlexLines(const LogicalFlexItems& flex
 
 FlexLayout::SizeList FlexLayout::computeMainSizeForFlexItems(const LogicalFlexItems& flexItems, const LineRanges& lineRanges, LayoutUnit flexContainerMainSize, const FlexBaseAndHypotheticalMainSizeList& flexBaseAndHypotheticalMainSizeList) const
 {
-    UNUSED_PARAM(flexItems);
-    UNUSED_PARAM(lineRanges);
-    UNUSED_PARAM(flexContainerMainSize);
-    UNUSED_PARAM(flexBaseAndHypotheticalMainSizeList);
-    return { };
+    SizeList mainSizeList(flexItems.size());
+    Vector<bool> isInflexibleItemList(flexItems.size(), false);
+
+    for (size_t lineIndex = 0; lineIndex < lineRanges.size(); ++lineIndex) {
+        auto lineRange = lineRanges[lineIndex];
+        auto nonFrozenSet = ListHashSet<size_t> { };
+
+        // 1. Determine the used flex factor. Sum the outer hypothetical main sizes of all items on the line.
+        //    If the sum is less than the flex container's inner main size, use the flex grow factor for the rest of this algorithm;
+        //    otherwise, use the flex shrink factor.
+        auto shouldUseFlexGrowFactor = [&] {
+            auto hypotheticalOuterMainSizes = LayoutUnit { };
+            for (auto flexItemIndex = lineRange.begin(); flexItemIndex < lineRange.end(); ++flexItemIndex)
+                hypotheticalOuterMainSizes += (flexItems[flexItemIndex].mainAxis().margin() + flexBaseAndHypotheticalMainSizeList[flexItemIndex].hypotheticalMainSize);
+            return hypotheticalOuterMainSizes < flexContainerMainSize;
+        }();
+
+        // 2. Size inflexible items. Freeze, setting its target main size to its hypothetical main size.
+        //    any item that has a flex factor of zero
+        //    if using the flex grow factor: any item that has a flex base size greater than its hypothetical main size
+        //    if using the flex shrink factor: any item that has a flex base size smaller than its hypothetical main size
+        for (auto flexItemIndex = lineRange.begin(); flexItemIndex < lineRange.end(); ++flexItemIndex) {
+            auto shouldFreeze = [&] {
+                if (!flexItems[flexItemIndex].growFactor() && !flexItems[flexItemIndex].shrinkFactor())
+                    return true;
+                auto flexBaseAndHypotheticalMainSize = flexBaseAndHypotheticalMainSizeList[flexItemIndex];
+                if (shouldUseFlexGrowFactor && flexBaseAndHypotheticalMainSize.flexBase > flexBaseAndHypotheticalMainSize.hypotheticalMainSize)
+                    return true;
+                if (!shouldUseFlexGrowFactor && flexBaseAndHypotheticalMainSize.flexBase < flexBaseAndHypotheticalMainSize.hypotheticalMainSize)
+                    return true;
+                return false;
+            };
+            if (shouldFreeze()) {
+                mainSizeList[flexItemIndex] = flexBaseAndHypotheticalMainSizeList[flexItemIndex].hypotheticalMainSize;
+                isInflexibleItemList[flexItemIndex] = true;
+                continue;
+            }
+            nonFrozenSet.add(flexItemIndex);
+        }
+
+        // 3. Calculate initial free space. Sum the outer sizes of all items on the line, and subtract this from the flex container's inner main size.
+        //    For frozen items, use their outer target main size; for other items, use their outer flex base size.
+        auto computedFreeSpace = [&] {
+            auto lineContentMainSize = LayoutUnit { };
+            for (auto flexItemIndex = lineRange.begin(); flexItemIndex < lineRange.end(); ++flexItemIndex) {
+                auto flexItemOuterMainSize = flexItems[flexItemIndex].mainAxis().margin() + (nonFrozenSet.contains(flexItemIndex) ? flexBaseAndHypotheticalMainSizeList[flexItemIndex].flexBase : flexBaseAndHypotheticalMainSizeList[flexItemIndex].hypotheticalMainSize);
+                lineContentMainSize += flexItemOuterMainSize;
+            }
+            return flexContainerMainSize - lineContentMainSize;
+        };
+
+        // 4. Loop:
+        while (true) {
+            // a. Check for flexible items. If all the flex items on the line are frozen, free space has been distributed; exit this loop.
+            if (nonFrozenSet.isEmpty())
+                break;
+
+            // b. Calculate the remaining free space as for initial free space, above. If the sum of the unfrozen flex items' flex factors
+            //    is less than one, multiply the initial free space by this sum. If the magnitude of this value is less than the magnitude of the
+            //    remaining free space, use this as the remaining free space.
+            auto freeSpace = computedFreeSpace();
+            auto adjustFreeSpaceWithFlexFactors = [&] {
+                auto totalFlexFactor = 0.f;
+                for (auto nonFrozenIndex : nonFrozenSet)
+                    totalFlexFactor += flexItems[nonFrozenIndex].growFactor() + flexItems[nonFrozenIndex].shrinkFactor();
+                if (totalFlexFactor < 1)
+                    freeSpace *= totalFlexFactor;
+            };
+            adjustFreeSpaceWithFlexFactors();
+
+            auto minimumViolationList = Vector<size_t> { flexItems.size() };
+            auto maximumViolationList = Vector<size_t> { flexItems.size() };
+            // c. Distribute free space proportional to the flex factors.
+            auto usedTotalFactor = 0.f;
+            for (auto nonFrozenIndex : nonFrozenSet)
+                usedTotalFactor += shouldUseFlexGrowFactor ? flexItems[nonFrozenIndex].growFactor() : flexItems[nonFrozenIndex].shrinkFactor() * flexBaseAndHypotheticalMainSizeList[nonFrozenIndex].flexBase;
+
+            for (auto nonFrozenIndex : nonFrozenSet) {
+                if (!usedTotalFactor) {
+                    mainSizeList[nonFrozenIndex] = flexBaseAndHypotheticalMainSizeList[nonFrozenIndex].flexBase;
+                    continue;
+                }
+                if (shouldUseFlexGrowFactor) {
+                    // If using the flex grow factor
+                    // Find the ratio of the item's flex grow factor to the sum of the flex grow factors of all unfrozen items on the line.
+                    // Set the item's target main size to its flex base size plus a fraction of the remaining free space proportional to the ratio.
+                    auto growFactor = flexItems[nonFrozenIndex].growFactor() / usedTotalFactor;
+                    mainSizeList[nonFrozenIndex] = flexBaseAndHypotheticalMainSizeList[nonFrozenIndex].flexBase + freeSpace * growFactor;
+                    continue;
+                }
+                // If using the flex shrink factor
+                // For every unfrozen item on the line, multiply its flex shrink factor by its inner flex base size, and note this as its scaled flex shrink factor.
+                // Find the ratio of the item's scaled flex shrink factor to the sum of the scaled flex shrink factors of all unfrozen items on the line.
+                // Set the item's target main size to its flex base size minus a fraction of the absolute value of the remaining free space proportional to the ratio.
+                // Note this may result in a negative inner main size; it will be corrected in the next step.
+                auto flexBaseSize = flexBaseAndHypotheticalMainSizeList[nonFrozenIndex].flexBase;
+                auto scaledShrinkFactor = flexItems[nonFrozenIndex].shrinkFactor() * flexBaseSize;
+                auto shrinkFactor = scaledShrinkFactor / usedTotalFactor;
+                mainSizeList[nonFrozenIndex] = flexBaseSize - std::abs(freeSpace * shrinkFactor);
+            }
+
+            // d. Fix min/max violations. Clamp each non-frozen item's target main size by its used min and max main sizes and floor
+            //    its content-box size at zero. If the item's target main size was made smaller by this, it's a max violation.
+            //    If the item's target main size was made larger by this, it's a min violation.
+            auto totalViolation = LayoutUnit { };
+            for (auto nonFrozenIndex : nonFrozenSet) {
+                auto mainSize = mainSizeList[nonFrozenIndex];
+                auto maximum = flexItems[nonFrozenIndex].mainAxis().maximumSize.value_or(mainSize);
+                auto minimum = flexItems[nonFrozenIndex].mainAxis().minimumSize.value_or(mainSize);
+                mainSize = std::max(maximum, std::min(minimum, mainSize));
+                auto mainContentBoxSize = std::max(0_lu, mainSize - flexItems[nonFrozenIndex].mainAxis().borderAndPadding);
+                if (mainContentBoxSize < mainSize)
+                    maximumViolationList.append(nonFrozenIndex);
+                else if (mainContentBoxSize > mainSize)
+                    minimumViolationList.append(nonFrozenIndex);
+                mainSizeList[nonFrozenIndex] = mainSize;
+            }
+
+            // e. Freeze over-flexed items. The total violation is the sum of the adjustments from the previous step
+            //    ∑(clamped size - unclamped size). If the total violation is:
+            //      Zero : Freeze all items.
+            //      Positive: Freeze all the items with min violations.
+            //      Negative: Freeze all the items with max violations.
+            if (!totalViolation)
+                nonFrozenSet.clear();
+            else if (totalViolation > 0) {
+                for (auto minimimViolationIndex : minimumViolationList)
+                    nonFrozenSet.remove(minimimViolationIndex);
+            } else {
+                for (auto maximumViolationIndex : maximumViolationList)
+                    nonFrozenSet.remove(maximumViolationIndex);
+            }
+        }
+    }
+    return mainSizeList;
 }
 
 FlexLayout::SizeList FlexLayout::hypotheticalCrossSizeForFlexItems(const LogicalFlexItems& flexItems) const
