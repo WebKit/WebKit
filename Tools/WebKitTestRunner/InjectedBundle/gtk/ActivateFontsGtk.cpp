@@ -43,9 +43,6 @@ void activateFonts()
     if (g_getenv("WEBKIT_SKIP_WEBKITTESTRUNNER_FONTCONFIG_INITIALIZATION"))
         return;
 
-    GUniquePtr<gchar> relativeFontsDir(g_build_filename("Tools", "WebKitTestRunner", "glib", "fonts", nullptr));
-    GUniquePtr<gchar> absoluteFontsDir(g_canonicalize_filename(relativeFontsDir.get(), nullptr));
-
     FcInit();
 
     // If a test resulted a font being added or removed via the @font-face rule, then
@@ -54,6 +51,8 @@ void activateFonts()
     FcFontSet* appFontSet = FcConfigGetFonts(0, FcSetApplication);
     if (appFontSet && numFonts && appFontSet->nfont == numFonts)
         return;
+
+    GUniquePtr<gchar> absoluteFontsDir(g_build_filename(TOP_LEVEL_DIR, "Tools", "WebKitTestRunner", "glib", "fonts", nullptr));
 
     // Load our configuration file, which sets up proper aliases for family
     // names like sans, serif and monospace.
