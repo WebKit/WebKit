@@ -404,9 +404,24 @@ FlexLayout::LinesCrossSizeList FlexLayout::crossSizeForFlexLines(const LineRange
 
 void FlexLayout::stretchFlexLines(LinesCrossSizeList& flexLinesCrossSizeList, size_t numberOfLines, const LogicalConstraints::AxisGeometry& crossAxis) const
 {
-    UNUSED_PARAM(flexLinesCrossSizeList);
-    UNUSED_PARAM(numberOfLines);
-    UNUSED_PARAM(crossAxis);
+    // Handle 'align-content: stretch'.
+    // If the flex container has a definite cross size, align-content is stretch, and the sum of the flex lines' cross sizes is less than the flex container's inner cross size,
+    // increase the cross size of each flex line by equal amounts such that the sum of their cross sizes exactly equals the flex container's inner cross size.
+    if (rootStyle().alignContent().distribution() != ContentDistribution::Stretch || !crossAxis.definiteSize)
+        return;
+
+    auto linesCrossSize = [&] {
+        auto size = LayoutUnit { };
+        for (size_t lineIndex = 0; lineIndex < flexLinesCrossSizeList.size(); ++lineIndex)
+            size += flexLinesCrossSizeList[lineIndex];
+        return size;
+    }();
+    if (*crossAxis.definiteSize > linesCrossSize)
+        return;
+
+    auto extraSpace = (*crossAxis.definiteSize - linesCrossSize) / numberOfLines;
+    for (size_t lineIndex = 0; lineIndex < flexLinesCrossSizeList.size(); ++lineIndex)
+        flexLinesCrossSizeList[lineIndex] += extraSpace;
 }
 
 bool FlexLayout::collapseNonVisibleFlexItems()
