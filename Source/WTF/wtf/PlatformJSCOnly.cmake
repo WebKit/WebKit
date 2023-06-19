@@ -93,6 +93,7 @@ elseif (APPLE)
         ${WTF_DERIVED_SOURCES_DIR}/mach_excUser.c
     )
     list(APPEND WTF_PUBLIC_HEADERS
+        spi/darwin/AbortWithReasonSPI.h
         spi/darwin/ProcessMemoryFootprint.h
     )
 elseif (CMAKE_SYSTEM_NAME MATCHES "Linux")
