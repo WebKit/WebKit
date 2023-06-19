@@ -510,11 +510,14 @@ ResolutionContext TreeResolver::makeResolutionContext()
 
 ResolutionContext TreeResolver::makeResolutionContextForPseudoElement(const ElementUpdate& elementUpdate, PseudoId pseudoId)
 {
-    auto parentStyle = [&] {
+    auto parentStyle = [&]() -> const RenderStyle* {
         if (pseudoId == PseudoId::FirstLetter) {
             if (auto* firstLineStyle = elementUpdate.style->getCachedPseudoStyle(PseudoId::FirstLine))
                 return firstLineStyle;
         }
+        // ::backdrop does not inherit style, hence using the view style as parent style
+        if (pseudoId == PseudoId::Backdrop)
+            return &m_document.renderView()->style();
         return elementUpdate.style.get();
     };
 
