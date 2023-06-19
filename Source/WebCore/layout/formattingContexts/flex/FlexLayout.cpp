@@ -431,11 +431,27 @@ bool FlexLayout::collapseNonVisibleFlexItems()
 
 FlexLayout::SizeList FlexLayout::computeCrossSizeForFlexItems(const LogicalFlexItems& flexItems, const LineRanges& lineRanges, const LinesCrossSizeList& flexLinesCrossSizeList, const SizeList& flexItemsHypotheticalCrossSizeList) const
 {
-    UNUSED_PARAM(flexItems);
-    UNUSED_PARAM(lineRanges);
-    UNUSED_PARAM(flexLinesCrossSizeList);
-    UNUSED_PARAM(flexItemsHypotheticalCrossSizeList);
-    return { };
+    SizeList crossSizeList(flexItems.size());
+    // If a flex item has align-self: stretch, its computed cross size property is auto, and neither of its cross-axis margins are auto, the used outer cross size is the used cross size of its flex line,
+    // clamped according to the item's used min and max cross sizes. Otherwise, the used cross size is the item's hypothetical cross size.
+    for (size_t lineIndex = 0; lineIndex < lineRanges.size(); ++lineIndex) {
+        for (auto flexItemIndex = lineRanges[lineIndex].begin(); flexItemIndex < lineRanges[lineIndex].end(); ++flexItemIndex) {
+            auto& flexItem = flexItems[flexItemIndex];
+            crossSizeList[flexItemIndex] = flexItemsHypotheticalCrossSizeList[flexItemIndex];
+            if (flexItem.style().alignSelf().position() == ItemPosition::Stretch) {
+                if (flexItem.crossAxis().hasSizeAuto && flexItem.crossAxis().hasNonAutoMargins()) {
+                    auto usedOuterCrossSize = flexLinesCrossSizeList[lineIndex];
+                    auto minimumCrossSize = flexItem.mainAxis().minimumSize.value_or(usedOuterCrossSize);
+                    auto maximumCrossSize = flexItem.mainAxis().maximumSize.value_or(usedOuterCrossSize);
+                    crossSizeList[flexItemIndex] = std::max(maximumCrossSize, std::min(minimumCrossSize, usedOuterCrossSize));
+                }
+                // If the flex item has align-self: stretch, redo layout for its contents, treating this used size as its definite cross
+                // size so that percentage-sized children can be resolved.
+                // FIXME: Not supported yet.
+            }
+        }
+    }
+    return crossSizeList;
 }
 
 FlexLayout::PositionAndMarginsList FlexLayout::handleMainAxisAlignment(LayoutUnit availableMainSpace, const LineRanges& lineRanges, const LogicalFlexItems& flexItems, const SizeList& flexItemsMainSizeList) const
