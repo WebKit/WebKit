@@ -104,6 +104,10 @@ private struct _WebView {
         view.uiDelegate = coordinator
         coordinator.webView = view
         coordinator.environment = environment
+        
+        // Configuration Options
+        view.allowsBackForwardNavigationGestures = true
+        view.allowsMagnification = true
 
         if let request = coordinator.initialRequest {
             view.load(request)
