@@ -128,6 +128,7 @@ public:
     EGLConfig config() const { return m_config; }
 
     WEBCORE_EXPORT bool makeContextCurrent();
+    bool unmakeContextCurrent();
     WEBCORE_EXPORT void swapBuffers();
     GCGLContext platformContext() const;
 
@@ -144,6 +145,22 @@ public:
             EGLSurface drawSurface { nullptr };
         } m_previous;
         std::unique_ptr<GLContext> m_context;
+    };
+
+    class ScopedGLContextCurrent {
+        WTF_MAKE_NONCOPYABLE(ScopedGLContextCurrent);
+    public:
+        explicit ScopedGLContextCurrent(GLContext&);
+        ~ScopedGLContextCurrent();
+    private:
+        struct {
+            GLContext* glContext { nullptr };
+            EGLDisplay display { nullptr };
+            EGLContext context { nullptr };
+            EGLSurface readSurface { nullptr };
+            EGLSurface drawSurface { nullptr };
+        } m_previous;
+        GLContext& m_context;
     };
 
 private:

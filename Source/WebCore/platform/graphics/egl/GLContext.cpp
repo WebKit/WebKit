@@ -498,6 +498,17 @@ bool GLContext::makeContextCurrent()
     return eglMakeCurrent(m_display.eglDisplay(), m_surface, m_surface, m_context);
 }
 
+bool GLContext::unmakeContextCurrent()
+{
+    if (this != *currentContext())
+        return false;
+
+    eglMakeCurrent(m_display.eglDisplay(), EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
+    *currentContext() = nullptr;
+
+    return true;
+}
+
 GLContext* GLContext::current()
 {
     return *currentContext();
@@ -576,6 +587,35 @@ GLContext::ScopedGLContext::~ScopedGLContext()
     m_context = nullptr;
     if (m_previous.context)
         eglMakeCurrent(m_previous.display, m_previous.drawSurface, m_previous.readSurface, m_previous.context);
+}
+
+GLContext::ScopedGLContextCurrent::ScopedGLContextCurrent(GLContext& context)
+    : m_context(context)
+{
+    auto eglContext = eglGetCurrentContext();
+    m_previous.glContext = *currentContext();
+    if (!m_previous.glContext || m_previous.glContext->platformContext() != eglContext) {
+        m_previous.context = eglContext;
+        m_previous.display = eglGetCurrentDisplay();
+        m_previous.readSurface = eglGetCurrentSurface(EGL_READ);
+        m_previous.drawSurface = eglGetCurrentSurface(EGL_DRAW);
+    }
+    m_context.makeContextCurrent();
+}
+
+GLContext::ScopedGLContextCurrent::~ScopedGLContextCurrent()
+{
+    if (m_previous.glContext && m_previous.context == EGL_NO_CONTEXT) {
+        m_previous.glContext->makeContextCurrent();
+        return;
+    }
+
+    if (m_previous.context)
+        eglMakeCurrent(m_previous.display, m_previous.drawSurface, m_previous.readSurface, m_previous.context);
+    else
+        m_context.unmakeContextCurrent();
+
+    *currentContext() = m_previous.glContext;
 }
 
 } // namespace WebCore

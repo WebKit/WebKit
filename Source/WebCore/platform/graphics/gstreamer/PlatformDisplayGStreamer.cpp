@@ -28,6 +28,10 @@
 #include <gst/gl/egl/gstgldisplay_egl.h>
 #endif
 #undef GST_USE_UNSTABLE_API
+#include <wtf/glib/GUniquePtr.h>
+
+GST_DEBUG_CATEGORY_EXTERN(webkit_media_player_debug);
+#define GST_CAT_DEFAULT webkit_media_player_debug
 
 namespace WebCore {
 
@@ -43,10 +47,25 @@ GstGLDisplay* PlatformDisplay::gstGLDisplay() const
 GstGLContext* PlatformDisplay::gstGLContext() const
 {
 #if USE(EGL)
-    if (!m_gstGLContext) {
-        if (auto* gstDisplay = gstGLDisplay()) {
-            if (auto* context = const_cast<PlatformDisplay*>(this)->sharingGLContext())
-                m_gstGLContext = adoptGRef(gst_gl_context_new_wrapped(gstDisplay, reinterpret_cast<guintptr>(context->platformContext()), GST_GL_PLATFORM_EGL, GST_GL_API_GLES2));
+    if (m_gstGLContext)
+        return m_gstGLContext.get();
+
+    auto* gstDisplay = gstGLDisplay();
+    if (!gstDisplay)
+        return nullptr;
+
+    auto* context = const_cast<PlatformDisplay*>(this)->sharingGLContext();
+    if (!context)
+        return nullptr;
+
+    m_gstGLContext = adoptGRef(gst_gl_context_new_wrapped(gstDisplay, reinterpret_cast<guintptr>(context->platformContext()), GST_GL_PLATFORM_EGL, GST_GL_API_GLES2));
+    {
+        GLContext::ScopedGLContextCurrent scopedCurrent(*context);
+        if (gst_gl_context_activate(m_gstGLContext.get(), TRUE)) {
+            GUniqueOutPtr<GError> error;
+            if (!gst_gl_context_fill_info(m_gstGLContext.get(), &error.outPtr()))
+                GST_WARNING("Failed to fill in GStreamer context: %s", error->message);
+            gst_gl_context_activate(m_gstGLContext.get(), FALSE);
         }
     }
 #endif
