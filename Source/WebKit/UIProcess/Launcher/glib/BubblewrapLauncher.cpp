@@ -442,6 +442,18 @@ static void bindV4l(Vector<CString>& args)
     }));
 }
 
+static bool enableDebugPermissions()
+{
+    static int enabled = -1;
+
+    if (enabled == -1) {
+        const char* env = g_getenv("WEBKIT_ENABLE_DEBUG_PERMISSIONS_IN_SANDBOX");
+        enabled = !g_strcmp0(env, "1");
+    }
+
+    return enabled;
+}
+
 // Translate a libseccomp error code into an error message. libseccomp
 // mostly returns negative errno values such as -ENOMEM, but some
 // standard errno values are used for non-standard purposes where their
@@ -570,7 +582,13 @@ static int setupSeccomp()
         { SCMP_SYS(fsmount), ENOSYS, nullptr },
         { SCMP_SYS(fspick), ENOSYS, nullptr },
         { SCMP_SYS(mount_setattr), ENOSYS, nullptr },
+    };
 
+    struct {
+        int scall;
+        int errnum;
+        struct scmp_arg_cmp* arg;
+    } nonDebugSyscallBlockList[] = {
         // Profiling operations; we expect these to be done by tools from outside
         // the sandbox. In particular perf has been the source of many CVEs.
         { SCMP_SYS(perf_event_open), EPERM, nullptr },
@@ -600,6 +618,20 @@ static int setupSeccomp()
             g_error("Failed to block syscall %d: %s", rule.scall, seccompStrerror(r));
     }
 
+    if (!enableDebugPermissions()) {
+        for (auto& rule : nonDebugSyscallBlockList) {
+            int r;
+            if (rule.arg)
+                r = seccomp_rule_add(seccomp, SCMP_ACT_ERRNO(rule.errnum), rule.scall, 1, *rule.arg);
+            else
+                r = seccomp_rule_add(seccomp, SCMP_ACT_ERRNO(rule.errnum), rule.scall, 0);
+            if (r == -EFAULT)
+                g_info("Unable to block syscall %d: syscall not known to libseccomp?", rule.scall);
+            else if (r < 0)
+                g_error("Failed to block syscall %d: %s", rule.scall, seccompStrerror(r));
+        }
+    }
+
     int tmpfd = memfd_create("seccomp-bpf", 0);
     if (tmpfd == -1)
         g_error("Failed to create memfd: %s", g_strerror(errno));
@@ -614,8 +646,12 @@ static int setupSeccomp()
     return tmpfd;
 }
 
-static bool shouldUnshareNetwork(ProcessLauncher::ProcessType processType)
+static bool shouldUnshareNetwork(ProcessLauncher::ProcessType processType, char** argv)
 {
+    // gdbserver requires network access for remote debugging.
+    if (enableDebugPermissions() && g_str_has_suffix(argv[0], "gdbserver"))
+        return false;
+
     // xdg-dbus-proxy needs access to host abstract sockets to connect to the a11y bus. Secure
     // host services must not use abstract sockets.
     if (processType == ProcessLauncher::ProcessType::DBusProxy)
@@ -684,7 +720,6 @@ GRefPtr<GSubprocess> bubblewrapSpawn(GSubprocessLauncher* launcher, const Proces
     const char* runDir = g_get_user_runtime_dir();
     Vector<CString> sandboxArgs = {
         "--die-with-parent",
-        "--unshare-pid",
         "--unshare-uts",
 
         // We assume /etc has safe permissions.
@@ -727,6 +762,24 @@ GRefPtr<GSubprocess> bubblewrapSpawn(GSubprocessLauncher* launcher, const Proces
         "--ro-bind-try", PKGLIBEXECDIR, PKGLIBEXECDIR,
     };
 
+    if (enableDebugPermissions()) {
+        const char* dataDir = g_get_user_data_dir();
+        GUniquePtr<char> rrOutputDir(g_build_filename(dataDir, "rr", nullptr));
+
+        sandboxArgs.appendVector(Vector<CString>({
+            // Other binaries are helpful for debugging such as gdbserver.
+            "--ro-bind-try", "/bin", "/bin",
+            "--ro-bind-try", "/usr/bin", "/usr/bin",
+            // rr writes to this directory.
+            "--bind-try", rrOutputDir.get(), rrOutputDir.get(),
+        }));
+    } else {
+        sandboxArgs.appendVector(Vector<CString>({
+            // In some configurations cross pid namespace debugging has issues.
+            "--unshare-pid",
+        }));
+    }
+
     addExtraPaths(launchOptions.extraSandboxPaths, sandboxArgs);
 
     if (launchOptions.processType == ProcessLauncher::ProcessType::DBusProxy) {
@@ -754,7 +807,7 @@ GRefPtr<GSubprocess> bubblewrapSpawn(GSubprocessLauncher* launcher, const Proces
 #endif
     }
 
-    if (shouldUnshareNetwork(launchOptions.processType))
+    if (shouldUnshareNetwork(launchOptions.processType, argv))
         sandboxArgs.append("--unshare-net");
 
     // We would have to parse ld config files for more info.
