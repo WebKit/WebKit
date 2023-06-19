@@ -456,11 +456,147 @@ FlexLayout::SizeList FlexLayout::computeCrossSizeForFlexItems(const LogicalFlexI
 
 FlexLayout::PositionAndMarginsList FlexLayout::handleMainAxisAlignment(LayoutUnit availableMainSpace, const LineRanges& lineRanges, const LogicalFlexItems& flexItems, const SizeList& flexItemsMainSizeList) const
 {
-    UNUSED_PARAM(availableMainSpace);
-    UNUSED_PARAM(lineRanges);
-    UNUSED_PARAM(flexItems);
-    UNUSED_PARAM(flexItemsMainSizeList);
-    return { };
+    // Distribute any remaining free space. For each flex line:
+    auto mainPositionAndMargins = PositionAndMarginsList { flexItems.size() };
+
+    for (auto lineRange : lineRanges) {
+        auto lineContentMainSize = LayoutUnit { };
+
+        auto resolveMarginAuto = [&] {
+            // 1. If the remaining free space is positive and at least one main-axis margin on this line is auto, distribute the free space equally among these margins.
+            //    Otherwise, set all auto margins to zero.
+            auto flexItemsWithMarginAuto = Vector<size_t> { flexItems.size() };
+            size_t autoMarginCount = 0;
+
+            for (auto flexItemIndex = lineRange.begin(); flexItemIndex < lineRange.end(); ++flexItemIndex) {
+                auto& flexItem = flexItems[flexItemIndex];
+                auto marginStart = flexItem.mainAxis().marginStart;
+                auto marginEnd = flexItem.mainAxis().marginEnd;
+
+                if (!marginStart || !marginEnd) {
+                    flexItemsWithMarginAuto.append(flexItemIndex);
+                    if (!marginStart)
+                        ++autoMarginCount;
+                    if (!marginEnd)
+                        ++autoMarginCount;
+                }
+                mainPositionAndMargins[flexItemIndex].marginStart = marginStart.value_or(0_lu);
+                mainPositionAndMargins[flexItemIndex].marginEnd = marginEnd.value_or(0_lu);
+                lineContentMainSize += mainPositionAndMargins[flexItemIndex].marginStart + flexItemsMainSizeList[flexItemIndex] + mainPositionAndMargins[flexItemIndex].marginEnd;
+            }
+
+            auto spaceToDistrubute = availableMainSpace - lineContentMainSize;
+            if (!autoMarginCount || spaceToDistrubute <= 0)
+                return;
+
+            lineContentMainSize = availableMainSpace;
+            auto extraMarginSpace = spaceToDistrubute / autoMarginCount;
+
+            for (auto flexItemIndex : flexItemsWithMarginAuto) {
+                auto& flexItem = flexItems[flexItemIndex];
+
+                if (!flexItem.mainAxis().marginStart)
+                    mainPositionAndMargins[flexItemIndex].marginStart = extraMarginSpace;
+                if (!flexItem.mainAxis().marginEnd)
+                    mainPositionAndMargins[flexItemIndex].marginEnd = extraMarginSpace;
+            }
+        };
+        resolveMarginAuto();
+
+        auto justifyContent = [&] {
+            // 2. Align the items along the main-axis per justify-content.
+            auto justifyContentValue = rootStyle().justifyContent();
+            auto initialOffset = [&] {
+                switch (justifyContentValue.distribution()) {
+                case ContentDistribution::Default:
+                    // Fall back to justifyContentValue.position()
+                    break;
+                case ContentDistribution::SpaceBetween:
+                    return LayoutUnit { };
+                case ContentDistribution::SpaceAround: {
+                    auto itemCount = availableMainSpace > lineContentMainSize ? lineRange.distance() : 1;
+                    return (availableMainSpace - lineContentMainSize) / itemCount / 2;
+                }
+                case ContentDistribution::SpaceEvenly: {
+                    auto gapCount = availableMainSpace > lineContentMainSize ? lineRange.distance() + 1 : 2;
+                    return (availableMainSpace - lineContentMainSize) / gapCount;
+                }
+                default:
+                    ASSERT_NOT_IMPLEMENTED_YET();
+                    break;
+                }
+
+                auto positionalAlignment = [&] {
+                    auto positionalAlignmentValue = justifyContentValue.position();
+                    if (!FlexFormattingGeometry::isMainAxisParallelWithInlineAxis(flexContainer()) && (positionalAlignmentValue == ContentPosition::Left || positionalAlignmentValue == ContentPosition::Right))
+                        positionalAlignmentValue = ContentPosition::Start;
+                    return positionalAlignmentValue;
+                };
+
+                switch (positionalAlignment()) {
+                // logical alignments
+                case ContentPosition::Normal:
+                case ContentPosition::FlexStart:
+                    return LayoutUnit { };
+                case ContentPosition::FlexEnd:
+                    return availableMainSpace - lineContentMainSize;
+                case ContentPosition::Center:
+                    return availableMainSpace / 2 - lineContentMainSize / 2;
+                // non-logical alignments
+                case ContentPosition::Left:
+                case ContentPosition::Start:
+                    if (FlexFormattingGeometry::isReversedToContentDirection(flexContainer()))
+                        return availableMainSpace - lineContentMainSize;
+                    return LayoutUnit { };
+                case ContentPosition::Right:
+                case ContentPosition::End:
+                    if (FlexFormattingGeometry::isReversedToContentDirection(flexContainer()))
+                        return LayoutUnit { };
+                    return availableMainSpace - lineContentMainSize;
+                default:
+                    ASSERT_NOT_IMPLEMENTED_YET();
+                    break;
+                }
+                ASSERT_NOT_REACHED();
+                return LayoutUnit { };
+            };
+
+            auto gapBetweenItems = [&] {
+                switch (justifyContentValue.distribution()) {
+                case ContentDistribution::Default:
+                    return LayoutUnit { };
+                case ContentDistribution::SpaceBetween:
+                    if (lineRange.distance() == 1)
+                        return LayoutUnit { };
+                    return std::max(0_lu, availableMainSpace - lineContentMainSize) / (lineRange.distance() - 1);
+                case ContentDistribution::SpaceAround:
+                    return std::max(0_lu, availableMainSpace - lineContentMainSize) / lineRange.distance();
+                case ContentDistribution::SpaceEvenly:
+                    return std::max(0_lu, availableMainSpace - lineContentMainSize) / (lineRange.distance() + 1);
+                default:
+                    ASSERT_NOT_IMPLEMENTED_YET();
+                    break;
+                }
+                ASSERT_NOT_REACHED();
+                return LayoutUnit { };
+            };
+
+            auto flexItemOuterEnd = [&](auto flexItemIndex) {
+                return mainPositionAndMargins[flexItemIndex].position + flexItemsMainSizeList[flexItemIndex] + mainPositionAndMargins[flexItemIndex].marginEnd;
+            };
+
+            auto startIndex = lineRange.begin();
+            mainPositionAndMargins[startIndex].position = initialOffset() + mainPositionAndMargins[startIndex].marginStart;
+            auto previousFlexItemOuterEnd = flexItemOuterEnd(startIndex);
+            auto gap = gapBetweenItems();
+            for (auto index = startIndex + 1; index < lineRange.end(); ++index) {
+                mainPositionAndMargins[index].position = previousFlexItemOuterEnd + gap + mainPositionAndMargins[index].marginStart;
+                previousFlexItemOuterEnd = flexItemOuterEnd(index);
+            }
+        };
+        justifyContent();
+    }
+    return mainPositionAndMargins;
 }
 
 FlexLayout::PositionAndMarginsList FlexLayout::handleCrossAxisAlignmentForFlexItems(const LogicalFlexItems& flexItems, const LineRanges& lineRanges, const SizeList& flexItemsCrossSizeList, const LinesCrossSizeList& flexLinesCrossSizeList) const
