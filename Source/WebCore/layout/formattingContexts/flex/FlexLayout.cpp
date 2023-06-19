@@ -128,7 +128,20 @@ FlexLayout::LogicalFlexItemRects FlexLayout::layout(const LogicalConstraints& lo
 
 void FlexLayout::computeAvailableMainAndCrossSpace(const LogicalConstraints& logicalConstraints)
 {
-    UNUSED_PARAM(logicalConstraints);
+    auto computedFinalSize = [&](auto& candidateSizes) {
+        // For each dimension, if that dimension of the flex container's content box is a definite size, use that;
+        // if that dimension of the flex container is being sized under a min or max-content constraint, the available space in that dimension is that constraint;
+        // otherwise, subtract the flex container's margin, border, and padding from the space available to the flex container in that dimension and use that value.
+        if (candidateSizes.definiteSize)
+            return *candidateSizes.definiteSize;
+        if (candidateSizes.minimumContentSize)
+            return *candidateSizes.minimumContentSize;
+        if (candidateSizes.maximumContentSize)
+            return *candidateSizes.maximumContentSize;
+        return candidateSizes.availableSize;
+    };
+    m_availableMainSpace = computedFinalSize(logicalConstraints.mainAxis);
+    m_availableCrossSpace = computedFinalSize(logicalConstraints.crossAxis);
 }
 
 FlexLayout::FlexBaseAndHypotheticalMainSizeList FlexLayout::flexBaseAndHypotheticalMainSizeForFlexItems(const LogicalConstraints::AxisGeometry& mainAxis, const LogicalFlexItems& flexItems) const
