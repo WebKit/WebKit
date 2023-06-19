@@ -3369,34 +3369,6 @@ void MediaPlayerPrivateGStreamer::pushDMABufToCompositor()
     if (!swapchainBuffer)
         return;
 
-    // Source helper struct, maps the raw memory and exposes the mapped data for copying.
-    struct Source {
-        Source(GstMemory* memory, gsize offset, uint32_t stride, uint32_t height)
-            : memory(memory)
-            , stride(stride)
-            , height(height)
-        {
-            if (!gst_memory_map(memory, &mapInfo, GST_MAP_READ))
-                return;
-
-            valid = true;
-            data = &mapInfo.data[offset];
-        }
-
-        ~Source()
-        {
-            if (valid)
-                gst_memory_unmap(memory, &mapInfo);
-        }
-
-        bool valid { false };
-        GstMemory* memory { nullptr };
-        GstMapInfo mapInfo;
-        uint8_t* data { nullptr };
-        uint32_t stride { 0 };
-        uint32_t height { 0 };
-    };
-
     // Destination helper struct, maps the gbm_bo object into CPU-memory space and copies from the accompanying Source in fill().
     struct Destination {
         static Lock& mappingLock()
@@ -3407,6 +3379,7 @@ void MediaPlayerPrivateGStreamer::pushDMABufToCompositor()
 
         Destination(struct gbm_bo* bo, uint32_t width, uint32_t height)
             : bo(bo)
+            , height(height)
         {
             map = gbm_bo_map(bo, 0, 0, width, height, GBM_BO_TRANSFER_WRITE, &stride, &mapData);
             if (!map)
@@ -3422,12 +3395,14 @@ void MediaPlayerPrivateGStreamer::pushDMABufToCompositor()
                 gbm_bo_unmap(bo, mapData);
         }
 
-        void fill(const Source& source)
+        void copyPlaneData(GstVideoFrame* sourceVideoFrame, unsigned planeIndex)
         {
-            for (uint32_t y = 0; y < source.height; ++y) {
-                auto* sourceData = &source.data[y * source.stride];
+            auto sourceStride = GST_VIDEO_FRAME_PLANE_STRIDE(sourceVideoFrame, planeIndex);
+            auto* planeData = reinterpret_cast<uint8_t*>(GST_VIDEO_FRAME_PLANE_DATA(sourceVideoFrame, planeIndex));
+            for (uint32_t y = 0; y < height; ++y) {
                 auto* destinationData = &data[y * stride];
-                memcpy(destinationData, sourceData, std::min(source.stride, stride));
+                auto* sourceData = &planeData[y * sourceStride];
+                memcpy(destinationData, sourceData, std::min(static_cast<uint32_t>(sourceStride), stride));
             }
         }
 
@@ -3436,29 +3411,19 @@ void MediaPlayerPrivateGStreamer::pushDMABufToCompositor()
         void* map { nullptr };
         void* mapData { nullptr };
         uint8_t* data { nullptr };
+        uint32_t height { 0 };
         uint32_t stride { 0 };
     };
 
-    for (unsigned i = 0; i < GST_VIDEO_INFO_N_PLANES(&videoInfo); ++i) {
-        gint comp[GST_VIDEO_MAX_COMPONENTS];
-        gst_video_format_info_component(videoInfo.finfo, i, comp);
-
+    GstMappedFrame sourceFrame(m_sample, GST_MAP_READ);
+    auto* sourceVideoFrame = sourceFrame.get();
+    for (unsigned i = 0; i < GST_VIDEO_FRAME_N_PLANES(sourceVideoFrame); ++i) {
         auto& planeData = swapchainBuffer->planeData(i);
-        gsize offset = GST_VIDEO_INFO_PLANE_OFFSET(&videoInfo, i);
-        guint stride = GST_VIDEO_INFO_PLANE_STRIDE(&videoInfo, i);
 
-        guint memid, length;
-        gsize skip;
-        if (gst_buffer_find_memory(buffer, offset, 1, &memid, &length, &skip)) {
-            auto* mem = gst_buffer_peek_memory(buffer, memid);
-
-            Locker locker { Destination::mappingLock() };
-
-            Source source(mem, offset, stride, planeData.height);
-            Destination destination(planeData.bo, planeData.width, planeData.height);
-            if (source.valid && destination.valid)
-                destination.fill(source);
-        }
+        Locker locker { Destination::mappingLock() };
+        Destination destination(planeData.bo, planeData.width, planeData.height);
+        if (destination.valid)
+            destination.copyPlaneData(sourceVideoFrame, i);
     }
 
     // The updated buffer is pushed into the composition stage. The DMABufObject handle uses the swapchain address as the handle base.
