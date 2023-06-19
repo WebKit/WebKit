@@ -738,6 +738,8 @@ std::optional<long long> CurlHandle::getContentLength()
 
 std::optional<long> CurlHandle::getHttpAuthAvail()
 {
+    auto allowedAuthMethods = CURLAUTH_DIGEST | CURLAUTH_BASIC;
+
     if (!m_handle)
         return std::nullopt;
 
@@ -746,11 +748,13 @@ std::optional<long> CurlHandle::getHttpAuthAvail()
     if (errorCode != CURLE_OK)
         return std::nullopt;
 
-    return httpAuthAvailable;
+    return httpAuthAvailable & allowedAuthMethods;
 }
 
 std::optional<long> CurlHandle::getProxyAuthAvail()
 {
+    auto allowedAuthMethods = CURLAUTH_DIGEST | CURLAUTH_BASIC;
+
     if (!m_handle)
         return std::nullopt;
 
@@ -759,7 +763,7 @@ std::optional<long> CurlHandle::getProxyAuthAvail()
     if (errorCode != CURLE_OK)
         return std::nullopt;
 
-    return proxyAuthAvailable;
+    return proxyAuthAvailable & allowedAuthMethods;
 }
 
 std::optional<long> CurlHandle::getHttpVersion()
