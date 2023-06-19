@@ -3464,6 +3464,9 @@ void LocalFrameView::setBaseBackgroundColor(const Color& backgroundColor)
     if (m_baseBackgroundColor == newBaseBackgroundColor)
         return;
 
+#if ENABLE(DARK_MODE_CSS)
+    m_styleColorOptions = styleColorOptions();
+#endif
     m_baseBackgroundColor = newBaseBackgroundColor;
 
     if (!isViewForDocumentInFrame())
