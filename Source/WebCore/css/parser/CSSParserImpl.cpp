@@ -54,6 +54,7 @@
 #include "MediaList.h"
 #include "MediaQueryParser.h"
 #include "MediaQueryParserContext.h"
+#include "NestingLevelIncrementer.h"
 #include "StylePropertiesInlines.h"
 #include "StyleRule.h"
 #include "StyleRuleImport.h"
@@ -579,10 +580,17 @@ RefPtr<StyleRuleBase> CSSParserImpl::createNestingParentRule()
 
 Vector<RefPtr<StyleRuleBase>> CSSParserImpl::consumeRegularRuleList(CSSParserTokenRange block)
 {
+    NestingLevelIncrementer incrementer { m_ruleListNestingLevel };
+
+    static constexpr auto maximumRuleListNestingLevel = 128;
+    if (m_ruleListNestingLevel > maximumRuleListNestingLevel)
+        return { };
+
     Vector<RefPtr<StyleRuleBase>> rules;
     if (isNestedContext()) {
         runInNewNestingContext([&] {
             consumeStyleBlock(block, StyleRuleType::Style, ParsingStyleDeclarationsInRuleList::Yes);
+
             if (!topContext().m_parsedProperties.isEmpty()) {
                 // This at-rule contains orphan declarations, we attach them to an implicit parent nesting rule. Web
                 // Inspector expects this rule to occur first in the children rules, and to contain all orphaned
@@ -597,7 +605,6 @@ Vector<RefPtr<StyleRuleBase>> CSSParserImpl::consumeRegularRuleList(CSSParserTok
             for (auto& rule : topContext().m_parsedRules)
                 rules.append(rule.ptr());
         });
-
     } else {
         consumeRuleList(block, RegularRuleList, [&rules](RefPtr<StyleRuleBase> rule) {
             rules.append(rule);
@@ -1087,9 +1094,10 @@ RefPtr<StyleRuleBase> CSSParserImpl::consumeStyleRule(CSSParserTokenRange prelud
     RefPtr<StyleRuleBase> styleRule;
 
     runInNewNestingContext([&]() {
-        m_styleRuleNestingDepth += 1;
-        consumeStyleBlock(block, StyleRuleType::Style);  
-        m_styleRuleNestingDepth -= 1;
+        {
+            NestingLevelIncrementer incrementer { m_styleRuleNestingLevel };
+            consumeStyleBlock(block, StyleRuleType::Style);
+        }
 
         auto nestedRules = WTFMove(topContext().m_parsedRules);
         auto properties = createStyleProperties(topContext().m_parsedProperties, m_context.mode);

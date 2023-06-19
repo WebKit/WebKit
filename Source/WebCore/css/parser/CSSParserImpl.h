@@ -181,11 +181,13 @@ private:
     }
     bool isNestedContext()
     {
-        return (m_isAlwaysNestedContext == CSSParserEnum::IsNestedContext::Yes || m_styleRuleNestingDepth) && context().cssNestingEnabled;
+        return (m_isAlwaysNestedContext == CSSParserEnum::IsNestedContext::Yes || m_styleRuleNestingLevel) && context().cssNestingEnabled;
     }
 
     CSSParserEnum::IsNestedContext m_isAlwaysNestedContext { CSSParserEnum::IsNestedContext::No }; // Do we directly start in a nested context (for CSSOM)
-    unsigned m_styleRuleNestingDepth { 0 };
+    unsigned m_styleRuleNestingLevel { 0 };
+    unsigned m_ruleListNestingLevel { 0 };
+
     Vector<NestingContext> m_nestingContextStack { NestingContext { } };
     const CSSParserContext& m_context;
 
