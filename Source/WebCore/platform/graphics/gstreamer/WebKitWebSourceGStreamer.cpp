@@ -925,11 +925,11 @@ static void webKitWebSrcUriHandlerInit(gpointer gIface, gpointer)
     iface->set_uri = webKitWebSrcSetUri;
 }
 
-void webKitWebSrcSetResourceLoader(WebKitWebSrc* src, RefPtr<WebCore::PlatformMediaResourceLoader>&& loader)
+void webKitWebSrcSetResourceLoader(WebKitWebSrc* src, const RefPtr<WebCore::PlatformMediaResourceLoader>& loader)
 {
     ASSERT(loader);
     DataMutexLocker members { src->priv->dataMutex };
-    members->loader = WTFMove(loader);
+    members->loader = loader;
 }
 
 void webKitWebSrcSetReferrer(WebKitWebSrc* src, const String& referrer)
