@@ -28,6 +28,7 @@
 #if USE(JPEGXL)
 
 #include <algorithm>
+#include <memory>
 
 #if PLATFORM(COCOA)
 #import <pal/spi/cocoa/AppleJPEGXL/AppleJPEGXLSPI.h>
@@ -35,57 +36,15 @@
 #include <jxl/decode.h>
 #endif
 
-class JxlDecoderPtr {
+class JXLDecoderDeleter {
 public:
-    JxlDecoderPtr() = default;
-
-    JxlDecoderPtr(JxlDecoder* decoder)
-        : m_decoder(decoder)
+    void operator()(JxlDecoder* decoder)
     {
+        JxlDecoderDestroy(decoder);
     }
-
-    JxlDecoderPtr(const JxlDecoderPtr&) = delete;
-
-    JxlDecoderPtr(JxlDecoderPtr&& other)
-        : m_decoder(other.m_decoder)
-    {
-        other.m_decoder = nullptr;
-    }
-
-    JxlDecoderPtr& operator=(const JxlDecoderPtr&) = delete;
-
-    JxlDecoderPtr& operator=(JxlDecoderPtr&& other)
-    {
-        reset();
-        std::swap(m_decoder, other.m_decoder);
-        return *this;
-    }
-
-    ~JxlDecoderPtr()
-    {
-        reset();
-    }
-
-    void reset()
-    {
-        if (m_decoder)
-            JxlDecoderDestroy(m_decoder);
-        m_decoder = nullptr;
-    }
-
-    operator bool() const
-    {
-        return m_decoder;
-    }
-
-    JxlDecoder* get() const
-    {
-        return m_decoder;
-    }
-
-private:
-    JxlDecoder* m_decoder { nullptr };
 };
+
+using JxlDecoderPtr = std::unique_ptr<JxlDecoder, JXLDecoderDeleter>;
 
 static inline JxlDecoderPtr JxlDecoderMake(const JxlMemoryManager* memoryManager)
 {
