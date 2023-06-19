@@ -28,6 +28,15 @@ import SwiftUI
 @main
 struct BrowserApp: App {
     var body: some Scene {
-        BrowserScene()
+        BrowserScene().commands {
+            CommandGroup(before: CommandGroupPlacement.newItem, addition: {
+                Button(action: {
+                    let currentWindow = NSApp.keyWindow
+                    currentWindow!.windowController!.newWindowForTab(nil)
+                    currentWindow!.addTabbedWindow(NSApp.keyWindow!, ordered: .above)
+                }, label: { Text("New Tab") })
+                .keyboardShortcut("t", modifiers: [.command])
+            })
+        }
     }
 }
