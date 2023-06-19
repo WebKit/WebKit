@@ -690,10 +690,75 @@ FlexLayout::PositionAndMarginsList FlexLayout::handleCrossAxisAlignmentForFlexIt
 
 FlexLayout::LinesCrossPositionList FlexLayout::handleCrossAxisAlignmentForFlexLines(const LogicalConstraints::AxisGeometry& crossAxis, const LineRanges& lineRanges, LinesCrossSizeList& flexLinesCrossSizeList) const
 {
-    UNUSED_PARAM(crossAxis);
-    UNUSED_PARAM(lineRanges);
-    UNUSED_PARAM(flexLinesCrossSizeList);
-    return { };
+    // If the cross size property is a definite size, use that, clamped by the used min and max cross sizes of the flex container.
+    // Otherwise, use the sum of the flex lines' cross sizes, clamped by the used min and max cross sizes of the flex container.
+    if (isSingleLineFlexContainer())
+        return { { } };
+
+    auto flexLinesCrossSize = [&] {
+        auto linesCrossSize = LayoutUnit { };
+        for (auto crossSize : flexLinesCrossSizeList)
+            linesCrossSize += crossSize;
+        return linesCrossSize;
+    }();
+    auto flexContainerUsedCrossSize = crossAxis.definiteSize.value_or(flexLinesCrossSize);
+    // Align all flex lines per align-content.
+    auto initialOffset = [&]() -> LayoutUnit {
+        switch (rootStyle().alignContent().position()) {
+        case ContentPosition::Start:
+        case ContentPosition::Normal:
+            return { };
+        case ContentPosition::Center:
+            return flexContainerUsedCrossSize / 2 - flexLinesCrossSize / 2;
+        case ContentPosition::End:
+            return flexContainerUsedCrossSize - flexLinesCrossSize;
+        default:
+            switch (rootStyle().alignContent().distribution()) {
+            case ContentDistribution::SpaceBetween:
+            case ContentDistribution::Stretch:
+                return { };
+            case ContentDistribution::SpaceAround: {
+                auto extraCrossSpace = flexContainerUsedCrossSize - flexLinesCrossSize;
+                if (extraCrossSpace <= 0)
+                    return { };
+                return extraCrossSpace / lineRanges.size() / 2;
+            }
+            default:
+                ASSERT_NOT_REACHED();
+                return { };
+            }
+        }
+    };
+
+    auto gap = [&]() -> LayoutUnit {
+        auto extraCrossSpace = flexContainerUsedCrossSize - flexLinesCrossSize;
+        if (extraCrossSpace <= 0)
+            return { };
+        switch (rootStyle().alignContent().distribution()) {
+        case ContentDistribution::SpaceBetween:
+            return extraCrossSpace / (lineRanges.size() - 1);
+        case ContentDistribution::SpaceAround:
+            return extraCrossSpace / lineRanges.size();
+        case ContentDistribution::Stretch:
+        case ContentDistribution::Default: {
+            // Lines stretch to take up the remaining space. If the leftover free-space is negative,
+            // this value is identical to flex-start. Otherwise, the free-space is split equally between all of the lines,
+            // increasing their cross size.
+            auto extraCrossSpaceForEachLine = extraCrossSpace / flexLinesCrossSizeList.size();
+            for (size_t lineIndex = 0; lineIndex < flexLinesCrossSizeList.size(); ++lineIndex)
+                flexLinesCrossSizeList[lineIndex] += extraCrossSpaceForEachLine;
+            return { };
+        }
+        default:
+            return { };
+        }
+    }();
+
+    LinesCrossPositionList linesCrossPositionList(lineRanges.size());
+    linesCrossPositionList[0] = initialOffset();
+    for (size_t lineIndex = 1; lineIndex < lineRanges.size(); ++lineIndex)
+        linesCrossPositionList[lineIndex] = flexLinesCrossSizeList[lineIndex - 1] + gap;
+    return linesCrossPositionList;
 }
 
 }
