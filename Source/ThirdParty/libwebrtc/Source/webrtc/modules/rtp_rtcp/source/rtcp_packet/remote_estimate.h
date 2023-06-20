@@ -41,6 +41,10 @@ class RemoteEstimate : public App {
   explicit RemoteEstimate(App&& app);
   // Note, sub type must be unique among all app messages with "goog" name.
   static constexpr uint8_t kSubType = 13;
+#if defined(WEBRTC_WEBKIT_BUILD)
+// Avoid macro name collision on macOS (https://bugs.webkit.org/show_bug.cgi?id=250065).
+#undef kName
+#endif
   static constexpr uint32_t kName = NameToInt("goog");
   static TimeDelta GetTimestampPeriod();
 
