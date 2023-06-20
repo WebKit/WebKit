@@ -137,7 +137,6 @@ WKRetainPtr<WKMutableDictionaryRef> TestInvocation::createTestSettingsDictionary
     setValue(beginTestMessageBody, "IsAccessibilityIsolatedTreeEnabled", options().accessibilityIsolatedTreeMode());
 #endif
     setValue(beginTestMessageBody, "UseFlexibleViewport", options().useFlexibleViewport());
-    setValue(beginTestMessageBody, "DumpPixels", m_dumpPixels);
     setValue(beginTestMessageBody, "Timeout", static_cast<uint64_t>(m_timeout.milliseconds()));
     setValue(beginTestMessageBody, "DumpJSConsoleLogInStdErr", m_dumpJSConsoleLogInStdErr);
     setValue(beginTestMessageBody, "additionalSupportedImageTypes", options().additionalSupportedImageTypes().c_str());

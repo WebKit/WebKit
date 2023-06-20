@@ -218,7 +218,6 @@ void InjectedBundle::didReceiveMessageToPage(WKBundlePageRef page, WKStringRef m
             setAllowedHosts(messageBodyDictionary);
 
             m_state = Idle;
-            m_dumpPixels = false;
             m_pixelResultIsPending = false;
             // Needed for pixel result pending mode, otherwise a no-op.
             InjectedBundle::page()->stopLoading();
@@ -532,7 +531,6 @@ void InjectedBundle::beginTesting(WKDictionaryRef settings, BegingTestingMode te
 {
     m_state = Testing;
 
-    m_dumpPixels = booleanValue(settings, "DumpPixels");
     m_timeout = Seconds::fromMilliseconds(uint64Value(settings, "Timeout"));
     m_dumpJSConsoleLogInStdErr = booleanValue(settings, "DumpJSConsoleLogInStdErr");
 
