@@ -78,21 +78,32 @@ private:
     public:
         virtual ~RenderTarget();
 
-        void willRenderFrame() const;
-        virtual void didRenderFrame();
-        virtual void didDisplayFrame();
+        virtual void willRenderFrame() const;
+        virtual void didRenderFrame() { };
+        virtual void didDisplayFrame() { };
 
     protected:
         explicit RenderTarget(const WebCore::IntSize&);
 
-        unsigned m_backColorBuffer { 0 };
-        unsigned m_frontColorBuffer { 0 };
-        unsigned m_displayColorBuffer { 0 };
         unsigned m_depthStencilBuffer { 0 };
     };
 
+    class RenderTargetColorBuffer : public RenderTarget {
+    protected:
+        explicit RenderTargetColorBuffer(const WebCore::IntSize&);
+        virtual ~RenderTargetColorBuffer();
+
+        void willRenderFrame() const final;
+        void didRenderFrame() override;
+        void didDisplayFrame() override;
+
+        unsigned m_backColorBuffer { 0 };
+        unsigned m_frontColorBuffer { 0 };
+        unsigned m_displayColorBuffer { 0 };
+    };
+
 #if USE(GBM)
-    class RenderTargetEGLImage final : public RenderTarget {
+    class RenderTargetEGLImage final : public RenderTargetColorBuffer {
     public:
         static std::unique_ptr<RenderTarget> create(uint64_t, const WebCore::IntSize&);
         RenderTargetEGLImage(uint64_t, const WebCore::IntSize&, EGLImage, WTF::UnixFileDescriptor&&, EGLImage, WTF::UnixFileDescriptor&&, EGLImage, WTF::UnixFileDescriptor&&, uint32_t format, uint32_t offset, uint32_t stride, uint64_t modifier);
@@ -108,7 +119,7 @@ private:
     };
 #endif
 
-    class RenderTargetSHMImage final : public RenderTarget {
+    class RenderTargetSHMImage final : public RenderTargetColorBuffer {
     public:
         static std::unique_ptr<RenderTarget> create(uint64_t, const WebCore::IntSize&);
         RenderTargetSHMImage(uint64_t, const WebCore::IntSize&, Ref<ShareableBitmap>&&, ShareableBitmapHandle&&, Ref<ShareableBitmap>&&, ShareableBitmapHandle&&, Ref<ShareableBitmap>&&, ShareableBitmapHandle&&);
@@ -121,6 +132,22 @@ private:
         Ref<ShareableBitmap> m_backBitmap;
         Ref<ShareableBitmap> m_frontBitmap;
         Ref<ShareableBitmap> m_displayBitmap;
+    };
+
+    class RenderTargetTexture final : public RenderTarget {
+    public:
+        static std::unique_ptr<RenderTarget> create(uint64_t, const WebCore::IntSize&);
+        RenderTargetTexture(uint64_t, const WebCore::IntSize&, WTF::UnixFileDescriptor&&, unsigned, WTF::UnixFileDescriptor&&, unsigned, WTF::UnixFileDescriptor&&, unsigned, uint32_t format, uint32_t offset, uint32_t stride, uint64_t modifier);
+        ~RenderTargetTexture();
+
+    private:
+        void willRenderFrame() const override;
+        void didRenderFrame() override;
+        void didDisplayFrame() override;
+
+        unsigned m_backTexture { 0 };
+        unsigned m_frontTexture { 0 };
+        unsigned m_displayTexture { 0 };
     };
 
     uint64_t m_id { 0 };

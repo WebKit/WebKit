@@ -67,17 +67,34 @@ AcceleratedSurfaceDMABuf::~AcceleratedSurfaceDMABuf()
 
 AcceleratedSurfaceDMABuf::RenderTarget::RenderTarget(const WebCore::IntSize& size)
 {
-    std::array<unsigned, 4> renderbuffers;
-    glGenRenderbuffers(4, renderbuffers.data());
-    m_backColorBuffer = renderbuffers[0];
-    m_frontColorBuffer = renderbuffers[1];
-    m_displayColorBuffer = renderbuffers[2];
-    m_depthStencilBuffer = renderbuffers[3];
+    glGenRenderbuffers(1, &m_depthStencilBuffer);
     glBindRenderbuffer(GL_RENDERBUFFER, m_depthStencilBuffer);
     glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8_OES, size.width(), size.height());
 }
 
 AcceleratedSurfaceDMABuf::RenderTarget::~RenderTarget()
+{
+    if (m_depthStencilBuffer)
+        glDeleteRenderbuffers(1, &m_depthStencilBuffer);
+}
+
+void AcceleratedSurfaceDMABuf::RenderTarget::willRenderFrame() const
+{
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_depthStencilBuffer);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_depthStencilBuffer);
+}
+
+AcceleratedSurfaceDMABuf::RenderTargetColorBuffer::RenderTargetColorBuffer(const WebCore::IntSize& size)
+    : RenderTarget(size)
+{
+    std::array<unsigned, 3> renderbuffers;
+    glGenRenderbuffers(3, renderbuffers.data());
+    m_backColorBuffer = renderbuffers[0];
+    m_frontColorBuffer = renderbuffers[1];
+    m_displayColorBuffer = renderbuffers[2];
+}
+
+AcceleratedSurfaceDMABuf::RenderTargetColorBuffer::~RenderTargetColorBuffer()
 {
     if (m_backColorBuffer)
         glDeleteRenderbuffers(1, &m_backColorBuffer);
@@ -85,23 +102,20 @@ AcceleratedSurfaceDMABuf::RenderTarget::~RenderTarget()
         glDeleteRenderbuffers(1, &m_frontColorBuffer);
     if (m_displayColorBuffer)
         glDeleteRenderbuffers(1, &m_displayColorBuffer);
-    if (m_depthStencilBuffer)
-        glDeleteRenderbuffers(1, &m_depthStencilBuffer);
 }
 
-void AcceleratedSurfaceDMABuf::RenderTarget::willRenderFrame() const
+void AcceleratedSurfaceDMABuf::RenderTargetColorBuffer::willRenderFrame() const
 {
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, m_backColorBuffer);
-    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_depthStencilBuffer);
-    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_depthStencilBuffer);
+    RenderTarget::willRenderFrame();
 }
 
-void AcceleratedSurfaceDMABuf::RenderTarget::didRenderFrame()
+void AcceleratedSurfaceDMABuf::RenderTargetColorBuffer::didRenderFrame()
 {
     std::swap(m_backColorBuffer, m_frontColorBuffer);
 }
 
-void AcceleratedSurfaceDMABuf::RenderTarget::didDisplayFrame()
+void AcceleratedSurfaceDMABuf::RenderTargetColorBuffer::didDisplayFrame()
 {
     std::swap(m_frontColorBuffer, m_displayColorBuffer);
 }
@@ -176,7 +190,7 @@ std::unique_ptr<AcceleratedSurfaceDMABuf::RenderTarget> AcceleratedSurfaceDMABuf
 }
 
 AcceleratedSurfaceDMABuf::RenderTargetEGLImage::RenderTargetEGLImage(uint64_t surfaceID, const WebCore::IntSize& size, EGLImage backImage, UnixFileDescriptor&& backFD, EGLImage frontImage, UnixFileDescriptor&& frontFD, EGLImage displayImage, UnixFileDescriptor&& displayFD, uint32_t format, uint32_t offset, uint32_t stride, uint64_t modifier)
-    : RenderTarget(size)
+    : RenderTargetColorBuffer(size)
     , m_backImage(backImage)
     , m_frontImage(frontImage)
     , m_displayImage(displayImage)
@@ -208,13 +222,13 @@ AcceleratedSurfaceDMABuf::RenderTargetEGLImage::~RenderTargetEGLImage()
 void AcceleratedSurfaceDMABuf::RenderTargetEGLImage::didRenderFrame()
 {
     std::swap(m_backImage, m_frontImage);
-    RenderTarget::didRenderFrame();
+    RenderTargetColorBuffer::didRenderFrame();
 }
 
 void AcceleratedSurfaceDMABuf::RenderTargetEGLImage::didDisplayFrame()
 {
     std::swap(m_frontImage, m_displayImage);
-    RenderTarget::didDisplayFrame();
+    RenderTargetColorBuffer::didDisplayFrame();
 }
 #endif
 
@@ -260,7 +274,7 @@ std::unique_ptr<AcceleratedSurfaceDMABuf::RenderTarget> AcceleratedSurfaceDMABuf
 }
 
 AcceleratedSurfaceDMABuf::RenderTargetSHMImage::RenderTargetSHMImage(uint64_t surfaceID, const WebCore::IntSize& size, Ref<ShareableBitmap>&& backBitmap, ShareableBitmap::Handle&& backBitmapHandle, Ref<ShareableBitmap>&& frontBitmap, ShareableBitmap::Handle&& frontBitmapHandle, Ref<ShareableBitmap>&& displayBitmap, ShareableBitmap::Handle&& displayBitmapHandle)
-    : RenderTarget(size)
+    : RenderTargetColorBuffer(size)
     , m_backBitmap(WTFMove(backBitmap))
     , m_frontBitmap(WTFMove(frontBitmap))
     , m_displayBitmap(WTFMove(displayBitmap))
@@ -281,13 +295,111 @@ void AcceleratedSurfaceDMABuf::RenderTargetSHMImage::didRenderFrame()
 {
     glReadPixels(0, 0, m_backBitmap->size().width(), m_backBitmap->size().height(), GL_BGRA, GL_UNSIGNED_BYTE, m_backBitmap->data());
     std::swap(m_backBitmap, m_frontBitmap);
-    RenderTarget::didRenderFrame();
+    RenderTargetColorBuffer::didRenderFrame();
 }
 
 void AcceleratedSurfaceDMABuf::RenderTargetSHMImage::didDisplayFrame()
 {
     std::swap(m_frontBitmap, m_displayBitmap);
-    RenderTarget::didDisplayFrame();
+    RenderTargetColorBuffer::didDisplayFrame();
+}
+
+std::unique_ptr<AcceleratedSurfaceDMABuf::RenderTarget> AcceleratedSurfaceDMABuf::RenderTargetTexture::create(uint64_t surfaceID, const WebCore::IntSize& size)
+{
+    auto& display = WebCore::PlatformDisplay::sharedDisplayForCompositing();
+    std::array<unsigned, 3> textures;
+    glGenTextures(3, textures.data());
+
+    struct {
+        uint32_t format;
+        uint32_t offset;
+        uint32_t stride;
+        uint64_t modifier;
+    } metadata;
+
+    auto exportTexture = [&](unsigned texture) -> UnixFileDescriptor {
+        glBindTexture(GL_TEXTURE_2D, texture);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, size.width(), size.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+
+        auto image = display.createEGLImage(eglGetCurrentContext(), EGL_GL_TEXTURE_2D, (EGLClientBuffer)(uint64_t)texture, { });
+        if (!image) {
+            WTFLogAlways("Failed to create EGL image for texture");
+            return { };
+        }
+
+        int fourcc;
+        uint64_t modifier;
+        if (!eglExportDMABUFImageQueryMESA(display.eglDisplay(), image, &fourcc, nullptr, &modifier)) {
+            WTFLogAlways("eglExportDMABUFImageQueryMESA failed");
+            display.destroyEGLImage(image);
+            return { };
+        }
+
+        int fd, stride, offset;
+        if (!eglExportDMABUFImageMESA(display.eglDisplay(), image, &fd, &stride, &offset)) {
+            WTFLogAlways("eglExportDMABUFImageMESA failed");
+            display.destroyEGLImage(image);
+            return { };
+        }
+
+        display.destroyEGLImage(image);
+
+        metadata.format = fourcc;
+        metadata.offset = offset;
+        metadata.stride = stride;
+        metadata.modifier = modifier;
+        return UnixFileDescriptor(fd, UnixFileDescriptor::Adopt);
+    };
+
+    auto backFD = exportTexture(textures[0]);
+    auto frontFD = exportTexture(textures[1]);
+    auto displayFD = exportTexture(textures[2]);
+    if (!backFD || !frontFD || !displayFD) {
+        glDeleteTextures(3, textures.data());
+        return nullptr;
+    }
+
+    return makeUnique<RenderTargetTexture>(surfaceID, size, WTFMove(backFD), textures[0], WTFMove(frontFD), textures[1], WTFMove(displayFD), textures[2], metadata.format, metadata.offset, metadata.stride, metadata.modifier);
+}
+
+AcceleratedSurfaceDMABuf::RenderTargetTexture::RenderTargetTexture(uint64_t surfaceID, const WebCore::IntSize& size, UnixFileDescriptor&& backFD, unsigned backTexture, UnixFileDescriptor&& frontFD, unsigned frontTexture, UnixFileDescriptor&& displayFD, unsigned displayTexture, uint32_t format, uint32_t offset, uint32_t stride, uint64_t modifier)
+    : RenderTarget(size)
+    , m_backTexture(backTexture)
+    , m_frontTexture(frontTexture)
+    , m_displayTexture(displayTexture)
+{
+    WebProcess::singleton().parentProcessConnection()->send(Messages::AcceleratedBackingStoreDMABuf::Configure(WTFMove(backFD), WTFMove(frontFD), WTFMove(displayFD),
+        size, format, offset, stride, modifier), surfaceID);
+}
+
+AcceleratedSurfaceDMABuf::RenderTargetTexture::~RenderTargetTexture()
+{
+    if (m_backTexture)
+        glDeleteTextures(1, &m_backTexture);
+    if (m_frontTexture)
+        glDeleteTextures(1, &m_frontTexture);
+    if (m_displayTexture)
+        glDeleteTextures(1, &m_displayTexture);
+}
+
+void AcceleratedSurfaceDMABuf::RenderTargetTexture::willRenderFrame() const
+{
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_backTexture, 0);
+    RenderTarget::willRenderFrame();
+}
+
+void AcceleratedSurfaceDMABuf::RenderTargetTexture::didRenderFrame()
+{
+    std::swap(m_backTexture, m_frontTexture);
+}
+
+void AcceleratedSurfaceDMABuf::RenderTargetTexture::didDisplayFrame()
+{
+    std::swap(m_frontTexture, m_displayTexture);
 }
 
 void AcceleratedSurfaceDMABuf::didCreateCompositingRunLoop(RunLoop& runLoop)
@@ -327,9 +439,13 @@ void AcceleratedSurfaceDMABuf::clientResize(const WebCore::IntSize& size)
     if (size.isEmpty())
         return;
 
-    switch (WebCore::PlatformDisplay::sharedDisplayForCompositing().type()) {
+    auto& display = WebCore::PlatformDisplay::sharedDisplayForCompositing();
+    switch (display.type()) {
     case WebCore::PlatformDisplay::Type::Surfaceless:
-        m_target = RenderTargetSHMImage::create(m_id, size);
+        if (display.eglExtensions().MESA_image_dma_buf_export)
+            m_target = RenderTargetTexture::create(m_id, size);
+        else
+            m_target = RenderTargetSHMImage::create(m_id, size);
         break;
 #if USE(GBM)
     case WebCore::PlatformDisplay::Type::GBM:

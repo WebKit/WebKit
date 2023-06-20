@@ -107,6 +107,7 @@ public:
         bool KHR_surfaceless_context { false };
         bool EXT_image_dma_buf_import { false };
         bool EXT_image_dma_buf_import_modifiers { false };
+        bool MESA_image_dma_buf_export { false };
     };
     const EGLExtensions& eglExtensions() const;
 
