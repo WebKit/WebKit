@@ -1173,6 +1173,28 @@ auto FunctionParser<Context>::simd(SIMDLaneOperation op, SIMDLane lane, SIMDSign
         } else
             return pushUnreachable(Types::V128);
     }
+    case SIMDLaneOperation::RelaxedMAdd:
+    case SIMDLaneOperation::RelaxedNMAdd: {
+        if constexpr (!isReachable)
+            return { };
+        TypedExpression a;
+        TypedExpression b;
+        TypedExpression c;
+        WASM_TRY_POP_EXPRESSION_STACK_INTO(c, "vector argument");
+        WASM_TRY_POP_EXPRESSION_STACK_INTO(b, "vector argument");
+        WASM_TRY_POP_EXPRESSION_STACK_INTO(a, "vector argument");
+        WASM_VALIDATOR_FAIL_IF(a.type() != Types::V128, "type mismatch for argument 0");
+        WASM_VALIDATOR_FAIL_IF(b.type() != Types::V128, "type mismatch for argument 1");
+        WASM_VALIDATOR_FAIL_IF(c.type() != Types::V128, "type mismatch for argument 2");
+
+        if constexpr (Context::tierSupportsSIMD) {
+            ExpressionType result;
+            WASM_TRY_ADD_TO_CONTEXT(addSIMDRelaxedFMA(op, SIMDInfo { lane, signMode }, a, b, c, result));
+            m_expressionStack.constructAndAppend(Types::V128, result);
+            return { };
+        } else
+            return pushUnreachable(Types::V128);
+    }
     default:
         ASSERT_NOT_REACHED();
         WASM_PARSER_FAIL_IF(true, "invalid simd op ", SIMDLaneOperationDump(op));

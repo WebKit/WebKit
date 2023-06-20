@@ -554,6 +554,17 @@ public:
         return { };
     }
 
+    auto addSIMDRelaxedFMA(SIMDLaneOperation op, SIMDInfo info, ExpressionType m1, ExpressionType m2, ExpressionType add, ExpressionType& result) -> PartialResult
+    {
+        B3_OP_CASES()
+        B3_OP_CASE(RelaxedMAdd)
+        B3_OP_CASE(RelaxedNMAdd)
+
+        result = push(m_currentBlock->appendNew<SIMDValue>(m_proc, origin(), b3Op, B3::V128, info,
+            get(m1), get(m2), get(add)));
+        return { };
+    }
+
     PartialResult WARN_UNUSED_RETURN addDrop(ExpressionType);
     PartialResult WARN_UNUSED_RETURN addInlinedArguments(const TypeDefinition&);
     PartialResult WARN_UNUSED_RETURN addArguments(const TypeDefinition&);

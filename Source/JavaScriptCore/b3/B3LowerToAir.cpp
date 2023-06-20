@@ -4376,6 +4376,18 @@ private:
             emitSIMDMonomorphicBinaryOp(Air::VectorSwizzle);
             return;
 
+        case B3::VectorRelaxedMAdd: {
+            SIMDValue* value = m_value->as<SIMDValue>();
+            append(Air::VectorFusedMulAdd, Arg::simdInfo(value->simdInfo()), tmp(m_value->child(0)), tmp(m_value->child(1)), tmp(m_value->child(2)), tmp(m_value), m_code.newTmp(FP));
+            return;
+        }
+
+        case B3::VectorRelaxedNMAdd: {
+            SIMDValue* value = m_value->as<SIMDValue>();
+            append(Air::VectorFusedNegMulAdd, Arg::simdInfo(value->simdInfo()), tmp(m_value->child(0)), tmp(m_value->child(1)), tmp(m_value->child(2)), tmp(m_value), m_code.newTmp(FP));
+            return;
+        }
+
         case Fence: {
             FenceValue* fence = m_value->as<FenceValue>();
             if (!fence->write && !fence->read)

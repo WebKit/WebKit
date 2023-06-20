@@ -234,6 +234,8 @@ namespace JSC { namespace B3 {
     case VectorRelaxedSwizzle: \
     case VectorMulByElement: \
     case VectorShiftByVector: \
+    case VectorRelaxedMAdd: \
+    case VectorRelaxedNMAdd: \
         return MACRO(SIMDValue); \
     default: \
         RELEASE_ASSERT_NOT_REACHED(); \

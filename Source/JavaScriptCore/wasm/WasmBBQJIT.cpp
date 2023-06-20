@@ -9252,6 +9252,39 @@ public:
         }
     }
 
+    PartialResult WARN_UNUSED_RETURN addSIMDRelaxedFMA(SIMDLaneOperation op, SIMDInfo info, ExpressionType mul1, ExpressionType mul2, ExpressionType addend, ExpressionType& result)
+    {
+        Location mul1Location = loadIfNecessary(mul1);
+        Location mul2Location = loadIfNecessary(mul2);
+        Location addendLocation = loadIfNecessary(addend);
+        consume(mul1);
+        consume(mul2);
+        consume(addend);
+
+        result = topValue(TypeKind::V128);
+        Location resultLocation = allocate(result);
+
+        LOG_INSTRUCTION("VectorRelaxedMAdd", mul1, mul1Location, mul2, mul2Location, addend, addendLocation, RESULT(result));
+
+        if (op == SIMDLaneOperation::RelaxedMAdd) {
+#if CPU(X86_64)
+            m_jit.vectorMul(info, mul1Location.asFPR(), mul2Location.asFPR(), wasmScratchFPR);
+            m_jit.vectorAdd(info, wasmScratchFPR, addendLocation.asFPR(), resultLocation.asFPR());
+#else
+            m_jit.vectorFusedMulAdd(info, mul1Location.asFPR(), mul2Location.asFPR(), addendLocation.asFPR(), resultLocation.asFPR(), wasmScratchFPR);
+#endif
+        } else if (op == SIMDLaneOperation::RelaxedNMAdd) {
+#if CPU(X86_64)
+            m_jit.vectorMul(info, mul1Location.asFPR(), mul2Location.asFPR(), wasmScratchFPR);
+            m_jit.vectorSub(info, addendLocation.asFPR(), wasmScratchFPR, resultLocation.asFPR());
+#else
+            m_jit.vectorFusedNegMulAdd(info, mul1Location.asFPR(), mul2Location.asFPR(), addendLocation.asFPR(), resultLocation.asFPR(), wasmScratchFPR);
+#endif
+        } else
+            RELEASE_ASSERT_NOT_REACHED();
+        return { };
+    }
+
     void dump(const ControlStack&, const Stack*) { }
     void didFinishParsingLocals() { }
     void didPopValueFromStack(ExpressionType, String) { }

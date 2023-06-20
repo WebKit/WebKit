@@ -682,6 +682,18 @@ public:
                 VALIDATE(value->asSIMDValue()->simdLane() == SIMDLane::i8x16, ("At ", *value));
                 break;
 
+            case VectorRelaxedMAdd:
+            case VectorRelaxedNMAdd:
+                VALIDATE(!value->kind().hasExtraBits(), ("At ", *value));
+                VALIDATE(value->numChildren() == 3, ("At ", *value));
+                VALIDATE(value->type() == V128, ("At ", *value));
+                VALIDATE(value->child(0)->type() == V128, ("At ", *value));
+                VALIDATE(value->child(1)->type() == V128, ("At ", *value));
+                VALIDATE(value->child(2)->type() == V128, ("At ", *value));
+                VALIDATE((value->asSIMDValue()->simdLane() == SIMDLane::f32x4) || (value->asSIMDValue()->simdLane() == SIMDLane::f64x2), ("At ", *value));
+                VALIDATE(value->asSIMDValue()->signMode() == SIMDSignMode::None, ("At ", *value));
+                break;
+
             case CCall:
                 VALIDATE(!value->kind().hasExtraBits(), ("At ", *value));
                 VALIDATE(value->numChildren() >= 1, ("At ", *value));

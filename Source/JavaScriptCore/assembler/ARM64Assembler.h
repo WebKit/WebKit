@@ -1712,6 +1712,16 @@ public:
         insn(0b01101110001000001111110000000000 | (sizeForFloatingPointSIMDOp(lane) << 22) | (vm << 16) | (vn << 5) | vd);
     }
 
+    ALWAYS_INLINE void vectorFmla(FPRegisterID vd, FPRegisterID vn, FPRegisterID vm, SIMDLane lane)
+    {
+        insn(0b01001110001000001100110000000000 | (sizeForFloatingPointSIMDOp(lane) << 22) | (vm << 16) | (vn << 5) | vd);
+    }
+
+    ALWAYS_INLINE void vectorFmls(FPRegisterID vd, FPRegisterID vn, FPRegisterID vm, SIMDLane lane)
+    {
+        insn(0b01001110101000001100110000000000 | (sizeForFloatingPointSIMDOp(lane) << 22) | (vm << 16) | (vn << 5) | vd);
+    }
+
     static uint32_t encodeLaneAndIndexToHLM(SIMDLane lane, uint32_t laneIndex)
     {
         switch (elementByteSize(lane)) {

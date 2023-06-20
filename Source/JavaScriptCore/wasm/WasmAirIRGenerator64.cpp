@@ -559,6 +559,23 @@ public:
         return { };
     }
 
+    auto addSIMDRelaxedFMA(SIMDLaneOperation op, SIMDInfo info, ExpressionType m1, ExpressionType m2, ExpressionType add, ExpressionType& result) -> PartialResult
+    {
+        B3::Air::Opcode airOp = B3::Air::Oops;
+        if (op == SIMDLaneOperation::RelaxedMAdd)
+            airOp = B3::Air::VectorFusedMulAdd;
+        else if (op == SIMDLaneOperation::RelaxedNMAdd)
+            airOp = B3::Air::VectorFusedNegMulAdd;
+        else {
+            RELEASE_ASSERT_NOT_REACHED();
+            return { };
+        }
+        result = tmpForType(Types::V128);
+        auto scratch = tmpForType(Types::V128);
+        append(airOp, Arg::simdInfo(info), m1, m2, add, result, scratch);
+        return { };
+    }
+
     // Control flow
     PartialResult WARN_UNUSED_RETURN addReturn(const ControlData&, const Stack& returnValues);
     PartialResult WARN_UNUSED_RETURN addThrow(unsigned exceptionIndex, Vector<ExpressionType>& args, Stack&);

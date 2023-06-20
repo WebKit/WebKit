@@ -2898,6 +2898,20 @@ public:
         }
     }
 
+    void vectorFusedMulAdd(SIMDInfo simdInfo, FPRegisterID mul1, FPRegisterID mul2, FPRegisterID addend, FPRegisterID dest, FPRegisterID scratch)
+    {
+        ASSERT(scalarTypeIsFloatingPoint(simdInfo.lane));
+        vectorMul(simdInfo, mul1, mul2, scratch);
+        vectorAdd(simdInfo, addend, scratch, dest);
+    }
+
+    void vectorFusedNegMulAdd(SIMDInfo simdInfo, FPRegisterID mul1, FPRegisterID mul2, FPRegisterID addend, FPRegisterID dest, FPRegisterID scratch)
+    {
+        ASSERT(scalarTypeIsFloatingPoint(simdInfo.lane));
+        vectorMul(simdInfo, mul1, mul2, scratch);
+        vectorSub(simdInfo, addend, scratch, dest);
+    }
+
     void vectorDiv(SIMDInfo simdInfo, FPRegisterID left, FPRegisterID right, FPRegisterID dest)
     {
         RELEASE_ASSERT(supportsAVX());

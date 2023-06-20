@@ -2039,6 +2039,12 @@ x86_64: VectorDotProduct U:F:128, U:F:128, D:F:128
 arm64: VectorSwizzle2 U:F:128, U:F:128, U:F:128, D:F:128
     Tmp, Tmp*, Tmp, Tmp
 
+64: VectorFusedMulAdd U:G:Ptr, U:F:128, U:F:128, U:F:128, D:F:128, S:F:128
+    SIMDInfo, Tmp, Tmp, Tmp, Tmp, Tmp
+
+64: VectorFusedNegMulAdd U:G:Ptr, U:F:128, U:F:128, U:F:128, D:F:128, S:F:128
+    SIMDInfo, Tmp, Tmp, Tmp, Tmp, Tmp
+
 arm64: VectorDupElementInt8 U:G:8, U:F:128, D:F:128
     Imm, Tmp, Tmp
 arm64: VectorDupElementInt16 U:G:8, U:F:128, D:F:128
