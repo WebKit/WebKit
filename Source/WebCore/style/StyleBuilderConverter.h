@@ -1008,9 +1008,9 @@ inline RefPtr<ShapeValue> BuilderConverter::convertShapeValue(BuilderState& buil
     if (is<CSSValueList>(value)) {
         for (auto& currentValue : downcast<CSSValueList>(value))
             processSingleValue(currentValue);
-    } else {
+    } else
         processSingleValue(value);
-    }
+
     
     if (shape)
         return ShapeValue::create(shape.releaseNonNull(), referenceBox);
