@@ -2064,6 +2064,9 @@ void BytecodeGenerator::pushLexicalScopeInternal(VariableEnvironment& environmen
     case ScopeType::CatchScope:
         symbolTable->setScopeType(SymbolTable::ScopeType::CatchScope);
         break;
+    case ScopeType::CatchScopeWithSimpleParameter:
+        symbolTable->setScopeType(SymbolTable::ScopeType::CatchScopeWithSimpleParameter);
+        break;
     case ScopeType::LetConstScope:
     case ScopeType::ClassScope:
         symbolTable->setScopeType(SymbolTable::ScopeType::LexicalScope);
@@ -4142,9 +4145,9 @@ void BytecodeGenerator::popLocalControlFlowScope()
     m_localScopeDepth--;
 }
 
-void BytecodeGenerator::emitPushCatchScope(VariableEnvironment& environment)
+void BytecodeGenerator::emitPushCatchScope(VariableEnvironment& environment, ScopeType scopeType)
 {
-    pushLexicalScopeInternal(environment, TDZCheckOptimization::Optimize, NestedScopeType::IsNotNested, nullptr, TDZRequirement::UnderTDZ, ScopeType::CatchScope, ScopeRegisterType::Block);
+    pushLexicalScopeInternal(environment, TDZCheckOptimization::Optimize, NestedScopeType::IsNotNested, nullptr, TDZRequirement::UnderTDZ, scopeType, ScopeRegisterType::Block);
 }
 
 void BytecodeGenerator::emitPopCatchScope(VariableEnvironment& environment) 

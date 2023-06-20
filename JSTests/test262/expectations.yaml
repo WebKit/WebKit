@@ -197,8 +197,6 @@ test/annexB/language/eval-code/direct/global-switch-dflt-eval-global-skip-early-
   default: 'Test262Error: An initialized binding is not created following evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
 test/annexB/language/eval-code/direct/global-switch-dflt-eval-global-skip-early-err-try.js:
   default: 'Test262Error: An initialized binding is not created prior to evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
-test/annexB/language/eval-code/direct/var-env-lower-lex-catch-non-strict.js:
-  default: "SyntaxError: Can't create duplicate variable in eval: 'err'"
 test/annexB/language/eval-code/indirect/global-block-decl-eval-global-skip-early-err-block.js:
   default: 'Test262Error: An initialized binding is not created following evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
 test/annexB/language/eval-code/indirect/global-block-decl-eval-global-skip-early-err-for-in.js:

@@ -4840,7 +4840,7 @@ void TryNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
         }
 
         if (m_catchPattern) {
-            generator.emitPushCatchScope(m_lexicalVariables);
+            generator.emitPushCatchScope(m_lexicalVariables, m_catchPattern->isBindingNode() ? BytecodeGenerator::ScopeType::CatchScopeWithSimpleParameter : BytecodeGenerator::ScopeType::CatchScope);
             m_catchPattern->bindValue(generator, thrownValueRegister.get());
         }
 

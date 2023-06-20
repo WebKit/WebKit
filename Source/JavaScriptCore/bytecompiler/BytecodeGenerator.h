@@ -941,6 +941,8 @@ namespace JSC {
         void emitOutOfLineExceptionHandler(RegisterID* exceptionRegister, RegisterID* thrownValueRegister, RegisterID* completionTypeRegister, TryData*);
 
     public:
+        enum class ScopeType : uint8_t { CatchScope, CatchScopeWithSimpleParameter, LetConstScope, FunctionNameScope, ClassScope };
+
         void restoreScopeRegister();
         void restoreScopeRegister(int lexicalScopeIndex);
 
@@ -957,7 +959,7 @@ namespace JSC {
         void emitThrowRangeError(const Identifier& message);
         void emitThrowOutOfMemoryError();
 
-        void emitPushCatchScope(VariableEnvironment&);
+        void emitPushCatchScope(VariableEnvironment&, ScopeType);
         void emitPopCatchScope(VariableEnvironment&);
 
         void emitAwait(RegisterID*);
@@ -1035,7 +1037,6 @@ namespace JSC {
 
         enum class TDZCheckOptimization { Optimize, DoNotOptimize };
         enum class NestedScopeType { IsNested, IsNotNested };
-        enum class ScopeType { CatchScope, LetConstScope, FunctionNameScope, ClassScope };
     private:
         enum class TDZRequirement { UnderTDZ, NotUnderTDZ };
         enum class ScopeRegisterType { Var, Block };

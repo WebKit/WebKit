@@ -70,6 +70,7 @@ public:
     bool isLexicalScope();
     bool isModuleScope();
     bool isCatchScope();
+    bool isCatchScopeWithSimpleParameter();
     bool isFunctionNameScopeObject();
 
     bool isNestedLexicalScope();
