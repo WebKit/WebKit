@@ -681,7 +681,10 @@ void TypeChecker::visit(AST::CallExpression& call)
             return;
         }
 
-        typeError(target.span(), "cannot call value of type '", *targetBinding->type, "'");
+        if (targetBinding)
+            typeError(target.span(), "cannot call value of type '", *targetBinding->type, "'");
+        else
+            typeError(target.span(), "unresolved call target '", targetName, "'");
         return;
     }
 
@@ -745,9 +748,7 @@ void TypeChecker::visit(AST::CallExpression& call)
         return;
     }
 
-    // FIXME: Ensure we can remove this workaround
-    auto* result = resolve(target);
-    inferred(result);
+    RELEASE_ASSERT_NOT_REACHED();
 }
 
 void TypeChecker::visit(AST::UnaryExpression& unary)

@@ -3,6 +3,9 @@
 fn f1(x: f32) -> f32 { return x; }
 
 fn f2() {
+    // CHECK-L: unresolved call target 'f0'
+    _ = f0();
+
     // CHECK-L: type in function call does not match parameter type: expected 'f32', found 'i32'
     _ = f1(0i);
 
