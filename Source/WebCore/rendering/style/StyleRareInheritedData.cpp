@@ -68,6 +68,8 @@ struct GreaterThanOrSameSizeAsStyleRareInheritedData : public RefCounted<Greater
     ListStyleType listStyleType;
 
     WordBoundaryDetection wordBoundaryDetection;
+
+    Markable<ScrollbarColor> scrollbarColor;
 };
 
 static_assert(sizeof(StyleRareInheritedData) <= sizeof(GreaterThanOrSameSizeAsStyleRareInheritedData), "StyleRareInheritedData should bit pack");
@@ -159,6 +161,7 @@ StyleRareInheritedData::StyleRareInheritedData()
     , textSpacingTrim(RenderStyle::initialTextSpacingTrim())
     , textAutospace(RenderStyle::initialTextAutospace())
     , listStyleType(RenderStyle::initialListStyleType())
+    , scrollbarColor(RenderStyle::initialScrollbarColor())
 {
 }
 
@@ -258,6 +261,7 @@ inline StyleRareInheritedData::StyleRareInheritedData(const StyleRareInheritedDa
     , textSpacingTrim(o.textSpacingTrim)
     , textAutospace(o.textAutospace)
     , listStyleType(o.listStyleType)
+    , scrollbarColor(o.scrollbarColor)
 {
 }
 
@@ -365,7 +369,8 @@ bool StyleRareInheritedData::operator==(const StyleRareInheritedData& o) const
         && arePointingToEqualData(listStyleImage, o.listStyleImage)
         && listStyleType == o.listStyleType
         && textSpacingTrim == o.textSpacingTrim
-        && textAutospace == o.textAutospace;
+        && textAutospace == o.textAutospace
+        && scrollbarColor == o.scrollbarColor;
 }
 
 bool StyleRareInheritedData::hasColorFilters() const

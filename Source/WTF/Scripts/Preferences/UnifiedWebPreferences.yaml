@@ -1238,6 +1238,20 @@ CSSScrollAnchoringEnabled:
     WebCore:
       default: false
 
+CSSScrollbarColorEnabled:
+  type: bool
+  status: testable
+  category: css
+  humanReadableName: "CSS scrollbar-color property"
+  humanReadableDescription: "Enable scrollbar-color CSS property"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 CSSScrollbarGutterEnabled:
   type: bool
   status: testable

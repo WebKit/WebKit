@@ -27,6 +27,7 @@
 #include "Length.h"
 #include "ListStyleType.h"
 #include "RenderStyleConstants.h"
+#include "ScrollbarColor.h"
 #include "StyleColor.h"
 #include "StyleCustomPropertyData.h"
 #include "StyleTextBoxEdge.h"
@@ -203,6 +204,8 @@ public:
     ListStyleType listStyleType;
 
     WordBoundaryDetection wordBoundaryDetection;
+
+    Markable<ScrollbarColor> scrollbarColor;
 
 private:
     StyleRareInheritedData();

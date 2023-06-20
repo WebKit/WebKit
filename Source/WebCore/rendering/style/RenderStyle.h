@@ -245,6 +245,7 @@ struct OrderedNamedGridLinesMap;
 struct ScrollSnapAlign;
 struct ScrollSnapType;
 struct ScrollbarGutter;
+struct ScrollbarColor;
 
 struct TabSize;
 struct TextAutospace;
@@ -615,7 +616,6 @@ public:
     StyleImage* listStyleImage() const;
     ListStylePosition listStylePosition() const { return static_cast<ListStylePosition>(m_inheritedFlags.listStylePosition); }
     inline bool isFixedTableLayout() const;
-
     inline const Length& marginTop() const;
     inline const Length& marginBottom() const;
     inline const Length& marginLeft() const;
@@ -969,6 +969,9 @@ public:
     const ScrollSnapAlign& scrollSnapAlign() const;
     ScrollSnapStop scrollSnapStop() const;
 
+    inline std::optional<ScrollbarColor> scrollbarColor() const;
+    inline const StyleColor& scrollbarThumbColor() const;
+    inline const StyleColor& scrollbarTrackColor() const;
     WEBCORE_EXPORT const ScrollbarGutter scrollbarGutter() const;
     WEBCORE_EXPORT ScrollbarWidth scrollbarWidth() const;
 
@@ -1507,6 +1510,9 @@ public:
     void setScrollSnapAlign(const ScrollSnapAlign&);
     void setScrollSnapStop(ScrollSnapStop);
 
+    inline void setScrollbarColor(const std::optional<ScrollbarColor>&);
+    inline void setScrollbarThumbColor(const StyleColor&);
+    inline void setScrollbarTrackColor(const StyleColor&);
     void setScrollbarGutter(ScrollbarGutter);
     void setScrollbarWidth(ScrollbarWidth);
 
@@ -1942,6 +1948,7 @@ public:
     static ScrollSnapAlign initialScrollSnapAlign();
     static ScrollSnapStop initialScrollSnapStop();
 
+    static inline std::optional<ScrollbarColor> initialScrollbarColor();
     static ScrollbarGutter initialScrollbarGutter();
     static ScrollbarWidth initialScrollbarWidth();
 

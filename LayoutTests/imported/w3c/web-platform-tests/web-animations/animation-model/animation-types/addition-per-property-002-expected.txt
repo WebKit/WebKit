@@ -148,6 +148,13 @@ PASS resize: "both" onto "horizontal"
 PASS scroll-behavior (type: discrete) has testAddition function
 PASS scroll-behavior: "smooth" onto "auto"
 PASS scroll-behavior: "auto" onto "smooth"
+PASS scrollbar-color (type: colorPair) has testAddition function
+PASS scrollbar-color supports animating as color pair of rgb() with overflowed  from and to values
+PASS scrollbar-color supports animating as color pair of #RGB
+PASS scrollbar-color supports animating as color pair of hsl()
+PASS scrollbar-color supports animating as color pair of #RGBa
+PASS scrollbar-color supports animating as color pair of rgba()
+PASS scrollbar-color supports animating as color pair of hsla()
 PASS scrollbar-gutter (type: discrete) has testAddition function
 PASS scrollbar-gutter: "stable" onto "auto"
 PASS scrollbar-gutter: "auto" onto "stable"

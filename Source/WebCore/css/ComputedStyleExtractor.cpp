@@ -4218,6 +4218,10 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         return createConvertingToCSSValueID(style.scrollSnapStop());
     case CSSPropertyScrollSnapType:
         return valueForScrollSnapType(style.scrollSnapType());
+    case CSSPropertyScrollbarColor:
+        if (!style.scrollbarColor())
+            return CSSPrimitiveValue::create(CSSValueAuto);
+        return CSSValuePair::createNoncoalescing(currentColorOrValidColor(style, style.scrollbarColor().value().thumbColor), currentColorOrValidColor(style, style.scrollbarColor().value().trackColor));
     case CSSPropertyScrollbarGutter:
         return valueForScrollbarGutter(style.scrollbarGutter());
     case CSSPropertyScrollbarWidth:

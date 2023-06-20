@@ -9013,6 +9013,22 @@
                 "url": "https://drafts.csswg.org/css-scroll-snap-1/#propdef-scroll-snap-stop"
             }
         },
+        "scrollbar-color": {
+            "codegen-properties": {
+                "converter": "ScrollbarColor",
+                "parser-function": "consumeScrollbarColor",
+                "parser-function-requires-context": true,
+                "parser-grammar-unused": "auto | <color>{2}",
+                "parser-grammar-unused-reason": "Needs support for '{A}' multipliers.",
+                "settings-flag": "cssScrollbarColorEnabled"
+            },
+            "inherited": true,
+            "specification": {
+                "category": "css-scrollbars",
+                "url": "https://drafts.csswg.org/css-scrollbars/#scrollbar-color"
+            },
+            "status": "in development"
+        },
         "scrollbar-gutter": {
             "codegen-properties": {
                 "converter": "ScrollbarGutter",

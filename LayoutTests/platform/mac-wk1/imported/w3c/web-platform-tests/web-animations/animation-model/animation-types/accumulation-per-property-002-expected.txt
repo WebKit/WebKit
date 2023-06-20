@@ -145,6 +145,13 @@ PASS quotes: ""“" "”" "‘" "’"" onto ""‘" "’" "“" "”""
 PASS resize (type: discrete) has testAccumulation function
 PASS resize: "horizontal" onto "both"
 PASS resize: "both" onto "horizontal"
+PASS scrollbar-color (type: colorPair) has testAccumulation function
+PASS scrollbar-color supports animating as color pair of rgb() with overflowed  from and to values
+PASS scrollbar-color supports animating as color pair of #RGB
+PASS scrollbar-color supports animating as color pair of hsl()
+PASS scrollbar-color supports animating as color pair of #RGBa
+PASS scrollbar-color supports animating as color pair of rgba()
+PASS scrollbar-color supports animating as color pair of hsla()
 PASS scrollbar-gutter (type: discrete) has testAccumulation function
 PASS scrollbar-gutter: "stable" onto "auto"
 PASS scrollbar-gutter: "auto" onto "stable"

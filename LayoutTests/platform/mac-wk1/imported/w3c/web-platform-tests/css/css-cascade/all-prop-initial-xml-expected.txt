@@ -281,6 +281,7 @@ PASS scroll-padding-top
 PASS scroll-snap-align
 PASS scroll-snap-stop
 PASS scroll-snap-type
+PASS scrollbar-color
 PASS scrollbar-gutter
 PASS scrollbar-width
 PASS shape-image-threshold

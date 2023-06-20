@@ -176,6 +176,13 @@ PASS resize (type: discrete) has testInterpolation function
 PASS resize uses discrete animation when animating between "both" and "horizontal" with linear easing
 PASS resize uses discrete animation when animating between "both" and "horizontal" with effect easing
 PASS resize uses discrete animation when animating between "both" and "horizontal" with keyframe easing
+PASS scrollbar-color (type: colorPair) has testInterpolation function
+PASS scrollbar-color supports animating as color pair of rgb()
+PASS scrollbar-color supports animating as color pair of #RGB
+PASS scrollbar-color supports animating as color pair of hsl()
+PASS scrollbar-color supports animating as color pair of #RGBa
+PASS scrollbar-color supports animating as color pair of rgba()
+PASS scrollbar-color supports animating as color pair of hsla()
 PASS scrollbar-gutter (type: discrete) has testInterpolation function
 PASS scrollbar-gutter uses discrete animation when animating between "auto" and "stable" with linear easing
 PASS scrollbar-gutter uses discrete animation when animating between "auto" and "stable" with effect easing

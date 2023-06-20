@@ -6671,6 +6671,19 @@ RefPtr<CSSValue> consumeScrollSnapType(CSSParserTokenRange& range)
     return CSSValueList::createSpaceSeparated(firstValue.releaseNonNull());
 }
 
+RefPtr<CSSValue> consumeScrollbarColor(CSSParserTokenRange& range, const CSSParserContext& context)
+{
+    if (auto ident = consumeIdent<CSSValueAuto>(range))
+        return ident;
+
+    if (auto thumbColor = consumeColor(range, context)) {
+        if (auto trackColor = consumeColor(range, context))
+            return CSSValuePair::createNoncoalescing(thumbColor.releaseNonNull(), trackColor.releaseNonNull());
+    }
+
+    return nullptr;
+}
+
 RefPtr<CSSValue> consumeScrollbarGutter(CSSParserTokenRange& range)
 {
     if (auto ident = consumeIdent<CSSValueAuto>(range))
