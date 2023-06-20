@@ -26,6 +26,62 @@
 #import "config.h"
 #import "NetworkIssueReporter.h"
 
-#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/NetworkIssueReporterAdditions.mm>)
-#import <WebKitAdditions/NetworkIssueReporterAdditions.mm>
-#endif
+#if ENABLE(NETWORK_ISSUE_REPORTING)
+
+#import <pal/spi/cf/CFNetworkSPI.h>
+#import <wtf/SoftLinking.h>
+
+SOFT_LINK_SYSTEM_LIBRARY(libsystem_networkextension)
+SOFT_LINK_OPTIONAL(libsystem_networkextension, ne_tracker_create_xcode_issue, void, __cdecl, (const char*, const void*, size_t))
+SOFT_LINK_OPTIONAL(libsystem_networkextension, ne_tracker_copy_current_stacktrace, void*, __cdecl, (size_t*))
+SOFT_LINK_OPTIONAL(libsystem_networkextension, ne_tracker_should_save_stacktrace, bool, __cdecl, (void))
+
+namespace WebKit {
+
+bool NetworkIssueReporter::isEnabled()
+{
+    auto* shouldSaveStacktrace = ne_tracker_should_save_stacktracePtr();
+    return shouldSaveStacktrace && shouldSaveStacktrace();
+}
+
+bool NetworkIssueReporter::shouldReport(NSURLSessionTaskMetrics *metrics)
+{
+    if (!isEnabled())
+        return false;
+
+    for (NSURLSessionTaskTransactionMetrics *transaction in metrics.transactionMetrics) {
+        if (transaction._isUnlistedTracker)
+            return true;
+    }
+
+    return false;
+}
+
+NetworkIssueReporter::NetworkIssueReporter()
+{
+    if (auto* copyStacktrace = ne_tracker_copy_current_stacktracePtr())
+        m_stackTrace = copyStacktrace(&m_stackTraceSize);
+}
+
+NetworkIssueReporter::~NetworkIssueReporter()
+{
+    if (m_stackTrace)
+        free(m_stackTrace);
+}
+
+void NetworkIssueReporter::report(const URL& requestURL)
+{
+    if (!m_stackTrace)
+        return;
+
+    auto host = requestURL.host().toString();
+    if (!m_reportedHosts.add(host).isNewEntry)
+        return;
+
+    if (auto createIssue = ne_tracker_create_xcode_issuePtr())
+        createIssue(host.utf8().data(), m_stackTrace, m_stackTraceSize);
+}
+
+} // namespace WebKit
+
+#endif // ENABLE(NETWORK_ISSUE_REPORTING)

@@ -335,11 +335,11 @@ typedef NS_ENUM(NSInteger, NSURLSessionCompanionProxyPreference) {
 #if HAVE(NETWORK_CONNECTION_PRIVACY_STANCE)
 @property (assign, readonly) nw_connection_privacy_stance_t _privacyStance;
 #endif
-@end
-
-@interface NSURLSessionTaskTransactionMetrics ()
 @property (assign) SSLProtocol _negotiatedTLSProtocol;
 @property (assign) SSLCipherSuite _negotiatedTLSCipher;
+#if ENABLE(NETWORK_ISSUE_REPORTING)
+@property (nonatomic, readonly) BOOL _isUnlistedTracker;
+#endif
 @end
 
 @interface NSURLSession (SPI)
