@@ -296,7 +296,10 @@ void FullscreenManager::cancelFullscreen()
 
     m_pendingExitFullscreen = true;
 
-    m_document.eventLoop().queueTask(TaskSource::MediaElement, [this, topDocument = WTFMove(topDocument), identifier = LOGIDENTIFIER] {
+    m_document.eventLoop().queueTask(TaskSource::MediaElement, [this, weakThis = WeakPtr { *this }, topDocument = WTFMove(topDocument), identifier = LOGIDENTIFIER] {
+        if (!weakThis)
+            return;
+
         if (!topDocument->page()) {
             INFO_LOG(identifier, "Top document has no page.");
             return;
@@ -304,7 +307,7 @@ void FullscreenManager::cancelFullscreen()
 
         // This triggers finishExitFullscreen with ExitMode::Resize, which fully exits the document.
         if (auto* fullscreenElement = topDocument->fullscreenManager().fullscreenElement())
-            page()->chrome().client().exitFullScreenForElement(fullscreenElement);
+            topDocument->page()->chrome().client().exitFullScreenForElement(fullscreenElement);
         else
             INFO_LOG(identifier, "Top document has no fullscreen element");
     });
