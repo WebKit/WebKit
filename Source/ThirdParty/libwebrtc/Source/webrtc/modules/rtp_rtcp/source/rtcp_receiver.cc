@@ -775,7 +775,7 @@ bool RTCPReceiver::HandleApp(const rtcp::CommonHeader& rtcp_block,
   if (!app.Parse(rtcp_block)) {
     return false;
   }
-  if (app.name() == rtcp::RemoteEstimate::kName &&
+  if (app.name() == rtcp::RemoteEstimate::kNameGoog &&
       app.sub_type() == rtcp::RemoteEstimate::kSubType) {
     rtcp::RemoteEstimate estimate(std::move(app));
     if (estimate.ParseData()) {
