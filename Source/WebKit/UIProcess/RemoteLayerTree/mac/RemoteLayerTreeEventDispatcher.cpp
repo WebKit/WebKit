@@ -118,7 +118,7 @@ void RemoteLayerTreeEventDispatcher::invalidate()
 {
     m_displayLinkClient->invalidate();
 
-    stopDisplayLinkObserver();
+    displayLink()->removeClient(*m_displayLinkClient);
 
     {
         Locker locker { m_scrollingTreeLock };
