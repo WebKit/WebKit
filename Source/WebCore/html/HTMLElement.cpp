@@ -433,7 +433,7 @@ Node::InsertedIntoAncestorResult HTMLElement::insertedIntoAncestor(InsertionType
     auto result = StyledElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
     hideNonce();
 
-    if (RefPtr parent = parentOrShadowHostElement(); parent && parent != document().documentElement() && UNLIKELY(parent->usesEffectiveTextDirection())) {
+    if (RefPtr parent = parentOrShadowHostElement(); parent && UNLIKELY(parent->usesEffectiveTextDirection())) {
         if (!elementAffectsDirectionality(*this) && !(is<HTMLInputElement>(*this) && downcast<HTMLInputElement>(*this).isTelephoneField())) {
             setUsesEffectiveTextDirection(true);
             setEffectiveTextDirection(parent->effectiveTextDirection());
