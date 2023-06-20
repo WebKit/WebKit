@@ -178,7 +178,7 @@ std::optional<BoundaryPoint> AXTextMarker::boundaryPoint() const
     int offset = characterOffset.startIndex + characterOffset.offset;
     WeakPtr node = characterOffset.node;
     ASSERT(node);
-    if (AccessibilityObject::replacedNodeNeedsCharacter(node.get()) || node->hasTagName(HTMLNames::brTag))
+    if (AccessibilityObject::replacedNodeNeedsCharacter(node.get()) || (node && node->hasTagName(HTMLNames::brTag)))
         node = nodeAndOffsetForReplacedNode(*node, offset, characterOffset.offset);
     if (!node)
         return std::nullopt;
