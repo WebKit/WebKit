@@ -16,7 +16,7 @@
 
 #include "absl/types/optional.h"
 #include "api/neteq/tick_timer.h"
-#include "modules/include/module_common_types_public.h"
+#include "rtc_base/numerics/sequence_number_unwrapper.h"
 
 namespace webrtc {
 
@@ -72,7 +72,7 @@ class PacketArrivalHistory {
   const PacketArrival* min_packet_arrival_ = nullptr;
   const PacketArrival* max_packet_arrival_ = nullptr;
   const int window_size_ms_;
-  TimestampUnwrapper timestamp_unwrapper_;
+  RtpTimestampUnwrapper timestamp_unwrapper_;
   absl::optional<int64_t> newest_rtp_timestamp_;
   int sample_rate_khz_ = 0;
 };

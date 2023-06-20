@@ -15,6 +15,7 @@
 #include <vector>
 
 #include "absl/container/inlined_vector.h"
+#include "api/video_codecs/sdp_video_format.h"
 #include "modules/video_coding/codecs/av1/av1_svc_config.h"
 #include "modules/video_coding/codecs/av1/libaom_av1_encoder.h"
 

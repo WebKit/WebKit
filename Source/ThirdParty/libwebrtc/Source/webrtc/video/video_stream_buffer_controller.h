@@ -17,8 +17,7 @@
 #include "api/task_queue/task_queue_base.h"
 #include "api/video/encoded_frame.h"
 #include "api/video/frame_buffer.h"
-#include "modules/video_coding/include/video_coding_defines.h"
-#include "modules/video_coding/timing/inter_frame_delay.h"
+#include "modules/video_coding/timing/inter_frame_delay_variation_calculator.h"
 #include "modules/video_coding/timing/jitter_estimator.h"
 #include "modules/video_coding/timing/timing.h"
 #include "rtc_base/experiments/rtt_mult_experiment.h"
@@ -36,29 +35,39 @@ class FrameSchedulingReceiver {
   virtual void OnDecodableFrameTimeout(TimeDelta wait_time) = 0;
 };
 
+class VideoStreamBufferControllerStatsObserver {
+ public:
+  virtual ~VideoStreamBufferControllerStatsObserver() = default;
+
+  virtual void OnCompleteFrame(bool is_keyframe,
+                               size_t size_bytes,
+                               VideoContentType content_type) = 0;
+
+  virtual void OnDroppedFrames(uint32_t frames_dropped) = 0;
+
+  virtual void OnFrameBufferTimingsUpdated(int estimated_max_decode_time_ms,
+                                           int current_delay_ms,
+                                           int target_delay_ms,
+                                           int jitter_buffer_ms,
+                                           int min_playout_delay_ms,
+                                           int render_delay_ms) = 0;
+
+  virtual void OnTimingFrameInfoUpdated(const TimingFrameInfo& info) = 0;
+};
+
 class VideoStreamBufferController {
  public:
-  static std::unique_ptr<VideoStreamBufferController> CreateFromFieldTrial(
-      Clock* clock,
-      TaskQueueBase* worker_queue,
-      VCMTiming* timing,
-      VCMReceiveStatisticsCallback* stats_proxy,
-      FrameSchedulingReceiver* receiver,
-      TimeDelta max_wait_for_keyframe,
-      TimeDelta max_wait_for_frame,
-      DecodeSynchronizer* decode_sync,
-      const FieldTrialsView& field_trials);
-  virtual ~VideoStreamBufferController() = default;
   VideoStreamBufferController(
       Clock* clock,
       TaskQueueBase* worker_queue,
       VCMTiming* timing,
-      VCMReceiveStatisticsCallback* stats_proxy,
+      VideoStreamBufferControllerStatsObserver* stats_proxy,
       FrameSchedulingReceiver* receiver,
       TimeDelta max_wait_for_keyframe,
       TimeDelta max_wait_for_frame,
       std::unique_ptr<FrameDecodeScheduler> frame_decode_scheduler,
       const FieldTrialsView& field_trials);
+  virtual ~VideoStreamBufferController() = default;
 
   void Stop();
   void SetProtectionMode(VCMVideoProtection protection_mode);
@@ -88,14 +97,15 @@ class VideoStreamBufferController {
   const absl::optional<RttMultExperiment::Settings> rtt_mult_settings_ =
       RttMultExperiment::GetRttMultValue();
   Clock* const clock_;
-  VCMReceiveStatisticsCallback* const stats_proxy_;
+  VideoStreamBufferControllerStatsObserver* const stats_proxy_;
   FrameSchedulingReceiver* const receiver_;
   VCMTiming* const timing_;
   const std::unique_ptr<FrameDecodeScheduler> frame_decode_scheduler_
       RTC_GUARDED_BY(&worker_sequence_checker_);
 
   JitterEstimator jitter_estimator_ RTC_GUARDED_BY(&worker_sequence_checker_);
-  InterFrameDelay inter_frame_delay_ RTC_GUARDED_BY(&worker_sequence_checker_);
+  InterFrameDelayVariationCalculator ifdv_calculator_
+      RTC_GUARDED_BY(&worker_sequence_checker_);
   bool keyframe_required_ RTC_GUARDED_BY(&worker_sequence_checker_) = false;
   std::unique_ptr<FrameBuffer> buffer_
       RTC_GUARDED_BY(&worker_sequence_checker_);

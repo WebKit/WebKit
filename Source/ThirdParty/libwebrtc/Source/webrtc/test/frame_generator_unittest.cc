@@ -10,7 +10,6 @@
 
 #include "test/frame_generator.h"
 
-#include <assert.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -28,33 +27,49 @@
 namespace webrtc {
 namespace test {
 
-static const int kFrameWidth = 4;
-static const int kFrameHeight = 4;
+constexpr int kFrameWidth = 4;
+constexpr int kFrameHeight = 4;
+constexpr int y_size = kFrameWidth * kFrameHeight;
+constexpr int uv_size = ((kFrameHeight + 1) / 2) * ((kFrameWidth + 1) / 2);
 
 class FrameGeneratorTest : public ::testing::Test {
  public:
   void SetUp() override {
-    two_frame_filename_ =
+    two_frame_yuv_filename_ =
         test::TempFilename(test::OutputPath(), "2_frame_yuv_file");
-    one_frame_filename_ =
+    one_frame_yuv_filename_ =
         test::TempFilename(test::OutputPath(), "1_frame_yuv_file");
+    two_frame_nv12_filename_ =
+        test::TempFilename(test::OutputPath(), "2_frame_nv12_file");
+    one_frame_nv12_filename_ =
+        test::TempFilename(test::OutputPath(), "1_frame_nv12_file");
 
-    FILE* file = fopen(two_frame_filename_.c_str(), "wb");
+    FILE* file = fopen(two_frame_yuv_filename_.c_str(), "wb");
     WriteYuvFile(file, 0, 0, 0);
-    WriteYuvFile(file, 127, 127, 127);
+    WriteYuvFile(file, 127, 128, 129);
     fclose(file);
-    file = fopen(one_frame_filename_.c_str(), "wb");
+    file = fopen(one_frame_yuv_filename_.c_str(), "wb");
     WriteYuvFile(file, 255, 255, 255);
     fclose(file);
+    file = fopen(two_frame_nv12_filename_.c_str(), "wb");
+    WriteNV12File(file, 0, 0, 0);
+    WriteNV12File(file, 127, 128, 129);
+    fclose(file);
+    file = fopen(one_frame_nv12_filename_.c_str(), "wb");
+    WriteNV12File(file, 255, 255, 255);
+    fclose(file);
   }
+
   void TearDown() override {
-    remove(one_frame_filename_.c_str());
-    remove(two_frame_filename_.c_str());
+    remove(one_frame_yuv_filename_.c_str());
+    remove(two_frame_yuv_filename_.c_str());
+    remove(one_frame_nv12_filename_.c_str());
+    remove(two_frame_nv12_filename_.c_str());
   }
 
  protected:
   void WriteYuvFile(FILE* file, uint8_t y, uint8_t u, uint8_t v) {
-    assert(file);
+    RTC_DCHECK(file);
     std::unique_ptr<uint8_t[]> plane_buffer(new uint8_t[y_size]);
     memset(plane_buffer.get(), y, y_size);
     fwrite(plane_buffer.get(), 1, y_size, file);
@@ -62,6 +77,19 @@ class FrameGeneratorTest : public ::testing::Test {
     fwrite(plane_buffer.get(), 1, uv_size, file);
     memset(plane_buffer.get(), v, uv_size);
     fwrite(plane_buffer.get(), 1, uv_size, file);
+  }
+
+  void WriteNV12File(FILE* file, uint8_t y, uint8_t u, uint8_t v) {
+    RTC_DCHECK(file);
+    uint8_t plane_buffer[y_size];
+
+    memset(&plane_buffer, y, y_size);
+    fwrite(&plane_buffer, 1, y_size, file);
+    for (size_t i = 0; i < uv_size; ++i) {
+      plane_buffer[2 * i] = u;
+      plane_buffer[2 * i + 1] = v;
+    }
+    fwrite(&plane_buffer, 1, 2 * uv_size, file);
   }
 
   void CheckFrameAndMutate(const FrameGeneratorInterface::VideoFrameData& frame,
@@ -103,69 +131,131 @@ class FrameGeneratorTest : public ::testing::Test {
     return hash;
   }
 
-  std::string two_frame_filename_;
-  std::string one_frame_filename_;
-  const int y_size = kFrameWidth * kFrameHeight;
-  const int uv_size = ((kFrameHeight + 1) / 2) * ((kFrameWidth + 1) / 2);
+  std::string two_frame_yuv_filename_;
+  std::string one_frame_yuv_filename_;
+  std::string two_frame_nv12_filename_;
+  std::string one_frame_nv12_filename_;
 };
 
-TEST_F(FrameGeneratorTest, SingleFrameFile) {
+TEST_F(FrameGeneratorTest, SingleFrameYuvFile) {
   std::unique_ptr<FrameGeneratorInterface> generator(
       CreateFromYuvFileFrameGenerator(
-          std::vector<std::string>(1, one_frame_filename_), kFrameWidth,
+          std::vector<std::string>(1, one_frame_yuv_filename_), kFrameWidth,
           kFrameHeight, 1));
   CheckFrameAndMutate(generator->NextFrame(), 255, 255, 255);
   CheckFrameAndMutate(generator->NextFrame(), 255, 255, 255);
 }
 
-TEST_F(FrameGeneratorTest, TwoFrameFile) {
+TEST_F(FrameGeneratorTest, TwoFrameYuvFile) {
   std::unique_ptr<FrameGeneratorInterface> generator(
       CreateFromYuvFileFrameGenerator(
-          std::vector<std::string>(1, two_frame_filename_), kFrameWidth,
+          std::vector<std::string>(1, two_frame_yuv_filename_), kFrameWidth,
           kFrameHeight, 1));
   CheckFrameAndMutate(generator->NextFrame(), 0, 0, 0);
-  CheckFrameAndMutate(generator->NextFrame(), 127, 127, 127);
+  CheckFrameAndMutate(generator->NextFrame(), 127, 128, 129);
   CheckFrameAndMutate(generator->NextFrame(), 0, 0, 0);
 }
 
-TEST_F(FrameGeneratorTest, MultipleFrameFiles) {
+TEST_F(FrameGeneratorTest, MultipleFrameYuvFiles) {
   std::vector<std::string> files;
-  files.push_back(two_frame_filename_);
-  files.push_back(one_frame_filename_);
+  files.push_back(two_frame_yuv_filename_);
+  files.push_back(one_frame_yuv_filename_);
 
   std::unique_ptr<FrameGeneratorInterface> generator(
       CreateFromYuvFileFrameGenerator(files, kFrameWidth, kFrameHeight, 1));
   CheckFrameAndMutate(generator->NextFrame(), 0, 0, 0);
-  CheckFrameAndMutate(generator->NextFrame(), 127, 127, 127);
+  CheckFrameAndMutate(generator->NextFrame(), 127, 128, 129);
   CheckFrameAndMutate(generator->NextFrame(), 255, 255, 255);
   CheckFrameAndMutate(generator->NextFrame(), 0, 0, 0);
 }
 
-TEST_F(FrameGeneratorTest, TwoFrameFileWithRepeat) {
+TEST_F(FrameGeneratorTest, TwoFrameYuvFileWithRepeat) {
   const int kRepeatCount = 3;
   std::unique_ptr<FrameGeneratorInterface> generator(
       CreateFromYuvFileFrameGenerator(
-          std::vector<std::string>(1, two_frame_filename_), kFrameWidth,
+          std::vector<std::string>(1, two_frame_yuv_filename_), kFrameWidth,
           kFrameHeight, kRepeatCount));
   for (int i = 0; i < kRepeatCount; ++i)
     CheckFrameAndMutate(generator->NextFrame(), 0, 0, 0);
   for (int i = 0; i < kRepeatCount; ++i)
-    CheckFrameAndMutate(generator->NextFrame(), 127, 127, 127);
+    CheckFrameAndMutate(generator->NextFrame(), 127, 128, 129);
   CheckFrameAndMutate(generator->NextFrame(), 0, 0, 0);
 }
 
-TEST_F(FrameGeneratorTest, MultipleFrameFilesWithRepeat) {
+TEST_F(FrameGeneratorTest, MultipleFrameYuvFilesWithRepeat) {
   const int kRepeatCount = 3;
   std::vector<std::string> files;
-  files.push_back(two_frame_filename_);
-  files.push_back(one_frame_filename_);
+  files.push_back(two_frame_yuv_filename_);
+  files.push_back(one_frame_yuv_filename_);
   std::unique_ptr<FrameGeneratorInterface> generator(
       CreateFromYuvFileFrameGenerator(files, kFrameWidth, kFrameHeight,
                                       kRepeatCount));
   for (int i = 0; i < kRepeatCount; ++i)
     CheckFrameAndMutate(generator->NextFrame(), 0, 0, 0);
   for (int i = 0; i < kRepeatCount; ++i)
-    CheckFrameAndMutate(generator->NextFrame(), 127, 127, 127);
+    CheckFrameAndMutate(generator->NextFrame(), 127, 128, 129);
+  for (int i = 0; i < kRepeatCount; ++i)
+    CheckFrameAndMutate(generator->NextFrame(), 255, 255, 255);
+  CheckFrameAndMutate(generator->NextFrame(), 0, 0, 0);
+}
+
+TEST_F(FrameGeneratorTest, SingleFrameNV12File) {
+  std::unique_ptr<FrameGeneratorInterface> generator(
+      CreateFromNV12FileFrameGenerator(
+          std::vector<std::string>(1, one_frame_nv12_filename_), kFrameWidth,
+          kFrameHeight, 1));
+  CheckFrameAndMutate(generator->NextFrame(), 255, 255, 255);
+  CheckFrameAndMutate(generator->NextFrame(), 255, 255, 255);
+}
+
+TEST_F(FrameGeneratorTest, TwoFrameNV12File) {
+  std::unique_ptr<FrameGeneratorInterface> generator(
+      CreateFromNV12FileFrameGenerator(
+          std::vector<std::string>(1, two_frame_nv12_filename_), kFrameWidth,
+          kFrameHeight, 1));
+  CheckFrameAndMutate(generator->NextFrame(), 0, 0, 0);
+  CheckFrameAndMutate(generator->NextFrame(), 127, 128, 129);
+  CheckFrameAndMutate(generator->NextFrame(), 0, 0, 0);
+}
+
+TEST_F(FrameGeneratorTest, MultipleFrameNV12Files) {
+  std::vector<std::string> files;
+  files.push_back(two_frame_nv12_filename_);
+  files.push_back(one_frame_nv12_filename_);
+
+  std::unique_ptr<FrameGeneratorInterface> generator(
+      CreateFromNV12FileFrameGenerator(files, kFrameWidth, kFrameHeight, 1));
+  CheckFrameAndMutate(generator->NextFrame(), 0, 0, 0);
+  CheckFrameAndMutate(generator->NextFrame(), 127, 128, 129);
+  CheckFrameAndMutate(generator->NextFrame(), 255, 255, 255);
+  CheckFrameAndMutate(generator->NextFrame(), 0, 0, 0);
+}
+
+TEST_F(FrameGeneratorTest, TwoFrameNV12FileWithRepeat) {
+  const int kRepeatCount = 3;
+  std::unique_ptr<FrameGeneratorInterface> generator(
+      CreateFromNV12FileFrameGenerator(
+          std::vector<std::string>(1, two_frame_nv12_filename_), kFrameWidth,
+          kFrameHeight, kRepeatCount));
+  for (int i = 0; i < kRepeatCount; ++i)
+    CheckFrameAndMutate(generator->NextFrame(), 0, 0, 0);
+  for (int i = 0; i < kRepeatCount; ++i)
+    CheckFrameAndMutate(generator->NextFrame(), 127, 128, 129);
+  CheckFrameAndMutate(generator->NextFrame(), 0, 0, 0);
+}
+
+TEST_F(FrameGeneratorTest, MultipleFrameNV12FilesWithRepeat) {
+  const int kRepeatCount = 3;
+  std::vector<std::string> files;
+  files.push_back(two_frame_nv12_filename_);
+  files.push_back(one_frame_nv12_filename_);
+  std::unique_ptr<FrameGeneratorInterface> generator(
+      CreateFromNV12FileFrameGenerator(files, kFrameWidth, kFrameHeight,
+                                       kRepeatCount));
+  for (int i = 0; i < kRepeatCount; ++i)
+    CheckFrameAndMutate(generator->NextFrame(), 0, 0, 0);
+  for (int i = 0; i < kRepeatCount; ++i)
+    CheckFrameAndMutate(generator->NextFrame(), 127, 128, 129);
   for (int i = 0; i < kRepeatCount; ++i)
     CheckFrameAndMutate(generator->NextFrame(), 255, 255, 255);
   CheckFrameAndMutate(generator->NextFrame(), 0, 0, 0);
@@ -180,7 +270,7 @@ TEST_F(FrameGeneratorTest, SlideGenerator) {
   for (int i = 0; i < kGenCount; ++i) {
     hashes[i] = Hash(generator->NextFrame());
   }
-  // Check that the buffer changes only every |kRepeatCount| frames.
+  // Check that the buffer changes only every `kRepeatCount` frames.
   for (int i = 1; i < kGenCount; ++i) {
     if (i % kRepeatCount == 0) {
       EXPECT_NE(hashes[i - 1], hashes[i]);

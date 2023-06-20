@@ -64,7 +64,7 @@ TEST(RtpPayloadParamsTest, InfoMappedToRtpVideoHeader_Vp8) {
   EncodedImage encoded_image;
   encoded_image.rotation_ = kVideoRotation_90;
   encoded_image.content_type_ = VideoContentType::SCREENSHARE;
-  encoded_image.SetSpatialIndex(1);
+  encoded_image.SetSimulcastIndex(1);
 
   CodecSpecificInfo codec_info;
   codec_info.codecType = kVideoCodecVP8;

@@ -64,7 +64,7 @@ TrackWithPeriodicSource CreateTrackWithPeriodicSource(
           periodic_track_source_config, /* remote */ false);
   TrackWithPeriodicSource track_with_source;
   track_with_source.track =
-      factory->CreateVideoTrack("PeriodicTrack", periodic_track_source.get());
+      factory->CreateVideoTrack(periodic_track_source, "PeriodicTrack");
   track_with_source.periodic_track_source = periodic_track_source;
   return track_with_source;
 }

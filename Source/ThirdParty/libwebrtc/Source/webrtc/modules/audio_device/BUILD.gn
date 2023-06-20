@@ -54,6 +54,7 @@ rtc_source_set("audio_device_api") {
     "../../rtc_base:refcount",
     "../../rtc_base:stringutils",
   ]
+  absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
 }
 
 rtc_library("audio_device_buffer") {
@@ -72,6 +73,7 @@ rtc_library("audio_device_buffer") {
     "../../common_audio:common_audio_c",
     "../../rtc_base:buffer",
     "../../rtc_base:checks",
+    "../../rtc_base:event_tracer",
     "../../rtc_base:logging",
     "../../rtc_base:macromagic",
     "../../rtc_base:rtc_task_queue",
@@ -175,6 +177,38 @@ rtc_source_set("audio_device_module_from_input_and_output") {
   }
 }
 
+if (!build_with_chromium) {
+  rtc_library("test_audio_device_module") {
+    visibility = [ "*" ]
+    sources = [
+      "include/test_audio_device.cc",
+      "include/test_audio_device.h",
+    ]
+    deps = [
+      ":audio_device_api",
+      ":audio_device_default",
+      "../../api:array_view",
+      "../../api:make_ref_counted",
+      "../../api:scoped_refptr",
+      "../../api/task_queue",
+      "../../common_audio",
+      "../../rtc_base:buffer",
+      "../../rtc_base:checks",
+      "../../rtc_base:logging",
+      "../../rtc_base:macromagic",
+      "../../rtc_base:platform_thread",
+      "../../rtc_base:random",
+      "../../rtc_base:rtc_event",
+      "../../rtc_base:rtc_task_queue",
+      "../../rtc_base:safe_conversions",
+      "../../rtc_base:timeutils",
+      "../../rtc_base/synchronization:mutex",
+      "../../rtc_base/task_utils:repeating_task",
+    ]
+    absl_deps = [ "//third_party/abseil-cpp/absl/strings" ]
+  }
+}
+
 # Contains default implementations of webrtc::AudioDeviceModule for Windows,
 # Linux, Mac, iOS and Android.
 rtc_library("audio_device_impl") {
@@ -192,7 +226,6 @@ rtc_library("audio_device_impl") {
     "../../api/task_queue",
     "../../common_audio",
     "../../common_audio:common_audio_c",
-    "../../rtc_base",
     "../../rtc_base:buffer",
     "../../rtc_base:checks",
     "../../rtc_base:logging",
@@ -227,8 +260,6 @@ rtc_library("audio_device_impl") {
     "dummy/file_audio_device.cc",
     "dummy/file_audio_device.h",
     "include/fake_audio_device.h",
-    "include/test_audio_device.cc",
-    "include/test_audio_device.h",
   ]
 
   if (build_with_mozilla) {
@@ -419,6 +450,7 @@ if (rtc_include_tests && !build_with_chromium) {
       ":audio_device_buffer",
       ":audio_device_impl",
       ":mock_audio_device",
+      ":test_audio_device_module",
       "../../api:array_view",
       "../../api:scoped_refptr",
       "../../api:sequence_checker",

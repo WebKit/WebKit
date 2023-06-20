@@ -119,7 +119,7 @@ void PacketBuffer::PartialFlush(int target_level_ms,
   // We should avoid flushing to very low levels.
   target_level_samples = std::max(
       target_level_samples, smart_flushing_config_->target_level_threshold_ms);
-  while (GetSpanSamples(last_decoded_length, sample_rate, true) >
+  while (GetSpanSamples(last_decoded_length, sample_rate, false) >
              static_cast<size_t>(target_level_samples) ||
          buffer_.size() > max_number_of_packets_ / 2) {
     LogPacketDiscarded(PeekNextPacket()->priority.codec_level, stats);
@@ -160,7 +160,7 @@ int PacketBuffer::InsertPacket(Packet&& packet,
           : 0;
   const bool smart_flush =
       smart_flushing_config_.has_value() &&
-      GetSpanSamples(last_decoded_length, sample_rate, true) >= span_threshold;
+      GetSpanSamples(last_decoded_length, sample_rate, false) >= span_threshold;
   if (buffer_.size() >= max_number_of_packets_ || smart_flush) {
     size_t buffer_size_before_flush = buffer_.size();
     if (smart_flushing_config_.has_value()) {
@@ -370,17 +370,19 @@ size_t PacketBuffer::NumSamplesInBuffer(size_t last_decoded_length) const {
 
 size_t PacketBuffer::GetSpanSamples(size_t last_decoded_length,
                                     size_t sample_rate,
-                                    bool count_dtx_waiting_time) const {
+                                    bool count_waiting_time) const {
   if (buffer_.size() == 0) {
     return 0;
   }
 
   size_t span = buffer_.back().timestamp - buffer_.front().timestamp;
-  if (buffer_.back().frame && buffer_.back().frame->Duration() > 0) {
+  size_t waiting_time_samples = rtc::dchecked_cast<size_t>(
+      buffer_.back().waiting_time->ElapsedMs() * (sample_rate / 1000));
+  if (count_waiting_time) {
+    span += waiting_time_samples;
+  } else if (buffer_.back().frame && buffer_.back().frame->Duration() > 0) {
     size_t duration = buffer_.back().frame->Duration();
-    if (count_dtx_waiting_time && buffer_.back().frame->IsDtxPacket()) {
-      size_t waiting_time_samples = rtc::dchecked_cast<size_t>(
-          buffer_.back().waiting_time->ElapsedMs() * (sample_rate / 1000));
+    if (buffer_.back().frame->IsDtxPacket()) {
       duration = std::max(duration, waiting_time_samples);
     }
     span += duration;

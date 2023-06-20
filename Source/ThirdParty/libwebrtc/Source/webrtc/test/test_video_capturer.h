@@ -41,9 +41,16 @@ class TestVideoCapturer : public rtc::VideoSourceInterface<VideoFrame> {
     MutexLock lock(&lock_);
     preprocessor_ = std::move(preprocessor);
   }
+  void SetEnableAdaptation(bool enable_adaptation) {
+    MutexLock lock(&lock_);
+    enable_adaptation_ = enable_adaptation;
+  }
   void OnOutputFormatRequest(int width,
                              int height,
                              const absl::optional<int>& max_fps);
+
+  virtual int GetFrameWidth() const = 0;
+  virtual int GetFrameHeight() const = 0;
 
  protected:
   void OnFrame(const VideoFrame& frame);
@@ -55,6 +62,7 @@ class TestVideoCapturer : public rtc::VideoSourceInterface<VideoFrame> {
 
   Mutex lock_;
   std::unique_ptr<FramePreprocessor> preprocessor_ RTC_GUARDED_BY(lock_);
+  bool enable_adaptation_ RTC_GUARDED_BY(lock_) = false;
   rtc::VideoBroadcaster broadcaster_;
   cricket::VideoAdapter video_adapter_;
 };

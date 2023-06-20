@@ -105,6 +105,7 @@ const uint32_t kDefaultPrflxPriority = ICE_TYPE_PREFERENCE_PRFLX << 24 |
 
 constexpr int kTiebreaker1 = 11111;
 constexpr int kTiebreaker2 = 22222;
+constexpr int kTiebreakerDefault = 44444;
 
 const char* data = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
 
@@ -516,12 +517,10 @@ class PortTest : public ::testing::Test, public sigslot::has_slots<> {
     return &networks_.back();
   }
 
-  rtc::Network* MakeNetworkMultipleAddrs(
-      const SocketAddress& global_addr,
-      const SocketAddress& link_local_addr,
-      const webrtc::FieldTrialsView* field_trials) {
+  rtc::Network* MakeNetworkMultipleAddrs(const SocketAddress& global_addr,
+                                         const SocketAddress& link_local_addr) {
     networks_.emplace_back("unittest", "unittest", global_addr.ipaddr(), 32,
-                           rtc::ADAPTER_TYPE_UNKNOWN, field_trials);
+                           rtc::ADAPTER_TYPE_UNKNOWN);
     networks_.back().AddIP(link_local_addr.ipaddr());
     networks_.back().AddIP(global_addr.ipaddr());
     networks_.back().AddIP(link_local_addr.ipaddr());
@@ -534,35 +533,43 @@ class PortTest : public ::testing::Test, public sigslot::has_slots<> {
   }
   std::unique_ptr<UDPPort> CreateUdpPort(const SocketAddress& addr,
                                          PacketSocketFactory* socket_factory) {
-    return UDPPort::Create(&main_, socket_factory, MakeNetwork(addr), 0, 0,
-                           username_, password_, true, absl::nullopt,
-                           &field_trials_);
+    auto port = UDPPort::Create(&main_, socket_factory, MakeNetwork(addr), 0, 0,
+                                username_, password_, true, absl::nullopt,
+                                &field_trials_);
+    port->SetIceTiebreaker(kTiebreakerDefault);
+    return port;
   }
+
   std::unique_ptr<UDPPort> CreateUdpPortMultipleAddrs(
       const SocketAddress& global_addr,
       const SocketAddress& link_local_addr,
-      PacketSocketFactory* socket_factory,
-      const webrtc::test::ScopedKeyValueConfig& field_trials) {
-    return UDPPort::Create(
+      PacketSocketFactory* socket_factory) {
+    auto port = UDPPort::Create(
         &main_, socket_factory,
-        MakeNetworkMultipleAddrs(global_addr, link_local_addr, &field_trials),
-        0, 0, username_, password_, true, absl::nullopt, &field_trials);
+        MakeNetworkMultipleAddrs(global_addr, link_local_addr), 0, 0, username_,
+        password_, true, absl::nullopt, &field_trials_);
+    port->SetIceTiebreaker(kTiebreakerDefault);
+    return port;
   }
   std::unique_ptr<TCPPort> CreateTcpPort(const SocketAddress& addr) {
     return CreateTcpPort(addr, &socket_factory_);
   }
   std::unique_ptr<TCPPort> CreateTcpPort(const SocketAddress& addr,
                                          PacketSocketFactory* socket_factory) {
-    return TCPPort::Create(&main_, socket_factory, MakeNetwork(addr), 0, 0,
-                           username_, password_, true, &field_trials_);
+    auto port = TCPPort::Create(&main_, socket_factory, MakeNetwork(addr), 0, 0,
+                                username_, password_, true, &field_trials_);
+    port->SetIceTiebreaker(kTiebreakerDefault);
+    return port;
   }
   std::unique_ptr<StunPort> CreateStunPort(const SocketAddress& addr,
                                            rtc::PacketSocketFactory* factory) {
     ServerAddresses stun_servers;
     stun_servers.insert(kStunAddr);
-    return StunPort::Create(&main_, factory, MakeNetwork(addr), 0, 0, username_,
-                            password_, stun_servers, absl::nullopt,
-                            &field_trials_);
+    auto port = StunPort::Create(&main_, factory, MakeNetwork(addr), 0, 0,
+                                 username_, password_, stun_servers,
+                                 absl::nullopt, &field_trials_);
+    port->SetIceTiebreaker(kTiebreakerDefault);
+    return port;
   }
   std::unique_ptr<Port> CreateRelayPort(const SocketAddress& addr,
                                         ProtocolType int_proto,
@@ -597,7 +604,9 @@ class PortTest : public ::testing::Test, public sigslot::has_slots<> {
     args.config = &config;
     args.field_trials = &field_trials_;
 
-    return TurnPort::Create(args, 0, 0);
+    auto port = TurnPort::Create(args, 0, 0);
+    port->SetIceTiebreaker(kTiebreakerDefault);
+    return port;
   }
 
   std::unique_ptr<rtc::NATServer> CreateNatServer(const SocketAddress& addr,
@@ -1758,8 +1767,6 @@ TEST_F(PortTest, TestUdpSingleAddressV6CrossTypePorts) {
 }
 
 TEST_F(PortTest, TestUdpMultipleAddressesV6CrossTypePorts) {
-  webrtc::test::ScopedKeyValueConfig field_trials(
-      "WebRTC-IPv6NetworkResolutionFixes/Enabled/");
   FakePacketSocketFactory factory;
   std::unique_ptr<Port> ports[5];
   SocketAddress addresses[5] = {
@@ -1769,8 +1776,9 @@ TEST_F(PortTest, TestUdpMultipleAddressesV6CrossTypePorts) {
   for (int i = 0; i < 5; i++) {
     FakeAsyncPacketSocket* socket = new FakeAsyncPacketSocket();
     factory.set_next_udp_socket(socket);
-    ports[i] = CreateUdpPortMultipleAddrs(addresses[i], kLinkLocalIPv6Addr,
-                                          &factory, field_trials);
+    ports[i] =
+        CreateUdpPortMultipleAddrs(addresses[i], kLinkLocalIPv6Addr, &factory);
+    ports[i]->SetIceTiebreaker(kTiebreakerDefault);
     socket->set_state(AsyncPacketSocket::STATE_BINDING);
     socket->SignalAddressReady(socket, addresses[i]);
     ports[i]->PrepareAddress();
@@ -2467,10 +2475,10 @@ TEST_F(PortTest,
 TEST_F(PortTest,
        TestHandleStunResponseWithUnknownComprehensionRequiredAttribute) {
   // Generic setup.
-  auto lport = CreateTestPort(kLocalAddr1, "lfrag", "lpass");
-  lport->SetIceRole(cricket::ICEROLE_CONTROLLING);
-  auto rport = CreateTestPort(kLocalAddr2, "rfrag", "rpass");
-  rport->SetIceRole(cricket::ICEROLE_CONTROLLED);
+  auto lport = CreateTestPort(kLocalAddr1, "lfrag", "lpass",
+                              cricket::ICEROLE_CONTROLLING, kTiebreakerDefault);
+  auto rport = CreateTestPort(kLocalAddr2, "rfrag", "rpass",
+                              cricket::ICEROLE_CONTROLLED, kTiebreakerDefault);
   lport->PrepareAddress();
   rport->PrepareAddress();
   ASSERT_FALSE(lport->Candidates().empty());
@@ -2504,10 +2512,10 @@ TEST_F(PortTest,
 TEST_F(PortTest,
        TestHandleStunIndicationWithUnknownComprehensionRequiredAttribute) {
   // Generic set up.
-  auto lport = CreateTestPort(kLocalAddr2, "lfrag", "lpass");
-  lport->SetIceRole(cricket::ICEROLE_CONTROLLING);
-  auto rport = CreateTestPort(kLocalAddr2, "rfrag", "rpass");
-  rport->SetIceRole(cricket::ICEROLE_CONTROLLED);
+  auto lport = CreateTestPort(kLocalAddr2, "lfrag", "lpass",
+                              cricket::ICEROLE_CONTROLLING, kTiebreakerDefault);
+  auto rport = CreateTestPort(kLocalAddr2, "rfrag", "rpass",
+                              cricket::ICEROLE_CONTROLLED, kTiebreakerDefault);
   lport->PrepareAddress();
   rport->PrepareAddress();
   ASSERT_FALSE(lport->Candidates().empty());
@@ -2529,9 +2537,8 @@ TEST_F(PortTest,
 // Test handling of STUN binding indication messages . STUN binding
 // indications are allowed only to the connection which is in read mode.
 TEST_F(PortTest, TestHandleStunBindingIndication) {
-  auto lport = CreateTestPort(kLocalAddr2, "lfrag", "lpass");
-  lport->SetIceRole(cricket::ICEROLE_CONTROLLING);
-  lport->SetIceTiebreaker(kTiebreaker1);
+  auto lport = CreateTestPort(kLocalAddr2, "lfrag", "lpass",
+                              cricket::ICEROLE_CONTROLLING, kTiebreaker1);
 
   // Verifying encoding and decoding STUN indication message.
   std::unique_ptr<IceMessage> in_msg, out_msg;
@@ -2585,6 +2592,7 @@ TEST_F(PortTest, TestHandleStunBindingIndication) {
 
 TEST_F(PortTest, TestComputeCandidatePriority) {
   auto port = CreateTestPort(kLocalAddr1, "name", "pass");
+  port->SetIceTiebreaker(kTiebreakerDefault);
   port->set_type_preference(90);
   port->set_component(177);
   port->AddCandidateAddress(SocketAddress("192.168.1.4", 1234));
@@ -2622,6 +2630,7 @@ TEST_F(PortTest, TestComputeCandidatePriority) {
 // Test that candidates with different types will have different foundation.
 TEST_F(PortTest, TestFoundation) {
   auto testport = CreateTestPort(kLocalAddr1, "name", "pass");
+  testport->SetIceTiebreaker(kTiebreakerDefault);
   testport->AddCandidateAddress(kLocalAddr1, kLocalAddr1, LOCAL_PORT_TYPE,
                                 cricket::ICE_TYPE_PREFERENCE_HOST, false);
   testport->AddCandidateAddress(kLocalAddr2, kLocalAddr1, STUN_PORT_TYPE,
@@ -2742,8 +2751,11 @@ TEST_F(PortTest, TestCandidatePriority) {
 // Test the Connection priority is calculated correctly.
 TEST_F(PortTest, TestConnectionPriority) {
   auto lport = CreateTestPort(kLocalAddr1, "lfrag", "lpass");
+  lport->SetIceTiebreaker(kTiebreakerDefault);
   lport->set_type_preference(cricket::ICE_TYPE_PREFERENCE_HOST);
+
   auto rport = CreateTestPort(kLocalAddr2, "rfrag", "rpass");
+  rport->SetIceTiebreaker(kTiebreakerDefault);
   rport->set_type_preference(cricket::ICE_TYPE_PREFERENCE_RELAY_UDP);
   lport->set_component(123);
   lport->AddCandidateAddress(SocketAddress("192.168.1.4", 1234));
@@ -3628,6 +3640,7 @@ TEST_F(PortTest, TestSupportsProtocol) {
 // on both the port itself and its candidates.
 TEST_F(PortTest, TestSetIceParameters) {
   auto port = CreateTestPort(kLocalAddr1, "ufrag1", "password1");
+  port->SetIceTiebreaker(kTiebreakerDefault);
   port->PrepareAddress();
   EXPECT_EQ(1UL, port->Candidates().size());
   port->SetIceParameters(1, "ufrag2", "password2");
@@ -3642,6 +3655,7 @@ TEST_F(PortTest, TestSetIceParameters) {
 
 TEST_F(PortTest, TestAddConnectionWithSameAddress) {
   auto port = CreateTestPort(kLocalAddr1, "ufrag1", "password1");
+  port->SetIceTiebreaker(kTiebreakerDefault);
   port->PrepareAddress();
   EXPECT_EQ(1u, port->Candidates().size());
   rtc::SocketAddress address("1.1.1.1", 5000);

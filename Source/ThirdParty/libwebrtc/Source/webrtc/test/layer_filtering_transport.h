@@ -39,7 +39,9 @@ class LayerFilteringTransport : public test::DirectTransport {
       int selected_sl,
       const std::map<uint8_t, MediaType>& payload_type_map,
       uint32_t ssrc_to_filter_min,
-      uint32_t ssrc_to_filter_max);
+      uint32_t ssrc_to_filter_max,
+      rtc::ArrayView<const RtpExtension> audio_extensions,
+      rtc::ArrayView<const RtpExtension> video_extensions);
   LayerFilteringTransport(
       TaskQueueBase* task_queue,
       std::unique_ptr<SimulatedPacketReceiverInterface> pipe,
@@ -48,7 +50,9 @@ class LayerFilteringTransport : public test::DirectTransport {
       uint8_t vp9_video_payload_type,
       int selected_tl,
       int selected_sl,
-      const std::map<uint8_t, MediaType>& payload_type_map);
+      const std::map<uint8_t, MediaType>& payload_type_map,
+      rtc::ArrayView<const RtpExtension> audio_extensions,
+      rtc::ArrayView<const RtpExtension> video_extensions);
   bool DiscardedLastPacket() const;
   bool SendRtp(const uint8_t* data,
                size_t length,

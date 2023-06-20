@@ -85,7 +85,7 @@ class TcpMessageRouteImpl final : public TcpMessageRoute {
                       EmulatedRoute* send_route,
                       EmulatedRoute* ret_route);
 
-  // Sends a TCP message of the given |size| over the route, |on_received| is
+  // Sends a TCP message of the given `size` over the route, `on_received` is
   // called when the message has been delivered. Note that the connection
   // parameters are reset iff there's no currently pending message on the route.
   void SendMessage(size_t size, std::function<void()> on_received) override;

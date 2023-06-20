@@ -159,11 +159,14 @@ class StunMessage {
 
   // The verification status of the message. This is checked on parsing,
   // or set by AddMessageIntegrity.
+  // These values are persisted to logs. Entries should not be renumbered and
+  // numeric values should never be reused.
   enum class IntegrityStatus {
-    kNotSet,
-    kNoIntegrity,   // Message-integrity attribute missing
-    kIntegrityOk,   // Message-integrity checked OK
-    kIntegrityBad,  // Message-integrity verification failed
+    kNotSet = 0,
+    kNoIntegrity = 1,   // Message-integrity attribute missing
+    kIntegrityOk = 2,   // Message-integrity checked OK
+    kIntegrityBad = 3,  // Message-integrity verification failed
+    kMaxValue = kIntegrityBad,
   };
 
   int type() const { return type_; }
@@ -216,6 +219,11 @@ class StunMessage {
   // Validates that a STUN message has a correct MESSAGE-INTEGRITY value.
   // This uses the buffered raw-format message stored by Read().
   IntegrityStatus ValidateMessageIntegrity(const std::string& password);
+
+  // Revalidates the STUN message with (possibly) a new password.
+  // Indicates that calling logic needs review - probably previous call
+  // was checking with the wrong password.
+  IntegrityStatus RevalidateMessageIntegrity(const std::string& password);
 
   // Returns the current integrity status of the message.
   IntegrityStatus integrity() const { return integrity_; }
@@ -280,29 +288,27 @@ class StunMessage {
   bool EqualAttributes(const StunMessage* other,
                        std::function<bool(int type)> attribute_type_mask) const;
 
-  // Expose raw-buffer ValidateMessageIntegrity function for testing.
-  static bool ValidateMessageIntegrityForTesting(const char* data,
-                                                 size_t size,
-                                                 const std::string& password) {
-    return ValidateMessageIntegrity(data, size, password);
-  }
-  // Expose raw-buffer ValidateMessageIntegrity function for testing.
-  static bool ValidateMessageIntegrity32ForTesting(
-      const char* data,
-      size_t size,
-      const std::string& password) {
-    return ValidateMessageIntegrity32(data, size, password);
-  }
   // Validates that a STUN message in byte buffer form
   // has a correct MESSAGE-INTEGRITY value.
   // These functions are not recommended and will be deprecated; use
   // ValidateMessageIntegrity(password) on the parsed form instead.
-  static bool ValidateMessageIntegrity(const char* data,
-                                       size_t size,
-                                       const std::string& password);
-  static bool ValidateMessageIntegrity32(const char* data,
-                                         size_t size,
-                                         const std::string& password);
+  [[deprecated("Use member function")]] static bool ValidateMessageIntegrity(
+      const char* data,
+      size_t size,
+      const std::string& password);
+  [[deprecated("Use member function")]] static bool ValidateMessageIntegrity32(
+      const char* data,
+      size_t size,
+      const std::string& password);
+
+  // Expose raw-buffer ValidateMessageIntegrity function for testing.
+  static bool ValidateMessageIntegrityForTesting(const char* data,
+                                                 size_t size,
+                                                 const std::string& password);
+  // Expose raw-buffer ValidateMessageIntegrity function for testing.
+  static bool ValidateMessageIntegrity32ForTesting(const char* data,
+                                                   size_t size,
+                                                   const std::string& password);
 
  protected:
   // Verifies that the given attribute is allowed for this message.
@@ -750,9 +756,10 @@ enum IceAttributeType {
   STUN_ATTR_GOOG_MISC_INFO = 0xC059,
   // Obsolete.
   STUN_ATTR_GOOG_OBSOLETE_1 = 0xC05A,
-  STUN_ATTR_GOOG_CONNECTION_ID = 0xC05B,  // Not yet implemented.
-  STUN_ATTR_GOOG_DELTA = 0xC05C,          // Not yet implemented.
-  STUN_ATTR_GOOG_DELTA_ACK = 0xC05D,      // Not yet implemented.
+  STUN_ATTR_GOOG_CONNECTION_ID = 0xC05B,   // Not yet implemented.
+  STUN_ATTR_GOOG_DELTA = 0xC05C,           // Not yet implemented.
+  STUN_ATTR_GOOG_DELTA_ACK = 0xC05D,       // Not yet implemented.
+  STUN_ATTR_GOOG_DELTA_SYNC_REQ = 0xC05E,  // Not yet implemented.
   // MESSAGE-INTEGRITY truncated to 32-bit.
   STUN_ATTR_GOOG_MESSAGE_INTEGRITY_32 = 0xC060,
 };

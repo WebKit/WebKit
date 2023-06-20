@@ -9,6 +9,8 @@
  */
 
 #include "test/frame_generator_capturer.h"
+
+#include "test/create_frame_generator_capturer.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 #include "test/time_controller/simulated_time_controller.h"
@@ -36,7 +38,7 @@ TEST(FrameGeneratorCapturerTest, CreateFromConfig) {
   config.squares_video->width = 300;
   config.squares_video->height = 200;
   config.squares_video->framerate = 20;
-  auto capturer = FrameGeneratorCapturer::Create(
+  auto capturer = CreateFrameGeneratorCapturer(
       time.GetClock(), *time.GetTaskQueueFactory(), config);
   testing::StrictMock<MockVideoSinkInterfaceVideoFrame> mock_sink;
   capturer->AddOrUpdateSink(&mock_sink, rtc::VideoSinkWants());
@@ -52,7 +54,7 @@ TEST(FrameGeneratorCapturerTest, OnOutputFormatRequest) {
   config.squares_video->width = kWidth;
   config.squares_video->height = kHeight;
   config.squares_video->framerate = 20;
-  auto capturer = FrameGeneratorCapturer::Create(
+  auto capturer = CreateFrameGeneratorCapturer(
       time.GetClock(), *time.GetTaskQueueFactory(), config);
   testing::StrictMock<MockVideoSinkInterfaceVideoFrame> mock_sink;
   capturer->AddOrUpdateSink(&mock_sink, rtc::VideoSinkWants());
@@ -69,9 +71,11 @@ TEST(FrameGeneratorCapturerTest, ChangeResolution) {
   config.squares_video->width = kWidth;
   config.squares_video->height = kHeight;
   config.squares_video->framerate = 20;
-  auto capturer = FrameGeneratorCapturer::Create(
+  auto capturer = CreateFrameGeneratorCapturer(
       time.GetClock(), *time.GetTaskQueueFactory(), config);
-  EXPECT_FALSE(capturer->GetResolution());
+  EXPECT_TRUE(capturer->GetResolution());
+  EXPECT_EQ(kWidth, capturer->GetResolution()->width);
+  EXPECT_EQ(kHeight, capturer->GetResolution()->height);
   capturer->Start();
   time.AdvanceTime(TimeDelta::Seconds(1));
   ASSERT_TRUE(capturer->GetResolution());

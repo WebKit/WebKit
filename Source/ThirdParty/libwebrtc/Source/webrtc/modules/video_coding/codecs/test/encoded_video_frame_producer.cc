@@ -62,6 +62,7 @@ EncodedVideoFrameProducer::Encode() {
         VideoFrame::Builder()
             .set_video_frame_buffer(frame_buffer_generator->NextFrame().buffer)
             .set_timestamp_rtp(rtp_timestamp_)
+            .set_capture_time_identifier(capture_time_identifier_)
             .build();
     rtp_timestamp_ += rtp_tick;
     RTC_CHECK_EQ(encoder_.Encode(frame, &next_frame_type_),

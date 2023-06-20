@@ -16,17 +16,18 @@
 #include <string>
 
 #include "absl/strings/string_view.h"
-#include "api/field_trials_view.h"
+#include "api/field_trials_registry.h"
 
 namespace webrtc {
 namespace test {
 
-class ExplicitKeyValueConfig : public FieldTrialsView {
+class ExplicitKeyValueConfig : public FieldTrialsRegistry {
  public:
   explicit ExplicitKeyValueConfig(absl::string_view s);
-  std::string Lookup(absl::string_view key) const override;
 
  private:
+  std::string GetValue(absl::string_view key) const override;
+
   // Unlike std::less<std::string>, std::less<> is transparent and allows
   // heterogeneous lookup directly with absl::string_view.
   std::map<std::string, std::string, std::less<>> key_value_map_;

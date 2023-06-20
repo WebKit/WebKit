@@ -16,13 +16,13 @@
 
 #include "api/video/video_frame.h"
 #include "api/video/video_sink_interface.h"
-#include "api/video_codecs/video_encoder_config.h"
 #include "call/rtp_config.h"
 #include "call/video_receive_stream.h"
 #include "call/video_send_stream.h"
 #include "rtc_base/event.h"
 #include "test/frame_generator_capturer.h"
 #include "test/gtest.h"
+#include "video/config/video_encoder_config.h"
 #include "video/end_to_end_tests/multi_stream_tester.h"
 
 namespace webrtc {
@@ -45,7 +45,7 @@ TEST(MultiStreamEndToEndTest, SendsAndReceivesMultipleStreams) {
 
     uint32_t Ssrc() { return ssrc_; }
 
-    bool Wait() { return done_.Wait(30 * 1000); }
+    bool Wait() { return done_.Wait(TimeDelta::Seconds(30)); }
 
    private:
     const MultiStreamTester::CodecSettings& settings_;

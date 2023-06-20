@@ -79,7 +79,6 @@
 #include "p2p/base/p2p_constants.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/ip_address.h"
-#include "rtc_base/location.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/net_helper.h"
 #include "rtc_base/rate_tracker.h"
@@ -367,6 +366,7 @@ TCPConnection::TCPConnection(rtc::WeakPtr<Port> tcp_port,
     RTC_LOG(LS_VERBOSE) << ToString() << ": socket ipaddr: "
                         << socket_->GetLocalAddress().ToSensitiveString()
                         << ", port() Network:" << port()->Network()->ToString();
+
 #if defined(WEBRTC_WEBKIT_BUILD)
     RTC_DCHECK(socket->GetLocalAddress().IsLoopbackIP() || absl::c_any_of(
 #else

@@ -20,12 +20,8 @@ absl::string_view ScalabilityModeToString(ScalabilityMode scalability_mode) {
       return "L1T1";
     case ScalabilityMode::kL1T2:
       return "L1T2";
-    case ScalabilityMode::kL1T2h:
-      return "L1T2h";
     case ScalabilityMode::kL1T3:
       return "L1T3";
-    case ScalabilityMode::kL1T3h:
-      return "L1T3h";
     case ScalabilityMode::kL2T1:
       return "L2T1";
     case ScalabilityMode::kL2T1h:
@@ -66,10 +62,28 @@ absl::string_view ScalabilityModeToString(ScalabilityMode scalability_mode) {
       return "L3T3_KEY";
     case ScalabilityMode::kS2T1:
       return "S2T1";
+    case ScalabilityMode::kS2T1h:
+      return "S2T1h";
+    case ScalabilityMode::kS2T2:
+      return "S2T2";
+    case ScalabilityMode::kS2T2h:
+      return "S2T2h";
     case ScalabilityMode::kS2T3:
       return "S2T3";
+    case ScalabilityMode::kS2T3h:
+      return "S2T3h";
+    case ScalabilityMode::kS3T1:
+      return "S3T1";
+    case ScalabilityMode::kS3T1h:
+      return "S3T1h";
+    case ScalabilityMode::kS3T2:
+      return "S3T2";
+    case ScalabilityMode::kS3T2h:
+      return "S3T2h";
     case ScalabilityMode::kS3T3:
       return "S3T3";
+    case ScalabilityMode::kS3T3h:
+      return "S3T3h";
   }
   RTC_CHECK_NOTREACHED();
 }

@@ -274,6 +274,8 @@ std::string TransmissionControlBlock::ToString() const {
   if (capabilities_.reconfig) {
     sb << "Reconfig,";
   }
+  sb << " max_in=" << capabilities_.negotiated_maximum_incoming_streams;
+  sb << " max_out=" << capabilities_.negotiated_maximum_outgoing_streams;
 
   return sb.Release();
 }
@@ -292,6 +294,10 @@ void TransmissionControlBlock::AddHandoverState(
   state.capabilities.partial_reliability = capabilities_.partial_reliability;
   state.capabilities.message_interleaving = capabilities_.message_interleaving;
   state.capabilities.reconfig = capabilities_.reconfig;
+  state.capabilities.negotiated_maximum_incoming_streams =
+      capabilities_.negotiated_maximum_incoming_streams;
+  state.capabilities.negotiated_maximum_outgoing_streams =
+      capabilities_.negotiated_maximum_outgoing_streams;
 
   state.my_verification_tag = my_verification_tag().value();
   state.peer_verification_tag = peer_verification_tag().value();

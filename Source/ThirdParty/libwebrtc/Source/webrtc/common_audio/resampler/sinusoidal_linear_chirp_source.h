@@ -41,7 +41,7 @@ class SinusoidalLinearChirpSource : public SincResamplerCallback {
   double Frequency(size_t position);
 
  private:
-  enum { kMinFrequency = 5 };
+  static constexpr int kMinFrequency = 5;
 
   int sample_rate_;
   size_t total_samples_;

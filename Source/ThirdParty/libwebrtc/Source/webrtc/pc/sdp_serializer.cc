@@ -17,6 +17,7 @@
 #include <vector>
 
 #include "absl/algorithm/container.h"
+#include "absl/strings/string_view.h"
 #include "absl/types/optional.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "rtc_base/checks.h"
@@ -52,7 +53,7 @@ const char kSendDirection[] = "send";
 const char kReceiveDirection[] = "recv";
 const char kPayloadType[] = "pt";
 
-RTCError ParseError(const std::string& message) {
+RTCError ParseError(absl::string_view message) {
   return RTCError(RTCErrorType::SYNTAX_ERROR, message);
 }
 

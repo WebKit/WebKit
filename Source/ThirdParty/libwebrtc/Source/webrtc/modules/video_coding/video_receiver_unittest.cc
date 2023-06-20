@@ -44,7 +44,10 @@ class MockVCMReceiveCallback : public VCMReceiveCallback {
       (VideoFrame&, absl::optional<uint8_t>, TimeDelta, VideoContentType),
       (override));
   MOCK_METHOD(void, OnIncomingPayloadType, (int), (override));
-  MOCK_METHOD(void, OnDecoderImplementationName, (const char*), (override));
+  MOCK_METHOD(void,
+              OnDecoderInfoChanged,
+              (const VideoDecoder::DecoderInfo&),
+              (override));
 };
 
 class TestVideoReceiver : public ::testing::Test {
@@ -74,8 +77,7 @@ class TestVideoReceiver : public ::testing::Test {
     // Since we call Decode, we need to provide a valid receive callback.
     // However, for the purposes of these tests, we ignore the callbacks.
     EXPECT_CALL(receive_callback_, OnIncomingPayloadType(_)).Times(AnyNumber());
-    EXPECT_CALL(receive_callback_, OnDecoderImplementationName(_))
-        .Times(AnyNumber());
+    EXPECT_CALL(receive_callback_, OnDecoderInfoChanged).Times(AnyNumber());
     receiver_.RegisterReceiveCallback(&receive_callback_);
   }
 

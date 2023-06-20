@@ -49,14 +49,12 @@ class StreamInterfaceChannel : public rtc::StreamInterface {
   // Implementations of StreamInterface
   rtc::StreamState GetState() const override;
   void Close() override;
-  rtc::StreamResult Read(void* buffer,
-                         size_t buffer_len,
-                         size_t* read,
-                         int* error) override;
-  rtc::StreamResult Write(const void* data,
-                          size_t data_len,
-                          size_t* written,
-                          int* error) override;
+  rtc::StreamResult Read(rtc::ArrayView<uint8_t> buffer,
+                         size_t& read,
+                         int& error) override;
+  rtc::StreamResult Write(rtc::ArrayView<const uint8_t> data,
+                          size_t& written,
+                          int& error) override;
 
  private:
   RTC_NO_UNIQUE_ADDRESS webrtc::SequenceChecker sequence_checker_;
@@ -139,6 +137,13 @@ class DtlsTransport : public DtlsTransportInternal {
   bool SetRemoteFingerprint(absl::string_view digest_alg,
                             const uint8_t* digest,
                             size_t digest_len) override;
+
+  // SetRemoteParameters must be called after SetLocalCertificate.
+  webrtc::RTCError SetRemoteParameters(
+      absl::string_view digest_alg,
+      const uint8_t* digest,
+      size_t digest_len,
+      absl::optional<rtc::SSLRole> role) override;
 
   // Called to send a packet (via DTLS, if turned on).
   int SendPacket(const char* data,

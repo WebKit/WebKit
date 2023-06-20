@@ -35,6 +35,10 @@ PROXY_CONSTMETHOD0(std::vector<std::string>, stream_ids)
 PROXY_CONSTMETHOD0(std::vector<RtpEncodingParameters>, init_send_encodings)
 PROXY_CONSTMETHOD0(RtpParameters, GetParameters)
 PROXY_METHOD1(RTCError, SetParameters, const RtpParameters&)
+PROXY_METHOD2(void,
+              SetParametersAsync,
+              const RtpParameters&,
+              SetParametersCallback)
 PROXY_CONSTMETHOD0(rtc::scoped_refptr<DtmfSenderInterface>, GetDtmfSender)
 PROXY_METHOD1(void,
               SetFrameEncryptor,
@@ -48,9 +52,7 @@ PROXY_METHOD1(void,
 PROXY_METHOD1(void,
               SetEncoderSelector,
               std::unique_ptr<VideoEncoderFactory::EncoderSelectorInterface>)
-#if defined(WEBRTC_WEBKIT_BUILD)
-PROXY_METHOD0(void, GenerateKeyFrame)
-#endif
+PROXY_METHOD1(RTCError, GenerateKeyFrame, const std::vector<std::string>&)
 END_PROXY_MAP(RtpSender)
 
 }  // namespace webrtc

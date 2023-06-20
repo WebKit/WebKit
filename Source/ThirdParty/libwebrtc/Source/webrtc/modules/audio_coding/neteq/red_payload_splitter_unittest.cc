@@ -12,7 +12,6 @@
 
 #include "modules/audio_coding/neteq/red_payload_splitter.h"
 
-
 #include <memory>
 #include <utility>  // pair
 

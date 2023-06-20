@@ -16,6 +16,7 @@
 #include <string>
 
 #include "absl/base/attributes.h"
+#include "absl/types/optional.h"
 #include "modules/audio_processing/include/audio_frame_view.h"
 #include "modules/audio_processing/include/audio_processing.h"
 
@@ -67,7 +68,7 @@ class AecDump {
   struct AudioProcessingState {
     int delay;
     int drift;
-    int level;
+    absl::optional<int> applied_input_volume;
     bool keypress;
   };
 

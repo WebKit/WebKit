@@ -69,20 +69,11 @@ void FastBlit(XImage* x_image,
   RTC_DCHECK_LE(frame->top_left().x(), rect.left());
   RTC_DCHECK_LE(frame->top_left().y(), rect.top());
 
-  int src_stride = x_image->bytes_per_line;
-  int dst_x = rect.left() - frame->top_left().x();
-  int dst_y = rect.top() - frame->top_left().y();
-
-  uint8_t* dst_pos = frame->data() + frame->stride() * dst_y;
-  dst_pos += dst_x * DesktopFrame::kBytesPerPixel;
-
-  int height = rect.height();
-  int row_bytes = rect.width() * DesktopFrame::kBytesPerPixel;
-  for (int y = 0; y < height; ++y) {
-    memcpy(dst_pos, src_pos, row_bytes);
-    src_pos += src_stride;
-    dst_pos += frame->stride();
-  }
+  frame->CopyPixelsFrom(
+      src_pos, x_image->bytes_per_line,
+      DesktopRect::MakeXYWH(rect.left() - frame->top_left().x(),
+                            rect.top() - frame->top_left().y(), rect.width(),
+                            rect.height()));
 }
 
 void SlowBlit(XImage* x_image,

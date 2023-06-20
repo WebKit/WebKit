@@ -61,8 +61,7 @@ Socket* AsyncTCPSocketBase::ConnectSocket(
   return owned_socket.release();
 }
 
-AsyncTCPSocketBase::AsyncTCPSocketBase(Socket* socket,
-                                       size_t max_packet_size)
+AsyncTCPSocketBase::AsyncTCPSocketBase(Socket* socket, size_t max_packet_size)
     : socket_(socket),
       max_insize_(max_packet_size),
       max_outsize_(max_packet_size) {

@@ -27,7 +27,7 @@ namespace webrtc {
 namespace test {
 namespace {
 
-constexpr int kMaxNextFrameWaitTemeoutMs = 1000;
+constexpr TimeDelta kMaxNextFrameWaitTimeout = TimeDelta::Seconds(1);
 
 }  // namespace
 
@@ -38,19 +38,17 @@ IvfVideoFrameGenerator::IvfVideoFrameGenerator(const std::string& file_name)
       width_(file_reader_->GetFrameWidth()),
       height_(file_reader_->GetFrameHeight()) {
   RTC_CHECK(video_decoder_) << "No decoder found for file's video codec type";
-  VideoCodec codec_settings;
-  codec_settings.codecType = file_reader_->GetVideoCodecType();
-  codec_settings.width = file_reader_->GetFrameWidth();
-  codec_settings.height = file_reader_->GetFrameHeight();
+  VideoDecoder::Settings decoder_settings;
+  decoder_settings.set_codec_type(file_reader_->GetVideoCodecType());
+  decoder_settings.set_max_render_resolution(
+      {file_reader_->GetFrameWidth(), file_reader_->GetFrameHeight()});
   // Set buffer pool size to max value to ensure that if users of generator,
   // ex. test frameworks, will retain frames for quite a long time, decoder
   // won't crash with buffers pool overflow error.
-  codec_settings.buffer_pool_size = std::numeric_limits<int>::max();
+  decoder_settings.set_buffer_pool_size(std::numeric_limits<int>::max());
   RTC_CHECK_EQ(video_decoder_->RegisterDecodeCompleteCallback(&callback_),
                WEBRTC_VIDEO_CODEC_OK);
-  RTC_CHECK_EQ(
-      video_decoder_->InitDecode(&codec_settings, /*number_of_cores=*/1),
-      WEBRTC_VIDEO_CODEC_OK);
+  RTC_CHECK(video_decoder_->Configure(decoder_settings));
 }
 IvfVideoFrameGenerator::~IvfVideoFrameGenerator() {
   MutexLock lock(&lock_);
@@ -59,7 +57,7 @@ IvfVideoFrameGenerator::~IvfVideoFrameGenerator() {
   }
   file_reader_->Close();
   file_reader_.reset();
-  // Reset decoder to prevent it from async access to |this|.
+  // Reset decoder to prevent it from async access to `this`.
   video_decoder_.reset();
   {
     MutexLock frame_lock(&frame_decode_lock_);
@@ -82,9 +80,9 @@ FrameGeneratorInterface::VideoFrameData IvfVideoFrameGenerator::NextFrame() {
   RTC_CHECK_EQ(WEBRTC_VIDEO_CODEC_OK,
                video_decoder_->Decode(*image, /*missing_frames=*/false,
                                       /*render_time_ms=*/0));
-  bool decoded = next_frame_decoded_.Wait(kMaxNextFrameWaitTemeoutMs);
+  bool decoded = next_frame_decoded_.Wait(kMaxNextFrameWaitTimeout);
   RTC_CHECK(decoded) << "Failed to decode next frame in "
-                     << kMaxNextFrameWaitTemeoutMs << "ms. Can't continue";
+                     << kMaxNextFrameWaitTimeout << ". Can't continue";
 
   MutexLock frame_lock(&frame_decode_lock_);
   rtc::scoped_refptr<VideoFrameBuffer> buffer =
@@ -105,6 +103,11 @@ void IvfVideoFrameGenerator::ChangeResolution(size_t width, size_t height) {
   MutexLock lock(&lock_);
   width_ = width;
   height_ = height;
+}
+
+FrameGeneratorInterface::Resolution IvfVideoFrameGenerator::GetResolution()
+    const {
+  return {.width = width_, .height = height_};
 }
 
 int32_t IvfVideoFrameGenerator::DecodedCallback::Decoded(

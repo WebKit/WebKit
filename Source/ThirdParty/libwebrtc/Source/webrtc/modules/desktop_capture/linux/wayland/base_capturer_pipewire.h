@@ -11,21 +11,30 @@
 #ifndef MODULES_DESKTOP_CAPTURE_LINUX_WAYLAND_BASE_CAPTURER_PIPEWIRE_H_
 #define MODULES_DESKTOP_CAPTURE_LINUX_WAYLAND_BASE_CAPTURER_PIPEWIRE_H_
 
+#include "modules/desktop_capture/delegated_source_list_controller.h"
 #include "modules/desktop_capture/desktop_capture_options.h"
 #include "modules/desktop_capture/desktop_capturer.h"
-#include "modules/desktop_capture/linux/wayland/portal_request_response.h"
 #include "modules/desktop_capture/linux/wayland/screen_capture_portal_interface.h"
 #include "modules/desktop_capture/linux/wayland/screencast_portal.h"
 #include "modules/desktop_capture/linux/wayland/shared_screencast_stream.h"
-#include "modules/desktop_capture/linux/wayland/xdg_desktop_portal_utils.h"
-#include "modules/desktop_capture/linux/wayland/xdg_session_details.h"
+#include "modules/portal/portal_request_response.h"
+#include "modules/portal/xdg_desktop_portal_utils.h"
+#include "modules/portal/xdg_session_details.h"
 
 namespace webrtc {
 
-class BaseCapturerPipeWire : public DesktopCapturer,
-                             public ScreenCastPortal::PortalNotifier {
+class RTC_EXPORT BaseCapturerPipeWire
+    : public DesktopCapturer,
+      public DelegatedSourceListController,
+      public ScreenCastPortal::PortalNotifier {
  public:
-  explicit BaseCapturerPipeWire(const DesktopCaptureOptions& options);
+  // Returns whether or not the current system can support capture via PipeWire.
+  // This will only be true on Wayland systems that also have PipeWire
+  // available, and thus may require dlopening PipeWire to determine if it is
+  // available.
+  static bool IsSupported();
+
+  BaseCapturerPipeWire(const DesktopCaptureOptions& options, CaptureType type);
   BaseCapturerPipeWire(
       const DesktopCaptureOptions& options,
       std::unique_ptr<xdg_portal::ScreenCapturePortalInterface> portal);
@@ -39,6 +48,13 @@ class BaseCapturerPipeWire : public DesktopCapturer,
   void CaptureFrame() override;
   bool GetSourceList(SourceList* sources) override;
   bool SelectSource(SourceId id) override;
+  DelegatedSourceListController* GetDelegatedSourceListController() override;
+  void SetMaxFrameRate(uint32_t max_frame_rate) override;
+
+  // DelegatedSourceListController
+  void Observe(Observer* observer) override;
+  void EnsureVisible() override;
+  void EnsureHidden() override;
 
   // ScreenCastPortal::PortalNotifier interface.
   void OnScreenCastRequestResult(xdg_portal::RequestResponse result,
@@ -49,13 +65,21 @@ class BaseCapturerPipeWire : public DesktopCapturer,
 
   xdg_portal::SessionDetails GetSessionDetails();
 
+  // Notifies the callback about the available frames as soon as a frame is
+  // received.
+  void SendFramesImmediately(bool send_frames_immediately);
+
  private:
   ScreenCastPortal* GetScreenCastPortal();
 
   DesktopCaptureOptions options_ = {};
   Callback* callback_ = nullptr;
+  bool send_frames_immediately_ = false;
   bool capturer_failed_ = false;
   bool is_screencast_portal_ = false;
+  bool is_portal_open_ = false;
+
+  Observer* delegated_source_list_observer_ = nullptr;
 
   // SourceId that is selected using SelectSource() and that we previously
   // returned in GetSourceList(). This should be a SourceId that has a restore

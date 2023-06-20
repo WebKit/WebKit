@@ -71,7 +71,7 @@ void GenerateFixedFrame(test::FuzzDataHelper* fuzz_data,
 }  // namespace
 
 void FuzzAudioProcessing(test::FuzzDataHelper* fuzz_data,
-                         std::unique_ptr<AudioProcessing> apm) {
+                         rtc::scoped_refptr<AudioProcessing> apm) {
   AudioFrame fixed_frame;
   // Normal usage is up to 8 channels. Allowing to fuzz one beyond this allows
   // us to catch implicit assumptions about normal usage.

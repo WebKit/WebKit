@@ -71,6 +71,8 @@ class AudioMixerImpl : public AudioMixer {
  private:
   struct HelperContainers;
 
+  void UpdateSourceCountStats() RTC_EXCLUSIVE_LOCKS_REQUIRED(mutex_);
+
   // Compute what audio sources to mix from audio_source_list_. Ramp
   // in and out. Update mixed status. Mixes up to
   // kMaximumAmountOfMixedAudioSources audio sources.
@@ -94,6 +96,9 @@ class AudioMixerImpl : public AudioMixer {
 
   // Component that handles actual adding of audio frames.
   FrameCombiner frame_combiner_;
+
+  // The highest source count this mixer has ever had. Used for UMA stats.
+  size_t max_source_count_ever_ = 0;
 };
 }  // namespace webrtc
 

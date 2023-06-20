@@ -11,6 +11,8 @@
 
 #include <algorithm>
 #include <iterator>
+#include <ostream>
+#include <string>
 
 #include "api/units/timestamp.h"
 #include "rtc_base/checks.h"
@@ -22,6 +24,55 @@ namespace {
 constexpr int kMicrosPerSecond = 1000000;
 
 }  // namespace
+
+std::string StreamCodecInfo::ToString() const {
+  rtc::StringBuilder out;
+  out << "{codec_name=" << codec_name << "; first_frame_id=" << first_frame_id
+      << "; last_frame_id=" << last_frame_id
+      << "; switched_on_at=" << webrtc::ToString(switched_on_at)
+      << "; switched_from_at=" << webrtc::ToString(switched_from_at) << " }";
+  return out.str();
+}
+
+std::ostream& operator<<(std::ostream& os, const StreamCodecInfo& state) {
+  return os << state.ToString();
+}
+
+rtc::StringBuilder& operator<<(rtc::StringBuilder& sb,
+                               const StreamCodecInfo& state) {
+  return sb << state.ToString();
+}
+
+bool operator==(const StreamCodecInfo& a, const StreamCodecInfo& b) {
+  return a.codec_name == b.codec_name && a.first_frame_id == b.first_frame_id &&
+         a.last_frame_id == b.last_frame_id &&
+         a.switched_on_at == b.switched_on_at &&
+         a.switched_from_at == b.switched_from_at;
+}
+
+std::string ToString(FrameDropPhase phase) {
+  switch (phase) {
+    case FrameDropPhase::kBeforeEncoder:
+      return "kBeforeEncoder";
+    case FrameDropPhase::kByEncoder:
+      return "kByEncoder";
+    case FrameDropPhase::kTransport:
+      return "kTransport";
+    case FrameDropPhase::kByDecoder:
+      return "kByDecoder";
+    case FrameDropPhase::kAfterDecoder:
+      return "kAfterDecoder";
+    case FrameDropPhase::kLastValue:
+      return "kLastValue";
+  }
+}
+
+std::ostream& operator<<(std::ostream& os, FrameDropPhase phase) {
+  return os << ToString(phase);
+}
+rtc::StringBuilder& operator<<(rtc::StringBuilder& sb, FrameDropPhase phase) {
+  return sb << ToString(phase);
+}
 
 void SamplesRateCounter::AddEvent(Timestamp event_time) {
   if (event_first_time_.IsMinusInfinity()) {

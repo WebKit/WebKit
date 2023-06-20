@@ -1,0 +1,109 @@
+# Copyright (c) 2023 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../../../../../../webrtc.gni")
+
+if (!build_with_chromium) {
+  group("dvqa") {
+    testonly = true
+
+    deps = [
+      ":frames_storage",
+      ":pausable_state",
+    ]
+  }
+
+  if (rtc_include_tests) {
+    group("dvqa_unittests") {
+      testonly = true
+
+      deps = [
+        ":frames_storage_test",
+        ":pausable_state_test",
+      ]
+    }
+  }
+}
+
+# These targets contains implementation details of DefaultVideoQualityAnalyzer,
+# so headers exported by it shouldn't be used in other places.
+
+rtc_library("pausable_state") {
+  visibility = [
+    ":dvqa",
+    ":pausable_state_test",
+    "..:default_video_quality_analyzer_internal",
+  ]
+
+  testonly = true
+  sources = [
+    "pausable_state.cc",
+    "pausable_state.h",
+  ]
+
+  deps = [
+    "../../../../../../api/units:time_delta",
+    "../../../../../../api/units:timestamp",
+    "../../../../../../rtc_base:checks",
+    "../../../../../../system_wrappers",
+  ]
+}
+
+rtc_library("frames_storage") {
+  visibility = [
+    ":dvqa",
+    ":frames_storage_test",
+    "..:default_video_quality_analyzer",
+  ]
+
+  testonly = true
+  sources = [
+    "frames_storage.cc",
+    "frames_storage.h",
+  ]
+
+  deps = [
+    "../../../../../../api/units:time_delta",
+    "../../../../../../api/units:timestamp",
+    "../../../../../../api/video:video_frame",
+    "../../../../../../system_wrappers",
+  ]
+  absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
+}
+
+if (rtc_include_tests) {
+  rtc_library("pausable_state_test") {
+    testonly = true
+    sources = [ "pausable_state_test.cc" ]
+    deps = [
+      ":pausable_state",
+      "../../../../..:test_support",
+      "../../../../../../api:time_controller",
+      "../../../../../../api/units:time_delta",
+      "../../../../../../api/units:timestamp",
+      "../../../../../../system_wrappers",
+      "../../../../../time_controller",
+    ]
+  }
+
+  rtc_library("frames_storage_test") {
+    testonly = true
+    sources = [ "frames_storage_test.cc" ]
+    deps = [
+      ":frames_storage",
+      "../../../../..:test_support",
+      "../../../../../../api:scoped_refptr",
+      "../../../../../../api:time_controller",
+      "../../../../../../api/units:time_delta",
+      "../../../../../../api/units:timestamp",
+      "../../../../../../api/video:video_frame",
+      "../../../../../../system_wrappers",
+      "../../../../../time_controller",
+    ]
+  }
+}

@@ -17,8 +17,10 @@
 #include <string>
 #include <vector>
 
+#include "absl/types/optional.h"
 #include "api/peer_connection_interface.h"
 #include "call/call.h"
+#include "modules/audio_device/include/audio_device.h"
 #include "pc/jsep_transport_controller.h"
 #include "pc/peer_connection_message_handler.h"
 #include "pc/rtp_transceiver.h"
@@ -53,10 +55,6 @@ class PeerConnectionSdpMethods {
   virtual const PeerConnectionInterface::RTCConfiguration* configuration()
       const = 0;
 
-  // Report the UMA metric SdpFormatReceived for the given remote description.
-  virtual void ReportSdpFormatReceived(
-      const SessionDescriptionInterface& remote_description) = 0;
-
   // Report the UMA metric BundleUsage for the given remote description.
   virtual void ReportSdpBundleUsage(
       const SessionDescriptionInterface& remote_description) = 0;
@@ -78,7 +76,7 @@ class PeerConnectionSdpMethods {
   virtual LegacyStatsCollector* legacy_stats() = 0;
   // Returns the observer. Will crash on CHECK if the observer is removed.
   virtual PeerConnectionObserver* Observer() const = 0;
-  virtual bool GetSctpSslRole(rtc::SSLRole* role) = 0;
+  virtual absl::optional<rtc::SSLRole> GetSctpSslRole_n() = 0;
   virtual PeerConnectionInterface::IceConnectionState
   ice_connection_state_internal() = 0;
   virtual void SetIceConnectionState(
@@ -119,19 +117,26 @@ class PeerConnectionSdpMethods {
   // Returns true if SRTP (either using DTLS-SRTP or SDES) is required by
   // this session.
   virtual bool SrtpRequired() const = 0;
-  virtual bool SetupDataChannelTransport_n(const std::string& mid) = 0;
-  virtual void TeardownDataChannelTransport_n() = 0;
-  virtual void SetSctpDataMid(const std::string& mid) = 0;
-  virtual void ResetSctpDataMid() = 0;
+  // Configures the data channel transport on the network thread.
+  // The return value will be unset if an error occurs. If the setup succeeded
+  // the return value will be set and contain the name of the transport
+  // (empty string if a name isn't available).
+  virtual absl::optional<std::string> SetupDataChannelTransport_n(
+      absl::string_view mid) = 0;
+  virtual void TeardownDataChannelTransport_n(RTCError error) = 0;
+  virtual void SetSctpDataInfo(absl::string_view mid,
+                               absl::string_view transport_name) = 0;
+  virtual void ResetSctpDataInfo() = 0;
 
   virtual const FieldTrialsView& trials() const = 0;
+
+  virtual void ClearStatsCache() = 0;
 };
 
 // Functions defined in this class are called by other objects,
 // but not by SdpOfferAnswerHandler.
 class PeerConnectionInternal : public PeerConnectionInterface,
-                               public PeerConnectionSdpMethods,
-                               public sigslot::has_slots<> {
+                               public PeerConnectionSdpMethods {
  public:
   virtual rtc::Thread* network_thread() const = 0;
   virtual rtc::Thread* worker_thread() const = 0;
@@ -142,9 +147,6 @@ class PeerConnectionInternal : public PeerConnectionInterface,
   virtual std::vector<
       rtc::scoped_refptr<RtpTransceiverProxyWithInternal<RtpTransceiver>>>
   GetTransceiversInternal() const = 0;
-
-  virtual sigslot::signal1<SctpDataChannel*>&
-  SignalSctpDataChannelCreated() = 0;
 
   // Call on the network thread to fetch stats for all the data channels.
   // TODO(tommi): Make pure virtual after downstream updates.
@@ -164,6 +166,8 @@ class PeerConnectionInternal : public PeerConnectionInterface,
 
   virtual Call::Stats GetCallStats() = 0;
 
+  virtual absl::optional<AudioDeviceModule::Stats> GetAudioDeviceStats() = 0;
+
   virtual bool GetLocalCertificate(
       const std::string& transport_name,
       rtc::scoped_refptr<rtc::RTCCertificate>* certificate) = 0;
@@ -178,8 +182,13 @@ class PeerConnectionInternal : public PeerConnectionInterface,
                           rtc::SSLRole* role) = 0;
   // Functions needed by DataChannelController
   virtual void NoteDataAddedEvent() {}
-  // Handler for the "channel closed" signal
-  virtual void OnSctpDataChannelClosed(DataChannelInterface* channel) {}
+  // Handler for sctp data channel state changes.
+  // The `channel_id` is the same unique identifier as used in
+  // `DataChannelStats::internal_id and
+  // `RTCDataChannelStats::data_channel_identifier`.
+  virtual void OnSctpDataChannelStateChanged(
+      int channel_id,
+      DataChannelInterface::DataState state) {}
 };
 
 }  // namespace webrtc

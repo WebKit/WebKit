@@ -93,9 +93,7 @@ class GoogCcNetworkController : public NetworkControllerInterface {
   const bool ignore_probes_lower_than_network_estimate_;
   const bool limit_probes_lower_than_throughput_estimate_;
   const RateControlSettings rate_control_settings_;
-  const bool loss_based_stable_rate_;
   const bool pace_at_max_of_bwe_and_lower_link_capacity_;
-  const bool pace_at_loss_based_bwe_when_loss_;
 
   const std::unique_ptr<ProbeController> probe_controller_;
   const std::unique_ptr<CongestionWindowPushbackController>
@@ -138,7 +136,6 @@ class GoogCcNetworkController : public NetworkControllerInterface {
   double pacing_factor_;
   DataRate min_total_allocated_bitrate_;
   DataRate max_padding_rate_;
-  DataRate max_total_allocated_bitrate_;
 
   bool previously_in_alr_ = false;
 

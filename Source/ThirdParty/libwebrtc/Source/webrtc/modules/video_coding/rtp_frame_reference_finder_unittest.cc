@@ -8,6 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include "modules/video_coding/rtp_frame_reference_finder.h"
+
 #include <cstring>
 #include <limits>
 #include <map>
@@ -15,9 +17,8 @@
 #include <utility>
 #include <vector>
 
-#include "modules/video_coding/frame_object.h"
+#include "modules/rtp_rtcp/source/frame_object.h"
 #include "modules/video_coding/packet_buffer.h"
-#include "modules/video_coding/rtp_frame_reference_finder.h"
 #include "rtc_base/random.h"
 #include "rtc_base/ref_count.h"
 #include "system_wrappers/include/clock.h"

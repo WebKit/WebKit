@@ -28,22 +28,18 @@ TimeDelta DriftingClock::Drift() const {
   return (now - start_time_) * drift_;
 }
 
-Timestamp DriftingClock::CurrentTime() {
-  return clock_->CurrentTime() + Drift() / 1000.;
+Timestamp DriftingClock::Drift(Timestamp timestamp) const {
+  return timestamp + Drift() / 1000.;
 }
 
-NtpTime DriftingClock::CurrentNtpTime() {
+NtpTime DriftingClock::Drift(NtpTime ntp_time) const {
   // NTP precision is 1/2^32 seconds, i.e. 2^32 ntp fractions = 1 second.
   const double kNtpFracPerMicroSecond = 4294.967296;  // = 2^32 / 10^6
 
-  NtpTime ntp = clock_->CurrentNtpTime();
-  uint64_t total_fractions = static_cast<uint64_t>(ntp);
+  uint64_t total_fractions = static_cast<uint64_t>(ntp_time);
   total_fractions += Drift().us() * kNtpFracPerMicroSecond;
   return NtpTime(total_fractions);
 }
 
-int64_t DriftingClock::CurrentNtpInMilliseconds() {
-  return clock_->CurrentNtpInMilliseconds() + Drift().ms();
-}
 }  // namespace test
 }  // namespace webrtc

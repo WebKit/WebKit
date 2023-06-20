@@ -21,11 +21,14 @@
 #include "api/video/color_space.h"
 #include "api/video/video_codec_type.h"
 #include "api/video/video_content_type.h"
+#include "api/video/video_frame_metadata.h"
 #include "api/video/video_frame_type.h"
 #include "api/video/video_rotation.h"
 #include "api/video/video_timing.h"
 #include "modules/video_coding/codecs/h264/include/h264_globals.h"
+#ifndef DISABLE_H265
 #include "modules/video_coding/codecs/h265/include/h265_globals.h"
+#endif
 #include "modules/video_coding/codecs/vp8/include/vp8_globals.h"
 #include "modules/video_coding/codecs/vp9/include/vp9_globals.h"
 
@@ -61,10 +64,16 @@ struct RTPVideoHeader {
     std::bitset<32> active_decode_targets = ~uint32_t{0};
   };
 
+  static RTPVideoHeader FromMetadata(const VideoFrameMetadata& metadata);
+
   RTPVideoHeader();
   RTPVideoHeader(const RTPVideoHeader& other);
 
   ~RTPVideoHeader();
+
+  // The subset of RTPVideoHeader that is exposed in the Insertable Streams API.
+  VideoFrameMetadata GetAsMetadata() const;
+  void SetFromMetadata(const VideoFrameMetadata& metadata);
 
   absl::optional<GenericDescriptorInfo> generic;
 

@@ -105,6 +105,17 @@ class RTC_EXPORT DesktopCaptureOptions {
     detect_updated_region_ = detect_updated_region;
   }
 
+  // Indicates that the capturer should try to include the cursor in the frame.
+  // If it is able to do so it will set `DesktopFrame::may_contain_cursor()`.
+  // Not all capturers will support including the cursor. If this value is false
+  // or the cursor otherwise cannot be included in the frame, then cursor
+  // metadata will be sent, though the capturer may choose to always send cursor
+  // metadata.
+  bool prefer_cursor_embedded() const { return prefer_cursor_embedded_; }
+  void set_prefer_cursor_embedded(bool prefer_cursor_embedded) {
+    prefer_cursor_embedded_ = prefer_cursor_embedded;
+  }
+
 #if defined(WEBRTC_WIN)
   // Enumerating windows owned by the current process on Windows has some
   // complications due to |GetWindowText*()| APIs potentially causing a
@@ -124,12 +135,6 @@ class RTC_EXPORT DesktopCaptureOptions {
     enumerate_current_process_windows_ = enumerate_current_process_windows;
   }
 
-  bool allow_use_magnification_api() const {
-    return allow_use_magnification_api_;
-  }
-  void set_allow_use_magnification_api(bool allow) {
-    allow_use_magnification_api_ = allow;
-  }
   // Allowing directx based capturer or not, this capturer works on windows 7
   // with platform update / windows 8 or upper.
   bool allow_directx_capturer() const { return allow_directx_capturer_; }
@@ -174,6 +179,11 @@ class RTC_EXPORT DesktopCaptureOptions {
   void set_allow_wgc_capturer_fallback(bool allow) {
     allow_wgc_capturer_fallback_ = allow;
   }
+
+  // This flag enables 0Hz mode in combination with the WGC capturer.
+  // The flag has no effect if the allow_wgc_capturer flag is false.
+  bool allow_wgc_zero_hertz() const { return allow_wgc_zero_hertz_; }
+  void set_allow_wgc_zero_hertz(bool allow) { allow_wgc_zero_hertz_ = allow; }
 #endif  // defined(RTC_ENABLE_WIN_WGC)
 #endif  // defined(WEBRTC_WIN)
 
@@ -194,6 +204,13 @@ class RTC_EXPORT DesktopCaptureOptions {
 
   void set_height(uint32_t height) { height_ = height; }
   uint32_t get_height() const { return height_; }
+
+  void set_pipewire_use_damage_region(bool use_damage_regions) {
+    pipewire_use_damage_region_ = use_damage_regions;
+  }
+  bool pipewire_use_damage_region() const {
+    return pipewire_use_damage_region_;
+  }
 #endif
 
  private:
@@ -215,12 +232,12 @@ class RTC_EXPORT DesktopCaptureOptions {
 
 #if defined(WEBRTC_WIN)
   bool enumerate_current_process_windows_ = true;
-  bool allow_use_magnification_api_ = false;
   bool allow_directx_capturer_ = false;
   bool allow_cropping_window_capturer_ = false;
 #if defined(RTC_ENABLE_WIN_WGC)
   bool allow_wgc_capturer_ = false;
   bool allow_wgc_capturer_fallback_ = false;
+  bool allow_wgc_zero_hertz_ = false;
 #endif
 #endif
 #if defined(WEBRTC_USE_X11)
@@ -230,8 +247,10 @@ class RTC_EXPORT DesktopCaptureOptions {
 #endif
   bool disable_effects_ = true;
   bool detect_updated_region_ = false;
+  bool prefer_cursor_embedded_ = false;
 #if defined(WEBRTC_USE_PIPEWIRE)
   bool allow_pipewire_ = false;
+  bool pipewire_use_damage_region_ = true;
   uint32_t width_ = 0;
   uint32_t height_ = 0;
 #endif

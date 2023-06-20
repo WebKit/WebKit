@@ -1,0 +1,3 @@
+
+PASS Remote reanswer altering rids does not throw an exception.
+

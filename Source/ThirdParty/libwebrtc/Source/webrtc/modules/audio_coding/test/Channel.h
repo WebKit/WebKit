@@ -13,6 +13,7 @@
 
 #include <stdio.h>
 
+#include "modules/audio_coding/acm2/acm_receiver.h"
 #include "modules/audio_coding/include/audio_coding_module.h"
 #include "modules/include/module_common_types.h"
 #include "rtc_base/synchronization/mutex.h"
@@ -54,7 +55,7 @@ class Channel : public AudioPacketizationCallback {
                    size_t payloadSize,
                    int64_t absolute_capture_timestamp_ms) override;
 
-  void RegisterReceiverACM(AudioCodingModule* acm);
+  void RegisterReceiverACM(acm2::AcmReceiver* acm_receiver);
 
   void ResetStats();
 
@@ -83,7 +84,7 @@ class Channel : public AudioPacketizationCallback {
  private:
   void CalcStatistics(const RTPHeader& rtp_header, size_t payloadSize);
 
-  AudioCodingModule* _receiverACM;
+  acm2::AcmReceiver* _receiverACM;
   uint16_t _seqNo;
   // 60msec * 32 sample(max)/msec * 2 description (maybe) * 2 bytes/sample
   uint8_t _payloadData[60 * 32 * 2 * 2];

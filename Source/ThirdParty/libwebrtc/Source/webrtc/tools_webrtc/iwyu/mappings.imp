@@ -32,4 +32,7 @@
 { symbol: ["std::unique_ptr", "public", "<memory>", "public"] },
 # Needed to avoid <iosfwd>
 { symbol: ["std::ostringstream", "public", "<sstream>", "public"] },
+
+{ ref: "../../buildtools/third_party/libc++/trunk/include/libcxx.imp" },
 ]
+

@@ -28,17 +28,13 @@ rtc_library("common_video") {
     "h264/sps_vui_rewriter.cc",
     "h264/sps_vui_rewriter.h",
     "include/bitrate_adjuster.h",
-    "include/incoming_video_stream.h",
     "include/quality_limitation_reason.h",
     "include/video_frame_buffer.h",
     "include/video_frame_buffer_pool.h",
-    "incoming_video_stream.cc",
     "libyuv/include/webrtc_libyuv.h",
     "libyuv/webrtc_libyuv.cc",
     "video_frame_buffer.cc",
     "video_frame_buffer_pool.cc",
-    "video_render_frames.cc",
-    "video_render_frames.h",
   ]
 
   deps = [
@@ -57,7 +53,6 @@ rtc_library("common_video") {
     "../api/video:video_rtp_headers",
     "../api/video_codecs:bitstream_parser_api",
     "../api/video_codecs:video_codecs_api",
-    "../rtc_base",
     "../rtc_base:bit_buffer",
     "../rtc_base:bitstream_reader",
     "../rtc_base:buffer",
@@ -123,7 +118,6 @@ if (rtc_include_tests && !build_with_chromium) {
       "../api/video:video_frame_i010",
       "../api/video:video_rtp_headers",
       "../api/video_codecs:video_codecs_api",
-      "../rtc_base",
       "../rtc_base:bit_buffer",
       "../rtc_base:buffer",
       "../rtc_base:checks",

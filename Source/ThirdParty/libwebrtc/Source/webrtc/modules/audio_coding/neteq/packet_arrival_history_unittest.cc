@@ -120,5 +120,22 @@ TEST_F(PacketArrivalHistoryTest, TimestampWraparound) {
   EXPECT_EQ(history_.GetMaxDelayMs(), 3 * kFrameSizeMs);
 }
 
+TEST_F(PacketArrivalHistoryTest, TimestampWraparoundBackwards) {
+  timestamp_ = 0;
+  EXPECT_EQ(InsertPacketAndGetDelay(0), 0);
+
+  IncrementTime(2 * kFrameSizeMs);
+  // Insert timestamp that will wrap around.
+  EXPECT_EQ(InsertPacketAndGetDelay(kFrameSizeMs), kFrameSizeMs);
+
+  // Insert reordered packet before the wraparound.
+  EXPECT_EQ(InsertPacketAndGetDelay(-2 * kFrameSizeMs), 3 * kFrameSizeMs);
+
+  // Insert another in-order packet after the wraparound.
+  EXPECT_EQ(InsertPacketAndGetDelay(kFrameSizeMs), 0);
+
+  EXPECT_EQ(history_.GetMaxDelayMs(), 3 * kFrameSizeMs);
+}
+
 }  // namespace
 }  // namespace webrtc

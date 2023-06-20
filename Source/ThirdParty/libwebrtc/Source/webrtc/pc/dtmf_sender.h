@@ -21,7 +21,6 @@
 #include "api/task_queue/pending_task_safety_flag.h"
 #include "api/task_queue/task_queue_base.h"
 #include "pc/proxy.h"
-#include "rtc_base/location.h"
 #include "rtc_base/ref_count.h"
 #include "rtc_base/thread_annotations.h"
 
@@ -77,8 +76,7 @@ class DtmfSender : public DtmfSenderInterface {
  private:
   DtmfSender();
 
-  void QueueInsertDtmf(const rtc::Location& posted_from, uint32_t delay_ms)
-      RTC_RUN_ON(signaling_thread_);
+  void QueueInsertDtmf(uint32_t delay_ms) RTC_RUN_ON(signaling_thread_);
 
   // The DTMF sending task.
   void DoInsertDtmf() RTC_RUN_ON(signaling_thread_);

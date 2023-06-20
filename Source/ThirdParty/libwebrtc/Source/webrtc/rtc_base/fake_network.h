@@ -17,9 +17,7 @@
 #include <vector>
 
 #include "absl/memory/memory.h"
-#include "rtc_base/checks.h"
 #include "rtc_base/mdns_responder_interface.h"
-#include "rtc_base/message_handler.h"
 #include "rtc_base/network.h"
 #include "rtc_base/socket_address.h"
 #include "rtc_base/string_encode.h"
@@ -31,8 +29,7 @@ const int kFakeIPv4NetworkPrefixLength = 24;
 const int kFakeIPv6NetworkPrefixLength = 64;
 
 // Fake network manager that allows us to manually specify the IPs to use.
-class FakeNetworkManager : public NetworkManagerBase,
-                           public MessageHandlerAutoCleanup {
+class FakeNetworkManager : public NetworkManagerBase {
  public:
   FakeNetworkManager() {}
 
@@ -77,27 +74,13 @@ class FakeNetworkManager : public NetworkManagerBase,
     ++start_count_;
     if (start_count_ == 1) {
       sent_first_update_ = false;
-      rtc::Thread::Current()->Post(RTC_FROM_HERE, this, kUpdateNetworksMessage);
-    } else {
-      if (sent_first_update_) {
-        rtc::Thread::Current()->Post(RTC_FROM_HERE, this,
-                                     kSignalNetworksMessage);
-      }
+      Thread::Current()->PostTask([this] { DoUpdateNetworks(); });
+    } else if (sent_first_update_) {
+      Thread::Current()->PostTask([this] { SignalNetworksChanged(); });
     }
   }
 
   void StopUpdating() override { --start_count_; }
-
-  // MessageHandler interface.
-  void OnMessage(Message* msg) override {
-    if (msg->message_id == kUpdateNetworksMessage) {
-      DoUpdateNetworks();
-    } else if (msg->message_id == kSignalNetworksMessage) {
-      SignalNetworksChanged();
-    } else {
-      RTC_CHECK(false);
-    }
-  }
 
   using NetworkManagerBase::set_default_local_addresses;
   using NetworkManagerBase::set_enumeration_permission;
@@ -127,7 +110,7 @@ class FakeNetworkManager : public NetworkManagerBase,
       IPAddress prefix = TruncateIP(it->socket_address.ipaddr(), prefix_length);
       auto net = std::make_unique<Network>(
           it->socket_address.hostname(), it->socket_address.hostname(), prefix,
-          prefix_length, it->adapter_type, /*field_trials=*/nullptr);
+          prefix_length, it->adapter_type);
       if (it->underlying_vpn_adapter_type.has_value()) {
         net->set_underlying_type_for_vpn(*it->underlying_vpn_adapter_type);
       }
@@ -147,9 +130,6 @@ class FakeNetworkManager : public NetworkManagerBase,
   int next_index_ = 0;
   int start_count_ = 0;
   bool sent_first_update_ = false;
-
-  static constexpr uint32_t kUpdateNetworksMessage = 1;
-  static constexpr uint32_t kSignalNetworksMessage = 2;
 
   std::unique_ptr<webrtc::MdnsResponderInterface> mdns_responder_;
 };

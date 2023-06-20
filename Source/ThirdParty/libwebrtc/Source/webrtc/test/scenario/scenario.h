@@ -103,36 +103,30 @@ class Scenario {
       AudioStreamConfig config);
 
   // Runs the provided function with a fixed interval. For real time tests,
-<<<<<<< HEAD
   // `function` starts being called after `interval` from the call to Every().
   void Every(TimeDelta interval, absl::AnyInvocable<void(TimeDelta)> function);
   void Every(TimeDelta interval, absl::AnyInvocable<void()> function);
-=======
-  // |function| starts being called after |interval| from the call to Every().
-  void Every(TimeDelta interval, std::function<void(TimeDelta)> function);
-  void Every(TimeDelta interval, std::function<void()> function);
->>>>>>> parent of 8e32ad0e8387 (revert libwebrtc changes to help bump)
 
   // Runs the provided function on the internal task queue. This ensure that
   // it's run on the main thread for simulated time tests.
   void Post(absl::AnyInvocable<void() &&> function);
 
   // Runs the provided function after given duration has passed. For real time
-  // tests, |function| is called after |target_time_since_start| from the call
+  // tests, `function` is called after `target_time_since_start` from the call
   // to Every().
   void At(TimeDelta offset, absl::AnyInvocable<void() &&> function);
 
-  // Sends a packet over the nodes and runs |action| when it has been delivered.
+  // Sends a packet over the nodes and runs `action` when it has been delivered.
   void NetworkDelayedAction(std::vector<EmulatedNetworkNode*> over_nodes,
                             size_t packet_size,
                             std::function<void()> action);
 
   // Runs the scenario for the given time.
   void RunFor(TimeDelta duration);
-  // Runs the scenario until |target_time_since_start|.
+  // Runs the scenario until `target_time_since_start`.
   void RunUntil(TimeDelta target_time_since_start);
-  // Runs the scenario until |target_time_since_start| or |exit_function|
-  // returns true. |exit_function| is polled after each |check_interval| has
+  // Runs the scenario until `target_time_since_start` or `exit_function`
+  // returns true. `exit_function` is polled after each `check_interval` has
   // passed.
   void RunUntil(TimeDelta target_time_since_start,
                 TimeDelta check_interval,

@@ -12,6 +12,7 @@
 
 #include "absl/algorithm/container.h"
 #include "absl/strings/match.h"
+#include "api/video_codecs/av1_profile.h"
 #include "api/video_codecs/h264_profile_level_id.h"
 #include "api/video_codecs/vp9_profile.h"
 #include "rtc_base/checks.h"
@@ -54,6 +55,8 @@ bool IsSameCodecSpecific(const std::string& name1,
            IsSameH264PacketizationMode(params1, params2);
   if (either_name_matches(kVp9CodecName))
     return webrtc::VP9IsSameProfile(params1, params2);
+  if (either_name_matches(kAv1CodecName))
+    return webrtc::AV1IsSameProfile(params1, params2);
   return true;
 }
 

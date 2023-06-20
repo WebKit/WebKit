@@ -23,5 +23,5 @@ enabled by using a field trial and should only be used in a testing environment.
      |  ID   | L=1   |    video-frame-tracking-id    |
      +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 
-Notes: The extension shoud be present only in the first packet of each frame.
+Notes: The extension should be present only in the first packet of each frame.
 If attached to other packets it can be ignored.

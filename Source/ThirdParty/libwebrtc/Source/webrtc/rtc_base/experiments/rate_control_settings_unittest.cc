@@ -11,9 +11,9 @@
 #include "rtc_base/experiments/rate_control_settings.h"
 
 #include "api/video_codecs/video_codec.h"
-#include "api/video_codecs/video_encoder_config.h"
 #include "test/field_trial.h"
 #include "test/gtest.h"
+#include "video/config/video_encoder_config.h"
 
 namespace webrtc {
 
@@ -170,16 +170,6 @@ TEST(RateControlSettingsTest,
   const RateControlSettings settings_after =
       RateControlSettings::ParseFromFieldTrials();
   EXPECT_FALSE(settings_after.Vp8BaseHeavyTl3RateAllocation());
-}
-
-TEST(RateControlSettingsTest, TriggerProbeOnMaxAllocatedBitrateChange) {
-  EXPECT_TRUE(RateControlSettings::ParseFromFieldTrials()
-                  .TriggerProbeOnMaxAllocatedBitrateChange());
-
-  test::ScopedFieldTrials field_trials(
-      "WebRTC-VideoRateControl/probe_max_allocation:0/");
-  EXPECT_FALSE(RateControlSettings::ParseFromFieldTrials()
-                   .TriggerProbeOnMaxAllocatedBitrateChange());
 }
 
 TEST(RateControlSettingsTest, UseEncoderBitrateAdjuster) {

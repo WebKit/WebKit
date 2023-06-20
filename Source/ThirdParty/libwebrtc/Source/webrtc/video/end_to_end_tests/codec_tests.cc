@@ -9,6 +9,7 @@
  */
 
 #include <memory>
+
 #include "absl/types/optional.h"
 #include "api/test/video/function_video_encoder_factory.h"
 #include "api/video/color_space.h"
@@ -25,6 +26,7 @@
 #include "test/encoder_settings.h"
 #include "test/field_trial.h"
 #include "test/gtest.h"
+#include "test/video_test_constants.h"
 
 namespace webrtc {
 namespace {
@@ -53,7 +55,7 @@ class CodecObserver : public test::EndToEndTest,
                 const std::string& payload_name,
                 VideoEncoderFactory* encoder_factory,
                 VideoDecoderFactory* decoder_factory)
-      : EndToEndTest(4 * CodecEndToEndTest::kDefaultTimeout),
+      : EndToEndTest(4 * test::VideoTestConstants::kDefaultTimeout),
         // TODO(hta): This timeout (120 seconds) is excessive.
         // https://bugs.webrtc.org/6830
         no_frames_to_wait_for_(no_frames_to_wait_for),
@@ -76,7 +78,8 @@ class CodecObserver : public test::EndToEndTest,
     encoder_config->codec_type = PayloadStringToCodecType(payload_name_);
     send_config->encoder_settings.encoder_factory = encoder_factory_;
     send_config->rtp.payload_name = payload_name_;
-    send_config->rtp.payload_type = test::CallTest::kVideoSendPayloadType;
+    send_config->rtp.payload_type =
+        test::VideoTestConstants::kVideoSendPayloadType;
 
     (*receive_configs)[0].renderer = this;
     (*receive_configs)[0].decoders.resize(1);

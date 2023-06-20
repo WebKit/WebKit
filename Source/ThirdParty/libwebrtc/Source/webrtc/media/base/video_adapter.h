@@ -13,6 +13,7 @@
 
 #include <stdint.h>
 
+#include <string>
 #include <utility>
 
 #include "absl/types/optional.h"
@@ -133,16 +134,32 @@ class RTC_EXPORT VideoAdapter {
   // Max number of pixels/fps requested via calls to OnOutputFormatRequest,
   // OnResolutionFramerateRequest respectively.
   // The adapted output format is the minimum of these.
-  absl::optional<std::pair<int, int>> target_landscape_aspect_ratio_
-      RTC_GUARDED_BY(mutex_);
-  absl::optional<int> max_landscape_pixel_count_ RTC_GUARDED_BY(mutex_);
-  absl::optional<std::pair<int, int>> target_portrait_aspect_ratio_
-      RTC_GUARDED_BY(mutex_);
-  absl::optional<int> max_portrait_pixel_count_ RTC_GUARDED_BY(mutex_);
-  absl::optional<int> max_fps_ RTC_GUARDED_BY(mutex_);
+  struct OutputFormatRequest {
+    absl::optional<std::pair<int, int>> target_landscape_aspect_ratio;
+    absl::optional<int> max_landscape_pixel_count;
+    absl::optional<std::pair<int, int>> target_portrait_aspect_ratio;
+    absl::optional<int> max_portrait_pixel_count;
+    absl::optional<int> max_fps;
+
+    // For logging.
+    std::string ToString() const;
+  };
+
+  OutputFormatRequest output_format_request_ RTC_GUARDED_BY(mutex_);
   int resolution_request_target_pixel_count_ RTC_GUARDED_BY(mutex_);
   int resolution_request_max_pixel_count_ RTC_GUARDED_BY(mutex_);
   int max_framerate_request_ RTC_GUARDED_BY(mutex_);
+
+  // Stashed OutputFormatRequest that is used to save value of
+  // OnOutputFormatRequest in case all active encoders are using
+  // requested_resolution. I.e when all active encoders are using
+  // requested_resolution, the call to OnOutputFormatRequest is ignored
+  // and the value from requested_resolution is used instead (to scale/crop
+  // frame). This allows for an application to only use
+  // RtpEncodingParameters::request_resolution and get the same behavior as if
+  // it had used VideoAdapter::OnOutputFormatRequest.
+  absl::optional<OutputFormatRequest> stashed_output_format_request_
+      RTC_GUARDED_BY(mutex_);
 
   webrtc::FramerateController framerate_controller_ RTC_GUARDED_BY(mutex_);
 

@@ -22,8 +22,6 @@
 #include "benchmark/benchmark.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/event.h"
-#include "rtc_base/location.h"
-#include "rtc_base/message_handler.h"
 #include "rtc_base/platform_thread.h"
 #include "rtc_base/synchronization/yield.h"
 #include "rtc_base/thread.h"
@@ -33,8 +31,6 @@ namespace webrtc {
 namespace {
 
 using ::rtc::Event;
-using ::rtc::Message;
-using ::rtc::MessageHandler;
 using ::rtc::Thread;
 
 constexpr int kNumThreads = 16;
@@ -77,7 +73,7 @@ class MutexLockLocker {
 };
 
 template <class MutexType, class MutexLocker>
-class LockRunner : public rtc::MessageHandlerAutoCleanup {
+class LockRunner {
  public:
   template <typename... Args>
   explicit LockRunner(Args... args)
@@ -106,7 +102,7 @@ class LockRunner : public rtc::MessageHandlerAutoCleanup {
     return shared_value;
   }
 
-  void OnMessage(Message* msg) override {
+  void Loop() {
     ASSERT_TRUE(start_event_.Wait(kLongTime));
     locker_.Lock();
 
@@ -129,7 +125,7 @@ class LockRunner : public rtc::MessageHandlerAutoCleanup {
   }
 
  private:
-  static constexpr int kLongTime = 10000;  // 10 seconds
+  static constexpr TimeDelta kLongTime = TimeDelta::Seconds(10);
   static constexpr int kOperationsToRun = 1000;
 
   std::atomic<int> threads_active_;
@@ -140,12 +136,13 @@ class LockRunner : public rtc::MessageHandlerAutoCleanup {
   MutexLocker locker_;
 };
 
+template <typename Runner>
 void StartThreads(std::vector<std::unique_ptr<Thread>>& threads,
-                  MessageHandler* handler) {
+                  Runner* handler) {
   for (int i = 0; i < kNumThreads; ++i) {
     std::unique_ptr<Thread> thread(Thread::Create());
     thread->Start();
-    thread->Post(RTC_FROM_HERE, handler);
+    thread->PostTask([handler] { handler->Loop(); });
     threads.push_back(std::move(thread));
   }
 }

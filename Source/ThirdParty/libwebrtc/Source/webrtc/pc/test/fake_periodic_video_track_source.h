@@ -29,6 +29,7 @@ class FakePeriodicVideoTrackSource : public VideoTrackSource {
 
   ~FakePeriodicVideoTrackSource() = default;
 
+  FakePeriodicVideoSource& fake_periodic_source() { return source_; }
   const FakePeriodicVideoSource& fake_periodic_source() const {
     return source_;
   }

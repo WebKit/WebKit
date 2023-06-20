@@ -31,6 +31,9 @@ class VcmCapturer : public TestVideoCapturer,
 
   void OnFrame(const VideoFrame& frame) override;
 
+  int GetFrameWidth() const override { return static_cast<int>(width_); }
+  int GetFrameHeight() const override { return static_cast<int>(height_); }
+
  private:
   VcmCapturer();
   bool Init(size_t width,
@@ -39,6 +42,8 @@ class VcmCapturer : public TestVideoCapturer,
             size_t capture_device_index);
   void Destroy();
 
+  size_t width_;
+  size_t height_;
   rtc::scoped_refptr<VideoCaptureModule> vcm_;
   VideoCaptureCapability capability_;
 };

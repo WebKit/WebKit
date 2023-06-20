@@ -21,47 +21,55 @@ namespace {
 
 class FakeEncodedFrame : public AudioDecoder::EncodedAudioFrame {
  public:
-  FakeEncodedFrame(AudioDecoder* decoder, rtc::Buffer&& payload)
-      : decoder_(decoder), payload_(std::move(payload)) {}
+  FakeEncodedFrame(FakeDecodeFromFile* decoder,
+                   uint32_t timestamp,
+                   size_t duration,
+                   bool is_dtx)
+      : decoder_(decoder),
+        timestamp_(timestamp),
+        duration_(duration),
+        is_dtx_(is_dtx) {}
 
-  size_t Duration() const override {
-    const int ret = decoder_->PacketDuration(payload_.data(), payload_.size());
-    return ret < 0 ? 0 : static_cast<size_t>(ret);
-  }
+  size_t Duration() const override { return duration_; }
 
   absl::optional<DecodeResult> Decode(
       rtc::ArrayView<int16_t> decoded) const override {
-    auto speech_type = AudioDecoder::kSpeech;
-    const int ret = decoder_->Decode(
-        payload_.data(), payload_.size(), decoder_->SampleRateHz(),
-        decoded.size() * sizeof(int16_t), decoded.data(), &speech_type);
-    return ret < 0 ? absl::nullopt
-                   : absl::optional<DecodeResult>(
-                         {static_cast<size_t>(ret), speech_type});
+    if (is_dtx_) {
+      std::fill_n(decoded.data(), duration_, 0);
+      return DecodeResult{duration_, AudioDecoder::kComfortNoise};
+    }
+
+    decoder_->ReadFromFile(timestamp_, duration_, decoded.data());
+    return DecodeResult{Duration(), AudioDecoder::kSpeech};
   }
 
-  // This is to mimic OpusFrame.
-  bool IsDtxPacket() const override {
-    uint32_t original_payload_size_bytes =
-        ByteReader<uint32_t>::ReadLittleEndian(&payload_.data()[8]);
-    return original_payload_size_bytes <= 2;
-  }
+  bool IsDtxPacket() const override { return is_dtx_; }
 
  private:
-  AudioDecoder* const decoder_;
-  const rtc::Buffer payload_;
+  FakeDecodeFromFile* const decoder_;
+  const uint32_t timestamp_;
+  const size_t duration_;
+  const bool is_dtx_;
 };
 
 }  // namespace
 
-std::vector<AudioDecoder::ParseResult> FakeDecodeFromFile::ParsePayload(
-    rtc::Buffer&& payload,
-    uint32_t timestamp) {
-  std::vector<ParseResult> results;
-  std::unique_ptr<EncodedAudioFrame> frame(
-      new FakeEncodedFrame(this, std::move(payload)));
-  results.emplace_back(timestamp, 0, std::move(frame));
-  return results;
+void FakeDecodeFromFile::ReadFromFile(uint32_t timestamp,
+                                      size_t samples,
+                                      int16_t* destination) {
+  if (next_timestamp_from_input_ && timestamp != *next_timestamp_from_input_) {
+    // A gap in the timestamp sequence is detected. Skip the same number of
+    // samples from the file.
+    uint32_t jump = timestamp - *next_timestamp_from_input_;
+    RTC_CHECK(input_->Seek(jump));
+  }
+
+  next_timestamp_from_input_ = timestamp + samples;
+  RTC_CHECK(input_->Read(static_cast<size_t>(samples), destination));
+
+  if (stereo_) {
+    InputAudioFile::DuplicateInterleaved(destination, samples, 2, destination);
+  }
 }
 
 int FakeDecodeFromFile::DecodeInternal(const uint8_t* encoded,
@@ -69,88 +77,16 @@ int FakeDecodeFromFile::DecodeInternal(const uint8_t* encoded,
                                        int sample_rate_hz,
                                        int16_t* decoded,
                                        SpeechType* speech_type) {
+  // This call is only used to produce codec-internal comfort noise.
   RTC_DCHECK_EQ(sample_rate_hz, SampleRateHz());
+  RTC_DCHECK_EQ(encoded_len, 0);
+  RTC_DCHECK(!encoded);  // NetEq always sends nullptr in this case.
 
-  const int samples_to_decode = PacketDuration(encoded, encoded_len);
+  const int samples_to_decode = rtc::CheckedDivExact(SampleRateHz(), 100);
   const int total_samples_to_decode = samples_to_decode * (stereo_ ? 2 : 1);
-
-  if (encoded_len == 0) {
-    // Decoder is asked to produce codec-internal comfort noise.
-    RTC_DCHECK(!encoded);  // NetEq always sends nullptr in this case.
-    RTC_DCHECK(cng_mode_);
-    RTC_DCHECK_GT(total_samples_to_decode, 0);
-    std::fill_n(decoded, total_samples_to_decode, 0);
-    *speech_type = kComfortNoise;
-    return rtc::dchecked_cast<int>(total_samples_to_decode);
-  }
-
-  RTC_CHECK_GE(encoded_len, 12);
-  uint32_t timestamp_to_decode =
-      ByteReader<uint32_t>::ReadLittleEndian(encoded);
-
-  if (next_timestamp_from_input_ &&
-      timestamp_to_decode != *next_timestamp_from_input_) {
-    // A gap in the timestamp sequence is detected. Skip the same number of
-    // samples from the file.
-    uint32_t jump = timestamp_to_decode - *next_timestamp_from_input_;
-    RTC_CHECK(input_->Seek(jump));
-  }
-
-  next_timestamp_from_input_ = timestamp_to_decode + samples_to_decode;
-
-  uint32_t original_payload_size_bytes =
-      ByteReader<uint32_t>::ReadLittleEndian(&encoded[8]);
-  if (original_payload_size_bytes <= 2) {
-    // This is a comfort noise payload.
-    RTC_DCHECK_GT(total_samples_to_decode, 0);
-    std::fill_n(decoded, total_samples_to_decode, 0);
-    *speech_type = kComfortNoise;
-    cng_mode_ = true;
-    return rtc::dchecked_cast<int>(total_samples_to_decode);
-  }
-
-  cng_mode_ = false;
-  RTC_CHECK(input_->Read(static_cast<size_t>(samples_to_decode), decoded));
-
-  if (stereo_) {
-    InputAudioFile::DuplicateInterleaved(decoded, samples_to_decode, 2,
-                                         decoded);
-  }
-
-  *speech_type = kSpeech;
-  last_decoded_length_ = samples_to_decode;
+  std::fill_n(decoded, total_samples_to_decode, 0);
+  *speech_type = kComfortNoise;
   return rtc::dchecked_cast<int>(total_samples_to_decode);
-}
-
-int FakeDecodeFromFile::PacketDuration(const uint8_t* encoded,
-                                       size_t encoded_len) const {
-  const uint32_t original_payload_size_bytes =
-      encoded_len < 8 + sizeof(uint32_t)
-          ? 0
-          : ByteReader<uint32_t>::ReadLittleEndian(&encoded[8]);
-  const uint32_t samples_to_decode =
-      encoded_len < 4 + sizeof(uint32_t)
-          ? 0
-          : ByteReader<uint32_t>::ReadLittleEndian(&encoded[4]);
-  if (encoded_len == 0) {
-    // Decoder is asked to produce codec-internal comfort noise.
-    return rtc::CheckedDivExact(SampleRateHz(), 100);
-  }
-  bool is_dtx_payload =
-      original_payload_size_bytes <= 2 || samples_to_decode == 0;
-  bool has_error_duration =
-      samples_to_decode % rtc::CheckedDivExact(SampleRateHz(), 100) != 0;
-  if (is_dtx_payload || has_error_duration) {
-    if (last_decoded_length_ > 0) {
-      // Use length of last decoded packet.
-      return rtc::dchecked_cast<int>(last_decoded_length_);
-    } else {
-      // This is the first packet to decode, and we do not know the length of
-      // it. Set it to 10 ms.
-      return rtc::CheckedDivExact(SampleRateHz(), 100);
-    }
-  }
-  return samples_to_decode;
 }
 
 void FakeDecodeFromFile::PrepareEncoded(uint32_t timestamp,
@@ -163,6 +99,23 @@ void FakeDecodeFromFile::PrepareEncoded(uint32_t timestamp,
                                           rtc::checked_cast<uint32_t>(samples));
   ByteWriter<uint32_t>::WriteLittleEndian(
       &encoded[8], rtc::checked_cast<uint32_t>(original_payload_size_bytes));
+}
+
+std::vector<AudioDecoder::ParseResult> FakeDecodeFromFile::ParsePayload(
+    rtc::Buffer&& payload,
+    uint32_t timestamp) {
+  RTC_CHECK_GE(payload.size(), 12);
+  // Parse payload encoded in PrepareEncoded.
+  RTC_CHECK_EQ(timestamp, ByteReader<uint32_t>::ReadLittleEndian(&payload[0]));
+  size_t samples = ByteReader<uint32_t>::ReadLittleEndian(&payload[4]);
+  size_t original_payload_size_bytes =
+      ByteReader<uint32_t>::ReadLittleEndian(&payload[8]);
+  bool opus_dtx = original_payload_size_bytes <= 2;
+  std::vector<ParseResult> results;
+  results.emplace_back(
+      timestamp, 0,
+      std::make_unique<FakeEncodedFrame>(this, timestamp, samples, opus_dtx));
+  return results;
 }
 
 }  // namespace test

@@ -20,13 +20,13 @@ namespace webrtc {
 namespace test {
 
 // If the test_artifacts_dir flag is set, returns true and copies the location
-// of the dir to |out_dir|. Otherwise, return false.
+// of the dir to `out_dir`. Otherwise, return false.
 bool GetTestArtifactsDir(std::string* out_dir);
 
-// Writes a |length| bytes array |buffer| to |filename| in isolated output
+// Writes a `length` bytes array `buffer` to `filename` in isolated output
 // directory defined by swarming. If the file is existing, content will be
 // appended. Otherwise a new file will be created. This function returns false
-// if isolated output directory has not been defined, or |filename| indicates an
+// if isolated output directory has not been defined, or `filename` indicates an
 // invalid or non-writable file, or underlying file system errors.
 bool WriteToTestArtifactsDir(const char* filename,
                              const uint8_t* buffer,

@@ -12,34 +12,34 @@
 
 #include <string>
 
+#include "absl/strings/match.h"
 #include "absl/strings/string_view.h"
 #include "rtc_base/system/rtc_export.h"
 
 namespace webrtc {
 
-// An interface that provides a key-value mapping for configuring internal
-// details of WebRTC. Note that there's no guarantess that the meaning of a
-// particular key value mapping will be preserved over time and no announcements
-// will be made if they are changed. It's up to the library user to ensure that
-// the behavior does not break.
+// An interface that provides the means to access field trials.
+//
+// Note that there are no guarantess that the meaning of a particular key-value
+// mapping will be preserved over time and no announcements will be made if they
+// are changed. It's up to the library user to ensure that the behavior does not
+// break.
 class RTC_EXPORT FieldTrialsView {
  public:
   virtual ~FieldTrialsView() = default;
-  // The configured value for the given key. Defaults to an empty string.
+
+  // Returns the configured value for `key` or an empty string if the field
+  // trial isn't configured.
   virtual std::string Lookup(absl::string_view key) const = 0;
 
   bool IsEnabled(absl::string_view key) const {
-    return Lookup(key).find("Enabled") == 0;
+    return absl::StartsWith(Lookup(key), "Enabled");
   }
 
   bool IsDisabled(absl::string_view key) const {
-    return Lookup(key).find("Disabled") == 0;
+    return absl::StartsWith(Lookup(key), "Disabled");
   }
 };
-
-// TODO(bugs.webrtc.org/10335): Remove once all migrated to
-// api/field_trials_view.h
-typedef FieldTrialsView WebRtcKeyValueConfig;
 
 }  // namespace webrtc
 

@@ -12,7 +12,6 @@
 
 namespace webrtc {
 void FuzzOneInput(const uint8_t* data, size_t size) {
-  int qp;
-  vp9::GetQp(data, size, &qp);
+  ParseUncompressedVp9Header(rtc::MakeArrayView(data, size));
 }
 }  // namespace webrtc

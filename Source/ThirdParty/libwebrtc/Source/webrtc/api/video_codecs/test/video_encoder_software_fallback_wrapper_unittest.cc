@@ -796,6 +796,37 @@ TEST(SoftwareFallbackEncoderTest, ReportsHardwareAccelerated) {
   EXPECT_FALSE(wrapper->GetEncoderInfo().is_hardware_accelerated);
 }
 
+TEST(SoftwareFallbackEncoderTest, ConfigureHardwareOnSecondAttempt) {
+  auto* sw_encoder = new ::testing::NiceMock<MockVideoEncoder>();
+  auto* hw_encoder = new ::testing::NiceMock<MockVideoEncoder>();
+  EXPECT_CALL(*sw_encoder, GetEncoderInfo())
+      .WillRepeatedly(Return(GetEncoderInfoWithHardwareAccelerated(false)));
+  EXPECT_CALL(*hw_encoder, GetEncoderInfo())
+      .WillRepeatedly(Return(GetEncoderInfoWithHardwareAccelerated(true)));
+
+  std::unique_ptr<VideoEncoder> wrapper =
+      CreateVideoEncoderSoftwareFallbackWrapper(
+          std::unique_ptr<VideoEncoder>(sw_encoder),
+          std::unique_ptr<VideoEncoder>(hw_encoder));
+  EXPECT_TRUE(wrapper->GetEncoderInfo().is_hardware_accelerated);
+
+  // Initialize the encoder. When HW attempt fails we fallback to SW.
+  VideoCodec codec_ = {};
+  codec_.width = 100;
+  codec_.height = 100;
+  EXPECT_CALL(*hw_encoder, InitEncode(_, _))
+      .WillOnce(Return(WEBRTC_VIDEO_CODEC_ERR_PARAMETER));
+  EXPECT_CALL(*sw_encoder, InitEncode(_, _))
+      .WillOnce(Return(WEBRTC_VIDEO_CODEC_OK));
+  wrapper->InitEncode(&codec_, kSettings);
+
+  // When reconfiguring (Release+InitEncode) we should re-attempt HW.
+  wrapper->Release();
+  EXPECT_CALL(*hw_encoder, InitEncode(_, _))
+      .WillOnce(Return(WEBRTC_VIDEO_CODEC_OK));
+  wrapper->InitEncode(&codec_, kSettings);
+}
+
 class PreferTemporalLayersFallbackTest : public ::testing::Test {
  public:
   PreferTemporalLayersFallbackTest() {}

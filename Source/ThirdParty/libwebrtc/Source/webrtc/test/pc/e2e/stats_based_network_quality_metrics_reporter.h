@@ -21,6 +21,7 @@
 
 #include "absl/strings/string_view.h"
 #include "api/numerics/samples_stats_counter.h"
+#include "api/test/metrics/metrics_logger.h"
 #include "api/test/network_emulation/network_emulation_interfaces.h"
 #include "api/test/network_emulation_manager.h"
 #include "api/test/peerconnection_quality_test_fixture.h"
@@ -32,17 +33,32 @@
 namespace webrtc {
 namespace webrtc_pc_e2e {
 
+// TODO(titovartem): make this class testable and add tests.
 class StatsBasedNetworkQualityMetricsReporter
     : public PeerConnectionE2EQualityTestFixture::QualityMetricsReporter {
  public:
-  // |networks| map peer name to network to report network layer stability stats
+  // Emulated network layer stats for single peer.
+  struct NetworkLayerStats {
+    EmulatedNetworkStats endpoints_stats;
+    EmulatedNetworkNodeStats uplink_stats;
+    EmulatedNetworkNodeStats downlink_stats;
+    std::set<std::string> receivers;
+  };
+
+  // `networks` map peer name to network to report network layer stability stats
   // and to log network layer metrics.
   StatsBasedNetworkQualityMetricsReporter(
       std::map<std::string, std::vector<EmulatedEndpoint*>> peer_endpoints,
-      NetworkEmulationManager* network_emulation)
-      : collector_(std::move(peer_endpoints), network_emulation),
-        clock_(network_emulation->time_controller()->GetClock()) {}
+      NetworkEmulationManager* network_emulation,
+      test::MetricsLogger* metrics_logger);
   ~StatsBasedNetworkQualityMetricsReporter() override = default;
+
+  void AddPeer(absl::string_view peer_name,
+               std::vector<EmulatedEndpoint*> endpoints);
+  void AddPeer(absl::string_view peer_name,
+               std::vector<EmulatedEndpoint*> endpoints,
+               std::vector<EmulatedNetworkNode*> uplink,
+               std::vector<EmulatedNetworkNode*> downlink);
 
   // Network stats must be empty when this method will be invoked.
   void Start(absl::string_view test_case_name,
@@ -67,11 +83,6 @@ class StatsBasedNetworkQualityMetricsReporter
     int64_t packets_sent = 0;
   };
 
-  struct NetworkLayerStats {
-    std::unique_ptr<EmulatedNetworkStats> stats;
-    std::set<std::string> receivers;
-  };
-
   class NetworkLayerStatsCollector {
    public:
     NetworkLayerStatsCollector(
@@ -80,11 +91,22 @@ class StatsBasedNetworkQualityMetricsReporter
 
     void Start();
 
+    void AddPeer(absl::string_view peer_name,
+                 std::vector<EmulatedEndpoint*> endpoints,
+                 std::vector<EmulatedNetworkNode*> uplink,
+                 std::vector<EmulatedNetworkNode*> downlink);
+
     std::map<std::string, NetworkLayerStats> GetStats();
 
    private:
-    const std::map<std::string, std::vector<EmulatedEndpoint*>> peer_endpoints_;
-    const std::map<rtc::IPAddress, std::string> ip_to_peer_;
+    Mutex mutex_;
+    std::map<std::string, std::vector<EmulatedEndpoint*>> peer_endpoints_
+        RTC_GUARDED_BY(mutex_);
+    std::map<std::string, std::vector<EmulatedNetworkNode*>> peer_uplinks_
+        RTC_GUARDED_BY(mutex_);
+    std::map<std::string, std::vector<EmulatedNetworkNode*>> peer_downlinks_
+        RTC_GUARDED_BY(mutex_);
+    std::map<rtc::IPAddress, std::string> ip_to_peer_ RTC_GUARDED_BY(mutex_);
     NetworkEmulationManager* const network_emulation_;
   };
 
@@ -93,20 +115,13 @@ class StatsBasedNetworkQualityMetricsReporter
                    const NetworkLayerStats& network_layer_stats,
                    int64_t packet_loss,
                    const Timestamp& end_time);
-  void ReportResult(const std::string& metric_name,
-                    const std::string& network_label,
-                    double value,
-                    const std::string& unit) const;
-  void ReportResult(const std::string& metric_name,
-                    const std::string& network_label,
-                    const SamplesStatsCounter& value,
-                    const std::string& unit) const;
   std::string GetTestCaseName(absl::string_view network_label) const;
   void LogNetworkLayerStats(const std::string& peer_name,
                             const NetworkLayerStats& stats) const;
 
   NetworkLayerStatsCollector collector_;
   Clock* const clock_;
+  test::MetricsLogger* const metrics_logger_;
 
   std::string test_case_name_;
   Timestamp start_time_ = Timestamp::MinusInfinity();

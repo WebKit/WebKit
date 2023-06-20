@@ -11,16 +11,22 @@
 #ifndef TEST_PC_E2E_ANALYZER_VIDEO_SIMULCAST_DUMMY_BUFFER_HELPER_H_
 #define TEST_PC_E2E_ANALYZER_VIDEO_SIMULCAST_DUMMY_BUFFER_HELPER_H_
 
-#include "api/video/i420_buffer.h"
+#include "api/video/video_frame.h"
 #include "api/video/video_frame_buffer.h"
 
 namespace webrtc {
 namespace webrtc_pc_e2e {
 
+// Creates a special video frame buffer that should be used to create frames
+// during Selective Forwarding Unit (SFU) emulation. Such frames are used when
+// original was discarded and some frame is required to be passed upstream
+// to make WebRTC pipeline happy and not request key frame on the received
+// stream due to lack of incoming frames.
 rtc::scoped_refptr<webrtc::VideoFrameBuffer> CreateDummyFrameBuffer();
 
-bool IsDummyFrameBuffer(
-    rtc::scoped_refptr<webrtc::VideoFrameBuffer> video_frame_buffer);
+// Tests if provided frame contains a buffer created by
+// `CreateDummyFrameBuffer`.
+bool IsDummyFrame(const webrtc::VideoFrame& video_frame);
 
 }  // namespace webrtc_pc_e2e
 }  // namespace webrtc

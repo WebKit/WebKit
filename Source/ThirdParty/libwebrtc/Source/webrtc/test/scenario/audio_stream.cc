@@ -11,6 +11,7 @@
 
 #include "absl/memory/memory.h"
 #include "test/call_test.h"
+#include "test/video_test_constants.h"
 
 #if WEBRTC_ENABLE_PROTOBUF
 RTC_PUSH_IGNORING_WUNDEF()
@@ -67,6 +68,20 @@ absl::optional<std::string> CreateAdaptationString(
 }
 }  // namespace
 
+std::vector<RtpExtension> GetAudioRtpExtensions(
+    const AudioStreamConfig& config) {
+  std::vector<RtpExtension> extensions;
+  if (config.stream.in_bandwidth_estimation) {
+    extensions.push_back({RtpExtension::kTransportSequenceNumberUri,
+                          kTransportSequenceNumberExtensionId});
+  }
+  if (config.stream.abs_send_time) {
+    extensions.push_back(
+        {RtpExtension::kAbsSendTimeUri, kAbsSendTimeExtensionId});
+  }
+  return extensions;
+}
+
 SendAudioStream::SendAudioStream(
     CallClient* sender,
     AudioStreamConfig config,
@@ -89,13 +104,15 @@ SendAudioStream::SendAudioStream(
   // stereo, but the actual channel count used is based on the "stereo"
   // parameter.
   send_config.send_codec_spec = AudioSendStream::Config::SendCodecSpec(
-      CallTest::kAudioSendPayloadType, {"opus", 48000, 2, sdp_params});
+      VideoTestConstants::kAudioSendPayloadType,
+      {"opus", 48000, 2, sdp_params});
   RTC_DCHECK_LE(config.source.channels, 2);
   send_config.encoder_factory = encoder_factory;
 
-  if (config.encoder.fixed_rate)
+  bool use_fixed_rate = !config.encoder.min_rate && !config.encoder.max_rate;
+  if (use_fixed_rate)
     send_config.send_codec_spec->target_bitrate_bps =
-        config.encoder.fixed_rate->bps();
+        config.encoder.fixed_rate.bps();
   if (!config.adapt.binary_proto.empty()) {
     send_config.audio_network_adaptor_config = config.adapt.binary_proto;
   } else if (config.network_adaptation) {
@@ -106,9 +123,9 @@ SendAudioStream::SendAudioStream(
       config.stream.in_bandwidth_estimation) {
     DataRate min_rate = DataRate::Infinity();
     DataRate max_rate = DataRate::Infinity();
-    if (config.encoder.fixed_rate) {
-      min_rate = *config.encoder.fixed_rate;
-      max_rate = *config.encoder.fixed_rate;
+    if (use_fixed_rate) {
+      min_rate = config.encoder.fixed_rate;
+      max_rate = config.encoder.fixed_rate;
     } else {
       min_rate = *config.encoder.min_rate;
       max_rate = *config.encoder.max_rate;
@@ -119,20 +136,13 @@ SendAudioStream::SendAudioStream(
 
   if (config.stream.in_bandwidth_estimation) {
     send_config.send_codec_spec->transport_cc_enabled = true;
-    send_config.rtp.extensions = {{RtpExtension::kTransportSequenceNumberUri,
-                                   kTransportSequenceNumberExtensionId}};
   }
-  if (config.stream.abs_send_time) {
-    send_config.rtp.extensions.push_back(
-        {RtpExtension::kAbsSendTimeUri, kAbsSendTimeExtensionId});
-  }
+  send_config.rtp.extensions = GetAudioRtpExtensions(config);
 
   sender_->SendTask([&] {
     send_stream_ = sender_->call_->CreateAudioSendStream(send_config);
-    if (field_trial::IsEnabled("WebRTC-SendSideBwe-WithOverhead")) {
-      sender->call_->OnAudioTransportOverheadChanged(
-          sender_->transport_->packet_overhead().bytes());
-    }
+    sender->call_->OnAudioTransportOverheadChanged(
+        sender_->transport_->packet_overhead().bytes());
   });
 }
 
@@ -180,15 +190,9 @@ ReceiveAudioStream::ReceiveAudioStream(
   recv_config.rtcp_send_transport = feedback_transport;
   recv_config.rtp.remote_ssrc = send_stream->ssrc_;
   receiver->ssrc_media_types_[recv_config.rtp.remote_ssrc] = MediaType::AUDIO;
-  if (config.stream.in_bandwidth_estimation) {
-    recv_config.rtp.transport_cc = true;
-    recv_config.rtp.extensions = {{RtpExtension::kTransportSequenceNumberUri,
-                                   kTransportSequenceNumberExtensionId}};
-  }
-  receiver_->AddExtensions(recv_config.rtp.extensions);
   recv_config.decoder_factory = decoder_factory;
   recv_config.decoder_map = {
-      {CallTest::kAudioSendPayloadType, {"opus", 48000, 2}}};
+      {VideoTestConstants::kAudioSendPayloadType, {"opus", 48000, 2}}};
   recv_config.sync_group = config.render.sync_group;
   receiver_->SendTask([&] {
     receive_stream_ = receiver_->call_->CreateAudioReceiveStream(recv_config);

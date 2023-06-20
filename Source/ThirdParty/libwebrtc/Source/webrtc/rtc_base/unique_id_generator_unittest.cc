@@ -33,11 +33,13 @@ class FakeTaskQueue : public webrtc::TaskQueueBase {
   FakeTaskQueue() : task_queue_setter_(this) {}
 
   void Delete() override {}
-  void PostTask(absl::AnyInvocable<void() &&> task) override {}
-  void PostDelayedTask(absl::AnyInvocable<void() &&> task,
-                       webrtc::TimeDelta delay) override {}
-  void PostDelayedHighPrecisionTask(absl::AnyInvocable<void() &&> task,
-                                    webrtc::TimeDelta delay) override {}
+  void PostTaskImpl(absl::AnyInvocable<void() &&> task,
+                    const PostTaskTraits& traits,
+                    const webrtc::Location& location) override {}
+  void PostDelayedTaskImpl(absl::AnyInvocable<void() &&> task,
+                           webrtc::TimeDelta delay,
+                           const PostDelayedTaskTraits& traits,
+                           const webrtc::Location& location) override {}
 
  private:
   CurrentTaskQueueSetter task_queue_setter_;
@@ -62,7 +64,7 @@ TYPED_TEST(UniqueIdGeneratorTest, ElementsDoNotRepeat) {
   Generator generator;
   std::vector<typename Generator::value_type> values;
   for (size_t i = 0; i < num_elements; i++) {
-    values.push_back(generator());
+    values.push_back(generator.Generate());
   }
 
   EXPECT_EQ(num_elements, values.size());
@@ -78,7 +80,7 @@ TYPED_TEST(UniqueIdGeneratorTest, KnownElementsAreNotGenerated) {
   Generator generator1;
   std::vector<typename Generator::value_type> known_values;
   for (size_t i = 0; i < num_elements; i++) {
-    known_values.push_back(generator1());
+    known_values.push_back(generator1.Generate());
   }
   EXPECT_EQ(num_elements, known_values.size());
 
@@ -87,7 +89,7 @@ TYPED_TEST(UniqueIdGeneratorTest, KnownElementsAreNotGenerated) {
 
   std::vector<typename Generator::value_type> values;
   for (size_t i = 0; i < num_elements; i++) {
-    values.push_back(generator2());
+    values.push_back(generator2.Generate());
   }
   EXPECT_THAT(values, ::testing::SizeIs(num_elements));
   absl::c_sort(values);
@@ -105,7 +107,7 @@ TYPED_TEST(UniqueIdGeneratorTest, AddedElementsAreNotGenerated) {
   Generator generator1;
   std::vector<typename Generator::value_type> known_values;
   for (size_t i = 0; i < num_elements; i++) {
-    known_values.push_back(generator1());
+    known_values.push_back(generator1.Generate());
   }
   EXPECT_EQ(num_elements, known_values.size());
 
@@ -118,7 +120,7 @@ TYPED_TEST(UniqueIdGeneratorTest, AddedElementsAreNotGenerated) {
 
   std::vector<typename Generator::value_type> values;
   for (size_t i = 0; i < num_elements; i++) {
-    values.push_back(generator2());
+    values.push_back(generator2.Generate());
   }
   EXPECT_THAT(values, ::testing::SizeIs(num_elements));
   absl::c_sort(values);
@@ -134,7 +136,7 @@ TYPED_TEST(UniqueIdGeneratorTest, AddKnownIdOnNewIdReturnsTrue) {
 
   rtc::InitRandom(0);
   Generator generator1;
-  const typename Generator::value_type id = generator1();
+  const typename Generator::value_type id = generator1.Generate();
 
   rtc::InitRandom(0);
   Generator generator2;
@@ -146,7 +148,7 @@ TYPED_TEST(UniqueIdGeneratorTest, AddKnownIdCalledAgainForSameIdReturnsFalse) {
 
   rtc::InitRandom(0);
   Generator generator1;
-  const typename Generator::value_type id = generator1();
+  const typename Generator::value_type id = generator1.Generate();
 
   rtc::InitRandom(0);
   Generator generator2;
@@ -160,7 +162,7 @@ TYPED_TEST(UniqueIdGeneratorTest,
 
   rtc::InitRandom(0);
   Generator generator1;
-  const typename Generator::value_type id = generator1();
+  const typename Generator::value_type id = generator1.Generate();
   std::vector<typename Generator::value_type> known_values = {id};
 
   rtc::InitRandom(0);
@@ -182,7 +184,7 @@ TEST(UniqueNumberGenerator, UsedOnSecondaryThread) {
   ASSERT_NE(current_tq, webrtc::TaskQueueBase::Current());
 
   // Generating an id should be fine in this context.
-  generator.GenerateNumber();
+  generator.Generate();
 }
 
 #if RTC_DCHECK_IS_ON && GTEST_HAS_DEATH_TEST && !defined(WEBRTC_ANDROID)
@@ -196,13 +198,13 @@ TEST(UniqueNumberGeneratorDeathTest, FailsWhenUsedInWrongContext) {
   FakeTaskQueue initial_fake_task_queue;
   // Generate an ID on the current thread. This causes the generator to attach
   // to the current thread context.
-  generator.GenerateNumber();
+  generator.Generate();
 
   // Instantiate a fake task queue that will register itself as the current tq.
   FakeTaskQueue fake_task_queue;
 
   // Attempting to generate an id should now trigger a dcheck.
-  EXPECT_DEATH(generator.GenerateNumber(), "");
+  EXPECT_DEATH(generator.Generate(), "");
 }
 #endif
 

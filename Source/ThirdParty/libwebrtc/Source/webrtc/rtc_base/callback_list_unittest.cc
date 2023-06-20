@@ -7,11 +7,12 @@
  *  in the file PATENTS.  All contributing project authors may
  *  be found in the AUTHORS file in the root of the source tree.
  */
+#include "rtc_base/callback_list.h"
+
 #include <string>
 #include <type_traits>
 
 #include "api/function_view.h"
-#include "rtc_base/callback_list.h"
 #include "test/gtest.h"
 
 namespace webrtc {
@@ -25,7 +26,7 @@ TEST(CallbackList, NoReceiverSingleMessageTest) {
 
 TEST(CallbackList, MultipleParameterMessageTest) {
   CallbackList<const std::string&, std::string, std::string&&, int, int*,
-             std::string&>
+               std::string&>
       c;
   std::string str = "messege";
   int i = 10;

@@ -141,9 +141,19 @@ class FakeDtlsTransport : public DtlsTransportInternal {
   const rtc::SSLFingerprint& dtls_fingerprint() const {
     return dtls_fingerprint_;
   }
+  webrtc::RTCError SetRemoteParameters(absl::string_view alg,
+                                       const uint8_t* digest,
+                                       size_t digest_len,
+                                       absl::optional<rtc::SSLRole> role) {
+    if (role) {
+      SetDtlsRole(*role);
+    }
+    SetRemoteFingerprint(alg, digest, digest_len);
+    return webrtc::RTCError::OK();
+  }
   bool SetRemoteFingerprint(absl::string_view alg,
                             const uint8_t* digest,
-                            size_t digest_len) override {
+                            size_t digest_len) {
     dtls_fingerprint_ =
         rtc::SSLFingerprint(alg, rtc::MakeArrayView(digest, digest_len));
     return true;

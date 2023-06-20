@@ -47,7 +47,6 @@ void PopulateRtpWithCodecSpecifics(const CodecSpecificInfo& info,
       vp8_header.temporalIdx = info.codecSpecific.VP8.temporalIdx;
       vp8_header.layerSync = info.codecSpecific.VP8.layerSync;
       vp8_header.keyIdx = info.codecSpecific.VP8.keyIdx;
-      rtp->simulcastIdx = spatial_index.value_or(0);
       return;
     }
     case kVideoCodecVP9: {
@@ -95,7 +94,6 @@ void PopulateRtpWithCodecSpecifics(const CodecSpecificInfo& info,
       auto& h264_header = rtp->video_type_header.emplace<RTPVideoHeaderH264>();
       h264_header.packetization_mode =
           info.codecSpecific.H264.packetization_mode;
-      rtp->simulcastIdx = spatial_index.value_or(0);
       return;
     }
 #ifndef DISABLE_H265
@@ -110,7 +108,6 @@ void PopulateRtpWithCodecSpecifics(const CodecSpecificInfo& info,
     case kVideoCodecMultiplex:
     case kVideoCodecGeneric:
       rtp->codec = kVideoCodecGeneric;
-      rtp->simulcastIdx = spatial_index.value_or(0);
       return;
     default:
       return;
@@ -215,6 +212,7 @@ RTPVideoHeader RtpPayloadParams::GetRtpVideoHeader(
     PopulateRtpWithCodecSpecifics(*codec_specific_info, image.SpatialIndex(),
                                   &rtp_video_header);
   }
+  rtp_video_header.simulcastIdx = image.SimulcastIndex().value_or(0);
   rtp_video_header.frame_type = image._frameType;
   rtp_video_header.rotation = image.rotation_;
   rtp_video_header.content_type = image.content_type_;
@@ -418,7 +416,9 @@ absl::optional<FrameDependencyStructure> RtpPayloadParams::GenericStructure(
     }
     case VideoCodecType::kVideoCodecAV1:
     case VideoCodecType::kVideoCodecH264:
+#ifndef DISABLE_H265
     case VideoCodecType::kVideoCodecH265:
+#endif
     case VideoCodecType::kVideoCodecMultiplex:
       return absl::nullopt;
   }

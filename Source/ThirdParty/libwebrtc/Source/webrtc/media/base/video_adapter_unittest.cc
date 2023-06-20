@@ -15,12 +15,14 @@
 #include <string>
 #include <utility>
 
+#include "api/video/resolution.h"
 #include "api/video/video_frame.h"
 #include "api/video/video_source_interface.h"
 #include "media/base/fake_frame_source.h"
 #include "rtc_base/arraysize.h"
 #include "rtc_base/time_utils.h"
 #include "test/field_trial.h"
+#include "test/gmock.h"
 #include "test/gtest.h"
 
 namespace cricket {
@@ -28,6 +30,11 @@ namespace {
 const int kWidth = 1280;
 const int kHeight = 720;
 const int kDefaultFps = 30;
+
+using ::testing::_;
+using ::testing::Eq;
+using ::testing::Pair;
+using webrtc::Resolution;
 
 rtc::VideoSinkWants BuildSinkWants(absl::optional<int> target_pixel_count,
                                    int max_pixel_count,
@@ -38,6 +45,31 @@ rtc::VideoSinkWants BuildSinkWants(absl::optional<int> target_pixel_count,
   wants.max_pixel_count = max_pixel_count;
   wants.max_framerate_fps = max_framerate_fps;
   wants.resolution_alignment = sink_alignment;
+  wants.is_active = true;
+  wants.aggregates.emplace(rtc::VideoSinkWants::Aggregates());
+  wants.aggregates->any_active_without_requested_resolution = false;
+  return wants;
+}
+
+rtc::VideoSinkWants BuildSinkWants(
+    absl::optional<webrtc::Resolution> requested_resolution,
+    bool any_active_without_requested_resolution) {
+  rtc::VideoSinkWants wants;
+  wants.max_framerate_fps = kDefaultFps;
+  wants.resolution_alignment = 1;
+  wants.is_active = true;
+  if (requested_resolution) {
+    wants.target_pixel_count = requested_resolution->PixelCount();
+    wants.max_pixel_count = requested_resolution->PixelCount();
+    wants.requested_resolution.emplace(rtc::VideoSinkWants::FrameSize(
+        requested_resolution->width, requested_resolution->height));
+  } else {
+    wants.target_pixel_count = kWidth * kHeight;
+    wants.max_pixel_count = kWidth * kHeight;
+  }
+  wants.aggregates.emplace(rtc::VideoSinkWants::Aggregates());
+  wants.aggregates->any_active_without_requested_resolution =
+      any_active_without_requested_resolution;
   return wants;
 }
 
@@ -136,9 +168,22 @@ class VideoAdapterTest : public ::testing::Test,
                     cricket::FOURCC_I420));
   }
 
+  // Return pair of <out resolution, cropping>
+  std::pair<webrtc::Resolution, webrtc::Resolution> AdaptFrameResolution(
+      webrtc::Resolution res) {
+    webrtc::Resolution out;
+    webrtc::Resolution cropped;
+    timestamp_ns_ += 1000000000;
+    EXPECT_TRUE(adapter_.AdaptFrameResolution(
+        res.width, res.height, timestamp_ns_, &cropped.width, &cropped.height,
+        &out.width, &out.height));
+    return std::make_pair(out, cropped);
+  }
+
   webrtc::test::ScopedFieldTrials override_field_trials_;
   const std::unique_ptr<FakeFrameSource> frame_source_;
   VideoAdapter adapter_;
+  int64_t timestamp_ns_ = 0;
   int cropped_width_;
   int cropped_height_;
   int out_width_;
@@ -794,6 +839,16 @@ TEST_P(VideoAdapterTest, RequestAspectRatio) {
   EXPECT_EQ(360, cropped_height_);
   EXPECT_EQ(640, out_width_);
   EXPECT_EQ(360, out_height_);
+
+  adapter_.OnOutputFormatRequest(std::make_pair(1280, 720), 1280 * 720 - 1,
+                                 absl::nullopt);
+  EXPECT_TRUE(adapter_.AdaptFrameResolution(2592, 1944, 0, &cropped_width_,
+                                            &cropped_height_, &out_width_,
+                                            &out_height_));
+  EXPECT_EQ(2592, cropped_width_);
+  EXPECT_EQ(1458, cropped_height_);
+  EXPECT_EQ(1152, out_width_);
+  EXPECT_EQ(648, out_height_);
 }
 
 TEST_P(VideoAdapterTest, RequestAspectRatioWithDifferentOrientation) {
@@ -1149,6 +1204,81 @@ TEST_P(VideoAdapterTest, AdaptResolutionWithSinkAlignment) {
     EXPECT_EQ(out_height_ % sink_alignment, 0);
 
     ++frame_num;
+  }
+}
+
+// Verify the cases the OnOutputFormatRequest is ignored and
+// requested_resolution is used instead.
+TEST_P(VideoAdapterTest, UseRequestedResolutionInsteadOfOnOutputFormatRequest) {
+  {
+    // Both new and old API active => Use OnOutputFormatRequest
+    OnOutputFormatRequest(640, 360, kDefaultFps);
+    adapter_.OnSinkWants(
+        BuildSinkWants(Resolution{.width = 960, .height = 540},
+                       /* any_active_without_requested_resolution= */ true));
+
+    EXPECT_THAT(
+        AdaptFrameResolution(/* input frame */ {.width = 1280, .height = 720})
+            .first,
+        Eq(Resolution{.width = 640, .height = 360}));
+  }
+  {
+    // New API active, old API inactive, ignore OnOutputFormatRequest and use
+    // requested_resolution.
+    OnOutputFormatRequest(640, 360, kDefaultFps);
+    adapter_.OnSinkWants(
+        BuildSinkWants(Resolution{.width = 960, .height = 540},
+                       /* any_active_without_requested_resolution= */ false));
+
+    EXPECT_THAT(
+        AdaptFrameResolution(/* input frame */ {.width = 1280, .height = 720})
+            .first,
+        Eq(Resolution{.width = 960, .height = 540}));
+  }
+
+  {
+    // New API inactive, old API inactive, use OnOutputFormatRequest.
+    OnOutputFormatRequest(640, 360, kDefaultFps);
+    adapter_.OnSinkWants(
+        BuildSinkWants(absl::nullopt,
+                       /* any_active_without_requested_resolution= */ false));
+
+    EXPECT_THAT(
+        AdaptFrameResolution(/* input frame */ {.width = 1280, .height = 720})
+            .first,
+        Eq(Resolution{.width = 640, .height = 360}));
+  }
+
+  {
+    // New API active, old API inactive, remember OnOutputFormatRequest.
+    OnOutputFormatRequest(640, 360, kDefaultFps);
+    adapter_.OnSinkWants(
+        BuildSinkWants(Resolution{.width = 960, .height = 540},
+                       /* any_active_without_requested_resolution= */ false));
+
+    EXPECT_THAT(
+        AdaptFrameResolution(/* input frame */ {.width = 1280, .height = 720})
+            .first,
+        Eq(Resolution{.width = 960, .height = 540}));
+
+    // This is ignored since there is not any active NOT using
+    // requested_resolution.
+    OnOutputFormatRequest(320, 180, kDefaultFps);
+
+    EXPECT_THAT(
+        AdaptFrameResolution(/* input frame */ {.width = 1280, .height = 720})
+            .first,
+        Eq(Resolution{.width = 960, .height = 540}));
+
+    // Disable new API => fallback to last OnOutputFormatRequest.
+    adapter_.OnSinkWants(
+        BuildSinkWants(absl::nullopt,
+                       /* any_active_without_requested_resolution= */ false));
+
+    EXPECT_THAT(
+        AdaptFrameResolution(/* input frame */ {.width = 1280, .height = 720})
+            .first,
+        Eq(Resolution{.width = 320, .height = 180}));
   }
 }
 

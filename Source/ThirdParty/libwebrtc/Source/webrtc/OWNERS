@@ -3,20 +3,4 @@ hta@webrtc.org
 mflodman@webrtc.org
 stefan@webrtc.org
 tommi@webrtc.org
-per-file .gitignore=*
-per-file .gn=mbonadei@webrtc.org
-per-file BUILD.gn=mbonadei@webrtc.org
-per-file .../BUILD.gn=mbonadei@webrtc.org
-per-file *.gni=mbonadei@webrtc.org
-per-file .../*.gni=mbonadei@webrtc.org
-per-file .vpython=mbonadei@webrtc.org
-per-file .vpython3=mbonadei@webrtc.org
-per-file AUTHORS=*
-per-file DEPS=*
-per-file pylintrc=mbonadei@webrtc.org
-per-file WATCHLISTS=*
-per-file native-api.md=mbonadei@webrtc.org
-per-file ....lua=titovartem@webrtc.org
-per-file .style.yapf=jleconte@webrtc.org
-per-file *.py=jansson@webrtc.org
-per-file *.py=jleconte@webrtc.org
+include OWNERS_INFRA #{Owners for infra and repo related files}

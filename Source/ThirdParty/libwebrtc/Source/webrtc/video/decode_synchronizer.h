@@ -45,7 +45,7 @@ namespace webrtc {
 // DecodeSynchronizer, it will instead be executed on the metronome during the
 // tick interval where `max_decode_time` occurs. For example, if a frame is
 // scheduled for decode in 50ms and the tick interval is 20ms, then the frame
-// will be released for decoding in 2 ticks. See below for illustation,
+// will be released for decoding in 2 ticks. See below for illustration,
 //
 // In the case where the decode time is in the past, or must occur before the
 // next metronome tick then the frame will be released right away, allowing a
@@ -53,12 +53,12 @@ namespace webrtc {
 //
 // DecodeSynchronizer is single threaded - all method calls must run on the
 // `worker_queue_`.
-class DecodeSynchronizer : private Metronome::TickListener {
+class DecodeSynchronizer {
  public:
   DecodeSynchronizer(Clock* clock,
                      Metronome* metronome,
                      TaskQueueBase* worker_queue);
-  ~DecodeSynchronizer() override;
+  ~DecodeSynchronizer();
   DecodeSynchronizer(const DecodeSynchronizer&) = delete;
   DecodeSynchronizer& operator=(const DecodeSynchronizer&) = delete;
 
@@ -119,9 +119,8 @@ class DecodeSynchronizer : private Metronome::TickListener {
   void OnFrameScheduled(SynchronizedFrameDecodeScheduler* scheduler);
   void RemoveFrameScheduler(SynchronizedFrameDecodeScheduler* scheduler);
 
-  // Metronome::TickListener implementation.
-  void OnTick() override;
-  TaskQueueBase* OnTickTaskQueue() override;
+  void ScheduleNextTick();
+  void OnTick();
 
   Clock* const clock_;
   TaskQueueBase* const worker_queue_;
@@ -130,6 +129,8 @@ class DecodeSynchronizer : private Metronome::TickListener {
   Timestamp expected_next_tick_ = Timestamp::PlusInfinity();
   std::set<SynchronizedFrameDecodeScheduler*> schedulers_
       RTC_GUARDED_BY(worker_queue_);
+  bool tick_scheduled_ = false;
+  ScopedTaskSafetyDetached safety_;
 };
 
 }  // namespace webrtc

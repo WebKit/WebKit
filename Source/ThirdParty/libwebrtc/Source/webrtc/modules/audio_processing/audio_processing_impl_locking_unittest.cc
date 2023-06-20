@@ -27,7 +27,7 @@ namespace webrtc {
 namespace {
 
 constexpr int kMaxFrameSize = 480;
-constexpr int kTestTimeOutLimit = 10 * 60 * 1000;
+constexpr TimeDelta kTestTimeOutLimit = TimeDelta::Minutes(10);
 
 class AudioProcessingImplLockTest;
 

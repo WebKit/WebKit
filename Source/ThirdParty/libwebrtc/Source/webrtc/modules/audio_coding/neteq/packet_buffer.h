@@ -150,7 +150,7 @@ class PacketBuffer {
   // across.
   virtual size_t GetSpanSamples(size_t last_decoded_length,
                                 size_t sample_rate,
-                                bool count_dtx_waiting_time) const;
+                                bool count_waiting_time) const;
 
   // Returns true if the packet buffer contains any DTX or CNG packets.
   virtual bool ContainsDtxOrCngPacket(

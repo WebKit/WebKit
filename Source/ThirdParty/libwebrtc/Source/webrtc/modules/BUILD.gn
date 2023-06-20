@@ -21,7 +21,6 @@ group("modules") {
     "rtp_rtcp",
     "utility",
     "video_coding",
-    "video_processing",
   ]
 
   if (rtc_desktop_capture_supported) {
@@ -229,8 +228,8 @@ if (rtc_include_tests && !build_with_chromium) {
       "remote_bitrate_estimator:remote_bitrate_estimator_unittests",
       "rtp_rtcp:rtp_rtcp_unittests",
       "video_coding:video_coding_unittests",
+      "video_coding/deprecated:deprecated_unittests",
       "video_coding/timing:timing_unittests",
-      "video_processing:video_processing_unittests",
     ]
 
     if (rtc_desktop_capture_supported) {

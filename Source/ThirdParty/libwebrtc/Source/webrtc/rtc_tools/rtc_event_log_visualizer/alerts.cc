@@ -20,7 +20,7 @@
 #include "logging/rtc_event_log/rtc_event_processor.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
-#include "rtc_base/numerics/sequence_number_util.h"
+#include "rtc_base/numerics/sequence_number_unwrapper.h"
 #include "rtc_base/strings/string_builder.h"
 
 namespace webrtc {

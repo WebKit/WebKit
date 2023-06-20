@@ -40,6 +40,7 @@ message EventStream {
   repeated GenericAckReceived generic_acks_received = 31;
   repeated RouteChange route_changes = 32;
   repeated RemoteEstimates remote_estimates = 33;
+  repeated NetEqSetMinimumDelay neteq_set_minimum_delay = 34;
 
   repeated AudioRecvStreamConfig audio_recv_stream_configs = 101;
   repeated AudioSendStreamConfig audio_send_stream_configs = 102;
@@ -102,6 +103,27 @@ message GenericAckReceived {
   optional bytes receive_acked_packet_time_ms_deltas = 20;
 }
 
+message DependencyDescriptorsWireInfo {
+  // required
+  // Base and delta encoded B and E bits represented as two bit numbers.
+  optional uint32 start_end_bit = 1;
+  optional bytes start_end_bit_deltas = 2;
+
+  // required
+  // Base and delta encoded template IDs, represented as six bit numbers.
+  optional uint32 template_id = 3;
+  optional bytes template_id_deltas = 4;
+
+  // required
+  // Base and delta compressed frame IDs.
+  optional uint32 frame_id = 5;
+  optional bytes frame_id_deltas = 6;
+
+  // optional - set if any DD contains extended information.
+  // The extended info encoded as optional blobs.
+  optional bytes extended_infos = 7;
+}
+
 message IncomingRtpPackets {
   // required
   optional int64 timestamp_ms = 1;
@@ -147,6 +169,8 @@ message IncomingRtpPackets {
   // `audio_level` and `voice_activity` are always used in conjunction.
   optional uint32 audio_level = 19;
   optional bool voice_activity = 20;
+  // Encodes all DD information in the batch, not just the base event.
+  optional DependencyDescriptorsWireInfo dependency_descriptor = 21;
   // TODO(terelius): Add other header extensions like playout delay?
 
   // Delta encodings.
@@ -216,6 +240,8 @@ message OutgoingRtpPackets {
   optional uint32 audio_level = 19;
   optional bool voice_activity = 20;
   // TODO(terelius): Add other header extensions like playout delay?
+  // Encodes all DD information in the batch, not just the base event.
+  optional DependencyDescriptorsWireInfo dependency_descriptor = 21;
 
   // Delta encodings.
   optional bytes timestamp_ms_deltas = 101;
@@ -283,6 +309,26 @@ message AudioPlayoutEvents {
   // Delta encodings.
   optional bytes timestamp_ms_deltas = 101;
   optional bytes local_ssrc_deltas = 102;
+}
+
+message NetEqSetMinimumDelay {
+  // required
+  optional int64 timestamp_ms = 1;
+
+  // required - The SSRC of the remote stream associated with the MinimumDelay
+  // event.
+  optional fixed32 remote_ssrc = 2;
+
+  // required - minimum delay passed to SetBaseMinimumDelay.
+  optional int32 minimum_delay_ms = 3;
+
+  // optional - required if the batch contains delta encoded events.
+  optional uint32 number_of_deltas = 4;
+
+  // Delta encodings.
+  optional bytes timestamp_ms_deltas = 101;
+  optional bytes remote_ssrc_deltas = 102;
+  optional bytes minimum_delay_ms_deltas = 103;
 }
 
 message FrameDecodedEvents {
@@ -407,6 +453,7 @@ message RtpHeaderExtensionConfig {
   optional int32 transport_sequence_number_id = 3;
   optional int32 video_rotation_id = 4;
   optional int32 audio_level_id = 5;
+  optional int32 dependency_descriptor_id = 6;
   // TODO(terelius): Add other header extensions like playout delay?
 }
 

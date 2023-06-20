@@ -131,7 +131,6 @@ std::string VideoReceiveStreamInterface::Config::Rtp::ToString() const {
   ss << "{receiver_reference_time_report: "
      << (rtcp_xr.receiver_reference_time_report ? "on" : "off");
   ss << '}';
-  ss << ", transport_cc: " << (transport_cc ? "on" : "off");
   ss << ", lntf: {enabled: " << (lntf.enabled ? "true" : "false") << '}';
   ss << ", nack: {rtp_history_ms: " << nack.rtp_history_ms << '}';
   ss << ", ulpfec_payload_type: " << ulpfec_payload_type;
@@ -147,13 +146,6 @@ std::string VideoReceiveStreamInterface::Config::Rtp::ToString() const {
     ss << pt << ", ";
   }
   ss << '}';
-  ss << ", extensions: [";
-  for (size_t i = 0; i < extensions.size(); ++i) {
-    ss << extensions[i].ToString();
-    if (i != extensions.size() - 1)
-      ss << ", ";
-  }
-  ss << ']';
   ss << '}';
   return ss.str();
 }

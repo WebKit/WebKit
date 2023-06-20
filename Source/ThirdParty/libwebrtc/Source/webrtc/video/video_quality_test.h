@@ -65,8 +65,6 @@ class VideoQualityTest : public test::CallTest,
   static std::vector<int> ParseCSV(const std::string& str);
 
  protected:
-  std::map<uint8_t, webrtc::MediaType> payload_type_map_;
-
   // No-op implementation to be able to instantiate this class from non-TEST_F
   // locations.
   void TestBody() override;

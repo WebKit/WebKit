@@ -25,10 +25,18 @@ ATOM Win32Window::window_class_ = 0;
 
 Win32Window::Win32Window() : wnd_(nullptr) {}
 
-Win32Window::~Win32Window() { RTC_DCHECK(nullptr == wnd_); }
+Win32Window::~Win32Window() {
+  RTC_DCHECK(nullptr == wnd_);
+}
 
-bool Win32Window::Create(HWND parent, const wchar_t* title, DWORD style,
-                         DWORD exstyle, int x, int y, int cx, int cy) {
+bool Win32Window::Create(HWND parent,
+                         const wchar_t* title,
+                         DWORD style,
+                         DWORD exstyle,
+                         int x,
+                         int y,
+                         int cx,
+                         int cy) {
   if (wnd_) {
     // Window already exists.
     return false;
@@ -83,7 +91,9 @@ void Win32Window::Shutdown() {
   }
 }
 
-bool Win32Window::OnMessage(UINT uMsg, WPARAM wParam, LPARAM lParam,
+bool Win32Window::OnMessage(UINT uMsg,
+                            WPARAM wParam,
+                            LPARAM lParam,
                             LRESULT& result) {
   switch (uMsg) {
     case WM_CLOSE:
@@ -96,13 +106,17 @@ bool Win32Window::OnMessage(UINT uMsg, WPARAM wParam, LPARAM lParam,
   return false;
 }
 
-bool Win32Window::OnClose() { return true; }
+bool Win32Window::OnClose() {
+  return true;
+}
 
 void Win32Window::OnNcDestroy() {
   // Do nothing. }
 }
 
-LRESULT Win32Window::WndProc(HWND hwnd, UINT uMsg, WPARAM wParam,
+LRESULT Win32Window::WndProc(HWND hwnd,
+                             UINT uMsg,
+                             WPARAM wParam,
                              LPARAM lParam) {
   Win32Window* that =
       reinterpret_cast<Win32Window*>(::GetWindowLongPtr(hwnd, GWLP_USERDATA));

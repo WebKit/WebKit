@@ -33,7 +33,8 @@ std::unique_ptr<RtcEventLog> RtcEventLogFactory::Create(
   if (field_trial::IsEnabled("WebRTC-RtcEventLogKillSwitch")) {
     return std::make_unique<RtcEventLogNull>();
   }
-  return std::make_unique<RtcEventLogImpl>(encoding_type, task_queue_factory_);
+  return std::make_unique<RtcEventLogImpl>(
+      RtcEventLogImpl::CreateEncoder(encoding_type), task_queue_factory_);
 #else
   return std::make_unique<RtcEventLogNull>();
 #endif

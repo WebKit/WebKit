@@ -341,5 +341,33 @@ TEST(BitstreamReaderTest, NoGolombOverread) {
   EXPECT_TRUE(reader3.Ok());
 }
 
+TEST(BitstreamReaderTest, ReadLeb128) {
+  const uint8_t bytes[] = {0xFF, 0x7F};
+  BitstreamReader reader(bytes);
+  EXPECT_EQ(reader.ReadLeb128(), 0x3FFFu);
+  EXPECT_TRUE(reader.Ok());
+}
+
+TEST(BitstreamReaderTest, ReadLeb128Large) {
+  const uint8_t max_uint64[] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+                                0xFF, 0xFF, 0xFF, 0xFF, 0x1};
+  BitstreamReader max_reader(max_uint64);
+  EXPECT_EQ(max_reader.ReadLeb128(), std::numeric_limits<uint64_t>::max());
+  EXPECT_TRUE(max_reader.Ok());
+
+  const uint8_t overflow_unit64_t[] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+                                       0xFF, 0xFF, 0xFF, 0xFF, 0x2};
+  BitstreamReader overflow_reader(overflow_unit64_t);
+  EXPECT_EQ(overflow_reader.ReadLeb128(), uint64_t{0});
+  EXPECT_FALSE(overflow_reader.Ok());
+}
+
+TEST(BitstreamReaderTest, ReadLeb128NoEndByte) {
+  const uint8_t bytes[] = {0xFF, 0xFF};
+  BitstreamReader reader(bytes);
+  EXPECT_EQ(reader.ReadLeb128(), uint64_t{0});
+  EXPECT_FALSE(reader.Ok());
+}
+
 }  // namespace
 }  // namespace webrtc

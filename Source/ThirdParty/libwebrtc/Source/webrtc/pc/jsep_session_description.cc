@@ -121,9 +121,6 @@ void UpdateConnectionAddress(
 
 }  // namespace
 
-const int JsepSessionDescription::kDefaultVideoCodecId = 100;
-const char JsepSessionDescription::kDefaultVideoCodecName[] = "VP8";
-
 // TODO(steveanton): Remove this default implementation once Chromium has been
 // updated.
 SdpType SessionDescriptionInterface::GetType() const {

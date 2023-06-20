@@ -51,7 +51,8 @@ void RunLoop::FakeSocketServer::FailNextWait() {
   fail_next_wait_ = true;
 }
 
-bool RunLoop::FakeSocketServer::Wait(int cms, bool process_io) {
+bool RunLoop::FakeSocketServer::Wait(webrtc::TimeDelta max_wait_duration,
+                                     bool process_io) {
   if (fail_next_wait_) {
     fail_next_wait_ = false;
     return false;
@@ -62,11 +63,6 @@ bool RunLoop::FakeSocketServer::Wait(int cms, bool process_io) {
 void RunLoop::FakeSocketServer::WakeUp() {}
 
 rtc::Socket* RunLoop::FakeSocketServer::CreateSocket(int family, int type) {
-  return nullptr;
-}
-
-rtc::AsyncSocket* RunLoop::FakeSocketServer::CreateAsyncSocket(int family,
-                                                               int type) {
   return nullptr;
 }
 

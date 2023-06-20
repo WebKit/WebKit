@@ -15,9 +15,9 @@
 #include <string>
 #include <vector>
 
-#include "api/video_codecs/video_encoder_config.h"
 #include "call/video_receive_stream.h"
 #include "call/video_send_stream.h"
+#include "video/config/video_encoder_config.h"
 
 namespace webrtc {
 namespace test {
@@ -35,15 +35,15 @@ class DefaultVideoStreamFactory
 
  private:
   std::vector<VideoStream> CreateEncoderStreams(
-      int width,
-      int height,
-      const VideoEncoderConfig& encoder_config) override;
+      int frame_width,
+      int frame_height,
+      const webrtc::VideoEncoderConfig& encoder_config) override;
 };
 
-// Creates |encoder_config.number_of_streams| VideoStreams where index
-// |encoder_config.number_of_streams -1| have width = |width|, height =
-// |height|. The total max bitrate of all VideoStreams is
-// |encoder_config.max_bitrate_bps|.
+// Creates `encoder_config.number_of_streams` VideoStreams where index
+// `encoder_config.number_of_streams -1` have width = `width`, height =
+// `height`. The total max bitrate of all VideoStreams is
+// `encoder_config.max_bitrate_bps`.
 std::vector<VideoStream> CreateVideoStreams(
     int width,
     int height,

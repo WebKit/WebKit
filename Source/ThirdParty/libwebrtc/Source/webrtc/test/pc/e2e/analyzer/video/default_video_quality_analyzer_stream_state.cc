@@ -10,18 +10,21 @@
 
 #include "test/pc/e2e/analyzer/video/default_video_quality_analyzer_stream_state.h"
 
-#include <map>
 #include <set>
+#include <unordered_map>
 
 #include "absl/types/optional.h"
 #include "api/units/timestamp.h"
 #include "rtc_base/checks.h"
+#include "system_wrappers/include/clock.h"
+#include "test/pc/e2e/analyzer/video/dvqa/pausable_state.h"
 
 namespace webrtc {
 namespace {
 
 template <typename T>
-absl::optional<T> MaybeGetValue(const std::map<size_t, T>& map, size_t key) {
+absl::optional<T> MaybeGetValue(const std::unordered_map<size_t, T>& map,
+                                size_t key) {
   auto it = map.find(key);
   if (it == map.end()) {
     return absl::nullopt;
@@ -33,15 +36,18 @@ absl::optional<T> MaybeGetValue(const std::map<size_t, T>& map, size_t key) {
 
 StreamState::StreamState(size_t sender,
                          std::set<size_t> receivers,
-                         Timestamp stream_started_time)
+                         Timestamp stream_started_time,
+                         Clock* clock)
     : sender_(sender),
       stream_started_time_(stream_started_time),
+      clock_(clock),
       receivers_(receivers),
       frame_ids_(std::move(receivers)) {
   frame_ids_.AddReader(kAliveFramesQueueIndex);
   RTC_CHECK_NE(sender_, kAliveFramesQueueIndex);
   for (size_t receiver : receivers_) {
     RTC_CHECK_NE(receiver, kAliveFramesQueueIndex);
+    pausable_state_.emplace(receiver, PausableState(clock_));
   }
 }
 
@@ -69,12 +75,14 @@ void StreamState::AddPeer(size_t peer) {
   RTC_CHECK_NE(peer, kAliveFramesQueueIndex);
   frame_ids_.AddReader(peer, kAliveFramesQueueIndex);
   receivers_.insert(peer);
+  pausable_state_.emplace(peer, PausableState(clock_));
 }
 
 void StreamState::RemovePeer(size_t peer) {
   RTC_CHECK_NE(peer, kAliveFramesQueueIndex);
   frame_ids_.RemoveReader(peer);
   receivers_.erase(peer);
+  pausable_state_.erase(peer);
 
   // If we removed the last receiver for the alive frames, we need to pop them
   // from the queue, because now they received by all receivers.
@@ -86,11 +94,11 @@ void StreamState::RemovePeer(size_t peer) {
   }
 }
 
-uint16_t StreamState::MarkNextAliveFrameAsDead() {
-  absl::optional<uint16_t> frame_id =
-      frame_ids_.PopFront(kAliveFramesQueueIndex);
-  RTC_DCHECK(frame_id.has_value());
-  return frame_id.value();
+PausableState* StreamState::GetPausableState(size_t peer) {
+  auto it = pausable_state_.find(peer);
+  RTC_CHECK(it != pausable_state_.end())
+      << "No pausable state for receiver " << peer;
+  return &it->second;
 }
 
 void StreamState::SetLastRenderedFrameTime(size_t peer, Timestamp time) {

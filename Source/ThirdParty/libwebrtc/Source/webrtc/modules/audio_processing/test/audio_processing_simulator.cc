@@ -118,7 +118,7 @@ AudioProcessingSimulator::AudioProcessingSimulator(
     std::unique_ptr<AudioProcessingBuilder> ap_builder)
     : settings_(settings),
       ap_(std::move(audio_processing)),
-      analog_mic_level_(settings.initial_mic_level),
+      applied_input_volume_(settings.initial_mic_level),
       fake_recording_device_(
           settings.initial_mic_level,
           settings_.simulate_mic_gain ? *settings.simulated_mic_kind : 0),
@@ -208,28 +208,50 @@ AudioProcessingSimulator::~AudioProcessingSimulator() {
 }
 
 void AudioProcessingSimulator::ProcessStream(bool fixed_interface) {
-  // Optionally use the fake recording device to simulate analog gain.
+  // Optionally simulate the input volume.
   if (settings_.simulate_mic_gain) {
-    if (settings_.aec_dump_input_filename) {
-      // When the analog gain is simulated and an AEC dump is used as input, set
-      // the undo level to `aec_dump_mic_level_` to virtually restore the
-      // unmodified microphone signal level.
-      fake_recording_device_.SetUndoMicLevel(aec_dump_mic_level_);
+    RTC_DCHECK(!settings_.use_analog_mic_gain_emulation);
+    // Set the input volume to simulate.
+    fake_recording_device_.SetMicLevel(applied_input_volume_);
+
+    if (settings_.aec_dump_input_filename &&
+        aec_dump_applied_input_level_.has_value()) {
+      // For AEC dumps, use the applied input level, if recorded, to "virtually
+      // restore" the capture signal level before the input volume was applied.
+      fake_recording_device_.SetUndoMicLevel(*aec_dump_applied_input_level_);
     }
 
+    // Apply the input volume.
     if (fixed_interface) {
       fake_recording_device_.SimulateAnalogGain(fwd_frame_.data);
     } else {
       fake_recording_device_.SimulateAnalogGain(in_buf_.get());
     }
+  }
 
-    // Notify the current mic level to AGC.
+  // Let APM know which input volume was applied.
+  // Keep track of whether `set_stream_analog_level()` is called.
+  bool applied_input_volume_set = false;
+  if (settings_.simulate_mic_gain) {
+    // When the input volume is simulated, use the volume applied for
+    // simulation.
     ap_->set_stream_analog_level(fake_recording_device_.MicLevel());
-  } else {
-    // Notify the current mic level to AGC.
-    ap_->set_stream_analog_level(settings_.aec_dump_input_filename
-                                     ? aec_dump_mic_level_
-                                     : analog_mic_level_);
+    applied_input_volume_set = true;
+  } else if (!settings_.use_analog_mic_gain_emulation) {
+    // Ignore the recommended input volume stored in `applied_input_volume_` and
+    // instead notify APM with the recorded input volume (if available).
+    if (settings_.aec_dump_input_filename &&
+        aec_dump_applied_input_level_.has_value()) {
+      // The actually applied input volume is available in the AEC dump.
+      ap_->set_stream_analog_level(*aec_dump_applied_input_level_);
+      applied_input_volume_set = true;
+    } else if (!settings_.aec_dump_input_filename) {
+      // Wav files do not include any information about the actually applied
+      // input volume. Hence, use the recommended input volume stored in
+      // `applied_input_volume_`.
+      ap_->set_stream_analog_level(applied_input_volume_);
+      applied_input_volume_set = true;
+    }
   }
 
   // Post any scheduled runtime settings.
@@ -265,13 +287,12 @@ void AudioProcessingSimulator::ProcessStream(bool fixed_interface) {
                                     out_config_, out_buf_->channels()));
   }
 
-  // Store the mic level suggested by AGC.
-  // Note that when the analog gain is simulated and an AEC dump is used as
-  // input, `analog_mic_level_` will not be used with set_stream_analog_level().
-  analog_mic_level_ = ap_->recommended_stream_analog_level();
-  if (settings_.simulate_mic_gain) {
-    fake_recording_device_.SetMicLevel(analog_mic_level_);
+  // Retrieve the recommended input volume only if `set_stream_analog_level()`
+  // has been called to stick to the APM API contract.
+  if (applied_input_volume_set) {
+    applied_input_volume_ = ap_->recommended_stream_analog_level();
   }
+
   if (buffer_memory_writer_) {
     RTC_CHECK(!buffer_file_writer_);
     buffer_memory_writer_->Write(*out_buf_);

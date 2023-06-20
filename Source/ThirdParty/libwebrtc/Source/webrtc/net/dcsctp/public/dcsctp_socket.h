@@ -244,6 +244,13 @@ struct Metrics {
   // Indicates if RFC8260 User Message Interleaving has been negotiated by both
   // peers.
   bool uses_message_interleaving = false;
+
+  // The number of negotiated incoming and outgoing streams, which is configured
+  // locally as `DcSctpOptions::announced_maximum_incoming_streams` and
+  // `DcSctpOptions::announced_maximum_outgoing_streams`, and which will be
+  // signaled by the peer during connection.
+  uint16_t negotiated_maximum_incoming_streams = 0;
+  uint16_t negotiated_maximum_outgoing_streams = 0;
 };
 
 // Callbacks that the DcSctpSocket will call synchronously to the owning

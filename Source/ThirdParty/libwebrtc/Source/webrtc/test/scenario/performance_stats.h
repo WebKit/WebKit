@@ -37,7 +37,6 @@ struct VideoFramePair {
   int repeated = 0;
 };
 
-
 struct VideoFramesStats {
   int count = 0;
   SampleStats<double> pixels;

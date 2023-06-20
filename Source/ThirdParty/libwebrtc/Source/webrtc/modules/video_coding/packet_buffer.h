@@ -82,6 +82,7 @@ class PacketBuffer {
   void Clear();
 
   void ForceSpsPpsIdrIsH264Keyframe();
+  void ResetSpsPpsIdrIsH264Keyframe();
 
  private:
   void ClearInternal();

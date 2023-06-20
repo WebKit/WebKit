@@ -14,6 +14,9 @@
 #include <stddef.h>  // For size_t.
 #include <stdint.h>  // For integer types.
 
+#include "absl/strings/string_view.h"
+#include "api/units/data_size.h"
+
 namespace rtc {
 
 // A BitBuffer API for write operations. Supports symmetric write APIs to the
@@ -22,6 +25,9 @@ namespace rtc {
 // Byte order is assumed big-endian/network.
 class BitBufferWriter {
  public:
+  static constexpr webrtc::DataSize kMaxLeb128Length =
+      webrtc::DataSize::Bytes(10);
+
   // Constructs a bit buffer for the writable buffer of `bytes`.
   BitBufferWriter(uint8_t* bytes, size_t byte_count);
 
@@ -71,6 +77,12 @@ class BitBufferWriter {
   // Signed exponential golomb values are just the unsigned values mapped to the
   // sequence 0, 1, -1, 2, -2, etc. in order.
   bool WriteSignedExponentialGolomb(int32_t val);
+
+  // Writes the Leb128 encoded value.
+  bool WriteLeb128(uint64_t val);
+
+  // Writes the string as bytes of data.
+  bool WriteString(absl::string_view data);
 
  private:
   // The buffer, as a writable array.

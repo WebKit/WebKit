@@ -18,7 +18,6 @@
 #include "api/video/video_adaptation_reason.h"
 #include "api/video_codecs/video_codec.h"
 #include "api/video_codecs/video_encoder.h"
-#include "api/video_codecs/video_encoder_config.h"
 #include "call/adaptation/adaptation_constraint.h"
 #include "call/adaptation/encoder_settings.h"
 #include "call/adaptation/test/fake_frame_rate_provider.h"
@@ -31,6 +30,7 @@
 #include "test/gtest.h"
 #include "test/scoped_key_value_config.h"
 #include "test/testsupport/rtc_expect_death.h"
+#include "video/config/video_encoder_config.h"
 
 namespace webrtc {
 

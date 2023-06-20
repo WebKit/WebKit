@@ -45,6 +45,12 @@ void SquareGenerator::ChangeResolution(size_t width, size_t height) {
   RTC_CHECK(height_ > 0);
 }
 
+FrameGeneratorInterface::Resolution SquareGenerator::GetResolution() const {
+  MutexLock lock(&mutex_);
+  return {.width = static_cast<size_t>(width_),
+          .height = static_cast<size_t>(height_)};
+}
+
 rtc::scoped_refptr<I420Buffer> SquareGenerator::CreateI420Buffer(int width,
                                                                  int height) {
   rtc::scoped_refptr<I420Buffer> buffer(I420Buffer::Create(width, height));
@@ -205,6 +211,76 @@ bool YuvFileGenerator::ReadNextFrame() {
   return frame_index_ != prev_frame_index || file_index_ != prev_file_index;
 }
 
+FrameGeneratorInterface::Resolution YuvFileGenerator::GetResolution() const {
+  return {.width = width_, .height = height_};
+}
+
+NV12FileGenerator::NV12FileGenerator(std::vector<FILE*> files,
+                                     size_t width,
+                                     size_t height,
+                                     int frame_repeat_count)
+    : file_index_(0),
+      frame_index_(std::numeric_limits<size_t>::max()),
+      files_(files),
+      width_(width),
+      height_(height),
+      frame_size_(CalcBufferSize(VideoType::kNV12,
+                                 static_cast<int>(width_),
+                                 static_cast<int>(height_))),
+      frame_buffer_(new uint8_t[frame_size_]),
+      frame_display_count_(frame_repeat_count),
+      current_display_count_(0) {
+  RTC_DCHECK_GT(width, 0);
+  RTC_DCHECK_GT(height, 0);
+  RTC_DCHECK_GT(frame_repeat_count, 0);
+}
+
+NV12FileGenerator::~NV12FileGenerator() {
+  for (FILE* file : files_)
+    fclose(file);
+}
+
+FrameGeneratorInterface::VideoFrameData NV12FileGenerator::NextFrame() {
+  // Empty update by default.
+  VideoFrame::UpdateRect update_rect{0, 0, 0, 0};
+  if (current_display_count_ == 0) {
+    const bool got_new_frame = ReadNextFrame();
+    // Full update on a new frame from file.
+    if (got_new_frame) {
+      update_rect = VideoFrame::UpdateRect{0, 0, static_cast<int>(width_),
+                                           static_cast<int>(height_)};
+    }
+  }
+  if (++current_display_count_ >= frame_display_count_)
+    current_display_count_ = 0;
+
+  return VideoFrameData(last_read_buffer_, update_rect);
+}
+
+FrameGeneratorInterface::Resolution NV12FileGenerator::GetResolution() const {
+  return {.width = width_, .height = height_};
+}
+
+bool NV12FileGenerator::ReadNextFrame() {
+  size_t prev_frame_index = frame_index_;
+  size_t prev_file_index = file_index_;
+  last_read_buffer_ = test::ReadNV12Buffer(
+      static_cast<int>(width_), static_cast<int>(height_), files_[file_index_]);
+  ++frame_index_;
+  if (!last_read_buffer_) {
+    // No more frames to read in this file, rewind and move to next file.
+    rewind(files_[file_index_]);
+
+    frame_index_ = 0;
+    file_index_ = (file_index_ + 1) % files_.size();
+    last_read_buffer_ =
+        test::ReadNV12Buffer(static_cast<int>(width_),
+                             static_cast<int>(height_), files_[file_index_]);
+    RTC_CHECK(last_read_buffer_);
+  }
+  return frame_index_ != prev_frame_index || file_index_ != prev_file_index;
+}
+
 SlideGenerator::SlideGenerator(int width, int height, int frame_repeat_count)
     : width_(width),
       height_(height),
@@ -223,6 +299,11 @@ FrameGeneratorInterface::VideoFrameData SlideGenerator::NextFrame() {
     current_display_count_ = 0;
 
   return VideoFrameData(buffer_, absl::nullopt);
+}
+
+FrameGeneratorInterface::Resolution SlideGenerator::GetResolution() const {
+  return {.width = static_cast<size_t>(width_),
+          .height = static_cast<size_t>(height_)};
 }
 
 void SlideGenerator::GenerateNewFrame() {
@@ -326,6 +407,12 @@ ScrollingImageFrameGenerator::NextFrame() {
   prev_frame_not_scrolled_ = cur_frame_not_scrolled;
 
   return current_frame_;
+}
+
+FrameGeneratorInterface::Resolution
+ScrollingImageFrameGenerator::GetResolution() const {
+  return {.width = static_cast<size_t>(target_width_),
+          .height = static_cast<size_t>(target_height_)};
 }
 
 void ScrollingImageFrameGenerator::UpdateSourceFrame(size_t frame_num) {

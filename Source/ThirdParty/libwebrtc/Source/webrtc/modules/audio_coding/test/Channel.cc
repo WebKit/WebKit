@@ -82,8 +82,8 @@ int32_t Channel::SendData(AudioFrameType frameType,
     return 0;
   }
 
-  status =
-      _receiverACM->IncomingPacket(_payloadData, payloadDataSize, rtp_header);
+  status = _receiverACM->InsertPacket(
+      rtp_header, rtc::ArrayView<const uint8_t>(_payloadData, payloadDataSize));
 
   return status;
 }
@@ -228,8 +228,8 @@ Channel::Channel(int16_t chID)
 
 Channel::~Channel() {}
 
-void Channel::RegisterReceiverACM(AudioCodingModule* acm) {
-  _receiverACM = acm;
+void Channel::RegisterReceiverACM(acm2::AcmReceiver* acm_receiver) {
+  _receiverACM = acm_receiver;
   return;
 }
 

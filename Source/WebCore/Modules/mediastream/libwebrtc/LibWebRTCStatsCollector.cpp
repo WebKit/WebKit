@@ -52,11 +52,11 @@ LibWebRTCStatsCollector::~LibWebRTCStatsCollector()
 
 static inline void fillRTCStats(RTCStatsReport::Stats& stats, const webrtc::RTCStats& rtcStats)
 {
-    stats.timestamp = Performance::reduceTimeResolution(Seconds::fromMicroseconds(rtcStats.timestamp_us())).milliseconds();
+    stats.timestamp = Performance::reduceTimeResolution(Seconds::fromMicroseconds(rtcStats.timestamp().us_or(0))).milliseconds();
     stats.id = fromStdString(rtcStats.id());
 }
 
-static inline void fillRtpStreamStats(RTCStatsReport::RtpStreamStats& stats, const webrtc::RTCRTPStreamStats& rtcStats)
+static inline void fillRtpStreamStats(RTCStatsReport::RtpStreamStats& stats, const webrtc::RTCRtpStreamStats& rtcStats)
 {
     fillRTCStats(stats, rtcStats);
 
@@ -66,7 +66,7 @@ static inline void fillRtpStreamStats(RTCStatsReport::RtpStreamStats& stats, con
         stats.transportId = fromStdString(*rtcStats.transport_id);
     if (rtcStats.codec_id.is_defined())
         stats.codecId = fromStdString(*rtcStats.codec_id);
-    if (rtcStats.media_type.is_defined())
+    if (rtcStats.kind.is_defined())
         stats.kind = fromStdString(*rtcStats.kind);
 }
 
@@ -79,13 +79,10 @@ static inline void fillReceivedRtpStreamStats(RTCStatsReport::ReceivedRtpStreamS
         stats.packetsLost = *rtcStats.packets_lost;
     if (rtcStats.jitter.is_defined())
         stats.jitter = *rtcStats.jitter;
-    // FIXME: Remove packets_discarded
-    if (rtcStats.packets_discarded.is_defined())
-        stats.packetsDiscarded = *rtcStats.packets_discarded;
     // framesDropped
 }
 
-static inline void fillInboundRtpStreamStats(RTCStatsReport::InboundRtpStreamStats& stats, const webrtc::RTCInboundRTPStreamStats& rtcStats)
+static inline void fillInboundRtpStreamStats(RTCStatsReport::InboundRtpStreamStats& stats, const webrtc::RTCInboundRtpStreamStats& rtcStats)
 {
     fillReceivedRtpStreamStats(stats, rtcStats);
 
@@ -192,7 +189,7 @@ static inline void fillRemoteInboundRtpStreamStats(RTCStatsReport::RemoteInbound
     // totalRoundTripTime, fractionLost, reportsReceived, roundTripTimeMeasurements
 }
 
-static inline void fillSentRtpStreamStats(RTCStatsReport::SentRtpStreamStats& stats, const webrtc::RTCOutboundRTPStreamStats& rtcStats)
+static inline void fillSentRtpStreamStats(RTCStatsReport::SentRtpStreamStats& stats, const webrtc::RTCOutboundRtpStreamStats& rtcStats)
 {
     fillRtpStreamStats(stats, rtcStats);
 
@@ -202,7 +199,7 @@ static inline void fillSentRtpStreamStats(RTCStatsReport::SentRtpStreamStats& st
         stats.bytesSent = *rtcStats.bytes_sent;
 }
 
-static inline void fillOutboundRtpStreamStats(RTCStatsReport::OutboundRtpStreamStats& stats, const webrtc::RTCOutboundRTPStreamStats& rtcStats)
+static inline void fillOutboundRtpStreamStats(RTCStatsReport::OutboundRtpStreamStats& stats, const webrtc::RTCOutboundRtpStreamStats& rtcStats)
 {
     fillSentRtpStreamStats(stats, rtcStats);
 
@@ -498,13 +495,13 @@ static inline void fillRTCVideoSourceStats(RTCStatsReport::VideoSourceStats& sta
 static inline void initializeRTCStatsReportBackingMap(DOMMapAdapter& report, const webrtc::RTCStatsReport& rtcReport)
 {
     for (const auto& rtcStats : rtcReport) {
-        if (rtcStats.type() == webrtc::RTCInboundRTPStreamStats::kType) {
+        if (rtcStats.type() == webrtc::RTCInboundRtpStreamStats::kType) {
             RTCStatsReport::InboundRtpStreamStats stats;
-            fillInboundRtpStreamStats(stats, static_cast<const webrtc::RTCInboundRTPStreamStats&>(rtcStats));
+            fillInboundRtpStreamStats(stats, static_cast<const webrtc::RTCInboundRtpStreamStats&>(rtcStats));
             report.set<IDLDOMString, IDLDictionary<RTCStatsReport::InboundRtpStreamStats>>(stats.id, WTFMove(stats));
-        } else if (rtcStats.type() == webrtc::RTCOutboundRTPStreamStats::kType) {
+        } else if (rtcStats.type() == webrtc::RTCOutboundRtpStreamStats::kType) {
             RTCStatsReport::OutboundRtpStreamStats stats;
-            fillOutboundRtpStreamStats(stats, static_cast<const webrtc::RTCOutboundRTPStreamStats&>(rtcStats));
+            fillOutboundRtpStreamStats(stats, static_cast<const webrtc::RTCOutboundRtpStreamStats&>(rtcStats));
             report.set<IDLDOMString, IDLDictionary<RTCStatsReport::OutboundRtpStreamStats>>(stats.id, WTFMove(stats));
         } else if (rtcStats.type() == webrtc::RTCDataChannelStats::kType) {
             RTCStatsReport::DataChannelStats stats;

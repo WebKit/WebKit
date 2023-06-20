@@ -17,6 +17,7 @@
 #include <vector>
 
 #include "api/scoped_refptr.h"
+#include "api/test/metrics/metrics_logger.h"
 #include "api/video/video_frame_buffer.h"
 #include "rtc_tools/video_file_reader.h"
 
@@ -69,12 +70,9 @@ double Ssim(const rtc::scoped_refptr<I420BufferInterface>& ref_buffer,
 // Prints the result from the analysis in Chromium performance
 // numbers compatible format to stdout. If the results object contains no frames
 // no output will be written.
-void PrintAnalysisResults(const std::string& label, ResultsContainer* results);
-
-// Similar to the above, but will print to the specified file handle.
-void PrintAnalysisResults(FILE* output,
-                          const std::string& label,
-                          ResultsContainer* results);
+void PrintAnalysisResults(const std::string& label,
+                          ResultsContainer& results,
+                          MetricsLogger& logger);
 
 struct Cluster {
   // Corresponding reference frame index for this cluster.

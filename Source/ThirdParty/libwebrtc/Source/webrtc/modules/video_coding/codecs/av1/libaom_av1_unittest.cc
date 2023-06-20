@@ -22,7 +22,7 @@
 #include "api/units/time_delta.h"
 #include "api/video_codecs/video_codec.h"
 #include "api/video_codecs/video_encoder.h"
-#include "modules/video_coding/codecs/av1/libaom_av1_decoder.h"
+#include "modules/video_coding/codecs/av1/dav1d_decoder.h"
 #include "modules/video_coding/codecs/av1/libaom_av1_encoder.h"
 #include "modules/video_coding/codecs/test/encoded_video_frame_producer.h"
 #include "modules/video_coding/include/video_codec_interface.h"
@@ -44,6 +44,7 @@ using ::testing::Ge;
 using ::testing::IsEmpty;
 using ::testing::Not;
 using ::testing::NotNull;
+using ::testing::Optional;
 using ::testing::Pointwise;
 using ::testing::SizeIs;
 using ::testing::Truly;
@@ -73,7 +74,7 @@ VideoEncoder::Settings DefaultEncoderSettings() {
 class TestAv1Decoder {
  public:
   explicit TestAv1Decoder(int decoder_id)
-      : decoder_id_(decoder_id), decoder_(CreateLibaomAv1Decoder()) {
+      : decoder_id_(decoder_id), decoder_(CreateDav1dDecoder()) {
     if (decoder_ == nullptr) {
       ADD_FAILURE() << "Failed to create a decoder#" << decoder_id_;
       return;
@@ -248,6 +249,8 @@ TEST_P(LibaomAv1SvcTest, EncodeAndDecodeAllDecodeTargets) {
         requested_ids.push_back(frame_id);
         decoder.Decode(frame_id, frame.encoded_image);
       }
+      EXPECT_THAT(frame.codec_specific_info.scalability_mode,
+                  Optional(param.GetScalabilityMode()));
     }
 
     ASSERT_THAT(requested_ids, SizeIs(Ge(2u)));
@@ -264,9 +267,9 @@ MATCHER(SameLayerIdAndBitrateIsNear, "") {
   // First check if layer id is the same.
   return std::get<0>(arg).first == std::get<1>(arg).first &&
          // check measured bitrate is not much lower than requested.
-         std::get<0>(arg).second >= std::get<1>(arg).second * 0.8 &&
+         std::get<0>(arg).second >= std::get<1>(arg).second * 0.75 &&
          // check measured bitrate is not much larger than requested.
-         std::get<0>(arg).second <= std::get<1>(arg).second * 1.1;
+         std::get<0>(arg).second <= std::get<1>(arg).second * 1.25;
 }
 
 TEST_P(LibaomAv1SvcTest, SetRatesMatchMeasuredBitrate) {

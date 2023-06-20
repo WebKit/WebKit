@@ -8,11 +8,12 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include "modules/video_coding/rtp_vp9_ref_finder.h"
+
 #include <utility>
 #include <vector>
 
-#include "modules/video_coding/frame_object.h"
-#include "modules/video_coding/rtp_vp9_ref_finder.h"
+#include "modules/rtp_rtcp/source/frame_object.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 
@@ -156,8 +157,7 @@ class HasFrameMatcher : public MatcherInterface<const FrameVector&> {
  public:
   explicit HasFrameMatcher(int64_t frame_id,
                            const std::vector<int64_t>& expected_refs)
-      : frame_id_(frame_id),
-        expected_refs_(expected_refs) {}
+      : frame_id_(frame_id), expected_refs_(expected_refs) {}
 
   bool MatchAndExplain(const FrameVector& frames,
                        MatchResultListener* result_listener) const override {
@@ -462,88 +462,6 @@ TEST_F(RtpVp9RefFinderTest, GofTemporalLayersReordered_0212) {
   EXPECT_THAT(frames_, HasFrameWithIdAndRefs(45, {40}));
   EXPECT_THAT(frames_, HasFrameWithIdAndRefs(50, {40}));
   EXPECT_THAT(frames_, HasFrameWithIdAndRefs(55, {50}));
-}
-
-TEST_F(RtpVp9RefFinderTest, GofTemporalLayersUpSwitch_02120212) {
-  GofInfoVP9 ss;
-  ss.SetGofInfoVP9(kTemporalStructureMode4);  // 02120212 pattern
-
-  Insert(Frame().Pid(0).SidAndTid(0, 0).Tl0(0).AsKeyFrame().NotAsInterPic().Gof(
-      &ss));
-  Insert(Frame().Pid(1).SidAndTid(0, 2).Tl0(0));
-  Insert(Frame().Pid(2).SidAndTid(0, 1).Tl0(0));
-  Insert(Frame().Pid(3).SidAndTid(0, 2).Tl0(0));
-  Insert(Frame().Pid(4).SidAndTid(0, 0).Tl0(1));
-  Insert(Frame().Pid(5).SidAndTid(0, 2).Tl0(1));
-  Insert(Frame().Pid(6).SidAndTid(0, 1).Tl0(1).AsUpswitch());
-  Insert(Frame().Pid(7).SidAndTid(0, 2).Tl0(1));
-  Insert(Frame().Pid(8).SidAndTid(0, 0).Tl0(2).AsUpswitch());
-  Insert(Frame().Pid(9).SidAndTid(0, 2).Tl0(2));
-  Insert(Frame().Pid(10).SidAndTid(0, 1).Tl0(2));
-  Insert(Frame().Pid(11).SidAndTid(0, 2).Tl0(2).AsUpswitch());
-  Insert(Frame().Pid(12).SidAndTid(0, 0).Tl0(3));
-  Insert(Frame().Pid(13).SidAndTid(0, 2).Tl0(3));
-  Insert(Frame().Pid(14).SidAndTid(0, 1).Tl0(3));
-  Insert(Frame().Pid(15).SidAndTid(0, 2).Tl0(3));
-
-  ASSERT_EQ(16UL, frames_.size());
-  EXPECT_THAT(frames_, HasFrameWithIdAndRefs(0, {}));
-  EXPECT_THAT(frames_, HasFrameWithIdAndRefs(5, {0}));
-  EXPECT_THAT(frames_, HasFrameWithIdAndRefs(10, {0}));
-  EXPECT_THAT(frames_, HasFrameWithIdAndRefs(15, {5, 10}));
-  EXPECT_THAT(frames_, HasFrameWithIdAndRefs(20, {0}));
-  EXPECT_THAT(frames_, HasFrameWithIdAndRefs(25, {15, 20}));
-  EXPECT_THAT(frames_, HasFrameWithIdAndRefs(30, {10, 20}));
-  EXPECT_THAT(frames_, HasFrameWithIdAndRefs(35, {30}));
-  EXPECT_THAT(frames_, HasFrameWithIdAndRefs(40, {20}));
-  EXPECT_THAT(frames_, HasFrameWithIdAndRefs(45, {40}));
-  EXPECT_THAT(frames_, HasFrameWithIdAndRefs(50, {40}));
-  EXPECT_THAT(frames_, HasFrameWithIdAndRefs(55, {45, 50}));
-  EXPECT_THAT(frames_, HasFrameWithIdAndRefs(60, {40}));
-  EXPECT_THAT(frames_, HasFrameWithIdAndRefs(65, {55, 60}));
-  EXPECT_THAT(frames_, HasFrameWithIdAndRefs(70, {50, 60}));
-  EXPECT_THAT(frames_, HasFrameWithIdAndRefs(75, {65, 70}));
-}
-
-TEST_F(RtpVp9RefFinderTest, GofTemporalLayersUpSwitchReordered_02120212) {
-  GofInfoVP9 ss;
-  ss.SetGofInfoVP9(kTemporalStructureMode4);  // 02120212 pattern
-
-  Insert(Frame().Pid(1).SidAndTid(0, 2).Tl0(0));
-  Insert(Frame().Pid(0).SidAndTid(0, 0).Tl0(0).AsKeyFrame().NotAsInterPic().Gof(
-      &ss));
-  Insert(Frame().Pid(4).SidAndTid(0, 0).Tl0(1));
-  Insert(Frame().Pid(2).SidAndTid(0, 1).Tl0(0));
-  Insert(Frame().Pid(5).SidAndTid(0, 2).Tl0(1));
-  Insert(Frame().Pid(3).SidAndTid(0, 2).Tl0(0));
-  Insert(Frame().Pid(7).SidAndTid(0, 2).Tl0(1));
-  Insert(Frame().Pid(9).SidAndTid(0, 2).Tl0(2));
-  Insert(Frame().Pid(6).SidAndTid(0, 1).Tl0(1).AsUpswitch());
-  Insert(Frame().Pid(12).SidAndTid(0, 0).Tl0(3));
-  Insert(Frame().Pid(10).SidAndTid(0, 1).Tl0(2));
-  Insert(Frame().Pid(8).SidAndTid(0, 0).Tl0(2).AsUpswitch());
-  Insert(Frame().Pid(11).SidAndTid(0, 2).Tl0(2).AsUpswitch());
-  Insert(Frame().Pid(13).SidAndTid(0, 2).Tl0(3));
-  Insert(Frame().Pid(15).SidAndTid(0, 2).Tl0(3));
-  Insert(Frame().Pid(14).SidAndTid(0, 1).Tl0(3));
-
-  ASSERT_EQ(16UL, frames_.size());
-  EXPECT_THAT(frames_, HasFrameWithIdAndRefs(0, {}));
-  EXPECT_THAT(frames_, HasFrameWithIdAndRefs(5, {0}));
-  EXPECT_THAT(frames_, HasFrameWithIdAndRefs(10, {0}));
-  EXPECT_THAT(frames_, HasFrameWithIdAndRefs(15, {5, 10}));
-  EXPECT_THAT(frames_, HasFrameWithIdAndRefs(20, {0}));
-  EXPECT_THAT(frames_, HasFrameWithIdAndRefs(25, {15, 20}));
-  EXPECT_THAT(frames_, HasFrameWithIdAndRefs(30, {10, 20}));
-  EXPECT_THAT(frames_, HasFrameWithIdAndRefs(35, {30}));
-  EXPECT_THAT(frames_, HasFrameWithIdAndRefs(40, {20}));
-  EXPECT_THAT(frames_, HasFrameWithIdAndRefs(45, {40}));
-  EXPECT_THAT(frames_, HasFrameWithIdAndRefs(50, {40}));
-  EXPECT_THAT(frames_, HasFrameWithIdAndRefs(55, {45, 50}));
-  EXPECT_THAT(frames_, HasFrameWithIdAndRefs(60, {40}));
-  EXPECT_THAT(frames_, HasFrameWithIdAndRefs(65, {55, 60}));
-  EXPECT_THAT(frames_, HasFrameWithIdAndRefs(70, {50, 60}));
-  EXPECT_THAT(frames_, HasFrameWithIdAndRefs(75, {65, 70}));
 }
 
 TEST_F(RtpVp9RefFinderTest, GofTemporalLayersReordered_01_0212) {

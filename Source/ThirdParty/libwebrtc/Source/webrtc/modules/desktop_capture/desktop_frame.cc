@@ -45,13 +45,9 @@ void DesktopFrame::CopyPixelsFrom(const uint8_t* src_buffer,
   RTC_CHECK(DesktopRect::MakeSize(size()).ContainsRect(dest_rect));
 
   uint8_t* dest = GetFrameDataAtPos(dest_rect.top_left());
-  // TODO(crbug.com/1330019): Temporary workaround for a known libyuv crash when
-  // the height or width is 0. Remove this once this change has been merged.
-  if (dest_rect.width() && dest_rect.height()) {
-    libyuv::CopyPlane(src_buffer, src_stride, dest, stride(),
-                      DesktopFrame::kBytesPerPixel * dest_rect.width(),
-                      dest_rect.height());
-  }
+  libyuv::CopyPlane(src_buffer, src_stride, dest, stride(),
+                    DesktopFrame::kBytesPerPixel * dest_rect.width(),
+                    dest_rect.height());
 }
 
 void DesktopFrame::CopyPixelsFrom(const DesktopFrame& src_frame,
@@ -137,6 +133,7 @@ void DesktopFrame::CopyFrameInfoFrom(const DesktopFrame& other) {
   *mutable_updated_region() = other.updated_region();
   set_top_left(other.top_left());
   set_icc_profile(other.icc_profile());
+  set_may_contain_cursor(other.may_contain_cursor());
 }
 
 void DesktopFrame::MoveFrameInfoFrom(DesktopFrame* other) {
@@ -146,6 +143,24 @@ void DesktopFrame::MoveFrameInfoFrom(DesktopFrame* other) {
   mutable_updated_region()->Swap(other->mutable_updated_region());
   set_top_left(other->top_left());
   set_icc_profile(other->icc_profile());
+  set_may_contain_cursor(other->may_contain_cursor());
+}
+
+bool DesktopFrame::FrameDataIsBlack() const {
+  if (size().is_empty())
+    return false;
+
+  uint32_t* pixel = reinterpret_cast<uint32_t*>(data());
+  for (int i = 0; i < size().width() * size().height(); ++i) {
+    if (*pixel++)
+      return false;
+  }
+  return true;
+}
+
+void DesktopFrame::SetFrameDataToBlack() {
+  const uint8_t kBlackPixelValue = 0x00;
+  memset(data(), kBlackPixelValue, stride() * size().height());
 }
 
 BasicDesktopFrame::BasicDesktopFrame(DesktopSize size)

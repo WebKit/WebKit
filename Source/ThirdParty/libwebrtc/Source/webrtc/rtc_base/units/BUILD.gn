@@ -10,13 +10,14 @@ import("../../webrtc.gni")
 
 rtc_source_set("unit_base") {
   visibility = [
-    "../../api/units:*",
     ":*",
+    "../../api/units:*",
   ]
   sources = [ "unit_base.h" ]
 
   deps = [
     "../../rtc_base:checks",
+    "../../rtc_base:divide_round",
     "../../rtc_base:safe_conversions",
   ]
 }

@@ -95,7 +95,7 @@ class TestVp8Impl : public VideoCodecUnitTest {
     ASSERT_TRUE(WaitForEncodedFrame(encoded_frame, codec_specific_info));
     VerifyQpParser(*encoded_frame);
     EXPECT_EQ(kVideoCodecVP8, codec_specific_info->codecType);
-    EXPECT_EQ(0, encoded_frame->SpatialIndex());
+    EXPECT_EQ(0, encoded_frame->SimulcastIndex());
   }
 
   void EncodeAndExpectFrameWith(const VideoFrame& input_frame,
@@ -249,10 +249,12 @@ TEST_F(TestVp8Impl, Configure) {
 }
 
 TEST_F(TestVp8Impl, OnEncodedImageReportsInfo) {
+  constexpr Timestamp kCaptureTimeIdentifier = Timestamp::Micros(1000);
   VideoFrame input_frame = NextInputFrame();
   input_frame.set_timestamp(kInitialTimestampRtp);
   input_frame.set_timestamp_us(kInitialTimestampMs *
                                rtc::kNumMicrosecsPerMillisec);
+  input_frame.set_capture_time_identifier(kCaptureTimeIdentifier);
   EncodedImage encoded_frame;
   CodecSpecificInfo codec_specific_info;
   EncodeAndWaitForFrame(input_frame, &encoded_frame, &codec_specific_info);
@@ -260,6 +262,9 @@ TEST_F(TestVp8Impl, OnEncodedImageReportsInfo) {
   EXPECT_EQ(kInitialTimestampRtp, encoded_frame.Timestamp());
   EXPECT_EQ(kWidth, static_cast<int>(encoded_frame._encodedWidth));
   EXPECT_EQ(kHeight, static_cast<int>(encoded_frame._encodedHeight));
+  ASSERT_TRUE(encoded_frame.CaptureTimeIdentifier().has_value());
+  EXPECT_EQ(kCaptureTimeIdentifier.us(),
+            encoded_frame.CaptureTimeIdentifier()->us());
 }
 
 TEST_F(TestVp8Impl,
@@ -640,7 +645,7 @@ TEST(LibvpxVp8EncoderTest, GetEncoderInfoReturnsStaticInformation) {
   EXPECT_FALSE(info.is_hardware_accelerated);
   EXPECT_TRUE(info.supports_simulcast);
   EXPECT_EQ(info.implementation_name, "libvpx");
-  EXPECT_EQ(info.requested_resolution_alignment, 1);
+  EXPECT_EQ(info.requested_resolution_alignment, 1u);
   EXPECT_THAT(info.preferred_pixel_formats,
               testing::UnorderedElementsAre(VideoFrameBuffer::Type::kNV12,
                                             VideoFrameBuffer::Type::kI420));
@@ -655,7 +660,7 @@ TEST(LibvpxVp8EncoderTest, RequestedResolutionAlignmentFromFieldTrial) {
   LibvpxVp8Encoder encoder((std::unique_ptr<LibvpxInterface>(vpx)),
                            VP8Encoder::Settings());
 
-  EXPECT_EQ(encoder.GetEncoderInfo().requested_resolution_alignment, 10);
+  EXPECT_EQ(encoder.GetEncoderInfo().requested_resolution_alignment, 10u);
   EXPECT_FALSE(
       encoder.GetEncoderInfo().apply_alignment_to_all_simulcast_layers);
   EXPECT_TRUE(encoder.GetEncoderInfo().resolution_bitrate_limits.empty());

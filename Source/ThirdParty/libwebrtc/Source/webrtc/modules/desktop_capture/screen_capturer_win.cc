@@ -18,14 +18,15 @@
 #include "modules/desktop_capture/rgba_color.h"
 #include "modules/desktop_capture/win/screen_capturer_win_directx.h"
 #include "modules/desktop_capture/win/screen_capturer_win_gdi.h"
-#include "modules/desktop_capture/win/screen_capturer_win_magnifier.h"
 
 namespace webrtc {
 
 namespace {
 
-std::unique_ptr<DesktopCapturer> CreateScreenCapturerWinDirectx() {
-  std::unique_ptr<DesktopCapturer> capturer(new ScreenCapturerWinDirectx());
+std::unique_ptr<DesktopCapturer> CreateScreenCapturerWinDirectx(
+    const DesktopCaptureOptions& options) {
+  std::unique_ptr<DesktopCapturer> capturer(
+      new ScreenCapturerWinDirectx(options));
   capturer.reset(new BlankDetectorDesktopCapturerWrapper(
       std::move(capturer), RgbaColor(0, 0, 0, 0)));
   return capturer;
@@ -36,26 +37,22 @@ std::unique_ptr<DesktopCapturer> CreateScreenCapturerWinDirectx() {
 // static
 std::unique_ptr<DesktopCapturer> DesktopCapturer::CreateRawScreenCapturer(
     const DesktopCaptureOptions& options) {
+  // Default capturer if no options are enabled is GDI.
   std::unique_ptr<DesktopCapturer> capturer(new ScreenCapturerWinGdi(options));
+
+  // If DirectX is enabled use it as main capturer with GDI as fallback.
   if (options.allow_directx_capturer()) {
     // `dxgi_duplicator_controller` should be alive in this scope to ensure it
     // won't unload DxgiDuplicatorController.
     auto dxgi_duplicator_controller = DxgiDuplicatorController::Instance();
     if (ScreenCapturerWinDirectx::IsSupported()) {
       capturer.reset(new FallbackDesktopCapturerWrapper(
-          CreateScreenCapturerWinDirectx(), std::move(capturer)));
+          CreateScreenCapturerWinDirectx(options), std::move(capturer)));
+      return capturer;
     }
   }
 
-  if (options.allow_use_magnification_api()) {
-    // ScreenCapturerWinMagnifier cannot work on Windows XP or earlier, as well
-    // as 64-bit only Windows, and it may randomly crash on multi-screen
-    // systems. So we may need to fallback to use original capturer.
-    capturer.reset(new FallbackDesktopCapturerWrapper(
-        std::unique_ptr<DesktopCapturer>(new ScreenCapturerWinMagnifier()),
-        std::move(capturer)));
-  }
-
+  // Use GDI as default capturer without any fallback solution.
   return capturer;
 }
 

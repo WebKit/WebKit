@@ -10,12 +10,15 @@
 
 #include "test/pc/e2e/analyzer/video/default_video_quality_analyzer_frame_in_flight.h"
 
+#include <unordered_map>
 #include <utility>
 #include <vector>
 
 #include "absl/types/optional.h"
 #include "api/units/data_size.h"
+#include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
+#include "api/video/video_frame.h"
 #include "api/video/video_frame_type.h"
 #include "test/pc/e2e/analyzer/video/default_video_quality_analyzer_internal_shared_objects.h"
 
@@ -23,7 +26,8 @@ namespace webrtc {
 namespace {
 
 template <typename T>
-absl::optional<T> MaybeGetValue(const std::map<size_t, T>& map, size_t key) {
+absl::optional<T> MaybeGetValue(const std::unordered_map<size_t, T>& map,
+                                size_t key) {
   auto it = map.find(key);
   if (it == map.end()) {
     return absl::nullopt;
@@ -33,35 +37,25 @@ absl::optional<T> MaybeGetValue(const std::map<size_t, T>& map, size_t key) {
 
 }  // namespace
 
-FrameInFlight::FrameInFlight(size_t stream,
-                             VideoFrame frame,
-                             Timestamp captured_time,
-                             std::set<size_t> expected_receivers)
+FrameInFlight::FrameInFlight(
+    size_t stream,
+    uint16_t frame_id,
+    Timestamp captured_time,
+    absl::optional<TimeDelta> time_between_captured_frames,
+    std::set<size_t> expected_receivers)
     : stream_(stream),
       expected_receivers_(std::move(expected_receivers)),
-      frame_(std::move(frame)),
-      captured_time_(captured_time) {}
-
-bool FrameInFlight::RemoveFrame() {
-  if (!frame_) {
-    return false;
-  }
-  frame_ = absl::nullopt;
-  return true;
-}
-
-void FrameInFlight::SetFrameId(uint16_t id) {
-  if (frame_) {
-    frame_->set_id(id);
-  }
-}
+      frame_id_(frame_id),
+      captured_time_(captured_time),
+      time_between_captured_frames_(time_between_captured_frames) {}
 
 std::vector<size_t> FrameInFlight::GetPeersWhichDidntReceive() const {
   std::vector<size_t> out;
   for (size_t peer : expected_receivers_) {
     auto it = receiver_stats_.find(peer);
     if (it == receiver_stats_.end() ||
-        (!it->second.dropped && it->second.rendered_time.IsInfinite())) {
+        (!it->second.dropped && !it->second.superfluous &&
+         it->second.rendered_time.IsInfinite())) {
       out.push_back(peer);
     }
   }
@@ -75,22 +69,34 @@ bool FrameInFlight::HaveAllPeersReceived() const {
       return false;
     }
 
-    if (!it->second.dropped && it->second.rendered_time.IsInfinite()) {
+    if (!it->second.dropped && !it->second.superfluous &&
+        it->second.rendered_time.IsInfinite()) {
       return false;
     }
   }
   return true;
 }
 
-void FrameInFlight::OnFrameEncoded(webrtc::Timestamp time,
-                                   VideoFrameType frame_type,
-                                   DataSize encoded_image_size,
-                                   uint32_t target_encode_bitrate,
-                                   StreamCodecInfo used_encoder) {
+void FrameInFlight::OnFrameEncoded(
+    webrtc::Timestamp time,
+    absl::optional<TimeDelta> time_between_encoded_frames,
+    VideoFrameType frame_type,
+    DataSize encoded_image_size,
+    uint32_t target_encode_bitrate,
+    int stream_index,
+    int qp,
+    StreamCodecInfo used_encoder) {
   encoded_time_ = time;
+  if (time_between_encoded_frames.has_value()) {
+    time_between_encoded_frames_ =
+        time_between_encoded_frames_.value_or(TimeDelta::Zero()) +
+        *time_between_encoded_frames;
+  }
   frame_type_ = frame_type;
   encoded_image_size_ = encoded_image_size;
   target_encode_bitrate_ += target_encode_bitrate;
+  stream_layers_qp_[stream_index].AddSample(SamplesStatsCounter::StatsSample{
+      .value = static_cast<double>(qp), .time = time});
   // Update used encoder info. If simulcast/SVC is used, this method can
   // be called multiple times, in such case we should preserve the value
   // of `used_encoder_.switched_on_at` from the first invocation as the
@@ -127,8 +133,18 @@ bool FrameInFlight::HasReceivedTime(size_t peer) const {
 
 void FrameInFlight::OnFrameDecoded(size_t peer,
                                    webrtc::Timestamp time,
-                                   StreamCodecInfo used_decoder) {
+                                   int width,
+                                   int height,
+                                   const StreamCodecInfo& used_decoder) {
   receiver_stats_[peer].decode_end_time = time;
+  receiver_stats_[peer].used_decoder = used_decoder;
+  receiver_stats_[peer].decoded_frame_width = width;
+  receiver_stats_[peer].decoded_frame_height = height;
+}
+
+void FrameInFlight::OnDecoderError(size_t peer,
+                                   const StreamCodecInfo& used_decoder) {
+  receiver_stats_[peer].decoder_failed = true;
   receiver_stats_[peer].used_decoder = used_decoder;
 }
 
@@ -140,13 +156,8 @@ bool FrameInFlight::HasDecodeEndTime(size_t peer) const {
   return it->second.decode_end_time.IsFinite();
 }
 
-void FrameInFlight::OnFrameRendered(size_t peer,
-                                    webrtc::Timestamp time,
-                                    int width,
-                                    int height) {
+void FrameInFlight::OnFrameRendered(size_t peer, webrtc::Timestamp time) {
   receiver_stats_[peer].rendered_time = time;
-  receiver_stats_[peer].rendered_frame_width = width;
-  receiver_stats_[peer].rendered_frame_height = height;
 }
 
 bool FrameInFlight::HasRenderedTime(size_t peer) const {
@@ -166,13 +177,20 @@ bool FrameInFlight::IsDropped(size_t peer) const {
 }
 
 FrameStats FrameInFlight::GetStatsForPeer(size_t peer) const {
-  FrameStats stats(captured_time_);
+  RTC_DCHECK_NE(frame_id_, VideoFrame::kNotSetId)
+      << "Frame id isn't initialized";
+  RTC_DCHECK(!IsSuperfluous(peer))
+      << "This frame is superfluous for peer " << peer;
+  FrameStats stats(frame_id_, captured_time_);
+  stats.time_between_captured_frames = time_between_captured_frames_;
+  stats.time_between_encoded_frames = time_between_encoded_frames_;
   stats.pre_encode_time = pre_encode_time_;
   stats.encoded_time = encoded_time_;
   stats.target_encode_bitrate = target_encode_bitrate_;
   stats.encoded_frame_type = frame_type_;
   stats.encoded_image_size = encoded_image_size_;
   stats.used_encoder = used_encoder_;
+  stats.spatial_layers_qp = stream_layers_qp_;
 
   absl::optional<ReceiverFrameStats> receiver_stats =
       MaybeGetValue<ReceiverFrameStats>(receiver_stats_, peer);
@@ -182,13 +200,24 @@ FrameStats FrameInFlight::GetStatsForPeer(size_t peer) const {
     stats.decode_end_time = receiver_stats->decode_end_time;
     stats.rendered_time = receiver_stats->rendered_time;
     stats.prev_frame_rendered_time = receiver_stats->prev_frame_rendered_time;
-    stats.rendered_frame_width = receiver_stats->rendered_frame_width;
-    stats.rendered_frame_height = receiver_stats->rendered_frame_height;
+    stats.time_between_rendered_frames =
+        receiver_stats->time_between_rendered_frames;
+    stats.decoded_frame_width = receiver_stats->decoded_frame_width;
+    stats.decoded_frame_height = receiver_stats->decoded_frame_height;
     stats.used_decoder = receiver_stats->used_decoder;
     stats.pre_decoded_frame_type = receiver_stats->frame_type;
     stats.pre_decoded_image_size = receiver_stats->encoded_image_size;
+    stats.decoder_failed = receiver_stats->decoder_failed;
   }
   return stats;
+}
+
+bool FrameInFlight::IsSuperfluous(size_t peer) const {
+  auto it = receiver_stats_.find(peer);
+  if (it == receiver_stats_.end()) {
+    return false;
+  }
+  return it->second.superfluous;
 }
 
 }  // namespace webrtc

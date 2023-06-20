@@ -21,7 +21,7 @@ need to be committed together.
 ## Uploading changes
 
 It is recommended to have a separate checkout for this branch, so switching
-to/from it does not populate/delete all files in the master branch.
+to/from it does not populate/delete all files in the main branch.
 
 Initial setup:
 
@@ -49,4 +49,4 @@ steps. You can see the status or force a refresh of the config at
 [console]: https://ci.chromium.org/p/webrtc/g/ci/console
 [luci-config]: https://luci-config.appspot.com/#/projects/webrtc
 [starlark]: https://github.com/google/starlark-go
-[lucicfg]: https://chromium.googlesource.com/infra/luci/luci-go/+/master/lucicfg/doc/
+[lucicfg]: https://chromium.googlesource.com/infra/luci/luci-go/+/main/lucicfg/doc/

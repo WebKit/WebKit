@@ -26,6 +26,7 @@
 #include "test/gmock.h"
 #include "test/gtest.h"
 #include "test/rtcp_packet_parser.h"
+#include "test/video_test_constants.h"
 
 using ::testing::Contains;
 using ::testing::Not;
@@ -53,7 +54,7 @@ TEST_F(FecEndToEndTest, ReceivesUlpfec) {
                                public rtc::VideoSinkInterface<VideoFrame> {
    public:
     UlpfecRenderObserver()
-        : EndToEndTest(kDefaultTimeout),
+        : EndToEndTest(test::VideoTestConstants::kDefaultTimeout),
           encoder_factory_([]() { return VP8Encoder::Create(); }),
           random_(0xcafef00d1),
           num_packets_sent_(0) {}
@@ -64,31 +65,38 @@ TEST_F(FecEndToEndTest, ReceivesUlpfec) {
       RtpPacket rtp_packet;
       EXPECT_TRUE(rtp_packet.Parse(packet, length));
 
-      EXPECT_TRUE(rtp_packet.PayloadType() == kVideoSendPayloadType ||
-                  rtp_packet.PayloadType() == kRedPayloadType)
+      EXPECT_TRUE(rtp_packet.PayloadType() ==
+                      test::VideoTestConstants::kVideoSendPayloadType ||
+                  rtp_packet.PayloadType() ==
+                      test::VideoTestConstants::kRedPayloadType)
           << "Unknown payload type received.";
-      EXPECT_EQ(kVideoSendSsrcs[0], rtp_packet.Ssrc())
+      EXPECT_EQ(test::VideoTestConstants::kVideoSendSsrcs[0], rtp_packet.Ssrc())
           << "Unknown SSRC received.";
 
       // Parse RED header.
       int encapsulated_payload_type = -1;
-      if (rtp_packet.PayloadType() == kRedPayloadType) {
+      if (rtp_packet.PayloadType() ==
+          test::VideoTestConstants::kRedPayloadType) {
         encapsulated_payload_type = rtp_packet.payload()[0];
 
-        EXPECT_TRUE(encapsulated_payload_type == kVideoSendPayloadType ||
-                    encapsulated_payload_type == kUlpfecPayloadType)
+        EXPECT_TRUE(encapsulated_payload_type ==
+                        test::VideoTestConstants::kVideoSendPayloadType ||
+                    encapsulated_payload_type ==
+                        test::VideoTestConstants::kUlpfecPayloadType)
             << "Unknown encapsulated payload type received.";
       }
 
       // To minimize test flakiness, always let ULPFEC packets through.
-      if (encapsulated_payload_type == kUlpfecPayloadType) {
+      if (encapsulated_payload_type ==
+          test::VideoTestConstants::kUlpfecPayloadType) {
         return SEND_PACKET;
       }
 
       // Simulate 5% video packet loss after rampup period. Record the
       // corresponding timestamps that were dropped.
       if (num_packets_sent_++ > 100 && random_.Rand(1, 100) <= 5) {
-        if (encapsulated_payload_type == kVideoSendPayloadType) {
+        if (encapsulated_payload_type ==
+            test::VideoTestConstants::kVideoSendPayloadType) {
           dropped_sequence_numbers_.insert(rtp_packet.SequenceNumber());
           dropped_timestamps_.insert(rtp_packet.Timestamp());
         }
@@ -116,7 +124,8 @@ TEST_F(FecEndToEndTest, ReceivesUlpfec) {
       // in the packetization headers.
       send_config->encoder_settings.encoder_factory = &encoder_factory_;
       send_config->rtp.payload_name = "VP8";
-      send_config->rtp.payload_type = kVideoSendPayloadType;
+      send_config->rtp.payload_type =
+          test::VideoTestConstants::kVideoSendPayloadType;
       encoder_config->codec_type = kVideoCodecVP8;
       VideoReceiveStreamInterface::Decoder decoder =
           test::CreateMatchingDecoder(*send_config);
@@ -125,10 +134,14 @@ TEST_F(FecEndToEndTest, ReceivesUlpfec) {
       (*receive_configs)[0].decoders.push_back(decoder);
 
       // Enable ULPFEC over RED.
-      send_config->rtp.ulpfec.red_payload_type = kRedPayloadType;
-      send_config->rtp.ulpfec.ulpfec_payload_type = kUlpfecPayloadType;
-      (*receive_configs)[0].rtp.red_payload_type = kRedPayloadType;
-      (*receive_configs)[0].rtp.ulpfec_payload_type = kUlpfecPayloadType;
+      send_config->rtp.ulpfec.red_payload_type =
+          test::VideoTestConstants::kRedPayloadType;
+      send_config->rtp.ulpfec.ulpfec_payload_type =
+          test::VideoTestConstants::kUlpfecPayloadType;
+      (*receive_configs)[0].rtp.red_payload_type =
+          test::VideoTestConstants::kRedPayloadType;
+      (*receive_configs)[0].rtp.ulpfec_payload_type =
+          test::VideoTestConstants::kUlpfecPayloadType;
 
       (*receive_configs)[0].renderer = this;
     }
@@ -159,7 +172,7 @@ class FlexfecRenderObserver : public test::EndToEndTest,
   static constexpr uint32_t kFlexfecLocalSsrc = 456;
 
   explicit FlexfecRenderObserver(bool enable_nack, bool expect_flexfec_rtcp)
-      : test::EndToEndTest(test::CallTest::kDefaultTimeout),
+      : test::EndToEndTest(test::VideoTestConstants::kLongTimeout),
         enable_nack_(enable_nack),
         expect_flexfec_rtcp_(expect_flexfec_rtcp),
         received_flexfec_rtcp_(false),
@@ -175,27 +188,32 @@ class FlexfecRenderObserver : public test::EndToEndTest,
     EXPECT_TRUE(rtp_packet.Parse(packet, length));
 
     EXPECT_TRUE(
-        rtp_packet.PayloadType() == test::CallTest::kFakeVideoSendPayloadType ||
-        rtp_packet.PayloadType() == test::CallTest::kFlexfecPayloadType ||
-        (enable_nack_ &&
-         rtp_packet.PayloadType() == test::CallTest::kSendRtxPayloadType))
+        rtp_packet.PayloadType() ==
+            test::VideoTestConstants::kFakeVideoSendPayloadType ||
+        rtp_packet.PayloadType() ==
+            test::VideoTestConstants::kFlexfecPayloadType ||
+        (enable_nack_ && rtp_packet.PayloadType() ==
+                             test::VideoTestConstants::kSendRtxPayloadType))
         << "Unknown payload type received.";
     EXPECT_TRUE(
-        rtp_packet.Ssrc() == test::CallTest::kVideoSendSsrcs[0] ||
-        rtp_packet.Ssrc() == test::CallTest::kFlexfecSendSsrc ||
-        (enable_nack_ && rtp_packet.Ssrc() == test::CallTest::kSendRtxSsrcs[0]))
+        rtp_packet.Ssrc() == test::VideoTestConstants::kVideoSendSsrcs[0] ||
+        rtp_packet.Ssrc() == test::VideoTestConstants::kFlexfecSendSsrc ||
+        (enable_nack_ &&
+         rtp_packet.Ssrc() == test::VideoTestConstants::kSendRtxSsrcs[0]))
         << "Unknown SSRC received.";
 
     // To reduce test flakiness, always let FlexFEC packets through.
-    if (rtp_packet.PayloadType() == test::CallTest::kFlexfecPayloadType) {
-      EXPECT_EQ(test::CallTest::kFlexfecSendSsrc, rtp_packet.Ssrc());
+    if (rtp_packet.PayloadType() ==
+        test::VideoTestConstants::kFlexfecPayloadType) {
+      EXPECT_EQ(test::VideoTestConstants::kFlexfecSendSsrc, rtp_packet.Ssrc());
 
       return SEND_PACKET;
     }
 
     // To reduce test flakiness, always let RTX packets through.
-    if (rtp_packet.PayloadType() == test::CallTest::kSendRtxPayloadType) {
-      EXPECT_EQ(test::CallTest::kSendRtxSsrcs[0], rtp_packet.Ssrc());
+    if (rtp_packet.PayloadType() ==
+        test::VideoTestConstants::kSendRtxPayloadType) {
+      EXPECT_EQ(test::VideoTestConstants::kSendRtxSsrcs[0], rtp_packet.Ssrc());
 
       if (rtp_packet.payload_size() == 0) {
         // Pure padding packet.
@@ -223,9 +241,10 @@ class FlexfecRenderObserver : public test::EndToEndTest,
     // Simulate 5% video packet loss after rampup period. Record the
     // corresponding timestamps that were dropped.
     if (num_packets_sent_++ > 100 && random_.Rand(1, 100) <= 5) {
-      EXPECT_EQ(test::CallTest::kFakeVideoSendPayloadType,
+      EXPECT_EQ(test::VideoTestConstants::kFakeVideoSendPayloadType,
                 rtp_packet.PayloadType());
-      EXPECT_EQ(test::CallTest::kVideoSendSsrcs[0], rtp_packet.Ssrc());
+      EXPECT_EQ(test::VideoTestConstants::kVideoSendSsrcs[0],
+                rtp_packet.Ssrc());
 
       dropped_sequence_numbers_.insert(rtp_packet.SequenceNumber());
       dropped_timestamps_.insert(rtp_packet.Timestamp());
@@ -246,7 +265,7 @@ class FlexfecRenderObserver : public test::EndToEndTest,
           parser.receiver_report()->report_blocks();
       if (!report_blocks.empty()) {
         EXPECT_EQ(1U, report_blocks.size());
-        EXPECT_EQ(test::CallTest::kFlexfecSendSsrc,
+        EXPECT_EQ(test::VideoTestConstants::kFlexfecSendSsrc,
                   report_blocks[0].source_ssrc());
         MutexLock lock(&mutex_);
         received_flexfec_rtcp_ = true;
@@ -256,19 +275,12 @@ class FlexfecRenderObserver : public test::EndToEndTest,
     return SEND_PACKET;
   }
 
-  std::unique_ptr<test::PacketTransport> CreateSendTransport(
-      TaskQueueBase* task_queue,
-      Call* sender_call) override {
+  BuiltInNetworkBehaviorConfig GetSendTransportConfig() const override {
     // At low RTT (< kLowRttNackMs) -> NACK only, no FEC.
     const int kNetworkDelayMs = 100;
     BuiltInNetworkBehaviorConfig config;
     config.queue_delay_ms = kNetworkDelayMs;
-    return std::make_unique<test::PacketTransport>(
-        task_queue, sender_call, this, test::PacketTransport::kSender,
-        test::CallTest::payload_type_map_,
-        std::make_unique<FakeNetworkPipe>(
-            Clock::GetRealTimeClock(),
-            std::make_unique<SimulatedNetwork>(config)));
+    return config;
   }
 
   void OnFrame(const VideoFrame& video_frame) override {
@@ -293,17 +305,20 @@ class FlexfecRenderObserver : public test::EndToEndTest,
     (*receive_configs)[0].renderer = this;
 
     if (enable_nack_) {
-      send_config->rtp.nack.rtp_history_ms = test::CallTest::kNackRtpHistoryMs;
-      send_config->rtp.rtx.ssrcs.push_back(test::CallTest::kSendRtxSsrcs[0]);
-      send_config->rtp.rtx.payload_type = test::CallTest::kSendRtxPayloadType;
+      send_config->rtp.nack.rtp_history_ms =
+          test::VideoTestConstants::kNackRtpHistoryMs;
+      send_config->rtp.rtx.ssrcs.push_back(
+          test::VideoTestConstants::kSendRtxSsrcs[0]);
+      send_config->rtp.rtx.payload_type =
+          test::VideoTestConstants::kSendRtxPayloadType;
 
       (*receive_configs)[0].rtp.nack.rtp_history_ms =
-          test::CallTest::kNackRtpHistoryMs;
-      (*receive_configs)[0].rtp.rtx_ssrc = test::CallTest::kSendRtxSsrcs[0];
-      (*receive_configs)[0]
-          .rtp
-          .rtx_associated_payload_types[test::CallTest::kSendRtxPayloadType] =
-          test::CallTest::kVideoSendPayloadType;
+          test::VideoTestConstants::kNackRtpHistoryMs;
+      (*receive_configs)[0].rtp.rtx_ssrc =
+          test::VideoTestConstants::kSendRtxSsrcs[0];
+      (*receive_configs)[0].rtp.rtx_associated_payload_types
+          [test::VideoTestConstants::kSendRtxPayloadType] =
+          test::VideoTestConstants::kVideoSendPayloadType;
     }
   }
 
@@ -352,7 +367,7 @@ TEST_F(FecEndToEndTest, ReceivedUlpfecPacketsNotNacked) {
   class UlpfecNackObserver : public test::EndToEndTest {
    public:
     UlpfecNackObserver()
-        : EndToEndTest(kDefaultTimeout),
+        : EndToEndTest(test::VideoTestConstants::kDefaultTimeout),
           state_(kFirstPacket),
           ulpfec_sequence_number_(0),
           has_last_sequence_number_(false),
@@ -366,12 +381,16 @@ TEST_F(FecEndToEndTest, ReceivedUlpfecPacketsNotNacked) {
       EXPECT_TRUE(rtp_packet.Parse(packet, length));
 
       int encapsulated_payload_type = -1;
-      if (rtp_packet.PayloadType() == kRedPayloadType) {
+      if (rtp_packet.PayloadType() ==
+          test::VideoTestConstants::kRedPayloadType) {
         encapsulated_payload_type = rtp_packet.payload()[0];
-        if (encapsulated_payload_type != kFakeVideoSendPayloadType)
-          EXPECT_EQ(kUlpfecPayloadType, encapsulated_payload_type);
+        if (encapsulated_payload_type !=
+            test::VideoTestConstants::kFakeVideoSendPayloadType)
+          EXPECT_EQ(test::VideoTestConstants::kUlpfecPayloadType,
+                    encapsulated_payload_type);
       } else {
-        EXPECT_EQ(kFakeVideoSendPayloadType, rtp_packet.PayloadType());
+        EXPECT_EQ(test::VideoTestConstants::kFakeVideoSendPayloadType,
+                  rtp_packet.PayloadType());
       }
 
       if (has_last_sequence_number_ &&
@@ -383,7 +402,8 @@ TEST_F(FecEndToEndTest, ReceivedUlpfecPacketsNotNacked) {
       last_sequence_number_ = rtp_packet.SequenceNumber();
       has_last_sequence_number_ = true;
 
-      bool ulpfec_packet = encapsulated_payload_type == kUlpfecPayloadType;
+      bool ulpfec_packet = encapsulated_payload_type ==
+                           test::VideoTestConstants::kUlpfecPayloadType;
       switch (state_) {
         case kFirstPacket:
           state_ = kDropEveryOtherPacketUntilUlpfec;
@@ -439,20 +459,13 @@ TEST_F(FecEndToEndTest, ReceivedUlpfecPacketsNotNacked) {
       return SEND_PACKET;
     }
 
-    std::unique_ptr<test::PacketTransport> CreateSendTransport(
-        TaskQueueBase* task_queue,
-        Call* sender_call) override {
+    BuiltInNetworkBehaviorConfig GetSendTransportConfig() const override {
       // At low RTT (< kLowRttNackMs) -> NACK only, no FEC.
       // Configure some network delay.
       const int kNetworkDelayMs = 50;
       BuiltInNetworkBehaviorConfig config;
       config.queue_delay_ms = kNetworkDelayMs;
-      return std::make_unique<test::PacketTransport>(
-          task_queue, sender_call, this, test::PacketTransport::kSender,
-          payload_type_map_,
-          std::make_unique<FakeNetworkPipe>(
-              Clock::GetRealTimeClock(),
-              std::make_unique<SimulatedNetwork>(config)));
+      return config;
     }
 
     // TODO(holmer): Investigate why we don't send FEC packets when the bitrate
@@ -468,18 +481,25 @@ TEST_F(FecEndToEndTest, ReceivedUlpfecPacketsNotNacked) {
         std::vector<VideoReceiveStreamInterface::Config>* receive_configs,
         VideoEncoderConfig* encoder_config) override {
       // Configure hybrid NACK/FEC.
-      send_config->rtp.nack.rtp_history_ms = kNackRtpHistoryMs;
-      send_config->rtp.ulpfec.red_payload_type = kRedPayloadType;
-      send_config->rtp.ulpfec.ulpfec_payload_type = kUlpfecPayloadType;
+      send_config->rtp.nack.rtp_history_ms =
+          test::VideoTestConstants::kNackRtpHistoryMs;
+      send_config->rtp.ulpfec.red_payload_type =
+          test::VideoTestConstants::kRedPayloadType;
+      send_config->rtp.ulpfec.ulpfec_payload_type =
+          test::VideoTestConstants::kUlpfecPayloadType;
       // Set codec to VP8, otherwise NACK/FEC hybrid will be disabled.
       send_config->encoder_settings.encoder_factory = &encoder_factory_;
       send_config->rtp.payload_name = "VP8";
-      send_config->rtp.payload_type = kFakeVideoSendPayloadType;
+      send_config->rtp.payload_type =
+          test::VideoTestConstants::kFakeVideoSendPayloadType;
       encoder_config->codec_type = kVideoCodecVP8;
 
-      (*receive_configs)[0].rtp.nack.rtp_history_ms = kNackRtpHistoryMs;
-      (*receive_configs)[0].rtp.red_payload_type = kRedPayloadType;
-      (*receive_configs)[0].rtp.ulpfec_payload_type = kUlpfecPayloadType;
+      (*receive_configs)[0].rtp.nack.rtp_history_ms =
+          test::VideoTestConstants::kNackRtpHistoryMs;
+      (*receive_configs)[0].rtp.red_payload_type =
+          test::VideoTestConstants::kRedPayloadType;
+      (*receive_configs)[0].rtp.ulpfec_payload_type =
+          test::VideoTestConstants::kUlpfecPayloadType;
 
       (*receive_configs)[0].decoders.resize(1);
       (*receive_configs)[0].decoders[0].payload_type =

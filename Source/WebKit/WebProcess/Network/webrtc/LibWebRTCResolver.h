@@ -57,7 +57,8 @@ private:
     friend class WebRTCResolver;
 
     // AsyncResolverInterface API.
-    void Start(const rtc::SocketAddress&) final;
+    void Start(const rtc::SocketAddress& address) final { Start(address, address.family()); }
+    void Start(const rtc::SocketAddress&, int) final;
     bool GetResolvedAddress(int, rtc::SocketAddress*) const final;
     int GetError() const final { return m_error; }
     void Destroy(bool) final;

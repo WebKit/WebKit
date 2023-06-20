@@ -13,7 +13,7 @@
 #include <utility>
 #include <vector>
 
-#include "modules/video_coding/frame_object.h"
+#include "modules/rtp_rtcp/source/frame_object.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 

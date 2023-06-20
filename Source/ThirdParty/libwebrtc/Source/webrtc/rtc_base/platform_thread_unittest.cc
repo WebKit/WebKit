@@ -34,7 +34,7 @@ TEST(PlatformThreadTest, StartFinalize) {
   EXPECT_FALSE(thread.empty());
   thread.Finalize();
   EXPECT_TRUE(thread.empty());
-  done.Wait(30000);
+  done.Wait(webrtc::TimeDelta::Seconds(30));
 }
 
 TEST(PlatformThreadTest, MovesEmpty) {
@@ -54,7 +54,7 @@ TEST(PlatformThreadTest, MovesHandles) {
   thread2 = std::move(thread1);
   EXPECT_TRUE(thread1.empty());
   EXPECT_FALSE(thread2.empty());
-  done.Wait(30000);
+  done.Wait(webrtc::TimeDelta::Seconds(30));
 }
 
 TEST(PlatformThreadTest,
@@ -81,7 +81,7 @@ TEST(PlatformThreadTest, JoinsThread) {
   // This test flakes if there are problems with the join implementation.
   rtc::Event event;
   PlatformThread::SpawnJoinable([&] { event.Set(); }, "T");
-  EXPECT_TRUE(event.Wait(/*give_up_after_ms=*/0));
+  EXPECT_TRUE(event.Wait(/*give_up_after=*/webrtc::TimeDelta::Zero()));
 }
 
 TEST(PlatformThreadTest, StopsBeforeDetachedThreadExits) {

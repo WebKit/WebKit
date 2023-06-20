@@ -246,7 +246,8 @@ TEST(OperationsChainTest, AsynchronousOperation) {
       operation_tracker_proxy.PostAsynchronousOperation(
           &unblock_async_operation_event);
   // This should not be signaled until we unblock the operation.
-  EXPECT_FALSE(async_operation_completed_event->Wait(0));
+  EXPECT_FALSE(
+      async_operation_completed_event->Wait(webrtc::TimeDelta::Zero()));
   // Unblock the operation and wait for it to complete.
   unblock_async_operation_event.Set();
   async_operation_completed_event->Wait(Event::kForever);
@@ -264,13 +265,13 @@ TEST(OperationsChainTest,
       operation_tracker.BindSynchronousOperation(&event0));
   // This should already be signaled. (If it wasn't, waiting wouldn't help,
   // because we'd be blocking the only thread that exists.)
-  EXPECT_TRUE(event0.Wait(0));
+  EXPECT_TRUE(event0.Wait(webrtc::TimeDelta::Zero()));
   // Chaining another operation should also execute immediately because the
   // chain should already be empty.
   Event event1;
   operations_chain->ChainOperation(
       operation_tracker.BindSynchronousOperation(&event1));
-  EXPECT_TRUE(event1.Wait(0));
+  EXPECT_TRUE(event1.Wait(webrtc::TimeDelta::Zero()));
 }
 
 TEST(OperationsChainTest, AsynchronousOperationBlocksSynchronousOperation) {
@@ -290,7 +291,7 @@ TEST(OperationsChainTest, AsynchronousOperationBlocksSynchronousOperation) {
   sync_operation_completed_event->Wait(Event::kForever);
   // The asynchronous avent should have blocked the synchronous event, meaning
   // this should already be signaled.
-  EXPECT_TRUE(async_operation_completed_event->Wait(0));
+  EXPECT_TRUE(async_operation_completed_event->Wait(webrtc::TimeDelta::Zero()));
 }
 
 TEST(OperationsChainTest, OperationsAreExecutedInOrder) {

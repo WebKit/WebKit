@@ -15,6 +15,7 @@
 #include "modules/video_coding/codecs/vp8/include/vp8.h"
 #include "test/call_test.h"
 #include "test/gtest.h"
+#include "test/video_test_constants.h"
 
 namespace webrtc {
 namespace {
@@ -29,7 +30,7 @@ class DecryptedFrameObserver : public test::EndToEndTest,
                                public rtc::VideoSinkInterface<VideoFrame> {
  public:
   DecryptedFrameObserver()
-      : EndToEndTest(test::CallTest::kDefaultTimeout),
+      : EndToEndTest(test::VideoTestConstants::kDefaultTimeout),
         encoder_factory_([] { return VP8Encoder::Create(); }) {}
 
  private:
@@ -40,7 +41,8 @@ class DecryptedFrameObserver : public test::EndToEndTest,
     // Use VP8 instead of FAKE.
     send_config->encoder_settings.encoder_factory = &encoder_factory_;
     send_config->rtp.payload_name = "VP8";
-    send_config->rtp.payload_type = test::CallTest::kVideoSendPayloadType;
+    send_config->rtp.payload_type =
+        test::VideoTestConstants::kVideoSendPayloadType;
     send_config->frame_encryptor = new FakeFrameEncryptor();
     send_config->crypto_options.sframe.require_frame_encryption = true;
     encoder_config->codec_type = kVideoCodecVP8;

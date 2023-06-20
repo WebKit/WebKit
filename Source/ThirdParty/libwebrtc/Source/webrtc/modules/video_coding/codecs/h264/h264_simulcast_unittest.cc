@@ -35,8 +35,12 @@ std::unique_ptr<SimulcastTestFixture> CreateSpecificSimulcastTestFixture() {
 }  // namespace
 
 TEST(TestH264Simulcast, TestKeyFrameRequestsOnAllStreams) {
+  GTEST_SKIP() << "Not applicable to H264.";
+}
+
+TEST(TestH264Simulcast, TestKeyFrameRequestsOnSpecificStreams) {
   auto fixture = CreateSpecificSimulcastTestFixture();
-  fixture->TestKeyFrameRequestsOnAllStreams();
+  fixture->TestKeyFrameRequestsOnSpecificStreams();
 }
 
 TEST(TestH264Simulcast, TestPaddingAllStreams) {

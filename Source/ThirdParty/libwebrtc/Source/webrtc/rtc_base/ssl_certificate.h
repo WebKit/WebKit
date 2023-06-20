@@ -38,6 +38,8 @@ struct RTC_EXPORT SSLCertificateStats {
   std::string fingerprint_algorithm;
   std::string base64_certificate;
   std::unique_ptr<SSLCertificateStats> issuer;
+
+  std::unique_ptr<SSLCertificateStats> Copy() const;
 };
 
 // Abstract interface overridden by SSL library specific

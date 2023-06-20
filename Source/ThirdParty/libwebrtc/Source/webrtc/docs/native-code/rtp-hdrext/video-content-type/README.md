@@ -19,6 +19,6 @@ Values:
   * 0x00: *Unspecified*. Default value. Treated the same as an absence of an extension.
   * 0x01: *Screenshare*. Video stream is of a screenshare type.
 
-Notes: Extension shoud be present only in the last packet of key-frames. If
+Notes: Extension should be present only in the last packet of key-frames. If
 attached to other packets it should be ignored. If extension is absent,
 *Unspecified* value is assumed.

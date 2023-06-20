@@ -45,6 +45,7 @@
 #include "logging/rtc_event_log/rtc_event_log_unittest_helper.h"
 #include "logging/rtc_event_log/rtc_stream_config.h"
 #include "modules/rtp_rtcp/include/rtp_header_extension_map.h"
+#include "modules/rtp_rtcp/source/rtp_dependency_descriptor_extension.h"
 #include "modules/rtp_rtcp/source/rtp_header_extensions.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/fake_clock.h"
@@ -228,7 +229,9 @@ void RtcEventLogSession::WriteAudioRecvConfigs(size_t audio_recv_streams,
     do {
       ssrc = prng_.Rand<uint32_t>();
     } while (SsrcUsed(ssrc, incoming_extensions_));
-    RtpHeaderExtensionMap extensions = gen_.NewRtpHeaderExtensionMap();
+    RtpHeaderExtensionMap extensions = gen_.NewRtpHeaderExtensionMap(
+        /*configure_all=*/false,
+        /*excluded_extensions=*/{RtpDependencyDescriptorExtension::kId});
     incoming_extensions_.emplace_back(ssrc, extensions);
     auto event = gen_.NewAudioReceiveStreamConfig(ssrc, extensions);
     event_log->Log(event->Copy());
@@ -245,7 +248,9 @@ void RtcEventLogSession::WriteAudioSendConfigs(size_t audio_send_streams,
     do {
       ssrc = prng_.Rand<uint32_t>();
     } while (SsrcUsed(ssrc, outgoing_extensions_));
-    RtpHeaderExtensionMap extensions = gen_.NewRtpHeaderExtensionMap();
+    RtpHeaderExtensionMap extensions = gen_.NewRtpHeaderExtensionMap(
+        /*configure_all=*/false,
+        /*excluded_extensions=*/{RtpDependencyDescriptorExtension::kId});
     outgoing_extensions_.emplace_back(ssrc, extensions);
     auto event = gen_.NewAudioSendStreamConfig(ssrc, extensions);
     event_log->Log(event->Copy());
@@ -263,6 +268,10 @@ void RtcEventLogSession::WriteVideoRecvConfigs(size_t video_recv_streams,
   RtpHeaderExtensionMap all_extensions =
       ParsedRtcEventLog::GetDefaultHeaderExtensionMap();
 
+  if (std::get<2>(GetParam()) == RtcEventLog::EncodingType::Legacy) {
+    all_extensions.Deregister(RtpDependencyDescriptorExtension::Uri());
+  }
+
   clock_.AdvanceTime(TimeDelta::Millis(prng_.Rand(20)));
   uint32_t ssrc = prng_.Rand<uint32_t>();
   incoming_extensions_.emplace_back(ssrc, all_extensions);
@@ -274,7 +283,12 @@ void RtcEventLogSession::WriteVideoRecvConfigs(size_t video_recv_streams,
     do {
       ssrc = prng_.Rand<uint32_t>();
     } while (SsrcUsed(ssrc, incoming_extensions_));
-    RtpHeaderExtensionMap extensions = gen_.NewRtpHeaderExtensionMap();
+    std::vector<RTPExtensionType> excluded_extensions;
+    if (std::get<2>(GetParam()) == RtcEventLog::EncodingType::Legacy) {
+      excluded_extensions.push_back(RtpDependencyDescriptorExtension::kId);
+    }
+    RtpHeaderExtensionMap extensions = gen_.NewRtpHeaderExtensionMap(
+        /*configure_all=*/false, excluded_extensions);
     incoming_extensions_.emplace_back(ssrc, extensions);
     auto new_event = gen_.NewVideoReceiveStreamConfig(ssrc, extensions);
     event_log->Log(new_event->Copy());
@@ -292,6 +306,10 @@ void RtcEventLogSession::WriteVideoSendConfigs(size_t video_send_streams,
   RtpHeaderExtensionMap all_extensions =
       ParsedRtcEventLog::GetDefaultHeaderExtensionMap();
 
+  if (std::get<2>(GetParam()) == RtcEventLog::EncodingType::Legacy) {
+    all_extensions.Deregister(RtpDependencyDescriptorExtension::Uri());
+  }
+
   clock_.AdvanceTime(TimeDelta::Millis(prng_.Rand(20)));
   uint32_t ssrc = prng_.Rand<uint32_t>();
   outgoing_extensions_.emplace_back(ssrc, all_extensions);
@@ -303,7 +321,12 @@ void RtcEventLogSession::WriteVideoSendConfigs(size_t video_send_streams,
     do {
       ssrc = prng_.Rand<uint32_t>();
     } while (SsrcUsed(ssrc, outgoing_extensions_));
-    RtpHeaderExtensionMap extensions = gen_.NewRtpHeaderExtensionMap();
+    std::vector<RTPExtensionType> excluded_extensions;
+    if (std::get<2>(GetParam()) == RtcEventLog::EncodingType::Legacy) {
+      excluded_extensions.push_back(RtpDependencyDescriptorExtension::kId);
+    }
+    RtpHeaderExtensionMap extensions = gen_.NewRtpHeaderExtensionMap(
+        /*configure_all=*/false, excluded_extensions);
     outgoing_extensions_.emplace_back(ssrc, extensions);
     auto event = gen_.NewVideoSendStreamConfig(ssrc, extensions);
     event_log->Log(event->Copy());

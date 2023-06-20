@@ -52,7 +52,7 @@ void FuzzOneInput(const uint8_t* data, size_t size) {
     // Write parsed descriptor back into raw buffer.
     size_t value_size =
         RtpDependencyDescriptorExtension::ValueSize(structure1, descriptor1);
-    // Check |writer| use minimal number of bytes to pack the descriptor by
+    // Check `writer` use minimal number of bytes to pack the descriptor by
     // checking it doesn't use more than reader consumed.
     RTC_CHECK_LE(value_size, raw.size());
     uint8_t some_memory[256];

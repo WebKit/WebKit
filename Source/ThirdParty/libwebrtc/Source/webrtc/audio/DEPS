@@ -2,6 +2,7 @@ include_rules = [
   "+call",
   "+common_audio",
   "+logging/rtc_event_log",
+  "+media/base",
   "+modules/async_audio_processing",
   "+modules/audio_coding",
   "+modules/audio_device",

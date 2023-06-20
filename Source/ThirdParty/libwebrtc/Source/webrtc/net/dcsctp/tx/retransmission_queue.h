@@ -221,7 +221,7 @@ class RetransmissionQueue {
   const size_t min_bytes_required_to_send_;
   // If the peer supports RFC3758 - SCTP Partial Reliability Extension.
   const bool partial_reliability_;
-  const std::string log_prefix_;
+  const absl::string_view log_prefix_;
   // The size of the data chunk (DATA/I-DATA) header that is used.
   const size_t data_chunk_header_size_;
   // Called when a new RTT measurement has been done

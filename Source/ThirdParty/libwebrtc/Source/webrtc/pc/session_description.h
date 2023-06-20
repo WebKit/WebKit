@@ -95,45 +95,41 @@ class MediaContentDescription {
 
   // `protocol` is the expected media transport protocol, such as RTP/AVPF,
   // RTP/SAVPF or SCTP/DTLS.
-  virtual std::string protocol() const { return protocol_; }
+  std::string protocol() const { return protocol_; }
   virtual void set_protocol(absl::string_view protocol) {
     protocol_ = std::string(protocol);
   }
 
-  virtual webrtc::RtpTransceiverDirection direction() const {
-    return direction_;
-  }
-  virtual void set_direction(webrtc::RtpTransceiverDirection direction) {
+  webrtc::RtpTransceiverDirection direction() const { return direction_; }
+  void set_direction(webrtc::RtpTransceiverDirection direction) {
     direction_ = direction;
   }
 
-  virtual bool rtcp_mux() const { return rtcp_mux_; }
-  virtual void set_rtcp_mux(bool mux) { rtcp_mux_ = mux; }
+  bool rtcp_mux() const { return rtcp_mux_; }
+  void set_rtcp_mux(bool mux) { rtcp_mux_ = mux; }
 
-  virtual bool rtcp_reduced_size() const { return rtcp_reduced_size_; }
-  virtual void set_rtcp_reduced_size(bool reduced_size) {
+  bool rtcp_reduced_size() const { return rtcp_reduced_size_; }
+  void set_rtcp_reduced_size(bool reduced_size) {
     rtcp_reduced_size_ = reduced_size;
   }
 
   // Indicates support for the remote network estimate packet type. This
   // functionality is experimental and subject to change without notice.
-  virtual bool remote_estimate() const { return remote_estimate_; }
-  virtual void set_remote_estimate(bool remote_estimate) {
+  bool remote_estimate() const { return remote_estimate_; }
+  void set_remote_estimate(bool remote_estimate) {
     remote_estimate_ = remote_estimate;
   }
 
-  virtual int bandwidth() const { return bandwidth_; }
-  virtual void set_bandwidth(int bandwidth) { bandwidth_ = bandwidth; }
-  virtual std::string bandwidth_type() const { return bandwidth_type_; }
-  virtual void set_bandwidth_type(std::string bandwidth_type) {
+  int bandwidth() const { return bandwidth_; }
+  void set_bandwidth(int bandwidth) { bandwidth_ = bandwidth; }
+  std::string bandwidth_type() const { return bandwidth_type_; }
+  void set_bandwidth_type(std::string bandwidth_type) {
     bandwidth_type_ = bandwidth_type;
   }
 
-  virtual const std::vector<CryptoParams>& cryptos() const { return cryptos_; }
-  virtual void AddCrypto(const CryptoParams& params) {
-    cryptos_.push_back(params);
-  }
-  virtual void set_cryptos(const std::vector<CryptoParams>& cryptos) {
+  const std::vector<CryptoParams>& cryptos() const { return cryptos_; }
+  void AddCrypto(const CryptoParams& params) { cryptos_.push_back(params); }
+  void set_cryptos(const std::vector<CryptoParams>& cryptos) {
     cryptos_ = cryptos;
   }
 
@@ -142,19 +138,18 @@ class MediaContentDescription {
   // are present.
   // Use RtpExtension::FindHeaderExtensionByUri for finding and
   // RtpExtension::DeduplicateHeaderExtensions for filtering.
-  virtual const RtpHeaderExtensions& rtp_header_extensions() const {
+  const RtpHeaderExtensions& rtp_header_extensions() const {
     return rtp_header_extensions_;
   }
-  virtual void set_rtp_header_extensions(
-      const RtpHeaderExtensions& extensions) {
+  void set_rtp_header_extensions(const RtpHeaderExtensions& extensions) {
     rtp_header_extensions_ = extensions;
     rtp_header_extensions_set_ = true;
   }
-  virtual void AddRtpHeaderExtension(const webrtc::RtpExtension& ext) {
+  void AddRtpHeaderExtension(const webrtc::RtpExtension& ext) {
     rtp_header_extensions_.push_back(ext);
     rtp_header_extensions_set_ = true;
   }
-  virtual void ClearRtpHeaderExtensions() {
+  void ClearRtpHeaderExtensions() {
     rtp_header_extensions_.clear();
     rtp_header_extensions_set_ = true;
   }
@@ -163,14 +158,12 @@ class MediaContentDescription {
   // signal them. For now we assume an empty list means no signaling, but
   // provide the ClearRtpHeaderExtensions method to allow "no support" to be
   // clearly indicated (i.e. when derived from other information).
-  virtual bool rtp_header_extensions_set() const {
-    return rtp_header_extensions_set_;
-  }
-  virtual const StreamParamsVec& streams() const { return send_streams_; }
+  bool rtp_header_extensions_set() const { return rtp_header_extensions_set_; }
+  const StreamParamsVec& streams() const { return send_streams_; }
   // TODO(pthatcher): Remove this by giving mediamessage.cc access
   // to MediaContentDescription
-  virtual StreamParamsVec& mutable_streams() { return send_streams_; }
-  virtual void AddStream(const StreamParams& stream) {
+  StreamParamsVec& mutable_streams() { return send_streams_; }
+  void AddStream(const StreamParams& stream) {
     send_streams_.push_back(stream);
   }
   // Legacy streams have an ssrc, but nothing else.
@@ -183,37 +176,36 @@ class MediaContentDescription {
     AddStream(sp);
   }
 
-  virtual uint32_t first_ssrc() const {
+  uint32_t first_ssrc() const {
     if (send_streams_.empty()) {
       return 0;
     }
     return send_streams_[0].first_ssrc();
   }
-  virtual bool has_ssrcs() const {
+  bool has_ssrcs() const {
     if (send_streams_.empty()) {
       return false;
     }
     return send_streams_[0].has_ssrcs();
   }
 
-  virtual void set_conference_mode(bool enable) { conference_mode_ = enable; }
-  virtual bool conference_mode() const { return conference_mode_; }
+  void set_conference_mode(bool enable) { conference_mode_ = enable; }
+  bool conference_mode() const { return conference_mode_; }
 
   // https://tools.ietf.org/html/rfc4566#section-5.7
   // May be present at the media or session level of SDP. If present at both
   // levels, the media-level attribute overwrites the session-level one.
-  virtual void set_connection_address(const rtc::SocketAddress& address) {
+  void set_connection_address(const rtc::SocketAddress& address) {
     connection_address_ = address;
   }
-  virtual const rtc::SocketAddress& connection_address() const {
+  const rtc::SocketAddress& connection_address() const {
     return connection_address_;
   }
 
   // Determines if it's allowed to mix one- and two-byte rtp header extensions
   // within the same rtp stream.
   enum ExtmapAllowMixed { kNo, kSession, kMedia };
-  virtual void set_extmap_allow_mixed_enum(
-      ExtmapAllowMixed new_extmap_allow_mixed) {
+  void set_extmap_allow_mixed_enum(ExtmapAllowMixed new_extmap_allow_mixed) {
     if (new_extmap_allow_mixed == kMedia &&
         extmap_allow_mixed_enum_ == kSession) {
       // Do not downgrade from session level to media level.
@@ -221,27 +213,24 @@ class MediaContentDescription {
     }
     extmap_allow_mixed_enum_ = new_extmap_allow_mixed;
   }
-  virtual ExtmapAllowMixed extmap_allow_mixed_enum() const {
+  ExtmapAllowMixed extmap_allow_mixed_enum() const {
     return extmap_allow_mixed_enum_;
   }
-  virtual bool extmap_allow_mixed() const {
-    return extmap_allow_mixed_enum_ != kNo;
-  }
+  bool extmap_allow_mixed() const { return extmap_allow_mixed_enum_ != kNo; }
 
   // Simulcast functionality.
-  virtual bool HasSimulcast() const { return !simulcast_.empty(); }
-  virtual SimulcastDescription& simulcast_description() { return simulcast_; }
-  virtual const SimulcastDescription& simulcast_description() const {
+  bool HasSimulcast() const { return !simulcast_.empty(); }
+  SimulcastDescription& simulcast_description() { return simulcast_; }
+  const SimulcastDescription& simulcast_description() const {
     return simulcast_;
   }
-  virtual void set_simulcast_description(
-      const SimulcastDescription& simulcast) {
+  void set_simulcast_description(const SimulcastDescription& simulcast) {
     simulcast_ = simulcast;
   }
-  virtual const std::vector<RidDescription>& receive_rids() const {
+  const std::vector<RidDescription>& receive_rids() const {
     return receive_rids_;
   }
-  virtual void set_receive_rids(const std::vector<RidDescription>& rids) {
+  void set_receive_rids(const std::vector<RidDescription>& rids) {
     receive_rids_ = rids;
   }
 
@@ -283,10 +272,10 @@ class MediaContentDescriptionImpl : public MediaContentDescription {
   typedef C CodecType;
 
   // Codecs should be in preference order (most preferred codec first).
-  virtual const std::vector<C>& codecs() const { return codecs_; }
-  virtual void set_codecs(const std::vector<C>& codecs) { codecs_ = codecs; }
+  const std::vector<C>& codecs() const { return codecs_; }
+  void set_codecs(const std::vector<C>& codecs) { codecs_ = codecs; }
   bool has_codecs() const override { return !codecs_.empty(); }
-  virtual bool HasCodec(int id) {
+  bool HasCodec(int id) {
     bool found = false;
     for (typename std::vector<C>::iterator iter = codecs_.begin();
          iter != codecs_.end(); ++iter) {
@@ -297,8 +286,8 @@ class MediaContentDescriptionImpl : public MediaContentDescription {
     }
     return found;
   }
-  virtual void AddCodec(const C& codec) { codecs_.push_back(codec); }
-  virtual void AddOrReplaceCodec(const C& codec) {
+  void AddCodec(const C& codec) { codecs_.push_back(codec); }
+  void AddOrReplaceCodec(const C& codec) {
     for (typename std::vector<C>::iterator iter = codecs_.begin();
          iter != codecs_.end(); ++iter) {
       if (iter->id == codec.id) {
@@ -308,7 +297,7 @@ class MediaContentDescriptionImpl : public MediaContentDescription {
     }
     AddCodec(codec);
   }
-  virtual void AddCodecs(const std::vector<C>& codecs) {
+  void AddCodecs(const std::vector<C>& codecs) {
     typename std::vector<C>::const_iterator codec;
     for (codec = codecs.begin(); codec != codecs.end(); ++codec) {
       AddCodec(*codec);

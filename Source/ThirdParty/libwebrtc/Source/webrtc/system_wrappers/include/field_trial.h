@@ -14,6 +14,7 @@
 #include <string>
 
 #include "absl/strings/string_view.h"
+#include "rtc_base/containers/flat_set.h"
 
 // Field trials allow webrtc clients (such as Chrome) to turn on feature code
 // in binaries out in the field and gather information with that.
@@ -96,6 +97,18 @@ bool FieldTrialsStringIsValid(absl::string_view trials_string);
 // Shall only be called with valid FieldTrial strings.
 std::string MergeFieldTrialsStrings(absl::string_view first,
                                     absl::string_view second);
+
+// This helper allows to temporary "register" a field trial within the current
+// scope. This is only useful for tests that use the global field trial string,
+// otherwise you can use `webrtc::FieldTrialsRegistry`.
+//
+// If you want to isolate changes to the global field trial string itself within
+// the current scope you should use `webrtc::test::ScopedFieldTrials`.
+class FieldTrialsAllowedInScopeForTesting {
+ public:
+  explicit FieldTrialsAllowedInScopeForTesting(flat_set<std::string> keys);
+  ~FieldTrialsAllowedInScopeForTesting();
+};
 
 }  // namespace field_trial
 }  // namespace webrtc

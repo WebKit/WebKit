@@ -14,37 +14,28 @@
 
 #include <memory>
 
+#include "api/units/time_delta.h"
 #include "rtc_base/gunit.h"
-#include "rtc_base/location.h"
-#include "rtc_base/message_handler.h"
 #include "rtc_base/thread.h"
 #include "rtc_base/time_utils.h"
 #include "test/gtest.h"
 
 namespace rtc {
 
-static const uint32_t kTimeout = 5000U;
-
-class NullSocketServerTest : public ::testing::Test,
-                             public MessageHandlerAutoCleanup {
- protected:
-  void OnMessage(Message* message) override { ss_.WakeUp(); }
-
-  NullSocketServer ss_;
-};
-
-TEST_F(NullSocketServerTest, WaitAndSet) {
+TEST(NullSocketServerTest, WaitAndSet) {
+  NullSocketServer ss;
   auto thread = Thread::Create();
   EXPECT_TRUE(thread->Start());
-  thread->Post(RTC_FROM_HERE, this, 0);
+  thread->PostTask([&ss] { ss.WakeUp(); });
   // The process_io will be ignored.
   const bool process_io = true;
-  EXPECT_TRUE_WAIT(ss_.Wait(SocketServer::kForever, process_io), kTimeout);
+  EXPECT_TRUE_WAIT(ss.Wait(SocketServer::kForever, process_io), 5'000);
 }
 
-TEST_F(NullSocketServerTest, TestWait) {
+TEST(NullSocketServerTest, TestWait) {
+  NullSocketServer ss;
   int64_t start = TimeMillis();
-  ss_.Wait(200, true);
+  ss.Wait(webrtc::TimeDelta::Millis(200), true);
   // The actual wait time is dependent on the resolution of the timer used by
   // the Event class. Allow for the event to signal ~20ms early.
   EXPECT_GE(TimeSince(start), 180);

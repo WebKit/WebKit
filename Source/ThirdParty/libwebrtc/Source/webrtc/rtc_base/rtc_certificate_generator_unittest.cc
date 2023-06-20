@@ -21,7 +21,7 @@
 
 namespace rtc {
 
-class RTCCertificateGeneratorFixture : public RTCCertificateGeneratorCallback {
+class RTCCertificateGeneratorFixture {
  public:
   RTCCertificateGeneratorFixture()
       : signaling_thread_(Thread::Current()),
@@ -32,21 +32,16 @@ class RTCCertificateGeneratorFixture : public RTCCertificateGeneratorCallback {
     generator_.reset(
         new RTCCertificateGenerator(signaling_thread_, worker_thread_.get()));
   }
-  ~RTCCertificateGeneratorFixture() override {}
 
   RTCCertificateGenerator* generator() const { return generator_.get(); }
   RTCCertificate* certificate() const { return certificate_.get(); }
 
-  void OnSuccess(const scoped_refptr<RTCCertificate>& certificate) override {
-    RTC_CHECK(signaling_thread_->IsCurrent());
-    RTC_CHECK(certificate);
-    certificate_ = certificate;
-    generate_async_completed_ = true;
-  }
-  void OnFailure() override {
-    RTC_CHECK(signaling_thread_->IsCurrent());
-    certificate_ = nullptr;
-    generate_async_completed_ = true;
+  RTCCertificateGeneratorInterface::Callback OnGenerated() {
+    return [this](scoped_refptr<RTCCertificate> certificate) mutable {
+      RTC_CHECK(signaling_thread_->IsCurrent());
+      certificate_ = std::move(certificate);
+      generate_async_completed_ = true;
+    };
   }
 
   bool GenerateAsyncCompleted() {
@@ -69,14 +64,11 @@ class RTCCertificateGeneratorFixture : public RTCCertificateGeneratorCallback {
 
 class RTCCertificateGeneratorTest : public ::testing::Test {
  public:
-  RTCCertificateGeneratorTest()
-      : fixture_(make_ref_counted<RTCCertificateGeneratorFixture>()) {}
-
  protected:
   static constexpr int kGenerationTimeoutMs = 10000;
 
   rtc::AutoThread main_thread_;
-  scoped_refptr<RTCCertificateGeneratorFixture> fixture_;
+  RTCCertificateGeneratorFixture fixture_;
 };
 
 TEST_F(RTCCertificateGeneratorTest, GenerateECDSA) {
@@ -90,16 +82,16 @@ TEST_F(RTCCertificateGeneratorTest, GenerateRSA) {
 }
 
 TEST_F(RTCCertificateGeneratorTest, GenerateAsyncECDSA) {
-  EXPECT_FALSE(fixture_->certificate());
-  fixture_->generator()->GenerateCertificateAsync(KeyParams::ECDSA(),
-                                                  absl::nullopt, fixture_);
+  EXPECT_FALSE(fixture_.certificate());
+  fixture_.generator()->GenerateCertificateAsync(
+      KeyParams::ECDSA(), absl::nullopt, fixture_.OnGenerated());
   // Until generation has completed, the certificate is null. Since this is an
   // async call, generation must not have completed until we process messages
   // posted to this thread (which is done by `EXPECT_TRUE_WAIT`).
-  EXPECT_FALSE(fixture_->GenerateAsyncCompleted());
-  EXPECT_FALSE(fixture_->certificate());
-  EXPECT_TRUE_WAIT(fixture_->GenerateAsyncCompleted(), kGenerationTimeoutMs);
-  EXPECT_TRUE(fixture_->certificate());
+  EXPECT_FALSE(fixture_.GenerateAsyncCompleted());
+  EXPECT_FALSE(fixture_.certificate());
+  EXPECT_TRUE_WAIT(fixture_.GenerateAsyncCompleted(), kGenerationTimeoutMs);
+  EXPECT_TRUE(fixture_.certificate());
 }
 
 TEST_F(RTCCertificateGeneratorTest, GenerateWithExpires) {
@@ -136,10 +128,10 @@ TEST_F(RTCCertificateGeneratorTest, GenerateWithInvalidParamsShouldFail) {
   EXPECT_FALSE(RTCCertificateGenerator::GenerateCertificate(invalid_params,
                                                             absl::nullopt));
 
-  fixture_->generator()->GenerateCertificateAsync(invalid_params, absl::nullopt,
-                                                  fixture_);
-  EXPECT_TRUE_WAIT(fixture_->GenerateAsyncCompleted(), kGenerationTimeoutMs);
-  EXPECT_FALSE(fixture_->certificate());
+  fixture_.generator()->GenerateCertificateAsync(invalid_params, absl::nullopt,
+                                                 fixture_.OnGenerated());
+  EXPECT_TRUE_WAIT(fixture_.GenerateAsyncCompleted(), kGenerationTimeoutMs);
+  EXPECT_FALSE(fixture_.certificate());
 }
 
 }  // namespace rtc

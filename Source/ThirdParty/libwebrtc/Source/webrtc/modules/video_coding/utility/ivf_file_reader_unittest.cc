@@ -9,11 +9,11 @@
  */
 
 #include "modules/video_coding/utility/ivf_file_reader.h"
-#include "modules/video_coding/utility/ivf_file_writer.h"
 
 #include <memory>
 #include <string>
 
+#include "modules/video_coding/utility/ivf_file_writer.h"
 #include "test/gtest.h"
 #include "test/testsupport/file_utils.h"
 

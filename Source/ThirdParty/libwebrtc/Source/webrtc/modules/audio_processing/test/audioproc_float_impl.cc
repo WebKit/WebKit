@@ -640,6 +640,12 @@ void PerformBasicParameterSanityChecks(
       "Error: --simulated_mic_kind must be specified when mic simulation is "
       "enabled\n");
 
+  // TODO(bugs.webrtc.org/7494): Document how the two settings below differ.
+  ReportConditionalErrorAndExit(
+      settings.simulate_mic_gain && settings.use_analog_mic_gain_emulation,
+      "Error: --simulate_mic_gain and --use_analog_mic_gain_emulation cannot "
+      "be enabled at the same time\n");
+
   auto valid_wav_name = [](absl::string_view wav_file_name) {
     if (wav_file_name.size() < 5) {
       return false;

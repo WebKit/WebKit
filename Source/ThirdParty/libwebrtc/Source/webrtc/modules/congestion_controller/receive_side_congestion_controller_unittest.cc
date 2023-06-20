@@ -12,36 +12,32 @@
 
 #include "api/test/network_emulation/create_cross_traffic.h"
 #include "api/test/network_emulation/cross_traffic.h"
+#include "api/units/data_rate.h"
+#include "api/units/data_size.h"
+#include "api/units/time_delta.h"
+#include "api/units/timestamp.h"
 #include "modules/pacing/packet_router.h"
+#include "modules/rtp_rtcp/include/rtp_header_extension_map.h"
+#include "modules/rtp_rtcp/source/rtp_header_extensions.h"
+#include "modules/rtp_rtcp/source/rtp_packet_received.h"
 #include "system_wrappers/include/clock.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 #include "test/scenario/scenario.h"
+
+namespace webrtc {
+namespace test {
+namespace {
 
 using ::testing::_;
 using ::testing::AtLeast;
 using ::testing::ElementsAre;
 using ::testing::MockFunction;
 
-namespace webrtc {
-
-namespace {
-
-// Helper to convert some time format to resolution used in absolute send time
-// header extension, rounded upwards. `t` is the time to convert, in some
-// resolution. `denom` is the value to divide `t` by to get whole seconds,
-// e.g. `denom` = 1000 if `t` is in milliseconds.
-uint32_t AbsSendTime(int64_t t, int64_t denom) {
-  return (((t << 18) + (denom >> 1)) / denom) & 0x00fffffful;
-}
-
-const uint32_t kInitialBitrateBps = 60000;
-
-}  // namespace
-
-namespace test {
+constexpr DataRate kInitialBitrate = DataRate::BitsPerSec(60'000);
 
 TEST(ReceiveSideCongestionControllerTest, SendsRembWithAbsSendTime) {
+  static constexpr DataSize kPayloadSize = DataSize::Bytes(1000);
   MockFunction<void(std::vector<std::unique_ptr<rtcp::RtcpPacket>>)>
       feedback_sender;
   MockFunction<void(uint64_t, std::vector<uint32_t>)> remb_sender;
@@ -51,18 +47,22 @@ TEST(ReceiveSideCongestionControllerTest, SendsRembWithAbsSendTime) {
       &clock_, feedback_sender.AsStdFunction(), remb_sender.AsStdFunction(),
       nullptr);
 
-  size_t payload_size = 1000;
-  RTPHeader header;
-  header.ssrc = 0x11eb21c;
-  header.extension.hasAbsoluteSendTime = true;
+  RtpHeaderExtensionMap extensions;
+  extensions.Register<AbsoluteSendTime>(1);
+  RtpPacketReceived packet(&extensions);
+  packet.SetSsrc(0x11eb21c);
+  packet.ReserveExtension<AbsoluteSendTime>();
+  packet.SetPayloadSize(kPayloadSize.bytes());
 
-  EXPECT_CALL(remb_sender, Call(_, ElementsAre(header.ssrc))).Times(AtLeast(1));
+  EXPECT_CALL(remb_sender, Call(_, ElementsAre(packet.Ssrc())))
+      .Times(AtLeast(1));
 
   for (int i = 0; i < 10; ++i) {
-    clock_.AdvanceTimeMilliseconds((1000 * payload_size) / kInitialBitrateBps);
-    int64_t now_ms = clock_.TimeInMilliseconds();
-    header.extension.absoluteSendTime = AbsSendTime(now_ms, 1000);
-    controller.OnReceivedPacket(now_ms, payload_size, header);
+    clock_.AdvanceTime(kPayloadSize / kInitialBitrate);
+    Timestamp now = clock_.CurrentTime();
+    packet.SetExtension<AbsoluteSendTime>(AbsoluteSendTime::To24Bits(now));
+    packet.set_arrival_time(now);
+    controller.OnReceivedPacket(packet, MediaType::VIDEO);
   }
 }
 
@@ -122,5 +122,6 @@ TEST(ReceiveSideCongestionControllerTest, IsFairToTCP) {
   // fixed and a lower bound should be added to the test.
   EXPECT_LT(client->send_bandwidth().kbps(), 750);
 }
+}  // namespace
 }  // namespace test
 }  // namespace webrtc

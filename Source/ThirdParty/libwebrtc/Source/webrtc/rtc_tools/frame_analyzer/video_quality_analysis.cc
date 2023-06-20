@@ -14,9 +14,10 @@
 #include <array>
 #include <cstddef>
 
+#include "api/numerics/samples_stats_counter.h"
+#include "api/test/metrics/metric.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
-#include "test/testsupport/perf_test.h"
 #include "third_party/libyuv/include/libyuv/compare.h"
 
 namespace webrtc {
@@ -117,39 +118,42 @@ int GetTotalNumberOfSkippedFrames(const std::vector<Cluster>& clusters) {
   return static_cast<int>(number_ref_frames - clusters.size());
 }
 
-void PrintAnalysisResults(const std::string& label, ResultsContainer* results) {
-  PrintAnalysisResults(stdout, label, results);
-}
+void PrintAnalysisResults(const std::string& label,
+                          ResultsContainer& results,
+                          MetricsLogger& logger) {
+  if (results.frames.size() > 0u) {
+    logger.LogSingleValueMetric("Unique_frames_count", label,
+                                results.frames.size(), Unit::kUnitless,
+                                ImprovementDirection::kNeitherIsBetter);
 
-void PrintAnalysisResults(FILE* output,
-                          const std::string& label,
-                          ResultsContainer* results) {
-  SetPerfResultsOutput(output);
-
-  if (results->frames.size() > 0u) {
-    PrintResult("Unique_frames_count", "", label, results->frames.size(),
-                "score", false);
-
-    std::vector<double> psnr_values;
-    std::vector<double> ssim_values;
-    for (const auto& frame : results->frames) {
-      psnr_values.push_back(frame.psnr_value);
-      ssim_values.push_back(frame.ssim_value);
+    SamplesStatsCounter psnr_values;
+    SamplesStatsCounter ssim_values;
+    for (const auto& frame : results.frames) {
+      psnr_values.AddSample(frame.psnr_value);
+      ssim_values.AddSample(frame.ssim_value);
     }
 
-    PrintResultList("PSNR", "", label, psnr_values, "dB", false);
-    PrintResultList("SSIM", "", label, ssim_values, "score", false);
+    logger.LogMetric("PSNR_dB", label, psnr_values, Unit::kUnitless,
+                     ImprovementDirection::kNeitherIsBetter);
+    logger.LogMetric("SSIM", label, ssim_values, Unit::kUnitless,
+                     ImprovementDirection::kNeitherIsBetter);
   }
 
-  PrintResult("Max_repeated", "", label, results->max_repeated_frames, "",
-              false);
-  PrintResult("Max_skipped", "", label, results->max_skipped_frames, "", false);
-  PrintResult("Total_skipped", "", label, results->total_skipped_frames, "",
-              false);
-  PrintResult("Decode_errors_reference", "", label, results->decode_errors_ref,
-              "", false);
-  PrintResult("Decode_errors_test", "", label, results->decode_errors_test, "",
-              false);
+  logger.LogSingleValueMetric("Max_repeated", label,
+                              results.max_repeated_frames, Unit::kUnitless,
+                              ImprovementDirection::kNeitherIsBetter);
+  logger.LogSingleValueMetric("Max_skipped", label, results.max_skipped_frames,
+                              Unit::kUnitless,
+                              ImprovementDirection::kNeitherIsBetter);
+  logger.LogSingleValueMetric("Total_skipped", label,
+                              results.total_skipped_frames, Unit::kUnitless,
+                              ImprovementDirection::kNeitherIsBetter);
+  logger.LogSingleValueMetric("Decode_errors_reference", label,
+                              results.decode_errors_ref, Unit::kUnitless,
+                              ImprovementDirection::kNeitherIsBetter);
+  logger.LogSingleValueMetric("Decode_errors_test", label,
+                              results.decode_errors_test, Unit::kUnitless,
+                              ImprovementDirection::kNeitherIsBetter);
 }
 
 }  // namespace test

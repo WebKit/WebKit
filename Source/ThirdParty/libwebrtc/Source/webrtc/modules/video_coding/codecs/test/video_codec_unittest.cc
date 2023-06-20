@@ -18,8 +18,10 @@
 #include "modules/video_coding/include/video_error_codes.h"
 #include "test/video_codec_settings.h"
 
-static const int kEncodeTimeoutMs = 100;
-static const int kDecodeTimeoutMs = 25;
+static constexpr webrtc::TimeDelta kEncodeTimeout =
+    webrtc::TimeDelta::Millis(100);
+static constexpr webrtc::TimeDelta kDecodeTimeout =
+    webrtc::TimeDelta::Millis(25);
 // Set bitrate to get higher quality.
 static const int kStartBitrate = 300;
 static const int kMaxBitrate = 4000;
@@ -136,7 +138,7 @@ void VideoCodecUnitTest::SetWaitForEncodedFramesThreshold(size_t num_frames) {
 bool VideoCodecUnitTest::WaitForEncodedFrames(
     std::vector<EncodedImage>* frames,
     std::vector<CodecSpecificInfo>* codec_specific_info) {
-  EXPECT_TRUE(encoded_frame_event_.Wait(kEncodeTimeoutMs))
+  EXPECT_TRUE(encoded_frame_event_.Wait(kEncodeTimeout))
       << "Timed out while waiting for encoded frame.";
   // This becomes unsafe if there are multiple threads waiting for frames.
   MutexLock lock(&encoded_frame_section_);
@@ -157,7 +159,7 @@ bool VideoCodecUnitTest::WaitForEncodedFrames(
 
 bool VideoCodecUnitTest::WaitForDecodedFrame(std::unique_ptr<VideoFrame>* frame,
                                              absl::optional<uint8_t>* qp) {
-  bool ret = decoded_frame_event_.Wait(kDecodeTimeoutMs);
+  bool ret = decoded_frame_event_.Wait(kDecodeTimeout);
   EXPECT_TRUE(ret) << "Timed out while waiting for a decoded frame.";
   // This becomes unsafe if there are multiple threads waiting for frames.
   MutexLock lock(&decoded_frame_section_);

@@ -13,7 +13,8 @@
 #include <map>
 #include <memory>
 
-#include "modules/rtp_rtcp/source/rtp_utility.h"
+#include "api/array_view.h"
+#include "modules/rtp_rtcp/source/rtp_util.h"
 #include "test/gtest.h"
 #include "test/testsupport/file_utils.h"
 
@@ -84,11 +85,9 @@ class TestPcapFileReader : public ::testing::Test {
     PacketsPerSsrc pps;
     test::RtpPacket packet;
     while (rtp_packet_source_->NextPacket(&packet)) {
-      RtpUtility::RtpHeaderParser rtp_header_parser(packet.data, packet.length);
-      webrtc::RTPHeader header;
-      if (!rtp_header_parser.RTCP() &&
-          rtp_header_parser.Parse(&header, nullptr)) {
-        pps[header.ssrc]++;
+      rtc::ArrayView<const uint8_t> raw(packet.data, packet.length);
+      if (IsRtpPacket(raw)) {
+        pps[ParseRtpSsrc(raw)]++;
       }
     }
     return pps;

@@ -23,16 +23,12 @@
 #include "api/test/time_controller.h"
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
-#include "rtc_base/logging.h"
-#include "rtc_base/network.h"
 #include "rtc_base/task_queue_for_test.h"
 #include "rtc_base/task_utils/repeating_task.h"
-#include "rtc_base/thread.h"
 #include "system_wrappers/include/clock.h"
 #include "test/network/cross_traffic.h"
 #include "test/network/emulated_network_manager.h"
 #include "test/network/emulated_turn_server.h"
-#include "test/network/fake_network_socket_server.h"
 #include "test/network/network_emulation.h"
 
 namespace webrtc {
@@ -40,7 +36,9 @@ namespace test {
 
 class NetworkEmulationManagerImpl : public NetworkEmulationManager {
  public:
-  explicit NetworkEmulationManagerImpl(TimeMode mode);
+  NetworkEmulationManagerImpl(
+      TimeMode mode,
+      EmulatedNetworkStatsGatheringMode stats_gathering_mode);
   ~NetworkEmulationManagerImpl();
 
   EmulatedNetworkNode* CreateEmulatedNode(BuiltInNetworkBehaviorConfig config,
@@ -81,9 +79,13 @@ class NetworkEmulationManagerImpl : public NetworkEmulationManager {
   EmulatedNetworkManagerInterface* CreateEmulatedNetworkManagerInterface(
       const std::vector<EmulatedEndpoint*>& endpoints) override;
 
-  void GetStats(rtc::ArrayView<EmulatedEndpoint* const> endpoints,
-                std::function<void(std::unique_ptr<EmulatedNetworkStats>)>
-                    stats_callback) override;
+  void GetStats(
+      rtc::ArrayView<EmulatedEndpoint* const> endpoints,
+      std::function<void(EmulatedNetworkStats)> stats_callback) override;
+
+  void GetStats(
+      rtc::ArrayView<EmulatedNetworkNode* const> nodes,
+      std::function<void(EmulatedNetworkNodeStats)> stats_callback) override;
 
   TimeController* time_controller() override { return time_controller_.get(); }
 
@@ -101,6 +103,7 @@ class NetworkEmulationManagerImpl : public NetworkEmulationManager {
   absl::optional<rtc::IPAddress> GetNextIPv4Address();
 
   const TimeMode time_mode_;
+  const EmulatedNetworkStatsGatheringMode stats_gathering_mode_;
   const std::unique_ptr<TimeController> time_controller_;
   Clock* const clock_;
   int next_node_id_;

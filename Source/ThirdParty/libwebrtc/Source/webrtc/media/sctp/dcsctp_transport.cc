@@ -59,11 +59,11 @@ enum class WebrtcPPID : dcsctp::PPID::UnderlyingType {
 
 WebrtcPPID ToPPID(DataMessageType message_type, size_t size) {
   switch (message_type) {
-    case webrtc::DataMessageType::kControl:
+    case DataMessageType::kControl:
       return WebrtcPPID::kDCEP;
-    case webrtc::DataMessageType::kText:
+    case DataMessageType::kText:
       return size > 0 ? WebrtcPPID::kString : WebrtcPPID::kStringEmpty;
-    case webrtc::DataMessageType::kBinary:
+    case DataMessageType::kBinary:
       return size > 0 ? WebrtcPPID::kBinary : WebrtcPPID::kBinaryEmpty;
   }
 }
@@ -71,15 +71,15 @@ WebrtcPPID ToPPID(DataMessageType message_type, size_t size) {
 absl::optional<DataMessageType> ToDataMessageType(dcsctp::PPID ppid) {
   switch (static_cast<WebrtcPPID>(ppid.value())) {
     case WebrtcPPID::kDCEP:
-      return webrtc::DataMessageType::kControl;
+      return DataMessageType::kControl;
     case WebrtcPPID::kString:
     case WebrtcPPID::kStringPartial:
     case WebrtcPPID::kStringEmpty:
-      return webrtc::DataMessageType::kText;
+      return DataMessageType::kText;
     case WebrtcPPID::kBinary:
     case WebrtcPPID::kBinaryPartial:
     case WebrtcPPID::kBinaryEmpty:
-      return webrtc::DataMessageType::kBinary;
+      return DataMessageType::kBinary;
   }
   return absl::nullopt;
 }
@@ -151,6 +151,19 @@ DcSctpTransport::~DcSctpTransport() {
   }
 }
 
+void DcSctpTransport::SetOnConnectedCallback(std::function<void()> callback) {
+  RTC_DCHECK_RUN_ON(network_thread_);
+  on_connected_callback_ = std::move(callback);
+}
+
+void DcSctpTransport::SetDataChannelSink(DataChannelSink* sink) {
+  RTC_DCHECK_RUN_ON(network_thread_);
+  data_channel_sink_ = sink;
+  if (data_channel_sink_ && ready_to_send_data_) {
+    data_channel_sink_->OnReadyToSend();
+  }
+}
+
 void DcSctpTransport::SetDtlsTransport(
     rtc::PacketTransportInternal* transport) {
   RTC_DCHECK_RUN_ON(network_thread_);
@@ -165,10 +178,9 @@ bool DcSctpTransport::Start(int local_sctp_port,
                             int max_message_size) {
   RTC_DCHECK_RUN_ON(network_thread_);
   RTC_DCHECK(max_message_size > 0);
-
-  RTC_LOG(LS_INFO) << debug_name_ << "->Start(local=" << local_sctp_port
-                   << ", remote=" << remote_sctp_port
-                   << ", max_message_size=" << max_message_size << ")";
+  RTC_DLOG(LS_INFO) << debug_name_ << "->Start(local=" << local_sctp_port
+                    << ", remote=" << remote_sctp_port
+                    << ", max_message_size=" << max_message_size << ")";
 
   if (!socket_) {
     dcsctp::DcSctpOptions options;
@@ -206,17 +218,18 @@ bool DcSctpTransport::Start(int local_sctp_port,
 }
 
 bool DcSctpTransport::OpenStream(int sid) {
-  RTC_LOG(LS_INFO) << debug_name_ << "->OpenStream(" << sid << ").";
-  if (!socket_) {
-    RTC_LOG(LS_ERROR) << debug_name_ << "->OpenStream(sid=" << sid
-                      << "): Transport is not started.";
-    return false;
-  }
+  RTC_DCHECK_RUN_ON(network_thread_);
+  RTC_DLOG(LS_INFO) << debug_name_ << "->OpenStream(" << sid << ").";
+
+  StreamState stream_state;
+  stream_states_.insert_or_assign(dcsctp::StreamID(static_cast<uint16_t>(sid)),
+                                  stream_state);
   return true;
 }
 
 bool DcSctpTransport::ResetStream(int sid) {
-  RTC_LOG(LS_INFO) << debug_name_ << "->ResetStream(" << sid << ").";
+  RTC_DCHECK_RUN_ON(network_thread_);
+  RTC_DLOG(LS_INFO) << debug_name_ << "->ResetStream(" << sid << ").";
   if (!socket_) {
     RTC_LOG(LS_ERROR) << debug_name_ << "->ResetStream(sid=" << sid
                       << "): Transport is not started.";
@@ -225,33 +238,59 @@ bool DcSctpTransport::ResetStream(int sid) {
 
   dcsctp::StreamID streams[1] = {dcsctp::StreamID(static_cast<uint16_t>(sid))};
 
-  StreamClosingState& closing_state = closing_states_[streams[0]];
-  if (closing_state.closure_initiated || closing_state.incoming_reset_done ||
-      closing_state.outgoing_reset_done) {
+  auto it = stream_states_.find(streams[0]);
+  if (it == stream_states_.end()) {
+    RTC_LOG(LS_ERROR) << debug_name_ << "->ResetStream(sid=" << sid
+                      << "): Stream is not open.";
+    return false;
+  }
+
+  StreamState& stream_state = it->second;
+  if (stream_state.closure_initiated || stream_state.incoming_reset_done ||
+      stream_state.outgoing_reset_done) {
     // The closing procedure was already initiated by the remote, don't do
     // anything.
     return false;
   }
-  closing_state.closure_initiated = true;
+  stream_state.closure_initiated = true;
   socket_->ResetStreams(streams);
   return true;
 }
 
-bool DcSctpTransport::SendData(int sid,
-                               const SendDataParams& params,
-                               const rtc::CopyOnWriteBuffer& payload,
-                               cricket::SendDataResult* result) {
+RTCError DcSctpTransport::SendData(int sid,
+                                   const SendDataParams& params,
+                                   const rtc::CopyOnWriteBuffer& payload) {
   RTC_DCHECK_RUN_ON(network_thread_);
-
-  RTC_LOG(LS_VERBOSE) << debug_name_ << "->SendData(sid=" << sid
-                      << ", type=" << static_cast<int>(params.type)
-                      << ", length=" << payload.size() << ").";
+  RTC_DLOG(LS_VERBOSE) << debug_name_ << "->SendData(sid=" << sid
+                       << ", type=" << static_cast<int>(params.type)
+                       << ", length=" << payload.size() << ").";
 
   if (!socket_) {
     RTC_LOG(LS_ERROR) << debug_name_
                       << "->SendData(...): Transport is not started.";
-    *result = cricket::SDR_ERROR;
-    return false;
+    return RTCError(RTCErrorType::INVALID_STATE);
+  }
+
+  // It is possible for a message to be sent from the signaling thread at the
+  // same time a data-channel is closing, but before the signaling thread is
+  // aware of it. So we need to keep track of currently active data channels and
+  // skip sending messages for the ones that are not open or closing.
+  // The sending errors are not impacting the data channel API contract as
+  // it is allowed to discard queued messages when the channel is closing.
+  auto stream_state =
+      stream_states_.find(dcsctp::StreamID(static_cast<uint16_t>(sid)));
+  if (stream_state == stream_states_.end()) {
+    RTC_LOG(LS_VERBOSE) << "Skipping message on non-open stream with sid: "
+                        << sid;
+    return RTCError(RTCErrorType::INVALID_STATE);
+  }
+
+  if (stream_state->second.closure_initiated ||
+      stream_state->second.incoming_reset_done ||
+      stream_state->second.outgoing_reset_done) {
+    RTC_LOG(LS_VERBOSE) << "Skipping message on closing stream with sid: "
+                        << sid;
+    return RTCError(RTCErrorType::INVALID_STATE);
   }
 
   auto max_message_size = socket_->options().max_message_size;
@@ -261,8 +300,7 @@ bool DcSctpTransport::SendData(int sid,
                            "Trying to send packet bigger "
                            "than the max message size: "
                         << payload.size() << " vs max of " << max_message_size;
-    *result = cricket::SDR_ERROR;
-    return false;
+    return RTCError(RTCErrorType::INVALID_RANGE);
   }
 
   std::vector<uint8_t> message_payload(payload.cdata(),
@@ -294,26 +332,24 @@ bool DcSctpTransport::SendData(int sid,
     send_options.max_retransmissions = *params.max_rtx_count;
   }
 
-  auto error = socket_->Send(std::move(message), send_options);
+  dcsctp::SendStatus error = socket_->Send(std::move(message), send_options);
   switch (error) {
     case dcsctp::SendStatus::kSuccess:
-      *result = cricket::SDR_SUCCESS;
-      break;
+      return RTCError::OK();
     case dcsctp::SendStatus::kErrorResourceExhaustion:
-      *result = cricket::SDR_BLOCK;
       ready_to_send_data_ = false;
-      break;
+      return RTCError(RTCErrorType::RESOURCE_EXHAUSTED);
     default:
+      absl::string_view message = dcsctp::ToString(error);
       RTC_LOG(LS_ERROR) << debug_name_
                         << "->SendData(...): send() failed with error "
-                        << dcsctp::ToString(error) << ".";
-      *result = cricket::SDR_ERROR;
+                        << message << ".";
+      return RTCError(RTCErrorType::NETWORK_ERROR, message);
   }
-
-  return *result == cricket::SDR_SUCCESS;
 }
 
 bool DcSctpTransport::ReadyToSendData() {
+  RTC_DCHECK_RUN_ON(network_thread_);
   return ready_to_send_data_;
 }
 
@@ -381,7 +417,7 @@ SendPacketStatus DcSctpTransport::SendPacketWithStatus(
 }
 
 std::unique_ptr<dcsctp::Timeout> DcSctpTransport::CreateTimeout(
-    webrtc::TaskQueueBase::DelayPrecision precision) {
+    TaskQueueBase::DelayPrecision precision) {
   return task_queue_timeout_factory_.CreateTimeout(precision);
 }
 
@@ -394,36 +430,38 @@ uint32_t DcSctpTransport::GetRandomInt(uint32_t low, uint32_t high) {
 }
 
 void DcSctpTransport::OnTotalBufferedAmountLow() {
+  RTC_DCHECK_RUN_ON(network_thread_);
   if (!ready_to_send_data_) {
     ready_to_send_data_ = true;
-    SignalReadyToSendData();
+    if (data_channel_sink_) {
+      data_channel_sink_->OnReadyToSend();
+    }
   }
 }
 
 void DcSctpTransport::OnMessageReceived(dcsctp::DcSctpMessage message) {
   RTC_DCHECK_RUN_ON(network_thread_);
-  RTC_LOG(LS_VERBOSE) << debug_name_ << "->OnMessageReceived(sid="
-                      << message.stream_id().value()
-                      << ", ppid=" << message.ppid().value()
-                      << ", length=" << message.payload().size() << ").";
-  cricket::ReceiveDataParams receive_data_params;
-  receive_data_params.sid = message.stream_id().value();
+  RTC_DLOG(LS_VERBOSE) << debug_name_ << "->OnMessageReceived(sid="
+                       << message.stream_id().value()
+                       << ", ppid=" << message.ppid().value()
+                       << ", length=" << message.payload().size() << ").";
   auto type = ToDataMessageType(message.ppid());
   if (!type.has_value()) {
     RTC_LOG(LS_VERBOSE) << debug_name_
                         << "->OnMessageReceived(): Received an unknown PPID "
                         << message.ppid().value()
                         << " on an SCTP packet. Dropping.";
+    return;
   }
-  receive_data_params.type = *type;
-  // No seq_num available from dcSCTP
-  receive_data_params.seq_num = 0;
   receive_buffer_.Clear();
   if (!IsEmptyPPID(message.ppid()))
     receive_buffer_.AppendData(message.payload().data(),
                                message.payload().size());
 
-  SignalDataReceived(receive_data_params, receive_buffer_);
+  if (data_channel_sink_) {
+    data_channel_sink_->OnDataReceived(message.stream_id().value(), *type,
+                                       receive_buffer_);
+  }
 }
 
 void DcSctpTransport::OnError(dcsctp::ErrorKind error,
@@ -444,6 +482,7 @@ void DcSctpTransport::OnError(dcsctp::ErrorKind error,
 
 void DcSctpTransport::OnAborted(dcsctp::ErrorKind error,
                                 absl::string_view message) {
+  RTC_DCHECK_RUN_ON(network_thread_);
   RTC_LOG(LS_ERROR) << debug_name_
                     << "->OnAborted(error=" << dcsctp::ToString(error)
                     << ", message=" << message << ").";
@@ -455,23 +494,31 @@ void DcSctpTransport::OnAborted(dcsctp::ErrorKind error,
   if (code.has_value()) {
     rtc_error.set_sctp_cause_code(static_cast<uint16_t>(*code));
   }
-  SignalClosedAbruptly(rtc_error);
+  if (data_channel_sink_) {
+    data_channel_sink_->OnTransportClosed(rtc_error);
+  }
 }
 
 void DcSctpTransport::OnConnected() {
-  RTC_LOG(LS_INFO) << debug_name_ << "->OnConnected().";
+  RTC_DCHECK_RUN_ON(network_thread_);
+  RTC_DLOG(LS_INFO) << debug_name_ << "->OnConnected().";
   ready_to_send_data_ = true;
-  SignalReadyToSendData();
-  SignalAssociationChangeCommunicationUp();
+  if (data_channel_sink_) {
+    data_channel_sink_->OnReadyToSend();
+  }
+  if (on_connected_callback_) {
+    on_connected_callback_();
+  }
 }
 
 void DcSctpTransport::OnClosed() {
-  RTC_LOG(LS_INFO) << debug_name_ << "->OnClosed().";
+  RTC_DCHECK_RUN_ON(network_thread_);
+  RTC_DLOG(LS_INFO) << debug_name_ << "->OnClosed().";
   ready_to_send_data_ = false;
 }
 
 void DcSctpTransport::OnConnectionRestarted() {
-  RTC_LOG(LS_INFO) << debug_name_ << "->OnConnectionRestarted().";
+  RTC_DLOG(LS_INFO) << debug_name_ << "->OnConnectionRestarted().";
 }
 
 void DcSctpTransport::OnStreamsResetFailed(
@@ -488,45 +535,65 @@ void DcSctpTransport::OnStreamsResetFailed(
 
 void DcSctpTransport::OnStreamsResetPerformed(
     rtc::ArrayView<const dcsctp::StreamID> outgoing_streams) {
+  RTC_DCHECK_RUN_ON(network_thread_);
   for (auto& stream_id : outgoing_streams) {
     RTC_LOG(LS_INFO) << debug_name_
                      << "->OnStreamsResetPerformed(...): Outgoing stream reset"
                      << ", sid=" << stream_id.value();
-    StreamClosingState& closing_state = closing_states_[stream_id];
-    closing_state.outgoing_reset_done = true;
 
-    if (closing_state.incoming_reset_done) {
+    auto it = stream_states_.find(stream_id);
+    if (it == stream_states_.end()) {
+      // Ignoring an outgoing stream reset for a closed stream
+      return;
+    }
+
+    StreamState& stream_state = it->second;
+    stream_state.outgoing_reset_done = true;
+
+    if (stream_state.incoming_reset_done) {
       //  When the close was not initiated locally, we can signal the end of the
       //  data channel close procedure when the remote ACKs the reset.
-      SignalClosingProcedureComplete(stream_id.value());
-      closing_states_.erase(stream_id);
+      if (data_channel_sink_) {
+        data_channel_sink_->OnChannelClosed(stream_id.value());
+      }
+      stream_states_.erase(stream_id);
     }
   }
 }
 
 void DcSctpTransport::OnIncomingStreamsReset(
     rtc::ArrayView<const dcsctp::StreamID> incoming_streams) {
+  RTC_DCHECK_RUN_ON(network_thread_);
   for (auto& stream_id : incoming_streams) {
     RTC_LOG(LS_INFO) << debug_name_
                      << "->OnIncomingStreamsReset(...): Incoming stream reset"
                      << ", sid=" << stream_id.value();
-    StreamClosingState& closing_state = closing_states_[stream_id];
-    closing_state.incoming_reset_done = true;
 
-    if (!closing_state.closure_initiated) {
+    auto it = stream_states_.find(stream_id);
+    if (it == stream_states_.end())
+      return;
+
+    StreamState& stream_state = it->second;
+    stream_state.incoming_reset_done = true;
+
+    if (!stream_state.closure_initiated) {
       // When receiving an incoming stream reset event for a non local close
       // procedure, the transport needs to reset the stream in the other
       // direction too.
       dcsctp::StreamID streams[1] = {stream_id};
       socket_->ResetStreams(streams);
-      SignalClosingProcedureStartedRemotely(stream_id.value());
+      if (data_channel_sink_) {
+        data_channel_sink_->OnChannelClosing(stream_id.value());
+      }
     }
 
-    if (closing_state.outgoing_reset_done) {
+    if (stream_state.outgoing_reset_done) {
       // The close procedure that was initiated locally is complete when we
       // receive and incoming reset event.
-      SignalClosingProcedureComplete(stream_id.value());
-      closing_states_.erase(stream_id);
+      if (data_channel_sink_) {
+        data_channel_sink_->OnChannelClosed(stream_id.value());
+      }
+      stream_states_.erase(stream_id);
     }
   }
 }
@@ -557,11 +624,9 @@ void DcSctpTransport::OnTransportWritableState(
     rtc::PacketTransportInternal* transport) {
   RTC_DCHECK_RUN_ON(network_thread_);
   RTC_DCHECK_EQ(transport_, transport);
-
-  RTC_LOG(LS_VERBOSE) << debug_name_
-                      << "->OnTransportWritableState(), writable="
-                      << transport->writable();
-
+  RTC_DLOG(LS_VERBOSE) << debug_name_
+                       << "->OnTransportWritableState(), writable="
+                       << transport->writable();
   MaybeConnectSocket();
 }
 
@@ -587,8 +652,11 @@ void DcSctpTransport::OnTransportReadPacket(
 
 void DcSctpTransport::OnTransportClosed(
     rtc::PacketTransportInternal* transport) {
-  RTC_LOG(LS_VERBOSE) << debug_name_ << "->OnTransportClosed().";
-  SignalClosedAbruptly({});
+  RTC_DCHECK_RUN_ON(network_thread_);
+  RTC_DLOG(LS_VERBOSE) << debug_name_ << "->OnTransportClosed().";
+  if (data_channel_sink_) {
+    data_channel_sink_->OnTransportClosed({});
+  }
 }
 
 void DcSctpTransport::MaybeConnectSocket() {

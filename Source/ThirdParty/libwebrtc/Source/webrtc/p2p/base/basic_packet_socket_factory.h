@@ -23,12 +23,13 @@
 #include "rtc_base/socket.h"
 #include "rtc_base/socket_address.h"
 #include "rtc_base/socket_factory.h"
+#include "rtc_base/system/rtc_export.h"
 
 namespace rtc {
 
 class SocketFactory;
 
-class BasicPacketSocketFactory : public PacketSocketFactory {
+class RTC_EXPORT BasicPacketSocketFactory : public PacketSocketFactory {
  public:
   explicit BasicPacketSocketFactory(SocketFactory* socket_factory);
   ~BasicPacketSocketFactory() override;

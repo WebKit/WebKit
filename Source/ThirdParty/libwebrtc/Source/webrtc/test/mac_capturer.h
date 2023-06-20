@@ -10,6 +10,7 @@
 #ifndef TEST_MAC_CAPTURER_H_
 #define TEST_MAC_CAPTURER_H_
 
+#include <cstddef>
 #include <memory>
 #include <vector>
 
@@ -33,6 +34,9 @@ class MacCapturer : public TestVideoCapturer,
 
   void OnFrame(const VideoFrame& frame) override;
 
+  int GetFrameWidth() const override { return static_cast<int>(width_); }
+  int GetFrameHeight() const override { return static_cast<int>(height_); }
+
  private:
   MacCapturer(size_t width,
               size_t height,
@@ -40,6 +44,8 @@ class MacCapturer : public TestVideoCapturer,
               size_t capture_device_index);
   void Destroy();
 
+  size_t width_;
+  size_t height_;
   void* capturer_;
   void* adapter_;
 };

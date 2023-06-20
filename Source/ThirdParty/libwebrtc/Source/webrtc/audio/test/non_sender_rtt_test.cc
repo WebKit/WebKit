@@ -9,6 +9,8 @@
  */
 
 #include "audio/test/audio_end_to_end_test.h"
+#include "rtc_base/gunit.h"
+#include "rtc_base/task_queue_for_test.h"
 #include "system_wrappers/include/sleep.h"
 #include "test/gtest.h"
 
@@ -20,10 +22,13 @@ using NonSenderRttTest = CallTest;
 TEST_F(NonSenderRttTest, NonSenderRttStats) {
   class NonSenderRttTest : public AudioEndToEndTest {
    public:
-    const int kTestDurationMs = 10000;
+    const int kLongTimeoutMs = 20000;
     const int64_t kRttMs = 30;
 
-    BuiltInNetworkBehaviorConfig GetNetworkPipeConfig() const override {
+    explicit NonSenderRttTest(TaskQueueBase* task_queue)
+        : task_queue_(task_queue) {}
+
+    BuiltInNetworkBehaviorConfig GetSendTransportConfig() const override {
       BuiltInNetworkBehaviorConfig pipe_config;
       pipe_config.queue_delay_ms = kRttMs / 2;
       return pipe_config;
@@ -38,7 +43,12 @@ TEST_F(NonSenderRttTest, NonSenderRttStats) {
       send_config->send_codec_spec->enable_non_sender_rtt = true;
     }
 
-    void PerformTest() override { SleepMs(kTestDurationMs); }
+    void PerformTest() override {
+      // Wait until we have an RTT measurement, but no longer than
+      // `kLongTimeoutMs`. This usually takes around 5 seconds, but in rare
+      // cases it can take more than 10 seconds.
+      EXPECT_TRUE_WAIT(HasRoundTripTimeMeasurement(), kLongTimeoutMs);
+    }
 
     void OnStreamsStopped() override {
       AudioReceiveStreamInterface::Stats recv_stats =
@@ -49,7 +59,23 @@ TEST_F(NonSenderRttTest, NonSenderRttStats) {
       EXPECT_GE(recv_stats.total_round_trip_time.ms(),
                 recv_stats.round_trip_time->ms());
     }
-  } test;
+
+   protected:
+    bool HasRoundTripTimeMeasurement() {
+      bool has_rtt = false;
+      // GetStats() can only be called on `task_queue_`, block while we check.
+      SendTask(task_queue_, [this, &has_rtt]() {
+        if (receive_stream() &&
+            receive_stream()->GetStats(true).round_trip_time_measurements > 0) {
+          has_rtt = true;
+        }
+      });
+      return has_rtt;
+    }
+
+   private:
+    TaskQueueBase* task_queue_;
+  } test(task_queue());
 
   RunBaseTest(&test);
 }

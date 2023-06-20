@@ -20,7 +20,7 @@ a contribution can be accepted. Please complete the agreement for an
 ### Contributing your First Patch
 You must do some preparation in order to upload your first CL:
 
-* [Check out and build the code][check out and build the code]
+* [Check out and build the code][Check out and build the code]
 * Fill in the Contributor agreement (see above)
 * If you’ve never submitted code before, you must add your
   (or your organization’s in the case the contributor agreement is signed by
@@ -34,7 +34,7 @@ You must do some preparation in order to upload your first CL:
 
 You will not have to repeat the above. After all that, you’re ready to upload:
 
-[Check out and the build code]: https://webrtc.googlesource.com/src/+/refs/heads/main/docs/native-code/development/index.md
+[Check out and build the code]: https://webrtc.googlesource.com/src/+/refs/heads/main/docs/native-code/development/
 [AUTHORS]: https://webrtc.googlesource.com/src/+/refs/heads/main/AUTHORS
 [new-password]: https://webrtc.googlesource.com/new-password
 [discuss-webrtc]: https://groups.google.com/forum/#!forum/discuss-webrtc

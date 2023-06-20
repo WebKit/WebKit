@@ -35,14 +35,23 @@ class VideoCodecTestStatsImpl : public VideoCodecTestStats {
   FrameStatistics* GetFrame(size_t frame_number, size_t spatial_idx);
   FrameStatistics* GetFrameWithTimestamp(size_t timestamp, size_t spatial_idx);
 
+  // Creates FrameStatisticts if it doesn't exists and/or returns
+  // created/existing FrameStatisticts.
+  FrameStatistics* GetOrAddFrame(size_t timestamp_rtp, size_t spatial_idx);
+
   // Implements VideoCodecTestStats.
-  std::vector<FrameStatistics> GetFrameStatistics() override;
+  std::vector<FrameStatistics> GetFrameStatistics() const override;
   std::vector<VideoStatistics> SliceAndCalcLayerVideoStatistic(
       size_t first_frame_num,
       size_t last_frame_num) override;
 
   VideoStatistics SliceAndCalcAggregatedVideoStatistic(size_t first_frame_num,
                                                        size_t last_frame_num);
+
+  VideoStatistics CalcVideoStatistic(size_t first_frame,
+                                     size_t last_frame,
+                                     DataRate target_bitrate,
+                                     Frequency target_framerate) override;
 
   size_t Size(size_t spatial_idx);
 
@@ -65,7 +74,9 @@ class VideoCodecTestStatsImpl : public VideoCodecTestStats {
       size_t last_frame_num,
       size_t spatial_idx,
       size_t temporal_idx,
-      bool aggregate_independent_layers);
+      bool aggregate_independent_layers,
+      absl::optional<DataRate> target_bitrate,
+      absl::optional<Frequency> target_framerate);
 
   void GetNumberOfEncodedLayers(size_t first_frame_num,
                                 size_t last_frame_num,

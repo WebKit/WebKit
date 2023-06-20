@@ -65,7 +65,7 @@ RetransmissionQueue::RetransmissionQueue(
       options_(options),
       min_bytes_required_to_send_(options.mtu * kMinBytesRequiredToSendFactor),
       partial_reliability_(supports_partial_reliability),
-      log_prefix_(std::string(log_prefix) + "tx: "),
+      log_prefix_(log_prefix),
       data_chunk_header_size_(use_message_interleaving
                                   ? IDataChunk::kHeaderSize
                                   : DataChunk::kHeaderSize),

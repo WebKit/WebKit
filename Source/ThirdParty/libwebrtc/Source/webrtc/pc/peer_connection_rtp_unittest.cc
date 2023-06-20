@@ -34,8 +34,16 @@
 #include "api/scoped_refptr.h"
 #include "api/set_remote_description_observer_interface.h"
 #include "api/uma_metrics.h"
-#include "api/video_codecs/builtin_video_decoder_factory.h"
-#include "api/video_codecs/builtin_video_encoder_factory.h"
+#include "api/video_codecs/video_decoder_factory_template.h"
+#include "api/video_codecs/video_decoder_factory_template_dav1d_adapter.h"
+#include "api/video_codecs/video_decoder_factory_template_libvpx_vp8_adapter.h"
+#include "api/video_codecs/video_decoder_factory_template_libvpx_vp9_adapter.h"
+#include "api/video_codecs/video_decoder_factory_template_open_h264_adapter.h"
+#include "api/video_codecs/video_encoder_factory_template.h"
+#include "api/video_codecs/video_encoder_factory_template_libaom_av1_adapter.h"
+#include "api/video_codecs/video_encoder_factory_template_libvpx_vp8_adapter.h"
+#include "api/video_codecs/video_encoder_factory_template_libvpx_vp9_adapter.h"
+#include "api/video_codecs/video_encoder_factory_template_open_h264_adapter.h"
 #include "media/base/stream_params.h"
 #include "modules/audio_device/include/audio_device.h"
 #include "modules/audio_processing/include/audio_processing.h"
@@ -87,17 +95,25 @@ class PeerConnectionRtpBaseTest : public ::testing::Test {
  public:
   explicit PeerConnectionRtpBaseTest(SdpSemantics sdp_semantics)
       : sdp_semantics_(sdp_semantics),
-        pc_factory_(
-            CreatePeerConnectionFactory(rtc::Thread::Current(),
-                                        rtc::Thread::Current(),
-                                        rtc::Thread::Current(),
-                                        FakeAudioCaptureModule::Create(),
-                                        CreateBuiltinAudioEncoderFactory(),
-                                        CreateBuiltinAudioDecoderFactory(),
-                                        CreateBuiltinVideoEncoderFactory(),
-                                        CreateBuiltinVideoDecoderFactory(),
-                                        nullptr /* audio_mixer */,
-                                        nullptr /* audio_processing */)) {
+        pc_factory_(CreatePeerConnectionFactory(
+            rtc::Thread::Current(),
+            rtc::Thread::Current(),
+            rtc::Thread::Current(),
+            FakeAudioCaptureModule::Create(),
+            CreateBuiltinAudioEncoderFactory(),
+            CreateBuiltinAudioDecoderFactory(),
+            std::make_unique<
+                VideoEncoderFactoryTemplate<LibvpxVp8EncoderTemplateAdapter,
+                                            LibvpxVp9EncoderTemplateAdapter,
+                                            OpenH264EncoderTemplateAdapter,
+                                            LibaomAv1EncoderTemplateAdapter>>(),
+            std::make_unique<
+                VideoDecoderFactoryTemplate<LibvpxVp8DecoderTemplateAdapter,
+                                            LibvpxVp9DecoderTemplateAdapter,
+                                            OpenH264DecoderTemplateAdapter,
+                                            Dav1dDecoderTemplateAdapter>>(),
+            nullptr /* audio_mixer */,
+            nullptr /* audio_processing */)) {
     webrtc::metrics::Reset();
   }
 
@@ -1145,6 +1161,23 @@ TEST_F(PeerConnectionRtpTestUnifiedPlan, AddTrackReusesTransceiver) {
   EXPECT_EQ(audio_track, sender->track());
 }
 
+TEST_F(PeerConnectionRtpTestUnifiedPlan,
+       AddTrackWithSendEncodingDoesNotReuseTransceiver) {
+  auto caller = CreatePeerConnection();
+
+  auto transceiver = caller->AddTransceiver(cricket::MEDIA_TYPE_AUDIO);
+  auto audio_track = caller->CreateAudioTrack("a");
+  RtpEncodingParameters encoding;
+  auto sender = caller->AddTrack(audio_track, {}, {encoding});
+  ASSERT_TRUE(sender);
+
+  auto transceivers = caller->pc()->GetTransceivers();
+  ASSERT_EQ(2u, transceivers.size());
+  EXPECT_EQ(transceiver, transceivers[0]);
+  EXPECT_NE(sender, transceiver->sender());
+  EXPECT_EQ(audio_track, sender->track());
+}
+
 // Test that adding two tracks to a new PeerConnection creates two
 // RtpTransceivers in the same order.
 TEST_F(PeerConnectionRtpTestUnifiedPlan, TwoAddTrackCreatesTwoTransceivers) {
@@ -1811,10 +1844,6 @@ TEST_F(PeerConnectionMsidSignalingTest, UnifiedPlanTalkingToOurself) {
   auto* answer = caller->pc()->remote_description();
   EXPECT_EQ(cricket::kMsidSignalingMediaSection,
             answer->description()->msid_signaling());
-  // Check that this is counted correctly
-  EXPECT_METRIC_THAT(
-      metrics::Samples("WebRTC.PeerConnection.SdpSemanticNegotiated"),
-      ElementsAre(Pair(kSdpSemanticNegotiatedUnifiedPlan, 2)));
 }
 
 TEST_F(PeerConnectionMsidSignalingTest, PlanBOfferToUnifiedPlanAnswer) {
@@ -1888,92 +1917,6 @@ TEST_F(PeerConnectionMsidSignalingTest, PureUnifiedPlanToUs) {
   auto answer = callee->CreateAnswer();
   EXPECT_EQ(cricket::kMsidSignalingMediaSection,
             answer->description()->msid_signaling());
-}
-
-// Test that the correct UMA metrics are reported for simple/complex SDP.
-
-class SdpFormatReceivedTest : public PeerConnectionRtpTestUnifiedPlan {};
-
-#ifdef WEBRTC_HAVE_SCTP
-TEST_F(SdpFormatReceivedTest, DataChannelOnlyIsReportedAsNoTracks) {
-  auto caller = CreatePeerConnectionWithUnifiedPlan();
-  caller->CreateDataChannel("dc");
-  auto callee = CreatePeerConnectionWithUnifiedPlan();
-
-  ASSERT_TRUE(callee->SetRemoteDescription(caller->CreateOffer()));
-  // Note that only the callee does ReportSdpFormatReceived.
-  EXPECT_METRIC_THAT(
-      metrics::Samples("WebRTC.PeerConnection.SdpFormatReceived"),
-      ElementsAre(Pair(kSdpFormatReceivedNoTracks, 1)));
-}
-#endif  // WEBRTC_HAVE_SCTP
-
-TEST_F(SdpFormatReceivedTest, SimpleUnifiedPlanIsReportedAsSimple) {
-  auto caller = CreatePeerConnectionWithUnifiedPlan();
-  caller->AddAudioTrack("audio");
-  caller->AddVideoTrack("video");
-  auto callee = CreatePeerConnectionWithPlanB();
-
-  ASSERT_TRUE(callee->SetRemoteDescription(caller->CreateOffer()));
-  // Note that only the callee does ReportSdpFormatReceived.
-  EXPECT_METRIC_THAT(
-      metrics::Samples("WebRTC.PeerConnection.SdpFormatReceived"),
-      ElementsAre(Pair(kSdpFormatReceivedSimple, 1)));
-}
-
-TEST_F(SdpFormatReceivedTest, SimplePlanBIsReportedAsSimple) {
-  auto caller = CreatePeerConnectionWithPlanB();
-  caller->AddVideoTrack("video");  // Video only.
-  auto callee = CreatePeerConnectionWithUnifiedPlan();
-
-  ASSERT_TRUE(callee->SetRemoteDescription(caller->CreateOffer()));
-  // Note that only the callee does ReportSdpFormatReceived.
-  EXPECT_METRIC_THAT(
-      metrics::Samples("WebRTC.PeerConnection.SdpFormatReceived"),
-      ElementsAre(Pair(kSdpFormatReceivedSimple, 1)));
-}
-
-TEST_F(SdpFormatReceivedTest, ComplexUnifiedIsReportedAsComplexUnifiedPlan) {
-  auto caller = CreatePeerConnectionWithUnifiedPlan();
-  caller->AddAudioTrack("audio1");
-  caller->AddAudioTrack("audio2");
-  caller->AddVideoTrack("video");
-  auto callee = CreatePeerConnectionWithPlanB();
-
-  ASSERT_TRUE(callee->SetRemoteDescription(caller->CreateOffer()));
-  // Note that only the callee does ReportSdpFormatReceived.
-  EXPECT_METRIC_THAT(
-      metrics::Samples("WebRTC.PeerConnection.SdpFormatReceived"),
-      ElementsAre(Pair(kSdpFormatReceivedComplexUnifiedPlan, 1)));
-}
-
-TEST_F(SdpFormatReceivedTest, ComplexPlanBIsReportedAsComplexPlanB) {
-  auto caller = CreatePeerConnectionWithPlanB();
-  caller->AddVideoTrack("video1");
-  caller->AddVideoTrack("video2");
-  auto callee = CreatePeerConnectionWithUnifiedPlan();
-
-  // This fails since Unified Plan cannot set a session description with
-  // multiple "Plan B tracks" in the same media section. But we still expect the
-  // SDP Format to be recorded.
-  ASSERT_FALSE(callee->SetRemoteDescription(caller->CreateOffer()));
-  // Note that only the callee does ReportSdpFormatReceived.
-  EXPECT_METRIC_THAT(
-      metrics::Samples("WebRTC.PeerConnection.SdpFormatReceived"),
-      ElementsAre(Pair(kSdpFormatReceivedComplexPlanB, 1)));
-}
-
-TEST_F(SdpFormatReceivedTest, AnswerIsReported) {
-  auto caller = CreatePeerConnectionWithPlanB();
-  caller->AddAudioTrack("audio");
-  caller->AddVideoTrack("video");
-  auto callee = CreatePeerConnectionWithUnifiedPlan();
-
-  ASSERT_TRUE(callee->SetRemoteDescription(caller->CreateOfferAndSetAsLocal()));
-  ASSERT_TRUE(caller->SetRemoteDescription(callee->CreateAnswer()));
-  EXPECT_METRIC_THAT(
-      metrics::Samples("WebRTC.PeerConnection.SdpFormatReceivedAnswer"),
-      ElementsAre(Pair(kSdpFormatReceivedSimple, 1)));
 }
 
 // Sender setups in a call.

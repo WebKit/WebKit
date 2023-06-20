@@ -17,24 +17,23 @@
 #include <string>
 
 #include "absl/strings/string_view.h"
-#include "api/field_trials_view.h"
+#include "api/field_trials_registry.h"
 #include "test/field_trial.h"
 
 namespace webrtc {
 namespace test {
 
-class ScopedKeyValueConfig : public FieldTrialsView {
+class ScopedKeyValueConfig : public FieldTrialsRegistry {
  public:
   virtual ~ScopedKeyValueConfig();
   ScopedKeyValueConfig();
   explicit ScopedKeyValueConfig(absl::string_view s);
   ScopedKeyValueConfig(ScopedKeyValueConfig& parent, absl::string_view s);
 
-  std::string Lookup(absl::string_view key) const override;
-
  private:
   ScopedKeyValueConfig(ScopedKeyValueConfig* parent, absl::string_view s);
   ScopedKeyValueConfig* GetRoot(ScopedKeyValueConfig* n);
+  std::string GetValue(absl::string_view key) const override;
   std::string LookupRecurse(absl::string_view key) const;
 
   ScopedKeyValueConfig* const parent_;

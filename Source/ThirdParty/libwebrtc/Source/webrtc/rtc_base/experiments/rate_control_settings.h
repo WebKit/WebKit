@@ -15,8 +15,8 @@
 #include "api/field_trials_view.h"
 #include "api/units/data_size.h"
 #include "api/video_codecs/video_codec.h"
-#include "api/video_codecs/video_encoder_config.h"
 #include "rtc_base/experiments/struct_parameters_parser.h"
+#include "video/config/video_encoder_config.h"
 
 namespace webrtc {
 
@@ -38,7 +38,6 @@ struct VideoRateControlConfig {
   absl::optional<int> vp8_min_pixels;
   bool trust_vp8 = true;
   bool trust_vp9 = true;
-  bool probe_max_allocation = true;
   bool bitrate_adjuster = true;
   bool adjuster_use_headroom = true;
   bool vp8_s0_boost = false;
@@ -79,7 +78,6 @@ class RateControlSettings final {
 
   bool Vp8BaseHeavyTl3RateAllocation() const;
 
-  bool TriggerProbeOnMaxAllocatedBitrateChange() const;
   bool UseEncoderBitrateAdjuster() const;
   bool BitrateAdjusterCanUseNetworkHeadroom() const;
 

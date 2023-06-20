@@ -9,6 +9,7 @@
  */
 
 #include "modules/desktop_capture/full_screen_window_detector.h"
+
 #include "modules/desktop_capture/full_screen_application_handler.h"
 #include "rtc_base/time_utils.h"
 

@@ -36,7 +36,8 @@ class CustomSocketServer : public rtc::PhysicalSocketServer {
   void set_conductor(Conductor* conductor) { conductor_ = conductor; }
 
   // Override so that we can also pump the GTK message loop.
-  bool Wait(int cms, bool process_io) override {
+  // This function never waits.
+  bool Wait(webrtc::TimeDelta max_wait_duration, bool process_io) override {
     // Pump GTK events.
     // TODO(henrike): We really should move either the socket server or UI to a
     // different thread.  Alternatively we could look at merging the two loops
@@ -49,7 +50,7 @@ class CustomSocketServer : public rtc::PhysicalSocketServer {
         client_ != NULL && !client_->is_connected()) {
       message_queue_->Quit();
     }
-    return rtc::PhysicalSocketServer::Wait(0 /*cms == -1 ? 1 : cms*/,
+    return rtc::PhysicalSocketServer::Wait(webrtc::TimeDelta::Zero(),
                                            process_io);
   }
 

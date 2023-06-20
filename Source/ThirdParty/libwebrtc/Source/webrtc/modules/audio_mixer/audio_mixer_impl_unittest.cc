@@ -28,6 +28,7 @@
 #include "rtc_base/checks.h"
 #include "rtc_base/strings/string_builder.h"
 #include "rtc_base/task_queue_for_test.h"
+#include "system_wrappers/include/metrics.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 
@@ -42,6 +43,8 @@ namespace webrtc {
 namespace {
 
 constexpr int kDefaultSampleRateHz = 48000;
+const char kSourceCountHistogramName[] =
+    "WebRTC.Audio.AudioMixer.NewHighestSourceCount";
 
 // Utility function that resets the frame member variables with
 // sensible defaults.
@@ -211,6 +214,41 @@ TEST(AudioMixer, LargestEnergyVadActiveMixed) {
       EXPECT_TRUE(is_mixed)
           << "Mixing status of AudioSource #" << i << " wrong.";
     }
+  }
+}
+
+TEST(AudioMixer, UpdatesSourceCountHistogram) {
+  constexpr int kAudioSourcesGroup1 = 5;
+  constexpr int kAudioSourcesGroup2 = 3;
+
+  const auto mixer = AudioMixerImpl::Create();
+
+  MockMixerAudioSource participants[kAudioSourcesGroup1 + kAudioSourcesGroup2];
+
+  // Add the sources in group 1.
+  for (int i = 0; i < kAudioSourcesGroup1; ++i) {
+    EXPECT_TRUE(mixer->AddSource(&participants[i]));
+    EXPECT_EQ(i + 1, metrics::NumSamples(kSourceCountHistogramName));
+    EXPECT_EQ(1, metrics::NumEvents(kSourceCountHistogramName, i + 1));
+  }
+  // Remove the sources again.
+  for (int i = 0; i < kAudioSourcesGroup1; ++i) {
+    mixer->RemoveSource(&participants[i]);
+  }
+  // Add the first group again. This should not add anything new to the
+  // histogram.
+  for (int i = 0; i < kAudioSourcesGroup1; ++i) {
+    EXPECT_TRUE(mixer->AddSource(&participants[i]));
+    EXPECT_EQ(kAudioSourcesGroup1,
+              metrics::NumSamples(kSourceCountHistogramName));
+    EXPECT_EQ(1, metrics::NumEvents(kSourceCountHistogramName, i + 1));
+  }
+  // Add the second group. This adds to the histogram again.
+  for (int i = kAudioSourcesGroup1;
+       i < kAudioSourcesGroup1 + kAudioSourcesGroup2; ++i) {
+    EXPECT_TRUE(mixer->AddSource(&participants[i]));
+    EXPECT_EQ(i + 1, metrics::NumSamples(kSourceCountHistogramName));
+    EXPECT_EQ(1, metrics::NumEvents(kSourceCountHistogramName, i + 1));
   }
 }
 
@@ -665,30 +703,29 @@ TEST(AudioMixer, ShouldIncludeRtpPacketInfoFromAllMixedSources) {
   const Timestamp kReceiveTime0 = Timestamp::Millis(10);
   const Timestamp kReceiveTime1 = Timestamp::Millis(20);
 
-  const RtpPacketInfo kPacketInfo0(kSsrc0, {kCsrc0, kCsrc1}, kRtpTimestamp0,
-                                   kAudioLevel0, absl::nullopt, kReceiveTime0);
-  const RtpPacketInfo kPacketInfo1(kSsrc1, {kCsrc2}, kRtpTimestamp1,
-                                   kAudioLevel1, absl::nullopt, kReceiveTime1);
-  const RtpPacketInfo kPacketInfo2(kSsrc2, {kCsrc3}, kRtpTimestamp1,
-                                   kAudioLevel2, absl::nullopt, kReceiveTime1);
+  RtpPacketInfo p0(kSsrc0, {kCsrc0, kCsrc1}, kRtpTimestamp0, kReceiveTime0);
+  p0.set_audio_level(kAudioLevel0);
+  RtpPacketInfo p1(kSsrc1, {kCsrc2}, kRtpTimestamp1, kReceiveTime1);
+  p1.set_audio_level(kAudioLevel1);
+  RtpPacketInfo p2(kSsrc2, {kCsrc3}, kRtpTimestamp1, kReceiveTime1);
+  p2.set_audio_level(kAudioLevel2);
 
   const auto mixer = AudioMixerImpl::Create();
 
   MockMixerAudioSource source;
-  source.set_packet_infos(RtpPacketInfos({kPacketInfo0}));
+  source.set_packet_infos(RtpPacketInfos({p0}));
   mixer->AddSource(&source);
   ResetFrame(source.fake_frame());
   mixer->Mix(1, &frame_for_mixing);
 
   MockMixerAudioSource other_source;
-  other_source.set_packet_infos(RtpPacketInfos({kPacketInfo1, kPacketInfo2}));
+  other_source.set_packet_infos(RtpPacketInfos({p1, p2}));
   ResetFrame(other_source.fake_frame());
   mixer->AddSource(&other_source);
 
   mixer->Mix(/*number_of_channels=*/1, &frame_for_mixing);
 
-  EXPECT_THAT(frame_for_mixing.packet_infos_,
-              UnorderedElementsAre(kPacketInfo0, kPacketInfo1, kPacketInfo2));
+  EXPECT_THAT(frame_for_mixing.packet_infos_, UnorderedElementsAre(p0, p1, p2));
 }
 
 TEST(AudioMixer, MixerShouldIncludeRtpPacketInfoFromMixedSourcesOnly) {
@@ -706,25 +743,23 @@ TEST(AudioMixer, MixerShouldIncludeRtpPacketInfoFromMixedSourcesOnly) {
   const Timestamp kReceiveTime0 = Timestamp::Millis(10);
   const Timestamp kReceiveTime1 = Timestamp::Millis(20);
 
-  const RtpPacketInfo kPacketInfo0(kSsrc0, {kCsrc0, kCsrc1}, kRtpTimestamp0,
-                                   kAudioLevel0, absl::nullopt, kReceiveTime0);
-  const RtpPacketInfo kPacketInfo1(kSsrc1, {kCsrc2}, kRtpTimestamp1,
-                                   kAudioLevelMissing, absl::nullopt,
-                                   kReceiveTime1);
-  const RtpPacketInfo kPacketInfo2(kSsrc2, {kCsrc3}, kRtpTimestamp1,
-                                   kAudioLevelMissing, absl::nullopt,
-                                   kReceiveTime1);
+  RtpPacketInfo p0(kSsrc0, {kCsrc0, kCsrc1}, kRtpTimestamp0, kReceiveTime0);
+  p0.set_audio_level(kAudioLevel0);
+  RtpPacketInfo p1(kSsrc1, {kCsrc2}, kRtpTimestamp1, kReceiveTime1);
+  p1.set_audio_level(kAudioLevelMissing);
+  RtpPacketInfo p2(kSsrc2, {kCsrc3}, kRtpTimestamp1, kReceiveTime1);
+  p2.set_audio_level(kAudioLevelMissing);
 
   const auto mixer = AudioMixerImpl::Create(/*max_sources_to_mix=*/2);
 
   MockMixerAudioSource source1;
-  source1.set_packet_infos(RtpPacketInfos({kPacketInfo0}));
+  source1.set_packet_infos(RtpPacketInfos({p0}));
   mixer->AddSource(&source1);
   ResetFrame(source1.fake_frame());
   mixer->Mix(1, &frame_for_mixing);
 
   MockMixerAudioSource source2;
-  source2.set_packet_infos(RtpPacketInfos({kPacketInfo1}));
+  source2.set_packet_infos(RtpPacketInfos({p1}));
   ResetFrame(source2.fake_frame());
   mixer->AddSource(&source2);
 
@@ -732,15 +767,14 @@ TEST(AudioMixer, MixerShouldIncludeRtpPacketInfoFromMixedSourcesOnly) {
   // We limit the number of sources to mix to 2 and set the third source's VAD
   // activity to kVadPassive so that it will not be added to the mix.
   MockMixerAudioSource source3;
-  source3.set_packet_infos(RtpPacketInfos({kPacketInfo2}));
+  source3.set_packet_infos(RtpPacketInfos({p2}));
   ResetFrame(source3.fake_frame());
   source3.fake_frame()->vad_activity_ = AudioFrame::kVadPassive;
   mixer->AddSource(&source3);
 
   mixer->Mix(/*number_of_channels=*/1, &frame_for_mixing);
 
-  EXPECT_THAT(frame_for_mixing.packet_infos_,
-              UnorderedElementsAre(kPacketInfo0, kPacketInfo1));
+  EXPECT_THAT(frame_for_mixing.packet_infos_, UnorderedElementsAre(p0, p1));
 }
 
 class HighOutputRateCalculator : public OutputRateCalculator {

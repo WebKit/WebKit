@@ -41,7 +41,7 @@ enum class ImproveDirection {
 //
 // (test binary name) > (bot) > ramp_up_time_turn_over_tcp > bwe_15s.
 //
-// The |measurement| + |modifier| is what we're measuring. |user_story| is the
+// The `measurement` + `modifier` is what we're measuring. `user_story` is the
 // scenario we're testing under.
 //
 // The binary this runs in must be hooked up as a perf test in the WebRTC
@@ -68,7 +68,7 @@ void PrintResultMeanAndError(
     bool important,
     ImproveDirection improve_direction = ImproveDirection::kNone);
 
-// Like PrintResult(), but prints an entire list of results. The |values|
+// Like PrintResult(), but prints an entire list of results. The `values`
 // will generally be a list of comma-separated numbers. A typical
 // post-processing step might produce plots of their mean and standard
 // deviation.
@@ -99,8 +99,8 @@ void PrintResult(absl::string_view measurement,
 std::string GetPerfResults();
 
 // Print into stdout plottable metrics for further post processing.
-// |desired_graphs| - list of metrics, that should be plotted. If empty - all
-// available metrics will be plotted. If some of |desired_graphs| are missing
+// `desired_graphs` - list of metrics, that should be plotted. If empty - all
+// available metrics will be plotted. If some of `desired_graphs` are missing
 // they will be skipped.
 void PrintPlottableResults(const std::vector<std::string>& desired_graphs);
 

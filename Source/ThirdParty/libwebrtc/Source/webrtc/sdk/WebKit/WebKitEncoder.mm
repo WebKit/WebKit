@@ -28,7 +28,7 @@
 #include "WebKitUtilities.h"
 #include "api/video/video_frame.h"
 #include "components/video_codec/RTCCodecSpecificInfoH264+Private.h"
-#include "media/engine/encoder_simulcast_proxy.h"
+#include "media/engine/simulcast_encoder_adapter.h"
 #include "modules/video_coding/utility/simulcast_utility.h"
 #include "sdk/objc/api/peerconnection/RTCEncodedImage+Private.h"
 #include "sdk/objc/api/peerconnection/RTCVideoCodecInfo+Private.h"
@@ -163,7 +163,7 @@ bool isH264HardwareEncoderAllowed()
 
 std::unique_ptr<VideoEncoder> VideoEncoderFactoryWithSimulcast::CreateVideoEncoder(const SdpVideoFormat& format)
 {
-    return std::make_unique<EncoderSimulcastProxy>(m_internalEncoderFactory.get(), format);
+    return std::make_unique<SimulcastEncoderAdapter>(m_internalEncoderFactory.get(), format);
 }
 
 struct VideoEncoderCallbacks {

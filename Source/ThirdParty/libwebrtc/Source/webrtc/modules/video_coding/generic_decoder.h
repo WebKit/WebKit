@@ -63,7 +63,7 @@ class VCMDecodedFrameCallback : public DecodedImageCallback {
                absl::optional<int32_t> decode_time_ms,
                absl::optional<uint8_t> qp) override;
 
-  void OnDecoderImplementationName(const char* implementation_name);
+  void OnDecoderInfoChanged(const VideoDecoder::DecoderInfo& decoder_info);
 
   void Map(FrameInfo frameInfo);
   void ClearTimestampMap();

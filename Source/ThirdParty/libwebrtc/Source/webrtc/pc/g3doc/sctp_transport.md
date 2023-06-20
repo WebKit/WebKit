@@ -1,6 +1,5 @@
-
-<?% config.freshness.reviewed = '2021-04-13' %?>
-<?% config.freshness.owner = 'hta' %?>
+<!-- go/cmark -->
+<!--* freshness: {owner: 'hta' reviewed: '2021-04-13'} *-->
 
 # SctpTransport
 
@@ -20,7 +19,7 @@ set during PeerConnectionFactory initialization).
 
 The implementation of this object lives in pc/sctp_transport.{h,cc}, and is
 basically a wrapper around a `cricket::SctpTransportInternal`, hiding its
-implementation details and APIs that shoudldn't be accessed from the user.
+implementation details and APIs that shouldn't be accessed from the user.
 
 The `webrtc::SctpTransport` is a ref counted object; it should be regarded
 as owned by the PeerConnection, and will be closed when the PeerConnection

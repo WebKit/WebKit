@@ -881,6 +881,61 @@ TEST_F(JsepTransport2Test, RemoteOfferThatChangesNegotiatedDtlsRole) {
           .ok());
 }
 
+// Test that a remote offer which changes both fingerprint and role is accepted.
+TEST_F(JsepTransport2Test, RemoteOfferThatChangesFingerprintAndDtlsRole) {
+  rtc::scoped_refptr<rtc::RTCCertificate> certificate =
+      rtc::RTCCertificate::Create(
+          rtc::SSLIdentity::Create("testing1", rtc::KT_ECDSA));
+  rtc::scoped_refptr<rtc::RTCCertificate> certificate2 =
+      rtc::RTCCertificate::Create(
+          rtc::SSLIdentity::Create("testing2", rtc::KT_ECDSA));
+  bool rtcp_mux_enabled = true;
+  jsep_transport_ = CreateJsepTransport2(rtcp_mux_enabled, SrtpMode::kDtlsSrtp);
+  jsep_transport_->SetLocalCertificate(certificate);
+
+  JsepTransportDescription remote_desc =
+      MakeJsepTransportDescription(rtcp_mux_enabled, kIceUfrag1, kIcePwd1,
+                                   certificate, CONNECTIONROLE_ACTPASS);
+  JsepTransportDescription remote_desc2 =
+      MakeJsepTransportDescription(rtcp_mux_enabled, kIceUfrag1, kIcePwd1,
+                                   certificate2, CONNECTIONROLE_ACTPASS);
+
+  JsepTransportDescription local_desc =
+      MakeJsepTransportDescription(rtcp_mux_enabled, kIceUfrag2, kIcePwd2,
+                                   certificate, CONNECTIONROLE_ACTIVE);
+
+  // Normal initial offer/answer with "actpass" in the offer and "active" in
+  // the answer.
+  ASSERT_TRUE(
+      jsep_transport_
+          ->SetRemoteJsepTransportDescription(remote_desc, SdpType::kOffer)
+          .ok());
+  ASSERT_TRUE(
+      jsep_transport_
+          ->SetLocalJsepTransportDescription(local_desc, SdpType::kAnswer)
+          .ok());
+
+  // Sanity check that role was actually negotiated.
+  absl::optional<rtc::SSLRole> role = jsep_transport_->GetDtlsRole();
+  ASSERT_TRUE(role);
+  EXPECT_EQ(rtc::SSL_CLIENT, *role);
+
+  // Subsequent exchange with new remote fingerprint and different role.
+  local_desc.transport_desc.connection_role = CONNECTIONROLE_PASSIVE;
+  EXPECT_TRUE(
+      jsep_transport_
+          ->SetRemoteJsepTransportDescription(remote_desc2, SdpType::kOffer)
+          .ok());
+  EXPECT_TRUE(
+      jsep_transport_
+          ->SetLocalJsepTransportDescription(local_desc, SdpType::kAnswer)
+          .ok());
+
+  role = jsep_transport_->GetDtlsRole();
+  ASSERT_TRUE(role);
+  EXPECT_EQ(rtc::SSL_SERVER, *role);
+}
+
 // Testing that a legacy client that doesn't use the setup attribute will be
 // interpreted as having an active role.
 TEST_F(JsepTransport2Test, DtlsSetupWithLegacyAsAnswerer) {
@@ -912,7 +967,7 @@ TEST_F(JsepTransport2Test, DtlsSetupWithLegacyAsAnswerer) {
 
   absl::optional<rtc::SSLRole> role = jsep_transport_->GetDtlsRole();
   ASSERT_TRUE(role);
-  // Since legacy answer ommitted setup atribute, and we offered actpass, we
+  // Since legacy answer omitted setup atribute, and we offered actpass, we
   // should act as passive (server).
   EXPECT_EQ(rtc::SSL_SERVER, *role);
 }

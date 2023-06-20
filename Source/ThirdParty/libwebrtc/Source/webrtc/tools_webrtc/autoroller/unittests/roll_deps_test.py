@@ -195,20 +195,24 @@ class TestRollChromiumRevision(unittest.TestCase):
           BUILD_NEW_REV)
       changed_deps = CalculateChangedDeps(webrtc_deps, new_cr_deps)
 
-    self.assertEqual(len(changed_deps), 3)
-    self.assertEqual(changed_deps[0].path, 'src/build')
-    self.assertEqual(changed_deps[0].current_rev, BUILD_OLD_REV)
-    self.assertEqual(changed_deps[0].new_rev, BUILD_NEW_REV)
+    self.assertEqual(len(changed_deps), 4)
+    self.assertEqual(changed_deps[0].path, 'fuchsia')
+    self.assertEqual(changed_deps[0].current_version, 'version:10.20221201.3.1')
+    self.assertEqual(changed_deps[0].new_version, 'version:11.20230207.1.1')
 
-    self.assertEqual(changed_deps[1].path, 'src/buildtools/linux64')
-    self.assertEqual(changed_deps[1].package, 'gn/gn/linux-amd64')
-    self.assertEqual(changed_deps[1].current_version,
+    self.assertEqual(changed_deps[1].path, 'src/build')
+    self.assertEqual(changed_deps[1].current_rev, BUILD_OLD_REV)
+    self.assertEqual(changed_deps[1].new_rev, BUILD_NEW_REV)
+
+    self.assertEqual(changed_deps[2].path, 'src/buildtools/linux64')
+    self.assertEqual(changed_deps[2].package, 'gn/gn/linux-amd64')
+    self.assertEqual(changed_deps[2].current_version,
                      'git_revision:69ec4fca1fa69ddadae13f9e6b7507efa0675263')
-    self.assertEqual(changed_deps[1].new_version, 'git_revision:new-revision')
+    self.assertEqual(changed_deps[2].new_version, 'git_revision:new-revision')
 
-    self.assertEqual(changed_deps[2].path, 'src/third_party/depot_tools')
-    self.assertEqual(changed_deps[2].current_rev, DEPOTTOOLS_OLD_REV)
-    self.assertEqual(changed_deps[2].new_rev, DEPOTTOOLS_NEW_REV)
+    self.assertEqual(changed_deps[3].path, 'src/third_party/depot_tools')
+    self.assertEqual(changed_deps[3].current_rev, DEPOTTOOLS_OLD_REV)
+    self.assertEqual(changed_deps[3].new_rev, DEPOTTOOLS_NEW_REV)
 
   def testWithDistinctDeps(self):
     """Check CalculateChangedDeps works when deps are added/removed."""
@@ -252,8 +256,9 @@ class TestRollChromiumRevision(unittest.TestCase):
     webrtc_deps = ParseLocalDepsFile(self._webrtc_depsfile)
     new_cr_deps = ParseLocalDepsFile(self._new_cr_depsfile_android)
     _, other_paths = FindRemovedDeps(webrtc_deps, new_cr_deps)
-    self.assertEqual(other_paths,
-                     ['src/buildtools/linux64', 'src/third_party/depot_tools'])
+    self.assertEqual(
+        other_paths,
+        ['fuchsia', 'src/buildtools/linux64', 'src/third_party/depot_tools'])
 
   def testExpectedDepsIsNotReportedMissing(self):
     """Some deps musn't be seen as missing, even if absent from Chromium."""

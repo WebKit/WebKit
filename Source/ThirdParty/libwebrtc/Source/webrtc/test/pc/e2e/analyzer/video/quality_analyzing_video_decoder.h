@@ -57,8 +57,7 @@ class QualityAnalyzingVideoDecoder : public VideoDecoder {
   ~QualityAnalyzingVideoDecoder() override;
 
   // Methods of VideoDecoder interface.
-  int32_t InitDecode(const VideoCodec* codec_settings,
-                     int32_t number_of_cores) override;
+  bool Configure(const Settings& settings) override;
   int32_t Decode(const EncodedImage& input_image,
                  bool missing_frames,
                  int64_t render_time_ms) override;
@@ -93,8 +92,8 @@ class QualityAnalyzingVideoDecoder : public VideoDecoder {
 
     rtc::scoped_refptr<webrtc::VideoFrameBuffer> dummy_frame_buffer_;
 
-    Mutex callback_lock_;
-    DecodedImageCallback* delegate_callback_ RTC_GUARDED_BY(callback_lock_);
+    Mutex callback_mutex_;
+    DecodedImageCallback* delegate_callback_ RTC_GUARDED_BY(callback_mutex_);
   };
 
   void OnFrameDecoded(VideoFrame* frame,
@@ -111,9 +110,8 @@ class QualityAnalyzingVideoDecoder : public VideoDecoder {
   // VideoDecoder interface assumes async delivery of decoded video frames.
   // This lock is used to protect shared state, that have to be propagated
   // from received EncodedImage to resulted VideoFrame.
-  Mutex lock_;
+  Mutex mutex_;
 
-<<<<<<< HEAD
   // Name of the video codec type used. Ex: VP8, VP9, H264 etc.
   std::string codec_name_ RTC_GUARDED_BY(mutex_);
   std::map<uint32_t, absl::optional<uint16_t>> timestamp_to_frame_id_
@@ -123,14 +121,6 @@ class QualityAnalyzingVideoDecoder : public VideoDecoder {
   // ensure, that this image won't be deleted during async decoding. To do it
   // all images are putted into this map and removed from here inside callback.
   std::map<uint32_t, EncodedImage> decoding_images_ RTC_GUARDED_BY(mutex_);
-=======
-  std::map<uint32_t, uint16_t> timestamp_to_frame_id_ RTC_GUARDED_BY(lock_);
-  // Stores currently being decoded images by frame id. Because
-  // EncodedImageDataExtractor can create new copy on EncodedImage we need to
-  // ensure, that this image won't be deleted during async decoding. To do it
-  // all images are putted into this map and removed from here inside callback.
-  std::map<uint16_t, EncodedImage> decoding_images_ RTC_GUARDED_BY(lock_);
->>>>>>> parent of 8e32ad0e8387 (revert libwebrtc changes to help bump)
 };
 
 // Produces QualityAnalyzingVideoDecoder, which hold decoders, produced by

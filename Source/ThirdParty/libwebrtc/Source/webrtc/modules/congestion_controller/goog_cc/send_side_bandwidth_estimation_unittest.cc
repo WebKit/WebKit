@@ -203,4 +203,38 @@ TEST(SendSideBweTest, FractionLossIsNotOverflowed) {
   EXPECT_EQ(0, bwe.fraction_loss());
 }
 
+TEST(SendSideBweTest, RttIsAboveLimitIfRttGreaterThanLimit) {
+  ::testing::NiceMock<MockRtcEventLog> event_log;
+  test::ExplicitKeyValueConfig key_value_config("");
+  SendSideBandwidthEstimation bwe(&key_value_config, &event_log);
+  static const int kMinBitrateBps = 10000;
+  static const int kMaxBitrateBps = 10000000;
+  static const int kInitialBitrateBps = 300000;
+  int64_t now_ms = 0;
+  bwe.SetMinMaxBitrate(DataRate::BitsPerSec(kMinBitrateBps),
+                       DataRate::BitsPerSec(kMaxBitrateBps));
+  bwe.SetSendBitrate(DataRate::BitsPerSec(kInitialBitrateBps),
+                     Timestamp::Millis(now_ms));
+  bwe.UpdatePropagationRtt(/*at_time=*/Timestamp::Millis(now_ms),
+                           /*propagation_rtt=*/TimeDelta::Millis(5000));
+  EXPECT_TRUE(bwe.IsRttAboveLimit());
+}
+
+TEST(SendSideBweTest, RttIsBelowLimitIfRttLessThanLimit) {
+  ::testing::NiceMock<MockRtcEventLog> event_log;
+  test::ExplicitKeyValueConfig key_value_config("");
+  SendSideBandwidthEstimation bwe(&key_value_config, &event_log);
+  static const int kMinBitrateBps = 10000;
+  static const int kMaxBitrateBps = 10000000;
+  static const int kInitialBitrateBps = 300000;
+  int64_t now_ms = 0;
+  bwe.SetMinMaxBitrate(DataRate::BitsPerSec(kMinBitrateBps),
+                       DataRate::BitsPerSec(kMaxBitrateBps));
+  bwe.SetSendBitrate(DataRate::BitsPerSec(kInitialBitrateBps),
+                     Timestamp::Millis(now_ms));
+  bwe.UpdatePropagationRtt(/*at_time=*/Timestamp::Millis(now_ms),
+                           /*propagation_rtt=*/TimeDelta::Millis(1000));
+  EXPECT_FALSE(bwe.IsRttAboveLimit());
+}
+
 }  // namespace webrtc

@@ -11,7 +11,6 @@ PASS Test that encodingInfo returns a valid MediaCapabilitiesInfo objects
 PASS Test that encodingInfo returns supported, smooth, and powerEfficient set to false for non-webrtc video content type.
 PASS Test that encodingInfo returns supported, smooth, and powerEfficient set to false for non-webrtc audio content type.
 PASS Test that encodingInfo returns supported true for the codec audio/opus returned by RTCRtpSender.getCapabilities()
-PASS Test that encodingInfo returns supported true for the codec audio/ISAC returned by RTCRtpSender.getCapabilities()
 PASS Test that encodingInfo returns supported true for the codec audio/G722 returned by RTCRtpSender.getCapabilities()
 PASS Test that encodingInfo returns supported true for the codec audio/PCMU returned by RTCRtpSender.getCapabilities()
 PASS Test that encodingInfo returns supported true for the codec audio/PCMA returned by RTCRtpSender.getCapabilities()

@@ -736,7 +736,8 @@ TEST_P(OpusTest, OpusDtxOff) {
 }
 
 TEST_P(OpusTest, OpusDtxOn) {
-  if (channels_ > 2) {
+  if (channels_ > 2 || application_ != 0) {
+    // DTX does not work with OPUS_APPLICATION_AUDIO at low complexity settings.
     // TODO(webrtc:10218): adapt the test to the sizes and order of multi-stream
     // DTX packets.
     return;

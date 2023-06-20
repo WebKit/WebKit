@@ -96,7 +96,7 @@ class InterleavedReassemblyStreams : public ReassemblyStreams {
 
   Stream& GetOrCreateStream(const FullStreamId& stream_id);
 
-  const std::string log_prefix_;
+  const absl::string_view log_prefix_;
 
   // Callback for when a message has been assembled.
   const OnAssembledMessage on_assembled_message_;

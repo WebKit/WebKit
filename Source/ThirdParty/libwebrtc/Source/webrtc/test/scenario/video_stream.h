@@ -129,6 +129,9 @@ class VideoStreamPair {
   SendVideoStream send_stream_;
   ReceiveVideoStream receive_stream_;
 };
+
+std::vector<RtpExtension> GetVideoRtpExtensions(const VideoStreamConfig config);
+
 }  // namespace test
 }  // namespace webrtc
 

@@ -35,7 +35,7 @@ message Stream {
 
   optional int32 delay = 3;
   optional sint32 drift = 4;
-  optional int32 level = 5;
+  optional int32 applied_input_volume = 5;
   optional bool keypress = 6;
 
   // float deinterleaved data, where each repeated element points to a single

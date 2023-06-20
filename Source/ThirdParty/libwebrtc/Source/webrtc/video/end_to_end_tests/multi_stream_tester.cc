@@ -29,6 +29,7 @@
 #include "rtc_base/task_queue_for_test.h"
 #include "test/call_test.h"
 #include "test/encoder_settings.h"
+#include "test/video_test_constants.h"
 
 namespace webrtc {
 
@@ -73,7 +74,6 @@ void MultiStreamTester::RunTest() {
     sender_transport = CreateSendTransport(task_queue.get(), sender_call.get());
     receiver_transport =
         CreateReceiveTransport(task_queue.get(), receiver_call.get());
-
     sender_transport->SetReceiver(receiver_call->Receiver());
     receiver_transport->SetReceiver(sender_call->Receiver());
 
@@ -102,7 +102,8 @@ void MultiStreamTester::RunTest() {
       VideoReceiveStreamInterface::Config receive_config(
           receiver_transport.get());
       receive_config.rtp.remote_ssrc = ssrc;
-      receive_config.rtp.local_ssrc = test::CallTest::kReceiverLocalVideoSsrc;
+      receive_config.rtp.local_ssrc =
+          test::VideoTestConstants::kReceiverLocalVideoSsrc;
       receive_config.decoder_factory = &decoder_factory;
       VideoReceiveStreamInterface::Decoder decoder =
           test::CreateMatchingDecoder(send_config);
@@ -158,22 +159,24 @@ void MultiStreamTester::UpdateReceiveConfig(
 std::unique_ptr<test::DirectTransport> MultiStreamTester::CreateSendTransport(
     TaskQueueBase* task_queue,
     Call* sender_call) {
+  std::vector<RtpExtension> extensions = {};
   return std::make_unique<test::DirectTransport>(
       task_queue,
       std::make_unique<FakeNetworkPipe>(
           Clock::GetRealTimeClock(),
           std::make_unique<SimulatedNetwork>(BuiltInNetworkBehaviorConfig())),
-      sender_call, payload_type_map_);
+      sender_call, payload_type_map_, extensions, extensions);
 }
 
 std::unique_ptr<test::DirectTransport>
 MultiStreamTester::CreateReceiveTransport(TaskQueueBase* task_queue,
                                           Call* receiver_call) {
+  std::vector<RtpExtension> extensions = {};
   return std::make_unique<test::DirectTransport>(
       task_queue,
       std::make_unique<FakeNetworkPipe>(
           Clock::GetRealTimeClock(),
           std::make_unique<SimulatedNetwork>(BuiltInNetworkBehaviorConfig())),
-      receiver_call, payload_type_map_);
+      receiver_call, payload_type_map_, extensions, extensions);
 }
 }  // namespace webrtc

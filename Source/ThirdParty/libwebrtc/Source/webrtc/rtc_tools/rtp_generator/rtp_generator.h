@@ -21,7 +21,6 @@
 #include "api/task_queue/task_queue_factory.h"
 #include "api/video/builtin_video_bitrate_allocator_factory.h"
 #include "api/video_codecs/video_decoder_factory.h"
-#include "api/video_codecs/video_encoder_config.h"
 #include "api/video_codecs/video_encoder_factory.h"
 #include "call/call.h"
 #include "call/rtp_config.h"
@@ -30,6 +29,7 @@
 #include "test/frame_generator_capturer.h"
 #include "test/rtp_file_reader.h"
 #include "test/rtp_file_writer.h"
+#include "video/config/video_encoder_config.h"
 
 namespace webrtc {
 

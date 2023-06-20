@@ -13,7 +13,6 @@
 #include "api/array_view.h"
 #include "api/transport/rtp/dependency_descriptor.h"
 #include "common_video/generic_frame_descriptor/generic_frame_info.h"
-
 #include "test/gmock.h"
 
 namespace webrtc {

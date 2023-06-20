@@ -38,7 +38,8 @@ constexpr float kDefaultMinBitratebps = 30000;
 std::vector<VideoEncoder::ResolutionBitrateLimits>
 EncoderInfoSettings::GetDefaultSinglecastBitrateLimits(
     VideoCodecType codec_type) {
-  // Specific limits for VP9. Other codecs use VP8 limits.
+  // Specific limits for VP9. Determining specific limits for AV1 via
+  // field trial experiment is a work in progress. Other codecs use VP8 limits.
   if (codec_type == kVideoCodecVP9) {
     return {{320 * 180, 0, 30000, 150000},
             {480 * 270, 120000, 30000, 300000},
@@ -188,7 +189,7 @@ EncoderInfoSettings::EncoderInfoSettings(absl::string_view name)
   resolution_bitrate_limits_ = ToResolutionBitrateLimits(bitrate_limits.Get());
 }
 
-absl::optional<int> EncoderInfoSettings::requested_resolution_alignment()
+absl::optional<uint32_t> EncoderInfoSettings::requested_resolution_alignment()
     const {
   if (requested_resolution_alignment_ &&
       requested_resolution_alignment_.Value() < 1) {
@@ -210,5 +211,8 @@ LibvpxVp8EncoderInfoSettings::LibvpxVp8EncoderInfoSettings()
 
 LibvpxVp9EncoderInfoSettings::LibvpxVp9EncoderInfoSettings()
     : EncoderInfoSettings("WebRTC-VP9-GetEncoderInfoOverride") {}
+
+LibaomAv1EncoderInfoSettings::LibaomAv1EncoderInfoSettings()
+    : EncoderInfoSettings("WebRTC-Av1-GetEncoderInfoOverride") {}
 
 }  // namespace webrtc

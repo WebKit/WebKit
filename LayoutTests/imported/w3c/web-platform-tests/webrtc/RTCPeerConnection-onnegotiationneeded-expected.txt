@@ -19,8 +19,8 @@ PASS Calling setStreams with an additional stream should cause negotiationneeded
 PASS Calling setStreams with a stream removed should cause negotiationneeded to fire
 PASS Calling setStreams with all streams removed should cause negotiationneeded to fire
 PASS Calling setStreams with the same stream as before should not cause negotiationneeded to fire
-FAIL Calling setStreams with duplicates of the same stream as before should not cause negotiationneeded to fire assert_equals: No negotiationneeded event expected (undefined) undefined but got (object) object "[object Event]"
+PASS Calling setStreams with duplicates of the same stream as before should not cause negotiationneeded to fire
 PASS Calling setStreams with the same streams as before in a different order should not cause negotiationneeded to fire
-FAIL Calling setStreams with duplicates of the same streams as before should not cause negotiationneeded to fire assert_equals: No negotiationneeded event expected (undefined) undefined but got (object) object "[object Event]"
+PASS Calling setStreams with duplicates of the same streams as before should not cause negotiationneeded to fire
 PASS Adding two transceivers, one at a time, results in the expected number of negotiationneeded events
 

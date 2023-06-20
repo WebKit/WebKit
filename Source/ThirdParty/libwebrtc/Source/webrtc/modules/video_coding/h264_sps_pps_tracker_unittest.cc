@@ -18,7 +18,6 @@
 #include "common_video/h264/h264_common.h"
 #include "modules/rtp_rtcp/source/rtp_video_header.h"
 #include "modules/video_coding/codecs/h264/include/h264_globals.h"
-#include "modules/video_coding/packet.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 

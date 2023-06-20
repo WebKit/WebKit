@@ -40,7 +40,7 @@ class EmulatedTURNServer : public EmulatedTURNServerInterface,
                            public webrtc::EmulatedNetworkReceiverInterface {
  public:
   // Create an EmulatedTURNServer.
-  // |thread| is a thread that will be used to run cricket::TurnServer
+  // `thread` is a thread that will be used to run cricket::TurnServer
   // that expects all calls to be made from a single thread.
   EmulatedTURNServer(std::unique_ptr<rtc::Thread> thread,
                      EmulatedEndpoint* client,

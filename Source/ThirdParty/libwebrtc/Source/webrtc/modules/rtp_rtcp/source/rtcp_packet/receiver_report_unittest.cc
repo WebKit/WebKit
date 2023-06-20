@@ -51,7 +51,7 @@ TEST(RtcpPacketReceiverReportTest, ParseWithOneReportBlock) {
   const ReportBlock& rb = parsed.report_blocks().front();
   EXPECT_EQ(kRemoteSsrc, rb.source_ssrc());
   EXPECT_EQ(kFractionLost, rb.fraction_lost());
-  EXPECT_EQ(kCumulativeLost, rb.cumulative_lost_signed());
+  EXPECT_EQ(kCumulativeLost, rb.cumulative_lost());
   EXPECT_EQ(kExtHighestSeqNum, rb.extended_high_seq_num());
   EXPECT_EQ(kJitter, rb.jitter());
   EXPECT_EQ(kLastSr, rb.last_sr());

@@ -134,11 +134,16 @@ bool StreamResetHandler::ValidateReqSeqNbr(
     ReconfigRequestSN req_seq_nbr,
     std::vector<ReconfigurationResponseParameter>& responses) {
   if (req_seq_nbr == last_processed_req_seq_nbr_) {
-    // This has already been performed previously.
+    // https://www.rfc-editor.org/rfc/rfc6525.html#section-5.2.1 "If the
+    // received RE-CONFIG chunk contains at least one request and based on the
+    // analysis of the Re-configuration Request Sequence Numbers this is the
+    // last received RE-CONFIG chunk (i.e., a retransmission), the same
+    // RE-CONFIG chunk MUST to be sent back in response, as it was earlier."
     RTC_DLOG(LS_VERBOSE) << log_prefix_ << "req=" << *req_seq_nbr
-                         << " already processed";
+                         << " already processed, returning result="
+                         << ToString(last_processed_req_result_);
     responses.push_back(ReconfigurationResponseParameter(
-        req_seq_nbr, ResponseResult::kSuccessNothingToDo));
+        req_seq_nbr, last_processed_req_result_));
     return false;
   }
 
@@ -170,20 +175,18 @@ void StreamResetHandler::HandleResetOutgoing(
   }
 
   if (ValidateReqSeqNbr(req->request_sequence_number(), responses)) {
-    ResponseResult result;
-
     RTC_DLOG(LS_VERBOSE) << log_prefix_
                          << "Reset outgoing streams with req_seq_nbr="
                          << *req->request_sequence_number();
 
     last_processed_req_seq_nbr_ = req->request_sequence_number();
-    result = reassembly_queue_->ResetStreams(
+    last_processed_req_result_ = reassembly_queue_->ResetStreams(
         *req, data_tracker_->last_cumulative_acked_tsn());
-    if (result == ResponseResult::kSuccessPerformed) {
+    if (last_processed_req_result_ == ResponseResult::kSuccessPerformed) {
       ctx_->callbacks().OnIncomingStreamsReset(req->stream_ids());
     }
     responses.push_back(ReconfigurationResponseParameter(
-        req->request_sequence_number(), result));
+        req->request_sequence_number(), last_processed_req_result_));
   }
 }
 

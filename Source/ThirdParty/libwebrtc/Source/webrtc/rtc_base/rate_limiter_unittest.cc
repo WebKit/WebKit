@@ -106,7 +106,7 @@ TEST_F(RateLimitTest, WindowSizeLimits) {
   EXPECT_FALSE(rate_limiter->SetWindowSize(kWindowSizeMs + 1));
 }
 
-static const int64_t kMaxTimeoutMs = 30000;
+static constexpr TimeDelta kMaxTimeout = TimeDelta::Seconds(30);
 
 class ThreadTask {
  public:
@@ -115,7 +115,7 @@ class ThreadTask {
   virtual ~ThreadTask() {}
 
   void Run() {
-    start_signal_.Wait(kMaxTimeoutMs);
+    start_signal_.Wait(kMaxTimeout);
     DoRun();
     end_signal_.Set();
   }
@@ -177,13 +177,13 @@ TEST_F(RateLimitTest, MultiThreadedUsage) {
       [&use_rate_task] { use_rate_task.Run(); }, "Thread3");
 
   set_window_size_task.start_signal_.Set();
-  EXPECT_TRUE(set_window_size_task.end_signal_.Wait(kMaxTimeoutMs));
+  EXPECT_TRUE(set_window_size_task.end_signal_.Wait(kMaxTimeout));
 
   set_max_rate_task.start_signal_.Set();
-  EXPECT_TRUE(set_max_rate_task.end_signal_.Wait(kMaxTimeoutMs));
+  EXPECT_TRUE(set_max_rate_task.end_signal_.Wait(kMaxTimeout));
 
   use_rate_task.start_signal_.Set();
-  EXPECT_TRUE(use_rate_task.end_signal_.Wait(kMaxTimeoutMs));
+  EXPECT_TRUE(use_rate_task.end_signal_.Wait(kMaxTimeout));
 
   // All rate consumed.
   EXPECT_FALSE(rate_limiter->TryUseRate(1));

@@ -20,6 +20,7 @@
 #include "absl/algorithm/container.h"
 #include "absl/types/optional.h"
 #include "api/video/video_timing.h"
+#include "api/video_codecs/video_decoder.h"
 #include "modules/include/module_common_types_public.h"
 #include "modules/video_coding/include/video_error_codes.h"
 #include "rtc_base/checks.h"
@@ -202,9 +203,9 @@ void VCMDecodedFrameCallback::Decoded(VideoFrame& decodedImage,
                                   frame_info->content_type);
 }
 
-void VCMDecodedFrameCallback::OnDecoderImplementationName(
-    const char* implementation_name) {
-  _receiveCallback->OnDecoderImplementationName(implementation_name);
+void VCMDecodedFrameCallback::OnDecoderInfoChanged(
+    const VideoDecoder::DecoderInfo& decoder_info) {
+  _receiveCallback->OnDecoderInfoChanged(decoder_info);
 }
 
 void VCMDecodedFrameCallback::Map(FrameInfo frameInfo) {
@@ -254,8 +255,7 @@ bool VCMGenericDecoder::Configure(const VideoDecoder::Settings& settings) {
   decoder_info_ = decoder_->GetDecoderInfo();
   RTC_LOG(LS_INFO) << "Decoder implementation: " << decoder_info_.ToString();
   if (_callback) {
-    _callback->OnDecoderImplementationName(
-        decoder_info_.implementation_name.c_str());
+    _callback->OnDecoderInfoChanged(decoder_info_);
   }
   return ok;
 }
@@ -293,10 +293,10 @@ int32_t VCMGenericDecoder::Decode(const VCMEncodedFrame& frame, Timestamp now) {
     RTC_LOG(LS_INFO) << "Changed decoder implementation to: "
                      << decoder_info.ToString();
     decoder_info_ = decoder_info;
-    _callback->OnDecoderImplementationName(
-        decoder_info.implementation_name.empty()
-            ? "unknown"
-            : decoder_info.implementation_name.c_str());
+    if (decoder_info.implementation_name.empty()) {
+      decoder_info.implementation_name = "unknown";
+    }
+    _callback->OnDecoderInfoChanged(std::move(decoder_info));
   }
   if (ret < WEBRTC_VIDEO_CODEC_OK) {
     RTC_LOG(LS_WARNING) << "Failed to decode frame with timestamp "
@@ -314,8 +314,7 @@ int32_t VCMGenericDecoder::RegisterDecodeCompleteCallback(
   _callback = callback;
   int32_t ret = decoder_->RegisterDecodeCompleteCallback(callback);
   if (callback && !decoder_info_.implementation_name.empty()) {
-    callback->OnDecoderImplementationName(
-        decoder_info_.implementation_name.c_str());
+    callback->OnDecoderInfoChanged(decoder_info_);
   }
   return ret;
 }

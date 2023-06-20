@@ -68,7 +68,7 @@ TEST(RtcpPacketReportBlockTest, ParseMatchCreate) {
 
   EXPECT_EQ(kRemoteSsrc, parsed.source_ssrc());
   EXPECT_EQ(kFractionLost, parsed.fraction_lost());
-  EXPECT_EQ(kCumulativeLost, parsed.cumulative_lost_signed());
+  EXPECT_EQ(kCumulativeLost, parsed.cumulative_lost());
   EXPECT_EQ(kExtHighestSeqNum, parsed.extended_high_seq_num());
   EXPECT_EQ(kJitter, parsed.jitter());
   EXPECT_EQ(kLastSr, parsed.last_sr());
@@ -77,9 +77,6 @@ TEST(RtcpPacketReportBlockTest, ParseMatchCreate) {
 
 TEST(RtcpPacketReportBlockTest, ValidateCumulativeLost) {
   // CumulativeLost is a signed 24-bit integer.
-  // However, existing code expects it to be an unsigned integer.
-  // The case of negative values should be unusual; we return 0
-  // when caller wants an unsigned integer.
   const int32_t kMaxCumulativeLost = 0x7fffff;
   const int32_t kMinCumulativeLost = -0x800000;
   ReportBlock rb;
@@ -87,8 +84,7 @@ TEST(RtcpPacketReportBlockTest, ValidateCumulativeLost) {
   EXPECT_TRUE(rb.SetCumulativeLost(kMaxCumulativeLost));
   EXPECT_FALSE(rb.SetCumulativeLost(kMinCumulativeLost - 1));
   EXPECT_TRUE(rb.SetCumulativeLost(kMinCumulativeLost));
-  EXPECT_EQ(kMinCumulativeLost, rb.cumulative_lost_signed());
-  EXPECT_EQ(0u, rb.cumulative_lost());
+  EXPECT_EQ(rb.cumulative_lost(), kMinCumulativeLost);
 }
 
 TEST(RtcpPacketReportBlockTest, ParseNegativeCumulativeLost) {
@@ -103,7 +99,7 @@ TEST(RtcpPacketReportBlockTest, ParseNegativeCumulativeLost) {
   ReportBlock parsed;
   EXPECT_TRUE(parsed.Parse(buffer, kBufferLength));
 
-  EXPECT_EQ(kNegativeCumulativeLost, parsed.cumulative_lost_signed());
+  EXPECT_EQ(kNegativeCumulativeLost, parsed.cumulative_lost());
 }
 
 }  // namespace

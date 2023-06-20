@@ -7,9 +7,7 @@
 # be found in the AUTHORS file in the root of the source tree.
 
 import("//build/config/linux/gtk/gtk.gni")
-import("//build/config/linux/pkg_config.gni")
 import("//build/config/ui.gni")
-import("//tools/generate_stubs/rules.gni")
 import("../../webrtc.gni")
 
 use_desktop_capture_differ_sse2 = current_cpu == "x86" || current_cpu == "x64"
@@ -43,11 +41,6 @@ rtc_library("primitives") {
     "../../rtc_base/system:rtc_export",
     "//third_party/libyuv",
   ]
-
-  if (!build_with_mozilla) {
-    deps += [ "../../rtc_base" ]  # TODO(kjellander): Cleanup in
-                                  # bugs.webrtc.org/3806.
-  }
 }
 
 if (rtc_include_tests) {
@@ -71,7 +64,6 @@ if (rtc_include_tests) {
         ":desktop_capture_mock",
         ":primitives",
         ":screen_drawer",
-        "../../rtc_base",
         "../../rtc_base/third_party/base64",
         "../../system_wrappers",
         "../../test:test_support",
@@ -84,7 +76,7 @@ if (rtc_include_tests) {
       ]
 
       if ((is_linux || is_chromeos) && rtc_use_pipewire) {
-        configs += [ ":gio" ]
+        configs += [ "../portal:gio" ]
       }
 
       public_configs = [ ":x11_config" ]
@@ -92,6 +84,44 @@ if (rtc_include_tests) {
       if (is_win) {
         deps += [ "../../rtc_base/win:windows_version" ]
       }
+    }
+  }
+
+  if ((is_linux || is_chromeos) && rtc_use_pipewire) {
+    rtc_test("shared_screencast_stream_test") {
+      testonly = true
+
+      sources = [
+        "linux/wayland/shared_screencast_stream_unittest.cc",
+        "linux/wayland/test/test_screencast_stream_provider.cc",
+        "linux/wayland/test/test_screencast_stream_provider.h",
+      ]
+
+      configs += [ "../portal:pipewire_all" ]
+
+      deps = [
+        ":desktop_capture",
+        ":desktop_capture_mock",
+        ":primitives",
+        "../../rtc_base:checks",
+        "../../rtc_base:logging",
+        "../../rtc_base:random",
+        "../../rtc_base:timeutils",
+        "../portal",
+
+        # TODO(bugs.webrtc.org/9987): Remove this dep on rtc_base:rtc_base once
+        # rtc_base:threading is fully defined.
+        "../../rtc_base:task_queue_for_test",
+        "../../rtc_base:threading",
+        "../../system_wrappers",
+        "../../test:test_main",
+        "../../test:test_support",
+        "//api/units:time_delta",
+        "//rtc_base:rtc_event",
+      ]
+
+      data = [ "../../third_party/pipewire" ]
+      public_configs = [ "../portal:pipewire_config" ]
     }
   }
 
@@ -110,7 +140,6 @@ if (rtc_include_tests) {
       "desktop_region_unittest.cc",
       "differ_block_unittest.cc",
       "fallback_desktop_capturer_wrapper_unittest.cc",
-      "mouse_cursor_monitor_unittest.cc",
       "rgba_color_unittest.cc",
       "test_utils.cc",
       "test_utils.h",
@@ -118,7 +147,7 @@ if (rtc_include_tests) {
     ]
 
     if ((is_linux || is_chromeos) && rtc_use_pipewire) {
-      configs += [ ":gio" ]
+      configs += [ "../portal:gio" ]
     }
 
     deps = [
@@ -133,7 +162,6 @@ if (rtc_include_tests) {
 
       # TODO(bugs.webrtc.org/9987): Remove this dep on rtc_base:rtc_base once
       # rtc_base:threading is fully defined.
-      "../../rtc_base:rtc_base",
       "../../rtc_base:task_queue_for_test",
       "../../rtc_base:threading",
       "../../system_wrappers",
@@ -228,7 +256,7 @@ if (rtc_include_tests) {
     ]
 
     if ((is_linux || is_chromeos) && rtc_use_pipewire) {
-      configs += [ ":gio" ]
+      configs += [ "../portal:gio" ]
     }
 
     deps = [
@@ -239,78 +267,10 @@ if (rtc_include_tests) {
   }
 }
 
-if (is_linux || is_chromeos) {
-  if (rtc_use_pipewire) {
-    pkg_config("gio") {
-      packages = [
-        "gio-2.0",
-        "gio-unix-2.0",
-      ]
-    }
-
-    pkg_config("pipewire") {
-      packages = [ "libpipewire-0.3" ]
-      if (!rtc_link_pipewire) {
-        ignore_libs = true
-      }
-    }
-
-    pkg_config("gbm") {
-      packages = [ "gbm" ]
-    }
-    pkg_config("egl") {
-      packages = [ "egl" ]
-    }
-    pkg_config("epoxy") {
-      packages = [ "epoxy" ]
-      ignore_libs = true
-    }
-    pkg_config("libdrm") {
-      packages = [ "libdrm" ]
-      if (!rtc_link_pipewire) {
-        ignore_libs = true
-      }
-    }
-
-    if (!rtc_link_pipewire) {
-      # When libpipewire is not directly linked, use stubs to allow for dlopening of
-      # the binary.
-      generate_stubs("pipewire_stubs") {
-        configs = [
-          "../../:common_config",
-          ":pipewire",
-          ":libdrm",
-        ]
-        deps = [ "../../rtc_base" ]
-        extra_header = "linux/wayland/pipewire_stub_header.fragment"
-        logging_function = "RTC_LOG(LS_VERBOSE)"
-        logging_include = "rtc_base/logging.h"
-        output_name = "linux/wayland/pipewire_stubs"
-        path_from_source = "modules/desktop_capture/linux/wayland"
-        sigs = [
-          "linux/wayland/pipewire.sigs",
-          "linux/wayland/drm.sigs",
-        ]
-        if (!build_with_chromium) {
-          macro_include = "rtc_base/system/no_cfi_icall.h"
-          macro_deps = [ "../../rtc_base/system:no_cfi_icall" ]
-        }
-      }
-    }
-
-    config("pipewire_config") {
-      defines = [ "WEBRTC_USE_PIPEWIRE" ]
-      if (!rtc_link_pipewire) {
-        defines += [ "WEBRTC_DLOPEN_PIPEWIRE" ]
-      }
-
-      # Chromecast build config overrides `WEBRTC_USE_PIPEWIRE` even when
-      # `rtc_use_pipewire` is not set, which causes pipewire_config to not be
-      # included in targets. More details in: webrtc:13898
-      if (is_linux && !is_castos) {
-        defines += [ "WEBRTC_USE_GIO" ]
-      }
-    }
+# TODO(bugs.webrtc.org/14187): remove when all users are gone
+if ((is_linux || is_chromeos) && rtc_use_pipewire) {
+  config("pipewire_config") {
+    configs = [ "../portal:pipewire_config" ]
   }
 }
 
@@ -326,6 +286,7 @@ rtc_library("desktop_capture") {
     "cropped_desktop_frame.h",
     "cropping_window_capturer.cc",
     "cropping_window_capturer.h",
+    "delegated_source_list_controller.h",
     "desktop_and_cursor_composer.cc",
     "desktop_and_cursor_composer.h",
     "desktop_capture_metrics_helper.cc",
@@ -555,9 +516,11 @@ rtc_library("desktop_capture") {
     libs = [
       "d3d11.lib",
       "dxgi.lib",
+      "shcore.lib",
     ]
     deps += [
       "../../rtc_base:win32",
+      "../../rtc_base/containers:flat_map",
       "../../rtc_base/win:create_direct3d_device",
       "../../rtc_base/win:get_activation_factory",
       "../../rtc_base/win:windows_version",
@@ -593,7 +556,6 @@ rtc_library("desktop_capture") {
       "linux/wayland/portal_request_response.h",
       "linux/wayland/restore_token_manager.cc",
       "linux/wayland/restore_token_manager.h",
-      "linux/wayland/scoped_glib.cc",
       "linux/wayland/scoped_glib.h",
       "linux/wayland/screen_capture_portal_interface.cc",
       "linux/wayland/screen_capture_portal_interface.h",
@@ -603,27 +565,18 @@ rtc_library("desktop_capture") {
       "linux/wayland/screencast_stream_utils.h",
       "linux/wayland/shared_screencast_stream.cc",
       "linux/wayland/shared_screencast_stream.h",
-      "linux/wayland/xdg_desktop_portal_utils.cc",
       "linux/wayland/xdg_desktop_portal_utils.h",
       "linux/wayland/xdg_session_details.h",
     ]
 
-    configs += [
-      ":gio",
-      ":pipewire",
-      ":gbm",
-      ":egl",
-      ":epoxy",
-      ":libdrm",
+    configs += [ "../portal:pipewire_all" ]
+
+    public_configs += [ "../portal:pipewire_config" ]
+
+    deps += [
+      "../../rtc_base:sanitizer",
+      "../portal",
     ]
-
-    if (!rtc_link_pipewire) {
-      deps += [ ":pipewire_stubs" ]
-    }
-
-    public_configs += [ ":pipewire_config" ]
-
-    deps += [ "../../rtc_base:sanitizer" ]
   }
 
   if (rtc_enable_win_wgc) {
@@ -659,6 +612,7 @@ if (is_mac) {
     # this target as private.
     visibility = [ ":desktop_capture" ]
     sources = [
+      "delegated_source_list_controller.h",
       "desktop_capture_options.h",
       "desktop_capturer.h",
       "full_screen_application_handler.h",
@@ -692,7 +646,6 @@ if (is_mac) {
       "../../api:refcountedbase",
       "../../api:scoped_refptr",
       "../../api:sequence_checker",
-      "../../rtc_base",
       "../../rtc_base:checks",
       "../../rtc_base:event_tracer",
       "../../rtc_base:logging",

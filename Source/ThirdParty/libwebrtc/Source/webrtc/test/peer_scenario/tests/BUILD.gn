@@ -12,6 +12,7 @@ if (rtc_include_tests) {
   rtc_library("tests") {
     testonly = true
     sources = [
+      "bwe_ramp_up_test.cc",
       "peer_scenario_quality_test.cc",
       "remote_estimate_test.cc",
       "unsignaled_stream_test.cc",
@@ -19,17 +20,16 @@ if (rtc_include_tests) {
     deps = [
       "..:peer_scenario",
       "../../:field_trial",
-      "../../:rtp_test_utils",
       "../../:test_support",
+      "../../../api:rtc_stats_api",
+      "../../../api/units:data_rate",
+      "../../../api/units:time_delta",
       "../../../media:rtc_media_base",
-      "../../../modules/rtp_rtcp:rtp_rtcp",
+      "../../../media:stream_params",
       "../../../modules/rtp_rtcp:rtp_rtcp_format",
-<<<<<<< HEAD
       "../../../pc:media_session",
+      "../../../pc:pc_test_utils",
       "../../../pc:session_description",
-=======
-      "../../../pc:rtc_pc_base",
->>>>>>> parent of 8e32ad0e8387 (revert libwebrtc changes to help bump)
     ]
   }
 }

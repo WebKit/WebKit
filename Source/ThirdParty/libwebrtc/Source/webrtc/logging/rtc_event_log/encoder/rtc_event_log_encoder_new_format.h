@@ -39,6 +39,7 @@ class RtcEventDtlsTransportState;
 class RtcEventDtlsWritableState;
 class RtcEventLoggingStarted;
 class RtcEventLoggingStopped;
+class RtcEventNetEqSetMinimumDelay;
 class RtcEventProbeClusterCreated;
 class RtcEventProbeResultFailure;
 class RtcEventProbeResultSuccess;
@@ -58,6 +59,7 @@ class RtcEventGenericPacketSent;
 
 class RtcEventLogEncoderNewFormat final : public RtcEventLogEncoder {
  public:
+  RtcEventLogEncoderNewFormat();
   ~RtcEventLogEncoderNewFormat() override = default;
 
   std::string EncodeBatch(
@@ -69,6 +71,8 @@ class RtcEventLogEncoderNewFormat final : public RtcEventLogEncoder {
   std::string EncodeLogEnd(int64_t timestamp_us) override;
 
  private:
+  bool encode_neteq_set_minimum_delay_kill_switch_ = false;
+
   // Encoding entry-point for the various RtcEvent subclasses.
   void EncodeAlrState(rtc::ArrayView<const RtcEventAlrState*> batch,
                       rtclog2::EventStream* event_stream);
@@ -117,6 +121,9 @@ class RtcEventLogEncoderNewFormat final : public RtcEventLogEncoder {
                             rtclog2::EventStream* event_stream);
   void EncodeLoggingStopped(rtc::ArrayView<const RtcEventLoggingStopped*> batch,
                             rtclog2::EventStream* event_stream);
+  void EncodeNetEqSetMinimumDelay(
+      rtc::ArrayView<const RtcEventNetEqSetMinimumDelay*> batch,
+      rtclog2::EventStream* event_stream);
   void EncodeProbeClusterCreated(
       rtc::ArrayView<const RtcEventProbeClusterCreated*> batch,
       rtclog2::EventStream* event_stream);

@@ -100,6 +100,10 @@ class AudioStreamPair {
   SendAudioStream send_stream_;
   ReceiveAudioStream receive_stream_;
 };
+
+std::vector<RtpExtension> GetAudioRtpExtensions(
+    const AudioStreamConfig& config);
+
 }  // namespace test
 }  // namespace webrtc
 

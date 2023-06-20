@@ -17,6 +17,9 @@ namespace webrtc {
 namespace test {
 namespace {
 
+// Wait half a second between stopping sending and stopping receiving audio.
+constexpr int kExtraRecordTimeMs = 500;
+
 bool IsNear(int reference, int v) {
   // Margin is 10%.
   const int error = reference / 10 + 1;
@@ -32,7 +35,7 @@ class NoLossTest : public AudioEndToEndTest {
 
   NoLossTest() = default;
 
-  BuiltInNetworkBehaviorConfig GetNetworkPipeConfig() const override {
+  BuiltInNetworkBehaviorConfig GetSendTransportConfig() const override {
     BuiltInNetworkBehaviorConfig pipe_config;
     pipe_config.queue_delay_ms = kRttMs / 2;
     return pipe_config;
@@ -41,7 +44,8 @@ class NoLossTest : public AudioEndToEndTest {
   void PerformTest() override {
     SleepMs(kTestDurationMs);
     send_audio_device()->StopRecording();
-    AudioEndToEndTest::PerformTest();
+    // and some extra time to account for network delay.
+    SleepMs(GetSendTransportConfig().queue_delay_ms + kExtraRecordTimeMs);
   }
 
   void OnStreamsStopped() override {
@@ -66,9 +70,9 @@ class NoLossTest : public AudioEndToEndTest {
 
     AudioReceiveStreamInterface::Stats recv_stats =
         receive_stream()->GetStats(/*get_and_clear_legacy_stats=*/true);
-    EXPECT_PRED2(IsNear, kBytesSent, recv_stats.payload_bytes_rcvd);
-    EXPECT_PRED2(IsNear, kPacketsSent, recv_stats.packets_rcvd);
-    EXPECT_EQ(0u, recv_stats.packets_lost);
+    EXPECT_PRED2(IsNear, kBytesSent, recv_stats.payload_bytes_received);
+    EXPECT_PRED2(IsNear, kPacketsSent, recv_stats.packets_received);
+    EXPECT_EQ(0, recv_stats.packets_lost);
     EXPECT_EQ("opus", send_stats.codec_name);
     // recv_stats.jitter_ms
     // recv_stats.jitter_buffer_ms

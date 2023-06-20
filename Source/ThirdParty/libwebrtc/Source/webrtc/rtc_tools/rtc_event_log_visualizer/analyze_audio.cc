@@ -18,6 +18,7 @@
 #include "modules/audio_coding/neteq/tools/audio_sink.h"
 #include "modules/audio_coding/neteq/tools/fake_decode_from_file.h"
 #include "modules/audio_coding/neteq/tools/neteq_delay_analyzer.h"
+#include "modules/audio_coding/neteq/tools/neteq_event_log_input.h"
 #include "modules/audio_coding/neteq/tools/neteq_replacement_input.h"
 #include "modules/audio_coding/neteq/tools/neteq_test.h"
 #include "modules/audio_coding/neteq/tools/resample_input_audio_file.h"
@@ -176,83 +177,6 @@ void CreateAudioEncoderNumChannelsGraph(const ParsedRtcEventLog& parsed_log,
   plot->SetTitle("Reported audio encoder number of channels");
 }
 
-class NetEqStreamInput : public test::NetEqInput {
- public:
-  // Does not take any ownership, and all pointers must refer to valid objects
-  // that outlive the one constructed.
-  NetEqStreamInput(const std::vector<LoggedRtpPacketIncoming>* packet_stream,
-                   const std::vector<LoggedAudioPlayoutEvent>* output_events,
-                   absl::optional<int64_t> end_time_ms)
-      : packet_stream_(*packet_stream),
-        packet_stream_it_(packet_stream_.begin()),
-        output_events_it_(output_events->begin()),
-        output_events_end_(output_events->end()),
-        end_time_ms_(end_time_ms) {
-    RTC_DCHECK(packet_stream);
-    RTC_DCHECK(output_events);
-  }
-
-  absl::optional<int64_t> NextPacketTime() const override {
-    if (packet_stream_it_ == packet_stream_.end()) {
-      return absl::nullopt;
-    }
-    if (end_time_ms_ && packet_stream_it_->rtp.log_time_ms() > *end_time_ms_) {
-      return absl::nullopt;
-    }
-    return packet_stream_it_->rtp.log_time_ms();
-  }
-
-  absl::optional<int64_t> NextOutputEventTime() const override {
-    if (output_events_it_ == output_events_end_) {
-      return absl::nullopt;
-    }
-    if (end_time_ms_ && output_events_it_->log_time_ms() > *end_time_ms_) {
-      return absl::nullopt;
-    }
-    return output_events_it_->log_time_ms();
-  }
-
-  std::unique_ptr<PacketData> PopPacket() override {
-    if (packet_stream_it_ == packet_stream_.end()) {
-      return std::unique_ptr<PacketData>();
-    }
-    std::unique_ptr<PacketData> packet_data(new PacketData());
-    packet_data->header = packet_stream_it_->rtp.header;
-    packet_data->time_ms = packet_stream_it_->rtp.log_time_ms();
-
-    // This is a header-only "dummy" packet. Set the payload to all zeros, with
-    // length according to the virtual length.
-    packet_data->payload.SetSize(packet_stream_it_->rtp.total_length -
-                                 packet_stream_it_->rtp.header_length);
-    std::fill_n(packet_data->payload.data(), packet_data->payload.size(), 0);
-
-    ++packet_stream_it_;
-    return packet_data;
-  }
-
-  void AdvanceOutputEvent() override {
-    if (output_events_it_ != output_events_end_) {
-      ++output_events_it_;
-    }
-  }
-
-  bool ended() const override { return !NextEventTime(); }
-
-  absl::optional<RTPHeader> NextHeader() const override {
-    if (packet_stream_it_ == packet_stream_.end()) {
-      return absl::nullopt;
-    }
-    return packet_stream_it_->rtp.header;
-  }
-
- private:
-  const std::vector<LoggedRtpPacketIncoming>& packet_stream_;
-  std::vector<LoggedRtpPacketIncoming>::const_iterator packet_stream_it_;
-  std::vector<LoggedAudioPlayoutEvent>::const_iterator output_events_it_;
-  const std::vector<LoggedAudioPlayoutEvent>::const_iterator output_events_end_;
-  const absl::optional<int64_t> end_time_ms_;
-};
-
 namespace {
 
 // Factory to create a "replacement decoder" that produces the decoded audio
@@ -292,13 +216,15 @@ class ReplacementAudioDecoderFactory : public AudioDecoderFactory {
 // the test and returns the NetEqDelayAnalyzer object that was used to
 // instrument the test.
 std::unique_ptr<test::NetEqStatsGetter> CreateNetEqTestAndRun(
-    const std::vector<LoggedRtpPacketIncoming>* packet_stream,
-    const std::vector<LoggedAudioPlayoutEvent>* output_events,
-    absl::optional<int64_t> end_time_ms,
+    ParsedRtcEventLog parsed_log,
+    uint32_t ssrc,
     const std::string& replacement_file_name,
     int file_sample_rate_hz) {
-  std::unique_ptr<test::NetEqInput> input(
-      new NetEqStreamInput(packet_stream, output_events, end_time_ms));
+  std::unique_ptr<test::NetEqInput> input =
+      test::CreateNetEqEventLogInput(parsed_log, ssrc);
+  if (!input) {
+    return nullptr;
+  }
 
   constexpr int kReplacementPt = 127;
   std::set<uint8_t> cn_types;
@@ -339,35 +265,13 @@ NetEqStatsGetterMap SimulateNetEq(const ParsedRtcEventLog& parsed_log,
                                   const std::string& replacement_file_name,
                                   int file_sample_rate_hz) {
   NetEqStatsGetterMap neteq_stats;
-
-  for (const auto& stream : parsed_log.incoming_rtp_packets_by_ssrc()) {
-    const uint32_t ssrc = stream.ssrc;
-    if (!IsAudioSsrc(parsed_log, kIncomingPacket, ssrc))
-      continue;
-    const std::vector<LoggedRtpPacketIncoming>* audio_packets =
-        &stream.incoming_packets;
-    if (audio_packets == nullptr) {
-      // No incoming audio stream found.
-      continue;
+  for (uint32_t ssrc : parsed_log.incoming_audio_ssrcs()) {
+    std::unique_ptr<test::NetEqStatsGetter> stats = CreateNetEqTestAndRun(
+        parsed_log, ssrc, replacement_file_name, file_sample_rate_hz);
+    if (stats) {
+      neteq_stats[ssrc] = std::move(stats);
     }
-
-    RTC_DCHECK(neteq_stats.find(ssrc) == neteq_stats.end());
-
-    std::map<uint32_t, std::vector<LoggedAudioPlayoutEvent>>::const_iterator
-        output_events_it = parsed_log.audio_playout_events().find(ssrc);
-    if (output_events_it == parsed_log.audio_playout_events().end()) {
-      // Could not find output events with SSRC matching the input audio stream.
-      // Using the first available stream of output events.
-      output_events_it = parsed_log.audio_playout_events().cbegin();
-    }
-
-    int64_t end_time_ms = parsed_log.first_log_segment().stop_time_ms();
-
-    neteq_stats[ssrc] = CreateNetEqTestAndRun(
-        audio_packets, &output_events_it->second, end_time_ms,
-        replacement_file_name, file_sample_rate_hz);
   }
-
   return neteq_stats;
 }
 

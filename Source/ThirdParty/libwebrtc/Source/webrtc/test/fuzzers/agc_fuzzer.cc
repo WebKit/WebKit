@@ -92,8 +92,8 @@ void FuzzGainController(test::FuzzDataHelper* fuzz_data, GainControlImpl* gci) {
   FuzzGainControllerConfig(fuzz_data, gci);
 
   // The audio buffer is used for both capture and render.
-  AudioBuffer audio(sample_rate_hz, num_channels, sample_rate_hz,
-                    num_channels, sample_rate_hz, num_channels);
+  AudioBuffer audio(sample_rate_hz, num_channels, sample_rate_hz, num_channels,
+                    sample_rate_hz, num_channels);
 
   std::vector<int16_t> packed_render_audio(samples_per_frame);
 

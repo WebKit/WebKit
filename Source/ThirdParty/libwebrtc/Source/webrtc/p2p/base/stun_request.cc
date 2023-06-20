@@ -35,7 +35,7 @@ const int STUN_INITIAL_RTO = 250;  // milliseconds
 // The timeout doubles each retransmission, up to this many times
 // RFC 5389 says SHOULD retransmit 7 times.
 // This has been 8 for years (not sure why).
-const int STUN_MAX_RETRANSMISSIONS = 8;           // Total sends: 9
+const int STUN_MAX_RETRANSMISSIONS = 8;  // Total sends: 9
 
 // We also cap the doubling, even though the standard doesn't say to.
 // This has been 1.6 seconds for years, but for networks that
@@ -107,11 +107,30 @@ bool StunRequestManager::CheckResponse(StunMessage* msg) {
   // integrity-protected or not.
   // For some tests, the message integrity is not set in the request.
   // Complain, and then don't check.
-  bool skip_integrity_checking = false;
-  if (request->msg()->integrity() == StunMessage::IntegrityStatus::kNotSet) {
-    skip_integrity_checking = true;
+  bool skip_integrity_checking =
+      (request->msg()->integrity() == StunMessage::IntegrityStatus::kNotSet);
+  if (skip_integrity_checking) {
+    // This indicates lazy test writing (not adding integrity attribute).
+    // Complain, but only in debug mode (while developing).
+    RTC_DLOG(LS_ERROR)
+        << "CheckResponse called on a passwordless request. Fix test!";
   } else {
-    msg->ValidateMessageIntegrity(request->msg()->password());
+    if (msg->integrity() == StunMessage::IntegrityStatus::kNotSet) {
+      // Checking status for the first time. Normal.
+      msg->ValidateMessageIntegrity(request->msg()->password());
+    } else if (msg->integrity() == StunMessage::IntegrityStatus::kIntegrityOk &&
+               msg->password() == request->msg()->password()) {
+      // Status is already checked, with the same password. This is the case
+      // we would want to see happen.
+    } else if (msg->integrity() ==
+               StunMessage::IntegrityStatus::kIntegrityBad) {
+      // This indicates that the original check had the wrong password.
+      // Bad design, needs revisiting.
+      // TODO(crbug.com/1177125): Fix this.
+      msg->RevalidateMessageIntegrity(request->msg()->password());
+    } else {
+      RTC_CHECK_NOTREACHED();
+    }
   }
 
   bool success = true;

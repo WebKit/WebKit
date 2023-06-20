@@ -6,7 +6,6 @@
       {
         "args": [
           "--xctest",
-          "--undefok=enable-run-ios-unittests-with-xctest",
           "--xcode-build-version",
           "13c100",
           "--out-dir",
@@ -14,7 +13,6 @@
         ],
         "isolate_name": "common_audio_unittests",
         "merge": {
-          "args": [],
           "script": "//testing/merge_scripts/standard_isolated_script_merge.py"
         },
         "name": "common_audio_unittests",
@@ -28,12 +26,12 @@
             {
               "cipd_package": "infra/tools/mac_toolchain/${platform}",
               "location": ".",
-              "revision": "git_revision:723fc1a6c8cdf2631a57851f5610e598db0c1de1"
+              "revision": "git_revision:a598cd77abc01089647a79e3cfa3cc8e8ecb5118"
             }
           ],
           "dimension_sets": [
             {
-              "os": "iOS-15.3",
+              "os": "iOS-15.7",
               "pool": "chrome.tests"
             }
           ],
@@ -50,7 +48,6 @@
       {
         "args": [
           "--xctest",
-          "--undefok=enable-run-ios-unittests-with-xctest",
           "--xcode-build-version",
           "13c100",
           "--out-dir",
@@ -58,7 +55,6 @@
         ],
         "isolate_name": "common_video_unittests",
         "merge": {
-          "args": [],
           "script": "//testing/merge_scripts/standard_isolated_script_merge.py"
         },
         "name": "common_video_unittests",
@@ -72,12 +68,12 @@
             {
               "cipd_package": "infra/tools/mac_toolchain/${platform}",
               "location": ".",
-              "revision": "git_revision:723fc1a6c8cdf2631a57851f5610e598db0c1de1"
+              "revision": "git_revision:a598cd77abc01089647a79e3cfa3cc8e8ecb5118"
             }
           ],
           "dimension_sets": [
             {
-              "os": "iOS-15.3",
+              "os": "iOS-15.7",
               "pool": "chrome.tests"
             }
           ],
@@ -95,7 +91,6 @@
         "args": [
           "--readline-timeout=1200",
           "--xctest",
-          "--undefok=enable-run-ios-unittests-with-xctest",
           "--xcode-build-version",
           "13c100",
           "--out-dir",
@@ -103,7 +98,6 @@
         ],
         "isolate_name": "modules_tests",
         "merge": {
-          "args": [],
           "script": "//testing/merge_scripts/standard_isolated_script_merge.py"
         },
         "name": "modules_tests",
@@ -117,12 +111,12 @@
             {
               "cipd_package": "infra/tools/mac_toolchain/${platform}",
               "location": ".",
-              "revision": "git_revision:723fc1a6c8cdf2631a57851f5610e598db0c1de1"
+              "revision": "git_revision:a598cd77abc01089647a79e3cfa3cc8e8ecb5118"
             }
           ],
           "dimension_sets": [
             {
-              "os": "iOS-15.3",
+              "os": "iOS-15.7",
               "pool": "chrome.tests"
             }
           ],
@@ -142,7 +136,6 @@
       {
         "args": [
           "--xctest",
-          "--undefok=enable-run-ios-unittests-with-xctest",
           "--xcode-build-version",
           "13c100",
           "--out-dir",
@@ -150,7 +143,6 @@
         ],
         "isolate_name": "modules_unittests",
         "merge": {
-          "args": [],
           "script": "//testing/merge_scripts/standard_isolated_script_merge.py"
         },
         "name": "modules_unittests",
@@ -164,12 +156,12 @@
             {
               "cipd_package": "infra/tools/mac_toolchain/${platform}",
               "location": ".",
-              "revision": "git_revision:723fc1a6c8cdf2631a57851f5610e598db0c1de1"
+              "revision": "git_revision:a598cd77abc01089647a79e3cfa3cc8e8ecb5118"
             }
           ],
           "dimension_sets": [
             {
-              "os": "iOS-15.3",
+              "os": "iOS-15.7",
               "pool": "chrome.tests"
             }
           ],
@@ -187,7 +179,6 @@
       {
         "args": [
           "--xctest",
-          "--undefok=enable-run-ios-unittests-with-xctest",
           "--xcode-build-version",
           "13c100",
           "--out-dir",
@@ -195,7 +186,6 @@
         ],
         "isolate_name": "rtc_pc_unittests",
         "merge": {
-          "args": [],
           "script": "//testing/merge_scripts/standard_isolated_script_merge.py"
         },
         "name": "rtc_pc_unittests",
@@ -209,12 +199,12 @@
             {
               "cipd_package": "infra/tools/mac_toolchain/${platform}",
               "location": ".",
-              "revision": "git_revision:723fc1a6c8cdf2631a57851f5610e598db0c1de1"
+              "revision": "git_revision:a598cd77abc01089647a79e3cfa3cc8e8ecb5118"
             }
           ],
           "dimension_sets": [
             {
-              "os": "iOS-15.3",
+              "os": "iOS-15.7",
               "pool": "chrome.tests"
             }
           ],
@@ -231,7 +221,6 @@
       {
         "args": [
           "--xctest",
-          "--undefok=enable-run-ios-unittests-with-xctest",
           "--xcode-build-version",
           "13c100",
           "--out-dir",
@@ -239,7 +228,6 @@
         ],
         "isolate_name": "rtc_stats_unittests",
         "merge": {
-          "args": [],
           "script": "//testing/merge_scripts/standard_isolated_script_merge.py"
         },
         "name": "rtc_stats_unittests",
@@ -253,12 +241,12 @@
             {
               "cipd_package": "infra/tools/mac_toolchain/${platform}",
               "location": ".",
-              "revision": "git_revision:723fc1a6c8cdf2631a57851f5610e598db0c1de1"
+              "revision": "git_revision:a598cd77abc01089647a79e3cfa3cc8e8ecb5118"
             }
           ],
           "dimension_sets": [
             {
-              "os": "iOS-15.3",
+              "os": "iOS-15.7",
               "pool": "chrome.tests"
             }
           ],
@@ -275,7 +263,6 @@
       {
         "args": [
           "--xctest",
-          "--undefok=enable-run-ios-unittests-with-xctest",
           "--xcode-build-version",
           "13c100",
           "--out-dir",
@@ -283,7 +270,6 @@
         ],
         "isolate_name": "system_wrappers_unittests",
         "merge": {
-          "args": [],
           "script": "//testing/merge_scripts/standard_isolated_script_merge.py"
         },
         "name": "system_wrappers_unittests",
@@ -297,12 +283,12 @@
             {
               "cipd_package": "infra/tools/mac_toolchain/${platform}",
               "location": ".",
-              "revision": "git_revision:723fc1a6c8cdf2631a57851f5610e598db0c1de1"
+              "revision": "git_revision:a598cd77abc01089647a79e3cfa3cc8e8ecb5118"
             }
           ],
           "dimension_sets": [
             {
-              "os": "iOS-15.3",
+              "os": "iOS-15.7",
               "pool": "chrome.tests"
             }
           ],
@@ -319,7 +305,6 @@
       {
         "args": [
           "--xctest",
-          "--undefok=enable-run-ios-unittests-with-xctest",
           "--xcode-build-version",
           "13c100",
           "--out-dir",
@@ -327,7 +312,6 @@
         ],
         "isolate_name": "test_support_unittests",
         "merge": {
-          "args": [],
           "script": "//testing/merge_scripts/standard_isolated_script_merge.py"
         },
         "name": "test_support_unittests",
@@ -341,12 +325,12 @@
             {
               "cipd_package": "infra/tools/mac_toolchain/${platform}",
               "location": ".",
-              "revision": "git_revision:723fc1a6c8cdf2631a57851f5610e598db0c1de1"
+              "revision": "git_revision:a598cd77abc01089647a79e3cfa3cc8e8ecb5118"
             }
           ],
           "dimension_sets": [
             {
-              "os": "iOS-15.3",
+              "os": "iOS-15.7",
               "pool": "chrome.tests"
             }
           ],
@@ -363,7 +347,6 @@
       {
         "args": [
           "--xctest",
-          "--undefok=enable-run-ios-unittests-with-xctest",
           "--xcode-build-version",
           "13c100",
           "--out-dir",
@@ -371,7 +354,6 @@
         ],
         "isolate_name": "tools_unittests",
         "merge": {
-          "args": [],
           "script": "//testing/merge_scripts/standard_isolated_script_merge.py"
         },
         "name": "tools_unittests",
@@ -385,12 +367,12 @@
             {
               "cipd_package": "infra/tools/mac_toolchain/${platform}",
               "location": ".",
-              "revision": "git_revision:723fc1a6c8cdf2631a57851f5610e598db0c1de1"
+              "revision": "git_revision:a598cd77abc01089647a79e3cfa3cc8e8ecb5118"
             }
           ],
           "dimension_sets": [
             {
-              "os": "iOS-15.3",
+              "os": "iOS-15.7",
               "pool": "chrome.tests"
             }
           ],
@@ -407,7 +389,6 @@
       {
         "args": [
           "--xctest",
-          "--undefok=enable-run-ios-unittests-with-xctest",
           "--xcode-build-version",
           "13c100",
           "--out-dir",
@@ -415,7 +396,6 @@
         ],
         "isolate_name": "video_capture_tests",
         "merge": {
-          "args": [],
           "script": "//testing/merge_scripts/standard_isolated_script_merge.py"
         },
         "name": "video_capture_tests",
@@ -429,12 +409,12 @@
             {
               "cipd_package": "infra/tools/mac_toolchain/${platform}",
               "location": ".",
-              "revision": "git_revision:723fc1a6c8cdf2631a57851f5610e598db0c1de1"
+              "revision": "git_revision:a598cd77abc01089647a79e3cfa3cc8e8ecb5118"
             }
           ],
           "dimension_sets": [
             {
-              "os": "iOS-15.3",
+              "os": "iOS-15.7",
               "pool": "chrome.tests"
             }
           ],
@@ -451,7 +431,6 @@
       {
         "args": [
           "--xctest",
-          "--undefok=enable-run-ios-unittests-with-xctest",
           "--xcode-build-version",
           "13c100",
           "--out-dir",
@@ -459,7 +438,6 @@
         ],
         "isolate_name": "video_engine_tests",
         "merge": {
-          "args": [],
           "script": "//testing/merge_scripts/standard_isolated_script_merge.py"
         },
         "name": "video_engine_tests",
@@ -473,12 +451,12 @@
             {
               "cipd_package": "infra/tools/mac_toolchain/${platform}",
               "location": ".",
-              "revision": "git_revision:723fc1a6c8cdf2631a57851f5610e598db0c1de1"
+              "revision": "git_revision:a598cd77abc01089647a79e3cfa3cc8e8ecb5118"
             }
           ],
           "dimension_sets": [
             {
-              "os": "iOS-15.3",
+              "os": "iOS-15.7",
               "pool": "chrome.tests"
             }
           ],
@@ -500,8 +478,9 @@
       {
         "args": [
           "--write_perf_output_on_ios",
+          "--xctest",
           "--xcode-build-version",
-          "12d4e",
+          "13c100",
           "--out-dir",
           "${ISOLATED_OUTDIR}",
           "--nologs"
@@ -512,7 +491,7 @@
             "--test-suite",
             "webrtc_perf_tests"
           ],
-          "script": "//tools_webrtc/perf/process_perf_results_py2.py"
+          "script": "//tools_webrtc/perf/process_perf_results.py"
         },
         "name": "webrtc_perf_tests",
         "resultdb": {
@@ -525,12 +504,12 @@
             {
               "cipd_package": "infra/tools/mac_toolchain/${platform}",
               "location": ".",
-              "revision": "git_revision:723fc1a6c8cdf2631a57851f5610e598db0c1de1"
+              "revision": "git_revision:a598cd77abc01089647a79e3cfa3cc8e8ecb5118"
             }
           ],
           "dimension_sets": [
             {
-              "id": "build15-a7",
+              "id": "mac-254-e504",
               "os": "iOS-12.4.1",
               "pool": "WebRTC"
             }
@@ -540,7 +519,7 @@
           "io_timeout": 10800,
           "named_caches": [
             {
-              "name": "xcode_ios_12d4e",
+              "name": "xcode_ios_13c100",
               "path": "Xcode.app"
             }
           ],
@@ -555,7 +534,6 @@
       {
         "args": [
           "--xctest",
-          "--undefok=enable-run-ios-unittests-with-xctest",
           "--xcode-build-version",
           "13c100",
           "--out-dir",
@@ -563,7 +541,6 @@
         ],
         "isolate_name": "common_audio_unittests",
         "merge": {
-          "args": [],
           "script": "//testing/merge_scripts/standard_isolated_script_merge.py"
         },
         "name": "common_audio_unittests",
@@ -577,12 +554,12 @@
             {
               "cipd_package": "infra/tools/mac_toolchain/${platform}",
               "location": ".",
-              "revision": "git_revision:723fc1a6c8cdf2631a57851f5610e598db0c1de1"
+              "revision": "git_revision:a598cd77abc01089647a79e3cfa3cc8e8ecb5118"
             }
           ],
           "dimension_sets": [
             {
-              "os": "iOS-15.3",
+              "os": "iOS-15.7",
               "pool": "chrome.tests"
             }
           ],
@@ -599,7 +576,6 @@
       {
         "args": [
           "--xctest",
-          "--undefok=enable-run-ios-unittests-with-xctest",
           "--xcode-build-version",
           "13c100",
           "--out-dir",
@@ -607,7 +583,6 @@
         ],
         "isolate_name": "common_video_unittests",
         "merge": {
-          "args": [],
           "script": "//testing/merge_scripts/standard_isolated_script_merge.py"
         },
         "name": "common_video_unittests",
@@ -621,12 +596,12 @@
             {
               "cipd_package": "infra/tools/mac_toolchain/${platform}",
               "location": ".",
-              "revision": "git_revision:723fc1a6c8cdf2631a57851f5610e598db0c1de1"
+              "revision": "git_revision:a598cd77abc01089647a79e3cfa3cc8e8ecb5118"
             }
           ],
           "dimension_sets": [
             {
-              "os": "iOS-15.3",
+              "os": "iOS-15.7",
               "pool": "chrome.tests"
             }
           ],
@@ -644,7 +619,6 @@
         "args": [
           "--readline-timeout=1200",
           "--xctest",
-          "--undefok=enable-run-ios-unittests-with-xctest",
           "--xcode-build-version",
           "13c100",
           "--out-dir",
@@ -652,7 +626,6 @@
         ],
         "isolate_name": "modules_tests",
         "merge": {
-          "args": [],
           "script": "//testing/merge_scripts/standard_isolated_script_merge.py"
         },
         "name": "modules_tests",
@@ -666,12 +639,12 @@
             {
               "cipd_package": "infra/tools/mac_toolchain/${platform}",
               "location": ".",
-              "revision": "git_revision:723fc1a6c8cdf2631a57851f5610e598db0c1de1"
+              "revision": "git_revision:a598cd77abc01089647a79e3cfa3cc8e8ecb5118"
             }
           ],
           "dimension_sets": [
             {
-              "os": "iOS-15.3",
+              "os": "iOS-15.7",
               "pool": "chrome.tests"
             }
           ],
@@ -691,7 +664,6 @@
       {
         "args": [
           "--xctest",
-          "--undefok=enable-run-ios-unittests-with-xctest",
           "--xcode-build-version",
           "13c100",
           "--out-dir",
@@ -699,7 +671,6 @@
         ],
         "isolate_name": "modules_unittests",
         "merge": {
-          "args": [],
           "script": "//testing/merge_scripts/standard_isolated_script_merge.py"
         },
         "name": "modules_unittests",
@@ -713,12 +684,12 @@
             {
               "cipd_package": "infra/tools/mac_toolchain/${platform}",
               "location": ".",
-              "revision": "git_revision:723fc1a6c8cdf2631a57851f5610e598db0c1de1"
+              "revision": "git_revision:a598cd77abc01089647a79e3cfa3cc8e8ecb5118"
             }
           ],
           "dimension_sets": [
             {
-              "os": "iOS-15.3",
+              "os": "iOS-15.7",
               "pool": "chrome.tests"
             }
           ],
@@ -736,7 +707,6 @@
       {
         "args": [
           "--xctest",
-          "--undefok=enable-run-ios-unittests-with-xctest",
           "--xcode-build-version",
           "13c100",
           "--out-dir",
@@ -744,7 +714,6 @@
         ],
         "isolate_name": "rtc_pc_unittests",
         "merge": {
-          "args": [],
           "script": "//testing/merge_scripts/standard_isolated_script_merge.py"
         },
         "name": "rtc_pc_unittests",
@@ -758,12 +727,12 @@
             {
               "cipd_package": "infra/tools/mac_toolchain/${platform}",
               "location": ".",
-              "revision": "git_revision:723fc1a6c8cdf2631a57851f5610e598db0c1de1"
+              "revision": "git_revision:a598cd77abc01089647a79e3cfa3cc8e8ecb5118"
             }
           ],
           "dimension_sets": [
             {
-              "os": "iOS-15.3",
+              "os": "iOS-15.7",
               "pool": "chrome.tests"
             }
           ],
@@ -780,7 +749,6 @@
       {
         "args": [
           "--xctest",
-          "--undefok=enable-run-ios-unittests-with-xctest",
           "--xcode-build-version",
           "13c100",
           "--out-dir",
@@ -788,7 +756,6 @@
         ],
         "isolate_name": "rtc_stats_unittests",
         "merge": {
-          "args": [],
           "script": "//testing/merge_scripts/standard_isolated_script_merge.py"
         },
         "name": "rtc_stats_unittests",
@@ -802,12 +769,12 @@
             {
               "cipd_package": "infra/tools/mac_toolchain/${platform}",
               "location": ".",
-              "revision": "git_revision:723fc1a6c8cdf2631a57851f5610e598db0c1de1"
+              "revision": "git_revision:a598cd77abc01089647a79e3cfa3cc8e8ecb5118"
             }
           ],
           "dimension_sets": [
             {
-              "os": "iOS-15.3",
+              "os": "iOS-15.7",
               "pool": "chrome.tests"
             }
           ],
@@ -824,7 +791,6 @@
       {
         "args": [
           "--xctest",
-          "--undefok=enable-run-ios-unittests-with-xctest",
           "--xcode-build-version",
           "13c100",
           "--out-dir",
@@ -832,7 +798,6 @@
         ],
         "isolate_name": "system_wrappers_unittests",
         "merge": {
-          "args": [],
           "script": "//testing/merge_scripts/standard_isolated_script_merge.py"
         },
         "name": "system_wrappers_unittests",
@@ -846,12 +811,12 @@
             {
               "cipd_package": "infra/tools/mac_toolchain/${platform}",
               "location": ".",
-              "revision": "git_revision:723fc1a6c8cdf2631a57851f5610e598db0c1de1"
+              "revision": "git_revision:a598cd77abc01089647a79e3cfa3cc8e8ecb5118"
             }
           ],
           "dimension_sets": [
             {
-              "os": "iOS-15.3",
+              "os": "iOS-15.7",
               "pool": "chrome.tests"
             }
           ],
@@ -868,7 +833,6 @@
       {
         "args": [
           "--xctest",
-          "--undefok=enable-run-ios-unittests-with-xctest",
           "--xcode-build-version",
           "13c100",
           "--out-dir",
@@ -876,7 +840,6 @@
         ],
         "isolate_name": "test_support_unittests",
         "merge": {
-          "args": [],
           "script": "//testing/merge_scripts/standard_isolated_script_merge.py"
         },
         "name": "test_support_unittests",
@@ -890,12 +853,12 @@
             {
               "cipd_package": "infra/tools/mac_toolchain/${platform}",
               "location": ".",
-              "revision": "git_revision:723fc1a6c8cdf2631a57851f5610e598db0c1de1"
+              "revision": "git_revision:a598cd77abc01089647a79e3cfa3cc8e8ecb5118"
             }
           ],
           "dimension_sets": [
             {
-              "os": "iOS-15.3",
+              "os": "iOS-15.7",
               "pool": "chrome.tests"
             }
           ],
@@ -912,7 +875,6 @@
       {
         "args": [
           "--xctest",
-          "--undefok=enable-run-ios-unittests-with-xctest",
           "--xcode-build-version",
           "13c100",
           "--out-dir",
@@ -920,7 +882,6 @@
         ],
         "isolate_name": "tools_unittests",
         "merge": {
-          "args": [],
           "script": "//testing/merge_scripts/standard_isolated_script_merge.py"
         },
         "name": "tools_unittests",
@@ -934,12 +895,12 @@
             {
               "cipd_package": "infra/tools/mac_toolchain/${platform}",
               "location": ".",
-              "revision": "git_revision:723fc1a6c8cdf2631a57851f5610e598db0c1de1"
+              "revision": "git_revision:a598cd77abc01089647a79e3cfa3cc8e8ecb5118"
             }
           ],
           "dimension_sets": [
             {
-              "os": "iOS-15.3",
+              "os": "iOS-15.7",
               "pool": "chrome.tests"
             }
           ],
@@ -956,7 +917,6 @@
       {
         "args": [
           "--xctest",
-          "--undefok=enable-run-ios-unittests-with-xctest",
           "--xcode-build-version",
           "13c100",
           "--out-dir",
@@ -964,7 +924,6 @@
         ],
         "isolate_name": "video_capture_tests",
         "merge": {
-          "args": [],
           "script": "//testing/merge_scripts/standard_isolated_script_merge.py"
         },
         "name": "video_capture_tests",
@@ -978,12 +937,12 @@
             {
               "cipd_package": "infra/tools/mac_toolchain/${platform}",
               "location": ".",
-              "revision": "git_revision:723fc1a6c8cdf2631a57851f5610e598db0c1de1"
+              "revision": "git_revision:a598cd77abc01089647a79e3cfa3cc8e8ecb5118"
             }
           ],
           "dimension_sets": [
             {
-              "os": "iOS-15.3",
+              "os": "iOS-15.7",
               "pool": "chrome.tests"
             }
           ],
@@ -1000,7 +959,6 @@
       {
         "args": [
           "--xctest",
-          "--undefok=enable-run-ios-unittests-with-xctest",
           "--xcode-build-version",
           "13c100",
           "--out-dir",
@@ -1008,7 +966,6 @@
         ],
         "isolate_name": "video_engine_tests",
         "merge": {
-          "args": [],
           "script": "//testing/merge_scripts/standard_isolated_script_merge.py"
         },
         "name": "video_engine_tests",
@@ -1022,12 +979,12 @@
             {
               "cipd_package": "infra/tools/mac_toolchain/${platform}",
               "location": ".",
-              "revision": "git_revision:723fc1a6c8cdf2631a57851f5610e598db0c1de1"
+              "revision": "git_revision:a598cd77abc01089647a79e3cfa3cc8e8ecb5118"
             }
           ],
           "dimension_sets": [
             {
-              "os": "iOS-15.3",
+              "os": "iOS-15.7",
               "pool": "chrome.tests"
             }
           ],

@@ -133,6 +133,11 @@ TEST_F(DelayBasedBweTest, InitialBehavior) {
   InitialBehaviorTestHelper(730000);
 }
 
+TEST_F(DelayBasedBweTest, InitializeResult) {
+  DelayBasedBwe::Result result;
+  EXPECT_EQ(result.delay_detector_state, BandwidthUsage::kBwNormal);
+}
+
 TEST_F(DelayBasedBweTest, RateIncreaseReordering) {
   RateIncreaseReorderingTestHelper(730000);
 }

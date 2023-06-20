@@ -21,7 +21,11 @@
 #include <string>
 
 #include "absl/strings/match.h"
+#include "absl/types/optional.h"
+#include "api/video/video_codec_constants.h"
+#include "api/video_codecs/scalability_mode.h"
 #include "common_video/libyuv/include/webrtc_libyuv.h"
+#include "modules/video_coding/svc/create_scalability_structure.h"
 #include "modules/video_coding/utility/simulcast_rate_allocator.h"
 #include "modules/video_coding/utility/simulcast_utility.h"
 #include "rtc_base/checks.h"
@@ -30,18 +34,10 @@
 #include "system_wrappers/include/metrics.h"
 #include "third_party/libyuv/include/libyuv/convert.h"
 #include "third_party/libyuv/include/libyuv/scale.h"
-
-#if defined(WEBKIT_LIBWEBRTC_OPENH264_ENCODER) && WEBKIT_LIBWEBRTC_OPENH264_ENCODER
-#include <wels/codec_api.h>
-#include <wels/codec_app_def.h>
-#include <wels/codec_def.h>
-#include <wels/codec_ver.h>
-#else
-#include "third_party/openh264/src/codec/api/svc/codec_api.h"
-#include "third_party/openh264/src/codec/api/svc/codec_app_def.h"
-#include "third_party/openh264/src/codec/api/svc/codec_def.h"
-#include "third_party/openh264/src/codec/api/svc/codec_ver.h"
-#endif
+#include "third_party/openh264/src/codec/api/wels/codec_api.h"
+#include "third_party/openh264/src/codec/api/wels/codec_app_def.h"
+#include "third_party/openh264/src/codec/api/wels/codec_def.h"
+#include "third_party/openh264/src/codec/api/wels/codec_ver.h"
 
 namespace webrtc {
 
@@ -60,19 +56,30 @@ enum H264EncoderImplEvent {
   kH264EncoderEventMax = 16,
 };
 
-int NumberOfThreads(int width, int height, int number_of_cores) {
+int NumberOfThreads(absl::optional<int> encoder_thread_limit,
+                    int width,
+                    int height,
+                    int number_of_cores) {
   // TODO(hbos): In Chromium, multiple threads do not work with sandbox on Mac,
   // see crbug.com/583348. Until further investigated, only use one thread.
-  //  if (width * height >= 1920 * 1080 && number_of_cores > 8) {
-  //    return 8;  // 8 threads for 1080p on high perf machines.
-  //  } else if (width * height > 1280 * 960 && number_of_cores >= 6) {
-  //    return 3;  // 3 threads for 1080p.
-  //  } else if (width * height > 640 * 480 && number_of_cores >= 3) {
-  //    return 2;  // 2 threads for qHD/HD.
-  //  } else {
-  //    return 1;  // 1 thread for VGA or less.
-  //  }
-  // TODO(sprang): Also check sSliceArgument.uiSliceNum om GetEncoderPrams(),
+  // While this limitation is gone, this changes the bitstream format (see
+  // bugs.webrtc.org/14368) so still guarded by field trial to allow for
+  // experimentation using th experimental
+  // WebRTC-VideoEncoderSettings/encoder_thread_limit trial.
+  if (encoder_thread_limit.has_value()) {
+    int limit = encoder_thread_limit.value();
+    RTC_DCHECK_GE(limit, 1);
+    if (width * height >= 1920 * 1080 && number_of_cores > 8) {
+      return std::min(limit, 8);  // 8 threads for 1080p on high perf machines.
+    } else if (width * height > 1280 * 960 && number_of_cores >= 6) {
+      return std::min(limit, 3);  // 3 threads for 1080p.
+    } else if (width * height > 640 * 480 && number_of_cores >= 3) {
+      return std::min(limit, 2);  // 2 threads for qHD/HD.
+    } else {
+      return 1;  // 1 thread for VGA or less.
+    }
+  }
+  // TODO(sprang): Also check sSliceArgument.uiSliceNum on GetEncoderParams(),
   //               before enabling multithreading here.
   return 1;
 }
@@ -91,6 +98,23 @@ VideoFrameType ConvertToVideoFrameType(EVideoFrameType type) {
   }
   RTC_DCHECK_NOTREACHED() << "Unexpected/invalid frame type: " << type;
   return VideoFrameType::kEmptyFrame;
+}
+
+absl::optional<ScalabilityMode> ScalabilityModeFromTemporalLayers(
+    int num_temporal_layers) {
+  switch (num_temporal_layers) {
+    case 0:
+      break;
+    case 1:
+      return ScalabilityMode::kL1T1;
+    case 2:
+      return ScalabilityMode::kL1T2;
+    case 3:
+      return ScalabilityMode::kL1T3;
+    default:
+      RTC_DCHECK_NOTREACHED();
+  }
+  return absl::nullopt;
 }
 
 }  // namespace
@@ -165,6 +189,7 @@ H264EncoderImpl::H264EncoderImpl(const cricket::VideoCodec& codec)
   encoders_.reserve(kMaxSimulcastStreams);
   configurations_.reserve(kMaxSimulcastStreams);
   tl0sync_limit_.reserve(kMaxSimulcastStreams);
+  svc_controllers_.reserve(kMaxSimulcastStreams);
 }
 
 H264EncoderImpl::~H264EncoderImpl() {
@@ -204,11 +229,14 @@ int32_t H264EncoderImpl::InitEncode(const VideoCodec* inst,
   encoded_images_.resize(number_of_streams);
   encoders_.resize(number_of_streams);
   pictures_.resize(number_of_streams);
+  svc_controllers_.resize(number_of_streams);
+  scalability_modes_.resize(number_of_streams);
   configurations_.resize(number_of_streams);
   tl0sync_limit_.resize(number_of_streams);
 
-  number_of_cores_ = settings.number_of_cores;
   max_payload_size_ = settings.max_payload_size;
+  number_of_cores_ = settings.number_of_cores;
+  encoder_thread_limit_ = settings.encoder_thread_limit;
   codec_ = *inst;
 
   // Code expects simulcastStream resolutions to be correct, make sure they are
@@ -289,6 +317,17 @@ int32_t H264EncoderImpl::InitEncode(const VideoCodec* inst,
     encoded_images_[i].set_size(0);
 
     tl0sync_limit_[i] = configurations_[i].num_temporal_layers;
+    scalability_modes_[i] = ScalabilityModeFromTemporalLayers(
+        configurations_[i].num_temporal_layers);
+    if (scalability_modes_[i].has_value()) {
+      svc_controllers_[i] = CreateScalabilityStructure(*scalability_modes_[i]);
+      if (svc_controllers_[i] == nullptr) {
+        RTC_LOG(LS_ERROR) << "Failed to create scalability structure";
+        Release();
+        ReportError();
+        return WEBRTC_VIDEO_CODEC_ERROR;
+      }
+    }
   }
 
   SimulcastRateAllocator init_allocator(codec_);
@@ -313,6 +352,8 @@ int32_t H264EncoderImpl::Release() {
   encoded_images_.clear();
   pictures_.clear();
   tl0sync_limit_.clear();
+  svc_controllers_.clear();
+  scalability_modes_.clear();
   return WEBRTC_VIDEO_CODEC_OK;
 }
 
@@ -394,23 +435,14 @@ int32_t H264EncoderImpl::Encode(
   RTC_CHECK(frame_buffer->type() == VideoFrameBuffer::Type::kI420 ||
             frame_buffer->type() == VideoFrameBuffer::Type::kI420A);
 
-  bool send_key_frame = false;
+  bool is_keyframe_needed = false;
   for (size_t i = 0; i < configurations_.size(); ++i) {
     if (configurations_[i].key_frame_request && configurations_[i].sending) {
-      send_key_frame = true;
+      // This is legacy behavior, generating a keyframe on all layers
+      // when generating one for a layer that became active for the first time
+      // or after being disabled.
+      is_keyframe_needed = true;
       break;
-    }
-  }
-
-  if (!send_key_frame && frame_types) {
-    for (size_t i = 0; i < configurations_.size(); ++i) {
-      const size_t simulcast_idx =
-          static_cast<size_t>(configurations_[i].simulcast_idx);
-      if (configurations_[i].sending && simulcast_idx < frame_types->size() &&
-          (*frame_types)[simulcast_idx] == VideoFrameType::kVideoFrameKey) {
-        send_key_frame = true;
-        break;
-      }
     }
   }
 
@@ -458,12 +490,20 @@ int32_t H264EncoderImpl::Encode(
     if (!configurations_[i].sending) {
       continue;
     }
-    if (frame_types != nullptr) {
+    if (frame_types != nullptr && i < frame_types->size()) {
       // Skip frame?
       if ((*frame_types)[i] == VideoFrameType::kEmptyFrame) {
         continue;
       }
     }
+    // Send a key frame either when this layer is configured to require one
+    // or we have explicitly been asked to.
+    const size_t simulcast_idx =
+        static_cast<size_t>(configurations_[i].simulcast_idx);
+    bool send_key_frame =
+        is_keyframe_needed ||
+        (frame_types && simulcast_idx < frame_types->size() &&
+         (*frame_types)[simulcast_idx] == VideoFrameType::kVideoFrameKey);
     if (send_key_frame) {
       // API doc says ForceIntraFrame(false) does nothing, but calling this
       // function forces a key frame regardless of the `bIDR` argument's value.
@@ -474,6 +514,12 @@ int32_t H264EncoderImpl::Encode(
     // EncodeFrame output.
     SFrameBSInfo info;
     memset(&info, 0, sizeof(SFrameBSInfo));
+
+    std::vector<ScalableVideoController::LayerFrameConfig> layer_frames;
+    if (svc_controllers_[i]) {
+      layer_frames = svc_controllers_[i]->NextFrameConfig(send_key_frame);
+      RTC_CHECK_EQ(layer_frames.size(), 1);
+    }
 
     // Encode!
     int enc_ret = encoders_[i]->EncodeFrame(&pictures_[i], &info);
@@ -490,7 +536,7 @@ int32_t H264EncoderImpl::Encode(
     encoded_images_[i].SetTimestamp(input_frame.timestamp());
     encoded_images_[i].SetColorSpace(input_frame.color_space());
     encoded_images_[i]._frameType = ConvertToVideoFrameType(info.eFrameType);
-    encoded_images_[i].SetSpatialIndex(configurations_[i].simulcast_idx);
+    encoded_images_[i].SetSimulcastIndex(configurations_[i].simulcast_idx);
 
     // Split encoded image up into fragments. This also updates
     // `encoded_image_`.
@@ -518,12 +564,30 @@ int32_t H264EncoderImpl::Encode(
         codec_specific.codecSpecific.H264.temporal_idx = tid;
         codec_specific.codecSpecific.H264.base_layer_sync =
             tid > 0 && tid < tl0sync_limit_[i];
+        if (svc_controllers_[i]) {
+          if (layer_frames[0].TemporalId() != tid) {
+            RTC_LOG(LS_WARNING)
+                << "Encoder produced a frame for layer S" << (i + 1) << "T"
+                << tid + 1 << " that wasn't requested.";
+            continue;
+          }
+          encoded_images_[i].SetTemporalIndex(tid);
+        }
         if (codec_specific.codecSpecific.H264.base_layer_sync) {
           tl0sync_limit_[i] = tid;
         }
         if (tid == 0) {
           tl0sync_limit_[i] = configurations_[i].num_temporal_layers;
         }
+      }
+      if (svc_controllers_[i]) {
+        codec_specific.generic_frame_info =
+            svc_controllers_[i]->OnEncodeDone(layer_frames[0]);
+        if (send_key_frame && codec_specific.generic_frame_info.has_value()) {
+          codec_specific.template_structure =
+              svc_controllers_[i]->DependencyStructure();
+        }
+        codec_specific.scalability_mode = scalability_modes_[i];
       }
       encoded_image_callback_->OnEncodedImage(encoded_images_[i],
                                               &codec_specific);
@@ -574,8 +638,9 @@ SEncParamExt H264EncoderImpl::CreateEncoderParams(size_t i) const {
   //  0: auto (dynamic imp. internal encoder)
   //  1: single thread (default value)
   // >1: number of threads
-  encoder_params.iMultipleThreadIdc = NumberOfThreads(
-      encoder_params.iPicWidth, encoder_params.iPicHeight, number_of_cores_);
+  encoder_params.iMultipleThreadIdc =
+      NumberOfThreads(encoder_thread_limit_, encoder_params.iPicWidth,
+                      encoder_params.iPicHeight, number_of_cores_);
   // The base spatial layer 0 is the only one we use.
   encoder_params.sSpatialLayers[0].iVideoWidth = encoder_params.iPicWidth;
   encoder_params.sSpatialLayers[0].iVideoHeight = encoder_params.iPicHeight;

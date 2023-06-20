@@ -22,11 +22,9 @@
 namespace webrtc {
 // Trait to read/write the dependency descriptor extension as described in
 // https://aomediacodec.github.io/av1-rtp-spec/#dependency-descriptor-rtp-header-extension
-// While the format is still in design, the code might change without backward
-// compatibility.
 class RtpDependencyDescriptorExtension {
  public:
-  static constexpr RTPExtensionType kId = kRtpExtensionGenericFrameDescriptor02;
+  static constexpr RTPExtensionType kId = kRtpExtensionDependencyDescriptor;
   static constexpr absl::string_view Uri() {
     return RtpExtension::kDependencyDescriptorUri;
   }

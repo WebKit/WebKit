@@ -2405,4 +2405,17 @@ TEST_F(PeerConnectionJsepTest,
   EXPECT_TRUE(callee->CreateOfferAndSetAsLocal());
 }
 
+TEST_F(PeerConnectionJsepTest, BundleOnlySectionDoesNotNeedRtcpMux) {
+  auto caller = CreatePeerConnection();
+  auto callee = CreatePeerConnection();
+  caller->AddTransceiver(cricket::MEDIA_TYPE_AUDIO);
+  caller->AddTransceiver(cricket::MEDIA_TYPE_VIDEO);
+  auto offer = caller->CreateOffer();
+  // Remove rtcp-mux and set bundle-only on the second content.
+  offer->description()->contents()[1].media_description()->set_rtcp_mux(false);
+  offer->description()->contents()[1].bundle_only = true;
+
+  EXPECT_TRUE(callee->SetRemoteDescription(std::move(offer)));
+}
+
 }  // namespace webrtc

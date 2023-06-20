@@ -14,6 +14,7 @@
 #include "audio/test/audio_end_to_end_test.h"
 #include "system_wrappers/include/sleep.h"
 #include "test/testsupport/file_utils.h"
+#include "test/video_test_constants.h"
 
 ABSL_DECLARE_FLAG(int, sample_rate_hz);
 ABSL_DECLARE_FLAG(bool, quick);
@@ -57,7 +58,8 @@ class AudioQualityTest : public AudioEndToEndTest {
       // Let the recording run for a small amount of time to check if it works.
       SleepMs(1000);
     } else {
-      AudioEndToEndTest::PerformTest();
+      // Sleep for whole audio duration which is 5.4 seconds.
+      SleepMs(5400);
     }
   }
 
@@ -77,14 +79,14 @@ class Mobile2GNetworkTest : public AudioQualityTest {
                           std::vector<AudioReceiveStreamInterface::Config>*
                               receive_configs) override {
     send_config->send_codec_spec = AudioSendStream::Config::SendCodecSpec(
-        test::CallTest::kAudioSendPayloadType,
+        test::VideoTestConstants::kAudioSendPayloadType,
         {"OPUS",
          48000,
          2,
          {{"maxaveragebitrate", "6000"}, {"ptime", "60"}, {"stereo", "1"}}});
   }
 
-  BuiltInNetworkBehaviorConfig GetNetworkPipeConfig() const override {
+  BuiltInNetworkBehaviorConfig GetSendTransportConfig() const override {
     BuiltInNetworkBehaviorConfig pipe_config;
     pipe_config.link_capacity_kbps = 12;
     pipe_config.queue_length_packets = 1500;

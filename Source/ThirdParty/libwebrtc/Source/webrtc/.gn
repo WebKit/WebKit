@@ -52,7 +52,7 @@ default_args = {
   ios_deployment_target = "12.0"
 
   # The SDK API level, in contrast, is set by build/android/AndroidManifest.xml.
-  android32_ndk_api_level = 16
+  android32_ndk_api_level = 21
   android64_ndk_api_level = 21
 
   # WebRTC does not provide the gflags dependency. Because libyuv uses it only
@@ -68,4 +68,13 @@ default_args = {
 
   # Prevent jsoncpp to pass -Wno-deprecated-declarations to users
   jsoncpp_no_deprecated_declarations = false
+
+  # Fixes the abi-revision issue.
+  # TODO(https://bugs.webrtc.org/14437):  Remove this section if general
+  # Chromium fix resolves the problem.
+  fuchsia_sdk_readelf_exec =
+      "//third_party/llvm-build/Release+Asserts/bin/llvm-readelf"
+  fuchsia_target_api_level = 9
+
+  use_cxx17 = false
 }

@@ -23,7 +23,7 @@ rtc_library("options") {
     "crypto_options.h",
   ]
   deps = [
-    "../../rtc_base:rtc_base",
+    "../../rtc_base:ssl",
     "../../rtc_base/system:rtc_export",
   ]
 }

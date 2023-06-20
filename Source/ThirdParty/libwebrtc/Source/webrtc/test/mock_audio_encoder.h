@@ -68,7 +68,7 @@ class MockAudioEncoder : public AudioEncoder {
 
   class FakeEncoding {
    public:
-    // Creates a functor that will return |info| and adjust the rtc::Buffer
+    // Creates a functor that will return `info` and adjust the rtc::Buffer
     // given as input to it, so it is info.encoded_bytes larger.
     explicit FakeEncoding(const AudioEncoder::EncodedInfo& info);
 
@@ -88,7 +88,7 @@ class MockAudioEncoder : public AudioEncoder {
    public:
     ~CopyEncoding();
 
-    // Creates a functor that will return |info| and append the data in the
+    // Creates a functor that will return `info` and append the data in the
     // payload to the buffer given as input to it. Up to info.encoded_bytes are
     // appended - make sure the payload is big enough!  Since it uses an
     // ArrayView, it _does not_ copy the payload. Make sure it doesn't fall out

@@ -685,7 +685,9 @@ static bool CreateContentOffer(
         // TODO(crbug.com/1051821): Configure the extension direction from
         // the information in the media_description_options extension
         // capability.
-        extensions.push_back(extension_with_id);
+        if (extension.direction != RtpTransceiverDirection::kStopped) {
+          extensions.push_back(extension_with_id);
+        }
       }
     }
   }
@@ -946,8 +948,10 @@ static const C* GetAssociatedCodecForRed(const std::vector<C>& codec_list,
   std::string fmtp;
   if (!red_codec.GetParam(kCodecParamNotInNameValueFormat, &fmtp)) {
     // Normal for video/RED.
-    RTC_LOG(LS_WARNING) << "RED codec " << red_codec.name
-                        << " is missing an associated payload type.";
+    if constexpr (std::is_same_v<C, AudioCodec>) {
+      RTC_LOG(LS_WARNING) << "RED codec " << red_codec.name
+                          << " is missing an associated payload type.";
+    }
     return nullptr;
   }
 
@@ -1409,8 +1413,24 @@ static bool CreateMediaContentAnswer(
       enable_encrypted_rtp_header_extensions
           ? webrtc::RtpExtension::Filter::kPreferEncryptedExtension
           : webrtc::RtpExtension::Filter::kDiscardEncryptedExtension;
+
+  // Filter local extensions by capabilities and direction.
+  RtpHeaderExtensions local_rtp_extensions_to_reply_with;
+  for (auto extension_with_id : local_rtp_extensions) {
+    for (const auto& extension : media_description_options.header_extensions) {
+      if (extension_with_id.uri == extension.uri) {
+        // TODO(crbug.com/1051821): Configure the extension direction from
+        // the information in the media_description_options extension
+        // capability. For now, do not include stopped extensions.
+        // See also crbug.com/webrtc/7477 about the general lack of direction.
+        if (extension.direction != RtpTransceiverDirection::kStopped) {
+          local_rtp_extensions_to_reply_with.push_back(extension_with_id);
+        }
+      }
+    }
+  }
   RtpHeaderExtensions negotiated_rtp_extensions;
-  NegotiateRtpHeaderExtensions(local_rtp_extensions,
+  NegotiateRtpHeaderExtensions(local_rtp_extensions_to_reply_with,
                                offer->rtp_header_extensions(),
                                extensions_filter, &negotiated_rtp_extensions);
   answer->set_rtp_header_extensions(negotiated_rtp_extensions);
@@ -2589,7 +2609,7 @@ bool MediaSessionDescriptionFactory::AddAudioContentForAnswer(
     const SessionDescription* current_description,
     const TransportInfo* bundle_transport,
     const AudioCodecs& audio_codecs,
-    const RtpHeaderExtensions& default_audio_rtp_header_extensions,
+    const RtpHeaderExtensions& rtp_header_extensions,
     StreamParamsVec* current_streams,
     SessionDescription* answer,
     IceCredentialsIterator* ice_credentials) const {
@@ -2677,7 +2697,7 @@ bool MediaSessionDescriptionFactory::AddAudioContentForAnswer(
   if (!CreateMediaContentAnswer(
           offer_audio_description, media_description_options, session_options,
           sdes_policy, GetCryptos(current_content),
-          filtered_rtp_header_extensions(default_audio_rtp_header_extensions),
+          filtered_rtp_header_extensions(rtp_header_extensions),
           ssrc_generator(), enable_encrypted_rtp_header_extensions_,
           current_streams, bundle_enabled, audio_answer.get())) {
     return false;  // Fails the session setup.

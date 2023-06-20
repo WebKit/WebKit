@@ -31,8 +31,8 @@
 #include "modules/audio_coding/neteq/tools/input_audio_file.h"
 #include "modules/audio_coding/neteq/tools/neteq_delay_analyzer.h"
 #include "modules/audio_coding/neteq/tools/neteq_event_log_input.h"
-#include "modules/audio_coding/neteq/tools/neteq_packet_source_input.h"
 #include "modules/audio_coding/neteq/tools/neteq_replacement_input.h"
+#include "modules/audio_coding/neteq/tools/neteq_rtp_dump_input.h"
 #include "modules/audio_coding/neteq/tools/neteq_stats_getter.h"
 #include "modules/audio_coding/neteq/tools/neteq_stats_plotter.h"
 #include "modules/audio_coding/neteq/tools/neteq_test.h"
@@ -112,8 +112,14 @@ std::unique_ptr<NetEqTest> NetEqTestFactory::InitializeTestFromString(
     absl::string_view input_string,
     NetEqFactory* factory,
     const Config& config) {
-  std::unique_ptr<NetEqInput> input(
-      NetEqEventLogInput::CreateFromString(input_string, config.ssrc_filter));
+  ParsedRtcEventLog parsed_log;
+  auto status = parsed_log.ParseString(input_string);
+  if (!status.ok()) {
+    std::cerr << "Failed to parse event log: " << status.message() << std::endl;
+    return nullptr;
+  }
+  std::unique_ptr<NetEqInput> input =
+      CreateNetEqEventLogInput(parsed_log, config.ssrc_filter);
   if (!input) {
     std::cerr << "Error: Cannot parse input string" << std::endl;
     return nullptr;
@@ -126,7 +132,7 @@ std::unique_ptr<NetEqTest> NetEqTestFactory::InitializeTestFromFile(
     NetEqFactory* factory,
     const Config& config) {
   // Gather RTP header extensions in a map.
-  NetEqPacketSourceInput::RtpHeaderExtensionMap rtp_ext_map = {
+  std::map<int, RTPExtensionType> rtp_ext_map = {
       {config.audio_level, kRtpExtensionAudioLevel},
       {config.abs_send_time, kRtpExtensionAbsoluteSendTime},
       {config.transport_seq_no, kRtpExtensionTransportSequenceNumber},
@@ -136,11 +142,17 @@ std::unique_ptr<NetEqTest> NetEqTestFactory::InitializeTestFromFile(
   std::unique_ptr<NetEqInput> input;
   if (RtpFileSource::ValidRtpDump(input_file_name) ||
       RtpFileSource::ValidPcap(input_file_name)) {
-    input.reset(new NetEqRtpDumpInput(input_file_name, rtp_ext_map,
-                                      config.ssrc_filter));
+    input = CreateNetEqRtpDumpInput(input_file_name, rtp_ext_map,
+                                    config.ssrc_filter);
   } else {
-    input.reset(NetEqEventLogInput::CreateFromFile(input_file_name,
-                                                   config.ssrc_filter));
+    ParsedRtcEventLog parsed_log;
+    auto status = parsed_log.ParseFile(input_file_name);
+    if (!status.ok()) {
+      std::cerr << "Failed to parse event log: " << status.message()
+                << std::endl;
+      return nullptr;
+    }
+    input = CreateNetEqEventLogInput(parsed_log, config.ssrc_filter);
   }
 
   std::cout << "Input file: " << input_file_name << std::endl;

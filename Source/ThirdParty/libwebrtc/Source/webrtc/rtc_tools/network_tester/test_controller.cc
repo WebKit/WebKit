@@ -38,7 +38,7 @@ TestController::TestController(int min_port,
   send_data_.fill(42);
   packet_sender_thread_->SetName("PacketSender", nullptr);
   packet_sender_thread_->Start();
-  packet_sender_thread_->Invoke<void>(RTC_FROM_HERE, [&] {
+  packet_sender_thread_->BlockingCall([&] {
     RTC_DCHECK_RUN_ON(packet_sender_thread_.get());
     udp_socket_ =
         std::unique_ptr<rtc::AsyncPacketSocket>(socket_factory_.CreateUdpSocket(
@@ -49,8 +49,8 @@ TestController::TestController(int min_port,
 
 TestController::~TestController() {
   RTC_DCHECK_RUN_ON(&test_controller_thread_checker_);
-  packet_sender_thread_->Invoke<void>(
-      RTC_FROM_HERE, [this]() { task_safety_flag_->SetNotAlive(); });
+  packet_sender_thread_->BlockingCall(
+      [this]() { task_safety_flag_->SetNotAlive(); });
 }
 
 void TestController::SendConnectTo(const std::string& hostname, int port) {

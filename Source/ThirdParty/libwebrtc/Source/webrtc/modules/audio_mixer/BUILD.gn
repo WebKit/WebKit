@@ -46,6 +46,7 @@ rtc_library("audio_mixer_impl") {
     "../../audio/utility:audio_frame_operations",
     "../../common_audio",
     "../../rtc_base:checks",
+    "../../rtc_base:event_tracer",
     "../../rtc_base:logging",
     "../../rtc_base:macromagic",
     "../../rtc_base:race_checker",
@@ -121,6 +122,7 @@ if (rtc_include_tests) {
       "../../rtc_base:checks",
       "../../rtc_base:stringutils",
       "../../rtc_base:task_queue_for_test",
+      "../../system_wrappers:metrics",
       "../../test:test_support",
     ]
   }

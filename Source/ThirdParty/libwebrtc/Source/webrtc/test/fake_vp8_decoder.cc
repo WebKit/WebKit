@@ -39,9 +39,8 @@ void ParseFakeVp8(const unsigned char* data, int* width, int* height) {
 
 FakeVp8Decoder::FakeVp8Decoder() : callback_(nullptr), width_(0), height_(0) {}
 
-int32_t FakeVp8Decoder::InitDecode(const VideoCodec* config,
-                                   int32_t number_of_cores) {
-  return WEBRTC_VIDEO_CODEC_OK;
+bool FakeVp8Decoder::Configure(const Settings& settings) {
+  return true;
 }
 
 int32_t FakeVp8Decoder::Decode(const EncodedImage& input,

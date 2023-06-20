@@ -5,9 +5,25 @@ mailing list before the release.
 
 ## Current release
 To find out the current release and schedule, refer to the
-[chromium dashboard](https://chromiumdash.appspot.com/schedule)
+[chromium dashboard](https://chromiumdash.appspot.com/schedule).
+
+To find a branch associated with a particular release, refer to
+[the list of branches](https://chromiumdash.appspot.com/branches).
 
 ## List of releases
+  * [M105 Release Notes](https://groups.google.com/g/discuss-webrtc/c/5KBtZx2gvcQ/m/HYKhV8ERDgAJ)
+  * [M104 Release Notes](https://groups.google.com/g/discuss-webrtc/c/Yf6c3HW4N3k/m/3SC_Hy15BQAJ)
+  * NOTE: The release notes for M100 to M103 were not sent out.
+  * [M99 Release Notes](https://groups.google.com/g/discuss-webrtc/c/Yf6c3HW4N3k/m/3SC_Hy15BQAJ)
+  * [M98 Release Notes](https://groups.google.com/g/discuss-webrtc/c/uQKmoaL93kE/m/a5NyC3gnBwAJ)
+  * [M97 Release Notes](https://groups.google.com/g/discuss-webrtc/c/-M808zqlSRE/m/vMZ1q1N9AgAJ)
+  * [M96 Release Notes](https://groups.google.com/g/discuss-webrtc/c/Bp8OzBzipSc/m/0AC4OGhdAgAJ)
+  * [M95 Release Notes](https://groups.google.com/g/discuss-webrtc/c/SfzpFc-dH-E/m/JHlMpLO1AAAJ)
+  * [M94 Release Notes](https://groups.google.com/g/discuss-webrtc/c/tFyWdqW2sQM/m/ebfZvC9VAgAJ)
+  * [M93 Release Notes](https://groups.google.com/g/discuss-webrtc/c/ws0_MYHIBOw/m/HZGn07uIAwAJ)
+  * [M92 Release Notes](https://groups.google.com/g/discuss-webrtc/c/hks5zneZJbo/m/Z-p4AfCrCQAJ)
+  * [M91 Release Notes](https://groups.google.com/g/discuss-webrtc/c/ScUMkkGA9tw/m/twkshm1pAgAJ)
+  * [M90 Release Notes](https://groups.google.com/g/discuss-webrtc/c/8VgEFxD_S80/m/L6ZuorxTAAAJ)
   * [M89 Release Notes](https://groups.google.com/g/discuss-webrtc/c/Zrsn2hi8FV0/m/KIbn0EZPBQAJ)
   * [M88 Release Notes](https://groups.google.com/g/discuss-webrtc/c/A0FjOcTW2c0/m/UAv-veyPCAAJ)
   * [M87 Release Notes](https://groups.google.com/g/discuss-webrtc/c/6VmKkCjRK0k/m/YyOTQyQ5AAAJ)
@@ -15,7 +31,7 @@ To find out the current release and schedule, refer to the
   * [M85 Release Notes](https://groups.google.com/d/msg/discuss-webrtc/Qq3nsR2w2HU/7WGLPscPBwAJ)
   * [M84 Release Notes](https://groups.google.com/d/msg/discuss-webrtc/MRAV4jgHYV0/5019yB-HAwAJ)
   * [M83 Release Notes](https://groups.google.com/d/msg/discuss-webrtc/EieMDYtQ9sg/7po9fl8_AgAJ)
-  * NOTE: M82 release was cancelled due to cancellation of Chrome 82 release
+  * NOTE: M82 release was cancelled due to cancellation of Chrome 82 release.
   * [M81 Release Notes](https://groups.google.com/d/msg/discuss-webrtc/a5_zncyPc3Y/iirhUr6bCwAJ)
   * [M80 Release Notes](https://groups.google.com/d/msg/discuss-webrtc/Ozvbd0p7Q1Y/M4WN2cRKCwAJ)
   * [M79 Release Notes](https://groups.google.com/d/msg/discuss-webrtc/X8q5Ae9VKco/oEiGuteoBAAJ)

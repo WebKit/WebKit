@@ -10,7 +10,9 @@
 
 #include "test/pc/e2e/analyzer/video/simulcast_dummy_buffer_helper.h"
 
-#include <cstring>
+#include "api/video/i420_buffer.h"
+#include "api/video/video_frame.h"
+#include "api/video/video_frame_buffer.h"
 
 namespace webrtc {
 namespace webrtc_pc_e2e {
@@ -32,13 +34,12 @@ rtc::scoped_refptr<webrtc::VideoFrameBuffer> CreateDummyFrameBuffer() {
   return buffer;
 }
 
-bool IsDummyFrameBuffer(
-    rtc::scoped_refptr<webrtc::VideoFrameBuffer> video_frame_buffer) {
-  if (video_frame_buffer->width() != 2 || video_frame_buffer->height() != 2) {
+bool IsDummyFrame(const webrtc::VideoFrame& video_frame) {
+  if (video_frame.width() != 2 || video_frame.height() != 2) {
     return false;
   }
   rtc::scoped_refptr<webrtc::I420BufferInterface> buffer =
-      video_frame_buffer->ToI420();
+      video_frame.video_frame_buffer()->ToI420();
   if (memcmp(buffer->DataY(), kIrrelatedSimulcastStreamFrameData, 2) != 0) {
     return false;
   }
