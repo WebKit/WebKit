@@ -34,7 +34,6 @@
 #include "LayoutChildIterator.h"
 #include "LayoutContext.h"
 #include "LengthFunctions.h"
-#include "LogicalFlexItem.h"
 #include "RenderStyleInlines.h"
 #include <wtf/FixedVector.h>
 #include <wtf/IsoMallocInlines.h>
@@ -129,8 +128,6 @@ void FlexFormattingContext::computeIntrinsicWidthConstraintsForFlexItems()
 
 FlexLayout::LogicalFlexItems FlexFormattingContext::convertFlexItemsToLogicalSpace(const ConstraintsForFlexContent& constraints)
 {
-    UNUSED_PARAM(constraints);
-
     struct FlexItem {
         LogicalFlexItem::MainAxisGeometry mainAxis;
         LogicalFlexItem::CrossAxisGeometry crossAxis;
@@ -140,15 +137,41 @@ FlexLayout::LogicalFlexItems FlexFormattingContext::convertFlexItemsToLogicalSpa
 
     Vector<FlexItem> flexItemList;
     auto flexItemsNeedReordering = false;
+    auto& formattingState = this->formattingState();
 
     auto convertVisualToLogical = [&] {
         auto direction = root().style().flexDirection();
         auto previousLogicalOrder = std::optional<int> { };
 
         for (auto* flexItem = root().firstInFlowChild(); flexItem; flexItem = flexItem->nextInFlowSibling()) {
+            auto& flexItemGeometry = formattingState.boxGeometry(*flexItem);
+            auto& style = flexItem->style();
+            auto mainAxis = LogicalFlexItem::MainAxisGeometry { };
+            auto crossAxis = LogicalFlexItem::CrossAxisGeometry { };
+
             switch (direction) {
             case FlexDirection::Row:
             case FlexDirection::RowReverse: {
+                if (!style.flexBasis().isAuto())
+                    mainAxis.definiteFlexBasis = valueForLength(style.flexBasis(), constraints.horizontal().logicalWidth);
+                if (style.maxWidth().isSpecified())
+                    mainAxis.maximumSize = valueForLength(style.maxWidth(), constraints.horizontal().logicalWidth);
+                if (!style.minWidth().isSpecified())
+                    mainAxis.minimumSize = valueForLength(style.minWidth(), constraints.horizontal().logicalWidth);
+                if (!style.marginStart().isAuto())
+                    mainAxis.marginStart = flexItemGeometry.marginStart();
+                if (!style.marginEnd().isAuto())
+                    mainAxis.marginEnd = flexItemGeometry.marginEnd();
+                mainAxis.borderAndPadding = flexItemGeometry.horizontalBorderAndPadding();
+
+                if (!style.marginBefore().isAuto())
+                    crossAxis.marginStart = flexItemGeometry.marginBefore();
+                if (!style.marginAfter().isAuto())
+                    crossAxis.marginEnd = flexItemGeometry.marginAfter();
+                auto& height = style.height();
+                crossAxis.hasSizeAuto = height.isAuto();
+                if (height.isFixed())
+                    crossAxis.definiteSize = height.value();
                 break;
             }
             case FlexDirection::Column:
@@ -159,11 +182,11 @@ FlexLayout::LogicalFlexItems FlexFormattingContext::convertFlexItemsToLogicalSpa
                 ASSERT_NOT_REACHED();
                 break;
             }
-            auto flexItemOrder = flexItem->style().order();
+            auto flexItemOrder = style.order();
             flexItemsNeedReordering = flexItemsNeedReordering || flexItemOrder != previousLogicalOrder.value_or(0);
             previousLogicalOrder = flexItemOrder;
 
-            flexItemList.append({ { }, { }, flexItemOrder, downcast<ElementBox>(flexItem) });
+            flexItemList.append({ mainAxis, crossAxis, flexItemOrder, downcast<ElementBox>(flexItem) });
         }
     };
     convertVisualToLogical();
@@ -338,4 +361,3 @@ IntrinsicWidthConstraints FlexFormattingContext::computedIntrinsicWidthConstrain
 
 }
 }
-
