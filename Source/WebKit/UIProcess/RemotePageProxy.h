@@ -59,6 +59,7 @@ class WebPageProxy;
 class WebProcessProxy;
 
 struct FrameInfoData;
+struct FrameTreeCreationParameters;
 
 class RemotePageProxy : public RefCounted<RemotePageProxy>, public IPC::MessageReceiver, public IPC::MessageSender {
     WTF_MAKE_FAST_ALLOCATED;
@@ -66,7 +67,11 @@ public:
     static Ref<RemotePageProxy> create(WebPageProxy& page, WebProcessProxy& process, const WebCore::RegistrableDomain& domain) { return adoptRef(*new RemotePageProxy(page, process, domain)); }
     ~RemotePageProxy();
 
+    void injectPageIntoNewProcess();
+
     WebProcessProxy& process() { return m_process.get(); }
+    WebCore::PageIdentifier pageID() const { return m_webPageID; }
+    const WebCore::RegistrableDomain& domain() const { return m_domain; }
 
 private:
     RemotePageProxy(WebPageProxy&, WebProcessProxy&, const WebCore::RegistrableDomain&);

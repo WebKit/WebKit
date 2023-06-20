@@ -517,6 +517,7 @@ public:
     PAL::SessionID sessionID() const;
 
     WebFrameProxy* mainFrame() const { return m_mainFrame.get(); }
+    WebFrameProxy* openerFrame() const { return m_openerFrame.get(); }
     WebFrameProxy* focusedFrame() const { return m_focusedFrame.get(); }
 
     DrawingAreaProxy* drawingArea() const { return m_drawingArea.get(); }
@@ -2164,6 +2165,9 @@ public:
     void addRemotePageProxy(const WebCore::RegistrableDomain&, WeakPtr<RemotePageProxy>&&);
     void removeRemotePageProxy(const WebCore::RegistrableDomain&);
 
+    void setRemotePageProxyInOpenerProcess(Ref<RemotePageProxy>&&);
+    void addOpenedRemotePageProxy(Ref<RemotePageProxy>&&);
+
     void createRemoteSubframesInOtherProcesses(WebFrameProxy&);
 
     void requestImageBitmap(const WebCore::ElementContext&, CompletionHandler<void(ShareableBitmapHandle&&, const String& sourceMIMEType)>&&);
@@ -2405,6 +2409,8 @@ private:
     void didReceiveResponseForResource(WebCore::ResourceLoaderIdentifier, WebCore::FrameIdentifier, WebCore::ResourceResponse&&);
     void didFinishLoadForResource(WebCore::ResourceLoaderIdentifier, WebCore::FrameIdentifier, WebCore::ResourceError&&);
 #endif
+
+    bool shouldClosePreviousPage();
 
 #if ENABLE(MEDIA_STREAM)
     UserMediaPermissionRequestManagerProxy& userMediaPermissionRequestManager();
@@ -2893,6 +2899,8 @@ private:
     Ref<WebsiteDataStore> m_websiteDataStore;
 
     RefPtr<WebFrameProxy> m_mainFrame;
+
+    RefPtr<WebFrameProxy> m_openerFrame;
 
     RefPtr<WebFrameProxy> m_focusedFrame;
 

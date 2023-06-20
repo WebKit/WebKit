@@ -215,6 +215,8 @@ struct WebPageProxy::Internals final : WebPopupMenuProxy::Client
     PageAllowedToRunInTheBackgroundCounter::Token pageAllowedToRunInTheBackgroundToken;
 
     HashMap<WebCore::RegistrableDomain, WeakPtr<RemotePageProxy>> domainToRemotePageProxyMap;
+    RefPtr<RemotePageProxy> remotePageProxyInOpenerProcess;
+    HashSet<Ref<RemotePageProxy>> openedRemotePageProxies;
 
 #if ENABLE(APPLE_PAY)
     std::unique_ptr<WebPaymentCoordinatorProxy> paymentCoordinator;

@@ -323,7 +323,7 @@ void WebFrame::continueWillSubmitForm(FormSubmitListenerIdentifier listenerID)
         completionHandler();
 }
 
-void WebFrame::didCommitLoadInAnotherProcess(WebCore::LayerHostingContextIdentifier layerHostingContextIdentifier, WebCore::ProcessIdentifier remoteProcessIdentifier)
+void WebFrame::didCommitLoadInAnotherProcess(std::optional<WebCore::LayerHostingContextIdentifier> layerHostingContextIdentifier, WebCore::ProcessIdentifier remoteProcessIdentifier)
 {
     RefPtr coreFrame = m_coreFrame.get();
     if (!coreFrame) {
@@ -370,10 +370,10 @@ void WebFrame::didCommitLoadInAnotherProcess(WebCore::LayerHostingContextIdentif
     auto client = makeUniqueRef<WebRemoteFrameClient>(*this, WTFMove(invalidator));
     auto newFrame = ownerElement
         ? WebCore::RemoteFrame::createSubframeWithContentsInAnotherProcess(*corePage, WTFMove(client), m_frameID, *ownerElement, layerHostingContextIdentifier, remoteProcessIdentifier)
-        : parent
-            ? WebCore::RemoteFrame::createSubframe(*corePage, WTFMove(client), m_frameID, *parent, remoteProcessIdentifier)
-            : WebCore::RemoteFrame::createMainFrame(*corePage, WTFMove(client), m_frameID, remoteProcessIdentifier);
+        : parent ? WebCore::RemoteFrame::createSubframe(*corePage, WTFMove(client), m_frameID, *parent, remoteProcessIdentifier) : WebCore::RemoteFrame::createMainFrame(*corePage, WTFMove(client), m_frameID, remoteProcessIdentifier);
 
+    if (!parent)
+        newFrame->takeWindowProxyFrom(*localFrame);
     auto remoteFrameView = WebCore::RemoteFrameView::create(newFrame);
     // FIXME: We need a corresponding setView(nullptr) during teardown to break the ref cycle.
     newFrame->setView(remoteFrameView.ptr());
@@ -404,16 +404,14 @@ void WebFrame::transitionToLocal(std::optional<WebCore::LayerHostingContextIdent
     }
 
     auto* parent = remoteFrame->tree().parent();
-    if (!parent) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
 
-    parent->tree().removeChild(*remoteFrame);
+    if (parent)
+        parent->tree().removeChild(*remoteFrame);
     remoteFrame->disconnectOwnerElement();
     auto invalidator = static_cast<WebRemoteFrameClient&>(remoteFrame->client()).takeFrameInvalidator();
 
-    auto localFrame = LocalFrame::createSubframeHostedInAnotherProcess(*corePage, makeUniqueRef<WebLocalFrameLoaderClient>(*this, WTFMove(invalidator)), m_frameID, *parent);
+    auto client = makeUniqueRef<WebLocalFrameLoaderClient>(*this, WTFMove(invalidator));
+    auto localFrame = parent ? LocalFrame::createSubframeHostedInAnotherProcess(*corePage, WTFMove(client), m_frameID, *parent) : LocalFrame::createMainFrame(*corePage, WTFMove(client), m_frameID);
     m_coreFrame = localFrame.ptr();
     localFrame->init();
 
@@ -421,6 +419,8 @@ void WebFrame::transitionToLocal(std::optional<WebCore::LayerHostingContextIdent
         setLayerHostingContextIdentifier(*layerHostingContextIdentifier);
     if (localFrame->isRootFrame())
         corePage->addRootFrame(localFrame.get());
+    if (localFrame->isMainFrame())
+        corePage->setMainFrame(WTFMove(localFrame));
 
     if (auto* webPage = page(); webPage && m_coreFrame->isRootFrame()) {
         if (auto* drawingArea = webPage->drawingArea())

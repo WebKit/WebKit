@@ -111,7 +111,7 @@ public:
     FormSubmitListenerIdentifier setUpWillSubmitFormListener(CompletionHandler<void()>&&);
     void continueWillSubmitForm(FormSubmitListenerIdentifier);
 
-    void didCommitLoadInAnotherProcess(WebCore::LayerHostingContextIdentifier, WebCore::ProcessIdentifier);
+    void didCommitLoadInAnotherProcess(std::optional<WebCore::LayerHostingContextIdentifier>, WebCore::ProcessIdentifier);
     void didFinishLoadInAnotherProcess();
 
     void startDownload(const WebCore::ResourceRequest&, const String& suggestedName = { });

@@ -31,9 +31,11 @@
 #include "DrawingAreaProxy.h"
 #include "FormDataReference.h"
 #include "HandleMessage.h"
+#include "LocalFrameCreationParameters.h"
 #include "Logging.h"
 #include "MessageSenderInlines.h"
 #include "PageClient.h"
+#include "RemotePageProxy.h"
 #include "SuspendedPageProxy.h"
 #include "URLSchemeTaskParameters.h"
 #include "WebBackForwardCacheEntry.h"
@@ -181,6 +183,20 @@ void ProvisionalPageProxy::initializeWebPage(RefPtr<API::WebsitePolicies>&& webs
     m_drawingArea = m_page->pageClient().createDrawingAreaProxy();
 
     auto parameters = m_page->creationParameters(m_process, *m_drawingArea, WTFMove(websitePolicies));
+
+    if (page().preferences().processSwapOnCrossSiteWindowOpenEnabled()) {
+        RegistrableDomain navigationDomain(m_request.url());
+        auto* openerFrame = m_page->openerFrame();
+        if (auto* openerPage = openerFrame ? openerFrame->page() : nullptr) {
+            parameters.openerFrameIdentifier = openerFrame->frameID();
+            parameters.mainFrameIdentifier = m_page->mainFrame()->frameID();
+
+            auto remotePageProxy = RemotePageProxy::create(*openerPage, m_process, navigationDomain);
+            remotePageProxy->injectPageIntoNewProcess();
+            openerPage->addOpenedRemotePageProxy(WTFMove(remotePageProxy));
+        }
+    }
+
     parameters.isProcessSwap = true;
     m_process->send(Messages::WebProcess::CreateWebPage(m_webPageID, parameters), 0);
     m_process->addVisitedLinkStoreUser(m_page->visitedLinkStore(), m_page->identifier());
@@ -251,14 +267,18 @@ void ProvisionalPageProxy::didCreateMainFrame(FrameIdentifier frameID)
     PROVISIONALPAGEPROXY_RELEASE_LOG(ProcessSwapping, "didCreateMainFrame: frameID=%" PRIu64, frameID.object().toUInt64());
     ASSERT(!m_mainFrame);
 
-    m_mainFrame = WebFrameProxy::create(m_page, m_process, frameID);
+    RefPtr<WebFrameProxy> previousMainFrame = m_page->mainFrame();
+    if (page().preferences().processSwapOnCrossSiteWindowOpenEnabled() && m_page->openerFrame()) {
+        ASSERT(m_page->mainFrame()->frameID() == frameID);
+        m_mainFrame = m_page->mainFrame();
+    } else
+        m_mainFrame = WebFrameProxy::create(m_page, m_process, frameID);
 
     // This navigation was destroyed so no need to notify of redirect.
     if (!m_page->navigationState().hasNavigation(m_navigationID))
         return;
 
     // Restore the main frame's committed URL as some clients may rely on it until the next load is committed.
-    RefPtr previousMainFrame = m_page->mainFrame();
     if (previousMainFrame) {
         m_mainFrame->frameLoadState().setURL(previousMainFrame->url());
         previousMainFrame->transferNavigationCallbackToFrame(*m_mainFrame);
@@ -298,8 +318,11 @@ void ProvisionalPageProxy::didStartProvisionalLoadForFrame(FrameIdentifier frame
     if (m_isServerRedirect)
         return;
 
+    // When this is true, we are reusing the main WebFrameProxy and its frame state will be updated in didStartProvisionalLoadForFrameShared.
+    bool isCrossSiteWindowOpen = page().preferences().processSwapOnCrossSiteWindowOpenEnabled() && m_page->openerFrame();
+
     // Clients expect the Page's main frame's expectedURL to be the provisional one when a provisional load is started.
-    if (auto* pageMainFrame = m_page->mainFrame())
+    if (auto* pageMainFrame = m_page->mainFrame(); pageMainFrame && !isCrossSiteWindowOpen)
         pageMainFrame->didStartProvisionalLoad(url);
 
     m_page->didStartProvisionalLoadForFrameShared(m_process.copyRef(), frameID, WTFMove(frameInfo), WTFMove(request), navigationID, WTFMove(url), WTFMove(unreachableURL), userData);
@@ -329,6 +352,16 @@ void ProvisionalPageProxy::didCommitLoadForFrame(FrameIdentifier frameID, FrameI
         return;
 
     PROVISIONALPAGEPROXY_RELEASE_LOG(ProcessSwapping, "didCommitLoadForFrame: frameID=%" PRIu64, frameID.object().toUInt64());
+    if (page().preferences().processSwapOnCrossSiteWindowOpenEnabled()) {
+        auto* openerFrame = m_page->openerFrame();
+        if (auto* openerPage = openerFrame ? openerFrame->page() : nullptr) {
+            RegistrableDomain navigationDomain(request.url());
+            page().send(Messages::WebPage::DidCommitLoadInAnotherProcess(page().mainFrame()->frameID(), std::nullopt, m_process->coreProcessIdentifier()));
+            page().process().removeMessageReceiver(Messages::WebPageProxy::messageReceiverName(), page().webPageID());
+            page().setRemotePageProxyInOpenerProcess(RemotePageProxy::create(page(), openerPage->process(), navigationDomain));
+            page().mainFrame()->setProcess(m_process.get());
+        }
+    }
     m_provisionalLoadURL = { };
     m_process->removeMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_webPageID);
 

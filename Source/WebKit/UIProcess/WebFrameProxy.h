@@ -28,6 +28,7 @@
 #include "APIObject.h"
 #include "FrameLoadState.h"
 #include "WebFramePolicyListenerProxy.h"
+#include "WebProcessProxy.h"
 #include <WebCore/FrameLoaderTypes.h>
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
@@ -160,6 +161,7 @@ public:
 
     WebFrameProxy* parentFrame() { return m_parentFrame.get(); }
     WebProcessProxy& process() { return m_process.get(); }
+    void setProcess(WebProcessProxy& process) { m_process = process; }
     ProvisionalFrameProxy* provisionalFrame() { return m_provisionalFrame.get(); }
 
 private:

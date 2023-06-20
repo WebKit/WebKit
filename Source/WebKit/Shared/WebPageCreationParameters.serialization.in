@@ -231,6 +231,8 @@ struct WebKit::WebPageCreationParameters {
     WebCore::ContentSecurityPolicyModeForExtension contentSecurityPolicyModeForExtension;
 
     std::optional<WebKit::FrameTreeCreationParameters> subframeProcessFrameTreeCreationParameters;
+    std::optional<WebCore::FrameIdentifier> openerFrameIdentifier;
+    std::optional<WebCore::FrameIdentifier> mainFrameIdentifier;
 
 #if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
     Vector<WebCore::LinkDecorationFilteringData> linkDecorationFilteringData;

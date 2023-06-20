@@ -1859,8 +1859,11 @@ void WebProcessPool::processForNavigation(WebPageProxy& page, WebFrameProxy& fra
 
     if (!frame.isMainFrame() && page.preferences().siteIsolationEnabled()) {
         RegistrableDomain navigationDomain(navigation.currentRequest().url());
-        if (!navigationDomain.isEmpty() && navigationDomain != mainFrameDomain)
-            frame.setRemotePageProxy(RemotePageProxy::create(page, process, navigationDomain));
+        if (!navigationDomain.isEmpty() && navigationDomain != mainFrameDomain) {
+            auto remotePageProxy = RemotePageProxy::create(page, process, navigationDomain);
+            frame.setRemotePageProxy(remotePageProxy);
+            remotePageProxy->injectPageIntoNewProcess();
+        }
     }
 
     // We are process-swapping so automatic process prewarming would be beneficial if the client has not explicitly enabled / disabled it.

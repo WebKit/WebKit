@@ -1037,6 +1037,11 @@ bool WebPageProxy::suspendCurrentPageIfPossible(API::Navigation& navigation, Ref
     if (!mainFrame)
         return false;
 
+    if (openerFrame() && preferences().processSwapOnCrossSiteWindowOpenEnabled()) {
+        WEBPAGEPROXY_RELEASE_LOG(ProcessSwapping, "suspendCurrentPageIfPossible: Not suspending current page for process pid %i because it has an opener.", m_process->processID());
+        return false;
+    }
+
     if (!hasCommittedAnyProvisionalLoads()) {
         WEBPAGEPROXY_RELEASE_LOG(ProcessSwapping, "suspendCurrentPageIfPossible: Not suspending current page for process pid %i because has not committed any load yet", m_process->processID());
         return false;
@@ -4072,7 +4077,7 @@ void WebPageProxy::commitProvisionalPage(FrameIdentifier frameID, FrameInfoData&
     m_process->removeWebPage(*this, m_websiteDataStore.ptr() == m_provisionalPage->process().websiteDataStore() ? WebProcessProxy::EndsUsingDataStore::No : WebProcessProxy::EndsUsingDataStore::Yes);
 
     // There is no way we'll be able to return to the page in the previous page so close it.
-    if (!didSuspendPreviousPage)
+    if (!didSuspendPreviousPage && shouldClosePreviousPage())
         send(Messages::WebPage::Close());
 
     const auto oldWebPageID = internals().webPageID;
@@ -4081,6 +4086,14 @@ void WebPageProxy::commitProvisionalPage(FrameIdentifier frameID, FrameInfoData&
     didCommitLoadForFrame(frameID, WTFMove(frameInfo), WTFMove(request), navigationID, mimeType, frameHasCustomContentProvider, frameLoadType, certificateInfo, usedLegacyTLS, privateRelayed, containsPluginDocument, hasInsecureContent, mouseEventPolicy, userData);
 
     m_inspectorController->didCommitProvisionalPage(oldWebPageID, internals().webPageID);
+}
+
+bool WebPageProxy::shouldClosePreviousPage()
+{
+    auto* opener = openerFrame();
+    return !preferences().processSwapOnCrossSiteWindowOpenEnabled()
+        || !opener
+        || opener->process() != process();
 }
 
 void WebPageProxy::destroyProvisionalPage()
@@ -4122,7 +4135,8 @@ void WebPageProxy::continueNavigationInNewProcess(API::Navigation& navigation, W
             LocalFrameCreationParameters localFrameCreationParameters {
                 WebCore::LayerHostingContextIdentifier::generate()
             };
-            newProcess->send(Messages::WebPage::TransitionFrameToLocalAndLoadRequest(localFrameCreationParameters, loadParameters), frame.page()->webPageID());
+            newProcess->send(Messages::WebPage::TransitionFrameToLocal(localFrameCreationParameters, frame.frameID()), webPageID());
+            newProcess->send(Messages::WebPage::LoadRequest(loadParameters), webPageID());
         }
         return;
     }
@@ -5065,13 +5079,13 @@ void WebPageProxy::getAllFrameTrees(CompletionHandler<void(Vector<FrameTreeNodeD
 
     auto& internals = this->internals();
     auto aggregator = FrameTreeCallbackAggregator::create(WTFMove(completionHandler));
-    m_mainFrame->process().sendWithAsyncReply(Messages::WebPage::GetFrameTree(), [aggregator] (auto&& data) {
+    sendWithAsyncReply(Messages::WebPage::GetFrameTree(), [aggregator] (auto&& data) {
         aggregator->addFrameTree(WTFMove(data));
-    }, webPageID());
+    });
     for (auto& remotePageProxy : internals.domainToRemotePageProxyMap.values()) {
-        remotePageProxy->process().sendWithAsyncReply(Messages::WebPage::GetFrameTree(), [aggregator] (auto&& data) {
+        remotePageProxy->sendWithAsyncReply(Messages::WebPage::GetFrameTree(), [aggregator] (auto&& data) {
             aggregator->addFrameTree(WTFMove(data));
-        }, webPageID());
+        });
     }
 }
 
@@ -6753,7 +6767,7 @@ void WebPageProxy::createNewPage(FrameInfoData&& originatingFrameInfoData, WebPa
     if (auto* page = originatingFrameInfo->page())
         openerAppInitiatedState = page->lastNavigationWasAppInitiated();
 
-    auto completionHandler = [this, protectedThis = Ref { *this }, mainFrameURL, request, reply = WTFMove(reply), privateClickMeasurement = navigationActionData.privateClickMeasurement, openerAppInitiatedState = WTFMove(openerAppInitiatedState)] (RefPtr<WebPageProxy> newPage) mutable {
+    auto completionHandler = [this, protectedThis = Ref { *this }, mainFrameURL, request, reply = WTFMove(reply), privateClickMeasurement = navigationActionData.privateClickMeasurement, openerAppInitiatedState = WTFMove(openerAppInitiatedState), openerFrameID = originatingFrameInfoData.frameID] (RefPtr<WebPageProxy> newPage) mutable {
         if (!newPage) {
             reply(std::nullopt, std::nullopt);
             return;
@@ -6763,6 +6777,10 @@ void WebPageProxy::createNewPage(FrameInfoData&& originatingFrameInfoData, WebPa
 
         if (openerAppInitiatedState)
             newPage->m_lastNavigationWasAppInitiated = *openerAppInitiatedState;
+        if (openerFrameID && preferences().processSwapOnCrossSiteWindowOpenEnabled()) {
+            if (auto* openerFrame = WebFrameProxy::webFrame(*openerFrameID))
+                newPage->m_openerFrame = openerFrame;
+        }
 
         reply(newPage->webPageID(), newPage->creationParameters(m_process, *newPage->drawingArea()));
 
@@ -12577,7 +12595,8 @@ void WebPageProxy::generateTestReport(const String& message, const String& group
 
 void WebPageProxy::addRemotePageProxy(const WebCore::RegistrableDomain& domain, WeakPtr<RemotePageProxy>&& remotePageProxy)
 {
-    internals().domainToRemotePageProxyMap.add(domain, WTFMove(remotePageProxy));
+    auto addResult = internals().domainToRemotePageProxyMap.add(domain, WTFMove(remotePageProxy));
+    ASSERT_UNUSED(addResult, addResult.isNewEntry);
 }
 
 void WebPageProxy::removeRemotePageProxy(const WebCore::RegistrableDomain& domain)
@@ -12588,6 +12607,17 @@ void WebPageProxy::removeRemotePageProxy(const WebCore::RegistrableDomain& domai
 RemotePageProxy* WebPageProxy::remotePageProxyForRegistrableDomain(WebCore::RegistrableDomain domain) const
 {
     return internals().domainToRemotePageProxyMap.get(domain).get();
+}
+
+void WebPageProxy::setRemotePageProxyInOpenerProcess(Ref<RemotePageProxy>&& page)
+{
+    internals().remotePageProxyInOpenerProcess = WTFMove(page);
+}
+
+// FIXME: Add a corresponding remove call if the opened page is closed or destroyed.
+void WebPageProxy::addOpenedRemotePageProxy(Ref<RemotePageProxy>&& page)
+{
+    internals().openedRemotePageProxies.add(WTFMove(page));
 }
 
 #if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)

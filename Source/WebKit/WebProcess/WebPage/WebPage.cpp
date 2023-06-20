@@ -521,7 +521,7 @@ static std::variant<UniqueRef<LocalFrameLoaderClient>, PageConfiguration::Remote
 
 WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     : m_identifier(pageID)
-    , m_mainFrame(WebFrame::create(*this, parameters.subframeProcessFrameTreeCreationParameters ? parameters.subframeProcessFrameTreeCreationParameters->frameID : WebCore::FrameIdentifier::generate()))
+    , m_mainFrame(WebFrame::create(*this, parameters.subframeProcessFrameTreeCreationParameters ? parameters.subframeProcessFrameTreeCreationParameters->frameID : (parameters.mainFrameIdentifier ? *parameters.mainFrameIdentifier : WebCore::FrameIdentifier::generate())))
     , m_viewSize(parameters.viewSize)
     , m_drawingAreaType(parameters.drawingAreaType)
     , m_alwaysShowsHorizontalScroller { parameters.alwaysShowsHorizontalScroller }
@@ -640,7 +640,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     m_pageGroup = WebProcess::singleton().webPageGroup(parameters.pageGroupData);
 
     std::optional<ProcessIdentifier> remoteProcessIdentifier;
-    if (parameters.subframeProcessFrameTreeCreationParameters)
+    if (parameters.subframeProcessFrameTreeCreationParameters && !parameters.openerFrameIdentifier)
         remoteProcessIdentifier = parameters.subframeProcessFrameTreeCreationParameters->remoteProcessIdentifier;
 
     PageConfiguration pageConfiguration(
@@ -775,7 +775,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 
     m_drawingArea = DrawingArea::create(*this, parameters);
     // FIXME: Refactor frame construction and remove receivedMainFrameIdentifierFromUIProcess.
-    if (!receivedMainFrameIdentifierFromUIProcess)
+    if (!receivedMainFrameIdentifierFromUIProcess || parameters.openerFrameIdentifier)
         m_drawingArea->addRootFrame(m_mainFrame->frameID());
     m_drawingArea->setShouldScaleViewToFitDocument(parameters.shouldScaleViewToFitDocument);
 
@@ -797,6 +797,16 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     if (auto& subframeProcessFrameTreeCreationParameters = parameters.subframeProcessFrameTreeCreationParameters) {
         for (auto& childParameters : subframeProcessFrameTreeCreationParameters->children)
             constructFrameTree(m_mainFrame.get(), childParameters);
+    }
+
+    if (parameters.isProcessSwap && parameters.openerFrameIdentifier) {
+        if (auto* openerFrame = WebProcess::singleton().webFrame(*parameters.openerFrameIdentifier)) {
+            if (auto* coreMainFrame = m_mainFrame->coreLocalFrame())
+                coreMainFrame->loader().setOpener(openerFrame->coreRemoteFrame());
+            else
+                ASSERT_NOT_REACHED();
+        } else
+            ASSERT_NOT_REACHED();
     }
 
     m_drawingArea->updatePreferences(parameters.store);
@@ -1063,7 +1073,7 @@ void WebPage::continueWillSubmitForm(WebCore::FrameIdentifier frameID, WebKit::F
     frame->continueWillSubmitForm(formListenerID);
 }
 
-void WebPage::didCommitLoadInAnotherProcess(WebCore::FrameIdentifier frameID, WebCore::LayerHostingContextIdentifier layerHostingContextIdentifier, WebCore::ProcessIdentifier remoteProcessIdentifier)
+void WebPage::didCommitLoadInAnotherProcess(WebCore::FrameIdentifier frameID, std::optional<WebCore::LayerHostingContextIdentifier> layerHostingContextIdentifier, WebCore::ProcessIdentifier remoteProcessIdentifier)
 {
     auto* frame = WebProcess::singleton().webFrame(frameID);
     if (!frame) {
@@ -1836,22 +1846,15 @@ void WebPage::platformDidReceiveLoadParameters(const LoadParameters& loadParamet
 }
 #endif
 
-void WebPage::transitionFrameToLocalAndLoadRequest(LocalFrameCreationParameters&& creationParameters, LoadParameters&& loadParameters)
+void WebPage::transitionFrameToLocal(LocalFrameCreationParameters&& creationParameters, FrameIdentifier frameIdentifier)
 {
-    if (!loadParameters.frameIdentifier) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-
-    RefPtr frame = WebProcess::singleton().webFrame(*loadParameters.frameIdentifier);
+    RefPtr frame = WebProcess::singleton().webFrame(frameIdentifier);
     if (!frame) {
         ASSERT_NOT_REACHED();
         return;
     }
 
     frame->transitionToLocal(creationParameters.layerHostingContextIdentifier);
-
-    loadRequest(WTFMove(loadParameters));
 }
 
 void WebPage::loadRequest(LoadParameters&& loadParameters)

@@ -45,29 +45,38 @@ RemotePageProxy::RemotePageProxy(WebPageProxy& page, WebProcessProxy& process, c
     , m_domain(domain)
 {
     m_process->addMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_webPageID, *this);
+    page.addRemotePageProxy(domain, *this);
+}
 
-    auto* drawingArea = page.drawingArea();
+void RemotePageProxy::injectPageIntoNewProcess()
+{
+    auto* page = m_page.get();
+    if (!page) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    auto* drawingArea = page->drawingArea();
     RELEASE_ASSERT(drawingArea);
     drawingArea->startReceivingMessages(m_process);
 
-    auto parameters = page.creationParameters(m_process, *drawingArea);
-    parameters.subframeProcessFrameTreeCreationParameters = page.frameTreeCreationParameters();
+    auto parameters = page->creationParameters(m_process, *drawingArea);
+    parameters.subframeProcessFrameTreeCreationParameters = page->frameTreeCreationParameters();
     parameters.isProcessSwap = true; // FIXME: This should be a parameter to creationParameters rather than doctoring up the parameters afterwards.
     parameters.topContentInset = 0;
     m_process->send(Messages::WebProcess::CreateWebPage(m_webPageID, parameters), 0);
-    m_process->addVisitedLinkStoreUser(page.visitedLinkStore(), page.identifier());
-    page.addRemotePageProxy(domain, *this);
+    m_process->addVisitedLinkStoreUser(page->visitedLinkStore(), page->identifier());
 }
 
 RemotePageProxy::~RemotePageProxy()
 {
     m_process->removeMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_webPageID);
 
-    if (auto* drawingArea = m_page->drawingArea())
-        drawingArea->stopReceivingMessages(m_process);
-
-    if (m_page)
+    if (m_page) {
+        if (auto* drawingArea = m_page->drawingArea())
+            drawingArea->stopReceivingMessages(m_process);
         m_page->removeRemotePageProxy(m_domain);
+    }
 }
 
 IPC::Connection* RemotePageProxy::messageSenderConnection() const

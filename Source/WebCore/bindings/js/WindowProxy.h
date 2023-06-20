@@ -52,6 +52,7 @@ public:
 
     WEBCORE_EXPORT Frame* frame() const;
     void detachFromFrame();
+    void replaceFrame(Frame&);
 
     void destroyJSWindowProxy(DOMWrapperWorld&);
 

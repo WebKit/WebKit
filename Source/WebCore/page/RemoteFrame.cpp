@@ -45,7 +45,7 @@ Ref<RemoteFrame> RemoteFrame::createSubframe(Page& page, UniqueRef<RemoteFrameCl
     return adoptRef(*new RemoteFrame(page, WTFMove(client), identifier, nullptr, &parent, std::nullopt, remoteProcessIdentifier));
 }
 
-Ref<RemoteFrame> RemoteFrame::createSubframeWithContentsInAnotherProcess(Page& page, UniqueRef<RemoteFrameClient>&& client, FrameIdentifier identifier, HTMLFrameOwnerElement& ownerElement, LayerHostingContextIdentifier layerHostingContextIdentifier, ProcessIdentifier remoteProcessIdentifier)
+Ref<RemoteFrame> RemoteFrame::createSubframeWithContentsInAnotherProcess(Page& page, UniqueRef<RemoteFrameClient>&& client, FrameIdentifier identifier, HTMLFrameOwnerElement& ownerElement, std::optional<LayerHostingContextIdentifier> layerHostingContextIdentifier, ProcessIdentifier remoteProcessIdentifier)
 {
     return adoptRef(*new RemoteFrame(page, WTFMove(client), identifier, &ownerElement, ownerElement.document().frame(), layerHostingContextIdentifier, remoteProcessIdentifier));
 }

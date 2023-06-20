@@ -44,7 +44,7 @@ class RemoteFrame final : public Frame {
 public:
     WEBCORE_EXPORT static Ref<RemoteFrame> createMainFrame(Page&, UniqueRef<RemoteFrameClient>&&, FrameIdentifier, ProcessIdentifier);
     WEBCORE_EXPORT static Ref<RemoteFrame> createSubframe(Page&, UniqueRef<RemoteFrameClient>&&, FrameIdentifier, Frame& parent, ProcessIdentifier);
-    WEBCORE_EXPORT static Ref<RemoteFrame> createSubframeWithContentsInAnotherProcess(Page&, UniqueRef<RemoteFrameClient>&&, FrameIdentifier, HTMLFrameOwnerElement&, LayerHostingContextIdentifier, ProcessIdentifier);
+    WEBCORE_EXPORT static Ref<RemoteFrame> createSubframeWithContentsInAnotherProcess(Page&, UniqueRef<RemoteFrameClient>&&, FrameIdentifier, HTMLFrameOwnerElement&, std::optional<LayerHostingContextIdentifier>, ProcessIdentifier);
     ~RemoteFrame();
 
     RemoteDOMWindow& window() const;

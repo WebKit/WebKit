@@ -48,6 +48,17 @@ static void enableSiteIsolation(WKWebViewConfiguration *configuration)
     }
 }
 
+static void enableWindowOpenPSON(WKWebViewConfiguration *configuration)
+{
+    auto preferences = [configuration preferences];
+    for (_WKFeature *feature in [WKPreferences _features]) {
+        if ([feature.key isEqualToString:@"ProcessSwapOnCrossSiteWindowOpenEnabled"]) {
+            [preferences _setEnabled:YES forFeature:feature];
+            break;
+        }
+    }
+}
+
 enum RemoteFrameTag { RemoteFrame };
 struct ExpectedFrameTree {
     std::variant<RemoteFrameTag, String> remoteOrOrigin;
@@ -78,7 +89,8 @@ static bool frameTreesMatch(_WKFrameTreeNode *actualRoot, const ExpectedFrameTre
 
 static bool frameTreesMatch(NSSet<_WKFrameTreeNode *> *actualFrameTrees, Vector<ExpectedFrameTree>&& expectedFrameTrees)
 {
-    EXPECT_EQ(actualFrameTrees.count, expectedFrameTrees.size());
+    if (actualFrameTrees.count != expectedFrameTrees.size())
+        return false;
 
     for (_WKFrameTreeNode *root in actualFrameTrees) {
         auto index = expectedFrameTrees.findIf([&] (auto& expectedFrameTree) {
@@ -91,14 +103,36 @@ static bool frameTreesMatch(NSSet<_WKFrameTreeNode *> *actualFrameTrees, Vector<
     return expectedFrameTrees.isEmpty();
 }
 
+static RetainPtr<NSSet> frameTrees(WKWebView *webView)
+{
+    __block RetainPtr<NSSet> result;
+    [webView _frameTrees:^(NSSet<_WKFrameTreeNode *> *frameTrees) {
+        result = frameTrees;
+    }];
+    while (!result)
+        Util::spinRunLoop();
+    return result;
+}
+
+static void checkFrameTreesInProcesses(NSSet<_WKFrameTreeNode *> *actualTrees, Vector<ExpectedFrameTree>&& expectedFrameTrees)
+{
+    EXPECT_TRUE(frameTreesMatch(actualTrees, WTFMove(expectedFrameTrees)));
+}
+
 static void checkFrameTreesInProcesses(WKWebView *webView, Vector<ExpectedFrameTree>&& expectedFrameTrees)
 {
-    bool done { false };
-    [webView _frameTrees:makeBlockPtr([&done, expectedFrameTrees = WTFMove(expectedFrameTrees)] (NSSet<_WKFrameTreeNode *> *actualFrameTrees) mutable {
-        EXPECT_TRUE(frameTreesMatch(actualFrameTrees, WTFMove(expectedFrameTrees)));
-        done = true;
-    }).get()];
-    Util::run(&done);
+    checkFrameTreesInProcesses(frameTrees(webView).get(), WTFMove(expectedFrameTrees));
+}
+
+enum class FrameType : bool { Local, Remote };
+static pid_t findFramePID(NSSet<_WKFrameTreeNode *> *set, FrameType local)
+{
+    for (_WKFrameTreeNode *node in set) {
+        if (node._isLocalFrame == (local == FrameType::Local))
+            return node._processIdentifier;
+    }
+    ASSERT_NOT_REACHED();
+    return 0;
 }
 
 TEST(SiteIsolation, LoadingCallbacksAndPostMessage)
@@ -200,6 +234,97 @@ TEST(SiteIsolation, LoadingCallbacksAndPostMessage)
             { { "https://webkit.org"_s } }
         },
     });
+}
+
+TEST(SiteIsolation, BasicPostMessageWindowOpen)
+{
+    auto exampleHTML = "<script>"
+    "    window.addEventListener('message', (event) => {"
+    "        w.postMessage('pong', '*');"
+    "    }, false);"
+    "</script>"_s;
+
+    auto webkitHTML = "<script>"
+    "    window.addEventListener('message', (event) => {"
+    "        alert('opened page received ' + event.data);"
+    "    }, false);"
+    "</script>"_s;
+
+    __block bool openerFinishedLoading { false };
+    __block bool openedFinishedLoading { false };
+    HTTPServer server({
+        { "/example"_s, { exampleHTML } },
+        { "/webkit"_s, { webkitHTML } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    __block RetainPtr<WKWebView> openerWebView;
+    __block RetainPtr<WKWebView> openedWebView;
+
+    auto openerNavigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [openerNavigationDelegate allowAnyTLSCertificate];
+    openerNavigationDelegate.get().didFinishNavigation = ^(WKWebView *opener, WKNavigation *navigation) {
+        EXPECT_WK_STREQ(navigation._request.URL.absoluteString, "https://example.com/example");
+        checkFrameTreesInProcesses(opener, { { "https://example.com"_s } });
+        openerFinishedLoading = true;
+    };
+
+    __block auto openedNavigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [openedNavigationDelegate allowAnyTLSCertificate];
+    openedNavigationDelegate.get().didFinishNavigation = ^(WKWebView *, WKNavigation *navigation) {
+        EXPECT_WK_STREQ(navigation._request.URL.absoluteString, "https://webkit.org/webkit");
+        checkFrameTreesInProcesses(openerWebView.get(), { { "https://example.com"_s }, { RemoteFrame } });
+        checkFrameTreesInProcesses(openedWebView.get(), { { "https://webkit.org"_s }, { RemoteFrame } });
+        auto openerFrames = frameTrees(openerWebView.get());
+        auto openedFrames = frameTrees(openedWebView.get());
+        EXPECT_NE([openerWebView _webProcessIdentifier], [openedWebView _webProcessIdentifier]);
+        EXPECT_EQ(findFramePID(openerFrames.get(), FrameType::Remote), [openedWebView _webProcessIdentifier]);
+        EXPECT_EQ(findFramePID(openedFrames.get(), FrameType::Remote), [openerWebView _webProcessIdentifier]);
+        openedFinishedLoading = true;
+    };
+    openedNavigationDelegate.get().decidePolicyForNavigationResponse = ^(WKNavigationResponse *, void (^completionHandler)(WKNavigationResponsePolicy)) {
+        auto openerFrames = frameTrees(openerWebView.get());
+        checkFrameTreesInProcesses(openerFrames.get(), { { "https://example.com"_s }, { RemoteFrame } });
+        checkFrameTreesInProcesses(openedWebView.get(), { { "https://example.com"_s } });
+        EXPECT_EQ([openerWebView _webProcessIdentifier], [openedWebView _webProcessIdentifier]);
+        EXPECT_NE([openedWebView _webProcessIdentifier], [openedWebView _provisionalWebProcessIdentifier]);
+        EXPECT_EQ(findFramePID(openerFrames.get(), FrameType::Remote), [openedWebView _provisionalWebProcessIdentifier]);
+        EXPECT_EQ(findFramePID(openerFrames.get(), FrameType::Local), [openerWebView _webProcessIdentifier]);
+        completionHandler(WKNavigationResponsePolicyAllow);
+    };
+
+    auto configuration = server.httpsProxyConfiguration();
+    enableWindowOpenPSON(configuration);
+
+    __block RetainPtr<NSString> alert;
+    auto uiDelegate = adoptNS([TestUIDelegate new]);
+    uiDelegate.get().runJavaScriptAlertPanelWithMessage = ^(WKWebView *, NSString *message, WKFrameInfo *, void (^completionHandler)(void)) {
+        alert = message;
+        completionHandler();
+    };
+
+    uiDelegate.get().createWebViewWithConfiguration = ^(WKWebViewConfiguration *configuration, WKNavigationAction *action, WKWindowFeatures *windowFeatures) {
+        openedWebView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration]);
+        openedWebView.get().UIDelegate = uiDelegate.get();
+        openedWebView.get().navigationDelegate = openedNavigationDelegate.get();
+        return openedWebView.get();
+    };
+
+    openerWebView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration]);
+    openerWebView.get().navigationDelegate = openerNavigationDelegate.get();
+    openerWebView.get().UIDelegate = uiDelegate.get();
+    openerWebView.get().configuration.preferences.javaScriptCanOpenWindowsAutomatically = YES;
+    [openerWebView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+    Util::run(&openerFinishedLoading);
+
+    [openerWebView evaluateJavaScript:@"w = window.open('https://webkit.org/webkit')" completionHandler:nil];
+
+    Util::run(&openedFinishedLoading);
+
+    [openedWebView evaluateJavaScript:@"try { window.opener.postMessage('ping', '*'); } catch(e) { alert('error ' + e) }" completionHandler:nil];
+
+    while (!alert)
+        Util::spinRunLoop();
+    EXPECT_WK_STREQ(alert.get(), "opened page received pong");
 }
 
 TEST(SiteIsolation, PostMessageWithMessagePorts)

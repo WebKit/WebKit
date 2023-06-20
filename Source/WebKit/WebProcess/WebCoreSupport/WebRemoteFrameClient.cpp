@@ -78,7 +78,7 @@ void WebRemoteFrameClient::changeLocation(WebCore::FrameLoadRequest&& request)
     // FIXME: Get more parameters correct and add tests for each one.
     dispatchDecidePolicyForNavigationAction(action, action.resourceRequest(), WebCore::ResourceResponse(), nullptr, WebCore::PolicyDecisionMode::Asynchronous, WebCore::PolicyCheckIdentifier::generate(), [protectedFrame = Ref { m_frame }, request = WTFMove(request)] (WebCore::PolicyAction policyAction, WebCore::PolicyCheckIdentifier responseIdentifier) mutable {
         // FIXME: Check responseIdentifier.
-        // WebPage::transitionFrameToLocalAndLoadRequest will make this load happen if needed.
+        // WebPage::loadRequest will make this load happen if needed.
     });
 }
 

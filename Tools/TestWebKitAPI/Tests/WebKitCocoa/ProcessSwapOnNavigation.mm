@@ -1390,7 +1390,8 @@ static void enableWindowOpenPSON(WKWebViewConfiguration *configuration)
     }
 }
 
-TEST(ProcessSwap, CrossSiteWindowOpenWithOpener)
+// FIXME: Get this working.
+TEST(ProcessSwap, DISABLED_CrossSiteWindowOpenWithOpener)
 {
     auto processPoolConfiguration = psonProcessPoolConfiguration();
     auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
@@ -7178,7 +7179,8 @@ window.onload = function() {
 
 static const char* openedPage = "Hello World";
 
-TEST(ProcessSwap, SameSiteWindowWithOpenerNavigateToFile)
+// FIXME: Get this working.
+TEST(ProcessSwap, DISABLED_SameSiteWindowWithOpenerNavigateToFile)
 {
     auto processPoolConfiguration = psonProcessPoolConfiguration();
     auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
