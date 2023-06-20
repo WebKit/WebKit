@@ -1165,10 +1165,10 @@ unsigned Internals::remoteImagesCountForTesting() const
     return document->page()->chrome().client().remoteImagesCountForTesting();
 }
 
-void Internals::setLargeImageAsyncDecodingEnabledForTesting(HTMLImageElement& element, bool enabled)
+void Internals::setAsyncDecodingEnabledForTesting(HTMLImageElement& element, bool enabled)
 {
     if (auto* bitmapImage = bitmapImageFromImageElement(element))
-        bitmapImage->setLargeImageAsyncDecodingEnabledForTesting(enabled);
+        bitmapImage->setAsyncDecodingEnabledForTesting(enabled);
 }
     
 void Internals::setForceUpdateImageDataEnabledForTesting(HTMLImageElement& element, bool enabled)

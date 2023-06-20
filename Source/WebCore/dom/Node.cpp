@@ -1273,6 +1273,16 @@ void Node::setManuallyAssignedSlot(HTMLSlotElement* slotElement)
     ensureRareData().setManuallyAssignedSlot(slotElement);
 }
 
+bool Node::hasEverPaintedImages() const
+{
+    return hasRareData() && rareData()->hasEverPaintedImages();
+}
+
+void Node::setHasEverPaintedImages(bool hasEverPaintedImages)
+{
+    ensureRareData().setHasEverPaintedImages(hasEverPaintedImages);
+}
+
 ContainerNode* Node::parentInComposedTree() const
 {
     ASSERT(isMainThreadOrGCThread());

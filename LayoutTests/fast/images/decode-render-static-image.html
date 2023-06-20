@@ -26,7 +26,7 @@
         image.onload = (() => {
             if (window.internals && window.testRunner) {
                 // Force async image decoding for this image.
-                internals.setLargeImageAsyncDecodingEnabledForTesting(image, true);
+                internals.setAsyncDecodingEnabledForTesting(image, true);
 
                 // Force layout and display so the image gets drawn.
                 document.body.offsetHeight;
