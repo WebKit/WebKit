@@ -339,15 +339,6 @@ std::optional<ElementUpdate> TreeResolver::resolvePseudoElement(Element& element
     if (!resolvedStyle)
         return { };
 
-    // FIXME: This test shouldn't be needed.
-    bool alwaysNeedsPseudoElement = resolvedStyle->style->hasAnimationsOrTransitions()
-        || element.hasKeyframeEffects(pseudoId)
-        || pseudoId == PseudoId::FirstLine
-        || pseudoId == PseudoId::FirstLetter
-        || pseudoId == PseudoId::Scrollbar;
-    if (!alwaysNeedsPseudoElement && !pseudoElementRendererIsNeeded(resolvedStyle->style.get()))
-        return { };
-
     auto animatedUpdate = createAnimatedElementUpdate(WTFMove(*resolvedStyle), { element, pseudoId }, elementUpdate.change, resolutionContext);
 
     if (pseudoId == PseudoId::Before || pseudoId == PseudoId::After) {
