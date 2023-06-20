@@ -49,6 +49,7 @@
 #endif
 
 #if USE(GSTREAMER)
+#include "MockDisplayCaptureSourceGStreamer.h"
 #include "MockRealtimeVideoSourceGStreamer.h"
 #endif
 
