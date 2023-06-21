@@ -49,15 +49,16 @@ struct WebGPUPtrTraits {
 };
 
 template <typename T, void (*reference)(T), void(*release)(T)> struct BaseWebGPURefDerefTraits {
-    static ALWAYS_INLINE void refIfNotNull(T t)
+    static ALWAYS_INLINE T refIfNotNull(T t)
     {
-        if (LIKELY(t != nullptr))
+        if (LIKELY(t))
             reference(t);
+        return t;
     }
 
     static ALWAYS_INLINE void derefIfNotNull(T t)
     {
-        if (LIKELY(t != nullptr))
+        if (LIKELY(t))
             release(t);
     }
 };

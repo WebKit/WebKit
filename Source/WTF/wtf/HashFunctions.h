@@ -237,7 +237,7 @@ namespace WTF {
     // make PtrHash the default hash function for pointer types that don't specialize
 
     template<typename P> struct DefaultHash<P*> : PtrHash<P*> { };
-    template<typename P> struct DefaultHash<RefPtr<P>> : PtrHash<RefPtr<P>> { };
+    template<typename P, typename Q, typename R> struct DefaultHash<RefPtr<P, Q, R>> : PtrHash<RefPtr<P, Q, R>> { };
     template<typename P> struct DefaultHash<Ref<P>> : PtrHash<Ref<P>> { };
 
     template<typename P, typename Deleter> struct DefaultHash<std::unique_ptr<P, Deleter>> : PtrHash<std::unique_ptr<P, Deleter>> { };

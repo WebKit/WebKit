@@ -49,9 +49,8 @@ public:
 
     void setPointer(T* pointer)
     {
-        WTF::DefaultRefDerefTraits<T>::refIfNotNull(pointer);
         auto* old = m_data.pointer();
-        m_data.setPointer(pointer);
+        m_data.setPointer(WTF::DefaultRefDerefTraits<T>::refIfNotNull(pointer));
         WTF::DefaultRefDerefTraits<T>::derefIfNotNull(old);
     }
 

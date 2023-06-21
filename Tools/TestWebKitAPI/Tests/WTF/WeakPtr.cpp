@@ -3007,4 +3007,19 @@ TEST(WTF_ThreadSafeWeakPtr, RemoveInDestructor)
     }
 }
 
+TEST(WTF_ThreadSafeWeakPtr, WeakRefInDestructor)
+{
+    struct S;
+    static ThreadSafeWeakPtr<S> weakPtr;
+    struct S : ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<S> {
+        ~S() { weakPtr = { *this }; }
+    };
+
+    {
+        auto s = adoptRef(*new S);
+    }
+    auto shouldBeNull = weakPtr.get();
+    EXPECT_NULL(shouldBeNull.get());
+}
+
 } // namespace TestWebKitAPI
