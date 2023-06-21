@@ -57,7 +57,7 @@ public:
             }
         }();
 
-        auto stringObject = createString(string, priorContext);
+        auto stringObject = createContextualizedCFString(string, priorContext);
         m_stringLength = string.length();
         m_priorContextLength = priorContext.length();
         auto localeObject = adoptCF(CFLocaleCreate(kCFAllocatorDefault, locale.string().createCFString().get()));
@@ -72,7 +72,7 @@ public:
 
     void setText(StringView string, StringView priorContext)
     {
-        auto stringObject = createString(string, priorContext);
+        auto stringObject = createContextualizedCFString(string, priorContext);
         m_stringLength = string.length();
         m_priorContextLength = priorContext.length();
         CFStringTokenizerSetString(m_stringTokenizer.get(), stringObject.get(), CFRangeMake(0, m_stringLength));
@@ -114,13 +114,6 @@ public:
     }
 
 private:
-    RetainPtr<CFStringRef> createString(StringView string, StringView priorContext)
-    {
-        if (priorContext.empty())
-            return string.createCFStringWithoutCopying();
-        return createContextualizedCFString(string, priorContext);
-    }
-
     RetainPtr<CFStringTokenizerRef> m_stringTokenizer;
     unsigned long m_stringLength { 0 };
     unsigned long m_priorContextLength { 0 };
