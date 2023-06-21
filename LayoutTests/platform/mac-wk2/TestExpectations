@@ -1795,3 +1795,5 @@ webkit.org/b/258325 [ Debug ] media/modern-media-controls/pip-support/pip-suppor
 imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/replaced-element-035.html [ Pass ImageOnlyFailure ] 
 fast/forms/file/entries-api/image-no-transcode-open-panel.html [ Pass Crash ] 
 [ Debug Ventura arm64 ] http/tests/media/modern-media-controls/overflow-support/playback-speed-live-broadcast.html [ Pass Crash ]
+[ Debug arm64 ] media/track/track-css-visible-stroke.html [ Pass Crash ]
+[ Ventura Debug arm64 ] http/tests/media/modern-media-controls/skip-back-support/skip-back-support-button-click.html [ Pass Crash ]

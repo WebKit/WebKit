@@ -2727,4 +2727,7 @@ webkit.org/b/256108 media/video-audio-session-mode.html [ Failure ]
 
 webkit.org/b/258181 [ Monterey+ Debug ] inspector/debugger/async-stack-trace-truncate.html [ Timeout ]
 
-webkit.org/b/258328 [ arm64 ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworklet-denormals.https.window.html [ Failure ]
+# webkit.org/b/258328 Umbrella Bug: Batch mark expectations slowing down EWS
+[ arm64 ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworklet-denormals.https.window.html [ Failure ]
+[ Debug ] fast/editing/document-leak-altered-text-field.html [ Pass Crash ]
+[ Debug ] media/modern-media-controls/pip-support/pip-support-enabled.html [ Pass Crash ]
