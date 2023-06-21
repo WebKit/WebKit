@@ -58,6 +58,7 @@
         testRunner.addMockMicrophoneDevice("usbmic3", "my third USB microphone");
         await new Promise(resolve => setTimeout(resolve, 200));
         assert_equals(video.srcObject.getAudioTracks()[0].readyState, "live");
+        video.srcObject.getAudioTracks()[0].stop();
     }, "Adding or removing a new device should not fail ongoing capture");
     </script>
 </body>
