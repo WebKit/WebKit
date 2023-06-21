@@ -52,13 +52,11 @@ static bool foundMixedContentInFrameTree(const Frame& frame, const URL& url)
     auto* document = frame.document();
 
     while (document) {
-        RELEASE_ASSERT_WITH_MESSAGE(document->frame(), "An unparented document tried to load or run content with url: %s", url.string().utf8().data());
-
         if (isMixedContent(*document, url))
             return true;
 
         auto* frame = document->frame();
-        if (frame->isMainFrame())
+        if (!frame || frame->isMainFrame())
             break;
 
         auto* abstractParentFrame = frame->tree().parent();
