@@ -497,7 +497,7 @@ static void webkit_website_data_manager_class_init(WebKitWebsiteDataManagerClass
      * The percentage of volume space that can be used for data storage for every domain.
      * If the maximum storage is reached the storage request will fail with a QuotaExceededError exception.
      * A value of 0.0 means that data storage is not allowed. A value of -1.0, which is the default,
-     * means WebKit will use the default quota (1GB).
+     * means WebKit will use the default quota (1 GiB).
      *
      * Since: 2.42
      */
