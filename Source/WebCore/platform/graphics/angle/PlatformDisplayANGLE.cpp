@@ -68,7 +68,7 @@ EGLDisplay PlatformDisplay::angleEGLDisplay() const
 EGLContext PlatformDisplay::angleSharingGLContext()
 {
 #if PLATFORM(WIN)
-    return sharingGLContext();
+    return sharingGLContext()->platformContext();
 #else
     if (m_angleSharingGLContext != EGL_NO_CONTEXT)
         return m_angleSharingGLContext;
