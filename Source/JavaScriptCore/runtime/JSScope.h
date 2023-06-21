@@ -40,7 +40,7 @@ using TDZEnvironment = HashSet<RefPtr<UniquedStringImpl>, IdentifierRepHash>;
 class JSScope : public JSNonFinalObject {
 public:
     using Base = JSNonFinalObject;
-    static constexpr unsigned StructureFlags = Base::StructureFlags | OverridesToThis;
+    static constexpr unsigned StructureFlags = Base::StructureFlags;
 
     template<typename, SubspaceAccess>
     static void subspaceFor(VM&)

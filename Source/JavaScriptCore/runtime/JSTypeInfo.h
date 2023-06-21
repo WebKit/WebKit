@@ -41,7 +41,6 @@ static constexpr unsigned MasqueradesAsUndefined = 1; // WebCore uses Masquerade
 static constexpr unsigned ImplementsDefaultHasInstance = 1 << 1;
 static constexpr unsigned OverridesGetCallData = 1 << 2; // Need this flag if you implement [[Callable]] interface, which means overriding getCallData. The object may not be callable since getCallData can say it is not callable.
 static constexpr unsigned OverridesGetOwnPropertySlot = 1 << 3;
-static constexpr unsigned OverridesToThis = 1 << 4; // If this is false then this returns something other than 'this'. Non-object cells that are visible to JS have this set as do some exotic objects.
 static constexpr unsigned HasStaticPropertyTable = 1 << 5;
 static constexpr unsigned TypeInfoPerCellBit = 1 << 7; // Unlike other inline flags, this will only be set on the cell itself and will not be set on the Structure.
 
@@ -99,7 +98,6 @@ public:
     static bool overridesGetOwnPropertySlot(InlineTypeFlags flags) { return flags & OverridesGetOwnPropertySlot; }
     static bool hasStaticPropertyTable(InlineTypeFlags flags) { return flags & HasStaticPropertyTable; }
     static bool perCellBit(InlineTypeFlags flags) { return flags & TypeInfoPerCellBit; }
-    bool overridesToThis() const { return isSetOnFlags1<OverridesToThis>(); }
     bool structureIsImmortal() const { return isSetOnFlags2<StructureIsImmortal>(); }
     bool overridesGetOwnPropertyNames() const { return isSetOnFlags2<OverridesGetOwnPropertyNames>(); }
     bool overridesGetOwnSpecialPropertyNames() const { return isSetOnFlags2<OverridesGetOwnSpecialPropertyNames>(); }

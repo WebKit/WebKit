@@ -2307,33 +2307,39 @@ private:
         JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
 
         LValue value = lowJSValue(m_node->child1());
-        
+
         LBasicBlock isCellCase = m_out.newBlock();
+        LBasicBlock isObjectCase = m_out.newBlock();
+        LBasicBlock scopeCase = m_out.newBlock();
         LBasicBlock slowCase = m_out.newBlock();
         LBasicBlock continuation = m_out.newBlock();
-        
-        m_out.branch(
-            isCell(value, provenType(m_node->child1())), usually(isCellCase), rarely(slowCase));
-        
-        LBasicBlock lastNext = m_out.appendTo(isCellCase, slowCase);
+
+        m_out.branch(isCell(value, provenType(m_node->child1())), usually(isCellCase), rarely(slowCase));
+
+        LBasicBlock lastNext = m_out.appendTo(isCellCase, isObjectCase);
+        m_out.branch(isObject(value, provenType(m_node->child1()) & SpecCellCheck), usually(isObjectCase), rarely(slowCase));
+
+        m_out.appendTo(isObjectCase, scopeCase);
         ValueFromBlock fastResult = m_out.anchor(value);
-        m_out.branch(
-            m_out.testIsZero32(
-                m_out.load8ZeroExt32(value, m_heaps.JSCell_typeInfoFlags),
-                m_out.constInt32(OverridesToThis)),
-            usually(continuation), rarely(slowCase));
-        
+        m_out.branch(isType(value, JSTypeRange { JSType(FirstScopeType), JSType(LastScopeType) }), unsure(scopeCase), unsure(continuation));
+
+        m_out.appendTo(scopeCase, slowCase);
+        ValueFromBlock scopeResult;
+        if (m_node->ecmaMode().isStrict())
+            scopeResult = m_out.anchor(m_out.constInt64(JSValue::encode(jsUndefined())));
+        else
+            scopeResult = m_out.anchor(m_out.loadPtr(m_out.absolute(globalObject->addressOfGlobalThis())));
+        m_out.jump(continuation);
+
         m_out.appendTo(slowCase, continuation);
-        J_JITOperation_GJ function;
+        auto function = &operationToThis;
         if (m_node->ecmaMode().isStrict())
             function = operationToThisStrict;
-        else
-            function = operationToThis;
         ValueFromBlock slowResult = m_out.anchor(vmCall(Int64, function, weakPointer(globalObject), value));
         m_out.jump(continuation);
-        
+
         m_out.appendTo(continuation, lastNext);
-        setJSValue(m_out.phi(Int64, fastResult, slowResult));
+        setJSValue(m_out.phi(Int64, fastResult, scopeResult, slowResult));
     }
 
     void compileValueAdd()

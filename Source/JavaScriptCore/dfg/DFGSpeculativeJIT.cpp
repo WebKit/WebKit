@@ -15087,20 +15087,26 @@ void SpeculativeJIT::compileToThis(Node* node)
 
     JumpList slowCases;
     slowCases.append(branchIfNotCell(thisValueRegs));
-    slowCases.append(
-        branchTest8(
-            NonZero,
-            Address(thisValueRegs.payloadGPR(), JSCell::typeInfoFlagsOffset()),
-            TrustedImm32(OverridesToThis)));
-    moveValueRegs(thisValueRegs, tempRegs);
+    slowCases.append(branchIfNotObject(thisValueRegs.payloadGPR()));
 
-    J_JITOperation_GJ function;
+    moveValueRegs(thisValueRegs, tempRegs);
+    auto notScope = branchIfNotType(thisValueRegs.payloadGPR(), JSC::JSTypeRange { JSType(FirstScopeType), JSType(LastScopeType) });
+    if (node->ecmaMode().isStrict())
+        moveTrustedValue(jsUndefined(), tempRegs);
+    else {
+        loadLinkableConstant(LinkableConstant::globalObject(*this, node), tempRegs.payloadGPR());
+        loadPtr(Address(tempRegs.payloadGPR(), JSGlobalObject::offsetOfGlobalThis()), tempRegs.payloadGPR());
+#if USE(JSVALUE32_64)
+        move(TrustedImm32(JSValue::CellTag), tempRegs.tagGPR());
+#endif
+    }
+
+    auto function = &operationToThis;
     if (node->ecmaMode().isStrict())
         function = operationToThisStrict;
-    else
-        function = operationToThis;
     addSlowPathGenerator(slowPathCall(slowCases, this, function, tempRegs, LinkableConstant::globalObject(*this, node), thisValueRegs));
 
+    notScope.link(this);
     jsValueResult(tempRegs, node);
 }
 

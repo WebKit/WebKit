@@ -107,7 +107,7 @@ public:
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=212956
     // Do we really need InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero?
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=212958
-    static constexpr unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero | StructureIsImmortal | OverridesToThis | OverridesPut;
+    static constexpr unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero | StructureIsImmortal | OverridesPut;
 
     static constexpr bool needsDestruction = true;
     static ALWAYS_INLINE void destroy(JSCell* cell)

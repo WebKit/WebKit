@@ -235,7 +235,7 @@ inline ToThisResult isToThisAnIdentity(ECMAMode ecmaMode, AbstractValue& valueFo
             // We don't need to worry about strings/symbols here since either:
             // 1) We are in strict mode and strings/symbols are not wrapped
             // 2) The AI has proven that the type of this is a subtype of object
-            if (type.isObject() && type.overridesToThis())
+            if (type.isObject() && (FirstScopeType <= type.type() && type.type() <= LastScopeType))
                 overridesToThis = true;
 
             // If all the structures are JSScope's ones, we know the details of JSScope::toThis() operation.

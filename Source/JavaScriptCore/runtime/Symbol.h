@@ -34,7 +34,7 @@ namespace JSC {
 class Symbol final : public JSCell {
 public:
     typedef JSCell Base;
-    static constexpr unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal | OverridesToThis | OverridesPut;
+    static constexpr unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal | OverridesPut;
 
     DECLARE_EXPORT_INFO;
 

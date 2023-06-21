@@ -145,6 +145,9 @@ static constexpr uint32_t LastTypedArrayTypeExcludingDataView = LastTypedArrayTy
 static constexpr uint32_t FirstObjectType = ObjectType;
 static constexpr uint32_t LastObjectType = MaxJSType;
 
+static constexpr uint32_t FirstScopeType = GlobalObjectType;
+static constexpr uint32_t LastScopeType = WithScopeType;
+
 static constexpr uint32_t NumberOfTypedArrayTypes = LastTypedArrayType - FirstTypedArrayType + 1;
 static constexpr uint32_t NumberOfTypedArrayTypesExcludingDataView = NumberOfTypedArrayTypes - 1;
 static constexpr uint32_t NumberOfTypedArrayTypesExcludingBigIntArraysAndDataView = NumberOfTypedArrayTypes - 3;
