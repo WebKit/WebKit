@@ -520,18 +520,19 @@ void AccessibilityNodeObject::addChildren()
     
     m_childrenInitialized = true;
 
-    if (!canHaveChildren())
+    WeakPtr node = this->node();
+    if (!node || !canHaveChildren())
         return;
 
     // The only time we add children from the DOM tree to a node with a renderer is when it's a canvas.
-    if (renderer() && !node()->hasTagName(canvasTag))
+    if (renderer() && !node->hasTagName(canvasTag))
         return;
 
     auto objectCache = axObjectCache();
     if (!objectCache)
         return;
 
-    for (auto* child = node()->firstChild(); child; child = child->nextSibling())
+    for (auto* child = node->firstChild(); child; child = child->nextSibling())
         addChild(objectCache->getOrCreate(child));
 
     updateOwnedChildren();
