@@ -122,6 +122,11 @@ public:
 #if PLATFORM(GTK)
     virtual EGLDisplay gtkEGLDisplay() { return nullptr; }
 #endif
+
+#if ENABLE(WEBGL)
+    EGLDisplay angleEGLDisplay() const;
+    EGLContext angleSharingGLContext();
+#endif
 #endif
 
 #if ENABLE(VIDEO) && USE(GSTREAMER_GL)
@@ -162,6 +167,11 @@ protected:
     std::optional<String> m_drmDeviceFile;
     std::optional<String> m_drmRenderNodeFile;
 #endif
+
+#if ENABLE(WEBGL) && !PLATFORM(WIN)
+    std::optional<int> m_anglePlatform;
+    void* m_angleNativeDisplay { nullptr };
+#endif
 #endif
 
 #if USE(LCMS)
@@ -177,6 +187,10 @@ protected:
 private:
     static std::unique_ptr<PlatformDisplay> createPlatformDisplay();
 
+#if ENABLE(WEBGL) && !PLATFORM(WIN)
+    void clearANGLESharingGLContext();
+#endif
+
 #if USE(EGL)
     void terminateEGLDisplay();
 #if USE(GBM)
@@ -187,6 +201,10 @@ private:
     int m_eglMajorVersion { 0 };
     int m_eglMinorVersion { 0 };
     EGLExtensions m_eglExtensions;
+#if ENABLE(WEBGL) && !PLATFORM(WIN)
+    mutable EGLDisplay m_angleEGLDisplay { nullptr };
+    EGLContext m_angleSharingGLContext { nullptr };
+#endif
 #endif
 
 #if ENABLE(VIDEO) && USE(GSTREAMER_GL)

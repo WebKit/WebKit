@@ -10,10 +10,10 @@
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
  *
- * THIS SOFTWARE IS PROVIDED BY APPLE COMPUTER, INC. ``AS IS'' AND ANY
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE COMPUTER, INC. OR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
  * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
  * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
  * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
@@ -24,44 +24,31 @@
  */
 
 #include "config.h"
-#include "PlatformDisplayGBM.h"
+#include "GraphicsContextGLTextureMapperANGLE.h"
 
-#if USE(EGL) && USE(GBM)
-#include "GLContext.h"
-#include <epoxy/egl.h>
-#include <gbm.h>
+#if ENABLE(WEBGL) && USE(TEXTURE_MAPPER) && USE(NICOSIA)
+#include <epoxy/gl.h>
 
 namespace WebCore {
 
-std::unique_ptr<PlatformDisplayGBM> PlatformDisplayGBM::create(struct gbm_device* device)
+GCGLuint GraphicsContextGLTextureMapperANGLE::setupCurrentTexture()
 {
-    return std::unique_ptr<PlatformDisplayGBM>(new PlatformDisplayGBM(device));
-}
+    // Current texture was bound by ANGLE, we query using epoxy to get the actual texture ID.
+    GLint texture;
+    glGetIntegerv(GL_TEXTURE_BINDING_2D, &texture);
 
-PlatformDisplayGBM::PlatformDisplayGBM(struct gbm_device* device)
-{
-#if PLATFORM(GTK)
-    PlatformDisplay::setSharedDisplayForCompositing(*this);
-#endif
-
-    const char* extensions = eglQueryString(nullptr, EGL_EXTENSIONS);
-    if (GLContext::isExtensionSupported(extensions, "EGL_EXT_platform_base"))
-        m_eglDisplay = eglGetPlatformDisplayEXT(EGL_PLATFORM_GBM_KHR, device, nullptr);
-    else if (GLContext::isExtensionSupported(extensions, "EGL_KHR_platform_base"))
-        m_eglDisplay = eglGetPlatformDisplay(EGL_PLATFORM_GBM_KHR, device, nullptr);
-
-    PlatformDisplay::initializeEGLDisplay();
-
-#if ENABLE(WEBGL)
-    m_anglePlatform = EGL_PLATFORM_GBM_KHR;
-    m_angleNativeDisplay = device;
-#endif
-}
-
-PlatformDisplayGBM::~PlatformDisplayGBM()
-{
+    // The texture has been configured by ANGLE too, but the values are cached and only applied
+    // when another call causes a texture state sync, which doesn't happen. So, we set the same
+    // parmeters here using epoxy to make sure the texture is configured as expected by the
+    // texture mapper.
+    GLenum textureTarget = drawingBufferTextureTarget();
+    glTexParameteri(textureTarget, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(textureTarget, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(textureTarget, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(textureTarget, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    return texture;
 }
 
 } // namespace WebCore
 
-#endif // USE(EGL) && USE(GBM)
+#endif // ENABLE(WEBGL) && USE(TEXTURE_MAPPER) && USE(NICOSIA)

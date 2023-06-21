@@ -25,9 +25,15 @@
 
 #pragma once
 
-#if ENABLE(WEBGL) && USE(TEXTURE_MAPPER) && !USE(NICOSIA)
+#if ENABLE(WEBGL) && USE(TEXTURE_MAPPER)
 
 #include "GraphicsContextGLANGLE.h"
+
+#if USE(NICOSIA)
+namespace Nicosia {
+class GCGLANGLELayer;
+}
+#endif
 
 namespace WebCore {
 
@@ -60,6 +66,10 @@ private:
 
     void prepareTexture() final;
 
+#if USE(NICOSIA)
+    GCGLuint setupCurrentTexture();
+#endif
+
     RefPtr<GraphicsLayerContentsDisplayDelegate> m_layerContentsDisplayDelegate;
 
     GCGLuint m_compositorTexture { 0 };
@@ -67,11 +77,21 @@ private:
     GCGLuint m_intermediateTexture { 0 };
 #endif
 
+#if USE(NICOSIA)
+    GCGLuint m_textureID { 0 };
+    GCGLuint m_compositorTextureID { 0 };
+    GCGLuint m_intermediateTextureID { 0 };
+
+    std::unique_ptr<Nicosia::GCGLANGLELayer> m_nicosiaLayer;
+
+    friend class Nicosia::GCGLANGLELayer;
+#else
     std::unique_ptr<TextureMapperGCGLPlatformLayer> m_texmapLayer;
 
     friend class TextureMapperGCGLPlatformLayer;
+#endif
 };
 
 } // namespace WebCore
 
-#endif // ENABLE(WEBGL) && USE(TEXTURE_MAPPER) && !USE(NICOSIA)
+#endif // ENABLE(WEBGL) && USE(TEXTURE_MAPPER)

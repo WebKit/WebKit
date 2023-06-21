@@ -66,6 +66,8 @@ platform/generic/ScrollbarsControllerGeneric.cpp
 
 platform/graphics/PlatformDisplay.cpp
 
+platform/graphics/angle/PlatformDisplayANGLE.cpp @no-unify
+
 platform/graphics/wpe/SystemFontDatabaseWPE.cpp
 
 platform/graphics/egl/GLContext.cpp
@@ -73,8 +75,6 @@ platform/graphics/egl/GLContextLibWPE.cpp
 
 platform/graphics/gbm/GBMBufferSwapchain.cpp
 platform/graphics/gbm/GBMDevice.cpp
-platform/graphics/gbm/GraphicsContextGLANGLELinux.cpp @no-unify
-platform/graphics/gbm/GraphicsContextGLFallback.cpp @no-unify
 platform/graphics/gbm/GraphicsContextGLGBM.cpp @no-unify
 platform/graphics/gbm/GraphicsContextGLGBMTextureMapper.cpp @no-unify
 

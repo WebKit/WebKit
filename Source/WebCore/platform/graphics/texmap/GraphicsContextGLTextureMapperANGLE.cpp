@@ -27,20 +27,27 @@
 #include "config.h"
 #include "GraphicsContextGLTextureMapperANGLE.h"
 
-#if ENABLE(WEBGL) && USE(TEXTURE_MAPPER) && !USE(NICOSIA)
+#if ENABLE(WEBGL) && USE(TEXTURE_MAPPER)
 
 #include "ANGLEHeaders.h"
 #include "ANGLEUtilities.h"
 #include "Logging.h"
 #include "PixelBuffer.h"
+#include "PlatformDisplay.h"
 #include "PlatformLayerDisplayDelegate.h"
 
-#include "GLContext.h"
-#include "PlatformDisplay.h"
+#if USE(NICOSIA)
+#include "NicosiaGCGLANGLELayer.h"
+#else
 #include "TextureMapperGCGLPlatformLayer.h"
+#endif
 
 #if USE(GSTREAMER) && ENABLE(MEDIA_STREAM)
 #include "VideoFrameGStreamer.h"
+#endif
+
+#if USE(ANGLE_GBM)
+#include "GraphicsContextGLGBMTextureMapper.h"
 #endif
 
 namespace WebCore {
@@ -65,12 +72,15 @@ GraphicsContextGLANGLE::~GraphicsContextGLANGLE()
             GL_DeleteRenderbuffers(1, &m_depthStencilBuffer);
     }
     GL_DeleteFramebuffers(1, &m_fbo);
+
+    if (m_contextObj) {
+        EGL_MakeCurrent(m_displayObj, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
+        EGL_DestroyContext(m_displayObj, m_contextObj);
+    }
 }
 
 bool GraphicsContextGLANGLE::makeContextCurrent()
 {
-    if (EGL_GetCurrentContext() == m_contextObj)
-        return true;
     return !!EGL_MakeCurrent(m_displayObj, EGL_NO_SURFACE, EGL_NO_SURFACE, m_contextObj);
 }
 
@@ -89,6 +99,11 @@ RefPtr<PixelBuffer> GraphicsContextGLTextureMapperANGLE::readCompositedResults()
 
 RefPtr<GraphicsContextGL> createWebProcessGraphicsContextGL(const GraphicsContextGLAttributes& attributes, SerialFunctionDispatcher*)
 {
+#if USE(ANGLE_GBM)
+    auto& eglExtensions = PlatformDisplay::sharedDisplayForCompositing().eglExtensions();
+    if (eglExtensions.KHR_image_base && eglExtensions.EXT_image_dma_buf_import)
+        return GraphicsContextGLGBMTextureMapper::create(GraphicsContextGLAttributes { attributes });
+#endif
     return GraphicsContextGLTextureMapperANGLE::create(GraphicsContextGLAttributes { attributes });
 }
 
@@ -126,7 +141,7 @@ RefPtr<GraphicsLayerContentsDisplayDelegate> GraphicsContextGLTextureMapperANGLE
 #if ENABLE(VIDEO)
 bool GraphicsContextGLTextureMapperANGLE::copyTextureFromMedia(MediaPlayer&, PlatformGLObject, GCGLenum, GCGLint, GCGLenum, GCGLenum, GCGLenum, bool, bool)
 {
-    // FIXME: Implement copy-free (or at least, software copy-free) texture transfer via dmabuf.
+    // FIXME: Implement copy-free (or at least, software copy-free) texture transfer.
     return false;
 }
 #endif
@@ -146,31 +161,19 @@ bool GraphicsContextGLTextureMapperANGLE::platformInitializeContext()
 {
     m_isForWebGL2 = contextAttributes().webGLVersion == GraphicsContextGLWebGLVersion::WebGL2;
 
-    Vector<EGLint> displayAttributes {
-#if !OS(WINDOWS)
-        EGL_PLATFORM_ANGLE_TYPE_ANGLE, EGL_PLATFORM_ANGLE_TYPE_OPENGLES_ANGLE,
-        EGL_PLATFORM_ANGLE_DEVICE_TYPE_ANGLE, EGL_PLATFORM_ANGLE_DEVICE_TYPE_EGL_ANGLE,
-        EGL_PLATFORM_ANGLE_NATIVE_PLATFORM_TYPE_ANGLE, EGL_PLATFORM_SURFACELESS_MESA,
-#endif
-        EGL_NONE,
-    };
-
-    m_displayObj = EGL_GetPlatformDisplayEXT(EGL_PLATFORM_ANGLE_ANGLE, EGL_DEFAULT_DISPLAY, displayAttributes.data());
+    auto& sharedDisplay = PlatformDisplay::sharedDisplayForCompositing();
+    m_displayObj = sharedDisplay.angleEGLDisplay();
     if (m_displayObj == EGL_NO_DISPLAY)
         return false;
-
-    EGLint majorVersion, minorVersion;
-    if (EGL_Initialize(m_displayObj, &majorVersion, &minorVersion) == EGL_FALSE) {
-        LOG(WebGL, "EGLDisplay Initialization failed.");
-        return false;
-    }
-    LOG(WebGL, "ANGLE initialised Major: %d Minor: %d", majorVersion, minorVersion);
 
     const char* displayExtensions = EGL_QueryString(m_displayObj, EGL_EXTENSIONS);
     LOG(WebGL, "Extensions: %s", displayExtensions);
 
     EGLint configAttributes[] = {
         EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
+#if USE(NICOSIA)
+        EGL_SURFACE_TYPE, sharedDisplay.type() == PlatformDisplay::Type::Surfaceless ? EGL_PBUFFER_BIT : EGL_WINDOW_BIT,
+#endif
         EGL_RED_SIZE, 8,
         EGL_GREEN_SIZE, 8,
         EGL_BLUE_SIZE, 8,
@@ -215,6 +218,10 @@ bool GraphicsContextGLTextureMapperANGLE::platformInitializeContext()
     // WebGL doesn't allow implicit creation of objects on bind.
     eglContextAttributes.append(EGL_CONTEXT_BIND_GENERATES_RESOURCE_CHROMIUM);
     eglContextAttributes.append(EGL_FALSE);
+#if USE(NICOSIA)
+    eglContextAttributes.append(EGL_CONTEXT_VIRTUALIZATION_GROUP_ANGLE);
+    eglContextAttributes.append(0);
+#endif
 
     if (strstr(displayExtensions, "EGL_ANGLE_power_preference")) {
         eglContextAttributes.append(EGL_POWER_PREFERENCE_ANGLE);
@@ -224,8 +231,7 @@ bool GraphicsContextGLTextureMapperANGLE::platformInitializeContext()
     }
     eglContextAttributes.append(EGL_NONE);
 
-    auto sharingContext = PlatformDisplay::sharedDisplayForCompositing().sharingGLContext()->platformContext();
-    m_contextObj = EGL_CreateContext(m_displayObj, m_configObj, sharingContext, eglContextAttributes.data());
+    m_contextObj = EGL_CreateContext(m_displayObj, m_configObj, sharedDisplay.angleSharingGLContext(), eglContextAttributes.data());
     if (m_contextObj == EGL_NO_CONTEXT) {
         LOG(WebGL, "EGLContext Initialization failed.");
         return false;
@@ -243,15 +249,16 @@ bool GraphicsContextGLTextureMapperANGLE::platformInitialize()
     if (m_isForWebGL2)
         GL_Enable(GraphicsContextGL::PRIMITIVE_RESTART_FIXED_INDEX);
 
+#if USE(NICOSIA)
+    m_nicosiaLayer = makeUnique<Nicosia::GCGLANGLELayer>(*this);
+    m_layerContentsDisplayDelegate = PlatformLayerDisplayDelegate::create(&m_nicosiaLayer->contentLayer());
+#else
     m_texmapLayer = makeUnique<TextureMapperGCGLPlatformLayer>(*this);
     m_layerContentsDisplayDelegate = PlatformLayerDisplayDelegate::create(m_texmapLayer.get());
+#endif
 
     bool success = makeContextCurrent();
     ASSERT_UNUSED(success, success);
-
-    // We require this extension to render into the dmabuf-backed EGLImage.
-    RELEASE_ASSERT(supportsExtension("GL_OES_EGL_image"_s));
-    GL_RequestExtensionANGLE("GL_OES_EGL_image");
 
     Vector<ASCIILiteral, 4> requiredExtensions;
     if (m_isForWebGL2) {
@@ -275,33 +282,41 @@ bool GraphicsContextGLTextureMapperANGLE::platformInitialize()
     // Create a texture to render into.
     GL_GenTextures(1, &m_texture);
     GL_BindTexture(textureTarget, m_texture);
-    GL_TexParameterf(textureTarget, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    GL_TexParameterf(textureTarget, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    GL_TexParameteri(textureTarget, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    GL_TexParameteri(textureTarget, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     GL_TexParameteri(textureTarget, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     GL_TexParameteri(textureTarget, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+#if USE(NICOSIA)
+    m_textureID = setupCurrentTexture();
+#endif
+
+    GL_GenTextures(1, &m_compositorTexture);
+    GL_BindTexture(textureTarget, m_compositorTexture);
+    GL_TexParameteri(textureTarget, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    GL_TexParameteri(textureTarget, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    GL_TexParameteri(textureTarget, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    GL_TexParameteri(textureTarget, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+#if USE(NICOSIA)
+    m_compositorTextureID = setupCurrentTexture();
+#endif
+
+#if USE(COORDINATED_GRAPHICS)
+    GL_GenTextures(1, &m_intermediateTexture);
+    GL_BindTexture(textureTarget, m_intermediateTexture);
+    GL_TexParameteri(textureTarget, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    GL_TexParameteri(textureTarget, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    GL_TexParameteri(textureTarget, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    GL_TexParameteri(textureTarget, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+#if USE(NICOSIA)
+    m_intermediateTextureID = setupCurrentTexture();
+#endif
+#endif
+
     GL_BindTexture(textureTarget, 0);
 
     // Create an FBO.
     GL_GenFramebuffers(1, &m_fbo);
     GL_BindFramebuffer(GL_FRAMEBUFFER, m_fbo);
-
-    GL_GenTextures(1, &m_compositorTexture);
-    GL_BindTexture(textureTarget, m_compositorTexture);
-    GL_TexParameterf(textureTarget, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    GL_TexParameterf(textureTarget, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    GL_TexParameteri(textureTarget, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    GL_TexParameteri(textureTarget, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
-#if USE(COORDINATED_GRAPHICS)
-    GL_GenTextures(1, &m_intermediateTexture);
-    GL_BindTexture(textureTarget, m_intermediateTexture);
-    GL_TexParameterf(textureTarget, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    GL_TexParameterf(textureTarget, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    GL_TexParameteri(textureTarget, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    GL_TexParameteri(textureTarget, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
-    GL_BindTexture(textureTarget, 0);
-#endif
 
     // Create a multisample FBO.
     ASSERT(m_state.boundReadFBO == m_state.boundDrawFBO);
@@ -334,6 +349,10 @@ void GraphicsContextGLTextureMapperANGLE::prepareTexture()
     std::swap(m_texture, m_compositorTexture);
 #if USE(COORDINATED_GRAPHICS)
     std::swap(m_texture, m_intermediateTexture);
+#if USE(NICOSIA)
+    std::swap(m_textureID, m_compositorTextureID);
+    std::swap(m_textureID, m_intermediateTextureID);
+#endif
 #endif
 
     GL_BindFramebuffer(GL_FRAMEBUFFER, m_fbo);
@@ -383,4 +402,4 @@ void GraphicsContextGLTextureMapperANGLE::prepareForDisplay()
 
 } // namespace WebCore
 
-#endif // ENABLE(WEBGL) && USE(TEXTURE_MAPPER) && !USE(NICOSIA)
+#endif // ENABLE(WEBGL) && USE(TEXTURE_MAPPER)

@@ -102,9 +102,6 @@ void TextureMapperPlatformLayerBuffer::paintToTextureMapper(TextureMapper& textu
     if (m_hasManagedTexture) {
         ASSERT(m_texture);
         BitmapTextureGL* textureGL = static_cast<BitmapTextureGL*>(m_texture.get());
-#if USE(ANGLE)
-        textureGL->updatePendingContents(IntRect(IntPoint(), textureGL->contentSize()), IntPoint());
-#endif
         texmapGL.drawTexture(textureGL->id(), m_extraFlags | textureGL->colorConvertFlags(), textureGL->size(), targetRect, modelViewMatrix, opacity);
         return;
     }
