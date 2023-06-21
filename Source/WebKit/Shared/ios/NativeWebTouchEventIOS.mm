@@ -51,22 +51,22 @@ static inline WebEventType webEventTypeForUIWebTouchEventType(UIWebTouchEventTyp
     }
 }
 
-static WebPlatformTouchPoint::TouchPointState convertTouchPhase(UITouchPhase touchPhase)
+static WebPlatformTouchPoint::State convertTouchPhase(UITouchPhase touchPhase)
 {
     switch (touchPhase) {
     case UITouchPhaseBegan:
-        return WebPlatformTouchPoint::TouchPressed;
+        return WebPlatformTouchPoint::State::Pressed;
     case UITouchPhaseMoved:
-        return WebPlatformTouchPoint::TouchMoved;
+        return WebPlatformTouchPoint::State::Moved;
     case UITouchPhaseStationary:
-        return WebPlatformTouchPoint::TouchStationary;
+        return WebPlatformTouchPoint::State::Stationary;
     case UITouchPhaseEnded:
-        return WebPlatformTouchPoint::TouchReleased;
+        return WebPlatformTouchPoint::State::Released;
     case UITouchPhaseCancelled:
-        return WebPlatformTouchPoint::TouchCancelled;
+        return WebPlatformTouchPoint::State::Cancelled;
     default:
         ASSERT_NOT_REACHED();
-        return WebPlatformTouchPoint::TouchStationary;
+        return WebPlatformTouchPoint::State::Stationary;
     }
 }
 
@@ -107,7 +107,7 @@ Vector<WebPlatformTouchPoint> NativeWebTouchEvent::extractWebTouchPoint(const _U
         const _UIWebTouchPoint& touchPoint = event->touchPoints[i];
         unsigned identifier = touchPoint.identifier;
         WebCore::IntPoint location = positionForCGPoint(touchPoint.locationInDocumentCoordinates);
-        WebPlatformTouchPoint::TouchPointState phase = convertTouchPhase(touchPoint.phase);
+        WebPlatformTouchPoint::State phase = convertTouchPhase(touchPoint.phase);
         WebPlatformTouchPoint platformTouchPoint = WebPlatformTouchPoint(identifier, location, phase);
 #if ENABLE(IOS_TOUCH_EVENTS)
         auto radius = radiusForTouchPoint(touchPoint);

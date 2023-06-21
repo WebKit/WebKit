@@ -1683,7 +1683,7 @@ static void webkitWebViewBaseLeave(WebKitWebViewBase* webViewBase, GdkCrossingMo
 #endif
 
 #if ENABLE(TOUCH_EVENTS)
-static void appendTouchEvent(GtkWidget* webViewBase, Vector<WebPlatformTouchPoint>& touchPoints, GdkEvent* event, WebPlatformTouchPoint::TouchPointState state)
+static void appendTouchEvent(GtkWidget* webViewBase, Vector<WebPlatformTouchPoint>& touchPoints, GdkEvent* event, WebPlatformTouchPoint::State state)
 {
     gdouble x, y;
     gdk_event_get_coords(event, &x, &y);
@@ -1700,22 +1700,22 @@ static void appendTouchEvent(GtkWidget* webViewBase, Vector<WebPlatformTouchPoin
     touchPoints.uncheckedAppend(WebPlatformTouchPoint(identifier, state, IntPoint(xRoot, yRoot), IntPoint(x, y)));
 }
 
-static inline WebPlatformTouchPoint::TouchPointState touchPointStateForEvents(GdkEvent* current, GdkEvent* event)
+static inline WebPlatformTouchPoint::State touchPointStateForEvents(GdkEvent* current, GdkEvent* event)
 {
     if (gdk_event_get_event_sequence(current) != gdk_event_get_event_sequence(event))
-        return WebPlatformTouchPoint::TouchStationary;
+        return WebPlatformTouchPoint::State::Stationary;
 
     switch (gdk_event_get_event_type(event)) {
     case GDK_TOUCH_UPDATE:
-        return WebPlatformTouchPoint::TouchMoved;
+        return WebPlatformTouchPoint::State::Moved;
     case GDK_TOUCH_BEGIN:
-        return WebPlatformTouchPoint::TouchPressed;
+        return WebPlatformTouchPoint::State::Pressed;
     case GDK_TOUCH_END:
-        return WebPlatformTouchPoint::TouchReleased;
+        return WebPlatformTouchPoint::State::Released;
     case GDK_TOUCH_CANCEL:
-        return WebPlatformTouchPoint::TouchCancelled;
+        return WebPlatformTouchPoint::State::Cancelled;
     default:
-        return WebPlatformTouchPoint::TouchStationary;
+        return WebPlatformTouchPoint::State::Stationary;
     }
 }
 
@@ -1732,7 +1732,7 @@ static void webkitWebViewBaseGetTouchPointsForEvent(WebKitWebViewBase* webViewBa
 
     // Touch was already removed from the TouchEventsMap, add it here.
     if (touchEnd)
-        appendTouchEvent(widget, touchPoints, event, WebPlatformTouchPoint::TouchReleased);
+        appendTouchEvent(widget, touchPoints, event, WebPlatformTouchPoint::State::Released);
 }
 
 #if USE(GTK4)

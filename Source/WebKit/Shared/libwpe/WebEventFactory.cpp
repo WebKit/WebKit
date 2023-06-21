@@ -261,24 +261,24 @@ WebWheelEvent WebEventFactory::createWebWheelEvent(struct wpe_input_axis_event* 
 }
 
 #if ENABLE(TOUCH_EVENTS)
-static WebKit::WebPlatformTouchPoint::TouchPointState stateForTouchPoint(int mainEventId, const struct wpe_input_touch_event_raw* point)
+static WebKit::WebPlatformTouchPoint::State stateForTouchPoint(int mainEventId, const struct wpe_input_touch_event_raw* point)
 {
     if (point->id != mainEventId)
-        return WebKit::WebPlatformTouchPoint::TouchStationary;
+        return WebKit::WebPlatformTouchPoint::State::Stationary;
 
     switch (point->type) {
     case wpe_input_touch_event_type_down:
-        return WebKit::WebPlatformTouchPoint::TouchPressed;
+        return WebKit::WebPlatformTouchPoint::State::Pressed;
     case wpe_input_touch_event_type_motion:
-        return WebKit::WebPlatformTouchPoint::TouchMoved;
+        return WebKit::WebPlatformTouchPoint::State::Moved;
     case wpe_input_touch_event_type_up:
-        return WebKit::WebPlatformTouchPoint::TouchReleased;
+        return WebKit::WebPlatformTouchPoint::State::Released;
     case wpe_input_touch_event_type_null:
         ASSERT_NOT_REACHED();
         break;
     };
 
-    return WebKit::WebPlatformTouchPoint::TouchStationary;
+    return WebKit::WebPlatformTouchPoint::State::Stationary;
 }
 
 WebTouchEvent WebEventFactory::createWebTouchEvent(struct wpe_input_touch_event* event, float deviceScaleFactor)

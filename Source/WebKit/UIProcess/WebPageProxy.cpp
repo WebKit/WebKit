@@ -3565,17 +3565,17 @@ TrackingType WebPageProxy::touchEventTrackingType(const WebTouchEvent& touchStar
     globalTrackingType = mergeTrackingTypes(globalTrackingType, tracking.touchForceChangedTracking);
     for (auto& touchPoint : touchStartEvent.touchPoints()) {
         switch (touchPoint.state()) {
-        case WebPlatformTouchPoint::TouchReleased:
+        case WebPlatformTouchPoint::State::Released:
             globalTrackingType = mergeTrackingTypes(globalTrackingType, tracking.touchEndTracking);
             break;
-        case WebPlatformTouchPoint::TouchPressed:
+        case WebPlatformTouchPoint::State::Pressed:
             globalTrackingType = mergeTrackingTypes(globalTrackingType, tracking.touchStartTracking);
             break;
-        case WebPlatformTouchPoint::TouchMoved:
-        case WebPlatformTouchPoint::TouchStationary:
+        case WebPlatformTouchPoint::State::Moved:
+        case WebPlatformTouchPoint::State::Stationary:
             globalTrackingType = mergeTrackingTypes(globalTrackingType, tracking.touchMoveTracking);
             break;
-        case WebPlatformTouchPoint::TouchCancelled:
+        case WebPlatformTouchPoint::State::Cancelled:
             globalTrackingType = mergeTrackingTypes(globalTrackingType, TrackingType::Asynchronous);
             break;
         }
