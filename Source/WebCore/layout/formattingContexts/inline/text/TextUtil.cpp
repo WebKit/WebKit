@@ -337,16 +337,16 @@ unsigned TextUtil::findNextBreakablePosition(CachedLineBreakIteratorFactory& lin
 
 bool TextUtil::shouldPreserveSpacesAndTabs(const Box& layoutBox)
 {
-    // https://www.w3.org/TR/css-text-3/#white-space-property
-    auto whitespace = layoutBox.style().whiteSpace();
-    return whitespace == WhiteSpace::Pre || whitespace == WhiteSpace::PreWrap || whitespace == WhiteSpace::BreakSpaces;
+    // https://www.w3.org/TR/css-text-4/#white-space-collapsing
+    auto whitespaceCollapse = layoutBox.style().whiteSpaceCollapse();
+    return whitespaceCollapse == WhiteSpaceCollapse::Preserve || whitespaceCollapse == WhiteSpaceCollapse::BreakSpaces;
 }
 
 bool TextUtil::shouldPreserveNewline(const Box& layoutBox)
 {
-    auto whitespace = layoutBox.style().whiteSpace();
-    // https://www.w3.org/TR/css-text-3/#white-space-property
-    return whitespace == WhiteSpace::Pre || whitespace == WhiteSpace::PreWrap || whitespace == WhiteSpace::BreakSpaces || whitespace == WhiteSpace::PreLine; 
+    // https://www.w3.org/TR/css-text-4/#white-space-collapsing
+    auto whitespaceCollapse = layoutBox.style().whiteSpaceCollapse();
+    return whitespaceCollapse == WhiteSpaceCollapse::Preserve || whitespaceCollapse == WhiteSpaceCollapse::PreserveBreaks || whitespaceCollapse == WhiteSpaceCollapse::BreakSpaces;
 }
 
 bool TextUtil::isWrappingAllowed(const RenderStyle& style)
