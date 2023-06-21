@@ -55,9 +55,11 @@
 #import "WebSleepDisablerClient.h"
 #import "WebSystemSoundDelegate.h"
 #import "WebsiteDataStoreParameters.h"
+#import <CoreMedia/CMFormatDescription.h>
 #import <JavaScriptCore/ConfigFile.h>
 #import <JavaScriptCore/Options.h>
 #import <WebCore/AVAssetMIMETypeCache.h>
+#import <pal/spi/cf/VideoToolboxSPI.h>
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 #import <WebCore/AXIsolatedObject.h>
@@ -176,10 +178,6 @@
 #import <pal/cocoa/DataDetectorsCoreSoftLink.h>
 #import <pal/cocoa/MediaToolboxSoftLink.h>
 
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/VideoToolboxAdditions.h>
-#endif
-
 #if HAVE(CATALYST_USER_INTERFACE_IDIOM_AND_SCALE_FACTOR)
 // FIXME: This is only for binary compatibility with versions of UIKit in macOS 11 that are missing the change in <rdar://problem/68524148>.
 SOFT_LINK_FRAMEWORK(UIKit)
@@ -280,6 +278,48 @@ static void softlinkDataDetectorsFrameworks()
 #endif // ENABLE(DATA_DETECTION)
 }
 
+enum class VideoDecoderBehavior : uint8_t {
+    AvoidHardware               = 1 << 0,
+    AvoidIOSurface              = 1 << 1,
+    EnableCommonVideoDecoders   = 1 << 2,
+    EnableHEIC                  = 1 << 3,
+    EnableAVIF                  = 1 << 4,
+};
+
+static void setVideoDecoderBehaviors(OptionSet<VideoDecoderBehavior> videoDecoderBehavior)
+{
+    if (!(PAL::isVideoToolboxFrameworkAvailable() && PAL::canLoad_VideoToolbox_VTRestrictVideoDecoders()))
+        return;
+
+    Vector<CMVideoCodecType> allowedCodecTypeList;
+
+    if (videoDecoderBehavior.contains(VideoDecoderBehavior::EnableCommonVideoDecoders)) {
+        allowedCodecTypeList.append(kCMVideoCodecType_H263);
+        allowedCodecTypeList.append(kCMVideoCodecType_H264);
+        allowedCodecTypeList.append(kCMVideoCodecType_MPEG4Video);
+    }
+
+    if (videoDecoderBehavior.contains(VideoDecoderBehavior::EnableHEIC)) {
+        allowedCodecTypeList.append(kCMVideoCodecType_HEVC);
+        allowedCodecTypeList.append(kCMVideoCodecType_HEVCWithAlpha);
+    }
+
+#if HAVE(AVIF)
+    if (videoDecoderBehavior.contains(VideoDecoderBehavior::EnableAVIF))
+        allowedCodecTypeList.append(kCMVideoCodecType_AV1);
+#endif
+
+    unsigned flags = 0;
+
+    if (videoDecoderBehavior.contains(VideoDecoderBehavior::AvoidHardware))
+        flags |= kVTRestrictions_RunVideoDecodersInProcess | kVTRestrictions_AvoidHardwareDecoders | kVTRestrictions_AvoidHardwarePixelTransfer;
+
+    if (videoDecoderBehavior.contains(VideoDecoderBehavior::AvoidIOSurface))
+        flags |= kVTRestrictions_AvoidIOSurfaceBackings;
+
+    PAL::softLinkVideoToolboxVTRestrictVideoDecoders(flags, allowedCodecTypeList.data(), allowedCodecTypeList.size());
+}
+
 void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& parameters)
 {
     WEBPROCESS_RELEASE_LOG(Process, "WebProcess::platformInitializeWebProcess");
@@ -330,7 +370,6 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
         });
     }
 #endif // PLATFORM(MAC)
-#if USE(APPLE_INTERNAL_SDK)
     OptionSet<VideoDecoderBehavior> videoDecoderBehavior;
     
     if (parameters.enableDecodingHEIC) {
@@ -347,7 +386,6 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
         videoDecoderBehavior.add({ VideoDecoderBehavior::AvoidIOSurface, VideoDecoderBehavior::AvoidHardware });
         setVideoDecoderBehaviors(videoDecoderBehavior);
     }
-#endif
 #endif // HAVE(VIDEO_RESTRICTED_DECODING)
 
     // Disable NSURLCache.

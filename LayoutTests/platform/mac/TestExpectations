@@ -2678,10 +2678,6 @@ webkit.org/b/245686 [ Ventura+ ] fast/text/system-font-fallback.html [ ImageOnly
 
 webkit.org/b/251099 [ Ventura+ ] fast/images/avif-image-document.html [ Pass Crash ]
 
-#webkit.org/b/251526 [ Ventura EWS ] 2x AVIF tests are constant failures on EWS only
-[ Ventura ] fast/images/avif-as-image.html [ Pass ImageOnlyFailure Crash ]
-[ Ventura ] fast/images/avif-heif-container-as-image.html [ Pass ImageOnlyFailure Crash ]
-
 # AVIF overlay images are only supported on macOS and iOS post Ventura.
 [ Ventura+ ] fast/images/image-overlay-mutiple-frames.html [ Pass ImageOnlyFailure ]
 

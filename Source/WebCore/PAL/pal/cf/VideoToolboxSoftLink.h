@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,10 +28,7 @@
 
 #include <VideoToolbox/VTCompressionSession.h>
 
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/VideoToolboxSPIAdditions.h>
-#endif
-
+#include <pal/spi/cf/VideoToolboxSPI.h>
 #include <wtf/SoftLinking.h>
 
 SOFT_LINK_FRAMEWORK_FOR_HEADER(PAL, VideoToolbox)
@@ -72,8 +69,6 @@ SOFT_LINK_FUNCTION_FOR_HEADER(PAL, VideoToolbox, VTCompressionSessionInvalidate,
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, VideoToolbox, VTGetDefaultColorAttributesWithHints, OSStatus, (OSType codecTypeHint, CFStringRef colorSpaceNameHint, size_t widthHint, size_t heightHint, CFStringRef* colorPrimariesOut, CFStringRef* transferFunctionOut, CFStringRef* yCbCrMatrixOut), (codecTypeHint, colorSpaceNameHint, widthHint, heightHint, colorPrimariesOut, transferFunctionOut, yCbCrMatrixOut))
 #define VTGetDefaultColorAttributesWithHints softLink_VideoToolbox_VTGetDefaultColorAttributesWithHints
 
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/VideoToolboxSoftLinkAdditions.h>
-#endif
+SOFT_LINK_FUNCTION_MAY_FAIL_FOR_HEADER(PAL, VideoToolbox, VTRestrictVideoDecoders, OSStatus, (VTVideoDecoderRestrictions restrictionFlags, const CMVideoCodecType* allowedCodecTypeList, CMItemCount allowedCodecTypeCount), (restrictionFlags, allowedCodecTypeList, allowedCodecTypeCount));
 
 #endif // USE(AVFOUNDATION)
