@@ -46,25 +46,21 @@
 namespace WebCore {
 namespace Style {
 
-static bool shouldDirtyAllStyle(const Vector<RefPtr<StyleRuleBase>>& rules)
+static bool shouldDirtyAllStyle(const Vector<Ref<StyleRuleBase>>& rules)
 {
     for (auto& rule : rules) {
-        if (is<StyleRuleMedia>(*rule)) {
-            if (shouldDirtyAllStyle(downcast<StyleRuleMedia>(*rule).childRules()))
+        if (is<StyleRuleMedia>(rule)) {
+            if (shouldDirtyAllStyle(downcast<StyleRuleMedia>(rule).childRules()))
                 return true;
             continue;
         }
-        if (is<StyleRuleWithNesting>(*rule)) {
-            auto childRules = downcast<StyleRuleWithNesting>(*rule).nestedRules().map(
-                [](auto& rule) {
-                    return RefPtr { rule.ptr() };
-                });
-            if (shouldDirtyAllStyle(childRules))
+        if (is<StyleRuleWithNesting>(rule)) {
+            if (shouldDirtyAllStyle(downcast<StyleRuleWithNesting>(rule).nestedRules()))
                 return true;
             continue;
         }
         // FIXME: At least font faces don't need full recalc in all cases.
-        if (!is<StyleRule>(*rule))
+        if (!is<StyleRule>(rule))
             return true;
     }
     return false;

@@ -31,6 +31,7 @@
 #include "StyleRuleType.h"
 #include <map>
 #include <variant>
+#include <wtf/Ref.h>
 #include <wtf/RefPtr.h>
 #include <wtf/TypeCasts.h>
 #include <wtf/UniqueArray.h>
@@ -124,7 +125,7 @@ public:
 
     void wrapperAdoptSelectorList(CSSSelectorList&&);
 
-    Vector<RefPtr<StyleRule>> splitIntoMultipleRulesWithMaximumSelectorComponentCount(unsigned) const;
+    Vector<Ref<StyleRule>> splitIntoMultipleRulesWithMaximumSelectorComponentCount(unsigned) const;
 
 #if ENABLE(CSS_SELECTOR_JIT)
     CompiledSelector& compiledSelectorForListIndex(unsigned index) const;
@@ -280,7 +281,7 @@ private:
 
 class StyleRuleGroup : public StyleRuleBase {
 public:
-    const Vector<RefPtr<StyleRuleBase>>& childRules() const;
+    const Vector<Ref<StyleRuleBase>>& childRules() const;
 
     void wrapperInsertRule(unsigned, Ref<StyleRuleBase>&&);
     void wrapperRemoveRule(unsigned);
@@ -289,23 +290,23 @@ public:
     friend class CSSStyleSheet;
 
 protected:
-    StyleRuleGroup(StyleRuleType, Vector<RefPtr<StyleRuleBase>>&&);
+    StyleRuleGroup(StyleRuleType, Vector<Ref<StyleRuleBase>>&&);
     StyleRuleGroup(const StyleRuleGroup&);
     
 private:
-    mutable Vector<RefPtr<StyleRuleBase>> m_childRules;
+    mutable Vector<Ref<StyleRuleBase>> m_childRules;
 };
 
 class StyleRuleMedia final : public StyleRuleGroup {
 public:
-    static Ref<StyleRuleMedia> create(MQ::MediaQueryList&&, Vector<RefPtr<StyleRuleBase>>&&);
+    static Ref<StyleRuleMedia> create(MQ::MediaQueryList&&, Vector<Ref<StyleRuleBase>>&&);
     Ref<StyleRuleMedia> copy() const;
 
     const MQ::MediaQueryList& mediaQueries() const { return m_mediaQueries; }
     void setMediaQueries(MQ::MediaQueryList&& queries) { m_mediaQueries = WTFMove(queries); }
 
 private:
-    StyleRuleMedia(MQ::MediaQueryList&&, Vector<RefPtr<StyleRuleBase>>&&);
+    StyleRuleMedia(MQ::MediaQueryList&&, Vector<Ref<StyleRuleBase>>&&);
     StyleRuleMedia(const StyleRuleMedia&);
 
     MQ::MediaQueryList m_mediaQueries;
@@ -313,14 +314,14 @@ private:
 
 class StyleRuleSupports final : public StyleRuleGroup {
 public:
-    static Ref<StyleRuleSupports> create(const String& conditionText, bool conditionIsSupported, Vector<RefPtr<StyleRuleBase>>&&);
+    static Ref<StyleRuleSupports> create(const String& conditionText, bool conditionIsSupported, Vector<Ref<StyleRuleBase>>&&);
     Ref<StyleRuleSupports> copy() const { return adoptRef(*new StyleRuleSupports(*this)); }
 
     String conditionText() const { return m_conditionText; }
     bool conditionIsSupported() const { return m_conditionIsSupported; }
 
 private:
-    StyleRuleSupports(const String& conditionText, bool conditionIsSupported, Vector<RefPtr<StyleRuleBase>>&&);
+    StyleRuleSupports(const String& conditionText, bool conditionIsSupported, Vector<Ref<StyleRuleBase>>&&);
     StyleRuleSupports(const StyleRuleSupports&) = default;
 
     String m_conditionText;
@@ -330,7 +331,7 @@ private:
 class StyleRuleLayer final : public StyleRuleGroup {
 public:
     static Ref<StyleRuleLayer> createStatement(Vector<CascadeLayerName>&&);
-    static Ref<StyleRuleLayer> createBlock(CascadeLayerName&&, Vector<RefPtr<StyleRuleBase>>&&);
+    static Ref<StyleRuleLayer> createBlock(CascadeLayerName&&, Vector<Ref<StyleRuleBase>>&&);
     Ref<StyleRuleLayer> copy() const { return adoptRef(*new StyleRuleLayer(*this)); }
 
     bool isStatement() const { return type() == StyleRuleType::LayerStatement; }
@@ -340,7 +341,7 @@ public:
 
 private:
     StyleRuleLayer(Vector<CascadeLayerName>&&);
-    StyleRuleLayer(CascadeLayerName&&, Vector<RefPtr<StyleRuleBase>>&&);
+    StyleRuleLayer(CascadeLayerName&&, Vector<Ref<StyleRuleBase>>&&);
     StyleRuleLayer(const StyleRuleLayer&) = default;
 
     std::variant<CascadeLayerName, Vector<CascadeLayerName>> m_nameVariant;
@@ -348,13 +349,13 @@ private:
 
 class StyleRuleContainer final : public StyleRuleGroup {
 public:
-    static Ref<StyleRuleContainer> create(CQ::ContainerQuery&&, Vector<RefPtr<StyleRuleBase>>&&);
+    static Ref<StyleRuleContainer> create(CQ::ContainerQuery&&, Vector<Ref<StyleRuleBase>>&&);
     Ref<StyleRuleContainer> copy() const { return adoptRef(*new StyleRuleContainer(*this)); }
 
     const CQ::ContainerQuery& containerQuery() const { return m_containerQuery; }
 
 private:
-    StyleRuleContainer(CQ::ContainerQuery&&, Vector<RefPtr<StyleRuleBase>>&&);
+    StyleRuleContainer(CQ::ContainerQuery&&, Vector<Ref<StyleRuleBase>>&&);
     StyleRuleContainer(const StyleRuleContainer&) = default;
 
     CQ::ContainerQuery m_containerQuery;

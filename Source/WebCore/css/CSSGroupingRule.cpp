@@ -155,9 +155,8 @@ void CSSGroupingRule::cssTextForDeclsAndRules(StringBuilder& decls, StringBuilde
         if (!index) {
             // It's the first rule.
             auto childRule = childRules[index];
-            ASSERT(childRule);
             if (childRule->isStyleRuleWithNesting()) {
-                auto& nestedStyleRule = downcast<StyleRuleWithNesting>(*childRule);
+                auto& nestedStyleRule = downcast<StyleRuleWithNesting>(childRule);
                 if (nestedStyleRule.originalSelectorList().hasOnlyNestingSelector() && nestedStyleRule.nestedRules().isEmpty()) {
                     decls.append(nestedStyleRule.properties().asText());
                     continue;
@@ -176,9 +175,9 @@ RefPtr<StyleRuleWithNesting> CSSGroupingRule::prepareChildStyleRuleForNesting(St
     auto& rules = m_groupRule->m_childRules;
     for (size_t i = 0 ; i < rules.size() ; i++) {
         auto& rule = rules[i];
-        if (rule == &styleRule) {
+        if (rule.ptr() == &styleRule) {
             auto styleRuleWithNesting = StyleRuleWithNesting::create(WTFMove(styleRule));
-            rules[i] = styleRuleWithNesting.ptr();
+            rules[i] = styleRuleWithNesting;
             if (auto* styleSheet = parentStyleSheet())
                 styleSheet->contents().setHasNestingRules();
             return styleRuleWithNesting;
@@ -215,7 +214,7 @@ void CSSGroupingRule::reattach(StyleRuleBase& rule)
     m_groupRule = downcast<StyleRuleGroup>(rule);
     for (unsigned i = 0; i < m_childRuleCSSOMWrappers.size(); ++i) {
         if (m_childRuleCSSOMWrappers[i])
-            m_childRuleCSSOMWrappers[i]->reattach(*m_groupRule.get().childRules()[i]);
+            m_childRuleCSSOMWrappers[i]->reattach(m_groupRule->childRules()[i]);
     }
 }
 

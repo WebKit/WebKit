@@ -182,9 +182,9 @@ RefPtr<StyleRuleWithNesting> CSSStyleSheet::prepareChildStyleRuleForNesting(Styl
     RuleMutationScope scope(this);
     auto& rules = m_contents->m_childRules;
     for (size_t i = 0 ; i < rules.size() ; i++) {
-        if (rules[i] == &styleRule) {
+        if (rules[i].ptr() == &styleRule) {
             auto styleRuleWithNesting = StyleRuleWithNesting::create(WTFMove(styleRule));
-            rules[i] = styleRuleWithNesting.ptr();
+            rules[i] = styleRuleWithNesting;
             m_contents->setHasNestingRules();
             return styleRuleWithNesting;
         }        

@@ -42,8 +42,8 @@ private:
 
     void addStyleRule(StyleRuleWithNesting&);
     void addRulesFromSheetContents(const StyleSheetContents&);
-    void addChildRules(const Vector<RefPtr<StyleRuleBase>>&);
-    void addChildRule(RefPtr<StyleRuleBase>);
+    void addChildRules(const Vector<Ref<StyleRuleBase>>&);
+    void addChildRule(Ref<StyleRuleBase>);
     void disallowDynamicMediaQueryEvaluationIfNeeded();
     void addStyleRuleWithSelectorList(const CSSSelectorList&, const StyleRule&);
 

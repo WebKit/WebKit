@@ -135,7 +135,7 @@ private:
     RefPtr<StyleRuleBase> consumeQualifiedRule(CSSParserTokenRange&, AllowedRulesType);
 
     // This function is used for all the nested group rules (@media, @supports,..etc)
-    Vector<RefPtr<StyleRuleBase>> consumeRegularRuleList(CSSParserTokenRange block);
+    Vector<Ref<StyleRuleBase>> consumeRegularRuleList(CSSParserTokenRange block);
 
     static RefPtr<StyleRuleCharset> consumeCharsetRule(CSSParserTokenRange prelude);
     RefPtr<StyleRuleImport> consumeImportRule(CSSParserTokenRange prelude);
@@ -172,7 +172,7 @@ private:
 
     static Vector<double> consumeKeyframeKeyList(CSSParserTokenRange);
 
-    RefPtr<StyleRuleBase> createNestingParentRule();
+    Ref<StyleRuleBase> createNestingParentRule();
     void runInNewNestingContext(auto&& run);
     NestingContext& topContext()
     {

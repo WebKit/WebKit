@@ -103,10 +103,10 @@ public:
     void clearRules();
 
     String encodingFromCharsetRule() const { return m_encodingFromCharsetRule; }
-    const Vector<RefPtr<StyleRuleLayer>>& layerRulesBeforeImportRules() const { return m_layerRulesBeforeImportRules; }
-    const Vector<RefPtr<StyleRuleImport>>& importRules() const { return m_importRules; }
-    const Vector<RefPtr<StyleRuleNamespace>>& namespaceRules() const { return m_namespaceRules; }
-    const Vector<RefPtr<StyleRuleBase>>& childRules() const { return m_childRules; }
+    const Vector<Ref<StyleRuleLayer>>& layerRulesBeforeImportRules() const { return m_layerRulesBeforeImportRules; }
+    const Vector<Ref<StyleRuleImport>>& importRules() const { return m_importRules; }
+    const Vector<Ref<StyleRuleNamespace>>& namespaceRules() const { return m_namespaceRules; }
+    const Vector<Ref<StyleRuleBase>>& childRules() const { return m_childRules; }
 
     void notifyLoadedSheet(const CachedCSSStyleSheet*);
     
@@ -166,10 +166,10 @@ private:
     String m_originalURL;
 
     String m_encodingFromCharsetRule;
-    Vector<RefPtr<StyleRuleLayer>> m_layerRulesBeforeImportRules;
-    Vector<RefPtr<StyleRuleImport>> m_importRules;
-    Vector<RefPtr<StyleRuleNamespace>> m_namespaceRules;
-    Vector<RefPtr<StyleRuleBase>> m_childRules;
+    Vector<Ref<StyleRuleLayer>> m_layerRulesBeforeImportRules;
+    Vector<Ref<StyleRuleImport>> m_importRules;
+    Vector<Ref<StyleRuleNamespace>> m_namespaceRules;
+    Vector<Ref<StyleRuleBase>> m_childRules;
     typedef HashMap<AtomString, AtomString> PrefixNamespaceURIMap;
     PrefixNamespaceURIMap m_namespaces;
     AtomString m_defaultNamespace;

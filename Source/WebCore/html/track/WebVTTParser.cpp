@@ -391,7 +391,7 @@ bool WebVTTParser::checkAndStoreStyleSheet(StringView line)
     for (const auto& rule : childRules) {
         if (!rule->isStyleRule())
             return true;
-        const auto& styleRule = downcast<StyleRule>(*rule);
+        const auto& styleRule = downcast<StyleRule>(rule);
 
         const auto& selectorList = styleRule.selectorList();
         if (selectorList.listSize() != 1)
