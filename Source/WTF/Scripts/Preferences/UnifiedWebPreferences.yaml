@@ -1364,12 +1364,12 @@ CSSTextUnderlinePositionLeftRightEnabled:
     WebCore:
       default: false
 
-CSSTextWrapEnabled:
+CSSTextWrapNewValuesEnabled:
   type: bool
   status: testable
   category: css
-  humanReadableName: "CSS text-wrap property"
-  humanReadableDescription: "Enable text-wrap CSS property"
+  humanReadableName: "CSS text-wrap: balance stable pretty"
+  humanReadableDescription: "Enable text-wrap: balance/stable/pretty CSS support"
   defaultValue:
     WebKitLegacy:
       default: false
@@ -1421,12 +1421,12 @@ CSSTypedOMEnabled:
     WebCore:
       default: true
 
-CSSWhiteSpaceCollapseEnabled:
+CSSWhiteSpaceLonghandsEnabled:
   type: bool
   status: testable
   category: css
-  humanReadableName: "CSS white-space-collapse property"
-  humanReadableDescription: "Enable white-space-collapse CSS property"
+  humanReadableName: "CSS text-wrap & white-space-collapse properties"
+  humanReadableDescription: "Enable text-wrap & white-space-collapse CSS properties"
   defaultValue:
     WebKitLegacy:
       default: false

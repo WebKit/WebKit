@@ -5854,12 +5854,21 @@
             "values": [
                 "wrap",
                 "nowrap",
-                "balance",
-                "stable",
-                "pretty"
+                {
+                    "value": "balance",
+                    "settings-flag": "cssTextWrapNewValuesEnabled"
+                },
+                {
+                    "value": "stable",
+                    "settings-flag": "cssTextWrapNewValuesEnabled"
+                },
+                {
+                    "value": "pretty",
+                    "settings-flag": "cssTextWrapNewValuesEnabled"
+                }
             ],
             "codegen-properties": {
-                "settings-flag": "cssTextWrapEnabled",
+                "settings-flag": "cssWhiteSpaceLonghandsEnabled",
                 "parser-grammar": "<<values>>"
             },
             "specification": {
@@ -6070,7 +6079,7 @@
                 "break-spaces"
             ],
             "codegen-properties": {
-                "settings-flag": "cssWhiteSpaceCollapseEnabled",
+                "settings-flag": "cssWhiteSpaceLonghandsEnabled",
                 "parser-grammar": "<<values>>"
             },
             "specification": {

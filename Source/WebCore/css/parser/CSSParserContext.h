@@ -94,6 +94,7 @@ struct CSSParserContext {
     bool cssNestingEnabled { false };
     bool cssPaintingAPIEnabled { false };
     bool cssTextUnderlinePositionLeftRightEnabled { false };
+    bool cssTextWrapNewValuesEnabled { false };
 
     // Settings, those affecting properties.
     CSSPropertySettings propertySettings;
