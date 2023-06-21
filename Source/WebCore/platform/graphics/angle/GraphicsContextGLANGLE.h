@@ -435,6 +435,9 @@ protected:
     GCGLDisplay m_displayObj { nullptr };
     GCGLContext m_contextObj { nullptr };
     GCGLConfig m_configObj { nullptr };
+#if USE(TEXTURE_MAPPER)
+    GCEGLSuface m_surfaceObj { nullptr };
+#endif
     GCGLint m_packAlignment { 4 };
     GCGLint m_packRowLength { 0 };
 };

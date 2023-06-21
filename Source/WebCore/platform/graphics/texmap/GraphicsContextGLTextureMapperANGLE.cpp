@@ -31,6 +31,7 @@
 
 #include "ANGLEHeaders.h"
 #include "ANGLEUtilities.h"
+#include "GLContext.h"
 #include "Logging.h"
 #include "PixelBuffer.h"
 #include "PlatformDisplay.h"
@@ -77,11 +78,14 @@ GraphicsContextGLANGLE::~GraphicsContextGLANGLE()
         EGL_MakeCurrent(m_displayObj, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
         EGL_DestroyContext(m_displayObj, m_contextObj);
     }
+
+    if (m_surfaceObj)
+        EGL_DestroySurface(m_displayObj, m_surfaceObj);
 }
 
 bool GraphicsContextGLANGLE::makeContextCurrent()
 {
-    return !!EGL_MakeCurrent(m_displayObj, EGL_NO_SURFACE, EGL_NO_SURFACE, m_contextObj);
+    return !!EGL_MakeCurrent(m_displayObj, m_surfaceObj, m_surfaceObj, m_contextObj);
 }
 
 void GraphicsContextGLANGLE::checkGPUStatus()
@@ -165,10 +169,12 @@ bool GraphicsContextGLTextureMapperANGLE::platformInitializeContext()
     const char* displayExtensions = EGL_QueryString(m_displayObj, EGL_EXTENSIONS);
     LOG(WebGL, "Extensions: %s", displayExtensions);
 
+    bool isSurfacelessContextSupported = GLContext::isExtensionSupported(displayExtensions, "EGL_KHR_surfaceless_context");
+
     EGLint configAttributes[] = {
         EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
 #if USE(NICOSIA)
-        EGL_SURFACE_TYPE, sharedDisplay.type() == PlatformDisplay::Type::Surfaceless ? EGL_PBUFFER_BIT : EGL_WINDOW_BIT,
+        EGL_SURFACE_TYPE, !isSurfacelessContextSupported || sharedDisplay.type() == PlatformDisplay::Type::Surfaceless ? EGL_PBUFFER_BIT : EGL_WINDOW_BIT,
 #endif
         EGL_RED_SIZE, 8,
         EGL_GREEN_SIZE, 8,
@@ -185,6 +191,15 @@ bool GraphicsContextGLTextureMapperANGLE::platformInitializeContext()
         return false;
     }
     LOG(WebGL, "Got EGLConfig");
+
+    if (!isSurfacelessContextSupported) {
+        static const int pbufferAttributes[] = { EGL_WIDTH, 1, EGL_HEIGHT, 1, EGL_NONE };
+        m_surfaceObj = EGL_CreatePbufferSurface(m_displayObj, m_configObj, pbufferAttributes);
+        if (m_surfaceObj == EGL_NO_SURFACE) {
+            LOG(WebGL, "Surfaceless context is not supported and we failed to create a pbuffer surface");
+            return false;
+        }
+    }
 
     EGL_BindAPI(EGL_OPENGL_ES_API);
     if (EGL_GetError() != EGL_SUCCESS) {

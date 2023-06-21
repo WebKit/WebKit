@@ -67,6 +67,7 @@ using GCGLDisplay = void*;
 using GCGLConfig = void*;
 using GCGLContext = void*;
 using GCEGLImage = void*;
+using GCEGLSuface = void*;
 using GCEGLSync = void*;
 
 #if !PLATFORM(COCOA)
