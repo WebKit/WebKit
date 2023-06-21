@@ -660,7 +660,7 @@ void InlineItemsBuilder::handleTextContent(const InlineTextBox& inlineTextBox, I
                 return false;
 
             ASSERT(whitespaceContent->length);
-            if (style.whiteSpace() == WhiteSpace::BreakSpaces) {
+            if (style.whiteSpaceCollapse() == WhiteSpaceCollapse::BreakSpaces) {
                 // https://www.w3.org/TR/css-text-3/#white-space-phase-1
                 // For break-spaces, a soft wrap opportunity exists after every space and every tab.
                 // FIXME: if this turns out to be a perf hit with too many individual whitespace inline items, we should transition this logic to line breaking.
