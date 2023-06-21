@@ -46,7 +46,7 @@ private:
     ASCIILiteral renderName() const override { return "RenderSVGRect"_s; }
 
     void updateShapeFromElement() override;
-    bool isEmpty() const override { return m_usePathFallback ? LegacyRenderSVGShape::isEmpty() : m_fillBoundingBox.isEmpty(); }
+    bool isEmpty() const override { return hasPath() ? LegacyRenderSVGShape::isEmpty() : m_fillBoundingBox.isEmpty(); }
     bool isRenderingDisabled() const override;
     void fillShape(GraphicsContext&) const override;
     void strokeShape(GraphicsContext&) const override;
@@ -56,7 +56,6 @@ private:
 private:
     FloatRect m_innerStrokeRect;
     FloatRect m_outerStrokeRect;
-    bool m_usePathFallback;
 };
 
 } // namespace WebCore
