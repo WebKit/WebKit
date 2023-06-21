@@ -447,7 +447,7 @@
                     "workernames": ["gtk-linux-bot-17"]
                   },
                   {
-                    "name": "GTK-Linux-64-bit-Release-GTK4-Tests", "factory": "BuildAndTestAllButJSCFactory",
+                    "name": "GTK-Linux-64-bit-Release-GTK4-Tests", "factory": "BuildAndTestAndArchiveAllButJSCFactory",
                     "platform": "gtk", "configuration": "release", "architectures": ["x86_64"],
                     "workernames": ["gtk-linux-bot-18"]
                   },
