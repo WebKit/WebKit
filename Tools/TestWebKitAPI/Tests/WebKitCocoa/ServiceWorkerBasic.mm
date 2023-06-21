@@ -39,6 +39,9 @@
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKURLSchemeHandler.h>
 #import <WebKit/WKURLSchemeTaskPrivate.h>
+#import <WebKit/WKUserContentControllerPrivate.h>
+#import <WebKit/WKUserScript.h>
+#import <WebKit/WKUserScriptPrivate.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
 #import <WebKit/WKWebpagePreferencesPrivate.h>
@@ -2766,6 +2769,13 @@ TEST(ServiceWorker, ExtensionServiceWorkerDisableCORS)
     WKWebViewConfiguration *webViewConfiguration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"ServiceWorkerPagePlugIn"];
     [webViewConfiguration setURLSchemeHandler:schemeHandler.get() forURLScheme:@"sw-ext"];
     webViewConfiguration._corsDisablingPatterns = @[@"*://*/*"];
+
+    // Adding another world to the page.
+    RetainPtr<WKContentWorld> world = [WKContentWorld worldWithName:@"TestWorld"];
+    RetainPtr<SWMessageHandler> handler = adoptNS([[SWMessageHandler alloc] init]);
+    RetainPtr<WKUserScript> userScript = adoptNS([[WKUserScript alloc] _initWithSource:@"window.webkit" injectionTime:WKUserScriptInjectionTimeAtDocumentStart forMainFrameOnly:NO includeMatchPatternStrings:@[] excludeMatchPatternStrings:@[] associatedURL:nil contentWorld:world.get() deferRunningUntilNotification:NO]);
+    [[webViewConfiguration userContentController] _addScriptMessageHandler:handler.get() name:@"testHandler" contentWorld:world.get()];
+    [[webViewConfiguration userContentController] addUserScript:userScript.get()];
 
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration]);
     // The service worker script should get loaded over the custom scheme handler.
