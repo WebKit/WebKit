@@ -73,14 +73,10 @@ private:
     RefPtr<GraphicsLayerContentsDisplayDelegate> m_layerContentsDisplayDelegate;
 
     GCGLuint m_compositorTexture { 0 };
-#if USE(COORDINATED_GRAPHICS)
-    GCGLuint m_intermediateTexture { 0 };
-#endif
 
 #if USE(NICOSIA)
     GCGLuint m_textureID { 0 };
     GCGLuint m_compositorTextureID { 0 };
-    GCGLuint m_intermediateTextureID { 0 };
 
     std::unique_ptr<Nicosia::GCGLANGLELayer> m_nicosiaLayer;
 

@@ -56,7 +56,7 @@ frames:
         1: (anonymous function)
         2: executeFrameFunction
   6: (duration)
-    0: bindTexture(1, 4)
+    0: bindTexture(1, 3)
       swizzleTypes: [Number, WebGLTexture]
       trace:
         0: bindTexture
@@ -275,7 +275,7 @@ frames:
         1: (anonymous function)
         2: executeFrameFunction
   37: (duration)
-    0: deleteTexture(4)
+    0: deleteTexture(3)
       swizzleTypes: [WebGLTexture]
       trace:
         0: deleteTexture

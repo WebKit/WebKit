@@ -127,10 +127,6 @@ GraphicsContextGLTextureMapperANGLE::~GraphicsContextGLTextureMapperANGLE()
 
     if (m_compositorTexture)
         GL_DeleteTextures(1, &m_compositorTexture);
-#if USE(COORDINATED_GRAPHICS)
-    if (m_intermediateTexture)
-        GL_DeleteTextures(1, &m_intermediateTexture);
-#endif
 }
 
 RefPtr<GraphicsLayerContentsDisplayDelegate> GraphicsContextGLTextureMapperANGLE::layerContentsDisplayDelegate()
@@ -300,18 +296,6 @@ bool GraphicsContextGLTextureMapperANGLE::platformInitialize()
     m_compositorTextureID = setupCurrentTexture();
 #endif
 
-#if USE(COORDINATED_GRAPHICS)
-    GL_GenTextures(1, &m_intermediateTexture);
-    GL_BindTexture(textureTarget, m_intermediateTexture);
-    GL_TexParameteri(textureTarget, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    GL_TexParameteri(textureTarget, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    GL_TexParameteri(textureTarget, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    GL_TexParameteri(textureTarget, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-#if USE(NICOSIA)
-    m_intermediateTextureID = setupCurrentTexture();
-#endif
-#endif
-
     GL_BindTexture(textureTarget, 0);
 
     // Create an FBO.
@@ -347,12 +331,8 @@ void GraphicsContextGLTextureMapperANGLE::prepareTexture()
         resolveMultisamplingIfNecessary();
 
     std::swap(m_texture, m_compositorTexture);
-#if USE(COORDINATED_GRAPHICS)
-    std::swap(m_texture, m_intermediateTexture);
 #if USE(NICOSIA)
     std::swap(m_textureID, m_compositorTextureID);
-    std::swap(m_textureID, m_intermediateTextureID);
-#endif
 #endif
 
     GL_BindFramebuffer(GL_FRAMEBUFFER, m_fbo);
@@ -380,10 +360,6 @@ bool GraphicsContextGLTextureMapperANGLE::reshapeDrawingBuffer()
 
     GL_BindTexture(textureTarget, m_compositorTexture);
     GL_TexImage2D(textureTarget, 0, internalColorFormat, width, height, 0, colorFormat, GL_UNSIGNED_BYTE, 0);
-#if USE(COORDINATED_GRAPHICS)
-    GL_BindTexture(textureTarget, m_intermediateTexture);
-    GL_TexImage2D(textureTarget, 0, internalColorFormat, width, height, 0, colorFormat, GL_UNSIGNED_BYTE, 0);
-#endif
     GL_BindTexture(textureTarget, m_texture);
     GL_TexImage2D(textureTarget, 0, internalColorFormat, width, height, 0, colorFormat, GL_UNSIGNED_BYTE, 0);
     GL_FramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, textureTarget, m_texture, 0);
