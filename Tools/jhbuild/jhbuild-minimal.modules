@@ -41,7 +41,7 @@
   <repository type="git" name="github.com"
       href="https://github.com"/>
   <repository type="tarball" name="github-tarball"
-      href="https://github.com/"/>
+      href="https://github.com"/>
   <repository type="tarball" name="sourceware.org-mirror"
       href="http://mirrors.kernel.org/sources.redhat.com/"/>
   <repository type="tarball" name="ftp.gnome.org"
@@ -74,27 +74,26 @@
       href="http://webkitgtk.org/jhbuild_mirror/"/>
   <repository type="tarball" name="gnupg.org"
       href="https://www.gnupg.org/ftp/gcrypt/"/>
-  <repository type="tarball" name="wpewebkit"
-      href="https://wpewebkit.org/releases/"/>
-
 
 <!-- This moduleset is used when the environment variable WEBKIT_JHBUILD_MODULESET=minimal is set -->
 <!-- Its intended to allow building WebKit using as much as libraries from your distribution as possible -->
 <!-- In order to ensure its minimal, all the modules should have a pkg-config declaration line -->
 
   <cmake id="libwpe">
-    <branch module="libwpe-${version}.tar.xz" version="1.14.1"
-            repo="wpewebkit"
-            hash="b1d0cdcf0f8dbb494e65b0f7913e357106da9a0d57f4fbb7b9d1238a6dbe9ade"/>
+    <branch repo="github-tarball"
+            module="WebPlatformForEmbedded/libwpe/releases/download/${version}/libwpe-${version}.tar.xz"
+            version="1.14.1"
+            hash="sha256:b1d0cdcf0f8dbb494e65b0f7913e357106da9a0d57f4fbb7b9d1238a6dbe9ade"/>
   </cmake>
 
   <meson id="wpebackend-fdo">
     <dependencies>
       <dep package="libwpe"/>
     </dependencies>
-    <branch module="wpebackend-fdo-${version}.tar.xz" version="1.14.0"
-            repo="wpewebkit"
-            hash="e75b0cb2c7145448416e8696013d8883f675c66c11ed750e06865efec5809155">
+    <branch repo="github-tarball"
+            module="Igalia/WPEBackend-fdo/releases/download/${version}/wpebackend-fdo-${version}.tar.xz"
+            version="1.14.2"
+            hash="sha256:93c9766ae9864eeaeaee2b0a74f22cbca08df42c1a1bdb55b086f2528e380d38">
     </branch>
   </meson>
 
