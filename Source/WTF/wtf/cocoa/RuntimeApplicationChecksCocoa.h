@@ -104,6 +104,7 @@ enum class SDKAlignedBehavior {
     UIBackForwardSkipsHistoryItemsWithoutUserGesture,
     ProgrammaticFocusDuringUserScriptShowsInputViews,
     UsesGameControllerPhysicalInputProfile,
+    EvaluateJavaScriptWithoutTransientActivation,
 
     NumberOfBehaviors
 };

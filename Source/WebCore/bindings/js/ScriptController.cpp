@@ -594,6 +594,20 @@ ValueOrException ScriptController::executeScriptInWorld(DOMWrapperWorld& world, 
 
     UserGestureIndicator gestureIndicator(parameters.forceUserGesture == ForceUserGesture::Yes ? std::optional<ProcessingUserGestureState>(ProcessingUserGesture) : std::nullopt, m_frame.document());
 
+#if PLATFORM(COCOA)
+    if (linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::EvaluateJavaScriptWithoutTransientActivation)) {
+        // Script executed by the user agent under simulated user gesture should not leave behind transient activation
+        if (parameters.forceUserGesture == ForceUserGesture::Yes && UserGestureIndicator::currentUserGesture()) {
+            UserGestureIndicator::currentUserGesture()->addDestructionObserver([](UserGestureToken& token) {
+                token.forEachImpactedDocument([](Document& document) {
+                    if (auto* window = document.domWindow())
+                        window->consumeTransientActivation();
+                });
+            });
+        }
+    }
+#endif
+
     if (!canExecuteScripts(AboutToExecuteScript) || isPaused())
         return makeUnexpected(ExceptionDetails { "Cannot execute JavaScript in this document"_s });
 
@@ -710,9 +724,10 @@ ValueOrException ScriptController::executeUserAgentScriptInWorld(DOMWrapperWorld
 
 void ScriptController::executeAsynchronousUserAgentScriptInWorld(DOMWrapperWorld& world, RunJavaScriptParameters&& parameters, ResolveFunction&& resolveCompletionHandler)
 {
+    auto runAsAsyncFunction = parameters.runAsAsyncFunction;
     auto result = executeScriptInWorld(world, WTFMove(parameters));
     
-    if (parameters.runAsAsyncFunction == RunAsAsyncFunction::No || !result || !result.value().isObject()) {
+    if (runAsAsyncFunction == RunAsAsyncFunction::No || !result || !result.value().isObject()) {
         resolveCompletionHandler(result);
         return;
     }
