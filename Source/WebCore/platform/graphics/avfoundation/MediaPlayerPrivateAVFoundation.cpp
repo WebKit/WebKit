@@ -111,7 +111,8 @@ MediaPlayerPrivateAVFoundation::MediaRenderingMode MediaPlayerPrivateAVFoundatio
     if (m_readyState >= MediaPlayer::ReadyState::HaveMetadata && !haveBeenAskedToPaint())
         return MediaRenderingMode::MediaRenderingToLayer;
 
-    if (supportsAcceleratedRendering() && m_player->renderingCanBeAccelerated())
+    auto player = m_player.get();
+    if (supportsAcceleratedRendering() && player && player->renderingCanBeAccelerated())
         return MediaRenderingMode::MediaRenderingToLayer;
 
     return MediaRenderingMode::MediaRenderingToContext;
@@ -169,7 +170,8 @@ void MediaPlayerPrivateAVFoundation::renderingModeChanged()
 {
     ASSERT(m_needsRenderingModeChanged);
     m_needsRenderingModeChanged = false;
-    m_player->renderingModeChanged();
+    if (auto player = m_player.get())
+        player->renderingModeChanged();
 }
 
 void MediaPlayerPrivateAVFoundation::tearDownVideoRendering()
@@ -331,7 +333,8 @@ void MediaPlayerPrivateAVFoundation::setNaturalSize(FloatSize size)
     m_cachedNaturalSize = size;
     if (oldSize != m_cachedNaturalSize) {
         INFO_LOG(LOGIDENTIFIER, "was ", oldSize.width(), " x ", oldSize.height(), ", is ", size.width(), " x ", size.height());
-        m_player->sizeChanged();
+        if (auto player = m_player.get())
+            player->sizeChanged();
     }
 }
 
@@ -365,7 +368,8 @@ void MediaPlayerPrivateAVFoundation::setNetworkState(MediaPlayer::NetworkState s
         return;
 
     m_networkState = state;
-    m_player->networkStateChanged();
+    if (auto player = m_player.get())
+        player->networkStateChanged();
 }
 
 void MediaPlayerPrivateAVFoundation::setReadyState(MediaPlayer::ReadyState state)
@@ -374,7 +378,9 @@ void MediaPlayerPrivateAVFoundation::setReadyState(MediaPlayer::ReadyState state
         return;
 
     auto oldState = std::exchange(m_readyState, state);
-    m_player->readyStateChanged();
+    auto player = m_player.get();
+    if (player)
+        player->readyStateChanged();
 
     if (oldState >= MediaPlayer::ReadyState::HaveMetadata)
         return;
@@ -383,8 +389,8 @@ void MediaPlayerPrivateAVFoundation::setReadyState(MediaPlayer::ReadyState state
     // if queried before reaching HaveMetadata. Re-fire their changed events after
     // the ready state moves beyond HaveMetadata so the correct values are reflected
     // upwards to clients.
-    if (!m_cachedNaturalSize.isEmpty())
-        m_player->sizeChanged();
+    if (!m_cachedNaturalSize.isEmpty() && player)
+        player->sizeChanged();
 }
 
 void MediaPlayerPrivateAVFoundation::characteristicsChanged()
@@ -395,7 +401,8 @@ void MediaPlayerPrivateAVFoundation::characteristicsChanged()
     }
 
     m_characteristicsChanged = false;
-    m_player->characteristicChanged();
+    if (auto player = m_player.get())
+        player->characteristicChanged();
 }
 
 void MediaPlayerPrivateAVFoundation::setDelayCharacteristicsChangedNotification(bool delay)
@@ -579,7 +586,8 @@ void MediaPlayerPrivateAVFoundation::updateStates()
     if (firstVideoFrameBecomeAvailable) {
         if (m_readyState < MediaPlayer::ReadyState::HaveCurrentData)
             newReadyState = MediaPlayer::ReadyState::HaveCurrentData;
-        m_player->firstVideoFrameAvailable();
+        if (auto player = m_player.get())
+            player->firstVideoFrameAvailable();
     }
 
     if (m_networkState != newNetworkState)
@@ -632,21 +640,24 @@ void MediaPlayerPrivateAVFoundation::metadataLoaded()
 
 void MediaPlayerPrivateAVFoundation::rateChanged()
 {
-    m_player->rateChanged();
+    if (auto player = m_player.get())
+        player->rateChanged();
 }
 
 void MediaPlayerPrivateAVFoundation::loadedTimeRangesChanged()
 {
     m_cachedMaxTimeLoaded = MediaTime::zeroTime();
     invalidateCachedDuration();
-    m_player->bufferedTimeRangesChanged();
+    if (auto player = m_player.get())
+        player->bufferedTimeRangesChanged();
 }
 
 void MediaPlayerPrivateAVFoundation::seekableTimeRangesChanged()
 {
     m_cachedMaxTimeSeekable = MediaTime::zeroTime();
     m_cachedMinTimeSeekable = MediaTime::zeroTime();
-    m_player->seekableTimeRangesChanged();
+    if (auto player = m_player.get())
+        player->seekableTimeRangesChanged();
 }
 
 void MediaPlayerPrivateAVFoundation::timeChanged(const MediaTime& time)
@@ -675,7 +686,8 @@ void MediaPlayerPrivateAVFoundation::seekCompleted(bool finished)
         currentTextTrack()->endSeeking();
 
     updateStates();
-    m_player->timeChanged();
+    if (auto player = m_player.get())
+        player->timeChanged();
 }
 
 void MediaPlayerPrivateAVFoundation::didEnd()
@@ -688,7 +700,8 @@ void MediaPlayerPrivateAVFoundation::didEnd()
         m_cachedDuration = now;
 
     updateStates();
-    m_player->timeChanged();
+    if (auto player = m_player.get())
+        player->timeChanged();
 }
 
 void MediaPlayerPrivateAVFoundation::invalidateCachedDuration()
@@ -700,8 +713,10 @@ void MediaPlayerPrivateAVFoundation::invalidateCachedDuration()
     MediaTime duration = this->durationMediaTime();
     if (duration != m_reportedDuration) {
         INFO_LOG(LOGIDENTIFIER, duration);
-        if (m_reportedDuration.isValid())
-            m_player->durationChanged();
+        if (m_reportedDuration.isValid()) {
+            if (auto player = m_player.get())
+                player->durationChanged();
+        }
         m_reportedDuration = duration;
     }
 }
@@ -940,8 +955,10 @@ void MediaPlayerPrivateAVFoundation::trackModeChanged()
 
 void MediaPlayerPrivateAVFoundation::clearTextTracks()
 {
+    auto player = this->player();
     for (auto& track : m_textTracks) {
-        player()->removeTextTrack(*track);
+        if (player)
+            player->removeTextTrack(*track);
         track->disconnect();
     }
     m_textTracks.clear();
@@ -949,13 +966,15 @@ void MediaPlayerPrivateAVFoundation::clearTextTracks()
 
 void MediaPlayerPrivateAVFoundation::processNewAndRemovedTextTracks(const Vector<RefPtr<InbandTextTrackPrivateAVF>>& removedTextTracks)
 {
+    auto player = this->player();
     if (removedTextTracks.size()) {
         for (unsigned i = 0; i < m_textTracks.size(); ) {
             if (!removedTextTracks.contains(m_textTracks[i])) {
                 ++i;
                 continue;
             }
-            player()->removeTextTrack(*m_textTracks[i]);
+            if (player)
+                player->removeTextTrack(*m_textTracks[i]);
             m_textTracks.remove(i);
         }
     }
@@ -976,7 +995,8 @@ void MediaPlayerPrivateAVFoundation::processNewAndRemovedTextTracks(const Vector
             continue;
         
         track->setHasBeenReported(true);
-        player()->addTextTrack(*track);
+        if (player)
+            player->addTextTrack(*track);
     }
 
     if (trackCount != m_textTracks.size())
@@ -986,8 +1006,8 @@ void MediaPlayerPrivateAVFoundation::processNewAndRemovedTextTracks(const Vector
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
 void MediaPlayerPrivateAVFoundation::playbackTargetIsWirelessChanged()
 {
-    if (m_player)
-        m_player->currentPlaybackTargetIsWirelessChanged(m_player->isCurrentPlaybackTargetWireless());
+    if (auto player = m_player.get())
+        player->currentPlaybackTargetIsWirelessChanged(player->isCurrentPlaybackTargetWireless());
 }
 #endif
 
@@ -1077,14 +1097,15 @@ bool MediaPlayerPrivateAVFoundation::isUnsupportedMIMEType(const String& type)
 bool MediaPlayerPrivateAVFoundation::shouldEnableInheritURIQueryComponent() const
 {
     static NeverDestroyed<const AtomString> iTunesInheritsURIQueryComponent(MAKE_STATIC_STRING_IMPL("x-itunes-inherit-uri-query-component"));
-    return player()->doesHaveAttribute(iTunesInheritsURIQueryComponent);
+    auto player = this->player();
+    return player && player->doesHaveAttribute(iTunesInheritsURIQueryComponent);
 }
 
 void MediaPlayerPrivateAVFoundation::queueTaskOnEventLoop(Function<void()>&& task)
 {
     ASSERT(isMainThread());
-    if (m_player)
-        m_player->queueTaskOnEventLoop(WTFMove(task));
+    if (auto player = m_player.get())
+        player->queueTaskOnEventLoop(WTFMove(task));
 }
 
 #if !RELEASE_LOG_DISABLED

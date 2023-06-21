@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,7 +35,6 @@
 #include <wtf/Function.h>
 #include <wtf/Lock.h>
 #include <wtf/LoggerHelper.h>
-#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
@@ -308,8 +307,7 @@ protected:
 
     const String& assetURL() const { return m_assetURL.string(); }
 
-    MediaPlayer* player() { return m_player.get(); }
-    const MediaPlayer* player() const { return m_player.get(); }
+    RefPtr<MediaPlayer> player() const { return m_player.get(); }
 
     String engineDescription() const override { return "AVFoundation"_s; }
     long platformErrorCode() const override { return assetErrorCode(); }
@@ -334,7 +332,7 @@ protected:
     bool shouldEnableInheritURIQueryComponent() const;
 
 private:
-    WeakPtr<MediaPlayer> m_player;
+    ThreadSafeWeakPtr<MediaPlayer> m_player;
 
     Function<void()> m_pendingSeek;
 

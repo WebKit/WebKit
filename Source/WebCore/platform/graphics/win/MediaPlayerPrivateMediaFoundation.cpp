@@ -36,6 +36,7 @@
 #include "HostWindow.h"
 #include "LocalFrame.h"
 #include "LocalFrameView.h"
+#include "MediaPlayer.h"
 #include "NotImplemented.h"
 #include <shlwapi.h>
 #include <wtf/MainThread.h>
@@ -197,6 +198,10 @@ MediaPlayer::SupportsType MediaPlayerPrivateMediaFoundation::supportsType(const 
 
 void MediaPlayerPrivateMediaFoundation::load(const String& url)
 {
+    auto player = m_player.get();
+    if (!player)
+        return;
+
     {
         Locker locker { m_cachedNaturalSizeLock };
         m_cachedNaturalSize = FloatSize();
@@ -205,9 +210,9 @@ void MediaPlayerPrivateMediaFoundation::load(const String& url)
     startCreateMediaSource(url);
 
     m_networkState = MediaPlayer::NetworkState::Loading;
-    m_player->networkStateChanged();
+    player->networkStateChanged();
     m_readyState = MediaPlayer::ReadyState::HaveNothing;
-    m_player->readyStateChanged();
+    player->readyStateChanged();
 }
 
 void MediaPlayerPrivateMediaFoundation::cancelLoad()
@@ -656,8 +661,9 @@ bool MediaPlayerPrivateMediaFoundation::addBranchToPartialTopology(int stream)
 
 HWND MediaPlayerPrivateMediaFoundation::hostWindow()
 {
-    if (m_player && m_player->cachedResourceLoader() && !m_player->cachedResourceLoader()->document()) {
-        auto* view = m_player->cachedResourceLoader()->document()->view();
+    auto player = m_player.get();
+    if (player && player->cachedResourceLoader() && !player->cachedResourceLoader()->document()) {
+        auto* view = player->cachedResourceLoader()->document()->view();
         if (view && view->hostWindow() && view->hostWindow()->platformPageClient())
             return view->hostWindow()->platformPageClient();
     }
@@ -666,7 +672,8 @@ HWND MediaPlayerPrivateMediaFoundation::hostWindow()
 
 void MediaPlayerPrivateMediaFoundation::invalidateVideoArea()
 {
-    m_player->repaint();
+    if (auto player = m_player.get())
+        player->repaint();
 }
 
 void MediaPlayerPrivateMediaFoundation::addListener(MediaPlayerListener* listener)
@@ -810,8 +817,10 @@ void MediaPlayerPrivateMediaFoundation::updateReadyState()
     else
         m_readyState = MediaPlayer::ReadyState::HaveCurrentData;
 
-    if (m_readyState != oldReadyState)
-        m_player->readyStateChanged();
+    if (m_readyState != oldReadyState) {
+        if (auto player = m_player.get())
+            player->readyStateChanged();
+    }
 }
 
 COMPtr<IMFVideoDisplayControl> MediaPlayerPrivateMediaFoundation::videoDisplay()
@@ -840,7 +849,8 @@ void MediaPlayerPrivateMediaFoundation::onCreatedMediaSource(COMPtr<IMFMediaSour
 void MediaPlayerPrivateMediaFoundation::onNetworkStateChanged(MediaPlayer::NetworkState state)
 {
     m_networkState = state;
-    m_player->networkStateChanged();
+    if (auto player = m_player.get())
+        player->networkStateChanged();
 }
 
 void MediaPlayerPrivateMediaFoundation::onTopologySet()
@@ -870,7 +880,8 @@ void MediaPlayerPrivateMediaFoundation::onSessionStarted()
         m_seeking = false;
         if (m_paused)
             m_mediaSession->Pause();
-        m_player->timeChanged();
+        if (auto player = m_player.get())
+            player->timeChanged();
         return;
     }
 
@@ -884,14 +895,19 @@ void MediaPlayerPrivateMediaFoundation::onSessionStarted()
 
 void MediaPlayerPrivateMediaFoundation::onSessionEnded()
 {
+    auto player = m_player.get();
+
     m_sessionEnded = true;
     m_networkState = MediaPlayer::NetworkState::Loaded;
-    m_player->networkStateChanged();
+    if (player)
+        player->networkStateChanged();
 
     m_paused = true;
-    m_player->playbackStateChanged();
+    if (player) {
+        player->playbackStateChanged();
 
-    m_player->timeChanged();
+        player->timeChanged();
+    }
 }
 
 MediaPlayerPrivateMediaFoundation::CustomVideoPresenter::CustomVideoPresenter(MediaPlayerPrivateMediaFoundation* mediaPlayer)

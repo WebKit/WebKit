@@ -44,7 +44,6 @@
 #include <WebCore/VideoFrameMetadata.h>
 #include <wtf/LoggerHelper.h>
 #include <wtf/MediaTime.h>
-#include <wtf/WeakPtr.h>
 
 #if ENABLE(MEDIA_SOURCE)
 #include "MediaSourcePrivateRemote.h"
@@ -95,7 +94,7 @@ public:
     WebCore::MediaPlayerEnums::MediaEngineIdentifier remoteEngineIdentifier() const { return m_remoteEngineIdentifier; }
     WebCore::MediaPlayerIdentifier identifier() const final { return m_id; }
     IPC::Connection& connection() const { return m_manager.gpuProcessConnection().connection(); }
-    WebCore::MediaPlayer* player() const { return m_player.get(); }
+    RefPtr<WebCore::MediaPlayer> player() const { return m_player.get(); }
 
     WebCore::MediaPlayer::ReadyState readyState() const final { return m_cachedState.readyState; }
     void setReadyState(WebCore::MediaPlayer::ReadyState);
@@ -430,7 +429,7 @@ private:
 #endif
     RemoteVideoFrameObjectHeapProxy& videoFrameObjectHeapProxy() const { return m_manager.gpuProcessConnection().videoFrameObjectHeapProxy(); }
 
-    WeakPtr<WebCore::MediaPlayer> m_player;
+    ThreadSafeWeakPtr<WebCore::MediaPlayer> m_player;
     Ref<WebCore::PlatformMediaResourceLoader> m_mediaResourceLoader;
 #if PLATFORM(COCOA)
     mutable UniqueRef<WebCore::VideoLayerManager> m_videoLayerManager;

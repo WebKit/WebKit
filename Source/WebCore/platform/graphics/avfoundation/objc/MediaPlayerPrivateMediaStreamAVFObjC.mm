@@ -351,7 +351,8 @@ void MediaPlayerPrivateMediaStreamAVFObjC::processNewVideoFrame(VideoFrame& vide
 
     if (!m_hasEverEnqueuedVideoFrame) {
         m_hasEverEnqueuedVideoFrame = true;
-        m_player->firstVideoFrameAvailable();
+        if (auto player = m_player.get())
+            player->firstVideoFrameAvailable();
     }
 
     if (m_waitingForFirstImage) {
@@ -397,7 +398,10 @@ void MediaPlayerPrivateMediaStreamAVFObjC::ensureLayers()
     if (!activeVideoTrack || !activeVideoTrack->enabled())
         return;
 
-    auto size = m_player->presentationSize();
+    auto player = m_player.get();
+    if (!player)
+        return;
+    auto size = player->presentationSize();
     if (size.isEmpty() || m_intrinsicSize.isEmpty())
         return;
 
@@ -501,7 +505,8 @@ void MediaPlayerPrivateMediaStreamAVFObjC::load(MediaStreamPrivate& stream)
 
 MediaStreamTrackPrivate* MediaPlayerPrivateMediaStreamAVFObjC::activeVideoTrack() const
 {
-    return (m_mediaStreamPrivate && m_player->isVideoPlayer()) ? m_mediaStreamPrivate->activeVideoTrack() : nullptr;
+    auto player = m_player.get();
+    return (m_mediaStreamPrivate && player && player->isVideoPlayer()) ? m_mediaStreamPrivate->activeVideoTrack() : nullptr;
 }
 
 bool MediaPlayerPrivateMediaStreamAVFObjC::didPassCORSAccessCheck() const
@@ -591,8 +596,8 @@ void MediaPlayerPrivateMediaStreamAVFObjC::play()
 
     scheduleDeferredTask([this] {
         updateReadyState();
-        if (m_player)
-            m_player->rateChanged();
+        if (auto player = m_player.get())
+            player->rateChanged();
     });
 }
 
@@ -615,8 +620,8 @@ void MediaPlayerPrivateMediaStreamAVFObjC::pause()
     flushRenderers();
 
     scheduleDeferredTask([this] {
-        if (m_player)
-            m_player->rateChanged();
+        if (auto player = m_player.get())
+            player->rateChanged();
     });
 }
 
@@ -740,9 +745,9 @@ void MediaPlayerPrivateMediaStreamAVFObjC::activeStatusChanged()
 
         if (ended != m_ended) {
             m_ended = ended;
-            if (m_player) {
-                m_player->timeChanged();
-                m_player->characteristicChanged();
+            if (auto player = m_player.get()) {
+                player->timeChanged();
+                player->characteristicChanged();
             }
         }
     });
@@ -757,8 +762,8 @@ void MediaPlayerPrivateMediaStreamAVFObjC::updateRenderingMode()
 void MediaPlayerPrivateMediaStreamAVFObjC::scheduleRenderingModeChanged()
 {
     scheduleDeferredTask([this] {
-        if (m_player)
-            m_player->renderingModeChanged();
+        if (auto player = m_player.get())
+            player->renderingModeChanged();
         reenqueueCurrentVideoFrameIfNeeded();
     });
 }
@@ -781,12 +786,13 @@ void MediaPlayerPrivateMediaStreamAVFObjC::characteristicsChanged()
     scheduleDeferredTask([this, sizeChanged] {
         updateReadyState();
 
-        if (!m_player)
+        auto player = m_player.get();
+        if (!player)
             return;
 
-        m_player->characteristicChanged();
+        player->characteristicChanged();
         if (sizeChanged) {
-            m_player->sizeChanged();
+            player->sizeChanged();
         }
         if (!m_sampleBufferDisplayLayer && !m_intrinsicSize.isEmpty())
             updateLayersAsNeeded();
@@ -945,18 +951,22 @@ void MediaPlayerPrivateMediaStreamAVFObjC::updateTracks()
 {
     MediaStreamTrackPrivateVector currentTracks = m_mediaStreamPrivate->tracks();
 
-    auto deviceId = m_player->audioOutputDeviceIdOverride();
-    auto setAudioTrackState = [this, &deviceId](AudioTrackPrivateMediaStream& track, int index, TrackState state)
+    auto player = m_player.get();
+    if (!player)
+        return;
+
+    auto deviceId = player->audioOutputDeviceIdOverride();
+    auto setAudioTrackState = [this, player, &deviceId](AudioTrackPrivateMediaStream& track, int index, TrackState state)
     {
         switch (state) {
         case TrackState::Remove:
             track.streamTrack().removeObserver(*this);
             track.clear();
-            m_player->removeAudioTrack(track);
+            player->removeAudioTrack(track);
             break;
         case TrackState::Add:
             track.streamTrack().addObserver(*this);
-            m_player->addAudioTrack(track);
+            player->addAudioTrack(track);
             break;
         case TrackState::Configure:
             track.setTrackIndex(index);
@@ -973,20 +983,20 @@ void MediaPlayerPrivateMediaStreamAVFObjC::updateTracks()
     };
     updateTracksOfKind(m_audioTrackMap, TrackKind::Audio, currentTracks, &AudioTrackPrivateMediaStream::create, WTFMove(setAudioTrackState));
 
-    if (!m_player->isVideoPlayer())
+    if (!player->isVideoPlayer())
         return;
 
-    auto setVideoTrackState = [this](VideoTrackPrivateMediaStream& track, int index, TrackState state)
+    auto setVideoTrackState = [this, player](VideoTrackPrivateMediaStream& track, int index, TrackState state)
     {
         switch (state) {
         case TrackState::Remove:
             track.streamTrack().removeObserver(*this);
-            m_player->removeVideoTrack(track);
+            player->removeVideoTrack(track);
             checkSelectedVideoTrack();
             break;
         case TrackState::Add:
             track.streamTrack().addObserver(*this);
-            m_player->addVideoTrack(track);
+            player->addVideoTrack(track);
             break;
         case TrackState::Configure:
             track.setTrackIndex(index);
@@ -1077,7 +1087,8 @@ DestinationColorSpace MediaPlayerPrivateMediaStreamAVFObjC::colorSpace()
 
 void MediaPlayerPrivateMediaStreamAVFObjC::updateLayersAsNeeded()
 {
-    if (m_player->renderingCanBeAccelerated())
+    auto player = m_player.get();
+    if (player && player->renderingCanBeAccelerated())
         ensureLayers();
     else
         destroyLayers();
@@ -1099,7 +1110,8 @@ void MediaPlayerPrivateMediaStreamAVFObjC::setReadyState(MediaPlayer::ReadyState
     m_readyState = readyState;
     characteristicsChanged();
 
-    m_player->readyStateChanged();
+    if (auto player = m_player.get())
+        player->readyStateChanged();
 }
 
 void MediaPlayerPrivateMediaStreamAVFObjC::setNetworkState(MediaPlayer::NetworkState networkState)
@@ -1108,7 +1120,8 @@ void MediaPlayerPrivateMediaStreamAVFObjC::setNetworkState(MediaPlayer::NetworkS
         return;
 
     m_networkState = networkState;
-    m_player->networkStateChanged();
+    if (auto player = m_player.get())
+        player->networkStateChanged();
 }
 
 void MediaPlayerPrivateMediaStreamAVFObjC::setBufferingPolicy(MediaPlayer::BufferingPolicy policy)
@@ -1119,9 +1132,10 @@ void MediaPlayerPrivateMediaStreamAVFObjC::setBufferingPolicy(MediaPlayer::Buffe
 
 void MediaPlayerPrivateMediaStreamAVFObjC::audioOutputDeviceChanged()
 {
-    if (!m_player)
+    auto player = m_player.get();
+    if (!player)
         return;
-    auto deviceId = m_player->audioOutputDeviceId();
+    auto deviceId = player->audioOutputDeviceId();
     for (auto& audioTrack : m_audioTrackMap.values())
         audioTrack->setAudioOutputDevice(deviceId);
 }

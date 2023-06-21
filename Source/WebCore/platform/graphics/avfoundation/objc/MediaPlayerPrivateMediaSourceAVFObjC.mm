@@ -182,8 +182,10 @@ MediaPlayerPrivateMediaSourceAVFObjC::MediaPlayerPrivateMediaSourceAVFObjC(Media
 
             if (shouldBePlaying())
                 [m_synchronizer setRate:m_rate];
-            if (!seeking() && m_seekCompleted == SeekCompleted)
-                m_player->timeChanged();
+            if (!seeking() && m_seekCompleted == SeekCompleted) {
+                if (auto player = weakThis->m_player.get())
+                    player->timeChanged();
+            }
         }
 
         if (m_pendingSeek)
@@ -297,7 +299,8 @@ void MediaPlayerPrivateMediaSourceAVFObjC::load(const String&)
 {
     // This media engine only supports MediaSource URLs.
     m_networkState = MediaPlayer::NetworkState::FormatError;
-    m_player->networkStateChanged();
+    if (auto player = m_player.get())
+        player->networkStateChanged();
 }
 
 void MediaPlayerPrivateMediaSourceAVFObjC::load(const URL&, const ContentType&, MediaSourcePrivateClient& client)
@@ -584,8 +587,10 @@ void MediaPlayerPrivateMediaSourceAVFObjC::waitForSeekCompleted()
 
         if (shouldBePlaying())
             [m_synchronizer setRate:m_rate];
-        if (!seeking() && m_seekCompleted)
-            m_player->timeChanged();
+        if (!seeking() && m_seekCompleted) {
+            if (auto player = m_player.get())
+                player->timeChanged();
+        }
     }
 }
 
@@ -602,8 +607,10 @@ void MediaPlayerPrivateMediaSourceAVFObjC::seekCompleted()
     m_seekCompleted = SeekCompleted;
     if (shouldBePlaying())
         [m_synchronizer setRate:m_rate];
-    if (!m_synchronizerSeeking)
-        m_player->timeChanged();
+    if (!m_synchronizerSeeking) {
+        if (auto player = m_player.get())
+            player->timeChanged();
+    }
 }
 
 bool MediaPlayerPrivateMediaSourceAVFObjC::seeking() const
@@ -616,9 +623,11 @@ void MediaPlayerPrivateMediaSourceAVFObjC::setRateDouble(double rate)
     // AVSampleBufferRenderSynchronizer does not support negative rate yet.
     m_rate = std::max<double>(rate, 0);
 
-    auto algorithm = MediaSessionManagerCocoa::audioTimePitchAlgorithmForMediaPlayerPitchCorrectionAlgorithm(m_player->pitchCorrectionAlgorithm(), m_player->preservesPitch(), m_rate);
-    for (const auto& key : m_sampleBufferAudioRendererMap.keys())
-        [(__bridge AVSampleBufferAudioRenderer *)key.get() setAudioTimePitchAlgorithm:algorithm];
+    if (auto player = m_player.get()) {
+        auto algorithm = MediaSessionManagerCocoa::audioTimePitchAlgorithmForMediaPlayerPitchCorrectionAlgorithm(player->pitchCorrectionAlgorithm(), player->preservesPitch(), m_rate);
+        for (const auto& key : m_sampleBufferAudioRendererMap.keys())
+            [(__bridge AVSampleBufferAudioRenderer *)key.get() setAudioTimePitchAlgorithm:algorithm];
+    }
 
     if (shouldBePlaying())
         [m_synchronizer setRate:m_rate];
@@ -637,9 +646,11 @@ double MediaPlayerPrivateMediaSourceAVFObjC::effectiveRate() const
 void MediaPlayerPrivateMediaSourceAVFObjC::setPreservesPitch(bool preservesPitch)
 {
     ALWAYS_LOG(LOGIDENTIFIER, preservesPitch);
-    auto algorithm = MediaSessionManagerCocoa::audioTimePitchAlgorithmForMediaPlayerPitchCorrectionAlgorithm(m_player->pitchCorrectionAlgorithm(), preservesPitch, m_rate);
-    for (const auto& key : m_sampleBufferAudioRendererMap.keys())
-        [(__bridge AVSampleBufferAudioRenderer *)key.get() setAudioTimePitchAlgorithm:algorithm];
+    if (auto player = m_player.get()) {
+        auto algorithm = MediaSessionManagerCocoa::audioTimePitchAlgorithmForMediaPlayerPitchCorrectionAlgorithm(player->pitchCorrectionAlgorithm(), preservesPitch, m_rate);
+        for (const auto& key : m_sampleBufferAudioRendererMap.keys())
+            [(__bridge AVSampleBufferAudioRenderer *)key.get() setAudioTimePitchAlgorithm:algorithm];
+    }
 }
 
 MediaPlayer::NetworkState MediaPlayerPrivateMediaSourceAVFObjC::networkState() const
@@ -804,9 +815,10 @@ bool MediaPlayerPrivateMediaSourceAVFObjC::shouldEnsureLayer() const
             return true;
         if (m_sampleBufferDisplayLayer)
             return !CGRectIsEmpty([m_sampleBufferDisplayLayer bounds]);
-        if (!m_player->videoInlineSize().isEmpty())
+        auto player = m_player.get();
+        if (player && !player->videoInlineSize().isEmpty())
             return true;
-        if (!m_player->playerContentBoxRect().isEmpty())
+        if (player && !player->playerContentBoxRect().isEmpty())
             return true;
         return false;
     }();
@@ -845,7 +857,8 @@ void MediaPlayerPrivateMediaSourceAVFObjC::updateDisplayLayerAndDecompressionSes
 
 void MediaPlayerPrivateMediaSourceAVFObjC::notifyActiveSourceBuffersChanged()
 {
-    m_player->activeSourceBuffersChanged();
+    if (auto player = m_player.get())
+        player->activeSourceBuffersChanged();
 }
 
 MediaPlayer::MovieLoadType MediaPlayerPrivateMediaSourceAVFObjC::movieLoadType() const
@@ -943,13 +956,16 @@ void MediaPlayerPrivateMediaSourceAVFObjC::ensureLayer()
         return;
     }
 
-    if ([m_sampleBufferDisplayLayer respondsToSelector:@selector(setToneMapToStandardDynamicRange:)])
-        [m_sampleBufferDisplayLayer setToneMapToStandardDynamicRange:m_player->shouldDisableHDR()];
+    auto player = m_player.get();
+    if (player && [m_sampleBufferDisplayLayer respondsToSelector:@selector(setToneMapToStandardDynamicRange:)])
+        [m_sampleBufferDisplayLayer setToneMapToStandardDynamicRange:player->shouldDisableHDR()];
 
     if (m_mediaSourcePrivate)
         m_mediaSourcePrivate->setVideoLayer(m_sampleBufferDisplayLayer.get());
-    m_videoLayerManager->setVideoLayer(m_sampleBufferDisplayLayer.get(), m_player->videoInlineSize());
-    m_player->renderingModeChanged();
+    if (player) {
+        m_videoLayerManager->setVideoLayer(m_sampleBufferDisplayLayer.get(), player->videoInlineSize());
+        player->renderingModeChanged();
+    }
 }
 
 void MediaPlayerPrivateMediaSourceAVFObjC::destroyLayer()
@@ -967,7 +983,8 @@ void MediaPlayerPrivateMediaSourceAVFObjC::destroyLayer()
     m_videoLayerManager->didDestroyVideoLayer();
     m_sampleBufferDisplayLayer = nullptr;
     setHasAvailableVideoFrame(false);
-    m_player->renderingModeChanged();
+    if (auto player = m_player.get())
+        player->renderingModeChanged();
 }
 
 void MediaPlayerPrivateMediaSourceAVFObjC::ensureDecompressionSession()
@@ -981,7 +998,8 @@ void MediaPlayerPrivateMediaSourceAVFObjC::ensureDecompressionSession()
     if (m_mediaSourcePrivate)
         m_mediaSourcePrivate->setDecompressionSession(m_decompressionSession.get());
 
-    m_player->renderingModeChanged();
+    if (auto player = m_player.get())
+        player->renderingModeChanged();
 }
 
 void MediaPlayerPrivateMediaSourceAVFObjC::destroyDecompressionSession()
@@ -1014,13 +1032,16 @@ void MediaPlayerPrivateMediaSourceAVFObjC::setHasAvailableVideoFrame(bool flag)
     if (!m_hasAvailableVideoFrame)
         return;
 
-    m_player->firstVideoFrameAvailable();
+    auto player = m_player.get();
+    if (player)
+        player->firstVideoFrameAvailable();
     if (m_seekCompleted == WaitingForAvailableFame)
         seekCompleted();
 
     if (m_readyStateIsWaitingForAvailableFrame) {
         m_readyStateIsWaitingForAvailableFrame = false;
-        m_player->readyStateChanged();
+        if (player)
+            player->readyStateChanged();
     }
 }
 
@@ -1081,8 +1102,10 @@ void MediaPlayerPrivateMediaSourceAVFObjC::durationChanged()
     MediaTime duration = m_mediaSourcePrivate->duration();
     // Avoid emiting durationchanged in the case where the previous duration was unkniwn as that case is already handled
     // by the HTMLMediaElement.
-    if (m_mediaTimeDuration != duration && m_mediaTimeDuration.isValid())
-        m_player->durationChanged();
+    if (m_mediaTimeDuration != duration && m_mediaTimeDuration.isValid()) {
+        if (auto player = m_player.get())
+            player->durationChanged();
+    }
     m_mediaTimeDuration = duration;
 
     NSArray* times = @[[NSValue valueWithCMTime:PAL::toCMTime(duration)]];
@@ -1103,7 +1126,8 @@ void MediaPlayerPrivateMediaSourceAVFObjC::durationChanged()
             ERROR_LOG(logSiteIdentifier, "ERROR: boundary time observer called before duration");
             [weakThis->m_synchronizer setRate:0 time:PAL::toCMTime(duration)];
         }
-        weakThis->m_player->timeChanged();
+        if (auto player = weakThis->m_player.get())
+            player->timeChanged();
 
     }];
 
@@ -1113,7 +1137,8 @@ void MediaPlayerPrivateMediaSourceAVFObjC::durationChanged()
 
 void MediaPlayerPrivateMediaSourceAVFObjC::effectiveRateChanged()
 {
-    m_player->rateChanged();
+    if (auto player = m_player.get())
+        player->rateChanged();
 }
 
 void MediaPlayerPrivateMediaSourceAVFObjC::sizeWillChangeAtTime(const MediaTime& time, const FloatSize& size)
@@ -1145,7 +1170,8 @@ void MediaPlayerPrivateMediaSourceAVFObjC::setNaturalSize(const FloatSize& size)
     ALWAYS_LOG(LOGIDENTIFIER, size);
 
     m_naturalSize = size;
-    m_player->sizeChanged();
+    if (auto player = m_player.get())
+        player->sizeChanged();
 }
 
 void MediaPlayerPrivateMediaSourceAVFObjC::flushPendingSizeChanges()
@@ -1183,7 +1209,8 @@ void MediaPlayerPrivateMediaSourceAVFObjC::setCDMSession(LegacyCDMSession* sessi
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA) || ENABLE(ENCRYPTED_MEDIA)
 void MediaPlayerPrivateMediaSourceAVFObjC::keyNeeded(const SharedBuffer& initData)
 {
-    m_player->keyNeeded(initData);
+    if (auto player = m_player.get())
+        player->keyNeeded(initData);
 }
 #endif
 
@@ -1232,24 +1259,27 @@ bool MediaPlayerPrivateMediaSourceAVFObjC::waitingForKey() const
 void MediaPlayerPrivateMediaSourceAVFObjC::waitingForKeyChanged()
 {
     ALWAYS_LOG(LOGIDENTIFIER);
-    m_player->waitingForKeyChanged();
+    if (auto player = m_player.get())
+        player->waitingForKeyChanged();
 }
 
 void MediaPlayerPrivateMediaSourceAVFObjC::initializationDataEncountered(const String& initDataType, RefPtr<ArrayBuffer>&& initData)
 {
     ALWAYS_LOG(LOGIDENTIFIER, initDataType);
-    m_player->initializationDataEncountered(initDataType, WTFMove(initData));
+    if (auto player = m_player.get())
+        player->initializationDataEncountered(initDataType, WTFMove(initData));
 }
 #endif
 
 const Vector<ContentType>& MediaPlayerPrivateMediaSourceAVFObjC::mediaContentTypesRequiringHardwareSupport() const
 {
-    return m_player->mediaContentTypesRequiringHardwareSupport();
+    return m_player.get()->mediaContentTypesRequiringHardwareSupport();
 }
 
 bool MediaPlayerPrivateMediaSourceAVFObjC::shouldCheckHardwareSupport() const
 {
-    return m_player->shouldCheckHardwareSupport();
+    auto player = m_player.get();
+    return player && player->shouldCheckHardwareSupport();
 }
 
 void MediaPlayerPrivateMediaSourceAVFObjC::needsVideoLayerChanged()
@@ -1275,7 +1305,8 @@ void MediaPlayerPrivateMediaSourceAVFObjC::setReadyState(MediaPlayer::ReadyState
         return;
     }
 
-    m_player->readyStateChanged();
+    if (auto player = m_player.get())
+        player->readyStateChanged();
 }
 
 void MediaPlayerPrivateMediaSourceAVFObjC::setNetworkState(MediaPlayer::NetworkState networkState)
@@ -1285,7 +1316,8 @@ void MediaPlayerPrivateMediaSourceAVFObjC::setNetworkState(MediaPlayer::NetworkS
 
     ALWAYS_LOG(LOGIDENTIFIER, networkState);
     m_networkState = networkState;
-    m_player->networkStateChanged();
+    if (auto player = m_player.get())
+        player->networkStateChanged();
 }
 
 ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
@@ -1300,19 +1332,23 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     if (!m_sampleBufferAudioRendererMap.add((__bridge CFTypeRef)audioRenderer, AudioRendererProperties()).isNewEntry)
         return;
 
-    [audioRenderer setMuted:m_player->muted()];
-    [audioRenderer setVolume:m_player->volume()];
-    auto algorithm = MediaSessionManagerCocoa::audioTimePitchAlgorithmForMediaPlayerPitchCorrectionAlgorithm(m_player->pitchCorrectionAlgorithm(), m_player->preservesPitch(), m_rate);
+    auto player = m_player.get();
+    if (!player)
+        return;
+
+    [audioRenderer setMuted:player->muted()];
+    [audioRenderer setVolume:player->volume()];
+    auto algorithm = MediaSessionManagerCocoa::audioTimePitchAlgorithmForMediaPlayerPitchCorrectionAlgorithm(player->pitchCorrectionAlgorithm(), player->preservesPitch(), m_rate);
     [audioRenderer setAudioTimePitchAlgorithm:algorithm];
 #if PLATFORM(MAC)
 ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
     if ([audioRenderer respondsToSelector:@selector(setIsUnaccompaniedByVisuals:)])
-        [audioRenderer setIsUnaccompaniedByVisuals:!m_player->isVideoPlayer()];
+        [audioRenderer setIsUnaccompaniedByVisuals:!player->isVideoPlayer()];
 ALLOW_NEW_API_WITHOUT_GUARDS_END
 #endif
 
 #if HAVE(AUDIO_OUTPUT_DEVICE_UNIQUE_ID)
-    auto deviceId = m_player->audioOutputDeviceIdOverride();
+    auto deviceId = player->audioOutputDeviceIdOverride();
     if (!deviceId.isNull()) {
         if (deviceId.isEmpty())
             audioRenderer.audioOutputDeviceUniqueID = nil;
@@ -1331,7 +1367,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
         return;
     }
 
-    m_player->characteristicChanged();
+    player->characteristicChanged();
 }
 
 ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
@@ -1348,28 +1384,33 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     }];
 
     m_sampleBufferAudioRendererMap.remove(iter);
-    m_player->renderingModeChanged();
+    if (auto player = m_player.get())
+        player->renderingModeChanged();
 }
 
 void MediaPlayerPrivateMediaSourceAVFObjC::removeAudioTrack(AudioTrackPrivate& track)
 {
-    m_player->removeAudioTrack(track);
+    if (auto player = m_player.get())
+        player->removeAudioTrack(track);
 }
 
 void MediaPlayerPrivateMediaSourceAVFObjC::removeVideoTrack(VideoTrackPrivate& track)
 {
-    m_player->removeVideoTrack(track);
+    if (auto player = m_player.get())
+        player->removeVideoTrack(track);
 }
 
 void MediaPlayerPrivateMediaSourceAVFObjC::removeTextTrack(InbandTextTrackPrivate& track)
 {
-    m_player->removeTextTrack(track);
+    if (auto player = m_player.get())
+        player->removeTextTrack(track);
 }
 
 void MediaPlayerPrivateMediaSourceAVFObjC::characteristicsChanged()
 {
     updateAllRenderersHaveAvailableSamples();
-    m_player->characteristicChanged();
+    if (auto player = m_player.get())
+        player->characteristicChanged();
 }
 
 RetainPtr<PlatformLayer> MediaPlayerPrivateMediaSourceAVFObjC::createVideoFullscreenLayer()
@@ -1419,8 +1460,8 @@ void MediaPlayerPrivateMediaSourceAVFObjC::setShouldPlayToPlaybackTarget(bool sh
     ALWAYS_LOG(LOGIDENTIFIER, shouldPlayToTarget);
     m_shouldPlayToTarget = shouldPlayToTarget;
 
-    if (m_player)
-        m_player->currentPlaybackTargetIsWirelessChanged(isCurrentPlaybackTargetWireless());
+    if (auto player = m_player.get())
+        player->currentPlaybackTargetIsWirelessChanged(isCurrentPlaybackTargetWireless());
 }
 
 bool MediaPlayerPrivateMediaSourceAVFObjC::isCurrentPlaybackTargetWireless() const
@@ -1450,9 +1491,10 @@ bool MediaPlayerPrivateMediaSourceAVFObjC::performTaskAtMediaTime(WTF::Function<
 void MediaPlayerPrivateMediaSourceAVFObjC::audioOutputDeviceChanged()
 {
 #if HAVE(AUDIO_OUTPUT_DEVICE_UNIQUE_ID)
-    if (!m_player)
+    auto player = m_player.get();
+    if (!player)
         return;
-    auto deviceId = m_player->audioOutputDeviceId();
+    auto deviceId = player->audioOutputDeviceId();
     for (auto& key : m_sampleBufferAudioRendererMap.keys()) {
         auto renderer = ((__bridge AVSampleBufferAudioRenderer *)key.get());
         if (deviceId.isEmpty())
@@ -1482,7 +1524,8 @@ void MediaPlayerPrivateMediaSourceAVFObjC::startVideoFrameMetadataGathering()
 
 void MediaPlayerPrivateMediaSourceAVFObjC::checkNewVideoFrameMetadata(CMTime currentTime)
 {
-    if (!m_player)
+    auto player = m_player.get();
+    if (!player)
         return;
 
     if (!updateLastPixelBuffer())
@@ -1495,7 +1538,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::checkNewVideoFrameMetadata(CMTime cur
     metadata.presentationTime = PAL::CMTimeGetSeconds(currentTime);
 
     m_videoFrameMetadata = metadata;
-    m_player->onNewVideoFrameMetadata(WTFMove(metadata), m_lastPixelBuffer.get());
+    player->onNewVideoFrameMetadata(WTFMove(metadata), m_lastPixelBuffer.get());
 }
 
 void MediaPlayerPrivateMediaSourceAVFObjC::stopVideoFrameMetadataGathering()

@@ -107,7 +107,7 @@ private:
 
     void notifyReadyState();
 
-    WeakPtr<MediaPlayer> m_player;
+    ThreadSafeWeakPtr<MediaPlayer> m_player;
     IntSize m_size;
     RunLoop::Timer m_readyTimer;
     MediaPlayer::NetworkState m_networkState;

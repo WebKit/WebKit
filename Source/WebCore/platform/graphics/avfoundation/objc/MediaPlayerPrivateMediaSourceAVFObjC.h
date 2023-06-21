@@ -315,7 +315,7 @@ private:
     };
     std::unique_ptr<PendingSeek> m_pendingSeek;
 
-    WeakPtr<MediaPlayer> m_player;
+    ThreadSafeWeakPtr<MediaPlayer> m_player;
     WeakPtrFactory<MediaPlayerPrivateMediaSourceAVFObjC> m_sizeChangeObserverWeakPtrFactory;
     RefPtr<MediaSourcePrivateAVFObjC> m_mediaSourcePrivate;
     RetainPtr<AVAsset> m_asset;

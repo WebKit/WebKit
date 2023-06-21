@@ -45,10 +45,9 @@
 #include <wtf/HashSet.h>
 #include <wtf/Logger.h>
 #include <wtf/MediaTime.h>
-#include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/URL.h>
 #include <wtf/WallTime.h>
-#include <wtf/WeakPtr.h>
 #include <wtf/text/StringHash.h>
 
 OBJC_CLASS AVPlayer;
@@ -303,12 +302,12 @@ public:
 #endif
 };
 
-class WEBCORE_EXPORT MediaPlayer : public MediaPlayerEnums, public ThreadSafeRefCounted<MediaPlayer, WTF::DestructionThread::Main>, public CanMakeWeakPtr<MediaPlayer> {
+class WEBCORE_EXPORT MediaPlayer : public MediaPlayerEnums, public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<MediaPlayer, WTF::DestructionThread::Main> {
     WTF_MAKE_NONCOPYABLE(MediaPlayer); WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<MediaPlayer> create(MediaPlayerClient&);
     static Ref<MediaPlayer> create(MediaPlayerClient&, MediaPlayerEnums::MediaEngineIdentifier);
-    virtual ~MediaPlayer();
+    ~MediaPlayer();
 
     void invalidate();
 

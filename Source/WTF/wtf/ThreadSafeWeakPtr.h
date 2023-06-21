@@ -127,8 +127,8 @@ public:
 private:
     template<typename, DestructionThread> friend class ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr;
     template<typename T>
-    explicit ThreadSafeWeakPtrControlBlock(T& object)
-        : m_object(&object) { }
+    explicit ThreadSafeWeakPtrControlBlock(T* object)
+        : m_object(object) { }
 
     mutable Lock m_lock;
     mutable size_t m_strongReferenceCount WTF_GUARDED_BY_LOCK(m_lock) { 1 };
@@ -165,7 +165,11 @@ protected:
 private:
     template<typename> friend class ThreadSafeWeakPtr;
     template<typename> friend class ThreadSafeWeakHashSet;
-    ThreadSafeWeakPtrControlBlock& m_controlBlock { *new ThreadSafeWeakPtrControlBlock(static_cast<T&>(*this)) };
+#if COMPILER(MSVC)
+    ThreadSafeWeakPtrControlBlock& m_controlBlock { *new ThreadSafeWeakPtrControlBlock((T*)this) };
+#else
+    ThreadSafeWeakPtrControlBlock& m_controlBlock { *new ThreadSafeWeakPtrControlBlock(static_cast<T*>(this)) };
+#endif
 };
 
 template<typename T>

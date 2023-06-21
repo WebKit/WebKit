@@ -331,7 +331,7 @@ protected:
 #endif
 
     Ref<MainThreadNotifier<MainThreadNotification>> m_notifier;
-    WeakPtr<MediaPlayer> m_player;
+    ThreadSafeWeakPtr<MediaPlayer> m_player;
     String m_referrer;
     mutable std::optional<MediaTime> m_cachedPosition;
     mutable MediaTime m_cachedDuration;

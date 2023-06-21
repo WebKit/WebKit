@@ -217,7 +217,8 @@ void MockMediaPlayerMediaSource::seekWithTolerance(const MediaTime& time, const 
         m_currentTime = m_mediaSourcePrivate->seekToTime(time, negativeTolerance, positiveTolerance);
 
     if (m_seekCompleted) {
-        m_player->timeChanged();
+        if (auto player = m_player.get())
+            player->timeChanged();
 
         if (m_playing)
             callOnMainThread([this, weakThis = WeakPtr { *this }] {
@@ -240,7 +241,8 @@ void MockMediaPlayerMediaSource::advanceCurrentTime()
 
     bool ignoreError;
     m_currentTime = std::min(m_duration, buffered.end(pos, ignoreError));
-    m_player->timeChanged();
+    if (auto player = m_player.get())
+        player->timeChanged();
 }
 
 void MockMediaPlayerMediaSource::updateDuration(const MediaTime& duration)
@@ -249,7 +251,8 @@ void MockMediaPlayerMediaSource::updateDuration(const MediaTime& duration)
         return;
 
     m_duration = duration;
-    m_player->durationChanged();
+    if (auto player = m_player.get())
+        player->durationChanged();
 }
 
 void MockMediaPlayerMediaSource::setReadyState(MediaPlayer::ReadyState readyState)
@@ -258,7 +261,8 @@ void MockMediaPlayerMediaSource::setReadyState(MediaPlayer::ReadyState readyStat
         return;
 
     m_readyState = readyState;
-    m_player->readyStateChanged();
+    if (auto player = m_player.get())
+        player->readyStateChanged();
 }
 
 void MockMediaPlayerMediaSource::setNetworkState(MediaPlayer::NetworkState networkState)
@@ -267,7 +271,8 @@ void MockMediaPlayerMediaSource::setNetworkState(MediaPlayer::NetworkState netwo
         return;
 
     m_networkState = networkState;
-    m_player->networkStateChanged();
+    if (auto player = m_player.get())
+        player->networkStateChanged();
 }
 
 void MockMediaPlayerMediaSource::waitForSeekCompleted()
@@ -281,7 +286,8 @@ void MockMediaPlayerMediaSource::seekCompleted()
         return;
     m_seekCompleted = true;
 
-    m_player->timeChanged();
+    if (auto player = m_player.get())
+        player->timeChanged();
 
     if (m_playing)
         callOnMainThread([this, weakThis = WeakPtr { *this }] {
