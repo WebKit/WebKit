@@ -22,15 +22,16 @@
 
 import getpass
 import os
-import requests
 import sys
 import time
 
 from .command import Command
 from .install_hooks import InstallHooks
-from requests.auth import HTTPBasicAuth
-from webkitcorepy import arguments, run, Editor, OutputCapture, Terminal
+from webkitcorepy import arguments, run, CallByNeed, Editor, OutputCapture, Terminal
 from webkitscmpy import log, local, remote
+
+requests = CallByNeed(lambda: __import__('requests'))
+HTTPBasicAuth = CallByNeed(lambda: __import__('requests.auth', fromlist=['HTTPBasicAuth']).HTTPBasicAuth)
 
 
 class Setup(Command):

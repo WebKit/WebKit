@@ -27,7 +27,6 @@ import re
 import time
 
 from datetime import datetime
-from mock import patch
 from collections import OrderedDict
 
 from webkitcorepy import decorators, mocks, string_utils, OutputCapture, StringIO
@@ -735,6 +734,8 @@ nothing to commit, working tree clean
         )
 
     def __enter__(self):
+        from mock import patch
+
         # TODO: Use shutil directly when Python 2.7 is removed
         from whichcraft import which
         self.patches.append(patch('whichcraft.which', lambda cmd: dict(git=self.executable).get(cmd, which(cmd))))

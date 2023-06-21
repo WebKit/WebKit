@@ -27,14 +27,6 @@ import re
 
 from webkitcorepy import CallByNeed, string_utils
 
-fuzz = None
-
-if sys.version_info > (3, 6):
-    try:
-        from rapidfuzz import fuzz
-    except ModuleNotFoundError:
-        pass
-
 
 class CommitClassifier(object):
     class LineFilter(object):
@@ -42,7 +34,11 @@ class CommitClassifier(object):
 
         @classmethod
         def fuzzy(cls, string, ratio=None):
-            if not fuzz:
+            if sys.version_info <= (3, 6):
+                return re.compile(string)
+            try:
+                from rapidfuzz import fuzz
+            except ModuleNotFoundError:
                 return re.compile(string)
 
             ratio = cls.DEFAULT_FUZZ_RATIO if not ratio else ratio

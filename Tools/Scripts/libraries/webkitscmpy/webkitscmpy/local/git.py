@@ -25,7 +25,6 @@ import logging
 import os
 import json
 import re
-import six
 import subprocess
 import sys
 import time
@@ -923,7 +922,7 @@ class Git(Scm):
                 log.kill()
 
     def find(self, argument, include_log=True, include_identifier=True):
-        if not isinstance(argument, six.string_types):
+        if not isinstance(argument, string_utils.basestring):
             raise ValueError("Expected 'argument' to be a string, not '{}'".format(type(argument)))
 
         # Map any candidate default branch to the one used by this repository
@@ -957,7 +956,7 @@ class Git(Scm):
     def _to_git_ref(self, argument):
         if not argument:
             return None
-        if not isinstance(argument, six.string_types):
+        if not isinstance(argument, string_utils.basestring):
             raise ValueError("Expected 'argument' to be a string, not '{}'".format(type(argument)))
         parsed_commit = Commit.parse(argument, do_assert=False)
         try:

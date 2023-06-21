@@ -21,9 +21,9 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import re
-import six
 
 from webkitscmpy.scm_base import ScmBase
+from webkitcorepy import string_utils
 
 
 class Scm(ScmBase):
@@ -86,7 +86,7 @@ class Scm(ScmBase):
             classifier=classifier,
         )
 
-        if not isinstance(url, six.string_types):
+        if not isinstance(url, string_utils.basestring):
             raise ValueError("Expected 'url' to be a string type, not '{}'".format(type(url)))
         self.url = url
         self.pull_requests = None
