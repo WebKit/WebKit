@@ -507,6 +507,23 @@ void SourceBufferPrivate::removeCodedFrames(const MediaTime& start, const MediaT
     updateBufferedFromTrackBuffers(trackBuffers, isEnded, WTFMove(completionHandler));
 }
 
+size_t SourceBufferPrivate::platformEvictionThreshold() const
+{
+    // Default implementation of the virtual function.
+    return 0;
+}
+
+bool SourceBufferPrivate::hasTooManySamples() const
+{
+    const size_t evictionThreshold = platformEvictionThreshold();
+    if (!evictionThreshold)
+        return false;
+    size_t currentSize = 0;
+    for (const auto& trackBuffer : m_trackBufferMap.values())
+        currentSize += trackBuffer->samples().size();
+    return currentSize > evictionThreshold;
+}
+
 void SourceBufferPrivate::evictCodedFrames(uint64_t newDataSize, uint64_t maximumBufferSize, const MediaTime& currentTime, bool isEnded)
 {
     // 3.5.13 Coded Frame Eviction Algorithm
@@ -518,7 +535,7 @@ void SourceBufferPrivate::evictCodedFrames(uint64_t newDataSize, uint64_t maximu
     // This algorithm is run to free up space in this source buffer when new data is appended.
     // 1. Let new data equal the data that is about to be appended to this SourceBuffer.
     // 2. If the buffer full flag equals false, then abort these steps.
-    bool isBufferFull = isBufferFullFor(newDataSize, maximumBufferSize);
+    bool isBufferFull = isBufferFullFor(newDataSize, maximumBufferSize) || hasTooManySamples();
     if (!isBufferFull)
         return;
 

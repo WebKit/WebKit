@@ -50,10 +50,7 @@
 #include "NotImplemented.h"
 #include "VideoTrackPrivateGStreamer.h"
 #include "WebKitMediaSourceGStreamer.h"
-
-#if PLATFORM(WPE)
 #include <wtf/text/StringToIntegerConversion.h>
-#endif
 
 GST_DEBUG_CATEGORY_EXTERN(webkit_mse_debug);
 #define GST_CAT_DEFAULT webkit_mse_debug
@@ -378,6 +375,18 @@ size_t SourceBufferPrivateGStreamer::platformMaximumBufferSize() const
 #endif
 
     return 0;
+}
+
+size_t SourceBufferPrivateGStreamer::platformEvictionThreshold() const
+{
+    static size_t evictionThreshold = 0;
+    static std::once_flag once;
+    std::call_once(once, []() {
+        auto stringView = StringView::fromLatin1(std::getenv("MSE_BUFFER_SAMPLES_EVICTION_THRESHOLD"));
+        if (!stringView.isEmpty())
+            evictionThreshold = parseInteger<size_t>(stringView, 10).value_or(0);
+    });
+    return evictionThreshold;
 }
 
 #undef GST_CAT_DEFAULT
