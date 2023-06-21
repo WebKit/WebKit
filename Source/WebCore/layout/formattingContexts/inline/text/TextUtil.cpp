@@ -351,8 +351,8 @@ bool TextUtil::shouldPreserveNewline(const Box& layoutBox)
 
 bool TextUtil::isWrappingAllowed(const RenderStyle& style)
 {
-    // Do not try to wrap overflown 'pre' and 'no-wrap' content to next line.
-    return style.whiteSpace() != WhiteSpace::Pre && style.whiteSpace() != WhiteSpace::NoWrap;
+    // https://www.w3.org/TR/css-text-4/#text-wrap
+    return style.textWrap() != TextWrap::NoWrap;
 }
 
 TextBreakIterator::LineMode::Behavior TextUtil::lineBreakIteratorMode(LineBreak lineBreak)
