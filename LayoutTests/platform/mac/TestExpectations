@@ -2730,3 +2730,5 @@ webkit.org/b/256108 media/video-audio-session-mode.html [ Failure ]
 [ x86_64 ] media/media-source/media-source-webm-configuration-vp9-header-color.html [ Pass Failure ]
 
 webkit.org/b/258181 [ Monterey+ Debug ] inspector/debugger/async-stack-trace-truncate.html [ Timeout ]
+
+webkit.org/b/258328 [ arm64 ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworklet-denormals.https.window.html [ Failure ]

@@ -124,7 +124,6 @@ fast/events/inactive-window-no-mouse-event.html [ Pass ]
 fast/animation/request-animation-frame-in-two-pages.html [ Pass ]
 
 fast/forms/file/entries-api/image-transcode-open-panel.html [ Pass ]
-fast/forms/file/entries-api/image-no-transcode-open-panel.html [ Pass ]
 fast/forms/file/entries-api/pages-jpeg-open-panel.html [ Pass ]
 fast/forms/file/entries-api/pdf-jpeg-open-panel.html [ Pass ]
 
@@ -1790,3 +1789,9 @@ webkit.org/b/256217 [ Debug ] imported/w3c/web-platform-tests/background-fetch/p
 webkit.org/b/238749 imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/focus-after-close.html [ Pass Failure ]
 
 webkit.org/b/258325 [ Debug ] media/modern-media-controls/pip-support/pip-support-click.html [ Crash ]
+
+# webkit.org/b/258328 Umbrella Bug: Batch mark expectations slowing down EWS (258328) 
+[ Debug ] imported/w3c/web-platform-tests/webcodecs/videoFrame-construction.crossOriginSource.sub.html [ Pass Failure Crash ]
+imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/replaced-element-035.html [ Pass ImageOnlyFailure ] 
+fast/forms/file/entries-api/image-no-transcode-open-panel.html [ Pass Crash ] 
+[ Debug Ventura arm64 ] http/tests/media/modern-media-controls/overflow-support/playback-speed-live-broadcast.html [ Pass Crash ]
