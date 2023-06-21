@@ -444,12 +444,13 @@ void AcceleratedBackingStoreDMABuf::frame()
 
 void AcceleratedBackingStoreDMABuf::willDisplayFrame()
 {
+    ASSERT(m_frameCompletionHandler);
     if (m_isSoftwareRast)
         std::swap(m_surface.frontBitmap, m_surface.displayBitmap);
     else
         std::swap(m_surface.frontFD, m_surface.displayFD);
 
-    if (m_committedSource && m_frameCompletionHandler)
+    if (m_committedSource)
         m_committedSource->willDisplayFrame();
 }
 
@@ -534,7 +535,9 @@ void AcceleratedBackingStoreDMABuf::update(const LayerTreeContext& context)
 #if USE(GTK4)
 void AcceleratedBackingStoreDMABuf::snapshot(GtkSnapshot* gtkSnapshot)
 {
-    willDisplayFrame();
+    if (m_frameCompletionHandler)
+        willDisplayFrame();
+
     if (!m_committedSource)
         return;
 
@@ -547,7 +550,9 @@ void AcceleratedBackingStoreDMABuf::snapshot(GtkSnapshot* gtkSnapshot)
 #else
 bool AcceleratedBackingStoreDMABuf::paint(cairo_t* cr, const WebCore::IntRect& clipRect)
 {
-    willDisplayFrame();
+    if (m_frameCompletionHandler)
+        willDisplayFrame();
+
     if (!m_committedSource)
         return false;
 
