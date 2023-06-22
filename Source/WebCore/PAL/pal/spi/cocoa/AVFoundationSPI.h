@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -285,7 +285,7 @@ NS_ASSUME_NONNULL_END
 @end
 #endif // !HAVE(AVKIT)
 
-#if !USE(APPLE_INTERNAL_SDK) || HAVE(VIDEO_PERFORMANCE_METRICS)
+#if !USE(APPLE_INTERNAL_SDK)
 @class AVVideoPerformanceMetrics;
 NS_ASSUME_NONNULL_BEGIN
 @interface AVPlayerLayer (AVPlayerLayerVideoPerformanceMetrics)
