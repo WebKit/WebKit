@@ -44,6 +44,7 @@ public:
     ISOWebVTTCue(const MediaTime& presentationTime, const MediaTime& duration);
     WEBCORE_EXPORT ISOWebVTTCue(MediaTime&& presentationTime, MediaTime&& duration, AtomString&& cueID, String&& cueText, String&& settings = { }, String&& sourceID = { }, String&& originalStartTime = { });
     ISOWebVTTCue(const ISOWebVTTCue&) = default;
+    WEBCORE_EXPORT ISOWebVTTCue();
     WEBCORE_EXPORT ISOWebVTTCue(ISOWebVTTCue&&);
     WEBCORE_EXPORT ~ISOWebVTTCue();
 
