@@ -7,26 +7,27 @@
 
   <metamodule id="webkitwpe-testing-dependencies">
     <dependencies>
-      <dep package="glib"/>
+      <dep package="atk"/>
+      <dep package="at-spi2-atk"/>
       <dep package="cairo"/>
       <dep package="dicts"/>
       <dep package="fontconfig"/>
       <dep package="freetype6"/>
+      <dep package="glib"/>
       <dep package="harfbuzz"/>
       <dep package="icu"/>
-      <dep package="webkit-gstreamer-testing-dependencies"/>
-      <dep package="libwpe"/>
-      <dep package="wpebackend-fdo"/>
-      <dep package="libgpg-error"/>
-      <dep package="libgcrypt"/>
       <dep package="libepoxy"/>
-      <dep package="wayland-protocols"/>
-      <dep package="openjpeg"/>
-      <dep package="xdg-dbus-proxy"/>
-      <dep package="atk"/>
-      <dep package="at-spi2-atk"/>
+      <dep package="libgcrypt"/>
+      <dep package="libgpg-error"/>
+      <dep package="libjxl"/>
+      <dep package="libwpe"/>
       <dep package="libxml2"/>
+      <dep package="openjpeg"/>
       <dep package="shared-mime-info"/>
+      <dep package="wayland-protocols"/>
+      <dep package="wpebackend-fdo"/>
+      <dep package="xdg-dbus-proxy"/>
+      <dep package="webkit-gstreamer-testing-dependencies"/>
       <if condition-unset="USE_SOUP2">
         <dep package="libsoup3"/>
       </if>
@@ -324,5 +325,34 @@
             repo="freedesktop.org"
             hash="sha256:c625a83b4838befc8cafcd54e3619946515d9e44d63d61c4adf7f5513ddfbebf"/>
   </autotools>
+
+  <!-- libjxl required for JPEGXL support -->
+  <cmake id="libjxl"
+         cmakeargs="-DBUILD_TESTING=OFF
+                    -DPROVISION_DEPENDENCIES=ON
+                    -DJPEGXL_ENABLE_FUZZERS=OFF
+                    -DJPEGXL_ENABLE_DEVTOOLS=OFF
+                    -DJPEGXL_ENABLE_TOOLS=OFF
+                    -DJPEGXL_ENABLE_MANPAGES=OFF
+                    -DJPEGXL_ENABLE_BENCHMARK=OFF
+                    -DJPEGXL_ENABLE_EXAMPLES=OFF
+                    -DJPEGXL_ENABLE_JNI=OFF
+                    -DJPEGXL_ENABLE_VIEWERS=OFF
+                    -DJPEGXL_ENABLE_TCMALLOC=OFF
+                    -DJPEGXL_ENABLE_PLUGINS=OFF
+                    -DJPEGXL_ENABLE_COVERAGE=OFF
+                    -DJPEGXL_ENABLE_TRANSCODE_JPEG=OFF
+                    -DJPEGXL_ENABLE_SJPEG=OFF
+                    -DJPEGXL_STATIC=OFF
+                    -DJPEGXL_WARNINGS_AS_ERRORS=OFF
+                    -DJPEGXL_ENABLE_SKCMS=ON">
+    <pkg-config>libjxl.pc</pkg-config>
+    <branch module="libjxl/libjxl.git"
+            tag="v0.6.1"
+            checkoutdir="libjxl-0.6.1"
+            repo="github.com">
+      <patch file="libjxl-add-cmake-flag-provision-dependencies.patch" strip="1"/>
+    </branch>
+  </cmake>
 
 </moduleset>

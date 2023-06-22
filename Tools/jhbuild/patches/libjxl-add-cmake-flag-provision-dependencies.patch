@@ -1,0 +1,36 @@
+From 4f433922a741268e0dbf4da432ca4c9e4317c6b6 Mon Sep 17 00:00:00 2001
+From: Diego Pino Garcia <dpino@igalia.com>
+Date: Tue, 20 Jun 2023 20:38:55 +0800
+Subject: [PATCH] add-cmake-flag-provision-dependencies
+
+---
+ CMakeLists.txt | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index c2790ab..2382603 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -47,6 +47,19 @@ if(CHECK_PIE_SUPPORTED)
+   endif()
+ endif()
+ 
++if(PROVISION_DEPENDENCIES)
++  # Run script to provision dependencies.
++  find_program (BASH_PROGRAM bash)
++  if(BASH_PROGRAM)
++    execute_process(
++      COMMAND ${BASH_PROGRAM} ${CMAKE_CURRENT_SOURCE_DIR}/deps.sh
++      RESULT_VARIABLE PROVISION_DEPENDENCIES_RESULT)
++  endif()
++  if(NOT PROVISION_DEPENDENCIES_RESULT EQUAL "0")
++    message(FATAL_ERROR "${CMAKE_CURRENT_SOURCE_DIR}/deps.sh failed with ${PROVISION_DEPENDENCIES_RESULT}")
++  endif()
++endif()
++
+ ### Project build options:
+ if(${CXX_FUZZERS_SUPPORTED})
+   # Enabled by default except on arm64, Windows and Apple builds.
+-- 
+2.40.0
+
