@@ -240,6 +240,7 @@ VM::VM(VMType vmType, HeapType heapType, WTF::RunLoop* runLoop, bool* success)
     stringStructure.setWithoutWriteBarrier(JSString::createStructure(*this, nullptr, jsNull()));
 
     smallStrings.initializeCommonStrings(*this);
+    numericStrings.initializeSmallIntCache(*this);
 
     propertyNames = new CommonIdentifiers(*this);
     propertyNameEnumeratorStructure.setWithoutWriteBarrier(JSPropertyNameEnumerator::createStructure(*this, nullptr, jsNull()));
@@ -1558,6 +1559,7 @@ template<typename Visitor>
 void VM::visitAggregateImpl(Visitor& visitor)
 {
     m_microtaskQueue.visitAggregate(visitor);
+    numericStrings.visitAggregate(visitor);
 
     visitor.append(structureStructure);
     visitor.append(structureRareDataStructure);

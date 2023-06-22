@@ -9497,17 +9497,11 @@ IGNORE_CLANG_WARNINGS_END
         }
 
         case Int32Use:
-            setJSValue(vmCall(Int64, operationInt32ToStringWithValidRadix, weakPointer(globalObject), lowInt32(m_node->child1()), m_out.constInt32(10)));
-            return;
-
         case Int52RepUse:
-            setJSValue(vmCall(Int64, operationInt52ToStringWithValidRadix, weakPointer(globalObject), lowStrictInt52(m_node->child1()), m_out.constInt32(10)));
+        case DoubleRepUse:
+            setJSValue(numberToStringWithValidRadixConstant(m_node->child1(), 10));
             return;
 
-        case DoubleRepUse:
-            setJSValue(vmCall(Int64, operationDoubleToStringWithValidRadix, weakPointer(globalObject), lowDouble(m_node->child1()), m_out.constInt32(10)));
-            return;
-            
         default:
             DFG_CRASH(m_graph, m_node, "Bad use kind");
             break;
@@ -17070,23 +17064,24 @@ IGNORE_CLANG_WARNINGS_END
 
     void compileNumberToStringWithRadix()
     {
-        bool validRadixIsGuaranteed = false;
         if (m_node->child2()->isInt32Constant()) {
             int32_t radix = m_node->child2()->asInt32();
-            if (radix >= 2 && radix <= 36)
-                validRadixIsGuaranteed = true;
+            if (radix >= 2 && radix <= 36) {
+                setJSValue(numberToStringWithValidRadixConstant(m_node->child1(), radix));
+                return;
+            }
         }
 
         JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
         switch (m_node->child1().useKind()) {
         case Int32Use:
-            setJSValue(vmCall(pointerType(), validRadixIsGuaranteed ? operationInt32ToStringWithValidRadix : operationInt32ToString, weakPointer(globalObject), lowInt32(m_node->child1()), lowInt32(m_node->child2())));
+            setJSValue(vmCall(pointerType(), operationInt32ToString, weakPointer(globalObject), lowInt32(m_node->child1()), lowInt32(m_node->child2())));
             break;
         case Int52RepUse:
-            setJSValue(vmCall(pointerType(), validRadixIsGuaranteed ? operationInt52ToStringWithValidRadix : operationInt52ToString, weakPointer(globalObject), lowStrictInt52(m_node->child1()), lowInt32(m_node->child2())));
+            setJSValue(vmCall(pointerType(), operationInt52ToString, weakPointer(globalObject), lowStrictInt52(m_node->child1()), lowInt32(m_node->child2())));
             break;
         case DoubleRepUse:
-            setJSValue(vmCall(pointerType(), validRadixIsGuaranteed ? operationDoubleToStringWithValidRadix : operationDoubleToString, weakPointer(globalObject), lowDouble(m_node->child1()), lowInt32(m_node->child2())));
+            setJSValue(vmCall(pointerType(), operationDoubleToString, weakPointer(globalObject), lowDouble(m_node->child1()), lowInt32(m_node->child2())));
             break;
         default:
             RELEASE_ASSERT_NOT_REACHED();
@@ -17095,20 +17090,45 @@ IGNORE_CLANG_WARNINGS_END
 
     void compileNumberToStringWithValidRadixConstant()
     {
+        setJSValue(numberToStringWithValidRadixConstant(m_node->child1(), m_node->validRadixConstant()));
+    }
+
+    LValue numberToStringWithValidRadixConstant(Edge child1, int32_t radix)
+    {
         JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
-        switch (m_node->child1().useKind()) {
-        case Int32Use:
-            setJSValue(vmCall(pointerType(), operationInt32ToStringWithValidRadix, weakPointer(globalObject), lowInt32(m_node->child1()), m_out.constInt32(m_node->validRadixConstant())));
-            break;
+        switch (child1.useKind()) {
+        case Int32Use: {
+            if (radix == 10) {
+                LBasicBlock cacheCase = m_out.newBlock();
+                LBasicBlock slowCase = m_out.newBlock();
+                LBasicBlock continuation = m_out.newBlock();
+
+                LValue int32Value = lowInt32(child1);
+                m_out.branch(m_out.aboveOrEqual(int32Value, m_out.constInt32(NumericStrings::cacheSize)), unsure(slowCase), unsure(cacheCase));
+
+                LBasicBlock lastNext = m_out.appendTo(cacheCase, slowCase);
+                LValue cache = m_out.constIntPtr(vm().numericStrings.smallIntCache());
+                LValue result = m_out.loadPtr(baseIndex(m_heaps.SmallIntCache, cache, int32Value, child1, NumericStrings::StringWithJSString::offsetOfJSString()));
+                ValueFromBlock fastResult = m_out.anchor(result);
+                m_out.branch(m_out.isNull(result), unsure(slowCase), unsure(continuation));
+
+                m_out.appendTo(slowCase, continuation);
+                ValueFromBlock slowResult = m_out.anchor(vmCall(pointerType(), operationInt32ToStringWithValidRadix, weakPointer(globalObject), int32Value, m_out.constInt32(radix)));
+                m_out.jump(continuation);
+
+                m_out.appendTo(continuation, lastNext);
+                return m_out.phi(pointerType(), fastResult, slowResult);
+            }
+            return vmCall(pointerType(), operationInt32ToStringWithValidRadix, weakPointer(globalObject), lowInt32(child1), m_out.constInt32(radix));
+        }
         case Int52RepUse:
-            setJSValue(vmCall(pointerType(), operationInt52ToStringWithValidRadix, weakPointer(globalObject), lowStrictInt52(m_node->child1()), m_out.constInt32(m_node->validRadixConstant())));
-            break;
+            return vmCall(pointerType(), operationInt52ToStringWithValidRadix, weakPointer(globalObject), lowStrictInt52(child1), m_out.constInt32(radix));
         case DoubleRepUse:
-            setJSValue(vmCall(pointerType(), operationDoubleToStringWithValidRadix, weakPointer(globalObject), lowDouble(m_node->child1()), m_out.constInt32(m_node->validRadixConstant())));
-            break;
+            return vmCall(pointerType(), operationDoubleToStringWithValidRadix, weakPointer(globalObject), lowDouble(child1), m_out.constInt32(radix));
         default:
             RELEASE_ASSERT_NOT_REACHED();
         }
+        return nullptr;
     }
 
     void compileResolveScopeForHoistingFuncDeclInEval()

@@ -3707,21 +3707,32 @@ private:
 
     bool attemptToMakeFastStringAdd(Node* node)
     {
+        bool atLeastOneString = false;
         bool goodToGo = true;
         m_graph.doToChildren(
             node,
             [&] (Edge& edge) {
-                if (edge->shouldSpeculateString())
+                if (edge->shouldSpeculateString()) {
+                    atLeastOneString = true;
+                    return;
+                }
+                if (edge->shouldSpeculateInt32())
                     return;
                 if (m_graph.canOptimizeStringObjectAccess(node->origin.semantic)) {
-                    if (edge->shouldSpeculateStringObject())
+                    if (edge->shouldSpeculateStringObject()) {
+                        atLeastOneString = true;
                         return;
-                    if (edge->shouldSpeculateStringOrStringObject())
+                    }
+                    if (edge->shouldSpeculateStringOrStringObject()) {
+                        atLeastOneString = true;
                         return;
+                    }
                 }
                 goodToGo = false;
             });
         if (!goodToGo)
+            return false;
+        if (!atLeastOneString)
             return false;
 
         m_graph.doToChildren(
@@ -3729,6 +3740,10 @@ private:
             [&] (Edge& edge) {
                 if (edge->shouldSpeculateString()) {
                     convertStringAddUse<StringUse>(node, edge);
+                    return;
+                }
+                if (edge->shouldSpeculateInt32()) {
+                    convertStringAddUse<Int32Use>(node, edge);
                     return;
                 }
                 if (!Options::useConcurrentJIT())

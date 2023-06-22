@@ -3422,8 +3422,8 @@ JSC_DEFINE_HOST_FUNCTION(functionFlattenDictionaryObject, (JSGlobalObject* globa
     DollarVMAssertScope assertScope;
     VM& vm = globalObject->vm();
     JSValue value = callFrame->argument(0);
-    RELEASE_ASSERT(value.isObject() && value.getObject()->structure()->isDictionary());
-    value.getObject()->flattenDictionaryObject(vm);
+    if (value.isObject() && value.getObject()->structure()->isDictionary())
+        value.getObject()->flattenDictionaryObject(vm);
     return encodedJSUndefined();
 }
 

@@ -2184,7 +2184,8 @@ void Heap::finalize()
     vm().keyAtomStringCache.clear();
     vm().stringSplitCache.clear();
     vm().stringReplaceCache.clear();
-    vm().numericStrings.clearOnGarbageCollection();
+    if (m_lastCollectionScope && m_lastCollectionScope.value() == CollectionScope::Full)
+        vm().numericStrings.clearOnGarbageCollection();
 
     m_possiblyAccessedStringsFromConcurrentThreads.clear();
 
