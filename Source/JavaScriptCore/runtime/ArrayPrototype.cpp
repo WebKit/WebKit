@@ -1471,7 +1471,8 @@ static JSValue concatAppendOne(JSGlobalObject* globalObject, VM& vm, JSArray* fi
     }
 
     unsigned resultSize = checkedResultSize;
-    IndexingType type = first->mergeIndexingTypeForCopying(indexingTypeForValue(second) | IsArray);
+    bool allowPromotion = false;
+    IndexingType type = first->mergeIndexingTypeForCopying(indexingTypeForValue(second) | IsArray, allowPromotion);
     
     if (type == NonArray)
         type = first->indexingType();
@@ -1511,16 +1512,36 @@ void clearElement(double& element)
     element = PNaN;
 }
 
-template<typename T>
-ALWAYS_INLINE void copyElements(T* buffer, unsigned offset, T* source, unsigned sourceSize, IndexingType sourceType)
+template<typename T, typename U>
+ALWAYS_INLINE void copyElements(T* buffer, unsigned offset, U* source, unsigned sourceSize, IndexingType sourceType)
 {
-    if (sourceType != ArrayWithUndecided) {
-        gcSafeMemcpy(buffer + offset, source, sizeof(JSValue) * sourceSize);
+    if (sourceType == ArrayWithUndecided) {
+        for (unsigned i = 0; i < sourceSize; ++i)
+            clearElement<T>(buffer[i + offset]);
         return;
     }
 
-    for (unsigned i = sourceSize; i--;)
-        clearElement<T>(buffer[i + offset]);
+    if constexpr (std::is_same_v<T, U>)
+        gcSafeMemcpy(buffer + offset, source, sizeof(JSValue) * sourceSize);
+    else if constexpr (std::is_same_v<T, double>) {
+        ASSERT(sourceType == ArrayWithInt32);
+        for (unsigned i = 0; i < sourceSize; ++i) {
+            JSValue value = source[i].get();
+            if (value)
+                buffer[i + offset] = value.asInt32();
+            else
+                buffer[i + offset] = PNaN;
+        }
+    } else {
+        ASSERT((std::is_same_v<U, double>));
+        for (unsigned i = 0; i < sourceSize; ++i) {
+            double value = source[i];
+            if (value == value)
+                buffer[i + offset].setWithoutWriteBarrier(JSValue(JSValue::EncodeAsDouble, value));
+            else
+                buffer[i + offset].clear();
+        }
+    }
 };
 
 JSC_DEFINE_HOST_FUNCTION(arrayProtoPrivateFuncConcatMemcpy, (JSGlobalObject* globalObject, CallFrame* callFrame))
@@ -1566,7 +1587,8 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoPrivateFuncConcatMemcpy, (JSGlobalObject* glo
     unsigned resultSize = checkedResultSize;
     IndexingType firstType = firstArray->indexingType();
     IndexingType secondType = secondArray->indexingType();
-    IndexingType type = firstArray->mergeIndexingTypeForCopying(secondType);
+    bool allowPromotion = true;
+    IndexingType type = firstArray->mergeIndexingTypeForCopying(secondType, allowPromotion);
     if (type == NonArray || !firstArray->canFastCopy(secondArray) || resultSize >= MIN_SPARSE_ARRAY_INDEX) {
         JSArray* result = constructEmptyArray(globalObject, nullptr, resultSize);
         RETURN_IF_EXCEPTION(scope, encodedJSValue());
@@ -1597,8 +1619,14 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoPrivateFuncConcatMemcpy, (JSGlobalObject* glo
 
     if (type == ArrayWithDouble) {
         double* buffer = result->butterfly()->contiguousDouble().data();
-        copyElements(buffer, 0, firstButterfly->contiguousDouble().data(), firstArraySize, firstType);
-        copyElements(buffer, firstArraySize, secondButterfly->contiguousDouble().data(), secondArraySize, secondType);
+        if (firstType == ArrayWithDouble)
+            copyElements(buffer, 0, firstButterfly->contiguousDouble().data(), firstArraySize, firstType);
+        else
+            copyElements(buffer, 0, firstButterfly->contiguous().data(), firstArraySize, firstType);
+        if (secondType == ArrayWithDouble)
+            copyElements(buffer, firstArraySize, secondButterfly->contiguousDouble().data(), secondArraySize, secondType);
+        else
+            copyElements(buffer, firstArraySize, secondButterfly->contiguous().data(), secondArraySize, secondType);
     } else if (type != ArrayWithUndecided) {
         WriteBarrier<Unknown>* buffer = result->butterfly()->contiguous().data();
         copyElements(buffer, 0, firstButterfly->contiguous().data(), firstArraySize, firstType);
