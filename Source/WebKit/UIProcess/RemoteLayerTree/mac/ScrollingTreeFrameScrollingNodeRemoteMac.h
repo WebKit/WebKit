@@ -38,8 +38,6 @@ public:
     static Ref<ScrollingTreeFrameScrollingNodeRemoteMac> create(WebCore::ScrollingTree&, WebCore::ScrollingNodeType, WebCore::ScrollingNodeID);
     virtual ~ScrollingTreeFrameScrollingNodeRemoteMac();
 
-    bool handleMouseEvent(const WebCore::PlatformMouseEvent&);
-
 private:
     ScrollingTreeFrameScrollingNodeRemoteMac(WebCore::ScrollingTree&, WebCore::ScrollingNodeType, WebCore::ScrollingNodeID);
 

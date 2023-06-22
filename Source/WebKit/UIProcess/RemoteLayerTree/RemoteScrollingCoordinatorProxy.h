@@ -99,8 +99,6 @@ public:
     void continueWheelEventHandling(const WebWheelEvent&, WebCore::WheelEventHandlingResult);
     virtual void wheelEventHandlingCompleted(const WebCore::PlatformWheelEvent&, WebCore::ScrollingNodeID, std::optional<WebCore::WheelScrollGestureState>) { }
 
-    void handleMouseEvent(const WebCore::PlatformMouseEvent&);
-    
     virtual WebCore::PlatformWheelEvent filteredWheelEvent(const WebCore::PlatformWheelEvent& wheelEvent) { return wheelEvent; }
 
     WebCore::ScrollingNodeID rootScrollingNodeID() const;

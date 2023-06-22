@@ -143,11 +143,6 @@ void RemoteScrollingCoordinatorProxy::continueWheelEventHandling(const WebWheelE
     webPageProxy().continueWheelEventHandling(wheelEvent, result, willStartSwipe);
 }
 
-void RemoteScrollingCoordinatorProxy::handleMouseEvent(const WebCore::PlatformMouseEvent& event)
-{
-    m_scrollingTree->handleMouseEvent(event);
-}
-
 TrackingType RemoteScrollingCoordinatorProxy::eventTrackingTypeForPoint(WebCore::EventTrackingRegions::EventType eventType, IntPoint p) const
 {
     return m_scrollingTree->eventTrackingTypeForPoint(eventType, p);
