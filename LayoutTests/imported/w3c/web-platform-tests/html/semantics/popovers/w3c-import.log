@@ -93,4 +93,5 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-top-layer-interactions.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-types-with-hints.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/popover-types.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/togglePopover.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/popovers/toggleevent-interface.html
