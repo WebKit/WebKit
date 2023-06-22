@@ -350,6 +350,7 @@ void FrameLoader::init()
     setPolicyDocumentLoader(m_client->createDocumentLoader(ResourceRequest(URL({ }, emptyString())), SubstituteData()).ptr());
     setProvisionalDocumentLoader(m_policyDocumentLoader.get());
     m_provisionalDocumentLoader->startLoadingMainResource();
+    setPolicyDocumentLoader(nullptr);
 
     Ref protectedFrame { m_frame };
     Ref document { *m_frame.document() };
