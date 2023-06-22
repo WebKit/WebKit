@@ -37,6 +37,7 @@ class AccessibilityTable;
 class AccessibilityTableRow : public AccessibilityRenderObject {
 public:
     static Ref<AccessibilityTableRow> create(RenderObject*);
+    static Ref<AccessibilityTableRow> create(Node&);
     virtual ~AccessibilityTableRow();
 
     // retrieves the "row" header (a th tag in the rightmost column)
@@ -57,6 +58,7 @@ public:
 
 protected:
     explicit AccessibilityTableRow(RenderObject*);
+    explicit AccessibilityTableRow(Node&);
 
     AccessibilityRole determineAccessibilityRole() final;
 

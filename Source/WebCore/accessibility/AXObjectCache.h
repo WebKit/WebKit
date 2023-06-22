@@ -47,6 +47,7 @@ class TextStream;
 
 namespace WebCore {
 
+class AccessibilityTable;
 class Document;
 class HTMLAreaElement;
 class HTMLTableElement;
@@ -220,7 +221,8 @@ public:
         , Vector<AttributeChange>
         , Vector<std::pair<Node*, Node*>>
         , WeakHashSet<Element, WeakPtrImplWithEventTargetData>
-        , WeakHashSet<HTMLTableElement, WeakPtrImplWithEventTargetData>>;
+        , WeakHashSet<HTMLTableElement, WeakPtrImplWithEventTargetData>
+        , WeakHashSet<AccessibilityTable>>;
     void deferModalChange(Element*);
     void deferMenuListValueChange(Element*);
     void deferNodeAddedOrRemoved(Node*);
@@ -320,6 +322,7 @@ public:
         AXActiveDescendantChanged,
         AXAutocorrectionOccured,
         AXAutofillTypeChanged,
+        AXCellSlotsChanged,
         AXCheckedStateChanged,
         AXChildrenChanged,
         AXColumnCountChanged,
@@ -437,6 +440,7 @@ public:
     void deferRecomputeIsIgnoredIfNeeded(Element*);
     void deferRecomputeIsIgnored(Element*);
     void deferRecomputeTableIsExposed(Element*);
+    void deferRecomputeTableCellSlots(AccessibilityTable&);
     void deferTextChangedIfNeeded(Node*);
     void deferSelectedChildrenChangedIfNeeded(Element&);
     void performDeferredCacheUpdate();
@@ -564,6 +568,7 @@ private:
     void handleFocusedUIElementChanged(Node* oldFocusedNode, Node* newFocusedNode, UpdateModal = UpdateModal::Yes);
     void handleMenuListValueChanged(Element&);
     void handleTextChanged(AccessibilityObject*);
+    void handleRecomputeCellSlots(AccessibilityTable&);
 
     // aria-modal or modal <dialog> related
     bool isModalElement(Element&) const;
@@ -636,6 +641,7 @@ private:
     HashSet<AXID> m_deferredRemovedObjects;
     WeakHashSet<Element, WeakPtrImplWithEventTargetData> m_deferredRecomputeIsIgnoredList;
     WeakHashSet<HTMLTableElement, WeakPtrImplWithEventTargetData> m_deferredRecomputeTableIsExposedList;
+    WeakHashSet<AccessibilityTable> m_deferredRecomputeTableCellSlotsList;
     ListHashSet<Node*> m_deferredTextChangedList;
     WeakHashSet<Element, WeakPtrImplWithEventTargetData> m_deferredSelectedChildredChangedList;
     ListHashSet<RefPtr<AccessibilityObject>> m_deferredChildrenChangedList;
@@ -680,6 +686,8 @@ private:
 };
 
 bool nodeHasRole(Node*, StringView role);
+bool nodeHasGridRole(Node*);
+bool nodeHasCellRole(Node*);
 // This will let you know if aria-hidden was explicitly set to false.
 bool isNodeAriaVisible(Node*);
     
@@ -705,6 +713,8 @@ inline void AXObjectCache::setForceDeferredSpellChecking(bool) { }
 inline void AXObjectCache::disableAccessibility() { }
 inline void AXObjectCache::setEnhancedUserInterfaceAccessibility(bool) { }
 inline bool nodeHasRole(Node*, StringView) { return false; }
+inline bool nodeHasGridRole(Node*) { return false; }
+inline bool nodeHasCellRole(Node*) { return false; }
 inline void AXObjectCache::startCachingComputedObjectAttributesUntilTreeMutates() { }
 inline void AXObjectCache::stopCachingComputedObjectAttributes() { }
 inline bool isNodeAriaVisible(Node*) { return true; }
@@ -731,6 +741,7 @@ inline void AXObjectCache::deferRecomputeIsIgnored(Element*) { }
 inline void AXObjectCache::deferTextChangedIfNeeded(Node*) { }
 inline void AXObjectCache::deferSelectedChildrenChangedIfNeeded(Element&) { }
 inline void AXObjectCache::deferTextReplacementNotificationForTextControl(HTMLTextFormControlElement&, const String&) { }
+inline void AXObjectCache::deferRecomputeTableCellSlots(AccessibilityTable&) { }
 #if !PLATFORM(COCOA) && !USE(ATSPI)
 inline void AXObjectCache::detachWrapper(AXCoreObject*, AccessibilityDetachmentType) { }
 #endif
@@ -764,6 +775,7 @@ inline void AXObjectCache::postTextStateChangeNotification(Node*, AXTextEditType
 inline void AXObjectCache::postTextStateChangeNotification(Node*, const AXTextStateChangeIntent&, const VisibleSelection&) { }
 inline void AXObjectCache::recomputeIsIgnored(RenderObject*) { }
 inline void AXObjectCache::handleTextChanged(AccessibilityObject*) { }
+inline void AXObjectCache::handleRecomputeCellSlots(AccessibilityTable&) { }
 inline void AXObjectCache::onRendererCreated(Element&) { }
 inline void AXObjectCache::updateLoadingProgress(double) { }
 inline SimpleRange AXObjectCache::rangeForNodeContents(Node& node) { return makeRangeSelectingNodeContents(node); }

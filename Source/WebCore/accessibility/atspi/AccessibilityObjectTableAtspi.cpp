@@ -92,7 +92,7 @@ GDBusInterfaceVTable AccessibilityObjectAtspi::s_tableFunctions = {
             auto row = atspiObject->rowAtIndex(index);
             auto column = atspiObject->columnAtIndex(index);
             auto* cell = atspiObject->m_coreObject ? atspiObject->m_coreObject->cellForColumnAndRow(*column, *row) : nullptr;
-            g_dbus_method_invocation_return_value(invocation, g_variant_new("(biiiib)", cell && cell->isTableCell() ? TRUE : FALSE,
+            g_dbus_method_invocation_return_value(invocation, g_variant_new("(biiiib)", cell && cell->isExposedTableCell() ? TRUE : FALSE,
                 row.value_or(-1), column.value_or(-1), row && column ? atspiObject->rowExtent(*row, *column) : -1,
                 row && column ? atspiObject->columnExtent(*row, *column) : -1, FALSE));
         } else if (!g_strcmp0(methodName, "GetSelectedRows")

@@ -40,9 +40,7 @@ class AccessibilityARIAGrid final : public AccessibilityTable {
 public:
     static Ref<AccessibilityARIAGrid> create(RenderObject*);
     virtual ~AccessibilityARIAGrid();
-    
-    void addChildren() override;
-    
+
 private:
     explicit AccessibilityARIAGrid(RenderObject*);
     bool isAccessibilityARIAGridInstance() const override { return true; }
@@ -52,9 +50,6 @@ private:
     bool isMultiSelectable() const override;
     bool computeIsTableExposableThroughAccessibility() const override { return true; }
     bool isAriaTable() const override { return true; }
-    
-    void addRowDescendant(AXCoreObject*, HashSet<AccessibilityObject*>& appendedRows, unsigned& columnCount);
-    bool addTableCellChild(AXCoreObject*, HashSet<AccessibilityObject*>& appendedRows, unsigned& columnCount);
 };
 
 } // namespace WebCore 

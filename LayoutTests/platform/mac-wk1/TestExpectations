@@ -808,6 +808,11 @@ accessibility/custom-elements/ [ Skip ]
 accessibility/ax-object-destroyed-on-reload.html [ Skip ]
 accessibility/page-reload-deadlock.html [ Skip ]
 
+# Skip because WK1 doesn't seem to support Element::setAttribute.
+accessibility/dynamic-rowspan.html [ Skip ]
+accessibility/dynamic-colspan.html [ Skip ]
+accessibility/dynamic-table-descendants.html [ Skip ] 
+
 # Missing AccessibilityUIElement::isIndeterminate() implementation.
 accessibility/progress-indeterminate-value.html [ Skip ]
 

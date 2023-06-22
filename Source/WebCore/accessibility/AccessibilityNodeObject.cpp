@@ -255,7 +255,7 @@ LayoutRect AccessibilityNodeObject::boundingBoxRect() const
     // the width of that ancestor, and about the height of a line of text, so it's clear this object is
     // a descendant of that ancestor.
     for (RefPtr<AccessibilityObject> ancestor = parentObject(); ancestor; ancestor = ancestor->parentObject()) {
-        if (!is<AccessibilityRenderObject>(ancestor))
+        if (!ancestor->renderer())
             continue;
         auto ancestorRect = ancestor->elementRect();
         if (ancestorRect.isEmpty())

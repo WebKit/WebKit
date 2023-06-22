@@ -154,9 +154,11 @@ public:
     AXCoreObject* headerContainer() override { return nullptr; }
     int axColumnCount() const override { return 0; }
     int axRowCount() const override { return 0; }
+    virtual Vector<Vector<AXID>> cellSlots() { return { }; }
 
     // Table cell support.
     bool isTableCell() const override { return false; }
+    bool isExposedTableCell() const override { return false; }
     // Returns the start location and row span of the cell.
     std::pair<unsigned, unsigned> rowIndexRange() const override { return { 0, 1 }; }
     // Returns the start location and column span of the cell.

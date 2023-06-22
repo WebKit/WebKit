@@ -29,17 +29,9 @@
 #include "config.h"
 #include "AccessibilityTableColumn.h"
 
-#include "AXObjectCache.h"
-#include "AccessibilityTableCell.h"
-#include "HTMLElement.h"
-#include "HTMLNames.h"
-#include "RenderTable.h"
-#include "RenderTableCell.h"
-#include "RenderTableSection.h"
+#include "AccessibilityTable.h"
 
 namespace WebCore {
-    
-using namespace HTMLNames;
 
 AccessibilityTableColumn::AccessibilityTableColumn() = default;
 
@@ -71,102 +63,17 @@ LayoutRect AccessibilityTableColumn::elementRect() const
 
 AXCoreObject* AccessibilityTableColumn::columnHeader()
 {
-    if (!m_parent || !is<AccessibilityTable>(*m_parent)
-        || !m_parent->isExposable())
+    auto* parentTable = dynamicDowncast<AccessibilityTable>(m_parent.get());
+    if (!parentTable || !parentTable->isExposable())
         return nullptr;
 
-    RenderObject* renderer = m_parent->renderer();
-    if (!renderer)
-        return nullptr;
-
-    auto& parentTable = downcast<AccessibilityTable>(*m_parent);
-
-    if (parentTable.isAriaTable()) {
-        for (const auto& cell : children()) {
-            if (cell->roleValue() == AccessibilityRole::ColumnHeader)
-                return cell.get();
-        }
-
-        return nullptr;
+    for (const auto& cell : children()) {
+        if (cell->roleValue() == AccessibilityRole::ColumnHeader)
+            return cell.get();
     }
-
-    if (!is<RenderTable>(*renderer))
-        return nullptr;
-    
-    RenderTable& table = downcast<RenderTable>(*renderer);
-
-    // try the <thead> section first. this doesn't require th tags
-    if (auto* headerObject = headerObjectForSection(table.header(), false))
-        return headerObject;
-    
-    RenderTableSection* bodySection = table.firstBody();
-    while (bodySection && bodySection->isAnonymous())
-        bodySection = table.sectionBelow(bodySection, SkipEmptySections);
-    
-    // now try for <th> tags in the first body. If the first body is 
-    return headerObjectForSection(bodySection, true);
+    return nullptr;
 }
 
-AccessibilityObject* AccessibilityTableColumn::headerObjectForSection(RenderTableSection* section, bool thTagRequired)
-{
-    if (!section)
-        return nullptr;
-    
-    unsigned numCols = section->numColumns();
-    if (m_columnIndex >= numCols)
-        return nullptr;
-    
-    if (!section->numRows())
-        return nullptr;
-    
-    RenderTableCell* cell = nullptr;
-    // also account for cells that have a span
-    for (int testCol = m_columnIndex; testCol >= 0; --testCol) {
-        
-        // Run down the rows in case initial rows are invalid (like when a <caption> is used).
-        unsigned rowCount = section->numRows();
-        for (unsigned testRow = 0; testRow < rowCount; testRow++) {
-            RenderTableCell* testCell = section->primaryCellAt(testRow, testCol);
-            // No cell at this index, keep checking more rows and columns.
-            if (!testCell)
-                continue;
-            
-            // If we've reached a cell that doesn't even overlap our column it can't be the header.
-            if ((testCell->col() + (testCell->colSpan()-1)) < m_columnIndex)
-                break;
-            
-            Node* testCellNode = testCell->element();
-            // If the RenderTableCell doesn't have an element because its anonymous,
-            // try to see if we can find the original cell element to check if it has a <th> tag.
-            if (!testCellNode && testCell->isAnonymous()) {
-                if (Element* parentElement = testCell->parent() ? testCell->parent()->element() : nullptr) {
-                    if (parentElement->hasTagName(trTag) && testCol < static_cast<int>(parentElement->countChildNodes()))
-                        testCellNode = parentElement->traverseToChildAt(testCol);
-                }
-            }
-
-            if (!testCellNode)
-                continue;
-            
-            // If th is required, but we found an element that doesn't have a th tag, we can stop looking.
-            if (thTagRequired && !testCellNode->hasTagName(thTag))
-                break;
-            
-            cell = testCell;
-            break;
-        }
-    }
-    
-    if (!cell)
-        return nullptr;
-
-    auto* cellObject = axObjectCache()->getOrCreate(cell);
-    if (!cellObject || cellObject->accessibilityIsIgnored())
-        return nullptr;
-        
-    return cellObject;
-}
-    
 bool AccessibilityTableColumn::computeAccessibilityIsIgnored() const
 {
     if (!m_parent)
@@ -182,22 +89,18 @@ bool AccessibilityTableColumn::computeAccessibilityIsIgnored() const
 void AccessibilityTableColumn::addChildren()
 {
     ASSERT(!m_childrenInitialized); 
-    
     m_childrenInitialized = true;
-    if (!is<AccessibilityTable>(m_parent))
+
+    auto* parentTable = dynamicDowncast<AccessibilityTable>(m_parent.get());
+    if (!parentTable || !parentTable->isExposable())
         return;
 
-    auto& parentTable = downcast<AccessibilityTable>(*m_parent);
-    if (!parentTable.isExposable())
-        return;
-    
-    int numRows = parentTable.rowCount();
-    
+    int numRows = parentTable->rowCount();
     for (int i = 0; i < numRows; ++i) {
-        auto* cell = parentTable.cellForColumnAndRow(m_columnIndex, i);
+        auto* cell = parentTable->cellForColumnAndRow(m_columnIndex, i);
         if (!cell)
             continue;
-        
+
         // make sure the last one isn't the same as this one (rowspan cells)
         if (m_children.size() > 0 && m_children.last() == cell)
             continue;

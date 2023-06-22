@@ -197,17 +197,16 @@ void AXIsolatedObject::initializeProperties(const Ref<AccessibilityObject>& axOb
         setProperty(AXPropertyName::SupportsSelectedRows, object.supportsSelectedRows());
         setObjectVectorProperty(AXPropertyName::Columns, object.columns());
         setObjectVectorProperty(AXPropertyName::Rows, object.rows());
-        setProperty(AXPropertyName::ColumnCount, object.columnCount());
-        setProperty(AXPropertyName::RowCount, object.rowCount());
         setObjectVectorProperty(AXPropertyName::Cells, object.cells());
         setObjectVectorProperty(AXPropertyName::VisibleRows, object.visibleRows());
         setObjectProperty(AXPropertyName::HeaderContainer, object.headerContainer());
         setProperty(AXPropertyName::AXColumnCount, object.axColumnCount());
         setProperty(AXPropertyName::AXRowCount, object.axRowCount());
+        setProperty(AXPropertyName::CellSlots, object.cellSlots());
     }
 
-    if (object.isTableCell()) {
-        setProperty(AXPropertyName::IsTableCell, true);
+    if (object.isExposedTableCell()) {
+        setProperty(AXPropertyName::IsExposedTableCell, true);
         setProperty(AXPropertyName::ColumnIndexRange, object.columnIndexRange());
         setProperty(AXPropertyName::RowIndexRange, object.rowIndexRange());
         setProperty(AXPropertyName::AXColumnIndex, object.axColumnIndex());
@@ -491,15 +490,20 @@ bool AXIsolatedObject::isDetachedFromParent()
 
 AXCoreObject* AXIsolatedObject::cellForColumnAndRow(unsigned columnIndex, unsigned rowIndex)
 {
-    AXID cellID = Accessibility::retrieveValueFromMainThread<AXID>([&columnIndex, &rowIndex, this] () -> AXID {
-        if (auto* object = associatedAXObject()) {
-            if (auto cell = object->cellForColumnAndRow(columnIndex, rowIndex))
-                return cell->objectID();
-        }
-        return { };
-    });
+    // AXPropertyName::CellSlots can be big, so make sure not to copy it.
+    auto cellSlotsIterator = m_propertyMap.find(AXPropertyName::CellSlots);
+    if (cellSlotsIterator == m_propertyMap.end())
+        return nullptr;
 
-    return tree()->objectForID(cellID).get();
+    AXID cellID = WTF::switchOn(cellSlotsIterator->value,
+        [&] (Vector<Vector<AXID>>& cellSlots) {
+            if (rowIndex >= cellSlots.size() || columnIndex >= cellSlots[rowIndex].size())
+                return AXID();
+            return cellSlots[rowIndex][columnIndex];
+        },
+        [] (auto&) { return AXID(); }
+    );
+    return cellID ? tree()->objectForID(cellID).get() : nullptr;
 }
 
 void AXIsolatedObject::accessibilityText(Vector<AccessibilityText>& texts) const
@@ -1649,6 +1653,12 @@ bool AXIsolatedObject::supportsChecked() const
 }
 
 bool AXIsolatedObject::isModalNode() const
+{
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
+bool AXIsolatedObject::isTableCell() const
 {
     ASSERT_NOT_REACHED();
     return false;

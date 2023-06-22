@@ -41,14 +41,8 @@ private:
     explicit AccessibilityARIAGridCell(RenderObject*);
     bool isAccessibilityARIAGridCellInstance() const override { return true; }
 
-    // Returns the start location and row span of the cell.
-    std::pair<unsigned, unsigned> rowIndexRange() const override;
-    // Returns the start location and column span of the cell.
-    std::pair<unsigned, unsigned> columnIndexRange() const override;
-
     AccessibilityTable* parentTable() const override;
     AccessibilityObject* parentRowGroup() const;
-    unsigned axRowSpanWithRowIndex(unsigned index) const;
     String readOnlyValue() const override;
 }; 
 

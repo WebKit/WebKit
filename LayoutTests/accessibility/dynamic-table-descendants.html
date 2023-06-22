@@ -1,0 +1,104 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+<style>
+td, th {
+    border: 1px solid black;
+}
+</style>
+</head>
+<body>
+
+<table id="table">
+<thead id="thead">
+    <tr id="r0">
+        <th id="r0c0">Header 0</th>
+        <th id="r0c1">Header 1</th>
+    </tr>
+</thead>
+<tbody id="tbody">
+    <tr id="r1">
+        <td id="r1c0">R1C0</td>
+        <td id="r1c1">R1C1</td>
+    </tr>
+    <tr id="r2">
+        <td id="r2c0">R2C0</td>
+        <td id="r2c1">R2C1</td>
+    </tr>
+</tbody>
+</table>
+
+<script>
+var output = "This test ensures that the 'cell for column and row' API works correctly after dynamic DOM child changes.\n\n";
+
+function createFourthRow() {
+    const tr = document.createElement("tr");
+    tr.id = "r3";
+
+    const cellOne = document.createElement("td");
+    cellOne.id = "r3c0";
+    const cellTwo = document.createElement("td");
+    cellTwo.id = "r3c1";
+    const cellThree = document.createElement("td");
+    cellTwo.id = "r3c2";
+
+    tr.appendChild(cellOne);
+    tr.appendChild(cellTwo);
+    tr.appendChild(cellThree);
+    return tr;
+}
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var newTbody = document.createElement("tbody");
+    var dynamicCell = document.createElement("td");
+    dynamicCell.id = "dynamic-cell";
+
+    var table = accessibilityController.accessibleElementById("table");
+    output += expect("table.cellForColumnAndRow(0, 0).domIdentifier", "'r0c0'");
+    output += expect("table.rowCount", "3");
+    output += expect("table.columnCount", "2");
+    output += expect("table.cellForColumnAndRow(0, 3) === null", "true");
+
+    output += evalAndReturn("document.getElementById('tbody').appendChild(createFourthRow())");
+    setTimeout(async function() {
+        output += await expectAsync("table.rowCount", "4");
+        // The fourth row has three cells in it (vs. the two cells in every other row).
+        output += await expectAsync("table.columnCount", "3");
+        output += expect("table.cellForColumnAndRow(0, 3).domIdentifier", "'r3c0'");
+
+        // Now append a cell to a row.
+        output += evalAndReturn("document.getElementById('r3').appendChild(dynamicCell)");
+        await waitFor(() => table.cellForColumnAndRow(3, 3));
+        output += expect("table.cellForColumnAndRow(3, 3).domIdentifier", "'dynamic-cell'");
+        output += await expectAsync("table.columnCount", "4");
+
+        // And remove it.
+        output += evalAndReturn("document.getElementById('dynamic-cell').remove()");
+        output += await expectAsync("table.cellForColumnAndRow(2, 4) === null", "true");
+        output += await expectAsync("table.columnCount", "3");
+
+        // Remove the dynamically added fourth row.
+        output += evalAndReturn("document.getElementById('r3').remove()");
+        output += await expectAsync("table.rowCount", "3");
+        output += await expectAsync("table.columnCount", "2");
+        output += await expectAsync("table.cellForColumnAndRow(0, 3) === null", "true");
+
+        // Then add the fourth row back to the new tbody.
+        output += evalAndReturn("newTbody.appendChild(createFourthRow())");
+        output += evalAndReturn("document.getElementById('table').appendChild(newTbody)");
+        output += await expectAsync("table.rowCount", "4");
+        output += await expectAsync("table.columnCount", "3");
+        output += expect("table.cellForColumnAndRow(0, 3).domIdentifier", "'r3c0'");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
+

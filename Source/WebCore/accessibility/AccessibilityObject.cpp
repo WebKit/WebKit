@@ -3089,7 +3089,7 @@ AXCoreObject::AccessibilityChildrenVector AccessibilityObject::selectedCells()
     }
 
     if (auto* activeDescendant = this->activeDescendant()) {
-        if (activeDescendant->isTableCell() && !selectedCells.contains(activeDescendant))
+        if (activeDescendant->isExposedTableCell() && !selectedCells.contains(activeDescendant))
             selectedCells.append(activeDescendant);
     }
 

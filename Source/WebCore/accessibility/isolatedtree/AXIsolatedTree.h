@@ -77,9 +77,9 @@ enum class AXPropertyName : uint16_t {
     CaretBrowsingEnabled,
 #endif
     Cells,
+    CellSlots,
     ColorValue,
     Columns,
-    ColumnCount,
     ColumnHeader,
     ColumnHeaders,
     ColumnIndex,
@@ -122,6 +122,7 @@ enum class AXPropertyName : uint16_t {
     IsEnabled,
     IsExpanded,
     IsExposable,
+    IsExposedTableCell,
     IsFieldset,
     IsFocused,
     IsIndeterminate,
@@ -151,7 +152,6 @@ enum class AXPropertyName : uint16_t {
     IsSelected,
     IsSelectedOptionActive,
     IsTable,
-    IsTableCell,
     IsTableColumn,
     IsTableRow,
     IsTree,
@@ -196,7 +196,6 @@ enum class AXPropertyName : uint16_t {
     RolePlatformString,
     RoleDescription,
     Rows,
-    RowCount,
     RowHeaders,
     RowIndex,
     RowIndexRange,
@@ -240,7 +239,7 @@ enum class AXPropertyName : uint16_t {
     VisibleRows,
 };
 
-using AXPropertyValueVariant = std::variant<std::nullptr_t, AXID, String, bool, int, unsigned, double, float, uint64_t, AccessibilityButtonState, Color, URL, LayoutRect, FloatPoint, FloatRect, IntPoint, IntRect, PAL::SessionID, std::pair<unsigned, unsigned>, Vector<AccessibilityText>, Vector<AXID>, Vector<std::pair<AXID, AXID>>, Vector<String>, Path, OptionSet<AXAncestorFlag>, RetainPtr<NSAttributedString>, InsideLink, CharacterRange>;
+using AXPropertyValueVariant = std::variant<std::nullptr_t, AXID, String, bool, int, unsigned, double, float, uint64_t, AccessibilityButtonState, Color, URL, LayoutRect, FloatPoint, FloatRect, IntPoint, IntRect, PAL::SessionID, std::pair<unsigned, unsigned>, Vector<AccessibilityText>, Vector<AXID>, Vector<std::pair<AXID, AXID>>, Vector<String>, Path, OptionSet<AXAncestorFlag>, RetainPtr<NSAttributedString>, InsideLink, Vector<Vector<AXID>>, CharacterRange>;
 using AXPropertyMap = HashMap<AXPropertyName, AXPropertyValueVariant, IntHash<AXPropertyName>, WTF::StrongEnumHashTraits<AXPropertyName>>;
 
 struct AXPropertyChange {

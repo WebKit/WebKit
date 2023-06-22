@@ -887,6 +887,7 @@ public:
 
     // Table cell support.
     virtual bool isTableCell() const = 0;
+    virtual bool isExposedTableCell() const = 0;
     // Returns the start location and row span of the cell.
     virtual std::pair<unsigned, unsigned> rowIndexRange() const = 0;
     // Returns the start location and column span of the cell.

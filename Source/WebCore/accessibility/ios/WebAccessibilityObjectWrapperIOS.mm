@@ -1286,7 +1286,7 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
 {
     // Find if this element is in a table cell.
     if (AXCoreObject* parent = Accessibility::findAncestor<AXCoreObject>(*self.axBackingObject, true, [] (const AXCoreObject& object) {
-        return object.isTableCell();
+        return object.isExposedTableCell();
     }))
         return static_cast<AccessibilityTableCell*>(parent);
     return nil;
@@ -1347,7 +1347,7 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
     // We should consider the cases where the row number does NOT match the index in
     // rowHeaders, the most common case is when row0/col0 does not have a header.
     for (const auto& rowHeader : rowHeaders) {
-        if (!is<AccessibilityTableCell>(*rowHeader))
+        if (!rowHeader->isExposedTableCell())
             break;
         auto rowHeaderRange = rowHeader->rowIndexRange();
         if (rowRangeIndex >= rowHeaderRange.first && rowRangeIndex < rowHeaderRange.first + rowHeaderRange.second) {

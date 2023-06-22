@@ -514,6 +514,9 @@ void AXIsolatedTree::updateNodeProperties(AXCoreObject& axObject, const Vector<A
         case AXPropertyName::CanSetValueAttribute:
             propertyMap.set(AXPropertyName::CanSetValueAttribute, axObject.canSetValueAttribute());
             break;
+        case AXPropertyName::CellSlots:
+            propertyMap.set(AXPropertyName::CellSlots, dynamicDowncast<AccessibilityObject>(axObject)->cellSlots());
+            break;
         case AXPropertyName::CurrentState:
             propertyMap.set(AXPropertyName::CurrentState, static_cast<int>(axObject.currentState()));
             break;
@@ -608,8 +611,24 @@ void AXIsolatedTree::updateNodeAndDependentProperties(AccessibilityObject& axObj
 
     updateNode(axObject);
 
-    if (auto* treeAncestor = Accessibility::findAncestor(axObject, true, [] (const auto& object) { return object.isTree(); }))
-        updateNodeProperty(*treeAncestor, AXPropertyName::ARIATreeRows);
+    // When a row gains or loses cells, the column count of the table can change.
+    bool updateTableAncestorColumns = is<AccessibilityTableRow>(axObject);
+    for (auto* ancestor = axObject.parentObject(); ancestor; ancestor = ancestor->parentObject()) {
+        if (ancestor->isTree()) {
+            updateNodeProperty(*ancestor, AXPropertyName::ARIATreeRows);
+            if (!updateTableAncestorColumns)
+                break;
+        }
+
+        if (updateTableAncestorColumns && ancestor->isAccessibilityTableInstance()) {
+            // Only `updateChildren` if the table is unignored, because otherwise `updateChildren` will ascend and update the next highest unignored ancestor, which doesn't accomplish our goal of updating table columns.
+            if (ancestor->accessibilityIsIgnored())
+                break;
+            // Use `updateChildren` rather than `updateNodeProperty` because `updateChildren` will ensure the columns (which are children) will have associated isolated objects created.
+            updateChildren(*ancestor);
+            break;
+        }
+    }
 }
 
 void AXIsolatedTree::updateChildren(AccessibilityObject& axObject, ResolveNodeChanges resolveNodeChanges)

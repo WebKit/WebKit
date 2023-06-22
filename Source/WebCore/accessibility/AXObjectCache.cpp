@@ -89,6 +89,7 @@
 #include "HTMLSelectElement.h"
 #include "HTMLTableElement.h"
 #include "HTMLTablePartElement.h"
+#include "HTMLTableRowElement.h"
 #include "HTMLTableSectionElement.h"
 #include "HTMLTextFormControlElement.h"
 #include "InlineRunAndOffset.h"
@@ -576,6 +577,16 @@ bool nodeHasRole(Node* node, StringView role)
     return SpaceSplitString::spaceSplitStringContainsValue(roleValue, role, SpaceSplitString::ShouldFoldCase::Yes);
 }
 
+bool nodeHasGridRole(Node* node)
+{
+    return nodeHasRole(node, "grid"_s) || nodeHasRole(node, "table"_s) || nodeHasRole(node, "treegrid"_s);
+}
+
+bool nodeHasCellRole(Node* node)
+{
+    return node && (nodeHasRole(node, "gridcell"_s) || nodeHasRole(node, "cell"_s) || nodeHasRole(node, "columnheader"_s) || nodeHasRole(node, "rowheader"_s));
+}
+
 static bool isSimpleImage(const RenderObject& renderer)
 {
     if (!is<RenderImage>(renderer))
@@ -618,6 +629,21 @@ static bool isAccessibilityTreeItem(Node* node)
     return nodeHasRole(node, "treeitem"_s);
 }
 
+static bool isAccessibilityTable(Node* node)
+{
+    return is<HTMLTableElement>(node);
+}
+
+static bool isAccessibilityTableRow(Node* node)
+{
+    return is<HTMLTableRowElement>(node);
+}
+
+static bool isAccessibilityTableCell(Node* node)
+{
+    return is<HTMLTableCellElement>(node);
+}
+
 Ref<AccessibilityObject> AXObjectCache::createObjectFromRenderer(RenderObject* renderer)
 {
     // FIXME: How could renderer->node() ever not be an Element?
@@ -627,7 +653,7 @@ Ref<AccessibilityObject> AXObjectCache::createObjectFromRenderer(RenderObject* r
         return AccessibilityList::create(renderer);
 
     // aria tables
-    if (nodeHasRole(node, "grid"_s) || nodeHasRole(node, "treegrid"_s) || nodeHasRole(node, "table"_s))
+    if (nodeHasGridRole(node))
         return AccessibilityARIAGrid::create(renderer);
     if (nodeHasRole(node, "row"_s))
         return AccessibilityARIAGridRow::create(renderer);
@@ -672,11 +698,11 @@ Ref<AccessibilityObject> AXObjectCache::createObjectFromRenderer(RenderObject* r
         return AccessibilityMenuList::create(downcast<RenderMenuList>(renderer));
 
     // standard tables
-    if (is<RenderTable>(renderer))
+    if (is<RenderTable>(renderer) || isAccessibilityTable(node))
         return AccessibilityTable::create(renderer);
-    if (is<RenderTableRow>(renderer))
+    if (is<RenderTableRow>(renderer) || isAccessibilityTableRow(node))
         return AccessibilityTableRow::create(renderer);
-    if (is<RenderTableCell>(renderer))
+    if ((is<RenderTableCell>(renderer) && !renderer->isAnonymous()) || isAccessibilityTableCell(node))
         return AccessibilityTableCell::create(renderer);
 
     // progress bar
@@ -702,6 +728,12 @@ static Ref<AccessibilityObject> createFromNode(Node& node)
 {
     if (isAccessibilityList(&node))
         return AccessibilityList::create(node);
+    if (isAccessibilityTable(&node))
+        return AccessibilityTable::create(node);
+    if (isAccessibilityTableRow(&node))
+        return AccessibilityTableRow::create(node);
+    if (isAccessibilityTableCell(&node))
+        return AccessibilityTableCell::create(node);
     if (isAccessibilityTree(&node))
         return AccessibilityTree::create(node);
     if (isAccessibilityTreeItem(&node))
@@ -1164,6 +1196,11 @@ void AXObjectCache::handleChildrenChanged(AccessibilityObject& object)
     } else if (is<AccessibilityMenuListPopup>(object)) {
         downcast<AccessibilityMenuListPopup>(object).handleChildrenChanged();
         return;
+    } else if (auto* axTable = dynamicDowncast<AccessibilityTable>(object))
+        deferRecomputeTableCellSlots(*axTable);
+    else if (auto* axRow = dynamicDowncast<AccessibilityTableRow>(object)) {
+        if (auto* parentTable = axRow->parentTable())
+            deferRecomputeTableCellSlots(*parentTable);
     }
 
     if (!object.node() && !object.renderer())
@@ -1205,6 +1242,14 @@ void AXObjectCache::handleChildrenChanged(AccessibilityObject& object)
         object.updateRole();
 
     postPlatformNotification(&object, AXChildrenChanged);
+}
+
+void AXObjectCache::handleRecomputeCellSlots(AccessibilityTable& axTable)
+{
+    axTable.setCellSlotsDirty();
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    updateIsolatedTree(axTable, AXCellSlotsChanged);
+#endif
 }
 
 void AXObjectCache::handleMenuOpened(Node* node)
@@ -1538,11 +1583,6 @@ void AXObjectCache::selectedChildrenChanged(RenderObject* renderer)
         selectedChildrenChanged(renderer->node());
 }
 
-static bool isARIATableCell(Node* node)
-{
-    return node && (nodeHasRole(node, "gridcell"_s) || nodeHasRole(node, "cell"_s) || nodeHasRole(node, "columnheader"_s) || nodeHasRole(node, "rowheader"_s));
-}
-
 void AXObjectCache::onScrollbarFrameRectChange(const Scrollbar& scrollbar)
 {
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
@@ -1558,7 +1598,7 @@ void AXObjectCache::onScrollbarFrameRectChange(const Scrollbar& scrollbar)
 
 void AXObjectCache::onSelectedChanged(Node* node)
 {
-    if (isARIATableCell(node))
+    if (nodeHasCellRole(node))
         postNotification(node, AXSelectedCellsChanged);
     else if (is<HTMLOptionElement>(node))
         postNotification(node, AXSelectedStateChanged);
@@ -2105,7 +2145,7 @@ void AXObjectCache::handleActiveDescendantChange(Element& element, const AtomStr
         postPlatformNotification(target, AXNotification::AXActiveDescendantChanged);
 
         // Table cell active descendant changes should trigger selected cell changes.
-        if (target->isTable() && activeDescendant->isTableCell()) {
+        if (target->isTable() && activeDescendant->isExposedTableCell()) {
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
             updateIsolatedTree(target, AXNotification::AXSelectedCellsChanged);
 #endif
@@ -2203,6 +2243,26 @@ void AXObjectCache::handleAttributeChange(Element* element, const QualifiedName&
     AXLOG(makeString("attribute ", attrName.localName(), " for element ", element ? element->debugDescription() : String("nullptr"_s)));
     AXLOG(makeString("old value: ", oldValue, " new value: ", newValue));
 
+    enum class TableProperty : uint8_t { Exposed = 1 << 0, CellSlots = 1 << 1 };
+    auto recomputeParentTableProperties = [this] (Element* element, OptionSet<TableProperty> properties) {
+        ASSERT(!properties.isEmpty());
+
+        if (!properties.contains(TableProperty::CellSlots)) {
+            // If we're re-computing the exposed state of the table, we only need to do work for non-ARIA tables, allowing us to
+            // do a cheap dynamicDowncast check for an HTMLTablePartElement rather than calling AccessibilityTableCell::parentTable().
+            // (ARIA tables are inherently always exposed).
+            if (auto* tablePartElement = dynamicDowncast<HTMLTablePartElement>(element))
+                deferRecomputeTableIsExposed(const_cast<HTMLTableElement*>(tablePartElement->findParentTable().get()));
+        } else if (auto* axCell = dynamicDowncast<AccessibilityTableCell>(getOrCreate(element))) {
+            if (auto* parentTable = axCell->parentTable()) {
+                if (properties.contains(TableProperty::Exposed) && !parentTable->isAriaTable())
+                    deferRecomputeTableIsExposed(parentTable->element());
+                if (properties.contains(TableProperty::CellSlots))
+                    deferRecomputeTableCellSlots(*parentTable);
+            }
+        }
+    };
+
     if (!shouldProcessAttributeChange(element, attrName))
         return;
 
@@ -2245,15 +2305,16 @@ void AXObjectCache::handleAttributeChange(Element* element, const QualifiedName&
     else if (attrName == openAttr && is<HTMLDialogElement>(*element)) {
         deferModalChange(element);
         recomputeIsIgnored(element->parentNode());
+    } else if (attrName == rowspanAttr) {
+        postNotification(element, AXRowSpanChanged);
+        recomputeParentTableProperties(element, TableProperty::CellSlots);
+    } else if (attrName == colspanAttr) {
+        postNotification(element, AXColumnSpanChanged);
+        recomputeParentTableProperties(element, TableProperty::CellSlots);
     }
 
     if (!attrName.localName().string().startsWith("aria-"_s))
         return;
-
-    auto recomputeParentTableExposure = [this] (Element* element) {
-        if (auto* tablePartElement = dynamicDowncast<HTMLTablePartElement>(element))
-            deferRecomputeTableIsExposed(const_cast<HTMLTableElement*>(tablePartElement->findParentTable().get()));
-    };
 
     if (attrName == aria_activedescendantAttr)
         handleActiveDescendantChange(*element, oldValue, newValue);
@@ -2274,10 +2335,10 @@ void AXObjectCache::handleAttributeChange(Element* element, const QualifiedName&
         deferRecomputeTableIsExposed(dynamicDowncast<HTMLTableElement>(element));
     } else if (attrName == aria_colindexAttr) {
         postNotification(element, AXColumnIndexChanged);
-        recomputeParentTableExposure(element);
+        recomputeParentTableProperties(element, TableProperty::Exposed);
     } else if (attrName == aria_colspanAttr) {
         postNotification(element, AXColumnSpanChanged);
-        recomputeParentTableExposure(element);
+        recomputeParentTableProperties(element, { TableProperty::CellSlots, TableProperty::Exposed });
     }
     else if (attrName == aria_describedbyAttr)
         postNotification(element, AXDescribedByChanged);
@@ -2297,7 +2358,7 @@ void AXObjectCache::handleAttributeChange(Element* element, const QualifiedName&
         postNotification(element, AXPlaceholderChanged);
     else if (attrName == aria_rowindexAttr) {
         postNotification(element, AXRowIndexChanged);
-        recomputeParentTableExposure(element);
+        recomputeParentTableProperties(element, { TableProperty::CellSlots, TableProperty::Exposed });
     }
     else if (attrName == aria_valuemaxAttr)
         postNotification(element, AXMaximumValueChanged);
@@ -2355,9 +2416,8 @@ void AXObjectCache::handleAttributeChange(Element* element, const QualifiedName&
         handleRowCountChanged(get(element), element ? &element->document() : nullptr);
     else if (attrName == aria_rowspanAttr) {
         postNotification(element, AXRowSpanChanged);
-        recomputeParentTableExposure(element);
-    }
-    else if (attrName == aria_sortAttr)
+        recomputeParentTableProperties(element, { TableProperty::CellSlots, TableProperty::Exposed });
+    } else if (attrName == aria_sortAttr)
         postNotification(element, AXObjectCache::AXSortDirectionChanged);
 }
 
@@ -3672,6 +3732,12 @@ void AXObjectCache::performDeferredCacheUpdate()
         handleChildrenChanged(*child);
     m_deferredChildrenChangedList.clear();
 
+    AXLOGDeferredCollection("RecomputeTableCellSlotsList"_s, m_deferredRecomputeTableCellSlotsList);
+    m_deferredRecomputeTableCellSlotsList.forEach([this] (auto& axTable) {
+        handleRecomputeCellSlots(axTable);
+    });
+    m_deferredRecomputeTableCellSlotsList.clear();
+
     AXLOGDeferredCollection("TextChangedList"_s, m_deferredTextChangedList);
     for (auto* node : m_deferredTextChangedList)
         handleTextChanged(getOrCreate(node));
@@ -3841,6 +3907,10 @@ void AXObjectCache::updateIsolatedTree(const Vector<std::pair<RefPtr<Accessibili
         case AXAutofillTypeChanged:
             tree->updateNodeProperty(*notification.first, AXPropertyName::ValueAutofillButtonType);
             break;
+        case AXCellSlotsChanged:
+            ASSERT(notification.first->isTable());
+            tree->updateNodeProperty(*notification.first, AXPropertyName::CellSlots);
+            break;
         case AXCheckedStateChanged:
             tree->updateNodeProperty(*notification.first, AXPropertyName::IsChecked);
             break;
@@ -3998,6 +4068,13 @@ void AXObjectCache::deferRecomputeTableIsExposed(Element* element)
         return;
 
     m_deferredRecomputeTableIsExposedList.add(*tableElement);
+    if (!m_performCacheUpdateTimer.isActive())
+        m_performCacheUpdateTimer.startOneShot(0_s);
+}
+
+void AXObjectCache::deferRecomputeTableCellSlots(AccessibilityTable& axTable)
+{
+    m_deferredRecomputeTableCellSlotsList.add(axTable);
     if (!m_performCacheUpdateTimer.isActive())
         m_performCacheUpdateTimer.startOneShot(0_s);
 }

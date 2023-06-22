@@ -139,10 +139,10 @@ private:
     AXIsolatedObject* exposedTableAncestor(bool includeSelf = false) const final { return Accessibility::exposedTableAncestor(*this, includeSelf); }
     int tableLevel() const override { return intAttributeValue(AXPropertyName::TableLevel); }
     bool supportsSelectedRows() const override { return boolAttributeValue(AXPropertyName::SupportsSelectedRows); }
-    AccessibilityChildrenVector columns() override { return tree()->objectsForIDs(vectorAttributeValue<AXID>(AXPropertyName::Columns)); }
-    AccessibilityChildrenVector rows() override { return tree()->objectsForIDs(vectorAttributeValue<AXID>(AXPropertyName::Rows)); }
-    unsigned columnCount() override { return unsignedAttributeValue(AXPropertyName::ColumnCount); }
-    unsigned rowCount() override { return unsignedAttributeValue(AXPropertyName::RowCount); }
+    AccessibilityChildrenVector columns() final { return tree()->objectsForIDs(vectorAttributeValue<AXID>(AXPropertyName::Columns)); }
+    AccessibilityChildrenVector rows() final { return tree()->objectsForIDs(vectorAttributeValue<AXID>(AXPropertyName::Rows)); }
+    unsigned columnCount() final { return static_cast<unsigned>(columns().size()); }
+    unsigned rowCount() final { return static_cast<unsigned>(rows().size()); }
     AccessibilityChildrenVector cells() override { return tree()->objectsForIDs(vectorAttributeValue<AXID>(AXPropertyName::Cells)); }
     AXCoreObject* cellForColumnAndRow(unsigned, unsigned) override;
     AccessibilityChildrenVector columnHeaders() override;
@@ -153,7 +153,8 @@ private:
     int axRowCount() const override { return intAttributeValue(AXPropertyName::AXRowCount); }
 
     // Table cell support.
-    bool isTableCell() const override { return boolAttributeValue(AXPropertyName::IsTableCell); }
+    bool isTableCell() const final;
+    bool isExposedTableCell() const final { return boolAttributeValue(AXPropertyName::IsExposedTableCell); }
     // Returns the start location and row span of the cell.
     std::pair<unsigned, unsigned> rowIndexRange() const override { return pairAttributeValue<unsigned>(AXPropertyName::RowIndexRange); }
     // Returns the start location and column span of the cell.
