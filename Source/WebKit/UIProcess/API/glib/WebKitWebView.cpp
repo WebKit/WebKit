@@ -774,19 +774,19 @@ static void webkitWebViewConstructed(GObject* object)
     WebKitWebViewPrivate* priv = webView->priv;
     if (priv->relatedView) {
         if (priv->context)
-            g_critical("WebKitWebView web-context property can't be set when releated-view is set too, passed web-context value is ignored.");
+            g_critical("WebKitWebView web-context property can't be set when related-view is set too, passed web-context value is ignored.");
         priv->context = webkit_web_view_get_context(priv->relatedView);
 #if ENABLE(2022_GLIB_API)
         if (priv->networkSession)
-            g_critical("WebKitWebView network-session property can't be set when releated-view is set too, passed network-session value is ignored.");
+            g_critical("WebKitWebView network-session property can't be set when related-view is set too, passed network-session value is ignored.");
         priv->networkSession = webkit_web_view_get_network_session(priv->relatedView);
 #else
         if (priv->isEphemeral)
-            g_critical("WebKitWebView is-ephemeral property can't be set when releated-view is set too, passed is-ephemeral value is ignored.");
+            g_critical("WebKitWebView is-ephemeral property can't be set when related-view is set too, passed is-ephemeral value is ignored.");
         priv->isEphemeral = webkit_web_view_is_ephemeral(priv->relatedView);
 #endif
         if (priv->isControlledByAutomation)
-            g_critical("WebKitWebView is-controlled-by-automation can't be set when releated-view is set too, passed is-controlled-by-automation value is ignored.");
+            g_critical("WebKitWebView is-controlled-by-automation can't be set when related-view is set too, passed is-controlled-by-automation value is ignored.");
         priv->isControlledByAutomation = webkit_web_view_is_controlled_by_automation(priv->relatedView);
     } else if (!priv->context)
         priv->context = webkit_web_context_get_default();
