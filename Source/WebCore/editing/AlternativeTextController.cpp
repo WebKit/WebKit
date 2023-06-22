@@ -85,9 +85,10 @@ static bool markersHaveIdenticalDescription(const Vector<RenderedDocumentMarker*
 }
 
 AlternativeTextController::AlternativeTextController(Document& document)
-    : m_timer(*this, &AlternativeTextController::timerFired)
+    : m_timer(&document, *this, &AlternativeTextController::timerFired)
     , m_document(document)
 {
+    m_timer.suspendIfNeeded();
 }
 
 AlternativeTextController::~AlternativeTextController()
@@ -118,7 +119,7 @@ void AlternativeTextController::startAlternativeTextUITimer(AlternativeTextType 
 
 void AlternativeTextController::stopAlternativeTextUITimer()
 {
-    m_timer.stop();
+    m_timer.cancel();
     m_rangeWithAlternative = std::nullopt;
 }
 

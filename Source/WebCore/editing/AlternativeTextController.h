@@ -28,7 +28,7 @@
 #include "AlternativeTextClient.h"
 #include "DocumentMarker.h"
 #include "Position.h"
-#include "Timer.h"
+#include "SuspendableTimer.h"
 #include <variant>
 #include <wtf/Noncopyable.h>
 
@@ -119,7 +119,7 @@ private:
     FloatRect rootViewRectForRange(const SimpleRange&) const;
     void markPrecedingWhitespaceForDeletedAutocorrectionAfterCommand(EditCommand*);
 
-    Timer m_timer;
+    SuspendableTimer m_timer;
     std::optional<SimpleRange> m_rangeWithAlternative;
     bool m_isActive { };
     bool m_isDismissedByEditing { };
