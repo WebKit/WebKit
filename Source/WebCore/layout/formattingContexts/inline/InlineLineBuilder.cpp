@@ -239,7 +239,8 @@ inline void LineCandidate::InlineContent::appendInlineItem(const InlineItem& inl
 
     if (inlineItem.isText()) {
         auto& inlineTextItem = downcast<InlineTextItem>(inlineItem);
-        auto isTrailingHangingContent = inlineTextItem.isWhitespace() && style.whiteSpace() == WhiteSpace::PreWrap;
+        // https://www.w3.org/TR/css-text-4/#white-space-phase-2
+        auto isTrailingHangingContent = inlineTextItem.isWhitespace() && TextUtil::shouldTrailingWhitespaceHang(style);
         auto trimmableWidth = [&]() -> std::optional<InlineLayoutUnit> {
             if (isTrailingHangingContent)
                 return { };

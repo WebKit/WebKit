@@ -355,6 +355,12 @@ bool TextUtil::isWrappingAllowed(const RenderStyle& style)
     return style.textWrap() != TextWrap::NoWrap;
 }
 
+bool TextUtil::shouldTrailingWhitespaceHang(const RenderStyle& style)
+{
+    // https://www.w3.org/TR/css-text-4/#white-space-phase-2
+    return style.whiteSpaceCollapse() == WhiteSpaceCollapse::Preserve && style.textWrap() != TextWrap::NoWrap;
+}
+
 TextBreakIterator::LineMode::Behavior TextUtil::lineBreakIteratorMode(LineBreak lineBreak)
 {
     switch (lineBreak) {

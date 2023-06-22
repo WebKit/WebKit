@@ -76,6 +76,7 @@ public:
     static bool shouldPreserveSpacesAndTabs(const Box&);
     static bool shouldPreserveNewline(const Box&);
     static bool isWrappingAllowed(const RenderStyle&);
+    static bool shouldTrailingWhitespaceHang(const RenderStyle&);
     static bool containsStrongDirectionalityText(StringView);
 
     static TextRun ellipsisTextRun(bool isHorizontal = true);

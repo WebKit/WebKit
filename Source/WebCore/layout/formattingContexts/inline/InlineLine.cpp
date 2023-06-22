@@ -519,7 +519,7 @@ void Line::appendTextContent(const InlineTextItem& inlineTextItem, const RenderS
         if (runHasHangablePunctuationStart)
             m_hangingContent.setLeadingPunctuation(TextUtil::hangablePunctuationStartWidth(inlineTextItem, style));
 
-        auto runHasHangableWhitespaceEnd = inlineTextItem.isWhitespace() && !isTrimmable && m_runs[lastRunIndex].shouldTrailingWhitespaceHang();
+        auto runHasHangableWhitespaceEnd = !isTrimmable && inlineTextItem.isWhitespace() && TextUtil::shouldTrailingWhitespaceHang(m_runs[lastRunIndex].style());
         if (runHasHangableWhitespaceEnd) {
             m_hangingContent.setTrailingWhitespace(inlineTextItem.length(), logicalWidth);
             return;
