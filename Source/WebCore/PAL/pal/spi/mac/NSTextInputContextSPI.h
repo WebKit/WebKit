@@ -35,6 +35,10 @@
 - (void)handleEvent:(NSEvent *)event completionHandler:(void(^)(BOOL handled))completionHandler;
 - (void)handleEventByInputMethod:(NSEvent *)event completionHandler:(void(^)(BOOL handled))completionHandler;
 - (BOOL)handleEventByKeyboardLayout:(NSEvent *)event;
+
+#if HAVE(REDESIGNED_TEXT_CURSOR)
+@property BOOL showsCursorAccessories;
+#endif
 @end
 
 #endif

@@ -31,6 +31,7 @@
 #include "CharacterData.h"
 #include "ColorBlending.h"
 #include "DeleteSelectionCommand.h"
+#include "DictationCaretAnimator.h"
 #include "DocumentInlines.h"
 #include "Editing.h"
 #include "Editor.h"
@@ -59,6 +60,7 @@
 #include "LocalFrameView.h"
 #include "Logging.h"
 #include "MutableStyleProperties.h"
+#include "OpacityCaretAnimator.h"
 #include "Page.h"
 #include "PseudoClassChangeInvalidation.h"
 #include "Range.h"
@@ -160,15 +162,26 @@ static inline bool isPageActive(Document* document)
     return document && document->page() && document->page()->focusController().isActive();
 }
 
-#if USE(APPLE_INTERNAL_SDK)
-#import <WebKitAdditions/FrameSelectionAdditions.cpp>
-#else
-
-static UniqueRef<CaretAnimator> createCaretAnimator(FrameSelection* frameSelection, CaretAnimatorType = CaretAnimatorType::Default)
+static UniqueRef<CaretAnimator> createCaretAnimator(FrameSelection* frameSelection, std::optional<CaretAnimatorType> optionalCaretType = std::nullopt)
 {
+#if PLATFORM(MAC) && HAVE(REDESIGNED_TEXT_CURSOR)
+    if (redesignedTextCursorEnabled()) {
+        std::optional<LayoutRect> existingExpansionRect = std::nullopt;
+        if (optionalCaretType)
+            existingExpansionRect = frameSelection->caretAnimator().caretRepaintRectForLocalRect(LayoutRect());
+
+        switch (optionalCaretType.value_or(CaretAnimatorType::Default)) {
+        case CaretAnimatorType::Default:
+            return makeUniqueRef<OpacityCaretAnimator>(*frameSelection, existingExpansionRect);
+        case CaretAnimatorType::Alternate:
+            return makeUniqueRef<DictationCaretAnimator>(*frameSelection);
+        }
+    }
+#else
+    UNUSED_PARAM(optionalCaretType);
+#endif
     return makeUniqueRef<SimpleCaretAnimator>(*frameSelection);
 }
-#endif // USE(APPLE_INTERNAL_SDK)
 
 FrameSelection::FrameSelection(Document* document)
     : m_document(document)
@@ -1968,6 +1981,11 @@ void FrameSelection::caretAnimatorInvalidated(CaretAnimatorType caretType)
 Document* FrameSelection::document()
 {
     return m_document.get();
+}
+
+Node* FrameSelection::caretNode()
+{
+    return selection().visibleStart().deepEquivalent().deprecatedNode();
 }
 
 bool FrameSelection::contains(const LayoutPoint& point) const

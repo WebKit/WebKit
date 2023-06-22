@@ -673,39 +673,197 @@ void TextBoxPainter<TextBoxPath>::paintForegroundDecorations(TextDecorationPaint
         m_paintInfo.context().concatCTM(rotation(m_paintRect, Counterclockwise));
 }
 
-#if USE(APPLE_INTERNAL_SDK)
-#include <WebKitAdditions/TextBoxPainterAdditions.cpp>
-#else
-static FloatRoundedRect::Radii radiiForUnderline(const CompositionUnderline&, unsigned, unsigned)
+static FloatRoundedRect::Radii radiiForUnderline(const CompositionUnderline& underline, unsigned markedTextStartOffset, unsigned markedTextEndOffset)
 {
-    return FloatRoundedRect::Radii { 0 };
+    auto radii = FloatRoundedRect::Radii { 0 };
+
+#if HAVE(REDESIGNED_TEXT_CURSOR)
+    if (!redesignedTextCursorEnabled())
+        return radii;
+
+    if (underline.startOffset >= markedTextStartOffset) {
+        radii.setTopLeft({ 1, 1 });
+        radii.setBottomLeft({ 1, 1 });
+    }
+
+    if (underline.endOffset <= markedTextEndOffset) {
+        radii.setTopRight({ 1, 1 });
+        radii.setBottomRight({ 1, 1 });
+    }
+#else
+    UNUSED_PARAM(underline);
+    UNUSED_PARAM(markedTextStartOffset);
+    UNUSED_PARAM(markedTextEndOffset);
+#endif
+
+    return radii;
 }
 
-template<typename TextBoxPath>
-void TextBoxPainter<TextBoxPath>::fillCompositionUnderline(float start, float width, const CompositionUnderline& underline, const FloatRoundedRect::Radii&, bool) const
+#if HAVE(REDESIGNED_TEXT_CURSOR)
+enum class TrimSide : bool {
+    Left,
+    Right,
+};
+
+static FloatRoundedRect::Radii trimRadii(const FloatRoundedRect::Radii& radii, TrimSide trimSide)
 {
+    switch (trimSide) {
+    case TrimSide::Left:
+        return { { }, radii.topRight(), { }, radii.bottomRight() };
+    case TrimSide::Right:
+        return { radii.topLeft(), { }, radii.bottomLeft(), { } };
+    }
+}
+
+enum class SnapDirection : uint8_t {
+    Left,
+    Right,
+    Both,
+};
+
+static FloatRect snapRectToDevicePixelsInDirection(const FloatRect& rect, float deviceScaleFactor, SnapDirection snapDirection)
+{
+    const auto layoutRect = LayoutRect { rect };
+    switch (snapDirection) {
+    case SnapDirection::Left:
+        return snapRectToDevicePixelsWithWritingDirection(layoutRect, deviceScaleFactor, true);
+    case SnapDirection::Right:
+        return snapRectToDevicePixelsWithWritingDirection(layoutRect, deviceScaleFactor, false);
+    case SnapDirection::Both:
+        auto snappedRectLeft = snapRectToDevicePixelsWithWritingDirection(layoutRect, deviceScaleFactor, true);
+        return snapRectToDevicePixelsWithWritingDirection(LayoutRect { snappedRectLeft }, deviceScaleFactor, false);
+    }
+}
+
+enum class LayoutBoxLocation : uint8_t {
+    OnlyBox,
+    StartOfSequence,
+    EndOfSequence,
+    MiddleOfSequence,
+    Unknown,
+};
+
+static LayoutBoxLocation layoutBoxSequenceLocation(const InlineIterator::BoxModernPath& textBox)
+{
+    auto isFirstForLayoutBox = textBox.box().isFirstForLayoutBox();
+    auto isLastForLayoutBox = textBox.box().isLastForLayoutBox();
+    if (isFirstForLayoutBox && isLastForLayoutBox)
+        return LayoutBoxLocation::OnlyBox;
+    if (isFirstForLayoutBox)
+        return LayoutBoxLocation::StartOfSequence;
+    if (isLastForLayoutBox)
+        return LayoutBoxLocation::EndOfSequence;
+    return LayoutBoxLocation::MiddleOfSequence;
+}
+
+static LayoutBoxLocation layoutBoxSequenceLocation(const InlineIterator::BoxLegacyPath&)
+{
+    return LayoutBoxLocation::Unknown;
+}
+#endif
+
+template<typename TextBoxPath>
+void TextBoxPainter<TextBoxPath>::fillCompositionUnderline(float start, float width, const CompositionUnderline& underline, const FloatRoundedRect::Radii& radii, bool hasLiveConversion) const
+{
+#if HAVE(REDESIGNED_TEXT_CURSOR)
+    if (!redesignedTextCursorEnabled())
+#endif
+    {
+        // Thick marked text underlines are 2px thick as long as there is room for the 2px line under the baseline.
+        // All other marked text underlines are 1px thick.
+        // If there's not enough space the underline will touch or overlap characters.
+        int lineThickness = 1;
+        int baseline = m_style.metricsOfPrimaryFont().ascent();
+        if (underline.thick && m_logicalRect.height() - baseline >= 2)
+            lineThickness = 2;
+
+        // We need to have some space between underlines of subsequent clauses, because some input methods do not use different underline styles for those.
+        // We make each line shorter, which has a harmless side effect of shortening the first and last clauses, too.
+        start += 1;
+        width -= 2;
+
+        auto& style = m_renderer.style();
+        auto underlineColor = underline.compositionUnderlineColor == CompositionUnderlineColor::TextColor ? style.visitedDependentColorWithColorFilter(CSSPropertyWebkitTextFillColor) : style.colorByApplyingColorFilter(underline.color);
+
+        auto& context = m_paintInfo.context();
+        context.setStrokeColor(underlineColor);
+        context.setStrokeThickness(lineThickness);
+        context.drawLineForText(FloatRect(m_paintRect.x() + start, m_paintRect.y() + m_logicalRect.height() - lineThickness, width, lineThickness), m_isPrinting);
+        return;
+    }
+
+#if HAVE(REDESIGNED_TEXT_CURSOR)
+    if (!underline.color.isVisible())
+        return;
+
     // Thick marked text underlines are 2px thick as long as there is room for the 2px line under the baseline.
     // All other marked text underlines are 1px thick.
     // If there's not enough space the underline will touch or overlap characters.
     int lineThickness = 1;
     int baseline = m_style.metricsOfPrimaryFont().ascent();
-    if (underline.thick && m_logicalRect.height() - baseline >= 2)
+    if (m_logicalRect.height() - baseline >= 2)
         lineThickness = 2;
 
-    // We need to have some space between underlines of subsequent clauses, because some input methods do not use different underline styles for those.
-    // We make each line shorter, which has a harmless side effect of shortening the first and last clauses, too.
-    start += 1;
-    width -= 2;
+    auto underlineColor = [this] {
+#if PLATFORM(MAC)
+        auto cssColorValue = CSSValueAppleSystemControlAccent;
+#else
+        auto cssColorValue = CSSValueAppleSystemBlue;
+#endif
+        auto styleColorOptions = m_renderer.styleColorOptions();
+        return RenderTheme::singleton().systemColor(cssColorValue, styleColorOptions | StyleColorOptions::UseSystemAppearance);
+    }();
 
-    auto& style = m_renderer.style();
-    auto underlineColor = underline.compositionUnderlineColor == CompositionUnderlineColor::TextColor ? style.visitedDependentColorWithColorFilter(CSSPropertyWebkitTextFillColor) : style.colorByApplyingColorFilter(underline.color);
+    if (!underline.thick && hasLiveConversion)
+        underlineColor = underlineColor.colorWithAlpha(0.35);
 
     auto& context = m_paintInfo.context();
     context.setStrokeColor(underlineColor);
     context.setStrokeThickness(lineThickness);
-    context.drawLineForText(FloatRect(m_paintRect.x() + start, m_paintRect.y() + m_logicalRect.height() - lineThickness, width, lineThickness), m_isPrinting);
-}
+
+    auto rect = FloatRect(m_paintRect.x() + start, m_paintRect.y() + m_logicalRect.height() - lineThickness, width, lineThickness);
+
+    if (radii.isZero()) {
+        context.drawLineForText(rect, m_isPrinting);
+        return;
+    }
+
+    // We cannot directly draw rounded edges for every rect, since a single textbox path may be split up over multiple rects.
+    // Drawing rounded edges unconditionally could then produce broken underlines between continuous rects.
+    // As a mitigation, we consult the textbox path to understand the current rect's position in the textbox path.
+    // If we're the only box in the path, then we fallback to unconditionally drawing rounded edges.
+    // If not, we flatten out the right, left, or both edges depending on whether we're at the start, end, or middle of a path, respectively.
+
+    auto deviceScaleFactor = m_document.deviceScaleFactor();
+
+    switch (layoutBoxSequenceLocation(m_textBox)) {
+    case LayoutBoxLocation::Unknown:
+    case LayoutBoxLocation::OnlyBox: {
+        context.fillRoundedRect(FloatRoundedRect { rect, radii }, underlineColor);
+        return;
+    }
+    case LayoutBoxLocation::StartOfSequence: {
+        auto snappedRectRight = snapRectToDevicePixelsInDirection(rect, deviceScaleFactor, SnapDirection::Right);
+        context.fillRoundedRect(FloatRoundedRect { snappedRectRight, trimRadii(radii, TrimSide::Right) }, underlineColor);
+        return;
+    }
+    case LayoutBoxLocation::EndOfSequence: {
+        auto snappedRectLeft = snapRectToDevicePixelsInDirection(rect, deviceScaleFactor, SnapDirection::Left);
+        context.fillRoundedRect(FloatRoundedRect { snappedRectLeft, trimRadii(radii, TrimSide::Left) }, underlineColor);
+        return;
+    }
+    case LayoutBoxLocation::MiddleOfSequence: {
+        auto snappedRectBoth = snapRectToDevicePixelsInDirection(rect, deviceScaleFactor, SnapDirection::Both);
+        context.fillRect(snappedRectBoth, underlineColor);
+        return;
+    }
+    }
+    ASSERT_NOT_REACHED("Unexpected LayoutBoxLocation value, underline not drawn");
+#else
+    UNUSED_PARAM(radii);
+    UNUSED_PARAM(hasLiveConversion);
 #endif
+}
 
 template<typename TextBoxPath>
 void TextBoxPainter<TextBoxPath>::paintCompositionUnderlines()
