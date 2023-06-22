@@ -676,17 +676,18 @@ void LineLayout::updateRenderTreePositions(const Vector<LineAdjustment>& lineAdj
             auto logicalBorderBoxRect = LayoutRect { Layout::BoxGeometry::borderBoxRect(logicalGeometry) };
             auto previousStaticPosition = LayoutPoint { layer.staticInlinePosition(), layer.staticBlockPosition() };
             auto delta = logicalBorderBoxRect.location() - previousStaticPosition;
+            auto hasStaticInlinePositioning = layoutBox.style().hasStaticInlinePosition(renderer.isHorizontalWritingMode());
 
             if (layoutBox.style().isOriginalDisplayInlineType()) {
                 blockFlow.setStaticInlinePositionForChild(renderer, logicalBorderBoxRect.y(), logicalBorderBoxRect.x());
-                // A non-statically positioned out-of-flow box's layout will override the top/left values we are setting here.
-                renderer.move(delta.width(), delta.height());
+                if (hasStaticInlinePositioning)
+                    renderer.move(delta.width(), delta.height());
             }
 
             layer.setStaticBlockPosition(logicalBorderBoxRect.y());
             layer.setStaticInlinePosition(logicalBorderBoxRect.x());
 
-            if (!delta.isZero() && layoutBox.style().hasStaticInlinePosition(renderer.isHorizontalWritingMode()))
+            if (!delta.isZero() && hasStaticInlinePositioning)
                 renderer.setChildNeedsLayout(MarkOnlyThis);
             continue;
         }
