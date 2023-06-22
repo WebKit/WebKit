@@ -31,6 +31,7 @@
 #include "RemoteDisplayListRecorderMessages.h"
 #include "RemoteImageBufferProxy.h"
 #include "RemoteRenderingBackendProxy.h"
+#include "SharedVideoFrame.h"
 #include "StreamClientConnection.h"
 #include "WebCoreArgumentCoders.h"
 #include <WebCore/DisplayList.h>
@@ -377,7 +378,7 @@ void RemoteDisplayListRecorderProxy::recordPaintFrameForMedia(MediaPlayer& playe
 void RemoteDisplayListRecorderProxy::recordPaintVideoFrame(VideoFrame& frame, const FloatRect& destination, bool shouldDiscardAlpha)
 {
 #if PLATFORM(COCOA)
-    auto sharedVideoFrame = m_sharedVideoFrameWriter.write(frame, [&](auto& semaphore) {
+    auto sharedVideoFrame = ensureSharedVideoFrameWriter().write(frame, [&](auto& semaphore) {
         send(Messages::RemoteDisplayListRecorder::SetSharedVideoFrameSemaphore { semaphore });
     }, [&](auto&& handle) {
         send(Messages::RemoteDisplayListRecorder::SetSharedVideoFrameMemory { WTFMove(handle) });
@@ -583,9 +584,20 @@ void RemoteDisplayListRecorderProxy::disconnect()
 {
     m_renderingBackend = nullptr;
 #if PLATFORM(COCOA) && ENABLE(VIDEO)
-    m_sharedVideoFrameWriter.disable();
+    if (m_sharedVideoFrameWriter)
+        m_sharedVideoFrameWriter->disable();
 #endif
 }
+
+#if PLATFORM(COCOA) && ENABLE(VIDEO)
+SharedVideoFrameWriter& RemoteDisplayListRecorderProxy::ensureSharedVideoFrameWriter()
+{
+    if (!m_sharedVideoFrameWriter)
+        m_sharedVideoFrameWriter = makeUnique<SharedVideoFrameWriter>();
+
+    return *m_sharedVideoFrameWriter;
+}
+#endif
 
 } // namespace WebCore
 

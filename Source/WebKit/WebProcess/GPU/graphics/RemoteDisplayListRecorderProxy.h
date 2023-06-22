@@ -27,7 +27,6 @@
 
 #if ENABLE(GPU_PROCESS)
 
-#include "SharedVideoFrame.h"
 #include <WebCore/DisplayListRecorder.h>
 #include <WebCore/DrawGlyphsRecorder.h>
 #include <WebCore/GraphicsContext.h>
@@ -42,6 +41,7 @@ namespace WebKit {
 
 class RemoteRenderingBackendProxy;
 class RemoteImageBufferProxy;
+class SharedVideoFrameWriter;
 
 class RemoteDisplayListRecorderProxy : public WebCore::DisplayList::Recorder {
 public:
@@ -152,11 +152,15 @@ private:
     RefPtr<WebCore::ImageBuffer> createAlignedImageBuffer(const WebCore::FloatSize&, const WebCore::DestinationColorSpace&, std::optional<WebCore::RenderingMethod>) const final;
     RefPtr<WebCore::ImageBuffer> createAlignedImageBuffer(const WebCore::FloatRect&, const WebCore::DestinationColorSpace&, std::optional<WebCore::RenderingMethod>) const final;
 
+#if PLATFORM(COCOA) && ENABLE(VIDEO)
+    SharedVideoFrameWriter& ensureSharedVideoFrameWriter();
+#endif
+
     WebCore::RenderingResourceIdentifier m_destinationBufferIdentifier;
     WeakPtr<RemoteImageBufferProxy> m_imageBuffer;
     WeakPtr<RemoteRenderingBackendProxy> m_renderingBackend;
 #if PLATFORM(COCOA) && ENABLE(VIDEO)
-    SharedVideoFrameWriter m_sharedVideoFrameWriter;
+    std::unique_ptr<SharedVideoFrameWriter> m_sharedVideoFrameWriter;
 #endif
 };
 
