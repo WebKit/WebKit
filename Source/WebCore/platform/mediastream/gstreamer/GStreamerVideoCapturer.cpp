@@ -55,14 +55,6 @@ GStreamerVideoCapturer::GStreamerVideoCapturer(const char* sourceFactory, Captur
     initializeVideoCapturerDebugCategory();
 }
 
-GStreamerVideoCapturer::~GStreamerVideoCapturer()
-{
-    auto* sink = this->sink();
-    if (!sink)
-        return;
-    g_signal_handlers_disconnect_by_data(sink, this);
-}
-
 void GStreamerVideoCapturer::setSinkVideoFrameCallback(SinkVideoFrameCallback&& callback)
 {
     if (m_sinkVideoFrameCallback.first)

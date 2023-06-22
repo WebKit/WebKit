@@ -63,13 +63,24 @@ MockRealtimeVideoSourceGStreamer::MockRealtimeVideoSourceGStreamer(String&& devi
         return;
 
     device->setIsMockDevice(true);
-    m_capturer = makeUnique<GStreamerVideoCapturer>(WTFMove(*device));
+    m_capturer = adoptRef(*new GStreamerVideoCapturer(WTFMove(*device)));
+    m_capturer->addObserver(*this);
     m_capturer->setupPipeline();
     m_capturer->setSinkVideoFrameCallback([this](auto&& videoFrame) {
         if (!isProducingData() || muted())
             return;
         dispatchVideoFrameToObservers(WTFMove(videoFrame), { });
     });
+    singleton.registerCapturer(m_capturer);
+}
+
+MockRealtimeVideoSourceGStreamer::~MockRealtimeVideoSourceGStreamer()
+{
+    m_capturer->stop();
+    m_capturer->removeObserver(*this);
+
+    auto& singleton = GStreamerVideoCaptureDeviceManager::singleton();
+    singleton.unregisterCapturer(*m_capturer);
 }
 
 void MockRealtimeVideoSourceGStreamer::startProducingData()
@@ -86,6 +97,13 @@ void MockRealtimeVideoSourceGStreamer::stopProducingData()
 {
     m_capturer->stop();
     MockRealtimeVideoSource::stopProducingData();
+}
+
+void MockRealtimeVideoSourceGStreamer::captureEnded()
+{
+    // NOTE: We could call captureFailed() like in the mock audio source, but that would trigger new
+    // test failures. For some reason we want 'ended' MediaStreamTrack notifications only for audio
+    // devices removal.
 }
 
 void MockRealtimeVideoSourceGStreamer::updateSampleBuffer()

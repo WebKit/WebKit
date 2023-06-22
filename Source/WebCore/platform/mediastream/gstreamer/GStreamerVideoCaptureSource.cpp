@@ -107,21 +107,27 @@ DisplayCaptureFactory& GStreamerVideoCaptureSource::displayFactory()
 
 GStreamerVideoCaptureSource::GStreamerVideoCaptureSource(String&& deviceID, AtomString&& name, MediaDeviceHashSalts&& hashSalts, const gchar* sourceFactory, CaptureDevice::DeviceType deviceType, const NodeAndFD& nodeAndFd)
     : RealtimeVideoCaptureSource(CaptureDevice { WTFMove(deviceID), CaptureDevice::DeviceType::Camera, WTFMove(name) }, WTFMove(hashSalts), { })
-    , m_capturer(makeUnique<GStreamerVideoCapturer>(sourceFactory, deviceType))
+    , m_capturer(adoptRef(*new GStreamerVideoCapturer(sourceFactory, deviceType)))
     , m_deviceType(deviceType)
 {
     initializeVideoCaptureSourceDebugCategory();
     m_capturer->setPipewireNodeAndFD(nodeAndFd);
     m_capturer->addObserver(*this);
+
+    auto& singleton = GStreamerVideoCaptureDeviceManager::singleton();
+    singleton.registerCapturer(m_capturer);
 }
 
 GStreamerVideoCaptureSource::GStreamerVideoCaptureSource(GStreamerCaptureDevice&& device, MediaDeviceHashSalts&& hashSalts)
     : RealtimeVideoCaptureSource(device, WTFMove(hashSalts), { })
-    , m_capturer(makeUnique<GStreamerVideoCapturer>(WTFMove(device)))
+    , m_capturer(adoptRef(*new GStreamerVideoCapturer(WTFMove(device))))
     , m_deviceType(CaptureDevice::DeviceType::Camera)
 {
     initializeVideoCaptureSourceDebugCategory();
     m_capturer->addObserver(*this);
+
+    auto& singleton = GStreamerVideoCaptureDeviceManager::singleton();
+    singleton.registerCapturer(m_capturer);
 }
 
 GStreamerVideoCaptureSource::~GStreamerVideoCaptureSource()
@@ -135,6 +141,9 @@ GStreamerVideoCaptureSource::~GStreamerVideoCaptureSource()
         auto& manager = GStreamerDisplayCaptureDeviceManager::singleton();
         manager.stopSource(persistentID());
     }
+
+    auto& singleton = GStreamerVideoCaptureDeviceManager::singleton();
+    singleton.unregisterCapturer(*m_capturer);
 }
 
 void GStreamerVideoCaptureSource::settingsDidChange(OptionSet<RealtimeMediaSourceSettings::Flag> settings)
@@ -165,6 +174,11 @@ void GStreamerVideoCaptureSource::sourceCapsChanged(const GstCaps* caps)
     setIntrinsicSize(IntSize(*videoResolution), false);
     if (m_deviceType == CaptureDevice::DeviceType::Screen)
         ensureIntrinsicSizeMaintainsAspectRatio();
+}
+
+void GStreamerVideoCaptureSource::captureEnded()
+{
+    m_capturer->stop();
 }
 
 void GStreamerVideoCaptureSource::startProducingData()

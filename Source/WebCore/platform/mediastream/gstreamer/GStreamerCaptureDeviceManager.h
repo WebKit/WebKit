@@ -26,6 +26,7 @@
 #include "DisplayCaptureManager.h"
 #include "GRefPtrGStreamer.h"
 #include "GStreamerCaptureDevice.h"
+#include "GStreamerCapturer.h"
 #include "GStreamerVideoCapturer.h"
 #include "RealtimeMediaSourceCenter.h"
 #include "RealtimeMediaSourceFactory.h"
@@ -45,15 +46,22 @@ public:
 
     // RealtimeMediaSourceCenter::Observer interface.
     void devicesChanged() final;
+    void deviceWillBeRemoved(const String& persistentId) final;
+
+    void registerCapturer(const RefPtr<GStreamerCapturer>&);
+    void unregisterCapturer(const GStreamerCapturer&);
+    void stopCapturing(const String& persistentId);
 
 private:
     void addDevice(GRefPtr<GstDevice>&&);
+    void removeDevice(GRefPtr<GstDevice>&&);
     void stopMonitor();
     void refreshCaptureDevices();
 
     GRefPtr<GstDeviceMonitor> m_deviceMonitor;
     Vector<GStreamerCaptureDevice> m_gstreamerDevices;
     Vector<CaptureDevice> m_devices;
+    Vector<RefPtr<GStreamerCapturer>> m_capturers;
 };
 
 class GStreamerAudioCaptureDeviceManager final : public GStreamerCaptureDeviceManager {
@@ -67,7 +75,6 @@ class GStreamerVideoCaptureDeviceManager final : public GStreamerCaptureDeviceMa
     friend class NeverDestroyed<GStreamerVideoCaptureDeviceManager>;
 public:
     static GStreamerVideoCaptureDeviceManager& singleton();
-    static VideoCaptureFactory& videoFactory();
     CaptureDevice::DeviceType deviceType() final { return CaptureDevice::DeviceType::Camera; }
 };
 

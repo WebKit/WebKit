@@ -215,6 +215,14 @@ void RealtimeMediaSourceCenter::captureDevicesChanged()
 #endif
 }
 
+void RealtimeMediaSourceCenter::captureDeviceWillBeRemoved(const String& persistentId)
+{
+    Ref protectedThis { *this };
+    m_observers.forEach([&](auto& observer) {
+        observer.deviceWillBeRemoved(persistentId);
+    });
+}
+
 void RealtimeMediaSourceCenter::triggerDevicesChangedObservers()
 {
     Ref protectedThis { *this };

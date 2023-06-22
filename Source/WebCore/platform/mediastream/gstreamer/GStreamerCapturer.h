@@ -27,14 +27,12 @@
 #include "GStreamerCaptureDevice.h"
 #include "GStreamerCommon.h"
 
-#include <gst/gst.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/WeakHashSet.h>
 
 namespace WebCore {
 
-class GStreamerCapturer
-    : public ThreadSafeRefCounted<GStreamerCapturer, WTF::DestructionThread::MainRunLoop> {
+class GStreamerCapturer : public ThreadSafeRefCounted<GStreamerCapturer> {
 
 public:
     class Observer : public CanMakeWeakPtr<Observer> {
@@ -42,6 +40,7 @@ public:
         virtual ~Observer();
 
         virtual void sourceCapsChanged(const GstCaps*) { }
+        virtual void captureEnded() { }
     };
 
     GStreamerCapturer(GStreamerCaptureDevice&&, GRefPtr<GstCaps>&&);
@@ -63,7 +62,6 @@ public:
     virtual const char* name() = 0;
 
     GstElement* sink() const { return m_sink.get(); }
-    void setSink(GstElement* sink) { m_sink = adoptGRef(sink); };
 
     GstElement* pipeline() const { return m_pipeline.get(); }
     virtual GstElement* createConverter() = 0;
@@ -72,6 +70,9 @@ public:
     void setInterrupted(bool);
 
     CaptureDevice::DeviceType deviceType() const { return m_deviceType; }
+    const String& devicePersistentId() const { return m_device ? m_device->persistentId() : emptyString(); }
+
+    void stopDevice();
 
 protected:
     GRefPtr<GstElement> m_sink;

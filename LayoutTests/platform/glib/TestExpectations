@@ -1718,11 +1718,8 @@ webkit.org/b/187603 fast/mediastream/media-stream-track-source-failure.html [ Ti
 # This ends up calling WKPageTriggerMockMicrophoneConfigurationChange which is specific to GPUProcess.
 fast/mediastream/mediastreamtrack-configurationchange.html [ Skip ]
 
-# Tests should be rebased, mock infra might need some updates.
-fast/mediastream/MediaDevices-addEventListener.html [ Failure ]
-fast/mediastream/microphone-change-while-capturing.html [ Failure ]
-fast/mediastream/microphone-change-while-muted.html [ Failure ]
-fast/mediastream/device-change-event-2.html [ Failure ]
+# Missing/broken pageIsFocused notification.
+fast/mediastream/device-change-event-2.html [ Timeout Failure ]
 
 # Regressions introduced by https://commits.webkit.org/263750@main
 fast/mediastream/apply-constraints-advanced.html [ Failure ]

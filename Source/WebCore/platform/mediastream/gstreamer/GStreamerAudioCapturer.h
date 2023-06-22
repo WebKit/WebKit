@@ -32,7 +32,7 @@ class GStreamerAudioCapturer final : public GStreamerCapturer {
 public:
     GStreamerAudioCapturer(GStreamerCaptureDevice&&);
     GStreamerAudioCapturer();
-    ~GStreamerAudioCapturer();
+    ~GStreamerAudioCapturer() = default;
 
     GstElement* createConverter() final;
     const char* name() final { return "Audio"; }

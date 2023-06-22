@@ -48,6 +48,7 @@ public:
 
     // GStreamerCapturer::Observer
     void sourceCapsChanged(const GstCaps*) final;
+    void captureEnded() final;
 
 protected:
     GStreamerVideoCaptureSource(String&& deviceID, AtomString&& name, MediaDeviceHashSalts&&, const gchar* source_factory, CaptureDevice::DeviceType, const NodeAndFD&);
@@ -67,7 +68,7 @@ private:
     bool isCaptureSource() const final { return true; }
     void settingsDidChange(OptionSet<RealtimeMediaSourceSettings::Flag>) final;
 
-    std::unique_ptr<GStreamerVideoCapturer> m_capturer;
+    RefPtr<GStreamerVideoCapturer> m_capturer;
     CaptureDevice::DeviceType m_deviceType;
 };
 

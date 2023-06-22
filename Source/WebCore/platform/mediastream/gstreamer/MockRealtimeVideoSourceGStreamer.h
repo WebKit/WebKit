@@ -29,10 +29,13 @@
 
 namespace WebCore {
 
-class MockRealtimeVideoSourceGStreamer final : public MockRealtimeVideoSource {
+class MockRealtimeVideoSourceGStreamer final : public MockRealtimeVideoSource, GStreamerCapturer::Observer {
 public:
     MockRealtimeVideoSourceGStreamer(String&& deviceID, AtomString&& name, MediaDeviceHashSalts&&);
-    ~MockRealtimeVideoSourceGStreamer() = default;
+    ~MockRealtimeVideoSourceGStreamer();
+
+    // GStreamerCapturer::Observer
+    void captureEnded() final;
 
 private:
     friend class MockRealtimeVideoSource;
@@ -41,7 +44,7 @@ private:
     void stopProducingData() final;
     void updateSampleBuffer() final;
     bool canResizeVideoFrames() const final { return true; }
-    std::unique_ptr<GStreamerVideoCapturer> m_capturer;
+    RefPtr<GStreamerVideoCapturer> m_capturer;
 };
 
 } // namespace WebCore

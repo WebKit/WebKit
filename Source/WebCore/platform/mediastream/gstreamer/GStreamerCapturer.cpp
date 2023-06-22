@@ -67,8 +67,15 @@ GStreamerCapturer::GStreamerCapturer(const char* sourceFactory, GRefPtr<GstCaps>
 
 GStreamerCapturer::~GStreamerCapturer()
 {
-    if (m_pipeline)
-        disconnectSimpleBusMessageCallback(pipeline());
+    auto* sink = this->sink();
+    if (sink)
+        g_signal_handlers_disconnect_by_data(sink, this);
+
+    if (!m_pipeline)
+        return;
+
+    disconnectSimpleBusMessageCallback(pipeline());
+    gst_element_set_state(pipeline(), GST_STATE_NULL);
 }
 
 GStreamerCapturer::Observer::~Observer()
@@ -214,6 +221,13 @@ bool GStreamerCapturer::isInterrupted() const
 void GStreamerCapturer::setInterrupted(bool isInterrupted)
 {
     g_object_set(m_valve.get(), "drop", isInterrupted, nullptr);
+}
+
+void GStreamerCapturer::stopDevice()
+{
+    forEachObserver([](auto& observer) {
+        observer.captureEnded();
+    });
 }
 
 #undef GST_CAT_DEFAULT

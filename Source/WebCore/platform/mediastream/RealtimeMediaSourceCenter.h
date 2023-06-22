@@ -65,6 +65,7 @@ public:
         virtual ~Observer();
 
         virtual void devicesChanged() = 0;
+        virtual void deviceWillBeRemoved(const String& persistentId) = 0;
     };
 
     ~RealtimeMediaSourceCenter();
@@ -101,6 +102,7 @@ public:
     WEBCORE_EXPORT void removeDevicesChangedObserver(Observer&);
 
     void captureDevicesChanged();
+    void captureDeviceWillBeRemoved(const String& persistentId);
 
     WEBCORE_EXPORT static bool shouldInterruptAudioOnPageVisibilityChange();
 

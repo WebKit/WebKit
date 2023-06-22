@@ -62,14 +62,6 @@ GStreamerAudioCapturer::GStreamerAudioCapturer()
     initializeAudioCapturerDebugCategory();
 }
 
-GStreamerAudioCapturer::~GStreamerAudioCapturer()
-{
-    auto* sink = this->sink();
-    if (!sink)
-        return;
-    g_signal_handlers_disconnect_by_data(sink, this);
-}
-
 void GStreamerAudioCapturer::setSinkAudioCallback(SinkAudioDataCallback&& callback)
 {
     if (m_sinkAudioDataCallback.first)

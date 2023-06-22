@@ -31,13 +31,16 @@
 
 namespace WebCore {
 
-class MockRealtimeAudioSourceGStreamer final : public MockRealtimeAudioSource {
+class MockRealtimeAudioSourceGStreamer final : public MockRealtimeAudioSource, GStreamerCapturer::Observer {
 public:
     static Ref<MockRealtimeAudioSource> createForMockAudioCapturer(String&& deviceID, AtomString&& name, MediaDeviceHashSalts&&);
 
     static const HashSet<MockRealtimeAudioSource*>& allMockRealtimeAudioSources();
 
     ~MockRealtimeAudioSourceGStreamer();
+
+    // GStreamerCapturer::Observer
+    void captureEnded() final;
 
 protected:
     void render(Seconds) final;
@@ -61,7 +64,7 @@ private:
     uint64_t m_samplesEmitted { 0 };
     uint64_t m_samplesRendered { 0 };
     bool m_isInterrupted { false };
-    std::unique_ptr<GStreamerAudioCapturer> m_capturer;
+    RefPtr<GStreamerAudioCapturer> m_capturer;
 };
 
 } // namespace WebCore

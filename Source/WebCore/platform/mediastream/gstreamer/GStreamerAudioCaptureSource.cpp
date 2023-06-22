@@ -87,7 +87,7 @@ AudioCaptureFactory& GStreamerAudioCaptureSource::factory()
 
 GStreamerAudioCaptureSource::GStreamerAudioCaptureSource(GStreamerCaptureDevice&& device, MediaDeviceHashSalts&& hashSalts)
     : RealtimeMediaSource(device, WTFMove(hashSalts))
-    , m_capturer(makeUnique<GStreamerAudioCapturer>(WTFMove(device)))
+    , m_capturer(adoptRef(*new GStreamerAudioCapturer(WTFMove(device))))
 {
     ensureGStreamerInitialized();
 
@@ -95,10 +95,21 @@ GStreamerAudioCaptureSource::GStreamerAudioCaptureSource(GStreamerCaptureDevice&
     std::call_once(debugRegisteredFlag, [] {
         GST_DEBUG_CATEGORY_INIT(webkit_audio_capture_source_debug, "webkitaudiocapturesource", 0, "WebKit Audio Capture Source.");
     });
+
+    auto& singleton = GStreamerAudioCaptureDeviceManager::singleton();
+    singleton.registerCapturer(m_capturer);
 }
 
 GStreamerAudioCaptureSource::~GStreamerAudioCaptureSource()
 {
+    auto& singleton = GStreamerAudioCaptureDeviceManager::singleton();
+    singleton.unregisterCapturer(*m_capturer);
+}
+
+void GStreamerAudioCaptureSource::captureEnded()
+{
+    m_capturer->stop();
+    captureFailed();
 }
 
 void GStreamerAudioCaptureSource::startProducingData()

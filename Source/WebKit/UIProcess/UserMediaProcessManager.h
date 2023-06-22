@@ -57,6 +57,7 @@ private:
 
     // RealtimeMediaSourceCenter::Observer
     void devicesChanged() final;
+    void deviceWillBeRemoved(const String& persistentId) final { }
 
     Vector<WebCore::CaptureDevice> m_captureDevices;
     bool m_captureEnabled { true };

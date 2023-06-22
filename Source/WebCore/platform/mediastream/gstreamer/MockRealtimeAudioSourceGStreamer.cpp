@@ -88,8 +88,8 @@ MockRealtimeAudioSourceGStreamer::MockRealtimeAudioSourceGStreamer(String&& devi
         return;
 
     device->setIsMockDevice(true);
-    m_capturer = makeUnique<GStreamerAudioCapturer>(WTFMove(*device));
-
+    m_capturer = adoptRef(*new GStreamerAudioCapturer(WTFMove(*device)));
+    m_capturer->addObserver(*this);
     m_capturer->setupPipeline();
     m_capturer->setSinkAudioCallback([this](auto&& sample, auto&& presentationTime) {
         const auto& info = m_streamFormat->getInfo();
@@ -97,11 +97,18 @@ MockRealtimeAudioSourceGStreamer::MockRealtimeAudioSourceGStreamer(String&& devi
         GStreamerAudioData data(WTFMove(sample), info);
         audioSamplesAvailable(presentationTime, data, *m_streamFormat, samplesCount);
     });
+    singleton.registerCapturer(m_capturer);
 }
 
 MockRealtimeAudioSourceGStreamer::~MockRealtimeAudioSourceGStreamer()
 {
     allMockRealtimeAudioSourcesStorage().remove(this);
+
+    m_capturer->stop();
+    m_capturer->removeObserver(*this);
+
+    auto& singleton = GStreamerAudioCaptureDeviceManager::singleton();
+    singleton.unregisterCapturer(*m_capturer);
 }
 
 void MockRealtimeAudioSourceGStreamer::startProducingData()
@@ -113,9 +120,13 @@ void MockRealtimeAudioSourceGStreamer::startProducingData()
 
 void MockRealtimeAudioSourceGStreamer::stopProducingData()
 {
-    MockRealtimeAudioSource::stopProducingData();
-
     m_capturer->stop();
+    MockRealtimeAudioSource::stopProducingData();
+}
+
+void MockRealtimeAudioSourceGStreamer::captureEnded()
+{
+    captureFailed();
 }
 
 void MockRealtimeAudioSourceGStreamer::render(Seconds delta)

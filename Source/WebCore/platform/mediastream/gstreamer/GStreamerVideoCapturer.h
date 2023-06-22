@@ -36,7 +36,7 @@ class GStreamerVideoCapturer final : public GStreamerCapturer {
 public:
     GStreamerVideoCapturer(GStreamerCaptureDevice&&);
     GStreamerVideoCapturer(const char* sourceFactory, CaptureDevice::DeviceType);
-    ~GStreamerVideoCapturer();
+    ~GStreamerVideoCapturer() = default;
 
     GstElement* createSource() final;
     GstElement* createConverter() final;
