@@ -66,8 +66,6 @@ private:
 
     static bool isAppendableHeader(const String &key);
     String platformSuggestedFilename() const;
-
-    void setStatusLine(StringView);
 };
 
 } // namespace WebCore

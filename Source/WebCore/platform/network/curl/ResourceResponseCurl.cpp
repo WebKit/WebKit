@@ -114,8 +114,12 @@ ResourceResponse::ResourceResponse(CurlResponse& response)
 
 void ResourceResponse::appendHTTPHeaderField(const String& header)
 {
-    auto splitPosition = header.find(':');
-    if (splitPosition != notFound) {
+    if (startsWithLettersIgnoringASCIICase(header, "http/"_s)) {
+        setHTTPStatusText(extractReasonPhraseFromHTTPStatusLine(header));
+        return;
+    }
+
+    if (auto splitPosition = header.find(':'); splitPosition != notFound) {
         auto key = header.left(splitPosition).trim(deprecatedIsSpaceOrNewline);
         auto value = header.substring(splitPosition + 1).trim(deprecatedIsSpaceOrNewline);
 
@@ -123,29 +127,6 @@ void ResourceResponse::appendHTTPHeaderField(const String& header)
             addHTTPHeaderField(key, value);
         else
             setHTTPHeaderField(key, value);
-    } else if (startsWithLettersIgnoringASCIICase(header, "http"_s)) {
-        // This is the first line of the response.
-        setStatusLine(header);
-    }
-}
-
-void ResourceResponse::setStatusLine(StringView header)
-{
-    auto statusLine = header.trim(deprecatedIsSpaceOrNewline);
-
-    auto httpVersionEndPosition = statusLine.find(' ');
-    auto statusCodeEndPosition = notFound;
-
-    // Extract the http version
-    if (httpVersionEndPosition != notFound) {
-        statusLine = statusLine.substring(httpVersionEndPosition + 1).trim(deprecatedIsSpaceOrNewline);
-        statusCodeEndPosition = statusLine.find(' ');
-    }
-
-    // Extract the http status text
-    if (statusCodeEndPosition != notFound) {
-        auto statusText = statusLine.substring(statusCodeEndPosition + 1).trim(deprecatedIsSpaceOrNewline);
-        setHTTPStatusText(statusText.toAtomString());
     }
 }
 
