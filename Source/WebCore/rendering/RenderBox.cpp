@@ -3832,7 +3832,7 @@ LayoutUnit RenderBox::containingBlockLogicalHeightForPositioned(const RenderBoxM
         if (isFixedPosition && is<RenderView>(containingBlock))
             return downcast<RenderView>(containingBlock).clientLogicalHeightForFixedPosition();
 
-        const RenderBlock& cb = is<RenderBlock>(containingBlock) ? downcast<RenderBlock>(containingBlock) : *containingBlock.containingBlock();
+        const RenderBox& cb = downcast<RenderBox>(containingBlock);
         LayoutUnit result = cb.clientLogicalHeight();
         RenderFragmentedFlow* fragmentedFlow = enclosingFragmentedFlow();
         if (fragmentedFlow && is<RenderFragmentedFlow>(containingBlock) && fragmentedFlow->isHorizontalWritingMode() == containingBlock.isHorizontalWritingMode())
