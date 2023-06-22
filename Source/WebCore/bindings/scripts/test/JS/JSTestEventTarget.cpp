@@ -22,6 +22,7 @@
 #include "JSTestEventTarget.h"
 
 #include "ActiveDOMObject.h"
+#include "Document.h"
 #include "ExtendedDOMClientIsoSubspaces.h"
 #include "ExtendedDOMIsoSubspaces.h"
 #include "JSDOMAbstractOperations.h"
@@ -35,6 +36,7 @@
 #include "JSDOMOperation.h"
 #include "JSDOMWrapperCache.h"
 #include "JSNode.h"
+#include "Quirks.h"
 #include "ScriptExecutionContext.h"
 #include "WebCoreJSClientData.h"
 #include <JavaScriptCore/HeapAnalyzer.h>
@@ -227,6 +229,13 @@ bool JSTestEventTarget::put(JSCell* cell, JSGlobalObject* lexicalGlobalObject, P
 
     if (UNLIKELY(thisObject != putPropertySlot.thisValue()))
         return JSObject::put(thisObject, lexicalGlobalObject, propertyName, value, putPropertySlot);
+
+    // Temporary quirk for ungap/@custom-elements polyfill (rdar://problem/111008826), consider removing in 2025.
+    if (auto* document = dynamicDowncast<Document>(jsDynamicCast<JSDOMGlobalObject*>(lexicalGlobalObject)->scriptExecutionContext())) {
+        if (UNLIKELY(document->quirks().needsConfigurableIndexedPropertiesQuirk()))
+            return JSObject::put(thisObject, lexicalGlobalObject, propertyName, value, putPropertySlot);
+    }
+
     auto throwScope = DECLARE_THROW_SCOPE(lexicalGlobalObject->vm());
 
     throwScope.assertNoException();
@@ -235,6 +244,13 @@ bool JSTestEventTarget::put(JSCell* cell, JSGlobalObject* lexicalGlobalObject, P
 
 bool JSTestEventTarget::putByIndex(JSCell* cell, JSGlobalObject* lexicalGlobalObject, unsigned index, JSValue value, bool shouldThrow)
 {
+
+    // Temporary quirk for ungap/@custom-elements polyfill (rdar://problem/111008826), consider removing in 2025.
+    if (auto* document = dynamicDowncast<Document>(jsDynamicCast<JSDOMGlobalObject*>(lexicalGlobalObject)->scriptExecutionContext())) {
+        if (UNLIKELY(document->quirks().needsConfigurableIndexedPropertiesQuirk()))
+            return JSObject::putByIndex(cell, lexicalGlobalObject, index, value, shouldThrow);
+    }
+
     auto* thisObject = jsCast<JSTestEventTarget*>(cell);
     ASSERT_GC_OBJECT_INHERITS(thisObject, info());
 
@@ -277,6 +293,13 @@ bool JSTestEventTarget::deleteProperty(JSCell* cell, JSGlobalObject* lexicalGlob
 {
     auto& thisObject = *jsCast<JSTestEventTarget*>(cell);
     auto& impl = thisObject.wrapped();
+
+    // Temporary quirk for ungap/@custom-elements polyfill (rdar://problem/111008826), consider removing in 2025.
+    if (auto* document = dynamicDowncast<Document>(jsDynamicCast<JSDOMGlobalObject*>(lexicalGlobalObject)->scriptExecutionContext())) {
+        if (UNLIKELY(document->quirks().needsConfigurableIndexedPropertiesQuirk()))
+            return JSObject::deleteProperty(cell, lexicalGlobalObject, propertyName, slot);
+    }
+
     if (auto index = parseIndex(propertyName))
         return !impl.isSupportedPropertyIndex(index.value());
     if (!propertyName.isSymbol() && impl.isSupportedPropertyName(propertyNameToString(propertyName))) {
@@ -292,6 +315,13 @@ bool JSTestEventTarget::deletePropertyByIndex(JSCell* cell, JSGlobalObject* lexi
     UNUSED_PARAM(lexicalGlobalObject);
     auto& thisObject = *jsCast<JSTestEventTarget*>(cell);
     auto& impl = thisObject.wrapped();
+
+    // Temporary quirk for ungap/@custom-elements polyfill (rdar://problem/111008826), consider removing in 2025.
+    if (auto* document = dynamicDowncast<Document>(jsDynamicCast<JSDOMGlobalObject*>(lexicalGlobalObject)->scriptExecutionContext())) {
+        if (UNLIKELY(document->quirks().needsConfigurableIndexedPropertiesQuirk()))
+            return JSObject::deletePropertyByIndex(cell, lexicalGlobalObject, index);
+    }
+
     return !impl.isSupportedPropertyIndex(index);
 }
 

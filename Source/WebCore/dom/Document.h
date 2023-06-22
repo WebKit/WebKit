@@ -629,6 +629,7 @@ public:
     const Settings& settings() const { return m_settings.get(); }
     EditingBehavior editingBehavior() const;
 
+    Quirks& quirks() { return m_quirks; }
     const Quirks& quirks() const { return m_quirks; }
 
     float deviceScaleFactor() const;

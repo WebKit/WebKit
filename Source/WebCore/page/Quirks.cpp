@@ -1577,4 +1577,10 @@ bool Quirks::shouldDisablePopoverAttributeQuirk() const
     return equalLettersIgnoringASCIICase(host, "apple-console.lrn.com"_s);
 }
 
+// ungap/@custom-elements polyfill (rdar://problem/111008826).
+bool Quirks::needsConfigurableIndexedPropertiesQuirk() const
+{
+    return needsQuirks() && m_needsConfigurableIndexedPropertiesQuirk;
+}
+
 }

@@ -1196,6 +1196,17 @@ sub GeneratePut
     push(@$outputArray, "    if (UNLIKELY(thisObject != putPropertySlot.thisValue()))\n");
     push(@$outputArray, "        return JSObject::put(thisObject, lexicalGlobalObject, propertyName, value, putPropertySlot);\n");
 
+    # Temporary quirk for ungap/@custom-elements polyfill (rdar://problem/111008826), consider removing in 2025.
+    if (!$namedSetterOperation && !$indexedSetterOperation) {
+       AddToImplIncludes("Document.h");
+       AddToImplIncludes("Quirks.h");
+       push(@$outputArray, "\n    // Temporary quirk for ungap/\@custom-elements polyfill (rdar://problem/111008826), consider removing in 2025.\n");
+       push(@$outputArray, "    if (auto* document = dynamicDowncast<Document>(jsDynamicCast<JSDOMGlobalObject*>(lexicalGlobalObject)->scriptExecutionContext())) {\n");
+       push(@$outputArray, "        if (UNLIKELY(document->quirks().needsConfigurableIndexedPropertiesQuirk()))\n");
+       push(@$outputArray, "            return JSObject::put(thisObject, lexicalGlobalObject, propertyName, value, putPropertySlot);\n");
+       push(@$outputArray, "    }\n\n");
+    }
+
     push(@$outputArray, "    auto throwScope = DECLARE_THROW_SCOPE(lexicalGlobalObject->vm());\n\n");
 
     assert("CEReactions is not supported on having both named setters and indexed setters") if $namedSetterOperation && $namedSetterOperation->extendedAttributes->{CEReactions}
@@ -1277,6 +1288,17 @@ sub GeneratePutByIndex
     
     push(@$outputArray, "bool ${className}::putByIndex(JSCell* cell, JSGlobalObject* lexicalGlobalObject, unsigned index, JSValue value, bool" . (!$ellidesCallsToBase ? " shouldThrow" : "") . ")\n");
     push(@$outputArray, "{\n");
+    # Temporary quirk for ungap/@custom-elements polyfill (rdar://problem/111008826), consider removing in 2025.
+    if (!$namedSetterOperation && !$indexedSetterOperation) {
+       AddToImplIncludes("Document.h");
+       AddToImplIncludes("Quirks.h");
+       push(@$outputArray, "\n    // Temporary quirk for ungap/\@custom-elements polyfill (rdar://problem/111008826), consider removing in 2025.\n");
+       push(@$outputArray, "    if (auto* document = dynamicDowncast<Document>(jsDynamicCast<JSDOMGlobalObject*>(lexicalGlobalObject)->scriptExecutionContext())) {\n");
+       push(@$outputArray, "        if (UNLIKELY(document->quirks().needsConfigurableIndexedPropertiesQuirk()))\n");
+       push(@$outputArray, "            return JSObject::putByIndex(cell, lexicalGlobalObject, index, value, shouldThrow);\n");
+       push(@$outputArray, "    }\n\n");
+    }
+
     push(@$outputArray, "    auto* thisObject = jsCast<${className}*>(cell);\n");
     push(@$outputArray, "    ASSERT_GC_OBJECT_INHERITS(thisObject, info());\n\n");
 
@@ -1490,7 +1512,7 @@ sub GenerateDefineOwnProperty
     }
     
     push(@$outputArray, "    PropertyDescriptor newPropertyDescriptor = propertyDescriptor;\n");
-       
+
     # 4. Return OrdinaryDefineOwnProperty(O, P, Desc).
     push(@$outputArray, "    throwScope.release();\n");
     push(@$outputArray, "    return JSObject::defineOwnProperty(object, lexicalGlobalObject, propertyName, newPropertyDescriptor, shouldThrow);\n");
@@ -1557,6 +1579,17 @@ sub GenerateDeleteProperty
     push(@$outputArray, "    auto& thisObject = *jsCast<${className}*>(cell);\n");
     push(@$outputArray, "    auto& impl = thisObject.wrapped();\n");
 
+    # Temporary quirk for ungap/@custom-elements polyfill (rdar://problem/111008826), consider removing in 2025.
+    if (!$namedDeleterOperation) {
+       AddToImplIncludes("Document.h");
+       AddToImplIncludes("Quirks.h");
+       push(@$outputArray, "\n    // Temporary quirk for ungap/\@custom-elements polyfill (rdar://problem/111008826), consider removing in 2025.\n");
+       push(@$outputArray, "    if (auto* document = dynamicDowncast<Document>(jsDynamicCast<JSDOMGlobalObject*>(lexicalGlobalObject)->scriptExecutionContext())) {\n");
+       push(@$outputArray, "        if (UNLIKELY(document->quirks().needsConfigurableIndexedPropertiesQuirk()))\n");
+       push(@$outputArray, "            return JSObject::deleteProperty(cell, lexicalGlobalObject, propertyName, slot);\n");
+       push(@$outputArray, "    }\n\n");
+    }
+
     # 1. If O supports indexed properties and P is an array index property name, then:
     #    1. Let index be the result of calling ToUint32(P).
     #    2. If index is not a supported property index, then return true.
@@ -1597,6 +1630,17 @@ sub GenerateDeletePropertyByIndex
     push(@$outputArray, "    UNUSED_PARAM(lexicalGlobalObject);\n");
     push(@$outputArray, "    auto& thisObject = *jsCast<${className}*>(cell);\n");
     push(@$outputArray, "    auto& impl = thisObject.wrapped();\n");
+
+    # Temporary quirk for ungap/@custom-elements polyfill (rdar://problem/111008826), consider removing in 2025.
+    if (!$namedDeleterOperation) {
+       AddToImplIncludes("Document.h");
+       AddToImplIncludes("Quirks.h");
+       push(@$outputArray, "\n    // Temporary quirk for ungap/\@custom-elements polyfill (rdar://problem/111008826), consider removing in 2025.\n");
+       push(@$outputArray, "    if (auto* document = dynamicDowncast<Document>(jsDynamicCast<JSDOMGlobalObject*>(lexicalGlobalObject)->scriptExecutionContext())) {\n");
+       push(@$outputArray, "        if (UNLIKELY(document->quirks().needsConfigurableIndexedPropertiesQuirk()))\n");
+       push(@$outputArray, "            return JSObject::deletePropertyByIndex(cell, lexicalGlobalObject, index);\n");
+       push(@$outputArray, "    }\n\n");
+    }
 
     # 1. If O supports indexed properties and P is an array index property name, then:
     #    1. Let index be the result of calling ToUint32(P).

@@ -35,6 +35,7 @@
 #include "LocalDOMWindow.h"
 #include "MathMLNames.h"
 #include "QualifiedName.h"
+#include "Quirks.h"
 #include "ShadowRoot.h"
 #include "TypedElementDescendantIteratorInlines.h"
 #include <JavaScriptCore/JSCJSValueInlines.h>
@@ -75,6 +76,8 @@ static void enqueueUpgradeInShadowIncludingTreeOrder(ContainerNode& node, JSCust
 
 RefPtr<DeferredPromise> CustomElementRegistry::addElementDefinition(Ref<JSCustomElementInterface>&& elementInterface)
 {
+    static MainThreadNeverDestroyed<const AtomString> extendsLi("extends-li"_s);
+
     AtomString localName = elementInterface->name().localName();
     ASSERT(!m_nameMap.contains(localName));
     m_nameMap.add(localName, elementInterface.copyRef());
@@ -86,8 +89,12 @@ RefPtr<DeferredPromise> CustomElementRegistry::addElementDefinition(Ref<JSCustom
     if (elementInterface->isShadowDisabled())
         m_disabledShadowSet.add(localName);
 
-    if (auto* document = m_window.document())
+    if (auto* document = m_window.document()) {
+        // ungap/@custom-elements detection for quirk (rdar://problem/111008826).
+        if (localName == extendsLi.get())
+            document->quirks().setNeedsConfigurableIndexedPropertiesQuirk();
         enqueueUpgradeInShadowIncludingTreeOrder(*document, elementInterface.get());
+    }
 
     return m_promiseMap.take(localName);
 }

@@ -22,6 +22,7 @@
 #include "JSTestIndexedSetterNoIdentifier.h"
 
 #include "ActiveDOMObject.h"
+#include "Document.h"
 #include "ExtendedDOMClientIsoSubspaces.h"
 #include "ExtendedDOMIsoSubspaces.h"
 #include "JSDOMBinding.h"
@@ -30,6 +31,7 @@
 #include "JSDOMExceptionHandling.h"
 #include "JSDOMGlobalObjectInlines.h"
 #include "JSDOMWrapperCache.h"
+#include "Quirks.h"
 #include "ScriptExecutionContext.h"
 #include "WebCoreJSClientData.h"
 #include <JavaScriptCore/FunctionPrototype.h>
@@ -259,6 +261,13 @@ bool JSTestIndexedSetterNoIdentifier::deleteProperty(JSCell* cell, JSGlobalObjec
 {
     auto& thisObject = *jsCast<JSTestIndexedSetterNoIdentifier*>(cell);
     auto& impl = thisObject.wrapped();
+
+    // Temporary quirk for ungap/@custom-elements polyfill (rdar://problem/111008826), consider removing in 2025.
+    if (auto* document = dynamicDowncast<Document>(jsDynamicCast<JSDOMGlobalObject*>(lexicalGlobalObject)->scriptExecutionContext())) {
+        if (UNLIKELY(document->quirks().needsConfigurableIndexedPropertiesQuirk()))
+            return JSObject::deleteProperty(cell, lexicalGlobalObject, propertyName, slot);
+    }
+
     if (auto index = parseIndex(propertyName))
         return !impl.isSupportedPropertyIndex(index.value());
     return JSObject::deleteProperty(cell, lexicalGlobalObject, propertyName, slot);
@@ -269,6 +278,13 @@ bool JSTestIndexedSetterNoIdentifier::deletePropertyByIndex(JSCell* cell, JSGlob
     UNUSED_PARAM(lexicalGlobalObject);
     auto& thisObject = *jsCast<JSTestIndexedSetterNoIdentifier*>(cell);
     auto& impl = thisObject.wrapped();
+
+    // Temporary quirk for ungap/@custom-elements polyfill (rdar://problem/111008826), consider removing in 2025.
+    if (auto* document = dynamicDowncast<Document>(jsDynamicCast<JSDOMGlobalObject*>(lexicalGlobalObject)->scriptExecutionContext())) {
+        if (UNLIKELY(document->quirks().needsConfigurableIndexedPropertiesQuirk()))
+            return JSObject::deletePropertyByIndex(cell, lexicalGlobalObject, index);
+    }
+
     return !impl.isSupportedPropertyIndex(index);
 }
 
