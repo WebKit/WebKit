@@ -69,13 +69,6 @@ bool RenderIFrame::requiresLayer() const
     return RenderFrameBase::requiresLayer() || style().resize() != Resize::None;
 }
 
-RenderView* RenderIFrame::contentRootRenderer() const
-{
-    auto* childFrameView = childView();
-    auto* localFrame = childFrameView ? dynamicDowncast<LocalFrame>(childFrameView->frame()) : nullptr;
-    return localFrame ? localFrame->contentRenderer() : nullptr;
-}
-
 bool RenderIFrame::isFullScreenIFrame() const
 {
     // Some authors implement fullscreen popups as out-of-flow iframes with size set to full viewport (using vw/vh units).
