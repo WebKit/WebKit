@@ -775,7 +775,7 @@ auto Connection::sendSyncMessage(SyncRequestID syncRequestID, UniqueRef<Encoder>
     popPendingSyncRequestID(syncRequestID);
 
     if (!replyOrError.decoder)
-        didFailToSendSyncMessage(replyOrError.error);
+        didFailToSendSyncMessage(replyOrError.error != Error::NoError ? replyOrError.error : Error::Unspecified);
 
     return replyOrError;
 }
@@ -800,10 +800,16 @@ auto Connection::waitForSyncReply(SyncRequestID syncRequestID, MessageName messa
             auto& pendingSyncReply = m_pendingSyncReplies.last();
             ASSERT_UNUSED(syncRequestID, pendingSyncReply.syncRequestID == syncRequestID);
 
-            // We found the sync reply, or the connection was closed.
-            if (pendingSyncReply.didReceiveReply || !m_shouldWaitForSyncReplies) {
+            // We found the sync reply.
+            if (pendingSyncReply.didReceiveReply) {
                 didReceiveSyncReply(sendSyncOptions);
                 return { WTFMove(pendingSyncReply.replyDecoder) };
+            }
+
+            // The connection was closed.
+            if (!m_shouldWaitForSyncReplies) {
+                didReceiveSyncReply(sendSyncOptions);
+                return Error::InvalidConnection;
             }
         }
 
