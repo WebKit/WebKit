@@ -47,7 +47,6 @@ typedef NS_ENUM(NSInteger, NEFilterSourceDirection) {
 @end
 
 @interface NEFilterSource (WKLegacyDetails)
-+ (void)setDelegation:(audit_token_t *)audit_token;
 + (BOOL)filterRequired;
 - (id)initWithURL:(NSURL *)url direction:(NEFilterSourceDirection)direction socketIdentifier:(uint64_t)socketIdentifier;
 - (void)addData:(NSData *)data withCompletionQueue:(dispatch_queue_t)queue completionHandler:(void (^)(NEFilterSourceStatus, NSData *))completionHandler;
