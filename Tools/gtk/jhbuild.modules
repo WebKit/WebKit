@@ -600,6 +600,7 @@
                     -DJPEGXL_ENABLE_SKCMS=ON">
     <pkg-config>libjxl.pc</pkg-config>
     <branch module="libjxl/libjxl.git"
+            version="0.6.1"
             tag="v0.6.1"
             checkoutdir="libjxl-0.6.1"
             repo="github.com">
