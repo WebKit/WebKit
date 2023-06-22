@@ -243,9 +243,9 @@ ConfigFile::ConfigFile(const char* filename)
     if (!filename)
         m_filename[0] = '\0';
     else {
-        IGNORE_GCC_WARNINGS_BEGIN("stringop-truncation")
+        IGNORE_WARNINGS_BEGIN("stringop-truncation")
         strncpy(m_filename, filename, s_maxPathLength);
-        IGNORE_GCC_WARNINGS_END
+        IGNORE_WARNINGS_END
         m_filename[s_maxPathLength] = '\0';
     }
 
@@ -489,10 +489,10 @@ void ConfigFile::canonicalizePaths()
             if (sizeof(filenameBuffer) - 1  >= pathnameLength + shouldAddPathSeparator) {
                 if (shouldAddPathSeparator)
                     strncat(filenameBuffer, "/", 2); // Room for '/' plus NUL
-                IGNORE_GCC_WARNINGS_BEGIN("stringop-truncation")
+                IGNORE_WARNINGS_BEGIN("stringop-truncation")
                 strncat(filenameBuffer, m_filename, sizeof(filenameBuffer) - strlen(filenameBuffer) - 1);
-                IGNORE_GCC_WARNINGS_END
                 strncpy(m_filename, filenameBuffer, s_maxPathLength);
+                IGNORE_WARNINGS_END
                 m_filename[s_maxPathLength] = '\0';
             }
         }
