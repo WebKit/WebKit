@@ -1387,7 +1387,7 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
     auto* renderer = focusedElement->renderer();
     if (!renderer)
         return nil;
-    auto color = WebCore::CaretBase::computeCaretColor(renderer->style(), renderer->element());
+    auto color = WebCore::CaretBase::computeCaretColor(renderer->style(), renderer->element(), std::nullopt);
     return color.isValid() ? cachedCGColor(color).autorelease() : nil;
 }
 

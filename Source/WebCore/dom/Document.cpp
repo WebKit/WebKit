@@ -7064,8 +7064,7 @@ void Document::serviceRequestAnimationFrameCallbacks()
 
 void Document::serviceCaretAnimation()
 {
-    if (auto* window = domWindow())
-        selection().caretAnimator().serviceCaretAnimation(window->frozenNowTimestamp());
+    selection().caretAnimator().serviceCaretAnimation();
 }
 
 void Document::serviceRequestVideoFrameCallbacks()

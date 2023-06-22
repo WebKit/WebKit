@@ -72,12 +72,12 @@ void OpacityCaretAnimator::setBlinkingSuspended(bool suspended)
     CaretAnimator::setBlinkingSuspended(suspended);
 }
 
-void OpacityCaretAnimator::updateAnimationProperties(ReducedResolutionSeconds)
+void OpacityCaretAnimator::updateAnimationProperties()
 {
     if (isBlinkingSuspended() && m_presentationProperties.opacity >= 1.0)
         return;
 
-    auto currentTime = currentTimeSinceEpoch();
+    auto currentTime = MonotonicTime::now();
     if (currentTime - m_lastTimeCaretOpacityWasToggled >= keyframeTimeDelta()) {
         setOpacity(keyframes[m_currentKeyframeIndex].value);
         m_lastTimeCaretOpacityWasToggled = currentTime;
@@ -93,12 +93,12 @@ void OpacityCaretAnimator::updateAnimationProperties(ReducedResolutionSeconds)
     }
 }
 
-void OpacityCaretAnimator::start(ReducedResolutionSeconds)
+void OpacityCaretAnimator::start()
 {
     // The default/start value of `m_currentKeyframeIndex` should be `1` since the keyframe
     // delta is the difference between `m_currentKeyframeIndex` and `m_currentKeyframeIndex - 1`
     m_currentKeyframeIndex = 1;
-    m_lastTimeCaretOpacityWasToggled = currentTimeSinceEpoch();
+    m_lastTimeCaretOpacityWasToggled = MonotonicTime::now();
     didStart(m_lastTimeCaretOpacityWasToggled, keyframeTimeDelta());
 }
 
@@ -109,29 +109,15 @@ String OpacityCaretAnimator::debugDescription() const
     return textStream.release();
 }
 
-void OpacityCaretAnimator::paint(const Node& node, GraphicsContext& context, const FloatRect& rect, const Color& oldCaretColor, const LayoutPoint&, const std::optional<VisibleSelection>& selection) const
+void OpacityCaretAnimator::paint(GraphicsContext& context, const FloatRect& rect, const Color& caretColor, const LayoutPoint&) const
 {
-    auto caretColor = [&] {
-        if (!selection) {
-            auto* element = is<Element>(node) ? downcast<Element>(&node) : node.parentElement();
-            if (element && element->renderer())
-                return platformCaretColor(element->renderer()->style(), &node);
-
-            return oldCaretColor;
-        }
-
-        if (RefPtr editableRoot = selection->rootEditableElement(); editableRoot && editableRoot->renderer())
-            return platformCaretColor(editableRoot->renderer()->style(), &node);
-
-        return oldCaretColor;
-    }();
-
     auto caretPresentationProperties = presentationProperties();
 
+    auto caretColorWithOpacity = caretColor;
     if (caretColor != Color::transparentBlack)
-        caretColor = caretColor.colorWithAlpha(caretPresentationProperties.opacity);
+        caretColorWithOpacity = caretColor.colorWithAlpha(caretPresentationProperties.opacity);
 
-    context.fillRoundedRect(FloatRoundedRect { rect, FloatRoundedRect::Radii { 1.0 } }, caretColor);
+    context.fillRoundedRect(FloatRoundedRect { rect, FloatRoundedRect::Radii { 1.0 } }, caretColorWithOpacity);
 }
 
 LayoutRect OpacityCaretAnimator::caretRepaintRectForLocalRect(LayoutRect repaintRect) const

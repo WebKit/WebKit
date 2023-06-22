@@ -36,9 +36,9 @@ public:
     explicit OpacityCaretAnimator(CaretAnimationClient&, std::optional<LayoutRect> = std::nullopt);
 
 private:
-    void updateAnimationProperties(ReducedResolutionSeconds) final;
-    void start(ReducedResolutionSeconds) final;
-    void paint(const Node&, GraphicsContext&, const FloatRect&, const Color&, const LayoutPoint&, const std::optional<VisibleSelection>&) const final;
+    void updateAnimationProperties() final;
+    void start() final;
+    void paint(GraphicsContext&, const FloatRect&, const Color&, const LayoutPoint&) const final;
 
     String debugDescription() const final;
 
@@ -58,7 +58,7 @@ private:
     Seconds keyframeTimeDelta() const;
     LayoutRect caretRepaintRectForLocalRect(LayoutRect) const final;
 
-    ReducedResolutionSeconds m_lastTimeCaretOpacityWasToggled;
+    MonotonicTime m_lastTimeCaretOpacityWasToggled;
     size_t m_currentKeyframeIndex { 1 };
     std::optional<LayoutRect> m_overrideRepaintRect;
 };

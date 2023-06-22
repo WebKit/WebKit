@@ -36,12 +36,12 @@
 
 namespace WebCore {
 
-static constexpr size_t dicationCaretAnimatorUpdateRate = 60;
+static constexpr size_t dictationCaretAnimatorUpdateRate = 60;
 
 static constexpr KeyFrame keyframe(size_t i)
 {
-    i %= dicationCaretAnimatorUpdateRate;
-    constexpr float inverseFrameRate = 1.f / static_cast<float>(dicationCaretAnimatorUpdateRate);
+    i %= dictationCaretAnimatorUpdateRate;
+    constexpr float inverseFrameRate = 1.f / static_cast<float>(dictationCaretAnimatorUpdateRate);
     return KeyFrame { Seconds(i * inverseFrameRate), fabs(sinf(static_cast<float>(M_PI * i * inverseFrameRate))) };
 }
 
@@ -49,6 +49,7 @@ constexpr auto tailBlurRadius(float cursorHeight)
 {
     return (10.f * cursorHeight) / 12.f;
 }
+
 constexpr auto caretBlurRadius(float cursorHeight)
 {
     return (8.f * cursorHeight) / 12.f;
@@ -66,7 +67,7 @@ constexpr auto coneEnd(float cursorHeight)
 
 size_t DictationCaretAnimator::keyframeCount() const
 {
-    return 2 * dicationCaretAnimatorUpdateRate;
+    return 2 * dictationCaretAnimatorUpdateRate;
 }
 
 DictationCaretAnimator::DictationCaretAnimator(CaretAnimationClient& client)
@@ -76,7 +77,7 @@ DictationCaretAnimator::DictationCaretAnimator(CaretAnimationClient& client)
 
 Seconds DictationCaretAnimator::keyframeTimeDelta() const
 {
-    return Seconds(1.f / static_cast<float>(dicationCaretAnimatorUpdateRate));
+    return Seconds(1.f / static_cast<float>(dictationCaretAnimatorUpdateRate));
 }
 
 void DictationCaretAnimator::setBlinkingSuspended(bool suspended)
@@ -144,9 +145,9 @@ void DictationCaretAnimator::updateGlowTail(Seconds elapsedTime)
     m_tailRect = computeTailRect();
 }
 
-void DictationCaretAnimator::updateAnimationProperties(ReducedResolutionSeconds)
+void DictationCaretAnimator::updateAnimationProperties()
 {
-    auto currentTime = currentTimeSinceEpoch();
+    auto currentTime = MonotonicTime::now();
     auto elapsedTime = currentTime - m_lastUpdateTime;
     if (elapsedTime >= keyframeTimeDelta()) {
         setOpacity(keyframe(m_currentKeyframeIndex).value);
@@ -164,12 +165,12 @@ void DictationCaretAnimator::updateAnimationProperties(ReducedResolutionSeconds)
     }
 }
 
-void DictationCaretAnimator::start(ReducedResolutionSeconds)
+void DictationCaretAnimator::start()
 {
     // The default/start value of `m_currentKeyframeIndex` should be `1` since the keyframe
     // delta is the difference between `m_currentKeyframeIndex` and `m_currentKeyframeIndex - 1`
     m_currentKeyframeIndex = 1;
-    m_lastUpdateTime = currentTimeSinceEpoch();
+    m_lastUpdateTime = MonotonicTime::now();
     m_initialScale = M_PI_2;
     didStart(m_lastUpdateTime, keyframeTimeDelta());
 
@@ -290,26 +291,11 @@ FloatRoundedRect DictationCaretAnimator::expandedCaretRect(const FloatRect& rect
     return FloatRoundedRect { expandedRect, FloatRoundedRect::Radii(1.f + std::max(0.f, .5f * horizontalPulseExpansion), 1.f + std::max(0.f, .5f * horizontalPulseExpansion)) };
 }
 
-void DictationCaretAnimator::paint(const Node& node, GraphicsContext& context, const FloatRect& rect, const Color& oldCaretColor, const LayoutPoint& paintOffset, const std::optional<VisibleSelection>& selection) const
+void DictationCaretAnimator::paint(GraphicsContext& context, const FloatRect& rect, const Color& caretColor, const LayoutPoint& paintOffset) const
 {
     auto tailRect = computeTailRect();
     bool blinkingSuspended = isBlinkingSuspended();
     bool fillTail = !blinkingSuspended && tailRect.width() > 0.f;
-
-    auto caretColor = [&] {
-        if (!selection) {
-            auto* element = is<Element>(node) ? downcast<Element>(&node) : node.parentElement();
-            if (element && element->renderer())
-                return platformCaretColor(element->renderer()->style(), &node);
-
-            return oldCaretColor;
-        }
-
-        if (RefPtr editableRoot = selection->rootEditableElement(); editableRoot && editableRoot->renderer())
-            return platformCaretColor(editableRoot->renderer()->style(), &node);
-
-        return oldCaretColor;
-    }();
 
     GraphicsContextStateSaver stateSaver(context);
     context.resetClip();

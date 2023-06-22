@@ -5068,7 +5068,7 @@ header: <WebCore/AcceleratedEffect.h>
 header: <WebCore/CaretAnimator.h>
 [CustomHeader] enum class WebCore::CaretAnimatorType : uint8_t {
     Default,
-    Alternate,
+    Dictation,
 };
 #endif
 

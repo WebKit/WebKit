@@ -38,8 +38,8 @@ public:
     explicit DictationCaretAnimator(CaretAnimationClient&);
 
 private:
-    void updateAnimationProperties(ReducedResolutionSeconds) final;
-    void start(ReducedResolutionSeconds) final;
+    void updateAnimationProperties() final;
+    void start() final;
     FloatRect tailRect() const;
 
     String debugDescription() const final;
@@ -64,7 +64,7 @@ private:
     void updateGlowTail(float caretPosition, Seconds elapsedTime);
     void resetGlowTail(FloatRect);
     void updateGlowTail(Seconds elapsedTime);
-    void paint(const Node&, GraphicsContext&, const FloatRect&, const Color&, const LayoutPoint&, const std::optional<VisibleSelection>&) const final;
+    void paint(GraphicsContext&, const FloatRect&, const Color&, const LayoutPoint&) const final;
     LayoutRect caretRepaintRectForLocalRect(LayoutRect repaintRect) const final;
     Path makeDictationTailConePath(const FloatRect&) const;
     void fillCaretTail(const FloatRect&, GraphicsContext&, const Color&) const;
@@ -74,7 +74,7 @@ private:
     FloatRoundedRect expandedCaretRect(const FloatRect&, bool fillTail) const;
     int computeScrollLeft() const;
 
-    ReducedResolutionSeconds m_lastUpdateTime;
+    MonotonicTime m_lastUpdateTime;
     size_t m_currentKeyframeIndex { 1 };
     FloatRect m_localCaretRect;
     FloatRect m_tailRect, m_previousTailRect;

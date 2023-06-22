@@ -377,9 +377,8 @@ public:
     bool validateUserInterfaceItem(id <NSValidatedUserInterfaceItem>);
     void setEditableElementIsFocused(bool);
 
-    // FIXME: Rename to `updateCursorAccessoryPlacement` (rdar://110802729).
 #if HAVE(REDESIGNED_TEXT_CURSOR)
-    void updateCaretDecorationPlacement();
+    void updateCursorAccessoryPlacement();
 #endif
 
     void startSpeaking();

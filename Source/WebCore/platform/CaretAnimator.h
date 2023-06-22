@@ -26,11 +26,7 @@
 #pragma once
 
 #include "Document.h"
-#include "ElementInlines.h"
 #include "LayoutRect.h"
-#include "ReducedResolutionSeconds.h"
-#include "RenderStyle.h"
-#include "RenderStyleInlines.h"
 #include "RenderTheme.h"
 #include "Timer.h"
 
@@ -45,10 +41,9 @@ class Node;
 class Page;
 class VisibleSelection;
 
-// FIXME: Rename "Alternate" to "Dictation" (rdar://110802729).
 enum class CaretAnimatorType : uint8_t {
     Default,
-    Alternate
+    Dictation
 };
 
 enum class CaretAnimatorStopReason : uint8_t {
@@ -57,28 +52,6 @@ enum class CaretAnimatorStopReason : uint8_t {
 };
 
 #if HAVE(REDESIGNED_TEXT_CURSOR)
-
-// FIXME: Use MonotonicTime type throughout instead of converting to Seconds (rdar://110802729)
-[[maybe_unused]] static Seconds currentTimeSinceEpoch()
-{
-    return MonotonicTime::now().secondsSinceEpoch();
-}
-
-// FIXME: Move to FrameSelection (rdar://110802729)
-[[maybe_unused]] static Color platformCaretColor(const RenderStyle& elementStyle, const Node* node)
-{
-#if PLATFORM(MAC)
-    if (elementStyle.hasAutoCaretColor()) {
-        auto styleColorOptions = node->document().styleColorOptions(&elementStyle);
-        return RenderTheme::singleton().systemColor(CSSValueAppleSystemControlAccent, styleColorOptions | StyleColorOptions::UseSystemAppearance);
-    }
-
-    return elementStyle.colorResolvingCurrentColor(elementStyle.caretColor());
-#else
-    UNUSED_PARAM(node);
-    return elementStyle.visitedDependentColorWithColorFilter(CSSPropertyCaretColor);
-#endif
-}
 
 struct KeyFrame {
     Seconds time;
@@ -113,13 +86,13 @@ public:
 
     virtual ~CaretAnimator() = default;
 
-    virtual void start(ReducedResolutionSeconds currentTime) = 0;
+    virtual void start() = 0;
 
     virtual void stop(CaretAnimatorStopReason = CaretAnimatorStopReason::Default);
 
     bool isActive() const { return m_isActive; }
 
-    void serviceCaretAnimation(ReducedResolutionSeconds);
+    void serviceCaretAnimation();
 
     virtual String debugDescription() const = 0;
 
@@ -129,9 +102,8 @@ public:
     virtual void setVisible(bool) = 0;
 
     PresentationProperties presentationProperties() const { return m_presentationProperties; }
-    // FIXME: The caret animators should not be the things painting the caret.
-    // Remove this method and insstead augment PresentationProperties (rdar://110802729).
-    virtual void paint(const Node&, GraphicsContext&, const FloatRect&, const Color&, const LayoutPoint&, const std::optional<VisibleSelection>&) const;
+
+    virtual void paint(GraphicsContext&, const FloatRect&, const Color&, const LayoutPoint&) const;
     virtual LayoutRect caretRepaintRectForLocalRect(LayoutRect) const;
 
 protected:
@@ -140,9 +112,9 @@ protected:
         , m_blinkTimer(*this, &CaretAnimator::scheduleAnimation)
     { }
 
-    virtual void updateAnimationProperties(ReducedResolutionSeconds) = 0;
+    virtual void updateAnimationProperties() = 0;
 
-    void didStart(ReducedResolutionSeconds currentTime, std::optional<Seconds> interval)
+    void didStart(MonotonicTime currentTime, std::optional<Seconds> interval)
     {
         m_startTime = currentTime;
         m_isActive = true;
@@ -160,7 +132,7 @@ protected:
     Page* page() const;
 
     CaretAnimationClient& m_client;
-    ReducedResolutionSeconds m_startTime;
+    MonotonicTime m_startTime;
     Timer m_blinkTimer;
     PresentationProperties m_presentationProperties { };
 

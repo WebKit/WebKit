@@ -173,7 +173,7 @@ static UniqueRef<CaretAnimator> createCaretAnimator(FrameSelection* frameSelecti
         switch (optionalCaretType.value_or(CaretAnimatorType::Default)) {
         case CaretAnimatorType::Default:
             return makeUniqueRef<OpacityCaretAnimator>(*frameSelection, existingExpansionRect);
-        case CaretAnimatorType::Alternate:
+        case CaretAnimatorType::Dictation:
             return makeUniqueRef<DictationCaretAnimator>(*frameSelection);
         }
     }
@@ -1898,15 +1898,35 @@ void FrameSelection::paintCaret(GraphicsContext& context, const LayoutPoint& pai
         CaretBase::paintCaret(*m_selection.start().deprecatedNode(), context, paintOffset, m_caretAnimator.ptr(), this->selection());
 }
 
-Color CaretBase::computeCaretColor(const RenderStyle& elementStyle, const Node* node)
+Color CaretBase::computeCaretColor(const RenderStyle& elementStyle, const Node* node, const std::optional<VisibleSelection>& selection)
 {
     // On iOS, we want to fall back to the tintColor, and only override if CSS has explicitly specified a custom color.
 #if PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)
     UNUSED_PARAM(node);
+    UNUSED_PARAM(selection);
     if (elementStyle.hasAutoCaretColor())
         return { };
     return elementStyle.colorResolvingCurrentColor(elementStyle.caretColor());
+#elif HAVE(REDESIGNED_TEXT_CURSOR)
+    const RenderStyle* elementStyleToUse = [&] {
+        if (!selection)
+            return &elementStyle;
+
+        RefPtr editableRoot = selection->rootEditableElement();
+        if (!editableRoot || !editableRoot->renderer())
+            return &elementStyle;
+
+        return &editableRoot->renderer()->style();
+    }();
+
+    if (elementStyleToUse->hasAutoCaretColor()) {
+        auto styleColorOptions = node->document().styleColorOptions(elementStyleToUse);
+        return RenderTheme::singleton().systemColor(CSSValueAppleSystemControlAccent, styleColorOptions | StyleColorOptions::UseSystemAppearance);
+    }
+
+    return elementStyleToUse->colorResolvingCurrentColor(elementStyleToUse->caretColor());
 #else
+    UNUSED_PARAM(selection);
     RefPtr parentElement = node ? node->parentElement() : nullptr;
     auto* parentStyle = parentElement && parentElement->renderer() ? &parentElement->renderer()->style() : nullptr;
     // CSS value "auto" is treated as an invalid color.
@@ -1938,11 +1958,11 @@ void CaretBase::paintCaret(const Node& node, GraphicsContext& context, const Lay
     Color caretColor = Color::black;
     auto* element = is<Element>(node) ? downcast<Element>(&node) : node.parentElement();
     if (element && element->renderer())
-        caretColor = CaretBase::computeCaretColor(element->renderer()->style(), &node);
+        caretColor = CaretBase::computeCaretColor(element->renderer()->style(), &node, selection);
 
     auto pixelSnappedCaretRect = snapRectToDevicePixels(caret, node.document().deviceScaleFactor());
     if (caretAnimator)
-        caretAnimator->paint(node, context, pixelSnappedCaretRect, caretColor, paintOffset, selection);
+        caretAnimator->paint(context, pixelSnappedCaretRect, caretColor, paintOffset);
     else
         context.fillRect(pixelSnappedCaretRect, caretColor);
 #else
@@ -2267,7 +2287,7 @@ void FrameSelection::updateAppearance()
     // already blinking in the right location.
     if (shouldBlink && !caretAnimator().isActive()) {
         if (m_document && m_document->domWindow())
-            caretAnimator().start(m_document->domWindow()->nowTimestamp());
+            caretAnimator().start();
 
         caretAnimator().setVisible(true);
     }

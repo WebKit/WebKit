@@ -2719,7 +2719,7 @@ void WebViewImpl::selectionDidChange()
 
 #if HAVE(REDESIGNED_TEXT_CURSOR)
     if (m_page->editorState().hasPostLayoutData())
-        updateCaretDecorationPlacement();
+        updateCursorAccessoryPlacement();
 #endif
 
     NSWindow *window = [m_view window];
@@ -6128,7 +6128,7 @@ void WebViewImpl::setEditableElementIsFocused(bool editableElementIsFocused)
 #endif // HAVE(TOUCH_BAR)
 
 #if HAVE(REDESIGNED_TEXT_CURSOR)
-void WebViewImpl::updateCaretDecorationPlacement()
+void WebViewImpl::updateCursorAccessoryPlacement()
 {
     const EditorState& editorState = m_page->editorState();
     if (!editorState.hasPostLayoutData())
@@ -6140,7 +6140,7 @@ void WebViewImpl::updateCaretDecorationPlacement()
     if (!context)
         return;
 
-    if ([_textInputNotifications caretType] == WebCore::CaretAnimatorType::Alternate) {
+    if ([_textInputNotifications caretType] == WebCore::CaretAnimatorType::Dictation) {
         // The dictation cursor accessory should always be visible no matter what, since it is
         // the only prominent way a user can tell if dictation is active.
         context.showsCursorAccessories = YES;
