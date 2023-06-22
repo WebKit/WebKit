@@ -58,15 +58,14 @@ public:
     bool isStarted() const { return m_isStarted; }
     NetworkRTCProvider& rtcProvider() { return m_rtcProvider; }
 
-    void onNetworksChanged(const Vector<RTCNetwork>&, const Vector<RTCNetwork>&, const RTCNetwork::IPAddress&, const RTCNetwork::IPAddress&);
+    void onNetworksChanged(const Vector<RTCNetwork>&, const RTCNetwork::IPAddress&, const RTCNetwork::IPAddress&);
 
 private:
-    void startUpdatingIfNeeded(bool);
+    void startUpdatingIfNeeded();
 
     NetworkRTCProvider& m_rtcProvider;
     std::unique_ptr<rtc::BasicNetworkManager> m_manager;
     bool m_isStarted { false };
-    bool m_enableEnumeratingAllNetworkInterfaces { false };
 };
 
 } // namespace WebKit

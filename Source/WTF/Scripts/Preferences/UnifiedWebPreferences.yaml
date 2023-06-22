@@ -2361,6 +2361,16 @@ EnumeratingAllNetworkInterfacesEnabled:
     WebKit:
       default: false
 
+EnumeratingVisibleNetworkInterfacesEnabled:
+  type: bool
+  status: internal
+  humanReadableName: "Enable Enumerating Visible Network Interfaces"
+  webcoreBinding: none
+  exposed: [ WebKit ]
+  defaultValue:
+    WebKit:
+      default: false
+
 EventHandlerDrivenSmoothKeyboardScrollingEnabled:
   type: bool
   status: internal

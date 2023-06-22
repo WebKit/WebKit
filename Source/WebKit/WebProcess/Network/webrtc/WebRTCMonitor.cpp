@@ -39,16 +39,11 @@ namespace WebKit {
 
 #define WEBRTC_RELEASE_LOG(fmt, ...) RELEASE_LOG(Network, "%p - WebRTCMonitor::" fmt, this, ##__VA_ARGS__)
 
-void WebRTCMonitor::setEnumeratingAllNetworkInterfacesEnabled(bool enabled)
-{
-    m_enableEnumeratingAllNetworkInterfaces = enabled;
-}
-
 void WebRTCMonitor::startUpdating()
 {
     WEBRTC_RELEASE_LOG("StartUpdating - Asking network process to start updating");
 
-    WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkRTCMonitor::StartUpdatingIfNeeded(m_enableEnumeratingAllNetworkInterfaces), 0);
+    WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkRTCMonitor::StartUpdatingIfNeeded(), 0);
     ++m_clientCount;
 }
 
@@ -66,6 +61,7 @@ void WebRTCMonitor::stopUpdating()
 
 void WebRTCMonitor::networksChanged(Vector<RTCNetwork>&& networkList, RTCNetwork::IPAddress&& ipv4, RTCNetwork::IPAddress&& ipv6)
 {
+    ASSERT(isMainRunLoop());
     WEBRTC_RELEASE_LOG("NetworksChanged");
 
     m_didReceiveNetworkList = true;

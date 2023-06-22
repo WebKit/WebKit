@@ -100,7 +100,7 @@ bool LibWebRTCMediaEndpoint::setConfiguration(LibWebRTCProvider& client, webrtc:
         if (!m_rtcSocketFactory) {
             RegistrableDomain domain { document.url() };
             bool isFirstParty = domain == RegistrableDomain(document.firstPartyForCookies());
-            m_rtcSocketFactory = client.createSocketFactory(document.userAgent(document.url()), isFirstParty, WTFMove(domain));
+            m_rtcSocketFactory = client.createSocketFactory(document.userAgent(document.url()), document.identifier(), isFirstParty, WTFMove(domain));
             if (!m_peerConnectionBackend.shouldFilterICECandidates() && m_rtcSocketFactory)
                 m_rtcSocketFactory->disableRelay();
         }

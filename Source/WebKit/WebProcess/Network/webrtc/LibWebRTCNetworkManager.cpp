@@ -54,6 +54,14 @@ LibWebRTCNetworkManager* LibWebRTCNetworkManager::getOrCreate(WebCore::ScriptExe
     return networkManager;
 }
 
+void LibWebRTCNetworkManager::signalUsedInterface(WebCore::ScriptExecutionContextIdentifier contextIdentifier, String&& name)
+{
+    callOnMainRunLoop([contextIdentifier, name = WTFMove(name).isolatedCopy()]() mutable {
+        if (auto* manager = LibWebRTCNetworkManager::getOrCreate(contextIdentifier))
+            manager->signalUsedInterface(WTFMove(name));
+    });
+}
+
 LibWebRTCNetworkManager::LibWebRTCNetworkManager(WebCore::ScriptExecutionContextIdentifier documentIdentifier)
     : m_documentIdentifier(documentIdentifier)
 {
@@ -75,6 +83,16 @@ void LibWebRTCNetworkManager::close()
 void LibWebRTCNetworkManager::unregisterMDNSNames()
 {
     WebProcess::singleton().libWebRTCNetwork().mdnsRegister().unregisterMDNSNames(m_documentIdentifier);
+}
+
+void LibWebRTCNetworkManager::setEnumeratingAllNetworkInterfacesEnabled(bool enabled)
+{
+    m_enableEnumeratingAllNetworkInterfaces = enabled;
+}
+
+void LibWebRTCNetworkManager::setEnumeratingVisibleNetworkInterfacesEnabled(bool enabled)
+{
+    m_enableEnumeratingVisibleNetworkInterfaces = enabled;
 }
 
 void LibWebRTCNetworkManager::StartUpdating()
@@ -112,8 +130,24 @@ void LibWebRTCNetworkManager::networksChanged(const Vector<RTCNetwork>& networks
 {
     bool forceSignaling = !m_receivedNetworkList;
     m_receivedNetworkList = true;
+    networksChanged(networks, ipv4, ipv6, forceSignaling);
+}
 
-    WebCore::LibWebRTCProvider::callOnWebRTCNetworkThread([this, protectedThis = Ref { *this }, networks, ipv4, ipv6, forceSignaling] {
+void LibWebRTCNetworkManager::networksChanged(const Vector<RTCNetwork>& networks, const RTCNetwork::IPAddress& ipv4, const RTCNetwork::IPAddress& ipv6, bool forceSignaling)
+{
+    ASSERT(isMainRunLoop());
+
+    Vector<RTCNetwork> filteredNetworks;
+    if (m_enableEnumeratingAllNetworkInterfaces)
+        filteredNetworks = networks;
+    else {
+        for (auto& network : networks) {
+            if (WTF::anyOf(network.ips, [&](const auto& ip) { return ipv4.value == ip || ipv6.value == ip; }) || (!m_useMDNSCandidates && m_enableEnumeratingVisibleNetworkInterfaces && m_allowedInterfaces.contains(String::fromUTF8(network.name.c_str()))))
+                filteredNetworks.append(network);
+        }
+    }
+
+    WebCore::LibWebRTCProvider::callOnWebRTCNetworkThread([this, protectedThis = Ref { *this }, networks = WTFMove(filteredNetworks), ipv4, ipv6, forceSignaling] {
         std::vector<std::unique_ptr<rtc::Network>> networkList(networks.size());
         for (size_t index = 0; index < networks.size(); ++index)
             networkList[index] = std::make_unique<rtc::Network>(networks[index].value());
@@ -125,6 +159,17 @@ void LibWebRTCNetworkManager::networksChanged(const Vector<RTCNetwork>& networks
             SignalNetworksChanged();
     });
 
+}
+
+void LibWebRTCNetworkManager::signalUsedInterface(String&& name)
+{
+    ASSERT(isMainRunLoop());
+    if (!m_allowedInterfaces.add(WTFMove(name)).isNewEntry || m_useMDNSCandidates || !m_enableEnumeratingVisibleNetworkInterfaces)
+        return;
+
+    auto& monitor = WebProcess::singleton().libWebRTCNetwork().monitor();
+    if (monitor.didReceiveNetworkList())
+        networksChanged(monitor.networkList() , monitor.ipv4(), monitor.ipv6(), false);
 }
 
 void LibWebRTCNetworkManager::networkProcessCrashed()

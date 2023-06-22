@@ -960,6 +960,10 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
         auto& rtcProvider = static_cast<LibWebRTCProvider&>(m_page->webRTCProvider());
         rtcProvider.enableEnumeratingAllNetworkInterfaces();
     }
+    if (parameters.store.getBoolValueForKey(WebPreferencesKey::enumeratingVisibleNetworkInterfacesEnabledKey())) {
+        auto& rtcProvider = static_cast<LibWebRTCProvider&>(m_page->webRTCProvider());
+        rtcProvider.enableEnumeratingVisibleNetworkInterfaces();
+    }
 #endif
 #endif
 

@@ -273,12 +273,17 @@ void LibWebRTCProvider::enableEnumeratingAllNetworkInterfaces()
     m_enableEnumeratingAllNetworkInterfaces = true;
 }
 
+void LibWebRTCProvider::enableEnumeratingVisibleNetworkInterfaces()
+{
+    m_enableEnumeratingVisibleNetworkInterfaces = true;
+}
+
 void LibWebRTCProvider::disableNonLocalhostConnections()
 {
     m_disableNonLocalhostConnections = true;
 }
 
-std::unique_ptr<LibWebRTCProvider::SuspendableSocketFactory> LibWebRTCProvider::createSocketFactory(String&& /* userAgent */, bool /* isFirstParty */, RegistrableDomain&&)
+std::unique_ptr<LibWebRTCProvider::SuspendableSocketFactory> LibWebRTCProvider::createSocketFactory(String&& /* userAgent */, ScriptExecutionContextIdentifier, bool /* isFirstParty */, RegistrableDomain&&)
 {
     return nullptr;
 }

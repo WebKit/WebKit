@@ -101,14 +101,21 @@ NetworkRTCTCPSocketCocoa::NetworkRTCTCPSocketCocoa(LibWebRTCSocketIdentifier ide
     m_nwConnection = adoptNS(nw_connection_create(host.get(), tcpTLS.get()));
 
     nw_connection_set_queue(m_nwConnection.get(), tcpSocketQueue());
-    nw_connection_set_state_changed_handler(m_nwConnection.get(), makeBlockPtr([identifier = m_identifier, rtcProvider = Ref { rtcProvider }, connection = m_connection.copyRef()](nw_connection_state_t state, _Nullable nw_error_t error) {
-        ASSERT_UNUSED(error, !error);
+    nw_connection_set_state_changed_handler(m_nwConnection.get(), makeBlockPtr([weakThis = WeakPtr { *this }, identifier = m_identifier, rtcProvider = Ref { rtcProvider }, connection = m_connection.copyRef()](nw_connection_state_t state, _Nullable nw_error_t error) {
         switch (state) {
         case nw_connection_state_invalid:
         case nw_connection_state_waiting:
         case nw_connection_state_preparing:
             return;
         case nw_connection_state_ready:
+            rtcProvider->callOnRTCNetworkThread([weakThis, connection, identifier] {
+                if (!weakThis)
+                    return;
+                auto path = adoptNS(nw_connection_copy_current_path(weakThis->m_nwConnection.get()));
+                auto interface = adoptNS(nw_path_copy_interface(path.get()));
+                auto* name = nw_interface_get_name(interface.get());
+                connection->send(Messages::LibWebRTCNetwork::SignalUsedInterface(identifier, String::fromUTF8(name)), 0);
+            });
             connection->send(Messages::LibWebRTCNetwork::SignalConnect(identifier), 0);
             return;
         case nw_connection_state_failed:
