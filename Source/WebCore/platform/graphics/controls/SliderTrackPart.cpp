@@ -93,7 +93,7 @@ void SliderTrackPart::drawTicks(GraphicsContext& context, const FloatRect& rect,
 
     for (auto tickRatio : m_tickRatios) {
         double value = isReversedInlineDirection ? 1.0 - tickRatio : tickRatio;
-        double tickPosition = round(tickRegionMargin + tickRegionWidth * value);
+        double tickPosition = std::round(tickRegionMargin + tickRegionWidth * value);
         if (isHorizontal)
             tickRect.setX(tickPosition);
         else

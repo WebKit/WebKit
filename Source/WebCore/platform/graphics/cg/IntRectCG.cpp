@@ -39,11 +39,11 @@ IntRect::operator CGRect() const
 
 IntRect enclosingIntRect(const CGRect& rect)
 {
-    int l = static_cast<int>(floorf(rect.origin.x));
-    int t = static_cast<int>(floorf(rect.origin.y));
-    int r = static_cast<int>(ceilf(CGRectGetMaxX(rect)));
-    int b = static_cast<int>(ceilf(CGRectGetMaxY(rect)));
-    return IntRect(l, t, r - l, b - t);
+    int left = static_cast<int>(std::floor(rect.origin.x));
+    int top = static_cast<int>(std::floor(rect.origin.y));
+    int right = static_cast<int>(std::ceil(CGRectGetMaxX(rect)));
+    int bottom = static_cast<int>(std::ceil(CGRectGetMaxY(rect)));
+    return IntRect(left, top, right - left, bottom - top);
 }
 
 }

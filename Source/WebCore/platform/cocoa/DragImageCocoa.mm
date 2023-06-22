@@ -69,8 +69,8 @@ RetainPtr<NSImage> scaleDragImage(RetainPtr<NSImage> image, FloatSize scale)
 {
     NSSize originalSize = [image size];
     NSSize newSize = NSMakeSize((originalSize.width * scale.width()), (originalSize.height * scale.height()));
-    newSize.width = roundf(newSize.width);
-    newSize.height = roundf(newSize.height);
+    newSize.width = std::round(newSize.width);
+    newSize.height = std::round(newSize.height);
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     [image setScalesWhenResized:YES];
 ALLOW_DEPRECATED_DECLARATIONS_END

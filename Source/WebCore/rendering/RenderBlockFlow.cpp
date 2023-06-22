@@ -4311,7 +4311,7 @@ void RenderBlockFlow::adjustComputedFontSizes(float size, float visibleWidth)
     
     float actualWidth = m_widthForTextAutosizing != -1 ? static_cast<float>(m_widthForTextAutosizing) : static_cast<float>(width());
     float scale = visibleWidth / actualWidth;
-    float minFontSize = roundf(size / scale);
+    float minFontSize = std::round(size / scale);
 
     for (auto* descendant = RenderObjectTraversal::firstChild(*this); descendant; ) {
         if (!isNonBlocksOrNonFixedHeightListItems(*descendant)) {
@@ -4327,7 +4327,7 @@ void RenderBlockFlow::adjustComputedFontSizes(float size, float visibleWidth)
         auto& oldStyle = text.style();
         auto& fontDescription = oldStyle.fontDescription();
         float specifiedSize = fontDescription.specifiedSize();
-        float scaledSize = roundf(specifiedSize * scale);
+        float scaledSize = std::round(specifiedSize * scale);
         if (scaledSize > 0 && scaledSize < minFontSize) {
             // Record the width of the block and the line count the first time we resize text and use it from then on for text resizing.
             // This makes text resizing consistent even if the block's width or line count changes (which can be caused by text resizing itself 5159915).
@@ -4337,7 +4337,7 @@ void RenderBlockFlow::adjustComputedFontSizes(float size, float visibleWidth)
                 m_widthForTextAutosizing = actualWidth;
 
             float lineTextMultiplier = lineCount == ONE_LINE ? oneLineTextMultiplier(text, specifiedSize) : textMultiplier(text, specifiedSize);
-            float candidateNewSize = roundf(std::min(minFontSize, specifiedSize * lineTextMultiplier));
+            float candidateNewSize = std::round(std::min(minFontSize, specifiedSize * lineTextMultiplier));
 
             if (candidateNewSize > specifiedSize && candidateNewSize != fontDescription.computedSize() && text.textNode() && oldStyle.textSizeAdjust().isAuto())
                 document().textAutoSizing().addTextNode(*text.textNode(), candidateNewSize);

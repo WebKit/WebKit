@@ -70,7 +70,7 @@ public:
         // extends to infinity. In 8-bit contexts, however, rounding causes the effect to become
         // undetectable at around 1.4x the radius.
         const float radiusExtentMultiplier = 1.4;
-        return LayoutUnit(ceilf(m_radius.value() * radiusExtentMultiplier));
+        return LayoutUnit(std::ceil(m_radius.value() * radiusExtentMultiplier));
     }
     const Length& spread() const { return m_spread; }
     ShadowStyle style() const { return m_style; }

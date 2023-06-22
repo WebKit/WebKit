@@ -686,12 +686,12 @@ Value FunSum::evaluate() const
 
 Value FunFloor::evaluate() const
 {
-    return floor(argument(0).evaluate().toNumber());
+    return std::floor(argument(0).evaluate().toNumber());
 }
 
 Value FunCeiling::evaluate() const
 {
-    return ceil(argument(0).evaluate().toNumber());
+    return std::ceil(argument(0).evaluate().toNumber());
 }
 
 double FunRound::round(double val)

@@ -394,7 +394,7 @@ LayoutUnit LegacyRootInlineBox::lineSnapAdjustment(LayoutUnit delta) const
         if (logicalHeight() <= lineGridFontHeight)
             firstTextTop += (lineGridFontHeight - logicalHeight()) / 2;
         else {
-            LayoutUnit numberOfLinesWithLeading { ceilf(static_cast<float>(logicalHeight() - lineGridFontHeight) / gridLineHeight) };
+            LayoutUnit numberOfLinesWithLeading { std::ceil(static_cast<float>(logicalHeight() - lineGridFontHeight) / gridLineHeight) };
             LayoutUnit totalHeight = lineGridFontHeight + numberOfLinesWithLeading * gridLineHeight;
             firstTextTop += (totalHeight - logicalHeight()) / 2;
         }

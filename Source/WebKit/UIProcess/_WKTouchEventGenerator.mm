@@ -182,8 +182,8 @@ static void delayBetweenMove(int eventIndex, double elapsed)
         }
 
         CGPoint point = pointInfo->point;
-        point = CGPointMake(roundf(point.x), roundf(point.y));
-        
+        point = CGPointMake(std::round(point.x), std::round(point.y));
+
         RetainPtr<IOHIDEventRef> subEvent = adoptCF(IOHIDEventCreateDigitizerFingerEvent(kCFAllocatorDefault, machTime,
             pointInfo->identifier,
             pointInfo->identifier,

@@ -1054,7 +1054,7 @@ float SVGSMILElement::calculateAnimationPercentAndRepeat(SMILTime elapsed, unsig
 
         double lastActiveDuration = elapsed >= m_intervalEnd ? m_intervalEnd.value() - m_intervalBegin.value() : repeatingDuration.value();
         double percent = lastActiveDuration / simpleDuration.value();
-        percent = percent - floor(percent);
+        percent = percent - std::floor(percent);
         if (percent < std::numeric_limits<float>::epsilon() || 1 - percent < std::numeric_limits<float>::epsilon())
             return 1.0f;
         return narrowPrecisionToFloat(percent);

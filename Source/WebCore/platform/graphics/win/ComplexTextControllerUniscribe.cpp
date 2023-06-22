@@ -257,9 +257,9 @@ void ComplexTextController::collectComplexTextRunsForCharacters(const UChar* cp,
 
             // Match AppKit's rules for the integer vs. non-integer rendering modes.
             if (!font->platformData().isSystemFont()) {
-                advance = roundf(advance);
-                offsetX = roundf(offsetX);
-                offsetY = roundf(offsetY);
+                advance = std::round(advance);
+                offsetX = std::round(offsetX);
+                offsetY = std::round(offsetY);
             }
 
             baseAdvances.uncheckedAppend({ advance, 0 });

@@ -140,7 +140,7 @@ bool fontHasEitherTable(CTFontRef ctFont, unsigned tableTag1, unsigned tableTag2
 void Font::platformInit()
 {
 #if PLATFORM(IOS_FAMILY)
-    m_syntheticBoldOffset = m_platformData.syntheticBold() ? ceilf(m_platformData.size() / 24.0f) : 0.f;
+    m_syntheticBoldOffset = m_platformData.syntheticBold() ? std::ceil(m_platformData.size() / 24.0f) : 0.f;
 #else
     m_syntheticBoldOffset = m_platformData.syntheticBold() ? 1.0f : 0.f;
 #endif
@@ -198,10 +198,10 @@ void Font::platformInit()
 #if PLATFORM(IOS_FAMILY)
     CGFloat adjustment = shouldUseAdjustment(m_platformData.font()) ? ceil((ascent + descent) * kLineHeightAdjustment) : 0;
 
-    lineGap = ceilf(lineGap);
-    lineSpacing = ceil(ascent) + adjustment + ceil(descent) + lineGap;
-    ascent = ceilf(ascent + adjustment);
-    descent = ceilf(descent);
+    lineGap = std::ceil(lineGap);
+    lineSpacing = std::ceil(ascent) + adjustment + std::ceil(descent) + lineGap;
+    ascent = std::ceil(ascent + adjustment);
+    descent = std::ceil(descent);
 
     m_shouldNotBeUsedForArabic = fontFamilyShouldNotBeUsedForArabic(familyName.get());
 #endif

@@ -136,7 +136,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     CGFloat maxWidth = 0;
     int maxIndex = -1;
     for (NSUInteger i = 0; i < numberToShow; i++) {
-        float width = ceilf([[_completions objectAtIndex:i] sizeWithAttributes:attributes].width);
+        CGFloat width = std::ceil([[_completions objectAtIndex:i] sizeWithAttributes:attributes].width);
         if (width > maxWidth) {
             maxWidth = width;
             maxIndex = i;
@@ -145,9 +145,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     windowFrame.size.width = 100;
     if (maxIndex >= 0) {
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        maxWidth = ceilf([NSScrollView frameSizeForContentSize:NSMakeSize(maxWidth, 100.0f) hasHorizontalScroller:NO hasVerticalScroller:YES borderType:NSNoBorder].width);
+        maxWidth = std::ceil([NSScrollView frameSizeForContentSize:NSMakeSize(maxWidth, 100.0f) hasHorizontalScroller:NO hasVerticalScroller:YES borderType:NSNoBorder].width);
 ALLOW_DEPRECATED_DECLARATIONS_END
-        maxWidth = ceilf([NSWindow frameRectForContentRect:NSMakeRect(0.0f, 0.0f, maxWidth, 100.0f) styleMask:NSWindowStyleMaskBorderless].size.width);
+        maxWidth = std::ceil([NSWindow frameRectForContentRect:NSMakeRect(0.0f, 0.0f, maxWidth, 100.0f) styleMask:NSWindowStyleMaskBorderless].size.width);
         maxWidth += 5.0f;
         windowFrame.size.width = std::max(maxWidth, windowFrame.size.width);
     }

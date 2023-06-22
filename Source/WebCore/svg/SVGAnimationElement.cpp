@@ -512,8 +512,8 @@ void SVGAnimationElement::currentValuesForValuesAnimation(float percent, float& 
     if (keyTimesCount) {
         fromPercent = keyTimes[index];
         toPercent = keyTimes[index + 1];
-    } else {        
-        index = static_cast<unsigned>(floorf(percent * (valuesCount - 1)));
+    } else {
+        index = static_cast<unsigned>(std::floor(percent * (valuesCount - 1)));
         fromPercent =  static_cast<float>(index) / (valuesCount - 1);
         toPercent =  static_cast<float>(index + 1) / (valuesCount - 1);
     }

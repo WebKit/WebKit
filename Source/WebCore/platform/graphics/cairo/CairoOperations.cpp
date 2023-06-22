@@ -380,8 +380,8 @@ FloatRect computeLineBoundsAndAntialiasingModeForText(GraphicsContextCairo& plat
     }
 
     FloatPoint devicePoint = transform.mapPoint(point);
-    // Visual overflow might occur here due to integral roundf/ceilf. visualOverflowForDecorations adjusts the overflow value for underline decoration.
-    FloatPoint deviceOrigin = FloatPoint(roundf(devicePoint.x()), ceilf(devicePoint.y()));
+    // Visual overflow might occur here due to integral std::round/std::ceil. visualOverflowForDecorations adjusts the overflow value for underline decoration.
+    FloatPoint deviceOrigin = FloatPoint(std::round(devicePoint.x()), std::ceil(devicePoint.y()));
     if (auto inverse = transform.inverse())
         origin = inverse.value().mapPoint(deviceOrigin);
     return FloatRect(origin, FloatSize(width, thickness));
@@ -890,8 +890,8 @@ void drawSurface(GraphicsContextCairo& platformContext, cairo_surface_t* surface
         patternSurface = adoptRef(cairo_surface_create_for_rectangle(surface, expandedSrcRect.x(),
             expandedSrcRect.y(), expandedSrcRect.width(), expandedSrcRect.height()));
 
-        leftPadding = static_cast<float>(expandedSrcRect.x()) - floorf(srcRect.x());
-        topPadding = static_cast<float>(expandedSrcRect.y()) - floorf(srcRect.y());
+        leftPadding = static_cast<float>(expandedSrcRect.x()) - std::floor(srcRect.x());
+        topPadding = static_cast<float>(expandedSrcRect.y()) - std::floor(srcRect.y());
     }
 
     RefPtr<cairo_pattern_t> pattern = adoptRef(cairo_pattern_create_for_surface(patternSurface.get()));

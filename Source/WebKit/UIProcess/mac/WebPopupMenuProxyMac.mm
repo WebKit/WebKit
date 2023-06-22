@@ -140,7 +140,7 @@ void WebPopupMenuProxyMac::showPopupMenu(const IntRect& rect, TextDirection text
         NSRect titleFrame = [m_popup  titleRectForBounds:rect];
         if (titleFrame.size.width <= 0 || titleFrame.size.height <= 0)
             titleFrame = rect;
-        float verticalOffset = roundf((NSMaxY(rect) - NSMaxY(titleFrame)) + NSHeight(titleFrame)) + 1;
+        float verticalOffset = std::round((NSMaxY(rect) - NSMaxY(titleFrame)) + NSHeight(titleFrame)) + 1;
         if (textDirection == TextDirection::LTR)
             location = NSMakePoint(NSMinX(rect) + popOverHorizontalAdjust, NSMaxY(rect) - verticalOffset);
         else
@@ -173,7 +173,7 @@ void WebPopupMenuProxyMac::showPopupMenu(const IntRect& rect, TextDirection text
     }
 
     Ref<WebPopupMenuProxyMac> protect(*this);
-    PAL::popUpMenu(menu, location, roundf(NSWidth(rect)), dummyView.get(), selectedIndex, font, controlSize, data.hideArrows);
+    PAL::popUpMenu(menu, location, std::round(NSWidth(rect)), dummyView.get(), selectedIndex, font, controlSize, data.hideArrows);
 
     [m_popup dismissPopUp];
     [dummyView removeFromSuperview];

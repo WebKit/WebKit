@@ -82,7 +82,7 @@ FramesPerSecond DisplayLink::nominalFramesPerSecondFromDisplayLink(CVDisplayLink
     if (!refreshPeriod.timeValue)
         return FullSpeedFramesPerSecond;
 
-    FramesPerSecond result = round((double)refreshPeriod.timeScale / (double)refreshPeriod.timeValue);
+    FramesPerSecond result = std::round((double)refreshPeriod.timeScale / (double)refreshPeriod.timeValue);
     return result ?: FullSpeedFramesPerSecond;
 }
 

@@ -1119,7 +1119,7 @@ LengthBox RenderThemeMac::popupInternalPaddingBox(const RenderStyle& style, cons
 
     if (style.effectiveAppearance() == StyleAppearance::MenulistButton) {
         float arrowWidth = baseArrowWidth * (style.computedFontPixelSize() / baseFontSize);
-        float rightPadding = ceilf(arrowWidth + (arrowPaddingBefore + arrowPaddingAfter + paddingBeforeSeparator) * style.effectiveZoom());
+        float rightPadding = std::ceil(arrowWidth + (arrowPaddingBefore + arrowPaddingAfter + paddingBeforeSeparator) * style.effectiveZoom());
         float leftPadding = styledPopupPaddingLeft * style.effectiveZoom();
         if (style.direction() == TextDirection::RTL)
             std::swap(rightPadding, leftPadding);

@@ -799,8 +799,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     // make sure image has integer offset
     CGPoint imageOffset = { -offset.x, -(imageSize.height - offset.y) };
-    imageOffset.x = floor(imageOffset.x + 0.5);
-    imageOffset.y = floor(imageOffset.y + 0.5);
+    imageOffset.x = std::floor(imageOffset.x + 0.5);
+    imageOffset.y = std::floor(imageOffset.y + 0.5);
 
     error = CoreDragSetImage(CoreDragGetCurrentDrag(), imageOffset, &imageSpec, imageShape, 1.0);
     CGSReleaseRegion(imageShape);

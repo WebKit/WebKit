@@ -4860,8 +4860,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     range->location = 1;
     float totalScaleFactor = [self _scaleFactorForPrintOperation:printOperation];
     float userScaleFactor = [printOperation _web_pageSetupScaleFactor];
-    float fullPageWidth = floorf([printOperation _web_availablePaperWidth] / totalScaleFactor);
-    float fullPageHeight = floorf([printOperation _web_availablePaperHeight] / totalScaleFactor);
+    float fullPageWidth = std::floor([printOperation _web_availablePaperWidth] / totalScaleFactor);
+    float fullPageHeight = std::floor([printOperation _web_availablePaperHeight] / totalScaleFactor);
     WebFrame *frame = [self _frame];
     NSArray *newPageRects = [frame _computePageRectsWithPrintScaleFactor:userScaleFactor pageSize:NSMakeSize(fullPageWidth, fullPageHeight)];
 
@@ -6883,8 +6883,8 @@ static CGImageRef imageFromRect(WebCore::LocalFrame* frame, CGRect rect)
     
     // Round image rect size in window coordinate space to avoid pixel cracks at HiDPI (4622794)
     rect = [view convertRect:rect toView:nil];
-    rect.size.height = roundf(rect.size.height);
-    rect.size.width = roundf(rect.size.width);
+    rect.size.height = std::round(rect.size.height);
+    rect.size.width = std::round(rect.size.width);
     rect = [view convertRect:rect fromView:nil];
     if (rect.size.width == 0 || rect.size.height == 0)
         return nil;

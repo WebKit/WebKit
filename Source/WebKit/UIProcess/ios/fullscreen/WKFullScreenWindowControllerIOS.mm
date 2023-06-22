@@ -577,7 +577,7 @@ static constexpr CGFloat kFullScreenWindowCornerRadius = 12;
                 targetWidth = videoDimensions.width * preferredHeight / videoDimensions.height;
         }
 
-        [_window setFrame:CGRectMake(0, 0, floorf(targetWidth), floorf(targetHeight))];
+        [_window setFrame:CGRectMake(0, 0, std::floor(targetWidth), std::floor(targetHeight))];
         [_window setAlpha:0];
         [_window setClipsToBounds:YES];
         [_window _setContinuousCornerRadius:kFullScreenWindowCornerRadius];

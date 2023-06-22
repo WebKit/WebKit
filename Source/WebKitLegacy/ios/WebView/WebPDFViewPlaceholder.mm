@@ -349,10 +349,10 @@ static const float PAGE_HEIGHT_INSET = 4.0f * 2.0f;
     if (rotation != 0)
         bounds = CGRectApplyAffineTransform(bounds, CGAffineTransformMakeRotation(rotation));
 
-    bounds.origin.x     = roundf(bounds.origin.x);
-    bounds.origin.y     = roundf(bounds.origin.y);
-    bounds.size.width   = roundf(bounds.size.width);
-    bounds.size.height  = roundf(bounds.size.height);
+    bounds.origin.x     = std::round(bounds.origin.x);
+    bounds.origin.y     = std::round(bounds.origin.y);
+    bounds.size.width   = std::round(bounds.size.width);
+    bounds.size.height  = std::round(bounds.size.height);
 
     return bounds;
 }
@@ -420,11 +420,11 @@ static const float PAGE_HEIGHT_INSET = 4.0f * 2.0f;
         CGRect pageRect = pageCropBoxes[i];
 
         // Apply our scaling to this page's bounds.
-        pageRect.size.width  = roundf(pageRect.size.width * scalingFactor);
-        pageRect.size.height = roundf(pageRect.size.height * scalingFactor);
+        pageRect.size.width  = std::round(pageRect.size.width * scalingFactor);
+        pageRect.size.height = std::round(pageRect.size.height * scalingFactor);
 
         // Center this page horizontally and update the starting vertical offset.
-        pageRect.origin.x = roundf((desiredWidth - pageRect.size.width) / 2.0f);
+        pageRect.origin.x = std::round((desiredWidth - pageRect.size.width) / 2.0f);
         pageRect.origin.y = desiredHeight;
 
         // Save this page's rect and minimum y-offset.
@@ -440,7 +440,7 @@ static const float PAGE_HEIGHT_INSET = 4.0f * 2.0f;
     self.pageYOrigins = pageYOrigins;
 
     // Determine the result desired bounds.
-    return CGSizeMake(roundf(desiredWidth), roundf(desiredHeight));
+    return CGSizeMake(std::round(desiredWidth), std::round(desiredHeight));
 }
 
 - (void)didUnlockDocument

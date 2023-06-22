@@ -180,7 +180,7 @@ std::optional<std::pair<double, double>> ViewGestureGeometryCollector::computeTe
 
         allTextNodes.add(&textNode);
 
-        unsigned fontSizeBin = fontSizeBinningInterval * round(textNode.renderer()->style().fontCascade().size() / fontSizeBinningInterval);
+        unsigned fontSizeBin = fontSizeBinningInterval * std::round(textNode.renderer()->style().fontCascade().size() / fontSizeBinningInterval);
         auto entry = fontSizeToCountMap.find(fontSizeBin);
         fontSizeToCountMap.set(fontSizeBin, textLength + (entry == fontSizeToCountMap.end() ? 0 : entry->value));
         totalSampledTextLength += textLength;

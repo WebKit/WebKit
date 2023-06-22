@@ -169,7 +169,7 @@ void InlineDisplayContentBuilder::appendTextDisplayBox(const Line::Run& lineRun,
             auto initialContaingBlockSize = formattingState().layoutState().isInlineFormattingContextIntegration()
                 ? formattingState().layoutState().viewportSize()
                 : formattingState().layoutState().geometryForBox(FormattingContext::initialContainingBlock(inlineTextBox)).contentBox().size();
-            auto strokeOverflow = ceilf(style.computedStrokeWidth(ceiledIntSize(initialContaingBlockSize)));
+            auto strokeOverflow = std::ceil(style.computedStrokeWidth(ceiledIntSize(initialContaingBlockSize)));
             inkOverflow.inflate(strokeOverflow);
         };
         addStrokeOverflow();
@@ -197,8 +197,8 @@ void InlineDisplayContentBuilder::appendTextDisplayBox(const Line::Run& lineRun,
             auto enclosingAscentAndDescent = TextUtil::enclosingGlyphBoundsForText(StringView(content).substring(text->start, text->length), style);
             // FIXME: Take fallback fonts into account.
             auto& fontMetrics = style.metricsOfPrimaryFont();
-            auto topOverflow = std::max(0.f, ceilf(-enclosingAscentAndDescent.ascent) - fontMetrics.ascent());
-            auto bottomOverflow = std::max(0.f, ceilf(enclosingAscentAndDescent.descent) - fontMetrics.descent());
+            auto topOverflow = std::max(0.f, std::ceil(-enclosingAscentAndDescent.ascent) - fontMetrics.ascent());
+            auto bottomOverflow = std::max(0.f, std::ceil(enclosingAscentAndDescent.descent) - fontMetrics.descent());
             inkOverflow.inflate(topOverflow, { }, bottomOverflow, { });
         };
         addGlyphOverflow();

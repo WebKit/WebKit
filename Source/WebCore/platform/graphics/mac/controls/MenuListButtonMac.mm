@@ -197,9 +197,9 @@ void MenuListButtonMac::draw(GraphicsContext& context, const FloatRoundedRect& b
     int separatorSpace = 2; // Deliberately ignores zoom since it looks nicer if it stays thin.
     int leftEdgeOfSeparator;
     if (isRightToLeft)
-        leftEdgeOfSeparator = static_cast<int>(roundf(leftEdge + arrowWidth + arrowPaddingBefore * style.zoomFactor));
+        leftEdgeOfSeparator = static_cast<int>(std::round(leftEdge + arrowWidth + arrowPaddingBefore * style.zoomFactor));
     else
-        leftEdgeOfSeparator = static_cast<int>(roundf(leftEdge - arrowPaddingBefore * style.zoomFactor));
+        leftEdgeOfSeparator = static_cast<int>(std::round(leftEdge - arrowPaddingBefore * style.zoomFactor));
 
     // Draw the separator to the left of the arrows
     context.setStrokeThickness(1); // Deliberately ignores zoom since it looks nicer if it stays thin.

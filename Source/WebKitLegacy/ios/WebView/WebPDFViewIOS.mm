@@ -265,8 +265,8 @@ static RetainPtr<CGColorRef> createCGColorWithDeviceWhite(CGFloat white, CGFloat
         CGFloat rotation = CGPDFPageGetRotationAngle(page) * (M_PI / 180);
         if (rotation != 0) {
             boxRect = CGRectApplyAffineTransform(boxRect, CGAffineTransformMakeRotation(rotation));
-            boxRect.size.width = roundf(boxRect.size.width);
-            boxRect.size.height = roundf(boxRect.size.height);
+            boxRect.size.width = std::round(boxRect.size.width);
+            boxRect.size.height = std::round(boxRect.size.height);
         }
 
         _pageRects[i-1] = boxRect;
@@ -280,7 +280,7 @@ static RetainPtr<CGColorRef> createCGColorWithDeviceWhite(CGFloat white, CGFloat
     [self setBoundsSize:size];
     
     for (i = 0; i < pageCount; i++)
-        _pageRects[i].origin.x = roundf((size.width - _pageRects[i].size.width) / 2);
+        _pageRects[i].origin.x = std::round((size.width - _pageRects[i].size.width) / 2);
 }
 
 - (void)_checkPDFTitle

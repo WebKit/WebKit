@@ -59,10 +59,10 @@ while (0)
 
 #endif
 
-static const int kLayoutUnitFractionalBits = 6;
-static constexpr int kFixedPointDenominator = 1 << kLayoutUnitFractionalBits;
-const int intMaxForLayoutUnit = INT_MAX / kFixedPointDenominator;
-const int intMinForLayoutUnit = INT_MIN / kFixedPointDenominator;
+constexpr int kLayoutUnitFractionalBits = 6;
+constexpr int kFixedPointDenominator = 1 << kLayoutUnitFractionalBits;
+constexpr int intMaxForLayoutUnit = INT_MAX / kFixedPointDenominator;
+constexpr int intMinForLayoutUnit = INT_MIN / kFixedPointDenominator;
 
 class LayoutUnit {
 public:
@@ -90,14 +90,14 @@ public:
     static LayoutUnit fromFloatCeil(float value)
     {
         LayoutUnit v;
-        v.m_value = clampToInteger(ceilf(value * kFixedPointDenominator));
+        v.m_value = clampToInteger(std::ceil(value * kFixedPointDenominator));
         return v;
     }
 
     static LayoutUnit fromFloatFloor(float value)
     {
         LayoutUnit v;
-        v.m_value = clampToInteger(floorf(value * kFixedPointDenominator));
+        v.m_value = clampToInteger(std::floor(value * kFixedPointDenominator));
         return v;
     }
 
@@ -777,23 +777,23 @@ inline float roundToDevicePixel(LayoutUnit value, float pixelSnappingFactor, boo
         valueToRound -= LayoutUnit::epsilon() / (2 * kFixedPointDenominator);
 
     if (valueToRound >= 0)
-        return round(valueToRound * pixelSnappingFactor) / pixelSnappingFactor;
+        return std::round(valueToRound * pixelSnappingFactor) / pixelSnappingFactor;
 
     // This adjusts directional rounding on negative halfway values. It produces the same direction for both negative and positive values.
     // Instead of rounding negative halfway cases away from zero, we translate them to positive values before rounding.
     // It helps snapping relative negative coordinates to the same position as if they were positive absolute coordinates.
     unsigned translateOrigin = -value.rawValue();
-    return (round((valueToRound + translateOrigin) * pixelSnappingFactor) / pixelSnappingFactor) - translateOrigin;
+    return (std::round((valueToRound + translateOrigin) * pixelSnappingFactor) / pixelSnappingFactor) - translateOrigin;
 }
 
 inline float floorToDevicePixel(LayoutUnit value, float pixelSnappingFactor)
 {
-    return floorf((value.rawValue() * pixelSnappingFactor) / kFixedPointDenominator) / pixelSnappingFactor;
+    return std::floor((value.rawValue() * pixelSnappingFactor) / kFixedPointDenominator) / pixelSnappingFactor;
 }
 
 inline float ceilToDevicePixel(LayoutUnit value, float pixelSnappingFactor)
 {
-    return ceilf((value.rawValue() * pixelSnappingFactor) / kFixedPointDenominator) / pixelSnappingFactor;
+    return std::ceil((value.rawValue() * pixelSnappingFactor) / kFixedPointDenominator) / pixelSnappingFactor;
 }
 
 inline int roundToInt(float value) { return roundToInt(LayoutUnit(value)); }

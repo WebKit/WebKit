@@ -934,8 +934,8 @@ void RenderThemeIOS::paintMenuListButtonDecorations(const RenderBox& box, const 
             ellipse.move(size + padding, 0);
         }
     }  else {
-        float centerX = floorf(buttonClip.x() + buttonClip.width() / 2.0) - 0.5;
-        float centerY = floorf(buttonClip.y() + buttonClip.height() * 3.0 / 8.0);
+        float centerX = std::floor(buttonClip.x() + buttonClip.width() / 2.0) - 0.5;
+        float centerY = std::floor(buttonClip.y() + buttonClip.height() * 3.0 / 8.0);
 
         Vector<FloatPoint> arrow = {
             { centerX - MenuListArrowWidth / 2, centerY },

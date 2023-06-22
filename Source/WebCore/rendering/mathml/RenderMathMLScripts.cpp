@@ -472,7 +472,7 @@ std::optional<LayoutUnit> RenderMathMLScripts::firstLineBaseline() const
     auto* base = firstChildBox();
     if (!base)
         return std::optional<LayoutUnit>();
-    return LayoutUnit { roundf(ascentForChild(*base) + base->logicalTop()) };
+    return LayoutUnit { std::round(static_cast<float>(ascentForChild(*base) + base->logicalTop())) };
 }
 
 }

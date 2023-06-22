@@ -701,7 +701,7 @@ void distanceDataForNode(FocusDirection direction, const FocusCandidate& current
     // df = dotDist + dx + dy + 2 * (xdisplacement + ydisplacement) - sqrt(Overlap)
 
     float distance = euclidianDistance + sameAxisDistance + 2 * otherAxisDistance;
-    candidate.distance = roundf(distance);
+    candidate.distance = std::round(distance);
     auto* localMainFrame = dynamicDowncast<LocalFrame>(candidate.visibleNode->document().page()->mainFrame());
     if (!localMainFrame)
         return;

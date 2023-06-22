@@ -43,7 +43,7 @@ BorderEdge::BorderEdge(float edgeWidth, Color edgeColor, BorderStyle edgeStyle, 
 {
     if (edgeStyle == BorderStyle::Double && edgeWidth  < borderWidthInDevicePixel(3))
         m_style = BorderStyle::Solid;
-    m_flooredToDevicePixelWidth = floorf(edgeWidth * devicePixelRatio) / devicePixelRatio;
+    m_flooredToDevicePixelWidth = std::floor(edgeWidth * devicePixelRatio) / devicePixelRatio;
 }
 
 BorderEdges borderEdges(const RenderStyle& style, float deviceScaleFactor, bool includeLogicalLeftEdge, bool includeLogicalRightEdge)

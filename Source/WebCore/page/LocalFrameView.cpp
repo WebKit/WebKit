@@ -5212,7 +5212,7 @@ void LocalFrameView::forceLayoutForPagination(const FloatSize& pageSize, const F
     float pageLogicalWidth = renderView.style().isHorizontalWritingMode() ? pageSize.width() : pageSize.height();
     float pageLogicalHeight = renderView.style().isHorizontalWritingMode() ? pageSize.height() : pageSize.width();
 
-    renderView.setPageLogicalSize({ floor(pageLogicalWidth), floor(pageLogicalHeight) });
+    renderView.setPageLogicalSize({ std::floor(pageLogicalWidth), std::floor(pageLogicalHeight) });
     renderView.setNeedsLayoutAndPrefWidthsRecalc();
     forceLayout();
     if (hasOneRef())
@@ -5232,7 +5232,7 @@ void LocalFrameView::forceLayoutForPagination(const FloatSize& pageSize, const F
         pageLogicalWidth = horizontalWritingMode ? maxPageSize.width() : maxPageSize.height();
         pageLogicalHeight = horizontalWritingMode ? maxPageSize.height() : maxPageSize.width();
 
-        renderView.setPageLogicalSize({ floor(pageLogicalWidth), floor(pageLogicalHeight) });
+        renderView.setPageLogicalSize({ std::floor(pageLogicalWidth), std::floor(pageLogicalHeight) });
         renderView.setNeedsLayoutAndPrefWidthsRecalc();
         forceLayout();
         if (hasOneRef())
@@ -5267,8 +5267,8 @@ void LocalFrameView::adjustPageHeightDeprecated(float *newBottom, float oldTop, 
     }
     // Use a context with painting disabled.
     NullGraphicsContext context;
-    renderView->setTruncatedAt(static_cast<int>(floorf(oldBottom)));
-    IntRect dirtyRect(0, static_cast<int>(floorf(oldTop)), renderView->layoutOverflowRect().maxX(), static_cast<int>(ceilf(oldBottom - oldTop)));
+    renderView->setTruncatedAt(static_cast<int>(std::floor(oldBottom)));
+    IntRect dirtyRect(0, static_cast<int>(std::floor(oldTop)), renderView->layoutOverflowRect().maxX(), static_cast<int>(std::ceil(oldBottom - oldTop)));
     renderView->setPrintRect(dirtyRect);
     renderView->layer()->paint(context, dirtyRect);
     *newBottom = renderView->bestTruncatedAt();

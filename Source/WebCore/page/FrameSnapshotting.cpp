@@ -115,7 +115,7 @@ RefPtr<ImageBuffer> snapshotFrameRectWithClip(LocalFrame& frame, const IntRect& 
         scaleFactor *= frame.page()->pageScaleFactor();
 
     if (options.flags.contains(SnapshotFlags::PaintWithIntegralScaleFactor))
-        scaleFactor = ceilf(scaleFactor);
+        scaleFactor = std::ceil(scaleFactor);
 
     auto purpose = options.flags.contains(SnapshotFlags::Shareable) ? RenderingPurpose::ShareableSnapshot : RenderingPurpose::Snapshot;
     auto hostWindow = (document->view() && document->view()->root()) ? document->view()->root()->hostWindow() : nullptr;

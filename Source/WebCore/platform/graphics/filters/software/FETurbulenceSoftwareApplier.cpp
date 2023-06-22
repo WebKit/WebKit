@@ -94,8 +94,8 @@ FETurbulenceSoftwareApplier::StitchData FETurbulenceSoftwareApplier::computeStit
     // When stitching tiled turbulence, the frequencies must be adjusted
     // so that the tile borders will be continuous.
     if (baseFrequencyX) {
-        float lowFrequency = floorf(tileWidth * baseFrequencyX) / tileWidth;
-        float highFrequency = ceilf(tileWidth * baseFrequencyX) / tileWidth;
+        float lowFrequency = std::floor(tileWidth * baseFrequencyX) / tileWidth;
+        float highFrequency = std::ceil(tileWidth * baseFrequencyX) / tileWidth;
         // BaseFrequency should be non-negative according to the standard.
         if (baseFrequencyX / lowFrequency < highFrequency / baseFrequencyX)
             baseFrequencyX = lowFrequency;
@@ -103,8 +103,8 @@ FETurbulenceSoftwareApplier::StitchData FETurbulenceSoftwareApplier::computeStit
             baseFrequencyX = highFrequency;
     }
     if (baseFrequencyY) {
-        float lowFrequency = floorf(tileHeight * baseFrequencyY) / tileHeight;
-        float highFrequency = ceilf(tileHeight * baseFrequencyY) / tileHeight;
+        float lowFrequency = std::floor(tileHeight * baseFrequencyY) / tileHeight;
+        float highFrequency = std::ceil(tileHeight * baseFrequencyY) / tileHeight;
         if (baseFrequencyY / lowFrequency < highFrequency / baseFrequencyY)
             baseFrequencyY = lowFrequency;
         else
@@ -112,9 +112,9 @@ FETurbulenceSoftwareApplier::StitchData FETurbulenceSoftwareApplier::computeStit
     }
 
     StitchData stitchData;
-    stitchData.width = roundf(tileWidth * baseFrequencyX);
+    stitchData.width = std::round(tileWidth * baseFrequencyX);
     stitchData.wrapX = s_perlinNoise + stitchData.width;
-    stitchData.height = roundf(tileHeight * baseFrequencyY);
+    stitchData.height = std::round(tileHeight * baseFrequencyY);
     stitchData.wrapY = s_perlinNoise + stitchData.height;
 
     return stitchData;

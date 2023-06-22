@@ -1575,15 +1575,15 @@ void RenderTheme::paintSliderTicks(const RenderObject& o, const PaintInfo& paint
     trackBounds.setY(trackBounds.y() - sliderBounds.y() + rect.y());
 
     if (isHorizontal) {
-        tickRect.setWidth(floor(tickSize.width() * zoomFactor));
-        tickRect.setHeight(floor(tickSize.height() * zoomFactor));
-        tickRect.setY(floor(rect.y() + rect.height() / 2.0 + sliderTickOffsetFromTrackCenter() * zoomFactor));
+        tickRect.setWidth(std::floor(tickSize.width() * zoomFactor));
+        tickRect.setHeight(std::floor(tickSize.height() * zoomFactor));
+        tickRect.setY(std::floor(rect.y() + rect.height() / 2.0 + sliderTickOffsetFromTrackCenter() * zoomFactor));
         tickRegionSideMargin = trackBounds.x() + (thumbSize.width() - tickSize.width() * zoomFactor) / 2.0;
         tickRegionWidth = trackBounds.width() - thumbSize.width();
     } else {
-        tickRect.setWidth(floor(tickSize.height() * zoomFactor));
-        tickRect.setHeight(floor(tickSize.width() * zoomFactor));
-        tickRect.setX(floor(rect.x() + rect.width() / 2.0 + sliderTickOffsetFromTrackCenter() * zoomFactor));
+        tickRect.setWidth(std::floor(tickSize.height() * zoomFactor));
+        tickRect.setHeight(std::floor(tickSize.width() * zoomFactor));
+        tickRect.setX(std::floor(rect.x() + rect.width() / 2.0 + sliderTickOffsetFromTrackCenter() * zoomFactor));
         tickRegionSideMargin = trackBounds.y() + (thumbSize.width() - tickSize.width() * zoomFactor) / 2.0;
         tickRegionWidth = trackBounds.height() - thumbSize.width();
     }
@@ -1594,7 +1594,7 @@ void RenderTheme::paintSliderTicks(const RenderObject& o, const PaintInfo& paint
         if (auto optionValue = input.listOptionValueAsDouble(optionElement)) {
             double tickFraction = (*optionValue - min) / (max - min);
             double tickRatio = isReversedInlineDirection ? 1.0 - tickFraction : tickFraction;
-            double tickPosition = round(tickRegionSideMargin + tickRegionWidth * tickRatio);
+            double tickPosition = std::round(tickRegionSideMargin + tickRegionWidth * tickRatio);
             if (isHorizontal)
                 tickRect.setX(tickPosition);
             else

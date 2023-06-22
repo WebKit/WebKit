@@ -548,7 +548,7 @@ void ViewportConfiguration::updateMinimumLayoutSize()
         return;
 
     float minDeviceWidth = platformDeviceWidthOverride();
-    m_minimumLayoutSize = FloatSize(minDeviceWidth, std::roundf(m_minimumLayoutSize.height() * (minDeviceWidth / m_minimumLayoutSize.width())));
+    m_minimumLayoutSize = FloatSize(minDeviceWidth, std::round(m_minimumLayoutSize.height() * (minDeviceWidth / m_minimumLayoutSize.width())));
 }
 
 double ViewportConfiguration::viewportArgumentsLength(double length) const

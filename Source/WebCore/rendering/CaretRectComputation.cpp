@@ -139,7 +139,7 @@ static LayoutRect computeCaretRectForLinePosition(const InlineIterator::LineBoxI
     int caretWidthLeftOfOffset = caretWidth() / 2;
     left -= caretWidthLeftOfOffset;
     int caretWidthRightOfOffset = caretWidth() - caretWidthLeftOfOffset;
-    left = roundf(left);
+    left = std::round(left);
 
     float lineLeft = lineSelectionRect.x();
     float lineRight = lineSelectionRect.maxX();

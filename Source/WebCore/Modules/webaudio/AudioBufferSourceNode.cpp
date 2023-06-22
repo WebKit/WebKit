@@ -259,10 +259,10 @@ bool AudioBufferSourceNode::renderFromBuffer(AudioBus* bus, unsigned destination
     if (startFrameOffset < 0 && pitchRate)
         virtualReadIndex += std::abs(startFrameOffset * pitchRate);
 
-    bool needsInterpolation = virtualReadIndex != floor(virtualReadIndex)
-        || virtualDeltaFrames != floor(virtualDeltaFrames)
-        || virtualMaxFrame != floor(virtualMaxFrame)
-        || virtualMinFrame != floor(virtualMinFrame);
+    bool needsInterpolation = virtualReadIndex != std::floor(virtualReadIndex)
+        || virtualDeltaFrames != std::floor(virtualDeltaFrames)
+        || virtualMaxFrame != std::floor(virtualMaxFrame)
+        || virtualMinFrame != std::floor(virtualMinFrame);
 
     // Render loop - reading from the source buffer to the destination using linear interpolation.
     int framesToProcess = numberOfFrames;
@@ -333,10 +333,10 @@ bool AudioBufferSourceNode::renderFromBuffer(AudioBus* bus, unsigned destination
             std::fill_n(destinationChannels[i] + writeIndex, framesToProcess, sourceChannels[i][readIndex]);
     } else if (reverse) {
         unsigned maxFrame = static_cast<unsigned>(virtualMaxFrame);
-        unsigned minFrame = static_cast<unsigned>(floorf(virtualMinFrame));
+        unsigned minFrame = static_cast<unsigned>(std::floor(virtualMinFrame));
 
         while (framesToProcess--) {
-            unsigned readIndex = static_cast<unsigned>(floorf(virtualReadIndex));
+            unsigned readIndex = static_cast<unsigned>(std::floor(virtualReadIndex));
             float interpolationFactor = virtualReadIndex - readIndex;
 
             unsigned readIndex2 = readIndex + 1;

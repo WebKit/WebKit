@@ -277,13 +277,13 @@ ImageDrawResult Image::drawTiled(GraphicsContext& ctxt, const FloatRect& dstRect
     switch (hRule) {
     case RoundTile: {
         float scaledSourceWidth = srcRect.width() * tileScale.width();
-        int numItems = std::max<int>(floorf(dstRect.width() / scaledSourceWidth), 1);
+        int numItems = std::max<int>(std::floor(dstRect.width() / scaledSourceWidth), 1);
         tileScale.setWidth(dstRect.width() / (srcRect.width() * numItems));
         break;
     }
     case SpaceTile: {
         float scaledSourceWidth = srcRect.width() * tileScale.width();
-        int numItems = floorf(dstRect.width() / scaledSourceWidth);
+        int numItems = std::floor(dstRect.width() / scaledSourceWidth);
         if (!numItems)
             return ImageDrawResult::DidNothing;
         spacing.setWidth((dstRect.width() - scaledSourceWidth * numItems) / (numItems + 1));
@@ -298,13 +298,13 @@ ImageDrawResult Image::drawTiled(GraphicsContext& ctxt, const FloatRect& dstRect
     switch (vRule) {
     case RoundTile: {
         float scaledSourceHeight = srcRect.height() * tileScale.height();
-        int numItems = std::max<int>(floorf(dstRect.height() / scaledSourceHeight), 1);
+        int numItems = std::max<int>(std::floor(dstRect.height() / scaledSourceHeight), 1);
         tileScale.setHeight(dstRect.height() / (srcRect.height() * numItems));
         break;
         }
     case SpaceTile: {
         float scaledSourceHeight = srcRect.height() * tileScale.height();
-        int numItems = floorf(dstRect.height() / scaledSourceHeight);
+        int numItems = std::floor(dstRect.height() / scaledSourceHeight);
         if (!numItems)
             return ImageDrawResult::DidNothing;
         spacing.setHeight((dstRect.height() - scaledSourceHeight * numItems) / (numItems + 1));

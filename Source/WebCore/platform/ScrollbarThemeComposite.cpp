@@ -236,7 +236,7 @@ int ScrollbarThemeComposite::thumbLength(Scrollbar& scrollbar)
 
     float proportion = scrollbar.visibleSize() / usedTotalSize(scrollbar);
     int trackLen = trackLength(scrollbar);
-    int length = round(proportion * trackLen);
+    int length = std::round(proportion * trackLen);
     length = std::max(length, minimumThumbLength(scrollbar));
     if (length > trackLen)
         length = 0; // Once the thumb is below the track length, it just goes away (to make more room for the track).

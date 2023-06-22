@@ -71,12 +71,12 @@ struct GlyphOverflow {
 
     void extendTop(float extendTo)
     {
-        top = std::max(top, LayoutUnit(ceilf(extendTo)));
+        top = std::max(top, LayoutUnit(std::ceil(extendTo)));
     }
 
     void extendBottom(float extendTo)
     {
-        bottom = std::max(bottom, LayoutUnit(ceilf(extendTo)));
+        bottom = std::max(bottom, LayoutUnit(std::ceil(extendTo)));
     }
 
     bool operator!=(const GlyphOverflow& other)

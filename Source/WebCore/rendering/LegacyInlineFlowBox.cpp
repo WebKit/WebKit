@@ -617,7 +617,7 @@ void LegacyInlineFlowBox::computeLogicalBoxHeights(LegacyRootInlineBox& rootBox,
             // means is that ascent and descent (including leading), can end up being negative. The setMaxAscent and
             // setMaxDescent booleans are used to ensure that we're willing to initially set maxAscent/Descent to negative
             // values.
-            ascent -= floorf(child->logicalTop());
+            ascent -= std::floor(child->logicalTop());
             auto isMaxAscent = false;
             if (affectsAscent) {
                 if (maxAscent < ascent || !setMaxAscent) {
@@ -633,8 +633,8 @@ void LegacyInlineFlowBox::computeLogicalBoxHeights(LegacyRootInlineBox& rootBox,
                 }
             }
             // In order to make sure the inline level box is fully enclosed, we should always ceil the descent (containing block's height is max ascent + max descent).
-            // However when the box's logical top is floored (see below), the descent value should also be adjusted in the same direction. 
-            descent += isMaxAscent ? floorf(child->logicalTop()) : ceilf(child->logicalTop());
+            // However when the box's logical top is floored (see below), the descent value should also be adjusted in the same direction.
+            descent += isMaxAscent ? std::floor(child->logicalTop()) : std::ceil(child->logicalTop());
             if (affectsDescent && (maxDescent < descent || !setMaxDescent)) {
                 maxDescent = descent;
                 setMaxDescent = true;
@@ -651,7 +651,7 @@ void LegacyInlineFlowBox::computeLogicalBoxHeights(LegacyRootInlineBox& rootBox,
         // stick out of block container at the top (see above).
         // In such cases the logical top also needs to be adjusted to match this stretched ascent geometry.
         // (not doing so will result a subpixel logical top offset while it should be flushed with the top edge)
-        inlineBox->setLogicalTop(floorf(inlineBox->logicalTop()));
+        inlineBox->setLogicalTop(std::floor(inlineBox->logicalTop()));
     }
 }
 

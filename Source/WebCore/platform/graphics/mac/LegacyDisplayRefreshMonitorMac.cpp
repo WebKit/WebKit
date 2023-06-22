@@ -82,7 +82,7 @@ void LegacyDisplayRefreshMonitorMac::dispatchDisplayDidRefresh(const DisplayUpda
 WebCore::FramesPerSecond LegacyDisplayRefreshMonitorMac::nominalFramesPerSecondFromDisplayLink(CVDisplayLinkRef displayLink)
 {
     CVTime refreshPeriod = CVDisplayLinkGetNominalOutputVideoRefreshPeriod(displayLink);
-    return round((double)refreshPeriod.timeScale / (double)refreshPeriod.timeValue);
+    return std::round((double)refreshPeriod.timeScale / (double)refreshPeriod.timeValue);
 }
 
 bool LegacyDisplayRefreshMonitorMac::ensureDisplayLink()

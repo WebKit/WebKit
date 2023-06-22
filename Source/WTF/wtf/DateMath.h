@@ -89,7 +89,7 @@ WTF_EXPORT_PRIVATE String makeRFC2822DateString(unsigned dayOfWeek, unsigned day
 inline double jsCurrentTime()
 {
     // JavaScript doesn't recognize fractions of a millisecond.
-    return floor(WallTime::now().secondsSinceEpoch().milliseconds());
+    return std::floor(WallTime::now().secondsSinceEpoch().milliseconds());
 }
 
 extern WTF_EXPORT_PRIVATE const ASCIILiteral weekdayName[7];
@@ -167,9 +167,9 @@ inline double daysFrom1970ToYear(int year)
     static constexpr int leapDaysBefore1971By400Rule = 1970 / 400;
 
     const double yearMinusOne = static_cast<double>(year) - 1;
-    const double yearsToAddBy4Rule = floor(yearMinusOne / 4.0) - leapDaysBefore1971By4Rule;
-    const double yearsToExcludeBy100Rule = floor(yearMinusOne / 100.0) - excludedLeapDaysBefore1971By100Rule;
-    const double yearsToAddBy400Rule = floor(yearMinusOne / 400.0) - leapDaysBefore1971By400Rule;
+    const double yearsToAddBy4Rule = std::floor(yearMinusOne / 4.0) - leapDaysBefore1971By4Rule;
+    const double yearsToExcludeBy100Rule = std::floor(yearMinusOne / 100.0) - excludedLeapDaysBefore1971By100Rule;
+    const double yearsToAddBy400Rule = std::floor(yearMinusOne / 400.0) - leapDaysBefore1971By400Rule;
 
     return 365.0 * (year - 1970.0) + yearsToAddBy4Rule - yearsToExcludeBy100Rule + yearsToAddBy400Rule;
 }
@@ -207,7 +207,7 @@ inline int daysInYear(int year)
 
 inline double msToDays(double ms)
 {
-    return floor(ms / msPerDay);
+    return std::floor(ms / msPerDay);
 }
 
 inline int32_t msToDays(Int64Milliseconds ms)
@@ -332,7 +332,7 @@ inline double dateToDaysFrom1970(int year, int month, int day)
         --year;
     }
 
-    double yearday = floor(daysFrom1970ToYear(year));
+    double yearday = std::floor(daysFrom1970ToYear(year));
     ASSERT((year >= 1970 && yearday >= 0) || (year < 1970 && yearday < 0));
     return yearday + dayInYear(year, month, day);
 }
@@ -353,7 +353,7 @@ inline int msToYear(double ms)
 
 inline int msToMinutes(double ms)
 {
-    double result = fmod(floor(ms / msPerMinute), minutesPerHour);
+    double result = fmod(std::floor(ms / msPerMinute), minutesPerHour);
     if (result < 0)
         result += minutesPerHour;
     return static_cast<int>(result);
@@ -361,7 +361,7 @@ inline int msToMinutes(double ms)
 
 inline int msToHours(double ms)
 {
-    double result = fmod(floor(ms / msPerHour), hoursPerDay);
+    double result = fmod(std::floor(ms / msPerHour), hoursPerDay);
     if (result < 0)
         result += hoursPerDay;
     return static_cast<int>(result);
@@ -369,7 +369,7 @@ inline int msToHours(double ms)
 
 inline int msToSeconds(double ms)
 {
-    double result = fmod(floor(ms / msPerSecond), secondsPerMinute);
+    double result = fmod(std::floor(ms / msPerSecond), secondsPerMinute);
     if (result < 0)
         result += secondsPerMinute;
     return static_cast<int>(result);

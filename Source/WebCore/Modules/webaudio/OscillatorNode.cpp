@@ -297,7 +297,7 @@ double OscillatorNode::processARate(int n, float* destP, double virtualReadIndex
         // Increment virtual read index and wrap virtualReadIndex into the range
         // 0 -> periodicWaveSize.
         virtualReadIndex += incr;
-        virtualReadIndex -= floor(virtualReadIndex * invPeriodicWaveSize) * periodicWaveSize;
+        virtualReadIndex -= std::floor(virtualReadIndex * invPeriodicWaveSize) * periodicWaveSize;
     }
 
     return virtualReadIndex;
@@ -332,7 +332,7 @@ double OscillatorNode::processKRate(int n, float* destP, double virtualReadIndex
         // Increment virtual read index and wrap virtualReadIndex into the range
         // 0 -> periodicWaveSize.
         virtualReadIndex += incr;
-        virtualReadIndex -= floor(virtualReadIndex * invPeriodicWaveSize) * periodicWaveSize;
+        virtualReadIndex -= std::floor(virtualReadIndex * invPeriodicWaveSize) * periodicWaveSize;
     }
 
     return virtualReadIndex;

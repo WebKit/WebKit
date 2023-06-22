@@ -575,9 +575,9 @@ void DateComponents::setMillisecondsSinceMidnightInternal(double msInDay)
 {
     ASSERT(msInDay >= 0 && msInDay < msPerDay);
     m_millisecond = static_cast<int>(fmod(msInDay, msPerSecond));
-    double value = floor(msInDay / msPerSecond);
+    double value = std::floor(msInDay / msPerSecond);
     m_second = static_cast<int>(fmod(value, secondsPerMinute));
-    value = floor(value / secondsPerMinute);
+    value = std::floor(value / secondsPerMinute);
     m_minute = static_cast<int>(fmod(value, minutesPerHour));
     m_hour = static_cast<int>(value / minutesPerHour);
 }
@@ -596,7 +596,7 @@ bool DateComponents::setMillisecondsSinceEpochForDate(double ms)
     m_type = DateComponentsType::Invalid;
     if (!std::isfinite(ms))
         return false;
-    if (!setMillisecondsSinceEpochForDateInternal(round(ms)))
+    if (!setMillisecondsSinceEpochForDateInternal(std::round(ms)))
         return false;
     if (!withinHTMLDateLimits(m_year, m_month, m_monthDay))
         return false;
@@ -609,7 +609,7 @@ bool DateComponents::setMillisecondsSinceEpochForDateTimeLocal(double ms)
     m_type = DateComponentsType::Invalid;
     if (!std::isfinite(ms))
         return false;
-    ms = round(ms);
+    ms = std::round(ms);
     setMillisecondsSinceMidnightInternal(positiveFmod(ms, msPerDay));
     if (!setMillisecondsSinceEpochForDateInternal(ms))
         return false;
@@ -624,7 +624,7 @@ bool DateComponents::setMillisecondsSinceEpochForMonth(double ms)
     m_type = DateComponentsType::Invalid;
     if (!std::isfinite(ms))
         return false;
-    if (!setMillisecondsSinceEpochForDateInternal(round(ms)))
+    if (!setMillisecondsSinceEpochForDateInternal(std::round(ms)))
         return false;
     if (!withinHTMLDateLimits(m_year, m_month))
         return false;
@@ -637,7 +637,7 @@ bool DateComponents::setMillisecondsSinceMidnight(double ms)
     m_type = DateComponentsType::Invalid;
     if (!std::isfinite(ms))
         return false;
-    setMillisecondsSinceMidnightInternal(positiveFmod(round(ms), msPerDay));
+    setMillisecondsSinceMidnightInternal(positiveFmod(std::round(ms), msPerDay));
     m_type = DateComponentsType::Time;
     return true;
 }
@@ -646,7 +646,7 @@ bool DateComponents::setMonthsSinceEpoch(double months)
 {
     if (!std::isfinite(months))
         return false;
-    months = round(months);
+    months = std::round(months);
     double doubleMonth = positiveFmod(months, 12);
     double doubleYear = 1970 + (months - doubleMonth) / 12;
     if (doubleYear < minimumYear() || maximumYear() < doubleYear)
@@ -676,7 +676,7 @@ bool DateComponents::setMillisecondsSinceEpochForWeek(double ms)
     m_type = DateComponentsType::Invalid;
     if (!std::isfinite(ms))
         return false;
-    ms = round(ms);
+    ms = std::round(ms);
 
     m_year = msToYear(ms);
     if (m_year < minimumYear() || m_year > maximumYear())

@@ -262,12 +262,12 @@ bool TileGrid::getTileIndexRangeForRect(const IntRect& rect, TileIndex& topLeft,
     if (clampedRect.x() >= 0)
         topLeft.setX(clampedRect.x() / tileSize.width());
     else
-        topLeft.setX(floorf((float)clampedRect.x() / tileSize.width()));
+        topLeft.setX(std::floor((float)clampedRect.x() / tileSize.width()));
 
     if (clampedRect.y() >= 0)
         topLeft.setY(clampedRect.y() / tileSize.height());
     else
-        topLeft.setY(floorf((float)clampedRect.y() / tileSize.height()));
+        topLeft.setY(std::floor((float)clampedRect.y() / tileSize.height()));
 
     int bottomXRatio = ceil((float)clampedRect.maxX() / tileSize.width());
     bottomRight.setX(std::max(bottomXRatio - 1, 0));

@@ -186,7 +186,7 @@ CGRect LocalFrame::renderRectForPoint(CGPoint point, bool* isReplaced, float* fo
         return CGRectZero;
 
     constexpr OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active, HitTestRequest::Type::DisallowUserAgentShadowContent, HitTestRequest::Type::AllowChildFrameContent };
-    auto result = eventHandler().hitTestResultAtPoint(IntPoint(roundf(point.x), roundf(point.y)), hitType);
+    auto result = eventHandler().hitTestResultAtPoint(IntPoint(std::round(point.x), std::round(point.y)), hitType);
 
     Node* node = result.innerNode();
     if (!node)

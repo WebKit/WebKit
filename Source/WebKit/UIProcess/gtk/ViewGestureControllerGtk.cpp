@@ -451,7 +451,7 @@ void ViewGestureController::snapshot(GtkSnapshot* snapshot, GskRenderNode* pageR
     int height = size.height();
     double scale = m_webPageProxy.deviceScaleFactor();
 
-    float swipingLayerOffset = (swipingLeft ? 0 : width) + floor(width * progress * scale) / scale;
+    float swipingLayerOffset = (swipingLeft ? 0 : width) + std::floor(width * progress * scale) / scale;
 
     float dimmingProgress = swipingLeft ? 1 - progress : -progress;
     if (isRTL) {
@@ -530,7 +530,7 @@ void ViewGestureController::draw(cairo_t* cr, cairo_pattern_t* pageGroup)
     int height = size.height();
     double scale = m_webPageProxy.deviceScaleFactor();
 
-    double swipingLayerOffset = (swipingLeft ? 0 : width) + floor(width * progress * scale) / scale;
+    double swipingLayerOffset = (swipingLeft ? 0 : width) + std::floor(width * progress * scale) / scale;
 
     double dimmingProgress = swipingLeft ? 1 - progress : -progress;
     if (isRTL)
