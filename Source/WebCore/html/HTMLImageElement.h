@@ -64,8 +64,9 @@ public:
     WEBCORE_EXPORT unsigned width();
     WEBCORE_EXPORT unsigned height();
 
-    WEBCORE_EXPORT int naturalWidth() const;
-    WEBCORE_EXPORT int naturalHeight() const;
+    WEBCORE_EXPORT unsigned naturalWidth() const;
+    WEBCORE_EXPORT unsigned naturalHeight() const;
+    const URL& currentURL() const { return m_currentURL; }
     const AtomString& currentSrc() const { return m_currentSrc; }
 
     bool isServerMap() const;
