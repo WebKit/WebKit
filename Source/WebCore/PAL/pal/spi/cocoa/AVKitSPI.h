@@ -401,3 +401,17 @@ NS_ASSUME_NONNULL_END
 
 #endif // HAVE(PIP_CONTROLLER)
 
+#if PLATFORM(VISION)
+
+// FIXME: rdar://111125392 – import SPI using a header, following rdar://111123290.
+
+typedef NS_OPTIONS(NSUInteger, AVPlayerViewControllerFullScreenBehaviors) {
+    AVPlayerViewControllerFullScreenBehaviorHostContentInline = 1 << 3,
+};
+
+@interface AVPlayerViewController ()
+@property (nonatomic) BOOL prefersRoomDimming;
+@property (nonatomic) AVPlayerViewControllerFullScreenBehaviors fullScreenBehaviors;
+@end
+
+#endif // PLATFORM(VISION)

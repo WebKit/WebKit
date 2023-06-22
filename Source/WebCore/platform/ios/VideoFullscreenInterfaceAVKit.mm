@@ -52,10 +52,6 @@
 #import <AVKit/AVPictureInPictureController.h>
 #endif
 
-#if PLATFORM(VISION)
-#import <WebKitAdditions/VideoFullscreenInterfaceAVKitAdditions.h>
-#endif
-
 using namespace WebCore;
 
 #import <pal/cf/CoreMediaSoftLink.h>
@@ -408,8 +404,9 @@ NS_ASSUME_NONNULL_END
     _avPlayerViewController.get().delegate = self;
 #endif
 
-#if ENABLE(FULLSCREEN_WINDOW_EFFECTS)
-    setupAVPlayerViewControllerForFullscreenWindowEffects(_avPlayerViewController.get());
+#if PLATFORM(VISION)
+    [_avPlayerViewController setPrefersRoomDimming:NO];
+    [_avPlayerViewController setFullScreenBehaviors:AVPlayerViewControllerFullScreenBehaviorHostContentInline];
 #endif
 
 #if HAVE(PIP_CONTROLLER)
