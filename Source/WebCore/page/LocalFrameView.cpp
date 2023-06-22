@@ -521,12 +521,12 @@ RefPtr<Element> LocalFrameView::rootElementForCustomScrollbarPartStyle() const
     // Try the <body> element first as a scrollbar source.
     auto* body = document->bodyOrFrameset();
     // scrollbar-width on root element should override custom scrollbars declared on body element, so check that here..
-    if (body && body->renderer() && body->renderer()->style().hasCustomScrollbarStyle() && scrollbarWidthStyle() == ScrollbarWidth::Auto)
+    if (body && body->renderer() && body->renderer()->style().usesLegacyScrollbarStyle() && scrollbarWidthStyle() == ScrollbarWidth::Auto)
         return body;
 
     // If the <body> didn't have a custom style, then the root element might.
     auto* docElement = document->documentElement();
-    if (docElement && docElement->renderer() && docElement->renderer()->style().hasCustomScrollbarStyle())
+    if (docElement && docElement->renderer() && docElement->renderer()->style().usesLegacyScrollbarStyle())
         return docElement;
 
     return nullptr;
@@ -540,7 +540,7 @@ Ref<Scrollbar> LocalFrameView::createScrollbar(ScrollbarOrientation orientation)
     // If we have an owning iframe/frame element, then it can set the custom scrollbar also.
     // FIXME: Seems bad to do this for cross-origin frames.
     RenderWidget* frameRenderer = m_frame->ownerRenderer();
-    if (frameRenderer && frameRenderer->style().hasCustomScrollbarStyle())
+    if (frameRenderer && frameRenderer->style().usesLegacyScrollbarStyle())
         return RenderScrollbar::createCustomScrollbar(*this, orientation, nullptr, m_frame.ptr());
 
     // Nobody set a custom style, so we just use a native scrollbar.
@@ -1534,15 +1534,15 @@ String LocalFrameView::debugDescription() const
 
 bool LocalFrameView::canShowNonOverlayScrollbars() const
 {
-    auto hasCustomScrollbarStyle = [&] {
+    auto usesLegacyScrollbarStyle = [&] {
         auto element = rootElementForCustomScrollbarPartStyle();
         if (!element || !is<RenderBox>(element->renderer()))
             return false;
 
-        return downcast<RenderBox>(*element->renderer()).style().hasCustomScrollbarStyle();
+        return downcast<RenderBox>(*element->renderer()).style().usesLegacyScrollbarStyle();
     }();
 
-    return canHaveScrollbars() && (hasCustomScrollbarStyle || !ScrollbarTheme::theme().usesOverlayScrollbars());
+    return canHaveScrollbars() && (usesLegacyScrollbarStyle || !ScrollbarTheme::theme().usesOverlayScrollbars());
 }
 
 bool LocalFrameView::styleHidesScrollbarWithOrientation(ScrollbarOrientation orientation) const

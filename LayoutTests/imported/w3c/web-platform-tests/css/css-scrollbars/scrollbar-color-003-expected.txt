@@ -3,5 +3,5 @@ auto
 themed
 
 PASS scrollbar-color auto defers to ::-webkit-scrollbar
-FAIL scrollbar-color yellow blue overrides ::-webkit-scrollbar assert_less_than: themed scrollWidth expected a number less than 200 but got 200
+PASS scrollbar-color yellow blue overrides ::-webkit-scrollbar
 
