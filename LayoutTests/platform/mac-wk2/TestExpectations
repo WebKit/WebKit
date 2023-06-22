@@ -1791,7 +1791,7 @@ webkit.org/b/238749 imported/w3c/web-platform-tests/html/semantics/interactive-e
 webkit.org/b/258325 [ Debug ] media/modern-media-controls/pip-support/pip-support-click.html [ Crash ]
 
 # webkit.org/b/258328 Umbrella Bug: Batch mark expectations slowing down EWS (258328) 
-[ Debug ] imported/w3c/web-platform-tests/webcodecs/videoFrame-construction.crossOriginSource.sub.html [ Pass Failure Crash ]
+[ Debug ] imported/w3c/web-platform-tests/webcodecs/videoFrame-construction.crossOriginSource.sub.html [ Pass Failure ]
 imported/w3c/web-platform-tests/css/css-sizing/aspect-ratio/replaced-element-035.html [ Pass ImageOnlyFailure ] 
 fast/forms/file/entries-api/image-no-transcode-open-panel.html [ Pass Crash ] 
 [ Debug Ventura arm64 ] http/tests/media/modern-media-controls/overflow-support/playback-speed-live-broadcast.html [ Pass Crash ]
