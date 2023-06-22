@@ -50,10 +50,6 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 
-#if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
-#import <pal/spi/cocoa/NEFilterSourceSPI.h>
-#endif
-
 namespace WebKit {
 
 static void initializeNetworkSettings()
@@ -82,7 +78,7 @@ void NetworkProcess::platformInitializeNetworkProcessCocoa(const NetworkProcessC
     IPC::setStrictSecureDecodingForAllObjCEnabled(parameters.strictSecureDecodingForAllObjCEnabled);
 
     m_uiProcessBundleIdentifier = parameters.uiProcessBundleIdentifier;
-
+    
     initializeNetworkSettings();
 
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
@@ -102,7 +98,6 @@ void NetworkProcess::platformInitializeNetworkProcessCocoa(const NetworkProcessC
     // Disable NSURLCache.
     auto urlCache(adoptNS([[NSURLCache alloc] initWithMemoryCapacity:0 diskCapacity:0 diskPath:nil]));
     [NSURLCache setSharedURLCache:urlCache.get()];
-
 }
 
 RetainPtr<CFDataRef> NetworkProcess::sourceApplicationAuditData() const
