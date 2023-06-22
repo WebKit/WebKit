@@ -43,16 +43,18 @@
 
 namespace WebCore {
 
+#if USE(APPLE_INTERNAL_SDK) && PLATFORM(MAC)
+#import <WebKitAdditions/CaretRectComputationAdditions.cpp>
+#else
 int caretWidth()
 {
 #if PLATFORM(IOS_FAMILY)
     return 2; // This value should be kept in sync with UIKit. See <rdar://problem/15580601>.
-#elif PLATFORM(MAC) && HAVE(REDESIGNED_TEXT_CURSOR)
-    return redesignedTextCursorEnabled() ? 2 : 1;
 #else
     return 1;
 #endif
 }
+#endif
 
 static LayoutRect computeCaretRectForEmptyElement(const RenderBoxModelObject& renderer, LayoutUnit width, LayoutUnit textIndentOffset, CaretRectMode caretRectMode)
 {

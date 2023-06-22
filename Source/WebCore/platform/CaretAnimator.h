@@ -25,13 +25,8 @@
 
 #pragma once
 
-#include "Document.h"
-#include "ElementInlines.h"
 #include "LayoutRect.h"
 #include "ReducedResolutionSeconds.h"
-#include "RenderStyle.h"
-#include "RenderStyleInlines.h"
-#include "RenderTheme.h"
 #include "Timer.h"
 
 namespace WebCore {
@@ -45,7 +40,6 @@ class Node;
 class Page;
 class VisibleSelection;
 
-// FIXME: Rename "Alternate" to "Dictation" (rdar://110802729).
 enum class CaretAnimatorType : uint8_t {
     Default,
     Alternate
@@ -56,37 +50,6 @@ enum class CaretAnimatorStopReason : uint8_t {
     CaretRectChanged,
 };
 
-#if HAVE(REDESIGNED_TEXT_CURSOR)
-
-// FIXME: Use MonotonicTime type throughout instead of converting to Seconds (rdar://110802729)
-[[maybe_unused]] static Seconds currentTimeSinceEpoch()
-{
-    return MonotonicTime::now().secondsSinceEpoch();
-}
-
-// FIXME: Move to FrameSelection (rdar://110802729)
-[[maybe_unused]] static Color platformCaretColor(const RenderStyle& elementStyle, const Node* node)
-{
-#if PLATFORM(MAC)
-    if (elementStyle.hasAutoCaretColor()) {
-        auto styleColorOptions = node->document().styleColorOptions(&elementStyle);
-        return RenderTheme::singleton().systemColor(CSSValueAppleSystemControlAccent, styleColorOptions | StyleColorOptions::UseSystemAppearance);
-    }
-
-    return elementStyle.colorResolvingCurrentColor(elementStyle.caretColor());
-#else
-    UNUSED_PARAM(node);
-    return elementStyle.visitedDependentColorWithColorFilter(CSSPropertyCaretColor);
-#endif
-}
-
-struct KeyFrame {
-    Seconds time;
-    float value;
-};
-
-#endif
-
 class CaretAnimationClient {
 public:
     virtual ~CaretAnimationClient() = default;
@@ -95,8 +58,6 @@ public:
     virtual LayoutRect localCaretRect() const = 0;
 
     virtual Document* document() = 0;
-
-    virtual Node* caretNode() = 0;
 };
 
 class CaretAnimator {
@@ -129,8 +90,6 @@ public:
     virtual void setVisible(bool) = 0;
 
     PresentationProperties presentationProperties() const { return m_presentationProperties; }
-    // FIXME: The caret animators should not be the things painting the caret.
-    // Remove this method and insstead augment PresentationProperties (rdar://110802729).
     virtual void paint(const Node&, GraphicsContext&, const FloatRect&, const Color&, const LayoutPoint&, const std::optional<VisibleSelection>&) const;
     virtual LayoutRect caretRepaintRectForLocalRect(LayoutRect) const;
 

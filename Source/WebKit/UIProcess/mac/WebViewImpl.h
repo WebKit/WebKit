@@ -90,10 +90,6 @@ OBJC_CLASS WKPDFHUDView;
 OBJC_CLASS VKCImageAnalysis;
 OBJC_CLASS VKCImageAnalysisOverlayView;
 
-#if HAVE(REDESIGNED_TEXT_CURSOR)
-OBJC_CLASS _WKWebViewTextInputNotifications;
-#endif
-
 namespace API {
 class HitTestResult;
 class Object;
@@ -377,10 +373,7 @@ public:
     bool validateUserInterfaceItem(id <NSValidatedUserInterfaceItem>);
     void setEditableElementIsFocused(bool);
 
-    // FIXME: Rename to `updateCursorAccessoryPlacement` (rdar://110802729).
-#if HAVE(REDESIGNED_TEXT_CURSOR)
     void updateCaretDecorationPlacement();
-#endif
 
     void startSpeaking();
     void stopSpeaking(id);
@@ -952,9 +945,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     WeakObjCPtr<NSPopover> m_lastContextMenuTranslationPopover;
 #endif
 
-#if HAVE(REDESIGNED_TEXT_CURSOR)
-    RetainPtr<_WKWebViewTextInputNotifications> _textInputNotifications;
-#endif
+    RetainPtr<NSObject> _textInputNotifications;
 };
     
 } // namespace WebKit

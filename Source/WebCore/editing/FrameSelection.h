@@ -321,8 +321,6 @@ private:
 
     Document* document() final;
 
-    Node* caretNode() final;
-
     bool dispatchSelectStart();
 
 #if PLATFORM(IOS_FAMILY)

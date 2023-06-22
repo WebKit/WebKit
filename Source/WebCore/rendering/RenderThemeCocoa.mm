@@ -27,7 +27,6 @@
 #import "RenderThemeCocoa.h"
 
 #import "AttachmentLayout.h"
-#import "CaretRectComputation.h"
 #import "DrawGlyphsRecorder.h"
 #import "FloatRoundedRect.h"
 #import "FontCacheCoreText.h"
@@ -78,14 +77,14 @@ constexpr int kThumbnailBorderCornerRadius = 1;
 constexpr int kVisibleBackgroundImageWidth = 1;
 constexpr int kMultipleThumbnailShrinkSize = 2;
 
+#if USE(APPLE_INTERNAL_SDK)
+#include <WebKitAdditions/RenderThemeCocoaAdditions.mm>
+#else
 static inline bool canShowCapsLockIndicator()
 {
-#if HAVE(ACCELERATED_TEXT_INPUT)
-    if (redesignedTextCursorEnabled())
-        return false;
-#endif
     return true;
 }
+#endif
 
 RenderThemeCocoa& RenderThemeCocoa::singleton()
 {
