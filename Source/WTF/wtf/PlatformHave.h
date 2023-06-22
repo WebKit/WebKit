@@ -608,6 +608,11 @@
 #define HAVE_GCCONTROLLER_HID_DEVICE_CHECK 1
 #endif
 
+// Newer versions no longer square continuous haptics (rdar://110338126).
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 140000)
+#define HAVE_GCCONTROLLER_REQUIRING_HAPTICS_SQUARING 1
+#endif
+
 #if PLATFORM(MAC)
 #define HAVE_INCREMENTAL_PDF_APIS 1
 #endif
