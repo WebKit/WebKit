@@ -804,6 +804,7 @@
 		E3149A37228BB42200BFA6C7 /* Bag.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FEBA64120CF37100074941C /* Bag.cpp */; };
 		E3149A39228BB43500BFA6C7 /* Vector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0F95B63420CB53C100479635 /* Vector.cpp */; };
 		E3149A3B228BDCAC00BFA6C7 /* ConcurrentBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3149A3A228BDCAB00BFA6C7 /* ConcurrentBuffer.cpp */; };
+		E314D1D22A31316100A1EBC6 /* AppServerSupportSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = E314D1D12A31315800A1EBC6 /* AppServerSupportSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E324FAA328C9ADBA007089DF /* StringSearch.h in Headers */ = {isa = PBXBuildFile; fileRef = E324FAA228C9ADBA007089DF /* StringSearch.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E336674A2722551100259122 /* Int128.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E33667492722550900259122 /* Int128.cpp */; };
 		E361DB532891159C00B2A2B8 /* FastFloat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E361DB512891159B00B2A2B8 /* FastFloat.cpp */; };
@@ -1698,6 +1699,7 @@
 		E311FB151F0A568B003C08DE /* ThreadGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ThreadGroup.cpp; sourceTree = "<group>"; };
 		E311FB161F0A568B003C08DE /* ThreadGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThreadGroup.h; sourceTree = "<group>"; };
 		E3149A3A228BDCAB00BFA6C7 /* ConcurrentBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConcurrentBuffer.cpp; sourceTree = "<group>"; };
+		E314D1D12A31315800A1EBC6 /* AppServerSupportSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppServerSupportSPI.h; sourceTree = "<group>"; };
 		E31CF0A5261058580036E673 /* RobinHoodHashTable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RobinHoodHashTable.h; sourceTree = "<group>"; };
 		E3200AB41E9A536D003B59D2 /* PlatformRegisters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformRegisters.h; sourceTree = "<group>"; };
 		E324FAA228C9ADBA007089DF /* StringSearch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringSearch.h; sourceTree = "<group>"; };
@@ -2818,6 +2820,7 @@
 		DDF306C627C08654006A526F /* cocoa */ = {
 			isa = PBXGroup;
 			children = (
+				E314D1D12A31315800A1EBC6 /* AppServerSupportSPI.h */,
 				DDF306CA27C08654006A526F /* CFXPCBridgeSPI.h */,
 				DDF306C727C08654006A526F /* CrashReporterClientSPI.h */,
 				1C08E3662985D7D300CAE594 /* IOReturnSPI.h */,
@@ -2923,6 +2926,7 @@
 				DD3DC96027A4BF8E007E5B61 /* Algorithms.h in Headers */,
 				DD3DC99627A4BF8E007E5B61 /* AnsiColors.h in Headers */,
 				DD3DC92527A4BF8E007E5B61 /* ApproximateTime.h in Headers */,
+				E314D1D22A31316100A1EBC6 /* AppServerSupportSPI.h in Headers */,
 				5CB8CB6D28C16CB700539906 /* ArgumentCoder.h in Headers */,
 				E361DB66289115D000B2A2B8 /* ascii_number.h in Headers */,
 				DD3DC8CA27A4BF8E007E5B61 /* ASCIICType.h in Headers */,
