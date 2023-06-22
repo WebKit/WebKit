@@ -941,13 +941,20 @@ window.webkit.messageHandlers.regularPage.postMessage("PASS");
 </script>
 )SWRESOURCE"_s;
 
-// fix me when rdar://110012082 is resolved
-#if PLATFORM(MAC)
-TEST(ServiceWorkers, DISABLED_SWProcessConnectionCreation)
-#else
-TEST(ServiceWorkers, SWProcessConnectionCreation)
-#endif
+static bool isSWProcessConnectionCreationTestSlow()
 {
+#if (!defined(NDEBUG) && PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 140000)
+    return true;
+#else
+    return false;
+#endif
+}
+
+TEST(ServiceWorkers, SWProcessConnectionCreation)
+{
+    if (isSWProcessConnectionCreationTestSlow())
+        return;
+
     [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
 
     RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
