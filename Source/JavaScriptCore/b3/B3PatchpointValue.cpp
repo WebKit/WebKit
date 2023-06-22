@@ -51,10 +51,11 @@ void PatchpointValue::dumpMeta(CommaPrinter& comma, PrintStream& out) const
         out.print(comma, "numFPScratchRegisters = ", numFPScratchRegisters);
 }
 
-PatchpointValue::PatchpointValue(Type type, Origin origin)
-    : Base(CheckedOpcode, Patchpoint, type, origin)
+PatchpointValue::PatchpointValue(Type type, Origin origin, Kind kind)
+    : Base(CheckedOpcode, kind, type, origin)
     , effects(Effects::forCall())
 {
+    ASSERT(accepts(kind));
     if (!type.isTuple())
         resultConstraints.append(type == Void ? ValueRep::WarmAny : ValueRep::SomeRegister);
 }

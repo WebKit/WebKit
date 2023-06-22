@@ -37,7 +37,7 @@ class PatchpointValue final : public StackmapValue {
 public:
     typedef StackmapValue Base;
     
-    static bool accepts(Kind kind) { return kind == Patchpoint; }
+    static bool accepts(Kind kind) { return kind.opcode() == Patchpoint; }
 
     ~PatchpointValue() final;
 
@@ -71,7 +71,8 @@ private:
     friend class Value;
 
     static Opcode opcodeFromConstructor(Type, Origin) { return Patchpoint; }
-    JS_EXPORT_PRIVATE PatchpointValue(Type, Origin);
+    static Opcode opcodeFromConstructor(Type, Origin, Kind) { return Patchpoint; }
+    JS_EXPORT_PRIVATE PatchpointValue(Type, Origin, Kind = Patchpoint);
 };
 
 } } // namespace JSC::B3
