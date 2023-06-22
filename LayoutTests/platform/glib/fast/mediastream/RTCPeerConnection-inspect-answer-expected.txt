@@ -62,20 +62,20 @@ a=extmap:3 urn:ietf:params:rtp-hdrext:ssrc-audio-level
 a=fmtp:96 minptime=10;useinbandfec=1
 a=sendrecv
 a=fingerprint:sha-256 {fingerprint:OK}
-m=video 9 UDP/TLS/RTP/SAVPF 99
+m=video 9 UDP/TLS/RTP/SAVPF 97
 c=IN IP4 0.0.0.0
 a=ice-ufrag:{ice-ufrag:OK}
 a=ice-pwd:{ice-password:OK}
 a=rtcp-mux
 a=mid:{mid:OK}
 a=setup:active
-a=rtpmap:99 H264/90000
-a=rtcp-fb:99 nack pli
-a=rtcp-fb:99 ccm fir
-a=rtcp-fb:99 transport-cc
+a=rtpmap:97 H264/90000
+a=rtcp-fb:97 nack pli
+a=rtcp-fb:97 ccm fir
+a=rtcp-fb:97 transport-cc
 a=rtcp-mux
 a=rtcp-rsize
-a=rtcp-fb:110 transport-cc
+a=rtcp-fb:108 transport-cc
 a=msid:{media-stream-id:OK} {media-stream-track-id:OK}
 a=ssrc-group:{semantics:OK} {ssrc-id:OK}
 a=fingerprint:sha-256 {fingerprint:OK}
@@ -85,7 +85,7 @@ a=extmap:2 http://www.webrtc.org/experiments/rtp-hdrext/color-space
 a=extmap:3 urn:ietf:params:rtp-hdrext:sdes:mid
 a=extmap:4 urn:ietf:params:rtp-hdrext:sdes:repaired-rtp-stream-id
 a=extmap:5 urn:ietf:params:rtp-hdrext:sdes:rtp-stream-id
-a=fmtp:99 packetization-mode=1;level-asymmetry-allowed=1
+a=fmtp:97 packetization-mode=1;level-asymmetry-allowed=1
 a=sendrecv
 a=fingerprint:sha-256 {fingerprint:OK}
 ===
