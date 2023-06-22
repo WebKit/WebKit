@@ -31,6 +31,8 @@
 
 #if TARGET_OS_IOS
 
+@protocol UIDropSession;
+
 typedef NS_ENUM(NSInteger, WebPreferredPresentationStyle) {
     WebPreferredPresentationStyleUnspecified,
     WebPreferredPresentationStyleInline,
@@ -103,6 +105,8 @@ WEBCORE_EXPORT @interface WebItemProviderPasteboard : NSObject<AbstractPasteboar
 @property (readonly, nonatomic) BOOL hasPendingOperation;
 - (void)incrementPendingOperationCount;
 - (void)decrementPendingOperationCount;
+
+- (void)setItemProviders:(NSArray<__kindof NSItemProvider *> *)itemProviders dropSession:(nullable id<UIDropSession>)dropSession;
 
 - (void)enumerateItemProvidersWithBlock:(void (^)(__kindof NSItemProvider *itemProvider, NSUInteger index, BOOL *stop))block;
 

@@ -9953,13 +9953,13 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
 
     _dragDropInteractionState.dropSessionDidEnterOrUpdate(session, dragData);
 
-    [[WebItemProviderPasteboard sharedInstance] setItemProviders:extractItemProvidersFromDropSession(session)];
+    [[WebItemProviderPasteboard sharedInstance] setItemProviders:extractItemProvidersFromDropSession(session) dropSession:session];
     _page->dragEntered(dragData, WebCore::Pasteboard::nameOfDragPasteboard());
 }
 
 - (UIDropProposal *)dropInteraction:(UIDropInteraction *)interaction sessionDidUpdate:(id <UIDropSession>)session
 {
-    [[WebItemProviderPasteboard sharedInstance] setItemProviders:extractItemProvidersFromDropSession(session)];
+    [[WebItemProviderPasteboard sharedInstance] setItemProviders:extractItemProvidersFromDropSession(session) dropSession:session];
 
     auto dragData = [self dragDataForDropSession:session dragDestinationAction:[self _dragDestinationActionForDropSession:session]];
     _page->dragUpdated(dragData, WebCore::Pasteboard::nameOfDragPasteboard());
@@ -9991,7 +9991,7 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
 - (void)dropInteraction:(UIDropInteraction *)interaction sessionDidExit:(id <UIDropSession>)session
 {
     RELEASE_LOG(DragAndDrop, "Drop session exited: %p with %tu items", session, session.items.count);
-    [[WebItemProviderPasteboard sharedInstance] setItemProviders:extractItemProvidersFromDropSession(session)];
+    [[WebItemProviderPasteboard sharedInstance] setItemProviders:extractItemProvidersFromDropSession(session) dropSession:session];
 
     auto dragData = [self dragDataForDropSession:session dragDestinationAction:WKDragDestinationActionAny];
     _page->dragExited(dragData, WebCore::Pasteboard::nameOfDragPasteboard());
@@ -10017,7 +10017,7 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
 
     _dragDropInteractionState.dropSessionWillPerformDrop();
 
-    [[WebItemProviderPasteboard sharedInstance] setItemProviders:itemProviders];
+    [[WebItemProviderPasteboard sharedInstance] setItemProviders:itemProviders dropSession:session];
     [[WebItemProviderPasteboard sharedInstance] incrementPendingOperationCount];
     auto dragData = [self dragDataForDropSession:session dragDestinationAction:WKDragDestinationActionAny];
     BOOL shouldSnapshotView = ![self _handleDropByInsertingImagePlaceholders:itemProviders session:session];

@@ -1097,6 +1097,7 @@ TEST(DragAndDropTests, ExternalSourceOverrideDropFileUpload)
     NSString *outputValue = [webView stringByEvaluatingJavaScript:@"output.value"];
     EXPECT_WK_STREQ("text/html", outputValue.UTF8String);
     EXPECT_FALSE([simulator lastKnownDropProposal].precise);
+    EXPECT_EQ(2, WebItemProviderPasteboard.sharedInstance.changeCount);
 }
 
 static RetainPtr<NSItemProvider> createMapItemForTesting()
@@ -1276,6 +1277,7 @@ TEST(DragAndDropTests, ExternalSourceOverrideDropInsertURL)
     [simulator runFrom:CGPointMake(300, 400) to:CGPointMake(100, 300)];
 
     EXPECT_WK_STREQ("https://webkit.org/", [webView stringByEvaluatingJavaScript:@"editor.textContent"]);
+    EXPECT_EQ(2, WebItemProviderPasteboard.sharedInstance.changeCount);
 }
 
 TEST(DragAndDropTests, OverrideDrop)

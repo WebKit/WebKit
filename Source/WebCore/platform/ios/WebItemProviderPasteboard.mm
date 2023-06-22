@@ -473,6 +473,7 @@ static UIPreferredPresentationStyle uiPreferredPresentationStyle(WebPreferredPre
     RetainPtr<NSArray<WebItemProviderRegistrationInfoList *>> _stagedRegistrationInfoLists;
 
     Vector<RetainPtr<WebItemProviderLoadResult>> _loadResults;
+    __weak id<UIDropSession> _dropSession;
 }
 
 + (instancetype)sharedInstance
@@ -524,17 +525,25 @@ static UIPreferredPresentationStyle uiPreferredPresentationStyle(WebPreferredPre
     return _itemProviders.get();
 }
 
-- (void)setItemProviders:(NSArray<__kindof NSItemProvider *> *)itemProviders
+- (void)setItemProviders:(NSArray<__kindof NSItemProvider *> *)itemProviders dropSession:(id<UIDropSession>)dropSession
 {
     itemProviders = itemProviders ?: @[ ];
     if (_itemProviders == itemProviders || [_itemProviders isEqualToArray:itemProviders])
         return;
 
-    _itemProviders = itemProviders;
-    _changeCount++;
+    if (dropSession != _dropSession || !dropSession)
+        _changeCount++;
+
+    _dropSession = dropSession;
+    _itemProviders = adoptNS(itemProviders.copy);
 
     if (!itemProviders.count)
         _loadResults = { };
+}
+
+- (void)setItemProviders:(NSArray<__kindof NSItemProvider *> *)itemProviders
+{
+    [self setItemProviders:itemProviders dropSession:nil];
 }
 
 - (NSInteger)numberOfItems
