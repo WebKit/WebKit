@@ -3681,7 +3681,7 @@ auto B3IRGenerator::addDelegateToUnreachable(ControlType& target, ControlType& d
 
 auto B3IRGenerator::addThrow(unsigned exceptionIndex, Vector<ExpressionType>& args, Stack&) -> PartialResult
 {
-    PatchpointValue* patch = m_proc.add<PatchpointValue>(B3::Void, origin());
+    PatchpointValue* patch = m_proc.add<PatchpointValue>(B3::Void, origin(), cloningForbidden(Patchpoint));
     patch->effects.terminal = true;
     patch->append(instanceValue(), ValueRep::reg(GPRInfo::argumentGPR0));
     for (unsigned i = 0; i < args.size(); ++i) {
@@ -3706,7 +3706,7 @@ auto B3IRGenerator::addThrow(unsigned exceptionIndex, Vector<ExpressionType>& ar
 
 auto B3IRGenerator::addRethrow(unsigned, ControlType& data) -> PartialResult
 {
-    PatchpointValue* patch = m_proc.add<PatchpointValue>(B3::Void, origin());
+    PatchpointValue* patch = m_proc.add<PatchpointValue>(B3::Void, origin(), cloningForbidden(Patchpoint));
     patch->clobber(RegisterSetBuilder::registersToSaveForJSCall(m_proc.usesSIMD() ? RegisterSetBuilder::allRegisters() : RegisterSetBuilder::allScalarRegisters()));
     patch->effects.terminal = true;
     patch->append(instanceValue(), ValueRep::reg(GPRInfo::argumentGPR0));
