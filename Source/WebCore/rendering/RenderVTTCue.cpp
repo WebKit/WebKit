@@ -76,7 +76,6 @@ void RenderVTTCue::layout()
 
 bool RenderVTTCue::initializeLayoutParameters(LayoutUnit& step, LayoutUnit& position)
 {
-    ASSERT(firstChild());
     if (!firstChild())
         return false;
 
@@ -158,6 +157,9 @@ void RenderVTTCue::placeBoxInDefaultPosition(LayoutUnit position, bool& switched
 
 bool RenderVTTCue::isOutside() const
 {
+    if (!firstChild())
+        return false;
+
     return !rectIsWithinContainer(backdropBox().absoluteBoundingBoxRect());
 }
 
@@ -169,11 +171,16 @@ bool RenderVTTCue::rectIsWithinContainer(const IntRect& rect) const
 
 bool RenderVTTCue::isOverlapping() const
 {
+    if (!firstChild())
+        return false;
+
     return overlappingObject();
 }
 
 RenderVTTCue* RenderVTTCue::overlappingObject() const
 {
+    ASSERT(firstChild());
+
     return overlappingObjectForRect(backdropBox().absoluteBoundingBoxRect());
 }
 
@@ -257,6 +264,9 @@ bool RenderVTTCue::switchDirection(bool& switched, LayoutUnit& step)
 
 void RenderVTTCue::moveIfNecessaryToKeepWithinContainer()
 {
+    if (!firstChild())
+        return;
+
     IntRect containerRect = containingBlock()->absoluteBoundingBoxRect();
     IntRect cueRect = backdropBox().absoluteBoundingBoxRect();
 
@@ -287,6 +297,9 @@ void RenderVTTCue::moveIfNecessaryToKeepWithinContainer()
 
 bool RenderVTTCue::findNonOverlappingPosition(int& newX, int& newY) const
 {
+    if (!firstChild())
+        return false;
+
     newX = x();
     newY = y();
     IntRect srcRect = backdropBox().absoluteBoundingBoxRect();
@@ -407,6 +420,7 @@ RenderBlockFlow& RenderVTTCue::backdropBox() const
 
 RenderInline& RenderVTTCue::cueBox() const
 {
+    ASSERT(firstChild());
     return downcast<RenderInline>(*backdropBox().firstChild());
 }
 
