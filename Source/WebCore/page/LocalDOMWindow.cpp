@@ -2610,7 +2610,7 @@ ExceptionOr<RefPtr<LocalFrame>> LocalDOMWindow::createWindow(const String& urlSt
         return RefPtr<LocalFrame> { nullptr };
 
     bool noopener = windowFeatures.noopener || windowFeatures.noreferrer;
-    if (!noopener)
+    if (!noopener && created)
         newFrame->loader().setOpener(&openerFrame);
 
     if (created)
