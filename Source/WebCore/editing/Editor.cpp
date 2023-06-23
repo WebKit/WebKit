@@ -1125,30 +1125,60 @@ static void notifyTextFromControls(Element* startRoot, Element* endRoot)
         endingTextControl->didEditInnerTextValue();
 }
 
-#if USE(APPLE_INTERNAL_SDK)
-#include <WebKitAdditions/EditorAdditions.cpp>
-#else
 static inline bool shouldRemoveAutocorrectionIndicator(bool shouldConsiderApplyingAutocorrection, bool autocorrectionWasApplied, bool isAutocompletion)
 {
+#if HAVE(AUTOCORRECTION_ENHANCEMENTS)
+    bool shouldRemoveIndicator = shouldConsiderApplyingAutocorrection && !autocorrectionWasApplied;
+#if PLATFORM(IOS_FAMILY)
+    // On iOS, unlike macOS, autocorrection is applied as two separate text insertions. The first insertion is
+    // an autocompletion.
+    return shouldRemoveIndicator && !isAutocompletion;
+#else // !PLATFORM(IOS_FAMILY)
+    UNUSED_PARAM(isAutocompletion);
+    return shouldRemoveIndicator;
+#endif // !PLATFORM(IOS_FAMILY)
+#else // !HAVE(AUTOCORRECTION_ENHANCEMENTS)
     UNUSED_PARAM(shouldConsiderApplyingAutocorrection);
     UNUSED_PARAM(isAutocompletion);
+#endif // !HAVE(AUTOCORRECTION_ENHANCEMENTS)
     return !autocorrectionWasApplied;
 }
 
-static inline bool didApplyAutocorrection(Document&, AlternativeTextController& alternativeTextController)
+static inline bool didApplyAutocorrection(Document& document, AlternativeTextController& alternativeTextController)
 {
+#if HAVE(AUTOCORRECTION_ENHANCEMENTS) && PLATFORM(IOS_FAMILY)
+    bool autocorrectionWasApplied = alternativeTextController.applyAutocorrectionBeforeTypingIfAppropriate();
+
+    // On iOS, unlike macOS, autocorrection is applied as two separate text insertions: the correction
+    // itself, followed by a space. This logic detects that an autocorrection was applied after the
+    // space has been inserted.
+
+    auto selection = document.selection().selection();
+    auto startOfSelection = selection.start();
+
+    auto wordStart = startOfWord(startOfSelection, LeftWordIfOnBoundary);
+    auto wordEnd = endOfWord(startOfSelection, LeftWordIfOnBoundary);
+
+    if (auto range = makeSimpleRange(wordStart, wordEnd)) {
+        if (document.markers().hasMarkers(*range, DocumentMarker::CorrectionIndicator))
+            autocorrectionWasApplied = true;
+    }
+
+    return autocorrectionWasApplied;
+#else
+    UNUSED_PARAM(document);
     return alternativeTextController.applyAutocorrectionBeforeTypingIfAppropriate();
-}
-
-static inline void respondToAppliedEditing(Document&, AlternativeTextController& alternativeTextController, CompositeEditCommand& command)
-{
-    alternativeTextController.respondToAppliedEditing(&command);
-}
-
-static inline void adjustMarkerTypesToRemoveForWordsAffectedByEditing(OptionSet<DocumentMarker::MarkerType>&)
-{
-}
 #endif
+}
+
+static inline void adjustMarkerTypesToRemoveForWordsAffectedByEditing(OptionSet<DocumentMarker::MarkerType>& markerTypes)
+{
+#if HAVE(AUTOCORRECTION_ENHANCEMENTS) && PLATFORM(IOS_FAMILY)
+    markerTypes.remove(DocumentMarker::CorrectionIndicator);
+#else
+    UNUSED_PARAM(markerTypes);
+#endif
+}
 
 static bool dispatchBeforeInputEvents(RefPtr<Element> startRoot, RefPtr<Element> endRoot, const AtomString& inputTypeName, IsInputMethodComposing isInputMethodComposing,
     const String& data = { }, RefPtr<DataTransfer>&& dataTransfer = nullptr, const Vector<RefPtr<StaticRange>>& targetRanges = { }, Event::IsCancelable cancelable = Event::IsCancelable::Yes)
@@ -1219,7 +1249,7 @@ void Editor::appliedEditing(CompositeEditCommand& command)
     if (command.isTopLevelCommand()) {
         updateEditorUINowIfScheduled();
 
-        respondToAppliedEditing(m_document, *m_alternativeTextController, command);
+        m_alternativeTextController->respondToAppliedEditing(m_document, &command);
 
         if (!command.preservesTypingStyle())
             m_document.selection().clearTypingStyle();

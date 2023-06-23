@@ -373,21 +373,10 @@ Color RenderThemeMac::platformDefaultButtonTextColor(OptionSet<StyleColorOptions
     return colorFromCocoaColor([NSColor alternateSelectedControlTextColor]);
 }
 
-#if USE(APPLE_INTERNAL_SDK)
-#include <WebKitAdditions/RenderThemeMacAdditions.mm>
-#else
-#if HAVE(NSSPELLCHECKER_CORRECTION_INDICATOR_UNDERLINE_COLOR)
-static inline bool usePlatformColorForAutocorrectionReplacementMarker()
-{
-    return false;
-}
-#endif
-#endif
-
 Color RenderThemeMac::platformAutocorrectionReplacementMarkerColor(OptionSet<StyleColorOptions> options) const
 {
-#if HAVE(NSSPELLCHECKER_CORRECTION_INDICATOR_UNDERLINE_COLOR)
-    if (usePlatformColorForAutocorrectionReplacementMarker() && [NSSpellChecker respondsToSelector:@selector(correctionIndicatorUnderlineColor)]) {
+#if HAVE(AUTOCORRECTION_ENHANCEMENTS)
+    if ([NSSpellChecker respondsToSelector:@selector(correctionIndicatorUnderlineColor)]) {
         LocalDefaultSystemAppearance localAppearance(options.contains(StyleColorOptions::UseDarkAppearance));
         return colorFromCocoaColor([NSSpellChecker correctionIndicatorUnderlineColor]);
     }

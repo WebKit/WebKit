@@ -201,13 +201,19 @@ static String plainTextForDisplay(const std::optional<SimpleRange>& range)
     return range ? plainTextForDisplay(*range) : emptyString();
 }
 
-#if USE(APPLE_INTERNAL_SDK)
-#include <WebKitAdditions/WebPageIOSAdditions.mm>
-#else
-static void adjustCandidateAutocorrectionInFrame(LocalFrame&)
+static void adjustCandidateAutocorrectionInFrame(LocalFrame& frame)
 {
-}
+#if HAVE(AUTOCORRECTION_ENHANCEMENTS)
+    FrameSelection selection;
+    selection.setSelection(frame.selection().selection());
+    selection.modify(FrameSelection::Alteration::Extend, SelectionDirection::Backward, TextGranularity::WordGranularity);
+
+    if (auto correctedRange = selection.selection().toNormalizedRange())
+        addMarker(*correctedRange, WebCore::DocumentMarker::CorrectionIndicator);
+#else
+    UNUSED_PARAM(frame);
 #endif
+}
 
 // WebCore stores the page scale factor as float instead of double. When we get a scale from WebCore,
 // we need to ignore differences that are within a small rounding error, with enough leeway

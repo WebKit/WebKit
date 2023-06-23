@@ -419,16 +419,16 @@ void AlternativeTextController::respondToChangedSelection(const VisibleSelection
     }
 }
 
-#if USE(APPLE_INTERNAL_SDK)
-#include <WebKitAdditions/AlternativeTextControllerAdditions.cpp>
-#else
 static inline void removeCorrectionIndicatorMarkers(Document& document)
 {
+#if HAVE(AUTOCORRECTION_ENHANCEMENTS)
+    document.markers().dismissMarkers(DocumentMarker::CorrectionIndicator);
+#else
     document.markers().removeMarkers(DocumentMarker::CorrectionIndicator);
-}
 #endif
+}
 
-void AlternativeTextController::respondToAppliedEditing(CompositeEditCommand* command)
+void AlternativeTextController::respondToAppliedEditing(Document& document, CompositeEditCommand* command)
 {
     if (command->isTopLevelCommand() && !command->shouldRetainAutocorrectionIndicator())
         removeCorrectionIndicatorMarkers(m_document);
@@ -437,6 +437,13 @@ void AlternativeTextController::respondToAppliedEditing(CompositeEditCommand* co
     m_originalStringForLastDeletedAutocorrection = String();
 
     dismiss(ReasonForDismissingAlternativeText::Ignored);
+
+#if HAVE(AUTOCORRECTION_ENHANCEMENTS) && PLATFORM(IOS_FAMILY)
+    if (!command->shouldRetainAutocorrectionIndicator())
+        document.markers().dismissMarkers(DocumentMarker::CorrectionIndicator);
+#else
+    UNUSED_PARAM(document);
+#endif
 }
 
 void AlternativeTextController::respondToUnappliedEditing(EditCommandComposition* command)

@@ -5169,6 +5169,11 @@ static void logTextInteractionAssistantSelectionChange(const char* methodName, U
     [self applyAutocorrection:correction toString:input isCandidate:NO withCompletionHandler:completionHandler];
 }
 
+- (void)applyAutocorrection:(NSString *)correction toString:(NSString *)input shouldUnderline:(BOOL)shouldUnderline withCompletionHandler:(void (^)(UIWKAutocorrectionRects *rectsForCorrection))completionHandler
+{
+    [self applyAutocorrection:correction toString:input isCandidate:shouldUnderline withCompletionHandler:completionHandler];
+}
+
 - (void)_invokePendingAutocorrectionContextHandler:(WKAutocorrectionContext *)context
 {
     if (auto handler = WTFMove(_pendingAutocorrectionContextHandler))

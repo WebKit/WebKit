@@ -146,14 +146,41 @@ static inline void drawDotsForDocumentMarker(CGContextRef context, const FloatRe
     CGContextFillPath(context);
 }
 
-#if USE(APPLE_INTERNAL_SDK)
-#include <WebKitAdditions/GraphicsContextCocoaAdditions.mm>
-#else
+#if HAVE(AUTOCORRECTION_ENHANCEMENTS)
+
+static inline void drawRoundedRectForDocumentMarker(CGContextRef context, const FloatRect& rect, DocumentMarkerLineStyle style)
+{
+    CGContextStateSaver stateSaver { context };
+    CGContextSetFillColorWithColor(context, cachedCGColor(style.color).get());
+    CGContextSetCompositeOperation(context, kCGCompositeSover);
+
+    auto radius = rect.height() / 2.0;
+    auto minX = rect.x();
+    auto maxX = rect.maxX();
+    auto minY = rect.y();
+    auto maxY = rect.maxY();
+    auto midY = (minY + maxY) / 2.0;
+
+    CGContextMoveToPoint(context, minX + radius, maxY);
+    CGContextAddArc(context, minX + radius, midY, radius, piOverTwoDouble, 3 * piOverTwoDouble, 0);
+    CGContextAddLineToPoint(context, maxX - radius, minY);
+    CGContextAddArc(context, maxX - radius, midY, radius, 3 * piOverTwoDouble, piOverTwoDouble, 0);
+    CGContextClosePath(context);
+    CGContextFillPath(context);
+}
+
+#endif
+
 void GraphicsContextCG::drawDotsForDocumentMarker(const FloatRect& rect, DocumentMarkerLineStyle style)
 {
+#if HAVE(AUTOCORRECTION_ENHANCEMENTS)
+    if (style.mode == DocumentMarkerLineStyleMode::AutocorrectionReplacement) {
+        drawRoundedRectForDocumentMarker(this->platformContext(), rect, style);
+        return;
+    }
+#endif
     WebCore::drawDotsForDocumentMarker(this->platformContext(), rect, style);
 }
-#endif
 
 void GraphicsContextCG::convertToDestinationColorSpaceIfNeeded(RetainPtr<CGImageRef>& image)
 {

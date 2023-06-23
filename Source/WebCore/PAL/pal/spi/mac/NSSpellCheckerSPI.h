@@ -62,7 +62,7 @@ typedef NS_OPTIONS(uint64_t, NSTextCheckingTypeAppKitTemporary) {
 
 #endif // USE(APPLE_INTERNAL_SDK)
 
-#if HAVE(NSSPELLCHECKER_CORRECTION_INDICATOR_UNDERLINE_COLOR)
+#if HAVE(AUTOCORRECTION_ENHANCEMENTS)
 // FIXME: rdar://105853874 Remove staging code.
 @interface NSSpellChecker (Staging_105286196)
 + (NSColor *)correctionIndicatorUnderlineColor;
