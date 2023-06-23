@@ -467,10 +467,9 @@
         (extension "com.apple.fileprovider.read-write")))
 
 #if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
-(with-filter (system-attribute apple-internal)
-    (allow mach-lookup (global-name
-        "com.apple.logd"
-        "com.apple.logd.events")))
+(deny mach-lookup (with no-report) (global-name
+    "com.apple.logd"
+    "com.apple.logd.events"))
 #else
 (allow mach-lookup (global-name
     "com.apple.logd"
