@@ -3204,7 +3204,8 @@ void WebPageProxy::handleMouseEvent(const NativeWebMouseEvent& event)
 void WebPageProxy::dispatchMouseDidMoveOverElementAsynchronously(const NativeWebMouseEvent& event)
 {
     sendWithAsyncReply(Messages::WebPage::PerformHitTestForMouseEvent { event }, [this, protectedThis = Ref { *this }](WebHitTestResultData&& hitTestResult, OptionSet<WebEventModifier> modifiers, UserData&& userData) {
-        this->mouseDidMoveOverElement(WTFMove(hitTestResult), modifiers, WTFMove(userData));
+        if (!isClosed())
+            mouseDidMoveOverElement(WTFMove(hitTestResult), modifiers, WTFMove(userData));
     });
 }
 
