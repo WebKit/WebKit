@@ -45,7 +45,7 @@ public:
     SVGResources();
 
     bool buildCachedResources(const RenderElement&, const RenderStyle&);
-    void layoutReferencedRootIfNeeded();
+    void layoutDifferentRootIfNeeded(const LegacyRenderSVGRoot*);
 
     // Ordinary resources
     RenderSVGResourceClipper* clipper() const { return m_clipperFilterMaskerData ? m_clipperFilterMaskerData->clipper.get() : nullptr; }

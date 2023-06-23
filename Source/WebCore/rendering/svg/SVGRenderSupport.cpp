@@ -232,8 +232,11 @@ bool SVGRenderSupport::transformToRootChanged(RenderElement* ancestor)
 
 void SVGRenderSupport::layoutDifferentRootIfNeeded(const RenderElement& renderer)
 {
-    if (auto* resources = SVGResourcesCache::cachedResourcesForRenderer(renderer))
-        resources->layoutReferencedRootIfNeeded();
+    if (auto* resources = SVGResourcesCache::cachedResourcesForRenderer(renderer)) {
+        auto* svgRoot = SVGRenderSupport::findTreeRootObject(renderer);
+        ASSERT(svgRoot);
+        resources->layoutDifferentRootIfNeeded(svgRoot);
+    }
 }
 
 void SVGRenderSupport::layoutChildren(RenderElement& start, bool selfNeedsLayout)

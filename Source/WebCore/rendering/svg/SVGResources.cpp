@@ -311,13 +311,13 @@ bool SVGResources::buildCachedResources(const RenderElement& renderer, const Ren
     return foundResources;
 }
 
-void SVGResources::layoutReferencedRootIfNeeded()
+void SVGResources::layoutDifferentRootIfNeeded(const LegacyRenderSVGRoot* svgRoot)
 {
     auto layoutDifferentRootIfNeeded = [&](RenderElement* container) {
         if (!container)
             return;
         auto* root = SVGRenderSupport::findTreeRootObject(*container);
-        if (root->isInLayout())
+        if (svgRoot == root || root->isInLayout())
             return;
         container->layoutIfNeeded();
     };
