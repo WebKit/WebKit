@@ -116,9 +116,6 @@ public:
     void setDefaultWebsitePolicies(WebsitePolicies*);
 
 #if PLATFORM(IOS_FAMILY)
-    bool clientNavigationsRunAtForegroundPriority() const { return m_clientNavigationsRunAtForegroundPriority; }
-    void setClientNavigationsRunAtForegroundPriority(bool value) { m_clientNavigationsRunAtForegroundPriority = value; }
-
     bool canShowWhileLocked() const { return m_canShowWhileLocked; }
     void setCanShowWhileLocked(bool canShowWhileLocked) { m_canShowWhileLocked = canShowWhileLocked; }
 
@@ -146,6 +143,9 @@ public:
 #if PLATFORM(COCOA)
     const WTF::Vector<WTF::String>& additionalSupportedImageTypes() const { return m_additionalSupportedImageTypes; }
     void setAdditionalSupportedImageTypes(WTF::Vector<WTF::String>&& additionalSupportedImageTypes) { m_additionalSupportedImageTypes = WTFMove(additionalSupportedImageTypes); }
+
+    bool clientNavigationsRunAtForegroundPriority() const { return m_clientNavigationsRunAtForegroundPriority; }
+    void setClientNavigationsRunAtForegroundPriority(bool value) { m_clientNavigationsRunAtForegroundPriority = value; }
 #endif
 
 #if ENABLE(APPLICATION_MANIFEST)
@@ -232,7 +232,6 @@ private:
     RefPtr<WebsitePolicies> m_defaultWebsitePolicies;
 
 #if PLATFORM(IOS_FAMILY)
-    bool m_clientNavigationsRunAtForegroundPriority { true };
     bool m_canShowWhileLocked { false };
     RetainPtr<_UIClickInteractionDriving> m_clickInteractionDriverForTesting;
 #endif
@@ -246,6 +245,7 @@ private:
 
 #if PLATFORM(COCOA)
     WTF::Vector<WTF::String> m_additionalSupportedImageTypes;
+    bool m_clientNavigationsRunAtForegroundPriority { true };
 #endif
 
 #if ENABLE(APPLICATION_MANIFEST)

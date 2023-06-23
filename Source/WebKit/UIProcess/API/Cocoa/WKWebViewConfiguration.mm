@@ -791,7 +791,6 @@ static NSString *defaultApplicationNameForUserAgent()
     _allowsMetaRefresh = allowsMetaRefresh;
 }
 
-#if PLATFORM(IOS_FAMILY)
 - (BOOL)_clientNavigationsRunAtForegroundPriority
 {
     return _pageConfiguration->clientNavigationsRunAtForegroundPriority();
@@ -802,6 +801,7 @@ static NSString *defaultApplicationNameForUserAgent()
     _pageConfiguration->setClientNavigationsRunAtForegroundPriority(clientNavigationsRunAtForegroundPriority);
 }
 
+#if PLATFORM(IOS_FAMILY)
 - (BOOL)_alwaysRunsAtForegroundPriority
 {
     return _pageConfiguration->clientNavigationsRunAtForegroundPriority();

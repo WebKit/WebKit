@@ -72,9 +72,7 @@ private:
     bool isViewWindowActive() override;
     bool isViewFocused() override;
     bool isViewVisible() override;
-#if USE(RUNNINGBOARD)
     bool canTakeForegroundAssertions() override { return true; };
-#endif
     bool isViewVisibleOrOccluded() override;
     bool isViewInWindow() override;
     bool isVisuallyIdle() override;
