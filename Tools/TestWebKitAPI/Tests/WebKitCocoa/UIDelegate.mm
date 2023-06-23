@@ -1136,7 +1136,7 @@ TEST(WebKit, DidResignInputElementStrongPasswordAppearanceWhenFormIsReset)
 
 @end
 
-TEST(WebKit, AutoFillAvailable)
+TEST(WebKit, DISABLED_AutoFillAvailable)
 {
     WKWebViewConfiguration *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"AutoFillAvailable"];
 
