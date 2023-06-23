@@ -44,6 +44,26 @@ enum RefFrameType {
   kRefFrameTypeNone = -1,
 };
 
+enum VP9_LEVEL {
+  LEVEL_UNKNOWN = 0,
+  LEVEL_AUTO = 1,
+  LEVEL_1 = 10,
+  LEVEL_1_1 = 11,
+  LEVEL_2 = 20,
+  LEVEL_2_1 = 21,
+  LEVEL_3 = 30,
+  LEVEL_3_1 = 31,
+  LEVEL_4 = 40,
+  LEVEL_4_1 = 41,
+  LEVEL_5 = 50,
+  LEVEL_5_1 = 51,
+  LEVEL_5_2 = 52,
+  LEVEL_6 = 60,
+  LEVEL_6_1 = 61,
+  LEVEL_6_2 = 62,
+  LEVEL_MAX = 255
+};
+
 enum GopMapFlag {
   kGopMapFlagStart =
       1 << 0,  // Indicate this location is the start of a group of pictures.
@@ -343,7 +363,8 @@ class SimpleEncode {
   // format.
   SimpleEncode(int frame_width, int frame_height, int frame_rate_num,
                int frame_rate_den, int target_bitrate, int num_frames,
-               const char *infile_path, const char *outfile_path = nullptr);
+               int target_level, const char *infile_path,
+               const char *outfile_path = nullptr);
   ~SimpleEncode();
   SimpleEncode(SimpleEncode &) = delete;
   SimpleEncode &operator=(const SimpleEncode &) = delete;
@@ -513,6 +534,7 @@ class SimpleEncode {
   int target_bitrate_;
   int num_frames_;
   int encode_speed_;
+  int target_level_;
 
   std::FILE *in_file_;
   std::FILE *out_file_;

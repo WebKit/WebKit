@@ -84,6 +84,7 @@ static int get_frame_stats(vpx_codec_ctx_t *ctx, const vpx_image_t *img,
       const uint8_t *const pkt_buf = pkt->data.twopass_stats.buf;
       const size_t pkt_size = pkt->data.twopass_stats.sz;
       stats->buf = realloc(stats->buf, stats->sz + pkt_size);
+      if (!stats->buf) die("Failed to reallocate stats buffer.");
       memcpy((uint8_t *)stats->buf + stats->sz, pkt_buf, pkt_size);
       stats->sz += pkt_size;
     }
@@ -221,7 +222,7 @@ int main(int argc, char **argv) {
     die("Invalid frame size: %dx%d", w, h);
 
   if (!vpx_img_alloc(&raw, VPX_IMG_FMT_I420, w, h, 1))
-    die("Failed to allocate image", w, h);
+    die("Failed to allocate image (%dx%d)", w, h);
 
   printf("Using %s\n", vpx_codec_iface_name(encoder->codec_interface()));
 

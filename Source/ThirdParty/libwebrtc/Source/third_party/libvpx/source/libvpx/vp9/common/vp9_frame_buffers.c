@@ -14,14 +14,17 @@
 #include "vpx_mem/vpx_mem.h"
 
 int vp9_alloc_internal_frame_buffers(InternalFrameBufferList *list) {
+  const int num_buffers = VP9_MAXIMUM_REF_BUFFERS + VPX_MAXIMUM_WORK_BUFFERS;
   assert(list != NULL);
   vp9_free_internal_frame_buffers(list);
 
-  list->num_internal_frame_buffers =
-      VP9_MAXIMUM_REF_BUFFERS + VPX_MAXIMUM_WORK_BUFFERS;
-  list->int_fb = (InternalFrameBuffer *)vpx_calloc(
-      list->num_internal_frame_buffers, sizeof(*list->int_fb));
-  return (list->int_fb == NULL);
+  list->int_fb =
+      (InternalFrameBuffer *)vpx_calloc(num_buffers, sizeof(*list->int_fb));
+  if (list->int_fb) {
+    list->num_internal_frame_buffers = num_buffers;
+    return 0;
+  }
+  return -1;
 }
 
 void vp9_free_internal_frame_buffers(InternalFrameBufferList *list) {
@@ -35,6 +38,7 @@ void vp9_free_internal_frame_buffers(InternalFrameBufferList *list) {
   }
   vpx_free(list->int_fb);
   list->int_fb = NULL;
+  list->num_internal_frame_buffers = 0;
 }
 
 int vp9_get_frame_buffer(void *cb_priv, size_t min_size,

@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2019 The WebM project authors. All Rights Reserved.
+ *  Copyright (c) 2023 The WebM project authors. All Rights Reserved.
  *
  *  Use of this source code is governed by a BSD-style license
  *  that can be found in the LICENSE file in the root of the source
@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef VPX_VP9_ENCODER_X86_TEMPORAL_FILTER_CONSTANTS_H_
-#define VPX_VP9_ENCODER_X86_TEMPORAL_FILTER_CONSTANTS_H_
+#ifndef VPX_VP9_ENCODER_TEMPORAL_FILTER_CONSTANTS_H_
+#define VPX_VP9_ENCODER_TEMPORAL_FILTER_CONSTANTS_H_
 #include "./vpx_config.h"
 
 // Division using multiplication and shifting. The C implementation does:
@@ -407,4 +407,4 @@ static const uint32_t
 
 #define DIST_STRIDE ((BW) + 2)
 
-#endif  // VPX_VP9_ENCODER_X86_TEMPORAL_FILTER_CONSTANTS_H_
+#endif  // VPX_VP9_ENCODER_TEMPORAL_FILTER_CONSTANTS_H_

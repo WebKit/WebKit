@@ -23,7 +23,6 @@ namespace {
 
 static const int kNoiseSize = 3072;
 
-// TODO(jimbankoski): make width and height integers not unsigned.
 typedef void (*AddNoiseFunc)(uint8_t *start, const int8_t *noise,
                              int blackclamp, int whiteclamp, int width,
                              int height, int pitch);

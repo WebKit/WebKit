@@ -485,7 +485,7 @@ static void vpx_filter_block1d4_h4_sse2(const uint8_t *src_ptr,
     // Saturate and convert to 8-bit words
     dst_first = _mm_packus_epi16(dst_first, _mm_setzero_si128());
 
-    *((uint32_t *)(dst_ptr)) = _mm_cvtsi128_si32(dst_first);
+    *((int *)(dst_ptr)) = _mm_cvtsi128_si32(dst_first);
 
     src_ptr += src_stride;
     dst_ptr += dst_stride;
@@ -589,8 +589,8 @@ static void vpx_filter_block1d4_v4_sse2(const uint8_t *src_ptr,
     res_reg_0123 = _mm_packus_epi16(res_reg_0123_lo, reg_zero);
 
     // Save only half of the register (8 words)
-    *((uint32_t *)(dst_ptr)) = _mm_cvtsi128_si32(res_reg_m1012);
-    *((uint32_t *)(dst_ptr + dst_stride)) = _mm_cvtsi128_si32(res_reg_0123);
+    *((int *)(dst_ptr)) = _mm_cvtsi128_si32(res_reg_m1012);
+    *((int *)(dst_ptr + dst_stride)) = _mm_cvtsi128_si32(res_reg_0123);
 
     // Update the source by two rows
     src_ptr += src_stride_unrolled;
@@ -1040,12 +1040,12 @@ filter8_1dfunction vpx_filter_block1d4_h2_avg_sse2;
 //                                  const InterpKernel *filter, int x0_q4,
 //                                  int32_t x_step_q4, int y0_q4, int y_step_q4,
 //                                  int w, int h);
-FUN_CONV_1D(horiz, x0_q4, x_step_q4, h, src, , sse2, 0);
+FUN_CONV_1D(horiz, x0_q4, x_step_q4, h, src, , sse2, 0)
 FUN_CONV_1D(vert, y0_q4, y_step_q4, v, src - (num_taps / 2 - 1) * src_stride, ,
-            sse2, 0);
-FUN_CONV_1D(avg_horiz, x0_q4, x_step_q4, h, src, avg_, sse2, 1);
+            sse2, 0)
+FUN_CONV_1D(avg_horiz, x0_q4, x_step_q4, h, src, avg_, sse2, 1)
 FUN_CONV_1D(avg_vert, y0_q4, y_step_q4, v,
-            src - (num_taps / 2 - 1) * src_stride, avg_, sse2, 1);
+            src - (num_taps / 2 - 1) * src_stride, avg_, sse2, 1)
 
 // void vpx_convolve8_sse2(const uint8_t *src, ptrdiff_t src_stride,
 //                         uint8_t *dst, ptrdiff_t dst_stride,
@@ -1057,8 +1057,8 @@ FUN_CONV_1D(avg_vert, y0_q4, y_step_q4, v,
 //                             const InterpKernel *filter, int x0_q4,
 //                             int32_t x_step_q4, int y0_q4, int y_step_q4,
 //                             int w, int h);
-FUN_CONV_2D(, sse2, 0);
-FUN_CONV_2D(avg_, sse2, 1);
+FUN_CONV_2D(, sse2, 0)
+FUN_CONV_2D(avg_, sse2, 1)
 
 #if CONFIG_VP9_HIGHBITDEPTH && VPX_ARCH_X86_64
 // From vpx_dsp/x86/vpx_high_subpixel_8t_sse2.asm.
@@ -1139,12 +1139,12 @@ highbd_filter8_1dfunction vpx_highbd_filter_block1d4_h2_avg_sse2;
 //                                         const int16_t *filter_y,
 //                                         int y_step_q4,
 //                                         int w, int h, int bd);
-HIGH_FUN_CONV_1D(horiz, x0_q4, x_step_q4, h, src, , sse2, 0);
+HIGH_FUN_CONV_1D(horiz, x0_q4, x_step_q4, h, src, , sse2, 0)
 HIGH_FUN_CONV_1D(vert, y0_q4, y_step_q4, v,
-                 src - src_stride * (num_taps / 2 - 1), , sse2, 0);
-HIGH_FUN_CONV_1D(avg_horiz, x0_q4, x_step_q4, h, src, avg_, sse2, 1);
+                 src - src_stride * (num_taps / 2 - 1), , sse2, 0)
+HIGH_FUN_CONV_1D(avg_horiz, x0_q4, x_step_q4, h, src, avg_, sse2, 1)
 HIGH_FUN_CONV_1D(avg_vert, y0_q4, y_step_q4, v,
-                 src - src_stride * (num_taps / 2 - 1), avg_, sse2, 1);
+                 src - src_stride * (num_taps / 2 - 1), avg_, sse2, 1)
 
 // void vpx_highbd_convolve8_sse2(const uint8_t *src, ptrdiff_t src_stride,
 //                                uint8_t *dst, ptrdiff_t dst_stride,
@@ -1156,6 +1156,6 @@ HIGH_FUN_CONV_1D(avg_vert, y0_q4, y_step_q4, v,
 //                                    const InterpKernel *filter, int x0_q4,
 //                                    int32_t x_step_q4, int y0_q4,
 //                                    int y_step_q4, int w, int h, int bd);
-HIGH_FUN_CONV_2D(, sse2, 0);
-HIGH_FUN_CONV_2D(avg_, sse2, 1);
+HIGH_FUN_CONV_2D(, sse2, 0)
+HIGH_FUN_CONV_2D(avg_, sse2, 1)
 #endif  // CONFIG_VP9_HIGHBITDEPTH && VPX_ARCH_X86_64

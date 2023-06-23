@@ -11,11 +11,8 @@
 
 package thumb;
 
-sub FixThumbInstructions($$)
+sub FixThumbInstructions($)
 {
-    my $short_branches = $_[1];
-    my $branch_shift_offset = $short_branches ? 1 : 0;
-
     # Write additions with shifts, such as "add r10, r11, lsl #8",
     # in three operand form, "add r10, r10, r11, lsl #8".
     s/(add\s+)(r\d+),\s*(r\d+),\s*(lsl #\d+)/$1$2, $2, $3, $4/g;

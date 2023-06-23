@@ -345,9 +345,11 @@ const char *vpx_codec_error_detail(vpx_codec_ctx_t *ctx);
  * \param[in] ctx   Pointer to this instance's context
  *
  * \retval #VPX_CODEC_OK
- *     The codec algorithm initialized.
- * \retval #VPX_CODEC_MEM_ERROR
- *     Memory allocation failed.
+ *     The codec instance has been destroyed.
+ * \retval #VPX_CODEC_INVALID_PARAM
+ *     ctx is a null pointer.
+ * \retval #VPX_CODEC_ERROR
+ *     Codec context not initialized.
  */
 vpx_codec_err_t vpx_codec_destroy(vpx_codec_ctx_t *ctx);
 

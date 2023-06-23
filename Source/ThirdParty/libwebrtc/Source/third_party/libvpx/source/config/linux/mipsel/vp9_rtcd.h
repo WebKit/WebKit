@@ -21,7 +21,7 @@ struct macroblockd;
 
 /* Encoder forward decls */
 struct macroblock;
-struct vp9_variance_vtable;
+struct vp9_sad_table;
 struct search_site_config;
 struct mv;
 union int_mv;
@@ -56,11 +56,12 @@ int vp9_denoiser_filter_c(const uint8_t* sig,
 int vp9_diamond_search_sad_c(const struct macroblock* x,
                              const struct search_site_config* cfg,
                              struct mv* ref_mv,
+                             uint32_t start_mv_sad,
                              struct mv* best_mv,
                              int search_param,
                              int sad_per_bit,
                              int* num00,
-                             const struct vp9_variance_vtable* fn_ptr,
+                             const struct vp9_sad_table* sad_fn_ptr,
                              const struct mv* center_mv);
 #define vp9_diamond_search_sad vp9_diamond_search_sad_c
 
@@ -119,7 +120,6 @@ void vp9_iht8x8_64_add_c(const tran_low_t* input,
 
 void vp9_quantize_fp_c(const tran_low_t* coeff_ptr,
                        intptr_t n_coeffs,
-                       int skip_block,
                        const int16_t* round_ptr,
                        const int16_t* quant_ptr,
                        tran_low_t* qcoeff_ptr,
@@ -132,7 +132,6 @@ void vp9_quantize_fp_c(const tran_low_t* coeff_ptr,
 
 void vp9_quantize_fp_32x32_c(const tran_low_t* coeff_ptr,
                              intptr_t n_coeffs,
-                             int skip_block,
                              const int16_t* round_ptr,
                              const int16_t* quant_ptr,
                              tran_low_t* qcoeff_ptr,

@@ -213,7 +213,12 @@ SECTION .text
 ;                         uint8_t *ref[4], int ref_stride,
 ;                         uint32_t res[4]);
 ; where NxN = 64x64, 32x32, 16x16, 16x8, 8x16 or 8x8
-%macro HIGH_SADNXN4D 2
+; Macro Arguments:
+;   1: Width
+;   2: Height
+;   3: If 0, then normal sad, if 2, then skip every other row
+%macro HIGH_SADNXN4D 2-3 0
+%if %3 == 0  ; normal sad
 %if UNIX64
 cglobal highbd_sad%1x%2x4d, 5, 8, 8, src, src_stride, ref1, ref_stride, \
                               res, ref2, ref3, ref4
@@ -221,6 +226,15 @@ cglobal highbd_sad%1x%2x4d, 5, 8, 8, src, src_stride, ref1, ref_stride, \
 cglobal highbd_sad%1x%2x4d, 4, 7, 8, src, src_stride, ref1, ref_stride, \
                               ref2, ref3, ref4
 %endif
+%else  ; %3 == 2, downsample
+%if UNIX64
+cglobal highbd_sad_skip_%1x%2x4d, 5, 8, 8, src, src_stride, ref1, ref_stride, \
+                              res, ref2, ref3, ref4
+%else
+cglobal highbd_sad_skip_%1x%2x4d, 4, 7, 8, src, src_stride, ref1, ref_stride, \
+                              ref2, ref3, ref4
+%endif  ;
+%endif  ; sad/avg/skip
 
 ; set m1
   push                srcq
@@ -229,6 +243,10 @@ cglobal highbd_sad%1x%2x4d, 4, 7, 8, src, src_stride, ref1, ref_stride, \
   pshufd                m1, m1, 0x0
   pop                 srcq
 
+%if %3 == 2  ; skip rows
+  lea          src_strided, [2*src_strided]
+  lea          ref_strided, [2*ref_strided]
+%endif  ; skip rows
   movsxdifnidn src_strideq, src_strided
   movsxdifnidn ref_strideq, ref_strided
   mov                ref2q, [ref1q+gprsize*1]
@@ -244,9 +262,15 @@ cglobal highbd_sad%1x%2x4d, 4, 7, 8, src, src_stride, ref1, ref_stride, \
   shl                ref1q, 1
 
   HIGH_PROCESS_%1x2x4 1, 0, 0, src_strideq, ref_strideq, 1
-%rep (%2-4)/2
+%if %3 == 2  ;  Downsampling by two
+%define num_rep (%2-8)/4
+%else
+%define num_rep (%2-4)/2
+%endif
+%rep num_rep
   HIGH_PROCESS_%1x2x4 0, 0, 0, src_strideq, ref_strideq, 1
 %endrep
+%undef rep
   HIGH_PROCESS_%1x2x4 0, 0, 0, src_strideq, ref_strideq, 0
   ; N.B. HIGH_PROCESS outputs dwords (32 bits)
   ; so in high bit depth even the smallest width (4) needs 128bits i.e. XMM
@@ -265,6 +289,9 @@ cglobal highbd_sad%1x%2x4d, 4, 7, 8, src, src_stride, ref1, ref_stride, \
   paddd                 m4, m0
   paddd                 m6, m1
   punpcklqdq            m4, m6
+%if %3 == 2  ; skip rows
+  pslld                 m4, 1
+%endif
   movifnidn             r4, r4mp
   movu                [r4], m4
   RET
@@ -285,3 +312,15 @@ HIGH_SADNXN4D  8,  8
 HIGH_SADNXN4D  8,  4
 HIGH_SADNXN4D  4,  8
 HIGH_SADNXN4D  4,  4
+
+HIGH_SADNXN4D 64, 64, 2
+HIGH_SADNXN4D 64, 32, 2
+HIGH_SADNXN4D 32, 64, 2
+HIGH_SADNXN4D 32, 32, 2
+HIGH_SADNXN4D 32, 16, 2
+HIGH_SADNXN4D 16, 32, 2
+HIGH_SADNXN4D 16, 16, 2
+HIGH_SADNXN4D 16,  8, 2
+HIGH_SADNXN4D  8, 16, 2
+HIGH_SADNXN4D  8,  8, 2
+HIGH_SADNXN4D  4,  8, 2

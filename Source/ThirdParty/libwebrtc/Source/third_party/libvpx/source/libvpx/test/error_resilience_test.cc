@@ -496,7 +496,7 @@ class ErrorResilienceTestLargeCodecControls
     ++tot_frame_number_;
   }
 
-  virtual void EndPassHook(void) {
+  virtual void EndPassHook() {
     duration_ = (last_pts_ + 1) * timebase_;
     if (cfg_.ts_number_layers > 1) {
       for (int layer = 0; layer < static_cast<int>(cfg_.ts_number_layers);

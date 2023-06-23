@@ -179,13 +179,27 @@ SECTION .text
 ;                         uint8_t *ref[4], int ref_stride,
 ;                         uint32_t res[4]);
 ; where NxN = 64x64, 32x32, 16x16, 16x8, 8x16, 8x8, 8x4, 4x8 and 4x4
-%macro SADNXN4D 2
+%macro SADNXN4D 2-3 0
+%if %3 == 1  ; skip rows
+%if UNIX64
+cglobal sad_skip_%1x%2x4d, 5, 8, 8, src, src_stride, ref1, ref_stride, \
+                              res, ref2, ref3, ref4
+%else
+cglobal sad_skip_%1x%2x4d, 4, 7, 8, src, src_stride, ref1, ref_stride, \
+                              ref2, ref3, ref4
+%endif
+%else  ; normal sad
 %if UNIX64
 cglobal sad%1x%2x4d, 5, 8, 8, src, src_stride, ref1, ref_stride, \
                               res, ref2, ref3, ref4
 %else
 cglobal sad%1x%2x4d, 4, 7, 8, src, src_stride, ref1, ref_stride, \
                               ref2, ref3, ref4
+%endif
+%endif
+%if %3 == 1
+  lea          src_strided, [2*src_strided]
+  lea          ref_strided, [2*ref_strided]
 %endif
   movsxdifnidn src_strideq, src_strided
   movsxdifnidn ref_strideq, ref_strided
@@ -195,9 +209,15 @@ cglobal sad%1x%2x4d, 4, 7, 8, src, src_stride, ref1, ref_stride, \
   mov                ref1q, [ref1q+gprsize*0]
 
   PROCESS_%1x2x4 1, 0, 0, src_strideq, ref_strideq, 1
-%rep (%2-4)/2
+%if %3 == 1  ; downsample number of rows by 2
+%define num_rep (%2-8)/4
+%else
+%define num_rep (%2-4)/2
+%endif
+%rep num_rep
   PROCESS_%1x2x4 0, 0, 0, src_strideq, ref_strideq, 1
 %endrep
+%undef num_rep
   PROCESS_%1x2x4 0, 0, 0, src_strideq, ref_strideq, 0
 
 %if %1 > 4
@@ -211,12 +231,19 @@ cglobal sad%1x%2x4d, 4, 7, 8, src, src_stride, ref1, ref_stride, \
   punpckhqdq            m5, m7
   movifnidn             r4, r4mp
   paddd                 m4, m5
+%if %3 == 1
+  pslld                 m4, 1
+%endif
   movu                [r4], m4
   RET
 %else
   movifnidn             r4, r4mp
   pshufd            m6, m6, 0x08
   pshufd            m7, m7, 0x08
+%if %3 == 1
+  pslld                 m6, 1
+  pslld                 m7, 1
+%endif
   movq              [r4+0], m6
   movq              [r4+8], m7
   RET
@@ -237,3 +264,15 @@ SADNXN4D  8,  8
 SADNXN4D  8,  4
 SADNXN4D  4,  8
 SADNXN4D  4,  4
+
+SADNXN4D 64, 64, 1
+SADNXN4D 64, 32, 1
+SADNXN4D 32, 64, 1
+SADNXN4D 32, 32, 1
+SADNXN4D 32, 16, 1
+SADNXN4D 16, 32, 1
+SADNXN4D 16, 16, 1
+SADNXN4D 16,  8, 1
+SADNXN4D  8, 16, 1
+SADNXN4D  8,  8, 1
+SADNXN4D  4,  8, 1

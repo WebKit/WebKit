@@ -330,7 +330,7 @@ class ContentEncoding {
 
  private:
   // Returns the size in bytes for the encoding elements.
-  uint64_t EncodingSize(uint64_t compresion_size,
+  uint64_t EncodingSize(uint64_t compression_size,
                         uint64_t encryption_size) const;
 
   // Returns the size in bytes for the encryption elements.
@@ -1425,7 +1425,7 @@ class SeekHead {
   bool Write(IMkvWriter* writer);
 
   // We are going to put a cap on the number of Seek Entries.
-  const static int32_t kSeekEntryCount = 5;
+  constexpr static int32_t kSeekEntryCount = 5;
 
  private:
   // Returns the maximum size in bytes of one seek entry.
@@ -1505,8 +1505,8 @@ class Segment {
     kBeforeClusters = 0x1  // Position Cues before Clusters
   };
 
-  static const uint32_t kDefaultDocTypeVersion = 4;
-  static const uint64_t kDefaultMaxClusterDuration = 30000000000ULL;
+  static constexpr uint32_t kDefaultDocTypeVersion = 4;
+  static constexpr uint64_t kDefaultMaxClusterDuration = 30000000000ULL;
 
   Segment();
   ~Segment();

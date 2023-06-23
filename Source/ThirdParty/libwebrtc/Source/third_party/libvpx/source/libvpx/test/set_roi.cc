@@ -161,6 +161,6 @@ TEST(VP8RoiMapTest, ParameterCheck) {
   // Free allocated memory
   if (cpi.segmentation_map) vpx_free(cpi.segmentation_map);
   if (roi_map) vpx_free(roi_map);
-};
+}
 
 }  // namespace

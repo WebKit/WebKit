@@ -104,7 +104,7 @@ void vpx_highbd_hadamard_8x8_avx2(const int16_t *src_diff, ptrdiff_t src_stride,
   src16[4] = _mm_loadu_si128((const __m128i *)(src_diff += src_stride));
   src16[5] = _mm_loadu_si128((const __m128i *)(src_diff += src_stride));
   src16[6] = _mm_loadu_si128((const __m128i *)(src_diff += src_stride));
-  src16[7] = _mm_loadu_si128((const __m128i *)(src_diff += src_stride));
+  src16[7] = _mm_loadu_si128((const __m128i *)(src_diff + src_stride));
 
   src32[0] = _mm256_cvtepi16_epi32(src16[0]);
   src32[1] = _mm256_cvtepi16_epi32(src16[1]);
@@ -304,7 +304,7 @@ static void hadamard_8x8x2_avx2(const int16_t *src_diff, ptrdiff_t src_stride,
   src[4] = _mm256_loadu_si256((const __m256i *)(src_diff += src_stride));
   src[5] = _mm256_loadu_si256((const __m256i *)(src_diff += src_stride));
   src[6] = _mm256_loadu_si256((const __m256i *)(src_diff += src_stride));
-  src[7] = _mm256_loadu_si256((const __m256i *)(src_diff += src_stride));
+  src[7] = _mm256_loadu_si256((const __m256i *)(src_diff + src_stride));
 
   hadamard_col8x2_avx2(src, 0);
   hadamard_col8x2_avx2(src, 1);

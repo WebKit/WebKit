@@ -16,7 +16,7 @@
 #include "vpx_ports/mem.h"
 
 static const int8_t vp8_sub_pel_filters[8][8] = {
-  { 0, 0, 128, 0, 0, 0, 0, 0 },     /* note that 1/8 pel positionyys are */
+  { 0, 0, 128, 0, 0, 0, 0, 0 },     /* note that 1/8 pel positions are */
   { 0, -6, 123, 12, -1, 0, 0, 0 },  /*    just as per alpha -0.5 bicubic */
   { 2, -11, 108, 36, -8, 1, 0, 0 }, /* New 1/4 pel 6 tap filter */
   { 0, -9, 93, 50, -6, 0, 0, 0 },
@@ -781,7 +781,6 @@ void vp8_sixtap_predict8x4_neon(unsigned char *src_ptr, int src_pixels_per_line,
   vst1_u8(dst_ptr, d8u8);
   dst_ptr += dst_pitch;
   vst1_u8(dst_ptr, d9u8);
-  return;
 }
 
 void vp8_sixtap_predict8x8_neon(unsigned char *src_ptr, int src_pixels_per_line,
@@ -1250,7 +1249,6 @@ void vp8_sixtap_predict8x8_neon(unsigned char *src_ptr, int src_pixels_per_line,
     vst1_u8(dst_ptr, d9u8);
     dst_ptr += dst_pitch;
   }
-  return;
 }
 
 void vp8_sixtap_predict16x16_neon(unsigned char *src_ptr,
@@ -1504,7 +1502,9 @@ void vp8_sixtap_predict16x16_neon(unsigned char *src_ptr,
     src += src_pixels_per_line;
     d12u8 = vld1_u8(src);
     d13u8 = vld1_u8(src + 8);
-    d14u8 = vld1_u8(src + 16);
+    // Only 5 pixels are needed, avoid a potential out of bounds read.
+    d14u8 = vld1_u8(src + 13);
+    d14u8 = vext_u8(d14u8, d14u8, 3);
     src += src_pixels_per_line;
 
     __builtin_prefetch(src);
@@ -1726,5 +1726,4 @@ void vp8_sixtap_predict16x16_neon(unsigned char *src_ptr,
       dst += dst_pitch;
     }
   }
-  return;
 }

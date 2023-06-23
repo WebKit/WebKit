@@ -35,7 +35,7 @@
     }                                                                        \
   }
 
-DEFINE_FILTER(horiz);
-DEFINE_FILTER(avg_horiz);
-DEFINE_FILTER(vert);
-DEFINE_FILTER(avg_vert);
+DEFINE_FILTER(horiz)
+DEFINE_FILTER(avg_horiz)
+DEFINE_FILTER(vert)
+DEFINE_FILTER(avg_vert)

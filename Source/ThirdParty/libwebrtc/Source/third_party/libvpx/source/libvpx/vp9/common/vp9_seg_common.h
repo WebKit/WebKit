@@ -25,6 +25,11 @@ extern "C" {
 
 #define PREDICTION_PROBS 3
 
+// Segment ID used to skip background encoding
+#define BACKGROUND_SEG_SKIP_ID 3
+// Number of frames that don't skip after a key frame
+#define FRAMES_NO_SKIPPING_AFTER_KEY 20
+
 // Segment level features.
 typedef enum {
   SEG_LVL_ALT_Q = 0,      // Use alternate Quantizer ....

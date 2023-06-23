@@ -26,11 +26,11 @@ class WebMVideoSource : public CompressedVideoSource {
  public:
   explicit WebMVideoSource(const std::string &file_name)
       : file_name_(file_name), vpx_ctx_(new VpxInputContext()),
-        webm_ctx_(new WebmInputContext()), buf_(NULL), buf_sz_(0), frame_(0),
+        webm_ctx_(new WebmInputContext()), buf_(nullptr), buf_sz_(0), frame_(0),
         end_of_file_(false) {}
 
   virtual ~WebMVideoSource() {
-    if (vpx_ctx_->file != NULL) fclose(vpx_ctx_->file);
+    if (vpx_ctx_->file != nullptr) fclose(vpx_ctx_->file);
     webm_free(webm_ctx_);
     delete vpx_ctx_;
     delete webm_ctx_;
@@ -40,7 +40,7 @@ class WebMVideoSource : public CompressedVideoSource {
 
   virtual void Begin() {
     vpx_ctx_->file = OpenTestDataFile(file_name_);
-    ASSERT_TRUE(vpx_ctx_->file != NULL)
+    ASSERT_NE(vpx_ctx_->file, nullptr)
         << "Input file open failed. Filename: " << file_name_;
 
     ASSERT_EQ(file_is_webm(webm_ctx_, vpx_ctx_), 1) << "file is not WebM";
@@ -54,7 +54,7 @@ class WebMVideoSource : public CompressedVideoSource {
   }
 
   void FillFrame() {
-    ASSERT_TRUE(vpx_ctx_->file != NULL);
+    ASSERT_NE(vpx_ctx_->file, nullptr);
     const int status = webm_read_frame(webm_ctx_, &buf_, &buf_sz_);
     ASSERT_GE(status, 0) << "webm_read_frame failed";
     if (status == 1) {
@@ -63,7 +63,7 @@ class WebMVideoSource : public CompressedVideoSource {
   }
 
   void SeekToNextKeyFrame() {
-    ASSERT_TRUE(vpx_ctx_->file != NULL);
+    ASSERT_NE(vpx_ctx_->file, nullptr);
     do {
       const int status = webm_read_frame(webm_ctx_, &buf_, &buf_sz_);
       ASSERT_GE(status, 0) << "webm_read_frame failed";
@@ -74,7 +74,9 @@ class WebMVideoSource : public CompressedVideoSource {
     } while (!webm_ctx_->is_key_frame && !end_of_file_);
   }
 
-  virtual const uint8_t *cxdata() const { return end_of_file_ ? NULL : buf_; }
+  virtual const uint8_t *cxdata() const {
+    return end_of_file_ ? nullptr : buf_;
+  }
   virtual size_t frame_size() const { return buf_sz_; }
   virtual unsigned int frame_number() const { return frame_; }
 

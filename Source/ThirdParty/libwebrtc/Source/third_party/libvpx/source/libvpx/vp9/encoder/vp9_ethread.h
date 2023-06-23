@@ -42,6 +42,11 @@ typedef struct VP9RowMTSyncData {
   int rows;
 } VP9RowMTSync;
 
+// Frees EncWorkerData related allocations made by vp9_encode_*_mt().
+// row_mt specific data is freed with vp9_row_mt_mem_dealloc() and is not
+// called by this function.
+void vp9_encode_free_mt_data(struct VP9_COMP *cpi);
+
 void vp9_encode_tiles_mt(struct VP9_COMP *cpi);
 
 void vp9_encode_tiles_row_mt(struct VP9_COMP *cpi);

@@ -470,8 +470,8 @@ void vp8cx_init_mbrthread_data(VP8_COMP *cpi, MACROBLOCK *x,
 
     setup_mbby_copy(&mbr_ei[i].mb, x);
 
-    mbd->fullpixel_mask = 0xffffffff;
-    if (cm->full_pixel) mbd->fullpixel_mask = 0xfffffff8;
+    mbd->fullpixel_mask = ~0;
+    if (cm->full_pixel) mbd->fullpixel_mask = ~7;
 
     vp8_zero(mb->coef_counts);
     vp8_zero(x->ymode_count);

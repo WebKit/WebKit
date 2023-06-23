@@ -69,10 +69,9 @@ static const unsigned char VP8_VAR_OFFS[16] = { 128, 128, 128, 128, 128, 128,
                                                 128, 128, 128, 128 };
 
 /* Original activity measure from Tim T's code. */
-static unsigned int tt_activity_measure(VP8_COMP *cpi, MACROBLOCK *x) {
+static unsigned int tt_activity_measure(MACROBLOCK *x) {
   unsigned int act;
   unsigned int sse;
-  (void)cpi;
   /* TODO: This could also be done over smaller areas (8x8), but that would
    *  require extensive changes elsewhere, as lambda is assumed to be fixed
    *  over an entire MB in most of the code.
@@ -90,28 +89,21 @@ static unsigned int tt_activity_measure(VP8_COMP *cpi, MACROBLOCK *x) {
   return act;
 }
 
-/* Stub for alternative experimental activity measures. */
-static unsigned int alt_activity_measure(VP8_COMP *cpi, MACROBLOCK *x,
-                                         int use_dc_pred) {
-  return vp8_encode_intra(cpi, x, use_dc_pred);
-}
-
 /* Measure the activity of the current macroblock
  * What we measure here is TBD so abstracted to this function
  */
 #define ALT_ACT_MEASURE 1
-static unsigned int mb_activity_measure(VP8_COMP *cpi, MACROBLOCK *x,
-                                        int mb_row, int mb_col) {
+static unsigned int mb_activity_measure(MACROBLOCK *x, int mb_row, int mb_col) {
   unsigned int mb_activity;
 
   if (ALT_ACT_MEASURE) {
     int use_dc_pred = (mb_col || mb_row) && (!mb_col || !mb_row);
 
-    /* Or use and alternative. */
-    mb_activity = alt_activity_measure(cpi, x, use_dc_pred);
+    /* Or use an alternative. */
+    mb_activity = vp8_encode_intra(x, use_dc_pred);
   } else {
     /* Original activity measure from Tim T's code. */
-    mb_activity = tt_activity_measure(cpi, x);
+    mb_activity = tt_activity_measure(x);
   }
 
   if (mb_activity < VP8_ACTIVITY_AVG_MIN) mb_activity = VP8_ACTIVITY_AVG_MIN;
@@ -264,7 +256,7 @@ static void build_activity_map(VP8_COMP *cpi) {
       vp8_copy_mem16x16(x->src.y_buffer, x->src.y_stride, x->thismb, 16);
 
       /* measure activity */
-      mb_activity = mb_activity_measure(cpi, x, mb_row, mb_col);
+      mb_activity = mb_activity_measure(x, mb_row, mb_col);
 
       /* Keep frame sum */
       activity_sum += mb_activity;
@@ -634,12 +626,13 @@ static void init_encode_frame_mb_context(VP8_COMP *cpi) {
                              cpi->prob_last_coded, cpi->prob_gf_coded);
   }
 
-  xd->fullpixel_mask = 0xffffffff;
-  if (cm->full_pixel) xd->fullpixel_mask = 0xfffffff8;
+  xd->fullpixel_mask = ~0;
+  if (cm->full_pixel) xd->fullpixel_mask = ~7;
 
   vp8_zero(x->coef_counts);
   vp8_zero(x->ymode_count);
-  vp8_zero(x->uv_mode_count) x->prediction_error = 0;
+  vp8_zero(x->uv_mode_count);
+  x->prediction_error = 0;
   x->intra_error = 0;
   vp8_zero(x->count_mb_ref_frame_usage);
 }
@@ -766,12 +759,12 @@ void vp8_encode_frame(VP8_COMP *cpi) {
 
       for (mb_row = 0; mb_row < cm->mb_rows;
            mb_row += (cpi->encoding_thread_count + 1)) {
-        vp8_zero(cm->left_context)
+        vp8_zero(cm->left_context);
 
 #if CONFIG_REALTIME_ONLY & CONFIG_ONTHEFLY_BITPACKING
-            tp = cpi->tok;
+        tp = cpi->tok;
 #else
-            tp = cpi->tok + mb_row * (cm->mb_cols * 16 * 24);
+        tp = cpi->tok + mb_row * (cm->mb_cols * 16 * 24);
 #endif
 
         encode_mb_row(cpi, cm, mb_row, x, xd, &tp, segment_counts, &totalrate);
@@ -858,10 +851,10 @@ void vp8_encode_frame(VP8_COMP *cpi) {
 
       /* for each macroblock row in image */
       for (mb_row = 0; mb_row < cm->mb_rows; ++mb_row) {
-        vp8_zero(cm->left_context)
+        vp8_zero(cm->left_context);
 
 #if CONFIG_REALTIME_ONLY & CONFIG_ONTHEFLY_BITPACKING
-            tp = cpi->tok;
+        tp = cpi->tok;
 #endif
 
         encode_mb_row(cpi, cm, mb_row, x, xd, &tp, segment_counts, &totalrate);

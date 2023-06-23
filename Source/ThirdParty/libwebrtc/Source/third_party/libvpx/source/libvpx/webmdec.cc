@@ -210,6 +210,8 @@ int webm_guess_framerate(struct WebmInputContext *webm_ctx,
   vpx_ctx->framerate.denominator =
       static_cast<int>(webm_ctx->timestamp_ns / 1000);
   delete[] buffer;
+  // webm_ctx->buffer is assigned to the buffer pointer in webm_read_frame().
+  webm_ctx->buffer = nullptr;
 
   get_first_cluster(webm_ctx);
   webm_ctx->block = nullptr;

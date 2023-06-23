@@ -7,6 +7,8 @@
  *  in the file PATENTS.  All contributing project authors may
  *  be found in the AUTHORS file in the root of the source tree.
  */
+#include <limits.h>
+
 #include "test/codec_factory.h"
 #include "test/encode_test_driver.h"
 #include "test/util.h"
@@ -33,17 +35,19 @@ class RealtimeTest
   }
 
   void BeginPassHook(unsigned int /*pass*/) override {
+#if !CONFIG_REALTIME_ONLY
     // TODO(tomfinegan): We're changing the pass value here to make sure
     // we get frames when real time mode is combined with |g_pass| set to
     // VPX_RC_FIRST_PASS. This is necessary because EncoderTest::RunLoop() sets
     // the pass value based on the mode passed into EncoderTest::SetMode(),
     // which overrides the one specified in SetUp() above.
     cfg_.g_pass = VPX_RC_FIRST_PASS;
+#endif
   }
 
   void PreEncodeFrameHook(::libvpx_test::VideoSource *video,
                           ::libvpx_test::Encoder *encoder) override {
-    if (video->frame() == 0) {
+    if (video->frame() == 0 && set_cpu_used_) {
       encoder->Control(VP8E_SET_CPUUSED, 8);
     }
   }
@@ -52,23 +56,57 @@ class RealtimeTest
     frame_packets_++;
   }
 
+  bool IsVP9() const {
+#if CONFIG_VP9_ENCODER
+    return codec_ == &libvpx_test::kVP9;
+#else
+    return false;
+#endif
+  }
+
+  void TestIntegerOverflow(unsigned int width, unsigned int height) {
+    ::libvpx_test::RandomVideoSource video;
+    video.SetSize(width, height);
+    video.set_limit(20);
+    cfg_.rc_target_bitrate = UINT_MAX;
+    ASSERT_NO_FATAL_FAILURE(RunLoop(&video));
+  }
+
+  void TestEncode() {
+    ::libvpx_test::RandomVideoSource video;
+    video.SetSize(kVideoSourceWidth, kVideoSourceHeight);
+    video.set_limit(kFramesToEncode);
+    ASSERT_NO_FATAL_FAILURE(RunLoop(&video));
+    EXPECT_EQ(kFramesToEncode, frame_packets_);
+  }
+
   int frame_packets_;
+  bool set_cpu_used_ = true;
 };
 
-TEST_P(RealtimeTest, RealtimeFirstPassProducesFrames) {
-  ::libvpx_test::RandomVideoSource video;
-  video.SetSize(kVideoSourceWidth, kVideoSourceHeight);
-  video.set_limit(kFramesToEncode);
-  ASSERT_NO_FATAL_FAILURE(RunLoop(&video));
-  EXPECT_EQ(kFramesToEncode, frame_packets_);
+TEST_P(RealtimeTest, RealtimeFirstPassProducesFrames) { TestEncode(); }
+
+TEST_P(RealtimeTest, RealtimeDefaultCpuUsed) {
+  set_cpu_used_ = false;
+  TestEncode();
 }
 
-TEST_P(RealtimeTest, IntegerOverflow) {
-  ::libvpx_test::RandomVideoSource video;
-  video.SetSize(800, 480);
-  video.set_limit(20);
-  cfg_.rc_target_bitrate = 140000000;
-  ASSERT_NO_FATAL_FAILURE(RunLoop(&video));
+TEST_P(RealtimeTest, IntegerOverflow) { TestIntegerOverflow(2048, 2048); }
+
+TEST_P(RealtimeTest, IntegerOverflowLarge) {
+  if (IsVP9()) {
+#if VPX_ARCH_X86_64
+    TestIntegerOverflow(16384, 16384);
+#else
+    TestIntegerOverflow(4096, 4096);
+#endif
+  } else {
+    GTEST_SKIP()
+        << "TODO(https://crbug.com/webm/1748,https://crbug.com/webm/1751):"
+        << " Enable this test after bitstream errors & undefined sanitizer "
+           "warnings are fixed.";
+    // TestIntegerOverflow(16383, 16383);
+  }
 }
 
 VP8_INSTANTIATE_TEST_SUITE(RealtimeTest,

@@ -768,4 +768,11 @@ INSTANTIATE_TEST_SUITE_P(VSX, FwdTrans8x8DCT,
                                                       &vpx_idct8x8_64_add_vsx,
                                                       0, VPX_BITS_8)));
 #endif  // HAVE_VSX && !CONFIG_VP9_HIGHBITDEPTH && !CONFIG_EMULATE_HARDWARE
+
+#if HAVE_LSX && !CONFIG_VP9_HIGHBITDEPTH && !CONFIG_EMULATE_HARDWARE
+INSTANTIATE_TEST_SUITE_P(LSX, FwdTrans8x8DCT,
+                         ::testing::Values(make_tuple(&vpx_fdct8x8_lsx,
+                                                      &vpx_idct8x8_64_add_c, 0,
+                                                      VPX_BITS_8)));
+#endif  // HAVE_LSX && !CONFIG_VP9_HIGHBITDEPTH && !CONFIG_EMULATE_HARDWARE
 }  // namespace

@@ -197,4 +197,22 @@ INSTANTIATE_TEST_SUITE_P(
                                  &BlockError8BitWrapper<vp9_block_error_c>,
                                  VPX_BITS_8)));
 #endif  // HAVE_AVX2
+
+#if HAVE_NEON
+const BlockErrorParam neon_block_error_tests[] = {
+#if CONFIG_VP9_HIGHBITDEPTH
+  make_tuple(&vp9_highbd_block_error_neon, &vp9_highbd_block_error_c,
+             VPX_BITS_10),
+  make_tuple(&vp9_highbd_block_error_neon, &vp9_highbd_block_error_c,
+             VPX_BITS_12),
+  make_tuple(&vp9_highbd_block_error_neon, &vp9_highbd_block_error_c,
+             VPX_BITS_8),
+#endif  // CONFIG_VP9_HIGHBITDEPTH
+  make_tuple(&BlockError8BitWrapper<vp9_block_error_neon>,
+             &BlockError8BitWrapper<vp9_block_error_c>, VPX_BITS_8)
+};
+
+INSTANTIATE_TEST_SUITE_P(NEON, BlockErrorTest,
+                         ::testing::ValuesIn(neon_block_error_tests));
+#endif  // HAVE_NEON
 }  // namespace

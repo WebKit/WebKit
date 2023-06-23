@@ -469,18 +469,18 @@ static void scale_plane_4_to_3_general(const uint8_t *src, const int src_stride,
   // It's used to choose the src offset and filter coefficient offset.
   const int offset_idx1 = (offset1_q4 >> 4) & 1;
   const int offset_idx2 = (offset2_q4 >> 4) & 1;
-  static const shuffle_filter_funcs shuffle_filter_funcs[2] = {
+  static const shuffle_filter_funcs kShuffleFilterFuncs[2] = {
     shuffle_filter_ssse3, shuffle_filter_odd_ssse3
   };
-  static const convolve8_funcs convolve8_funcs[2] = {
+  static const convolve8_funcs kConvolve8Funcs[2] = {
     convolve8_8_even_offset_ssse3, convolve8_8_odd_offset_ssse3
   };
 
   assert(w && h);
 
   shuffle_filter_ssse3(coef[(phase_scaler + 0 * step_q4) & SUBPEL_MASK], f0);
-  shuffle_filter_funcs[offset_idx1](coef[offset1_q4 & SUBPEL_MASK], f1);
-  shuffle_filter_funcs[offset_idx2](coef[offset2_q4 & SUBPEL_MASK], f2);
+  kShuffleFilterFuncs[offset_idx1](coef[offset1_q4 & SUBPEL_MASK], f1);
+  kShuffleFilterFuncs[offset_idx2](coef[offset2_q4 & SUBPEL_MASK], f2);
 
   // Sub 64 to avoid overflow.
   // Coef 128 would be treated as -128 in PMADDUBSW. Sub 64 here.
@@ -522,11 +522,11 @@ static void scale_plane_4_to_3_general(const uint8_t *src, const int src_stride,
       // 04 14 24 34 44 54 64 74
       // 05 15 25 35 45 55 65 75
       d[0] = convolve8_8_even_offset_ssse3(&s[0], f0);
-      d[1] = convolve8_funcs[offset_idx1](&s[offset1_q4 >> 5], f1);
-      d[2] = convolve8_funcs[offset_idx2](&s[offset2_q4 >> 5], f2);
+      d[1] = kConvolve8Funcs[offset_idx1](&s[offset1_q4 >> 5], f1);
+      d[2] = kConvolve8Funcs[offset_idx2](&s[offset2_q4 >> 5], f2);
       d[3] = convolve8_8_even_offset_ssse3(&s[2], f0);
-      d[4] = convolve8_funcs[offset_idx1](&s[2 + (offset1_q4 >> 5)], f1);
-      d[5] = convolve8_funcs[offset_idx2](&s[2 + (offset2_q4 >> 5)], f2);
+      d[4] = kConvolve8Funcs[offset_idx1](&s[2 + (offset1_q4 >> 5)], f1);
+      d[5] = kConvolve8Funcs[offset_idx2](&s[2 + (offset2_q4 >> 5)], f2);
 
       // 00 10 20 30 40 50 60 70  02 12 22 32 42 52 62 72
       // 01 11 21 31 41 51 61 71  03 13 23 33 43 53 63 73
@@ -598,11 +598,11 @@ static void scale_plane_4_to_3_general(const uint8_t *src, const int src_stride,
       loadu_8bit_16x4(t, stride_hor, &s[4]);
 
       d[0] = convolve8_8_even_offset_ssse3(&s[0], f0);
-      d[1] = convolve8_funcs[offset_idx1](&s[offset1_q4 >> 5], f1);
-      d[2] = convolve8_funcs[offset_idx2](&s[offset2_q4 >> 5], f2);
+      d[1] = kConvolve8Funcs[offset_idx1](&s[offset1_q4 >> 5], f1);
+      d[2] = kConvolve8Funcs[offset_idx2](&s[offset2_q4 >> 5], f2);
       d[3] = convolve8_8_even_offset_ssse3(&s[2], f0);
-      d[4] = convolve8_funcs[offset_idx1](&s[2 + (offset1_q4 >> 5)], f1);
-      d[5] = convolve8_funcs[offset_idx2](&s[2 + (offset2_q4 >> 5)], f2);
+      d[4] = kConvolve8Funcs[offset_idx1](&s[2 + (offset1_q4 >> 5)], f1);
+      d[5] = kConvolve8Funcs[offset_idx2](&s[2 + (offset2_q4 >> 5)], f2);
 
       // 00 01 02 03 04 05 06 07  10 11 12 13 14 15 16 17
       // 20 21 22 23 24 25 26 27  30 31 32 33 34 35 36 37
@@ -754,8 +754,8 @@ void vp9_scale_and_extend_frame_ssse3(const YV12_BUFFER_CONFIG *src,
   const int src_h = src->y_crop_height;
   const int dst_w = dst->y_crop_width;
   const int dst_h = dst->y_crop_height;
-  const int dst_uv_w = dst_w / 2;
-  const int dst_uv_h = dst_h / 2;
+  const int dst_uv_w = dst->uv_crop_width;
+  const int dst_uv_h = dst->uv_crop_height;
   int scaled = 0;
 
   // phase_scaler is usually 0 or 8.

@@ -13,6 +13,7 @@
 
 #include "vpx_util/vpx_thread.h"
 
+#include "vp9/common/vp9_blockd.h"
 #include "vp9/common/vp9_entropymv.h"
 #include "vp9/common/vp9_entropy.h"
 
@@ -24,7 +25,7 @@ typedef struct {
   unsigned int sse;
   int sum;
   unsigned int var;
-} diff;
+} Diff;
 
 struct macroblock_plane {
   DECLARE_ALIGNED(16, int16_t, src_diff[64 * 64]);
@@ -34,7 +35,7 @@ struct macroblock_plane {
   struct buf_2d src;
 
   // Quantizer setings
-  DECLARE_ALIGNED(16, int16_t, round_fp[8]);
+  int16_t *round_fp;
   int16_t *quant_fp;
   int16_t *quant;
   int16_t *quant_shift;
@@ -78,7 +79,7 @@ struct macroblock {
   int skip_recode;
   int skip_optimize;
   int q_index;
-  int block_qcoeff_opt;
+  double log_block_src_var;
   int block_tx_domain;
 
   // The equivalent error at the current rdmult of one whole bit (not one
@@ -157,6 +158,9 @@ struct macroblock {
   // skip forward transform and quantization
   uint8_t skip_txfm[MAX_MB_PLANE << 2];
 #define SKIP_TXFM_NONE 0
+// TODO(chengchen): consider remove SKIP_TXFM_AC_DC from vp9 completely
+// since it increases risks of bad perceptual quality.
+// https://crbug.com/webm/1729
 #define SKIP_TXFM_AC_DC 1
 #define SKIP_TXFM_AC_ONLY 2
 

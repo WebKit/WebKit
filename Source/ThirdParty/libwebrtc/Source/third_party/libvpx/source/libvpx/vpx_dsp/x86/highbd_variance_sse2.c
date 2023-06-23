@@ -7,6 +7,7 @@
  *  in the file PATENTS.  All contributing project authors may
  *  be found in the AUTHORS file in the root of the source tree.
  */
+#include <emmintrin.h>  // SSE2
 
 #include "./vpx_config.h"
 #include "./vpx_dsp_rtcd.h"
@@ -121,8 +122,8 @@ static void highbd_12_variance_sse2(const uint16_t *src, int src_stride,
     *sse = ROUND_POWER_OF_TWO(*sse, 8);                                       \
   }
 
-HIGH_GET_VAR(16);
-HIGH_GET_VAR(8);
+HIGH_GET_VAR(16)
+HIGH_GET_VAR(8)
 
 #undef HIGH_GET_VAR
 
@@ -167,16 +168,16 @@ HIGH_GET_VAR(8);
     return (var >= 0) ? (uint32_t)var : 0;                                 \
   }
 
-VAR_FN(64, 64, 16, 12);
-VAR_FN(64, 32, 16, 11);
-VAR_FN(32, 64, 16, 11);
-VAR_FN(32, 32, 16, 10);
-VAR_FN(32, 16, 16, 9);
-VAR_FN(16, 32, 16, 9);
-VAR_FN(16, 16, 16, 8);
-VAR_FN(16, 8, 8, 7);
-VAR_FN(8, 16, 8, 7);
-VAR_FN(8, 8, 8, 6);
+VAR_FN(64, 64, 16, 12)
+VAR_FN(64, 32, 16, 11)
+VAR_FN(32, 64, 16, 11)
+VAR_FN(32, 32, 16, 10)
+VAR_FN(32, 16, 16, 9)
+VAR_FN(16, 32, 16, 9)
+VAR_FN(16, 16, 16, 8)
+VAR_FN(16, 8, 8, 7)
+VAR_FN(8, 16, 8, 7)
+VAR_FN(8, 8, 8, 6)
 
 #undef VAR_FN
 
@@ -255,10 +256,10 @@ unsigned int vpx_highbd_12_mse8x8_sse2(const uint8_t *src8, int src_stride,
       const uint16_t *ref, ptrdiff_t ref_stride, int height,                 \
       unsigned int *sse, void *unused0, void *unused);
 #define DECLS(opt) \
-  DECL(8, opt);    \
+  DECL(8, opt)     \
   DECL(16, opt)
 
-DECLS(sse2);
+DECLS(sse2)
 
 #undef DECLS
 #undef DECL
@@ -383,20 +384,20 @@ DECLS(sse2);
     return (var >= 0) ? (uint32_t)var : 0;                                     \
   }
 
-#define FNS(opt)                        \
-  FN(64, 64, 16, 6, 6, opt, (int64_t)); \
-  FN(64, 32, 16, 6, 5, opt, (int64_t)); \
-  FN(32, 64, 16, 5, 6, opt, (int64_t)); \
-  FN(32, 32, 16, 5, 5, opt, (int64_t)); \
-  FN(32, 16, 16, 5, 4, opt, (int64_t)); \
-  FN(16, 32, 16, 4, 5, opt, (int64_t)); \
-  FN(16, 16, 16, 4, 4, opt, (int64_t)); \
-  FN(16, 8, 16, 4, 3, opt, (int64_t));  \
-  FN(8, 16, 8, 3, 4, opt, (int64_t));   \
-  FN(8, 8, 8, 3, 3, opt, (int64_t));    \
-  FN(8, 4, 8, 3, 2, opt, (int64_t));
+#define FNS(opt)                       \
+  FN(64, 64, 16, 6, 6, opt, (int64_t)) \
+  FN(64, 32, 16, 6, 5, opt, (int64_t)) \
+  FN(32, 64, 16, 5, 6, opt, (int64_t)) \
+  FN(32, 32, 16, 5, 5, opt, (int64_t)) \
+  FN(32, 16, 16, 5, 4, opt, (int64_t)) \
+  FN(16, 32, 16, 4, 5, opt, (int64_t)) \
+  FN(16, 16, 16, 4, 4, opt, (int64_t)) \
+  FN(16, 8, 16, 4, 3, opt, (int64_t))  \
+  FN(8, 16, 8, 3, 4, opt, (int64_t))   \
+  FN(8, 8, 8, 3, 3, opt, (int64_t))    \
+  FN(8, 4, 8, 3, 2, opt, (int64_t))
 
-FNS(sse2);
+FNS(sse2)
 
 #undef FNS
 #undef FN
@@ -412,7 +413,7 @@ FNS(sse2);
   DECL(16, opt1)    \
   DECL(8, opt1)
 
-DECLS(sse2);
+DECLS(sse2)
 #undef DECL
 #undef DECLS
 
@@ -542,20 +543,66 @@ DECLS(sse2);
     return (var >= 0) ? (uint32_t)var : 0;                                     \
   }
 
-#define FNS(opt1)                        \
-  FN(64, 64, 16, 6, 6, opt1, (int64_t)); \
-  FN(64, 32, 16, 6, 5, opt1, (int64_t)); \
-  FN(32, 64, 16, 5, 6, opt1, (int64_t)); \
-  FN(32, 32, 16, 5, 5, opt1, (int64_t)); \
-  FN(32, 16, 16, 5, 4, opt1, (int64_t)); \
-  FN(16, 32, 16, 4, 5, opt1, (int64_t)); \
-  FN(16, 16, 16, 4, 4, opt1, (int64_t)); \
-  FN(16, 8, 16, 4, 3, opt1, (int64_t));  \
-  FN(8, 16, 8, 4, 3, opt1, (int64_t));   \
-  FN(8, 8, 8, 3, 3, opt1, (int64_t));    \
-  FN(8, 4, 8, 3, 2, opt1, (int64_t));
+#define FNS(opt1)                       \
+  FN(64, 64, 16, 6, 6, opt1, (int64_t)) \
+  FN(64, 32, 16, 6, 5, opt1, (int64_t)) \
+  FN(32, 64, 16, 5, 6, opt1, (int64_t)) \
+  FN(32, 32, 16, 5, 5, opt1, (int64_t)) \
+  FN(32, 16, 16, 5, 4, opt1, (int64_t)) \
+  FN(16, 32, 16, 4, 5, opt1, (int64_t)) \
+  FN(16, 16, 16, 4, 4, opt1, (int64_t)) \
+  FN(16, 8, 16, 4, 3, opt1, (int64_t))  \
+  FN(8, 16, 8, 4, 3, opt1, (int64_t))   \
+  FN(8, 8, 8, 3, 3, opt1, (int64_t))    \
+  FN(8, 4, 8, 3, 2, opt1, (int64_t))
 
-FNS(sse2);
+FNS(sse2)
 
 #undef FNS
 #undef FN
+
+void vpx_highbd_comp_avg_pred_sse2(uint16_t *comp_pred, const uint16_t *pred,
+                                   int width, int height, const uint16_t *ref,
+                                   int ref_stride) {
+  int i, j;
+  if (width > 8) {
+    for (i = 0; i < height; ++i) {
+      for (j = 0; j < width; j += 16) {
+        const __m128i p0 = _mm_loadu_si128((const __m128i *)&pred[j]);
+        const __m128i p1 = _mm_loadu_si128((const __m128i *)&pred[j + 8]);
+        const __m128i r0 = _mm_loadu_si128((const __m128i *)&ref[j]);
+        const __m128i r1 = _mm_loadu_si128((const __m128i *)&ref[j + 8]);
+        _mm_storeu_si128((__m128i *)&comp_pred[j], _mm_avg_epu16(p0, r0));
+        _mm_storeu_si128((__m128i *)&comp_pred[j + 8], _mm_avg_epu16(p1, r1));
+      }
+      comp_pred += width;
+      pred += width;
+      ref += ref_stride;
+    }
+  } else if (width == 8) {
+    for (i = 0; i < height; i += 2) {
+      const __m128i p0 = _mm_loadu_si128((const __m128i *)&pred[0]);
+      const __m128i p1 = _mm_loadu_si128((const __m128i *)&pred[8]);
+      const __m128i r0 = _mm_loadu_si128((const __m128i *)&ref[0]);
+      const __m128i r1 = _mm_loadu_si128((const __m128i *)&ref[ref_stride]);
+      _mm_storeu_si128((__m128i *)&comp_pred[0], _mm_avg_epu16(p0, r0));
+      _mm_storeu_si128((__m128i *)&comp_pred[8], _mm_avg_epu16(p1, r1));
+      comp_pred += 8 << 1;
+      pred += 8 << 1;
+      ref += ref_stride << 1;
+    }
+  } else {
+    assert(width == 4);
+    for (i = 0; i < height; i += 2) {
+      const __m128i p0 = _mm_loadl_epi64((const __m128i *)&pred[0]);
+      const __m128i p1 = _mm_loadl_epi64((const __m128i *)&pred[4]);
+      const __m128i r0 = _mm_loadl_epi64((const __m128i *)&ref[0]);
+      const __m128i r1 = _mm_loadl_epi64((const __m128i *)&ref[ref_stride]);
+      _mm_storel_epi64((__m128i *)&comp_pred[0], _mm_avg_epu16(p0, r0));
+      _mm_storel_epi64((__m128i *)&comp_pred[4], _mm_avg_epu16(p1, r1));
+      comp_pred += 4 << 1;
+      pred += 4 << 1;
+      ref += ref_stride << 1;
+    }
+  }
+}

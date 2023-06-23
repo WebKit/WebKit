@@ -36,7 +36,7 @@ void vpx_mbpost_proc_down_sse2(unsigned char *dst, int pitch, int rows,
     __m128i s = _mm_loadl_epi64((__m128i *)dst);
     __m128i sum, sumsq_0, sumsq_1;
     __m128i tmp_0, tmp_1;
-    __m128i below_context;
+    __m128i below_context = _mm_setzero_si128();
 
     s = _mm_unpacklo_epi8(s, zero);
 

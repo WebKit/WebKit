@@ -11,6 +11,8 @@
 #ifndef VPX_VP8_DECODER_ONYXD_INT_H_
 #define VPX_VP8_DECODER_ONYXD_INT_H_
 
+#include <assert.h>
+
 #include "vpx_config.h"
 #include "vp8/common/onyxd.h"
 #include "treereader.h"
@@ -136,6 +138,7 @@ int vp8_remove_decoder_instances(struct frame_buffers *fb);
 #if CONFIG_DEBUG
 #define CHECK_MEM_ERROR(lval, expr)                                         \
   do {                                                                      \
+    assert(pbi->common.error.setjmp);                                       \
     (lval) = (expr);                                                        \
     if (!(lval))                                                            \
       vpx_internal_error(&pbi->common.error, VPX_CODEC_MEM_ERROR,           \
@@ -145,6 +148,7 @@ int vp8_remove_decoder_instances(struct frame_buffers *fb);
 #else
 #define CHECK_MEM_ERROR(lval, expr)                               \
   do {                                                            \
+    assert(pbi->common.error.setjmp);                             \
     (lval) = (expr);                                              \
     if (!(lval))                                                  \
       vpx_internal_error(&pbi->common.error, VPX_CODEC_MEM_ERROR, \

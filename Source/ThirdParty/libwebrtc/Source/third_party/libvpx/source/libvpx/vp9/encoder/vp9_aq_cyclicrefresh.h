@@ -70,6 +70,7 @@ struct CYCLIC_REFRESH {
   int apply_cyclic_refresh;
   int counter_encode_maxq_scene_change;
   int skip_flat_static_blocks;
+  int content_mode;
 };
 
 struct VP9_COMP;

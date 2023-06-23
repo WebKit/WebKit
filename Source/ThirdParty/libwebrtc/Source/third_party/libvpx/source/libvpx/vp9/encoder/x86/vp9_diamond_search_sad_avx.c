@@ -32,29 +32,6 @@ static INLINE int_mv pack_int_mv(int16_t row, int16_t col) {
   result.as_mv.col = col;
   return result;
 }
-
-static INLINE MV_JOINT_TYPE get_mv_joint(const int_mv mv) {
-  // This is simplified from the C implementation to utilise that
-  //  x->nmvjointsadcost[1] == x->nmvjointsadcost[2]  and
-  //  x->nmvjointsadcost[1] == x->nmvjointsadcost[3]
-  return mv.as_int == 0 ? 0 : 1;
-}
-
-static INLINE int mv_cost(const int_mv mv, const int *joint_cost,
-                          int *const comp_cost[2]) {
-  return joint_cost[get_mv_joint(mv)] + comp_cost[0][mv.as_mv.row] +
-         comp_cost[1][mv.as_mv.col];
-}
-
-static int mvsad_err_cost(const MACROBLOCK *x, const int_mv mv, const MV *ref,
-                          int sad_per_bit) {
-  const int_mv diff =
-      pack_int_mv(mv.as_mv.row - ref->row, mv.as_mv.col - ref->col);
-  return ROUND_POWER_OF_TWO(
-      (unsigned)mv_cost(diff, x->nmvjointsadcost, x->nmvsadcost) * sad_per_bit,
-      VP9_PROB_COST_SHIFT);
-}
-
 /*****************************************************************************
  * This function utilizes 3 properties of the cost function lookup tables,   *
  * constructed in using 'cal_nmvjointsadcost' and 'cal_nmvsadcosts' in       *
@@ -72,13 +49,14 @@ static int mvsad_err_cost(const MACROBLOCK *x, const int_mv mv, const MV *ref,
  *****************************************************************************/
 int vp9_diamond_search_sad_avx(const MACROBLOCK *x,
                                const search_site_config *cfg, MV *ref_mv,
-                               MV *best_mv, int search_param, int sad_per_bit,
-                               int *num00, const vp9_variance_fn_ptr_t *fn_ptr,
+                               uint32_t start_mv_sad, MV *best_mv,
+                               int search_param, int sad_per_bit, int *num00,
+                               const vp9_sad_fn_ptr_t *sad_fn_ptr,
                                const MV *center_mv) {
   const int_mv maxmv = pack_int_mv(x->mv_limits.row_max, x->mv_limits.col_max);
-  const __m128i v_max_mv_w = _mm_set1_epi32(maxmv.as_int);
+  const __m128i v_max_mv_w = _mm_set1_epi32((int)maxmv.as_int);
   const int_mv minmv = pack_int_mv(x->mv_limits.row_min, x->mv_limits.col_min);
-  const __m128i v_min_mv_w = _mm_set1_epi32(minmv.as_int);
+  const __m128i v_min_mv_w = _mm_set1_epi32((int)minmv.as_int);
 
   const __m128i v_spb_d = _mm_set1_epi32(sad_per_bit);
 
@@ -96,14 +74,14 @@ int vp9_diamond_search_sad_avx(const MACROBLOCK *x,
 
   const int_mv fcenter_mv =
       pack_int_mv(center_mv->row >> 3, center_mv->col >> 3);
-  const __m128i vfcmv = _mm_set1_epi32(fcenter_mv.as_int);
+  const __m128i vfcmv = _mm_set1_epi32((int)fcenter_mv.as_int);
 
-  const int ref_row = clamp(ref_mv->row, minmv.as_mv.row, maxmv.as_mv.row);
-  const int ref_col = clamp(ref_mv->col, minmv.as_mv.col, maxmv.as_mv.col);
+  const int ref_row = ref_mv->row;
+  const int ref_col = ref_mv->col;
 
   int_mv bmv = pack_int_mv(ref_row, ref_col);
   int_mv new_bmv = bmv;
-  __m128i v_bmv_w = _mm_set1_epi32(bmv.as_int);
+  __m128i v_bmv_w = _mm_set1_epi32((int)bmv.as_int);
 
   const int what_stride = x->plane[0].src.stride;
   const int in_what_stride = x->e_mbd.plane[0].pre[0].stride;
@@ -119,8 +97,8 @@ int vp9_diamond_search_sad_avx(const MACROBLOCK *x,
 #else
   __m128i v_ba_d = _mm_set1_epi32((intptr_t)best_address);
 #endif
-
-  unsigned int best_sad;
+  // Starting position
+  unsigned int best_sad = start_mv_sad;
   int i, j, step;
 
   // Check the prerequisite cost function properties that are easy to check
@@ -128,10 +106,6 @@ int vp9_diamond_search_sad_avx(const MACROBLOCK *x,
   // prerequisites.
   assert(x->nmvjointsadcost[1] == x->nmvjointsadcost[2]);
   assert(x->nmvjointsadcost[1] == x->nmvjointsadcost[3]);
-
-  // Check the starting position
-  best_sad = fn_ptr->sdf(what, what_stride, in_what, in_what_stride);
-  best_sad += mvsad_err_cost(x, bmv, &fcenter_mv.as_mv, sad_per_bit);
 
   *num00 = 0;
 
@@ -193,8 +167,8 @@ int vp9_diamond_search_sad_avx(const MACROBLOCK *x,
 #endif
       }
 
-      fn_ptr->sdx4df(what, what_stride, (const uint8_t **)&v_blocka[0],
-                     in_what_stride, (uint32_t *)&v_sad_d);
+      sad_fn_ptr->sdx4df(what, what_stride, (const uint8_t **)&v_blocka[0],
+                         in_what_stride, (uint32_t *)&v_sad_d);
 
       // Look up the component cost of the residual motion vector
       {
@@ -282,7 +256,14 @@ int vp9_diamond_search_sad_avx(const MACROBLOCK *x,
 
         // Update the global minimum if the local minimum is smaller
         if (LIKELY(local_best_sad < best_sad)) {
+#if defined(__GNUC__) && __GNUC__ >= 4 && !defined(__clang__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
+#endif
           new_bmv = ((const int_mv *)&v_these_mv_w)[local_best_idx];
+#if defined(__GNUC__) && __GNUC__ >= 4 && !defined(__clang__)
+#pragma GCC diagnostic pop
+#endif
           new_best_address = ((const uint8_t **)v_blocka)[local_best_idx];
 
           best_sad = local_best_sad;
@@ -293,7 +274,7 @@ int vp9_diamond_search_sad_avx(const MACROBLOCK *x,
     bmv = new_bmv;
     best_address = new_best_address;
 
-    v_bmv_w = _mm_set1_epi32(bmv.as_int);
+    v_bmv_w = _mm_set1_epi32((int)bmv.as_int);
 #if VPX_ARCH_X86_64
     v_ba_q = _mm_set1_epi64x((intptr_t)best_address);
 #else

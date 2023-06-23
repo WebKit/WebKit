@@ -14,6 +14,7 @@
 #include "./vpx_dsp_rtcd.h"
 #include "./vpx_scale_rtcd.h"
 #include "vp9/common/vp9_blockd.h"
+#include "vpx_dsp/arm/mem_neon.h"
 #include "vpx_dsp/arm/transpose_neon.h"
 #include "vpx_dsp/arm/vpx_convolve8_neon.h"
 #include "vpx_dsp/vpx_filter.h"
@@ -710,8 +711,8 @@ void vp9_scale_and_extend_frame_neon(const YV12_BUFFER_CONFIG *src,
   const int src_h = src->y_crop_height;
   const int dst_w = dst->y_crop_width;
   const int dst_h = dst->y_crop_height;
-  const int dst_uv_w = dst_w / 2;
-  const int dst_uv_h = dst_h / 2;
+  const int dst_uv_w = dst->uv_crop_width;
+  const int dst_uv_h = dst->uv_crop_height;
   int scaled = 0;
 
   // phase_scaler is usually 0 or 8.

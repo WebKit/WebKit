@@ -23,14 +23,14 @@ extern "C" {
 
 #define MAX_NEIGHBORS 2
 
-typedef struct {
+typedef struct ScanOrder {
   const int16_t *scan;
   const int16_t *iscan;
   const int16_t *neighbors;
-} scan_order;
+} ScanOrder;
 
-extern const scan_order vp9_default_scan_orders[TX_SIZES];
-extern const scan_order vp9_scan_orders[TX_SIZES][TX_TYPES];
+extern const ScanOrder vp9_default_scan_orders[TX_SIZES];
+extern const ScanOrder vp9_scan_orders[TX_SIZES][TX_TYPES];
 
 static INLINE int get_coef_context(const int16_t *neighbors,
                                    const uint8_t *token_cache, int c) {
@@ -39,8 +39,8 @@ static INLINE int get_coef_context(const int16_t *neighbors,
          1;
 }
 
-static INLINE const scan_order *get_scan(const MACROBLOCKD *xd, TX_SIZE tx_size,
-                                         PLANE_TYPE type, int block_idx) {
+static INLINE const ScanOrder *get_scan(const MACROBLOCKD *xd, TX_SIZE tx_size,
+                                        PLANE_TYPE type, int block_idx) {
   const MODE_INFO *const mi = xd->mi[0];
 
   if (is_inter_block(mi) || type != PLANE_TYPE_Y || xd->lossless) {

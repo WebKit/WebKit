@@ -50,10 +50,10 @@ fractional_mv_step_fp vp8_find_best_sub_pixel_step;
 fractional_mv_step_fp vp8_find_best_half_pixel_step;
 fractional_mv_step_fp vp8_skip_fractional_mv_step;
 
-typedef int (*vp8_full_search_fn_t)(MACROBLOCK *x, BLOCK *b, BLOCKD *d,
-                                    int_mv *ref_mv, int sad_per_bit,
-                                    int distance, vp8_variance_fn_ptr_t *fn_ptr,
-                                    int *mvcost[2], int_mv *center_mv);
+int vp8_full_search_sad(MACROBLOCK *x, BLOCK *b, BLOCKD *d, int_mv *ref_mv,
+                        int sad_per_bit, int distance,
+                        vp8_variance_fn_ptr_t *fn_ptr, int *mvcost[2],
+                        int_mv *center_mv);
 
 typedef int (*vp8_refining_search_fn_t)(MACROBLOCK *x, BLOCK *b, BLOCKD *d,
                                         int_mv *ref_mv, int sad_per_bit,

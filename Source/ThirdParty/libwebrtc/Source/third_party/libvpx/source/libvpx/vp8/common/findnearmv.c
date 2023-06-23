@@ -105,9 +105,9 @@ void vp8_find_near_mvs(MACROBLOCKD *xd, const MODE_INFO *here, int_mv *nearest,
     tmp = near_mv_ref_cnts[CNT_NEAREST];
     near_mv_ref_cnts[CNT_NEAREST] = near_mv_ref_cnts[CNT_NEAR];
     near_mv_ref_cnts[CNT_NEAR] = tmp;
-    tmp = near_mvs[CNT_NEAREST].as_int;
+    tmp = (int)near_mvs[CNT_NEAREST].as_int;
     near_mvs[CNT_NEAREST].as_int = near_mvs[CNT_NEAR].as_int;
-    near_mvs[CNT_NEAR].as_int = tmp;
+    near_mvs[CNT_NEAR].as_int = (uint32_t)tmp;
   }
 
   /* Use near_mvs[0] to store the "best" MV */

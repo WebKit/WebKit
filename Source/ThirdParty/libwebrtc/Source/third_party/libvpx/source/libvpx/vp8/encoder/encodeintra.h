@@ -16,7 +16,7 @@
 extern "C" {
 #endif
 
-int vp8_encode_intra(VP8_COMP *cpi, MACROBLOCK *x, int use_dc_pred);
+int vp8_encode_intra(MACROBLOCK *x, int use_dc_pred);
 void vp8_encode_intra16x16mby(MACROBLOCK *x);
 void vp8_encode_intra16x16mbuv(MACROBLOCK *x);
 void vp8_encode_intra4x4mby(MACROBLOCK *mb);

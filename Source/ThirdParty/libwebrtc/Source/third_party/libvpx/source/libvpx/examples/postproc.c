@@ -109,7 +109,7 @@ int main(int argc, char **argv) {
                                 0 };
       if (vpx_codec_control(&codec, VP8_SET_POSTPROC, &pp))
         die_codec(&codec, "Failed to turn on postproc.");
-    };
+    }
 
     // Decode the frame with 15ms deadline
     if (vpx_codec_decode(&codec, frame, (unsigned int)frame_size, NULL, 15000))

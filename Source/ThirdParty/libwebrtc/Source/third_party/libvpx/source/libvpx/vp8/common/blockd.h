@@ -58,7 +58,7 @@ typedef struct {
 extern const unsigned char vp8_block2left[25];
 extern const unsigned char vp8_block2above[25];
 
-#define VP8_COMBINEENTROPYCONTEXTS(Dest, A, B) Dest = (A) + (B);
+#define VP8_COMBINEENTROPYCONTEXTS(Dest, A, B) Dest = (A) + (B)
 
 typedef enum { KEY_FRAME = 0, INTER_FRAME = 1 } FRAME_TYPE;
 

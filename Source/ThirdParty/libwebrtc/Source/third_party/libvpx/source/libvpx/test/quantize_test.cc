@@ -224,4 +224,11 @@ INSTANTIATE_TEST_SUITE_P(
         make_tuple(&vp8_fast_quantize_b_mmi, &vp8_fast_quantize_b_c),
         make_tuple(&vp8_regular_quantize_b_mmi, &vp8_regular_quantize_b_c)));
 #endif  // HAVE_MMI
+
+#if HAVE_LSX
+INSTANTIATE_TEST_SUITE_P(
+    LSX, QuantizeTest,
+    ::testing::Values(make_tuple(&vp8_regular_quantize_b_lsx,
+                                 &vp8_regular_quantize_b_c)));
+#endif  // HAVE_LSX
 }  // namespace

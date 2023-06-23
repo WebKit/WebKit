@@ -9,6 +9,7 @@
  */
 #include "./vpx_config.h"
 #include "third_party/googletest/src/include/gtest/gtest.h"
+#include "test/acm_random.h"
 #include "test/codec_factory.h"
 #include "test/encode_test_driver.h"
 #include "test/i420_video_source.h"
@@ -147,14 +148,16 @@ class DatarateTestVP9 : public ::libvpx_test::EncoderTest {
       if (video->frame() == 0) {
         encoder->Control(VP9E_SET_SVC, 1);
       }
-      vpx_svc_layer_id_t layer_id;
-      layer_id.spatial_layer_id = 0;
-      frame_flags_ = GetFrameFlags(video->frame(), cfg_.ts_number_layers);
-      layer_id.temporal_layer_id =
-          SetLayerId(video->frame(), cfg_.ts_number_layers);
-      layer_id.temporal_layer_id_per_spatial[0] =
-          SetLayerId(video->frame(), cfg_.ts_number_layers);
-      encoder->Control(VP9E_SET_SVC_LAYER_ID, &layer_id);
+      if (cfg_.temporal_layering_mode == VP9E_TEMPORAL_LAYERING_MODE_BYPASS) {
+        vpx_svc_layer_id_t layer_id;
+        frame_flags_ = GetFrameFlags(video->frame(), cfg_.ts_number_layers);
+        layer_id.spatial_layer_id = 0;
+        layer_id.temporal_layer_id =
+            SetLayerId(video->frame(), cfg_.ts_number_layers);
+        layer_id.temporal_layer_id_per_spatial[0] =
+            SetLayerId(video->frame(), cfg_.ts_number_layers);
+        encoder->Control(VP9E_SET_SVC_LAYER_ID, &layer_id);
+      }
     }
     const vpx_rational_t tb = video->timebase();
     timebase_ = static_cast<double>(tb.num) / tb.den;
@@ -199,7 +202,7 @@ class DatarateTestVP9 : public ::libvpx_test::EncoderTest {
     ++tot_frame_number_;
   }
 
-  virtual void EndPassHook(void) {
+  virtual void EndPassHook() {
     for (int layer = 0; layer < static_cast<int>(cfg_.ts_number_layers);
          ++layer) {
       duration_ = (last_pts_ + 1) * timebase_;
@@ -809,6 +812,135 @@ TEST_P(DatarateTestVP9PostEncodeDrop, PostEncodeDropScreenContent) {
       << " The datarate for the file is greater than target by too much!";
 }
 
+using libvpx_test::ACMRandom;
+
+class DatarateTestVP9FrameQp
+    : public DatarateTestVP9,
+      public ::testing::TestWithParam<const libvpx_test::CodecFactory *> {
+ public:
+  DatarateTestVP9FrameQp() : DatarateTestVP9(GetParam()), frame_(0) {}
+  virtual ~DatarateTestVP9FrameQp() {}
+
+ protected:
+  virtual void SetUp() {
+    InitializeConfig();
+    SetMode(::libvpx_test::kRealTime);
+    ResetModel();
+  }
+
+  virtual void PreEncodeFrameHook(::libvpx_test::VideoSource *video,
+                                  ::libvpx_test::Encoder *encoder) {
+    set_cpu_used_ = 7;
+    DatarateTestVP9::PreEncodeFrameHook(video, encoder);
+    frame_qp_ = static_cast<int>(rnd_.RandRange(64));
+    encoder->Control(VP9E_SET_QUANTIZER_ONE_PASS, frame_qp_);
+    frame_++;
+  }
+
+  virtual void PostEncodeFrameHook(::libvpx_test::Encoder *encoder) {
+    int qp = 0;
+    vpx_svc_layer_id_t layer_id;
+    if (frame_ >= total_frame_) return;
+    encoder->Control(VP8E_GET_LAST_QUANTIZER_64, &qp);
+    ASSERT_EQ(frame_qp_, qp);
+    encoder->Control(VP9E_GET_SVC_LAYER_ID, &layer_id);
+    temporal_layer_id_ = layer_id.temporal_layer_id;
+  }
+
+  virtual void MismatchHook(const vpx_image_t * /*img1*/,
+                            const vpx_image_t * /*img2*/) {
+    if (frame_ >= total_frame_) return;
+    ASSERT_TRUE(cfg_.temporal_layering_mode ==
+                    VP9E_TEMPORAL_LAYERING_MODE_0212 &&
+                temporal_layer_id_ == 2);
+  }
+
+ protected:
+  int total_frame_;
+
+ private:
+  ACMRandom rnd_;
+  int frame_qp_;
+  int frame_;
+  int temporal_layer_id_;
+};
+
+TEST_P(DatarateTestVP9FrameQp, VP9SetFrameQp) {
+  cfg_.rc_buf_initial_sz = 500;
+  cfg_.rc_buf_optimal_sz = 500;
+  cfg_.rc_buf_sz = 1000;
+  cfg_.rc_dropframe_thresh = 0;
+  cfg_.rc_min_quantizer = 0;
+  cfg_.rc_max_quantizer = 63;
+  cfg_.rc_end_usage = VPX_CBR;
+  cfg_.g_lag_in_frames = 0;
+
+  total_frame_ = 400;
+  ::libvpx_test::I420VideoSource video("niklas_640_480_30.yuv", 640, 480, 30, 1,
+                                       0, total_frame_);
+  ResetModel();
+  ASSERT_NO_FATAL_FAILURE(RunLoop(&video));
+}
+
+TEST_P(DatarateTestVP9FrameQp, VP9SetFrameQp3TemporalLayersBypass) {
+  cfg_.rc_buf_initial_sz = 500;
+  cfg_.rc_buf_optimal_sz = 500;
+  cfg_.rc_buf_sz = 1000;
+  cfg_.rc_dropframe_thresh = 0;
+  cfg_.rc_max_quantizer = 63;
+  cfg_.rc_min_quantizer = 0;
+  cfg_.rc_end_usage = VPX_CBR;
+  cfg_.g_lag_in_frames = 0;
+
+  // 3 Temporal layers, no spatial layers: Framerate decimation (4, 2, 1).
+  cfg_.ss_number_layers = 1;
+  cfg_.ts_number_layers = 3;
+  cfg_.ts_rate_decimator[0] = 4;
+  cfg_.ts_rate_decimator[1] = 2;
+  cfg_.ts_rate_decimator[2] = 1;
+
+  cfg_.temporal_layering_mode = VP9E_TEMPORAL_LAYERING_MODE_BYPASS;
+  cfg_.rc_target_bitrate = 200;
+  total_frame_ = 400;
+  ::libvpx_test::I420VideoSource video("niklas_640_480_30.yuv", 640, 480, 30, 1,
+                                       0, total_frame_);
+  ResetModel();
+  cfg_.layer_target_bitrate[0] = 40 * cfg_.rc_target_bitrate / 100;
+  cfg_.layer_target_bitrate[1] = 60 * cfg_.rc_target_bitrate / 100;
+  cfg_.layer_target_bitrate[2] = cfg_.rc_target_bitrate;
+  ASSERT_NO_FATAL_FAILURE(RunLoop(&video));
+}
+
+TEST_P(DatarateTestVP9FrameQp, VP9SetFrameQp3TemporalLayersFixedMode) {
+  cfg_.rc_buf_initial_sz = 500;
+  cfg_.rc_buf_optimal_sz = 500;
+  cfg_.rc_buf_sz = 1000;
+  cfg_.rc_dropframe_thresh = 0;
+  cfg_.rc_max_quantizer = 63;
+  cfg_.rc_min_quantizer = 0;
+  cfg_.rc_end_usage = VPX_CBR;
+  cfg_.g_lag_in_frames = 0;
+
+  // 3 Temporal layers, no spatial layers: Framerate decimation (4, 2, 1).
+  cfg_.ss_number_layers = 1;
+  cfg_.ts_number_layers = 3;
+  cfg_.ts_rate_decimator[0] = 4;
+  cfg_.ts_rate_decimator[1] = 2;
+  cfg_.ts_rate_decimator[2] = 1;
+
+  cfg_.temporal_layering_mode = VP9E_TEMPORAL_LAYERING_MODE_0212;
+  cfg_.rc_target_bitrate = 200;
+  cfg_.g_error_resilient = 1;
+  total_frame_ = 400;
+  ::libvpx_test::I420VideoSource video("niklas_640_480_30.yuv", 640, 480, 30, 1,
+                                       0, total_frame_);
+  ResetModel();
+  cfg_.layer_target_bitrate[0] = 40 * cfg_.rc_target_bitrate / 100;
+  cfg_.layer_target_bitrate[1] = 60 * cfg_.rc_target_bitrate / 100;
+  cfg_.layer_target_bitrate[2] = cfg_.rc_target_bitrate;
+  ASSERT_NO_FATAL_FAILURE(RunLoop(&video));
+}
+
 #if CONFIG_VP9_TEMPORAL_DENOISING
 // Params: speed setting.
 class DatarateTestVP9RealTimeDenoiser : public DatarateTestVP9RealTime {
@@ -942,6 +1074,13 @@ VP9_INSTANTIATE_TEST_SUITE(DatarateTestVP9LargeVBR, ::testing::Range(5, 9),
                            ::testing::Range(0, 2));
 
 VP9_INSTANTIATE_TEST_SUITE(DatarateTestVP9RealTime, ::testing::Range(5, 10));
+
+#if CONFIG_VP9
+INSTANTIATE_TEST_SUITE_P(
+    VP9, DatarateTestVP9FrameQp,
+    ::testing::Values(
+        static_cast<const libvpx_test::CodecFactory *>(&libvpx_test::kVP9)));
+#endif
 
 VP9_INSTANTIATE_TEST_SUITE(DatarateTestVP9RealTimeDeltaQUV,
                            ::testing::Range(5, 10),

@@ -8,6 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include "vp9/common/vp9_thread_common.h"
+#include "vp9/encoder/vp9_bitstream.h"
 #include "vp9/encoder/vp9_encodeframe.h"
 #include "vp9/encoder/vp9_encoder.h"
 #include "vp9/encoder/vp9_ethread.h"
@@ -79,60 +81,59 @@ static void create_enc_workers(VP9_COMP *cpi, int num_workers) {
   VP9_COMMON *const cm = &cpi->common;
   const VPxWorkerInterface *const winterface = vpx_get_worker_interface();
   int i;
+  // While using SVC, we need to allocate threads according to the highest
+  // resolution. When row based multithreading is enabled, it is OK to
+  // allocate more threads than the number of max tile columns.
+  if (cpi->use_svc && !cpi->row_mt) {
+    int max_tile_cols = get_max_tile_cols(cpi);
+    num_workers = VPXMIN(cpi->oxcf.max_threads, max_tile_cols);
+  }
+  assert(num_workers > 0);
+  if (num_workers == cpi->num_workers) return;
+  vp9_loop_filter_dealloc(&cpi->lf_row_sync);
+  vp9_bitstream_encode_tiles_buffer_dealloc(cpi);
+  vp9_encode_free_mt_data(cpi);
 
-  // Only run once to create threads and allocate thread data.
-  if (cpi->num_workers == 0) {
-    int allocated_workers = num_workers;
+  CHECK_MEM_ERROR(cm, cpi->workers,
+                  vpx_malloc(num_workers * sizeof(*cpi->workers)));
 
-    // While using SVC, we need to allocate threads according to the highest
-    // resolution. When row based multithreading is enabled, it is OK to
-    // allocate more threads than the number of max tile columns.
-    if (cpi->use_svc && !cpi->row_mt) {
-      int max_tile_cols = get_max_tile_cols(cpi);
-      allocated_workers = VPXMIN(cpi->oxcf.max_threads, max_tile_cols);
+  CHECK_MEM_ERROR(cm, cpi->tile_thr_data,
+                  vpx_calloc(num_workers, sizeof(*cpi->tile_thr_data)));
+
+  for (i = 0; i < num_workers; i++) {
+    VPxWorker *const worker = &cpi->workers[i];
+    EncWorkerData *thread_data = &cpi->tile_thr_data[i];
+
+    ++cpi->num_workers;
+    winterface->init(worker);
+
+    if (i < num_workers - 1) {
+      thread_data->cpi = cpi;
+
+      // Allocate thread data.
+      CHECK_MEM_ERROR(cm, thread_data->td,
+                      vpx_memalign(32, sizeof(*thread_data->td)));
+      vp9_zero(*thread_data->td);
+
+      // Set up pc_tree.
+      thread_data->td->leaf_tree = NULL;
+      thread_data->td->pc_tree = NULL;
+      vp9_setup_pc_tree(cm, thread_data->td);
+
+      // Allocate frame counters in thread data.
+      CHECK_MEM_ERROR(cm, thread_data->td->counts,
+                      vpx_calloc(1, sizeof(*thread_data->td->counts)));
+
+      // Create threads
+      if (!winterface->reset(worker))
+        vpx_internal_error(&cm->error, VPX_CODEC_ERROR,
+                           "Tile encoder thread creation failed");
+    } else {
+      // Main thread acts as a worker and uses the thread data in cpi.
+      thread_data->cpi = cpi;
+      thread_data->td = &cpi->td;
     }
-
-    CHECK_MEM_ERROR(cm, cpi->workers,
-                    vpx_malloc(allocated_workers * sizeof(*cpi->workers)));
-
-    CHECK_MEM_ERROR(cm, cpi->tile_thr_data,
-                    vpx_calloc(allocated_workers, sizeof(*cpi->tile_thr_data)));
-
-    for (i = 0; i < allocated_workers; i++) {
-      VPxWorker *const worker = &cpi->workers[i];
-      EncWorkerData *thread_data = &cpi->tile_thr_data[i];
-
-      ++cpi->num_workers;
-      winterface->init(worker);
-
-      if (i < allocated_workers - 1) {
-        thread_data->cpi = cpi;
-
-        // Allocate thread data.
-        CHECK_MEM_ERROR(cm, thread_data->td,
-                        vpx_memalign(32, sizeof(*thread_data->td)));
-        vp9_zero(*thread_data->td);
-
-        // Set up pc_tree.
-        thread_data->td->leaf_tree = NULL;
-        thread_data->td->pc_tree = NULL;
-        vp9_setup_pc_tree(cm, thread_data->td);
-
-        // Allocate frame counters in thread data.
-        CHECK_MEM_ERROR(cm, thread_data->td->counts,
-                        vpx_calloc(1, sizeof(*thread_data->td->counts)));
-
-        // Create threads
-        if (!winterface->reset(worker))
-          vpx_internal_error(&cm->error, VPX_CODEC_ERROR,
-                             "Tile encoder thread creation failed");
-      } else {
-        // Main thread acts as a worker and uses the thread data in cpi.
-        thread_data->cpi = cpi;
-        thread_data->td = &cpi->td;
-      }
-      winterface->sync(worker);
-    }
+    winterface->sync(worker);
   }
 }
 
@@ -167,6 +168,27 @@ static void launch_enc_workers(VP9_COMP *cpi, VPxWorkerHook hook, void *data2,
     VPxWorker *const worker = &cpi->workers[i];
     winterface->sync(worker);
   }
+}
+
+void vp9_encode_free_mt_data(struct VP9_COMP *cpi) {
+  int t;
+  for (t = 0; t < cpi->num_workers; ++t) {
+    VPxWorker *const worker = &cpi->workers[t];
+    EncWorkerData *const thread_data = &cpi->tile_thr_data[t];
+
+    // Deallocate allocated threads.
+    vpx_get_worker_interface()->end(worker);
+
+    // Deallocate allocated thread data.
+    if (t < cpi->num_workers - 1) {
+      vpx_free(thread_data->td->counts);
+      vp9_free_pc_tree(thread_data->td);
+      vpx_free(thread_data->td);
+    }
+  }
+  vpx_free(cpi->tile_thr_data);
+  vpx_free(cpi->workers);
+  cpi->num_workers = 0;
 }
 
 void vp9_encode_tiles_mt(VP9_COMP *cpi) {

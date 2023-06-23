@@ -173,7 +173,8 @@ const vp8_prob vp8_sub_mv_ref_prob3[8][VP8_SUBMVREFS - 1] = {
   { 208, 1, 1 }     /* SUBMVREF_LEFT_ABOVE_ZED  */
 };
 
-static const vp8_prob *get_sub_mv_ref_prob(const int left, const int above) {
+static const vp8_prob *get_sub_mv_ref_prob(const uint32_t left,
+                                           const uint32_t above) {
   int lez = (left == 0);
   int aez = (above == 0);
   int lea = (left == above);
@@ -371,9 +372,9 @@ static void read_mb_modes_mv(VP8D_COMP *pbi, MODE_INFO *mi,
         tmp = cnt[CNT_NEAREST];
         cnt[CNT_NEAREST] = cnt[CNT_NEAR];
         cnt[CNT_NEAR] = tmp;
-        tmp = near_mvs[CNT_NEAREST].as_int;
+        tmp = (int)near_mvs[CNT_NEAREST].as_int;
         near_mvs[CNT_NEAREST].as_int = near_mvs[CNT_NEAR].as_int;
-        near_mvs[CNT_NEAR].as_int = tmp;
+        near_mvs[CNT_NEAR].as_int = (uint32_t)tmp;
       }
 
       if (vp8_read(bc, vp8_mode_contexts[cnt[CNT_NEAREST]][1])) {

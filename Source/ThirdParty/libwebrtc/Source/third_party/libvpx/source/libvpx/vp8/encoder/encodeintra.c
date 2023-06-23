@@ -18,10 +18,9 @@
 #include "vp8/common/invtrans.h"
 #include "encodeintra.h"
 
-int vp8_encode_intra(VP8_COMP *cpi, MACROBLOCK *x, int use_dc_pred) {
+int vp8_encode_intra(MACROBLOCK *x, int use_dc_pred) {
   int i;
   int intra_pred_var = 0;
-  (void)cpi;
 
   if (use_dc_pred) {
     x->e_mbd.mode_info_context->mbmi.mode = DC_PRED;

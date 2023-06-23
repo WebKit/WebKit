@@ -45,6 +45,9 @@ PORTS_SRCS-$(VPX_ARCH_PPC) += ppc.h
 PORTS_SRCS-$(VPX_ARCH_MIPS) += mips_cpudetect.c
 PORTS_SRCS-$(VPX_ARCH_MIPS) += mips.h
 
+PORTS_SRCS-$(VPX_ARCH_LOONGARCH) += loongarch_cpudetect.c
+PORTS_SRCS-$(VPX_ARCH_LOONGARCH) += loongarch.h
+
 ifeq ($(VPX_ARCH_MIPS), yes)
 PORTS_SRCS-yes += asmdefs_mmi.h
 endif

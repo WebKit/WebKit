@@ -164,7 +164,7 @@ unsigned int vpx_highbd_avg_8x8_sse2(const uint8_t *s8, int p) {
   s0 = _mm_add_epi32(s0, s1);
   s0 = _mm_add_epi32(s0, _mm_srli_si128(s0, 8));
   s0 = _mm_add_epi32(s0, _mm_srli_si128(s0, 4));
-  avg = _mm_cvtsi128_si32(s0);
+  avg = (unsigned int)_mm_cvtsi128_si32(s0);
 
   return (avg + 32) >> 6;
 }
@@ -275,7 +275,7 @@ static INLINE void hadamard_8x8_sse2(const int16_t *src_diff,
   src[4] = _mm_load_si128((const __m128i *)(src_diff += src_stride));
   src[5] = _mm_load_si128((const __m128i *)(src_diff += src_stride));
   src[6] = _mm_load_si128((const __m128i *)(src_diff += src_stride));
-  src[7] = _mm_load_si128((const __m128i *)(src_diff += src_stride));
+  src[7] = _mm_load_si128((const __m128i *)(src_diff + src_stride));
 
   hadamard_col8_sse2(src, 0);
   hadamard_col8_sse2(src, 1);
@@ -464,7 +464,7 @@ int vpx_satd_sse2(const tran_low_t *coeff, int length) {
   return _mm_cvtsi128_si32(accum);
 }
 
-void vpx_int_pro_row_sse2(int16_t *hbuf, const uint8_t *ref,
+void vpx_int_pro_row_sse2(int16_t hbuf[16], const uint8_t *ref,
                           const int ref_stride, const int height) {
   int idx;
   __m128i zero = _mm_setzero_si128();

@@ -100,7 +100,7 @@ void FDCT32x32_2D(const int16_t *input, tran_low_t *output_org, int stride) {
   const __m128i k__cospi_m21_p11 = pair_set_epi16(-cospi_21_64, cospi_11_64);
   const __m128i k__cospi_m05_p27 = pair_set_epi16(-cospi_5_64, cospi_27_64);
   const __m128i k__DCT_CONST_ROUNDING = _mm_set1_epi32(DCT_CONST_ROUNDING);
-  const __m128i kZero = _mm_set1_epi16(0);
+  const __m128i kZero = _mm_setzero_si128();
   const __m128i kOne = _mm_set1_epi16(1);
 
   // Do the two transform/transpose passes

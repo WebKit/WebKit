@@ -33,7 +33,7 @@ uint64_t vpx_sum_squares_2d_i16_sse2(const int16_t *src, int stride, int size) {
   } else {
     // Generic case
     int r = size;
-    const __m128i v_zext_mask_q = _mm_set_epi32(0, 0xffffffff, 0, 0xffffffff);
+    const __m128i v_zext_mask_q = _mm_set_epi32(0, -1, 0, -1);
     __m128i v_acc_q = _mm_setzero_si128();
 
     assert(size % 8 == 0);

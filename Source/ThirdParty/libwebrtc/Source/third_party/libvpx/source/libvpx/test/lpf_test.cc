@@ -147,7 +147,7 @@ class Loop8Test6Param : public ::testing::TestWithParam<loop8_param_t> {
 };
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(Loop8Test6Param);
 
-#if HAVE_NEON || HAVE_SSE2 || \
+#if HAVE_NEON || HAVE_SSE2 || (HAVE_LSX && !CONFIG_VP9_HIGHBITDEPTH) || \
     (HAVE_DSPR2 || HAVE_MSA && !CONFIG_VP9_HIGHBITDEPTH)
 class Loop8Test9Param : public ::testing::TestWithParam<dualloop8_param_t> {
  public:
@@ -169,7 +169,7 @@ class Loop8Test9Param : public ::testing::TestWithParam<dualloop8_param_t> {
 };
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(Loop8Test9Param);
 #endif  // HAVE_NEON || HAVE_SSE2 || (HAVE_DSPR2 || HAVE_MSA &&
-        // (!CONFIG_VP9_HIGHBITDEPTH))
+        // (!CONFIG_VP9_HIGHBITDEPTH) || (HAVE_LSX && !CONFIG_VP9_HIGHBITDEPTH))
 
 TEST_P(Loop8Test6Param, OperationCheck) {
   ACMRandom rnd(ACMRandom::DeterministicSeed());
@@ -281,7 +281,7 @@ TEST_P(Loop8Test6Param, ValueCheck) {
       << "First failed at test case " << first_failure;
 }
 
-#if HAVE_NEON || HAVE_SSE2 || \
+#if HAVE_NEON || HAVE_SSE2 || (HAVE_LSX && (!CONFIG_VP9_HIGHBITDEPTH)) || \
     (HAVE_DSPR2 || HAVE_MSA && (!CONFIG_VP9_HIGHBITDEPTH))
 TEST_P(Loop8Test9Param, OperationCheck) {
   ACMRandom rnd(ACMRandom::DeterministicSeed());
@@ -411,6 +411,7 @@ TEST_P(Loop8Test9Param, ValueCheck) {
       << "First failed at test case " << first_failure;
 }
 #endif  // HAVE_NEON || HAVE_SSE2 || (HAVE_DSPR2 || HAVE_MSA &&
+        // (!CONFIG_VP9_HIGHBITDEPTH)) || (HAVE_LSX &&
         // (!CONFIG_VP9_HIGHBITDEPTH))
 
 using std::make_tuple;
@@ -691,5 +692,30 @@ INSTANTIATE_TEST_SUITE_P(
                       make_tuple(&vpx_lpf_vertical_8_dual_msa,
                                  &vpx_lpf_vertical_8_dual_c, 8)));
 #endif  // HAVE_MSA && (!CONFIG_VP9_HIGHBITDEPTH)
+
+#if HAVE_LSX && (!CONFIG_VP9_HIGHBITDEPTH)
+INSTANTIATE_TEST_SUITE_P(
+    LSX, Loop8Test6Param,
+    ::testing::Values(
+        make_tuple(&vpx_lpf_horizontal_4_lsx, &vpx_lpf_horizontal_4_c, 8),
+        make_tuple(&vpx_lpf_horizontal_8_lsx, &vpx_lpf_horizontal_8_c, 8),
+        make_tuple(&vpx_lpf_horizontal_16_dual_lsx,
+                   &vpx_lpf_horizontal_16_dual_c, 8),
+        make_tuple(&vpx_lpf_vertical_4_lsx, &vpx_lpf_vertical_4_c, 8),
+        make_tuple(&vpx_lpf_vertical_8_lsx, &vpx_lpf_vertical_8_c, 8),
+        make_tuple(&vpx_lpf_vertical_16_dual_lsx, &vpx_lpf_vertical_16_dual_c,
+                   8)));
+
+INSTANTIATE_TEST_SUITE_P(
+    LSX, Loop8Test9Param,
+    ::testing::Values(make_tuple(&vpx_lpf_horizontal_4_dual_lsx,
+                                 &vpx_lpf_horizontal_4_dual_c, 8),
+                      make_tuple(&vpx_lpf_horizontal_8_dual_lsx,
+                                 &vpx_lpf_horizontal_8_dual_c, 8),
+                      make_tuple(&vpx_lpf_vertical_4_dual_lsx,
+                                 &vpx_lpf_vertical_4_dual_c, 8),
+                      make_tuple(&vpx_lpf_vertical_8_dual_lsx,
+                                 &vpx_lpf_vertical_8_dual_c, 8)));
+#endif  // HAVE_LSX && (!CONFIG_VP9_HIGHBITDEPTH)
 
 }  // namespace

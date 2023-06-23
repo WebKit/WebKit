@@ -314,7 +314,7 @@ static void calc_iframe_target_size(VP8_COMP *cpi) {
      * bandwidth per second * fraction of the initial buffer
      * level
      */
-    target = cpi->oxcf.starting_buffer_level / 2;
+    target = (uint64_t)cpi->oxcf.starting_buffer_level / 2;
 
     if (target > cpi->oxcf.target_bandwidth * 3 / 2) {
       target = cpi->oxcf.target_bandwidth * 3 / 2;
@@ -327,7 +327,8 @@ static void calc_iframe_target_size(VP8_COMP *cpi) {
     int initial_boost = 32; /* |3.0 * per_frame_bandwidth| */
     /* Boost depends somewhat on frame rate: only used for 1 layer case. */
     if (cpi->oxcf.number_of_layers == 1) {
-      kf_boost = VPXMAX(initial_boost, (int)(2 * cpi->output_framerate - 16));
+      kf_boost =
+          VPXMAX(initial_boost, (int)round(2 * cpi->output_framerate - 16));
     } else {
       /* Initial factor: set target size to: |3.0 * per_frame_bandwidth|. */
       kf_boost = initial_boost;
@@ -349,8 +350,12 @@ static void calc_iframe_target_size(VP8_COMP *cpi) {
   }
 
   if (cpi->oxcf.rc_max_intra_bitrate_pct) {
-    unsigned int max_rate =
-        cpi->per_frame_bandwidth * cpi->oxcf.rc_max_intra_bitrate_pct / 100;
+    unsigned int max_rate;
+    // This product may overflow unsigned int
+    uint64_t product = cpi->per_frame_bandwidth;
+    product *= cpi->oxcf.rc_max_intra_bitrate_pct;
+    product /= 100;
+    max_rate = (unsigned int)VPXMIN(INT_MAX, product);
 
     if (target > max_rate) target = max_rate;
   }
@@ -776,6 +781,7 @@ static void calc_pframe_target_size(VP8_COMP *cpi) {
         }
       } else {
         int percent_high = 0;
+        int64_t target = cpi->this_frame_target;
 
         if ((cpi->oxcf.end_usage == USAGE_STREAM_FROM_SERVER) &&
             (cpi->buffer_level > cpi->oxcf.optimal_buffer_level)) {
@@ -793,7 +799,9 @@ static void calc_pframe_target_size(VP8_COMP *cpi) {
           percent_high = 0;
         }
 
-        cpi->this_frame_target += (cpi->this_frame_target * percent_high) / 200;
+        target += (target * percent_high) / 200;
+        target = VPXMIN(target, INT_MAX);
+        cpi->this_frame_target = (int)target;
 
         /* Are we allowing control of active_worst_allowed_q according
          * to buffer level.
@@ -1074,8 +1082,8 @@ void vp8_update_rate_correction_factors(VP8_COMP *cpi, int damp_var) {
 
   /* Work out a size correction factor. */
   if (projected_size_based_on_q > 0) {
-    correction_factor =
-        (100 * cpi->projected_frame_size) / projected_size_based_on_q;
+    correction_factor = (int)((100 * (int64_t)cpi->projected_frame_size) /
+                              projected_size_based_on_q);
   }
 
   /* More heavily damped adjustment used if we have been oscillating

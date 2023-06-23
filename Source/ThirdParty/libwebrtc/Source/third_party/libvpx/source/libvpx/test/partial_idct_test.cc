@@ -954,6 +954,20 @@ INSTANTIATE_TEST_SUITE_P(MSA, PartialIDctTest,
                          ::testing::ValuesIn(msa_partial_idct_tests));
 #endif  // HAVE_MSA && !CONFIG_VP9_HIGHBITDEPTH
 
+#if HAVE_LSX && !CONFIG_VP9_HIGHBITDEPTH
+const PartialInvTxfmParam lsx_partial_idct_tests[] = {
+  make_tuple(&vpx_fdct32x32_c, &wrapper<vpx_idct32x32_1024_add_c>,
+             &wrapper<vpx_idct32x32_1024_add_lsx>, TX_32X32, 1024, 8, 1),
+  make_tuple(&vpx_fdct32x32_c, &wrapper<vpx_idct32x32_34_add_c>,
+             &wrapper<vpx_idct32x32_34_add_lsx>, TX_32X32, 34, 8, 1),
+  make_tuple(&vpx_fdct32x32_c, &wrapper<vpx_idct32x32_1_add_c>,
+             &wrapper<vpx_idct32x32_1_add_lsx>, TX_32X32, 1, 8, 1),
+};
+
+INSTANTIATE_TEST_SUITE_P(LSX, PartialIDctTest,
+                         ::testing::ValuesIn(lsx_partial_idct_tests));
+#endif  // HAVE_LSX && !CONFIG_VP9_HIGHBITDEPTH
+
 #endif  // !CONFIG_EMULATE_HARDWARE
 
 }  // namespace

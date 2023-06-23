@@ -127,7 +127,7 @@ typedef struct vpx_codec_dec_cfg {
  * \param[in]    ver     ABI version number. Must be set to
  *                       VPX_DECODER_ABI_VERSION
  * \retval #VPX_CODEC_OK
- *     The decoder algorithm initialized.
+ *     The decoder algorithm has been initialized.
  * \retval #VPX_CODEC_MEM_ERROR
  *     Memory allocation failed.
  */

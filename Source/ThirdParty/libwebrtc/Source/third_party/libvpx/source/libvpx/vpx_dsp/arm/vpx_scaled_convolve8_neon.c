@@ -15,6 +15,7 @@
 #include "./vpx_config.h"
 #include "./vpx_dsp_rtcd.h"
 #include "vpx/vpx_integer.h"
+#include "vpx_dsp/arm/mem_neon.h"
 #include "vpx_dsp/arm/transpose_neon.h"
 #include "vpx_dsp/arm/vpx_convolve8_neon.h"
 #include "vpx_ports/mem.h"
@@ -38,8 +39,6 @@ static INLINE void scaledconvolve_horiz_w4(
         const uint8_t *const src_x = &src[x_q4 >> SUBPEL_BITS];
         if (x_q4 & SUBPEL_MASK) {
           const int16x8_t filters = vld1q_s16(x_filters[x_q4 & SUBPEL_MASK]);
-          const int16x4_t filter3 = vdup_lane_s16(vget_low_s16(filters), 3);
-          const int16x4_t filter4 = vdup_lane_s16(vget_high_s16(filters), 0);
           uint8x8_t s[8], d;
           int16x8_t ss[4];
           int16x4_t t[8], tt;
@@ -61,7 +60,7 @@ static INLINE void scaledconvolve_horiz_w4(
           t[7] = vget_high_s16(ss[3]);
 
           tt = convolve8_4(t[0], t[1], t[2], t[3], t[4], t[5], t[6], t[7],
-                           filters, filter3, filter4);
+                           filters);
           d = vqrshrun_n_s16(vcombine_s16(tt, tt), 7);
           vst1_lane_u32((uint32_t *)&temp[4 * z], vreinterpret_u32_u8(d), 0);
         } else {
@@ -167,8 +166,6 @@ static INLINE void scaledconvolve_vert_w4(
 
     if (y_q4 & SUBPEL_MASK) {
       const int16x8_t filters = vld1q_s16(y_filters[y_q4 & SUBPEL_MASK]);
-      const int16x4_t filter3 = vdup_lane_s16(vget_low_s16(filters), 3);
-      const int16x4_t filter4 = vdup_lane_s16(vget_high_s16(filters), 0);
       uint8x8_t s[8], d;
       int16x4_t t[8], tt;
 
@@ -183,8 +180,7 @@ static INLINE void scaledconvolve_vert_w4(
       t[6] = vget_low_s16(vreinterpretq_s16_u16(vmovl_u8(s[6])));
       t[7] = vget_low_s16(vreinterpretq_s16_u16(vmovl_u8(s[7])));
 
-      tt = convolve8_4(t[0], t[1], t[2], t[3], t[4], t[5], t[6], t[7], filters,
-                       filter3, filter4);
+      tt = convolve8_4(t[0], t[1], t[2], t[3], t[4], t[5], t[6], t[7], filters);
       d = vqrshrun_n_s16(vcombine_s16(tt, tt), 7);
       vst1_lane_u32((uint32_t *)dst, vreinterpret_u32_u8(d), 0);
     } else {

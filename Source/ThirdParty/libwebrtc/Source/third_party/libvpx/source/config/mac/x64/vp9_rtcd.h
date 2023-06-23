@@ -21,7 +21,7 @@ struct macroblockd;
 
 /* Encoder forward decls */
 struct macroblock;
-struct vp9_variance_vtable;
+struct vp9_sad_table;
 struct search_site_config;
 struct mv;
 union int_mv;
@@ -88,30 +88,33 @@ int vp9_denoiser_filter_sse2(const uint8_t* sig,
 int vp9_diamond_search_sad_c(const struct macroblock* x,
                              const struct search_site_config* cfg,
                              struct mv* ref_mv,
+                             uint32_t start_mv_sad,
                              struct mv* best_mv,
                              int search_param,
                              int sad_per_bit,
                              int* num00,
-                             const struct vp9_variance_vtable* fn_ptr,
+                             const struct vp9_sad_table* sad_fn_ptr,
                              const struct mv* center_mv);
 int vp9_diamond_search_sad_avx(const struct macroblock* x,
                                const struct search_site_config* cfg,
                                struct mv* ref_mv,
+                               uint32_t start_mv_sad,
                                struct mv* best_mv,
                                int search_param,
                                int sad_per_bit,
                                int* num00,
-                               const struct vp9_variance_vtable* fn_ptr,
+                               const struct vp9_sad_table* sad_fn_ptr,
                                const struct mv* center_mv);
 RTCD_EXTERN int (*vp9_diamond_search_sad)(
     const struct macroblock* x,
     const struct search_site_config* cfg,
     struct mv* ref_mv,
+    uint32_t start_mv_sad,
     struct mv* best_mv,
     int search_param,
     int sad_per_bit,
     int* num00,
-    const struct vp9_variance_vtable* fn_ptr,
+    const struct vp9_sad_table* sad_fn_ptr,
     const struct mv* center_mv);
 
 void vp9_fht16x16_c(const int16_t* input,
@@ -307,7 +310,6 @@ void vp9_highbd_post_proc_down_and_across_c(const uint16_t* src_ptr,
 
 void vp9_highbd_quantize_fp_c(const tran_low_t* coeff_ptr,
                               intptr_t n_coeffs,
-                              int skip_block,
                               const int16_t* round_ptr,
                               const int16_t* quant_ptr,
                               tran_low_t* qcoeff_ptr,
@@ -316,11 +318,29 @@ void vp9_highbd_quantize_fp_c(const tran_low_t* coeff_ptr,
                               uint16_t* eob_ptr,
                               const int16_t* scan,
                               const int16_t* iscan);
-#define vp9_highbd_quantize_fp vp9_highbd_quantize_fp_c
+void vp9_highbd_quantize_fp_avx2(const tran_low_t* coeff_ptr,
+                                 intptr_t n_coeffs,
+                                 const int16_t* round_ptr,
+                                 const int16_t* quant_ptr,
+                                 tran_low_t* qcoeff_ptr,
+                                 tran_low_t* dqcoeff_ptr,
+                                 const int16_t* dequant_ptr,
+                                 uint16_t* eob_ptr,
+                                 const int16_t* scan,
+                                 const int16_t* iscan);
+RTCD_EXTERN void (*vp9_highbd_quantize_fp)(const tran_low_t* coeff_ptr,
+                                           intptr_t n_coeffs,
+                                           const int16_t* round_ptr,
+                                           const int16_t* quant_ptr,
+                                           tran_low_t* qcoeff_ptr,
+                                           tran_low_t* dqcoeff_ptr,
+                                           const int16_t* dequant_ptr,
+                                           uint16_t* eob_ptr,
+                                           const int16_t* scan,
+                                           const int16_t* iscan);
 
 void vp9_highbd_quantize_fp_32x32_c(const tran_low_t* coeff_ptr,
                                     intptr_t n_coeffs,
-                                    int skip_block,
                                     const int16_t* round_ptr,
                                     const int16_t* quant_ptr,
                                     tran_low_t* qcoeff_ptr,
@@ -329,7 +349,26 @@ void vp9_highbd_quantize_fp_32x32_c(const tran_low_t* coeff_ptr,
                                     uint16_t* eob_ptr,
                                     const int16_t* scan,
                                     const int16_t* iscan);
-#define vp9_highbd_quantize_fp_32x32 vp9_highbd_quantize_fp_32x32_c
+void vp9_highbd_quantize_fp_32x32_avx2(const tran_low_t* coeff_ptr,
+                                       intptr_t n_coeffs,
+                                       const int16_t* round_ptr,
+                                       const int16_t* quant_ptr,
+                                       tran_low_t* qcoeff_ptr,
+                                       tran_low_t* dqcoeff_ptr,
+                                       const int16_t* dequant_ptr,
+                                       uint16_t* eob_ptr,
+                                       const int16_t* scan,
+                                       const int16_t* iscan);
+RTCD_EXTERN void (*vp9_highbd_quantize_fp_32x32)(const tran_low_t* coeff_ptr,
+                                                 intptr_t n_coeffs,
+                                                 const int16_t* round_ptr,
+                                                 const int16_t* quant_ptr,
+                                                 tran_low_t* qcoeff_ptr,
+                                                 tran_low_t* dqcoeff_ptr,
+                                                 const int16_t* dequant_ptr,
+                                                 uint16_t* eob_ptr,
+                                                 const int16_t* scan,
+                                                 const int16_t* iscan);
 
 void vp9_highbd_temporal_filter_apply_c(const uint8_t* frame1,
                                         unsigned int stride,
@@ -387,7 +426,6 @@ void vp9_iht8x8_64_add_sse2(const tran_low_t* input,
 
 void vp9_quantize_fp_c(const tran_low_t* coeff_ptr,
                        intptr_t n_coeffs,
-                       int skip_block,
                        const int16_t* round_ptr,
                        const int16_t* quant_ptr,
                        tran_low_t* qcoeff_ptr,
@@ -398,7 +436,6 @@ void vp9_quantize_fp_c(const tran_low_t* coeff_ptr,
                        const int16_t* iscan);
 void vp9_quantize_fp_sse2(const tran_low_t* coeff_ptr,
                           intptr_t n_coeffs,
-                          int skip_block,
                           const int16_t* round_ptr,
                           const int16_t* quant_ptr,
                           tran_low_t* qcoeff_ptr,
@@ -409,7 +446,6 @@ void vp9_quantize_fp_sse2(const tran_low_t* coeff_ptr,
                           const int16_t* iscan);
 void vp9_quantize_fp_ssse3(const tran_low_t* coeff_ptr,
                            intptr_t n_coeffs,
-                           int skip_block,
                            const int16_t* round_ptr,
                            const int16_t* quant_ptr,
                            tran_low_t* qcoeff_ptr,
@@ -420,7 +456,6 @@ void vp9_quantize_fp_ssse3(const tran_low_t* coeff_ptr,
                            const int16_t* iscan);
 void vp9_quantize_fp_avx2(const tran_low_t* coeff_ptr,
                           intptr_t n_coeffs,
-                          int skip_block,
                           const int16_t* round_ptr,
                           const int16_t* quant_ptr,
                           tran_low_t* qcoeff_ptr,
@@ -431,7 +466,6 @@ void vp9_quantize_fp_avx2(const tran_low_t* coeff_ptr,
                           const int16_t* iscan);
 RTCD_EXTERN void (*vp9_quantize_fp)(const tran_low_t* coeff_ptr,
                                     intptr_t n_coeffs,
-                                    int skip_block,
                                     const int16_t* round_ptr,
                                     const int16_t* quant_ptr,
                                     tran_low_t* qcoeff_ptr,
@@ -443,7 +477,6 @@ RTCD_EXTERN void (*vp9_quantize_fp)(const tran_low_t* coeff_ptr,
 
 void vp9_quantize_fp_32x32_c(const tran_low_t* coeff_ptr,
                              intptr_t n_coeffs,
-                             int skip_block,
                              const int16_t* round_ptr,
                              const int16_t* quant_ptr,
                              tran_low_t* qcoeff_ptr,
@@ -454,7 +487,6 @@ void vp9_quantize_fp_32x32_c(const tran_low_t* coeff_ptr,
                              const int16_t* iscan);
 void vp9_quantize_fp_32x32_ssse3(const tran_low_t* coeff_ptr,
                                  intptr_t n_coeffs,
-                                 int skip_block,
                                  const int16_t* round_ptr,
                                  const int16_t* quant_ptr,
                                  tran_low_t* qcoeff_ptr,
@@ -463,9 +495,18 @@ void vp9_quantize_fp_32x32_ssse3(const tran_low_t* coeff_ptr,
                                  uint16_t* eob_ptr,
                                  const int16_t* scan,
                                  const int16_t* iscan);
+void vp9_quantize_fp_32x32_avx2(const tran_low_t* coeff_ptr,
+                                intptr_t n_coeffs,
+                                const int16_t* round_ptr,
+                                const int16_t* quant_ptr,
+                                tran_low_t* qcoeff_ptr,
+                                tran_low_t* dqcoeff_ptr,
+                                const int16_t* dequant_ptr,
+                                uint16_t* eob_ptr,
+                                const int16_t* scan,
+                                const int16_t* iscan);
 RTCD_EXTERN void (*vp9_quantize_fp_32x32)(const tran_low_t* coeff_ptr,
                                           intptr_t n_coeffs,
-                                          int skip_block,
                                           const int16_t* round_ptr,
                                           const int16_t* quant_ptr,
                                           tran_low_t* qcoeff_ptr,
@@ -489,19 +530,10 @@ RTCD_EXTERN void (*vp9_scale_and_extend_frame)(
     INTERP_FILTER filter_type,
     int phase_scaler);
 
-void vp9_apply_temporal_filter_c(const uint8_t *y_src, int y_src_stride, const uint8_t *y_pre, int y_pre_stride, const uint8_t *u_src, const uint8_t *v_src, int uv_src_stride, const uint8_t *u_pre, const uint8_t *v_pre, int uv_pre_stride, unsigned int block_width, unsigned int block_height, int ss_x, int ss_y, int strength, const int *const blk_fw, int use_32x32, uint32_t *y_accumulator, uint16_t *y_count, uint32_t *u_accumulator, uint16_t *u_count, uint32_t *v_accumulator, uint16_t *v_count);
-void vp9_apply_temporal_filter_sse4_1(const uint8_t *y_src, int y_src_stride, const uint8_t *y_pre, int y_pre_stride, const uint8_t *u_src, const uint8_t *v_src, int uv_src_stride, const uint8_t *u_pre, const uint8_t *v_pre, int uv_pre_stride, unsigned int block_width, unsigned int block_height, int ss_x, int ss_y, int strength, const int *const blk_fw, int use_32x32, uint32_t *y_accumulator, uint16_t *y_count, uint32_t *u_accumulator, uint16_t *u_count, uint32_t *v_accumulator, uint16_t *v_count);
-RTCD_EXTERN void (*vp9_apply_temporal_filter)(const uint8_t *y_src, int y_src_stride, const uint8_t *y_pre, int y_pre_stride, const uint8_t *u_src, const uint8_t *v_src, int uv_src_stride, const uint8_t *u_pre, const uint8_t *v_pre, int uv_pre_stride, unsigned int block_width, unsigned int block_height, int ss_x, int ss_y, int strength, const int *const blk_fw, int use_32x32, uint32_t *y_accumulator, uint16_t *y_count, uint32_t *u_accumulator, uint16_t *u_count, uint32_t *v_accumulator, uint16_t *v_count);
-
-void vp9_highbd_apply_temporal_filter_c(const uint16_t *y_src, int y_src_stride, const uint16_t *y_pre, int y_pre_stride, const uint16_t *u_src, const uint16_t *v_src, int uv_src_stride, const uint16_t *u_pre, const uint16_t *v_pre, int uv_pre_stride, unsigned int block_width, unsigned int block_height, int ss_x, int ss_y, int strength, const int *const blk_fw, int use_32x32, uint32_t *y_accum, uint16_t *y_count, uint32_t *u_accum, uint16_t *u_count, uint32_t *v_accum, uint16_t *v_count);
-void vp9_highbd_apply_temporal_filter_sse4_1(const uint16_t *y_src, int y_src_stride, const uint16_t *y_pre, int y_pre_stride, const uint16_t *u_src, const uint16_t *v_src, int uv_src_stride, const uint16_t *u_pre, const uint16_t *v_pre, int uv_pre_stride, unsigned int block_width, unsigned int block_height, int ss_x, int ss_y, int strength, const int *const blk_fw, int use_32x32, uint32_t *y_accum, uint16_t *y_count, uint32_t *u_accum, uint16_t *u_count, uint32_t *v_accum, uint16_t *v_count);
-RTCD_EXTERN void (*vp9_highbd_apply_temporal_filter)(const uint16_t *y_src, int y_src_stride, const uint16_t *y_pre, int y_pre_stride, const uint16_t *u_src, const uint16_t *v_src, int uv_src_stride, const uint16_t *u_pre, const uint16_t *v_pre, int uv_pre_stride, unsigned int block_width, unsigned int block_height, int ss_x, int ss_y, int strength, const int *const blk_fw, int use_32x32, uint32_t *y_accum, uint16_t *y_count, uint32_t *u_accum, uint16_t *u_count, uint32_t *v_accum, uint16_t *v_count);
-
 void vp9_rtcd(void);
 
 #ifdef RTCD_C
 #include "vpx_ports/x86.h"
-
 static void setup_rtcd_internal(void) {
   int flags = x86_simd_caps();
 
@@ -534,6 +566,8 @@ static void setup_rtcd_internal(void) {
   if (flags & HAS_SSE4_1)
     vp9_highbd_iht8x8_64_add = vp9_highbd_iht8x8_64_add_sse4_1;
 #endif
+  vp9_highbd_quantize_fp = vp9_highbd_quantize_fp_c;
+  vp9_highbd_quantize_fp_32x32 = vp9_highbd_quantize_fp_32x32_c;
 #ifdef WEBRTC_WEBKIT_DISABLE_HARDWARE_ACCELERATION
   vp9_quantize_fp = vp9_quantize_fp_c;
 #else
@@ -550,16 +584,6 @@ static void setup_rtcd_internal(void) {
 #ifndef WEBRTC_WEBKIT_DISABLE_HARDWARE_ACCELERATION
   if (flags & HAS_SSSE3)
     vp9_scale_and_extend_frame = vp9_scale_and_extend_frame_ssse3;
-#endif
-  vp9_apply_temporal_filter = vp9_apply_temporal_filter_c;
-#if !defined(WEBRTC_WEBKIT_DISABLE_HARDWARE_ACCELERATION) && !defined(WEBRTC_WEBKIT_MAC_CATALIST)
-  if (flags & HAS_SSE4_1)
-    vp9_apply_temporal_filter = vp9_apply_temporal_filter_sse4_1;
-#endif
-  vp9_highbd_apply_temporal_filter = vp9_highbd_apply_temporal_filter_c;
-#if !defined(WEBRTC_WEBKIT_DISABLE_HARDWARE_ACCELERATION) && !defined(WEBRTC_WEBKIT_MAC_CATALIST)
-  if (flags & HAS_SSE4_1)
-    vp9_highbd_apply_temporal_filter = vp9_highbd_apply_temporal_filter_sse4_1;
 #endif
 }
 #endif

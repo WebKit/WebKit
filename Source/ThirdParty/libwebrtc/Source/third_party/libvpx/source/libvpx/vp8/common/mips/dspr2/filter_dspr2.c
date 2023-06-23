@@ -816,8 +816,8 @@ void vp8_filter_block2d_first_pass16_0(unsigned char *RESTRICT src_ptr,
 
         : [Temp1] "=&r"(Temp1), [Temp2] "=&r"(Temp2), [Temp3] "=&r"(Temp3),
           [Temp4] "=&r"(Temp4), [src_ptr] "+r"(src_ptr)
-        : [src_pixels_per_line] "r"(src_pixels_per_line),
-          [output_ptr] "r"(output_ptr));
+        : [src_pixels_per_line] "r"(src_pixels_per_line), [output_ptr] "r"(
+                                                              output_ptr));
 
     __asm__ __volatile__(
         "ulw    %[Temp1],   0(%[src_ptr])                               \n\t"
@@ -832,8 +832,8 @@ void vp8_filter_block2d_first_pass16_0(unsigned char *RESTRICT src_ptr,
 
         : [Temp1] "=&r"(Temp1), [Temp2] "=&r"(Temp2), [Temp3] "=&r"(Temp3),
           [Temp4] "=&r"(Temp4), [src_ptr] "+r"(src_ptr)
-        : [src_pixels_per_line] "r"(src_pixels_per_line),
-          [output_ptr] "r"(output_ptr));
+        : [src_pixels_per_line] "r"(src_pixels_per_line), [output_ptr] "r"(
+                                                              output_ptr));
 
     __asm__ __volatile__(
         "ulw    %[Temp1],   0(%[src_ptr])                               \n\t"
@@ -848,8 +848,8 @@ void vp8_filter_block2d_first_pass16_0(unsigned char *RESTRICT src_ptr,
 
         : [Temp1] "=&r"(Temp1), [Temp2] "=&r"(Temp2), [Temp3] "=&r"(Temp3),
           [Temp4] "=&r"(Temp4), [src_ptr] "+r"(src_ptr)
-        : [src_pixels_per_line] "r"(src_pixels_per_line),
-          [output_ptr] "r"(output_ptr));
+        : [src_pixels_per_line] "r"(src_pixels_per_line), [output_ptr] "r"(
+                                                              output_ptr));
 
     output_ptr += 48;
   }

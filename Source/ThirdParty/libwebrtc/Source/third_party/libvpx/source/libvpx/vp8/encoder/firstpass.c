@@ -567,7 +567,7 @@ void vp8_first_pass(VP8_COMP *cpi) {
       vp8_copy_mem16x16(x->src.y_buffer, x->src.y_stride, x->thismb, 16);
 
       /* do intra 16x16 prediction */
-      this_error = vp8_encode_intra(cpi, x, use_dc_pred);
+      this_error = vp8_encode_intra(x, use_dc_pred);
 
       /* "intrapenalty" below deals with situations where the intra
        * and inter error scores are very low (eg a plain black frame)
@@ -903,9 +903,9 @@ static double calc_correction_factor(double err_per_mb, double err_devisor,
   correction_factor = pow(error_term, power_term);
 
   /* Clip range */
-  correction_factor = (correction_factor < 0.05)
-                          ? 0.05
-                          : (correction_factor > 5.0) ? 5.0 : correction_factor;
+  correction_factor = (correction_factor < 0.05)  ? 0.05
+                      : (correction_factor > 5.0) ? 5.0
+                                                  : correction_factor;
 
   return correction_factor;
 }
@@ -947,11 +947,10 @@ static int estimate_max_q(VP8_COMP *cpi, FIRSTPASS_STATS *fpstats,
     }
 
     cpi->twopass.est_max_qcorrection_factor =
-        (cpi->twopass.est_max_qcorrection_factor < 0.1)
-            ? 0.1
-            : (cpi->twopass.est_max_qcorrection_factor > 10.0)
-                  ? 10.0
-                  : cpi->twopass.est_max_qcorrection_factor;
+        (cpi->twopass.est_max_qcorrection_factor < 0.1) ? 0.1
+        : (cpi->twopass.est_max_qcorrection_factor > 10.0)
+            ? 10.0
+            : cpi->twopass.est_max_qcorrection_factor;
   }
 
   /* Corrections for higher compression speed settings
@@ -1178,10 +1177,9 @@ static int estimate_kf_group_q(VP8_COMP *cpi, double section_err,
   } else {
     current_spend_ratio = (double)cpi->long_rolling_actual_bits /
                           (double)cpi->long_rolling_target_bits;
-    current_spend_ratio =
-        (current_spend_ratio > 10.0)
-            ? 10.0
-            : (current_spend_ratio < 0.1) ? 0.1 : current_spend_ratio;
+    current_spend_ratio = (current_spend_ratio > 10.0)  ? 10.0
+                          : (current_spend_ratio < 0.1) ? 0.1
+                                                        : current_spend_ratio;
   }
 
   /* Calculate a correction factor based on the quality of prediction in
@@ -1631,7 +1629,6 @@ static void define_gf_group(VP8_COMP *cpi, FIRSTPASS_STATS *this_frame) {
   double this_frame_mv_in_out = 0.0;
   double mv_in_out_accumulator = 0.0;
   double abs_mv_in_out_accumulator = 0.0;
-  double mod_err_per_mb_accumulator = 0.0;
 
   int max_bits = frame_max_bits(cpi); /* Max for a single frame */
 
@@ -1681,9 +1678,6 @@ static void define_gf_group(VP8_COMP *cpi, FIRSTPASS_STATS *this_frame) {
     mod_frame_err = calculate_modified_err(cpi, this_frame);
 
     gf_group_err += mod_frame_err;
-
-    mod_err_per_mb_accumulator +=
-        mod_frame_err / DOUBLE_DIVIDE_CHECK((double)cpi->common.MBs);
 
     if (EOF == input_stats(cpi, &next_frame)) break;
 
@@ -1972,11 +1966,10 @@ static void define_gf_group(VP8_COMP *cpi, FIRSTPASS_STATS *this_frame) {
   }
 
   cpi->twopass.gf_group_bits =
-      (cpi->twopass.gf_group_bits < 0)
-          ? 0
-          : (cpi->twopass.gf_group_bits > cpi->twopass.kf_group_bits)
-                ? cpi->twopass.kf_group_bits
-                : cpi->twopass.gf_group_bits;
+      (cpi->twopass.gf_group_bits < 0) ? 0
+      : (cpi->twopass.gf_group_bits > cpi->twopass.kf_group_bits)
+          ? cpi->twopass.kf_group_bits
+          : cpi->twopass.gf_group_bits;
 
   /* Clip cpi->twopass.gf_group_bits based on user supplied data rate
    * variability limit (cpi->oxcf.two_pass_vbrmax_section)
@@ -2997,8 +2990,8 @@ static void find_next_key_frame(VP8_COMP *cpi, FIRSTPASS_STATS *this_frame) {
     }
 
     /* Set back to unscaled by defaults */
-    cpi->common.horiz_scale = NORMAL;
-    cpi->common.vert_scale = NORMAL;
+    cpi->common.horiz_scale = VP8E_NORMAL;
+    cpi->common.vert_scale = VP8E_NORMAL;
 
     /* Calculate Average bits per frame. */
     av_bits_per_frame = cpi->oxcf.target_bandwidth /

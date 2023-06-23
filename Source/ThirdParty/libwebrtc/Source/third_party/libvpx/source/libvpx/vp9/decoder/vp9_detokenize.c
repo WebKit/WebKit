@@ -133,17 +133,18 @@ static int decode_coefs(const MACROBLOCKD *xd, PLANE_TYPE type,
   int16_t dqv = dq[0];
   const uint8_t *const cat6_prob =
 #if CONFIG_VP9_HIGHBITDEPTH
-      (xd->bd == VPX_BITS_12)
-          ? vp9_cat6_prob_high12
-          : (xd->bd == VPX_BITS_10) ? vp9_cat6_prob_high12 + 2 :
+      (xd->bd == VPX_BITS_12)   ? vp9_cat6_prob_high12
+      : (xd->bd == VPX_BITS_10) ? vp9_cat6_prob_high12 + 2
+                                :
 #endif  // CONFIG_VP9_HIGHBITDEPTH
-                                    vp9_cat6_prob;
+                                vp9_cat6_prob;
   const int cat6_bits =
 #if CONFIG_VP9_HIGHBITDEPTH
-      (xd->bd == VPX_BITS_12) ? 18
-                              : (xd->bd == VPX_BITS_10) ? 16 :
+      (xd->bd == VPX_BITS_12)   ? 18
+      : (xd->bd == VPX_BITS_10) ? 16
+                                :
 #endif  // CONFIG_VP9_HIGHBITDEPTH
-                                                        14;
+                                14;
   // Keep value, range, and count as locals.  The compiler produces better
   // results with the locals than using r directly.
   BD_VALUE value = r->value;
@@ -271,9 +272,8 @@ static void get_ctx_shift(MACROBLOCKD *xd, int *ctx_shift_a, int *ctx_shift_l,
   }
 }
 
-int vp9_decode_block_tokens(TileWorkerData *twd, int plane,
-                            const scan_order *sc, int x, int y, TX_SIZE tx_size,
-                            int seg_id) {
+int vp9_decode_block_tokens(TileWorkerData *twd, int plane, const ScanOrder *sc,
+                            int x, int y, TX_SIZE tx_size, int seg_id) {
   vpx_reader *r = &twd->bit_reader;
   MACROBLOCKD *xd = &twd->xd;
   struct macroblockd_plane *const pd = &xd->plane[plane];

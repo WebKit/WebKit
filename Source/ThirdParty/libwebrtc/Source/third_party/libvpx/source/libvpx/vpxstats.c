@@ -41,7 +41,7 @@ int stats_open_file(stats_io_t *stats, const char *fpf, int pass) {
     stats->buf.buf = malloc(stats->buf_alloc_sz);
 
     if (!stats->buf.buf)
-      fatal("Failed to allocate first-pass stats buffer (%lu bytes)",
+      fatal("Failed to allocate first-pass stats buffer (%u bytes)",
             (unsigned int)stats->buf_alloc_sz);
 
     nbytes = fread(stats->buf.buf, 1, stats->buf.sz, stats->file);

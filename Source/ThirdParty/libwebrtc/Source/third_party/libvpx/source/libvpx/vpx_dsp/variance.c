@@ -549,9 +549,9 @@ HIGHBD_MSE(16, 8)
 HIGHBD_MSE(8, 16)
 HIGHBD_MSE(8, 8)
 
-void vpx_highbd_comp_avg_pred(uint16_t *comp_pred, const uint16_t *pred,
-                              int width, int height, const uint16_t *ref,
-                              int ref_stride) {
+void vpx_highbd_comp_avg_pred_c(uint16_t *comp_pred, const uint16_t *pred,
+                                int width, int height, const uint16_t *ref,
+                                int ref_stride) {
   int i, j;
   for (i = 0; i < height; ++i) {
     for (j = 0; j < width; ++j) {

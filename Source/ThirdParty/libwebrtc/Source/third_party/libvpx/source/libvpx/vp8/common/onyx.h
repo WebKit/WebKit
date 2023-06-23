@@ -27,13 +27,6 @@ struct VP8_COMP;
 /* Create/destroy static data structures. */
 
 typedef enum {
-  NORMAL = 0,
-  FOURFIVE = 1,
-  THREEFIVE = 2,
-  ONETWO = 3
-} VPX_SCALING;
-
-typedef enum {
   USAGE_LOCAL_FILE_PLAYBACK = 0x0,
   USAGE_STREAM_FROM_SERVER = 0x1,
   USAGE_CONSTRAINED_QUALITY = 0x2,
@@ -58,19 +51,19 @@ typedef enum {
 #include <assert.h>
 static INLINE void Scale2Ratio(int mode, int *hr, int *hs) {
   switch (mode) {
-    case NORMAL:
+    case VP8E_NORMAL:
       *hr = 1;
       *hs = 1;
       break;
-    case FOURFIVE:
+    case VP8E_FOURFIVE:
       *hr = 4;
       *hs = 5;
       break;
-    case THREEFIVE:
+    case VP8E_THREEFIVE:
       *hr = 3;
       *hs = 5;
       break;
-    case ONETWO:
+    case VP8E_ONETWO:
       *hr = 1;
       *hs = 2;
       break;
@@ -273,8 +266,8 @@ int vp8_set_roimap(struct VP8_COMP *cpi, unsigned char *map, unsigned int rows,
                    unsigned int threshold[4]);
 int vp8_set_active_map(struct VP8_COMP *cpi, unsigned char *map,
                        unsigned int rows, unsigned int cols);
-int vp8_set_internal_size(struct VP8_COMP *cpi, VPX_SCALING horiz_mode,
-                          VPX_SCALING vert_mode);
+int vp8_set_internal_size(struct VP8_COMP *cpi, VPX_SCALING_MODE horiz_mode,
+                          VPX_SCALING_MODE vert_mode);
 int vp8_get_quantizer(struct VP8_COMP *cpi);
 
 #ifdef __cplusplus

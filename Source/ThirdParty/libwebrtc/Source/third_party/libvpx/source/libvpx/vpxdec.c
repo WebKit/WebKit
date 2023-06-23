@@ -581,7 +581,10 @@ static int main_loop(int argc, const char **argv_) {
   /* Parse command line */
   exec_name = argv_[0];
   argv = argv_dup(argc - 1, argv_ + 1);
-
+  if (!argv) {
+    fprintf(stderr, "Error allocating argument list\n");
+    return EXIT_FAILURE;
+  }
   for (argi = argj = argv; (*argj = *argi); argi += arg.argv_step) {
     memset(&arg, 0, sizeof(arg));
     arg.argv_step = 1;
@@ -815,6 +818,10 @@ static int main_loop(int argc, const char **argv_) {
     ext_fb_list.num_external_frame_buffers = num_external_frame_buffers;
     ext_fb_list.ext_fb = (struct ExternalFrameBuffer *)calloc(
         num_external_frame_buffers, sizeof(*ext_fb_list.ext_fb));
+    if (!ext_fb_list.ext_fb) {
+      fprintf(stderr, "Failed to allocate ExternalFrameBuffer\n");
+      goto fail;
+    }
     if (vpx_codec_set_frame_buffer_functions(&decoder, get_vp9_frame_buffer,
                                              release_vp9_frame_buffer,
                                              &ext_fb_list)) {
@@ -930,6 +937,11 @@ static int main_loop(int argc, const char **argv_) {
           }
           scaled_img =
               vpx_img_alloc(NULL, img->fmt, render_width, render_height, 16);
+          if (!scaled_img) {
+            fprintf(stderr, "Failed to allocate scaled image (%d x %d)\n",
+                    render_width, render_height);
+            goto fail;
+          }
           scaled_img->bit_depth = img->bit_depth;
         }
 
@@ -966,6 +978,10 @@ static int main_loop(int argc, const char **argv_) {
         if (!img_shifted) {
           img_shifted =
               vpx_img_alloc(NULL, shifted_fmt, img->d_w, img->d_h, 16);
+          if (!img_shifted) {
+            fprintf(stderr, "Failed to allocate image\n");
+            goto fail;
+          }
           img_shifted->bit_depth = output_bit_depth;
         }
         if (output_bit_depth > img->bit_depth) {
@@ -980,7 +996,7 @@ static int main_loop(int argc, const char **argv_) {
 
       if (single_file) {
         if (use_y4m) {
-          char buf[Y4M_BUFFER_SIZE] = { 0 };
+          char y4m_buf[Y4M_BUFFER_SIZE] = { 0 };
           size_t len = 0;
           if (img->fmt == VPX_IMG_FMT_I440 || img->fmt == VPX_IMG_FMT_I44016) {
             fprintf(stderr, "Cannot produce y4m output for 440 sampling.\n");
@@ -989,21 +1005,22 @@ static int main_loop(int argc, const char **argv_) {
           if (frame_out == 1) {
             // Y4M file header
             len = y4m_write_file_header(
-                buf, sizeof(buf), vpx_input_ctx.width, vpx_input_ctx.height,
-                &vpx_input_ctx.framerate, img->fmt, img->bit_depth);
+                y4m_buf, sizeof(y4m_buf), vpx_input_ctx.width,
+                vpx_input_ctx.height, &vpx_input_ctx.framerate, img->fmt,
+                img->bit_depth);
             if (do_md5) {
-              MD5Update(&md5_ctx, (md5byte *)buf, (unsigned int)len);
+              MD5Update(&md5_ctx, (md5byte *)y4m_buf, (unsigned int)len);
             } else {
-              fputs(buf, outfile);
+              fputs(y4m_buf, outfile);
             }
           }
 
           // Y4M frame header
-          len = y4m_write_frame_header(buf, sizeof(buf));
+          len = y4m_write_frame_header(y4m_buf, sizeof(y4m_buf));
           if (do_md5) {
-            MD5Update(&md5_ctx, (md5byte *)buf, (unsigned int)len);
+            MD5Update(&md5_ctx, (md5byte *)y4m_buf, (unsigned int)len);
           } else {
-            fputs(buf, outfile);
+            fputs(y4m_buf, outfile);
           }
         } else {
           if (frame_out == 1) {
@@ -1110,6 +1127,10 @@ int main(int argc, const char **argv_) {
   int error = 0;
 
   argv = argv_dup(argc - 1, argv_ + 1);
+  if (!argv) {
+    fprintf(stderr, "Error allocating argument list\n");
+    return EXIT_FAILURE;
+  }
   for (argi = argj = argv; (*argj = *argi); argi += arg.argv_step) {
     memset(&arg, 0, sizeof(arg));
     arg.argv_step = 1;

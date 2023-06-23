@@ -19,9 +19,8 @@
 extern "C" {
 #endif
 
-int vp9_decode_block_tokens(TileWorkerData *twd, int plane,
-                            const scan_order *sc, int x, int y, TX_SIZE tx_size,
-                            int seg_id);
+int vp9_decode_block_tokens(TileWorkerData *twd, int plane, const ScanOrder *sc,
+                            int x, int y, TX_SIZE tx_size, int seg_id);
 
 #ifdef __cplusplus
 }  // extern "C"

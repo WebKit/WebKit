@@ -82,15 +82,11 @@ int vp9_lookahead_next_show_idx(const struct lookahead_ctx *ctx);
  * This function will copy the source image into a new framebuffer with
  * the expected stride/border.
  *
- * If active_map is non-NULL and there is only one frame in the queue, then copy
- * only active macroblocks.
- *
  * \param[in] ctx         Pointer to the lookahead context
  * \param[in] src         Pointer to the image to enqueue
  * \param[in] ts_start    Timestamp for the start of this frame
  * \param[in] ts_end      Timestamp for the end of this frame
  * \param[in] flags       Flags set on this frame
- * \param[in] active_map  Map that specifies which macroblock is active
  */
 int vp9_lookahead_push(struct lookahead_ctx *ctx, YV12_BUFFER_CONFIG *src,
                        int64_t ts_start, int64_t ts_end, int use_highbitdepth,

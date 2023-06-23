@@ -18,7 +18,7 @@ static INLINE __m128i signed_char_clamp_bd_sse2(__m128i value, int bd) {
   __m128i lbounded;
   __m128i retval;
 
-  const __m128i zero = _mm_set1_epi16(0);
+  const __m128i zero = _mm_setzero_si128();
   const __m128i one = _mm_set1_epi16(1);
   __m128i t80, max, min;
 
@@ -51,7 +51,7 @@ void vpx_highbd_lpf_horizontal_16_sse2(uint16_t *s, int pitch,
                                        const uint8_t *blimit,
                                        const uint8_t *limit,
                                        const uint8_t *thresh, int bd) {
-  const __m128i zero = _mm_set1_epi16(0);
+  const __m128i zero = _mm_setzero_si128();
   const __m128i one = _mm_set1_epi16(1);
   __m128i blimit_v, limit_v, thresh_v;
   __m128i q7, p7, q6, p6, q5, p5, q4, p4, q3, p3, q2, p2, q1, p1, q0, p0;
@@ -492,7 +492,7 @@ void vpx_highbd_lpf_horizontal_8_sse2(uint16_t *s, int pitch,
   DECLARE_ALIGNED(16, uint16_t, flat_oq2[16]);
   DECLARE_ALIGNED(16, uint16_t, flat_oq1[16]);
   DECLARE_ALIGNED(16, uint16_t, flat_oq0[16]);
-  const __m128i zero = _mm_set1_epi16(0);
+  const __m128i zero = _mm_setzero_si128();
   __m128i blimit_v, limit_v, thresh_v;
   __m128i mask, hev, flat;
   __m128i p3 = _mm_load_si128((__m128i *)(s - 4 * pitch));
@@ -720,7 +720,7 @@ void vpx_highbd_lpf_horizontal_4_sse2(uint16_t *s, int pitch,
                                       const uint8_t *blimit,
                                       const uint8_t *limit,
                                       const uint8_t *thresh, int bd) {
-  const __m128i zero = _mm_set1_epi16(0);
+  const __m128i zero = _mm_setzero_si128();
   __m128i blimit_v, limit_v, thresh_v;
   __m128i mask, hev, flat;
   __m128i p3 = _mm_loadu_si128((__m128i *)(s - 4 * pitch));

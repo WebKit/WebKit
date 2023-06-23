@@ -872,8 +872,8 @@ static void init_frame(VP8D_COMP *pbi) {
   xd->mode_info_stride = pc->mode_info_stride;
   xd->corrupted = 0; /* init without corruption */
 
-  xd->fullpixel_mask = 0xffffffff;
-  if (pc->full_pixel) xd->fullpixel_mask = 0xfffffff8;
+  xd->fullpixel_mask = ~0;
+  if (pc->full_pixel) xd->fullpixel_mask = ~7;
 }
 
 int vp8_decode_frame(VP8D_COMP *pbi) {

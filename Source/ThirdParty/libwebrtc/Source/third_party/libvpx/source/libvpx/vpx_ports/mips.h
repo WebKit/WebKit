@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef VPX_PORTS_MIPS_H_
-#define VPX_PORTS_MIPS_H_
+#ifndef VPX_VPX_PORTS_MIPS_H_
+#define VPX_VPX_PORTS_MIPS_H_
 
 #ifdef __cplusplus
 extern "C" {
@@ -24,4 +24,4 @@ int mips_cpu_caps(void);
 }  // extern "C"
 #endif
 
-#endif  // VPX_PORTS_MIPS_H_
+#endif  // VPX_VPX_PORTS_MIPS_H_

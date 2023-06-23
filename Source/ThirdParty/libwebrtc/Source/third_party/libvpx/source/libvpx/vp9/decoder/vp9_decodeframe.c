@@ -323,9 +323,9 @@ static void predict_and_reconstruct_intra_block(TileWorkerData *twd,
   if (!mi->skip) {
     const TX_TYPE tx_type =
         (plane || xd->lossless) ? DCT_DCT : intra_mode_to_tx_type_lookup[mode];
-    const scan_order *sc = (plane || xd->lossless)
-                               ? &vp9_default_scan_orders[tx_size]
-                               : &vp9_scan_orders[tx_size][tx_type];
+    const ScanOrder *sc = (plane || xd->lossless)
+                              ? &vp9_default_scan_orders[tx_size]
+                              : &vp9_scan_orders[tx_size][tx_type];
     const int eob = vp9_decode_block_tokens(twd, plane, sc, col, row, tx_size,
                                             mi->segment_id);
     if (eob > 0) {
@@ -348,9 +348,9 @@ static void parse_intra_block_row_mt(TileWorkerData *twd, MODE_INFO *const mi,
     struct macroblockd_plane *const pd = &xd->plane[plane];
     const TX_TYPE tx_type =
         (plane || xd->lossless) ? DCT_DCT : intra_mode_to_tx_type_lookup[mode];
-    const scan_order *sc = (plane || xd->lossless)
-                               ? &vp9_default_scan_orders[tx_size]
-                               : &vp9_scan_orders[tx_size][tx_type];
+    const ScanOrder *sc = (plane || xd->lossless)
+                              ? &vp9_default_scan_orders[tx_size]
+                              : &vp9_scan_orders[tx_size][tx_type];
     *pd->eob = vp9_decode_block_tokens(twd, plane, sc, col, row, tx_size,
                                        mi->segment_id);
     /* Keep the alignment to 16 */
@@ -393,7 +393,7 @@ static int reconstruct_inter_block(TileWorkerData *twd, MODE_INFO *const mi,
                                    int mi_row, int mi_col) {
   MACROBLOCKD *const xd = &twd->xd;
   struct macroblockd_plane *const pd = &xd->plane[plane];
-  const scan_order *sc = &vp9_default_scan_orders[tx_size];
+  const ScanOrder *sc = &vp9_default_scan_orders[tx_size];
   const int eob = vp9_decode_block_tokens(twd, plane, sc, col, row, tx_size,
                                           mi->segment_id);
   uint8_t *dst = &pd->dst.buf[4 * row * pd->dst.stride + 4 * col];
@@ -423,7 +423,7 @@ static int parse_inter_block_row_mt(TileWorkerData *twd, MODE_INFO *const mi,
                                     TX_SIZE tx_size) {
   MACROBLOCKD *const xd = &twd->xd;
   struct macroblockd_plane *const pd = &xd->plane[plane];
-  const scan_order *sc = &vp9_default_scan_orders[tx_size];
+  const ScanOrder *sc = &vp9_default_scan_orders[tx_size];
   const int eob = vp9_decode_block_tokens(twd, plane, sc, col, row, tx_size,
                                           mi->segment_id);
 

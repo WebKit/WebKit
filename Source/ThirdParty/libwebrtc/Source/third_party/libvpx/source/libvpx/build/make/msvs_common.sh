@@ -9,7 +9,8 @@
 ##  be found in the AUTHORS file in the root of the source tree.
 ##
 
-if [ "$(uname -o 2>/dev/null)" = "Cygwin" ] \
+shell_name="$(uname -o 2>/dev/null)"
+if [[ "$shell_name" = "Cygwin" || "$shell_name" = "Msys" ]] \
    && cygpath --help >/dev/null 2>&1; then
     FIXPATH='cygpath -m'
 else

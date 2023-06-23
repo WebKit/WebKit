@@ -124,6 +124,11 @@ ifeq ($(CONFIG_POSTPROC),yes)
 VP8_COMMON_SRCS-$(HAVE_MSA) += common/mips/msa/mfqe_msa.c
 endif
 
+# common (loongarch LSX intrinsics)
+VP8_COMMON_SRCS-$(HAVE_LSX) += common/loongarch/loopfilter_filters_lsx.c
+VP8_COMMON_SRCS-$(HAVE_LSX) += common/loongarch/sixtap_filter_lsx.c
+VP8_COMMON_SRCS-$(HAVE_LSX) += common/loongarch/idct_lsx.c
+
 # common (neon intrinsics)
 VP8_COMMON_SRCS-$(HAVE_NEON)  += common/arm/loopfilter_arm.c
 VP8_COMMON_SRCS-$(HAVE_NEON)  += common/arm/loopfilter_arm.h

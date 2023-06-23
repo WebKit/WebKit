@@ -157,6 +157,8 @@ for opt in "$@"; do
         ;;
         --lib) proj_kind="lib"
         ;;
+        --as=*) as="${optval}"
+        ;;
         --src-path-bare=*)
             src_path_bare=$(fix_path "$optval")
             src_path_bare=${src_path_bare%/}
@@ -168,7 +170,7 @@ for opt in "$@"; do
         --ver=*)
             vs_ver="$optval"
             case "$optval" in
-                1[4-6])
+                1[4-7])
                 ;;
                 *) die Unrecognized Visual Studio Version in $opt
                 ;;
@@ -247,13 +249,13 @@ libs=${libs// /;}
 case "$target" in
     x86_64*)
         platforms[0]="x64"
-        asm_Debug_cmdline="yasm -Xvc -g cv8 -f win64 ${yasmincs} &quot;%(FullPath)&quot;"
-        asm_Release_cmdline="yasm -Xvc -f win64 ${yasmincs} &quot;%(FullPath)&quot;"
+        asm_Debug_cmdline="${as} -Xvc -gcv8 -f win64 ${yasmincs} &quot;%(FullPath)&quot;"
+        asm_Release_cmdline="${as} -Xvc -f win64 ${yasmincs} &quot;%(FullPath)&quot;"
     ;;
     x86*)
         platforms[0]="Win32"
-        asm_Debug_cmdline="yasm -Xvc -g cv8 -f win32 ${yasmincs} &quot;%(FullPath)&quot;"
-        asm_Release_cmdline="yasm -Xvc -f win32 ${yasmincs} &quot;%(FullPath)&quot;"
+        asm_Debug_cmdline="${as} -Xvc -gcv8 -f win32 ${yasmincs} &quot;%(FullPath)&quot;"
+        asm_Release_cmdline="${as} -Xvc -f win32 ${yasmincs} &quot;%(FullPath)&quot;"
     ;;
     arm64*)
         platforms[0]="ARM64"
@@ -341,6 +343,9 @@ generate_vcxproj() {
             fi
             if [ "$vs_ver" = "16" ]; then
                 tag_content PlatformToolset v142
+            fi
+            if [ "$vs_ver" = "17" ]; then
+                tag_content PlatformToolset v143
             fi
             tag_content CharacterSet Unicode
             if [ "$config" = "Release" ]; then

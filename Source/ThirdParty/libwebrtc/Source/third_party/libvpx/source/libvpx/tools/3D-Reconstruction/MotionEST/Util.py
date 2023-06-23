@@ -18,7 +18,7 @@ from PIL import Image, ImageDraw
 def MSE(blk1, blk2):
   return np.mean(
       LA.norm(
-          np.array(blk1, dtype=np.int) - np.array(blk2, dtype=np.int), axis=2))
+          np.array(blk1, dtype=int) - np.array(blk2, dtype=int), axis=2))
 
 
 def drawMF(img, blk_sz, mf):
