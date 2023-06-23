@@ -2240,10 +2240,13 @@ AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
         return AccessibilityRole::RubyBlock;
     if (m_renderer->isRubyInline())
         return AccessibilityRole::RubyInline;
-    
+
+    if (m_renderer->isAnonymous() && (is<RenderTableCell>(m_renderer.get()) || is<RenderTableRow>(m_renderer.get()) || is<RenderTable>(m_renderer.get())))
+        return AccessibilityRole::Ignored;
+
     // This return value is what will be used if AccessibilityTableCell determines
     // the cell should not be treated as a cell (e.g. because it is a layout table.
-    if (is<RenderTableCell>(renderer()))
+    if (is<RenderTableCell>(m_renderer.get()))
         return AccessibilityRole::TextGroup;
     // Table sections should be ignored.
     if (m_renderer->isTableSection())

@@ -56,7 +56,7 @@ PASS axElement.role == 'AXRole: AXList' is true
 
 
 Inline list elements with an aria role should be a list
-PASS axElement.role == 'AXRole: AXList' is false
+PASS axElement.role == 'AXRole: AXList' is true
 
 
 PASS successfullyParsed is true

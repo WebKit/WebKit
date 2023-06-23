@@ -713,9 +713,9 @@ Ref<AccessibilityObject> AXObjectCache::createObjectFromRenderer(RenderObject* r
         return AccessibilityMenuList::create(downcast<RenderMenuList>(renderer));
 
     // standard tables
-    if (is<RenderTable>(renderer) || isAccessibilityTable(node))
+    if ((is<RenderTable>(renderer) && !renderer->isAnonymous()) || isAccessibilityTable(node))
         return AccessibilityTable::create(renderer);
-    if (is<RenderTableRow>(renderer) || isAccessibilityTableRow(node))
+    if ((is<RenderTableRow>(renderer) && !renderer->isAnonymous()) || isAccessibilityTableRow(node))
         return AccessibilityTableRow::create(renderer);
     if ((is<RenderTableCell>(renderer) && !renderer->isAnonymous()) || isAccessibilityTableCell(node))
         return AccessibilityTableCell::create(renderer);

@@ -1,4 +1,4 @@
-This test ensures that a table with display:contents components is accessible.
+This test ensures that a table with display:grid components is accessible.
 
 PASS: table.rowCount === 4
 PASS: table.columnCount === 3
@@ -79,8 +79,15 @@ PASS successfullyParsed is true
 
 TEST COMPLETE
 This is a table caption
-Author Title Year
-Stephen Hawking A Brief History of Time 1988
-Carl Sagan Cosmos 1980
-Will Gater The Mysteries of the Universe 2020
-
+Author
+Title
+Year
+Stephen Hawking
+A Brief History of Time
+1988
+Carl Sagan
+Cosmos
+1980
+Will Gater
+The Mysteries of the Universe
+2020
