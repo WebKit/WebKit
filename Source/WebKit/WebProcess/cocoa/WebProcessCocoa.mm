@@ -268,16 +268,6 @@ static Boolean isAXAuthenticatedCallback(audit_token_t auditToken)
 }
 #endif
 
-static void softlinkDataDetectorsFrameworks()
-{
-#if ENABLE(DATA_DETECTION)
-    PAL::isDataDetectorsCoreFrameworkAvailable();
-#if PLATFORM(IOS_FAMILY)
-    PAL::isDataDetectorsUIFrameworkAvailable();
-#endif // PLATFORM(IOS_FAMILY)
-#endif // ENABLE(DATA_DETECTION)
-}
-
 enum class VideoDecoderBehavior : uint8_t {
     AvoidHardware               = 1 << 0,
     AvoidIOSurface              = 1 << 1,
@@ -536,10 +526,6 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
 #endif
 
     disableURLSchemeCheckInDataDetectors();
-
-    // Soft link frameworks related to Data Detection before we disconnect from launchd because these frameworks connect to
-    // launchd temporarily at link time to register XPC services. See rdar://93598951 (my feature request to stop doing that)
-    softlinkDataDetectorsFrameworks();
 
 #if HAVE(VIDEO_RESTRICTED_DECODING) && PLATFORM(MAC)
     if (codeCheckSemaphore)
