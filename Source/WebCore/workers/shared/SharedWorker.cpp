@@ -29,6 +29,7 @@
 #include "ClientOrigin.h"
 #include "ContentSecurityPolicy.h"
 #include "Document.h"
+#include "DocumentInlines.h"
 #include "EventNames.h"
 #include "Logging.h"
 #include "MessageChannel.h"
@@ -70,6 +71,9 @@ ExceptionOr<Ref<SharedWorker>> SharedWorker::create(Document& document, String&&
 {
     if (!mainThreadConnection())
         return Exception { NotSupportedError, "Shared workers are not supported"_s };
+
+    if (!document.hasBrowsingContext())
+        return Exception { InvalidStateError, "No browsing context"_s };
 
     auto url = document.completeURL(scriptURLString);
     if (!url.isValid())
