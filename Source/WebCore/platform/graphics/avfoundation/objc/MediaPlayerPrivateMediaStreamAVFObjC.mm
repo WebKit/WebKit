@@ -441,6 +441,9 @@ void MediaPlayerPrivateMediaStreamAVFObjC::layersAreInitialized(IntSize size, bo
     scheduleRenderingModeChanged();
 
     m_sampleBufferDisplayLayer->setLogIdentifier(makeString(hex(reinterpret_cast<uintptr_t>(logIdentifier()))));
+    if (m_storedBounds)
+        m_sampleBufferDisplayLayer->updateBoundsAndPosition(*m_storedBounds, m_videoRotation);
+
     m_sampleBufferDisplayLayer->updateDisplayMode(m_displayMode < PausedImage, hideRootLayer());
     m_shouldUpdateDisplayLayer = true;
 
@@ -1201,9 +1204,10 @@ void MediaPlayerPrivateMediaStreamAVFObjC::setVideoInlineSizeFenced(const FloatS
 {
     if (!m_sampleBufferDisplayLayer || size.isEmpty())
         return;
-    CGRect bounds = m_sampleBufferDisplayLayer->rootLayer().bounds;
-    bounds.size = size;
-    m_sampleBufferDisplayLayer->updateBoundsAndPosition(bounds, m_videoRotation, fence);
+
+    m_storedBounds = m_sampleBufferDisplayLayer->rootLayer().bounds;
+    m_storedBounds->size = size;
+    m_sampleBufferDisplayLayer->updateBoundsAndPosition(*m_storedBounds, m_videoRotation, fence);
 }
 
 }

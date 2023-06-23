@@ -301,6 +301,7 @@ private:
     FloatSize m_videoFrameSize;
     VideoFrameTimeMetadata m_sampleMetadata;
 
+    std::optional<CGRect> m_storedBounds;
     static NativeImageCreator m_nativeImageCreator;
 };
 
