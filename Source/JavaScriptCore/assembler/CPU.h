@@ -203,6 +203,10 @@ inline bool hasSensibleDoubleToInt()
     return optimizeForX86();
 }
 
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
+bool isKernOpenSource();
+#endif
+
 #if (CPU(X86) || CPU(X86_64)) && OS(DARWIN)
 bool isKernTCSMAvailable();
 bool enableKernTCSM();
