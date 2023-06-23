@@ -105,7 +105,11 @@
 #endif
 #endif
 
-#if PLATFORM(PLAYSTATION)
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 120000
+#define HAVE_MISSING_STD_FILESYSTEM_PATH_CONSTRUCTOR 1
+// FIXME: This should be deleted, along with any code that's using it.
+#define HAVE_CPP20_INCOMPATIBLE_INTERNAL_HEADERS 1
+#elif PLATFORM(PLAYSTATION)
 #define HAVE_MISSING_STD_FILESYSTEM_PATH_CONSTRUCTOR 1
 #endif
 
@@ -357,6 +361,12 @@
 #define HAVE_NS_ACTIVITY 1
 #endif
 
+// FIXME: The only place this is used is in Cocoa-specific code,
+// so we can just assume its value and delete this definition.
+#if PLATFORM(COCOA)
+#define HAVE_SEC_TRUST_SET_CLIENT_AUDIT_TOKEN 1
+#endif
+
 #if PLATFORM(MAC)
 #define HAVE_TOUCH_BAR 1
 #endif
@@ -443,6 +453,12 @@
 #define HAVE_ALTERNATIVE_SERVICE 1
 #endif
 
+// FIXME: This should be deleted, along with any code that's using it.
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 120000
+#define HAVE_SAFARI_FOR_WEBKIT_DEVELOPMENT_REQUIRING_EXTRA_SYMBOLS 1
+#define HAVE_NSURLSESSION_EFFECTIVE_CONFIGURATION_OBJECT 1
+#endif
+
 #if PLATFORM(MAC)
 #define HAVE_CSCHECKFIXDISABLE 1
 #endif
@@ -503,6 +519,12 @@
 
 #if PLATFORM(MAC) || PLATFORM(IOS_FAMILY)
 #define HAVE_NSURLSESSION_WEBSOCKET 1
+#endif
+
+// FIXME: The only place this is used is in Cocoa-specific code,
+// so we can just assume its value and delete this definition.
+#if PLATFORM(COCOA)
+#define HAVE_NWPARAMETERS_TRACKER_API 1
 #endif
 
 #if PLATFORM(COCOA) && !PLATFORM(MACCATALYST)
@@ -840,6 +862,12 @@
 #define HAVE_AVCONTENTKEYREQUEST_COMPATABILITIY_MODE 1
 #endif
 
+// FIXME: The only place this is used is in Cocoa-specific code,
+// so we can just assume its value and delete this definition.
+#if PLATFORM(COCOA)
+#define HAVE_LEVEL_3_SYSTEM_FONT_WIDTH_VALUES 1
+#endif
+
 #if __has_include(<AVFoundation/AVPlayerInterstitialEventController.h>)
 #if !defined(HAVE_AVFOUNDATION_INTERSTITIAL_EVENTS)
 #define HAVE_AVFOUNDATION_INTERSTITIAL_EVENTS 1
@@ -903,6 +931,12 @@
 
 #if PLATFORM(COCOA) && !PLATFORM(WATCHOS)
 #define HAVE_VISION 1
+#endif
+
+// FIXME: The only place this is used is in Cocoa-specific code,
+// so we can just assume its value and delete this definition.
+#if PLATFORM(COCOA)
+#define HAVE_VM_FLAGS_PERMANENT 1
 #endif
 
 #if PLATFORM(COCOA)
@@ -973,6 +1007,12 @@
 #define HAVE_PER_APP_ACCESSIBILITY_PREFERENCES 1
 #endif
 
+// FIXME: The only place this is used is in Cocoa-specific code,
+// so we can just assume its value and delete this definition.
+#if PLATFORM(COCOA)
+#define HAVE_APP_SPECIFIC_ACCESSIBILITY_SETTINGS 1
+#endif
+
 #if (PLATFORM(IOS_FAMILY) && !PLATFORM(IOS_FAMILY_SIMULATOR)) || PLATFORM(MACCATALYST) || PLATFORM(MAC)
 #define HAVE_PAC_SHARED_REGION_ID 1
 #endif
@@ -1002,6 +1042,12 @@
 
 #if PLATFORM(MAC)
 #define HAVE_CMPHOTO_TILE_DECODER_AVAILABLE 1
+#endif
+
+// FIXME: The only place this is used is in Cocoa-specific code,
+// so we can just assume its value and delete this definition.
+#if PLATFORM(COCOA)
+#define HAVE_AVSAMPLEBUFFERRENDERSYNCHRONIZER_RATEATHOSTTIME 1
 #endif
 
 #if (PLATFORM(IOS) || PLATFORM(VISION)) && !PLATFORM(IOS_FAMILY_SIMULATOR)
@@ -1038,6 +1084,12 @@
 
 #if PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)
 #define HAVE_AUDIOSESSION_PROCESSASSERTION 1
+#endif
+
+// FIXME: The only place this is used is in Cocoa-specific code,
+// so we can just assume its value and delete this definition.
+#if PLATFORM(COCOA)
+#define HAVE_NSTEXTLIST_MARKER_FORMATS 1
 #endif
 
 // FIXME: Why no catalyst?
@@ -1090,6 +1142,14 @@
 #define HAVE_UNIFORM_TYPE_IDENTIFIERS_FRAMEWORK 1
 #endif
 
+#if PLATFORM(COCOA)
+#define HAVE_AV_DELEGATING_PLAYBACK_COORDINATOR 1
+#endif
+// FIXME: This should be deleted, along with any code that's using it.
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 120000
+#undef HAVE_AV_DELEGATING_PLAYBACK_COORDINATOR
+#endif
+
 #if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 130000)
 #define HAVE_SCREEN_CAPTURE_KIT 1
 #endif
@@ -1119,6 +1179,12 @@
 
 #if PLATFORM(MAC)
 #define HAVE_PLATFORM_SCROLL_MOMENTUM_INTERRUPTION_REASON 1
+#endif
+
+// FIXME: The only place this is used is in Cocoa-specific code,
+// so we can just assume its value and delete this definition.
+#if PLATFORM(COCOA)
+#define HAVE_CFNETWORK_DISABLE_CACHE_SPI 1
 #endif
 
 #if PLATFORM(IOS) || PLATFORM(MACCATALYST) || PLATFORM(VISION)

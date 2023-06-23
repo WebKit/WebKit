@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2014, 2015 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -98,6 +98,7 @@ SOFT_LINK_CONSTANT(UIFoundation, NSMarkedClauseSegmentAttributeName, NSString *)
 SOFT_LINK_CONSTANT(UIFoundation, NSTextAlternativesAttributeName, NSString *)
 #define NSTextAlternativesAttributeName getNSTextAlternativesAttributeName()
 
+#if HAVE(NSTEXTLIST_MARKER_FORMATS)
 #import <UIKit/NSTextList.h>
 SOFT_LINK_CONSTANT(UIFoundation, NSTextListMarkerCircle, NSTextListMarkerFormat)
 #define NSTextListMarkerCircle getNSTextListMarkerCircle()
@@ -125,6 +126,22 @@ SOFT_LINK_CONSTANT(UIFoundation, NSTextListMarkerUppercaseRoman, NSTextListMarke
 #define NSTextListMarkerUppercaseRoman getNSTextListMarkerUppercaseRoman()
 SOFT_LINK_CONSTANT(UIFoundation, NSTextListMarkerDecimal, NSTextListMarkerFormat)
 #define NSTextListMarkerDecimal getNSTextListMarkerDecimal()
+#else
+typedef NSString *NSTextListMarkerFormat;
+static NSTextListMarkerFormat const NSTextListMarkerCircle = @"{circle}";
+static NSTextListMarkerFormat const NSTextListMarkerDisc = @"{disc}";
+static NSTextListMarkerFormat const NSTextListMarkerSquare = @"{square}";
+static NSTextListMarkerFormat const NSTextListMarkerLowercaseHexadecimal = @"{lower-hexadecimal}";
+static NSTextListMarkerFormat const NSTextListMarkerUppercaseHexadecimal = @"{upper-hexadecimal}";
+static NSTextListMarkerFormat const NSTextListMarkerOctal = @"{octal}";
+static NSTextListMarkerFormat const NSTextListMarkerLowercaseAlpha = @"{lower-alpha}";
+static NSTextListMarkerFormat const NSTextListMarkerUppercaseAlpha = @"{upper-alpha}";
+static NSTextListMarkerFormat const NSTextListMarkerLowercaseLatin = @"{lower-latin}";
+static NSTextListMarkerFormat const NSTextListMarkerUppercaseLatin = @"{upper-latin}";
+static NSTextListMarkerFormat const NSTextListMarkerLowercaseRoman = @"{lower-roman}";
+static NSTextListMarkerFormat const NSTextListMarkerUppercaseRoman = @"{upper-roman}";
+static NSTextListMarkerFormat const NSTextListMarkerDecimal = @"{decimal}";
+#endif // HAVE(NSTEXTLIST_MARKER_FORMATS)
 
 // We don't softlink NSSuperscriptAttributeName because UIFoundation stopped exporting it.
 // This attribute is being deprecated at the API level, but internally UIFoundation

@@ -861,6 +861,11 @@ void WebProcess::initializeSandbox(const AuxiliaryProcessInitializationParameter
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
     auto webKitBundle = [NSBundle bundleForClass:NSClassFromString(@"WKWebView")];
 
+#if defined(USE_VORBIS_AUDIOCOMPONENT_WORKAROUND)
+    // We need to initialize the Vorbis decoder before the sandbox gets setup; this is a one off action.
+    WebCore::registerVorbisDecoderIfNeeded();
+#endif
+
     sandboxParameters.setOverrideSandboxProfilePath(makeString(String([webKitBundle resourcePath]), "/com.apple.WebProcess.sb"));
 
     AuxiliaryProcess::initializeSandbox(parameters, sandboxParameters);

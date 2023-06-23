@@ -1,5 +1,5 @@
 /*
-  * Copyright (C) 2017-2023 Apple Inc. All rights reserved.
+  * Copyright (C) 2017 Apple Inc. All rights reserved.
   *
   * Redistribution and use in source and binary forms, with or without
   * modification, are permitted provided that the following conditions
@@ -74,6 +74,17 @@ IGNORE_WARNINGS_END
 @property (readonly) NSArray<NSString *> *alternativeStrings;
 @property (readonly) BOOL isLowConfidence;
 @end
+
+#if !HAVE(NSTEXTLIST_MARKER_FORMATS)
+@interface NSParagraphStyle ()
+- (NSArray *)textLists;
+@end
+
+@interface NSTextList : NSObject
+@property NSInteger startingItemNumber;
+@property (readonly, copy) NSString *markerFormat;
+@end
+#endif
 
 WTF_EXTERN_C_BEGIN
 

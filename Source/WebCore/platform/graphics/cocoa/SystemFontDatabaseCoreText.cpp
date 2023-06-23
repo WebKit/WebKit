@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2022 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -87,8 +87,13 @@ RetainPtr<CTFontRef> SystemFontDatabaseCoreText::createTextStyleFont(const Casca
     auto descriptor = adoptCF(CTFontDescriptorCreateWithTextStyle(parameters.fontName.string().createCFString().get(), contentSizeCategory(), localeString.get()));
     // FIXME: Use createFontByApplyingWeightWidthItalicsAndFallbackBehavior().
     CTFontSymbolicTraits traits = (parameters.weight >= kCTFontWeightSemibold ? kCTFontTraitBold : 0)
+#if HAVE(LEVEL_2_SYSTEM_FONT_WIDTH_VALUES) || HAVE(LEVEL_3_SYSTEM_FONT_WIDTH_VALUES)
         | (parameters.width >= kCTFontWidthSemiExpanded ? kCTFontTraitExpanded : 0)
         | (parameters.width <= kCTFontWidthSemiCondensed ? kCTFontTraitCondensed : 0)
+#else
+        | (parameters.width >= kCTFontWidthExpanded ? kCTFontTraitExpanded : 0)
+        | (parameters.width <= kCTFontWidthCondensed ? kCTFontTraitCondensed : 0)
+#endif
         | (parameters.italic ? kCTFontTraitItalic : 0);
     if (traits)
         descriptor = adoptCF(CTFontDescriptorCreateCopyWithSymbolicTraits(descriptor.get(), traits, traits));
@@ -211,6 +216,7 @@ static CGFloat mapWidth(FontSelectionValue width)
         FontSelectionValue input;
         CGFloat output;
     } piecewisePoints[] = {
+#if HAVE(LEVEL_3_SYSTEM_FONT_WIDTH_VALUES)
         {FontSelectionValue(37.5f), kCTFontWidthUltraCompressed},
         {FontSelectionValue(50), kCTFontWidthExtraCompressed}, // ultra condensed
         {FontSelectionValue(62.5f), kCTFontWidthExtraCondensed},
@@ -220,6 +226,18 @@ static CGFloat mapWidth(FontSelectionValue width)
         {FontSelectionValue(112.5f), kCTFontWidthSemiExpanded},
         {FontSelectionValue(125), kCTFontWidthExpanded},
         {FontSelectionValue(150), kCTFontWidthExtraExpanded},
+#elif HAVE(LEVEL_2_SYSTEM_FONT_WIDTH_VALUES)
+        {FontSelectionValue(62.5f), kCTFontWidthExtraCondensed},
+        {FontSelectionValue(75), kCTFontWidthCondensed},
+        {FontSelectionValue(87.5f), kCTFontWidthSemiCondensed},
+        {FontSelectionValue(100), kCTFontWidthStandard},
+        {FontSelectionValue(112.5f), kCTFontWidthSemiExpanded},
+        {FontSelectionValue(125), kCTFontWidthExpanded}
+#else // level 1
+        {FontSelectionValue(75), kCTFontWidthCondensed},
+        {FontSelectionValue(100), kCTFontWidthStandard},
+        {FontSelectionValue(125), kCTFontWidthExpanded}
+#endif
     };
     for (size_t i = 0; i < std::size(piecewisePoints) - 1; ++i) {
         auto& previous = piecewisePoints[i];

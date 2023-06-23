@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2023 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006, 2016 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -90,10 +90,14 @@ CertificateInfo ResourceResponse::platformCertificateInfo(std::span<const std::b
         return { };
     auto trust = checked_cf_cast<SecTrustRef>(trustValue);
 
+#if HAVE(SEC_TRUST_SET_CLIENT_AUDIT_TOKEN)
     if (trust && auditToken.size()) {
         auto data = adoptCF(CFDataCreate(nullptr, reinterpret_cast<const uint8_t*>(auditToken.data()), auditToken.size()));
         SecTrustSetClientAuditToken(trust, data.get());
     }
+#else
+    UNUSED_PARAM(auditToken);
+#endif
 
     SecTrustResultType trustResultType;
     OSStatus result = SecTrustGetTrustResult(trust, &trustResultType);

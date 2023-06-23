@@ -1775,6 +1775,7 @@
 		DDE99312278D089000F60D26 /* libWebKitAdditions.a in Product Dependencies */ = {isa = PBXBuildFile; fileRef = DDE9930E278D086600F60D26 /* libWebKitAdditions.a */; };
 		DE26E9031CB5DD0500D2BE82 /* BuiltinExecutableCreator.h in Headers */ = {isa = PBXBuildFile; fileRef = DE26E9021CB5DD0500D2BE82 /* BuiltinExecutableCreator.h */; };
 		DEA7E2451BBC677F00D78440 /* JSTypedArrayViewPrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = 53917E7C1B791106000EBD33 /* JSTypedArrayViewPrototype.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		DFBC2CA625E6D5B90081BDD1 /* SymbolStubsForSafariCompatibility.mm in Sources */ = {isa = PBXBuildFile; fileRef = DFBC2CA525E6D5790081BDD1 /* SymbolStubsForSafariCompatibility.mm */; };
 		E124A8F70E555775003091F1 /* OpaqueJSString.h in Headers */ = {isa = PBXBuildFile; fileRef = E124A8F50E555775003091F1 /* OpaqueJSString.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E307178324C7827100DF0644 /* IntlRelativeTimeFormat.h in Headers */ = {isa = PBXBuildFile; fileRef = A3BF885024480BE1001B9F35 /* IntlRelativeTimeFormat.h */; };
 		E307178424C7827700DF0644 /* IntlRelativeTimeFormatConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = A3BF884E24480BE0001B9F35 /* IntlRelativeTimeFormatConstructor.h */; };
@@ -5182,6 +5183,7 @@
 		DDE9930E278D086600F60D26 /* libWebKitAdditions.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libWebKitAdditions.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		DE26E9021CB5DD0500D2BE82 /* BuiltinExecutableCreator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BuiltinExecutableCreator.h; sourceTree = "<group>"; };
 		DE26E9061CB5DD9600D2BE82 /* BuiltinExecutableCreator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BuiltinExecutableCreator.cpp; sourceTree = "<group>"; };
+		DFBC2CA525E6D5790081BDD1 /* SymbolStubsForSafariCompatibility.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SymbolStubsForSafariCompatibility.mm; sourceTree = "<group>"; };
 		E124A8F50E555775003091F1 /* OpaqueJSString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OpaqueJSString.h; sourceTree = "<group>"; };
 		E124A8F60E555775003091F1 /* OpaqueJSString.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OpaqueJSString.cpp; sourceTree = "<group>"; };
 		E178633F0D9BEC0000D74E75 /* InitializeThreading.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InitializeThreading.h; sourceTree = "<group>"; };
@@ -8293,6 +8295,7 @@
 				705B41A81A6E501E00716757 /* SymbolObject.h */,
 				705B41A91A6E501E00716757 /* SymbolPrototype.cpp */,
 				705B41AA1A6E501E00716757 /* SymbolPrototype.h */,
+				DFBC2CA525E6D5790081BDD1 /* SymbolStubsForSafariCompatibility.mm */,
 				0F919D2715856770004A4E7D /* SymbolTable.cpp */,
 				14A396A60CD2933100B5B4FF /* SymbolTable.h */,
 				E39BF39822A2288B00BD183E /* SymbolTableInlines.h */,
@@ -12371,6 +12374,7 @@
 				4B46940328984FA800512FDF /* MacroAssemblerARM64.cpp in Sources */,
 				4B46940428984FEE00512FDF /* MacroAssemblerX86Common.cpp in Sources */,
 				FE770390298CD40F009634C7 /* Parser.cpp in Sources */,
+				DFBC2CA625E6D5B90081BDD1 /* SymbolStubsForSafariCompatibility.mm in Sources */,
 				E32F713F281B3C6600AFD21D /* UnifiedSource1-c.c in Sources */,
 				536B319A1F735E780037FC33 /* UnifiedSource1-mm.mm in Sources */,
 				536B315F1F71C5990037FC33 /* UnifiedSource1.cpp in Sources */,
