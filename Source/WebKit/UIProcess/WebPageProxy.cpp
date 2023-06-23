@@ -12109,7 +12109,7 @@ void WebPageProxy::loadServiceWorker(const URL& url, bool usingModules, Completi
 #endif
 }
 
-#if !PLATFORM(IOS_FAMILY)
+#if !PLATFORM(COCOA)
 bool WebPageProxy::shouldForceForegroundPriorityForClientNavigation() const
 {
     return false;

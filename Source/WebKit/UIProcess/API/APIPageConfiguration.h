@@ -116,9 +116,6 @@ public:
     void setDefaultWebsitePolicies(WebsitePolicies*);
 
 #if PLATFORM(IOS_FAMILY)
-    bool clientNavigationsRunAtForegroundPriority() const { return m_data.clientNavigationsRunAtForegroundPriority; }
-    void setClientNavigationsRunAtForegroundPriority(bool value) { m_data.clientNavigationsRunAtForegroundPriority = value; }
-
     bool canShowWhileLocked() const { return m_data.canShowWhileLocked; }
     void setCanShowWhileLocked(bool canShowWhileLocked) { m_data.canShowWhileLocked = canShowWhileLocked; }
 
@@ -146,6 +143,9 @@ public:
 #if PLATFORM(COCOA)
     const WTF::Vector<WTF::String>& additionalSupportedImageTypes() const { return m_data.additionalSupportedImageTypes; }
     void setAdditionalSupportedImageTypes(WTF::Vector<WTF::String>&& additionalSupportedImageTypes) { m_data.additionalSupportedImageTypes = WTFMove(additionalSupportedImageTypes); }
+
+    bool clientNavigationsRunAtForegroundPriority() const { return m_data.clientNavigationsRunAtForegroundPriority; }
+    void setClientNavigationsRunAtForegroundPriority(bool value) { m_data.clientNavigationsRunAtForegroundPriority = value; }
 #endif
 
 #if ENABLE(APPLICATION_MANIFEST)
@@ -238,7 +238,6 @@ private:
         RefPtr<WebsitePolicies> defaultWebsitePolicies;
 
 #if PLATFORM(IOS_FAMILY)
-        bool clientNavigationsRunAtForegroundPriority { true };
         bool canShowWhileLocked { false };
         WebKit::AttributionOverrideTesting appInitiatedOverrideValueForTesting { WebKit::AttributionOverrideTesting::NoOverride };
         RetainPtr<_UIClickInteractionDriving> clickInteractionDriverForTesting;
@@ -255,6 +254,7 @@ private:
 
 #if PLATFORM(COCOA)
         WTF::Vector<WTF::String> additionalSupportedImageTypes;
+        bool clientNavigationsRunAtForegroundPriority { true };
 #endif
 
 #if ENABLE(APPLICATION_MANIFEST)

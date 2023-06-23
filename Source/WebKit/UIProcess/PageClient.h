@@ -233,7 +233,7 @@ public:
     // Return whether the view is visible.
     virtual bool isViewVisible() = 0;
 
-#if USE(RUNNINGBOARD)
+#if PLATFORM(COCOA)
     virtual bool canTakeForegroundAssertions() = 0;
 #endif
 
