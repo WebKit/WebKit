@@ -1,0 +1,18 @@
+WEBVTT
+Valid and invalid position values with alignments
+
+1
+00:00:00.000 --> 00:00:01.000 position:0%,line-left
+position:0%,line-left
+
+2
+00:00:01.000 --> 00:00:02.000 position:50%,center
+position:50%,center
+
+3
+00:00:02.000 --> 00:00:03.000 position:100%,line-right
+position:100%,line-right
+
+4
+00:00:03.000 --> 00:00:04.000 position:50%,middle
+position:50%,middle (invalid)

@@ -1234,10 +1234,43 @@ void VTTCue::setCueSettings(const String& inputString)
         }
         case Position: {
             float position;
-            if (WebVTTParser::parseFloatPercentageValue(input, position) && input.isAt(valueRun.end()))
-                m_textPosition = position;
-            else
-                LOG(Media, "VTTCue::setCueSettings, invalid Position");
+            CuePositionAlignment alignment { PositionAlignmentLignAuto };
+
+            auto parsePosition = [] (VTTScanner& input, auto end, float& position, auto& alignment) -> bool {
+                // 1. a position value consisting of: a WebVTT percentage.
+                if (!WebVTTParser::parseFloatPercentageValue(input, position)) {
+                    LOG(Media, "VTTCue::setCueSettings, invalid Position percentage");
+                    return false;
+                }
+
+                // 2. an optional alignment value consisting of:
+                if (input.isAt(end))
+                    return true;
+
+                // 2.1 A U+002C COMMA character (,).
+                if (!input.scan(','))
+                    return false;
+
+                // 2.2 One of the following strings: "line-left", "center", "line-right"
+                if (input.scan(lineLeftKeyword().characters8(), lineLeftKeyword().length()))
+                    alignment = PositionAlignmentLignLeft;
+                else if (input.scan(centerKeyword().characters8(), centerKeyword().length()))
+                    alignment = PositionAlignmentLignCenter;
+                else if (input.scan(lineRightKeyword().characters8(), lineRightKeyword().length()))
+                    alignment = PositionAlignmentLignRight;
+                else {
+                    LOG(Media, "VTTCue::setCueSettings, invalid Position setting alignment");
+                    return false;
+                }
+
+                return true;
+            };
+
+            if (!parsePosition(input, valueRun.end(), position, alignment))
+                break;
+
+            m_textPosition = position;
+            m_positionAlignment = alignment;
             break;
         }
         case Size: {
