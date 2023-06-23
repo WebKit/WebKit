@@ -78,7 +78,7 @@ std::unique_ptr<TextureMapperPlatformLayerBuffer> TextureMapperPlatformLayerBuff
                 return nullptr;
             }
 
-            auto clonedTexture = BitmapTextureGL::create(TextureMapperContextAttributes::get(), m_internalFormat);
+            auto clonedTexture = BitmapTextureGL::create(TextureMapperContextAttributes::get(), TextureMapperGL::NoFlag, m_internalFormat);
             clonedTexture->reset(m_size);
             static_cast<BitmapTextureGL&>(clonedTexture.get()).copyFromExternalTexture(texture.id);
             return makeUnique<TextureMapperPlatformLayerBuffer>(WTFMove(clonedTexture), m_extraFlags);

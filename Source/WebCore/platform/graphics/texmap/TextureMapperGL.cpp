@@ -1000,9 +1000,9 @@ IntRect TextureMapperGL::clipBounds()
     return clipStack().current().scissorBox;
 }
 
-Ref<BitmapTexture> TextureMapperGL::createTexture(GLint internalFormat)
+Ref<BitmapTexture> TextureMapperGL::createTexture()
 {
-    return BitmapTextureGL::create(m_contextAttributes, internalFormat);
+    return BitmapTextureGL::create(m_contextAttributes);
 }
 
 void TextureMapperGL::setDepthRange(double zNear, double zFar)

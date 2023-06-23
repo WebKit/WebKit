@@ -81,7 +81,6 @@ public:
     virtual void endClip() = 0;
     virtual IntRect clipBounds() = 0;
     virtual Ref<BitmapTexture> createTexture() = 0;
-    virtual Ref<BitmapTexture> createTexture(int internalFormat) = 0;
     virtual void setDepthRange(double zNear, double zFar) = 0;
 
     virtual void beginPainting(PaintFlags = 0, BitmapTexture* = nullptr) { }
