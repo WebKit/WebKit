@@ -4409,7 +4409,6 @@ webkit.org/b/202948 fast/parser/open-comment-in-textarea.html [ Failure ]
 
 webkit.org/b/202947 http/tests/is-logged-in/available-in-secure-contexts.https.html [ Failure ]
 
-webkit.org/b/202949 http/tests/websocket/tests/hybi/non-document-mixed-content-blocked-http-with-embedded-https-with-embedded-http.html [ Failure ]
 webkit.org/b/202949 http/tests/websocket/tests/hybi/non-document-mixed-content-blocked-http-with-embedded-https.html [ Failure ]
 
 webkit.org/b/202954 http/wpt/resource-timing/rt-resources-per-worker.html [ Failure ]

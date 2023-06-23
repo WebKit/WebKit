@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: The page at about:srcdoc was allowed to display insecure content from http://localhost:8000/security/resources/post-origin-to-parent.html.
+CONSOLE MESSAGE: The page at https://127.0.0.1:8443/security/contentSecurityPolicy/upgrade-insecure-requests/iframe-upgrade.https.html was allowed to display insecure content from http://localhost:8000/security/resources/post-origin-to-parent.html.
 
 
 

@@ -61,7 +61,7 @@ onmessage = (msg) => {
         printResults();
 }
 
-function runTests(isTestingMultipart)
+async function runTests(isTestingMultipart)
 {
     window.isTestingMultipart = isTestingMultipart;
     for (let i = 0; i < results.length; i++) {
@@ -72,5 +72,7 @@ function runTests(isTestingMultipart)
         frame.style = "display:none";
         frame.src = sourceOrigin + "security/resources/serve-referrer-policy-and-test.py?value=" + currentTest[0] + "&destinationOrigin=" + currentTest[2] + "&isTestingMultipart=" + (isTestingMultipart ? "1" : "0") + "&id=" + i;
         document.body.appendChild(frame);
+
+        await new Promise(resolve => frame.onload = resolve);
     }
 }
