@@ -78,9 +78,9 @@ static bool isHostSelectorMatchingInShadowTree(const CSSSelector& startSelector)
     bool hasOnlyOneCompound = true;
     bool hasHostInLastCompound = false;
     for (auto* selector = &startSelector; selector; selector = selector->tagHistory()) {
-        if (selector->match() == CSSSelector::PseudoClass && selector->pseudoClassType() == CSSSelector::PseudoClassHost)
+        if (selector->match() == CSSSelector::Match::PseudoClass && selector->pseudoClassType() == CSSSelector::PseudoClassHost)
             hasHostInLastCompound = true;
-        if (selector->tagHistory() && selector->relation() != CSSSelector::Subselector) {
+        if (selector->tagHistory() && selector->relation() != CSSSelector::RelationType::Subselector) {
             hasOnlyOneCompound = false;
             hasHostInLastCompound = false;
         }
@@ -143,10 +143,10 @@ void RuleSet::addRule(RuleData&& ruleData, CascadeLayerIdentifier cascadeLayerId
     const CSSSelector* selector = ruleData.selector();
     do {
         switch (selector->match()) {
-        case CSSSelector::Id:
+        case CSSSelector::Match::Id:
             idSelector = selector;
             break;
-        case CSSSelector::Class: {
+        case CSSSelector::Match::Class: {
             auto& className = selector->value();
             if (!classSelector) {
                 classSelector = selector;
@@ -160,21 +160,21 @@ void RuleSet::addRule(RuleData&& ruleData, CascadeLayerIdentifier cascadeLayerId
             }
             break;
         }
-        case CSSSelector::Exact:
-        case CSSSelector::Set:
-        case CSSSelector::List:
-        case CSSSelector::Hyphen:
-        case CSSSelector::Contain:
-        case CSSSelector::Begin:
-        case CSSSelector::End:
+        case CSSSelector::Match::Exact:
+        case CSSSelector::Match::Set:
+        case CSSSelector::Match::List:
+        case CSSSelector::Match::Hyphen:
+        case CSSSelector::Match::Contain:
+        case CSSSelector::Match::Begin:
+        case CSSSelector::Match::End:
             if (shouldHaveBucketForAttributeName(*selector))
                 attributeSelector = selector;
             break;
-        case CSSSelector::Tag:
+        case CSSSelector::Match::Tag:
             if (selector->tagQName().localName() != starAtom())
                 tagSelector = selector;
             break;
-        case CSSSelector::PseudoElement:
+        case CSSSelector::Match::PseudoElement:
             switch (selector->pseudoElementType()) {
             case CSSSelector::PseudoElementWebKitCustom:
             case CSSSelector::PseudoElementWebKitCustomLegacyPrefixed:
@@ -195,7 +195,7 @@ void RuleSet::addRule(RuleData&& ruleData, CascadeLayerIdentifier cascadeLayerId
                 break;
             }
             break;
-        case CSSSelector::PseudoClass:
+        case CSSSelector::Match::PseudoClass:
             switch (selector->pseudoClassType()) {
             case CSSSelector::PseudoClassLink:
             case CSSSelector::PseudoClassVisited:
@@ -214,11 +214,11 @@ void RuleSet::addRule(RuleData&& ruleData, CascadeLayerIdentifier cascadeLayerId
                 break;
             }
             break;
-        case CSSSelector::Unknown:
-        case CSSSelector::PagePseudoClass:
+        case CSSSelector::Match::Unknown:
+        case CSSSelector::Match::PagePseudoClass:
             break;
         }
-        if (selector->relation() != CSSSelector::Subselector)
+        if (selector->relation() != CSSSelector::RelationType::Subselector)
             break;
         selector = selector->tagHistory();
     } while (selector);
@@ -252,7 +252,7 @@ void RuleSet::addRule(RuleData&& ruleData, CascadeLayerIdentifier cascadeLayerId
         ruleData.disableSelectorFiltering();
 
         auto* nextSelector = customPseudoElementSelector->tagHistory();
-        if (nextSelector && nextSelector->match() == CSSSelector::PseudoElement && nextSelector->pseudoElementType() == CSSSelector::PseudoElementPart) {
+        if (nextSelector && nextSelector->match() == CSSSelector::Match::PseudoElement && nextSelector->pseudoElementType() == CSSSelector::PseudoElementPart) {
             // Handle selectors like ::part(foo)::placeholder with the part codepath.
             m_partPseudoElementRules.append(ruleData);
             return;

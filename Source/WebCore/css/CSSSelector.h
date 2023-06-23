@@ -67,7 +67,7 @@ struct PossiblyQuotedIdentifier {
         void replaceNestingParentByPseudoClassScope();
 
         // How the attribute value has to match. Default is Exact.
-        enum Match {
+        enum class Match : uint8_t {
             Unknown = 0,
             Tag,
             Id,
@@ -84,8 +84,8 @@ struct PossiblyQuotedIdentifier {
             PagePseudoClass
         };
 
-        enum RelationType {
-            Subselector,
+        enum class RelationType : uint8_t {
+            Subselector = 0,
             DescendantSpace,
             Child,
             DirectAdjacent,
@@ -282,9 +282,9 @@ struct PossiblyQuotedIdentifier {
         int nthA() const;
         int nthB() const;
 
-        bool hasDescendantRelation() const { return relation() == DescendantSpace; }
+        bool hasDescendantRelation() const { return relation() == RelationType::DescendantSpace; }
 
-        bool hasDescendantOrChildRelation() const { return relation() == Child || hasDescendantRelation(); }
+        bool hasDescendantOrChildRelation() const { return relation() == RelationType::Child || hasDescendantRelation(); }
 
         PseudoClassType pseudoClassType() const;
         void setPseudoClassType(PseudoClassType);
@@ -323,8 +323,8 @@ struct PossiblyQuotedIdentifier {
         void setForPage() { m_isForPage = true; }
 
     private:
-        unsigned m_relation : 4 { DescendantSpace }; // enum RelationType.
-        mutable unsigned m_match : 4 { Unknown }; // enum Match.
+        unsigned m_relation : 4 { static_cast<unsigned>(RelationType::DescendantSpace) }; // enum RelationType.
+        mutable unsigned m_match : 4 { static_cast<unsigned>(Match::Unknown) }; // enum Match.
         mutable unsigned m_pseudoType : 8 { 0 }; // PseudoType.
         unsigned m_isLastInSelectorList : 1 { false };
         unsigned m_isFirstInTagHistory : 1 { true };
@@ -390,17 +390,17 @@ inline const QualifiedName& CSSSelector::attribute() const
 
 inline bool CSSSelector::matchesPseudoElement() const
 {
-    return match() == PseudoElement;
+    return match() == Match::PseudoElement;
 }
 
 inline bool CSSSelector::isUnknownPseudoElement() const
 {
-    return match() == PseudoElement && pseudoElementType() == PseudoElementUnknown;
+    return match() == Match::PseudoElement && pseudoElementType() == PseudoElementUnknown;
 }
 
 inline bool CSSSelector::isCustomPseudoElement() const
 {
-    return match() == PseudoElement
+    return match() == Match::PseudoElement
         && (pseudoElementType() == PseudoElementWebKitCustom
             || pseudoElementType() == PseudoElementWebKitCustomLegacyPrefixed);
 }
@@ -447,25 +447,25 @@ inline bool isLogicalCombinationPseudoClass(CSSSelector::PseudoClassType pseudoC
 
 inline bool CSSSelector::isSiblingSelector() const
 {
-    return relation() == DirectAdjacent
-        || relation() == IndirectAdjacent
-        || (match() == CSSSelector::PseudoClass && pseudoClassIsRelativeToSiblings(pseudoClassType()));
+    return relation() == RelationType::DirectAdjacent
+        || relation() == RelationType::IndirectAdjacent
+        || (match() == CSSSelector::Match::PseudoClass && pseudoClassIsRelativeToSiblings(pseudoClassType()));
 }
 
 inline bool CSSSelector::isAttributeSelector() const
 {
-    return match() == CSSSelector::Exact
-        || match() == CSSSelector::Set
-        || match() == CSSSelector::List
-        || match() == CSSSelector::Hyphen
-        || match() == CSSSelector::Contain
-        || match() == CSSSelector::Begin
-        || match() == CSSSelector::End;
+    return match() == CSSSelector::Match::Exact
+        || match() == CSSSelector::Match::Set
+        || match() == CSSSelector::Match::List
+        || match() == CSSSelector::Match::Hyphen
+        || match() == CSSSelector::Match::Contain
+        || match() == CSSSelector::Match::Begin
+        || match() == CSSSelector::Match::End;
 }
 
 inline void CSSSelector::setValue(const AtomString& value, bool matchLowerCase)
 {
-    ASSERT(match() != Tag);
+    ASSERT(match() != Match::Tag);
     AtomString matchingValue = matchLowerCase ? value.convertToASCIILowercase() : value;
     if (!m_hasRareData && matchingValue != value)
         createRareData();
@@ -493,10 +493,10 @@ inline CSSSelector::~CSSSelector()
         m_data.rareData->deref();
         m_data.rareData = nullptr;
         m_hasRareData = false;
-    } else if (match() == Tag) {
+    } else if (match() == Match::Tag) {
         m_data.tagQName->deref();
         m_data.tagQName = nullptr;
-        m_match = Unknown;
+        m_match = static_cast<unsigned>(Match::Unknown);
     } else if (m_data.value) {
         m_data.value->deref();
         m_data.value = nullptr;
@@ -515,7 +515,7 @@ inline const AtomString& CSSSelector::tagLowercaseLocalName() const
 
 inline const AtomString& CSSSelector::value() const
 {
-    ASSERT(match() != Tag);
+    ASSERT(match() != Match::Tag);
     if (m_hasRareData)
         return m_data.rareData->matchingValue;
 
@@ -525,7 +525,7 @@ inline const AtomString& CSSSelector::value() const
 
 inline const AtomString& CSSSelector::serializingValue() const
 {
-    ASSERT(match() != Tag);
+    ASSERT(match() != Match::Tag);
     if (m_hasRareData)
         return m_data.rareData->serializingValue;
     
@@ -540,7 +540,7 @@ inline bool CSSSelector::attributeValueMatchingIsCaseInsensitive() const
 
 inline auto CSSSelector::pseudoClassType() const -> PseudoClassType
 {
-    ASSERT(match() == PseudoClass);
+    ASSERT(match() == Match::PseudoClass);
     return static_cast<PseudoClassType>(m_pseudoType);
 }
 
@@ -552,7 +552,7 @@ inline void CSSSelector::setPseudoClassType(PseudoClassType pseudoType)
 
 inline auto CSSSelector::pseudoElementType() const -> PseudoElementType
 {
-    ASSERT(match() == PseudoElement);
+    ASSERT(match() == Match::PseudoElement);
     return static_cast<PseudoElementType>(m_pseudoType);
 }
 
@@ -564,26 +564,23 @@ inline void CSSSelector::setPseudoElementType(PseudoElementType pseudoElementTyp
 
 inline auto CSSSelector::pagePseudoClassType() const -> PagePseudoClassType
 {
-    ASSERT(match() == PagePseudoClass);
+    ASSERT(match() == Match::PagePseudoClass);
     return static_cast<PagePseudoClassType>(m_pseudoType);
 }
 
 inline void CSSSelector::setPagePseudoType(PagePseudoClassType pagePseudoType)
 {
     m_pseudoType = pagePseudoType;
-    ASSERT(m_pseudoType == pagePseudoType);
 }
 
 inline void CSSSelector::setRelation(RelationType relation)
 {
-    m_relation = relation;
-    ASSERT(m_relation == relation);
+    m_relation = static_cast<unsigned>(relation);
 }
 
 inline void CSSSelector::setMatch(Match match)
 {
-    m_match = match;
-    ASSERT(m_match == match);
+    m_match = static_cast<unsigned>(match);
 }
 
 } // namespace WebCore

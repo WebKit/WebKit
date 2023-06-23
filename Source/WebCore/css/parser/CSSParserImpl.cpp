@@ -229,7 +229,7 @@ CSSSelectorList CSSParserImpl::parsePageSelector(CSSParserTokenRange range, Styl
         selector = makeUnique<CSSParserSelector>();
         if (!pseudo.isNull()) {
             selector = std::unique_ptr<CSSParserSelector>(CSSParserSelector::parsePagePseudoSelector(pseudo));
-            if (!selector || selector->match() != CSSSelector::PagePseudoClass)
+            if (!selector || selector->match() != CSSSelector::Match::PagePseudoClass)
                 return CSSSelectorList();
         }
         if (!typeSelector.isNull())

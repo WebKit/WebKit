@@ -362,7 +362,7 @@ static AttributeCaseSensitivity attributeSelectorCaseSensitivity(const CSSSelect
     ASSERT(selector.isAttributeSelector());
 
     // This is by convention, the case is irrelevant for Set.
-    if (selector.match() == CSSSelector::Set)
+    if (selector.match() == CSSSelector::Match::Set)
         return AttributeCaseSensitivity::CaseSensitive;
 
     if (selector.attributeValueMatchingIsCaseInsensitive())
@@ -379,7 +379,7 @@ public:
         , m_attributeCaseSensitivity(attributeSelectorCaseSensitivity(selector))
     {
         ASSERT(!(m_attributeCaseSensitivity == AttributeCaseSensitivity::CaseInsensitive && !selector.attributeValueMatchingIsCaseInsensitive()));
-        ASSERT(!(selector.match() == CSSSelector::Set && m_attributeCaseSensitivity != AttributeCaseSensitivity::CaseSensitive));
+        ASSERT(!(selector.match() == CSSSelector::Match::Set && m_attributeCaseSensitivity != AttributeCaseSensitivity::CaseSensitive));
     }
 
     AttributeCaseSensitivity attributeCaseSensitivity() const { return m_attributeCaseSensitivity; }
@@ -651,18 +651,18 @@ void compileSelector(CompiledSelector& compiledSelector, const CSSSelector* sele
 static inline FragmentRelation fragmentRelationForSelectorRelation(CSSSelector::RelationType relation)
 {
     switch (relation) {
-    case CSSSelector::DescendantSpace:
+    case CSSSelector::RelationType::DescendantSpace:
         return FragmentRelation::Descendant;
-    case CSSSelector::Child:
+    case CSSSelector::RelationType::Child:
         return FragmentRelation::Child;
-    case CSSSelector::DirectAdjacent:
+    case CSSSelector::RelationType::DirectAdjacent:
         return FragmentRelation::DirectAdjacent;
-    case CSSSelector::IndirectAdjacent:
+    case CSSSelector::RelationType::IndirectAdjacent:
         return FragmentRelation::IndirectAdjacent;
-    case CSSSelector::Subselector:
-    case CSSSelector::ShadowDescendant:
-    case CSSSelector::ShadowPartDescendant:
-    case CSSSelector::ShadowSlotted:
+    case CSSSelector::RelationType::Subselector:
+    case CSSSelector::RelationType::ShadowDescendant:
+    case CSSSelector::RelationType::ShadowPartDescendant:
+    case CSSSelector::RelationType::ShadowSlotted:
         ASSERT_NOT_REACHED();
     }
     ASSERT_NOT_REACHED();
@@ -1437,13 +1437,13 @@ static FunctionType constructFragmentsInternal(const CSSSelector* rootSelector, 
         }
 
         switch (selector->match()) {
-        case CSSSelector::Tag:
+        case CSSSelector::Match::Tag:
             ASSERT(!fragment->tagNameSelector);
             fragment->tagNameSelector = selector;
             if (fragment->tagNameSelector->tagQName() != anyQName())
                 fragment->onlyMatchesLinksInQuirksMode = false;
             break;
-        case CSSSelector::Id: {
+        case CSSSelector::Match::Id: {
             const AtomString& id = selector->value();
             if (fragment->id) {
                 if (id != *fragment->id)
@@ -1453,11 +1453,11 @@ static FunctionType constructFragmentsInternal(const CSSSelector* rootSelector, 
             fragment->onlyMatchesLinksInQuirksMode = false;
             break;
         }
-        case CSSSelector::Class:
+        case CSSSelector::Match::Class:
             fragment->classNames.append(selector->value().impl());
             fragment->onlyMatchesLinksInQuirksMode = false;
             break;
-        case CSSSelector::PseudoClass: {
+        case CSSSelector::Match::PseudoClass: {
             FragmentPositionInRootFragments subPosition = positionInRootFragments;
             if (relationToPreviousFragment != FragmentRelation::Rightmost)
                 subPosition = isRightmostOrAdjacent ? FragmentPositionInRootFragments::AdjacentToRightmost : FragmentPositionInRootFragments::Other;
@@ -1471,7 +1471,7 @@ static FunctionType constructFragmentsInternal(const CSSSelector* rootSelector, 
                 return functionType;
             break;
         }
-        case CSSSelector::PseudoElement: {
+        case CSSSelector::Match::PseudoElement: {
             fragment->onlyMatchesLinksInQuirksMode = false;
 
             // In the QuerySelector context, PseudoElement selectors always fail.
@@ -1516,46 +1516,46 @@ static FunctionType constructFragmentsInternal(const CSSSelector* rootSelector, 
             functionType = FunctionType::SelectorCheckerWithCheckingContext;
             break;
         }
-        case CSSSelector::List:
+        case CSSSelector::Match::List:
             if (selector->value().find(isASCIIWhitespace<UChar>) != notFound)
                 return FunctionType::CannotMatchAnything;
             FALLTHROUGH;
-        case CSSSelector::Begin:
-        case CSSSelector::End:
-        case CSSSelector::Contain:
+        case CSSSelector::Match::Begin:
+        case CSSSelector::Match::End:
+        case CSSSelector::Match::Contain:
             if (selector->value().isEmpty())
                 return FunctionType::CannotMatchAnything;
             FALLTHROUGH;
-        case CSSSelector::Exact:
-        case CSSSelector::Hyphen:
+        case CSSSelector::Match::Exact:
+        case CSSSelector::Match::Hyphen:
             fragment->onlyMatchesLinksInQuirksMode = false;
             fragment->attributes.append(AttributeMatchingInfo(*selector));
             break;
 
-        case CSSSelector::Set:
+        case CSSSelector::Match::Set:
             fragment->onlyMatchesLinksInQuirksMode = false;
             fragment->attributes.append(AttributeMatchingInfo(*selector));
             break;
-        case CSSSelector::PagePseudoClass:
+        case CSSSelector::Match::PagePseudoClass:
             fragment->onlyMatchesLinksInQuirksMode = false;
             // Pseudo page class are only relevant for style resolution, they are ignored for matching.
             break;
-        case CSSSelector::Unknown:
+        case CSSSelector::Match::Unknown:
             ASSERT_NOT_REACHED();
             return FunctionType::CannotMatchAnything;
         }
 
         auto relation = selector->relation();
-        if (relation == CSSSelector::Subselector)
+        if (relation == CSSSelector::RelationType::Subselector)
             continue;
 
-        if ((relation == CSSSelector::ShadowDescendant || relation == CSSSelector::ShadowPartDescendant) && !selector->isLastInTagHistory())
+        if ((relation == CSSSelector::RelationType::ShadowDescendant || relation == CSSSelector::RelationType::ShadowPartDescendant) && !selector->isLastInTagHistory())
             return FunctionType::CannotCompile;
 
-        if (relation == CSSSelector::ShadowSlotted)
+        if (relation == CSSSelector::RelationType::ShadowSlotted)
             return FunctionType::CannotCompile;
 
-        if (relation == CSSSelector::DirectAdjacent || relation == CSSSelector::IndirectAdjacent) {
+        if (relation == CSSSelector::RelationType::DirectAdjacent || relation == CSSSelector::RelationType::IndirectAdjacent) {
             FunctionType relationFunctionType = FunctionType::SelectorCheckerWithCheckingContext;
             if (selectorContext == SelectorContext::QuerySelector)
                 relationFunctionType = FunctionType::SimpleSelectorChecker;
@@ -1612,7 +1612,7 @@ static inline bool attributeValueTestingRequiresExtraRegister(const AttributeMat
     case AttributeCaseSensitivity::HTMLLegacyCaseInsensitive:
         return true;
     case AttributeCaseSensitivity::CaseInsensitive:
-        return attributeInfo.selector().match() == CSSSelector::Exact;
+        return attributeInfo.selector().match() == CSSSelector::Match::Exact;
     }
     return true;
 }
@@ -3422,7 +3422,7 @@ void SelectorCodeGenerator::generateElementAttributeMatching(Assembler::JumpList
 
     successCases.link(&m_assembler);
 
-    if (attributeSelector.match() != CSSSelector::Set) {
+    if (attributeSelector.match() != CSSSelector::Match::Set) {
         // We make the assumption that name matching fails in most cases and we keep value matching outside
         // of the loop. We re-enter the loop if needed.
         // FIXME: exact case sensitive value matching is so simple that it should be done in the loop.
@@ -3581,22 +3581,22 @@ void SelectorCodeGenerator::generateElementAttributeValueMatching(Assembler::Jum
     AttributeCaseSensitivity valueCaseSensitivity = attributeInfo.attributeCaseSensitivity();
 
     switch (attributeSelector.match()) {
-    case CSSSelector::Begin:
+    case CSSSelector::Match::Begin:
         generateElementAttributeFunctionCallValueMatching(failureCases, currentAttributeAddress, expectedValue, valueCaseSensitivity, operationAttributeValueBeginsWithCaseSensitive, operationAttributeValueBeginsWithCaseInsensitive);
         break;
-    case CSSSelector::Contain:
+    case CSSSelector::Match::Contain:
         generateElementAttributeFunctionCallValueMatching(failureCases, currentAttributeAddress, expectedValue, valueCaseSensitivity, operationAttributeValueContainsCaseSensitive, operationAttributeValueContainsCaseInsensitive);
         break;
-    case CSSSelector::End:
+    case CSSSelector::Match::End:
         generateElementAttributeFunctionCallValueMatching(failureCases, currentAttributeAddress, expectedValue, valueCaseSensitivity, operationAttributeValueEndsWithCaseSensitive, operationAttributeValueEndsWithCaseInsensitive);
         break;
-    case CSSSelector::Exact:
+    case CSSSelector::Match::Exact:
         generateElementAttributeValueExactMatching(failureCases, currentAttributeAddress, expectedValue, valueCaseSensitivity);
         break;
-    case CSSSelector::Hyphen:
+    case CSSSelector::Match::Hyphen:
         generateElementAttributeFunctionCallValueMatching(failureCases, currentAttributeAddress, expectedValue, valueCaseSensitivity, operationAttributeValueMatchHyphenRuleCaseSensitive, operationAttributeValueMatchHyphenRuleCaseInsensitive);
         break;
-    case CSSSelector::List:
+    case CSSSelector::Match::List:
         generateElementAttributeFunctionCallValueMatching(failureCases, currentAttributeAddress, expectedValue, valueCaseSensitivity, operationAttributeValueSpaceSeparatedListContainsCaseSensitive, operationAttributeValueSpaceSeparatedListContainsCaseInsensitive);
         break;
     default:

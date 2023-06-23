@@ -104,7 +104,7 @@ private:
 
 inline bool CSSParserSelector::needsImplicitShadowCombinatorForMatching() const
 {
-    return match() == CSSSelector::PseudoElement
+    return match() == CSSSelector::Match::PseudoElement
         && (pseudoElementType() == CSSSelector::PseudoElementWebKitCustom
 #if ENABLE(VIDEO)
             || pseudoElementType() == CSSSelector::PseudoElementCue
@@ -117,7 +117,7 @@ inline bool CSSParserSelector::needsImplicitShadowCombinatorForMatching() const
 inline bool CSSParserSelector::isPseudoElementCueFunction() const
 {
 #if ENABLE(VIDEO)
-    return m_selector->match() == CSSSelector::PseudoElement && m_selector->pseudoElementType() == CSSSelector::PseudoElementCue;
+    return m_selector->match() == CSSSelector::Match::PseudoElement && m_selector->pseudoElementType() == CSSSelector::PseudoElementCue;
 #else
     return false;
 #endif

@@ -42,12 +42,12 @@ namespace WebCore {
 #if ASSERT_ENABLED
 static bool isSingleTagNameSelector(const CSSSelector& selector)
 {
-    return selector.isLastInTagHistory() && selector.match() == CSSSelector::Tag;
+    return selector.isLastInTagHistory() && selector.match() == CSSSelector::Match::Tag;
 }
 
 static bool isSingleClassNameSelector(const CSSSelector& selector)
 {
-    return selector.isLastInTagHistory() && selector.match() == CSSSelector::Class;
+    return selector.isLastInTagHistory() && selector.match() == CSSSelector::Match::Class;
 }
 #endif // ASSERT_ENABLED
 
@@ -68,8 +68,8 @@ template<typename Output> static ALWAYS_INLINE void appendOutputForElement(Outpu
 
 static bool canBeUsedForIdFastPath(const CSSSelector& selector)
 {
-    return selector.match() == CSSSelector::Id
-        || (selector.match() == CSSSelector::Exact && selector.attribute() == HTMLNames::idAttr && !selector.attributeValueMatchingIsCaseInsensitive());
+    return selector.match() == CSSSelector::Match::Id
+        || (selector.match() == CSSSelector::Match::Exact && selector.attribute() == HTMLNames::idAttr && !selector.attributeValueMatchingIsCaseInsensitive());
 }
 
 static IdMatchingType findIdMatchingType(const CSSSelector& firstSelector)
@@ -81,7 +81,7 @@ static IdMatchingType findIdMatchingType(const CSSSelector& firstSelector)
                 return IdMatchingType::Rightmost;
             return IdMatchingType::Filter;
         }
-        if (selector->relation() != CSSSelector::Subselector)
+        if (selector->relation() != CSSSelector::RelationType::Subselector)
             inRightmost = false;
     }
     return IdMatchingType::None;
@@ -101,10 +101,10 @@ SelectorDataList::SelectorDataList(const CSSSelectorList& selectorList)
         const CSSSelector& selector = *m_selectors.first().selector;
         if (selector.isLastInTagHistory()) {
             switch (selector.match()) {
-            case CSSSelector::Tag:
+            case CSSSelector::Match::Tag:
                 m_matchType = TagNameMatch;
                 break;
-            case CSSSelector::Class:
+            case CSSSelector::Match::Class:
                 m_matchType = ClassNameMatch;
                 break;
             default:
@@ -193,7 +193,7 @@ static const CSSSelector* selectorForIdLookup(const ContainerNode& rootNode, con
     for (const CSSSelector* selector = &firstSelector; selector; selector = selector->tagHistory()) {
         if (canBeUsedForIdFastPath(*selector))
             return selector;
-        if (selector->relation() != CSSSelector::Subselector)
+        if (selector->relation() != CSSSelector::RelationType::Subselector)
             break;
     }
 
@@ -240,7 +240,7 @@ static ContainerNode& filterRootById(ContainerNode& rootNode, const CSSSelector&
     const CSSSelector* selector = &firstSelector;
     do {
         ASSERT(!canBeUsedForIdFastPath(*selector));
-        if (selector->relation() != CSSSelector::Subselector)
+        if (selector->relation() != CSSSelector::RelationType::Subselector)
             break;
         selector = selector->tagHistory();
     } while (selector);
@@ -258,9 +258,9 @@ static ContainerNode& filterRootById(ContainerNode& rootNode, const CSSSelector&
                 }
             }
         }
-        if (selector->relation() == CSSSelector::Subselector)
+        if (selector->relation() == CSSSelector::RelationType::Subselector)
             continue;
-        inAdjacentChain = selector->relation() == CSSSelector::DirectAdjacent || selector->relation() == CSSSelector::IndirectAdjacent;
+        inAdjacentChain = selector->relation() == CSSSelector::RelationType::DirectAdjacent || selector->relation() == CSSSelector::RelationType::IndirectAdjacent;
     }
     return rootNode;
 }
