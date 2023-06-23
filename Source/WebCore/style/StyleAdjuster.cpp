@@ -186,6 +186,8 @@ static bool shouldInheritTextDecorationsInEffect(const RenderStyle& style, const
     case DisplayType::Table:
     case DisplayType::InlineTable:
     case DisplayType::InlineBlock:
+    case DisplayType::InlineGrid:
+    case DisplayType::InlineFlex:
     case DisplayType::InlineBox:
         return false;
     default:
