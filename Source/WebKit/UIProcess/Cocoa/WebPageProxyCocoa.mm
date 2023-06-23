@@ -978,6 +978,11 @@ bool WebPageProxy::useGPUProcessForDOMRenderingEnabled() const
     if (preferences().useGPUProcessForDOMRenderingEnabled())
         return true;
 
+#if ENABLE(REMOTE_LAYER_TREE_ON_MAC_BY_DEFAULT)
+    if (m_configuration->lockdownModeEnabled())
+        return true;
+#endif
+
     HashSet<RefPtr<const WebPageProxy>> visitedPages;
     visitedPages.add(this);
     for (auto* page = m_configuration->relatedPage(); page && !visitedPages.contains(page); page = page->configuration().relatedPage()) {
