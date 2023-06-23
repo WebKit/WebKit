@@ -560,8 +560,10 @@ Error Connection::sendMessage(UniqueRef<Encoder>&& encoder, OptionSet<SendOption
 
     size_t outgoingMessagesCount;
     bool shouldNotifyOfQueueGrowingLarge;
+    bool shouldDispatchMessageSend;
     {
         Locker locker { m_outgoingMessagesLock };
+        shouldDispatchMessageSend = m_outgoingMessages.isEmpty();
         m_outgoingMessages.append(WTFMove(encoder));
         outgoingMessagesCount = m_outgoingMessages.size();
         shouldNotifyOfQueueGrowingLarge = m_outgoingMessageQueueIsGrowingLargeCallback && outgoingMessagesCount > largeOutgoingMessageQueueCountThreshold && (MonotonicTime::now() - m_lastOutgoingMessageQueueIsGrowingLargeCallbackCallTime) >= largeOutgoingMessageQueueTimeThreshold;
@@ -578,15 +580,17 @@ Error Connection::sendMessage(UniqueRef<Encoder>&& encoder, OptionSet<SendOption
         m_outgoingMessageQueueIsGrowingLargeCallback();
     }
 
-    // FIXME: We should add a boolean flag so we don't call this when work has already been scheduled.
-    auto sendOutgoingMessages = [protectedThis = Ref { *this }]() mutable {
-        protectedThis->sendOutgoingMessages();
-    };
+    // It's not clear if calling dispatchWithQOS() will do anything if Connection::sendOutgoingMessages() is already running.
+    if (shouldDispatchMessageSend || qos) {
+        auto sendOutgoingMessages = [protectedThis = Ref { *this }]() mutable {
+            protectedThis->sendOutgoingMessages();
+        };
 
-    if (qos)
-        m_connectionQueue->dispatchWithQOS(WTFMove(sendOutgoingMessages), *qos);
-    else
-        m_connectionQueue->dispatch(WTFMove(sendOutgoingMessages));
+        if (qos)
+            m_connectionQueue->dispatchWithQOS(WTFMove(sendOutgoingMessages), *qos);
+        else
+            m_connectionQueue->dispatch(WTFMove(sendOutgoingMessages));
+    }
 
     return Error::NoError;
 }
