@@ -4674,8 +4674,6 @@ void WebPage::willCommitLayerTree(RemoteLayerTreeTransaction& layerTransaction, 
     if (!frameView)
         return;
 
-    corePage()->setIsAwaitingLayerTreeTransactionFlush(true);
-
     layerTransaction.setContentsSize(frameView->contentsSize());
     layerTransaction.setScrollOrigin(frameView->scrollOrigin());
     layerTransaction.setPageScaleFactor(corePage()->pageScaleFactor());
@@ -4734,7 +4732,6 @@ void WebPage::didFlushLayerTreeAtTime(MonotonicTime timestamp)
 #else
     UNUSED_PARAM(timestamp);
 #endif
-    corePage()->setIsAwaitingLayerTreeTransactionFlush(false);
 }
 #endif
 

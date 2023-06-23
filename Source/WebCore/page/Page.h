@@ -1036,11 +1036,6 @@ public:
     void setAccessibilityRootObject(AccessibilityRootAtspi* rootObject) { m_accessibilityRootObject = rootObject; }
 #endif
 
-#if PLATFORM(COCOA)
-    void setIsAwaitingLayerTreeTransactionFlush(bool isAwaiting) { m_isAwaitingLayerTreeTransactionFlush = isAwaiting; }
-    bool isAwaitingLayerTreeTransactionFlush() const { return m_isAwaitingLayerTreeTransactionFlush; }
-#endif
-
     void timelineControllerMaximumAnimationFrameRateDidChange(DocumentTimelinesController&);
 
     ContentSecurityPolicyModeForExtension contentSecurityPolicyModeForExtension() const { return m_contentSecurityPolicyModeForExtension; }
@@ -1324,10 +1319,6 @@ private:
 
 #if ENABLE(EDITABLE_REGION)
     bool m_isEditableRegionEnabled { false };
-#endif
-
-#if PLATFORM(COCOA)
-    bool m_isAwaitingLayerTreeTransactionFlush { false };
 #endif
 
     Vector<OptionSet<RenderingUpdateStep>, 2> m_renderingUpdateRemainingSteps;
