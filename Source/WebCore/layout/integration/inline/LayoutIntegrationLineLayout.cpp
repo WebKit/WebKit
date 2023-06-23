@@ -243,11 +243,19 @@ void LineLayout::updateListMarkerDimensions(const RenderListMarker& listMarker)
     if (layoutBox.isListMarkerOutside()) {
         auto* ancestor = listMarker.containingBlock();
         auto offsetFromParentListItem = [&] {
+            auto hasAccountedForBorderAndPadding = false;
             auto offset = LayoutUnit { };
             for (; ancestor; ancestor = ancestor->containingBlock()) {
-                offset -= (ancestor->borderStart() + ancestor->paddingStart());
+                if (!hasAccountedForBorderAndPadding)
+                    offset -= (ancestor->borderStart() + ancestor->paddingStart());
                 if (is<RenderListItem>(*ancestor))
                     break;
+                if (ancestor->isFlexItem()) {
+                    offset -= ancestor->logicalLeft();
+                    hasAccountedForBorderAndPadding = true;
+                    continue;
+                }
+                hasAccountedForBorderAndPadding = false;
             }
             return offset;
         }();
