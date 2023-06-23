@@ -198,15 +198,21 @@ function requestInstantiate(entry, parameters, fetcher)
 
     var instantiatePromise = (async () => {
         var sourcePossiblyPromise = this.requestFetch(entry, parameters, fetcher);
-        var source = sourcePossiblyPromise;
+        var source;
 
         // Support CommonJS modules by synchronously importing the module when possible.
         if (@isPromise(sourcePossiblyPromise)) {
-            if ((@getPromiseInternalField(sourcePossiblyPromise, @promiseFieldFlags) & @promiseStateMask) === @promiseStateFulfilled) {
+            const state = @getPromiseInternalField(sourcePossiblyPromise, @promiseFieldFlags) & @promiseStateMask);
+            if (state === @promiseStateFulfilled) {
                 source = @getPromiseInternalField(sourcePossiblyPromise, @promiseFieldReactionsOrResult);
+            } else if (state === @promiseStateRejected) {
+                @putPromiseInternalField(sourcePossiblyPromise, @promiseFieldFlags, @getPromiseInternalField(sourcePossiblyPromise, @promiseFieldFlags) | @promiseFlagsIsHandled);
+                throw @getPromiseInternalField(sourcePossiblyPromise, @promiseFieldReactionsOrResult);
             } else {
                 source = await sourcePossiblyPromise;
             }
+        } else {
+            source = sourcePossiblyPromise;
         }
             
 
@@ -219,15 +225,21 @@ function requestInstantiate(entry, parameters, fetcher)
 
         var key = entry.key;
         var parseModuleRequest = this.parseModule(key, source);
-        var moduleRecord = parseModuleRequest;
+        var moduleRecord;
 
         // Support CommonJS modules by synchronously importing the module when possible.
-        if (@isPromise(parseModuleRequest)) {
-            if ((@getPromiseInternalField(parseModuleRequest, @promiseFieldFlags) & @promiseStateMask) === @promiseStateFulfilled) {
-                moduleRecord = @getPromiseInternalField(parseModuleRequest, @promiseFieldReactionsOrResult);
+        if (@isPromise(sourcePossiblyPromise)) {
+            const state = @getPromiseInternalField(parseModuleRequest, @promiseFieldFlags) & @promiseStateMask);
+            if (state === @promiseStateFulfilled) {
+                source = @getPromiseInternalField(parseModuleRequest, @promiseFieldReactionsOrResult);
+            } else if (state === @promiseStateRejected) {
+                @putPromiseInternalField(parseModuleRequest, @promiseFieldFlags, @getPromiseInternalField(parseModuleRequest, @promiseFieldFlags) | @promiseFlagsIsHandled);
+                throw @getPromiseInternalField(parseModuleRequest, @promiseFieldReactionsOrResult);
             } else {
-                moduleRecord = await parseModuleRequest;
+                source = await sourcePossiblyPromise;
             }
+        } else {
+            moduleRecord = parseModuleRequest;
         }
         
         var dependenciesMap = moduleRecord.dependenciesMap;
