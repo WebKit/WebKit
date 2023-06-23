@@ -99,7 +99,7 @@
                   { "name": "gtk-linux-bot-15", "platform": "gtk" },
                   { "name": "gtk-linux-bot-16", "platform": "gtk" },
                   { "name": "gtk-linux-bot-17", "platform": "gtk" },
-                  { "name": "gtk-linux-bot-18", "platform": "gtk" },
+                  { "name": "gtk-linux-bot-18", "platform": "gtk4" },
                   { "name": "gtk-linux-bot-19", "platform": "gtk" },
                   { "name": "gtk-linux-bot-20", "platform": "gtk" },
                   { "name": "gtk-linux-bot-21", "platform": "gtk" },
@@ -448,7 +448,7 @@
                   },
                   {
                     "name": "GTK-Linux-64-bit-Release-GTK4-Tests", "factory": "BuildAndTestAndArchiveAllButJSCFactory",
-                    "platform": "gtk", "configuration": "release", "architectures": ["x86_64"],
+                    "platform": "gtk4", "configuration": "release", "architectures": ["x86_64"],
                     "workernames": ["gtk-linux-bot-18"]
                   },
                   {

@@ -46,7 +46,7 @@ class Factory(factory.BuildFactory):
         if self.shouldInstallDependencies:
             if platform == "win":
                 self.addStep(InstallWin32Dependencies())
-            if platform == "gtk":
+            if platform.startswith("gtk"):
                 self.addStep(InstallGtkDependencies())
             if platform == "wpe":
                 self.addStep(InstallWpeDependencies())
@@ -72,7 +72,7 @@ class BuildFactory(Factory):
             self.addStep(GenerateMiniBrowserBundle())
 
         if triggers:
-            if platform == "gtk":
+            if platform.startswith("gtk"):
                 self.addStep(InstallBuiltProduct())
 
             self.addStep(ArchiveBuiltProduct())
@@ -137,7 +137,7 @@ class TestFactory(Factory):
         if platform.startswith('mac') or platform.startswith('ios-simulator'):
             self.addStep(TriggerCrashLogSubmission())
 
-        if platform == "gtk":
+        if platform.startswith("gtk"):
             self.addStep(RunGtkAPITests())
             if additionalArguments and "--display-server=wayland" in additionalArguments:
                 self.addStep(RunWebDriverTests())
@@ -194,7 +194,8 @@ class BuildAndTestAndArchiveAllButJSCFactory(BuildAndTestFactory):
         # The parent class will already archive if triggered
         if not triggers:
             self.addStep(ArchiveBuiltProduct())
-        self.addStep(RunWebDriverTests())
+        if platform != "gtk4":
+            self.addStep(RunWebDriverTests())
 
 
 class BuildAndGenerateJSCBundleFactory(BuildFactory):
@@ -272,7 +273,7 @@ class BuildAndPerfTestFactory(Factory):
         Factory.__init__(self, platform, configuration, architectures, False, additionalArguments, device_model, **kwargs)
         self.addStep(CompileWebKit())
         self.addStep(RunAndUploadPerfTests())
-        if platform == "gtk":
+        if platform.startswith("gtk"):
             self.addStep(RunBenchmarkTests(timeout=2000))
 
 

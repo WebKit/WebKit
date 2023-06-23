@@ -1142,8 +1142,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'bindings-generation-tests',
             'builtins-generator-tests',
             'API-tests',
-            'archive-built-product',
-            'webdriver-test'
+            'archive-built-product'
         ],
         'GTK-Linux-64-bit-Release-Skip-Failing-Tests': [
             'configure-build',
