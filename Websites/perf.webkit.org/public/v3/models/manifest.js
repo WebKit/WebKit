@@ -12,6 +12,7 @@ class Manifest {
         Platform.clearStaticMap();
         PlatformGroup.clearStaticMap();
         Repository.clearStaticMap();
+        TestParameter.clearStaticMap();
         CommitSet.clearStaticMap();
         Test.clearStaticMap();
         TestGroup.clearStaticMap();
@@ -73,6 +74,7 @@ class Manifest {
         });
         buildObjectsFromIdMap(rawResponse.builders, Builder);
         buildObjectsFromIdMap(rawResponse.repositories, Repository);
+        buildObjectsFromIdMap(rawResponse.testParameters, TestParameter);
         buildObjectsFromIdMap(rawResponse.bugTrackers, BugTracker, (raw) => {
             if (raw.repositories)
                 raw.repositories = raw.repositories.map((id) => { return Repository.findById(id); });
@@ -88,8 +90,9 @@ class Manifest {
                 return TriggerableRepositoryGroup.ensureSingleton(group.id, group);
             });
             raw.configurations = raw.configurations.map((configuration) => {
-                const [testId, platformId, supportedRepetitionTypes] = configuration;
-                return {test: Test.findById(testId), platform: Platform.findById(platformId), supportedRepetitionTypes};
+                const [testId, platformId, supportedRepetitionTypes, testParameterIds] = configuration;
+                const testParameters = testParameterIds.map(id => TestParameter.findById(id));
+                return {test: Test.findById(testId), platform: Platform.findById(platformId), supportedRepetitionTypes, testParameters};
             });
         });
 

@@ -29,6 +29,11 @@ function main($post_data)
     foreach ($repository_groups as &$group)
         $group['existingGroup'] = $finder->find_by_repositories($group['repository_id_list']);
 
+    $test_parameter_table = $db->fetch_table('test_parameters');
+    $valid_test_parameter_ids = array();
+    foreach ($test_parameter_table as &$row)
+        $valid_test_parameter_ids[$row['testparam_id']] = TRUE;
+
     $db->begin_transaction();
     if ($db->query_and_get_affected_rows('DELETE FROM triggerable_configurations WHERE trigconfig_triggerable = $1', array($triggerable_id)) === false) {
         $db->rollback_transaction();
@@ -48,6 +53,21 @@ function main($post_data)
                 array('configrepetition_config' => $new_triggerable_id, 'configrepetition_type' => $repetition_type), NULL)) {
                 $db->rollback_transaction();
                 exit_with_error('FailedToInsertRepetitionTypeForTriggerableConfig');
+            }
+        }
+
+        $test_parameters = array_get($entry, 'testParameters', array());
+        if (!is_array($test_parameters))
+            continue;
+        foreach ($test_parameters as $test_parameter_id) {
+            if (!array_key_exists($test_parameter_id, $valid_test_parameter_ids)) {
+                $db->rollback_transaction();
+                exit_with_error('InvalidTestParameterId', array('testParameterId' => $test_parameter_id));
+            }
+            if (!$db->insert_row('triggerable_configuration_test_parameters', 'trigconfigtestparam',
+                array('config' => $new_triggerable_id, 'parameter' => $test_parameter_id), NULL)) {
+                $db->rollback_transaction();
+                exit_with_error('FailedToInsertTestParameterForTriggerableConfig');
             }
         }
     }

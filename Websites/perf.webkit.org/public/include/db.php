@@ -348,6 +348,16 @@ class Database
         return $this->query_and_fetch_all("SELECT * FROM $table_name $clauses");
     }
 
+    function fetch_enum_values($enum_type_name) {
+        if (!$this->connection || !ctype_alnum_underscore($enum_type_name))
+            return false;
+        $entries = $this->query_and_fetch_all('SELECT unnest(enum_range(null::'. $enum_type_name . ')) AS value');
+        $values = array();
+        foreach($entries as $entry)
+            array_push($values, $entry['value']);
+        return $values;
+    }
+
     function begin_transaction() {
         return $this->connection and pg_query($this->connection, "BEGIN");
     }

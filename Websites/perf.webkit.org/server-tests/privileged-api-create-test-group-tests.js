@@ -94,15 +94,15 @@ function createAnalysisTask(name, webkitRevisions = ["191622", "191623"])
     }).then((content) => content['taskId']);
 }
 
-function addTriggerableAndCreateTask(name, webkitRevisions)
+function addTriggerableAndCreateTask(name, webkitRevisions, testParametersList=[[], []])
 {
     const report = {
         'workerName': 'anotherWorker',
         'workerPassword': 'anotherPassword',
         'triggerable': 'build-webkit',
         'configurations': [
-            {test: MockData.someTestId(), platform: MockData.somePlatformId(), supportedRepetitionTypes: ['alternating', 'sequential']},
-            {test: MockData.someTestId(), platform: MockData.otherPlatformId(), supportedRepetitionTypes: ['alternating', 'sequential']},
+            {test: MockData.someTestId(), platform: MockData.somePlatformId(), supportedRepetitionTypes: ['alternating', 'sequential'], testParameters: testParametersList[0]},
+            {test: MockData.someTestId(), platform: MockData.otherPlatformId(), supportedRepetitionTypes: ['alternating', 'sequential'], testParameters: testParametersList[1]},
         ],
         'repositoryGroups': [
             {name: 'os-only', acceptsRoot: true, repositories: [
@@ -1498,6 +1498,324 @@ describe('/privileged-api/create-test-group', function () {
             return PrivilegedAPI.sendRequest('create-test-group', {name: 'test', task: taskId,
                 platform: MockData.somePlatformId(), test: MockData.someTestId(),
                 needsNotification: true, repetitionType: 'invalid-mode', repetitionCount: 2, revisionSets})
+        });
+    });
+
+    it('should create a test group with test parameters', async () => {
+        await addTriggerableAndCreateTask('some task',  ["191622", "191623"], [[1, 2], [1, 2]]);
+        const webkit = Repository.all().filter((repository) => repository.name() == 'WebKit')[0];
+        const revisionSets = [{[webkit.id()]: {revision: '191622'}}, {[webkit.id()]: {revision: '191623'}}];
+        const testParametersList = [{1: {value: true, file: null}}, {1: {value: true}}];
+        let result = await PrivilegedAPI.sendRequest('create-test-group',
+            {name: 'test', taskName: 'other task', platform: MockData.somePlatformId(), test: MockData.someTestId(),
+                needsNotification: true, revisionSets, testParametersList, repetitionType: 'alternating', repetitionCount: 2});
+        const insertedGroupId = result['testGroupId'];
+
+        const [analysisTask, testGroups] = await Promise.all([AnalysisTask.fetchById(result['taskId']), TestGroup.fetchForTask(result['taskId'], true)]);
+        assert.strictEqual(analysisTask.name(), 'other task');
+
+        assert.strictEqual(testGroups.length, 1);
+        const group = testGroups[0];
+        assert.strictEqual(group.id(), insertedGroupId);
+        assert.strictEqual(group.initialRepetitionCount(), 2);
+        assert.strictEqual(group.repetitionType(), 'alternating')
+        assert.ok(group.needsNotification());
+        const requests = group.buildRequests();
+        assert.strictEqual(requests.length, 4);
+
+        assert.strictEqual(requests[0].order(), 0);
+        assert.strictEqual(requests[1].order(), 1);
+        assert.strictEqual(requests[2].order(), 2);
+        assert.strictEqual(requests[3].order(), 3);
+
+        assert.strictEqual(group.requestedCommitSets().length, 2);
+        assert(requests[0].commitSet().equals(requests[2].commitSet()));
+        assert(requests[1].commitSet().equals(requests[3].commitSet()));
+
+        const set0 = requests[0].commitSet();
+        const set1 = requests[1].commitSet();
+        assert.deepStrictEqual(set0.repositories(), [webkit]);
+        assert.deepStrictEqual(set0.customRoots(), []);
+        assert.deepStrictEqual(set1.repositories(), [webkit]);
+        assert.deepStrictEqual(set1.customRoots(), []);
+        assert.strictEqual(set0.revisionForRepository(webkit), '191622');
+        assert.strictEqual(set1.revisionForRepository(webkit), '191623');
+
+        assert.strictEqual(group.requestedTestParameterSets().length, 2);
+        const parameterSet0 = requests[0].testParameterSet();
+        const parameterSet1 = requests[1].testParameterSet();
+        assert(parameterSet0 === requests[2].testParameterSet());
+        assert(parameterSet1 === requests[3].testParameterSet());
+
+        assert.strictEqual(parameterSet0.parameters.length, 1);
+        assert.strictEqual(parameterSet0.buildTypeParameters.length, 0);
+        assert.strictEqual(parameterSet0.testTypeParameters.length, 1);
+        assert.strictEqual(parameterSet0.valueForParameterName('diagnose'), true);
+        assert.strictEqual(parameterSet0.fileForParameterName('diagnose'), undefined);
+
+        assert.strictEqual(parameterSet1.parameters.length, 1);
+        assert.strictEqual(parameterSet1.buildTypeParameters.length, 0);
+        assert.strictEqual(parameterSet1.testTypeParameters.length, 1);
+        assert.strictEqual(parameterSet1.valueForParameterName('diagnose'), true);
+        assert.strictEqual(parameterSet1.fileForParameterName('diagnose'), undefined);
+    });
+
+    it('should create a test group with build type requests if any build type test parameter is specified', async () => {
+        await addTriggerableAndCreateTask('some task',  ["191622", "191623"], [[1, 2], [1, 2]]);
+        const webkit = Repository.all().filter((repository) => repository.name() == 'WebKit')[0];
+        const revisionSets = [{[webkit.id()]: {revision: '191622'}}, {[webkit.id()]: {revision: '191623'}}];
+        const testParametersList = [{1: {value: true, file: null}, 2: {value: 'Xcode 14.3'}}, {2: {value: 'Xcode 14.3'}}];
+        let result = await PrivilegedAPI.sendRequest('create-test-group',
+            {name: 'test', taskName: 'other task', platform: MockData.somePlatformId(), test: MockData.someTestId(),
+                needsNotification: true, revisionSets, testParametersList, repetitionType: 'alternating', repetitionCount: 2});
+        const insertedGroupId = result['testGroupId'];
+
+        const [analysisTask, testGroups] = await Promise.all([AnalysisTask.fetchById(result['taskId']), TestGroup.fetchForTask(result['taskId'], true)]);
+        assert.strictEqual(analysisTask.name(), 'other task');
+
+        assert.strictEqual(testGroups.length, 1);
+        const group = testGroups[0];
+        assert.strictEqual(group.id(), insertedGroupId);
+        assert.strictEqual(group.initialRepetitionCount(), 2);
+        assert.strictEqual(group.repetitionType(), 'alternating')
+        assert.ok(group.needsNotification());
+        const requests = group.buildRequests();
+        assert.strictEqual(requests.length, 6);
+
+        assert.strictEqual(requests[0].order(), -2);
+        assert.strictEqual(requests[1].order(), -1);
+        assert.strictEqual(requests[2].order(), 0);
+        assert.strictEqual(requests[3].order(), 1);
+        assert.strictEqual(requests[4].order(), 2);
+        assert.strictEqual(requests[5].order(), 3);
+
+        assert.strictEqual(group.requestedCommitSets().length, 2);
+        assert(requests[0].commitSet().equals(requests[2].commitSet()));
+        assert(requests[0].commitSet().equals(requests[4].commitSet()));
+        assert(requests[1].commitSet().equals(requests[3].commitSet()));
+        assert(requests[1].commitSet().equals(requests[5].commitSet()));
+
+        const set0 = requests[0].commitSet();
+        const set1 = requests[1].commitSet();
+        assert.deepStrictEqual(set0.repositories(), [webkit]);
+        assert.deepStrictEqual(set0.customRoots(), []);
+        assert.deepStrictEqual(set1.repositories(), [webkit]);
+        assert.deepStrictEqual(set1.customRoots(), []);
+        assert.strictEqual(set0.revisionForRepository(webkit), '191622');
+        assert.strictEqual(set1.revisionForRepository(webkit), '191623');
+
+        assert.strictEqual(group.requestedTestParameterSets().length, 2);
+        const parameterSet0 = requests[0].testParameterSet();
+        const parameterSet1 = requests[1].testParameterSet();
+        assert(parameterSet0 === requests[2].testParameterSet());
+        assert(parameterSet0 === requests[4].testParameterSet());
+        assert(parameterSet1 === requests[3].testParameterSet());
+        assert(parameterSet1 === requests[5].testParameterSet());
+
+        assert.strictEqual(parameterSet0.parameters.length, 2);
+        assert.strictEqual(parameterSet0.buildTypeParameters.length, 1);
+        assert.strictEqual(parameterSet0.testTypeParameters.length, 1);
+        assert.strictEqual(parameterSet0.valueForParameterName('diagnose'), true);
+        assert.strictEqual(parameterSet0.fileForParameterName('diagnose'), undefined);
+        assert.strictEqual(parameterSet0.valueForParameterName('Custom SDK'), 'Xcode 14.3');
+        assert.strictEqual(parameterSet0.fileForParameterName('Custom SDK'), undefined);
+
+        assert.strictEqual(parameterSet1.parameters.length, 1);
+        assert.strictEqual(parameterSet1.buildTypeParameters.length, 1);
+        assert.strictEqual(parameterSet1.testTypeParameters.length, 0);
+        assert.strictEqual(parameterSet1.valueForParameterName('Custom SDK'), 'Xcode 14.3');
+        assert.strictEqual(parameterSet1.fileForParameterName('Custom SDK'), undefined);
+    });
+
+    it('should create a test group allowing one side with not test parameter specified', async () => {
+        await addTriggerableAndCreateTask('some task',  ["191622", "191623"], [[1, 2], [1, 2]]);
+        const webkit = Repository.all().filter((repository) => repository.name() == 'WebKit')[0];
+        const revisionSets = [{[webkit.id()]: {revision: '191622'}}, {[webkit.id()]: {revision: '191623'}}];
+        const testParametersList = [null, {2: {value: 'Xcode 14.3'}}];
+        let result = await PrivilegedAPI.sendRequest('create-test-group',
+            {name: 'test', taskName: 'other task', platform: MockData.somePlatformId(), test: MockData.someTestId(),
+                needsNotification: true, revisionSets, testParametersList, repetitionType: 'alternating', repetitionCount: 2});
+        const insertedGroupId = result['testGroupId'];
+
+        const [analysisTask, testGroups] = await Promise.all([AnalysisTask.fetchById(result['taskId']), TestGroup.fetchForTask(result['taskId'], true)]);
+        assert.strictEqual(analysisTask.name(), 'other task');
+
+        assert.strictEqual(testGroups.length, 1);
+        const group = testGroups[0];
+        assert.strictEqual(group.id(), insertedGroupId);
+        assert.strictEqual(group.initialRepetitionCount(), 2);
+        assert.strictEqual(group.repetitionType(), 'alternating')
+        assert.ok(group.needsNotification());
+        const requests = group.buildRequests();
+        assert.strictEqual(requests.length, 6);
+
+        assert.strictEqual(requests[0].order(), -2);
+        assert.strictEqual(requests[1].order(), -1);
+        assert.strictEqual(requests[2].order(), 0);
+        assert.strictEqual(requests[3].order(), 1);
+        assert.strictEqual(requests[4].order(), 2);
+        assert.strictEqual(requests[5].order(), 3);
+
+        assert.strictEqual(group.requestedCommitSets().length, 2);
+        assert(requests[0].commitSet().equals(requests[2].commitSet()));
+        assert(requests[0].commitSet().equals(requests[4].commitSet()));
+        assert(requests[1].commitSet().equals(requests[3].commitSet()));
+        assert(requests[1].commitSet().equals(requests[5].commitSet()));
+
+        const set0 = requests[0].commitSet();
+        const set1 = requests[1].commitSet();
+        assert.deepStrictEqual(set0.repositories(), [webkit]);
+        assert.deepStrictEqual(set0.customRoots(), []);
+        assert.deepStrictEqual(set1.repositories(), [webkit]);
+        assert.deepStrictEqual(set1.customRoots(), []);
+        assert.strictEqual(set0.revisionForRepository(webkit), '191622');
+        assert.strictEqual(set1.revisionForRepository(webkit), '191623');
+
+        assert.strictEqual(group.requestedTestParameterSets().length, 2);
+        const parameterSet0 = requests[0].testParameterSet();
+        const parameterSet1 = requests[1].testParameterSet();
+        assert(parameterSet0 === requests[2].testParameterSet());
+        assert(parameterSet0 === requests[4].testParameterSet());
+        assert(parameterSet1 === requests[3].testParameterSet());
+        assert(parameterSet1 === requests[5].testParameterSet());
+
+        assert.strictEqual(parameterSet0, null);
+
+        assert.strictEqual(parameterSet1.parameters.length, 1);
+        assert.strictEqual(parameterSet1.buildTypeParameters.length, 1);
+        assert.strictEqual(parameterSet1.testTypeParameters.length, 0);
+        assert.strictEqual(parameterSet1.valueForParameterName('Custom SDK'), 'Xcode 14.3');
+        assert.strictEqual(parameterSet1.fileForParameterName('Custom SDK'), undefined);
+    });
+
+    it('should create a test group only for the side with build type test parameter if the other side has a different repository group', async () => {
+        const taskId = await addTriggerableAndCreateTask('some task',  ["191622", "191623"], [[1, 2], [1, 2]]);
+
+        const webkit = Repository.findById(MockData.webkitRepositoryId());
+        const macos = Repository.findById(MockData.macosRepositoryId());
+        const revisionSets = [{[macos.id()]: {revision: '15A284'}, [webkit.id()]: {revision: '191622'}},
+            {[webkit.id()]: {revision: '191623'}}];
+        const testParametersList = [null, {2: {value: 'Xcode 14.3'}}];
+        const params = {name: 'test', task: taskId, repetitionCount: 2, revisionSets, testParametersList};
+        const content = await PrivilegedAPI.sendRequest('create-test-group', params)
+        const insertedGroupId = content['testGroupId'];
+        const testGroups = await TestGroup.fetchForTask(taskId, true);
+
+        assert.strictEqual(testGroups.length, 1);
+        const group = testGroups[0];
+        assert.strictEqual(group.id(), insertedGroupId);
+        assert.strictEqual(group.initialRepetitionCount(), 2);
+        assert.ok(!group.needsNotification());
+        const requests = group.buildRequests();
+        assert.strictEqual(requests.length, 5);
+        assert.strictEqual(requests[0].order(), -1);
+
+        const set0 = requests[1].commitSet();
+        const set1 = requests[2].commitSet();
+        assert.deepStrictEqual(Repository.sortByNamePreferringOnesWithURL(set0.repositories()), [webkit, macos]);
+        assert.deepStrictEqual(set1.repositories(), [webkit]);
+        assert.strictEqual(set0.revisionForRepository(webkit), '191622');
+        assert.strictEqual(set0.revisionForRepository(macos), '15A284');
+        assert.strictEqual(set1.revisionForRepository(webkit), '191623');
+        assert.strictEqual(set1.revisionForRepository(macos), null);
+
+        const repositoryGroup0 = requests[1].repositoryGroup();
+        assert.strictEqual(repositoryGroup0.name(), 'system-and-webkit');
+        assert.strictEqual(repositoryGroup0, requests[3].repositoryGroup());
+        assert(repositoryGroup0.accepts(set0));
+        assert(!repositoryGroup0.accepts(set1));
+
+        const repositoryGroup1 = requests[2].repositoryGroup();
+        assert.strictEqual(repositoryGroup1.name(), 'webkit-only');
+        assert.strictEqual(repositoryGroup1, requests[4].repositoryGroup());
+        assert(!repositoryGroup1.accepts(set0));
+        assert(repositoryGroup1.accepts(set1));
+
+        assert.strictEqual(group.requestedTestParameterSets().length, 2);
+        const parameterSet0 = requests[1].testParameterSet();
+        const parameterSet1 = requests[2].testParameterSet();
+        assert(parameterSet0 === requests[3].testParameterSet());
+        assert(parameterSet1 === requests[0].testParameterSet());
+        assert(parameterSet1 === requests[4].testParameterSet());
+
+        assert.strictEqual(parameterSet0, null);
+
+        assert.strictEqual(parameterSet1.parameters.length, 1);
+        assert.strictEqual(parameterSet1.buildTypeParameters.length, 1);
+        assert.strictEqual(parameterSet1.testTypeParameters.length, 0);
+        assert.strictEqual(parameterSet1.valueForParameterName('Custom SDK'), 'Xcode 14.3');
+        assert.strictEqual(parameterSet1.fileForParameterName('Custom SDK'), undefined);
+    });
+
+    it('should reject with "UnsupportedTestParameter" if any specified parameter is not supported.', async () => {
+        await addTriggerableAndCreateTask('some task', ["191622", "191623"], [[2], [2]]);
+        const webkit = Repository.all().filter((repository) => repository.name() == 'WebKit')[0];
+        const revisionSets = [{[webkit.id()]: {revision: '191622'}}, {[webkit.id()]: {revision: '191623'}}];
+        const testParametersList = [{1: {value: true, file: null}}, {1: {value: true}}];
+        await assertThrows('UnsupportedTestParameter', () => {
+            return PrivilegedAPI.sendRequest('create-test-group',
+                {name: 'test', taskName: 'other task', platform: MockData.somePlatformId(), test: MockData.someTestId(),
+                    needsNotification: true, revisionSets, testParametersList, repetitionType: 'alternating', repetitionCount: 2});
+        });
+    });
+
+    it('should reject with "InvalidTestParameterEntry" if any specified parameter is not an array.', async () => {
+        await addTriggerableAndCreateTask('some task', ["191622", "191623"], [[1, 2], [1, 2]]);
+        const webkit = Repository.all().filter((repository) => repository.name() == 'WebKit')[0];
+        const revisionSets = [{[webkit.id()]: {revision: '191622'}}, {[webkit.id()]: {revision: '191623'}}];
+        const testParametersList = [{1: true}, {1: {value: true}}];
+        await assertThrows('InvalidTestParameterEntry', () => {
+            return PrivilegedAPI.sendRequest('create-test-group',
+                {name: 'test', taskName: 'other task', platform: MockData.somePlatformId(), test: MockData.someTestId(),
+                    needsNotification: true, revisionSets, testParametersList, repetitionType: 'alternating', repetitionCount: 2});
+        });
+    });
+
+    it('should reject with "MissingValueForParameter" if missing a "value" filed for a parameter requires a value.', async () => {
+        await addTriggerableAndCreateTask('some task', ["191622", "191623"], [[1, 2], [1, 2]]);
+        const webkit = Repository.all().filter((repository) => repository.name() == 'WebKit')[0];
+        const revisionSets = [{[webkit.id()]: {revision: '191622'}}, {[webkit.id()]: {revision: '191623'}}];
+        const testParametersList = [{1: {file: null}}, {1: {value: true}}];
+        await assertThrows('MissingValueForParameter', () => {
+            return PrivilegedAPI.sendRequest('create-test-group',
+                {name: 'test', taskName: 'other task', platform: MockData.somePlatformId(), test: MockData.someTestId(),
+                    needsNotification: true, revisionSets, testParametersList, repetitionType: 'alternating', repetitionCount: 2});
+        });
+    });
+
+    it('should reject with "ShouldNotSpecifyValueForParameter" if missing a "value" filed for a parameter requires a value.', async () => {
+        await addTriggerableAndCreateTask('some task', ["191622", "191623"], [[1, 2, 3], [1, 2, 3]]);
+        const webkit = Repository.all().filter((repository) => repository.name() == 'WebKit')[0];
+        const revisionSets = [{[webkit.id()]: {revision: '191622'}}, {[webkit.id()]: {revision: '191623'}}];
+        const testParametersList = [{3: {value: true}}, null];
+        await assertThrows('ShouldNotSpecifyValueForParameter', () => {
+            return PrivilegedAPI.sendRequest('create-test-group',
+                {name: 'test', taskName: 'other task', platform: MockData.somePlatformId(), test: MockData.someTestId(),
+                    needsNotification: true, revisionSets, testParametersList, repetitionType: 'alternating', repetitionCount: 2});
+        });
+    });
+
+    it('should reject with "InvalidUploadedFileForParameter" if uploaded file does not exist for a parameter requires a file.', async () => {
+        await addTriggerableAndCreateTask('some task', ["191622", "191623"], [[1, 2, 3], [1, 2, 3]]);
+        const webkit = Repository.all().filter((repository) => repository.name() == 'WebKit')[0];
+        const revisionSets = [{[webkit.id()]: {revision: '191622'}}, {[webkit.id()]: {revision: '191623'}}];
+        const testParametersList = [{3: {file: 9999}}, {3: {file: 6666}}];
+        await assertThrows('InvalidUploadedFileForParameter', () => {
+            return PrivilegedAPI.sendRequest('create-test-group',
+                {name: 'test', taskName: 'other task', platform: MockData.somePlatformId(), test: MockData.someTestId(),
+                    needsNotification: true, revisionSets, testParametersList, repetitionType: 'alternating', repetitionCount: 2});
+        });
+    });
+
+    it('should reject with "ShouldNotSpecifyFileForParameter" if uploaded file does not exist for a parameter requires a file.', async () => {
+        await addTriggerableAndCreateTask('some task', ["191622", "191623"], [[1, 2, 3], [1, 2, 3]]);
+        const webkit = Repository.all().filter((repository) => repository.name() == 'WebKit')[0];
+        const revisionSets = [{[webkit.id()]: {revision: '191622'}}, {[webkit.id()]: {revision: '191623'}}];
+        const testParametersList = [{1: {value: true, file: 9999}}, {2: {value: true, file: 6666}}];
+        await assertThrows('ShouldNotSpecifyFileForParameter', () => {
+            return PrivilegedAPI.sendRequest('create-test-group',
+                {name: 'test', taskName: 'other task', platform: MockData.somePlatformId(), test: MockData.someTestId(),
+                    needsNotification: true, revisionSets, testParametersList, repetitionType: 'alternating', repetitionCount: 2});
         });
     });
 });

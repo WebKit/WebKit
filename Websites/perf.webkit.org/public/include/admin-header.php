@@ -21,6 +21,7 @@ require_once('manifest-generator.php');
     <li><a href="/admin/builders">Builders</a></li>
     <li><a href="/admin/build-workers">Workers</a></li>
     <li><a href="/admin/triggerables">Triggerables</a></li>
+    <li><a href="/admin/test-parameters">Test Parameters</a></li>
     <li><a href="/admin/repositories">Repositories</a></li>
     <li><a href="/admin/bug-trackers">Bug Trackers</a></li>
     <li><a href="/admin/files">Files</a></li>
@@ -51,7 +52,7 @@ function execute_query_and_expect_one_row_to_be_affected($query, $params, $succe
 
     $affected_rows = $db->query_and_get_affected_rows($query, $params);
     if ($affected_rows) {
-        assert('$affected_rows == 1');
+        assert($affected_rows == 1);
         notice($success_message);
         return true;
     }
@@ -85,6 +86,8 @@ function update_field($table, $prefix, $field_name, $new_value = NULL) {
 }
 
 function update_boolean_field($table, $prefix, $field_name) {
+    if (array_get($_POST, 'updated-column') != $field_name && !array_key_exists($field_name, $_POST))
+        return FALSE;
     return update_field($table, $prefix, $field_name, Database::to_database_boolean(array_get($_POST, $field_name)));
 }
 
@@ -146,6 +149,22 @@ END;
             echo <<< END
 <input type="text" name="$name" value="$value" size="70">
 END;
+            break;
+        case 'select':
+            echo <<< END
+<select name="$name">
+END;
+            $selections = array_get($this->column_info[$name], 'selections', array());
+            foreach ($selections as $selection) {
+                $selection_string = $selection == $value ? " selected" : "";
+                echo <<< END
+<option value=$selection {$selection_string}>{$selection}</option>
+END;
+            }
+            echo <<< END
+</select>
+END;
+            $show_update_button = $show_update_button_if_needed;
             break;
         default:
             assert($editing_mode == 'string');

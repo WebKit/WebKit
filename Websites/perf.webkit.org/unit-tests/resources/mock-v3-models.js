@@ -16,6 +16,8 @@ var MockModels = {
             Triggerable.clearStaticMap();
             TriggerableConfiguration.clearStaticMap();
             UploadedFile.clearStaticMap();
+            TestParameter.clearStaticMap();
+            TestParameterSet.clearStaticMap();
             MeasurementSet._setMap = null;
 
             MockModels.osx = Repository.ensureSingleton(9, {name: 'OS X'});
@@ -76,6 +78,9 @@ var MockModels = {
                 configurations: [{test: MockModels.iPhonePLT, platform: MockModels.iphone, supportedRepetitionTypes: ['alternating', 'sequential']}]});
 
             MockModels.someTriggableConfiguration = TriggerableConfiguration.findByTestAndPlatform(MockModels.iPhonePLT, MockModels.iphone);
+
+            MockModels.macOSSDKParameter = TestParameter.ensureSingleton(1, {name: 'Custom SDK', disabled: false, type: 'build', hasFile: false, hasValue: true, description: 'Specify custom SDK'});
+            MockModels.diagnoseParameter = TestParameter.ensureSingleton(2, {name: 'diagnose', disabled: false, type: 'test', hasFile: false, hasValue: true, description: 'Trigger diagnose'});
         });
     }
 }

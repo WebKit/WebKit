@@ -14,6 +14,7 @@ function main() {
     $needs_notification = array_get($data, 'needsNotification', False);
     $test_group_name = array_get($data, 'testGroupName');
     $revision_set_list = array_get($data, 'revisionSets');
+    $test_parameters_list = array_get($data, 'testParametersList');
 
     $segmentation_name = array_get($data, 'segmentationStrategy');
     $test_range_name = array_get($data, 'testRangeStrategy');
@@ -83,7 +84,8 @@ function main() {
             exit_with_error('TriggerableNotFoundForTask', array('task' => $task_id, 'platform' => $config['config_platform']));
         }
         $triggerable_id = $triggerable['id'];
-        if ($triggerable['platform'] != $config['config_platform']) {
+        $platform_id = $triggerable['platform'];
+        if ($platform_id != $config['config_platform']) {
             $db->rollback_transaction();
             exit_with_error('InconsistentPlatform', array('configPlatform' => $config['config_platform'], 'taskPlatform' => $triggerable['platform']));
         }
@@ -93,7 +95,9 @@ function main() {
         }
         $test_id = $triggerable['test'];
         $commit_sets = commit_sets_from_revision_sets($db, $triggerable_id, $revision_set_list);
-        create_test_group_and_build_requests($db, $commit_sets, $task_id, $test_group_name, $author, $triggerable_id, $config['config_platform'], $test_id, $repetition_count, $repetition_type, $needs_notification);
+        $test_parameter_sets = test_parameter_sets_from_test_parameters($db, $platform_id, $test_id, $test_parameters_list);
+        create_test_group_and_build_requests($db, $commit_sets, $test_parameter_sets, $task_id, $test_group_name,
+            $author, $triggerable_id, $config['config_platform'], $test_id, $repetition_count, $repetition_type, $needs_notification);
     }
 
     $db->commit_transaction();

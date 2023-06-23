@@ -23,6 +23,7 @@ function main()
     $platform_id = array_get($data, 'platform');
     $test_id = array_get($data, 'test');
     $revision_set_list = array_get($data, 'revisionSets');
+    $test_parameters_list = array_get($data, 'testParametersList');
     $commit_sets_info = array_get($data, 'commitSets'); // V2 UI compatibility
 
     if (!$task_id == !$task_name)
@@ -95,12 +96,14 @@ function main()
     else // V2 UI compatibility
         $commit_sets = ensure_commit_sets($db, $triggerable_id, $commit_sets_info);
 
+    $test_parameter_sets = test_parameter_sets_from_test_parameters($db, $platform_id, $test_id, $test_parameters_list);
+
     $db->begin_transaction();
 
     if ($task_name)
         $task_id = $db->insert_row('analysis_tasks', 'task', array('name' => $task_name, 'author' => $author));
 
-    $group_id = create_test_group_and_build_requests($db, $commit_sets, $task_id, $name, $author, $triggerable_id, $platform_id, $test_id, $repetition_count, $repetition_type, $needs_notification);
+    $group_id = create_test_group_and_build_requests($db, $commit_sets, $test_parameter_sets, $task_id, $name, $author, $triggerable_id, $platform_id, $test_id, $repetition_count, $repetition_type, $needs_notification);
 
     $db->commit_transaction();
 

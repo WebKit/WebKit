@@ -34,6 +34,7 @@ function main($id, $path, $post_data) {
     exit_with_success(array(
         'buildRequests' => $resolve_id ? $requests_fetcher->results_with_resolved_ids() : $requests_fetcher->results(),
         'commitSets' => $requests_fetcher->commit_sets(),
+        'testParameterSets' => $requests_fetcher->test_parameter_sets(),
         'commits' => $requests_fetcher->commits(),
         'uploadedFiles' => $requests_fetcher->uploaded_files(),
     ));
