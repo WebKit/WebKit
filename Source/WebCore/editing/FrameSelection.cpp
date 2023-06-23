@@ -1920,8 +1920,13 @@ Color CaretBase::computeCaretColor(const RenderStyle& elementStyle, const Node* 
     }();
 
     if (elementStyleToUse->hasAutoCaretColor()) {
+#if PLATFORM(MAC)
+        auto cssColorValue = CSSValueAppleSystemControlAccent;
+#else
+        auto cssColorValue = CSSValueAppleSystemBlue;
+#endif
         auto styleColorOptions = node->document().styleColorOptions(elementStyleToUse);
-        return RenderTheme::singleton().systemColor(CSSValueAppleSystemControlAccent, styleColorOptions | StyleColorOptions::UseSystemAppearance);
+        return RenderTheme::singleton().systemColor(cssColorValue, styleColorOptions | StyleColorOptions::UseSystemAppearance);
     }
 
     return elementStyleToUse->colorResolvingCurrentColor(elementStyleToUse->caretColor());
