@@ -44,8 +44,8 @@ WI.TimelineRecording = class TimelineRecording extends WI.Object
         this._discontinuities = null;
         this._firstRecordOfTypeAfterDiscontinuity = new Set;
 
+        this._markers = null;
         this._exportDataRecords = null;
-        this._exportDataMarkers = null;
         this._exportDataMemoryPressureEvents = null;
         this._exportDataSampleStackTraces = null;
         this._exportDataSampleDurations = null;
@@ -135,7 +135,7 @@ WI.TimelineRecording = class TimelineRecording extends WI.Object
             discontinuities: this._discontinuities,
             instrumentTypes: this._instruments.map((instrument) => instrument.timelineRecordType),
             records: this._exportDataRecords,
-            markers: this._exportDataMarkers,
+            markers: this._markers,
             memoryPressureEvents: this._exportDataMemoryPressureEvents,
             sampleStackTraces: this._exportDataSampleStackTraces,
             sampleDurations: this._exportDataSampleDurations,
@@ -153,6 +153,8 @@ WI.TimelineRecording = class TimelineRecording extends WI.Object
     get imported() { return this._imported; }
     get startTime() { return this._startTime; }
     get endTime() { return this._endTime; }
+
+    get markers() { return this._markers; }
 
     get topDownCallingContextTree() { return this._topDownCallingContextTree; }
     get bottomUpCallingContextTree() { return this._bottomUpCallingContextTree; }
@@ -243,8 +245,8 @@ WI.TimelineRecording = class TimelineRecording extends WI.Object
         this._discontinuities = [];
         this._firstRecordOfTypeAfterDiscontinuity.clear();
 
+        this._markers = [];
         this._exportDataRecords = [];
-        this._exportDataMarkers = [];
         this._exportDataMemoryPressureEvents = [];
         this._exportDataSampleStackTraces = [];
         this._exportDataSampleDurations = [];
@@ -310,7 +312,7 @@ WI.TimelineRecording = class TimelineRecording extends WI.Object
 
     addEventMarker(marker)
     {
-        this._exportDataMarkers.push(marker);
+        this._markers.push(marker);
 
         if (!this._capturing && !this.__importing)
             return;

@@ -274,6 +274,14 @@ double InspectorTimelineAgent::timestamp()
     return m_environment.executionStopwatch().elapsedTime().seconds();
 }
 
+std::optional<double> InspectorTimelineAgent::timestampFromMonotonicTime(MonotonicTime time)
+{
+    auto stopwatchTime = m_environment.executionStopwatch().fromMonotonicTime(time);
+    if (!stopwatchTime)
+        return std::nullopt;
+    return stopwatchTime->seconds();
+}
+
 static LocalFrame* frame(JSC::JSGlobalObject* globalObject)
 {
     auto context = executionContext(globalObject);
@@ -479,6 +487,17 @@ void InspectorTimelineAgent::time(LocalFrame& frame, const String& message)
 void InspectorTimelineAgent::timeEnd(LocalFrame& frame, const String& message)
 {
     appendRecord(TimelineRecordFactory::createTimeStampData(message), TimelineRecordType::TimeEnd, true, &frame);
+}
+
+void InspectorTimelineAgent::didPerformanceMark(const String& label, std::optional<MonotonicTime> timeInMonotonicTime, LocalFrame* frame)
+{
+    std::optional<double> timestamp;
+    if (timeInMonotonicTime) {
+        timestamp = timestampFromMonotonicTime(*timeInMonotonicTime);
+        if (!timestamp)
+            return; // Stopwatch wasn't running at the time of timeInMonotonicTime.
+    }
+    appendRecord(TimelineRecordFactory::createTimeStampData(label), TimelineRecordType::TimeStamp, true, frame, timestamp);
 }
 
 void InspectorTimelineAgent::mainFrameStartedLoading()
@@ -815,9 +834,9 @@ void InspectorTimelineAgent::didCompleteCurrentRecord(TimelineRecordType type)
     }
 }
 
-void InspectorTimelineAgent::appendRecord(Ref<JSON::Object>&& data, TimelineRecordType type, bool captureCallStack, LocalFrame* frame)
+void InspectorTimelineAgent::appendRecord(Ref<JSON::Object>&& data, TimelineRecordType type, bool captureCallStack, LocalFrame* frame, std::optional<double> startTime)
 {
-    Ref<JSON::Object> record = TimelineRecordFactory::createGenericRecord(timestamp(), captureCallStack ? m_maxCallStackDepth : 0);
+    Ref<JSON::Object> record = TimelineRecordFactory::createGenericRecord(startTime.value_or(timestamp()), captureCallStack ? m_maxCallStackDepth : 0);
     record->setObject(Protocol::Timeline::TimelineEvent::dataKey, WTFMove(data));
     setFrameIdentifier(&record.get(), frame);
     addRecordToTimeline(WTFMove(record), type);

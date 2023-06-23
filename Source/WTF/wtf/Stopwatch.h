@@ -25,6 +25,7 @@
 #pragma once
 
 #include <cmath>
+#include <utility>
 #include <wtf/MonotonicTime.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
@@ -45,12 +46,15 @@ public:
     Seconds elapsedTime() const;
     Seconds elapsedTimeSince(MonotonicTime) const;
 
+    std::optional<Seconds> fromMonotonicTime(MonotonicTime) const;
+
     bool isActive() const { return !std::isnan(m_lastStartTime); }
 private:
     Stopwatch() { reset(); }
 
     Seconds m_elapsedTime;
     MonotonicTime m_lastStartTime;
+    Vector<std::pair<MonotonicTime, MonotonicTime>> m_pastInternals;
 };
 
 inline void Stopwatch::reset()
@@ -70,7 +74,9 @@ inline void Stopwatch::stop()
 {
     ASSERT_WITH_MESSAGE(!std::isnan(m_lastStartTime), "Tried to stop the stopwatch, but it is not running.");
 
-    m_elapsedTime += MonotonicTime::now() - m_lastStartTime;
+    auto stopTime = MonotonicTime::now();
+    m_pastInternals.append({ m_lastStartTime, stopTime });
+    m_elapsedTime += stopTime - m_lastStartTime;
     m_lastStartTime = MonotonicTime::nan();
 }
 
@@ -88,6 +94,23 @@ inline Seconds Stopwatch::elapsedTimeSince(MonotonicTime timeStamp) const
         return m_elapsedTime;
 
     return m_elapsedTime + (timeStamp - m_lastStartTime);
+}
+
+inline std::optional<Seconds> Stopwatch::fromMonotonicTime(MonotonicTime timeStamp) const
+{
+    if (!std::isnan(m_lastStartTime) && m_lastStartTime < timeStamp)
+        return Stopwatch::elapsedTimeSince(timeStamp);
+
+    Seconds elapsedTime;
+    for (auto& interval : m_pastInternals) {
+        if (timeStamp < interval.first)
+            return std::nullopt;
+        if (interval.first <= timeStamp && timeStamp <= interval.second)
+            return elapsedTime + timeStamp - interval.first;
+        elapsedTime += interval.second - interval.first;
+    }
+
+    return std::nullopt;
 }
 
 } // namespace WTF

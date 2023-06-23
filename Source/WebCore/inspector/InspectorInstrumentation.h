@@ -269,6 +269,9 @@ public:
     static void consoleStartRecordingCanvas(CanvasRenderingContext&, JSC::JSGlobalObject&, JSC::JSObject* options);
     static void consoleStopRecordingCanvas(CanvasRenderingContext&);
 
+    static void performanceMark(LocalFrame&, const String&, std::optional<MonotonicTime>);
+    static void performanceMark(WorkerOrWorkletGlobalScope&, const String&, std::optional<MonotonicTime>);
+
     static void didRequestAnimationFrame(Document&, int callbackId);
     static void didCancelAnimationFrame(Document&, int callbackId);
     static void willFireAnimationFrame(Document&, int callbackId);
@@ -475,6 +478,9 @@ private:
     static void stopProfilingImpl(InstrumentingAgents&, JSC::JSGlobalObject*, const String& title);
     static void consoleStartRecordingCanvasImpl(InstrumentingAgents&, CanvasRenderingContext&, JSC::JSGlobalObject&, JSC::JSObject* options);
     static void consoleStopRecordingCanvasImpl(InstrumentingAgents&, CanvasRenderingContext&);
+
+    static void performanceMarkImpl(InstrumentingAgents&, LocalFrame&, const String& label, std::optional<MonotonicTime> timestamp);
+    static void performanceMarkImpl(InstrumentingAgents&, const String& label, std::optional<MonotonicTime> timestamp);
 
     static void didRequestAnimationFrameImpl(InstrumentingAgents&, int callbackId, Document&);
     static void didCancelAnimationFrameImpl(InstrumentingAgents&, int callbackId, Document&);
@@ -1675,6 +1681,18 @@ inline void InspectorInstrumentation::consoleStopRecordingCanvas(CanvasRendering
 {
     if (auto* agents = instrumentingAgents(context.canvasBase().scriptExecutionContext()))
         consoleStopRecordingCanvasImpl(*agents, context);
+}
+
+inline void InspectorInstrumentation::performanceMark(LocalFrame& frame, const String& label, std::optional<MonotonicTime> startTime)
+{
+    FAST_RETURN_IF_NO_FRONTENDS(void());
+    if (auto* agents = instrumentingAgents(frame))
+        performanceMarkImpl(*agents, frame, label, WTFMove(startTime));
+}
+
+inline void InspectorInstrumentation::performanceMark(WorkerOrWorkletGlobalScope& globalScope, const String& label, std::optional<MonotonicTime> startTime)
+{
+    performanceMarkImpl(instrumentingAgents(globalScope), label, WTFMove(startTime));
 }
 
 inline void InspectorInstrumentation::didRequestAnimationFrame(Document& document, int callbackId)
