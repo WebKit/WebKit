@@ -580,7 +580,6 @@ TransformationMatrix::TransformationMatrix(const AffineTransform& t)
     setMatrix(t.a(), t.b(), t.c(), t.d(), t.e(), t.f());
 }
 
-
 // FIXME: Once https://bugs.webkit.org/show_bug.cgi?id=220856 is addressed we can reuse this function in TransformationMatrix::recompose4().
 TransformationMatrix TransformationMatrix::fromQuaternion(double qx, double qy, double qz, double qw)
 {
