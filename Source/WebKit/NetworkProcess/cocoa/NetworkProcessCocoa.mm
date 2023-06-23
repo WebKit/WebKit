@@ -103,11 +103,6 @@ void NetworkProcess::platformInitializeNetworkProcessCocoa(const NetworkProcessC
     auto urlCache(adoptNS([[NSURLCache alloc] initWithMemoryCapacity:0 diskCapacity:0 diskPath:nil]));
     [NSURLCache setSharedURLCache:urlCache.get()];
 
-#if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
-    auto auditToken = *parentProcessConnection()->getAuditToken();
-    if ([NEFilterSource respondsToSelector:@selector(setDelegation:)])
-        [NEFilterSource setDelegation:&auditToken];
-#endif
 }
 
 RetainPtr<CFDataRef> NetworkProcess::sourceApplicationAuditData() const

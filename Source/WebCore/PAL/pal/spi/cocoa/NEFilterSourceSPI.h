@@ -75,3 +75,7 @@ typedef void (^NEFilterSourceDecisionHandler)(NEFilterSourceStatus, NSDictionary
 @end
 
 #endif // !USE(APPLE_INTERNAL_SDK)
+
+@interface NEFilterSource (Delegation)
++ (void)setDelegation:(audit_token_t *)audit_token;
+@end
