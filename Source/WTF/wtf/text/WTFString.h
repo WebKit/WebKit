@@ -243,12 +243,8 @@ public:
 #endif
 
 #if USE(FOUNDATION) && defined(__OBJC__)
-#if HAVE(SAFARI_FOR_WEBKIT_DEVELOPMENT_REQUIRING_EXTRA_SYMBOLS)
-    WTF_EXPORT_PRIVATE String(NSString *);
-#else
     String(NSString *string)
         : String((__bridge CFStringRef)string) { }
-#endif
 
     // This conversion converts the null string to an empty NSString rather than to nil.
     // Given Cocoa idioms, this is a more useful default. Clients that need to preserve the

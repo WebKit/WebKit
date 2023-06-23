@@ -358,7 +358,6 @@ void MediaPlayerPrivateMediaSourceAVFObjC::playInternal(std::optional<MonotonicT
     if (!shouldBePlaying())
         return;
 
-#if HAVE(AVSAMPLEBUFFERRENDERSYNCHRONIZER_RATEATHOSTTIME)
 ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
     if (hostTime && [m_synchronizer respondsToSelector:@selector(setRate:time:atHostTime:)]) {
         auto cmHostTime = PAL::CMClockMakeHostTimeFromSystemUnits(hostTime->toMachAbsoluteTime());
@@ -367,10 +366,6 @@ ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
     } else
         [m_synchronizer setRate:m_rate];
 ALLOW_NEW_API_WITHOUT_GUARDS_END
-#else
-    UNUSED_PARAM(hostTime);
-    [m_synchronizer setRate:m_rate];
-#endif
 }
 
 void MediaPlayerPrivateMediaSourceAVFObjC::pause()
@@ -384,7 +379,6 @@ void MediaPlayerPrivateMediaSourceAVFObjC::pauseInternal(std::optional<Monotonic
     ALWAYS_LOG(LOGIDENTIFIER);
     m_playing = false;
 
-#if HAVE(AVSAMPLEBUFFERRENDERSYNCHRONIZER_RATEATHOSTTIME)
 ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
     if (hostTime && [m_synchronizer respondsToSelector:@selector(setRate:time:atHostTime:)]) {
         auto cmHostTime = PAL::CMClockMakeHostTimeFromSystemUnits(hostTime->toMachAbsoluteTime());
@@ -393,10 +387,6 @@ ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
     } else
         [m_synchronizer setRate:0];
 ALLOW_NEW_API_WITHOUT_GUARDS_END
-#else
-    UNUSED_PARAM(hostTime);
-    [m_synchronizer setRate:0];
-#endif
 }
 
 bool MediaPlayerPrivateMediaSourceAVFObjC::paused() const
@@ -502,7 +492,6 @@ bool MediaPlayerPrivateMediaSourceAVFObjC::setCurrentTimeDidChangeCallback(Media
     return true;
 }
 
-#if HAVE(AVSAMPLEBUFFERRENDERSYNCHRONIZER_RATEATHOSTTIME)
 bool MediaPlayerPrivateMediaSourceAVFObjC::playAtHostTime(const MonotonicTime& time)
 {
     ALWAYS_LOG(LOGIDENTIFIER);
@@ -516,7 +505,6 @@ bool MediaPlayerPrivateMediaSourceAVFObjC::pauseAtHostTime(const MonotonicTime& 
     pauseInternal(time);
     return true;
 }
-#endif
 
 MediaTime MediaPlayerPrivateMediaSourceAVFObjC::startTime() const
 {

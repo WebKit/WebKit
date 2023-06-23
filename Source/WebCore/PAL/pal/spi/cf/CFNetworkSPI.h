@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -63,12 +63,6 @@
 #if HAVE(CFNETWORK_HOSTOVERRIDE)
 #include <Network/Network.h>
 #endif
-
-#if HAVE(NSURLSESSION_EFFECTIVE_CONFIGURATION_OBJECT) && defined(__OBJC__)
-@interface NSURLSessionEffectiveConfiguration : NSObject <NSCopying>
-- (instancetype)_initWithConfiguration:(NSURLSessionConfiguration *)config;
-@end
-#endif // HAVE(NSURLSESSION_EFFECTIVE_CONFIGURATION_OBJECT) && defined(__OBJC__)
 
 #if HAVE(PRECONNECT_PING) && defined(__OBJC__)
 
@@ -305,11 +299,7 @@ typedef NS_ENUM(NSInteger, NSURLSessionCompanionProxyPreference) {
 @end
 
 @interface NSURLSessionTask ()
-#if HAVE(NSURLSESSION_EFFECTIVE_CONFIGURATION_OBJECT)
-- (void)_adoptEffectiveConfiguration:(NSURLSessionEffectiveConfiguration *) newConfiguration;
-#else
 - (void)_adoptEffectiveConfiguration:(NSURLSessionConfiguration *) newConfiguration;
-#endif
 - (NSDictionary *)_timingData;
 @property (readwrite, copy) NSString *_pathToDownloadTaskFile;
 @property (copy) NSString *_storagePartitionIdentifier;
@@ -396,9 +386,7 @@ typedef void (^CFCachedURLResponseCallBackBlock)(CFCachedURLResponseRef);
 void _CFCachedURLResponseSetBecameFileBackedCallBackBlock(CFCachedURLResponseRef, CFCachedURLResponseCallBackBlock, dispatch_queue_t);
 #endif
 
-#if HAVE(CFNETWORK_DISABLE_CACHE_SPI)
 void _CFURLStorageSessionDisableCache(CFURLStorageSessionRef);
-#endif
 CFURLStorageSessionRef _CFURLStorageSessionCreate(CFAllocatorRef, CFStringRef, CFDictionaryRef);
 CFURLCacheRef _CFURLStorageSessionCopyCache(CFAllocatorRef, CFURLStorageSessionRef);
 void CFURLRequestSetShouldStartSynchronously(CFURLRequestRef, Boolean);

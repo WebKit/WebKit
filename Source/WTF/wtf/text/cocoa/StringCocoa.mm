@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2023 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -25,13 +25,6 @@
 #import <wtf/cocoa/TypeCastsCocoa.h>
 
 namespace WTF {
-
-#if HAVE(SAFARI_FOR_WEBKIT_DEVELOPMENT_REQUIRING_EXTRA_SYMBOLS)
-String::String(NSString *string)
-    : String(bridge_cast(string))
-{
-}
-#endif
 
 RetainPtr<id> makeNSArrayElement(const String& vectorElement)
 {

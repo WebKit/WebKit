@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,10 +28,6 @@
 #if PLATFORM(MAC)
 
 #if USE(APPLE_INTERNAL_SDK)
-
-#if HAVE(CPP20_INCOMPATIBLE_INTERNAL_HEADERS)
-#define CGCOLORTAGGEDPOINTER_H_
-#endif
 
 #import <AppKit/NSWindow_Private.h>
 
