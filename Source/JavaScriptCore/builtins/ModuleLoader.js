@@ -197,7 +197,19 @@ function requestInstantiate(entry, parameters, fetcher)
         return entry.instantiate;
 
     var instantiatePromise = (async () => {
-        var source = await this.requestFetch(entry, parameters, fetcher);
+        var sourcePossiblyPromise = this.requestFetch(entry, parameters, fetcher);
+        var source = sourcePossiblyPromise;
+
+        // Support CommonJS modules by synchronously importing the module when possible.
+        if (@isPromise(sourcePossiblyPromise)) {
+            if ((@getPromiseInternalField(sourcePossiblyPromise, @promiseFieldFlags) & @promiseStateMask) === @promiseStateFulfilled) {
+                source = @getPromiseInternalField(sourcePossiblyPromise, @promiseFieldReactionsOrResult);
+            } else {
+                source = await sourcePossiblyPromise;
+            }
+        }
+            
+
         // https://html.spec.whatwg.org/#fetch-a-single-module-script
         // Now fetching request succeeds. Then even if instantiation fails, we should cache it.
         // Instantiation won't be retried.
@@ -206,7 +218,18 @@ function requestInstantiate(entry, parameters, fetcher)
         entry.instantiate = instantiatePromise;
 
         var key = entry.key;
-        var moduleRecord = await this.parseModule(key, source);
+        var parseModuleRequest = this.parseModule(key, source);
+        var moduleRecord = parseModuleRequest;
+
+        // Support CommonJS modules by synchronously importing the module when possible.
+        if (@isPromise(parseModuleRequest)) {
+            if ((@getPromiseInternalField(parseModuleRequest, @promiseFieldFlags) & @promiseStateMask) === @promiseStateFulfilled) {
+                moduleRecord = @getPromiseInternalField(parseModuleRequest, @promiseFieldReactionsOrResult);
+            } else {
+                moduleRecord = await parseModuleRequest;
+            }
+        }
+        
         var dependenciesMap = moduleRecord.dependenciesMap;
         var requestedModules = this.requestedModules(moduleRecord);
         var dependencies = @newArrayWithSize(requestedModules.length);
