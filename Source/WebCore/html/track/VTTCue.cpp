@@ -1179,14 +1179,19 @@ void VTTCue::setCueSettings(const String& inputString)
                 if (!input.scanFloat(linePosition, &isNegative))
                     break;
 
+                CueLignAlignment alignment { LignAlignmentStart };
                 bool isPercentage = input.scan('%');
                 if (!input.isAt(valueRun.end())) {
                     if (!input.scan(','))
                         break;
-                    // FIXME: implement handling of line setting alignment.
-                    if (!input.scan(startKeyword().characters8(), startKeyword().length())
-                        && !input.scan(centerKeyword().characters8(), centerKeyword().length())
-                        && !input.scan(endKeyword().characters8(), endKeyword().length())) {
+
+                    if (input.scan(startKeyword().characters8(), startKeyword().length()))
+                        alignment = LignAlignmentStart;
+                    else if (input.scan(centerKeyword().characters8(), centerKeyword().length()))
+                        alignment = LignAlignmentCenter;
+                    else if (input.scan(endKeyword().characters8(), endKeyword().length()))
+                        alignment = LignAlignmentEnd;
+                    else {
                         LOG(Media, "VTTCue::setCueSettings, invalid line setting alignment");
                         break;
                     }
@@ -1224,6 +1229,7 @@ void VTTCue::setCueSettings(const String& inputString)
                 }
                 
                 m_linePosition = linePosition;
+                m_lineAlignment = alignment;
                 isValid = true;
             } while (0);
 
