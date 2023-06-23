@@ -44,7 +44,7 @@ namespace WebCore {
 
 enum class VideoFrameRotation : uint16_t;
 
-class WEBCORE_EXPORT LocalSampleBufferDisplayLayer final : public SampleBufferDisplayLayer, public CanMakeWeakPtr<LocalSampleBufferDisplayLayer, WeakPtrFactoryInitialization::Eager> {
+class WEBCORE_EXPORT LocalSampleBufferDisplayLayer final : public SampleBufferDisplayLayer {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static RefPtr<LocalSampleBufferDisplayLayer> create(Client&);
@@ -91,7 +91,7 @@ public:
     void setRenderPolicy(RenderPolicy) final;
 
 private:
-
+    void enqueueBufferInternal(CVPixelBufferRef, MediaTime);
     void removeOldVideoFramesFromPendingQueue();
     void addVideoFrameToPendingQueue(Ref<VideoFrame>&&);
     void requestNotificationWhenReadyForVideoData();
@@ -122,7 +122,7 @@ private:
     bool m_didFail { false };
 #if !RELEASE_LOG_DISABLED
     String m_logIdentifier;
-    FrameRateMonitor m_frameRateMonitor;
+    FrameRateMonitor m_frameRateMonitor WTF_GUARDED_BY_CAPABILITY(workQueue());
 #endif
 };
 

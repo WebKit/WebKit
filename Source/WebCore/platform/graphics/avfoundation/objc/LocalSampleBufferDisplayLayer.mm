@@ -51,12 +51,13 @@
 using namespace WebCore;
 
 @interface WebAVSampleBufferStatusChangeListener : NSObject {
-    WeakPtr<LocalSampleBufferDisplayLayer> _parent;
+    RetainPtr<PlatformLayer> _displayLayer;
+    ThreadSafeWeakPtr<LocalSampleBufferDisplayLayer> _parent;
 }
 
 - (id)initWithParent:(LocalSampleBufferDisplayLayer*)callback;
 - (void)invalidate;
-- (void)begin;
+- (void)begin:(PlatformLayer*)displayLayer;
 - (void)stop;
 @end
 
@@ -84,25 +85,21 @@ using namespace WebCore;
     _parent = nullptr;
 }
 
-- (void)begin
+- (void)begin:(PlatformLayer*)displayLayer
 {
-    ASSERT(_parent);
-    ASSERT(_parent->displayLayer());
-    ASSERT(_parent->rootLayer());
-
-    [_parent->displayLayer() addObserver:self forKeyPath:@"status" options:NSKeyValueObservingOptionNew context:nil];
-    [_parent->displayLayer() addObserver:self forKeyPath:@"error" options:NSKeyValueObservingOptionNew context:nil];
+    _displayLayer = displayLayer;
+    [_displayLayer addObserver:self forKeyPath:@"status" options:NSKeyValueObservingOptionNew context:nil];
+    [_displayLayer addObserver:self forKeyPath:@"error" options:NSKeyValueObservingOptionNew context:nil];
 }
 
 - (void)stop
 {
-    if (!_parent)
+    if (!_displayLayer)
         return;
 
-    if (_parent->displayLayer()) {
-        [_parent->displayLayer() removeObserver:self forKeyPath:@"status"];
-        [_parent->displayLayer() removeObserver:self forKeyPath:@"error"];
-    }
+    [_displayLayer removeObserver:self forKeyPath:@"status"];
+    [_displayLayer removeObserver:self forKeyPath:@"error"];
+    _displayLayer = nullptr;
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
@@ -116,16 +113,16 @@ using namespace WebCore;
 
     if ([keyPath isEqualToString:@"status"]) {
         callOnMainThread([protectedSelf = RetainPtr<WebAVSampleBufferStatusChangeListener>(self)] {
-            if (protectedSelf->_parent)
-                protectedSelf->_parent->layerStatusDidChange();
+            if (auto parent = protectedSelf->_parent.get())
+                parent->layerStatusDidChange();
         });
         return;
     }
 
     if ([keyPath isEqualToString:@"error"]) {
         callOnMainThread([protectedSelf = RetainPtr<WebAVSampleBufferStatusChangeListener>(self)] {
-            if (protectedSelf->_parent)
-                protectedSelf->_parent->layerErrorDidChange();
+            if (auto parent = protectedSelf->_parent.get())
+                parent->layerErrorDidChange();
         });
         return;
     }
@@ -173,7 +170,11 @@ void LocalSampleBufferDisplayLayer::initialize(bool hideRootLayer, IntSize size,
 {
     m_sampleBufferDisplayLayer.get().anchorPoint = { .5, .5 };
 
-    m_processingQueue->dispatch([this, layer = RetainPtr { m_sampleBufferDisplayLayer }]() mutable {
+    m_processingQueue->dispatch([this, weakThis = ThreadSafeWeakPtr { *this }, layer = RetainPtr { m_sampleBufferDisplayLayer }]() mutable {
+        auto protectedThis = weakThis.get();
+        if (!protectedThis)
+            return;
+
         assertIsCurrent(workQueue());
         m_sampleBufferDisplayLayerForQueue = WTFMove(layer);
     });
@@ -183,7 +184,7 @@ void LocalSampleBufferDisplayLayer::initialize(bool hideRootLayer, IntSize size,
 
     m_rootLayer.get().bounds = CGRectMake(0, 0, size.width(), size.height());
 
-    [m_statusChangeListener begin];
+    [m_statusChangeListener begin:m_sampleBufferDisplayLayer.get()];
 
     [m_rootLayer addSublayer:m_sampleBufferDisplayLayer.get()];
 
@@ -197,8 +198,6 @@ void LocalSampleBufferDisplayLayer::initialize(bool hideRootLayer, IntSize size,
 LocalSampleBufferDisplayLayer::~LocalSampleBufferDisplayLayer()
 {
     ASSERT(isMainThread());
-
-    m_processingQueue->dispatchSync([] { });
 
     [m_statusChangeListener stop];
 
@@ -299,8 +298,9 @@ void LocalSampleBufferDisplayLayer::setRootLayerBoundsAndPositions(CGRect bounds
 
 void LocalSampleBufferDisplayLayer::updateRootLayerBoundsAndPosition(CGRect bounds, VideoFrame::Rotation rotation, ShouldUpdateRootLayer shouldUpdateRootLayer)
 {
-    callOnMainThread([this, weakThis = WeakPtr { *this }, shouldUpdateRootLayer, bounds, rotation]() mutable {
-        if (!weakThis)
+    callOnMainThread([this, weakThis = ThreadSafeWeakPtr { *this }, shouldUpdateRootLayer, bounds, rotation]() mutable {
+        auto protectedThis = weakThis.get();
+        if (!protectedThis)
             return;
 
         [m_statusChangeListener stop];
@@ -320,28 +320,39 @@ void LocalSampleBufferDisplayLayer::updateRootLayerBoundsAndPosition(CGRect boun
         m_sampleBufferDisplayLayer.get().bounds = layerBounds;
 
         m_processingQueue->dispatch([this, weakThis = WTFMove(weakThis), newLayer = m_sampleBufferDisplayLayer, oldLayer = WTFMove(oldLayer), shouldUpdateRootLayer, bounds, rotation]() mutable {
+            auto protectedThis = weakThis.get();
+            if (!protectedThis)
+                return;
+
             assertIsCurrent(workQueue());
             m_sampleBufferDisplayLayerForQueue = newLayer;
             if (m_lastPixelBuffer)
-                enqueueBuffer(m_lastPixelBuffer.get(), m_lastPresentationTime);
+                enqueueBufferInternal(m_lastPixelBuffer.get(), m_lastPresentationTime);
 
             callOnMainThread([weakThis = WTFMove(weakThis), shouldUpdateRootLayer, bounds, rotation, rootLayer = m_rootLayer, newLayer = WTFMove(newLayer), oldLayer = WTFMove(oldLayer)] {
+                auto protectedThis = weakThis.get();
+                if (!protectedThis)
+                    return;
+
                 [rootLayer replaceSublayer:oldLayer.get() with:newLayer.get()];
                 if (shouldUpdateRootLayer == ShouldUpdateRootLayer::Yes) {
                     runWithoutAnimations([&] {
-                        if (weakThis)
-                            weakThis->setRootLayerBoundsAndPositions(bounds, rotation);
+                        protectedThis->setRootLayerBoundsAndPositions(bounds, rotation);
                     });
                 }
             });
         });
-        [m_statusChangeListener begin];
+        [m_statusChangeListener begin:m_sampleBufferDisplayLayer.get()];
     });
 }
 
 void LocalSampleBufferDisplayLayer::flush()
 {
-    m_processingQueue->dispatch([this] {
+    m_processingQueue->dispatch([this, weakThis = ThreadSafeWeakPtr { *this }] {
+        auto protectedThis = weakThis.get();
+        if (!protectedThis)
+            return;
+
         assertIsCurrent(workQueue());
         [m_sampleBufferDisplayLayerForQueue flush];
     });
@@ -349,7 +360,11 @@ void LocalSampleBufferDisplayLayer::flush()
 
 void LocalSampleBufferDisplayLayer::flushAndRemoveImage()
 {
-    m_processingQueue->dispatch([this] {
+    m_processingQueue->dispatch([this, weakThis = ThreadSafeWeakPtr { *this }] {
+        auto protectedThis = weakThis.get();
+        if (!protectedThis)
+            return;
+
         assertIsCurrent(workQueue());
         @try {
             [m_sampleBufferDisplayLayerForQueue flushAndRemoveImage];
@@ -364,15 +379,20 @@ static const double rendererLatency = 0.02;
 
 void LocalSampleBufferDisplayLayer::enqueueVideoFrame(VideoFrame& videoFrame)
 {
-    if (m_paused) {
+    if (m_paused)
+        return;
+
+    m_processingQueue->dispatch([this, weakThis = ThreadSafeWeakPtr { *this }, videoFrame = Ref { videoFrame }]() mutable {
+        auto protectedThis = weakThis.get();
+        if (!protectedThis)
+            return;
+
+        assertIsCurrent(workQueue());
+
 #if !RELEASE_LOG_DISABLED
         m_frameRateMonitor.update();
 #endif
-        return;
-    }
 
-    m_processingQueue->dispatch([this, videoFrame = Ref { videoFrame }]() mutable {
-        assertIsCurrent(workQueue());
         m_lastPixelBuffer = videoFrame->pixelBuffer();
         m_lastPresentationTime = videoFrame->presentationTime();
 
@@ -382,7 +402,7 @@ void LocalSampleBufferDisplayLayer::enqueueVideoFrame(VideoFrame& videoFrame)
             requestNotificationWhenReadyForVideoData();
             return;
         }
-        enqueueBuffer(videoFrame->pixelBuffer(), videoFrame->presentationTime());
+        enqueueBufferInternal(videoFrame->pixelBuffer(), videoFrame->presentationTime());
     });
 }
 
@@ -397,36 +417,50 @@ static void setSampleBufferAsDisplayImmediately(CMSampleBufferRef sampleBuffer)
 
 void LocalSampleBufferDisplayLayer::enqueueBuffer(CVPixelBufferRef pixelBuffer, MediaTime presentationTime)
 {
-    m_processingQueue->dispatch([this, pixelBuffer = RetainPtr { pixelBuffer }, presentationTime]() mutable {
-        assertIsCurrent(workQueue());
-        m_lastPixelBuffer = pixelBuffer;
-        m_lastPresentationTime = presentationTime;
+    m_processingQueue->dispatch([this, weakThis = ThreadSafeWeakPtr { *this }, pixelBuffer = RetainPtr { pixelBuffer }, presentationTime]() mutable {
+        auto protectedThis = weakThis.get();
+        if (!protectedThis)
+            return;
 
-        auto sampleBuffer = createVideoSampleBuffer(pixelBuffer.get(), PAL::toCMTime(presentationTime));
-        auto now = MediaTime::createWithDouble(MonotonicTime::now().secondsSinceEpoch().value() + rendererLatency);
-        if (m_renderPolicy == RenderPolicy::Immediately || now >= presentationTime)
-            setSampleBufferAsDisplayImmediately(sampleBuffer.get());
+        enqueueBufferInternal(pixelBuffer.get(), presentationTime);
+    });
+}
 
-        [m_sampleBufferDisplayLayerForQueue enqueueSampleBuffer:sampleBuffer.get()];
+void LocalSampleBufferDisplayLayer::enqueueBufferInternal(CVPixelBufferRef pixelBuffer, MediaTime presentationTime)
+{
+    assertIsCurrent(workQueue());
+
+    m_lastPixelBuffer = pixelBuffer;
+    m_lastPresentationTime = presentationTime;
+
+    auto sampleBuffer = createVideoSampleBuffer(pixelBuffer, PAL::toCMTime(presentationTime));
+    auto now = MediaTime::createWithDouble(MonotonicTime::now().secondsSinceEpoch().value() + rendererLatency);
+    if (m_renderPolicy == RenderPolicy::Immediately || now >= presentationTime)
+        setSampleBufferAsDisplayImmediately(sampleBuffer.get());
+
+    [m_sampleBufferDisplayLayerForQueue enqueueSampleBuffer:sampleBuffer.get()];
 
 #if !RELEASE_LOG_DISABLED
-        constexpr size_t frameCountPerLog = 1800; // log every minute at 30 fps
-        if (!(m_frameRateMonitor.frameCount() % frameCountPerLog)) {
-            if (auto* metrics = [m_sampleBufferDisplayLayer videoPerformanceMetrics])
-                RELEASE_LOG(WebRTC, "LocalSampleBufferDisplayLayer (%{public}s) metrics, total=%lu, dropped=%lu, corrupted=%lu, display-composited=%lu, non-display-composited=%lu (pending=%lu)", m_logIdentifier.utf8().data(), metrics.totalNumberOfVideoFrames, metrics.numberOfDroppedVideoFrames, metrics.numberOfCorruptedVideoFrames, metrics.numberOfDisplayCompositedVideoFrames, metrics.numberOfNonDisplayCompositedVideoFrames, m_pendingVideoFrameQueue.size());
-        }
-        m_frameRateMonitor.update();
+    constexpr size_t frameCountPerLog = 1800; // log every minute at 30 fps
+    if (!(m_frameRateMonitor.frameCount() % frameCountPerLog)) {
+        if (auto* metrics = [m_sampleBufferDisplayLayer videoPerformanceMetrics])
+            RELEASE_LOG(WebRTC, "LocalSampleBufferDisplayLayer (%{public}s) metrics, total=%lu, dropped=%lu, corrupted=%lu, display-composited=%lu, non-display-composited=%lu (pending=%lu)", m_logIdentifier.utf8().data(), metrics.totalNumberOfVideoFrames, metrics.numberOfDroppedVideoFrames, metrics.numberOfCorruptedVideoFrames, metrics.numberOfDisplayCompositedVideoFrames, metrics.numberOfNonDisplayCompositedVideoFrames, m_pendingVideoFrameQueue.size());
+    }
+    m_frameRateMonitor.update();
 #endif
-    });
 }
 
 #if !RELEASE_LOG_DISABLED
 void LocalSampleBufferDisplayLayer::onIrregularFrameRateNotification(MonotonicTime frameTime, MonotonicTime lastFrameTime)
 {
-    callOnMainThread([frameTime = frameTime.secondsSinceEpoch().value(), lastFrameTime = lastFrameTime.secondsSinceEpoch().value(), observedFrameRate = m_frameRateMonitor.observedFrameRate(), frameCount = m_frameRateMonitor.frameCount(), weakThis = WeakPtr { *this }] {
-        if (!weakThis)
+    assertIsCurrent(workQueue());
+
+    callOnMainThread([frameTime = frameTime.secondsSinceEpoch().value(), lastFrameTime = lastFrameTime.secondsSinceEpoch().value(), observedFrameRate = m_frameRateMonitor.observedFrameRate(), frameCount = m_frameRateMonitor.frameCount(), weakThis = ThreadSafeWeakPtr { *this }] {
+        auto protectedThis = weakThis.get();
+        if (!protectedThis)
             return;
-        RELEASE_LOG(WebRTC, "LocalSampleBufferDisplayLayer::enqueueVideoFrame (%{public}s) at %f, previous frame was at %f, observed frame rate is %f, delay since last frame is %f ms, frame count is %lu", weakThis->m_logIdentifier.utf8().data(), frameTime, lastFrameTime, observedFrameRate, (frameTime - lastFrameTime) * 1000, frameCount);
+
+        RELEASE_LOG(WebRTC, "LocalSampleBufferDisplayLayer::enqueueVideoFrame (%{public}s) at %f, previous frame was at %f, observed frame rate is %f, delay since last frame is %f ms, frame count is %lu", protectedThis->m_logIdentifier.utf8().data(), frameTime, lastFrameTime, observedFrameRate, (frameTime - lastFrameTime) * 1000, frameCount);
     });
 }
 #endif
@@ -462,7 +496,11 @@ void LocalSampleBufferDisplayLayer::addVideoFrameToPendingQueue(Ref<VideoFrame>&
 
 void LocalSampleBufferDisplayLayer::clearVideoFrames()
 {
-    m_processingQueue->dispatch([this] {
+    m_processingQueue->dispatch([this, weakThis = ThreadSafeWeakPtr { *this }] {
+        auto protectedThis = weakThis.get();
+        if (!protectedThis)
+            return;
+
         assertIsCurrent(workQueue());
 
         m_pendingVideoFrameQueue.clear();
@@ -474,12 +512,17 @@ void LocalSampleBufferDisplayLayer::requestNotificationWhenReadyForVideoData()
 {
     assertIsCurrent(workQueue());
 
-    WeakPtr weakThis { *this };
+    ThreadSafeWeakPtr weakThis { *this };
     [m_sampleBufferDisplayLayerForQueue requestMediaDataWhenReadyOnQueue:dispatch_get_main_queue() usingBlock:^{
-        if (!weakThis)
+        auto protectedThis = weakThis.get();
+        if (!protectedThis)
             return;
 
-        m_processingQueue->dispatch([this] {
+        m_processingQueue->dispatch([this, weakThis] {
+            auto protectedThis = weakThis.get();
+            if (!protectedThis)
+                return;
+
             assertIsCurrent(workQueue());
             [m_sampleBufferDisplayLayerForQueue stopRequestingMediaData];
 

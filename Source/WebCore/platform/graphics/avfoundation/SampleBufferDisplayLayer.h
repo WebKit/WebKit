@@ -43,7 +43,7 @@ enum class VideoFrameRotation : uint16_t;
 
 using LayerHostingContextID = uint32_t;
 
-class SampleBufferDisplayLayer : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<SampleBufferDisplayLayer> {
+class SampleBufferDisplayLayer : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<SampleBufferDisplayLayer, WTF::DestructionThread::MainRunLoop> {
 public:
     class Client : public CanMakeWeakPtr<Client> {
     public:
