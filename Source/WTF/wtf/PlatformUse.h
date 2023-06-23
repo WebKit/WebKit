@@ -321,11 +321,6 @@
 #define USE_SANDBOX_EXTENSIONS_FOR_CACHE_AND_TEMP_DIRECTORY_ACCESS 1
 #endif
 
-// FIXME: This should be deleted, along with any code that's using it.
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 120000
-#define USE_VORBIS_AUDIOCOMPONENT_WORKAROUND 1
-#endif
-
 #if !defined(USE_ISO_MALLOC)
 #define USE_ISO_MALLOC 1
 #endif

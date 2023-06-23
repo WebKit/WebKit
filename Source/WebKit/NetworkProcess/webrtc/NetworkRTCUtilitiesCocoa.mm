@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,7 +32,6 @@
 #import <wtf/SoftLinking.h>
 #import <wtf/text/WTFString.h>
 
-#if HAVE(NWPARAMETERS_TRACKER_API)
 SOFT_LINK_LIBRARY(libnetworkextension)
 SOFT_LINK_CLASS(libnetworkextension, NEHelperTrackerDisposition_t)
 SOFT_LINK_CLASS(libnetworkextension, NEHelperTrackerAppInfoRef)
@@ -41,7 +40,6 @@ SOFT_LINK(libnetworkextension, NEHelperTrackerGetDisposition, NEHelperTrackerDis
 
 SOFT_LINK_LIBRARY_OPTIONAL(libnetwork)
 SOFT_LINK_OPTIONAL(libnetwork, nw_parameters_set_attributed_bundle_identifier, void, __cdecl, (nw_parameters_t, const char*))
-#endif
 
 namespace WebKit {
 
@@ -52,32 +50,24 @@ void setNWParametersApplicationIdentifiers(nw_parameters_t parameters, const cha
     else if (sourceApplicationAuditToken)
         nw_parameters_set_source_application(parameters, *sourceApplicationAuditToken);
 
-#if HAVE(NWPARAMETERS_TRACKER_API)
     if (!attributedBundleIdentifier.isEmpty() && nw_parameters_set_attributed_bundle_identifierPtr())
         nw_parameters_set_attributed_bundle_identifierPtr()(parameters, attributedBundleIdentifier.utf8().data());
-#endif
 }
 
 void setNWParametersTrackerOptions(nw_parameters_t parameters, bool shouldBypassRelay, bool isFirstParty, bool isKnownTracker)
 {
     if (shouldBypassRelay)
         nw_parameters_set_account_id(parameters, "com.apple.safari.peertopeer");
-#if HAVE(NWPARAMETERS_TRACKER_API)
     nw_parameters_set_is_third_party_web_content(parameters, !isFirstParty);
     nw_parameters_set_is_known_tracker(parameters, isKnownTracker);
-#endif
 }
 
 bool isKnownTracker(const WebCore::RegistrableDomain& domain)
 {
-#if HAVE(NWPARAMETERS_TRACKER_API)
     NSArray<NSString *> *domains = @[domain.string()];
     NEHelperTrackerDomainContextRef *context = nil;
     CFIndex index = 0;
     return !!NEHelperTrackerGetDisposition(nullptr, (CFArrayRef)domains, context, &index);
-#else
-    return false;
-#endif
 }
 
 std::optional<uint32_t> trafficClassFromDSCP(rtc::DiffServCodePoint dscpValue)
