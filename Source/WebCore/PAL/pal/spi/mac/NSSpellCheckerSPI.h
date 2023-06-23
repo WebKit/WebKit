@@ -40,6 +40,7 @@ extern NSString *NSTextCompletionAttributeName;
 @interface NSSpellChecker ()
 
 #if HAVE(INLINE_PREDICTIONS)
+@property (class, readonly, getter=isAutomaticInlineCompletionEnabled) BOOL automaticInlineCompletionEnabled;
 - (NSTextCheckingResult *)completionCandidateFromCandidates:(NSArray<NSTextCheckingResult *> *)candidates;
 - (void)showCompletionForCandidate:(NSTextCheckingResult *)candidate selectedRange:(NSRange)selectedRange offset:(NSUInteger)offset inString:(NSString *)string rect:(NSRect)rect view:(NSView *)view completionHandler:(void (^)(NSDictionary *resultDictionary))completionBlock;
 - (void)showCompletionForCandidate:(NSTextCheckingResult *)candidate selectedRange:(NSRange)selectedRange offset:(NSUInteger)offset inString:(NSString *)string rect:(NSRect)rect view:(NSView *)view client:(id <NSTextInputClient>)client completionHandler:(void (^)(NSDictionary *resultDictionary))completionBlock;
