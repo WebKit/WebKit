@@ -115,7 +115,7 @@ ResourceResponse::ResourceResponse(CurlResponse& response)
 void ResourceResponse::appendHTTPHeaderField(const String& header)
 {
     if (startsWithLettersIgnoringASCIICase(header, "http/"_s)) {
-        setHTTPStatusText(extractReasonPhraseFromHTTPStatusLine(header));
+        setHTTPStatusText(extractReasonPhraseFromHTTPStatusLine(header.trim(deprecatedIsSpaceOrNewline)));
         return;
     }
 
