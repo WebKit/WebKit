@@ -132,3 +132,18 @@ PROJECTS = dict(
         ),
     ),
 )
+
+MILESTONES = [
+    dict(
+        name='October',
+        isProtected=True,
+        protectedAccessGroup='Managers,Integrators',
+        categories=['Test Development', 'Tentpole Feature Work', 'Escape / Regression in the Build'],
+        events=['Week 1', 'Week 2', 'Week 3', 'Week 4', 'Convergence'],
+        tentpoles=['Scrolling', 'SVG'],
+        isCategoryRequired=True,
+    ), dict(
+        name='Future',
+        categories=['Test Development', 'Tentpole TBD', 'Escape / Regression in the Build'],
+    ),
+]

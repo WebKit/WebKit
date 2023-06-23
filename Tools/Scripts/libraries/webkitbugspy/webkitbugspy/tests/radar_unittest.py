@@ -402,3 +402,22 @@ What version of 'WebKit Text' should the bug be associated with?:
         with mocks.Radar(issues=mocks.ISSUES):
             tracker = radar.Tracker()
             self.assertEqual(tracker.issue(1).classification, 'Other Bug')
+
+    def test_clone(self):
+        with wkmocks.Environment(RADAR_USERNAME='tcontributor'), mocks.Radar(issues=mocks.ISSUES, projects=mocks.PROJECTS):
+            tracker = radar.Tracker()
+            original = tracker.issue(1)
+            cloned = tracker.clone(original, reason='Cloning for merge-back')
+
+            self.assertEqual(original.title, cloned.title)
+            self.assertEqual(original.classification, cloned.classification)
+            self.assertEqual(original.project, cloned.project)
+            self.assertEqual(original.component, cloned.component)
+            self.assertEqual(original.version, cloned.version)
+            self.assertEqual(
+                cloned.description,
+                'Reason for clone:\n'
+                'Cloning for merge-back\n\n'
+                '<original text - begin>\n\n'
+                'An example issue for testing',
+            )
