@@ -553,7 +553,7 @@ static LineEndingEllipsisPolicy lineEndingEllipsisPolicy(const RenderStyle& root
             return LineEndingEllipsisPolicy::WhenContentOverflowsInBlockDirection;
     }
     // Truncation is in effect when the block container has overflow other than visible.
-    if (rootStyle.overflowX() == Overflow::Hidden && rootStyle.textOverflow() == TextOverflow::Ellipsis)
+    if (rootStyle.overflowX() != Overflow::Visible && rootStyle.textOverflow() == TextOverflow::Ellipsis)
         return LineEndingEllipsisPolicy::WhenContentOverflowsInInlineDirection;
     return LineEndingEllipsisPolicy::No;
 }
