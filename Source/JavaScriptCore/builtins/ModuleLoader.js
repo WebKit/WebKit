@@ -202,18 +202,31 @@ function requestInstantiate(entry, parameters, fetcher)
 
         // Support CommonJS modules by synchronously importing the module when possible.
         if (@isPromise(sourcePossiblyPromise)) {
-            const state = @getPromiseInternalField(sourcePossiblyPromise, @promiseFieldFlags) & @promiseStateMask);
+            const state =
+              @getPromiseInternalField(sourcePossiblyPromise, @promiseFieldFlags) &
+              @promiseStateMask;
             if (state === @promiseStateFulfilled) {
-                source = @getPromiseInternalField(sourcePossiblyPromise, @promiseFieldReactionsOrResult);
+              source = @getPromiseInternalField(
+                sourcePossiblyPromise,
+                @promiseFieldReactionsOrResult
+              );
             } else if (state === @promiseStateRejected) {
-                @putPromiseInternalField(sourcePossiblyPromise, @promiseFieldFlags, @getPromiseInternalField(sourcePossiblyPromise, @promiseFieldFlags) | @promiseFlagsIsHandled);
-                throw @getPromiseInternalField(sourcePossiblyPromise, @promiseFieldReactionsOrResult);
+              @putPromiseInternalField(
+                sourcePossiblyPromise,
+                @promiseFieldFlags,
+                @getPromiseInternalField(sourcePossiblyPromise, @promiseFieldFlags) |
+                  @promiseFlagsIsHandled
+              );
+              throw @getPromiseInternalField(
+                sourcePossiblyPromise,
+                @promiseFieldReactionsOrResult
+              );
             } else {
-                source = await sourcePossiblyPromise;
+              source = await sourcePossiblyPromise;
             }
-        } else {
+          } else {
             source = sourcePossiblyPromise;
-        }
+          }          
             
 
         // https://html.spec.whatwg.org/#fetch-a-single-module-script
@@ -228,20 +241,33 @@ function requestInstantiate(entry, parameters, fetcher)
         var moduleRecord;
 
         // Support CommonJS modules by synchronously importing the module when possible.
-        if (@isPromise(sourcePossiblyPromise)) {
-            const state = @getPromiseInternalField(parseModuleRequest, @promiseFieldFlags) & @promiseStateMask);
+        if (@isPromise(parseModuleRequest)) {
+            const state =
+              @getPromiseInternalField(parseModuleRequest, @promiseFieldFlags) &
+              @promiseStateMask;
             if (state === @promiseStateFulfilled) {
-                source = @getPromiseInternalField(parseModuleRequest, @promiseFieldReactionsOrResult);
+              moduleRecord = @getPromiseInternalField(
+                parseModuleRequest,
+                @promiseFieldReactionsOrResult
+              );
             } else if (state === @promiseStateRejected) {
-                @putPromiseInternalField(parseModuleRequest, @promiseFieldFlags, @getPromiseInternalField(parseModuleRequest, @promiseFieldFlags) | @promiseFlagsIsHandled);
-                throw @getPromiseInternalField(parseModuleRequest, @promiseFieldReactionsOrResult);
+              @putPromiseInternalField(
+                parseModuleRequest,
+                @promiseFieldFlags,
+                @getPromiseInternalField(parseModuleRequest, @promiseFieldFlags) |
+                  @promiseFlagsIsHandled
+              );
+              throw @getPromiseInternalField(
+                parseModuleRequest,
+                @promiseFieldReactionsOrResult
+              );
             } else {
-                source = await sourcePossiblyPromise;
+              moduleRecord = await parseModuleRequest;
             }
-        } else {
+          } else {
             moduleRecord = parseModuleRequest;
-        }
-        
+          } 
+          
         var dependenciesMap = moduleRecord.dependenciesMap;
         var requestedModules = this.requestedModules(moduleRecord);
         var dependencies = @newArrayWithSize(requestedModules.length);
