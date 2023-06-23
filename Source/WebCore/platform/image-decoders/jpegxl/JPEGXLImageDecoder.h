@@ -34,6 +34,9 @@
 
 #if USE(LCMS)
 #include "LCMSUniquePtr.h"
+#elif USE(CG)
+#include <CoreGraphics/CoreGraphics.h>
+#include <wtf/RetainPtr.h>
 #endif
 
 namespace WebCore {
@@ -85,10 +88,13 @@ private:
     static void imageOutCallback(void*, size_t x, size_t y, size_t numPixels, const void* pixels);
     void imageOut(size_t x, size_t y, size_t numPixels, const uint8_t* pixels) WTF_REQUIRES_LOCK(m_lock);
 
-#if USE(LCMS)
     void clearColorTransform();
     void prepareColorTransform();
+    void maybePerformColorSpaceConversion(void* inputBuffer, void* outputBuffer, unsigned numberOfPixels);
+#if USE(LCMS)
     LCMSProfilePtr tryDecodeICCColorProfile();
+#elif USE(CG)
+    RetainPtr<CGColorSpaceRef> tryDecodeICCColorProfile();
 #endif
 
     JxlDecoderPtr m_decoder;
@@ -103,6 +109,8 @@ private:
 
 #if USE(LCMS)
     LCMSTransformPtr m_iccTransform;
+#elif USE(CG)
+    RetainPtr<CGColorSpaceRef> m_profile;
 #endif
 };
 

@@ -50,6 +50,7 @@ typedef enum {
     JXL_DEC_ERROR = 1,
     JXL_DEC_NEED_MORE_INPUT = 2,
     JXL_DEC_BASIC_INFO = 0x40,
+    JXL_DEC_COLOR_ENCODING = 0x100,
     JXL_DEC_FRAME = 0x400,
     JXL_DEC_FULL_IMAGE = 0x1000,
 } JxlDecoderStatus;
@@ -137,6 +138,10 @@ typedef struct {
     JxlLayerInfo layer_info;
 } JxlFrameHeader;
 
+typedef enum {
+    JXL_COLOR_PROFILE_TARGET_DATA = 1,
+} JxlColorProfileTarget;
+
 typedef struct JxlDecoderStruct JxlDecoder;
 
 typedef void* (*jpegxl_alloc_func)(void* opaque, size_t size);
@@ -162,6 +167,8 @@ JxlDecoderStatus JxlDecoderGetFrameHeader(const JxlDecoder*, JxlFrameHeader*);
 JxlDecoderStatus JxlDecoderSetImageOutCallback(JxlDecoder*, const JxlPixelFormat*, JxlImageOutCallback, void* opaque);
 void JxlDecoderDestroy(JxlDecoder*);
 JxlSignature JxlSignatureCheck(const uint8_t* buf, size_t len);
+JxlDecoderStatus JxlDecoderGetICCProfileSize(const JxlDecoder*, const JxlPixelFormat*, JxlColorProfileTarget, size_t*);
+JxlDecoderStatus JxlDecoderGetColorAsICCProfile(const JxlDecoder*, const JxlPixelFormat*, JxlColorProfileTarget, uint8_t* icc_profile, size_t);
 
 #if defined(__cplusplus) || defined(c_plusplus)
 }
