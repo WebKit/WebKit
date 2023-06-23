@@ -27,10 +27,10 @@ extern "C" {
 
 // Only need this for fixed-size arrays, for structs just assign.
 #define vp9_copy(dest, src)              \
-  do {                                   \
+  {                                      \
     assert(sizeof(dest) == sizeof(src)); \
     memcpy(dest, src, sizeof(src));      \
-  } while (0)
+  }
 
 // Use this for variably-sized arrays.
 #define vp9_copy_array(dest, src, n)           \
@@ -49,7 +49,6 @@ static INLINE int get_unsigned_bits(unsigned int num_values) {
 #if CONFIG_DEBUG
 #define CHECK_MEM_ERROR(cm, lval, expr)                                     \
   do {                                                                      \
-    assert(&(cm)->error.setjmp);                                            \
     (lval) = (expr);                                                        \
     if (!(lval))                                                            \
       vpx_internal_error(&(cm)->error, VPX_CODEC_MEM_ERROR,                 \
@@ -59,7 +58,6 @@ static INLINE int get_unsigned_bits(unsigned int num_values) {
 #else
 #define CHECK_MEM_ERROR(cm, lval, expr)                     \
   do {                                                      \
-    assert(&(cm)->error.setjmp);                            \
     (lval) = (expr);                                        \
     if (!(lval))                                            \
       vpx_internal_error(&(cm)->error, VPX_CODEC_MEM_ERROR, \

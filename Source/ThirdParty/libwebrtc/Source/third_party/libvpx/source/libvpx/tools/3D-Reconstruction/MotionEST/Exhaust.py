@@ -83,7 +83,7 @@ class ExhaustNeighbor(MotionEST):
     self.beta = beta
     self.metric = metric
     super(ExhaustNeighbor, self).__init__(cur_f, ref_f, blk_size)
-    self.assign = np.zeros((self.num_row, self.num_col), dtype=bool)
+    self.assign = np.zeros((self.num_row, self.num_col), dtype=np.bool)
 
   """
     estimate neighbor loss:

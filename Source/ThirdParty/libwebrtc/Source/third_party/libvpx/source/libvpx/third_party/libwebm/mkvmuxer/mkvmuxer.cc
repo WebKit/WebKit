@@ -607,10 +607,10 @@ bool ContentEncoding::Write(IMkvWriter* writer) const {
   return true;
 }
 
-uint64_t ContentEncoding::EncodingSize(uint64_t compression_size,
+uint64_t ContentEncoding::EncodingSize(uint64_t compresion_size,
                                        uint64_t encryption_size) const {
   // TODO(fgalligan): Add support for compression settings.
-  if (compression_size != 0)
+  if (compresion_size != 0)
     return 0;
 
   uint64_t encoding_size = 0;
@@ -774,7 +774,7 @@ bool Track::Write(IMkvWriter* writer) const {
     return false;
 
   // AV1 tracks require a CodecPrivate. See
-  // https://github.com/ietf-wg-cellar/matroska-specification/blob/HEAD/codec/av1.md
+  // https://github.com/Matroska-Org/matroska-specification/blob/av1-mappin/codec/av1.md
   // TODO(tomfinegan): Update the above link to the AV1 Matroska mappings to
   // point to a stable version once it is finalized, or our own WebM mappings
   // page on webmproject.org should we decide to release them.
@@ -3084,7 +3084,6 @@ Segment::Segment()
       accurate_cluster_duration_(false),
       fixed_size_cluster_timecode_(false),
       estimate_file_duration_(false),
-      ebml_header_size_(0),
       payload_pos_(0),
       size_position_(0),
       doc_type_version_(kDefaultDocTypeVersion),
@@ -4106,16 +4105,12 @@ int Segment::WriteFramesAll() {
     // places where |doc_type_version_| needs to be updated.
     if (frame->discard_padding() != 0)
       doc_type_version_ = 4;
-    if (!cluster->AddFrame(frame)) {
-      delete frame;
-      continue;
-    }
+    if (!cluster->AddFrame(frame))
+      return -1;
 
     if (new_cuepoint_ && cues_track_ == frame->track_number()) {
-      if (!AddCuePoint(frame->timestamp(), cues_track_)) {
-        delete frame;
-        continue;
-      }
+      if (!AddCuePoint(frame->timestamp(), cues_track_))
+        return -1;
     }
 
     if (frame->timestamp() > last_timestamp_) {
@@ -4158,16 +4153,12 @@ bool Segment::WriteFramesLessThan(uint64_t timestamp) {
       const Frame* const frame_prev = frames_[i - 1];
       if (frame_prev->discard_padding() != 0)
         doc_type_version_ = 4;
-      if (!cluster->AddFrame(frame_prev)) {
-        delete frame_prev;
-        continue;
-      }
+      if (!cluster->AddFrame(frame_prev))
+        return false;
 
       if (new_cuepoint_ && cues_track_ == frame_prev->track_number()) {
-        if (!AddCuePoint(frame_prev->timestamp(), cues_track_)) {
-          delete frame_prev;
-          continue;
-        }
+        if (!AddCuePoint(frame_prev->timestamp(), cues_track_))
+          return false;
       }
 
       ++shift_left;

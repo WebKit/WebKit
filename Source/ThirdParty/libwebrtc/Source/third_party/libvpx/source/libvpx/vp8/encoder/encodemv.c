@@ -31,15 +31,17 @@ static void encode_mvcomponent(vp8_writer *const w, const int v,
 
     vp8_write(w, 1, p[mvpis_short]);
 
-    do {
+    do
       vp8_write(w, (x >> i) & 1, p[MVPbits + i]);
-    } while (++i < 3);
+
+    while (++i < 3);
 
     i = mvlong_width - 1; /* Skip bit 3, which is sometimes implicit */
 
-    do {
+    do
       vp8_write(w, (x >> i) & 1, p[MVPbits + i]);
-    } while (--i > 3);
+
+    while (--i > 3);
 
     if (x & 0xFFF0) vp8_write(w, (x >> 3) & 1, p[MVPbits + 3]);
   }
@@ -158,7 +160,7 @@ static void calc_prob(vp8_prob *p, const unsigned int ct[2]) {
   const unsigned int tot = ct[0] + ct[1];
 
   if (tot) {
-    const vp8_prob x = ((ct[0] * 255) / tot) & ~1u;
+    const vp8_prob x = ((ct[0] * 255) / tot) & -2;
     *p = x ? x : 1;
   }
 }
@@ -203,11 +205,8 @@ static void write_component_probs(vp8_writer *const w,
   (void)rc;
   vp8_copy_array(Pnew, default_mvc, MVPcount);
 
-  vp8_zero(is_short_ct);
-  vp8_zero(sign_ct);
-  vp8_zero(bit_ct);
-  vp8_zero(short_ct);
-  vp8_zero(short_bct);
+  vp8_zero(is_short_ct) vp8_zero(sign_ct) vp8_zero(bit_ct) vp8_zero(short_ct)
+      vp8_zero(short_bct)
 
   /* j=0 */
   {

@@ -11,9 +11,7 @@
 #ifndef VPX_VP8_ENCODER_ONYX_INT_H_
 #define VPX_VP8_ENCODER_ONYX_INT_H_
 
-#include <assert.h>
 #include <stdio.h>
-
 #include "vpx_config.h"
 #include "vp8/common/onyx.h"
 #include "treewriter.h"
@@ -485,7 +483,7 @@ typedef struct VP8_COMP {
 
   unsigned char *segmentation_map;
   signed char segment_feature_data[MB_LVL_MAX][MAX_MB_SEGMENTS];
-  unsigned int segment_encode_breakout[MAX_MB_SEGMENTS];
+  int segment_encode_breakout[MAX_MB_SEGMENTS];
 
   unsigned char *active_map;
   unsigned int active_map_enabled;
@@ -551,6 +549,7 @@ typedef struct VP8_COMP {
   unsigned char *partition_d_end[MAX_PARTITIONS];
 
   fractional_mv_step_fp *find_fractional_mv_step;
+  vp8_full_search_fn_t full_search_sad;
   vp8_refining_search_fn_t refining_search_sad;
   vp8_diamond_search_fn_t diamond_search_sad;
   vp8_variance_fn_ptr_t fn_ptr[BLOCK_MAX_SEGMENTS];
@@ -703,24 +702,12 @@ typedef struct VP8_COMP {
   int use_roi_static_threshold;
 
   int ext_refresh_frame_flags_pending;
-
-  // Always update correction factor used for rate control after each frame for
-  // realtime encoding.
-  int rt_always_update_correction_factor;
 } VP8_COMP;
 
 void vp8_initialize_enc(void);
 
 void vp8_alloc_compressor_data(VP8_COMP *cpi);
 int vp8_reverse_trans(int x);
-void vp8_reset_temporal_layer_change(VP8_COMP *cpi, VP8_CONFIG *oxcf,
-                                     const int prev_num_layers);
-void vp8_init_temporal_layer_context(VP8_COMP *cpi, VP8_CONFIG *oxcf,
-                                     const int layer,
-                                     double prev_layer_framerate);
-void vp8_update_layer_contexts(VP8_COMP *cpi);
-void vp8_save_layer_context(VP8_COMP *cpi);
-void vp8_restore_layer_context(VP8_COMP *cpi, const int layer);
 void vp8_new_framerate(VP8_COMP *cpi, double framerate);
 void vp8_loopfilter_frame(VP8_COMP *cpi, VP8_COMMON *cm);
 
@@ -734,7 +721,6 @@ void vp8_set_speed_features(VP8_COMP *cpi);
 #if CONFIG_DEBUG
 #define CHECK_MEM_ERROR(lval, expr)                                         \
   do {                                                                      \
-    assert(cpi->common.error.setjmp);                                       \
     (lval) = (expr);                                                        \
     if (!(lval))                                                            \
       vpx_internal_error(&cpi->common.error, VPX_CODEC_MEM_ERROR,           \
@@ -744,7 +730,6 @@ void vp8_set_speed_features(VP8_COMP *cpi);
 #else
 #define CHECK_MEM_ERROR(lval, expr)                               \
   do {                                                            \
-    assert(cpi->common.error.setjmp);                             \
     (lval) = (expr);                                              \
     if (!(lval))                                                  \
       vpx_internal_error(&cpi->common.error, VPX_CODEC_MEM_ERROR, \

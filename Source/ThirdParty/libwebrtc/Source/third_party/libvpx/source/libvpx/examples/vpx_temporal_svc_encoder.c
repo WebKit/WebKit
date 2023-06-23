@@ -30,7 +30,7 @@
 
 #define ROI_MAP 0
 
-#define zero(Dest) memset(&(Dest), 0, sizeof(Dest))
+#define zero(Dest) memset(&(Dest), 0, sizeof(Dest));
 
 static const char *exec_name;
 
@@ -237,38 +237,6 @@ static void set_roi_map(const char *enc_name, vpx_codec_enc_cfg_t *cfg,
           j > (roi->cols >> 2) && j < ((roi->cols * 3) >> 2)) {
         roi->roi_map[i * roi->cols + j] = 1;
       }
-    }
-  }
-}
-
-static void set_roi_skip_map(vpx_codec_enc_cfg_t *cfg, vpx_roi_map_t *roi,
-                             int *skip_map, int *prev_mask_map, int frame_num) {
-  const int block_size = 8;
-  unsigned int i, j;
-  roi->rows = (cfg->g_h + block_size - 1) / block_size;
-  roi->cols = (cfg->g_w + block_size - 1) / block_size;
-  zero(roi->skip);
-  zero(roi->delta_q);
-  zero(roi->delta_lf);
-  memset(roi->ref_frame, -1, sizeof(roi->ref_frame));
-  roi->ref_frame[1] = 1;
-  // Use segment 3 for skip.
-  roi->skip[3] = 1;
-  roi->roi_map =
-      (uint8_t *)calloc(roi->rows * roi->cols, sizeof(*roi->roi_map));
-  for (i = 0; i < roi->rows; ++i) {
-    for (j = 0; j < roi->cols; ++j) {
-      const int idx = i * roi->cols + j;
-      // Use segment 3 for skip.
-      // prev_mask_map keeps track of blocks that have been stably on segment 3
-      // for the past 10 frames. Only skip when the block is on segment 3 in
-      // both current map and prev_mask_map.
-      if (skip_map[idx] == 1 && prev_mask_map[idx] == 1) roi->roi_map[idx] = 3;
-      // Reset it every 10 frames so it doesn't propagate for too many frames.
-      if (frame_num % 10 == 0)
-        prev_mask_map[idx] = skip_map[idx];
-      else if (prev_mask_map[idx] == 1 && skip_map[idx] == 0)
-        prev_mask_map[idx] = 0;
     }
   }
 }
@@ -606,23 +574,6 @@ static void set_temporal_layer_pattern(int layering_mode,
   }
 }
 
-#if ROI_MAP
-static void read_mask(FILE *mask_file, int *seg_map) {
-  int mask_rows, mask_cols, i, j;
-  int *map_start = seg_map;
-  fscanf(mask_file, "%d %d\n", &mask_cols, &mask_rows);
-  for (i = 0; i < mask_rows; i++) {
-    for (j = 0; j < mask_cols; j++) {
-      fscanf(mask_file, "%d ", &seg_map[j]);
-      // reverse the bit
-      seg_map[j] = 1 - seg_map[j];
-    }
-    seg_map += mask_cols;
-  }
-  seg_map = map_start;
-}
-#endif
-
 int main(int argc, char **argv) {
   VpxVideoWriter *outfile[VPX_TS_MAX_LAYERS] = { NULL };
   vpx_codec_ctx_t codec;
@@ -662,14 +613,7 @@ int main(int argc, char **argv) {
   double sum_bitrate = 0.0;
   double sum_bitrate2 = 0.0;
   double framerate = 30.0;
-#if ROI_MAP
-  FILE *mask_file = NULL;
-  int block_size = 8;
-  int mask_rows = 0;
-  int mask_cols = 0;
-  int *mask_map;
-  int *prev_mask_map;
-#endif
+
   zero(rc.layer_target_bitrate);
   memset(&layer_id, 0, sizeof(vpx_svc_layer_id_t));
   memset(&input_ctx, 0, sizeof(input_ctx));
@@ -713,15 +657,9 @@ int main(int argc, char **argv) {
     die("Invalid layering mode (0..12) %s", argv[12]);
   }
 
-#if ROI_MAP
-  if (argc != min_args + mode_to_num_layers[layering_mode] + 1) {
-    die("Invalid number of arguments");
-  }
-#else
   if (argc != min_args + mode_to_num_layers[layering_mode]) {
     die("Invalid number of arguments");
   }
-#endif
 
   input_ctx.filename = argv[1];
   open_input_file(&input_ctx);
@@ -749,14 +687,14 @@ int main(int argc, char **argv) {
             &raw,
             bit_depth == VPX_BITS_8 ? VPX_IMG_FMT_I420 : VPX_IMG_FMT_I42016,
             width, height, 32)) {
-      die("Failed to allocate image (%dx%d)", width, height);
+      die("Failed to allocate image", width, height);
     }
   }
 #else
   // Y4M reader has its own allocation.
   if (input_ctx.file_type != FILE_TYPE_Y4M) {
     if (!vpx_img_alloc(&raw, VPX_IMG_FMT_I420, width, height, 32)) {
-      die("Failed to allocate image (%dx%d)", width, height);
+      die("Failed to allocate image", width, height);
     }
   }
 #endif  // CONFIG_VP9_HIGHBITDEPTH
@@ -879,13 +817,6 @@ int main(int argc, char **argv) {
 #endif  // CONFIG_VP9_HIGHBITDEPTH
     die("Failed to initialize encoder");
 
-#if ROI_MAP
-  mask_rows = (cfg.g_h + block_size - 1) / block_size;
-  mask_cols = (cfg.g_w + block_size - 1) / block_size;
-  mask_map = (int *)calloc(mask_rows * mask_cols, sizeof(*mask_map));
-  prev_mask_map = (int *)calloc(mask_rows * mask_cols, sizeof(*mask_map));
-#endif
-
   if (strncmp(encoder->name, "vp8", 3) == 0) {
     vpx_codec_control(&codec, VP8E_SET_CPUUSED, -speed);
     vpx_codec_control(&codec, VP8E_SET_NOISE_SENSITIVITY, kVp8DenoiserOff);
@@ -896,10 +827,10 @@ int main(int argc, char **argv) {
     if (vpx_codec_control(&codec, VP8E_SET_ROI_MAP, &roi))
       die_codec(&codec, "Failed to set ROI map");
 #endif
+
   } else if (strncmp(encoder->name, "vp9", 3) == 0) {
     vpx_svc_extra_cfg_t svc_params;
     memset(&svc_params, 0, sizeof(svc_params));
-    vpx_codec_control(&codec, VP9E_SET_POSTENCODE_DROP, 0);
     vpx_codec_control(&codec, VP9E_SET_DISABLE_OVERSHOOT_MAXQ_CBR, 0);
     vpx_codec_control(&codec, VP8E_SET_CPUUSED, speed);
     vpx_codec_control(&codec, VP9E_SET_AQ_MODE, 3);
@@ -911,7 +842,12 @@ int main(int argc, char **argv) {
     vpx_codec_control(&codec, VP9E_SET_TUNE_CONTENT, 0);
     vpx_codec_control(&codec, VP9E_SET_TILE_COLUMNS, get_msb(cfg.g_threads));
     vpx_codec_control(&codec, VP9E_SET_DISABLE_LOOPFILTER, 0);
-
+#if ROI_MAP
+    set_roi_map(encoder->name, &cfg, &roi);
+    if (vpx_codec_control(&codec, VP9E_SET_ROI_MAP, &roi))
+      die_codec(&codec, "Failed to set ROI map");
+    vpx_codec_control(&codec, VP9E_SET_AQ_MODE, 0);
+#endif
     if (cfg.g_threads > 1)
       vpx_codec_control(&codec, VP9E_SET_ROW_MT, 1);
     else
@@ -944,9 +880,6 @@ int main(int argc, char **argv) {
     struct vpx_usec_timer timer;
     vpx_codec_iter_t iter = NULL;
     const vpx_codec_cx_pkt_t *pkt;
-#if ROI_MAP
-    char mask_file_name[255];
-#endif
     // Update the temporal layer_id. No spatial layers in this test.
     layer_id.spatial_layer_id = 0;
     layer_id.temporal_layer_id =
@@ -960,19 +893,6 @@ int main(int argc, char **argv) {
     }
     flags = layer_flags[frame_cnt % flag_periodicity];
     if (layering_mode == 0) flags = 0;
-#if ROI_MAP
-    snprintf(mask_file_name, sizeof(mask_file_name), "%s%05d.txt",
-             argv[argc - 1], frame_cnt);
-    mask_file = fopen(mask_file_name, "r");
-    if (mask_file != NULL) {
-      read_mask(mask_file, mask_map);
-      fclose(mask_file);
-      // set_roi_map(encoder->name, &cfg, &roi);
-      set_roi_skip_map(&cfg, &roi, mask_map, prev_mask_map, frame_cnt);
-      if (vpx_codec_control(&codec, VP9E_SET_ROI_MAP, &roi))
-        die_codec(&codec, "Failed to set ROI map");
-    }
-#endif
     frame_avail = read_frame(&input_ctx, &raw);
     if (frame_avail) ++rc.layer_input_frames[layer_id.temporal_layer_id];
     vpx_usec_timer_start(&timer);
@@ -1010,7 +930,6 @@ int main(int argc, char **argv) {
           // Update for short-time encoding bitrate states, for moving window
           // of size rc->window, shifted by rc->window / 2.
           // Ignore first window segment, due to key frame.
-          if (rc.window_size == 0) rc.window_size = 15;
           if (frame_cnt > rc.window_size) {
             sum_bitrate += 0.001 * 8.0 * pkt->data.frame.sz * framerate;
             if (frame_cnt % rc.window_size == 0) {
@@ -1042,10 +961,6 @@ int main(int argc, char **argv) {
     ++frame_cnt;
     pts += frame_duration;
   }
-#if ROI_MAP
-  free(mask_map);
-  free(prev_mask_map);
-#endif
   close_input_file(&input_ctx);
   printout_rate_control_summary(&rc, &cfg, frame_cnt);
   printf("\n");

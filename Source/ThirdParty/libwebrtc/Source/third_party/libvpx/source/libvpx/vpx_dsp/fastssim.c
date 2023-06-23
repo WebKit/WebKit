@@ -47,7 +47,7 @@ struct fs_ctx {
   unsigned *col_buf;
 };
 
-static int fs_ctx_init(fs_ctx *_ctx, int _w, int _h, int _nlevels) {
+static void fs_ctx_init(fs_ctx *_ctx, int _w, int _h, int _nlevels) {
   unsigned char *data;
   size_t data_size;
   int lw;
@@ -71,7 +71,6 @@ static int fs_ctx_init(fs_ctx *_ctx, int _w, int _h, int _nlevels) {
     lh = (lh + 1) >> 1;
   }
   data = (unsigned char *)malloc(data_size);
-  if (!data) return -1;
   _ctx->level = (fs_level *)data;
   _ctx->nlevels = _nlevels;
   data += _nlevels * sizeof(*_ctx->level);
@@ -96,7 +95,6 @@ static int fs_ctx_init(fs_ctx *_ctx, int _w, int _h, int _nlevels) {
     lh = (lh + 1) >> 1;
   }
   _ctx->col_buf = (unsigned *)data;
-  return 0;
 }
 
 static void fs_ctx_clear(fs_ctx *_ctx) { free(_ctx->level); }
@@ -458,7 +456,7 @@ static double calc_ssim(const uint8_t *_src, int _systride, const uint8_t *_dst,
   double ret;
   int l;
   ret = 1;
-  if (fs_ctx_init(&ctx, _w, _h, FS_NLEVELS)) return 99.0;
+  fs_ctx_init(&ctx, _w, _h, FS_NLEVELS);
   fs_downsample_level0(&ctx, _src, _systride, _dst, _dystride, _w, _h, _bd,
                        _shift);
   for (l = 0; l < FS_NLEVELS - 1; l++) {

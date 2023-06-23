@@ -47,7 +47,7 @@ typedef enum {
 #define cpuid(func, func2, ax, bx, cx, dx)                      \
   __asm__ __volatile__("cpuid           \n\t"                   \
                        : "=a"(ax), "=b"(bx), "=c"(cx), "=d"(dx) \
-                       : "a"(func), "c"(func2))
+                       : "a"(func), "c"(func2));
 #else
 #define cpuid(func, func2, ax, bx, cx, dx)     \
   __asm__ __volatile__(                        \
@@ -55,7 +55,7 @@ typedef enum {
       "cpuid              \n\t"                \
       "xchg %%edi, %%ebx  \n\t"                \
       : "=a"(ax), "=D"(bx), "=c"(cx), "=d"(dx) \
-      : "a"(func), "c"(func2))
+      : "a"(func), "c"(func2));
 #endif
 #elif defined(__SUNPRO_C) || \
     defined(__SUNPRO_CC) /* end __GNUC__ or __ANDROID__*/
@@ -67,7 +67,7 @@ typedef enum {
       "movl %ebx, %edi \n\t"                   \
       "xchg %rsi, %rbx \n\t"                   \
       : "=a"(ax), "=D"(bx), "=c"(cx), "=d"(dx) \
-      : "a"(func), "c"(func2))
+      : "a"(func), "c"(func2));
 #else
 #define cpuid(func, func2, ax, bx, cx, dx)     \
   asm volatile(                                \
@@ -76,7 +76,7 @@ typedef enum {
       "movl %ebx, %edi  \n\t"                  \
       "popl %ebx        \n\t"                  \
       : "=a"(ax), "=D"(bx), "=c"(cx), "=d"(dx) \
-      : "a"(func), "c"(func2))
+      : "a"(func), "c"(func2));
 #endif
 #else /* end __SUNPRO__ */
 #if VPX_ARCH_X86_64
@@ -242,7 +242,7 @@ static INLINE int x86_simd_caps(void) {
 // x86_readtsc directly, but prevent the CPU's out-of-order execution from
 // affecting the measurement (by having earlier/later instructions be evaluated
 // in the time interval). See the white paper, "How to Benchmark Code
-// Execution Times on Intel(R) IA-32 and IA-64 Instruction Set Architectures" by
+// Execution Times on Intel® IA-32 and IA-64 Instruction Set Architectures" by
 // Gabriele Paoloni for more information.
 //
 // If you are timing a large function (CPU time > a couple of seconds), use
@@ -308,7 +308,6 @@ static INLINE unsigned int x86_readtscp(void) {
 
 static INLINE unsigned int x86_tsc_start(void) {
   unsigned int reg_eax, reg_ebx, reg_ecx, reg_edx;
-  // This call should not be removed. See function notes above.
   cpuid(0, 0, reg_eax, reg_ebx, reg_ecx, reg_edx);
   // Avoid compiler warnings on unused-but-set variables.
   (void)reg_eax;
@@ -321,7 +320,6 @@ static INLINE unsigned int x86_tsc_start(void) {
 static INLINE unsigned int x86_tsc_end(void) {
   uint32_t v = x86_readtscp();
   unsigned int reg_eax, reg_ebx, reg_ecx, reg_edx;
-  // This call should not be removed. See function notes above.
   cpuid(0, 0, reg_eax, reg_ebx, reg_ecx, reg_edx);
   // Avoid compiler warnings on unused-but-set variables.
   (void)reg_eax;
@@ -391,7 +389,7 @@ static INLINE unsigned int x87_set_double_precision(void) {
   // Reserved                      01B
   // Double Precision (53-Bits)    10B
   // Extended Precision (64-Bits)  11B
-  x87_set_control_word((mode & ~0x300u) | 0x200u);
+  x87_set_control_word((mode & ~0x300) | 0x200);
   return mode;
 }
 

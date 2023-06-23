@@ -306,6 +306,7 @@ void vp9_loop_filter_alloc(VP9LfSync *lf_sync, VP9_COMMON *cm, int rows,
     CHECK_MEM_ERROR(cm, lf_sync->recon_done_mutex,
                     vpx_malloc(sizeof(*lf_sync->recon_done_mutex) * rows));
     if (lf_sync->recon_done_mutex) {
+      int i;
       for (i = 0; i < rows; ++i) {
         pthread_mutex_init(&lf_sync->recon_done_mutex[i], NULL);
       }
@@ -314,6 +315,7 @@ void vp9_loop_filter_alloc(VP9LfSync *lf_sync, VP9_COMMON *cm, int rows,
     CHECK_MEM_ERROR(cm, lf_sync->recon_done_cond,
                     vpx_malloc(sizeof(*lf_sync->recon_done_cond) * rows));
     if (lf_sync->recon_done_cond) {
+      int i;
       for (i = 0; i < rows; ++i) {
         pthread_cond_init(&lf_sync->recon_done_cond[i], NULL);
       }

@@ -10,7 +10,7 @@
 
 #include "vpx_config.h"
 #include "vp8_rtcd.h"
-#if !defined(_WIN32) && CONFIG_OS_SUPPORT == 1
+#if !defined(WIN32) && CONFIG_OS_SUPPORT == 1
 #include <unistd.h>
 #endif
 #include "onyxd_int.h"
@@ -74,9 +74,9 @@ static void setup_decoding_thread_data(VP8D_COMP *pbi, MACROBLOCKD *xd,
     memcpy(mbd->dequant_y2, xd->dequant_y2, sizeof(xd->dequant_y2));
     memcpy(mbd->dequant_uv, xd->dequant_uv, sizeof(xd->dequant_uv));
 
-    mbd->fullpixel_mask = ~0;
+    mbd->fullpixel_mask = 0xffffffff;
 
-    if (pc->full_pixel) mbd->fullpixel_mask = ~7;
+    if (pc->full_pixel) mbd->fullpixel_mask = 0xfffffff8;
   }
 
   for (i = 0; i < pc->mb_rows; ++i)

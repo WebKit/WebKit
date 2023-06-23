@@ -28,7 +28,7 @@ while (<STDIN>)
     s/qsubaddx/qsax/i;
     s/qaddsubx/qasx/i;
 
-    thumb::FixThumbInstructions($_);
+    thumb::FixThumbInstructions($_, 1);
 
     s/ldrneb/ldrbne/i;
     s/ldrneh/ldrhne/i;

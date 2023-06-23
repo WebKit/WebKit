@@ -27,7 +27,6 @@
 #include "vpx/vpx_integer.h"
 #include "vpx_ports/mem.h"
 #include "vpx_ports/msvc.h"  // for round()
-#include "vpx_ports/vpx_timer.h"
 
 using libvpx_test::ACMRandom;
 
@@ -549,44 +548,6 @@ class Trans16x16TestBase {
     }
   }
 
-  void RunSpeedTest() {
-    ACMRandom rnd(ACMRandom::DeterministicSeed());
-    const int count_test_block = 10000;
-    int c_sum_time = 0;
-    int simd_sum_time = 0;
-
-    DECLARE_ALIGNED(32, int16_t, input_block[kNumCoeffs]);
-    DECLARE_ALIGNED(32, tran_low_t, output_ref_block[kNumCoeffs]);
-    DECLARE_ALIGNED(32, tran_low_t, output_block[kNumCoeffs]);
-
-    // Initialize a test block with input range [-mask_, mask_].
-    for (int j = 0; j < kNumCoeffs; ++j) {
-      input_block[j] = (rnd.Rand16() & mask_) - (rnd.Rand16() & mask_);
-    }
-
-    vpx_usec_timer timer_c;
-    vpx_usec_timer_start(&timer_c);
-    for (int i = 0; i < count_test_block; ++i) {
-      vpx_fdct16x16_c(input_block, output_ref_block, pitch_);
-    }
-    vpx_usec_timer_mark(&timer_c);
-    c_sum_time += static_cast<int>(vpx_usec_timer_elapsed(&timer_c));
-
-    vpx_usec_timer timer_mod;
-    vpx_usec_timer_start(&timer_mod);
-    for (int i = 0; i < count_test_block; ++i) {
-      RunFwdTxfm(input_block, output_block, pitch_);
-    }
-
-    vpx_usec_timer_mark(&timer_mod);
-    simd_sum_time += static_cast<int>(vpx_usec_timer_elapsed(&timer_mod));
-
-    printf(
-        "c_time = %d \t simd_time = %d \t Gain = %4.2f \n", c_sum_time,
-        simd_sum_time,
-        (static_cast<float>(c_sum_time) / static_cast<float>(simd_sum_time)));
-  }
-
   void CompareInvReference(IdctFunc ref_txfm, int thresh) {
     ACMRandom rnd(ACMRandom::DeterministicSeed());
     const int count_test_block = 10000;
@@ -702,8 +663,6 @@ TEST_P(Trans16x16DCT, QuantCheck) {
 }
 
 TEST_P(Trans16x16DCT, InvAccuracyCheck) { RunInvAccuracyCheck(); }
-
-TEST_P(Trans16x16DCT, DISABLED_Speed) { RunSpeedTest(); }
 
 class Trans16x16HT : public Trans16x16TestBase,
                      public ::testing::TestWithParam<Ht16x16Param> {
@@ -830,22 +789,12 @@ INSTANTIATE_TEST_SUITE_P(
         make_tuple(&vp9_fht16x16_c, &vp9_iht16x16_256_add_c, 3, VPX_BITS_8)));
 #endif  // CONFIG_VP9_HIGHBITDEPTH
 
-#if HAVE_NEON && !CONFIG_VP9_HIGHBITDEPTH && !CONFIG_EMULATE_HARDWARE
+#if HAVE_NEON && !CONFIG_EMULATE_HARDWARE
 INSTANTIATE_TEST_SUITE_P(
     NEON, Trans16x16DCT,
     ::testing::Values(make_tuple(&vpx_fdct16x16_neon,
                                  &vpx_idct16x16_256_add_neon, 0, VPX_BITS_8)));
 #endif  // HAVE_NEON && !CONFIG_EMULATE_HARDWARE
-
-#if HAVE_NEON && CONFIG_VP9_HIGHBITDEPTH && !CONFIG_EMULATE_HARDWARE
-INSTANTIATE_TEST_SUITE_P(
-    NEON, Trans16x16DCT,
-    ::testing::Values(
-        make_tuple(&vpx_highbd_fdct16x16_neon, &idct16x16_10, 0, VPX_BITS_10),
-        make_tuple(&vpx_highbd_fdct16x16_neon, &idct16x16_12, 0, VPX_BITS_12),
-        make_tuple(&vpx_fdct16x16_neon, &vpx_idct16x16_256_add_c, 0,
-                   VPX_BITS_8)));
-#endif  // HAVE_NEON && CONFIG_VP9_HIGHBITDEPTH && !CONFIG_EMULATE_HARDWARE
 
 #if HAVE_SSE2 && !CONFIG_VP9_HIGHBITDEPTH && !CONFIG_EMULATE_HARDWARE
 INSTANTIATE_TEST_SUITE_P(
@@ -863,13 +812,6 @@ INSTANTIATE_TEST_SUITE_P(
                       make_tuple(&vp9_fht16x16_sse2, &vp9_iht16x16_256_add_sse2,
                                  3, VPX_BITS_8)));
 #endif  // HAVE_SSE2 && !CONFIG_VP9_HIGHBITDEPTH && !CONFIG_EMULATE_HARDWARE
-
-#if HAVE_AVX2 && !CONFIG_VP9_HIGHBITDEPTH && !CONFIG_EMULATE_HARDWARE
-INSTANTIATE_TEST_SUITE_P(
-    AVX2, Trans16x16DCT,
-    ::testing::Values(make_tuple(&vpx_fdct16x16_avx2,
-                                 &vpx_idct16x16_256_add_sse2, 0, VPX_BITS_8)));
-#endif  // HAVE_AVX2 && !CONFIG_VP9_HIGHBITDEPTH && !CONFIG_EMULATE_HARDWARE
 
 #if HAVE_SSE2 && CONFIG_VP9_HIGHBITDEPTH && !CONFIG_EMULATE_HARDWARE
 INSTANTIATE_TEST_SUITE_P(
@@ -926,11 +868,4 @@ INSTANTIATE_TEST_SUITE_P(
     ::testing::Values(make_tuple(&vpx_fdct16x16_c, &vpx_idct16x16_256_add_vsx,
                                  0, VPX_BITS_8)));
 #endif  // HAVE_VSX && !CONFIG_VP9_HIGHBITDEPTH && !CONFIG_EMULATE_HARDWARE
-
-#if HAVE_LSX && !CONFIG_VP9_HIGHBITDEPTH && !CONFIG_EMULATE_HARDWARE
-INSTANTIATE_TEST_SUITE_P(LSX, Trans16x16DCT,
-                         ::testing::Values(make_tuple(&vpx_fdct16x16_lsx,
-                                                      &vpx_idct16x16_256_add_c,
-                                                      0, VPX_BITS_8)));
-#endif  // HAVE_LSX && !CONFIG_VP9_HIGHBITDEPTH && !CONFIG_EMULATE_HARDWARE
 }  // namespace

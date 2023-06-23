@@ -37,6 +37,9 @@ typedef struct {
   DECLARE_ALIGNED(16, int16_t, uv_round[QINDEX_RANGE][8]);
 } QUANTS;
 
+void vp9_regular_quantize_b_4x4(MACROBLOCK *x, int plane, int block,
+                                const int16_t *scan, const int16_t *iscan);
+
 struct VP9_COMP;
 struct VP9Common;
 

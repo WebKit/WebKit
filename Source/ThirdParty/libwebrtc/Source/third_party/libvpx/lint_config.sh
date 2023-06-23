@@ -1,6 +1,6 @@
-#!/bin/bash
+#!/bin/bash -e
 #
-# Copyright 2012 The Chromium Authors
+# Copyright (c) 2012 The Chromium Authors. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -19,31 +19,32 @@
 # # Compare the two configuration files and output the final results.
 # ./lint_config.sh -h vpx_config.h -a vpx_config.asm -o libvpx.config -p
 
-set -e
-
 export LC_ALL=C
 print_final="no"
 
-while getopts "h:a:o:p" flag; do
-  if [[ "$flag" == "h" ]]; then
+while getopts "h:a:o:p" flag
+do
+  if [ "$flag" = "h" ]; then
     header_file=$OPTARG
-  elif [[ "$flag" == "a" ]]; then
+  elif [ "$flag" = "a" ]; then
     asm_file=$OPTARG
-  elif [[ "$flag" == "o" ]]; then
+  elif [ "$flag" = "o" ]; then
     out_file=$OPTARG
-  elif [[ "$flag" == "p" ]]; then
+  elif [ "$flag" = "p" ]; then
     print_final="yes"
   fi
 done
 
-if [[ -z "$header_file" ]]; then
+if [ -z "$header_file" ]; then
   echo "Header file not specified."
-  exit 1
+  false
+  exit
 fi
 
-if [[ -z "$asm_file" ]]; then
+if [ -z "$asm_file" ]; then
   echo "ASM file not specified."
-  exit 1
+  false
+  exit
 fi
 
 # Concat header file and assembly file and select those ended with 0 or 1.
@@ -90,11 +91,12 @@ for var in $odd_vars; do
   echo ""
 done
 
-if [[ -n "$odd_vars" ]]; then
-  exit 1
+if [ -n "$odd_vars" ]; then
+  false
+  exit
 fi
 
-if [[ "$print_final" == "no" ]]; then
+if [ "$print_final" = "no" ]; then
   exit
 fi
 
@@ -103,7 +105,7 @@ combined_config="$(echo "$combined_config" | grep -v ARCH_X86=no)"
 combined_config="$(echo "$combined_config" | grep -v ARCH_X86_64=no)"
 
 # Print out the unique configurations.
-if [[ -n "$out_file" ]]; then
+if [ -n "$out_file" ]; then
   echo "$combined_config" | sort | uniq > $out_file
 else
   echo "$combined_config" | sort | uniq

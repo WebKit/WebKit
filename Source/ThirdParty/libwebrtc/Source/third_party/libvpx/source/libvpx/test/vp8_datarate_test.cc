@@ -121,7 +121,7 @@ class DatarateTestLarge
     ++frame_number_;
   }
 
-  virtual void EndPassHook() {
+  virtual void EndPassHook(void) {
     if (bits_total_) {
       const double file_size_in_kb = bits_total_ / 1000.;  // bits per kilobit
 

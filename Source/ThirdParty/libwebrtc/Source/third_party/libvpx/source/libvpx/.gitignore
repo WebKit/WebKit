@@ -7,10 +7,8 @@
 *.o
 *~
 .cproject
-.idea
 .project
 .settings
-.vscode
 /*-*.mk
 /*.asm
 /*.doxy

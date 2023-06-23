@@ -171,8 +171,7 @@ vpx_image_t *vpx_img_wrap(vpx_image_t *img, vpx_img_fmt_t fmt, unsigned int d_w,
 /*!\brief Set the rectangle identifying the displayed portion of the image
  *
  * Updates the displayed rectangle (aka viewport) on the image surface to
- * match the specified coordinates and size. Specifically, sets img->d_w,
- * img->d_h, and elements of the img->planes[] array.
+ * match the specified coordinates and size.
  *
  * \param[in]    img       Image descriptor
  * \param[in]    x         leftmost column
@@ -180,7 +179,7 @@ vpx_image_t *vpx_img_wrap(vpx_image_t *img, vpx_img_fmt_t fmt, unsigned int d_w,
  * \param[in]    w         width
  * \param[in]    h         height
  *
- * \return 0 if the requested rectangle is valid, nonzero (-1) otherwise.
+ * \return 0 if the requested rectangle is valid, nonzero otherwise.
  */
 int vpx_img_set_rect(vpx_image_t *img, unsigned int x, unsigned int y,
                      unsigned int w, unsigned int h);

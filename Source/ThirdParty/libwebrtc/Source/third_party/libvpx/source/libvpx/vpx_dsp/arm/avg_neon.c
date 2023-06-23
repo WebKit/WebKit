@@ -22,13 +22,15 @@
 uint32_t vpx_avg_4x4_neon(const uint8_t *a, int a_stride) {
   const uint8x16_t b = load_unaligned_u8q(a, a_stride);
   const uint16x8_t c = vaddl_u8(vget_low_u8(b), vget_high_u8(b));
-  return (horizontal_add_uint16x8(c) + (1 << 3)) >> 4;
+  const uint32x2_t d = horizontal_add_uint16x8(c);
+  return vget_lane_u32(vrshr_n_u32(d, 4), 0);
 }
 
 uint32_t vpx_avg_8x8_neon(const uint8_t *a, int a_stride) {
   int i;
   uint8x8_t b, c;
   uint16x8_t sum;
+  uint32x2_t d;
   b = vld1_u8(a);
   a += a_stride;
   c = vld1_u8(a);
@@ -41,30 +43,36 @@ uint32_t vpx_avg_8x8_neon(const uint8_t *a, int a_stride) {
     sum = vaddw_u8(sum, d);
   }
 
-  return (horizontal_add_uint16x8(sum) + (1 << 5)) >> 6;
+  d = horizontal_add_uint16x8(sum);
+
+  return vget_lane_u32(vrshr_n_u32(d, 6), 0);
 }
 
 // coeff: 16 bits, dynamic range [-32640, 32640].
 // length: value range {16, 64, 256, 1024}.
-// satd: 26 bits, dynamic range [-32640 * 1024, 32640 * 1024]
 int vpx_satd_neon(const tran_low_t *coeff, int length) {
-  int32x4_t sum_s32[2] = { vdupq_n_s32(0), vdupq_n_s32(0) };
+  const int16x4_t zero = vdup_n_s16(0);
+  int32x4_t accum = vdupq_n_s32(0);
 
   do {
-    int16x8_t abs0, abs1;
-    const int16x8_t s0 = load_tran_low_to_s16q(coeff);
-    const int16x8_t s1 = load_tran_low_to_s16q(coeff + 8);
-
-    abs0 = vabsq_s16(s0);
-    sum_s32[0] = vpadalq_s16(sum_s32[0], abs0);
-    abs1 = vabsq_s16(s1);
-    sum_s32[1] = vpadalq_s16(sum_s32[1], abs1);
-
+    const int16x8_t src0 = load_tran_low_to_s16q(coeff);
+    const int16x8_t src8 = load_tran_low_to_s16q(coeff + 8);
+    accum = vabal_s16(accum, vget_low_s16(src0), zero);
+    accum = vabal_s16(accum, vget_high_s16(src0), zero);
+    accum = vabal_s16(accum, vget_low_s16(src8), zero);
+    accum = vabal_s16(accum, vget_high_s16(src8), zero);
     length -= 16;
     coeff += 16;
   } while (length != 0);
 
-  return horizontal_add_int32x4(vaddq_s32(sum_s32[0], sum_s32[1]));
+  {
+    // satd: 26 bits, dynamic range [-32640 * 1024, 32640 * 1024]
+    const int64x2_t s0 = vpaddlq_s32(accum);  // cascading summation of 'accum'.
+    const int32x2_t s1 = vadd_s32(vreinterpret_s32_s64(vget_low_s64(s0)),
+                                  vreinterpret_s32_s64(vget_high_s64(s0)));
+    const int satd = vget_lane_s32(s1, 0);
+    return satd;
+  }
 }
 
 void vpx_int_pro_row_neon(int16_t hbuf[16], uint8_t const *ref,
@@ -131,7 +139,8 @@ int16_t vpx_int_pro_col_neon(uint8_t const *ref, const int width) {
     ref += 16;
   }
 
-  return (int16_t)horizontal_add_uint16x8(vec_sum);
+  return vget_lane_s16(vreinterpret_s16_u32(horizontal_add_uint16x8(vec_sum)),
+                       0);
 }
 
 // ref, src = [0, 510] - max diff = 16-bits
@@ -210,16 +219,11 @@ void vpx_minmax_8x8_neon(const uint8_t *a, int a_stride, const uint8_t *b,
   const uint8x16_t ab07_max = vmaxq_u8(ab0123_max, ab4567_max);
   const uint8x16_t ab07_min = vminq_u8(ab0123_min, ab4567_min);
 
-#if defined(__aarch64__)
-  *min = *max = 0;  // Clear high bits
-  *((uint8_t *)max) = vmaxvq_u8(ab07_max);
-  *((uint8_t *)min) = vminvq_u8(ab07_min);
-#else
-  // Split into 64-bit vectors and execute pairwise min/max.
+  // Split to D and start doing pairwise.
   uint8x8_t ab_max = vmax_u8(vget_high_u8(ab07_max), vget_low_u8(ab07_max));
   uint8x8_t ab_min = vmin_u8(vget_high_u8(ab07_min), vget_low_u8(ab07_min));
 
-  // Enough runs of vpmax/min propagate the max/min values to every position.
+  // Enough runs of vpmax/min propogate the max/min values to every position.
   ab_max = vpmax_u8(ab_max, ab_max);
   ab_min = vpmin_u8(ab_min, ab_min);
 
@@ -233,5 +237,4 @@ void vpx_minmax_8x8_neon(const uint8_t *a, int a_stride, const uint8_t *b,
   // Store directly to avoid costly neon->gpr transfer.
   vst1_lane_u8((uint8_t *)max, ab_max, 0);
   vst1_lane_u8((uint8_t *)min, ab_min, 0);
-#endif
 }

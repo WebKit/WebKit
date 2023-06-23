@@ -8,7 +8,6 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include <limits.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -23,9 +22,7 @@ static vpx_image_t *img_alloc_helper(vpx_image_t *img, vpx_img_fmt_t fmt,
                                      unsigned char *img_data) {
   unsigned int h, w, s, xcs, ycs, bps;
   unsigned int stride_in_bytes;
-  unsigned int align;
-
-  if (img != NULL) memset(img, 0, sizeof(vpx_image_t));
+  int align;
 
   /* Treat align==0 like align==1 */
   if (!buf_align) buf_align = 1;
@@ -91,6 +88,8 @@ static vpx_image_t *img_alloc_helper(vpx_image_t *img, vpx_img_fmt_t fmt,
     if (!img) goto fail;
 
     img->self_allocd = 1;
+  } else {
+    memset(img, 0, sizeof(vpx_image_t));
   }
 
   img->img_data = img_data;
@@ -153,8 +152,9 @@ vpx_image_t *vpx_img_wrap(vpx_image_t *img, vpx_img_fmt_t fmt, unsigned int d_w,
 
 int vpx_img_set_rect(vpx_image_t *img, unsigned int x, unsigned int y,
                      unsigned int w, unsigned int h) {
-  if (x <= UINT_MAX - w && x + w <= img->w && y <= UINT_MAX - h &&
-      y + h <= img->h) {
+  unsigned char *data;
+
+  if (x + w <= img->w && y + h <= img->h) {
     img->d_w = w;
     img->d_h = h;
 
@@ -165,7 +165,7 @@ int vpx_img_set_rect(vpx_image_t *img, unsigned int x, unsigned int y,
     } else {
       const int bytes_per_sample =
           (img->fmt & VPX_IMG_FMT_HIGHBITDEPTH) ? 2 : 1;
-      unsigned char *data = img->img_data;
+      data = img->img_data;
 
       if (img->fmt & VPX_IMG_FMT_HAS_ALPHA) {
         img->planes[VPX_PLANE_ALPHA] =

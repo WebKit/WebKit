@@ -137,21 +137,19 @@ static int extrc_get_frame_type(FRAME_UPDATE_TYPE update_type) {
 
 vpx_codec_err_t vp9_extrc_get_encodeframe_decision(
     EXT_RATECTRL *ext_ratectrl, int show_index, int coding_index, int gop_index,
-    FRAME_UPDATE_TYPE update_type, int gop_size, int use_alt_ref,
+    FRAME_UPDATE_TYPE update_type,
     RefCntBuffer *ref_frame_bufs[MAX_INTER_REF_FRAMES], int ref_frame_flags,
     vpx_rc_encodeframe_decision_t *encode_frame_decision) {
   if (ext_ratectrl == NULL) {
     return VPX_CODEC_INVALID_PARAM;
   }
-  if (ext_ratectrl->ready && (ext_ratectrl->funcs.rc_type & VPX_RC_QP) != 0) {
+  if (ext_ratectrl->ready) {
     vpx_rc_status_t rc_status;
     vpx_rc_encodeframe_info_t encode_frame_info;
     encode_frame_info.show_index = show_index;
     encode_frame_info.coding_index = coding_index;
     encode_frame_info.gop_index = gop_index;
     encode_frame_info.frame_type = extrc_get_frame_type(update_type);
-    encode_frame_info.gop_size = gop_size;
-    encode_frame_info.use_alt_ref = use_alt_ref;
 
     vp9_get_ref_frame_info(update_type, ref_frame_flags, ref_frame_bufs,
                            encode_frame_info.ref_frame_coding_indexes,
@@ -170,7 +168,7 @@ vpx_codec_err_t vp9_extrc_update_encodeframe_result(
     EXT_RATECTRL *ext_ratectrl, int64_t bit_count,
     const YV12_BUFFER_CONFIG *source_frame,
     const YV12_BUFFER_CONFIG *coded_frame, uint32_t bit_depth,
-    uint32_t input_bit_depth, const int actual_encoding_qindex) {
+    uint32_t input_bit_depth) {
   if (ext_ratectrl == NULL) {
     return VPX_CODEC_INVALID_PARAM;
   }
@@ -182,7 +180,6 @@ vpx_codec_err_t vp9_extrc_update_encodeframe_result(
     encode_frame_result.pixel_count =
         source_frame->y_crop_width * source_frame->y_crop_height +
         2 * source_frame->uv_crop_width * source_frame->uv_crop_height;
-    encode_frame_result.actual_encoding_qindex = actual_encoding_qindex;
 #if CONFIG_VP9_HIGHBITDEPTH
     vpx_calc_highbd_psnr(source_frame, coded_frame, &psnr, bit_depth,
                          input_bit_depth);
@@ -197,65 +194,6 @@ vpx_codec_err_t vp9_extrc_update_encodeframe_result(
     if (rc_status == VPX_RC_ERROR) {
       return VPX_CODEC_ERROR;
     }
-  }
-  return VPX_CODEC_OK;
-}
-
-vpx_codec_err_t vp9_extrc_get_gop_decision(
-    EXT_RATECTRL *ext_ratectrl, const vpx_rc_gop_info_t *const gop_info,
-    vpx_rc_gop_decision_t *gop_decision) {
-  vpx_rc_status_t rc_status;
-  if (ext_ratectrl == NULL || !ext_ratectrl->ready ||
-      (ext_ratectrl->funcs.rc_type & VPX_RC_GOP) == 0) {
-    return VPX_CODEC_INVALID_PARAM;
-  }
-  rc_status = ext_ratectrl->funcs.get_gop_decision(ext_ratectrl->model,
-                                                   gop_info, gop_decision);
-  if (gop_decision->use_alt_ref) {
-    const int arf_constraint =
-        gop_decision->gop_coding_frames >= gop_info->min_gf_interval &&
-        gop_decision->gop_coding_frames < gop_info->lag_in_frames;
-    if (!arf_constraint || !gop_info->allow_alt_ref) return VPX_CODEC_ERROR;
-  }
-  // TODO(chengchen): Take min and max gf interval from the model
-  // and overwrite libvpx's decision so that we can get rid
-  // of one of the checks here.
-  if (gop_decision->gop_coding_frames > gop_info->frames_to_key ||
-      gop_decision->gop_coding_frames - gop_decision->use_alt_ref >
-          gop_info->max_gf_interval) {
-    return VPX_CODEC_ERROR;
-  }
-  if (rc_status == VPX_RC_ERROR) {
-    return VPX_CODEC_ERROR;
-  }
-  return VPX_CODEC_OK;
-}
-
-vpx_codec_err_t vp9_extrc_get_frame_rdmult(
-    EXT_RATECTRL *ext_ratectrl, int show_index, int coding_index, int gop_index,
-    FRAME_UPDATE_TYPE update_type, int gop_size, int use_alt_ref,
-    RefCntBuffer *ref_frame_bufs[MAX_INTER_REF_FRAMES], int ref_frame_flags,
-    int *rdmult) {
-  vpx_rc_status_t rc_status;
-  vpx_rc_encodeframe_info_t encode_frame_info;
-  if (ext_ratectrl == NULL || !ext_ratectrl->ready ||
-      (ext_ratectrl->funcs.rc_type & VPX_RC_RDMULT) == 0) {
-    return VPX_CODEC_INVALID_PARAM;
-  }
-  encode_frame_info.show_index = show_index;
-  encode_frame_info.coding_index = coding_index;
-  encode_frame_info.gop_index = gop_index;
-  encode_frame_info.frame_type = extrc_get_frame_type(update_type);
-  encode_frame_info.gop_size = gop_size;
-  encode_frame_info.use_alt_ref = use_alt_ref;
-
-  vp9_get_ref_frame_info(update_type, ref_frame_flags, ref_frame_bufs,
-                         encode_frame_info.ref_frame_coding_indexes,
-                         encode_frame_info.ref_frame_valid_list);
-  rc_status = ext_ratectrl->funcs.get_frame_rdmult(ext_ratectrl->model,
-                                                   &encode_frame_info, rdmult);
-  if (rc_status == VPX_RC_ERROR) {
-    return VPX_CODEC_ERROR;
   }
   return VPX_CODEC_OK;
 }

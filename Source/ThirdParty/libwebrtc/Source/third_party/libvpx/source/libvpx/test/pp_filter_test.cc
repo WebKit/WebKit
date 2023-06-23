@@ -7,11 +7,7 @@
  *  in the file PATENTS.  All contributing project authors may
  *  be found in the AUTHORS file in the root of the source tree.
  */
-
 #include <limits.h>
-
-#include <memory>
-
 #include "./vpx_config.h"
 #include "./vpx_dsp_rtcd.h"
 #include "test/acm_random.h"
@@ -119,7 +115,7 @@ TEST_P(VpxPostProcDownAndAcrossMbRowTest, CheckFilterOutput) {
   }
 
   vpx_free(flimits_);
-}
+};
 
 TEST_P(VpxPostProcDownAndAcrossMbRowTest, CheckCvsAssembly) {
   // Size of the underlying data block that will be filtered.
@@ -218,7 +214,7 @@ TEST_P(VpxPostProcDownAndAcrossMbRowTest, DISABLED_Speed) {
   PrintMedian("16x16");
 
   vpx_free(flimits_);
-}
+};
 
 class VpxMbPostProcAcrossIpTest
     : public AbstractBench,
@@ -462,13 +458,14 @@ TEST_P(VpxMbPostProcDownTest, CheckLowFilterOutput) {
 
   SetRows(src_c_.TopLeftPixel(), rows_, cols_, src_c_.stride());
 
-  std::unique_ptr<unsigned char[]> expected_output(
-      new unsigned char[rows_ * cols_]);
+  unsigned char *expected_output = new unsigned char[rows_ * cols_];
   ASSERT_NE(expected_output, nullptr);
-  SetRows(expected_output.get(), rows_, cols_, cols_);
+  SetRows(expected_output, rows_, cols_, cols_);
 
   RunFilterLevel(src_c_.TopLeftPixel(), rows_, cols_, src_c_.stride(), q2mbl(0),
-                 expected_output.get());
+                 expected_output);
+
+  delete[] expected_output;
 }
 
 TEST_P(VpxMbPostProcDownTest, CheckCvsAssembly) {

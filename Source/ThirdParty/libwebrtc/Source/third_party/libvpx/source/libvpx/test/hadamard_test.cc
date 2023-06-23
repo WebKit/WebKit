@@ -264,8 +264,7 @@ INSTANTIATE_TEST_SUITE_P(
 INSTANTIATE_TEST_SUITE_P(
     NEON, HadamardLowbdTest,
     ::testing::Values(HadamardFuncWithSize(&vpx_hadamard_8x8_neon, 8),
-                      HadamardFuncWithSize(&vpx_hadamard_16x16_neon, 16),
-                      HadamardFuncWithSize(&vpx_hadamard_32x32_neon, 32)));
+                      HadamardFuncWithSize(&vpx_hadamard_16x16_neon, 16)));
 #endif  // HAVE_NEON
 
 // TODO(jingning): Remove highbitdepth flag when the SIMD functions are
@@ -285,13 +284,6 @@ INSTANTIATE_TEST_SUITE_P(
     ::testing::Values(HadamardFuncWithSize(&vpx_hadamard_8x8_vsx, 8),
                       HadamardFuncWithSize(&vpx_hadamard_16x16_vsx, 16)));
 #endif  // HAVE_VSX
-
-#if HAVE_LSX
-INSTANTIATE_TEST_SUITE_P(
-    LSX, HadamardLowbdTest,
-    ::testing::Values(HadamardFuncWithSize(&vpx_hadamard_8x8_lsx, 8),
-                      HadamardFuncWithSize(&vpx_hadamard_16x16_lsx, 16)));
-#endif  // HAVE_LSX
 
 #if CONFIG_VP9_HIGHBITDEPTH
 class HadamardHighbdTest : public HadamardTestBase {
@@ -323,15 +315,6 @@ INSTANTIATE_TEST_SUITE_P(
                       HadamardFuncWithSize(&vpx_highbd_hadamard_32x32_avx2,
                                            32)));
 #endif  // HAVE_AVX2
-
-#if HAVE_NEON
-INSTANTIATE_TEST_SUITE_P(
-    NEON, HadamardHighbdTest,
-    ::testing::Values(HadamardFuncWithSize(&vpx_highbd_hadamard_8x8_neon, 8),
-                      HadamardFuncWithSize(&vpx_highbd_hadamard_16x16_neon, 16),
-                      HadamardFuncWithSize(&vpx_highbd_hadamard_32x32_neon,
-                                           32)));
-#endif
 
 #endif  // CONFIG_VP9_HIGHBITDEPTH
 }  // namespace

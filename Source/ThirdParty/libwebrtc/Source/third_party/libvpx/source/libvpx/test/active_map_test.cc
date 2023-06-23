@@ -19,8 +19,7 @@ namespace {
 
 class ActiveMapTest
     : public ::libvpx_test::EncoderTest,
-      public ::libvpx_test::CodecTestWith3Params<libvpx_test::TestMode, int,
-                                                 int> {
+      public ::libvpx_test::CodecTestWith2Params<libvpx_test::TestMode, int> {
  protected:
   static const int kWidth = 208;
   static const int kHeight = 144;
@@ -38,7 +37,6 @@ class ActiveMapTest
                                   ::libvpx_test::Encoder *encoder) {
     if (video->frame() == 0) {
       encoder->Control(VP8E_SET_CPUUSED, cpu_used_);
-      encoder->Control(VP9E_SET_AQ_MODE, GET_PARAM(3));
     } else if (video->frame() == 3) {
       vpx_active_map_t map = vpx_active_map_t();
       /* clang-format off */
@@ -89,5 +87,5 @@ TEST_P(ActiveMapTest, Test) {
 
 VP9_INSTANTIATE_TEST_SUITE(ActiveMapTest,
                            ::testing::Values(::libvpx_test::kRealTime),
-                           ::testing::Range(5, 10), ::testing::Values(0, 3));
+                           ::testing::Range(0, 9));
 }  // namespace
