@@ -8401,7 +8401,7 @@ void SpeculativeJIT::compileGetTypedArrayByteOffset(Node* node)
 
 #if USE(LARGE_TYPED_ARRAYS)
     // AI promises that the result of GetTypedArrayByteOffset will be Int32, so we must uphold that promise here.
-    speculationCheck(Overflow, JSValueRegs(), nullptr, m_jit.branch32(MacroAssembler::Above, vectorGPR, TrustedImm32(std::numeric_limits<int32_t>::max())));
+    speculationCheck(Overflow, JSValueRegs(), nullptr, m_jit.branch64(MacroAssembler::Above, vectorGPR, TrustedImm32(std::numeric_limits<int32_t>::max())));
 #endif
 
     strictInt32Result(vectorGPR, node);
