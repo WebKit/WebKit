@@ -3410,9 +3410,12 @@ void WebPage::mouseEvent(const WebMouseEvent& mouseEvent, std::optional<Vector<S
 
 void WebPage::performHitTestForMouseEvent(const WebMouseEvent& event, CompletionHandler<void(WebHitTestResultData&&, OptionSet<WebEventModifier>, UserData&&)>&& completionHandler)
 {
+    auto modifiers = event.modifiers();
     RefPtr localMainFrame = dynamicDowncast<WebCore::LocalFrame>(corePage()->mainFrame());
-    if (!localMainFrame || !localMainFrame->view())
+    if (!localMainFrame || !localMainFrame->view()) {
+        completionHandler({ }, modifiers, { });
         return;
+    }
 
     auto hitTestResult = localMainFrame->eventHandler().getHitTestResultForMouseEvent(platform(event));
 
@@ -3422,7 +3425,6 @@ void WebPage::performHitTestForMouseEvent(const WebMouseEvent& event, Completion
 
     RefPtr<API::Object> userData;
     WebHitTestResultData hitTestResultData { hitTestResult, toolTip };
-    auto modifiers = event.modifiers();
     injectedBundleUIClient().mouseDidMoveOverElement(this, hitTestResult, modifiers, userData);
 
     completionHandler(WTFMove(hitTestResultData), modifiers, UserData(WebProcess::singleton().transformObjectsToHandles(WTFMove(userData).get()).get()));
