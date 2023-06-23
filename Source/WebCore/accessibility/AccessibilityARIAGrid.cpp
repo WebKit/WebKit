@@ -30,17 +30,18 @@
 #include "AccessibilityARIAGrid.h"
 
 #include "AXObjectCache.h"
-#include "AccessibilityARIAGridRow.h"
-#include "AccessibilityTableCell.h"
-#include "AccessibilityTableColumn.h"
-#include "AccessibilityTableHeaderContainer.h"
-#include "RenderObject.h"
-#include "RenderTableSection.h"
 
 namespace WebCore {
 
+class RenderObject;
+
 AccessibilityARIAGrid::AccessibilityARIAGrid(RenderObject* renderer)
     : AccessibilityTable(renderer)
+{
+}
+
+AccessibilityARIAGrid::AccessibilityARIAGrid(Node& node)
+    : AccessibilityTable(node)
 {
 }
 
@@ -49,6 +50,11 @@ AccessibilityARIAGrid::~AccessibilityARIAGrid() = default;
 Ref<AccessibilityARIAGrid> AccessibilityARIAGrid::create(RenderObject* renderer)
 {
     return adoptRef(*new AccessibilityARIAGrid(renderer));
+}
+
+Ref<AccessibilityARIAGrid> AccessibilityARIAGrid::create(Node& node)
+{
+    return adoptRef(*new AccessibilityARIAGrid(node));
 }
 
 bool AccessibilityARIAGrid::isMultiSelectable() const

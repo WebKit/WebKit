@@ -31,7 +31,6 @@
 
 #include "AccessibilityObject.h"
 #include "AccessibilityTable.h"
-#include "AccessibilityTableRow.h"
 #include "HTMLNames.h"
 
 namespace WebCore {
@@ -43,11 +42,21 @@ AccessibilityARIAGridCell::AccessibilityARIAGridCell(RenderObject* renderer)
 {
 }
 
+AccessibilityARIAGridCell::AccessibilityARIAGridCell(Node& node)
+    : AccessibilityTableCell(node)
+{
+}
+
 AccessibilityARIAGridCell::~AccessibilityARIAGridCell() = default;
 
 Ref<AccessibilityARIAGridCell> AccessibilityARIAGridCell::create(RenderObject* renderer)
 {
     return adoptRef(*new AccessibilityARIAGridCell(renderer));
+}
+
+Ref<AccessibilityARIAGridCell> AccessibilityARIAGridCell::create(Node& node)
+{
+    return adoptRef(*new AccessibilityARIAGridCell(node));
 }
 
 AccessibilityTable* AccessibilityARIAGridCell::parentTable() const
@@ -61,17 +70,6 @@ AccessibilityTable* AccessibilityARIAGridCell::parentTable() const
     }));
 }
     
-AccessibilityObject* AccessibilityARIAGridCell::parentRowGroup() const
-{
-    for (AccessibilityObject* parent = parentObject(); parent; parent = parent->parentObject()) {
-        if (parent->hasTagName(theadTag) || parent->hasTagName(tbodyTag) || parent->hasTagName(tfootTag) || parent->roleValue() == AccessibilityRole::RowGroup)
-            return parent;
-    }
-    
-    // If there's no row group found, we use the parent table as the row group.
-    return parentTable();
-}
-
 String AccessibilityARIAGridCell::readOnlyValue() const
 {
     if (hasAttribute(aria_readonlyAttr))
@@ -79,7 +77,7 @@ String AccessibilityARIAGridCell::readOnlyValue() const
 
     // ARIA 1.1 requires user agents to propagate the grid's aria-readonly value to all
     // gridcell elements if the property is not present on the gridcell element itelf.
-    if (AccessibilityObject* parent = parentTable())
+    if (auto* parent = parentTable())
         return parent->readOnlyValue();
 
     return String();

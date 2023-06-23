@@ -35,14 +35,15 @@ namespace WebCore {
 class AccessibilityARIAGridCell final : public AccessibilityTableCell {
 public:
     static Ref<AccessibilityARIAGridCell> create(RenderObject*);
+    static Ref<AccessibilityARIAGridCell> create(Node&);
     virtual ~AccessibilityARIAGridCell();
 
 private:
     explicit AccessibilityARIAGridCell(RenderObject*);
+    explicit AccessibilityARIAGridCell(Node&);
     bool isAccessibilityARIAGridCellInstance() const override { return true; }
 
     AccessibilityTable* parentTable() const override;
-    AccessibilityObject* parentRowGroup() const;
     String readOnlyValue() const override;
 }; 
 

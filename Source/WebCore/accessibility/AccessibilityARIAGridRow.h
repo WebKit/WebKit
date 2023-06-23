@@ -37,6 +37,7 @@ class AccessibilityTable;
 class AccessibilityARIAGridRow final : public AccessibilityTableRow {
 public:
     static Ref<AccessibilityARIAGridRow> create(RenderObject*);
+    static Ref<AccessibilityARIAGridRow> create(Node&);
     virtual ~AccessibilityARIAGridRow();
 
     AccessibilityChildrenVector disclosedRows() override;
@@ -46,6 +47,7 @@ public:
     
 private:
     explicit AccessibilityARIAGridRow(RenderObject*);
+    explicit AccessibilityARIAGridRow(Node&);
     bool isAccessibilityARIAGridRowInstance() const override { return true; }
 
     bool isARIATreeGridRow() const override;

@@ -644,6 +644,21 @@ static bool isAccessibilityTableCell(Node* node)
     return is<HTMLTableCellElement>(node);
 }
 
+static bool isAccessibilityARIAGrid(Node* node)
+{
+    return nodeHasGridRole(node);
+}
+
+static bool isAccessibilityARIAGridRow(Node* node)
+{
+    return nodeHasRole(node, "row"_s);
+}
+
+static bool isAccessibilityARIAGridCell(Node* node)
+{
+    return nodeHasCellRole(node);
+}
+
 Ref<AccessibilityObject> AXObjectCache::createObjectFromRenderer(RenderObject* renderer)
 {
     // FIXME: How could renderer->node() ever not be an Element?
@@ -653,11 +668,11 @@ Ref<AccessibilityObject> AXObjectCache::createObjectFromRenderer(RenderObject* r
         return AccessibilityList::create(renderer);
 
     // aria tables
-    if (nodeHasGridRole(node))
+    if (isAccessibilityARIAGrid(node))
         return AccessibilityARIAGrid::create(renderer);
-    if (nodeHasRole(node, "row"_s))
+    if (isAccessibilityARIAGridRow(node))
         return AccessibilityARIAGridRow::create(renderer);
-    if (nodeHasRole(node, "gridcell"_s) || nodeHasRole(node, "cell"_s) || nodeHasRole(node, "columnheader"_s) || nodeHasRole(node, "rowheader"_s))
+    if (isAccessibilityARIAGridCell(node))
         return AccessibilityARIAGridCell::create(renderer);
 
     // aria tree
@@ -738,6 +753,12 @@ static Ref<AccessibilityObject> createFromNode(Node& node)
         return AccessibilityTree::create(node);
     if (isAccessibilityTreeItem(&node))
         return AccessibilityTreeItem::create(node);
+    if (isAccessibilityARIAGrid(&node))
+        return AccessibilityARIAGrid::create(node);
+    if (isAccessibilityARIAGridRow(&node))
+        return AccessibilityARIAGridRow::create(node);
+    if (isAccessibilityARIAGridCell(&node))
+        return AccessibilityARIAGridCell::create(node);
     return AccessibilityNodeObject::create(node);
 }
 
