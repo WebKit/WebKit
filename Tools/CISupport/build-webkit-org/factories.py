@@ -194,6 +194,7 @@ class BuildAndTestAndArchiveAllButJSCFactory(BuildAndTestFactory):
         # The parent class will already archive if triggered
         if not triggers:
             self.addStep(ArchiveBuiltProduct())
+            self.addStep(UploadBuiltProduct())
         if platform != "gtk4":
             self.addStep(RunWebDriverTests())
 
