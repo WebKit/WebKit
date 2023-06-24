@@ -1962,6 +1962,22 @@ void KeyframeEffect::animationWasCanceled()
         addPendingAcceleratedAction(AcceleratedAction::Stop);
 }
 
+void KeyframeEffect::wasRemovedFromStack()
+{
+#if ENABLE(THREADED_ANIMATION_RESOLUTION)
+    if (threadedAnimationResolutionEnabled())
+        return;
+#endif
+
+    // If the effect was running accelerated, we need to mark it for removal straight away
+    // since it will not be invalidated by a future call to KeyframeEffectStack::applyPendingAcceleratedActions().
+    if (animation() && (isRunningAccelerated() || isAboutToRunAccelerated())) {
+        m_pendingAcceleratedActions.clear();
+        m_pendingAcceleratedActions.append(AcceleratedAction::Stop);
+        applyPendingAcceleratedActions();
+    }
+}
+
 void KeyframeEffect::willChangeRenderer()
 {
 #if ENABLE(THREADED_ANIMATION_RESOLUTION)

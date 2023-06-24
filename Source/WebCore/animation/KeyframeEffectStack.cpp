@@ -71,7 +71,12 @@ bool KeyframeEffectStack::addEffect(KeyframeEffect& effect)
 void KeyframeEffectStack::removeEffect(KeyframeEffect& effect)
 {
     auto removedEffect = m_effects.removeFirst(&effect);
-    if (removedEffect && !m_effects.isEmpty() && !effect.canBeAccelerated())
+    if (!removedEffect || m_effects.isEmpty())
+        return;
+
+    if (effect.canBeAccelerated())
+        effect.wasRemovedFromStack();
+    else
         startAcceleratedAnimationsIfPossible();
 }
 
