@@ -109,8 +109,12 @@ WK_CLASS_AVAILABLE(macos(10.11), ios(9.0))
 */
 + (void)fetchAllDataStoreIdentifiers:(void(^)(NSArray<NSUUID *> *))completionHandler WK_SWIFT_ASYNC_NAME(getter:allDataStoreIdentifiers()) WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
-#if 0 // API_WEBKIT_ADDITIONS_REPLACEMENT
-#import <WebKitAdditions/WKWebsiteDataStoreAdditions.h>
+#if ((TARGET_OS_OSX && __MAC_OS_X_VERSION_MAX_ALLOWED >= 140000) \
+    || ((TARGET_OS_IOS || TARGET_OS_MACCATALYST) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 170000) \
+    || (TARGET_OS_WATCH && __WATCH_OS_VERSION_MAX_ALLOWED >= 100000) \
+    || (TARGET_OS_TV && __TV_OS_VERSION_MAX_ALLOWED >= 170000))
+/*! @abstract Gets or sets the proxy configurations to be used to override networking in all WKWebViews that use this WKWebsiteDataStore. */
+@property (nullable, nonatomic, copy) NSArray<nw_proxy_config_t> *proxyConfigurations NS_REFINED_FOR_SWIFT API_AVAILABLE(macos(14.0), ios(17.0));
 #endif
 
 @end
