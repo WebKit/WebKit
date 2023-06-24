@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -5323,6 +5323,11 @@ void RenderLayerCompositor::updateScrollSnapPropertiesWithFrameView(const LocalF
 Page& RenderLayerCompositor::page() const
 {
     return m_renderView.page();
+}
+
+bool RenderLayerCompositor::nonVisualModeEnabled()
+{
+    return page().settings().nonVisualModeEnabled();
 }
 
 TextStream& operator<<(TextStream& ts, CompositingUpdateType updateType)

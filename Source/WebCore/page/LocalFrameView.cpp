@@ -4794,6 +4794,11 @@ void LocalFrameView::didPaintContents(GraphicsContext& context, const IntRect& d
 
 void LocalFrameView::paintContents(GraphicsContext& context, const IntRect& dirtyRect, SecurityOriginPaintPolicy securityOriginPaintPolicy, RegionContext* regionContext)
 {
+    if (auto* document = m_frame->document()) {
+        if (document->settings().nonVisualModeEnabled())
+            return;
+    }
+
 #ifndef NDEBUG
     bool fillWithWarningColor;
     if (m_frame->document()->printing())

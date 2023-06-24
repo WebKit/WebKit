@@ -4290,4 +4290,9 @@ TransformationMatrix RenderLayerBacking::transformMatrixForProperty(AnimatedProp
     return matrix;
 }
 
+bool RenderLayerBacking::nonVisualModeEnabled()
+{
+    return m_owningLayer.page().settings().nonVisualModeEnabled();
+}
+
 } // namespace WebCore

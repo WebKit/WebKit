@@ -4812,6 +4812,19 @@ NeedsStorageAccessFromFileURLsQuirk:
     WebCore:
       default: true
 
+NonVisualModeEnabled:
+  type: bool
+  status: embedder
+  humanReadableName: "Enables non-visual mode"
+  humanReadableDescription: "Enables a mode that doesn't show anything visually (painting, compositing, etc.)"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 NotificationEventEnabled:
   type: bool
   status: internal

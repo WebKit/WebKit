@@ -4604,3 +4604,9 @@ imported/w3c/web-platform-tests/css/filter-effects/effect-reference-feimage-001.
 imported/w3c/web-platform-tests/css/filter-effects/effect-reference-feimage-003.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/filter-effects/filter-function/filter-function-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/filter-effects/svg-image-root-filter.html [ ImageOnlyFailure ]
+
+# These tests are only expected to work on some ports.
+fast/dom/non-visual-mode.html [ Pass ]
+fast/images/non-visual-mode.html [ Pass ]
+fast/text/non-visual-mode.html [ Pass ]
+fast/transforms/non-visual-mode.html [ Pass ]

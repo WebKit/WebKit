@@ -356,7 +356,7 @@ void GraphicsLayer::setMasksToBounds(bool b)
 void GraphicsLayer::setDrawsContent(bool b)
 {
     ASSERT_IMPLIES(m_type == Type::Structural, false);
-    m_drawsContent = b;
+    m_drawsContent = b && !client().nonVisualModeEnabled();
 }
 
 const TransformationMatrix& GraphicsLayer::transform() const
@@ -575,7 +575,8 @@ void GraphicsLayer::paintGraphicsLayerContents(GraphicsContext& context, const F
         clipRect.move(offset);
     }
 
-    client().paintContents(this, context, clipRect, layerPaintBehavior);
+    if (!client().nonVisualModeEnabled())
+        client().paintContents(this, context, clipRect, layerPaintBehavior);
 }
 
 FloatRect GraphicsLayer::adjustCoverageRectForMovement(const FloatRect& coverageRect, const FloatRect& previousVisibleRect, const FloatRect& currentVisibleRect)
