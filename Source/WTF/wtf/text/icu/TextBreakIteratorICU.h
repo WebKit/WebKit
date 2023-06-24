@@ -60,6 +60,10 @@ public:
 
         UErrorCode status = U_ZERO_ERROR;
         m_iterator = ubrk_open(type, localeWithOptionalBreakKeyword.string().utf8().data(), nullptr, 0, &status);
+        if (!m_iterator) {
+            status = U_ZERO_ERROR;
+            m_iterator = ubrk_open(type, "", nullptr, 0, &status);
+        }
         ASSERT(U_SUCCESS(status));
 
         setText(string, priorContext, priorContextLength);

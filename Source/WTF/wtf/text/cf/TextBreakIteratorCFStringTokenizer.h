@@ -62,6 +62,9 @@ public:
         m_priorContextLength = priorContext.length();
         auto localeObject = adoptCF(CFLocaleCreate(kCFAllocatorDefault, locale.string().createCFString().get()));
         m_stringTokenizer = adoptCF(CFStringTokenizerCreate(kCFAllocatorDefault, stringObject.get(), CFRangeMake(0, m_stringLength + m_priorContextLength), options, localeObject.get()));
+        if (!m_stringTokenizer)
+            m_stringTokenizer = adoptCF(CFStringTokenizerCreate(kCFAllocatorDefault, stringObject.get(), CFRangeMake(0, m_stringLength + m_priorContextLength), options, nullptr));
+        ASSERT(m_stringTokenizer);
     }
 
     TextBreakIteratorCFStringTokenizer() = delete;
