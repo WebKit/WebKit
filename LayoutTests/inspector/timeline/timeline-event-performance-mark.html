@@ -27,12 +27,12 @@ function test()
 
             let recording = WI.timelineManager.activeRecording;
 
-            InspectorTest.expectEqual(recording.markers.length, 2);
-            InspectorTest.expectEqual(recording.markers[0].type, "timestamp");
-            InspectorTest.expectEqual(recording.markers[0].details, "foo");
-            InspectorTest.expectEqual(recording.markers[1].type, "timestamp");
-            InspectorTest.expectEqual(recording.markers[1].details, "bar");
-            InspectorTest.assert(recording.markers[0].time > recording.markers[1].time);
+            InspectorTest.expectEqual(recording.markersForTesting.length, 2);
+            InspectorTest.expectEqual(recording.markersForTesting[0].type, "timestamp");
+            InspectorTest.expectEqual(recording.markersForTesting[0].details, "foo");
+            InspectorTest.expectEqual(recording.markersForTesting[1].type, "timestamp");
+            InspectorTest.expectEqual(recording.markersForTesting[1].details, "bar");
+            InspectorTest.assert(recording.markersForTesting[0].time > recording.markersForTesting[1].time);
         }
     });
 

@@ -98,10 +98,8 @@ ExceptionOr<Ref<PerformanceMark>> PerformanceUserTiming::mark(JSC::JSGlobalObjec
     std::optional<MonotonicTime> timestamp;
     if (markOptions && markOptions->startTime)
         timestamp = m_performance.monotonicTimeFromRelativeTime(*markOptions->startTime);
-    if (auto* globalScope = dynamicDowncast<WorkerOrWorkletGlobalScope>(context.get()))
-        InspectorInstrumentation::performanceMark(*globalScope, markName, timestamp);
-    else if (auto* document = dynamicDowncast<Document>(context.get()); document && document->frame())
-        InspectorInstrumentation::performanceMark(*document->frame(), markName, timestamp);
+
+    InspectorInstrumentation::performanceMark(context.get(), markName, timestamp, is<Document>(context) ? downcast<Document>(context).frame() : nullptr);
 
     auto mark = PerformanceMark::create(globalObject, context, markName, WTFMove(markOptions));
     if (mark.hasException())
