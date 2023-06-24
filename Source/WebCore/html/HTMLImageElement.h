@@ -66,6 +66,7 @@ public:
 
     WEBCORE_EXPORT int naturalWidth() const;
     WEBCORE_EXPORT int naturalHeight() const;
+    const URL& currentURL() const { return m_currentURL; }
     const AtomString& currentSrc() const { return m_currentSrc; }
 
     bool isServerMap() const;
@@ -242,6 +243,7 @@ private:
     CompositeOperator m_compositeOperator;
     AtomString m_bestFitImageURL;
     AtomString m_currentSrc;
+    URL m_currentURL;
     AtomString m_parsedUsemap;
     float m_imageDevicePixelRatio;
 #if ENABLE(SERVICE_CONTROLS)

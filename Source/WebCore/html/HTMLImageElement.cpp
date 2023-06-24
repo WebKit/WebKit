@@ -229,7 +229,8 @@ const AtomString& HTMLImageElement::imageSourceURL() const
 void HTMLImageElement::setBestFitURLAndDPRFromImageCandidate(const ImageCandidate& candidate)
 {
     m_bestFitImageURL = candidate.string.toAtomString();
-    m_currentSrc = AtomString(document().completeURL(imageSourceURL()).string());
+    m_currentURL = document().completeURL(imageSourceURL());
+    m_currentSrc = AtomString(m_currentURL.string());
     if (candidate.density >= 0)
         m_imageDevicePixelRatio = 1 / candidate.density;
     if (is<RenderImage>(renderer()))

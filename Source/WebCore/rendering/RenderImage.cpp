@@ -331,7 +331,7 @@ void RenderImage::updateInnerContentRect()
     if (!containerSize.isEmpty()) {
         URL imageSourceURL;
         if (auto* imageElement = dynamicDowncast<HTMLImageElement>(element()))
-            imageSourceURL = document().completeURL(imageElement->imageSourceURL());
+            imageSourceURL = imageElement->currentURL();
         imageResource().setContainerContext(containerSize, imageSourceURL);
     }
 }
