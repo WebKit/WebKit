@@ -180,7 +180,7 @@ ImageBufferBackend* RemoteImageBufferProxy::ensureBackendCreated() const
         LOG_WITH_STREAM(SharedDisplayLists, stream << "RemoteImageBufferProxy " << m_renderingResourceIdentifier << " ensureBackendCreated: exceeded max number of timeouts");
 
         auto& renderingBackendParameters = m_remoteRenderingBackendProxy->parameters();
-        RELEASE_LOG_FAULT(RemoteLayerBuffers, "[pageProxyID=%" PRIu64 ", webPageID=%" PRIu64 ", renderingBackend=%" PRIu64 "] RemoteImageBufferProxy::ensureBackendCreated - exceeded max number of timeouts waiting for backend creaetion for image buffer %" PRIu64,
+        RELEASE_LOG_FAULT(RemoteLayerBuffers, "[pageProxyID=%" PRIu64 ", webPageID=%" PRIu64 ", renderingBackend=%" PRIu64 "] RemoteImageBufferProxy::ensureBackendCreated - exceeded max number of timeouts waiting for backend creation for image buffer %" PRIu64,
             renderingBackendParameters.pageProxyID.toUInt64(), renderingBackendParameters.pageID.toUInt64(), renderingBackendParameters.identifier.toUInt64(),
             m_renderingResourceIdentifier.toUInt64());
     }
