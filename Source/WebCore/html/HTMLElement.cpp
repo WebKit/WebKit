@@ -960,6 +960,11 @@ void HTMLElement::updateEffectiveDirectionalityOfDirAuto()
         invalidateStyleForSubtree();
 }
 
+void HTMLElement::updateTextDirectionalityAfterTelephoneInputTypeChange()
+{
+    dirAttributeChanged(attributeWithoutSynchronization(dirAttr));
+}
+
 void HTMLElement::adjustDirectionalityIfNeededAfterChildrenChanged(Element* beforeChange, ChildChange::Type changeType)
 {
     // FIXME: This function looks suspicious.

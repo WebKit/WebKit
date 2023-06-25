@@ -532,11 +532,15 @@ void HTMLInputElement::updateType(const AtomString& typeAttributeValue)
 
     m_inputType->destroyShadowSubtree();
     m_inputType->detachFromElement();
+    auto oldType = m_inputType->type();
 
     bool previouslySelectable = m_inputType->supportsSelectionAPI();
 
     m_inputType = WTFMove(newType);
     m_inputType->createShadowSubtreeIfNeeded();
+
+    if (oldType == InputType::Type::Telephone || m_inputType->type() == InputType::Type::Telephone)
+        updateTextDirectionalityAfterTelephoneInputTypeChange();
 
     if (UNLIKELY(didSupportReadOnly != willSupportReadOnly && hasAttributeWithoutSynchronization(readonlyAttr))) {
         emplace(readWriteInvalidation, *this, { { CSSSelector::PseudoClassReadWrite, !willSupportReadOnly }, { CSSSelector::PseudoClassReadOnly, willSupportReadOnly } });

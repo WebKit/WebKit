@@ -1388,6 +1388,8 @@ bdi, output {
     unicode-bidi: isolate;
 }
 
+input[type=tel i]:dir(ltr) { direction: ltr; }
+
 bdo {
     unicode-bidi: bidi-override;
 }

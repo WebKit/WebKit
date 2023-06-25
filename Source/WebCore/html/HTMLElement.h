@@ -191,6 +191,7 @@ protected:
     unsigned parseBorderWidthAttribute(const AtomString&) const;
 
     void childrenChanged(const ChildChange&) override;
+    void updateTextDirectionalityAfterTelephoneInputTypeChange();
     void updateEffectiveDirectionalityOfDirAuto();
 
     using EventHandlerNameMap = HashMap<AtomStringImpl*, AtomString>;
