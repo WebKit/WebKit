@@ -649,6 +649,19 @@ bool JSObject::getOwnPropertySlot(JSObject* object, JSGlobalObject* globalObject
 // https://tc39.github.io/ecma262/#sec-ordinaryset
 bool ordinarySetSlow(JSGlobalObject* globalObject, JSObject* object, PropertyName propertyName, JSValue value, JSValue receiver, bool shouldThrow)
 {
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    PropertyDescriptor ownDescriptor;
+    if (object->type() != ProxyObjectType) {
+        object->getOwnPropertyDescriptor(globalObject, propertyName, ownDescriptor);
+        RETURN_IF_EXCEPTION(scope, false);
+    }
+    RELEASE_AND_RETURN(scope, ordinarySetWithOwnDescriptor(globalObject, object, propertyName, value, receiver, WTFMove(ownDescriptor), shouldThrow));
+}
+
+// https://tc39.es/ecma262/multipage/ordinary-and-exotic-objects-behaviours.html#sec-ordinarysetwithowndescriptor
+bool ordinarySetWithOwnDescriptor(JSGlobalObject* globalObject, JSObject* object, PropertyName propertyName, JSValue value, JSValue receiver, PropertyDescriptor&& ownDescriptor, bool shouldThrow)
+{
     // If we find the receiver is not the same to the object, we fall to this slow path.
     // Currently, there are 3 candidates.
     // 1. Reflect.set can alter the receiver with an arbitrary value.
@@ -658,7 +671,6 @@ bool ordinarySetSlow(JSGlobalObject* globalObject, JSObject* object, PropertyNam
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     JSObject* current = object;
-    PropertyDescriptor ownDescriptor;
     while (true) {
         if (current->type() == ProxyObjectType) {
             auto* proxy = jsCast<ProxyObject*>(current);
@@ -667,8 +679,13 @@ bool ordinarySetSlow(JSGlobalObject* globalObject, JSObject* object, PropertyNam
         }
 
         // 9.1.9.1-2 Let ownDesc be ? O.[[GetOwnProperty]](P).
-        bool ownDescriptorFound = current->getOwnPropertyDescriptor(globalObject, propertyName, ownDescriptor);
-        RETURN_IF_EXCEPTION(scope, false);
+        bool ownDescriptorFound;
+        if (current == object)
+            ownDescriptorFound = !ownDescriptor.isEmpty();
+        else {
+            ownDescriptorFound = current->getOwnPropertyDescriptor(globalObject, propertyName, ownDescriptor);
+            RETURN_IF_EXCEPTION(scope, false);
+        }
 
         if (!ownDescriptorFound) {
             // 9.1.9.1-3-a Let parent be ? O.[[GetPrototypeOf]]().
@@ -3723,52 +3740,6 @@ Butterfly* JSObject::allocateMoreOutOfLineStorage(VM& vm, size_t oldSize, size_t
     return Butterfly::createOrGrowPropertyStorage(butterfly(), vm, this, structure(), oldSize, newSize);
 }
 
-template<typename T>
-struct WeakCustomGetterOrSetterHashTranslator {
-    using BaseHash = JSGlobalObject::WeakCustomGetterOrSetterHash<T>;
-
-    using Key = std::tuple<PropertyName, typename T::CustomFunctionPointer, const ClassInfo*>;
-
-    static unsigned hash(const Key& key)
-    {
-        return BaseHash::hash(std::get<0>(key), std::get<1>(key), std::get<2>(key));
-    }
-
-    static bool equal(const Weak<T>& a, const Key& b)
-    {
-        if (!a)
-            return false;
-        return a->propertyName() == std::get<0>(b) && a->customFunctionPointer() == std::get<1>(b) && a->slotBaseClassInfoIfExists() == std::get<2>(b);
-    }
-};
-
-static JSCustomGetterFunction* createCustomGetterFunction(JSGlobalObject* globalObject, VM& vm, PropertyName propertyName, GetValueFunc getValueFunc, std::optional<DOMAttributeAnnotation> domAttribute)
-{
-    using Translator = WeakCustomGetterOrSetterHashTranslator<JSCustomGetterFunction>;
-
-    // WeakGCSet::ensureValue's functor must not invoke GC since GC can modify WeakGCSet in the middle of HashSet::ensure.
-    // We use DeferGC here (1) not to invoke GC when executing WeakGCSet::ensureValue and (2) to avoid looking up HashSet twice.
-    DeferGC deferGC(vm);
-    const ClassInfo* classInfo = nullptr;
-    if (domAttribute)
-        classInfo = domAttribute->classInfo;
-    return globalObject->customGetterFunctionSet().ensureValue<Translator>(std::tuple { propertyName, getValueFunc, classInfo }, [&] {
-        return JSCustomGetterFunction::create(vm, globalObject, propertyName, getValueFunc, domAttribute);
-    });
-}
-
-static JSCustomSetterFunction* createCustomSetterFunction(JSGlobalObject* globalObject, VM& vm, PropertyName propertyName, PutValueFunc putValueFunc)
-{
-    using Translator = WeakCustomGetterOrSetterHashTranslator<JSCustomSetterFunction>;
-
-    // WeakGCSet::ensureValue's functor must not invoke GC since GC can modify WeakGCSet in the middle of HashSet::ensure.
-    // We use DeferGC here (1) not to invoke GC when executing WeakGCSet::ensureValue and (2) to avoid looking up HashSet twice.
-    DeferGC deferGC(vm);
-    return globalObject->customSetterFunctionSet().ensureValue<Translator>(std::tuple { propertyName, putValueFunc, nullptr }, [&] {
-        return JSCustomSetterFunction::create(vm, globalObject, propertyName, putValueFunc);
-    });
-}
-
 bool JSObject::getOwnPropertyDescriptor(JSGlobalObject* globalObject, PropertyName propertyName, PropertyDescriptor& descriptor)
 {
     VM& vm = globalObject->vm();
@@ -3776,27 +3747,11 @@ bool JSObject::getOwnPropertyDescriptor(JSGlobalObject* globalObject, PropertyNa
     PropertySlot slot(this, PropertySlot::InternalMethodType::GetOwnProperty);
 
     bool result = methodTable()->getOwnPropertySlot(this, globalObject, propertyName, slot);
-    EXCEPTION_ASSERT(!scope.exception() || !result);
+    EXCEPTION_ASSERT_UNUSED(scope, !scope.exception() || !result);
     if (!result)
         return false;
 
-    if (slot.isAccessor())
-        descriptor.setAccessorDescriptor(slot.getterSetter(), slot.attributes());
-    else if (slot.attributes() & PropertyAttribute::CustomAccessor) {
-        ASSERT_WITH_MESSAGE(slot.isCustom(), "PropertySlot::TypeCustom is required in case of PropertyAttribute::CustomAccessor");
-        descriptor.setAccessorDescriptor((slot.attributes() | PropertyAttribute::Accessor) & ~PropertyAttribute::CustomAccessor);
-        JSGlobalObject* slotBaseGlobalObject = slot.slotBase()->globalObject();
-        if (slot.customGetter())
-            descriptor.setGetter(createCustomGetterFunction(slotBaseGlobalObject, vm, propertyName, slot.customGetter(), slot.domAttribute()));
-        if (slot.customSetter())
-            descriptor.setSetter(createCustomSetterFunction(slotBaseGlobalObject, vm, propertyName, slot.customSetter()));
-    } else {
-        JSValue value = slot.getValue(globalObject, propertyName);
-        RETURN_IF_EXCEPTION(scope, false);
-        descriptor.setDescriptor(value, slot.attributes());
-    }
-
-    return true;
+    RELEASE_AND_RETURN(scope, descriptor.setPropertySlot(globalObject, propertyName, slot));
 }
 
 bool JSObject::putDirectMayBeIndex(JSGlobalObject* globalObject, PropertyName propertyName, JSValue value)
