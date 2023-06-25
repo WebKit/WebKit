@@ -1118,6 +1118,8 @@ http/wpt/service-workers/fetch-service-worker-preload-use-download.https.html [ 
 http/wpt/service-workers/form-data-upload.html [ Failure ]
 http/wpt/service-workers/navigate-iframes-window-client.https.html [ Failure ]
 
+http/tests/workers/service/postmessage-after-sw-process-crash.https.html [ Timeout Pass ]
+
 http/tests/misc/slow-loading-animated-image.html [ ImageOnlyFailure ]
 
 http/tests/misc/webtiming-one-redirect.py [ Failure Pass ]
@@ -2292,7 +2294,6 @@ fast/text/rtl-pre-wrap-hanging-offset.html [ ImageOnlyFailure ]
 fast/text/synthetic-bold-percentage-word-spacing.html [ ImageOnlyFailure ]
 fast/text/text-overflow-over-64k.html [ ImageOnlyFailure ]
 
-webgl/2.0.0/conformance/textures/misc/default-texture.html [ Failure ]
 webgl/lose-context-after-context-lost.html [ Failure ]
 webgl/max-active-contexts-gc.html [ Failure Pass ]
 webgl/max-active-contexts-webglcontextlost-prevent-default.html [ Failure ]
