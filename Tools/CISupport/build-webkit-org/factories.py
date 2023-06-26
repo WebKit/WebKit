@@ -193,6 +193,7 @@ class BuildAndTestAndArchiveAllButJSCFactory(BuildAndTestFactory):
         BuildAndTestFactory.__init__(self, platform, configuration, architectures, triggers, additionalArguments, device_model, **kwargs)
         # The parent class will already archive if triggered
         if not triggers:
+            self.addStep(InstallBuiltProduct())
             self.addStep(ArchiveBuiltProduct())
             self.addStep(UploadBuiltProduct())
         if platform != "gtk4":

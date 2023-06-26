@@ -1142,6 +1142,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'bindings-generation-tests',
             'builtins-generator-tests',
             'API-tests',
+            'install-built-product',
             'archive-built-product',
             'upload-built-product'
         ],
