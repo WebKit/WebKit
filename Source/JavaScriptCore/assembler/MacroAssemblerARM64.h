@@ -2742,8 +2742,12 @@ public:
 
     void materializeVector(v128_t value, FPRegisterID dest)
     {
+        if (bitEquals(value, vectorAllZeros())) {
+            moveZeroToVector(dest);
+            return;
+        }
         move(TrustedImm64(value.u64x2[0]), scratchRegister());
-        vectorReplaceLaneInt64(TrustedImm32(0), scratchRegister(), dest);
+        vectorSplatInt64(scratchRegister(), dest);
         move(TrustedImm64(value.u64x2[1]), scratchRegister());
         vectorReplaceLaneInt64(TrustedImm32(1), scratchRegister(), dest);
     }
