@@ -41,6 +41,8 @@
 #include "WKProtectionSpaceTypes.h"
 #include "WKResourceCacheManager.h"
 #include "WKSharedAPICast.h"
+#include "WKWebsiteDataRecordRef.h"
+#include "WebsiteDataType.h"
 #include <WebCore/Credential.h>
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/HTTPCookieAcceptPolicy.h>
@@ -66,6 +68,7 @@ class PageConfiguration;
 class ProcessPoolConfiguration;
 class SessionState;
 class UserScript;
+class WebsiteDataRecord;
 class WebsitePolicies;
 class WindowFeatures;
 }
@@ -163,6 +166,7 @@ WK_ADD_API_MAPPING(WKUserMediaPermissionCheckRef, UserMediaPermissionCheckProxy)
 WK_ADD_API_MAPPING(WKUserMediaPermissionRequestRef, UserMediaPermissionRequestProxy)
 WK_ADD_API_MAPPING(WKUserScriptRef, API::UserScript)
 WK_ADD_API_MAPPING(WKViewportAttributesRef, WebViewportAttributes)
+WK_ADD_API_MAPPING(WKWebsiteDataRecordRef, API::WebsiteDataRecord)
 WK_ADD_API_MAPPING(WKWebsiteDataStoreRef, WebKit::WebsiteDataStore)
 WK_ADD_API_MAPPING(WKWebsiteDataStoreConfigurationRef, WebKit::WebsiteDataStoreConfiguration)
 WK_ADD_API_MAPPING(WKWebsitePoliciesRef, API::WebsitePolicies)
@@ -418,6 +422,9 @@ inline WKStorageBlockingPolicy toAPI(WebCore::StorageBlockingPolicy policy)
     ASSERT_NOT_REACHED();
     return kWKAllowAllStorage;
 }
+
+OptionSet<WebsiteDataType> toWebsiteDataTypes(WKWebsiteDataTypes websiteDataTypes);
+WKWebsiteDataTypes toAPI(const OptionSet<WebsiteDataType>& websiteDataTypes);
 
 } // namespace WebKit
 

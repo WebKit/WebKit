@@ -31,6 +31,7 @@
 #include "NetworkProcessProxy.h"
 #include "ShouldGrandfatherStatistics.h"
 #include "WKAPICast.h"
+#include "WKArray.h"
 #include "WKDictionary.h"
 #include "WKMutableArray.h"
 #include "WKNumber.h"
@@ -80,21 +81,8 @@ WKProcessID WKWebsiteDataStoreGetNetworkProcessIdentifier(WKWebsiteDataStoreRef 
     return WebKit::toImpl(dataStore)->networkProcess().processID();
 }
 
-void WKWebsiteDataStoreRemoveITPDataForDomain(WKWebsiteDataStoreRef dataStoreRef, WKStringRef host, void* context, WKWebsiteDataStoreRemoveITPDataForDomainFunction callback)
+void WKWebsiteDataStoreRemoveITPDataForDomain(WKWebsiteDataStoreRef, WKStringRef, void*, WKWebsiteDataStoreRemoveITPDataForDomainFunction)
 {
-#if ENABLE(TRACKING_PREVENTION)
-    WebKit::WebsiteDataRecord dataRecord;
-    dataRecord.types.add(WebKit::WebsiteDataType::ResourceLoadStatistics);
-    dataRecord.addResourceLoadStatisticsRegistrableDomain(WebCore::RegistrableDomain::uncheckedCreateFromHost(WebKit::toImpl(host)->string()));
-    Vector<WebKit::WebsiteDataRecord> dataRecords = { WTFMove(dataRecord) };
-
-    OptionSet<WebKit::WebsiteDataType> dataTypes = WebKit::WebsiteDataType::ResourceLoadStatistics;
-    WebKit::toImpl(dataStoreRef)->removeData(dataTypes, dataRecords, [context, callback] {
-        callback(context);
-    });
-#else
-    callback(context);
-#endif
 }
 
 void WKWebsiteDataStoreDoesStatisticsDomainIDExistInDatabase(WKWebsiteDataStoreRef dataStoreRef, int domainID, void* context, WKWebsiteDataStoreDoesStatisticsDomainIDExistInDatabaseFunction callback)
@@ -541,12 +529,8 @@ void WKWebsiteDataStoreStatisticsClearInMemoryAndPersistentStoreModifiedSinceHou
 #endif
 }
 
-void WKWebsiteDataStoreStatisticsClearThroughWebsiteDataRemoval(WKWebsiteDataStoreRef dataStoreRef, void* context, WKWebsiteDataStoreStatisticsClearThroughWebsiteDataRemovalFunction callback)
+void WKWebsiteDataStoreStatisticsClearThroughWebsiteDataRemoval(WKWebsiteDataStoreRef, void*, WKWebsiteDataStoreStatisticsClearThroughWebsiteDataRemovalFunction)
 {
-    OptionSet<WebKit::WebsiteDataType> dataTypes = WebKit::WebsiteDataType::ResourceLoadStatistics;
-    WebKit::toImpl(dataStoreRef)->removeData(dataTypes, WallTime::fromRawSeconds(0), [context, callback] {
-        callback(context);
-    });
 }
 
 void WKWebsiteDataStoreStatisticsDeleteCookiesForTesting(WKWebsiteDataStoreRef dataStoreRef, WKStringRef host, bool includeHttpOnlyCookies, void* context, WKWebsiteDataStoreStatisticsDeleteCookiesForTestingFunction callback)
@@ -744,71 +728,32 @@ void WKWebsiteDataStoreStatisticsResetToConsistentState(WKWebsiteDataStoreRef da
 #endif
 }
 
-void WKWebsiteDataStoreRemoveAllFetchCaches(WKWebsiteDataStoreRef dataStoreRef, void* context, WKWebsiteDataStoreRemoveFetchCacheRemovalFunction callback)
+void WKWebsiteDataStoreRemoveAllFetchCaches(WKWebsiteDataStoreRef, void*, WKWebsiteDataStoreRemoveFetchCacheRemovalFunction)
 {
-    OptionSet<WebKit::WebsiteDataType> dataTypes = WebKit::WebsiteDataType::DOMCache;
-    WebKit::toImpl(dataStoreRef)->removeData(dataTypes, -WallTime::infinity(), [context, callback] {
-        callback(context);
-    });
 }
 
-void WKWebsiteDataStoreRemoveNetworkCache(WKWebsiteDataStoreRef dataStoreRef, void* context, WKWebsiteDataStoreRemoveNetworkCacheCallback callback)
+void WKWebsiteDataStoreRemoveNetworkCache(WKWebsiteDataStoreRef, void*, WKWebsiteDataStoreRemoveNetworkCacheCallback)
 {
-    OptionSet<WebKit::WebsiteDataType> dataTypes = WebKit::WebsiteDataType::DiskCache;
-    WebKit::toImpl(dataStoreRef)->removeData(dataTypes, -WallTime::infinity(), [context, callback] {
-        callback(context);
-    });
 }
 
-void WKWebsiteDataStoreRemoveMemoryCaches(WKWebsiteDataStoreRef dataStoreRef, void* context, WKWebsiteDataStoreRemoveMemoryCachesRemovalFunction callback)
+void WKWebsiteDataStoreRemoveMemoryCaches(WKWebsiteDataStoreRef, void*, WKWebsiteDataStoreRemoveMemoryCachesRemovalFunction)
 {
-    OptionSet<WebKit::WebsiteDataType> dataTypes = WebKit::WebsiteDataType::MemoryCache;
-    WebKit::toImpl(dataStoreRef)->removeData(dataTypes, -WallTime::infinity(), [context, callback] {
-        callback(context);
-    });
 }
 
-void WKWebsiteDataStoreRemoveFetchCacheForOrigin(WKWebsiteDataStoreRef dataStoreRef, WKSecurityOriginRef origin, void* context, WKWebsiteDataStoreRemoveFetchCacheRemovalFunction callback)
+void WKWebsiteDataStoreRemoveFetchCacheForOrigin(WKWebsiteDataStoreRef, WKSecurityOriginRef, void*, WKWebsiteDataStoreRemoveFetchCacheRemovalFunction)
 {
-    WebKit::WebsiteDataRecord dataRecord;
-    dataRecord.add(WebKit::WebsiteDataType::DOMCache, WebKit::toImpl(origin)->securityOrigin());
-    Vector<WebKit::WebsiteDataRecord> dataRecords = { WTFMove(dataRecord) };
-
-    OptionSet<WebKit::WebsiteDataType> dataTypes = WebKit::WebsiteDataType::DOMCache;
-    WebKit::toImpl(dataStoreRef)->removeData(dataTypes, dataRecords, [context, callback] {
-        callback(context);
-    });
 }
 
-void WKWebsiteDataStoreRemoveAllIndexedDatabases(WKWebsiteDataStoreRef dataStoreRef, void* context, WKWebsiteDataStoreRemoveAllIndexedDatabasesCallback callback)
+void WKWebsiteDataStoreRemoveAllIndexedDatabases(WKWebsiteDataStoreRef, void*, WKWebsiteDataStoreRemoveAllIndexedDatabasesCallback)
 {
-    OptionSet<WebKit::WebsiteDataType> dataTypes = WebKit::WebsiteDataType::IndexedDBDatabases;
-    WebKit::toImpl(dataStoreRef)->removeData(dataTypes, -WallTime::infinity(), [context, callback] {
-    if (callback)
-        callback(context);
-    });
 }
 
-void WKWebsiteDataStoreRemoveLocalStorage(WKWebsiteDataStoreRef dataStoreRef, void* context, WKWebsiteDataStoreRemoveLocalStorageCallback callback)
+void WKWebsiteDataStoreRemoveLocalStorage(WKWebsiteDataStoreRef, void*, WKWebsiteDataStoreRemoveLocalStorageCallback)
 {
-    OptionSet<WebKit::WebsiteDataType> dataTypes = WebKit::WebsiteDataType::LocalStorage;
-    WebKit::toImpl(dataStoreRef)->removeData(dataTypes, -WallTime::infinity(), [context, callback] {
-        if (callback)
-            callback(context);
-    });
 }
 
-void WKWebsiteDataStoreRemoveAllServiceWorkerRegistrations(WKWebsiteDataStoreRef dataStoreRef, void* context, WKWebsiteDataStoreRemoveAllServiceWorkerRegistrationsCallback callback)
+void WKWebsiteDataStoreRemoveAllServiceWorkerRegistrations(WKWebsiteDataStoreRef, void*, WKWebsiteDataStoreRemoveAllServiceWorkerRegistrationsCallback)
 {
-#if ENABLE(SERVICE_WORKER)
-    OptionSet<WebKit::WebsiteDataType> dataTypes = WebKit::WebsiteDataType::ServiceWorkerRegistrations;
-    WebKit::toImpl(dataStoreRef)->removeData(dataTypes, -WallTime::infinity(), [context, callback] {
-        callback(context);
-    });
-#else
-    UNUSED_PARAM(dataStoreRef);
-    callback(context);
-#endif
 }
 
 void WKWebsiteDataStoreGetFetchCacheOrigins(WKWebsiteDataStoreRef dataStoreRef, void* context, WKWebsiteDataStoreGetFetchCacheOriginsFunction callback)
@@ -853,12 +798,8 @@ void WKWebsiteDataStoreClearAllDeviceOrientationPermissions(WKWebsiteDataStoreRe
 #endif
 }
 
-void WKWebsiteDataStoreClearPrivateClickMeasurementsThroughWebsiteDataRemoval(WKWebsiteDataStoreRef dataStoreRef, void* context, WKWebsiteDataStoreClearPrivateClickMeasurementsThroughWebsiteDataRemovalFunction callback)
+void WKWebsiteDataStoreClearPrivateClickMeasurementsThroughWebsiteDataRemoval(WKWebsiteDataStoreRef, void*, WKWebsiteDataStoreClearPrivateClickMeasurementsThroughWebsiteDataRemovalFunction)
 {
-    OptionSet<WebKit::WebsiteDataType> dataTypes = WebKit::WebsiteDataType::PrivateClickMeasurements;
-    WebKit::toImpl(dataStoreRef)->removeData(dataTypes, WallTime::fromRawSeconds(0), [context, callback] {
-        callback(context);
-    });
 }
 
 void WKWebsiteDataStoreSetCacheModelSynchronouslyForTesting(WKWebsiteDataStoreRef dataStoreRef, WKCacheModel cacheModel)
@@ -882,22 +823,8 @@ void WKWebsiteDataStoreResetStoragePersistedState(WKWebsiteDataStoreRef dataStor
     });
 }
 
-void WKWebsiteDataStoreClearStorage(WKWebsiteDataStoreRef dataStoreRef, void* context, WKWebsiteDataStoreClearStorageCallback callback)
+void WKWebsiteDataStoreClearStorage(WKWebsiteDataStoreRef, void*, WKWebsiteDataStoreClearStorageCallback)
 {
-    OptionSet<WebKit::WebsiteDataType> dataTypes = {
-        WebKit::WebsiteDataType::LocalStorage,
-        WebKit::WebsiteDataType::IndexedDBDatabases,
-        WebKit::WebsiteDataType::FileSystem,
-        WebKit::WebsiteDataType::DOMCache,
-        WebKit::WebsiteDataType::Credentials,
-#if ENABLE(SERVICE_WORKER)
-        WebKit::WebsiteDataType::ServiceWorkerRegistrations
-#endif
-    };
-    WebKit::toImpl(dataStoreRef)->removeData(dataTypes, -WallTime::infinity(), [context, callback] {
-        if (callback)
-            callback(context);
-    });
 }
 
 void WKWebsiteDataStoreClearAppBoundSession(WKWebsiteDataStoreRef dataStoreRef, void* context, WKWebsiteDataStoreClearAppBoundSessionFunction completionHandler)
@@ -948,4 +875,88 @@ void WKWebsiteDataStoreGetAllStorageAccessEntries(WKWebsiteDataStoreRef dataStor
 #else
     callback(context, WKMutableArrayCreate());
 #endif
+}
+
+WKWebsiteDataTypes WKWebsiteDataStoreAllWebsiteDataTypes()
+{
+    return kWKWebsiteDataTypesCookies
+        | kWKWebsiteDataTypesDiskCache
+        | kWKWebsiteDataTypesMemoryCache
+        | kWKWebsiteDataTypesOfflineWebApplicationCache
+        | kWKWebsiteDataTypesSessionStorage
+        | kWKWebsiteDataTypesLocalStorage
+        | kWKWebsiteDataTypesWebSQLDatabases
+        | kWKWebsiteDataTypesIndexedDBDatabases
+        | kWKWebsiteDataTypesMediaKeys
+        | kWKWebsiteDataTypesHSTSCache
+        | kWKWebsiteDataTypesSearchFieldRecentSearches
+        | kWKWebsiteDataTypesResourceLoadStatistics
+        | kWKWebsiteDataTypesCredentials
+#if ENABLE(SERVICE_WORKER)
+        | kWKWebsiteDataTypesServiceWorkerRegistrations
+        | kWKWebsiteDataTypesBackgroundFetchStorage
+#endif
+        | kWKWebsiteDataTypesDOMCache
+        | kWKWebsiteDataTypesDeviceIdHashSalt
+        | kWKWebsiteDataTypesPrivateClickMeasurements
+#if HAVE(ALTERNATIVE_SERVICE)
+        | kWKWebsiteDataTypesAlternativeServices
+#endif
+        | kWKWebsiteDataTypesFileSystem;
+}
+
+void WKWebsiteDataStoreRemoveDataOfTypes(WKWebsiteDataStoreRef dataStoreRef, WKWebsiteDataTypes dataTypes, int64_t timeSpan, void* context, WKWebsiteDataStoreRemoveDataOfTypesCallback callback)
+{
+#if !ENABLE(SERVICE_WORKER)
+    if (dataTypes & kWKWebsiteDataTypesServiceWorkerRegistrations && callback)
+        callback(context);
+#endif
+
+    WallTime timePoint = timeSpan ? WallTime::now() - Seconds::fromMicroseconds(timeSpan) : -WallTime::infinity();
+    WebKit::toImpl(dataStoreRef)->removeData(WebKit::toWebsiteDataTypes(dataTypes), timePoint, [context, callback] {
+        if (callback)
+            callback(context);
+    });
+}
+
+void WKWebsiteDataStoreRemoveDataOfTypesWithValues(WKWebsiteDataStoreRef dataStoreRef, WKWebsiteDataTypes dataType, WKArrayRef dataValues, void* context, WKWebsiteDataStoreRemoveDataOfTypesCallback callback)
+{
+    auto type = WebKit::toWebsiteDataTypes(dataType);
+    if (!type.hasExactlyOneBitSet())
+        return;
+
+#if !ENABLE(TRACKING_PREVENTION)
+    if (type.contains(WebKit::WebsiteDataType::ResourceLoadStatistics)) {
+        callback(context);
+        return;
+    }
+#endif
+
+    WebKit::WebsiteDataRecord dataRecord;
+
+    if (dataValues) {
+        auto* array = WebKit::toImpl(dataValues);
+
+        for (auto hostname : array->elementsOfType<API::String>()) {
+            if (type.contains(WebKit::WebsiteDataType::Cookies))
+                dataRecord.addCookieHostName(hostname->string());
+            else if (type.contains(WebKit::WebsiteDataType::HSTSCache))
+                dataRecord.addHSTSCacheHostname(hostname->string());
+#if HAVE(ALTERNATIVE_SERVICE)
+            else if (type.contains(WebKit::WebsiteDataType::AlternativeServices))
+                dataRecord.addAlternativeServicesHostname(hostname->string());
+#endif
+#if ENABLE(TRACKING_PREVENTION)
+            else if (type.contains(WebKit::WebsiteDataType::ResourceLoadStatistics))
+                dataRecord.addResourceLoadStatisticsRegistrableDomain(WebCore::RegistrableDomain::uncheckedCreateFromHost(hostname->string()));
+#endif
+        }
+
+        for (auto origin : array->elementsOfType<API::SecurityOrigin>())
+            dataRecord.add(static_cast<WebKit::WebsiteDataType>(type.toRaw()), origin->securityOrigin());
+    }
+
+    WebKit::toImpl(dataStoreRef)->removeData(type, WTF::Vector<WebKit::WebsiteDataRecord> { dataRecord }, [context, callback] {
+        callback(context);
+    });
 }

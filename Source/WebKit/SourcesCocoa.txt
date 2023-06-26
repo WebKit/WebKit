@@ -237,8 +237,6 @@ UIProcess/ViewSnapshotStore.cpp
 UIProcess/WebMemoryPressureHandler.cpp
 UIProcess/WKImagePreviewViewController.mm
 
-UIProcess/API/APIWebsiteDataRecord.cpp
-
 UIProcess/API/C/WKContextMenuListener.cpp
 UIProcess/API/C/WKTestingSupport.cpp
 UIProcess/API/C/WKUserScriptRef.cpp
