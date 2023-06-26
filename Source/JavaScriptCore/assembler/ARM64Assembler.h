@@ -2177,6 +2177,13 @@ public:
     }
 
     template<int datasize>
+    ALWAYS_INLINE void movi(FPRegisterID rd, uint8_t imm)
+    {
+        CHECK_DATASIZE_SIMD();
+        insn(simdMoveImmediate(datasize == 128, true, 0b1110, imm, rd));
+    }
+
+    template<int datasize>
     ALWAYS_INLINE void movk(RegisterID rd, uint16_t value, int shift = 0)
     {
         CHECK_DATASIZE();
@@ -4501,6 +4508,11 @@ protected:
         bool sz = sizeForFloatingPointSIMDOp(lane);
         int insn = 0b01001110001000001110010000000000 | (U << 29) | (E << 23) | (sz << 22) | (rm << 16) | (ac << 11) | (rn << 5) | rd;
         return insn;
+    }
+
+    ALWAYS_INLINE static int simdMoveImmediate(bool Q, bool op, uint8_t cmode, uint8_t imm, FPRegisterID rd)
+    {
+        return 0b0'0'0'0111100000'000'0000'01'00000'00000 | (Q << 30) | (op << 29) | (static_cast<unsigned>(imm >> 5) << 16) | (static_cast<unsigned>(cmode) << 12) | (static_cast<unsigned>(imm & 0b11111) << 5) | rd;
     }
 
     Vector<LinkRecord, 0, UnsafeVectorOverflow> m_jumpsToLink;

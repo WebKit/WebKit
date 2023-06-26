@@ -2754,12 +2754,14 @@ public:
 
     void moveZeroToDouble(FPRegisterID reg)
     {
-        m_assembler.fmov<64>(reg, ARM64Registers::zr);
+        // Intentionally use 128bit width here to clear all part of this register with zero.
+        m_assembler.movi<128>(reg, 0);
     }
 
     void moveZeroToFloat(FPRegisterID reg)
     {
-        m_assembler.fmov<32>(reg, ARM64Registers::zr);
+        // Intentionally use 128bit width here to clear all part of this register with zero.
+        m_assembler.movi<128>(reg, 0);
     }
 
     void moveDoubleTo64(FPRegisterID src, RegisterID dest)
@@ -3296,8 +3298,12 @@ public:
 
     void move(RegisterID src, RegisterID dest)
     {
-        if (src != dest)
-            m_assembler.mov<64>(dest, src);
+        if (src != dest) {
+            if (src == ARM64Registers::zr && dest != ARM64Registers::sp)
+                m_assembler.movz<64>(dest, 0);
+            else
+                m_assembler.mov<64>(dest, src);
+        }
     }
 
     void move(TrustedImm32 imm, RegisterID dest)
@@ -5459,7 +5465,7 @@ public:
 
     void moveZeroToVector(FPRegisterID dest)
     {
-        vectorXor({ SIMDLane::v128, SIMDSignMode::None }, dest, dest, dest);
+        m_assembler.movi<128>(dest, 0);
     }
 
     void vectorAbs(SIMDInfo simdInfo, FPRegisterID input, FPRegisterID dest)
