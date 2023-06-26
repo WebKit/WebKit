@@ -1937,6 +1937,7 @@
         SYS_readlink
         SYS_rename
         SYS_sendto
+        SYS_sigaltstack
         SYS_stat64
         SYS_statfs64
         SYS_sysctl
@@ -2016,7 +2017,6 @@
     SYS_mincore
     SYS_psynch_rw_unlock
     SYS_psynch_rw_wrlock
-    SYS_sigaltstack
     SYS_sigprocmask
     SYS_sysctlbyname
     SYS_umask
