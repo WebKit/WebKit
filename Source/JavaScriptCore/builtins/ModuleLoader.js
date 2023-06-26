@@ -72,11 +72,13 @@ function newRegistryEntry(key)
     // 4. Link
     //     Ready to link the module with the other modules.
     //     Linking means that the module imports and exports the bindings from/to the other modules.
+    //     a. If the status is Link and there is no entry.link promise, the entry is ready to link.
+    //     b. If the status is Link and there is a entry.link promise, the entry is just linking.
     //
     // 5. Ready
     //     The module is linked, so the module is ready to be executed.
     //
-    // Each registry entry has the 4 promises; "fetch", "instantiate" and "satisfy".
+    // Each registry entry has the 4 promises; "fetch", "instantiate", "satisfy", and "link".
     // They are assigned when starting the each phase. And they are fulfilled when the each phase is completed.
     //
     // In the current module draft, linking will be performed after the whole modules are instantiated and the dependencies are resolved.
@@ -94,6 +96,7 @@ function newRegistryEntry(key)
         fetch: @undefined,
         instantiate: @undefined,
         satisfy: @undefined,
+        link: @undefined,
         dependencies: [], // To keep the module order, we store the module keys in the array.
         module: @undefined, // JSModuleRecord
         linkError: @undefined,
@@ -311,6 +314,57 @@ function link(entry, fetcher)
     }
 }
 
+@visibility=PrivateRecursive
+async function asyncLink(entry, parameters, fetcher, visited)
+{
+    "use strict";
+
+    // Current implementation for setting Satisfy isn't sound since it
+    // cannot be done in single pass. However, we can still get benefits from it
+    // with additional checks in linking phase to make it robust.
+    if (!entry.linkSucceeded)
+        throw entry.linkError;
+    if (entry.state === @ModuleReady)
+        return;
+    if (visited.@has(entry))
+        return this.requestInstantiate(entry, parameters, fetcher);
+    if (entry.link)
+        return entry.link;
+
+    if (entry.state < @ModuleLink) {
+        entry = await this.requestSatisfy(entry, parameters, fetcher, new @Set);
+        if (visited.@has(entry))
+            return this.requestInstantiate(entry, parameters, fetcher);
+        if (entry.link)
+            return entry.link;
+    }
+
+    visited.@add(entry);
+    try {
+        var hasAsyncDependency = false;
+        var dependencies = entry.dependencies;
+        var depLoads = this.requestedModuleParameters(entry.module);
+        for (var i = 0, length = dependencies.length; i < length; ++i) {
+            var dependency = dependencies[i];
+            var parameters = depLoads[i];
+            var promise = this.asyncLink(dependency, parameters, fetcher, visited);
+            @putByValDirect(depLoads, i, promise);
+            hasAsyncDependency ||= dependency.isAsync;
+        }
+
+        entry.link = @InternalPromise.internalAll(depLoads).then((values) => {
+            entry.isAsync = this.moduleDeclarationInstantiation(entry.module, fetcher) || hasAsyncDependency;
+            @setStateToMax(entry, @ModuleReady);
+        });
+
+        return entry.link;
+    } catch (error) {
+        entry.linkSucceeded = false;
+        entry.linkError = error;
+        throw error;
+    }
+}
+
 // Module semantics.
 
 @visibility=PrivateRecursive
@@ -403,6 +457,16 @@ function linkAndEvaluateModule(key, fetcher)
 }
 
 @visibility=PrivateRecursive
+async function asyncLinkAndEvaluateModule(key, parameters, fetcher)
+{
+    "use strict";
+
+    var entry = this.ensureRegistered(key);
+    await this.asyncLink(entry, parameters, fetcher, new @Set);
+    return this.moduleEvaluation(entry, fetcher);
+}
+
+@visibility=PrivateRecursive
 async function loadAndEvaluateModule(moduleName, parameters, fetcher)
 {
     "use strict";
@@ -412,7 +476,7 @@ async function loadAndEvaluateModule(moduleName, parameters, fetcher)
         await importMap;
     var key = this.resolve(moduleName, @undefined, fetcher);
     key = await this.loadModule(key, parameters, fetcher);
-    return await this.linkAndEvaluateModule(key, fetcher);
+    return await this.asyncLinkAndEvaluateModule(key, parameters, fetcher);
 }
 
 @visibility=PrivateRecursive
@@ -425,7 +489,7 @@ async function requestImportModule(moduleName, referrer, parameters, fetcher)
         await importMap;
     var key = this.resolve(moduleName, referrer, fetcher);
     var entry = await this.requestSatisfy(this.ensureRegistered(key), parameters, fetcher, new @Set);
-    await this.linkAndEvaluateModule(entry.key, fetcher);
+    await this.asyncLinkAndEvaluateModule(entry.key, parameters, fetcher);
     return this.getModuleNamespaceObject(entry.module);
 }
 
