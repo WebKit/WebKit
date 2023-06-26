@@ -1,4 +1,4 @@
-# Copyright (C) 2021 Apple Inc. All rights reserved.
+# Copyright (C) 2021-2023 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -21,7 +21,6 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import json
-import six
 
 from collections import defaultdict
 from webkitcorepy import string_utils
@@ -107,7 +106,7 @@ class User(object):
     def name(self):
         if self._name:
             return self._name
-        if self.username and isinstance(self.username, six.string_types):
+        if self.username and isinstance(self.username, string_utils.basestring):
             return self.username
         if self.email:
             return self.email
@@ -133,7 +132,7 @@ class User(object):
     def __repr__(self):
         address = None
         for candidate in [self.username, self.email]:
-            if isinstance(candidate, six.string_types) and candidate != self.name:
+            if isinstance(candidate, string_utils.basestring) and candidate != self.name:
                 address = candidate
                 break
         if not address:

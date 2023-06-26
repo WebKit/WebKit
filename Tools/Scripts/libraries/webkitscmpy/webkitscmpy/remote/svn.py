@@ -25,14 +25,16 @@ import calendar
 import json
 import os
 import re
-import requests
 import tempfile
 
 from datetime import datetime
 
-from webkitcorepy import decorators, string_utils
+from webkitcorepy import decorators, string_utils, CallByNeed
 from webkitscmpy.remote.scm import Scm
 from webkitscmpy import Commit, Version
+
+requests = CallByNeed(lambda: __import__('requests'))
+xmltodict = CallByNeed(lambda: __import__('xmltodict'))
 
 
 class Svn(Scm):
@@ -104,8 +106,6 @@ class Svn(Scm):
 
     @decorators.Memoize(cached=False)
     def info(self, branch=None, revision=None, tag=None):
-        import xmltodict
-
         if tag and branch:
             raise ValueError('Cannot specify both branch and tag')
         if tag and revision:
@@ -169,8 +169,6 @@ class Svn(Scm):
         return 'trunk'
 
     def list(self, category):
-        import xmltodict
-
         revision = self._latest()
         if not revision:
             return []
@@ -290,8 +288,6 @@ class Svn(Scm):
         return self._metadata_cache[branch]
 
     def _branch_for(self, revision):
-        import xmltodict
-
         response = requests.request(
             method='REPORT',
             url='{}!svn/rvr/{}'.format(self.url, revision),
@@ -342,8 +338,6 @@ class Svn(Scm):
         return self._commit_count(revision=self._metadata_cache[branch][0], branch=self.default_branch)
 
     def commit(self, hash=None, revision=None, identifier=None, branch=None, tag=None, include_log=True, include_identifier=True):
-        import xmltodict
-
         if hash:
             raise ValueError('SVN does not support Git hashes')
 
@@ -468,8 +462,6 @@ class Svn(Scm):
         )
 
     def _args_from_content(self, content, include_log=True):
-        import xmltodict
-
         xml = xmltodict.parse(content)
         date = datetime.strptime(string_utils.decode(xml['S:log-item']['S:date']).split('.')[0], '%Y-%m-%dT%H:%M:%S')
         name = string_utils.decode(xml['S:log-item']['D:creator-displayname'])

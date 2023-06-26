@@ -23,18 +23,18 @@
 import calendar
 import os
 import re
-import requests
-import six
 import sys
 
 from datetime import datetime
-from requests.auth import HTTPBasicAuth
 from webkitbugspy import User
 from webkitbugspy.github import Tracker
-from webkitcorepy import decorators
+from webkitcorepy import decorators, string_utils, CallByNeed
 from webkitscmpy import Commit, Contributor, PullRequest
 from webkitscmpy.remote.scm import Scm
 from xml.dom import minidom
+
+requests = CallByNeed(lambda: __import__('requests'))
+HTTPBasicAuth = CallByNeed(lambda: __import__('requests.auth', fromlist=['HTTPBasicAuth']).HTTPBasicAuth)
 
 
 class GitHub(Scm):
@@ -737,7 +737,7 @@ class GitHub(Scm):
 
 
     def find(self, argument, include_log=True, include_identifier=True):
-        if not isinstance(argument, six.string_types):
+        if not isinstance(argument, string_utils.basestring):
             raise ValueError("Expected 'argument' to be a string, not '{}'".format(type(argument)))
 
         if argument in self.DEFAULT_BRANCHES:

@@ -21,11 +21,11 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import re
-import six
 
 from .commit import Commit
 from datetime import datetime
 from webkitscmpy import Contributor
+from webkitcorepy import string_utils
 
 
 class PullRequest(object):
@@ -36,20 +36,20 @@ class PullRequest(object):
         def __init__(self, author, timestamp, content):
             if author and isinstance(author, dict) and author.get('name'):
                 self.author = Contributor(author.get('name'), author.get('emails'))
-            elif author and isinstance(author, six.string_types) and '@' in author:
+            elif author and isinstance(author, string_utils.basestring) and '@' in author:
                 self.author = Contributor(author, [author])
             elif author and not isinstance(author, Contributor):
                 raise TypeError("Expected 'author' to be of type {}, got '{}'".format(Contributor, author))
             else:
                 self.author = author
 
-            if isinstance(timestamp, six.string_types) and timestamp.isdigit():
+            if isinstance(timestamp, string_utils.basestring) and timestamp.isdigit():
                 timestamp = int(timestamp)
             if timestamp and not isinstance(timestamp, int):
                 raise TypeError("Expected 'timestamp' to be of type int, got '{}'".format(timestamp))
             self.timestamp = timestamp
 
-            if content and not isinstance(content, six.string_types):
+            if content and not isinstance(content, string_utils.basestring):
                 raise ValueError("Expected 'content' to be a string, got '{}'".format(content))
             self.content = content
 

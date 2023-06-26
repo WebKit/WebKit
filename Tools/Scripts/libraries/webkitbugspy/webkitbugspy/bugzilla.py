@@ -1,4 +1,4 @@
-# Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+# Copyright (C) 2021-2023 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -22,7 +22,6 @@
 
 import calendar
 import re
-import requests
 import sys
 import time
 import webkitcorepy
@@ -33,6 +32,8 @@ from .radar import Tracker as RadarTracker
 
 from datetime import datetime
 from webkitbugspy import User, log
+
+requests = webkitcorepy.CallByNeed(lambda: __import__('requests'))
 
 
 class Tracker(GenericTracker):

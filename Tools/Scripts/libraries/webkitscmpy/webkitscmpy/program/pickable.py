@@ -32,14 +32,6 @@ from datetime import datetime
 from webkitcorepy import arguments, run, string_utils
 from webkitscmpy import Commit, local, CommitClassifier
 
-fuzz = None
-
-if sys.version_info > (3, 6):
-    try:
-        from rapidfuzz import fuzz
-    except ModuleNotFoundError:
-        pass
-
 
 class Pickable(Command):
     class Filters(object):
@@ -47,7 +39,12 @@ class Pickable(Command):
 
         @classmethod
         def fuzzy(cls, string, ratio=None):
-            if not fuzz:
+            if sys.version_info <= (3, 6):
+                return re.compile(string)
+
+            try:
+                from rapidfuzz import fuzz
+            except ModuleNotFoundError:
                 return re.compile(string)
 
             ratio = cls.DEFAULT_FUZZ_RATIO if not ratio else ratio
