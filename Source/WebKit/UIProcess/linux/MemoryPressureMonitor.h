@@ -68,6 +68,7 @@ private:
     CString m_cgroupMemoryControllerPath;
 
     FILE* m_cgroupMemoryMemswLimitInBytesFile;
+    FILE* m_cgroupMemoryMemswUsageInBytesFile;
     FILE* m_cgroupMemoryLimitInBytesFile;
     FILE* m_cgroupMemoryUsageInBytesFile;
 
