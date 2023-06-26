@@ -112,7 +112,7 @@ private:
     GstElement* m_src;
 };
 
-static void webkitMediaStreamSrcEnsureStreamCollectionPosted(WebKitMediaStreamSrc*, bool);
+static void webkitMediaStreamSrcEnsureStreamCollectionPosted(WebKitMediaStreamSrc*);
 
 class InternalSource final : public MediaStreamTrackPrivate::Observer,
     public RealtimeMediaSource::Observer,
@@ -291,8 +291,6 @@ public:
             return;
 
         GST_TRACE_OBJECT(m_src.get(), "%s", logMessage);
-        auto* parent = WEBKIT_MEDIA_STREAM_SRC(m_parent);
-        webkitMediaStreamSrcEnsureStreamCollectionPosted(parent, false);
 
         bool drop = m_enoughData;
         auto* buffer = gst_sample_get_buffer(sample.get());
@@ -330,7 +328,7 @@ public:
         GST_INFO_OBJECT(m_src.get(), "Track ended");
         sourceStopped();
         m_isEnded = true;
-        webkitMediaStreamSrcEnsureStreamCollectionPosted(WEBKIT_MEDIA_STREAM_SRC(m_parent), true);
+        webkitMediaStreamSrcEnsureStreamCollectionPosted(WEBKIT_MEDIA_STREAM_SRC(m_parent));
     }
 
     void sourceStopped() final
@@ -554,7 +552,6 @@ struct _WebKitMediaStreamSrcPrivate {
     Vector<RefPtr<MediaStreamTrackPrivate>> tracks;
     GUniquePtr<GstFlowCombiner> flowCombiner;
     GRefPtr<GstStreamCollection> streamCollection;
-    Atomic<bool> streamCollectionPosted;
     Atomic<unsigned> audioPadCounter;
     Atomic<unsigned> videoPadCounter;
 };
@@ -571,7 +568,7 @@ void WebKitMediaStreamObserver::activeStatusChanged()
 {
     auto* element = WEBKIT_MEDIA_STREAM_SRC_CAST(m_src);
     if (!element->priv->stream->active())
-        webkitMediaStreamSrcEnsureStreamCollectionPosted(element, true);
+        webkitMediaStreamSrcEnsureStreamCollectionPosted(element);
 }
 
 void WebKitMediaStreamObserver::didRemoveTrack(MediaStreamTrackPrivate& track)
@@ -595,7 +592,7 @@ void WebKitMediaStreamObserver::didRemoveTrack(MediaStreamTrackPrivate& track)
     });
 
     // Make sure that the video.videoWidth is reset to 0.
-    webkitMediaStreamSrcEnsureStreamCollectionPosted(element, true);
+    webkitMediaStreamSrcEnsureStreamCollectionPosted(element);
 
     // Properly stop data flow. The source stops observing notifications from WebCore.
     source->signalEndOfStream();
@@ -804,7 +801,7 @@ static GstFlowReturn webkitMediaStreamSrcChain(GstPad* pad, GstObject* parent, G
             continue;
 
         // Make sure that the video.videoWidth is reset to 0.
-        webkitMediaStreamSrcEnsureStreamCollectionPosted(self, true);
+        webkitMediaStreamSrcEnsureStreamCollectionPosted(self);
 
         auto tags = mediaStreamTrackPrivateGetTags(source->track());
         gst_pad_push_event(pad, gst_event_new_tag(tags.leakRef()));
@@ -851,16 +848,12 @@ static void webkitMediaStreamSrcPostStreamCollection(WebKitMediaStreamSrc* self)
         }
     }
 
-    GST_DEBUG_OBJECT(self, "Posting stream collection message");
+    GST_DEBUG_OBJECT(self, "Posting stream collection message containing %u streams", gst_stream_collection_get_size(priv->streamCollection.get()));
     gst_element_post_message(GST_ELEMENT_CAST(self), gst_message_new_stream_collection(GST_OBJECT_CAST(self), priv->streamCollection.get()));
 }
 
-static void webkitMediaStreamSrcEnsureStreamCollectionPosted(WebKitMediaStreamSrc* self, bool force)
+static void webkitMediaStreamSrcEnsureStreamCollectionPosted(WebKitMediaStreamSrc* self)
 {
-    if (self->priv->streamCollectionPosted.load() && !force)
-        return;
-
-    self->priv->streamCollectionPosted.store(true);
     GST_DEBUG_OBJECT(self, "Posting stream collection");
     DisableMallocRestrictionsForCurrentThreadScope disableMallocRestrictions;
     callOnMainThreadAndWait([element = GRefPtr<GstElement>(GST_ELEMENT_CAST(self))] {
@@ -1010,6 +1003,13 @@ void webkitMediaStreamSrcSetStream(WebKitMediaStreamSrc* self, MediaStreamPrivat
             continue;
         webkitMediaStreamSrcAddTrack(self, track.ptr(), onlyTrack, isVideoPlayer);
     }
+
+    // Posting an initial empty stream collection while the element hasn't exposed pads yet triggers
+    // a critical warning in urisourcebin.
+    if (self->priv->sources.isEmpty())
+        return;
+
+    webkitMediaStreamSrcEnsureStreamCollectionPosted(self);
 }
 
 void webkitMediaStreamSrcConfigureAudioTracks(WebKitMediaStreamSrc* self, float volume, bool isMuted, bool isPlaying)
