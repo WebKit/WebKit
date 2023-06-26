@@ -1760,7 +1760,7 @@ webkit.org/b/235885 webrtc/video-addTransceiver.html [ Skip ]
 webkit.org/b/193641 webkit.org/b/235885 webrtc/video-setDirection.html [ Skip ]
 webkit.org/b/235885 webrtc/direction-change.html [ Skip ]
 # This test calls pc.removeTrack() which implies a transceiver direction change.
-webkit.org/b/235885 webrtc/remove-track.html [ Failure ]
+webkit.org/b/235885 webrtc/remove-track.html [ Skip ] # Timeout
 
 # Specific to LibWebRTC:
 webkit.org/b/235885 webrtc/disable-encryption.html [ Skip ]
@@ -2784,7 +2784,7 @@ webkit.org/b/193323 http/wpt/cache-storage/cache-quota.any.html [ Failure ]
 webkit.org/b/193518 imported/w3c/web-platform-tests/fetch/range/general.window.html [ Failure ]
 webkit.org/b/193629 fast/css3-text/css3-text-decoration/text-underline-style.html [ ImageOnlyFailure ]
 webkit.org/b/193631 fast/text/font-variations-feature-detection.html [ ImageOnlyFailure ]
-webkit.org/b/194606 accessibility/set-value-not-work-for-disabled-sliders.html [ Failure ]
+webkit.org/b/194606 accessibility/set-value-not-work-for-disabled-sliders.html [ Skip ] # Timeout.
 webkit.org/b/195133 mathml/non-core/lengths-3.html [ Failure ]
 webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/boundary-shaping/boundary-shaping-010.html [ Timeout ImageOnlyFailure ]
 webkit.org/b/195670 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/load-events-networkState.html [ Failure ]
@@ -3252,8 +3252,8 @@ webkit.org/b/223830 inspector/debugger/csp-exceptions.html [ Timeout ]
 webkit.org/b/233047 inspector/page/setShowPaintRects.html [ Skip ]
 
 # setMockCameraOrientation seems to fail.
-webkit.org/b/235396 fast/mediastream/getUserMedia-to-canvas-1.html [ Failure ]
-webkit.org/b/235396 fast/mediastream/getUserMedia-to-canvas-2.html [ Failure ]
+webkit.org/b/235396 fast/mediastream/getUserMedia-to-canvas-1.html [ Skip ] # Timeout
+webkit.org/b/235396 fast/mediastream/getUserMedia-to-canvas-2.html [ Skip ] # Timeout
 
 # Timing out since their import.
 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/replace-before-load/form-requestsubmit.html [ Skip ]
@@ -3338,6 +3338,10 @@ webkit.org/b/257624 webrtc/audio-replace-track.html [ Failure Pass Timeout ]
 webkit.org/b/257624 webrtc/negotiatedneeded-event-addStream.html [ Failure Pass ]
 
 webkit.org/b/258162 fast/images/image-alt-text-vertical.html [ ImageOnlyFailure ]
+
+fast/scrolling/keyboard-scrolling-distance-downArrow.html [ Skip ] # Timeout
+
+webgl/2.0.y/conformance/textures/misc/texture-corner-case-videos.html [ Skip ] # Timeout
 
 # End: Common failures between GTK and WPE.
 

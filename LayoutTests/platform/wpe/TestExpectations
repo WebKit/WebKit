@@ -987,7 +987,6 @@ webkit.org/b/252878 fast/hidpi/image-set-as-background-quotes.html [ ImageOnlyFa
 webkit.org/b/252878 fast/hidpi/image-set-gradient.html [ ImageOnlyFailure Pass ]
 webkit.org/b/252878 fast/hidpi/image-set-gradient-multi.html [ ImageOnlyFailure Pass ]
 webkit.org/b/252878 fast/hidpi/image-set-units.html [ ImageOnlyFailure Pass ]
-webkit.org/b/252878 fast/scrolling/keyboard-scrolling-distance-downArrow.html [ Pass Timeout ]
 webkit.org/b/252878 fast/scrolling/keyboard-scrolling-distance-pageDown.html [ Pass Timeout ]
 webkit.org/b/252878 fast/speechsynthesis/speech-synthesis-speak-empty-string.html [ Crash Failure Pass ]
 webkit.org/b/252878 fast/speechsynthesis/speech-synthesis-speak.html [ Crash Failure Pass ]
