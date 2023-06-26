@@ -1926,10 +1926,11 @@ Color CaretBase::computeCaretColor(const RenderStyle& elementStyle, const Node* 
         auto cssColorValue = CSSValueAppleSystemBlue;
 #endif
         auto styleColorOptions = node->document().styleColorOptions(elementStyleToUse);
-        return RenderTheme::singleton().systemColor(cssColorValue, styleColorOptions | StyleColorOptions::UseSystemAppearance);
+        auto systemAccentColor = RenderTheme::singleton().systemColor(cssColorValue, styleColorOptions | StyleColorOptions::UseSystemAppearance);
+        return elementStyleToUse->colorByApplyingColorFilter(systemAccentColor);
     }
 
-    return elementStyleToUse->colorResolvingCurrentColor(elementStyleToUse->caretColor());
+    return elementStyleToUse->colorByApplyingColorFilter(elementStyleToUse->colorResolvingCurrentColor(elementStyleToUse->caretColor()));
 #else
     UNUSED_PARAM(selection);
     RefPtr parentElement = node ? node->parentElement() : nullptr;
