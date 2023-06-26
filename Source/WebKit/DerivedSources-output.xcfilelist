@@ -206,6 +206,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteGraphicsContextGLProxyMessageR
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteGraphicsContextGLProxyMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteGraphicsContextMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteGraphicsContextMessages.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteImageBufferProxyMessageReceiver.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteImageBufferProxyMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteImageDecoderAVFManagerMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteImageDecoderAVFManagerMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteImageDecoderAVFMessageReceiver.cpp

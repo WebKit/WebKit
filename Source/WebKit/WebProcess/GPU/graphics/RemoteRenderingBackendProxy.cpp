@@ -34,6 +34,7 @@
 #include "PlatformImageBufferShareableBackend.h"
 #include "RemoteDisplayListRecorderProxy.h"
 #include "RemoteImageBufferProxy.h"
+#include "RemoteImageBufferProxyMessages.h"
 #include "RemoteRenderingBackendMessages.h"
 #include "RemoteRenderingBackendProxyMessages.h"
 #include "SwapBuffersDisplayRequirement.h"
@@ -116,18 +117,6 @@ void RemoteRenderingBackendProxy::disconnectGPUProcess()
     m_didRenderingUpdateID = { };
     m_streamConnection->invalidate();
     m_streamConnection = nullptr;
-}
-
-RemoteRenderingBackendProxy::DidReceiveBackendCreationResult RemoteRenderingBackendProxy::waitForDidCreateImageBufferBackend()
-{
-    auto error = streamConnection().waitForAndDispatchImmediately<Messages::RemoteRenderingBackendProxy::DidCreateImageBufferBackend>(renderingBackendIdentifier(), 1_s, IPC::WaitForOption::InterruptWaitingIfSyncMessageArrives);
-    if (error != IPC::Error::NoError) {
-        RELEASE_LOG(RemoteLayerBuffers, "[pageProxyID=%" PRIu64 ", webPageID=%" PRIu64 ", renderingBackend=%" PRIu64 "] RemoteRenderingBackendProxy::waitForDidCreateImageBufferBackend - waitForAndDispatchImmediately returned error: %" PUBLIC_LOG_STRING,
-            m_parameters.pageProxyID.toUInt64(), m_parameters.pageID.toUInt64(), m_parameters.identifier.toUInt64(), IPC::errorAsString(error));
-        return DidReceiveBackendCreationResult::TimeoutOrIPCFailure;
-    }
-
-    return DidReceiveBackendCreationResult::ReceivedAnyResponse;
 }
 
 void RemoteRenderingBackendProxy::createRemoteImageBuffer(ImageBuffer& imageBuffer)
@@ -444,12 +433,21 @@ void RemoteRenderingBackendProxy::didPaintLayers()
     m_remoteResourceCacheProxy.didPaintLayers();
 }
 
-void RemoteRenderingBackendProxy::didCreateImageBufferBackend(ImageBufferBackendHandle&& handle, RenderingResourceIdentifier renderingResourceIdentifier)
+bool RemoteRenderingBackendProxy::dispatchMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
-    auto imageBuffer = m_remoteResourceCacheProxy.cachedImageBuffer(renderingResourceIdentifier);
-    if (!imageBuffer)
-        return;
-    imageBuffer->didCreateImageBufferBackend(WTFMove(handle));
+    if (decoder.messageReceiverName() == Messages::RemoteImageBufferProxy::messageReceiverName()) {
+        auto* imageBuffer = m_remoteResourceCacheProxy.cachedImageBuffer(RenderingResourceIdentifier { decoder.destinationID() });
+        if (imageBuffer)
+            imageBuffer->didReceiveMessage(connection, decoder);
+        // Messages to already removed instances are ok.
+        return true;
+    }
+    return false;
+}
+
+bool RemoteRenderingBackendProxy::dispatchSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&)
+{
+    return false;
 }
 
 void RemoteRenderingBackendProxy::didFinalizeRenderingUpdate(RenderingUpdateID didRenderingUpdateID)

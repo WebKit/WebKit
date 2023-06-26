@@ -41,6 +41,7 @@
 #include "RemoteFaceDetector.h"
 #include "RemoteFaceDetectorMessages.h"
 #include "RemoteImageBuffer.h"
+#include "RemoteImageBufferProxyMessages.h"
 #include "RemoteMediaPlayerManagerProxy.h"
 #include "RemoteMediaPlayerProxy.h"
 #include "RemoteRenderingBackendCreationParameters.h"
@@ -190,7 +191,7 @@ void RemoteRenderingBackend::didCreateImageBuffer(Ref<RemoteImageBuffer> imageBu
     auto* sharing = imageBuffer->backend()->toBackendSharing();
     auto handle = downcast<ImageBufferBackendHandleSharing>(*sharing).createBackendHandle();
     m_remoteResourceCache.cacheImageBuffer(WTFMove(imageBuffer), renderingResourceIdentifier);
-    send(Messages::RemoteRenderingBackendProxy::DidCreateImageBufferBackend(WTFMove(handle), renderingResourceIdentifier.object()), m_renderingBackendIdentifier);
+    send(Messages::RemoteImageBufferProxy::DidCreateBackend(WTFMove(handle)), renderingResourceIdentifier.object());
 }
 
 void RemoteRenderingBackend::moveToSerializedBuffer(WebCore::RenderingResourceIdentifier identifier)

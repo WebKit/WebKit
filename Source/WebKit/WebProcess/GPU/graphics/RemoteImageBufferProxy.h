@@ -65,9 +65,12 @@ public:
 
     void clearBackend();
     void backingStoreWillChange();
-    void didCreateImageBufferBackend(ImageBufferBackendHandle&&);
-
     std::unique_ptr<WebCore::SerializedImageBuffer> sinkIntoSerializedImageBuffer() final;
+
+    void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
+
+    // Messages
+    void didCreateBackend(ImageBufferBackendHandle&&);
 
 private:
     RemoteImageBufferProxy(const WebCore::ImageBufferBackend::Parameters&, const WebCore::ImageBufferBackend::Info&, RemoteRenderingBackendProxy&, std::unique_ptr<WebCore::ImageBufferBackend>&& = nullptr, WebCore::RenderingResourceIdentifier = WebCore::RenderingResourceIdentifier::generate());
@@ -100,6 +103,8 @@ private:
     void prepareForBackingStoreChange();
 
     void assertDispatcherIsCurrent() const;
+
+    IPC::StreamClientConnection& streamConnection() const;
 
     RefPtr<RemoteImageBufferProxyFlushFence> m_pendingFlush;
     WeakPtr<RemoteRenderingBackendProxy> m_remoteRenderingBackendProxy;

@@ -5716,6 +5716,7 @@
 		7BE37F9527C7CD90007A6CD3 /* IPCStreamTester.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = IPCStreamTester.cpp; sourceTree = "<group>"; };
 		7BE5134929768F0D00814F18 /* StreamClientConnectionBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StreamClientConnectionBuffer.h; sourceTree = "<group>"; };
 		7BE5134A29768F0E00814F18 /* StreamServerConnectionBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StreamServerConnectionBuffer.h; sourceTree = "<group>"; };
+		7BE66B942A388C200059B6F2 /* RemoteImageBufferProxy.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = RemoteImageBufferProxy.messages.in; sourceTree = "<group>"; };
 		7BE726572574F67200E85D98 /* RemoteGraphicsContextGLProxyFunctionsGenerated.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteGraphicsContextGLProxyFunctionsGenerated.cpp; sourceTree = "<group>"; };
 		7BE72668257680EF00E85D98 /* RemoteGraphicsContextGLCocoa.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteGraphicsContextGLCocoa.cpp; sourceTree = "<group>"; };
 		7BE9326227F5C75A00D5FEFB /* ReceiverMatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReceiverMatcher.h; sourceTree = "<group>"; };
@@ -10932,6 +10933,7 @@
 				7BE726572574F67200E85D98 /* RemoteGraphicsContextGLProxyFunctionsGenerated.cpp */,
 				72440D3A287CF58900FADBC4 /* RemoteImageBufferProxy.cpp */,
 				727A7F492408AEE6004D2931 /* RemoteImageBufferProxy.h */,
+				7BE66B942A388C200059B6F2 /* RemoteImageBufferProxy.messages.in */,
 				5506409D2407160900AAE045 /* RemoteRenderingBackendProxy.cpp */,
 				5506409E2407160900AAE045 /* RemoteRenderingBackendProxy.h */,
 				550640A0240719E100AAE045 /* RemoteRenderingBackendProxy.messages.in */,

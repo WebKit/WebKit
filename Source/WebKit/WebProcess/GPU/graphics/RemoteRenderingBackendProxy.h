@@ -90,6 +90,7 @@ public:
 
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
+    bool didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) override;
 
     // Messages to be sent.
     RefPtr<WebCore::ImageBuffer> createImageBuffer(const WebCore::FloatSize&, WebCore::RenderingMode, WebCore::RenderingPurpose, float resolutionScale, const WebCore::DestinationColorSpace&, WebCore::PixelFormat, bool avoidBackendSizeCheck = false);
@@ -135,12 +136,6 @@ public:
     RenderingUpdateID renderingUpdateID() const { return m_renderingUpdateID; }
     unsigned delayedRenderingUpdateCount() const { return m_renderingUpdateID - m_didRenderingUpdateID; }
 
-    enum class DidReceiveBackendCreationResult : bool {
-        ReceivedAnyResponse,
-        TimeoutOrIPCFailure
-    };
-    DidReceiveBackendCreationResult waitForDidCreateImageBufferBackend();
-
     RenderingBackendIdentifier renderingBackendIdentifier() const;
 
     RenderingBackendIdentifier ensureBackendCreated();
@@ -182,6 +177,9 @@ private:
     void didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName) final { }
     void disconnectGPUProcess();
     void ensureGPUProcessConnection();
+
+    bool dispatchMessage(IPC::Connection&, IPC::Decoder&);
+    bool dispatchSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&);
 
     // Returns std::nullopt if no update is needed or allocation failed.
     // Returns handle if that should be sent to the receiver process.
