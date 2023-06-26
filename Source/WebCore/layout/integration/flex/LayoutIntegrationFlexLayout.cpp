@@ -129,7 +129,7 @@ void FlexLayout::updateStyle(const RenderBlock&, const RenderStyle&)
 std::pair<LayoutUnit, LayoutUnit> FlexLayout::computeIntrinsicWidthConstraints()
 {
     auto flexFormattingContext = Layout::FlexFormattingContext { flexBox(), m_flexFormattingState };
-    auto constraints = flexFormattingContext.computedIntrinsicWidthConstraintsForIntegration();
+    auto constraints = flexFormattingContext.computedIntrinsicWidthConstraints();
 
     return { constraints.minimum, constraints.maximum };
 }
@@ -156,7 +156,7 @@ void FlexLayout::layout()
     auto [availableVerticalSpace, minimumVerticalSpace] = verticalSpaceForFlexItems();
     auto constraints = Layout::ConstraintsForFlexContent { { horizontalConstraints, rootGeometry.contentBoxTop() }, availableVerticalSpace, minimumVerticalSpace };
     auto flexFormattingContext = Layout::FlexFormattingContext { flexBox(), m_flexFormattingState };
-    flexFormattingContext.layoutInFlowContentForIntegration(constraints);
+    flexFormattingContext.layout(constraints);
 
     updateRenderers();
 

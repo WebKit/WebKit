@@ -389,16 +389,6 @@ FloatingContext::Constraints InlineFormattingGeometry::floatConstraintsForLine(I
     return floatingContext.constraints(logicalTopCandidate, logicalBottomCandidate, FloatingContext::MayBeAboveLastFloat::Yes);
 }
 
-void InlineFormattingGeometry::adjustMarginStartForListMarker(const ElementBox& listMarkerBox, LayoutUnit nestedListMarkerMarginStart, InlineLayoutUnit rootInlineBoxOffset) const
-{
-    if (!nestedListMarkerMarginStart && !rootInlineBoxOffset)
-        return;
-    auto& listMarkerGeometry = const_cast<InlineFormattingState&>(formattingContext().formattingState()).boxGeometry(listMarkerBox);
-    // Make sure that the line content does not get pulled in to logical left direction due to
-    // the large negative margin (i.e. this ensures that logical left of the list content stays at the line start)
-    listMarkerGeometry.setHorizontalMargin({ listMarkerGeometry.marginStart() + nestedListMarkerMarginStart - LayoutUnit { rootInlineBoxOffset }, listMarkerGeometry.marginEnd() - nestedListMarkerMarginStart + LayoutUnit { rootInlineBoxOffset } });
-}
-
 InlineLayoutUnit InlineFormattingGeometry::horizontalAlignmentOffset(InlineLayoutUnit horizontalAvailableSpace, IsLastLineOrAfterLineBreak isLastLineOrAfterLineBreak, std::optional<TextDirection> inlineBaseDirectionOverride) const
 {
     if (horizontalAvailableSpace <= 0)

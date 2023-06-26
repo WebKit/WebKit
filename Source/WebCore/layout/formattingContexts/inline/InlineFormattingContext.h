@@ -59,34 +59,26 @@ class InlineFormattingContext final : public FormattingContext {
 public:
     InlineFormattingContext(const ElementBox& formattingContextRoot, InlineFormattingState&, const InlineDamage* = nullptr);
 
-    void layoutInFlowContent(const ConstraintsForInFlowContent&) override;
+    InlineLayoutResult layoutInFlowAndFloatContent(const ConstraintsForInlineContent&, InlineLayoutState&);
+    void layoutOutOfFlowContent(const ConstraintsForInlineContent&, InlineLayoutState&, const InlineDisplay::Content&);
     IntrinsicWidthConstraints computedIntrinsicWidthConstraints() override;
-    LayoutUnit usedContentHeight() const override;
 
-    const InlineFormattingState& formattingState() const { return downcast<InlineFormattingState>(FormattingContext::formattingState()); }
-    InlineFormattingState& formattingState() { return downcast<InlineFormattingState>(FormattingContext::formattingState()); }
     const InlineFormattingGeometry& formattingGeometry() const final { return m_inlineFormattingGeometry; }
     const InlineFormattingQuirks& formattingQuirks() const final { return m_inlineFormattingQuirks; }
-
-    InlineLayoutResult layoutInFlowAndFloatContentForIntegration(const ConstraintsForInlineContent&, InlineLayoutState&);
-    void layoutOutOfFlowContentForIntegration(const ConstraintsForInlineContent&, InlineLayoutState&, const InlineDisplay::Content&);
-    IntrinsicWidthConstraints computedIntrinsicWidthConstraintsForIntegration();
+    const InlineFormattingState& formattingState() const { return downcast<InlineFormattingState>(FormattingContext::formattingState()); }
 
 private:
     InlineLayoutResult lineLayout(const InlineItems&, InlineItemRange, std::optional<PreviousLine>, const ConstraintsForInlineContent&, InlineLayoutState&);
     void layoutFloatContentOnly(const ConstraintsForInlineContent&, FloatingState&);
     void computeStaticPositionForOutOfFlowContent(const FormattingState::OutOfFlowBoxList&, const ConstraintsForInFlowContent&, const InlineDisplay::Content&, const FloatingState&);
 
-    void computeIntrinsicWidthForFormattingRoot(const Box&);
     InlineLayoutUnit computedIntrinsicWidthForConstraint(IntrinsicWidthMode) const;
-
-    void computeHorizontalMargin(const Box&, const HorizontalConstraints&);
-    void computeHeightAndMargin(const Box&, const HorizontalConstraints&);
-    void computeWidthAndMargin(const Box&, const HorizontalConstraints&);
 
     void collectContentIfNeeded();
     InlineRect createDisplayContentForLine(size_t lineIndex, const LineBuilder::LayoutResult&, const ConstraintsForInlineContent&, const InlineLayoutState&, InlineDisplay::Content&);
     void resetGeometryForClampedContent(const InlineItemRange& needsDisplayContentRange, const LineBuilder::SuspendedFloatList& suspendedFloats, LayoutPoint topleft);
+
+    InlineFormattingState& formattingState() { return downcast<InlineFormattingState>(FormattingContext::formattingState()); }
 
     const InlineDamage* m_lineDamage { nullptr };
     const InlineFormattingGeometry m_inlineFormattingGeometry;

@@ -79,7 +79,6 @@ private:
     const ElementBox& root() const { return formattingContext().root(); }
     const RenderStyle& rootStyle() const { return m_lineIndex ? root().style() : root().firstLineStyle(); }
     const InlineFormattingContext& formattingContext() const { return m_formattingContext; }
-    const InlineFormattingGeometry& formattingGeometry() const { return formattingContext().formattingGeometry(); }
     InlineFormattingState& formattingState() const { return m_formattingState; } 
 
     const InlineFormattingContext& m_formattingContext;
