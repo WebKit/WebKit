@@ -1,0 +1,11 @@
+
+FAIL cookieStore.set with __Secure- name on secure origin promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: cookieStore"
+FAIL cookieStore.set of expired __Secure- cookie name on secure origin promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: cookieStore"
+FAIL cookieStore.delete with __Secure- name on secure origin promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: cookieStore"
+FAIL cookieStore.set with __Host- name on secure origin promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: cookieStore"
+FAIL cookieStore.set of expired __Host- cookie name on secure origin promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: cookieStore"
+FAIL cookieStore.delete with __Host- name on secure origin promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: cookieStore"
+FAIL cookieStore.set with __Host- prefix and a domain option promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: cookieStore"
+FAIL cookieStore.set with __Host- prefix a path option promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: cookieStore"
+FAIL cookieStore.set with malformed name. assert_equals: cookieStore thrown an incorrect exception - expected "TypeError" but got "ReferenceError"
+

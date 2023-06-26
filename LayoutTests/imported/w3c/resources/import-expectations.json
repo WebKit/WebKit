@@ -90,6 +90,7 @@
     "web-platform-tests/console": "import",
     "web-platform-tests/content-security-policy": "import",
     "web-platform-tests/content-security-policy/wasm-unsafe-eval": "import",
+    "web-platform-tests/cookie-store": "import",
     "web-platform-tests/cookies": "import",
     "web-platform-tests/cookies/resources": "import",
     "web-platform-tests/cookies/secure": "import",

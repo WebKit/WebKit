@@ -1,0 +1,3 @@
+
+FAIL cookieStore fires change event for cookie deleted by cookieStore.delete() promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: cookieStore"
+

@@ -1,0 +1,54 @@
+
+FAIL idl_test setup promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'navigator.serviceWorker.getRegistration')"
+PASS idl_test validation
+PASS Partial interface ServiceWorkerRegistration: original interface defined
+PASS Partial interface ServiceWorkerRegistration: valid exposure set
+PASS Partial interface ServiceWorkerRegistration: member names are unique
+PASS Partial interface Window: original interface defined
+PASS Partial interface Window: member names are unique
+PASS Partial interface ServiceWorkerGlobalScope: original interface defined
+PASS Partial interface ServiceWorkerGlobalScope: member names are unique
+PASS Partial interface Window[2]: member names are unique
+PASS Window includes GlobalEventHandlers: member names are unique
+PASS Window includes WindowEventHandlers: member names are unique
+PASS Window includes WindowOrWorkerGlobalScope: member names are unique
+PASS WorkerGlobalScope includes WindowOrWorkerGlobalScope: member names are unique
+PASS Window includes AnimationFrameProvider: member names are unique
+PASS Window includes WindowSessionStorage: member names are unique
+PASS Window includes WindowLocalStorage: member names are unique
+FAIL CookieStore interface: existence and properties of interface object assert_own_property: self does not have own property "CookieStore" expected property "CookieStore" missing
+FAIL CookieStore interface object length assert_own_property: self does not have own property "CookieStore" expected property "CookieStore" missing
+FAIL CookieStore interface object name assert_own_property: self does not have own property "CookieStore" expected property "CookieStore" missing
+FAIL CookieStore interface: existence and properties of interface prototype object assert_own_property: self does not have own property "CookieStore" expected property "CookieStore" missing
+FAIL CookieStore interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "CookieStore" expected property "CookieStore" missing
+FAIL CookieStore interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "CookieStore" expected property "CookieStore" missing
+FAIL CookieStore interface: operation get(USVString) assert_own_property: self does not have own property "CookieStore" expected property "CookieStore" missing
+FAIL CookieStore interface: operation get(optional CookieStoreGetOptions) assert_own_property: self does not have own property "CookieStore" expected property "CookieStore" missing
+FAIL CookieStore interface: operation getAll(USVString) assert_own_property: self does not have own property "CookieStore" expected property "CookieStore" missing
+FAIL CookieStore interface: operation getAll(optional CookieStoreGetOptions) assert_own_property: self does not have own property "CookieStore" expected property "CookieStore" missing
+FAIL CookieStore interface: operation set(USVString, USVString) assert_own_property: self does not have own property "CookieStore" expected property "CookieStore" missing
+FAIL CookieStore interface: operation set(CookieInit) assert_own_property: self does not have own property "CookieStore" expected property "CookieStore" missing
+FAIL CookieStore interface: operation delete(USVString) assert_own_property: self does not have own property "CookieStore" expected property "CookieStore" missing
+FAIL CookieStore interface: operation delete(CookieStoreDeleteOptions) assert_own_property: self does not have own property "CookieStore" expected property "CookieStore" missing
+FAIL CookieStore interface: attribute onchange assert_own_property: self does not have own property "CookieStore" expected property "CookieStore" missing
+FAIL CookieStoreManager interface: existence and properties of interface object assert_own_property: self does not have own property "CookieStoreManager" expected property "CookieStoreManager" missing
+FAIL CookieStoreManager interface object length assert_own_property: self does not have own property "CookieStoreManager" expected property "CookieStoreManager" missing
+FAIL CookieStoreManager interface object name assert_own_property: self does not have own property "CookieStoreManager" expected property "CookieStoreManager" missing
+FAIL CookieStoreManager interface: existence and properties of interface prototype object assert_own_property: self does not have own property "CookieStoreManager" expected property "CookieStoreManager" missing
+FAIL CookieStoreManager interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "CookieStoreManager" expected property "CookieStoreManager" missing
+FAIL CookieStoreManager interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "CookieStoreManager" expected property "CookieStoreManager" missing
+FAIL CookieStoreManager interface: operation subscribe(sequence<CookieStoreGetOptions>) assert_own_property: self does not have own property "CookieStoreManager" expected property "CookieStoreManager" missing
+FAIL CookieStoreManager interface: operation getSubscriptions() assert_own_property: self does not have own property "CookieStoreManager" expected property "CookieStoreManager" missing
+FAIL CookieStoreManager interface: operation unsubscribe(sequence<CookieStoreGetOptions>) assert_own_property: self does not have own property "CookieStoreManager" expected property "CookieStoreManager" missing
+FAIL CookieChangeEvent interface: existence and properties of interface object assert_own_property: self does not have own property "CookieChangeEvent" expected property "CookieChangeEvent" missing
+FAIL CookieChangeEvent interface object length assert_own_property: self does not have own property "CookieChangeEvent" expected property "CookieChangeEvent" missing
+FAIL CookieChangeEvent interface object name assert_own_property: self does not have own property "CookieChangeEvent" expected property "CookieChangeEvent" missing
+FAIL CookieChangeEvent interface: existence and properties of interface prototype object assert_own_property: self does not have own property "CookieChangeEvent" expected property "CookieChangeEvent" missing
+FAIL CookieChangeEvent interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "CookieChangeEvent" expected property "CookieChangeEvent" missing
+FAIL CookieChangeEvent interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "CookieChangeEvent" expected property "CookieChangeEvent" missing
+FAIL CookieChangeEvent interface: attribute changed assert_own_property: self does not have own property "CookieChangeEvent" expected property "CookieChangeEvent" missing
+FAIL CookieChangeEvent interface: attribute deleted assert_own_property: self does not have own property "CookieChangeEvent" expected property "CookieChangeEvent" missing
+PASS ExtendableCookieChangeEvent interface: existence and properties of interface object
+FAIL ServiceWorkerRegistration interface: attribute cookies assert_own_property: self does not have own property "ServiceWorkerRegistration" expected property "ServiceWorkerRegistration" missing
+FAIL Window interface: attribute cookieStore assert_own_property: The global object must have a property "cookieStore" expected property "cookieStore" missing
+

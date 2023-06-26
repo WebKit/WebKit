@@ -1,0 +1,6 @@
+CONSOLE MESSAGE: Unhandled Promise Rejection: ReferenceError: Can't find variable: cookieStore
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT cookieStore.get() in ServiceWorker reads cookie set in cross-origin frame Test timed out
+

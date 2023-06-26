@@ -1,0 +1,4 @@
+
+FAIL cookieStore.get() sees cookieStore.set() in frame promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'frameCookieStore.get')"
+FAIL cookieStore.get() in frame sees cookieStore.set() promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'frameCookieStore.get')"
+

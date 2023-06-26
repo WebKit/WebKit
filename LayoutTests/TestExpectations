@@ -516,6 +516,7 @@ imported/w3c/web-platform-tests/x-frame-options/get-decode-split.html [ DumpJSCo
 imported/w3c/web-platform-tests/x-frame-options/invalid.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/x-frame-options/multiple.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/x-frame-options/sameorigin.sub.html [ DumpJSConsoleLogInStdErr ]
+imported/w3c/web-platform-tests/cookie-store/cookieStore_event_basic.https.window.html [ DumpJSConsoleLogInStdErr ]
 
 # Timing out tests.
 imported/w3c/web-platform-tests/background-fetch/fetch-uploads.https.window.html [ Skip ]

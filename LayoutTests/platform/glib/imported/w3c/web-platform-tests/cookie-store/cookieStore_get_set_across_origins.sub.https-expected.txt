@@ -1,0 +1,7 @@
+CONSOLE MESSAGE: Unhandled Promise Rejection: ReferenceError: Can't find variable: cookieStore
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT cookieStore.get() sees cookieStore.set() in cross-origin frame Test timed out
+NOTRUN cookieStore.get() in cross-origin frame sees cookieStore.set()
+

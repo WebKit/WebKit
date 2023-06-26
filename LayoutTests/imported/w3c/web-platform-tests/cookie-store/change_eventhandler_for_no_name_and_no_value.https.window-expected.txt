@@ -1,0 +1,3 @@
+
+FAIL Verify behavior of no-name and no-value cookies. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: cookieStore"
+
