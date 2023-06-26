@@ -458,10 +458,11 @@ class Tracker(GenericTracker):
             raise ValueError("'{}' is not a valid reproducibility argument".format(classification))
 
         try:
+            name = '{} {}'.format(project, component) if component else project
             response = self.client.create_radar(dict(
                 title=title,
                 description=description,
-                component=dict(name='{} {}'.format(project, component), version=version),
+                component=dict(name=name, version=version),
                 classification=classification,
                 reproducible=reproducible,
             ))
@@ -478,3 +479,34 @@ class Tracker(GenericTracker):
     def cc_radar(self, issue, block=False, timeout=None, radar=None):
         # cc-ing radar is a no-op for radar
         return issue
+
+    def clone(
+        self, issue, reason,
+        project=None, component=None, version=None,
+        assign=True,
+    ):
+        if not reason:
+            raise ValueError('Reason must be provided for a clone')
+        if (not self.client or not self.library) and member:
+            sys.stderr.write('radarclient inaccessible on this machine\n')
+            return None
+
+        project = project or issue.project
+        component = component or issue.component
+        version = version or issue.version
+
+        try:
+            name = '{} {}'.format(project, component) if component else project
+            clone = self.client.clone_radar(
+                issue.id, reason_text=reason,
+                component=dict(name=name.strip(), version=version),
+            )
+        except self.library.exceptions.UnsuccessfulResponseException as e:
+            sys.stderr.write('Failed to clone {}:\n'.format(issue))
+            sys.stderr.write('{}\n'.format(e))
+            return None
+
+        result = self.issue(clone.id)
+        if assign:
+            result.assign(self.me())
+        return result

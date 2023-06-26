@@ -30,6 +30,7 @@ from .branch import Branch
 from .canonicalize import Canonicalize
 from .cherry_pick import CherryPick
 from .clean import Clean, DeletePRBranches
+from .clone import Clone
 from .command import Command
 from .commit import Commit
 from .squash import Squash
@@ -91,7 +92,7 @@ def main(
 
     programs = [
         Blame, Branch, Canonicalize, Checkout,
-        Clean, Find, Info, Land, Log, Pull,
+        Clean, Clone, Find, Info, Land, Log, Pull,
         PullRequest, Revert, Setup, InstallGitLFS,
         Credentials, Commit, DeletePRBranches, Squash,
         Pickable, CherryPick, Trace, Track, Show, Publish,
