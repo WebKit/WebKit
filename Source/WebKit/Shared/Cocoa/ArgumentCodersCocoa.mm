@@ -174,14 +174,7 @@ static constexpr NSString *baseURLKey = @"WK.baseURL";
 - (void)encodeWithCoder:(NSCoder *)coder
 {
     RELEASE_ASSERT(m_wrappedURL);
-    auto baseURL = m_wrappedURL.get().baseURL;
-    BOOL hasBaseURL = !!baseURL;
-
-    [coder encodeValueOfObjCType:"c" at:&hasBaseURL];
-    if (hasBaseURL)
-        [coder encodeObject:baseURL forKey:baseURLKey];
-
-    auto bytes = bytesAsVector(bridge_cast(m_wrappedURL.get()));
+    auto bytes = bytesAsVector(bridge_cast([m_wrappedURL.get() absoluteURL]));
     [coder encodeBytes:bytes.data() length:bytes.size()];
 }
 
@@ -191,16 +184,9 @@ static constexpr NSString *baseURLKey = @"WK.baseURL";
     if (!selfPtr)
         return nil;
 
-    BOOL hasBaseURL;
-    [coder decodeValueOfObjCType:"c" at:&hasBaseURL size:sizeof(hasBaseURL)];
-
-    RetainPtr<NSURL> baseURL;
-    if (hasBaseURL)
-        baseURL = (NSURL *)[coder decodeObjectOfClass:NSURL.class forKey:baseURLKey];
-
     NSUInteger length;
     if (auto bytes = (UInt8 *)[coder decodeBytesWithReturnedLength:&length]) {
-        m_wrappedURL = bridge_cast(adoptCF(CFURLCreateAbsoluteURLWithBytes(nullptr, bytes, length, kCFStringEncodingUTF8, bridge_cast(baseURL.get()), true)));
+        m_wrappedURL = bridge_cast(adoptCF(CFURLCreateAbsoluteURLWithBytes(nullptr, bytes, length, kCFStringEncodingUTF8, nullptr, true)));
         if (!m_wrappedURL)
             LOG_ERROR("Failed to decode NSURL due to invalid encoding of length %d. Substituting a blank URL", length);
     }
