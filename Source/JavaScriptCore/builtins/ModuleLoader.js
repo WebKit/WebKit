@@ -47,7 +47,7 @@ function newRegistryEntry(key)
 {
     // https://whatwg.github.io/loader/#registry
     //
-    // Each registry entry becomes one of the 5 states.
+    // Each registry entry becomes one of the 4 states.
     // 1. Fetch
     //     Ready to fetch (or now fetching) the resource of this module.
     //     Typically, we fetch the source code over the network or from the file system.
@@ -62,21 +62,14 @@ function newRegistryEntry(key)
     //     b. If the status is Instantiate and there is the entry.fetch promise, the entry is just instantiating
     //        the module record.
     //
-    // 3. Satisfy
-    //     Ready to request the dependent modules (or now requesting & resolving).
-    //     Without this state, the current draft causes infinite recursion when there is circular dependency.
-    //     a. If the status is Satisfy and there is no entry.satisfy promise, the entry is ready to resolve the dependencies.
-    //     b. If the status is Satisfy and there is the entry.satisfy promise, the entry is just resolving
-    //        the dependencies.
-    //
-    // 4. Link
+    // 3. Link
     //     Ready to link the module with the other modules.
     //     Linking means that the module imports and exports the bindings from/to the other modules.
     //
-    // 5. Ready
+    // 4. Ready
     //     The module is linked, so the module is ready to be executed.
     //
-    // Each registry entry has the 4 promises; "fetch", "instantiate" and "satisfy".
+    // Each registry entry has the 2 promises; "fetch" and "instantiate".
     // They are assigned when starting the each phase. And they are fulfilled when the each phase is completed.
     //
     // In the current module draft, linking will be performed after the whole modules are instantiated and the dependencies are resolved.
@@ -93,7 +86,6 @@ function newRegistryEntry(key)
         state: @ModuleFetch,
         fetch: @undefined,
         instantiate: @undefined,
-        satisfy: @undefined,
         dependencies: [], // To keep the module order, we store the module keys in the array.
         module: @undefined, // JSModuleRecord
         linkError: @undefined,
@@ -219,27 +211,20 @@ function requestInstantiate(entry, parameters, fetcher)
         }
         entry.dependencies = dependencies;
         entry.module = moduleRecord;
-        @setStateToMax(entry, @ModuleSatisfy);
         return entry;
     })();
     return instantiatePromise;
 }
 
 @visibility=PrivateRecursive
-function requestSatisfy(entry, parameters, fetcher, visited)
+function requestInstantiateAll(entry, parameters, fetcher, visited)
 {
     // https://html.spec.whatwg.org/#internal-module-script-graph-fetching-procedure
 
     "use strict";
 
-    if (entry.satisfy)
-        return entry.satisfy;
-
     visited.@add(entry);
-    var satisfyPromise = this.requestInstantiate(entry, parameters, fetcher).then((entry) => {
-        if (entry.satisfy)
-            return entry.satisfy;
-
+    return this.requestInstantiate(entry, parameters, fetcher).then((entry) => {
         var depLoads = this.requestedModuleParameters(entry.module);
         for (var i = 0, length = entry.dependencies.length; i < length; ++i) {
             var parameters = depLoads[i];
@@ -252,28 +237,23 @@ function requestSatisfy(entry, parameters, fetcher, visited)
             // we need to wait for the instantiation for the dependent module.
             // For example, reaching here, the module is starting resolving the dependencies.
             // But the module may or may not reach the instantiation phase in the loader's pipeline.
-            // If we wait for the Satisfy for this module, it construct the circular promise chain and
+            // If we wait for this module, it construct the circular promise chain and
             // rejected by the Promises runtime. Since only we need is the instantiated module, instead of waiting
-            // the Satisfy for this module, we just wait Instantiate for this.
+            // for this module, we just wait Instantiate for this.
             if (visited.@has(depEntry))
                 promise = this.requestInstantiate(depEntry, parameters, fetcher);
             else {
                 // Currently, module loader do not pass any information for non-top-level module fetching.
-                promise = this.requestSatisfy(depEntry, parameters, fetcher, visited);
+                promise = this.requestInstantiateAll(depEntry, parameters, fetcher, visited);
             }
             @putByValDirect(depLoads, i, promise);
         }
 
         return @InternalPromise.internalAll(depLoads).then((entries) => {
-            if (entry.satisfy)
-                return entry;
             @setStateToMax(entry, @ModuleLink);
-            entry.satisfy = satisfyPromise;
             return entry;
         });
     });
-
-    return satisfyPromise;
 }
 
 // Linking semantics.
@@ -287,6 +267,8 @@ function link(entry, fetcher)
 
     if (!entry.linkSucceeded)
         throw entry.linkError;
+    if (entry.state < @ModuleLink)
+        @throwTypeError("Requested module is not instantiated yet.");
     if (entry.state === @ModuleReady)
         return;
     @setStateToMax(entry, @ModuleReady);
@@ -385,7 +367,7 @@ async function loadModule(key, parameters, fetcher)
     var importMap = @importMapStatus();
     if (importMap)
         await importMap;
-    var entry = await this.requestSatisfy(this.ensureRegistered(key), parameters, fetcher, new @Set);
+    var entry = await this.requestInstantiateAll(this.ensureRegistered(key), parameters, fetcher, new @Set);
     return entry.key;
 }
 
@@ -395,9 +377,6 @@ function linkAndEvaluateModule(key, fetcher)
     "use strict";
 
     var entry = this.ensureRegistered(key);
-    if (entry.state < @ModuleLink)
-        @throwTypeError("Requested module is not instantiated yet.");
-
     this.link(entry, fetcher);
     return this.moduleEvaluation(entry, fetcher);
 }
@@ -424,7 +403,7 @@ async function requestImportModule(moduleName, referrer, parameters, fetcher)
     if (importMap)
         await importMap;
     var key = this.resolve(moduleName, referrer, fetcher);
-    var entry = await this.requestSatisfy(this.ensureRegistered(key), parameters, fetcher, new @Set);
+    var entry = await this.requestInstantiateAll(this.ensureRegistered(key), parameters, fetcher, new @Set);
     await this.linkAndEvaluateModule(entry.key, fetcher);
     return this.getModuleNamespaceObject(entry.module);
 }

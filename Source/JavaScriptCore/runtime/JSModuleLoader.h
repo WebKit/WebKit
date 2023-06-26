@@ -50,7 +50,6 @@ public:
     enum Status {
         Fetch = 1,
         Instantiate,
-        Satisfy,
         Link,
         Ready,
     };

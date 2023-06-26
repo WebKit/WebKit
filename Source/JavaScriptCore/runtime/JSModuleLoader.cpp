@@ -89,7 +89,7 @@ void JSModuleLoader::finishCreation(JSGlobalObject* globalObject, VM& vm)
     JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().ensureRegisteredPublicName(), moduleLoaderEnsureRegisteredCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
     JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().requestFetchPublicName(), moduleLoaderRequestFetchCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
     JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().requestInstantiatePublicName(), moduleLoaderRequestInstantiateCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
-    JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().requestSatisfyPublicName(), moduleLoaderRequestSatisfyCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
+    JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().requestInstantiateAllPublicName(), moduleLoaderRequestInstantiateAllCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
     JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().linkPublicName(), moduleLoaderLinkCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
     JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().moduleEvaluationPublicName(), moduleLoaderModuleEvaluationCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
     JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION(vm.propertyNames->builtinNames().asyncModuleEvaluationPublicName(), moduleLoaderAsyncModuleEvaluationCodeGenerator, static_cast<unsigned>(PropertyAttribute::DontEnum));
