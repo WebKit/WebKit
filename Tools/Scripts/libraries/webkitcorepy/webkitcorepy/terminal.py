@@ -29,7 +29,7 @@ import webbrowser
 if not sys.platform.startswith('win'):
     import readline
 
-from webkitcorepy import StringIO, run, Timer
+from webkitcorepy import StringIO, run, Timer, run
 
 if sys.version_info > (3, 0):
     file = io.IOBase
@@ -60,6 +60,16 @@ class Terminal(object):
         if file:
             file.write('\a')
             file.flush()
+
+    @classmethod
+    def size(cls):
+        cmd = run(['stty', 'size'], capture_output=True, encoding='utf-8')
+        if cmd.returncode:
+            return None, None
+        try:
+            return [int(value) for value in cmd.stdout.strip().split(' ')]
+        except ValueError:
+            return None, None
 
     @classmethod
     def choose(cls, prompt, options=None, default=None, strict=False, numbered=False, alert_after=RING_INTERVAL):
