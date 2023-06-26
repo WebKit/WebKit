@@ -43,7 +43,11 @@ namespace WebCore {
 
 static bool isFilePasteboardType(const String& type)
 {
-    return [legacyFilenamesPasteboardType() isEqualToString:type] || [legacyFilesPromisePasteboardType() isEqualToString:type];
+    return [legacyFilenamesPasteboardType() isEqualToString:type]
+        || [legacyFilesPromisePasteboardType() isEqualToString:type]
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+        || [(NSString *)kUTTypeFileURL isEqualToString:type];
+ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 static bool canWritePasteboardType(const String& type)
