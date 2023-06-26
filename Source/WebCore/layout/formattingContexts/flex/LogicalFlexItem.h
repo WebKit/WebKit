@@ -68,6 +68,7 @@ public:
     bool hasAvailableSpaceDependentFlexBasis() const { return false; }
     bool hasAspectRatio() const { return m_hasAspectRatio; }
     bool isOrhogonal() const { return m_isOrhogonal; }
+    bool isContentBoxBased() const { return style().boxSizing() == BoxSizing::ContentBox; }
 
     const ElementBox& layoutBox() const { return *m_layoutBox; }
     const RenderStyle& style() const { return layoutBox().style(); }

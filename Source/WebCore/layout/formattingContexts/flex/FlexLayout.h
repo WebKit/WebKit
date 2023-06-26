@@ -73,7 +73,7 @@ private:
     LayoutUnit flexContainerMainSize(const LogicalConstraints::AxisGeometry& mainAxis) const;
     LineRanges computeFlexLines(const LogicalFlexItems&, LayoutUnit flexContainerMainSize, const FlexBaseAndHypotheticalMainSizeList&) const;
     SizeList computeMainSizeForFlexItems(const LogicalFlexItems&, const LineRanges&, LayoutUnit flexContainerMainSize, const FlexBaseAndHypotheticalMainSizeList&) const;
-    SizeList hypotheticalCrossSizeForFlexItems(const LogicalFlexItems&) const;
+    SizeList hypotheticalCrossSizeForFlexItems(const LogicalFlexItems&, const SizeList& flexItemsMainSizeList) const;
     LinesCrossSizeList crossSizeForFlexLines(const LineRanges&, const LogicalConstraints::AxisGeometry& crossAxis, const LogicalFlexItems&, const SizeList& flexItemsHypotheticalCrossSizeList) const;
     void stretchFlexLines(LinesCrossSizeList& flexLinesCrossSizeList, size_t numberOfLines, const LogicalConstraints::AxisGeometry& crossAxis) const;
     bool collapseNonVisibleFlexItems();
