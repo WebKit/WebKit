@@ -26,8 +26,9 @@ import math
 import os
 import platform
 import re
-import subprocess
 import shutil
+import ssl
+import subprocess
 import sys
 import tarfile
 import tempfile
@@ -455,10 +456,10 @@ class AutoInstall(object):
     @classmethod
     def _request(cls, url, ca_cert_path=None):
         if sys.platform.startswith('linux'):
-            cafile = None
-        else:
-            cafile = ca_cert_path or cls.ca_cert_path
-        return urlopen(url, timeout=cls.timeout, cafile=cafile)
+            return urlopen(url, timeout=cls.timeout)
+
+        context = ssl.create_default_context(cafile=ca_cert_path or cls.ca_cert_path)
+        return urlopen(url, timeout=cls.timeout, context=context)
 
     @classmethod
     def enabled(cls):
