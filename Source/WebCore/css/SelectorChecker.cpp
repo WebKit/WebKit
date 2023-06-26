@@ -627,6 +627,7 @@ static bool canMatchHoverOrActiveInQuirksMode(const SelectorChecker::LocalContex
         case CSSSelector::Match::PagePseudoClass:
         case CSSSelector::Match::PseudoElement:
             return true;
+        case CSSSelector::Match::NestingParent:
         case CSSSelector::Match::Unknown:
             ASSERT_NOT_REACHED();
             break;
@@ -724,8 +725,6 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
         // Normal element pseudo class checking.
         switch (selector.pseudoClassType()) {
             // Pseudo classes:
-        case CSSSelector::PseudoClassNestingParent:
-            // This pseudo selector should have been replaced earlier.
         case CSSSelector::PseudoClassNot:
             ASSERT_NOT_REACHED();
             break; // Already handled up above.

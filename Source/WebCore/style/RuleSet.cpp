@@ -215,6 +215,7 @@ void RuleSet::addRule(RuleData&& ruleData, CascadeLayerIdentifier cascadeLayerId
             }
             break;
         case CSSSelector::Match::Unknown:
+        case CSSSelector::Match::NestingParent:
         case CSSSelector::Match::PagePseudoClass:
             break;
         }

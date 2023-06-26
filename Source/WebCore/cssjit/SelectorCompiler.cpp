@@ -1386,7 +1386,6 @@ static inline FunctionType addPseudoClassType(const CSSSelector& selector, Selec
         }
     case CSSSelector::PseudoClassHost:
         return FunctionType::CannotCompile;
-    case CSSSelector::PseudoClassNestingParent: // Should have already been replaced by the actual parent selector at this point.
     case CSSSelector::PseudoClassUnknown:
         ASSERT_NOT_REACHED();
         return FunctionType::CannotMatchAnything;
@@ -1540,6 +1539,7 @@ static FunctionType constructFragmentsInternal(const CSSSelector* rootSelector, 
             fragment->onlyMatchesLinksInQuirksMode = false;
             // Pseudo page class are only relevant for style resolution, they are ignored for matching.
             break;
+        case CSSSelector::Match::NestingParent:
         case CSSSelector::Match::Unknown:
             ASSERT_NOT_REACHED();
             return FunctionType::CannotMatchAnything;

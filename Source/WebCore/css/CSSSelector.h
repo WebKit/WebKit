@@ -81,7 +81,8 @@ struct PossiblyQuotedIdentifier {
             Contain, // css3: E[foo*="bar"]
             Begin, // css3: E[foo^="bar"]
             End, // css3: E[foo$="bar"]
-            PagePseudoClass
+            PagePseudoClass,
+            NestingParent // &
         };
 
         enum class RelationType : uint8_t {
@@ -191,8 +192,7 @@ struct PossiblyQuotedIdentifier {
             PseudoClassModal,
             PseudoClassPopoverOpen,
             PseudoClassUserInvalid,
-            PseudoClassUserValid,
-            PseudoClassNestingParent,
+            PseudoClassUserValid
         };
 
         enum PseudoElementType {

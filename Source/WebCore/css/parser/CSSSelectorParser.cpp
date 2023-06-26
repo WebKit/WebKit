@@ -663,8 +663,7 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumeNesting(CSSParserTo
     range.consume();
 
     auto selector = makeUnique<CSSParserSelector>();
-    selector->setMatch(CSSSelector::Match::PseudoClass);
-    selector->setPseudoClassType(CSSSelector::PseudoClassNestingParent);
+    selector->setMatch(CSSSelector::Match::NestingParent);
     
     return selector;
 }

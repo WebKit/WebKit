@@ -140,6 +140,7 @@ SelectorSpecificity simpleSelectorSpecificity(const CSSSelector& simpleSelector)
     switch (simpleSelector.match()) {
     case CSSSelector::Match::Id:
         return SelectorSpecificityIncrement::ClassA;
+    case CSSSelector::Match::NestingParent:
     case CSSSelector::Match::PagePseudoClass:
         break;
     case CSSSelector::Match::PseudoClass:
@@ -157,9 +158,6 @@ SelectorSpecificity simpleSelectorSpecificity(const CSSSelector& simpleSelector)
             return SelectorSpecificityIncrement::ClassB + maxSpecificity(simpleSelector.selectorList());
         case CSSSelector::PseudoClassRelativeScope:
             return 0;
-        case CSSSelector::PseudoClassNestingParent:
-            ASSERT_NOT_REACHED();
-            return { };
         default:
             return SelectorSpecificityIncrement::ClassB;
         }
@@ -399,7 +397,9 @@ String CSSSelector::selectorText(StringView separator, StringView rightSide) con
         if (cs->match() == Match::Id) {
             builder.append('#');
             serializeIdentifier(cs->serializingValue(), builder);
-        } else if (cs->match() == Match::Class) {
+        } else if (cs->match() == CSSSelector::Match::NestingParent) {
+            builder.append('&');
+        } else if (cs->match() == CSSSelector::Match::Class) {
             builder.append('.');
             serializeIdentifier(cs->serializingValue(), builder);
         } else if (cs->match() == Match::PseudoClass) {
@@ -630,9 +630,6 @@ String CSSSelector::selectorText(StringView separator, StringView rightSide) con
                 break;
             case CSSSelector::PseudoClassOptional:
                 builder.append(":optional");
-                break;
-            case CSSSelector::PseudoClassNestingParent:
-                builder.append('&');
                 break;
             case CSSSelector::PseudoClassIs: {
                 builder.append(":is(");
@@ -1004,9 +1001,9 @@ void CSSSelector::visitAllSimpleSelectors(auto& apply) const
 void CSSSelector::resolveNestingParentSelectors(const CSSSelectorList& parent)
 {
     auto replaceParentSelector = [&parent] (CSSSelector& selector) {
-        if (selector.match() == Match::PseudoClass && selector.pseudoClassType() == CSSSelector::PseudoClassNestingParent) {
-            selector.setMatch(Match::PseudoClass);
+        if (selector.match() == CSSSelector::Match::NestingParent) {
             // FIXME: Optimize cases where we can include the parent selector directly instead of wrapping it in a ":is" pseudo class.
+            selector.setMatch(Match::PseudoClass);
             selector.setPseudoClassType(PseudoClassType::PseudoClassIs);
             selector.setSelectorList(makeUnique<CSSSelectorList>(parent));
         }
@@ -1018,8 +1015,9 @@ void CSSSelector::resolveNestingParentSelectors(const CSSSelectorList& parent)
 void CSSSelector::replaceNestingParentByPseudoClassScope()
 {
     auto replaceParentSelector = [] (CSSSelector& selector) {
-        if (selector.match() == Match::PseudoClass && selector.pseudoClassType() == CSSSelector::PseudoClassNestingParent) {
+        if (selector.match() == CSSSelector::Match::NestingParent) {
             // Replace by :scope
+            selector.setMatch(Match::PseudoClass);
             selector.setPseudoClassType(PseudoClassType::PseudoClassScope);
         }
     };
@@ -1032,7 +1030,7 @@ bool CSSSelector::hasExplicitNestingParent() const
     bool result = false;
 
     auto checkForExplicitParent = [&result] (const CSSSelector& selector) {
-        if (selector.match() == Match::PseudoClass && selector.pseudoClassType() == CSSSelector::PseudoClassNestingParent)
+        if (selector.match() == CSSSelector::Match::NestingParent)
             result = true;
     };
 

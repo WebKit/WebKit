@@ -208,7 +208,7 @@ bool CSSSelectorList::hasOnlyNestingSelector() const
     if (singleSelector->tagHistory())
         return false;
 
-    return singleSelector->match() == CSSSelector::Match::PseudoClass && singleSelector->pseudoClassType() == CSSSelector::PseudoClassType::PseudoClassNestingParent;
+    return singleSelector->match() == CSSSelector::Match::NestingParent;
 }
 
 } // namespace WebCore
