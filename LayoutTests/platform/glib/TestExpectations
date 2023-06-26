@@ -282,9 +282,6 @@ imported/w3c/web-platform-tests/css/css-flexbox/select-element-zero-height-002.h
 webaudio/Panner/hrtf-database.html [ Timeout Pass ]
 crypto/subtle/ecdsa-import-compressed-spki-key-p384.html [ Skip ] # Timeout.
 
-# CSS backgrounds. Passing after WPT re-import in r277073.
-webkit.org/b/254943 imported/w3c/web-platform-tests/css/css-backgrounds/css3-border-image-repeat-repeat.html [ ImageOnlyFailure ]
-
 # Conic gradient. Marked as failure in root expectations
 webkit.org/b/225916 imported/w3c/web-platform-tests/css/css-images/conic-gradient-angle.html [ Pass ]
 
@@ -426,8 +423,6 @@ imported/w3c/web-platform-tests/css/filter-effects/effect-reference-displacement
 imported/w3c/web-platform-tests/css/filter-effects/effect-reference-local-url-with-base-001.html [ Pass ]
 imported/w3c/web-platform-tests/css/filter-effects/fecomposite-non-zero-inoffset-001.html [ Pass ]
 
-imported/w3c/web-platform-tests/css/motion/offset-path-ray-contain-004.html [ Pass ]
-
 imported/w3c/web-platform-tests/html/browsers/windows/iframe-cross-origin-print.sub.html [ Pass ]
 imported/w3c/web-platform-tests/html/browsers/windows/iframe-cross-origin-scaled-print.sub.html [ Pass ]
 
@@ -513,10 +508,6 @@ accessibility/visible-character-range-scrolling.html [ Skip ]
 accessibility/visible-character-range-width-changes.html [ Skip ]
 
 accessibility/display-contents/tree-and-treeitems.html [ Skip ]
-
-# Started failing after it was rewritten in https://bugs.webkit.org/show_bug.cgi?id=251175.
-# Test may need to be altered to accommodate glib-specific behavior?
-accessibility/element-reflection-ariadescribedby.html [ Timeout ]
 
 webkit.org/b/212805 accessibility/svg-text.html [ Failure ]
 
@@ -719,13 +710,8 @@ webkit.org/b/216853 css3/font-synthesis-small-caps.html [ ImageOnlyFailure ]
 webkit.org/b/221308 [ Debug ] fast/selectors/matches-backtracking.html [ Timeout ]
 webkit.org/b/221308 [ Debug ] fast/selectors/is-backtracking.html [ Timeout ]
 
-webkit.org/b/206409 imported/w3c/web-platform-tests/css/css-overflow/overflow-padding.html [ Failure ]
-
 webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/line-box-height-vlr-011.xht [ ImageOnlyFailure ]
 webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/line-box-height-vlr-013.xht [ ImageOnlyFailure ]
-
-webkit.org/b/223252 imported/w3c/web-platform-tests/css/css-contain/contain-size-grid-003.html [ Failure ]
-webkit.org/b/223252 imported/w3c/web-platform-tests/css/css-contain/contain-size-grid-004.html [ Failure ]
 
 webkit.org/b/229389 imported/w3c/web-platform-tests/css/css-text/white-space/control-chars-001.html [ ImageOnlyFailure ]
 webkit.org/b/229389 imported/w3c/web-platform-tests/css/css-text/white-space/control-chars-002.html [ ImageOnlyFailure ]
@@ -934,29 +920,23 @@ webkit.org/b/218372 fast/text/canvas-color-fonts/stroke-color-shadow-COLR.html [
 webkit.org/b/218372 fast/text/canvas-color-fonts/stroke-color-shadow-ctm-COLR.html [ ImageOnlyFailure ]
 webkit.org/b/218372 fast/text/canvas-color-fonts/stroke-gradient-COLR-3.html [ ImageOnlyFailure ]
 webkit.org/b/218372 fast/text/canvas-color-fonts/stroke-gradient-COLR-4.html [ ImageOnlyFailure ]
-webkit.org/b/218372 http/tests/canvas/color-fonts/ctm-sbix.html [ ImageOnlyFailure ]
 webkit.org/b/218372 http/tests/canvas/color-fonts/ctm-sbix-2.html [ ImageOnlyFailure ]
 webkit.org/b/218372 http/tests/canvas/color-fonts/ctm-sbix-3.html [ ImageOnlyFailure ]
 webkit.org/b/218372 http/tests/canvas/color-fonts/ctm-sbix-4.html [ ImageOnlyFailure ]
-webkit.org/b/218372 http/tests/canvas/color-fonts/fill-color-sbix.html [ ImageOnlyFailure ]
 webkit.org/b/218372 http/tests/canvas/color-fonts/fill-color-sbix-2.html [ ImageOnlyFailure ]
 webkit.org/b/218372 http/tests/canvas/color-fonts/fill-color-sbix-3.html [ ImageOnlyFailure ]
 webkit.org/b/218372 http/tests/canvas/color-fonts/fill-color-sbix-4.html [ ImageOnlyFailure ]
 webkit.org/b/218372 http/tests/canvas/color-fonts/fill-color-shadow-ctm-sbix.html [ ImageOnlyFailure ]
 webkit.org/b/218372 http/tests/canvas/color-fonts/fill-color-shadow-sbix.html [ ImageOnlyFailure ]
-webkit.org/b/218372 http/tests/canvas/color-fonts/fill-gradient-sbix.html [ ImageOnlyFailure ]
 webkit.org/b/218372 http/tests/canvas/color-fonts/fill-gradient-sbix-2.html [ ImageOnlyFailure ]
 webkit.org/b/218372 http/tests/canvas/color-fonts/fill-gradient-sbix-3.html [ ImageOnlyFailure ]
 webkit.org/b/218372 http/tests/canvas/color-fonts/fill-gradient-sbix-4.html [ ImageOnlyFailure ]
-webkit.org/b/218372 http/tests/canvas/color-fonts/linedash-sbix.html  [ ImageOnlyFailure ]
 webkit.org/b/218372 http/tests/canvas/color-fonts/stroke-color-sbix.html [ ImageOnlyFailure ]
 webkit.org/b/218372 http/tests/canvas/color-fonts/stroke-color-shadow-ctm-sbix.html [ ImageOnlyFailure ]
 webkit.org/b/218372 http/tests/canvas/color-fonts/stroke-color-shadow-sbix.html [ ImageOnlyFailure ]
-webkit.org/b/218372 http/tests/canvas/color-fonts/stroke-gradient-sbix.html [ ImageOnlyFailure ]
 webkit.org/b/218372 http/tests/canvas/color-fonts/stroke-gradient-sbix-2.html [ ImageOnlyFailure ]
 webkit.org/b/218372 http/tests/canvas/color-fonts/stroke-gradient-sbix-3.html [ ImageOnlyFailure ]
 webkit.org/b/218372 http/tests/canvas/color-fonts/stroke-gradient-sbix-4.html [ ImageOnlyFailure ]
-webkit.org/b/218372 http/tests/canvas/color-fonts/text-sbix.html [ ImageOnlyFailure ]
 webkit.org/b/218372 http/tests/canvas/color-fonts/text-sbix-2.html [ ImageOnlyFailure ]
 webkit.org/b/218372 http/tests/canvas/color-fonts/text-sbix-3.html [ ImageOnlyFailure ]
 webkit.org/b/218372 http/tests/canvas/color-fonts/text-sbix-4.html [ ImageOnlyFailure ]
@@ -1009,9 +989,6 @@ webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/font-variant-0
 webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/font-variant-caps-03.html [ ImageOnlyFailure ]
 webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/font-variant-caps-05.html [ ImageOnlyFailure ]
 webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/font-variant-caps.html [ ImageOnlyFailure ]
-webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/font-face-stretch-auto-variable.html [ ImageOnlyFailure ]
-webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/font-face-stretch-default-variable.html [ ImageOnlyFailure ]
-webkit.org/b/206881 imported/w3c/web-platform-tests/css/css-fonts/variations/font-weight-metrics.html [ ImageOnlyFailure ]
 
 webkit.org/b/177294 fast/text/fitzpatrick-combination.html [ ImageOnlyFailure ]
 
@@ -1307,7 +1284,6 @@ webkit.org/b/245334 [ Debug ] imported/w3c/web-platform-tests/html/canvas/offscr
 
 # This failure is related with (incomplete?) webgl support for OffscreenCanvas.
 webkit.org/b/245952 [ Debug ] imported/w3c/web-platform-tests/webcodecs/videoFrame-texImage.any.worker.html [ Failure Crash ]
-webkit.org/b/245952 [ Release ] imported/w3c/web-platform-tests/webcodecs/videoFrame-texImage.any.worker.html [ Failure ]
 webgl/1.0.x/conformance/offscreencanvas/offscreencanvas-transfer-image-bitmap.html [ Failure Timeout Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1609,7 +1585,7 @@ webkit.org/b/221021 webanimations/combining-transform-animations-with-different-
 #////////////////////////////////////////////////////////////////////////////////////////
 
 # AudioContext.
-webkit.org/b/226807 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/processing-after-resume.https.html [ Failure ]
+webkit.org/b/226807 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/processing-after-resume.https.html [ Timeout Pass ]
 
 # AudioWorklet.
 webkit.org/b/218010 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworkletnode-output-channel-count.https.html [ Failure Pass ]
@@ -1656,18 +1632,12 @@ fast/canvas/webgl/oes-texture-float-linear.html [ Failure ]
 fast/canvas/webgl/webgl-compressed-texture-size-limit.html [ Failure ]
 fast/canvas/webgl/colorspaces-test.html [ Failure ]
 http/tests/webgl/1.0.x/conformance/textures/misc/origin-clean-conformance-offscreencanvas.html [ Failure ]
-http/wpt/offscreen-canvas/transferToImageBitmap-webgl.html [ Failure ]
 imported/w3c/web-platform-tests/html/canvas/offscreen/manual/the-offscreen-canvas/offscreencanvas.getcontext.html [ Failure ]
-imported/w3c/web-platform-tests/html/canvas/offscreen/manual/the-offscreen-canvas/offscreencanvas.getcontext.worker.html [ Failure ]
 imported/w3c/web-platform-tests/html/canvas/offscreen/manual/the-offscreen-canvas/offscreencanvas.resize.html [ Failure ]
 imported/w3c/web-platform-tests/html/canvas/offscreen/manual/the-offscreen-canvas/offscreencanvas.transfer.to.imagebitmap.html [ Failure ]
-imported/w3c/web-platform-tests/html/canvas/offscreen/manual/the-offscreen-canvas/offscreencanvas.transfer.to.imagebitmap.w.html [ Failure ]
 imported/w3c/web-platform-tests/html/canvas/offscreen/manual/the-offscreen-canvas/offscreencanvas.transferrable.html [ Failure ]
-imported/w3c/web-platform-tests/html/canvas/offscreen/manual/the-offscreen-canvas/offscreencanvas.transferrable.w.html [ Failure ]
 # WebGL on GTK renders pixels with opacity slightly differently
 fast/canvas/toDataURL-alpha-permutation.html [ ImageOnlyFailure ]
-
-webgl/webgl2-primitive-restart.html [ Failure ]
 
 webgl/webgl-draft-extensions-flag-default.html [ Skip ]
 webgl/webgl-draft-extensions-flag-on.html [ Skip ]
@@ -1967,13 +1937,7 @@ webkit.org/b/202736 [ Release ] http/wpt/cache-storage/quota-third-party.https.h
 
 webkit.org/b/203240 imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-image/shape-image-025.html [ ImageOnlyFailure Pass ]
 
-webkit.org/b/203675 imported/w3c/web-platform-tests/css/css-shapes/spec-examples/shape-outside-010.html [ Failure ]
-webkit.org/b/203675 imported/w3c/web-platform-tests/css/css-shapes/spec-examples/shape-outside-011.html [ Failure ]
 webkit.org/b/203675 imported/w3c/web-platform-tests/css/css-shapes/spec-examples/shape-outside-013.html [ Failure ]
-webkit.org/b/203675 imported/w3c/web-platform-tests/css/css-shapes/spec-examples/shape-outside-014.html [ Failure ]
-webkit.org/b/203675 imported/w3c/web-platform-tests/css/css-shapes/spec-examples/shape-outside-015.html [ Failure ]
-webkit.org/b/203675 imported/w3c/web-platform-tests/css/css-shapes/spec-examples/shape-outside-016.html [ Failure ]
-webkit.org/b/203675 imported/w3c/web-platform-tests/css/css-shapes/spec-examples/shape-outside-017.html [ Failure ]
 
 webkit.org/b/207623 imported/w3c/web-platform-tests/content-security-policy/reporting/report-same-origin-with-cookies.html [ Failure ]
 
@@ -2059,7 +2023,6 @@ webkit.org/b/186045 imported/w3c/web-platform-tests/css/css-values/vh_not_refres
 
 webkit.org/b/186485 imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/accumulation-per-property-002.html [ Failure ]
 webkit.org/b/186486 imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/addition-per-property-002.html [ Failure ]
-webkit.org/b/186488 imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/interpolation-per-property-002.html [ Failure ]
 
 webkit.org/b/203448 imported/w3c/web-platform-tests/css/css-position/position-absolute-dynamic-static-position-table-cell.html [ Pass ]
 
@@ -2662,8 +2625,6 @@ webkit.org/b/152618 fast/text/international/system-language/navigator-language/n
 webkit.org/b/152618 fast/text/international/system-language/navigator-language/navigator-language-zh-Hant-HK.html [ Failure ]
 webkit.org/b/152618 fast/text/international/system-language/navigator-language/navigator-language-zh-Hant.html [ Failure ]
 
-webkit.org/b/193493 fast/text/international/spaces-combined-in-vertical-text.html [ Failure ]
-
 webkit.org/b/153700 fast/ruby/ruby-expansion-cjk-2.html [ ImageOnlyFailure ]
 webkit.org/b/153700 fast/ruby/ruby-expansion-cjk-3.html [ ImageOnlyFailure ]
 webkit.org/b/153700 fast/ruby/ruby-expansion-cjk-4.html [ ImageOnlyFailure ]
@@ -2892,14 +2853,12 @@ webkit.org/b/252878 imported/w3c/web-platform-tests/websockets/unload-a-document
 webkit.org/b/252878 imported/w3c/web-platform-tests/websockets/unload-a-document/004.html?wss [ Failure Pass ]
 webkit.org/b/251347 imported/w3c/web-platform-tests/websockets/binaryType-wrong-value.any.html?wss [ Failure ]
 webkit.org/b/251347 imported/w3c/web-platform-tests/websockets/constructor/004.html?wss [ Failure ]
-webkit.org/b/251347 imported/w3c/web-platform-tests/websockets/constructor/007.html [ Failure ]
 webkit.org/b/251347 imported/w3c/web-platform-tests/websockets/constructor/007.html?wss [ Failure ]
 webkit.org/b/251347 imported/w3c/web-platform-tests/websockets/constructor/010.html [ Failure ]
 webkit.org/b/251347 imported/w3c/web-platform-tests/websockets/constructor/010.html?wss [ Failure ]
 webkit.org/b/206652 imported/w3c/web-platform-tests/websockets/constructor/011.html [ Failure ]
 webkit.org/b/251347 imported/w3c/web-platform-tests/websockets/constructor/011.html?wss [ Failure ]
 webkit.org/b/252878 imported/w3c/web-platform-tests/websockets/constructor/016.html?wss [ Failure Pass ]
-webkit.org/b/251347 imported/w3c/web-platform-tests/websockets/constructor/021.html [ Failure ]
 webkit.org/b/251347 imported/w3c/web-platform-tests/websockets/constructor/021.html?wss [ Failure ]
 webkit.org/b/251347 imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/bufferedAmount/bufferedAmount-deleting.html?wss [ Failure ]
 webkit.org/b/251347 imported/w3c/web-platform-tests/websockets/interfaces/WebSocket/close/close-basic.html?wss [ Failure ]
@@ -3123,8 +3082,6 @@ webkit.org/b/228778 mhtml [ ImageOnlyFailure Pass ]
 
 webkit.org/b/229057 media/event-attributes.html [ Pass Failure ]
 
-webkit.org/b/229732 imported/w3c/web-platform-tests/css/css-fonts/font-display/font-display-failure-fallback.html [ Failure ]
-
 webkit.org/b/229062 fast/forms/caps-lock-indicator-width.html [ Crash ]
 
 # Test is a flaky timeout. The test is also skipped in iOS and Windows.
@@ -3136,10 +3093,8 @@ webkit.org/b/229738 fast/text/whitespace/tab-character-basics.html [ Failure ]
 webkit.org/b/229738 fast/text/word-break.html [ Failure ]
 
 webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-backgrounds/background-clip-content-box-002.html [ ImageOnlyFailure ]
-webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-backgrounds/background-image-cover-zoomed-1.html [ ImageOnlyFailure ]
 webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-backgrounds/border-image-repeat-space-8.html [ ImageOnlyFailure Pass ]
 webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-backgrounds/border-image-repeat-space-9.html [ ImageOnlyFailure Pass ]
-webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-backgrounds/animations/background-color-animation-with-blur.html [ ImageOnlyFailure ]
 
 webkit.org/b/230315 imported/w3c/web-platform-tests/mathml/presentation-markup/direction/direction-006.html [ ImageOnlyFailure ]
 
@@ -3364,13 +3319,11 @@ webkit.org/b/143153 imported/w3c/web-platform-tests/css/css-text/text-transform/
 webgl/1.0.x/conformance/context/premultiplyalpha-test.html [ Failure ]
 webgl/2.0.y/conformance/context/premultiplyalpha-test.html [ Failure ]
 webgl/2.0.y/conformance/extensions/ext-color-buffer-half-float.html [ Failure ]
-webgl/2.0.y/conformance/rendering/negative-one-index.html [ Failure ]
 
 imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/tall--contain--height.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/tall--contain--width.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/wide--contain--height.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/wide--contain--width.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/wide--cover--width.html [ ImageOnlyFailure ]
 
 # Flaky tests detected both on GTK and WPE on May2023
 webkit.org/b/257624 animations/background-position.html [ ImageOnlyFailure Pass ]
