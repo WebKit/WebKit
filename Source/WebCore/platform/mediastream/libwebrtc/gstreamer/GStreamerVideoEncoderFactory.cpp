@@ -50,7 +50,9 @@
 #include <wtf/text/StringConcatenateNumbers.h>
 
 GST_DEBUG_CATEGORY(webkit_webrtcenc_debug);
+#if !defined(GST_CAT_DEFAULT)
 #define GST_CAT_DEFAULT webkit_webrtcenc_debug
+#endif
 
 namespace WebCore {
 
