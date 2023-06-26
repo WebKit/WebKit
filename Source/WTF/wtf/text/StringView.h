@@ -73,8 +73,6 @@ public:
 
     ALWAYS_INLINE static StringView fromLatin1(const char* characters) { return StringView { characters }; }
 
-    static StringView empty();
-
     unsigned length() const;
     bool isEmpty() const;
 
@@ -267,7 +265,10 @@ WTF_EXPORT_PRIVATE StringViewWithUnderlyingString normalizedNFC(StringView);
 
 WTF_EXPORT_PRIVATE String normalizedNFC(const String&);
 
-}
+inline StringView nullStringView() { return { }; }
+inline StringView emptyStringView() { return StringView("", 0); }
+
+} // namespace WTF
 
 #include <wtf/text/AtomString.h>
 #include <wtf/text/WTFString.h>
@@ -445,11 +446,6 @@ inline void StringView::clear()
     m_is8Bit = true;
 }
 
-inline StringView StringView::empty()
-{
-    return StringView("", 0);
-}
-
 inline const LChar* StringView::characters8() const
 {
     ASSERT(is8Bit());
@@ -532,7 +528,7 @@ inline bool StringView::is8Bit() const
 inline StringView StringView::substring(unsigned start, unsigned length) const
 {
     if (start >= this->length())
-        return empty();
+        return emptyStringView();
     unsigned maxLength = this->length() - start;
 
     if (length >= maxLength) {
@@ -1115,7 +1111,7 @@ inline StringView StringView::trim(const CharacterType* characters, const Matche
         ++start;
 
     if (start > end)
-        return StringView::empty();
+        return emptyStringView();
 
     while (end && predicate(characters[end]))
         --end;
@@ -1466,3 +1462,5 @@ using WTF::makeStringBySimplifyingNewLines;
 using WTF::StringView;
 using WTF::StringViewWithUnderlyingString;
 using WTF::hasUnpairedSurrogate;
+using WTF::nullStringView;
+using WTF::emptyStringView;

@@ -44,7 +44,7 @@ StringView stringViewFromUTF8(String& ref, const char* characters)
 TEST(WTF, StringViewStartsWithEmptyVsNull)
 {
     StringView nullView;
-    StringView emptyView = StringView::empty();
+    StringView emptyView = emptyStringView();
     String stringWithCharacters("hello"_s);
     StringView viewWithCharacters(stringWithCharacters);
 
@@ -69,7 +69,7 @@ TEST(WTF, StringViewEmptyVsNull)
     else
         FAIL();
 
-    StringView emptyView = StringView::empty();
+    StringView emptyView = emptyStringView();
     EXPECT_FALSE(emptyView.isNull());
     EXPECT_TRUE(emptyView.isEmpty());
 
@@ -137,9 +137,9 @@ TEST(WTF, StringViewIterators)
     EXPECT_TRUE(compareLoopIterations(StringView().codeUnits(), { }));
     EXPECT_TRUE(compareLoopIterations(StringView().graphemeClusters(), { }));
 
-    EXPECT_TRUE(compareLoopIterations(StringView::empty().codePoints(), { }));
-    EXPECT_TRUE(compareLoopIterations(StringView::empty().codeUnits(), { }));
-    EXPECT_TRUE(compareLoopIterations(StringView::empty().graphemeClusters(), { }));
+    EXPECT_TRUE(compareLoopIterations(emptyStringView().codePoints(), { }));
+    EXPECT_TRUE(compareLoopIterations(emptyStringView().codeUnits(), { }));
+    EXPECT_TRUE(compareLoopIterations(emptyStringView().graphemeClusters(), { }));
 
     String helo("helo"_s);
     StringView heloView(helo);
@@ -892,7 +892,7 @@ TEST(WTF, StringViewEndsWithIgnoringASCIICaseWithLatin1Characters)
 TEST(WTF, StringView8Bit)
 {
     EXPECT_TRUE(StringView().is8Bit());
-    EXPECT_TRUE(StringView::empty().is8Bit());
+    EXPECT_TRUE(emptyStringView().is8Bit());
 
     LChar* lcharPtr = nullptr;
     UChar* ucharPtr = nullptr;
@@ -967,9 +967,9 @@ TEST(WTF, StringViewTrim)
     EXPECT_TRUE(stringViewFromLiteral("AAAAAACCC").trim(isA) == stringViewFromLiteral("CCC"));
     EXPECT_TRUE(stringViewFromLiteral("BBBAAAAAA").trim(isA) == stringViewFromLiteral("BBB"));
     EXPECT_TRUE(stringViewFromLiteral("CCCAAABBB").trim(isA) == stringViewFromLiteral("CCCAAABBB"));
-    EXPECT_TRUE(stringViewFromLiteral("AAAAAAAAA").trim(isA) == StringView::empty());
+    EXPECT_TRUE(stringViewFromLiteral("AAAAAAAAA").trim(isA) == emptyStringView());
 
-    StringView emptyView = StringView::empty();
+    StringView emptyView = emptyStringView();
     EXPECT_TRUE(emptyView.trim(isA) == emptyView);
 
     StringView nullView;
