@@ -275,11 +275,12 @@ class Package(object):
         if self.is_cached():
             return
 
-        # Make sure that setuptools, setuptools_scm and wheel are installed, since setup.py relies on it
-        if self.name not in ['setuptools', 'setuptools_scm', 'wheel']:
+        # Make sure that setuptools, setuptools_scm, wheel and packaging are installed, since setup.py relies on them
+        if self.name not in ['setuptools', 'setuptools_scm', 'wheel', 'packaging']:
             AutoInstall.install('setuptools')
             AutoInstall.install('setuptools_scm')
             AutoInstall.install('wheel')
+            AutoInstall.install('packaging')
 
         # In some cases a package may check if another package is installed without actually
         # importing it, which would make the AutoInstall to miss the dependency as it would
