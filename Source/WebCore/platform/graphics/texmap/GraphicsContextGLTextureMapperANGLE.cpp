@@ -68,9 +68,16 @@ GraphicsContextGLANGLE::~GraphicsContextGLANGLE()
         if (attributes.stencil || attributes.depth)
             GL_DeleteRenderbuffers(1, &m_multisampleDepthStencilBuffer);
         GL_DeleteFramebuffers(1, &m_multisampleFBO);
-    } else if (attributes.stencil || attributes.depth) {
-        if (m_depthStencilBuffer)
-            GL_DeleteRenderbuffers(1, &m_depthStencilBuffer);
+    } else {
+        if (attributes.stencil || attributes.depth) {
+            if (m_depthStencilBuffer)
+                GL_DeleteRenderbuffers(1, &m_depthStencilBuffer);
+        }
+
+        if (m_preserveDrawingBufferTexture)
+            GL_DeleteTextures(1, &m_preserveDrawingBufferTexture);
+        if (m_preserveDrawingBufferFBO)
+            GL_DeleteFramebuffers(1, &m_preserveDrawingBufferFBO);
     }
     GL_DeleteFramebuffers(1, &m_fbo);
 
@@ -315,11 +322,10 @@ bool GraphicsContextGLTextureMapperANGLE::platformInitialize()
 
     // Create an FBO.
     GL_GenFramebuffers(1, &m_fbo);
-    GL_BindFramebuffer(GL_FRAMEBUFFER, m_fbo);
 
-    // Create a multisample FBO.
     ASSERT(m_state.boundReadFBO == m_state.boundDrawFBO);
     if (attributes.antialias) {
+        // Create a multisample FBO.
         GL_GenFramebuffers(1, &m_multisampleFBO);
         GL_BindFramebuffer(GL_FRAMEBUFFER, m_multisampleFBO);
         m_state.boundDrawFBO = m_state.boundReadFBO = m_multisampleFBO;
@@ -330,8 +336,22 @@ bool GraphicsContextGLTextureMapperANGLE::platformInitialize()
         // Bind canvas FBO.
         GL_BindFramebuffer(GL_FRAMEBUFFER, m_fbo);
         m_state.boundDrawFBO = m_state.boundReadFBO = m_fbo;
+
         if (attributes.stencil || attributes.depth)
             GL_GenRenderbuffers(1, &m_depthStencilBuffer);
+
+        if (attributes.preserveDrawingBuffer) {
+            // Create another texture to handle preserveDrawingBuffer:true without antialiasing.
+            GL_GenTextures(1, &m_preserveDrawingBufferTexture);
+            GL_BindTexture(GL_TEXTURE_2D, m_preserveDrawingBufferTexture);
+            GL_TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+            GL_TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+            GL_TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+            GL_TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+            GL_BindTexture(GL_TEXTURE_2D, 0);
+            // Create an FBO with which to perform BlitFramebuffer from one texture to the other.
+            GL_GenFramebuffers(1, &m_preserveDrawingBufferFBO);
+        }
     }
 
     GL_ClearColor(0, 0, 0, 0);
@@ -345,13 +365,39 @@ void GraphicsContextGLTextureMapperANGLE::prepareTexture()
     if (contextAttributes().antialias)
         resolveMultisamplingIfNecessary();
 
+    if (m_preserveDrawingBufferTexture) {
+        // Blit m_preserveDrawingBufferTexture into m_texture.
+        ScopedGLCapability scopedScissor(GL_SCISSOR_TEST, GL_FALSE);
+        ScopedGLCapability scopedDither(GL_DITHER, GL_FALSE);
+        GL_BindFramebuffer(GL_DRAW_FRAMEBUFFER_ANGLE, m_preserveDrawingBufferFBO);
+        GL_BindFramebuffer(GL_READ_FRAMEBUFFER_ANGLE, m_fbo);
+        GL_BlitFramebufferANGLE(0, 0, m_currentWidth, m_currentHeight, 0, 0, m_currentWidth, m_currentHeight, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+
+        if (m_isForWebGL2) {
+            GL_BindFramebuffer(GL_DRAW_FRAMEBUFFER, m_state.boundDrawFBO);
+            GL_BindFramebuffer(GL_READ_FRAMEBUFFER, m_state.boundReadFBO);
+        } else
+            GL_BindFramebuffer(GL_FRAMEBUFFER, m_state.boundDrawFBO);
+    }
+
     std::swap(m_texture, m_compositorTexture);
 #if USE(NICOSIA)
     std::swap(m_textureID, m_compositorTextureID);
 #endif
 
-    GL_BindFramebuffer(GL_FRAMEBUFFER, m_fbo);
-    GL_FramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, drawingBufferTextureTarget(), m_texture, 0);
+    if (m_preserveDrawingBufferTexture) {
+        // The context requires the use of an intermediate texture in order to implement preserveDrawingBuffer:true without antialiasing.
+        // m_fbo is bound at this point.
+        GL_FramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_preserveDrawingBufferTexture, 0);
+        // Attach m_texture to m_preserveDrawingBufferFBO for later blitting.
+        GL_BindFramebuffer(GL_FRAMEBUFFER, m_preserveDrawingBufferFBO);
+        GL_FramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, drawingBufferTextureTarget(), m_texture, 0);
+        GL_BindFramebuffer(GL_FRAMEBUFFER, m_fbo);
+    } else {
+        GL_BindFramebuffer(GL_FRAMEBUFFER, m_fbo);
+        GL_FramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, drawingBufferTextureTarget(), m_texture, 0);
+    }
+
     GL_Flush();
 
     if (m_state.boundDrawFBO != m_fbo)
@@ -377,7 +423,6 @@ bool GraphicsContextGLTextureMapperANGLE::reshapeDrawingBuffer()
     GL_TexImage2D(textureTarget, 0, internalColorFormat, width, height, 0, colorFormat, GL_UNSIGNED_BYTE, 0);
     GL_BindTexture(textureTarget, m_texture);
     GL_TexImage2D(textureTarget, 0, internalColorFormat, width, height, 0, colorFormat, GL_UNSIGNED_BYTE, 0);
-    GL_FramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, textureTarget, m_texture, 0);
 
     return true;
 }

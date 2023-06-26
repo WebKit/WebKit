@@ -1662,10 +1662,6 @@ webkit.org/b/251106 webgl/2.0.y/conformance/offscreencanvas/context-lost-worker.
 webkit.org/b/251106 webgl/2.0.y/conformance/offscreencanvas/methods-worker.html [ Failure Pass ]
 webkit.org/b/251106 webgl/2.0.y/conformance/offscreencanvas/offscreencanvas-timer-query.html [ Pass Timeout ]
 
-# Preserve drawing buffer enabled.
-webkit.org/b/258294 webgl/1.0.x/conformance/extensions/angle-instanced-arrays.html [ Failure ]
-webkit.org/b/258294 webgl/1.0.x/conformance/extensions/webgl-multi-draw.html [ Failure ]
-
 # Fails when using two textures.
 webkit.org/b/258296 webrtc/canvas-to-peer-connection.html [ Failure ]
 
