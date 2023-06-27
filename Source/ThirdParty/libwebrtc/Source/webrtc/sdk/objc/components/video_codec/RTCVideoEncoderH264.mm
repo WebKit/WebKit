@@ -841,7 +841,7 @@ NSUInteger GetMaxSampleRate(const webrtc::H264ProfileLevelId &profile_level_id) 
 
 - (void)configureCompressionSession {
   RTC_DCHECK([self hasCompressionSession]);
-  SetVTSessionProperty(_vtCompressionSession, _vcpCompressionSession, kVTCompressionPropertyKey_RealTime, true);
+  SetVTSessionProperty(_vtCompressionSession, _vcpCompressionSession, kVTCompressionPropertyKey_RealTime, _isH264LowLatencyEncoderEnabled);
 #if ENABLE_VCP_FOR_H264_BASELINE
   if (_useBaseline && _useVCP && _isH264LowLatencyEncoderEnabled)
     SetVTSessionProperty(_vtCompressionSession, _vcpCompressionSession, kVTCompressionPropertyKey_ProfileLevel, kVTProfileLevel_H264_ConstrainedBaseline_AutoLevel);
@@ -982,6 +982,7 @@ NSUInteger GetMaxSampleRate(const webrtc::H264ProfileLevelId &profile_level_id) 
     if (isKeyFrameRequired)
       _isKeyFrameRequired = true;
     RTC_LOG(LS_INFO) << "H264 encode dropped frame.";
+    RTC_DCHECK(_isH264LowLatencyEncoderEnabled);
     return;
   }
   _isKeyFrameRequired = false;
