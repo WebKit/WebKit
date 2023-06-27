@@ -225,6 +225,10 @@ webkit.org/b/217821 imported/w3c/web-platform-tests/density-size-correction/ [ S
 # Scrolling coordinator
 webkit.org/b/215508 [ Release ] scrollingcoordinator/overflow-proxy-reattach.html [ Pass Timeout ]
 webkit.org/b/215508 [ Release ] scrollingcoordinator/fixed-node-reattach.html [ Pass Timeout ]
+webkit.org/b/258543 scrollingcoordinator/scrolling-tree/composited-in-offscreen-fixed.html [ Failure ]
+webkit.org/b/258543 scrollingcoordinator/scrolling-tree/fixed-inside-relative-inside-stacking-overflow-inside-transformed.html [ Failure ]
+webkit.org/b/258543 scrollingcoordinator/scrolling-tree/fixed-inside-stacking-overflow-inside-transformed.html [ Failure ]
+webkit.org/b/258543 scrollingcoordinator/scrolling-tree/fixed-position-within-transformed.html [ Failure ]
 
 #Simple Line Layout
 webkit.org/b/219976 fast/text/simple-line-wordspacing.html [ ImageOnlyFailure ]
@@ -274,9 +278,6 @@ media/no-fullscreen-when-hidden.html [ Failure ]
 media/video-background-tab-playback.html [ Failure ]
 media/video-muted-holds-sleep-assertion.html [ Failure ]
 media/video-unmuted-after-play-holds-sleep-assertion.html [ Failure ]
-scrollingcoordinator/scrolling-tree/composited-in-offscreen-fixed.html [ Failure ]
-scrollingcoordinator/scrolling-tree/fixed-inside-stacking-overflow-inside-transformed.html [ Failure ]
-scrollingcoordinator/scrolling-tree/fixed-position-within-transformed.html [ Failure ]
 svg/hixie/viewbox/002.xml [ Failure ]
 svg/hixie/viewbox/preserveAspectRatio/002.xml [ Failure ]
 webanimations/accelerated-animations-and-motion-path.html [ Failure ]
@@ -405,9 +406,20 @@ imported/w3c/web-platform-tests/xhr/event-error.sub.any.worker.html [ Failure ]
 imported/w3c/web-platform-tests/xhr/send-authentication-basic-setrequestheader-existing-session.htm [ Failure ]
 imported/w3c/web-platform-tests/xhr/send-network-error-async-events.sub.htm [ Failure ]
 imported/w3c/web-platform-tests/xhr/send-network-error-sync-events.sub.htm [ Failure ]
-imported/w3c/web-platform-tests/xhr/xmlhttprequest-timeout-synconmain.html [ Skip ]
-imported/w3c/web-platform-tests/xhr/xmlhttprequest-timeout-worker-aborted.html [ Skip ]
 imported/w3c/web-platform-tests/xhr/xmlhttprequest-timeout-worker-overridesexpires.html [ Skip ]
+
+imported/w3c/web-platform-tests/xhr/xmlhttprequest-timeout-synconmain.html?timeout_after_open [ DumpJSConsoleLogInStdErr ]
+imported/w3c/web-platform-tests/xhr/xmlhttprequest-timeout-synconmain.html?timeout_before_open [ DumpJSConsoleLogInStdErr ]
+
+# Timeout.
+imported/w3c/web-platform-tests/xhr/xmlhttprequest-timeout-worker-aborted.html?aborted_immediately_after_send() [ Skip ]
+imported/w3c/web-platform-tests/xhr/xmlhttprequest-timeout-worker-aborted.html?call_abort()_after_TIME_NORMAL_LOAD [ Skip ]
+imported/w3c/web-platform-tests/xhr/xmlhttprequest-timeout-worker-aborted.html?only_open()ed,_not_aborted [ Skip ]
+imported/w3c/web-platform-tests/xhr/xmlhttprequest-timeout-worker-overridesexpires.html?timeout_set_to_expired_value_before_load_fires [ Skip ]
+imported/w3c/web-platform-tests/xhr/xmlhttprequest-timeout-worker-overridesexpires.html?timeout_set_to_expiring_value_after_load_fires [ Skip ]
+imported/w3c/web-platform-tests/xhr/xmlhttprequest-timeout-worker-overridesexpires.html?timeout_set_to_non-expiring_value_after_timeout_fires [ Skip ]
+
+webkit.org/b/235885 webrtc/vp9-profile2.html [ Failure ]
 
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End of Triaged Expectations
@@ -1071,7 +1083,6 @@ webkit.org/b/257624 webgl/1.0.x/conformance/rendering/texture-switch-performance
 webkit.org/b/257624 webgl/2.0.y/conformance2/offscreencanvas/offscreencanvas-timer-query.html [ Pass Timeout ]
 webkit.org/b/257624 webgl/2.0.y/conformance/rendering/texture-switch-performance.html [ Failure Pass ]
 webkit.org/b/257624 webrtc/canvas-to-peer-connection-2d.html [ Failure Pass Timeout ]
-webkit.org/b/257624 webrtc/canvas-to-peer-connection.html [ Pass Timeout ]
 webkit.org/b/257624 webrtc/datachannel/bufferedAmountLowThreshold.html [ Failure Pass ]
 webkit.org/b/257624 webrtc/video-h264.html [ Crash Pass Timeout ]
 webkit.org/b/257624 webrtc/video-mute.html [ Pass Timeout ]

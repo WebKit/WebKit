@@ -1444,7 +1444,7 @@ webkit.org/b/252878 webrtc/datachannel/bufferedAmountLowThreshold-default.html [
 webkit.org/b/252878 webrtc/h264-packetization-mode.html [ Failure Pass Timeout ]
 webkit.org/b/252878 webrtc/video-h264.html [ Pass Timeout ]
 webkit.org/b/252878 webrtc/video-mute-vp8.html [ Pass Timeout ]
-webkit.org/b/252878 webrtc/vp9-profile2.html [ Failure Pass Timeout ]
+webkit.org/b/252878 webrtc/vp9-profile2.html [ Skip ]
 
 # Flaky tests detected on May2023
 webkit.org/b/257624 compositing/reflections/mask-and-reflection.html [ ImageOnlyFailure Pass ]

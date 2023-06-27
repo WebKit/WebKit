@@ -1663,7 +1663,7 @@ webkit.org/b/251106 webgl/2.0.y/conformance/offscreencanvas/methods-worker.html 
 webkit.org/b/251106 webgl/2.0.y/conformance/offscreencanvas/offscreencanvas-timer-query.html [ Pass Timeout ]
 
 # Fails when using two textures.
-webkit.org/b/258296 webrtc/canvas-to-peer-connection.html [ Failure ]
+webkit.org/b/258296 webrtc/canvas-to-peer-connection.html [ Failure Timeout ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of WebGL-related bugs
@@ -1858,7 +1858,6 @@ webkit.org/b/235885 imported/w3c/web-platform-tests/webrtc/RTCDTMFSender-ontonec
 webkit.org/b/235885 webrtc/dtmf-gc.html [ Skip ]
 
 webkit.org/b/235885 webrtc/video-h264.html [ Slow ]
-webkit.org/b/235885 webrtc/vp9-profile2.html [ Slow ]
 webkit.org/b/235885 webrtc/vp9.html [ Slow ]
 
 # Re-enabling an incoming video track leads to a caps negotiation error. Might be a decodebin3 bug.
@@ -2771,7 +2770,7 @@ webkit.org/b/187044 webanimations/opacity-animation-yields-compositing-span.html
 webkit.org/b/187271 fast/text/emoji-with-joiner.html [ Failure ]
 webkit.org/b/189343 imported/w3c/web-platform-tests/xhr/sync-no-timeout.any.worker.html [ Failure ]
 webkit.org/b/190707 css-custom-properties-api/length2.html [ Failure ]
-webkit.org/b/191008 webanimations/accelerated-animation-suspension.html [ Timeout ]
+webkit.org/b/191008 webanimations/accelerated-animation-suspension.html [ Failure ]
 webkit.org/b/191497 http/tests/inspector/network/getSerializedCertificate.html [ Skip ]
 webkit.org/b/191497 http/tests/inspector/network/resource-security-certificate.html [ Skip ]
 webkit.org/b/192150 imported/w3c/web-platform-tests/xhr/setrequestheader-content-type.htm [ Failure ]
