@@ -736,7 +736,7 @@ static void registerLogHook()
         // Send fault logs with high priority. If the WebContent process is terminated, we might not be able to send the log in time.
         if (type == OS_LOG_TYPE_FAULT) {
             type = OS_LOG_TYPE_ERROR;
-            qos = Thread::QOS::Interactive;
+            qos = Thread::QOS::UserInteractive;
         }
 
         Vector<uint8_t> buffer(msg->buffer, msg->buffer_sz);
