@@ -20,6 +20,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/crashtests/chrome-bug-1289718-001-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/crashtests/chrome-bug-1346969-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/crashtests/chrome-bug-1362391-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/crashtests/chrome-bug-1429955-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/crashtests/chrome-layout-root-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/crashtests/chrome-quotes-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/crashtests/chrome-remove-insert-evaluator-crash.html
@@ -27,6 +28,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/crashtests/columns-in-table-002-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/crashtests/container-in-canvas-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/crashtests/container-type-change-chrome-legacy-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/crashtests/dialog-backdrop-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/crashtests/dirty-rowgroup-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/crashtests/flex-in-columns-000-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/crashtests/flex-in-columns-001-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/crashtests/flex-in-columns-002-crash.html
@@ -37,6 +40,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/crashtests/grid-in-columns-001-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/crashtests/grid-in-columns-002-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/crashtests/grid-in-columns-003-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/crashtests/iframe-init-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/crashtests/inline-multicol-inside-container-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/crashtests/inline-with-columns-000-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/crashtests/inline-with-columns-001-crash.html
@@ -46,6 +50,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/crashtests/math-block-container-child-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/crashtests/orthogonal-replaced-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/crashtests/pseudo-container-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/crashtests/reversed-ol-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/crashtests/size-change-during-transition-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/crashtests/svg-layout-root-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/crashtests/svg-text-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/container-queries/crashtests/table-in-columns-000-crash.html

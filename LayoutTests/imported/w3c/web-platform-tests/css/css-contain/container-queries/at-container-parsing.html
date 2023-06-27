@@ -136,6 +136,7 @@
   test_condition_unknown('(asdf)');
   test_condition_unknown('(resolution > 100dpi)');
   test_condition_unknown('(resolution: 150dpi)');
+  test_condition_unknown('(resolution: calc(2x))');
   test_condition_unknown('(color)');
   test_condition_unknown('(min-color: 1)');
   test_condition_unknown('(color-index >= 1)');
@@ -191,16 +192,4 @@
   test_container_name_invalid('And');
   test_container_name_invalid('oR');
   test_container_name_invalid('nOt');
-
-  test_condition_known('style(--my-prop: foo)');
-  test_condition_known('style(--my-prop: foo - bar ())');
-  test_condition_known('style(not ((--foo: calc(10px + 2em)) and ((--foo: url(x)))))');
-  test_condition_known('style((--foo: bar) or (--bar: 10px))');
-  test_condition_known('style(--my-prop:)');
-  test_condition_known('style(--my-prop: )');
-  test_condition_known('style(--foo: bar !important)');
-
-  test_condition_unknown('style(--foo: bar;)');
-  test_condition_unknown('style(--foo)');
-  test_condition_unknown('style(style(--foo: bar))');
 </script>

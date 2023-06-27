@@ -2,6 +2,11 @@
 FAIL em units respond to changes assert_equals: expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
 PASS rem units respond to changes
 FAIL ex units respond to changes assert_equals: expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
+FAIL rex units respond to changes assert_equals: expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
 FAIL ch units respond to changes assert_equals: expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
+FAIL rch units respond to changes assert_equals: expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
 FAIL lh units respond to changes assert_equals: expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
+PASS rlh units respond to changes
+FAIL ic units respond to changes assert_equals: expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
+FAIL ric units respond to changes assert_equals: expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
 

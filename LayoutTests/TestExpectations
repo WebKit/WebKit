@@ -4960,6 +4960,7 @@ imported/w3c/web-platform-tests/css/css-contain/quote-scoping-invalidation-004.h
 # Container queries
 webkit.org/b/229659 imported/w3c/web-platform-tests/css/css-contain/container-queries/custom-layout-container-001.https.html [ ImageOnlyFailure ]
 webkit.org/b/229659 imported/w3c/web-platform-tests/css/css-contain/container-queries/inline-size-bfc-floats.html [ ImageOnlyFailure ]
+webkit.org/b/229659 imported/w3c/web-platform-tests/css/css-contain/container-queries/container-for-cue.html [ Skip ]
 webkit.org/b/241778 [ Debug ] imported/w3c/web-platform-tests/css/css-contain/container-queries/svg-foreignobject-no-size-container.html [ Skip ]
 
 # Flaky css-contain test

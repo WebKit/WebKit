@@ -1,33 +1,17 @@
 <!doctype html>
 <meta charset="utf-8">
-<title>CSS Container Queries Test: query container for Shadow DOM</title>
+<title>CSS Container Queries Test: style query container for Shadow DOM</title>
 <link rel="help" href="https://drafts.csswg.org/css-contain-3/#query-container">
 <script src="/resources/testharness.js"></script>
 <script src="/resources/testharnessreport.js"></script>
 <script src="/resources/declarative-shadow-dom-polyfill.js"></script>
 <script src="support/cq-testcommon.js"></script>
-<style>
-  #inclusive-ancestor-across-root,
-  #inclusive-ancestor-skip-slotting,
-  #inclusive-ancestor-slotted,
-  #inclusive-ancestor-host,
-  #inclusive-ancestor-part,
-  #inclusive-ancestor-slotted-before,
-  #inclusive-ancestor-host-before,
-  #inclusive-ancestor-part-before,
-  #inclusive-ancestor-inner-part,
-  #inclusive-ancestor-slot-fallback,
-  #inner-scope-host-part {
-    width: 400px;
-    container-type: inline-size;
-  }
-</style>
 
 <div id="inclusive-ancestor-across-root">
-  <div>
+  <div style="--foo: bar">
     <template shadowrootmode="open">
       <style>
-        @container (width = 400px) {
+        @container style(--foo: bar) {
           #t1 { color: green; }
         }
       </style>
@@ -37,20 +21,14 @@
 </div>
 
 <div id="inclusive-ancestor-skip-slotting">
-  <div>
+  <div style="--foo: bar">
     <template shadowrootmode="open">
-      <style>
-        div {
-          width: 200px;
-          container-type: inline-size;
-        }
-      </style>
-      <div>
+      <div style="--foo: baz">
         <slot></slot>
       </div>
     </template>
     <style>
-      @container (width = 400px) {
+      @container style(--foo: bar) {
         #t2 { color: green; }
       }
     </style>
@@ -59,29 +37,24 @@
 </div>
 
 <div id="inclusive-ancestor-slotted">
-  <div>
+  <div style="--foo: baz">
     <template shadowrootmode="open">
       <style>
-        slot {
-          display: block;
-          width: 200px;
-          container-type: inline-size;
-        }
-        @container (width = 200px) {
+        @container style(--foo: bar) {
           ::slotted(#t3) { color: green; }
         }
       </style>
-      <slot></slot>
+      <slot style="--foo: bar"></slot>
     </template>
     <div id="t3"></div>
   </div>
 </div>
 
-<div id="inclusive-ancestor-host">
+<div id="inclusive-ancestor-host" style="--foo: bar">
   <div id="t4">
     <template shadowrootmode="open">
       <style>
-        @container (width = 400px) {
+        @container style(--foo: bar) {
           :host(#t4) { color: green; }
         }
       </style>
@@ -90,20 +63,14 @@
 </div>
 
 <div id="inclusive-ancestor-part">
-  <div>
+  <div style="--foo: bar">
     <template shadowrootmode="open">
-      <style>
-        div {
-          width: 200px;
-          container-type: inline-size;
-        }
-      </style>
-      <div>
+      <div style="--foo: baz">
         <span id="t5" part="part"></span>
       </div>
     </template>
     <style>
-      @container (width = 400px) {
+      @container style(--foo: bar) {
         #inclusive-ancestor-part > div::part(part) { color: green; }
       }
     </style>
@@ -114,39 +81,24 @@
   <div>
     <template shadowrootmode="open">
       <style>
-        slot {
-          display: block;
-          width: 200px;
-          container-type: inline-size;
-        }
-        @container (width = 200px) {
+        @container style(--foo: bar) {
           ::slotted(#t6)::before {
             content: "X";
             color: green;
           }
         }
       </style>
-      <slot></slot>
+      <slot style="--foo: bar"></slot>
     </template>
-    <style>
-      #t6 {
-        width: 400px;
-        container-type: inline-size;
-      }
-    </style>
-    <div id="t6"></div>
+    <div id="t6" style="--foo: baz"></div>
   </div>
 </div>
 
 <div id="inclusive-ancestor-host-before">
-  <div id="t7">
+  <div id="t7" style="--foo: bar">
     <template shadowrootmode="open">
       <style>
-        :host {
-          width: 200px;
-          container-type: inline-size;
-        }
-        @container (width = 200px) {
+        @container style(--foo: bar) {
           :host(#t7)::before {
             content: "X";
             color: green;
@@ -159,22 +111,16 @@
 
 <div id="inclusive-ancestor-part-before">
   <style>
-    @container (width = 400px) {
+    @container style(--foo: bar) {
       #inclusive-ancestor-part-before > div::part(part)::before {
         content: "X";
         color: green;
       }
     }
   </style>
-  <div>
+  <div style="--foo: bar">
     <template shadowrootmode="open">
-      <style>
-        div {
-          width: 200px;
-          container-type: inline-size;
-        }
-      </style>
-      <div>
+      <div style="--foo: baz">
         <span id="t8" part="part"></span>
       </div>
     </template>
@@ -183,27 +129,15 @@
 
 <div id="inclusive-ancestor-inner-part">
   <style>
-    @container (width = 400px) {
+    @container style(--foo: bar) {
       #inclusive-ancestor-inner-part > div::part(inner-part) { color: green; }
     }
   </style>
-  <div>
+  <div style="--foo: bar">
     <template shadowrootmode="open">
-      <style>
-        div {
-          width: 200px;
-          container-type: inline-size;
-        }
-      </style>
-      <div exportparts="inner-part">
+      <div exportparts="inner-part" style="-foo: baz">
         <template shadowrootmode="open">
-          <style>
-            div {
-              width: 200px;
-              container-type: inline-size;
-            }
-          </style>
-          <div>
+          <div style="--foo: baz">
             <span id="t9" part="inner-part"></span>
           </div>
         </template>
@@ -215,16 +149,12 @@
 <div id="inclusive-ancestor-slot-fallback">
   <div><template shadowrootmode="open">
     <style>
-      div {
-        width: 200px;
-        container-type: inline-size;
-      }
-      @container (width = 200px) {
+      @container style(--foo: bar) {
         #t10 { color: green; }
       }
     </style>
     <div>
-      <slot><span id="t10"></span></slot>
+      <slot style="--foo: bar"><span id="t10"></span></slot>
     </div>
   </template></div>
 </div>
@@ -233,42 +163,32 @@
   <div>
     <template shadowrootmode="open">
       <style>
-        div {
-          width: 200px;
-          container-type: inline-size;
-        }
         #t11 { color: green; }
       </style>
-      <div>
+      <div style="--foo: bar">
         <span id="t11" part="part"></span>
       </div>
     </template>
     <style>
-      @container (width = 200px) {
+      @container style(--foo: bar) {
         #no-container-for-part > div::part(part) { color: red; }
       }
     </style>
   </div>
 </div>
 
-<div id="inner-scope-host-part">
+<div id="inner-scope-host-part" style="--foo: bar">
   <div>
     <template shadowrootmode="open">
       <style>
-        div {
-          width: 200px;
-          container-type: inline-size;
-        }
-        @container (width = 400px) {
+        @container style(--foo: bar) {
           :host::part(part) { color: green; }
         }
       </style>
-      <div>
+      <div style="--foo: baz">
         <span id="t12" part="part"></span>
       </div>
     </template>
-    <style>
-    </style>
   </div>
 </div>
 
