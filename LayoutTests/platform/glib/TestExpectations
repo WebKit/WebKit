@@ -1403,6 +1403,8 @@ webkit.org/b/185254 http/tests/xmlhttprequest/response-access-on-error.html [ Du
 
 webkit.org/b/233796 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/navigating-across-documents/refresh [ Failure ]
 
+webkit.org/b/258547 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/overlapping-navigations-and-traversals/nav-cancelation-2.sub.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of SOUP and Networking-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -2087,17 +2089,20 @@ webkit.org/b/232346 media/video-orientation-canvas.html [ Failure ]
 # These have randomly generated tokens in their URLs that make console messages unreliable.
 imported/w3c/web-platform-tests/cors/304.htm [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/cors/cors-safelisted-request-header.any.html [ DumpJSConsoleLogInStdErr ]
+imported/w3c/web-platform-tests/cors/cors-safelisted-request-header.any.worker.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/cors/redirect-preflight-2.htm [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/cors/simple-requests-ch.tentative.htm [ DumpJSConsoleLogInStdErr ]
+imported/w3c/web-platform-tests/fetch/api/abort/general.any.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/fetch/api/cors/cors-origin.any.html [ DumpJSConsoleLogInStdErr ]
+imported/w3c/web-platform-tests/fetch/api/cors/cors-preflight.any.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/fetch/api/cors/cors-preflight-redirect.any.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/fetch/api/cors/cors-preflight-response-validation.any.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/fetch/api/cors/cors-preflight-status.any.html [ DumpJSConsoleLogInStdErr ]
-imported/w3c/web-platform-tests/fetch/api/cors/cors-preflight.any.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/fetch/api/cors/cors-redirect-preflight.any.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/fetch/api/request/request-cache-only-if-cached.any.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/fetch/api/request/request-cache-only-if-cached.any.worker.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/fetch/range/general.any.html [ DumpJSConsoleLogInStdErr ]
+imported/w3c/web-platform-tests/fetch/range/general.any.worker.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-request-css-images.https.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/iframe-blank-inherit.meta/upgrade/xhr.https.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/xhr/access-control-and-redirects-async.any.worker.html [ DumpJSConsoleLogInStdErr ]

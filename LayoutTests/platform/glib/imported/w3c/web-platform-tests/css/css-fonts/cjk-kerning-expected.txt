@@ -1,17 +1,17 @@
 Testing application of kerning to CJK text
 
 default
-YeYeYeYeãƒ†ã‚£ãƒ†ã‚£ãƒ†ã‚£ãƒ†ã‚£
+YeYeYeYeティティティティ
 font-kerning: none;
-YeYeYeYeãƒ†ã‚£ãƒ†ã‚£ãƒ†ã‚£ãƒ†ã‚£
+YeYeYeYeティティティティ
 font-kerning: normal;
-YeYeYeYeãƒ†ã‚£ãƒ†ã‚£ãƒ†ã‚£ãƒ†ã‚£
+YeYeYeYeティティティティ
 font-feature-settings:"palt" 0; font-kerning: normal;
-YeYeYeYeãƒ†ã‚£ãƒ†ã‚£ãƒ†ã‚£ãƒ†ã‚£
+YeYeYeYeティティティティ
 font-feature-settings:"palt" 1; font-kerning: normal;
-YeYeYeYeãƒ†ã‚£ãƒ†ã‚£ãƒ†ã‚£ãƒ†ã‚£
+YeYeYeYeティティティティ
 font-feature-settings:"palt" 1; font-kerning: none;
-YeYeYeYeãƒ†ã‚£ãƒ†ã‚£ãƒ†ã‚£ãƒ†ã‚£
+YeYeYeYeティティティティ
 
 PASS expected match: .kernON .latin vs .paltOFFkernON .latin
 PASS expected match: .kernON .latin vs .paltONkernON .latin
