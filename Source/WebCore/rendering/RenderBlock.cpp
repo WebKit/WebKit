@@ -2316,7 +2316,6 @@ void RenderBlock::computeBlockPreferredLogicalWidths(LayoutUnit& minLogicalWidth
     ASSERT(!shouldApplyInlineSizeContainment());
 
     const RenderStyle& styleToUse = style();
-    bool nowrap = styleToUse.whiteSpace() == WhiteSpace::NoWrap;
 
     RenderObject* child = firstChild();
     RenderBlock* containingBlock = this->containingBlock();
@@ -2382,7 +2381,7 @@ void RenderBlock::computeBlockPreferredLogicalWidths(LayoutUnit& minLogicalWidth
         minLogicalWidth = std::max(w, minLogicalWidth);
 
         // IE ignores tables for calculation of nowrap. Makes some sense.
-        if (nowrap && !child->isTable())
+        if (!styleToUse.autoWrap() && !child->isTable())
             maxLogicalWidth = std::max(w, maxLogicalWidth);
 
         w = childMaxPreferredLogicalWidth + margin;

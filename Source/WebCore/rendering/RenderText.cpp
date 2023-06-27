@@ -1338,7 +1338,7 @@ void RenderText::computePreferredLogicalWidths(float leadWidth, HashSet<const Fo
     if (!style.autoWrap())
         m_minWidth = m_maxWidth;
 
-    if (style.whiteSpace() == WhiteSpace::Pre) {
+    if (!style.autoWrap() && style.preserveNewline()) {
         if (firstLine)
             m_beginMinWidth = *m_maxWidth;
         m_endMinWidth = currMaxWidth;
