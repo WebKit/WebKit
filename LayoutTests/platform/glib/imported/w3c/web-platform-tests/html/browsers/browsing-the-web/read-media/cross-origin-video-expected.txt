@@ -1,6 +1,4 @@
 
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT Test cross origin load of media document in parts Test timed out
+FAIL Test cross origin load of media document in parts promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
 
