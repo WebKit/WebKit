@@ -69,6 +69,10 @@ function newRegistryEntry(key)
     //     b. If the status is Satisfy and there is the entry.satisfy promise, the entry is just resolving
     //        the dependencies.
     //
+    // 4. Verify
+    //     Ready to request verification of module record instantiation.
+    //     Verifying means to check and wait for instantiation of module record for all dependencies underneath.
+    //
     // 4. Link
     //     Ready to link the module with the other modules.
     //     Linking means that the module imports and exports the bindings from/to the other modules.
@@ -267,13 +271,41 @@ function requestSatisfy(entry, parameters, fetcher, visited)
         return @InternalPromise.internalAll(depLoads).then((entries) => {
             if (entry.satisfy)
                 return entry;
-            @setStateToMax(entry, @ModuleLink);
+            @setStateToMax(entry, @ModuleVerify);
             entry.satisfy = satisfyPromise;
             return entry;
         });
     });
 
     return satisfyPromise;
+}
+
+@visibility=PrivateRecursive
+function requestVerify(entry, parameters, fetcher, visited)
+{
+    "use strict";
+
+    visited.@add(entry);
+    var verifyPromise = this.requestInstantiate(entry, parameters, fetcher).then((entry) => {
+        var depLoads = this.requestedModuleParameters(entry.module);
+        for (var i = 0, length = entry.dependencies.length; i < length; ++i) {
+            var parameters = depLoads[i];
+            var depEntry = entry.dependencies[i];
+            var promise;
+            if (visited.@has(depEntry))
+                promise = this.requestInstantiate(depEntry, parameters, fetcher);
+            else
+                promise = this.requestVerify(depEntry, parameters, fetcher, visited);
+            @putByValDirect(depLoads, i, promise);
+        }
+
+        return @InternalPromise.internalAll(depLoads).then((entries) => {
+            @setStateToMax(entry, @ModuleLink);
+            return entry;
+        });
+    });
+
+    return verifyPromise;
 }
 
 // Linking semantics.
@@ -287,6 +319,8 @@ function link(entry, fetcher)
 
     if (!entry.linkSucceeded)
         throw entry.linkError;
+    if (entry.state < @ModuleLink)
+        @throwTypeError("Requested module is not instantiated yet.");
     if (entry.state === @ModuleReady)
         return;
     @setStateToMax(entry, @ModuleReady);
@@ -386,6 +420,7 @@ async function loadModule(key, parameters, fetcher)
     if (importMap)
         await importMap;
     var entry = await this.requestSatisfy(this.ensureRegistered(key), parameters, fetcher, new @Set);
+    entry = await this.requestVerify(entry, parameters, fetcher, new @Set);
     return entry.key;
 }
 
@@ -395,9 +430,6 @@ function linkAndEvaluateModule(key, fetcher)
     "use strict";
 
     var entry = this.ensureRegistered(key);
-    if (entry.state < @ModuleLink)
-        @throwTypeError("Requested module is not instantiated yet.");
-
     this.link(entry, fetcher);
     return this.moduleEvaluation(entry, fetcher);
 }
@@ -425,6 +457,7 @@ async function requestImportModule(moduleName, referrer, parameters, fetcher)
         await importMap;
     var key = this.resolve(moduleName, referrer, fetcher);
     var entry = await this.requestSatisfy(this.ensureRegistered(key), parameters, fetcher, new @Set);
+    entry = await this.requestVerify(entry, parameters, fetcher, new @Set);
     await this.linkAndEvaluateModule(entry.key, fetcher);
     return this.getModuleNamespaceObject(entry.module);
 }

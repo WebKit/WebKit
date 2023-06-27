@@ -51,6 +51,7 @@ public:
         Fetch = 1,
         Instantiate,
         Satisfy,
+        Verify,
         Link,
         Ready,
     };
