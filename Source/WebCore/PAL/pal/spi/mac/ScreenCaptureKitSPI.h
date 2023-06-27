@@ -109,11 +109,23 @@ typedef NS_OPTIONS(NSUInteger, SCContentSharingAllowedPickerModes) {
     SCContentSharingPickerAllowedModeSingleDisplay         = 1 << 3,
 };
 
-@interface SCContentSharingPickerConfiguration : NSObject
+// FIXME: Drop deprecated method names once we no longer support Ventura. These
+// SPI methods all have public equivalents in Sonoma.
+@interface SCContentSharingPickerConfiguration
+#if HAVE(SC_CONTENT_SHARING_PICKER)
+    ()
+#else
+    : NSObject
+#endif
 @property (nonatomic, assign) SCContentSharingAllowedPickerModes allowedPickingModes;
 @end
 
-@interface SCContentSharingPicker : NSObject
+@interface SCContentSharingPicker
+#if HAVE(SC_CONTENT_SHARING_PICKER)
+    ()
+#else
+    : NSObject
+#endif
 @property (nonatomic, weak, nullable) id<SCContentSharingPickerDelegate> delegate;
 @property (nonatomic, nullable, strong) NSNumber *maxStreamCount;
 @property (nonatomic, nullable, copy) SCContentSharingPickerConfiguration *configuration;
