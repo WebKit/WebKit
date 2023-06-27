@@ -168,7 +168,7 @@ void NetworkDataTaskCurl::curlDidReceiveResponse(CurlRequest& request, CurlRespo
 
     handleCookieHeaders(request.resourceRequest(), receivedResponse);
 
-    if (m_response.shouldRedirect()) {
+    if (shouldStartHTTPRedirection()) {
         willPerformHTTPRedirection();
         return;
     }
@@ -260,6 +260,22 @@ void NetworkDataTaskCurl::curlDidFailWithError(CurlRequest& request, ResourceErr
     }
 
     m_client->didCompleteWithError(resourceError);
+}
+
+bool NetworkDataTaskCurl::shouldStartHTTPRedirection()
+{
+    auto statusCode = m_response.httpStatusCode();
+    if (statusCode < 300 || statusCode >= 400)
+        return false;
+
+    // Some 3xx status codes aren't actually redirects.
+    if (statusCode == 300 || statusCode == 304 || statusCode == 305 || statusCode == 306)
+        return false;
+
+    if (m_response.httpHeaderField(HTTPHeaderName::Location).isEmpty())
+        return false;
+
+    return true;
 }
 
 bool NetworkDataTaskCurl::shouldRedirectAsGET(const ResourceRequest& request, bool crossOrigin)
