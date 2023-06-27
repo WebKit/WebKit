@@ -201,7 +201,7 @@ void SWServerWorker::didFinishInstall(const std::optional<ServiceWorkerJobDataId
         return;
 
     ASSERT(m_server);
-    RELEASE_ASSERT_WITH_MESSAGE(state == ServiceWorkerState::Installing, "State is %hhu", state);
+    RELEASE_ASSERT_WITH_MESSAGE(state == ServiceWorkerState::Installing, "State is %hhu", static_cast<uint8_t>(state));
     if (m_server)
         m_server->didFinishInstall(jobDataIdentifier, *this, wasSuccessful);
 }
@@ -213,7 +213,7 @@ void SWServerWorker::didFinishActivation()
         return;
 
     ASSERT(m_server);
-    RELEASE_ASSERT_WITH_MESSAGE(state == ServiceWorkerState::Activating, "State is %hhu", state);
+    RELEASE_ASSERT_WITH_MESSAGE(state == ServiceWorkerState::Activating, "State is %hhu", static_cast<uint8_t>(state));
     if (m_server)
         m_server->didFinishActivation(*this);
 }
