@@ -100,12 +100,12 @@ void SVGFEImageElement::buildPendingResource()
     if (!isConnected())
         return;
 
-    auto target = SVGURIReference::targetElementFromIRIString(href(), treeScope());
+    auto target = SVGURIReference::targetElementFromIRIString(href(), treeScopeForSVGReferences());
     if (!target.element) {
         if (target.identifier.isEmpty())
             requestImageResource();
         else {
-            document().accessSVGExtensions().addPendingResource(target.identifier, *this);
+            treeScopeForSVGReferences().addPendingSVGResource(target.identifier, *this);
             ASSERT(hasPendingResources());
         }
     } else if (is<SVGElement>(*target.element))
@@ -180,7 +180,7 @@ void SVGFEImageElement::notifyFinished(CachedResource&, const NetworkLoadMetrics
 
 std::tuple<RefPtr<ImageBuffer>, FloatRect> SVGFEImageElement::imageBufferForEffect(const GraphicsContext& destinationContext) const
 {
-    auto target = SVGURIReference::targetElementFromIRIString(href(), treeScope());
+    auto target = SVGURIReference::targetElementFromIRIString(href(), const_cast<SVGFEImageElement&>(*this).treeScopeForSVGReferences());
     if (!is<SVGElement>(target.element))
         return { };
 

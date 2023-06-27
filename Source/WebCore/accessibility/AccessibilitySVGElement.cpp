@@ -69,7 +69,7 @@ AccessibilityObject* AccessibilitySVGElement::targetForUseElement() const
     if (href.isEmpty())
         href = getAttribute(HTMLNames::hrefAttr);
 
-    auto target = SVGURIReference::targetElementFromIRIString(href, use.treeScope());
+    auto target = SVGURIReference::targetElementFromIRIString(href, use.treeScopeForSVGReferences());
     if (!target.element)
         return nullptr;
 

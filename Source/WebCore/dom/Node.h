@@ -390,6 +390,8 @@ public:
     void setTreeScopeRecursively(TreeScope&);
     static ptrdiff_t treeScopeMemoryOffset() { return OBJECT_OFFSETOF(Node, m_treeScope); }
 
+    TreeScope& treeScopeForSVGReferences() const;
+
     // Returns true if this node is associated with a document and is in its associated document's
     // node tree, false otherwise (https://dom.spec.whatwg.org/#connected).
     bool isConnected() const { return hasNodeFlag(NodeFlag::IsConnected); }

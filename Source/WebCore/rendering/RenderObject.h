@@ -507,6 +507,7 @@ public:
     Node* generatingNode() const { return isPseudoElement() ? generatingPseudoHostElement() : node(); }
 
     Document& document() const { ASSERT(m_node); return m_node->document(); }
+    TreeScope& treeScopeForSVGReferences() const { ASSERT(m_node); return m_node->treeScopeForSVGReferences(); }
     LocalFrame& frame() const;
     Page& page() const;
     Settings& settings() const { return page().settings(); }

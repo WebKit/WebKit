@@ -179,13 +179,13 @@ static inline bool isChainableResource(const SVGElement& element, const SVGEleme
     return false;
 }
 
-static inline RenderSVGResourceContainer* paintingResourceFromSVGPaint(Document& document, const SVGPaintType& paintType, const String& paintUri, AtomString& id, bool& hasPendingResource)
+static inline RenderSVGResourceContainer* paintingResourceFromSVGPaint(TreeScope& treeScope, const SVGPaintType& paintType, const String& paintUri, AtomString& id, bool& hasPendingResource)
 {
     if (paintType != SVGPaintType::URI && paintType != SVGPaintType::URIRGBColor && paintType != SVGPaintType::URICurrentColor)
         return nullptr;
 
-    id = SVGURIReference::fragmentIdentifierFromIRIString(paintUri, document);
-    RenderSVGResourceContainer* container = getRenderSVGResourceContainerById(document, id);
+    id = SVGURIReference::fragmentIdentifierFromIRIString(paintUri, treeScope.documentScope());
+    RenderSVGResourceContainer* container = getRenderSVGResourceContainerById(treeScope, id);
     if (!container) {
         hasPendingResource = true;
         return nullptr;
@@ -198,11 +198,6 @@ static inline RenderSVGResourceContainer* paintingResourceFromSVGPaint(Document&
     return container;
 }
 
-static inline void registerPendingResource(SVGDocumentExtensions& extensions, const AtomString& id, SVGElement& element)
-{
-    extensions.addPendingResource(id, element);
-}
-
 bool SVGResources::buildCachedResources(const RenderElement& renderer, const RenderStyle& style)
 {
     ASSERT(renderer.element());
@@ -213,9 +208,8 @@ bool SVGResources::buildCachedResources(const RenderElement& renderer, const Ren
 
     auto& element = downcast<SVGElement>(*renderer.element());
 
-    Document& document = element.document();
-
-    SVGDocumentExtensions& extensions = document.accessSVGExtensions();
+    auto& treeScope = element.treeScopeForSVGReferences();
+    Document& document = treeScope.documentScope();
 
     const AtomString& tagName = element.localName();
     if (tagName.isNull())
@@ -230,10 +224,10 @@ bool SVGResources::buildCachedResources(const RenderElement& renderer, const Ren
             // https://bugs.webkit.org/show_bug.cgi?id=127032
             auto& clipPath = downcast<ReferencePathOperation>(*style.clipPath());
             AtomString id(clipPath.fragment());
-            if (setClipper(getRenderSVGResourceById<RenderSVGResourceClipper>(document, id)))
+            if (setClipper(getRenderSVGResourceById<RenderSVGResourceClipper>(treeScope, id)))
                 foundResources = true;
             else
-                registerPendingResource(extensions, id, element);
+                treeScope.addPendingSVGResource(id, element);
         }
 
         if (style.hasFilter()) {
@@ -243,10 +237,10 @@ bool SVGResources::buildCachedResources(const RenderElement& renderer, const Ren
                 if (filterOperation.type() == FilterOperation::Type::Reference) {
                     const auto& referenceFilterOperation = downcast<ReferenceFilterOperation>(filterOperation);
                     AtomString id = SVGURIReference::fragmentIdentifierFromIRIString(referenceFilterOperation.url(), element.document());
-                    if (setFilter(getRenderSVGResourceById<RenderSVGResourceFilter>(document, id)))
+                    if (setFilter(getRenderSVGResourceById<RenderSVGResourceFilter>(treeScope, id)))
                         foundResources = true;
                     else
-                        registerPendingResource(extensions, id, element);
+                        treeScope.addPendingSVGResource(id, element);
                 }
             }
         }
@@ -256,10 +250,10 @@ bool SVGResources::buildCachedResources(const RenderElement& renderer, const Ren
             auto* maskImage = style.maskImage();
             if (is<StyleCachedImage>(maskImage)) {
                 auto resourceID = SVGURIReference::fragmentIdentifierFromIRIString(downcast<StyleCachedImage>(*maskImage).reresolvedURL(document).string(), document);
-                if (setMasker(getRenderSVGResourceById<RenderSVGResourceMasker>(document, resourceID)))
+                if (setMasker(getRenderSVGResourceById<RenderSVGResourceMasker>(treeScope, resourceID)))
                     foundResources = true;
                 else
-                    registerPendingResource(extensions, resourceID, element);
+                    treeScope.addPendingSVGResource(resourceID, element);
             }
         }
     }
@@ -267,10 +261,10 @@ bool SVGResources::buildCachedResources(const RenderElement& renderer, const Ren
     if (markerTags().contains(tagName) && svgStyle.hasMarkers()) {
         auto buildCachedMarkerResource = [&](const String& markerResource, bool (SVGResources::*setMarker)(RenderSVGResourceMarker*)) {
             auto markerId = SVGURIReference::fragmentIdentifierFromIRIString(markerResource, document);
-            if ((this->*setMarker)(getRenderSVGResourceById<RenderSVGResourceMarker>(document, markerId)))
+            if ((this->*setMarker)(getRenderSVGResourceById<RenderSVGResourceMarker>(treeScope, markerId)))
                 foundResources = true;
             else
-                registerPendingResource(extensions, markerId, element);
+                treeScope.addPendingSVGResource(markerId, element);
         };
         buildCachedMarkerResource(svgStyle.markerStartResource(), &SVGResources::setMarkerStart);
         buildCachedMarkerResource(svgStyle.markerMidResource(), &SVGResources::setMarkerMid);
@@ -281,19 +275,19 @@ bool SVGResources::buildCachedResources(const RenderElement& renderer, const Ren
         if (svgStyle.hasFill()) {
             bool hasPendingResource = false;
             AtomString id;
-            if (setFill(paintingResourceFromSVGPaint(document, svgStyle.fillPaintType(), svgStyle.fillPaintUri(), id, hasPendingResource)))
+            if (setFill(paintingResourceFromSVGPaint(treeScope, svgStyle.fillPaintType(), svgStyle.fillPaintUri(), id, hasPendingResource)))
                 foundResources = true;
             else if (hasPendingResource)
-                registerPendingResource(extensions, id, element);
+                treeScope.addPendingSVGResource(id, element);
         }
 
         if (svgStyle.hasStroke()) {
             bool hasPendingResource = false;
             AtomString id;
-            if (setStroke(paintingResourceFromSVGPaint(document, svgStyle.strokePaintType(), svgStyle.strokePaintUri(), id, hasPendingResource)))
+            if (setStroke(paintingResourceFromSVGPaint(treeScope, svgStyle.strokePaintType(), svgStyle.strokePaintUri(), id, hasPendingResource)))
                 foundResources = true;
             else if (hasPendingResource)
-                registerPendingResource(extensions, id, element);
+                treeScope.addPendingSVGResource(id, element);
         }
     }
 
@@ -301,7 +295,7 @@ bool SVGResources::buildCachedResources(const RenderElement& renderer, const Ren
         AtomString id(targetReferenceFromResource(element));
         auto* linkedResource = getRenderSVGResourceContainerById(document, id);
         if (!linkedResource)
-            registerPendingResource(extensions, id, element);
+            treeScope.addPendingSVGResource(id, element);
         else if (isChainableResource(element, linkedResource->element())) {
             setLinkedResource(linkedResource);
             foundResources = true;

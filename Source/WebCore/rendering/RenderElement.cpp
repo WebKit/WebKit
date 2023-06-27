@@ -2036,7 +2036,7 @@ void RenderElement::updateReferencedSVGResources()
 {
     auto referencedElementIDs = ReferencedSVGResources::referencedSVGResourceIDs(style());
     if (!referencedElementIDs.isEmpty())
-        ensureReferencedSVGResources().updateReferencedResources(document(), referencedElementIDs);
+        ensureReferencedSVGResources().updateReferencedResources(treeScopeForSVGReferences(), referencedElementIDs);
     else
         clearReferencedSVGResources();
 }

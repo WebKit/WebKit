@@ -191,7 +191,7 @@ void SVGSMILElement::buildPendingResource()
     if (href.isEmpty())
         target = parentElement();
     else {
-        auto result = SVGURIReference::targetElementFromIRIString(href.string(), treeScope());
+        auto result = SVGURIReference::targetElementFromIRIString(href.string(), treeScopeForSVGReferences());
         target = WTFMove(result.element);
         id = WTFMove(result.identifier);
     }
@@ -202,11 +202,11 @@ void SVGSMILElement::buildPendingResource()
 
     if (!svgTarget) {
         // Do not register as pending if we are already pending this resource.
-        if (document().accessSVGExtensions().isPendingResource(*this, id))
+        if (treeScopeForSVGReferences().isPendingSVGResource(*this, id))
             return;
 
         if (!id.isEmpty()) {
-            document().accessSVGExtensions().addPendingResource(id, *this);
+            treeScopeForSVGReferences().addPendingSVGResource(id, *this);
             ASSERT(hasPendingResources());
         }
     } else

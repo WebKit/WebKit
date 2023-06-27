@@ -71,10 +71,9 @@ ReferencedSVGResources::ReferencedSVGResources(RenderElement& renderer)
 
 ReferencedSVGResources::~ReferencedSVGResources()
 {
-    auto& document = m_renderer.document();
-    
+    auto& treeScope = m_renderer.treeScopeForSVGReferences();
     for (auto& targetID : copyToVector(m_elementClients.keys()))
-        removeClientForTarget(document, targetID);
+        removeClientForTarget(treeScope, targetID);
 }
 
 void ReferencedSVGResources::addClientForTarget(SVGElement& targetElement, const AtomString& targetID)
@@ -86,13 +85,13 @@ void ReferencedSVGResources::addClientForTarget(SVGElement& targetElement, const
     });
 }
 
-void ReferencedSVGResources::removeClientForTarget(Document& document, const AtomString& targetID)
+void ReferencedSVGResources::removeClientForTarget(TreeScope& treeScope, const AtomString& targetID)
 {
     auto client = m_elementClients.take(targetID);
 
-    auto* targetElement = document.getElementById(targetID);
-    if (is<SVGElement>(targetElement))
-        downcast<SVGElement>(*targetElement).removeReferencingCSSClient(*client);
+    auto* targetElement = treeScope.getElementById(targetID);
+    if (auto* svgElement = dynamicDowncast<SVGElement>(targetElement))
+        svgElement->removeReferencingCSSClient(*client);
 }
 
 Vector<std::pair<AtomString, QualifiedName>> ReferencedSVGResources::referencedSVGResourceIDs(const RenderStyle& style)
@@ -119,14 +118,14 @@ Vector<std::pair<AtomString, QualifiedName>> ReferencedSVGResources::referencedS
     return referencedResources;
 }
 
-void ReferencedSVGResources::updateReferencedResources(Document& document, const Vector<std::pair<AtomString, QualifiedName>>& referencedResources)
+void ReferencedSVGResources::updateReferencedResources(TreeScope& treeScope, const Vector<std::pair<AtomString, QualifiedName>>& referencedResources)
 {
     HashSet<AtomString> oldKeys;
     for (auto& key : m_elementClients.keys())
         oldKeys.add(key);
 
     for (auto& [targetID, tagName] : referencedResources) {
-        auto* element = elementForResourceID(document, targetID, tagName);
+        auto* element = elementForResourceID(treeScope, targetID, tagName);
         if (!element)
             continue;
 
@@ -135,34 +134,34 @@ void ReferencedSVGResources::updateReferencedResources(Document& document, const
     }
     
     for (auto& targetID : oldKeys)
-        removeClientForTarget(document, targetID);
+        removeClientForTarget(treeScope, targetID);
 }
 
 // SVG code uses getRenderSVGResourceById<>, but that works in terms of renderers. We need to find resources
 // before the render tree is fully constructed, so this works on Elements.
-SVGElement* ReferencedSVGResources::elementForResourceID(Document& document, const AtomString& resourceID, const QualifiedName& tagName)
+SVGElement* ReferencedSVGResources::elementForResourceID(TreeScope& treeScope, const AtomString& resourceID, const QualifiedName& tagName)
 {
-    auto* element = document.getElementById(resourceID);
+    auto* element = treeScope.getElementById(resourceID);
     if (!element || !element->hasTagName(tagName))
         return nullptr;
 
     return downcast<SVGElement>(element);
 }
 
-SVGFilterElement* ReferencedSVGResources::referencedFilterElement(Document& document, const ReferenceFilterOperation& referenceFilter)
+SVGFilterElement* ReferencedSVGResources::referencedFilterElement(TreeScope& treeScope, const ReferenceFilterOperation& referenceFilter)
 {
     if (referenceFilter.fragment().isEmpty())
         return nullptr;
-    auto* element = elementForResourceID(document, referenceFilter.fragment(), SVGNames::filterTag);
+    auto* element = elementForResourceID(treeScope, referenceFilter.fragment(), SVGNames::filterTag);
     return element ? downcast<SVGFilterElement>(element) : nullptr;
 }
 
-RenderSVGResourceClipper* ReferencedSVGResources::referencedClipperRenderer(Document& document, const ReferencePathOperation& clipPath)
+RenderSVGResourceClipper* ReferencedSVGResources::referencedClipperRenderer(TreeScope& treeScope, const ReferencePathOperation& clipPath)
 {
     if (clipPath.fragment().isEmpty())
         return nullptr;
     // For some reason, SVG stores a cache of id -> renderer, rather than just using getElementById() and renderer().
-    return getRenderSVGResourceById<RenderSVGResourceClipper>(document, clipPath.fragment());
+    return getRenderSVGResourceById<RenderSVGResourceClipper>(treeScope, clipPath.fragment());
 }
 
 } // namespace WebCore

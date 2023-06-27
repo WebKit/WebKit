@@ -54,7 +54,10 @@ class LayoutPoint;
 class IdTargetObserverRegistry;
 class Node;
 class RadioButtonGroups;
+class RenderSVGResourceContainer;
+class SVGElement;
 class ShadowRoot;
+struct SVGResourcesMap;
 
 class TreeScope {
     friend class Document;
@@ -126,6 +129,19 @@ public:
     std::span<const RefPtr<CSSStyleSheet>> adoptedStyleSheets() const;
     ExceptionOr<void> setAdoptedStyleSheets(Vector<RefPtr<CSSStyleSheet>>&&);
 
+    void addSVGResource(const AtomString& id, RenderSVGResourceContainer&);
+    void removeSVGResource(const AtomString& id);
+    RenderSVGResourceContainer* svgResourceById(const AtomString& id) const;
+
+    void addPendingSVGResource(const AtomString& id, SVGElement&);
+    bool isIdOfPendingSVGResource(const AtomString& id) const;
+    bool isPendingSVGResource(SVGElement&, const AtomString& id) const;
+    void clearHasPendingSVGResourcesIfPossible(SVGElement&);
+    void removeElementFromPendingSVGResources(SVGElement&);
+    WeakHashSet<SVGElement, WeakPtrImplWithEventTargetData> removePendingSVGResource(const AtomString&);
+    void markPendingSVGResourcesForRemoval(const AtomString&);
+    RefPtr<SVGElement> takeElementFromPendingSVGResourcesForRemovalMap(const AtomString&);
+
 protected:
     TreeScope(ShadowRoot&, Document&);
     explicit TreeScope(Document&);
@@ -142,6 +158,9 @@ protected:
 private:
     CSSStyleSheetObservableArray& ensureAdoptedStyleSheets();
 
+    SVGResourcesMap& svgResourcesMap() const;
+    bool isElementWithPendingSVGResources(SVGElement&) const;
+
     ContainerNode& m_rootNode;
     std::reference_wrapper<Document> m_documentScope;
     TreeScope* m_parentTreeScope;
@@ -153,9 +172,11 @@ private:
     std::unique_ptr<TreeScopeOrderedMap> m_labelsByForAttribute;
 
     UniqueRef<IdTargetObserverRegistry> m_idTargetObserverRegistry;
-    
+
     std::unique_ptr<RadioButtonGroups> m_radioButtonGroups;
     RefPtr<CSSStyleSheetObservableArray> m_adoptedStyleSheets;
+
+    std::unique_ptr<SVGResourcesMap> m_svgResourcesMap;
 };
 
 inline bool TreeScope::hasElementWithId(const AtomStringImpl& id) const
