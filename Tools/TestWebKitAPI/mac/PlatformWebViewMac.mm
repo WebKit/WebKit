@@ -51,6 +51,10 @@ void PlatformWebView::initialize(WKPageConfigurationRef pageConfiguration, Class
         configuration.get()._relatedWebView = WKPageGetWebView(relatedPage);
     if (auto* preferences = WKPageConfigurationGetPreferences(pageConfiguration))
         configuration.get().preferences = (WKPreferences *)preferences;
+    else if (auto* pageGroup = WKPageConfigurationGetPageGroup(pageConfiguration)) {
+        if (auto preferences = WKPageGroupGetPreferences(pageGroup))
+            configuration.get().preferences = (WKPreferences *)preferences;
+    }
 
     m_view = [[wkViewSubclass alloc] initWithFrame:rect configuration:configuration.get()];
     [m_view _setWindowOcclusionDetectionEnabled:NO];
