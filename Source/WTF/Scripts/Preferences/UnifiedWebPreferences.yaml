@@ -2190,6 +2190,20 @@ DialogElementEnabled:
     WebCore:
       default: true
 
+DialogInvokerAttributeEnabled:
+  type: bool
+  status: stable
+  category: html
+  humanReadableName: "HTML dialogmodaltarget attribute"
+  humanReadableDescription: "Enable HTML dialogmodaltarget attribute support"
+  defaultValue:
+    WebKitLegacy:
+      default: true
+    WebKit:
+      default: true
+    WebCore:
+      default: true
+
 DirPseudoEnabled:
   type: bool
   status: stable

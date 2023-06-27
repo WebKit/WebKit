@@ -213,6 +213,12 @@ bool defaultPopoverAttributeEnabled()
     return newSDK;
 }
 
+bool defaultDialogInvokerAttributeEnabled()
+{
+    static bool newSDK = linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::DialogInvokerAttributeEnabled);
+    return newSDK;
+}
+
 #if PLATFORM(MAC)
 
 bool defaultPassiveWheelListenersAsDefaultOnDocument()

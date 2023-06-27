@@ -2026,7 +2026,8 @@ static inline AtomString makeIdForStyleResolution(const AtomString& value, bool 
 bool Element::isElementReflectionAttribute(const Settings& settings, const QualifiedName& name)
 {
     return (settings.ariaReflectionForElementReferencesEnabled() && name == HTMLNames::aria_activedescendantAttr)
-        || (settings.popoverAttributeEnabled() && name == HTMLNames::popovertargetAttr);
+        || (settings.popoverAttributeEnabled() && name == HTMLNames::popovertargetAttr)
+        || (settings.dialogInvokerAttributeEnabled() && name == HTMLNames::dialogmodaltargetAttr);
 }
 
 bool Element::isElementsArrayReflectionAttribute(const Settings& settings, const QualifiedName& name)

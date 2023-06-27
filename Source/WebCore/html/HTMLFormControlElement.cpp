@@ -368,6 +368,32 @@ HTMLElement* HTMLFormControlElement::popoverTargetElement() const
     return nullptr;
 }
 
+// https://html.spec.whatwg.org/#popover-target-element
+HTMLDialogElement* HTMLFormControlElement::dialogModalTargetElement() const
+{
+    auto canInvokeDialogs = [](const HTMLFormControlElement& element) -> bool {
+        if (!element.document().settings().dialogInvokerAttributeEnabled())
+            return false;
+        if (auto* inputElement = dynamicDowncast<HTMLInputElement>(element))
+            return inputElement->isTextButton() || inputElement->isImageButton();
+        return is<HTMLButtonElement>(element);
+    };
+
+    if (!canInvokeDialogs(*this))
+        return nullptr;
+
+    if (isDisabledFormControl())
+        return nullptr;
+
+    if (form() && isSubmitButton())
+        return nullptr;
+
+    auto* element = dynamicDowncast<HTMLDialogElement>(getElementAttribute(dialogmodaltargetAttr));
+    if (element && element->popoverState() == PopoverState::None)
+        return element;
+    return nullptr;
+}
+
 const AtomString& HTMLFormControlElement::popoverTargetAction() const
 {
     auto value = attributeWithoutSynchronization(HTMLNames::popovertargetactionAttr);
@@ -410,6 +436,22 @@ void HTMLFormControlElement::handlePopoverTargetAction() const
         if (auto* cache = document().existingAXObjectCache())
             cache->onPopoverTargetToggle(*this);
     }
+}
+
+// https://html.spec.whatwg.org/#popover-target-attribute-activation-behavior
+void HTMLFormControlElement::handleDialogModalTargetAction() const
+{
+    RefPtr target = dialogModalTargetElement();
+    if (!target)
+        return;
+
+    bool shouldClose = target->isOpen() && target->isModal();
+    bool shouldShow = !target->isOpen();
+
+    if (shouldClose)
+        target->close(String { });
+    else if (shouldShow)
+        target->showModal();
 }
 
 // FIXME: We should remove the quirk once <rdar://problem/47334655> is fixed.

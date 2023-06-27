@@ -155,7 +155,9 @@ void HTMLButtonElement::defaultEventHandler(Event& event)
 
             if (m_type == SUBMIT || m_type == RESET)
                 event.setDefaultHandled();
-        } else
+        } else if (dialogModalTargetElement())
+            handleDialogModalTargetAction();
+        else
             handlePopoverTargetAction();
     }
 

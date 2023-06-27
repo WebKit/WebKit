@@ -296,6 +296,16 @@ bool defaultPopoverAttributeEnabled()
 #endif
 }
 
+bool defaultDialogInvokerAttributeEnabled()
+{
+#if PLATFORM(COCOA)
+    static bool newSDK = linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::DialogInvokerAttributeEnabled);
+    return newSDK;
+#else
+    return false;
+#endif
+}
+
 bool defaultUseGPUProcessForDOMRenderingEnabled()
 {
 #if ENABLE(GPU_PROCESS_BY_DEFAULT) && ENABLE(GPU_PROCESS_DOM_RENDERING_BY_DEFAULT)

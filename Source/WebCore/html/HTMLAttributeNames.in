@@ -117,6 +117,7 @@ declare
 decoding
 default
 defer
+dialogmodaltarget
 dir
 direction
 dirname

@@ -102,6 +102,8 @@ public:
     const AtomString& popoverTargetAction() const;
     void setPopoverTargetAction(const AtomString& value);
 
+    HTMLDialogElement* dialogModalTargetElement() const;
+
     using Node::ref;
     using Node::deref;
 
@@ -128,6 +130,7 @@ protected:
     void dispatchBlurEvent(RefPtr<Element>&& newFocusedElement) override;
 
     void handlePopoverTargetAction() const;
+    void handleDialogModalTargetAction() const;
 
 private:
     void refFormAssociatedElement() const final { ref(); }

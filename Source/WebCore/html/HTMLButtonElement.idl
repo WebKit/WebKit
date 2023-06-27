@@ -45,3 +45,4 @@
 };
 
 HTMLButtonElement includes PopoverInvokerElement;
+HTMLButtonElement includes DialogInvokerElement;
