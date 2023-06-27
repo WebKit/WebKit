@@ -673,8 +673,15 @@ void LineLayout::updateRenderTreePositions(const Vector<LineAdjustment>& lineAdj
             floatingObject.setMarginOffset({ marginLeft, marginTop });
             floatingObject.setIsPlaced(true);
 
+            auto oldRect = renderer.frameRect();
             renderer.setLocation(Layout::BoxGeometry::borderBoxRect(visualGeometry).topLeft());
-            renderer.repaint();
+            if (renderer.checkForRepaintDuringLayout()) {
+                auto hasMoved = oldRect.location() != renderer.location();
+                if (hasMoved)
+                    renderer.repaintDuringLayoutIfMoved(oldRect);
+                else
+                    renderer.repaint();
+            }
             continue;
         }
 
@@ -700,7 +707,6 @@ void LineLayout::updateRenderTreePositions(const Vector<LineAdjustment>& lineAdj
             continue;
         }
     }
-
 }
 
 void LineLayout::updateInlineContentConstraints()
