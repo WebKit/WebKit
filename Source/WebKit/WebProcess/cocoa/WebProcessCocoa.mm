@@ -723,20 +723,28 @@ static void registerLogHook()
         if (msg->buffer_sz > 1024)
             return;
 
-        // Skip faults and debug logs in non-internal builds.
-        if (type == OS_LOG_TYPE_FAULT || type == OS_LOG_TYPE_DEBUG)
+        // Skip debug logs in non-internal builds.
+        if (type == OS_LOG_TYPE_DEBUG)
             return;
 
         CString logFormat(msg->format);
         CString logChannel(msg->subsystem);
         CString logCategory(msg->category);
 
+        auto qos = Thread::Background;
+
+        // Send fault logs with high priority. If the WebContent process is terminated, we might not be able to send the log in time.
+        if (type == OS_LOG_TYPE_FAULT) {
+            type = OS_LOG_TYPE_ERROR;
+            qos = Thread::Interactive;
+        }
+
         Vector<uint8_t> buffer(msg->buffer, msg->buffer_sz);
         Vector<uint8_t> privdata(msg->privdata, msg->privdata_sz);
 
         static NeverDestroyed<Ref<WorkQueue>> queue(WorkQueue::create("Log Queue", WorkQueue::QOS::Background));
 
-        queue.get()->dispatch([logFormat = WTFMove(logFormat), logChannel = WTFMove(logChannel), logCategory = WTFMove(logCategory), type = type, buffer = WTFMove(buffer), privdata = WTFMove(privdata)] {
+        queue.get()->dispatchWithQOS([logFormat = WTFMove(logFormat), logChannel = WTFMove(logChannel), logCategory = WTFMove(logCategory), type = type, buffer = WTFMove(buffer), privdata = WTFMove(privdata), qos] {
             os_log_message_s msg = { 0 };
 
             msg.format = logFormat.data();
@@ -752,10 +760,10 @@ static void registerLogHook()
 
             auto connectionID = WebProcess::singleton().networkProcessConnectionID();
             if (connectionID)
-                IPC::Connection::send(connectionID, Messages::NetworkConnectionToWebProcess::LogOnBehalfOfWebContent(logChannel.bytesInludingNullTerminator(), logCategory.bytesInludingNullTerminator(), logString, type, getpid()), 0);
+                IPC::Connection::send(connectionID, Messages::NetworkConnectionToWebProcess::LogOnBehalfOfWebContent(logChannel.bytesInludingNullTerminator(), logCategory.bytesInludingNullTerminator(), logString, type, getpid()), 0, { }, qos);
 
             free(messageString);
-        });
+        }, qos);
     });
 }
 #endif
