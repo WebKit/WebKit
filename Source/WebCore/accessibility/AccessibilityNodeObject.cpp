@@ -823,16 +823,15 @@ bool AccessibilityNodeObject::isMultiSelectable() const
 
 bool AccessibilityNodeObject::isRequired() const
 {
-    // Explicit aria-required values should trump native required attributes.
+    auto* formControlElement = dynamicDowncast<HTMLFormControlElement>(node());
+    if (formControlElement && formControlElement->isRequired())
+        return true;
+
     const AtomString& requiredValue = getAttribute(aria_requiredAttr);
     if (equalLettersIgnoringASCIICase(requiredValue, "true"_s))
         return true;
     if (equalLettersIgnoringASCIICase(requiredValue, "false"_s))
         return false;
-
-    Node* n = this->node();
-    if (is<HTMLFormControlElement>(n))
-        return downcast<HTMLFormControlElement>(*n).isRequired();
 
     return false;
 }
