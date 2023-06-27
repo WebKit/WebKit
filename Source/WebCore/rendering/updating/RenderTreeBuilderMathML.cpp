@@ -30,6 +30,7 @@
 
 #include "RenderMathMLFenced.h"
 #include "RenderMathMLFencedOperator.h"
+#include "RenderStyleSetters.h"
 #include "RenderTreeBuilderBlock.h"
 
 namespace WebCore {

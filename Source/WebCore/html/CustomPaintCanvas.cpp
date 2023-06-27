@@ -31,6 +31,7 @@
 #include "CanvasRenderingContext.h"
 #include "ImageBitmap.h"
 #include "PaintRenderingContext2D.h"
+#include "ScriptExecutionContext.h"
 
 namespace WebCore {
 

@@ -50,6 +50,8 @@
 
 namespace WebCore {
 
+using namespace HTMLNames;
+
 AccessibilityTable::AccessibilityTable(RenderObject* renderer)
     : AccessibilityRenderObject(renderer)
     , m_headerContainer(nullptr)

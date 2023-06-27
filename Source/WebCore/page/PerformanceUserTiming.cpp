@@ -28,6 +28,7 @@
 #include "PerformanceUserTiming.h"
 
 #include "Document.h"
+#include "FrameDestructionObserverInlines.h"
 #include "InspectorInstrumentation.h"
 #include "MessagePort.h"
 #include "PerformanceMarkOptions.h"

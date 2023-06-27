@@ -24,6 +24,7 @@
 #include "DOMObjectCache.h"
 #include <WebCore/DOMException.h>
 #include <WebCore/Document.h>
+#include <WebCore/ElementInlines.h>
 #include "GObjectEventListener.h"
 #include <WebCore/HTMLNames.h>
 #include <WebCore/JSExecState.h>

@@ -33,6 +33,7 @@
 namespace WebCore {
 
 class Page;
+class OpportunisticTaskScheduler;
 
 class OpportunisticTaskDeferralScope {
     WTF_MAKE_NONCOPYABLE(OpportunisticTaskDeferralScope); WTF_MAKE_FAST_ALLOCATED;

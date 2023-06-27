@@ -43,6 +43,7 @@
 #include "Quirks.h"
 #include "RenderElement.h"
 #include "RenderStyleSetters.h"
+#include "RenderView.h"
 #include "ResolvedStyle.h"
 #include "Settings.h"
 #include "ShadowRoot.h"

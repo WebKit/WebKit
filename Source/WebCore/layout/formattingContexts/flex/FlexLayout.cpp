@@ -26,8 +26,14 @@
 #include "config.h"
 #include "FlexLayout.h"
 
+#include "FlexFormattingContext.h"
+#include "FlexFormattingGeometry.h"
 #include "FlexRect.h"
+#include "RenderStyleSetters.h"
+#include "StyleContentAlignmentData.h"
+#include "StyleSelfAlignmentData.h"
 #include <wtf/FixedVector.h>
+#include <wtf/ListHashSet.h>
 
 namespace WebCore {
 namespace Layout {

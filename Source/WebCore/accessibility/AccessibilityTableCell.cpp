@@ -29,6 +29,7 @@
 #include "config.h"
 #include "AccessibilityTableCell.h"
 
+#include "AXObjectCache.h"
 #include "AccessibilityTable.h"
 #include "AccessibilityTableRow.h"
 #include "HTMLParserIdioms.h"
@@ -36,6 +37,8 @@
 #include "RenderTableCell.h"
 
 namespace WebCore {
+
+using namespace HTMLNames;
 
 AccessibilityTableCell::AccessibilityTableCell(RenderObject* renderer)
     : AccessibilityRenderObject(renderer)
