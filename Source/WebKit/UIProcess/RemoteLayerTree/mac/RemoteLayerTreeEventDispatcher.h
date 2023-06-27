@@ -51,6 +51,7 @@ namespace WebKit {
 class DisplayLink;
 class NativeWebWheelEvent;
 class RemoteScrollingCoordinatorProxyMac;
+class RemoteLayerTreeDrawingAreaProxyMac;
 class RemoteScrollingTree;
 class RemoteLayerTreeEventDispatcherDisplayLinkClient;
 
@@ -79,6 +80,7 @@ public:
 
     void hasNodeWithAnimatedScrollChanged(bool hasAnimatedScrolls);
 
+    void windowScreenWillChange();
     void windowScreenDidChange(WebCore::PlatformDisplayID, std::optional<WebCore::FramesPerSecond>);
 
     void renderingUpdateComplete();
@@ -100,12 +102,15 @@ private:
     void wheelEventWasHandledByScrollingThread(WheelEventHandlingResult);
 
     DisplayLink* displayLink() const;
+    DisplayLink* existingDisplayLink() const;
+    RemoteLayerTreeDrawingAreaProxyMac& drawingAreaMac() const;
 
     void startDisplayLinkObserver();
     void stopDisplayLinkObserver();
 
     void startOrStopDisplayLink();
     void startOrStopDisplayLinkOnMainThread();
+    void removeDisplayLinkClient();
 
     void scheduleDelayedRenderingUpdateDetectionTimer(Seconds delay);
     void delayedRenderingUpdateDetectionTimerFired();

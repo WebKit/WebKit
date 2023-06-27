@@ -307,6 +307,13 @@ PlatformWheelEvent RemoteLayerTreeEventDispatcher::filteredWheelEvent(const Plat
     return filteredEvent;
 }
 
+RemoteLayerTreeDrawingAreaProxyMac& RemoteLayerTreeEventDispatcher::drawingAreaMac() const
+{
+    auto* drawingArea = dynamicDowncast<RemoteLayerTreeDrawingAreaProxy>(m_scrollingCoordinator->webPageProxy().drawingArea());
+    ASSERT(drawingArea && drawingArea->isRemoteLayerTreeDrawingAreaProxyMac());
+    return *static_cast<RemoteLayerTreeDrawingAreaProxyMac*>(drawingArea);
+}
+
 DisplayLink* RemoteLayerTreeEventDispatcher::displayLink() const
 {
     ASSERT(isMainRunLoop());
@@ -314,11 +321,17 @@ DisplayLink* RemoteLayerTreeEventDispatcher::displayLink() const
     if (!m_scrollingCoordinator)
         return nullptr;
 
-    auto* drawingArea = dynamicDowncast<RemoteLayerTreeDrawingAreaProxy>(m_scrollingCoordinator->webPageProxy().drawingArea());
-    ASSERT(drawingArea && drawingArea->isRemoteLayerTreeDrawingAreaProxyMac());
-    auto* drawingAreaMac = static_cast<RemoteLayerTreeDrawingAreaProxyMac*>(drawingArea);
+    return &drawingAreaMac().displayLink();
+}
 
-    return &drawingAreaMac->displayLink();
+DisplayLink* RemoteLayerTreeEventDispatcher::existingDisplayLink() const
+{
+    ASSERT(isMainRunLoop());
+
+    if (!m_scrollingCoordinator)
+        return nullptr;
+
+    return drawingAreaMac().existingDisplayLink();
 }
 
 void RemoteLayerTreeEventDispatcher::startOrStopDisplayLink()
@@ -384,6 +397,17 @@ void RemoteLayerTreeEventDispatcher::stopDisplayLinkObserver()
     LOG_WITH_STREAM(DisplayLink, stream << "[UI ] RemoteLayerTreeEventDispatcher::stopDisplayLinkObserver");
 
     displayLink->removeObserver(*m_displayLinkClient, *m_displayRefreshObserverID);
+    m_displayRefreshObserverID = { };
+}
+
+void RemoteLayerTreeEventDispatcher::removeDisplayLinkClient()
+{
+    auto* displayLink = existingDisplayLink();
+    if (!displayLink)
+        return;
+
+    LOG_WITH_STREAM(DisplayLink, stream << "[UI ] RemoteLayerTreeEventDispatcher::removeDisplayLinkClient");
+    displayLink->removeClient(*m_displayLinkClient);
     m_displayRefreshObserverID = { };
 }
 
@@ -527,6 +551,11 @@ void RemoteLayerTreeEventDispatcher::renderingUpdateComplete()
         m_stateCondition.notifyOne();
 
     m_state = SynchronizationState::Idle;
+}
+
+void RemoteLayerTreeEventDispatcher::windowScreenWillChange()
+{
+    removeDisplayLinkClient();
 }
 
 void RemoteLayerTreeEventDispatcher::windowScreenDidChange(PlatformDisplayID displayID, std::optional<FramesPerSecond> nominalFramesPerSecond)

@@ -60,6 +60,7 @@ private:
     void establishLayerTreeScrollingRelations(const RemoteLayerTreeHost&) override;
 
     void displayDidRefresh(WebCore::PlatformDisplayID) override;
+    void windowScreenWillChange() override;
     void windowScreenDidChange(WebCore::PlatformDisplayID, std::optional<WebCore::FramesPerSecond>) override;
 
     void willCommitLayerAndScrollingTrees() override;

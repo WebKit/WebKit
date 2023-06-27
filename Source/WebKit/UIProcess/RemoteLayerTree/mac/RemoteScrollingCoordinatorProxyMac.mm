@@ -228,6 +228,13 @@ void RemoteScrollingCoordinatorProxyMac::windowScreenDidChange(PlatformDisplayID
 #endif
 }
 
+void RemoteScrollingCoordinatorProxyMac::windowScreenWillChange()
+{
+#if ENABLE(SCROLLING_THREAD)
+    m_wheelEventDispatcher->windowScreenWillChange();
+#endif
+}
+
 void RemoteScrollingCoordinatorProxyMac::willCommitLayerAndScrollingTrees()
 {
     scrollingTree()->lockLayersForHitTesting();

@@ -49,7 +49,8 @@ public:
     void didRefreshDisplay() override;
 
     DisplayLink& displayLink();
-    
+    DisplayLink* existingDisplayLink();
+
     void updateZoomTransactionID();
     WebCore::PlatformLayerIdentifier pageScalingLayerID() { return m_pageScalingLayerID; }
 private:
@@ -80,8 +81,6 @@ private:
     void setDisplayLinkWantsFullSpeedUpdates(bool) override;
 
     void removeObserver(std::optional<DisplayLinkObserverID>&);
-
-    DisplayLink* exisingDisplayLink();
 
     WTF::MachSendRight createFence() override;
 
