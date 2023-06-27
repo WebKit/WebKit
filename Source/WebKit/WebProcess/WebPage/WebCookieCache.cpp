@@ -37,8 +37,7 @@ using namespace WebCore;
 bool WebCookieCache::isSupported()
 {
 #if HAVE(COOKIE_CHANGE_LISTENER_API)
-    // FIXME: This can eventually be removed, this is merely to ensure a smooth transition to the new API.
-    return inMemoryStorageSession().supportsCookieChangeListenerAPI();
+    return true;
 #else
     return false;
 #endif

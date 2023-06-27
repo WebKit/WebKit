@@ -754,13 +754,6 @@ void NetworkStorageSession::stopListeningForCookieChangeNotifications(CookieChan
         [nsCookieStorage() _setSubscribedDomainsForCookieChanges:m_subscribedDomainsForCookieChanges.get()];
 }
 
-// FIXME: This can eventually go away, this is merely to ensure a smooth transition to the new API.
-bool NetworkStorageSession::supportsCookieChangeListenerAPI() const
-{
-    static const bool supportsAPI = [nsCookieStorage() respondsToSelector:@selector(_setCookiesChangedHandler:onQueue:)];
-    return supportsAPI;
-}
-
 #endif // HAVE(COOKIE_CHANGE_LISTENER_API)
 
 } // namespace WebCore

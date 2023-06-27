@@ -179,7 +179,6 @@ public:
 #if HAVE(COOKIE_CHANGE_LISTENER_API)
     WEBCORE_EXPORT void startListeningForCookieChangeNotifications(CookieChangeObserver&, const String& host);
     WEBCORE_EXPORT void stopListeningForCookieChangeNotifications(CookieChangeObserver&, const HashSet<String>& hosts);
-    WEBCORE_EXPORT bool supportsCookieChangeListenerAPI() const;
 #endif
 
 #if ENABLE(TRACKING_PREVENTION)
