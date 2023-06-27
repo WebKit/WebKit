@@ -81,6 +81,11 @@ View::View(struct wpe_view_backend* backend, const API::PageConfiguration& baseC
     }
 
     auto* pool = configuration->processPool();
+    if (!pool) {
+        auto processPoolConfiguration = API::ProcessPoolConfiguration::create();
+        pool = &WebProcessPool::create(processPoolConfiguration).leakRef();
+        configuration->setProcessPool(pool);
+    }
     m_pageProxy = pool->createWebPage(*m_pageClient, WTFMove(configuration));
 
 #if ENABLE(MEMORY_SAMPLER)

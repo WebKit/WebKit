@@ -2480,7 +2480,14 @@ static void deviceScaleFactorChanged(WebKitWebViewBase* webkitWebViewBase)
 void webkitWebViewBaseCreateWebPage(WebKitWebViewBase* webkitWebViewBase, Ref<API::PageConfiguration>&& configuration)
 {
     WebKitWebViewBasePrivate* priv = webkitWebViewBase->priv;
+
     WebProcessPool* processPool = configuration->processPool();
+    if (!processPool) {
+        auto processPoolConfiguration = API::ProcessPoolConfiguration::create();
+        processPool = &WebProcessPool::create(processPoolConfiguration).leakRef();
+        configuration->setProcessPool(processPool);
+    }
+
     priv->pageProxy = processPool->createWebPage(*priv->pageClient, WTFMove(configuration));
     priv->acceleratedBackingStore = AcceleratedBackingStore::create(*priv->pageProxy);
     priv->pageProxy->initializeWebPage();
