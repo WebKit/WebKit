@@ -34,6 +34,9 @@ NS_ASSUME_NONNULL_BEGIN
 @interface WKFullScreenViewController : UIViewController
 @property (retain, nonatomic) id target;
 @property (assign, nonatomic) SEL exitFullScreenAction;
+#if PLATFORM(VISION)
+@property (assign, nonatomic) SEL toggleDimmingAction;
+#endif
 @property (copy, nonatomic) NSString *location;
 @property (assign, nonatomic) BOOL prefersStatusBarHidden;
 @property (assign, nonatomic) BOOL prefersHomeIndicatorAutoHidden;
@@ -52,7 +55,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)setSupportedOrientations:(UIInterfaceOrientationMask)supportedOrientations;
 - (void)resetSupportedOrientations;
 #if PLATFORM(VISION)
-- (void)hideCancelAndPIPButtons:(BOOL)hidden;
+- (void)setSceneDimmed:(BOOL)dimmed;
+- (void)hideCustomControls:(BOOL)hidden;
 #endif
 @end
 

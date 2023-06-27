@@ -153,7 +153,8 @@ private:
     CGFloat _nonZeroStatusBarHeight;
     std::optional<UIInterfaceOrientationMask> _supportedOrientations;
 #if PLATFORM(VISION)
-    BOOL m_shouldHideCancelAndPIPButtons;
+    RetainPtr<_WKExtrinsicButton> _dimmingButton;
+    BOOL m_shouldHideCustomControls;
 #endif
 }
 
@@ -178,7 +179,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     _playbackClient.setParent(self);
     _valid = YES;
 #if PLATFORM(VISION)
-    m_shouldHideCancelAndPIPButtons = NO;
+    m_shouldHideCustomControls = NO;
 #endif
 
     return self;
@@ -322,8 +323,14 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         isPiPEnabled = page->preferences().pictureInPictureAPIEnabled() && page->preferences().allowsPictureInPictureMediaPlayback();
     bool isPiPSupported = playbackSessionModel && playbackSessionModel->isPictureInPictureSupported();
 #if PLATFORM(VISION)
-    [_cancelButton setHidden:m_shouldHideCancelAndPIPButtons];
-    isPiPEnabled = !m_shouldHideCancelAndPIPButtons && isPiPEnabled;
+    [_cancelButton setHidden:m_shouldHideCustomControls];
+
+    bool isDimmingEnabled = false;
+    if (auto page = [self._webView _page])
+        isDimmingEnabled = page->preferences().fullscreenSceneDimmingEnabled();
+    [_dimmingButton setHidden:m_shouldHideCustomControls || !isDimmingEnabled];
+
+    isPiPEnabled = !m_shouldHideCustomControls && isPiPEnabled;
 #endif
     [_pipButton setHidden:!isPiPEnabled || !isPiPSupported];
 }
@@ -337,12 +344,12 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 #if PLATFORM(VISION)
-- (void)hideCancelAndPIPButtons:(BOOL)hidden
+- (void)hideCustomControls:(BOOL)hidden
 {
-    if (m_shouldHideCancelAndPIPButtons == hidden)
+    if (m_shouldHideCustomControls == hidden)
         return;
 
-    m_shouldHideCancelAndPIPButtons = hidden;
+    m_shouldHideCustomControls = hidden;
     [self videoControlsManagerDidChange];
 }
 #endif // PLATFORM(VISION)
@@ -391,6 +398,23 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     _pictureInPictureActive = active;
     [_pipButton setSelected:active];
 }
+
+#if PLATFORM(VISION)
+
+- (void)setSceneDimmed:(BOOL)dimmed
+{
+    ASSERT(_valid);
+
+    NSString *symbolName = nil;
+    if (dimmed)
+        symbolName = @"light.max";
+    else
+        symbolName = @"light.min";
+
+    [_dimmingButton setImage:[[UIImage systemImageNamed:symbolName] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate] forState:UIControlStateNormal];
+}
+
+#endif // PLATFORM(VISION)
 
 - (void)setAnimating:(BOOL)animating
 {
@@ -456,15 +480,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     _animatingView.get().autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     [self.view addSubview:_animatingView.get()];
 
-    _cancelButton = [_WKExtrinsicButton buttonWithType:UIButtonTypeSystem];
-    [_cancelButton setTranslatesAutoresizingMaskIntoConstraints:NO];
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    [_cancelButton setAdjustsImageWhenHighlighted:NO];
-ALLOW_DEPRECATED_DECLARATIONS_END
-    [_cancelButton setExtrinsicContentSize:buttonSize];
-    
+    _cancelButton = [self _createButtonWithExtrinsicContentSize:buttonSize];
     [_cancelButton setImage:[doneImage imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate] forState:UIControlStateNormal];
-    [_cancelButton setTintColor:[UIColor whiteColor]];
     [_cancelButton sizeToFit];
     [_cancelButton addTarget:self action:@selector(_cancelAction:) forControlEvents:UIControlEventTouchUpInside];
 
@@ -473,22 +490,24 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         // FIXME: this color specification should not be necessary.
         cancelButtonConfiguration.baseBackgroundColor = [UIColor colorWithWhite:1.0 alpha:0.15];
         [_cancelButton setConfiguration:cancelButtonConfiguration];
-        
+
+#if PLATFORM(VISION)
+        _dimmingButton = [self _createButtonWithExtrinsicContentSize:buttonSize];
+        [_dimmingButton addTarget:self action:@selector(_toggleDimmingAction:) forControlEvents:UIControlEventTouchUpInside];
+        [_dimmingButton setConfiguration:cancelButtonConfiguration];
+#endif
+
         _stackView = adoptNS([[UIStackView alloc] init]);
         [_stackView addArrangedSubview:_cancelButton.get()];
         [_stackView addArrangedSubview:_pipButton.get()];
+#if PLATFORM(VISION)
+        [_stackView addArrangedSubview:_dimmingButton.get()];
+#endif
         [_stackView setSpacing:24.0];
     } else {
-        _pipButton = [_WKExtrinsicButton buttonWithType:UIButtonTypeSystem];
-        [_pipButton setTranslatesAutoresizingMaskIntoConstraints:NO];
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        [_pipButton setAdjustsImageWhenHighlighted:NO];
-ALLOW_DEPRECATED_DECLARATIONS_END
-        [_pipButton setExtrinsicContentSize:buttonSize];
-        
+        _pipButton = [self _createButtonWithExtrinsicContentSize:buttonSize];
         [_pipButton setImage:[startPiPImage imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate] forState:UIControlStateNormal];
         [_pipButton setImage:[stopPiPImage imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate] forState:UIControlStateSelected];
-        [_pipButton setTintColor:[UIColor whiteColor]];
         [_pipButton sizeToFit];
         [_pipButton addTarget:self action:@selector(_togglePiPAction:) forControlEvents:UIControlEventTouchUpInside];
         
@@ -677,6 +696,16 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     playbackSessionModel->togglePictureInPicture();
 }
 
+#if PLATFORM(VISION)
+
+- (void)_toggleDimmingAction:(id)sender
+{
+    ASSERT(_valid);
+    [[self target] performSelector:[self toggleDimmingAction]];
+}
+
+#endif // PLATFORM(VISION)
+
 - (void)_touchDetected:(id)sender
 {
     ASSERT(_valid);
@@ -740,6 +769,18 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     [alert addAction:exitAction];
     [alert addAction:stayAction];
     [self presentViewController:alert.get() animated:YES completion:nil];
+}
+
+- (_WKExtrinsicButton *)_createButtonWithExtrinsicContentSize:(CGSize)size
+{
+    _WKExtrinsicButton *button = [_WKExtrinsicButton buttonWithType:UIButtonTypeSystem];
+    [button setTranslatesAutoresizingMaskIntoConstraints:NO];
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    [button setAdjustsImageWhenHighlighted:NO];
+ALLOW_DEPRECATED_DECLARATIONS_END
+    [button setExtrinsicContentSize:size];
+    [button setTintColor:[UIColor whiteColor]];
+    return button;
 }
 
 @end

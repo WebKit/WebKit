@@ -2719,6 +2719,20 @@ FullscreenRequirementForScreenOrientationLockingEnabled:
     WebCore:
       default: true
 
+FullscreenSceneDimmingEnabled:
+  type: bool
+  status: internal
+  humanReadableName: "Fullscreen scene dimming"
+  humanReadableDescription: "Enable scene dimming in Fullscreen"
+  condition: PLATFORM(VISION)
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 GStreamerEnabled:
   type: bool
   status: embedder
