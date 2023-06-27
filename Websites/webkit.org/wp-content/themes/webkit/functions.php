@@ -422,15 +422,14 @@ class Responsive_Toggle_Walker_Nav_Menu extends Walker_Nav_Menu {
 
         $before = $args->link_before;
         $after = $args->link_after;
-
+        $toggle = "";
+        
         if ( in_array('menu-item-has-children', $item->classes) && 0 == $depth ) {
             $this->toggleid = $item->ID;
-            $args->before .= "<input type=\"checkbox\" id=\"toggle-{$item->ID}\" class=\"menu-toggle\" />";
+            $toggle = "<input type=\"checkbox\" id=\"toggle-{$item->ID}\" class=\"menu-toggle\" />";
             $args->link_before = "<label for=\"toggle-{$item->ID}\" class=\"label-toggle\">" . $args->link_before;
             $args->link_after .= "</label>";
             $item->url = '#nav-sub-menu';
-        } elseif ( in_array('menu-item-has-children', $item->classes) && 1 == $depth ) {
-            // $item->role = "presentation";
         } else $toggleid = null;
 
         $indent = ( $depth ) ? str_repeat( "\t", $depth ) : '';
@@ -470,7 +469,7 @@ class Responsive_Toggle_Walker_Nav_Menu extends Walker_Nav_Menu {
             }
         }
 
-        $item_output = $args->before;
+        $item_output = $args->before . $toggle;
         $item_output .= '<a'. $attributes .'>';
         $item_output .= $args->link_before . apply_filters( 'the_title', $item->title, $item->ID ) . $args->link_after;
         $item_output .= '</a>';
