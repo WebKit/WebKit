@@ -100,6 +100,7 @@
 #endif
 
 #if PLATFORM(COCOA)
+#include "DefaultWebBrowserChecks.h"
 #include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #endif
 
@@ -2606,7 +2607,13 @@ void WKPageSetPageStateClient(WKPageRef pageRef, WKPageStateClientBase* client)
 void WKPageRunJavaScriptInMainFrame(WKPageRef pageRef, WKStringRef scriptRef, void* context, WKPageRunJavaScriptFunction callback)
 {
     CRASH_IF_SUSPENDED;
-    toImpl(pageRef)->runJavaScriptInMainFrame({ toImpl(scriptRef)->string(), URL { }, false, std::nullopt, true }, [context, callback] (auto&& result) {
+#if PLATFORM(COCOA)
+    auto removeTransientActivation = shouldEvaluateJavaScriptWithoutTransientActivation() ? RemoveTransientActivation::Yes : RemoveTransientActivation::No;
+#else
+    auto removeTransientActivation = RemoveTransientActivation::No;
+#endif
+
+    toImpl(pageRef)->runJavaScriptInMainFrame({ toImpl(scriptRef)->string(), URL { }, false, std::nullopt, true, removeTransientActivation }, [context, callback] (auto&& result) {
         if (result.has_value())
             callback(toAPI(result.value().get()), nullptr, context);
         else
