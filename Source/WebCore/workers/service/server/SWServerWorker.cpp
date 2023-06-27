@@ -364,13 +364,15 @@ void SWServerWorker::setState(State state)
     case State::Terminating:
         callWhenActivatedHandler(false);
         break;
-    case State::NotRunning:
+    case State::NotRunning: {
+        bool isActivateEventAlreadyFired = m_isActivateEventFired;
         terminationCompleted();
-
         callWhenActivatedHandler(false);
+
         // As per https://w3c.github.io/ServiceWorker/#activate, a worker goes to activated even if activating fails.
-        if (m_data.state == ServiceWorkerState::Activating)
+        if (m_data.state == ServiceWorkerState::Activating && isActivateEventAlreadyFired)
             didFinishActivation();
+        }
         break;
     }
 }

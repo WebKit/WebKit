@@ -1055,6 +1055,7 @@ void SWServer::runServiceWorkerAndFireActivateEvent(SWServerWorker& worker)
             return;
 
         RELEASE_LOG(ServiceWorker, "SWServer::runServiceWorkerAndFireActivateEvent on worker %llu", worker->identifier().toUInt64());
+        worker->markActivateEventAsFired();
         contextConnection->fireActivateEvent(worker->identifier());
     });
 }
