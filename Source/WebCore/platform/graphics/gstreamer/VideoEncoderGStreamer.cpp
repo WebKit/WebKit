@@ -180,7 +180,7 @@ GStreamerInternalVideoEncoder::GStreamerInternalVideoEncoder(const String& codec
         GstMappedBuffer encodedImage(outputBuffer.get(), GST_MAP_READ);
         VideoEncoder::EncodedFrame encodedFrame {
             Vector<uint8_t> { std::span<const uint8_t> { encodedImage.data(), encodedImage.size() } },
-            isKeyFrame, m_timestamp, m_duration
+            isKeyFrame, m_timestamp, m_duration, { }
         };
 
         m_postTaskCallback([protectedThis = Ref { *this }, encodedFrame = WTFMove(encodedFrame)]() mutable {

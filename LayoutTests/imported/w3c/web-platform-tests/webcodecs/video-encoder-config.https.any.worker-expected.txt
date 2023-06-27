@@ -3,7 +3,7 @@ PASS Test that VideoEncoder.isConfigSupported() rejects invalid config:Emtpy cod
 PASS Test that VideoEncoder.isConfigSupported() rejects invalid config:Unrecognized codec
 FAIL Test that VideoEncoder.isConfigSupported() rejects invalid config:Width is too large assert_unreached: Should have rejected: undefined Reached unreachable code
 FAIL Test that VideoEncoder.isConfigSupported() rejects invalid config:Height is too large assert_unreached: Should have rejected: undefined Reached unreachable code
-FAIL Test that VideoEncoder.isConfigSupported() rejects invalid config:Invalid scalability mode assert_unreached: Should have rejected: undefined Reached unreachable code
+PASS Test that VideoEncoder.isConfigSupported() rejects invalid config:Invalid scalability mode
 FAIL VideoEncoder.isConfigSupported() doesn't support config:Too strenuous accelerated encoding parameters assert_false: expected false got true
 FAIL VideoEncoder.isConfigSupported() doesn't support config:Odd sized frames for H264 assert_false: expected false got true
 PASS VideoEncoder.isConfigSupported() supports:{"codec":"avc1.42001E","hardwareAcceleration":"no-preference","width":640,"height":480,"bitrate":5000000,"framerate":24,"avc":{"format":"annexb"},"futureConfigFeature":"foo"}

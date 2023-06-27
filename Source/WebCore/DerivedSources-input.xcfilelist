@@ -828,6 +828,7 @@ $(PROJECT_DIR)/Modules/webcodecs/WebCodecsEncodedVideoChunkMetadata.idl
 $(PROJECT_DIR)/Modules/webcodecs/WebCodecsEncodedVideoChunkOutputCallback.idl
 $(PROJECT_DIR)/Modules/webcodecs/WebCodecsEncodedVideoChunkType.idl
 $(PROJECT_DIR)/Modules/webcodecs/WebCodecsErrorCallback.idl
+$(PROJECT_DIR)/Modules/webcodecs/WebCodecsSvcOutputMetadata.idl
 $(PROJECT_DIR)/Modules/webcodecs/WebCodecsVideoDecoder.idl
 $(PROJECT_DIR)/Modules/webcodecs/WebCodecsVideoDecoderConfig.idl
 $(PROJECT_DIR)/Modules/webcodecs/WebCodecsVideoDecoderSupport.idl

@@ -28,6 +28,7 @@
 #if ENABLE(WEB_CODECS)
 
 #include "VideoEncoderActiveConfiguration.h"
+#include "VideoEncoderScalabilityMode.h"
 #include "VideoFrame.h"
 #include <span>
 #include <wtf/CompletionHandler.h>
@@ -39,6 +40,8 @@ class VideoEncoder {
 public:
     virtual ~VideoEncoder() = default;
 
+    using ScalabilityMode = VideoEncoderScalabilityMode;
+
     struct Config {
         uint64_t width { 0 };
         uint64_t height { 0 };
@@ -46,6 +49,7 @@ public:
         uint64_t bitRate { 0 };
         double frameRate { 0 };
         bool isRealtime { true };
+        ScalabilityMode scalabilityMode { ScalabilityMode::L1T1 };
     };
     using ActiveConfiguration = VideoEncoderActiveConfiguration;
     struct EncodedFrame {
@@ -53,6 +57,7 @@ public:
         bool isKeyFrame { false };
         int64_t timestamp { 0 };
         std::optional<uint64_t> duration;
+        std::optional<unsigned> temporalIndex;
     };
     struct RawFrame {
         Ref<VideoFrame> frame;

@@ -155,6 +155,13 @@ void RemoteVideoCodecFactory::createEncoder(const String& codec, const WebCore::
         VideoEncoder::createLocalEncoder(codec, config, WTFMove(createCallback), WTFMove(descriptionCallback), WTFMove(outputCallback), WTFMove(postTaskCallback));
         return;
     }
+
+    // FIXME: Add support for remote codec scalability.
+    if (config.scalabilityMode != VideoEncoder::ScalabilityMode::L1T1) {
+        createCallback(makeUnexpected("Scalability mode is not supported"_s));
+        return;
+    }
+
     WebProcess::singleton().libWebRTCCodecs().createEncoderAndWaitUntilReady(*type, { }, config.isRealtime, config.useAnnexB, [config, createCallback = WTFMove(createCallback), descriptionCallback = WTFMove(descriptionCallback), outputCallback = WTFMove(outputCallback), postTaskCallback = WTFMove(postTaskCallback)](auto& internalEncoder) mutable {
         auto callbacks = RemoteVideoEncoderCallbacks::create(WTFMove(descriptionCallback), WTFMove(outputCallback), WTFMove(postTaskCallback));
         UniqueRef<VideoEncoder> encoder = makeUniqueRef<RemoteVideoEncoder>(internalEncoder, config, callbacks.copyRef());
@@ -291,7 +298,7 @@ void RemoteVideoEncoderCallbacks::notifyEncodedChunk(Vector<uint8_t>&& data, boo
 
         // FIXME: Remove from the map.
         auto duration = protectedThis->m_timestampToDuration.get(timestamp + 1);
-        protectedThis->m_outputCallback({ WTFMove(data), isKeyFrame, static_cast<int64_t>(timestamp), duration });
+        protectedThis->m_outputCallback({ WTFMove(data), isKeyFrame, static_cast<int64_t>(timestamp), duration, { } });
     });
 }
 

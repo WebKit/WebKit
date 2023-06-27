@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,14 +27,10 @@
 
 #if ENABLE(WEB_CODECS)
 
-#include "WebCodecsVideoDecoderConfig.h"
-#include "WebCodecsSvcOutputMetadata.h"
-
 namespace WebCore {
 
-struct WebCodecsEncodedVideoChunkMetadata {
-    std::optional<WebCodecsVideoDecoderConfig> decoderConfig;
-    std::optional<WebCodecsSvcOutputMetadata> svc;
+struct WebCodecsSvcOutputMetadata {
+    std::optional<unsigned> temporalLayerId;
 };
 
 }
