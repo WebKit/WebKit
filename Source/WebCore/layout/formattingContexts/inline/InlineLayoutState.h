@@ -46,12 +46,16 @@ public:
 
     LayoutUnit nestedListMarkerOffset(const ElementBox& listMarkerBox) const { return m_nestedListMarkerOffsets.get(&listMarkerBox); }
 
+    void setHorizontalConstraintOverride(std::optional<LayoutUnit> horizontalConstraintOverride) { m_horizontalConstraintOverride = horizontalConstraintOverride; }
+    std::optional<LayoutUnit> horizontalConstraintOverride() const { return m_horizontalConstraintOverride; }
+
 private:
     BlockLayoutState& m_parentBlockLayoutState;
     InlineLayoutUnit m_clearGapBeforeFirstLine { 0.f };
     InlineLayoutUnit m_clearGapAfterLastLine { 0.f };
     // FIXME: This is required by the integaration codepath.
     HashMap<const ElementBox*, LayoutUnit> m_nestedListMarkerOffsets;
+    std::optional<LayoutUnit> m_horizontalConstraintOverride { std::nullopt };
 };
 
 inline InlineLayoutState::InlineLayoutState(BlockLayoutState& parentBlockLayoutState, HashMap<const ElementBox*, LayoutUnit>&& nestedListMarkerOffsets)

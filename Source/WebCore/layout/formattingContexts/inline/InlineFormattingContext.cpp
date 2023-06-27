@@ -110,6 +110,10 @@ InlineLayoutResult InlineFormattingContext::layoutInFlowAndFloatContent(const Co
         // FIXME: We should be able to extract the last line information and provide it to layout as "previous line" (ends in line break and inline direction).
         return PreviousLine { lastLineIndex, { }, { }, { }, { } };
     };
+
+    if (root().style().textWrap() == TextWrap::Balance)
+        inlineLayoutState.setHorizontalConstraintOverride(computeTextWrapBalanceWidthConstraint(inlineItems, constraints, inlineLayoutState));
+
     return lineLayout(inlineItems, needsLayoutRange, previousLine(), constraints, inlineLayoutState);
 }
 
@@ -316,6 +320,91 @@ InlineLayoutUnit InlineFormattingContext::computedIntrinsicWidthForConstraint(In
         previousLine = PreviousLine { lineIndex++, lineLayoutResult.contentGeometry.trailingOverflowingContentWidth, { }, { }, WTFMove(lineLayoutResult.floatContent.suspendedFloats) };
     }
     return maximumContentWidth;
+}
+
+std::optional<LayoutUnit> InlineFormattingContext::computeTextWrapBalanceWidthConstraint(const InlineItems& inlineItems, const ConstraintsForInlineContent& constraints, const InlineLayoutState& inlineLayoutState)
+{
+    // Always consider all inline items, as modification of one line can impact line layout
+    // across earlier/later lines due to rebalancing.
+    InlineItemRange needsLayoutRange = InlineItemRange { 0, inlineItems.size() };
+
+    // Visible lines allowed according to line clamping
+    auto numberOfVisibleLinesAllowed = [&] () -> std::optional<size_t> {
+        if (auto lineClamp = inlineLayoutState.parentBlockLayoutState().lineClamp())
+            return lineClamp->maximumLineCount > lineClamp->currentLineCount ? lineClamp->maximumLineCount - lineClamp->currentLineCount : 0;
+        return { };
+    }();
+
+    // Local variables modified by the following lambda function
+    bool containsFloat = false;
+    size_t layoutLineCount;
+    auto inlineItemRangeForLastVisibleLine = InlineItemRange { };
+
+    // Performs a line layout at a specified width constraint
+    auto lineLayoutWithWidthConstraint = [&](LayoutUnit widthConstraint) {
+        auto floatingState = FloatingState { root() };
+        auto parentBlockLayoutState = BlockLayoutState { floatingState, { } };
+        auto inlineLayoutState = InlineLayoutState { parentBlockLayoutState, { } };
+        inlineLayoutState.setHorizontalConstraintOverride(widthConstraint);
+        auto lineBuilder = LineBuilder { *this, inlineLayoutState, floatingState, constraints.horizontal(), inlineItems };
+        auto layoutRange = needsLayoutRange;
+        auto previousLineEnd = std::optional<InlineItemPosition> { };
+        auto previousLine = std::optional<PreviousLine> { };
+        auto lineIndex = 0lu;
+
+        while (!layoutRange.isEmpty()) {
+            auto lineInitialRect = InlineRect { 0.f, constraints.horizontal().logicalLeft, constraints.horizontal().logicalWidth, 0.f };
+            auto lineLayoutResult = lineBuilder.layoutInlineContent({ layoutRange, lineInitialRect }, previousLine);
+
+            // Abort if float is encountered
+            if (!floatingState.isEmpty()) {
+                containsFloat = true;
+                return;
+            }
+
+            layoutRange.start = leadingInlineItemPositionForNextLine(lineLayoutResult.inlineItemRange.end, previousLineEnd, layoutRange.end);
+            previousLineEnd = layoutRange.start;
+            previousLine = PreviousLine { lineIndex, lineLayoutResult.contentGeometry.trailingOverflowingContentWidth, { }, { }, WTFMove(lineLayoutResult.floatContent.suspendedFloats) };
+
+            if (numberOfVisibleLinesAllowed && lineIndex == *numberOfVisibleLinesAllowed - 1)
+                inlineItemRangeForLastVisibleLine = lineLayoutResult.inlineItemRange;
+
+            lineIndex++;
+        }
+        layoutLineCount = lineIndex;
+    };
+
+    // Perform initial line layout with the original width
+    auto candidateWidth = constraints.horizontal().logicalWidth;
+    lineLayoutWithWidthConstraint(candidateWidth);
+
+    // Fallback to original width if float is detected
+    if (containsFloat)
+        return std::nullopt;
+
+    // If line clamping occurs, only balance the visible lines
+    auto initialLineCount = layoutLineCount;
+    if (numberOfVisibleLinesAllowed && initialLineCount > numberOfVisibleLinesAllowed) {
+        needsLayoutRange.end = inlineItemRangeForLastVisibleLine.end;
+        initialLineCount = *numberOfVisibleLinesAllowed;
+    }
+
+    // Binary search for minimum width that doesn't cause an extra line to appear
+    int high = candidateWidth.rawValue();
+    int low = 0;
+    while (low <= high) {
+        LayoutUnit mid;
+        mid.setRawValue(low + (high - low) / 2);
+        lineLayoutWithWidthConstraint(mid);
+        if (layoutLineCount > initialLineCount)
+            low = mid.rawValue() + 1;
+        else {
+            candidateWidth = mid;
+            high = mid.rawValue() - 1;
+        }
+    }
+
+    return candidateWidth;
 }
 
 static LineEndingEllipsisPolicy lineEndingEllipsisPolicy(const RenderStyle& rootStyle, size_t numberOfLines, std::optional<size_t> numberOfVisibleLinesAllowed)

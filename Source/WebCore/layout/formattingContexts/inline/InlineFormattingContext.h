@@ -75,6 +75,8 @@ private:
 
     InlineLayoutUnit computedIntrinsicWidthForConstraint(IntrinsicWidthMode) const;
 
+    std::optional<LayoutUnit> computeTextWrapBalanceWidthConstraint(const InlineItems&, const ConstraintsForInlineContent&, const InlineLayoutState&);
+
     void collectContentIfNeeded();
     InlineRect createDisplayContentForLine(size_t lineIndex, const LineBuilder::LayoutResult&, const ConstraintsForInlineContent&, const InlineLayoutState&, InlineDisplay::Content&);
     void resetGeometryForClampedContent(const InlineItemRange& needsDisplayContentRange, const LineBuilder::SuspendedFloatList& suspendedFloats, LayoutPoint topleft);

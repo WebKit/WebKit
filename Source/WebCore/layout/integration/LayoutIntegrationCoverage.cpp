@@ -502,6 +502,8 @@ bool shouldInvalidateLineLayoutPathAfterChangeFor(const RenderBlockFlow& rootBlo
         // Single mutation only atm.
         return true;
     }
+    if (renderer.style().textWrap() == TextWrap::Balance)
+        return true;
 
     auto rootHasNonSupportedRenderer = [&] {
         for (auto* sibling = rootBlockContainer.firstChild(); sibling; sibling = sibling->nextSibling()) {

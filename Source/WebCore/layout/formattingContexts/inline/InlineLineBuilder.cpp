@@ -1156,7 +1156,13 @@ LineBuilder::Result LineBuilder::handleInlineContent(InlineContentBreaker& inlin
 
     // While the floats are not considered to be on the line, they make the line contentful for line breaking.
     auto [adjustedLineForCandidateContent, candidateContentIsConstrainedByFloat] = lineBoxForCandidateInlineContent(lineCandidate);
-    auto availableWidthForCandidateContent = availableWidth(inlineContent, m_line, adjustedLineForCandidateContent.width());
+
+    // Alter the available width for content appropriately when horizontal constraint override exists
+    // e.g. text-wrap: balance is enabled
+    auto widthOverride = m_inlineLayoutState.horizontalConstraintOverride();
+    auto availableTotalWidthForContent = widthOverride ? InlineLayoutUnit { widthOverride.value() } - m_lineMarginStart : adjustedLineForCandidateContent.width();
+
+    auto availableWidthForCandidateContent = availableWidth(inlineContent, m_line, availableTotalWidthForContent);
     auto lineIsConsideredContentful = m_line.hasContentOrListMarker() || m_lineIsConstrainedByFloat || candidateContentIsConstrainedByFloat;
     auto lineStatus = InlineContentBreaker::LineStatus {
         m_line.contentLogicalRight(),
