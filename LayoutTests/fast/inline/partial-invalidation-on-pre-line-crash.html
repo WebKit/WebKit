@@ -1,0 +1,30 @@
+<style id=style>
+html { 
+  -webkit-user-modify: read-write-plaintext-only;
+}
+
+body {
+  display: table-caption;
+  white-space: pre-line;
+}
+</style>
+<script>
+if (window.testRunner)
+  testRunner.dumpAsText();
+
+function mutateContent() {
+  style.appendChild(container);
+  document.execCommand("selectAll", false);
+  document.getSelection().extend(empty_block, 0);
+  document.execCommand("insertHTML", false, block_with_inline_content.outerHTML);
+  document.execCommand("forwardDelete", false);
+}
+</script>
+<body onload=mutateContent()>
+<!--PASS if no crash or assert -->
+<div id=container>
+  <div id=empty_block></div>
+  <div id="block_with_inline_content">
+    <span></span>
+  </div>
+</div>
