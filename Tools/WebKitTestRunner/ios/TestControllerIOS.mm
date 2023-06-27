@@ -328,6 +328,7 @@ bool TestController::platformResetStateToConsistentValues(const TestOptions& opt
         [webView setAllowedMenuActions:nil];
         webView._dragInteractionPolicy = dragInteractionPolicy(options);
         webView.focusStartsInputSessionPolicy = focusStartsInputSessionPolicy(options);
+        webView.suppressInputAccessoryView = options.suppressInputAccessoryView();
 
 #if HAVE(UIFINDINTERACTION)
         webView.findInteractionEnabled = options.findInteractionEnabled();

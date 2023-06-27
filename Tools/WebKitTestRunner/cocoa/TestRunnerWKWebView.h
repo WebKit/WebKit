@@ -73,6 +73,7 @@
 @property (nonatomic) _WKFocusStartsInputSessionPolicy focusStartsInputSessionPolicy;
 
 @property (nonatomic, assign) UIInterfaceOrientationMask supportedInterfaceOrientations;
+@property (nonatomic) BOOL suppressInputAccessoryView;
 
 #endif
 

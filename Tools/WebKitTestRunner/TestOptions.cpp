@@ -186,6 +186,7 @@ const TestFeatures& TestOptions::defaults()
             { "useRemoteLayerTree", false },
             { "noUseRemoteLayerTree", false },
             { "useThreadedScrolling", false },
+            { "suppressInputAccessoryView", false },
         };
         features.doubleTestRunnerFeatures = {
             { "contentInset.top", 0 },
@@ -245,6 +246,7 @@ const std::unordered_map<std::string, TestHeaderKeyType>& TestOptions::keyTypeMa
         { "useFlexibleViewport", TestHeaderKeyType::BoolTestRunner },
         { "useRemoteLayerTree", TestHeaderKeyType::BoolTestRunner },
         { "useThreadedScrolling", TestHeaderKeyType::BoolTestRunner },
+        { "suppressInputAccessoryView", TestHeaderKeyType::BoolTestRunner },
     
         { "contentInset.top", TestHeaderKeyType::DoubleTestRunner },
         { "obscuredInset.top", TestHeaderKeyType::DoubleTestRunner },
