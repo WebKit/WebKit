@@ -196,7 +196,7 @@ class BuildAndTestAndArchiveAllButJSCFactory(BuildAndTestFactory):
             self.addStep(InstallBuiltProduct())
             self.addStep(ArchiveBuiltProduct())
             self.addStep(UploadBuiltProduct())
-        if platform != "gtk4":
+        if platform != "gtk-4":
             self.addStep(RunWebDriverTests())
 
 
