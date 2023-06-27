@@ -1920,9 +1920,7 @@ bool RenderElement::hasSelfPaintingLayer() const
 
 bool RenderElement::checkForRepaintDuringLayout() const
 {
-    if (document().view()->layoutContext().needsFullRepaint() || !everHadLayout() || hasSelfPaintingLayer())
-        return false;
-    return !settings().repaintOutsideLayoutEnabled();
+    return everHadLayout() && !hasSelfPaintingLayer() && !document().view()->layoutContext().needsFullRepaint();
 }
 
 ImageOrientation RenderElement::imageOrientation() const
