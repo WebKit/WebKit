@@ -1060,8 +1060,8 @@
 
 #if PLATFORM(COCOA)
 #define HAVE_CORE_LOCATION 1
-// kCLAuthorizationStatusAuthorizedWhenInUse is only available on macOS as part of the internal SDK.
-#if PLATFORM(IOS_FAMILY) || (defined __has_include && __has_include(<CoreFoundation/CFPriv.h>))
+// kCLAuthorizationStatusAuthorizedWhenInUse is SPI on macOS until 14.0.
+#if PLATFORM(IOS_FAMILY) || (defined __has_include && __has_include(<CoreFoundation/CFPriv.h>)) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 140000
 #define HAVE_CORE_LOCATION_AUTHORIZED_WHEN_IN_USE 1
 #endif
 #endif
