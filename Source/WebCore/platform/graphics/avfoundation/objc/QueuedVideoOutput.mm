@@ -305,7 +305,10 @@ void QueuedVideoOutput::addVideoFrameEntries(Vector<VideoFrameEntry>&& videoFram
 void QueuedVideoOutput::purgeVideoFrameEntries()
 {
     cancelNextImageTimeObserver();
-    m_videoFrames.clear();
+    if (!m_paused)
+        m_videoFrames.clear();
+    else if (m_videoFrames.size() >= 1)
+        m_videoFrames.erase(m_videoFrames.begin(), --m_videoFrames.end());
 }
 
 void QueuedVideoOutput::purgeImagesBeforeTime(const MediaTime& time)

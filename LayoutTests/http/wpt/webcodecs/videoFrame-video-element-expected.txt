@@ -1,0 +1,4 @@
+
+
+PASS Test we can construct a VideoFrame from a <video> who just fired onloadeddata.
+
