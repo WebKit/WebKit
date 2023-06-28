@@ -647,9 +647,9 @@ bool RenderThemeAdwaita::paintSliderThumb(const RenderObject& renderObject, cons
 
     FloatRect fieldRect = rect;
     Path path;
-    path.addEllipse(fieldRect);
+    path.addEllipseInRect(fieldRect);
     fieldRect.inflate(-sliderThumbBorderSize);
-    path.addEllipse(fieldRect);
+    path.addEllipseInRect(fieldRect);
     graphicsContext.setFillRule(WindRule::EvenOdd);
     if (isEnabled(renderObject) && isPressed(renderObject))
         graphicsContext.setFillColor(getAccentColor(renderObject));
@@ -658,7 +658,7 @@ bool RenderThemeAdwaita::paintSliderThumb(const RenderObject& renderObject, cons
     graphicsContext.fillPath(path);
     path.clear();
 
-    path.addEllipse(fieldRect);
+    path.addEllipseInRect(fieldRect);
     graphicsContext.setFillRule(WindRule::NonZero);
     if (!isEnabled(renderObject))
         graphicsContext.setFillColor(sliderThumbBackgroundDisabledColor);

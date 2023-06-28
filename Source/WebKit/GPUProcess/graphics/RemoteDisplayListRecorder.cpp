@@ -487,24 +487,24 @@ void RemoteDisplayListRecorder::fillRectWithRoundedHole(const FloatRect& rect, c
 
 #if ENABLE(INLINE_PATH_DATA)
 
-void RemoteDisplayListRecorder::fillLine(const LineData& data)
+void RemoteDisplayListRecorder::fillLine(const PathDataLine& line)
 {
-    handleItem(DisplayList::FillLine(data));
+    handleItem(DisplayList::FillLine(line));
 }
 
-void RemoteDisplayListRecorder::fillArc(const ArcData& data)
+void RemoteDisplayListRecorder::fillArc(const PathArc& arc)
 {
-    handleItem(DisplayList::FillArc(data));
+    handleItem(DisplayList::FillArc(arc));
 }
 
-void RemoteDisplayListRecorder::fillQuadCurve(const QuadCurveData& data)
+void RemoteDisplayListRecorder::fillQuadCurve(const PathDataQuadCurve& curve)
 {
-    handleItem(DisplayList::FillQuadCurve(data));
+    handleItem(DisplayList::FillQuadCurve(curve));
 }
 
-void RemoteDisplayListRecorder::fillBezierCurve(const BezierCurveData& data)
+void RemoteDisplayListRecorder::fillBezierCurve(const PathDataBezierCurve& curve)
 {
-    handleItem(DisplayList::FillBezierCurve(data));
+    handleItem(DisplayList::FillBezierCurve(curve));
 }
 
 #endif // ENABLE(INLINE_PATH_DATA)
@@ -512,6 +512,11 @@ void RemoteDisplayListRecorder::fillBezierCurve(const BezierCurveData& data)
 void RemoteDisplayListRecorder::fillPath(const Path& path)
 {
     handleItem(DisplayList::FillPath(path));
+}
+
+void RemoteDisplayListRecorder::fillPathSegment(const PathSegment& segment)
+{
+    handleItem(DisplayList::FillPathSegment(segment));
 }
 
 void RemoteDisplayListRecorder::fillEllipse(const FloatRect& rect)
@@ -564,34 +569,39 @@ void RemoteDisplayListRecorder::strokeRect(const FloatRect& rect, float lineWidt
 
 #if ENABLE(INLINE_PATH_DATA)
 
-void RemoteDisplayListRecorder::strokeLine(const LineData& data)
+void RemoteDisplayListRecorder::strokeLine(const PathDataLine& line)
 {
-    handleItem(DisplayList::StrokeLine(data));
+    handleItem(DisplayList::StrokeLine(line));
 }
 
-void RemoteDisplayListRecorder::strokeLineWithColorAndThickness(WebCore::DisplayList::SetInlineStrokeColor&& item, float thickness, const WebCore::LineData& data)
+void RemoteDisplayListRecorder::strokeLineWithColorAndThickness(const PathDataLine& line, DisplayList::SetInlineStrokeColor&& color, float thickness)
 {
-    handleItem(WTFMove(item));
+    handleItem(WTFMove(color));
     handleItem(DisplayList::SetStrokeThickness(thickness));
-    handleItem(DisplayList::StrokeLine(data));
+    handleItem(DisplayList::StrokeLine(line));
 }
 
-void RemoteDisplayListRecorder::strokeArc(const ArcData& data)
+void RemoteDisplayListRecorder::strokeArc(const PathArc& arc)
 {
-    handleItem(DisplayList::StrokeArc(data));
+    handleItem(DisplayList::StrokeArc(arc));
 }
 
-void RemoteDisplayListRecorder::strokeQuadCurve(const QuadCurveData& data)
+void RemoteDisplayListRecorder::strokeQuadCurve(const PathDataQuadCurve& curve)
 {
-    handleItem(DisplayList::StrokeQuadCurve(data));
+    handleItem(DisplayList::StrokeQuadCurve(curve));
 }
 
-void RemoteDisplayListRecorder::strokeBezierCurve(const BezierCurveData& data)
+void RemoteDisplayListRecorder::strokeBezierCurve(const PathDataBezierCurve& curve)
 {
-    handleItem(DisplayList::StrokeBezierCurve(data));
+    handleItem(DisplayList::StrokeBezierCurve(curve));
 }
 
 #endif // ENABLE(INLINE_PATH_DATA)
+
+void RemoteDisplayListRecorder::strokePathSegment(const PathSegment& segment)
+{
+    handleItem(DisplayList::StrokePathSegment(segment));
+}
 
 void RemoteDisplayListRecorder::strokePath(const Path& path)
 {

@@ -468,7 +468,6 @@ webkit.org/b/73766 css3/unicode-bidi-isolate-aharon-failing.html [ ImageOnlyFail
 # Failing ref tests
 webkit.org/b/85404 fast/loader/javascript-url-in-embed.html [ Failure Pass ]
 
-webkit.org/b/85408 svg/batik/text/longTextOnPath.svg [ Failure Pass ]
 webkit.org/b/85408 svg/batik/paints/gradientLimit.svg [ Failure Pass ]
 webkit.org/b/85408 svg/batik/text/textOnPath.svg [ Failure Pass ]
 webkit.org/b/85408 svg/batik/text/verticalTextOnPath.svg [ Failure Pass ]

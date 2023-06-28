@@ -171,7 +171,7 @@ void PlatformCALayerRemote::updateClonedLayerProperties(PlatformCALayerRemote& c
     clone.setCornerRadius(cornerRadius());
     clone.setVideoGravity(videoGravity());
 
-    if (!m_properties.shapePath.isNull())
+    if (!m_properties.shapePath.isEmpty())
         clone.setShapePath(m_properties.shapePath);
 
     if (m_properties.shapeRoundedRect)

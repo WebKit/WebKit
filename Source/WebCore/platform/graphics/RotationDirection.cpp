@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,55 +23,24 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "RotationDirection.h"
 
-#if ENABLE(INLINE_PATH_DATA)
-
-#include "FloatPoint.h"
-#include <variant>
+#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 
-struct LineData {
-    FloatPoint start;
-    FloatPoint end;
-};
-
-struct ArcData {
-    enum class Type : uint8_t {
-        ArcOnly,
-        LineAndArc,
-        ClosedLineAndArc
-    };
-
-    FloatPoint start;
-    FloatPoint center;
-    float radius { 0 };
-    float startAngle { 0 };
-    float endAngle { 0 };
-    bool clockwise { false };
-    Type type { Type::ArcOnly };
-};
-
-struct MoveData {
-    FloatPoint location;
-};
-
-struct QuadCurveData {
-    FloatPoint startPoint;
-    FloatPoint controlPoint;
-    FloatPoint endPoint;
-};
-
-struct BezierCurveData {
-    FloatPoint startPoint;
-    FloatPoint controlPoint1;
-    FloatPoint controlPoint2;
-    FloatPoint endPoint;
-};
-
-using InlinePathData = std::variant<std::monostate, MoveData, LineData, ArcData, QuadCurveData, BezierCurveData>;
+TextStream& operator<<(TextStream& ts, RotationDirection direction)
+{
+    switch (direction) {
+    case RotationDirection::Counterclockwise:
+        ts << "counterclockwise";
+        break;
+    case RotationDirection::Clockwise:
+        ts << "clockwise";
+        break;
+    }
+    return ts;
+}
 
 } // namespace WebCore
-
-#endif // ENABLE(INLINE_PATH_DATA)

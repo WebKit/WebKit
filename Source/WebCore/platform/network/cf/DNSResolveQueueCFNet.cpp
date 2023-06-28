@@ -30,6 +30,7 @@
 
 #include "Timer.h"
 #include <dns_sd.h>
+#include <wtf/CompletionHandler.h>
 #include <wtf/HashSet.h>
 #include <wtf/MainThread.h>
 #include <wtf/RetainPtr.h>

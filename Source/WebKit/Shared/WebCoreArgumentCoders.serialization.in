@@ -1203,6 +1203,8 @@ enum class WebCore::RenderingPurpose : uint8_t {
     MediaPainting,
 };
 
+enum class WebCore::RotationDirection : bool
+
 #if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
 [LegacyPopulateFromEmptyConstructor] class WebCore::MockContentFilterSettings {
     bool m_enabled;
@@ -2827,6 +2829,30 @@ header: <WebCore/FEComponentTransfer.h>
     bool stitchTiles();
 };
 
+[Nested, OptionSet] enum class WebCore::FilterEffectGeometry::Flags : uint8_t {
+    HasX,
+    HasY,
+    HasWidth,
+    HasHeight
+};
+
+[AdditionalEncoder=StreamConnectionEncoder] class WebCore::FilterEffectGeometry {
+    WebCore::FloatRect m_boundaries;
+    OptionSet<WebCore::FilterEffectGeometry::Flags> m_flags;
+};
+
+header: <WebCore/SVGFilterExpression.h>
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] struct WebCore::SVGFilterExpressionTerm {
+    unsigned index;
+    unsigned level;
+    std::optional<WebCore::FilterEffectGeometry> geometry;
+};
+
+[AdditionalEncoder=StreamConnectionEncoder] class WebCore::SVGPreserveAspectRatioValue {
+    WebCore::SVGPreserveAspectRatioValue::SVGPreserveAspectRatioType m_align;
+    WebCore::SVGPreserveAspectRatioValue::SVGMeetOrSliceType m_meetOrSlice;
+};
+
 enum class WebCore::HasInsecureContent : bool
 
 header: <WebCore/ModalContainerTypes.h>
@@ -3576,23 +3602,6 @@ struct WebCore::ImageBufferBackendParameters {
 };
 
 enum class WebCore::PreserveResolution : bool;
-
-[AdditionalEncoder=StreamConnectionEncoder] enum class WebCore::PathElementType : uint8_t {
-    MoveToPoint,
-    AddLineToPoint,
-    AddQuadCurveToPoint,
-    AddCurveToPoint,
-    CloseSubpath
-};
-
-[AdditionalEncoder=StreamConnectionEncoder] enum class WebCore::EncodedPathElementType : uint8_t {
-    MoveToPoint,
-    AddLineToPoint,
-    AddQuadCurveToPoint,
-    AddCurveToPoint,
-    CloseSubpath,
-    EndOfPath
-};
 
 class WebCore::ProcessIdentity {
 #if HAVE(TASK_IDENTITY_TOKEN)
@@ -4430,18 +4439,6 @@ struct WebCore::RTCDataChannelIdentifier {
 
 #endif // ENABLE(WEB_RTC)
 
-header: <WebCore/SVGFilterExpression.h>
-[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] struct WebCore::SVGFilterExpressionTerm {
-    unsigned index;
-    unsigned level;
-    std::optional<WebCore::FilterEffectGeometry> geometry;
-};
-
-[AdditionalEncoder=StreamConnectionEncoder] class WebCore::SVGPreserveAspectRatioValue {
-    WebCore::SVGPreserveAspectRatioValue::SVGPreserveAspectRatioType m_align;
-    WebCore::SVGPreserveAspectRatioValue::SVGMeetOrSliceType m_meetOrSlice;
-};
-
 #if ENABLE(CONTENT_EXTENSIONS)
 
 [Nested] struct WebCore::ContentRuleListResults::Result {
@@ -4851,18 +4848,6 @@ class WebCore::Region {
     WebCore::IntRect bounds();
     std::unique_ptr<WebCore::Region::Shape> copyShape();
 }
-
-[Nested, OptionSet] enum class WebCore::FilterEffectGeometry::Flags : uint8_t {
-    HasX,
-    HasY,
-    HasWidth,
-    HasHeight
-};
-
-[AdditionalEncoder=StreamConnectionEncoder] class WebCore::FilterEffectGeometry {
-    WebCore::FloatRect m_boundaries;
-    OptionSet<WebCore::FilterEffectGeometry::Flags> m_flags;
-};
 
 header: <WebCore/ISOVTTCue.h>
 [CustomHeader] class WebCore::ISOWebVTTCue {

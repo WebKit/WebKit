@@ -505,14 +505,14 @@ void GraphicsContext::drawPath(const Path& path)
 void GraphicsContext::fillEllipseAsPath(const FloatRect& ellipse)
 {
     Path path;
-    path.addEllipse(ellipse);
+    path.addEllipseInRect(ellipse);
     fillPath(path);
 }
 
 void GraphicsContext::strokeEllipseAsPath(const FloatRect& ellipse)
 {
     Path path;
-    path.addEllipse(ellipse);
+    path.addEllipseInRect(ellipse);
     strokePath(path);
 }
 

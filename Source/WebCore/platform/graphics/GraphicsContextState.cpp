@@ -58,6 +58,17 @@ bool GraphicsContextState::containsOnlyInlineChanges() const
     return true;
 }
 
+bool GraphicsContextState::containsOnlyInlineStrokeChanges() const
+{
+    if (m_changeFlags != (m_changeFlags & strokeChangeFlags))
+        return false;
+
+    if (m_changeFlags.contains(Change::StrokeBrush) && !m_strokeBrush.isInlineColor())
+        return false;
+
+    return true;
+}
+
 constexpr unsigned toIndex(GraphicsContextState::Change change)
 {
     return WTF::ctzConstexpr(enumToUnderlyingType(change));

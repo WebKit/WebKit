@@ -119,6 +119,7 @@ class Font;
 class FontPlatformData;
 class FragmentedSharedBuffer;
 class LightSource;
+class Path;
 class PaymentInstallmentConfiguration;
 class PixelBuffer;
 class ResourceError;
@@ -138,6 +139,9 @@ struct SerializedAttachmentData;
 struct SoupNetworkProxySettings;
 struct TextRecognitionDataDetector;
 struct ViewportArguments;
+
+template <class>
+struct PathCommand;
 
 namespace DOMCacheEngine {
 struct Record;
@@ -451,6 +455,36 @@ template<> struct ArgumentCoder<WebCore::Filter> {
     template<typename Encoder>
     static void encode(Encoder&, const WebCore::Filter&);
     static std::optional<Ref<WebCore::Filter>> decode(Decoder&);
+};
+
+template<typename DataType1, typename DataType2>
+struct ArgumentCoder<WebCore::PathDataComposite<DataType1, DataType2>> {
+    template<typename Encoder>
+    static void encode(Encoder& encoder, const WebCore::PathDataComposite<DataType1, DataType2>& data)
+    {
+        encoder << data.data1;
+        encoder << data.data2;
+    }
+    static std::optional<WebCore::PathDataComposite<DataType1, DataType2>> decode(Decoder& decoder)
+    {
+        std::optional<DataType1> data1;
+        decoder >> data1;
+        if (!data1)
+            return std::nullopt;
+
+        std::optional<DataType2> data2;
+        decoder >> data2;
+        if (!data2)
+            return std::nullopt;
+
+        return WebCore::PathDataComposite<DataType1, DataType2> { *data1, *data2 };
+    }
+};
+
+template<> struct ArgumentCoder<WebCore::Path> {
+    template<typename Encoder>
+    static void encode(Encoder&, const WebCore::Path&);
+    static std::optional<WebCore::Path> decode(Decoder&);
 };
 
 #if ENABLE(DATA_DETECTION)

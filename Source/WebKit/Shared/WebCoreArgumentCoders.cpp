@@ -107,6 +107,7 @@
 #include <WebCore/MeterPart.h>
 #include <WebCore/NotificationResources.h>
 #include <WebCore/Pasteboard.h>
+#include <WebCore/Path.h>
 #include <WebCore/PerspectiveTransformOperation.h>
 #include <WebCore/PluginData.h>
 #include <WebCore/PointLightSource.h>
@@ -2250,6 +2251,30 @@ std::optional<Ref<Filter>> ArgumentCoder<Filter>::decode(Decoder& decoder)
     (*filter)->setFilterRegion(*filterRegion);
 
     return filter;
+}
+
+template<typename Encoder>
+void ArgumentCoder<Path>::encode(Encoder& encoder, const Path& path)
+{
+    if (auto* segments = path.segmentsIfExists())
+        encoder << *segments;
+    else
+        encoder << path.segments();
+}
+
+template
+void ArgumentCoder<Path>::encode<Encoder>(Encoder&, const Path&);
+template
+void ArgumentCoder<Path>::encode<StreamConnectionEncoder>(StreamConnectionEncoder&, const Path&);
+
+std::optional<Path> ArgumentCoder<Path>::decode(Decoder& decoder)
+{
+    std::optional<Vector<PathSegment>> segments;
+    decoder >> segments;
+    if (!segments)
+        return std::nullopt;
+
+    return Path(WTFMove(*segments));
 }
 
 #if ENABLE(ENCRYPTED_MEDIA)

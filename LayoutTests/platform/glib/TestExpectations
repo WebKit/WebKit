@@ -3352,6 +3352,16 @@ fast/scrolling/keyboard-scrolling-distance-downArrow.html [ Skip ] # Timeout
 
 webgl/2.0.y/conformance/textures/misc/texture-corner-case-videos.html [ Skip ] # Timeout
 
+# Path with marker failures
+fast/canvas/canvas-ellipse-connecting-line.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/svg/painting/marker-003.svg [ Failure ]
+imported/w3c/web-platform-tests/svg/painting/marker-009.svg [ Failure ]
+imported/w3c/web-platform-tests/svg/painting/marker-orient-001.svg [ Failure ]
+imported/w3c/web-platform-tests/svg/painting/reftests/marker-path-021.svg [ Failure ]
+imported/w3c/web-platform-tests/svg/painting/reftests/marker-path-022.svg [ Failure ]
+imported/w3c/web-platform-tests/svg/painting/reftests/marker-path-023.svg [ Failure ]
+svg/W3C-SVG-1.1/painting-marker-03-f.svg [ Failure ]
+
 # End: Common failures between GTK and WPE.
 
 #////////////////////////////////////////////////////////////////////////////////////////

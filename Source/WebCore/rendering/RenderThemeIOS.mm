@@ -952,11 +952,11 @@ void RenderThemeIOS::paintMenuListButtonDecorations(const RenderBox& box, const 
         uint8_t opacity = isReadOnlyControl(box) ? 51 : 128;
         paintInfo.context().setStrokeColor(Color::black.colorWithAlphaByte(opacity));
         paintInfo.context().setFillColor(Color::black.colorWithAlphaByte(opacity));
-        paintInfo.context().drawPath(Path::polygonPathFromPoints(shadow));
+        paintInfo.context().drawPath(Path(shadow));
 
         paintInfo.context().setStrokeColor(Color::white);
         paintInfo.context().setFillColor(Color::white);
-        paintInfo.context().drawPath(Path::polygonPathFromPoints(arrow));
+        paintInfo.context().drawPath(Path(arrow));
     }
 }
 
@@ -1681,7 +1681,7 @@ static void paintAttachmentProgress(GraphicsContext& context, AttachmentLayout& 
     Path progressPath;
     progressPath.moveTo(center);
     progressPath.addLineTo(FloatPoint(center.x(), info.progressRect.y()));
-    progressPath.addArc(center, info.progressRect.width() / 2, -M_PI_2, info.progress * 2 * M_PI - M_PI_2, 0);
+    progressPath.addArc(center, info.progressRect.width() / 2, -M_PI_2, info.progress * 2 * M_PI - M_PI_2, RotationDirection::Counterclockwise);
     progressPath.closeSubpath();
     context.fillPath(progressPath);
 }
@@ -2000,7 +2000,7 @@ bool RenderThemeIOS::paintRadio(const RenderObject& box, const PaintInfo& paintI
         context.fillEllipse(innerCircleRect);
     } else {
         Path path;
-        path.addEllipse(rect);
+        path.addEllipseInRect(rect);
         if (!useAlternateDesign) {
             context.setStrokeColor(checkboxRadioBorderColor(controlStates, styleColorOptions));
             context.setStrokeThickness(checkboxRadioBorderWidth * 2);
@@ -2429,7 +2429,7 @@ void RenderThemeIOS::paintMenuListButtonDecorationsWithFormControlRefresh(const 
         FloatRect ellipse(0, 0, length, length);
 
         for (int i = 0; i < count; ++i) {
-            glyphPath.addEllipse(ellipse);
+            glyphPath.addEllipseInRect(ellipse);
             ellipse.move(length + padding, 0);
         }
 

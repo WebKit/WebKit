@@ -71,11 +71,12 @@ messages -> RemoteDisplayListRecorder NotRefCounted Stream {
     FillRoundedRect(WebCore::FloatRoundedRect rect, WebCore::Color color, enum:uint8_t WebCore::BlendMode blendMode)
     FillRectWithRoundedHole(WebCore::FloatRect rect, WebCore::FloatRoundedRect roundedHoleRect, WebCore::Color color)
 #if ENABLE(INLINE_PATH_DATA)
-    FillLine(struct WebCore::LineData data)
-    FillArc(struct WebCore::ArcData data)
-    FillQuadCurve(struct WebCore::QuadCurveData data)
-    FillBezierCurve(struct WebCore::BezierCurveData data)
+    FillLine(struct WebCore::PathDataLine line)
+    FillArc(struct WebCore::PathArc arc)
+    FillQuadCurve(struct WebCore::PathDataQuadCurve curve)
+    FillBezierCurve(struct WebCore::PathDataBezierCurve curve)
 #endif
+    FillPathSegment(WebCore::PathSegment segment) StreamBatched
     FillPath(WebCore::Path path)
     FillEllipse(WebCore::FloatRect rect)
     ConvertToLuminanceMask()
@@ -85,12 +86,13 @@ messages -> RemoteDisplayListRecorder NotRefCounted Stream {
 #endif
     StrokeRect(WebCore::FloatRect rect, float lineWidth)
 #if ENABLE(INLINE_PATH_DATA)
-    StrokeLine(struct WebCore::LineData data) StreamBatched
-    StrokeLineWithColorAndThickness(WebCore::DisplayList::SetInlineStrokeColor color, float thickness, struct WebCore::LineData data) StreamBatched
-    StrokeArc(struct WebCore::ArcData data) StreamBatched
-    StrokeQuadCurve(struct WebCore::QuadCurveData data) StreamBatched
-    StrokeBezierCurve(struct WebCore::BezierCurveData data) StreamBatched
+    StrokeLine(WebCore::PathDataLine line) StreamBatched
+    StrokeLineWithColorAndThickness(WebCore::PathDataLine line, WebCore::DisplayList::SetInlineStrokeColor color, float thickness) StreamBatched
+    StrokeArc(struct WebCore::PathArc arc) StreamBatched
+    StrokeQuadCurve(struct WebCore::PathDataQuadCurve curve) StreamBatched
+    StrokeBezierCurve(struct WebCore::PathDataBezierCurve curve) StreamBatched
 #endif
+    StrokePathSegment(WebCore::PathSegment segment) StreamBatched
     StrokePath(WebCore::Path path) StreamBatched
     StrokeEllipse(WebCore::FloatRect rect) StreamBatched
     ClearRect(WebCore::FloatRect rect)

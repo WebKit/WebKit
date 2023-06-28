@@ -5223,7 +5223,7 @@ ExceptionOr<String> Internals::pathStringWithShrinkWrappedRects(const Vector<dou
         rects.append(FloatRect(rectComponents[i], rectComponents[i + 1], rectComponents[i + 2], rectComponents[i + 3]));
 
     SVGPathStringBuilder builder;
-    PathUtilities::pathWithShrinkWrappedRects(rects, radius).apply([&builder](const PathElement& element) {
+    PathUtilities::pathWithShrinkWrappedRects(rects, radius).applyElements([&builder](const PathElement& element) {
         switch (element.type) {
         case PathElement::Type::MoveToPoint:
             builder.moveTo(element.points[0], false, AbsoluteCoordinates);

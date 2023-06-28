@@ -128,14 +128,17 @@ double RayPathOperation::lengthForContainPath(const FloatRect& elementRect, doub
 
 const std::optional<Path> RayPathOperation::getPath(const FloatRect& referenceRect) const
 {
-    Path path;
     if (m_containingBlockBoundingRect.isZero())
         return std::nullopt;
+
     double length = lengthForPath();
     if (m_isContaining)
         length = lengthForContainPath(referenceRect, length);
+
     auto radians = deg2rad(toPositiveAngle(m_angle) - 90.0);
     auto point = FloatPoint(std::cos(radians) * length, std::sin(radians) * length);
+
+    Path path;
     path.addLineTo(point);
     return path;
 }

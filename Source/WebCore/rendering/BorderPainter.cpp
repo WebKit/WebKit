@@ -1096,7 +1096,7 @@ void BorderPainter::clipBorderSidePolygon(const RoundedRect& outerBorder, const 
     if (firstEdgeMatches == secondEdgeMatches) {
         bool wasAntialiased = graphicsContext.shouldAntialias();
         graphicsContext.setShouldAntialias(!firstEdgeMatches);
-        graphicsContext.clipPath(Path::polygonPathFromPoints(quad), WindRule::NonZero);
+        graphicsContext.clipPath(Path(quad), WindRule::NonZero);
         graphicsContext.setShouldAntialias(wasAntialiased);
         return;
     }
@@ -1111,7 +1111,7 @@ void BorderPainter::clipBorderSidePolygon(const RoundedRect& outerBorder, const 
     };
     bool wasAntialiased = graphicsContext.shouldAntialias();
     graphicsContext.setShouldAntialias(!firstEdgeMatches);
-    graphicsContext.clipPath(Path::polygonPathFromPoints(firstQuad), WindRule::NonZero);
+    graphicsContext.clipPath(Path(firstQuad), WindRule::NonZero);
 
     Vector<FloatPoint> secondQuad = {
         quad[0],
@@ -1122,7 +1122,7 @@ void BorderPainter::clipBorderSidePolygon(const RoundedRect& outerBorder, const 
     };
     // Antialiasing affects the second side.
     graphicsContext.setShouldAntialias(!secondEdgeMatches);
-    graphicsContext.clipPath(Path::polygonPathFromPoints(secondQuad), WindRule::NonZero);
+    graphicsContext.clipPath(Path(secondQuad), WindRule::NonZero);
 
     graphicsContext.setShouldAntialias(wasAntialiased);
 }
@@ -1385,7 +1385,7 @@ void BorderPainter::drawLineForBoxSide(GraphicsContext& graphicsContext, const D
         graphicsContext.setFillColor(color);
         bool wasAntialiased = graphicsContext.shouldAntialias();
         graphicsContext.setShouldAntialias(antialias);
-        graphicsContext.fillPath(Path::polygonPathFromPoints(quad));
+        graphicsContext.fillPath(Path(quad));
         graphicsContext.setShouldAntialias(wasAntialiased);
 
         graphicsContext.setStrokeStyle(oldStrokeStyle);

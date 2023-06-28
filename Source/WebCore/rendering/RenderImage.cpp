@@ -569,10 +569,10 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
                         visualLeft += adjustedPaintOffset.x();
 
                         auto rotationRect = LayoutRect { visualLeft, adjustedPaintOffset.y(), textWidth, contentLogicalHeight };
-                        context.concatCTM(rotation(rotationRect, Clockwise));
+                        context.concatCTM(rotation(rotationRect, RotationDirection::Clockwise));
                         auto textOrigin = LayoutPoint { visualLeft, adjustedPaintOffset.y() + fontCascade.metricsOfPrimaryFont().ascent() };
                         context.drawBidiText(fontCascade, textRun, textOrigin);
-                        context.concatCTM(rotation(rotationRect, Counterclockwise));
+                        context.concatCTM(rotation(rotationRect, RotationDirection::Counterclockwise));
                     }
                 }
             }

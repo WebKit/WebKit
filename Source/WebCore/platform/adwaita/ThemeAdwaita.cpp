@@ -418,7 +418,7 @@ void ThemeAdwaita::paintRadio(ControlStates& states, GraphicsContext& graphicsCo
     Path path;
 
     if (states.states().containsAny({ ControlStates::States::Checked, ControlStates::States::Indeterminate })) {
-        path.addEllipse(fieldRect);
+        path.addEllipseInRect(fieldRect);
         graphicsContext.setFillRule(WindRule::NonZero);
         if (states.states().contains(ControlStates::States::Hovered) && states.states().contains(ControlStates::States::Enabled))
             graphicsContext.setFillColor(accentHoverColor);
@@ -428,11 +428,11 @@ void ThemeAdwaita::paintRadio(ControlStates& states, GraphicsContext& graphicsCo
         path.clear();
 
         fieldRect.inflate(-(fieldRect.width() - fieldRect.width() * 0.70));
-        path.addEllipse(fieldRect);
+        path.addEllipseInRect(fieldRect);
         graphicsContext.setFillColor(foregroundColor);
         graphicsContext.fillPath(path);
     } else {
-        path.addEllipse(fieldRect);
+        path.addEllipseInRect(fieldRect);
         if (states.states().contains(ControlStates::States::Hovered) && states.states().contains(ControlStates::States::Enabled))
             graphicsContext.setFillColor(toggleBorderHoverColor);
         else
@@ -441,7 +441,7 @@ void ThemeAdwaita::paintRadio(ControlStates& states, GraphicsContext& graphicsCo
         path.clear();
 
         fieldRect.inflate(-toggleBorderSize);
-        path.addEllipse(fieldRect);
+        path.addEllipseInRect(fieldRect);
         graphicsContext.setFillColor(foregroundColor);
         graphicsContext.fillPath(path);
     }

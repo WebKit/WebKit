@@ -63,7 +63,7 @@ namespace WebCore {
 
 void GraphicsContextCG::drawFocusRing(const Path& path, float, const Color& color)
 {
-    if (path.isNull())
+    if (path.isEmpty())
         return;
 
     CGFocusRingStyle focusRingStyle;

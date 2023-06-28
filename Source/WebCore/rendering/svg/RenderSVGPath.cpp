@@ -130,7 +130,7 @@ Path* RenderSVGPath::zeroLengthLinecapPath(const FloatPoint& linecapPosition) co
     if (style().capStyle() == LineCap::Square)
         tempPath.get().addRect(zeroLengthSubpathRect(linecapPosition, this->strokeWidth()));
     else
-        tempPath.get().addEllipse(zeroLengthSubpathRect(linecapPosition, this->strokeWidth()));
+        tempPath.get().addEllipseInRect(zeroLengthSubpathRect(linecapPosition, this->strokeWidth()));
 
     return &tempPath.get();
 }
@@ -148,7 +148,7 @@ void RenderSVGPath::updateZeroLengthSubpaths()
         return;
 
     SVGSubpathData subpathData(m_zeroLengthLinecapLocations);
-    path().apply([&subpathData](const PathElement& pathElement) {
+    path().applyElements([&subpathData](const PathElement& pathElement) {
         SVGSubpathData::updateFromPathElement(subpathData, pathElement);
     });
     subpathData.pathIsDone();

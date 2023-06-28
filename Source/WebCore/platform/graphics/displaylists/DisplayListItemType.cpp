@@ -134,6 +134,8 @@ static size_t sizeOfItemInBytes(ItemType type)
     case ItemType::FillBezierCurve:
         return sizeof(FillBezierCurve);
 #endif
+    case ItemType::FillPathSegment:
+        return sizeof(FillPathSegment);
     case ItemType::FillPath:
         return sizeof(FillPath);
     case ItemType::FillEllipse:
@@ -154,6 +156,8 @@ static size_t sizeOfItemInBytes(ItemType type)
     case ItemType::StrokeBezierCurve:
         return sizeof(StrokeBezierCurve);
 #endif
+    case ItemType::StrokePathSegment:
+        return sizeof(StrokePathSegment);
     case ItemType::StrokePath:
         return sizeof(StrokePath);
     case ItemType::StrokeEllipse:
@@ -242,6 +246,7 @@ bool isDrawingItem(ItemType type)
     case ItemType::FillQuadCurve:
     case ItemType::FillBezierCurve:
 #endif
+    case ItemType::FillPathSegment:
     case ItemType::FillPath:
     case ItemType::FillRect:
     case ItemType::FillRectWithColor:
@@ -257,6 +262,7 @@ bool isDrawingItem(ItemType type)
     case ItemType::StrokeQuadCurve:
     case ItemType::StrokeBezierCurve:
 #endif
+    case ItemType::StrokePathSegment:
     case ItemType::StrokePath:
     case ItemType::StrokeRect:
     case ItemType::StrokeLine:
@@ -344,6 +350,7 @@ bool isInlineItem(ItemType type)
     case ItemType::FillQuadCurve:
     case ItemType::FillBezierCurve:
 #endif
+    case ItemType::FillPathSegment:
     case ItemType::FillRect:
 #if ENABLE(VIDEO)
     case ItemType::PaintFrameForMedia:
@@ -365,6 +372,7 @@ bool isInlineItem(ItemType type)
     case ItemType::StrokeQuadCurve:
     case ItemType::StrokeBezierCurve:
 #endif
+    case ItemType::StrokePathSegment:
     case ItemType::StrokeRect:
     case ItemType::StrokeLine:
     case ItemType::Translate:

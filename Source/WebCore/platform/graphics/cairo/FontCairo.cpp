@@ -41,6 +41,7 @@
 #include "Gradient.h"
 #include "GraphicsContext.h"
 #include "ImageBuffer.h"
+#include "PathCairo.h"
 #include "Pattern.h"
 #include "RefPtrCairo.h"
 #include "ShadowBlur.h"
@@ -92,7 +93,7 @@ Path Font::platformPathForGlyph(Glyph glyph) const
         cairo_translate(cr.get(), syntheticBoldOffset, 0);
         cairo_glyph_path(cr.get(), &cairoGlyph, 1);
     }
-    return Path(WTFMove(cr));
+    return { PathCairo::create(WTFMove(cr)) };
 }
 
 FloatRect Font::platformBoundsForGlyph(Glyph glyph) const

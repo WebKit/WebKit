@@ -281,6 +281,8 @@ void DisplayList::append(ItemHandle item)
     case ItemType::FillBezierCurve:
         return append<FillBezierCurve>(item.get<FillBezierCurve>());
 #endif
+    case ItemType::FillPathSegment:
+        return append<FillPathSegment>(item.get<FillPathSegment>());
     case ItemType::FillPath:
         return append<FillPath>(item.get<FillPath>());
     case ItemType::FillEllipse:
@@ -301,6 +303,8 @@ void DisplayList::append(ItemHandle item)
     case ItemType::StrokeBezierCurve:
         return append<StrokeBezierCurve>(item.get<StrokeBezierCurve>());
 #endif
+    case ItemType::StrokePathSegment:
+        return append<StrokePathSegment>(item.get<StrokePathSegment>());
     case ItemType::StrokePath:
         return append<StrokePath>(item.get<StrokePath>());
     case ItemType::StrokeEllipse:

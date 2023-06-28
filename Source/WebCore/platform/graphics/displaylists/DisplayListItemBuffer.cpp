@@ -195,6 +195,9 @@ void ItemHandle::apply(GraphicsContext& context)
         get<FillBezierCurve>().apply(context);
         return;
 #endif
+    case ItemType::FillPathSegment:
+        get<FillPathSegment>().apply(context);
+        return;
     case ItemType::FillPath:
         get<FillPath>().apply(context);
         return;
@@ -223,6 +226,9 @@ void ItemHandle::apply(GraphicsContext& context)
         get<StrokeBezierCurve>().apply(context);
         return;
 #endif
+    case ItemType::StrokePathSegment:
+        get<StrokePathSegment>().apply(context);
+        return;
     case ItemType::StrokePath:
         get<StrokePath>().apply(context);
         return;
@@ -297,6 +303,9 @@ void ItemHandle::destroy()
     case ItemType::FillPath:
         get<FillPath>().~FillPath();
         return;
+    case ItemType::FillPathSegment:
+        get<FillPathSegment>().~FillPathSegment();
+        return;
     case ItemType::FillRectWithColor:
         get<FillRectWithColor>().~FillRectWithColor();
         return;
@@ -317,6 +326,9 @@ void ItemHandle::destroy()
         return;
     case ItemType::StrokePath:
         get<StrokePath>().~StrokePath();
+        return;
+    case ItemType::StrokePathSegment:
+        get<StrokePathSegment>().~StrokePathSegment();
         return;
     case ItemType::ApplyDeviceScaleFactor:
         static_assert(std::is_trivially_destructible<ApplyDeviceScaleFactor>::value);
@@ -532,6 +544,8 @@ bool ItemHandle::safeCopy(ItemType itemType, ItemHandle destination) const
         return copyInto<FillCompositedRect>(itemOffset, *this);
     case ItemType::FillPath:
         return copyInto<FillPath>(itemOffset, *this);
+    case ItemType::FillPathSegment:
+        return copyInto<FillPathSegment>(itemOffset, *this);
     case ItemType::FillRectWithColor:
         return copyInto<FillRectWithColor>(itemOffset, *this);
     case ItemType::FillRectWithGradient:
@@ -546,6 +560,8 @@ bool ItemHandle::safeCopy(ItemType itemType, ItemHandle destination) const
         return copyInto<SetState>(itemOffset, *this);
     case ItemType::StrokePath:
         return copyInto<StrokePath>(itemOffset, *this);
+    case ItemType::StrokePathSegment:
+        return copyInto<StrokePathSegment>(itemOffset, *this);
     case ItemType::ApplyDeviceScaleFactor:
         return copyInto<ApplyDeviceScaleFactor>(itemOffset, *this);
 #if USE(CG)

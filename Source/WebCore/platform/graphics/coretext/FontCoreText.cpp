@@ -35,6 +35,7 @@
 #include "LocaleCocoa.h"
 #include "Logging.h"
 #include "OpenTypeCG.h"
+#include "PathCG.h"
 #include "SharedBuffer.h"
 #include <CoreText/CoreText.h>
 #include <float.h>
@@ -731,15 +732,19 @@ FloatRect Font::platformBoundsForGlyph(Glyph glyph) const
 Path Font::platformPathForGlyph(Glyph glyph) const
 {
     auto result = adoptCF(CTFontCreatePathForGlyph(platformData().ctFont(), glyph, nullptr));
+    if (!result)
+        return { };
+
     auto syntheticBoldOffset = this->syntheticBoldOffset();
     if (syntheticBoldOffset) {
         auto newPath = adoptCF(CGPathCreateMutable());
         CGPathAddPath(newPath.get(), nullptr, result.get());
         auto translation = CGAffineTransformMakeTranslation(syntheticBoldOffset, 0);
         CGPathAddPath(newPath.get(), &translation, result.get());
-        return { WTFMove(newPath) };
+        return { PathCG::create(WTFMove(newPath)) };
     }
-    return { adoptCF(CGPathCreateMutableCopy(result.get())) };
+
+    return { PathCG::create(adoptCF(CGPathCreateMutableCopy(result.get()))) };
 }
 
 bool Font::platformSupportsCodePoint(UChar32 character, std::optional<UChar32> variation) const

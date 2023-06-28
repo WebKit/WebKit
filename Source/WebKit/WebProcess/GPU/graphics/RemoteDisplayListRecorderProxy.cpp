@@ -337,27 +337,32 @@ void RemoteDisplayListRecorderProxy::recordFillRectWithRoundedHole(const FloatRe
 
 #if ENABLE(INLINE_PATH_DATA)
 
-void RemoteDisplayListRecorderProxy::recordFillLine(const LineData& data)
+void RemoteDisplayListRecorderProxy::recordFillLine(const PathDataLine& line)
 {
-    send(Messages::RemoteDisplayListRecorder::FillLine(data));
+    send(Messages::RemoteDisplayListRecorder::FillLine(line));
 }
 
-void RemoteDisplayListRecorderProxy::recordFillArc(const ArcData& data)
+void RemoteDisplayListRecorderProxy::recordFillArc(const PathArc& arc)
 {
-    send(Messages::RemoteDisplayListRecorder::FillArc(data));
+    send(Messages::RemoteDisplayListRecorder::FillArc(arc));
 }
 
-void RemoteDisplayListRecorderProxy::recordFillQuadCurve(const QuadCurveData& data)
+void RemoteDisplayListRecorderProxy::recordFillQuadCurve(const PathDataQuadCurve& curve)
 {
-    send(Messages::RemoteDisplayListRecorder::FillQuadCurve(data));
+    send(Messages::RemoteDisplayListRecorder::FillQuadCurve(curve));
 }
 
-void RemoteDisplayListRecorderProxy::recordFillBezierCurve(const BezierCurveData& data)
+void RemoteDisplayListRecorderProxy::recordFillBezierCurve(const PathDataBezierCurve& curve)
 {
-    send(Messages::RemoteDisplayListRecorder::FillBezierCurve(data));
+    send(Messages::RemoteDisplayListRecorder::FillBezierCurve(curve));
 }
 
 #endif // ENABLE(INLINE_PATH_DATA)
+
+void RemoteDisplayListRecorderProxy::recordFillPathSegment(const PathSegment& segment)
+{
+    send(Messages::RemoteDisplayListRecorder::FillPathSegment(segment));
+}
 
 void RemoteDisplayListRecorderProxy::recordFillPath(const Path& path)
 {
@@ -397,32 +402,37 @@ void RemoteDisplayListRecorderProxy::recordStrokeRect(const FloatRect& rect, flo
 
 #if ENABLE(INLINE_PATH_DATA)
 
-void RemoteDisplayListRecorderProxy::recordStrokeLine(const LineData& data)
+void RemoteDisplayListRecorderProxy::recordStrokeLine(const PathDataLine& line)
 {
-    send(Messages::RemoteDisplayListRecorder::StrokeLine(data));
+    send(Messages::RemoteDisplayListRecorder::StrokeLine(line));
 }
 
-void RemoteDisplayListRecorderProxy::recordStrokeLineWithColorAndThickness(SRGBA<uint8_t> color, float thickness, const LineData& data)
+void RemoteDisplayListRecorderProxy::recordStrokeLineWithColorAndThickness(const PathDataLine& line, SRGBA<uint8_t> color, float thickness)
 {
-    send(Messages::RemoteDisplayListRecorder::StrokeLineWithColorAndThickness(color, thickness, data));
+    send(Messages::RemoteDisplayListRecorder::StrokeLineWithColorAndThickness(line, color, thickness));
 }
 
-void RemoteDisplayListRecorderProxy::recordStrokeArc(const ArcData& data)
+void RemoteDisplayListRecorderProxy::recordStrokeArc(const PathArc& arc)
 {
-    send(Messages::RemoteDisplayListRecorder::StrokeArc(data));
+    send(Messages::RemoteDisplayListRecorder::StrokeArc(arc));
 }
 
-void RemoteDisplayListRecorderProxy::recordStrokeQuadCurve(const QuadCurveData& data)
+void RemoteDisplayListRecorderProxy::recordStrokeQuadCurve(const PathDataQuadCurve& curve)
 {
-    send(Messages::RemoteDisplayListRecorder::StrokeQuadCurve(data));
+    send(Messages::RemoteDisplayListRecorder::StrokeQuadCurve(curve));
 }
 
-void RemoteDisplayListRecorderProxy::recordStrokeBezierCurve(const BezierCurveData& data)
+void RemoteDisplayListRecorderProxy::recordStrokeBezierCurve(const PathDataBezierCurve& curve)
 {
-    send(Messages::RemoteDisplayListRecorder::StrokeBezierCurve(data));
+    send(Messages::RemoteDisplayListRecorder::StrokeBezierCurve(curve));
 }
 
 #endif // ENABLE(INLINE_PATH_DATA)
+
+void RemoteDisplayListRecorderProxy::recordStrokePathSegment(const PathSegment& segment)
+{
+    send(Messages::RemoteDisplayListRecorder::StrokePathSegment(segment));
+}
 
 void RemoteDisplayListRecorderProxy::recordStrokePath(const Path& path)
 {

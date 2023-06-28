@@ -337,7 +337,7 @@ static void drawShapeHighlight(GraphicsContext& context, Node& node, InspectorOv
 
     const auto mapPoints = [&] (const Path& path) {
         Path newPath;
-        path.apply([&] (const PathElement& pathElement) {
+        path.applyElements([&] (const PathElement& pathElement) {
             const auto localToRoot = [&] (size_t index) {
                 const FloatPoint& point = pathElement.points[index];
                 return localPointToRootPoint(containingView, renderer->localToAbsolute(shapeOutsideInfo->shapeToRendererPoint(point)));

@@ -103,11 +103,12 @@ public:
     void fillRoundedRect(const WebCore::FloatRoundedRect&, const WebCore::Color&, WebCore::BlendMode);
     void fillRectWithRoundedHole(const WebCore::FloatRect&, const WebCore::FloatRoundedRect&, const WebCore::Color&);
 #if ENABLE(INLINE_PATH_DATA)
-    void fillLine(const WebCore::LineData&);
-    void fillArc(const WebCore::ArcData&);
-    void fillQuadCurve(const WebCore::QuadCurveData&);
-    void fillBezierCurve(const WebCore::BezierCurveData&);
+    void fillLine(const WebCore::PathDataLine&);
+    void fillArc(const WebCore::PathArc&);
+    void fillQuadCurve(const WebCore::PathDataQuadCurve&);
+    void fillBezierCurve(const WebCore::PathDataBezierCurve&);
 #endif
+    void fillPathSegment(const WebCore::PathSegment&);
     void fillPath(const WebCore::Path&);
     void fillEllipse(const WebCore::FloatRect&);
     void convertToLuminanceMask();
@@ -117,12 +118,13 @@ public:
 #endif
     void strokeRect(const WebCore::FloatRect&, float lineWidth);
 #if ENABLE(INLINE_PATH_DATA)
-    void strokeLine(const WebCore::LineData&);
-    void strokeLineWithColorAndThickness(WebCore::DisplayList::SetInlineStrokeColor&&, float, const WebCore::LineData&);
-    void strokeArc(const WebCore::ArcData&);
-    void strokeQuadCurve(const WebCore::QuadCurveData&);
-    void strokeBezierCurve(const WebCore::BezierCurveData&);
+    void strokeLine(const WebCore::PathDataLine&);
+    void strokeLineWithColorAndThickness(const WebCore::PathDataLine&, WebCore::DisplayList::SetInlineStrokeColor&&, float thickness);
+    void strokeArc(const WebCore::PathArc&);
+    void strokeQuadCurve(const WebCore::PathDataQuadCurve&);
+    void strokeBezierCurve(const WebCore::PathDataBezierCurve&);
 #endif
+    void strokePathSegment(const WebCore::PathSegment&);
     void strokePath(const WebCore::Path&);
     void strokeEllipse(const WebCore::FloatRect&);
     void clearRect(const WebCore::FloatRect&);

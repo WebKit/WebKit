@@ -1076,15 +1076,15 @@ public:
     static constexpr bool isInlineItem = true;
     static constexpr bool isDrawingItem = true;
 
-    FillLine(const LineData& lineData)
-        : m_lineData(lineData)
+    FillLine(const PathDataLine& line)
+        : m_line(line)
     {
     }
 
-    Path path() const { return Path::from({m_lineData}); }
+    Path path() const { return Path({ PathSegment(m_line) }); }
     WEBCORE_EXPORT void apply(GraphicsContext&) const;
 private:
-    LineData m_lineData;
+    PathDataLine m_line;
 };
 
 class FillArc {
@@ -1093,15 +1093,15 @@ public:
     static constexpr bool isInlineItem = true;
     static constexpr bool isDrawingItem = true;
 
-    FillArc(const ArcData& arcData)
-        : m_arcData(arcData)
+    FillArc(const PathArc& arc)
+        : m_arc(arc)
     {
     }
 
-    Path path() const { return Path::from({m_arcData}); }
+    Path path() const { return Path({ PathSegment(m_arc) }); }
     WEBCORE_EXPORT void apply(GraphicsContext&) const;
 private:
-    ArcData m_arcData;
+    PathArc m_arc;
 };
 
 class FillQuadCurve {
@@ -1110,15 +1110,15 @@ public:
     static constexpr bool isInlineItem = true;
     static constexpr bool isDrawingItem = true;
 
-    FillQuadCurve(const QuadCurveData& quadCurveData)
-        : m_quadCurveData(quadCurveData)
+    FillQuadCurve(const PathDataQuadCurve& quadCurve)
+        : m_quadCurve(quadCurve)
     {
     }
 
-    Path path() const { return Path::from({m_quadCurveData}); }
+    Path path() const { return Path({ PathSegment(m_quadCurve) }); }
     WEBCORE_EXPORT void apply(GraphicsContext&) const;
 private:
-    QuadCurveData m_quadCurveData;
+    PathDataQuadCurve m_quadCurve;
 };
 
 class FillBezierCurve {
@@ -1127,18 +1127,37 @@ public:
     static constexpr bool isInlineItem = true;
     static constexpr bool isDrawingItem = true;
 
-    FillBezierCurve(const BezierCurveData& bezierCurveData)
-        : m_bezierCurveData(bezierCurveData)
+    FillBezierCurve(const PathDataBezierCurve& bezierCurve)
+        : m_bezierCurve(bezierCurve)
     {
     }
 
-    Path path() const { return Path::from({m_bezierCurveData}); }
+    Path path() const { return Path({ PathSegment(m_bezierCurve) }); }
     WEBCORE_EXPORT void apply(GraphicsContext&) const;
 private:
-    BezierCurveData m_bezierCurveData;
+    PathDataBezierCurve m_bezierCurve;
 };
 
 #endif // ENABLE(INLINE_PATH_DATA)
+
+class FillPathSegment {
+public:
+    static constexpr ItemType itemType = ItemType::FillPathSegment;
+    static constexpr bool isInlineItem = true;
+    static constexpr bool isDrawingItem = true;
+
+    FillPathSegment(const PathSegment& segment)
+        : m_segment(segment)
+    {
+    }
+
+    Path path() const { return Path({ m_segment }); }
+
+    WEBCORE_EXPORT void apply(GraphicsContext&) const;
+
+private:
+    PathSegment m_segment;
+};
 
 class FillPath {
 public:
@@ -1232,9 +1251,9 @@ public:
     static constexpr bool isDrawingItem = true;
 
 #if ENABLE(INLINE_PATH_DATA)
-    StrokeLine(const LineData& lineData)
-        : m_start(lineData.start)
-        , m_end(lineData.end)
+    StrokeLine(const PathDataLine& line)
+        : m_start(line.data1.point)
+        , m_end(line.data2.point)
     {
     }
 #endif
@@ -1262,15 +1281,15 @@ public:
     static constexpr bool isInlineItem = true;
     static constexpr bool isDrawingItem = true;
 
-    StrokeArc(const ArcData& arcData)
-        : m_arcData(arcData)
+    StrokeArc(const PathArc& arc)
+        : m_arc(arc)
     {
     }
 
-    Path path() const { return Path::from({m_arcData}); }
+    Path path() const { return Path({ PathSegment(m_arc) }); }
     WEBCORE_EXPORT void apply(GraphicsContext&) const;
 private:
-    ArcData m_arcData;
+    PathArc m_arc;
 };
 
 class StrokeQuadCurve {
@@ -1279,15 +1298,15 @@ public:
     static constexpr bool isInlineItem = true;
     static constexpr bool isDrawingItem = true;
 
-    StrokeQuadCurve(const QuadCurveData& quadCurveData)
-        : m_quadCurveData(quadCurveData)
+    StrokeQuadCurve(const PathDataQuadCurve& quadCurve)
+        : m_quadCurve(quadCurve)
     {
     }
 
-    Path path() const { return Path::from({m_quadCurveData}); }
+    Path path() const { return Path({ PathSegment(m_quadCurve) }); }
     WEBCORE_EXPORT void apply(GraphicsContext&) const;
 private:
-    QuadCurveData m_quadCurveData;
+    PathDataQuadCurve m_quadCurve;
 };
 
 class StrokeBezierCurve {
@@ -1296,18 +1315,38 @@ public:
     static constexpr bool isInlineItem = true;
     static constexpr bool isDrawingItem = true;
 
-    StrokeBezierCurve(const BezierCurveData& bezierCurveData)
-        : m_bezierCurveData(bezierCurveData)
+    StrokeBezierCurve(const PathDataBezierCurve& bezierCurve)
+        : m_bezierCurve(bezierCurve)
     {
     }
 
-    Path path() const { return Path::from({m_bezierCurveData}); }
+    Path path() const { return Path({ PathSegment(m_bezierCurve) }); }
     WEBCORE_EXPORT void apply(GraphicsContext&) const;
+
 private:
-    BezierCurveData m_bezierCurveData;
+    PathDataBezierCurve m_bezierCurve;
 };
 
 #endif // ENABLE(INLINE_PATH_DATA)
+
+class StrokePathSegment {
+public:
+    static constexpr ItemType itemType = ItemType::StrokePathSegment;
+    static constexpr bool isInlineItem = true;
+    static constexpr bool isDrawingItem = true;
+
+    StrokePathSegment(const PathSegment& segment)
+        : m_segment(segment)
+    {
+    }
+
+    Path path() const { return Path({ m_segment }); }
+
+    WEBCORE_EXPORT void apply(GraphicsContext&) const;
+
+private:
+    PathSegment m_segment;
+};
 
 class StrokePath {
 public:
@@ -1466,6 +1505,7 @@ using DisplayListItem = std::variant
     , EndTransparencyLayer
     , FillCompositedRect
     , FillEllipse
+    , FillPathSegment
     , FillPath
     , FillRect
     , FillRectWithColor
@@ -1488,6 +1528,7 @@ using DisplayListItem = std::variant
     , SetStrokeThickness
     , StrokeEllipse
     , StrokeLine
+    , StrokePathSegment
     , StrokePath
     , StrokeRect
     , Translate
@@ -1567,12 +1608,14 @@ WEBCORE_EXPORT void dumpItem(TextStream&, const StrokeArc&, OptionSet<AsTextFlag
 WEBCORE_EXPORT void dumpItem(TextStream&, const StrokeQuadCurve&, OptionSet<AsTextFlag>);
 WEBCORE_EXPORT void dumpItem(TextStream&, const StrokeBezierCurve&, OptionSet<AsTextFlag>);
 #endif // ENABLE(INLINE_PATH_DATA)
+WEBCORE_EXPORT void dumpItem(TextStream&, const FillPathSegment&, OptionSet<AsTextFlag>);
 WEBCORE_EXPORT void dumpItem(TextStream&, const FillPath&, OptionSet<AsTextFlag>);
 WEBCORE_EXPORT void dumpItem(TextStream&, const FillEllipse&, OptionSet<AsTextFlag>);
 #if ENABLE(VIDEO)
 WEBCORE_EXPORT void dumpItem(TextStream&, const PaintFrameForMedia&, OptionSet<AsTextFlag>);
 #endif // ENABLE(VIDEO)
 WEBCORE_EXPORT void dumpItem(TextStream&, const StrokeRect&, OptionSet<AsTextFlag>);
+WEBCORE_EXPORT void dumpItem(TextStream&, const StrokePathSegment&, OptionSet<AsTextFlag>);
 WEBCORE_EXPORT void dumpItem(TextStream&, const StrokePath&, OptionSet<AsTextFlag>);
 WEBCORE_EXPORT void dumpItem(TextStream&, const StrokeEllipse&, OptionSet<AsTextFlag>);
 WEBCORE_EXPORT void dumpItem(TextStream&, const StrokeLine&, OptionSet<AsTextFlag>);
@@ -1655,6 +1698,7 @@ template<> struct EnumTraits<WebCore::DisplayList::ItemType> {
     WebCore::DisplayList::ItemType::FillQuadCurve,
     WebCore::DisplayList::ItemType::FillBezierCurve,
 #endif
+    WebCore::DisplayList::ItemType::FillPathSegment,
     WebCore::DisplayList::ItemType::FillPath,
     WebCore::DisplayList::ItemType::FillEllipse,
 #if ENABLE(VIDEO)
@@ -1667,6 +1711,7 @@ template<> struct EnumTraits<WebCore::DisplayList::ItemType> {
     WebCore::DisplayList::ItemType::StrokeQuadCurve,
     WebCore::DisplayList::ItemType::StrokeBezierCurve,
 #endif
+    WebCore::DisplayList::ItemType::StrokePathSegment,
     WebCore::DisplayList::ItemType::StrokePath,
     WebCore::DisplayList::ItemType::StrokeEllipse,
     WebCore::DisplayList::ItemType::ClearRect,

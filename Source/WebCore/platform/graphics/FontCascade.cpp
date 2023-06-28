@@ -1694,7 +1694,7 @@ DashArray FontCascade::dashesForIntersectionsWithRect(const TextRun& run, const 
         switch (translator.underlineType()) {
         case GlyphUnderlineType::SkipDescenders: {
             Path path = translator.path();
-            path.apply([&](const PathElement& element) {
+            path.applyElements([&](const PathElement& element) {
                 findPathIntersections(info, element);
             });
             if (info.minX < info.maxX) {

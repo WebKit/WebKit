@@ -314,10 +314,6 @@ CGColorRef CGStyleGetColor(CGStyleRef);
 bool CGColorSpaceEqualToColorSpace(CGColorSpaceRef, CGColorSpaceRef);
 CFStringRef CGColorSpaceCopyICCProfileDescription(CGColorSpaceRef);
 
-#if HAVE(CGPATH_GET_NUMBER_OF_ELEMENTS)
-size_t CGPathGetNumberOfElements(CGPathRef);
-#endif
-
 #if HAVE(IOSURFACE)
 CGContextRef CGIOSurfaceContextCreate(IOSurfaceRef, size_t, size_t, size_t, size_t, CGColorSpaceRef, CGBitmapInfo);
 CGImageRef CGIOSurfaceContextCreateImage(CGContextRef);

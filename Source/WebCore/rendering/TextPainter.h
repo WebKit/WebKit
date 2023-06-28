@@ -25,6 +25,7 @@
 #include "AffineTransform.h"
 #include "FloatRect.h"
 #include "GlyphDisplayListCache.h"
+#include "RotationDirection.h"
 #include "TextFlags.h"
 #include "TextPaintStyle.h"
 #include <wtf/text/AtomString.h>
@@ -40,11 +41,10 @@ class Text;
 
 struct TextPaintStyle;
 
-enum RotationDirection { Counterclockwise, Clockwise };
-
-static inline AffineTransform rotation(const FloatRect& boxRect, RotationDirection clockwise)
+static inline AffineTransform rotation(const FloatRect& boxRect, RotationDirection direction)
 {
-    return clockwise ? AffineTransform(0, 1, -1, 0, boxRect.x() + boxRect.maxY(), boxRect.maxY() - boxRect.x())
+    return direction == RotationDirection::Clockwise
+        ? AffineTransform(0, 1, -1, 0, boxRect.x() + boxRect.maxY(), boxRect.maxY() - boxRect.x())
         : AffineTransform(0, -1, 1, 0, boxRect.x() - boxRect.maxY(), boxRect.x() + boxRect.maxY());
 }
 

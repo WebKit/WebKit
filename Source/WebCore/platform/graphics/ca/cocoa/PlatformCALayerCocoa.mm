@@ -34,6 +34,7 @@
 #import "LocalCurrentGraphicsContext.h"
 #import "MediaPlayerEnumsCocoa.h"
 #import "Model.h"
+#import "PathCG.h"
 #import "PlatformCAAnimationCocoa.h"
 #import "PlatformCAFilters.h"
 #import "PlatformCALayerContentsDelayedReleaser.h"
@@ -1026,7 +1027,7 @@ Path PlatformCALayerCocoa::shapePath() const
     ASSERT(m_layerType == LayerTypeShapeLayer);
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS
-    return { adoptCF(CGPathCreateMutableCopy([(CAShapeLayer *)m_layer path])) };
+    return { PathCG::create(adoptCF(CGPathCreateMutableCopy([(CAShapeLayer *)m_layer path]))) };
     END_BLOCK_OBJC_EXCEPTIONS
 }
 

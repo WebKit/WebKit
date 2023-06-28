@@ -595,7 +595,7 @@ void GraphicsContextCG::drawLine(const FloatPoint& point1, const FloatPoint& poi
 void GraphicsContextCG::drawEllipse(const FloatRect& rect)
 {
     Path path;
-    path.addEllipse(rect);
+    path.addEllipseInRect(rect);
     drawPath(path);
 }
 
@@ -809,10 +809,9 @@ void GraphicsContextCG::strokePath(const Path& path)
         applyStrokePattern();
 
 #if USE(CG_CONTEXT_STROKE_LINE_SEGMENTS_WHEN_STROKING_PATH)
-    if (path.hasInlineData<LineData>()) {
-        auto& lineData = path.inlineData<LineData>();
-        CGPoint points[2] { lineData.start, lineData.end };
-        CGContextStrokeLineSegments(context, points, 2);
+    if (auto line = path.singleDataLine()) {
+        CGPoint cgPoints[2] { line->data1.point, line->data2.point };
+        CGContextStrokeLineSegments(context, cgPoints, 2);
         return;
     }
 #endif

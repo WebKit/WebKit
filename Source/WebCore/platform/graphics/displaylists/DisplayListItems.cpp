@@ -355,6 +355,11 @@ void FillBezierCurve::apply(GraphicsContext& context) const
 
 #endif // ENABLE(INLINE_PATH_DATA)
 
+void FillPathSegment::apply(GraphicsContext& context) const
+{
+    context.fillPath(path());
+}
+
 void FillPath::apply(GraphicsContext& context) const
 {
     context.fillPath(m_path);
@@ -383,6 +388,11 @@ void StrokePath::apply(GraphicsContext& context) const
     context.strokePath(m_path);
 }
 
+void StrokePathSegment::apply(GraphicsContext& context) const
+{
+    context.strokePath(path());
+}
+
 void StrokeEllipse::apply(GraphicsContext& context) const
 {
     context.strokeEllipse(m_rect);
@@ -391,7 +401,7 @@ void StrokeEllipse::apply(GraphicsContext& context) const
 void StrokeLine::apply(GraphicsContext& context) const
 {
 #if ENABLE(INLINE_PATH_DATA)
-    auto path = Path::from(InlinePathData { LineData { start(), end() } });
+    auto path = Path({ PathSegment { PathDataLine { { start() }, { end() } } } });
 #else
     Path path;
     path.moveTo(start());
@@ -518,6 +528,7 @@ TextStream& operator<<(TextStream& ts, ItemType type)
     case ItemType::FillQuadCurve: ts << "fill-quad-curve"; break;
     case ItemType::FillBezierCurve: ts << "fill-bezier-curve"; break;
 #endif
+    case ItemType::FillPathSegment: ts << "fill-path-segment"; break;
     case ItemType::FillPath: ts << "fill-path"; break;
     case ItemType::FillEllipse: ts << "fill-ellipse"; break;
 #if ENABLE(VIDEO)
@@ -530,6 +541,7 @@ TextStream& operator<<(TextStream& ts, ItemType type)
     case ItemType::StrokeQuadCurve: ts << "stroke-quad-curve"; break;
     case ItemType::StrokeBezierCurve: ts << "stroke-bezier-curve"; break;
 #endif
+    case ItemType::StrokePathSegment: ts << "stroke-path-segment"; break;
     case ItemType::StrokePath: ts << "stroke-path"; break;
     case ItemType::StrokeEllipse: ts << "stroke-ellipse"; break;
     case ItemType::ClearRect: ts << "clear-rect"; break;
@@ -840,6 +852,11 @@ void dumpItem(TextStream& ts, const StrokeBezierCurve& item, OptionSet<AsTextFla
 
 #endif // ENABLE(INLINE_PATH_DATA)
 
+void dumpItem(TextStream& ts, const FillPathSegment& item, OptionSet<AsTextFlag>)
+{
+    ts.dumpProperty("path", item.path());
+}
+
 void dumpItem(TextStream& ts, const FillPath& item, OptionSet<AsTextFlag>)
 {
     ts.dumpProperty("path", item.path());
@@ -864,6 +881,11 @@ void dumpItem(TextStream& ts, const StrokeRect& item, OptionSet<AsTextFlag>)
 {
     ts.dumpProperty("rect", item.rect());
     ts.dumpProperty("line-width", item.lineWidth());
+}
+
+void dumpItem(TextStream& ts, const StrokePathSegment& item, OptionSet<AsTextFlag>)
+{
+    ts.dumpProperty("path", item.path());
 }
 
 void dumpItem(TextStream& ts, const StrokePath& item, OptionSet<AsTextFlag>)
@@ -1047,6 +1069,9 @@ void dumpItemHandle(TextStream& ts, const ItemHandle& item, OptionSet<AsTextFlag
         dumpItem(ts, item.get<FillBezierCurve>(), flags);
         break;
 #endif
+    case ItemType::FillPathSegment:
+        dumpItem(ts, item.get<FillPathSegment>(), flags);
+        break;
     case ItemType::FillPath:
         dumpItem(ts, item.get<FillPath>(), flags);
         break;
@@ -1075,6 +1100,9 @@ void dumpItemHandle(TextStream& ts, const ItemHandle& item, OptionSet<AsTextFlag
         dumpItem(ts, item.get<StrokeBezierCurve>(), flags);
         break;
 #endif
+    case ItemType::StrokePathSegment:
+        dumpItem(ts, item.get<StrokePathSegment>(), flags);
+        break;
     case ItemType::StrokePath:
         dumpItem(ts, item.get<StrokePath>(), flags);
         break;

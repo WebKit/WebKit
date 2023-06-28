@@ -212,11 +212,6 @@ public:
 
     FloatRect transposedRect() const { return FloatRect(m_location.transposedPoint(), m_size.transposedSize()); }
 
-    // Re-initializes this rectangle to fit the sets of passed points.
-    WEBCORE_EXPORT void fitToPoints(const FloatPoint& p0, const FloatPoint& p1);
-    WEBCORE_EXPORT void fitToPoints(const FloatPoint& p0, const FloatPoint& p1, const FloatPoint& p2);
-    WEBCORE_EXPORT void fitToPoints(const FloatPoint& p0, const FloatPoint& p1, const FloatPoint& p2, const FloatPoint& p3);
-
 #if USE(CG)
     WEBCORE_EXPORT FloatRect(const CGRect&);
     WEBCORE_EXPORT operator CGRect() const;
@@ -238,6 +233,9 @@ public:
 
     static FloatRect infiniteRect();
     bool isInfinite() const;
+
+    static FloatRect smallestRect();
+    bool isSmallest() const;
 
     WEBCORE_EXPORT String toJSONString() const;
     WEBCORE_EXPORT Ref<JSON::Object> toJSONObject() const;
@@ -302,6 +300,17 @@ inline FloatRect FloatRect::infiniteRect()
 inline bool FloatRect::isInfinite() const
 {
     return *this == infiniteRect();
+}
+
+inline FloatRect FloatRect::smallestRect()
+{
+    static FloatRect smallestRect(std::numeric_limits<float>::max() / 2, std::numeric_limits<float>::max() / 2, -std::numeric_limits<float>::max(), -std::numeric_limits<float>::max());
+    return smallestRect;
+}
+
+inline bool FloatRect::isSmallest() const
+{
+    return *this == smallestRect();
 }
 
 inline void FloatRect::inflate(float deltaX, float deltaY, float deltaMaxX, float deltaMaxY)

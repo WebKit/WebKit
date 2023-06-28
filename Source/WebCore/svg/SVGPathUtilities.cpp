@@ -56,8 +56,8 @@ String buildStringFromPath(const Path& path)
 {
     StringBuilder builder;
 
-    if (!path.isNull() && !path.isEmpty()) {
-        path.apply([&builder] (const PathElement& element) {
+    if (!path.isEmpty()) {
+        path.applyElements([&builder] (const PathElement& element) {
             switch (element.type) {
             case PathElement::Type::MoveToPoint:
                 builder.append('M', element.points[0].x(), ' ', element.points[0].y());
