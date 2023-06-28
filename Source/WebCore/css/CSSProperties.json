@@ -5870,7 +5870,8 @@
             ],
             "codegen-properties": {
                 "settings-flag": "cssWhiteSpaceLonghandsEnabled",
-                "parser-grammar": "<<values>>"
+                "parser-grammar": "<<values>>",
+                "parser-exported": true
             },
             "specification": {
                 "category": "css-text",
@@ -6073,15 +6074,14 @@
             "inherited": true,
             "values": [
                 "collapse",
-                "discard",
                 "preserve",
                 "preserve-breaks",
-                "preserve-spaces",
                 "break-spaces"
             ],
             "codegen-properties": {
                 "settings-flag": "cssWhiteSpaceLonghandsEnabled",
-                "parser-grammar": "<<values>>"
+                "parser-grammar": "<<values>>",
+                "parser-exported": true
             },
             "specification": {
                 "category": "css-text",

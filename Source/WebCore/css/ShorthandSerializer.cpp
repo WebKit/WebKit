@@ -1171,20 +1171,24 @@ String ShorthandSerializer::serializeWhiteSpace() const
 {
     auto whiteSpaceCollapse = longhandValueID(0);
     auto textWrap = longhandValueID(1);
-    if (whiteSpaceCollapse == CSSValueBreakSpaces && textWrap == CSSValueWrap)
-        return nameString(CSSValueBreakSpaces);
+
+    // Convert to backwards-compatible keywords if possible.
     if (whiteSpaceCollapse == CSSValueCollapse && textWrap == CSSValueWrap)
         return nameString(CSSValueNormal);
-    if (whiteSpaceCollapse == CSSValueCollapse && textWrap == CSSValueNowrap)
-        return nameString(CSSValueNowrap);
     if (whiteSpaceCollapse == CSSValuePreserve && textWrap == CSSValueNowrap)
         return nameString(CSSValuePre);
-    if (whiteSpaceCollapse == CSSValuePreserveBreaks && textWrap == CSSValueWrap)
-        return nameString(CSSValuePreLine);
     if (whiteSpaceCollapse == CSSValuePreserve && textWrap == CSSValueWrap)
         return nameString(CSSValuePreWrap);
+    if (whiteSpaceCollapse == CSSValuePreserveBreaks && textWrap == CSSValueWrap)
+        return nameString(CSSValuePreLine);
 
-    return String();
+    // Omit default longhand values.
+    if (whiteSpaceCollapse == CSSValueCollapse)
+        return nameString(textWrap);
+    if (textWrap == CSSValueWrap)
+        return nameString(whiteSpaceCollapse);
+
+    return makeString(nameLiteral(whiteSpaceCollapse), ' ', nameLiteral(textWrap));
 }
 
 String serializeShorthandValue(const StyleProperties& properties, CSSPropertyID shorthand)

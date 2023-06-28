@@ -829,13 +829,6 @@ stable
 pretty
 
 //
-// CSS_PROP__KHTML_MARGIN_COLLAPSE
-//
-// collapse
-// separate
-discard
-
-//
 // CSS_PROP_TEXT_*_COLOR
 //
 dot-dash
@@ -868,11 +861,13 @@ break-spaces
 // CSS_PROP_WHITE_SPACE_COLLAPSE
 //
 // collapse
-// discard
 preserve
 preserve-breaks
-preserve-spaces
 // break-spaces
+
+// Unimplemented:
+// discard
+// preserve-spaces
 
 //
 // CSS_PROP__KHTML_NBSP_MODE

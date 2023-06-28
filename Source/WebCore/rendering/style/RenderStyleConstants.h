@@ -598,10 +598,8 @@ enum class WhiteSpace : uint8_t {
 
 enum class WhiteSpaceCollapse : uint8_t {
     Collapse,
-    Discard,
     Preserve,
     PreserveBreaks,
-    PreserveSpaces,
     BreakSpaces
 };
 

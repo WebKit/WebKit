@@ -579,21 +579,24 @@ RefPtr<CSSValue> ComputedStyleExtractor::whiteSpaceShorthandValue(const RenderSt
 {
     auto whiteSpaceCollapse = style.whiteSpaceCollapse();
     auto textWrap = style.textWrap();
-    if (whiteSpaceCollapse == WhiteSpaceCollapse::BreakSpaces && textWrap == TextWrap::Wrap)
-        return CSSPrimitiveValue::create(CSSValueBreakSpaces);
+
+    // Convert to backwards-compatible keywords if possible.
     if (whiteSpaceCollapse == WhiteSpaceCollapse::Collapse && textWrap == TextWrap::Wrap)
         return CSSPrimitiveValue::create(CSSValueNormal);
-    if (whiteSpaceCollapse == WhiteSpaceCollapse::Collapse && textWrap == TextWrap::NoWrap)
-        return CSSPrimitiveValue::create(CSSValueNowrap);
     if (whiteSpaceCollapse == WhiteSpaceCollapse::Preserve && textWrap == TextWrap::NoWrap)
         return CSSPrimitiveValue::create(CSSValuePre);
-    if (whiteSpaceCollapse == WhiteSpaceCollapse::PreserveBreaks && textWrap == TextWrap::Wrap)
-        return CSSPrimitiveValue::create(CSSValuePreLine);
     if (whiteSpaceCollapse == WhiteSpaceCollapse::Preserve && textWrap == TextWrap::Wrap)
         return CSSPrimitiveValue::create(CSSValuePreWrap);
+    if (whiteSpaceCollapse == WhiteSpaceCollapse::PreserveBreaks && textWrap == TextWrap::Wrap)
+        return CSSPrimitiveValue::create(CSSValuePreLine);
 
-    // The white-space property cannot be properly expressed in terms of its longhands
-    return nullptr;
+    // Omit default longhand values.
+    if (whiteSpaceCollapse == WhiteSpaceCollapse::Collapse)
+        return createConvertingToCSSValueID(textWrap);
+    if (textWrap == TextWrap::Wrap)
+        return createConvertingToCSSValueID(whiteSpaceCollapse);
+
+    return CSSValuePair::create(createConvertingToCSSValueID(whiteSpaceCollapse), createConvertingToCSSValueID(textWrap));
 }
 
 Ref<CSSPrimitiveValue> ComputedStyleExtractor::currentColorOrValidColor(const RenderStyle& style, const StyleColor& color)

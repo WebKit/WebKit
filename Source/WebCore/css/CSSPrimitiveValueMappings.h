@@ -1348,7 +1348,7 @@ DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS
 #undef FOR_EACH
 
 #define TYPE WhiteSpaceCollapse
-#define FOR_EACH(CASE) CASE(Collapse) CASE(Discard) CASE(Preserve) CASE(PreserveBreaks) CASE(PreserveSpaces) CASE(BreakSpaces)
+#define FOR_EACH(CASE) CASE(Collapse) CASE(Preserve) CASE(PreserveBreaks) CASE(BreakSpaces)
 DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS
 #undef TYPE
 #undef FOR_EACH

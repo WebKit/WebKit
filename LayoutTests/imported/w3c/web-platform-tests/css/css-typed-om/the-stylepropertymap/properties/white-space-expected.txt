@@ -5,10 +5,10 @@ PASS Can set 'white-space-collapse' to CSS-wide keywords: unset
 PASS Can set 'white-space-collapse' to CSS-wide keywords: revert
 PASS Can set 'white-space-collapse' to var() references:  var(--A)
 PASS Can set 'white-space-collapse' to the 'collapse' keyword: collapse
-PASS Can set 'white-space-collapse' to the 'discard' keyword: discard
+FAIL Can set 'white-space-collapse' to the 'discard' keyword: discard Invalid values
 PASS Can set 'white-space-collapse' to the 'preserve' keyword: preserve
 PASS Can set 'white-space-collapse' to the 'preserve-breaks' keyword: preserve-breaks
-PASS Can set 'white-space-collapse' to the 'preserve-spaces' keyword: preserve-spaces
+FAIL Can set 'white-space-collapse' to the 'preserve-spaces' keyword: preserve-spaces Invalid values
 PASS Can set 'white-space-collapse' to the 'break-spaces' keyword: break-spaces
 PASS Setting 'white-space-collapse' to a length: 0px throws TypeError
 PASS Setting 'white-space-collapse' to a length: -3.14em throws TypeError
