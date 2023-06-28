@@ -92,27 +92,19 @@ void WebXROpaqueFramebuffer::startFrame(const PlatformXR::Device::FrameData::Lay
         return;
     auto& gl = *m_context.graphicsContextGL();
 
-#if USE(IOSURFACE_FOR_XR_LAYER_DATA)
-    ASSERT(data.surface);
-    auto bufferSize = data.surface->size();
-
-    auto gCGL = static_cast<GraphicsContextGLCocoa*>(m_context.graphicsContextGL());
-    auto [textureTarget, textureTargetBinding] = gl.externalImageTextureBindingPoint();
-#else
-    GCGLenum textureTarget = GL::TEXTURE_2D;
-    GCGLenum textureTargetBinding = GL::TEXTURE_BINDING_2D;
+#if USE(WEBXR_USE_EGL_IMAGE)
+    IntSize bufferSize; // = data.surface->size();
 #endif
-
     m_framebuffer->setOpaqueActive(true);
 
     GCGLint boundFBO { 0 };
-    GCGLint boundTexture { 0 };
+    GCGLint boundRenderbuffer { 0 };
     gl.getIntegerv(GL::FRAMEBUFFER_BINDING, std::span(&boundFBO, 1));
-    gl.getIntegerv(textureTargetBinding, std::span(&boundTexture, 1));
+    gl.getIntegerv(GL::RENDERBUFFER_BINDING, std::span(&boundRenderbuffer, 1));
 
-    auto scopedBindings = makeScopeExit([&gl, boundFBO, boundTexture, textureTarget]() {
+    auto scopedBindings = makeScopeExit([&gl, boundFBO, boundRenderbuffer]() {
         gl.bindFramebuffer(GL::FRAMEBUFFER, boundFBO);
-        gl.bindTexture(textureTarget, boundTexture);
+        gl.bindRenderbuffer(GL::RENDERBUFFER, boundRenderbuffer);
     });
 
     gl.bindFramebuffer(GraphicsContextGL::FRAMEBUFFER, m_framebuffer->object());
@@ -123,35 +115,27 @@ void WebXROpaqueFramebuffer::startFrame(const PlatformXR::Device::FrameData::Lay
     // the textures/renderbuffers.
 
 #if USE(IOSURFACE_FOR_XR_LAYER_DATA)
-    m_opaqueTexture.ensure(gl);
-    gl.bindTexture(textureTarget, m_opaqueTexture);
-    gl.texParameteri(textureTarget, GL::TEXTURE_MAG_FILTER, GL::LINEAR);
-    gl.texParameteri(textureTarget, GL::TEXTURE_MIN_FILTER, GL::LINEAR);
-    gl.texParameteri(textureTarget, GL::TEXTURE_WRAP_S, GL::CLAMP_TO_EDGE);
-    gl.texParameteri(textureTarget, GL::TEXTURE_WRAP_T, GL::CLAMP_TO_EDGE);
-
+    // FIXME: This is temporary until Cocoa-specific platforms migrate to MTLTEXTURE_FOR_XR_LAYER_DATA.
+    auto colorTextureHandle = data.surface->createSendRight();
+    bool colorTextureIsShared = false;
+#elif USE(MTLTEXTURE_FOR_XR_LAYER_DATA)
     // Tell the GraphicsContextGL to use the IOSurface as the backing store for m_opaqueTexture.
-    if (data.isShared) {
-#if !PLATFORM(IOS_FAMILY_SIMULATOR)
-        auto surfaceTextureAttachment = gCGL->createAndBindEGLImage(textureTarget, data.surface.get());
-        if (!surfaceTextureAttachment) {
-            m_opaqueTexture.release(gl);
-            return;
-        }
-
-        auto [textureHandle, textureSize] = surfaceTextureAttachment.value();
-        m_ioSurfaceTextureHandle = textureHandle;
-        bufferSize = textureSize;
-
-        m_ioSurfaceTextureHandleIsShared = true;
-#else
-        ASSERT_NOT_REACHED();
+    auto [colorTextureHandle, colorTextureIsShared] = data.colorTexture;
 #endif
-    } else {
-        m_ioSurfaceTextureHandle = gCGL->createPbufferAndAttachIOSurface(textureTarget, GraphicsContextGLCocoa::PbufferAttachmentUsage::Write, GL::BGRA, bufferSize.width(), bufferSize.height(), GL::UNSIGNED_BYTE, data.surface->surface(), 0);
-        m_ioSurfaceTextureHandleIsShared = false;
+
+#if USE(WEBXR_USE_EGL_IMAGE)
+    m_colorBuffer.ensure(gl);
+    gl.bindRenderbuffer(GL::RENDERBUFFER, m_colorBuffer);
+
+    auto colorTextureSource = (colorTextureIsShared) ? GL::EGLImageSource(GL::EGLImageSourceMTLSharedTextureHandle { colorTextureHandle }) : GL::EGLImageSource(GL::EGLImageSourceIOSurfaceHandle { colorTextureHandle });
+
+    auto colorTextureAttachment = gl.createAndBindEGLImage(GL::RENDERBUFFER, colorTextureSource);
+    if (!colorTextureAttachment) {
+        m_colorBuffer.release(gl);
+        return;
     }
 
+    std::tie(m_colorImage, bufferSize) = colorTextureAttachment.value();
     if (bufferSize.isEmpty())
         return;
 
@@ -163,17 +147,12 @@ void WebXROpaqueFramebuffer::startFrame(const PlatformXR::Device::FrameData::Lay
             return;
     }
 
-    if (!m_ioSurfaceTextureHandle) {
-        m_opaqueTexture.release(gl);
-        return;
-    }
-
     // Set up the framebuffer to use the texture that points to the IOSurface. If we're not multisampling,
     // the target framebuffer is m_framebuffer->object() (bound above). If we are multisampling, the target
     // is the resolved framebuffer we created in setupFramebuffer.
     if (m_multisampleColorBuffer)
         gl.bindFramebuffer(GL::FRAMEBUFFER, m_resolvedFBO);
-    gl.framebufferTexture2D(GL::FRAMEBUFFER, GL::COLOR_ATTACHMENT0, textureTarget, m_opaqueTexture, 0);
+    gl.framebufferRenderbuffer(GL::FRAMEBUFFER, GL::COLOR_ATTACHMENT0, GL::RENDERBUFFER, m_colorBuffer);
 
     // At this point the framebuffer should be "complete".
     ASSERT(gl.checkFramebufferStatus(GL::FRAMEBUFFER) == GL::FRAMEBUFFER_COMPLETE);
@@ -241,20 +220,10 @@ void WebXROpaqueFramebuffer::endFrame()
 #endif
 
 
-#if USE(IOSURFACE_FOR_XR_LAYER_DATA)
-    if (m_ioSurfaceTextureHandle) {
-        if (m_ioSurfaceTextureHandleIsShared) {
-#if !PLATFORM(IOS_FAMILY_SIMULATOR)
-            gl.destroyEGLImage(m_ioSurfaceTextureHandle);
-#else
-            ASSERT_NOT_REACHED();
-#endif
-        } else {
-            auto gCGL = static_cast<GraphicsContextGLCocoa*>(&gl);
-            gCGL->destroyPbufferAndDetachIOSurface(m_ioSurfaceTextureHandle);
-        }
-        m_ioSurfaceTextureHandle = nullptr;
-        m_ioSurfaceTextureHandleIsShared = false;
+#if USE(WEBXR_USE_EGL_IMAGE)
+    if (m_colorImage) {
+        gl.destroyEGLImage(m_colorImage);
+        m_colorImage = nullptr;
     }
 #endif
 }
@@ -325,12 +294,7 @@ PlatformGLObject WebXROpaqueFramebuffer::allocateRenderbufferStorage(GraphicsCon
 
 PlatformGLObject WebXROpaqueFramebuffer::allocateColorStorage(GraphicsContextGL& gl, GCGLsizei samples, IntSize size)
 {
-#if USE(IOSURFACE_FOR_XR_LAYER_DATA) && !PLATFORM(IOS_FAMILY_SIMULATOR)
     constexpr auto colorFormat = GL::SRGB8_ALPHA8;
-#else
-    constexpr auto colorFormat = GL::RGBA8;
-#endif
-
     return allocateRenderbufferStorage(gl, samples, colorFormat, size);
 }
 

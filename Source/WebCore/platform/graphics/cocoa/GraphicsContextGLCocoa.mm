@@ -406,7 +406,7 @@ bool GraphicsContextGLCocoa::platformInitialize()
         requiredExtensions.append("GL_EXT_texture_format_BGRA8888"_s);
     }
 #endif // PLATFORM(MAC) || PLATFORM(MACCATALYST)
-#if ENABLE(WEBXR) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+#if ENABLE(WEBXR)
     if (attributes.xrCompatible) {
         requiredExtensions.append("GL_OES_EGL_image"_s);
         requiredExtensions.append("GL_EXT_sRGB"_s);
@@ -683,85 +683,70 @@ void GraphicsContextGLCocoa::destroyPbufferAndDetachIOSurface(void* handle)
     WebCore::destroyPbufferAndDetachIOSurface(m_displayObj, handle);
 }
 
-#if !PLATFORM(IOS_FAMILY_SIMULATOR)
-static std::optional<GraphicsContextGL::EGLImageAttachResult> createAndBindSharedTextureToExternalImage(GCGLDisplay platformDisplay, GCGLenum target, MTLSharedTextureHandle* handle)
+std::optional<GraphicsContextGL::EGLImageAttachResult> GraphicsContextGLCocoa::createAndBindEGLImage(GCGLenum target, EGLImageSource source)
 {
     EGLDeviceEXT eglDevice = EGL_NO_DEVICE_EXT;
-    if (!EGL_QueryDisplayAttribEXT(platformDisplay, EGL_DEVICE_EXT, reinterpret_cast<EGLAttrib*>(&eglDevice)))
+    if (!EGL_QueryDisplayAttribEXT(platformDisplay(), EGL_DEVICE_EXT, reinterpret_cast<EGLAttrib*>(&eglDevice)))
         return std::nullopt;
 
     id<MTLDevice> mtlDevice = nil;
     if (!EGL_QueryDeviceAttribEXT(eglDevice, EGL_METAL_DEVICE_ANGLE, reinterpret_cast<EGLAttrib*>(&mtlDevice)))
         return std::nullopt;
 
-    if (mtlDevice != [handle device]) {
-        LOG(WebGL, "MTLSharedTextureHandle does not have the same Metal device as platformDisplay in attachMTLTextureToExternalImage.");
-        return std::nullopt;
-    }
+    RetainPtr<id<MTLTexture>> texture = WTF::switchOn(WTFMove(source),
+    [&](EGLImageSourceIOSurfaceHandle&& ioSurface) -> RetainPtr<id> {
+        auto surface = IOSurface::createFromSendRight(WTFMove(ioSurface.handle));
+        if (!surface)
+            return { };
 
-    // Create a MTLTexture out of the MTLSharedTextureHandle.
-    auto texture = adoptNS([mtlDevice newSharedTextureWithHandle:handle]);
+        auto size = surface->size();
+        MTLTextureDescriptor *desc = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:MTLPixelFormatBGRA8Unorm_sRGB width:size.width() height:size.height() mipmapped:NO];
+        [desc setUsage:MTLTextureUsageShaderRead | MTLTextureUsageRenderTarget];
+
+        auto tex = adoptNS([mtlDevice newTextureWithDescriptor:desc iosurface:surface->surface() plane:0]);
+        return tex;
+    },
+    [&](EGLImageSourceMTLSharedTextureHandle&& sharedTexture) -> RetainPtr<id> {
+#if PLATFORM(IOS_FAMILY_SIMULATOR)
+        UNUSED_VARIABLE(sharedTexture);
+        ASSERT_NOT_REACHED();
+        return { };
+#else
+        auto handle = adoptNS([[MTLSharedTextureHandle alloc] initWithMachPort:sharedTexture.handle.sendRight()]);
+        if (!handle)
+            return { };
+
+        if (mtlDevice != [handle device]) {
+            LOG(WebGL, "MTLSharedTextureHandle does not have the same Metal device as platformDisplay.");
+            return { };
+        }
+
+        // Create a MTLTexture out of the MTLSharedTextureHandle.
+        RetainPtr<id> texture = adoptNS([mtlDevice newSharedTextureWithHandle:handle.get()]);
+        return texture;
+        // FIXME: Does the texture have the correct usage mode?
+#endif
+    });
+
     if (!texture)
         return std::nullopt;
 
-    GCGLuint textureWidth = [texture width];
-    GCGLuint textureHeight = [texture height];
-
-    // FIXME: Does the texture have the correct usage mode?
-
     // Create an EGLImage out of the MTLTexture
     constexpr EGLint emptyAttributes[] = { EGL_NONE };
-    auto eglImage = EGL_CreateImageKHR(platformDisplay, EGL_NO_CONTEXT, EGL_METAL_TEXTURE_ANGLE, reinterpret_cast<EGLClientBuffer>(texture.get()), emptyAttributes);
+    auto eglImage = EGL_CreateImageKHR(platformDisplay(), EGL_NO_CONTEXT, EGL_METAL_TEXTURE_ANGLE, reinterpret_cast<EGLClientBuffer>(texture.get()), emptyAttributes);
     if (!eglImage)
         return std::nullopt;
 
     // Tell the currently bound texture to use the EGLImage.
-    GL_EGLImageTargetTexture2DOES(target, eglImage);
+    if (target == RENDERBUFFER)
+        GL_EGLImageTargetRenderbufferStorageOES(target, eglImage);
+    else
+        GL_EGLImageTargetTexture2DOES(target, eglImage);
+
+    GCGLuint textureWidth = [texture.get() width];
+    GCGLuint textureHeight = [texture.get() height];
 
     return std::make_tuple(eglImage, IntSize(textureWidth, textureHeight));
-}
-
-std::optional<GraphicsContextGL::EGLImageAttachResult> GraphicsContextGLCocoa::createAndBindEGLImage(GCGLenum target, IOSurface* surface)
-{
-    auto handle = adoptNS([[MTLSharedTextureHandle alloc] initWithIOSurface:surface->surface() label:@"WebXR"]);
-    if (!handle)
-        return std::nullopt;
-
-    return createAndBindSharedTextureToExternalImage(platformDisplay(), target, handle.get());
-}
-#endif
-
-std::optional<GraphicsContextGL::EGLImageAttachResult> GraphicsContextGLCocoa::createAndBindEGLImage(GCGLenum target, EGLImageSource source)
-{
-#if PLATFORM(IOS_FAMILY_SIMULATOR)
-    // MTLSharedTexture is unsupported on simulator
-    UNUSED_VARIABLE(target);
-    UNUSED_VARIABLE(source);
-
-    return std::nullopt;
-#else // !PLATFORM(IOS_FAMILY_SIMULATOR
-
-    RetainPtr<MTLSharedTextureHandle> handle;
-    return WTF::switchOn(WTFMove(source),
-        [&](EGLImageSourceIOSurfaceHandle&& ioSurface) -> std::optional<EGLImageAttachResult> {
-            auto surface = IOSurface::createFromSendRight(WTFMove(ioSurface.handle));
-            if (!surface)
-                return std::nullopt;
-
-            handle = adoptNS([[MTLSharedTextureHandle alloc] initWithIOSurface:surface->surface() label:@"WebXR"]);
-            if (!handle)
-                return std::nullopt;
-
-            return createAndBindSharedTextureToExternalImage(platformDisplay(), target, handle.get());
-        },
-        [&](EGLImageSourceMTLSharedTextureHandle&& sharedTexture) -> std::optional<EGLImageAttachResult> {
-            handle = adoptNS([[MTLSharedTextureHandle alloc] initWithMachPort:sharedTexture.handle.sendRight()]);
-            if (!handle)
-                return std::nullopt;
-
-            return createAndBindSharedTextureToExternalImage(platformDisplay(), target, handle.get());
-        });
-#endif
 }
 
 RetainPtr<id> GraphicsContextGLCocoa::newSharedEventWithMachPort(mach_port_t sharedEventSendRight)
