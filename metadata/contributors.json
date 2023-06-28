@@ -6350,6 +6350,7 @@
    },
    {
       "emails" : [
+         "rupin@apple.com",
          "rmittal2@apple.com",
          "rupinmittal@ucla.edu"
       ],
@@ -6357,7 +6358,8 @@
       "name" : "Rupin Mittal",
       "nicks" : [
          "rupin"
-      ]
+      ],
+      "status" : "committer"
    },
    {
       "emails" : [
