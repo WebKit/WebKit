@@ -78,11 +78,8 @@ public:
         {
             Locker locker { m_lock };
             ASSERT_WITH_SECURITY_IMPLICATION(m_object);
-            auto tempRefCount = m_strongReferenceCount - 1;
-            if (LIKELY(tempRefCount)) {
-                m_strongReferenceCount = tempRefCount;
+            if (LIKELY(--m_strongReferenceCount))
                 return;
-            }
             object = static_cast<T*>(std::exchange(m_object, nullptr));
             if (!m_weakReferenceCount)
                 shouldDeleteControlBlock = true;
