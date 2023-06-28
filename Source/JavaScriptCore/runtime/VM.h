@@ -887,6 +887,10 @@ public:
     void queueMicrotask(QueuedTask&& task) { m_microtaskQueue.enqueue(WTFMove(task)); }
     JS_EXPORT_PRIVATE void drainMicrotasks();
     void setOnEachMicrotaskTick(WTF::Function<void(VM&)>&& func) { m_onEachMicrotaskTick = WTFMove(func); }
+    
+    WTF::Function<String(VM&, Vector<StackFrame>& stackTrace, unsigned &line, unsigned &column, String& sourceURL, JSC::JSObject*)>& onComputeErrorInfo() { return m_onComputeErrorInfo; }
+    void setOnComputeErrorInfo(WTF::Function<String(VM&, Vector<StackFrame>& stackTrace, unsigned &line, unsigned &column, String& sourceURL, JSC::JSObject*)>&& func) { m_onComputeErrorInfo = WTFMove(func); }
+    
     void finalizeSynchronousJSExecution() { ASSERT(currentThreadIsHoldingAPILock()); m_currentWeakRefVersion++; }
     uintptr_t currentWeakRefVersion() const { return m_currentWeakRefVersion; }
 
@@ -1074,6 +1078,7 @@ private:
     Vector<Strong<JSPromise>> m_aboutToBeNotifiedRejectedPromises;
 
     WTF::Function<void(VM&)> m_onEachMicrotaskTick;
+    WTF::Function<String(VM&, Vector<StackFrame>& stackTrace, unsigned &line, unsigned &column, String& sourceURL, JSC::JSObject*)> m_onComputeErrorInfo;
     uintptr_t m_currentWeakRefVersion { 0 };
 
     bool m_hasTerminationRequest { false };
