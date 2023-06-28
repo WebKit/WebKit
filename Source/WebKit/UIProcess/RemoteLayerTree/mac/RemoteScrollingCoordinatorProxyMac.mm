@@ -116,6 +116,12 @@ void RemoteScrollingCoordinatorProxyMac::hasNodeWithAnimatedScrollChanged(bool h
 #endif
 }
 
+void RemoteScrollingCoordinatorProxyMac::clearNodesWithUserScrollInProgress()
+{
+    m_uiState.clearNodesWithActiveUserScroll();
+    sendUIStateChangedIfNecessary();
+}
+
 void RemoteScrollingCoordinatorProxyMac::scrollingTreeNodeWillStartScroll(ScrollingNodeID nodeID)
 {
     m_uiState.addNodeWithActiveUserScroll(nodeID);

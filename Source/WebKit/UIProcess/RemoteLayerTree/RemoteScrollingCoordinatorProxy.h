@@ -120,6 +120,7 @@ public:
     virtual void scrollingTreeNodeWillStartPanGesture(WebCore::ScrollingNodeID) { }
     virtual void scrollingTreeNodeWillStartScroll(WebCore::ScrollingNodeID) { }
     virtual void scrollingTreeNodeDidEndScroll(WebCore::ScrollingNodeID) { }
+    virtual void clearNodesWithUserScrollInProgress() { }
     virtual void hasNodeWithAnimatedScrollChanged(bool) { }
     virtual void setRootNodeIsInUserScroll(bool) { }
 

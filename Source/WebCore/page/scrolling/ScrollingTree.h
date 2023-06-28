@@ -91,7 +91,7 @@ public:
 
     bool isUserScrollInProgressForNode(ScrollingNodeID);
     void setUserScrollInProgressForNode(ScrollingNodeID, bool);
-    void clearNodesWithUserScrollInProgress();
+    WEBCORE_EXPORT virtual void clearNodesWithUserScrollInProgress();
 
     bool isScrollSnapInProgressForNode(ScrollingNodeID);
     void setNodeScrollSnapInProgress(ScrollingNodeID, bool);

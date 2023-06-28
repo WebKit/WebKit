@@ -90,6 +90,13 @@ void RemoteScrollingTreeMac::scrollingTreeNodeDidEndScroll(ScrollingNodeID nodeI
     });
 }
 
+void RemoteScrollingTreeMac::clearNodesWithUserScrollInProgress()
+{
+    RunLoop::main().dispatch([protectedThis = Ref { *this }, this] {
+        RemoteScrollingTree::clearNodesWithUserScrollInProgress();
+    });
+}
+
 void RemoteScrollingTreeMac::scrollingTreeNodeDidBeginScrollSnapping(ScrollingNodeID nodeID)
 {
     RunLoop::main().dispatch([protectedThis = Ref { *this }, this, nodeID] {

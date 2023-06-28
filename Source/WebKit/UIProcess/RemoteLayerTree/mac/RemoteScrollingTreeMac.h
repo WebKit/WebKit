@@ -84,6 +84,7 @@ private:
 
     void scrollingTreeNodeWillStartScroll(WebCore::ScrollingNodeID) override;
     void scrollingTreeNodeDidEndScroll(WebCore::ScrollingNodeID) override;
+    void clearNodesWithUserScrollInProgress() override;
 
     void scrollingTreeNodeDidBeginScrollSnapping(ScrollingNodeID) override;
     void scrollingTreeNodeDidEndScrollSnapping(ScrollingNodeID) override;
