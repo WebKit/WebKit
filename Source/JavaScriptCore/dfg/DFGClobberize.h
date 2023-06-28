@@ -1947,10 +1947,6 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         return;
 
     case StringCharAt:
-        if (node->arrayMode().isOutOfBounds()) {
-            clobberTop();
-            return;
-        }
         def(PureValue(node));
         return;
 

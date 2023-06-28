@@ -2881,12 +2881,8 @@ auto ByteCodeParser::handleIntrinsicCall(Node* callee, Operand result, CallVaria
             if (argumentCountIncludingThis < 2)
                 return CallOptimizationResult::DidNothing;
 
-            if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, OutOfBounds) || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadType))
+            if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadType))
                 return CallOptimizationResult::DidNothing;
-
-            // FIXME: String#charAt returns empty string when index is out-of-bounds, and this does not break the AI's claim.
-            // Only FTL supports out-of-bounds version now. We should support out-of-bounds version even in DFG.
-            // https://bugs.webkit.org/show_bug.cgi?id=201678
 
             insertChecks();
             VirtualRegister thisOperand = virtualRegisterForArgumentIncludingThis(0, registerOffset);

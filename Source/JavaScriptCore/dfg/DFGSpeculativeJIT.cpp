@@ -3183,6 +3183,8 @@ void SpeculativeJIT::compileGetByValOnString(Node* node, const ScopedLambda<std:
     GPRReg baseReg = base.gpr();
     GPRReg propertyReg = property.gpr();
 
+    JumpList doneCases;
+
     JSValueRegs resultRegs;
     DataFormat format;
     std::tie(resultRegs, format, std::ignore) = prefix(node->arrayMode().isOutOfBounds() ? DataFormatJS : DataFormatCell);
@@ -3193,8 +3195,10 @@ void SpeculativeJIT::compileGetByValOnString(Node* node, const ScopedLambda<std:
     Jump outOfBounds = branch32(
         AboveOrEqual, propertyReg,
         Address(scratchReg, StringImpl::lengthMemoryOffset()));
-    if (node->arrayMode().isInBounds())
-        speculationCheck(OutOfBounds, JSValueRegs(), nullptr, outOfBounds);
+    if (node->op() != StringCharAt) {
+        if (node->arrayMode().isInBounds())
+            speculationCheck(OutOfBounds, JSValueRegs(), nullptr, outOfBounds);
+    }
 
     // Load the character into scratchReg
     Jump is16Bit = branchTest32(Zero, Address(scratchReg, StringImpl::flagsOffset()), TrustedImm32(StringImpl::flagIs8Bit()));
@@ -3202,6 +3206,16 @@ void SpeculativeJIT::compileGetByValOnString(Node* node, const ScopedLambda<std:
     loadPtr(Address(scratchReg, StringImpl::dataOffset()), scratchReg);
     load8(BaseIndex(scratchReg, propertyReg, TimesOne, 0), scratchReg);
     Jump cont8Bit = jump();
+
+    if (node->op() == StringCharAt) {
+        outOfBounds.link(this);
+#if USE(JSVALUE32_64)
+        if (format == DataFormatJS)
+            move(TrustedImm32(JSValue::CellTag), resultRegs.tagGPR());
+#endif
+        loadLinkableConstant(LinkableConstant(*this, jsEmptyString(vm())), resultRegs.payloadGPR());
+        doneCases.append(jump());
+    }
 
     is16Bit.link(this);
 
@@ -3223,7 +3237,7 @@ void SpeculativeJIT::compileGetByValOnString(Node* node, const ScopedLambda<std:
         slowPathCall(
             bigCharacter, this, operationSingleCharacterString, scratchReg, TrustedImmPtr(&vm), scratchReg));
 
-    if (node->arrayMode().isOutOfBounds()) {
+    if (node->op() != StringCharAt && node->arrayMode().isOutOfBounds()) {
         ASSERT(format == DataFormatJS);
 #if USE(JSVALUE32_64)
         move(TrustedImm32(JSValue::CellTag), resultRegs.tagGPR());
@@ -3244,15 +3258,17 @@ void SpeculativeJIT::compileGetByValOnString(Node* node, const ScopedLambda<std:
                     outOfBounds, this, operationGetByValStringInt,
                     resultRegs, LinkableConstant::globalObject(*this, node), baseReg, propertyReg));
         }
-        
+
         jsValueResult(resultRegs, m_currentNode);
-    } else {
-        if (format == DataFormatJS)
-            jsValueResult(resultRegs, m_currentNode);
-        else {
-            ASSERT(format == DataFormatCell);
-            cellResult(resultRegs.payloadGPR(), m_currentNode);
-        }
+        return;
+    }
+
+    doneCases.link(this);
+    if (format == DataFormatJS)
+        jsValueResult(resultRegs, m_currentNode);
+    else {
+        ASSERT(format == DataFormatCell);
+        cellResult(resultRegs.payloadGPR(), m_currentNode);
     }
 }
 
