@@ -191,7 +191,11 @@ void MediaSessionManagerCocoa::updateSessionState()
         mode = AudioSession::Mode::VideoChat;
     } else if (hasAudibleVideoMediaType) {
         category = AudioSession::CategoryType::MediaPlayback;
+#if PLATFORM(VISION)
+        // visionOS AudioSessions are designed more like a headphone experience,
+        // and thus use a different mode.
         mode = AudioSession::Mode::MoviePlayback;
+#endif
     } else if (hasAudibleAudioOrVideoMediaType)
         category = AudioSession::CategoryType::MediaPlayback;
     else if (webAudioCount)
