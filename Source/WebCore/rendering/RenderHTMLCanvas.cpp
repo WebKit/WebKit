@@ -99,10 +99,9 @@ void RenderHTMLCanvas::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& pa
 
     canvasElement().setIsSnapshotting(paintInfo.paintBehavior.contains(PaintBehavior::Snapshotting));
     CompositeOperator op = CompositeOperator::SourceOver;
-#if ENABLE(CSS_COMPOSITING)
     if (paintInfo.enclosingSelfPaintingLayer() && paintInfo.enclosingSelfPaintingLayer()->shouldPaintUsingCompositeCopy())
         op = CompositeOperator::Copy;
-#endif
+
     canvasElement().paint(context, replacedContentRect, op);
     canvasElement().setIsSnapshotting(false);
 }

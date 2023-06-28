@@ -88,7 +88,7 @@ public:
     void updateGeometry(const RenderLayer* compositingAncestor);
 
     // Update state the requires that descendant layers have been updated.
-    void updateAfterDescendants();
+    void updateAfterDescendants(bool reevaluateConfiguration);
 
     // Update contents and clipping structure.
     void updateDrawsContent();
