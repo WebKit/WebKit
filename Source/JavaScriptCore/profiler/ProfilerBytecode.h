@@ -26,6 +26,7 @@
 #pragma once
 
 #include "JSCJSValue.h"
+#include <wtf/JSONValues.h>
 #include <wtf/text/CString.h>
 
 namespace JSC {
@@ -33,6 +34,8 @@ namespace JSC {
 enum OpcodeID : unsigned;
 
 namespace Profiler {
+
+class Dumper;
 
 class Bytecode {
 public:
@@ -52,7 +55,7 @@ public:
     OpcodeID opcodeID() const { return m_opcodeID; }
     const CString& description() const { return m_description; }
     
-    JSValue toJS(JSGlobalObject*) const;
+    Ref<JSON::Value> toJSON(Dumper&) const;
 private:
     unsigned m_bytecodeIndex;
     OpcodeID m_opcodeID;

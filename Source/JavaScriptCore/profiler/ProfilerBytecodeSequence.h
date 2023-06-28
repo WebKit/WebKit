@@ -36,6 +36,8 @@ class CodeBlock;
 
 namespace Profiler {
 
+class Dumper;
+
 class BytecodeSequence {
 public:
     BytecodeSequence(CodeBlock*);
@@ -49,7 +51,7 @@ public:
     const Bytecode& forBytecodeIndex(unsigned bytecodeIndex) const;
 
 protected:
-    void addSequenceProperties(JSGlobalObject*, JSObject*) const;
+    void addSequenceProperties(Dumper&, JSON::Object&) const;
     
 private:
     Vector<CString> m_header;
