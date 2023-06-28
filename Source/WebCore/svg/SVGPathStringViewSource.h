@@ -26,9 +26,9 @@
 
 namespace WebCore {
 
-class SVGPathStringSource final : public SVGPathSource {
+class SVGPathStringViewSource final : public SVGPathSource {
 public:
-    explicit SVGPathStringSource(const String&);
+    explicit SVGPathStringViewSource(StringView);
 
 private:
     bool hasMoreData() const final;
@@ -48,9 +48,7 @@ private:
 
     template<typename Function> decltype(auto) parse(Function&&);
 
-    String m_string;
     bool m_is8BitSource;
-
     union {
         StringParsingBuffer<LChar> m_buffer8;
         StringParsingBuffer<UChar> m_buffer16;

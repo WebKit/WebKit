@@ -2887,7 +2887,7 @@ svg/SVGPathParser.cpp
 svg/SVGPathSegListBuilder.cpp
 svg/SVGPathSegListSource.cpp
 svg/SVGPathStringBuilder.cpp
-svg/SVGPathStringSource.cpp
+svg/SVGPathStringViewSource.cpp
 svg/SVGPathTraversalStateBuilder.cpp
 svg/SVGPathUtilities.cpp
 svg/SVGPatternElement.cpp

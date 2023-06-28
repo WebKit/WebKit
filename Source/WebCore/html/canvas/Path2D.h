@@ -55,7 +55,7 @@ public:
         return create(path.path());
     }
 
-    static Ref<Path2D> create(const String& pathData)
+    static Ref<Path2D> create(StringView pathData)
     {
         return create(buildPathFromString(pathData));
     }
