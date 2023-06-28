@@ -24,7 +24,7 @@
 
 header: "PrepareBackingStoreBuffersData.h"
 
-[CustomHeader] struct WebKit::PrepareBackingStoreBuffersInputData {
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] struct WebKit::PrepareBackingStoreBuffersInputData {
     WebKit::BufferIdentifierSet bufferSet;
     bool supportsPartialRepaint;
     bool hasEmptyDirtyRegion;
