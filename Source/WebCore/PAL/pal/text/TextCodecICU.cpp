@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Alexey Proskuryakov <ap@nypop.com>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -55,6 +55,7 @@ DECLARE_ALIASES(ISO_8859_14, "iso8859-14", "iso885914", "isoceltic", "iso8859141
 DECLARE_ALIASES(ISO_8859_15, "csisolatin9", "iso8859-15", "iso885915", "iso_8859-15", "l9");
 DECLARE_ALIASES(ISO_8859_16, "isoir226", "iso8859162001", "l10", "latin10");
 DECLARE_ALIASES(KOI8_R, "cskoi8r", "koi", "koi8", "koi8_r");
+DECLARE_ALIASES(gb18030, "ibm-1392", "windows-54936", "chinese", "csgb2312", "csiso58gb231280", "gb2312", "gb_2312", "gb_2312-80", "iso-ir-58", "x-gbk", "cn-gb", "csgb231280", "x-euc-cn", "euc-cn", "cp936", "ms936", "gb2312-1980", "windows-936", "windows-936-2000", "GBK");
 DECLARE_ALIASES(macintosh, "csmacintosh", "mac", "x-mac-roman", "macroman", "x-macroman");
 DECLARE_ALIASES(windows_1250, "cp1250", "x-cp1250", "winlatin2");
 DECLARE_ALIASES(windows_1251, "cp1251", "wincyrillic", "x-cp1251");
@@ -87,6 +88,7 @@ static const struct EncodingName {
     DECLARE_ENCODING_NAME("ISO-8859-15", ISO_8859_15),
     DECLARE_ENCODING_NAME("ISO-8859-16", ISO_8859_16),
     DECLARE_ENCODING_NAME("KOI8-R", KOI8_R),
+    DECLARE_ENCODING_NAME("gb18030", gb18030),
     DECLARE_ENCODING_NAME("macintosh", macintosh),
     DECLARE_ENCODING_NAME("windows-1250", windows_1250),
     DECLARE_ENCODING_NAME("windows-1251", windows_1251),

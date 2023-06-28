@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,7 +38,6 @@ const std::array<std::pair<uint16_t, UChar>, 7724>& jis0208();
 const std::array<std::pair<uint16_t, UChar>, 6067>& jis0212();
 const std::array<std::pair<uint16_t, UChar32>, 18590>& big5();
 const std::array<std::pair<uint16_t, UChar>, 17048>& eucKR();
-const std::array<UChar, 23940>& gb18030();
 
 void checkEncodingTableInvariants();
 
