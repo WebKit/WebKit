@@ -673,13 +673,8 @@ auto Connection::waitForMessage(MessageName messageName, uint64_t destinationID,
         }
 
         // Don't even start waiting if we have InterruptWaitingIfSyncMessageArrives and there's a sync message already in the queue.
-        if (hasIncomingSynchronousMessage && waitForOptions.contains(WaitForOption::InterruptWaitingIfSyncMessageArrives)) {
-#if ASSERT_ENABLED
-            // We don't support having multiple clients waiting for messages.
-            ASSERT(!m_waitingForMessage);
-#endif
-            return { Error::MultipleWaitingClients };
-        }
+        if (hasIncomingSynchronousMessage && waitForOptions.contains(WaitForOption::InterruptWaitingIfSyncMessageArrives))
+            return { Error::SyncMessageInterruptedWait };
 
         m_waitingForMessage = &waitingForMessage;
     }
@@ -711,13 +706,19 @@ auto Connection::waitForMessage(MessageName messageName, uint64_t destinationID,
             return { WTFMove(decoder) };
         }
 
-        // Now we wait.
-        bool didTimeout = !m_waitForMessageCondition.waitUntil(m_waitForMessageLock, timeout.deadline());
-        // We timed out, lost our connection, or a sync message came in with InterruptWaitingIfSyncMessageArrives, so stop waiting.
-        if (didTimeout || m_waitingForMessage->messageWaitingInterrupted) {
+        if (!isValid()) {
             m_waitingForMessage = nullptr;
+            return Error::InvalidConnection;
+        }
 
-            return didTimeout ? Error::AttemptingToWaitInsideSyncMessageHandling : Error::SyncMessageInterrupedWait;
+        bool didTimeout = !m_waitForMessageCondition.waitUntil(m_waitForMessageLock, timeout.deadline());
+        if (didTimeout) {
+            m_waitingForMessage = nullptr;
+            return Error::Timeout;
+        }
+        if (m_waitingForMessage->messageWaitingInterrupted) {
+            m_waitingForMessage = nullptr;
+            return Error::SyncMessageInterruptedWait;
         }
     }
 
@@ -1491,7 +1492,7 @@ const char* errorAsString(Error error)
     case Error::AttemptingToWaitOnClosedConnection: return "AttemptingToWaitOnClosedConnection";
     case Error::WaitingOnAlreadyDispatchedMessage: return "WaitingOnAlreadyDispatchedMessage";
     case Error::AttemptingToWaitInsideSyncMessageHandling: return "AttemptingToWaitInsideSyncMessageHandling";
-    case Error::SyncMessageInterrupedWait: return "SyncMessageInterrupedWait";
+    case Error::SyncMessageInterruptedWait: return "SyncMessageInterruptedWait";
     case Error::CantWaitForSyncReplies: return "CantWaitForSyncReplies";
     case Error::FailedToEncodeMessageArguments: return "FailedToEncodeMessageArguments";
     case Error::FailedToDecodeReplyArguments: return "FailedToDecodeReplyArguments";

@@ -110,7 +110,7 @@ enum class Error : uint8_t {
     AttemptingToWaitOnClosedConnection,
     WaitingOnAlreadyDispatchedMessage,
     AttemptingToWaitInsideSyncMessageHandling,
-    SyncMessageInterrupedWait,
+    SyncMessageInterruptedWait,
     CantWaitForSyncReplies,
     FailedToEncodeMessageArguments,
     FailedToDecodeReplyArguments,

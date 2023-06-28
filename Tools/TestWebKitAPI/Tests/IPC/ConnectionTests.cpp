@@ -306,6 +306,30 @@ TEST_P(ConnectionTestABBA, ReceiveAlreadyInvalidatedClientNoAssert)
         RunLoop::current().cycle();
 }
 
+// DISABLED: currently cannot test that wait on unopened connection causes InvalidConnection,
+// since that will crash. The semantics are that isValid() == true for unopened connection,
+// which doesn't make much sense.
+TEST_P(ConnectionTestABBA, DISABLED_UnopenedWaitForAndDispatchImmediatelyIsInvalidConnection)
+{
+    IPC::Error error = a()->waitForAndDispatchImmediately<MockTestMessage1>(0, kWaitForAbsenceTimeout);
+    EXPECT_EQ(IPC::Error::InvalidConnection, error);
+}
+
+TEST_P(ConnectionTestABBA, InvalidatedWaitForAndDispatchImmediatelyIsInvalidConnection)
+{
+    ASSERT_TRUE(openA());
+    a()->invalidate();
+    IPC::Error error = a()->waitForAndDispatchImmediately<MockTestMessage1>(0, kWaitForAbsenceTimeout);
+    EXPECT_EQ(IPC::Error::InvalidConnection, error);
+}
+
+TEST_P(ConnectionTestABBA, UnsentWaitForAndDispatchImmediatelyIsTimeout)
+{
+    ASSERT_TRUE(openA());
+    IPC::Error error = a()->waitForAndDispatchImmediately<MockTestMessage1>(0, kWaitForAbsenceTimeout);
+    EXPECT_EQ(IPC::Error::Timeout, error);
+}
+
 template<typename C>
 static void dispatchSync(RunLoop& runLoop, C&& function)
 {
@@ -545,6 +569,43 @@ TEST_P(ConnectionRunLoopTest, InvalidSendWithAsyncReplyDispatchesCancelHandlerOn
         RunLoop::current().cycle();
     EXPECT_EQ(reply, 0u);
     semaphore.signal();
+    localReferenceBarrier();
+}
+
+TEST_P(ConnectionRunLoopTest, RunLoopWaitForAndDispatchImmediately)
+{
+    ASSERT_TRUE(openA());
+
+    for (uint64_t i = 0u; i < 55u; ++i)
+        a()->send(MockTestMessage1 { }, i);
+
+    auto runLoop = createRunLoop(RUN_LOOP_NAME);
+    runLoop->dispatch([&] {
+        ASSERT_TRUE(openB());
+        for (uint64_t i = 100u; i < 160u; ++i)
+            b()->send(MockTestMessage1 { }, i);
+
+        for (uint64_t i = 0u; i < 55u; ++i) {
+            IPC::Error error = b()->waitForAndDispatchImmediately<MockTestMessage1>(i, kDefaultWaitForTimeout);
+            ASSERT_EQ(IPC::Error::NoError, error);
+
+            auto message = bClient().waitForMessage(0_s);
+            EXPECT_EQ(message.messageName, MockTestMessage1::name());
+            EXPECT_EQ(message.destinationID, i);
+        }
+    });
+    for (uint64_t i = 100u; i < 160u; ++i) {
+        IPC::Error error = a()->waitForAndDispatchImmediately<MockTestMessage1>(i, kDefaultWaitForTimeout);
+        ASSERT_EQ(IPC::Error::NoError, error);
+
+        auto message = aClient().waitForMessage(0_s);
+        EXPECT_EQ(message.messageName, MockTestMessage1::name());
+        EXPECT_EQ(message.destinationID, i);
+    }
+    runLoop->dispatch([&] {
+        b()->invalidate();
+    });
+
     localReferenceBarrier();
 }
 
