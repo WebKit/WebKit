@@ -95,18 +95,16 @@ void WebXROpaqueFramebuffer::startFrame(const PlatformXR::Device::FrameData::Lay
 #if USE(WEBXR_USE_EGL_IMAGE)
     IntSize bufferSize; // = data.surface->size();
 #endif
-    auto [textureTarget, textureTargetBinding] = gl.externalImageTextureBindingPoint();
-
     m_framebuffer->setOpaqueActive(true);
 
     GCGLint boundFBO { 0 };
-    GCGLint boundTexture { 0 };
+    GCGLint boundRenderbuffer { 0 };
     gl.getIntegerv(GL::FRAMEBUFFER_BINDING, std::span(&boundFBO, 1));
-    gl.getIntegerv(textureTargetBinding, std::span(&boundTexture, 1));
+    gl.getIntegerv(GL::RENDERBUFFER_BINDING, std::span(&boundRenderbuffer, 1));
 
-    auto scopedBindings = makeScopeExit([&gl, boundFBO, boundTexture, textureTarget]() {
+    auto scopedBindings = makeScopeExit([&gl, boundFBO, boundRenderbuffer]() {
         gl.bindFramebuffer(GL::FRAMEBUFFER, boundFBO);
-        gl.bindTexture(textureTarget, boundTexture);
+        gl.bindRenderbuffer(GL::RENDERBUFFER, boundRenderbuffer);
     });
 
     gl.bindFramebuffer(GraphicsContextGL::FRAMEBUFFER, m_framebuffer->object());
@@ -126,22 +124,18 @@ void WebXROpaqueFramebuffer::startFrame(const PlatformXR::Device::FrameData::Lay
 #endif
 
 #if USE(WEBXR_USE_EGL_IMAGE)
-    m_opaqueTexture.ensure(gl);
-    gl.bindTexture(textureTarget, m_opaqueTexture);
-    gl.texParameteri(textureTarget, GL::TEXTURE_MAG_FILTER, GL::LINEAR);
-    gl.texParameteri(textureTarget, GL::TEXTURE_MIN_FILTER, GL::LINEAR);
-    gl.texParameteri(textureTarget, GL::TEXTURE_WRAP_S, GL::CLAMP_TO_EDGE);
-    gl.texParameteri(textureTarget, GL::TEXTURE_WRAP_T, GL::CLAMP_TO_EDGE);
+    m_colorBuffer.ensure(gl);
+    gl.bindRenderbuffer(GL::RENDERBUFFER, m_colorBuffer);
 
     auto colorTextureSource = (colorTextureIsShared) ? GL::EGLImageSource(GL::EGLImageSourceMTLSharedTextureHandle { colorTextureHandle }) : GL::EGLImageSource(GL::EGLImageSourceIOSurfaceHandle { colorTextureHandle });
 
-    auto colorTextureAttachment = gl.createAndBindEGLImage(textureTarget, colorTextureSource);
+    auto colorTextureAttachment = gl.createAndBindEGLImage(GL::RENDERBUFFER, colorTextureSource);
     if (!colorTextureAttachment) {
-        m_opaqueTexture.release(gl);
+        m_colorBuffer.release(gl);
         return;
     }
 
-    std::tie(m_opaqueImage, bufferSize) = colorTextureAttachment.value();
+    std::tie(m_colorImage, bufferSize) = colorTextureAttachment.value();
     if (bufferSize.isEmpty())
         return;
 
@@ -158,7 +152,7 @@ void WebXROpaqueFramebuffer::startFrame(const PlatformXR::Device::FrameData::Lay
     // is the resolved framebuffer we created in setupFramebuffer.
     if (m_multisampleColorBuffer)
         gl.bindFramebuffer(GL::FRAMEBUFFER, m_resolvedFBO);
-    gl.framebufferTexture2D(GL::FRAMEBUFFER, GL::COLOR_ATTACHMENT0, textureTarget, m_opaqueTexture, 0);
+    gl.framebufferRenderbuffer(GL::FRAMEBUFFER, GL::COLOR_ATTACHMENT0, GL::RENDERBUFFER, m_colorBuffer);
 
     // At this point the framebuffer should be "complete".
     ASSERT(gl.checkFramebufferStatus(GL::FRAMEBUFFER) == GL::FRAMEBUFFER_COMPLETE);
@@ -227,9 +221,9 @@ void WebXROpaqueFramebuffer::endFrame()
 
 
 #if USE(WEBXR_USE_EGL_IMAGE)
-    if (m_opaqueImage) {
-        gl.destroyEGLImage(m_opaqueImage);
-        m_opaqueImage = nullptr;
+    if (m_colorImage) {
+        gl.destroyEGLImage(m_colorImage);
+        m_colorImage = nullptr;
     }
 #endif
 }

@@ -738,7 +738,10 @@ std::optional<GraphicsContextGL::EGLImageAttachResult> GraphicsContextGLCocoa::c
         return std::nullopt;
 
     // Tell the currently bound texture to use the EGLImage.
-    GL_EGLImageTargetTexture2DOES(target, eglImage);
+    if (target == RENDERBUFFER)
+        GL_EGLImageTargetRenderbufferStorageOES(target, eglImage);
+    else
+        GL_EGLImageTargetTexture2DOES(target, eglImage);
 
     GCGLuint textureWidth = [texture.get() width];
     GCGLuint textureHeight = [texture.get() height];

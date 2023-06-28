@@ -87,8 +87,8 @@ private:
     GCGLOwnedFramebuffer m_resolvedFBO;
 
 #if USE(WEBXR_USE_EGL_IMAGE)
-    GCGLOwnedTexture m_opaqueTexture;
-    GCEGLImage m_opaqueImage;
+    GCGLOwnedRenderbuffer m_colorBuffer;
+    GCEGLImage m_colorImage { };
 #else
     PlatformGLObject m_opaqueTexture;
 #endif
