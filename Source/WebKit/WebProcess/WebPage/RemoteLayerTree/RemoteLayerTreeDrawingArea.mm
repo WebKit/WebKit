@@ -423,18 +423,17 @@ void RemoteLayerTreeDrawingArea::displayDidRefresh()
     // FIXME: This should use a counted replacement for setLayerTreeStateIsFrozen, but
     // the callers of that function are not strictly paired.
 
-    m_waitingForBackingStoreSwap = false;
-
     if (!WebProcess::singleton().shouldUseRemoteRenderingFor(WebCore::RenderingPurpose::DOM)) {
         // This empty transaction serves to trigger CA's garbage collection of IOSurfaces. See <rdar://problem/16110687>
         [CATransaction begin];
         [CATransaction commit];
     }
 
-    if (m_deferredRenderingUpdateWhileWaitingForBackingStoreSwap || (m_isScheduled && !m_scheduleRenderingTimer.isActive())) {
+    if (m_deferredRenderingUpdateWhileWaitingForBackingStoreSwap || (m_isScheduled && !m_scheduleRenderingTimer.isActive()) || m_waitingForBackingStoreSwap) {
         triggerRenderingUpdate();
         m_deferredRenderingUpdateWhileWaitingForBackingStoreSwap = false;
         m_isScheduled = false;
+        m_waitingForBackingStoreSwap = false;
     } else
         send(Messages::RemoteLayerTreeDrawingAreaProxy::CommitLayerTreeNotTriggered());
 }
