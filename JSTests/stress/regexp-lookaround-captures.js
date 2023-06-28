@@ -106,3 +106,10 @@ testRegExp(/(?<!(\D){3})f|f/, "abcdef", ["f", undefined]);
 testRegExp(/((?<!\D{3}))f|f/, "abcdef", ["f", undefined]);
 testRegExp(/(?<!(\w{3}))f(?=(\w{3}))|(?<=(\w+?))c(?=(\w{2}))|(?<=(\w{4}))c(?=(\w{3})$)/, "abcdef", ["c",undefined,undefined,"b","de",undefined,undefined]);
 testRegExp(/abc|(efg).*\!|xyz/, "efg xyz", ["xyz", undefined]);
+
+// Test 21
+testRegExp(/abc(?=([iA-\u{103ff}]*)([A-\u{ffff}]+)([A-z]+))/u, "abcABCDEFGHIJK", ["abc", "ABCDEFGHI", "J", "K"]);
+testRegExp(/abc(?=([iA-\u{103ff}]*)([A-\u{ffff}]+)([A-z]+))/u, "abcABCDEFGHIJK\u{10308}\u{273b}X", ["abc", "ABCDEFGHIJK\u{10308}", "\u{273b}", "X"]);
+testRegExp(/(?<=([A-z]+)([A-\u{ffff}]+)([A-\u{103ff}]*))abc/u, "ABCDEFGHIJKabc", ["abc", "A", "B", "CDEFGHIJK"]);
+testRegExp(/(?<=([A-z]+)([A-\u{ffff}]+)([A-\u{103ff}]*))abc/u, "1\u{10420}X\u{273b}\u{10308}ABCDEFGHIJKabc", ["abc", "X", "\u{273b}", "\u{10308}ABCDEFGHIJK"]);
+testRegExp(/(?<=([A]+)([A-\u{103ff}]*))abc/u, "A\u{10420}X\u{273b}\u{10308}ABCDEFGHIJKabc", ["abc", "A", "BCDEFGHIJK"]);
