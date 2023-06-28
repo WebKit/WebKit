@@ -109,6 +109,22 @@ static String appendSourceToErrorMessage(CodeBlock* codeBlock, ErrorInstance* ex
     return appender(message, codeBlock->source().provider()->getRange(start, stop), type, ErrorInstance::FoundApproximateSource);
 }
 
+void ErrorInstance::captureStackTrace(VM& vm, JSGlobalObject* globalObject, size_t framesToSkip)
+{
+    {
+        Locker locker { cellLock() };
+         if (m_stackTrace) {
+            m_stackTrace->clear();
+        }
+
+        unsigned int limit = globalObject->stackTraceLimit().value();
+        std::unique_ptr<Vector<StackFrame>> stackTrace = makeUnique<Vector<StackFrame>>();
+        vm.interpreter.getStackTrace(this, *stackTrace, framesToSkip, limit);
+        m_stackTrace = WTFMove(stackTrace);
+    }
+    vm.writeBarrier(this);
+}
+
 void ErrorInstance::finishCreation(VM& vm, JSGlobalObject* globalObject, const String& message, JSValue cause, SourceAppender appender, RuntimeType type, bool useCurrentFrame)
 {
     Base::finishCreation(vm);
@@ -216,19 +232,24 @@ void ErrorInstance::finalizeUnconditionally(VM& vm, CollectionScope)
     // get caught in a trace.
     for (const auto& frame : *m_stackTrace.get()) {
         if (!frame.isMarked(vm)) {
-            computeErrorInfo(vm);
+            computeErrorInfo(vm, false);
             return;
         }
     }
 }
 
-void ErrorInstance::computeErrorInfo(VM& vm)
+void ErrorInstance::computeErrorInfo(VM& vm, bool allocationAllowed)
 {
     ASSERT(!m_errorInfoMaterialized);
 
     if (m_stackTrace && !m_stackTrace->isEmpty()) {
-        getLineColumnAndSource(vm, m_stackTrace.get(), m_line, m_column, m_sourceURL);
-        m_stackString = Interpreter::stackTraceAsString(vm, *m_stackTrace.get());
+        auto &fn = vm.onComputeErrorInfo();
+        if (fn) {
+            m_stackString = fn(vm, *m_stackTrace.get(), m_line, m_column, m_sourceURL, allocationAllowed ? this : nullptr);
+        } else {
+            getLineColumnAndSource(vm, m_stackTrace.get(), m_line, m_column, m_sourceURL);
+            m_stackString = Interpreter::stackTraceAsString(vm, *m_stackTrace.get());
+        }
         m_stackTrace = nullptr;
     }
 }
@@ -238,7 +259,7 @@ bool ErrorInstance::materializeErrorInfoIfNeeded(VM& vm)
     if (m_errorInfoMaterialized)
         return false;
 
-    computeErrorInfo(vm);
+    computeErrorInfo(vm, true);
 
     if (!m_stackString.isNull()) {
         auto attributes = static_cast<unsigned>(PropertyAttribute::DontEnum);

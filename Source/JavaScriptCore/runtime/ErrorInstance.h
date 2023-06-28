@@ -64,6 +64,8 @@ public:
 
     static ErrorInstance* create(JSGlobalObject*, Structure*, JSValue message, JSValue options, SourceAppender = nullptr, RuntimeType = TypeNothing, ErrorType = ErrorType::Error, bool useCurrentFrame = true);
 
+    JS_EXPORT_PRIVATE void captureStackTrace(VM &vm, JSC::JSGlobalObject* globalObject, size_t framesToSkip = 0);
+
     bool hasSourceAppender() const { return !!m_sourceAppender; }
     SourceAppender sourceAppender() const { return m_sourceAppender; }
     void setSourceAppender(SourceAppender appender) { m_sourceAppender = appender; }
@@ -108,7 +110,7 @@ protected:
     static bool put(JSCell*, JSGlobalObject*, PropertyName, JSValue, PutPropertySlot&);
     static bool deleteProperty(JSCell*, JSGlobalObject*, PropertyName, DeletePropertySlot&);
 
-    void computeErrorInfo(VM&);
+    void computeErrorInfo(VM&, bool allocationAllowed);
 
     SourceAppender m_sourceAppender { nullptr };
     std::unique_ptr<Vector<StackFrame>> m_stackTrace;
