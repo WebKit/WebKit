@@ -22,6 +22,7 @@
 #include "config.h"
 #include <wtf/text/TextBreakIterator.h>
 
+#include <wtf/Compiler.h>
 #include <wtf/text/TextBreakIteratorInternalICU.h>
 #include <wtf/text/icu/UTextProviderLatin1.h>
 #include <wtf/text/icu/UTextProviderUTF16.h>
@@ -131,7 +132,9 @@ UBreakIterator* sentenceBreakIterator(StringView string)
     return setTextForIterator(*staticSentenceBreakIterator, string);
 }
 
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 static std::atomic<UBreakIterator*> nonSharedCharacterBreakIterator = ATOMIC_VAR_INIT(nullptr);
+ALLOW_DEPRECATED_DECLARATIONS_END
 
 static inline UBreakIterator* getNonSharedCharacterBreakIterator()
 {
