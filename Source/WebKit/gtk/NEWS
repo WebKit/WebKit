@@ -1,4 +1,17 @@
 ================
+WebKitGTK 2.40.3
+================
+
+What's new in WebKitGTK 2.40.3?
+
+  - Make memory pressure monitor honor memory.memsw.usage_in_bytes if exists.
+  - Include key modifiers in wheel events.
+  - Apply cookie blocking policy to WebSocket handshakes.
+  - Remove accidental dependency on GLib 2.70.
+  - Fix the build with BUBBLEWRAP_SANDBOX disabled.
+  - Fix several crashes and rendering issues.
+
+================
 WebKitGTK 2.40.2
 ================
 
