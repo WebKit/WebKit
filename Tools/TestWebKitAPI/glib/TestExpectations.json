@@ -241,9 +241,6 @@
             "WebKit.FocusedFrameAfterCrash": {
                 "expected": {"gtk": {"status": ["TIMEOUT", "PASS"], "bug": "webkit.org/b/205336"}}
             },
-            "WebKit.OnDeviceChangeCrash": {
-                "expected": {"all": {"status": ["TIMEOUT"], "bug": "webkit.org/b/214805"}}
-            },
             "WebKit.PrivateBrowsingPushStateNoHistoryCallback": {
                 "expected": {"all": {"status": ["TIMEOUT"], "bug": "webkit.org/b/254002"}}
             },

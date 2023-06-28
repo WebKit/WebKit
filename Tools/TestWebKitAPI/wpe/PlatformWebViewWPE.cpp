@@ -56,6 +56,10 @@ PlatformWebView::PlatformWebView(WKPageRef relatedPage)
     WKPageConfigurationSetPageGroup(configuration.get(), WKPageGetPageGroup(relatedPage));
     WKPageConfigurationSetRelatedPage(configuration.get(), relatedPage);
 
+    auto relatedConfiguration = adoptWK(WKPageCopyPageConfiguration(relatedPage));
+    if (auto* preferences = WKPageConfigurationGetPreferences(relatedConfiguration.get()))
+        WKPageConfigurationSetPreferences(configuration.get(), preferences);
+
     initialize(configuration.get());
 }
 
