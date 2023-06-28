@@ -1442,6 +1442,8 @@ void HTMLMediaElement::selectMediaResource()
         // 9. Run the appropriate steps from the following list:
         // ↳ If mode is object
         if (mode == Object) {
+            m_loadState = LoadingFromSrcAttr;
+
             // 1. Set the currentSrc attribute to the empty string.
             setCurrentSrc(URL());
 
