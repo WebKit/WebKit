@@ -27,6 +27,7 @@
 
 #include "CrossOriginOpenerPolicy.h"
 #include "GlobalFrameIdentifier.h"
+#include "ScriptExecutionContextIdentifier.h"
 #include "SecurityOrigin.h"
 
 namespace WebCore {
