@@ -721,13 +721,23 @@ arm64: MoveWithIncrement32 UD:G:32, ZD:G:32
 Move32 U:G:32, ZD:G:32, S:G:32
     Addr, Addr, Tmp
 
-arm64: Store32 U:G:32, ZD:G:32
-    ZeroReg, Addr
-    ZeroReg, Index
+arm64: LoadPair32 U:G:64, D:G:32, D:G:32
+    Addr, Tmp, Tmp
 
-arm64: Store64 U:G:64, D:G:64
-    ZeroReg, Addr
-    ZeroReg, Index
+arm64: LoadPair64 U:G:128, D:G:64, D:G:64
+    Addr, Tmp, Tmp
+
+arm64: StorePair32 U:G:32, U:G:32, D:G:64
+    Tmp, Tmp, Addr
+    ZeroReg, Tmp, Addr
+    Tmp, ZeroReg, Addr
+    ZeroReg, ZeroReg, Addr
+
+arm64: StorePair64 U:G:64, U:G:64, D:G:128
+    Tmp, Tmp, Addr
+    ZeroReg, Tmp, Addr
+    Tmp, ZeroReg, Addr
+    ZeroReg, ZeroReg, Addr
 
 64: SignExtend8To64 U:G:8, D:G:64
     Tmp, Tmp
@@ -777,7 +787,19 @@ MoveDouble U:F:64, D:F:64
 
 MoveDouble U:F:64, D:F:64, S:F:64
     Addr, Addr, Tmp
-    
+
+arm64: LoadPairFloat U:F:64, D:F:32, D:F:32
+    Addr, Tmp, Tmp
+
+arm64: LoadPairDouble U:F:128, D:F:64, D:F:64
+    Addr, Tmp, Tmp
+
+arm64: StorePairFloat U:F:32, U:F:32, D:F:64
+    Tmp, Tmp, Addr
+
+arm64: StorePairDouble U:F:64, U:F:64, D:F:128
+    Tmp, Tmp, Addr
+
 64: MoveVector U:F:128, D:F:128
     Tmp, Tmp
     Addr, Tmp as loadVector

@@ -42,7 +42,6 @@ namespace JSC { namespace B3 { namespace Air {
 struct Kind {
     Kind(Opcode opcode)
         : opcode(opcode)
-        , effects(false)
     {
     }
     
@@ -54,12 +53,13 @@ struct Kind {
     bool operator==(const Kind& other) const
     {
         return opcode == other.opcode
-            && effects == other.effects;
+            && effects == other.effects
+            && spill == other.spill;
     }
     
     unsigned hash() const
     {
-        return static_cast<unsigned>(opcode) + (static_cast<unsigned>(effects) << 16);
+        return static_cast<unsigned>(opcode) + (static_cast<unsigned>(effects) << 16) + (static_cast<unsigned>(spill) << 17);
     }
     
     explicit operator bool() const
@@ -75,7 +75,10 @@ struct Kind {
     // any of the following:
     // - Trap.
     // - Perform some non-arg non-control effect.
-    bool effects : 1;
+    bool effects : 1 { false };
+
+    // This marks whether this instruction was generated for stack spilling.
+    bool spill : 1 { false };
 };
 
 } } } // namespace JSC::B3::Air

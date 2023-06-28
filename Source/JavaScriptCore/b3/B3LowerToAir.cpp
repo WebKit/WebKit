@@ -1227,20 +1227,20 @@ private:
                 default:
                     break;
                 case Air::Store8:
-                    if (isValidForm(Air::Store8, Arg::ZeroReg, dest.kind()) && dest.isValidForm(Move, Width8))
-                        return Inst(Air::Store8, m_value, zeroReg(), dest);
+                    if (isValidForm(move.opcode, Arg::ZeroReg, dest.kind()) && dest.isValidForm(Move, Width8))
+                        return Inst(move, m_value, zeroReg(), dest);
                     break;
                 case Air::Store16:
-                    if (isValidForm(Air::Store16, Arg::ZeroReg, dest.kind()) && dest.isValidForm(Move, Width16))
-                        return Inst(Air::Store16, m_value, zeroReg(), dest);
+                    if (isValidForm(move.opcode, Arg::ZeroReg, dest.kind()) && dest.isValidForm(Move, Width16))
+                        return Inst(move, m_value, zeroReg(), dest);
                     break;
                 case Air::Move32:
-                    if (isValidForm(Store32, Arg::ZeroReg, dest.kind()) && dest.isValidForm(Move, Width32))
-                        return Inst(Store32, m_value, zeroReg(), dest);
+                    if (isValidForm(move.opcode, Arg::ZeroReg, dest.kind()) && dest.isValidForm(move.opcode, Width32))
+                        return Inst(move, m_value, zeroReg(), dest);
                     break;
                 case Air::Move:
-                    if (isValidForm(Store64, Arg::ZeroReg, dest.kind()) && dest.isValidForm(Move, Width64))
-                        return Inst(Store64, m_value, zeroReg(), dest);
+                    if (isValidForm(move.opcode, Arg::ZeroReg, dest.kind()) && dest.isValidForm(move.opcode, Width64))
+                        return Inst(move, m_value, zeroReg(), dest);
                     break;
                 }
             }

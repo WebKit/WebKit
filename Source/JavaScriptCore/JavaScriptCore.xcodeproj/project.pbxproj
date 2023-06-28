@@ -1965,6 +1965,7 @@
 		E3F23A801ECF13F500978D99 /* SnippetReg.h in Headers */ = {isa = PBXBuildFile; fileRef = E3F23A7D1ECF13E500978D99 /* SnippetReg.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E3F23A811ECF13FA00978D99 /* SnippetParams.h in Headers */ = {isa = PBXBuildFile; fileRef = E3F23A7C1ECF13E500978D99 /* SnippetParams.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E3F23A821ECF13FE00978D99 /* Snippet.h in Headers */ = {isa = PBXBuildFile; fileRef = E3F23A7B1ECF13E500978D99 /* Snippet.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E3F429BD2A41742F00C5FEFF /* AirOptimizePairedLoadStore.h in Headers */ = {isa = PBXBuildFile; fileRef = E3F429BB2A41742700C5FEFF /* AirOptimizePairedLoadStore.h */; };
 		E3FB853A22F3667B008F90ED /* WasmCalleeRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = E3FB853822F36674008F90ED /* WasmCalleeRegistry.h */; };
 		E3FCCB642310A90D00238E72 /* ConstructorKind.h in Headers */ = {isa = PBXBuildFile; fileRef = E3FCCB632310A90D00238E72 /* ConstructorKind.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E3FF75331D9CEA1800C7E16D /* DOMJITGetterSetter.h in Headers */ = {isa = PBXBuildFile; fileRef = E3FF752F1D9CEA1200C7E16D /* DOMJITGetterSetter.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -5516,6 +5517,8 @@
 		E3F23A7C1ECF13E500978D99 /* SnippetParams.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SnippetParams.h; sourceTree = "<group>"; };
 		E3F23A7D1ECF13E500978D99 /* SnippetReg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SnippetReg.h; sourceTree = "<group>"; };
 		E3F23A7E1ECF13E500978D99 /* SnippetSlowPathCalls.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SnippetSlowPathCalls.h; sourceTree = "<group>"; };
+		E3F429BB2A41742700C5FEFF /* AirOptimizePairedLoadStore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = AirOptimizePairedLoadStore.h; path = b3/air/AirOptimizePairedLoadStore.h; sourceTree = "<group>"; };
+		E3F429BC2A41742700C5FEFF /* AirOptimizePairedLoadStore.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = AirOptimizePairedLoadStore.cpp; path = b3/air/AirOptimizePairedLoadStore.cpp; sourceTree = "<group>"; };
 		E3FB853822F36674008F90ED /* WasmCalleeRegistry.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WasmCalleeRegistry.h; sourceTree = "<group>"; };
 		E3FB853922F36674008F90ED /* WasmCalleeRegistry.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WasmCalleeRegistry.cpp; sourceTree = "<group>"; };
 		E3FC25102256ECF400583518 /* DoublePredictionFuzzerAgent.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DoublePredictionFuzzerAgent.cpp; sourceTree = "<group>"; };
@@ -6368,6 +6371,8 @@
 				264091FA1BE2FD4100684DB2 /* AirOpcode.opcodes */,
 				0FB3878C1BFBC44D00E3AB1E /* AirOptimizeBlockOrder.cpp */,
 				0FB3878D1BFBC44D00E3AB1E /* AirOptimizeBlockOrder.h */,
+				E3F429BC2A41742700C5FEFF /* AirOptimizePairedLoadStore.cpp */,
+				E3F429BB2A41742700C5FEFF /* AirOptimizePairedLoadStore.h */,
 				0F9CABC61DB54A760008E83B /* AirPadInterference.cpp */,
 				0F9CABC71DB54A760008E83B /* AirPadInterference.h */,
 				0F2AC56C1E8D7AFF0001EE3F /* AirPhaseInsertionSet.cpp */,
@@ -9734,6 +9739,7 @@
 				0F40E4A81C497F7400A577FA /* AirOpcodeGenerated.h in Headers */,
 				0F40E4A91C497F7400A577FA /* AirOpcodeUtils.h in Headers */,
 				0FB387901BFBC44D00E3AB1E /* AirOptimizeBlockOrder.h in Headers */,
+				E3F429BD2A41742F00C5FEFF /* AirOptimizePairedLoadStore.h in Headers */,
 				0F9CABC91DB54A7A0008E83B /* AirPadInterference.h in Headers */,
 				0F2AC56F1E8D7B030001EE3F /* AirPhaseInsertionSet.h in Headers */,
 				0FEC85841BDACDC70080FF74 /* AirPhaseScope.h in Headers */,
