@@ -48,13 +48,24 @@ video[controls]::-webkit-media-text-track-container.visible-controls-bar {
     height: calc(100% - var(--inline-controls-bar-height) - var(--inline-controls-inside-margin));
 }
 
+/* https://w3c.github.io/webvtt/#applying-css-properties
+   7.4. Applying CSS properties to WebVTT Node Objects */
+
 video::cue {
     background-color: rgba(0, 0, 0, 0.8);
+    overflow: visible;
 }
 
 video::-webkit-media-text-track-display {
     position: absolute;
-    overflow: hidden;
+    unicode-bidi: plaintext;
+    overflow: visible;
+    writing-mode: writing-mode;
+    overflow-wrap: break-word;
+    white-space: pre-line;
+}
+
+video::-webkit-media-text-track-display {
     white-space: pre-wrap;
     box-sizing: border-box;
     font: 22px sans-serif; /* Keep in sync with `DEFAULTCAPTIONFONTSIZE`. */

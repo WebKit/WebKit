@@ -26,6 +26,11 @@
 enum AutoKeyword { "auto" };
 typedef (double or AutoKeyword) LineAndPositionSetting;
 
+enum DirectionSetting { "" /* horizontal */, "rl", "lr" };
+enum LineAlignSetting { "start", "center", "end" };
+enum PositionAlignSetting { "line-left", "center", "line-right", "auto" };
+enum AlignSetting { "start", "center", "end", "left", "right" };
+
 [
     Conditional=VIDEO,
     ExportMacro=WEBCORE_EXPORT,
@@ -35,14 +40,14 @@ typedef (double or AutoKeyword) LineAndPositionSetting;
 ] interface VTTCue : TextTrackCue {
     [CallWith=CurrentDocument] constructor(double startTime, double endTime, DOMString text);
 
-    attribute DOMString vertical;
+    attribute DirectionSetting vertical;
     attribute boolean snapToLines;
     attribute LineAndPositionSetting line;
-    attribute DOMString lineAlign;
+    attribute LineAlignSetting lineAlign;
     attribute LineAndPositionSetting position;
-    attribute DOMString positionAlign;
+    attribute PositionAlignSetting positionAlign;
     attribute double size;
-    attribute DOMString align;
+    attribute AlignSetting align;
     attribute DOMString text;
     DocumentFragment getCueAsHTML();
 

@@ -25,6 +25,7 @@
 
 #include "config.h"
 
+#include <wtf/Deque.h>
 #include <wtf/EnumTraits.h>
 
 enum class TestEnum {
@@ -46,6 +47,22 @@ TEST(WTF_EnumTraits, IsValidEnum)
     EXPECT_TRUE(isValidEnum<TestEnum>(0));
     EXPECT_FALSE(isValidEnum<TestEnum>(-1));
     EXPECT_FALSE(isValidEnum<TestEnum>(3));
+}
+
+TEST(WTF_EnumTraits, ValuesTraits)
+{
+    EXPECT_EQ(WTF::EnumTraits<TestEnum>::values::max, TestEnum::C);
+    EXPECT_EQ(WTF::EnumTraits<TestEnum>::values::min, TestEnum::A);
+    EXPECT_EQ(WTF::EnumTraits<TestEnum>::values::count, 3UL);
+    EXPECT_NE(WTF::EnumTraits<TestEnum>::values::max, TestEnum::A);
+    EXPECT_NE(WTF::EnumTraits<TestEnum>::values::min, TestEnum::C);
+    EXPECT_NE(WTF::EnumTraits<TestEnum>::values::count, 4UL);
+
+    Deque<TestEnum> expectedValues = { TestEnum::A, TestEnum::B, TestEnum::C };
+    WTF::EnumTraits<TestEnum>::values::forEach([&] (auto value) {
+        EXPECT_EQ(value, expectedValues.takeFirst());
+    });
+    EXPECT_EQ(expectedValues.size(), 0UL);
 }
 
 }

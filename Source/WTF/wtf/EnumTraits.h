@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <algorithm>
 #include <type_traits>
 
 namespace WTF {
@@ -33,6 +34,20 @@ template<typename> struct EnumTraits;
 template<typename> struct EnumTraitsForPersistence;
 
 template<typename E, E...> struct EnumValues;
+
+template<typename E, E... values>
+struct EnumValues {
+    static constexpr E max = std::max({ values... });
+    static constexpr E min = std::min({ values... });
+    static constexpr size_t count = sizeof...(values);
+
+    template <typename Callable>
+    static void forEach(Callable&& c)
+    {
+        for (auto value : { values... })
+            c(value);
+    }
+};
 
 template<typename T, typename E> struct EnumValueChecker;
 
