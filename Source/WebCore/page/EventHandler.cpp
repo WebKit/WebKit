@@ -1552,17 +1552,6 @@ std::optional<Cursor> EventHandler::selectCursor(const HitTestResult& result, bo
         }
     }
 
-    // During selection, use an I-beam regardless of the content beneath the cursor.
-    // If a drag may be starting or we're capturing mouse events for a particular node, don't treat this as a selection.
-    if (m_mousePressed
-        && mouseDownMayStartSelect()
-#if ENABLE(DRAG_SUPPORT)
-        && !m_mouseDownMayStartDrag
-#endif
-        && m_frame.selection().isCaretOrRange()
-        && !m_capturingMouseEventsElement)
-        return iBeam;
-
     switch (style ? style->cursor() : CursorType::Auto) {
     case CursorType::Auto: {
         if (ImageOverlay::isOverlayText(node.get())) {
@@ -1584,6 +1573,17 @@ std::optional<Cursor> EventHandler::selectCursor(const HitTestResult& result, bo
             if (inResizer)
                 return layerRenderer.shouldPlaceVerticalScrollbarOnLeft() ? southWestResizeCursor() : southEastResizeCursor();
         }
+
+        // During selection, use an I-beam regardless of the content beneath the cursor.
+        // If a drag may be starting or we're capturing mouse events for a particular node, don't treat this as a selection.
+        if (m_mousePressed
+            && mouseDownMayStartSelect()
+#if ENABLE(DRAG_SUPPORT)
+            && !m_mouseDownMayStartDrag
+#endif
+            && m_frame.selection().isCaretOrRange()
+            && !m_capturingMouseEventsElement)
+                return iBeam;
 
         if ((editable || (renderer && renderer->isText() && node->canStartSelection())) && !inResizer && !result.scrollbar())
             return iBeam;

@@ -1081,6 +1081,7 @@ imported/w3c/web-platform-tests/shadow-dom/accesskey.tentative.html [ Skip ]
 
 # Tests that use EventSender's mouseMoveTo, mouseUp and mouseDown
 css3/viewport-percentage-lengths/vh-resize.html [ Skip ]
+editing/caret/caret-type-for-user-select-none.html [ Skip ]
 editing/pasteboard/can-read-in-dragstart-event.html [ Skip ]
 editing/pasteboard/cleanup-on-move.html [ Skip ]
 editing/pasteboard/copy-crash.html [ Skip ]
