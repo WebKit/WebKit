@@ -468,6 +468,28 @@ TEST(ContextMenuTests, ContextMenuElementInfoContainsQRCodePayloadStringSVGPageZ
     EXPECT_WK_STREQ(elementInfo.qrCodePayloadString, "https://www.webkit.org");
 }
 
+TEST(ContextMenuTests, ContextMenuElementInfoWithQRCodeDetectionCrash)
+{
+    auto createWebView = [] {
+        auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+        [configuration _setContextMenuQRCodeDetectionEnabled:YES];
+        auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 600, 600) configuration:configuration.get()]);
+        [webView synchronouslyLoadHTMLString:@"<img src='qr-code.png'></img>"];
+        return webView;
+    };
+
+    @autoreleasepool {
+        auto webView = createWebView();
+        [webView rightClickAtPoint:CGPointMake(300, 300)];
+        [webView waitForNextPresentationUpdate];
+        [webView removeFromSuperview];
+    }
+
+    auto webView = createWebView();
+    _WKContextMenuElementInfo *elementInfo = [webView rightClickAtPointAndWaitForContextMenu:NSMakePoint(300, 300)];
+    EXPECT_WK_STREQ(elementInfo.qrCodePayloadString, "https://www.webkit.org");
+}
+
 #endif // ENABLE(CONTEXT_MENU_QR_CODE_DETECTION)
 
 TEST(ContextMenuTests, ContextMenuElementInfoHasEntireImage)
