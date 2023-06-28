@@ -109,17 +109,25 @@ static String appendSourceToErrorMessage(CodeBlock* codeBlock, ErrorInstance* ex
     return appender(message, codeBlock->source().provider()->getRange(start, stop), type, ErrorInstance::FoundApproximateSource);
 }
 
-void ErrorInstance::captureStackTrace(VM& vm, JSGlobalObject* globalObject, size_t framesToSkip)
+void ErrorInstance::captureStackTrace(VM& vm, JSGlobalObject* globalObject, size_t framesToSkip, bool append)
 {
     {
         Locker locker { cellLock() };
-         if (m_stackTrace) {
+         if (m_stackTrace && !append) {
             m_stackTrace->clear();
         }
 
         unsigned int limit = globalObject->stackTraceLimit().value();
         std::unique_ptr<Vector<StackFrame>> stackTrace = makeUnique<Vector<StackFrame>>();
         vm.interpreter.getStackTrace(this, *stackTrace, framesToSkip, limit);
+        limit -= stackTrace->size();
+        if (append && limit && m_stackTrace && !m_stackTrace->isEmpty()) {
+            limit = std::min(limit, static_cast<unsigned int>(m_stackTrace->size()));
+            stackTrace->reserveCapacity(limit);
+            for (size_t i = 0; i < limit; i++) {
+                stackTrace->append(m_stackTrace->at(i));
+            }
+        }
         m_stackTrace = WTFMove(stackTrace);
     }
     vm.writeBarrier(this);
@@ -141,14 +149,16 @@ void ErrorInstance::finishCreation(VM& vm, JSGlobalObject* globalObject, const S
     vm.writeBarrier(this);
 
     String messageWithSource = message;
+
     if (m_stackTrace && !m_stackTrace->isEmpty() && hasSourceAppender()) {
         auto [codeBlock, bytecodeIndex] = getBytecodeIndex(vm, vm.topCallFrame);
         if (codeBlock)
             messageWithSource = appendSourceToErrorMessage(codeBlock, this, bytecodeIndex, message);
     }
 
-    if (!messageWithSource.isNull())
+    if (!messageWithSource.isNull()) {
         putDirect(vm, vm.propertyNames->message, jsString(vm, WTFMove(messageWithSource)), static_cast<unsigned>(PropertyAttribute::DontEnum));
+    }
 
     if (!cause.isEmpty())
         putDirect(vm, vm.propertyNames->cause, cause, static_cast<unsigned>(PropertyAttribute::DontEnum));
