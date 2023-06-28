@@ -35,6 +35,10 @@
 #include <wtf/Ref.h>
 #include <wtf/RetainPtr.h>
 
+#if USE(IOSURFACE_FOR_XR_LAYER_DATA) || USE(MTLTEXTURE_FOR_XR_LAYER_DATA)
+#define USE_WEBXR_USE_EGL_IMAGE 1
+#endif
+
 namespace WebCore {
 
 class IntSize;
@@ -81,10 +85,10 @@ private:
     GCGLOwnedRenderbuffer m_stencilBuffer;
     GCGLOwnedRenderbuffer m_multisampleColorBuffer;
     GCGLOwnedFramebuffer m_resolvedFBO;
-#if USE(IOSURFACE_FOR_XR_LAYER_DATA)
+
+#if USE(WEBXR_USE_EGL_IMAGE)
     GCGLOwnedTexture m_opaqueTexture;
-    void* m_ioSurfaceTextureHandle { nullptr };
-    bool m_ioSurfaceTextureHandleIsShared { false };
+    GCEGLImage m_opaqueImage;
 #else
     PlatformGLObject m_opaqueTexture;
 #endif
