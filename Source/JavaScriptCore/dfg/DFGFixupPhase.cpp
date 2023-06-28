@@ -2912,7 +2912,7 @@ private:
 
         case GlobalIsNaN: {
             if (node->child1()->shouldSpeculateInt32()) {
-                fixEdge<Int32Use>(node->child1());
+                insertCheck<Int32Use>(node->child1().node());
                 m_graph.convertToConstant(node, jsBoolean(false));
                 break;
             }
@@ -2926,7 +2926,7 @@ private:
 
         case NumberIsNaN: {
             if (node->child1()->shouldSpeculateInt32()) {
-                fixEdge<Int32Use>(node->child1());
+                insertCheck<Int32Use>(node->child1().node());
                 m_graph.convertToConstant(node, jsBoolean(false));
                 break;
             }
