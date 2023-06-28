@@ -349,7 +349,9 @@ void* createLocalEncoder(const webrtc::SdpVideoFormat& format, bool useAnnexB, L
         WebKitEncodedFrameInfo info;
         info.width = encodedImage._encodedWidth;
         info.height = encodedImage._encodedHeight;
-        info.timeStamp = encodedImage.Timestamp();
+        info.timeStamp = [frame timeStamp];
+        if ([frame duration] != std::numeric_limits<uint64_t>::max())
+            info.duration = [frame duration];
         info.ntpTimeMS = encodedImage.ntp_time_ms_;
         info.captureTimeMS = encodedImage.capture_time_ms_;
         info.frameType = encodedImage._frameType;
@@ -390,7 +392,7 @@ void initializeLocalEncoder(LocalEncoder localEncoder, uint16_t width, uint16_t 
     [encoder startEncodeWithSettings:[[RTCVideoEncoderSettings alloc] initWithNativeVideoCodec:&codecSettings] numberOfCores:1];
 }
 
-void encodeLocalEncoderFrame(LocalEncoder localEncoder, CVPixelBufferRef pixelBuffer, int64_t timeStampNs, uint32_t timeStamp, webrtc::VideoRotation rotation, bool isKeyframeRequired)
+void encodeLocalEncoderFrame(LocalEncoder localEncoder, CVPixelBufferRef pixelBuffer, int64_t timeStampNs, int64_t timeStamp, std::optional<uint64_t> duration, webrtc::VideoRotation rotation, bool isKeyframeRequired)
 {
     NSMutableArray<NSNumber *> *rtcFrameTypes = [NSMutableArray array];
     if (isKeyframeRequired)
@@ -399,6 +401,7 @@ void encodeLocalEncoderFrame(LocalEncoder localEncoder, CVPixelBufferRef pixelBu
     auto videoFrameBuffer = pixelBufferToFrame(pixelBuffer);
     auto *videoFrame = [[RTCVideoFrame alloc] initWithBuffer:ToObjCVideoFrameBuffer(videoFrameBuffer) rotation:RTCVideoRotation(rotation) timeStampNs:timeStampNs];
     videoFrame.timeStamp = timeStamp;
+    videoFrame.duration = duration.value_or(std::numeric_limits<uint64_t>::max());
     auto *encoder = (__bridge WK_RTCLocalVideoH264H265Encoder *)(localEncoder);
     [encoder encode:videoFrame codecSpecificInfo:nil frameTypes:rtcFrameTypes];
 }

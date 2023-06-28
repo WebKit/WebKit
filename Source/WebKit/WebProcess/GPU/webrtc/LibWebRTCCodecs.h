@@ -104,7 +104,7 @@ public:
     void registerDecodedVideoFrameCallback(Decoder&, DecoderCallback&&);
 
     using DescriptionCallback = Function<void(WebCore::VideoEncoderActiveConfiguration&&)>;
-    using EncoderCallback = Function<void(std::span<const uint8_t>&&, bool isKeyFrame, int64_t timestamp)>;
+    using EncoderCallback = Function<void(std::span<const uint8_t>&&, bool isKeyFrame, int64_t timestamp, std::optional<uint64_t> duration)>;
     struct EncoderInitializationData {
         uint16_t width;
         uint16_t height;
@@ -137,7 +137,7 @@ public:
     void createEncoderAndWaitUntilReady(VideoCodecType, const std::map<std::string, std::string>&, bool isRealtime, bool useAnnexB, Function<void(Encoder&)>&&);
     int32_t releaseEncoder(Encoder&);
     int32_t initializeEncoder(Encoder&, uint16_t width, uint16_t height, unsigned startBitrate, unsigned maxBitrate, unsigned minBitrate, uint32_t maxFramerate);
-    int32_t encodeFrame(Encoder&, const WebCore::VideoFrame&, uint32_t timestamp, bool shouldEncodeAsKeyFrame);
+    int32_t encodeFrame(Encoder&, const WebCore::VideoFrame&, int64_t timestamp, std::optional<uint64_t> duration, bool shouldEncodeAsKeyFrame);
     int32_t encodeFrame(Encoder&, const webrtc::VideoFrame&, bool shouldEncodeAsKeyFrame);
     void flushEncoder(Encoder&, Function<void()>&&);
     void registerEncodeFrameCallback(Encoder&, void* encodedImageCallback);
@@ -189,7 +189,7 @@ private:
 
     Decoder* createDecoderInternal(VideoCodecType, Function<void(Decoder&)>&&);
     Encoder* createEncoderInternal(VideoCodecType, const std::map<std::string, std::string>&, bool isRealtime, bool useAnnexB, Function<void(Encoder&)>&&);
-    template<typename Frame> int32_t encodeFrameInternal(Encoder&, const Frame&, bool shouldEncodeAsKeyFrame, WebCore::VideoFrameRotation, MediaTime, uint32_t);
+    template<typename Frame> int32_t encodeFrameInternal(Encoder&, const Frame&, bool shouldEncodeAsKeyFrame, WebCore::VideoFrameRotation, MediaTime, int64_t timestamp, std::optional<uint64_t> duration);
 
 private:
     HashMap<VideoDecoderIdentifier, std::unique_ptr<Decoder>> m_decoders WTF_GUARDED_BY_CAPABILITY(workQueue());

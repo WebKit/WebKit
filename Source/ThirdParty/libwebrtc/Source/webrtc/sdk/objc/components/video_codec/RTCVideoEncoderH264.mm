@@ -58,7 +58,8 @@ VT_EXPORT const CFStringRef kVTCompressionPropertyKey_Usage;
                   width:(int32_t)width
                  height:(int32_t)height
            renderTimeMs:(int64_t)renderTimeMs
-              timestamp:(uint32_t)timestamp
+              timestamp:(int64_t)timestamp
+               duration:(uint64_t)duration
                rotation:(RTCVideoRotation)rotation
      isKeyFrameRequired:(bool)isKeyFrameRequired;
 - (void)updateBitRateAccordingActualFrameRate;
@@ -88,10 +89,11 @@ struct RTCFrameEncodeParams {
                        int32_t w,
                        int32_t h,
                        int64_t rtms,
-                       uint32_t ts,
+                       int64_t ts,
+                       uint64_t duration,
                        RTCVideoRotation r,
                        bool isKeyFrameRequired)
-      : encoder(e), width(w), height(h), render_time_ms(rtms), timestamp(ts), rotation(r), isKeyFrameRequired(isKeyFrameRequired) {
+      : encoder(e), width(w), height(h), render_time_ms(rtms), timestamp(ts), duration(duration), rotation(r), isKeyFrameRequired(isKeyFrameRequired) {
     if (csi) {
       codecSpecificInfo = csi;
     } else {
@@ -104,7 +106,8 @@ struct RTCFrameEncodeParams {
   int32_t width;
   int32_t height;
   int64_t render_time_ms;
-  uint32_t timestamp;
+  int64_t timestamp;
+  uint64_t duration;
   RTCVideoRotation rotation;
   bool isKeyFrameRequired;
 };
@@ -192,6 +195,7 @@ void compressionOutputCallback(void *encoder,
                                   height:encodeParams->height
                             renderTimeMs:encodeParams->render_time_ms
                                timestamp:encodeParams->timestamp
+                                duration:encodeParams->duration
                                 rotation:encodeParams->rotation
                       isKeyFrameRequired:encodeParams->isKeyFrameRequired];
 }
@@ -558,6 +562,7 @@ NSUInteger GetMaxSampleRate(const webrtc::H264ProfileLevelId &profile_level_id) 
                                               _height,
                                               frame.timeStampNs / rtc::kNumNanosecsPerMillisec,
                                               frame.timeStamp,
+                                              frame.duration,
                                               frame.rotation,
                                               isKeyframeRequired));
   encodeParams->codecSpecificInfo.packetizationMode = _packetizationMode;
@@ -969,7 +974,8 @@ NSUInteger GetMaxSampleRate(const webrtc::H264ProfileLevelId &profile_level_id) 
                   width:(int32_t)width
                  height:(int32_t)height
            renderTimeMs:(int64_t)renderTimeMs
-              timestamp:(uint32_t)timestamp
+              timestamp:(int64_t)timestamp
+               duration:(uint64_t)duration
                rotation:(RTCVideoRotation)rotation
      isKeyFrameRequired:(bool)isKeyFrameRequired {
   if (status != noErr) {
@@ -1049,6 +1055,7 @@ NSUInteger GetMaxSampleRate(const webrtc::H264ProfileLevelId &profile_level_id) 
   frame.completeFrame = YES;
   frame.frameType = isKeyframe ? RTCFrameTypeVideoFrameKey : RTCFrameTypeVideoFrameDelta;
   frame.captureTimeMs = renderTimeMs;
+  frame.duration = duration;
   frame.timeStamp = timestamp;
   frame.rotation = rotation;
   frame.contentType = (_mode == RTCVideoCodecModeScreensharing) ? RTCVideoContentTypeScreenshare :

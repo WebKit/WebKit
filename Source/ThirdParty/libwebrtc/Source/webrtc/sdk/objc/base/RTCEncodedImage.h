@@ -37,7 +37,8 @@ __attribute__((objc_runtime_name("WK_RTCEncodedImage")))
 @property(nonatomic, strong) NSData *buffer;
 @property(nonatomic, assign) int32_t encodedWidth;
 @property(nonatomic, assign) int32_t encodedHeight;
-@property(nonatomic, assign) uint32_t timeStamp;
+@property(nonatomic, assign) int64_t timeStamp;
+@property(nonatomic, assign) uint64_t duration;
 @property(nonatomic, assign) int64_t captureTimeMs;
 @property(nonatomic, assign) int64_t ntpTimeMs;
 @property(nonatomic, assign) uint8_t flags;

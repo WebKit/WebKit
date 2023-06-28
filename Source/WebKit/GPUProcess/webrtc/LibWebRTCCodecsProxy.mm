@@ -306,7 +306,7 @@ static inline webrtc::VideoRotation toWebRTCVideoRotation(WebCore::VideoFrame::R
     return webrtc::kVideoRotation_0;
 }
 
-void LibWebRTCCodecsProxy::encodeFrame(VideoEncoderIdentifier identifier, SharedVideoFrame&& sharedVideoFrame, uint32_t timeStamp, bool shouldEncodeAsKeyFrame)
+void LibWebRTCCodecsProxy::encodeFrame(VideoEncoderIdentifier identifier, SharedVideoFrame&& sharedVideoFrame, int64_t timeStamp, std::optional<uint64_t> duration, bool shouldEncodeAsKeyFrame)
 {
     assertIsCurrent(workQueue());
     auto* encoder = findEncoder(identifier);
@@ -332,7 +332,7 @@ void LibWebRTCCodecsProxy::encodeFrame(VideoEncoderIdentifier identifier, Shared
     }
 
 #if !PLATFORM(MACCATALYST)
-    webrtc::encodeLocalEncoderFrame(encoder->webrtcEncoder, pixelBuffer.get(), sharedVideoFrame.time.toTimeScale(1000000).timeValue(), timeStamp, toWebRTCVideoRotation(sharedVideoFrame.rotation), shouldEncodeAsKeyFrame);
+    webrtc::encodeLocalEncoderFrame(encoder->webrtcEncoder, pixelBuffer.get(), sharedVideoFrame.time.toTimeScale(1000000).timeValue(), timeStamp, duration, toWebRTCVideoRotation(sharedVideoFrame.rotation), shouldEncodeAsKeyFrame);
 #endif
 }
 
