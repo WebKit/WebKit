@@ -1489,6 +1489,10 @@ ExceptionOr<bool> HTMLElement::togglePopover(std::optional<bool> force)
         auto returnValue = showPopover();
         if (returnValue.hasException())
             return returnValue.releaseException();
+    } else {
+        auto check = checkPopoverValidity(*this, popoverData() ? popoverData()->visibilityState() : PopoverVisibilityState::Showing);
+        if (check.hasException())
+            return check.releaseException();
     }
     return isPopoverShowing();
 }
