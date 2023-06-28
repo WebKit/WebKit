@@ -556,6 +556,7 @@ void WebAuthenticatorCoordinatorProxy::isUserVerifyingPlatformAuthenticatorAvail
             return;
         }
         handler(LocalService::isAvailable());
+        return;
     }
     handler(false);
 }
