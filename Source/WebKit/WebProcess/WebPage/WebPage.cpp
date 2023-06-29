@@ -1132,6 +1132,12 @@ void WebPage::suspendAllMediaPlayback(CompletionHandler<void()>&& completionHand
     completionHandler();
 }
 
+void WebPage::unsuspendAllMediaPlayback(CompletionHandler<void()>&& completionHandler)
+{
+    m_page->unsuspendAllMediaPlayback();
+    completionHandler();
+}
+
 void WebPage::resumeAllMediaPlayback(CompletionHandler<void()>&& completionHandler)
 {
     m_page->resumeAllMediaPlayback();

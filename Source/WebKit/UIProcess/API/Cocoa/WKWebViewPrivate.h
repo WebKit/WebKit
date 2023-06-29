@@ -368,6 +368,7 @@ for this property.
 - (void)_togglePictureInPicture;
 - (void)_stopAllMediaPlayback;
 - (void)_suspendAllMediaPlayback;
+- (void)_unsuspendAllMediaPlayback WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 - (void)_resumeAllMediaPlayback;
 - (void)_closeAllMediaPresentations;
 

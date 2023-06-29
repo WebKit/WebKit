@@ -1986,6 +1986,7 @@ private:
 
     void pauseAllMediaPlayback(CompletionHandler<void()>&&);
     void suspendAllMediaPlayback(CompletionHandler<void()>&&);
+    void unsuspendAllMediaPlayback(CompletionHandler<void()>&&);
     void resumeAllMediaPlayback(CompletionHandler<void()>&&);
 
     void advanceToNextMisspelling(bool startBeforeSelection);

@@ -2637,6 +2637,12 @@ static RetainPtr<NSArray> wkTextManipulationErrors(NSArray<_WKTextManipulationIt
     [self setAllMediaPlaybackSuspended:YES completionHandler:nil];
 }
 
+- (void)_unsuspendAllMediaPlayback
+{
+    THROW_IF_SUSPENDED;
+    _page->unsuspendAllMediaPlayback(makeBlockPtr([] { }));
+}
+
 - (void)_resumeAllMediaPlayback
 {
     THROW_IF_SUSPENDED;

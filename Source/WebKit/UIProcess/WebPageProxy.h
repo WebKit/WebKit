@@ -1554,6 +1554,7 @@ public:
 
     void pauseAllMediaPlayback(CompletionHandler<void()>&&);
     void suspendAllMediaPlayback(CompletionHandler<void()>&&);
+    void unsuspendAllMediaPlayback(CompletionHandler<void()>&&);
     void resumeAllMediaPlayback(CompletionHandler<void()>&&);
     void requestMediaPlaybackState(CompletionHandler<void(MediaPlaybackState)>&&);
 

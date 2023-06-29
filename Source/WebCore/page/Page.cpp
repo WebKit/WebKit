@@ -2622,6 +2622,16 @@ void Page::suspendAllMediaPlayback()
 #endif
 }
 
+void Page::unsuspendAllMediaPlayback()
+{
+#if ENABLE(VIDEO)
+    ASSERT(m_mediaPlaybackIsSuspended);
+    if (!m_mediaPlaybackIsSuspended)
+        return;
+    m_mediaPlaybackIsSuspended = false;
+#endif
+}
+
 MediaSessionGroupIdentifier Page::mediaSessionGroupIdentifier() const
 {
     if (!m_mediaSessionGroupIdentifier) {

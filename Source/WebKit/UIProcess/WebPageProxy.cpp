@@ -7295,6 +7295,25 @@ void WebPageProxy::suspendAllMediaPlayback(CompletionHandler<void()>&& completio
     sendWithAsyncReply(Messages::WebPage::SuspendAllMediaPlayback(), WTFMove(completionHandler));
 }
 
+void WebPageProxy::unsuspendAllMediaPlayback(CompletionHandler<void()>&& completionHandler)
+{
+    if (m_suspendMediaPlaybackCounter > 0)
+        m_suspendMediaPlaybackCounter--;
+
+    if (!m_mediaPlaybackIsSuspended || m_suspendMediaPlaybackCounter) {
+        completionHandler();
+        return;
+    }
+    m_mediaPlaybackIsSuspended = false;
+
+    if (!hasRunningProcess()) {
+        completionHandler();
+        return;
+    }
+
+    sendWithAsyncReply(Messages::WebPage::UnsuspendAllMediaPlayback(), WTFMove(completionHandler));
+}
+
 void WebPageProxy::resumeAllMediaPlayback(CompletionHandler<void()>&& completionHandler)
 {
     if (m_suspendMediaPlaybackCounter > 0)

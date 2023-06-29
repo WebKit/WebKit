@@ -868,6 +868,7 @@ public:
     WEBCORE_EXPORT bool mediaPlaybackIsPaused();
     WEBCORE_EXPORT void pauseAllMediaPlayback();
     WEBCORE_EXPORT void suspendAllMediaPlayback();
+    WEBCORE_EXPORT void unsuspendAllMediaPlayback();
     WEBCORE_EXPORT void resumeAllMediaPlayback();
     bool mediaPlaybackIsSuspended() const { return m_mediaPlaybackIsSuspended; }
     WEBCORE_EXPORT void suspendAllMediaBuffering();
