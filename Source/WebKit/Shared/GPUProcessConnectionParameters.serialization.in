@@ -24,6 +24,7 @@
 
 struct WebKit::GPUProcessConnectionParameters {
     WebCore::ProcessIdentity webProcessIdentity;
+    bool isDOMRenderingEnabled;
     bool isLockdownModeEnabled;
     bool isWebGPUEnabled;
 #if ENABLE(IPC_TESTING_API)

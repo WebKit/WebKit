@@ -513,7 +513,10 @@ void WebProcessPool::createGPUProcessConnection(WebProcessProxy& webProcessProxy
 
     parameters.isLockdownModeEnabled = webProcessProxy.lockdownMode() == WebProcessProxy::LockdownMode::Enabled;
     parameters.isWebGPUEnabled = WTF::anyOf(webProcessProxy.pages(), [](const auto& page) {
-        return page && page->preferences().webGPUEnabled();
+        return page->preferences().webGPUEnabled();
+    });
+    parameters.isDOMRenderingEnabled = WTF::anyOf(webProcessProxy.pages(), [](const auto& page) {
+        return page->preferences().useGPUProcessForDOMRenderingEnabled();
     });
     parameters.allowTestOnlyIPC = webProcessProxy.allowTestOnlyIPC();
     

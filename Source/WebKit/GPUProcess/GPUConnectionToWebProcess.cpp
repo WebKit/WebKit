@@ -268,6 +268,7 @@ GPUConnectionToWebProcess::GPUConnectionToWebProcess(GPUProcess& gpuProcess, Web
 #if HAVE(AUDIT_TOKEN)
     , m_presentingApplicationAuditToken(WTFMove(parameters.presentingApplicationAuditToken))
 #endif
+    , m_isDOMRenderingEnabled(parameters.isDOMRenderingEnabled)
     , m_isLockdownModeEnabled(parameters.isLockdownModeEnabled)
     , m_allowTestOnlyIPC(parameters.allowTestOnlyIPC)
 #if ENABLE(ROUTING_ARBITRATION) && HAVE(AVAUDIO_ROUTING_ARBITER)
@@ -439,6 +440,10 @@ bool GPUConnectionToWebProcess::allowsExitUnderMemoryPressure() const
 {
     if (hasOutstandingRenderingResourceUsage())
         return false;
+
+    if (m_isDOMRenderingEnabled)
+        return false;
+
 #if ENABLE(WEB_AUDIO)
     if (m_remoteAudioDestinationManager && !m_remoteAudioDestinationManager->allowsExitUnderMemoryPressure())
         return false;

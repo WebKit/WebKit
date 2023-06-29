@@ -756,6 +756,7 @@ void WebProcessProxy::addExistingWebPage(WebPageProxy& webPage, BeginsUsingDataS
     updateBackgroundResponsivenessTimer();
     updateBlobRegistryPartitioningState();
     updateWebGPUEnabledStateInGPUProcess();
+    updateDOMRenderingStateInGPUProcess();
 
     // If this was previously a standalone worker process with no pages we need to call didChangeThrottleState()
     // to update our process assertions on the network process since standalone worker processes do not hold
@@ -795,6 +796,7 @@ void WebProcessProxy::removeWebPage(WebPageProxy& webPage, EndsUsingDataStore en
     updateMediaStreamingActivity();
     updateBackgroundResponsivenessTimer();
     updateWebGPUEnabledStateInGPUProcess();
+    updateDOMRenderingStateInGPUProcess();
     updateBlobRegistryPartitioningState();
 
     maybeShutDown();
@@ -1940,12 +1942,24 @@ void WebProcessProxy::updateBlobRegistryPartitioningState() const
         networkProcess->setBlobRegistryTopOriginPartitioningEnabled(sessionID(),  dataStore->isBlobRegistryPartitioningEnabled());
 }
 
+
+void WebProcessProxy::updateDOMRenderingStateInGPUProcess()
+{
+#if ENABLE(GPU_PROCESS)
+    if (auto* gpuProcess = processPool().gpuProcess()) {
+        gpuProcess->updateDOMRenderingEnabled(*this, WTF::anyOf(pages(), [](auto& page) {
+            return page->preferences().useGPUProcessForDOMRenderingEnabled();
+        }));
+    }
+#endif
+}
+
 void WebProcessProxy::updateWebGPUEnabledStateInGPUProcess()
 {
 #if ENABLE(GPU_PROCESS)
     if (auto* process = processPool().gpuProcess()) {
         process->updateWebGPUEnabled(*this, WTF::anyOf(pages(), [](const auto& page) {
-            return page && page->preferences().webGPUEnabled();
+            return page->preferences().webGPUEnabled();
         }));
     }
 #endif

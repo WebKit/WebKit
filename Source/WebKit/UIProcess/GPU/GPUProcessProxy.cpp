@@ -453,6 +453,11 @@ void GPUProcessProxy::updateWebGPUEnabled(WebProcessProxy& webProcessProxy, bool
     send(Messages::GPUProcess::UpdateWebGPUEnabled(webProcessProxy.coreProcessIdentifier(), webGPUEnabled), 0);
 }
 
+void GPUProcessProxy::updateDOMRenderingEnabled(WebProcessProxy& webProcessProxy, bool isDOMRenderingEnabled)
+{
+    send(Messages::GPUProcess::UpdateDOMRenderingEnabled(webProcessProxy.coreProcessIdentifier(), isDOMRenderingEnabled), 0);
+}
+
 void GPUProcessProxy::createGPUProcessConnection(WebProcessProxy& webProcessProxy, IPC::Connection::Handle&& connectionIdentifier, GPUProcessConnectionParameters&& parameters)
 {
 #if ENABLE(VP9)

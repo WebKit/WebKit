@@ -132,6 +132,7 @@ public:
     virtual ~GPUConnectionToWebProcess();
 
     void updateWebGPUEnabled(bool webGPUEnabled) { m_webGPUEnabled = webGPUEnabled; }
+    void updateDOMRenderingEnabled(bool isDOMRenderingEnabled) { m_isDOMRenderingEnabled = isDOMRenderingEnabled; }
 
     using WebCore::NowPlayingManager::Client::weakPtrFactory;
     using WebCore::NowPlayingManager::Client::WeakValueType;
@@ -396,6 +397,7 @@ private:
 #endif
 
     RefPtr<RemoteRemoteCommandListenerProxy> m_remoteRemoteCommandListener;
+    bool m_isDOMRenderingEnabled { false };
     bool m_isActiveNowPlayingProcess { false };
     bool m_isLockdownModeEnabled { false };
     bool m_allowTestOnlyIPC { false };

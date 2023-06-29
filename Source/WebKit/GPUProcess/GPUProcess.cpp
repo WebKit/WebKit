@@ -126,6 +126,12 @@ void GPUProcess::updateWebGPUEnabled(WebCore::ProcessIdentifier processIdentifie
         connection->updateWebGPUEnabled(webGPUEnabled);
 }
 
+void GPUProcess::updateDOMRenderingEnabled(WebCore::ProcessIdentifier processIdentifier, bool isDOMRenderingEnabled)
+{
+    if (auto* connection = m_webProcessConnections.get(processIdentifier))
+        connection->updateDOMRenderingEnabled(isDOMRenderingEnabled);
+}
+
 void GPUProcess::createGPUConnectionToWebProcess(WebCore::ProcessIdentifier identifier, PAL::SessionID sessionID, IPC::Connection::Handle&& connectionHandle, GPUProcessConnectionParameters&& parameters, CompletionHandler<void()>&& completionHandler)
 {
     RELEASE_LOG(Process, "%p - GPUProcess::createGPUConnectionToWebProcess: processIdentifier=%" PRIu64, this, identifier.toUInt64());
