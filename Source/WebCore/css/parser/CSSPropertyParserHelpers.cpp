@@ -8097,29 +8097,23 @@ RefPtr<CSSValue> consumeContain(CSSParserTokenRange& range)
 RefPtr<CSSValue> consumeContainIntrinsicSize(CSSParserTokenRange& range)
 {
     RefPtr<CSSPrimitiveValue> autoValue;
-    if (range.peek().type() == IdentToken) {
-        switch (range.peek().id()) {
-        case CSSValueNone:
-            return consumeIdent<CSSValueNone>(range);
-        case CSSValueAuto:
-            autoValue = consumeIdent<CSSValueAuto>(range);
-            break;
-        default:
+    if ((autoValue = consumeIdent<CSSValueAuto>(range))) {
+        if (range.atEnd())
             return nullptr;
-        }
     }
 
-    if (range.atEnd())
-        return nullptr;
+    if (auto noneValue = consumeIdent<CSSValueNone>(range)) {
+        if (autoValue)
+            return CSSValuePair::create(autoValue.releaseNonNull(), noneValue.releaseNonNull());
+        return noneValue;
+    }
 
-    auto lengthValue = consumeLength(range, HTMLStandardMode, ValueRange::NonNegative);
-    if (!lengthValue)
-        return nullptr;
-
-    if (!autoValue)
+    if (auto lengthValue = consumeLength(range, HTMLStandardMode, ValueRange::NonNegative)) {
+        if (autoValue)
+            return CSSValuePair::create(autoValue.releaseNonNull(), lengthValue.releaseNonNull());
         return lengthValue;
-
-    return CSSValueList::createSpaceSeparated(autoValue.releaseNonNull(), lengthValue.releaseNonNull());
+    }
+    return nullptr;
 }
 
 RefPtr<CSSValue> consumeTextEmphasisPosition(CSSParserTokenRange& range)

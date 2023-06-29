@@ -1351,6 +1351,9 @@ TextStream& operator<<(TextStream& ts, ContainIntrinsicSizeType containIntrinsic
     case ContainIntrinsicSizeType::AutoAndLength:
         ts << "autoandlength";
         break;
+    case ContainIntrinsicSizeType::AutoAndNone:
+        ts << "autoandnone";
+        break;
     }
     return ts;
 }

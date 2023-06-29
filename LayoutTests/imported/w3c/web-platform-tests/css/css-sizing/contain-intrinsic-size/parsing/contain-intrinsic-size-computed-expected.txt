@@ -17,4 +17,5 @@ PASS Property contain-intrinsic-height value '1px'
 PASS Property contain-intrinsic-height value 'auto 1px'
 PASS Property contain-intrinsic-height value '2vw'
 PASS Property contain-intrinsic-height value '3vh'
+PASS Property contain-intrinsic-height value 'auto none'
 
