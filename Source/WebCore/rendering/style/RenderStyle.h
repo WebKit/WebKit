@@ -702,6 +702,8 @@ public:
     inline ContainIntrinsicSizeType containIntrinsicHeightType() const;
     inline ContainIntrinsicSizeType containIntrinsicLogicalWidthType() const;
     inline ContainIntrinsicSizeType containIntrinsicLogicalHeightType() const;
+    inline bool containIntrinsicWidthHasAuto() const;
+    inline bool containIntrinsicHeightHasAuto() const;
     inline std::optional<Length> containIntrinsicWidth() const;
     inline std::optional<Length> containIntrinsicHeight() const;
     inline bool hasAutoLengthContainIntrinsicSize() const;

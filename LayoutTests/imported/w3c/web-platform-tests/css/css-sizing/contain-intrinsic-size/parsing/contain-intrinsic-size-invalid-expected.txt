@@ -38,5 +38,4 @@ PASS e.style['contain-intrinsic-block-size'] = "1px none" should not set the pro
 PASS e.style['contain-intrinsic-block-size'] = "auto 1px auto" should not set the property value
 PASS e.style['contain-intrinsic-block-size'] = "20%" should not set the property value
 PASS e.style['contain-intrinsic-block-size'] = "1px auto" should not set the property value
-PASS e.style['contain-intrinsic-block-size'] = "auto none" should not set the property value
 

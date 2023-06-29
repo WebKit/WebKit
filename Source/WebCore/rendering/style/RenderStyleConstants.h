@@ -1152,7 +1152,8 @@ enum class ContainerType : uint8_t {
 enum class ContainIntrinsicSizeType : uint8_t {
     None,
     Length,
-    AutoAndLength
+    AutoAndLength,
+    AutoAndNone,
 };
 
 enum class ContentVisibility : uint8_t {

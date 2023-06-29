@@ -416,9 +416,9 @@ static void CallbackForContainIntrinsicSize(const Vector<Ref<ResizeObserverEntry
             ASSERT(box->style().hasAutoLengthContainIntrinsicSize());
 
             auto contentBoxSize = entry->contentBoxSize().at(0);
-            if (box->style().containIntrinsicLogicalWidthType() == ContainIntrinsicSizeType::AutoAndLength)
+            if (box->style().containIntrinsicWidthHasAuto())
                 target->setLastRememberedLogicalWidth(LayoutUnit(contentBoxSize->inlineSize()));
-            if (box->style().containIntrinsicLogicalHeightType() == ContainIntrinsicSizeType::AutoAndLength)
+            if (box->style().containIntrinsicHeightHasAuto())
                 target->setLastRememberedLogicalHeight(LayoutUnit(contentBoxSize->blockSize()));
         }
     }

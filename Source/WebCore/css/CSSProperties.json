@@ -6336,7 +6336,7 @@
                     "resolver": "horizontal"
                 },
                 "parser-function": "consumeContainIntrinsicSize",
-                "parser-grammar-unused": "none | <length> | [ auto && <length> ]",
+                "parser-grammar-unused": "auto? [none | <<length>>]",
                 "parser-grammar-unused-reason": "Needs support for '&&' groups.",
                 "comment": "Should ensure generator simplifies to 'none | [ <length> && auto? ]"
             },
@@ -6354,7 +6354,7 @@
                     "resolver": "block"
                 },
                 "parser-function": "consumeContainIntrinsicSize",
-                "parser-grammar-unused": "none | <length> | [ auto && <length> ]",
+                "parser-grammar-unused": "auto? [none | <<length>>]",
                 "parser-grammar-unused-reason": "Needs support for '&&' groups.",
                 "comment": "Should ensure generator simplifies to 'none | [ <length> && auto? ]"
             },

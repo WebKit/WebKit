@@ -349,9 +349,9 @@ void RenderTreeUpdater::updateElementRenderer(Element& element, const Style::Ele
         element.clearDisplayContentsStyle();
 
     if (!hasDisplayContents) {
-        if (elementUpdateStyle.containIntrinsicLogicalWidthType() != ContainIntrinsicSizeType::AutoAndLength)
+        if (!elementUpdateStyle.containIntrinsicWidthHasAuto())
             element.clearLastRememberedLogicalWidth();
-        if (elementUpdateStyle.containIntrinsicLogicalHeightType() != ContainIntrinsicSizeType::AutoAndLength)
+        if (!elementUpdateStyle.containIntrinsicHeightHasAuto())
             element.clearLastRememberedLogicalHeight();
     }
     auto scopeExit = makeScopeExit([&] {
