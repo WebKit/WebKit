@@ -1,7 +1,4 @@
 /*
- * Copyright (C) 2016 Oleksandr Skachkov <gskachkov@gmail.com>.
- * Copyright (C) 2015 Jordan Harband. All rights reserved.
- * Copyright (C) 2018 Yusuke Suzuki <yusukesuzuki@slowstart.org>.
  * Copyright (C) 2023 Devin Rousso <webkit@devinrousso.com>.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,41 +23,24 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-function fromEntries(iterable)
-{
-    "use strict";
-
-    var object = {};
-
-    for (var entry of iterable) {
-        if (!@isObject(entry))
-            @throwTypeError("Object.fromEntries requires the first iterable parameter yields objects");
-        var key = entry[0];
-        var value = entry[1];
-        @putByValDirect(object, key, value);
-    }
-
-    return object;
-}
-
 function groupBy(items, callback)
 {
     "use strict";
 
     if (!@isObject(items))
-        @throwTypeError("Object.groupBy requires that the first argument must be an object");
+        @throwTypeError("Map.groupBy requires that the first argument must be an object");
 
     if (!@isCallable(callback))
-        @throwTypeError("Object.groupBy requires that the second argument must be a function");
+        @throwTypeError("Map.groupBy requires that the second argument must be a function");
 
-    var groups = @Object.@create(null);
+    var groups = new @Map;
     var k = 0;
     for (var item of items) {
-        var key = @toPropertyKey(callback.@call(@undefined, item, k, items));
-        var group = groups[key];
+        var key = callback.@call(@undefined, item, k, items);
+        var group = groups.@get(key);
         if (!group) {
             group = [];
-            @putByValDirect(groups, key, group);
+            groups.@set(key, group);
         }
         @putByValDirect(group, group.length, item);
         ++k;

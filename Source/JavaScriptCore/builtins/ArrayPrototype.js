@@ -156,58 +156,6 @@ function filter(callback /*, thisArg */)
     return result;
 }
 
-function group(callback /*, thisArg */)
-{
-    "use strict";
-
-    var array = @toObject(this, "Array.prototype.group requires that |this| not be null or undefined");
-    var length = @toLength(array.length);
-
-    if (!@isCallable(callback))
-        @throwTypeError("Array.prototype.group callback must be a function");
-
-    var thisArg = @argument(1);
-
-    var groups = @Object.@create(null);
-    for (var i = 0; i < length; ++i) {
-        var value = array[i];
-        var key = @toPropertyKey(callback.@call(thisArg, value, i, array));
-        var group = groups[key];
-        if (!group) {
-            group = [];
-            @putByValDirect(groups, key, group);
-        }
-        @putByValDirect(group, group.length, value);
-    }
-    return groups;
-}
-
-function groupToMap(callback /*, thisArg */)
-{
-    "use strict";
-
-    var array = @toObject(this, "Array.prototype.groupToMap requires that |this| not be null or undefined");
-    var length = @toLength(array.length);
-
-    if (!@isCallable(callback))
-        @throwTypeError("Array.prototype.groupToMap callback must be a function");
-
-    var thisArg = @argument(1);
-
-    var groups = new @Map;
-    for (var i = 0; i < length; ++i) {
-        var value = array[i];
-        var key = callback.@call(thisArg, value, i, array);
-        var group = groups.@get(key);
-        if (!group) {
-            group = [];
-            groups.@set(key, group);
-        }
-        @putByValDirect(group, group.length, value);
-    }
-    return groups;
-}
-
 function map(callback /*, thisArg */)
 {
     "use strict";
