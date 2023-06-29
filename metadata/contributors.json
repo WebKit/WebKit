@@ -3785,6 +3785,17 @@
    },
    {
       "emails" : [
+         "jesse_hertz@apple.com",
+         "jesse.hertz@apple.com"
+      ],
+      "github" : "jhertz-apple",
+      "name" : "Jesse Hertz",
+      "nicks" : [
+         "jhertz"
+      ]
+   },
+   {
+      "emails" : [
          "jcheung23@apple.com",
          "cheungje@usc.edu"
       ],
