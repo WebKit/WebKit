@@ -2100,10 +2100,10 @@ inline void BuilderCustom::applyValueContainIntrinsicWidth(BuilderState& builder
 
     auto& pair = downcast<CSSValuePair>(value);
     ASSERT(downcast<CSSPrimitiveValue>(pair.first()).valueID() == CSSValueAuto);
-    ASSERT(downcast<CSSPrimitiveValue>(pair.second()).isLength() || downcast<CSSPrimitiveValue>(pair.second()).valueID() == CSSValueNone);
     if (downcast<CSSPrimitiveValue>(pair.second()).valueID() == CSSValueNone)
         style.setContainIntrinsicWidthType(ContainIntrinsicSizeType::AutoAndNone);
     else {
+        ASSERT(downcast<CSSPrimitiveValue>(pair.second()).isLength());
         style.setContainIntrinsicWidthType(ContainIntrinsicSizeType::AutoAndLength);
         auto lengthValue = downcast<CSSPrimitiveValue>(pair.second()).computeLength<Length>(builderState.cssToLengthConversionData().copyWithAdjustedZoom(1.0f));
         style.setContainIntrinsicWidth(lengthValue);
@@ -2143,10 +2143,10 @@ inline void BuilderCustom::applyValueContainIntrinsicHeight(BuilderState& builde
 
     auto& pair = downcast<CSSValuePair>(value);
     ASSERT(downcast<CSSPrimitiveValue>(pair.first()).valueID() == CSSValueAuto);
-    ASSERT(downcast<CSSPrimitiveValue>(pair.second()).isLength() || downcast<CSSPrimitiveValue>(pair.second()).valueID() == CSSValueNone);
     if (downcast<CSSPrimitiveValue>(pair.second()).valueID() == CSSValueNone)
         style.setContainIntrinsicHeightType(ContainIntrinsicSizeType::AutoAndNone);
     else {
+        ASSERT(downcast<CSSPrimitiveValue>(pair.second()).isLength());
         style.setContainIntrinsicHeightType(ContainIntrinsicSizeType::AutoAndLength);
         auto lengthValue = downcast<CSSPrimitiveValue>(pair.second()).computeLength<Length>(builderState.cssToLengthConversionData().copyWithAdjustedZoom(1.0f));
         style.setContainIntrinsicHeight(lengthValue);

@@ -1745,10 +1745,10 @@ static Ref<CSSValue> valueForContainIntrinsicSize(const RenderStyle& style, cons
     case ContainIntrinsicSizeType::Length:
         return zoomAdjustedPixelValueForLength(containIntrinsicLength.value(), style);
     case ContainIntrinsicSizeType::AutoAndLength:
-        return CSSValueList::createSpaceSeparated(CSSPrimitiveValue::create(CSSValueAuto),
+        return CSSValuePair::create(CSSPrimitiveValue::create(CSSValueAuto),
             zoomAdjustedPixelValueForLength(containIntrinsicLength.value(), style));
     case ContainIntrinsicSizeType::AutoAndNone:
-        return CSSValueList::createSpaceSeparated(CSSPrimitiveValue::create(CSSValueAuto), CSSPrimitiveValue::create(CSSValueNone));
+        return CSSValuePair::create(CSSPrimitiveValue::create(CSSValueAuto), CSSPrimitiveValue::create(CSSValueNone));
     }
     RELEASE_ASSERT_NOT_REACHED();
     return CSSPrimitiveValue::create(CSSValueNone);
