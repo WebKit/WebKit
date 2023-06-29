@@ -31,7 +31,15 @@
 
 namespace TestWebKitAPI {
 
-static auto *manifest = @{ @"manifest_version": @3, @"background": @{ @"scripts": @[ @"background.js" ], @"type": @"module", @"persistent": @NO } };
+static auto *manifest = @{
+    @"manifest_version": @3,
+    @"background": @{
+        @"scripts": @[ @"background.js" ],
+        @"type": @"module",
+        @"persistent": @NO
+    },
+    @"unused" : [NSNull null]
+};
 
 TEST(WKWebExtensionAPIRuntime, GetURL)
 {
@@ -103,8 +111,7 @@ TEST(WKWebExtensionAPIRuntime, Id)
 TEST(WKWebExtensionAPIRuntime, GetManifest)
 {
     auto *backgroundScript = Util::constructScript(@[
-        // FIXME: <https://webkit.org/b/248154> browser.runtime.getManifest() returns 1/0 instead true/false for background.persistent
-        @"browser.test.assertDeepEq(browser.runtime.getManifest(), { manifest_version: 3, background: { persistent: 0, scripts: [ 'background.js' ], type: 'module' } })",
+        @"browser.test.assertDeepEq(browser.runtime.getManifest(), { manifest_version: 3, background: { persistent: false, scripts: [ 'background.js' ], type: 'module' }, unused: null })",
 
         // Finish
         @"browser.test.notifyPass()"

@@ -32,6 +32,7 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
+#import "APIData.h"
 #import "CocoaHelpers.h"
 #import "FoundationSPI.h"
 #import "_WKWebExtensionInternal.h"
@@ -192,6 +193,11 @@ NSDictionary *WebExtension::manifest()
     // since that will need delegated to the app.
 
     return m_manifest.get();
+}
+
+Ref<API::Data> WebExtension::serializeManifest()
+{
+    return API::Data::createWithoutCopying([NSJSONSerialization dataWithJSONObject:manifest() options:0 error:nullptr]);
 }
 
 double WebExtension::manifestVersion()
