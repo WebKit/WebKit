@@ -959,7 +959,7 @@ void AXObjectCache::remove(Node& node)
         m_deferredModalChangedList.remove(downcast<Element>(node));
         m_deferredMenuListChange.remove(downcast<Element>(node));
     }
-    m_deferredNodeAddedOrRemovedList.remove(&node);
+    m_deferredNodeAddedOrRemovedList.remove(node);
     m_deferredTextChangedList.remove(&node);
     // Remove the entry if the new focused node is being removed.
     m_deferredFocusedNodeChange.removeAllMatching([&node](auto& entry) -> bool {
@@ -1167,7 +1167,7 @@ void AXObjectCache::deferNodeAddedOrRemoved(Node* node)
     if (!node)
         return;
 
-    m_deferredNodeAddedOrRemovedList.add(node);
+    m_deferredNodeAddedOrRemovedList.add(*node);
 
     if (is<Element>(node)) {
         auto* changedElement = downcast<Element>(node);
@@ -3411,12 +3411,19 @@ static void filterWeakHashSetForRemoval(WeakHashSet& weakHashSet, const Document
     });
 }
 
+template<typename WeakListHashSetType>
+static void filterWeakListHashSetForRemoval(WeakListHashSetType& list, const Document& document, HashSet<Ref<Node>>& nodesToRemove)
+{
+    for (auto& node : list)
+        conditionallyAddNodeToFilterList(&node, document, nodesToRemove);
+}
+
 void AXObjectCache::prepareForDocumentDestruction(const Document& document)
 {
     HashSet<Ref<Node>> nodesToRemove;
     filterListForRemoval(m_textMarkerNodes, document, nodesToRemove);
     filterListForRemoval(m_deferredTextChangedList, document, nodesToRemove);
-    filterListForRemoval(m_deferredNodeAddedOrRemovedList, document, nodesToRemove);
+    filterWeakListHashSetForRemoval(m_deferredNodeAddedOrRemovedList, document, nodesToRemove);
     filterWeakHashSetForRemoval(m_deferredRecomputeIsIgnoredList, document, nodesToRemove);
     filterWeakHashSetForRemoval(m_deferredRecomputeTableIsExposedList, document, nodesToRemove);
     filterWeakHashSetForRemoval(m_deferredSelectedChildredChangedList, document, nodesToRemove);
@@ -3479,9 +3486,9 @@ void AXObjectCache::performDeferredCacheUpdate()
     m_deferredRecomputeTableIsExposedList.clear();
 
     AXLOGDeferredCollection("NodeAddedOrRemovedList"_s, m_deferredNodeAddedOrRemovedList);
-    for (auto* nodeChild : m_deferredNodeAddedOrRemovedList) {
-        handleMenuOpened(nodeChild);
-        handleLiveRegionCreated(nodeChild);
+    for (auto& nodeChild : m_deferredNodeAddedOrRemovedList) {
+        handleMenuOpened(&nodeChild);
+        handleLiveRegionCreated(&nodeChild);
     }
     m_deferredNodeAddedOrRemovedList.clear();
 

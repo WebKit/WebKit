@@ -943,7 +943,7 @@ void AXIsolatedObject::fillChildrenVectorForProperty(AXPropertyName propertyName
 void AXIsolatedObject::updateBackingStore()
 {
     // This method can be called on either the main or the AX threads.
-    if (auto tree = this->tree())
+    if (RefPtr tree = this->tree())
         tree->applyPendingChanges();
     // AXIsolatedTree::applyPendingChanges can cause this object and / or the AXIsolatedTree to be destroyed.
     // Make sure to protect `this` with a Ref before adding more logic to this function.
