@@ -205,8 +205,9 @@ ParserError BytecodeGenerator::generate(unsigned& size)
         }
 
         {
+            bool shouldHoistInEval = m_codeType == EvalCode && !m_ecmaMode.isStrict();
             RefPtr<RegisterID> temp = newTemporary();
-            RefPtr<RegisterID> tolLevelScope;
+            RefPtr<RegisterID> topLevelScope;
             for (auto functionPair : m_functionsToInitialize) {
                 FunctionMetadataNode* metadata = functionPair.first;
                 FunctionVariableType functionType = functionPair.second;
@@ -214,7 +215,7 @@ ParserError BytecodeGenerator::generate(unsigned& size)
                 if (functionType == NormalFunctionVariable)
                     initializeVariable(variable(metadata->ident()), temp.get());
                 else if (functionType == TopLevelFunctionVariable) {
-                    if (!tolLevelScope) {
+                    if (!topLevelScope) {
                         // We know this will resolve to the top level scope or global object because our parser/global initialization code 
                         // doesn't allow let/const/class variables to have the same names as functions.
                         // This is a top level function, and it's an error to ever create a top level function
@@ -231,11 +232,17 @@ ParserError BytecodeGenerator::generate(unsigned& size)
                         //     }
                         // ```
                         // Therefore, we're guaranteed to have this resolve to a top level variable.
-                        RefPtr<RegisterID> tolLevelObjectScope = emitResolveScope(nullptr, Variable(metadata->ident()));
-                        tolLevelScope = newBlockScopeVariable();
-                        move(tolLevelScope.get(), tolLevelObjectScope.get());
+                        RefPtr<RegisterID> topLevelObjectScope = shouldHoistInEval
+                            ? emitResolveScopeForHoistingFuncDeclInEval(nullptr, metadata->ident())
+                            : emitResolveScope(nullptr, Variable(metadata->ident()));
+
+                        topLevelScope = newBlockScopeVariable();
+                        move(topLevelScope.get(), topLevelObjectScope.get());
                     }
-                    emitPutToScope(tolLevelScope.get(), Variable(metadata->ident()), temp.get(), ThrowIfNotFound, InitializationMode::NotInitialization);
+                    if (shouldHoistInEval)
+                        emitPutToScopeDynamic(topLevelScope.get(), metadata->ident(), temp.get(), ThrowIfNotFound, InitializationMode::NotInitialization);
+                    else
+                        emitPutToScope(topLevelScope.get(), Variable(metadata->ident()), temp.get(), ThrowIfNotFound, InitializationMode::NotInitialization);
                 } else
                     RELEASE_ASSERT_NOT_REACHED();
             }
@@ -2225,7 +2232,7 @@ void BytecodeGenerator::hoistSloppyModeFunctionIfNecessary(const Identifier& fun
             emitJumpIfTrue(checkResult.get(), isNotVarScopeLabel.get());
 
             // Put to outer scope
-            emitPutToScope(scopeId.get(), functionName, currentValue.get(), DoNotThrowIfNotFound, InitializationMode::NotInitialization);
+            emitPutToScopeDynamic(scopeId.get(), functionName, currentValue.get(), DoNotThrowIfNotFound, InitializationMode::NotInitialization);
             emitLabel(isNotVarScopeLabel.get());
 
         }
@@ -2588,6 +2595,14 @@ RegisterID* BytecodeGenerator::emitPutToScope(RegisterID* scope, const Variable&
     } }
     
     RELEASE_ASSERT_NOT_REACHED();
+}
+
+RegisterID* BytecodeGenerator::emitPutToScopeDynamic(RegisterID* scope, const Identifier& ident, RegisterID* value, ResolveMode resolveMode, InitializationMode initializationMode)
+{
+    GetPutInfo getPutInfo(resolveMode, Dynamic, initializationMode, ecmaMode());
+    unsigned scopeOffset = 0;
+    OpPutToScope::emit(this, scope, addConstant(ident), value, getPutInfo, SymbolTableOrScopeDepth::scopeDepth(localScopeDepth()), scopeOffset);
+    return value;
 }
 
 RegisterID* BytecodeGenerator::initializeVariable(const Variable& variable, RegisterID* value)

@@ -18,20 +18,51 @@ for (let i = 0; i < 100; i++) {
     assert(foo === "foo");
     assert(bar === "bar");
     assert(INJECTION === 20);
+
     let threw = false;
     try {
         eval("var foo;");
     } catch(e) {
         threw = true;
-        assert(e.message.indexOf("Can't create duplicate global variable in eval") !== -1);
+        assert(e.toString() === "SyntaxError: Can't create duplicate variable in eval: 'foo'");
     }
     assert(threw);
+
+
     threw = false;
     try {
         eval("var bar;");
     } catch(e) {
         threw = true;
-        assert(e.message.indexOf("Can't create duplicate global variable in eval") !== -1);
+        assert(e.toString() === "SyntaxError: Can't create duplicate variable in eval: 'bar'");
+    }
+    assert(threw);
+
+
+    assert(foo === "foo");
+    assert(bar === "bar");
+    assert(INJECTION === 20);
+
+    threw = false;
+    try {
+        eval("function foo() {}");
+    } catch(e) {
+        threw = true;
+        assert(e.toString() === "SyntaxError: Can't create duplicate variable in eval: 'foo'");
+    }
+    assert(threw);
+
+
+    assert(foo === "foo");
+    assert(bar === "bar");
+    assert(INJECTION === 20);
+
+    threw = false;
+    try {
+        eval("function bar() {}");
+    } catch(e) {
+        threw = true;
+        assert(e.toString() === "SyntaxError: Can't create duplicate variable in eval: 'bar'");
     }
     assert(threw);
 
