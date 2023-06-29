@@ -1,4 +1,4 @@
 
 
-FAIL Test cross origin load of media document in parts promise_test: Unhandled rejection with value: object "SecurityError: Blocked a frame with origin "http://localhost:8800" from accessing a cross-origin frame. Protocols, domains, and ports must match."
+PASS Test cross origin load of media document in parts
 
