@@ -11,10 +11,8 @@ if (window.testRunner)
 
 function canvastest()
 {
-    if (window.internals) {
-        window.internals.setMaxCanvasPixelMemory(16384 * 16384 * 4);
+    if (window.internals)
         window.internals.setMaxCanvasArea(13951 * 11138);
-    }
     var ctx = document.getCSSCanvasContext("2d", "canvastest", 13951, 11138);
     ctx.putImageData(ctx.getImageData(1431655766, document.getElementById("a").appendChild(document.createElement("media")).clientWidth, 4096, -1024), 128, -65535, 127, -2147483648, 2147483647, -2147483648);
 

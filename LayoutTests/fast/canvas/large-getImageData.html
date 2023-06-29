@@ -8,10 +8,8 @@
 var width = 4096;
 var height = 4097;
 
-if (window.internals) {
-    window.internals.setMaxCanvasPixelMemory(width * height * 4);
+if (window.internals)
     window.internals.setMaxCanvasArea(width * height);
-}
 
 var canvas = document.createElement('canvas');
 canvas.width = width;

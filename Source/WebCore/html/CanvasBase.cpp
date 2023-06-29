@@ -61,7 +61,6 @@ const InterpolationQuality defaultInterpolationQuality = InterpolationQuality::D
 #endif
 
 static std::optional<size_t> maxCanvasAreaForTesting;
-static std::optional<size_t> maxActivePixelMemoryForTesting;
 
 CanvasBase::CanvasBase(IntSize size, const std::optional<NoiseInjectionHashSalt>& noiseHashSalt)
     : m_size(size)
@@ -136,29 +135,6 @@ size_t CanvasBase::externalMemoryCost() const
     if (!m_imageBuffer)
         return 0;
     return m_imageBuffer->externalMemoryCost();
-}
-
-size_t CanvasBase::maxActivePixelMemory()
-{
-    if (maxActivePixelMemoryForTesting)
-        return *maxActivePixelMemoryForTesting;
-
-    static size_t maxPixelMemory;
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [] {
-#if PLATFORM(IOS_FAMILY)
-        maxPixelMemory = ramSize() / 4;
-#else
-        maxPixelMemory = std::max(ramSize() / 4, 2151 * MB);
-#endif
-    });
-
-    return maxPixelMemory;
-}
-
-void CanvasBase::setMaxPixelMemoryForTesting(std::optional<size_t> size)
-{
-    maxActivePixelMemoryForTesting = size;
 }
 
 static inline size_t maxCanvasArea()
@@ -345,14 +321,6 @@ RefPtr<ImageBuffer> CanvasBase::allocateImageBuffer(bool usesDisplayListDrawing,
 
     if (checkedArea.hasOverflowed() || checkedArea > maxCanvasArea()) {
         auto message = makeString("Canvas area exceeds the maximum limit (width * height > ", maxCanvasArea(), ").");
-        scriptExecutionContext()->addConsoleMessage(MessageSource::JS, MessageLevel::Warning, message);
-        return nullptr;
-    }
-
-    // Make sure we don't use more pixel memory than the system can support.
-    auto checkedRequestedPixelMemory = (4 * checkedArea) + activePixelMemory();
-    if (checkedRequestedPixelMemory.hasOverflowed() || checkedRequestedPixelMemory > maxActivePixelMemory()) {
-        auto message = makeString("Total canvas memory use exceeds the maximum limit (", maxActivePixelMemory() / 1024 / 1024, " MB).");
         scriptExecutionContext()->addConsoleMessage(MessageSource::JS, MessageLevel::Warning, message);
         return nullptr;
     }

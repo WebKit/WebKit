@@ -125,8 +125,6 @@ public:
     bool shouldAccelerate(const IntSize&) const;
     bool shouldAccelerate(unsigned area) const;
 
-    WEBCORE_EXPORT static size_t maxActivePixelMemory();
-    WEBCORE_EXPORT static void setMaxPixelMemoryForTesting(std::optional<size_t>);
     WEBCORE_EXPORT static void setMaxCanvasAreaForTesting(std::optional<size_t>);
 
     virtual void queueTaskKeepingObjectAlive(TaskSource, Function<void()>&&) = 0;
