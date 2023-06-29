@@ -1,4 +1,6 @@
 
+Harness Error (TIMEOUT), message = null
+
 PASS Test we can construct a VideoFrame.
 FAIL Test closed VideoFrame. null is not an object (evaluating 'frame.colorSpace.primaries')
 PASS Test we can construct a VideoFrame with a negative timestamp.
@@ -7,7 +9,7 @@ PASS Test that timestamp is required when constructing VideoFrame from Offscreen
 PASS Test that timestamp is NOT required when constructing VideoFrame from another VideoFrame
 PASS Test we can construct an odd-sized VideoFrame.
 PASS Test constructing w/ unusable image argument throws: HAVE_NOTHING <video>.
-PASS Test we can construct a VideoFrame from a <video>.
+TIMEOUT Test we can construct a VideoFrame from a <video>. Test timed out
 PASS Test constructing w/ unusable image argument throws: emtpy Canvas.
 PASS Test constructing w/ unusable image argument throws: closed ImageBitmap.
 PASS Test constructing w/ unusable image argument throws: closed VideoFrame.

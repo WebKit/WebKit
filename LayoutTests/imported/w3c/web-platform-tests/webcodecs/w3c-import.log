@@ -23,6 +23,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/webcodecs/audio-decoder.crossOriginIsolated.https.any.js
 /LayoutTests/imported/w3c/web-platform-tests/webcodecs/audio-decoder.crossOriginIsolated.https.any.js.headers
 /LayoutTests/imported/w3c/web-platform-tests/webcodecs/audio-decoder.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/webcodecs/audio-encoder-codec-specific.https.any.js
 /LayoutTests/imported/w3c/web-platform-tests/webcodecs/audio-encoder-config.https.any.js
 /LayoutTests/imported/w3c/web-platform-tests/webcodecs/audio-encoder.https.any.js
 /LayoutTests/imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.js

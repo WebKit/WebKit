@@ -1125,6 +1125,9 @@ imported/w3c/web-platform-tests/webcodecs/temporal-svc-encoding.https.any.html?v
 imported/w3c/web-platform-tests/webcodecs/temporal-svc-encoding.https.any.html?vp9 [ Failure ]
 
 imported/w3c/web-platform-tests/webcodecs/videoFrame-createImageBitmap.any.worker.html [ Pass ]
+# Needs rebasing
+imported/w3c/web-platform-tests/webcodecs/video-encoder-config.https.any.html [ Pass Failure ]
+imported/w3c/web-platform-tests/webcodecs/video-encoder-config.https.any.worker.html [ Pass Failure ]
 
 # Likely bugs related with dav1ddec.
 imported/w3c/web-platform-tests/webcodecs/videoDecoder-codec-specific.https.any.html?av1 [ Failure ]
