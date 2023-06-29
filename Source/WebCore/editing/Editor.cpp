@@ -4383,9 +4383,6 @@ void Editor::cloneAttachmentData(const String& fromIdentifier, const String& toI
 
 void Editor::didInsertAttachmentElement(HTMLAttachmentElement& attachment)
 {
-    if (attachment.isImageOnly())
-        return;
-
     auto identifier = attachment.uniqueIdentifier();
     if (identifier.isEmpty())
         return;

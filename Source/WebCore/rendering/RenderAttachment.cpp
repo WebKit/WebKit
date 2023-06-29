@@ -144,6 +144,8 @@ bool RenderAttachment::paintWideLayoutAttachmentOnly(const PaintInfo& paintInfo,
                 wideLayoutShadowRenderer->paint(shadowPaintInfo, offset);
             }
         }
+
+        attachmentElement().requestWideLayoutIconIfNeeded();
         return true;
     }
     return false;

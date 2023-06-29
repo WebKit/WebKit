@@ -85,9 +85,9 @@ Ref<HTMLAttachmentElement> HTMLAttachmentElement::create(const QualifiedName& ta
 {
     Ref attachment = adoptRef(*new HTMLAttachmentElement(tagName, document));
     if (document.settings().attachmentWideLayoutEnabled()) {
-        ASSERT(attachment->m_implementation == Implementation::Legacy);
-        ASSERT(!attachment->renderer()); // Switch to modern style *must* be done before renderer is created!
-        attachment->m_implementation = Implementation::Modern;
+        ASSERT(attachment->m_implementation == Implementation::NarrowLayout);
+        ASSERT(!attachment->renderer()); // Switch to wide-layout style *must* be done before renderer is created!
+        attachment->m_implementation = Implementation::WideLayout;
         attachment->ensureUserAgentShadowRoot();
     }
     return attachment;
@@ -95,8 +95,8 @@ Ref<HTMLAttachmentElement> HTMLAttachmentElement::create(const QualifiedName& ta
 
 void HTMLAttachmentElement::didAddUserAgentShadowRoot(ShadowRoot& root)
 {
-    if (m_implementation == Implementation::Modern)
-        ensureModernShadowTree(root);
+    if (m_implementation == Implementation::WideLayout)
+        ensureWideLayoutShadowTree(root);
 }
 
 static const AtomString& attachmentContainerIdentifier()
@@ -111,15 +111,15 @@ static const AtomString& attachmentPreviewAreaIdentifier()
     return identifier;
 }
 
-static const AtomString& attachmentPreviewIdentifier()
-{
-    static MainThreadNeverDestroyed<const AtomString> identifier("attachment-preview"_s);
-    return identifier;
-}
-
 static const AtomString& attachmentPlaceholderIdentifier()
 {
     static MainThreadNeverDestroyed<const AtomString> identifier("attachment-placeholder"_s);
+    return identifier;
+}
+
+static const AtomString& attachmentIconIdentifier()
+{
+    static MainThreadNeverDestroyed<const AtomString> identifier("attachment-icon"_s);
     return identifier;
 }
 
@@ -206,9 +206,9 @@ static Ref<ElementType> createContainedElement(HTMLElement& container, const Ato
     return element;
 }
 
-void HTMLAttachmentElement::ensureModernShadowTree(ShadowRoot& root)
+void HTMLAttachmentElement::ensureWideLayoutShadowTree(ShadowRoot& root)
 {
-    ASSERT(m_implementation == Implementation::Modern);
+    ASSERT(m_implementation == Implementation::WideLayout);
     if (m_titleElement)
         return;
 
@@ -223,25 +223,9 @@ void HTMLAttachmentElement::ensureModernShadowTree(ShadowRoot& root)
 
     auto previewArea = createContainedElement<HTMLDivElement>(*m_containerElement, attachmentPreviewAreaIdentifier());
 
-    // FIXME: This is using the same HTMLAttachmentElement type, but with different behavior (thanks to m_implementation), to fetch and show
-    // the appropriate image (thumbnail, icon, etc.). In the longer term, this functionality should be folded into the Implementation::Modern
-    // code, and the old Legacy/ImageOnly code should be removed; this element could be an image (with a different data member name). See rdar://105252742.
-    m_innerLegacyAttachment = adoptRef(*new HTMLAttachmentElement(HTMLNames::attachmentTag, document()));
-    m_innerLegacyAttachment->m_implementation = Implementation::ImageOnly;
-    auto copyAttribute = [this](const QualifiedName& attr) {
-        m_innerLegacyAttachment->setAttributeWithoutSynchronization(attr, attributeWithoutSynchronization(attr));
-    };
-    copyAttribute(actionAttr);
-    copyAttribute(progressAttr);
-    copyAttribute(subtitleAttr);
-    copyAttribute(titleAttr);
-    copyAttribute(typeAttr);
-    m_innerLegacyAttachment->m_file = m_file;
-    m_innerLegacyAttachment->m_thumbnail = m_thumbnail;
-    m_innerLegacyAttachment->m_icon = m_icon;
-    m_innerLegacyAttachment->m_iconSize = m_iconSize;
-    m_innerLegacyAttachment->setIdAttribute(attachmentPreviewIdentifier());
-    previewArea->appendChild(*m_innerLegacyAttachment);
+    m_imageElement = createContainedElement<HTMLImageElement>(previewArea, attachmentIconIdentifier());
+    setNeedsWideLayoutIconRequest();
+    updateImage();
 
     m_placeholderElement = createContainedElement<HTMLDivElement>(previewArea, attachmentPlaceholderIdentifier());
 
@@ -302,7 +286,6 @@ void HTMLAttachmentElement::updateProgress(const AtomString& progress)
     bool validProgress = false;
     float value = progress.toFloat(&validProgress);
     if (validProgress && std::isfinite(value)) {
-        m_innerLegacyAttachment->setInlineStyleProperty(CSSPropertyDisplay, CSSValueNone);
         if (!value) {
             m_placeholderElement->removeInlineStyleProperty(CSSPropertyDisplay);
             m_progressElement->setInlineStyleProperty(CSSPropertyDisplay, CSSValueNone);
@@ -315,7 +298,6 @@ void HTMLAttachmentElement::updateProgress(const AtomString& progress)
         return;
     }
 
-    m_innerLegacyAttachment->removeInlineStyleProperty(CSSPropertyDisplay);
     m_placeholderElement->setInlineStyleProperty(CSSPropertyDisplay, CSSValueNone);
     m_progressElement->setInlineStyleProperty(CSSPropertyDisplay, CSSValueNone);
     m_progressElement->removeInlineStyleCustomProperty(attachmentProgressCSSProperty());
@@ -407,8 +389,6 @@ URL HTMLAttachmentElement::blobURL() const
 void HTMLAttachmentElement::setFile(RefPtr<File>&& file, UpdateDisplayAttributes updateAttributes)
 {
     m_file = WTFMove(file);
-    if (m_innerLegacyAttachment)
-        m_innerLegacyAttachment->setFile(m_file.copyRef(), updateAttributes);
 
     if (updateAttributes == UpdateDisplayAttributes::Yes) {
         if (m_file) {
@@ -422,6 +402,7 @@ void HTMLAttachmentElement::setFile(RefPtr<File>&& file, UpdateDisplayAttributes
         }
     }
 
+    setNeedsWideLayoutIconRequest();
     invalidateRendering();
 }
 
@@ -479,12 +460,10 @@ void HTMLAttachmentElement::attributeChanged(const QualifiedName& name, const At
     case AttributeNames::subtitleAttr:
     case AttributeNames::titleAttr:
     case AttributeNames::typeAttr:
-        if (m_innerLegacyAttachment)
-            m_innerLegacyAttachment->setAttributeWithoutSynchronization(name, newValue);
         invalidateRendering();
         break;
     case AttributeNames::progressAttr:
-        if (m_implementation == Implementation::Legacy)
+        if (m_implementation == Implementation::NarrowLayout)
             invalidateRendering();
         break;
     default:
@@ -501,6 +480,7 @@ void HTMLAttachmentElement::attributeChanged(const QualifiedName& name, const At
     case AttributeNames::titleAttr:
         if (m_titleElement)
             m_titleElement->setTextContent(attachmentTitleForDisplay());
+        setNeedsWideLayoutIconRequest();
         break;
     case AttributeNames::subtitleAttr:
         if (m_subtitleElement)
@@ -512,14 +492,15 @@ void HTMLAttachmentElement::attributeChanged(const QualifiedName& name, const At
     case AttributeNames::saveAttr:
         updateSaveButton(!newValue.isNull());
         break;
-#if ENABLE(SERVICE_CONTROLS)
     case AttributeNames::typeAttr:
+#if ENABLE(SERVICE_CONTROLS)
         if (attachmentType() == "application/pdf"_s) {
             setImageMenuEnabled(true);
             ImageControlsMac::updateImageControls(*this);
         }
-        break;
 #endif
+        setNeedsWideLayoutIconRequest();
+        break;
     default:
         break;
     }
@@ -540,17 +521,11 @@ const AtomString& HTMLAttachmentElement::attachmentSubtitle() const
 
 const AtomString& HTMLAttachmentElement::attachmentActionForDisplay() const
 {
-    if (m_implementation == Implementation::ImageOnly)
-        return nullAtom();
-
     return attributeWithoutSynchronization(actionAttr);
 }
 
 String HTMLAttachmentElement::attachmentTitleForDisplay() const
 {
-    if (m_implementation == Implementation::ImageOnly)
-        return { };
-
     auto title = attachmentTitle();
     auto indexOfLastDot = title.reverseFind('.');
     if (indexOfLastDot == notFound)
@@ -568,9 +543,6 @@ String HTMLAttachmentElement::attachmentTitleForDisplay() const
 
 const AtomString& HTMLAttachmentElement::attachmentSubtitleForDisplay() const
 {
-    if (m_implementation == Implementation::ImageOnly)
-        return nullAtom();
-
     return attachmentSubtitle();
 }
 
@@ -606,6 +578,7 @@ void HTMLAttachmentElement::updateAttributes(std::optional<uint64_t>&& newFileSi
     else
         removeAttribute(subtitleAttr);
 
+    setNeedsWideLayoutIconRequest();
     invalidateRendering();
 }
 
@@ -635,26 +608,80 @@ void HTMLAttachmentElement::updateEnclosingImageWithData(const String& contentTy
     enclosingImage->setAttributeWithoutSynchronization(HTMLNames::srcAttr, AtomString { DOMURL::createObjectURL(document(), Blob::create(&document(), buffer->extractData(), mimeType)) });
 }
 
-void HTMLAttachmentElement::updateThumbnail(const RefPtr<Image>& thumbnail)
+void HTMLAttachmentElement::updateImage()
 {
+    if (!m_imageElement)
+        return;
+
+    if (!m_thumbnailForWideLayout.isEmpty()) {
+        m_imageElement->setSrc(AtomString { DOMURL::createObjectURL(document(), Blob::create(&document(), Vector<uint8_t>(m_thumbnailForWideLayout), "image/png"_s)) });
+        return;
+    }
+
+    if (!m_iconForWideLayout.isEmpty()) {
+        m_imageElement->setSrc(AtomString { DOMURL::createObjectURL(document(), Blob::create(&document(), Vector<uint8_t>(m_iconForWideLayout), "image/png"_s)) });
+        return;
+    }
+
+    m_imageElement->setSrc(nullAtom());
+}
+
+void HTMLAttachmentElement::updateThumbnailForNarrowLayout(const RefPtr<Image>& thumbnail)
+{
+    ASSERT(!isWideLayout());
     m_thumbnail = thumbnail;
-    if (m_innerLegacyAttachment)
-        m_innerLegacyAttachment->updateThumbnail(thumbnail);
     removeAttribute(HTMLNames::progressAttr);
     invalidateRendering();
 }
 
-void HTMLAttachmentElement::updateIcon(const RefPtr<Image>& icon, const WebCore::FloatSize& iconSize)
+void HTMLAttachmentElement::updateThumbnailForWideLayout(Vector<uint8_t>&& thumbnailSrcData)
 {
+    ASSERT(isWideLayout());
+    m_thumbnailForWideLayout = WTFMove(thumbnailSrcData);
+    updateImage();
+}
+
+void HTMLAttachmentElement::updateIconForNarrowLayout(const RefPtr<Image>& icon, const WebCore::FloatSize& iconSize)
+{
+    ASSERT(!isWideLayout());
     m_icon = icon;
     m_iconSize = iconSize;
-    if (m_innerLegacyAttachment)
-        m_innerLegacyAttachment->updateIcon(icon, iconSize);
     invalidateRendering();
+}
+
+void HTMLAttachmentElement::updateIconForWideLayout(Vector<uint8_t>&& iconSrcData)
+{
+    ASSERT(isWideLayout());
+    m_iconForWideLayout = WTFMove(iconSrcData);
+    updateImage();
+}
+
+void HTMLAttachmentElement::setNeedsWideLayoutIconRequest()
+{
+    m_needsWideLayoutIconRequest = true;
+}
+
+void HTMLAttachmentElement::requestWideLayoutIconIfNeeded()
+{
+    if (!m_needsWideLayoutIconRequest)
+        return;
+
+    if (!m_imageElement || !document().page() || !document().page()->attachmentElementClient())
+        return;
+
+    bool unusedIsReplaced;
+    auto rect = m_imageElement->renderRect(&unusedIsReplaced);
+    if (rect.isEmpty())
+        return;
+
+    m_needsWideLayoutIconRequest = false;
+
+    document().page()->attachmentElementClient()->requestAttachmentIcon(uniqueIdentifier(), FloatSize(rect.width().toFloat(), rect.height().toFloat()));
 }
 
 void HTMLAttachmentElement::requestIconWithSize(const FloatSize& size) const
 {
+    ASSERT(!isWideLayout());
     if (!document().page() || !document().page()->attachmentElementClient())
         return;
 

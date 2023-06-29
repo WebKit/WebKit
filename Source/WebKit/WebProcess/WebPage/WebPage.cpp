@@ -7988,16 +7988,32 @@ void WebPage::updateAttachmentAttributes(const String& identifier, std::optional
 void WebPage::updateAttachmentThumbnail(const String& identifier, ShareableBitmap::Handle&& qlThumbnailHandle)
 {
     if (auto attachment = attachmentElementWithIdentifier(identifier)) {
-        if (RefPtr<ShareableBitmap> thumbnail = !qlThumbnailHandle.isNull() ? ShareableBitmap::create(WTFMove(qlThumbnailHandle)) : nullptr)
-            attachment->updateThumbnail(thumbnail->createImage());
+        if (RefPtr thumbnail = !qlThumbnailHandle.isNull() ? ShareableBitmap::create(WTFMove(qlThumbnailHandle)) : nullptr) {
+            if (attachment->isWideLayout()) {
+                if (auto imageBuffer = ImageBuffer::create(thumbnail->size(), RenderingPurpose::Unspecified, 1.0, DestinationColorSpace::SRGB(), PixelFormat::BGRA8)) {
+                    thumbnail->paint(imageBuffer->context(), IntPoint::zero(), IntRect(IntPoint::zero(), thumbnail->size()));
+                    auto data = imageBuffer->toData("image/png"_s);
+                    attachment->updateThumbnailForWideLayout(WTFMove(data));
+                }
+            } else
+                attachment->updateThumbnailForNarrowLayout(thumbnail->createImage());
+        }
     }
 }
 
 void WebPage::updateAttachmentIcon(const String& identifier, ShareableBitmap::Handle&& iconHandle, const WebCore::FloatSize& size)
 {
     if (auto attachment = attachmentElementWithIdentifier(identifier)) {
-        if (auto icon = !iconHandle.isNull() ? ShareableBitmap::create(WTFMove(iconHandle)) : nullptr)
-            attachment->updateIcon(icon->createImage(), size);
+        if (auto icon = !iconHandle.isNull() ? ShareableBitmap::create(WTFMove(iconHandle)) : nullptr) {
+            if (attachment->isWideLayout()) {
+                if (auto imageBuffer = ImageBuffer::create(icon->size(), RenderingPurpose::Unspecified, 1.0, DestinationColorSpace::SRGB(), PixelFormat::BGRA8)) {
+                    icon->paint(imageBuffer->context(), IntPoint::zero(), IntRect(IntPoint::zero(), icon->size()));
+                    auto data = imageBuffer->toData("image/png"_s);
+                    attachment->updateIconForWideLayout(WTFMove(data));
+                }
+            } else
+                attachment->updateIconForNarrowLayout(icon->createImage(), size);
+        }
     }
 }
 

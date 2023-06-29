@@ -47,13 +47,13 @@ div#attachment-preview-area {
     grid-row: 1;
     grid-column: 1;
 #if (defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY)
-    width: 56px; /* Co-dependent with attachmentImageOnlySize.width */
-    height: 72px; /* Co-dependent with attachmentImageOnlySize.height */
+    width: 56px;
+    height: 72px;
     padding: 10px;
     border-radius: 12px 0px 0px 12px;
 #else
     width: 40px;
-    height: 52px; /* Co-dependent with attachmentImageOnlyIconSize */
+    height: 52px;
     padding: 14px;
     border-radius: 8px 0px 0px 8px;
 #endif
@@ -63,15 +63,15 @@ div#attachment-preview-area {
     justify-items: center;
 }
 
-attachment#attachment-preview {
+img#attachment-icon {
     grid-row: 1;
     grid-column: 1;
 #if (defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY)
-    max-width: 72px;
-    max-height: 72px;
+    width: 72px; /* Co-dependent with iconSize in HTMLAttachmentElement::needWideLayoutIcon */
+    height: 72px;
 #else
-    max-width: 52px;
-    max-height: 52px;
+    width: 52px;
+    height: 52px;
 #endif
     overflow: hidden;
 }
