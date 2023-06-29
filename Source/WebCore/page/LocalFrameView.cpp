@@ -3914,6 +3914,7 @@ void LocalFrameView::scheduleResizeEventIfNeeded()
 
     auto* document = m_frame->document();
     if (document->quirks().shouldSilenceWindowResizeEvents()) {
+        document->addConsoleMessage(MessageSource::Other, MessageLevel::Info, "Window resize events silenced due to: http://webkit.org/b/258597"_s);
         FRAMEVIEW_RELEASE_LOG(Events, "scheduleResizeEventIfNeeded: Not firing resize events because they are temporarily disabled for this page");
         return;
     }

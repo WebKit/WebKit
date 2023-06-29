@@ -753,7 +753,8 @@ bool Quirks::shouldSilenceWindowResizeEvents() const
 
     auto host = m_document->topDocument().url().host();
     return equalLettersIgnoringASCIICase(host, "nytimes.com"_s) || host.endsWithIgnoringASCIICase(".nytimes.com"_s)
-        || equalLettersIgnoringASCIICase(host, "twitter.com"_s) || host.endsWithIgnoringASCIICase(".twitter.com"_s);
+        || equalLettersIgnoringASCIICase(host, "twitter.com"_s) || host.endsWithIgnoringASCIICase(".twitter.com"_s)
+        || equalLettersIgnoringASCIICase(host, "zillow.com"_s) || host.endsWithIgnoringASCIICase(".zillow.com"_s);
 #else
     return false;
 #endif
