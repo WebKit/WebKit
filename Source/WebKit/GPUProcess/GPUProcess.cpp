@@ -298,10 +298,6 @@ void GPUProcess::initializeGPUProcess(GPUProcessCreationParameters&& parameters)
 #if USE(OS_STATE)
     registerWithStateDumper("GPUProcess state"_s);
 #endif
-
-#if PLATFORM(COCOA)
-    platformInitializeGPUProcess(parameters);
-#endif
 }
 
 void GPUProcess::updateGPUProcessPreferences(GPUProcessPreferences&& preferences)
