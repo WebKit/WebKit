@@ -775,8 +775,6 @@ public:
     }
 
     bool isolatesBlending() const { return hasNotIsolatedBlendingDescendants() && isCSSStackingContext(); }
-
-    bool shouldPaintUsingCompositeCopy() const { return m_shouldPaintUsingCompositeCopy; }
     
     // FIXME: We should ASSERT(!m_hasNotIsolatedBlendingDescendantsStatusDirty); here but we hit the same bugs as visible content above.
     bool hasNotIsolatedBlendingDescendants() const { return m_hasNotIsolatedBlendingDescendants; }
@@ -788,6 +786,7 @@ public:
     bool hasNotIsolatedBlendingDescendantsStatusDirty() const { return false; }
 #endif
 
+    bool shouldPaintUsingCompositeCopy() const { return m_shouldPaintUsingCompositeCopy; }
     bool isComposited() const { return m_backing != nullptr; }
     bool hasCompositingDescendant() const { return m_hasCompositingDescendant; }
     bool hasCompositedMask() const;
