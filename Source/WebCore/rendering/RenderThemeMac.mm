@@ -1614,23 +1614,20 @@ bool RenderThemeMac::paintAttachment(const RenderObject& renderer, const PaintIn
 
     bool usePlaceholder = validProgress && !progress;
 
-    if (!element.isImageOnly())
-        paintAttachmentIconBackground(attachment, context, layout);
+    paintAttachmentIconBackground(attachment, context, layout);
 
     if (usePlaceholder)
         paintAttachmentIconPlaceholder(attachment, context, layout);
     else
         paintAttachmentIcon(attachment, context, layout);
 
-    if (!element.isImageOnly()) {
-        paintAttachmentTitleBackground(attachment, context, layout);
-        paintAttachmentText(context, &layout);
-    }
+    paintAttachmentTitleBackground(attachment, context, layout);
+    paintAttachmentText(context, &layout);
 
     if (validProgress && progress)
         paintAttachmentProgress(attachment, context, layout, progress);
 
-    if (usePlaceholder && !element.isImageOnly())
+    if (usePlaceholder)
         paintAttachmentPlaceholderBorder(attachment, context, layout);
 
     return true;

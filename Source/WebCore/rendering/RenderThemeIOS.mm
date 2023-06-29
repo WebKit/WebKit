@@ -1651,9 +1651,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     return IconAndSize { result, size };
 }
 
-LayoutSize RenderThemeIOS::attachmentIntrinsicSize(const RenderAttachment& renderAttachment) const
+LayoutSize RenderThemeIOS::attachmentIntrinsicSize(const RenderAttachment&) const
 {
-    return LayoutSize(FloatSize(renderAttachment.attachmentElement().isImageOnly() ? attachmentImageOnlySize : attachmentSize) * attachmentDynamicTypeScaleFactor());
+    return LayoutSize(FloatSize(attachmentSize) * attachmentDynamicTypeScaleFactor());
 }
 
 static void paintAttachmentIcon(GraphicsContext& context, AttachmentLayout& info)
@@ -1720,7 +1720,7 @@ bool RenderThemeIOS::paintAttachment(const RenderObject& renderer, const PaintIn
 
     context.translate(toFloatSize(paintRect.location()));
 
-    if (attachment.shouldDrawBorder() && !attachment.attachmentElement().isImageOnly()) {
+    if (attachment.shouldDrawBorder()) {
         auto borderPath = attachmentBorderPath(info);
         paintAttachmentBorder(context, borderPath);
         context.clipPath(borderPath);
