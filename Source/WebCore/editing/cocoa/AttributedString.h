@@ -92,7 +92,8 @@ struct WEBCORE_EXPORT AttributedString {
             RetainPtr<NSTextAttachment>,
             RetainPtr<NSShadow>,
             RetainPtr<NSDate>,
-            RetainPtr<PlatformColor>
+            RetainPtr<PlatformColor>,
+            RetainPtr<CGColorRef>
         > value;
     };
 

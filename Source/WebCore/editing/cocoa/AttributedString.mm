@@ -69,36 +69,38 @@ bool AttributedString::rangesAreSafe(const String& string, const Vector<std::pai
     return true;
 }
 
-static RetainPtr<NSObject> toNSObject(const AttributedString::AttributeValue& value)
+static RetainPtr<id> toNSObject(const AttributedString::AttributeValue& value)
 {
-    return WTF::switchOn(value.value, [] (double value) -> RetainPtr<NSObject> {
+    return WTF::switchOn(value.value, [] (double value) -> RetainPtr<id> {
         return adoptNS([[NSNumber alloc] initWithDouble:value]);
-    }, [] (const String& value) -> RetainPtr<NSObject> {
+    }, [] (const String& value) -> RetainPtr<id> {
         return (NSString *)value;
-    }, [] (const RetainPtr<NSParagraphStyle>& value) -> RetainPtr<NSObject> {
+    }, [] (const RetainPtr<NSParagraphStyle>& value) -> RetainPtr<id> {
         return value;
-    }, [] (const RetainPtr<NSPresentationIntent>& value) -> RetainPtr<NSObject> {
+    }, [] (const RetainPtr<NSPresentationIntent>& value) -> RetainPtr<id> {
         return value;
-    }, [] (const URL& value) -> RetainPtr<NSObject> {
+    }, [] (const URL& value) -> RetainPtr<id> {
         return (NSURL *)value;
-    }, [] (const Vector<String>& value) -> RetainPtr<NSObject> {
+    }, [] (const Vector<String>& value) -> RetainPtr<id> {
         return createNSArray(value, [] (const String& string) {
             return (NSString *)string;
         });
-    }, [] (const Vector<double>& value) -> RetainPtr<NSObject> {
+    }, [] (const Vector<double>& value) -> RetainPtr<id> {
         return createNSArray(value, [] (double number) {
             return adoptNS([[NSNumber alloc] initWithDouble:number]);
         });
-    }, [] (const RetainPtr<NSTextAttachment>& value) -> RetainPtr<NSObject> {
+    }, [] (const RetainPtr<NSTextAttachment>& value) -> RetainPtr<id> {
         return value;
-    }, [] (const RetainPtr<NSShadow>& value) -> RetainPtr<NSObject> {
+    }, [] (const RetainPtr<NSShadow>& value) -> RetainPtr<id> {
         return value;
-    }, [] (const RetainPtr<NSDate>& value) -> RetainPtr<NSObject> {
+    }, [] (const RetainPtr<NSDate>& value) -> RetainPtr<id> {
         return value;
-    }, [] (const Ref<Font>& font) -> RetainPtr<NSObject> {
+    }, [] (const Ref<Font>& font) -> RetainPtr<id> {
         return (__bridge PlatformFont *)(font->getCTFont());
-    }, [] (const RetainPtr<PlatformColor>& value) -> RetainPtr<NSObject> {
+    }, [] (const RetainPtr<PlatformColor>& value) -> RetainPtr<id> {
         return value;
+    }, [] (const RetainPtr<CGColorRef>& value) -> RetainPtr<id> {
+        return (__bridge id)value.get();
     });
 }
 
@@ -167,6 +169,8 @@ static std::optional<AttributedString::AttributeValue> extractArray(NSArray *arr
 
 static std::optional<AttributedString::AttributeValue> extractValue(id value)
 {
+    if (CFGetTypeID((CFTypeRef)value) == CGColorGetTypeID())
+        return { { { RetainPtr<CGColorRef> { (CGColorRef) value } } } };
     if (auto* number = dynamic_objc_cast<NSNumber>(value))
         return { { { number.doubleValue } } };
     if (auto* string = dynamic_objc_cast<NSString>(value))
