@@ -3373,11 +3373,14 @@ void WebPageProxy::wheelEventHandlingCompleted(bool wasHandled)
 {
     auto oldestProcessedEvent = wheelEventCoalescer().takeOldestEventBeingProcessed();
 
-    LOG_WITH_STREAM(WheelEvents, stream << "WebPageProxy::wheelEventHandlingCompleted - finished handling " << platform(oldestProcessedEvent) << " handled " << wasHandled);
+    if (oldestProcessedEvent)
+        LOG_WITH_STREAM(WheelEvents, stream << "WebPageProxy::wheelEventHandlingCompleted - finished handling " << platform(*oldestProcessedEvent) << " handled " << wasHandled);
+    else
+        LOG_WITH_STREAM(WheelEvents, stream << "WebPageProxy::wheelEventHandlingCompleted - no event, handled " << wasHandled);
 
-    if (!wasHandled) {
-        m_uiClient->didNotHandleWheelEvent(this, oldestProcessedEvent);
-        pageClient().wheelEventWasNotHandledByWebCore(oldestProcessedEvent);
+    if (oldestProcessedEvent && !wasHandled) {
+        m_uiClient->didNotHandleWheelEvent(this, *oldestProcessedEvent);
+        pageClient().wheelEventWasNotHandledByWebCore(*oldestProcessedEvent);
     }
 
     if (auto eventToSend = wheelEventCoalescer().nextEventToDispatch()) {

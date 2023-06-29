@@ -155,9 +155,11 @@ bool WebWheelEventCoalescer::shouldDispatchEvent(const NativeWebWheelEvent& even
     return true;
 }
 
-NativeWebWheelEvent WebWheelEventCoalescer::takeOldestEventBeingProcessed()
+std::optional<NativeWebWheelEvent> WebWheelEventCoalescer::takeOldestEventBeingProcessed()
 {
-    ASSERT(hasEventsBeingProcessed());
+    if (m_eventsBeingProcessed.isEmpty())
+        return { };
+
     auto oldestSequence = m_eventsBeingProcessed.takeFirst();
     return oldestSequence->last();
 }
