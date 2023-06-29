@@ -197,7 +197,7 @@ public:
         return content;
     }
 
-    bool atEnd() const { return !m_text && m_iterator.atEnd() && m_node == m_pastEndNode; }
+    bool atEnd() const { return !m_text && m_node == m_pastEndNode; }
 
 private:
     bool shouldAdvanceIteratorPastCurrentNode() const
