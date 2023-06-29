@@ -3774,6 +3774,16 @@
    },
    {
       "emails" : [
+         "jesse_hertz@apple.com",
+         "jesse.hertz@apple.com"
+      ],
+      "nicks" : [
+         "jhertz"
+      ]
+      "name" : "Jesse Hertz"    
+   },
+   {
+      "emails" : [
          "jorlow@webkit.org",
          "jorlow@chromium.org"
       ],
