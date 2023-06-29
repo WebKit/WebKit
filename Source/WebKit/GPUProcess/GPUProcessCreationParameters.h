@@ -46,6 +46,7 @@ struct GPUProcessCreationParameters {
     bool useMockCaptureDevices { false };
 #if PLATFORM(MAC)
     SandboxExtension::Handle microphoneSandboxExtensionHandle;
+    SandboxExtension::Handle launchServicesExtensionHandle;
 #endif
 #endif
 #if HAVE(AVCONTENTKEYSPECIFIER)
