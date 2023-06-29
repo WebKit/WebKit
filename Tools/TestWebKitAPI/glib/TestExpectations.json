@@ -213,8 +213,7 @@
         "subtests": {
             "WebKit.MouseMoveAfterCrash": {
                 "expected": {
-                    "gtk": {"status": ["CRASH", "PASS"], "bug": "webkit.org/b/85066"},
-                    "wpe": {"status": ["FAIL"]}
+                    "gtk": {"status": ["CRASH", "PASS"], "bug": "webkit.org/b/85066"}
                 }
             },
             "WebKit.NewFirstVisuallyNonEmptyLayoutForImages": {
@@ -234,9 +233,6 @@
             },
             "WebKit.TerminateTwice": {
                 "expected": {"gtk": {"status": ["SKIP"], "bug": "webkit.org/b/121970"}}
-            },
-            "WebKit.HitTestResultNodeHandle": {
-                "expected": {"wpe": {"status": ["TIMEOUT"]}}
             },
             "WebKit.FocusedFrameAfterCrash": {
                 "expected": {"gtk": {"status": ["TIMEOUT", "PASS"], "bug": "webkit.org/b/205336"}}

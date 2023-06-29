@@ -27,6 +27,7 @@
 #include "PlatformWebView.h"
 
 #include <WPEToolingBackends/HeadlessViewBackend.h>
+#include <WebKit/WKPagePrivateWPE.h>
 #include <WebKit/WKRetainPtr.h>
 #include <WebKit/WKView.h>
 
@@ -86,22 +87,32 @@ void PlatformWebView::resizeTo(unsigned width, unsigned height)
 
 void PlatformWebView::simulateSpacebarKeyPress()
 {
-    // FIXME: implement this.
+    // https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/code
+    WKPageHandleKeyboardEvent(page(), WKKeyboardEventMake(kWKEventKeyDown, kWKInputTypeNormal, " ", 1, WPE_KEY_space, 0x0041, 0));
+    WKPageHandleKeyboardEvent(page(), WKKeyboardEventMake(kWKEventKeyUp, kWKInputTypeNormal, " ", 1, WPE_KEY_space, 0x0041, 0));
 }
 
 void PlatformWebView::simulateAltKeyPress()
 {
-    // FIXME: implement this.
+    // https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/code
+    WKPageHandleKeyboardEvent(page(), WKKeyboardEventMake(kWKEventKeyDown, kWKInputTypeNormal, nullptr, 0, WPE_KEY_Alt_L, 0x0040, 0));
+    WKPageHandleKeyboardEvent(page(), WKKeyboardEventMake(kWKEventKeyUp, kWKInputTypeNormal, nullptr, 0, WPE_KEY_Alt_L, 0x0040, 0));
 }
 
 void PlatformWebView::simulateRightClick(unsigned x, unsigned y)
 {
-    // FIXME: implement this.
+    simulateButtonClick(kWKEventMouseButtonRightButton, x, y, 0);
 }
 
-void PlatformWebView::simulateMouseMove(unsigned x, unsigned y, WKEventModifiers)
+void PlatformWebView::simulateButtonClick(WKEventMouseButton button, unsigned x, unsigned y, WKEventModifiers modifiers)
 {
-    // FIXME: implement this.
+    WKPageHandleMouseEvent(page(), WKMouseEventMake(kWKEventMouseDown, button, WKPointMake(x, y), 0, modifiers));
+    WKPageHandleMouseEvent(page(), WKMouseEventMake(kWKEventMouseUp, button, WKPointMake(x, y), 0, modifiers));
+}
+
+void PlatformWebView::simulateMouseMove(unsigned x, unsigned y, WKEventModifiers modifiers)
+{
+    WKPageHandleMouseEvent(page(), WKMouseEventMake(kWKEventMouseMove, kWKEventMouseButtonNoButton, WKPointMake(x, y), 0, modifiers));
 }
 
 } // namespace TestWebKitAPI

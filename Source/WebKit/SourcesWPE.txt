@@ -118,6 +118,9 @@ UIProcess/API/C/glib/WKContextConfigurationGlib.cpp
 UIProcess/API/C/glib/WKTextCheckerGLib.cpp
 
 UIProcess/API/C/wpe/WKView.cpp
+UIProcess/API/C/wpe/WKPagePrivateWPE.cpp
+
+Shared/API/c/wpe/WKEventWPE.cpp
 
 UIProcess/API/glib/APIContentRuleListStoreGLib.cpp @no-unify
 UIProcess/API/glib/APISerializedScriptValueGLib.cpp @no-unify
