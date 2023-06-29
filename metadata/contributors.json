@@ -3777,10 +3777,11 @@
          "jesse_hertz@apple.com",
          "jesse.hertz@apple.com"
       ],
+      "name" : "Jesse Hertz",   
       "nicks" : [
-         "jhertz"
+         "jhertz",
+         "jhertz-apple"
       ]
-      "name" : "Jesse Hertz"    
    },
    {
       "emails" : [
