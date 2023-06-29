@@ -206,7 +206,8 @@ public:
         , Vector<AttributeChange>
         , Vector<std::pair<Node*, Node*>>
         , WeakHashSet<Element, WeakPtrImplWithEventTargetData>
-        , WeakHashSet<HTMLTableElement, WeakPtrImplWithEventTargetData>>;
+        , WeakHashSet<HTMLTableElement, WeakPtrImplWithEventTargetData>
+        , WeakListHashSet<Node, WeakPtrImplWithEventTargetData>>;
     void deferFocusedUIElementChangeIfNeeded(Node* oldFocusedNode, Node* newFocusedNode);
     void deferModalChange(Element*);
     void deferMenuListValueChange(Element*);
@@ -595,7 +596,7 @@ private:
     ListHashSet<Node*> m_deferredTextChangedList;
     WeakHashSet<Element, WeakPtrImplWithEventTargetData> m_deferredSelectedChildredChangedList;
     ListHashSet<RefPtr<AccessibilityObject>> m_deferredChildrenChangedList;
-    ListHashSet<Node*> m_deferredNodeAddedOrRemovedList;
+    WeakListHashSet<Node, WeakPtrImplWithEventTargetData> m_deferredNodeAddedOrRemovedList;
     WeakHashSet<Element, WeakPtrImplWithEventTargetData> m_deferredModalChangedList;
     WeakHashSet<Element, WeakPtrImplWithEventTargetData> m_deferredMenuListChange;
     HashMap<Element*, String> m_deferredTextFormControlValue;
