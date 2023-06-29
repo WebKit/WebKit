@@ -3817,11 +3817,17 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
             
     case GetArrayLength: {
-        JSArrayBufferView* view = m_graph.tryGetFoldableView(
-            forNode(node->child1()).m_value, node->arrayMode());
-        if (view && !view->isResizableOrGrowableShared() && isInBounds<int32_t>(view->length())) {
-            setConstant(node, jsNumber(view->length()));
-            break;
+        if (JSValue constant = forNode(node->child1()).m_value) {
+            JSArrayBufferView* view = m_graph.tryGetFoldableView(constant, node->arrayMode());
+            if (view && !view->isResizableOrGrowableShared() && isInBounds<int32_t>(view->length())) {
+                setConstant(node, jsNumber(view->length()));
+                break;
+            }
+
+            if (constant.isString() && node->arrayMode().type() == Array::String) {
+                setConstant(node, jsNumber(asString(constant)->length()));
+                break;
+            }
         }
         setNonCellTypeForNode(node, SpecInt32Only);
         break;
