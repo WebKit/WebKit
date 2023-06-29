@@ -36,7 +36,7 @@
 #include "WebGLRenderingContextBase.h"
 #include <wtf/Scope.h>
 
-#if USE(IOSURFACE_FOR_XR_LAYER_DATA)
+#if USE(IOSURFACE_FOR_XR_LAYER_DATA) || USE(MTLTEXTURE_FOR_XR_LAYER_DATA)
 #include "GraphicsContextGLCocoa.h"
 #endif
 
@@ -65,7 +65,7 @@ WebXROpaqueFramebuffer::WebXROpaqueFramebuffer(PlatformXR::LayerHandle handle, R
 WebXROpaqueFramebuffer::~WebXROpaqueFramebuffer()
 {
     if (auto gl = m_context.graphicsContextGL()) {
-#if USE(IOSURFACE_FOR_XR_LAYER_DATA)
+#if USE(IOSURFACE_FOR_XR_LAYER_DATA) || USE(MTLTEXTURE_FOR_XR_LAYER_DATA)
         m_opaqueTexture.release(*gl);
 #endif
         m_stencilBuffer.release(*gl);
@@ -76,7 +76,7 @@ WebXROpaqueFramebuffer::~WebXROpaqueFramebuffer()
     } else {
         // The GraphicsContextGL is gone, so disarm the GCGLOwned objects so
         // their destructors don't assert.
-#if USE(IOSURFACE_FOR_XR_LAYER_DATA)
+#if USE(IOSURFACE_FOR_XR_LAYER_DATA) || USE(MTLTEXTURE_FOR_XR_LAYER_DATA)
         m_opaqueTexture.leakObject();
 #endif
         m_stencilBuffer.leakObject();
@@ -92,16 +92,10 @@ void WebXROpaqueFramebuffer::startFrame(const PlatformXR::Device::FrameData::Lay
         return;
     auto& gl = *m_context.graphicsContextGL();
 
-#if USE(IOSURFACE_FOR_XR_LAYER_DATA)
-    ASSERT(data.surface);
-    auto bufferSize = data.surface->size();
-
-    auto gCGL = static_cast<GraphicsContextGLCocoa*>(m_context.graphicsContextGL());
-    auto [textureTarget, textureTargetBinding] = gl.externalImageTextureBindingPoint();
-#else
-    GCGLenum textureTarget = GL::TEXTURE_2D;
-    GCGLenum textureTargetBinding = GL::TEXTURE_BINDING_2D;
+#if USE(IOSURFACE_FOR_XR_LAYER_DATA) || USE(MTLTEXTURE_FOR_XR_LAYER_DATA)
+    IntSize bufferSize;
 #endif
+    auto [textureTarget, textureTargetBinding] = gl.externalImageTextureBindingPoint();
 
     m_framebuffer->setOpaqueActive(true);
 
@@ -123,6 +117,15 @@ void WebXROpaqueFramebuffer::startFrame(const PlatformXR::Device::FrameData::Lay
     // the textures/renderbuffers.
 
 #if USE(IOSURFACE_FOR_XR_LAYER_DATA)
+    // FIXME: This is temporary until Cocoa-specific platforms migrate to MTLTEXTURE_FOR_XR_LAYER_DATA.
+    auto colorTextureHandle = data.surface->createSendRight();
+    bool colorTextureIsShared = false;
+#elif USE(MTLTEXTURE_FOR_XR_LAYER_DATA)
+    // Tell the GraphicsContextGL to use the IOSurface as the backing store for m_opaqueTexture.
+    auto [colorTextureHandle, colorTextureIsShared] = data.colorTexture;
+#endif
+
+#if USE(IOSURFACE_FOR_XR_LAYER_DATA) || USE(MTLTEXTURE_FOR_XR_LAYER_DATA)
     m_opaqueTexture.ensure(gl);
     gl.bindTexture(textureTarget, m_opaqueTexture);
     gl.texParameteri(textureTarget, GL::TEXTURE_MAG_FILTER, GL::LINEAR);
@@ -130,28 +133,15 @@ void WebXROpaqueFramebuffer::startFrame(const PlatformXR::Device::FrameData::Lay
     gl.texParameteri(textureTarget, GL::TEXTURE_WRAP_S, GL::CLAMP_TO_EDGE);
     gl.texParameteri(textureTarget, GL::TEXTURE_WRAP_T, GL::CLAMP_TO_EDGE);
 
-    // Tell the GraphicsContextGL to use the IOSurface as the backing store for m_opaqueTexture.
-    if (data.isShared) {
-#if !PLATFORM(IOS_FAMILY_SIMULATOR)
-        auto surfaceTextureAttachment = gCGL->createAndBindEGLImage(textureTarget, data.surface.get());
-        if (!surfaceTextureAttachment) {
-            m_opaqueTexture.release(gl);
-            return;
-        }
+    auto colorTextureSource = (colorTextureIsShared) ? GL::EGLImageSource(GL::EGLImageSourceMTLSharedTextureHandle { colorTextureHandle }) : GL::EGLImageSource(GL::EGLImageSourceIOSurfaceHandle { colorTextureHandle });
 
-        auto [textureHandle, textureSize] = surfaceTextureAttachment.value();
-        m_ioSurfaceTextureHandle = textureHandle;
-        bufferSize = textureSize;
-
-        m_ioSurfaceTextureHandleIsShared = true;
-#else
-        ASSERT_NOT_REACHED();
-#endif
-    } else {
-        m_ioSurfaceTextureHandle = gCGL->createPbufferAndAttachIOSurface(textureTarget, GraphicsContextGLCocoa::PbufferAttachmentUsage::Write, GL::BGRA, bufferSize.width(), bufferSize.height(), GL::UNSIGNED_BYTE, data.surface->surface(), 0);
-        m_ioSurfaceTextureHandleIsShared = false;
+    auto colorTextureAttachment = gl.createAndBindEGLImage(textureTarget, colorTextureSource);
+    if (!colorTextureAttachment) {
+        m_opaqueTexture.release(gl);
+        return;
     }
 
+    std::tie(m_opaqueImage, bufferSize) = colorTextureAttachment.value();
     if (bufferSize.isEmpty())
         return;
 
@@ -161,11 +151,6 @@ void WebXROpaqueFramebuffer::startFrame(const PlatformXR::Device::FrameData::Lay
         m_framebufferSize = bufferSize;
         if (!setupFramebuffer())
             return;
-    }
-
-    if (!m_ioSurfaceTextureHandle) {
-        m_opaqueTexture.release(gl);
-        return;
     }
 
     // Set up the framebuffer to use the texture that points to the IOSurface. If we're not multisampling,
@@ -241,20 +226,10 @@ void WebXROpaqueFramebuffer::endFrame()
 #endif
 
 
-#if USE(IOSURFACE_FOR_XR_LAYER_DATA)
-    if (m_ioSurfaceTextureHandle) {
-        if (m_ioSurfaceTextureHandleIsShared) {
-#if !PLATFORM(IOS_FAMILY_SIMULATOR)
-            gl.destroyEGLImage(m_ioSurfaceTextureHandle);
-#else
-            ASSERT_NOT_REACHED();
-#endif
-        } else {
-            auto gCGL = static_cast<GraphicsContextGLCocoa*>(&gl);
-            gCGL->destroyPbufferAndDetachIOSurface(m_ioSurfaceTextureHandle);
-        }
-        m_ioSurfaceTextureHandle = nullptr;
-        m_ioSurfaceTextureHandleIsShared = false;
+#if USE(IOSURFACE_FOR_XR_LAYER_DATA) || USE(MTLTEXTURE_FOR_XR_LAYER_DATA)
+    if (m_opaqueImage) {
+        gl.destroyEGLImage(m_opaqueImage);
+        m_opaqueImage = nullptr;
     }
 #endif
 }
@@ -325,12 +300,7 @@ PlatformGLObject WebXROpaqueFramebuffer::allocateRenderbufferStorage(GraphicsCon
 
 PlatformGLObject WebXROpaqueFramebuffer::allocateColorStorage(GraphicsContextGL& gl, GCGLsizei samples, IntSize size)
 {
-#if USE(IOSURFACE_FOR_XR_LAYER_DATA) && !PLATFORM(IOS_FAMILY_SIMULATOR)
     constexpr auto colorFormat = GL::SRGB8_ALPHA8;
-#else
-    constexpr auto colorFormat = GL::RGBA8;
-#endif
-
     return allocateRenderbufferStorage(gl, samples, colorFormat, size);
 }
 

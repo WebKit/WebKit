@@ -69,10 +69,6 @@ public:
     void destroyPbufferAndDetachIOSurface(void* handle);
 
     std::optional<EGLImageAttachResult> createAndBindEGLImage(GCGLenum, EGLImageSource) final;
-#if !PLATFORM(IOS_FAMILY_SIMULATOR)
-    // Short-term support for in-process WebGL.
-    std::optional<EGLImageAttachResult> createAndBindEGLImage(GCGLenum, IOSurface*);
-#endif
 
     RetainPtr<id> newSharedEventWithMachPort(mach_port_t);
     GCEGLSync createEGLSync(ExternalEGLSyncEvent) final;

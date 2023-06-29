@@ -81,10 +81,9 @@ private:
     GCGLOwnedRenderbuffer m_stencilBuffer;
     GCGLOwnedRenderbuffer m_multisampleColorBuffer;
     GCGLOwnedFramebuffer m_resolvedFBO;
-#if USE(IOSURFACE_FOR_XR_LAYER_DATA)
+#if USE(IOSURFACE_FOR_XR_LAYER_DATA) || USE(MTLTEXTURE_FOR_XR_LAYER_DATA)
     GCGLOwnedTexture m_opaqueTexture;
-    void* m_ioSurfaceTextureHandle { nullptr };
-    bool m_ioSurfaceTextureHandleIsShared { false };
+    GCEGLImage m_opaqueImage;
 #else
     PlatformGLObject m_opaqueTexture;
 #endif
