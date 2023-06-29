@@ -279,7 +279,7 @@ bool HeapVerifier::validateJSCell(VM* expectedVM, JSCell* cell, CellProfile* pro
 
         // 3. Validate the cell's structure's structure.
         
-        Structure* structureStructure = structureID.decode();
+        Structure* structureStructure = structureStructureID.decode();
         if (!structureStructure) {
             printHeaderAndCell();
             dataLog(" has structure ", RawPointer(structure), " whose structure is NULL\n");
