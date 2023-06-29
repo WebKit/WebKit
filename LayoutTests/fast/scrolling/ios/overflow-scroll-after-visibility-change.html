@@ -1,0 +1,68 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body {
+    margin: 0;
+}
+
+#description {
+    margin-top: 300px;
+}
+
+.outer-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    border: 1px solid tomato;
+    display: block;
+    visibility: hidden;
+    font-size: 24px;
+}
+
+.scroller {
+    overflow: auto;
+    width: 250px;
+    height: 250px;
+}
+
+.tall {
+    height: 1000px;
+}
+</style>
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<script>
+jsTestIsAsync = true;
+description("This test verifies that toggling visibility on an overflow scrolling container's ancestor makes the overflow scrolling container scrollable or non-scrollable. To manually run the test, load the page and scroll the red box.");
+
+function hasOverflowScroller() {
+    return internals.scrollingStateTreeAsText().includes("Overflow scrolling node");
+}
+
+addEventListener("load", async () => {
+    await UIHelper.delayFor(0);
+    if (window.testRunner)
+        shouldBe("hasOverflowScroller()", "false");
+
+    document.querySelector(".outer-container").style.visibility = "visible";
+    await UIHelper.renderingUpdate();
+    if (window.testRunner)
+        shouldBe("hasOverflowScroller()", "true");
+
+    finishJSTest();
+});
+</script>
+</head>
+<body>
+    <div class="outer-container">
+        <div class="scroller">
+            <div class="tall">This box should be scrollable.</div>
+        </div>
+    </div>
+    <pre id="description"></pre>
+    <pre id="console"></pre>
+</body>
+</html>
