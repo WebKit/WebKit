@@ -49,6 +49,10 @@ void GPUProcessProxy::platformInitializeGPUProcessParameters(GPUProcessCreationP
     parameters.gpuToolsExtensionHandles = createGPUToolsSandboxExtensionHandlesIfNeeded();
     parameters.applicationVisibleName = applicationVisibleName();
     parameters.strictSecureDecodingForAllObjCEnabled = IPC::strictSecureDecodingForAllObjCEnabled();
+#if PLATFORM(MAC)
+    if (auto launchServicesExtensionHandle = SandboxExtension::createHandleForMachLookup("com.apple.coreservices.launchservicesd"_s, std::nullopt))
+        parameters.launchServicesExtensionHandle = WTFMove(*launchServicesExtensionHandle);
+#endif
 }
 
 #if HAVE(POWERLOG_TASK_MODE_QUERY)
