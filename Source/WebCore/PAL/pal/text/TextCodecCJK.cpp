@@ -981,6 +981,52 @@ String TextCodecCJK::gb18030Decode(const uint8_t* bytes, size_t length, bool flu
     return result;
 }
 
+// https://www.unicode.org/L2/L2023/23003r-gb18030-recommendations.pdf
+static std::optional<uint16_t> gb18030AsymmetricEncode(UChar32 codePoint)
+{
+    switch (codePoint) {
+    case 0xE78D:
+        return 0xA6D9;
+    case 0xE78E:
+        return 0xA6DA;
+    case 0xE78F:
+        return 0xA6DB;
+    case 0xE790:
+        return 0xA6DC;
+    case 0xE791:
+        return 0xA6DD;
+    case 0xE792:
+        return 0xA6DE;
+    case 0xE793:
+        return 0xA6DF;
+    case 0xE794:
+        return 0xA6EC;
+    case 0xE795:
+        return 0xA6ED;
+    case 0xE796:
+        return 0xA6F3;
+    case 0xE81E:
+        return 0xFE59;
+    case 0xE826:
+        return 0xFE61;
+    case 0xE82B:
+        return 0xFE66;
+    case 0xE82C:
+        return 0xFE67;
+    case 0xE832:
+        return 0xFE6D;
+    case 0xE843:
+        return 0xFE7E;
+    case 0xE854:
+        return 0xFE90;
+    case 0xE864:
+        return 0xFEA0;
+    default:
+        break;
+    }
+    return std::nullopt;
+}
+
 // https://encoding.spec.whatwg.org/#gb18030-encoder
 enum class IsGBK : bool { No, Yes };
 static Vector<uint8_t> gbEncodeShared(StringView string, Function<void(UChar32, Vector<uint8_t>&)>&& unencodableHandler, IsGBK isGBK)
@@ -999,8 +1045,14 @@ static Vector<uint8_t> gbEncodeShared(StringView string, Function<void(UChar32, 
             unencodableHandler(codePoint, result);
             continue;
         }
-        if (isGBK == IsGBK::Yes && codePoint == 0x20AC) {
-            result.append(0x80);
+        if (isGBK == IsGBK::Yes) {
+            if (codePoint == 0x20AC) {
+                result.append(0x80);
+                continue;
+            }
+        } else if (auto encoded = gb18030AsymmetricEncode(codePoint)) {
+            result.append(*encoded >> 8);
+            result.append(*encoded);
             continue;
         }
         auto pointerRange = findInSortedPairs(gb18030EncodeIndex(), codePoint);
