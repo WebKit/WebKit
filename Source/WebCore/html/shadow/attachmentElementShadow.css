@@ -67,7 +67,7 @@ img#attachment-icon {
     grid-row: 1;
     grid-column: 1;
 #if (defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY)
-    width: 72px; /* Co-dependent with iconSize in HTMLAttachmentElement::needWideLayoutIcon */
+    width: 72px;
     height: 72px;
 #else
     width: 52px;
