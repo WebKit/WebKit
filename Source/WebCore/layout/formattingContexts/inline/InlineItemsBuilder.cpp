@@ -131,7 +131,8 @@ void InlineItemsBuilder::build(InlineItemPosition startPosition)
 #endif
 }
 
-using LayoutQueue = Vector<const Box*>;
+using LayoutQueue = Vector<CheckedRef<const Box>>;
+
 static bool traverseUntilDamaged(LayoutQueue& layoutQueue, const Box& root, const Box& firstDamagedLayoutBox)
 {
     if (&root == &firstDamagedLayoutBox)
@@ -140,14 +141,14 @@ static bool traverseUntilDamaged(LayoutQueue& layoutQueue, const Box& root, cons
     auto shouldSkipSubtree = root.establishesFormattingContext();
     if (!shouldSkipSubtree && is<ElementBox>(root) && downcast<ElementBox>(root).hasChild()) {
         auto& firstChild = *downcast<ElementBox>(root).firstChild();
-        layoutQueue.append(&firstChild);
+        layoutQueue.append(firstChild);
         if (traverseUntilDamaged(layoutQueue, firstChild, firstDamagedLayoutBox))
             return true;
         layoutQueue.takeLast();
     }
     if (auto* nextSibling = root.nextSibling()) {
         layoutQueue.takeLast();
-        layoutQueue.append(nextSibling);
+        layoutQueue.append(*nextSibling);
         if (traverseUntilDamaged(layoutQueue, *nextSibling, firstDamagedLayoutBox))
             return true;
     }
@@ -156,8 +157,14 @@ static bool traverseUntilDamaged(LayoutQueue& layoutQueue, const Box& root, cons
 
 static LayoutQueue initializeLayoutQueue(const ElementBox& formattingContextRoot, InlineItemPosition startPosition, const InlineItems& currentInlineItems)
 {
+    if (!formattingContextRoot.firstChild()) {
+        // There should always be at least one inflow child in this inline formatting context.
+        ASSERT_NOT_REACHED();
+        return { };
+    }
+
     if (!startPosition)
-        return { formattingContextRoot.firstChild() };
+        return { *formattingContextRoot.firstChild() };
     // For partial layout we need to build the layout queue up to the point where the new content is in order
     // to be able to produce non-content type of trailing inline items.
     // e.g <div><span<span>text</span></span> produces
@@ -168,24 +175,18 @@ static LayoutQueue initializeLayoutQueue(const ElementBox& formattingContextRoot
     // where we start processing the content at the new layout box and continue with whatever we have on the stack (layout queue).
     if (startPosition.index >= currentInlineItems.size()) {
         ASSERT_NOT_REACHED();
-        return { formattingContextRoot.firstChild() };
-    }
-
-    if (!formattingContextRoot.firstChild()) {
-        // There should always be at least one inflow child in this inline formatting context.
-        ASSERT_NOT_REACHED();
-        return { };
+        return { *formattingContextRoot.firstChild() };
     }
 
     auto& firstDamagedLayoutBox = currentInlineItems[startPosition.index].layoutBox();
     auto& firstChild = *formattingContextRoot.firstChild();
     LayoutQueue layoutQueue;
-    layoutQueue.append(&firstChild);
+    layoutQueue.append(firstChild);
     traverseUntilDamaged(layoutQueue, firstChild, firstDamagedLayoutBox);
 
     if (layoutQueue.isEmpty()) {
         ASSERT_NOT_REACHED();
-        layoutQueue.append(formattingContextRoot.firstChild());
+        layoutQueue.append(*formattingContextRoot.firstChild());
     }
     return layoutQueue;
 }
@@ -217,8 +218,8 @@ void InlineItemsBuilder::collectInlineItems(InlineItems& inlineItems, Formatting
 
     while (!layoutQueue.isEmpty()) {
         while (true) {
-            auto& layoutBox = *layoutQueue.last();
-            auto isInlineBoxWithInlineContent = layoutBox.isInlineBox() && !layoutBox.isInlineTextBox() && !layoutBox.isLineBreakBox() && !layoutBox.isOutOfFlowPositioned();
+            auto layoutBox = layoutQueue.last();
+            auto isInlineBoxWithInlineContent = layoutBox->isInlineBox() && !layoutBox->isInlineTextBox() && !layoutBox->isLineBreakBox() && !layoutBox->isOutOfFlowPositioned();
             if (!isInlineBoxWithInlineContent)
                 break;
             // This is the start of an inline box (e.g. <span>).
@@ -226,29 +227,29 @@ void InlineItemsBuilder::collectInlineItems(InlineItems& inlineItems, Formatting
             auto& inlineBox = downcast<ElementBox>(layoutBox);
             if (!inlineBox.hasChild())
                 break;
-            layoutQueue.append(inlineBox.firstChild());
+            layoutQueue.append(*inlineBox.firstChild());
         }
 
         while (!layoutQueue.isEmpty()) {
-            auto& layoutBox = *layoutQueue.takeLast();
-            if (layoutBox.isInlineTextBox()) {
+            auto layoutBox = layoutQueue.takeLast();
+            if (layoutBox->isInlineTextBox()) {
                 auto& inlineTextBox = downcast<InlineTextBox>(layoutBox);
                 handleTextContent(inlineTextBox, inlineItems, partialContentOffset(inlineTextBox));
-            } else if (layoutBox.isAtomicInlineLevelBox() || layoutBox.isLineBreakBox())
+            } else if (layoutBox->isAtomicInlineLevelBox() || layoutBox->isLineBreakBox())
                 handleInlineLevelBox(layoutBox, inlineItems);
-            else if (layoutBox.isInlineBox())
+            else if (layoutBox->isInlineBox())
                 handleInlineBoxEnd(layoutBox, inlineItems);
-            else if (layoutBox.isFloatingPositioned())
+            else if (layoutBox->isFloatingPositioned())
                 inlineItems.append({ layoutBox, InlineItem::Type::Float });
-            else if (layoutBox.isOutOfFlowPositioned()) {
+            else if (layoutBox->isOutOfFlowPositioned()) {
                 // Let's not construct InlineItems for out-of-flow content as they don't participate in the inline layout.
                 // However to be able to static positioning them, we need to compute their approximate positions.
                 outOfFlowBoxes.append(layoutBox);
             } else
                 ASSERT_NOT_REACHED();
 
-            if (auto* nextSibling = layoutBox.nextSibling()) {
-                layoutQueue.append(nextSibling);
+            if (auto* nextSibling = layoutBox->nextSibling()) {
+                layoutQueue.append(*nextSibling);
                 break;
             }
         }
