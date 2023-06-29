@@ -718,6 +718,26 @@ bool Quirks::shouldOmitHTMLDocumentSupportedPropertyNames()
 #endif
 }
 
+// rdar://110097836
+bool Quirks::shouldSilenceResizeObservers() const
+{
+#if PLATFORM(IOS) || PLATFORM(VISION)
+    if (!needsQuirks())
+        return false;
+
+    // ResizeObservers are silenced on YouTube during the 'homing out' snapshout sequence to
+    // resolve rdar://109837319. This is due to a bug on the site that is causing unexpected
+    // content layout and can be removed when it is addressed.
+    auto* page = m_document->page();
+    if (!page || !page->isTakingSnapshotsForApplicationSuspension())
+        return false;
+
+    return RegistrableDomain(m_document->topDocument().url()) == "youtube.com"_s;
+#else
+    return false;
+#endif
+}
+
 bool Quirks::shouldSilenceWindowResizeEvents() const
 {
 #if PLATFORM(IOS) || PLATFORM(VISION)

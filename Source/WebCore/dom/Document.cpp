@@ -8601,6 +8601,10 @@ void Document::setHasSkippedResizeObservations(bool skipped)
 
 void Document::updateResizeObservations(Page& page)
 {
+    if (quirks().shouldSilenceResizeObservers()) {
+        addConsoleMessage(MessageSource::Other, MessageLevel::Info, "ResizeObservers silenced due to: http://webkit.org/b/258597"_s);
+        return;
+    }
     if (!hasResizeObservers() && !m_resizeObserverForContainIntrinsicSize)
         return;
 
