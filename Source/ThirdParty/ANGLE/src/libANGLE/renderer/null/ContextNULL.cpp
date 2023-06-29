@@ -67,6 +67,8 @@ ContextNULL::ContextNULL(const gl::State &state,
     ASSERT(mAllocationTracker != nullptr);
 
     mExtensions                               = gl::Extensions();
+    mExtensions.blendEquationAdvancedKHR      = true;
+    mExtensions.blendFuncExtendedEXT          = true;
     mExtensions.copyCompressedTextureCHROMIUM = true;
     mExtensions.copyTextureCHROMIUM           = true;
     mExtensions.debugMarkerEXT                = true;
@@ -372,10 +374,10 @@ angle::Result ContextNULL::popDebugGroup(const gl::Context *context)
 }
 
 angle::Result ContextNULL::syncState(const gl::Context *context,
-                                     const gl::State::DirtyBits &dirtyBits,
-                                     const gl::State::DirtyBits &bitMask,
-                                     const gl::State::ExtendedDirtyBits &extendedDirtyBits,
-                                     const gl::State::ExtendedDirtyBits &extendedBitMask,
+                                     const gl::state::DirtyBits &dirtyBits,
+                                     const gl::state::DirtyBits &bitMask,
+                                     const gl::state::ExtendedDirtyBits &extendedDirtyBits,
+                                     const gl::state::ExtendedDirtyBits &extendedBitMask,
                                      gl::Command command)
 {
     return angle::Result::Continue;

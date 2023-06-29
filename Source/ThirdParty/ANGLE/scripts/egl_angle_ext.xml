@@ -76,7 +76,7 @@
             <param><ptype>EGLint</ptype> <name>mode</name></param>
         </command>
         <command>
-            <proto><ptype>const char *</ptype> <name>eglQueryStringiANGLE</name></proto>
+            <proto>const char *<name>eglQueryStringiANGLE</name></proto>
             <param><ptype>EGLDisplay</ptype> <name>dpy</name></param>
             <param><ptype>EGLint</ptype> <name>name</name></param>
             <param><ptype>EGLint</ptype> <name>index</name></param>
@@ -85,35 +85,35 @@
             <proto><ptype>EGLBoolean</ptype> <name>eglDisplayAttribANGLE</name></proto>
             <param><ptype>EGLDisplay</ptype> <name>dpy</name></param>
             <param><ptype>EGLint</ptype> <name>attribute</name></param>
-            <param><ptype>EGLAttrib *</ptype> <name>value</name></param>
+            <param><ptype>EGLAttrib</ptype> *<name>value</name></param>
         </command>
         <command>
-            <proto><pytpe>EGLBoolean</pytpe> <name>eglSwapBuffersWithFrameTokenANGLE</name></proto>
+            <proto><ptype>EGLBoolean</ptype> <name>eglSwapBuffersWithFrameTokenANGLE</name></proto>
             <param><ptype>EGLDisplay</ptype> <name>dpy</name></param>
             <param><ptype>EGLSurface</ptype> <name>surface</name></param>
             <param><ptype>EGLFrameTokenANGLE</ptype> <name>frametoken</name></param>
         </command>
         <command>
-            <proto><pytpe>EGLBoolean</pytpe> <name>eglPrepareSwapBuffersANGLE</name></proto>
+            <proto><ptype>EGLBoolean</ptype> <name>eglPrepareSwapBuffersANGLE</name></proto>
             <param><ptype>EGLDisplay</ptype> <name>dpy</name></param>
             <param><ptype>EGLSurface</ptype> <name>surface</name></param>
         </command>
         <command>
-            <proto><pytpe>void</pytpe> <name>eglReleaseHighPowerGPUANGLE</name></proto>
+            <proto>void <name>eglReleaseHighPowerGPUANGLE</name></proto>
             <param><ptype>EGLDisplay</ptype> <name>dpy</name></param>
             <param><ptype>EGLContext</ptype> <name>ctx</name></param>
         </command>
         <command>
-            <proto><pytpe>void</pytpe> <name>eglReacquireHighPowerGPUANGLE</name></proto>
+            <proto>void <name>eglReacquireHighPowerGPUANGLE</name></proto>
             <param><ptype>EGLDisplay</ptype> <name>dpy</name></param>
             <param><ptype>EGLContext</ptype> <name>ctx</name></param>
         </command>
         <command>
-            <proto><pytpe>void</pytpe> <name>eglHandleGPUSwitchANGLE</name></proto>
+            <proto>void <name>eglHandleGPUSwitchANGLE</name></proto>
             <param><ptype>EGLDisplay</ptype> <name>dpy</name></param>
         </command>
         <command>
-            <proto><pytpe>void</pytpe> <name>eglForceGPUSwitchANGLE</name></proto>
+            <proto>void <name>eglForceGPUSwitchANGLE</name></proto>
             <param><ptype>EGLDisplay</ptype> <name>dpy</name></param>
             <param><ptype>EGLint</ptype> <name>gpuIDHigh</name></param>
             <param><ptype>EGLint</ptype> <name>gpuIDLow</name></param>
@@ -122,22 +122,22 @@
             <proto><ptype>EGLBoolean</ptype> <name>eglQueryDisplayAttribANGLE</name></proto>
             <param><ptype>EGLDisplay</ptype> <name>dpy</name></param>
             <param><ptype>EGLint</ptype> <name>attribute</name></param>
-            <param><ptype>EGLAttrib *</ptype> <name>value</name></param>
+            <param><ptype>EGLAttrib</ptype> *<name>value</name></param>
         </command>
         <command>
             <proto><ptype>EGLBoolean</ptype> <name>eglExportVkImageANGLE</name></proto>
             <param><ptype>EGLDisplay</ptype> <name>dpy</name></param>
             <param><ptype>EGLImage</ptype> <name>image</name></param>
-            <param><ptype>void *</ptype> <name>vk_image</name></param>
-            <param><ptype>void *</ptype> <name>vk_image_create_info</name></param>
+            <param>void *<name>vk_image</name></param>
+            <param>void *<name>vk_image_create_info</name></param>
         </command>
         <command>
-            <proto><ptype>void *</ptype> <name>eglCopyMetalSharedEventANGLE</name></proto>
+            <proto>void *<name>eglCopyMetalSharedEventANGLE</name></proto>
             <param><ptype>EGLDisplay</ptype> <name>dpy</name></param>
             <param><ptype>EGLSyncKHR</ptype> <name>sync</name></param>
         </command>
         <command>
-            <proto><ptype>void</ptype> <name>eglWaitUntilWorkScheduledANGLE</name></proto>
+            <proto>void <name>eglWaitUntilWorkScheduledANGLE</name></proto>
             <param><ptype>EGLDisplay</ptype> <name>dpy</name></param>
         </command>
     </commands>
@@ -471,7 +471,7 @@
                 <enum name="EGL_SYNC_METAL_SHARED_EVENT_OBJECT_ANGLE"/>
                 <enum name="EGL_SYNC_METAL_SHARED_EVENT_SIGNAL_VALUE_LO_ANGLE"/>
                 <enum name="EGL_SYNC_METAL_SHARED_EVENT_SIGNAL_VALUE_HI_ANGLE"/>
-                <enum name="EGL_SYNC_METAL_SHARED_EVENT_SIGNALED" />
+                <enum name="EGL_SYNC_METAL_SHARED_EVENT_SIGNALED_ANGLE" />
             </require>
         </extension>
     </extensions>

@@ -32,22 +32,39 @@
 // Geometry and tessellation failures on the Android and Linux bots, potentially due to missing
 // features from old drivers.  On up-to-date Linux, the expectations should be as above for windows.
 // No triaging is done to know which of these tests actually fail on the bots.
-5579 VULKAN ANDROID : KHR-GLES32.core.geometry_shader.* = SKIP
-5579 VULKAN ANDROID : KHR-GLES32.core.texture_cube_map_array.*geometry* = SKIP
-5579 VULKAN ANDROID : KHR-GLES32.core.constant_expressions.*geometry = SKIP
-5579 VULKAN ANDROID : KHR-GLES32.core.separable_programs_tf.geometry_active = SKIP
-5579 VULKAN ANDROID : KHR-GLES32.core.shader_macros.fragment_precision_high_geometry = SKIP
-5579 VULKAN ANDROID : KHR-GLES32.core.texture_cube_map_array.color_depth_attachments = SKIP
-5579 VULKAN ANDROID : KHR-GLES32.core.texture_cube_map_array.stencil_attachments_*mutable_layered = SKIP
-5579 VULKAN ANDROID : KHR-GLES32.core.texture_cube_map_array.fbo_incompleteness = FAIL
-5557 VULKAN ANDROID : KHR-GLES32.core.tessellation_shader.* = SKIP
-5557 VULKAN ANDROID : KHR-GLES32.core.texture_cube_map_array.*tessellation* = SKIP
-5557 VULKAN ANDROID : KHR-GLES32.core.texture_cube_map_array.*tesselation* = SKIP
-5557 VULKAN ANDROID : KHR-GLES32.core.constant_expressions.*tess_control = SKIP
-5557 VULKAN ANDROID : KHR-GLES32.core.constant_expressions.*tess_eval = SKIP
-5557 VULKAN ANDROID : KHR-GLES32.core.separable_programs_tf.tessellation_active = SKIP
-5557 VULKAN ANDROID : KHR-GLES32.core.shader_macros.fragment_precision_high_tess_* = SKIP
-5557 VULKAN ANDROID : KHR-GLES32.core.texture_cube_map_array.sampling = SKIP
+5579 VULKAN PIXEL4ORXL : KHR-GLES32.core.geometry_shader.* = SKIP
+5579 VULKAN PIXEL4ORXL : KHR-GLES32.core.texture_cube_map_array.*geometry* = SKIP
+5579 VULKAN PIXEL4ORXL : KHR-GLES32.core.separable_programs_tf.geometry_active = SKIP
+5579 VULKAN PIXEL4ORXL : KHR-GLES32.core.texture_cube_map_array.color_depth_attachments = SKIP
+5579 VULKAN PIXEL4ORXL : KHR-GLES32.core.texture_cube_map_array.fbo_incompleteness = FAIL
+5557 VULKAN PIXEL4ORXL : KHR-GLES32.core.tessellation_shader.* = SKIP
+5557 VULKAN PIXEL4ORXL : KHR-GLES32.core.texture_cube_map_array.*tesselation* = SKIP
+5557 VULKAN PIXEL4ORXL : KHR-GLES32.core.constant_expressions.*tess_control = SKIP
+5557 VULKAN PIXEL4ORXL : KHR-GLES32.core.constant_expressions.*tess_eval = SKIP
+5557 VULKAN PIXEL4ORXL : KHR-GLES32.core.separable_programs_tf.tessellation_active = SKIP
+5557 VULKAN PIXEL4ORXL : KHR-GLES32.core.shader_macros.fragment_precision_high_tess_* = SKIP
+
+// Tessellation Shader Failures on Pixel6
+5557 VULKAN PIXEL6 : KHR-GLES32.core.tessellation_shader.vertex.vertex_ordering = SKIP
+5557 VULKAN PIXEL6 : KHR-GLES32.core.tessellation_shader.tessellation_shader_tessellation.gl_InvocationID_PatchVerticesIn_PrimitiveID = SKIP
+5557 VULKAN PIXEL6 : KHR-GLES32.core.tessellation_shader.tessellation_shader_quads_tessellation.degenerate_case = SKIP
+5557 VULKAN PIXEL6 : KHR-GLES32.core.tessellation_shader.tessellation_invariance.invariance_rule2 = SKIP
+5557 VULKAN PIXEL6 : KHR-GLES32.core.tessellation_shader.tessellation_invariance.invariance_rule5 = SKIP
+5557 VULKAN PIXEL6 : KHR-GLES32.core.tessellation_shader.tessellation_invariance.invariance_rule6 = SKIP
+5557 VULKAN PIXEL6 : KHR-GLES32.core.tessellation_shader.tessellation_invariance.invariance_rule4 = SKIP
+5557 VULKAN PIXEL6 : KHR-GLES32.core.tessellation_shader.tessellation_shader_point_mode.points_verification = SKIP
+5557 VULKAN PIXEL6 : KHR-GLES32.core.tessellation_shader.tessellation_control_to_tessellation_evaluation.gl_tessLevel = SKIP
+5557 VULKAN PIXEL6 : KHR-GLES32.core.tessellation_shader.vertex.vertex_spacing = SKIP
+5557 VULKAN PIXEL6 : KHR-GLES32.core.tessellation_shader.tessellation_invariance.invariance_rule7 = SKIP
+5557 VULKAN PIXEL6 : KHR-GLES32.core.tessellation_shader.tessellation_control_to_tessellation_evaluation.gl_in = SKIP
+5557 VULKAN PIXEL6 : KHR-GLES32.core.tessellation_shader.tessellation_shader_triangles_tessellation.inner_tessellation_level_rounding = SKIP
+5557 VULKAN PIXEL6 : KHR-GLES32.core.tessellation_shader.tessellation_control_to_tessellation_evaluation.data_pass_through = SKIP
+5557 VULKAN PIXEL6 : KHR-GLES32.core.tessellation_shader.tessellation_shader_tessellation.TCS_TES = SKIP
+5557 VULKAN PIXEL6 : KHR-GLES32.core.tessellation_shader.tessellation_shader_quads_tessellation.inner_tessellation_level_rounding = SKIP
+5557 VULKAN PIXEL6 : KHR-GLES32.core.tessellation_shader.tessellation_invariance.invariance_rule3 = SKIP
+5557 VULKAN PIXEL6 : KHR-GLES32.core.tessellation_shader.tessellation_control_to_tessellation_evaluation.gl_MaxPatchVertices_Position_PointSize = SKIP
+5557 VULKAN PIXEL6 : KHR-GLES32.core.tessellation_shader.tessellation_shader_triangles_tessellation.identical_triangles = SKIP
+5557 VULKAN PIXEL6 : KHR-GLES32.core.tessellation_shader.tessellation_invariance.invariance_rule1 = SKIP
 
 5579 VULKAN LINUX : KHR-GLES32.core.geometry_shader.* = SKIP
 5579 VULKAN LINUX : KHR-GLES32.core.texture_cube_map_array.*geometry* = SKIP
@@ -69,19 +86,18 @@
 6008 VULKAN NVIDIA LINUX :  KHR-GLES32.core.framebuffer_completeness.cube_map_layered_attachment_valid_size_and_format = SKIP
 
 // https://gitlab.khronos.org/Tracker/vk-gl-cts/-/issues/4292
-5978 : KHR-GLES32.core.texture_border_clamp.Texture2DDC16Linear = SKIP
-5978 : KHR-GLES32.core.texture_border_clamp.Texture2DDC32FLinear = SKIP
+5978 VULKAN WIN NVIDIA : KHR-GLES32.core.texture_border_clamp.Texture2DDC16Linear = SKIP
+5978 VULKAN WIN NVIDIA : KHR-GLES32.core.texture_border_clamp.Texture2DDC32FLinear = SKIP
+5978 VULKAN PIXEL6 : KHR-GLES32.core.texture_border_clamp.Texture2DDC16Linear = SKIP
+5978 VULKAN PIXEL6 : KHR-GLES32.core.texture_border_clamp.Texture2DDC32FLinear = SKIP
 
 // Lack of border clamp support on older drivers.
 3577 VULKAN LINUX NVIDIA : KHR-GLES32.core.texture_border_clamp.* = SKIP
 3577 VULKAN LINUX NVIDIA : KHR-GLES32.core.gpu_shader5.*clamp*_border = SKIP
 3577 VULKAN LINUX NVIDIA : KHR-GLES32.core.gpu_shader5.*clamp*_edge = SKIP
-3577 VULKAN ANDROID : KHR-GLES32.core.texture_border_clamp.* = SKIP
-3577 VULKAN ANDROID : KHR-GLES32.core.gpu_shader5.*clamp*_border = SKIP
-3577 VULKAN ANDROID : KHR-GLES32.core.gpu_shader5.*clamp*_edge = SKIP
-
-// No known implementation supports STORAGE_TEXEL_BUFFER support for RGB32 formats
-3573 VULKAN : KHR-GLES32.core.texture_buffer.texture_buffer_texture_buffer_range = SKIP
+3577 VULKAN PIXEL4ORXL : KHR-GLES32.core.texture_border_clamp.* = SKIP
+3577 VULKAN PIXEL4ORXL : KHR-GLES32.core.gpu_shader5.*clamp*_border = SKIP
+3577 VULKAN PIXEL4ORXL : KHR-GLES32.core.gpu_shader5.*clamp*_edge = SKIP
 
 // Desktop cards without native etc support
 5276 AMD VULKAN LINUX : KHR-GLES32.core.texture_cube_map_array.etc2_texture = FAIL
@@ -89,13 +105,9 @@
 5276 NVIDIA VULKAN : KHR-GLES32.core.texture_cube_map_array.etc2_texture = FAIL
 
 // Validation errors
-6441 VULKAN : KHR-GLES32.core.compressed_format.api.texstorage_accepts_compressed_format = FAIL
-6441 VULKAN : KHR-GLES32.core.compressed_format.api.invalid_inconsistent_data_size = FAIL
-6441 VULKAN : KHR-GLES32.core.compressed_format.api.invalid_inconsistent_data_size_array = FAIL
-6441 VULKAN : KHR-GLES32.core.compressed_format.api.invalid_offset_or_size = FAIL
-6441 VULKAN : KHR-GLES32.core.compressed_format.api.copy_compressed_to_uncompressed = FAIL
-6441 VULKAN : KHR-GLES32.core.compressed_format.api.copy_uncompressed_to_compressed = FAIL
-6441 VULKAN : KHR-GLES32.core.compressed_format.api.copy_compressed_to_compressed = FAIL
+6441 VULKAN NVIDIA : KHR-GLES32.core.compressed_format.api.copy_compressed_to_uncompressed = FAIL
+6441 VULKAN NVIDIA : KHR-GLES32.core.compressed_format.api.copy_uncompressed_to_compressed = FAIL
+6441 VULKAN NVIDIA : KHR-GLES32.core.compressed_format.api.copy_compressed_to_compressed = FAIL
 // Looks like test error where ASTC support is not queried
 6441 VULKAN NVIDIA : KHR-GLES32.core.compressed_format.format.*astc* = FAIL
 6441 VULKAN AMD : KHR-GLES32.core.compressed_format.format.*astc* = FAIL
@@ -103,5 +115,5 @@
 // Pixel 4 expectations.
 5990 PIXEL4ORXL VULKAN : KHR-GLES32.core.draw_buffers_indexed.color_masks = SKIP
 
-// Failure since VK-GL-CTS roll (2023-02-28)
-8045 : KHR-GLES32.shaders.negative.non_precision_qualifiers_in_struct_members = SKIP
+// Samsung Galaxy S23
+8157 GALAXYS23 VULKAN : KHR-GLES32.shaders.function.global_variable_aliasing_fragment = SKIP

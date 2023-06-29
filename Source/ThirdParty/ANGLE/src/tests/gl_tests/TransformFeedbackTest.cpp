@@ -170,7 +170,7 @@ void main()
 TEST_P(TransformFeedbackTest, ZeroSizedViewport)
 {
     // http://anglebug.com/5154
-    ANGLE_SKIP_TEST_IF(IsOSX() && IsOpenGL());
+    ANGLE_SKIP_TEST_IF(IsMac() && IsOpenGL());
 
     // Set the program's transform feedback varyings (just gl_Position)
     std::vector<std::string> tfVaryings;
@@ -252,7 +252,7 @@ TEST_P(TransformFeedbackTest, QueryActiveNoXfbDrawThenXfbBeginEnd)
 TEST_P(TransformFeedbackTest, BufferRebinding)
 {
     // http://anglebug.com/5154
-    ANGLE_SKIP_TEST_IF(IsOSX() && IsOpenGL());
+    ANGLE_SKIP_TEST_IF(IsMac() && IsOpenGL());
 
     glDisable(GL_DEPTH_TEST);
 
@@ -332,7 +332,7 @@ TEST_P(TransformFeedbackTest, RecordAndDraw)
     ANGLE_SKIP_TEST_IF(IsWindows() && IsIntel() && IsVulkan());
 
     // Fails on Mac GL drivers. http://anglebug.com/4992
-    ANGLE_SKIP_TEST_IF(IsOpenGL() && IsOSX());
+    ANGLE_SKIP_TEST_IF(IsOpenGL() && IsMac());
 
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
     glClear(GL_COLOR_BUFFER_BIT);
@@ -407,7 +407,7 @@ TEST_P(TransformFeedbackTest, SpanMultipleRenderPasses)
     ANGLE_SKIP_TEST_IF(IsWindows() && IsIntel() && IsVulkan());
 
     // Fails on Mac GL drivers. http://anglebug.com/4992
-    ANGLE_SKIP_TEST_IF(IsOpenGL() && IsOSX());
+    ANGLE_SKIP_TEST_IF(IsOpenGL() && IsMac());
 
     // anglebug.com/5429
     ANGLE_SKIP_TEST_IF(IsAndroid() && IsOpenGLES());
@@ -503,12 +503,12 @@ TEST_P(TransformFeedbackTest, UseAsUBOThenUpdateThenCapture)
     ANGLE_SKIP_TEST_IF(IsWindows() && IsIntel() && IsVulkan());
 
     // Fails on Mac GL drivers. http://anglebug.com/4992
-    ANGLE_SKIP_TEST_IF(IsOpenGL() && IsOSX());
+    ANGLE_SKIP_TEST_IF(IsOpenGL() && IsMac());
 
     const std::array<uint32_t, 12> kInitialData = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11};
     const std::array<uint32_t, 12> kUpdateData  = {
-         0x12345678u, 0x9ABCDEF0u, 0x13579BDFu, 0x2468ACE0u, 0x23456781u, 0xABCDEF09u,
-         0x3579BDF1u, 0x468ACE02u, 0x34567812u, 0xBCDEF09Au, 0x579BDF13u, 0x68ACE024u,
+        0x12345678u, 0x9ABCDEF0u, 0x13579BDFu, 0x2468ACE0u, 0x23456781u, 0xABCDEF09u,
+        0x3579BDF1u, 0x468ACE02u, 0x34567812u, 0xBCDEF09Au, 0x579BDF13u, 0x68ACE024u,
     };
 
     GLBuffer buffer;
@@ -662,7 +662,7 @@ TEST_P(TransformFeedbackTest, ClearWhileRecordingDoesNotContribute)
     ANGLE_SKIP_TEST_IF(IsWindows() && IsIntel() && IsVulkan());
 
     // Fails on Mac GL drivers. http://anglebug.com/4992
-    ANGLE_SKIP_TEST_IF(IsOpenGL() && IsOSX());
+    ANGLE_SKIP_TEST_IF(IsOpenGL() && IsMac());
 
     // anglebug.com/5434
     ANGLE_SKIP_TEST_IF(IsAndroid() && IsOpenGLES());
@@ -702,7 +702,7 @@ TEST_P(TransformFeedbackTest, CopyWhileRecordingDoesNotContribute)
     ANGLE_SKIP_TEST_IF(IsWindows() && IsIntel() && IsVulkan());
 
     // Fails on Mac GL drivers. http://anglebug.com/4992
-    ANGLE_SKIP_TEST_IF(IsOpenGL() && IsOSX());
+    ANGLE_SKIP_TEST_IF(IsOpenGL() && IsMac());
 
     // anglebug.com/5434
     ANGLE_SKIP_TEST_IF(IsAndroid() && IsOpenGLES());
@@ -739,7 +739,7 @@ TEST_P(TransformFeedbackTest, BlitWhileRecordingDoesNotContribute)
     ANGLE_SKIP_TEST_IF(IsWindows() && IsIntel() && IsVulkan());
 
     // Fails on Mac GL drivers. http://anglebug.com/4992
-    ANGLE_SKIP_TEST_IF(IsOpenGL() && IsOSX());
+    ANGLE_SKIP_TEST_IF(IsOpenGL() && IsMac());
 
     // anglebug.com/5434
     ANGLE_SKIP_TEST_IF(IsAndroid() && IsOpenGLES());
@@ -842,7 +842,7 @@ TEST_P(TransformFeedbackTest, DISABLED_TooSmallBuffers)
 TEST_P(TransformFeedbackTest, BufferBinding)
 {
     // http://anglebug.com/5154
-    ANGLE_SKIP_TEST_IF(IsOSX() && IsOpenGL());
+    ANGLE_SKIP_TEST_IF(IsMac() && IsOpenGL());
 
     // Reset any state
     glBindTransformFeedback(GL_TRANSFORM_FEEDBACK, 0);
@@ -1046,7 +1046,7 @@ TEST_P(TransformFeedbackTest, InactiveStructureVarying)
 TEST_P(TransformFeedbackTest, MultiplePaused)
 {
     // Crashes on Mac Intel GL drivers. http://anglebug.com/4992
-    ANGLE_SKIP_TEST_IF(IsOpenGL() && IsIntel() && IsOSX());
+    ANGLE_SKIP_TEST_IF(IsOpenGL() && IsIntel() && IsMac());
 
     const size_t drawSize = 1024;
     std::vector<float> transformFeedbackData(drawSize);
@@ -1136,7 +1136,7 @@ void main(void)
 TEST_P(TransformFeedbackTest, MultiContext)
 {
     // These tests are flaky, do not lift these unless you find the root cause and the fix.
-    ANGLE_SKIP_TEST_IF(IsOSX() && IsOpenGL());
+    ANGLE_SKIP_TEST_IF(IsMac() && IsOpenGL());
 
     ANGLE_SKIP_TEST_IF(IsLinux() && IsAMD() && IsOpenGL());
 
@@ -1320,7 +1320,7 @@ TEST_P(TransformFeedbackTest, PackingBug)
     ANGLE_SKIP_TEST_IF(IsWindows() && IsIntel() && IsVulkan());
 
     // TODO(anglebug.com/5360): Timing out on ARM-based Apple DTKs.
-    ANGLE_SKIP_TEST_IF(IsOSX() && IsARM64() && IsDesktopOpenGL());
+    ANGLE_SKIP_TEST_IF(IsMac() && IsARM64() && IsDesktopOpenGL());
 
     // TODO(jmadill): With points and rasterizer discard?
     constexpr char kVS[] =
@@ -1454,7 +1454,7 @@ TEST_P(TransformFeedbackTest, TwoUnreferencedInFragShader)
     // TODO(anglebug.com/4533) This fails after the upgrade to the 26.20.100.7870 driver.
     ANGLE_SKIP_TEST_IF(IsWindows() && IsIntel() && IsVulkan());
     // TODO(anglebug.com/5360): Failing on ARM-based Apple DTKs.
-    ANGLE_SKIP_TEST_IF(IsOSX() && IsARM64() && IsDesktopOpenGL());
+    ANGLE_SKIP_TEST_IF(IsMac() && IsARM64() && IsDesktopOpenGL());
 
     // TODO(jmadill): With points and rasterizer discard?
     constexpr char kVS[] =
@@ -1522,7 +1522,7 @@ TEST_P(TransformFeedbackTest, TwoUnreferencedInFragShader)
 TEST_P(TransformFeedbackTest, OffsetResetOnBeginTransformFeedback)
 {
     // http://anglebug.com/5069
-    ANGLE_SKIP_TEST_IF(IsOpenGL() && IsOSX() && IsAMD());
+    ANGLE_SKIP_TEST_IF(IsOpenGL() && IsMac() && IsAMD());
 
     // http://anglebug.com/5069
     ANGLE_SKIP_TEST_IF(IsNexus5X() && IsOpenGLES());
@@ -2175,7 +2175,7 @@ TEST_P(TransformFeedbackTest, NonExistentTransformFeedbackVarying)
 TEST_P(TransformFeedbackTest, NonExistentTransformFeedbackVaryingWithGLPrefix)
 {
     // TODO(anglebug.com/5360): Failing on ARM-based Apple DTKs.
-    ANGLE_SKIP_TEST_IF(IsOSX() && IsARM64() && IsDesktopOpenGL());
+    ANGLE_SKIP_TEST_IF(IsMac() && IsARM64() && IsDesktopOpenGL());
 
     std::vector<std::string> tfVaryings;
     tfVaryings.push_back("gl_Bogus");
@@ -2278,7 +2278,7 @@ TEST_P(TransformFeedbackTest, NoTransformFeedbackVaryingsInUse)
 TEST_P(TransformFeedbackTest, SwitchProgramBeforeDraw)
 {
     // TODO(anglebug.com/5360): Failing on ARM-based Apple DTKs.
-    ANGLE_SKIP_TEST_IF(IsOSX() && IsARM64() && IsDesktopOpenGL());
+    ANGLE_SKIP_TEST_IF(IsMac() && IsARM64() && IsDesktopOpenGL());
 
     std::vector<std::string> tfVaryings;
     tfVaryings.push_back("gl_Position");
@@ -2556,7 +2556,7 @@ TEST_P(TransformFeedbackTest, OverrunWithPause)
     ANGLE_SKIP_TEST_IF(IsWindows() && IsIntel() && IsVulkan());
 
     // Fails on Mac Intel GL drivers. http://anglebug.com/4992
-    ANGLE_SKIP_TEST_IF(IsOpenGL() && IsIntel() && IsOSX());
+    ANGLE_SKIP_TEST_IF(IsOpenGL() && IsIntel() && IsMac());
 
     const std::vector<GLfloat> vertices = {
         -1.0f, 1.0f, 0.5f, 1.0f, -1.0f, -1.0f, 0.5f, 1.0f, 1.0f, -1.0f, 0.5f, 1.0f,
@@ -2637,10 +2637,10 @@ TEST_P(TransformFeedbackTest, OverrunWithMultiplePauseAndResume)
     ANGLE_SKIP_TEST_IF(IsOpenGL() && IsIntel() && IsWindows());
 
     // Fails on Mac AMD GL drivers. http://anglebug.com/4775
-    ANGLE_SKIP_TEST_IF(IsOpenGL() && IsAMD() && IsOSX());
+    ANGLE_SKIP_TEST_IF(IsOpenGL() && IsAMD() && IsMac());
 
     // Crashes on Mac Intel GL drivers. http://anglebug.com/4992
-    ANGLE_SKIP_TEST_IF(IsOpenGL() && IsIntel() && IsOSX());
+    ANGLE_SKIP_TEST_IF(IsOpenGL() && IsIntel() && IsMac());
 
     const std::vector<GLfloat> vertices = {
         -1.0f, 1.0f, 0.5f, 1.0f, -1.0f, -1.0f, 0.5f, 1.0f, 1.0f, -1.0f, 0.5f, 1.0f,
@@ -2760,7 +2760,7 @@ TEST_P(TransformFeedbackTest, EndThenBindNewBufferAndRestart)
 TEST_P(TransformFeedbackTest, DrawWithoutTransformFeedbackThenWith)
 {
     // Fails on Mac Intel GL drivers. http://anglebug.com/4992
-    ANGLE_SKIP_TEST_IF(IsOpenGL() && IsIntel() && IsOSX());
+    ANGLE_SKIP_TEST_IF(IsOpenGL() && IsIntel() && IsMac());
 
     constexpr char kVS[] =
         R"(#version 300 es
@@ -2852,7 +2852,7 @@ void main() {
 TEST_P(TransformFeedbackTest, RecordAndDrawWithScissorTest)
 {
     // http://crbug.com/1135841
-    ANGLE_SKIP_TEST_IF(IsAMD() && IsOSX());
+    ANGLE_SKIP_TEST_IF(IsAMD() && IsMac());
 
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -3749,9 +3749,9 @@ void main()
     constexpr size_t kCapturedVaryingsCount = 3;
     constexpr std::array<size_t, kCapturedVaryingsCount> kCaptureSizes = {8, 9, 4};
     const std::vector<float> kExpected[kCapturedVaryingsCount]         = {
-                {0.27, 0.30, 0.33, 0.36, 0.39, 0.42, 0.45, 0.48},
-                {0.63, 0.66, 0.69, 0.72, 0.75, 0.78, 0.81, 0.84, 0.87},
-                {0.25, 0.5, 0.75, 1.0},
+        {0.27, 0.30, 0.33, 0.36, 0.39, 0.42, 0.45, 0.48},
+        {0.63, 0.66, 0.69, 0.72, 0.75, 0.78, 0.81, 0.84, 0.87},
+        {0.25, 0.5, 0.75, 1.0},
     };
 
     ANGLE_GL_PROGRAM_TRANSFORM_FEEDBACK(program, kVS, kFS, tfVaryings, GL_INTERLEAVED_ATTRIBS);
@@ -3848,9 +3848,9 @@ void main()
     constexpr size_t kCapturedVaryingsCount                            = 3;
     constexpr std::array<size_t, kCapturedVaryingsCount> kCaptureSizes = {1, 2, 1};
     const std::vector<float> kExpected[kCapturedVaryingsCount]         = {
-                {0.25},
-                {0.5, 0.75},
-                {1.0},
+        {0.25},
+        {0.5, 0.75},
+        {1.0},
     };
 
     ANGLE_GL_PROGRAM_TRANSFORM_FEEDBACK(program, kVS, kFS, tfVaryings, GL_SEPARATE_ATTRIBS);
@@ -4396,6 +4396,7 @@ GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(TransformFeedbackTest);
 ANGLE_INSTANTIATE_TEST_ES3_AND(TransformFeedbackTest,
                                ES3_VULKAN()
                                    .disable(Feature::SupportsTransformFeedbackExtension)
+                                   .disable(Feature::SupportsPrimitivesGeneratedQuery)
                                    .disable(Feature::SupportsGeometryStreamsCapability)
                                    .enable(Feature::EmulateTransformFeedback));
 
@@ -4403,6 +4404,7 @@ GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(TransformFeedbackLifetimeTest);
 ANGLE_INSTANTIATE_TEST_ES3_AND(TransformFeedbackLifetimeTest,
                                ES3_VULKAN()
                                    .disable(Feature::SupportsTransformFeedbackExtension)
+                                   .disable(Feature::SupportsPrimitivesGeneratedQuery)
                                    .disable(Feature::SupportsGeometryStreamsCapability)
                                    .enable(Feature::EmulateTransformFeedback));
 
@@ -4410,6 +4412,7 @@ GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(TransformFeedbackTestES31);
 ANGLE_INSTANTIATE_TEST_ES31_AND(TransformFeedbackTestES31,
                                 ES31_VULKAN()
                                     .disable(Feature::SupportsTransformFeedbackExtension)
+                                    .disable(Feature::SupportsPrimitivesGeneratedQuery)
                                     .disable(Feature::SupportsGeometryStreamsCapability)
                                     .enable(Feature::EmulateTransformFeedback));
 
@@ -4417,6 +4420,7 @@ GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(TransformFeedbackTestIOBlocks);
 ANGLE_INSTANTIATE_TEST_ES31_AND(TransformFeedbackTestIOBlocks,
                                 ES31_VULKAN()
                                     .disable(Feature::SupportsTransformFeedbackExtension)
+                                    .disable(Feature::SupportsPrimitivesGeneratedQuery)
                                     .disable(Feature::SupportsGeometryStreamsCapability)
                                     .enable(Feature::EmulateTransformFeedback));
 
@@ -4427,6 +4431,7 @@ GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(TransformFeedbackWithDepthBufferTe
 ANGLE_INSTANTIATE_TEST_ES3_AND(TransformFeedbackWithDepthBufferTest,
                                ES3_VULKAN()
                                    .disable(Feature::SupportsTransformFeedbackExtension)
+                                   .disable(Feature::SupportsPrimitivesGeneratedQuery)
                                    .disable(Feature::SupportsGeometryStreamsCapability)
                                    .enable(Feature::EmulateTransformFeedback));
 }  // anonymous namespace

@@ -275,6 +275,10 @@ struct alignas(4) RenderPipelineDesc
     size_t hash() const;
     bool rasterizationEnabled() const;
 
+    AutoObjCPtr<MTLRenderPipelineDescriptor *> createMetalDesc(
+        id<MTLFunction> vertexShader,
+        id<MTLFunction> fragmentShader) const;
+
     VertexDesc vertexDescriptor;
 
     RenderPipelineOutputDesc outputDescriptor;
@@ -447,22 +451,6 @@ namespace rx
 namespace mtl
 {
 
-// Abstract factory to create specialized vertex & fragment shaders based on RenderPipelineDesc.
-class RenderPipelineCacheSpecializeShaderFactory
-{
-  public:
-    virtual ~RenderPipelineCacheSpecializeShaderFactory() = default;
-    // Get specialized shader for the render pipeline cache.
-    virtual angle::Result getSpecializedShader(ContextMtl *context,
-                                               gl::ShaderType shaderType,
-                                               const RenderPipelineDesc &renderPipelineDesc,
-                                               id<MTLFunction> *shaderOut) = 0;
-    // Check whether specialized shaders is required for the specified RenderPipelineDesc.
-    // If not, the render pipeline cache will use the supplied non-specialized shaders.
-    virtual bool hasSpecializedShader(gl::ShaderType shaderType,
-                                      const RenderPipelineDesc &renderPipelineDesc) = 0;
-};
-
 // Abstract factory to create specialized provoking vertex compute shaders based off of
 // compute shader pipeline descs
 
@@ -488,14 +476,8 @@ class RenderPipelineCache final : angle::NonCopyable
 {
   public:
     RenderPipelineCache();
-    RenderPipelineCache(RenderPipelineCacheSpecializeShaderFactory *specializedShaderFactory);
     ~RenderPipelineCache();
 
-    // Set non-specialized vertex/fragment shader to be used by render pipeline cache to create
-    // render pipeline state. If the internal
-    // RenderPipelineCacheSpecializeShaderFactory.hasSpecializedShader() returns false for a
-    // particular RenderPipelineDesc, the render pipeline cache will use the non-specialized
-    // shaders.
     void setVertexShader(ContextMtl *context, id<MTLFunction> shader);
     void setFragmentShader(ContextMtl *context, id<MTLFunction> shader);
 
@@ -531,7 +513,6 @@ class RenderPipelineCache final : angle::NonCopyable
     // One table with default attrib and one table without.
     angle::HashMap<RenderPipelineDesc, AutoObjCPtr<id<MTLRenderPipelineState>>>
         mRenderPipelineStates[2];
-    RenderPipelineCacheSpecializeShaderFactory *mSpecializedShaderFactory;
 };
 
 // render pipeline state cache per shader program

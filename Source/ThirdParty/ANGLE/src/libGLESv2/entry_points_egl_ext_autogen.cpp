@@ -13,6 +13,7 @@
 #include "libANGLE/capture/capture_egl_autogen.h"
 #include "libANGLE/entry_points_utils.h"
 #include "libANGLE/validationEGL_autogen.h"
+#include "libGLESv2/egl_context_lock_impl.h"
 #include "libGLESv2/egl_ext_stubs_autogen.h"
 #include "libGLESv2/global_state.h"
 
@@ -35,10 +36,14 @@ void EGLAPIENTRY EGL_SetBlobCacheFuncsANDROID(EGLDisplay dpy,
 
         egl::Display *dpyPacked = PackParam<egl::Display *>(dpy);
 
-        ANGLE_EGL_VALIDATE_VOID(thread, SetBlobCacheFuncsANDROID, GetDisplayIfValid(dpyPacked),
-                                dpyPacked, set, get);
+        {
+            ANGLE_EGL_SCOPED_CONTEXT_LOCK(SetBlobCacheFuncsANDROID, thread, dpyPacked);
+            ANGLE_EGL_VALIDATE_VOID(thread, SetBlobCacheFuncsANDROID, GetDisplayIfValid(dpyPacked),
+                                    dpyPacked, set, get);
 
-        SetBlobCacheFuncsANDROID(thread, dpyPacked, set, get);
+            SetBlobCacheFuncsANDROID(thread, dpyPacked, set, get);
+        }
+
         ANGLE_CAPTURE_EGL(SetBlobCacheFuncsANDROID, true, thread, dpyPacked, set, get);
     }
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
@@ -57,10 +62,14 @@ EGLClientBuffer EGLAPIENTRY EGL_CreateNativeClientBufferANDROID(const EGLint *at
 
         const AttributeMap &attrib_listPacked = PackParam<const AttributeMap &>(attrib_list);
 
-        ANGLE_EGL_VALIDATE(thread, CreateNativeClientBufferANDROID, nullptr, EGLClientBuffer,
-                           attrib_listPacked);
+        {
+            ANGLE_EGL_SCOPED_CONTEXT_LOCK(CreateNativeClientBufferANDROID, thread);
+            ANGLE_EGL_VALIDATE(thread, CreateNativeClientBufferANDROID, nullptr, EGLClientBuffer,
+                               attrib_listPacked);
 
-        returnValue = CreateNativeClientBufferANDROID(thread, attrib_listPacked);
+            returnValue = CreateNativeClientBufferANDROID(thread, attrib_listPacked);
+        }
+
         ANGLE_CAPTURE_EGL(CreateNativeClientBufferANDROID, true, thread, attrib_listPacked,
                           returnValue);
     }
@@ -86,12 +95,16 @@ EGLBoolean EGLAPIENTRY EGL_GetCompositorTimingSupportedANDROID(EGLDisplay dpy,
         SurfaceID surfacePacked     = PackParam<SurfaceID>(surface);
         CompositorTiming namePacked = PackParam<CompositorTiming>(name);
 
-        ANGLE_EGL_VALIDATE(thread, GetCompositorTimingSupportedANDROID,
-                           GetDisplayIfValid(dpyPacked), EGLBoolean, dpyPacked, surfacePacked,
-                           namePacked);
+        {
+            ANGLE_EGL_SCOPED_CONTEXT_LOCK(GetCompositorTimingSupportedANDROID, thread, dpyPacked);
+            ANGLE_EGL_VALIDATE(thread, GetCompositorTimingSupportedANDROID,
+                               GetDisplayIfValid(dpyPacked), EGLBoolean, dpyPacked, surfacePacked,
+                               namePacked);
 
-        returnValue =
-            GetCompositorTimingSupportedANDROID(thread, dpyPacked, surfacePacked, namePacked);
+            returnValue =
+                GetCompositorTimingSupportedANDROID(thread, dpyPacked, surfacePacked, namePacked);
+        }
+
         ANGLE_CAPTURE_EGL(GetCompositorTimingSupportedANDROID, true, thread, dpyPacked,
                           surfacePacked, namePacked, returnValue);
     }
@@ -119,11 +132,15 @@ EGLBoolean EGLAPIENTRY EGL_GetCompositorTimingANDROID(EGLDisplay dpy,
         egl::Display *dpyPacked = PackParam<egl::Display *>(dpy);
         SurfaceID surfacePacked = PackParam<SurfaceID>(surface);
 
-        ANGLE_EGL_VALIDATE(thread, GetCompositorTimingANDROID, GetDisplayIfValid(dpyPacked),
-                           EGLBoolean, dpyPacked, surfacePacked, numTimestamps, names, values);
+        {
+            ANGLE_EGL_SCOPED_CONTEXT_LOCK(GetCompositorTimingANDROID, thread, dpyPacked);
+            ANGLE_EGL_VALIDATE(thread, GetCompositorTimingANDROID, GetDisplayIfValid(dpyPacked),
+                               EGLBoolean, dpyPacked, surfacePacked, numTimestamps, names, values);
 
-        returnValue = GetCompositorTimingANDROID(thread, dpyPacked, surfacePacked, numTimestamps,
-                                                 names, values);
+            returnValue = GetCompositorTimingANDROID(thread, dpyPacked, surfacePacked,
+                                                     numTimestamps, names, values);
+        }
+
         ANGLE_CAPTURE_EGL(GetCompositorTimingANDROID, true, thread, dpyPacked, surfacePacked,
                           numTimestamps, names, values, returnValue);
     }
@@ -148,10 +165,14 @@ EGLBoolean EGLAPIENTRY EGL_GetNextFrameIdANDROID(EGLDisplay dpy,
         egl::Display *dpyPacked = PackParam<egl::Display *>(dpy);
         SurfaceID surfacePacked = PackParam<SurfaceID>(surface);
 
-        ANGLE_EGL_VALIDATE(thread, GetNextFrameIdANDROID, GetDisplayIfValid(dpyPacked), EGLBoolean,
-                           dpyPacked, surfacePacked, frameId);
+        {
+            ANGLE_EGL_SCOPED_CONTEXT_LOCK(GetNextFrameIdANDROID, thread, dpyPacked);
+            ANGLE_EGL_VALIDATE(thread, GetNextFrameIdANDROID, GetDisplayIfValid(dpyPacked),
+                               EGLBoolean, dpyPacked, surfacePacked, frameId);
 
-        returnValue = GetNextFrameIdANDROID(thread, dpyPacked, surfacePacked, frameId);
+            returnValue = GetNextFrameIdANDROID(thread, dpyPacked, surfacePacked, frameId);
+        }
+
         ANGLE_CAPTURE_EGL(GetNextFrameIdANDROID, true, thread, dpyPacked, surfacePacked, frameId,
                           returnValue);
     }
@@ -176,11 +197,16 @@ EGLBoolean EGLAPIENTRY EGL_GetFrameTimestampSupportedANDROID(EGLDisplay dpy,
         SurfaceID surfacePacked   = PackParam<SurfaceID>(surface);
         Timestamp timestampPacked = PackParam<Timestamp>(timestamp);
 
-        ANGLE_EGL_VALIDATE(thread, GetFrameTimestampSupportedANDROID, GetDisplayIfValid(dpyPacked),
-                           EGLBoolean, dpyPacked, surfacePacked, timestampPacked);
+        {
+            ANGLE_EGL_SCOPED_CONTEXT_LOCK(GetFrameTimestampSupportedANDROID, thread, dpyPacked);
+            ANGLE_EGL_VALIDATE(thread, GetFrameTimestampSupportedANDROID,
+                               GetDisplayIfValid(dpyPacked), EGLBoolean, dpyPacked, surfacePacked,
+                               timestampPacked);
 
-        returnValue =
-            GetFrameTimestampSupportedANDROID(thread, dpyPacked, surfacePacked, timestampPacked);
+            returnValue = GetFrameTimestampSupportedANDROID(thread, dpyPacked, surfacePacked,
+                                                            timestampPacked);
+        }
+
         ANGLE_CAPTURE_EGL(GetFrameTimestampSupportedANDROID, true, thread, dpyPacked, surfacePacked,
                           timestampPacked, returnValue);
     }
@@ -210,12 +236,16 @@ EGLBoolean EGLAPIENTRY EGL_GetFrameTimestampsANDROID(EGLDisplay dpy,
         egl::Display *dpyPacked = PackParam<egl::Display *>(dpy);
         SurfaceID surfacePacked = PackParam<SurfaceID>(surface);
 
-        ANGLE_EGL_VALIDATE(thread, GetFrameTimestampsANDROID, GetDisplayIfValid(dpyPacked),
-                           EGLBoolean, dpyPacked, surfacePacked, frameId, numTimestamps, timestamps,
-                           values);
+        {
+            ANGLE_EGL_SCOPED_CONTEXT_LOCK(GetFrameTimestampsANDROID, thread, dpyPacked);
+            ANGLE_EGL_VALIDATE(thread, GetFrameTimestampsANDROID, GetDisplayIfValid(dpyPacked),
+                               EGLBoolean, dpyPacked, surfacePacked, frameId, numTimestamps,
+                               timestamps, values);
 
-        returnValue = GetFrameTimestampsANDROID(thread, dpyPacked, surfacePacked, frameId,
-                                                numTimestamps, timestamps, values);
+            returnValue = GetFrameTimestampsANDROID(thread, dpyPacked, surfacePacked, frameId,
+                                                    numTimestamps, timestamps, values);
+        }
+
         ANGLE_CAPTURE_EGL(GetFrameTimestampsANDROID, true, thread, dpyPacked, surfacePacked,
                           frameId, numTimestamps, timestamps, values, returnValue);
     }
@@ -233,9 +263,14 @@ EGLClientBuffer EGLAPIENTRY EGL_GetNativeClientBufferANDROID(const struct AHardw
         ANGLE_SCOPED_GLOBAL_LOCK();
         EGL_EVENT(GetNativeClientBufferANDROID, "buffer = 0x%016" PRIxPTR "", (uintptr_t)buffer);
 
-        ANGLE_EGL_VALIDATE(thread, GetNativeClientBufferANDROID, nullptr, EGLClientBuffer, buffer);
+        {
+            ANGLE_EGL_SCOPED_CONTEXT_LOCK(GetNativeClientBufferANDROID, thread);
+            ANGLE_EGL_VALIDATE(thread, GetNativeClientBufferANDROID, nullptr, EGLClientBuffer,
+                               buffer);
 
-        returnValue = GetNativeClientBufferANDROID(thread, buffer);
+            returnValue = GetNativeClientBufferANDROID(thread, buffer);
+        }
+
         ANGLE_CAPTURE_EGL(GetNativeClientBufferANDROID, true, thread, buffer, returnValue);
     }
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
@@ -256,10 +291,14 @@ EGLint EGLAPIENTRY EGL_DupNativeFenceFDANDROID(EGLDisplay dpy, EGLSyncKHR sync)
         egl::Display *dpyPacked = PackParam<egl::Display *>(dpy);
         egl::SyncID syncPacked  = PackParam<egl::SyncID>(sync);
 
-        ANGLE_EGL_VALIDATE(thread, DupNativeFenceFDANDROID, GetDisplayIfValid(dpyPacked), EGLint,
-                           dpyPacked, syncPacked);
+        {
+            ANGLE_EGL_SCOPED_CONTEXT_LOCK(DupNativeFenceFDANDROID, thread, dpyPacked);
+            ANGLE_EGL_VALIDATE(thread, DupNativeFenceFDANDROID, GetDisplayIfValid(dpyPacked),
+                               EGLint, dpyPacked, syncPacked);
 
-        returnValue = DupNativeFenceFDANDROID(thread, dpyPacked, syncPacked);
+            returnValue = DupNativeFenceFDANDROID(thread, dpyPacked, syncPacked);
+        }
+
         ANGLE_CAPTURE_EGL(DupNativeFenceFDANDROID, true, thread, dpyPacked, syncPacked,
                           returnValue);
     }
@@ -284,10 +323,14 @@ EGLBoolean EGLAPIENTRY EGL_PresentationTimeANDROID(EGLDisplay dpy,
         egl::Display *dpyPacked = PackParam<egl::Display *>(dpy);
         SurfaceID surfacePacked = PackParam<SurfaceID>(surface);
 
-        ANGLE_EGL_VALIDATE(thread, PresentationTimeANDROID, GetDisplayIfValid(dpyPacked),
-                           EGLBoolean, dpyPacked, surfacePacked, time);
+        {
+            ANGLE_EGL_SCOPED_CONTEXT_LOCK(PresentationTimeANDROID, thread, dpyPacked);
+            ANGLE_EGL_VALIDATE(thread, PresentationTimeANDROID, GetDisplayIfValid(dpyPacked),
+                               EGLBoolean, dpyPacked, surfacePacked, time);
 
-        returnValue = PresentationTimeANDROID(thread, dpyPacked, surfacePacked, time);
+            returnValue = PresentationTimeANDROID(thread, dpyPacked, surfacePacked, time);
+        }
+
         ANGLE_CAPTURE_EGL(PresentationTimeANDROID, true, thread, dpyPacked, surfacePacked, time,
                           returnValue);
     }
@@ -310,10 +353,14 @@ EGLDeviceEXT EGLAPIENTRY EGL_CreateDeviceANGLE(EGLint device_type,
                   ", attrib_list = 0x%016" PRIxPTR "",
                   device_type, (uintptr_t)native_device, (uintptr_t)attrib_list);
 
-        ANGLE_EGL_VALIDATE(thread, CreateDeviceANGLE, nullptr, EGLDeviceEXT, device_type,
-                           native_device, attrib_list);
+        {
+            ANGLE_EGL_SCOPED_CONTEXT_LOCK(CreateDeviceANGLE, thread);
+            ANGLE_EGL_VALIDATE(thread, CreateDeviceANGLE, nullptr, EGLDeviceEXT, device_type,
+                               native_device, attrib_list);
 
-        returnValue = CreateDeviceANGLE(thread, device_type, native_device, attrib_list);
+            returnValue = CreateDeviceANGLE(thread, device_type, native_device, attrib_list);
+        }
+
         ANGLE_CAPTURE_EGL(CreateDeviceANGLE, true, thread, device_type, native_device, attrib_list,
                           returnValue);
     }
@@ -332,9 +379,13 @@ EGLBoolean EGLAPIENTRY EGL_ReleaseDeviceANGLE(EGLDeviceEXT device)
 
         egl::Device *devicePacked = PackParam<egl::Device *>(device);
 
-        ANGLE_EGL_VALIDATE(thread, ReleaseDeviceANGLE, nullptr, EGLBoolean, devicePacked);
+        {
+            ANGLE_EGL_SCOPED_CONTEXT_LOCK(ReleaseDeviceANGLE, thread);
+            ANGLE_EGL_VALIDATE(thread, ReleaseDeviceANGLE, nullptr, EGLBoolean, devicePacked);
 
-        returnValue = ReleaseDeviceANGLE(thread, devicePacked);
+            returnValue = ReleaseDeviceANGLE(thread, devicePacked);
+        }
+
         ANGLE_CAPTURE_EGL(ReleaseDeviceANGLE, true, thread, devicePacked, returnValue);
     }
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
@@ -354,10 +405,14 @@ const char *EGLAPIENTRY EGL_QueryStringiANGLE(EGLDisplay dpy, EGLint name, EGLin
 
         egl::Display *dpyPacked = PackParam<egl::Display *>(dpy);
 
-        ANGLE_EGL_VALIDATE(thread, QueryStringiANGLE, GetDisplayIfValid(dpyPacked), const char *,
-                           dpyPacked, name, index);
+        {
+            ANGLE_EGL_SCOPED_CONTEXT_LOCK(QueryStringiANGLE, thread, dpyPacked);
+            ANGLE_EGL_VALIDATE(thread, QueryStringiANGLE, GetDisplayIfValid(dpyPacked),
+                               const char *, dpyPacked, name, index);
 
-        returnValue = QueryStringiANGLE(thread, dpyPacked, name, index);
+            returnValue = QueryStringiANGLE(thread, dpyPacked, name, index);
+        }
+
         ANGLE_CAPTURE_EGL(QueryStringiANGLE, true, thread, dpyPacked, name, index, returnValue);
     }
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
@@ -379,10 +434,14 @@ EGLBoolean EGLAPIENTRY EGL_QueryDisplayAttribANGLE(EGLDisplay dpy,
 
         egl::Display *dpyPacked = PackParam<egl::Display *>(dpy);
 
-        ANGLE_EGL_VALIDATE(thread, QueryDisplayAttribANGLE, GetDisplayIfValid(dpyPacked),
-                           EGLBoolean, dpyPacked, attribute, value);
+        {
+            ANGLE_EGL_SCOPED_CONTEXT_LOCK(QueryDisplayAttribANGLE, thread, dpyPacked, attribute);
+            ANGLE_EGL_VALIDATE(thread, QueryDisplayAttribANGLE, GetDisplayIfValid(dpyPacked),
+                               EGLBoolean, dpyPacked, attribute, value);
 
-        returnValue = QueryDisplayAttribANGLE(thread, dpyPacked, attribute, value);
+            returnValue = QueryDisplayAttribANGLE(thread, dpyPacked, attribute, value);
+        }
+
         ANGLE_CAPTURE_EGL(QueryDisplayAttribANGLE, true, thread, dpyPacked, attribute, value,
                           returnValue);
     }
@@ -404,10 +463,14 @@ void *EGLAPIENTRY EGL_CopyMetalSharedEventANGLE(EGLDisplay dpy, EGLSyncKHR sync)
         egl::Display *dpyPacked = PackParam<egl::Display *>(dpy);
         egl::SyncID syncPacked  = PackParam<egl::SyncID>(sync);
 
-        ANGLE_EGL_VALIDATE(thread, CopyMetalSharedEventANGLE, GetDisplayIfValid(dpyPacked), void *,
-                           dpyPacked, syncPacked);
+        {
+            ANGLE_EGL_SCOPED_CONTEXT_LOCK(CopyMetalSharedEventANGLE, thread, dpyPacked);
+            ANGLE_EGL_VALIDATE(thread, CopyMetalSharedEventANGLE, GetDisplayIfValid(dpyPacked),
+                               void *, dpyPacked, syncPacked);
 
-        returnValue = CopyMetalSharedEventANGLE(thread, dpyPacked, syncPacked);
+            returnValue = CopyMetalSharedEventANGLE(thread, dpyPacked, syncPacked);
+        }
+
         ANGLE_CAPTURE_EGL(CopyMetalSharedEventANGLE, true, thread, dpyPacked, syncPacked,
                           returnValue);
     }
@@ -428,10 +491,14 @@ void EGLAPIENTRY EGL_ReleaseHighPowerGPUANGLE(EGLDisplay dpy, EGLContext ctx)
         egl::Display *dpyPacked = PackParam<egl::Display *>(dpy);
         gl::ContextID ctxPacked = PackParam<gl::ContextID>(ctx);
 
-        ANGLE_EGL_VALIDATE_VOID(thread, ReleaseHighPowerGPUANGLE, GetDisplayIfValid(dpyPacked),
-                                dpyPacked, ctxPacked);
+        {
+            ANGLE_EGL_SCOPED_CONTEXT_LOCK(ReleaseHighPowerGPUANGLE, thread, dpyPacked, ctxPacked);
+            ANGLE_EGL_VALIDATE_VOID(thread, ReleaseHighPowerGPUANGLE, GetDisplayIfValid(dpyPacked),
+                                    dpyPacked, ctxPacked);
 
-        ReleaseHighPowerGPUANGLE(thread, dpyPacked, ctxPacked);
+            ReleaseHighPowerGPUANGLE(thread, dpyPacked, ctxPacked);
+        }
+
         ANGLE_CAPTURE_EGL(ReleaseHighPowerGPUANGLE, true, thread, dpyPacked, ctxPacked);
     }
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
@@ -449,10 +516,14 @@ void EGLAPIENTRY EGL_ReacquireHighPowerGPUANGLE(EGLDisplay dpy, EGLContext ctx)
         egl::Display *dpyPacked = PackParam<egl::Display *>(dpy);
         gl::ContextID ctxPacked = PackParam<gl::ContextID>(ctx);
 
-        ANGLE_EGL_VALIDATE_VOID(thread, ReacquireHighPowerGPUANGLE, GetDisplayIfValid(dpyPacked),
-                                dpyPacked, ctxPacked);
+        {
+            ANGLE_EGL_SCOPED_CONTEXT_LOCK(ReacquireHighPowerGPUANGLE, thread, dpyPacked, ctxPacked);
+            ANGLE_EGL_VALIDATE_VOID(thread, ReacquireHighPowerGPUANGLE,
+                                    GetDisplayIfValid(dpyPacked), dpyPacked, ctxPacked);
 
-        ReacquireHighPowerGPUANGLE(thread, dpyPacked, ctxPacked);
+            ReacquireHighPowerGPUANGLE(thread, dpyPacked, ctxPacked);
+        }
+
         ANGLE_CAPTURE_EGL(ReacquireHighPowerGPUANGLE, true, thread, dpyPacked, ctxPacked);
     }
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
@@ -468,10 +539,14 @@ void EGLAPIENTRY EGL_HandleGPUSwitchANGLE(EGLDisplay dpy)
 
         egl::Display *dpyPacked = PackParam<egl::Display *>(dpy);
 
-        ANGLE_EGL_VALIDATE_VOID(thread, HandleGPUSwitchANGLE, GetDisplayIfValid(dpyPacked),
-                                dpyPacked);
+        {
+            ANGLE_EGL_SCOPED_CONTEXT_LOCK(HandleGPUSwitchANGLE, thread, dpyPacked);
+            ANGLE_EGL_VALIDATE_VOID(thread, HandleGPUSwitchANGLE, GetDisplayIfValid(dpyPacked),
+                                    dpyPacked);
 
-        HandleGPUSwitchANGLE(thread, dpyPacked);
+            HandleGPUSwitchANGLE(thread, dpyPacked);
+        }
+
         ANGLE_CAPTURE_EGL(HandleGPUSwitchANGLE, true, thread, dpyPacked);
     }
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
@@ -488,10 +563,14 @@ void EGLAPIENTRY EGL_ForceGPUSwitchANGLE(EGLDisplay dpy, EGLint gpuIDHigh, EGLin
 
         egl::Display *dpyPacked = PackParam<egl::Display *>(dpy);
 
-        ANGLE_EGL_VALIDATE_VOID(thread, ForceGPUSwitchANGLE, GetDisplayIfValid(dpyPacked),
-                                dpyPacked, gpuIDHigh, gpuIDLow);
+        {
+            ANGLE_EGL_SCOPED_CONTEXT_LOCK(ForceGPUSwitchANGLE, thread, dpyPacked);
+            ANGLE_EGL_VALIDATE_VOID(thread, ForceGPUSwitchANGLE, GetDisplayIfValid(dpyPacked),
+                                    dpyPacked, gpuIDHigh, gpuIDLow);
 
-        ForceGPUSwitchANGLE(thread, dpyPacked, gpuIDHigh, gpuIDLow);
+            ForceGPUSwitchANGLE(thread, dpyPacked, gpuIDHigh, gpuIDLow);
+        }
+
         ANGLE_CAPTURE_EGL(ForceGPUSwitchANGLE, true, thread, dpyPacked, gpuIDHigh, gpuIDLow);
     }
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
@@ -500,7 +579,30 @@ void EGLAPIENTRY EGL_ForceGPUSwitchANGLE(EGLDisplay dpy, EGLint gpuIDHigh, EGLin
 // EGL_ANGLE_prepare_swap_buffers
 EGLBoolean EGLAPIENTRY EGL_PrepareSwapBuffersANGLE(EGLDisplay dpy, EGLSurface surface)
 {
-    return PrepareSwapBuffersANGLE(dpy, surface);
+
+    Thread *thread = egl::GetCurrentThread();
+    EGLBoolean returnValue;
+    {
+        ANGLE_SCOPED_GLOBAL_LOCK();
+        EGL_EVENT(PrepareSwapBuffersANGLE, "dpy = 0x%016" PRIxPTR ", surface = 0x%016" PRIxPTR "",
+                  (uintptr_t)dpy, (uintptr_t)surface);
+
+        egl::Display *dpyPacked = PackParam<egl::Display *>(dpy);
+        SurfaceID surfacePacked = PackParam<SurfaceID>(surface);
+
+        {
+            ANGLE_EGL_SCOPED_CONTEXT_LOCK(PrepareSwapBuffersANGLE, thread, dpyPacked);
+            ANGLE_EGL_VALIDATE(thread, PrepareSwapBuffersANGLE, GetDisplayIfValid(dpyPacked),
+                               EGLBoolean, dpyPacked, surfacePacked);
+
+            returnValue = PrepareSwapBuffersANGLE(thread, dpyPacked, surfacePacked);
+        }
+
+        ANGLE_CAPTURE_EGL(PrepareSwapBuffersANGLE, true, thread, dpyPacked, surfacePacked,
+                          returnValue);
+    }
+    egl::Display::GetCurrentThreadUnlockedTailCall()->run();
+    return returnValue;
 }
 
 // EGL_ANGLE_program_cache_control
@@ -516,10 +618,14 @@ EGLint EGLAPIENTRY EGL_ProgramCacheGetAttribANGLE(EGLDisplay dpy, EGLenum attrib
 
         egl::Display *dpyPacked = PackParam<egl::Display *>(dpy);
 
-        ANGLE_EGL_VALIDATE(thread, ProgramCacheGetAttribANGLE, GetDisplayIfValid(dpyPacked), EGLint,
-                           dpyPacked, attrib);
+        {
+            ANGLE_EGL_SCOPED_CONTEXT_LOCK(ProgramCacheGetAttribANGLE, thread, dpyPacked);
+            ANGLE_EGL_VALIDATE(thread, ProgramCacheGetAttribANGLE, GetDisplayIfValid(dpyPacked),
+                               EGLint, dpyPacked, attrib);
 
-        returnValue = ProgramCacheGetAttribANGLE(thread, dpyPacked, attrib);
+            returnValue = ProgramCacheGetAttribANGLE(thread, dpyPacked, attrib);
+        }
+
         ANGLE_CAPTURE_EGL(ProgramCacheGetAttribANGLE, true, thread, dpyPacked, attrib, returnValue);
     }
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
@@ -546,10 +652,14 @@ void EGLAPIENTRY EGL_ProgramCacheQueryANGLE(EGLDisplay dpy,
 
         egl::Display *dpyPacked = PackParam<egl::Display *>(dpy);
 
-        ANGLE_EGL_VALIDATE_VOID(thread, ProgramCacheQueryANGLE, GetDisplayIfValid(dpyPacked),
-                                dpyPacked, index, key, keysize, binary, binarysize);
+        {
+            ANGLE_EGL_SCOPED_CONTEXT_LOCK(ProgramCacheQueryANGLE, thread, dpyPacked);
+            ANGLE_EGL_VALIDATE_VOID(thread, ProgramCacheQueryANGLE, GetDisplayIfValid(dpyPacked),
+                                    dpyPacked, index, key, keysize, binary, binarysize);
 
-        ProgramCacheQueryANGLE(thread, dpyPacked, index, key, keysize, binary, binarysize);
+            ProgramCacheQueryANGLE(thread, dpyPacked, index, key, keysize, binary, binarysize);
+        }
+
         ANGLE_CAPTURE_EGL(ProgramCacheQueryANGLE, true, thread, dpyPacked, index, key, keysize,
                           binary, binarysize);
     }
@@ -573,10 +683,14 @@ void EGLAPIENTRY EGL_ProgramCachePopulateANGLE(EGLDisplay dpy,
 
         egl::Display *dpyPacked = PackParam<egl::Display *>(dpy);
 
-        ANGLE_EGL_VALIDATE_VOID(thread, ProgramCachePopulateANGLE, GetDisplayIfValid(dpyPacked),
-                                dpyPacked, key, keysize, binary, binarysize);
+        {
+            ANGLE_EGL_SCOPED_CONTEXT_LOCK(ProgramCachePopulateANGLE, thread, dpyPacked);
+            ANGLE_EGL_VALIDATE_VOID(thread, ProgramCachePopulateANGLE, GetDisplayIfValid(dpyPacked),
+                                    dpyPacked, key, keysize, binary, binarysize);
 
-        ProgramCachePopulateANGLE(thread, dpyPacked, key, keysize, binary, binarysize);
+            ProgramCachePopulateANGLE(thread, dpyPacked, key, keysize, binary, binarysize);
+        }
+
         ANGLE_CAPTURE_EGL(ProgramCachePopulateANGLE, true, thread, dpyPacked, key, keysize, binary,
                           binarysize);
     }
@@ -595,10 +709,14 @@ EGLint EGLAPIENTRY EGL_ProgramCacheResizeANGLE(EGLDisplay dpy, EGLint limit, EGL
 
         egl::Display *dpyPacked = PackParam<egl::Display *>(dpy);
 
-        ANGLE_EGL_VALIDATE(thread, ProgramCacheResizeANGLE, GetDisplayIfValid(dpyPacked), EGLint,
-                           dpyPacked, limit, mode);
+        {
+            ANGLE_EGL_SCOPED_CONTEXT_LOCK(ProgramCacheResizeANGLE, thread, dpyPacked);
+            ANGLE_EGL_VALIDATE(thread, ProgramCacheResizeANGLE, GetDisplayIfValid(dpyPacked),
+                               EGLint, dpyPacked, limit, mode);
 
-        returnValue = ProgramCacheResizeANGLE(thread, dpyPacked, limit, mode);
+            returnValue = ProgramCacheResizeANGLE(thread, dpyPacked, limit, mode);
+        }
+
         ANGLE_CAPTURE_EGL(ProgramCacheResizeANGLE, true, thread, dpyPacked, limit, mode,
                           returnValue);
     }
@@ -625,10 +743,15 @@ EGLBoolean EGLAPIENTRY EGL_QuerySurfacePointerANGLE(EGLDisplay dpy,
         egl::Display *dpyPacked = PackParam<egl::Display *>(dpy);
         SurfaceID surfacePacked = PackParam<SurfaceID>(surface);
 
-        ANGLE_EGL_VALIDATE(thread, QuerySurfacePointerANGLE, GetDisplayIfValid(dpyPacked),
-                           EGLBoolean, dpyPacked, surfacePacked, attribute, value);
+        {
+            ANGLE_EGL_SCOPED_CONTEXT_LOCK(QuerySurfacePointerANGLE, thread, dpyPacked, attribute);
+            ANGLE_EGL_VALIDATE(thread, QuerySurfacePointerANGLE, GetDisplayIfValid(dpyPacked),
+                               EGLBoolean, dpyPacked, surfacePacked, attribute, value);
 
-        returnValue = QuerySurfacePointerANGLE(thread, dpyPacked, surfacePacked, attribute, value);
+            returnValue =
+                QuerySurfacePointerANGLE(thread, dpyPacked, surfacePacked, attribute, value);
+        }
+
         ANGLE_CAPTURE_EGL(QuerySurfacePointerANGLE, true, thread, dpyPacked, surfacePacked,
                           attribute, value, returnValue);
     }
@@ -655,12 +778,16 @@ EGLBoolean EGLAPIENTRY EGL_CreateStreamProducerD3DTextureANGLE(EGLDisplay dpy,
         egl::Stream *streamPacked             = PackParam<egl::Stream *>(stream);
         const AttributeMap &attrib_listPacked = PackParam<const AttributeMap &>(attrib_list);
 
-        ANGLE_EGL_VALIDATE(thread, CreateStreamProducerD3DTextureANGLE,
-                           GetDisplayIfValid(dpyPacked), EGLBoolean, dpyPacked, streamPacked,
-                           attrib_listPacked);
+        {
+            ANGLE_EGL_SCOPED_CONTEXT_LOCK(CreateStreamProducerD3DTextureANGLE, thread, dpyPacked);
+            ANGLE_EGL_VALIDATE(thread, CreateStreamProducerD3DTextureANGLE,
+                               GetDisplayIfValid(dpyPacked), EGLBoolean, dpyPacked, streamPacked,
+                               attrib_listPacked);
 
-        returnValue =
-            CreateStreamProducerD3DTextureANGLE(thread, dpyPacked, streamPacked, attrib_listPacked);
+            returnValue = CreateStreamProducerD3DTextureANGLE(thread, dpyPacked, streamPacked,
+                                                              attrib_listPacked);
+        }
+
         ANGLE_CAPTURE_EGL(CreateStreamProducerD3DTextureANGLE, true, thread, dpyPacked,
                           streamPacked, attrib_listPacked, returnValue);
     }
@@ -687,11 +814,15 @@ EGLBoolean EGLAPIENTRY EGL_StreamPostD3DTextureANGLE(EGLDisplay dpy,
         egl::Stream *streamPacked             = PackParam<egl::Stream *>(stream);
         const AttributeMap &attrib_listPacked = PackParam<const AttributeMap &>(attrib_list);
 
-        ANGLE_EGL_VALIDATE(thread, StreamPostD3DTextureANGLE, GetDisplayIfValid(dpyPacked),
-                           EGLBoolean, dpyPacked, streamPacked, texture, attrib_listPacked);
+        {
+            ANGLE_EGL_SCOPED_CONTEXT_LOCK(StreamPostD3DTextureANGLE, thread, dpyPacked);
+            ANGLE_EGL_VALIDATE(thread, StreamPostD3DTextureANGLE, GetDisplayIfValid(dpyPacked),
+                               EGLBoolean, dpyPacked, streamPacked, texture, attrib_listPacked);
 
-        returnValue =
-            StreamPostD3DTextureANGLE(thread, dpyPacked, streamPacked, texture, attrib_listPacked);
+            returnValue = StreamPostD3DTextureANGLE(thread, dpyPacked, streamPacked, texture,
+                                                    attrib_listPacked);
+        }
+
         ANGLE_CAPTURE_EGL(StreamPostD3DTextureANGLE, true, thread, dpyPacked, streamPacked, texture,
                           attrib_listPacked, returnValue);
     }
@@ -704,7 +835,7 @@ EGLBoolean EGLAPIENTRY EGL_SwapBuffersWithFrameTokenANGLE(EGLDisplay dpy,
                                                           EGLSurface surface,
                                                           EGLFrameTokenANGLE frametoken)
 {
-    ANGLE_EGLBOOLEAN_TRY(PrepareSwapBuffersANGLE(dpy, surface));
+    ANGLE_EGLBOOLEAN_TRY(EGL_PrepareSwapBuffersANGLE(dpy, surface));
     Thread *thread = egl::GetCurrentThread();
     EGLBoolean returnValue;
     {
@@ -716,14 +847,19 @@ EGLBoolean EGLAPIENTRY EGL_SwapBuffersWithFrameTokenANGLE(EGLDisplay dpy,
         egl::Display *dpyPacked = PackParam<egl::Display *>(dpy);
         SurfaceID surfacePacked = PackParam<SurfaceID>(surface);
 
-        ANGLE_EGL_VALIDATE(thread, SwapBuffersWithFrameTokenANGLE, GetDisplayIfValid(dpyPacked),
-                           EGLBoolean, dpyPacked, surfacePacked, frametoken);
+        {
+            ANGLE_EGL_SCOPED_CONTEXT_LOCK(SwapBuffersWithFrameTokenANGLE, thread, dpyPacked);
+            ANGLE_EGL_VALIDATE(thread, SwapBuffersWithFrameTokenANGLE, GetDisplayIfValid(dpyPacked),
+                               EGLBoolean, dpyPacked, surfacePacked, frametoken);
 
-        returnValue = SwapBuffersWithFrameTokenANGLE(thread, dpyPacked, surfacePacked, frametoken);
+            returnValue =
+                SwapBuffersWithFrameTokenANGLE(thread, dpyPacked, surfacePacked, frametoken);
+        }
+
         ANGLE_CAPTURE_EGL(SwapBuffersWithFrameTokenANGLE, true, thread, dpyPacked, surfacePacked,
                           frametoken, returnValue);
     }
-    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
+    egl::Display::GetCurrentThreadUnlockedTailCall()->run();
     return returnValue;
 }
 
@@ -746,10 +882,14 @@ EGLBoolean EGLAPIENTRY EGL_GetMscRateANGLE(EGLDisplay dpy,
         egl::Display *dpyPacked = PackParam<egl::Display *>(dpy);
         SurfaceID surfacePacked = PackParam<SurfaceID>(surface);
 
-        ANGLE_EGL_VALIDATE(thread, GetMscRateANGLE, GetDisplayIfValid(dpyPacked), EGLBoolean,
-                           dpyPacked, surfacePacked, numerator, denominator);
+        {
+            ANGLE_EGL_SCOPED_CONTEXT_LOCK(GetMscRateANGLE, thread, dpyPacked);
+            ANGLE_EGL_VALIDATE(thread, GetMscRateANGLE, GetDisplayIfValid(dpyPacked), EGLBoolean,
+                               dpyPacked, surfacePacked, numerator, denominator);
 
-        returnValue = GetMscRateANGLE(thread, dpyPacked, surfacePacked, numerator, denominator);
+            returnValue = GetMscRateANGLE(thread, dpyPacked, surfacePacked, numerator, denominator);
+        }
+
         ANGLE_CAPTURE_EGL(GetMscRateANGLE, true, thread, dpyPacked, surfacePacked, numerator,
                           denominator, returnValue);
     }
@@ -777,11 +917,15 @@ EGLBoolean EGLAPIENTRY EGL_ExportVkImageANGLE(EGLDisplay dpy,
         egl::Display *dpyPacked = PackParam<egl::Display *>(dpy);
         ImageID imagePacked     = PackParam<ImageID>(image);
 
-        ANGLE_EGL_VALIDATE(thread, ExportVkImageANGLE, GetDisplayIfValid(dpyPacked), EGLBoolean,
-                           dpyPacked, imagePacked, vk_image, vk_image_create_info);
+        {
+            ANGLE_EGL_SCOPED_CONTEXT_LOCK(ExportVkImageANGLE, thread, dpyPacked);
+            ANGLE_EGL_VALIDATE(thread, ExportVkImageANGLE, GetDisplayIfValid(dpyPacked), EGLBoolean,
+                               dpyPacked, imagePacked, vk_image, vk_image_create_info);
 
-        returnValue =
-            ExportVkImageANGLE(thread, dpyPacked, imagePacked, vk_image, vk_image_create_info);
+            returnValue =
+                ExportVkImageANGLE(thread, dpyPacked, imagePacked, vk_image, vk_image_create_info);
+        }
+
         ANGLE_CAPTURE_EGL(ExportVkImageANGLE, true, thread, dpyPacked, imagePacked, vk_image,
                           vk_image_create_info, returnValue);
     }
@@ -800,10 +944,14 @@ void EGLAPIENTRY EGL_WaitUntilWorkScheduledANGLE(EGLDisplay dpy)
 
         egl::Display *dpyPacked = PackParam<egl::Display *>(dpy);
 
-        ANGLE_EGL_VALIDATE_VOID(thread, WaitUntilWorkScheduledANGLE, GetDisplayIfValid(dpyPacked),
-                                dpyPacked);
+        {
+            ANGLE_EGL_SCOPED_CONTEXT_LOCK(WaitUntilWorkScheduledANGLE, thread, dpyPacked);
+            ANGLE_EGL_VALIDATE_VOID(thread, WaitUntilWorkScheduledANGLE,
+                                    GetDisplayIfValid(dpyPacked), dpyPacked);
 
-        WaitUntilWorkScheduledANGLE(thread, dpyPacked);
+            WaitUntilWorkScheduledANGLE(thread, dpyPacked);
+        }
+
         ANGLE_CAPTURE_EGL(WaitUntilWorkScheduledANGLE, true, thread, dpyPacked);
     }
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
@@ -830,10 +978,14 @@ EGLBoolean EGLAPIENTRY EGL_GetSyncValuesCHROMIUM(EGLDisplay dpy,
         egl::Display *dpyPacked = PackParam<egl::Display *>(dpy);
         SurfaceID surfacePacked = PackParam<SurfaceID>(surface);
 
-        ANGLE_EGL_VALIDATE(thread, GetSyncValuesCHROMIUM, GetDisplayIfValid(dpyPacked), EGLBoolean,
-                           dpyPacked, surfacePacked, ust, msc, sbc);
+        {
+            ANGLE_EGL_SCOPED_CONTEXT_LOCK(GetSyncValuesCHROMIUM, thread, dpyPacked);
+            ANGLE_EGL_VALIDATE(thread, GetSyncValuesCHROMIUM, GetDisplayIfValid(dpyPacked),
+                               EGLBoolean, dpyPacked, surfacePacked, ust, msc, sbc);
 
-        returnValue = GetSyncValuesCHROMIUM(thread, dpyPacked, surfacePacked, ust, msc, sbc);
+            returnValue = GetSyncValuesCHROMIUM(thread, dpyPacked, surfacePacked, ust, msc, sbc);
+        }
+
         ANGLE_CAPTURE_EGL(GetSyncValuesCHROMIUM, true, thread, dpyPacked, surfacePacked, ust, msc,
                           sbc, returnValue);
     }
@@ -857,10 +1009,14 @@ EGLBoolean EGLAPIENTRY EGL_QueryDeviceAttribEXT(EGLDeviceEXT device,
 
         egl::Device *devicePacked = PackParam<egl::Device *>(device);
 
-        ANGLE_EGL_VALIDATE(thread, QueryDeviceAttribEXT, nullptr, EGLBoolean, devicePacked,
-                           attribute, value);
+        {
+            ANGLE_EGL_SCOPED_CONTEXT_LOCK(QueryDeviceAttribEXT, thread, attribute);
+            ANGLE_EGL_VALIDATE(thread, QueryDeviceAttribEXT, nullptr, EGLBoolean, devicePacked,
+                               attribute, value);
 
-        returnValue = QueryDeviceAttribEXT(thread, devicePacked, attribute, value);
+            returnValue = QueryDeviceAttribEXT(thread, devicePacked, attribute, value);
+        }
+
         ANGLE_CAPTURE_EGL(QueryDeviceAttribEXT, true, thread, devicePacked, attribute, value,
                           returnValue);
     }
@@ -880,9 +1036,14 @@ const char *EGLAPIENTRY EGL_QueryDeviceStringEXT(EGLDeviceEXT device, EGLint nam
 
         egl::Device *devicePacked = PackParam<egl::Device *>(device);
 
-        ANGLE_EGL_VALIDATE(thread, QueryDeviceStringEXT, nullptr, const char *, devicePacked, name);
+        {
+            ANGLE_EGL_SCOPED_CONTEXT_LOCK(QueryDeviceStringEXT, thread);
+            ANGLE_EGL_VALIDATE(thread, QueryDeviceStringEXT, nullptr, const char *, devicePacked,
+                               name);
 
-        returnValue = QueryDeviceStringEXT(thread, devicePacked, name);
+            returnValue = QueryDeviceStringEXT(thread, devicePacked, name);
+        }
+
         ANGLE_CAPTURE_EGL(QueryDeviceStringEXT, true, thread, devicePacked, name, returnValue);
     }
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
@@ -902,10 +1063,14 @@ EGLBoolean EGLAPIENTRY EGL_QueryDisplayAttribEXT(EGLDisplay dpy, EGLint attribut
 
         egl::Display *dpyPacked = PackParam<egl::Display *>(dpy);
 
-        ANGLE_EGL_VALIDATE(thread, QueryDisplayAttribEXT, GetDisplayIfValid(dpyPacked), EGLBoolean,
-                           dpyPacked, attribute, value);
+        {
+            ANGLE_EGL_SCOPED_CONTEXT_LOCK(QueryDisplayAttribEXT, thread, dpyPacked, attribute);
+            ANGLE_EGL_VALIDATE(thread, QueryDisplayAttribEXT, GetDisplayIfValid(dpyPacked),
+                               EGLBoolean, dpyPacked, attribute, value);
 
-        returnValue = QueryDisplayAttribEXT(thread, dpyPacked, attribute, value);
+            returnValue = QueryDisplayAttribEXT(thread, dpyPacked, attribute, value);
+        }
+
         ANGLE_CAPTURE_EGL(QueryDisplayAttribEXT, true, thread, dpyPacked, attribute, value,
                           returnValue);
     }
@@ -931,10 +1096,15 @@ EGLBoolean EGLAPIENTRY EGL_QueryDmaBufFormatsEXT(EGLDisplay dpy,
 
         egl::Display *dpyPacked = PackParam<egl::Display *>(dpy);
 
-        ANGLE_EGL_VALIDATE(thread, QueryDmaBufFormatsEXT, GetDisplayIfValid(dpyPacked), EGLBoolean,
-                           dpyPacked, max_formats, formats, num_formats);
+        {
+            ANGLE_EGL_SCOPED_CONTEXT_LOCK(QueryDmaBufFormatsEXT, thread, dpyPacked);
+            ANGLE_EGL_VALIDATE(thread, QueryDmaBufFormatsEXT, GetDisplayIfValid(dpyPacked),
+                               EGLBoolean, dpyPacked, max_formats, formats, num_formats);
 
-        returnValue = QueryDmaBufFormatsEXT(thread, dpyPacked, max_formats, formats, num_formats);
+            returnValue =
+                QueryDmaBufFormatsEXT(thread, dpyPacked, max_formats, formats, num_formats);
+        }
+
         ANGLE_CAPTURE_EGL(QueryDmaBufFormatsEXT, true, thread, dpyPacked, max_formats, formats,
                           num_formats, returnValue);
     }
@@ -963,12 +1133,16 @@ EGLBoolean EGLAPIENTRY EGL_QueryDmaBufModifiersEXT(EGLDisplay dpy,
 
         egl::Display *dpyPacked = PackParam<egl::Display *>(dpy);
 
-        ANGLE_EGL_VALIDATE(thread, QueryDmaBufModifiersEXT, GetDisplayIfValid(dpyPacked),
-                           EGLBoolean, dpyPacked, format, max_modifiers, modifiers, external_only,
-                           num_modifiers);
+        {
+            ANGLE_EGL_SCOPED_CONTEXT_LOCK(QueryDmaBufModifiersEXT, thread, dpyPacked);
+            ANGLE_EGL_VALIDATE(thread, QueryDmaBufModifiersEXT, GetDisplayIfValid(dpyPacked),
+                               EGLBoolean, dpyPacked, format, max_modifiers, modifiers,
+                               external_only, num_modifiers);
 
-        returnValue = QueryDmaBufModifiersEXT(thread, dpyPacked, format, max_modifiers, modifiers,
-                                              external_only, num_modifiers);
+            returnValue = QueryDmaBufModifiersEXT(thread, dpyPacked, format, max_modifiers,
+                                                  modifiers, external_only, num_modifiers);
+        }
+
         ANGLE_CAPTURE_EGL(QueryDmaBufModifiersEXT, true, thread, dpyPacked, format, max_modifiers,
                           modifiers, external_only, num_modifiers, returnValue);
     }
@@ -997,11 +1171,16 @@ EGLSurface EGLAPIENTRY EGL_CreatePlatformPixmapSurfaceEXT(EGLDisplay dpy,
         egl::Config *configPacked             = PackParam<egl::Config *>(config);
         const AttributeMap &attrib_listPacked = PackParam<const AttributeMap &>(attrib_list);
 
-        ANGLE_EGL_VALIDATE(thread, CreatePlatformPixmapSurfaceEXT, GetDisplayIfValid(dpyPacked),
-                           EGLSurface, dpyPacked, configPacked, native_pixmap, attrib_listPacked);
+        {
+            ANGLE_EGL_SCOPED_CONTEXT_LOCK(CreatePlatformPixmapSurfaceEXT, thread, dpyPacked);
+            ANGLE_EGL_VALIDATE(thread, CreatePlatformPixmapSurfaceEXT, GetDisplayIfValid(dpyPacked),
+                               EGLSurface, dpyPacked, configPacked, native_pixmap,
+                               attrib_listPacked);
 
-        returnValue = CreatePlatformPixmapSurfaceEXT(thread, dpyPacked, configPacked, native_pixmap,
-                                                     attrib_listPacked);
+            returnValue = CreatePlatformPixmapSurfaceEXT(thread, dpyPacked, configPacked,
+                                                         native_pixmap, attrib_listPacked);
+        }
+
         ANGLE_CAPTURE_EGL(CreatePlatformPixmapSurfaceEXT, true, thread, dpyPacked, configPacked,
                           native_pixmap, attrib_listPacked, returnValue);
     }
@@ -1029,11 +1208,16 @@ EGLSurface EGLAPIENTRY EGL_CreatePlatformWindowSurfaceEXT(EGLDisplay dpy,
         egl::Config *configPacked             = PackParam<egl::Config *>(config);
         const AttributeMap &attrib_listPacked = PackParam<const AttributeMap &>(attrib_list);
 
-        ANGLE_EGL_VALIDATE(thread, CreatePlatformWindowSurfaceEXT, GetDisplayIfValid(dpyPacked),
-                           EGLSurface, dpyPacked, configPacked, native_window, attrib_listPacked);
+        {
+            ANGLE_EGL_SCOPED_CONTEXT_LOCK(CreatePlatformWindowSurfaceEXT, thread, dpyPacked);
+            ANGLE_EGL_VALIDATE(thread, CreatePlatformWindowSurfaceEXT, GetDisplayIfValid(dpyPacked),
+                               EGLSurface, dpyPacked, configPacked, native_window,
+                               attrib_listPacked);
 
-        returnValue = CreatePlatformWindowSurfaceEXT(thread, dpyPacked, configPacked, native_window,
-                                                     attrib_listPacked);
+            returnValue = CreatePlatformWindowSurfaceEXT(thread, dpyPacked, configPacked,
+                                                         native_window, attrib_listPacked);
+        }
+
         ANGLE_CAPTURE_EGL(CreatePlatformWindowSurfaceEXT, true, thread, dpyPacked, configPacked,
                           native_window, attrib_listPacked, returnValue);
     }
@@ -1057,10 +1241,15 @@ EGLDisplay EGLAPIENTRY EGL_GetPlatformDisplayEXT(EGLenum platform,
 
         const AttributeMap &attrib_listPacked = PackParam<const AttributeMap &>(attrib_list);
 
-        ANGLE_EGL_VALIDATE(thread, GetPlatformDisplayEXT, nullptr, EGLDisplay, platform,
-                           native_display, attrib_listPacked);
+        {
+            ANGLE_EGL_SCOPED_CONTEXT_LOCK(GetPlatformDisplayEXT, thread);
+            ANGLE_EGL_VALIDATE(thread, GetPlatformDisplayEXT, nullptr, EGLDisplay, platform,
+                               native_display, attrib_listPacked);
 
-        returnValue = GetPlatformDisplayEXT(thread, platform, native_display, attrib_listPacked);
+            returnValue =
+                GetPlatformDisplayEXT(thread, platform, native_display, attrib_listPacked);
+        }
+
         ANGLE_CAPTURE_EGL(GetPlatformDisplayEXT, true, thread, platform, native_display,
                           attrib_listPacked, returnValue);
     }
@@ -1083,10 +1272,14 @@ EGLint EGLAPIENTRY EGL_DebugMessageControlKHR(EGLDEBUGPROCKHR callback,
 
         const AttributeMap &attrib_listPacked = PackParam<const AttributeMap &>(attrib_list);
 
-        ANGLE_EGL_VALIDATE(thread, DebugMessageControlKHR, nullptr, EGLint, callback,
-                           attrib_listPacked);
+        {
+            ANGLE_EGL_SCOPED_CONTEXT_LOCK(DebugMessageControlKHR, thread);
+            ANGLE_EGL_VALIDATE(thread, DebugMessageControlKHR, nullptr, EGLint, callback,
+                               attrib_listPacked);
 
-        returnValue = DebugMessageControlKHR(thread, callback, attrib_listPacked);
+            returnValue = DebugMessageControlKHR(thread, callback, attrib_listPacked);
+        }
+
         ANGLE_CAPTURE_EGL(DebugMessageControlKHR, true, thread, callback, attrib_listPacked,
                           returnValue);
     }
@@ -1112,10 +1305,14 @@ EGLint EGLAPIENTRY EGL_LabelObjectKHR(EGLDisplay display,
         egl::Display *displayPacked = PackParam<egl::Display *>(display);
         ObjectType objectTypePacked = PackParam<ObjectType>(objectType);
 
-        ANGLE_EGL_VALIDATE(thread, LabelObjectKHR, GetDisplayIfValid(displayPacked), EGLint,
-                           displayPacked, objectTypePacked, object, label);
+        {
+            ANGLE_EGL_SCOPED_CONTEXT_LOCK(LabelObjectKHR, thread, displayPacked);
+            ANGLE_EGL_VALIDATE(thread, LabelObjectKHR, GetDisplayIfValid(displayPacked), EGLint,
+                               displayPacked, objectTypePacked, object, label);
 
-        returnValue = LabelObjectKHR(thread, displayPacked, objectTypePacked, object, label);
+            returnValue = LabelObjectKHR(thread, displayPacked, objectTypePacked, object, label);
+        }
+
         ANGLE_CAPTURE_EGL(LabelObjectKHR, true, thread, displayPacked, objectTypePacked, object,
                           label, returnValue);
     }
@@ -1133,9 +1330,13 @@ EGLBoolean EGLAPIENTRY EGL_QueryDebugKHR(EGLint attribute, EGLAttrib *value)
         EGL_EVENT(QueryDebugKHR, "attribute = %d, value = 0x%016" PRIxPTR "", attribute,
                   (uintptr_t)value);
 
-        ANGLE_EGL_VALIDATE(thread, QueryDebugKHR, nullptr, EGLBoolean, attribute, value);
+        {
+            ANGLE_EGL_SCOPED_CONTEXT_LOCK(QueryDebugKHR, thread, attribute);
+            ANGLE_EGL_VALIDATE(thread, QueryDebugKHR, nullptr, EGLBoolean, attribute, value);
 
-        returnValue = QueryDebugKHR(thread, attribute, value);
+            returnValue = QueryDebugKHR(thread, attribute, value);
+        }
+
         ANGLE_CAPTURE_EGL(QueryDebugKHR, true, thread, attribute, value, returnValue);
     }
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
@@ -1160,10 +1361,14 @@ EGLint EGLAPIENTRY EGL_ClientWaitSyncKHR(EGLDisplay dpy,
         egl::Display *dpyPacked = PackParam<egl::Display *>(dpy);
         egl::SyncID syncPacked  = PackParam<egl::SyncID>(sync);
 
-        ANGLE_EGL_VALIDATE(thread, ClientWaitSyncKHR, GetDisplayIfValid(dpyPacked), EGLint,
-                           dpyPacked, syncPacked, flags, timeout);
+        {
+            ANGLE_EGL_SCOPED_CONTEXT_LOCK(ClientWaitSyncKHR, thread, dpyPacked);
+            ANGLE_EGL_VALIDATE(thread, ClientWaitSyncKHR, GetDisplayIfValid(dpyPacked), EGLint,
+                               dpyPacked, syncPacked, flags, timeout);
 
-        returnValue = ClientWaitSyncKHR(thread, dpyPacked, syncPacked, flags, timeout);
+            returnValue = ClientWaitSyncKHR(thread, dpyPacked, syncPacked, flags, timeout);
+        }
+
         ANGLE_CAPTURE_EGL(ClientWaitSyncKHR, true, thread, dpyPacked, syncPacked, flags, timeout,
                           returnValue);
     }
@@ -1185,10 +1390,14 @@ EGLSyncKHR EGLAPIENTRY EGL_CreateSyncKHR(EGLDisplay dpy, EGLenum type, const EGL
         egl::Display *dpyPacked               = PackParam<egl::Display *>(dpy);
         const AttributeMap &attrib_listPacked = PackParam<const AttributeMap &>(attrib_list);
 
-        ANGLE_EGL_VALIDATE(thread, CreateSyncKHR, GetDisplayIfValid(dpyPacked), EGLSyncKHR,
-                           dpyPacked, type, attrib_listPacked);
+        {
+            ANGLE_EGL_SCOPED_CONTEXT_LOCK(CreateSyncKHR, thread, dpyPacked);
+            ANGLE_EGL_VALIDATE(thread, CreateSyncKHR, GetDisplayIfValid(dpyPacked), EGLSyncKHR,
+                               dpyPacked, type, attrib_listPacked);
 
-        returnValue = CreateSyncKHR(thread, dpyPacked, type, attrib_listPacked);
+            returnValue = CreateSyncKHR(thread, dpyPacked, type, attrib_listPacked);
+        }
+
         ANGLE_CAPTURE_EGL(CreateSyncKHR, true, thread, dpyPacked, type, attrib_listPacked,
                           returnValue);
     }
@@ -1209,10 +1418,14 @@ EGLBoolean EGLAPIENTRY EGL_DestroySyncKHR(EGLDisplay dpy, EGLSyncKHR sync)
         egl::Display *dpyPacked = PackParam<egl::Display *>(dpy);
         egl::SyncID syncPacked  = PackParam<egl::SyncID>(sync);
 
-        ANGLE_EGL_VALIDATE(thread, DestroySyncKHR, GetDisplayIfValid(dpyPacked), EGLBoolean,
-                           dpyPacked, syncPacked);
+        {
+            ANGLE_EGL_SCOPED_CONTEXT_LOCK(DestroySyncKHR, thread, dpyPacked);
+            ANGLE_EGL_VALIDATE(thread, DestroySyncKHR, GetDisplayIfValid(dpyPacked), EGLBoolean,
+                               dpyPacked, syncPacked);
 
-        returnValue = DestroySyncKHR(thread, dpyPacked, syncPacked);
+            returnValue = DestroySyncKHR(thread, dpyPacked, syncPacked);
+        }
+
         ANGLE_CAPTURE_EGL(DestroySyncKHR, true, thread, dpyPacked, syncPacked, returnValue);
     }
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
@@ -1237,10 +1450,14 @@ EGLBoolean EGLAPIENTRY EGL_GetSyncAttribKHR(EGLDisplay dpy,
         egl::Display *dpyPacked = PackParam<egl::Display *>(dpy);
         egl::SyncID syncPacked  = PackParam<egl::SyncID>(sync);
 
-        ANGLE_EGL_VALIDATE(thread, GetSyncAttribKHR, GetDisplayIfValid(dpyPacked), EGLBoolean,
-                           dpyPacked, syncPacked, attribute, value);
+        {
+            ANGLE_EGL_SCOPED_CONTEXT_LOCK(GetSyncAttribKHR, thread, dpyPacked, attribute);
+            ANGLE_EGL_VALIDATE(thread, GetSyncAttribKHR, GetDisplayIfValid(dpyPacked), EGLBoolean,
+                               dpyPacked, syncPacked, attribute, value);
 
-        returnValue = GetSyncAttribKHR(thread, dpyPacked, syncPacked, attribute, value);
+            returnValue = GetSyncAttribKHR(thread, dpyPacked, syncPacked, attribute, value);
+        }
+
         ANGLE_CAPTURE_EGL(GetSyncAttribKHR, true, thread, dpyPacked, syncPacked, attribute, value,
                           returnValue);
     }
@@ -1270,11 +1487,15 @@ EGLImageKHR EGLAPIENTRY EGL_CreateImageKHR(EGLDisplay dpy,
         gl::ContextID ctxPacked               = PackParam<gl::ContextID>(ctx);
         const AttributeMap &attrib_listPacked = PackParam<const AttributeMap &>(attrib_list);
 
-        ANGLE_EGL_VALIDATE(thread, CreateImageKHR, GetDisplayIfValid(dpyPacked), EGLImageKHR,
-                           dpyPacked, ctxPacked, target, buffer, attrib_listPacked);
+        {
+            ANGLE_EGL_SCOPED_CONTEXT_LOCK(CreateImageKHR, thread, dpyPacked, ctxPacked);
+            ANGLE_EGL_VALIDATE(thread, CreateImageKHR, GetDisplayIfValid(dpyPacked), EGLImageKHR,
+                               dpyPacked, ctxPacked, target, buffer, attrib_listPacked);
 
-        returnValue =
-            CreateImageKHR(thread, dpyPacked, ctxPacked, target, buffer, attrib_listPacked);
+            returnValue =
+                CreateImageKHR(thread, dpyPacked, ctxPacked, target, buffer, attrib_listPacked);
+        }
+
         ANGLE_CAPTURE_EGL(CreateImageKHR, true, thread, dpyPacked, ctxPacked, target, buffer,
                           attrib_listPacked, returnValue);
     }
@@ -1295,10 +1516,14 @@ EGLBoolean EGLAPIENTRY EGL_DestroyImageKHR(EGLDisplay dpy, EGLImageKHR image)
         egl::Display *dpyPacked = PackParam<egl::Display *>(dpy);
         ImageID imagePacked     = PackParam<ImageID>(image);
 
-        ANGLE_EGL_VALIDATE(thread, DestroyImageKHR, GetDisplayIfValid(dpyPacked), EGLBoolean,
-                           dpyPacked, imagePacked);
+        {
+            ANGLE_EGL_SCOPED_CONTEXT_LOCK(DestroyImageKHR, thread, dpyPacked);
+            ANGLE_EGL_VALIDATE(thread, DestroyImageKHR, GetDisplayIfValid(dpyPacked), EGLBoolean,
+                               dpyPacked, imagePacked);
 
-        returnValue = DestroyImageKHR(thread, dpyPacked, imagePacked);
+            returnValue = DestroyImageKHR(thread, dpyPacked, imagePacked);
+        }
+
         ANGLE_CAPTURE_EGL(DestroyImageKHR, true, thread, dpyPacked, imagePacked, returnValue);
     }
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
@@ -1324,10 +1549,14 @@ EGLBoolean EGLAPIENTRY EGL_LockSurfaceKHR(EGLDisplay dpy,
         SurfaceID surfacePacked               = PackParam<SurfaceID>(surface);
         const AttributeMap &attrib_listPacked = PackParam<const AttributeMap &>(attrib_list);
 
-        ANGLE_EGL_VALIDATE(thread, LockSurfaceKHR, GetDisplayIfValid(dpyPacked), EGLBoolean,
-                           dpyPacked, surfacePacked, attrib_listPacked);
+        {
+            ANGLE_EGL_SCOPED_CONTEXT_LOCK(LockSurfaceKHR, thread, dpyPacked);
+            ANGLE_EGL_VALIDATE(thread, LockSurfaceKHR, GetDisplayIfValid(dpyPacked), EGLBoolean,
+                               dpyPacked, surfacePacked, attrib_listPacked);
 
-        returnValue = LockSurfaceKHR(thread, dpyPacked, surfacePacked, attrib_listPacked);
+            returnValue = LockSurfaceKHR(thread, dpyPacked, surfacePacked, attrib_listPacked);
+        }
+
         ANGLE_CAPTURE_EGL(LockSurfaceKHR, true, thread, dpyPacked, surfacePacked, attrib_listPacked,
                           returnValue);
     }
@@ -1353,10 +1582,14 @@ EGLBoolean EGLAPIENTRY EGL_QuerySurface64KHR(EGLDisplay dpy,
         egl::Display *dpyPacked = PackParam<egl::Display *>(dpy);
         SurfaceID surfacePacked = PackParam<SurfaceID>(surface);
 
-        ANGLE_EGL_VALIDATE(thread, QuerySurface64KHR, GetDisplayIfValid(dpyPacked), EGLBoolean,
-                           dpyPacked, surfacePacked, attribute, value);
+        {
+            ANGLE_EGL_SCOPED_CONTEXT_LOCK(QuerySurface64KHR, thread, dpyPacked, attribute);
+            ANGLE_EGL_VALIDATE(thread, QuerySurface64KHR, GetDisplayIfValid(dpyPacked), EGLBoolean,
+                               dpyPacked, surfacePacked, attribute, value);
 
-        returnValue = QuerySurface64KHR(thread, dpyPacked, surfacePacked, attribute, value);
+            returnValue = QuerySurface64KHR(thread, dpyPacked, surfacePacked, attribute, value);
+        }
+
         ANGLE_CAPTURE_EGL(QuerySurface64KHR, true, thread, dpyPacked, surfacePacked, attribute,
                           value, returnValue);
     }
@@ -1377,10 +1610,14 @@ EGLBoolean EGLAPIENTRY EGL_UnlockSurfaceKHR(EGLDisplay dpy, EGLSurface surface)
         egl::Display *dpyPacked = PackParam<egl::Display *>(dpy);
         SurfaceID surfacePacked = PackParam<SurfaceID>(surface);
 
-        ANGLE_EGL_VALIDATE(thread, UnlockSurfaceKHR, GetDisplayIfValid(dpyPacked), EGLBoolean,
-                           dpyPacked, surfacePacked);
+        {
+            ANGLE_EGL_SCOPED_CONTEXT_LOCK(UnlockSurfaceKHR, thread, dpyPacked);
+            ANGLE_EGL_VALIDATE(thread, UnlockSurfaceKHR, GetDisplayIfValid(dpyPacked), EGLBoolean,
+                               dpyPacked, surfacePacked);
 
-        returnValue = UnlockSurfaceKHR(thread, dpyPacked, surfacePacked);
+            returnValue = UnlockSurfaceKHR(thread, dpyPacked, surfacePacked);
+        }
+
         ANGLE_CAPTURE_EGL(UnlockSurfaceKHR, true, thread, dpyPacked, surfacePacked, returnValue);
     }
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
@@ -1406,10 +1643,14 @@ EGLBoolean EGLAPIENTRY EGL_SetDamageRegionKHR(EGLDisplay dpy,
         egl::Display *dpyPacked = PackParam<egl::Display *>(dpy);
         SurfaceID surfacePacked = PackParam<SurfaceID>(surface);
 
-        ANGLE_EGL_VALIDATE(thread, SetDamageRegionKHR, GetDisplayIfValid(dpyPacked), EGLBoolean,
-                           dpyPacked, surfacePacked, rects, n_rects);
+        {
+            ANGLE_EGL_SCOPED_CONTEXT_LOCK(SetDamageRegionKHR, thread, dpyPacked);
+            ANGLE_EGL_VALIDATE(thread, SetDamageRegionKHR, GetDisplayIfValid(dpyPacked), EGLBoolean,
+                               dpyPacked, surfacePacked, rects, n_rects);
 
-        returnValue = SetDamageRegionKHR(thread, dpyPacked, surfacePacked, rects, n_rects);
+            returnValue = SetDamageRegionKHR(thread, dpyPacked, surfacePacked, rects, n_rects);
+        }
+
         ANGLE_CAPTURE_EGL(SetDamageRegionKHR, true, thread, dpyPacked, surfacePacked, rects,
                           n_rects, returnValue);
     }
@@ -1431,10 +1672,14 @@ EGLBoolean EGLAPIENTRY EGL_SignalSyncKHR(EGLDisplay dpy, EGLSyncKHR sync, EGLenu
         egl::Display *dpyPacked = PackParam<egl::Display *>(dpy);
         egl::SyncID syncPacked  = PackParam<egl::SyncID>(sync);
 
-        ANGLE_EGL_VALIDATE(thread, SignalSyncKHR, GetDisplayIfValid(dpyPacked), EGLBoolean,
-                           dpyPacked, syncPacked, mode);
+        {
+            ANGLE_EGL_SCOPED_CONTEXT_LOCK(SignalSyncKHR, thread, dpyPacked);
+            ANGLE_EGL_VALIDATE(thread, SignalSyncKHR, GetDisplayIfValid(dpyPacked), EGLBoolean,
+                               dpyPacked, syncPacked, mode);
 
-        returnValue = SignalSyncKHR(thread, dpyPacked, syncPacked, mode);
+            returnValue = SignalSyncKHR(thread, dpyPacked, syncPacked, mode);
+        }
+
         ANGLE_CAPTURE_EGL(SignalSyncKHR, true, thread, dpyPacked, syncPacked, mode, returnValue);
     }
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
@@ -1463,10 +1708,14 @@ EGLStreamKHR EGLAPIENTRY EGL_CreateStreamKHR(EGLDisplay dpy, const EGLint *attri
         egl::Display *dpyPacked               = PackParam<egl::Display *>(dpy);
         const AttributeMap &attrib_listPacked = PackParam<const AttributeMap &>(attrib_list);
 
-        ANGLE_EGL_VALIDATE(thread, CreateStreamKHR, GetDisplayIfValid(dpyPacked), EGLStreamKHR,
-                           dpyPacked, attrib_listPacked);
+        {
+            ANGLE_EGL_SCOPED_CONTEXT_LOCK(CreateStreamKHR, thread, dpyPacked);
+            ANGLE_EGL_VALIDATE(thread, CreateStreamKHR, GetDisplayIfValid(dpyPacked), EGLStreamKHR,
+                               dpyPacked, attrib_listPacked);
 
-        returnValue = CreateStreamKHR(thread, dpyPacked, attrib_listPacked);
+            returnValue = CreateStreamKHR(thread, dpyPacked, attrib_listPacked);
+        }
+
         ANGLE_CAPTURE_EGL(CreateStreamKHR, true, thread, dpyPacked, attrib_listPacked, returnValue);
     }
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
@@ -1486,10 +1735,14 @@ EGLBoolean EGLAPIENTRY EGL_DestroyStreamKHR(EGLDisplay dpy, EGLStreamKHR stream)
         egl::Display *dpyPacked   = PackParam<egl::Display *>(dpy);
         egl::Stream *streamPacked = PackParam<egl::Stream *>(stream);
 
-        ANGLE_EGL_VALIDATE(thread, DestroyStreamKHR, GetDisplayIfValid(dpyPacked), EGLBoolean,
-                           dpyPacked, streamPacked);
+        {
+            ANGLE_EGL_SCOPED_CONTEXT_LOCK(DestroyStreamKHR, thread, dpyPacked);
+            ANGLE_EGL_VALIDATE(thread, DestroyStreamKHR, GetDisplayIfValid(dpyPacked), EGLBoolean,
+                               dpyPacked, streamPacked);
 
-        returnValue = DestroyStreamKHR(thread, dpyPacked, streamPacked);
+            returnValue = DestroyStreamKHR(thread, dpyPacked, streamPacked);
+        }
+
         ANGLE_CAPTURE_EGL(DestroyStreamKHR, true, thread, dpyPacked, streamPacked, returnValue);
     }
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
@@ -1514,10 +1767,14 @@ EGLBoolean EGLAPIENTRY EGL_QueryStreamKHR(EGLDisplay dpy,
         egl::Display *dpyPacked   = PackParam<egl::Display *>(dpy);
         egl::Stream *streamPacked = PackParam<egl::Stream *>(stream);
 
-        ANGLE_EGL_VALIDATE(thread, QueryStreamKHR, GetDisplayIfValid(dpyPacked), EGLBoolean,
-                           dpyPacked, streamPacked, attribute, value);
+        {
+            ANGLE_EGL_SCOPED_CONTEXT_LOCK(QueryStreamKHR, thread, dpyPacked, attribute);
+            ANGLE_EGL_VALIDATE(thread, QueryStreamKHR, GetDisplayIfValid(dpyPacked), EGLBoolean,
+                               dpyPacked, streamPacked, attribute, value);
 
-        returnValue = QueryStreamKHR(thread, dpyPacked, streamPacked, attribute, value);
+            returnValue = QueryStreamKHR(thread, dpyPacked, streamPacked, attribute, value);
+        }
+
         ANGLE_CAPTURE_EGL(QueryStreamKHR, true, thread, dpyPacked, streamPacked, attribute, value,
                           returnValue);
     }
@@ -1543,10 +1800,14 @@ EGLBoolean EGLAPIENTRY EGL_QueryStreamu64KHR(EGLDisplay dpy,
         egl::Display *dpyPacked   = PackParam<egl::Display *>(dpy);
         egl::Stream *streamPacked = PackParam<egl::Stream *>(stream);
 
-        ANGLE_EGL_VALIDATE(thread, QueryStreamu64KHR, GetDisplayIfValid(dpyPacked), EGLBoolean,
-                           dpyPacked, streamPacked, attribute, value);
+        {
+            ANGLE_EGL_SCOPED_CONTEXT_LOCK(QueryStreamu64KHR, thread, dpyPacked, attribute);
+            ANGLE_EGL_VALIDATE(thread, QueryStreamu64KHR, GetDisplayIfValid(dpyPacked), EGLBoolean,
+                               dpyPacked, streamPacked, attribute, value);
 
-        returnValue = QueryStreamu64KHR(thread, dpyPacked, streamPacked, attribute, value);
+            returnValue = QueryStreamu64KHR(thread, dpyPacked, streamPacked, attribute, value);
+        }
+
         ANGLE_CAPTURE_EGL(QueryStreamu64KHR, true, thread, dpyPacked, streamPacked, attribute,
                           value, returnValue);
     }
@@ -1572,10 +1833,14 @@ EGLBoolean EGLAPIENTRY EGL_StreamAttribKHR(EGLDisplay dpy,
         egl::Display *dpyPacked   = PackParam<egl::Display *>(dpy);
         egl::Stream *streamPacked = PackParam<egl::Stream *>(stream);
 
-        ANGLE_EGL_VALIDATE(thread, StreamAttribKHR, GetDisplayIfValid(dpyPacked), EGLBoolean,
-                           dpyPacked, streamPacked, attribute, value);
+        {
+            ANGLE_EGL_SCOPED_CONTEXT_LOCK(StreamAttribKHR, thread, dpyPacked, attribute);
+            ANGLE_EGL_VALIDATE(thread, StreamAttribKHR, GetDisplayIfValid(dpyPacked), EGLBoolean,
+                               dpyPacked, streamPacked, attribute, value);
 
-        returnValue = StreamAttribKHR(thread, dpyPacked, streamPacked, attribute, value);
+            returnValue = StreamAttribKHR(thread, dpyPacked, streamPacked, attribute, value);
+        }
+
         ANGLE_CAPTURE_EGL(StreamAttribKHR, true, thread, dpyPacked, streamPacked, attribute, value,
                           returnValue);
     }
@@ -1597,10 +1862,14 @@ EGLBoolean EGLAPIENTRY EGL_StreamConsumerAcquireKHR(EGLDisplay dpy, EGLStreamKHR
         egl::Display *dpyPacked   = PackParam<egl::Display *>(dpy);
         egl::Stream *streamPacked = PackParam<egl::Stream *>(stream);
 
-        ANGLE_EGL_VALIDATE(thread, StreamConsumerAcquireKHR, GetDisplayIfValid(dpyPacked),
-                           EGLBoolean, dpyPacked, streamPacked);
+        {
+            ANGLE_EGL_SCOPED_CONTEXT_LOCK(StreamConsumerAcquireKHR, thread, dpyPacked);
+            ANGLE_EGL_VALIDATE(thread, StreamConsumerAcquireKHR, GetDisplayIfValid(dpyPacked),
+                               EGLBoolean, dpyPacked, streamPacked);
 
-        returnValue = StreamConsumerAcquireKHR(thread, dpyPacked, streamPacked);
+            returnValue = StreamConsumerAcquireKHR(thread, dpyPacked, streamPacked);
+        }
+
         ANGLE_CAPTURE_EGL(StreamConsumerAcquireKHR, true, thread, dpyPacked, streamPacked,
                           returnValue);
     }
@@ -1622,10 +1891,14 @@ EGLBoolean EGLAPIENTRY EGL_StreamConsumerGLTextureExternalKHR(EGLDisplay dpy, EG
         egl::Display *dpyPacked   = PackParam<egl::Display *>(dpy);
         egl::Stream *streamPacked = PackParam<egl::Stream *>(stream);
 
-        ANGLE_EGL_VALIDATE(thread, StreamConsumerGLTextureExternalKHR, GetDisplayIfValid(dpyPacked),
-                           EGLBoolean, dpyPacked, streamPacked);
+        {
+            ANGLE_EGL_SCOPED_CONTEXT_LOCK(StreamConsumerGLTextureExternalKHR, thread, dpyPacked);
+            ANGLE_EGL_VALIDATE(thread, StreamConsumerGLTextureExternalKHR,
+                               GetDisplayIfValid(dpyPacked), EGLBoolean, dpyPacked, streamPacked);
 
-        returnValue = StreamConsumerGLTextureExternalKHR(thread, dpyPacked, streamPacked);
+            returnValue = StreamConsumerGLTextureExternalKHR(thread, dpyPacked, streamPacked);
+        }
+
         ANGLE_CAPTURE_EGL(StreamConsumerGLTextureExternalKHR, true, thread, dpyPacked, streamPacked,
                           returnValue);
     }
@@ -1646,10 +1919,14 @@ EGLBoolean EGLAPIENTRY EGL_StreamConsumerReleaseKHR(EGLDisplay dpy, EGLStreamKHR
         egl::Display *dpyPacked   = PackParam<egl::Display *>(dpy);
         egl::Stream *streamPacked = PackParam<egl::Stream *>(stream);
 
-        ANGLE_EGL_VALIDATE(thread, StreamConsumerReleaseKHR, GetDisplayIfValid(dpyPacked),
-                           EGLBoolean, dpyPacked, streamPacked);
+        {
+            ANGLE_EGL_SCOPED_CONTEXT_LOCK(StreamConsumerReleaseKHR, thread, dpyPacked);
+            ANGLE_EGL_VALIDATE(thread, StreamConsumerReleaseKHR, GetDisplayIfValid(dpyPacked),
+                               EGLBoolean, dpyPacked, streamPacked);
 
-        returnValue = StreamConsumerReleaseKHR(thread, dpyPacked, streamPacked);
+            returnValue = StreamConsumerReleaseKHR(thread, dpyPacked, streamPacked);
+        }
+
         ANGLE_CAPTURE_EGL(StreamConsumerReleaseKHR, true, thread, dpyPacked, streamPacked,
                           returnValue);
     }
@@ -1663,7 +1940,7 @@ EGLBoolean EGLAPIENTRY EGL_SwapBuffersWithDamageKHR(EGLDisplay dpy,
                                                     const EGLint *rects,
                                                     EGLint n_rects)
 {
-    ANGLE_EGLBOOLEAN_TRY(PrepareSwapBuffersANGLE(dpy, surface));
+    ANGLE_EGLBOOLEAN_TRY(EGL_PrepareSwapBuffersANGLE(dpy, surface));
     Thread *thread = egl::GetCurrentThread();
     EGLBoolean returnValue;
     {
@@ -1676,14 +1953,19 @@ EGLBoolean EGLAPIENTRY EGL_SwapBuffersWithDamageKHR(EGLDisplay dpy,
         egl::Display *dpyPacked = PackParam<egl::Display *>(dpy);
         SurfaceID surfacePacked = PackParam<SurfaceID>(surface);
 
-        ANGLE_EGL_VALIDATE(thread, SwapBuffersWithDamageKHR, GetDisplayIfValid(dpyPacked),
-                           EGLBoolean, dpyPacked, surfacePacked, rects, n_rects);
+        {
+            ANGLE_EGL_SCOPED_CONTEXT_LOCK(SwapBuffersWithDamageKHR, thread, dpyPacked);
+            ANGLE_EGL_VALIDATE(thread, SwapBuffersWithDamageKHR, GetDisplayIfValid(dpyPacked),
+                               EGLBoolean, dpyPacked, surfacePacked, rects, n_rects);
 
-        returnValue = SwapBuffersWithDamageKHR(thread, dpyPacked, surfacePacked, rects, n_rects);
+            returnValue =
+                SwapBuffersWithDamageKHR(thread, dpyPacked, surfacePacked, rects, n_rects);
+        }
+
         ANGLE_CAPTURE_EGL(SwapBuffersWithDamageKHR, true, thread, dpyPacked, surfacePacked, rects,
                           n_rects, returnValue);
     }
-    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
+    egl::Display::GetCurrentThreadUnlockedTailCall()->run();
     return returnValue;
 }
 
@@ -1701,10 +1983,14 @@ EGLint EGLAPIENTRY EGL_WaitSyncKHR(EGLDisplay dpy, EGLSyncKHR sync, EGLint flags
         egl::Display *dpyPacked = PackParam<egl::Display *>(dpy);
         egl::SyncID syncPacked  = PackParam<egl::SyncID>(sync);
 
-        ANGLE_EGL_VALIDATE(thread, WaitSyncKHR, GetDisplayIfValid(dpyPacked), EGLint, dpyPacked,
-                           syncPacked, flags);
+        {
+            ANGLE_EGL_SCOPED_CONTEXT_LOCK(WaitSyncKHR, thread, dpyPacked);
+            ANGLE_EGL_VALIDATE(thread, WaitSyncKHR, GetDisplayIfValid(dpyPacked), EGLint, dpyPacked,
+                               syncPacked, flags);
 
-        returnValue = WaitSyncKHR(thread, dpyPacked, syncPacked, flags);
+            returnValue = WaitSyncKHR(thread, dpyPacked, syncPacked, flags);
+        }
+
         ANGLE_CAPTURE_EGL(WaitSyncKHR, true, thread, dpyPacked, syncPacked, flags, returnValue);
     }
     ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
@@ -1732,10 +2018,14 @@ EGLBoolean EGLAPIENTRY EGL_PostSubBufferNV(EGLDisplay dpy,
         egl::Display *dpyPacked = PackParam<egl::Display *>(dpy);
         SurfaceID surfacePacked = PackParam<SurfaceID>(surface);
 
-        ANGLE_EGL_VALIDATE(thread, PostSubBufferNV, GetDisplayIfValid(dpyPacked), EGLBoolean,
-                           dpyPacked, surfacePacked, x, y, width, height);
+        {
+            ANGLE_EGL_SCOPED_CONTEXT_LOCK(PostSubBufferNV, thread, dpyPacked);
+            ANGLE_EGL_VALIDATE(thread, PostSubBufferNV, GetDisplayIfValid(dpyPacked), EGLBoolean,
+                               dpyPacked, surfacePacked, x, y, width, height);
 
-        returnValue = PostSubBufferNV(thread, dpyPacked, surfacePacked, x, y, width, height);
+            returnValue = PostSubBufferNV(thread, dpyPacked, surfacePacked, x, y, width, height);
+        }
+
         ANGLE_CAPTURE_EGL(PostSubBufferNV, true, thread, dpyPacked, surfacePacked, x, y, width,
                           height, returnValue);
     }
@@ -1762,12 +2052,17 @@ EGLBoolean EGLAPIENTRY EGL_StreamConsumerGLTextureExternalAttribsNV(EGLDisplay d
         egl::Stream *streamPacked             = PackParam<egl::Stream *>(stream);
         const AttributeMap &attrib_listPacked = PackParam<const AttributeMap &>(attrib_list);
 
-        ANGLE_EGL_VALIDATE(thread, StreamConsumerGLTextureExternalAttribsNV,
-                           GetDisplayIfValid(dpyPacked), EGLBoolean, dpyPacked, streamPacked,
-                           attrib_listPacked);
+        {
+            ANGLE_EGL_SCOPED_CONTEXT_LOCK(StreamConsumerGLTextureExternalAttribsNV, thread,
+                                          dpyPacked);
+            ANGLE_EGL_VALIDATE(thread, StreamConsumerGLTextureExternalAttribsNV,
+                               GetDisplayIfValid(dpyPacked), EGLBoolean, dpyPacked, streamPacked,
+                               attrib_listPacked);
 
-        returnValue = StreamConsumerGLTextureExternalAttribsNV(thread, dpyPacked, streamPacked,
-                                                               attrib_listPacked);
+            returnValue = StreamConsumerGLTextureExternalAttribsNV(thread, dpyPacked, streamPacked,
+                                                                   attrib_listPacked);
+        }
+
         ANGLE_CAPTURE_EGL(StreamConsumerGLTextureExternalAttribsNV, true, thread, dpyPacked,
                           streamPacked, attrib_listPacked, returnValue);
     }

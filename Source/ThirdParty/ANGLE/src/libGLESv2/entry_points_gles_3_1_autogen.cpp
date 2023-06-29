@@ -203,10 +203,8 @@ void GL_APIENTRY GL_DeleteProgramPipelines(GLsizei n, const GLuint *pipelines)
         SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid =
             (context->skipValidation() ||
-             (ValidatePixelLocalStorageInactive(context,
-                                                angle::EntryPoint::GLDeleteProgramPipelines) &&
-              ValidateDeleteProgramPipelines(context, angle::EntryPoint::GLDeleteProgramPipelines,
-                                             n, pipelinesPacked)));
+             ValidateDeleteProgramPipelines(context, angle::EntryPoint::GLDeleteProgramPipelines, n,
+                                            pipelinesPacked));
         if (isCallValid)
         {
             context->deleteProgramPipelines(n, pipelinesPacked);

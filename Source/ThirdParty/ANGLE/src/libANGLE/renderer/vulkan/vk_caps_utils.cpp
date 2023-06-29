@@ -173,78 +173,6 @@ bool GetTextureSRGBOverrideSupport(const RendererVk *rendererVk,
     return true;
 }
 
-bool HasTextureBufferSupport(const RendererVk *rendererVk)
-{
-    //  glTexBuffer page 187 table 8.18.
-    //  glBindImageTexture page 216 table 8.24.
-    //  https://www.khronos.org/registry/OpenGL/specs/es/3.2/es_spec_3.2.pdf.
-    //  https://www.khronos.org/registry/vulkan/specs/1.0-extensions/html/chap43.html#features-required-format-support
-    //  required image and texture access for texture buffer formats are
-    //                         texture access                image access
-    //    8-bit components, all required by vulkan.
-    //
-    //    GL_R8                        Y                           N
-    //    GL_R8I                       Y                           N
-    //    GL_R8UI                      Y                           N
-    //    GL_RG8                       Y                           N
-    //    GL_RG8I                      Y                           N
-    //    GL_RG8UI                     Y                           N
-    //    GL_RGBA8                     Y                           Y
-    //    GL_RGBA8I                    Y                           Y
-    //    GL_RGBA8UI                   Y                           Y
-    //    GL_RGBA8_SNORM               N                           Y
-    //
-    //    16-bit components,  all required by vulkan.
-    //
-    //    GL_R16F                      Y                           N
-    //    GL_R16I                      Y                           N
-    //    GL_R16UI                     Y                           N
-    //    GL_RG16F                     Y                           N
-    //    GL_RG16I                     Y                           N
-    //    GL_RG16UI                    Y                           N
-    //    GL_RGBA16F                   Y                           Y
-    //    GL_RGBA16I                   Y                           Y
-    //    GL_RGBA16UI                  Y                           Y
-    //
-    //    32-bit components, except RGB32 all others required by vulkan.
-    //
-    //    GL_R32F                      Y                           Y
-    //    GL_R32I                      Y                           Y
-    //    GL_R32UI                     Y                           Y
-    //    GL_RG32F                     Y                           N
-    //    GL_RG32I                     Y                           N
-    //    GL_RG32UI                    Y                           N
-    //    GL_RGB32F                    Y                           N
-    //    GL_RGB32I                    Y                           N
-    //    GL_RGB32UI                   Y                           N
-    //    GL_RGBA32F                   Y                           Y
-    //    GL_RGBA32I                   Y                           Y
-    //    GL_RGBA32UI                  Y                           Y
-
-    // TODO: some platform may not support RGB32 formats as UNIFORM_TEXEL_BUFFER
-    // Despite this limitation, we expose EXT_texture_buffer. http://anglebug.com/3573
-    if (rendererVk->getFeatures().exposeNonConformantExtensionsAndVersions.enabled)
-    {
-        return true;
-    }
-
-    const std::array<GLenum, 3> &optionalFormats = {
-        GL_RGB32F,
-        GL_RGB32I,
-        GL_RGB32UI,
-    };
-
-    for (GLenum formatGL : optionalFormats)
-    {
-        const Format &formatVk = rendererVk->getFormat(formatGL);
-        if (!rendererVk->hasBufferFormatFeatureBits(formatVk.getActualBufferFormat(false).id,
-                                                    VK_FORMAT_FEATURE_UNIFORM_TEXEL_BUFFER_BIT))
-            return false;
-    }
-
-    return true;
-}
-
 bool CanSupportYuvInternalFormat(const RendererVk *rendererVk)
 {
     // The following formats are not mandatory in Vulkan, even when VK_KHR_sampler_ycbcr_conversion
@@ -357,7 +285,10 @@ void RendererVk::ensureCapsInitialized() const
     mNativeExtensions.stencilTexturingANGLE         = true;
     mNativeExtensions.textureBorderClampOES = getFeatures().supportsCustomBorderColor.enabled;
     mNativeExtensions.textureBorderClampEXT = getFeatures().supportsCustomBorderColor.enabled;
+    mNativeExtensions.polygonModeNV         = mPhysicalDeviceFeatures.fillModeNonSolid == VK_TRUE;
+    mNativeExtensions.polygonModeANGLE      = mPhysicalDeviceFeatures.fillModeNonSolid == VK_TRUE;
     mNativeExtensions.polygonOffsetClampEXT = mPhysicalDeviceFeatures.depthBiasClamp == VK_TRUE;
+    mNativeExtensions.depthClampEXT         = mPhysicalDeviceFeatures.depthClamp == VK_TRUE;
     // Enable EXT_texture_type_2_10_10_10_REV
     mNativeExtensions.textureType2101010REVEXT = true;
 
@@ -976,14 +907,57 @@ void RendererVk::ensureCapsInitialized() const
     // R32G32B32_SFLOAT/UINT/SINT which are optional.  For many formats, the STORAGE_TEXEL_BUFFER
     // feature is optional though.  This extension is exposed only if the formats specified in
     // EXT_texture_buffer support the necessary feature bits.
-    if (vk::HasTextureBufferSupport(this))
-    {
-        mNativeExtensions.textureBufferOES = true;
-        mNativeExtensions.textureBufferEXT = true;
-        mNativeCaps.maxTextureBufferSize   = LimitToInt(limitsVk.maxTexelBufferElements);
-        mNativeCaps.textureBufferOffsetAlignment =
-            LimitToInt(limitsVk.minTexelBufferOffsetAlignment);
-    }
+    //
+    //  glTexBuffer page 187 table 8.18.
+    //  glBindImageTexture page 216 table 8.24.
+    //  https://www.khronos.org/registry/OpenGL/specs/es/3.2/es_spec_3.2.pdf.
+    //  https://www.khronos.org/registry/vulkan/specs/1.0-extensions/html/chap43.html#features-required-format-support
+    //  required image and texture access for texture buffer formats are
+    //                         texture access                image access
+    //    8-bit components, all required by vulkan.
+    //
+    //    GL_R8                        Y                           N
+    //    GL_R8I                       Y                           N
+    //    GL_R8UI                      Y                           N
+    //    GL_RG8                       Y                           N
+    //    GL_RG8I                      Y                           N
+    //    GL_RG8UI                     Y                           N
+    //    GL_RGBA8                     Y                           Y
+    //    GL_RGBA8I                    Y                           Y
+    //    GL_RGBA8UI                   Y                           Y
+    //    GL_RGBA8_SNORM               N                           Y
+    //
+    //    16-bit components,  all required by vulkan.
+    //
+    //    GL_R16F                      Y                           N
+    //    GL_R16I                      Y                           N
+    //    GL_R16UI                     Y                           N
+    //    GL_RG16F                     Y                           N
+    //    GL_RG16I                     Y                           N
+    //    GL_RG16UI                    Y                           N
+    //    GL_RGBA16F                   Y                           Y
+    //    GL_RGBA16I                   Y                           Y
+    //    GL_RGBA16UI                  Y                           Y
+    //
+    //    32-bit components, except RGB32 all others required by vulkan.
+    //                       RGB32 is emulated by ANGLE
+    //
+    //    GL_R32F                      Y                           Y
+    //    GL_R32I                      Y                           Y
+    //    GL_R32UI                     Y                           Y
+    //    GL_RG32F                     Y                           N
+    //    GL_RG32I                     Y                           N
+    //    GL_RG32UI                    Y                           N
+    //    GL_RGB32F                    Y                           N
+    //    GL_RGB32I                    Y                           N
+    //    GL_RGB32UI                   Y                           N
+    //    GL_RGBA32F                   Y                           Y
+    //    GL_RGBA32I                   Y                           Y
+    //    GL_RGBA32UI                  Y                           Y
+    mNativeExtensions.textureBufferOES       = true;
+    mNativeExtensions.textureBufferEXT       = true;
+    mNativeCaps.maxTextureBufferSize         = LimitToInt(limitsVk.maxTexelBufferElements);
+    mNativeCaps.textureBufferOffsetAlignment = LimitToInt(limitsVk.minTexelBufferOffsetAlignment);
 
     // Atomic image operations in the vertex and fragment shaders require the
     // vertexPipelineStoresAndAtomics and fragmentStoresAndAtomics Vulkan features respectively.

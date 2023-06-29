@@ -240,6 +240,11 @@ struct ShaderVariable
     // If the variable is a sampler that has ever been statically used with texelFetch
     bool texelFetchStaticUse;
 
+    // Id of the variable in the shader.  Currently used by the SPIR-V output to communicate the
+    // SPIR-V id of the variable.  This value is only set for variables that the SPIR-V transformer
+    // needs to know about, i.e. active variables, excluding non-zero array elements etc.
+    uint32_t id;
+
   protected:
     bool isSameVariableAtLinkTime(const ShaderVariable &other,
                                   bool matchPrecision,
@@ -296,6 +301,9 @@ struct InterfaceBlock
     bool isReadOnly;
     BlockType blockType;
     std::vector<ShaderVariable> fields;
+
+    // Id of the interface block in the shader.  Similar to |ShaderVariable::id|.
+    uint32_t id;
 };
 
 struct WorkGroupSize

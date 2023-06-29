@@ -37,9 +37,6 @@ class TranslatorHLSL : public TCompiler
                                  PerformanceDiagnostics *perfDiagnostics) override;
     bool shouldFlattenPragmaStdglInvariantAll() override;
 
-    // collectVariables needs to be run always so registers can be assigned.
-    bool shouldCollectVariables(const ShCompileOptions &compileOptions) override { return true; }
-
     std::map<std::string, unsigned int> mShaderStorageBlockRegisterMap;
     std::map<std::string, unsigned int> mUniformBlockRegisterMap;
     std::map<std::string, bool> mUniformBlockUseStructuredBufferMap;

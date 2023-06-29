@@ -63,7 +63,7 @@ void runBasicGlobalMutexTest(bool expectToPass, Args &&...args)
     }
     else
     {
-        EXPECT_NE(testVar.load(), kThreadCount * kIterationCount);
+        EXPECT_LE(testVar.load(), kThreadCount * kIterationCount);
     }
 }
 

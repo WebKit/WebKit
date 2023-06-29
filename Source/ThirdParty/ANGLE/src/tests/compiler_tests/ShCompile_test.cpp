@@ -41,7 +41,6 @@ class ShCompileTest : public testing::Test
     {
         ShCompileOptions options    = {};
         options.objectCode          = true;
-        options.variables           = true;
         options.initOutputVariables = true;
 
         bool success                  = sh::Compile(mCompiler, shaderStrings, stringCount, options);

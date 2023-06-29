@@ -68,6 +68,8 @@ class [[nodiscard]] Error final
     inline EGLint getID() const;
     inline bool isError() const;
 
+    inline void setCode(EGLint code);
+
     const std::string &getMessage() const;
 
     static inline Error NoError();
@@ -163,7 +165,8 @@ namespace angle
 // either indicate an Error or a non-Error early exit condition such as a detected no-op.
 // Incomplete signals special cases that are neither success nor failure but require
 // special attention.
-enum class [[nodiscard]] Result{
+enum class [[nodiscard]] Result
+{
     Continue,
     Stop,
     Incomplete,

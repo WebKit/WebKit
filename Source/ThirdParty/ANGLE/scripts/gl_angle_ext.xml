@@ -70,7 +70,7 @@
             <proto>void <name>glBindUniformLocationCHROMIUM</name></proto>
             <param><ptype>GLuint</ptype> <name>program</name></param>
             <param><ptype>GLint</ptype> <name>location</name></param>
-            <param><ptype>const GLchar*</ptype> <name>name</name></param>
+            <param>const <ptype>GLchar</ptype> *<name>name</name></param>
         </command>
         <command>
             <proto>void <name>glCoverageModulationCHROMIUM</name></proto>
@@ -79,7 +79,7 @@
         <command>
             <proto>void <name>glMatrixLoadfCHROMIUM</name></proto>
             <param><ptype>GLenum</ptype> <name>matrixMode</name></param>
-            <param><ptype>const GLfloat *</ptype> <name>matrix</name></param>
+            <param>const <ptype>GLfloat</ptype> *<name>matrix</name></param>
         </command>
         <command>
             <proto>void <name>glMatrixLoadIdentityCHROMIUM</name></proto>
@@ -122,33 +122,33 @@
         </command>
         <command>
         <proto>void <name>glRequestExtensionANGLE</name></proto>
-            <param><ptype>const GLchar *</ptype> <name>name</name></param>
+            <param>const <ptype>GLchar</ptype> *<name>name</name></param>
         </command>
         <command>
         <proto>void <name>glDisableExtensionANGLE</name></proto>
-            <param><ptype>const GLchar *</ptype> <name>name</name></param>
+            <param>const <ptype>GLchar</ptype> *<name>name</name></param>
         </command>
         <command>
         <proto>void <name>glGetBooleanvRobustANGLE</name></proto>
             <param><ptype>GLenum</ptype> <name>pname</name></param>
             <param><ptype>GLsizei</ptype> <name>bufSize</name></param>
-            <param><ptype>GLsizei *</ptype> <name>length</name></param>
-            <param><ptype>GLboolean *</ptype> <name>params</name></param>
+            <param><ptype>GLsizei</ptype> *<name>length</name></param>
+            <param><ptype>GLboolean</ptype> *<name>params</name></param>
         </command>
         <command>
         <proto>void <name>glGetBufferParameterivRobustANGLE</name></proto>
             <param><ptype>GLenum</ptype> <name>target</name></param>
             <param><ptype>GLenum</ptype> <name>pname</name></param>
             <param><ptype>GLsizei</ptype> <name>bufSize</name></param>
-            <param><ptype>GLsizei *</ptype> <name>length</name></param>
-            <param><ptype>GLint *</ptype> <name>params</name></param>
+            <param><ptype>GLsizei</ptype> *<name>length</name></param>
+            <param><ptype>GLint</ptype> *<name>params</name></param>
         </command>
         <command>
         <proto>void <name>glGetFloatvRobustANGLE</name></proto>
             <param><ptype>GLenum</ptype> <name>pname</name></param>
             <param><ptype>GLsizei</ptype> <name>bufSize</name></param>
-            <param><ptype>GLsizei *</ptype> <name>length</name></param>
-            <param><ptype>GLfloat *</ptype> <name>params</name></param>
+            <param><ptype>GLsizei</ptype> *<name>length</name></param>
+            <param><ptype>GLfloat</ptype> *<name>params</name></param>
         </command>
         <command>
         <proto>void <name>glGetFramebufferAttachmentParameterivRobustANGLE</name></proto>
@@ -156,95 +156,95 @@
             <param><ptype>GLenum</ptype> <name>attachment</name></param>
             <param><ptype>GLenum</ptype> <name>pname</name></param>
             <param><ptype>GLsizei</ptype> <name>bufSize</name></param>
-            <param><ptype>GLsizei *</ptype> <name>length</name></param>
-            <param><ptype>GLint *</ptype> <name>params</name></param>
+            <param><ptype>GLsizei</ptype> *<name>length</name></param>
+            <param><ptype>GLint</ptype> *<name>params</name></param>
         </command>
         <command>
         <proto>void <name>glGetIntegervRobustANGLE</name></proto>
             <param><ptype>GLenum</ptype> <name>pname</name></param>
             <param><ptype>GLsizei</ptype> <name>bufSize</name></param>
-            <param><ptype>GLsizei *</ptype> <name>length</name></param>
-            <param><ptype>GLint *</ptype> <name>data</name></param>
+            <param><ptype>GLsizei</ptype> *<name>length</name></param>
+            <param><ptype>GLint</ptype> *<name>data</name></param>
         </command>
         <command>
         <proto>void <name>glGetProgramivRobustANGLE</name></proto>
             <param><ptype>GLuint</ptype> <name>program</name></param>
             <param><ptype>GLenum</ptype> <name>pname</name></param>
             <param><ptype>GLsizei</ptype> <name>bufSize</name></param>
-            <param><ptype>GLsizei *</ptype> <name>length</name></param>
-            <param><ptype>GLint *</ptype> <name>params</name></param>
+            <param><ptype>GLsizei</ptype> *<name>length</name></param>
+            <param><ptype>GLint</ptype> *<name>params</name></param>
         </command>
         <command>
         <proto>void <name>glGetRenderbufferParameterivRobustANGLE</name></proto>
             <param><ptype>GLenum</ptype> <name>target</name></param>
             <param><ptype>GLenum</ptype> <name>pname</name></param>
             <param><ptype>GLsizei</ptype> <name>bufSize</name></param>
-            <param><ptype>GLsizei *</ptype> <name>length</name></param>
-            <param><ptype>GLint *</ptype> <name>params</name></param>
+            <param><ptype>GLsizei</ptype> *<name>length</name></param>
+            <param><ptype>GLint</ptype> *<name>params</name></param>
         </command>
         <command>
         <proto>void <name>glGetShaderivRobustANGLE</name></proto>
             <param><ptype>GLuint</ptype> <name>shader</name></param>
             <param><ptype>GLenum</ptype> <name>pname</name></param>
             <param><ptype>GLsizei</ptype> <name>bufSize</name></param>
-            <param><ptype>GLsizei *</ptype> <name>length</name></param>
-            <param><ptype>GLint *</ptype> <name>params</name></param>
+            <param><ptype>GLsizei</ptype> *<name>length</name></param>
+            <param><ptype>GLint</ptype> *<name>params</name></param>
         </command>
         <command>
         <proto>void <name>glGetTexParameterfvRobustANGLE</name></proto>
             <param><ptype>GLenum</ptype> <name>target</name></param>
             <param><ptype>GLenum</ptype> <name>pname</name></param>
             <param><ptype>GLsizei</ptype> <name>bufSize</name></param>
-            <param><ptype>GLsizei *</ptype> <name>length</name></param>
-            <param><ptype>GLfloat *</ptype> <name>params</name></param>
+            <param><ptype>GLsizei</ptype> *<name>length</name></param>
+            <param><ptype>GLfloat</ptype> *<name>params</name></param>
         </command>
         <command>
         <proto>void <name>glGetTexParameterivRobustANGLE</name></proto>
             <param><ptype>GLenum</ptype> <name>target</name></param>
             <param><ptype>GLenum</ptype> <name>pname</name></param>
             <param><ptype>GLsizei</ptype> <name>bufSize</name></param>
-            <param><ptype>GLsizei *</ptype> <name>length</name></param>
-            <param><ptype>GLint *</ptype> <name>params</name></param>
+            <param><ptype>GLsizei</ptype> *<name>length</name></param>
+            <param><ptype>GLint</ptype> *<name>params</name></param>
         </command>
         <command>
         <proto>void <name>glGetUniformfvRobustANGLE</name></proto>
             <param><ptype>GLuint</ptype> <name>program</name></param>
             <param><ptype>GLint</ptype> <name>location</name></param>
             <param><ptype>GLsizei</ptype> <name>bufSize</name></param>
-            <param><ptype>GLsizei *</ptype> <name>length</name></param>
-            <param><ptype>GLfloat *</ptype> <name>params</name></param>
+            <param><ptype>GLsizei</ptype> *<name>length</name></param>
+            <param><ptype>GLfloat</ptype> *<name>params</name></param>
         </command>
         <command>
         <proto>void <name>glGetUniformivRobustANGLE</name></proto>
             <param><ptype>GLuint</ptype> <name>program</name></param>
             <param><ptype>GLint</ptype> <name>location</name></param>
             <param><ptype>GLsizei</ptype> <name>bufSize</name></param>
-            <param><ptype>GLsizei *</ptype> <name>length</name></param>
-            <param><ptype>GLint *</ptype> <name>params</name></param>
+            <param><ptype>GLsizei</ptype> *<name>length</name></param>
+            <param><ptype>GLint</ptype> *<name>params</name></param>
         </command>
         <command>
         <proto>void <name>glGetVertexAttribfvRobustANGLE</name></proto>
             <param><ptype>GLuint</ptype> <name>index</name></param>
             <param><ptype>GLenum</ptype> <name>pname</name></param>
             <param><ptype>GLsizei</ptype> <name>bufSize</name></param>
-            <param><ptype>GLsizei *</ptype> <name>length</name></param>
-            <param><ptype>GLfloat *</ptype> <name>params</name></param>
+            <param><ptype>GLsizei</ptype> *<name>length</name></param>
+            <param><ptype>GLfloat</ptype> *<name>params</name></param>
         </command>
         <command>
         <proto>void <name>glGetVertexAttribivRobustANGLE</name></proto>
             <param><ptype>GLuint</ptype> <name>index</name></param>
             <param><ptype>GLenum</ptype> <name>pname</name></param>
             <param><ptype>GLsizei</ptype> <name>bufSize</name></param>
-            <param><ptype>GLsizei *</ptype> <name>length</name></param>
-            <param><ptype>GLint *</ptype> <name>params</name></param>
+            <param><ptype>GLsizei</ptype> *<name>length</name></param>
+            <param><ptype>GLint</ptype> *<name>params</name></param>
         </command>
         <command>
         <proto>void <name>glGetVertexAttribPointervRobustANGLE</name></proto>
             <param><ptype>GLuint</ptype> <name>index</name></param>
             <param><ptype>GLenum</ptype> <name>pname</name></param>
             <param><ptype>GLsizei</ptype> <name>bufSize</name></param>
-            <param><ptype>GLsizei *</ptype> <name>length</name></param>
-            <param><ptype>void **</ptype> <name>pointer</name></param>
+            <param><ptype>GLsizei</ptype> *<name>length</name></param>
+            <param>void **<name>pointer</name></param>
         </command>
         <command>
         <proto>void <name>glReadPixelsRobustANGLE</name></proto>
@@ -255,10 +255,10 @@
             <param><ptype>GLenum</ptype> <name>format</name></param>
             <param><ptype>GLenum</ptype> <name>type</name></param>
             <param><ptype>GLsizei</ptype> <name>bufSize</name></param>
-            <param><ptype>GLsizei *</ptype> <name>length</name></param>
-            <param><ptype>GLsizei *</ptype> <name>columns</name></param>
-            <param><ptype>GLsizei *</ptype> <name>rows</name></param>
-            <param><ptype>void *</ptype> <name>pixels</name></param>
+            <param><ptype>GLsizei</ptype> *<name>length</name></param>
+            <param><ptype>GLsizei</ptype> *<name>columns</name></param>
+            <param><ptype>GLsizei</ptype> *<name>rows</name></param>
+            <param>void *<name>pixels</name></param>
         </command>
         <command>
         <proto>void <name>glTexImage2DRobustANGLE</name></proto>
@@ -271,21 +271,21 @@
             <param><ptype>GLenum</ptype> <name>format</name></param>
             <param><ptype>GLenum</ptype> <name>type</name></param>
             <param><ptype>GLsizei</ptype> <name>bufSize</name></param>
-            <param><ptype>const void *</ptype> <name>pixels</name></param>
+            <param>const void *<name>pixels</name></param>
         </command>
         <command>
         <proto>void <name>glTexParameterfvRobustANGLE</name></proto>
             <param><ptype>GLenum</ptype> <name>target</name></param>
             <param><ptype>GLenum</ptype> <name>pname</name></param>
             <param><ptype>GLsizei</ptype> <name>bufSize</name></param>
-            <param><ptype>const GLfloat *</ptype> <name>params</name></param>
+            <param>const <ptype>GLfloat</ptype> *<name>params</name></param>
         </command>
         <command>
         <proto>void <name>glTexParameterivRobustANGLE</name></proto>
             <param><ptype>GLenum</ptype> <name>target</name></param>
             <param><ptype>GLenum</ptype> <name>pname</name></param>
             <param><ptype>GLsizei</ptype> <name>bufSize</name></param>
-            <param><ptype>const GLint *</ptype> <name>params</name></param>
+            <param>const <ptype>GLint</ptype> *<name>params</name></param>
         </command>
         <command>
         <proto>void <name>glTexSubImage2DRobustANGLE</name></proto>
@@ -298,7 +298,7 @@
             <param><ptype>GLenum</ptype> <name>format</name></param>
             <param><ptype>GLenum</ptype> <name>type</name></param>
             <param><ptype>GLsizei</ptype> <name>bufSize</name></param>
-            <param><ptype>const void *</ptype> <name>pixels</name></param>
+            <param>const void *<name>pixels</name></param>
         </command>
         <command>
         <proto>void <name>glTexImage3DRobustANGLE</name></proto>
@@ -312,7 +312,7 @@
             <param><ptype>GLenum</ptype> <name>format</name></param>
             <param><ptype>GLenum</ptype> <name>type</name></param>
             <param><ptype>GLsizei</ptype> <name>bufSize</name></param>
-            <param><ptype>const void *</ptype> <name>pixels</name></param>
+            <param>const void *<name>pixels</name></param>
         </command>
         <command>
         <proto>void <name>glTexSubImage3DRobustANGLE</name></proto>
@@ -327,7 +327,7 @@
             <param><ptype>GLenum</ptype> <name>format</name></param>
             <param><ptype>GLenum</ptype> <name>type</name></param>
             <param><ptype>GLsizei</ptype> <name>bufSize</name></param>
-            <param><ptype>const void *</ptype> <name>pixels</name></param>
+            <param>const void *<name>pixels</name></param>
         </command>
         <command>
         <proto>void <name>glCompressedTexImage2DRobustANGLE</name></proto>
@@ -339,7 +339,7 @@
             <param><ptype>GLint</ptype> <name>border</name></param>
             <param><ptype>GLsizei</ptype> <name>imageSize</name></param>
             <param><ptype>GLsizei</ptype> <name>dataSize</name></param>
-            <param><ptype>const GLvoid *</ptype> <name>data</name></param>
+            <param>const void *<name>data</name></param>
         </command>
         <command>
         <proto>void <name>glCompressedTexSubImage2DRobustANGLE</name></proto>
@@ -352,7 +352,7 @@
             <param><ptype>GLenum</ptype> <name>format</name></param>
             <param><ptype>GLsizei</ptype> <name>imageSize</name></param>
             <param><ptype>GLsizei</ptype> <name>dataSize</name></param>
-            <param><ptype>const GLvoid *</ptype> <name>data</name></param>
+            <param>const void *<name>data</name></param>
         </command>
         <command>
         <proto>void <name>glCompressedTexImage3DRobustANGLE</name></proto>
@@ -365,7 +365,7 @@
             <param><ptype>GLint</ptype> <name>border</name></param>
             <param><ptype>GLsizei</ptype> <name>imageSize</name></param>
             <param><ptype>GLsizei</ptype> <name>dataSize</name></param>
-            <param><ptype>const GLvoid *</ptype> <name>data</name></param>
+            <param>const void *<name>data</name></param>
         </command>
         <command>
         <proto>void <name>glCompressedTexSubImage3DRobustANGLE</name></proto>
@@ -380,39 +380,39 @@
             <param><ptype>GLenum</ptype> <name>format</name></param>
             <param><ptype>GLsizei</ptype> <name>imageSize</name></param>
             <param><ptype>GLsizei</ptype> <name>dataSize</name></param>
-            <param><ptype>const GLvoid *</ptype> <name>data</name></param>
+            <param>const void *<name>data</name></param>
         </command>
         <command>
         <proto>void <name>glGetQueryivRobustANGLE</name></proto>
             <param><ptype>GLenum</ptype> <name>target</name></param>
             <param><ptype>GLenum</ptype> <name>pname</name></param>
             <param><ptype>GLsizei</ptype> <name>bufSize</name></param>
-            <param><ptype>GLsizei *</ptype> <name>length</name></param>
-            <param><ptype>GLint *</ptype> <name>params</name></param>
+            <param><ptype>GLsizei</ptype> *<name>length</name></param>
+            <param><ptype>GLint</ptype> *<name>params</name></param>
         </command>
         <command>
         <proto>void <name>glGetQueryObjectuivRobustANGLE</name></proto>
             <param><ptype>GLuint</ptype> <name>id</name></param>
             <param><ptype>GLenum</ptype> <name>pname</name></param>
             <param><ptype>GLsizei</ptype> <name>bufSize</name></param>
-            <param><ptype>GLsizei *</ptype> <name>length</name></param>
-            <param><ptype>GLuint *</ptype> <name>params</name></param>
+            <param><ptype>GLsizei</ptype> *<name>length</name></param>
+            <param><ptype>GLuint</ptype> *<name>params</name></param>
         </command>
         <command>
         <proto>void <name>glGetBufferPointervRobustANGLE</name></proto>
             <param><ptype>GLenum</ptype> <name>target</name></param>
             <param><ptype>GLenum</ptype> <name>pname</name></param>
             <param><ptype>GLsizei</ptype> <name>bufSize</name></param>
-            <param><ptype>GLsizei *</ptype> <name>length</name></param>
-            <param><ptype>void **</ptype> <name>params</name></param>
+            <param><ptype>GLsizei</ptype> *<name>length</name></param>
+            <param>void **<name>params</name></param>
         </command>
         <command>
         <proto>void <name>glGetIntegeri_vRobustANGLE</name></proto>
             <param><ptype>GLenum</ptype> <name>target</name></param>
             <param><ptype>GLuint</ptype> <name>index</name></param>
             <param><ptype>GLsizei</ptype> <name>bufSize</name></param>
-            <param><ptype>GLsizei *</ptype> <name>length</name></param>
-            <param><ptype>GLint *</ptype> <name>data</name></param>
+            <param><ptype>GLsizei</ptype> *<name>length</name></param>
+            <param><ptype>GLint</ptype> *<name>data</name></param>
         </command>
         <command>
         <proto>void <name>glGetInternalformativRobustANGLE</name></proto>
@@ -420,32 +420,32 @@
             <param><ptype>GLenum</ptype> <name>internalformat</name></param>
             <param><ptype>GLenum</ptype> <name>pname</name></param>
             <param><ptype>GLsizei</ptype> <name>bufSize</name></param>
-            <param><ptype>GLsizei *</ptype> <name>length</name></param>
-            <param><ptype>GLint *</ptype> <name>params</name></param>
+            <param><ptype>GLsizei</ptype> *<name>length</name></param>
+            <param><ptype>GLint</ptype> *<name>params</name></param>
         </command>
         <command>
         <proto>void <name>glGetVertexAttribIivRobustANGLE</name></proto>
             <param><ptype>GLuint</ptype> <name>index</name></param>
             <param><ptype>GLenum</ptype> <name>pname</name></param>
             <param><ptype>GLsizei</ptype> <name>bufSize</name></param>
-            <param><ptype>GLsizei *</ptype> <name>length</name></param>
-            <param><ptype>GLint *</ptype> <name>params</name></param>
+            <param><ptype>GLsizei</ptype> *<name>length</name></param>
+            <param><ptype>GLint</ptype> *<name>params</name></param>
         </command>
         <command>
         <proto>void <name>glGetVertexAttribIuivRobustANGLE</name></proto>
             <param><ptype>GLuint</ptype> <name>index</name></param>
             <param><ptype>GLenum</ptype> <name>pname</name></param>
             <param><ptype>GLsizei</ptype> <name>bufSize</name></param>
-            <param><ptype>GLsizei *</ptype> <name>length</name></param>
-            <param><ptype>GLuint *</ptype> <name>params</name></param>
+            <param><ptype>GLsizei</ptype> *<name>length</name></param>
+            <param><ptype>GLuint</ptype> *<name>params</name></param>
         </command>
         <command>
         <proto>void <name>glGetUniformuivRobustANGLE</name></proto>
             <param><ptype>GLuint</ptype> <name>program</name></param>
             <param><ptype>GLint</ptype> <name>location</name></param>
             <param><ptype>GLsizei</ptype> <name>bufSize</name></param>
-            <param><ptype>GLsizei *</ptype> <name>length</name></param>
-            <param><ptype>GLuint *</ptype> <name>params</name></param>
+            <param><ptype>GLsizei</ptype> *<name>length</name></param>
+            <param><ptype>GLuint</ptype> *<name>params</name></param>
         </command>
         <command>
         <proto>void <name>glGetActiveUniformBlockivRobustANGLE</name></proto>
@@ -453,69 +453,69 @@
             <param><ptype>GLuint</ptype> <name>uniformBlockIndex</name></param>
             <param><ptype>GLenum</ptype> <name>pname</name></param>
             <param><ptype>GLsizei</ptype> <name>bufSize</name></param>
-            <param><ptype>GLsizei *</ptype> <name>length</name></param>
-            <param><ptype>GLint *</ptype> <name>params</name></param>
+            <param><ptype>GLsizei</ptype> *<name>length</name></param>
+            <param><ptype>GLint</ptype> *<name>params</name></param>
         </command>
         <command>
         <proto>void <name>glGetInteger64vRobustANGLE</name></proto>
             <param><ptype>GLenum</ptype> <name>pname</name></param>
             <param><ptype>GLsizei</ptype> <name>bufSize</name></param>
-            <param><ptype>GLsizei *</ptype> <name>length</name></param>
-            <param><ptype>GLint64 *</ptype> <name>data</name></param>
+            <param><ptype>GLsizei</ptype> *<name>length</name></param>
+            <param><ptype>GLint64</ptype> *<name>data</name></param>
         </command>
         <command>
         <proto>void <name>glGetInteger64i_vRobustANGLE</name></proto>
             <param><ptype>GLenum</ptype> <name>target</name></param>
             <param><ptype>GLuint</ptype> <name>index</name></param>
             <param><ptype>GLsizei</ptype> <name>bufSize</name></param>
-            <param><ptype>GLsizei *</ptype> <name>length</name></param>
-            <param><ptype>GLint64 *</ptype> <name>data</name></param>
+            <param><ptype>GLsizei</ptype> *<name>length</name></param>
+            <param><ptype>GLint64</ptype> *<name>data</name></param>
         </command>
         <command>
         <proto>void <name>glGetBufferParameteri64vRobustANGLE</name></proto>
             <param><ptype>GLenum</ptype> <name>target</name></param>
             <param><ptype>GLenum</ptype> <name>pname</name></param>
             <param><ptype>GLsizei</ptype> <name>bufSize</name></param>
-            <param><ptype>GLsizei *</ptype> <name>length</name></param>
-            <param><ptype>GLint64 *</ptype> <name>params</name></param>
+            <param><ptype>GLsizei</ptype> *<name>length</name></param>
+            <param><ptype>GLint64</ptype> *<name>params</name></param>
         </command>
         <command>
         <proto>void <name>glSamplerParameterivRobustANGLE</name></proto>
             <param><ptype>GLuint</ptype> <name>sampler</name></param>
             <param><ptype>GLuint</ptype> <name>pname</name></param>
             <param><ptype>GLsizei</ptype> <name>bufSize</name></param>
-            <param><ptype>const GLint *</ptype> <name>param</name></param>
+            <param>const <ptype>GLint</ptype> *<name>param</name></param>
         </command>
         <command>
         <proto>void <name>glSamplerParameterfvRobustANGLE</name></proto>
             <param><ptype>GLuint</ptype> <name>sampler</name></param>
             <param><ptype>GLenum</ptype> <name>pname</name></param>
             <param><ptype>GLsizei</ptype> <name>bufSize</name></param>
-            <param><ptype>const GLfloat *</ptype> <name>param</name></param>
+            <param>const <ptype>GLfloat</ptype> *<name>param</name></param>
         </command>
         <command>
         <proto>void <name>glGetSamplerParameterivRobustANGLE</name></proto>
             <param><ptype>GLuint</ptype> <name>sampler</name></param>
             <param><ptype>GLenum</ptype> <name>pname</name></param>
             <param><ptype>GLsizei</ptype> <name>bufSize</name></param>
-            <param><ptype>GLsizei *</ptype> <name>length</name></param>
-            <param><ptype>GLint *</ptype> <name>params</name></param>
+            <param><ptype>GLsizei</ptype> *<name>length</name></param>
+            <param><ptype>GLint</ptype> *<name>params</name></param>
         </command>
         <command>
         <proto>void <name>glGetSamplerParameterfvRobustANGLE</name></proto>
             <param><ptype>GLuint</ptype> <name>sampler</name></param>
             <param><ptype>GLenum</ptype> <name>pname</name></param>
             <param><ptype>GLsizei</ptype> <name>bufSize</name></param>
-            <param><ptype>GLsizei *</ptype> <name>length</name></param>
-            <param><ptype>GLfloat *</ptype> <name>params</name></param>
+            <param><ptype>GLsizei</ptype> *<name>length</name></param>
+            <param><ptype>GLfloat</ptype> *<name>params</name></param>
         </command>
         <command>
         <proto>void <name>glGetFramebufferParameterivRobustANGLE</name></proto>
             <param><ptype>GLenum</ptype> <name>target</name></param>
             <param><ptype>GLenum</ptype> <name>pname</name></param>
             <param><ptype>GLsizei</ptype> <name>bufSize</name></param>
-            <param><ptype>GLsizei *</ptype> <name>length</name></param>
-            <param><ptype>GLint *</ptype> <name>params</name></param>
+            <param><ptype>GLsizei</ptype> *<name>length</name></param>
+            <param><ptype>GLint</ptype> *<name>params</name></param>
         </command>
         <command>
         <proto>void <name>glGetProgramInterfaceivRobustANGLE</name></proto>
@@ -523,24 +523,24 @@
             <param><ptype>GLenum</ptype> <name>programInterface</name></param>
             <param><ptype>GLenum</ptype> <name>pname</name></param>
             <param><ptype>GLsizei</ptype> <name>bufSize</name></param>
-            <param><ptype>GLsizei *</ptype> <name>length</name></param>
-            <param><ptype>GLint *</ptype> <name>params</name></param>
+            <param><ptype>GLsizei</ptype> *<name>length</name></param>
+            <param><ptype>GLint</ptype> *<name>params</name></param>
         </command>
         <command>
         <proto>void <name>glGetBooleani_vRobustANGLE</name></proto>
             <param><ptype>GLenum</ptype> <name>target</name></param>
             <param><ptype>GLuint</ptype> <name>index</name></param>
             <param><ptype>GLsizei</ptype> <name>bufSize</name></param>
-            <param><ptype>GLsizei *</ptype> <name>length</name></param>
-            <param><ptype>GLboolean *</ptype> <name>data</name></param>
+            <param><ptype>GLsizei</ptype> *<name>length</name></param>
+            <param><ptype>GLboolean</ptype> *<name>data</name></param>
         </command>
         <command>
         <proto>void <name>glGetMultisamplefvRobustANGLE</name></proto>
             <param><ptype>GLenum</ptype> <name>pname</name></param>
             <param><ptype>GLuint</ptype> <name>index</name></param>
             <param><ptype>GLsizei</ptype> <name>bufSize</name></param>
-            <param><ptype>GLsizei *</ptype> <name>length</name></param>
-            <param><ptype>GLfloat *</ptype> <name>val</name></param>
+            <param><ptype>GLsizei</ptype> *<name>length</name></param>
+            <param><ptype>GLfloat</ptype> *<name>val</name></param>
         </command>
         <command>
         <proto>void <name>glGetTexLevelParameterivRobustANGLE</name></proto>
@@ -548,8 +548,8 @@
             <param><ptype>GLint</ptype> <name>level</name></param>
             <param><ptype>GLenum</ptype> <name>pname</name></param>
             <param><ptype>GLsizei</ptype> <name>bufSize</name></param>
-            <param><ptype>GLsizei *</ptype> <name>length</name></param>
-            <param><ptype>GLint *</ptype> <name>params</name></param>
+            <param><ptype>GLsizei</ptype> *<name>length</name></param>
+            <param><ptype>GLint</ptype> *<name>params</name></param>
         </command>
         <command>
         <proto>void <name>glGetTexLevelParameterfvRobustANGLE</name></proto>
@@ -557,15 +557,15 @@
             <param><ptype>GLint</ptype> <name>level</name></param>
             <param><ptype>GLenum</ptype> <name>pname</name></param>
             <param><ptype>GLsizei</ptype> <name>bufSize</name></param>
-            <param><ptype>GLsizei *</ptype> <name>length</name></param>
-            <param><ptype>GLfloat *</ptype> <name>params</name></param>
+            <param><ptype>GLsizei</ptype> *<name>length</name></param>
+            <param><ptype>GLfloat</ptype> *<name>params</name></param>
         </command>
         <command>
         <proto>void <name>glGetPointervRobustANGLERobustANGLE</name></proto>
             <param><ptype>GLenum</ptype> <name>pname</name></param>
             <param><ptype>GLsizei</ptype> <name>bufSize</name></param>
-            <param><ptype>GLsizei *</ptype> <name>length</name></param>
-            <param><ptype>void **</ptype> <name>params</name></param>
+            <param><ptype>GLsizei</ptype> *<name>length</name></param>
+            <param>void **<name>params</name></param>
         </command>
         <command>
         <proto>void <name>glReadnPixelsRobustANGLE</name></proto>
@@ -576,118 +576,118 @@
             <param><ptype>GLenum</ptype> <name>format</name></param>
             <param><ptype>GLenum</ptype> <name>type</name></param>
             <param><ptype>GLsizei</ptype> <name>bufSize</name></param>
-            <param><ptype>GLsizei *</ptype> <name>length</name></param>
-            <param><ptype>GLsizei *</ptype> <name>columns</name></param>
-            <param><ptype>GLsizei *</ptype> <name>rows</name></param>
-            <param><ptype>void *</ptype> <name>data</name></param>
+            <param><ptype>GLsizei</ptype> *<name>length</name></param>
+            <param><ptype>GLsizei</ptype> *<name>columns</name></param>
+            <param><ptype>GLsizei</ptype> *<name>rows</name></param>
+            <param>void *<name>data</name></param>
         </command>
         <command>
         <proto>void <name>glGetnUniformfvRobustANGLE</name></proto>
             <param><ptype>GLuint</ptype> <name>program</name></param>
             <param><ptype>GLint</ptype> <name>location</name></param>
             <param><ptype>GLsizei</ptype> <name>bufSize</name></param>
-            <param><ptype>GLsizei *</ptype> <name>length</name></param>
-            <param><ptype>GLfloat *</ptype> <name>params</name></param>
+            <param><ptype>GLsizei</ptype> *<name>length</name></param>
+            <param><ptype>GLfloat</ptype> *<name>params</name></param>
         </command>
         <command>
         <proto>void <name>glGetnUniformivRobustANGLE</name></proto>
             <param><ptype>GLuint</ptype> <name>program</name></param>
             <param><ptype>GLint</ptype> <name>location</name></param>
             <param><ptype>GLsizei</ptype> <name>bufSize</name></param>
-            <param><ptype>GLsizei *</ptype> <name>length</name></param>
-            <param><ptype>GLint *</ptype> <name>params</name></param>
+            <param><ptype>GLsizei</ptype> *<name>length</name></param>
+            <param><ptype>GLint</ptype> *<name>params</name></param>
         </command>
         <command>
         <proto>void <name>glGetnUniformuivRobustANGLE</name></proto>
             <param><ptype>GLuint</ptype> <name>program</name></param>
             <param><ptype>GLint</ptype> <name>location</name></param>
             <param><ptype>GLsizei</ptype> <name>bufSize</name></param>
-            <param><ptype>GLsizei *</ptype> <name>length</name></param>
-            <param><ptype>GLuint *</ptype> <name>params</name></param>
+            <param><ptype>GLsizei</ptype> *<name>length</name></param>
+            <param><ptype>GLuint</ptype> *<name>params</name></param>
         </command>
         <command>
         <proto>void <name>glTexParameterIivRobustANGLE</name></proto>
             <param><ptype>GLenum</ptype> <name>target</name></param>
             <param><ptype>GLenum</ptype> <name>pname</name></param>
             <param><ptype>GLsizei</ptype> <name>bufSize</name></param>
-            <param><ptype>const GLint *</ptype> <name>params</name></param>
+            <param>const <ptype>GLint</ptype> *<name>params</name></param>
         </command>
         <command>
         <proto>void <name>glTexParameterIuivRobustANGLE</name></proto>
             <param><ptype>GLenum</ptype> <name>target</name></param>
             <param><ptype>GLenum</ptype> <name>pname</name></param>
             <param><ptype>GLsizei</ptype> <name>bufSize</name></param>
-            <param><ptype>const GLuint *</ptype> <name>params</name></param>
+            <param>const <ptype>GLuint</ptype> *<name>params</name></param>
         </command>
         <command>
         <proto>void <name>glGetTexParameterIivRobustANGLE</name></proto>
             <param><ptype>GLenum</ptype> <name>target</name></param>
             <param><ptype>GLenum</ptype> <name>pname</name></param>
             <param><ptype>GLsizei</ptype> <name>bufSize</name></param>
-            <param><ptype>GLsizei *</ptype> <name>length</name></param>
-            <param><ptype>GLint *</ptype> <name>params</name></param>
+            <param><ptype>GLsizei</ptype> *<name>length</name></param>
+            <param><ptype>GLint</ptype> *<name>params</name></param>
         </command>
         <command>
         <proto>void <name>glGetTexParameterIuivRobustANGLE</name></proto>
             <param><ptype>GLenum</ptype> <name>target</name></param>
             <param><ptype>GLenum</ptype> <name>pname</name></param>
             <param><ptype>GLsizei</ptype> <name>bufSize</name></param>
-            <param><ptype>GLsizei *</ptype> <name>length</name></param>
-            <param><ptype>GLuint *</ptype> <name>params</name></param>
+            <param><ptype>GLsizei</ptype> *<name>length</name></param>
+            <param><ptype>GLuint</ptype> *<name>params</name></param>
         </command>
         <command>
         <proto>void <name>glSamplerParameterIivRobustANGLE</name></proto>
             <param><ptype>GLuint</ptype> <name>sampler</name></param>
             <param><ptype>GLenum</ptype> <name>pname</name></param>
             <param><ptype>GLsizei</ptype> <name>bufSize</name></param>
-            <param><ptype>const GLint *</ptype> <name>param</name></param>
+            <param>const <ptype>GLint</ptype> *<name>param</name></param>
         </command>
         <command>
         <proto>void <name>glSamplerParameterIuivRobustANGLE</name></proto>
             <param><ptype>GLuint</ptype> <name>sampler</name></param>
             <param><ptype>GLenum</ptype> <name>pname</name></param>
             <param><ptype>GLsizei</ptype> <name>bufSize</name></param>
-            <param><ptype>const GLuint *</ptype> <name>param</name></param>
+            <param>const <ptype>GLuint</ptype> *<name>param</name></param>
         </command>
         <command>
         <proto>void <name>glGetSamplerParameterIivRobustANGLE</name></proto>
             <param><ptype>GLuint</ptype> <name>sampler</name></param>
             <param><ptype>GLenum</ptype> <name>pname</name></param>
             <param><ptype>GLsizei</ptype> <name>bufSize</name></param>
-            <param><ptype>GLsizei *</ptype> <name>length</name></param>
-            <param><ptype>GLint *</ptype> <name>params</name></param>
+            <param><ptype>GLsizei</ptype> *<name>length</name></param>
+            <param><ptype>GLint</ptype> *<name>params</name></param>
         </command>
         <command>
         <proto>void <name>glGetSamplerParameterIuivRobustANGLE</name></proto>
             <param><ptype>GLuint</ptype> <name>sampler</name></param>
             <param><ptype>GLenum</ptype> <name>pname</name></param>
             <param><ptype>GLsizei</ptype> <name>bufSize</name></param>
-            <param><ptype>GLsizei *</ptype> <name>length</name></param>
-            <param><ptype>GLuint *</ptype> <name>params</name></param>
+            <param><ptype>GLsizei</ptype> *<name>length</name></param>
+            <param><ptype>GLuint</ptype> *<name>params</name></param>
         </command>
         <command>
         <proto>void <name>glGetQueryObjectivRobustANGLE</name></proto>
             <param><ptype>GLuint</ptype> <name>id</name></param>
             <param><ptype>GLenum</ptype> <name>pname</name></param>
             <param><ptype>GLsizei</ptype> <name>bufSize</name></param>
-            <param><ptype>GLsizei *</ptype> <name>length</name></param>
-            <param><ptype>GLint *</ptype> <name>params</name></param>
+            <param><ptype>GLsizei</ptype> *<name>length</name></param>
+            <param><ptype>GLint</ptype> *<name>params</name></param>
         </command>
         <command>
         <proto>void <name>glGetQueryObjecti64vRobustANGLE</name></proto>
             <param><ptype>GLuint</ptype> <name>id</name></param>
             <param><ptype>GLenum</ptype> <name>pname</name></param>
             <param><ptype>GLsizei</ptype> <name>bufSize</name></param>
-            <param><ptype>GLsizei *</ptype> <name>length</name></param>
-            <param><ptype>GLint64 *</ptype> <name>params</name></param>
+            <param><ptype>GLsizei</ptype> *<name>length</name></param>
+            <param><ptype>GLint64</ptype> *<name>params</name></param>
         </command>
         <command>
         <proto>void <name>glGetQueryObjectui64vRobustANGLE</name></proto>
             <param><ptype>GLuint</ptype> <name>id</name></param>
             <param><ptype>GLenum</ptype> <name>pname</name></param>
             <param><ptype>GLsizei</ptype> <name>bufSize</name></param>
-            <param><ptype>GLsizei *</ptype> <name>length</name></param>
-            <param><ptype>GLuint64 *</ptype> <name>params</name></param>
+            <param><ptype>GLsizei</ptype> *<name>length</name></param>
+            <param><ptype>GLuint64</ptype> *<name>params</name></param>
         </command>
         <command>
         <proto>void <name>glCopyTexture3DANGLE</name></proto>
@@ -743,7 +743,7 @@
             <param><ptype>GLenum</ptype> <name>target</name></param>
             <param><ptype>GLint</ptype> <name>level</name></param>
             <param><ptype>GLenum</ptype> <name>pname</name></param>
-            <param><ptype>GLfloat *</ptype> <name>params</name></param>
+            <param><ptype>GLfloat</ptype> *<name>params</name></param>
         </command>
         <command>
         <proto>void <name>glMultiDrawArraysANGLE</name></proto>
@@ -765,7 +765,7 @@
             <param group="PrimitiveType"><ptype>GLenum</ptype> <name>mode</name></param>
             <param len="COMPSIZE(primcount)">const <ptype>GLsizei</ptype> *<name>counts</name></param>
             <param group="DrawElementsType"><ptype>GLenum</ptype> <name>type</name></param>
-            <param len="COMPSIZE(primcount)">const <ptype>GLvoid</ptype> *const*<name>indices</name></param>
+            <param len="COMPSIZE(primcount)">const void *const*<name>indices</name></param>
             <param><ptype>GLsizei</ptype> <name>drawcount</name></param>
         </command>
         <command>
@@ -773,7 +773,7 @@
             <param group="PrimitiveType"><ptype>GLenum</ptype> <name>mode</name></param>
             <param len="COMPSIZE(primcount)">const <ptype>GLsizei</ptype> *<name>counts</name></param>
             <param group="DrawElementsType"><ptype>GLenum</ptype> <name>type</name></param>
-            <param len="COMPSIZE(primcount)">const <ptype>GLvoid</ptype> *const*<name>indices</name></param>
+            <param len="COMPSIZE(primcount)">const void *const*<name>indices</name></param>
             <param len="COMPSIZE(primcount)">const GLsizei*<name>instanceCounts</name></param>
             <param><ptype>GLsizei</ptype> <name>drawcount</name></param>
         </command>
@@ -790,7 +790,7 @@
             <param group="PrimitiveType"><ptype>GLenum</ptype> <name>mode</name></param>
             <param><ptype>GLsizei</ptype> <name>count</name></param>
             <param group="DrawElementsType"><ptype>GLenum</ptype> <name>type</name></param>
-            <param>const <ptype>GLvoid</ptype> *<name>indices</name></param>
+            <param>const void *<name>indices</name></param>
             <param><ptype>GLsizei</ptype> <name>instanceCount</name></param>
             <param><ptype>GLint</ptype> <name>baseVertex</name></param>
             <param><ptype>GLuint</ptype> <name>baseInstance</name></param>
@@ -809,7 +809,7 @@
             <param group="PrimitiveType"><ptype>GLenum</ptype> <name>mode</name></param>
             <param len="COMPSIZE(primcount)">const <ptype>GLsizei</ptype> *<name>counts</name></param>
             <param group="DrawElementsType"><ptype>GLenum</ptype> <name>type</name></param>
-            <param len="COMPSIZE(primcount)">const <ptype>GLvoid</ptype> *const*<name>indices</name></param>
+            <param len="COMPSIZE(primcount)">const void *const*<name>indices</name></param>
             <param len="COMPSIZE(primcount)">const <ptype>GLsizei</ptype> *<name>instanceCounts</name></param>
             <param len="COMPSIZE(primcount)">const <ptype>GLint</ptype> *<name>baseVertices</name></param>
             <param len="COMPSIZE(primcount)">const <ptype>GLuint</ptype> *<name>baseInstances</name></param>
@@ -819,12 +819,17 @@
         <proto>void <name>glGetMultisamplefvANGLE</name></proto>
             <param><ptype>GLenum</ptype> <name>pname</name></param>
             <param><ptype>GLuint</ptype> <name>index</name></param>
-            <param><ptype>GLfloat *</ptype> <name>val</name></param>
+            <param><ptype>GLfloat</ptype> *<name>val</name></param>
         </command>
         <command>
         <proto>void <name>glSampleMaskiANGLE</name></proto>
             <param><ptype>GLuint</ptype> <name>maskNumber</name></param>
             <param><ptype>GLbitfield</ptype> <name>mask</name></param>
+        </command>
+        <command>
+            <proto>void <name>glPolygonModeANGLE</name></proto>
+            <param group="TriangleFace"><ptype>GLenum</ptype> <name>face</name></param>
+            <param group="PolygonMode"><ptype>GLenum</ptype> <name>mode</name></param>
         </command>
         <command>
             <proto>void <name>glProvokingVertexANGLE</name></proto>
@@ -883,7 +888,7 @@
             <param><ptype>GLuint64</ptype> <name>offset</name></param>
             <param><ptype>GLbitfield</ptype> <name>createFlags</name></param>
             <param><ptype>GLbitfield</ptype> <name>usageFlags</name></param>
-            <param><ptype>const void *</ptype> <name>imageCreateInfoPNext</name></param>
+            <param>const void *<name>imageCreateInfoPNext</name></param>
         </command>
         <command>
             <proto>void <name>glTexStorageMemFlags2DMultisampleANGLE</name></proto>
@@ -897,7 +902,7 @@
             <param><ptype>GLuint64</ptype> <name>offset</name></param>
             <param><ptype>GLbitfield</ptype> <name>createFlags</name></param>
             <param><ptype>GLbitfield</ptype> <name>usageFlags</name></param>
-            <param><ptype>const void *</ptype> <name>imageCreateInfoPNext</name></param>
+            <param>const void *<name>imageCreateInfoPNext</name></param>
         </command>
         <command>
             <proto>void <name>glTexStorageMemFlags3DANGLE</name></proto>
@@ -911,7 +916,7 @@
             <param><ptype>GLuint64</ptype> <name>offset</name></param>
             <param><ptype>GLbitfield</ptype> <name>createFlags</name></param>
             <param><ptype>GLbitfield</ptype> <name>usageFlags</name></param>
-            <param><ptype>const void *</ptype> <name>imageCreateInfoPNext</name></param>
+            <param>const void *<name>imageCreateInfoPNext</name></param>
         </command>
         <command>
             <proto>void <name>glTexStorageMemFlags3DMultisampleANGLE</name></proto>
@@ -926,7 +931,7 @@
             <param><ptype>GLuint64</ptype> <name>offset</name></param>
             <param><ptype>GLbitfield</ptype> <name>createFlags</name></param>
             <param><ptype>GLbitfield</ptype> <name>usageFlags</name></param>
-            <param><ptype>const void *</ptype> <name>imageCreateInfoPNext</name></param>
+            <param>const void *<name>imageCreateInfoPNext</name></param>
         </command>
         <command>
             <proto>void <name>glImportMemoryZirconHandleANGLE</name></proto>
@@ -1016,7 +1021,7 @@
             <param><ptype>GLint</ptype> <name>plane</name></param>
             <param group="PLSQueryFloat"><ptype>GLenum</ptype> <name>pname</name></param>
             <param><ptype>GLsizei</ptype> <name>bufSize</name></param>
-            <param><ptype>GLsizei *</ptype> <name>length</name></param>
+            <param><ptype>GLsizei</ptype> *<name>length</name></param>
             <param><ptype>GLfloat</ptype> *<name>params</name></param>
         </command>
         <command>
@@ -1024,7 +1029,7 @@
             <param><ptype>GLint</ptype> <name>plane</name></param>
             <param group="PLSQueryInt"><ptype>GLenum</ptype> <name>pname</name></param>
             <param><ptype>GLsizei</ptype> <name>bufSize</name></param>
-            <param><ptype>GLsizei *</ptype> <name>length</name></param>
+            <param><ptype>GLsizei</ptype> *<name>length</name></param>
             <param><ptype>GLint</ptype> *<name>params</name></param>
         </command>
         <command>
@@ -1188,6 +1193,15 @@
                 <enum name="GL_CLIP_DISTANCE7_ANGLE"/>
             </require>
         </extension>
+        <extension name="GL_ANGLE_polygon_mode" supported='gles2'>
+            <require>
+                <enum name="GL_POLYGON_MODE_ANGLE"/>
+                <enum name="GL_LINE_ANGLE"/>
+                <enum name="GL_FILL_ANGLE"/>
+                <enum name="GL_POLYGON_OFFSET_LINE_ANGLE"/>
+                <command name="glPolygonModeANGLE"/>
+            </require>
+        </extension>
         <extension name="GL_ANGLE_provoking_vertex" supported='gles2'>
             <require>
                 <enum name="GL_FIRST_VERTEX_CONVENTION_ANGLE"/>
@@ -1336,6 +1350,13 @@
     </extensions>
 
     <!-- SECTION: GL enumerant (token) definitions. -->
+    <enums namespace="GL" vendor="ANGLE">
+        <enum value="0x0B40" name="GL_POLYGON_MODE_ANGLE" group="GetPName"/>
+        <enum value="0x1B01" name="GL_LINE_ANGLE" group="PolygonMode"/>
+        <enum value="0x1B02" name="GL_FILL_ANGLE" group="PolygonMode"/>
+        <enum value="0x2A02" name="GL_POLYGON_OFFSET_LINE_ANGLE" group="GetPName,EnableCap"/>
+    </enums>
+
     <enums namespace="GL" start="0x8E4D" end="0x8E4F" vendor="ANGLE">
         <enum value="0x8E4D" name="GL_FIRST_VERTEX_CONVENTION_ANGLE" group="VertexProvokingMode"/>
         <enum value="0x8E4E" name="GL_LAST_VERTEX_CONVENTION_ANGLE" group="VertexProvokingMode"/>

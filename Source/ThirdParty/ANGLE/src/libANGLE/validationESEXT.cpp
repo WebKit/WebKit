@@ -1722,6 +1722,57 @@ bool ValidatePLSTextureType(const Context *context,
     }
 }
 
+bool ValidatePLSActiveBlendFunc(const Context *context,
+                                angle::EntryPoint entryPoint,
+                                GLenum blendFunc)
+{
+    // INVALID_OPERATION is generated if BLEND_DST_ALPHA, BLEND_DST_RGB, BLEND_SRC_ALPHA, or
+    // BLEND_SRC_RGB, for any draw buffer, is a blend function requiring the secondary color input,
+    // as specified in EXT_blend_func_extended.
+    ASSERT(context->getState().getExtensions().blendFuncExtendedEXT);
+    switch (blendFunc)
+    {
+        case GL_SRC1_COLOR_EXT:
+        case GL_ONE_MINUS_SRC1_COLOR_EXT:
+        case GL_SRC1_ALPHA_EXT:
+        case GL_ONE_MINUS_SRC1_ALPHA_EXT:
+            context->validationError(entryPoint, GL_INVALID_OPERATION, kPLSSecondaryBlendEnabled);
+            return false;
+        default:
+            return true;
+    }
+}
+bool ValidatePLSActiveBlendEquation(const Context *context,
+                                    angle::EntryPoint entryPoint,
+                                    GLenum blendEquation)
+{
+    // INVALID_OPERATION is generated if BLEND_EQUATION_RGB and/or BLEND_EQUATION_ALPHA is an
+    // advanced blend equation defined in KHR_blend_equation_advanced.
+    ASSERT(context->getState().getExtensions().blendEquationAdvancedKHR);
+    switch (blendEquation)
+    {
+        case GL_MULTIPLY_KHR:
+        case GL_SCREEN_KHR:
+        case GL_OVERLAY_KHR:
+        case GL_DARKEN_KHR:
+        case GL_LIGHTEN_KHR:
+        case GL_COLORDODGE_KHR:
+        case GL_COLORBURN_KHR:
+        case GL_HARDLIGHT_KHR:
+        case GL_SOFTLIGHT_KHR:
+        case GL_DIFFERENCE_KHR:
+        case GL_EXCLUSION_KHR:
+        case GL_HSL_HUE_KHR:
+        case GL_HSL_SATURATION_KHR:
+        case GL_HSL_COLOR_KHR:
+        case GL_HSL_LUMINOSITY_KHR:
+            context->validationError(entryPoint, GL_INVALID_OPERATION, kPLSAdvancedBlendEnabled);
+            return false;
+        default:
+            return true;
+    }
+}
+
 bool ValidatePLSLoadOperation(const Context *context, angle::EntryPoint entryPoint, GLenum loadop)
 {
     // INVALID_ENUM is generated if <loadops>[0..<n>-1] is not one of the Load Operations enumerated
@@ -1941,6 +1992,43 @@ bool ValidateBeginPixelLocalStorageANGLE(const Context *context,
         return false;
     }
 
+    // INVALID_OPERATION is generated if TRANSFORM_FEEDBACK_ACTIVE is true.
+    if (state.isTransformFeedbackActive())
+    {
+        context->validationError(entryPoint, GL_INVALID_OPERATION, kPLSTransformFeedbackActive);
+        return false;
+    }
+
+    // INVALID_OPERATION is generated if BLEND_DST_ALPHA, BLEND_DST_RGB, BLEND_SRC_ALPHA, or
+    // BLEND_SRC_RGB, for any draw buffer, is a blend function requiring the secondary color input,
+    // as specified in EXT_blend_func_extended.
+    if (state.getExtensions().blendFuncExtendedEXT)
+    {
+        for (GLsizei i = 0; i < state.getCaps().maxDrawBuffers; ++i)
+        {
+            const BlendStateExt &blend = state.getBlendStateExt();
+            if (!ValidatePLSActiveBlendFunc(context, entryPoint, blend.getDstAlphaIndexed(i)) ||
+                !ValidatePLSActiveBlendFunc(context, entryPoint, blend.getDstColorIndexed(i)) ||
+                !ValidatePLSActiveBlendFunc(context, entryPoint, blend.getSrcAlphaIndexed(i)) ||
+                !ValidatePLSActiveBlendFunc(context, entryPoint, blend.getSrcColorIndexed(i)))
+            {
+                return false;
+            }
+        }
+    }
+
+    // INVALID_OPERATION is generated if BLEND_EQUATION_RGB and/or BLEND_EQUATION_ALPHA is an
+    // advanced blend equation defined in KHR_blend_equation_advanced.
+    if (state.getExtensions().blendEquationAdvancedKHR)
+    {
+        if (!ValidatePLSActiveBlendEquation(context, entryPoint,
+                                            state.getBlendStateExt().getEquationColorIndexed(0)) ||
+            !ValidatePLSActiveBlendEquation(context, entryPoint,
+                                            state.getBlendStateExt().getEquationAlphaIndexed(0)))
+        {
+            return false;
+        }
+    }
     // INVALID_VALUE is generated if <n> < 1 or <n> > MAX_PIXEL_LOCAL_STORAGE_PLANES_ANGLE.
     if (n < 1)
     {
@@ -2546,6 +2634,60 @@ bool ValidateNamedBufferStorageExternalEXT(const Context *context,
 {
     UNIMPLEMENTED();
     return false;
+}
+
+// GL_ANGLE_polygon_mode
+bool ValidatePolygonModeANGLE(const Context *context,
+                              angle::EntryPoint entryPoint,
+                              GLenum face,
+                              PolygonMode modePacked)
+{
+    if (!context->getExtensions().polygonModeANGLE)
+    {
+        context->validationError(entryPoint, GL_INVALID_OPERATION, kExtensionNotEnabled);
+        return false;
+    }
+
+    if (face != GL_FRONT_AND_BACK)
+    {
+        context->validationError(entryPoint, GL_INVALID_ENUM, kInvalidCullMode);
+        return false;
+    }
+
+    if (modePacked == PolygonMode::Point || modePacked == PolygonMode::InvalidEnum)
+    {
+        context->validationError(entryPoint, GL_INVALID_ENUM, kInvalidPolygonMode);
+        return false;
+    }
+
+    return true;
+}
+
+// GL_NV_polygon_mode
+bool ValidatePolygonModeNV(const Context *context,
+                           angle::EntryPoint entryPoint,
+                           GLenum face,
+                           PolygonMode modePacked)
+{
+    if (!context->getExtensions().polygonModeNV)
+    {
+        context->validationError(entryPoint, GL_INVALID_OPERATION, kExtensionNotEnabled);
+        return false;
+    }
+
+    if (face != GL_FRONT_AND_BACK)
+    {
+        context->validationError(entryPoint, GL_INVALID_ENUM, kInvalidCullMode);
+        return false;
+    }
+
+    if (modePacked == PolygonMode::InvalidEnum)
+    {
+        context->validationError(entryPoint, GL_INVALID_ENUM, kInvalidPolygonMode);
+        return false;
+    }
+
+    return true;
 }
 
 // GL_EXT_polygon_offset_clamp

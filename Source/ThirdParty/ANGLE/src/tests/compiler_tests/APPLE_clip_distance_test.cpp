@@ -91,7 +91,6 @@ class APPLEClipDistanceTest : public sh::ShaderExtensionTest
 
         ShCompileOptions compileOptions = {};
         compileOptions.objectCode       = true;
-        compileOptions.variables        = true;
 
         bool success = sh::Compile(mCompiler, shaderStrings, 3, compileOptions);
         if (success)
@@ -185,18 +184,6 @@ TEST_P(APPLEClipDistanceTest, CompileSucceedsMetal)
     mResources.MaxClipDistances    = 8;
 
     InitializeCompiler(SH_MSL_METAL_OUTPUT);
-    EXPECT_TRUE(TestShaderCompile(EXTPragma));
-}
-#endif
-
-#if defined(ANGLE_ENABLE_METAL_SPIRV)
-// With extension flag and extension directive, compiling using TranslatorMetal succeeds.
-TEST_P(APPLEClipDistanceTest, CompileSucceedsMetalSPIRV)
-{
-    mResources.APPLE_clip_distance = 1;
-    mResources.MaxClipDistances    = 8;
-
-    InitializeCompiler(SH_SPIRV_METAL_OUTPUT);
     EXPECT_TRUE(TestShaderCompile(EXTPragma));
 }
 #endif

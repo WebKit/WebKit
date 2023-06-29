@@ -237,8 +237,8 @@ class Framebuffer final : public angle::ObserverInterface,
                                 GLint baseViewIndex);
     void resetAttachment(const Context *context, GLenum binding);
 
-    bool detachTexture(const Context *context, TextureID texture);
-    bool detachRenderbuffer(const Context *context, RenderbufferID renderbuffer);
+    bool detachTexture(Context *context, TextureID texture);
+    bool detachRenderbuffer(Context *context, RenderbufferID renderbuffer);
 
     const FramebufferAttachment *getColorAttachment(size_t colorAttachment) const;
     const FramebufferAttachment *getDepthAttachment() const;
@@ -442,15 +442,15 @@ class Framebuffer final : public angle::ObserverInterface,
     // Lazily creates a PixelLocalStorage object for this Framebuffer.
     PixelLocalStorage &getPixelLocalStorage(const Context *);
     // Returns nullptr if the pixel local storage object has not been created yet.
-    const PixelLocalStorage *peekPixelLocalStorage() const { return mPixelLocalStorage.get(); }
+    PixelLocalStorage *peekPixelLocalStorage() const { return mPixelLocalStorage.get(); }
     // Detaches the the pixel local storage object so the Context can call deleteContextObjects().
     std::unique_ptr<PixelLocalStorage> detachPixelLocalStorage();
 
     static const FramebufferID kDefaultDrawFramebufferHandle;
 
   private:
-    bool detachResourceById(const Context *context, GLenum resourceType, GLuint resourceId);
-    bool detachMatchingAttachment(const Context *context,
+    bool detachResourceById(Context *context, GLenum resourceType, GLuint resourceId);
+    bool detachMatchingAttachment(Context *context,
                                   FramebufferAttachment *attachment,
                                   GLenum matchType,
                                   GLuint matchId);

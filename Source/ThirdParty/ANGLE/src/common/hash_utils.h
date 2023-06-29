@@ -34,6 +34,25 @@ size_t ComputeGenericHash(const T &key)
     static_assert(sizeof(key) % 4 == 0, "ComputeGenericHash requires aligned types");
     return ComputeGenericHash(&key, sizeof(key));
 }
+
+inline void HashCombine(size_t &seed) {}
+
+template <typename T, typename... Rest>
+inline void HashCombine(std::size_t &seed, const T &hashableObject, Rest... rest)
+{
+    std::hash<T> hasher;
+    seed ^= hasher(hashableObject) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
+    HashCombine(seed, rest...);
+}
+
+template <typename T, typename... Rest>
+inline size_t HashMultiple(const T &hashableObject, Rest... rest)
+{
+    size_t seed = 0;
+    HashCombine(seed, hashableObject, rest...);
+    return seed;
+}
+
 }  // namespace angle
 
 #endif  // COMMON_HASHUTILS_H_

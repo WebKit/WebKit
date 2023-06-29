@@ -26,7 +26,7 @@
 #include "tcuDefs.hpp"
 #include "tcuNullContextFactory.hpp"
 #include "tcuPlatform.hpp"
-#include "util/angle_features_autogen.h"
+#include "util/autogen/angle_features_autogen.h"
 #include "util/test_utils.h"
 
 #ifndef _EGLUPLATFORM_HPP

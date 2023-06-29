@@ -105,9 +105,6 @@ class DisplayVk : public DisplayImpl, public vk::Context
                      const char *function,
                      unsigned int line) override;
 
-    // TODO(jmadill): Remove this once refactor is done. http://anglebug.com/3041
-    egl::Error getEGLError(EGLint errorCode);
-
     void initializeFrontendFeatures(angle::FrontendFeatures *features) const override;
 
     void populateFeatureList(angle::FeatureList *features) override;
@@ -133,8 +130,6 @@ class DisplayVk : public DisplayImpl, public vk::Context
     void initSupportedSurfaceFormatColorspaces();
 
     mutable angle::ScratchBuffer mScratchBuffer;
-
-    vk::Error mSavedError;
 
     // Map of supported colorspace and associated surface format set.
     angle::HashMap<VkColorSpaceKHR, std::unordered_set<VkFormat>> mSupportedColorspaceFormatsMap;

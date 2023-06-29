@@ -161,7 +161,7 @@ TEST_P(ReadPixelsPBONVTest, SubDataPreservesContents)
                        !IsGLExtensionEnabled("GL_OES_mapbuffer"));
 
     // anglebug.com/2185
-    ANGLE_SKIP_TEST_IF(IsOSX() && IsNVIDIA() && IsDesktopOpenGL());
+    ANGLE_SKIP_TEST_IF(IsMac() && IsNVIDIA() && IsDesktopOpenGL());
 
     glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
@@ -194,7 +194,7 @@ TEST_P(ReadPixelsPBONVTest, DynamicPBO)
                        !IsGLExtensionEnabled("GL_OES_mapbuffer"));
 
     // anglebug.com/2185
-    ANGLE_SKIP_TEST_IF(IsOSX() && IsNVIDIA() && IsDesktopOpenGL());
+    ANGLE_SKIP_TEST_IF(IsMac() && IsNVIDIA() && IsDesktopOpenGL());
 
     glBindBuffer(GL_PIXEL_PACK_BUFFER, mPBO);
     glBufferData(GL_PIXEL_PACK_BUFFER, 4 * getWindowWidth() * getWindowHeight(), nullptr,
@@ -438,7 +438,7 @@ TEST_P(ReadPixelsPBOTest, ExistingDataPreserved)
 TEST_P(ReadPixelsPBOTest, SubDataPreservesContents)
 {
     // anglebug.com/2185
-    ANGLE_SKIP_TEST_IF(IsOSX() && IsNVIDIA() && IsDesktopOpenGL());
+    ANGLE_SKIP_TEST_IF(IsMac() && IsNVIDIA() && IsDesktopOpenGL());
 
     glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
@@ -469,7 +469,7 @@ TEST_P(ReadPixelsPBOTest, SubDataOffsetPreservesContents)
     // anglebug.com/1415
     ANGLE_SKIP_TEST_IF(IsNexus5X() && IsAdreno() && IsOpenGLES());
     // anglebug.com/2185
-    ANGLE_SKIP_TEST_IF(IsOSX() && IsNVIDIA() && IsDesktopOpenGL());
+    ANGLE_SKIP_TEST_IF(IsMac() && IsNVIDIA() && IsDesktopOpenGL());
 
     glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
@@ -961,7 +961,7 @@ TEST_P(ReadPixelsTextureTest, MipAttachment3DPBO)
 TEST_P(ReadPixelsTextureTest, LayerAttachment3DPBO)
 {
     // http://anglebug.com/5267
-    ANGLE_SKIP_TEST_IF(IsOSX() && IsIntelUHD630Mobile() && IsDesktopOpenGL());
+    ANGLE_SKIP_TEST_IF(IsMac() && IsIntelUHD630Mobile() && IsDesktopOpenGL());
 
     testPBORead(GL_TEXTURE_3D, 1, 0, 1);
 }
@@ -970,7 +970,7 @@ TEST_P(ReadPixelsTextureTest, LayerAttachment3DPBO)
 TEST_P(ReadPixelsTextureTest, MipLayerAttachment3DPBO)
 {
     // http://anglebug.com/5267
-    ANGLE_SKIP_TEST_IF(IsOSX() && IsIntelUHD630Mobile() && IsDesktopOpenGL());
+    ANGLE_SKIP_TEST_IF(IsMac() && IsIntelUHD630Mobile() && IsDesktopOpenGL());
 
     testPBORead(GL_TEXTURE_3D, 2, 1, 1);
 }
@@ -991,7 +991,7 @@ TEST_P(ReadPixelsTextureTest, MipAttachment2DArrayPBO)
 TEST_P(ReadPixelsTextureTest, LayerAttachment2DArrayPBO)
 {
     // http://anglebug.com/5267
-    ANGLE_SKIP_TEST_IF(IsOSX() && IsIntelUHD630Mobile() && IsDesktopOpenGL());
+    ANGLE_SKIP_TEST_IF(IsMac() && IsIntelUHD630Mobile() && IsDesktopOpenGL());
 
     testPBORead(GL_TEXTURE_2D_ARRAY, 1, 0, 1);
 }
@@ -1000,7 +1000,7 @@ TEST_P(ReadPixelsTextureTest, LayerAttachment2DArrayPBO)
 TEST_P(ReadPixelsTextureTest, MipLayerAttachment2DArrayPBO)
 {
     // http://anglebug.com/5267
-    ANGLE_SKIP_TEST_IF(IsOSX() && IsIntelUHD630Mobile() && IsDesktopOpenGL());
+    ANGLE_SKIP_TEST_IF(IsMac() && IsIntelUHD630Mobile() && IsDesktopOpenGL());
 
     testPBORead(GL_TEXTURE_2D_ARRAY, 2, 1, 1);
 }

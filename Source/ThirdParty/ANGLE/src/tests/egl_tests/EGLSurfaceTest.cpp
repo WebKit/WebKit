@@ -2307,6 +2307,88 @@ TEST_P(EGLSingleBufferTest, ScissoredDraw)
     context = EGL_NO_CONTEXT;
 }
 
+// Tests that "one off" submission is waited before destroying the surface.
+TEST_P(EGLSingleBufferTest, WaitOneOffSubmission)
+{
+    ANGLE_SKIP_TEST_IF(!IsEGLDisplayExtensionEnabled(mDisplay, "EGL_KHR_mutable_render_buffer"));
+
+    EGLConfig config = EGL_NO_CONFIG_KHR;
+    ANGLE_SKIP_TEST_IF(!chooseConfig(&config, true));
+
+    EGLContext context = EGL_NO_CONTEXT;
+    EXPECT_EGL_TRUE(createContext(config, &context));
+    ASSERT_EGL_SUCCESS() << "eglCreateContext failed.";
+
+    EGLContext context2 = EGL_NO_CONTEXT;
+    EXPECT_EGL_TRUE(createContext(config, &context2));
+    ASSERT_EGL_SUCCESS() << "eglCreateContext failed.";
+
+    const EGLint pbufferSurfaceAttrs[] = {
+        EGL_WIDTH, 1024, EGL_HEIGHT, 1024, EGL_NONE,
+    };
+    EGLSurface pbufferSurface = eglCreatePbufferSurface(mDisplay, config, pbufferSurfaceAttrs);
+    ASSERT_EGL_SUCCESS() << "eglCreatePbufferSurface failed.";
+
+    EGLSurface surface = EGL_NO_SURFACE;
+    OSWindow *osWindow = OSWindow::New();
+    osWindow->initialize("EGLSingleBufferTest", kWidth, kHeight);
+    EXPECT_EGL_TRUE(
+        createWindowSurface(config, osWindow->getNativeWindow(), &surface, EGL_BACK_BUFFER));
+    ASSERT_EGL_SUCCESS() << "eglCreateWindowSurface failed.";
+
+    EXPECT_EGL_TRUE(eglMakeCurrent(mDisplay, surface, surface, context));
+    ASSERT_EGL_SUCCESS() << "eglMakeCurrent failed.";
+
+    // Query age for the first time to avoid submitting debug information a second time.
+    EGLint age = 0;
+    EXPECT_EGL_TRUE(eglQuerySurface(mDisplay, surface, EGL_BUFFER_AGE_EXT, &age));
+
+    if (eglSurfaceAttrib(mDisplay, surface, EGL_RENDER_BUFFER, EGL_SINGLE_BUFFER))
+    {
+        // Transition into EGL_SINGLE_BUFFER mode.
+        EXPECT_EGL_TRUE(eglSwapBuffers(mDisplay, surface));
+
+        // Submit heavy work to the GPU before querying the buffer age.
+        std::thread([this, context2, pbufferSurface]() {
+            EXPECT_EGL_TRUE(eglMakeCurrent(mDisplay, pbufferSurface, pbufferSurface, context2));
+            ASSERT_EGL_SUCCESS() << "eglMakeCurrent failed.";
+
+            ANGLE_GL_PROGRAM(greenProgram, essl1_shaders::vs::Simple(), essl1_shaders::fs::Green());
+            drawQuadInstanced(greenProgram, essl1_shaders::PositionAttrib(), 0.5f, 1.0f, false,
+                              1000);
+
+            EXPECT_EGL_TRUE(
+                eglMakeCurrent(mDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT));
+            ASSERT_EGL_SUCCESS() << "eglMakeCurrent failed.";
+        }).join();
+
+        // Querying the buffer age should perform first acquire of the image and "one off"
+        // submission to change image layout to the VK_IMAGE_LAYOUT_SHARED_PRESENT_KHR.
+        EXPECT_EGL_TRUE(eglQuerySurface(mDisplay, surface, EGL_BUFFER_AGE_EXT, &age));
+    }
+    else
+    {
+        std::cout << "EGL_SINGLE_BUFFER mode is not supported." << std::endl;
+    }
+
+    EXPECT_EGL_TRUE(eglMakeCurrent(mDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, context));
+    ASSERT_EGL_SUCCESS() << "eglMakeCurrent - uncurrent failed.";
+
+    eglDestroySurface(mDisplay, surface);
+    surface = EGL_NO_SURFACE;
+    osWindow->destroy();
+    OSWindow::Delete(&osWindow);
+
+    eglDestroySurface(mDisplay, pbufferSurface);
+    pbufferSurface = EGL_NO_SURFACE;
+
+    eglDestroyContext(mDisplay, context);
+    context = EGL_NO_CONTEXT;
+
+    eglDestroyContext(mDisplay, context2);
+    context2 = EGL_NO_CONTEXT;
+}
+
 // Test that setting a surface to EGL_SINGLE_BUFFER after enabling
 // EGL_FRONT_BUFFER_AUTO_REFRESH_ANDROID does not disable auto refresh
 TEST_P(EGLAndroidAutoRefreshTest, Basic)

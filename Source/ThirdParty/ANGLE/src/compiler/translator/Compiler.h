@@ -141,7 +141,7 @@ class TCompiler : public TShHandleBase
     TSymbolTable &getSymbolTable() { return mSymbolTable; }
     ShShaderSpec getShaderSpec() const { return mShaderSpec; }
     ShShaderOutput getOutputType() const { return mOutputType; }
-    ShBuiltInResources getBuiltInResources() const { return mResources; }
+    const ShBuiltInResources &getBuiltInResources() const { return mResources; }
     const std::string &getBuiltInResourcesString() const { return mBuiltInResourcesString; }
 
     bool isHighPrecisionSupported() const;
@@ -245,9 +245,7 @@ class TCompiler : public TShHandleBase
     const BuiltInFunctionEmulator &getBuiltInFunctionEmulator() const;
 
     virtual bool shouldFlattenPragmaStdglInvariantAll() = 0;
-    virtual bool shouldCollectVariables(const ShCompileOptions &compileOptions);
 
-    bool wereVariablesCollected() const;
     std::vector<sh::ShaderVariable> mAttributes;
     std::vector<sh::ShaderVariable> mOutputVariables;
     std::vector<sh::ShaderVariable> mUniforms;

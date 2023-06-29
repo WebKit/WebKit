@@ -902,15 +902,14 @@ StencilBlitViaBufferParams::StencilBlitViaBufferParams(const DepthStencilBlitPar
 // RenderUtils implementation
 RenderUtils::RenderUtils(DisplayMtl *display)
     : Context(display),
-      mClearUtils(
-          {ClearUtils("clearIntFS"), ClearUtils("clearUIntFS"), ClearUtils("clearFloatFS")}),
-      mColorBlitUtils({ColorBlitUtils("blitIntFS"), ColorBlitUtils("blitUIntFS"),
-                       ColorBlitUtils("blitFloatFS")}),
+      mClearUtils{ClearUtils("clearIntFS"), ClearUtils("clearUIntFS"), ClearUtils("clearFloatFS")},
+      mColorBlitUtils{ColorBlitUtils("blitIntFS"), ColorBlitUtils("blitUIntFS"),
+                      ColorBlitUtils("blitFloatFS")},
       mCopyTextureFloatToUIntUtils("copyTextureFloatToUIntFS"),
-      mCopyPixelsUtils(
-          {CopyPixelsUtils("readFromBufferToIntTexture", "writeFromIntTextureToBuffer"),
-           CopyPixelsUtils("readFromBufferToUIntTexture", "writeFromUIntTextureToBuffer"),
-           CopyPixelsUtils("readFromBufferToFloatTexture", "writeFromFloatTextureToBuffer")})
+      mCopyPixelsUtils{
+          CopyPixelsUtils("readFromBufferToIntTexture", "writeFromIntTextureToBuffer"),
+          CopyPixelsUtils("readFromBufferToUIntTexture", "writeFromUIntTextureToBuffer"),
+          CopyPixelsUtils("readFromBufferToFloatTexture", "writeFromFloatTextureToBuffer")}
 {}
 
 RenderUtils::~RenderUtils() {}
@@ -1188,8 +1187,6 @@ ClearUtils::ClearUtils(const std::string &fragmentShaderName)
     : mFragmentShaderName(fragmentShaderName)
 {}
 
-ClearUtils::ClearUtils(const ClearUtils &src) : ClearUtils(src.mFragmentShaderName) {}
-
 void ClearUtils::onDestroy()
 {
     ClearRenderPipelineCacheArray(&mClearRenderPipelineCache);
@@ -1390,9 +1387,6 @@ angle::Result ClearUtils::clearWithDraw(const gl::Context *context,
 // ColorBlitUtils implementation
 ColorBlitUtils::ColorBlitUtils(const std::string &fragmentShaderName)
     : mFragmentShaderName(fragmentShaderName)
-{}
-
-ColorBlitUtils::ColorBlitUtils(const ColorBlitUtils &src) : ColorBlitUtils(src.mFragmentShaderName)
 {}
 
 void ColorBlitUtils::onDestroy()
@@ -2103,8 +2097,7 @@ angle::Result IndexGeneratorUtils::generateTriFanBufferFromElementsArray(
              contextMtl->getRenderCommandEncoder()))
         {
             IndexGenerationParams cpuPathParams = params;
-            cpuPathParams.indices =
-                elementBufferMtl->getClientShadowCopyData(contextMtl) + srcOffset;
+            cpuPathParams.indices = elementBufferMtl->getBufferDataReadOnly(contextMtl) + srcOffset;
             return generateTriFanBufferFromElementsArrayCPU(contextMtl, cpuPathParams,
                                                             indicesGenerated);
         }
@@ -2232,8 +2225,7 @@ angle::Result IndexGeneratorUtils::generateLineLoopBufferFromElementsArray(
              contextMtl->getRenderCommandEncoder()))
         {
             IndexGenerationParams cpuPathParams = params;
-            cpuPathParams.indices =
-                elementBufferMtl->getClientShadowCopyData(contextMtl) + srcOffset;
+            cpuPathParams.indices = elementBufferMtl->getBufferDataReadOnly(contextMtl) + srcOffset;
             return generateLineLoopBufferFromElementsArrayCPU(contextMtl, cpuPathParams,
                                                               indicesGenerated);
         }
@@ -2619,7 +2611,7 @@ angle::Result MipmapUtils::generateMipmapCS(ContextMtl *contextMtl,
     MipmapNativeLevel batchSrcLevel = kZeroNativeMipLevel;
     options.srcLevel                = batchSrcLevel.get();
     options.sRGB                    = sRGBMipmap;
-    
+
     cmdEncoder->setTexture(srcTexture, 0);
     cmdEncoder->markResourceBeingWrittenByGPU(srcTexture);
     while (remainMips)
@@ -2667,9 +2659,6 @@ angle::Result MipmapUtils::generateMipmapCS(ContextMtl *contextMtl,
 CopyPixelsUtils::CopyPixelsUtils(const std::string &readShaderName,
                                  const std::string &writeShaderName)
     : mReadShaderName(readShaderName), mWriteShaderName(writeShaderName)
-{}
-CopyPixelsUtils::CopyPixelsUtils(const CopyPixelsUtils &src)
-    : CopyPixelsUtils(src.mReadShaderName, src.mWriteShaderName)
 {}
 
 void CopyPixelsUtils::onDestroy()

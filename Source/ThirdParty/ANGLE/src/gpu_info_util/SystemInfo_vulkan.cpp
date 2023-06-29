@@ -12,11 +12,15 @@
 #include <vulkan/vulkan.h>
 #include "gpu_info_util/SystemInfo_internal.h"
 
+#include <algorithm>
 #include <cstring>
 #include <fstream>
+#include <string>
+#include <vector>
 
 #include "common/angleutils.h"
 #include "common/debug.h"
+#include "common/platform_helpers.h"
 #include "common/system_utils.h"
 #include "common/vulkan/libvulkan_loader.h"
 
@@ -41,6 +45,48 @@ class VulkanLibrary final : NonCopyable
         CloseSystemLibrary(mLibVulkan);
     }
 
+    std::vector<std::string> GetInstanceExtensionNames() const
+    {
+        std::vector<std::string> extensionNames;
+
+        auto pfnEnumerateInstanceExtensionProperties =
+            getProc<PFN_vkEnumerateInstanceExtensionProperties>(
+                "vkEnumerateInstanceExtensionProperties");
+        if (!pfnEnumerateInstanceExtensionProperties)
+        {
+            return extensionNames;
+        }
+
+        uint32_t extensionCount = 0;
+        if (pfnEnumerateInstanceExtensionProperties(nullptr, &extensionCount, nullptr) !=
+            VK_SUCCESS)
+        {
+            return extensionNames;
+        }
+
+        std::vector<VkExtensionProperties> extensions(extensionCount);
+        if (pfnEnumerateInstanceExtensionProperties(nullptr, &extensionCount, extensions.data()) !=
+            VK_SUCCESS)
+        {
+            return extensionNames;
+        }
+
+        for (const auto &extension : extensions)
+        {
+            extensionNames.emplace_back(extension.extensionName);
+        }
+
+        std::sort(extensionNames.begin(), extensionNames.end());
+
+        return extensionNames;
+    }
+
+    bool ExtensionFound(std::string const &needle, const std::vector<std::string> &haystack)
+    {
+        // NOTE: The list must be sorted.
+        return std::binary_search(haystack.begin(), haystack.end(), needle);
+    }
+
     VkInstance getVulkanInstance()
     {
         mLibVulkan = vk::OpenLibVulkan();
@@ -62,6 +108,21 @@ class VulkanLibrary final : NonCopyable
         }
 #endif  // VK_VERSION_1_1
 
+        std::vector<std::string> availableInstanceExtensions = GetInstanceExtensionNames();
+        std::vector<const char *> enabledInstanceExtensions;
+
+        bool hasPortabilityEnumeration = false;
+
+        if (IsApple() && ExtensionFound(VK_KHR_PORTABILITY_ENUMERATION_EXTENSION_NAME,
+                                        availableInstanceExtensions))
+        {
+            // On iOS/macOS, there is no native Vulkan driver, so we need to
+            // enable the portability enumeration extension to allow use of
+            // MoltenVK.
+            enabledInstanceExtensions.push_back(VK_KHR_PORTABILITY_ENUMERATION_EXTENSION_NAME);
+            hasPortabilityEnumeration = true;
+        }
+
         // Create a Vulkan instance:
         VkApplicationInfo appInfo;
         appInfo.sType              = VK_STRUCTURE_TYPE_APPLICATION_INFO;
@@ -73,14 +134,21 @@ class VulkanLibrary final : NonCopyable
         appInfo.apiVersion         = instanceVersion;
 
         VkInstanceCreateInfo createInstanceInfo;
-        createInstanceInfo.sType                   = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
-        createInstanceInfo.pNext                   = nullptr;
-        createInstanceInfo.flags                   = 0;
-        createInstanceInfo.pApplicationInfo        = &appInfo;
-        createInstanceInfo.enabledLayerCount       = 0;
-        createInstanceInfo.ppEnabledLayerNames     = nullptr;
-        createInstanceInfo.enabledExtensionCount   = 0;
-        createInstanceInfo.ppEnabledExtensionNames = nullptr;
+        createInstanceInfo.sType               = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
+        createInstanceInfo.pNext               = nullptr;
+        createInstanceInfo.flags               = 0;
+        createInstanceInfo.pApplicationInfo    = &appInfo;
+        createInstanceInfo.enabledLayerCount   = 0;
+        createInstanceInfo.ppEnabledLayerNames = nullptr;
+        createInstanceInfo.enabledExtensionCount =
+            static_cast<uint32_t>(enabledInstanceExtensions.size());
+        createInstanceInfo.ppEnabledExtensionNames =
+            enabledInstanceExtensions.empty() ? nullptr : enabledInstanceExtensions.data();
+
+        if (hasPortabilityEnumeration)
+        {
+            createInstanceInfo.flags |= VK_INSTANCE_CREATE_ENUMERATE_PORTABILITY_BIT_KHR;
+        }
 
         auto pfnCreateInstance = getProc<PFN_vkCreateInstance>("vkCreateInstance");
         if (!pfnCreateInstance ||
@@ -274,6 +342,18 @@ bool GetSystemInfoVulkanWithICD(SystemInfo *info, vk::ICD preferredICD)
                 gpu.driverVendor                = "Mesa";
                 gpu.driverVersion               = FormatString("0x%x", properties.driverVersion);
                 gpu.detailedDriverVersion.major = properties.driverVersion;
+                break;
+            case kVendorID_Apple:
+                // Note: this is the version extraction for MoltenVK, which
+                // formulates its version number as a decimal number like so:
+                //     (major * 10000) + (minor * 100) + patch
+                gpu.driverVendor                = "Apple";
+                gpu.detailedDriverVersion.major = properties.driverVersion / 10000;
+                gpu.detailedDriverVersion.minor = (properties.driverVersion / 100) % 100;
+                gpu.detailedDriverVersion.patch = properties.driverVersion % 100;
+                gpu.driverVersion =
+                    FormatString("%d.%d.%d", gpu.detailedDriverVersion.major,
+                                 gpu.detailedDriverVersion.minor, gpu.detailedDriverVersion.patch);
                 break;
             default:
                 return false;

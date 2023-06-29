@@ -285,7 +285,7 @@ TEST_P(BuiltinVariableFragDepthClampingFloatRBOTest, Above0)
 TEST_P(BuiltinVariableFragDepthClampingFloatRBOTest, Below1)
 {
     // TODO(anglebug.com/5360): Failing on ARM-based Apple DTKs.
-    ANGLE_SKIP_TEST_IF(IsOSX() && IsARM64() && IsDesktopOpenGL());
+    ANGLE_SKIP_TEST_IF(IsMac() && IsARM64() && IsDesktopOpenGL());
 
     CheckDepthWritten(1.0f, 42.0f);
 }

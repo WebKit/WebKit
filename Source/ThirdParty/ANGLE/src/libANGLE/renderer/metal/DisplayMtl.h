@@ -20,7 +20,7 @@
 #include "libANGLE/renderer/metal/mtl_render_utils.h"
 #include "libANGLE/renderer/metal/mtl_state_cache.h"
 #include "libANGLE/renderer/metal/mtl_utils.h"
-#include "platform/FeaturesMtl_autogen.h"
+#include "platform/autogen/FeaturesMtl_autogen.h"
 
 namespace egl
 {
@@ -135,6 +135,7 @@ class DisplayMtl : public DisplayImpl
     bool supportsDepth24Stencil8PixelFormat() const;
     bool supports32BitFloatFiltering() const;
     bool isAMD() const;
+    bool isAMDBronzeDriver() const;
     bool isIntel() const;
     bool isNVIDIA() const;
     bool isSimulator() const;
@@ -192,6 +193,10 @@ class DisplayMtl : public DisplayImpl
     mtl::AutoObjCPtr<id<MTLDevice>> mMetalDevice = nil;
     uint32_t mMetalDeviceVendorId                = 0;
 
+    // Expensive-to-compute AMD Bronze driver detection
+    mutable bool mComputedAMDBronze = false;
+    mutable bool mIsAMDBronze       = false;
+
     mtl::CommandQueue mCmdQueue;
 
     mutable mtl::FormatTable mFormatTable;
@@ -200,7 +205,7 @@ class DisplayMtl : public DisplayImpl
     mtl::RenderUtils mUtils;
 
     // Built-in Shaders
-    std::shared_ptr<DefaultShaderAsyncInfoMtl> mDefaultShadersAsyncInfo;
+    mtl::AutoObjCPtr<id<MTLLibrary>> mDefaultShaders;
 #if ANGLE_MTL_EVENT_AVAILABLE
     mtl::AutoObjCObj<MTLSharedEventListener> mSharedEventListener;
 #endif

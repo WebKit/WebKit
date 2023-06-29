@@ -22,7 +22,8 @@ class TVariable;
 [[nodiscard]] bool RewriteAtomicCounters(TCompiler *compiler,
                                          TIntermBlock *root,
                                          TSymbolTable *symbolTable,
-                                         const TIntermTyped *acbBufferOffsets);
+                                         const TIntermTyped *acbBufferOffsets,
+                                         const TVariable **atomicCountersOut);
 }  // namespace sh
 
 #endif  // COMPILER_TRANSLATOR_TREEOPS_REWRITEATOMICCOUNTERS_H_

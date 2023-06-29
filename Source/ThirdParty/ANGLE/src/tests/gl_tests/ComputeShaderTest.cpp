@@ -5335,6 +5335,61 @@ TEST_P(ComputeShaderTest, SSBOAliasOverWrite)
     EXPECT_EQ(false, error);
 }
 
+// Performs an atomic operation and assigns the previous value to an SSBO.
+TEST_P(ComputeShaderTest, AtomicOpPreviousValueAssignedToSSBO)
+{
+
+    constexpr char kCSSource[] = R"(#version 310 es
+    shared int wg;
+    layout(binding = 0, std430) buffer Storage0 {
+      int inner[16];
+    } buf;
+
+    layout(local_size_x = 1, local_size_y = 1, local_size_z = 1) in;
+    void main() {
+      wg = 0;
+      atomicExchange(wg, 0);
+      barrier();
+      buf.inner[gl_WorkGroupID.x] = atomicOr(wg, 1);
+    })";
+
+    const int dispatchSize = 16;
+
+    // define compute shader output buffer
+    const int outputBufferSizeInBytes   = dispatchSize * sizeof(int32_t);
+    const int outputBufferElementsCount = dispatchSize;
+    std::vector<int32_t> minusOnes(outputBufferElementsCount, -1);
+    GLBuffer resultBuffer;
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, resultBuffer);
+    glBufferData(GL_SHADER_STORAGE_BUFFER, outputBufferSizeInBytes, &minusOnes[0], GL_STATIC_DRAW);
+    ASSERT_GL_NO_ERROR();
+
+    ANGLE_GL_COMPUTE_PROGRAM(csProgram, kCSSource);
+    glUseProgram(csProgram);
+    ASSERT_GL_NO_ERROR();
+
+    // Bind storage buffer to compute shader binding locations
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, resultBuffer);
+
+    glDispatchCompute(dispatchSize, 1, 1);
+    ASSERT_GL_NO_ERROR();
+
+    // verify the result
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, resultBuffer);
+    glMemoryBarrier(GL_BUFFER_UPDATE_BARRIER_BIT);
+    void *mappedResults =
+        glMapBufferRange(GL_SHADER_STORAGE_BUFFER, 0, outputBufferSizeInBytes, GL_MAP_READ_BIT);
+    std::vector<int32_t> results(outputBufferElementsCount);
+    memcpy(results.data(), mappedResults, outputBufferSizeInBytes);
+    glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
+    ASSERT_GL_NO_ERROR();
+
+    for (int index = 0; index < static_cast<int>(results.size()); ++index)
+    {
+        EXPECT_EQ(results[index], 0);
+    }
+}
+
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(ComputeShaderTest);
 ANGLE_INSTANTIATE_TEST_ES31(ComputeShaderTest);
 

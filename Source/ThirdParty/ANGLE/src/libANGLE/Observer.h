@@ -73,6 +73,11 @@ enum class SubjectMessage
     // Indicates a Storage of back-end in gl::Texture has been released.
     StorageReleased,
 
+    // Sent when the GLuint ID for a gl::Texture is being deleted via glDeleteTextures. The
+    // texture may stay alive due to orphaning, but will no longer be directly accessible by the GL
+    // API.
+    TextureIDDeleted,
+
     // Indicates that all pending updates are complete in the subject.
     InitializationComplete,
 };

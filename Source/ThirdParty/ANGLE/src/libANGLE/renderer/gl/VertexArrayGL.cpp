@@ -906,13 +906,21 @@ angle::Result VertexArrayGL::syncDirtyBinding(
 {
     // Dependent state changes in buffers can trigger updates with no dirty bits set.
 
-    for (size_t dirtyBit : dirtyBindingBits)
+    for (auto iter = dirtyBindingBits.begin(), endIter = dirtyBindingBits.end(); iter != endIter;
+         ++iter)
     {
+        size_t dirtyBit = *iter;
         switch (dirtyBit)
         {
             case VertexArray::DIRTY_BINDING_BUFFER:
+            case VertexArray::DIRTY_BINDING_STRIDE:
+            case VertexArray::DIRTY_BINDING_OFFSET:
                 ASSERT(supportVertexAttribBinding(context));
                 ANGLE_TRY(updateBindingBuffer(context, bindingIndex));
+                // Clear these bits to avoid repeated processing
+                iter.resetLaterBits(gl::VertexArray::DirtyBindingBits{
+                    VertexArray::DIRTY_BINDING_BUFFER, VertexArray::DIRTY_BINDING_STRIDE,
+                    VertexArray::DIRTY_BINDING_OFFSET});
                 break;
 
             case VertexArray::DIRTY_BINDING_DIVISOR:
@@ -951,10 +959,23 @@ angle::Result VertexArrayGL::syncState(const gl::Context *context,
     StateManagerGL *stateManager = GetStateManagerGL(context);
     stateManager->bindVertexArray(mVertexArrayID, mNativeState);
 
-    for (size_t dirtyBit : dirtyBits)
+    for (auto iter = dirtyBits.begin(), endIter = dirtyBits.end(); iter != endIter; ++iter)
     {
+        size_t dirtyBit = *iter;
         switch (dirtyBit)
         {
+            case gl::VertexArray::DIRTY_BIT_LOST_OBSERVATION:
+            {
+                // If vertex array was not observing while unbound, we need to check buffer's
+                // internal storage and take action if buffer has changed while not observing.
+                // For now we just simply assume buffer storage has changed and always dirty all
+                // binding points.
+                iter.setLaterBits(
+                    gl::VertexArray::DirtyBits(mState.getBufferBindingMask().to_ulong()
+                                               << gl::VertexArray::DIRTY_BIT_BINDING_0));
+                break;
+            }
+
             case VertexArray::DIRTY_BIT_ELEMENT_ARRAY_BUFFER:
                 ANGLE_TRY(updateElementArrayBufferBinding(context));
                 break;

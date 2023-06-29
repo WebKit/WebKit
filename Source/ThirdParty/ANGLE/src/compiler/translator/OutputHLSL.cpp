@@ -150,7 +150,8 @@ bool IsAtomicFunctionForSharedVariableDirectAssign(const TIntermBinary &node)
 
     if (node.getOp() == EOpAssign && BuiltInGroup::IsAtomicMemory(aggregateNode->getOp()))
     {
-        return !IsInShaderStorageBlock((*aggregateNode->getSequence())[0]->getAsTyped());
+        return !IsInShaderStorageBlock((*aggregateNode->getSequence())[0]->getAsTyped()) &&
+               !IsInShaderStorageBlock(node.getLeft());
     }
 
     return false;

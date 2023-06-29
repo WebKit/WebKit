@@ -296,7 +296,7 @@ TEST_P(IncompleteTextureTestES3, IntegerType)
     ANGLE_SKIP_TEST_IF(IsAdreno() && IsAndroid() && IsOpenGLES());
 
     // http://crbug.com/1168370
-    ANGLE_SKIP_TEST_IF(IsOSX() && IsARM64() && IsOpenGL());
+    ANGLE_SKIP_TEST_IF(IsMac() && IsARM64() && IsOpenGL());
 
     constexpr char kVS[] = R"(#version 300 es
 in highp vec2 position;
@@ -350,7 +350,7 @@ TEST_P(IncompleteTextureTestES3, UnsignedIntegerType)
     ANGLE_SKIP_TEST_IF(IsAdreno() && IsAndroid() && IsOpenGLES());
 
     // http://crbug.com/1168370
-    ANGLE_SKIP_TEST_IF(IsOSX() && IsARM64() && IsOpenGL());
+    ANGLE_SKIP_TEST_IF(IsMac() && IsARM64() && IsOpenGL());
 
     constexpr char kVS[] = R"(#version 300 es
 in highp vec2 position;
@@ -405,10 +405,10 @@ TEST_P(IncompleteTextureTestES3, ShadowType)
     ANGLE_SKIP_TEST_IF(IsAdreno() && IsAndroid() && IsOpenGLES());
 
     // http://crbug.com/1168370
-    ANGLE_SKIP_TEST_IF(IsOSX() && IsARM64() && IsOpenGL());
+    ANGLE_SKIP_TEST_IF(IsMac() && IsARM64() && IsOpenGL());
 
     // http://anglebug.com/5594
-    ANGLE_SKIP_TEST_IF(IsD3D11() || IsOSX());
+    ANGLE_SKIP_TEST_IF(IsD3D11() || IsMac());
 
     constexpr char kVS[] = R"(#version 300 es
 in highp vec2 position;

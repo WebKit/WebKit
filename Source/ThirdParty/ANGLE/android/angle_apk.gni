@@ -42,16 +42,17 @@ if (enable_java_templates) {
       version_name = invoker.version_name
       min_sdk_version = 26
       target_sdk_version = 28
-      generate_final_jni = false
       deps = [ ":${invoker.package_name}_assets" ]
       if (symbol_level != 0) {
         deps += [ ":compressed_symbols" ]
-        if (android_64bit_target_cpu) {
+        if (android_64bit_target_cpu &&
+            defined(android_secondary_abi_toolchain)) {
           deps += [ ":compressed_symbols($android_secondary_abi_toolchain)" ]
         }
       }
 
-      if (android_64bit_target_cpu) {
+      if (android_64bit_target_cpu &&
+          defined(android_secondary_abi_toolchain)) {
         if (symbol_level == 0) {
           secondary_abi_shared_libraries = []
           foreach(_library, angle_libraries) {

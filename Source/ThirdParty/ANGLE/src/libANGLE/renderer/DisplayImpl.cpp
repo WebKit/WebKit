@@ -45,7 +45,7 @@ DisplayImpl::DisplayImpl(const egl::DisplayState &state)
 
 DisplayImpl::~DisplayImpl()
 {
-    ASSERT(mState.surfaceSet.empty());
+    ASSERT(mState.surfaceMap.empty());
 }
 
 egl::Error DisplayImpl::prepareForCall()

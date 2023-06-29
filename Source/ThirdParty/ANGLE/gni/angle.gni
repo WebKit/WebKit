@@ -107,7 +107,8 @@ declare_args() {
 
   if (current_cpu == "arm64" || current_cpu == "x64" ||
       current_cpu == "mips64el" || current_cpu == "s390x" ||
-      current_cpu == "ppc64" || current_cpu == "loong64") {
+      current_cpu == "ppc64" || current_cpu == "loong64" ||
+      current_cpu == "riscv64") {
     angle_64bit_current_cpu = true
   } else if (current_cpu == "arm" || current_cpu == "x86" ||
              current_cpu == "mipsel" || current_cpu == "s390" ||
@@ -152,9 +153,6 @@ declare_args() {
 
   # Frame capture code is enabled by default if rapidjson is available.
   angle_has_frame_capture = angle_has_rapidjson
-
-  # By default, include the SPIR-V based MSL translator (in addition to the direct translator)
-  angle_enable_msl_through_spirv = is_mac
 }
 
 declare_args() {
@@ -180,7 +178,7 @@ declare_args() {
       ((is_win && !angle_is_winuwp) ||
        ((is_linux || is_chromeos) &&
         (angle_use_x11 || angle_use_wayland || angle_use_vulkan_display)) ||
-       is_android || is_fuchsia || is_ggp || angle_enable_msl_through_spirv)
+       is_android || is_fuchsia || is_ggp || is_mac)
 
   # When set to true, ANGLE will not use VK_KHR_surface and VK_KHR_swapchain
   # extensions. Content can be rendered only off-screen.
@@ -560,20 +558,10 @@ if (angle_standalone || build_with_chromium) {
 
       if (is_android) {
         public_configs += [ "$angle_root:build_id_config" ]
+        configs -= [ "//build/config/android:hide_all_but_jni" ]
         use_default_launcher = false
-
-        apk_build = true
-        if (defined(invoker.use_raw_android_executable)) {
-          # If the caller of this template has requested binaries only, skip the APK steps below
-          apk_build = !invoker.use_raw_android_executable
-        }
-
-        # Some of our build targets don't want an APK on Android, specifically trace tests which exceed APK size
-        if (apk_build) {
-          generate_final_jni = false
-          android_manifest_template = "$angle_root/src/tests/test_utils/runner/android/java/AndroidManifest.xml.jinja2"
-          configs -= [ "//build/config/android:hide_all_but_jni" ]
-        }
+        generate_final_jni = false
+        android_manifest_template = "$angle_root/src/tests/test_utils/runner/android/java/AndroidManifest.xml.jinja2"
 
         deps += [
           "$angle_root/src/tests:native_test_java",
@@ -593,118 +581,5 @@ if (angle_standalone || build_with_chromium) {
         data_deps += [ "//build/win:runtime_libs" ]
       }
     }
-  }
-}
-
-template("angle_trace") {
-  angle_shared_library(target_name) {
-    testonly = true
-
-    # Similar to capture replay sample, use the file index for sources
-    sources = invoker.sources
-
-    data = invoker.data
-    defines = [ "ANGLE_REPLAY_IMPLEMENTATION" ]
-    suppressed_configs += [ "$angle_root:constructor_and_destructor_warnings" ]
-
-    deps = [
-      "$angle_root/util:angle_trace_fixture",
-      "$angle_root/util:angle_trace_loader",
-    ]
-
-    if (defined(invoker.deps)) {
-      deps += invoker.deps
-    }
-
-    if (is_android) {
-      libs = [ "log" ]
-    }
-
-    # Disable optimization in the trace perf tests to avoid optimizing huge files.
-    if (!is_debug && !is_ubsan) {
-      suppressed_configs += [
-        "//build/config/compiler:afdo",
-        "//build/config/compiler:afdo_optimize_size",
-        "//build/config/compiler:default_optimization",
-        "//build/config/compiler/pgo:default_pgo_flags",
-      ]
-      configs += [ "//build/config/compiler:no_optimize" ]
-    }
-
-    include_dirs = [ "." ]
-
-    if (defined(invoker.output_name)) {
-      output_name = invoker.output_name
-    }
-  }
-}
-
-set_defaults("angle_trace_library") {
-  # Uses a short name to work around file path limits on Windows.
-  short_names = false
-}
-
-template("angle_trace_library") {
-  _trace_targets = []
-
-  if (invoker.short_names) {
-    _trace_counter = 1
-  }
-
-  foreach(_trace_and_version, invoker.trace_list) {
-    _trace_and_version_arr = []
-    _trace_and_version_arr = string_split(_trace_and_version)
-    _trace = _trace_and_version_arr[0]
-    if (defined(invoker.trace_dir)) {
-      _trace_dir = invoker.trace_dir
-    } else {
-      _trace_dir = _trace
-    }
-    _trace_json_path = "$_trace_dir/$_trace.json"
-    _trace_data = []
-    _trace_data = read_file(_trace_json_path, "json")
-
-    if (invoker.short_names) {
-      _target = "cr_trace_${_trace_counter}"
-      _trace_counter += 1
-    } else {
-      _target = "${target_name}_$_trace"
-    }
-
-    _gen_target = "gen${target_name}_$_trace"
-    action(_gen_target) {
-      script = "//scripts/tracegz.py"
-      args = [
-        _trace,
-        rebase_path(_trace_dir, root_build_dir),
-      ]
-      outputs = [ "$root_gen_dir/tracegz_$_trace.gz" ]
-    }
-
-    angle_trace(_target) {
-      sources = rebase_path(_trace_data.TraceFiles, ".", _trace_dir)
-
-      data = [
-        "$_trace_dir/$_trace.json",
-        "$_trace_dir/$_trace.angledata.gz",
-        "$root_gen_dir/tracegz_$_trace.gz",
-      ]
-
-      deps = [ ":$_gen_target" ]
-
-      if (invoker.short_names) {
-        output_name = _trace
-      }
-    }
-
-    _trace_targets += [ ":$_target" ]
-  }
-
-  angle_shared_library(target_name) {
-    testonly = true
-    data = [ invoker.json_path ]
-    data_deps = _trace_targets
-    deps = [ "$angle_root:angle_common" ]
-    public_deps = [ "$angle_root/util:angle_trace_loader" ]
   }
 }

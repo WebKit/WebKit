@@ -124,6 +124,7 @@ const ExtensionInfoMap &GetExtensionInfoMap()
         map["GL_KHR_parallel_shader_compile"] = enableableExtension(&Extensions::parallelShaderCompileKHR);
         map["GL_AMD_performance_monitor"] = esOnlyExtension(&Extensions::performanceMonitorAMD);
         map["GL_NV_pixel_buffer_object"] = enableableExtension(&Extensions::pixelBufferObjectNV);
+        map["GL_NV_polygon_mode"] = enableableExtension(&Extensions::polygonModeNV);
         map["GL_EXT_polygon_offset_clamp"] = enableableExtension(&Extensions::polygonOffsetClampEXT);
         map["GL_EXT_primitive_bounding_box"] = esOnlyExtension(&Extensions::primitiveBoundingBoxEXT);
         map["GL_OES_primitive_bounding_box"] = esOnlyExtension(&Extensions::primitiveBoundingBoxOES);
@@ -235,6 +236,7 @@ const ExtensionInfoMap &GetExtensionInfoMap()
         map["GL_ANGLE_memory_size"] = enableableExtension(&Extensions::memorySizeANGLE);
         map["GL_ANGLE_multi_draw"] = enableableExtension(&Extensions::multiDrawANGLE);
         map["GL_ANGLE_multiview_multisample"] = enableableExtension(&Extensions::multiviewMultisampleANGLE);
+        map["GL_ANGLE_polygon_mode"] = enableableExtension(&Extensions::polygonModeANGLE);
         map["GL_ANGLE_program_binary"] = esOnlyExtension(&Extensions::programBinaryANGLE);
         map["GL_ANGLE_program_cache_control"] = esOnlyExtension(&Extensions::programCacheControlANGLE);
         map["GL_ANGLE_provoking_vertex"] = enableableExtension(&Extensions::provokingVertexANGLE);

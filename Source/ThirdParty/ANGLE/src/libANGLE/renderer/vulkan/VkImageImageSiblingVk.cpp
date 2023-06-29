@@ -38,7 +38,7 @@ VkImageImageSiblingVk::~VkImageImageSiblingVk() = default;
 egl::Error VkImageImageSiblingVk::initialize(const egl::Display *display)
 {
     DisplayVk *displayVk = vk::GetImpl(display);
-    return angle::ToEGL(initImpl(displayVk), displayVk, EGL_BAD_PARAMETER);
+    return angle::ToEGL(initImpl(displayVk), EGL_BAD_PARAMETER);
 }
 
 angle::Result VkImageImageSiblingVk::initImpl(DisplayVk *displayVk)

@@ -35,7 +35,9 @@ class ValidateTypeSizeLimitationsTraverser : public TIntermTraverser
 {
   public:
     ValidateTypeSizeLimitationsTraverser(TSymbolTable *symbolTable, TDiagnostics *diagnostics)
-        : TIntermTraverser(true, false, false, symbolTable), mDiagnostics(diagnostics)
+        : TIntermTraverser(true, false, false, symbolTable),
+          mDiagnostics(diagnostics),
+          mTotalPrivateVariablesSize(0)
     {
         ASSERT(diagnostics);
     }
@@ -93,16 +95,31 @@ class ValidateTypeSizeLimitationsTraverser : public TIntermTraverser
             const bool isPrivate = variableType.getQualifier() == EvqTemporary ||
                                    variableType.getQualifier() == EvqGlobal ||
                                    variableType.getQualifier() == EvqConst;
-            if (layoutEncoder.getCurrentOffset() > kMaxPrivateVariableSizeInBytes && isPrivate)
+            if (isPrivate)
             {
-                error(asSymbol->getLine(),
-                      "Size of declared private variable exceeds implementation-defined limit",
-                      asSymbol->getName());
-                return false;
+                if (layoutEncoder.getCurrentOffset() > kMaxPrivateVariableSizeInBytes)
+                {
+                    error(asSymbol->getLine(),
+                          "Size of declared private variable exceeds implementation-defined limit",
+                          asSymbol->getName());
+                    return false;
+                }
+                mTotalPrivateVariablesSize += layoutEncoder.getCurrentOffset();
             }
         }
 
         return true;
+    }
+
+    void validateTotalPrivateVariableSize()
+    {
+        if (mTotalPrivateVariablesSize > kMaxPrivateVariableSizeInBytes)
+        {
+            mDiagnostics->error(
+                TSourceLoc{},
+                "Total size of declared private variables exceeds implementation-defined limit",
+                "");
+        }
     }
 
   private:
@@ -213,6 +230,8 @@ class ValidateTypeSizeLimitationsTraverser : public TIntermTraverser
 
     TDiagnostics *mDiagnostics;
     std::vector<int> mLoopSymbolIds;
+
+    size_t mTotalPrivateVariablesSize;
 };
 
 }  // namespace
@@ -223,6 +242,7 @@ bool ValidateTypeSizeLimitations(TIntermNode *root,
 {
     ValidateTypeSizeLimitationsTraverser validate(symbolTable, diagnostics);
     root->traverse(&validate);
+    validate.validateTotalPrivateVariableSize();
     return diagnostics->numErrors() == 0;
 }
 

@@ -148,7 +148,6 @@ class TextureState final : private angle::NonCopyable
     GLenum getDepthStencilTextureMode() const { return mDepthStencilTextureMode; }
 
     bool hasBeenBoundAsImage() const { return mHasBeenBoundAsImage; }
-    bool is3DTextureAndHasBeenBoundAs2DImage() const { return mIs3DAndHasBeenBoundAs2DImage; }
     bool hasBeenBoundAsAttachment() const { return mHasBeenBoundAsAttachment; }
 
     gl::SrgbOverride getSRGBOverride() const { return mSrgbOverride; }
@@ -232,7 +231,6 @@ class TextureState final : private angle::NonCopyable
     GLenum mDepthStencilTextureMode;
 
     bool mHasBeenBoundAsImage;
-    bool mIs3DAndHasBeenBoundAs2DImage;
     bool mHasBeenBoundAsAttachment;
 
     bool mImmutableFormat;
@@ -268,6 +266,18 @@ class TextureState final : private angle::NonCopyable
 
 bool operator==(const TextureState &a, const TextureState &b);
 bool operator!=(const TextureState &a, const TextureState &b);
+
+class TextureBufferContentsObservers final : angle::NonCopyable
+{
+  public:
+    TextureBufferContentsObservers(Texture *texture);
+    void enableForBuffer(Buffer *buffer);
+    void disableForBuffer(Buffer *buffer);
+    bool isEnabledForBuffer(Buffer *buffer);
+
+  private:
+    Texture *mTexture;
+};
 
 class Texture final : public RefCountObject<TextureID>,
                       public egl::ImageSibling,
@@ -527,7 +537,6 @@ class Texture final : public RefCountObject<TextureID>,
     angle::Result generateMipmap(Context *context);
 
     void onBindAsImageTexture();
-    void onBind3DTextureAs2DImage();
 
     egl::Surface *getBoundSurface() const;
     egl::Stream *getBoundStream() const;
@@ -664,6 +673,9 @@ class Texture final : public RefCountObject<TextureID>,
     // ObserverInterface implementation.
     void onSubjectStateChange(angle::SubjectIndex index, angle::SubjectMessage message) override;
 
+    // Texture buffer updates.
+    void onBufferContentsChange();
+
   private:
     rx::FramebufferAttachmentObjectImpl *getAttachmentImpl() const override;
 
@@ -733,6 +745,7 @@ class Texture final : public RefCountObject<TextureID>,
     };
 
     mutable SamplerCompletenessCache mCompletenessCache;
+    TextureBufferContentsObservers mBufferContentsObservers;
 };
 
 inline bool operator==(const TextureState &a, const TextureState &b)

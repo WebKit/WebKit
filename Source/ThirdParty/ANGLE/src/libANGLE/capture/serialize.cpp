@@ -405,6 +405,9 @@ void SerializeRasterizerState(JsonSerializer *json, const gl::RasterizerState &r
     json->addScalar("CullFace", rasterizerState.cullFace);
     json->addString("CullMode", ToString(rasterizerState.cullMode));
     json->addScalar("FrontFace", rasterizerState.frontFace);
+    json->addString("PolygonMode", ToString(rasterizerState.polygonMode));
+    json->addScalar("PolygonOffsetPoint", rasterizerState.polygonOffsetPoint);
+    json->addScalar("PolygonOffsetLine", rasterizerState.polygonOffsetLine);
     json->addScalar("PolygonOffsetFill", rasterizerState.polygonOffsetFill);
     json->addScalar("PolygonOffsetFactor", rasterizerState.polygonOffsetFactor);
     json->addScalar("PolygonOffsetUnits", rasterizerState.polygonOffsetUnits);
@@ -1001,6 +1004,13 @@ void SerializeBlockMemberInfo(JsonSerializer *json, const sh::BlockMemberInfo &b
 void SerializeActiveVariable(JsonSerializer *json, const gl::ActiveVariable &activeVariable)
 {
     json->addScalar("ActiveShaders", activeVariable.activeShaders().to_ulong());
+    GroupScope group(json, "Ids");
+    for (const gl::ShaderType shaderType : gl::AllShaderTypes())
+    {
+        json->addScalar(
+            gl::ShaderTypeToString(shaderType),
+            activeVariable.isActive(shaderType) ? activeVariable.getIds()[shaderType] : 0);
+    }
 }
 
 void SerializeBufferVariablesVector(JsonSerializer *json,

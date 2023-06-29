@@ -181,6 +181,64 @@ TraceLibrary::TraceLibrary(const std::string &traceName, const TraceInfo &traceI
         FATAL() << "Failed to load trace library (" << libName << "): " << loadError;
     }
 
-    callFunc<SetTraceInfoFunc>("SetTraceInfo", traceInfo.traceFiles);
+    callFunc<SetupEntryPoints>("SetupEntryPoints", static_cast<angle::TraceCallbacks *>(this),
+                               &mTraceFunctions);
+    mTraceFunctions->SetTraceInfo(traceInfo);
+    mTraceInfo = traceInfo;
 }
+
+uint8_t *TraceLibrary::LoadBinaryData(const char *fileName)
+{
+    std::ostringstream pathBuffer;
+    pathBuffer << mBinaryDataDir << "/" << fileName;
+    FILE *fp = fopen(pathBuffer.str().c_str(), "rb");
+    if (fp == 0)
+    {
+        fprintf(stderr, "Error loading binary data file: %s\n", fileName);
+        exit(1);
+    }
+    fseek(fp, 0, SEEK_END);
+    long size = ftell(fp);
+    fseek(fp, 0, SEEK_SET);
+    if (mTraceInfo.isBinaryDataCompressed)
+    {
+        if (!strstr(fileName, ".gz"))
+        {
+            fprintf(stderr, "Filename does not end in .gz");
+            exit(1);
+        }
+
+        std::vector<uint8_t> compressedData(size);
+        (void)fread(compressedData.data(), 1, size, fp);
+
+        uint32_t uncompressedSize =
+            zlib_internal::GetGzipUncompressedSize(compressedData.data(), compressedData.size());
+
+        mBinaryData.resize(uncompressedSize + 1);  // +1 to make sure .data() is valid
+        uLong destLen = uncompressedSize;
+        int zResult =
+            zlib_internal::GzipUncompressHelper(mBinaryData.data(), &destLen, compressedData.data(),
+                                                static_cast<uLong>(compressedData.size()));
+
+        if (zResult != Z_OK)
+        {
+            std::cerr << "Failure to decompressed binary data: " << zResult << "\n";
+            exit(1);
+        }
+    }
+    else
+    {
+        if (!strstr(fileName, ".angledata"))
+        {
+            fprintf(stderr, "Filename does not end in .angledata");
+            exit(1);
+        }
+        mBinaryData.resize(size + 1);
+        (void)fread(mBinaryData.data(), 1, size, fp);
+    }
+    fclose(fp);
+
+    return mBinaryData.data();
+}
+
 }  // namespace angle

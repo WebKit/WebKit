@@ -4336,6 +4336,18 @@ CallCapture ParseCallCapture(const Token &nameToken,
             ParseParameters<std::remove_pointer<PFNGLPOINTSIZEXPROC>::type>(paramTokens, strings);
         return CallCapture(EntryPoint::GLPointSizex, std::move(params));
     }
+    if (strcmp(nameToken, "glPolygonModeANGLE") == 0)
+    {
+        ParamBuffer params = ParseParameters<std::remove_pointer<PFNGLPOLYGONMODEANGLEPROC>::type>(
+            paramTokens, strings);
+        return CallCapture(EntryPoint::GLPolygonModeANGLE, std::move(params));
+    }
+    if (strcmp(nameToken, "glPolygonModeNV") == 0)
+    {
+        ParamBuffer params = ParseParameters<std::remove_pointer<PFNGLPOLYGONMODENVPROC>::type>(
+            paramTokens, strings);
+        return CallCapture(EntryPoint::GLPolygonModeNV, std::move(params));
+    }
     if (strcmp(nameToken, "glPolygonOffset") == 0)
     {
         ParamBuffer params = ParseParameters<std::remove_pointer<PFNGLPOLYGONOFFSETPROC>::type>(

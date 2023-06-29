@@ -21,6 +21,7 @@
 
 import sys
 
+# Conditional import enables getting inputs/outputs with python3 instead of vpython3
 if len(sys.argv) < 2:
     from freetype import *
 

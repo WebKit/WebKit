@@ -19,7 +19,7 @@
 #include "libANGLE/renderer/gl/StateManagerGL.h"
 #include "libANGLE/renderer/gl/formatutilsgl.h"
 #include "libANGLE/renderer/gl/renderergl_utils.h"
-#include "platform/FeaturesGL_autogen.h"
+#include "platform/autogen/FeaturesGL_autogen.h"
 
 namespace rx
 {

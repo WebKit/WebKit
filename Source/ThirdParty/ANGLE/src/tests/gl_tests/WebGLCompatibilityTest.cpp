@@ -611,7 +611,7 @@ TEST_P(WebGLCompatibilityTest, EnablePixelBufferObjectExtensions)
     ANGLE_SKIP_TEST_IF(getClientMajorVersion() >= 3);
 
     // http://anglebug.com/5268
-    ANGLE_SKIP_TEST_IF(IsOSX() && IsIntelUHD630Mobile() && IsDesktopOpenGL());
+    ANGLE_SKIP_TEST_IF(IsMac() && IsIntelUHD630Mobile() && IsDesktopOpenGL());
 
     GLBuffer buffer;
     glBindBuffer(GL_PIXEL_PACK_BUFFER, buffer);
@@ -2755,7 +2755,7 @@ void main() {
 TEST_P(WebGLCompatibilityTest, TextureCopyingFeedbackLoops)
 {
     // TODO(anglebug.com/5360): Failing on ARM-based Apple DTKs.
-    ANGLE_SKIP_TEST_IF(IsOSX() && IsARM64() && IsDesktopOpenGL());
+    ANGLE_SKIP_TEST_IF(IsMac() && IsARM64() && IsDesktopOpenGL());
 
     GLTexture texture;
     glBindTexture(GL_TEXTURE_2D, texture.get());
@@ -2823,10 +2823,10 @@ TEST_P(WebGL2CompatibilityTest, CopyMip1ToMip0)
     ANGLE_SKIP_TEST_IF(IsD3D11());
 
     // http://anglebug.com/4805
-    ANGLE_SKIP_TEST_IF(IsOpenGL() && IsIntel() && (IsWindows() || IsOSX()));
+    ANGLE_SKIP_TEST_IF(IsOpenGL() && IsIntel() && (IsWindows() || IsMac()));
 
     // TODO(anglebug.com/5360): Failing on ARM64-based Apple DTKs.
-    ANGLE_SKIP_TEST_IF(IsOSX() && IsARM64() && IsDesktopOpenGL());
+    ANGLE_SKIP_TEST_IF(IsMac() && IsARM64() && IsDesktopOpenGL());
 
     GLFramebuffer framebuffer;
     glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
@@ -2864,7 +2864,7 @@ TEST_P(WebGL2CompatibilityTest, CopyMip1ToMip0)
     ANGLE_SKIP_TEST_IF(IsOpenGL() && IsNVIDIA());
 
     // http://anglebug.com/4803
-    ANGLE_SKIP_TEST_IF(IsOpenGL() && IsAMD() && IsOSX());
+    ANGLE_SKIP_TEST_IF(IsOpenGL() && IsAMD() && IsMac());
 
     // Bind framebuffer to mip 0 and make sure the copy was done.
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 0);
@@ -3377,7 +3377,7 @@ TEST_P(WebGLCompatibilityTest, RGB32FTextures)
 TEST_P(WebGLCompatibilityTest, RGBA32FTextures)
 {
     // http://anglebug.com/5357
-    ANGLE_SKIP_TEST_IF(IsOpenGL() && IsOSX());
+    ANGLE_SKIP_TEST_IF(IsOpenGL() && IsMac());
 
     constexpr float data[] = {7000.0f, 100.0f, 33.0f, -1.0f};
 
@@ -3683,7 +3683,7 @@ TEST_P(WebGLCompatibilityTest, HalfFloatBlend)
 TEST_P(WebGLCompatibilityTest, R16FTextures)
 {
     // http://anglebug.com/5357
-    ANGLE_SKIP_TEST_IF(IsOpenGL() && IsOSX());
+    ANGLE_SKIP_TEST_IF(IsOpenGL() && IsMac());
 
     constexpr float readPixelsData[] = {-5000.0f, 0.0f, 0.0f, 1.0f};
     const GLushort textureData[]     = {
@@ -3744,7 +3744,7 @@ TEST_P(WebGLCompatibilityTest, R16FTextures)
 TEST_P(WebGLCompatibilityTest, RG16FTextures)
 {
     // http://anglebug.com/5357
-    ANGLE_SKIP_TEST_IF(IsOpenGL() && IsOSX());
+    ANGLE_SKIP_TEST_IF(IsOpenGL() && IsMac());
 
     constexpr float readPixelsData[] = {7108.0f, -10.0f, 0.0f, 1.0f};
     const GLushort textureData[]     = {
@@ -3805,7 +3805,7 @@ TEST_P(WebGLCompatibilityTest, RG16FTextures)
 TEST_P(WebGLCompatibilityTest, RGB16FTextures)
 {
     // http://anglebug.com/5357
-    ANGLE_SKIP_TEST_IF(IsOpenGL() && IsOSX());
+    ANGLE_SKIP_TEST_IF(IsOpenGL() && IsMac());
 
     ANGLE_SKIP_TEST_IF(IsOzone() && IsIntel());
 
@@ -3868,7 +3868,7 @@ TEST_P(WebGLCompatibilityTest, RGB16FTextures)
 TEST_P(WebGLCompatibilityTest, RGBA16FTextures)
 {
     // http://anglebug.com/5357
-    ANGLE_SKIP_TEST_IF(IsOpenGL() && IsOSX());
+    ANGLE_SKIP_TEST_IF(IsOpenGL() && IsMac());
 
     ANGLE_SKIP_TEST_IF(IsOzone() && IsIntel());
 
@@ -5271,11 +5271,12 @@ TEST_P(WebGLCompatibilityTest, ValidateArraySizes)
     // fairly small array.
     constexpr char kVSArrayOK[] =
         R"(varying vec4 color;
-const int array_size = 1000;
+const int array_size = 500;
 void main()
 {
     mat2 array[array_size];
-    if (array[0][0][0] == 2.0)
+    mat2 array2[array_size];
+    if (array[0][0][0] + array2[0][0][0] == 2.0)
         color = vec4(0.0, 1.0, 0.0, 1.0);
     else
         color = vec4(1.0, 0.0, 0.0, 1.0);
@@ -5350,6 +5351,103 @@ void main()
 })";
 
     GLuint program = CompileProgram(essl1_shaders::vs::Simple(), kFSStructTooLarge);
+    EXPECT_EQ(0u, program);
+}
+
+// Reject attempts to allocate too much private memory.
+// This is an implementation-defined limit - crbug.com/1431761.
+TEST_P(WebGLCompatibilityTest, ValidateTotalPrivateSize)
+{
+    constexpr char kTooLargeGlobalMemory1[] =
+        R"(precision mediump float;
+
+// 1 MB / 16 bytes per vec4 = 65536
+vec4 array[32768];
+vec4 array2[32769];
+
+void main()
+{
+    if (array[0].x + array[1].x == 0.)
+        gl_FragColor = vec4(0.0, 1.0, 0.0, 1.0);
+    else
+        gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+})";
+
+    constexpr char kTooLargeGlobalMemory2[] =
+        R"(precision mediump float;
+
+// 1 MB / 16 bytes per vec4 = 65536
+vec4 array[32767];
+vec4 array2[32767];
+vec4 x, y, z;
+
+void main()
+{
+    if (array[0].x + array[1].x == x.w + y.w + z.w)
+        gl_FragColor = vec4(0.0, 1.0, 0.0, 1.0);
+    else
+        gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+})";
+
+    constexpr char kTooLargeGlobalAndLocalMemory1[] =
+        R"(precision mediump float;
+
+// 1 MB / 16 bytes per vec4 = 65536
+vec4 array[32768];
+
+void main()
+{
+    vec4 array2[32769];
+    if (array[0].x + array[1].x == 2.0)
+        gl_FragColor = vec4(0.0, 1.0, 0.0, 1.0);
+    else
+        gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+})";
+
+    // Note: The call stack is not taken into account for the purposes of total memory calculation.
+    constexpr char kTooLargeGlobalAndLocalMemory2[] =
+        R"(precision mediump float;
+
+// 1 MB / 16 bytes per vec4 = 65536
+vec4 array[32768];
+
+float f()
+{
+    vec4 array2[16384];
+    return array2[0].x;
+}
+
+float g()
+{
+    vec4 array3[16383];
+    return array3[0].x;
+}
+
+float h()
+{
+    vec4 value;
+    float value2
+    return value.x + value2;
+}
+
+void main()
+{
+    if (array[0].x + f() + g() + h() == 2.0)
+        gl_FragColor = vec4(0.0, 1.0, 0.0, 1.0);
+    else
+        gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+})";
+
+    GLuint program = CompileProgram(essl1_shaders::vs::Simple(), kTooLargeGlobalMemory1);
+    EXPECT_EQ(0u, program);
+
+    program = CompileProgram(essl1_shaders::vs::Simple(), kTooLargeGlobalMemory2);
+    EXPECT_EQ(0u, program);
+
+    program = CompileProgram(essl1_shaders::vs::Simple(), kTooLargeGlobalAndLocalMemory1);
+    EXPECT_EQ(0u, program);
+
+    program = CompileProgram(essl1_shaders::vs::Simple(), kTooLargeGlobalAndLocalMemory2);
     EXPECT_EQ(0u, program);
 }
 
@@ -5875,6 +5973,25 @@ TEST_P(WebGL2CompatibilityTest, TexImageSyncWithIncompleteFramebufferBug)
     GLTexture texture;
     glBindTexture(GL_TEXTURE_2D, texture);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_R8, 8, 8, 0, GL_RED_EXT, GL_UNSIGNED_BYTE, nullptr);
+}
+
+// Test that "depth_unchanged" layout qualifier is rejected for WebGL contexts.
+TEST_P(WebGL2CompatibilityTest, FragDepthLayoutUnchanged)
+{
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_EXT_conservative_depth"));
+
+    constexpr char kFS[] = R"(#version 300 es
+#extension GL_EXT_conservative_depth: enable
+out highp vec4 color;
+layout (depth_unchanged) out highp float gl_FragDepth;
+void main() {
+    color = vec4(0.0, 0.0, 0.0, 1.0);
+    gl_FragDepth = 1.0;
+})";
+
+    GLProgram prg;
+    prg.makeRaster(essl3_shaders::vs::Simple(), kFS);
+    EXPECT_FALSE(prg.valid());
 }
 
 ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(WebGLCompatibilityTest);

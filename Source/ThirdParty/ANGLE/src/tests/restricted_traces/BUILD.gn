@@ -5,8 +5,9 @@
 # Contains the build rules for confidential trace tests.
 
 import("../../../gni/angle.gni")
+import("../angle_traces.gni")
 
-angle_trace_library("angle_restricted_traces") {
+angle_trace_libs("angle_restricted_traces") {
   json_path = "restricted_traces.json"
   if (angle_restricted_traces != []) {
     trace_list = angle_restricted_traces

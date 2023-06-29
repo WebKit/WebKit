@@ -271,6 +271,8 @@
                            GLint dstY0, GLint dstX1, GLint dstY1, GLbitfield mask, GLenum filter); \
     /* GL_NV_pack_subimage */                                                                      \
     /* GL_NV_pixel_buffer_object */                                                                \
+    /* GL_NV_polygon_mode */                                                                       \
+    void polygonModeNV(GLenum face, PolygonMode modePacked);                                       \
     /* GL_NV_read_depth */                                                                         \
     /* GL_NV_read_depth_stencil */                                                                 \
     /* GL_NV_read_stencil */                                                                       \
@@ -350,14 +352,14 @@
                                               GLsizei count, GLsizei instanceCount,                \
                                               GLuint baseInstance);                                \
     void drawElementsInstancedBaseVertexBaseInstanceANGLE(                                         \
-        PrimitiveMode modePacked, GLsizei count, DrawElementsType typePacked,                      \
-        const GLvoid *indices, GLsizei instanceCount, GLint baseVertex, GLuint baseInstance);      \
+        PrimitiveMode modePacked, GLsizei count, DrawElementsType typePacked, const void *indices, \
+        GLsizei instanceCount, GLint baseVertex, GLuint baseInstance);                             \
     void multiDrawArraysInstancedBaseInstance(                                                     \
         PrimitiveMode modePacked, const GLint *firsts, const GLsizei *counts,                      \
         const GLsizei *instanceCounts, const GLuint *baseInstances, GLsizei drawcount);            \
     void multiDrawElementsInstancedBaseVertexBaseInstance(                                         \
         PrimitiveMode modePacked, const GLsizei *counts, DrawElementsType typePacked,              \
-        const GLvoid *const *indices, const GLsizei *instanceCounts, const GLint *baseVertices,    \
+        const void *const *indices, const GLsizei *instanceCounts, const GLint *baseVertices,      \
         const GLuint *baseInstances, GLsizei drawcount);                                           \
     /* GL_ANGLE_base_vertex_base_instance_shader_builtin */                                        \
     /* GL_ANGLE_client_arrays */                                                                   \
@@ -414,12 +416,14 @@
                                   const GLsizei *counts, const GLsizei *instanceCounts,            \
                                   GLsizei drawcount);                                              \
     void multiDrawElements(PrimitiveMode modePacked, const GLsizei *counts,                        \
-                           DrawElementsType typePacked, const GLvoid *const *indices,              \
+                           DrawElementsType typePacked, const void *const *indices,                \
                            GLsizei drawcount);                                                     \
     void multiDrawElementsInstanced(PrimitiveMode modePacked, const GLsizei *counts,               \
-                                    DrawElementsType typePacked, const GLvoid *const *indices,     \
+                                    DrawElementsType typePacked, const void *const *indices,       \
                                     const GLsizei *instanceCounts, GLsizei drawcount);             \
     /* GL_ANGLE_multiview_multisample */                                                           \
+    /* GL_ANGLE_polygon_mode */                                                                    \
+    void polygonMode(GLenum face, PolygonMode modePacked);                                         \
     /* GL_ANGLE_program_binary */                                                                  \
     /* GL_ANGLE_program_cache_control */                                                           \
     /* GL_ANGLE_provoking_vertex */                                                                \
@@ -482,18 +486,18 @@
                              const void *pixels);                                                  \
     void compressedTexImage2DRobust(                                                               \
         TextureTarget targetPacked, GLint level, GLenum internalformat, GLsizei width,             \
-        GLsizei height, GLint border, GLsizei imageSize, GLsizei dataSize, const GLvoid *data);    \
+        GLsizei height, GLint border, GLsizei imageSize, GLsizei dataSize, const void *data);      \
     void compressedTexSubImage2DRobust(                                                            \
         TextureTarget targetPacked, GLint level, GLsizei xoffset, GLsizei yoffset, GLsizei width,  \
-        GLsizei height, GLenum format, GLsizei imageSize, GLsizei dataSize, const GLvoid *data);   \
+        GLsizei height, GLenum format, GLsizei imageSize, GLsizei dataSize, const void *data);     \
     void compressedTexImage3DRobust(TextureTarget targetPacked, GLint level,                       \
                                     GLenum internalformat, GLsizei width, GLsizei height,          \
                                     GLsizei depth, GLint border, GLsizei imageSize,                \
-                                    GLsizei dataSize, const GLvoid *data);                         \
+                                    GLsizei dataSize, const void *data);                           \
     void compressedTexSubImage3DRobust(TextureTarget targetPacked, GLint level, GLint xoffset,     \
                                        GLint yoffset, GLint zoffset, GLsizei width,                \
                                        GLsizei height, GLsizei depth, GLenum format,               \
-                                       GLsizei imageSize, GLsizei dataSize, const GLvoid *data);   \
+                                       GLsizei imageSize, GLsizei dataSize, const void *data);     \
     void getQueryivRobust(QueryType targetPacked, GLenum pname, GLsizei bufSize, GLsizei *length,  \
                           GLint *params);                                                          \
     void getQueryObjectuivRobust(QueryID idPacked, GLenum pname, GLsizei bufSize, GLsizei *length, \

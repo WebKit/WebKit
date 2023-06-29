@@ -66,7 +66,7 @@ TEST_P(WebGLCompressedTextureAvailabilityTest, Test)
     }
     else if (IsMetal())
     {
-        if (IsOSX())
+        if (IsMac())
         {
             EXPECT_TRUE(EnsureGLExtensionEnabled(kDXT1));
             EXPECT_TRUE(EnsureGLExtensionEnabled(kDXT3));
@@ -75,7 +75,7 @@ TEST_P(WebGLCompressedTextureAvailabilityTest, Test)
             EXPECT_TRUE(EnsureGLExtensionEnabled(kRGTC));
             EXPECT_TRUE(EnsureGLExtensionEnabled(kBPTC));
 
-            if (IsApple())
+            if (IsAppleGPU())
             {
                 // M1 or newer
                 EXPECT_TRUE(EnsureGLExtensionEnabled(kETC1));
@@ -103,7 +103,7 @@ TEST_P(WebGLCompressedTextureAvailabilityTest, Test)
     }
     else if (IsDesktopOpenGL())
     {
-        if (IsOSX())
+        if (IsMac())
         {
             // OpenGL version is fixed to 4.1 on macOS, so the supported formats are the same on all
             // devices.

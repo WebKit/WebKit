@@ -120,8 +120,7 @@ class FindGLBaseInstanceTraverser : public TIntermTraverser
 bool EmulateGLDrawID(TCompiler *compiler,
                      TIntermBlock *root,
                      TSymbolTable *symbolTable,
-                     std::vector<sh::ShaderVariable> *uniforms,
-                     bool shouldCollect)
+                     std::vector<sh::ShaderVariable> *uniforms)
 {
     FindGLDrawIDTraverser traverser;
     root->traverse(&traverser);
@@ -134,23 +133,20 @@ bool EmulateGLDrawID(TCompiler *compiler,
         const TIntermSymbol *drawIDSymbol = new TIntermSymbol(drawID);
 
         // AngleInternal variables don't get collected
-        if (shouldCollect)
-        {
-            ShaderVariable uniform;
-            uniform.name          = kEmulatedGLDrawIDName.data();
-            uniform.mappedName    = kEmulatedGLDrawIDName.data();
-            uniform.type          = GLVariableType(*type);
-            uniform.precision     = GLVariablePrecision(*type);
-            uniform.staticUse     = symbolTable->isStaticallyUsed(*builtInVariable);
-            uniform.active        = true;
-            uniform.binding       = type->getLayoutQualifier().binding;
-            uniform.location      = type->getLayoutQualifier().location;
-            uniform.offset        = type->getLayoutQualifier().offset;
-            uniform.rasterOrdered = type->getLayoutQualifier().rasterOrdered;
-            uniform.readonly      = type->getMemoryQualifier().readonly;
-            uniform.writeonly     = type->getMemoryQualifier().writeonly;
-            uniforms->push_back(uniform);
-        }
+        ShaderVariable uniform;
+        uniform.name          = kEmulatedGLDrawIDName.data();
+        uniform.mappedName    = kEmulatedGLDrawIDName.data();
+        uniform.type          = GLVariableType(*type);
+        uniform.precision     = GLVariablePrecision(*type);
+        uniform.staticUse     = symbolTable->isStaticallyUsed(*builtInVariable);
+        uniform.active        = true;
+        uniform.binding       = type->getLayoutQualifier().binding;
+        uniform.location      = type->getLayoutQualifier().location;
+        uniform.offset        = type->getLayoutQualifier().offset;
+        uniform.rasterOrdered = type->getLayoutQualifier().rasterOrdered;
+        uniform.readonly      = type->getMemoryQualifier().readonly;
+        uniform.writeonly     = type->getMemoryQualifier().writeonly;
+        uniforms->push_back(uniform);
 
         DeclareGlobalVariable(root, drawID);
         if (!ReplaceVariableWithTyped(compiler, root, builtInVariable, drawIDSymbol))
@@ -166,7 +162,6 @@ bool EmulateGLBaseVertexBaseInstance(TCompiler *compiler,
                                      TIntermBlock *root,
                                      TSymbolTable *symbolTable,
                                      std::vector<sh::ShaderVariable> *uniforms,
-                                     bool shouldCollect,
                                      bool addBaseVertexToVertexID)
 {
     bool addBaseVertex = false, addBaseInstance = false;
@@ -196,22 +191,19 @@ bool EmulateGLBaseVertexBaseInstance(TCompiler *compiler,
         const TIntermSymbol *baseVertexSymbol = new TIntermSymbol(baseVertex);
 
         // AngleInternal variables don't get collected
-        if (shouldCollect)
-        {
-            uniformBaseVertex.name       = kEmulatedGLBaseVertexName.data();
-            uniformBaseVertex.mappedName = kEmulatedGLBaseVertexName.data();
-            uniformBaseVertex.type       = GLVariableType(type);
-            uniformBaseVertex.precision  = GLVariablePrecision(type);
-            uniformBaseVertex.staticUse = symbolTable->isStaticallyUsed(*builtInVariableBaseVertex);
-            uniformBaseVertex.active    = true;
-            uniformBaseVertex.binding   = type.getLayoutQualifier().binding;
-            uniformBaseVertex.location  = type.getLayoutQualifier().location;
-            uniformBaseVertex.offset    = type.getLayoutQualifier().offset;
-            uniformBaseVertex.rasterOrdered = type.getLayoutQualifier().rasterOrdered;
-            uniformBaseVertex.readonly      = type.getMemoryQualifier().readonly;
-            uniformBaseVertex.writeonly     = type.getMemoryQualifier().writeonly;
-            addBaseVertex                   = true;
-        }
+        uniformBaseVertex.name          = kEmulatedGLBaseVertexName.data();
+        uniformBaseVertex.mappedName    = kEmulatedGLBaseVertexName.data();
+        uniformBaseVertex.type          = GLVariableType(type);
+        uniformBaseVertex.precision     = GLVariablePrecision(type);
+        uniformBaseVertex.staticUse     = symbolTable->isStaticallyUsed(*builtInVariableBaseVertex);
+        uniformBaseVertex.active        = true;
+        uniformBaseVertex.binding       = type.getLayoutQualifier().binding;
+        uniformBaseVertex.location      = type.getLayoutQualifier().location;
+        uniformBaseVertex.offset        = type.getLayoutQualifier().offset;
+        uniformBaseVertex.rasterOrdered = type.getLayoutQualifier().rasterOrdered;
+        uniformBaseVertex.readonly      = type.getMemoryQualifier().readonly;
+        uniformBaseVertex.writeonly     = type.getMemoryQualifier().writeonly;
+        addBaseVertex                   = true;
 
         DeclareGlobalVariable(root, baseVertex);
         if (!ReplaceVariableWithTyped(compiler, root, builtInVariableBaseVertex, baseVertexSymbol))
@@ -232,23 +224,19 @@ bool EmulateGLBaseVertexBaseInstance(TCompiler *compiler,
         const TIntermSymbol *baseInstanceSymbol = new TIntermSymbol(baseInstance);
 
         // AngleInternal variables don't get collected
-        if (shouldCollect)
-        {
-            uniformBaseInstance.name       = kEmulatedGLBaseInstanceName.data();
-            uniformBaseInstance.mappedName = kEmulatedGLBaseInstanceName.data();
-            uniformBaseInstance.type       = GLVariableType(type);
-            uniformBaseInstance.precision  = GLVariablePrecision(type);
-            uniformBaseInstance.staticUse =
-                symbolTable->isStaticallyUsed(*builtInVariableBaseInstance);
-            uniformBaseInstance.active        = true;
-            uniformBaseInstance.binding       = type.getLayoutQualifier().binding;
-            uniformBaseInstance.location      = type.getLayoutQualifier().location;
-            uniformBaseInstance.offset        = type.getLayoutQualifier().offset;
-            uniformBaseInstance.rasterOrdered = type.getLayoutQualifier().rasterOrdered;
-            uniformBaseInstance.readonly      = type.getMemoryQualifier().readonly;
-            uniformBaseInstance.writeonly     = type.getMemoryQualifier().writeonly;
-            addBaseInstance                   = true;
-        }
+        uniformBaseInstance.name       = kEmulatedGLBaseInstanceName.data();
+        uniformBaseInstance.mappedName = kEmulatedGLBaseInstanceName.data();
+        uniformBaseInstance.type       = GLVariableType(type);
+        uniformBaseInstance.precision  = GLVariablePrecision(type);
+        uniformBaseInstance.staticUse = symbolTable->isStaticallyUsed(*builtInVariableBaseInstance);
+        uniformBaseInstance.active    = true;
+        uniformBaseInstance.binding   = type.getLayoutQualifier().binding;
+        uniformBaseInstance.location  = type.getLayoutQualifier().location;
+        uniformBaseInstance.offset    = type.getLayoutQualifier().offset;
+        uniformBaseInstance.rasterOrdered = type.getLayoutQualifier().rasterOrdered;
+        uniformBaseInstance.readonly      = type.getMemoryQualifier().readonly;
+        uniformBaseInstance.writeonly     = type.getMemoryQualifier().writeonly;
+        addBaseInstance                   = true;
 
         DeclareGlobalVariable(root, baseInstance);
         if (!ReplaceVariableWithTyped(compiler, root, builtInVariableBaseInstance,

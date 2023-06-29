@@ -29,7 +29,6 @@ class UnrollFlattenTest : public testing::Test
     void compile(const std::string &shaderString)
     {
         ShCompileOptions compileOptions = {};
-        compileOptions.variables        = true;
 
         std::string infoLog;
         bool compilationSuccess =

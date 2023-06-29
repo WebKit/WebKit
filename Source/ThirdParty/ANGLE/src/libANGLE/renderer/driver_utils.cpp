@@ -21,10 +21,6 @@
 #    include <sys/utsname.h>
 #endif
 
-#if defined(ANGLE_PLATFORM_WINDOWS)
-#    include <versionhelpers.h>
-#endif
-
 namespace rx
 {
 // Intel
@@ -285,32 +281,6 @@ const char *GetVendorString(uint32_t vendorId)
     }
 }
 
-MajorMinorPatchVersion::MajorMinorPatchVersion() {}
-MajorMinorPatchVersion::MajorMinorPatchVersion(int major, int minor, int patch)
-    : majorVersion(major), minorVersion(minor), patchVersion(patch)
-{}
-
-bool operator==(const MajorMinorPatchVersion &a, const MajorMinorPatchVersion &b)
-{
-    return std::tie(a.majorVersion, a.minorVersion, a.patchVersion) ==
-           std::tie(b.majorVersion, b.minorVersion, b.patchVersion);
-}
-bool operator!=(const MajorMinorPatchVersion &a, const MajorMinorPatchVersion &b)
-{
-    return std::tie(a.majorVersion, a.minorVersion, a.patchVersion) !=
-           std::tie(b.majorVersion, b.minorVersion, b.patchVersion);
-}
-bool operator<(const MajorMinorPatchVersion &a, const MajorMinorPatchVersion &b)
-{
-    return std::tie(a.majorVersion, a.minorVersion, a.patchVersion) <
-           std::tie(b.majorVersion, b.minorVersion, b.patchVersion);
-}
-bool operator>=(const MajorMinorPatchVersion &a, const MajorMinorPatchVersion &b)
-{
-    return std::tie(a.majorVersion, a.minorVersion, a.patchVersion) >=
-           std::tie(b.majorVersion, b.minorVersion, b.patchVersion);
-}
-
 ARMDriverVersion ParseARMDriverVersion(uint32_t driverVersion)
 {
     // ARM driver versions are built with the following macro:
@@ -424,17 +394,6 @@ bool IsWayland()
         checked = true;
     }
     return isWayland;
-}
-
-bool IsWin10OrGreater()
-{
-#if defined(ANGLE_ENABLE_WINDOWS_UWP)
-    return true;
-#elif defined(ANGLE_PLATFORM_WINDOWS)
-    return IsWindows10OrGreater();
-#else
-    return false;
-#endif
 }
 
 }  // namespace rx

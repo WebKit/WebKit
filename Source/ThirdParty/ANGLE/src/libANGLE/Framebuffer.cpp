@@ -996,17 +996,17 @@ const std::string &Framebuffer::getLabel() const
     return mState.mLabel;
 }
 
-bool Framebuffer::detachTexture(const Context *context, TextureID textureId)
+bool Framebuffer::detachTexture(Context *context, TextureID textureId)
 {
     return detachResourceById(context, GL_TEXTURE, textureId.value);
 }
 
-bool Framebuffer::detachRenderbuffer(const Context *context, RenderbufferID renderbufferId)
+bool Framebuffer::detachRenderbuffer(Context *context, RenderbufferID renderbufferId)
 {
     return detachResourceById(context, GL_RENDERBUFFER, renderbufferId.value);
 }
 
-bool Framebuffer::detachResourceById(const Context *context, GLenum resourceType, GLuint resourceId)
+bool Framebuffer::detachResourceById(Context *context, GLenum resourceType, GLuint resourceId)
 {
     bool found = false;
 
@@ -1047,13 +1047,23 @@ bool Framebuffer::detachResourceById(const Context *context, GLenum resourceType
     return found;
 }
 
-bool Framebuffer::detachMatchingAttachment(const Context *context,
+bool Framebuffer::detachMatchingAttachment(Context *context,
                                            FramebufferAttachment *attachment,
                                            GLenum matchType,
                                            GLuint matchId)
 {
     if (attachment->isAttached() && attachment->type() == matchType && attachment->id() == matchId)
     {
+        const State &contextState = context->getState();
+        if (contextState.getPixelLocalStorageActivePlanes() != 0 &&
+            this == contextState.getDrawFramebuffer())
+        {
+            // If a (renderbuffer, texture) object is deleted while its image is attached to the
+            // currently bound draw framebuffer object, and pixel local storage is active, then it
+            // is as if EndPixelLocalStorageANGLE() had been called with
+            // <n>=PIXEL_LOCAL_STORAGE_ACTIVE_PLANES_ANGLE and <storeops> of STORE_OP_STORE_ANGLE.
+            context->endPixelLocalStorageWithStoreOpsStore();
+        }
         // We go through resetAttachment to make sure that all the required bookkeeping will be done
         // such as updating enabled draw buffer state.
         resetAttachment(context, attachment->getBinding());
@@ -2197,7 +2207,8 @@ void Framebuffer::onSubjectStateChange(angle::SubjectIndex index, angle::Subject
         }
 
         // This can be triggered by the GL back-end TextureGL class.
-        ASSERT(message == angle::SubjectMessage::DirtyBitsFlagged);
+        ASSERT(message == angle::SubjectMessage::DirtyBitsFlagged ||
+               message == angle::SubjectMessage::TextureIDDeleted);
         return;
     }
 

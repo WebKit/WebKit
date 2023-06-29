@@ -26,6 +26,11 @@
     "label": "//:angle_apks",
     "type": "additional_compile_target",
   },
+  "angle_capture_tests": {
+    "label": "//src/tests:angle_capture_tests",
+    "script": "//src/tests/capture_tests/capture_tests.py",
+    "type": "script",
+  },
   "angle_deqp_egl_tests": {
     "label": "//src/tests:angle_deqp_egl_tests",
     "type": "windowed_test_launcher",

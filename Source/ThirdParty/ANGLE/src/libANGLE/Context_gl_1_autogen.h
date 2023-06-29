@@ -146,7 +146,6 @@
     void pixelTransferf(GLenum pname, GLfloat param);                                              \
     void pixelTransferi(GLenum pname, GLint param);                                                \
     void pixelZoom(GLfloat xfactor, GLfloat yfactor);                                              \
-    void polygonMode(GLenum face, GLenum mode);                                                    \
     void polygonStipple(const GLubyte *mask);                                                      \
     void popAttrib();                                                                              \
     void popName();                                                                                \

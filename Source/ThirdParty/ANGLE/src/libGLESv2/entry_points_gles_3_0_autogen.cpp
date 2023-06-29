@@ -588,8 +588,7 @@ void GL_APIENTRY GL_DeleteQueries(GLsizei n, const GLuint *ids)
         SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid =
             (context->skipValidation() ||
-             (ValidatePixelLocalStorageInactive(context, angle::EntryPoint::GLDeleteQueries) &&
-              ValidateDeleteQueries(context, angle::EntryPoint::GLDeleteQueries, n, idsPacked)));
+             ValidateDeleteQueries(context, angle::EntryPoint::GLDeleteQueries, n, idsPacked));
         if (isCallValid)
         {
             context->deleteQueries(n, idsPacked);
@@ -613,11 +612,9 @@ void GL_APIENTRY GL_DeleteSamplers(GLsizei count, const GLuint *samplers)
     {
         const SamplerID *samplersPacked = PackParam<const SamplerID *>(samplers);
         SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid =
-            (context->skipValidation() ||
-             (ValidatePixelLocalStorageInactive(context, angle::EntryPoint::GLDeleteSamplers) &&
-              ValidateDeleteSamplers(context, angle::EntryPoint::GLDeleteSamplers, count,
-                                     samplersPacked)));
+        bool isCallValid = (context->skipValidation() ||
+                            ValidateDeleteSamplers(context, angle::EntryPoint::GLDeleteSamplers,
+                                                   count, samplersPacked));
         if (isCallValid)
         {
             context->deleteSamplers(count, samplersPacked);
@@ -643,8 +640,7 @@ void GL_APIENTRY GL_DeleteSync(GLsync sync)
         SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid =
             (context->skipValidation() ||
-             (ValidatePixelLocalStorageInactive(context, angle::EntryPoint::GLDeleteSync) &&
-              ValidateDeleteSync(context, angle::EntryPoint::GLDeleteSync, syncPacked)));
+             ValidateDeleteSync(context, angle::EntryPoint::GLDeleteSync, syncPacked));
         if (isCallValid)
         {
             context->deleteSync(syncPacked);
@@ -670,10 +666,8 @@ void GL_APIENTRY GL_DeleteTransformFeedbacks(GLsizei n, const GLuint *ids)
         SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid =
             (context->skipValidation() ||
-             (ValidatePixelLocalStorageInactive(context,
-                                                angle::EntryPoint::GLDeleteTransformFeedbacks) &&
-              ValidateDeleteTransformFeedbacks(
-                  context, angle::EntryPoint::GLDeleteTransformFeedbacks, n, idsPacked)));
+             ValidateDeleteTransformFeedbacks(
+                 context, angle::EntryPoint::GLDeleteTransformFeedbacks, n, idsPacked));
         if (isCallValid)
         {
             context->deleteTransformFeedbacks(n, idsPacked);
@@ -697,11 +691,9 @@ void GL_APIENTRY GL_DeleteVertexArrays(GLsizei n, const GLuint *arrays)
     {
         const VertexArrayID *arraysPacked = PackParam<const VertexArrayID *>(arrays);
         SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid =
-            (context->skipValidation() ||
-             (ValidatePixelLocalStorageInactive(context, angle::EntryPoint::GLDeleteVertexArrays) &&
-              ValidateDeleteVertexArrays(context, angle::EntryPoint::GLDeleteVertexArrays, n,
-                                         arraysPacked)));
+        bool isCallValid = (context->skipValidation() ||
+                            ValidateDeleteVertexArrays(
+                                context, angle::EntryPoint::GLDeleteVertexArrays, n, arraysPacked));
         if (isCallValid)
         {
             context->deleteVertexArrays(n, arraysPacked);

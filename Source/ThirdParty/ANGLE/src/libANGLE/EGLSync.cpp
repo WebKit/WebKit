@@ -25,6 +25,7 @@ Sync::Sync(rx::EGLImplFactory *factory,
     : mLabel(nullptr),
       mId(id),
       mType(type),
+      mAttributeMap(attribs),
       mCondition(EGL_SYNC_PRIOR_COMMANDS_COMPLETE_KHR),
       mNativeFenceFD(
           attribs.getAsInt(EGL_SYNC_NATIVE_FENCE_FD_ANDROID, EGL_NO_NATIVE_FENCE_FD_ANDROID))

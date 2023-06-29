@@ -302,12 +302,6 @@ class CaptureReplayTests
             return false;
         }
 
-        if (traceInfo.isBinaryDataCompressed)
-        {
-            mTraceLibrary->setBinaryDataDecompressCallback(angle::DecompressBinaryData,
-                                                           angle::DeleteBinaryData);
-        }
-
         std::stringstream binaryPathStream;
         binaryPathStream << execDir << angle::GetPathSeparator()
                          << ANGLE_CAPTURE_REPLAY_TEST_DATA_DIR;

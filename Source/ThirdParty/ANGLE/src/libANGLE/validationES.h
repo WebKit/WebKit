@@ -432,16 +432,11 @@ ANGLE_INLINE bool ValidateDrawBase(const Context *context,
                                    angle::EntryPoint entryPoint,
                                    PrimitiveMode mode)
 {
-    intptr_t drawStatesError = context->getStateCache().getBasicDrawStatesError(context);
+    intptr_t drawStatesError = context->getStateCache().getBasicDrawStatesErrorString(context);
     if (drawStatesError)
     {
         const char *errorMessage = reinterpret_cast<const char *>(drawStatesError);
-
-        // All errors from ValidateDrawStates should return INVALID_OPERATION except Framebuffer
-        // Incomplete.
-        bool isFramebufferIncomplete = strcmp(errorMessage, err::kDrawFramebufferIncomplete) == 0;
-        GLenum errorCode =
-            isFramebufferIncomplete ? GL_INVALID_FRAMEBUFFER_OPERATION : GL_INVALID_OPERATION;
+        GLenum errorCode         = context->getStateCache().getBasicDrawElementsErrorCode();
         context->validationError(entryPoint, errorCode, errorMessage);
         return false;
     }
@@ -952,7 +947,7 @@ const char *ValidateProgramPipelineDrawStates(const State &state,
                                               const Extensions &extensions,
                                               ProgramPipeline *programPipeline);
 const char *ValidateProgramPipelineAttachedPrograms(ProgramPipeline *programPipeline);
-const char *ValidateDrawStates(const Context *context);
+const char *ValidateDrawStates(const Context *context, GLenum *outErrorCode);
 const char *ValidateProgramPipeline(const Context *context);
 
 void RecordDrawAttribsError(const Context *context, angle::EntryPoint entryPoint);

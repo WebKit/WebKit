@@ -81,6 +81,16 @@
 #        endif
 #    endif
 
+// GCC < 10.4 or 11.0 - 11.3 miscodegen extern thread_local variable accesses.
+// This affects MinGW targets only.
+// See https://gcc.gnu.org/bugzilla/show_bug.cgi?id=104862
+#    if defined(__GNUC__)
+#        if __GNUC__ < 10 || __GNUC__ == 10 && __GNUC_MINOR__ < 4 || \
+            __GNUC__ == 11 && __GNUC_MINOR__ < 3
+#            define ANGLE_USE_STATIC_THREAD_LOCAL_VARIABLES 1
+#        endif
+#    endif
+
 // Include <windows.h> to ensure tests related files can be built when building
 // vulkan only backend ANGLE on windows.
 #    if defined(ANGLE_ENABLE_VULKAN)

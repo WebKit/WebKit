@@ -958,8 +958,9 @@ bool ValidTexture3DDestinationTarget(const Context *context, TextureTarget targe
     switch (target)
     {
         case TextureTarget::_3D:
-        case TextureTarget::_2DArray:
             return true;
+        case TextureTarget::_2DArray:
+            return context->getClientVersion() >= Version(3, 0);
         case TextureTarget::CubeMapArray:
             return (context->getClientVersion() >= Version(3, 2) ||
                     context->getExtensions().textureCubeMapArrayAny());
@@ -4099,10 +4100,12 @@ const char *ValidateProgramPipelineAttachedPrograms(ProgramPipeline *programPipe
     return nullptr;
 }
 
-// Note all errors returned from this function are INVALID_OPERATION except for the draw framebuffer
-// completeness check.
-const char *ValidateDrawStates(const Context *context)
+const char *ValidateDrawStates(const Context *context, GLenum *outErrorCode)
 {
+    // Note all errors returned from this function are INVALID_OPERATION except for the draw
+    // framebuffer completeness check.
+    *outErrorCode = GL_INVALID_OPERATION;
+
     const Extensions &extensions = context->getExtensions();
     const State &state           = context->getState();
 
@@ -4182,10 +4185,12 @@ const char *ValidateDrawStates(const Context *context)
         }
     }
 
-    if (!framebuffer->isComplete(context))
+    const FramebufferStatus &framebufferStatus = framebuffer->checkStatus(context);
+    if (!framebufferStatus.isComplete())
     {
-        // Note: this error should be generated as INVALID_FRAMEBUFFER_OPERATION.
-        return kDrawFramebufferIncomplete;
+        *outErrorCode = GL_INVALID_FRAMEBUFFER_OPERATION;
+        ASSERT(framebufferStatus.reason);
+        return framebufferStatus.reason;
     }
 
     bool framebufferIsYUV = framebuffer->hasYUVAttachment();
@@ -4391,6 +4396,7 @@ const char *ValidateDrawStates(const Context *context)
         }
     }
 
+    *outErrorCode = GL_NO_ERROR;
     return nullptr;
 }
 
