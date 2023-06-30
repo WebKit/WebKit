@@ -1661,9 +1661,8 @@ imported/w3c/web-platform-tests/css/selectors/invalidation/nth-last-child-of-in-
 # This test is bit heavy for debug
 [ Debug ] imported/w3c/web-platform-tests/css/selectors/invalidation/has-complexity.html [ Skip ]
 
-# https://github.com/w3c/web-platform-tests/issues/8547
-imported/w3c/web-platform-tests/css/mediaqueries/device-aspect-ratio-001.html [ Skip ]
-imported/w3c/web-platform-tests/css/mediaqueries/device-aspect-ratio-005.html [ Skip ]
+# This test is flaky on macOS Ventura
+imported/w3c/web-platform-tests/css/mediaqueries/mq-non-matching-lazy-load.tentative.html [ Skip ]
 
 # nth-child tests takes long time and Debug build sometimes timeouts because there are many test cases.
 webkit.org/b/137149 fast/selectors/nth-child-of-basics.html [ Slow ]

@@ -15,6 +15,7 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/resources/matchmedia-utils.js
+/LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/resources/mq-non-matching-lazy-load-style.css
 /LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/resources/prefers-color-scheme-dark.svg
 /LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/resources/prefers-color-scheme-light.svg
 /LayoutTests/imported/w3c/web-platform-tests/css/mediaqueries/resources/prefers-color-scheme.svg
