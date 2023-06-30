@@ -271,6 +271,23 @@ ExitMode mayExitImpl(Graph& graph, Node* node, StateType& state)
         break;
     }
 
+    case ToString:
+    case CallStringConstructor:
+        switch (node->child1().useKind()) {
+        case KnownPrimitiveUse:
+        case Int32Use:
+        case Int52RepUse:
+        case DoubleRepUse:
+        case NotCellUse:
+        case StringObjectUse:
+        case StringOrStringObjectUse:
+            result = ExitsForExceptions;
+            break;
+        default:
+            return Exits;
+        }
+        break;
+
     default:
         // If in doubt, return true.
         return Exits;

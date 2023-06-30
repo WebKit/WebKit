@@ -11560,13 +11560,16 @@ void SpeculativeJIT::compileToStringOrCallStringConstructorOrStringValueOf(Node*
         return;
     }
 
+    case KnownPrimitiveUse:
     case UntypedUse: {
-        JSValueOperand op1(this, node->child1());
+        JSValueOperand op1(this, node->child1(), ManualOperandSpeculation);
+        GPRFlushedCallResult result(this);
+
         JSValueRegs op1Regs = op1.jsValueRegs();
         GPRReg op1PayloadGPR = op1Regs.payloadGPR();
-
-        GPRFlushedCallResult result(this);
         GPRReg resultGPR = result.gpr();
+
+        speculate(node, node->child1());
 
         flushRegisters();
 

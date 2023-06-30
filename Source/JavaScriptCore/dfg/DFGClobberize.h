@@ -1982,6 +1982,10 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
             clobberTop();
             return;
 
+        case KnownPrimitiveUse:
+            write(SideState);
+            return;
+
         case StringObjectUse:
         case StringOrStringObjectUse:
             // These two StringObjectUse's are pure because if we emit this node with either

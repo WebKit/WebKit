@@ -9446,14 +9446,17 @@ IGNORE_CLANG_WARNINGS_END
             
         case CellUse:
         case NotCellUse:
-        case UntypedUse: {
+        case UntypedUse:
+        case KnownPrimitiveUse: {
             LValue value;
             if (m_node->child1().useKind() == CellUse)
                 value = lowCell(m_node->child1());
             else if (m_node->child1().useKind() == NotCellUse)
                 value = lowNotCell(m_node->child1());
-            else
+            else if (m_node->child1().useKind() == UntypedUse)
                 value = lowJSValue(m_node->child1());
+            else
+                value = lowJSValue(m_node->child1(), ManualOperandSpeculation);
             
             LBasicBlock isCell = m_out.newBlock();
             LBasicBlock notString = m_out.newBlock();

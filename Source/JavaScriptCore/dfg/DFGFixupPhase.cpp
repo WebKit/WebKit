@@ -3728,6 +3728,8 @@ private:
                         return;
                     }
                 }
+                if (edge->op() == ToPrimitive)
+                    return;
                 goodToGo = false;
             });
         if (!goodToGo)
@@ -3756,6 +3758,10 @@ private:
                 if (edge->shouldSpeculateStringOrStringObject()) {
                     addCheckStructureForOriginalStringObjectUse(StringOrStringObjectUse, node->origin, edge.node());
                     convertStringAddUse<StringOrStringObjectUse>(node, edge);
+                    return;
+                }
+                if (edge->op() == ToPrimitive) {
+                    convertStringAddUse<KnownPrimitiveUse>(node, edge);
                     return;
                 }
                 RELEASE_ASSERT_NOT_REACHED();

@@ -3053,6 +3053,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         case Int52RepUse:
         case DoubleRepUse:
         case NotCellUse:
+        case KnownPrimitiveUse:
             break;
         case CellUse:
         case UntypedUse:

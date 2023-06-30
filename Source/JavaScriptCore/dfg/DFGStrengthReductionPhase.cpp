@@ -448,6 +448,8 @@ private:
                 }
                 break;
             }
+            case KnownPrimitiveUse:
+                break;
 
             default:
                 break;
