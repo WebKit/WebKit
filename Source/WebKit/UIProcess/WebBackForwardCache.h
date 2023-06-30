@@ -69,8 +69,7 @@ private:
 
     WebProcessPool& m_processPool;
     unsigned m_capacity { 0 };
-    // Items cannot be null, we're using WeakPtr for hardening.
-    Vector<WeakPtr<WebBackForwardListItem>, 2> m_itemsWithCachedPage;
+    Vector<WebBackForwardListItem*, 2> m_itemsWithCachedPage;
 };
 
 } // namespace WebKit
