@@ -3628,8 +3628,7 @@ void SpeculativeJIT::compileDoubleRep(Node* node)
             Jump isNumber = branchIfNumber(op1GPR);
             Jump isUndefined = branchIfUndefined(op1GPR);
 
-            static constexpr double zero = 0;
-            loadDouble(TrustedImmPtr(&zero), resultFPR);
+            moveZeroToDouble(resultFPR);
 
             Jump isNull = branchIfNull(op1GPR);
             done.append(isNull);
@@ -3673,8 +3672,7 @@ void SpeculativeJIT::compileDoubleRep(Node* node)
             Jump isNumber = branch32(Below, op1TagGPR, TrustedImm32(JSValue::LowestTag + 1));
             Jump isUndefined = branchIfUndefined(op1TagGPR);
 
-            static constexpr double zero = 0;
-            loadDouble(TrustedImmPtr(&zero), resultFPR);
+            moveZeroToDouble(resultFPR);
 
             Jump isNull = branchIfNull(op1TagGPR);
             done.append(isNull);
@@ -3802,10 +3800,9 @@ static void compileClampIntegerToByte(JITCompiler& jit, GPRReg result)
 static void compileClampDoubleToByte(JITCompiler& jit, GPRReg result, FPRReg source, FPRReg scratch)
 {
     // Unordered compare so we pick up NaN
-    static constexpr double zero = 0;
     static constexpr double byteMax = 255;
     static constexpr double half = 0.5;
-    jit.loadDouble(SpeculativeJIT::TrustedImmPtr(&zero), scratch);
+    jit.moveZeroToDouble(scratch);
     MacroAssembler::Jump tooSmall = jit.branchDouble(MacroAssembler::DoubleLessThanOrEqualOrUnordered, source, scratch);
     jit.loadDouble(SpeculativeJIT::TrustedImmPtr(&byteMax), scratch);
     MacroAssembler::Jump tooBig = jit.branchDouble(MacroAssembler::DoubleGreaterThanAndOrdered, source, scratch);
