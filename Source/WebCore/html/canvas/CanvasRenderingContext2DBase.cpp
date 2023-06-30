@@ -306,7 +306,7 @@ String CanvasRenderingContext2DBase::State::fontString() const
 
     auto italic = font.italic() ? "italic " : "";
     auto smallCaps = font.variantCaps() == FontVariantCaps::Small ? "small-caps " : "";
-    serializedFont.append(italic, smallCaps, font.computedPixelSize(), "px");
+    serializedFont.append(italic, smallCaps, font.computedSize(), "px");
 
     for (unsigned i = 0; i < font.familyCount(); ++i) {
         StringView family = font.familyAt(i);

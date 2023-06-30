@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2007 Nicholas Shanks <contact@nickshanks.com>
- * Copyright (C) 2008, 2013-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -120,7 +120,7 @@ AtomString FontDescription::platformResolveGenericFamily(UScriptCode, const Atom
 float FontDescription::adjustedSizeForFontFace(float fontFaceSizeAdjust) const
 {
     // It is not worth modifying the used size with @font-face size-adjust if we are to re-adjust it later with font-size-adjust. This is because font-size-adjust will overrule this change, since size-adjust also modifies the font's metric values and thus, keeps the aspect-value unchanged.
-    return fontSizeAdjust().value ? computedPixelSize() : fontFaceSizeAdjust * computedPixelSize();
+    return fontSizeAdjust().value ? computedSize() : fontFaceSizeAdjust * computedSize();
 
 }
 } // namespace WebCore

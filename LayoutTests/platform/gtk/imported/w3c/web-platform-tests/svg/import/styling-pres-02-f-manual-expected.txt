@@ -68,7 +68,7 @@ layer at (0,0) size 800x600
         RenderSVGRect {rect} at (416,91) size 34x34 [fill={[type=SOLID] [color=#008000]}] [x=250.00] [y=55.00] [width=20.00] [height=20.00]
         RenderSVGText {text} at (280,57) size 153x16 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 153x16
-            chunk 1 text run 1 at (280.00,70.00) startOffset 0 endOffset 25 width 152.40: "flood-opacity on textPath"
+            chunk 1 text run 1 at (280.00,70.00) startOffset 0 endOffset 25 width 153.00: "flood-opacity on textPath"
         RenderSVGRect {rect} at (416,141) size 34x34 [fill={[type=SOLID] [color=#008000]}] [x=250.00] [y=85.00] [width=20.00] [height=20.00]
         RenderSVGText {text} at (280,87) size 154x16 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 154x16
@@ -88,9 +88,9 @@ layer at (0,0) size 800x600
         RenderSVGRect {rect} at (416,341) size 34x34 [fill={[type=SOLID] [color=#008000]}] [x=250.00] [y=205.00] [width=20.00] [height=20.00]
         RenderSVGText {text} at (280,207) size 152x16 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 152x16
-            chunk 1 text run 1 at (280.00,220.00) startOffset 0 endOffset 26 width 151.20: "lighting-color on clipPath"
-    RenderSVGContainer {g} at (16,518) size 380x60
-      RenderSVGText {text} at (10,311) size 228x36 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 228x36
-          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 227.40: "$Revision: 1.9 $"
+            chunk 1 text run 1 at (280.00,220.00) startOffset 0 endOffset 26 width 151.80: "lighting-color on clipPath"
+    RenderSVGContainer {g} at (16,518) size 388x60
+      RenderSVGText {text} at (10,311) size 233x36 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 233x36
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 232.20: "$Revision: 1.9 $"
     RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

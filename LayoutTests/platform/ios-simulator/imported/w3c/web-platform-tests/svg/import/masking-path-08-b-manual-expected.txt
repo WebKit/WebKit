@@ -60,8 +60,8 @@ layer at (0,0) size 800x600
           RenderSVGRect {rect} at (450,350) size 84x84 [fill={[type=SOLID] [color=#00FF00]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
             [clipPath="fillopacityclip"] RenderSVGResourceClipper {clipPath} at (0,0) size 100x100
         RenderSVGRect {rect} at (266,166) size 268x268 [stroke={[type=SOLID] [color=#000000]}] [x=0.00] [y=0.00] [width=320.00] [height=320.00]
-    RenderSVGContainer {g} at (16,516) size 385x64
-      RenderSVGText {text} at (10,310) size 231x38 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 231x38
-          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 230.19: "$Revision: 1.7 $"
+    RenderSVGContainer {g} at (16,516) size 384x64
+      RenderSVGText {text} at (10,310) size 230x38 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 230x38
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 229.47: "$Revision: 1.7 $"
     RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

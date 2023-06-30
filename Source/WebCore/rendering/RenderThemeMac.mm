@@ -862,7 +862,7 @@ bool RenderThemeMac::controlSupportsTints(const RenderObject& o) const
 
 NSControlSize RenderThemeMac::controlSizeForFont(const RenderStyle& style) const
 {
-    int fontSize = style.computedFontPixelSize();
+    auto fontSize = style.computedFontSize();
     if (fontSize >= 21 && ThemeMac::supportsLargeFormControls())
         return NSControlSizeLarge;
     if (fontSize >= 16)
@@ -944,7 +944,7 @@ void RenderThemeMac::setFontFromControlSize(RenderStyle& style, NSControlSize co
 
 NSControlSize RenderThemeMac::controlSizeForSystemFont(const RenderStyle& style) const
 {
-    int fontSize = style.computedFontPixelSize();
+    auto fontSize = style.computedFontSize();
     if (fontSize >= [NSFont systemFontSizeForControlSize:NSControlSizeLarge] && ThemeMac::supportsLargeFormControls())
         return NSControlSizeLarge;
     if (fontSize >= [NSFont systemFontSizeForControlSize:NSControlSizeRegular])
@@ -1107,7 +1107,7 @@ LengthBox RenderThemeMac::popupInternalPaddingBox(const RenderStyle& style, cons
     }
 
     if (style.effectiveAppearance() == StyleAppearance::MenulistButton) {
-        float arrowWidth = baseArrowWidth * (style.computedFontPixelSize() / baseFontSize);
+        float arrowWidth = baseArrowWidth * (style.computedFontSize() / baseFontSize);
         float rightPadding = ceilf(arrowWidth + (arrowPaddingBefore + arrowPaddingAfter + paddingBeforeSeparator) * style.effectiveZoom());
         float leftPadding = styledPopupPaddingLeft * style.effectiveZoom();
         if (style.direction() == TextDirection::RTL)
@@ -1141,7 +1141,7 @@ PopupMenuStyle::PopupMenuSize RenderThemeMac::popupMenuSize(const RenderStyle& s
 
 void RenderThemeMac::adjustMenuListButtonStyle(RenderStyle& style, const Element*) const
 {
-    float fontScale = style.computedFontPixelSize() / baseFontSize;
+    float fontScale = style.computedFontSize() / baseFontSize;
 
     style.resetPadding();
     style.setBorderRadius(IntSize(int(baseBorderRadius + fontScale - 1), int(baseBorderRadius + fontScale - 1))); // FIXME: Round up?

@@ -8,7 +8,7 @@ layer at (0,0) size 800x600
       RenderSVGContainer {g} at (16,12) size 647x488
         RenderSVGText {text} at (10,7) size 133x16 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 133x16
-            chunk 1 text run 1 at (10.00,20.00) startOffset 0 endOffset 21 width 132.87: "Test for mask support"
+            chunk 1 text run 1 at (10.00,20.00) startOffset 0 endOffset 21 width 132.85: "Test for mask support"
         RenderSVGRect {rect} at (16,50) size 168x434 [fill={[type=SOLID] [color=#FF0000]}] [x=10.00] [y=30.00] [width=100.00] [height=260.00]
         RenderSVGResourceMasker {mask} [id="mask1"] [maskUnits=userSpaceOnUse] [maskContentUnits=userSpaceOnUse]
           RenderSVGHiddenContainer {defs} at (0,0) size 0x0
@@ -40,19 +40,19 @@ layer at (0,0) size 800x600
           RenderSVGRect {rect} at (100,375) size 334x42 [fill={[type=SOLID] [color=#FFFFFF] [opacity=0.20]}] [x=60.00] [y=225.00] [width=200.00] [height=25.00]
           RenderSVGRect {rect} at (100,416) size 334x43 [fill={[type=SOLID] [color=#FFFFFF]}] [x=60.00] [y=250.00] [width=200.00] [height=25.00]
           RenderSVGRect {rect} at (100,458) size 334x42 [fill={[type=SOLID] [color=#FFFFFF] [opacity=0.70]}] [x=60.00] [y=275.00] [width=200.00] [height=25.00]
-        RenderSVGText {text} at (60,202) size 121x111 contains 1 chunk(s)
+        RenderSVGText {text} at (60,202) size 122x111 contains 1 chunk(s)
           [masker="mask3"] RenderSVGResourceMasker {mask} at (60,200) size 200x100
-          RenderSVGInlineText {#text} at (0,0) size 121x111
+          RenderSVGInlineText {#text} at (0,0) size 122x111
             [masker="mask3"] RenderSVGResourceMasker {mask} at (60,200) size 200x100
-            chunk 1 text run 1 at (60.00,280.00) startOffset 0 endOffset 3 width 120.60: "SVG"
+            chunk 1 text run 1 at (60.00,280.00) startOffset 0 endOffset 3 width 121.20: "SVG"
         RenderSVGText {text} at (200,214) size 196x14 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 196x14
             chunk 1 text run 1 at (200.00,225.00) startOffset 0 endOffset 36 width 195.47: "Text with mask containing rectangles"
         RenderSVGText {text} at (200,229) size 103x14 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 103x14
             chunk 1 text run 1 at (200.00,240.00) startOffset 0 endOffset 20 width 102.60: "of various opacities"
-    RenderSVGContainer {g} at (16,518) size 380x60
-      RenderSVGText {text} at (10,311) size 228x36 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 228x36
-          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 227.40: "$Revision: 1.8 $"
+    RenderSVGContainer {g} at (16,518) size 388x60
+      RenderSVGText {text} at (10,311) size 233x36 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 233x36
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 232.20: "$Revision: 1.8 $"
     RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

@@ -4,8 +4,8 @@ layer at (0,0) size 800x380
   RenderBlock {HTML} at (0,0) size 800x381
     RenderBody {BODY} at (8,18) size 784x355
       RenderBlock {H3} at (0,0) size 784x23
-        RenderText {#text} at (0,0) size 520x22
-          text run at (0,0) width 520: "SPAN attribute of COL element being ignored in Mozilla 1.0 rc1"
+        RenderText {#text} at (0,0) size 513x22
+          text run at (0,0) width 513: "SPAN attribute of COL element being ignored in Mozilla 1.0 rc1"
       RenderBlock {P} at (0,41) size 784x41
         RenderText {#text} at (0,0) size 744x39
           text run at (0,0) width 744: "(Note: this is a regression bug - I don't know when it appeared, but I remember the SPAN attribute on COL elements"

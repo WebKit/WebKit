@@ -26,6 +26,8 @@
 #include "config.h"
 #include "WasmBBQJIT.h"
 
+#if ENABLE(WEBASSEMBLY_BBQJIT)
+
 #include "B3Common.h"
 #include "B3ValueRep.h"
 #include "BinarySwitch.h"
@@ -64,8 +66,6 @@
 #include <wtf/PlatformRegisters.h>
 #include <wtf/SmallSet.h>
 #include <wtf/StdLibExtras.h>
-
-#if ENABLE(WEBASSEMBLY_BBQJIT)
 
 namespace JSC { namespace Wasm {
 

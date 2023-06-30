@@ -4,9 +4,9 @@ layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
     RenderSVGContainer {g} at (25,15) size 756x491
-      RenderSVGText {text} at (129,9) size 222x24 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 222x24
-          chunk 1 (middle anchor) text run 1 at (129.46,28.00) startOffset 0 endOffset 25 width 221.07: "<svg> 'viewBox' attribute"
+      RenderSVGText {text} at (130,9) size 220x24 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 220x24
+          chunk 1 (middle anchor) text run 1 at (130.01,28.00) startOffset 0 endOffset 25 width 219.97: "<svg> 'viewBox' attribute"
       RenderSVGContainer {g} at (25,99) size 756x407
         RenderSVGViewportContainer {svg} at (74,99) size 135x135
           RenderSVGPath {path} at (74,99) size 135x135 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#ADD8E6] [fill rule=EVEN-ODD]}] [data="M 20 20 C 126.667 20 180 73.3333 180 180 C 73.3333 180 20 126.667 20 20 Z M 20 180 C 20 73.3333 73.3333 20 180 20 C 180 126.667 126.667 180 20 180 Z M 100 40 L 160 100 L 100 160 L 40 100 Z"]
@@ -58,8 +58,8 @@ layer at (0,0) size 800x600
         RenderSVGText {text} at (340,287) size 110x17 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 109x16
             chunk 1 (middle anchor) text run 1 at (340.86,300.00) startOffset 0 endOffset 17 width 108.28: "overflow=\"hidden\""
-    RenderSVGContainer {g} at (16,516) size 385x64
-      RenderSVGText {text} at (10,310) size 231x38 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 231x38
-          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 230.19: "$Revision: 1.6 $"
+    RenderSVGContainer {g} at (16,516) size 384x64
+      RenderSVGText {text} at (10,310) size 230x38 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 230x38
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 229.47: "$Revision: 1.6 $"
     RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

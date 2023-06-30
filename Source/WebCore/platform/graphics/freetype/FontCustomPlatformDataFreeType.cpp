@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2008 Alp Toker <alp@atoker.com>
  * Copyright (C) 2010 Igalia S.L.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -98,7 +99,7 @@ FontPlatformData FontCustomPlatformData::fontPlatformData(const FontDescription&
     auto size = description.adjustedSizeForFontFace(fontCreationContext.sizeAdjust());
     FontPlatformData platformData(m_fontFace.get(), WTFMove(pattern), size, freeTypeFace->face_flags & FT_FACE_FLAG_FIXED_WIDTH, bold, italic, description.orientation());
 
-    platformData.updateSizeWithFontSizeAdjust(description.fontSizeAdjust(), description.computedPixelSize());
+    platformData.updateSizeWithFontSizeAdjust(description.fontSizeAdjust(), description.computedSize());
     return platformData;
 }
 

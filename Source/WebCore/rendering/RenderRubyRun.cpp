@@ -220,7 +220,7 @@ static bool shouldOverhang(bool firstLine, const RenderObject* renderer, const R
         return false;
     const RenderStyle& rubyBaseStyle = firstLine ? rubyBase.firstLineStyle() : rubyBase.style();
     const RenderStyle& style = firstLine ? renderer->firstLineStyle() : renderer->style();
-    return style.computedFontPixelSize() <= rubyBaseStyle.computedFontPixelSize();
+    return style.computedFontSize() <= rubyBaseStyle.computedFontSize();
 }
 
 void RenderRubyRun::getOverhang(bool firstLine, RenderObject* startRenderer, RenderObject* endRenderer, float& startOverhang, float& endOverhang) const
@@ -271,7 +271,7 @@ std::pair<float, float> RenderRubyRun::startAndEndOverhang(bool forFirstLine) co
     auto endOverhang = style().isLeftToRightDirection() ? logicalRightOverhang : logicalLeftOverhang;
 
     const RenderStyle& rubyTextStyle = forFirstLine ? rubyText->firstLineStyle() : rubyText->style();
-    float halfWidthOfFontSize = rubyTextStyle.computedFontPixelSize() / 2.;
+    float halfWidthOfFontSize = rubyTextStyle.computedFontSize() / 2.;
 
     return { std::min(startOverhang, halfWidthOfFontSize), std::min(endOverhang, halfWidthOfFontSize) };
 }

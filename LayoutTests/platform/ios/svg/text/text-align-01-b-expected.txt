@@ -3,9 +3,9 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
     RenderSVGContainer {g} at (8,15) size 751x463
-      RenderSVGText {text} at (5,9) size 437x39 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 437x39
-          chunk 1 text run 1 at (5.00,40.00) startOffset 0 endOffset 31 width 436.86: "Test 'text-anchor' (horizontal)"
+      RenderSVGText {text} at (5,9) size 439x39 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 439x39
+          chunk 1 text run 1 at (5.00,40.00) startOffset 0 endOffset 31 width 438.15: "Test 'text-anchor' (horizontal)"
       RenderSVGContainer {g} at (35,171) size 724x307
         RenderSVGContainer {g} at (378,171) size 381x57 [transform={m=((1.00,0.00)(0.00,1.00)) t=(230.00,130.00)}]
           RenderSVGPath {line} at (383,215) size 84x3 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [x1=0.00] [y1=0.00] [x2=50.00] [y2=0.00]
@@ -31,7 +31,7 @@ layer at (0,0) size 800x600
           RenderSVGText {text} at (-209,-28) size 209x35 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 209x34
               chunk 1 (end anchor) text run 1 at (-208.46,0.00) startOffset 0 endOffset 15 width 208.46: "text-anchor:end"
-    RenderSVGText {text} at (10,304) size 263x45 contains 1 chunk(s)
-      RenderSVGInlineText {#text} at (0,0) size 263x45
-        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 262.68: "$Revision: 1.5 $"
+    RenderSVGText {text} at (10,304) size 264x45 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 264x45
+        chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 263.34: "$Revision: 1.5 $"
     RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

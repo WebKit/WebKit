@@ -1,8 +1,8 @@
 
 FAIL Taking into account stretch axis. assert_approx_equals: vertical characters stretch vertically expected 150 +/- 2 but got 25
 PASS Taking into account stretchy property.
-FAIL Only operators with a stretchy property and block stretch axis. assert_approx_equals: small width expected 12.5 +/- 2 but got 19.9375
-FAIL Operators smaller and larger than non-stretchy siblings. assert_approx_equals: small width expected 12.5 +/- 2 but got 19.9375
+FAIL Only operators with a stretchy property and block stretch axis. assert_approx_equals: small width expected 12.5 +/- 2 but got 19.4375
+FAIL Operators smaller and larger than non-stretchy siblings. assert_approx_equals: small width expected 12.5 +/- 2 but got 19.4375
 FAIL Embellished operators assert_approx_equals: mrow expected 150 +/- 2 but got 25
 ⥚
 ⥜

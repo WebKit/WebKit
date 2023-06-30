@@ -1090,7 +1090,7 @@ float RenderText::maxWordFragmentWidth(const RenderStyle& style, const FontCasca
     // and one that measures the single last suffix.
 
     // FIXME: Breaking the string at these places in the middle of words doesn't work with complex text.
-    float minimumFragmentWidthToConsider = font.pixelSize() * 5 / 4 + hyphenWidth(*this, font);
+    float minimumFragmentWidthToConsider = font.size() * 5 / 4 + hyphenWidth(*this, font);
     float maxFragmentWidth = 0;
     for (size_t k = 0; k < hyphenLocations.size(); ++k) {
         int fragmentLength = hyphenLocations[k] - suffixStart;

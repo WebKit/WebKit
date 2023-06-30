@@ -5,9 +5,9 @@ layer at (0,0) size 800x600
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
     RenderSVGContainer {g} at (8,22) size 780x462
       RenderSVGContainer {g} at (8,22) size 780x462
-        RenderSVGText {text} at (5,13) size 407x46 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 407x45
-            chunk 1 text run 1 at (5.00,50.00) startOffset 0 endOffset 26 width 406.32: "Test 'altGlyph' facilities"
+        RenderSVGText {text} at (5,13) size 405x46 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 405x45
+            chunk 1 text run 1 at (5.00,50.00) startOffset 0 endOffset 26 width 404.30: "Test 'altGlyph' facilities"
         RenderSVGText {text} at (5,62) size 461x35 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 461x34
             chunk 1 text run 1 at (5.00,90.00) startOffset 0 endOffset 32 width 460.21: "and many-to-many chars to glyphs"
@@ -46,8 +46,8 @@ layer at (0,0) size 800x600
           RenderSVGText {text} at (280,209) size 188x76 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 188x76
               chunk 1 text run 1 at (280.00,270.00) startOffset 0 endOffset 5 width 187.50: "SASSY"
-    RenderSVGContainer {g} at (16,517) size 381x62
-      RenderSVGText {text} at (10,310) size 229x38 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 229x37
-          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 228.03: "$Revision: 1.7 $"
+    RenderSVGContainer {g} at (16,517) size 384x62
+      RenderSVGText {text} at (10,310) size 230x38 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 230x37
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 229.47: "$Revision: 1.7 $"
     RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

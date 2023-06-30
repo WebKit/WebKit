@@ -21,5 +21,5 @@ layer at (8,26) size 504x504
         RenderText {#text} at (0,0) size 467x36
           text run at (0,0) width 467: "You should see a yellow rect on the left, and a green one on the right. No"
           text run at (0,18) width 67: "red pixels."
-    layer at (150,406) size 100x100
-      RenderBlock (positioned) {DIV} at (150,70) size 100x100 [bgcolor=#008000]
+    layer at (10,406) size 100x100
+      RenderBlock (positioned) {DIV} at (10,70) size 100x100 [bgcolor=#FF0000]

@@ -231,7 +231,7 @@ FlexLayout::LineRanges FlexLayout::computeFlexLines(const LogicalFlexItems& flex
     // If the very first uncollected item wouldn't fit, collect just it into the line.
     // For this step, the size of a flex item is its outer hypothetical main size. (Note: This can be negative.)
     if (isSingleLineFlexContainer())
-        return { 0, flexBaseAndHypotheticalMainSizeList.size() };
+        return { { 0, flexBaseAndHypotheticalMainSizeList.size() } };
 
     auto lineRanges = LineRanges { };
     size_t lastWrapIndex = 0;

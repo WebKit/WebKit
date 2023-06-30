@@ -3,35 +3,35 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-    RenderSVGContainer {g} at (57,99) size 713x321
+    RenderSVGContainer {g} at (58,100) size 712x320
       RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-      RenderSVGContainer {g} at (57,99) size 713x321 [transform={m=((1.00,0.00)(0.00,1.00)) t=(80.00,80.00)}]
-        RenderSVGContainer {g} at (57,152) size 118x262 [transform={m=((1.00,0.00)(0.00,1.00)) t=(20.00,10.00)}]
-          RenderSVGText {text} at (-66,1) size 71x18 contains 1 chunk(s)
+      RenderSVGContainer {g} at (58,100) size 712x320 [transform={m=((1.00,0.00)(0.00,1.00)) t=(80.00,80.00)}]
+        RenderSVGContainer {g} at (58,153) size 117x261 [transform={m=((1.00,0.00)(0.00,1.00)) t=(20.00,10.00)}]
+          RenderSVGText {text} at (-66,2) size 71x17 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 71x17
-              chunk 1 (end anchor) text run 1 at (-65.53,15.00) startOffset 0 endOffset 11 width 70.53: "text-anchor"
-          RenderSVGText {text} at (-49,36) size 54x18 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 54x17
-              chunk 1 (end anchor) text run 1 at (-48.29,50.00) startOffset 0 endOffset 9 width 53.29: "font-size"
-          RenderSVGText {text} at (-61,71) size 66x18 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 66x17
-              chunk 1 (end anchor) text run 1 at (-60.03,85.00) startOffset 0 endOffset 11 width 65.03: "font-family"
-          RenderSVGText {text} at (-53,106) size 58x18 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 58x17
-              chunk 1 (end anchor) text run 1 at (-52.21,120.00) startOffset 0 endOffset 10 width 57.21: "font-style"
-          RenderSVGText {text} at (-64,141) size 69x18 contains 1 chunk(s)
+              chunk 1 (end anchor) text run 1 at (-65.03,15.00) startOffset 0 endOffset 11 width 70.03: "text-anchor"
+          RenderSVGText {text} at (-48,37) size 53x17 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 53x17
+              chunk 1 (end anchor) text run 1 at (-47.91,50.00) startOffset 0 endOffset 9 width 52.91: "font-size"
+          RenderSVGText {text} at (-60,72) size 65x17 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 65x17
+              chunk 1 (end anchor) text run 1 at (-59.57,85.00) startOffset 0 endOffset 11 width 64.57: "font-family"
+          RenderSVGText {text} at (-52,107) size 57x17 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 57x17
+              chunk 1 (end anchor) text run 1 at (-51.80,120.00) startOffset 0 endOffset 10 width 56.80: "font-style"
+          RenderSVGText {text} at (-64,142) size 69x17 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 69x17
-              chunk 1 (end anchor) text run 1 at (-63.97,155.00) startOffset 0 endOffset 11 width 68.97: "font-weight"
-        RenderSVGContainer {g} at (283,99) size 438x29 [transform={m=((1.00,0.00)(0.00,1.00)) t=(90.00,-10.00)}]
-          RenderSVGText {text} at (0,-11) size 40x18 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 40x17
-              chunk 1 (middle anchor) text run 1 at (0.40,3.00) startOffset 0 endOffset 6 width 39.19: "<text>"
-          RenderSVGText {text} at (122,-11) size 26x18 contains 1 chunk(s)
+              chunk 1 (end anchor) text run 1 at (-63.48,155.00) startOffset 0 endOffset 11 width 68.48: "font-weight"
+        RenderSVGContainer {g} at (284,100) size 437x28 [transform={m=((1.00,0.00)(0.00,1.00)) t=(90.00,-10.00)}]
+          RenderSVGText {text} at (0,-10) size 40x17 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 39x17
+              chunk 1 (middle anchor) text run 1 at (0.54,3.00) startOffset 0 endOffset 6 width 38.92: "<text>"
+          RenderSVGText {text} at (122,-10) size 26x17 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 25x17
-              chunk 1 (middle anchor) text run 1 at (122.84,3.00) startOffset 0 endOffset 3 width 24.31: "<g>"
-          RenderSVGText {text} at (237,-11) size 26x18 contains 1 chunk(s)
+              chunk 1 (middle anchor) text run 1 at (122.93,3.00) startOffset 0 endOffset 3 width 24.14: "<g>"
+          RenderSVGText {text} at (237,-10) size 26x17 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 25x17
-              chunk 1 (middle anchor) text run 1 at (237.84,3.00) startOffset 0 endOffset 3 width 24.31: "<a>"
+              chunk 1 (middle anchor) text run 1 at (237.93,3.00) startOffset 0 endOffset 3 width 24.14: "<a>"
         RenderSVGContainer {g} at (230,127) size 540x293 [transform={m=((1.00,0.00)(0.00,1.00)) t=(80.00,5.00)}]
           RenderSVGContainer {g} at (230,127) size 540x60
             RenderSVGHiddenContainer {defs} at (0,0) size 0x0
@@ -329,8 +329,8 @@ layer at (0,0) size 800x600
               RenderSVGText {text} at (0,-9) size 22x36 contains 1 chunk(s)
                 RenderSVGInlineText {#text} at (0,0) size 22x36
                   chunk 1 text run 1 at (0.00,20.00) startOffset 0 endOffset 1 width 21.67: "A"
-    RenderSVGContainer {g} at (16,516) size 385x64
-      RenderSVGText {text} at (10,310) size 231x38 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 231x38
-          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 230.19: "$Revision: 1.9 $"
+    RenderSVGContainer {g} at (16,516) size 384x64
+      RenderSVGText {text} at (10,310) size 230x38 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 230x38
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 229.47: "$Revision: 1.9 $"
     RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

@@ -588,7 +588,7 @@ inline void tryHyphenating(RenderText& text, const FontCascade& font, const Atom
     float hyphenWidth = measureHyphenWidth(text, font);
 
     float maxPrefixWidth = availableWidth - xPos - hyphenWidth - lastSpaceWordSpacing;
-    if (!enoughWidthForHyphenation(maxPrefixWidth, font.pixelSize()))
+    if (!enoughWidthForHyphenation(maxPrefixWidth, font.size()))
         return;
 
     const RenderStyle& style = text.style();

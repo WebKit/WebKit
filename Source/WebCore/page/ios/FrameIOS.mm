@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -210,7 +210,7 @@ CGRect LocalFrame::renderRectForPoint(CGPoint point, bool* isReplaced, float* fo
 #if CHECK_FONT_SIZE
             for (RenderObject* textRenderer = hitRenderer; textRenderer; textRenderer = textRenderer->traverseNext(hitRenderer)) {
                 if (textRenderer->isText()) {
-                    *fontSize = textRenderer->font(true).pixelSize();
+                    *fontSize = textRenderer->font(true).size();
                     break;
                 }
             }

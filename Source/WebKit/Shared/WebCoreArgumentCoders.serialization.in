@@ -2580,7 +2580,7 @@ enum class WebCore::FetchHeadersGuard : uint8_t {
 
 [AdditionalEncoder=StreamConnectionEncoder] struct WebCore::ControlStyle {
     OptionSet<WebCore::ControlStyle::State> states;
-    unsigned fontSize;
+    float fontSize;
     float zoomFactor;
     WebCore::Color accentColor;
     WebCore::Color textColor;

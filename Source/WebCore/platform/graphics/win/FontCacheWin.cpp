@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2022 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006-2023 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -408,7 +408,7 @@ Ref<Font> FontCache::lastResortFallbackFont(const FontDescription& fontDescripti
     }
 
     auto hFont = adoptGDIObject(static_cast<HFONT>(GetStockObject(DEFAULT_GUI_FONT)));
-    FontPlatformData platformData(WTFMove(hFont), fontDescription.computedPixelSize(), false, false);
+    FontPlatformData platformData(WTFMove(hFont), fontDescription.computedSize(), false, false);
     return fontForPlatformData(platformData);
 }
 
@@ -625,7 +625,7 @@ std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDe
 {
     LONG weight = adjustedGDIFontWeight(toGDIFontWeight(fontDescription.weight()), family);
     auto hfont = createGDIFont(family, weight, isItalic(fontDescription.italic()),
-        fontDescription.computedPixelSize() * cWindowsFontScaleFactor);
+        fontDescription.computedSize() * cWindowsFontScaleFactor);
 
     if (!hfont)
         return nullptr;
@@ -636,7 +636,7 @@ std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDe
     bool synthesizeBold = isGDIFontWeightBold(weight) && !isGDIFontWeightBold(logFont.lfWeight);
     bool synthesizeItalic = isItalic(fontDescription.italic()) && !logFont.lfItalic;
 
-    auto result = makeUnique<FontPlatformData>(WTFMove(hfont), fontDescription.computedPixelSize(), synthesizeBold, synthesizeItalic);
+    auto result = makeUnique<FontPlatformData>(WTFMove(hfont), fontDescription.computedSize(), synthesizeBold, synthesizeItalic);
 
     bool fontCreationFailed = !result->scaledFont();
 

@@ -15,8 +15,8 @@ PASS cqmin unit resolves against appropriate container (vertical writing-mode on
 PASS cqmax unit resolves against appropriate container (vertical writing-mode on subject)
 PASS cqw unit resolves against appropriate container (vertical writing-mode on container)
 PASS cqh unit resolves against appropriate container (vertical writing-mode on container)
-FAIL cqi unit resolves against appropriate container (vertical writing-mode on container) assert_equals: expected "true" but got ""
-FAIL cqb unit resolves against appropriate container (vertical writing-mode on container) assert_equals: expected "true" but got ""
+PASS cqi unit resolves against appropriate container (vertical writing-mode on container)
+PASS cqb unit resolves against appropriate container (vertical writing-mode on container)
 PASS cqmin unit resolves against appropriate container (vertical writing-mode on container)
 PASS cqmax unit resolves against appropriate container (vertical writing-mode on container)
 

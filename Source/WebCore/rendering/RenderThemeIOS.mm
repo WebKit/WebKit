@@ -347,7 +347,7 @@ void RenderThemeIOS::adjustCheckboxStyle(RenderStyle& style, const Element* elem
     if (!style.width().isIntrinsicOrAuto() && !style.height().isAuto())
         return;
 
-    int size = std::max(style.computedFontPixelSize(), 10U);
+    auto size = std::max(style.computedFontSize(), 10.f);
     style.setWidth({ size, LengthType::Fixed });
     style.setHeight({ size, LengthType::Fixed });
 }
@@ -506,10 +506,10 @@ void RenderThemeIOS::adjustRadioStyle(RenderStyle& style, const Element* element
     if (!style.width().isIntrinsicOrAuto() && !style.height().isAuto())
         return;
 
-    int size = std::max(style.computedFontPixelSize(), 10U);
+    auto size = std::max(style.computedFontSize(), 10.f);
     style.setWidth({ size, LengthType::Fixed });
     style.setHeight({ size, LengthType::Fixed });
-    style.setBorderRadius({ size / 2, size / 2 });
+    style.setBorderRadius({ static_cast<int>(size / 2), static_cast<int>(size / 2) });
 }
 
 void RenderThemeIOS::paintRadioDecorations(const RenderObject& box, const PaintInfo& paintInfo, const IntRect& rect)

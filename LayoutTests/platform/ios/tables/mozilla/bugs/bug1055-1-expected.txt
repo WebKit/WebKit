@@ -6,8 +6,8 @@ layer at (0,0) size 800x2136
       RenderBlock (anonymous) at (0,0) size 784x20
         RenderBR {BR} at (0,0) size 0x19
       RenderBlock {H3} at (0,48) size 784x24
-        RenderText {#text} at (0,0) size 88x22
-          text run at (0,0) width 88: "border-top"
+        RenderText {#text} at (0,0) size 87x22
+          text run at (0,0) width 87: "border-top"
       RenderBlock {P} at (0,90) size 784x21
         RenderInline {CODE} at (0,0) size 55x14
           RenderText {#text} at (0,5) size 55x14
@@ -95,8 +95,8 @@ layer at (0,0) size 800x2136
       RenderBlock (anonymous) at (0,435) size 784x21
         RenderBR {BR} at (0,0) size 0x19
       RenderBlock {H3} at (0,484) size 784x24
-        RenderText {#text} at (0,0) size 102x22
-          text run at (0,0) width 102: "border-right"
+        RenderText {#text} at (0,0) size 101x22
+          text run at (0,0) width 101: "border-right"
       RenderBlock {P} at (0,525) size 784x21
         RenderInline {CODE} at (0,0) size 55x14
           RenderText {#text} at (0,5) size 55x14
@@ -184,8 +184,8 @@ layer at (0,0) size 800x2136
       RenderBlock (anonymous) at (0,813) size 784x21
         RenderBR {BR} at (0,0) size 0x19
       RenderBlock {H3} at (0,862) size 784x24
-        RenderText {#text} at (0,0) size 120x22
-          text run at (0,0) width 120: "border-bottom"
+        RenderText {#text} at (0,0) size 118x22
+          text run at (0,0) width 118: "border-bottom"
       RenderBlock {P} at (0,904) size 784x21
         RenderInline {CODE} at (0,0) size 55x14
           RenderText {#text} at (0,5) size 55x14
@@ -273,8 +273,8 @@ layer at (0,0) size 800x2136
       RenderBlock (anonymous) at (0,1249) size 784x21
         RenderBR {BR} at (0,0) size 0x19
       RenderBlock {H3} at (0,1298) size 784x24
-        RenderText {#text} at (0,0) size 88x22
-          text run at (0,0) width 88: "border-left"
+        RenderText {#text} at (0,0) size 87x22
+          text run at (0,0) width 87: "border-left"
       RenderBlock {P} at (0,1339) size 784x21
         RenderInline {CODE} at (0,0) size 55x14
           RenderText {#text} at (0,5) size 55x14

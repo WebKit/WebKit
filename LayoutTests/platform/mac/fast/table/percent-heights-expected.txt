@@ -4,8 +4,8 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {H3} at (0,0) size 784x22
-        RenderText {#text} at (0,0) size 246x22
-          text run at (0,0) width 246: "Small Percentage Heights Bug"
+        RenderText {#text} at (0,0) size 242x22
+          text run at (0,0) width 242: "Small Percentage Heights Bug"
       RenderBlock {P} at (0,40) size 784x37
         RenderText {#text} at (0,0) size 761x36
           text run at (0,0) width 409: "In the example below, all eight cells should be the same height. "

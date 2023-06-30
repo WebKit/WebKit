@@ -27,29 +27,29 @@ layer at (0,0) size 480x360
         RenderSVGContainer {g} at (0,5) size 480x292
           RenderSVGRect {rect} at (8,5) size 464x290 [stroke={[type=SOLID] [color=#0000FF]}] [x=1.00] [y=1.00] [width=798.00] [height=498.00]
           RenderSVGRect {rect} at (19,16) size 442x24 [fill={[type=LINEAR-GRADIENT] [id="MyGradient"]}] [x=20.00] [y=20.00] [width=760.00] [height=40.00]
-          RenderSVGText {text} at (20,55) size 195x49 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 195x49
-              chunk 1 text run 1 at (20.00,95.00) startOffset 0 endOffset 10 width 194.33: "Unfiltered"
+          RenderSVGText {text} at (20,54) size 197x50 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 197x49
+              chunk 1 text run 1 at (20.00,95.00) startOffset 0 endOffset 10 width 196.02: "Unfiltered"
           RenderSVGRect {rect} at (19,74) size 442x24 [fill={[type=LINEAR-GRADIENT] [id="MyGradient"]}] [x=20.00] [y=120.00] [width=760.00] [height=40.00]
             [filter="Matrix"] RenderSVGResourceFilter {filter} at (20,120) size 760x40
-          RenderSVGText {text} at (20,155) size 668x49 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 668x49
-              chunk 1 text run 1 at (20.00,195.00) startOffset 0 endOffset 32 width 667.30: "type=\"matrix\" (grayscale matrix)"
+          RenderSVGText {text} at (20,154) size 674x50 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 674x49
+              chunk 1 text run 1 at (20.00,195.00) startOffset 0 endOffset 32 width 673.11: "type=\"matrix\" (grayscale matrix)"
           RenderSVGRect {rect} at (0,131) size 480x26 [fill={[type=LINEAR-GRADIENT] [id="MyGradient"]}] [x=20.00] [y=220.00] [width=760.00] [height=40.00]
             [filter="Saturate40"] RenderSVGResourceFilter {filter} at (-18,218) size 836x44
-          RenderSVGText {text} at (20,255) size 572x49 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 572x49
-              chunk 1 text run 1 at (20.00,295.00) startOffset 0 endOffset 27 width 571.44: "type=\"saturate\" values=\".4\""
+          RenderSVGText {text} at (20,254) size 577x50 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 577x49
+              chunk 1 text run 1 at (20.00,295.00) startOffset 0 endOffset 27 width 576.41: "type=\"saturate\" values=\".4\""
           RenderSVGRect {rect} at (0,189) size 480x26 [fill={[type=LINEAR-GRADIENT] [id="MyGradient"]}] [x=20.00] [y=320.00] [width=760.00] [height=40.00]
             [filter="HueRotate90"] RenderSVGResourceFilter {filter} at (-18,318) size 836x44
-          RenderSVGText {text} at (20,355) size 622x49 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 622x49
-              chunk 1 text run 1 at (20.00,395.00) startOffset 0 endOffset 28 width 621.18: "type=\"hueRotate\" values=\"90\""
+          RenderSVGText {text} at (20,354) size 627x50 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 627x49
+              chunk 1 text run 1 at (20.00,395.00) startOffset 0 endOffset 28 width 626.58: "type=\"hueRotate\" values=\"90\""
           RenderSVGRect {rect} at (0,247) size 480x26 [fill={[type=LINEAR-GRADIENT] [id="MyGradient"]}] [x=20.00] [y=420.00] [width=760.00] [height=40.00]
             [filter="LuminanceToAlpha"] RenderSVGResourceFilter {filter} at (-18,418) size 836x44
-          RenderSVGText {text} at (20,455) size 521x49 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 521x49
-              chunk 1 text run 1 at (20.00,495.00) startOffset 0 endOffset 23 width 520.11: "type=\"luminanceToAlpha\""
+          RenderSVGText {text} at (20,454) size 525x50 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 525x49
+              chunk 1 text run 1 at (20.00,495.00) startOffset 0 endOffset 23 width 524.63: "type=\"luminanceToAlpha\""
     RenderSVGText {text} at (10,304) size 264x46 contains 1 chunk(s)
       RenderSVGInlineText {#text} at (0,0) size 264x46
         chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 263.34: "$Revision: 1.6 $"

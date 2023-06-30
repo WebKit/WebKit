@@ -3,10 +3,10 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-    RenderSVGContainer {g} at (105,17) size 590x472
-      RenderSVGText {text} at (121,10) size 238x19 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 238x19
-          chunk 1 (middle anchor) text run 1 at (121.36,25.00) startOffset 0 endOffset 33 width 237.29: "<animate> on <path>'s d attribute"
+    RenderSVGContainer {g} at (105,16) size 590x473
+      RenderSVGText {text} at (120,9) size 240x20 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 239x20
+          chunk 1 (middle anchor) text run 1 at (120.61,25.00) startOffset 0 endOffset 33 width 238.78: "<animate> on <path>'s d attribute"
       RenderSVGHiddenContainer {defs} at (0,0) size 0x0
         RenderSVGContainer {g} at (0,0) size 75x75
           RenderSVGEllipse {circle} at (0,0) size 69x69 [stroke={[type=SOLID] [color=#C0C0C0] [stroke width=2.00]}] [cx=0.00] [cy=0.00] [r=40.00]
@@ -74,8 +74,8 @@ layer at (0,0) size 800x600
           RenderSVGText {text} at (-27,78) size 54x15 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 53x15
               chunk 1 (middle anchor) text run 1 at (-26.01,90.00) startOffset 0 endOffset 8 width 52.03: "segments"
-    RenderSVGContainer {g} at (16,516) size 385x64
-      RenderSVGText {text} at (10,310) size 231x38 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 231x38
-          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 230.19: "$Revision: 1.7 $"
+    RenderSVGContainer {g} at (16,516) size 384x64
+      RenderSVGText {text} at (10,310) size 230x38 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 230x38
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 229.47: "$Revision: 1.7 $"
     RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

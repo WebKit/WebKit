@@ -47,14 +47,14 @@ layer at (0,0) size 800x600
             RenderSVGInlineText {#text} at (0,0) size 171x34
               chunk 1 text run 1 at (60.00,230.00) startOffset 0 endOffset 15 width 170.40: "Blue is lighter"
         RenderSVGContainer {g} at (50,429) size 380x60
-          RenderSVGText {text} at (30,257) size 212x16 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 212x16
-              chunk 1 text run 1 at (30.00,270.00) startOffset 0 endOffset 34 width 211.44: "ZalamanderCaps is an OpenType font"
-          RenderSVGText {text} at (30,277) size 228x16 contains 1 chunk(s)
+          RenderSVGText {text} at (30,257) size 213x17 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 213x16
+              chunk 1 text run 1 at (30.00,270.00) startOffset 0 endOffset 34 width 212.02: "ZalamanderCaps is an OpenType font"
+          RenderSVGText {text} at (30,277) size 228x17 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 228x16
               chunk 1 text run 1 at (30.00,290.00) startOffset 0 endOffset 37 width 227.51: "by Tim Ahrens of Just Another Foundry"
-    RenderSVGContainer {g} at (16,518) size 380x60
-      RenderSVGText {text} at (10,311) size 228x36 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 228x36
-          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 227.40: "$Revision: 1.4 $"
+    RenderSVGContainer {g} at (16,518) size 388x60
+      RenderSVGText {text} at (10,311) size 233x36 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 233x36
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 232.20: "$Revision: 1.4 $"
     RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
