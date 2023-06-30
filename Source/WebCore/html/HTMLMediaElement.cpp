@@ -6263,6 +6263,7 @@ void HTMLMediaElement::clearMediaPlayer()
     m_resourceSelectionTaskCancellationGroup.cancel();
 
     updateSleepDisabling();
+    updateRenderer();
 }
 
 const char* HTMLMediaElement::activeDOMObjectName() const
@@ -7405,6 +7406,7 @@ void HTMLMediaElement::createMediaPlayer() WTF_IGNORES_THREAD_SAFETY_ANALYSIS
 #endif
 
     updateSleepDisabling();
+    updateRenderer();
 }
 
 #if ENABLE(WEB_AUDIO)
