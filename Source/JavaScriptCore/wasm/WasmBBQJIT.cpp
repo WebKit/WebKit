@@ -55,6 +55,7 @@
 #include "WasmOps.h"
 #include "WasmThunks.h"
 #include "WasmTypeDefinition.h"
+#include <bit>
 #include <wtf/Assertions.h>
 #include <wtf/Compiler.h>
 #include <wtf/HashFunctions.h>
@@ -6044,7 +6045,7 @@ public:
     {
         EMIT_UNARY(
             "I32Popcnt", TypeKind::I32,
-            BLOCK(Value::fromI32(__builtin_popcount(operand.asI32()))),
+            BLOCK(Value::fromI32(std::popcount(static_cast<uint32_t>(operand.asI32())))),
             BLOCK(
                 if (m_jit.supportsCountPopulation())
                     m_jit.countPopulation32(operandLocation.asGPR(), resultLocation.asGPR(), wasmScratchFPR);
@@ -6068,7 +6069,7 @@ public:
     {
         EMIT_UNARY(
             "I64Popcnt", TypeKind::I64,
-            BLOCK(Value::fromI64(__builtin_popcountll(operand.asI64()))),
+            BLOCK(Value::fromI64(std::popcount(static_cast<uint64_t>(operand.asI64())))),
             BLOCK(
                 if (m_jit.supportsCountPopulation())
                     m_jit.countPopulation64(operandLocation.asGPR(), resultLocation.asGPR(), wasmScratchFPR);

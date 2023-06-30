@@ -49,6 +49,7 @@
 #include "WasmTypeDefinitionInlines.h"
 #include "WasmWorklist.h"
 #include "WebAssemblyFunction.h"
+#include <bit>
 
 namespace JSC { namespace LLInt {
 
@@ -1184,13 +1185,13 @@ extern "C" UGPRPair slow_path_wasm_throw_exception(CallFrame* callFrame, const W
 
 extern "C" UGPRPair slow_path_wasm_popcount(const WasmInstruction* pc, uint32_t x)
 {
-    void* result = bitwise_cast<void*>(static_cast<size_t>(__builtin_popcount(x)));
+    void* result = bitwise_cast<void*>(static_cast<size_t>(std::popcount(x)));
     WASM_RETURN_TWO(pc, result);
 }
 
 extern "C" UGPRPair slow_path_wasm_popcountll(const WasmInstruction* pc, uint64_t x)
 {
-    void* result = bitwise_cast<void*>(static_cast<size_t>(__builtin_popcountll(x)));
+    void* result = bitwise_cast<void*>(static_cast<size_t>(std::popcount(x)));
     WASM_RETURN_TWO(pc, result);
 }
 

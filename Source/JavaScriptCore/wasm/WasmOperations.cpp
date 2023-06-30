@@ -55,6 +55,7 @@
 #include "WasmOSREntryPlan.h"
 #include "WasmOperationsInlines.h"
 #include "WasmWorklist.h"
+#include <bit>
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/DataLog.h>
 #include <wtf/Locker.h>
@@ -757,12 +758,12 @@ JSC_DEFINE_JIT_OPERATION(operationWasmWriteBarrierSlowPath, void, (JSCell* cell,
 
 JSC_DEFINE_JIT_OPERATION(operationPopcount32, uint32_t, (int32_t value))
 {
-    return __builtin_popcount(value);
+    return std::popcount(static_cast<uint32_t>(value));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationPopcount64, uint64_t, (int64_t value))
 {
-    return __builtin_popcountll(value);
+    return std::popcount(static_cast<uint64_t>(value));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationGrowMemory, int32_t, (Instance* instance, int32_t delta))
