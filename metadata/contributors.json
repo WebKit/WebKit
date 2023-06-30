@@ -1846,7 +1846,8 @@
          "dtr_bugzilla@apple.com"
       ],
       "github" : "drobson1005",
-      "name" : "Dan Robson"
+      "name" : "Dan Robson",
+      "status" : "committer"
    },
    {
       "emails" : [
@@ -5554,7 +5555,8 @@
          "mcobbs@apple.com"
       ],
       "github" : "MyahCobbs",
-      "name" : "Myah Cobbs"
+      "name" : "Myah Cobbs",
+      "status" : "committer"
    },
    {
       "aliases" : [
