@@ -8532,9 +8532,19 @@ void ByteCodeParser::parseBlock(unsigned limit)
                     set(bytecode.m_dst, weakJSConstant(value));
                     break;
                 }
-                SpeculatedType prediction = getPrediction();
-                set(bytecode.m_dst,
-                    addToGraph(GetClosureVar, OpInfo(operand), OpInfo(prediction), scopeNode));
+
+                SpeculatedType prediction = SpecNone;
+                if (bytecode.m_getPutInfo.resolveType() == ResolvedClosureVar) {
+                    // ResolvedClosureVar is not used normally. It is very special internal ResolveType, mainly used for generators and private fields.
+                    // In these variables, it can happen that we use JSEmpty as a result of op_get_from_scope (which becomes a TDZ error in normal ClosureVar).
+                    // And this JSEmpty is still legit. The problem is that ValueProfile never tells about JSEmpty since it sees no value is stored when JSEmpty
+                    // is stored. We workaround this very special internal use case by explicitly setting SpecEmpty when ValueProfile tells this is SpecNone.
+                    prediction = getPredictionWithoutOSRExit();
+                    if (prediction == SpecNone)
+                        prediction = SpecEmpty;
+                } else
+                    prediction = getPrediction();
+                set(bytecode.m_dst, addToGraph(GetClosureVar, OpInfo(operand), OpInfo(prediction), scopeNode));
                 break;
             }
             case UnresolvedProperty:
