@@ -29,6 +29,7 @@
 #if HAVE(AVKIT)
 
 #import "GeometryUtilities.h"
+#import "LayoutRect.h"
 #import "Logging.h"
 #import "VideoFullscreenModel.h"
 #import "WebAVPlayerController.h"
@@ -184,7 +185,7 @@ private:
     else
         ASSERT_NOT_REACHED();
 
-    return targetVideoFrame;
+    return snappedIntRect(LayoutRect(targetVideoFrame));
 }
 
 // Sometimes the `frame` returned by CA will differ from the value assigned
