@@ -536,6 +536,8 @@ bool RemoteLayerTreeDrawingArea::scheduleRenderingUpdate()
     if (m_isScheduled)
         return true;
 
+    tracePoint(RemoteLayerTreeScheduleRenderingUpdate, m_waitingForBackingStoreSwap);
+
     m_isScheduled = true;
 
     if (m_preferredFramesPerSecond) {

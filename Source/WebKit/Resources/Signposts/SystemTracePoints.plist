@@ -662,6 +662,21 @@
              </dict>
              <dict>
                  <key>Name</key>
+                 <string>Schedule rendering update</string>
+                 <key>Type</key>
+                 <string>Impulse</string>
+                 <key>Component</key>
+                 <string>47</string>
+                 <key>Code</key>
+                 <string>12028</string>
+                 <key>ArgNames</key>
+                 <dict>
+                     <key>Arg1</key>
+                     <string>Waiting for backing store swap</string>
+                 </dict>
+             </dict>
+             <dict>
+                 <key>Name</key>
                  <string>Commit RemoteLayerTree transaction</string>
                  <key>Type</key>
                  <string>Interval</string>
