@@ -1347,10 +1347,11 @@
    {
       "emails" : [
          "sun.shin@webkit.org",
+         "sushin@nvidia.com",
          "sun.shin@lge.com"
       ],
-      "expertise" : "WTF, GPU Accelerated Rendering and Compositing",
-      "name" : "Byungseon Shin",
+      "expertise" : "WebRTC, WTF, GPU Accelerated Rendering and Compositing",
+      "name" : "Byungseon(Sun) Shin",
       "nicks" : [
          "xingri"
       ]
