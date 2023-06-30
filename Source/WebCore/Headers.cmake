@@ -658,7 +658,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     css/CSSValueList.h
     css/CSSVariableData.h
     css/CSSVariableReferenceValue.h
-    css/CSSWordBoundaryDetectionValue.h
     css/ContainerQuery.h
     css/Counter.h
     css/DeprecatedCSSOMCounter.h
@@ -2214,7 +2213,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     rendering/style/TextSizeAdjustment.h
     rendering/style/TextUnderlineOffset.h
     rendering/style/WillChangeData.h
-    rendering/style/WordBoundaryDetection.h
 
     rendering/svg/RenderSVGModelObject.h
     rendering/svg/SVGBoundingBoxComputation.h

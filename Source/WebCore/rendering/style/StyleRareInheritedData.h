@@ -35,7 +35,6 @@
 #include "TextSpacing.h"
 #include "TextUnderlineOffset.h"
 #include "TouchAction.h"
-#include "WordBoundaryDetection.h"
 #include <wtf/DataRef.h>
 #include <wtf/OptionSet.h>
 #include <wtf/RefCounted.h>
@@ -202,8 +201,6 @@ public:
     TextAutospace textAutospace;
 
     ListStyleType listStyleType;
-
-    WordBoundaryDetection wordBoundaryDetection;
 
     Markable<ScrollbarColor> scrollbarColor;
 

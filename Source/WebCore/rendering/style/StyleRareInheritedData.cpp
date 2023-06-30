@@ -67,8 +67,6 @@ struct GreaterThanOrSameSizeAsStyleRareInheritedData : public RefCounted<Greater
 
     ListStyleType listStyleType;
 
-    WordBoundaryDetection wordBoundaryDetection;
-
     Markable<ScrollbarColor> scrollbarColor;
 };
 

@@ -91,7 +91,6 @@ class TransformOperations;
 class TransformationMatrix;
 class TranslateTransformOperation;
 class WillChangeData;
-class WordBoundaryDetection;
 
 enum CSSPropertyID : uint16_t;
 enum GridAutoFlow : uint8_t;
@@ -826,7 +825,6 @@ public:
     inline unsigned short columnRuleWidth() const;
     inline bool columnRuleIsTransparent() const;
     inline ColumnSpan columnSpan() const;
-    inline const WordBoundaryDetection& wordBoundaryDetection() const;
 
     inline const TransformOperations& transform() const;
     inline bool hasTransform() const;
@@ -1417,7 +1415,6 @@ public:
     inline void setColumnRuleWidth(unsigned short);
     inline void resetColumnRule();
     inline void setColumnSpan(ColumnSpan);
-    inline void setWordBoundaryDetection(const WordBoundaryDetection&);
     inline void inheritColumnPropertiesFrom(const RenderStyle& parent);
 
     inline void setTransform(const TransformOperations&);
@@ -1874,7 +1871,6 @@ public:
     static Vector<AtomString> initialContainerNames();
     static double initialAspectRatioWidth() { return 1.0; }
     static double initialAspectRatioHeight() { return 1.0; }
-    static WordBoundaryDetection initialWordBoundaryDetection();
 
     static constexpr ContainIntrinsicSizeType initialContainIntrinsicWidthType();
     static constexpr ContainIntrinsicSizeType initialContainIntrinsicHeightType();

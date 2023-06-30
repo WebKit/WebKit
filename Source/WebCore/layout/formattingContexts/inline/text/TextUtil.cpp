@@ -36,7 +36,6 @@
 #include "SurrogatePairAwareTextIterator.h"
 #include "TextRun.h"
 #include "WidthIterator.h"
-#include "WordBoundaryDetection.h"
 #include <unicode/ubidi.h>
 #include <wtf/text/TextBreakIterator.h>
 
@@ -379,16 +378,10 @@ TextBreakIterator::LineMode::Behavior TextUtil::lineBreakIteratorMode(LineBreak 
     return TextBreakIterator::LineMode::Behavior::Default;
 }
 
-TextBreakIterator::ContentAnalysis TextUtil::contentAnalysis(const WordBoundaryDetection& wordBoundaryDetection)
+TextBreakIterator::ContentAnalysis TextUtil::contentAnalysis()
 {
-    // FIXME: Explicit static_cast to work around issue on libstdc++-10. Undo when upgrading GCC from 10 to 11.
-    return WTF::switchOn(static_cast<WordBoundaryDetectionType>(wordBoundaryDetection), [](WordBoundaryDetectionNormal) {
-        return TextBreakIterator::ContentAnalysis::Mechanical;
-    }, [](WordBoundaryDetectionManual) {
-        return TextBreakIterator::ContentAnalysis::Mechanical;
-    }, [](const WordBoundaryDetectionAuto&) {
-        return TextBreakIterator::ContentAnalysis::Linguistic;
-    });
+    // FIXME: Implement this.
+    return TextBreakIterator::ContentAnalysis::Mechanical;
 }
 
 bool TextUtil::containsStrongDirectionalityText(StringView text)

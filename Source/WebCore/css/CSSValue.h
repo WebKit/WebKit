@@ -125,7 +125,6 @@ public:
     bool isUnicodeRangeValue() const { return m_classType == UnicodeRangeClass; }
     bool isValueList() const { return m_classType == ValueListClass; }
     bool isVariableReferenceValue() const { return m_classType == VariableReferenceClass; }
-    bool isWordBoundaryDetectionValue() const { return m_classType == WordBoundaryDetectionClass; }
 
 #if ENABLE(CSS_PAINTING_API)
     bool isPaintImageValue() const { return m_classType == PaintImageClass; }
@@ -246,7 +245,6 @@ protected:
         UnicodeRangeClass,
         ValuePairClass,
         VariableReferenceClass,
-        WordBoundaryDetectionClass,
 
         // Classes that contain vectors, which derive from CSSValueContainingVector.
         ValueListClass,

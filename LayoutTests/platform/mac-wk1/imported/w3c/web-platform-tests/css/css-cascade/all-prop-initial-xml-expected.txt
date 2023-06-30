@@ -348,7 +348,6 @@ PASS white-space-collapse
 PASS widows
 PASS width
 PASS will-change
-PASS word-boundary-detection
 PASS word-break
 PASS word-spacing
 PASS writing-mode

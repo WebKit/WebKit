@@ -701,7 +701,7 @@ inline bool BreakingContext::handleText(WordMeasurements& wordMeasurements, bool
     bool keepAllWords = style.wordBreak() == WordBreak::KeepAll;
     float hyphenWidth = 0;
     auto iteratorMode = mapLineBreakToIteratorMode(m_blockStyle.lineBreak());
-    auto contentAnalysis = mapWordBoundaryDetectionToContentAnalysis(m_blockStyle.wordBoundaryDetection());
+    auto contentAnalysis = mapWordBoundaryDetectionToContentAnalysis();
     bool canUseLineBreakShortcut = iteratorMode == TextBreakIterator::LineMode::Behavior::Default;
     bool isLineEmpty = m_lineInfo.isEmpty();
 

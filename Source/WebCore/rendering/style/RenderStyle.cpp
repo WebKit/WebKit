@@ -908,8 +908,7 @@ static bool rareInheritedDataChangeRequiresLayout(const StyleRareInheritedData& 
         || first.useTouchOverflowScrolling != second.useTouchOverflowScrolling
 #endif
         || first.listStyleType != second.listStyleType
-        || first.listStyleImage != second.listStyleImage
-        || first.wordBoundaryDetection != second.wordBoundaryDetection)
+        || first.listStyleImage != second.listStyleImage)
         return true;
 
     if (first.textStrokeWidth != second.textStrokeWidth)

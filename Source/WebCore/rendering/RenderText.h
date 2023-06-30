@@ -262,7 +262,7 @@ private:
 String applyTextTransform(const RenderStyle&, const String&, UChar previousCharacter);
 String capitalize(const String&, UChar previousCharacter);
 TextBreakIterator::LineMode::Behavior mapLineBreakToIteratorMode(LineBreak);
-TextBreakIterator::ContentAnalysis mapWordBoundaryDetectionToContentAnalysis(const WordBoundaryDetection&);
+TextBreakIterator::ContentAnalysis mapWordBoundaryDetectionToContentAnalysis();
 
 inline UChar RenderText::characterAt(unsigned i) const
 {
