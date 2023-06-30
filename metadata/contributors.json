@@ -403,18 +403,6 @@
    },
    {
       "emails" : [
-         "alexm@gnome.org"
-      ],
-      "expertise" : "WebkitGTK, Epiphany",
-      "github" : "Exalm",
-      "name" : "Alexander Mikhaylenko",
-      "nicks" : [
-         "alexm"
-      ],
-      "status" : "committer"
-   },
-   {
-      "emails" : [
          "apavlov@chromium.org",
          "pavlov81@gmail.com"
       ],
@@ -523,6 +511,17 @@
       "nicks" : [
          "aliu"
       ]
+   },
+   {
+      "emails" : [
+         "alicem@gnome.org",
+         "alexm@gnome.org",
+         "exalm7659@gmail.com"
+      ],
+      "expertise" : "WebKitGTK, Epiphany",
+      "github" : "alice-mkh",
+      "name" : "Alice Mikhaylenko",
+      "status" : "committer"
    },
    {
       "emails" : [
