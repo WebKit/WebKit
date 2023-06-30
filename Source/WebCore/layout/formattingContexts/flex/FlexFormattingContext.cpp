@@ -271,15 +271,17 @@ void FlexFormattingContext::setFlexItemsGeometry(const FlexLayout::LogicalFlexIt
         }
         flexItemGeometry.setLogicalTopLeft(borderBoxTopLeft);
 
-        auto horizontalMarginBorderAndPadding = usedHorizontalMargin.start + flexItemGeometry.horizontalBorderAndPadding() + usedHorizontalMargin.end;
-        auto verticallMarginBorderAndPadding = usedVerticalMargin.before + flexItemGeometry.verticalBorderAndPadding() + usedVerticalMargin.after;
-        if (isMainAxisParallelWithInlineAxis) {
-            flexItemGeometry.setContentBoxWidth(logicalRect.width() - horizontalMarginBorderAndPadding);
-            flexItemGeometry.setContentBoxHeight(logicalRect.height() - verticallMarginBorderAndPadding);
-        } else {
-            flexItemGeometry.setContentBoxWidth(logicalRect.height() - horizontalMarginBorderAndPadding);
-            flexItemGeometry.setContentBoxHeight(logicalRect.width() - verticallMarginBorderAndPadding);
+        auto contentBoxWidth = isMainAxisParallelWithInlineAxis ? logicalRect.width() : logicalRect.height();
+        auto contentBoxHeight = isMainAxisParallelWithInlineAxis ? logicalRect.height() : logicalRect.width();
+        if (!logicalFlexItem.isContentBoxBased()) {
+            auto horizontalMarginBorderAndPadding = usedHorizontalMargin.start + flexItemGeometry.horizontalBorderAndPadding() + usedHorizontalMargin.end;
+            auto verticallMarginBorderAndPadding = usedVerticalMargin.before + flexItemGeometry.verticalBorderAndPadding() + usedVerticalMargin.after;
+
+            contentBoxWidth -= horizontalMarginBorderAndPadding;
+            contentBoxHeight -= verticallMarginBorderAndPadding;
         }
+        flexItemGeometry.setContentBoxWidth(contentBoxWidth);
+        flexItemGeometry.setContentBoxHeight(contentBoxHeight);
     }
 }
 
