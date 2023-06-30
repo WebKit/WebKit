@@ -47,7 +47,7 @@ class SuspendedPageProxy;
 class WebBackForwardCache;
 class WebBackForwardCacheEntry;
 
-class WebBackForwardListItem : public API::ObjectImpl<API::Object::Type::BackForwardListItem> {
+class WebBackForwardListItem : public API::ObjectImpl<API::Object::Type::BackForwardListItem>, public CanMakeWeakPtr<WebBackForwardListItem> {
 public:
     static Ref<WebBackForwardListItem> create(BackForwardListItemState&&, WebPageProxyIdentifier);
     virtual ~WebBackForwardListItem();
