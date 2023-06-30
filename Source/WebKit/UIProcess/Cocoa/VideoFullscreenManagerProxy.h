@@ -43,7 +43,10 @@
 #include <wtf/WeakHashSet.h>
 #include <wtf/text/WTFString.h>
 
-#if PLATFORM(IOS_FAMILY)
+#if PLATFORM(WATCHOS)
+#include <WebCore/NullVideoFullscreenInterface.h>
+typedef WebCore::NullVideoFullscreenInterface PlatformVideoFullscreenInterface;
+#elif PLATFORM(IOS_FAMILY)
 #include <WebCore/VideoFullscreenInterfaceAVKit.h>
 typedef WebCore::VideoFullscreenInterfaceAVKit PlatformVideoFullscreenInterface;
 #else

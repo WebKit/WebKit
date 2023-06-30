@@ -38,13 +38,17 @@
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
-#if PLATFORM(IOS_FAMILY)
+#if PLATFORM(WATCHOS)
+#include <WebCore/NullPlaybackSessionInterface.h>
+#elif PLATFORM(IOS_FAMILY)
 #include <WebCore/PlaybackSessionInterfaceAVKit.h>
 #else
 #include <WebCore/PlaybackSessionInterfaceMac.h>
 #endif
 
-#if PLATFORM(IOS_FAMILY)
+#if PLATFORM(WATCHOS)
+typedef WebCore::NullPlaybackSessionInterface PlatformPlaybackSessionInterface;
+#elif PLATFORM(IOS_FAMILY)
 typedef WebCore::PlaybackSessionInterfaceAVKit PlatformPlaybackSessionInterface;
 #else
 typedef WebCore::PlaybackSessionInterfaceMac PlatformPlaybackSessionInterface;
