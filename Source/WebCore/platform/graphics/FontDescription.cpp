@@ -123,4 +123,20 @@ float FontDescription::adjustedSizeForFontFace(float fontFaceSizeAdjust) const
     return fontSizeAdjust().value ? computedPixelSize() : fontFaceSizeAdjust * computedPixelSize();
 
 }
+
+bool FontDescription::areLigaturesDisabled() const
+{
+    auto disabledByVariant = variantCommonLigatures() == FontVariantLigatures::No;
+    if (disabledByVariant)
+        return true;
+    // It can also be disabled by feature-settings with a 'liga' tag.
+    for (auto& feature : featureSettings()) {
+        if (feature.tag() != FontTag({ 'l', 'i', 'g', 'a' }))
+            continue;
+        if (!feature.value())
+            return true;
+    }
+    return false;
+}
+
 } // namespace WebCore

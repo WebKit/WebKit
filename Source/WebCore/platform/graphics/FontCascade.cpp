@@ -508,7 +508,7 @@ FontCascade::CodePath FontCascade::codePath(const TextRun& run, std::optional<un
 #if USE(FONT_VARIANT_VIA_FEATURES) || USE(FREETYPE)
     // Because Font::applyTransforms() doesn't know which features to enable/disable in the simple code path, it can't properly handle feature or variant settings.
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=150791: @font-face features should also cause this to be complex.
-    if (m_fontDescription.featureSettings().size() > 0 || !m_fontDescription.variantSettings().isAllNormal())
+    if ((m_fontDescription.featureSettings().size() > 0 || !m_fontDescription.variantSettings().isAllNormal()) && !m_fontDescription.areLigaturesDisabled())
         return CodePath::Complex;
 
 #else

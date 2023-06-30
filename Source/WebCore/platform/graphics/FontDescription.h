@@ -104,6 +104,7 @@ public:
     FontStyleAxis fontStyleAxis() const { return m_fontStyleAxis ? FontStyleAxis::ital : FontStyleAxis::slnt; }
     AllowUserInstalledFonts shouldAllowUserInstalledFonts() const { return static_cast<AllowUserInstalledFonts>(m_shouldAllowUserInstalledFonts); }
     bool shouldDisableLigaturesForSpacing() const { return m_shouldDisableLigaturesForSpacing; }
+    bool areLigaturesDisabled() const;
     FontPalette fontPalette() const { return m_fontPalette; }
     FontSizeAdjust fontSizeAdjust() const { return m_sizeAdjust; }
 
