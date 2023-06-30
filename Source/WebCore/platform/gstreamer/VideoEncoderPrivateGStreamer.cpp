@@ -41,6 +41,9 @@ GST_DEBUG_CATEGORY(video_encoder_debug);
 // FIXME: Make this configurable at runtime?
 #define NUMBER_OF_THREADS 4
 
+#define MAX_WIDTH 4096
+#define MAX_HEIGHT 4096
+
 static GstStaticPadTemplate sinkTemplate = GST_STATIC_PAD_TEMPLATE("sink", GST_PAD_SINK, GST_PAD_ALWAYS, GST_STATIC_CAPS("video/x-raw(ANY)"));
 static GstStaticPadTemplate srcTemplate = GST_STATIC_PAD_TEMPLATE("src", GST_PAD_SRC, GST_PAD_ALWAYS, GST_STATIC_CAPS("video/x-h264;video/x-vp8;video/x-vp9;video/x-h265;video/x-av1"));
 
@@ -262,6 +265,21 @@ static void videoEncoderSetBitrate(WebKitVideoEncoder* self, guint bitrate)
 static bool videoEncoderSetEncoder(WebKitVideoEncoder* self, EncoderId encoderId, GRefPtr<GstCaps>&& encodedCaps)
 {
     ASSERT(encoderId != EncoderId::None);
+
+    auto* structure = gst_caps_get_structure(encodedCaps.get(), 0);
+    if (structure) {
+        int width;
+        if (gst_structure_get_int(structure, "width", &width) && width > MAX_WIDTH) {
+            GST_WARNING_OBJECT(self, "Encoded width (%d) is too high. Maximum allowed: %d.", width, MAX_WIDTH);
+            return false;
+        }
+
+        int height;
+        if (gst_structure_get_int(structure, "height", &height) && height > MAX_HEIGHT) {
+            GST_WARNING_OBJECT(self, "Encoded height (%d) is too high. Maximum allowed: %d.", height, MAX_HEIGHT);
+            return false;
+        }
+    }
 
     auto* priv = self->priv;
     auto srcPad = adoptGRef(gst_element_get_static_pad(GST_ELEMENT_CAST(self), "src"));
