@@ -191,7 +191,8 @@ void GStreamerMediaEndpoint::teardownPipeline()
 #endif
     m_statsCollector->setElement(nullptr);
 
-    g_signal_handlers_disconnect_by_data(m_webrtcBin.get(), this);
+    if (m_webrtcBin)
+        g_signal_handlers_disconnect_by_data(m_webrtcBin.get(), this);
     disconnectSimpleBusMessageCallback(m_pipeline.get());
     gst_element_set_state(m_pipeline.get(), GST_STATE_NULL);
 
