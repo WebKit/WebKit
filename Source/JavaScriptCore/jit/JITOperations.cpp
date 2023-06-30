@@ -2390,7 +2390,9 @@ JSC_DEFINE_JIT_OPERATION(operationTryOSREnterAtCatchAndValueProfile, UGPRPair, (
     auto bytecode = codeBlock->instructions().at(bytecodeIndex)->as<OpCatch>();
     auto& metadata = bytecode.metadata(codeBlock);
     metadata.m_buffer->forEach([&] (ValueProfileAndVirtualRegister& profile) {
-        profile.m_buckets[0] = JSValue::encode(callFrame->uncheckedR(profile.m_operand).jsValue());
+        JSValue value = callFrame->uncheckedR(profile.m_operand).jsValue();
+        vm.checkForValueProfileCorruptionIfNeeded(value);
+        profile.m_buckets[0] = JSValue::encode(value);
     });
 
     return encodeResult(nullptr, nullptr);

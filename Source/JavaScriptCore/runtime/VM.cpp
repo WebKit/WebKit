@@ -475,6 +475,24 @@ VM::~VM()
 #endif
 }
 
+std::tuple<bool, void*, void*> VM::detectValueProfileCorruption(JSValue value)
+{
+    JSCell* cell = value.asCell();
+
+    auto* structure = cell->structureID().tryDecode();
+    Structure* cellStructureStructure = structure->structure();
+    Structure* vmStructureStructure = this->structureStructure.get();
+    bool hasValidStructureStructure = cellStructureStructure == vmStructureStructure;
+
+    return { hasValidStructureStructure, (void*)cellStructureStructure, (void*)cellStructureStructure };
+}
+
+void VM::checkForValueProfileCorruption(JSValue value)
+{
+    auto [hasValidStructureStructure, cellStructureStructure, vmStructureStructure] = detectValueProfileCorruption(value);
+    RELEASE_ASSERT(hasValidStructureStructure, cellStructureStructure, vmStructureStructure);
+}
+
 void VM::primitiveGigacageDisabledCallback(void* argument)
 {
     static_cast<VM*>(argument)->primitiveGigacageDisabled();

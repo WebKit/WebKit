@@ -1069,6 +1069,15 @@ private:
 
 public:
     bool didEnterVM { false };
+
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=258889.
+    // The 5 lines of code below is used for tracking ValueProfile corruption.
+    // Remove them when the issue is fixed.
+    bool needsValueProfileCorruptionCheck(JSValue);
+    std::tuple<bool, void*, void*> detectValueProfileCorruption(JSValue);
+    void checkForValueProfileCorruption(JSValue);
+    void checkForValueProfileCorruptionIfNeeded(JSValue);
+    bool enableCorruptionCheck { false };
 private:
     bool m_failNextNewCodeBlock { false };
     bool m_globalConstRedeclarationShouldThrow { true };

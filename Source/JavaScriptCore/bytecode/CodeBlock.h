@@ -411,7 +411,8 @@ public:
 
     ValueProfile& valueProfileForBytecodeIndex(BytecodeIndex);
     SpeculatedType valueProfilePredictionForBytecodeIndex(const ConcurrentJSLocker&, BytecodeIndex);
-
+    template<bool enableCorruptionCheck, typename Functor, typename FunctorWithCorruptionCheck> void forEachValueProfileHelper(const Functor&, const FunctorWithCorruptionCheck&);
+    template<typename Functor, typename FunctorWithCorruptionCheck> void forEachValueProfileWithCorruptionCheck(const Functor&, const FunctorWithCorruptionCheck&);
     template<typename Functor> void forEachValueProfile(const Functor&);
     template<typename Functor> void forEachArrayAllocationProfile(const Functor&);
     template<typename Functor> void forEachObjectAllocationProfile(const Functor&);

@@ -2853,7 +2853,7 @@ void CodeBlock::updateAllNonLazyValueProfilePredictionsAndCountLiveness(const Co
     numberOfSamplesInProfiles = 0; // If this divided by ValueProfile::numberOfBuckets equals numberOfValueProfiles() then value profiles are full.
 
     unsigned index = 0;
-    forEachValueProfile([&](ValueProfile& profile, bool isArgument) {
+    auto computeAndUpdatePrediction = [&](ValueProfile& profile, bool isArgument) {
         unsigned numSamples = profile.totalNumberOfSamples();
         static_assert(ValueProfile::numberOfBuckets == 1);
         if (numSamples > ValueProfile::numberOfBuckets)
@@ -2868,7 +2868,25 @@ void CodeBlock::updateAllNonLazyValueProfilePredictionsAndCountLiveness(const Co
             numberOfLiveNonArgumentValueProfiles++;
         profile.computeUpdatedPrediction(locker);
         unlinkedCodeBlock()->unlinkedValueProfile(index++).update(profile);
-    });
+    };
+
+    auto computeAndUpdatePredictionWithValueProfileDiagAnalysis = [&](OpcodeID opcodeID, ValueProfile& profile, bool isArgument) {
+        UNUSED_VARIABLE(opcodeID);
+#if ENABLE(STRUCTURE_ID_WITH_SHIFT)
+        if (m_vm && m_vm->enableCorruptionCheck && !isArgument) {
+            for (unsigned i = 0; i < profile.totalNumberOfSamples(); ++i) {
+                JSValue value = JSValue::decode(profile.bucketForInspection(i));
+                if (m_vm->needsValueProfileCorruptionCheck(value)) {
+                    auto [hasValidStructureStructure, cellStructureStructure, vmStructureStructure] = m_vm->detectValueProfileCorruption(value);
+                    RELEASE_ASSERT(hasValidStructureStructure, cellStructureStructure, vmStructureStructure, i, opcodeID);
+                }
+            }
+        }
+#endif
+        computeAndUpdatePrediction(profile, isArgument);
+    };
+
+    forEachValueProfileWithCorruptionCheck(computeAndUpdatePrediction, computeAndUpdatePredictionWithValueProfileDiagAnalysis);
 
     if (m_metadata) {
         m_metadata->forEach<OpCatch>([&](auto& metadata) {
@@ -3170,7 +3188,7 @@ ValueProfile* CodeBlock::tryGetValueProfileForBytecodeIndex(BytecodeIndex byteco
     case Op::opcodeID: \
         return &instruction->as<Op>().metadata(this).m_profile;
 
-        FOR_EACH_OPCODE_WITH_VALUE_PROFILE(CASE)
+        FOR_EACH_OPCODE_WITH_VALUE_PROFILE(CASE) // <- here
 
 #undef CASE
 
@@ -3187,14 +3205,14 @@ ValueProfile* CodeBlock::tryGetValueProfileForBytecodeIndex(BytecodeIndex byteco
 
 SpeculatedType CodeBlock::valueProfilePredictionForBytecodeIndex(const ConcurrentJSLocker& locker, BytecodeIndex bytecodeIndex)
 {
-    if (ValueProfile* valueProfile = tryGetValueProfileForBytecodeIndex(bytecodeIndex))
+    if (ValueProfile* valueProfile = tryGetValueProfileForBytecodeIndex(bytecodeIndex)) // <- here, not this one
         return valueProfile->computeUpdatedPrediction(locker);
     return SpecNone;
 }
 
 ValueProfile& CodeBlock::valueProfileForBytecodeIndex(BytecodeIndex bytecodeIndex)
 {
-    ValueProfile* profile = tryGetValueProfileForBytecodeIndex(bytecodeIndex);
+    ValueProfile* profile = tryGetValueProfileForBytecodeIndex(bytecodeIndex); // <- here
     ASSERT(profile);
     return *profile;
 }

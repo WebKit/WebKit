@@ -696,10 +696,16 @@ void Heap::finalizeUnconditionalFinalizers()
 
     finalizeMarkedUnconditionalFinalizers<SymbolTable>(symbolTableSpace, collectionScope);
 
-    forEachCodeBlockSpace(
-        [&] (auto& space) {
-            this->finalizeMarkedUnconditionalFinalizers<CodeBlock>(space.set, collectionScope);
-        });
+    {
+#if ENABLE(STRUCTURE_ID_WITH_SHIFT)
+        SetForScope valueProfileDiagAnalysisScope(vm.enableCorruptionCheck, true);
+#endif
+        forEachCodeBlockSpace(
+            [&] (auto& space) {
+                this->finalizeMarkedUnconditionalFinalizers<CodeBlock>(space.set, collectionScope);
+            });
+    }
+
     if (collectionScope == CollectionScope::Full) {
         finalizeMarkedUnconditionalFinalizers<Structure>(structureSpace, collectionScope);
         finalizeMarkedUnconditionalFinalizers<BrandedStructure>(brandedStructureSpace, collectionScope);

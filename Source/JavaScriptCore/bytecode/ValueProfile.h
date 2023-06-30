@@ -145,6 +145,11 @@ struct ValueProfileBase {
         return m_prediction;
     }
 
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=258889.
+    // This should only be used for code for tracking ValueProfile corruption.
+    // Remove this when the issue is fixed.
+    EncodedJSValue bucketForInspection(unsigned i) { return m_buckets[i]; }
+
     EncodedJSValue m_buckets[totalNumberOfBuckets];
 
     SpeculatedType m_prediction { SpecNone };

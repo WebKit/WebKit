@@ -158,6 +158,7 @@ inline JSValue getOperand(CallFrame* callFrame, VirtualRegister operand) { retur
     } while (false)
 
 #define LLINT_PROFILE_VALUE(value) do { \
+        vm.checkForValueProfileCorruptionIfNeeded(value); \
         bytecode.metadata(codeBlock).m_profile.m_buckets[0] = JSValue::encode(value); \
     } while (false)
 
@@ -905,6 +906,7 @@ LLINT_SLOW_PATH_DECL(slow_path_iterator_open_get_next)
     JSValue result = performLLIntGetByID(codeBlock->bytecodeIndex(pc).withCheckpoint(OpIteratorOpen::getNext), codeBlock, globalObject, iterator, vm.propertyNames->next, metadata.m_modeMetadata);
     LLINT_CHECK_EXCEPTION();
     nextRegister = result;
+    vm.checkForValueProfileCorruptionIfNeeded(result);
     bytecode.metadata(codeBlock).m_nextProfile.m_buckets[0] = JSValue::encode(result);
     LLINT_END();
 }
@@ -925,6 +927,7 @@ LLINT_SLOW_PATH_DECL(slow_path_iterator_next_get_done)
     JSValue result = performLLIntGetByID(codeBlock->bytecodeIndex(pc).withCheckpoint(OpIteratorNext::getDone), codeBlock, globalObject, iteratorReturn, vm.propertyNames->done, metadata.m_doneModeMetadata);
     LLINT_CHECK_EXCEPTION();
     doneRegister = result;
+    vm.checkForValueProfileCorruptionIfNeeded(result);
     bytecode.metadata(codeBlock).m_doneProfile.m_buckets[0] = JSValue::encode(result);
     LLINT_END();
 }
@@ -942,6 +945,7 @@ LLINT_SLOW_PATH_DECL(slow_path_iterator_next_get_value)
     JSValue result = performLLIntGetByID(codeBlock->bytecodeIndex(pc).withCheckpoint(OpIteratorNext::getValue), codeBlock, globalObject, iteratorReturn, vm.propertyNames->value, metadata.m_valueModeMetadata);
     LLINT_CHECK_EXCEPTION();
     valueRegister = result;
+    vm.checkForValueProfileCorruptionIfNeeded(result);
     bytecode.metadata(codeBlock).m_valueProfile.m_buckets[0] = JSValue::encode(result);
     LLINT_END();
 }
@@ -2322,7 +2326,9 @@ LLINT_SLOW_PATH_DECL(slow_path_profile_catch)
     auto bytecode = pc->as<OpCatch>();
     auto& metadata = bytecode.metadata(codeBlock);
     metadata.m_buffer->forEach([&] (ValueProfileAndVirtualRegister& profile) {
-        profile.m_buckets[0] = JSValue::encode(callFrame->uncheckedR(profile.m_operand).jsValue());
+        JSValue value = callFrame->uncheckedR(profile.m_operand).jsValue();
+        vm.checkForValueProfileCorruptionIfNeeded(value);
+        profile.m_buckets[0] = JSValue::encode(value);
     });
 
     LLINT_END();

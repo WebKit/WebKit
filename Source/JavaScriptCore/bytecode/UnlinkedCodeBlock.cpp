@@ -390,7 +390,7 @@ void UnlinkedCodeBlock::allocateSharedProfiles(unsigned numBinaryArithProfiles, 
         if (m_metadata->hasMetadata()) {
 #define COUNT(__op) \
             numberOfValueProfiles += m_metadata->numEntries<__op>();
-            FOR_EACH_OPCODE_WITH_VALUE_PROFILE(COUNT)
+            FOR_EACH_OPCODE_WITH_VALUE_PROFILE(COUNT) // <- here, not this one
 #undef COUNT
             numberOfValueProfiles += m_metadata->numEntries<OpIteratorOpen>() * 3;
             numberOfValueProfiles += m_metadata->numEntries<OpIteratorNext>() * 3;

@@ -108,4 +108,18 @@ inline void VM::forEachDebugger(const Func& callback)
         callback(*debugger);
 }
 
+inline bool VM::needsValueProfileCorruptionCheck(JSValue value)
+{
+    return value && value.isCell() && !value.isString();
+}
+
+inline void VM::checkForValueProfileCorruptionIfNeeded(JSValue value)
+{
+    UNUSED_VARIABLE(value);
+#if ENABLE(STRUCTURE_ID_WITH_SHIFT)
+    if (needsValueProfileCorruptionCheck(value))
+        checkForValueProfileCorruption(value);
+#endif
+}
+
 } // namespace JSC

@@ -33,16 +33,21 @@
 
 namespace JSC {
 
-template<typename Functor>
-void CodeBlock::forEachValueProfile(const Functor& func)
+template<bool enableCorruptionCheck, typename Functor, typename FunctorWithCorruptionCheck>
+void CodeBlock::forEachValueProfileHelper(const Functor& func, const FunctorWithCorruptionCheck& funcWithValueProfileDiagAnalysis)
 {
     for (unsigned i = 0; i < numberOfArgumentValueProfiles(); ++i)
         func(valueProfileForArgument(i), true);
 
     if (m_metadata) {
 #define VISIT(__op) \
-        m_metadata->forEach<__op>([&] (auto& metadata) { func(metadata.m_profile, false); });
-        FOR_EACH_OPCODE_WITH_VALUE_PROFILE(VISIT)
+        m_metadata->forEach<__op>([&] (auto& metadata) { \
+            if constexpr (enableCorruptionCheck) \
+                func(metadata.m_profile, false); \
+            else \
+                funcWithValueProfileDiagAnalysis(metadata.opcodeID, metadata.m_profile, false); \
+        });
+        FOR_EACH_OPCODE_WITH_VALUE_PROFILE(VISIT) // <- here, not this one
 #undef VISIT
 
         m_metadata->forEach<OpIteratorOpen>([&] (auto& metadata) { 
@@ -57,6 +62,18 @@ void CodeBlock::forEachValueProfile(const Functor& func)
             func(metadata.m_valueProfile, false);
         });
     }   
+}
+
+template<typename Functor>
+void CodeBlock::forEachValueProfile(const Functor& func)
+{
+    forEachValueProfileHelper<false>(func, [](OpcodeID, ValueProfile&, bool) { });
+}
+
+template<typename Functor, typename FunctorWithCorruptionCheck>
+void CodeBlock::forEachValueProfileWithCorruptionCheck(const Functor& func, const FunctorWithCorruptionCheck& funcWithValueProfileDiagAnalysis)
+{
+    forEachValueProfileHelper<true>(func, funcWithValueProfileDiagAnalysis);
 }
 
 template<typename Functor>

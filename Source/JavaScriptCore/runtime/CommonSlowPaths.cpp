@@ -142,6 +142,7 @@ namespace JSC {
     PROFILE_VALUE_IN(value__, m_profile)
 
 #define PROFILE_VALUE_IN(value, profileName) do { \
+        vm.checkForValueProfileCorruptionIfNeeded(value); \
         bytecode.metadata(codeBlock).profileName.m_buckets[0] = JSValue::encode(value); \
     } while (false)
 
