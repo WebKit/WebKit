@@ -44,6 +44,7 @@
 #import <wtf/Deque.h>
 #import <wtf/text/CString.h>
 #import <wtf/text/TextStream.h>
+#import <wtf/SystemTracing.h>
 
 namespace WebCore {
 
@@ -178,6 +179,8 @@ void ScrollingTreeFrameScrollingNodeMac::repositionScrollingLayers()
             layer.position = CGPointZero;
     }
 
+    //tracePoint(SyntheticMomentumEvent, static_cast<uint64_t>(phase), std::abs(delta.width()), std::abs(delta.height()));
+    tracePoint(LayerRepositionEvent, static_cast<uint64_t>(0), 0, 0);
     // We use scroll position here because the root content layer is offset to account for scrollOrigin (see LocalFrameView::positionForRootContentLayer).
     layer.position = -currentScrollPosition();
     END_BLOCK_OBJC_EXCEPTIONS
