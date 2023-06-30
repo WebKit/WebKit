@@ -306,6 +306,7 @@
     "web-platform-tests/html/interaction/focus/the-autofocus-attribute": "import",
     "web-platform-tests/html/obsolete": "skip",
     "web-platform-tests/html/rendering": "skip",
+    "web-platform-tests/html/rendering/non-replaced-elements/tables": "import",
     "web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/": "import",
     "web-platform-tests/html/resources": "import",
     "web-platform-tests/html/semantics": "import",

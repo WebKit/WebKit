@@ -404,9 +404,6 @@ void HTMLTableElement::attributeChanged(const QualifiedName& name, const AtomStr
         // FIXME: This attribute is a mess.
         m_borderAttr = parseBorderWidthAttribute(newValue);
         break;
-    case AttributeNames::bordercolorAttr:
-        m_borderColorAttr = !newValue.isEmpty();
-        break;
     case AttributeNames::frameAttr: {
         // FIXME: This attribute is a mess.
         bool borderTop;
@@ -464,7 +461,7 @@ const MutableStyleProperties* HTMLTableElement::additionalPresentationalHintStyl
     if (m_frameAttr)
         return nullptr;
     
-    if (!m_borderAttr && !m_borderColorAttr) {
+    if (!m_borderAttr) {
         // Setting the border to 'hidden' allows it to win over any border
         // set on the table's cells during border-conflict resolution.
         if (m_rulesAttr != UnsetRules) {
@@ -474,10 +471,6 @@ const MutableStyleProperties* HTMLTableElement::additionalPresentationalHintStyl
         return nullptr;
     }
 
-    if (m_borderColorAttr) {
-        static auto* solidBorderStyle = leakBorderStyle(CSSValueSolid);
-        return solidBorderStyle;
-    }
     static auto* outsetBorderStyle = leakBorderStyle(CSSValueOutset);
     return outsetBorderStyle;
 }
@@ -497,8 +490,6 @@ HTMLTableElement::CellBorders HTMLTableElement::cellBorders() const
         case UnsetRules:
             if (!m_borderAttr)
                 return NoBorders;
-            if (m_borderColorAttr)
-                return SolidBorders;
             return InsetBorders;
     }
     ASSERT_NOT_REACHED();

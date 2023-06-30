@@ -20,14 +20,14 @@ layer at (0,0) size 800x585
                               RenderBlock {CENTER} at (0,0) size 765x1840
                                 RenderBlock (anonymous) at (0,0) size 765x18
                                   RenderBR {BR} at (382,0) size 1x17
-                                RenderTable {TABLE} at (19,18) size 727x1804 [border: (1px solid #000000)]
+                                RenderTable {TABLE} at (19,18) size 727x1804 [border: (1px outset #000000)]
                                   RenderTableSection {TBODY} at (1,1) size 725x1802
                                     RenderTableRow {TR} at (0,0) size 725x20
-                                      RenderTableCell {TD} at (0,0) size 725x20 [bgcolor=#3F5694] [border: (1px solid #000000)] [r=0 c=0 rs=1 cs=1]
+                                      RenderTableCell {TD} at (0,0) size 725x20 [bgcolor=#3F5694] [border: (1px inset #000000)] [r=0 c=0 rs=1 cs=1]
                                         RenderText {#text} at (343,1) size 38x17
                                           text run at (343,1) width 38: "News"
                                     RenderTableRow {TR} at (0,20) size 725x38
-                                      RenderTableCell {TD} at (0,20) size 725x38 [border: (1px solid #000000)] [r=1 c=0 rs=1 cs=1]
+                                      RenderTableCell {TD} at (0,20) size 725x38 [border: (1px inset #000000)] [r=1 c=0 rs=1 cs=1]
                                         RenderInline {B} at (0,0) size 97x17
                                           RenderText {#text} at (314,1) size 97x17
                                             text run at (314,1) width 97: "11. M\x{E4}rz 2002"
@@ -36,7 +36,7 @@ layer at (0,0) size 800x585
                                           text run at (50,19) width 490: "nun gibt es auch eine kommerzielle Version vom PopUp-Manager, mehr Info "
                                           text run at (539,19) width 136: "unter komerz. Scripte"
                                     RenderTableRow {TR} at (0,58) size 725x38
-                                      RenderTableCell {TD} at (0,58) size 725x38 [border: (1px solid #000000)] [r=2 c=0 rs=1 cs=1]
+                                      RenderTableCell {TD} at (0,58) size 725x38 [border: (1px inset #000000)] [r=2 c=0 rs=1 cs=1]
                                         RenderInline {B} at (0,0) size 94x17
                                           RenderText {#text} at (315,1) size 94x17
                                             text run at (315,1) width 94: "09.M\x{E4}rz 2002"
@@ -44,14 +44,14 @@ layer at (0,0) size 800x585
                                         RenderText {#text} at (159,19) size 407x17
                                           text run at (159,19) width 407: "neues Script ist online, PopUp-Manager, mehr Info unter Scripte"
                                     RenderTableRow {TR} at (0,96) size 725x38
-                                      RenderTableCell {TD} at (0,96) size 725x38 [border: (1px solid #000000)] [r=3 c=0 rs=1 cs=1]
+                                      RenderTableCell {TD} at (0,96) size 725x38 [border: (1px inset #000000)] [r=3 c=0 rs=1 cs=1]
                                         RenderText {#text} at (298,1) size 128x17
                                           text run at (298,1) width 128: "17. November 2001"
                                         RenderBR {BR} at (425,1) size 1x17
                                         RenderText {#text} at (279,19) size 167x17
                                           text run at (279,19) width 167: "Endlich wieder Online! :-)"
                                     RenderTableRow {TR} at (0,134) size 725x164
-                                      RenderTableCell {TD} at (0,134) size 725x164 [border: (1px solid #000000)] [r=4 c=0 rs=1 cs=1]
+                                      RenderTableCell {TD} at (0,134) size 725x164 [border: (1px inset #000000)] [r=4 c=0 rs=1 cs=1]
                                         RenderText {#text} at (266,1) size 192x17
                                           text run at (266,1) width 192: "23. Oktober 2001 (21:00 Uhr)"
                                         RenderBR {BR} at (457,1) size 1x17
@@ -79,7 +79,7 @@ layer at (0,0) size 800x585
                                           text run at (159,145) width 90: "Bereich unter "
                                           text run at (248,145) width 318: "Modus unten die URL zu Eurem Button angeben!"
                                     RenderTableRow {TR} at (0,298) size 725x38
-                                      RenderTableCell {TD} at (0,298) size 725x38 [border: (1px solid #000000)] [r=5 c=0 rs=1 cs=1]
+                                      RenderTableCell {TD} at (0,298) size 725x38 [border: (1px inset #000000)] [r=5 c=0 rs=1 cs=1]
                                         RenderText {#text} at (306,1) size 113x17
                                           text run at (306,1) width 113: "22. Oktober 2001"
                                         RenderBR {BR} at (418,1) size 1x17
@@ -87,7 +87,7 @@ layer at (0,0) size 800x585
                                           text run at (124,19) width 430: "Download-Bereich ist vorrerst geschlo\x{DF}en, kommen Sie bitte sp\x{E4}ter "
                                           text run at (553,19) width 47: "wieder."
                                     RenderTableRow {TR} at (0,336) size 725x56
-                                      RenderTableCell {TD} at (0,336) size 725x56 [border: (1px solid #000000)] [r=6 c=0 rs=1 cs=1]
+                                      RenderTableCell {TD} at (0,336) size 725x56 [border: (1px inset #000000)] [r=6 c=0 rs=1 cs=1]
                                         RenderText {#text} at (266,1) size 192x17
                                           text run at (266,1) width 192: "21. Oktober 2001 (22:45 Uhr)"
                                         RenderBR {BR} at (457,1) size 1x17
@@ -98,7 +98,7 @@ layer at (0,0) size 800x585
                                           text run at (247,37) width 436: "noch das Password-Manager-Script dazu, sollte jetzt alles sicher sein!"
                                         RenderBR {BR} at (682,37) size 1x17
                                     RenderTableRow {TR} at (0,392) size 725x110
-                                      RenderTableCell {TD} at (0,392) size 725x110 [border: (1px solid #000000)] [r=7 c=0 rs=1 cs=1]
+                                      RenderTableCell {TD} at (0,392) size 725x110 [border: (1px inset #000000)] [r=7 c=0 rs=1 cs=1]
                                         RenderText {#text} at (266,1) size 192x17
                                           text run at (266,1) width 192: "21. Oktober 2001 (20:50 Uhr)"
                                         RenderBR {BR} at (457,1) size 1x17
@@ -119,7 +119,7 @@ layer at (0,0) size 800x585
                                           text run at (75,91) width 473: "Der Grund : man hat festgestellt das .htaccess Password Schutz doch nicht "
                                           text run at (547,91) width 103: "das sicherste ist!"
                                     RenderTableRow {TR} at (0,502) size 725x180
-                                      RenderTableCell {TD} at (0,502) size 725x180 [border: (1px solid #000000)] [r=8 c=0 rs=1 cs=1]
+                                      RenderTableCell {TD} at (0,502) size 725x180 [border: (1px inset #000000)] [r=8 c=0 rs=1 cs=1]
                                         RenderBlock {P} at (1,1) size 723x126
                                           RenderText {#text} at (305,0) size 113x17
                                             text run at (305,0) width 113: "13. Oktober 2001"
@@ -149,21 +149,21 @@ layer at (0,0) size 800x585
                                             text run at (121,18) width 144: "die folgenden Dateien "
                                             text run at (264,18) width 337: "durch die neuen ersetzen: topsites.cgi und admin.cgi ."
                                     RenderTableRow {TR} at (0,682) size 725x38
-                                      RenderTableCell {TD} at (0,682) size 725x38 [border: (1px solid #000000)] [r=9 c=0 rs=1 cs=1]
+                                      RenderTableCell {TD} at (0,682) size 725x38 [border: (1px inset #000000)] [r=9 c=0 rs=1 cs=1]
                                         RenderText {#text} at (306,1) size 113x17
                                           text run at (306,1) width 113: "11. Oktober 2001"
                                         RenderBR {BR} at (418,1) size 1x17
                                         RenderText {#text} at (121,19) size 483x17
                                           text run at (121,19) width 483: "neues Script ist online, .htaccess-Password-Manager, mehr Info unter Scripte"
                                     RenderTableRow {TR} at (0,720) size 725x38
-                                      RenderTableCell {TD} at (0,720) size 725x38 [border: (1px solid #000000)] [r=10 c=0 rs=1 cs=1]
+                                      RenderTableCell {TD} at (0,720) size 725x38 [border: (1px inset #000000)] [r=10 c=0 rs=1 cs=1]
                                         RenderText {#text} at (298,1) size 128x17
                                           text run at (298,1) width 128: "08. September 2001"
                                         RenderBR {BR} at (425,1) size 1x17
                                         RenderText {#text} at (196,19) size 332x17
                                           text run at (196,19) width 332: "Eine neu Version des Download Counters ist online!"
                                     RenderTableRow {TR} at (0,758) size 725x56
-                                      RenderTableCell {TD} at (0,758) size 725x56 [border: (1px solid #000000)] [r=11 c=0 rs=1 cs=1]
+                                      RenderTableCell {TD} at (0,758) size 725x56 [border: (1px inset #000000)] [r=11 c=0 rs=1 cs=1]
                                         RenderText {#text} at (309,1) size 107x17
                                           text run at (309,1) width 107: "11. August 2001"
                                         RenderBR {BR} at (415,1) size 1x17
@@ -174,7 +174,7 @@ layer at (0,0) size 800x585
                                         RenderText {#text} at (251,37) size 223x17
                                           text run at (251,37) width 223: "auf eine zuf\x{E4}llig ausgew\x{E4}hlte Seite."
                                     RenderTableRow {TR} at (0,814) size 725x56
-                                      RenderTableCell {TD} at (0,814) size 725x56 [border: (1px solid #000000)] [r=12 c=0 rs=1 cs=1]
+                                      RenderTableCell {TD} at (0,814) size 725x56 [border: (1px inset #000000)] [r=12 c=0 rs=1 cs=1]
                                         RenderText {#text} at (309,1) size 107x17
                                           text run at (309,1) width 107: "08. August 2001"
                                         RenderBR {BR} at (415,1) size 1x17
@@ -185,7 +185,7 @@ layer at (0,0) size 800x585
                                         RenderText {#text} at (184,37) size 357x17
                                           text run at (184,37) width 357: "ins Forum was Ihr da alles haben wollt, wer das benutzt!"
                                     RenderTableRow {TR} at (0,870) size 725x56
-                                      RenderTableCell {TD} at (0,870) size 725x56 [border: (1px solid #000000)] [r=13 c=0 rs=1 cs=1]
+                                      RenderTableCell {TD} at (0,870) size 725x56 [border: (1px inset #000000)] [r=13 c=0 rs=1 cs=1]
                                         RenderText {#text} at (321,1) size 83x17
                                           text run at (321,1) width 83: "09. Juli 2001"
                                         RenderBR {BR} at (403,1) size 1x17
@@ -195,7 +195,7 @@ layer at (0,0) size 800x585
                                           text run at (180,37) width 170: "topsites.cgi auktualisieren, "
                                           text run at (349,37) width 196: "mu\x{DF} aber nicht unbedingt sein!"
                                     RenderTableRow {TR} at (0,926) size 725x56
-                                      RenderTableCell {TD} at (0,926) size 725x56 [border: (1px solid #000000)] [r=14 c=0 rs=1 cs=1]
+                                      RenderTableCell {TD} at (0,926) size 725x56 [border: (1px inset #000000)] [r=14 c=0 rs=1 cs=1]
                                         RenderText {#text} at (321,1) size 83x17
                                           text run at (321,1) width 83: "01. Juli 2001"
                                         RenderBR {BR} at (403,1) size 1x17
@@ -207,7 +207,7 @@ layer at (0,0) size 800x585
                                           text run at (54,37) width 392: "beantworten! Au\x{DF}erdem k\x{F6}nnt Ihr dort auch Eure Vorschl\x{E4}ge "
                                           text run at (445,37) width 225: "zu den einzelnen Scripten abgeben!"
                                     RenderTableRow {TR} at (0,982) size 725x56
-                                      RenderTableCell {TD} at (0,982) size 725x56 [border: (1px solid #000000)] [r=15 c=0 rs=1 cs=1]
+                                      RenderTableCell {TD} at (0,982) size 725x56 [border: (1px inset #000000)] [r=15 c=0 rs=1 cs=1]
                                         RenderText {#text} at (321,1) size 83x17
                                           text run at (321,1) width 83: "01. Juli 2001"
                                         RenderBR {BR} at (403,1) size 1x17
@@ -218,7 +218,7 @@ layer at (0,0) size 800x585
                                         RenderText {#text} at (142,37) size 440x17
                                           text run at (142,37) width 440: "Es gibt einige neue Funktionen und es wurde auch einiges verbessert!"
                                     RenderTableRow {TR} at (0,1038) size 725x56
-                                      RenderTableCell {TD} at (0,1038) size 725x56 [border: (1px solid #000000)] [r=16 c=0 rs=1 cs=1]
+                                      RenderTableCell {TD} at (0,1038) size 725x56 [border: (1px inset #000000)] [r=16 c=0 rs=1 cs=1]
                                         RenderText {#text} at (319,1) size 87x17
                                           text run at (319,1) width 87: "20. Juni 2001"
                                         RenderBR {BR} at (405,1) size 1x17
@@ -229,7 +229,7 @@ layer at (0,0) size 800x585
                                         RenderText {#text} at (238,37) size 248x17
                                           text run at (238,37) width 248: "nicht gehen, einfach wieder versuchen!"
                                     RenderTableRow {TR} at (0,1094) size 725x92
-                                      RenderTableCell {TD} at (0,1094) size 725x92 [border: (1px solid #000000)] [r=17 c=0 rs=1 cs=1]
+                                      RenderTableCell {TD} at (0,1094) size 725x92 [border: (1px inset #000000)] [r=17 c=0 rs=1 cs=1]
                                         RenderText {#text} at (319,1) size 87x17
                                           text run at (319,1) width 87: "09. Juni 2001"
                                         RenderBR {BR} at (405,1) size 1x17
@@ -246,7 +246,7 @@ layer at (0,0) size 800x585
                                         RenderText {#text} at (151,73) size 423x17
                                           text run at (151,73) width 423: "P.S. den Umstieg auf die Version3.3 kann ich Euch nur empfehlen!"
                                     RenderTableRow {TR} at (0,1186) size 725x74
-                                      RenderTableCell {TD} at (0,1186) size 725x74 [border: (1px solid #000000)] [r=18 c=0 rs=1 cs=1]
+                                      RenderTableCell {TD} at (0,1186) size 725x74 [border: (1px inset #000000)] [r=18 c=0 rs=1 cs=1]
                                         RenderText {#text} at (319,1) size 87x17
                                           text run at (319,1) width 87: "04. Juni 2001"
                                         RenderBR {BR} at (405,1) size 1x17
@@ -260,7 +260,7 @@ layer at (0,0) size 800x585
                                           text run at (143,55) width 433: "Ladet Euch die jetzige Version runter und ersetzt nur die topsites.cgi "
                                           text run at (575,55) width 6: "!"
                                     RenderTableRow {TR} at (0,1260) size 725x56
-                                      RenderTableCell {TD} at (0,1260) size 725x56 [border: (1px solid #000000)] [r=19 c=0 rs=1 cs=1]
+                                      RenderTableCell {TD} at (0,1260) size 725x56 [border: (1px inset #000000)] [r=19 c=0 rs=1 cs=1]
                                         RenderText {#text} at (319,1) size 87x17
                                           text run at (319,1) width 87: "01. Juni 2001"
                                         RenderBR {BR} at (405,1) size 1x17
@@ -270,7 +270,7 @@ layer at (0,0) size 800x585
                                         RenderText {#text} at (234,37) size 257x17
                                           text run at (234,37) width 257: "Mehr Info unter \"Perl Scripte\" im Men\x{FC}."
                                     RenderTableRow {TR} at (0,1316) size 725x56
-                                      RenderTableCell {TD} at (0,1316) size 725x56 [border: (1px solid #000000)] [r=20 c=0 rs=1 cs=1]
+                                      RenderTableCell {TD} at (0,1316) size 725x56 [border: (1px inset #000000)] [r=20 c=0 rs=1 cs=1]
                                         RenderText {#text} at (319,1) size 86x17
                                           text run at (319,1) width 86: "31. Mai 2001"
                                         RenderBR {BR} at (404,1) size 1x17
@@ -280,14 +280,14 @@ layer at (0,0) size 800x585
                                         RenderText {#text} at (174,37) size 377x17
                                           text run at (174,37) width 377: "Tragt Euch ein, dann seit Ihr immer auf dem neusten Stand!"
                                     RenderTableRow {TR} at (0,1372) size 725x38
-                                      RenderTableCell {TD} at (0,1372) size 725x38 [border: (1px solid #000000)] [r=21 c=0 rs=1 cs=1]
+                                      RenderTableCell {TD} at (0,1372) size 725x38 [border: (1px inset #000000)] [r=21 c=0 rs=1 cs=1]
                                         RenderText {#text} at (319,1) size 86x17
                                           text run at (319,1) width 86: "26. Mai 2001"
                                         RenderBR {BR} at (404,1) size 1x17
                                         RenderText {#text} at (256,19) size 213x17
                                           text run at (256,19) width 213: "The Real Topsites v3.0 ist online!"
                                     RenderTableRow {TR} at (0,1410) size 725x56
-                                      RenderTableCell {TD} at (0,1410) size 725x56 [border: (1px solid #000000)] [r=22 c=0 rs=1 cs=1]
+                                      RenderTableCell {TD} at (0,1410) size 725x56 [border: (1px inset #000000)] [r=22 c=0 rs=1 cs=1]
                                         RenderText {#text} at (319,1) size 86x17
                                           text run at (319,1) width 86: "25. Mai 2001"
                                         RenderBR {BR} at (404,1) size 1x17
@@ -297,7 +297,7 @@ layer at (0,0) size 800x585
                                         RenderText {#text} at (234,37) size 257x17
                                           text run at (234,37) width 257: "Mehr Info unter \"Perl Scripte\" im Men\x{FC}."
                                     RenderTableRow {TR} at (0,1466) size 725x92
-                                      RenderTableCell {TD} at (0,1466) size 725x92 [border: (1px solid #000000)] [r=23 c=0 rs=1 cs=1]
+                                      RenderTableCell {TD} at (0,1466) size 725x92 [border: (1px inset #000000)] [r=23 c=0 rs=1 cs=1]
                                         RenderText {#text} at (319,1) size 86x17
                                           text run at (319,1) width 86: "24. Mai 2001"
                                         RenderBR {BR} at (404,1) size 1x17
@@ -315,7 +315,7 @@ layer at (0,0) size 800x585
                                         RenderText {#text} at (309,73) size 107x17
                                           text run at (309,73) width 107: "Viel Spa\x{DF} damit!"
                                     RenderTableRow {TR} at (0,1558) size 725x56
-                                      RenderTableCell {TD} at (0,1558) size 725x56 [border: (1px solid #000000)] [r=24 c=0 rs=1 cs=1]
+                                      RenderTableCell {TD} at (0,1558) size 725x56 [border: (1px inset #000000)] [r=24 c=0 rs=1 cs=1]
                                         RenderText {#text} at (319,1) size 86x17
                                           text run at (319,1) width 86: "13. Mai 2001"
                                         RenderBR {BR} at (404,1) size 1x17
@@ -326,7 +326,7 @@ layer at (0,0) size 800x585
                                           text run at (238,37) width 365: "unbedingt SSI unterst\x{FC}tzen mu\x{DF} um den Script ausf\x{FC}hren "
                                           text run at (602,37) width 72: "zu k\x{F6}nnen!"
                                     RenderTableRow {TR} at (0,1614) size 725x56
-                                      RenderTableCell {TD} at (0,1614) size 725x56 [border: (1px solid #000000)] [r=25 c=0 rs=1 cs=1]
+                                      RenderTableCell {TD} at (0,1614) size 725x56 [border: (1px inset #000000)] [r=25 c=0 rs=1 cs=1]
                                         RenderText {#text} at (315,1) size 94x17
                                           text run at (315,1) width 94: "22. April 2001"
                                         RenderBR {BR} at (408,1) size 1x17
@@ -336,7 +336,7 @@ layer at (0,0) size 800x585
                                         RenderText {#text} at (234,37) size 257x17
                                           text run at (234,37) width 257: "Mehr Info unter \"Perl Scripte\" im Men\x{FC}."
                                     RenderTableRow {TR} at (0,1670) size 725x74
-                                      RenderTableCell {TD} at (0,1670) size 725x74 [border: (1px solid #000000)] [r=26 c=0 rs=1 cs=1]
+                                      RenderTableCell {TD} at (0,1670) size 725x74 [border: (1px inset #000000)] [r=26 c=0 rs=1 cs=1]
                                         RenderText {#text} at (315,1) size 94x17
                                           text run at (315,1) width 94: "20. April 2001"
                                         RenderBR {BR} at (408,1) size 1x17
@@ -349,14 +349,14 @@ layer at (0,0) size 800x585
                                         RenderText {#text} at (234,55) size 257x17
                                           text run at (234,55) width 257: "Mehr Info unter \"Perl Scripte\" im Men\x{FC}."
                                     RenderTableRow {TR} at (0,1744) size 725x38
-                                      RenderTableCell {TD} at (0,1744) size 725x38 [border: (1px solid #000000)] [r=27 c=0 rs=1 cs=1]
+                                      RenderTableCell {TD} at (0,1744) size 725x38 [border: (1px inset #000000)] [r=27 c=0 rs=1 cs=1]
                                         RenderText {#text} at (315,1) size 94x17
                                           text run at (315,1) width 94: "13. M\x{E4}rz 2001"
                                         RenderBR {BR} at (408,1) size 1x17
                                         RenderText {#text} at (220,19) size 285x17
                                           text run at (220,19) width 285: "An diesem Tag ging die G5-Script.de online!"
                                     RenderTableRow {TR} at (0,1782) size 725x20
-                                      RenderTableCell {TD} at (0,1782) size 725x20 [border: (1px solid #000000)] [r=28 c=0 rs=1 cs=1]
+                                      RenderTableCell {TD} at (0,1782) size 725x20 [border: (1px inset #000000)] [r=28 c=0 rs=1 cs=1]
                                         RenderText {#text} at (360,1) size 5x17
                                           text run at (360,1) width 5: " "
                                 RenderBlock (anonymous) at (0,1822) size 765x18

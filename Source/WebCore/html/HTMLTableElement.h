@@ -91,7 +91,6 @@ private:
     HTMLTableSectionElement* lastBody() const;
 
     bool m_borderAttr { false }; // Sets a precise border width and creates an outset border for the table and for its cells.
-    bool m_borderColorAttr { false }; // Overrides the outset border and makes it solid for the table and cells instead.
     bool m_frameAttr { false }; // Implies a thin border width if no border is set and then a certain set of solid/hidden borders based off the value.
     TableRules m_rulesAttr { UnsetRules }; // Implies a thin border width, a collapsing border model, and all borders on the table becoming set to hidden (if frame/border are present, to none otherwise).
     unsigned short m_padding { 1 };

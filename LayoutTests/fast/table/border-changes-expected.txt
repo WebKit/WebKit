@@ -55,10 +55,10 @@ PASS getComputedStyle(table, '').borderLeftWidth is '1px'
 PASS getComputedStyle(table, '').borderRightWidth is '1px'
 PASS getComputedStyle(table, '').borderTopWidth is '1px'
 PASS getComputedStyle(table, '').borderBottomWidth is '1px'
-PASS getComputedStyle(table, '').borderLeftStyle is 'solid'
-PASS getComputedStyle(table, '').borderRightStyle is 'solid'
-PASS getComputedStyle(table, '').borderTopStyle is 'solid'
-PASS getComputedStyle(table, '').borderBottomStyle is 'solid'
+PASS getComputedStyle(table, '').borderLeftStyle is 'outset'
+PASS getComputedStyle(table, '').borderRightStyle is 'outset'
+PASS getComputedStyle(table, '').borderTopStyle is 'outset'
+PASS getComputedStyle(table, '').borderBottomStyle is 'outset'
 PASS getComputedStyle(table, '').borderLeftColor is yellow
 PASS getComputedStyle(table, '').borderRightColor is yellow
 PASS getComputedStyle(table, '').borderTopColor is yellow
@@ -67,10 +67,10 @@ PASS getComputedStyle(cell, '').borderLeftWidth is '1px'
 PASS getComputedStyle(cell, '').borderRightWidth is '1px'
 PASS getComputedStyle(cell, '').borderTopWidth is '1px'
 PASS getComputedStyle(cell, '').borderBottomWidth is '1px'
-PASS getComputedStyle(cell, '').borderLeftStyle is 'solid'
-PASS getComputedStyle(cell, '').borderRightStyle is 'solid'
-PASS getComputedStyle(cell, '').borderTopStyle is 'solid'
-PASS getComputedStyle(cell, '').borderBottomStyle is 'solid'
+PASS getComputedStyle(cell, '').borderLeftStyle is 'inset'
+PASS getComputedStyle(cell, '').borderRightStyle is 'inset'
+PASS getComputedStyle(cell, '').borderTopStyle is 'inset'
+PASS getComputedStyle(cell, '').borderBottomStyle is 'inset'
 PASS getComputedStyle(cell, '').borderLeftColor is red
 PASS getComputedStyle(cell, '').borderRightColor is red
 PASS getComputedStyle(cell, '').borderTopColor is red
@@ -79,10 +79,10 @@ PASS getComputedStyle(table, '').borderLeftWidth is '1px'
 PASS getComputedStyle(table, '').borderRightWidth is '1px'
 PASS getComputedStyle(table, '').borderTopWidth is '1px'
 PASS getComputedStyle(table, '').borderBottomWidth is '1px'
-PASS getComputedStyle(table, '').borderLeftStyle is 'solid'
-PASS getComputedStyle(table, '').borderRightStyle is 'solid'
-PASS getComputedStyle(table, '').borderTopStyle is 'solid'
-PASS getComputedStyle(table, '').borderBottomStyle is 'solid'
+PASS getComputedStyle(table, '').borderLeftStyle is 'outset'
+PASS getComputedStyle(table, '').borderRightStyle is 'outset'
+PASS getComputedStyle(table, '').borderTopStyle is 'outset'
+PASS getComputedStyle(table, '').borderBottomStyle is 'outset'
 PASS getComputedStyle(table, '').borderLeftColor is yellow
 PASS getComputedStyle(table, '').borderRightColor is yellow
 PASS getComputedStyle(table, '').borderTopColor is yellow
@@ -103,39 +103,40 @@ PASS getComputedStyle(table, '').borderLeftWidth is '1px'
 PASS getComputedStyle(table, '').borderRightWidth is '1px'
 PASS getComputedStyle(table, '').borderTopWidth is '1px'
 PASS getComputedStyle(table, '').borderBottomWidth is '1px'
-PASS getComputedStyle(table, '').borderLeftStyle is 'solid'
-PASS getComputedStyle(table, '').borderRightStyle is 'solid'
-PASS getComputedStyle(table, '').borderTopStyle is 'solid'
-PASS getComputedStyle(table, '').borderBottomStyle is 'solid'
+PASS getComputedStyle(table, '').borderLeftStyle is 'outset'
+PASS getComputedStyle(table, '').borderRightStyle is 'outset'
+PASS getComputedStyle(table, '').borderTopStyle is 'outset'
+PASS getComputedStyle(table, '').borderBottomStyle is 'outset'
 PASS getComputedStyle(table, '').borderLeftColor is yellow
 PASS getComputedStyle(table, '').borderRightColor is yellow
 PASS getComputedStyle(table, '').borderTopColor is yellow
 PASS getComputedStyle(table, '').borderBottomColor is yellow
 PASS getComputedStyle(cell, '').borderLeftWidth is '0px'
 PASS getComputedStyle(cell, '').borderRightWidth is '0px'
-PASS getComputedStyle(cell, '').borderTopWidth is '1px'
-PASS getComputedStyle(cell, '').borderBottomWidth is '1px'
+FAIL getComputedStyle(cell, '').borderTopWidth should be 0px. Was 1px.
+FAIL getComputedStyle(cell, '').borderBottomWidth should be 0px. Was 1px.
 PASS getComputedStyle(cell, '').borderLeftStyle is 'none'
 PASS getComputedStyle(cell, '').borderRightStyle is 'none'
-PASS getComputedStyle(cell, '').borderTopStyle is 'solid'
-PASS getComputedStyle(cell, '').borderBottomStyle is 'solid'
+FAIL getComputedStyle(cell, '').borderTopStyle should be none. Was solid.
+FAIL getComputedStyle(cell, '').borderBottomStyle should be none. Was solid.
 PASS getComputedStyle(cell, '').borderLeftColor is red
 PASS getComputedStyle(cell, '').borderRightColor is red
 PASS getComputedStyle(cell, '').borderTopColor is red
 PASS getComputedStyle(cell, '').borderBottomColor is red
-PASS getComputedStyle(table, '').borderLeftWidth is '3px'
-PASS getComputedStyle(table, '').borderRightWidth is '3px'
-PASS getComputedStyle(table, '').borderTopWidth is '3px'
-PASS getComputedStyle(table, '').borderBottomWidth is '3px'
-PASS getComputedStyle(table, '').borderLeftStyle is 'solid'
-PASS getComputedStyle(table, '').borderRightStyle is 'solid'
-PASS getComputedStyle(table, '').borderTopStyle is 'solid'
-PASS getComputedStyle(table, '').borderBottomStyle is 'solid'
+PASS getComputedStyle(table, '').borderLeftWidth is '0px'
+PASS getComputedStyle(table, '').borderRightWidth is '0px'
+PASS getComputedStyle(table, '').borderTopWidth is '0px'
+PASS getComputedStyle(table, '').borderBottomWidth is '0px'
+PASS getComputedStyle(table, '').borderLeftStyle is 'hidden'
+PASS getComputedStyle(table, '').borderRightStyle is 'hidden'
+PASS getComputedStyle(table, '').borderTopStyle is 'hidden'
+PASS getComputedStyle(table, '').borderBottomStyle is 'hidden'
 PASS getComputedStyle(table, '').borderLeftColor is yellow
 PASS getComputedStyle(table, '').borderRightColor is yellow
 PASS getComputedStyle(table, '').borderTopColor is yellow
 PASS getComputedStyle(table, '').borderBottomColor is yellow
 PASS successfullyParsed is true
+Some tests failed.
 
 TEST COMPLETE
 

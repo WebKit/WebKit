@@ -15,7 +15,9 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/colgroup_valign-ref.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/colgroup_valign_bottom-expected.xhtml
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/colgroup_valign_bottom.xhtml
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/colgroup_valign_top-expected.xhtml
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/colgroup_valign_top.xhtml
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/form-in-tables-xhtml.xhtml
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/form-in-tables.html
@@ -39,6 +41,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/table-border-presentational-hints-ascii-case-insensitive-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/table-border-presentational-hints-ascii-case-insensitive-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/table-border-presentational-hints-ascii-case-insensitive.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/table-bordercolor-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/table-bordercolor-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/table-bordercolor-001.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/table-cell-nowrap-with-fixed-width-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/table-cell-nowrap-with-fixed-width-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/table-cell-nowrap-with-fixed-width.html

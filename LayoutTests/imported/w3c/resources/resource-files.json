@@ -6046,6 +6046,7 @@
         "web-platform-tests/html/rendering/non-replaced-elements/tables/table-border-2-ref.html",
         "web-platform-tests/html/rendering/non-replaced-elements/tables/table-border-3-ref.html",
         "web-platform-tests/html/rendering/non-replaced-elements/tables/table-border-presentational-hints-ascii-case-insensitive-ref.html",
+        "web-platform-tests/html/rendering/non-replaced-elements/tables/table-bordercolor-001-ref.html",
         "web-platform-tests/html/rendering/non-replaced-elements/tables/table-cell-nowrap-with-fixed-width-ref.html",
         "web-platform-tests/html/rendering/non-replaced-elements/tables/table-cell-width-ref.html",
         "web-platform-tests/html/rendering/non-replaced-elements/tables/table-column-width-ref.html",
