@@ -305,8 +305,8 @@ public:
     {
         return addSpeculationMode(
             add,
-            add->child1()->shouldSpeculateInt32OrBooleanExpectingDefined(),
-            add->child2()->shouldSpeculateInt32OrBooleanExpectingDefined(),
+            add->child1()->shouldSpeculateInt32OrBooleanExpectingDefined(add->mayHaveDoubleResult()),
+            add->child2()->shouldSpeculateInt32OrBooleanExpectingDefined(add->mayHaveDoubleResult()),
             pass);
     }
     
@@ -314,8 +314,8 @@ public:
     {
         return addSpeculationMode(
             add,
-            add->child1()->shouldSpeculateInt32OrBooleanForArithmetic(),
-            add->child2()->shouldSpeculateInt32OrBooleanForArithmetic(),
+            add->child1()->shouldSpeculateInt32OrBooleanForArithmetic(add->mayHaveDoubleResult()),
+            add->child2()->shouldSpeculateInt32OrBooleanForArithmetic(add->mayHaveDoubleResult()),
             pass);
     }
     
