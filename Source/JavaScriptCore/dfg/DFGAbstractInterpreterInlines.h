@@ -5074,6 +5074,11 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
     }
 
+    case DateSetTime: {
+        setNonCellTypeForNode(node, SpecFullDouble);
+        break;
+    }
+
     case DataViewSet: {
         break;
     }

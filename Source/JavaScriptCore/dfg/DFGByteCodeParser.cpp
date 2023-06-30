@@ -3586,6 +3586,22 @@ auto ByteCodeParser::handleIntrinsicCall(Node* callee, Operand result, CallVaria
             return CallOptimizationResult::Inlined;
         }
 
+        case DatePrototypeSetTimeIntrinsic: {
+            if (!is64Bit())
+                return CallOptimizationResult::DidNothing;
+            if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadType))
+                return CallOptimizationResult::DidNothing;
+            if (argumentCountIncludingThis < 2)
+                return CallOptimizationResult::DidNothing;
+            if (!MacroAssembler::supportsFloatingPointRounding())
+                return CallOptimizationResult::DidNothing;
+            insertChecks();
+            Node* base = get(virtualRegisterForArgumentIncludingThis(0, registerOffset));
+            Node* time = get(virtualRegisterForArgumentIncludingThis(1, registerOffset));
+            setResult(addToGraph(DateSetTime, OpInfo(), OpInfo(), base, time));
+            return CallOptimizationResult::Inlined;
+        }
+
         case DatePrototypeGetFullYearIntrinsic:
         case DatePrototypeGetUTCFullYearIntrinsic:
         case DatePrototypeGetMonthIntrinsic:

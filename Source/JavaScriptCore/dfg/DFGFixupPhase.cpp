@@ -2946,6 +2946,11 @@ private:
             fixEdge<DateObjectUse>(node->child1());
             break;
 
+        case DateSetTime:
+            fixEdge<DateObjectUse>(node->child1());
+            fixEdge<DoubleRepUse>(node->child2());
+            break;
+
         case DataViewGetInt:
         case DataViewGetFloat: {
             fixEdge<DataViewObjectUse>(node->child1());

@@ -586,6 +586,7 @@ namespace JSC { namespace DFG {
     /* Date access */ \
     macro(DateGetInt32OrNaN, NodeResultJS) \
     macro(DateGetTime, NodeResultDouble) \
+    macro(DateSetTime, NodeMustGenerate | NodeResultDouble) \
 
 
 // This enum generates a monotonically increasing id for all Node types,

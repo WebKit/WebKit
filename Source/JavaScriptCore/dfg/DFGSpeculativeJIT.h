@@ -1628,6 +1628,7 @@ public:
     void compileStringCodePointAt(Node*);
     void compileStringLocaleCompare(Node*);
     void compileDateGet(Node*);
+    void compileDateSet(Node*);
     void compileGlobalIsNaN(Node*);
     void compileNumberIsNaN(Node*);
 

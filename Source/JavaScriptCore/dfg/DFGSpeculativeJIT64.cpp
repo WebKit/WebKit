@@ -5919,6 +5919,10 @@ void SpeculativeJIT::compile(Node* node)
         compileDateGet(node);
         break;
 
+    case DateSetTime:
+        compileDateSet(node);
+        break;
+
     case DataViewSet: {
         SpeculateCellOperand dataView(this, m_graph.varArgChild(node, 0));
         GPRReg dataViewGPR = dataView.gpr();
@@ -6553,6 +6557,40 @@ void SpeculativeJIT::compileDateGet(Node* node)
     default:
         RELEASE_ASSERT_NOT_REACHED();
     }
+}
+
+void SpeculativeJIT::compileDateSet(Node* node)
+{
+    SpeculateCellOperand base(this, node->child1());
+    SpeculateDoubleOperand time(this, node->child2());
+
+    FPRTemporary scratch1(this);
+    FPRTemporary scratch2(this);
+    FPRTemporary scratch3(this);
+    FPRTemporary scratch4(this);
+
+    GPRReg baseGPR = base.gpr();
+    FPRReg timeFPR = time.fpr();
+    FPRReg scratch1FPR = scratch1.fpr();
+    FPRReg scratch2FPR = scratch2.fpr();
+    FPRReg scratch3FPR = scratch3.fpr();
+    FPRReg scratch4FPR = scratch4.fpr();
+
+    speculateDateObject(node->child1(), baseGPR);
+
+    roundTowardZeroDouble(timeFPR, scratch1FPR);
+    moveZeroToDouble(scratch2FPR);
+    addDouble(scratch2FPR, scratch1FPR);
+
+    static const double NaN = PNaN;
+    static const double max = WTF::maxECMAScriptTime;
+    loadDouble(TrustedImmPtr(&max), scratch3FPR);
+    loadDouble(TrustedImmPtr(&NaN), scratch4FPR);
+    absDouble(timeFPR, scratch2FPR);
+    moveDoubleConditionallyDouble(DoubleGreaterThanAndOrdered, scratch2FPR, scratch3FPR, scratch4FPR, scratch1FPR, scratch1FPR);
+
+    storeDouble(scratch1FPR, Address(baseGPR, DateInstance::offsetOfInternalNumber()));
+    doubleResult(scratch1FPR, node);
 }
 
 void SpeculativeJIT::compileGetByValWithThis(Node* node)

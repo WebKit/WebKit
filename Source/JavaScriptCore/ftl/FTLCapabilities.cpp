@@ -449,6 +449,7 @@ inline CapabilityLevel canCompile(Node* node)
     case DataViewSet:
     case DateGetInt32OrNaN:
     case DateGetTime:
+    case DateSetTime:
         // These are OK.
         break;
 

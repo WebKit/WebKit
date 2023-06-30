@@ -442,6 +442,7 @@ bool doesGC(Graph& graph, Node* node)
     case ValuePow:
     case ValueBitNot:
     case ValueNegate:
+    case DateSetTime:
 #else // not ASSERT_ENABLED
     // See comment at the top for why the default for all nodes should be to
     // return true.

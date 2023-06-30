@@ -2155,6 +2155,11 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         return;
     }
 
+    case DateSetTime: {
+        write(JSDateFields);
+        return;
+    }
+
     case DataViewGetFloat:
     case DataViewGetInt: {
         read(MiscFields);
