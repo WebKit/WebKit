@@ -1330,14 +1330,14 @@ GPUProcessConnection& WebProcess::ensureGPUProcessConnection()
     // If we've lost our connection to the GPU process (e.g. it crashed) try to re-establish it.
     if (!m_gpuProcessConnection) {
         m_gpuProcessConnection = GPUProcessConnection::create(*parentProcessConnection());
-
+        if (!m_gpuProcessConnection)
+            CRASH();
         for (auto& page : m_pageMap.values()) {
             // If page is null, then it is currently being constructed.
             if (page)
                 page->gpuProcessConnectionDidBecomeAvailable(*m_gpuProcessConnection);
         }
     }
-    
     return *m_gpuProcessConnection;
 }
 
