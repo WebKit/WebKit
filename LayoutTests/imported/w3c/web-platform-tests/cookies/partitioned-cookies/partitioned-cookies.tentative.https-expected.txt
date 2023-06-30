@@ -1,5 +1,5 @@
-CONSOLE MESSAGE: Unhandled Promise Rejection: ReferenceError: Can't find variable: cookieStore
+CONSOLE MESSAGE: Unhandled Promise Rejection: NotSupportedError: The operation is not supported.
 
-Harness Error (FAIL), message = Unhandled rejection: Can't find variable: cookieStore
+Harness Error (FAIL), message = Unhandled rejection: The operation is not supported.
 
 

@@ -159,6 +159,7 @@ namespace WebCore {
     macro(CSSUnitValue) \
     macro(CSSUnparsedValue) \
     macro(CSSVariableReferenceValue) \
+    macro(CookieStore) \
     macro(CustomElementRegistry) \
     macro(CustomEffect) \
     macro(Database) \
@@ -512,6 +513,7 @@ namespace WebCore {
     macro(consumeChunk) \
     macro(controlledReadableStream) \
     macro(controller) \
+    macro(cookieStore) \
     macro(createAbortSignal) \
     macro(createImageBitmap) \
     macro(createReadableStream) \

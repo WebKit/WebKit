@@ -1,4 +1,4 @@
 
-FAIL Set three simple origin session cookies sequentially and ensure they all end up in the cookie jar in order. promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: cookieStore"
-FAIL Set three simple origin session cookies in undefined order using Promise.all and ensure they all end up in the cookie jar in any order.  promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: cookieStore"
+FAIL Set three simple origin session cookies sequentially and ensure they all end up in the cookie jar in order. promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+FAIL Set three simple origin session cookies in undefined order using Promise.all and ensure they all end up in the cookie jar in any order.  promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
 

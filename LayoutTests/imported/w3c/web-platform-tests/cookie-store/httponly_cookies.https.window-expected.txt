@@ -1,5 +1,5 @@
 
-FAIL HttpOnly cookies are not observed promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: cookieStore"
-FAIL HttpOnly cookies can not be set by document.cookie promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: cookieStore"
-FAIL HttpOnly cookies can not be set by CookieStore promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: cookieStore"
+FAIL HttpOnly cookies are not observed promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+FAIL HttpOnly cookies can not be set by document.cookie promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+FAIL HttpOnly cookies can not be set by CookieStore promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
 

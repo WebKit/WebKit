@@ -1,11 +1,15 @@
 
-FAIL cookieStore.get with no arguments returns TypeError promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: cookieStore"
-FAIL cookieStore.get with empty options returns TypeError promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: cookieStore"
-FAIL cookieStore.get with positional name promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: cookieStore"
-FAIL cookieStore.get with name in options promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: cookieStore"
-FAIL cookieStore.get with name in both positional arguments and options promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: cookieStore"
-FAIL cookieStore.get with absolute url in options promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: cookieStore"
-FAIL cookieStore.get with relative url in options promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: cookieStore"
-FAIL cookieStore.get with invalid url path in options promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: cookieStore"
-FAIL cookieStore.get with invalid url host in options promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: cookieStore"
+FAIL cookieStore.get with no arguments returns TypeError promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+FAIL cookieStore.get with empty options returns TypeError promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+FAIL cookieStore.get with positional name promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+FAIL cookieStore.get with name in options promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+FAIL cookieStore.get with name in both positional arguments and options promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+FAIL cookieStore.get with absolute url in options promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+FAIL cookieStore.get with relative url in options promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+FAIL cookieStore.get with invalid url path in options promise_rejects_js: function "function() { throw e }" threw object "NotSupportedError: The operation is not supported." ("NotSupportedError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
+FAIL cookieStore.get with invalid url host in options promise_rejects_js: function "function() { throw e }" threw object "NotSupportedError: The operation is not supported." ("NotSupportedError") expected instance of function "function TypeError() {
+    [native code]
+}" ("TypeError")
 

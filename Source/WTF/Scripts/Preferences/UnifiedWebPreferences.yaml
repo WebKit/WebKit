@@ -1759,6 +1759,20 @@ CookieEnabled:
     WebCore:
       default: true
 
+CookieStoreAPIEnabled:
+  type: bool
+  category: dom
+  status: testable
+  humanReadableName: "Cookie Store API"
+  humanReadableDescription: "Enable Cookie Store API"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 CoreMathMLEnabled:
   type: bool
   status: unstable

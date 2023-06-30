@@ -28,6 +28,7 @@ set(WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/Modules/compression"
     "${WEBCORE_DIR}/Modules/contact-picker"
     "${WEBCORE_DIR}/Modules/cookie-consent"
+    "${WEBCORE_DIR}/Modules/cookie-store"
     "${WEBCORE_DIR}/Modules/credentialmanagement"
     "${WEBCORE_DIR}/Modules/encryptedmedia"
     "${WEBCORE_DIR}/Modules/encryptedmedia/legacy"
@@ -212,6 +213,7 @@ set(WebCore_IDL_INCLUDES
     Modules/badge
     Modules/cache
     Modules/compression
+    Modules/cookie-store
     Modules/credentialmanagement
     Modules/encryptedmedia/legacy
     Modules/entriesapi
@@ -286,6 +288,14 @@ set(WebCore_NON_SVG_IDL_FILES
 
     Modules/cookie-consent/Navigator+CookieConsent.idl
     Modules/cookie-consent/RequestCookieConsentOptions.idl
+
+    Modules/cookie-store/CookieInit.idl
+    Modules/cookie-store/CookieListItem.idl
+    Modules/cookie-store/CookieSameSite.idl
+    Modules/cookie-store/CookieStore.idl
+    Modules/cookie-store/CookieStoreDeleteOptions.idl
+    Modules/cookie-store/CookieStoreGetOptions.idl
+    Modules/cookie-store/LocalDOMWindow+CookieStore.idl
 
     Modules/credentialmanagement/BasicCredential.idl
     Modules/credentialmanagement/CredentialCreationOptions.idl

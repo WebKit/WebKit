@@ -1,7 +1,7 @@
 
-FAIL HTTP set/overwrite/delete observed in CookieStore promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: cookieStore"
-FAIL CookieStore agreed with HTTP headers agree on encoding non-ASCII cookies promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: cookieStore"
-FAIL CookieStore set/overwrite/delete observed in HTTP headers promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: cookieStore"
-FAIL HTTP headers agreed with CookieStore on encoding non-ASCII cookies promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: cookieStore"
-FAIL Binary HTTP set/overwrite/delete observed in CookieStore promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: cookieStore"
+FAIL HTTP set/overwrite/delete observed in CookieStore promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+FAIL CookieStore agreed with HTTP headers agree on encoding non-ASCII cookies promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+FAIL CookieStore set/overwrite/delete observed in HTTP headers promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+FAIL HTTP headers agreed with CookieStore on encoding non-ASCII cookies promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+FAIL Binary HTTP set/overwrite/delete observed in CookieStore promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
 

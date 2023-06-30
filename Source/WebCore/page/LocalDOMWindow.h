@@ -57,6 +57,7 @@ namespace WebCore {
 class BarProp;
 class CSSRuleList;
 class CSSStyleDeclaration;
+class CookieStore;
 class Crypto;
 class CustomElementRegistry;
 class DOMApplicationCache;
@@ -407,6 +408,8 @@ public:
     Page* page() const;
     WEBCORE_EXPORT static void forEachWindowInterestedInStorageEvents(const Function<void(LocalDOMWindow&)>&);
 
+    CookieStore& cookieStore();
+
 private:
     explicit LocalDOMWindow(Document&);
 
@@ -494,6 +497,8 @@ private:
 #if ENABLE(USER_MESSAGE_HANDLERS)
     mutable RefPtr<WebKitNamespace> m_webkitNamespace;
 #endif
+
+    RefPtr<CookieStore> m_cookieStore;
 };
 
 inline String LocalDOMWindow::status() const

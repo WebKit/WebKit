@@ -38,6 +38,7 @@
 #include "ContentExtensionActions.h"
 #include "ContentExtensionRule.h"
 #include "ContentRuleListResults.h"
+#include "CookieStore.h"
 #include "CrossOriginOpenerPolicy.h"
 #include "Crypto.h"
 #include "CustomElementRegistry.h"
@@ -2801,6 +2802,13 @@ void LocalDOMWindow::eventListenersDidChange()
 WebCoreOpaqueRoot root(LocalDOMWindow* window)
 {
     return WebCoreOpaqueRoot { window };
+}
+
+CookieStore& LocalDOMWindow::cookieStore()
+{
+    if (!m_cookieStore)
+        m_cookieStore = CookieStore::create();
+    return *m_cookieStore;
 }
 
 } // namespace WebCore

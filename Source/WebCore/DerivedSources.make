@@ -292,6 +292,13 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/contact-picker/Navigator+Contacts.idl \
     $(WebCore)/Modules/cookie-consent/Navigator+CookieConsent.idl \
     $(WebCore)/Modules/cookie-consent/RequestCookieConsentOptions.idl \
+    $(WebCore)/Modules/cookie-store/CookieInit.idl \
+    $(WebCore)/Modules/cookie-store/CookieListItem.idl \
+    $(WebCore)/Modules/cookie-store/CookieSameSite.idl \
+    $(WebCore)/Modules/cookie-store/CookieStore.idl \
+    $(WebCore)/Modules/cookie-store/CookieStoreGetOptions.idl \
+    $(WebCore)/Modules/cookie-store/CookieStoreDeleteOptions.idl \
+    $(WebCore)/Modules/cookie-store/LocalDOMWindow+CookieStore.idl \
     $(WebCore)/Modules/credentialmanagement/BasicCredential.idl \
     $(WebCore)/Modules/credentialmanagement/CredentialCreationOptions.idl \
     $(WebCore)/Modules/credentialmanagement/CredentialRequestOptions.idl \

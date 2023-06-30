@@ -270,6 +270,13 @@ $(PROJECT_DIR)/Modules/contact-picker/ContactsSelectOptions.idl
 $(PROJECT_DIR)/Modules/contact-picker/Navigator+Contacts.idl
 $(PROJECT_DIR)/Modules/cookie-consent/Navigator+CookieConsent.idl
 $(PROJECT_DIR)/Modules/cookie-consent/RequestCookieConsentOptions.idl
+$(PROJECT_DIR)/Modules/cookie-store/CookieInit.idl
+$(PROJECT_DIR)/Modules/cookie-store/CookieListItem.idl
+$(PROJECT_DIR)/Modules/cookie-store/CookieSameSite.idl
+$(PROJECT_DIR)/Modules/cookie-store/CookieStore.idl
+$(PROJECT_DIR)/Modules/cookie-store/CookieStoreDeleteOptions.idl
+$(PROJECT_DIR)/Modules/cookie-store/CookieStoreGetOptions.idl
+$(PROJECT_DIR)/Modules/cookie-store/LocalDOMWindow+CookieStore.idl
 $(PROJECT_DIR)/Modules/credentialmanagement/BasicCredential.idl
 $(PROJECT_DIR)/Modules/credentialmanagement/CredentialCreationOptions.idl
 $(PROJECT_DIR)/Modules/credentialmanagement/CredentialRequestOptions.idl

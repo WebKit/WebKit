@@ -16,40 +16,40 @@ PASS WorkerGlobalScope includes WindowOrWorkerGlobalScope: member names are uniq
 PASS Window includes AnimationFrameProvider: member names are unique
 PASS Window includes WindowSessionStorage: member names are unique
 PASS Window includes WindowLocalStorage: member names are unique
-FAIL CookieStore interface: existence and properties of interface object assert_own_property: self does not have own property "CookieStore" expected property "CookieStore" missing
-FAIL CookieStore interface object length assert_own_property: self does not have own property "CookieStore" expected property "CookieStore" missing
-FAIL CookieStore interface object name assert_own_property: self does not have own property "CookieStore" expected property "CookieStore" missing
-FAIL CookieStore interface: existence and properties of interface prototype object assert_own_property: self does not have own property "CookieStore" expected property "CookieStore" missing
-FAIL CookieStore interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "CookieStore" expected property "CookieStore" missing
-FAIL CookieStore interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "CookieStore" expected property "CookieStore" missing
-FAIL CookieStore interface: operation get(USVString) assert_own_property: self does not have own property "CookieStore" expected property "CookieStore" missing
-FAIL CookieStore interface: operation get(optional CookieStoreGetOptions) assert_own_property: self does not have own property "CookieStore" expected property "CookieStore" missing
-FAIL CookieStore interface: operation getAll(USVString) assert_own_property: self does not have own property "CookieStore" expected property "CookieStore" missing
-FAIL CookieStore interface: operation getAll(optional CookieStoreGetOptions) assert_own_property: self does not have own property "CookieStore" expected property "CookieStore" missing
-FAIL CookieStore interface: operation set(USVString, USVString) assert_own_property: self does not have own property "CookieStore" expected property "CookieStore" missing
-FAIL CookieStore interface: operation set(CookieInit) assert_own_property: self does not have own property "CookieStore" expected property "CookieStore" missing
-FAIL CookieStore interface: operation delete(USVString) assert_own_property: self does not have own property "CookieStore" expected property "CookieStore" missing
-FAIL CookieStore interface: operation delete(CookieStoreDeleteOptions) assert_own_property: self does not have own property "CookieStore" expected property "CookieStore" missing
-FAIL CookieStore interface: attribute onchange assert_own_property: self does not have own property "CookieStore" expected property "CookieStore" missing
-FAIL CookieStore must be primary interface of self.cookieStore assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL Stringification of self.cookieStore assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL CookieStore interface: self.cookieStore must inherit property "get(USVString)" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL CookieStore interface: calling get(USVString) on self.cookieStore with too few arguments must throw TypeError assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL CookieStore interface: self.cookieStore must inherit property "get(optional CookieStoreGetOptions)" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL CookieStore interface: calling get(optional CookieStoreGetOptions) on self.cookieStore with too few arguments must throw TypeError assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL CookieStore interface: self.cookieStore must inherit property "getAll(USVString)" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL CookieStore interface: calling getAll(USVString) on self.cookieStore with too few arguments must throw TypeError assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL CookieStore interface: self.cookieStore must inherit property "getAll(optional CookieStoreGetOptions)" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL CookieStore interface: calling getAll(optional CookieStoreGetOptions) on self.cookieStore with too few arguments must throw TypeError assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL CookieStore interface: self.cookieStore must inherit property "set(USVString, USVString)" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL CookieStore interface: calling set(USVString, USVString) on self.cookieStore with too few arguments must throw TypeError assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL CookieStore interface: self.cookieStore must inherit property "set(CookieInit)" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL CookieStore interface: calling set(CookieInit) on self.cookieStore with too few arguments must throw TypeError assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL CookieStore interface: self.cookieStore must inherit property "delete(USVString)" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL CookieStore interface: calling delete(USVString) on self.cookieStore with too few arguments must throw TypeError assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL CookieStore interface: self.cookieStore must inherit property "delete(CookieStoreDeleteOptions)" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL CookieStore interface: calling delete(CookieStoreDeleteOptions) on self.cookieStore with too few arguments must throw TypeError assert_equals: wrong typeof object expected "object" but got "undefined"
-FAIL CookieStore interface: self.cookieStore must inherit property "onchange" with the proper type assert_equals: wrong typeof object expected "object" but got "undefined"
+PASS CookieStore interface: existence and properties of interface object
+PASS CookieStore interface object length
+PASS CookieStore interface object name
+PASS CookieStore interface: existence and properties of interface prototype object
+PASS CookieStore interface: existence and properties of interface prototype object's "constructor" property
+PASS CookieStore interface: existence and properties of interface prototype object's @@unscopables property
+PASS CookieStore interface: operation get(USVString)
+PASS CookieStore interface: operation get(optional CookieStoreGetOptions)
+PASS CookieStore interface: operation getAll(USVString)
+PASS CookieStore interface: operation getAll(optional CookieStoreGetOptions)
+PASS CookieStore interface: operation set(USVString, USVString)
+PASS CookieStore interface: operation set(CookieInit)
+PASS CookieStore interface: operation delete(USVString)
+PASS CookieStore interface: operation delete(CookieStoreDeleteOptions)
+PASS CookieStore interface: attribute onchange
+PASS CookieStore must be primary interface of self.cookieStore
+PASS Stringification of self.cookieStore
+PASS CookieStore interface: self.cookieStore must inherit property "get(USVString)" with the proper type
+PASS CookieStore interface: calling get(USVString) on self.cookieStore with too few arguments must throw TypeError
+PASS CookieStore interface: self.cookieStore must inherit property "get(optional CookieStoreGetOptions)" with the proper type
+PASS CookieStore interface: calling get(optional CookieStoreGetOptions) on self.cookieStore with too few arguments must throw TypeError
+PASS CookieStore interface: self.cookieStore must inherit property "getAll(USVString)" with the proper type
+PASS CookieStore interface: calling getAll(USVString) on self.cookieStore with too few arguments must throw TypeError
+PASS CookieStore interface: self.cookieStore must inherit property "getAll(optional CookieStoreGetOptions)" with the proper type
+PASS CookieStore interface: calling getAll(optional CookieStoreGetOptions) on self.cookieStore with too few arguments must throw TypeError
+PASS CookieStore interface: self.cookieStore must inherit property "set(USVString, USVString)" with the proper type
+PASS CookieStore interface: calling set(USVString, USVString) on self.cookieStore with too few arguments must throw TypeError
+PASS CookieStore interface: self.cookieStore must inherit property "set(CookieInit)" with the proper type
+PASS CookieStore interface: calling set(CookieInit) on self.cookieStore with too few arguments must throw TypeError
+PASS CookieStore interface: self.cookieStore must inherit property "delete(USVString)" with the proper type
+PASS CookieStore interface: calling delete(USVString) on self.cookieStore with too few arguments must throw TypeError
+PASS CookieStore interface: self.cookieStore must inherit property "delete(CookieStoreDeleteOptions)" with the proper type
+PASS CookieStore interface: calling delete(CookieStoreDeleteOptions) on self.cookieStore with too few arguments must throw TypeError
+PASS CookieStore interface: self.cookieStore must inherit property "onchange" with the proper type
 FAIL CookieStoreManager interface: existence and properties of interface object assert_own_property: self does not have own property "CookieStoreManager" expected property "CookieStoreManager" missing
 FAIL CookieStoreManager interface object length assert_own_property: self does not have own property "CookieStoreManager" expected property "CookieStoreManager" missing
 FAIL CookieStoreManager interface object name assert_own_property: self does not have own property "CookieStoreManager" expected property "CookieStoreManager" missing
@@ -81,6 +81,6 @@ FAIL CookieChangeEvent interface: new CookieChangeEvent("change") must inherit p
 PASS ExtendableCookieChangeEvent interface: existence and properties of interface object
 FAIL ServiceWorkerRegistration interface: attribute cookies assert_true: The prototype object must have a property "cookies" expected true got false
 FAIL ServiceWorkerRegistration interface: self.registration must inherit property "cookies" with the proper type assert_inherits: property "cookies" not found in prototype chain
-FAIL Window interface: attribute cookieStore assert_own_property: The global object must have a property "cookieStore" expected property "cookieStore" missing
-FAIL Window interface: self must inherit property "cookieStore" with the proper type assert_own_property: expected property "cookieStore" missing
+PASS Window interface: attribute cookieStore
+PASS Window interface: self must inherit property "cookieStore" with the proper type
 

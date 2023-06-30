@@ -605,6 +605,18 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSConvolverNode.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSConvolverNode.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSConvolverOptions.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSConvolverOptions.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCookieInit.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCookieInit.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCookieListItem.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCookieListItem.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCookieSameSite.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCookieSameSite.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCookieStore.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCookieStore.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCookieStoreDeleteOptions.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCookieStoreDeleteOptions.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCookieStoreGetOptions.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCookieStoreGetOptions.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCountQueuingStrategy.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCountQueuingStrategy.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCredentialCreationOptions.cpp
@@ -1659,6 +1671,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSLocalDOMWindow+CSSOMView.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSLocalDOMWindow+CSSOMView.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSLocalDOMWindow+Compat.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSLocalDOMWindow+Compat.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSLocalDOMWindow+CookieStore.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSLocalDOMWindow+CookieStore.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSLocalDOMWindow+DeviceMotion.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSLocalDOMWindow+DeviceMotion.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSLocalDOMWindow+DeviceOrientation.cpp
