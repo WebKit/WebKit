@@ -281,6 +281,9 @@
                     case "prefers-reduced-motion":
                     case     "reduce":
                     case     "no-preference":
+                    case "prefers-reduced-transparency":
+                    case     "reduce":
+                    case     "no-preference":
                     case "inverted-colors":
                     case     "inverted":
                     case "color-gamut":

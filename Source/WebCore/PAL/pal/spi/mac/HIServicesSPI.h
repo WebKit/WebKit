@@ -149,6 +149,8 @@ void _AXSetClientIdentificationOverride(AXClientType);
 
 extern CFStringRef kAXInterfaceReduceMotionKey;
 extern CFStringRef kAXInterfaceReduceMotionStatusDidChangeNotification;
+extern CFStringRef kAXInterfaceReduceTransparencyKey;
+extern CFStringRef kAXInterfaceReduceTransparencyStatusDidChangeNotification;
 
 extern CFStringRef kAXInterfaceIncreaseContrastKey;
 

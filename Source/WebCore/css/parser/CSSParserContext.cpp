@@ -101,6 +101,7 @@ CSSParserContext::CSSParserContext(const Document& document, const URL& sheetBas
 #if ENABLE(CSS_PAINTING_API)
     , cssPaintingAPIEnabled { document.settings().cssPaintingAPIEnabled() }
 #endif
+    , cssPrefersReducedTransparencyEnabled { document.settings().cssPrefersReducedTransparencyEnabled() }
     , cssTextUnderlinePositionLeftRightEnabled { document.settings().cssTextUnderlinePositionLeftRightEnabled() }
     , cssTextWrapNewValuesEnabled { document.settings().cssTextWrapNewValuesEnabled() }
     , propertySettings { CSSPropertySettings { document.settings() } }
@@ -139,6 +140,7 @@ bool operator==(const CSSParserContext& a, const CSSParserContext& b)
         && a.masonryEnabled == b.masonryEnabled
         && a.cssNestingEnabled == b.cssNestingEnabled
         && a.cssPaintingAPIEnabled == b.cssPaintingAPIEnabled
+        && a.cssPrefersReducedTransparencyEnabled == b.cssPrefersReducedTransparencyEnabled
         && a.cssTextUnderlinePositionLeftRightEnabled == b.cssTextUnderlinePositionLeftRightEnabled
         && a.cssTextWrapNewValuesEnabled == b.cssTextWrapNewValuesEnabled
         && a.propertySettings == b.propertySettings
@@ -171,9 +173,10 @@ void add(Hasher& hasher, const CSSParserContext& context)
         | context.masonryEnabled                            << 19
         | context.cssNestingEnabled                         << 20
         | context.cssPaintingAPIEnabled                     << 21
-        | context.cssTextUnderlinePositionLeftRightEnabled  << 22
-        | context.cssTextWrapNewValuesEnabled               << 23
-        | (uint64_t)context.mode                            << 24; // This is multiple bits, so keep it last.
+        | context.cssPrefersReducedTransparencyEnabled      << 22
+        | context.cssTextUnderlinePositionLeftRightEnabled  << 23
+        | context.cssTextWrapNewValuesEnabled               << 24
+        | (uint64_t)context.mode                            << 25; // This is multiple bits, so keep it last.
     add(hasher, context.baseURL, context.charset, context.propertySettings, bits);
 }
 

@@ -1194,6 +1194,11 @@ void WebProcess::accessibilityPreferencesDidChange(const AccessibilityPreference
     auto invertColorsEnabled = preferences.invertColorsEnabled;
     if (_AXSInvertColorsEnabledApp(appID) != invertColorsEnabled)
         _AXSInvertColorsSetEnabledApp(invertColorsEnabled, appID);
+#if PLATFORM(MAC)
+    auto reduceTransparencyEnabled = preferences.reduceTransparencyEnabled;
+    if (_AXSReduceTransparencyEnabledApp(appID) != reduceTransparencyEnabled)
+        _AXSSetReduceTransparencyEnabledApp(reduceTransparencyEnabled, appID);
+#endif
 #endif
     setOverrideEnhanceTextLegibility(preferences.enhanceTextLegibilityOverall);
     FontCache::invalidateAllFontCaches();
@@ -1304,7 +1309,7 @@ void WebProcess::handlePreferenceChange(const String& domain, const String& key,
 
 #if USE(APPKIT)
     auto cfKey = key.createCFString();
-    if (CFEqual(cfKey.get(), kAXInterfaceReduceMotionKey) || CFEqual(cfKey.get(), kAXInterfaceIncreaseContrastKey) || key == invertColorsPreferenceKey()) {
+    if (CFEqual(cfKey.get(), kAXInterfaceReduceMotionKey) || CFEqual(cfKey.get(), kAXInterfaceReduceTransparencyKey) || CFEqual(cfKey.get(), kAXInterfaceIncreaseContrastKey) || key == invertColorsPreferenceKey()) {
         [NSWorkspace _invalidateAccessibilityDisplayValues];
         for (auto& page : m_pageMap.values())
             page->accessibilitySettingsDidChange();

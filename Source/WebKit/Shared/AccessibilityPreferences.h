@@ -36,6 +36,7 @@ namespace WebKit {
 struct AccessibilityPreferences {
 #if HAVE(PER_APP_ACCESSIBILITY_PREFERENCES)
     AXValueState reduceMotionEnabled { AXValueStateEmpty };
+    AXValueState reduceTransparencyEnabled { AXValueStateEmpty };
     AXValueState increaseButtonLegibility { AXValueStateEmpty };
     AXValueState enhanceTextLegibility { AXValueStateEmpty };
     AXValueState darkenSystemColors { AXValueStateEmpty };

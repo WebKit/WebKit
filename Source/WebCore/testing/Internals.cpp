@@ -5428,6 +5428,11 @@ bool Internals::userPrefersReducedMotion() const
     return false;
 }
 
+bool Internals::userPrefersReducedTransparency() const
+{
+    return false;
+}
+
 bool Internals::userPrefersContrast() const
 {
     return false;

@@ -1291,6 +1291,8 @@ localizedStrings["Redirect Response"] = "Redirect Response";
 localizedStrings["Redirects"] = "Redirects";
 /* Label for input to override the preference for reduced motion. */
 localizedStrings["Reduce motion @ User Preferences Overrides"] = "Reduce motion";
+/* Label for input to override the preference for reduced transparency. */
+localizedStrings["Reduce transparency @ User Preferences Overrides"] = "Reduce transparency";
 localizedStrings["Reduction"] = "Reduction";
 localizedStrings["Reference Issue"] = "Reference Issue";
 localizedStrings["Reflection"] = "Reflection";

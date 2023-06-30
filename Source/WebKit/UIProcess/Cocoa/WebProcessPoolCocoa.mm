@@ -263,6 +263,9 @@ static AccessibilityPreferences accessibilityPreferences()
     preferences.enhanceTextLegibility = _AXSEnhanceTextLegibilityEnabledApp(appId.get());
     preferences.darkenSystemColors = _AXDarkenSystemColorsApp(appId.get());
     preferences.invertColorsEnabled = _AXSInvertColorsEnabledApp(appId.get());
+#if PLATFORM(MAC)
+    preferences.reduceTransparencyEnabled = _AXSReduceTransparencyEnabledApp(appId.get());
+#endif
 #endif
     preferences.enhanceTextLegibilityOverall = _AXSEnhanceTextLegibilityEnabled();
 #if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
@@ -815,6 +818,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     addCFNotificationObserver(accessibilityPreferencesChangedCallback, kAXSEnhanceTextLegibilityChangedNotification);
     addCFNotificationObserver(accessibilityPreferencesChangedCallback, kAXSDarkenSystemColorsEnabledNotification);
     addCFNotificationObserver(accessibilityPreferencesChangedCallback, kAXSInvertColorsEnabledNotification);
+#if PLATFORM(MAC)
+    addCFNotificationObserver(accessibilityPreferencesChangedCallback, kAXSReduceTransparencyChangedNotification);
+#endif
 #endif
 #if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
     if (canLoadkAXSReduceMotionAutoplayAnimatedImagesChangedNotification())
@@ -875,6 +881,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     removeCFNotificationObserver(kAXSEnhanceTextLegibilityChangedNotification);
     removeCFNotificationObserver(kAXSDarkenSystemColorsEnabledNotification);
     removeCFNotificationObserver(kAXSInvertColorsEnabledNotification);
+#if PLATFORM(MAC)
+    removeCFNotificationObserver(kAXSReduceTransparencyChangedNotification);
+#endif
 #endif
 #if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
     removeCFNotificationObserver(kMAXCaptionAppearanceSettingsChangedNotification);

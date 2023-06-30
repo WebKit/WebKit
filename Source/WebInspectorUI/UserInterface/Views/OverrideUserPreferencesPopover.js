@@ -86,7 +86,7 @@ WI.OverrideUserPreferencesPopover = class OverrideUserPreferencesPopover extends
             });
         }
 
-        if (InspectorBackend.Enum.Page?.UserPreferenceName?.PrefersReducedMotion || InspectorBackend.Enum.Page?.UserPreferenceName?.PrefersContrast) {
+        if (InspectorBackend.Enum.Page?.UserPreferenceName?.PrefersReducedMotion || InspectorBackend.Enum.Page?.UserPreferenceName?.PrefersContrast || InspectorBackend.Enum.Page?.UserPreferenceName?.PrefersReducedTransparency) {
             let accessibilityHeader = contentElement.appendChild(document.createElement("h1"));
             accessibilityHeader.textContent = WI.UIString("Accessibility", "Accessibility @ User Preferences Overrides", "Header for section with accessibility user preferences.");
         }
@@ -110,6 +110,17 @@ WI.OverrideUserPreferencesPopover = class OverrideUserPreferencesPopover extends
                 label: WI.UIString("Increase contrast", "Increase contrast @ User Preferences Overrides", "Label for input to override the preference for high contrast."),
                 preferenceName: InspectorBackend.Enum.Page.UserPreferenceName.PrefersContrast,
                 preferenceValues: [InspectorBackend.Enum.Page.UserPreferenceValue.More, InspectorBackend.Enum.Page.UserPreferenceValue.NoPreference],
+                defaultValue: WI.CSSManager.UserPreferenceDefaultValue,
+            });
+
+        // COMPATIBILITY (macOS 13.0, iOS 16.0): `PrefersReducedTransparency` value for `Page.UserPreferenceName` did not exist yet.
+        if (InspectorBackend.Enum.Page?.UserPreferenceName?.PrefersReducedTransparency)
+            this._createSelectElement({
+                contentElement,
+                id: "override-prefers-reduced-transparency",
+                label: WI.UIString("Reduce transparency", "Reduce transparency @ User Preferences Overrides", "Label for input to override the preference for reduced transparency."),
+                preferenceName: InspectorBackend.Enum.Page.UserPreferenceName.PrefersReducedTransparency,
+                preferenceValues: [InspectorBackend.Enum.Page.UserPreferenceValue.Reduce, InspectorBackend.Enum.Page.UserPreferenceValue.NoPreference],
                 defaultValue: WI.CSSManager.UserPreferenceDefaultValue,
             });
 

@@ -1,7 +1,7 @@
 
-FAIL Should be known: '(prefers-reduced-transparency)' assert_true: expected true got false
-FAIL Should be known: '(prefers-reduced-transparency: no-preference)' assert_true: expected true got false
-FAIL Should be known: '(prefers-reduced-transparency: reduce)' assert_true: expected true got false
+PASS Should be known: '(prefers-reduced-transparency)'
+PASS Should be known: '(prefers-reduced-transparency: no-preference)'
+PASS Should be known: '(prefers-reduced-transparency: reduce)'
 PASS Should be parseable: '(prefers-reduced-transparency: 0)'
 PASS Should be unknown: '(prefers-reduced-transparency: 0)'
 PASS Should be parseable: '(prefers-reduced-transparency: none)'
@@ -14,6 +14,6 @@ PASS Should be parseable: '(prefers-reduced-transparency: reduced)'
 PASS Should be unknown: '(prefers-reduced-transparency: reduced)'
 PASS Should be parseable: '(prefers-reduced-transparency: no-preference/reduce)'
 PASS Should be unknown: '(prefers-reduced-transparency: no-preference/reduce)'
-FAIL Check that no-preference evaluates to false in the boolean context assert_equals: expected true but got false
+PASS Check that no-preference evaluates to false in the boolean context
 PASS Check that invalid evaluates to false
 

@@ -32,6 +32,7 @@ void ArgumentCoder<WebKit::AccessibilityPreferences>::encode(Encoder& encoder, c
 {
 #if HAVE(PER_APP_ACCESSIBILITY_PREFERENCES)
     encoder << preferences.reduceMotionEnabled;
+    encoder << preferences.reduceTransparencyEnabled;
     encoder << preferences.increaseButtonLegibility;
     encoder << preferences.enhanceTextLegibility;
     encoder << preferences.darkenSystemColors;
@@ -46,6 +47,8 @@ std::optional<WebKit::AccessibilityPreferences> ArgumentCoder<WebKit::Accessibil
     WebKit::AccessibilityPreferences preferences;
 #if HAVE(PER_APP_ACCESSIBILITY_PREFERENCES)
     if (!decoder.decode(preferences.reduceMotionEnabled))
+        return std::nullopt;
+    if (!decoder.decode(preferences.reduceTransparencyEnabled))
         return std::nullopt;
     if (!decoder.decode(preferences.increaseButtonLegibility))
         return std::nullopt;

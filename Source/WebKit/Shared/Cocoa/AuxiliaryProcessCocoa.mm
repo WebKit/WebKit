@@ -224,6 +224,10 @@ static void handleAXPreferenceChange(const String& domain, const String& key, id
         // these methods need to be called directly.
         if (CFEqual(key.createCFString().get(), kAXSReduceMotionPreference) && [value isKindOfClass:[NSNumber class]])
             _AXSSetReduceMotionEnabled([(NSNumber *)value boolValue]);
+#if PLATFORM(IOS)
+        else if (CFEqual(key.createCFString().get(), kAXSReduceTransparencyPreference) && [value isKindOfClass:[NSNumber class]])
+            _AXSSetReduceTransparencyEnabled([(NSNumber *)value boolValue]);
+#endif
         else if (CFEqual(key.createCFString().get(), increaseContrastPreferenceKey()) && [value isKindOfClass:[NSNumber class]])
             _AXSSetDarkenSystemColors([(NSNumber *)value boolValue]);
 #endif

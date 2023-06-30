@@ -83,6 +83,7 @@ public:
 
     virtual bool userPrefersContrast() const;
     virtual bool userPrefersReducedMotion() const;
+    virtual bool userPrefersReducedTransparency() const;
 
 protected:
     Theme() = default;

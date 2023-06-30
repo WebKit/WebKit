@@ -55,6 +55,7 @@ const FeatureSchema& pointer();
 const FeatureSchema& prefersContrast();
 const FeatureSchema& prefersDarkInterface();
 const FeatureSchema& prefersReducedMotion();
+const FeatureSchema& prefersReducedTransparency();
 const FeatureSchema& resolution();
 const FeatureSchema& scan();
 const FeatureSchema& scripting();

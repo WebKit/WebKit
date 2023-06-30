@@ -75,6 +75,8 @@ SOFT_LINK_FUNCTION_FOR_HEADER(PAL, UIKit, UIAccessibilityIsReduceMotionEnabled, 
 #define UIAccessibilityIsReduceMotionEnabled PAL::softLink_UIKit_UIAccessibilityIsReduceMotionEnabled
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, UIKit, UIAccessibilityDarkerSystemColorsEnabled, BOOL, (void), ())
 #define UIAccessibilityDarkerSystemColorsEnabled PAL::softLink_UIKit_UIAccessibilityDarkerSystemColorsEnabled
+SOFT_LINK_FUNCTION_FOR_HEADER(PAL, UIKit, UIAccessibilityIsReduceTransparencyEnabled, BOOL, (void), ())
+#define UIAccessibilityIsReduceTransparencyEnabled PAL::softLink_UIKit_UIAccessibilityIsReduceTransparencyEnabled
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, UIKit, UIAccessibilityPostNotification, void, (UIAccessibilityNotifications n, id argument), (n, argument))
 #define UIAccessibilityPostNotification PAL::softLink_UIKit_UIAccessibilityPostNotification
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, UIKit, UIGraphicsGetCurrentContext, CGContextRef, (void), ())

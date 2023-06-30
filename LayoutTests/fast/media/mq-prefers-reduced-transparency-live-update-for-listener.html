@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script>
+
+description('This tests listeners on MediaQueryList get called when reduce transparency is turned on when there are no relevant style rules');
+
+jsTestIsAsync = true;
+
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+let didCallListener = false;
+let timer;
+
+window.onload = () => {
+    window.matchMedia('(prefers-reduced-transparency)').addListener((e) => {
+        didCallListener = true;
+    });
+
+    if (!window.internals || !testRunner.runUIScript) {
+        testFailed('This test requires runUIScript');
+        finishJSTest();
+        return;
+    }
+
+    requestAnimationFrame(async () => {
+        window.internals.settings.forcedPrefersReducedTransparencyAccessibilityValue = "on";
+        await new Promise(resolve => {
+            testRunner.runUIScript(`
+                uiController.simulateAccessibilitySettingsChangeNotification(() => {
+                    uiController.uiScriptComplete();
+                });`, resolve);
+        });
+
+        if (didCallListener)
+            finalize();
+        else
+            timer = setTimeout(finalize, 1000);
+    });
+}
+
+function finalize() {
+    if (timer)
+        clearTimeout(timer);
+
+    shouldBeTrue('didCallListener');
+    shouldBeTrue('matchMedia("(prefers-reduced-transparency)").matches');
+    finishJSTest();
+}
+
+</script>
+</body>
+</html>

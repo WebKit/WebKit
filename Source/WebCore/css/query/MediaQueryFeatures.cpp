@@ -574,6 +574,35 @@ const FeatureSchema& prefersReducedMotion()
     return schema;
 }
 
+const FeatureSchema& prefersReducedTransparency()
+{
+    static MainThreadNeverDestroyed<IdentifierSchema> schema {
+        "prefers-reduced-transparency"_s,
+        FixedVector { CSSValueNoPreference, CSSValueReduce },
+        [](auto& context) {
+            bool userPrefersReducedTransparency = [&] {
+                auto& frame = *context.document.frame();
+                switch (frame.settings().forcedPrefersReducedTransparencyAccessibilityValue()) {
+                case ForcedAccessibilityValue::On:
+                    return true;
+                case ForcedAccessibilityValue::Off:
+                    return false;
+                case ForcedAccessibilityValue::System:
+#if USE(NEW_THEME) || PLATFORM(IOS_FAMILY)
+                    return Theme::singleton().userPrefersReducedTransparency();
+#else
+                    return false;
+#endif
+                }
+                return false;
+            }();
+
+            return MatchingIdentifiers { userPrefersReducedTransparency ? CSSValueReduce : CSSValueNoPreference };
+        }
+    };
+    return schema;
+}
+
 const FeatureSchema& resolution()
 {
     static MainThreadNeverDestroyed<ResolutionSchema> schema {
@@ -809,6 +838,7 @@ Vector<const FeatureSchema*> allSchemas()
         &prefersContrast(),
         &prefersDarkInterface(),
         &prefersReducedMotion(),
+        &prefersReducedTransparency(),
         &resolution(),
         &scan(),
         &scripting(),
@@ -840,7 +870,7 @@ std::optional<MediaQueryDynamicDependency> dynamicDependency(const FeatureSchema
         return MediaQueryDynamicDependency::Appearance;
 #endif
 
-    if (&schema == &invertedColors() || &schema == &monochrome() || &schema == &prefersReducedMotion() || &schema == &prefersContrast())
+    if (&schema == &invertedColors() || &schema == &monochrome() || &schema == &prefersReducedMotion() || &schema == &prefersContrast() || &schema == &prefersReducedTransparency())
         return MediaQueryDynamicDependency::Accessibility;
 
     return { };

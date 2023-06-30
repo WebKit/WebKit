@@ -89,6 +89,10 @@ bool Theme::userPrefersContrast() const
     return false;
 }
 
+bool Theme::userPrefersReducedTransparency() const
+{
+    return false;
+}
 
 LengthBox Theme::controlBorder(StyleAppearance appearance, const FontCascade&, const LengthBox& zoomedBox, float) const
 {

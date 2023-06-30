@@ -172,6 +172,13 @@ ForcedPrefersReducedMotionAccessibilityValue:
     WebCore:
       default: ForcedAccessibilityValue::System
 
+ForcedPrefersReducedTransparencyAccessibilityValue:
+  type: uint32_t
+  refinedType: ForcedAccessibilityValue
+  defaultValue:
+    WebCore:
+      default: ForcedAccessibilityValue::System
+
 ForcedSupportsHighDynamicRangeValue:
   type: uint32_t
   refinedType: ForcedAccessibilityValue

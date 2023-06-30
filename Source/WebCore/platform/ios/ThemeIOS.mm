@@ -49,6 +49,11 @@ bool ThemeIOS::userPrefersContrast() const
     return PAL::softLink_UIKit_UIAccessibilityDarkerSystemColorsEnabled();
 }
 
+bool ThemeIOS::userPrefersReducedTransparency() const
+{
+    return PAL::softLink_UIKit_UIAccessibilityIsReduceTransparencyEnabled();
+}
+
 }
 
 #endif // PLATFORM(IOS_FAMILY)

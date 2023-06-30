@@ -159,6 +159,7 @@ private:
     static bool dataContent(const uint8_t* data, unsigned size, const String& textEncodingName, bool withBase64Encode, String* result);
 
     void overridePrefersReducedMotion(std::optional<Inspector::Protocol::Page::UserPreferenceValue>&&);
+    void overridePrefersReducedTransparency(std::optional<Inspector::Protocol::Page::UserPreferenceValue>&&);
     void overridePrefersContrast(std::optional<Inspector::Protocol::Page::UserPreferenceValue>&&);
     void overridePrefersColorScheme(std::optional<Inspector::Protocol::Page::UserPreferenceValue>&&);
 

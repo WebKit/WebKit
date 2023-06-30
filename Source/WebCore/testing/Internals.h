@@ -872,6 +872,7 @@ public:
 
     bool userPrefersContrast() const;
     bool userPrefersReducedMotion() const;
+    bool userPrefersReducedTransparency() const;
 
     void reportBacktrace();
 

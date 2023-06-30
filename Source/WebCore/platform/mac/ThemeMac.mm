@@ -676,6 +676,11 @@ bool ThemeMac::userPrefersContrast() const
     return [[NSWorkspace sharedWorkspace] accessibilityDisplayShouldIncreaseContrast];
 }
 
+bool ThemeMac::userPrefersReducedTransparency() const
+{
+    return [[NSWorkspace sharedWorkspace] accessibilityDisplayShouldReduceTransparency];
+}
+
 bool ThemeMac::supportsLargeFormControls()
 {
     static bool hasSupport = [[NSAppearance currentDrawingAppearance] _usesMetricsAppearance];

@@ -216,6 +216,7 @@ static WebCore::IntDegrees deviceOrientationForUIInterfaceOrientation(UIInterfac
     [center addObserver:self selector:@selector(_accessibilitySettingsDidChange:) name:UIAccessibilityGrayscaleStatusDidChangeNotification object:nil];
     [center addObserver:self selector:@selector(_accessibilitySettingsDidChange:) name:UIAccessibilityInvertColorsStatusDidChangeNotification object:nil];
     [center addObserver:self selector:@selector(_accessibilitySettingsDidChange:) name:UIAccessibilityReduceMotionStatusDidChangeNotification object:nil];
+    [center addObserver:self selector:@selector(_accessibilitySettingsDidChange:) name:UIAccessibilityReduceTransparencyStatusDidChangeNotification object:nil];
 
 #if HAVE(UIKIT_RESIZABLE_WINDOWS)
     [center addObserver:self selector:@selector(_enhancedWindowingToggled:) name:_UIWindowSceneEnhancedWindowingModeChanged object:nil];

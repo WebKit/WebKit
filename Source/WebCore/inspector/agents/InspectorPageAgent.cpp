@@ -390,6 +390,7 @@ Protocol::ErrorStringOr<void> InspectorPageAgent::disable()
     inspectedPageSettings.setShowRepaintCounterInspectorOverride(std::nullopt);
     inspectedPageSettings.setWebSecurityEnabledInspectorOverride(std::nullopt);
     inspectedPageSettings.setForcedPrefersReducedMotionAccessibilityValue(ForcedAccessibilityValue::System);
+    inspectedPageSettings.setForcedPrefersReducedTransparencyAccessibilityValue(ForcedAccessibilityValue::System);
     inspectedPageSettings.setForcedPrefersContrastAccessibilityValue(ForcedAccessibilityValue::System);
 
     m_client->setDeveloperPreferenceOverride(InspectorClient::DeveloperPreference::PrivateClickMeasurementDebugModeEnabled, std::nullopt);
@@ -516,6 +517,10 @@ Protocol::ErrorStringOr<void> InspectorPageAgent::overrideUserPreference(Protoco
     case Protocol::Page::UserPreferenceName::PrefersColorScheme:
         overridePrefersColorScheme(WTFMove(value));
         return { };
+
+    case Protocol::Page::UserPreferenceName::PrefersReducedTransparency:
+        overridePrefersReducedTransparency(WTFMove(value));
+        return { };
     }
 
     ASSERT_NOT_REACHED();
@@ -532,6 +537,19 @@ void InspectorPageAgent::overridePrefersReducedMotion(std::optional<Protocol::Pa
         forcedValue = ForcedAccessibilityValue::Off;
 
     m_inspectedPage.settings().setForcedPrefersReducedMotionAccessibilityValue(forcedValue);
+    m_inspectedPage.accessibilitySettingsDidChange();
+}
+
+void InspectorPageAgent::overridePrefersReducedTransparency(std::optional<Protocol::Page::UserPreferenceValue>&& value)
+{
+    ForcedAccessibilityValue forcedValue = ForcedAccessibilityValue::System;
+
+    if (value == Protocol::Page::UserPreferenceValue::Reduce)
+        forcedValue = ForcedAccessibilityValue::On;
+    else if (value == Protocol::Page::UserPreferenceValue::NoPreference)
+        forcedValue = ForcedAccessibilityValue::Off;
+
+    m_inspectedPage.settings().setForcedPrefersReducedTransparencyAccessibilityValue(forcedValue);
     m_inspectedPage.accessibilitySettingsDidChange();
 }
 
@@ -1010,6 +1028,19 @@ void InspectorPageAgent::defaultUserPreferencesDidChange()
         .release();
 
     defaultUserPreferences->addItem(WTFMove(prefersContrastUserPreference));
+
+#if USE(NEW_THEME)
+    bool prefersReducedTransparency = Theme::singleton().userPrefersReducedTransparency();
+#else
+    bool prefersReducedTransparency = false;
+#endif
+
+    auto prefersReducedTransparencyUserPreference = Protocol::Page::UserPreference::create()
+        .setName(Protocol::Page::UserPreferenceName::PrefersReducedTransparency)
+        .setValue(prefersReducedTransparency ? Protocol::Page::UserPreferenceValue::Reduce : Protocol::Page::UserPreferenceValue::NoPreference)
+        .release();
+
+    defaultUserPreferences->addItem(WTFMove(prefersReducedTransparencyUserPreference));
 
 #if ENABLE(DARK_MODE_CSS) || HAVE(OS_DARK_MODE_SUPPORT)
     auto prefersColorSchemeUserPreference = Protocol::Page::UserPreference::create()

@@ -35,7 +35,7 @@
         {
             "id": "UserPreferenceName",
             "type": "string",
-            "enum": ["PrefersReducedMotion", "PrefersContrast", "PrefersColorScheme"],
+            "enum": ["PrefersReducedMotion", "PrefersContrast", "PrefersColorScheme", "PrefersReducedTransparency"],
             "description": "User preference name."
         },
         {

@@ -58,6 +58,7 @@ InternalSettings::Backup::Backup(Settings& settings)
     , m_forcedDisplayIsMonochromeAccessibilityValue(settings.forcedDisplayIsMonochromeAccessibilityValue())
     , m_forcedPrefersContrastAccessibilityValue(settings.forcedPrefersContrastAccessibilityValue())
     , m_forcedPrefersReducedMotionAccessibilityValue(settings.forcedPrefersReducedMotionAccessibilityValue())
+    , m_forcedPrefersReducedTransparencyAccessibilityValue(settings.forcedPrefersReducedTransparencyAccessibilityValue())
     , m_fontLoadTimingOverride(settings.fontLoadTimingOverride())
     , m_fetchAPIKeepAliveAPIEnabled(DeprecatedGlobalSettings::fetchAPIKeepAliveEnabled())
     , m_customPasteboardDataEnabled(DeprecatedGlobalSettings::customPasteboardDataEnabled())
@@ -111,6 +112,7 @@ void InternalSettings::Backup::restoreTo(Settings& settings)
     settings.setForcedDisplayIsMonochromeAccessibilityValue(m_forcedDisplayIsMonochromeAccessibilityValue);
     settings.setForcedPrefersContrastAccessibilityValue(m_forcedPrefersContrastAccessibilityValue);
     settings.setForcedPrefersReducedMotionAccessibilityValue(m_forcedPrefersReducedMotionAccessibilityValue);
+    settings.setForcedPrefersReducedTransparencyAccessibilityValue(m_forcedPrefersReducedTransparencyAccessibilityValue);
     settings.setFontLoadTimingOverride(m_fontLoadTimingOverride);
 
     DeprecatedGlobalSettings::setFetchAPIKeepAliveEnabled(m_fetchAPIKeepAliveAPIEnabled);
@@ -395,6 +397,16 @@ InternalSettings::ForcedAccessibilityValue InternalSettings::forcedPrefersReduce
 void InternalSettings::setForcedPrefersReducedMotionAccessibilityValue(InternalSettings::ForcedAccessibilityValue value)
 {
     settings().setForcedPrefersReducedMotionAccessibilityValue(value);
+}
+
+InternalSettings::ForcedAccessibilityValue InternalSettings::forcedPrefersReducedTransparencyAccessibilityValue() const
+{
+    return settings().forcedPrefersReducedTransparencyAccessibilityValue();
+}
+
+void InternalSettings::setForcedPrefersReducedTransparencyAccessibilityValue(InternalSettings::ForcedAccessibilityValue value)
+{
+    settings().setForcedPrefersReducedTransparencyAccessibilityValue(value);
 }
 
 InternalSettings::ForcedAccessibilityValue InternalSettings::forcedSupportsHighDynamicRangeValue() const

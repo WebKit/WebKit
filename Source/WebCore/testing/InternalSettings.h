@@ -80,6 +80,8 @@ public:
     void setForcedPrefersContrastAccessibilityValue(ForcedAccessibilityValue);
     ForcedAccessibilityValue forcedPrefersReducedMotionAccessibilityValue() const;
     void setForcedPrefersReducedMotionAccessibilityValue(ForcedAccessibilityValue);
+    ForcedAccessibilityValue forcedPrefersReducedTransparencyAccessibilityValue() const;
+    void setForcedPrefersReducedTransparencyAccessibilityValue(ForcedAccessibilityValue);
     ForcedAccessibilityValue forcedSupportsHighDynamicRangeValue() const;
     void setForcedSupportsHighDynamicRangeValue(ForcedAccessibilityValue);
 
@@ -153,6 +155,7 @@ private:
         WebCore::ForcedAccessibilityValue m_forcedDisplayIsMonochromeAccessibilityValue;
         WebCore::ForcedAccessibilityValue m_forcedPrefersContrastAccessibilityValue;
         WebCore::ForcedAccessibilityValue m_forcedPrefersReducedMotionAccessibilityValue;
+        WebCore::ForcedAccessibilityValue m_forcedPrefersReducedTransparencyAccessibilityValue;
         WebCore::FontLoadTimingOverride m_fontLoadTimingOverride;
 
         // DeprecatedGlobalSettings

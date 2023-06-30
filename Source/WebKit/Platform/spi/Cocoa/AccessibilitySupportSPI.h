@@ -41,6 +41,7 @@ typedef enum {
 WTF_EXTERN_C_BEGIN
 
 void _AXSSetReduceMotionEnabled(Boolean enabled);
+void _AXSSetReduceTransparencyEnabled(Boolean enabled);
 void _AXSSetDarkenSystemColors(Boolean enabled);
 Boolean _AXSKeyRepeatEnabled();
 Boolean _AXSApplicationAccessibilityEnabled();
@@ -48,14 +49,17 @@ void _AXSApplicationAccessibilitySetEnabled(Boolean enabled);
 extern CFStringRef kAXSApplicationAccessibilityEnabledNotification;
 
 extern CFStringRef kAXSReduceMotionPreference;
+extern CFStringRef kAXSReduceTransparencyPreference;
 
 extern CFStringRef kAXSReduceMotionChangedNotification;
+extern CFStringRef kAXSReduceTransparencyChangedNotification;
 extern CFStringRef kAXSIncreaseButtonLegibilityNotification;
 extern CFStringRef kAXSEnhanceTextLegibilityChangedNotification;
 extern CFStringRef kAXSDarkenSystemColorsEnabledNotification;
 extern CFStringRef kAXSInvertColorsEnabledNotification;
 
 AXValueState _AXSReduceMotionEnabledApp(CFStringRef appID);
+AXValueState _AXSReduceTransparencyEnabledApp(CFStringRef appID);
 AXValueState _AXSIncreaseButtonLegibilityApp(CFStringRef appID);
 AXValueState _AXSEnhanceTextLegibilityEnabledApp(CFStringRef appID);
 AXValueState _AXDarkenSystemColorsApp(CFStringRef appID);
@@ -63,6 +67,7 @@ AXValueState _AXSInvertColorsEnabledApp(CFStringRef appID);
 Boolean _AXSEnhanceTextLegibilityEnabled();
 
 void _AXSSetReduceMotionEnabledApp(AXValueState enabled, CFStringRef appID);
+void _AXSSetReduceTransparencyEnabledApp(AXValueState enabled, CFStringRef appID);
 void _AXSSetIncreaseButtonLegibilityApp(AXValueState enabled, CFStringRef appID);
 void _AXSSetEnhanceTextLegibilityEnabledApp(AXValueState enabled, CFStringRef appID);
 void _AXSSetDarkenSystemColorsApp(AXValueState enabled, CFStringRef appID);

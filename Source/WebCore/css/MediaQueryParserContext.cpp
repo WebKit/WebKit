@@ -34,12 +34,14 @@ namespace WebCore {
     
 MediaQueryParserContext::MediaQueryParserContext(const CSSParserContext& context)
     : useSystemAppearance(context.useSystemAppearance)
+    , cssPrefersReducedTransparencyEnabled(context.cssPrefersReducedTransparencyEnabled)
     , mode(context.mode)
 {
 }
 
 MediaQueryParserContext::MediaQueryParserContext(const Document& document)
     : useSystemAppearance(document.page() && document.page()->useSystemAppearance())
+    , cssPrefersReducedTransparencyEnabled(document.settings().cssPrefersReducedTransparencyEnabled())
 {
 }
 

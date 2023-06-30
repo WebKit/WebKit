@@ -190,6 +190,9 @@ const FeatureSchema* MediaQueryParser::schemaForFeatureName(const AtomString& na
     if (schema == &Features::prefersDarkInterface()) {
         if (!m_context.useSystemAppearance && !isUASheetBehavior(m_context.mode))
             return nullptr;
+    } else if (schema == &Features::prefersReducedTransparency()) {
+        if (!m_context.cssPrefersReducedTransparencyEnabled)
+            return nullptr;
     }
     
     return schema;

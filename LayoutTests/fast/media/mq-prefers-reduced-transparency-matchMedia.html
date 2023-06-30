@@ -1,0 +1,51 @@
+<html>
+<head>
+<title>CSS5 media query test: prefers-reduced-transparency using matchMedia and addListener.</title>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function runTest()
+{
+    if (!window.internals)
+        return;
+
+    var transparencyQuery = window.matchMedia("(prefers-reduced-transparency)");
+    transparencyQuery.addListener(() => {
+        document.getElementById("after").textContent = transparencyQuery.matches ? "true" : "false";
+        queryFired = true;
+        checkDone();
+    });
+
+    document.getElementById("before").textContent = transparencyQuery.matches ? "true" : "false";
+    window.internals.settings.forcedPrefersReducedTransparencyAccessibilityValue = "on";
+    testRunner.runUIScript(`
+        (function() {
+            uiController.simulateAccessibilitySettingsChangeNotification(function() {
+                uiController.uiScriptComplete("Done");
+            });
+        })();`, function (result) {
+            scriptRan = true;
+            checkDone();
+        });
+}
+
+let queryFired = false;
+let scriptRan = false;
+
+function checkDone() {
+    if (queryFired && scriptRan)
+        testRunner.notifyDone();
+}
+
+window.addEventListener("load", runTest, false);
+</script>
+</head>
+<body>
+  <p>Initial value of transparencyQuery.matches: <span id="before">unknown</span> - should be false</p>
+  <p>Updated value of transparencyQuery.matches: <span id="after">unknown</span> - should be true</p>
+  <p>Note the updated value will only be filled if the listener fires.</p>
+</body>
+</html>

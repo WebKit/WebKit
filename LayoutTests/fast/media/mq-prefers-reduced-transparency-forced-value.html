@@ -1,0 +1,32 @@
+<html>
+<head>
+<title>CSS5 media query test: prefers-reduced-transparency.</title>
+<style type="text/css">
+p { color: black; }
+</style>
+<script>
+window.addEventListener("load", function () {
+    if (!window.internals)
+        return;
+
+    window.internals.settings.forcedPrefersReducedTransparencyAccessibilityValue = "on";
+    if (window.matchMedia("(prefers-reduced-transparency)").matches)
+        document.getElementById("a").style.color = "green";
+    if (window.matchMedia("(prefers-reduced-transparency: reduce)").matches)
+        document.getElementById("b").style.color = "green";
+
+    window.internals.settings.forcedPrefersReducedTransparencyAccessibilityValue = "off";
+    if (!window.matchMedia("(prefers-reduced-transparency)").matches)
+        document.getElementById("c").style.color = "green";
+    if (window.matchMedia("(prefers-reduced-transparency: no-preference)").matches)
+        document.getElementById("d").style.color = "green";
+}, false);
+</script>
+</head>
+<body>
+  <p id="a">This text should be green.</p>
+  <p id="b">This text should be green.</p>
+  <p id="c">This text should be green.</p>
+  <p id="d">This text should be green.</p>
+</body>
+</html>

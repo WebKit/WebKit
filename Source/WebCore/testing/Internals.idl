@@ -945,6 +945,7 @@ typedef (FetchRequest or FetchResponse) FetchObject;
 
     boolean userPrefersContrast();
     boolean userPrefersReducedMotion();
+    boolean userPrefersReducedTransparency();
 
     undefined reportBacktrace();
 

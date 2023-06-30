@@ -93,6 +93,7 @@ struct CSSParserContext {
     bool masonryEnabled { false };
     bool cssNestingEnabled { false };
     bool cssPaintingAPIEnabled { false };
+    bool cssPrefersReducedTransparencyEnabled { false };
     bool cssTextUnderlinePositionLeftRightEnabled { false };
     bool cssTextWrapNewValuesEnabled { false };
 

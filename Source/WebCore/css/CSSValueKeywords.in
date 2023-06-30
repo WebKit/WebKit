@@ -1586,6 +1586,7 @@ prefers
 // no-preference
 
 // prefers-reduced-motion
+// prefers-reduced-transparency
 reduce
 no-preference
 

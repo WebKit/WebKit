@@ -1196,6 +1196,20 @@ CSSPaintingAPIEnabled:
     WebCore:
       default: false
 
+CSSPrefersReducedTransparencyEnabled:
+  type: bool
+  status: testable
+  category: css
+  humanReadableName: "CSS prefers-reduced-transparency media query"
+  humanReadableDescription: "Enable the CSS prefers-reduced-transparency media query"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 CSSRelativeColorSyntaxEnabled:
   type: bool
   status: stable

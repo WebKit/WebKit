@@ -58,6 +58,7 @@ enum UserInterfaceDirectionPolicy { "Content", "System" };
     attribute ForcedAccessibilityValue forcedDisplayIsMonochromeAccessibilityValue;
     attribute ForcedAccessibilityValue forcedPrefersContrastAccessibilityValue;
     attribute ForcedAccessibilityValue forcedPrefersReducedMotionAccessibilityValue;
+    attribute ForcedAccessibilityValue forcedPrefersReducedTransparencyAccessibilityValue;
     attribute ForcedAccessibilityValue forcedSupportsHighDynamicRangeValue;
 
     // DeprecatedGlobalSettings.

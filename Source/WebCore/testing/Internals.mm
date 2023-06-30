@@ -116,6 +116,15 @@ bool Internals::userPrefersReducedMotion() const
 #endif
 }
 
+bool Internals::userPrefersReducedTransparency() const
+{
+#if PLATFORM(IOS_FAMILY)
+    return PAL::softLink_UIKit_UIAccessibilityIsReduceTransparencyEnabled();
+#else
+    return [[NSWorkspace sharedWorkspace] accessibilityDisplayShouldReduceTransparency];
+#endif
+}
+
 #if PLATFORM(MAC)
 
 ExceptionOr<RefPtr<Range>> Internals::rangeForDictionaryLookupAtLocation(int x, int y)
