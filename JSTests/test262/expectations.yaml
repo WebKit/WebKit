@@ -601,6 +601,104 @@ test/annexB/language/global-code/switch-dflt-global-skip-early-err-try.js:
   default: 'Test262Error: An initialized binding is not created prior to evaluation Expected a ReferenceError to be thrown but no exception was thrown at all'
 test/annexB/language/global-code/switch-dflt-global-skip-early-err.js:
   default: "SyntaxError: Cannot declare a function that shadows a let/const/class/function variable 'f' in strict mode."
+test/built-ins/Array/prototype/Symbol.unscopables/array-grouping.js:
+  default: 'Test262Error: `group` property value Expected SameValue(«undefined», «true») to be true'
+  strict mode: 'Test262Error: `group` property value Expected SameValue(«undefined», «true») to be true'
+test/built-ins/Array/prototype/group/array-like.js:
+  default: "TypeError: undefined is not an object (evaluating 'Array.prototype.group.call')"
+  strict mode: "TypeError: undefined is not an object (evaluating 'Array.prototype.group.call')"
+test/built-ins/Array/prototype/group/callback-arg.js:
+  default: "TypeError: undefined is not a function (near '...arr.group...')"
+  strict mode: "TypeError: undefined is not a function (near '...arr.group...')"
+test/built-ins/Array/prototype/group/callback-throws.js:
+  default: 'Test262Error: Expected a Test262Error but got a TypeError'
+  strict mode: 'Test262Error: Expected a Test262Error but got a TypeError'
+test/built-ins/Array/prototype/group/emptyList.js:
+  default: "TypeError: original.group is not a function. (In 'original.group(function () {"
+  strict mode: "TypeError: original.group is not a function. (In 'original.group(function () {"
+test/built-ins/Array/prototype/group/evenOdd.js:
+  default: "TypeError: array.group is not a function. (In 'array.group(function (i) {"
+  strict mode: "TypeError: array.group is not a function. (In 'array.group(function (i) {"
+test/built-ins/Array/prototype/group/get-throws.js:
+  default: 'Test262Error: Expected a Test262Error but got a TypeError'
+  strict mode: 'Test262Error: Expected a Test262Error but got a TypeError'
+test/built-ins/Array/prototype/group/groupLength.js:
+  default: "TypeError: arr.group is not a function. (In 'arr.group(function (i) { return i.length; })', 'arr.group' is undefined)"
+  strict mode: "TypeError: arr.group is not a function. (In 'arr.group(function (i) { return i.length; })', 'arr.group' is undefined)"
+test/built-ins/Array/prototype/group/invalid-property-key.js:
+  default: 'Test262Error: Expected a Test262Error but got a TypeError'
+  strict mode: 'Test262Error: Expected a Test262Error but got a TypeError'
+test/built-ins/Array/prototype/group/length-throw.js:
+  default: 'Test262Error: Expected a Test262Error but got a TypeError'
+  strict mode: 'Test262Error: Expected a Test262Error but got a TypeError'
+test/built-ins/Array/prototype/group/length.js:
+  default: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
+  strict mode: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
+test/built-ins/Array/prototype/group/name.js:
+  default: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
+  strict mode: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
+test/built-ins/Array/prototype/group/null-prototype.js:
+  default: "TypeError: array.group is not a function. (In 'array.group(function (i) {"
+  strict mode: "TypeError: array.group is not a function. (In 'array.group(function (i) {"
+test/built-ins/Array/prototype/group/sparse-array.js:
+  default: "TypeError: array.group is not a function. (In 'array.group(function () {"
+  strict mode: "TypeError: array.group is not a function. (In 'array.group(function () {"
+test/built-ins/Array/prototype/group/this-arg-strict.js:
+  strict mode: "TypeError: [1].group is not a function. (In '[1].group(function() {"
+test/built-ins/Array/prototype/group/this-arg.js:
+  default: "TypeError: [1].group is not a function. (In '[1].group(function() {"
+test/built-ins/Array/prototype/group/toPropertyKey.js:
+  default: "TypeError: array.group is not a function. (In 'array.group(function (v) { return v; })', 'array.group' is undefined)"
+  strict mode: "TypeError: array.group is not a function. (In 'array.group(function (v) { return v; })', 'array.group' is undefined)"
+test/built-ins/Array/prototype/groupToMap/array-like.js:
+  default: "TypeError: undefined is not an object (evaluating 'Array.prototype.groupToMap.call')"
+  strict mode: "TypeError: undefined is not an object (evaluating 'Array.prototype.groupToMap.call')"
+test/built-ins/Array/prototype/groupToMap/callback-arg.js:
+  default: "TypeError: undefined is not a function (near '...arr.groupToMap...')"
+  strict mode: "TypeError: undefined is not a function (near '...arr.groupToMap...')"
+test/built-ins/Array/prototype/groupToMap/callback-throws.js:
+  default: 'Test262Error: Expected a Test262Error but got a TypeError'
+  strict mode: 'Test262Error: Expected a Test262Error but got a TypeError'
+test/built-ins/Array/prototype/groupToMap/emptyList.js:
+  default: "TypeError: original.groupToMap is not a function. (In 'original.groupToMap(function () {"
+  strict mode: "TypeError: original.groupToMap is not a function. (In 'original.groupToMap(function () {"
+test/built-ins/Array/prototype/groupToMap/evenOdd.js:
+  default: "TypeError: array.groupToMap is not a function. (In 'array.groupToMap(function (i) {"
+  strict mode: "TypeError: array.groupToMap is not a function. (In 'array.groupToMap(function (i) {"
+test/built-ins/Array/prototype/groupToMap/get-throws.js:
+  default: 'Test262Error: Expected a Test262Error but got a TypeError'
+  strict mode: 'Test262Error: Expected a Test262Error but got a TypeError'
+test/built-ins/Array/prototype/groupToMap/groupLength.js:
+  default: "TypeError: arr.groupToMap is not a function. (In 'arr.groupToMap(function (i) { return i.length; })', 'arr.groupToMap' is undefined)"
+  strict mode: "TypeError: arr.groupToMap is not a function. (In 'arr.groupToMap(function (i) { return i.length; })', 'arr.groupToMap' is undefined)"
+test/built-ins/Array/prototype/groupToMap/invalid-property-key.js:
+  default: "TypeError: [1].groupToMap is not a function. (In '[1].groupToMap(function() {"
+  strict mode: "TypeError: [1].groupToMap is not a function. (In '[1].groupToMap(function() {"
+test/built-ins/Array/prototype/groupToMap/length-throw.js:
+  default: 'Test262Error: Expected a Test262Error but got a TypeError'
+  strict mode: 'Test262Error: Expected a Test262Error but got a TypeError'
+test/built-ins/Array/prototype/groupToMap/length.js:
+  default: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
+  strict mode: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
+test/built-ins/Array/prototype/groupToMap/map-instance.js:
+  default: "TypeError: array.groupToMap is not a function. (In 'array.groupToMap(function (i) {"
+  strict mode: "TypeError: array.groupToMap is not a function. (In 'array.groupToMap(function (i) {"
+test/built-ins/Array/prototype/groupToMap/name.js:
+  default: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
+  strict mode: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
+test/built-ins/Array/prototype/groupToMap/negativeZero.js:
+  default: "TypeError: arr.groupToMap is not a function. (In 'arr.groupToMap(function (i) { return i; })', 'arr.groupToMap' is undefined)"
+  strict mode: "TypeError: arr.groupToMap is not a function. (In 'arr.groupToMap(function (i) { return i; })', 'arr.groupToMap' is undefined)"
+test/built-ins/Array/prototype/groupToMap/sparse-array.js:
+  default: "TypeError: array.groupToMap is not a function. (In 'array.groupToMap(function () {"
+  strict mode: "TypeError: array.groupToMap is not a function. (In 'array.groupToMap(function () {"
+test/built-ins/Array/prototype/groupToMap/this-arg-strict.js:
+  strict mode: "TypeError: [1].groupToMap is not a function. (In '[1].groupToMap(function() {"
+test/built-ins/Array/prototype/groupToMap/this-arg.js:
+  default: "TypeError: [1].groupToMap is not a function. (In '[1].groupToMap(function() {"
+test/built-ins/Array/prototype/groupToMap/toPropertyKey.js:
+  default: "TypeError: array.groupToMap is not a function. (In 'array.groupToMap(v => v)', 'array.groupToMap' is undefined)"
+  strict mode: "TypeError: array.groupToMap is not a function. (In 'array.groupToMap(v => v)', 'array.groupToMap' is undefined)"
 test/built-ins/ArrayBuffer/prototype/detached/detached-buffer-resizable.js:
   default: 'Test262Error: Resizable ArrayBuffer with maxByteLength of 0 is not detached Expected SameValue(«undefined», «false») to be true'
   strict mode: 'Test262Error: Resizable ArrayBuffer with maxByteLength of 0 is not detached Expected SameValue(«undefined», «false») to be true'
@@ -652,24 +750,6 @@ test/built-ins/AsyncGeneratorPrototype/return/return-suspendedStart-broken-promi
 test/built-ins/AsyncGeneratorPrototype/return/return-suspendedYield-broken-promise-try-catch.js:
   default: 'Test262:AsyncTestFailure:Error: broken promise'
   strict mode: 'Test262:AsyncTestFailure:Error: broken promise'
-test/built-ins/Date/S15.9.3.1_A5_T1.js:
-  default: 'Test262Error: Expected Fri Dec 01 1899 00:00:00 GMT+0009 (Central European Standard Time) to be -2211667200000 milliseconds from the Unix epoch'
-  strict mode: 'Test262Error: Expected Fri Dec 01 1899 00:00:00 GMT+0009 (Central European Standard Time) to be -2211667200000 milliseconds from the Unix epoch'
-test/built-ins/Date/S15.9.3.1_A5_T2.js:
-  default: 'Test262Error: Expected Sun Dec 31 1899 00:00:00 GMT+0009 (Central European Standard Time) to be -2209075200000 milliseconds from the Unix epoch'
-  strict mode: 'Test262Error: Expected Sun Dec 31 1899 00:00:00 GMT+0009 (Central European Standard Time) to be -2209075200000 milliseconds from the Unix epoch'
-test/built-ins/Date/S15.9.3.1_A5_T3.js:
-  default: 'Test262Error: Expected Sun Dec 31 1899 23:00:00 GMT+0009 (Central European Standard Time) to be -2208992400000 milliseconds from the Unix epoch'
-  strict mode: 'Test262Error: Expected Sun Dec 31 1899 23:00:00 GMT+0009 (Central European Standard Time) to be -2208992400000 milliseconds from the Unix epoch'
-test/built-ins/Date/S15.9.3.1_A5_T4.js:
-  default: 'Test262Error: Expected Sun Dec 31 1899 23:59:00 GMT+0009 (Central European Standard Time) to be -2208988860000 milliseconds from the Unix epoch'
-  strict mode: 'Test262Error: Expected Sun Dec 31 1899 23:59:00 GMT+0009 (Central European Standard Time) to be -2208988860000 milliseconds from the Unix epoch'
-test/built-ins/Date/S15.9.3.1_A5_T5.js:
-  default: 'Test262Error: Expected Sun Dec 31 1899 23:59:59 GMT+0009 (Central European Standard Time) to be -2208988801000 milliseconds from the Unix epoch'
-  strict mode: 'Test262Error: Expected Sun Dec 31 1899 23:59:59 GMT+0009 (Central European Standard Time) to be -2208988801000 milliseconds from the Unix epoch'
-test/built-ins/Date/S15.9.3.1_A5_T6.js:
-  default: 'Test262Error: Expected Sun Dec 31 1899 23:59:59 GMT+0009 (Central European Standard Time) to be -2208988800001 milliseconds from the Unix epoch'
-  strict mode: 'Test262Error: Expected Sun Dec 31 1899 23:59:59 GMT+0009 (Central European Standard Time) to be -2208988800001 milliseconds from the Unix epoch'
 test/built-ins/Function/internals/Construct/derived-return-val-realm.js:
   default: 'Test262Error: Expected a TypeError but got a different error constructor with the same name'
   strict mode: 'Test262Error: Expected a TypeError but got a different error constructor with the same name'
@@ -1051,6 +1131,12 @@ test/built-ins/Temporal/PlainTime/prototype/with/order-of-operations.js:
 test/built-ins/Temporal/getOwnPropertyNames.js:
   default: 'Test262Error: ZonedDateTime'
   strict mode: 'Test262Error: ZonedDateTime'
+test/built-ins/TypedArray/prototype/set/BigInt/number-tobigint.js:
+  default: 'Test262Error: abrupt completion from Number: 1 Expected a TypeError to be thrown but no exception was thrown at all (Testing with BigInt64Array.)'
+  strict mode: 'Test262Error: abrupt completion from Number: 1 Expected a TypeError to be thrown but no exception was thrown at all (Testing with BigInt64Array.)'
+test/built-ins/TypedArrayConstructors/ctors-bigint/object-arg/number-tobigint.js:
+  default: 'Test262Error: abrupt completion from Number: 1 Expected a TypeError to be thrown but no exception was thrown at all (Testing with BigInt64Array.)'
+  strict mode: 'Test262Error: abrupt completion from Number: 1 Expected a TypeError to be thrown but no exception was thrown at all (Testing with BigInt64Array.)'
 test/harness/asyncHelpers-asyncTest-without-async-flag.js:
   default: "Test262Error: Without 'async' flag, $DONE should not be defined"
   strict mode: "Test262Error: Without 'async' flag, $DONE should not be defined"
