@@ -33,7 +33,6 @@ namespace WebCore {
 class Font;
 class LegacyInlineTextBox;
 struct GlyphOverflow;
-class WordBoundaryDetection;
 struct WordTrailingSpace;
 
 namespace LayoutIntegration {
@@ -262,7 +261,7 @@ private:
 String applyTextTransform(const RenderStyle&, const String&, UChar previousCharacter);
 String capitalize(const String&, UChar previousCharacter);
 TextBreakIterator::LineMode::Behavior mapLineBreakToIteratorMode(LineBreak);
-TextBreakIterator::ContentAnalysis mapWordBoundaryDetectionToContentAnalysis();
+TextBreakIterator::ContentAnalysis mapWordBreakToContentAnalysis(WordBreak);
 
 inline UChar RenderText::characterAt(unsigned i) const
 {

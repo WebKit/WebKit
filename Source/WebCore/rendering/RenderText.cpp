@@ -1039,9 +1039,17 @@ TextBreakIterator::LineMode::Behavior mapLineBreakToIteratorMode(LineBreak lineB
     return TextBreakIterator::LineMode::Behavior::Default;
 }
 
-TextBreakIterator::ContentAnalysis mapWordBoundaryDetectionToContentAnalysis()
+TextBreakIterator::ContentAnalysis mapWordBreakToContentAnalysis(WordBreak wordBreak)
 {
-    // FIXME: Implement this.
+    switch (wordBreak) {
+    case WordBreak::Normal:
+    case WordBreak::BreakAll:
+    case WordBreak::KeepAll:
+    case WordBreak::BreakWord:
+        return TextBreakIterator::ContentAnalysis::Mechanical;
+    case WordBreak::Auto:
+        return TextBreakIterator::ContentAnalysis::Linguistic;
+    }
     return TextBreakIterator::ContentAnalysis::Mechanical;
 }
 
@@ -1136,7 +1144,7 @@ void RenderText::computePreferredLogicalWidths(float leadWidth, HashSet<const Fo
     auto& string = text();
     unsigned length = string.length();
     auto iteratorMode = mapLineBreakToIteratorMode(style.lineBreak());
-    auto contentAnalysis = mapWordBoundaryDetectionToContentAnalysis();
+    auto contentAnalysis = mapWordBreakToContentAnalysis(style.wordBreak());
     CachedLineBreakIteratorFactory lineBreakIteratorFactory(string, style.computedLocale(), iteratorMode, contentAnalysis);
     bool needsWordSpacing = false;
     bool ignoringSpaces = false;

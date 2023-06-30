@@ -6134,7 +6134,11 @@
                 "normal",
                 "break-all",
                 "keep-all",
-                "break-word"
+                "break-word",
+                {
+                    "settings-flag": "cssWordBreakAutoEnabled",
+                    "value": "auto"
+                }
             ],
             "codegen-properties": {
                 "aliases": [

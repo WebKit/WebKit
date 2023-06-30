@@ -378,9 +378,17 @@ TextBreakIterator::LineMode::Behavior TextUtil::lineBreakIteratorMode(LineBreak 
     return TextBreakIterator::LineMode::Behavior::Default;
 }
 
-TextBreakIterator::ContentAnalysis TextUtil::contentAnalysis()
+TextBreakIterator::ContentAnalysis TextUtil::contentAnalysis(WordBreak wordBreak)
 {
-    // FIXME: Implement this.
+    switch (wordBreak) {
+    case WordBreak::Normal:
+    case WordBreak::BreakAll:
+    case WordBreak::KeepAll:
+    case WordBreak::BreakWord:
+        return TextBreakIterator::ContentAnalysis::Mechanical;
+    case WordBreak::Auto:
+        return TextBreakIterator::ContentAnalysis::Linguistic;
+    }
     return TextBreakIterator::ContentAnalysis::Mechanical;
 }
 

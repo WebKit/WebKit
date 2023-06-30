@@ -1435,6 +1435,21 @@ CSSWhiteSpaceLonghandsEnabled:
     WebCore:
       default: false
 
+CSSWordBreakAutoEnabled:
+  type: bool
+  status: testable
+  category: css
+  webcoreOnChange: setNeedsRecalcStyleInAllFrames
+  humanReadableName: "word-break: auto enabled"
+  humanReadableDescription: "Enables the auto value of the word-break CSS property"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 # FIXME: This is not relevent for WebKitLegacy, so should be excluded from WebKitLegacy entirely (though we should still set the default value to false when initializing settings).
 CacheAPIEnabled:
   type: bool

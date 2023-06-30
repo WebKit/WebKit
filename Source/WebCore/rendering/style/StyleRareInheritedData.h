@@ -111,7 +111,7 @@ public:
     
     unsigned textSecurity : 2; // TextSecurity
     unsigned userModify : 2; // UserModify (editing)
-    unsigned wordBreak : 2; // WordBreak
+    unsigned wordBreak : 3; // WordBreak
     unsigned overflowWrap : 2; // OverflowWrap
     unsigned nbspMode : 1; // NBSPMode
     unsigned lineBreak : 3; // LineBreak

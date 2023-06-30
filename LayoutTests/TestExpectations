@@ -6549,3 +6549,6 @@ imported/w3c/web-platform-tests/css/css-overflow/overflow-auto-scrollbar-gutter-
 webkit.org/b/257336 imported/w3c/web-platform-tests/css/css-tables/visibility-collapse-row-003-dynamic.html [ Pass Failure ]
 
 webkit.org/b/257904 http/tests/site-isolation/basic-iframe.html [ Skip ]
+
+# Only some OSes have support for auto word breaking.
+imported/w3c/web-platform-tests/css/css-text/word-break/auto [ Pass Failure ImageOnlyFailure ]

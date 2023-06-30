@@ -70,7 +70,7 @@ public:
 
     static unsigned findNextBreakablePosition(CachedLineBreakIteratorFactory&, unsigned startPosition, const RenderStyle&);
     static TextBreakIterator::LineMode::Behavior lineBreakIteratorMode(LineBreak);
-    static TextBreakIterator::ContentAnalysis contentAnalysis();
+    static TextBreakIterator::ContentAnalysis contentAnalysis(WordBreak);
 
     static bool shouldPreserveSpacesAndTabs(const Box&);
     static bool shouldPreserveNewline(const Box&);
