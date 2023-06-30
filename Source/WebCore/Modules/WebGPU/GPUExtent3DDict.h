@@ -26,14 +26,14 @@
 #pragma once
 
 #include "GPUIntegralTypes.h"
-#include <pal/graphics/WebGPU/WebGPUExtent3D.h>
+#include "WebGPUExtent3D.h"
 #include <variant>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
 struct GPUExtent3DDict {
-    PAL::WebGPU::Extent3DDict convertToBacking() const
+    WebGPU::Extent3DDict convertToBacking() const
     {
         return {
             width,
@@ -49,11 +49,11 @@ struct GPUExtent3DDict {
 
 using GPUExtent3D = std::variant<Vector<GPUIntegerCoordinate>, GPUExtent3DDict>;
 
-inline PAL::WebGPU::Extent3D convertToBacking(const GPUExtent3D& extent3D)
+inline WebGPU::Extent3D convertToBacking(const GPUExtent3D& extent3D)
 {
-    return WTF::switchOn(extent3D, [](const Vector<GPUIntegerCoordinate>& vector) -> PAL::WebGPU::Extent3D {
+    return WTF::switchOn(extent3D, [](const Vector<GPUIntegerCoordinate>& vector) -> WebGPU::Extent3D {
         return vector;
-    }, [](const GPUExtent3DDict& extent3D) -> PAL::WebGPU::Extent3D {
+    }, [](const GPUExtent3DDict& extent3D) -> WebGPU::Extent3D {
         return extent3D.convertToBacking();
     });
 }

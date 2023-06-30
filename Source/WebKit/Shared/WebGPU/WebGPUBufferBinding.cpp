@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,11 +30,11 @@
 
 #include "WebGPUConvertFromBackingContext.h"
 #include "WebGPUConvertToBackingContext.h"
-#include <pal/graphics/WebGPU/WebGPUBufferBinding.h>
+#include <WebCore/WebGPUBufferBinding.h>
 
 namespace WebKit::WebGPU {
 
-std::optional<BufferBinding> ConvertToBackingContext::convertToBacking(const PAL::WebGPU::BufferBinding& bufferBinding)
+std::optional<BufferBinding> ConvertToBackingContext::convertToBacking(const WebCore::WebGPU::BufferBinding& bufferBinding)
 {
     auto buffer = convertToBacking(bufferBinding.buffer);
     if (!buffer)
@@ -43,7 +43,7 @@ std::optional<BufferBinding> ConvertToBackingContext::convertToBacking(const PAL
     return { { buffer, bufferBinding.offset, bufferBinding.size } };
 }
 
-std::optional<PAL::WebGPU::BufferBinding> ConvertFromBackingContext::convertFromBacking(const BufferBinding& bufferBinding)
+std::optional<WebCore::WebGPU::BufferBinding> ConvertFromBackingContext::convertFromBacking(const BufferBinding& bufferBinding)
 {
     auto* buffer = convertBufferFromBacking(bufferBinding.buffer);
     if (!buffer)

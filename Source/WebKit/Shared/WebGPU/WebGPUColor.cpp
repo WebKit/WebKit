@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,20 +30,20 @@
 
 #include "WebGPUConvertFromBackingContext.h"
 #include "WebGPUConvertToBackingContext.h"
-#include <pal/graphics/WebGPU/WebGPUColor.h>
+#include <WebCore/WebGPUColor.h>
 
 namespace WebKit::WebGPU {
 
-std::optional<ColorDict> ConvertToBackingContext::convertToBacking(const PAL::WebGPU::ColorDict& colorDict)
+std::optional<ColorDict> ConvertToBackingContext::convertToBacking(const WebCore::WebGPU::ColorDict& colorDict)
 {
     return { { colorDict.r, colorDict.g, colorDict.b, colorDict.a } };
 }
 
-std::optional<Color> ConvertToBackingContext::convertToBacking(const PAL::WebGPU::Color& color)
+std::optional<Color> ConvertToBackingContext::convertToBacking(const WebCore::WebGPU::Color& color)
 {
     return WTF::switchOn(color, [] (const Vector<double>& vector) -> std::optional<Color> {
         return { { vector } };
-    }, [this] (const PAL::WebGPU::ColorDict& colorDict) -> std::optional<Color> {
+    }, [this] (const WebCore::WebGPU::ColorDict& colorDict) -> std::optional<Color> {
         auto color = convertToBacking(colorDict);
         if (!color)
             return std::nullopt;
@@ -51,16 +51,16 @@ std::optional<Color> ConvertToBackingContext::convertToBacking(const PAL::WebGPU
     });
 }
 
-std::optional<PAL::WebGPU::ColorDict> ConvertFromBackingContext::convertFromBacking(const ColorDict& colorDict)
+std::optional<WebCore::WebGPU::ColorDict> ConvertFromBackingContext::convertFromBacking(const ColorDict& colorDict)
 {
     return { { colorDict.r, colorDict.g, colorDict.b, colorDict.a } };
 }
 
-std::optional<PAL::WebGPU::Color> ConvertFromBackingContext::convertFromBacking(const Color& color)
+std::optional<WebCore::WebGPU::Color> ConvertFromBackingContext::convertFromBacking(const Color& color)
 {
-    return WTF::switchOn(color, [] (const Vector<double>& vector) -> std::optional<PAL::WebGPU::Color> {
+    return WTF::switchOn(color, [] (const Vector<double>& vector) -> std::optional<WebCore::WebGPU::Color> {
         return { { vector } };
-    }, [this] (const ColorDict& colorDict) -> std::optional<PAL::WebGPU::Color> {
+    }, [this] (const ColorDict& colorDict) -> std::optional<WebCore::WebGPU::Color> {
         auto color = convertFromBacking(colorDict);
         if (!color)
             return std::nullopt;

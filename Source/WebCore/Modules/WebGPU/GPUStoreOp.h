@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,8 +25,8 @@
 
 #pragma once
 
+#include "WebGPUStoreOp.h"
 #include <cstdint>
-#include <pal/graphics/WebGPU/WebGPUStoreOp.h>
 
 namespace WebCore {
 
@@ -35,13 +35,13 @@ enum class GPUStoreOp : uint8_t {
     Discard,
 };
 
-inline PAL::WebGPU::StoreOp convertToBacking(GPUStoreOp storeOp)
+inline WebGPU::StoreOp convertToBacking(GPUStoreOp storeOp)
 {
     switch (storeOp) {
     case GPUStoreOp::Store:
-        return PAL::WebGPU::StoreOp::Store;
+        return WebGPU::StoreOp::Store;
     case GPUStoreOp::Discard:
-        return PAL::WebGPU::StoreOp::Discard;
+        return WebGPU::StoreOp::Discard;
     }
     RELEASE_ASSERT_NOT_REACHED();
 }

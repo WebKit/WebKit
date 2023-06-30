@@ -52,6 +52,7 @@
 #include "StorageNamespace.h"
 #include "StorageNamespaceProvider.h"
 #include "TextDetectorInterface.h"
+#include "WebGPU.h"
 #include "WindowFeatures.h"
 #include "WorkerClient.h"
 #include <JavaScriptCore/VM.h>
@@ -565,7 +566,7 @@ RefPtr<GraphicsContextGL> Chrome::createGraphicsContextGL(const GraphicsContextG
 }
 #endif
 
-RefPtr<PAL::WebGPU::GPU> Chrome::createGPUForWebGPU() const
+RefPtr<WebGPU::GPU> Chrome::createGPUForWebGPU() const
 {
     return m_client->createGPUForWebGPU();
 }

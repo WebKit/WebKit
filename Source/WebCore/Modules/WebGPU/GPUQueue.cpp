@@ -50,7 +50,7 @@ void GPUQueue::setLabel(String&& label)
 
 void GPUQueue::submit(Vector<RefPtr<GPUCommandBuffer>>&& commandBuffers)
 {
-    Vector<std::reference_wrapper<PAL::WebGPU::CommandBuffer>> result;
+    Vector<std::reference_wrapper<WebGPU::CommandBuffer>> result;
     result.reserveInitialCapacity(commandBuffers.size());
     for (const auto& commandBuffer : commandBuffers) {
         if (!commandBuffer)

@@ -28,13 +28,13 @@
 #include "GPUBindGroupEntry.h"
 #include "GPUBindGroupLayout.h"
 #include "GPUObjectDescriptorBase.h"
-#include <pal/graphics/WebGPU/WebGPUBindGroupDescriptor.h>
+#include "WebGPUBindGroupDescriptor.h"
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
 struct GPUBindGroupDescriptor : public GPUObjectDescriptorBase {
-    PAL::WebGPU::BindGroupDescriptor convertToBacking() const
+    WebGPU::BindGroupDescriptor convertToBacking() const
     {
         ASSERT(layout);
         return {

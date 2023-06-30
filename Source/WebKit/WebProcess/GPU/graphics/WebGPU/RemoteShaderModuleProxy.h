@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,13 +29,13 @@
 
 #include "RemoteDeviceProxy.h"
 #include "WebGPUIdentifier.h"
-#include <pal/graphics/WebGPU/WebGPUShaderModule.h>
+#include <WebCore/WebGPUShaderModule.h>
 
 namespace WebKit::WebGPU {
 
 class ConvertToBackingContext;
 
-class RemoteShaderModuleProxy final : public PAL::WebGPU::ShaderModule {
+class RemoteShaderModuleProxy final : public WebCore::WebGPU::ShaderModule {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<RemoteShaderModuleProxy> create(RemoteDeviceProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
@@ -77,7 +77,7 @@ private:
         return root().streamClientConnection().sendWithAsyncReply(WTFMove(message), completionHandler, backing(), defaultSendTimeout);
     }
 
-    void compilationInfo(CompletionHandler<void(Ref<PAL::WebGPU::CompilationInfo>&&)>&&) final;
+    void compilationInfo(CompletionHandler<void(Ref<WebCore::WebGPU::CompilationInfo>&&)>&&) final;
 
     void setLabelInternal(const String&) final;
 

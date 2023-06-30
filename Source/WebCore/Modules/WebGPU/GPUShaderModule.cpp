@@ -43,7 +43,7 @@ void GPUShaderModule::setLabel(String&& label)
 
 void GPUShaderModule::compilationInfo(CompilationInfoPromise&& promise)
 {
-    m_backing->compilationInfo([promise = WTFMove(promise)](Ref<PAL::WebGPU::CompilationInfo>&& compilationInfo) mutable {
+    m_backing->compilationInfo([promise = WTFMove(promise)](Ref<WebGPU::CompilationInfo>&& compilationInfo) mutable {
         promise.resolve(GPUCompilationInfo::create(WTFMove(compilationInfo)));
     });
 }

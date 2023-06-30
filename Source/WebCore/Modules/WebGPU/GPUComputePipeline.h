@@ -26,8 +26,8 @@
 #pragma once
 
 #include "GPUBindGroupLayout.h"
+#include "WebGPUComputePipeline.h"
 #include <cstdint>
-#include <pal/graphics/WebGPU/WebGPUComputePipeline.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
@@ -36,7 +36,7 @@ namespace WebCore {
 
 class GPUComputePipeline : public RefCounted<GPUComputePipeline> {
 public:
-    static Ref<GPUComputePipeline> create(Ref<PAL::WebGPU::ComputePipeline>&& backing)
+    static Ref<GPUComputePipeline> create(Ref<WebGPU::ComputePipeline>&& backing)
     {
         return adoptRef(*new GPUComputePipeline(WTFMove(backing)));
     }
@@ -46,16 +46,16 @@ public:
 
     Ref<GPUBindGroupLayout> getBindGroupLayout(uint32_t index);
 
-    PAL::WebGPU::ComputePipeline& backing() { return m_backing; }
-    const PAL::WebGPU::ComputePipeline& backing() const { return m_backing; }
+    WebGPU::ComputePipeline& backing() { return m_backing; }
+    const WebGPU::ComputePipeline& backing() const { return m_backing; }
 
 private:
-    GPUComputePipeline(Ref<PAL::WebGPU::ComputePipeline>&& backing)
+    GPUComputePipeline(Ref<WebGPU::ComputePipeline>&& backing)
         : m_backing(WTFMove(backing))
     {
     }
 
-    Ref<PAL::WebGPU::ComputePipeline> m_backing;
+    Ref<WebGPU::ComputePipeline> m_backing;
 };
 
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,7 +29,7 @@
 
 #include "RemoteGPUProxy.h"
 #include "WebGPUIdentifier.h"
-#include <pal/graphics/WebGPU/WebGPUAdapter.h>
+#include <WebCore/WebGPUAdapter.h>
 #include <wtf/Deque.h>
 
 namespace WebKit {
@@ -40,10 +40,10 @@ namespace WebKit::WebGPU {
 
 class ConvertToBackingContext;
 
-class RemoteAdapterProxy final : public PAL::WebGPU::Adapter {
+class RemoteAdapterProxy final : public WebCore::WebGPU::Adapter {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<RemoteAdapterProxy> create(String&& name, PAL::WebGPU::SupportedFeatures& features, PAL::WebGPU::SupportedLimits& limits, bool isFallbackAdapter, RemoteGPUProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
+    static Ref<RemoteAdapterProxy> create(String&& name, WebCore::WebGPU::SupportedFeatures& features, WebCore::WebGPU::SupportedLimits& limits, bool isFallbackAdapter, RemoteGPUProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
     {
         return adoptRef(*new RemoteAdapterProxy(WTFMove(name), features, limits, isFallbackAdapter, parent, convertToBackingContext, identifier));
     }
@@ -56,7 +56,7 @@ public:
 private:
     friend class DowncastConvertToBackingContext;
 
-    RemoteAdapterProxy(String&& name, PAL::WebGPU::SupportedFeatures&, PAL::WebGPU::SupportedLimits&, bool isFallbackAdapter, RemoteGPUProxy&, ConvertToBackingContext&, WebGPUIdentifier);
+    RemoteAdapterProxy(String&& name, WebCore::WebGPU::SupportedFeatures&, WebCore::WebGPU::SupportedLimits&, bool isFallbackAdapter, RemoteGPUProxy&, ConvertToBackingContext&, WebGPUIdentifier);
 
     RemoteAdapterProxy(const RemoteAdapterProxy&) = delete;
     RemoteAdapterProxy(RemoteAdapterProxy&&) = delete;
@@ -77,9 +77,9 @@ private:
         return root().streamClientConnection().sendSync(WTFMove(message), backing(), defaultSendTimeout);
     }
 
-    void requestDevice(const PAL::WebGPU::DeviceDescriptor&, CompletionHandler<void(RefPtr<PAL::WebGPU::Device>&&)>&&) final;
+    void requestDevice(const WebCore::WebGPU::DeviceDescriptor&, CompletionHandler<void(RefPtr<WebCore::WebGPU::Device>&&)>&&) final;
 
-    Deque<CompletionHandler<void(Ref<PAL::WebGPU::Device>)>> m_callbacks;
+    Deque<CompletionHandler<void(Ref<WebCore::WebGPU::Device>)>> m_callbacks;
 
     WebGPUIdentifier m_backing;
     Ref<ConvertToBackingContext> m_convertToBackingContext;

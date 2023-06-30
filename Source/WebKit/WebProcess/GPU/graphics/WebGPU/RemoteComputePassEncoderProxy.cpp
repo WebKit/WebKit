@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -46,7 +46,7 @@ RemoteComputePassEncoderProxy::~RemoteComputePassEncoderProxy()
     UNUSED_VARIABLE(sendResult);
 }
 
-void RemoteComputePassEncoderProxy::setPipeline(const PAL::WebGPU::ComputePipeline& computePipeline)
+void RemoteComputePassEncoderProxy::setPipeline(const WebCore::WebGPU::ComputePipeline& computePipeline)
 {
     auto convertedComputePipeline = m_convertToBackingContext->convertToBacking(computePipeline);
     ASSERT(convertedComputePipeline);
@@ -57,13 +57,13 @@ void RemoteComputePassEncoderProxy::setPipeline(const PAL::WebGPU::ComputePipeli
     UNUSED_VARIABLE(sendResult);
 }
 
-void RemoteComputePassEncoderProxy::dispatch(PAL::WebGPU::Size32 workgroupCountX, PAL::WebGPU::Size32 workgroupCountY, PAL::WebGPU::Size32 workgroupCountZ)
+void RemoteComputePassEncoderProxy::dispatch(WebCore::WebGPU::Size32 workgroupCountX, WebCore::WebGPU::Size32 workgroupCountY, WebCore::WebGPU::Size32 workgroupCountZ)
 {
     auto sendResult = send(Messages::RemoteComputePassEncoder::Dispatch(workgroupCountX, workgroupCountY, workgroupCountZ));
     UNUSED_VARIABLE(sendResult);
 }
 
-void RemoteComputePassEncoderProxy::dispatchIndirect(const PAL::WebGPU::Buffer& indirectBuffer, PAL::WebGPU::Size64 indirectOffset)
+void RemoteComputePassEncoderProxy::dispatchIndirect(const WebCore::WebGPU::Buffer& indirectBuffer, WebCore::WebGPU::Size64 indirectOffset)
 {
     auto convertedIndirectBuffer = m_convertToBackingContext->convertToBacking(indirectBuffer);
     ASSERT(convertedIndirectBuffer);
@@ -80,8 +80,8 @@ void RemoteComputePassEncoderProxy::end()
     UNUSED_VARIABLE(sendResult);
 }
 
-void RemoteComputePassEncoderProxy::setBindGroup(PAL::WebGPU::Index32 index, const PAL::WebGPU::BindGroup& bindGroup,
-    std::optional<Vector<PAL::WebGPU::BufferDynamicOffset>>&& offsets)
+void RemoteComputePassEncoderProxy::setBindGroup(WebCore::WebGPU::Index32 index, const WebCore::WebGPU::BindGroup& bindGroup,
+    std::optional<Vector<WebCore::WebGPU::BufferDynamicOffset>>&& offsets)
 {
     auto convertedBindGroup = m_convertToBackingContext->convertToBacking(bindGroup);
     ASSERT(convertedBindGroup);
@@ -92,18 +92,18 @@ void RemoteComputePassEncoderProxy::setBindGroup(PAL::WebGPU::Index32 index, con
     UNUSED_VARIABLE(sendResult);
 }
 
-void RemoteComputePassEncoderProxy::setBindGroup(PAL::WebGPU::Index32 index, const PAL::WebGPU::BindGroup& bindGroup,
+void RemoteComputePassEncoderProxy::setBindGroup(WebCore::WebGPU::Index32 index, const WebCore::WebGPU::BindGroup& bindGroup,
     const uint32_t* dynamicOffsetsArrayBuffer,
     size_t dynamicOffsetsArrayBufferLength,
-    PAL::WebGPU::Size64 dynamicOffsetsDataStart,
-    PAL::WebGPU::Size32 dynamicOffsetsDataLength)
+    WebCore::WebGPU::Size64 dynamicOffsetsDataStart,
+    WebCore::WebGPU::Size32 dynamicOffsetsDataLength)
 {
     auto convertedBindGroup = m_convertToBackingContext->convertToBacking(bindGroup);
     ASSERT(convertedBindGroup);
     if (!convertedBindGroup)
         return;
 
-    auto sendResult = send(Messages::RemoteComputePassEncoder::SetBindGroup(index, convertedBindGroup, Vector<PAL::WebGPU::BufferDynamicOffset>(dynamicOffsetsArrayBuffer + dynamicOffsetsDataStart, dynamicOffsetsDataLength)));
+    auto sendResult = send(Messages::RemoteComputePassEncoder::SetBindGroup(index, convertedBindGroup, Vector<WebCore::WebGPU::BufferDynamicOffset>(dynamicOffsetsArrayBuffer + dynamicOffsetsDataStart, dynamicOffsetsDataLength)));
     UNUSED_VARIABLE(sendResult);
 }
 

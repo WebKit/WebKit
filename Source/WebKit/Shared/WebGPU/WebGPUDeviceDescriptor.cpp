@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,20 +30,20 @@
 
 #include "WebGPUConvertFromBackingContext.h"
 #include "WebGPUConvertToBackingContext.h"
-#include <pal/graphics/WebGPU/WebGPUDeviceDescriptor.h>
+#include <WebCore/WebGPUDeviceDescriptor.h>
 
 namespace WebKit::WebGPU {
 
-std::optional<DeviceDescriptor> ConvertToBackingContext::convertToBacking(const PAL::WebGPU::DeviceDescriptor& deviceDescriptor)
+std::optional<DeviceDescriptor> ConvertToBackingContext::convertToBacking(const WebCore::WebGPU::DeviceDescriptor& deviceDescriptor)
 {
-    auto base = convertToBacking(static_cast<const PAL::WebGPU::ObjectDescriptorBase&>(deviceDescriptor));
+    auto base = convertToBacking(static_cast<const WebCore::WebGPU::ObjectDescriptorBase&>(deviceDescriptor));
     if (!base)
         return std::nullopt;
 
     return { { WTFMove(*base), deviceDescriptor.requiredFeatures, deviceDescriptor.requiredLimits } };
 }
 
-std::optional<PAL::WebGPU::DeviceDescriptor> ConvertFromBackingContext::convertFromBacking(const DeviceDescriptor& deviceDescriptor)
+std::optional<WebCore::WebGPU::DeviceDescriptor> ConvertFromBackingContext::convertFromBacking(const DeviceDescriptor& deviceDescriptor)
 {
     auto base = convertFromBacking(static_cast<const ObjectDescriptorBase&>(deviceDescriptor));
     if (!base)

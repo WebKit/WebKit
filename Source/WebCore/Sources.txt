@@ -21,6 +21,36 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 // THE POSSIBILITY OF SUCH DAMAGE.
 
+Modules/ShapeDetection/BarcodeDetector.cpp
+Modules/ShapeDetection/FaceDetector.cpp
+Modules/ShapeDetection/TextDetector.cpp
+Modules/WebGPU/Implementation/WebGPUAdapterImpl.cpp
+Modules/WebGPU/Implementation/WebGPUBindGroupImpl.cpp
+Modules/WebGPU/Implementation/WebGPUBindGroupLayoutImpl.cpp
+Modules/WebGPU/Implementation/WebGPUBufferImpl.cpp
+Modules/WebGPU/Implementation/WebGPUCommandBufferImpl.cpp
+Modules/WebGPU/Implementation/WebGPUCommandEncoderImpl.cpp
+Modules/WebGPU/Implementation/WebGPUCompositorIntegrationImpl.cpp
+Modules/WebGPU/Implementation/WebGPUComputePassEncoderImpl.cpp
+Modules/WebGPU/Implementation/WebGPUComputePipelineImpl.cpp
+Modules/WebGPU/Implementation/WebGPUConvertToBackingContext.cpp
+Modules/WebGPU/Implementation/WebGPUCreateImpl.cpp
+Modules/WebGPU/Implementation/WebGPUDeviceImpl.cpp
+Modules/WebGPU/Implementation/WebGPUDowncastConvertToBackingContext.cpp
+Modules/WebGPU/Implementation/WebGPUExternalTextureImpl.cpp
+Modules/WebGPU/Implementation/WebGPUImpl.cpp
+Modules/WebGPU/Implementation/WebGPUPipelineLayoutImpl.cpp
+Modules/WebGPU/Implementation/WebGPUPresentationContextImpl.cpp
+Modules/WebGPU/Implementation/WebGPUQuerySetImpl.cpp
+Modules/WebGPU/Implementation/WebGPUQueueImpl.cpp
+Modules/WebGPU/Implementation/WebGPURenderBundleEncoderImpl.cpp
+Modules/WebGPU/Implementation/WebGPURenderBundleImpl.cpp
+Modules/WebGPU/Implementation/WebGPURenderPassEncoderImpl.cpp
+Modules/WebGPU/Implementation/WebGPURenderPipelineImpl.cpp
+Modules/WebGPU/Implementation/WebGPUSamplerImpl.cpp
+Modules/WebGPU/Implementation/WebGPUShaderModuleImpl.cpp
+Modules/WebGPU/Implementation/WebGPUTextureImpl.cpp
+Modules/WebGPU/Implementation/WebGPUTextureViewImpl.cpp
 Modules/WebGPU/GPU.cpp
 Modules/WebGPU/GPUAdapter.cpp
 Modules/WebGPU/GPUBindGroup.cpp
@@ -54,9 +84,6 @@ Modules/WebGPU/GPUTexture.cpp
 Modules/WebGPU/GPUTextureView.cpp
 Modules/WebGPU/GPUUncapturedErrorEvent.cpp
 Modules/WebGPU/GPUValidationError.cpp
-Modules/ShapeDetection/BarcodeDetector.cpp
-Modules/ShapeDetection/FaceDetector.cpp
-Modules/ShapeDetection/TextDetector.cpp
 Modules/airplay/WebKitPlaybackTargetAvailabilityEvent.cpp
 Modules/applicationmanifest/ApplicationManifestParser.cpp
 Modules/async-clipboard/Clipboard.cpp

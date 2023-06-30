@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,13 +30,13 @@
 
 #include "WebGPUConvertFromBackingContext.h"
 #include "WebGPUConvertToBackingContext.h"
-#include <pal/graphics/WebGPU/WebGPUComputePassDescriptor.h>
+#include <WebCore/WebGPUComputePassDescriptor.h>
 
 namespace WebKit::WebGPU {
 
-std::optional<ComputePassDescriptor> ConvertToBackingContext::convertToBacking(const PAL::WebGPU::ComputePassDescriptor& computePassDescriptor)
+std::optional<ComputePassDescriptor> ConvertToBackingContext::convertToBacking(const WebCore::WebGPU::ComputePassDescriptor& computePassDescriptor)
 {
-    auto base = convertToBacking(static_cast<const PAL::WebGPU::ObjectDescriptorBase&>(computePassDescriptor));
+    auto base = convertToBacking(static_cast<const WebCore::WebGPU::ObjectDescriptorBase&>(computePassDescriptor));
     if (!base)
         return std::nullopt;
 
@@ -47,7 +47,7 @@ std::optional<ComputePassDescriptor> ConvertToBackingContext::convertToBacking(c
     return { { WTFMove(*base), WTFMove(*timestampWrites) } };
 }
 
-std::optional<PAL::WebGPU::ComputePassDescriptor> ConvertFromBackingContext::convertFromBacking(const ComputePassDescriptor& computePassDescriptor)
+std::optional<WebCore::WebGPU::ComputePassDescriptor> ConvertFromBackingContext::convertFromBacking(const ComputePassDescriptor& computePassDescriptor)
 {
     auto base = convertFromBacking(static_cast<const ObjectDescriptorBase&>(computePassDescriptor));
     if (!base)

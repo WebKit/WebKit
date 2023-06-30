@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,16 +27,16 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include <WebCore/WebGPUCompilationMessageType.h>
 #include <cstdint>
 #include <optional>
-#include <pal/graphics/WebGPU/WebGPUCompilationMessageType.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebKit::WebGPU {
 
 struct CompilationMessage {
     String message;
-    PAL::WebGPU::CompilationMessageType type { PAL::WebGPU::CompilationMessageType::Error };
+    WebCore::WebGPU::CompilationMessageType type { WebCore::WebGPU::CompilationMessageType::Error };
     uint64_t lineNum { 0 };
     uint64_t linePos { 0 };
     uint64_t offset { 0 };

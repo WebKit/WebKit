@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,13 +29,13 @@
 
 #include "RemoteDeviceProxy.h"
 #include "WebGPUIdentifier.h"
-#include <pal/graphics/WebGPU/WebGPUCommandBuffer.h>
+#include <WebCore/WebGPUCommandBuffer.h>
 
 namespace WebKit::WebGPU {
 
 class ConvertToBackingContext;
 
-class RemoteCommandBufferProxy final : public PAL::WebGPU::CommandBuffer {
+class RemoteCommandBufferProxy final : public WebCore::WebGPU::CommandBuffer {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<RemoteCommandBufferProxy> create(RemoteDeviceProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)

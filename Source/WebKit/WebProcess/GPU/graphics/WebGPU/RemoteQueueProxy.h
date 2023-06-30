@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,14 +29,14 @@
 
 #include "RemoteAdapterProxy.h"
 #include "WebGPUIdentifier.h"
-#include <pal/graphics/WebGPU/WebGPUQueue.h>
+#include <WebCore/WebGPUQueue.h>
 #include <wtf/Deque.h>
 
 namespace WebKit::WebGPU {
 
 class ConvertToBackingContext;
 
-class RemoteQueueProxy final : public PAL::WebGPU::Queue {
+class RemoteQueueProxy final : public WebCore::WebGPU::Queue {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<RemoteQueueProxy> create(RemoteAdapterProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
@@ -73,29 +73,29 @@ private:
         return root().streamClientConnection().sendSync(WTFMove(message), backing(), defaultSendTimeout);
     }
 
-    void submit(Vector<std::reference_wrapper<PAL::WebGPU::CommandBuffer>>&&) final;
+    void submit(Vector<std::reference_wrapper<WebCore::WebGPU::CommandBuffer>>&&) final;
 
     void onSubmittedWorkDone(CompletionHandler<void()>&&) final;
 
     void writeBuffer(
-        const PAL::WebGPU::Buffer&,
-        PAL::WebGPU::Size64 bufferOffset,
+        const WebCore::WebGPU::Buffer&,
+        WebCore::WebGPU::Size64 bufferOffset,
         const void* source,
         size_t byteLength,
-        PAL::WebGPU::Size64 dataOffset = 0,
-        std::optional<PAL::WebGPU::Size64> = std::nullopt) final;
+        WebCore::WebGPU::Size64 dataOffset = 0,
+        std::optional<WebCore::WebGPU::Size64> = std::nullopt) final;
 
     void writeTexture(
-        const PAL::WebGPU::ImageCopyTexture& destination,
+        const WebCore::WebGPU::ImageCopyTexture& destination,
         const void* source,
         size_t byteLength,
-        const PAL::WebGPU::ImageDataLayout&,
-        const PAL::WebGPU::Extent3D& size) final;
+        const WebCore::WebGPU::ImageDataLayout&,
+        const WebCore::WebGPU::Extent3D& size) final;
 
     void copyExternalImageToTexture(
-        const PAL::WebGPU::ImageCopyExternalImage& source,
-        const PAL::WebGPU::ImageCopyTextureTagged& destination,
-        const PAL::WebGPU::Extent3D& copySize) final;
+        const WebCore::WebGPU::ImageCopyExternalImage& source,
+        const WebCore::WebGPU::ImageCopyTextureTagged& destination,
+        const WebCore::WebGPU::Extent3D& copySize) final;
 
     void setLabelInternal(const String&) final;
 

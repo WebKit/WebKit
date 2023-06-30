@@ -27,22 +27,22 @@
 
 #include "GPUObjectDescriptorBase.h"
 #include "GPUShaderModuleCompilationHint.h"
+#include "WebGPUShaderModuleDescriptor.h"
 #include <JavaScriptCore/JSObject.h>
 #include <JavaScriptCore/Strong.h>
-#include <pal/graphics/WebGPU/WebGPUShaderModuleDescriptor.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 struct GPUShaderModuleDescriptor : public GPUObjectDescriptorBase {
-    PAL::WebGPU::ShaderModuleDescriptor convertToBacking(const Ref<GPUPipelineLayout>& autoLayout) const
+    WebGPU::ShaderModuleDescriptor convertToBacking(const Ref<GPUPipelineLayout>& autoLayout) const
     {
         return {
             { label },
             code,
             // FIXME: Handle the sourceMap.
             hints.map([&autoLayout](auto& hint) {
-                return KeyValuePair<String, PAL::WebGPU::ShaderModuleCompilationHint>(hint.key, hint.value.convertToBacking(autoLayout));
+                return KeyValuePair<String, WebGPU::ShaderModuleCompilationHint>(hint.key, hint.value.convertToBacking(autoLayout));
             }),
         };
     }

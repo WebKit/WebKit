@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,13 +30,13 @@
 
 #include "WebGPUConvertFromBackingContext.h"
 #include "WebGPUConvertToBackingContext.h"
-#include <pal/graphics/WebGPU/WebGPUShaderModuleDescriptor.h>
+#include <WebCore/WebGPUShaderModuleDescriptor.h>
 
 namespace WebKit::WebGPU {
 
-std::optional<ShaderModuleDescriptor> ConvertToBackingContext::convertToBacking(const PAL::WebGPU::ShaderModuleDescriptor& shaderModuleDescriptor)
+std::optional<ShaderModuleDescriptor> ConvertToBackingContext::convertToBacking(const WebCore::WebGPU::ShaderModuleDescriptor& shaderModuleDescriptor)
 {
-    auto base = convertToBacking(static_cast<const PAL::WebGPU::ObjectDescriptorBase&>(shaderModuleDescriptor));
+    auto base = convertToBacking(static_cast<const WebCore::WebGPU::ObjectDescriptorBase&>(shaderModuleDescriptor));
     if (!base)
         return std::nullopt;
 
@@ -52,13 +52,13 @@ std::optional<ShaderModuleDescriptor> ConvertToBackingContext::convertToBacking(
     return { { WTFMove(*base), shaderModuleDescriptor.code, WTFMove(hints) } };
 }
 
-std::optional<PAL::WebGPU::ShaderModuleDescriptor> ConvertFromBackingContext::convertFromBacking(const ShaderModuleDescriptor& shaderModuleDescriptor)
+std::optional<WebCore::WebGPU::ShaderModuleDescriptor> ConvertFromBackingContext::convertFromBacking(const ShaderModuleDescriptor& shaderModuleDescriptor)
 {
     auto base = convertFromBacking(static_cast<const ObjectDescriptorBase&>(shaderModuleDescriptor));
     if (!base)
         return std::nullopt;
 
-    Vector<KeyValuePair<String, PAL::WebGPU::ShaderModuleCompilationHint>> hints;
+    Vector<KeyValuePair<String, WebCore::WebGPU::ShaderModuleCompilationHint>> hints;
     hints.reserveInitialCapacity(shaderModuleDescriptor.hints.size());
     for (const auto& hint : shaderModuleDescriptor.hints) {
         auto value = convertFromBacking(hint.value);

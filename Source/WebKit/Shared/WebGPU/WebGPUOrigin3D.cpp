@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,20 +30,20 @@
 
 #include "WebGPUConvertFromBackingContext.h"
 #include "WebGPUConvertToBackingContext.h"
-#include <pal/graphics/WebGPU/WebGPUOrigin3D.h>
+#include <WebCore/WebGPUOrigin3D.h>
 
 namespace WebKit::WebGPU {
 
-std::optional<Origin3DDict> ConvertToBackingContext::convertToBacking(const PAL::WebGPU::Origin3DDict& origin3DDict)
+std::optional<Origin3DDict> ConvertToBackingContext::convertToBacking(const WebCore::WebGPU::Origin3DDict& origin3DDict)
 {
     return { { origin3DDict.x, origin3DDict.y, origin3DDict.z } };
 }
 
-std::optional<Origin3D> ConvertToBackingContext::convertToBacking(const PAL::WebGPU::Origin3D& origin3D)
+std::optional<Origin3D> ConvertToBackingContext::convertToBacking(const WebCore::WebGPU::Origin3D& origin3D)
 {
-    return WTF::switchOn(origin3D, [] (const Vector<PAL::WebGPU::IntegerCoordinate>& vector) -> std::optional<Origin3D> {
+    return WTF::switchOn(origin3D, [] (const Vector<WebCore::WebGPU::IntegerCoordinate>& vector) -> std::optional<Origin3D> {
         return { { vector } };
-    }, [this] (const PAL::WebGPU::Origin3DDict& origin3DDict) -> std::optional<Origin3D> {
+    }, [this] (const WebCore::WebGPU::Origin3DDict& origin3DDict) -> std::optional<Origin3D> {
         auto origin3D = convertToBacking(origin3DDict);
         if (!origin3D)
             return std::nullopt;
@@ -51,16 +51,16 @@ std::optional<Origin3D> ConvertToBackingContext::convertToBacking(const PAL::Web
     });
 }
 
-std::optional<PAL::WebGPU::Origin3DDict> ConvertFromBackingContext::convertFromBacking(const Origin3DDict& origin3DDict)
+std::optional<WebCore::WebGPU::Origin3DDict> ConvertFromBackingContext::convertFromBacking(const Origin3DDict& origin3DDict)
 {
     return { { origin3DDict.x, origin3DDict.y, origin3DDict.z } };
 }
 
-std::optional<PAL::WebGPU::Origin3D> ConvertFromBackingContext::convertFromBacking(const Origin3D& origin3D)
+std::optional<WebCore::WebGPU::Origin3D> ConvertFromBackingContext::convertFromBacking(const Origin3D& origin3D)
 {
-    return WTF::switchOn(origin3D, [] (const Vector<PAL::WebGPU::IntegerCoordinate>& vector) -> std::optional<PAL::WebGPU::Origin3D> {
+    return WTF::switchOn(origin3D, [] (const Vector<WebCore::WebGPU::IntegerCoordinate>& vector) -> std::optional<WebCore::WebGPU::Origin3D> {
         return { { vector } };
-    }, [this] (const Origin3DDict& origin3DDict) -> std::optional<PAL::WebGPU::Origin3D> {
+    }, [this] (const Origin3DDict& origin3DDict) -> std::optional<WebCore::WebGPU::Origin3D> {
         auto origin3D = convertFromBacking(origin3DDict);
         if (!origin3D)
             return std::nullopt;

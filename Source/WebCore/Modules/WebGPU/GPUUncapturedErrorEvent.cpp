@@ -37,11 +37,11 @@ GPUError GPUUncapturedErrorEvent::error() const
     if (!m_backing)
         return m_uncapturedErrorEventInit.error;
 
-    return WTF::switchOn(PAL::WebGPU::Error(m_backing->error()), [](Ref<PAL::WebGPU::OutOfMemoryError>&& outOfMemoryError) -> GPUError {
+    return WTF::switchOn(WebGPU::Error(m_backing->error()), [](Ref<WebGPU::OutOfMemoryError>&& outOfMemoryError) -> GPUError {
         return RefPtr<GPUOutOfMemoryError>(GPUOutOfMemoryError::create(WTFMove(outOfMemoryError)));
-    }, [](Ref<PAL::WebGPU::ValidationError>&& validationError) -> GPUError {
+    }, [](Ref<WebGPU::ValidationError>&& validationError) -> GPUError {
         return RefPtr<GPUValidationError>(GPUValidationError::create(WTFMove(validationError)));
-    }, [](Ref<PAL::WebGPU::InternalError>&& internalError) -> GPUError {
+    }, [](Ref<WebGPU::InternalError>&& internalError) -> GPUError {
         return RefPtr<GPUInternalError>(GPUInternalError::create(WTFMove(internalError)));
     });
 

@@ -27,17 +27,17 @@
 
 #include "GPUBindGroupLayout.h"
 #include "GPUObjectDescriptorBase.h"
-#include <pal/graphics/WebGPU/WebGPUPipelineLayoutDescriptor.h>
+#include "WebGPUPipelineLayoutDescriptor.h"
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
 struct GPUPipelineLayoutDescriptor : public GPUObjectDescriptorBase {
-    PAL::WebGPU::PipelineLayoutDescriptor convertToBacking() const
+    WebGPU::PipelineLayoutDescriptor convertToBacking() const
     {
         return {
             { label },
-            bindGroupLayouts.map([](const auto& bindGroupLayout) -> std::reference_wrapper<PAL::WebGPU::BindGroupLayout> {
+            bindGroupLayouts.map([](const auto& bindGroupLayout) -> std::reference_wrapper<WebGPU::BindGroupLayout> {
                 ASSERT(bindGroupLayout);
                 return bindGroupLayout->backing();
             }),

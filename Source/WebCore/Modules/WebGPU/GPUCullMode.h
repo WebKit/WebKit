@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,8 +25,8 @@
 
 #pragma once
 
+#include "WebGPUCullMode.h"
 #include <cstdint>
-#include <pal/graphics/WebGPU/WebGPUCullMode.h>
 
 namespace WebCore {
 
@@ -36,15 +36,15 @@ enum class GPUCullMode : uint8_t {
     Back,
 };
 
-inline PAL::WebGPU::CullMode convertToBacking(GPUCullMode cullMode)
+inline WebGPU::CullMode convertToBacking(GPUCullMode cullMode)
 {
     switch (cullMode) {
     case GPUCullMode::None:
-        return PAL::WebGPU::CullMode::None;
+        return WebGPU::CullMode::None;
     case GPUCullMode::Front:
-        return PAL::WebGPU::CullMode::Front;
+        return WebGPU::CullMode::Front;
     case GPUCullMode::Back:
-        return PAL::WebGPU::CullMode::Back;
+        return WebGPU::CullMode::Back;
     }
     RELEASE_ASSERT_NOT_REACHED();
 }

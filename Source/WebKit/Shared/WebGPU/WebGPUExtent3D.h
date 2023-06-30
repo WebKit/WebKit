@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,20 +27,20 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include <WebCore/WebGPUIntegralTypes.h>
 #include <optional>
-#include <pal/graphics/WebGPU/WebGPUIntegralTypes.h>
 #include <variant>
 #include <wtf/Vector.h>
 
 namespace WebKit::WebGPU {
 
 struct Extent3DDict {
-    PAL::WebGPU::IntegerCoordinate width { 0 };
-    PAL::WebGPU::IntegerCoordinate height { 0 };
-    PAL::WebGPU::IntegerCoordinate depthOrArrayLayers { 0 };
+    WebCore::WebGPU::IntegerCoordinate width { 0 };
+    WebCore::WebGPU::IntegerCoordinate height { 0 };
+    WebCore::WebGPU::IntegerCoordinate depthOrArrayLayers { 0 };
 };
 
-using Extent3D = std::variant<Vector<PAL::WebGPU::IntegerCoordinate>, Extent3DDict>;
+using Extent3D = std::variant<Vector<WebCore::WebGPU::IntegerCoordinate>, Extent3DDict>;
 
 } // namespace WebKit::WebGPU
 

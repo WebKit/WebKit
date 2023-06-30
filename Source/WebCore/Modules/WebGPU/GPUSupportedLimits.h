@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,13 +25,13 @@
 
 #pragma once
 
-#include <pal/graphics/WebGPU/WebGPUSupportedLimits.h>
+#include "WebGPUSupportedLimits.h"
 
 namespace WebCore {
 
 class GPUSupportedLimits : public RefCounted<GPUSupportedLimits> {
 public:
-    static Ref<GPUSupportedLimits> create(Ref<PAL::WebGPU::SupportedLimits>&& backing)
+    static Ref<GPUSupportedLimits> create(Ref<WebGPU::SupportedLimits>&& backing)
     {
         return adoptRef(*new GPUSupportedLimits(WTFMove(backing)));
     }
@@ -68,16 +68,16 @@ public:
     uint32_t maxComputeWorkgroupSizeZ() const;
     uint32_t maxComputeWorkgroupsPerDimension() const;
 
-    PAL::WebGPU::SupportedLimits& backing() { return m_backing; }
-    const PAL::WebGPU::SupportedLimits& backing() const { return m_backing; }
+    WebGPU::SupportedLimits& backing() { return m_backing; }
+    const WebGPU::SupportedLimits& backing() const { return m_backing; }
 
 private:
-    GPUSupportedLimits(Ref<PAL::WebGPU::SupportedLimits>&& backing)
+    GPUSupportedLimits(Ref<WebGPU::SupportedLimits>&& backing)
         : m_backing(WTFMove(backing))
     {
     }
 
-    Ref<PAL::WebGPU::SupportedLimits> m_backing;
+    Ref<WebGPU::SupportedLimits> m_backing;
 };
 
 }

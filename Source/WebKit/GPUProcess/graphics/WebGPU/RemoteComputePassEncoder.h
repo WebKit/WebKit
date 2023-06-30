@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,11 +29,11 @@
 
 #include "StreamMessageReceiver.h"
 #include "WebGPUIdentifier.h"
-#include <pal/graphics/WebGPU/WebGPUIntegralTypes.h>
+#include <WebCore/WebGPUIntegralTypes.h>
 #include <wtf/Ref.h>
 #include <wtf/text/WTFString.h>
 
-namespace PAL::WebGPU {
+namespace WebCore::WebGPU {
 class ComputePassEncoder;
 }
 
@@ -50,7 +50,7 @@ class ObjectHeap;
 class RemoteComputePassEncoder final : public IPC::StreamMessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<RemoteComputePassEncoder> create(PAL::WebGPU::ComputePassEncoder& computePassEncoder, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
+    static Ref<RemoteComputePassEncoder> create(WebCore::WebGPU::ComputePassEncoder& computePassEncoder, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
     {
         return adoptRef(*new RemoteComputePassEncoder(computePassEncoder, objectHeap, WTFMove(streamConnection), identifier));
     }
@@ -62,25 +62,25 @@ public:
 private:
     friend class WebGPU::ObjectHeap;
 
-    RemoteComputePassEncoder(PAL::WebGPU::ComputePassEncoder&, WebGPU::ObjectHeap&, Ref<IPC::StreamServerConnection>&&, WebGPUIdentifier);
+    RemoteComputePassEncoder(WebCore::WebGPU::ComputePassEncoder&, WebGPU::ObjectHeap&, Ref<IPC::StreamServerConnection>&&, WebGPUIdentifier);
 
     RemoteComputePassEncoder(const RemoteComputePassEncoder&) = delete;
     RemoteComputePassEncoder(RemoteComputePassEncoder&&) = delete;
     RemoteComputePassEncoder& operator=(const RemoteComputePassEncoder&) = delete;
     RemoteComputePassEncoder& operator=(RemoteComputePassEncoder&&) = delete;
 
-    PAL::WebGPU::ComputePassEncoder& backing() { return m_backing; }
+    WebCore::WebGPU::ComputePassEncoder& backing() { return m_backing; }
 
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
 
     void setPipeline(WebGPUIdentifier);
-    void dispatch(PAL::WebGPU::Size32 workgroupCountX, PAL::WebGPU::Size32 workgroupCountY = 1, PAL::WebGPU::Size32 workgroupCountZ = 1);
-    void dispatchIndirect(WebGPUIdentifier indirectBuffer, PAL::WebGPU::Size64 indirectOffset);
+    void dispatch(WebCore::WebGPU::Size32 workgroupCountX, WebCore::WebGPU::Size32 workgroupCountY = 1, WebCore::WebGPU::Size32 workgroupCountZ = 1);
+    void dispatchIndirect(WebGPUIdentifier indirectBuffer, WebCore::WebGPU::Size64 indirectOffset);
 
     void end();
 
-    void setBindGroup(PAL::WebGPU::Index32, WebGPUIdentifier,
-        std::optional<Vector<PAL::WebGPU::BufferDynamicOffset>>&&);
+    void setBindGroup(WebCore::WebGPU::Index32, WebGPUIdentifier,
+        std::optional<Vector<WebCore::WebGPU::BufferDynamicOffset>>&&);
 
     void pushDebugGroup(String&& groupLabel);
     void popDebugGroup();
@@ -89,7 +89,7 @@ private:
     void setLabel(String&&);
     void destruct();
 
-    Ref<PAL::WebGPU::ComputePassEncoder> m_backing;
+    Ref<WebCore::WebGPU::ComputePassEncoder> m_backing;
     WebGPU::ObjectHeap& m_objectHeap;
     Ref<IPC::StreamServerConnection> m_streamConnection;
     WebGPUIdentifier m_identifier;

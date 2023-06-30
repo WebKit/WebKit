@@ -26,12 +26,12 @@
 #pragma once
 
 #include "GPUCompositorIntegration.h"
-#include <pal/graphics/WebGPU/WebGPUPresentationContextDescriptor.h>
+#include "WebGPUPresentationContextDescriptor.h"
 
 namespace WebCore {
 
 struct GPUPresentationContextDescriptor {
-    PAL::WebGPU::PresentationContextDescriptor convertToBacking() const
+    WebGPU::PresentationContextDescriptor convertToBacking() const
     {
         return {
             layout.backing(),

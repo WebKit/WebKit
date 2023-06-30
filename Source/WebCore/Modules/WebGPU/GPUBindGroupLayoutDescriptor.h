@@ -27,13 +27,13 @@
 
 #include "GPUBindGroupLayoutEntry.h"
 #include "GPUObjectDescriptorBase.h"
-#include <pal/graphics/WebGPU/WebGPUBindGroupLayoutDescriptor.h>
+#include "WebGPUBindGroupLayoutDescriptor.h"
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
 struct GPUBindGroupLayoutDescriptor : public GPUObjectDescriptorBase {
-    PAL::WebGPU::BindGroupLayoutDescriptor convertToBacking() const
+    WebGPU::BindGroupLayoutDescriptor convertToBacking() const
     {
         return {
             { label },

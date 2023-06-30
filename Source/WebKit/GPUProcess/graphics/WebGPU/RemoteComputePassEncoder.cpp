@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,11 +31,11 @@
 #include "RemoteComputePassEncoderMessages.h"
 #include "StreamServerConnection.h"
 #include "WebGPUObjectHeap.h"
-#include <pal/graphics/WebGPU/WebGPUComputePassEncoder.h>
+#include <WebCore/WebGPUComputePassEncoder.h>
 
 namespace WebKit {
 
-RemoteComputePassEncoder::RemoteComputePassEncoder(PAL::WebGPU::ComputePassEncoder& computePassEncoder, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
+RemoteComputePassEncoder::RemoteComputePassEncoder(WebCore::WebGPU::ComputePassEncoder& computePassEncoder, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
     : m_backing(computePassEncoder)
     , m_objectHeap(objectHeap)
     , m_streamConnection(WTFMove(streamConnection))
@@ -66,12 +66,12 @@ void RemoteComputePassEncoder::setPipeline(WebGPUIdentifier computePipeline)
     m_backing->setPipeline(*convertedComputePipeline);
 }
 
-void RemoteComputePassEncoder::dispatch(PAL::WebGPU::Size32 workgroupCountX, PAL::WebGPU::Size32 workgroupCountY, PAL::WebGPU::Size32 workgroupCountZ)
+void RemoteComputePassEncoder::dispatch(WebCore::WebGPU::Size32 workgroupCountX, WebCore::WebGPU::Size32 workgroupCountY, WebCore::WebGPU::Size32 workgroupCountZ)
 {
     m_backing->dispatch(workgroupCountX, workgroupCountY, workgroupCountZ);
 }
 
-void RemoteComputePassEncoder::dispatchIndirect(WebGPUIdentifier indirectBuffer, PAL::WebGPU::Size64 indirectOffset)
+void RemoteComputePassEncoder::dispatchIndirect(WebGPUIdentifier indirectBuffer, WebCore::WebGPU::Size64 indirectOffset)
 {
     auto convertedIndirectBuffer = m_objectHeap.convertBufferFromBacking(indirectBuffer);
     ASSERT(convertedIndirectBuffer);
@@ -86,8 +86,8 @@ void RemoteComputePassEncoder::end()
     m_backing->end();
 }
 
-void RemoteComputePassEncoder::setBindGroup(PAL::WebGPU::Index32 index, WebGPUIdentifier bindGroup,
-    std::optional<Vector<PAL::WebGPU::BufferDynamicOffset>>&& offsets)
+void RemoteComputePassEncoder::setBindGroup(WebCore::WebGPU::Index32 index, WebGPUIdentifier bindGroup,
+    std::optional<Vector<WebCore::WebGPU::BufferDynamicOffset>>&& offsets)
 {
     auto convertedBindGroup = m_objectHeap.convertBindGroupFromBacking(bindGroup);
     ASSERT(convertedBindGroup);

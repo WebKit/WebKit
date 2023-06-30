@@ -31,8 +31,8 @@
 #include "RenderingBackendIdentifier.h"
 #include "StreamClientConnection.h"
 #include "WebGPUIdentifier.h"
-#include <pal/graphics/WebGPU/WebGPU.h>
-#include <pal/graphics/WebGPU/WebGPUPresentationContext.h>
+#include <WebCore/WebGPU.h>
+#include <WebCore/WebGPUPresentationContext.h>
 #include <wtf/Deque.h>
 
 namespace WebKit {
@@ -46,7 +46,7 @@ class ConvertToBackingContext;
 class DowncastConvertToBackingContext;
 }
 
-class RemoteGPUProxy final : public PAL::WebGPU::GPU, private IPC::Connection::Client, private GPUProcessConnection::Client, public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<RemoteGPUProxy> {
+class RemoteGPUProxy final : public WebCore::WebGPU::GPU, private IPC::Connection::Client, private GPUProcessConnection::Client, public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<RemoteGPUProxy> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static RefPtr<RemoteGPUProxy> create(GPUProcessConnection&, WebGPU::ConvertToBackingContext&, WebGPUIdentifier, RenderingBackendIdentifier);
@@ -100,16 +100,16 @@ private:
     }
     IPC::Connection& connection() const { return m_gpuProcessConnection.get()->connection(); }
 
-    void requestAdapter(const PAL::WebGPU::RequestAdapterOptions&, CompletionHandler<void(RefPtr<PAL::WebGPU::Adapter>&&)>&&) final;
+    void requestAdapter(const WebCore::WebGPU::RequestAdapterOptions&, CompletionHandler<void(RefPtr<WebCore::WebGPU::Adapter>&&)>&&) final;
 
-    Ref<PAL::WebGPU::PresentationContext> createPresentationContext(const PAL::WebGPU::PresentationContextDescriptor&) final;
+    Ref<WebCore::WebGPU::PresentationContext> createPresentationContext(const WebCore::WebGPU::PresentationContextDescriptor&) final;
 
-    Ref<PAL::WebGPU::CompositorIntegration> createCompositorIntegration() final;
+    Ref<WebCore::WebGPU::CompositorIntegration> createCompositorIntegration() final;
 
     void abandonGPUProcess();
     void disconnectGpuProcessIfNeeded();
 
-    Deque<CompletionHandler<void(RefPtr<PAL::WebGPU::Adapter>&&)>> m_callbacks;
+    Deque<CompletionHandler<void(RefPtr<WebCore::WebGPU::Adapter>&&)>> m_callbacks;
 
     WebGPUIdentifier m_backing;
     Ref<WebGPU::ConvertToBackingContext> m_convertToBackingContext;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,8 +25,8 @@
 
 #pragma once
 
+#include "WebGPUFeatureName.h"
 #include <cstdint>
-#include <pal/graphics/WebGPU/WebGPUFeatureName.h>
 
 namespace WebCore {
 
@@ -43,29 +43,29 @@ enum class GPUFeatureName : uint8_t {
     Bgra8unormStorage,
 };
 
-inline PAL::WebGPU::FeatureName convertToBacking(GPUFeatureName featureName)
+inline WebGPU::FeatureName convertToBacking(GPUFeatureName featureName)
 {
     switch (featureName) {
     case GPUFeatureName::DepthClipControl:
-        return PAL::WebGPU::FeatureName::DepthClipControl;
+        return WebGPU::FeatureName::DepthClipControl;
     case GPUFeatureName::Depth32floatStencil8:
-        return PAL::WebGPU::FeatureName::Depth32floatStencil8;
+        return WebGPU::FeatureName::Depth32floatStencil8;
     case GPUFeatureName::TextureCompressionBc:
-        return PAL::WebGPU::FeatureName::TextureCompressionBc;
+        return WebGPU::FeatureName::TextureCompressionBc;
     case GPUFeatureName::TextureCompressionEtc2:
-        return PAL::WebGPU::FeatureName::TextureCompressionEtc2;
+        return WebGPU::FeatureName::TextureCompressionEtc2;
     case GPUFeatureName::TextureCompressionAstc:
-        return PAL::WebGPU::FeatureName::TextureCompressionAstc;
+        return WebGPU::FeatureName::TextureCompressionAstc;
     case GPUFeatureName::TimestampQuery:
-        return PAL::WebGPU::FeatureName::TimestampQuery;
+        return WebGPU::FeatureName::TimestampQuery;
     case GPUFeatureName::IndirectFirstInstance:
-        return PAL::WebGPU::FeatureName::IndirectFirstInstance;
+        return WebGPU::FeatureName::IndirectFirstInstance;
     case GPUFeatureName::Bgra8unormStorage:
-        return PAL::WebGPU::FeatureName::Bgra8unormStorage;
+        return WebGPU::FeatureName::Bgra8unormStorage;
     case GPUFeatureName::ShaderF16:
-        return PAL::WebGPU::FeatureName::ShaderF16;
+        return WebGPU::FeatureName::ShaderF16;
     case GPUFeatureName::Rg11b10ufloatRenderable:
-        return PAL::WebGPU::FeatureName::Rg11b10ufloatRenderable;
+        return WebGPU::FeatureName::Rg11b10ufloatRenderable;
     }
     RELEASE_ASSERT_NOT_REACHED();
 }

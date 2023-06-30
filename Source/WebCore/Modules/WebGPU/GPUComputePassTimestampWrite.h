@@ -28,14 +28,14 @@
 #include "GPUComputePassTimestampLocation.h"
 #include "GPUIntegralTypes.h"
 #include "GPUQuerySet.h"
-#include <pal/graphics/WebGPU/WebGPUComputePassTimestampWrites.h>
+#include "WebGPUComputePassTimestampWrites.h"
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
 struct GPUComputePassTimestampWrite {
-    PAL::WebGPU::ComputePassTimestampWrite convertToBacking() const
+    WebGPU::ComputePassTimestampWrite convertToBacking() const
     {
         ASSERT(querySet);
         return {
@@ -52,7 +52,7 @@ struct GPUComputePassTimestampWrite {
 
 using GPUComputePassTimestampWrites = Vector<GPUComputePassTimestampWrite>;
 
-inline PAL::WebGPU::ComputePassTimestampWrites convertToBacking(const GPUComputePassTimestampWrites& computePassTimestampWrites)
+inline WebGPU::ComputePassTimestampWrites convertToBacking(const GPUComputePassTimestampWrites& computePassTimestampWrites)
 {
     return computePassTimestampWrites.map([](auto& computePassTimestampWrite) {
         return computePassTimestampWrite.convertToBacking();

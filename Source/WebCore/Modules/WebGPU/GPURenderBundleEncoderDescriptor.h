@@ -26,17 +26,17 @@
 #pragma once
 
 #include "GPURenderPassLayout.h"
-#include <pal/graphics/WebGPU/WebGPURenderBundleEncoderDescriptor.h>
+#include "WebGPURenderBundleEncoderDescriptor.h"
 
 namespace WebCore {
 
 struct GPURenderBundleEncoderDescriptor : public GPURenderPassLayout {
-    PAL::WebGPU::RenderBundleEncoderDescriptor convertToBacking() const
+    WebGPU::RenderBundleEncoderDescriptor convertToBacking() const
     {
         return {
             {
                 { label },
-                colorFormats.map([](auto& colorFormat) -> std::optional<PAL::WebGPU::TextureFormat> {
+                colorFormats.map([](auto& colorFormat) -> std::optional<WebGPU::TextureFormat> {
                     if (colorFormat)
                         return WebCore::convertToBacking(*colorFormat);
                     return std::nullopt;

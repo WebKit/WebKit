@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,12 +28,12 @@
 #include "GPUBufferUsage.h"
 #include "GPUIntegralTypes.h"
 #include "GPUObjectDescriptorBase.h"
-#include <pal/graphics/WebGPU/WebGPUBufferDescriptor.h>
+#include "WebGPUBufferDescriptor.h"
 
 namespace WebCore {
 
 struct GPUBufferDescriptor : public GPUObjectDescriptorBase {
-    PAL::WebGPU::BufferDescriptor convertToBacking() const
+    WebGPU::BufferDescriptor convertToBacking() const
     {
         return {
             { label },

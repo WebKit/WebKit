@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,16 +30,16 @@
 
 #include "WebGPUConvertFromBackingContext.h"
 #include "WebGPUConvertToBackingContext.h"
-#include <pal/graphics/WebGPU/WebGPUTextureBindingLayout.h>
+#include <WebCore/WebGPUTextureBindingLayout.h>
 
 namespace WebKit::WebGPU {
 
-std::optional<TextureBindingLayout> ConvertToBackingContext::convertToBacking(const PAL::WebGPU::TextureBindingLayout& textureBindingLayout)
+std::optional<TextureBindingLayout> ConvertToBackingContext::convertToBacking(const WebCore::WebGPU::TextureBindingLayout& textureBindingLayout)
 {
     return { { textureBindingLayout.sampleType, textureBindingLayout.viewDimension, textureBindingLayout.multisampled } };
 }
 
-std::optional<PAL::WebGPU::TextureBindingLayout> ConvertFromBackingContext::convertFromBacking(const TextureBindingLayout& textureBindingLayout)
+std::optional<WebCore::WebGPU::TextureBindingLayout> ConvertFromBackingContext::convertFromBacking(const TextureBindingLayout& textureBindingLayout)
 {
     return { { textureBindingLayout.sampleType, textureBindingLayout.viewDimension, textureBindingLayout.multisampled } };
 }

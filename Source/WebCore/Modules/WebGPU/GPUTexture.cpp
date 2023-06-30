@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,7 +28,7 @@
 
 #include "GPUTextureView.h"
 #include "GPUTextureViewDescriptor.h"
-#include <pal/graphics/WebGPU/WebGPUTextureViewDescriptor.h>
+#include "WebGPUTextureViewDescriptor.h"
 
 namespace WebCore {
 
@@ -42,14 +42,14 @@ void GPUTexture::setLabel(String&& label)
     m_backing->setLabel(WTFMove(label));
 }
 
-static PAL::WebGPU::TextureViewDescriptor convertToBacking(const std::optional<GPUTextureViewDescriptor>& textureViewDescriptor)
+static WebGPU::TextureViewDescriptor convertToBacking(const std::optional<GPUTextureViewDescriptor>& textureViewDescriptor)
 {
     if (!textureViewDescriptor) {
         return {
             { },
             std::nullopt,
             std::nullopt,
-            PAL::WebGPU::TextureAspect::All,
+            WebGPU::TextureAspect::All,
             0,
             std::nullopt,
             0,

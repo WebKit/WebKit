@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,11 +30,11 @@
 #include "StreamMessageReceiver.h"
 #include "WebGPUExtent3D.h"
 #include "WebGPUIdentifier.h"
-#include <pal/graphics/WebGPU/WebGPUIntegralTypes.h>
+#include <WebCore/WebGPUIntegralTypes.h>
 #include <wtf/Ref.h>
 #include <wtf/text/WTFString.h>
 
-namespace PAL::WebGPU {
+namespace WebCore::WebGPU {
 class CommandEncoder;
 }
 
@@ -56,7 +56,7 @@ struct RenderPassDescriptor;
 class RemoteCommandEncoder final : public IPC::StreamMessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<RemoteCommandEncoder> create(PAL::WebGPU::CommandEncoder& commandEncoder, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
+    static Ref<RemoteCommandEncoder> create(WebCore::WebGPU::CommandEncoder& commandEncoder, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
     {
         return adoptRef(*new RemoteCommandEncoder(commandEncoder, objectHeap, WTFMove(streamConnection), identifier));
     }
@@ -68,14 +68,14 @@ public:
 private:
     friend class WebGPU::ObjectHeap;
 
-    RemoteCommandEncoder(PAL::WebGPU::CommandEncoder&, WebGPU::ObjectHeap&, Ref<IPC::StreamServerConnection>&&, WebGPUIdentifier);
+    RemoteCommandEncoder(WebCore::WebGPU::CommandEncoder&, WebGPU::ObjectHeap&, Ref<IPC::StreamServerConnection>&&, WebGPUIdentifier);
 
     RemoteCommandEncoder(const RemoteCommandEncoder&) = delete;
     RemoteCommandEncoder(RemoteCommandEncoder&&) = delete;
     RemoteCommandEncoder& operator=(const RemoteCommandEncoder&) = delete;
     RemoteCommandEncoder& operator=(RemoteCommandEncoder&&) = delete;
 
-    PAL::WebGPU::CommandEncoder& backing() { return m_backing; }
+    WebCore::WebGPU::CommandEncoder& backing() { return m_backing; }
 
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
 
@@ -84,10 +84,10 @@ private:
 
     void copyBufferToBuffer(
         WebGPUIdentifier source,
-        PAL::WebGPU::Size64 sourceOffset,
+        WebCore::WebGPU::Size64 sourceOffset,
         WebGPUIdentifier destination,
-        PAL::WebGPU::Size64 destinationOffset,
-        PAL::WebGPU::Size64);
+        WebCore::WebGPU::Size64 destinationOffset,
+        WebCore::WebGPU::Size64);
 
     void copyBufferToTexture(
         const WebGPU::ImageCopyBuffer& source,
@@ -106,28 +106,28 @@ private:
 
     void clearBuffer(
         WebGPUIdentifier buffer,
-        PAL::WebGPU::Size64 offset = 0,
-        std::optional<PAL::WebGPU::Size64> = std::nullopt);
+        WebCore::WebGPU::Size64 offset = 0,
+        std::optional<WebCore::WebGPU::Size64> = std::nullopt);
 
     void pushDebugGroup(String&& groupLabel);
     void popDebugGroup();
     void insertDebugMarker(String&& markerLabel);
 
-    void writeTimestamp(WebGPUIdentifier, PAL::WebGPU::Size32 queryIndex);
+    void writeTimestamp(WebGPUIdentifier, WebCore::WebGPU::Size32 queryIndex);
 
     void resolveQuerySet(
         WebGPUIdentifier,
-        PAL::WebGPU::Size32 firstQuery,
-        PAL::WebGPU::Size32 queryCount,
+        WebCore::WebGPU::Size32 firstQuery,
+        WebCore::WebGPU::Size32 queryCount,
         WebGPUIdentifier destination,
-        PAL::WebGPU::Size64 destinationOffset);
+        WebCore::WebGPU::Size64 destinationOffset);
 
     void finish(const WebGPU::CommandBufferDescriptor&, WebGPUIdentifier);
 
     void setLabel(String&&);
     void destruct();
 
-    Ref<PAL::WebGPU::CommandEncoder> m_backing;
+    Ref<WebCore::WebGPU::CommandEncoder> m_backing;
     WebGPU::ObjectHeap& m_objectHeap;
     Ref<IPC::StreamServerConnection> m_streamConnection;
     WebGPUIdentifier m_identifier;

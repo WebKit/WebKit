@@ -30,13 +30,13 @@
 #include "GPUPredefinedColorSpace.h"
 #include "GPUTextureFormat.h"
 #include "GPUTextureUsage.h"
-#include <pal/graphics/WebGPU/WebGPUCanvasConfiguration.h>
+#include "WebGPUCanvasConfiguration.h"
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
 struct GPUCanvasConfiguration {
-    PAL::WebGPU::CanvasConfiguration convertToBacking() const
+    WebGPU::CanvasConfiguration convertToBacking() const
     {
         ASSERT(device);
         return {

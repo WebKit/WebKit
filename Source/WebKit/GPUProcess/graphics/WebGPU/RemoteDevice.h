@@ -34,14 +34,14 @@
 #include "WebGPUError.h"
 #include "WebGPUIdentifier.h"
 #include <WebCore/MediaPlayerIdentifier.h>
-#include <pal/graphics/WebGPU/WebGPUErrorFilter.h>
+#include <WebCore/WebGPUErrorFilter.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Ref.h>
 #include <wtf/text/WTFString.h>
 
 typedef struct __CVBuffer* CVPixelBufferRef;
 
-namespace PAL::WebGPU {
+namespace WebCore::WebGPU {
 class Device;
 enum class DeviceLostReason : uint8_t;
 }
@@ -87,7 +87,7 @@ using PerformWithMediaPlayerOnMainThread = Function<void()>;
 class RemoteDevice final : public IPC::StreamMessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<RemoteDevice> create(PerformWithMediaPlayerOnMainThread& performWithMediaPlayerOnMainThread, PAL::WebGPU::Device& device, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier, WebGPUIdentifier queueIdentifier)
+    static Ref<RemoteDevice> create(PerformWithMediaPlayerOnMainThread& performWithMediaPlayerOnMainThread, WebCore::WebGPU::Device& device, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier, WebGPUIdentifier queueIdentifier)
     {
         return adoptRef(*new RemoteDevice(performWithMediaPlayerOnMainThread, device, objectHeap, WTFMove(streamConnection), identifier, queueIdentifier));
     }
@@ -101,14 +101,14 @@ public:
 private:
     friend class WebGPU::ObjectHeap;
 
-    RemoteDevice(PerformWithMediaPlayerOnMainThread&, PAL::WebGPU::Device&, WebGPU::ObjectHeap&, Ref<IPC::StreamServerConnection>&&, WebGPUIdentifier, WebGPUIdentifier queueIdentifier);
+    RemoteDevice(PerformWithMediaPlayerOnMainThread&, WebCore::WebGPU::Device&, WebGPU::ObjectHeap&, Ref<IPC::StreamServerConnection>&&, WebGPUIdentifier, WebGPUIdentifier queueIdentifier);
 
     RemoteDevice(const RemoteDevice&) = delete;
     RemoteDevice(RemoteDevice&&) = delete;
     RemoteDevice& operator=(const RemoteDevice&) = delete;
     RemoteDevice& operator=(RemoteDevice&&) = delete;
 
-    PAL::WebGPU::Device& backing() { return m_backing; }
+    WebCore::WebGPU::Device& backing() { return m_backing; }
 
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
 
@@ -138,14 +138,14 @@ private:
 
     void createQuerySet(const WebGPU::QuerySetDescriptor&, WebGPUIdentifier);
 
-    void pushErrorScope(PAL::WebGPU::ErrorFilter);
+    void pushErrorScope(WebCore::WebGPU::ErrorFilter);
     void popErrorScope(CompletionHandler<void(std::optional<WebGPU::Error>&&)>&&);
 
     void setLabel(String&&);
     void setSharedVideoFrameSemaphore(IPC::Semaphore&&);
     void setSharedVideoFrameMemory(SharedMemoryHandle&&);
 
-    Ref<PAL::WebGPU::Device> m_backing;
+    Ref<WebCore::WebGPU::Device> m_backing;
     WebGPU::ObjectHeap& m_objectHeap;
     Ref<IPC::StreamServerConnection> m_streamConnection;
     WebGPUIdentifier m_identifier;

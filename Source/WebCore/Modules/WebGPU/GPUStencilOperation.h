@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,8 +25,8 @@
 
 #pragma once
 
+#include "WebGPUStencilOperation.h"
 #include <cstdint>
-#include <pal/graphics/WebGPU/WebGPUStencilOperation.h>
 
 namespace WebCore {
 
@@ -41,25 +41,25 @@ enum class GPUStencilOperation : uint8_t {
     DecrementWrap,
 };
 
-inline PAL::WebGPU::StencilOperation convertToBacking(GPUStencilOperation stencilOperation)
+inline WebGPU::StencilOperation convertToBacking(GPUStencilOperation stencilOperation)
 {
     switch (stencilOperation) {
     case GPUStencilOperation::Keep:
-        return PAL::WebGPU::StencilOperation::Keep;
+        return WebGPU::StencilOperation::Keep;
     case GPUStencilOperation::Zero:
-        return PAL::WebGPU::StencilOperation::Zero;
+        return WebGPU::StencilOperation::Zero;
     case GPUStencilOperation::Replace:
-        return PAL::WebGPU::StencilOperation::Replace;
+        return WebGPU::StencilOperation::Replace;
     case GPUStencilOperation::Invert:
-        return PAL::WebGPU::StencilOperation::Invert;
+        return WebGPU::StencilOperation::Invert;
     case GPUStencilOperation::IncrementClamp:
-        return PAL::WebGPU::StencilOperation::IncrementClamp;
+        return WebGPU::StencilOperation::IncrementClamp;
     case GPUStencilOperation::DecrementClamp:
-        return PAL::WebGPU::StencilOperation::DecrementClamp;
+        return WebGPU::StencilOperation::DecrementClamp;
     case GPUStencilOperation::IncrementWrap:
-        return PAL::WebGPU::StencilOperation::IncrementWrap;
+        return WebGPU::StencilOperation::IncrementWrap;
     case GPUStencilOperation::DecrementWrap:
-        return PAL::WebGPU::StencilOperation::DecrementWrap;
+        return WebGPU::StencilOperation::DecrementWrap;
     }
     RELEASE_ASSERT_NOT_REACHED();
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,8 +26,8 @@
 #pragma once
 
 #include "GPUTextureFormat.h"
+#include "WebGPUTexture.h"
 #include <optional>
-#include <pal/graphics/WebGPU/WebGPUTexture.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
@@ -39,7 +39,7 @@ struct GPUTextureViewDescriptor;
 
 class GPUTexture : public RefCounted<GPUTexture> {
 public:
-    static Ref<GPUTexture> create(Ref<PAL::WebGPU::Texture>&& backing, GPUTextureFormat format)
+    static Ref<GPUTexture> create(Ref<WebGPU::Texture>&& backing, GPUTextureFormat format)
     {
         return adoptRef(*new GPUTexture(WTFMove(backing), format));
     }
@@ -51,18 +51,18 @@ public:
 
     void destroy();
 
-    PAL::WebGPU::Texture& backing() { return m_backing; }
-    const PAL::WebGPU::Texture& backing() const { return m_backing; }
+    WebGPU::Texture& backing() { return m_backing; }
+    const WebGPU::Texture& backing() const { return m_backing; }
     GPUTextureFormat format() const { return m_format; }
 
 private:
-    GPUTexture(Ref<PAL::WebGPU::Texture>&& backing, GPUTextureFormat format)
+    GPUTexture(Ref<WebGPU::Texture>&& backing, GPUTextureFormat format)
         : m_backing(WTFMove(backing))
         , m_format(format)
     {
     }
 
-    Ref<PAL::WebGPU::Texture> m_backing;
+    Ref<WebGPU::Texture> m_backing;
     GPUTextureFormat m_format;
 };
 

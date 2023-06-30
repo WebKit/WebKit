@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,7 +35,7 @@
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
-namespace PAL::WebGPU {
+namespace WebCore::WebGPU {
 class ShaderModule;
 }
 
@@ -52,7 +52,7 @@ class ObjectHeap;
 class RemoteShaderModule final : public IPC::StreamMessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<RemoteShaderModule> create(PAL::WebGPU::ShaderModule& shaderModule, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
+    static Ref<RemoteShaderModule> create(WebCore::WebGPU::ShaderModule& shaderModule, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
     {
         return adoptRef(*new RemoteShaderModule(shaderModule, objectHeap, WTFMove(streamConnection), identifier));
     }
@@ -64,14 +64,14 @@ public:
 private:
     friend class WebGPU::ObjectHeap;
 
-    RemoteShaderModule(PAL::WebGPU::ShaderModule&, WebGPU::ObjectHeap&, Ref<IPC::StreamServerConnection>&&, WebGPUIdentifier);
+    RemoteShaderModule(WebCore::WebGPU::ShaderModule&, WebGPU::ObjectHeap&, Ref<IPC::StreamServerConnection>&&, WebGPUIdentifier);
 
     RemoteShaderModule(const RemoteShaderModule&) = delete;
     RemoteShaderModule(RemoteShaderModule&&) = delete;
     RemoteShaderModule& operator=(const RemoteShaderModule&) = delete;
     RemoteShaderModule& operator=(RemoteShaderModule&&) = delete;
 
-    PAL::WebGPU::ShaderModule& backing() { return m_backing; }
+    WebCore::WebGPU::ShaderModule& backing() { return m_backing; }
 
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
 
@@ -80,7 +80,7 @@ private:
     void setLabel(String&&);
     void destruct();
 
-    Ref<PAL::WebGPU::ShaderModule> m_backing;
+    Ref<WebCore::WebGPU::ShaderModule> m_backing;
     WebGPU::ObjectHeap& m_objectHeap;
     Ref<IPC::StreamServerConnection> m_streamConnection;
     WebGPUIdentifier m_identifier;

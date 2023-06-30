@@ -27,8 +27,8 @@
 
 #include "GPUFeatureName.h"
 #include "GPUObjectDescriptorBase.h"
+#include "WebGPUDeviceDescriptor.h"
 #include <cstdint>
-#include <pal/graphics/WebGPU/WebGPUDeviceDescriptor.h>
 #include <wtf/HashMap.h>
 #include <wtf/KeyValuePair.h>
 #include <wtf/RefPtr.h>
@@ -37,7 +37,7 @@
 namespace WebCore {
 
 struct GPUDeviceDescriptor : public GPUObjectDescriptorBase {
-    PAL::WebGPU::DeviceDescriptor convertToBacking() const
+    WebGPU::DeviceDescriptor convertToBacking() const
     {
         return {
             { label },

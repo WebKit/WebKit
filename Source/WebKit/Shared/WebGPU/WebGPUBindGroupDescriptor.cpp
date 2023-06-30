@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,13 +30,13 @@
 
 #include "WebGPUConvertFromBackingContext.h"
 #include "WebGPUConvertToBackingContext.h"
-#include <pal/graphics/WebGPU/WebGPUBindGroupDescriptor.h>
+#include <WebCore/WebGPUBindGroupDescriptor.h>
 
 namespace WebKit::WebGPU {
 
-std::optional<BindGroupDescriptor> ConvertToBackingContext::convertToBacking(const PAL::WebGPU::BindGroupDescriptor& bindGroupDescriptor)
+std::optional<BindGroupDescriptor> ConvertToBackingContext::convertToBacking(const WebCore::WebGPU::BindGroupDescriptor& bindGroupDescriptor)
 {
-    auto base = convertToBacking(static_cast<const PAL::WebGPU::ObjectDescriptorBase&>(bindGroupDescriptor));
+    auto base = convertToBacking(static_cast<const WebCore::WebGPU::ObjectDescriptorBase&>(bindGroupDescriptor));
     if (!base)
         return std::nullopt;
 
@@ -56,7 +56,7 @@ std::optional<BindGroupDescriptor> ConvertToBackingContext::convertToBacking(con
     return { { WTFMove(*base), identifier, WTFMove(entries) } };
 }
 
-std::optional<PAL::WebGPU::BindGroupDescriptor> ConvertFromBackingContext::convertFromBacking(const BindGroupDescriptor& bindGroupDescriptor)
+std::optional<WebCore::WebGPU::BindGroupDescriptor> ConvertFromBackingContext::convertFromBacking(const BindGroupDescriptor& bindGroupDescriptor)
 {
     auto base = convertFromBacking(static_cast<const ObjectDescriptorBase&>(bindGroupDescriptor));
     if (!base)
@@ -66,7 +66,7 @@ std::optional<PAL::WebGPU::BindGroupDescriptor> ConvertFromBackingContext::conve
     if (!bindGroupLayout)
         return std::nullopt;
 
-    Vector<PAL::WebGPU::BindGroupEntry> entries;
+    Vector<WebCore::WebGPU::BindGroupEntry> entries;
     entries.reserveInitialCapacity(bindGroupDescriptor.entries.size());
     for (const auto& backingEntry : bindGroupDescriptor.entries) {
         auto entry = convertFromBacking(backingEntry);

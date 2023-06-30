@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,15 +29,15 @@
 
 #include "StreamMessageReceiver.h"
 #include "WebGPUIdentifier.h"
-#include <pal/graphics/WebGPU/WebGPUBuffer.h>
-#include <pal/graphics/WebGPU/WebGPUIntegralTypes.h>
-#include <pal/graphics/WebGPU/WebGPUMapMode.h>
+#include <WebCore/WebGPUBuffer.h>
+#include <WebCore/WebGPUIntegralTypes.h>
+#include <WebCore/WebGPUMapMode.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Ref.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
-namespace PAL::WebGPU {
+namespace WebCore::WebGPU {
 class Buffer;
 }
 
@@ -54,7 +54,7 @@ class ObjectHeap;
 class RemoteBuffer final : public IPC::StreamMessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<RemoteBuffer> create(PAL::WebGPU::Buffer& buffer, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
+    static Ref<RemoteBuffer> create(WebCore::WebGPU::Buffer& buffer, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
     {
         return adoptRef(*new RemoteBuffer(buffer, objectHeap, WTFMove(streamConnection), identifier));
     }
@@ -66,19 +66,19 @@ public:
 private:
     friend class WebGPU::ObjectHeap;
 
-    RemoteBuffer(PAL::WebGPU::Buffer&, WebGPU::ObjectHeap&, Ref<IPC::StreamServerConnection>&&, WebGPUIdentifier);
+    RemoteBuffer(WebCore::WebGPU::Buffer&, WebGPU::ObjectHeap&, Ref<IPC::StreamServerConnection>&&, WebGPUIdentifier);
 
     RemoteBuffer(const RemoteBuffer&) = delete;
     RemoteBuffer(RemoteBuffer&&) = delete;
     RemoteBuffer& operator=(const RemoteBuffer&) = delete;
     RemoteBuffer& operator=(RemoteBuffer&&) = delete;
 
-    PAL::WebGPU::Buffer& backing() { return m_backing; }
+    WebCore::WebGPU::Buffer& backing() { return m_backing; }
 
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
 
-    void getMappedRange(PAL::WebGPU::Size64 offset, std::optional<PAL::WebGPU::Size64> sizeForMap, CompletionHandler<void(std::optional<Vector<uint8_t>>&&)>&&);
-    void mapAsync(PAL::WebGPU::MapModeFlags, PAL::WebGPU::Size64 offset, std::optional<PAL::WebGPU::Size64> sizeForMap, CompletionHandler<void(std::optional<Vector<uint8_t>>&&)>&&);
+    void getMappedRange(WebCore::WebGPU::Size64 offset, std::optional<WebCore::WebGPU::Size64> sizeForMap, CompletionHandler<void(std::optional<Vector<uint8_t>>&&)>&&);
+    void mapAsync(WebCore::WebGPU::MapModeFlags, WebCore::WebGPU::Size64 offset, std::optional<WebCore::WebGPU::Size64> sizeForMap, CompletionHandler<void(std::optional<Vector<uint8_t>>&&)>&&);
     void unmap(Vector<uint8_t>&&);
 
     void destroy();
@@ -86,13 +86,13 @@ private:
 
     void setLabel(String&&);
 
-    Ref<PAL::WebGPU::Buffer> m_backing;
+    Ref<WebCore::WebGPU::Buffer> m_backing;
     WebGPU::ObjectHeap& m_objectHeap;
     Ref<IPC::StreamServerConnection> m_streamConnection;
     WebGPUIdentifier m_identifier;
     bool m_isMapped { false };
-    std::optional<PAL::WebGPU::Buffer::MappedRange> m_mappedRange;
-    PAL::WebGPU::MapModeFlags m_mapModeFlags;
+    std::optional<WebCore::WebGPU::Buffer::MappedRange> m_mappedRange;
+    WebCore::WebGPU::MapModeFlags m_mapModeFlags;
 };
 
 } // namespace WebKit

@@ -36,10 +36,6 @@
 OBJC_CLASS NSView;
 #endif
 
-namespace PAL::WebGPU {
-class GPU;
-}
-
 namespace WebCore {
 
 namespace ShapeDetection {
@@ -49,6 +45,10 @@ enum class BarcodeFormat : uint8_t;
 class FaceDetector;
 struct FaceDetectorOptions;
 class TextDetector;
+}
+
+namespace WebGPU {
+class GPU;
 }
 
 enum class PlatformEventModifier : uint8_t;
@@ -114,7 +114,7 @@ public:
     RefPtr<GraphicsContextGL> createGraphicsContextGL(const GraphicsContextGLAttributes&) const override;
 #endif
 
-    RefPtr<PAL::WebGPU::GPU> createGPUForWebGPU() const;
+    RefPtr<WebGPU::GPU> createGPUForWebGPU() const;
 
     RefPtr<ShapeDetection::BarcodeDetector> createBarcodeDetector(const ShapeDetection::BarcodeDetectorOptions&) const;
     void getBarcodeDetectorSupportedFormats(CompletionHandler<void(Vector<ShapeDetection::BarcodeFormat>&&)>&&) const;

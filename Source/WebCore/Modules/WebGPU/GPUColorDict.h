@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include <pal/graphics/WebGPU/WebGPUColor.h>
+#include "WebGPUColor.h"
 #include <variant>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
@@ -33,7 +33,7 @@
 namespace WebCore {
 
 struct GPUColorDict {
-    PAL::WebGPU::ColorDict convertToBacking() const
+    WebGPU::ColorDict convertToBacking() const
     {
         return {
             r,
@@ -51,11 +51,11 @@ struct GPUColorDict {
 
 using GPUColor = std::variant<Vector<double>, GPUColorDict>;
 
-inline PAL::WebGPU::Color convertToBacking(const GPUColor& color)
+inline WebGPU::Color convertToBacking(const GPUColor& color)
 {
-    return WTF::switchOn(color, [](const Vector<double>& vector) -> PAL::WebGPU::Color {
+    return WTF::switchOn(color, [](const Vector<double>& vector) -> WebGPU::Color {
         return vector;
-    }, [](const GPUColorDict& color) -> PAL::WebGPU::Color {
+    }, [](const GPUColorDict& color) -> WebGPU::Color {
         return color.convertToBacking();
     });
 }

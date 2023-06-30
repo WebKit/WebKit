@@ -30,13 +30,13 @@
 #include "RemoteGPUProxy.h"
 #include "RemotePresentationContextProxy.h"
 #include "WebGPUIdentifier.h"
-#include <pal/graphics/WebGPU/WebGPUCompositorIntegration.h>
+#include <WebCore/WebGPUCompositorIntegration.h>
 
 namespace WebKit::WebGPU {
 
 class ConvertToBackingContext;
 
-class RemoteCompositorIntegrationProxy final : public PAL::WebGPU::CompositorIntegration {
+class RemoteCompositorIntegrationProxy final : public WebCore::WebGPU::CompositorIntegration {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static Ref<RemoteCompositorIntegrationProxy> create(RemoteGPUProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)

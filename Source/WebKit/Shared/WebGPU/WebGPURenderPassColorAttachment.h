@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,9 +29,9 @@
 
 #include "WebGPUColor.h"
 #include "WebGPUIdentifier.h"
+#include <WebCore/WebGPULoadOp.h>
+#include <WebCore/WebGPUStoreOp.h>
 #include <optional>
-#include <pal/graphics/WebGPU/WebGPULoadOp.h>
-#include <pal/graphics/WebGPU/WebGPUStoreOp.h>
 #include <variant>
 #include <wtf/Ref.h>
 #include <wtf/Vector.h>
@@ -43,8 +43,8 @@ struct RenderPassColorAttachment {
     std::optional<WebGPUIdentifier> resolveTarget;
 
     std::optional<Color> clearValue;
-    PAL::WebGPU::LoadOp loadOp { PAL::WebGPU::LoadOp::Load };
-    PAL::WebGPU::StoreOp storeOp { PAL::WebGPU::StoreOp::Store };
+    WebCore::WebGPU::LoadOp loadOp { WebCore::WebGPU::LoadOp::Load };
+    WebCore::WebGPU::StoreOp storeOp { WebCore::WebGPU::StoreOp::Store };
 };
 
 } // namespace WebKit::WebGPU

@@ -31,12 +31,12 @@
 #include "GPUTextureDimension.h"
 #include "GPUTextureFormat.h"
 #include "GPUTextureUsage.h"
-#include <pal/graphics/WebGPU/WebGPUTextureDescriptor.h>
+#include "WebGPUTextureDescriptor.h"
 
 namespace WebCore {
 
 struct GPUTextureDescriptor : public GPUObjectDescriptorBase {
-    PAL::WebGPU::TextureDescriptor convertToBacking() const
+    WebGPU::TextureDescriptor convertToBacking() const
     {
         return {
             { label },

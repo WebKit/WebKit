@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,11 +30,11 @@
 
 #include "WebGPUConvertFromBackingContext.h"
 #include "WebGPUConvertToBackingContext.h"
-#include <pal/graphics/WebGPU/WebGPUImageCopyTexture.h>
+#include <WebCore/WebGPUImageCopyTexture.h>
 
 namespace WebKit::WebGPU {
 
-std::optional<ImageCopyTexture> ConvertToBackingContext::convertToBacking(const PAL::WebGPU::ImageCopyTexture& imageCopyTexture)
+std::optional<ImageCopyTexture> ConvertToBackingContext::convertToBacking(const WebCore::WebGPU::ImageCopyTexture& imageCopyTexture)
 {
     auto texture = convertToBacking(imageCopyTexture.texture);
     if (!texture)
@@ -50,13 +50,13 @@ std::optional<ImageCopyTexture> ConvertToBackingContext::convertToBacking(const 
     return { { texture, imageCopyTexture.mipLevel, WTFMove(origin), imageCopyTexture.aspect } };
 }
 
-std::optional<PAL::WebGPU::ImageCopyTexture> ConvertFromBackingContext::convertFromBacking(const ImageCopyTexture& imageCopyTexture)
+std::optional<WebCore::WebGPU::ImageCopyTexture> ConvertFromBackingContext::convertFromBacking(const ImageCopyTexture& imageCopyTexture)
 {
     auto* texture = convertTextureFromBacking(imageCopyTexture.texture);
     if (!texture)
         return std::nullopt;
 
-    std::optional<PAL::WebGPU::Origin3D> origin;
+    std::optional<WebCore::WebGPU::Origin3D> origin;
     if (imageCopyTexture.origin) {
         origin = convertFromBacking(*imageCopyTexture.origin);
         if (!origin)

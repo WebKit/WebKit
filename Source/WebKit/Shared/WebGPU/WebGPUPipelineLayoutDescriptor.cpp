@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,13 +30,13 @@
 
 #include "WebGPUConvertFromBackingContext.h"
 #include "WebGPUConvertToBackingContext.h"
-#include <pal/graphics/WebGPU/WebGPUPipelineLayoutDescriptor.h>
+#include <WebCore/WebGPUPipelineLayoutDescriptor.h>
 
 namespace WebKit::WebGPU {
 
-std::optional<PipelineLayoutDescriptor> ConvertToBackingContext::convertToBacking(const PAL::WebGPU::PipelineLayoutDescriptor& pipelineLayoutDescriptor)
+std::optional<PipelineLayoutDescriptor> ConvertToBackingContext::convertToBacking(const WebCore::WebGPU::PipelineLayoutDescriptor& pipelineLayoutDescriptor)
 {
-    auto base = convertToBacking(static_cast<const PAL::WebGPU::ObjectDescriptorBase&>(pipelineLayoutDescriptor));
+    auto base = convertToBacking(static_cast<const WebCore::WebGPU::ObjectDescriptorBase&>(pipelineLayoutDescriptor));
     if (!base)
         return std::nullopt;
 
@@ -57,14 +57,14 @@ std::optional<PipelineLayoutDescriptor> ConvertToBackingContext::convertToBackin
     return { { WTFMove(*base), WTFMove(optionalBindGroupLayouts) } };
 }
 
-std::optional<PAL::WebGPU::PipelineLayoutDescriptor> ConvertFromBackingContext::convertFromBacking(const PipelineLayoutDescriptor& pipelineLayoutDescriptor)
+std::optional<WebCore::WebGPU::PipelineLayoutDescriptor> ConvertFromBackingContext::convertFromBacking(const PipelineLayoutDescriptor& pipelineLayoutDescriptor)
 {
     auto base = convertFromBacking(static_cast<const ObjectDescriptorBase&>(pipelineLayoutDescriptor));
     if (!base)
         return std::nullopt;
 
-    std::optional<Vector<std::reference_wrapper<PAL::WebGPU::BindGroupLayout>>> optionalBindGroupLayouts = std::nullopt;
-    Vector<std::reference_wrapper<PAL::WebGPU::BindGroupLayout>> bindGroupLayouts;
+    std::optional<Vector<std::reference_wrapper<WebCore::WebGPU::BindGroupLayout>>> optionalBindGroupLayouts = std::nullopt;
+    Vector<std::reference_wrapper<WebCore::WebGPU::BindGroupLayout>> bindGroupLayouts;
     if (pipelineLayoutDescriptor.bindGroupLayouts) {
         bindGroupLayouts.reserveInitialCapacity(pipelineLayoutDescriptor.bindGroupLayouts->size());
         for (const auto& backingBindGroupLayout : *pipelineLayoutDescriptor.bindGroupLayouts) {

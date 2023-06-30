@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,16 +30,16 @@
 
 #include "WebGPUConvertFromBackingContext.h"
 #include "WebGPUConvertToBackingContext.h"
-#include <pal/graphics/WebGPU/WebGPUMultisampleState.h>
+#include <WebCore/WebGPUMultisampleState.h>
 
 namespace WebKit::WebGPU {
 
-std::optional<MultisampleState> ConvertToBackingContext::convertToBacking(const PAL::WebGPU::MultisampleState& multisampleState)
+std::optional<MultisampleState> ConvertToBackingContext::convertToBacking(const WebCore::WebGPU::MultisampleState& multisampleState)
 {
     return { { multisampleState.count, multisampleState.mask, multisampleState.alphaToCoverageEnabled } };
 }
 
-std::optional<PAL::WebGPU::MultisampleState> ConvertFromBackingContext::convertFromBacking(const MultisampleState& multisampleState)
+std::optional<WebCore::WebGPU::MultisampleState> ConvertFromBackingContext::convertFromBacking(const MultisampleState& multisampleState)
 {
     return { { multisampleState.count, multisampleState.mask, multisampleState.alphaToCoverageEnabled } };
 }

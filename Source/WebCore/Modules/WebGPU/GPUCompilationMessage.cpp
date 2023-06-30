@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,11 +36,11 @@ const String& GPUCompilationMessage::message() const
 GPUCompilationMessageType GPUCompilationMessage::type() const
 {
     switch (m_backing->type()) {
-    case PAL::WebGPU::CompilationMessageType::Error:
+    case WebGPU::CompilationMessageType::Error:
         return GPUCompilationMessageType::Error;
-    case PAL::WebGPU::CompilationMessageType::Warning:
+    case WebGPU::CompilationMessageType::Warning:
         return GPUCompilationMessageType::Warning;
-    case PAL::WebGPU::CompilationMessageType::Info:
+    case WebGPU::CompilationMessageType::Info:
         return GPUCompilationMessageType::Info;
     }
     RELEASE_ASSERT_NOT_REACHED();

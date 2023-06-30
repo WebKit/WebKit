@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,8 +25,8 @@
 
 #pragma once
 
+#include "WebGPUQueryType.h"
 #include <cstdint>
-#include <pal/graphics/WebGPU/WebGPUQueryType.h>
 
 namespace WebCore {
 
@@ -35,13 +35,13 @@ enum class GPUQueryType : uint8_t {
     Timestamp,
 };
 
-inline PAL::WebGPU::QueryType convertToBacking(GPUQueryType queryType)
+inline WebGPU::QueryType convertToBacking(GPUQueryType queryType)
 {
     switch (queryType) {
     case GPUQueryType::Occlusion:
-        return PAL::WebGPU::QueryType::Occlusion;
+        return WebGPU::QueryType::Occlusion;
     case GPUQueryType::Timestamp:
-        return PAL::WebGPU::QueryType::Timestamp;
+        return WebGPU::QueryType::Timestamp;
     }
     RELEASE_ASSERT_NOT_REACHED();
 }

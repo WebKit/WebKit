@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,12 +27,12 @@
 
 #include "GPUBufferBindingType.h"
 #include "GPUIntegralTypes.h"
-#include <pal/graphics/WebGPU/WebGPUBufferBindingLayout.h>
+#include "WebGPUBufferBindingLayout.h"
 
 namespace WebCore {
 
 struct GPUBufferBindingLayout {
-    PAL::WebGPU::BufferBindingLayout convertToBacking() const
+    WebGPU::BufferBindingLayout convertToBacking() const
     {
         return {
             WebCore::convertToBacking(type),

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,12 +26,12 @@
 #pragma once
 
 #include "GPUIntegralTypes.h"
-#include <pal/graphics/WebGPU/WebGPUMultisampleState.h>
+#include "WebGPUMultisampleState.h"
 
 namespace WebCore {
 
 struct GPUMultisampleState {
-    PAL::WebGPU::MultisampleState convertToBacking() const
+    WebGPU::MultisampleState convertToBacking() const
     {
         return {
             count,

@@ -30,19 +30,19 @@
 #include "GPURenderPassColorAttachment.h"
 #include "GPURenderPassDepthStencilAttachment.h"
 #include "GPURenderPassTimestampWrite.h"
+#include "WebGPURenderPassDescriptor.h"
 #include <optional>
-#include <pal/graphics/WebGPU/WebGPURenderPassDescriptor.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
 struct GPURenderPassDescriptor : public GPUObjectDescriptorBase {
-    PAL::WebGPU::RenderPassDescriptor convertToBacking() const
+    WebGPU::RenderPassDescriptor convertToBacking() const
     {
         return {
             { label },
-            colorAttachments.map([](auto& colorAttachment) -> std::optional<PAL::WebGPU::RenderPassColorAttachment> {
+            colorAttachments.map([](auto& colorAttachment) -> std::optional<WebGPU::RenderPassColorAttachment> {
                 if (colorAttachment)
                     return colorAttachment->convertToBacking();
                 return std::nullopt;

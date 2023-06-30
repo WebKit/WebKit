@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,8 +25,8 @@
 
 #pragma once
 
+#include "WebGPUBufferBindingType.h"
 #include <cstdint>
-#include <pal/graphics/WebGPU/WebGPUBufferBindingType.h>
 
 namespace WebCore {
 
@@ -36,15 +36,15 @@ enum class GPUBufferBindingType : uint8_t {
     ReadOnlyStorage,
 };
 
-inline PAL::WebGPU::BufferBindingType convertToBacking(GPUBufferBindingType bufferBindingType)
+inline WebGPU::BufferBindingType convertToBacking(GPUBufferBindingType bufferBindingType)
 {
     switch (bufferBindingType) {
     case GPUBufferBindingType::Uniform:
-        return PAL::WebGPU::BufferBindingType::Uniform;
+        return WebGPU::BufferBindingType::Uniform;
     case GPUBufferBindingType::Storage:
-        return PAL::WebGPU::BufferBindingType::Storage;
+        return WebGPU::BufferBindingType::Storage;
     case GPUBufferBindingType::ReadOnlyStorage:
-        return PAL::WebGPU::BufferBindingType::ReadOnlyStorage;
+        return WebGPU::BufferBindingType::ReadOnlyStorage;
     }
     RELEASE_ASSERT_NOT_REACHED();
 }

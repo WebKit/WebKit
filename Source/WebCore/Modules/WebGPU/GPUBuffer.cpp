@@ -37,7 +37,7 @@ GPUBuffer::~GPUBuffer()
     m_arrayBuffer = nullptr;
 }
 
-GPUBuffer::GPUBuffer(Ref<PAL::WebGPU::Buffer>&& backing, size_t bufferSize, GPUBufferUsageFlags usage, bool mappedAtCreation)
+GPUBuffer::GPUBuffer(Ref<WebGPU::Buffer>&& backing, size_t bufferSize, GPUBufferUsageFlags usage, bool mappedAtCreation)
     : m_backing(WTFMove(backing))
     , m_bufferSize(bufferSize)
     , m_usage(usage)

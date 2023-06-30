@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,13 +30,13 @@
 
 #include "WebGPUConvertFromBackingContext.h"
 #include "WebGPUConvertToBackingContext.h"
-#include <pal/graphics/WebGPU/WebGPUFragmentState.h>
+#include <WebCore/WebGPUFragmentState.h>
 
 namespace WebKit::WebGPU {
 
-std::optional<FragmentState> ConvertToBackingContext::convertToBacking(const PAL::WebGPU::FragmentState& fragmentState)
+std::optional<FragmentState> ConvertToBackingContext::convertToBacking(const WebCore::WebGPU::FragmentState& fragmentState)
 {
-    auto base = convertToBacking(static_cast<const PAL::WebGPU::ProgrammableStage&>(fragmentState));
+    auto base = convertToBacking(static_cast<const WebCore::WebGPU::ProgrammableStage&>(fragmentState));
     if (!base)
         return std::nullopt;
 
@@ -55,13 +55,13 @@ std::optional<FragmentState> ConvertToBackingContext::convertToBacking(const PAL
     return { { WTFMove(*base), WTFMove(targets) } };
 }
 
-std::optional<PAL::WebGPU::FragmentState> ConvertFromBackingContext::convertFromBacking(const FragmentState& fragmentState)
+std::optional<WebCore::WebGPU::FragmentState> ConvertFromBackingContext::convertFromBacking(const FragmentState& fragmentState)
 {
     auto base = convertFromBacking(static_cast<const ProgrammableStage&>(fragmentState));
     if (!base)
         return std::nullopt;
 
-    Vector<std::optional<PAL::WebGPU::ColorTargetState>> targets;
+    Vector<std::optional<WebCore::WebGPU::ColorTargetState>> targets;
     targets.reserveInitialCapacity(fragmentState.targets.size());
     for (const auto& backingTarget : fragmentState.targets) {
         if (backingTarget) {

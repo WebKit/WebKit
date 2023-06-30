@@ -35,16 +35,16 @@
 #include "WebGPUOrigin2D.h"
 #include "WebGPUOrigin3D.h"
 #include "WebGPURenderPassTimestampWrites.h"
-#include <pal/graphics/WebGPU/WebGPUColor.h>
-#include <pal/graphics/WebGPU/WebGPUComputePassTimestampWrites.h>
-#include <pal/graphics/WebGPU/WebGPUError.h>
-#include <pal/graphics/WebGPU/WebGPUExtent3D.h>
-#include <pal/graphics/WebGPU/WebGPUOrigin2D.h>
-#include <pal/graphics/WebGPU/WebGPUOrigin3D.h>
-#include <pal/graphics/WebGPU/WebGPURenderPassTimestampWrites.h>
+#include <WebCore/WebGPUColor.h>
+#include <WebCore/WebGPUComputePassTimestampWrites.h>
+#include <WebCore/WebGPUError.h>
+#include <WebCore/WebGPUExtent3D.h>
+#include <WebCore/WebGPUOrigin2D.h>
+#include <WebCore/WebGPUOrigin3D.h>
+#include <WebCore/WebGPURenderPassTimestampWrites.h>
 #include <wtf/RefCounted.h>
 
-namespace PAL::WebGPU {
+namespace WebCore::WebGPU {
 
 class Adapter;
 class BindGroup;
@@ -132,7 +132,7 @@ struct VertexAttribute;
 struct VertexBufferLayout;
 struct VertexState;
 
-} // namespace PAL::WebGPU
+} // namespace WebCore::WebGPU
 
 namespace WebKit::WebGPU {
 
@@ -203,105 +203,105 @@ class ConvertToBackingContext : public RefCounted<ConvertToBackingContext> {
 public:
     virtual ~ConvertToBackingContext() = default;
 
-    std::optional<BindGroupDescriptor> convertToBacking(const PAL::WebGPU::BindGroupDescriptor&);
-    std::optional<BindGroupEntry> convertToBacking(const PAL::WebGPU::BindGroupEntry&);
-    std::optional<BindGroupLayoutDescriptor> convertToBacking(const PAL::WebGPU::BindGroupLayoutDescriptor&);
-    std::optional<BindGroupLayoutEntry> convertToBacking(const PAL::WebGPU::BindGroupLayoutEntry&);
-    std::optional<BlendComponent> convertToBacking(const PAL::WebGPU::BlendComponent&);
-    std::optional<BlendState> convertToBacking(const PAL::WebGPU::BlendState&);
-    std::optional<BufferBinding> convertToBacking(const PAL::WebGPU::BufferBinding&);
-    std::optional<BufferBindingLayout> convertToBacking(const PAL::WebGPU::BufferBindingLayout&);
-    std::optional<BufferDescriptor> convertToBacking(const PAL::WebGPU::BufferDescriptor&);
-    std::optional<CanvasConfiguration> convertToBacking(const PAL::WebGPU::CanvasConfiguration&);
-    std::optional<Color> convertToBacking(const PAL::WebGPU::Color&);
-    std::optional<ColorDict> convertToBacking(const PAL::WebGPU::ColorDict&);
-    std::optional<ColorTargetState> convertToBacking(const PAL::WebGPU::ColorTargetState&);
-    std::optional<CommandBufferDescriptor> convertToBacking(const PAL::WebGPU::CommandBufferDescriptor&);
-    std::optional<CommandEncoderDescriptor> convertToBacking(const PAL::WebGPU::CommandEncoderDescriptor&);
-    std::optional<CompilationMessage> convertToBacking(const PAL::WebGPU::CompilationMessage&);
-    std::optional<ComputePassDescriptor> convertToBacking(const PAL::WebGPU::ComputePassDescriptor&);
-    std::optional<ComputePassTimestampWrite> convertToBacking(const PAL::WebGPU::ComputePassTimestampWrite&);
-    std::optional<ComputePassTimestampWrites> convertToBacking(const PAL::WebGPU::ComputePassTimestampWrites&);
-    std::optional<ComputePipelineDescriptor> convertToBacking(const PAL::WebGPU::ComputePipelineDescriptor&);
-    std::optional<DepthStencilState> convertToBacking(const PAL::WebGPU::DepthStencilState&);
-    std::optional<DeviceDescriptor> convertToBacking(const PAL::WebGPU::DeviceDescriptor&);
-    std::optional<Error> convertToBacking(const PAL::WebGPU::Error&);
-    std::optional<Extent3D> convertToBacking(const PAL::WebGPU::Extent3D&);
-    std::optional<Extent3DDict> convertToBacking(const PAL::WebGPU::Extent3DDict&);
-    std::optional<ExternalTextureBindingLayout> convertToBacking(const PAL::WebGPU::ExternalTextureBindingLayout&);
-    std::optional<ExternalTextureDescriptor> convertToBacking(const PAL::WebGPU::ExternalTextureDescriptor&);
-    std::optional<FragmentState> convertToBacking(const PAL::WebGPU::FragmentState&);
-    std::optional<Identifier> convertToBacking(const PAL::WebGPU::Identifier&);
-    std::optional<ImageCopyBuffer> convertToBacking(const PAL::WebGPU::ImageCopyBuffer&);
-    std::optional<ImageCopyExternalImage> convertToBacking(const PAL::WebGPU::ImageCopyExternalImage&);
-    std::optional<ImageCopyTexture> convertToBacking(const PAL::WebGPU::ImageCopyTexture&);
-    std::optional<ImageCopyTextureTagged> convertToBacking(const PAL::WebGPU::ImageCopyTextureTagged&);
-    std::optional<ImageDataLayout> convertToBacking(const PAL::WebGPU::ImageDataLayout&);
-    std::optional<InternalError> convertToBacking(const PAL::WebGPU::InternalError&);
-    std::optional<MultisampleState> convertToBacking(const PAL::WebGPU::MultisampleState&);
-    std::optional<ObjectDescriptorBase> convertToBacking(const PAL::WebGPU::ObjectDescriptorBase&);
-    std::optional<Origin2D> convertToBacking(const PAL::WebGPU::Origin2D&);
-    std::optional<Origin2DDict> convertToBacking(const PAL::WebGPU::Origin2DDict&);
-    std::optional<Origin3D> convertToBacking(const PAL::WebGPU::Origin3D&);
-    std::optional<Origin3DDict> convertToBacking(const PAL::WebGPU::Origin3DDict&);
-    std::optional<OutOfMemoryError> convertToBacking(const PAL::WebGPU::OutOfMemoryError&);
-    std::optional<PipelineDescriptorBase> convertToBacking(const PAL::WebGPU::PipelineDescriptorBase&);
-    std::optional<PipelineLayoutDescriptor> convertToBacking(const PAL::WebGPU::PipelineLayoutDescriptor&);
-    std::optional<PresentationContextDescriptor> convertToBacking(const PAL::WebGPU::PresentationContextDescriptor&);
-    std::optional<PrimitiveState> convertToBacking(const PAL::WebGPU::PrimitiveState&);
-    std::optional<ProgrammableStage> convertToBacking(const PAL::WebGPU::ProgrammableStage&);
-    std::optional<QuerySetDescriptor> convertToBacking(const PAL::WebGPU::QuerySetDescriptor&);
-    std::optional<RenderBundleDescriptor> convertToBacking(const PAL::WebGPU::RenderBundleDescriptor&);
-    std::optional<RenderBundleEncoderDescriptor> convertToBacking(const PAL::WebGPU::RenderBundleEncoderDescriptor&);
-    std::optional<RenderPassColorAttachment> convertToBacking(const PAL::WebGPU::RenderPassColorAttachment&);
-    std::optional<RenderPassDepthStencilAttachment> convertToBacking(const PAL::WebGPU::RenderPassDepthStencilAttachment&);
-    std::optional<RenderPassDescriptor> convertToBacking(const PAL::WebGPU::RenderPassDescriptor&);
-    std::optional<RenderPassLayout> convertToBacking(const PAL::WebGPU::RenderPassLayout&);
-    std::optional<RenderPassTimestampWrite> convertToBacking(const PAL::WebGPU::RenderPassTimestampWrite&);
-    std::optional<RenderPassTimestampWrites> convertToBacking(const PAL::WebGPU::RenderPassTimestampWrites&);
-    std::optional<RenderPipelineDescriptor> convertToBacking(const PAL::WebGPU::RenderPipelineDescriptor&);
-    std::optional<RequestAdapterOptions> convertToBacking(const PAL::WebGPU::RequestAdapterOptions&);
-    std::optional<SamplerBindingLayout> convertToBacking(const PAL::WebGPU::SamplerBindingLayout&);
-    std::optional<SamplerDescriptor> convertToBacking(const PAL::WebGPU::SamplerDescriptor&);
-    std::optional<ShaderModuleCompilationHint> convertToBacking(const PAL::WebGPU::ShaderModuleCompilationHint&);
-    std::optional<ShaderModuleDescriptor> convertToBacking(const PAL::WebGPU::ShaderModuleDescriptor&);
-    std::optional<StencilFaceState> convertToBacking(const PAL::WebGPU::StencilFaceState&);
-    std::optional<StorageTextureBindingLayout> convertToBacking(const PAL::WebGPU::StorageTextureBindingLayout&);
-    std::optional<SupportedFeatures> convertToBacking(const PAL::WebGPU::SupportedFeatures&);
-    std::optional<SupportedLimits> convertToBacking(const PAL::WebGPU::SupportedLimits&);
-    std::optional<TextureBindingLayout> convertToBacking(const PAL::WebGPU::TextureBindingLayout&);
-    std::optional<TextureDescriptor> convertToBacking(const PAL::WebGPU::TextureDescriptor&);
-    std::optional<TextureViewDescriptor> convertToBacking(const PAL::WebGPU::TextureViewDescriptor&);
-    std::optional<ValidationError> convertToBacking(const PAL::WebGPU::ValidationError&);
-    std::optional<VertexAttribute> convertToBacking(const PAL::WebGPU::VertexAttribute&);
-    std::optional<VertexBufferLayout> convertToBacking(const PAL::WebGPU::VertexBufferLayout&);
-    std::optional<VertexState> convertToBacking(const PAL::WebGPU::VertexState&);
+    std::optional<BindGroupDescriptor> convertToBacking(const WebCore::WebGPU::BindGroupDescriptor&);
+    std::optional<BindGroupEntry> convertToBacking(const WebCore::WebGPU::BindGroupEntry&);
+    std::optional<BindGroupLayoutDescriptor> convertToBacking(const WebCore::WebGPU::BindGroupLayoutDescriptor&);
+    std::optional<BindGroupLayoutEntry> convertToBacking(const WebCore::WebGPU::BindGroupLayoutEntry&);
+    std::optional<BlendComponent> convertToBacking(const WebCore::WebGPU::BlendComponent&);
+    std::optional<BlendState> convertToBacking(const WebCore::WebGPU::BlendState&);
+    std::optional<BufferBinding> convertToBacking(const WebCore::WebGPU::BufferBinding&);
+    std::optional<BufferBindingLayout> convertToBacking(const WebCore::WebGPU::BufferBindingLayout&);
+    std::optional<BufferDescriptor> convertToBacking(const WebCore::WebGPU::BufferDescriptor&);
+    std::optional<CanvasConfiguration> convertToBacking(const WebCore::WebGPU::CanvasConfiguration&);
+    std::optional<Color> convertToBacking(const WebCore::WebGPU::Color&);
+    std::optional<ColorDict> convertToBacking(const WebCore::WebGPU::ColorDict&);
+    std::optional<ColorTargetState> convertToBacking(const WebCore::WebGPU::ColorTargetState&);
+    std::optional<CommandBufferDescriptor> convertToBacking(const WebCore::WebGPU::CommandBufferDescriptor&);
+    std::optional<CommandEncoderDescriptor> convertToBacking(const WebCore::WebGPU::CommandEncoderDescriptor&);
+    std::optional<CompilationMessage> convertToBacking(const WebCore::WebGPU::CompilationMessage&);
+    std::optional<ComputePassDescriptor> convertToBacking(const WebCore::WebGPU::ComputePassDescriptor&);
+    std::optional<ComputePassTimestampWrite> convertToBacking(const WebCore::WebGPU::ComputePassTimestampWrite&);
+    std::optional<ComputePassTimestampWrites> convertToBacking(const WebCore::WebGPU::ComputePassTimestampWrites&);
+    std::optional<ComputePipelineDescriptor> convertToBacking(const WebCore::WebGPU::ComputePipelineDescriptor&);
+    std::optional<DepthStencilState> convertToBacking(const WebCore::WebGPU::DepthStencilState&);
+    std::optional<DeviceDescriptor> convertToBacking(const WebCore::WebGPU::DeviceDescriptor&);
+    std::optional<Error> convertToBacking(const WebCore::WebGPU::Error&);
+    std::optional<Extent3D> convertToBacking(const WebCore::WebGPU::Extent3D&);
+    std::optional<Extent3DDict> convertToBacking(const WebCore::WebGPU::Extent3DDict&);
+    std::optional<ExternalTextureBindingLayout> convertToBacking(const WebCore::WebGPU::ExternalTextureBindingLayout&);
+    std::optional<ExternalTextureDescriptor> convertToBacking(const WebCore::WebGPU::ExternalTextureDescriptor&);
+    std::optional<FragmentState> convertToBacking(const WebCore::WebGPU::FragmentState&);
+    std::optional<Identifier> convertToBacking(const WebCore::WebGPU::Identifier&);
+    std::optional<ImageCopyBuffer> convertToBacking(const WebCore::WebGPU::ImageCopyBuffer&);
+    std::optional<ImageCopyExternalImage> convertToBacking(const WebCore::WebGPU::ImageCopyExternalImage&);
+    std::optional<ImageCopyTexture> convertToBacking(const WebCore::WebGPU::ImageCopyTexture&);
+    std::optional<ImageCopyTextureTagged> convertToBacking(const WebCore::WebGPU::ImageCopyTextureTagged&);
+    std::optional<ImageDataLayout> convertToBacking(const WebCore::WebGPU::ImageDataLayout&);
+    std::optional<InternalError> convertToBacking(const WebCore::WebGPU::InternalError&);
+    std::optional<MultisampleState> convertToBacking(const WebCore::WebGPU::MultisampleState&);
+    std::optional<ObjectDescriptorBase> convertToBacking(const WebCore::WebGPU::ObjectDescriptorBase&);
+    std::optional<Origin2D> convertToBacking(const WebCore::WebGPU::Origin2D&);
+    std::optional<Origin2DDict> convertToBacking(const WebCore::WebGPU::Origin2DDict&);
+    std::optional<Origin3D> convertToBacking(const WebCore::WebGPU::Origin3D&);
+    std::optional<Origin3DDict> convertToBacking(const WebCore::WebGPU::Origin3DDict&);
+    std::optional<OutOfMemoryError> convertToBacking(const WebCore::WebGPU::OutOfMemoryError&);
+    std::optional<PipelineDescriptorBase> convertToBacking(const WebCore::WebGPU::PipelineDescriptorBase&);
+    std::optional<PipelineLayoutDescriptor> convertToBacking(const WebCore::WebGPU::PipelineLayoutDescriptor&);
+    std::optional<PresentationContextDescriptor> convertToBacking(const WebCore::WebGPU::PresentationContextDescriptor&);
+    std::optional<PrimitiveState> convertToBacking(const WebCore::WebGPU::PrimitiveState&);
+    std::optional<ProgrammableStage> convertToBacking(const WebCore::WebGPU::ProgrammableStage&);
+    std::optional<QuerySetDescriptor> convertToBacking(const WebCore::WebGPU::QuerySetDescriptor&);
+    std::optional<RenderBundleDescriptor> convertToBacking(const WebCore::WebGPU::RenderBundleDescriptor&);
+    std::optional<RenderBundleEncoderDescriptor> convertToBacking(const WebCore::WebGPU::RenderBundleEncoderDescriptor&);
+    std::optional<RenderPassColorAttachment> convertToBacking(const WebCore::WebGPU::RenderPassColorAttachment&);
+    std::optional<RenderPassDepthStencilAttachment> convertToBacking(const WebCore::WebGPU::RenderPassDepthStencilAttachment&);
+    std::optional<RenderPassDescriptor> convertToBacking(const WebCore::WebGPU::RenderPassDescriptor&);
+    std::optional<RenderPassLayout> convertToBacking(const WebCore::WebGPU::RenderPassLayout&);
+    std::optional<RenderPassTimestampWrite> convertToBacking(const WebCore::WebGPU::RenderPassTimestampWrite&);
+    std::optional<RenderPassTimestampWrites> convertToBacking(const WebCore::WebGPU::RenderPassTimestampWrites&);
+    std::optional<RenderPipelineDescriptor> convertToBacking(const WebCore::WebGPU::RenderPipelineDescriptor&);
+    std::optional<RequestAdapterOptions> convertToBacking(const WebCore::WebGPU::RequestAdapterOptions&);
+    std::optional<SamplerBindingLayout> convertToBacking(const WebCore::WebGPU::SamplerBindingLayout&);
+    std::optional<SamplerDescriptor> convertToBacking(const WebCore::WebGPU::SamplerDescriptor&);
+    std::optional<ShaderModuleCompilationHint> convertToBacking(const WebCore::WebGPU::ShaderModuleCompilationHint&);
+    std::optional<ShaderModuleDescriptor> convertToBacking(const WebCore::WebGPU::ShaderModuleDescriptor&);
+    std::optional<StencilFaceState> convertToBacking(const WebCore::WebGPU::StencilFaceState&);
+    std::optional<StorageTextureBindingLayout> convertToBacking(const WebCore::WebGPU::StorageTextureBindingLayout&);
+    std::optional<SupportedFeatures> convertToBacking(const WebCore::WebGPU::SupportedFeatures&);
+    std::optional<SupportedLimits> convertToBacking(const WebCore::WebGPU::SupportedLimits&);
+    std::optional<TextureBindingLayout> convertToBacking(const WebCore::WebGPU::TextureBindingLayout&);
+    std::optional<TextureDescriptor> convertToBacking(const WebCore::WebGPU::TextureDescriptor&);
+    std::optional<TextureViewDescriptor> convertToBacking(const WebCore::WebGPU::TextureViewDescriptor&);
+    std::optional<ValidationError> convertToBacking(const WebCore::WebGPU::ValidationError&);
+    std::optional<VertexAttribute> convertToBacking(const WebCore::WebGPU::VertexAttribute&);
+    std::optional<VertexBufferLayout> convertToBacking(const WebCore::WebGPU::VertexBufferLayout&);
+    std::optional<VertexState> convertToBacking(const WebCore::WebGPU::VertexState&);
 
-    virtual WebGPUIdentifier convertToBacking(const PAL::WebGPU::Adapter&) = 0;
-    virtual WebGPUIdentifier convertToBacking(const PAL::WebGPU::BindGroup&) = 0;
-    virtual WebGPUIdentifier convertToBacking(const PAL::WebGPU::BindGroupLayout&) = 0;
-    virtual WebGPUIdentifier convertToBacking(const PAL::WebGPU::Buffer&) = 0;
-    virtual WebGPUIdentifier convertToBacking(const PAL::WebGPU::CommandBuffer&) = 0;
-    virtual WebGPUIdentifier convertToBacking(const PAL::WebGPU::CommandEncoder&) = 0;
-    virtual const RemoteCompositorIntegrationProxy& convertToRawBacking(const PAL::WebGPU::CompositorIntegration&) = 0;
-    virtual WebGPUIdentifier convertToBacking(const PAL::WebGPU::CompositorIntegration&) = 0;
-    virtual WebGPUIdentifier convertToBacking(const PAL::WebGPU::ComputePassEncoder&) = 0;
-    virtual WebGPUIdentifier convertToBacking(const PAL::WebGPU::ComputePipeline&) = 0;
-    virtual WebGPUIdentifier convertToBacking(const PAL::WebGPU::Device&) = 0;
-    virtual WebGPUIdentifier convertToBacking(const PAL::WebGPU::ExternalTexture&) = 0;
-    virtual WebGPUIdentifier convertToBacking(const PAL::WebGPU::GPU&) = 0;
-    virtual WebGPUIdentifier convertToBacking(const PAL::WebGPU::PipelineLayout&) = 0;
-    virtual WebGPUIdentifier convertToBacking(const PAL::WebGPU::PresentationContext&) = 0;
-    virtual WebGPUIdentifier convertToBacking(const PAL::WebGPU::QuerySet&) = 0;
-    virtual WebGPUIdentifier convertToBacking(const PAL::WebGPU::Queue&) = 0;
-    virtual WebGPUIdentifier convertToBacking(const PAL::WebGPU::RenderBundleEncoder&) = 0;
-    virtual WebGPUIdentifier convertToBacking(const PAL::WebGPU::RenderBundle&) = 0;
-    virtual WebGPUIdentifier convertToBacking(const PAL::WebGPU::RenderPassEncoder&) = 0;
-    virtual WebGPUIdentifier convertToBacking(const PAL::WebGPU::RenderPipeline&) = 0;
-    virtual WebGPUIdentifier convertToBacking(const PAL::WebGPU::Sampler&) = 0;
-    virtual WebGPUIdentifier convertToBacking(const PAL::WebGPU::ShaderModule&) = 0;
-    virtual WebGPUIdentifier convertToBacking(const PAL::WebGPU::Texture&) = 0;
-    virtual WebGPUIdentifier convertToBacking(const PAL::WebGPU::TextureView&) = 0;
+    virtual WebGPUIdentifier convertToBacking(const WebCore::WebGPU::Adapter&) = 0;
+    virtual WebGPUIdentifier convertToBacking(const WebCore::WebGPU::BindGroup&) = 0;
+    virtual WebGPUIdentifier convertToBacking(const WebCore::WebGPU::BindGroupLayout&) = 0;
+    virtual WebGPUIdentifier convertToBacking(const WebCore::WebGPU::Buffer&) = 0;
+    virtual WebGPUIdentifier convertToBacking(const WebCore::WebGPU::CommandBuffer&) = 0;
+    virtual WebGPUIdentifier convertToBacking(const WebCore::WebGPU::CommandEncoder&) = 0;
+    virtual const RemoteCompositorIntegrationProxy& convertToRawBacking(const WebCore::WebGPU::CompositorIntegration&) = 0;
+    virtual WebGPUIdentifier convertToBacking(const WebCore::WebGPU::CompositorIntegration&) = 0;
+    virtual WebGPUIdentifier convertToBacking(const WebCore::WebGPU::ComputePassEncoder&) = 0;
+    virtual WebGPUIdentifier convertToBacking(const WebCore::WebGPU::ComputePipeline&) = 0;
+    virtual WebGPUIdentifier convertToBacking(const WebCore::WebGPU::Device&) = 0;
+    virtual WebGPUIdentifier convertToBacking(const WebCore::WebGPU::ExternalTexture&) = 0;
+    virtual WebGPUIdentifier convertToBacking(const WebCore::WebGPU::GPU&) = 0;
+    virtual WebGPUIdentifier convertToBacking(const WebCore::WebGPU::PipelineLayout&) = 0;
+    virtual WebGPUIdentifier convertToBacking(const WebCore::WebGPU::PresentationContext&) = 0;
+    virtual WebGPUIdentifier convertToBacking(const WebCore::WebGPU::QuerySet&) = 0;
+    virtual WebGPUIdentifier convertToBacking(const WebCore::WebGPU::Queue&) = 0;
+    virtual WebGPUIdentifier convertToBacking(const WebCore::WebGPU::RenderBundleEncoder&) = 0;
+    virtual WebGPUIdentifier convertToBacking(const WebCore::WebGPU::RenderBundle&) = 0;
+    virtual WebGPUIdentifier convertToBacking(const WebCore::WebGPU::RenderPassEncoder&) = 0;
+    virtual WebGPUIdentifier convertToBacking(const WebCore::WebGPU::RenderPipeline&) = 0;
+    virtual WebGPUIdentifier convertToBacking(const WebCore::WebGPU::Sampler&) = 0;
+    virtual WebGPUIdentifier convertToBacking(const WebCore::WebGPU::ShaderModule&) = 0;
+    virtual WebGPUIdentifier convertToBacking(const WebCore::WebGPU::Texture&) = 0;
+    virtual WebGPUIdentifier convertToBacking(const WebCore::WebGPU::TextureView&) = 0;
 };
 
 } // namespace WebKit::WebGPU

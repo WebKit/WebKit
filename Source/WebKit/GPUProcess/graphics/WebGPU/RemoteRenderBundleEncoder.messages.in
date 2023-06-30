@@ -1,4 +1,4 @@
-/* Copyright (C) 2021 Apple Inc. All rights reserved.
+/* Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,13 +26,13 @@
 messages -> RemoteRenderBundleEncoder NotRefCounted Stream {
     void Destruct()
     void SetPipeline(WebKit::WebGPUIdentifier identifier)
-    void SetIndexBuffer(WebKit::WebGPUIdentifier identifier, PAL::WebGPU::IndexFormat indexFormat, std::optional<PAL::WebGPU::Size64> offset, std::optional<PAL::WebGPU::Size64> size)
-    void SetVertexBuffer(PAL::WebGPU::Index32 slot, WebKit::WebGPUIdentifier identifier, std::optional<PAL::WebGPU::Size64> offset, std::optional<PAL::WebGPU::Size64> size)
-    void Draw(PAL::WebGPU::Size32 vertexCount, std::optional<PAL::WebGPU::Size32> instanceCount, std::optional<PAL::WebGPU::Size32> firstVertex, std::optional<PAL::WebGPU::Size32> firstInstance)
-    void DrawIndexed(PAL::WebGPU::Size32 indexCount, std::optional<PAL::WebGPU::Size32> instanceCount, std::optional<PAL::WebGPU::Size32> firstIndex, std::optional<PAL::WebGPU::SignedOffset32> baseVertex, std::optional<PAL::WebGPU::Size32> firstInstance)
-    void DrawIndirect(WebKit::WebGPUIdentifier indirectBuffer, PAL::WebGPU::Size64 indirectOffset)
-    void DrawIndexedIndirect(WebKit::WebGPUIdentifier indirectBuffer, PAL::WebGPU::Size64 indirectOffset)
-    void SetBindGroup(PAL::WebGPU::Index32 index, WebKit::WebGPUIdentifier identifier, std::optional<Vector<PAL::WebGPU::BufferDynamicOffset>> dynamicOffsets)
+    void SetIndexBuffer(WebKit::WebGPUIdentifier identifier, WebCore::WebGPU::IndexFormat indexFormat, std::optional<WebCore::WebGPU::Size64> offset, std::optional<WebCore::WebGPU::Size64> size)
+    void SetVertexBuffer(WebCore::WebGPU::Index32 slot, WebKit::WebGPUIdentifier identifier, std::optional<WebCore::WebGPU::Size64> offset, std::optional<WebCore::WebGPU::Size64> size)
+    void Draw(WebCore::WebGPU::Size32 vertexCount, std::optional<WebCore::WebGPU::Size32> instanceCount, std::optional<WebCore::WebGPU::Size32> firstVertex, std::optional<WebCore::WebGPU::Size32> firstInstance)
+    void DrawIndexed(WebCore::WebGPU::Size32 indexCount, std::optional<WebCore::WebGPU::Size32> instanceCount, std::optional<WebCore::WebGPU::Size32> firstIndex, std::optional<WebCore::WebGPU::SignedOffset32> baseVertex, std::optional<WebCore::WebGPU::Size32> firstInstance)
+    void DrawIndirect(WebKit::WebGPUIdentifier indirectBuffer, WebCore::WebGPU::Size64 indirectOffset)
+    void DrawIndexedIndirect(WebKit::WebGPUIdentifier indirectBuffer, WebCore::WebGPU::Size64 indirectOffset)
+    void SetBindGroup(WebCore::WebGPU::Index32 index, WebKit::WebGPUIdentifier identifier, std::optional<Vector<WebCore::WebGPU::BufferDynamicOffset>> dynamicOffsets)
     void PushDebugGroup(String groupLabel)
     void PopDebugGroup()
     void InsertDebugMarker(String markerLabel)

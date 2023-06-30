@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,8 +26,8 @@
 #pragma once
 
 #include "GPUIntegralTypes.h"
+#include "WebGPUShaderStage.h"
 #include <cstdint>
-#include <pal/graphics/WebGPU/WebGPUShaderStage.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
@@ -40,15 +40,15 @@ public:
     static constexpr GPUFlagsConstant COMPUTE  = 0x4;
 };
 
-inline PAL::WebGPU::ShaderStageFlags convertShaderStageFlagsToBacking(GPUShaderStageFlags shaderStageFlags)
+inline WebGPU::ShaderStageFlags convertShaderStageFlagsToBacking(GPUShaderStageFlags shaderStageFlags)
 {
-    PAL::WebGPU::ShaderStageFlags result;
+    WebGPU::ShaderStageFlags result;
     if (shaderStageFlags & GPUShaderStage::VERTEX)
-        result.add(PAL::WebGPU::ShaderStage::Vertex);
+        result.add(WebGPU::ShaderStage::Vertex);
     if (shaderStageFlags & GPUShaderStage::FRAGMENT)
-        result.add(PAL::WebGPU::ShaderStage::Fragment);
+        result.add(WebGPU::ShaderStage::Fragment);
     if (shaderStageFlags & GPUShaderStage::COMPUTE)
-        result.add(PAL::WebGPU::ShaderStage::Compute);
+        result.add(WebGPU::ShaderStage::Compute);
     return result;
 }
 

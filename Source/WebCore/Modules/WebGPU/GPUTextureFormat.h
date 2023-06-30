@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,8 +25,8 @@
 
 #pragma once
 
+#include "WebGPUTextureFormat.h"
 #include <cstdint>
-#include <pal/graphics/WebGPU/WebGPUTextureFormat.h>
 
 namespace WebCore {
 
@@ -150,197 +150,197 @@ enum class GPUTextureFormat : uint8_t {
     Astc12x12UnormSRGB,
 };
 
-inline PAL::WebGPU::TextureFormat convertToBacking(GPUTextureFormat textureFormat)
+inline WebGPU::TextureFormat convertToBacking(GPUTextureFormat textureFormat)
 {
     switch (textureFormat) {
     case GPUTextureFormat::R8unorm:
-        return PAL::WebGPU::TextureFormat::R8unorm;
+        return WebGPU::TextureFormat::R8unorm;
     case GPUTextureFormat::R8snorm:
-        return PAL::WebGPU::TextureFormat::R8snorm;
+        return WebGPU::TextureFormat::R8snorm;
     case GPUTextureFormat::R8uint:
-        return PAL::WebGPU::TextureFormat::R8uint;
+        return WebGPU::TextureFormat::R8uint;
     case GPUTextureFormat::R8sint:
-        return PAL::WebGPU::TextureFormat::R8sint;
+        return WebGPU::TextureFormat::R8sint;
     case GPUTextureFormat::R16uint:
-        return PAL::WebGPU::TextureFormat::R16uint;
+        return WebGPU::TextureFormat::R16uint;
     case GPUTextureFormat::R16sint:
-        return PAL::WebGPU::TextureFormat::R16sint;
+        return WebGPU::TextureFormat::R16sint;
     case GPUTextureFormat::R16float:
-        return PAL::WebGPU::TextureFormat::R16float;
+        return WebGPU::TextureFormat::R16float;
     case GPUTextureFormat::Rg8unorm:
-        return PAL::WebGPU::TextureFormat::Rg8unorm;
+        return WebGPU::TextureFormat::Rg8unorm;
     case GPUTextureFormat::Rg8snorm:
-        return PAL::WebGPU::TextureFormat::Rg8snorm;
+        return WebGPU::TextureFormat::Rg8snorm;
     case GPUTextureFormat::Rg8uint:
-        return PAL::WebGPU::TextureFormat::Rg8uint;
+        return WebGPU::TextureFormat::Rg8uint;
     case GPUTextureFormat::Rg8sint:
-        return PAL::WebGPU::TextureFormat::Rg8sint;
+        return WebGPU::TextureFormat::Rg8sint;
     case GPUTextureFormat::R32uint:
-        return PAL::WebGPU::TextureFormat::R32uint;
+        return WebGPU::TextureFormat::R32uint;
     case GPUTextureFormat::R32sint:
-        return PAL::WebGPU::TextureFormat::R32sint;
+        return WebGPU::TextureFormat::R32sint;
     case GPUTextureFormat::R32float:
-        return PAL::WebGPU::TextureFormat::R32float;
+        return WebGPU::TextureFormat::R32float;
     case GPUTextureFormat::Rg16uint:
-        return PAL::WebGPU::TextureFormat::Rg16uint;
+        return WebGPU::TextureFormat::Rg16uint;
     case GPUTextureFormat::Rg16sint:
-        return PAL::WebGPU::TextureFormat::Rg16sint;
+        return WebGPU::TextureFormat::Rg16sint;
     case GPUTextureFormat::Rg16float:
-        return PAL::WebGPU::TextureFormat::Rg16float;
+        return WebGPU::TextureFormat::Rg16float;
     case GPUTextureFormat::Rgba8unorm:
-        return PAL::WebGPU::TextureFormat::Rgba8unorm;
+        return WebGPU::TextureFormat::Rgba8unorm;
     case GPUTextureFormat::Rgba8unormSRGB:
-        return PAL::WebGPU::TextureFormat::Rgba8unormSRGB;
+        return WebGPU::TextureFormat::Rgba8unormSRGB;
     case GPUTextureFormat::Rgba8snorm:
-        return PAL::WebGPU::TextureFormat::Rgba8snorm;
+        return WebGPU::TextureFormat::Rgba8snorm;
     case GPUTextureFormat::Rgba8uint:
-        return PAL::WebGPU::TextureFormat::Rgba8uint;
+        return WebGPU::TextureFormat::Rgba8uint;
     case GPUTextureFormat::Rgba8sint:
-        return PAL::WebGPU::TextureFormat::Rgba8sint;
+        return WebGPU::TextureFormat::Rgba8sint;
     case GPUTextureFormat::Bgra8unorm:
-        return PAL::WebGPU::TextureFormat::Bgra8unorm;
+        return WebGPU::TextureFormat::Bgra8unorm;
     case GPUTextureFormat::Bgra8unormSRGB:
-        return PAL::WebGPU::TextureFormat::Bgra8unormSRGB;
+        return WebGPU::TextureFormat::Bgra8unormSRGB;
     case GPUTextureFormat::Rgb9e5ufloat:
-        return PAL::WebGPU::TextureFormat::Rgb9e5ufloat;
+        return WebGPU::TextureFormat::Rgb9e5ufloat;
     case GPUTextureFormat::Rgb10a2unorm:
-        return PAL::WebGPU::TextureFormat::Rgb10a2unorm;
+        return WebGPU::TextureFormat::Rgb10a2unorm;
     case GPUTextureFormat::Rg11b10ufloat:
-        return PAL::WebGPU::TextureFormat::Rg11b10ufloat;
+        return WebGPU::TextureFormat::Rg11b10ufloat;
     case GPUTextureFormat::Rg32uint:
-        return PAL::WebGPU::TextureFormat::Rg32uint;
+        return WebGPU::TextureFormat::Rg32uint;
     case GPUTextureFormat::Rg32sint:
-        return PAL::WebGPU::TextureFormat::Rg32sint;
+        return WebGPU::TextureFormat::Rg32sint;
     case GPUTextureFormat::Rg32float:
-        return PAL::WebGPU::TextureFormat::Rg32float;
+        return WebGPU::TextureFormat::Rg32float;
     case GPUTextureFormat::Rgba16uint:
-        return PAL::WebGPU::TextureFormat::Rgba16uint;
+        return WebGPU::TextureFormat::Rgba16uint;
     case GPUTextureFormat::Rgba16sint:
-        return PAL::WebGPU::TextureFormat::Rgba16sint;
+        return WebGPU::TextureFormat::Rgba16sint;
     case GPUTextureFormat::Rgba16float:
-        return PAL::WebGPU::TextureFormat::Rgba16float;
+        return WebGPU::TextureFormat::Rgba16float;
     case GPUTextureFormat::Rgba32uint:
-        return PAL::WebGPU::TextureFormat::Rgba32uint;
+        return WebGPU::TextureFormat::Rgba32uint;
     case GPUTextureFormat::Rgba32sint:
-        return PAL::WebGPU::TextureFormat::Rgba32sint;
+        return WebGPU::TextureFormat::Rgba32sint;
     case GPUTextureFormat::Rgba32float:
-        return PAL::WebGPU::TextureFormat::Rgba32float;
+        return WebGPU::TextureFormat::Rgba32float;
     case GPUTextureFormat::Stencil8:
-        return PAL::WebGPU::TextureFormat::Stencil8;
+        return WebGPU::TextureFormat::Stencil8;
     case GPUTextureFormat::Depth16unorm:
-        return PAL::WebGPU::TextureFormat::Depth16unorm;
+        return WebGPU::TextureFormat::Depth16unorm;
     case GPUTextureFormat::Depth24plus:
-        return PAL::WebGPU::TextureFormat::Depth24plus;
+        return WebGPU::TextureFormat::Depth24plus;
     case GPUTextureFormat::Depth24plusStencil8:
-        return PAL::WebGPU::TextureFormat::Depth24plusStencil8;
+        return WebGPU::TextureFormat::Depth24plusStencil8;
     case GPUTextureFormat::Depth32float:
-        return PAL::WebGPU::TextureFormat::Depth32float;
+        return WebGPU::TextureFormat::Depth32float;
     case GPUTextureFormat::Depth32floatStencil8:
-        return PAL::WebGPU::TextureFormat::Depth32floatStencil8;
+        return WebGPU::TextureFormat::Depth32floatStencil8;
     case GPUTextureFormat::Bc1RgbaUnorm:
-        return PAL::WebGPU::TextureFormat::Bc1RgbaUnorm;
+        return WebGPU::TextureFormat::Bc1RgbaUnorm;
     case GPUTextureFormat::Bc1RgbaUnormSRGB:
-        return PAL::WebGPU::TextureFormat::Bc1RgbaUnormSRGB;
+        return WebGPU::TextureFormat::Bc1RgbaUnormSRGB;
     case GPUTextureFormat::Bc2RgbaUnorm:
-        return PAL::WebGPU::TextureFormat::Bc2RgbaUnorm;
+        return WebGPU::TextureFormat::Bc2RgbaUnorm;
     case GPUTextureFormat::Bc2RgbaUnormSRGB:
-        return PAL::WebGPU::TextureFormat::Bc2RgbaUnormSRGB;
+        return WebGPU::TextureFormat::Bc2RgbaUnormSRGB;
     case GPUTextureFormat::Bc3RgbaUnorm:
-        return PAL::WebGPU::TextureFormat::Bc3RgbaUnorm;
+        return WebGPU::TextureFormat::Bc3RgbaUnorm;
     case GPUTextureFormat::Bc3RgbaUnormSRGB:
-        return PAL::WebGPU::TextureFormat::Bc3RgbaUnormSRGB;
+        return WebGPU::TextureFormat::Bc3RgbaUnormSRGB;
     case GPUTextureFormat::Bc4RUnorm:
-        return PAL::WebGPU::TextureFormat::Bc4RUnorm;
+        return WebGPU::TextureFormat::Bc4RUnorm;
     case GPUTextureFormat::Bc4RSnorm:
-        return PAL::WebGPU::TextureFormat::Bc4RSnorm;
+        return WebGPU::TextureFormat::Bc4RSnorm;
     case GPUTextureFormat::Bc5RgUnorm:
-        return PAL::WebGPU::TextureFormat::Bc5RgUnorm;
+        return WebGPU::TextureFormat::Bc5RgUnorm;
     case GPUTextureFormat::Bc5RgSnorm:
-        return PAL::WebGPU::TextureFormat::Bc5RgSnorm;
+        return WebGPU::TextureFormat::Bc5RgSnorm;
     case GPUTextureFormat::Bc6hRgbUfloat:
-        return PAL::WebGPU::TextureFormat::Bc6hRgbUfloat;
+        return WebGPU::TextureFormat::Bc6hRgbUfloat;
     case GPUTextureFormat::Bc6hRgbFloat:
-        return PAL::WebGPU::TextureFormat::Bc6hRgbFloat;
+        return WebGPU::TextureFormat::Bc6hRgbFloat;
     case GPUTextureFormat::Bc7RgbaUnorm:
-        return PAL::WebGPU::TextureFormat::Bc7RgbaUnorm;
+        return WebGPU::TextureFormat::Bc7RgbaUnorm;
     case GPUTextureFormat::Bc7RgbaUnormSRGB:
-        return PAL::WebGPU::TextureFormat::Bc7RgbaUnormSRGB;
+        return WebGPU::TextureFormat::Bc7RgbaUnormSRGB;
     case GPUTextureFormat::Etc2Rgb8unorm:
-        return PAL::WebGPU::TextureFormat::Etc2Rgb8unorm;
+        return WebGPU::TextureFormat::Etc2Rgb8unorm;
     case GPUTextureFormat::Etc2Rgb8unormSRGB:
-        return PAL::WebGPU::TextureFormat::Etc2Rgb8unormSRGB;
+        return WebGPU::TextureFormat::Etc2Rgb8unormSRGB;
     case GPUTextureFormat::Etc2Rgb8a1unorm:
-        return PAL::WebGPU::TextureFormat::Etc2Rgb8a1unorm;
+        return WebGPU::TextureFormat::Etc2Rgb8a1unorm;
     case GPUTextureFormat::Etc2Rgb8a1unormSRGB:
-        return PAL::WebGPU::TextureFormat::Etc2Rgb8a1unormSRGB;
+        return WebGPU::TextureFormat::Etc2Rgb8a1unormSRGB;
     case GPUTextureFormat::Etc2Rgba8unorm:
-        return PAL::WebGPU::TextureFormat::Etc2Rgba8unorm;
+        return WebGPU::TextureFormat::Etc2Rgba8unorm;
     case GPUTextureFormat::Etc2Rgba8unormSRGB:
-        return PAL::WebGPU::TextureFormat::Etc2Rgba8unormSRGB;
+        return WebGPU::TextureFormat::Etc2Rgba8unormSRGB;
     case GPUTextureFormat::EacR11unorm:
-        return PAL::WebGPU::TextureFormat::EacR11unorm;
+        return WebGPU::TextureFormat::EacR11unorm;
     case GPUTextureFormat::EacR11snorm:
-        return PAL::WebGPU::TextureFormat::EacR11snorm;
+        return WebGPU::TextureFormat::EacR11snorm;
     case GPUTextureFormat::EacRg11unorm:
-        return PAL::WebGPU::TextureFormat::EacRg11unorm;
+        return WebGPU::TextureFormat::EacRg11unorm;
     case GPUTextureFormat::EacRg11snorm:
-        return PAL::WebGPU::TextureFormat::EacRg11snorm;
+        return WebGPU::TextureFormat::EacRg11snorm;
     case GPUTextureFormat::Astc4x4Unorm:
-        return PAL::WebGPU::TextureFormat::Astc4x4Unorm;
+        return WebGPU::TextureFormat::Astc4x4Unorm;
     case GPUTextureFormat::Astc4x4UnormSRGB:
-        return PAL::WebGPU::TextureFormat::Astc4x4UnormSRGB;
+        return WebGPU::TextureFormat::Astc4x4UnormSRGB;
     case GPUTextureFormat::Astc5x4Unorm:
-        return PAL::WebGPU::TextureFormat::Astc5x4Unorm;
+        return WebGPU::TextureFormat::Astc5x4Unorm;
     case GPUTextureFormat::Astc5x4UnormSRGB:
-        return PAL::WebGPU::TextureFormat::Astc5x4UnormSRGB;
+        return WebGPU::TextureFormat::Astc5x4UnormSRGB;
     case GPUTextureFormat::Astc5x5Unorm:
-        return PAL::WebGPU::TextureFormat::Astc5x5Unorm;
+        return WebGPU::TextureFormat::Astc5x5Unorm;
     case GPUTextureFormat::Astc5x5UnormSRGB:
-        return PAL::WebGPU::TextureFormat::Astc5x5UnormSRGB;
+        return WebGPU::TextureFormat::Astc5x5UnormSRGB;
     case GPUTextureFormat::Astc6x5Unorm:
-        return PAL::WebGPU::TextureFormat::Astc6x5Unorm;
+        return WebGPU::TextureFormat::Astc6x5Unorm;
     case GPUTextureFormat::Astc6x5UnormSRGB:
-        return PAL::WebGPU::TextureFormat::Astc6x5UnormSRGB;
+        return WebGPU::TextureFormat::Astc6x5UnormSRGB;
     case GPUTextureFormat::Astc6x6Unorm:
-        return PAL::WebGPU::TextureFormat::Astc6x6Unorm;
+        return WebGPU::TextureFormat::Astc6x6Unorm;
     case GPUTextureFormat::Astc6x6UnormSRGB:
-        return PAL::WebGPU::TextureFormat::Astc6x6UnormSRGB;
+        return WebGPU::TextureFormat::Astc6x6UnormSRGB;
     case GPUTextureFormat::Astc8x5Unorm:
-        return PAL::WebGPU::TextureFormat::Astc8x5Unorm;
+        return WebGPU::TextureFormat::Astc8x5Unorm;
     case GPUTextureFormat::Astc8x5UnormSRGB:
-        return PAL::WebGPU::TextureFormat::Astc8x5UnormSRGB;
+        return WebGPU::TextureFormat::Astc8x5UnormSRGB;
     case GPUTextureFormat::Astc8x6Unorm:
-        return PAL::WebGPU::TextureFormat::Astc8x6Unorm;
+        return WebGPU::TextureFormat::Astc8x6Unorm;
     case GPUTextureFormat::Astc8x6UnormSRGB:
-        return PAL::WebGPU::TextureFormat::Astc8x6UnormSRGB;
+        return WebGPU::TextureFormat::Astc8x6UnormSRGB;
     case GPUTextureFormat::Astc8x8Unorm:
-        return PAL::WebGPU::TextureFormat::Astc8x8Unorm;
+        return WebGPU::TextureFormat::Astc8x8Unorm;
     case GPUTextureFormat::Astc8x8UnormSRGB:
-        return PAL::WebGPU::TextureFormat::Astc8x8UnormSRGB;
+        return WebGPU::TextureFormat::Astc8x8UnormSRGB;
     case GPUTextureFormat::Astc10x5Unorm:
-        return PAL::WebGPU::TextureFormat::Astc10x5Unorm;
+        return WebGPU::TextureFormat::Astc10x5Unorm;
     case GPUTextureFormat::Astc10x5UnormSRGB:
-        return PAL::WebGPU::TextureFormat::Astc10x5UnormSRGB;
+        return WebGPU::TextureFormat::Astc10x5UnormSRGB;
     case GPUTextureFormat::Astc10x6Unorm:
-        return PAL::WebGPU::TextureFormat::Astc10x6Unorm;
+        return WebGPU::TextureFormat::Astc10x6Unorm;
     case GPUTextureFormat::Astc10x6UnormSRGB:
-        return PAL::WebGPU::TextureFormat::Astc10x6UnormSRGB;
+        return WebGPU::TextureFormat::Astc10x6UnormSRGB;
     case GPUTextureFormat::Astc10x8Unorm:
-        return PAL::WebGPU::TextureFormat::Astc10x8Unorm;
+        return WebGPU::TextureFormat::Astc10x8Unorm;
     case GPUTextureFormat::Astc10x8UnormSRGB:
-        return PAL::WebGPU::TextureFormat::Astc10x8UnormSRGB;
+        return WebGPU::TextureFormat::Astc10x8UnormSRGB;
     case GPUTextureFormat::Astc10x10Unorm:
-        return PAL::WebGPU::TextureFormat::Astc10x10Unorm;
+        return WebGPU::TextureFormat::Astc10x10Unorm;
     case GPUTextureFormat::Astc10x10UnormSRGB:
-        return PAL::WebGPU::TextureFormat::Astc10x10UnormSRGB;
+        return WebGPU::TextureFormat::Astc10x10UnormSRGB;
     case GPUTextureFormat::Astc12x10Unorm:
-        return PAL::WebGPU::TextureFormat::Astc12x10Unorm;
+        return WebGPU::TextureFormat::Astc12x10Unorm;
     case GPUTextureFormat::Astc12x10UnormSRGB:
-        return PAL::WebGPU::TextureFormat::Astc12x10UnormSRGB;
+        return WebGPU::TextureFormat::Astc12x10UnormSRGB;
     case GPUTextureFormat::Astc12x12Unorm:
-        return PAL::WebGPU::TextureFormat::Astc12x12Unorm;
+        return WebGPU::TextureFormat::Astc12x12Unorm;
     case GPUTextureFormat::Astc12x12UnormSRGB:
-        return PAL::WebGPU::TextureFormat::Astc12x12UnormSRGB;
+        return WebGPU::TextureFormat::Astc12x12UnormSRGB;
     }
     RELEASE_ASSERT_NOT_REACHED();
 }

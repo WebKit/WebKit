@@ -32,12 +32,12 @@
 #include "RemoteRenderPipelineMessages.h"
 #include "StreamServerConnection.h"
 #include "WebGPUObjectHeap.h"
-#include <pal/graphics/WebGPU/WebGPUBindGroupLayout.h>
-#include <pal/graphics/WebGPU/WebGPURenderPipeline.h>
+#include <WebCore/WebGPUBindGroupLayout.h>
+#include <WebCore/WebGPURenderPipeline.h>
 
 namespace WebKit {
 
-RemoteRenderPipeline::RemoteRenderPipeline(PAL::WebGPU::RenderPipeline& renderPipeline, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
+RemoteRenderPipeline::RemoteRenderPipeline(WebCore::WebGPU::RenderPipeline& renderPipeline, WebGPU::ObjectHeap& objectHeap, Ref<IPC::StreamServerConnection>&& streamConnection, WebGPUIdentifier identifier)
     : m_backing(renderPipeline)
     , m_objectHeap(objectHeap)
     , m_streamConnection(WTFMove(streamConnection))

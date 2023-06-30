@@ -28,7 +28,7 @@
 #include "GPUAutoLayoutMode.h"
 #include "GPUObjectDescriptorBase.h"
 #include "GPUPipelineLayout.h"
-#include <pal/graphics/WebGPU/WebGPUPipelineDescriptorBase.h>
+#include "WebGPUPipelineDescriptorBase.h"
 
 #include <variant>
 
@@ -39,7 +39,7 @@ using GPULayoutMode = std::variant<
     GPUAutoLayoutMode
 >;
 
-static PAL::WebGPU::PipelineLayout& convertPipelineLayoutToBacking(const GPULayoutMode& layout, const Ref<GPUPipelineLayout>& autoLayout)
+static WebGPU::PipelineLayout& convertPipelineLayoutToBacking(const GPULayoutMode& layout, const Ref<GPUPipelineLayout>& autoLayout)
 {
     return *WTF::switchOn(layout, [](auto pipelineLayout) {
         return &pipelineLayout->backing();
@@ -49,7 +49,7 @@ static PAL::WebGPU::PipelineLayout& convertPipelineLayoutToBacking(const GPULayo
 }
 
 struct GPUPipelineDescriptorBase : public GPUObjectDescriptorBase {
-    PAL::WebGPU::PipelineDescriptorBase convertToBacking(const Ref<GPUPipelineLayout>& autoLayout) const
+    WebGPU::PipelineDescriptorBase convertToBacking(const Ref<GPUPipelineLayout>& autoLayout) const
     {
         return {
             { label },

@@ -25,8 +25,8 @@
 
 #pragma once
 
+#include "WebGPUFilterMode.h"
 #include <cstdint>
-#include <pal/graphics/WebGPU/WebGPUFilterMode.h>
 
 namespace WebCore {
 
@@ -35,13 +35,13 @@ enum class GPUMipmapFilterMode : uint8_t {
     Linear,
 };
 
-inline PAL::WebGPU::MipmapFilterMode convertToBacking(GPUMipmapFilterMode filterMode)
+inline WebGPU::MipmapFilterMode convertToBacking(GPUMipmapFilterMode filterMode)
 {
     switch (filterMode) {
     case GPUMipmapFilterMode::Nearest:
-        return PAL::WebGPU::MipmapFilterMode::Nearest;
+        return WebGPU::MipmapFilterMode::Nearest;
     case GPUMipmapFilterMode::Linear:
-        return PAL::WebGPU::MipmapFilterMode::Linear;
+        return WebGPU::MipmapFilterMode::Linear;
     }
     RELEASE_ASSERT_NOT_REACHED();
 }

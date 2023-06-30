@@ -1,4 +1,4 @@
-# Copyright (C) 2022 Apple Inc. All rights reserved.
+# Copyright (C) 2022-2023 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -26,6 +26,6 @@
     std::optional<WebKit::WebGPUIdentifier> resolveTarget
 
     std::optional<WebKit::WebGPU::Color> clearValue
-    PAL::WebGPU::LoadOp loadOp
-    PAL::WebGPU::StoreOp storeOp
+    WebCore::WebGPU::LoadOp loadOp
+    WebCore::WebGPU::StoreOp storeOp
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,8 +25,8 @@
 
 #pragma once
 
+#include "WebGPUAddressMode.h"
 #include <cstdint>
-#include <pal/graphics/WebGPU/WebGPUAddressMode.h>
 
 namespace WebCore {
 
@@ -36,15 +36,15 @@ enum class GPUAddressMode : uint8_t {
     MirrorRepeat,
 };
 
-inline PAL::WebGPU::AddressMode convertToBacking(GPUAddressMode addressMode)
+inline WebGPU::AddressMode convertToBacking(GPUAddressMode addressMode)
 {
     switch (addressMode) {
     case GPUAddressMode::ClampToEdge:
-        return PAL::WebGPU::AddressMode::ClampToEdge;
+        return WebGPU::AddressMode::ClampToEdge;
     case GPUAddressMode::Repeat:
-        return PAL::WebGPU::AddressMode::Repeat;
+        return WebGPU::AddressMode::Repeat;
     case GPUAddressMode::MirrorRepeat:
-        return PAL::WebGPU::AddressMode::MirrorRepeat;
+        return WebGPU::AddressMode::MirrorRepeat;
     }
     RELEASE_ASSERT_NOT_REACHED();
 }

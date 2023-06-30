@@ -30,18 +30,18 @@
 
 #include "WebGPUConvertFromBackingContext.h"
 #include "WebGPUConvertToBackingContext.h"
-#include <pal/graphics/WebGPU/WebGPUInternalError.h>
+#include <WebCore/WebGPUInternalError.h>
 
 namespace WebKit::WebGPU {
 
-std::optional<InternalError> ConvertToBackingContext::convertToBacking(const PAL::WebGPU::InternalError& internalError)
+std::optional<InternalError> ConvertToBackingContext::convertToBacking(const WebCore::WebGPU::InternalError& internalError)
 {
     return { { internalError.message() } };
 }
 
-RefPtr<PAL::WebGPU::InternalError> ConvertFromBackingContext::convertFromBacking(const InternalError& internalError)
+RefPtr<WebCore::WebGPU::InternalError> ConvertFromBackingContext::convertFromBacking(const InternalError& internalError)
 {
-    return { PAL::WebGPU::InternalError::create(internalError.message) };
+    return { WebCore::WebGPU::InternalError::create(internalError.message) };
 }
 
 } // namespace WebKit

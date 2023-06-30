@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,13 +30,13 @@
 
 #include "WebGPUConvertFromBackingContext.h"
 #include "WebGPUConvertToBackingContext.h"
-#include <pal/graphics/WebGPU/WebGPUTextureDescriptor.h>
+#include <WebCore/WebGPUTextureDescriptor.h>
 
 namespace WebKit::WebGPU {
 
-std::optional<TextureDescriptor> ConvertToBackingContext::convertToBacking(const PAL::WebGPU::TextureDescriptor& textureDescriptor)
+std::optional<TextureDescriptor> ConvertToBackingContext::convertToBacking(const WebCore::WebGPU::TextureDescriptor& textureDescriptor)
 {
-    auto base = convertToBacking(static_cast<const PAL::WebGPU::ObjectDescriptorBase&>(textureDescriptor));
+    auto base = convertToBacking(static_cast<const WebCore::WebGPU::ObjectDescriptorBase&>(textureDescriptor));
     if (!base)
         return std::nullopt;
 
@@ -47,7 +47,7 @@ std::optional<TextureDescriptor> ConvertToBackingContext::convertToBacking(const
     return { { WTFMove(*base), WTFMove(*size), textureDescriptor.mipLevelCount, textureDescriptor.sampleCount, textureDescriptor.dimension, textureDescriptor.format, textureDescriptor.usage, textureDescriptor.viewFormats } };
 }
 
-std::optional<PAL::WebGPU::TextureDescriptor> ConvertFromBackingContext::convertFromBacking(const TextureDescriptor& textureDescriptor)
+std::optional<WebCore::WebGPU::TextureDescriptor> ConvertFromBackingContext::convertFromBacking(const TextureDescriptor& textureDescriptor)
 {
     auto base = convertFromBacking(static_cast<const ObjectDescriptorBase&>(textureDescriptor));
     if (!base)

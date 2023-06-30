@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,8 +25,8 @@
 
 #pragma once
 
+#include "WebGPUCompilationMessageType.h"
 #include <cstdint>
-#include <pal/graphics/WebGPU/WebGPUCompilationMessageType.h>
 
 namespace WebCore {
 
@@ -36,15 +36,15 @@ enum class GPUCompilationMessageType : uint8_t {
     Info,
 };
 
-inline PAL::WebGPU::CompilationMessageType convertToBacking(GPUCompilationMessageType compilationMessageType)
+inline WebGPU::CompilationMessageType convertToBacking(GPUCompilationMessageType compilationMessageType)
 {
     switch (compilationMessageType) {
     case GPUCompilationMessageType::Error:
-        return PAL::WebGPU::CompilationMessageType::Error;
+        return WebGPU::CompilationMessageType::Error;
     case GPUCompilationMessageType::Warning:
-        return PAL::WebGPU::CompilationMessageType::Warning;
+        return WebGPU::CompilationMessageType::Warning;
     case GPUCompilationMessageType::Info:
-        return PAL::WebGPU::CompilationMessageType::Info;
+        return WebGPU::CompilationMessageType::Info;
     }
     RELEASE_ASSERT_NOT_REACHED();
 }

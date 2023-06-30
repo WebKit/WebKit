@@ -28,13 +28,13 @@
 #include "GPUIntegralTypes.h"
 #include "GPUVertexAttribute.h"
 #include "GPUVertexStepMode.h"
-#include <pal/graphics/WebGPU/WebGPUVertexBufferLayout.h>
+#include "WebGPUVertexBufferLayout.h"
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
 struct GPUVertexBufferLayout {
-    PAL::WebGPU::VertexBufferLayout convertToBacking() const
+    WebGPU::VertexBufferLayout convertToBacking() const
     {
         return {
             arrayStride,
