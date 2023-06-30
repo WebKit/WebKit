@@ -118,7 +118,6 @@ public:
 
     const FontCascadeDescription& fontDescription() const { return m_fontDescription; }
 
-    int pixelSize() const { return fontDescription().computedPixelSize(); }
     float size() const { return fontDescription().computedSize(); }
 
     bool isCurrent(const FontSelector&) const;

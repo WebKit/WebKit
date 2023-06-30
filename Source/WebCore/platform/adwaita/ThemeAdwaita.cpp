@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2015, 2020 Igalia S.L.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -237,8 +238,8 @@ LengthSize ThemeAdwaita::controlSize(StyleAppearance appearance, const FontCasca
         LengthSize spinButtonSize = zoomedSize;
         if (spinButtonSize.width.isIntrinsicOrAuto())
             spinButtonSize.width = Length(static_cast<int>(arrowSize * zoomFactor), LengthType::Fixed);
-        if (spinButtonSize.height.isIntrinsicOrAuto() || fontCascade.pixelSize() > static_cast<int>(arrowSize))
-            spinButtonSize.height = Length(fontCascade.pixelSize(), LengthType::Fixed);
+        if (spinButtonSize.height.isIntrinsicOrAuto() || fontCascade.size() > arrowSize)
+            spinButtonSize.height = Length(fontCascade.size(), LengthType::Fixed);
         return spinButtonSize;
     }
     default:

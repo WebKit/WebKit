@@ -1,4 +1,4 @@
-layer at (0,0) size 1160x585
+layer at (0,0) size 1045x585
   RenderView at (0,0) size 800x585
 layer at (0,0) size 800x585
   RenderBlock {HTML} at (0,0) size 800x585
@@ -8,18 +8,18 @@ layer at (0,0) size 800x585
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {DIV} at (0,162) size 781x118
         RenderBlock (anonymous) at (0,0) size 781x66
-          RenderText {#text} at (0,0) size 60x21
-            text run at (0,0) width 60: "Results:"
-          RenderBR {BR} at (59,0) size 1x21
-          RenderText {#text} at (0,22) size 102x21
-            text run at (0,22) width 102: "Test 1 Passed"
-          RenderBR {BR} at (101,22) size 1x21
-          RenderText {#text} at (0,44) size 98x21
-            text run at (0,44) width 98: "Test 2 Failed"
-          RenderBR {BR} at (97,44) size 1x21
+          RenderText {#text} at (0,0) size 61x21
+            text run at (0,0) width 61: "Results:"
+          RenderBR {BR} at (61,0) size 0x21
+          RenderText {#text} at (0,22) size 105x21
+            text run at (0,22) width 105: "Test 1 Passed"
+          RenderBR {BR} at (104,22) size 1x21
+          RenderText {#text} at (0,44) size 101x21
+            text run at (0,44) width 101: "Test 2 Failed"
+          RenderBR {BR} at (100,44) size 1x21
         RenderBlock {PRE} at (0,81) size 781x37
-          RenderText {#text} at (0,0) size 1150x18
-            text run at (0,0) width 1150: "     Expected: false,false,false,false,false,false,true,false,false,false,false,false,false,false,false,false,false"
-          RenderBR {BR} at (1150,0) size 0x18
-          RenderText {#text} at (0,18) size 1130x18
-            text run at (0,18) width 1130: "     Actual: false,false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,false"
+          RenderText {#text} at (0,0) size 1035x18
+            text run at (0,0) width 1035: "     Expected: false,false,false,false,false,false,true,false,false,false,false,false,false,false,false,false,false"
+          RenderBR {BR} at (1035,0) size 0x18
+          RenderText {#text} at (0,18) size 1017x18
+            text run at (0,18) width 1017: "     Actual: false,false,false,false,true,false,false,false,false,false,false,false,false,false,false,false,false"

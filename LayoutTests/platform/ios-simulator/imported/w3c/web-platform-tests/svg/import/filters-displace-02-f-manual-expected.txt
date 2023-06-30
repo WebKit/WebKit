@@ -25,8 +25,8 @@ layer at (0,0) size 800x600
       RenderSVGRect {rect} at (98,298) size 604x137 [stroke={[type=SOLID] [color=#993333] [stroke width=2.00]}] [x=60.00] [y=180.00] [width=360.00] [height=80.00]
       RenderSVGRect {rect} at (100,126) size 600x305 [fill={[type=LINEAR-GRADIENT] [id="fade"]}] [x=60.00] [y=180.00] [width=360.00] [height=80.00]
         [filter="bend"] RenderSVGResourceFilter {filter} at (60,76) size 360x182.40
-    RenderSVGContainer {g} at (16,516) size 385x64
-      RenderSVGText {text} at (10,310) size 231x38 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 231x38
-          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 230.19: "$Revision: 1.9 $"
+    RenderSVGContainer {g} at (16,516) size 384x64
+      RenderSVGText {text} at (10,310) size 230x38 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 230x38
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 229.47: "$Revision: 1.9 $"
     RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

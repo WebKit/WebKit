@@ -56,7 +56,7 @@ FontPlatformData FontCustomPlatformData::fontPlatformData(const FontDescription&
     ASSERT(font);
     FontPlatformData platformData(font.get(), size, bold, italic, orientation, widthVariant, fontDescription.textRenderingMode(), this);
 
-    platformData.updateSizeWithFontSizeAdjust(fontDescription.fontSizeAdjust(), fontDescription.computedPixelSize());
+    platformData.updateSizeWithFontSizeAdjust(fontDescription.fontSizeAdjust(), fontDescription.computedSize());
     return platformData;
 }
 

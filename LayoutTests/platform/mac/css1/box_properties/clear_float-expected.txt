@@ -47,8 +47,8 @@ layer at (0,0) size 785x793
               text run at (0,0) width 89: "0.5em margin"
       RenderBlock (floating) {DIV} at (0,315) size 192x117 [color=#FFFFFF] [bgcolor=#0000FF]
         RenderBlock {H1} at (8,8) size 176x22
-          RenderText {#text} at (0,0) size 111x22
-            text run at (0,0) width 111: "Bottom menu"
+          RenderText {#text} at (0,0) size 112x22
+            text run at (0,0) width 112: "Bottom menu"
         RenderBlock {UL} at (24,33) size 156x73
           RenderListItem {LI} at (0,0) size 156x18
             RenderListMarker at (-17,0) size 7x18: bullet
@@ -117,8 +117,8 @@ layer at (0,0) size 785x793
                       text run at (0,0) width 89: "0.5em margin"
               RenderBlock (floating) {DIV} at (4,130) size 192x117 [color=#FFFFFF] [bgcolor=#0000FF]
                 RenderBlock {H1} at (8,8) size 176x22
-                  RenderText {#text} at (0,0) size 111x22
-                    text run at (0,0) width 111: "Bottom menu"
+                  RenderText {#text} at (0,0) size 112x22
+                    text run at (0,0) width 112: "Bottom menu"
                 RenderBlock {UL} at (24,33) size 156x73
                   RenderListItem {LI} at (0,0) size 156x18
                     RenderListMarker at (-17,0) size 7x18: bullet

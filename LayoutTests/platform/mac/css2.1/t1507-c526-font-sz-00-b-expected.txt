@@ -10,11 +10,11 @@ layer at (0,0) size 800x324
         RenderText {#text} at (0,0) size 218x18
           text run at (0,0) width 218: "This sentence should be the same."
       RenderBlock {P} at (10,56) size 764x22 [color=#000080]
-        RenderText {#text} at (0,0) size 332x22
-          text run at (0,0) width 332: "This sentence should be larger than normal."
+        RenderText {#text} at (0,0) size 336x22
+          text run at (0,0) width 336: "This sentence should be larger than normal."
       RenderBlock {P} at (10,88) size 764x15 [color=#000080]
-        RenderText {#text} at (0,0) size 236x15
-          text run at (0,0) width 236: "This sentence should be smaller than normal."
+        RenderText {#text} at (0,0) size 242x15
+          text run at (0,0) width 242: "This sentence should be smaller than normal."
       RenderBlock {P} at (10,113) size 764x18 [color=#000080]
         RenderText {#text} at (0,6) size 131x10
           text run at (0,6) width 131: "This sentence should be very small. "

@@ -83,7 +83,7 @@ void RenderRubyText::adjustInlineDirectionLineBounds(int expansionOpportunityCou
     // ruby character on each side.
     float inset = (logicalWidth - maxPreferredLogicalWidth) / (expansionOpportunityCount + 1);
     if (expansionOpportunityCount)
-        inset = std::min<float>(2 * style().computedFontPixelSize(), inset);
+        inset = std::min(2 * style().computedFontSize(), inset);
 
     logicalLeft += inset / 2;
     logicalWidth -= inset;

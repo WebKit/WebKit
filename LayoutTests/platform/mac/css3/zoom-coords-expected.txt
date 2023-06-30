@@ -54,9 +54,9 @@ PASS image1.right is 150
 PASS image1.bottom is 275
 PASS text1.left is 100
 PASS text1.top is within 1 of 282
-PASS text1.width is within 1 of 46
+PASS text1.width is within 1 of 48
 PASS text1.height is within 1 of 6
-PASS text1.right is within 1 of 146
+PASS text1.right is within 1 of 148
 PASS text1.bottom is within 1 of 289
 
 PASS svg2.left is 75
@@ -104,9 +104,9 @@ PASS image3.right is 1200
 PASS image3.bottom is 550
 PASS text3.left is 1100
 PASS text3.top is within 1 of 565
-PASS text3.width is within 1 of 92
+PASS text3.width is within 1 of 96
 PASS text3.height is within 1 of 12
-PASS text3.right is within 1 of 1192
+PASS text3.right is within 1 of 1196
 PASS text3.bottom is within 1 of 577
 
 PASS successfullyParsed is true

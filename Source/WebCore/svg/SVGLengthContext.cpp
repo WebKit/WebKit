@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2004, 2005, 2006 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
- * Copyright (C) 2007-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2023 Apple Inc. All rights reserved.
  * Copyright (C) Research In Motion Limited 2011. All rights reserved.
  * Copyright (C) 2014 Adobe Systems Incorporated. All rights reserved.
  *
@@ -241,7 +241,7 @@ ExceptionOr<float> SVGLengthContext::convertValueFromUserUnitsToEMS(float value)
     if (!style)
         return Exception { NotSupportedError };
 
-    float fontSize = style->computedFontPixelSize();
+    float fontSize = style->computedFontSize();
     if (!fontSize)
         return Exception { NotSupportedError };
 
@@ -254,7 +254,7 @@ ExceptionOr<float> SVGLengthContext::convertValueFromEMSToUserUnits(float value)
     if (!style)
         return Exception { NotSupportedError };
 
-    return value * style->computedFontPixelSize();
+    return value * style->computedFontSize();
 }
 
 ExceptionOr<float> SVGLengthContext::convertValueFromUserUnitsToEXS(float value) const

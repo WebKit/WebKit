@@ -290,9 +290,9 @@ layer at (0,0) size 785x1205
             RenderTableCell {TD} at (57,199) size 710x27 [border: (1px solid #EEEEEE)] [r=5 c=1 rs=1 cs=1]
               RenderText {#text} at (2,6) size 233x18
                 text run at (2,6) width 233: "Quelqu'un L\x{2019}amour T'appelles\x{2011}Tu 3"
-              RenderInline {SUP} at (0,0) size 22x15
-                RenderText {#text} at (234,2) size 22x15
-                  text run at (234,2) width 22: "eme"
+              RenderInline {SUP} at (0,0) size 23x15
+                RenderText {#text} at (234,2) size 23x15
+                  text run at (234,2) width 23: "eme"
           RenderTableRow {TR} at (0,227) size 769x24
             RenderTableCell {TH} at (2,227) size 54x23 [bgcolor=#F8F8F8] [border: (1px solid #EEEEEE)] [r=6 c=0 rs=1 cs=1]
               RenderText {#text} at (17,1) size 19x20

@@ -25,8 +25,8 @@ layer at (0,0) size 800x600
         RenderSVGText {text} at (18,12) size 444x29 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 443x29
             chunk 1 (middle anchor) text run 1 at (18.54,35.00) startOffset 0 endOffset 39 width 442.92: "External references and computed values"
-    RenderSVGContainer {g} at (16,516) size 385x64
-      RenderSVGText {text} at (10,310) size 231x38 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 231x38
-          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 230.19: "$Revision: 1.4 $"
+    RenderSVGContainer {g} at (16,516) size 384x64
+      RenderSVGText {text} at (10,310) size 230x38 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 230x38
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 229.47: "$Revision: 1.4 $"
     RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

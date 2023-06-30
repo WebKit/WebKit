@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2010 Alex Milowski (alex@milowski.com). All rights reserved.
  * Copyright (C) 2016 Igalia S.L.
+ * Copyright (C) 2023 Apple Inc. All right reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -91,7 +92,7 @@ void RenderMathMLRow::stretchVerticalOperatorsAndLayoutChildren()
     }
     if (stretchAscent + stretchDescent <= 0) {
         // We ensure a minimal stretch size.
-        stretchAscent = style().computedFontPixelSize();
+        stretchAscent = style().computedFontSize();
         stretchDescent = 0;
     }
 

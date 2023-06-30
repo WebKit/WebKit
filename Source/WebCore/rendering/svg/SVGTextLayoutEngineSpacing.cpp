@@ -1,5 +1,6 @@
 /*
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -39,7 +40,7 @@ float SVGTextLayoutEngineSpacing::calculateCSSKerningAndSpacing(const SVGRenderS
     float kerning = 0;
     auto kerningLength = style->kerning();
     if (kerningLength.lengthType() == SVGLengthType::Percentage)
-        kerning = kerningLength.valueAsPercentage() * m_font.pixelSize();
+        kerning = kerningLength.valueAsPercentage() * m_font.size();
     else {
         SVGLengthContext lengthContext(contextElement);
         kerning = kerningLength.value(lengthContext);

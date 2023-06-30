@@ -37,8 +37,8 @@ layer at (0,0) size 800x600
               chunk 1 text run 1 at (160.00,40.00) startOffset 0 endOffset 11 width 77.20: "Filler Text"
           RenderSVGRect {rect} at (482,232) size 53x86 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [x=250.00] [y=20.00] [width=30.00] [height=50.00]
           RenderSVGPath {line} at (580,230) size 74x90 [stroke={[type=SOLID] [color=#000000] [stroke width=5.00]}] [fill={[type=SOLID] [color=#000000]}] [x1=310.00] [y1=20.00] [x2=350.00] [y2=70.00]
-    RenderSVGContainer {g} at (16,518) size 380x60
-      RenderSVGText {text} at (10,311) size 228x36 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 228x36
-          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 227.40: "$Revision: 1.9 $"
+    RenderSVGContainer {g} at (16,518) size 388x60
+      RenderSVGText {text} at (10,311) size 233x36 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 233x36
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 232.20: "$Revision: 1.9 $"
     RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

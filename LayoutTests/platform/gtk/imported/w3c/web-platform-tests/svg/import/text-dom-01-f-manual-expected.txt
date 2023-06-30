@@ -56,14 +56,14 @@ layer at (0,0) size 800x600
         RenderSVGText {text} at (30,266) size 398x18 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 398x17
             chunk 1 text run 1 at (30.00,280.00) startOffset 0 endOffset 59 width 397.37: ".lengthAdjust.baseVal and .lengthAdjust.animVal result: 1,1"
-    RenderSVGContainer {g} at (16,518) size 380x60
-      RenderSVGText {text} at (10,311) size 228x36 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 228x36
-          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 227.40: "$Revision: 1.4 $"
+    RenderSVGContainer {g} at (16,518) size 388x60
+      RenderSVGText {text} at (10,311) size 233x36 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 233x36
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 232.20: "$Revision: 1.4 $"
     RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
     RenderSVGContainer {g} at (0,0) size 800x38
       RenderSVGRect {rect} at (0,0) size 800x36 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FF0000]}] [x=1.00] [y=1.00] [width=478.00] [height=20.00]
-      RenderSVGText {text} at (206,0) size 68x23 contains 1 chunk(s)
+      RenderSVGText {text} at (206,-1) size 68x24 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 68x23
           chunk 1 (middle anchor) text run 1 at (206.40,18.00) startOffset 0 endOffset 5 width 67.20: "DRAFT"
 selection start: position 11 of child 2 {#text} of child 7 {text} of child 3 {g} of child 25 {g} of child 0 {svg} of document

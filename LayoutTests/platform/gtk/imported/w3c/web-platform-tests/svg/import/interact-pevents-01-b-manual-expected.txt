@@ -151,8 +151,8 @@ layer at (0,0) size 800x600
             RenderSVGText {text} at (15,0) size 120x24 contains 1 chunk(s)
               RenderSVGInlineText {#text} at (0,0) size 120x23
                 chunk 1 (middle anchor) text run 1 at (15.11,19.00) startOffset 0 endOffset 13 width 119.78: "Toggle freeze"
-    RenderSVGContainer {g} at (16,518) size 380x60
-      RenderSVGText {text} at (10,311) size 228x36 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 228x36
-          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 227.40: "$Revision: 1.6 $"
+    RenderSVGContainer {g} at (16,518) size 388x60
+      RenderSVGText {text} at (10,311) size 233x36 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 233x36
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 232.20: "$Revision: 1.6 $"
     RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

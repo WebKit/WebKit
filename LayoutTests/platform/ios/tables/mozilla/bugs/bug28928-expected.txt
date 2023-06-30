@@ -4,8 +4,8 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {H3} at (0,0) size 784x23
-        RenderText {#text} at (0,0) size 197x22
-          text run at (0,0) width 197: "With long hidden values"
+        RenderText {#text} at (0,0) size 194x22
+          text run at (0,0) width 194: "With long hidden values"
       RenderTable {TABLE} at (0,41) size 198x69 [border: (1px solid #FF0000)]
         RenderTableSection {TBODY} at (1,1) size 196x66
           RenderTableRow {TR} at (0,2) size 196x60
@@ -24,8 +24,8 @@ layer at (0,0) size 800x600
                   text run at (0,22) width 190: "Enter City Name or Zip Code"
           RenderTableRow {TR} at (0,64) size 196x0
       RenderBlock {H3} at (0,138) size 784x24
-        RenderText {#text} at (0,0) size 204x22
-          text run at (0,0) width 204: "With short hidden values"
+        RenderText {#text} at (0,0) size 201x22
+          text run at (0,0) width 201: "With short hidden values"
       RenderTable {TABLE} at (0,180) size 198x69 [border: (1px solid #FF0000)]
         RenderTableSection {TBODY} at (1,1) size 196x66
           RenderTableRow {TR} at (0,2) size 196x60

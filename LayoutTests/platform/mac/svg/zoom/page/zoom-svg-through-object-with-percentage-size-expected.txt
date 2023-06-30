@@ -12,15 +12,15 @@ layer at (0,0) size 800x386
                   RenderTableRow {tr} at (0,1) size 693x68
                     RenderTableCell {td} at (1,1) size 691x68 [r=0 c=0 rs=1 cs=2]
                       RenderBlock {h1} at (5,20) size 680x27
-                        RenderText {#text} at (102,0) size 475x26
-                          text run at (102,0) width 475: "Both sides should have identical size after zooming"
+                        RenderText {#text} at (99,0) size 481x26
+                          text run at (99,0) width 481: "Both sides should have identical size after zooming"
                   RenderTableRow {tr} at (0,69) size 693x25
                     RenderTableCell {td} at (1,69) size 345x25 [r=1 c=0 rs=1 cs=1]
-                      RenderText {#text} at (146,5) size 53x14
-                        text run at (146,5) width 53: "SVG Image"
+                      RenderText {#text} at (145,5) size 54x14
+                        text run at (145,5) width 54: "SVG Image"
                     RenderTableCell {td} at (347,69) size 345x25 [r=1 c=1 rs=1 cs=1]
-                      RenderText {#text} at (146,5) size 53x14
-                        text run at (146,5) width 53: "PNG Image"
+                      RenderText {#text} at (145,5) size 54x14
+                        text run at (145,5) width 54: "PNG Image"
                   RenderTableRow {tr} at (0,95) size 693x265
                     RenderTableCell {td} at (1,95) size 345x265 [r=2 c=0 rs=1 cs=1]
                       RenderEmbeddedObject {object} at (5,5) size 334x251
@@ -37,9 +37,9 @@ layer at (0,0) size 800x386
                               RenderSVGRect {rect} at (87,133) size 41x62 [stroke={[type=SOLID] [color=#0000FF] [stroke width=8.00]}] [fill={[type=SOLID] [color=#00FF00]}] [x=130.00] [y=196.00] [width=50.00] [height=80.00]
                               RenderSVGRect {rect} at (170,133) size 41x62 [stroke={[type=SOLID] [color=#0000FF] [stroke width=8.00]}] [x=250.00] [y=196.00] [width=50.00] [height=80.00]
                               RenderSVGRect {rect} at (242,136) size 36x56 [fill={[type=SOLID] [color=#00FF00]}] [x=350.00] [y=196.00] [width=50.00] [height=80.00]
-                            RenderSVGText {text} at (10,303) size 266x48 contains 1 chunk(s)
-                              RenderSVGInlineText {#text} at (0,0) size 266x47
-                                chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 265.71: "$Revision: 1.7 $"
+                            RenderSVGText {text} at (10,304) size 264x46 contains 1 chunk(s)
+                              RenderSVGInlineText {#text} at (0,0) size 264x46
+                                chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 263.34: "$Revision: 1.7 $"
                             RenderSVGRect {rect} at (0,0) size 333x250 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
                       RenderText {#text} at (0,0) size 0x0
                     RenderTableCell {td} at (347,95) size 345x265 [r=2 c=1 rs=1 cs=1]

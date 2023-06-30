@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2007-2008 Torch Mobile, Inc.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -110,7 +110,7 @@ struct FontDescriptionKey {
     FontDescriptionKey() = default;
 
     FontDescriptionKey(const FontDescription& description)
-        : m_size(description.computedPixelSize())
+        : m_size(description.computedSize())
         , m_fontSelectionRequest(description.fontSelectionRequest())
         , m_flags(makeFlagsKey(description))
         , m_locale(description.specifiedLocale())
@@ -176,7 +176,7 @@ private:
     }
 
     bool m_isDeletedValue { false };
-    unsigned m_size { 0 };
+    float m_size { 0 };
     FontSelectionRequest m_fontSelectionRequest;
     std::array<unsigned, 2> m_flags { { 0, 0 } };
     AtomString m_locale;

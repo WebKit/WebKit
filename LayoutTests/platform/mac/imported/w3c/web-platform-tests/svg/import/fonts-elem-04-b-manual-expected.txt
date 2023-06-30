@@ -34,8 +34,8 @@ layer at (0,0) size 800x600
         RenderSVGText {text} at (0,-54) size 199x69 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 199x69
             chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 5 width 198.54: "Ay\x{D6}@\x{E7}"
-    RenderSVGContainer {g} at (16,517) size 381x62
-      RenderSVGText {text} at (10,310) size 229x38 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 229x37
-          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 228.03: "$Revision: 1.8 $"
+    RenderSVGContainer {g} at (16,517) size 384x62
+      RenderSVGText {text} at (10,310) size 230x38 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 230x37
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 229.47: "$Revision: 1.8 $"
     RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

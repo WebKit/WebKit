@@ -5,9 +5,9 @@ layer at (0,0) size 800x600
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
     RenderSVGContainer {g} at (16,25) size 702x469
       RenderSVGContainer {g} at (16,25) size 702x469 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,30.00)}]
-        RenderSVGText {text} at (73,-15) size 334x19 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 334x19
-            chunk 1 (middle anchor) text run 1 at (73.50,0.00) startOffset 0 endOffset 45 width 333.00: "Test available options of preserveAspectRatio"
+        RenderSVGText {text} at (78,-15) size 324x19 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 323x18
+            chunk 1 (middle anchor) text run 1 at (78.89,0.00) startOffset 0 endOffset 45 width 322.23: "Test available options of preserveAspectRatio"
         RenderSVGText {text} at (16,21) size 39x11 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 38x11
             chunk 1 (middle anchor) text run 1 at (16.60,30.00) startOffset 0 endOffset 10 width 37.80: "SVG to fit"
@@ -188,8 +188,8 @@ layer at (0,0) size 800x600
                 RenderSVGEllipse {circle} at (529,423) size 9x9 [fill={[type=SOLID] [color=#000000]}] [cx=12.00] [cy=12.00] [r=1.50]
                 RenderSVGEllipse {circle} at (543,423) size 9x9 [fill={[type=SOLID] [color=#000000]}] [cx=17.00] [cy=12.00] [r=1.50]
                 RenderSVGPath {path} at (526,445) size 32x17 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M 10 19 L 15 23 L 20 19"]
-    RenderSVGContainer {g} at (16,518) size 380x60
-      RenderSVGText {text} at (10,311) size 228x36 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 228x36
-          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 227.40: "$Revision: 1.8 $"
+    RenderSVGContainer {g} at (16,518) size 388x60
+      RenderSVGText {text} at (10,311) size 233x36 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 233x36
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 232.20: "$Revision: 1.8 $"
     RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]

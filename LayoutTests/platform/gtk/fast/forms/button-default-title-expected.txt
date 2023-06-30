@@ -4,8 +4,8 @@ layer at (0,0) size 785x652
   RenderBlock {HTML} at (0,0) size 785x653
     RenderBody {BODY} at (8,8) size 769x637
       RenderBlock {H3} at (0,0) size 769x22
-        RenderText {#text} at (0,0) size 195x21
-          text run at (0,0) width 195: "<input type=\"submit\">"
+        RenderText {#text} at (0,0) size 186x21
+          text run at (0,0) width 186: "<input type=\"submit\">"
       RenderBlock {P} at (0,40) size 769x19
         RenderText {#text} at (0,0) size 343x17
           text run at (0,0) width 343: "This button should have the default submit button title:"
@@ -40,8 +40,8 @@ layer at (0,0) size 785x652
         RenderButton {INPUT} at (0,0) size 80x21 [color=#000000CC] [bgcolor=#008000] [border: (2px outset #C0C0C0)]
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {H3} at (0,327) size 769x23
-        RenderText {#text} at (0,0) size 176x21
-          text run at (0,0) width 176: "<input type=\"reset\">"
+        RenderText {#text} at (0,0) size 169x21
+          text run at (0,0) width 169: "<input type=\"reset\">"
       RenderBlock {P} at (0,368) size 769x19
         RenderText {#text} at (0,0) size 330x17
           text run at (0,0) width 330: "This button should have the default reset button title:"

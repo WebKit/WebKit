@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -153,7 +153,7 @@ Theme& Theme::singleton()
 
 static NSControlSize controlSizeForFont(const FontCascade& font)
 {
-    int fontSize = font.pixelSize();
+    auto fontSize = font.size();
     if (fontSize >= 21 && ThemeMac::supportsLargeFormControls())
         return NSControlSizeLarge;
     if (fontSize >= 16)
@@ -462,7 +462,7 @@ static const std::array<IntSize, 4>& stepperSizes()
 // should be equal to or less than the corresponding text field height,
 static NSControlSize stepperControlSizeForFont(const FontCascade& font)
 {
-    int fontSize = font.pixelSize();
+    auto fontSize = font.size();
     if (fontSize >= 23 && ThemeMac::supportsLargeFormControls())
         return NSControlSizeLarge;
     if (fontSize >= 18)

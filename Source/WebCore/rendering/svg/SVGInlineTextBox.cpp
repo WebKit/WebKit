@@ -2,6 +2,7 @@
  * Copyright (C) 2007 Rob Buis <buis@kde.org>
  * Copyright (C) 2007 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -160,9 +161,7 @@ LayoutRect SVGInlineTextBox::localSelectionRect(unsigned start, unsigned end) co
 
 static inline bool textShouldBePainted(const RenderSVGInlineText& textRenderer)
 {
-    // FontCascade::pixelSize(), returns FontDescription::computedPixelSize(), which returns "int(x + 0.5)".
-    // If the absolute font size on screen is below x=0.5, don't render anything.
-    return textRenderer.scaledFont().pixelSize();
+    return textRenderer.scaledFont().size() >= 0.5;
 }
 
 void SVGInlineTextBox::paintSelectionBackground(PaintInfo& paintInfo)

@@ -1,5 +1,6 @@
 2d.fillStyle.parse.rgb-clamp-1
 Assumes colors are clamped to [0,255].
+
 Actual output:
 Expected output:
 

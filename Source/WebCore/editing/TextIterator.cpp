@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2015 Google Inc. All rights reserved.
  * Copyright (C) 2005 Alexey Proskuryakov.
  *
@@ -942,8 +942,8 @@ static bool shouldEmitExtraNewlineForNode(Node& node)
     if (!renderBox.height())
         return false;
 
-    int bottomMargin = renderBox.collapsedMarginAfter();
-    int fontSize = renderBox.style().fontDescription().computedPixelSize();
+    auto bottomMargin = renderBox.collapsedMarginAfter();
+    auto fontSize = renderBox.style().fontDescription().computedSize();
     return bottomMargin * 2 >= fontSize;
 }
 

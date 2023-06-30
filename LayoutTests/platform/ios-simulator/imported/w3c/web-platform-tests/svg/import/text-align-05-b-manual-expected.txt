@@ -3,10 +3,10 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-    RenderSVGContainer {g} at (8,5) size 780x529
-      RenderSVGText {text} at (5,3) size 468x47 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 468x47
-          chunk 1 text run 1 at (5.00,40.00) startOffset 0 endOffset 29 width 467.56: "Test 'text-anchor' (vertical)"
+    RenderSVGContainer {g} at (8,4) size 782x530
+      RenderSVGText {text} at (5,2) size 469x48 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 469x47
+          chunk 1 text run 1 at (5.00,40.00) startOffset 0 endOffset 29 width 468.73: "Test 'text-anchor' (vertical)"
       RenderSVGContainer {g} at (252,81) size 196x453
         RenderSVGContainer {g} at (252,81) size 196x453 [transform={m=((1.00,0.00)(0.00,1.00)) t=(160.00,150.00)}]
           RenderSVGContainer {g} at (252,245) size 29x289
@@ -35,8 +35,8 @@ layer at (0,0) size 800x600
                 chunk 1 (end anchor, vertical) text run 1 at (-10.50,-101.70) startOffset 0 endOffset 1 height 33.90: "e"
                 chunk 1 (end anchor, vertical) text run 2 at (-10.50,-67.80) startOffset 1 endOffset 2 height 33.90: "n"
                 chunk 1 (end anchor, vertical) text run 3 at (-10.50,-33.90) startOffset 2 endOffset 3 height 33.90: "d"
-    RenderSVGContainer {g} at (16,516) size 385x64
-      RenderSVGText {text} at (10,310) size 231x38 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 231x38
-          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 230.19: "$Revision: 1.9 $"
+    RenderSVGContainer {g} at (16,516) size 384x64
+      RenderSVGText {text} at (10,310) size 230x38 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 230x38
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 229.47: "$Revision: 1.9 $"
     RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
