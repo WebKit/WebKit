@@ -457,6 +457,9 @@ accessibility/progress-element-value-changes.html [ Skip ]
 accessibility/svg-font-face.html [ Skip ]
 accessibility/aria-labelledby-on-password-input.html [ Skip ]
 
+# Skipped because text marker APIs not implemented.
+accessibility/display-contents/end-text-marker.html [ Skip ]
+
 # Need to implement AccessibilityUIElement::insertText.
 accessibility/insert-text-into-password-field.html [ Skip ]
 

@@ -469,6 +469,7 @@ public:
     LocalFrame* frame() const;
     LocalFrame* mainFrame() const;
     Document* topDocument() const;
+    RenderView* topRenderer() const;
     ScrollView* scrollView() const override { return nullptr; }
     String language() const override;
     // 1-based, to match the aria-level spec.
@@ -565,7 +566,7 @@ public:
     IntRect boundsForRange(const SimpleRange&) const final;
     void setSelectedVisiblePositionRange(const VisiblePositionRange&) const override { }
 
-    VisiblePosition visiblePositionForPoint(const IntPoint&) const override { return VisiblePosition(); }
+    VisiblePosition visiblePositionForPoint(const IntPoint&) const final;
     VisiblePosition nextLineEndPosition(const VisiblePosition&) const override;
     VisiblePosition previousLineStartPosition(const VisiblePosition&) const override;
     VisiblePosition nextSentenceEndPosition(const VisiblePosition&) const override;

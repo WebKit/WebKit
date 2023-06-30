@@ -91,7 +91,6 @@ public:
     Node* node() const override;
 
     Document* document() const override;
-    RenderView* topRenderer() const;
 
     URL url() const override;
     CharacterRange selectedTextRange() const override;
@@ -112,19 +111,15 @@ public:
 
     void addChildren() override;
 
-    VisiblePositionRange visiblePositionRange() const override;
-    VisiblePositionRange visiblePositionRangeForLine(unsigned) const override;
     IntRect boundsForVisiblePositionRange(const VisiblePositionRange&) const override;
-    VisiblePositionRange selectedVisiblePositionRange() const override;
     void setSelectedVisiblePositionRange(const VisiblePositionRange&) const override;
     bool isVisiblePositionRangeInDifferentDocument(const VisiblePositionRange&) const;
 
-    VisiblePosition visiblePositionForPoint(const IntPoint&) const override;
     VisiblePosition visiblePositionForIndex(unsigned indexValue, bool lastIndexOK) const override;
     int index(const VisiblePosition&) const override;
 
-    VisiblePosition visiblePositionForIndex(int) const override;
-    int indexForVisiblePosition(const VisiblePosition&) const override;
+    VisiblePosition visiblePositionForIndex(int) const final;
+    int indexForVisiblePosition(const VisiblePosition&) const final;
 
     CharacterRange doAXRangeForLine(unsigned) const override;
     CharacterRange doAXRangeForIndex(unsigned) const override;

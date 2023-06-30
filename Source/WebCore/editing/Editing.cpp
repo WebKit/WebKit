@@ -204,7 +204,7 @@ Position nextCandidate(const Position& position)
     return { };
 }
 
-Position nextVisuallyDistinctCandidate(const Position& position)
+Position nextVisuallyDistinctCandidate(const Position& position, SkipDisplayContents skipDisplayContents)
 {
     // FIXME: Use PositionIterator instead.
     Position nextPosition = position;
@@ -214,8 +214,13 @@ Position nextVisuallyDistinctCandidate(const Position& position)
         if (nextPosition.isCandidate() && nextPosition.downstream() != downstreamStart)
             return nextPosition;
         if (auto* node = nextPosition.containerNode()) {
-            if (!node->renderer())
+            if (!node->renderer()) {
+                if (skipDisplayContents == SkipDisplayContents::No) {
+                    if (auto* element = dynamicDowncast<Element>(node); element && element->hasDisplayContents())
+                        continue;
+                }
                 nextPosition = lastPositionInOrAfterNode(node);
+            }
         }
     }
     return { };

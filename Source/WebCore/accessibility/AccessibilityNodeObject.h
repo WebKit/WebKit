@@ -179,6 +179,12 @@ protected:
     // This returns true if it's focusable but it's not content editable and it's not a control or ARIA control.
     bool isGenericFocusableElement() const;
 
+    VisiblePositionRange visiblePositionRange() const final;
+    VisiblePositionRange selectedVisiblePositionRange() const final;
+    VisiblePositionRange visiblePositionRangeForLine(unsigned) const final;
+    VisiblePosition visiblePositionForIndex(int) const override;
+    int indexForVisiblePosition(const VisiblePosition&) const override;
+
     bool elementAttributeValue(const QualifiedName&) const;
 
     const String liveRegionStatus() const override;

@@ -1337,6 +1337,13 @@ Document* AccessibilityObject::topDocument() const
     return &document()->topDocument();
 }
 
+RenderView* AccessibilityObject::topRenderer() const
+{
+    if (auto* topDocument = this->topDocument())
+        return topDocument->renderView();
+    return nullptr;
+}
+
 String AccessibilityObject::language() const
 {
     const AtomString& lang = getAttribute(langAttr);
@@ -1355,7 +1362,68 @@ String AccessibilityObject::language() const
     
     return parent->language();
 }
+
+VisiblePosition AccessibilityObject::visiblePositionForPoint(const IntPoint& point) const
+{
+    // convert absolute point to view coordinates
+    RenderView* renderView = topRenderer();
+    if (!renderView)
+        return VisiblePosition();
+
+#if PLATFORM(MAC)
+    auto* frameView = &renderView->frameView();
+#endif
+
+    Node* innerNode = nullptr;
+
+    // Locate the node containing the point
+    // FIXME: Remove this loop and instead add HitTestRequest::Type::AllowVisibleChildFrameContentOnly to the hit test request type.
+    LayoutPoint pointResult;
+    while (1) {
+        LayoutPoint pointToUse;
+#if PLATFORM(MAC)
+        pointToUse = frameView->screenToContents(point);
+#else
+        pointToUse = point;
+#endif
+        constexpr OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active };
+        HitTestResult result { pointToUse };
+        renderView->document().hitTest(hitType, result);
+        innerNode = result.innerNode();
+        if (!innerNode)
+            return VisiblePosition();
+
+        RenderObject* renderer = innerNode->renderer();
+        if (!renderer)
+            return VisiblePosition();
+
+        pointResult = result.localPoint();
+
+        // done if hit something other than a widget
+        if (!is<RenderWidget>(*renderer))
+            break;
+
+        // descend into widget (FRAME, IFRAME, OBJECT...)
+        auto* widget = downcast<RenderWidget>(*renderer).widget();
+        auto* frameView = dynamicDowncast<LocalFrameView>(widget);
+        if (!frameView)
+            break;
+        auto* localFrame = dynamicDowncast<LocalFrame>(frameView->frame());
+        if (!localFrame)
+            break;
+        auto* document = localFrame->document();
+        if (!document)
+            break;
+
+        renderView = document->renderView();
+#if PLATFORM(MAC)
+        frameView = downcast<LocalFrameView>(widget);
+#endif
+    }
     
+    return innerNode->renderer()->positionForPoint(pointResult, nullptr);
+}
+
 VisiblePositionRange AccessibilityObject::visiblePositionRangeForUnorderedPositions(const VisiblePosition& visiblePos1, const VisiblePosition& visiblePos2) const
 {
     if (visiblePos1.isNull() || visiblePos2.isNull())

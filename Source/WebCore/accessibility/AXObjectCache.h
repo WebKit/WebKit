@@ -83,6 +83,11 @@ struct CharacterOffset {
             return false;
         return node == other.node && startIndex == other.startIndex && offset == other.offset;
     }
+
+    String debugDescription()
+    {
+        return makeString("CharacterOffset {node: ", node ? node->debugDescription() : "null"_s, ", startIndex: ", startIndex, ", offset: ", offset, ", remainingOffset: ", remainingOffset, "}");
+    }
 };
 
 class AXComputedObjectAttributeCache {

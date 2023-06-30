@@ -132,6 +132,9 @@ struct VisiblePositionRange {
     VisiblePosition end;
 
     bool isNull() const { return start.isNull() || end.isNull(); }
+#if ENABLE(TREE_DEBUGGING)
+    String debugDescription() const;
+#endif
 };
 
 WEBCORE_EXPORT std::optional<SimpleRange> makeSimpleRange(const VisiblePositionRange&);

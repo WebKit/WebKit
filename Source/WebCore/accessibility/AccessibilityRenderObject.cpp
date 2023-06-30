@@ -730,7 +730,7 @@ String AccessibilityRenderObject::textUnderElement(AccessibilityTextUnderElement
 bool AccessibilityRenderObject::shouldGetTextFromNode(AccessibilityTextUnderElementMode mode) const
 {
     if (!m_renderer)
-        return false;
+        return true;
 
     // AccessibilityRenderObject::textUnderElement() gets the text of anonymous blocks by using
     // the child nodes to define positions. CSS tables and their anonymous descendants lack
@@ -1498,15 +1498,6 @@ bool AccessibilityRenderObject::setValue(const String& string)
     return false;
 }
 
-RenderView* AccessibilityRenderObject::topRenderer() const
-{
-    Document* topDoc = topDocument();
-    if (!topDoc)
-        return nullptr;
-    
-    return topDoc->renderView();
-}
-
 Document* AccessibilityRenderObject::document() const
 {
     if (!m_renderer)
@@ -1596,105 +1587,30 @@ Widget* AccessibilityRenderObject::widgetForAttachmentView() const
     return downcast<RenderWidget>(*m_renderer).widget();
 }
 
-// This function is like a cross-platform version of - (WebCoreTextMarkerRange*)textMarkerRange. It returns
-// a Range that we can convert to a WebCoreTextMarkerRange in the Obj-C file
-VisiblePositionRange AccessibilityRenderObject::visiblePositionRange() const
-{
-    if (!m_renderer)
-        return VisiblePositionRange();
-    
-    Node* node = m_renderer->node();
-    if (!node)
-        return VisiblePositionRange();
-
-    VisiblePosition startPos = firstPositionInOrBeforeNode(node);
-    VisiblePosition endPos = lastPositionInOrAfterNode(node);
-
-    // the VisiblePositions are equal for nodes like buttons, so adjust for that
-    // FIXME: Really?  [button, 0] and [button, 1] are distinct (before and after the button)
-    // I expect this code is only hit for things like empty divs?  In which case I don't think
-    // the behavior is correct here -- eseidel
-    if (startPos == endPos) {
-        endPos = endPos.next();
-        if (endPos.isNull())
-            endPos = startPos;
-    }
-
-    return { WTFMove(startPos), WTFMove(endPos) };
-}
-
-VisiblePositionRange AccessibilityRenderObject::visiblePositionRangeForLine(unsigned lineCount) const
-{
-    if (!lineCount || !m_renderer)
-        return VisiblePositionRange();
-    
-    // iterate over the lines
-    // FIXME: This is wrong when lineNumber is lineCount+1, because nextLinePosition takes you to the last offset of the last line.
-    VisiblePosition position = m_renderer->view().positionForPoint(IntPoint(), nullptr);
-    while (--lineCount) {
-        auto previousLinePosition = position;
-        position = nextLinePosition(position, 0);
-        if (position.isNull() || position == previousLinePosition)
-            return VisiblePositionRange();
-    }
-
-    // make a caret selection for the marker position, then extend it to the line
-    // NOTE: Ignores results of sel.modify because it returns false when starting at an empty line.
-    // The resulting selection in that case will be a caret at position.
-    FrameSelection selection;
-    selection.setSelection(position);
-    selection.modify(FrameSelection::Alteration::Extend, SelectionDirection::Right, TextGranularity::LineBoundary);
-    return selection.selection();
-}
-
 VisiblePosition AccessibilityRenderObject::visiblePositionForIndex(int index) const
 {
-    if (!m_renderer)
-        return { };
+    if (m_renderer) {
+        if (isNativeTextControl()) {
+            auto& textControl = downcast<RenderTextControl>(*m_renderer).textFormControlElement();
+            return textControl.visiblePositionForIndex(std::clamp(index, 0, static_cast<int>(textControl.value().length())));
+        }
 
-    if (isNativeTextControl()) {
-        auto& textControl = downcast<RenderTextControl>(*m_renderer).textFormControlElement();
-        return textControl.visiblePositionForIndex(std::clamp(index, 0, static_cast<int>(textControl.value().length())));
+        if (!allowsTextRanges() && !is<RenderText>(*m_renderer))
+            return { };
     }
-
-    if (!allowsTextRanges() && !is<RenderText>(*m_renderer))
-        return { };
-
-    Node* node = m_renderer->node();
-    if (!node)
-        return { };
-
-#if USE(ATSPI)
-    // We need to consider replaced elements for GTK, as they will be presented with the 'object replacement character' (0xFFFC).
-    return WebCore::visiblePositionForIndex(index, node, TextIteratorBehavior::EmitsObjectReplacementCharacters);
-#else
-    return visiblePositionForIndexUsingCharacterIterator(*node, index);
-#endif
+    return AccessibilityNodeObject::visiblePositionForIndex(index);
 }
 
 int AccessibilityRenderObject::indexForVisiblePosition(const VisiblePosition& position) const
 {
-    if (!m_renderer)
-        return 0;
+    if (m_renderer) {
+        if (isNativeTextControl())
+            return downcast<RenderTextControl>(*m_renderer).textFormControlElement().indexForVisiblePosition(position);
 
-    if (isNativeTextControl())
-        return downcast<RenderTextControl>(*m_renderer).textFormControlElement().indexForVisiblePosition(position);
-
-    if (!allowsTextRanges() && !is<RenderText>(*m_renderer))
-        return 0;
-
-    Node* node = m_renderer->node();
-    if (!node)
-        return 0;
-
-    // We need to consider replaced elements for GTK, as they will be
-    // presented with the 'object replacement character' (0xFFFC).
-    TextIteratorBehaviors behaviors;
-#if USE(ATSPI)
-    behaviors.add(TextIteratorBehavior::EmitsObjectReplacementCharacters);
-#endif
-
-    return WebCore::indexForVisiblePosition(*node, position, behaviors);
+        if (!allowsTextRanges() && !is<RenderText>(*m_renderer))
+            return 0;
+    }
+    return AccessibilityNodeObject::indexForVisiblePosition(position);
 }
 
 Element* AccessibilityRenderObject::rootEditableElementForPosition(const Position& position) const
@@ -1745,17 +1661,6 @@ bool AccessibilityRenderObject::isVisiblePositionRangeInDifferentDocument(const 
     }
     
     return false;
-}
-
-VisiblePositionRange AccessibilityRenderObject::selectedVisiblePositionRange() const
-{
-    if (!m_renderer)
-        return { };
-
-    auto selection = m_renderer->frame().selection().selection();
-    if (selection.isNone())
-        return { };
-    return selection;
 }
 
 void AccessibilityRenderObject::setSelectedVisiblePositionRange(const VisiblePositionRange& range) const
@@ -1829,70 +1734,6 @@ void AccessibilityRenderObject::setSelectedVisiblePositionRange(const VisiblePos
 
     if (client)
         client->didChangeSelectionForAccessibility();
-}
-
-VisiblePosition AccessibilityRenderObject::visiblePositionForPoint(const IntPoint& point) const
-{
-    if (!m_renderer)
-        return VisiblePosition();
-
-    // convert absolute point to view coordinates
-    RenderView* renderView = topRenderer();
-    if (!renderView)
-        return VisiblePosition();
-
-#if PLATFORM(MAC)
-    auto* frameView = &renderView->frameView();
-#endif
-
-    Node* innerNode = nullptr;
-    
-    // Locate the node containing the point
-    // FIXME: Remove this loop and instead add HitTestRequest::Type::AllowVisibleChildFrameContentOnly to the hit test request type.
-    LayoutPoint pointResult;
-    while (1) {
-        LayoutPoint pointToUse;
-#if PLATFORM(MAC)
-        pointToUse = frameView->screenToContents(point);
-#else
-        pointToUse = point;
-#endif
-        constexpr OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active };
-        HitTestResult result { pointToUse };
-        renderView->document().hitTest(hitType, result);
-        innerNode = result.innerNode();
-        if (!innerNode)
-            return VisiblePosition();
-        
-        RenderObject* renderer = innerNode->renderer();
-        if (!renderer)
-            return VisiblePosition();
-        
-        pointResult = result.localPoint();
-
-        // done if hit something other than a widget
-        if (!is<RenderWidget>(*renderer))
-            break;
-
-        // descend into widget (FRAME, IFRAME, OBJECT...)
-        auto* widget = downcast<RenderWidget>(*renderer).widget();
-        auto* frameView = dynamicDowncast<LocalFrameView>(widget);
-        if (!frameView)
-            break;
-        auto* localFrame = dynamicDowncast<LocalFrame>(frameView->frame());
-        if (!localFrame)
-            break;
-        auto* document = localFrame->document();
-        if (!document)
-            break;
-
-        renderView = document->renderView();
-#if PLATFORM(MAC)
-        frameView = downcast<LocalFrameView>(widget);
-#endif
-    }
-    
-    return innerNode->renderer()->positionForPoint(pointResult, nullptr);
 }
 
 // NOTE: Consider providing this utility method as AX API
