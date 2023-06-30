@@ -1,5 +1,5 @@
-
+CONSOLE MESSAGE: Feature policy 'ScreenWakeLock' check failed for iframe with origin 'https://127.0.0.1:9443' and allow attribute ';screen-wake-lock'.
 
 PASS Feature-Policy allow="screen-wake-lock" allows same-origin relocation
-FAIL Feature-Policy allow="screen-wake-lock" disallows cross-origin relocation assert_false: navigator.wakeLock.request("screen") expected false got true
+PASS Feature-Policy allow="screen-wake-lock" disallows cross-origin relocation
 

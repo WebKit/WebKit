@@ -124,15 +124,25 @@ static bool isAllowedByFeaturePolicy(const FeaturePolicy::AllowRule& rule, const
     return false;
 }
 
-static inline void processOriginItem(Document& document, FeaturePolicy::AllowRule& rule, StringView item)
+static inline void processOriginItem(Document& document, const HTMLIFrameElement& iframe, FeaturePolicy::AllowRule& rule, StringView item)
 {
     if (rule.type == FeaturePolicy::AllowRule::Type::None)
         return;
 
     item = item.trim(isASCIIWhitespace<UChar>);
-    // FIXME: Support 'src'.
-    if (item == "'src'"_s)
+    if (item == "'src'"_s) {
+        auto srcURL = document.completeURL(iframe.getAttribute(srcAttr));
+        if (srcURL.isValid()) {
+            RefPtr<SecurityOrigin> allowedOrigin;
+            if (srcURL.protocolIsInHTTPFamily())
+                allowedOrigin = SecurityOrigin::create(srcURL);
+            else if (auto contentDocument = iframe.contentDocument())
+                allowedOrigin = &contentDocument->securityOrigin();
+            if (allowedOrigin)
+                rule.allowedList.add(allowedOrigin->data());
+        }
         return;
+    }
 
     if (item == "*"_s) {
         rule.type = FeaturePolicy::AllowRule::Type::All;
@@ -152,22 +162,26 @@ static inline void processOriginItem(Document& document, FeaturePolicy::AllowRul
         rule.allowedList.add(SecurityOriginData::fromURL(url));
 }
 
-static inline void updateList(Document& document, FeaturePolicy::AllowRule& rule, StringView value)
+static inline void updateList(Document& document, const HTMLIFrameElement& iframe, FeaturePolicy::AllowRule& rule, StringView value)
 {
     // We keep the empty string value equivalent to '*' for existing websites.
     if (value.isEmpty()) {
-        rule.type = FeaturePolicy::AllowRule::Type::All;
+        // The allowlist for the features named in the attribute may be empty; in that case,
+        // the default value for the allowlist is 'src', which represents the origin of the
+        // URL in the iframe’s src attribute.
+        // https://www.w3.org/TR/permissions-policy/#iframe-allow-attribute
+        processOriginItem(document, iframe, rule, "'src'"_s);
         return;
     }
 
     while (!value.isEmpty()) {
         auto position = value.find(isASCIIWhitespace<UChar>);
         if (position == notFound) {
-            processOriginItem(document, rule, value);
+            processOriginItem(document, iframe, rule, value);
             return;
         }
 
-        processOriginItem(document, rule, value.left(position));
+        processOriginItem(document, iframe, rule, value.left(position));
         value = value.substring(position + 1).trim(isASCIIWhitespace<UChar>);
     }
 }
@@ -200,82 +214,82 @@ FeaturePolicy FeaturePolicy::parse(Document& document, const HTMLIFrameElement& 
         auto item = allowItem.trim(isASCIIWhitespace<UChar>);
         if (item.startsWith("camera"_s)) {
             isCameraInitialized = true;
-            updateList(document, policy.m_cameraRule, item.substring(7));
+            updateList(document, iframe, policy.m_cameraRule, item.substring(7));
             continue;
         }
         if (item.startsWith("microphone"_s)) {
             isMicrophoneInitialized = true;
-            updateList(document, policy.m_microphoneRule, item.substring(11));
+            updateList(document, iframe, policy.m_microphoneRule, item.substring(11));
             continue;
         }
         if (item.startsWith("speaker-selection"_s)) {
             isSpeakerSelectionInitialized = true;
-            updateList(document, policy.m_speakerSelectionRule, item.substring(18));
+            updateList(document, iframe, policy.m_speakerSelectionRule, item.substring(18));
             continue;
         }
         if (item.startsWith("display-capture"_s)) {
             isDisplayCaptureInitialized = true;
-            updateList(document, policy.m_displayCaptureRule, item.substring(16));
+            updateList(document, iframe, policy.m_displayCaptureRule, item.substring(16));
             continue;
         }
         if (item.startsWith("geolocation"_s)) {
             isGeolocationInitialized = true;
-            updateList(document, policy.m_geolocationRule, item.substring(12));
+            updateList(document, iframe, policy.m_geolocationRule, item.substring(12));
             continue;
         }
         if (item.startsWith("payment"_s)) {
             isPaymentInitialized = true;
-            updateList(document, policy.m_paymentRule, item.substring(8));
+            updateList(document, iframe, policy.m_paymentRule, item.substring(8));
             continue;
         }
         if (item.startsWith("screen-wake-lock"_s)) {
             isScreenWakeLockInitialized = true;
-            updateList(document, policy.m_screenWakeLockRule, item.substring(17));
+            updateList(document, iframe, policy.m_screenWakeLockRule, item.substring(17));
             continue;
         }
         if (item.startsWith("sync-xhr"_s)) {
             isSyncXHRInitialized = true;
-            updateList(document, policy.m_syncXHRRule, item.substring(9));
+            updateList(document, iframe, policy.m_syncXHRRule, item.substring(9));
             continue;
         }
         if (item.startsWith("fullscreen"_s)) {
             isFullscreenInitialized = true;
-            updateList(document, policy.m_fullscreenRule, item.substring(11));
+            updateList(document, iframe, policy.m_fullscreenRule, item.substring(11));
             continue;
         }
         if (item.startsWith("web-share"_s)) {
             isWebShareInitialized = true;
-            updateList(document, policy.m_webShareRule, item.substring(10));
+            updateList(document, iframe, policy.m_webShareRule, item.substring(10));
             continue;
         }
 #if ENABLE(DEVICE_ORIENTATION)
         if (item.startsWith("gyroscope"_s)) {
             isGyroscopeInitialized = true;
-            updateList(document, policy.m_gyroscopeRule, item.substring(10));
+            updateList(document, iframe, policy.m_gyroscopeRule, item.substring(10));
             continue;
         }
         if (item.startsWith("accelerometer"_s)) {
             isAccelerometerInitialized = true;
-            updateList(document, policy.m_accelerometerRule, item.substring(14));
+            updateList(document, iframe, policy.m_accelerometerRule, item.substring(14));
             continue;
         }
         if (item.startsWith("magnetometer"_s)) {
             isMagnetometerInitialized = true;
-            updateList(document, policy.m_magnetometerRule, item.substring(13));
+            updateList(document, iframe, policy.m_magnetometerRule, item.substring(13));
             continue;
         }
 #endif
 #if ENABLE(WEB_AUTHN)
         if (item.startsWith("publickey-credentials-get"_s)) {
             isPublickeyCredentialsGetInitialized = true;
-            updateList(document, policy.m_publickeyCredentialsGetRule, item.substring(26));
+            updateList(document, iframe, policy.m_publickeyCredentialsGetRule, item.substring(26));
             continue;
         }
 #endif
 #if ENABLE(WEBXR)
         if (item.startsWith("xr-spatial-tracking"_s)) {
             isXRSpatialTrackingInitialized = true;
-            updateList(document, policy.m_xrSpatialTrackingRule, item.substring(19));
+            updateList(document, iframe, policy.m_xrSpatialTrackingRule, item.substring(19));
             continue;
         }
 #endif

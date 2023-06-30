@@ -75,6 +75,9 @@ imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiocontext-interfac
 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/audiocontext-sinkid-setsinkid.https.html [ Skip ]
 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/audiocontext-sinkid-state-change.https.html [ Skip ]
 
+# Payment request API is not supported on WK1.
+imported/w3c/web-platform-tests/permissions-policy/payment-allowed-by-permissions-policy-attribute-redirect-on-load.https.sub.html [ Skip ]
+
 # No support for the Clear-Site-Data header in WebKit1.
 imported/w3c/web-platform-tests/clear-site-data [ Skip ]
 http/tests/clear-site-data [ Skip ]

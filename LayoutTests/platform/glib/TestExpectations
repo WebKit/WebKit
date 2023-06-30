@@ -2400,6 +2400,7 @@ webgl/webgl-fail-remote-context-ipc-buffer-allocation-no-crash.html [ Skip ]
 
 # Payment Request
 imported/w3c/web-platform-tests/payment-request [ Skip ]
+imported/w3c/web-platform-tests/permissions-policy/payment-allowed-by-permissions-policy-attribute-redirect-on-load.https.sub.html [ Skip ]
 
 # WebArchive
 webarchive [ WontFix ]
