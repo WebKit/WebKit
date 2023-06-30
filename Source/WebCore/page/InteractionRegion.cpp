@@ -259,7 +259,7 @@ std::optional<InteractionRegion> interactionRegionForRenderedRegion(RenderObject
     if (!hasPointer) {
         // The hover check can be expensive (it may end up doing selector matching), so we only run it on some elements.
         bool hasVisibleBoxDecorations = renderer.hasVisibleBoxDecorations();
-        bool nonScrollable = !renderer.hasPotentiallyScrollableOverflow();
+        bool nonScrollable = !is<RenderBox>(renderer) || (!downcast<RenderBox>(renderer).hasScrollableOverflowX() && !downcast<RenderBox>(renderer).hasScrollableOverflowY());
         if (hasVisibleBoxDecorations && nonScrollable)
             detectedHoverRules = elementMatchesHoverRules(*matchedElement);
     }
