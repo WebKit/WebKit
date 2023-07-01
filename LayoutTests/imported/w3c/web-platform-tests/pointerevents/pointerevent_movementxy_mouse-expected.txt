@@ -1,0 +1,14 @@
+Pointer Events movementX/Y attribute test
+
+Follow the test instructions with mouse. If you don't have the device skip it.
+
+Test Description: This test checks the movementX/Y properties of pointer events.
+Press down on the black square.
+Move your pointer slowly along a straight line to the red square.
+Release the pointer when you are over the red square.
+Test passes if the proper behavior of the events is observed.
+
+
+
+FAIL mouse pointerevent attributes assert_equals: movementX should be 0 for event other than pointermove. expected 0 but got 20
+

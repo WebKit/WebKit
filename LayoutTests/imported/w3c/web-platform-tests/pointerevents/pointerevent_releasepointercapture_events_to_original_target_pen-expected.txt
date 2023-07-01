@@ -1,0 +1,28 @@
+Pointer Event: releasePointerCapture() - subsequent events follow normal hitting testing mechanisms
+
+Test Description: Use your pointer and press down in the black box. Then move around in the box and release your pointer. After invoking the releasePointerCapture method on an element, subsequent events for the specified pointer must follow normal hit testing mechanisms for determining the event target.
+
+
+
+PASS pen got/lost pointercapture: subsequent events to target
+PASS pen pointerover/enter should be received before the target receives gotpointercapture even when the pointer is not over it.
+FAIL pen gotpointercapture.pointerType is correct. assert_equals: expected "pen" but got "mouse"
+PASS pen gotpointercapture event is a PointerEvent event
+PASS pen gotpointercapture.fromElement value is null
+PASS pen gotpointercapture.toElement value is null
+FAIL pen gotpointercapture.isTrusted value is true assert_equals: expected true but got false
+FAIL pen gotpointercapture.composed value is valid assert_equals: expected true but got false
+PASS pen gotpointercapture.bubbles value is valid
+PASS pen gotpointercapture.pressure value is valid
+PASS pen gotpointercapture properties for pointerType = mouse
+FAIL pen lostpointercapture.pointerType is correct. assert_equals: expected "pen" but got "mouse"
+PASS pen lostpointercapture event is a PointerEvent event
+PASS pen lostpointercapture.fromElement value is null
+PASS pen lostpointercapture.toElement value is null
+FAIL pen lostpointercapture.isTrusted value is true assert_equals: expected true but got false
+FAIL pen lostpointercapture.composed value is valid assert_equals: expected true but got false
+PASS pen lostpointercapture.bubbles value is valid
+PASS pen lostpointercapture.pressure value is valid
+PASS pen lostpointercapture properties for pointerType = mouse
+PASS pen pointerout/leave should not be received unless the target just lost the capture.
+

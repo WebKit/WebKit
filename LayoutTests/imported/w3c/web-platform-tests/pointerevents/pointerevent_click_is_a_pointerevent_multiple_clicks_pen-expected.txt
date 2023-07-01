@@ -1,0 +1,8 @@
+
+
+FAIL click using pen is a PointerEvent assert_equals: click should use a PointerEvent constructor in phase 1 expected function "function PointerEvent() {
+    [native code]
+}" but got function "function MouseEvent() {
+    [native code]
+}"
+

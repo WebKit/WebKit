@@ -1,0 +1,88 @@
+Pointer Events touch-action none on body when style propagates from body to viewport
+
+Test Description: Try to touch scroll. You shouldn't be able to.
+
+Note: this test is for touch only
+
+Body with touch-action=none.
+Paragraph with touch-action=none
+
+Paragraph with touch-action=none
+
+Paragraph with touch-action=none
+
+Paragraph with touch-action=none
+
+Paragraph with touch-action=none
+
+Paragraph with touch-action=none
+
+Paragraph with touch-action=none
+
+Paragraph with touch-action=none
+
+Paragraph with touch-action=none
+
+Paragraph with touch-action=none
+
+Paragraph with touch-action=none
+
+Paragraph with touch-action=none
+
+Paragraph with touch-action=none
+
+Paragraph with touch-action=none
+
+Paragraph with touch-action=none
+
+Paragraph with touch-action=none
+
+Paragraph with touch-action=none
+
+Paragraph with touch-action=none
+
+Paragraph with touch-action=none
+
+Paragraph with touch-action=none
+
+Paragraph with touch-action=none
+
+Paragraph with touch-action=none
+
+Paragraph with touch-action=none
+
+Paragraph with touch-action=none
+
+Paragraph with touch-action=none
+
+Paragraph with touch-action=none
+
+Paragraph with touch-action=none
+
+Paragraph with touch-action=none
+
+Paragraph with touch-action=none
+
+Paragraph with touch-action=none
+
+Paragraph with touch-action=none
+
+Paragraph with touch-action=none
+
+Paragraph with touch-action=none
+
+Paragraph with touch-action=none
+
+Paragraph with touch-action=none
+
+Paragraph with touch-action=none
+
+Paragraph with touch-action=none
+
+Paragraph with touch-action=none
+
+Paragraph with touch-action=none
+
+
+PASS touch-action none on body when style propagates to viewport
+

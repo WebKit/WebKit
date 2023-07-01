@@ -1,0 +1,3 @@
+
+FAIL Coalesced pointermoves under load event.getCoalescedEvents is not a function. (In 'event.getCoalescedEvents()', 'event.getCoalescedEvents' is undefined)
+

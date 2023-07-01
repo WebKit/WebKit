@@ -1,0 +1,9 @@
+The pointerout event should not be fired if the pointer doesn't move
+
+Test Description: This test checks if the pointerout event dispatched unexpectedly.
+Click on the black rectangle.
+Don't move mouse after clicking.
+
+
+PASS The pointerout event should not be fired if the pointer doesn't move
+

@@ -14,8 +14,11 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/pointerevents/resources/iframe-touch-action-none-subframe.html
+/LayoutTests/imported/w3c/web-platform-tests/pointerevents/resources/minimal.html
 /LayoutTests/imported/w3c/web-platform-tests/pointerevents/resources/pointerevent_attributes_hoverable_pointers-iframe.html
 /LayoutTests/imported/w3c/web-platform-tests/pointerevents/resources/pointerevent_fractional_coordinates-iframe.html
+/LayoutTests/imported/w3c/web-platform-tests/pointerevents/resources/pointerevent_mouse_pointercapture_inactivate_pointer-iframe.html
 /LayoutTests/imported/w3c/web-platform-tests/pointerevents/resources/pointerevent_pointerId_scope-iframe.html
 /LayoutTests/imported/w3c/web-platform-tests/pointerevents/resources/pointerevent_pointercapture-iframe.html
 /LayoutTests/imported/w3c/web-platform-tests/pointerevents/resources/pointerevent_pointerrawupdate_in_pointerlock-iframe.html

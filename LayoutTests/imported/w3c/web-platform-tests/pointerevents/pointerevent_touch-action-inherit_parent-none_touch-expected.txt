@@ -1,0 +1,16 @@
+CONSOLE MESSAGE: ReferenceError: Can't find variable: detected_pointertypes
+Pointer Events: effective touch-action is "none" when parent has "none" and target has "auto"
+
+Try to scroll DOWN then RIGHT from inside blue rectangle. Tap Complete button under the rectangle when done. Expectation: no panning
+
+Note: this test is for touch-devices only
+
+Try to scroll DOWN then RIGHT from here.
+
+behavior: none
+
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT touch-action attribute test Test timed out
+

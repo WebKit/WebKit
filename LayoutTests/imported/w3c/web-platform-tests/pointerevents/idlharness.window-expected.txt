@@ -137,10 +137,10 @@ PASS Document interface: document must inherit property "onpointerleave" with th
 PASS Element interface: operation setPointerCapture(long)
 PASS Element interface: operation releasePointerCapture(long)
 PASS Element interface: operation hasPointerCapture(long)
-FAIL Element interface: document must inherit property "setPointerCapture(long)" with the proper type assert_inherits: property "setPointerCapture" not found in prototype chain
-FAIL Element interface: calling setPointerCapture(long) on document with too few arguments must throw TypeError assert_inherits: property "setPointerCapture" not found in prototype chain
-FAIL Element interface: document must inherit property "releasePointerCapture(long)" with the proper type assert_inherits: property "releasePointerCapture" not found in prototype chain
-FAIL Element interface: calling releasePointerCapture(long) on document with too few arguments must throw TypeError assert_inherits: property "releasePointerCapture" not found in prototype chain
-FAIL Element interface: document must inherit property "hasPointerCapture(long)" with the proper type assert_inherits: property "hasPointerCapture" not found in prototype chain
-FAIL Element interface: calling hasPointerCapture(long) on document with too few arguments must throw TypeError assert_inherits: property "hasPointerCapture" not found in prototype chain
+PASS Element interface: document.body must inherit property "setPointerCapture(long)" with the proper type
+PASS Element interface: calling setPointerCapture(long) on document.body with too few arguments must throw TypeError
+PASS Element interface: document.body must inherit property "releasePointerCapture(long)" with the proper type
+PASS Element interface: calling releasePointerCapture(long) on document.body with too few arguments must throw TypeError
+PASS Element interface: document.body must inherit property "hasPointerCapture(long)" with the proper type
+PASS Element interface: calling hasPointerCapture(long) on document.body with too few arguments must throw TypeError
 

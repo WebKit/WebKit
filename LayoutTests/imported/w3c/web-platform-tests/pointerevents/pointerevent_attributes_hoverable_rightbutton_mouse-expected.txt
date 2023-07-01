@@ -1,0 +1,115 @@
+Pointer Events hoverable pointer attributes test
+
+Follow the test instructions with mouse. If you don't have the device skip it.
+
+
+
+Harness Error (TIMEOUT), message = null
+
+NOTRUN mouse pointerevent attributes
+PASS mouse pointerover's type should be pointerover
+FAIL mouse pointerover's button is -1 when mouse buttons are in released state. assert_equals: expected -1 but got 0
+PASS mouse pointerover's buttons is 0 when mouse buttons are in released state.
+PASS mouse pointerover's ClientX and ClientY attributes are correct.
+PASS mouse pointerover.pointerType is correct.
+PASS mouse pointerover event is a PointerEvent event
+PASS mouse pointerover.fromElement value is null
+PASS mouse pointerover.toElement value is null
+PASS mouse pointerover.isTrusted value is true
+PASS mouse pointerover.composed value is valid
+PASS mouse pointerover.bubbles value is valid
+PASS mouse pointerover.pressure value is valid
+PASS mouse pointerover properties for pointerType = mouse
+PASS mouse pointerover.isPrimary attribute is correct.
+PASS mouse pointerenter's type should be pointerenter
+FAIL mouse pointerenter's button is -1 when mouse buttons are in released state. assert_equals: expected -1 but got 0
+PASS mouse pointerenter's buttons is 0 when mouse buttons are in released state.
+PASS mouse pointerenter's ClientX and ClientY attributes are correct.
+PASS mouse pointerenter.pointerType is correct.
+PASS mouse pointerenter event is a PointerEvent event
+PASS mouse pointerenter.fromElement value is null
+PASS mouse pointerenter.toElement value is null
+PASS mouse pointerenter.isTrusted value is true
+PASS mouse pointerenter.composed value is valid
+PASS mouse pointerenter.bubbles value is valid
+PASS mouse pointerenter.pressure value is valid
+PASS mouse pointerenter properties for pointerType = mouse
+PASS mouse pointerenter.isPrimary attribute is correct.
+PASS mouse pointerenter.pointerId should be the same as previous pointer events for this active pointer.
+PASS mouse pointermove's type should be pointermove
+PASS mouse pointermove's button is -1 when mouse buttons are in released state.
+PASS mouse pointermove's buttons is 0 when mouse buttons are in released state.
+PASS mouse pointermove's ClientX and ClientY attributes are correct.
+PASS mouse pointermove.pointerType is correct.
+PASS mouse pointermove event is a PointerEvent event
+PASS mouse pointermove.fromElement value is null
+PASS mouse pointermove.toElement value is null
+PASS mouse pointermove.isTrusted value is true
+PASS mouse pointermove.composed value is valid
+PASS mouse pointermove.bubbles value is valid
+PASS mouse pointermove.pressure value is valid
+PASS mouse pointermove properties for pointerType = mouse
+PASS mouse pointermove.isPrimary attribute is correct.
+PASS mouse pointermove.pointerId should be the same as previous pointer events for this active pointer.
+PASS mouse pointerdown's type should be pointerdown
+PASS mouse pointerdown's button attribute is 2 when right mouse button is pressed.
+FAIL mouse pointerdown's buttons attribute is 2 when right mouse button is pressed. assert_equals: expected 2 but got 4
+PASS mouse pointerdown's ClientX and ClientY attributes are correct.
+PASS mouse pointerdown.pointerType is correct.
+PASS mouse pointerdown event is a PointerEvent event
+PASS mouse pointerdown.fromElement value is null
+PASS mouse pointerdown.toElement value is null
+PASS mouse pointerdown.isTrusted value is true
+PASS mouse pointerdown.composed value is valid
+PASS mouse pointerdown.bubbles value is valid
+FAIL mouse pointerdown.pressure value is valid assert_greater_than: pressure is greater than 0 with a button pressed expected a number greater than 0 but got 0
+PASS mouse pointerdown properties for pointerType = mouse
+PASS mouse pointerdown.isPrimary attribute is correct.
+PASS mouse pointerdown.pointerId should be the same as previous pointer events for this active pointer.
+PASS mouse pointerup's type should be pointerup
+PASS mouse pointerup's button attribute is 0 when right mouse button is just released.
+PASS mouse pointerup's buttons attribute is 0 when right mouse button is just released.
+PASS mouse pointerup's ClientX and ClientY attributes are correct.
+PASS mouse pointerup.pointerType is correct.
+PASS mouse pointerup event is a PointerEvent event
+PASS mouse pointerup.fromElement value is null
+PASS mouse pointerup.toElement value is null
+PASS mouse pointerup.isTrusted value is true
+PASS mouse pointerup.composed value is valid
+PASS mouse pointerup.bubbles value is valid
+PASS mouse pointerup.pressure value is valid
+PASS mouse pointerup properties for pointerType = mouse
+PASS mouse pointerup properties for pointerup
+PASS mouse pointerup.isPrimary attribute is correct.
+PASS mouse pointerup.pointerId should be the same as previous pointer events for this active pointer.
+PASS mouse pointerout's type should be pointerout
+FAIL mouse pointerout's button is -1 when mouse buttons are in released state. assert_equals: expected -1 but got 0
+PASS mouse pointerout's buttons is 0 when mouse buttons are in released state.
+PASS mouse pointerout's ClientX and ClientY attributes are correct.
+PASS mouse pointerout.pointerType is correct.
+PASS mouse pointerout event is a PointerEvent event
+PASS mouse pointerout.fromElement value is null
+PASS mouse pointerout.toElement value is null
+PASS mouse pointerout.isTrusted value is true
+PASS mouse pointerout.composed value is valid
+PASS mouse pointerout.bubbles value is valid
+PASS mouse pointerout.pressure value is valid
+PASS mouse pointerout properties for pointerType = mouse
+PASS mouse pointerout.isPrimary attribute is correct.
+PASS mouse pointerout.pointerId should be the same as previous pointer events for this active pointer.
+PASS mouse pointerleave's type should be pointerleave
+FAIL mouse pointerleave's button is -1 when mouse buttons are in released state. assert_equals: expected -1 but got 0
+PASS mouse pointerleave's buttons is 0 when mouse buttons are in released state.
+PASS mouse pointerleave's ClientX and ClientY attributes are correct.
+PASS mouse pointerleave.pointerType is correct.
+PASS mouse pointerleave event is a PointerEvent event
+PASS mouse pointerleave.fromElement value is null
+PASS mouse pointerleave.toElement value is null
+PASS mouse pointerleave.isTrusted value is true
+PASS mouse pointerleave.composed value is valid
+PASS mouse pointerleave.bubbles value is valid
+PASS mouse pointerleave.pressure value is valid
+PASS mouse pointerleave properties for pointerType = mouse
+PASS mouse pointerleave.isPrimary attribute is correct.
+PASS mouse pointerleave.pointerId should be the same as previous pointer events for this active pointer.
+

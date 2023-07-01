@@ -2583,3 +2583,13 @@ imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-color-001.html  [ S
 imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-color-002.html  [ Skip ]
 imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-width-010.html  [ Skip ]
 imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-width-014.html  [ Skip ]
+
+# webkit.org/b/258628 Skipping some newly imported pointerevents WPT
+imported/w3c/web-platform-tests/pointerevents/compat/pointerevent_mouse-on-object.html [ Skip ]
+imported/w3c/web-platform-tests/pointerevents/compat/pointerevent_mouse-pointer-preventdefault-passive.html [ Skip ]
+imported/w3c/web-platform-tests/pointerevents/pointerevent_after_target_removed.html?mouse [ Skip ]
+imported/w3c/web-platform-tests/pointerevents/pointerevent_after_target_removed.html?pen [ Skip ]
+imported/w3c/web-platform-tests/pointerevents/pointerevent_contextmenu_is_a_pointerevent.html?mouse [ Skip ]
+imported/w3c/web-platform-tests/pointerevents/pointerevent_fractional_coordinates.html?mouse [ Skip ]
+imported/w3c/web-platform-tests/pointerevents/pointerevent_fractional_coordinates.html?pen [ Skip ]
+imported/w3c/web-platform-tests/pointerevents/pointerevent_pointerout_no_pointer_movement.html [ Skip ]
