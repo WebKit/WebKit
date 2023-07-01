@@ -774,7 +774,6 @@ platform/mac/fast/loader/file-url-mimetypes.html [ Failure ]
 
 # rdar://92299030 ([ Ventura ] 2 imported/w3c/web-platform-tests/svg/* tests are constant text failures)
 imported/w3c/web-platform-tests/svg/path/distance/pathlength-path.svg [ Failure ]
-imported/w3c/web-platform-tests/svg/import/animate-elem-35-t-manual.svg [ Failure ]
 
 # This test rarely times out with color being (0, 0, 0, 0), so far only on macOS Ventura.
 http/tests/media/hls/hls-hdr-switch.html [ Pass Timeout ]
