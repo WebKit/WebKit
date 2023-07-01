@@ -330,7 +330,7 @@ ScrollerMac::~ScrollerMac()
 void ScrollerMac::attach()
 {
     m_scrollerImpDelegate = adoptNS([[WebScrollerImpDelegateMac alloc] initWithScroller:this]);
-    m_scrollerImp = [NSScrollerImp scrollerImpWithStyle:nsScrollerStyle(m_pair.scrollbarStyle()) controlSize:NSControlSizeRegular horizontal:m_orientation == ScrollbarOrientation::Horizontal replacingScrollerImp:nil];
+    m_scrollerImp = [NSScrollerImp scrollerImpWithStyle:nsScrollerStyle(m_pair.scrollbarStyle()) controlSize:nsControlSizeFromScrollbarWidth(m_pair.scrollbarWidthStyle()) horizontal:m_orientation == ScrollbarOrientation::Horizontal replacingScrollerImp:nil];
     [m_scrollerImp setDelegate:m_scrollerImpDelegate.get()];
 }
 
@@ -369,7 +369,7 @@ void ScrollerMac::updateValues()
 
 void ScrollerMac::updateScrollbarStyle()
 {
-    m_scrollerImp = [NSScrollerImp scrollerImpWithStyle:nsScrollerStyle(m_pair.scrollbarStyle()) controlSize:NSControlSizeRegular horizontal:m_orientation == ScrollbarOrientation::Horizontal replacingScrollerImp:takeScrollerImp().get()];
+    m_scrollerImp = [NSScrollerImp scrollerImpWithStyle:nsScrollerStyle(m_pair.scrollbarStyle()) controlSize:nsControlSizeFromScrollbarWidth(m_pair.scrollbarWidthStyle()) horizontal:m_orientation == ScrollbarOrientation::Horizontal replacingScrollerImp:takeScrollerImp().get()];
     updatePairScrollerImps();
 }
 

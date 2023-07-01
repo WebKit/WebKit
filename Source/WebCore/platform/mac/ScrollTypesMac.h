@@ -56,6 +56,20 @@ inline ScrollbarStyle scrollbarStyle(NSScrollerStyle style)
     return ScrollbarStyle::AlwaysVisible;
 }
 
+inline NSControlSize nsControlSizeFromScrollbarWidth(ScrollbarWidth width)
+{
+    switch (width) {
+    case ScrollbarWidth::Auto:
+    case ScrollbarWidth::None:
+        return NSControlSizeRegular;
+    case ScrollbarWidth::Thin:
+        return NSControlSizeSmall;
+    }
+
+    ASSERT_NOT_REACHED();
+    return NSControlSizeRegular;
+}
+
 } // namespace WebCore
 
 #endif // PLATFORM(MAC)
