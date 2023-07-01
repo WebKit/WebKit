@@ -1515,17 +1515,20 @@ CSSUnprefixedBackdropFilterEnabled:
 
 CSSWordBreakAutoPhraseEnabled:
   type: bool
-  status: testable
+  status: stable
   category: css
   webcoreOnChange: setNeedsRecalcStyleInAllFrames
   humanReadableName: "word-break: auto-phrase enabled"
   humanReadableDescription: "Enables the auto-phrase value of the word-break CSS property"
   defaultValue:
     WebKitLegacy:
+      "ENABLE(WORD_BREAK_AUTO_PHRASE)": true
       default: false
     WebKit:
+      "ENABLE(WORD_BREAK_AUTO_PHRASE)": true
       default: false
     WebCore:
+      "ENABLE(WORD_BREAK_AUTO_PHRASE)": true
       default: false
 
 # FIXME: This is not relevent for WebKitLegacy, so should be excluded from WebKitLegacy entirely (though we should still set the default value to false when initializing settings).
