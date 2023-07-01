@@ -49,12 +49,12 @@ layer at (0,0) size 800x417
                   RenderBlock {ARTICLE} at (0,0) size 71x67
                     RenderBlock {SECTION} at (0,0) size 71x67
                       RenderBlock {H1} at (0,24) size 71x19 [border: (1px solid #00FF00)]
-                        RenderText {#text} at (1,1) size 36x15
-                          text run at (1,1) width 36: "MMM"
+                        RenderText {#text} at (1,1) size 39x15
+                          text run at (1,1) width 39: "MMM"
             RenderTableCell {TD} at (77,221) size 73x70 [r=3 c=1 rs=1 cs=1]
               RenderBlock {H5} at (1,25) size 71x19 [border: (1px solid #00FF00)]
-                RenderText {#text} at (1,1) size 36x15
-                  text run at (1,1) width 36: "MMM"
+                RenderText {#text} at (1,1) size 39x15
+                  text run at (1,1) width 39: "MMM"
           RenderTableRow {TR} at (0,292) size 152x72
             RenderTableCell {TD} at (2,292) size 73x72 [r=4 c=0 rs=1 cs=1]
               RenderBlock {SECTION} at (1,1) size 71x69
@@ -113,12 +113,12 @@ layer at (0,0) size 800x417
                   RenderBlock {ARTICLE} at (0,0) size 67x71
                     RenderBlock {SECTION} at (0,0) size 67x71
                       RenderBlock {H1} at (24,0) size 19x71 [border: (1px solid #00FF00)]
-                        RenderText {#text} at (1,1) size 15x36
-                          text run at (1,1) width 36: "MMM"
+                        RenderText {#text} at (1,1) size 15x39
+                          text run at (1,1) width 39: "MMM"
             RenderTableCell {TD} at (221,77) size 70x73 [r=3 c=1 rs=1 cs=1]
               RenderBlock {H5} at (25,1) size 19x71 [border: (1px solid #00FF00)]
-                RenderText {#text} at (1,1) size 15x36
-                  text run at (1,1) width 36: "MMM"
+                RenderText {#text} at (1,1) size 15x39
+                  text run at (1,1) width 39: "MMM"
           RenderTableRow {TR} at (292,0) size 72x152
             RenderTableCell {TD} at (292,2) size 72x73 [r=4 c=0 rs=1 cs=1]
               RenderBlock {SECTION} at (1,1) size 69x71

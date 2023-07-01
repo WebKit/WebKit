@@ -83,8 +83,8 @@ layer at (0,0) size 785x915
           text run at (386,0) width 9: "):"
       RenderBlock {DIV} at (0,506) size 769x169 [border: (1px solid #000000)]
         RenderBlock {H3} at (26,44) size 717x24
-          RenderText {#text} at (0,0) size 48x22
-            text run at (0,0) width 48: "Box 1"
+          RenderText {#text} at (0,0) size 46x22
+            text run at (0,0) width 46: "Box 1"
         RenderBlock {P} at (26,86) size 717x41
           RenderBlock (anonymous) at (0,0) size 717x20
             RenderText {#text} at (0,0) size 650x19
@@ -94,8 +94,8 @@ layer at (0,0) size 785x915
               text run at (0,0) width 111: "generated content"
       RenderBlock {DIV} at (0,699) size 769x170 [border: (1px solid #000000)]
         RenderBlock {H3} at (26,44) size 717x24
-          RenderText {#text} at (0,0) size 48x22
-            text run at (0,0) width 48: "Box 2"
+          RenderText {#text} at (0,0) size 46x22
+            text run at (0,0) width 46: "Box 2"
         RenderBlock {P} at (26,86) size 717x41
           RenderBlock (anonymous) at (0,0) size 717x20
             RenderText {#text} at (0,0) size 628x19

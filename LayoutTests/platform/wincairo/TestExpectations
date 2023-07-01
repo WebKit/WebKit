@@ -1912,6 +1912,7 @@ imported/w3c/web-platform-tests/paint-timing [ Skip ]
 imported/w3c/web-platform-tests/payment-request [ Skip ]
 imported/w3c/web-platform-tests/performance-timeline [ Skip ]
 imported/w3c/web-platform-tests/permissions [ Skip ]
+imported/w3c/web-platform-tests/permissions-policy [ Skip ]
 imported/w3c/web-platform-tests/picture-in-picture [ Skip ]
 imported/w3c/web-platform-tests/pointerevents [ Skip ]
 imported/w3c/web-platform-tests/pointerlock [ Skip ]
@@ -2309,8 +2310,6 @@ fast/css3-text/font-synthesis.html [ ImageOnlyFailure ]
 fast/css3-text/css3-text-decoration/text-underline-position/underline-visual-overflow-with-subpixel-position.html [ Failure ]
 
 fast/canvas/toDataURL-alpha-permutation.html [ ImageOnlyFailure ]
-
-webgl/2.0.y/conformance2/extensions/webgl-multi-draw-instanced-base-vertex-base-instance.html [ Failure ]
 
 webkit.org/b/243992 fast/text/punctuation-break-all.html [ ImageOnlyFailure ]
 
@@ -2836,3 +2835,5 @@ http/tests/inspector/network/xhr-request-type.html [ Failure ]
 compositing/overlap-blending/reflection-opacity-huge.html [ ImageOnlyFailure Pass ]
 
 fast/css-grid-layout/grid-item-display.html [ Failure Pass ]
+
+fast/canvas/canvas-ellipse-connecting-line.html [ ImageOnlyFailure ]
