@@ -2722,3 +2722,5 @@ webkit.org/b/258181 [ Monterey+ Debug ] inspector/debugger/async-stack-trace-tru
 # webkit.org/b/258328 Umbrella Bug: Batch mark expectations slowing down EWS
 [ arm64 ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworklet-denormals.https.window.html [ Failure ]
 [ Debug ] media/modern-media-controls/pip-support/pip-support-enabled.html [ Pass Crash ]
+
+webkit.org/b/236128 imported/w3c/web-platform-tests/html/user-activation/activation-trigger-mouse-right.html [ Skip ]

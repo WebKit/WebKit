@@ -720,6 +720,7 @@ imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/mo
 imported/w3c/web-platform-tests/html/user-activation/activation-trigger-keyboard-enter.html [ Skip ]
 imported/w3c/web-platform-tests/html/user-activation/activation-trigger-keyboard-escape.html [ Skip ]
 imported/w3c/web-platform-tests/html/user-activation/activation-trigger-mouse-left.html [ Skip ]
+imported/w3c/web-platform-tests/html/user-activation/activation-trigger-mouse-right.html [ Skip ]
 imported/w3c/web-platform-tests/html/webappapis/scripting/processing-model-2/unhandled-promise-rejections/allow-crossorigin.html [ Skip ]
 imported/w3c/web-platform-tests/html/webappapis/scripting/processing-model-2/unhandled-promise-rejections/disallow-crossorigin.html [ Skip ]
 imported/w3c/web-platform-tests/html/webappapis/scripting/processing-model-2/unhandled-promise-rejections/promise-rejection-events.html [ Skip ]

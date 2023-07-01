@@ -1037,6 +1037,7 @@ fast/forms/validation-message-maxLength.html [ Skip ]
 fast/forms/ValidityState-valueMissing-002.html [ Skip ]
 fast/frames/focus-controller-crash-change-event.html
 fast/html/details-keyboard-show-hide.html [ Skip ]
+fast/html/transient-activation.html [ Skip ]
 fast/shadow-dom/activate-over-slotted-content.html [ Skip ]
 fast/shadow-dom/clear-active-state-in-shadow.html [ Skip ]
 fast/shadow-dom/focus-across-details-element.html [ Skip ]

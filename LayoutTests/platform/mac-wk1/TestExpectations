@@ -2352,7 +2352,7 @@ imported/w3c/web-platform-tests/pointerevents/pointerevent_mouse_capture_change_
 imported/w3c/web-platform-tests/pointerevents/pointerevent_mouse_pointercapture_in_frame.html [ Pass Failure ]
 imported/w3c/web-platform-tests/pointerevents/pointerevent_pointercapture-in-custom-element.html [ Pass Failure ]
 
-webkit.org/b/236128 imported/w3c/web-platform-tests/html/user-activation/activation-trigger-mouse-right.html [ Skip ]
+webkit.org/b/236128 fullscreen/full-screen-iframe-with-max-width-height.html [ Skip ]
 
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-object-element/object-param-url.html [ ImageOnlyFailure ]
 

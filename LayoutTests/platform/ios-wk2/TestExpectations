@@ -1175,7 +1175,6 @@ webkit.org/b/161631 imported/w3c/web-platform-tests/html/browsers/browsing-the-w
 
 # Newly imported WPT tests that are timing out on iOS.
 imported/w3c/web-platform-tests/html/semantics/forms/the-button-element/button-activate-keyup-prevented.html [ Skip ]
-imported/w3c/web-platform-tests/html/user-activation/activation-trigger-mouse-right.html [ Skip ]
 imported/w3c/web-platform-tests/uievents/click/auxclick_event.html [ Skip ]
 imported/w3c/web-platform-tests/uievents/click/click_event_target_child_parent.html [ Skip ]
 imported/w3c/web-platform-tests/uievents/click/click_event_target_siblings.html [ Skip ]
