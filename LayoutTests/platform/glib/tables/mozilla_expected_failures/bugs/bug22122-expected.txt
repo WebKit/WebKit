@@ -4,8 +4,8 @@ layer at (0,0) size 785x862
   RenderBlock {HTML} at (0,0) size 785x862
     RenderBody {BODY} at (8,8) size 769x846
       RenderBlock {H3} at (0,20) size 769x23
-        RenderText {#text} at (0,0) size 61x21
-          text run at (0,0) width 61: "Table 1"
+        RenderText {#text} at (0,0) size 57x21
+          text run at (0,0) width 57: "Table 1"
       RenderBlock {PRE} at (0,61) size 769x61
         RenderText {#text} at (0,0) size 224x60
           text run at (0,0) width 224: "<TABLE width=\"500\" border=1>"
@@ -52,8 +52,8 @@ layer at (0,0) size 785x862
               RenderText {#text} at (2,2) size 35x17
                 text run at (2,2) width 35: "Cell I"
       RenderBlock {H3} at (0,239) size 769x23
-        RenderText {#text} at (0,0) size 76x21
-          text run at (0,0) width 76: "Table 2.1"
+        RenderText {#text} at (0,0) size 71x21
+          text run at (0,0) width 71: "Table 2.1"
       RenderBlock {PRE} at (0,279) size 769x61
         RenderText {#text} at (0,0) size 224x60
           text run at (0,0) width 224: "<TABLE width=\"500\" border=1>"
@@ -100,8 +100,8 @@ layer at (0,0) size 785x862
               RenderText {#text} at (2,2) size 35x17
                 text run at (2,2) width 35: "Cell I"
       RenderBlock {H3} at (0,447) size 769x23
-        RenderText {#text} at (0,0) size 76x21
-          text run at (0,0) width 76: "Table 2.2"
+        RenderText {#text} at (0,0) size 71x21
+          text run at (0,0) width 71: "Table 2.2"
       RenderBlock {PRE} at (0,488) size 769x61
         RenderText {#text} at (0,0) size 224x60
           text run at (0,0) width 224: "<TABLE width=\"500\" border=1>"
@@ -148,8 +148,8 @@ layer at (0,0) size 785x862
               RenderText {#text} at (2,2) size 35x17
                 text run at (2,2) width 35: "Cell I"
       RenderBlock {H3} at (0,656) size 769x23
-        RenderText {#text} at (0,0) size 76x21
-          text run at (0,0) width 76: "Table 3.1"
+        RenderText {#text} at (0,0) size 71x21
+          text run at (0,0) width 71: "Table 3.1"
       RenderBlock {PRE} at (0,696) size 769x61
         RenderText {#text} at (0,0) size 224x60
           text run at (0,0) width 224: "<TABLE width=\"500\" border=1>"

@@ -24,10 +24,10 @@ layer at (0,0) size 450x500
         RenderSVGText {text} at (111,116) size 114x18 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 114x17
             chunk 1 (end anchor) text run 1 at (111.00,130.00) startOffset 0 endOffset 17 width 114.00: "text-anchor=\"end\""
-      RenderSVGContainer {g} at (45,146) size 110x53 [transform={m=((1.00,0.00)(0.00,1.00)) t=(100.00,180.00)}]
-        RenderSVGText {text} at (-55,-34) size 110x43 contains 1 chunk(s)
-          RenderSVGInlineText {#text} at (0,0) size 109x43
-            chunk 1 (middle anchor) text run 1 at (-54.50,0.00) startOffset 0 endOffset 6 width 109.00: "sample"
+      RenderSVGContainer {g} at (46,146) size 108x53 [transform={m=((1.00,0.00)(0.00,1.00)) t=(100.00,180.00)}]
+        RenderSVGText {text} at (-54,-34) size 108x43 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 108x42
+            chunk 1 (middle anchor) text run 1 at (-54.00,0.00) startOffset 0 endOffset 6 width 108.00: "sample"
         RenderSVGText {text} at (-52,0) size 104x19 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 104x18
             chunk 1 (middle anchor) text run 1 at (-52.00,15.00) startOffset 0 endOffset 15 width 104.00: "font-size=\"1cm\""

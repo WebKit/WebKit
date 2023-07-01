@@ -4,9 +4,9 @@ layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
     RenderSVGContainer {g} at (28,11) size 705x469
-      RenderSVGText {text} at (202,7) size 76x23 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 75x23
-          chunk 1 (middle anchor) text run 1 at (202.80,25.00) startOffset 0 endOffset 8 width 74.40: "graphics"
+      RenderSVGText {text} at (201,6) size 78x24 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 77x23
+          chunk 1 (middle anchor) text run 1 at (201.60,25.00) startOffset 0 endOffset 8 width 76.80: "graphics"
       RenderSVGContainer {g} at (28,75) size 705x405 [transform={m=((1.00,0.00)(0.00,1.00)) t=(80.00,75.00)}]
         RenderSVGContainer {g} at (28,123) size 156x357 [transform={m=((1.00,0.00)(0.00,1.00)) t=(30.00,10.00)}]
           RenderSVGText {text} at (-11,-11) size 11x14 contains 1 chunk(s)
@@ -42,16 +42,16 @@ layer at (0,0) size 800x600
           RenderSVGText {text} at (-26,189) size 26x14 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 26x14
               chunk 1 (end anchor) text run 1 at (-25.80,200.00) startOffset 0 endOffset 5 width 25.80: "color"
-        RenderSVGContainer {g} at (275,75) size 420x27 [transform={m=((1.00,0.00)(0.00,1.00)) t=(90.00,-20.00)}]
+        RenderSVGContainer {g} at (275,75) size 421x27 [transform={m=((1.00,0.00)(0.00,1.00)) t=(90.00,-20.00)}]
           RenderSVGText {text} at (-5,-10) size 50x16 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,0) size 50x16
               chunk 1 (middle anchor) text run 1 at (-4.60,3.00) startOffset 0 endOffset 7 width 49.20: "element"
-          RenderSVGText {text} at (118,-10) size 24x16 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 24x16
-              chunk 1 (middle anchor) text run 1 at (118.30,3.00) startOffset 0 endOffset 3 width 23.40: "<g>"
-          RenderSVGText {text} at (223,-10) size 24x16 contains 1 chunk(s)
-            RenderSVGInlineText {#text} at (0,0) size 24x16
-              chunk 1 (middle anchor) text run 1 at (223.30,3.00) startOffset 0 endOffset 3 width 23.40: "<a>"
+          RenderSVGText {text} at (117,-10) size 26x16 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 25x16
+              chunk 1 (middle anchor) text run 1 at (117.70,3.00) startOffset 0 endOffset 3 width 24.60: "<g>"
+          RenderSVGText {text} at (222,-10) size 26x16 contains 1 chunk(s)
+            RenderSVGInlineText {#text} at (0,0) size 25x16
+              chunk 1 (middle anchor) text run 1 at (222.70,3.00) startOffset 0 endOffset 3 width 24.60: "<a>"
         RenderSVGContainer {g} at (258,115) size 475x357 [transform={m=((1.00,0.00)(0.00,1.00)) t=(80.00,0.00)}]
           RenderSVGContainer {g} at (283,115) size 431x24
             RenderSVGHiddenContainer {defs} at (0,0) size 0x0
@@ -299,8 +299,8 @@ layer at (0,0) size 800x600
               RenderSVGRect {rect} at (466,458) size 14x14 [fill={[type=SOLID] [color=#CC0066]}] [x=10.00] [y=0.00] [width=8.00] [height=8.00]
             RenderSVGContainer {a} at (650,458) size 14x14 [transform={m=((1.00,0.00)(0.00,1.00)) t=(220.00,0.00)}]
               RenderSVGRect {rect} at (650,458) size 14x14 [fill={[type=SOLID] [color=#CC0066]}] [x=10.00] [y=0.00] [width=8.00] [height=8.00]
-    RenderSVGContainer {g} at (16,518) size 380x60
-      RenderSVGText {text} at (10,311) size 228x36 contains 1 chunk(s)
-        RenderSVGInlineText {#text} at (0,0) size 228x36
-          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 227.40: "$Revision: 1.8 $"
+    RenderSVGContainer {g} at (16,518) size 388x60
+      RenderSVGText {text} at (10,311) size 233x36 contains 1 chunk(s)
+        RenderSVGInlineText {#text} at (0,0) size 233x36
+          chunk 1 text run 1 at (10.00,340.00) startOffset 0 endOffset 16 width 232.20: "$Revision: 1.8 $"
     RenderSVGRect {rect} at (0,0) size 800x600 [stroke={[type=SOLID] [color=#000000]}] [x=1.00] [y=1.00] [width=478.00] [height=358.00]
