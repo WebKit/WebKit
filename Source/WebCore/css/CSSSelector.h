@@ -23,6 +23,7 @@
 
 #include "QualifiedName.h"
 #include "RenderStyleConstants.h"
+#include <wtf/EnumTraits.h>
 #include <wtf/FixedVector.h>
 
 namespace WebCore {
@@ -96,103 +97,103 @@ struct PossiblyQuotedIdentifier {
             ShadowSlotted
         };
 
-        enum PseudoClassType {
-            PseudoClassUnknown = 0,
-            PseudoClassEmpty,
-            PseudoClassFirstChild,
-            PseudoClassFirstOfType,
-            PseudoClassLastChild,
-            PseudoClassLastOfType,
-            PseudoClassOnlyChild,
-            PseudoClassOnlyOfType,
-            PseudoClassNthChild,
-            PseudoClassNthOfType,
-            PseudoClassNthLastChild,
-            PseudoClassNthLastOfType,
-            PseudoClassLink,
-            PseudoClassVisited,
-            PseudoClassAny,
-            PseudoClassAnyLink,
-            PseudoClassAnyLinkDeprecated,
-            PseudoClassAutofill,
-            PseudoClassAutofillAndObscured,
-            PseudoClassAutofillStrongPassword,
-            PseudoClassAutofillStrongPasswordViewable,
-            PseudoClassHover,
-            PseudoClassDrag,
-            PseudoClassFocus,
-            PseudoClassFocusVisible,
-            PseudoClassFocusWithin,
-            PseudoClassActive,
-            PseudoClassChecked,
-            PseudoClassEnabled,
-            PseudoClassFullPageMedia,
-            PseudoClassDefault,
-            PseudoClassDisabled,
-            PseudoClassHtmlDocument, // for internal use only with forms in table case in UA stylesheet
-            PseudoClassIs,
-            PseudoClassMatches, // obsolete synonym for PseudoClassIs
-            PseudoClassWhere,
-            PseudoClassOptional,
-            PseudoClassPlaceholderShown,
-            PseudoClassRequired,
-            PseudoClassReadOnly,
-            PseudoClassReadWrite,
-            PseudoClassValid,
-            PseudoClassInvalid,
-            PseudoClassIndeterminate,
-            PseudoClassTarget,
-            PseudoClassLang,
-            PseudoClassNot,
-            PseudoClassRoot,
-            PseudoClassScope,
-            PseudoClassRelativeScope, // Like :scope but for internal use with relative selectors like :has(> foo).
-            PseudoClassWindowInactive,
-            PseudoClassCornerPresent,
-            PseudoClassDecrement,
-            PseudoClassIncrement,
-            PseudoClassHas,
-            PseudoClassHorizontal,
-            PseudoClassVertical,
-            PseudoClassStart,
-            PseudoClassEnd,
-            PseudoClassDoubleButton,
-            PseudoClassSingleButton,
-            PseudoClassNoButton,
+        enum class PseudoClassType : uint8_t {
+            Unknown = 0,
+            Empty,
+            FirstChild,
+            FirstOfType,
+            LastChild,
+            LastOfType,
+            OnlyChild,
+            OnlyOfType,
+            NthChild,
+            NthOfType,
+            NthLastChild,
+            NthLastOfType,
+            Link,
+            Visited,
+            Any,
+            AnyLink,
+            AnyLinkDeprecated,
+            Autofill,
+            AutofillAndObscured,
+            AutofillStrongPassword,
+            AutofillStrongPasswordViewable,
+            Hover,
+            Drag,
+            Focus,
+            FocusVisible,
+            FocusWithin,
+            Active,
+            Checked,
+            Enabled,
+            FullPageMedia,
+            Default,
+            Disabled,
+            HtmlDocument, // for internal use only with forms in table case in UA stylesheet
+            Is,
+            Matches, // obsolete synonym for PseudoClassIs
+            Where,
+            Optional,
+            PlaceholderShown,
+            Required,
+            ReadOnly,
+            ReadWrite,
+            Valid,
+            Invalid,
+            Indeterminate,
+            Target,
+            Lang,
+            Not,
+            Root,
+            Scope,
+            RelativeScope, // Like :scope but for internal use with relative selectors like :has(> foo).
+            WindowInactive,
+            CornerPresent,
+            Decrement,
+            Increment,
+            Has,
+            Horizontal,
+            Vertical,
+            Start,
+            End,
+            DoubleButton,
+            SingleButton,
+            NoButton,
 #if ENABLE(FULLSCREEN_API)
-            PseudoClassFullscreen,
-            PseudoClassWebkitFullScreen,
-            PseudoClassFullScreenDocument,
-            PseudoClassFullScreenAncestor,
-            PseudoClassAnimatingFullScreenTransition,
-            PseudoClassFullScreenControlsHidden,
+            Fullscreen,
+            WebkitFullScreen,
+            FullScreenDocument,
+            FullScreenAncestor,
+            AnimatingFullScreenTransition,
+            FullScreenControlsHidden,
 #endif
 #if ENABLE(PICTURE_IN_PICTURE_API)
-            PseudoClassPictureInPicture,
+            PictureInPicture,
 #endif
-            PseudoClassInRange,
-            PseudoClassOutOfRange,
+            InRange,
+            OutOfRange,
 #if ENABLE(VIDEO)
-            PseudoClassFuture,
-            PseudoClassPast,
-            PseudoClassPlaying,
-            PseudoClassPaused,
-            PseudoClassSeeking,
-            PseudoClassBuffering,
-            PseudoClassStalled,
-            PseudoClassMuted,
-            PseudoClassVolumeLocked,
+            Future,
+            Past,
+            Playing,
+            Paused,
+            Seeking,
+            Buffering,
+            Stalled,
+            Muted,
+            VolumeLocked,
 #endif
-            PseudoClassDir,
-            PseudoClassHost,
-            PseudoClassDefined,
+            Dir,
+            Host,
+            Defined,
 #if ENABLE(ATTACHMENT_ELEMENT)
-            PseudoClassHasAttachment,
+            HasAttachment,
 #endif
-            PseudoClassModal,
-            PseudoClassPopoverOpen,
-            PseudoClassUserInvalid,
-            PseudoClassUserValid
+            Modal,
+            PopoverOpen,
+            UserInvalid,
+            UserValid
         };
 
         enum PseudoElementType {
@@ -412,33 +413,33 @@ inline bool CSSSelector::isWebKitCustomPseudoElement() const
 
 static inline bool pseudoClassIsRelativeToSiblings(CSSSelector::PseudoClassType type)
 {
-    return type == CSSSelector::PseudoClassEmpty
-        || type == CSSSelector::PseudoClassFirstChild
-        || type == CSSSelector::PseudoClassFirstOfType
-        || type == CSSSelector::PseudoClassLastChild
-        || type == CSSSelector::PseudoClassLastOfType
-        || type == CSSSelector::PseudoClassOnlyChild
-        || type == CSSSelector::PseudoClassOnlyOfType
-        || type == CSSSelector::PseudoClassNthChild
-        || type == CSSSelector::PseudoClassNthOfType
-        || type == CSSSelector::PseudoClassNthLastChild
-        || type == CSSSelector::PseudoClassNthLastOfType;
+    return type == CSSSelector::PseudoClassType::Empty
+        || type == CSSSelector::PseudoClassType::FirstChild
+        || type == CSSSelector::PseudoClassType::FirstOfType
+        || type == CSSSelector::PseudoClassType::LastChild
+        || type == CSSSelector::PseudoClassType::LastOfType
+        || type == CSSSelector::PseudoClassType::OnlyChild
+        || type == CSSSelector::PseudoClassType::OnlyOfType
+        || type == CSSSelector::PseudoClassType::NthChild
+        || type == CSSSelector::PseudoClassType::NthOfType
+        || type == CSSSelector::PseudoClassType::NthLastChild
+        || type == CSSSelector::PseudoClassType::NthLastOfType;
 }
 
 static inline bool isTreeStructuralPseudoClass(CSSSelector::PseudoClassType type)
 {
-    return pseudoClassIsRelativeToSiblings(type) || type == CSSSelector::PseudoClassRoot;
+    return pseudoClassIsRelativeToSiblings(type) || type == CSSSelector::PseudoClassType::Root;
 }
 
 inline bool isLogicalCombinationPseudoClass(CSSSelector::PseudoClassType pseudoClassType)
 {
     switch (pseudoClassType) {
-    case CSSSelector::PseudoClassIs:
-    case CSSSelector::PseudoClassWhere:
-    case CSSSelector::PseudoClassNot:
-    case CSSSelector::PseudoClassAny:
-    case CSSSelector::PseudoClassMatches:
-    case CSSSelector::PseudoClassHas:
+    case CSSSelector::PseudoClassType::Is:
+    case CSSSelector::PseudoClassType::Where:
+    case CSSSelector::PseudoClassType::Not:
+    case CSSSelector::PseudoClassType::Any:
+    case CSSSelector::PseudoClassType::Matches:
+    case CSSSelector::PseudoClassType::Has:
         return true;
     default:
         return false;
@@ -546,8 +547,8 @@ inline auto CSSSelector::pseudoClassType() const -> PseudoClassType
 
 inline void CSSSelector::setPseudoClassType(PseudoClassType pseudoType)
 {
-    m_pseudoType = pseudoType;
-    ASSERT(m_pseudoType == pseudoType);
+    m_pseudoType = enumToUnderlyingType(pseudoType);
+    ASSERT(static_cast<PseudoClassType>(m_pseudoType) == pseudoType);
 }
 
 inline auto CSSSelector::pseudoElementType() const -> PseudoElementType

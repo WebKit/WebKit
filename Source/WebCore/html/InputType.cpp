@@ -822,7 +822,7 @@ void InputType::setValue(const String& sanitizedValue, bool valueChanged, TextFi
 
     std::optional<Style::PseudoClassChangeInvalidation> styleInvalidation;
     if (wasInRange != inRange)
-        emplace(styleInvalidation, *element(), { { CSSSelector::PseudoClassInRange, inRange }, { CSSSelector::PseudoClassOutOfRange, !inRange } });
+        emplace(styleInvalidation, *element(), { { CSSSelector::PseudoClassType::InRange, inRange }, { CSSSelector::PseudoClassType::OutOfRange, !inRange } });
 
     element()->setValueInternal(sanitizedValue, eventBehavior);
 

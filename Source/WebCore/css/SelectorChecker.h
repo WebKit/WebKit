@@ -134,11 +134,11 @@ inline bool SelectorChecker::isCommonPseudoClassSelector(const CSSSelector* sele
     if (selector->match() != CSSSelector::Match::PseudoClass)
         return false;
     CSSSelector::PseudoClassType pseudoType = selector->pseudoClassType();
-    return pseudoType == CSSSelector::PseudoClassLink
-        || pseudoType == CSSSelector::PseudoClassAnyLink
-        || pseudoType == CSSSelector::PseudoClassAnyLinkDeprecated
-        || pseudoType == CSSSelector::PseudoClassVisited
-        || pseudoType == CSSSelector::PseudoClassFocus;
+    return pseudoType == CSSSelector::PseudoClassType::Link
+        || pseudoType == CSSSelector::PseudoClassType::AnyLink
+        || pseudoType == CSSSelector::PseudoClassType::AnyLinkDeprecated
+        || pseudoType == CSSSelector::PseudoClassType::Visited
+        || pseudoType == CSSSelector::PseudoClassType::Focus;
 }
 
 } // namespace WebCore

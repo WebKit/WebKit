@@ -166,8 +166,8 @@ void SelectorFilter::collectSimpleSelectorHash(CollectedSelectorHashes& collecte
     }
     case CSSSelector::Match::PseudoClass:
         switch (selector.pseudoClassType()) {
-        case CSSSelector::PseudoClassIs:
-        case CSSSelector::PseudoClassWhere:
+        case CSSSelector::PseudoClassType::Is:
+        case CSSSelector::PseudoClassType::Where:
             // We can use the filter in the trivial case of single argument :is()/:where().
             // Supporting the multiargument case would require more than one hash.
             if (selector.selectorList()->listSize() == 1)

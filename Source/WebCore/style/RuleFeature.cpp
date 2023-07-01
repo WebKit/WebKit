@@ -193,14 +193,14 @@ static MatchElement computeSubSelectorMatchElement(MatchElement matchElement, co
     if (selector.match() == CSSSelector::Match::PseudoClass) {
         auto type = selector.pseudoClassType();
         // For :nth-child(n of .some-subselector) where an element change may affect other elements similar to sibling combinators.
-        if (type == CSSSelector::PseudoClassNthChild || type == CSSSelector::PseudoClassNthLastChild)
+        if (type == CSSSelector::PseudoClassType::NthChild || type == CSSSelector::PseudoClassType::NthLastChild)
             return MatchElement::AnySibling;
 
         // Similarly for :host().
-        if (type == CSSSelector::PseudoClassHost)
+        if (type == CSSSelector::PseudoClassType::Host)
             return MatchElement::Host;
 
-        if (type == CSSSelector::PseudoClassHas) {
+        if (type == CSSSelector::PseudoClassType::Has) {
             if (matchElement != MatchElement::Subject)
                 return MatchElement::HasNonSubjectOrScopeBreaking;
             return computeHasPseudoClassMatchElement(childSelector);
@@ -247,7 +247,7 @@ void RuleFeatureSet::recursivelyCollectFeaturesFromSelector(SelectorFeatures& se
             bool isLogicalCombination = isLogicalCombinationPseudoClass(selector->pseudoClassType());
             if (!isLogicalCombination)
                 selectorFeatures.pseudoClasses.append({ selector, matchElement, isNegation });
-            canBreakScope = isLogicalCombination && selector->pseudoClassType() != CSSSelector::PseudoClassHas ? CanBreakScope::Yes : CanBreakScope::No;
+            canBreakScope = isLogicalCombination && selector->pseudoClassType() != CSSSelector::PseudoClassType::Has ? CanBreakScope::Yes : CanBreakScope::No;
         }
 
         if (!selectorFeatures.hasSiblingSelector && selector->isSiblingSelector())
@@ -255,7 +255,7 @@ void RuleFeatureSet::recursivelyCollectFeaturesFromSelector(SelectorFeatures& se
 
         if (const CSSSelectorList* selectorList = selector->selectorList()) {
             auto subSelectorIsNegation = isNegation;
-            if (selector->match() == CSSSelector::Match::PseudoClass && selector->pseudoClassType() == CSSSelector::PseudoClassNot)
+            if (selector->match() == CSSSelector::Match::PseudoClass && selector->pseudoClassType() == CSSSelector::PseudoClassType::Not)
                 subSelectorIsNegation = isNegation == IsNegation::No ? IsNegation::Yes : IsNegation::No;
 
             for (const CSSSelector* subSelector = selectorList->first(); subSelector; subSelector = CSSSelectorList::next(subSelector)) {
@@ -264,7 +264,7 @@ void RuleFeatureSet::recursivelyCollectFeaturesFromSelector(SelectorFeatures& se
                     selectorFeatures.hasSiblingSelector = true;
                 recursivelyCollectFeaturesFromSelector(selectorFeatures, *subSelector, subSelectorMatchElement, subSelectorIsNegation, canBreakScope);
 
-                if (selector->match() == CSSSelector::Match::PseudoClass && selector->pseudoClassType() == CSSSelector::PseudoClassHas)
+                if (selector->match() == CSSSelector::Match::PseudoClass && selector->pseudoClassType() == CSSSelector::PseudoClassType::Has)
                     selectorFeatures.hasPseudoClasses.append({ subSelector, subSelectorMatchElement, isNegation });
             }
         }
@@ -283,7 +283,7 @@ PseudoClassInvalidationKey makePseudoClassInvalidationKey(CSSSelector::PseudoCla
 {
     ASSERT(keyType != InvalidationKeyType::Universal || keyString == starAtom());
     return {
-        pseudoClass,
+        enumToUnderlyingType(pseudoClass),
         static_cast<uint8_t>(keyType),
         keyString
     };
@@ -371,7 +371,7 @@ void RuleFeatureSet::collectFeatures(const RuleData& ruleData)
     for (auto& entry : selectorFeatures.hasPseudoClasses) {
         auto& [selector, matchElement, isNegation] = entry;
         // The selector argument points to a selector inside :has() selector list instead of :has() itself.
-        hasPseudoClassRules.ensure(makePseudoClassInvalidationKey(CSSSelector::PseudoClassHas, *selector), [] {
+        hasPseudoClassRules.ensure(makePseudoClassInvalidationKey(CSSSelector::PseudoClassType::Has, *selector), [] {
             return makeUnique<Vector<RuleFeatureWithInvalidationSelector>>();
         }).iterator->value->append({ ruleData, matchElement, isNegation, selector });
 

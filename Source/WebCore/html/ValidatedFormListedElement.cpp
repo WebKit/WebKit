@@ -212,8 +212,8 @@ void ValidatedFormListedElement::setDisabledInternal(bool disabled, bool disable
     std::optional<Style::PseudoClassChangeInvalidation> styleInvalidation;
     if (changingDisabledState) {
         emplace(styleInvalidation, asHTMLElement(), {
-            { CSSSelector::PseudoClassDisabled, newDisabledState },
-            { CSSSelector::PseudoClassEnabled, !newDisabledState },
+            { CSSSelector::PseudoClassType::Disabled, newDisabledState },
+            { CSSSelector::PseudoClassType::Enabled, !newDisabledState },
         });
     }
 
@@ -253,10 +253,10 @@ void ValidatedFormListedElement::updateValidity()
     if (newIsValid != m_isValid) {
         HTMLElement& element = asHTMLElement();
         Style::PseudoClassChangeInvalidation styleInvalidation(element, {
-            { CSSSelector::PseudoClassValid, newIsValid },
-            { CSSSelector::PseudoClassInvalid, !newIsValid },
-            { CSSSelector::PseudoClassUserValid, m_wasInteractedWithSinceLastFormSubmitEvent && newIsValid },
-            { CSSSelector::PseudoClassUserInvalid, m_wasInteractedWithSinceLastFormSubmitEvent && !newIsValid },
+            { CSSSelector::PseudoClassType::Valid, newIsValid },
+            { CSSSelector::PseudoClassType::Invalid, !newIsValid },
+            { CSSSelector::PseudoClassType::UserValid, m_wasInteractedWithSinceLastFormSubmitEvent && newIsValid },
+            { CSSSelector::PseudoClassType::UserInvalid, m_wasInteractedWithSinceLastFormSubmitEvent && !newIsValid },
         });
 
         m_isValid = newIsValid;
@@ -313,7 +313,7 @@ void ValidatedFormListedElement::parseReadOnlyAttribute(const AtomString& value)
     bool newHasReadOnlyAttribute = !value.isNull();
     if (m_hasReadOnlyAttribute != newHasReadOnlyAttribute) {
         bool newMatchesReadWrite = supportsReadOnly() && !newHasReadOnlyAttribute;
-        Style::PseudoClassChangeInvalidation readWriteInvalidation(asHTMLElement(), { { CSSSelector::PseudoClassReadWrite, newMatchesReadWrite }, { CSSSelector::PseudoClassReadOnly, !newMatchesReadWrite } });
+        Style::PseudoClassChangeInvalidation readWriteInvalidation(asHTMLElement(), { { CSSSelector::PseudoClassType::ReadWrite, newMatchesReadWrite }, { CSSSelector::PseudoClassType::ReadOnly, !newMatchesReadWrite } });
         m_hasReadOnlyAttribute = newHasReadOnlyAttribute;
         readOnlyStateChanged();
     }
@@ -504,8 +504,8 @@ void ValidatedFormListedElement::setInteractedWithSinceLastFormSubmitEvent(bool 
         return;
 
     Style::PseudoClassChangeInvalidation styleInvalidation(asHTMLElement(), {
-        { CSSSelector::PseudoClassUserValid, interactedWith && matchesValidPseudoClass() },
-        { CSSSelector::PseudoClassUserInvalid, interactedWith && matchesInvalidPseudoClass() },
+        { CSSSelector::PseudoClassType::UserValid, interactedWith && matchesValidPseudoClass() },
+        { CSSSelector::PseudoClassType::UserInvalid, interactedWith && matchesInvalidPseudoClass() },
     });
 
     m_wasInteractedWithSinceLastFormSubmitEvent = interactedWith;

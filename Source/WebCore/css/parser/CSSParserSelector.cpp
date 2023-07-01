@@ -79,7 +79,7 @@ std::unique_ptr<CSSParserSelector> CSSParserSelector::parsePseudoElementSelector
 std::unique_ptr<CSSParserSelector> CSSParserSelector::parsePseudoClassSelector(StringView pseudoTypeString)
 {
     auto pseudoType = parsePseudoClassAndCompatibilityElementString(pseudoTypeString);
-    if (pseudoType.pseudoClass != CSSSelector::PseudoClassUnknown) {
+    if (pseudoType.pseudoClass != CSSSelector::PseudoClassType::Unknown) {
         auto selector = makeUnique<CSSParserSelector>();
         selector->m_selector->setMatch(CSSSelector::Match::PseudoClass);
         selector->m_selector->setPseudoClassType(pseudoType.pseudoClass);
@@ -239,7 +239,7 @@ std::unique_ptr<CSSParserSelector> CSSParserSelector::releaseTagHistory()
 // FIXME-NEWPARSER: Add support for :host-context
 bool CSSParserSelector::isHostPseudoSelector() const
 {
-    return match() == CSSSelector::Match::PseudoClass && pseudoClassType() == CSSSelector::PseudoClassHost;
+    return match() == CSSSelector::Match::PseudoClass && pseudoClassType() == CSSSelector::PseudoClassType::Host;
 }
 
 }
