@@ -32,6 +32,7 @@
 #import "GraphicsLayer.h"
 #import "ImageBuffer.h"
 #import "LocalCurrentGraphicsContext.h"
+#import "LocalDefaultSystemAppearance.h"
 #import "NSScrollerImpDetails.h"
 #import "PlatformMouseEvent.h"
 #import "ScrollView.h"
@@ -582,10 +583,13 @@ bool ScrollbarThemeMac::paint(Scrollbar& scrollbar, GraphicsContext& context, co
     return true;
 }
 
-void ScrollbarThemeMac::paintScrollCorner(ScrollableArea&, GraphicsContext& context, const IntRect& cornerRect)
+void ScrollbarThemeMac::paintScrollCorner(ScrollableArea& area, GraphicsContext& context, const IntRect& cornerRect)
 {
     if (context.paintingDisabled())
         return;
+
+    // Keep this in sync with ScrollAnimatorMac's effectiveAppearanceForScrollerImp:.
+    LocalDefaultSystemAppearance localAppearance(area.useDarkAppearanceForScrollbars());
 
     context.drawSystemImage(ScrollbarTrackCornerSystemImageMac::create(), cornerRect);
 }

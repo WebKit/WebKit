@@ -140,10 +140,6 @@
 #include "LegacyTileCache.h"
 #endif
 
-#if PLATFORM(MAC)
-#include "LocalDefaultSystemAppearance.h"
-#endif
-
 #include "DisplayView.h"
 #include "LayoutContext.h"
 
@@ -4569,11 +4565,6 @@ void LocalFrameView::paintScrollCorner(GraphicsContext& context, const IntRect& 
         m_scrollCorner->paintIntoRect(context, cornerRect.location(), cornerRect);
         return;
     }
-
-#if PLATFORM(MAC)
-    // Keep this in sync with ScrollAnimatorMac's effectiveAppearanceForScrollerImp:.
-    LocalDefaultSystemAppearance localAppearance(useDarkAppearanceForScrollbars());
-#endif
 
     ScrollView::paintScrollCorner(context, cornerRect);
 }
