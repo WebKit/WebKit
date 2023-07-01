@@ -39,7 +39,10 @@
 #import "WebProcessProxy.h"
 #import <QuartzCore/CoreAnimation.h>
 #import <WebCore/MediaPlayerEnums.h>
+#import <WebCore/NullVideoFullscreenInterface.h>
 #import <WebCore/TimeRanges.h>
+#import <WebCore/VideoFullscreenInterfaceAVKit.h>
+#import <WebCore/VideoFullscreenInterfaceMac.h>
 #import <WebCore/WebAVPlayerLayer.h>
 #import <WebCore/WebAVPlayerLayerView.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>

@@ -38,9 +38,14 @@
 #import "WebPageProxy.h"
 #import "WebPreferences.h"
 #import <WebCore/LocalizedStrings.h>
+#import <WebCore/VideoFullscreenInterfaceAVKit.h>
 #import <pal/spi/cocoa/AVKitSPI.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/WeakObjCPtr.h>
+
+namespace WebCore {
+class PlaybackSessionInterfaceAVKit;
+}
 
 static const NSTimeInterval showHideAnimationDuration = 0.1;
 static const NSTimeInterval pipHideAnimationDuration = 0.2;
@@ -685,7 +690,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (!playbackSessionManager)
         return;
 
-    PlatformPlaybackSessionInterface* playbackSessionInterface = playbackSessionManager->controlsManagerInterface();
+    WebCore::PlatformPlaybackSessionInterface* playbackSessionInterface = playbackSessionManager->controlsManagerInterface();
     if (!playbackSessionInterface)
         return;
 
