@@ -53,7 +53,7 @@ FlexFormattingContext::FlexFormattingContext(const ElementBox& formattingContext
 void FlexFormattingContext::layout(const ConstraintsForFlexContent& constraints)
 {
     auto logicalFlexItems = convertFlexItemsToLogicalSpace(constraints);
-    auto flexLayout = FlexLayout { root() };
+    auto flexLayout = FlexLayout { *this };
 
     auto logicalFlexConstraints = [&] {
         auto flexDirection = root().style().flexDirection();

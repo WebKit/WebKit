@@ -141,6 +141,18 @@ IntrinsicWidthConstraints InlineFormattingContext::computedIntrinsicWidthConstra
     return constraints;
 }
 
+LayoutUnit InlineFormattingContext::maximumContentSize()
+{
+    auto& inlineFormattingState = formattingState();
+    if (auto intrinsicWidthConstraints = inlineFormattingState.intrinsicWidthConstraints())
+        return intrinsicWidthConstraints->maximum;
+
+    if (inlineFormattingState.inlineItems().isEmpty())
+        InlineItemsBuilder { root(), inlineFormattingState }.build({ });
+
+    return ceiledLayoutUnit(computedIntrinsicWidthForConstraint(IntrinsicWidthMode::Maximum));
+}
+
 static InlineItemPosition leadingInlineItemPositionForNextLine(InlineItemPosition lineContentEnd, std::optional<InlineItemPosition> previousLineTrailingInlineItemPosition, InlineItemPosition layoutRangeEnd)
 {
     if (!previousLineTrailingInlineItemPosition)

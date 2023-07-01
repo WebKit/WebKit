@@ -29,6 +29,7 @@
 #include "FlexFormattingContext.h"
 #include "FlexFormattingGeometry.h"
 #include "FlexRect.h"
+#include "InlineFormattingContext.h"
 #include "RenderStyleSetters.h"
 #include "StyleContentAlignmentData.h"
 #include "StyleSelfAlignmentData.h"
@@ -51,8 +52,8 @@ struct PositionAndMargins {
     LayoutUnit marginEnd;
 };
 
-FlexLayout::FlexLayout(const ElementBox& flexContainer)
-    : m_flexContainer(flexContainer)
+FlexLayout::FlexLayout(const FlexFormattingContext& flexFormattingContext)
+    : m_flexFormattingContext(flexFormattingContext)
 {
 }
 
@@ -152,23 +153,40 @@ void FlexLayout::computeAvailableMainAndCrossSpace(const LogicalConstraints& log
     m_availableCrossSpace = computedFinalSize(logicalConstraints.crossAxis);
 }
 
+LayoutUnit FlexLayout::maxContentForFlexItem(const LogicalFlexItem& flexItem) const
+{
+    // 9.2.3 E Otherwise, size the item into the available space using its used flex basis in place of its main size,
+    // treating a value of content as max-content. If a cross size is needed to determine the main size (e.g. when the flex item’s main size
+    // is in its block axis) and the flex item’s cross size is auto and not definite, in this calculation use fit-content as the flex item’s cross size.
+    // The flex base size is the item’s resulting main size.
+    auto& flexItemBox = flexItem.layoutBox();
+    if (!flexItemBox.establishesInlineFormattingContext()) {
+        ASSERT_NOT_IMPLEMENTED_YET();
+        return { };
+    }
+
+    if (flexItem.isOrhogonal() && !flexItem.crossAxis().definiteSize) {
+        ASSERT_NOT_IMPLEMENTED_YET();
+        return { };
+    }
+    auto& inlineFormattingState = flexFormattingContext().layoutState().ensureInlineFormattingState(flexItemBox);
+    return InlineFormattingContext { flexItemBox, inlineFormattingState, { } }.maximumContentSize();
+}
+
 FlexLayout::FlexBaseAndHypotheticalMainSizeList FlexLayout::flexBaseAndHypotheticalMainSizeForFlexItems(const LogicalConstraints::AxisGeometry& mainAxis, const LogicalFlexItems& flexItems) const
 {
     auto flexBaseAndHypotheticalMainSizeList = FlexBaseAndHypotheticalMainSizeList { };
     for (auto& flexItem : flexItems) {
-        auto flexBase = LayoutUnit { };
         // 3. Determine the flex base size and hypothetical main size of each item:
-        auto computeFlexBase = [&] {
+        auto computedFlexBase = [&]() -> LayoutUnit {
             // A. If the item has a definite used flex basis, that's the flex base size.
-            if (auto definiteFlexBase = flexItem.mainAxis().definiteFlexBasis) {
-                flexBase = *definiteFlexBase;
-                return;
-            }
+            if (auto definiteFlexBase = flexItem.mainAxis().definiteFlexBasis)
+                return *definiteFlexBase;
             // B. If the flex item has...
             if (flexItem.hasAspectRatio() && flexItem.hasContentFlexBasis() && flexItem.crossAxis().definiteSize) {
                 // The flex base size is calculated from its inner cross size and the flex item's intrinsic aspect ratio.
                 ASSERT_NOT_IMPLEMENTED_YET();
-                return;
+                return { };
             }
             // C. If the used flex basis is content or depends on its available space, and the flex container is being sized under
             //    a min-content or max-content constraint, size the item under that constraint
@@ -177,7 +195,7 @@ FlexLayout::FlexBaseAndHypotheticalMainSizeList FlexLayout::flexBaseAndHypotheti
             if (flexBasisContentOrAvailableSpaceDependent && flexContainerHasMinMaxConstraints) {
                 // Compute flex item's main size.
                 ASSERT_NOT_IMPLEMENTED_YET();
-                return;
+                return { };
             }
             // D. If the used flex basis is content or depends on its available space, the available main size is infinite,
             //    and the flex item's inline axis is parallel to the main axis, lay the item out using the rules for a box in an orthogonal flow.
@@ -185,21 +203,21 @@ FlexLayout::FlexBaseAndHypotheticalMainSizeList FlexLayout::flexBaseAndHypotheti
             if (flexBasisContentOrAvailableSpaceDependent && flexItem.isOrhogonal()) {
                 // Lay the item out using the rules for a box in an orthogonal flow. The flex base size is the item's max-content main size.
                 ASSERT_NOT_IMPLEMENTED_YET();
-                return;
+                return { };
             }
             // E. Otherwise, size the item into the available space using its used flex basis in place of its main size, treating a value of content as max-content.
-            ASSERT_NOT_IMPLEMENTED_YET();
+            return maxContentForFlexItem(flexItem);
         };
-        computeFlexBase();
+        auto flexBaseSize = computedFlexBase();
 
         auto hypotheticalMainSize = [&] {
             // The hypothetical main size is the item's flex base size clamped according to its used min and max main sizes (and flooring the content box size at zero).
-            auto hypotheticalValue = flexBase;
+            auto hypotheticalValue = flexBaseSize;
             auto maximum = flexItem.mainAxis().maximumSize.value_or(hypotheticalValue);
             auto minimum = flexItem.mainAxis().minimumSize.value_or(hypotheticalValue);
             return std::max(maximum, std::min(minimum, hypotheticalValue));
         };
-        flexBaseAndHypotheticalMainSizeList.append({ flexBase, hypotheticalMainSize() });
+        flexBaseAndHypotheticalMainSizeList.append({ flexBaseSize, hypotheticalMainSize() });
     }
     return flexBaseAndHypotheticalMainSizeList;
 }
@@ -449,7 +467,7 @@ void FlexLayout::stretchFlexLines(LinesCrossSizeList& flexLinesCrossSizeList, si
     // Handle 'align-content: stretch'.
     // If the flex container has a definite cross size, align-content is stretch, and the sum of the flex lines' cross sizes is less than the flex container's inner cross size,
     // increase the cross size of each flex line by equal amounts such that the sum of their cross sizes exactly equals the flex container's inner cross size.
-    if (rootStyle().alignContent().distribution() != ContentDistribution::Stretch || !crossAxis.definiteSize)
+    if (flexContainerStyle().alignContent().distribution() != ContentDistribution::Stretch || !crossAxis.definiteSize)
         return;
 
     auto linesCrossSize = [&] {
@@ -550,7 +568,7 @@ FlexLayout::PositionAndMarginsList FlexLayout::handleMainAxisAlignment(LayoutUni
 
         auto justifyContent = [&] {
             // 2. Align the items along the main-axis per justify-content.
-            auto justifyContentValue = rootStyle().justifyContent();
+            auto justifyContentValue = flexContainerStyle().justifyContent();
             auto initialOffset = [&] {
                 switch (justifyContentValue.distribution()) {
                 case ContentDistribution::Default:
@@ -699,7 +717,7 @@ FlexLayout::PositionAndMarginsList FlexLayout::handleCrossAxisAlignmentForFlexIt
                 auto flexitemOuterCrossPosition = LayoutUnit { };
 
                 auto& flexItemAlignSelf = flexItem.style().alignSelf();
-                auto alignValue = flexItemAlignSelf.position() != ItemPosition::Auto ? flexItemAlignSelf : rootStyle().alignItems();
+                auto alignValue = flexItemAlignSelf.position() != ItemPosition::Auto ? flexItemAlignSelf : flexContainerStyle().alignItems();
                 switch (alignValue.position()) {
                 case ItemPosition::Stretch:
                 case ItemPosition::Normal: {
@@ -752,7 +770,7 @@ FlexLayout::LinesCrossPositionList FlexLayout::handleCrossAxisAlignmentForFlexLi
     auto flexContainerUsedCrossSize = crossAxis.definiteSize.value_or(flexLinesCrossSize);
     // Align all flex lines per align-content.
     auto initialOffset = [&]() -> LayoutUnit {
-        switch (rootStyle().alignContent().position()) {
+        switch (flexContainerStyle().alignContent().position()) {
         case ContentPosition::Start:
         case ContentPosition::Normal:
             return { };
@@ -761,7 +779,7 @@ FlexLayout::LinesCrossPositionList FlexLayout::handleCrossAxisAlignmentForFlexLi
         case ContentPosition::End:
             return flexContainerUsedCrossSize - flexLinesCrossSize;
         default:
-            switch (rootStyle().alignContent().distribution()) {
+            switch (flexContainerStyle().alignContent().distribution()) {
             case ContentDistribution::SpaceBetween:
             case ContentDistribution::Stretch:
                 return { };
@@ -782,7 +800,7 @@ FlexLayout::LinesCrossPositionList FlexLayout::handleCrossAxisAlignmentForFlexLi
         auto extraCrossSpace = flexContainerUsedCrossSize - flexLinesCrossSize;
         if (extraCrossSpace <= 0)
             return { };
-        switch (rootStyle().alignContent().distribution()) {
+        switch (flexContainerStyle().alignContent().distribution()) {
         case ContentDistribution::SpaceBetween:
             return extraCrossSpace / (lineRanges.size() - 1);
         case ContentDistribution::SpaceAround:
@@ -807,6 +825,16 @@ FlexLayout::LinesCrossPositionList FlexLayout::handleCrossAxisAlignmentForFlexLi
     for (size_t lineIndex = 1; lineIndex < lineRanges.size(); ++lineIndex)
         linesCrossPositionList[lineIndex] = flexLinesCrossSizeList[lineIndex - 1] + gap;
     return linesCrossPositionList;
+}
+
+const ElementBox& FlexLayout::flexContainer() const
+{
+    return flexFormattingContext().root();
+}
+
+const FlexFormattingContext& FlexLayout::flexFormattingContext() const
+{
+    return m_flexFormattingContext;
 }
 
 }

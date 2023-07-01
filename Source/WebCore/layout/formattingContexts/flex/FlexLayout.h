@@ -41,7 +41,7 @@ struct PositionAndMargins;
 // https://www.w3.org/TR/css-flexbox-1/
 class FlexLayout {
 public:
-    FlexLayout(const ElementBox& flexContainer);
+    FlexLayout(const FlexFormattingContext&);
 
     using LogicalFlexItems = Vector<LogicalFlexItem>;
     struct LogicalConstraints {
@@ -82,12 +82,15 @@ private:
     PositionAndMarginsList handleCrossAxisAlignmentForFlexItems(const LogicalFlexItems&, const LineRanges&, const SizeList& flexItemsCrossSizeList, const LinesCrossSizeList& flexLinesCrossSizeList) const;
     LinesCrossPositionList handleCrossAxisAlignmentForFlexLines(const LogicalConstraints::AxisGeometry& crossAxis, const LineRanges&, LinesCrossSizeList& flexLinesCrossSizeList) const;
 
-    bool isSingleLineFlexContainer() const { return m_flexContainer.style().flexWrap() == FlexWrap::NoWrap; }
-    const ElementBox& flexContainer() const { return m_flexContainer; }
-    const RenderStyle& rootStyle() const { return flexContainer().style(); }
+    LayoutUnit maxContentForFlexItem(const LogicalFlexItem&) const;
+
+    bool isSingleLineFlexContainer() const { return flexContainer().style().flexWrap() == FlexWrap::NoWrap; }
+    const ElementBox& flexContainer() const;
+    const FlexFormattingContext& flexFormattingContext() const;
+    const RenderStyle& flexContainerStyle() const { return flexContainer().style(); }
 
 private:
-    const ElementBox& m_flexContainer;
+    const FlexFormattingContext& m_flexFormattingContext;
 
     LayoutUnit m_availableMainSpace;
     LayoutUnit m_availableCrossSpace;
