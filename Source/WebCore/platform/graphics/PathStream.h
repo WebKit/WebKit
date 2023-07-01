@@ -70,8 +70,7 @@ public:
     FloatRect boundingRect() const final;
 
 private:
-    template<typename DataType1, typename DataType2>
-    bool mergeIntoComposite(const DataType2&);
+    const PathMoveTo* lastIfMoveTo() const;
 
     bool isPathStream() const final { return true; }
 

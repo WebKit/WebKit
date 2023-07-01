@@ -86,8 +86,8 @@ messages -> RemoteDisplayListRecorder NotRefCounted Stream {
 #endif
     StrokeRect(WebCore::FloatRect rect, float lineWidth)
 #if ENABLE(INLINE_PATH_DATA)
-    StrokeLine(WebCore::PathDataLine line) StreamBatched
-    StrokeLineWithColorAndThickness(WebCore::PathDataLine line, WebCore::DisplayList::SetInlineStrokeColor color, float thickness) StreamBatched
+    StrokeLine(struct WebCore::PathDataLine line) StreamBatched
+    StrokeLineWithColorAndThickness(struct WebCore::PathDataLine line, WebCore::DisplayList::SetInlineStrokeColor color, float thickness) StreamBatched
     StrokeArc(struct WebCore::PathArc arc) StreamBatched
     StrokeQuadCurve(struct WebCore::PathDataQuadCurve curve) StreamBatched
     StrokeBezierCurve(struct WebCore::PathDataBezierCurve curve) StreamBatched

@@ -112,7 +112,6 @@ struct PathArcTo {
 
     bool operator==(const PathArcTo&) const = default;
 
-    FloatPoint calculateEndPoint(const FloatPoint& currentPoint) const;
     FloatPoint calculateEndPoint(const FloatPoint& currentPoint, FloatPoint& lastMoveToPoint) const;
 
     void extendFastBoundingRect(const FloatPoint& currentPoint, const FloatPoint& lastMoveToPoint, FloatRect& boundingRect) const;
@@ -220,12 +219,11 @@ struct PathRoundedRect {
 
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const PathRoundedRect&);
 
-template<typename DataType1, typename DataType2>
-struct PathDataComposite {
-    DataType1 data1;
-    DataType2 data2;
+struct PathDataLine {
+    FloatPoint start;
+    FloatPoint end;
 
-    bool operator==(const PathDataComposite&) const = default;
+    bool operator==(const PathDataLine&) const = default;
 
     FloatPoint calculateEndPoint(const FloatPoint& currentPoint, FloatPoint& lastMoveToPoint) const;
 
@@ -236,18 +234,62 @@ struct PathDataComposite {
     void applyElements(const PathElementApplier&) const;
 };
 
-template<typename DataType1, typename DataType2>
-inline WTF::TextStream& operator<<(WTF::TextStream& ts, const PathDataComposite<DataType1, DataType2>& data)
-{
-    ts << data.data1;
-    ts << ", ";
-    ts << data.data2;
-    return ts;
-}
+WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const PathDataLine&);
 
-using PathDataLine        = PathDataComposite<PathMoveTo, PathLineTo>;
-using PathDataQuadCurve   = PathDataComposite<PathMoveTo, PathQuadCurveTo>;
-using PathDataBezierCurve = PathDataComposite<PathMoveTo, PathBezierCurveTo>;
-using PathDataArc         = PathDataComposite<PathMoveTo, PathArcTo>;
+struct PathDataQuadCurve {
+    FloatPoint start;
+    FloatPoint controlPoint;
+    FloatPoint endPoint;
+
+    bool operator==(const PathDataQuadCurve&) const = default;
+
+    FloatPoint calculateEndPoint(const FloatPoint& currentPoint, FloatPoint& lastMoveToPoint) const;
+
+    void extendFastBoundingRect(const FloatPoint& currentPoint, const FloatPoint& lastMoveToPoint, FloatRect& boundingRect) const;
+    void extendBoundingRect(const FloatPoint& currentPoint, const FloatPoint& lastMoveToPoint, FloatRect& boundingRect) const;
+
+    void addToImpl(PathImpl&) const;
+    void applyElements(const PathElementApplier&) const;
+};
+
+WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const PathDataQuadCurve&);
+
+struct PathDataBezierCurve {
+    FloatPoint start;
+    FloatPoint controlPoint1;
+    FloatPoint controlPoint2;
+    FloatPoint endPoint;
+
+    bool operator==(const PathDataBezierCurve&) const = default;
+
+    FloatPoint calculateEndPoint(const FloatPoint& currentPoint, FloatPoint& lastMoveToPoint) const;
+
+    void extendFastBoundingRect(const FloatPoint& currentPoint, const FloatPoint& lastMoveToPoint, FloatRect& boundingRect) const;
+    void extendBoundingRect(const FloatPoint& currentPoint, const FloatPoint& lastMoveToPoint, FloatRect& boundingRect) const;
+
+    void addToImpl(PathImpl&) const;
+    void applyElements(const PathElementApplier&) const;
+};
+
+WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const PathDataBezierCurve&);
+
+struct PathDataArc {
+    FloatPoint start;
+    FloatPoint controlPoint1;
+    FloatPoint controlPoint2;
+    float radius;
+
+    bool operator==(const PathDataArc&) const = default;
+
+    FloatPoint calculateEndPoint(const FloatPoint& currentPoint, FloatPoint& lastMoveToPoint) const;
+
+    void extendFastBoundingRect(const FloatPoint& currentPoint, const FloatPoint& lastMoveToPoint, FloatRect& boundingRect) const;
+    void extendBoundingRect(const FloatPoint& currentPoint, const FloatPoint& lastMoveToPoint, FloatRect& boundingRect) const;
+
+    void addToImpl(PathImpl&) const;
+    [[noreturn]] void applyElements(const PathElementApplier&) const { RELEASE_ASSERT_NOT_REACHED(); }
+};
+
+WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const PathDataArc&);
 
 } // namespace WebCore

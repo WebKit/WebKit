@@ -1252,8 +1252,8 @@ public:
 
 #if ENABLE(INLINE_PATH_DATA)
     StrokeLine(const PathDataLine& line)
-        : m_start(line.data1.point)
-        , m_end(line.data2.point)
+        : m_start(line.start)
+        , m_end(line.end)
     {
     }
 #endif

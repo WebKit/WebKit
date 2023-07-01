@@ -81,18 +81,12 @@ bool PathStream::operator==(const PathImpl& other) const
     return m_segments == downcast<PathStream>(other).m_segments;
 }
 
-template<class DataType1, class DataType2>
-bool PathStream::mergeIntoComposite(const DataType2& data2)
+const PathMoveTo* PathStream::lastIfMoveTo() const
 {
     if (m_segments.isEmpty())
-        return false;
+        return nullptr;
 
-    const auto* data1 = std::get_if<DataType1>(&m_segments.last().data());
-    if (!data1)
-        return false;
-
-    m_segments.last() = { PathDataComposite<DataType1, DataType2> { *data1, data2 } };
-    return true;
+    return std::get_if<PathMoveTo>(&m_segments.last().data());
 }
 
 void PathStream::moveTo(const FloatPoint& point)
@@ -102,34 +96,34 @@ void PathStream::moveTo(const FloatPoint& point)
 
 void PathStream::addLineTo(const FloatPoint& point)
 {
-    auto lineTo = PathLineTo { point };
-    if (mergeIntoComposite<PathMoveTo>(lineTo))
-        return;
-    m_segments.append(lineTo);
+    if (const auto* moveTo = lastIfMoveTo())
+        m_segments.last() = { PathDataLine { moveTo->point, point } };
+    else
+        m_segments.append(PathLineTo { point });
 }
 
 void PathStream::addQuadCurveTo(const FloatPoint& controlPoint, const FloatPoint& endPoint)
 {
-    auto quadCurveTo = PathQuadCurveTo { controlPoint, endPoint };
-    if (mergeIntoComposite<PathMoveTo>(quadCurveTo))
-        return;
-    m_segments.append(quadCurveTo);
+    if (const auto* moveTo = lastIfMoveTo())
+        m_segments.last() = { PathDataQuadCurve { moveTo->point, controlPoint, endPoint } };
+    else
+        m_segments.append(PathQuadCurveTo { controlPoint, endPoint });
 }
 
 void PathStream::addBezierCurveTo(const FloatPoint& controlPoint1, const FloatPoint& controlPoint2, const FloatPoint& endPoint)
 {
-    auto bezierCurveTo = PathBezierCurveTo { controlPoint1, controlPoint2, endPoint };
-    if (mergeIntoComposite<PathMoveTo>(bezierCurveTo))
-        return;
-    m_segments.append(bezierCurveTo);
+    if (const auto* moveTo = lastIfMoveTo())
+        m_segments.last() = { PathDataBezierCurve { moveTo->point, controlPoint1, controlPoint2, endPoint } };
+    else
+        m_segments.append(PathBezierCurveTo { controlPoint1, controlPoint2, endPoint });
 }
 
 void PathStream::addArcTo(const FloatPoint& point1, const FloatPoint& point2, float radius)
 {
-    auto arcTo = PathArcTo { point1, point2, radius };
-    if (mergeIntoComposite<PathMoveTo>(arcTo))
-        return;
-    m_segments.append(arcTo);
+    if (const auto* moveTo = lastIfMoveTo())
+        m_segments.last() = { PathDataArc { moveTo->point, point1, point2, radius } };
+    else
+        m_segments.append(PathArcTo { point1, point2, radius });
 }
 
 void PathStream::addArc(const FloatPoint& point, float radius, float startAngle, float endAngle, RotationDirection direction)

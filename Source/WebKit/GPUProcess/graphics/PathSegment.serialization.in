@@ -92,6 +92,35 @@ header: <WebCore/PathSegmentData.h>
     WebCore::PathRoundedRect::Strategy strategy;
 };
 
+header: <WebCore/PathSegmentData.h>
+[AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct WebCore::PathDataLine {
+    WebCore::FloatPoint start;
+    WebCore::FloatPoint end;
+};
+
+header: <WebCore/PathSegmentData.h>
+[AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct WebCore::PathDataQuadCurve {
+    WebCore::FloatPoint start;
+    WebCore::FloatPoint controlPoint;
+    WebCore::FloatPoint endPoint;
+};
+
+header: <WebCore/PathSegmentData.h>
+[AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct WebCore::PathDataBezierCurve {
+    WebCore::FloatPoint start;
+    WebCore::FloatPoint controlPoint1;
+    WebCore::FloatPoint controlPoint2;
+    WebCore::FloatPoint endPoint;
+};
+
+header: <WebCore/PathSegmentData.h>
+[AdditionalEncoder=StreamConnectionEncoder, CustomHeader] struct WebCore::PathDataArc {
+    WebCore::FloatPoint start;
+    WebCore::FloatPoint controlPoint1;
+    WebCore::FloatPoint controlPoint2;
+    float radius;
+};
+
 header: <WebCore/PathSegment.h>
 [AdditionalEncoder=StreamConnectionEncoder, CustomHeader] class WebCore::PathSegment {
     WebCore::PathSegment::Data data();

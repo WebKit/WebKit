@@ -278,7 +278,7 @@ static float angleOfLine(const FloatPoint& p1, const FloatPoint& p2)
     return atan2(p1.y() - p2.y(), p1.x() - p2.x());
 }
 
-FloatPoint PathArcTo::calculateEndPoint(const FloatPoint& currentPoint) const
+static FloatPoint calculateArcToEndPoint(const FloatPoint& currentPoint, const FloatPoint& controlPoint1, const FloatPoint& controlPoint2, float radius)
 {
     float angle1 = angleOfLine(currentPoint, controlPoint1);
     float angle2 = angleOfLine(controlPoint1, controlPoint2);
@@ -296,7 +296,7 @@ FloatPoint PathArcTo::calculateEndPoint(const FloatPoint& currentPoint) const
 
 FloatPoint PathArcTo::calculateEndPoint(const FloatPoint& currentPoint, FloatPoint&) const
 {
-    return calculateEndPoint(currentPoint);
+    return calculateArcToEndPoint(currentPoint, controlPoint1, controlPoint2, radius);
 }
 
 void PathArcTo::extendFastBoundingRect(const FloatPoint& currentPoint, const FloatPoint&, FloatRect& boundingRect) const
@@ -310,7 +310,7 @@ void PathArcTo::extendBoundingRect(const FloatPoint& currentPoint, const FloatPo
 {
     boundingRect.extend(currentPoint);
     boundingRect.extend(controlPoint1);
-    boundingRect.extend(calculateEndPoint(currentPoint));
+    boundingRect.extend(calculateArcToEndPoint(currentPoint, controlPoint1, controlPoint2, radius));
 }
 
 void PathArcTo::addToImpl(PathImpl& impl) const
@@ -532,43 +532,159 @@ WTF::TextStream& operator<<(WTF::TextStream& ts, const PathRoundedRect& data)
     return ts;
 }
 
-template<class DataType1, class DataType2>
-FloatPoint PathDataComposite<DataType1, DataType2>::calculateEndPoint(const FloatPoint& currentPoint, FloatPoint& lastMoveToPoint) const
+FloatPoint PathDataLine::calculateEndPoint(const FloatPoint&, FloatPoint& lastMoveToPoint) const
 {
-    auto localCurrentPoint = data1.calculateEndPoint(currentPoint, lastMoveToPoint);
-    return data2.calculateEndPoint(localCurrentPoint, lastMoveToPoint);
+    lastMoveToPoint = start;
+    return end;
 }
 
-template<class DataType1, class DataType2>
-void PathDataComposite<DataType1, DataType2>::extendFastBoundingRect(const FloatPoint& currentPoint, const FloatPoint& lastMoveToPoint, FloatRect& boundingRect) const
+void PathDataLine::extendFastBoundingRect(const FloatPoint& currentPoint, const FloatPoint& lastMoveToPoint, FloatRect& boundingRect) const
 {
-    data1.extendFastBoundingRect(currentPoint, lastMoveToPoint, boundingRect);
-    auto localLastMoveToPoint = lastMoveToPoint;
-    auto localCurrentPoint = data1.calculateEndPoint(currentPoint, localLastMoveToPoint);
-    data2.extendFastBoundingRect(localCurrentPoint, lastMoveToPoint, boundingRect);
+    extendBoundingRect(currentPoint, lastMoveToPoint, boundingRect);
 }
 
-template<class DataType1, class DataType2>
-void PathDataComposite<DataType1, DataType2>::extendBoundingRect(const FloatPoint& currentPoint, const FloatPoint& lastMoveToPoint, FloatRect& boundingRect) const
+void PathDataLine::extendBoundingRect(const FloatPoint&, const FloatPoint&, FloatRect& boundingRect) const
 {
-    data1.extendBoundingRect(currentPoint, lastMoveToPoint, boundingRect);
-    auto localLastMoveToPoint = lastMoveToPoint;
-    auto localCurrentPoint = data1.calculateEndPoint(currentPoint, localLastMoveToPoint);
-    data2.extendBoundingRect(localCurrentPoint, lastMoveToPoint, boundingRect);
+    boundingRect.extend(start);
+    boundingRect.extend(end);
 }
 
-template<class DataType1, class DataType2>
-void PathDataComposite<DataType1, DataType2>::addToImpl(PathImpl& impl) const
+void PathDataLine::addToImpl(PathImpl& impl) const
 {
-    data1.addToImpl(impl);
-    data2.addToImpl(impl);
+    impl.moveTo(start);
+    impl.addLineTo(end);
 }
 
-template<class DataType1, class DataType2>
-void PathDataComposite<DataType1, DataType2>::applyElements(const PathElementApplier& applier) const
+void PathDataLine::applyElements(const PathElementApplier& applier) const
 {
-    data1.applyElements(applier);
-    data2.applyElements(applier);
+    applier({ PathElement::Type::MoveToPoint, { start } });
+    applier({ PathElement::Type::AddLineToPoint, { end } });
+}
+
+WTF::TextStream& operator<<(WTF::TextStream& ts, const PathDataLine& data)
+{
+    ts << "move to " << data.start;
+    ts << ", ";
+    ts << "add line to " << data.end;
+    return ts;
+}
+
+FloatPoint PathDataQuadCurve::calculateEndPoint(const FloatPoint&, FloatPoint& lastMoveToPoint) const
+{
+    lastMoveToPoint = start;
+    return endPoint;
+}
+
+void PathDataQuadCurve::extendFastBoundingRect(const FloatPoint&, const FloatPoint&, FloatRect& boundingRect) const
+{
+    boundingRect.extend(start);
+    boundingRect.extend(controlPoint);
+    boundingRect.extend(endPoint);
+}
+
+void PathDataQuadCurve::extendBoundingRect(const FloatPoint&, const FloatPoint&, FloatRect& boundingRect) const
+{
+    auto extremity = calculateQuadraticExtremity(start, controlPoint, endPoint);
+    boundingRect.extend(start);
+    boundingRect.extend(extremity);
+    boundingRect.extend(endPoint);
+}
+
+void PathDataQuadCurve::addToImpl(PathImpl& impl) const
+{
+    impl.moveTo(start);
+    impl.addQuadCurveTo(controlPoint, endPoint);
+}
+
+void PathDataQuadCurve::applyElements(const PathElementApplier& applier) const
+{
+    applier({ PathElement::Type::MoveToPoint, { start } });
+    applier({ PathElement::Type::AddQuadCurveToPoint, { controlPoint, endPoint } });
+}
+
+WTF::TextStream& operator<<(WTF::TextStream& ts, const PathDataQuadCurve& data)
+{
+    ts << "move to " << data.start;
+    ts << ", ";
+    ts << "add quad curve to " << data.controlPoint << " " << data.endPoint;
+    return ts;
+}
+
+FloatPoint PathDataBezierCurve::calculateEndPoint(const FloatPoint&, FloatPoint& lastMoveToPoint) const
+{
+    lastMoveToPoint = start;
+    return endPoint;
+}
+
+void PathDataBezierCurve::extendFastBoundingRect(const FloatPoint&, const FloatPoint&, FloatRect& boundingRect) const
+{
+    boundingRect.extend(start);
+    boundingRect.extend(controlPoint1);
+    boundingRect.extend(controlPoint2);
+    boundingRect.extend(endPoint);
+}
+
+void PathDataBezierCurve::extendBoundingRect(const FloatPoint&, const FloatPoint&, FloatRect& boundingRect) const
+{
+    auto bezierExtremities = calculateBezierExtremities(start, controlPoint1, controlPoint2, endPoint);
+    boundingRect.extend(start);
+    boundingRect.extend(bezierExtremities.first);
+    boundingRect.extend(bezierExtremities.second);
+    boundingRect.extend(endPoint);
+}
+
+void PathDataBezierCurve::addToImpl(PathImpl& impl) const
+{
+    impl.moveTo(start);
+    impl.addBezierCurveTo(controlPoint1, controlPoint2, endPoint);
+}
+
+void PathDataBezierCurve::applyElements(const PathElementApplier& applier) const
+{
+    applier({ PathElement::Type::MoveToPoint, { start } });
+    applier({ PathElement::Type::AddCurveToPoint, { controlPoint1, controlPoint2, endPoint } });
+}
+
+WTF::TextStream& operator<<(WTF::TextStream& ts, const PathDataBezierCurve& data)
+{
+    ts << "move to " << data.start;
+    ts << ", ";
+    ts << "add curve to " << data.controlPoint1 << " " << data.controlPoint2 << " " << data.endPoint;
+    return ts;
+}
+
+FloatPoint PathDataArc::calculateEndPoint(const FloatPoint&, FloatPoint& lastMoveToPoint) const
+{
+    lastMoveToPoint = start;
+    return calculateArcToEndPoint(start, controlPoint1, controlPoint2, radius);
+}
+
+void PathDataArc::extendFastBoundingRect(const FloatPoint&, const FloatPoint&, FloatRect& boundingRect) const
+{
+    boundingRect.extend(start);
+    boundingRect.extend(controlPoint1);
+    boundingRect.extend(controlPoint2);
+}
+
+void PathDataArc::extendBoundingRect(const FloatPoint&, const FloatPoint&, FloatRect& boundingRect) const
+{
+    boundingRect.extend(start);
+    boundingRect.extend(controlPoint1);
+    boundingRect.extend(calculateArcToEndPoint(start, controlPoint1, controlPoint2, radius));
+}
+
+void PathDataArc::addToImpl(PathImpl& impl) const
+{
+    impl.moveTo(start);
+    impl.addArcTo(controlPoint1, controlPoint2, radius);
+}
+
+WTF::TextStream& operator<<(WTF::TextStream& ts, const PathDataArc& data)
+{
+    ts << "move to " << data.start;
+    ts << ", ";
+    ts << "add arc to " << data.controlPoint1 << " " << data.controlPoint2 << " " << data.radius;
+    return ts;
 }
 
 } // namespace WebCore

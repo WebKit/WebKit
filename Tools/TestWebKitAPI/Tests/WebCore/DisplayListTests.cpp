@@ -74,7 +74,7 @@ TEST(DisplayListTests, AppendItems)
         list.append<FillRectWithGradient>(FloatRect { 1., 1., 10., 10. }, gradient);
         list.append<SetInlineFillColor>(Color::red);
 #if ENABLE(INLINE_PATH_DATA)
-        list.append<StrokeLine>(PathDataLine { { { 0., 0. } }, { { 10., 15. } } });
+        list.append<StrokeLine>(PathDataLine { { 0., 0. }, { 10., 15. } });
 #endif
     }
 
