@@ -144,8 +144,11 @@ RefPtr<AudioWorkletProcessor> AudioWorkletGlobalScope::createProcessor(const Str
     m_pendingProcessorConstructionData = makeUnique<AudioWorkletProcessorConstructionData>(String { name }, MessagePort::entangle(*this, WTFMove(port)));
 
     JSC::MarkedArgumentBuffer args;
-    auto arg = options->deserialize(*globalObject, globalObject, SerializationErrorMode::NonThrowing);
+    bool didFail = false;
+    auto arg = options->deserialize(*globalObject, globalObject, SerializationErrorMode::NonThrowing, &didFail);
     RETURN_IF_EXCEPTION(scope, nullptr);
+    if (didFail)
+        return nullptr;
     args.append(arg);
     ASSERT(!args.hasOverflowed());
 

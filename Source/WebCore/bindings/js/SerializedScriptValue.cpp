@@ -38,6 +38,7 @@
 #include "CryptoKeyRaw.h"
 #include "IDBValue.h"
 #include "ImageBitmapBacking.h"
+#include "JSAudioWorkletGlobalScope.h"
 #include "JSBlob.h"
 #include "JSCryptoKey.h"
 #include "JSDOMBinding.h"
@@ -234,6 +235,93 @@ enum ArrayBufferViewSubtag {
     BigInt64ArrayTag = 10,
     BigUint64ArrayTag = 11,
 };
+
+static bool isTypeExposedToGlobalObject(JSC::JSGlobalObject& globalObject, SerializationTag tag)
+{
+#if ENABLE(WEB_AUDIO)
+    if (!jsDynamicCast<JSAudioWorkletGlobalScope*>(&globalObject))
+        return true;
+
+    // Only built-in JS types are exposed to audio worklets.
+    switch (tag) {
+    case ArrayTag:
+    case ObjectTag:
+    case UndefinedTag:
+    case NullTag:
+    case IntTag:
+    case ZeroTag:
+    case OneTag:
+    case FalseTag:
+    case TrueTag:
+    case DoubleTag:
+    case DateTag:
+    case StringTag:
+    case EmptyStringTag:
+    case RegExpTag:
+    case ObjectReferenceTag:
+    case ArrayBufferTag:
+    case ArrayBufferViewTag:
+    case ArrayBufferTransferTag:
+    case TrueObjectTag:
+    case FalseObjectTag:
+    case StringObjectTag:
+    case EmptyStringObjectTag:
+    case NumberObjectTag:
+    case SetObjectTag:
+    case MapObjectTag:
+    case NonMapPropertiesTag:
+    case NonSetPropertiesTag:
+    case SharedArrayBufferTag:
+#if ENABLE(WEBASSEMBLY)
+    case WasmModuleTag:
+#endif
+    case BigIntTag:
+    case BigIntObjectTag:
+#if ENABLE(WEBASSEMBLY)
+    case WasmMemoryTag:
+#endif
+    case ResizableArrayBufferTag:
+    case ErrorInstanceTag:
+    case ErrorTag:
+        return true;
+    case FileTag:
+    case FileListTag:
+    case ImageDataTag:
+    case BlobTag:
+    case MessagePortReferenceTag:
+#if ENABLE(WEB_CRYPTO)
+    case CryptoKeyTag:
+#endif
+    case DOMPointReadOnlyTag:
+    case DOMPointTag:
+    case DOMRectReadOnlyTag:
+    case DOMRectTag:
+    case DOMMatrixReadOnlyTag:
+    case DOMMatrixTag:
+    case DOMQuadTag:
+    case ImageBitmapTransferTag:
+#if ENABLE(WEB_RTC)
+    case RTCCertificateTag:
+#endif
+    case ImageBitmapTag:
+#if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
+    case OffscreenCanvasTransferTag:
+#endif
+#if ENABLE(WEB_RTC)
+    case RTCDataChannelTransferTag:
+#endif
+    case DOMExceptionTag:
+#if ENABLE(WEB_CODECS)
+    case WebCodecsEncodedVideoChunkTag:
+    case WebCodecsVideoFrameTag:
+#endif
+        break;
+    }
+    return false;
+#else
+    return true;
+#endif
+}
 
 static unsigned typedArrayElementSize(ArrayBufferViewSubtag tag)
 {
@@ -3997,6 +4085,8 @@ private:
     JSValue readTerminal()
     {
         SerializationTag tag = readTag();
+        if (!isTypeExposedToGlobalObject(*m_globalObject, tag))
+            return JSValue();
         switch (tag) {
         case UndefinedTag:
             return jsUndefined();
