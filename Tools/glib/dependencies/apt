@@ -84,7 +84,7 @@ PACKAGES=(
     pulseaudio-utils
     ruby-highline
     ruby-json
-    $(aptIfExists python-gi)
+    python3-gi
 
     # These are dependencies necessary for building with the Flatpak SDK.
     flatpak
