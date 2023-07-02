@@ -45,13 +45,20 @@ public:
     };
 
     struct CrossAxisGeometry {
+        LayoutUnit margin() const { return marginStart.value_or(0_lu) + marginEnd.value_or(0_lu); }
+
         bool hasNonAutoMargins() const { return marginStart && marginEnd; }
 
         std::optional<LayoutUnit> definiteSize;
+
         LayoutUnit ascent;
         LayoutUnit descent;
+
         std::optional<LayoutUnit> marginStart;
         std::optional<LayoutUnit> marginEnd;
+
+        LayoutUnit borderAndPadding;
+
         bool hasSizeAuto { false };
     };
 

@@ -240,6 +240,15 @@ static LayoutUnit outerMainSize(const LogicalFlexItem& flexItem, LayoutUnit main
     return outerMainSize;
 }
 
+static LayoutUnit outerCrossSize(const LogicalFlexItem& flexItem, LayoutUnit crossSize, std::optional<LayoutUnit> usedMargin = { })
+{
+    auto outerCrossSize = usedMargin.value_or(flexItem.crossAxis().margin());
+    if (flexItem.isContentBoxBased())
+        outerCrossSize += flexItem.crossAxis().borderAndPadding;
+    outerCrossSize += crossSize;
+    return outerCrossSize;
+}
+
 FlexLayout::LineRanges FlexLayout::computeFlexLines(const LogicalFlexItems& flexItems, LayoutUnit flexContainerMainSize, const FlexBaseAndHypotheticalMainSizeList& flexBaseAndHypotheticalMainSizeList) const
 {
     // Collect flex items into flex lines:
@@ -448,7 +457,8 @@ FlexLayout::LinesCrossSizeList FlexLayout::crossSizeForFlexLines(const LineRange
                 continue;
             }
             // Among all the items not collected by the previous step, find the largest outer hypothetical cross size.
-            maximumHypotheticalOuterCrossSize = std::max(maximumHypotheticalOuterCrossSize, flexItemsHypotheticalCrossSizeList[flexItemIndex]);
+            auto flexItemOuterCrossSize = outerCrossSize(flexItem, flexItemsHypotheticalCrossSizeList[flexItemIndex]);
+            maximumHypotheticalOuterCrossSize = std::max(maximumHypotheticalOuterCrossSize, flexItemOuterCrossSize);
         }
         // The used cross-size of the flex line is the largest of the numbers found in the previous two steps and zero.
         // If the flex container is single-line, then clamp the line's cross-size to be within the container's computed min and max cross sizes.
@@ -503,7 +513,7 @@ FlexLayout::SizeList FlexLayout::computeCrossSizeForFlexItems(const LogicalFlexI
             crossSizeList[flexItemIndex] = flexItemsHypotheticalCrossSizeList[flexItemIndex];
             if (flexItem.style().alignSelf().position() == ItemPosition::Stretch) {
                 if (flexItem.crossAxis().hasSizeAuto && flexItem.crossAxis().hasNonAutoMargins()) {
-                    auto usedOuterCrossSize = flexLinesCrossSizeList[lineIndex];
+                    auto usedOuterCrossSize = outerCrossSize(flexItem, flexLinesCrossSizeList[flexItemIndex]);
                     auto minimumCrossSize = flexItem.mainAxis().minimumSize.value_or(usedOuterCrossSize);
                     auto maximumCrossSize = flexItem.mainAxis().maximumSize.value_or(usedOuterCrossSize);
                     crossSizeList[flexItemIndex] = std::max(maximumCrossSize, std::min(minimumCrossSize, usedOuterCrossSize));
@@ -680,7 +690,7 @@ FlexLayout::PositionAndMarginsList FlexLayout::handleCrossAxisAlignmentForFlexIt
 
                 // Resolve cross-axis auto margins. If a flex item has auto cross-axis margins:
                 if (!marginStart || !marginEnd) {
-                    auto flexItemOuterCrossSize = marginStart.value_or(0_lu) + flexItemsCrossSizeList[flexItemIndex] + marginEnd.value_or(0_lu);
+                    auto flexItemOuterCrossSize = outerCrossSize(flexItem, flexItemsCrossSizeList[flexItemIndex]);
                     auto extraCrossSpace = flexLinesCrossSizeList[lineIndex] - flexItemOuterCrossSize;
                     // If its outer cross size (treating those auto margins as zero) is less than the cross size of its flex line, distribute
                     // the difference in those sizes equally to the auto margins.

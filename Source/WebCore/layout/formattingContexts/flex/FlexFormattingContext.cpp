@@ -124,6 +124,7 @@ FlexLayout::LogicalFlexItems FlexFormattingContext::convertFlexItemsToLogicalSpa
                 crossAxis.hasSizeAuto = height.isAuto();
                 if (height.isFixed())
                     crossAxis.definiteSize = height.value();
+                crossAxis.borderAndPadding = flexItemGeometry.verticalBorderAndPadding();
                 break;
             }
             case FlexDirection::Column:
