@@ -206,7 +206,10 @@ FlexLayout::FlexBaseAndHypotheticalMainSizeList FlexLayout::flexBaseAndHypotheti
                 return { };
             }
             // E. Otherwise, size the item into the available space using its used flex basis in place of its main size, treating a value of content as max-content.
-            return maxContentForFlexItem(flexItem);
+            auto usedMainSize = maxContentForFlexItem(flexItem);
+            if (!flexItem.isContentBoxBased())
+                usedMainSize += flexItem.mainAxis().borderAndPadding;
+            return usedMainSize;
         };
         auto flexBaseSize = computedFlexBase();
 
@@ -447,7 +450,10 @@ FlexLayout::SizeList FlexLayout::hypotheticalCrossSizeForFlexItems(const Logical
             auto layoutResult = inlineFormattingContext.layoutInFlowAndFloatContent({ constraintsForInFlowContent, { } }, inlineLayoutState);
             return LayoutUnit { layoutResult.displayContent.lines.last().lineBoxLogicalRect().maxY() };
         };
-        hypotheticalCrossSizeList[flexItemIndex] = crossSizeAfterPerformingLayout();
+        auto usedCrossSize = crossSizeAfterPerformingLayout();
+        if (!flexItem.isContentBoxBased())
+            usedCrossSize += flexItem.crossAxis().borderAndPadding;
+        hypotheticalCrossSizeList[flexItemIndex] = usedCrossSize;
     }
     return hypotheticalCrossSizeList;
 }
