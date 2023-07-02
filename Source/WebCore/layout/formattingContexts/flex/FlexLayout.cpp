@@ -424,10 +424,30 @@ FlexLayout::SizeList FlexLayout::hypotheticalCrossSizeForFlexItems(const Logical
     UNUSED_PARAM(flexItemsMainSizeList);
     // FIXME: This is where layout is called on flex items.
     SizeList hypotheticalCrossSizeList(flexItems.size());
-    for (size_t index = 0; index < flexItems.size(); ++index) {
-        // FIXME: replace this with the actual layout result. See above.
-        ASSERT(flexItems[index].crossAxis().definiteSize);
-        hypotheticalCrossSizeList[index] = *flexItems[index].crossAxis().definiteSize;
+    for (size_t flexItemIndex = 0; flexItemIndex < flexItems.size(); ++flexItemIndex) {
+        auto& flexItem = flexItems[flexItemIndex];
+
+        if (auto definiteSize = flexItems[flexItemIndex].crossAxis().definiteSize) {
+            hypotheticalCrossSizeList[flexItemIndex] = *definiteSize;
+            continue;
+        }
+        auto& flexItemBox = flexItem.layoutBox();
+        auto crossSizeAfterPerformingLayout = [&]() -> LayoutUnit {
+            if (!flexItemBox.establishesInlineFormattingContext()) {
+                ASSERT_NOT_IMPLEMENTED_YET();
+                return { };
+            }
+            // FIXME: Let it run through integration codepath.
+            auto floatingState = FloatingState { flexItemBox };
+            auto parentBlockLayoutState = BlockLayoutState { floatingState };
+            auto inlineLayoutState = InlineLayoutState { parentBlockLayoutState, { } };
+            auto& inlineFormattingState = flexFormattingContext().layoutState().ensureInlineFormattingState(flexItemBox);
+            auto inlineFormattingContext = InlineFormattingContext { flexItemBox, inlineFormattingState, { } };
+            auto constraintsForInFlowContent = ConstraintsForInFlowContent { HorizontalConstraints { { }, flexItemsMainSizeList[flexItemIndex] }, { } };
+            auto layoutResult = inlineFormattingContext.layoutInFlowAndFloatContent({ constraintsForInFlowContent, { } }, inlineLayoutState);
+            return LayoutUnit { layoutResult.displayContent.lines.last().lineBoxLogicalRect().maxY() };
+        };
+        hypotheticalCrossSizeList[flexItemIndex] = crossSizeAfterPerformingLayout();
     }
     return hypotheticalCrossSizeList;
 }
