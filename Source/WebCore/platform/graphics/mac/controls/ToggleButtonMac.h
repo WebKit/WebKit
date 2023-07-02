@@ -41,6 +41,8 @@ private:
     IntSize cellSize(NSControlSize, const ControlStyle&) const override;
     IntOutsets cellOutsets(NSControlSize, const ControlStyle&) const override;
 
+    FloatRect rectForBounds(const FloatRect& bounds, const ControlStyle&) const override;
+
     void draw(GraphicsContext&, const FloatRoundedRect& borderRect, float deviceScaleFactor, const ControlStyle&) override;
 };
 

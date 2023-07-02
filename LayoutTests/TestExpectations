@@ -140,6 +140,10 @@ fast/forms/search/search-padding-cancel-results-buttons.html [ Skip ]
 fast/forms/search/search-results-hidden-crash.html [ Skip ]
 fast/forms/search/search-recent-searches.html [ Skip ]
 
+# Only macOS has fixed size controls.
+fast/forms/fixed-size-checkbox-vertically-centered.html [ Skip ]
+fast/forms/fixed-size-radio-vertically-centered.html [ Skip ]
+
 # Only applicable on platforms with dark mode support
 css-dark-mode [ Skip ]
 fast/css/apple-system-control-colors.html [ Skip ]
