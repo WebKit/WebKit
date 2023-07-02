@@ -477,7 +477,11 @@ void FlexLayout::stretchFlexLines(LinesCrossSizeList& flexLinesCrossSizeList, si
     // Handle 'align-content: stretch'.
     // If the flex container has a definite cross size, align-content is stretch, and the sum of the flex lines' cross sizes is less than the flex container's inner cross size,
     // increase the cross size of each flex line by equal amounts such that the sum of their cross sizes exactly equals the flex container's inner cross size.
-    if (flexContainerStyle().alignContent().distribution() != ContentDistribution::Stretch || !crossAxis.definiteSize)
+    auto linesMayStretch = [&] {
+        auto alignContent = flexContainerStyle().alignContent().distribution();
+        return alignContent == ContentDistribution::Stretch || alignContent == ContentDistribution::Default;
+    };
+    if (!linesMayStretch() || !crossAxis.definiteSize)
         return;
 
     auto linesCrossSize = [&] {
@@ -486,7 +490,7 @@ void FlexLayout::stretchFlexLines(LinesCrossSizeList& flexLinesCrossSizeList, si
             size += flexLinesCrossSizeList[lineIndex];
         return size;
     }();
-    if (*crossAxis.definiteSize > linesCrossSize)
+    if (*crossAxis.definiteSize <= linesCrossSize)
         return;
 
     auto extraSpace = (*crossAxis.definiteSize - linesCrossSize) / numberOfLines;
@@ -538,7 +542,7 @@ FlexLayout::PositionAndMarginsList FlexLayout::handleMainAxisAlignment(LayoutUni
         auto resolveMarginAuto = [&] {
             // 1. If the remaining free space is positive and at least one main-axis margin on this line is auto, distribute the free space equally among these margins.
             //    Otherwise, set all auto margins to zero.
-            auto flexItemsWithMarginAuto = Vector<size_t> { flexItems.size() };
+            auto flexItemsWithMarginAuto = Vector<size_t> { };
             size_t autoMarginCount = 0;
 
             for (auto flexItemIndex = lineRange.begin(); flexItemIndex < lineRange.end(); ++flexItemIndex) {
