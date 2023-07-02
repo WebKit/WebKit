@@ -53,6 +53,6 @@ private:
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(DateConstructor, InternalFunction);
 
 JSObject* constructDate(JSGlobalObject*, JSValue newTarget, const ArgList&);
-JSValue dateNowImpl();
+JSValue dateNowImpl(JSGlobalObject*);
 
 } // namespace JSC

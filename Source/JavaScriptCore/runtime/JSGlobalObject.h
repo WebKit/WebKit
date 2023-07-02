@@ -542,6 +542,16 @@ public:
     RuntimeFlags m_runtimeFlags;
     WeakPtr<ConsoleClient> m_consoleClient;
     std::optional<unsigned> m_stackTraceLimit;
+    
+    // Added for "bun test"
+    double overridenDateNow { -1 };
+
+    double jsDateNow() const {
+        if (overridenDateNow > -1)
+            return overridenDateNow;
+        
+        return WTF::jsCurrentTime();
+    }
 
     template<typename T>
     struct WeakCustomGetterOrSetterHash {

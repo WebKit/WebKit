@@ -1,9 +1,16 @@
 # WebKit with patches
 
-This is a fork of WebKit used by a new JavaScript bundler. It's not designed for usage outside the bundler.
+This is a build of WebKit with some extra patches used by [bun](https://bun.sh)
 
 The changes to WebKit are as follows:
 
+- `JSC::ErrorInstance` has a `captureStackTrace` function which lets you update the internally-stored `Vector<StackTrace>`
+- `JSC::JSGlobalObject` has a `double overridenDateNow` field which lets you override the timestamp used for `Date.now()` and `new Date()`
+- `JSC::VM` has a `onComputeErrorInfo` callback which lets the embedder customize how `Error.prototype.stack` strings are formatted (Bun uses this to make them match V8's behavior, for Node.js compatibility)
+- More things are exported
+- Typed Arrays can be passed through DOMJIT
+- ExternalStringImpl has an extra pointer field
+- `OptionsList::showPrivateScriptsInStackTraces()` enables ImplementationVisibilty::Private functions showing up in stack traces
 - Many of the locks in the C API are removed. Locking is handled internally by the bundler.
 - `JSString` iterator that exposes the pointer of each nested `JSRopeString`'s underlying buffer to a callback without flattening/allocating an entirely new string. This is useful for native code piping strings from JavaScript to elsewhere, or manually allocating strings outside of `WTF::String`. `console.log` or server-side rendering (when not using streams) are examples.
 - `ExternalStringImpl` now supports static strings. This is somewhat of a hack; the better solution for this case is a script that generates all the static strings at compile time using `NeverDestroyed<StaticStringImpl>`, however need to figure out a way to do that well from Zig.
