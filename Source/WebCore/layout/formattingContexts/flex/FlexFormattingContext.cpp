@@ -99,7 +99,12 @@ FlexLayout::LogicalFlexItems FlexFormattingContext::convertFlexItemsToLogicalSpa
             switch (direction) {
             case FlexDirection::Row:
             case FlexDirection::RowReverse: {
-                if (!style.flexBasis().isAuto())
+                if (style.flexBasis().isAuto()) {
+                    // Auto keyword retrieves the value of the main size property as the used flex-basis.
+                    // If that value is itself auto, then the used value is content.
+                    if (!style.width().isAuto())
+                        mainAxis.definiteFlexBasis = valueForLength(style.width(), constraints.horizontal().logicalWidth);
+                } else if (!style.flexBasis().isContent())
                     mainAxis.definiteFlexBasis = valueForLength(style.flexBasis(), constraints.horizontal().logicalWidth);
                 if (style.maxWidth().isSpecified())
                     mainAxis.maximumSize = valueForLength(style.maxWidth(), constraints.horizontal().logicalWidth);
