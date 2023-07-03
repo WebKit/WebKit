@@ -399,6 +399,7 @@ def encode_type(type):
                 result.append('        encoder << WTFMove(*subclass);')
             else:
                 result.append('        encoder << *subclass;')
+            result.append('        return;')
             result.append('    }')
         else:
             if type.rvalue and not type.serialize_with_function_calls:
@@ -614,6 +615,8 @@ def generate_impl(serialized_types, serialized_enums, headers):
             if not type.members_are_subclasses:
                 result = result + check_type_members(type, False)
             result = result + encode_type(type)
+            if type.members_are_subclasses:
+                result.append('    ASSERT_NOT_REACHED();')
             result.append('}')
         result.append('')
         if type.return_ref:

@@ -654,19 +654,24 @@ void ArgumentCoder<WebCore::TimingFunction>::encode(Encoder& encoder, const WebC
     if (auto* subclass = dynamicDowncast<WebCore::LinearTimingFunction>(instance)) {
         encoder << WebCore_TimingFunction_Subclass::LinearTimingFunction;
         encoder << *subclass;
+        return;
     }
     if (auto* subclass = dynamicDowncast<WebCore::CubicBezierTimingFunction>(instance)) {
         encoder << WebCore_TimingFunction_Subclass::CubicBezierTimingFunction;
         encoder << *subclass;
+        return;
     }
     if (auto* subclass = dynamicDowncast<WebCore::StepsTimingFunction>(instance)) {
         encoder << WebCore_TimingFunction_Subclass::StepsTimingFunction;
         encoder << *subclass;
+        return;
     }
     if (auto* subclass = dynamicDowncast<WebCore::SpringTimingFunction>(instance)) {
         encoder << WebCore_TimingFunction_Subclass::SpringTimingFunction;
         encoder << *subclass;
+        return;
     }
+    ASSERT_NOT_REACHED();
 }
 
 std::optional<Ref<WebCore::TimingFunction>> ArgumentCoder<WebCore::TimingFunction>::decode(Decoder& decoder)
@@ -808,7 +813,9 @@ void ArgumentCoder<WebCore::MoveOnlyBaseClass>::encode(Encoder& encoder, WebCore
     if (auto* subclass = dynamicDowncast<WebCore::MoveOnlyDerivedClass>(instance)) {
         encoder << WebCore_MoveOnlyBaseClass_Subclass::MoveOnlyDerivedClass;
         encoder << WTFMove(*subclass);
+        return;
     }
+    ASSERT_NOT_REACHED();
 }
 
 std::optional<WebCore::MoveOnlyBaseClass> ArgumentCoder<WebCore::MoveOnlyBaseClass>::decode(Decoder& decoder)
