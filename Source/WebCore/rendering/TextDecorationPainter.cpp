@@ -333,13 +333,10 @@ void TextDecorationPainter::paintLineThrough(const Color& color, float thickness
         m_context.drawLineForText(rect, m_isPrinting, style == TextDecorationStyle::Double, strokeStyle);
 }
 
-static void collectStylesForRenderer(TextDecorationPainter::Styles& result, const RenderObject& renderer, OptionSet<TextDecorationLine> remainingDecorations, bool firstLineStyle, OptionSet<PaintBehavior> paintBehavior, PseudoId pseudoId)
+static void collectStylesForRenderer(TextDecorationPainter::Styles& result, const RenderObject& renderer, OptionSet<TextDecorationLine> remainingDecorations, bool firstLineStyle, PseudoId pseudoId)
 {
     auto extractDecorations = [&] (const RenderStyle& style, OptionSet<TextDecorationLine> decorations) {
-        if (decorations.isEmpty())
-            return;
-
-        auto color = TextDecorationPainter::decorationColor(style, paintBehavior);
+        auto color = TextDecorationPainter::decorationColor(style);
         auto decorationStyle = style.textDecorationStyle();
 
         if (decorations.contains(TextDecorationLine::Underline)) {
@@ -391,22 +388,9 @@ static void collectStylesForRenderer(TextDecorationPainter::Styles& result, cons
         extractDecorations(styleForRenderer(*current), remainingDecorations);
 }
 
-Color TextDecorationPainter::decorationColor(const RenderStyle& style, OptionSet<PaintBehavior> paintBehavior)
+Color TextDecorationPainter::decorationColor(const RenderStyle& style)
 {
-    return style.visitedDependentColorWithColorFilter(CSSPropertyTextDecorationColor, paintBehavior);
-}
-
-auto TextDecorationPainter::stylesForRenderer(const RenderObject& renderer, OptionSet<TextDecorationLine> requestedDecorations, bool firstLineStyle, OptionSet<PaintBehavior> paintBehavior, PseudoId pseudoId) -> Styles
-{
-    if (requestedDecorations.isEmpty())
-        return { };
-
-    Styles result;
-    collectStylesForRenderer(result, renderer, requestedDecorations, false, paintBehavior, pseudoId);
-    if (firstLineStyle)
-        collectStylesForRenderer(result, renderer, requestedDecorations, true, paintBehavior, pseudoId);
-    result.skipInk = renderer.style().textDecorationSkipInk();
-    return result;
+    return style.visitedDependentColorWithColorFilter(CSSPropertyTextDecorationColor);
 }
 
 OptionSet<TextDecorationLine> TextDecorationPainter::textDecorationsInEffectForStyle(const TextDecorationPainter::Styles& style)

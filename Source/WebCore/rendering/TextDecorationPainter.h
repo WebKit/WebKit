@@ -67,11 +67,9 @@ public:
         TextDecorationStyle overlineStyle;
         TextDecorationStyle linethroughStyle;
     };
-    void paintForegroundDecorations(const ForegroundDecorationGeometry&, const Styles&);
-
-    static Color decorationColor(const RenderStyle&, OptionSet<PaintBehavior> paintBehavior = { });
-    static Styles stylesForRenderer(const RenderObject&, OptionSet<TextDecorationLine> requestedDecorations, bool firstLineStyle = false, OptionSet<PaintBehavior> paintBehavior = { }, PseudoId = PseudoId::None);
-    static OptionSet<TextDecorationLine> textDecorationsInEffectForStyle(const TextDecorationPainter::Styles&);
+    static Color decorationColor(const RenderStyle&);
+    static OptionSet<TextDecorationLine> textDecorationsInEffectForStyle(const Styles&);
+    static Styles stylesForRenderer(const RenderObject&, OptionSet<TextDecorationLine> requestedDecorations, bool firstLineStyle = false, PseudoId = PseudoId::None);
 
 private:
     GraphicsContext& m_context;

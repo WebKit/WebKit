@@ -121,8 +121,6 @@ class StyleInheritedData;
 class StyleScrollSnapArea;
 class TransformationMatrix;
 
-enum class PaintBehavior : uint32_t;
-
 struct ScrollSnapAlign;
 struct ScrollSnapType;
 
@@ -1546,8 +1544,8 @@ public:
     Color unresolvedColorForProperty(CSSPropertyID colorProperty, bool visitedLink = false) const;
     Color colorResolvingCurrentColor(const Color&) const;
 
-    WEBCORE_EXPORT Color visitedDependentColor(CSSPropertyID, OptionSet<PaintBehavior> paintBehavior = { }) const;
-    WEBCORE_EXPORT Color visitedDependentColorWithColorFilter(CSSPropertyID, OptionSet<PaintBehavior> paintBehavior = { }) const;
+    WEBCORE_EXPORT Color visitedDependentColor(CSSPropertyID) const;
+    WEBCORE_EXPORT Color visitedDependentColorWithColorFilter(CSSPropertyID) const;
 
     WEBCORE_EXPORT Color colorByApplyingColorFilter(const Color&) const;
 

@@ -53,7 +53,7 @@ static StyledMarkedText resolveStyleForMarkedText(const MarkedText& markedText, 
             style.textStyles.fillColor = renderStyle->computedStrokeColor();
             style.textStyles.strokeColor = renderStyle->computedStrokeColor();
 
-            auto color = TextDecorationPainter::decorationColor(*renderStyle.get(), paintInfo.paintBehavior);
+            auto color = TextDecorationPainter::decorationColor(*renderStyle.get());
             auto decorationStyle = renderStyle->textDecorationStyle();
             auto decorations = renderStyle->textDecorationsInEffect();
 
@@ -108,7 +108,7 @@ static StyledMarkedText resolveStyleForMarkedText(const MarkedText& markedText, 
 static StyledMarkedText::Style computeStyleForUnmarkedMarkedText(const RenderText& renderer, const RenderStyle& lineStyle, bool isFirstLine, const PaintInfo& paintInfo)
 {
     StyledMarkedText::Style style;
-    style.textDecorationStyles = TextDecorationPainter::stylesForRenderer(renderer, lineStyle.textDecorationsInEffect(), isFirstLine, paintInfo.paintBehavior);
+    style.textDecorationStyles = TextDecorationPainter::stylesForRenderer(renderer, lineStyle.textDecorationsInEffect(), isFirstLine);
     style.textStyles = computeTextPaintStyle(renderer.frame(), lineStyle, paintInfo);
     style.textShadow = ShadowData::clone(paintInfo.forceTextColor() ? nullptr : lineStyle.textShadow());
     return style;
