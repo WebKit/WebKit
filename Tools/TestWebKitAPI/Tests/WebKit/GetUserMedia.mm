@@ -673,8 +673,12 @@ TEST(WebKit2, CrashGPUProcessWhileCapturing)
     EXPECT_EQ(gpuProcessPID, [processPool _gpuProcessIdentifier]);
     EXPECT_EQ(webViewPID, [webView _webProcessIdentifier]);
 }
-
+// FIXME when rdar://111696238 is resolved.
+#if PLATFORM(IOS)
+TEST(WebKit2, DISABLED_CrashGPUProcessAfterApplyingConstraints)
+#else
 TEST(WebKit2, CrashGPUProcessAfterApplyingConstraints)
+#endif
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     auto preferences = [configuration preferences];
