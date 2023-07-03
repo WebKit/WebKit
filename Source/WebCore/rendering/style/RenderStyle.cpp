@@ -866,6 +866,9 @@ static bool rareDataChangeRequiresLayout(const StyleRareNonInheritedData& first,
     if (first.scrollbarGutter != second.scrollbarGutter)
         return true;
 
+    if (first.scrollbarWidth != second.scrollbarWidth)
+        return true;
+
     return false;
 }
 
