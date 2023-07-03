@@ -28,6 +28,7 @@
 
 #include "CodeBlock.h"
 #include "JSCInlines.h"
+#include "ProfilerDumper.h"
 #include <wtf/StringPrintStream.h>
 
 namespace JSC { namespace Profiler {

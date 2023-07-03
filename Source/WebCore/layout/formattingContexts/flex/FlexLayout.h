@@ -34,6 +34,7 @@
 namespace WebCore {
 namespace Layout {
 
+class FlexFormattingContext;
 struct FlexBaseAndHypotheticalMainSize;
 struct PositionAndMargins;
 

@@ -57,6 +57,7 @@ class RadioButtonGroups;
 class RenderSVGResourceContainer;
 class SVGElement;
 class ShadowRoot;
+class WeakPtrImplWithEventTargetData;
 struct SVGResourcesMap;
 
 class TreeScope {

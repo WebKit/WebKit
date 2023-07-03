@@ -35,6 +35,7 @@
 #include "LayoutChildIterator.h"
 #include "RenderBoxInlines.h"
 #include "RenderFlexibleBox.h"
+#include "RenderView.h"
 
 namespace WebCore {
 namespace LayoutIntegration {
