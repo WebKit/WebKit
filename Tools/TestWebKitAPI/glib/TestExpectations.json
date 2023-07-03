@@ -237,9 +237,6 @@
             "WebKit.FocusedFrameAfterCrash": {
                 "expected": {"gtk": {"status": ["TIMEOUT", "PASS"], "bug": "webkit.org/b/205336"}}
             },
-            "WebKit.PrivateBrowsingPushStateNoHistoryCallback": {
-                "expected": {"all": {"status": ["TIMEOUT"], "bug": "webkit.org/b/254002"}}
-            },
             "WebKit.GeolocationWatchMultiprocess": {
                 "expected": {"gtk": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/254002"}}
             },

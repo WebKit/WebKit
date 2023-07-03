@@ -32,6 +32,7 @@
 #include "Test.h"
 #include <WebKit/WKPreferencesRefPrivate.h>
 #include <WebKit/WKRetainPtr.h>
+#include <WebKit/WKWebsiteDataStoreConfigurationRef.h>
 #include <WebKit/WKWebsiteDataStoreRef.h>
 
 namespace TestWebKitAPI {
@@ -91,7 +92,10 @@ TEST(WebKit, PrivateBrowsingPushStateNoHistoryCallback)
 
     Util::run(&didSameDocumentNavigation);
 
-    WKPageConfigurationSetWebsiteDataStore(pageConfiguration.get(), WKWebsiteDataStoreGetDefaultDataStore());
+    WKRetainPtr<WKWebsiteDataStoreConfigurationRef> dataStoreConfiguration = adoptWK(WKWebsiteDataStoreConfigurationCreate());
+    WKRetainPtr<WKWebsiteDataStoreRef> dataStore = adoptWK(WKWebsiteDataStoreCreateWithConfiguration(dataStoreConfiguration.get()));
+    WKPageConfigurationSetWebsiteDataStore(pageConfiguration.get(), dataStore.get());
+
     PlatformWebView webView2(pageConfiguration.get());
 
     historyClient.didNavigateWithNavigationData = didNavigateWithNavigationData;
