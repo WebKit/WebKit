@@ -419,7 +419,7 @@ def decode_type(type):
 
     if type.members_are_subclasses:
         result.append('    auto type = decoder.decode<' + type.subclass_enum_name() + '>();')
-        result.append('    if (!type)')
+        result.append('    if (UNLIKELY(!decoder.isValid()))')
         result.append('        return std::nullopt;')
         result.append('')
 
@@ -433,13 +433,11 @@ def decode_type(type):
             match = re.search("RetainPtr<(.*)>", member.type)
             assert match
             result.append('    auto ' + sanitized_variable_name + ' = IPC::decode<' + match.groups()[0] + '>(decoder, @[ ' + decodable_classes[0] + ' ]);')
-            result.append('    if (!' + sanitized_variable_name + ')')
-            result.append('        return std::nullopt;')
         elif member.is_subclass:
             result.append('    if (type == ' + type.subclass_enum_name() + "::" + member.name + ') {')
             typename = member.namespace + "::" + member.name
             result.append('        auto result = decoder.decode<Ref<' + typename + '>>();')
-            result.append('        if (!result)')
+            result.append('        if (UNLIKELY(!decoder.isValid()))')
             result.append('            return std::nullopt;')
             result.append('        return WTFMove(*result);')
             result.append('    }')
@@ -454,38 +452,34 @@ def decode_type(type):
                 if 'Nullable' in member.attributes:
                     indentation = 2
                     result.append('    auto has' + sanitized_variable_name + ' = decoder.decode<bool>();')
-                    result.append('    if (!has' + sanitized_variable_name + ')')
+                    result.append('    if (UNLIKELY(!decoder.isValid()))')
                     result.append('        return std::nullopt;')
                     result.append('    std::optional<' + member.type + '> ' + sanitized_variable_name + ';')
                     result.append('    if (*has' + sanitized_variable_name + ') {')
                 auto_specifier = '' if 'Nullable' in member.attributes else 'auto '
                 result.append(indent(indentation) + auto_specifier + sanitized_variable_name + ' = IPC::decode<' + match.groups()[0] + '>(decoder, ' + soft_linked_classes[0] + ');')
-                result.append(indent(indentation) + 'if (!' + sanitized_variable_name + ')')
-                result.append(indent(indentation) + '    return std::nullopt;')
                 if 'Nullable' in member.attributes:
                     result.append('    } else')
                     result.append('        ' + sanitized_variable_name + ' = std::optional<' + member.type + '> { ' + member.type + ' { } };')
             elif 'Nullable' in member.attributes:
                 result.append('    auto has' + sanitized_variable_name + ' = decoder.decode<bool>();')
-                result.append('    if (!has' + sanitized_variable_name + ')')
+                result.append('    if (UNLIKELY(!decoder.isValid()))')
                 result.append('        return std::nullopt;')
                 result.append('    std::optional<' + member.type + '> ' + sanitized_variable_name + ';')
                 result.append('    if (*has' + sanitized_variable_name + ') {')
                 # FIXME: This should be below
                 result.append('        ' + sanitized_variable_name + ' = decoder.decode<' + member.type + '>();')
-                result.append('        if (!' + sanitized_variable_name + ')')
-                result.append('            return std::nullopt;')
                 result.append('    } else')
                 result.append('        ' + sanitized_variable_name + ' = std::optional<' + member.type + '> { ' + member.type + ' { } };')
             else:
                 assert len(soft_linked_classes) == 0
                 result.append('    auto ' + sanitized_variable_name + ' = decoder.decode<' + member.type + '>();')
-                result.append('    if (!' + sanitized_variable_name + ')')
-                result.append('        return std::nullopt;')
         for attribute in member.attributes:
             match = re.search(r'Validator=\'(.*)\'', attribute)
             if match:
                 validator, = match.groups()
+                result.append('    if (UNLIKELY(!decoder.isValid()))')
+                result.append('        return std::nullopt;')
                 result.append('')
                 result.append('    if (!(' + validator + '))')
                 result.append('        return std::nullopt;')
@@ -495,7 +489,6 @@ def decode_type(type):
                 assert not match
         if member.condition is not None:
             result.append('#endif')
-        result.append('')
     return result
 
 
@@ -624,6 +617,8 @@ def generate_impl(serialized_types, serialized_enums, headers):
         result.append('{')
         result = result + decode_type(type)
         if not type.members_are_subclasses:
+            result.append('    if (UNLIKELY(!decoder.isValid()))')
+            result.append('        return std::nullopt;')
             if type.populate_from_empty_constructor:
                 result.append('    ' + type.namespace_and_name() + ' result;')
                 for member in type.serialized_members():
