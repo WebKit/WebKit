@@ -1,5 +1,4 @@
 CONSOLE MESSAGE: TypeError: target0.requestPointerLock is not a function. (In 'target0.requestPointerLock()', 'target0.requestPointerLock' is undefined)
-CONSOLE MESSAGE: TypeError: target0.requestPointerLock is not a function. (In 'target0.requestPointerLock()', 'target0.requestPointerLock' is undefined)
 PointerMove
 
 Test Description: This test checks if pointermove event are triggered by button state changes

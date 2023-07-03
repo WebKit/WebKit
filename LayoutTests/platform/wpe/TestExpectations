@@ -259,6 +259,7 @@ webkit.org/b/258543 scrollingcoordinator/scrolling-tree/composited-in-offscreen-
 webkit.org/b/258543 scrollingcoordinator/scrolling-tree/fixed-inside-relative-inside-stacking-overflow-inside-transformed.html [ Failure ]
 webkit.org/b/258543 scrollingcoordinator/scrolling-tree/fixed-inside-stacking-overflow-inside-transformed.html [ Failure ]
 webkit.org/b/258543 scrollingcoordinator/scrolling-tree/fixed-position-within-transformed.html [ Failure ]
+webkit.org/b/258543 scrollingcoordinator/scrolling-tree/absolute-in-nested-overflow-scroll.html [ Failure ]
 
 #Simple Line Layout
 webkit.org/b/219976 fast/text/simple-line-wordspacing.html [ ImageOnlyFailure ]
