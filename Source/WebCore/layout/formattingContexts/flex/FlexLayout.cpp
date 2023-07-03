@@ -863,7 +863,7 @@ FlexLayout::LinesCrossPositionList FlexLayout::handleCrossAxisAlignmentForFlexLi
     LinesCrossPositionList linesCrossPositionList(lineRanges.size());
     linesCrossPositionList[0] = initialOffset();
     for (size_t lineIndex = 1; lineIndex < lineRanges.size(); ++lineIndex)
-        linesCrossPositionList[lineIndex] = flexLinesCrossSizeList[lineIndex - 1] + gap;
+        linesCrossPositionList[lineIndex] = (linesCrossPositionList[lineIndex - 1] + flexLinesCrossSizeList[lineIndex - 1]) + gap;
     return linesCrossPositionList;
 }
 
