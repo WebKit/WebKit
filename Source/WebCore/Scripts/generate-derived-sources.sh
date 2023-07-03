@@ -17,10 +17,7 @@ if [ ! "$CC" ]; then
 fi
 
 if [ ! "$GPERF" ]; then
-    # gperf writes the path it was invoked from in generated sources. For build
-    # reproducibility, invoke it from a relative path.
-    /bin/ln -sfh "`xcrun -find gperf`" gperf
-    export GPERF=./gperf
+    export GPERF="`xcrun -find gperf`"
 fi
 
 MAKEFILE_INCLUDE_FLAGS=$(echo "${WEBKITADDITIONS_HEADER_SEARCH_PATHS}" | perl -e 'print "-I" . join(" -I", split(" ", <>));')
