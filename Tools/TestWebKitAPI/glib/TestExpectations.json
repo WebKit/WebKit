@@ -174,7 +174,10 @@
                 "expected": {"gtk": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/210635"}}
             },
             "/webkit/WebKitWebView/is-web-process-responsive": {
-                "expected": {"gtk": {"status": ["PASS", "TIMEOUT"], "slow": true, "bug": "webkit.org/b/254002"}}
+                "expected": {"all": {"slow": true }}
+            },
+            "/webkit/WebKitWebView/terminate-unresponsive-web-process": {
+                "expected": {"all": {"slow": true }}
             },
             "/webkit/WebKitWebView/fullscreen": {
                 "expected": {
