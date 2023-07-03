@@ -446,7 +446,10 @@ bool CachedResourceLoader::checkInsecureContent(CachedResource::Type type, const
         // These resource can inject script into the current document (Script,
         // XSL) or exfiltrate the content of the current document (CSS).
         if (Frame* frame = this->frame()) {
-            if (!MixedContentChecker::frameAndAncestorsCanRunInsecureContent(*frame, m_document->securityOrigin(), url))
+            if (!MixedContentChecker::canRunInsecureContent(*frame, m_document->securityOrigin(), url))
+                return false;
+            Frame& top = frame->tree().top();
+            if (&top != frame && !MixedContentChecker::canRunInsecureContent(top, top.document()->securityOrigin(), url))
                 return false;
         }
         break;
@@ -464,7 +467,10 @@ bool CachedResourceLoader::checkInsecureContent(CachedResource::Type type, const
     case CachedResource::Type::FontResource: {
         // These resources can corrupt only the frame's pixels.
         if (Frame* frame = this->frame()) {
-            if (!MixedContentChecker::frameAndAncestorsCanDisplayInsecureContent(*frame, contentTypeFromResourceType(type), url))
+            if (!MixedContentChecker::canDisplayInsecureContent(*frame, m_document->securityOrigin(), contentTypeFromResourceType(type), url, MixedContentChecker::AlwaysDisplayInNonStrictMode::Yes))
+                return false;
+            Frame& topFrame = frame->tree().top();
+            if (!MixedContentChecker::canDisplayInsecureContent(topFrame, topFrame.document()->securityOrigin(), contentTypeFromResourceType(type), url))
                 return false;
         }
         break;
