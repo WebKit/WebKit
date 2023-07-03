@@ -40,7 +40,6 @@
 #import "VideoFrameMetadata.h"
 #import "VideoLayerManagerObjC.h"
 #import "VideoTrackPrivateMediaStream.h"
-#import <CoreGraphics/CGAffineTransform.h>
 #import <objc_runtime.h>
 #import <pal/avfoundation/MediaTimeAVFoundation.h>
 #import <pal/spi/cocoa/AVFoundationSPI.h>
@@ -237,21 +236,6 @@ MediaPlayer::SupportsType MediaPlayerPrivateMediaStreamAVFObjC::supportsType(con
 #pragma mark -
 #pragma mark AVSampleBuffer Methods
 
-static inline CGAffineTransform videoTransformationMatrix(VideoFrame& videoFrame)
-{
-    auto size = videoFrame.presentationSize();
-    size_t width = static_cast<size_t>(size.width());
-    size_t height = static_cast<size_t>(size.height());
-    if (!width || !height)
-        return CGAffineTransformIdentity;
-
-    auto videoTransform = CGAffineTransformMakeRotation(static_cast<int>(videoFrame.rotation()) * M_PI / 180);
-    if (videoFrame.isMirrored())
-        videoTransform = CGAffineTransformScale(videoTransform, -1, 1);
-
-    return videoTransform;
-}
-
 void MediaPlayerPrivateMediaStreamAVFObjC::videoFrameAvailable(VideoFrame& videoFrame, VideoFrameTimeMetadata metadata)
 {
     auto presentationTime = MonotonicTime::now().secondsSinceEpoch();
@@ -270,16 +254,6 @@ void MediaPlayerPrivateMediaStreamAVFObjC::enqueueVideoFrame(VideoFrame& videoFr
 
     if (!m_canEnqueueDisplayLayer || !m_sampleBufferDisplayLayer || m_sampleBufferDisplayLayer->didFail())
         return;
-
-    if (videoFrame.rotation() != m_videoRotation || videoFrame.isMirrored() != m_videoMirrored) {
-        m_videoRotation = videoFrame.rotation();
-        m_videoMirrored = videoFrame.isMirrored();
-        m_shouldUpdateDisplayLayer = true;
-    }
-    if (m_shouldUpdateDisplayLayer) {
-        m_sampleBufferDisplayLayer->updateAffineTransform(videoTransformationMatrix(videoFrame));
-        m_shouldUpdateDisplayLayer = false;
-    }
 
     if (!m_isActiveVideoTrackEnabled) {
         if (!m_hasEnqueuedBlackFrame) {
@@ -401,7 +375,10 @@ void MediaPlayerPrivateMediaStreamAVFObjC::ensureLayers()
     auto player = m_player.get();
     if (!player)
         return;
-    auto size = player->presentationSize();
+
+    auto size = IntSize { player->videoInlineSize() } ;
+    if (size.isEmpty())
+        size = player->presentationSize();
     if (size.isEmpty() || m_intrinsicSize.isEmpty())
         return;
 
@@ -442,10 +419,9 @@ void MediaPlayerPrivateMediaStreamAVFObjC::layersAreInitialized(IntSize size, bo
 
     m_sampleBufferDisplayLayer->setLogIdentifier(makeString(hex(reinterpret_cast<uintptr_t>(logIdentifier()))));
     if (m_storedBounds)
-        m_sampleBufferDisplayLayer->updateBoundsAndPosition(*m_storedBounds, m_videoRotation);
+        m_sampleBufferDisplayLayer->updateBoundsAndPosition(*m_storedBounds);
 
     m_sampleBufferDisplayLayer->updateDisplayMode(m_displayMode < PausedImage, hideRootLayer());
-    m_shouldUpdateDisplayLayer = true;
 
     m_videoLayerManager->setVideoLayer(m_sampleBufferDisplayLayer->rootLayer(), size);
 
@@ -1048,6 +1024,21 @@ void MediaPlayerPrivateMediaStreamAVFObjC::updateCurrentFrameImage()
         m_imagePainter.cgImage = NativeImage::create(m_imagePainter.pixelBufferConformer->createImageFromPixelBuffer(pixelBuffer));
 }
 
+static inline CGAffineTransform videoTransformationMatrix(VideoFrame& videoFrame)
+{
+    auto size = videoFrame.presentationSize();
+    size_t width = static_cast<size_t>(size.width());
+    size_t height = static_cast<size_t>(size.height());
+    if (!width || !height)
+        return CGAffineTransformIdentity;
+
+    auto videoTransform = CGAffineTransformMakeRotation(static_cast<int>(videoFrame.rotation()) * M_PI / 180);
+    if (videoFrame.isMirrored())
+        videoTransform = CGAffineTransformScale(videoTransform, -1, 1);
+
+    return videoTransform;
+}
+
 void MediaPlayerPrivateMediaStreamAVFObjC::paintCurrentFrameInContext(GraphicsContext& context, const FloatRect& destRect)
 {
     if (m_displayMode == None || !metaDataAvailable() || context.paintingDisabled())
@@ -1165,7 +1156,7 @@ void MediaPlayerPrivateMediaStreamAVFObjC::rootLayerBoundsDidChange()
 {
     Locker locker { m_sampleBufferDisplayLayerLock };
     if (m_sampleBufferDisplayLayer)
-        m_sampleBufferDisplayLayer->updateBoundsAndPosition(m_sampleBufferDisplayLayer->rootLayer().bounds, m_videoRotation);
+        m_sampleBufferDisplayLayer->updateBoundsAndPosition(m_sampleBufferDisplayLayer->rootLayer().bounds);
 }
 
 WTFLogChannel& MediaPlayerPrivateMediaStreamAVFObjC::logChannel() const
@@ -1207,7 +1198,7 @@ void MediaPlayerPrivateMediaStreamAVFObjC::setVideoInlineSizeFenced(const FloatS
 
     m_storedBounds = m_sampleBufferDisplayLayer->rootLayer().bounds;
     m_storedBounds->size = size;
-    m_sampleBufferDisplayLayer->updateBoundsAndPosition(*m_storedBounds, m_videoRotation, fence);
+    m_sampleBufferDisplayLayer->updateBoundsAndPosition(*m_storedBounds, fence);
 }
 
 }

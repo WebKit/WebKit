@@ -28,8 +28,7 @@ messages -> RemoteSampleBufferDisplayLayer NotRefCounted {
     SetLogIdentifier(String logIdentifier)
 #endif
     UpdateDisplayMode(bool hideDisplayLayer, bool hideRootLayer)
-    UpdateAffineTransform(CGAffineTransform transform)
-    UpdateBoundsAndPosition(CGRect bounds, WebCore::VideoFrame::Rotation rotation, std::optional<MachSendRight> fence)
+    UpdateBoundsAndPosition(CGRect bounds, std::optional<MachSendRight> fence)
     Flush()
     FlushAndRemoveImage()
     EnqueueVideoFrame(struct WebKit::SharedVideoFrame frame)

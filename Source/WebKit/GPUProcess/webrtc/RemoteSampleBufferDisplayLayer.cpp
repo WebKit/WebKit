@@ -88,17 +88,12 @@ void RemoteSampleBufferDisplayLayer::updateDisplayMode(bool hideDisplayLayer, bo
     m_sampleBufferDisplayLayer->updateDisplayMode(hideDisplayLayer, hideRootLayer);
 }
 
-void RemoteSampleBufferDisplayLayer::updateAffineTransform(CGAffineTransform transform)
-{
-    m_sampleBufferDisplayLayer->updateRootLayerAffineTransform(transform);
-}
-
-void RemoteSampleBufferDisplayLayer::updateBoundsAndPosition(CGRect bounds, WebCore::VideoFrame::Rotation rotation, std::optional<WTF::MachSendRight>&& fence)
+void RemoteSampleBufferDisplayLayer::updateBoundsAndPosition(CGRect bounds, std::optional<WTF::MachSendRight>&& fence)
 {
     if (fence && fence->sendRight())
         m_layerHostingContext->setFencePort(fence->sendRight());
 
-    m_sampleBufferDisplayLayer->updateRootLayerBoundsAndPosition(bounds, rotation, LocalSampleBufferDisplayLayer::ShouldUpdateRootLayer::Yes);
+    m_sampleBufferDisplayLayer->updateBoundsAndPosition(bounds, { });
 }
 
 void RemoteSampleBufferDisplayLayer::flush()
@@ -124,7 +119,7 @@ void RemoteSampleBufferDisplayLayer::pause()
 void RemoteSampleBufferDisplayLayer::enqueueVideoFrame(SharedVideoFrame&& frame)
 {
     if (auto videoFrame = m_sharedVideoFrameReader.read(WTFMove(frame)))
-        m_sampleBufferDisplayLayer->enqueueBuffer(videoFrame->pixelBuffer(), videoFrame->presentationTime());
+        m_sampleBufferDisplayLayer->enqueueVideoFrame(*videoFrame);
 }
 
 void RemoteSampleBufferDisplayLayer::clearVideoFrames()

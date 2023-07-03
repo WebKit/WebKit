@@ -1,0 +1,37 @@
+<div>
+<canvas id="canvas1" width=100 height=100></canvas>
+<canvas id="canvas2" width=100 height=100></canvas>
+<br>
+<video id="video" width=100 height=100 autoplay playsinline></video>
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+async function test()
+{
+     const context1 = canvas1.getContext('2d');
+     setInterval(() => {
+        context1.fillStyle = "green";
+        context1.fillRect(0, 0, 100, 100);
+    }, 100);
+    video.srcObject = canvas1.captureStream();
+    await video.play();
+    await new Promise(resolve => setTimeout(resolve, 500));
+    video.style.display = 'none';
+    await new Promise(resolve => setTimeout(resolve, 500));
+
+    video.style.display = 'block';
+    const context2 = canvas2.getContext('2d');
+    setInterval(() => {
+        context2.fillStyle = "green";
+        context2.fillRect(0, 0, 100, 100);
+    }, 100);
+    video.srcObject = canvas2.captureStream();
+    await video.play();
+    await new Promise(resolve => setTimeout(resolve, 500));
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+test();
+</script>

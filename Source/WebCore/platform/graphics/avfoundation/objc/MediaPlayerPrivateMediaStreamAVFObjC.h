@@ -265,7 +265,6 @@ private:
     // Used on both main thread and sample thread.
     RefPtr<SampleBufferDisplayLayer> m_sampleBufferDisplayLayer;
     Lock m_sampleBufferDisplayLayerLock;
-    bool m_shouldUpdateDisplayLayer { true };
     // Written on main thread, read on sample thread.
     bool m_canEnqueueDisplayLayer { false };
     // Used on sample thread.
