@@ -528,4 +528,9 @@ float Scrollbar::deviceScaleFactor() const
     return m_scrollableArea.deviceScaleFactor();
 }
 
+bool Scrollbar::shouldRegisterScrollbar() const
+{
+    return m_scrollableArea.scrollbarsController().shouldRegisterScrollbars();
+}
+
 } // namespace WebCore

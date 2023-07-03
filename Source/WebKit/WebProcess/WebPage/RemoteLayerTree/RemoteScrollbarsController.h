@@ -51,6 +51,7 @@ public:
 
     void setScrollbarVisibilityState(WebCore::ScrollbarOrientation, bool) final;
     bool shouldDrawIntoScrollbarLayer(WebCore::Scrollbar&) const final;
+    bool shouldRegisterScrollbars() const final { return scrollableArea().isListBox(); }
 
 private:
     bool m_horizontalOverlayScrollbarIsVisible { false };

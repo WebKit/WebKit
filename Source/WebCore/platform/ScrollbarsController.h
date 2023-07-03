@@ -94,6 +94,7 @@ public:
     WEBCORE_EXPORT virtual void setScrollbarVisibilityState(ScrollbarOrientation, bool) { }
 
     WEBCORE_EXPORT virtual bool shouldDrawIntoScrollbarLayer(Scrollbar&) const { return true; }
+    WEBCORE_EXPORT virtual bool shouldRegisterScrollbars() const { return true; }
 
 private:
     ScrollableArea& m_scrollableArea;

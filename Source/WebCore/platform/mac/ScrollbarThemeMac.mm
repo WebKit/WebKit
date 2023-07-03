@@ -156,7 +156,7 @@ void ScrollbarThemeMac::didCreateScrollerImp(Scrollbar& scrollbar)
 
 void ScrollbarThemeMac::registerScrollbar(Scrollbar& scrollbar)
 {
-    if (scrollbar.isCustomScrollbar())
+    if (scrollbar.isCustomScrollbar() || !scrollbar.shouldRegisterScrollbar())
         return;
 
     bool isHorizontal = scrollbar.orientation() == ScrollbarOrientation::Horizontal;
