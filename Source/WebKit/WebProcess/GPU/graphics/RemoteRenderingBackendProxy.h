@@ -155,7 +155,7 @@ public:
 
     SerialFunctionDispatcher& dispatcher() { return m_dispatcher; }
 
-    static constexpr Seconds defaultTimeout = 3_s;
+    static constexpr Seconds defaultTimeout = 15_s;
 private:
     explicit RemoteRenderingBackendProxy(const RemoteRenderingBackendCreationParameters&, SerialFunctionDispatcher&);
 
