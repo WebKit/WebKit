@@ -2723,6 +2723,16 @@
    },
    {
       "emails" : [
+         "fantasai@apple.com",
+         "fantasai.bugs@inkedblade.net"
+      ],
+      "name" : "Elika Etemad",
+      "nicks" : [
+         "fantasai"
+      ]
+   },
+   {
+      "emails" : [
          "fbucchi@apple.com",
          "b.federico@gmail.com"
       ],
