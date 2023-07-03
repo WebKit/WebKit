@@ -257,11 +257,6 @@
                 "expected": {
                     "gtk": {"status": ["FAIL"], "bug": "webkit.org/b/254002"}
                 }
-            },
-            "/webkit/WebKitUserContentManager/script-message-received": {
-                "expected": {
-                    "all": {"status": ["FAIL"], "bug": "webkit.org/b/256557"}
-                }
             }
         }
     },

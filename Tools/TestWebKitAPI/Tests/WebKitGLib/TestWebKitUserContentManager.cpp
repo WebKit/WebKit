@@ -308,6 +308,8 @@ public:
 
     JSCValue* waitUntilMessageReceived(const char* handlerName)
     {
+        m_scriptMessage = nullptr;
+
         GUniquePtr<char> signalName(g_strdup_printf("script-message-received::%s", handlerName));
         g_signal_connect(m_userContentManager.get(), signalName.get(), G_CALLBACK(scriptMessageReceived), this);
 
