@@ -1,5 +1,5 @@
 
 
 PASS Setup activating worker
-PASS Service worker load uses preload through calling fetch on the fetch event request
+PASS Service worker load does not use preload when using an updated fetch request
 
