@@ -418,8 +418,7 @@ def decode_type(type):
         result = result + decode_type(type.parent_class)
 
     if type.members_are_subclasses:
-        result.append('    std::optional<' + type.subclass_enum_name() + '> type;')
-        result.append('    decoder >> type;')
+        result.append('    auto type = decoder.decode<' + type.subclass_enum_name() + '>();')
         result.append('    if (!type)')
         result.append('        return std::nullopt;')
         result.append('')
@@ -439,8 +438,7 @@ def decode_type(type):
         elif member.is_subclass:
             result.append('    if (type == ' + type.subclass_enum_name() + "::" + member.name + ') {')
             typename = member.namespace + "::" + member.name
-            result.append('        std::optional<Ref<' + typename + '>> result;')
-            result.append('        decoder >> result;')
+            result.append('        auto result = decoder.decode<Ref<' + typename + '>>();')
             result.append('        if (!result)')
             result.append('            return std::nullopt;')
             result.append('        return WTFMove(*result);')

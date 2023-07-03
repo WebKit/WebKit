@@ -676,38 +676,33 @@ void ArgumentCoder<WebCore::TimingFunction>::encode(Encoder& encoder, const WebC
 
 std::optional<Ref<WebCore::TimingFunction>> ArgumentCoder<WebCore::TimingFunction>::decode(Decoder& decoder)
 {
-    std::optional<WebCore_TimingFunction_Subclass> type;
-    decoder >> type;
+    auto type = decoder.decode<WebCore_TimingFunction_Subclass>();
     if (!type)
         return std::nullopt;
 
     if (type == WebCore_TimingFunction_Subclass::LinearTimingFunction) {
-        std::optional<Ref<WebCore::LinearTimingFunction>> result;
-        decoder >> result;
+        auto result = decoder.decode<Ref<WebCore::LinearTimingFunction>>();
         if (!result)
             return std::nullopt;
         return WTFMove(*result);
     }
 
     if (type == WebCore_TimingFunction_Subclass::CubicBezierTimingFunction) {
-        std::optional<Ref<WebCore::CubicBezierTimingFunction>> result;
-        decoder >> result;
+        auto result = decoder.decode<Ref<WebCore::CubicBezierTimingFunction>>();
         if (!result)
             return std::nullopt;
         return WTFMove(*result);
     }
 
     if (type == WebCore_TimingFunction_Subclass::StepsTimingFunction) {
-        std::optional<Ref<WebCore::StepsTimingFunction>> result;
-        decoder >> result;
+        auto result = decoder.decode<Ref<WebCore::StepsTimingFunction>>();
         if (!result)
             return std::nullopt;
         return WTFMove(*result);
     }
 
     if (type == WebCore_TimingFunction_Subclass::SpringTimingFunction) {
-        std::optional<Ref<WebCore::SpringTimingFunction>> result;
-        decoder >> result;
+        auto result = decoder.decode<Ref<WebCore::SpringTimingFunction>>();
         if (!result)
             return std::nullopt;
         return WTFMove(*result);
@@ -820,14 +815,12 @@ void ArgumentCoder<WebCore::MoveOnlyBaseClass>::encode(Encoder& encoder, WebCore
 
 std::optional<WebCore::MoveOnlyBaseClass> ArgumentCoder<WebCore::MoveOnlyBaseClass>::decode(Decoder& decoder)
 {
-    std::optional<WebCore_MoveOnlyBaseClass_Subclass> type;
-    decoder >> type;
+    auto type = decoder.decode<WebCore_MoveOnlyBaseClass_Subclass>();
     if (!type)
         return std::nullopt;
 
     if (type == WebCore_MoveOnlyBaseClass_Subclass::MoveOnlyDerivedClass) {
-        std::optional<Ref<WebCore::MoveOnlyDerivedClass>> result;
-        decoder >> result;
+        auto result = decoder.decode<Ref<WebCore::MoveOnlyDerivedClass>>();
         if (!result)
             return std::nullopt;
         return WTFMove(*result);
