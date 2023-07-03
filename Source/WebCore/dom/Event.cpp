@@ -84,6 +84,7 @@ Event::Event(const AtomString& eventType, const EventInit& initializer, IsTruste
         initializer.composed ? IsComposed::Yes : IsComposed::No }
 {
     ASSERT(!eventType.isNull());
+    m_isConstructedFromInitializer = true;
 }
 
 Event::~Event() = default;
