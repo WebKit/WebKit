@@ -32,7 +32,9 @@
 #import "TestNavigationDelegate.h"
 #import "TestProtocol.h"
 #import "TestWKWebView.h"
+#import "WKWebViewConfigurationExtras.h"
 #import <WebKit/WKProcessPoolPrivate.h>
+#import <WebKit/WKWebViewPrivateForTesting.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
 #import <pal/spi/mac/NSTextInputContextSPI.h>
 #import <wtf/BlockPtr.h>
@@ -177,5 +179,46 @@ TEST(WKWebViewMacEditingTests, ProcessSwapAfterSettingMarkedText)
     }];
     TestWebKitAPI::Util::run(&done);
 }
+
+#if HAVE(INLINE_PREDICTIONS)
+TEST(WKWebViewMacEditingTests, InlinePredictionsShouldSurpressAutocorrection)
+{
+    auto configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
+    auto webView = adoptNS([[TestWKWebView<NSTextInputClient, NSTextInputClient_Async> alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration]);
+    [webView _setContinuousSpellCheckingEnabledForTesting:YES];
+    [webView synchronouslyLoadHTMLString:@"<body id='p' contenteditable>Is it &nbsp;</body>"];
+    [webView stringByEvaluatingJavaScript:@"document.body.focus()"];
+    [webView _setEditable:YES];
+    [webView waitForNextPresentationUpdate];
+
+    NSString *modifySelectionJavascript = @""
+    "(() => {"
+    "  const node = document.getElementById('p').firstChild;"
+    "  const range = document.createRange();"
+    "  range.setStart(node, 7);"
+    "  range.setEnd(node, 7);"
+    "  "
+    "  var selection = window.getSelection();"
+    "  selection.removeAllRanges();"
+    "  selection.addRange(range);"
+    "})();";
+
+    [webView stringByEvaluatingJavaScript:modifySelectionJavascript];
+
+    auto typedString = adoptNS([[NSAttributedString alloc] initWithString:@"wedn"]);
+    auto predictedString = adoptNS([[NSAttributedString alloc] initWithString:@"esday" attributes:@{
+        NSForegroundColorAttributeName : NSColor.grayColor
+    }]);
+
+    auto string = adoptNS([[NSMutableAttributedString alloc] init]);
+    [string appendAttributedString:typedString.get()];
+    [string appendAttributedString:predictedString.get()];
+
+    [webView setMarkedText:string.get() selectedRange:NSMakeRange(4, 0) replacementRange:NSMakeRange(6, 4)];
+
+    NSString *hasSpellingMarker = [webView stringByEvaluatingJavaScript:@"internals.hasSpellingMarker(6, 9) ? 'true' : 'false'"];
+    EXPECT_STREQ("false", hasSpellingMarker.UTF8String);
+}
+#endif
 
 #endif // PLATFORM(MAC)

@@ -2257,6 +2257,9 @@ void Editor::setComposition(const String& text, const Vector<CompositionUnderlin
             // We should send a compositionstart event only when the given text is not empty because this
             // function doesn't create a composition node when the text is empty.
             if (!text.isEmpty()) {
+                // When an inline predicition is being offered, there will be text and a non-zero amount of highlights.
+                m_isHandlingAcceptedCandidate = !highlights.isEmpty();
+
                 target->dispatchEvent(CompositionEvent::create(eventNames().compositionstartEvent, document().windowProxy(), originalText));
                 event = CompositionEvent::create(eventNames().compositionupdateEvent, document().windowProxy(), text);
             }
@@ -2270,6 +2273,9 @@ void Editor::setComposition(const String& text, const Vector<CompositionUnderlin
     // If text is empty, then delete the old composition here.  If text is non-empty, InsertTextCommand::input
     // will delete the old composition with an optimized replace operation.
     if (text.isEmpty()) {
+        // The absence of text implies that there are currently no inline predicitions being offered.
+        m_isHandlingAcceptedCandidate = false;
+
         TypingCommand::deleteSelection(document(), TypingCommand::Option::PreventSpellChecking, TypingCommand::TextCompositionType::Pending);
         if (target)
             target->dispatchEvent(CompositionEvent::create(eventNames().compositionendEvent, document().windowProxy(), text));
@@ -2866,6 +2872,10 @@ void Editor::markAllMisspellingsAndBadGrammarInRanges(OptionSet<TextCheckingType
 
     // This function is called with selections already expanded to word boundaries.
     if (!client() || !spellingRange || (shouldMarkGrammar && !grammarRange))
+        return;
+
+    // Do not mark spelling or grammer corrections when an inline prediction candidate is currently being offered.
+    if (m_isHandlingAcceptedCandidate)
         return;
 
     // If we're not in an editable node, bail.
