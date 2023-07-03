@@ -159,18 +159,8 @@ public:
 private:
     explicit RemoteRenderingBackendProxy(const RemoteRenderingBackendCreationParameters&, SerialFunctionDispatcher&);
 
-    template<typename T>
-    void send(T&& message)
-    {
-        streamConnection().send(WTFMove(message), renderingBackendIdentifier(), Seconds::infinity());
-
-    }
-
-    template<typename T>
-    auto sendSync(T&& message, IPC::Timeout timeout = Seconds::infinity())
-    {
-        return streamConnection().sendSync(WTFMove(message), renderingBackendIdentifier(), timeout);
-    }
+    template<typename T> auto send(T&& message);
+    template<typename T> auto sendSync(T&& message);
 
     // Connection::Client
     void didClose(IPC::Connection&) final;

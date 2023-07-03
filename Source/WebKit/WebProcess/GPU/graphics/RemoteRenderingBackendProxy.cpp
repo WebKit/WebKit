@@ -98,6 +98,27 @@ void RemoteRenderingBackendProxy::ensureGPUProcessConnection()
         });
     }
 }
+template<typename T>
+auto RemoteRenderingBackendProxy::send(T&& message)
+{
+    auto result = streamConnection().send(WTFMove(message), renderingBackendIdentifier(), defaultTimeout);
+    if (UNLIKELY(result != IPC::Error::NoError)) {
+        RELEASE_LOG(RemoteLayerBuffers, "[pageProxyID=%" PRIu64 ", webPageID=%" PRIu64 ", renderingBackend=%" PRIu64 "] RemoteRenderingBackendProxy::send - failed, name:%" PUBLIC_LOG_STRING ", error:%" PUBLIC_LOG_STRING,
+            m_parameters.pageProxyID.toUInt64(), m_parameters.pageID.toUInt64(), m_parameters.identifier.toUInt64(), IPC::description(T::name()), IPC::errorAsString(result));
+    }
+    return result;
+}
+
+template<typename T>
+auto RemoteRenderingBackendProxy::sendSync(T&& message)
+{
+    auto result = streamConnection().sendSync(WTFMove(message), renderingBackendIdentifier(), defaultTimeout);
+    if (UNLIKELY(!result.succeeded())) {
+        RELEASE_LOG(RemoteLayerBuffers, "[pageProxyID=%" PRIu64 ", webPageID=%" PRIu64 ", renderingBackend=%" PRIu64 "] RemoteRenderingBackendProxy::sendSync - failed, name:%" PUBLIC_LOG_STRING ", error:%" PUBLIC_LOG_STRING,
+            m_parameters.pageProxyID.toUInt64(), m_parameters.pageID.toUInt64(), m_parameters.identifier.toUInt64(), IPC::description(T::name()), IPC::errorAsString(result.error));
+    }
+    return result;
+}
 
 void RemoteRenderingBackendProxy::didClose(IPC::Connection&)
 {
@@ -360,7 +381,7 @@ auto RemoteRenderingBackendProxy::prepareBuffersForDisplay(const Vector<LayerPre
         auto* buffer = m_remoteResourceCacheProxy.cachedImageBuffer(*identifier);
         if (!buffer)
             return nullptr;
-            
+
         if (handle) {
             if (auto* backend = buffer->ensureBackendCreated()) {
                 auto* sharing = backend->toBackendSharing();
@@ -368,7 +389,7 @@ auto RemoteRenderingBackendProxy::prepareBuffersForDisplay(const Vector<LayerPre
                     downcast<ImageBufferBackendHandleSharing>(*sharing).setBackendHandle(WTFMove(*handle));
             }
         }
-        
+
         if (isFrontBuffer) {
             // We know the GPU Process always sets the new front buffer to be non-volatile.
             buffer->setVolatilityState(VolatilityState::NonVolatile);

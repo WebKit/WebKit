@@ -54,7 +54,6 @@ public:
     void flushContextSync();
     void disconnect();
 
-    static inline constexpr Seconds defaultSendTimeout = 3_s;
 private:
     template<typename T> void send(T&& message);
     template<typename T> void sendSync(T&& message);
