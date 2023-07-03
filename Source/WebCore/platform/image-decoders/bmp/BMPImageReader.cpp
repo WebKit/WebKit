@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008, 2009, Google Inc. All rights reserved.
+ * Copyright (c) 2008-2015 Google Inc. All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -44,7 +44,6 @@ BMPImageReader::BMPImageReader(ScalableImageDecoder* parent, size_t decodedAndHe
     , m_isTopDown(false)
     , m_needToProcessBitmasks(false)
     , m_needToProcessColorTable(false)
-    , m_tableSizeInBytes(0)
     , m_seenNonZeroAlphaPixel(false)
     , m_seenZeroAlphaPixel(false)
     , m_andMaskState(usesAndMask ? NotYetDecoded : None)
@@ -59,8 +58,9 @@ bool BMPImageReader::decodeBMP(bool onlySize)
     if (!m_infoHeader.biSize && !readInfoHeaderSize())
         return false;
 
+    const size_t headerEnd = m_headerOffset + m_infoHeader.biSize;
     // Read and process info header.
-    if ((m_decodedOffset < (m_headerOffset + m_infoHeader.biSize)) && !processInfoHeader())
+    if ((m_decodedOffset < headerEnd) && !processInfoHeader())
         return false;
 
     // processInfoHeader() set the size, so if that's all we needed, we're done.
@@ -134,7 +134,8 @@ bool BMPImageReader::readInfoHeaderSize()
     // Don't allow the header to overflow (which would be harmless here, but
     // problematic or at least confusing in other places), or to overrun the
     // image data.
-    if (((m_headerOffset + m_infoHeader.biSize) < m_headerOffset) || (m_imgDataOffset && (m_imgDataOffset < (m_headerOffset + m_infoHeader.biSize))))
+    const size_t headerEnd = m_headerOffset + m_infoHeader.biSize;
+    if ((headerEnd < m_headerOffset) || (m_imgDataOffset && (m_imgDataOffset < headerEnd)))
         return m_parent->setFailed();
 
     // See if this is a header size we understand:
@@ -392,12 +393,14 @@ bool BMPImageReader::processBitmasks()
         // we read the info header.
 
         // Fail if we don't have enough file space for the bitmasks.
-        static const size_t SIZEOF_BITMASKS = 12;
-        if (((m_headerOffset + m_infoHeader.biSize + SIZEOF_BITMASKS) < (m_headerOffset + m_infoHeader.biSize)) || (m_imgDataOffset && (m_imgDataOffset < (m_headerOffset + m_infoHeader.biSize + SIZEOF_BITMASKS))))
+        const size_t headerEnd = m_headerOffset + m_infoHeader.biSize;
+        static constexpr size_t bitmasksSize = 12;
+        const size_t bitmasksEnd = headerEnd + bitmasksSize;
+        if ((bitmasksEnd < headerEnd) || (m_imgDataOffset && (m_imgDataOffset < bitmasksEnd)))
             return m_parent->setFailed();
 
         // Read bitmasks.
-        if ((m_data->size() - m_decodedOffset) < SIZEOF_BITMASKS)
+        if ((m_data->size() - m_decodedOffset) < bitmasksSize)
             return false;
         m_bitMasks[0] = readUint32(0);
         m_bitMasks[1] = readUint32(4);
@@ -405,7 +408,7 @@ bool BMPImageReader::processBitmasks()
         // No alpha in anything other than Windows V4+.
         m_bitMasks[3] = 0;
 
-        m_decodedOffset += SIZEOF_BITMASKS;
+        m_decodedOffset += bitmasksSize;
     }
 
     // We've now decoded all the non-image data we care about.  Skip anything
@@ -462,14 +465,15 @@ bool BMPImageReader::processBitmasks()
 
 bool BMPImageReader::processColorTable()
 {
-    m_tableSizeInBytes = m_infoHeader.biClrUsed * (m_isOS21x ? 3 : 4);
-
     // Fail if we don't have enough file space for the color table.
-    if (((m_headerOffset + m_infoHeader.biSize + m_tableSizeInBytes) < (m_headerOffset + m_infoHeader.biSize)) || (m_imgDataOffset && (m_imgDataOffset < (m_headerOffset + m_infoHeader.biSize + m_tableSizeInBytes))))
+    const size_t headerEnd = m_headerOffset + m_infoHeader.biSize;
+    const size_t tableSizeInBytes = m_infoHeader.biClrUsed * (m_isOS21x ? 3 : 4);
+    const size_t tableEnd = headerEnd + tableSizeInBytes;
+    if ((tableEnd < headerEnd) || (m_imgDataOffset && (m_imgDataOffset < tableEnd)))
         return m_parent->setFailed();
 
     // Read color table.
-    if ((m_decodedOffset > m_data->size()) || ((m_data->size() - m_decodedOffset) < m_tableSizeInBytes))
+    if ((m_decodedOffset > m_data->size()) || ((m_data->size() - m_decodedOffset) < tableSizeInBytes))
         return false;
     m_colorTable.resize(m_infoHeader.biClrUsed);
     for (size_t i = 0; i < m_infoHeader.biClrUsed; ++i) {
