@@ -51,7 +51,7 @@ NavigationRequester NavigationRequester::from(Document& document)
         document.url(),
         document.securityOrigin(),
         document.topOrigin(),
-        createGlobalFrameIdentifier(document),
+        createGlobalFrameIdentifier(document)
         document.policyContainer(),
         document.identifier(),
         createGlobalFrameIdentifier(document),
