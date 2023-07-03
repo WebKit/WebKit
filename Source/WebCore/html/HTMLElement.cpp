@@ -1349,14 +1349,14 @@ void HTMLElement::queuePopoverToggleEventTask(PopoverVisibilityState oldState, P
 
 ExceptionOr<void> HTMLElement::showPopover(const HTMLFormControlElement* invoker)
 {
-    if (popoverData())
-        popoverData()->setInvoker(invoker);
-
     auto check = checkPopoverValidity(*this, PopoverVisibilityState::Hidden);
     if (check.hasException())
         return check.releaseException();
     if (!check.returnValue())
         return { };
+
+    if (popoverData())
+        popoverData()->setInvoker(invoker);
 
     ASSERT(!isInTopLayer());
 
