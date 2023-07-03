@@ -94,7 +94,7 @@ private:
 
     EventInterface eventInterface() const final;
 
-    DataType m_data;
+    DataType m_data WTF_GUARDED_BY_LOCK(m_concurrentDataAccessLock);
     String m_origin;
     String m_lastEventId;
     std::optional<MessageEventSource> m_source;

@@ -59,7 +59,7 @@ using AdoptLockTag = std::adopt_lock_t;
 constexpr AdoptLockTag AdoptLock;
 
 template<typename T>
-class Locker : public AbstractLocker {
+class [[nodiscard]] Locker : public AbstractLocker { // NOLINT
 public:
     explicit Locker(T& lockable) : m_lockable(&lockable) { lock(); }
     explicit Locker(T* lockable) : m_lockable(lockable) { lock(); }
