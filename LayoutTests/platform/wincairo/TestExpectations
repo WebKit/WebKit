@@ -843,6 +843,7 @@ http/tests/eventsource [ Skip ]
 http/tests/events/touch/ios [ Skip ]
 http/tests/fileapi [ Skip ]
 http/tests/frame-throttling [ Skip ]
+http/tests/fullscreen [ Skip ]
 
 http/tests/globalhistory/history-delegate-basic-refresh-redirect.html [ Failure ]
 http/tests/globalhistory/history-delegate-basic-visited-links.html [ Pass Failure ]
@@ -852,6 +853,9 @@ http/tests/images/image-supports-video.html [ Failure ]
 http/tests/images/mp4-partial-load.html [ Failure ]
 
 webkit.org/b/219225 http/tests/inspector/dom/disconnect-dom-tree-after-main-frame-navigation.html [ Pass Failure ]
+
+# fullscreen isn't supported yet
+http/tests/inspector/dom/didFireEvent.html [ Skip ]
 
 http/tests/inspector/network/eventsource-type.html [ Failure ]
 http/tests/inspector/network/fetch-response-body.html [ Failure ]
@@ -2837,3 +2841,5 @@ compositing/overlap-blending/reflection-opacity-huge.html [ ImageOnlyFailure Pas
 fast/css-grid-layout/grid-item-display.html [ Failure Pass ]
 
 fast/canvas/canvas-ellipse-connecting-line.html [ ImageOnlyFailure ]
+
+fast/html/transient-activation.html [ Skip ]
