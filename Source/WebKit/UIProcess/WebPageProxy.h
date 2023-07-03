@@ -2236,6 +2236,8 @@ public:
     void reportNetworkIssue(const URL&);
 #endif
 
+    void useRedirectionForCurrentNavigation(const WebCore::ResourceResponse&);
+
 #if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
     void pauseAllAnimations(CompletionHandler<void()>&&);
     void playAllAnimations(CompletionHandler<void()>&&);

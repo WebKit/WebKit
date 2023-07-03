@@ -12806,6 +12806,12 @@ void WebPageProxy::setSystemPreviewCompletionHandlerForLoadTesting(CompletionHan
 }
 #endif
 
+void WebPageProxy::useRedirectionForCurrentNavigation(const ResourceResponse& response)
+{
+    ASSERT(response.isRedirection());
+    send(Messages::WebPage::UseRedirectionForCurrentNavigation(response));
+}
+
 } // namespace WebKit
 
 #undef WEBPAGEPROXY_RELEASE_LOG

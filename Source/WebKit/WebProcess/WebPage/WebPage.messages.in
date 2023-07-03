@@ -735,5 +735,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     PlayAllAnimations() -> ()
 #endif
 
+    UseRedirectionForCurrentNavigation(WebCore::ResourceResponse response);
+
     UpdateFrameSize(WebCore::FrameIdentifier frame, WebCore::IntSize newSize)
 }

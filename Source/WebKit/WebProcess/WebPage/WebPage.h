@@ -2129,6 +2129,8 @@ private:
     bool hasPendingEditorStateUpdate() const;
     bool shouldAvoidComputingPostLayoutDataForEditorState() const;
 
+    void useRedirectionForCurrentNavigation(WebCore::ResourceResponse&&);
+
     WebCore::PageIdentifier m_identifier;
 
     std::unique_ptr<WebCore::Page> m_page;

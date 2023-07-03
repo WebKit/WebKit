@@ -209,6 +209,8 @@ public:
 #endif
 
     void addAllowedFirstPartyForCookies(const RegistrableDomain&);
+    void useRedirectionForCurrentNavigation(WebCore::ResourceLoaderIdentifier, WebCore::ResourceResponse&&);
+
 private:
     NetworkConnectionToWebProcess(NetworkProcess&, WebCore::ProcessIdentifier, PAL::SessionID, NetworkProcessConnectionParameters, IPC::Connection::Identifier);
 

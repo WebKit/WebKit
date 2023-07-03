@@ -415,6 +415,8 @@ public:
     void setShouldOpenExternalURLsPolicy(ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy) { m_shouldOpenExternalURLsPolicy = shouldOpenExternalURLsPolicy; }
     ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicyToPropagate() const;
 
+    WEBCORE_EXPORT void setRedirectionAsSubstituteData(ResourceResponse&&);
+
 #if ENABLE(CONTENT_FILTERING)
 #if ENABLE(CONTENT_FILTERING_IN_NETWORKING_PROCESS)
     void setBlockedPageURL(const URL& blockedPageURL) { m_blockedPageURL = blockedPageURL; }
@@ -541,6 +543,8 @@ private:
     WEBCORE_EXPORT void cancelMainResourceLoadForContentFilter(const ResourceError&) final;
     WEBCORE_EXPORT void handleProvisionalLoadFailureFromContentFilter(const URL& blockedPageURL, SubstituteData&) final;
 #endif
+
+    void redirectReceived(ResourceRequest&&, const ResourceResponse&, CompletionHandler<void(ResourceRequest&&)>&&);
 
     void dataReceived(const SharedBuffer&);
 

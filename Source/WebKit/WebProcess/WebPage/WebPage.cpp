@@ -272,6 +272,7 @@
 #include <WebCore/StaticRange.h>
 #include <WebCore/StyleProperties.h>
 #include <WebCore/SubframeLoader.h>
+#include <WebCore/SubresourceLoader.h>
 #include <WebCore/SubstituteData.h>
 #include <WebCore/TextIterator.h>
 #include <WebCore/TextRecognitionOptions.h>
@@ -8917,6 +8918,33 @@ const Logger& WebPage::logger() const
 const void* WebPage::logIdentifier() const
 {
     return reinterpret_cast<const void*>(intHash(m_identifier.toUInt64()));
+}
+
+void WebPage::useRedirectionForCurrentNavigation(WebCore::ResourceResponse&& response)
+{
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame());
+    if (!localMainFrame) {
+        WEBPAGE_RELEASE_LOG_ERROR(Loading, "WebPage::useRedirectionForCurrentNavigation failed without frame");
+        return;
+    }
+
+    auto* loader = localMainFrame->loader().policyDocumentLoader();
+    if (!loader)
+        loader = localMainFrame->loader().provisionalDocumentLoader();
+
+    if (!loader) {
+        WEBPAGE_RELEASE_LOG_ERROR(Loading, "WebPage::useRedirectionForCurrentNavigation failed without loader");
+        return;
+    }
+
+    if (auto* resourceLoader = loader->mainResourceLoader()) {
+        WEBPAGE_RELEASE_LOG(Loading, "WebPage::useRedirectionForCurrentNavigation to network process");
+        WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::UseRedirectionForCurrentNavigation(resourceLoader->identifier(), response), 0);
+        return;
+    }
+
+    WEBPAGE_RELEASE_LOG(Loading, "WebPage::useRedirectionForCurrentNavigation as substiute data");
+    loader->setRedirectionAsSubstituteData(WTFMove(response));
 }
 
 } // namespace WebKit
