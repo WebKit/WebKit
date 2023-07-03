@@ -779,8 +779,11 @@ auto Connection::sendSyncMessage(SyncRequestID syncRequestID, UniqueRef<Encoder>
 
     popPendingSyncRequestID(syncRequestID);
 
-    if (!replyOrError.decoder)
-        didFailToSendSyncMessage(replyOrError.error != Error::NoError ? replyOrError.error : Error::Unspecified);
+    if (!replyOrError.decoder) {
+        if (replyOrError.error == Error::NoError)
+            replyOrError.error = Error::Unspecified;
+        didFailToSendSyncMessage(replyOrError.error);
+    }
 
     return replyOrError;
 }
