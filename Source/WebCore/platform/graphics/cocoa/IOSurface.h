@@ -82,24 +82,21 @@ public:
     };
 
     WEBCORE_EXPORT static IOSurface::Format formatForPixelFormat(WebCore::PixelFormat);
-    
+
+    enum class AccessMode : uint32_t {
+        ReadWrite = 0,
+        ReadOnly = kIOSurfaceLockReadOnly
+    };
+    template <AccessMode Mode>
     class Locker {
     public:
-        enum class AccessMode : uint32_t {
-            ReadWrite = 0,
-            ReadOnly = kIOSurfaceLockReadOnly,
-        };
-
-        explicit Locker(IOSurface& surface, AccessMode mode = AccessMode::ReadOnly)
-            : m_surface(surface.surface())
-            , m_flags(static_cast<uint32_t>(mode))
+        static Locker adopt(RetainPtr<IOSurfaceRef> surface)
         {
-            IOSurfaceLock(m_surface, m_flags, nullptr);
+            return Locker { WTFMove(surface) };
         }
 
         Locker(Locker&& other)
             : m_surface(std::exchange(other.m_surface, nullptr))
-            , m_flags(other.m_flags)
         {
         }
 
@@ -107,24 +104,27 @@ public:
         {
             if (!m_surface)
                 return;
-            IOSurfaceUnlock(m_surface, m_flags, nullptr);
+            IOSurfaceUnlock(m_surface.get(), static_cast<uint32_t>(Mode), nullptr);
         }
 
         Locker& operator=(Locker&& other)
         {
             m_surface = std::exchange(other.m_surface, nullptr);
-            m_flags = other.m_flags;
             return *this;
         }
 
-        void * surfaceBaseAddress() const
+        void* surfaceBaseAddress() const
         {
-            return IOSurfaceGetBaseAddress(m_surface);
+            return IOSurfaceGetBaseAddress(m_surface.get());
         }
 
     private:
-        IOSurfaceRef m_surface;
-        uint32_t m_flags;
+        explicit Locker(RetainPtr<IOSurfaceRef> surface)
+            : m_surface(WTFMove(surface))
+        {
+        }
+
+        RetainPtr<IOSurfaceRef> m_surface;
     };
 
     WEBCORE_EXPORT static std::unique_ptr<IOSurface> create(IOSurfacePool*, IntSize, const DestinationColorSpace&, Name = Name::Default, Format = Format::BGRA);
@@ -166,10 +166,11 @@ public:
     WEBCORE_EXPORT RetainPtr<CGContextRef> createPlatformContext(PlatformDisplayID = 0);
 
     struct LockAndContext {
-        IOSurface::Locker lock;
+        IOSurface::Locker<AccessMode::ReadWrite> lock;
         RetainPtr<CGContextRef> context;
     };
     WEBCORE_EXPORT std::optional<LockAndContext> createBitmapPlatformContext();
+    template<AccessMode Mode> std::optional<Locker<Mode>> lock();
 
     // Querying volatility can be expensive, so in cases where the surface is
     // going to be used immediately, use the return value of setVolatile to
@@ -233,6 +234,14 @@ private:
 
     WEBCORE_EXPORT friend WTF::TextStream& operator<<(WTF::TextStream&, const WebCore::IOSurface&);
 };
+
+template<IOSurface::AccessMode Mode>
+std::optional<IOSurface::Locker<Mode>> IOSurface::lock()
+{
+    if (IOSurfaceLock(m_surface.get(), static_cast<uint32_t>(Mode), nullptr) != kIOReturnSuccess)
+        return std::nullopt;
+    return IOSurface::Locker<Mode>::adopt(m_surface);
+}
 
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, WebCore::IOSurface::Format);
 
