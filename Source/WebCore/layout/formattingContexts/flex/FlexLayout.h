@@ -80,7 +80,7 @@ private:
     bool collapseNonVisibleFlexItems();
     SizeList computeCrossSizeForFlexItems(const LogicalFlexItems&, const LineRanges&, const LinesCrossSizeList& flexLinesCrossSizeList, const SizeList& flexItemsHypotheticalCrossSizeList) const;
     PositionAndMarginsList handleMainAxisAlignment(LayoutUnit availableMainSpace, const LineRanges&, const LogicalFlexItems&, const SizeList& flexItemsMainSizeList) const;
-    PositionAndMarginsList handleCrossAxisAlignmentForFlexItems(const LogicalFlexItems&, const LineRanges&, const SizeList& flexItemsCrossSizeList, const LinesCrossSizeList& flexLinesCrossSizeList) const;
+    PositionAndMarginsList handleCrossAxisAlignmentForFlexItems(const LogicalFlexItems&, const LineRanges&, SizeList& flexItemsCrossSizeList, const LinesCrossSizeList& flexLinesCrossSizeList) const;
     LinesCrossPositionList handleCrossAxisAlignmentForFlexLines(const LogicalConstraints::AxisGeometry& crossAxis, const LineRanges&, LinesCrossSizeList& flexLinesCrossSizeList) const;
 
     LayoutUnit maxContentForFlexItem(const LogicalFlexItem&) const;

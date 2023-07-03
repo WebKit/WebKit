@@ -54,6 +54,9 @@ public:
         LayoutUnit ascent;
         LayoutUnit descent;
 
+        std::optional<LayoutUnit> maximumSize;
+        std::optional<LayoutUnit> minimumSize;
+
         std::optional<LayoutUnit> marginStart;
         std::optional<LayoutUnit> marginEnd;
 

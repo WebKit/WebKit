@@ -218,7 +218,7 @@ FlexLayout::FlexBaseAndHypotheticalMainSizeList FlexLayout::flexBaseAndHypotheti
             auto hypotheticalValue = flexBaseSize;
             auto maximum = flexItem.mainAxis().maximumSize.value_or(hypotheticalValue);
             auto minimum = flexItem.mainAxis().minimumSize.value_or(hypotheticalValue);
-            return std::max(maximum, std::min(minimum, hypotheticalValue));
+            return std::min(maximum, std::max(minimum, hypotheticalValue));
         };
         flexBaseAndHypotheticalMainSizeList.append({ flexBaseSize, hypotheticalMainSize() });
     }
@@ -394,7 +394,7 @@ FlexLayout::SizeList FlexLayout::computeMainSizeForFlexItems(const LogicalFlexIt
                 auto mainSize = mainSizeList[nonFrozenIndex];
                 auto maximum = flexItems[nonFrozenIndex].mainAxis().maximumSize.value_or(mainSize);
                 auto minimum = flexItems[nonFrozenIndex].mainAxis().minimumSize.value_or(mainSize);
-                mainSize = std::max(maximum, std::min(minimum, mainSize));
+                mainSize = std::min(maximum, std::max(minimum, mainSize));
                 auto mainContentBoxSize = std::max(0_lu, mainSize - flexItems[nonFrozenIndex].mainAxis().borderAndPadding);
                 if (mainContentBoxSize < mainSize)
                     maximumViolationList.append(nonFrozenIndex);
@@ -492,7 +492,7 @@ FlexLayout::LinesCrossSizeList FlexLayout::crossSizeForFlexLines(const LineRange
         if (isSingleLineFlexContainer()) {
             auto minimumCrossSize = crossAxis.minimumSize.value_or(flexLinesCrossSizeList[lineIndex]);
             auto maximumCrossSize = crossAxis.maximumSize.value_or(flexLinesCrossSizeList[lineIndex]);
-            flexLinesCrossSizeList[lineIndex] = std::max(maximumCrossSize, std::min(minimumCrossSize, flexLinesCrossSizeList[lineIndex]));
+            flexLinesCrossSizeList[lineIndex] = std::min(maximumCrossSize, std::max(minimumCrossSize, flexLinesCrossSizeList[lineIndex]));
         }
     }
     return flexLinesCrossSizeList;
@@ -546,7 +546,7 @@ FlexLayout::SizeList FlexLayout::computeCrossSizeForFlexItems(const LogicalFlexI
                     auto usedOuterCrossSize = outerCrossSize(flexItem, flexLinesCrossSizeList[flexItemIndex]);
                     auto minimumCrossSize = flexItem.mainAxis().minimumSize.value_or(usedOuterCrossSize);
                     auto maximumCrossSize = flexItem.mainAxis().maximumSize.value_or(usedOuterCrossSize);
-                    crossSizeList[flexItemIndex] = std::max(maximumCrossSize, std::min(minimumCrossSize, usedOuterCrossSize));
+                    crossSizeList[flexItemIndex] = std::min(maximumCrossSize, std::max(minimumCrossSize, usedOuterCrossSize));
                 }
                 // If the flex item has align-self: stretch, redo layout for its contents, treating this used size as its definite cross
                 // size so that percentage-sized children can be resolved.
@@ -705,7 +705,7 @@ FlexLayout::PositionAndMarginsList FlexLayout::handleMainAxisAlignment(LayoutUni
     return mainPositionAndMargins;
 }
 
-FlexLayout::PositionAndMarginsList FlexLayout::handleCrossAxisAlignmentForFlexItems(const LogicalFlexItems& flexItems, const LineRanges& lineRanges, const SizeList& flexItemsCrossSizeList, const LinesCrossSizeList& flexLinesCrossSizeList) const
+FlexLayout::PositionAndMarginsList FlexLayout::handleCrossAxisAlignmentForFlexItems(const LogicalFlexItems& flexItems, const LineRanges& lineRanges, SizeList& flexItemsCrossSizeList, const LinesCrossSizeList& flexLinesCrossSizeList) const
 {
     auto crossPositionAndMargins = PositionAndMarginsList { flexItems.size() };
 
@@ -753,40 +753,49 @@ FlexLayout::PositionAndMarginsList FlexLayout::handleCrossAxisAlignmentForFlexIt
             // Align all flex items along the cross-axis per align-self, if neither of the item's cross-axis margins are auto.
             for (auto flexItemIndex = lineRange.begin(); flexItemIndex < lineRange.end(); ++flexItemIndex) {
                 auto& flexItem = flexItems[flexItemIndex];
-                auto flexItemOuterCrossSize = crossPositionAndMargins[flexItemIndex].marginStart + flexItemsCrossSizeList[flexItemIndex] + crossPositionAndMargins[flexItemIndex].marginEnd;
-                auto flexitemOuterCrossPosition = LayoutUnit { };
+                auto flexItemOuterCrossSize = outerCrossSize(flexItem, flexItemsCrossSizeList[flexItemIndex], crossPositionAndMargins[flexItemIndex].margin());
+
+                auto flexItemOuterCrossPosition = LayoutUnit { };
 
                 auto& flexItemAlignSelf = flexItem.style().alignSelf();
                 auto alignValue = flexItemAlignSelf.position() != ItemPosition::Auto ? flexItemAlignSelf : flexContainerStyle().alignItems();
                 switch (alignValue.position()) {
                 case ItemPosition::Stretch:
                 case ItemPosition::Normal: {
-                    flexitemOuterCrossPosition = { };
+                    flexItemOuterCrossPosition = { };
                     auto& crossAxis = flexItems[flexItemIndex].crossAxis();
                     if (crossAxis.hasSizeAuto && crossAxis.marginStart && crossAxis.marginEnd) {
                         // If the cross size property of the flex item computes to auto, and neither of the cross-axis margins are auto, the flex item is stretched.
                         // Its used value is the length necessary to make the cross size of the item's margin box as close to the
                         // same size as the line as possible, while still respecting the constraints imposed by min-height/min-width/max-height/max-width.
-                        ASSERT_NOT_IMPLEMENTED_YET();
+                        auto stretchedInnerCrossSize = [&] {
+                            auto stretchedInnerCrossSize = flexLinesCrossSizeList[lineIndex] - crossPositionAndMargins[flexItemIndex].margin();
+                            if (flexItem.isContentBoxBased())
+                                stretchedInnerCrossSize -= flexItem.crossAxis().borderAndPadding;
+                            auto maximum = flexItem.crossAxis().maximumSize.value_or(stretchedInnerCrossSize);
+                            auto minimum = flexItem.crossAxis().minimumSize.value_or(stretchedInnerCrossSize);
+                            return std::min(maximum, std::max(minimum, stretchedInnerCrossSize));
+                        };
+                        flexItemsCrossSizeList[flexItemIndex] = stretchedInnerCrossSize();
                     }
                     break;
                 }
                 case ItemPosition::Center:
-                    flexitemOuterCrossPosition = flexLinesCrossSizeList[lineIndex] / 2 - flexItemOuterCrossSize  / 2;
+                    flexItemOuterCrossPosition = flexLinesCrossSizeList[lineIndex] / 2 - flexItemOuterCrossSize  / 2;
                     break;
                 case ItemPosition::Start:
                 case ItemPosition::FlexStart:
-                    flexitemOuterCrossPosition = { };
+                    flexItemOuterCrossPosition = { };
                     break;
                 case ItemPosition::End:
                 case ItemPosition::FlexEnd:
-                    flexitemOuterCrossPosition = flexLinesCrossSizeList[lineIndex] - flexItemOuterCrossSize;
+                    flexItemOuterCrossPosition = flexLinesCrossSizeList[lineIndex] - flexItemOuterCrossSize;
                     break;
                 default:
                     ASSERT_NOT_IMPLEMENTED_YET();
                     break;
                 }
-                crossPositionAndMargins[flexItemIndex].position = flexitemOuterCrossPosition + crossPositionAndMargins[flexItemIndex].marginStart;
+                crossPositionAndMargins[flexItemIndex].position = flexItemOuterCrossPosition + crossPositionAndMargins[flexItemIndex].marginStart;
             }
         };
         alignSelf();

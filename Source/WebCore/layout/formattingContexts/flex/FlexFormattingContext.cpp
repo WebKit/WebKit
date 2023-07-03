@@ -124,6 +124,10 @@ FlexLayout::LogicalFlexItems FlexFormattingContext::convertFlexItemsToLogicalSpa
                 crossAxis.hasSizeAuto = height.isAuto();
                 if (height.isFixed())
                     crossAxis.definiteSize = height.value();
+                if (style.maxHeight().isSpecified())
+                    crossAxis.maximumSize = valueForLength(style.maxHeight(), constraints.availableVerticalSpace().value_or(0));
+                if (!style.minHeight().isSpecified())
+                    crossAxis.minimumSize = valueForLength(style.minHeight(), constraints.availableVerticalSpace().value_or(0));
                 crossAxis.borderAndPadding = flexItemGeometry.verticalBorderAndPadding();
                 break;
             }
