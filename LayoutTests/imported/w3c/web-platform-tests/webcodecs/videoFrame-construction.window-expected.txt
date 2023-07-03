@@ -1,7 +1,5 @@
 
-Harness Error (TIMEOUT), message = null
-
 PASS Test that timestamp is required when constructing VideoFrame from HTMLImageElement
-TIMEOUT Test that timestamp is required when constructing VideoFrame from SVGImageElement Test timed out
-NOTRUN Test that timeamp is required when constructing VideoFrame from HTMLCanvasElement
+PASS Test that timestamp is required when constructing VideoFrame from SVGImageElement
+PASS Test that timeamp is required when constructing VideoFrame from HTMLCanvasElement
 
