@@ -39,8 +39,8 @@
 #if ENABLE(TEST_FEATURE)
 #include "StructHeader.h"
 #endif
-#include <Namespace/EmptyConstructorNullable.h>
 #include <Namespace/EmptyConstructorStruct.h>
+#include <Namespace/EmptyConstructorWithIf.h>
 #include <Namespace/ReturnRefClass.h>
 #include <WebCore/FloatBoxExtent.h>
 #include <WebCore/InheritanceGrandchild.h>
@@ -72,9 +72,6 @@ Vector<SerializedTypeInfo> allSerializedTypes()
         } },
         { "Namespace::OtherClass"_s, {
             {
-                "bool"_s,
-                "isNull"_s
-            }, {
                 "int"_s,
                 "a"_s
             }, {
@@ -106,11 +103,8 @@ Vector<SerializedTypeInfo> allSerializedTypes()
                 "m_double"_s
             }
         } },
-        { "Namespace::EmptyConstructorNullable"_s, {
+        { "Namespace::EmptyConstructorWithIf"_s, {
             {
-                "bool"_s,
-                "m_isNull"_s
-            }, {
                 "MemberType"_s,
                 "m_type"_s
             }, {

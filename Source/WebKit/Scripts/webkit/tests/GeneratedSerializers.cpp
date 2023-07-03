@@ -39,8 +39,8 @@
 #if ENABLE(TEST_FEATURE)
 #include "StructHeader.h"
 #endif
-#include <Namespace/EmptyConstructorNullable.h>
 #include <Namespace/EmptyConstructorStruct.h>
+#include <Namespace/EmptyConstructorWithIf.h>
 #include <Namespace/ReturnRefClass.h>
 #include <WebCore/FloatBoxExtent.h>
 #include <WebCore/InheritanceGrandchild.h>
@@ -202,23 +202,19 @@ std::optional<Namespace::Subnamespace::StructName> ArgumentCoder<Namespace::Subn
 
 void ArgumentCoder<Namespace::OtherClass>::encode(Encoder& encoder, const Namespace::OtherClass& instance)
 {
-    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.isNull)>, bool>);
     static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.a)>, int>);
     static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.b)>, bool>);
     static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.dataDetectorResults)>, RetainPtr<NSArray>>);
     struct ShouldBeSameSizeAsOtherClass : public VirtualTableAndRefCountOverhead<std::is_polymorphic_v<Namespace::OtherClass>, false> {
-        bool isNull;
         int a;
         bool b : 1;
         RetainPtr<NSArray> dataDetectorResults;
     };
     static_assert(sizeof(ShouldBeSameSizeAsOtherClass) == sizeof(Namespace::OtherClass));
     static_assert(MembersInCorrectOrder<0
-        , offsetof(Namespace::OtherClass, isNull)
         , offsetof(Namespace::OtherClass, a)
         , offsetof(Namespace::OtherClass, dataDetectorResults)
     >::value);
-    encoder << instance.isNull;
     encoder << instance.a;
     encoder << instance.b;
     encoder << instance.dataDetectorResults;
@@ -226,10 +222,6 @@ void ArgumentCoder<Namespace::OtherClass>::encode(Encoder& encoder, const Namesp
 
 std::optional<Namespace::OtherClass> ArgumentCoder<Namespace::OtherClass>::decode(Decoder& decoder)
 {
-    auto isNull = decoder.decode<bool>();
-    if (!isNull)
-        return std::nullopt;
-
     auto a = decoder.decode<int>();
     if (!a)
         return std::nullopt;
@@ -244,7 +236,6 @@ std::optional<Namespace::OtherClass> ArgumentCoder<Namespace::OtherClass>::decod
 
     return {
         Namespace::OtherClass {
-            WTFMove(*isNull),
             WTFMove(*a),
             WTFMove(*b),
             WTFMove(*dataDetectorResults)
@@ -312,17 +303,15 @@ std::optional<Namespace::EmptyConstructorStruct> ArgumentCoder<Namespace::EmptyC
 }
 
 
-void ArgumentCoder<Namespace::EmptyConstructorNullable>::encode(Encoder& encoder, const Namespace::EmptyConstructorNullable& instance)
+void ArgumentCoder<Namespace::EmptyConstructorWithIf>::encode(Encoder& encoder, const Namespace::EmptyConstructorWithIf& instance)
 {
-    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.m_isNull)>, bool>);
 #if CONDITION_AROUND_M_TYPE_AND_M_VALUE
     static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.m_type)>, MemberType>);
 #endif
 #if CONDITION_AROUND_M_TYPE_AND_M_VALUE
     static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.m_value)>, OtherMemberType>);
 #endif
-    struct ShouldBeSameSizeAsEmptyConstructorNullable : public VirtualTableAndRefCountOverhead<std::is_polymorphic_v<Namespace::EmptyConstructorNullable>, false> {
-        bool m_isNull;
+    struct ShouldBeSameSizeAsEmptyConstructorWithIf : public VirtualTableAndRefCountOverhead<std::is_polymorphic_v<Namespace::EmptyConstructorWithIf>, false> {
 #if CONDITION_AROUND_M_TYPE_AND_M_VALUE
         MemberType m_type;
 #endif
@@ -330,17 +319,15 @@ void ArgumentCoder<Namespace::EmptyConstructorNullable>::encode(Encoder& encoder
         OtherMemberType m_value;
 #endif
     };
-    static_assert(sizeof(ShouldBeSameSizeAsEmptyConstructorNullable) == sizeof(Namespace::EmptyConstructorNullable));
+    static_assert(sizeof(ShouldBeSameSizeAsEmptyConstructorWithIf) == sizeof(Namespace::EmptyConstructorWithIf));
     static_assert(MembersInCorrectOrder<0
-        , offsetof(Namespace::EmptyConstructorNullable, m_isNull)
 #if CONDITION_AROUND_M_TYPE_AND_M_VALUE
-        , offsetof(Namespace::EmptyConstructorNullable, m_type)
+        , offsetof(Namespace::EmptyConstructorWithIf, m_type)
 #endif
 #if CONDITION_AROUND_M_TYPE_AND_M_VALUE
-        , offsetof(Namespace::EmptyConstructorNullable, m_value)
+        , offsetof(Namespace::EmptyConstructorWithIf, m_value)
 #endif
     >::value);
-    encoder << instance.m_isNull;
 #if CONDITION_AROUND_M_TYPE_AND_M_VALUE
     encoder << instance.m_type;
 #endif
@@ -349,12 +336,8 @@ void ArgumentCoder<Namespace::EmptyConstructorNullable>::encode(Encoder& encoder
 #endif
 }
 
-std::optional<Namespace::EmptyConstructorNullable> ArgumentCoder<Namespace::EmptyConstructorNullable>::decode(Decoder& decoder)
+std::optional<Namespace::EmptyConstructorWithIf> ArgumentCoder<Namespace::EmptyConstructorWithIf>::decode(Decoder& decoder)
 {
-    auto m_isNull = decoder.decode<bool>();
-    if (!m_isNull)
-        return std::nullopt;
-
 #if CONDITION_AROUND_M_TYPE_AND_M_VALUE
     auto m_type = decoder.decode<MemberType>();
     if (!m_type)
@@ -367,8 +350,7 @@ std::optional<Namespace::EmptyConstructorNullable> ArgumentCoder<Namespace::Empt
         return std::nullopt;
 #endif
 
-    Namespace::EmptyConstructorNullable result;
-    result.m_isNull = WTFMove(*m_isNull);
+    Namespace::EmptyConstructorWithIf result;
 #if CONDITION_AROUND_M_TYPE_AND_M_VALUE
     result.m_type = WTFMove(*m_type);
 #endif

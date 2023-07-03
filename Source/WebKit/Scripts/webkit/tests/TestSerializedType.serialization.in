@@ -14,7 +14,6 @@ headers: "StructHeader.h" "FirstMemberType.h" "SecondMemberType.h"
 #endif
 
 [Nested] class Namespace::OtherClass {
-    [ReturnEarlyIfTrue] bool isNull
     int a
     [BitField] bool b
     [SecureCodingAllowed=[NSArray.class, PAL::getDDScannerResultClass()]] RetainPtr<NSArray> dataDetectorResults;
@@ -31,8 +30,7 @@ headers: "StructHeader.h" "FirstMemberType.h" "SecondMemberType.h"
     double m_double;
 }
 
-[LegacyPopulateFromEmptyConstructor] class Namespace::EmptyConstructorNullable {
-    [ReturnEarlyIfTrue] bool m_isNull;
+[LegacyPopulateFromEmptyConstructor] class Namespace::EmptyConstructorWithIf {
 #if CONDITION_AROUND_M_TYPE_AND_M_VALUE
     MemberType m_type;
     OtherMemberType m_value;

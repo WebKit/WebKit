@@ -43,7 +43,7 @@ namespace Namespace::Subnamespace { struct StructName; }
 #endif
 namespace Namespace { class ReturnRefClass; }
 namespace Namespace { struct EmptyConstructorStruct; }
-namespace Namespace { class EmptyConstructorNullable; }
+namespace Namespace { class EmptyConstructorWithIf; }
 class WithoutNamespace;
 class WithoutNamespaceWithAttributes;
 namespace WebCore { class InheritsFrom; }
@@ -88,9 +88,9 @@ template<> struct ArgumentCoder<Namespace::EmptyConstructorStruct> {
     static std::optional<Namespace::EmptyConstructorStruct> decode(Decoder&);
 };
 
-template<> struct ArgumentCoder<Namespace::EmptyConstructorNullable> {
-    static void encode(Encoder&, const Namespace::EmptyConstructorNullable&);
-    static std::optional<Namespace::EmptyConstructorNullable> decode(Decoder&);
+template<> struct ArgumentCoder<Namespace::EmptyConstructorWithIf> {
+    static void encode(Encoder&, const Namespace::EmptyConstructorWithIf&);
+    static std::optional<Namespace::EmptyConstructorWithIf> decode(Decoder&);
 };
 
 template<> struct ArgumentCoder<WithoutNamespace> {
