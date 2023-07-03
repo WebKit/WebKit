@@ -266,13 +266,8 @@ void FlexFormattingContext::setFlexItemsGeometry(const FlexLayout::LogicalFlexIt
         auto contentBoxWidth = isMainAxisParallelWithInlineAxis ? logicalRect.width() : logicalRect.height();
         auto contentBoxHeight = isMainAxisParallelWithInlineAxis ? logicalRect.height() : logicalRect.width();
         if (!logicalFlexItem.isContentBoxBased()) {
-            auto usedHorizontalMargin = horizontalMargin(logicalRects[index], flexDirection);
-            auto usedVerticalMargin = verticalMargin(logicalRects[index], flexDirection);
-            auto horizontalMarginBorderAndPadding = usedHorizontalMargin.start + flexItemGeometry.horizontalBorderAndPadding() + usedHorizontalMargin.end;
-            auto verticallMarginBorderAndPadding = usedVerticalMargin.before + flexItemGeometry.verticalBorderAndPadding() + usedVerticalMargin.after;
-
-            contentBoxWidth -= horizontalMarginBorderAndPadding;
-            contentBoxHeight -= verticallMarginBorderAndPadding;
+            contentBoxWidth -= flexItemGeometry.horizontalBorderAndPadding();
+            contentBoxHeight -= flexItemGeometry.verticalBorderAndPadding();
         }
         flexItemGeometry.setContentBoxWidth(contentBoxWidth);
         flexItemGeometry.setContentBoxHeight(contentBoxHeight);
