@@ -246,7 +246,7 @@
 
 .media-controls.vision.audio > .bottom.controls-bar,
 .media-controls.vision.audio > .bottom.controls-bar * {
-    --inline-controls-bar-height: 31px;
+    --inline-controls-bar-height: 32px;
 }
 
 .media-controls.vision > .bottom.controls-bar {
@@ -258,6 +258,28 @@
     padding: 10px;
     box-sizing: content-box;
     transform: translateX(-10px);
+}
+
+/* Adjust the padding and margins of the audio buttons to account for their smaller sizes */
+
+.media-controls.vision.audio > .bottom.controls-bar button {
+    border-radius: 50%;
+    padding: 6px;
+    box-sizing: content-box;
+    transform: translateX(-6px);
+}
+
+.media-controls.vision.audio > .bottom.controls-bar button.mute {
+    padding: 3px;
+    transform: translateX(-3px);
+}
+
+.media-controls.vision.audio > .bottom.controls-bar .buttons-container.left {
+    margin-left: -1px;
+}
+
+.media-controls.vision.audio > .bottom.controls-bar .buttons-container.right {
+    margin-left: 6px;
 }
 
 .media-controls.vision > .controls-bar > .background-tint,
