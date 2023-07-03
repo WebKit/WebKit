@@ -3185,9 +3185,11 @@ void RenderLayerBacking::updateImageContents(PaintedContentsInfo& contentsInfo)
     if (!image)
         return;
 
+#if (!PLATFORM(GTK) && !PLATFORM(WPE) && !PLATFORM(WIN) && !PLATFORM(PLAYSTATION))
     // We have to wait until the image is fully loaded before setting it on the layer.
     if (!cachedImage->isLoaded())
         return;
+#endif
 
     updateContentsRects();
     m_graphicsLayer->setContentsToImage(image);
