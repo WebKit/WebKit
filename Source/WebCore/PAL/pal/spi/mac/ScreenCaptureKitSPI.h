@@ -37,10 +37,6 @@
 #if __has_include(<ScreenCaptureKit/SCContentSharingPicker.h>)
 #import <ScreenCaptureKit/SCContentSharingPicker.h>
 #endif
-
-#if __has_include(<ScreenCaptureKit/SCContentSharingPicker_Private.h>)
-#import <ScreenCaptureKit/SCContentSharingPicker_Private.h>
-#endif
 #endif // HAVE(SC_CONTENT_SHARING_PICKER)
 
 #else // USE(APPLE_INTERNAL_SDK)
@@ -92,43 +88,6 @@ typedef NS_ENUM(NSInteger, SCContentFilterType) {
 
 @interface SCStream (SCContentSharing) <SCContentSharingSessionProtocol>
 - (instancetype)initWithSharingSession:(SCContentSharingSession *)session captureOutputProperties:(SCStreamConfiguration *)streamConfig delegate:(id<SCStreamDelegate>)delegate;
-@end
-
-@protocol SCContentSharingPickerDelegate <NSObject>
-@required
-@optional
-- (void)contentSharingPicker:(SCContentSharingPicker *)picker didCancelForStream:(nullable SCStream *)stream;
-- (void)contentSharingPickerStartDidFailWithError:(NSError *)error;
-- (void)contentSharingPickerDidCancel:(SCContentSharingPicker *)picker forStream:(nullable SCStream *)stream;
-@end
-
-typedef NS_OPTIONS(NSUInteger, SCContentSharingAllowedPickerModes) {
-    SCContentSharingPickerAllowedModeSingleWindow          = 1 << 0,
-    SCContentSharingPickerAllowedModeMultipleWindows       = 1 << 1,
-    SCContentSharingPickerAllowedModeSingleApplication     = 1 << 2,
-    SCContentSharingPickerAllowedModeSingleDisplay         = 1 << 3,
-};
-
-// FIXME: Drop deprecated method names once we no longer support Ventura. These
-// SPI methods all have public equivalents in Sonoma.
-@interface SCContentSharingPickerConfiguration
-#if HAVE(SC_CONTENT_SHARING_PICKER)
-    ()
-#else
-    : NSObject
-#endif
-@property (nonatomic, assign) SCContentSharingAllowedPickerModes allowedPickingModes;
-@end
-
-@interface SCContentSharingPicker
-#if HAVE(SC_CONTENT_SHARING_PICKER)
-    ()
-#else
-    : NSObject
-#endif
-@property (nonatomic, weak, nullable) id<SCContentSharingPickerDelegate> delegate;
-@property (nonatomic, nullable, strong) NSNumber *maxStreamCount;
-@property (nonatomic, nullable, copy) SCContentSharingPickerConfiguration *configuration;
 @end
 
 NS_ASSUME_NONNULL_END
