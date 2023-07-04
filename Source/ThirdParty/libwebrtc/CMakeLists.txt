@@ -1780,8 +1780,8 @@ if (WTF_CPU_X86_64 OR WTF_CPU_X86)
     )
 endif()
 
-if (WTF_CPU_X86_64 AND WTF_CPU_HAS_AVX2)
-    list(APPEND webrtc_SOURCES
+if (WTF_CPU_X86_64 OR WTF_CPU_X86)
+    list(APPEND webrtc_avx_SOURCES
         Source/webrtc/common_audio/fir_filter_avx2.cc
         Source/webrtc/common_audio/resampler/sinc_resampler_avx2.cc
         Source/webrtc/modules/audio_processing/aec3/adaptive_fir_filter_avx2.cc
@@ -1791,7 +1791,8 @@ if (WTF_CPU_X86_64 AND WTF_CPU_HAS_AVX2)
         Source/webrtc/modules/audio_processing/aec3/vector_math_avx2.cc
         Source/webrtc/modules/audio_processing/agc2/rnn_vad/vector_math_avx2.cc
     )
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=native -mno-avx512f")
+    set_source_files_properties(webrtc_avx_SOURCES PROPERTIES COMPILE_OPTIONS "-mavx2;-mfma")
+    list(APPEND webrtc_SOURCES webrtc_avx_SOURCES)
     add_definitions(-DWEBRTC_ENABLE_AVX2)
 endif()
 

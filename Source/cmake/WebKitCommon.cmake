@@ -124,13 +124,6 @@ if (NOT HAS_RUN_WEBKIT_COMMON)
         set(WTF_CPU_UNKNOWN 1)
     endif ()
 
-    if (WTF_CPU_X86_64 AND NOT CMAKE_CROSSCOMPILING)
-        include(DetectAVX2)
-        if (AVX2_SUPPORT_FOUND)
-            set(WTF_CPU_HAS_AVX2 1)
-        endif ()
-    endif ()
-
     # -----------------------------------------------------------------------------
     # Determine the operating system
     # -----------------------------------------------------------------------------
