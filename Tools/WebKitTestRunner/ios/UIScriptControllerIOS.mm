@@ -882,7 +882,7 @@ JSObjectRef UIScriptControllerIOS::selectionEndGrabberViewRect() const
     return JSValueToObject(jsContext, [JSValue valueWithObject:toNSDictionary(frameInContentViewCoordinates) inContext:[JSContext contextWithJSGlobalContextRef:jsContext]].JSValueRef, nullptr);
 }
 
-JSObjectRef UIScriptControllerIOS::selectionCaretViewRect() const
+JSObjectRef UIScriptControllerIOS::selectionCaretViewRect(id<UICoordinateSpace> coordinateSpace) const
 {
     UIView *contentView = platformContentView();
     UIView *caretView = nil;
@@ -894,9 +894,21 @@ JSObjectRef UIScriptControllerIOS::selectionCaretViewRect() const
     caretView = [contentView valueForKeyPath:@"interactionAssistant.selectionView.caretView"];
 #endif
 
-    auto rectInContentViewCoordinates = CGRectIntersection([caretView convertRect:caretView.bounds toView:contentView], contentView.bounds);
-    clipSelectionViewRectToContentView(rectInContentViewCoordinates, contentView);
-    return JSValueToObject(m_context->jsContext(), [JSValue valueWithObject:toNSDictionary(rectInContentViewCoordinates) inContext:[JSContext contextWithJSGlobalContextRef:m_context->jsContext()]].JSValueRef, nullptr);
+    auto contentRect = CGRectIntersection([caretView convertRect:caretView.bounds toView:contentView], contentView.bounds);
+    clipSelectionViewRectToContentView(contentRect, contentView);
+    if (coordinateSpace != contentView)
+        contentRect = [coordinateSpace convertRect:contentRect fromCoordinateSpace:contentView];
+    return JSValueToObject(m_context->jsContext(), [JSValue valueWithObject:toNSDictionary(contentRect) inContext:[JSContext contextWithJSGlobalContextRef:m_context->jsContext()]].JSValueRef, nullptr);
+}
+
+JSObjectRef UIScriptControllerIOS::selectionCaretViewRect() const
+{
+    return selectionCaretViewRect(platformContentView());
+}
+
+JSObjectRef UIScriptControllerIOS::selectionCaretViewRectInGlobalCoordinates() const
+{
+    return selectionCaretViewRect(webView());
 }
 
 JSObjectRef UIScriptControllerIOS::selectionRangeViewRects() const

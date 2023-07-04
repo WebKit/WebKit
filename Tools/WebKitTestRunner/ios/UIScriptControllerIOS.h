@@ -33,6 +33,8 @@
 typedef struct CGRect CGRect;
 OBJC_CLASS UITextSelectionDisplayInteraction;
 
+@protocol UICoordinateSpace;
+
 namespace WebCore {
 class FloatPoint;
 class FloatRect;
@@ -115,6 +117,8 @@ private:
     JSObjectRef selectionStartGrabberViewRect() const override;
     JSObjectRef selectionEndGrabberViewRect() const override;
     JSObjectRef selectionCaretViewRect() const override;
+    JSObjectRef selectionCaretViewRectInGlobalCoordinates() const override;
+    JSObjectRef selectionCaretViewRect(id<UICoordinateSpace>) const;
     JSObjectRef selectionRangeViewRects() const override;
     JSObjectRef inputViewBounds() const override;
     JSRetainPtr<JSStringRef> scrollingTreeAsText() const override;

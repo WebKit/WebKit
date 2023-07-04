@@ -320,12 +320,14 @@ interface UIScriptController {
     // When false, content rect updates to the web process have inStableState=false, as if a scroll or zoom were in progress.
     attribute boolean? stableStateOverride;
 
-    readonly attribute object contentVisibleRect; // Returned object has 'left', 'top', 'width', 'height' properties.
-
+    // The attributes below return an array of objects with 'left', 'top', 'width', and 'height' properties.
+    readonly attribute object contentVisibleRect;
     readonly attribute object selectionStartGrabberViewRect;
     readonly attribute object selectionEndGrabberViewRect;
-    readonly attribute object selectionCaretViewRect; // An array of objects with 'left', 'top', 'width', and 'height' properties.
-    readonly attribute object selectionRangeViewRects; // An object with 'left', 'top', 'width', 'height' properties.
+    readonly attribute object selectionCaretViewRect;
+    readonly attribute object selectionCaretViewRectInGlobalCoordinates;
+    readonly attribute object selectionRangeViewRects;
+
     readonly attribute object calendarType;
     undefined setDefaultCalendarType(DOMString calendarIdentifier, DOMString localeIdentifier);
     readonly attribute object inputViewBounds;

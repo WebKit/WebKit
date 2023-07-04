@@ -896,6 +896,22 @@ window.UIHelper = class UIHelper {
         });
     }
 
+    static getUICaretViewRectInGlobalCoordinates()
+    {
+        if (!this.isWebKit2() || !this.isIOSFamily())
+            return Promise.resolve();
+
+        return new Promise(resolve => {
+            testRunner.runUIScript(`(function() {
+                uiController.doAfterNextStablePresentationUpdate(function() {
+                    uiController.uiScriptComplete(JSON.stringify(uiController.selectionCaretViewRectInGlobalCoordinates));
+                });
+            })()`, jsonString => {
+                resolve(JSON.parse(jsonString));
+            });
+        });
+    }
+
     static getUISelectionViewRects()
     {
         if (!this.isWebKit2() || !this.isIOSFamily())
