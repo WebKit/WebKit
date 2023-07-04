@@ -1,4 +1,4 @@
 
-FAIL Encoding and decoding cycle assert_equals: frames_decoded expected 16 but got 13
-FAIL Encoding and decoding cycle w/ stripped color space assert_equals: frames_decoded expected 16 but got 13
+FAIL Encoding and decoding cycle assert_equals: frames_decoded expected 16 but got 8
+FAIL Encoding and decoding cycle w/ stripped color space assert_equals: frames_decoded expected 16 but got 8
 
