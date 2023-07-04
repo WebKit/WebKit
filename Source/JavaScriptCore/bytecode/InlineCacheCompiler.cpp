@@ -226,6 +226,12 @@ auto InlineCacheCompiler::preserveLiveRegistersToStackForCall(const RegisterSet&
 
     unsigned extraStackPadding = 0;
     unsigned numberOfStackBytesUsedForRegisterPreservation = ScratchRegisterAllocator::preserveRegistersToStackForCall(*m_jit, liveRegisters.buildAndValidate(), extraStackPadding);
+    RELEASE_ASSERT(liveRegisters.buildAndValidate().numberOfSetRegisters() == liveRegisters.buildScalarRegisterSet().numberOfSetRegisters(),
+        liveRegisters.buildAndValidate().numberOfSetRegisters(),
+        liveRegisters.buildScalarRegisterSet().numberOfSetRegisters());
+    RELEASE_ASSERT(liveRegisters.buildScalarRegisterSet().numberOfSetRegisters() || !numberOfStackBytesUsedForRegisterPreservation,
+        liveRegisters.buildScalarRegisterSet().numberOfSetRegisters(),
+        numberOfStackBytesUsedForRegisterPreservation);
     return SpillState {
         liveRegisters.buildScalarRegisterSet(),
         numberOfStackBytesUsedForRegisterPreservation
@@ -242,6 +248,12 @@ auto InlineCacheCompiler::preserveLiveRegistersToStackForCallWithoutExceptions()
 
     constexpr unsigned extraStackPadding = 0;
     unsigned numberOfStackBytesUsedForRegisterPreservation = ScratchRegisterAllocator::preserveRegistersToStackForCall(*m_jit, liveRegisters.buildAndValidate(), extraStackPadding);
+    RELEASE_ASSERT(liveRegisters.buildAndValidate().numberOfSetRegisters() == liveRegisters.buildScalarRegisterSet().numberOfSetRegisters(),
+        liveRegisters.buildAndValidate().numberOfSetRegisters(),
+        liveRegisters.buildScalarRegisterSet().numberOfSetRegisters());
+    RELEASE_ASSERT(liveRegisters.buildScalarRegisterSet().numberOfSetRegisters() || !numberOfStackBytesUsedForRegisterPreservation,
+        liveRegisters.buildScalarRegisterSet().numberOfSetRegisters(),
+        numberOfStackBytesUsedForRegisterPreservation);
     return SpillState {
         liveRegisters.buildScalarRegisterSet(),
         numberOfStackBytesUsedForRegisterPreservation
