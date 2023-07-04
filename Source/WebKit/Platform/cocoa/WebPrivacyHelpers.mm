@@ -460,7 +460,8 @@ void configureForAdvancedPrivacyProtections(NSURLSession *session)
         }
 
         if (auto host = hostname(endpoint)) {
-            if (auto info = TrackerDomainLookupInfo::find(String::fromLatin1(*host)); info.owner().length()) {
+            auto domain = WebCore::RegistrableDomain { URL { makeString("http://", String::fromLatin1(*host)) } };
+            if (auto info = TrackerDomainLookupInfo::find(domain.string()); info.owner().length()) {
                 *owner = info.owner().data();
                 *hostName = *host;
                 *canBlock = info.canBlock() == TrackerDomainLookupInfo::CanBlock::Yes;
