@@ -24,6 +24,7 @@
 #include "MouseRelatedEvent.h"
 
 #include "Document.h"
+#include "EventNames.h"
 #include "LayoutPoint.h"
 #include "LocalDOMWindow.h"
 #include "LocalFrame.h"
