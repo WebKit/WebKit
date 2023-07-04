@@ -247,12 +247,25 @@ public:
     void setSpillStateForJSCall(SpillState& spillState)
     {
         if (!m_spillStateForJSCall.isEmpty()) {
-            ASSERT(m_spillStateForJSCall.numberOfStackBytesUsedForRegisterPreservation == spillState.numberOfStackBytesUsedForRegisterPreservation);
-            ASSERT(m_spillStateForJSCall.spilledRegisters == spillState.spilledRegisters);
+            RELEASE_ASSERT(m_spillStateForJSCall.numberOfStackBytesUsedForRegisterPreservation == spillState.numberOfStackBytesUsedForRegisterPreservation,
+                m_spillStateForJSCall.numberOfStackBytesUsedForRegisterPreservation,
+                spillState.numberOfStackBytesUsedForRegisterPreservation);
+            RELEASE_ASSERT(m_spillStateForJSCall.spilledRegisters == spillState.spilledRegisters,
+                m_spillStateForJSCall.spilledRegisters.bitsForDebugging(),
+                spillState.spilledRegisters.bitsForDebugging());
         }
+        RELEASE_ASSERT(spillState.spilledRegisters.numberOfSetRegisters() || !spillState.numberOfStackBytesUsedForRegisterPreservation,
+            spillState.spilledRegisters.numberOfSetRegisters(),
+            spillState.numberOfStackBytesUsedForRegisterPreservation);
         m_spillStateForJSCall = spillState;
     }
-    SpillState spillStateForJSCall() const { return m_spillStateForJSCall; }
+    SpillState spillStateForJSCall() const
+    {
+        RELEASE_ASSERT(m_spillStateForJSCall.spilledRegisters.numberOfSetRegisters() || !m_spillStateForJSCall.numberOfStackBytesUsedForRegisterPreservation,
+            m_spillStateForJSCall.spilledRegisters.numberOfSetRegisters(),
+            m_spillStateForJSCall.numberOfStackBytesUsedForRegisterPreservation);
+        return m_spillStateForJSCall;
+    }
 
     ScratchRegisterAllocator makeDefaultScratchAllocator(GPRReg extraToLock = InvalidGPRReg);
 
