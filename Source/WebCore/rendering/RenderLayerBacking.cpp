@@ -1116,8 +1116,33 @@ bool RenderLayerBacking::updateConfiguration(const RenderLayer* compositingAnces
     } else
         m_graphicsLayer->setReplicatedByLayer(nullptr);
 
-    if (m_owningLayer.isRenderViewLayer())
+    PaintedContentsInfo contentsInfo(*this);
+
+    // Requires layout.
+    if (!m_owningLayer.isRenderViewLayer()) {
+        bool didUpdateContentsRect = false;
+        updateDirectlyCompositedBoxDecorations(contentsInfo, didUpdateContentsRect);
+    } else
         updateRootLayerConfiguration();
+
+    // Requires layout.
+    if (contentsInfo.isDirectlyCompositedImage())
+        updateImageContents(contentsInfo);
+
+    bool unscaledBitmap = contentsInfo.isUnscaledBitmapOnly();
+    if (unscaledBitmap == m_graphicsLayer->appliesDeviceScale()) {
+        m_graphicsLayer->setAppliesDeviceScale(!unscaledBitmap);
+        layerConfigChanged = true;
+    }
+
+#if ENABLE(CSS_COMPOSITING)
+    bool shouldPaintUsingCompositeCopy = unscaledBitmap && is<RenderHTMLCanvas>(renderer());
+    if (shouldPaintUsingCompositeCopy != m_owningLayer.shouldPaintUsingCompositeCopy()) {
+        m_owningLayer.setShouldPaintUsingCompositeCopy(shouldPaintUsingCompositeCopy);
+        m_graphicsLayer->setShouldPaintUsingCompositeCopy(shouldPaintUsingCompositeCopy);
+        layerConfigChanged = true;
+    }
+#endif
 
     if (is<RenderEmbeddedObject>(renderer()) && downcast<RenderEmbeddedObject>(renderer()).allowsAcceleratedCompositing()) {
         auto* pluginViewBase = downcast<PluginViewBase>(downcast<RenderWidget>(renderer()).widget());
@@ -1625,33 +1650,19 @@ void RenderLayerBacking::updateScrollOffset(ScrollOffset scrollOffset)
     ASSERT(m_scrolledContentsLayer->position().isZero());
 }
 
-void RenderLayerBacking::updateAfterDescendants(bool reevaluateConfiguration)
+void RenderLayerBacking::updateAfterDescendants()
 {
-    if (reevaluateConfiguration || m_owningLayer.needsCompositingConfigurationUpdate()) {
-        PaintedContentsInfo contentsInfo(*this);
+    // FIXME: this potentially duplicates work we did in updateConfiguration().
+    PaintedContentsInfo contentsInfo(*this);
 
-        if (contentsInfo.isDirectlyCompositedImage())
-            updateImageContents(contentsInfo);
-
-        bool unscaledBitmap = contentsInfo.isUnscaledBitmapOnly();
-        if (unscaledBitmap == m_graphicsLayer->appliesDeviceScale())
-            m_graphicsLayer->setAppliesDeviceScale(!unscaledBitmap);
-
-        bool shouldPaintUsingCompositeCopy = unscaledBitmap && is<RenderHTMLCanvas>(renderer());
-        if (shouldPaintUsingCompositeCopy != m_owningLayer.shouldPaintUsingCompositeCopy()) {
-            m_owningLayer.setShouldPaintUsingCompositeCopy(shouldPaintUsingCompositeCopy);
-            m_graphicsLayer->setShouldPaintUsingCompositeCopy(shouldPaintUsingCompositeCopy);
-        }
-
-        if (!m_owningLayer.isRenderViewLayer()) {
-            bool didUpdateContentsRect = false;
-            updateDirectlyCompositedBoxDecorations(contentsInfo, didUpdateContentsRect);
-            if (!didUpdateContentsRect && m_graphicsLayer->usesContentsLayer())
-                resetContentsRect();
-        }
-
-        updateDrawsContent(contentsInfo);
+    if (!m_owningLayer.isRenderViewLayer()) {
+        bool didUpdateContentsRect = false;
+        updateDirectlyCompositedBoxDecorations(contentsInfo, didUpdateContentsRect);
+        if (!didUpdateContentsRect && m_graphicsLayer->usesContentsLayer())
+            resetContentsRect();
     }
+
+    updateDrawsContent(contentsInfo);
 
     if (!m_isMainFrameRenderViewLayer && !m_isFrameLayerWithTiledBacking && !m_requiresBackgroundLayer) {
         // For non-root layers, background is always painted by the primary graphics layer.
@@ -1661,7 +1672,6 @@ void RenderLayerBacking::updateAfterDescendants(bool reevaluateConfiguration)
 
     bool isSkippedContent = renderer().isSkippedContent();
     m_graphicsLayer->setContentsVisible(!isSkippedContent && (m_owningLayer.hasVisibleContent() || hasVisibleNonCompositedDescendants()));
-
     if (m_scrollContainerLayer) {
         m_scrollContainerLayer->setContentsVisible(renderer().style().visibility() == Visibility::Visible);
 

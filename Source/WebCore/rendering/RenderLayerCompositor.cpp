@@ -1444,7 +1444,7 @@ void RenderLayerCompositor::updateBackingAndHierarchy(RenderLayer& layer, Vector
             if (auto* reflectionBacking = reflection->backing()) {
                 reflectionBacking->updateCompositedBounds();
                 reflectionBacking->updateGeometry(&layer);
-                reflectionBacking->updateAfterDescendants(layerNeedsUpdate);
+                reflectionBacking->updateAfterDescendants();
             }
         }
 
@@ -1537,7 +1537,7 @@ void RenderLayerCompositor::updateBackingAndHierarchy(RenderLayer& layer, Vector
         if (layer.hasCompositedScrollableOverflow())
             traversalState.overflowScrollLayers->append(&layer);
 
-        layerBacking->updateAfterDescendants(layerNeedsUpdate);
+        layerBacking->updateAfterDescendants();
     }
     
     layer.clearUpdateBackingOrHierarchyTraversalState();
@@ -2014,7 +2014,6 @@ bool RenderLayerCompositor::updateBacking(RenderLayer& layer, RequiresCompositin
     return layerChanged;
 }
 
-// Only used for reflection layers.
 bool RenderLayerCompositor::updateLayerCompositingState(RenderLayer& layer, const RenderLayer* compositingAncestor, RequiresCompositingData& queryData, BackingSharingState& backingSharingState)
 {
     bool layerChanged = updateBacking(layer, queryData, &backingSharingState);
