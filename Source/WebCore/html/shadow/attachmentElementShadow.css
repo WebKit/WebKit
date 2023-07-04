@@ -73,6 +73,7 @@ img#attachment-icon {
     width: 52px;
     height: 52px;
 #endif
+    object-fit: contain;
     overflow: hidden;
 }
 
