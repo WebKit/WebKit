@@ -135,12 +135,6 @@ static const AtomString& attachmentProgressCSSProperty()
     return property;
 }
 
-static const AtomString& attachmentProgressCircleIdentifier()
-{
-    static MainThreadNeverDestroyed<const AtomString> identifier("attachment-progress-circle"_s);
-    return identifier;
-}
-
 static const AtomString& attachmentInformationAreaIdentifier()
 {
     static MainThreadNeverDestroyed<const AtomString> identifier("attachment-information-area"_s);
@@ -231,8 +225,6 @@ void HTMLAttachmentElement::ensureWideLayoutShadowTree(ShadowRoot& root)
 
     m_progressElement = createContainedElement<HTMLDivElement>(previewArea, attachmentProgressIdentifier());
     updateProgress(attributeWithoutSynchronization(progressAttr));
-
-    createContainedElement<HTMLDivElement>(*m_progressElement, attachmentProgressCircleIdentifier());
 
     auto informationArea = createContainedElement<HTMLDivElement>(*m_containerElement, attachmentInformationAreaIdentifier());
 

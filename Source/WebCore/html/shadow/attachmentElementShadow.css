@@ -101,7 +101,9 @@ div#attachment-progress {
 }
 
 /* FIXME: Move the border into attachment-progress above, and remove this div, when rdar://107621207 is fixed (currently it produces artifacts at the edges). */
-div#attachment-progress-circle {
+div#attachment-progress::before {
+    content: "";
+    display: block;
     width: 100%;
     aspect-ratio: 1;
     border-radius: 50%;

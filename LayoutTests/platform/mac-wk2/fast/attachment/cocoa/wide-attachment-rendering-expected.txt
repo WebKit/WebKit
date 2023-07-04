@@ -68,7 +68,8 @@ layer at (0,0) size 785x672
             RenderGrid {DIV} at (0,0) size 68x80
               RenderImage {IMG} at (14,14) size 52x52
               RenderBlock {DIV} at (14,14) size 52x52 [color=#0000007F]
-                RenderBlock {DIV} at (0,0) size 52x52 [border: (4px solid #0000007F)]
+                RenderBlock (generated) at (0,0) size 52x52 [border: (4px solid #0000007F)]
+                  RenderText at (0,0) size 0x0
             RenderGrid {DIV} at (68,0) size 198x80
               RenderGrid {DIV} at (4,32) size 170x16
       RenderBlock {DIV} at (0,574) size 769x82
@@ -79,7 +80,8 @@ layer at (0,0) size 785x672
             RenderGrid {DIV} at (0,0) size 68x80
               RenderImage {IMG} at (14,14) size 52x52
               RenderBlock {DIV} at (14,14) size 52x52 [color=#0000007F]
-                RenderBlock {DIV} at (0,0) size 52x52 [border: (4px solid #0000007F)]
+                RenderBlock (generated) at (0,0) size 52x52 [border: (4px solid #0000007F)]
+                  RenderText at (0,0) size 0x0
             RenderGrid {DIV} at (68,0) size 198x80
               RenderGrid {DIV} at (4,32) size 170x16
 layer at (119,117) size 170x16
