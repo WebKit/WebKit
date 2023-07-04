@@ -1,4 +1,17 @@
 ================
+WebKitGTK 2.41.6
+================
+
+What's new in WebKitGTK 2.41.6?
+
+  - Add API to set the percentage of volume space that can be used for data storage.
+  - Do not use GBM and DMA-BUF for WebGL implementation.
+  - Use EGL_MESA_image_dma_buf_export if available when GBM is disabled.
+  - Fix AV1 video with the dav1d decoder when using the DMA-BUF sink.
+  - Use three buffers for DMA-BUF renderer.
+  - Fix several crashes and rendering issues.
+
+================
 WebKitGTK 2.41.5
 ================
 
