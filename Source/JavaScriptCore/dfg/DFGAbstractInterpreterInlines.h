@@ -2862,7 +2862,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
 
     case StringReplaceString:
-        if (node->child3().useKind() != StringUse) {
+        if (node->child3().useKind() != StringUse && node->child3().useKind() != Int32Use) {
             // child3 could be non String (e.g. function). In this case, any side effect can happen.
             clobberWorld();
         }

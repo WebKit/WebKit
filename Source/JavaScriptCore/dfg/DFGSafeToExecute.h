@@ -727,7 +727,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
         return false;
 
     case StringReplaceString:
-        return node->child3().useKind() == StringUse;
+        return node->child3().useKind() == StringUse || node->child3().useKind() == Int32Use;
 
     case Inc:
     case Dec:

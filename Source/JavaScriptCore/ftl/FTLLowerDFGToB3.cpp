@@ -16221,6 +16221,22 @@ IGNORE_CLANG_WARNINGS_END
             return;
         }
 
+        if (m_node->child3().useKind() == Int32Use) {
+            const BoyerMooreHorspoolTable<uint8_t>* tablePointer = nullptr;
+            String searchString = m_node->child2()->tryGetString(m_graph);
+            if (!!searchString)
+                tablePointer = m_graph.tryAddStringSearchTable8(searchString);
+
+            LValue string = lowString(m_node->child1());
+            LValue search = lowString(m_node->child2());
+            LValue replace = lowInt32(m_node->child3());
+            if (tablePointer)
+                setJSValue(vmCall(pointerType(), operationStringReplaceStringStringInt32WithTable8, weakPointer(globalObject), string, search, replace, m_out.constIntPtr(tablePointer)));
+            else
+                setJSValue(vmCall(pointerType(), operationStringReplaceStringStringInt32, weakPointer(globalObject), string, search, replace));
+            return;
+        }
+
         setJSValue(vmCall(pointerType(), operationStringReplaceStringGeneric, weakPointer(globalObject), lowString(m_node->child1()), lowString(m_node->child2()), lowJSValue(m_node->child3())));
     }
 

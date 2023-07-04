@@ -13860,6 +13860,32 @@ void SpeculativeJIT::compileStringReplaceString(Node* node)
         return;
     }
 
+    if (node->child3().useKind() == Int32Use) {
+        const BoyerMooreHorspoolTable<uint8_t>* tablePointer = nullptr;
+        String searchString = node->child2()->tryGetString(m_graph);
+        if (!!searchString)
+            tablePointer = m_graph.tryAddStringSearchTable8(searchString);
+
+        SpeculateCellOperand string(this, node->child1());
+        SpeculateCellOperand search(this, node->child2());
+        SpeculateInt32Operand replace(this, node->child3());
+        GPRReg stringGPR = string.gpr();
+        GPRReg searchGPR = search.gpr();
+        GPRReg replaceGPR = replace.gpr();
+        speculateString(node->child1(), stringGPR);
+        speculateString(node->child2(), searchGPR);
+
+        flushRegisters();
+        GPRFlushedCallResult result(this);
+        if (tablePointer)
+            callOperation(operationStringReplaceStringStringInt32WithTable8, result.gpr(), LinkableConstant::globalObject(*this, node), stringGPR, searchGPR, replaceGPR, TrustedImmPtr(tablePointer));
+        else
+            callOperation(operationStringReplaceStringStringInt32, result.gpr(), LinkableConstant::globalObject(*this, node), stringGPR, searchGPR, replaceGPR);
+        exceptionCheck();
+        cellResult(result.gpr(), node);
+        return;
+    }
+
     // Otherwise, maybe function. Let's call slow path.
     SpeculateCellOperand string(this, node->child1());
     SpeculateCellOperand search(this, node->child2());
