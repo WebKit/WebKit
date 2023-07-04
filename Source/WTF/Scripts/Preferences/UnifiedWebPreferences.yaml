@@ -1964,11 +1964,11 @@ DataDetectorTypes:
   condition: ENABLE(DATA_DETECTION)
   defaultValue:
     WebKitLegacy:
-      default: DataDetectorType::None
+      default: static_cast<DataDetectorType>(0)
     WebKit:
-      default: DataDetectorType::None
+      default: static_cast<DataDetectorType>(0)
     WebCore:
-      default: DataDetectorType::None
+      default: static_cast<DataDetectorType>(0)
 
 # FIXME: This is on by default in WebKit2 (for everything but WatchOS). Perhaps we should consider turning it on for WebKitLegacy as well.
 DataListElementEnabled:
