@@ -27,6 +27,7 @@
 
 #import "SettingsViewController.h"
 #import "TabViewController.h"
+#import <WTF/Compiler.h>
 #import <WebKit/WKNavigation.h>
 #import <WebKit/WKNavigationDelegate.h>
 #import <WebKit/WKPreferencesPrivate.h>
@@ -73,6 +74,7 @@ void* URLContext = &URLContext;
 
 - (void)viewDidLoad
 {
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     [super viewDidLoad];
     self.webViews = [[NSMutableArray alloc] initWithCapacity:1];
     self.tabViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"idTabViewController"];
@@ -86,6 +88,7 @@ void* URLContext = &URLContext;
     WKWebView *webView = [self createWebView];
     [webView loadRequest:[NSURLRequest requestWithURL:[self targetURLorDefaultURL]]];
     [self setCurrentWebView:webView];
+ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 

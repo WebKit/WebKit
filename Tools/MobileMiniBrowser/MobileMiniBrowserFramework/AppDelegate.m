@@ -27,6 +27,8 @@
 
 #import "WebViewController.h"
 
+#import <wtf/Compiler.h>
+
 @interface AppDelegate ()
 @end
 
@@ -34,6 +36,7 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     UIStoryboard *frameworkMainStoryboard = [UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle bundleForClass:[AppDelegate class]]];
     WebViewController *viewController = [frameworkMainStoryboard instantiateInitialViewController];
     if (!viewController)
@@ -45,6 +48,7 @@
     [self.window makeKeyAndVisible];
 
     return YES;
+ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 
