@@ -132,9 +132,9 @@ UBreakIterator* sentenceBreakIterator(StringView string)
     return setTextForIterator(*staticSentenceBreakIterator, string);
 }
 
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+ALLOW_DEPRECATED_PRAGMA_BEGIN
 static std::atomic<UBreakIterator*> nonSharedCharacterBreakIterator = ATOMIC_VAR_INIT(nullptr);
-ALLOW_DEPRECATED_DECLARATIONS_END
+ALLOW_DEPRECATED_PRAGMA_END
 
 static inline UBreakIterator* getNonSharedCharacterBreakIterator()
 {
