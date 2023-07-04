@@ -49,8 +49,6 @@ public:
     unsigned textLength() const { return value().length(); }
     String validationMessage() const final;
 
-    void rendererWillBeDestroyed() { updateValue(); }
-
     WEBCORE_EXPORT RefPtr<TextControlInnerTextElement> innerTextElement() const final;
 
     bool shouldSaveAndRestoreFormControlState() const final { return true; }
