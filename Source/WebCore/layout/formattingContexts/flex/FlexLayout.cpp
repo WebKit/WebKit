@@ -535,23 +535,27 @@ bool FlexLayout::collapseNonVisibleFlexItems()
 FlexLayout::SizeList FlexLayout::computeCrossSizeForFlexItems(const LogicalFlexItems& flexItems, const LineRanges& lineRanges, const LinesCrossSizeList& flexLinesCrossSizeList, const SizeList& flexItemsHypotheticalCrossSizeList) const
 {
     SizeList crossSizeList(flexItems.size());
-    // If a flex item has align-self: stretch, its computed cross size property is auto, and neither of its cross-axis margins are auto, the used outer cross size is the used cross size of its flex line,
-    // clamped according to the item's used min and max cross sizes. Otherwise, the used cross size is the item's hypothetical cross size.
     for (size_t lineIndex = 0; lineIndex < lineRanges.size(); ++lineIndex) {
         for (auto flexItemIndex = lineRanges[lineIndex].begin(); flexItemIndex < lineRanges[lineIndex].end(); ++flexItemIndex) {
             auto& flexItem = flexItems[flexItemIndex];
-            crossSizeList[flexItemIndex] = flexItemsHypotheticalCrossSizeList[flexItemIndex];
-            if (flexItem.style().alignSelf().position() == ItemPosition::Stretch) {
-                if (flexItem.crossAxis().hasSizeAuto && flexItem.crossAxis().hasNonAutoMargins()) {
-                    auto usedOuterCrossSize = outerCrossSize(flexItem, flexLinesCrossSizeList[flexItemIndex]);
-                    auto minimumCrossSize = flexItem.mainAxis().minimumSize.value_or(usedOuterCrossSize);
-                    auto maximumCrossSize = flexItem.mainAxis().maximumSize.value_or(usedOuterCrossSize);
-                    crossSizeList[flexItemIndex] = std::min(maximumCrossSize, std::max(minimumCrossSize, usedOuterCrossSize));
-                }
-                // If the flex item has align-self: stretch, redo layout for its contents, treating this used size as its definite cross
-                // size so that percentage-sized children can be resolved.
-                // FIXME: Not supported yet.
-            }
+            auto& crossAxis = flexItem.crossAxis();
+            auto& flexItemAlignSelf = flexItem.style().alignSelf();
+            auto alignValue = flexItemAlignSelf.position() != ItemPosition::Auto ? flexItemAlignSelf.position() : flexContainerStyle().alignItems().position();
+            // If a flex item has align-self: stretch, its computed cross size property is auto, and neither of its cross-axis margins are auto, the used outer cross size is the used cross size of its flex line,
+            // clamped according to the item's used min and max cross sizes. Otherwise, the used cross size is the item's hypothetical cross size.
+            if ((alignValue == ItemPosition::Stretch || alignValue == ItemPosition::Normal) && crossAxis.hasSizeAuto && crossAxis.hasNonAutoMargins()) {
+                auto stretchedInnerCrossSize = [&] {
+                    auto stretchedInnerCrossSize = flexLinesCrossSizeList[lineIndex] - flexItems[flexItemIndex].crossAxis().margin();
+                    if (flexItem.isContentBoxBased())
+                        stretchedInnerCrossSize -= flexItem.crossAxis().borderAndPadding;
+                    auto maximum = flexItem.crossAxis().maximumSize.value_or(stretchedInnerCrossSize);
+                    auto minimum = flexItem.crossAxis().minimumSize.value_or(stretchedInnerCrossSize);
+                    return std::min(maximum, std::max(minimum, stretchedInnerCrossSize));
+                };
+                crossSizeList[flexItemIndex] = stretchedInnerCrossSize();
+                // FIXME: This requires re-layout to get percentage-sized descendants updated.
+            } else
+                crossSizeList[flexItemIndex] = flexItemsHypotheticalCrossSizeList[flexItemIndex];
         }
     }
     return crossSizeList;
@@ -705,7 +709,7 @@ FlexLayout::PositionAndMarginsList FlexLayout::handleMainAxisAlignment(LayoutUni
     return mainPositionAndMargins;
 }
 
-FlexLayout::PositionAndMarginsList FlexLayout::handleCrossAxisAlignmentForFlexItems(const LogicalFlexItems& flexItems, const LineRanges& lineRanges, SizeList& flexItemsCrossSizeList, const LinesCrossSizeList& flexLinesCrossSizeList) const
+FlexLayout::PositionAndMarginsList FlexLayout::handleCrossAxisAlignmentForFlexItems(const LogicalFlexItems& flexItems, const LineRanges& lineRanges, const SizeList& flexItemsCrossSizeList, const LinesCrossSizeList& flexLinesCrossSizeList) const
 {
     auto crossPositionAndMargins = PositionAndMarginsList { flexItems.size() };
 
@@ -754,32 +758,16 @@ FlexLayout::PositionAndMarginsList FlexLayout::handleCrossAxisAlignmentForFlexIt
             for (auto flexItemIndex = lineRange.begin(); flexItemIndex < lineRange.end(); ++flexItemIndex) {
                 auto& flexItem = flexItems[flexItemIndex];
                 auto flexItemOuterCrossSize = outerCrossSize(flexItem, flexItemsCrossSizeList[flexItemIndex], crossPositionAndMargins[flexItemIndex].margin());
-
                 auto flexItemOuterCrossPosition = LayoutUnit { };
 
                 auto& flexItemAlignSelf = flexItem.style().alignSelf();
                 auto alignValue = flexItemAlignSelf.position() != ItemPosition::Auto ? flexItemAlignSelf : flexContainerStyle().alignItems();
                 switch (alignValue.position()) {
                 case ItemPosition::Stretch:
-                case ItemPosition::Normal: {
+                case ItemPosition::Normal:
+                    // This is taken care of at 9.4.11 see computeCrossSizeForFlexItems.
                     flexItemOuterCrossPosition = { };
-                    auto& crossAxis = flexItems[flexItemIndex].crossAxis();
-                    if (crossAxis.hasSizeAuto && crossAxis.marginStart && crossAxis.marginEnd) {
-                        // If the cross size property of the flex item computes to auto, and neither of the cross-axis margins are auto, the flex item is stretched.
-                        // Its used value is the length necessary to make the cross size of the item's margin box as close to the
-                        // same size as the line as possible, while still respecting the constraints imposed by min-height/min-width/max-height/max-width.
-                        auto stretchedInnerCrossSize = [&] {
-                            auto stretchedInnerCrossSize = flexLinesCrossSizeList[lineIndex] - crossPositionAndMargins[flexItemIndex].margin();
-                            if (flexItem.isContentBoxBased())
-                                stretchedInnerCrossSize -= flexItem.crossAxis().borderAndPadding;
-                            auto maximum = flexItem.crossAxis().maximumSize.value_or(stretchedInnerCrossSize);
-                            auto minimum = flexItem.crossAxis().minimumSize.value_or(stretchedInnerCrossSize);
-                            return std::min(maximum, std::max(minimum, stretchedInnerCrossSize));
-                        };
-                        flexItemsCrossSizeList[flexItemIndex] = stretchedInnerCrossSize();
-                    }
                     break;
-                }
                 case ItemPosition::Center:
                     flexItemOuterCrossPosition = flexLinesCrossSizeList[lineIndex] / 2 - flexItemOuterCrossSize  / 2;
                     break;
