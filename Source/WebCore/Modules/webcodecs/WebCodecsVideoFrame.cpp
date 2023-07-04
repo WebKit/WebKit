@@ -501,7 +501,7 @@ ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::clone(ScriptExecution
 
     auto clone = adoptRef(*new WebCodecsVideoFrame(context, WebCodecsVideoFrameData { m_data }));
 
-    clone->m_colorSpace = colorSpace();
+    clone->m_colorSpace = &colorSpace();
     clone->m_codedRect = codedRect();
     clone->m_visibleRect = visibleRect();
     clone->m_isDetached = m_isDetached;
@@ -529,7 +529,6 @@ void WebCodecsVideoFrame::close()
 
     m_codedRect = nullptr;
     m_visibleRect = nullptr;
-    m_colorSpace = nullptr;
 }
 
 DOMRectReadOnly* WebCodecsVideoFrame::codedRect() const
@@ -566,12 +565,12 @@ void WebCodecsVideoFrame::setVisibleRect(const DOMRectInit& rect)
     m_data.visibleHeight = rect.height;
 }
 
-VideoColorSpace* WebCodecsVideoFrame::colorSpace() const
+VideoColorSpace& WebCodecsVideoFrame::colorSpace() const
 {
-    if (!m_colorSpace && m_data.internalFrame)
-        m_colorSpace = VideoColorSpace::create(m_data.internalFrame->colorSpace());
+    if (!m_colorSpace)
+        m_colorSpace = m_data.internalFrame ? VideoColorSpace::create(m_data.internalFrame->colorSpace()) : VideoColorSpace::create();
 
-    return m_colorSpace.get();
+    return *m_colorSpace.get();
 }
 
 } // namespace WebCore

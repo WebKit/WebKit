@@ -2,7 +2,7 @@
 Harness Error (TIMEOUT), message = null
 
 PASS Test we can construct a VideoFrame.
-FAIL Test closed VideoFrame. null is not an object (evaluating 'frame.colorSpace.primaries')
+PASS Test closed VideoFrame.
 PASS Test we can construct a VideoFrame with a negative timestamp.
 PASS Test that timestamp is required when constructing VideoFrame from ImageBitmap
 PASS Test that timestamp is required when constructing VideoFrame from OffscreenCanvas
