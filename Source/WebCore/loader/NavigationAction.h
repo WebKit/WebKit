@@ -48,6 +48,8 @@ class HistoryItem;
 class MouseEvent;
 class UIEventWithKeyState;
 
+enum class SyntheticClickType : uint8_t;
+
 // NavigationAction should never hold a strong reference to the originating document either directly
 // or indirectly as doing so prevents its destruction even after navigating away from it because
 // DocumentLoader keeps around the NavigationAction for the last navigation.
@@ -82,7 +84,7 @@ public:
         LayoutPoint absoluteLocation;
         FloatPoint locationInRootViewCoordinates;
         short button;
-        unsigned short syntheticClickType;
+        SyntheticClickType syntheticClickType;
         bool buttonDown;
     };
     const std::optional<UIEventWithKeyStateData>& keyStateEventData() const { return m_keyStateEventData; }

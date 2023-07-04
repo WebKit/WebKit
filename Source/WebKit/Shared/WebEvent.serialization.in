@@ -153,7 +153,7 @@ class WebKit::WebTouchEvent : WebKit::WebEvent {
     NoButton
 };
 
-[CustomHeader] enum class WebKit::WebMouseEventSyntheticClickType : uint32_t {
+[CustomHeader] enum class WebKit::WebMouseEventSyntheticClickType : uint8_t {
     NoTap,
     OneFingerTap,
     TwoFingerTap

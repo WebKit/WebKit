@@ -51,7 +51,7 @@ enum class WebMouseEventButton : int32_t {
 };
 WebMouseEventButton mouseButton(const WebCore::NavigationAction&);
 
-enum class WebMouseEventSyntheticClickType : uint32_t {
+enum class WebMouseEventSyntheticClickType : uint8_t {
     NoTap,
     OneFingerTap,
     TwoFingerTap

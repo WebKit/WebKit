@@ -232,7 +232,7 @@ class SubstituteData;
 class TextCheckingRequest;
 class VisiblePosition;
 
-enum SyntheticClickType : int8_t;
+enum class SyntheticClickType : uint8_t;
 enum class COEPDisposition : bool;
 enum class CaretAnimatorType : uint8_t;
 enum class CreateNewGroupForHighlight : bool;

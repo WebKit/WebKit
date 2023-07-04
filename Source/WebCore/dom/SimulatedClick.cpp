@@ -31,6 +31,7 @@
 #include "Element.h"
 #include "EventNames.h"
 #include "MouseEvent.h"
+#include "PlatformMouseEvent.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/NeverDestroyed.h>
 
@@ -48,7 +49,7 @@ private:
     SimulatedMouseEvent(const AtomString& eventType, RefPtr<WindowProxy>&& view, RefPtr<Event>&& underlyingEvent, Element& target, SimulatedClickSource source)
         : MouseEvent(eventType, CanBubble::Yes, IsCancelable::Yes, IsComposed::Yes,
             underlyingEvent ? underlyingEvent->timeStamp() : MonotonicTime::now(), WTFMove(view), /* detail */ 0,
-            { }, { }, 0, 0, modifiersFromUnderlyingEvent(underlyingEvent), 0, 0, nullptr, 0, 0, IsSimulated::Yes,
+            { }, { }, 0, 0, modifiersFromUnderlyingEvent(underlyingEvent), 0, 0, nullptr, 0, SyntheticClickType::NoTap, IsSimulated::Yes,
             source == SimulatedClickSource::UserAgent ? IsTrusted::Yes : IsTrusted::No)
     {
         setUnderlyingEvent(underlyingEvent.get());

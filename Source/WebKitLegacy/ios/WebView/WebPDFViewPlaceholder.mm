@@ -40,6 +40,7 @@
 #import <WebCore/HTMLFormElement.h>
 #import <WebCore/LocalFrame.h>
 #import <WebCore/MouseEvent.h>
+#import <WebCore/PlatformMouseEvent.h>
 #import <WebKitLegacy/WebDataSourcePrivate.h>
 #import <WebKitLegacy/WebFramePrivate.h>
 #import <WebKitLegacy/WebJSPDFDoc.h>
@@ -463,7 +464,7 @@ static const float PAGE_HEIGHT_INSET = 4.0f * 2.0f;
         return;
 
     auto event = MouseEvent::create(eventNames().clickEvent, Event::CanBubble::Yes, Event::IsCancelable::Yes, Event::IsComposed::Yes,
-        MonotonicTime::now(), nullptr, 1, { }, { }, 0, 0, { }, 0, 0, nullptr, 0, 0, MouseEvent::IsSimulated::Yes);
+        MonotonicTime::now(), nullptr, 1, { }, { }, 0, 0, { }, 0, 0, nullptr, 0, SyntheticClickType::NoTap, MouseEvent::IsSimulated::Yes);
 
     // Call to the frame loader because this is where our security checks are made.
     auto* frame = core([_dataSource webFrame]);
