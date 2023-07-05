@@ -310,20 +310,36 @@ void RemoteScrollingTreeMac::waitForEventDefaultHandlingCompletion(const Platfor
     LOG_WITH_STREAM(Scrolling, stream << "RemoteScrollingTreeMac::waitForEventDefaultHandlingCompletion took " << (MonotonicTime::now() - startTime).milliseconds() << "ms - timed out " << !receivedEvent << " gesture state is " << gestureState());
 }
 
+void RemoteScrollingTreeMac::receivedEventAfterDefaultHandling(const WebCore::PlatformWheelEvent& wheelEvent, std::optional<WheelScrollGestureState> gestureState)
+{
+    LOG_WITH_STREAM(Scrolling, stream << "RemoteScrollingTreeMac::receivedEventAfterDefaultHandling - " << wheelEvent << " gestureState " << gestureState);
+
+    ASSERT(isMainRunLoop());
+
+    if (!wheelEvent.isGestureStart())
+        return;
+
+    Locker locker { m_treeLock };
+
+    if (m_receivedBeganEventFromMainThread)
+        return;
+
+    setGestureState(gestureState);
+
+    m_receivedBeganEventFromMainThread = true;
+    m_waitingForBeganEventCondition.notifyOne();
+}
+
 WheelEventHandlingResult RemoteScrollingTreeMac::handleWheelEventAfterDefaultHandling(const PlatformWheelEvent& wheelEvent, ScrollingNodeID targetNodeID, std::optional<WheelScrollGestureState> gestureState)
 {
     LOG_WITH_STREAM(Scrolling, stream << "RemoteScrollingTreeMac::handleWheelEventAfterDefaultHandling - targetNodeID " << targetNodeID << " gestureState " << gestureState);
 
     ASSERT(ScrollingThread::isCurrentThread());
+
+    if (!targetNodeID)
+        return WheelEventHandlingResult::unhandled();
     
     Locker locker { m_treeLock };
-
-    if (!m_receivedBeganEventFromMainThread && wheelEvent.isGestureStart()) {
-        setGestureState(gestureState);
-
-        m_receivedBeganEventFromMainThread = true;
-        m_waitingForBeganEventCondition.notifyOne();
-    }
 
     bool allowLatching = false;
     OptionSet<WheelEventProcessingSteps> processingSteps;

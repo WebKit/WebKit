@@ -3363,11 +3363,9 @@ void WebPageProxy::handleWheelEventReply(const WebWheelEvent& event, ScrollingNo
     MESSAGE_CHECK(m_process, wheelEventCoalescer().hasEventsBeingProcessed());
 
 #if ENABLE(ASYNC_SCROLLING) && PLATFORM(MAC)
-    if (nodeID) {
-        if (auto* scrollingCoordinatorProxy = this->scrollingCoordinatorProxy()) {
-            scrollingCoordinatorProxy->wheelEventHandlingCompleted(platform(event), nodeID, gestureState);
-            return;
-        }
+    if (auto* scrollingCoordinatorProxy = this->scrollingCoordinatorProxy()) {
+        scrollingCoordinatorProxy->wheelEventHandlingCompleted(platform(event), nodeID, gestureState);
+        return;
     }
 #else
     UNUSED_PARAM(event);

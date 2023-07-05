@@ -280,6 +280,9 @@ void RemoteLayerTreeEventDispatcher::wheelEventHandlingCompleted(const PlatformW
 
     LOG_WITH_STREAM(WheelEvents, stream << "RemoteLayerTreeEventDispatcher::wheelEventHandlingCompleted " << wheelEvent << " - sending event to scrolling thread, node " << 0 << " gestureState " << gestureState);
 
+    if (auto scrollingTree = this->scrollingTree())
+        scrollingTree->receivedEventAfterDefaultHandling(wheelEvent, gestureState);
+
     ScrollingThread::dispatch([protectedThis = Ref { *this }, wheelEvent, scrollingNodeID, gestureState] {
         auto scrollingTree = protectedThis->scrollingTree();
         if (!scrollingTree)
