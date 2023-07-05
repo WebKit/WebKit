@@ -89,8 +89,6 @@ if (ENABLE_WEBKIT)
 
         Tests/WebKit/CookieStorageFile.cpp
 
-        Tests/WebKit/curl/Certificates.cpp
-
         win/PlatformUtilitiesWin.cpp
         win/PlatformWebViewWin.cpp
     )
