@@ -148,6 +148,9 @@ static bool shouldAllowNonPointerCursorForElement(const Element& element)
         return true;
 #endif
 
+    if (is<HTMLTextFormControlElement>(element))
+        return !element.focused();
+
     if (is<HTMLFormControlElement>(element))
         return true;
 
