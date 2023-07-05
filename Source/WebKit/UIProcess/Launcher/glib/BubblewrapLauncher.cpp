@@ -385,27 +385,50 @@ static bool bindPathVar(Vector<CString>& args, const char* varname)
     return true;
 }
 
+static const char* environmentVariableValue(const char* name, const char* defaultValue)
+{
+    const char* value = g_getenv(name);
+    return value ? value : defaultValue;
+}
+
 static void bindGStreamerData(Vector<CString>& args)
 {
     if (!bindPathVar(args, "GST_PLUGIN_PATH_1_0"))
         bindPathVar(args, "GST_PLUGIN_PATH");
 
-    if (!bindPathVar(args, "GST_PLUGIN_SYSTEM_PATH_1_0")) {
-        if (!bindPathVar(args, "GST_PLUGIN_SYSTEM_PATH")) {
-            GUniquePtr<char> gstData(g_build_filename(g_get_user_data_dir(), "gstreamer-1.0", nullptr));
-            bindIfExists(args, gstData.get());
-        }
+    if (!bindPathVar(args, "GST_PLUGIN_SYSTEM_PATH_1_0"))
+        bindPathVar(args, "GST_PLUGIN_SYSTEM_PATH");
+
+    // The plugin scanner needs write permissions in the parent directory of GST_REGISTRY in order to
+    // write the registry file.
+    if (const char* registryPath = g_getenv("GST_REGISTRY")) {
+        auto registryDir = FileSystem::parentPath(FileSystem::stringFromFileSystemRepresentation(registryPath));
+        bindIfExists(args, registryDir.utf8().data(), BindFlags::ReadWrite);
     }
 
-    GUniquePtr<char> gstCache(g_build_filename(g_get_user_cache_dir(), "gstreamer-1.0", nullptr));
-    bindIfExists(args, gstCache.get(), BindFlags::ReadWrite);
+    bindPathVar(args, "GST_PRESET_PATH");
+
+    // GST_DEBUG_FILE points to an absolute file path, so we need write permissions for its parent directory.
+    if (const char* debugFilePath = g_getenv("GST_DEBUG_FILE")) {
+        auto parentDir = FileSystem::parentPath(FileSystem::stringFromFileSystemRepresentation(debugFilePath));
+        bindIfExists(args, parentDir.utf8().data(), BindFlags::ReadWrite);
+    }
+
+    // GST_DEBUG_DUMP_DOT_DIR might not exist when the application starts, so we need write
+    // permissions for its parent directory.
+    if (const char* dotDir = g_getenv("GST_DEBUG_DUMP_DOT_DIR")) {
+        auto parentDir = FileSystem::parentPath(FileSystem::stringFromFileSystemRepresentation(dotDir));
+        bindIfExists(args, parentDir.utf8().data(), BindFlags::ReadWrite);
+    }
 
     // /usr/lib is already added so this is only requried for other dirs
-    const char* scannerPath = g_getenv("GST_PLUGIN_SCANNER") ?: "/usr/libexec/gstreamer-1.0/gst-plugin-scanner";
-    const char* helperPath = g_getenv("GST_INSTALL_PLUGINS_HELPER ") ?: "/usr/libexec/gst-install-plugins-helper";
+    const char* scannerPath = environmentVariableValue("GST_PLUGIN_SCANNER", "/usr/libexec/gstreamer-1.0/gst-plugin-scanner");
+    const char* installPluginsHelperPath = environmentVariableValue("GST_INSTALL_PLUGINS_HELPER", "/usr/libexec/gstreamer-1.0/gst-install-plugins-helper");
+    const char* ptpHelperPath = environmentVariableValue("GST_PTP_HELPER", "/usr/libexec/gstreamer-1.0/gst-ptp-helper");
 
     bindIfExists(args, scannerPath);
-    bindIfExists(args, helperPath);
+    bindIfExists(args, installPluginsHelperPath);
+    bindIfExists(args, ptpHelperPath);
 }
 
 static void bindOpenGL(Vector<CString>& args)
