@@ -118,7 +118,8 @@ DisplayLink* RemoteLayerTreeDrawingAreaProxyMac::existingDisplayLink()
 
 DisplayLink& RemoteLayerTreeDrawingAreaProxyMac::displayLink()
 {
-    ASSERT(m_displayID);
+    if (!m_displayID)
+        return;
 
     auto& displayLinks = m_webPageProxy.process().processPool().displayLinks();
     return displayLinks.displayLinkForDisplay(*m_displayID);
