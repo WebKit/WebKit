@@ -2761,6 +2761,3 @@ webkit.org/b/258181 [ Monterey+ Debug ] inspector/debugger/async-stack-trace-tru
 [ Debug ] media/modern-media-controls/pip-support/pip-support-enabled.html [ Pass Crash ]
 
 webkit.org/b/236128 imported/w3c/web-platform-tests/html/user-activation/activation-trigger-mouse-right.html [ Skip ]
-
-# rdar://111704637
-fast/html/transient-activation.html [ Pass Timeout ] 

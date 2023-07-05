@@ -2593,3 +2593,6 @@ imported/w3c/web-platform-tests/pointerevents/pointerevent_contextmenu_is_a_poin
 imported/w3c/web-platform-tests/pointerevents/pointerevent_fractional_coordinates.html?mouse [ Skip ]
 imported/w3c/web-platform-tests/pointerevents/pointerevent_fractional_coordinates.html?pen [ Skip ]
 imported/w3c/web-platform-tests/pointerevents/pointerevent_pointerout_no_pointer_movement.html [ Skip ]
+
+# rdar://111704637 - 'mousemove' not emitted from 'eventSender.moveMouseTo()'
+fast/html/transient-activation.html [ Skip ]
