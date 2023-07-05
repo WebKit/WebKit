@@ -391,11 +391,11 @@ void LocalSampleBufferDisplayLayer::enqueueVideoFrame(VideoFrame& videoFrame)
     }
 
     m_processingQueue->dispatch([this, weakThis = ThreadSafeWeakPtr { *this }, pixelBuffer = RetainPtr { videoFrame.pixelBuffer() }, presentationTime = videoFrame.presentationTime(), isReconfiguring]() mutable {
-        assertIsCurrent(workQueue());
-
         auto protectedThis = weakThis.get();
         if (!protectedThis)
             return;
+
+        assertIsCurrent(workQueue());
         if (isReconfiguring)
             m_isReconfiguring = true;
 
