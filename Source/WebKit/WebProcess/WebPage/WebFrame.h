@@ -225,10 +225,13 @@ public:
     Markable<WebCore::LayerHostingContextIdentifier> layerHostingContextIdentifier() { return m_layerHostingContextIdentifier; }
 
     OptionSet<WebCore::AdvancedPrivacyProtections> advancedPrivacyProtections() const;
+    OptionSet<WebCore::AdvancedPrivacyProtections> originatorAdvancedPrivacyProtections() const;
 private:
     WebFrame(WebPage&, WebCore::FrameIdentifier);
 
     void setLayerHostingContextIdentifier(WebCore::LayerHostingContextIdentifier identifier) { m_layerHostingContextIdentifier = identifier; }
+
+    inline WebCore::DocumentLoader* policySourceDocumentLoader() const;
 
     WeakPtr<WebCore::Frame> m_coreFrame;
     WeakPtr<WebPage> m_page;

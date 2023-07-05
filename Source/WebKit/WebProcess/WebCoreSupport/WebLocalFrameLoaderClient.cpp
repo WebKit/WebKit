@@ -495,6 +495,7 @@ void WebLocalFrameLoaderClient::didSameDocumentNavigationForFrameViaJSHistoryAPI
         0, /* effectiveSandboxFlags */
         std::nullopt, /* privateClickMeasurement */
         { }, /* advancedPrivacyProtections */
+        { }, /* originatorAdvancedPrivacyProtections */
 #if PLATFORM(MAC) || HAVE(UIKIT_WITH_MOUSE_SUPPORT)
         std::nullopt, /* webHitTestResultData */
 #endif
@@ -959,6 +960,7 @@ void WebLocalFrameLoaderClient::dispatchDecidePolicyForNewWindowAction(const Nav
         0, /* effectiveSandboxFlags */
         navigationAction.privateClickMeasurement(),
         { }, /* advancedPrivacyProtections */
+        { }, /* originatorAdvancedPrivacyProtections */
 #if PLATFORM(MAC) || HAVE(UIKIT_WITH_MOUSE_SUPPORT)
         WebHitTestResultData::fromNavigationActionAndLocalFrame(navigationAction, m_frame->coreLocalFrame()),
 #endif

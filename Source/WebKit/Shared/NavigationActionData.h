@@ -70,6 +70,7 @@ struct NavigationActionData {
     WebCore::SandboxFlags effectiveSandboxFlags { 0 };
     std::optional<WebCore::PrivateClickMeasurement> privateClickMeasurement;
     OptionSet<WebCore::AdvancedPrivacyProtections> advancedPrivacyProtections;
+    OptionSet<WebCore::AdvancedPrivacyProtections> originatorAdvancedPrivacyProtections;
 #if PLATFORM(MAC) || HAVE(UIKIT_WITH_MOUSE_SUPPORT)
     std::optional<WebKit::WebHitTestResultData> webHitTestResultData;
 #endif

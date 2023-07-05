@@ -142,6 +142,7 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navigat
         coreFrame ? coreFrame->loader().effectiveSandboxFlags() : SandboxFlags(),
         navigationAction.privateClickMeasurement(),
         requestingFrame ? requestingFrame->advancedPrivacyProtections() : OptionSet<AdvancedPrivacyProtections> { },
+        requestingFrame ? requestingFrame->originatorAdvancedPrivacyProtections() : OptionSet<AdvancedPrivacyProtections> { },
 #if PLATFORM(MAC) || HAVE(UIKIT_WITH_MOUSE_SUPPORT)
         WebHitTestResultData::fromNavigationActionAndLocalFrame(navigationAction, coreFrame.get()),
 #endif

@@ -325,6 +325,7 @@ Page* WebChromeClient::createWindow(LocalFrame& frame, const WindowFeatures& win
         0, /* effectiveSandboxFlags */
         navigationAction.privateClickMeasurement(),
         { }, /* advancedPrivacyProtections */
+        { }, /* originatorAdvancedPrivacyProtections */
 #if PLATFORM(MAC) || HAVE(UIKIT_WITH_MOUSE_SUPPORT)
         std::nullopt, /* webHitTestResultData */
 #endif

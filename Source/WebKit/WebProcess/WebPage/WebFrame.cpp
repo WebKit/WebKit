@@ -1144,25 +1144,42 @@ std::optional<NavigatingToAppBoundDomain> WebFrame::isTopFrameNavigatingToAppBou
 }
 #endif
 
-OptionSet<WebCore::AdvancedPrivacyProtections> WebFrame::advancedPrivacyProtections() const
+inline DocumentLoader* WebFrame::policySourceDocumentLoader() const
 {
-    auto* coreFrame = this->coreLocalFrame();
+    auto* coreFrame = coreLocalFrame();
     if (!coreFrame)
-        return { };
+        return nullptr;
 
     auto* document = coreFrame->document();
     if (!document)
-        return { };
+        return nullptr;
 
-    auto* topDocumentLoader = document->topDocument().loader();
-    if (!topDocumentLoader)
-        return { };
+    auto* policySourceDocumentLoader = document->topDocument().loader();
+    if (!policySourceDocumentLoader)
+        return nullptr;
 
-    auto* policySourceDocumentLoader = topDocumentLoader;
     if (!policySourceDocumentLoader->request().url().hasSpecialScheme() && document->url().protocolIsInHTTPFamily())
         policySourceDocumentLoader = document->loader();
 
-    return policySourceDocumentLoader->advancedPrivacyProtections();
+    return policySourceDocumentLoader;
+}
+
+OptionSet<WebCore::AdvancedPrivacyProtections> WebFrame::advancedPrivacyProtections() const
+{
+    auto* loader = policySourceDocumentLoader();
+    if (!loader)
+        return { };
+
+    return loader->advancedPrivacyProtections();
+}
+
+OptionSet<WebCore::AdvancedPrivacyProtections> WebFrame::originatorAdvancedPrivacyProtections() const
+{
+    auto* loader = policySourceDocumentLoader();
+    if (!loader)
+        return { };
+
+    return loader->originatorAdvancedPrivacyProtections();
 }
 
 } // namespace WebKit
