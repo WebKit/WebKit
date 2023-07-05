@@ -102,6 +102,7 @@ enum LSSessionID {
 
 enum {
     kLSServerConnectionStatusDoNotConnectToServerMask = 0x1ULL,
+    kLSServerConnectionStatusReleaseNotificationsMask = (1ULL << 2),
 };
 
 WTF_EXTERN_C_BEGIN
