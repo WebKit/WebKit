@@ -231,7 +231,7 @@ std::optional<StreamClientConnection::SendSyncResult<T>> StreamClientConnection:
     // std::nullopt means we couldn't send through the stream, so try sending out of stream.
     auto syncRequestID = m_connection->makeSyncRequestID();
     if (!m_connection->pushPendingSyncRequestID(syncRequestID))
-        return SendSyncResult<T> { };
+        return { { nullptr, std::nullopt, Error::CantWaitForSyncReplies } };
 
     auto decoderResult = [&]() -> std::optional<Connection::DecoderOrError> {
         StreamConnectionEncoder messageEncoder { T::name(), span.data(), span.size() };
@@ -266,6 +266,8 @@ std::optional<StreamClientConnection::SendSyncResult<T>> StreamClientConnection:
         *decoder >> result.replyArguments;
         if (result.replyArguments)
             result.decoder = WTFMove(decoder);
+        else
+            result.error = Error::FailedToDecodeReplyArguments;
     } else
         result.error = decoderResult->error;
     return result;
