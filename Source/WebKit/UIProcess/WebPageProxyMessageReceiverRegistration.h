@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,25 +25,28 @@
 
 #pragma once
 
-#if PLATFORM(IOS_FAMILY) && ENABLE(UI_SIDE_COMPOSITING)
+#include <WebCore/PageIdentifier.h>
 
-#include "RemoteScrollingTree.h"
+namespace IPC {
+class MessageReceiver;
+}
 
 namespace WebKit {
 
-class RemoteScrollingCoordinatorProxy;
+class WebProcessProxy;
 
-class RemoteScrollingTreeIOS final : public RemoteScrollingTree {
+class WebPageProxyMessageReceiverRegistration {
 public:
-    explicit RemoteScrollingTreeIOS(RemoteScrollingCoordinatorProxy&);
-    virtual ~RemoteScrollingTreeIOS();
-
+    ~WebPageProxyMessageReceiverRegistration();
+    void startReceivingMessages(WebProcessProxy&, WebCore::PageIdentifier, IPC::MessageReceiver&);
+    void stopReceivingMessages();
+    void transferMessageReceivingFrom(WebPageProxyMessageReceiverRegistration&, IPC::MessageReceiver& newReceiver);
 private:
-    Ref<WebCore::ScrollingTreeNode> createScrollingTreeNode(WebCore::ScrollingNodeType, WebCore::ScrollingNodeID) final;
-
-    void scrollingTreeNodeWillStartPanGesture(WebCore::ScrollingNodeID) final;
+    struct Data {
+        WebCore::PageIdentifier webPageID;
+        Ref<WebProcessProxy> process;
+    };
+    std::optional<Data> m_data;
 };
 
 } // namespace WebKit
-
-#endif // PLATFORM(IOS_FAMILY) && ENABLE(UI_SIDE_COMPOSITING)

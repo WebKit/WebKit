@@ -27,6 +27,7 @@
 
 #include "MessageReceiver.h"
 #include "MessageSender.h"
+#include "WebPageProxyMessageReceiverRegistration.h"
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/RegistrableDomain.h>
@@ -53,6 +54,8 @@ using PolicyCheckIdentifier = ProcessQualified<ObjectIdentifier<PolicyCheckIdent
 
 namespace WebKit {
 
+class RemotePageDrawingAreaProxy;
+class RemotePageVisitedLinkStoreRegistration;
 class UserData;
 class WebFrameProxy;
 class WebPageProxy;
@@ -64,7 +67,7 @@ struct FrameTreeCreationParameters;
 class RemotePageProxy : public RefCounted<RemotePageProxy>, public IPC::MessageReceiver, public IPC::MessageSender {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<RemotePageProxy> create(WebPageProxy& page, WebProcessProxy& process, const WebCore::RegistrableDomain& domain) { return adoptRef(*new RemotePageProxy(page, process, domain)); }
+    static Ref<RemotePageProxy> create(WebPageProxy& page, WebProcessProxy& process, const WebCore::RegistrableDomain& domain, WebPageProxyMessageReceiverRegistration* registrationToTransfer = nullptr) { return adoptRef(*new RemotePageProxy(page, process, domain, registrationToTransfer)); }
     ~RemotePageProxy();
 
     void injectPageIntoNewProcess();
@@ -74,11 +77,11 @@ public:
     const WebCore::RegistrableDomain& domain() const { return m_domain; }
 
 private:
-    RemotePageProxy(WebPageProxy&, WebProcessProxy&, const WebCore::RegistrableDomain&);
+    RemotePageProxy(WebPageProxy&, WebProcessProxy&, const WebCore::RegistrableDomain&, WebPageProxyMessageReceiverRegistration*);
     IPC::Connection* messageSenderConnection() const final;
     uint64_t messageSenderDestinationID() const final;
-    void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
-    bool didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&);
+    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
+    bool didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) final;
     void decidePolicyForResponse(WebCore::FrameIdentifier, FrameInfoData&&, WebCore::PolicyCheckIdentifier, uint64_t navigationID, const WebCore::ResourceResponse&, const WebCore::ResourceRequest&, bool canShowMIMEType, const String& downloadAttribute, uint64_t listenerID);
     void didCommitLoadForFrame(WebCore::FrameIdentifier, FrameInfoData&&, WebCore::ResourceRequest&&, uint64_t navigationID, const String& mimeType, bool frameHasCustomContentProvider, WebCore::FrameLoadType, const WebCore::CertificateInfo&, bool usedLegacyTLS, bool privateRelayed, bool containsPluginDocument, WebCore::HasInsecureContent, WebCore::MouseEventPolicy, const UserData&);
 
@@ -86,6 +89,9 @@ private:
     const Ref<WebProcessProxy> m_process;
     WeakPtr<WebPageProxy> m_page;
     const WebCore::RegistrableDomain m_domain;
+    std::unique_ptr<RemotePageDrawingAreaProxy> m_drawingArea;
+    std::unique_ptr<RemotePageVisitedLinkStoreRegistration> m_visitedLinkStoreRegistration;
+    WebPageProxyMessageReceiverRegistration m_messageReceiverRegistration;
 };
 
 }

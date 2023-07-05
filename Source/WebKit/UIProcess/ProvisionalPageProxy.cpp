@@ -86,7 +86,7 @@ ProvisionalPageProxy::ProvisionalPageProxy(WebPageProxy& page, Ref<WebProcessPro
 {
     PROVISIONALPAGEPROXY_RELEASE_LOG(ProcessSwapping, "ProvisionalPageProxy: suspendedPage=%p", suspendedPage.get());
 
-    m_process->addMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_webPageID, *this);
+    m_messageReceiverRegistration.startReceivingMessages(m_process, m_webPageID, *this);
     m_process->addProvisionalPageProxy(*this);
     ASSERT(navigation.processID() == m_process->coreProcessIdentifier());
 
@@ -124,7 +124,6 @@ ProvisionalPageProxy::~ProvisionalPageProxy()
         if (dataStore && dataStore!= &m_page->websiteDataStore())
             m_process->processPool().pageEndUsingWebsiteDataStore(m_page->identifier(), *dataStore);
 
-        m_process->removeMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_webPageID);
         if (m_process->hasConnection())
             send(Messages::WebPage::Close());
         m_process->removeVisitedLinkStoreUser(m_page->visitedLinkStore(), m_page->identifier());
@@ -355,15 +354,15 @@ void ProvisionalPageProxy::didCommitLoadForFrame(FrameIdentifier frameID, FrameI
     if (page().preferences().processSwapOnCrossSiteWindowOpenEnabled()) {
         auto* openerFrame = m_page->openerFrame();
         if (auto* openerPage = openerFrame ? openerFrame->page() : nullptr) {
+            auto& page = this->page();
             RegistrableDomain navigationDomain(request.url());
-            page().send(Messages::WebPage::DidCommitLoadInAnotherProcess(page().mainFrame()->frameID(), std::nullopt, m_process->coreProcessIdentifier()));
-            page().process().removeMessageReceiver(Messages::WebPageProxy::messageReceiverName(), page().webPageID());
-            page().setRemotePageProxyInOpenerProcess(RemotePageProxy::create(page(), openerPage->process(), navigationDomain));
-            page().mainFrame()->setProcess(m_process.get());
+            page.send(Messages::WebPage::DidCommitLoadInAnotherProcess(page.mainFrame()->frameID(), std::nullopt, m_process->coreProcessIdentifier()));
+            page.setRemotePageProxyInOpenerProcess(RemotePageProxy::create(page, openerPage->process(), navigationDomain, &page.messageReceiverRegistration()));
+            page.mainFrame()->setProcess(m_process.get());
         }
     }
     m_provisionalLoadURL = { };
-    m_process->removeMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_webPageID);
+    m_messageReceiverRegistration.stopReceivingMessages();
 
     m_wasCommitted = true;
     m_page->commitProvisionalPage(frameID, WTFMove(frameInfo), WTFMove(request), navigationID, mimeType, frameHasCustomContentProvider, frameLoadType, certificateInfo, usedLegacyTLS, privateRelayed, containsPluginDocument, hasInsecureContent, mouseEventPolicy, userData); // Will delete |this|.

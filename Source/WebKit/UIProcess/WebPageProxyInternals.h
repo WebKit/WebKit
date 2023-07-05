@@ -37,6 +37,7 @@
 #include "WebColorPicker.h"
 #include "WebNotificationManagerMessageHandler.h"
 #include "WebPageProxy.h"
+#include "WebPageProxyMessageReceiverRegistration.h"
 #include "WebPopupMenuProxy.h"
 #include "WebURLSchemeHandlerIdentifier.h"
 #include "WindowKind.h"
@@ -217,6 +218,7 @@ struct WebPageProxy::Internals final : WebPopupMenuProxy::Client
     HashMap<WebCore::RegistrableDomain, WeakPtr<RemotePageProxy>> domainToRemotePageProxyMap;
     RefPtr<RemotePageProxy> remotePageProxyInOpenerProcess;
     HashSet<Ref<RemotePageProxy>> openedRemotePageProxies;
+    WebPageProxyMessageReceiverRegistration messageReceiverRegistration;
 
 #if ENABLE(APPLE_PAY)
     std::unique_ptr<WebPaymentCoordinatorProxy> paymentCoordinator;

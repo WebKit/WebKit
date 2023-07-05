@@ -44,6 +44,9 @@ namespace WebCore {
 class PlatformWheelEvent;
 class WheelEventDeltaFilter;
 struct WheelEventHandlingResult;
+using ScrollingNodeID = uint64_t;
+enum class WheelScrollGestureState : uint8_t;
+enum class WheelEventProcessingSteps : uint8_t;
 };
 
 namespace WebKit {
@@ -86,10 +89,10 @@ public:
     void renderingUpdateComplete();
 
 private:
-    OptionSet<WheelEventProcessingSteps> determineWheelEventProcessing(const WebCore::PlatformWheelEvent&, WebCore::RectEdges<bool> rubberBandableEdges);
+    OptionSet<WebCore::WheelEventProcessingSteps> determineWheelEventProcessing(const WebCore::PlatformWheelEvent&, WebCore::RectEdges<bool> rubberBandableEdges);
 
-    void scrollingThreadHandleWheelEvent(const WebWheelEvent&, RectEdges<bool> rubberBandableEdges);
-    WebCore::WheelEventHandlingResult internalHandleWheelEvent(const WebCore::PlatformWheelEvent&, OptionSet<WheelEventProcessingSteps>);
+    void scrollingThreadHandleWheelEvent(const WebWheelEvent&, WebCore::RectEdges<bool> rubberBandableEdges);
+    WebCore::WheelEventHandlingResult internalHandleWheelEvent(const WebCore::PlatformWheelEvent&, OptionSet<WebCore::WheelEventProcessingSteps>);
 
     WebCore::PlatformWheelEvent filteredWheelEvent(const WebCore::PlatformWheelEvent&);
 
@@ -98,8 +101,8 @@ private:
     void wheelEventHysteresisUpdated(PAL::HysteresisState);
 
     void willHandleWheelEvent(const WebWheelEvent&);
-    void continueWheelEventHandling(WheelEventHandlingResult);
-    void wheelEventWasHandledByScrollingThread(WheelEventHandlingResult);
+    void continueWheelEventHandling(WebCore::WheelEventHandlingResult);
+    void wheelEventWasHandledByScrollingThread(WebCore::WheelEventHandlingResult);
 
     DisplayLink* displayLink() const;
     DisplayLink* existingDisplayLink() const;

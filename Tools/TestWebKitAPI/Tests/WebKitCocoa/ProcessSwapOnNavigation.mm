@@ -1390,8 +1390,7 @@ static void enableWindowOpenPSON(WKWebViewConfiguration *configuration)
     }
 }
 
-// FIXME: Get this working.
-TEST(ProcessSwap, DISABLED_CrossSiteWindowOpenWithOpener)
+TEST(ProcessSwap, CrossSiteWindowOpenWithOpener)
 {
     auto processPoolConfiguration = psonProcessPoolConfiguration();
     auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);

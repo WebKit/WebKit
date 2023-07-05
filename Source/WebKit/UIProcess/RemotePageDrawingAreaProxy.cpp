@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,27 +23,41 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
-#if PLATFORM(IOS_FAMILY) && ENABLE(UI_SIDE_COMPOSITING)
-
-#include "RemoteScrollingTree.h"
+#include "config.h"
+#include "RemotePageDrawingAreaProxy.h"
 
 namespace WebKit {
 
-class RemoteScrollingCoordinatorProxy;
+RemotePageDrawingAreaProxy::RemotePageDrawingAreaProxy(DrawingAreaProxy& drawingArea, WebProcessProxy& process)
+    : m_drawingArea(drawingArea)
+    , m_identifier(drawingArea.identifier())
+    , m_names(drawingArea.messageReceiverNames())
+    , m_process(process)
+{
+    for (auto& name : m_names)
+        process.addMessageReceiver(name, m_identifier, *this);
+}
 
-class RemoteScrollingTreeIOS final : public RemoteScrollingTree {
-public:
-    explicit RemoteScrollingTreeIOS(RemoteScrollingCoordinatorProxy&);
-    virtual ~RemoteScrollingTreeIOS();
+RemotePageDrawingAreaProxy::~RemotePageDrawingAreaProxy()
+{
+    for (auto& name : m_names)
+        m_process->removeMessageReceiver(name, m_identifier);
+}
 
-private:
-    Ref<WebCore::ScrollingTreeNode> createScrollingTreeNode(WebCore::ScrollingNodeType, WebCore::ScrollingNodeID) final;
+void RemotePageDrawingAreaProxy::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
+{
+    if (m_drawingArea)
+        m_drawingArea->didReceiveMessage(connection, decoder);
+    else
+        ASSERT_NOT_REACHED();
+}
 
-    void scrollingTreeNodeWillStartPanGesture(WebCore::ScrollingNodeID) final;
-};
+bool RemotePageDrawingAreaProxy::didReceiveSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& encoder)
+{
+    if (m_drawingArea)
+        return m_drawingArea->didReceiveSyncMessage(connection, decoder, encoder);
+    ASSERT_NOT_REACHED();
+    return false;
+}
 
-} // namespace WebKit
-
-#endif // PLATFORM(IOS_FAMILY) && ENABLE(UI_SIDE_COMPOSITING)
+}

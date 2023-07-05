@@ -30,6 +30,8 @@
 #include "DrawingAreaProxy.h"
 #include "FrameInfoData.h"
 #include "HandleMessage.h"
+#include "RemotePageDrawingAreaProxy.h"
+#include "RemotePageVisitedLinkStoreRegistration.h"
 #include "WebFrameProxy.h"
 #include "WebPageProxy.h"
 #include "WebPageProxyMessages.h"
@@ -38,13 +40,16 @@
 
 namespace WebKit {
 
-RemotePageProxy::RemotePageProxy(WebPageProxy& page, WebProcessProxy& process, const WebCore::RegistrableDomain& domain)
+RemotePageProxy::RemotePageProxy(WebPageProxy& page, WebProcessProxy& process, const WebCore::RegistrableDomain& domain, WebPageProxyMessageReceiverRegistration* registrationToTransfer)
     : m_webPageID(page.webPageID())
     , m_process(process)
     , m_page(page)
     , m_domain(domain)
 {
-    m_process->addMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_webPageID, *this);
+    if (registrationToTransfer)
+        m_messageReceiverRegistration.transferMessageReceivingFrom(*registrationToTransfer, *this);
+    else
+        m_messageReceiverRegistration.startReceivingMessages(m_process, m_webPageID, *this);
     page.addRemotePageProxy(domain, *this);
 }
 
@@ -58,25 +63,21 @@ void RemotePageProxy::injectPageIntoNewProcess()
 
     auto* drawingArea = page->drawingArea();
     RELEASE_ASSERT(drawingArea);
-    drawingArea->startReceivingMessages(m_process);
+
+    m_drawingArea = makeUnique<RemotePageDrawingAreaProxy>(*drawingArea, m_process);
+    m_visitedLinkStoreRegistration = makeUnique<RemotePageVisitedLinkStoreRegistration>(*page, m_process);
 
     auto parameters = page->creationParameters(m_process, *drawingArea);
     parameters.subframeProcessFrameTreeCreationParameters = page->frameTreeCreationParameters();
     parameters.isProcessSwap = true; // FIXME: This should be a parameter to creationParameters rather than doctoring up the parameters afterwards.
     parameters.topContentInset = 0;
     m_process->send(Messages::WebProcess::CreateWebPage(m_webPageID, parameters), 0);
-    m_process->addVisitedLinkStoreUser(page->visitedLinkStore(), page->identifier());
 }
 
 RemotePageProxy::~RemotePageProxy()
 {
-    m_process->removeMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_webPageID);
-
-    if (m_page) {
-        if (auto* drawingArea = m_page->drawingArea())
-            drawingArea->stopReceivingMessages(m_process);
+    if (m_page)
         m_page->removeRemotePageProxy(m_domain);
-    }
 }
 
 IPC::Connection* RemotePageProxy::messageSenderConnection() const

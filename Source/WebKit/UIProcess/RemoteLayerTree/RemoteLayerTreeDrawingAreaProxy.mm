@@ -27,6 +27,7 @@
 #import "RemoteLayerTreeDrawingAreaProxy.h"
 
 #import "DrawingAreaMessages.h"
+#import "DrawingAreaProxyMessages.h"
 #import "Logging.h"
 #import "MessageSenderInlines.h"
 #import "RemoteLayerTreeDrawingAreaProxyMessages.h"
@@ -66,16 +67,10 @@ RemoteLayerTreeDrawingAreaProxy::RemoteLayerTreeDrawingAreaProxy(WebPageProxy& p
 
 RemoteLayerTreeDrawingAreaProxy::~RemoteLayerTreeDrawingAreaProxy() = default;
 
-void RemoteLayerTreeDrawingAreaProxy::startReceivingMessages(WebProcessProxy& process)
+std::span<IPC::ReceiverName> RemoteLayerTreeDrawingAreaProxy::messageReceiverNames() const
 {
-    DrawingAreaProxy::startReceivingMessages(process);
-    process.addMessageReceiver(Messages::RemoteLayerTreeDrawingAreaProxy::messageReceiverName(), m_identifier, *this);
-}
-
-void RemoteLayerTreeDrawingAreaProxy::stopReceivingMessages(WebProcessProxy& process)
-{
-    DrawingAreaProxy::stopReceivingMessages(process);
-    process.removeMessageReceiver(Messages::RemoteLayerTreeDrawingAreaProxy::messageReceiverName(), m_identifier);
+    static std::array<IPC::ReceiverName, 2> names { Messages::DrawingAreaProxy::messageReceiverName(), Messages::RemoteLayerTreeDrawingAreaProxy::messageReceiverName() };
+    return { names };
 }
 
 std::unique_ptr<RemoteLayerTreeHost> RemoteLayerTreeDrawingAreaProxy::detachRemoteLayerTreeHost()

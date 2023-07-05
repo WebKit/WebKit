@@ -34,6 +34,7 @@
 #include "SandboxExtension.h"
 #include "WebFramePolicyListenerProxy.h"
 #include "WebPageProxyIdentifier.h"
+#include "WebPageProxyMessageReceiverRegistration.h"
 #include "WebsitePoliciesData.h"
 #include <WebCore/DiagnosticLoggingClient.h>
 #include <WebCore/FrameIdentifier.h>
@@ -183,6 +184,7 @@ private:
     bool m_wasCommitted { false };
     bool m_isProcessSwappingOnNavigationResponse { false };
     URL m_provisionalLoadURL;
+    WebPageProxyMessageReceiverRegistration m_messageReceiverRegistration;
 
 #if PLATFORM(COCOA)
     Vector<uint8_t> m_accessibilityToken;

@@ -29,6 +29,7 @@
 #include "MessageSender.h"
 #include "ProcessThrottler.h"
 #include "WebBackForwardListItem.h"
+#include "WebPageProxyMessageReceiverRegistration.h"
 #include "WebProcessProxy.h"
 #include <WebCore/FrameIdentifier.h>
 #include <wtf/RefCounted.h>
@@ -107,6 +108,7 @@ private:
     WebCore::PageIdentifier m_webPageID;
     Ref<WebProcessProxy> m_process;
     Ref<WebFrameProxy> m_mainFrame;
+    WebPageProxyMessageReceiverRegistration m_messageReceiverRegistration;
     bool m_isClosed { false };
     ShouldDelayClosingUntilFirstLayerFlush m_shouldDelayClosingUntilFirstLayerFlush { ShouldDelayClosingUntilFirstLayerFlush::No };
     bool m_shouldCloseWhenEnteringAcceleratedCompositingMode { false };

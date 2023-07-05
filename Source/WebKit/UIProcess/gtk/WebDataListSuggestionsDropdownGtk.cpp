@@ -30,6 +30,7 @@
 
 #include "WebPageProxy.h"
 #include <WebCore/DataListSuggestionInformation.h>
+#include <WebCore/GUniquePtrGtk.h>
 #include <WebCore/GtkUtilities.h>
 #include <WebCore/GtkVersioning.h>
 #include <WebCore/IntPoint.h>

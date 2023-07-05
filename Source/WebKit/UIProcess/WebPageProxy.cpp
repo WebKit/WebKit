@@ -746,18 +746,26 @@ WebPageProxy::~WebPageProxy()
     if (m_preferences->mediaSessionCoordinatorEnabled())
         GroupActivitiesSessionNotifier::sharedNotifier().removeWebPage(*this);
 #endif
+
+    internals().remotePageProxyInOpenerProcess = nullptr;
+    internals().openedRemotePageProxies.clear();
 }
 
 void WebPageProxy::addAllMessageReceivers()
 {
-    m_process->addMessageReceiver(Messages::WebPageProxy::messageReceiverName(), internals().webPageID, *this);
+    internals().messageReceiverRegistration.startReceivingMessages(m_process, internals().webPageID, *this);
     m_process->addMessageReceiver(Messages::NotificationManagerMessageHandler::messageReceiverName(), internals().webPageID, internals().notificationManagerMessageHandler);
 }
 
 void WebPageProxy::removeAllMessageReceivers()
 {
-    m_process->removeMessageReceiver(Messages::WebPageProxy::messageReceiverName(), internals().webPageID);
+    internals().messageReceiverRegistration.stopReceivingMessages();
     m_process->removeMessageReceiver(Messages::NotificationManagerMessageHandler::messageReceiverName(), internals().webPageID);
+}
+
+WebPageProxyMessageReceiverRegistration& WebPageProxy::messageReceiverRegistration()
+{
+    return internals().messageReceiverRegistration;
 }
 
 // FIXME: Should return a const PageClient& and add a separate non-const

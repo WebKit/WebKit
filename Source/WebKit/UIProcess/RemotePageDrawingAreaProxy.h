@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,25 +25,28 @@
 
 #pragma once
 
-#if PLATFORM(IOS_FAMILY) && ENABLE(UI_SIDE_COMPOSITING)
-
-#include "RemoteScrollingTree.h"
+#include "DrawingAreaInfo.h"
+#include "MessageReceiver.h"
 
 namespace WebKit {
 
-class RemoteScrollingCoordinatorProxy;
+class DrawingAreaProxy;
+class WebProcessProxy;
 
-class RemoteScrollingTreeIOS final : public RemoteScrollingTree {
+class RemotePageDrawingAreaProxy : public IPC::MessageReceiver {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit RemoteScrollingTreeIOS(RemoteScrollingCoordinatorProxy&);
-    virtual ~RemoteScrollingTreeIOS();
+    RemotePageDrawingAreaProxy(DrawingAreaProxy&, WebProcessProxy&);
+    ~RemotePageDrawingAreaProxy();
 
 private:
-    Ref<WebCore::ScrollingTreeNode> createScrollingTreeNode(WebCore::ScrollingNodeType, WebCore::ScrollingNodeID) final;
+    void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
+    bool didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) final;
 
-    void scrollingTreeNodeWillStartPanGesture(WebCore::ScrollingNodeID) final;
+    WeakPtr<DrawingAreaProxy> m_drawingArea;
+    DrawingAreaIdentifier m_identifier;
+    std::span<IPC::ReceiverName> m_names;
+    Ref<WebProcessProxy> m_process;
 };
 
-} // namespace WebKit
-
-#endif // PLATFORM(IOS_FAMILY) && ENABLE(UI_SIDE_COMPOSITING)
+}

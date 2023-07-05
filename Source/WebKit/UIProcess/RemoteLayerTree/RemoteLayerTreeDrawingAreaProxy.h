@@ -88,8 +88,7 @@ private:
     void minimumSizeForAutoLayoutDidChange() final;
     void sizeToContentAutoSizeMaximumSizeDidChange() final;
     void didUpdateGeometry();
-    void startReceivingMessages(WebProcessProxy&) final;
-    void stopReceivingMessages(WebProcessProxy&) final;
+    std::span<IPC::ReceiverName> messageReceiverNames() const final;
 
     virtual void scheduleDisplayRefreshCallbacks() { }
     virtual void pauseDisplayRefreshCallbacks() { }

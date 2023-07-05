@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,25 +25,25 @@
 
 #pragma once
 
-#if PLATFORM(IOS_FAMILY) && ENABLE(UI_SIDE_COMPOSITING)
-
-#include "RemoteScrollingTree.h"
-
 namespace WebKit {
 
-class RemoteScrollingCoordinatorProxy;
-
-class RemoteScrollingTreeIOS final : public RemoteScrollingTree {
+class RemotePageVisitedLinkStoreRegistration {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit RemoteScrollingTreeIOS(RemoteScrollingCoordinatorProxy&);
-    virtual ~RemoteScrollingTreeIOS();
-
+    RemotePageVisitedLinkStoreRegistration(WebPageProxy& page, WebProcessProxy& process)
+        : m_page(page)
+        , m_process(process)
+    {
+        m_process->addVisitedLinkStoreUser(page.visitedLinkStore(), page.identifier());
+    }
+    ~RemotePageVisitedLinkStoreRegistration()
+    {
+        if (m_page)
+            m_process->removeVisitedLinkStoreUser(m_page->visitedLinkStore(), m_page->identifier());
+    }
 private:
-    Ref<WebCore::ScrollingTreeNode> createScrollingTreeNode(WebCore::ScrollingNodeType, WebCore::ScrollingNodeID) final;
-
-    void scrollingTreeNodeWillStartPanGesture(WebCore::ScrollingNodeID) final;
+    WeakPtr<WebPageProxy> m_page;
+    Ref<WebProcessProxy> m_process;
 };
 
-} // namespace WebKit
-
-#endif // PLATFORM(IOS_FAMILY) && ENABLE(UI_SIDE_COMPOSITING)
+}

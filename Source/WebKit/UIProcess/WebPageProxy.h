@@ -387,6 +387,7 @@ class WebPageDebuggable;
 class WebPageGroup;
 class WebPageInjectedBundleClient;
 class WebPageInspectorController;
+class WebPageProxyMessageReceiverRegistration;
 class WebPopupMenuProxy;
 class WebPopupMenuProxyClient;
 class WebPreferences;
@@ -2259,6 +2260,8 @@ public:
 #if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
     OptionSet<WebCore::AdvancedPrivacyProtections> advancedPrivacyProtectionsPolicies() const { return m_advancedPrivacyProtectionsPolicies; }
 #endif
+
+    WebPageProxyMessageReceiverRegistration& messageReceiverRegistration();
 
 private:
     WebPageProxy(PageClient&, WebProcessProxy&, Ref<API::PageConfiguration>&&);

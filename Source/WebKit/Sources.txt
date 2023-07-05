@@ -402,6 +402,7 @@ UIProcess/ProcessAssertion.cpp
 UIProcess/ProcessThrottler.cpp
 UIProcess/ProvisionalFrameProxy.cpp
 UIProcess/ProvisionalPageProxy.cpp
+UIProcess/RemotePageDrawingAreaProxy.cpp
 UIProcess/RemotePageProxy.cpp
 UIProcess/ResponsivenessTimer.cpp
 UIProcess/SpeechRecognitionRemoteRealtimeMediaSource.cpp
@@ -445,6 +446,7 @@ UIProcess/WebPageDiagnosticLoggingClient.cpp
 UIProcess/WebPageGroup.cpp
 UIProcess/WebPageInjectedBundleClient.cpp
 UIProcess/WebPageProxy.cpp
+UIProcess/WebPageProxyMessageReceiverRegistration.cpp
 UIProcess/WebPasteboardProxy.cpp
 UIProcess/WebPermissionControllerProxy.cpp
 UIProcess/WebPreferences.cpp
