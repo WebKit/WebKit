@@ -3278,7 +3278,7 @@ void WebGLRenderingContextBase::makeXRCompatible(MakeXRCompatiblePromise&& promi
         // FIXME: add a way to verify that we're using a compatible graphics adapter.
         m_isXRCompatible = true;
 
-#if PLATFORM(COCOA) && !PLATFORM(IOS_FAMILY_SIMULATOR)
+#if PLATFORM(COCOA)
         // FIXME: This is ugly. It's something needed at the GraphicsContextGL
         // level, not WebGLRenderingContext. We should move this down to a
         // virtual makeXRCompatible or something on GCGL.
