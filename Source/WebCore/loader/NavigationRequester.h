@@ -27,7 +27,6 @@
 
 #include "CrossOriginOpenerPolicy.h"
 #include "GlobalFrameIdentifier.h"
-#include "PolicyContainer.h"
 #include "SecurityContext.h"
 #include "SecurityOrigin.h"
 
@@ -53,7 +52,7 @@ struct NavigationRequester {
 template<class Encoder>
 void NavigationRequester::encode(Encoder& encoder) const
 {
-    encoder << url << securityOrigin.get() << topOrigin.get() << policyContainer << documentIdentifier << globalFrameIdentifier << sandboxFlags;
+    encoder << url << securityOrigin.get() << topOrigin.get() << crossOriginOpenerPolicy << documentIdentifier << globalFrameIdentifier << sandboxFlags;
 }
 
 template<class Decoder>
@@ -92,7 +91,7 @@ std::optional<NavigationRequester> NavigationRequester::decode(Decoder& decoder)
     if (!sandboxFlags)
         return std::nullopt;
 
-    return NavigationRequester { WTFMove(*url), WTFMove(*securityOrigin), WTFMove(*topOrigin), WTFMove(*policyContainer), *documentIdentifier, *globalFrameIdentifier, *sandboxFlags };
+    return NavigationRequester { WTFMove(*url), WTFMove(*securityOrigin), WTFMove(*topOrigin), WTFMove(*crossOriginOpenerPolicy), *documentIdentifier, *globalFrameIdentifier, *sandboxFlags };
 }
 
 } // namespace WebCore
