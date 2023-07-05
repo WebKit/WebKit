@@ -65,7 +65,6 @@ private:
     std::unique_ptr<Timer> m_refreshTimer;
     unsigned m_rescheduledRenderingUpdateCount { 0 };
     bool m_useTimer { false };
-    bool m_scheduled { false };
 };
 
 }
