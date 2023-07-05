@@ -111,10 +111,7 @@
                 "expected": {"all": {"status": ["TIMEOUT", "PASS"], "bug": "webkit.org/b/205333"}}
             },
             "/webkit/WebKitWebProcessExtension/user-messages": {
-                "expected": {
-                    "gtk": {"status": ["FAIL", "TIMEOUT", "PASS"], "bug": "webkit.org/b/211336"},
-                    "wpe": {"status": ["FAIL", "TIMEOUT", "PASS", "CRASH"], "bug": ["webkit.org/b/211336", "webkit.org/b/219980"]}
-                }
+                "expected": {"all": {"slow": true}}
             },
             "/webkit/WebKitWebProcessExtension/dom-document-title": {
                 "expected": {"gtk": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/254002"}}
