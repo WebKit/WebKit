@@ -351,7 +351,7 @@ static bool videoEncoderSetEncoder(WebKitVideoEncoder* self, EncoderId encoderId
         auto sinkPad = adoptGRef(gst_element_get_static_pad(GST_ELEMENT_CAST(self), "sink"));
         gst_ghost_pad_set_target(GST_GHOST_PAD(sinkPad.get()), sinkPadTarget.get());
     } else {
-        gst_element_unlink(priv->videoConvert.get(), priv->inputCapsFilter.get());
+        gst_element_unlink_many(priv->videoConvert.get(), priv->videoScale.get(), priv->inputCapsFilter.get(), nullptr);
         auto caps = adoptGRef(gst_caps_new_any());
         g_object_set(priv->inputCapsFilter.get(), "caps", caps.get(), nullptr);
     }
