@@ -157,9 +157,6 @@
     },
     "TestWebKitWebContext": {
         "subtests": {
-            "/webkit/WebKitWebContext/uri-scheme": {
-                "expected": {"all": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/183183"}}
-            },
             "/webkit/WebKitWebContext/proxy": {
                 "expected": {"all": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/222090"}}
             }
