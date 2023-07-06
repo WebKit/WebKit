@@ -1129,8 +1129,6 @@ imported/w3c/web-platform-tests/webcodecs/temporal-svc-encoding.https.any.html?v
 
 imported/w3c/web-platform-tests/webcodecs/videoFrame-createImageBitmap.any.worker.html [ Pass ]
 
-http/wpt/webcodecs/videoFrame-colorSpace.html [ Skip ]
-
 # Likely bugs related with dav1ddec.
 imported/w3c/web-platform-tests/webcodecs/videoDecoder-codec-specific.https.any.html?av1 [ Failure ]
 imported/w3c/web-platform-tests/webcodecs/videoDecoder-codec-specific.https.any.worker.html?av1 [ Failure ]
