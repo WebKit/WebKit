@@ -27,8 +27,8 @@
 #import "WKStorageAccessAlert.h"
 
 #if PLATFORM(IOS_FAMILY)
-#import "UIAlertControllerUtilities.h"
 #import "UIKitSPI.h"
+#import "UIKitUtilities.h"
 #endif
 
 #if PLATFORM(COCOA) && !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)

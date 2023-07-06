@@ -24,7 +24,7 @@
  */
 
 #import "config.h"
-#import "UIAlertControllerUtilities.h"
+#import "UIKitUtilities.h"
 
 #if PLATFORM(IOS_FAMILY)
 
@@ -39,6 +39,15 @@ RetainPtr<UIAlertController> createUIAlertController(NSString *title, NSString *
     return alert;
 }
 
+UIScrollView *scrollViewForTouches(NSSet<UITouch *> *touches)
+{
+    for (UITouch *touch in touches) {
+        if (auto scrollView = dynamic_objc_cast<UIScrollView>(touch.view))
+            return scrollView;
+    }
+    return nil;
+}
+
 } // namespace WebKit
 
-#endif
+#endif // PLATFORM(IOS_FAMILY)

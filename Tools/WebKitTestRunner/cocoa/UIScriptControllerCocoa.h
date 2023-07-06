@@ -80,6 +80,10 @@ private:
     void completeTaskAsynchronouslyAfterActivityStateUpdate(unsigned callbackID);
 
     unsigned long countOfUpdatesWithLayerChanges() const override;
+
+#if ENABLE(IMAGE_ANALYSIS)
+    uint64_t currentImageAnalysisRequestID() const final;
+#endif
 };
 
 } // namespace WTR

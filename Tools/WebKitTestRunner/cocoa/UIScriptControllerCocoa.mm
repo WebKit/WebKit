@@ -303,4 +303,13 @@ unsigned long UIScriptControllerCocoa::countOfUpdatesWithLayerChanges() const
     return webView()._countOfUpdatesWithLayerChanges;
 }
 
+#if ENABLE(IMAGE_ANALYSIS)
+
+uint64_t UIScriptControllerCocoa::currentImageAnalysisRequestID() const
+{
+    return TestController::currentImageAnalysisRequestID();
+}
+
+#endif // ENABLE(IMAGE_ANALYSIS)
+
 } // namespace WTR

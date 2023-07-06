@@ -30,7 +30,7 @@
 
 #import "FullscreenTouchSecheuristic.h"
 #import "PlaybackSessionManagerProxy.h"
-#import "UIAlertControllerUtilities.h"
+#import "UIKitUtilities.h"
 #import "VideoFullscreenManagerProxy.h"
 #import "WKFullscreenStackView.h"
 #import "WKWebViewIOS.h"

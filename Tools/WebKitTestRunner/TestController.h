@@ -420,6 +420,10 @@ public:
 
     void receivedServiceWorkerConsoleMessage(const String&);
 
+#if ENABLE(IMAGE_ANALYSIS)
+    static uint64_t currentImageAnalysisRequestID();
+#endif
+
 private:
     WKRetainPtr<WKPageConfigurationRef> generatePageConfiguration(const TestOptions&);
     WKRetainPtr<WKContextConfigurationRef> generateContextConfiguration(const TestOptions&) const;
@@ -604,6 +608,9 @@ private:
     std::unique_ptr<ClassMethodSwizzler> m_calendarSwizzler;
     std::pair<RetainPtr<NSString>, RetainPtr<NSString>> m_overriddenCalendarAndLocaleIdentifiers;
 #endif // PLATFORM(COCOA)
+#if ENABLE(IMAGE_ANALYSIS)
+    std::unique_ptr<InstanceMethodSwizzler> m_imageAnalysisRequestSwizzler;
+#endif
     bool m_verbose { false };
     bool m_printSeparators { false };
     bool m_usingServerMode { false };

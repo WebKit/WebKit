@@ -39,7 +39,7 @@
 #import <wtf/spi/darwin/SandboxSPI.h>
 
 #if PLATFORM(IOS_FAMILY)
-#import "UIAlertControllerUtilities.h"
+#import "UIKitUtilities.h"
 #endif
 
 #import "TCCSoftLink.h"

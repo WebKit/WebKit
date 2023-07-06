@@ -30,11 +30,14 @@
 #import <wtf/RetainPtr.h>
 
 OBJC_CLASS UIAlertController;
+OBJC_CLASS UIScrollView;
+OBJC_CLASS UITouch;
 
 namespace WebKit {
 
 RetainPtr<UIAlertController> createUIAlertController(NSString *title, NSString *message);
+UIScrollView *scrollViewForTouches(NSSet<UITouch *> *);
 
 } // namespace WebKit
 
-#endif
+#endif // PLATFORM(IOS_FAMILY)

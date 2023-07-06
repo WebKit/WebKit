@@ -4623,8 +4623,8 @@
 		41EB4D3A274CE04500A9272B /* ServiceWorkerNavigationPreloader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ServiceWorkerNavigationPreloader.h; sourceTree = "<group>"; };
 		41EB4D3B274CE04500A9272B /* ServiceWorkerNavigationPreloader.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ServiceWorkerNavigationPreloader.cpp; sourceTree = "<group>"; };
 		41F060DD1654317500F3281C /* WebSocketChannelMessageReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebSocketChannelMessageReceiver.cpp; sourceTree = "<group>"; };
-		41F2B52729DF569D004B6FB6 /* UIAlertControllerUtilities.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = UIAlertControllerUtilities.h; path = ios/UIAlertControllerUtilities.h; sourceTree = "<group>"; };
-		41F2B52829DF569E004B6FB6 /* UIAlertControllerUtilities.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = UIAlertControllerUtilities.mm; path = ios/UIAlertControllerUtilities.mm; sourceTree = "<group>"; };
+		41F2B52729DF569D004B6FB6 /* UIKitUtilities.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = UIKitUtilities.h; path = ios/UIKitUtilities.h; sourceTree = "<group>"; };
+		41F2B52829DF569E004B6FB6 /* UIKitUtilities.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = UIKitUtilities.mm; path = ios/UIKitUtilities.mm; sourceTree = "<group>"; };
 		41F898BB28EB195B0070549C /* RemoteVideoCodecFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteVideoCodecFactory.cpp; sourceTree = "<group>"; };
 		41F898BC28EB195C0070549C /* RemoteVideoCodecFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteVideoCodecFactory.h; sourceTree = "<group>"; };
 		41F9FD1823ED8A810099B579 /* LibWebRTCResolverIdentifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LibWebRTCResolverIdentifier.h; path = Network/webrtc/LibWebRTCResolverIdentifier.h; sourceTree = "<group>"; };
@@ -9622,8 +9622,8 @@
 				2DAF06D818BD23BA0081CEB1 /* SmartMagnificationController.messages.in */,
 				2DAF06D518BD1A470081CEB1 /* SmartMagnificationController.mm */,
 				2DA944A91884E9BA00ED86DB /* TextCheckerIOS.mm */,
-				41F2B52729DF569D004B6FB6 /* UIAlertControllerUtilities.h */,
-				41F2B52829DF569E004B6FB6 /* UIAlertControllerUtilities.mm */,
+				41F2B52729DF569D004B6FB6 /* UIKitUtilities.h */,
+				41F2B52829DF569E004B6FB6 /* UIKitUtilities.mm */,
 				2DF9593418A42412009785A1 /* ViewGestureControllerIOS.mm */,
 				E5BEF6802130C47F00F31111 /* WebDataListSuggestionsDropdownIOS.h */,
 				E5BEF6812130C47F00F31111 /* WebDataListSuggestionsDropdownIOS.mm */,

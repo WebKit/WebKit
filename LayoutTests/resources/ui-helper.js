@@ -1876,6 +1876,16 @@ window.UIHelper = class UIHelper {
         });
     }
 
+    static currentImageAnalysisRequestID()
+    {
+        if (!this.isWebKit2())
+            return Promise.resolve(0);
+
+        return new Promise(resolve => {
+            testRunner.runUIScript("uiController.uiScriptComplete(uiController.currentImageAnalysisRequestID)", result => resolve(result));
+        });
+    }
+
     static moveToNextByKeyboardAccessoryBar()
     {
         return new Promise((resolve) => {

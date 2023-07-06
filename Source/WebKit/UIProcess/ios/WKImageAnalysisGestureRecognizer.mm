@@ -23,13 +23,16 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WKImageAnalysisGestureRecognizer.h"
+#import "config.h"
+#import "WKImageAnalysisGestureRecognizer.h"
 
 #if PLATFORM(IOS_FAMILY) && ENABLE(IMAGE_ANALYSIS)
 
+#import "UIKitUtilities.h"
+
 @implementation WKImageAnalysisGestureRecognizer {
     __weak UIView <WKImageAnalysisGestureRecognizerDelegate> *_imageAnalysisGestureRecognizerDelegate;
+    __weak UIScrollView *_lastTouchedScrollView;
 }
 
 - (instancetype)initWithImageAnalysisGestureDelegate:(UIView <WKImageAnalysisGestureRecognizerDelegate> *)delegate
@@ -45,9 +48,19 @@
     return self;
 }
 
+- (void)reset
+{
+    [super reset];
+
+    _lastTouchedScrollView = nil;
+}
+
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
 {
     [super touchesBegan:touches withEvent:event];
+
+    if (auto scrollView = WebKit::scrollViewForTouches(touches))
+        _lastTouchedScrollView = scrollView;
 
     [self beginAfterExceedingForceThresholdIfNeeded:touches];
 }

@@ -11234,6 +11234,9 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 {
     ASSERT(WebKit::isLiveTextAvailableAndEnabled());
 
+    if ([self _isPanningScrollViewOrAncestor:gestureRecognizer.lastTouchedScrollView])
+        return;
+
     auto requestIdentifier = WebKit::ImageAnalysisRequestIdentifier::generate();
 
     [_imageAnalyzer cancelAllRequests];

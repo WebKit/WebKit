@@ -55,10 +55,28 @@
 #import <WebKit/WKWebsiteDataStoreRef.h>
 #import <WebKit/_WKApplicationManifest.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
+#import <wtf/BlockPtr.h>
 #import <wtf/MainThread.h>
+#import <wtf/RunLoop.h>
 #import <wtf/UniqueRef.h>
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/spi/cocoa/SecuritySPI.h>
+
+#import <pal/cocoa/VisionKitCoreSoftLink.h>
+
+#if ENABLE(IMAGE_ANALYSIS)
+
+static VKImageAnalysisRequestID gCurrentImageAnalysisRequestID = 0;
+
+VKImageAnalysisRequestID swizzledProcessImageAnalysisRequest(id, SEL, VKCImageAnalyzerRequest *, void (^progressHandler)(double), void (^completionHandler)(VKCImageAnalysis *, NSError *))
+{
+    RunLoop::main().dispatchAfter(25_ms, [completionHandler = makeBlockPtr(completionHandler)] {
+        completionHandler(nil, [NSError errorWithDomain:NSCocoaErrorDomain code:404 userInfo:nil]);
+    });
+    return ++gCurrentImageAnalysisRequestID;
+}
+
+#endif // ENABLE(IMAGE_ANALYSIS)
 
 namespace WTR {
 
@@ -125,7 +143,24 @@ void TestController::cocoaPlatformInitialize(const Options& options)
 
     if (options.lockdownModeEnabled)
         [WKProcessPool _setCaptivePortalModeEnabledGloballyForTesting:YES];
+
+#if ENABLE(IMAGE_ANALYSIS)
+    m_imageAnalysisRequestSwizzler = makeUnique<InstanceMethodSwizzler>(
+        PAL::getVKCImageAnalyzerClass(),
+        @selector(processRequest:progressHandler:completionHandler:),
+        reinterpret_cast<IMP>(swizzledProcessImageAnalysisRequest)
+    );
+#endif
 }
+
+#if ENABLE(IMAGE_ANALYSIS)
+
+uint64_t TestController::currentImageAnalysisRequestID()
+{
+    return static_cast<uint64_t>(gCurrentImageAnalysisRequestID);
+}
+
+#endif
 
 WKContextRef TestController::platformContext()
 {

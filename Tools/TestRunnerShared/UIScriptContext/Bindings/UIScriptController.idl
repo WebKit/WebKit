@@ -388,4 +388,6 @@ interface UIScriptController {
     readonly attribute DOMString firstRedoLabel;
     
     readonly attribute unsigned long countOfUpdatesWithLayerChanges;
+
+    readonly attribute unsigned long long currentImageAnalysisRequestID;
 };
