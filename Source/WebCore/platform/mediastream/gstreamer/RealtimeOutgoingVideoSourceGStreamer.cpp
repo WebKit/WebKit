@@ -108,8 +108,14 @@ bool RealtimeOutgoingVideoSourceGStreamer::setPayloadType(const GRefPtr<GstCaps>
 
     GRefPtr<GstCaps> encoderCaps;
     if (encoding == "vp8"_s) {
+        if (gstObjectHasProperty(m_payloader.get(), "picture-id-mode"))
+            gst_util_set_object_arg(G_OBJECT(m_payloader.get()), "picture-id-mode", "15-bit");
+
         encoderCaps = adoptGRef(gst_caps_new_empty_simple("video/x-vp8"));
     } else if (encoding == "vp9"_s) {
+        if (gstObjectHasProperty(m_payloader.get(), "picture-id-mode"))
+            gst_util_set_object_arg(G_OBJECT(m_payloader.get()), "picture-id-mode", "15-bit");
+
         encoderCaps = adoptGRef(gst_caps_new_empty_simple("video/x-vp9"));
         if (const char* vp9Profile = gst_structure_get_string(structure, "vp9-profile-id"))
             gst_caps_set_simple(encoderCaps.get(), "profile", G_TYPE_STRING, vp9Profile, nullptr);
