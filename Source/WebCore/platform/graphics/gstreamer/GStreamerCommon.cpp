@@ -309,11 +309,14 @@ bool ensureGStreamerInitialized()
     return isGStreamerInitialized;
 }
 
-static void registerInternalVideoEncoder()
+static bool registerInternalVideoEncoder()
 {
 #if ENABLE(VIDEO)
-    gst_element_register(nullptr, "webkitvideoencoder", GST_RANK_PRIMARY + 100, WEBKIT_TYPE_VIDEO_ENCODER);
+    if (auto factory = adoptGRef(gst_element_factory_find("webkitvideoencoder")))
+        return false;
+    return gst_element_register(nullptr, "webkitvideoencoder", GST_RANK_PRIMARY + 100, WEBKIT_TYPE_VIDEO_ENCODER);
 #endif
+    return false;
 }
 
 void registerWebKitGStreamerElements()
@@ -426,8 +429,7 @@ void registerWebKitGStreamerVideoEncoder()
     static std::once_flag onceFlag;
     bool registryWasUpdated = false;
     std::call_once(onceFlag, [&registryWasUpdated] {
-        registerInternalVideoEncoder();
-        registryWasUpdated = true;
+        registryWasUpdated = registerInternalVideoEncoder();
     });
 
     // The video encoder might be registered after the scanner was initialized, so in this situation
