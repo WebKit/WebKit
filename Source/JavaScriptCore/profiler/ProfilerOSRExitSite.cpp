@@ -31,11 +31,16 @@
 
 namespace JSC { namespace Profiler {
 
-Ref<JSON::Value> OSRExitSite::toJSON(Dumper&) const
+JSValue OSRExitSite::toJS(JSGlobalObject* globalObject) const
 {
-    auto result = JSON::Array::create();
-    for (unsigned i = 0; i < m_codeAddresses.size(); ++i)
-        result->pushString(toString(RawPointer(m_codeAddresses[i].dataLocation())));
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    JSArray* result = constructEmptyArray(globalObject, nullptr);
+    RETURN_IF_EXCEPTION(scope, { });
+    for (unsigned i = 0; i < m_codeAddresses.size(); ++i) {
+        result->putDirectIndex(globalObject, i, jsString(vm, toString(RawPointer(m_codeAddresses[i].dataLocation()))));
+        RETURN_IF_EXCEPTION(scope, { });
+    }
     return result;
 }
 

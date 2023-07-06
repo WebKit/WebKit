@@ -46,7 +46,7 @@ public:
 
     void dump(PrintStream&) const;
     
-    Ref<JSON::Value> toJSON(Dumper&) const;
+    JSValue toJS(JSGlobalObject*) const;
     
 private:
     size_t m_id;

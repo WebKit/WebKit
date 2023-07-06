@@ -37,7 +37,7 @@ public:
     
     const Bytecodes* bytecodes() const { return m_bytecodes; }
     
-    Ref<JSON::Value> toJSON(Dumper&) const;
+    JSValue toJS(JSGlobalObject*) const;
 
 private:
     Bytecodes* m_bytecodes;

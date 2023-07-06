@@ -38,7 +38,6 @@ class CodeOrigin;
 namespace Profiler {
 
 class Database;
-class Dumper;
 
 class OriginStack {
 public:
@@ -66,7 +65,7 @@ public:
     bool isHashTableDeletedValue() const;
     
     void dump(PrintStream&) const;
-    Ref<JSON::Value> toJSON(Dumper&) const;
+    JSValue toJS(JSGlobalObject*) const;
     
 private:
     Vector<Origin, 1> m_stack;

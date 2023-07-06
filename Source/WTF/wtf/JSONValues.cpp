@@ -33,7 +33,6 @@
 #include "config.h"
 #include <wtf/JSONValues.h>
 
-#include <wtf/CommaPrinter.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WTF {
@@ -458,6 +457,13 @@ RefPtr<JSON::Value> buildValue(const CodeUnit* start, const CodeUnit* end, const
     return result;
 }
 
+inline void appendDoubleQuotedString(StringBuilder& builder, StringView string)
+{
+    builder.append('"');
+    Value::escapeString(builder, string);
+    builder.append('"');
+}
+
 } // anonymous namespace
 
 Ref<Value> Value::null()
@@ -536,6 +542,46 @@ RefPtr<Value> Value::parseJSON(StringView json)
     return result;
 }
 
+void Value::escapeString(StringBuilder& builder, StringView string)
+{
+    for (UChar codeUnit : string.codeUnits()) {
+        switch (codeUnit) {
+        case '\b':
+            builder.append("\\b");
+            continue;
+        case '\f':
+            builder.append("\\f");
+            continue;
+        case '\n':
+            builder.append("\\n");
+            continue;
+        case '\r':
+            builder.append("\\r");
+            continue;
+        case '\t':
+            builder.append("\\t");
+            continue;
+        case '\\':
+            builder.append("\\\\");
+            continue;
+        case '"':
+            builder.append("\\\"");
+            continue;
+        }
+        // We escape < and > to prevent script execution.
+        if (codeUnit >= 32 && codeUnit < 127 && codeUnit != '<' && codeUnit != '>') {
+            builder.append(codeUnit);
+            continue;
+        }
+        // We could encode characters >= 127 as UTF-8 instead of \u escape sequences.
+        // We could handle surrogates here if callers wanted that; for now we just
+        // write them out as a \u sequence, so a surrogate pair appears as two of them.
+        builder.append("\\u",
+            upperNibbleToASCIIHexDigit(codeUnit >> 8), lowerNibbleToASCIIHexDigit(codeUnit >> 8),
+            upperNibbleToASCIIHexDigit(codeUnit), lowerNibbleToASCIIHexDigit(codeUnit));
+    }
+}
+
 String Value::toJSONString() const
 {
     StringBuilder result;
@@ -572,57 +618,6 @@ String Value::asString() const
     return m_value.string;
 }
 
-void Value::dump(PrintStream& out) const
-{
-    switch (m_type) {
-    case Type::Null:
-        out.print("null"_s);
-        break;
-    case Type::Boolean:
-        out.print(m_value.boolean ? "true"_s : "false"_s);
-        break;
-    case Type::String: {
-        StringBuilder builder;
-        builder.appendQuotedJSONString(m_value.string);
-        out.print(builder.toString());
-        break;
-    }
-    case Type::Double:
-    case Type::Integer: {
-        if (!std::isfinite(m_value.number))
-            out.print("null"_s);
-        else
-            out.print(makeString(m_value.number));
-        break;
-    }
-    case Type::Object: {
-        auto& object = *static_cast<const ObjectBase*>(this);
-        CommaPrinter comma(",");
-        out.print("{");
-        for (const auto& key : object.m_order) {
-            auto findResult = object.m_map.find(key);
-            ASSERT(findResult != object.m_map.end());
-            StringBuilder builder;
-            builder.appendQuotedJSONString(findResult->key);
-            out.print(comma, builder.toString(), ":", findResult->value.get());
-        }
-        out.print("}");
-        break;
-    }
-    case Type::Array: {
-        auto& array = *static_cast<const ArrayBase*>(this);
-        CommaPrinter comma(",");
-        out.print("[");
-        for (auto& value : array.m_map)
-            out.print(comma, value.get());
-        out.print("]");
-        break;
-    }
-    default:
-        ASSERT_NOT_REACHED();
-    }
-}
-
 void Value::writeJSON(StringBuilder& output) const
 {
     switch (m_type) {
@@ -636,7 +631,7 @@ void Value::writeJSON(StringBuilder& output) const
             output.append("false");
         break;
     case Type::String:
-        output.appendQuotedJSONString(m_value.string);
+        appendDoubleQuotedString(output, m_value.string);
         break;
     case Type::Double:
     case Type::Integer: {
@@ -753,7 +748,7 @@ void ObjectBase::writeJSON(StringBuilder& output) const
         ASSERT(findResult != m_map.end());
         if (i)
             output.append(',');
-        output.appendQuotedJSONString(findResult->key);
+        appendDoubleQuotedString(output, findResult->key);
         output.append(':');
         findResult->value->writeJSON(output);
     }

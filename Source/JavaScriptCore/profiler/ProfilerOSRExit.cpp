@@ -28,7 +28,7 @@
 
 #include "JSGlobalObject.h"
 #include "ObjectConstructor.h"
-#include "ProfilerDumper.h"
+#include "JSCInlines.h"
 
 namespace JSC { namespace Profiler {
 
@@ -45,14 +45,15 @@ OSRExit::~OSRExit()
 {
 }
 
-Ref<JSON::Value> OSRExit::toJSON(Dumper& dumper) const
+JSValue OSRExit::toJS(JSGlobalObject* globalObject) const
 {
-    auto result = JSON::Object::create();
-    result->setDouble(dumper.keys().m_id, m_id);
-    result->setValue(dumper.keys().m_origin, m_origin.toJSON(dumper));
-    result->setString(dumper.keys().m_exitKind, exitKindToString(m_exitKind));
-    result->setBoolean(dumper.keys().m_isWatchpoint, !!m_isWatchpoint);
-    result->setDouble(dumper.keys().m_count, m_counter);
+    VM& vm = globalObject->vm();
+    JSObject* result = constructEmptyObject(globalObject);
+    result->putDirect(vm, vm.propertyNames->id, jsNumber(m_id));
+    result->putDirect(vm, vm.propertyNames->origin, m_origin.toJS(globalObject));
+    result->putDirect(vm, vm.propertyNames->exitKind, jsNontrivialString(vm, exitKindToString(m_exitKind)));
+    result->putDirect(vm, vm.propertyNames->isWatchpoint, jsBoolean(m_isWatchpoint));
+    result->putDirect(vm, vm.propertyNames->count, jsNumber(m_counter));
     return result;
 }
 

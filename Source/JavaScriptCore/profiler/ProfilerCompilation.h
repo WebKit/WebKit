@@ -47,7 +47,6 @@ namespace Profiler {
 
 class Bytecodes;
 class Database;
-class Dumper;
 
 // Represents the act of executing some bytecodes in some engine, and does
 // all of the counting for those executions.
@@ -79,7 +78,7 @@ public:
     UID uid() const { return m_uid; }
     
     void dump(PrintStream&) const;
-    Ref<JSON::Value> toJSON(Dumper&) const;
+    JSValue toJS(JSGlobalObject*) const;
     
 private:
     CompilationKind m_kind;

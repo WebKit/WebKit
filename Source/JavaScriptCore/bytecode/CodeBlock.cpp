@@ -140,11 +140,16 @@ CString CodeBlock::sourceCodeForTools() const
 {
     if (codeType() != FunctionCode)
         return ownerExecutable()->source().toUTF8();
-
+    
+    SourceProvider* provider = source().provider();
     FunctionExecutable* executable = jsCast<FunctionExecutable*>(ownerExecutable());
-    return executable->source().provider()->getRange(
-        executable->functionStart(),
-        executable->parametersStartOffset() + executable->source().length()).utf8();
+    UnlinkedFunctionExecutable* unlinked = executable->unlinkedExecutable();
+    unsigned unlinkedStartOffset = unlinked->startOffset();
+    unsigned linkedStartOffset = executable->source().startOffset();
+    int delta = linkedStartOffset - unlinkedStartOffset;
+    unsigned rangeStart = delta + unlinked->unlinkedFunctionStart();
+    unsigned rangeEnd = delta + unlinked->startOffset() + unlinked->sourceLength();
+    return provider->source().substring(rangeStart, rangeEnd - rangeStart).utf8();
 }
 
 CString CodeBlock::sourceCodeOnOneLine() const

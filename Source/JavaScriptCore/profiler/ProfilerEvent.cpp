@@ -30,7 +30,6 @@
 #include "ObjectConstructor.h"
 #include "ProfilerBytecodes.h"
 #include "ProfilerCompilation.h"
-#include "ProfilerDumper.h"
 #include "ProfilerUID.h"
 
 namespace JSC { namespace Profiler {
@@ -45,18 +44,19 @@ void Event::dump(PrintStream& out) const
         out.print(" (", m_detail, ")");
 }
 
-Ref<JSON::Value> Event::toJSON(Dumper& dumper) const
+JSValue Event::toJS(JSGlobalObject* globalObject) const
 {
-    auto result = JSON::Object::create();
-
-    result->setDouble(dumper.keys().m_time, m_time.secondsSinceEpoch().value());
-    result->setDouble(dumper.keys().m_bytecodesID, m_bytecodes->id());
+    VM& vm = globalObject->vm();
+    JSObject* result = constructEmptyObject(globalObject);
+    
+    result->putDirect(vm, vm.propertyNames->time, jsNumber(m_time.secondsSinceEpoch().value()));
+    result->putDirect(vm, vm.propertyNames->bytecodesID, jsNumber(m_bytecodes->id()));
     if (m_compilation)
-        result->setValue(dumper.keys().m_compilationUID, m_compilation->uid().toJSON(dumper));
-    result->setString(dumper.keys().m_summary, String::fromUTF8(m_summary));
+        result->putDirect(vm, vm.propertyNames->compilationUID, m_compilation->uid().toJS(globalObject));
+    result->putDirect(vm, vm.propertyNames->summary, jsString(vm, String::fromUTF8(m_summary)));
     if (m_detail.length())
-        result->setString(dumper.keys().m_detail, String::fromUTF8(m_detail));
-
+        result->putDirect(vm, vm.propertyNames->detail, jsString(vm, String::fromUTF8(m_detail)));
+    
     return result;
 }
 

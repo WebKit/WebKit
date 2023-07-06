@@ -38,7 +38,6 @@ namespace Profiler {
 
 class Bytecodes;
 class Database;
-class Dumper;
 
 class Origin {
 public:
@@ -67,7 +66,7 @@ public:
     bool isHashTableDeletedValue() const;
     
     void dump(PrintStream&) const;
-    Ref<JSON::Value> toJSON(Dumper&) const;
+    JSValue toJS(JSGlobalObject*) const;
 
 private:
     Bytecodes* m_bytecodes;

@@ -48,9 +48,9 @@ void UID::dump(PrintStream& out) const
     out.print(m_uid);
 }
 
-Ref<JSON::Value> UID::toJSON(Dumper&) const
+JSValue UID::toJS(JSGlobalObject* globalObject) const
 {
-    return JSON::Value::create(toString(*this));
+    return jsString(globalObject->vm(), toString(*this));
 }
 
 } } // namespace JSC::Profiler

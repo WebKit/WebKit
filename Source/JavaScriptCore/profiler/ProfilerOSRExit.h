@@ -31,9 +31,6 @@
 
 namespace JSC { namespace Profiler {
 
-class Database;
-class Dumper;
-
 class OSRExit {
 public:
     OSRExit(unsigned id, const OriginStack&, ExitKind, bool isWatchpoint);
@@ -48,7 +45,7 @@ public:
     uint64_t count() const { return m_counter; }
     void incCount() { m_counter++; }
 
-    Ref<JSON::Value> toJSON(Dumper&) const;
+    JSValue toJS(JSGlobalObject*) const;
 
 private:
     OriginStack m_origin;

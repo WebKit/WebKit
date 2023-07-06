@@ -30,7 +30,6 @@
 #include "ObjectConstructor.h"
 #include "ProfilerBytecodes.h"
 #include "ProfilerDatabase.h"
-#include "ProfilerDumper.h"
 
 namespace JSC { namespace Profiler {
 
@@ -45,11 +44,12 @@ void Origin::dump(PrintStream& out) const
     out.print(*m_bytecodes, " ", m_bytecodeIndex);
 }
 
-Ref<JSON::Value> Origin::toJSON(Dumper& dumper) const
+JSValue Origin::toJS(JSGlobalObject* globalObject) const
 {
-    auto result = JSON::Object::create();
-    result->setDouble(dumper.keys().m_bytecodesID, m_bytecodes->id());
-    result->setDouble(dumper.keys().m_bytecodeIndex, m_bytecodeIndex.offset());
+    VM& vm = globalObject->vm();
+    JSObject* result = constructEmptyObject(globalObject);
+    result->putDirect(vm, vm.propertyNames->bytecodesID, jsNumber(m_bytecodes->id()));
+    result->putDirect(vm, vm.propertyNames->bytecodeIndex, jsNumber(m_bytecodeIndex.offset()));
     return result;
 }
 

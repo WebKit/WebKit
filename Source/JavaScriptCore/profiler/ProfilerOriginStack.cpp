@@ -97,11 +97,18 @@ void OriginStack::dump(PrintStream& out) const
     }
 }
 
-Ref<JSON::Value> OriginStack::toJSON(Dumper& dumper) const
+JSValue OriginStack::toJS(JSGlobalObject* globalObject) const
 {
-    auto result = JSON::Array::create();
-    for (unsigned i = 0; i < m_stack.size(); ++i)
-        result->pushValue(m_stack[i].toJSON(dumper));
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    JSArray* result = constructEmptyArray(globalObject, nullptr);
+    RETURN_IF_EXCEPTION(scope, { });
+    
+    for (unsigned i = 0; i < m_stack.size(); ++i) {
+        result->putDirectIndex(globalObject, i, m_stack[i].toJS(globalObject));
+        RETURN_IF_EXCEPTION(scope, { });
+    }
+    
     return result;
 }
 
