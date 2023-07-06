@@ -1278,12 +1278,9 @@ Bug(WPE) fast/viewport/viewport-legacy-xhtmlmp.html [ Failure ]
 webkit.org/b/174673 fast/events/keyboardevent-code.html [ Failure ]
 
 # clickCount related failures
-webkit.org/b/174674 fast/events/click-count.html [ Failure ]
-webkit.org/b/174674 fast/events/dblclick-addEventListener.html [ Failure ]
 webkit.org/b/174674 fast/events/mouse-click-events.html [ Failure ]
 webkit.org/b/174674 fast/events/selectstart-by-double-triple-clicks.html [ Failure ]
 webkit.org/b/174674 fast/events/zoom-dblclick.html [ Failure ]
-webkit.org/b/174674 imported/w3c/web-platform-tests/uievents/click/dblclick_event_mouse.html [ Failure ]
 
 # The tests below need gardening after the EventSenderWPE has been added.
 # Most of them are probably failing because of missing support of event related
