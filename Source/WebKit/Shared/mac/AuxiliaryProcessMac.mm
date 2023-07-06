@@ -393,8 +393,19 @@ static bool ensureSandboxCacheDirectory(const SandboxInfo& info)
 
 static bool writeSandboxDataToCacheFile(const SandboxInfo& info, const Vector<char>& cacheFile)
 {
-    FileHandle file { info.filePath, FileSystem::FileOpenMode::Truncate, FileSystem::FileLockMode::Exclusive };
-    return file.write(cacheFile.data(), cacheFile.size()) == safeCast<int>(cacheFile.size());
+    // To avoid locking, write the sandbox data to a temporary path including the current process' PID
+    // then rename it to the final cache path.
+    auto temporaryPath = makeString(info.filePath, '-', getpid());
+    FileHandle file { temporaryPath, FileSystem::FileOpenMode::Truncate };
+    if (file.write(cacheFile.data(), cacheFile.size()) != safeCast<int>(cacheFile.size())) {
+        FileSystem::deleteFile(temporaryPath);
+        return false;
+    }
+    if (!FileSystem::moveFile(temporaryPath, info.filePath)) {
+        FileSystem::deleteFile(temporaryPath);
+        return false;
+    }
+    return true;
 }
 
 static SandboxProfilePtr compileAndCacheSandboxProfile(const SandboxInfo& info)
@@ -458,7 +469,7 @@ static bool tryApplyCachedSandbox(const SandboxInfo& info)
         return false;
 #endif
 
-    auto contents = fileContents(info.filePath, true, FileSystem::FileLockMode::Shared);
+    auto contents = fileContents(info.filePath);
     if (!contents || contents->isEmpty())
         return false;
     Vector<char> cachedSandboxContents = WTFMove(*contents);
