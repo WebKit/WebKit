@@ -47,6 +47,8 @@ public:
     void simulateAccessibilitySettingsChangeNotification(JSValueRef) override;
     void removeViewFromWindow(JSValueRef) override;
     void addViewToWindow(JSValueRef) override;
+    double zoomScale() const override;
+    void zoomToScale(double, JSValueRef) override;
 };
 
 } // namespace WTR

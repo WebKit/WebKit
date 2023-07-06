@@ -1352,7 +1352,7 @@ webkit.org/b/212202 css3/scroll-snap/scroll-snap-wheel-event.html [ Skip ]
 css3/scroll-snap/scroll-snap-discrete-wheel-event-in-mainframe.html [ Skip ]
 css3/scroll-snap/scroll-snap-discrete-wheel-events-with-layout.html [ Skip ]
 
-webkit.org/b/213921 fast/visual-viewport/scroll-event-fired-during-scroll-alone.html [ Crash ]
+fast/visual-viewport/client-coordinates-relative-to-layout-viewport.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Scrolling-related bugs
@@ -2662,22 +2662,6 @@ webkit.org/b/162815 fast/text/variations/font-selection-properties.html [ ImageO
 webkit.org/b/162815 fast/text/variations/skia-postscript-name.html [ ImageOnlyFailure ]
 webkit.org/b/163981 fast/css3-text/css3-text-decoration/text-underline-position/underline-visual-overflow-with-subpixel-position.html [ Failure ]
 
-# Skip tests requiring UIScriptController::zoomToScale.
-webkit.org/b/168050 fast/visual-viewport/resize-event-fired.html [ Skip ]
-webkit.org/b/168050 fast/visual-viewport/rtl-zoomed-rects.html [ Skip ]
-webkit.org/b/168050 fast/visual-viewport/scroll-event-fired.html [ Skip ]
-webkit.org/b/168050 fast/visual-viewport/viewport-dimensions-exclude-custom-scrollbars.html [ Skip ]
-webkit.org/b/168050 fast/visual-viewport/viewport-dimensions-exclude-scrollbars.html [ Skip ]
-webkit.org/b/168050 fast/visual-viewport/viewport-dimensions.html [ Skip ]
-webkit.org/b/168050 fast/visual-viewport/viewport-dimensions-iframe.html [ Skip ]
-webkit.org/b/168050 fast/visual-viewport/viewport-dimensions-under-page-zoom.html [ Skip ]
-webkit.org/b/168050 fast/visual-viewport/zoomed-fixed-header-and-footer.html [ Skip ]
-webkit.org/b/168050 fast/visual-viewport/zoomed-fixed.html [ Skip ]
-webkit.org/b/168050 fast/visual-viewport/zoomed-fixed-scroll-down-then-up.html [ Skip ]
-webkit.org/b/168050 fast/visual-viewport/zoomed-rects.html [ Skip ]
-webkit.org/b/168050 fast/zooming/client-rect-in-fixed-zoomed.html [ Skip ]
-webkit.org/b/168050 fast/zooming/uiscript-zooming.html [ Skip ]
-
 # Skip tests requiring UIScriptController::singleTapAtPoint.
 media/modern-media-controls/button/button-active-state.html [ Skip ]
 media/modern-media-controls/button/button.html [ Skip ]
@@ -2713,6 +2697,12 @@ media/modern-media-controls/volume-support/volume-support-drag-to-mute.html [ Sk
 
 webkit.org/b/168191 fast/text/system-font-weight.html [ Failure ]
 webkit.org/b/168370 accessibility/hidden-th-still-column-header.html [ Failure ]
+
+# Skip tests requiring unimplemented features in UIScriptController.
+fast/events/autoscroll-when-input-is-offscreen.html [ Skip ]
+fast/events/autoscroll-with-software-keyboard.html [ Skip ]
+fast/events/before-input-prevent-insert-replacement.html [ Skip ]
+fast/events/input-event-insert-replacement.html [ Skip ]
 
 # [GTK][WPE] Some reftest fail with only one or two pixel differences in diff image
 webkit.org/b/168426 fast/html/details-comment-crash.html [ ImageOnlyFailure ]

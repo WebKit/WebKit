@@ -646,14 +646,6 @@ webkit.org/b/89052 fast/css/image-orientation [ Skip ]
 # No support for resource load statistics yet
 webkit.org/b/177943 http/tests/resourceLoadStatistics/ [ Skip ]
 
-# Missing UIScriptController implementation, causing crashes
-webkit.org/b/200295 fast/events/autoscroll-when-input-is-offscreen.html [ Crash ]
-webkit.org/b/200295 fast/events/autoscroll-with-software-keyboard.html [ Crash ]
-webkit.org/b/200295 fast/events/before-input-prevent-insert-replacement.html [ Crash ]
-webkit.org/b/200295 fast/events/input-event-insert-replacement.html [ Crash ]
-webkit.org/b/200295 fast/visual-viewport/client-coordinates-relative-to-layout-viewport.html [ Crash ]
-webkit.org/b/200295 fast/visual-viewport/client-rects-relative-to-layout-viewport.html [ Crash ]
-
 # Inspector tests don't work with platform WebSockets API
 webkit.org/b/200162 http/tests/websocket/tests/hybi/inspector/ [ Skip ]
 
