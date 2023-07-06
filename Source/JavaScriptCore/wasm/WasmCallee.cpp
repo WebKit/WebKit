@@ -236,6 +236,7 @@ const WasmInstruction* LLIntCallee::outOfLineJumpTarget(const WasmInstruction* p
     return m_instructions->at(offset + target).ptr();
 }
 
+#if ENABLE(WEBASSEMBLY_B3JIT)
 void OptimizingJITCallee::addCodeOrigin(unsigned firstInlineCSI, unsigned lastInlineCSI, const Wasm::ModuleInformation& info, uint32_t functionIndex)
 {
     if (!nameSections.size())
@@ -273,7 +274,6 @@ IndexOrName OptimizingJITCallee::getOrigin(unsigned csi, unsigned depth, bool& i
     return indexOrName();
 }
 
-#if ENABLE(WEBASSEMBLY_B3JIT)
 void OptimizingJITCallee::linkExceptionHandlers(Vector<UnlinkedHandlerInfo> unlinkedExceptionHandlers, Vector<CodeLocationLabel<ExceptionHandlerPtrTag>> exceptionHandlerLocations)
 {
     size_t count = unlinkedExceptionHandlers.size();
