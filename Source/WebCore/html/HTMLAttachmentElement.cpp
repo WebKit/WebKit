@@ -278,6 +278,7 @@ void HTMLAttachmentElement::updateProgress(const AtomString& progress)
     bool validProgress = false;
     float value = progress.toFloat(&validProgress);
     if (validProgress && std::isfinite(value)) {
+        m_imageElement->setInlineStyleProperty(CSSPropertyDisplay, CSSValueNone);
         if (!value) {
             m_placeholderElement->removeInlineStyleProperty(CSSPropertyDisplay);
             m_progressElement->setInlineStyleProperty(CSSPropertyDisplay, CSSValueNone);
@@ -290,6 +291,7 @@ void HTMLAttachmentElement::updateProgress(const AtomString& progress)
         return;
     }
 
+    m_imageElement->removeInlineStyleProperty(CSSPropertyDisplay);
     m_placeholderElement->setInlineStyleProperty(CSSPropertyDisplay, CSSValueNone);
     m_progressElement->setInlineStyleProperty(CSSPropertyDisplay, CSSValueNone);
     m_progressElement->removeInlineStyleCustomProperty(attachmentProgressCSSProperty());

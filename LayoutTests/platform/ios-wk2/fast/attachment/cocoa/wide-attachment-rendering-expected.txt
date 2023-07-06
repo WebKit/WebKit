@@ -57,7 +57,6 @@ layer at (0,0) size 800x888
         RenderAttachment {ATTACHMENT} at (97,16) size 339x92 [color=#007AFF]
           RenderFlexibleBox {DIV} at (0,0) size 338x92 [bgcolor=#74748014]
             RenderGrid {DIV} at (0,0) size 82x92
-              RenderImage {IMG} at (10,10) size 72x72
             RenderFlexibleBox {DIV} at (82,0) size 230x92
               RenderGrid {DIV} at (0,37) size 230x18
       RenderBlock {DIV} at (0,654) size 784x109
@@ -66,7 +65,6 @@ layer at (0,0) size 800x888
         RenderAttachment {ATTACHMENT} at (96,16) size 339x92 [color=#007AFF]
           RenderFlexibleBox {DIV} at (0,0) size 338x92 [bgcolor=#74748014]
             RenderGrid {DIV} at (0,0) size 82x92
-              RenderImage {IMG} at (10,10) size 72x72
               RenderBlock {DIV} at (10,10) size 72x72 [color=#3C3C4399]
                 RenderBlock (generated) at (0,0) size 72x72 [border: (4px solid #3C3C4399)]
                   RenderText at (0,0) size 0x0
@@ -78,7 +76,6 @@ layer at (0,0) size 800x888
         RenderAttachment {ATTACHMENT} at (104,16) size 339x92 [color=#007AFF]
           RenderFlexibleBox {DIV} at (0,0) size 338x92 [bgcolor=#74748014]
             RenderGrid {DIV} at (0,0) size 82x92
-              RenderImage {IMG} at (10,10) size 72x72
               RenderBlock {DIV} at (10,10) size 72x72 [color=#3C3C4399]
                 RenderBlock (generated) at (0,0) size 72x72 [border: (4px solid #3C3C4399)]
                   RenderText at (0,0) size 0x0
