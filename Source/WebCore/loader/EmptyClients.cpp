@@ -276,7 +276,7 @@ private:
     void respondToChangedContents() final { }
     void respondToChangedSelection(Frame*) final { }
     void updateEditorStateAfterLayoutIfEditabilityChanged() final { }
-    void discardedComposition(Frame*) final { }
+    void discardedComposition(const Document&) final { }
     void canceledComposition() final { }
     void didUpdateComposition() final { }
     void didEndEditing() final { }
