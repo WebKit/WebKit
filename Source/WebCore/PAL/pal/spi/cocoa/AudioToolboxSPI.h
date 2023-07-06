@@ -26,5 +26,10 @@
 #if USE(APPLE_INTERNAL_SDK)
 
 #import <AudioToolbox/AudioComponentPriv.h>
+#import <AudioToolbox/AudioFormatPriv.h>
+
+#else
+
+static constexpr OSType kAudioFormatProperty_AvailableDecodeChannelLayoutTags = 'adcl';
 
 #endif
