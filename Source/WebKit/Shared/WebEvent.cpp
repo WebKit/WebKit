@@ -34,11 +34,11 @@ namespace WebKit {
 
 WebEvent::WebEvent()
     : m_type(WebEventType::NoType)
-    , m_authorizationToken(UUID::createVersion4())
+    , m_authorizationToken(WTF::UUID::createVersion4())
 {
 }
 
-WebEvent::WebEvent(WebEventType type, OptionSet<WebEventModifier> modifiers, WallTime timestamp, UUID authorizationToken)
+WebEvent::WebEvent(WebEventType type, OptionSet<WebEventModifier> modifiers, WallTime timestamp, WTF::UUID authorizationToken)
     : m_type(type)
     , m_modifiers(modifiers)
     , m_timestamp(timestamp)
@@ -50,7 +50,7 @@ WebEvent::WebEvent(WebEventType type, OptionSet<WebEventModifier> modifiers, Wal
     : m_type(type)
     , m_modifiers(modifiers)
     , m_timestamp(timestamp)
-    , m_authorizationToken(UUID::createVersion4())
+    , m_authorizationToken(WTF::UUID::createVersion4())
 {
 }
 

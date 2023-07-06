@@ -49,7 +49,7 @@ public:
         return adoptRef(*new WebNotification(data, pageIdentifier, std::nullopt, sourceConnection));
     }
 
-    static Ref<WebNotification> createPersistent(const WebCore::NotificationData& data, const std::optional<UUID>& dataStoreIdentifier, IPC::Connection& sourceConnection)
+    static Ref<WebNotification> createPersistent(const WebCore::NotificationData& data, const std::optional<WTF::UUID>& dataStoreIdentifier, IPC::Connection& sourceConnection)
     {
         ASSERT(data.isPersistent());
         return adoptRef(*new WebNotification(data, WebPageProxyIdentifier(), dataStoreIdentifier, sourceConnection));
@@ -61,8 +61,8 @@ public:
     const String& tag() const { return m_data.tag; }
     const String& lang() const { return m_data.language; }
     WebCore::NotificationDirection dir() const { return m_data.direction; }
-    const UUID& coreNotificationID() const { return m_data.notificationID; }
-    const std::optional<UUID>& dataStoreIdentifier() const { return m_dataStoreIdentifier; }
+    const WTF::UUID& coreNotificationID() const { return m_data.notificationID; }
+    const std::optional<WTF::UUID>& dataStoreIdentifier() const { return m_dataStoreIdentifier; }
     PAL::SessionID sessionID() const { return m_data.sourceSession; }
 
     const WebCore::NotificationData& data() const { return m_data; }
@@ -77,12 +77,12 @@ public:
     RefPtr<IPC::Connection> sourceConnection() const { return m_sourceConnection.get(); }
 
 private:
-    WebNotification(const WebCore::NotificationData&, WebPageProxyIdentifier, const std::optional<UUID>& dataStoreIdentifier, IPC::Connection&);
+    WebNotification(const WebCore::NotificationData&, WebPageProxyIdentifier, const std::optional<WTF::UUID>& dataStoreIdentifier, IPC::Connection&);
 
     WebCore::NotificationData m_data;
     RefPtr<API::SecurityOrigin> m_origin;
     WebPageProxyIdentifier m_pageIdentifier;
-    std::optional<UUID> m_dataStoreIdentifier;
+    std::optional<WTF::UUID> m_dataStoreIdentifier;
     ThreadSafeWeakPtr<IPC::Connection> m_sourceConnection;
 };
 

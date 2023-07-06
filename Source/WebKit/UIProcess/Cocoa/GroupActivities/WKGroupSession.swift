@@ -68,7 +68,7 @@ public final class WKGroupSessionWrapper : NSObject {
     }
 
     @objc public var activity: WKURLActivityWrapper { self.activityWrapper }
-    @objc public var uuid: UUID { groupSession.id }
+    @objc public var uuid: WTF::UUID { groupSession.id }
 
     private static func wrapperSessionState(state: GroupSession<URLActivity>.State) -> WKGroupSessionState {
         switch state {

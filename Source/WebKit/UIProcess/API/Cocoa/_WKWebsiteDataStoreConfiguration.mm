@@ -69,7 +69,7 @@ static void checkURLArgument(NSURL *url)
     if (!identifier)
         [NSException raise:NSInvalidArgumentException format:@"Identifier is nil"];
 
-    auto uuid = UUID::fromNSUUID(identifier);
+    auto uuid = WTF::UUID::fromNSUUID(identifier);
     if (!uuid || !uuid->isValid())
         [NSException raise:NSInvalidArgumentException format:@"Identifier (%s) is invalid for data store", String([identifier UUIDString]).utf8().data()];
 

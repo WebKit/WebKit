@@ -243,7 +243,7 @@ bool WebsiteDataStore::defaultDataStoreExists()
     return !!globalDefaultDataStore();
 }
 
-RefPtr<WebsiteDataStore> WebsiteDataStore::existingDataStoreForIdentifier(const UUID& identifier)
+RefPtr<WebsiteDataStore> WebsiteDataStore::existingDataStoreForIdentifier(const WTF::UUID& identifier)
 {
     for (auto* dataStore : allDataStores().values()) {
         if (dataStore && dataStore->configuration().identifier() == identifier)
@@ -254,7 +254,7 @@ RefPtr<WebsiteDataStore> WebsiteDataStore::existingDataStoreForIdentifier(const 
 }
 
 #if PLATFORM(COCOA)
-Ref<WebsiteDataStore> WebsiteDataStore::dataStoreForIdentifier(const UUID& uuid)
+Ref<WebsiteDataStore> WebsiteDataStore::dataStoreForIdentifier(const WTF::UUID& uuid)
 {
     RELEASE_ASSERT(uuid.isValid());
 
@@ -2316,18 +2316,18 @@ void WebsiteDataStore::showServiceWorkerNotification(IPC::Connection& connection
     WebNotificationManagerProxy::sharedServiceWorkerManager().show(*this, connection, notificationData, nullptr);
 }
 
-void WebsiteDataStore::cancelServiceWorkerNotification(const UUID& notificationID)
+void WebsiteDataStore::cancelServiceWorkerNotification(const WTF::UUID& notificationID)
 {
     WebNotificationManagerProxy::sharedServiceWorkerManager().cancel(nullptr, notificationID);
 }
 
-void WebsiteDataStore::clearServiceWorkerNotification(const UUID& notificationID)
+void WebsiteDataStore::clearServiceWorkerNotification(const WTF::UUID& notificationID)
 {
-    Vector<UUID> notifications = { notificationID };
+    Vector<WTF::UUID> notifications = { notificationID };
     WebNotificationManagerProxy::sharedServiceWorkerManager().clearNotifications(nullptr, notifications);
 }
 
-void WebsiteDataStore::didDestroyServiceWorkerNotification(const UUID& notificationID)
+void WebsiteDataStore::didDestroyServiceWorkerNotification(const WTF::UUID& notificationID)
 {
     WebNotificationManagerProxy::sharedServiceWorkerManager().didDestroyNotification(nullptr, notificationID);
 }
@@ -2438,7 +2438,7 @@ void WebsiteDataStore::clearProxyConfigData()
     networkProcess().send(Messages::NetworkProcess::ClearProxyConfigData(m_sessionID), 0);
 }
 
-void WebsiteDataStore::setProxyConfigData(Vector<std::pair<Vector<uint8_t>, UUID>>&& data)
+void WebsiteDataStore::setProxyConfigData(Vector<std::pair<Vector<uint8_t>, WTF::UUID>>&& data)
 {
     networkProcess().send(Messages::NetworkProcess::SetProxyConfigData(m_sessionID, WTFMove(data)), 0);
 }

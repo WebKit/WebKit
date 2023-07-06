@@ -23,11 +23,6 @@
 #include <stddef.h>
 #include <wtf/Platform.h>
 
-// Include <windows.h> before "using WTF::UUID" to avoid conflicts with UUID in Windows headers.
-#if OS(WINDOWS)
-#include <windows.h>
-#endif
-
 namespace WTF {
 
 class ASCIILiteral;
@@ -181,7 +176,6 @@ using WTF::SuspendableWorkQueue;
 using WTF::TextPosition;
 using WTF::TextStream;
 using WTF::URL;
-using WTF::UUID;
 using WTF::UniqueRef;
 using WTF::Vector;
 using WTF::WeakPtr;

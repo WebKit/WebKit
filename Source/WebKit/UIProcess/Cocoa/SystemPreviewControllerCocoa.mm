@@ -530,7 +530,7 @@ void SystemPreviewController::triggerSystemPreviewAction()
 
 void SystemPreviewController::triggerSystemPreviewActionWithTargetForTesting(uint64_t elementID, NSString* documentID, uint64_t pageID)
 {
-    auto uuid = UUID::parseVersion4(String(documentID));
+    auto uuid = WTF::UUID::parseVersion4(String(documentID));
     ASSERT(uuid);
     if (!uuid)
         return;

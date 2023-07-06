@@ -67,16 +67,16 @@ public:
 
     void show(WebPageProxy*, IPC::Connection&, const WebCore::NotificationData&, RefPtr<WebCore::NotificationResources>&&);
     void show(const WebsiteDataStore&, IPC::Connection&, const WebCore::NotificationData&, RefPtr<WebCore::NotificationResources>&&);
-    void cancel(WebPageProxy*, const UUID& pageNotificationID);
+    void cancel(WebPageProxy*, const WTF::UUID& pageNotificationID);
     void clearNotifications(WebPageProxy*);
-    void clearNotifications(WebPageProxy*, const Vector<UUID>& pageNotificationIDs);
-    void didDestroyNotification(WebPageProxy*, const UUID& pageNotificationID);
+    void clearNotifications(WebPageProxy*, const Vector<WTF::UUID>& pageNotificationIDs);
+    void didDestroyNotification(WebPageProxy*, const WTF::UUID& pageNotificationID);
 
     void getNotifications(const URL&, const String&, PAL::SessionID, CompletionHandler<void(Vector<WebCore::NotificationData>&&)>&&);
 
     void providerDidShowNotification(uint64_t notificationID);
     void providerDidClickNotification(uint64_t notificationID);
-    void providerDidClickNotification(const UUID& notificationID);
+    void providerDidClickNotification(const WTF::UUID& notificationID);
     void providerDidCloseNotifications(API::Array* notificationIDs);
     void providerDidUpdateNotificationPolicy(const API::SecurityOrigin*, bool allowed);
     void providerDidRemoveNotificationPolicies(API::Array* origins);
@@ -96,8 +96,8 @@ private:
 
     std::unique_ptr<API::NotificationProvider> m_provider;
 
-    HashMap<uint64_t, UUID> m_globalNotificationMap;
-    HashMap<UUID, Ref<WebNotification>> m_notifications;
+    HashMap<uint64_t, WTF::UUID> m_globalNotificationMap;
+    HashMap<WTF::UUID, Ref<WebNotification>> m_notifications;
 };
 
 } // namespace WebKit

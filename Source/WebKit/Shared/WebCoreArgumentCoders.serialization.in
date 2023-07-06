@@ -943,7 +943,7 @@ struct WebCore::NotificationData {
     WebCore::NotificationDirection direction;
     String originString;
     URL serviceWorkerRegistrationURL;
-    UUID notificationID;
+    WTF::UUID notificationID;
     WebCore::ScriptExecutionContextIdentifier contextIdentifier;
     PAL::SessionID sourceSession;
     MonotonicTime creationTime;
@@ -2545,8 +2545,8 @@ struct WebCore::FetchOptions {
     WebCore::ReferrerPolicy referrerPolicy;
     bool keepAlive;
     String integrity;
-    Markable<UUID> clientIdentifier;
-    Markable<UUID> resultingClientIdentifier;
+    Markable<WTF::UUID> clientIdentifier;
+    Markable<WTF::UUID> resultingClientIdentifier;
 }
 
 enum class WebCore::FetchHeadersGuard : uint8_t {

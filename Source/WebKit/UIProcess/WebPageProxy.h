@@ -2180,9 +2180,9 @@ public:
 #endif
 
     void showNotification(IPC::Connection&, const WebCore::NotificationData&, RefPtr<WebCore::NotificationResources>&&);
-    void cancelNotification(const UUID& notificationID);
-    void clearNotifications(const Vector<UUID>& notificationIDs);
-    void didDestroyNotification(const UUID& notificationID);
+    void cancelNotification(const WTF::UUID& notificationID);
+    void clearNotifications(const Vector<WTF::UUID>& notificationIDs);
+    void didDestroyNotification(const WTF::UUID& notificationID);
     void pageWillLikelyUseNotifications();
 
 #if USE(SYSTEM_PREVIEW)

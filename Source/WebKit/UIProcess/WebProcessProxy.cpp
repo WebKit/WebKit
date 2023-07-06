@@ -1296,7 +1296,7 @@ bool WebProcessProxy::wasPreviouslyApprovedFileURL(const URL& url) const
     return m_previouslyApprovedFilePaths.contains(fileSystemPath);
 }
 
-void WebProcessProxy::recordUserGestureAuthorizationToken(UUID authorizationToken)
+void WebProcessProxy::recordUserGestureAuthorizationToken(WTF::UUID authorizationToken)
 {
     if (!UserInitiatedActionByAuthorizationTokenMap::isValidKey(authorizationToken) || !authorizationToken)
         return;
@@ -1317,7 +1317,7 @@ RefPtr<API::UserInitiatedAction> WebProcessProxy::userInitiatedActivity(uint64_t
     return result.iterator->value;
 }
 
-RefPtr<API::UserInitiatedAction> WebProcessProxy::userInitiatedActivity(std::optional<UUID> authorizationToken, uint64_t identifier)
+RefPtr<API::UserInitiatedAction> WebProcessProxy::userInitiatedActivity(std::optional<WTF::UUID> authorizationToken, uint64_t identifier)
 {
     if (!UserInitiatedActionMap::isValidKey(identifier) || !identifier)
         return nullptr;
@@ -1335,7 +1335,7 @@ RefPtr<API::UserInitiatedAction> WebProcessProxy::userInitiatedActivity(std::opt
     return userInitiatedActivity(identifier);
 }
 
-void WebProcessProxy::consumeIfNotVerifiablyFromUIProcess(API::UserInitiatedAction& action, std::optional<UUID> authToken)
+void WebProcessProxy::consumeIfNotVerifiablyFromUIProcess(API::UserInitiatedAction& action, std::optional<WTF::UUID> authToken)
 {
     if (authToken && m_userInitiatedActionByAuthorizationTokenMap.remove(*authToken))
         return;

@@ -667,7 +667,7 @@ def headers_for_type(type):
         'Seconds': ['<wtf/Seconds.h>'],
         'String': ['<wtf/text/WTFString.h>'],
         'URL': ['<wtf/URLHash.h>'],
-        'UUID': ['<wtf/UUID.h>'],
+        'WTF::UUID': ['<wtf/UUID.h>'],
         'WallTime': ['<wtf/WallTime.h>'],
         'WebCore::AlternativeTextType': ['<WebCore/AlternativeTextClient.h>'],
         'WebCore::ApplyTrackingPrevention': ['<WebCore/NetworkStorageSession.h>'],

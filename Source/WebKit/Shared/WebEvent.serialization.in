@@ -32,7 +32,7 @@ class WebKit::WebEvent {
     WebKit::WebEventType type();
     OptionSet<WebKit::WebEventModifier> modifiers();
     WallTime timestamp();
-    UUID authorizationToken();
+    WTF::UUID authorizationToken();
 };
 
 enum class WebKit::WebEventType : int8_t {

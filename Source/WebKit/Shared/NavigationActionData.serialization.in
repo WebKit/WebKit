@@ -26,7 +26,7 @@ struct WebKit::NavigationActionData {
     WebKit::WebMouseEventButton mouseButton;
     WebKit::WebMouseEventSyntheticClickType syntheticClickType;
     uint64_t userGestureTokenIdentifier;
-    std::optional<UUID> userGestureAuthorizationToken;
+    std::optional<WTF::UUID> userGestureAuthorizationToken;
     bool canHandleRequest;
     WebCore::ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy;
     WTF::String downloadAttribute;

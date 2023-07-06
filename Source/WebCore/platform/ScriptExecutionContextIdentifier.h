@@ -32,16 +32,16 @@
 namespace WebCore {
 
 template <>
-class ProcessQualified<UUID> {
+class ProcessQualified<WTF::UUID> {
 public:
-    static ProcessQualified generate() { return { UUID::createVersion4(), Process::identifier() }; }
+    static ProcessQualified generate() { return { WTF::UUID::createVersion4(), Process::identifier() }; }
 
     ProcessQualified()
-        : m_object(UUID::emptyValue)
+        : m_object(WTF::UUID::emptyValue)
     {
     }
 
-    ProcessQualified(UUID object, ProcessIdentifier processIdentifier)
+    ProcessQualified(WTF::UUID object, ProcessIdentifier processIdentifier)
         : m_object(WTFMove(object))
         , m_processIdentifier(processIdentifier)
     {
@@ -55,7 +55,7 @@ public:
 
     operator bool() const { return !!m_object; }
 
-    const UUID& object() const { return m_object; }
+    const WTF::UUID& object() const { return m_object; }
     ProcessIdentifier processIdentifier() const { return m_processIdentifier; }
 
     bool isHashTableDeletedValue() const { return m_processIdentifier.isHashTableDeletedValue(); }
@@ -68,19 +68,19 @@ public:
     template<typename Decoder> static std::optional<ProcessQualified> decode(Decoder&);
 
 private:
-    UUID m_object;
+    WTF::UUID m_object;
     ProcessIdentifier m_processIdentifier;
 };
 
-inline void add(Hasher& hasher, const ProcessQualified<UUID>& uuid)
+inline void add(Hasher& hasher, const ProcessQualified<WTF::UUID>& uuid)
 {
     // Since UUIDs are unique on their own, optimize by not hashing the process identifier.
     add(hasher, uuid.object());
 }
 
-template<typename Decoder> std::optional<ProcessQualified<UUID>> ProcessQualified<UUID>::decode(Decoder& decoder)
+template<typename Decoder> std::optional<ProcessQualified<WTF::UUID>> ProcessQualified<WTF::UUID>::decode(Decoder& decoder)
 {
-    std::optional<UUID> object;
+    std::optional<WTF::UUID> object;
     decoder >> object;
     if (!object)
         return std::nullopt;
@@ -92,12 +92,12 @@ template<typename Decoder> std::optional<ProcessQualified<UUID>> ProcessQualifie
 }
 
 template <>
-inline TextStream& operator<<(TextStream& ts, const ProcessQualified<UUID>& processQualified)
+inline TextStream& operator<<(TextStream& ts, const ProcessQualified<WTF::UUID>& processQualified)
 {
     ts << "ProcessQualified(" << processQualified.processIdentifier().toUInt64() << '-' << processQualified.object().toString() << ')';
     return ts;
 }
 
-using ScriptExecutionContextIdentifier = ProcessQualified<UUID>;
+using ScriptExecutionContextIdentifier = ProcessQualified<WTF::UUID>;
 
 }

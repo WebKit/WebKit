@@ -148,7 +148,7 @@ static String effectiveApplicationId()
 
     // If it is not possible to obtain the executable path, generate
     // a random identifier as a fallback.
-    auto uuid = UUID::createVersion4Weak();
+    auto uuid = WTF::UUID::createVersion4Weak();
     return makeString("org.webkit.app-", uuid.toString());
 }
 

@@ -106,10 +106,10 @@ public:
     void setUserStyleSheetLocation(const String&);
     void setWebNotificationPermission(WebPage*, const String& originString, bool allowed);
     void removeAllWebNotificationPermissions(WebPage*);
-    std::optional<UUID> webNotificationID(JSContextRef, JSValueRef);
+    std::optional<WTF::UUID> webNotificationID(JSContextRef, JSValueRef);
     Ref<API::Data> createWebDataFromUint8Array(JSContextRef, JSValueRef);
     
-    typedef HashMap<UUID, String> DocumentIDToURLMap;
+    typedef HashMap<WTF::UUID, String> DocumentIDToURLMap;
     DocumentIDToURLMap liveDocumentURLs(bool excludeDocumentsInPageGroupPages);
 
     // Garbage collection API

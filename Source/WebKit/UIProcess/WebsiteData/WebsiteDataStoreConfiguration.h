@@ -48,8 +48,8 @@ public:
     WebsiteDataStoreConfiguration(IsPersistent, ShouldInitializePaths = ShouldInitializePaths::Yes);
 
 #if PLATFORM(COCOA)
-    static Ref<WebsiteDataStoreConfiguration> create(const UUID& identifier) { return adoptRef(*new WebsiteDataStoreConfiguration(identifier)); }
-    WebsiteDataStoreConfiguration(const UUID&);
+    static Ref<WebsiteDataStoreConfiguration> create(const WTF::UUID& identifier) { return adoptRef(*new WebsiteDataStoreConfiguration(identifier)); }
+    WebsiteDataStoreConfiguration(const WTF::UUID&);
 #endif
 
 #if !PLATFORM(COCOA)
@@ -61,7 +61,7 @@ public:
     Ref<WebsiteDataStoreConfiguration> copy() const;
 
     bool isPersistent() const { return m_isPersistent == IsPersistent::Yes; }
-    std::optional<UUID> identifier() const { return m_identifier; }
+    std::optional<WTF::UUID> identifier() const { return m_identifier; }
 
     uint64_t perOriginStorageQuota() const { return m_perOriginStorageQuota; }
     void setPerOriginStorageQuota(uint64_t quota) { m_perOriginStorageQuota = quota; }
@@ -253,7 +253,7 @@ private:
     IsPersistent m_isPersistent { IsPersistent::No };
 
     UnifiedOriginStorageLevel m_unifiedOriginStorageLevel;
-    Markable<UUID> m_identifier;
+    Markable<WTF::UUID> m_identifier;
     String m_baseCacheDirectory;
     String m_baseDataDirectory;
     String m_cacheStorageDirectory;

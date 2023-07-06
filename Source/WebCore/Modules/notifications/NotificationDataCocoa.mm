@@ -65,12 +65,12 @@ std::optional<NotificationData> NotificationData::fromDictionary(NSDictionary *d
     NSData *notificationData = dictionary[WebNotificationDataKey];
 
     String uuidString = dictionary[WebNotificationUUIDStringKey];
-    auto uuid = UUID::parseVersion4(uuidString);
+    auto uuid = WTF::UUID::parseVersion4(uuidString);
     if (!uuid)
         return std::nullopt;
 
     String contextUUIDString = dictionary[WebNotificationContextUUIDStringKey];
-    auto contextUUID = UUID::parseVersion4(contextUUIDString);
+    auto contextUUID = WTF::UUID::parseVersion4(contextUUIDString);
     if (!contextUUID)
         return std::nullopt;
     ScriptExecutionContextIdentifier contextIdentifier(*contextUUID, Process::identifier());

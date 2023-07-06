@@ -9947,17 +9947,17 @@ void WebPageProxy::showNotification(IPC::Connection& connection, const WebCore::
         internals().pageAllowedToRunInTheBackgroundToken = process().throttler().pageAllowedToRunInTheBackgroundToken();
 }
 
-void WebPageProxy::cancelNotification(const UUID& notificationID)
+void WebPageProxy::cancelNotification(const WTF::UUID& notificationID)
 {
     m_process->processPool().supplement<WebNotificationManagerProxy>()->cancel(this, notificationID);
 }
 
-void WebPageProxy::clearNotifications(const Vector<UUID>& notificationIDs)
+void WebPageProxy::clearNotifications(const Vector<WTF::UUID>& notificationIDs)
 {
     m_process->processPool().supplement<WebNotificationManagerProxy>()->clearNotifications(this, notificationIDs);
 }
 
-void WebPageProxy::didDestroyNotification(const UUID& notificationID)
+void WebPageProxy::didDestroyNotification(const WTF::UUID& notificationID)
 {
     m_process->processPool().supplement<WebNotificationManagerProxy>()->didDestroyNotification(this, notificationID);
 }

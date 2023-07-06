@@ -58,7 +58,7 @@ WebsiteDataStoreConfiguration::WebsiteDataStoreConfiguration(IsPersistent isPers
 
 #if PLATFORM(COCOA)
 
-WebsiteDataStoreConfiguration::WebsiteDataStoreConfiguration(const UUID& identifier)
+WebsiteDataStoreConfiguration::WebsiteDataStoreConfiguration(const WTF::UUID& identifier)
     : m_isPersistent(IsPersistent::Yes)
     , m_unifiedOriginStorageLevel(WebsiteDataStore::defaultUnifiedOriginStorageLevel())
     , m_identifier(identifier)

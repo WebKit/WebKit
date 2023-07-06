@@ -32,21 +32,21 @@
 namespace WTR {
 
 WKDataRef dataValue(WKTypeRef);
-UUID dataToUUID(WKDataRef);
-WKRetainPtr<WKDataRef> uuidToData(const UUID&);
+WTF::UUID dataToUUID(WKDataRef);
+WKRetainPtr<WKDataRef> uuidToData(const WTF::UUID&);
 
 inline WKDataRef dataValue(WKTypeRef value)
 {
     return value && WKGetTypeID(value) == WKDataGetTypeID() ? static_cast<WKDataRef>(value) : nullptr;
 }
 
-inline UUID dataToUUID(WKDataRef data)
+inline WTF::UUID dataToUUID(WKDataRef data)
 {
     RELEASE_ASSERT(WKDataGetSize(data) == 16);
-    return UUID { std::span<const uint8_t, 16> { WKDataGetBytes(data), 16 } };
+    return WTF::UUID { std::span<const uint8_t, 16> { WKDataGetBytes(data), 16 } };
 }
 
-inline WKRetainPtr<WKDataRef> uuidToData(const UUID& uuid)
+inline WKRetainPtr<WKDataRef> uuidToData(const WTF::UUID& uuid)
 {
     auto span = uuid.toSpan();
     return adoptWK(WKDataCreate(span.data(), span.size()));

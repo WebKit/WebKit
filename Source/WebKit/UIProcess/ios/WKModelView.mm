@@ -102,7 +102,7 @@ SOFT_LINK_CLASS(AssetViewer, ASVInlinePreview);
         return NO;
     }
 
-    String fileName = makeString(UUID::createVersion4(), ".usdz"_s);
+    String fileName = makeString(WTF::UUID::createVersion4(), ".usdz"_s);
     auto filePath = FileSystem::pathByAppendingComponent(pathToDirectory, fileName);
     auto file = FileSystem::openFile(filePath, FileSystem::FileOpenMode::Truncate);
     if (file <= 0)

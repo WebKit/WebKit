@@ -226,7 +226,7 @@ void WebNotificationManager::didDestroyNotification(NotificationData&& notificat
 #endif
 }
 
-void WebNotificationManager::didShowNotification(const UUID& notificationID)
+void WebNotificationManager::didShowNotification(const WTF::UUID& notificationID)
 {
     ASSERT(isMainRunLoop());
 
@@ -246,7 +246,7 @@ void WebNotificationManager::didShowNotification(const UUID& notificationID)
 #endif
 }
 
-void WebNotificationManager::didClickNotification(const UUID& notificationID)
+void WebNotificationManager::didClickNotification(const WTF::UUID& notificationID)
 {
     ASSERT(isMainRunLoop());
 
@@ -275,7 +275,7 @@ void WebNotificationManager::didClickNotification(const UUID& notificationID)
 #endif
 }
 
-void WebNotificationManager::didCloseNotifications(const Vector<UUID>& notificationIDs)
+void WebNotificationManager::didCloseNotifications(const Vector<WTF::UUID>& notificationIDs)
 {
     ASSERT(isMainRunLoop());
 

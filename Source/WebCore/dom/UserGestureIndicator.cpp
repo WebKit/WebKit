@@ -44,7 +44,7 @@ static RefPtr<UserGestureToken>& currentToken()
     return token;
 }
 
-UserGestureToken::UserGestureToken(ProcessingUserGestureState state, UserGestureType gestureType, Document* document, std::optional<UUID> authorizationToken)
+UserGestureToken::UserGestureToken(ProcessingUserGestureState state, UserGestureType gestureType, Document* document, std::optional<WTF::UUID> authorizationToken)
     : m_state(state)
     , m_gestureType(gestureType)
     , m_authorizationToken(authorizationToken)
@@ -106,7 +106,7 @@ void UserGestureToken::forEachImpactedDocument(Function<void(Document&)>&& funct
     m_documentsImpactedByUserGesture.forEach(function);
 }
 
-UserGestureIndicator::UserGestureIndicator(std::optional<ProcessingUserGestureState> state, Document* document, UserGestureType gestureType, ProcessInteractionStyle processInteractionStyle, std::optional<UUID> authorizationToken)
+UserGestureIndicator::UserGestureIndicator(std::optional<ProcessingUserGestureState> state, Document* document, UserGestureType gestureType, ProcessInteractionStyle processInteractionStyle, std::optional<WTF::UUID> authorizationToken)
     : m_previousToken { currentToken() }
 {
     ASSERT(isMainThread());
@@ -196,7 +196,7 @@ bool UserGestureIndicator::processingUserGestureForMedia()
     return currentToken() ? currentToken()->processingUserGestureForMedia() : false;
 }
 
-std::optional<UUID> UserGestureIndicator::authorizationToken() const
+std::optional<WTF::UUID> UserGestureIndicator::authorizationToken() const
 {
     if (!isMainThread())
         return std::nullopt;

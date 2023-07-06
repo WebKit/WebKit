@@ -141,7 +141,7 @@ void WebNotificationProvider::removeNotificationManager(WKNotificationManagerRef
     auto protectedManager = m_knownManagers.take(manager);
     ASSERT(protectedManager);
 
-    auto toRemove = Vector<UUID> { };
+    auto toRemove = Vector<WTF::UUID> { };
     for (auto& iterator : m_owningManager) {
         if (iterator.value != manager)
             continue;

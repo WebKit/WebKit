@@ -21,9 +21,9 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 messages -> WebNotificationManager NotRefCounted {
-    DidShowNotification(UUID notificationID);
-    DidClickNotification(UUID notificationID);
-    DidCloseNotifications(Vector<UUID> notificationIDs);
+    DidShowNotification(WTF::UUID notificationID);
+    DidClickNotification(WTF::UUID notificationID);
+    DidCloseNotifications(Vector<WTF::UUID> notificationIDs);
     DidUpdateNotificationDecision(String originString, bool allowed);
     DidRemoveNotificationDecisions(Vector<String> originStrings);
 }
