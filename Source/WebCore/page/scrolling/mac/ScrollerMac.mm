@@ -332,6 +332,8 @@ void ScrollerMac::attach()
     m_scrollerImpDelegate = adoptNS([[WebScrollerImpDelegateMac alloc] initWithScroller:this]);
     m_scrollerImp = [NSScrollerImp scrollerImpWithStyle:nsScrollerStyle(m_pair.scrollbarStyle()) controlSize:NSControlSizeRegular horizontal:m_orientation == ScrollbarOrientation::Horizontal replacingScrollerImp:nil];
     [m_scrollerImp setDelegate:m_scrollerImpDelegate.get()];
+    for (int i = 0; i < 5; i++)
+        m_lastSetValues.propertyNeedsWrite[i] = true;
 }
 
 void ScrollerMac::detach()
@@ -352,19 +354,65 @@ void ScrollerMac::setHostLayer(CALayer *layer)
     updatePairScrollerImps();
 }
 
+void ScrollerMac::updateEnabledValue(bool value)
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
+    if (m_lastSetValues.propertyNeedsWrite[0] || (std::exchange(m_lastSetValues.enabled, value) != value))
+        [m_scrollerImp setEnabled:m_lastSetValues.enabled];
+    m_lastSetValues.propertyNeedsWrite[0] = false;
+
+    END_BLOCK_OBJC_EXCEPTIONS
+}
+
+void ScrollerMac::updateBoundsSizeValue(NSSize value)
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
+    if (m_lastSetValues.propertyNeedsWrite[1] || !CGSizeEqualToSize(std::exchange(m_lastSetValues.boundsSize, value), value))
+        [m_scrollerImp setBoundsSize:m_lastSetValues.boundsSize];
+    m_lastSetValues.propertyNeedsWrite[1] = false;
+
+    END_BLOCK_OBJC_EXCEPTIONS
+}
+
+void ScrollerMac::updateDoubleValue(float value)
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
+    if (m_lastSetValues.propertyNeedsWrite[2] || (std::exchange(m_lastSetValues.doubleValue, value) != value))
+        [m_scrollerImp setDoubleValue:m_lastSetValues.doubleValue];
+    m_lastSetValues.propertyNeedsWrite[2] = false;
+
+    END_BLOCK_OBJC_EXCEPTIONS
+}
+
+void ScrollerMac::updatePresentationValue(float value)
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
+    if (m_lastSetValues.propertyNeedsWrite[3] || (std::exchange(m_lastSetValues.presentationValue, value) != value))
+        [m_scrollerImp setPresentationValue:m_lastSetValues.presentationValue];
+    m_lastSetValues.propertyNeedsWrite[3] = false;
+
+    END_BLOCK_OBJC_EXCEPTIONS
+}
+
+void ScrollerMac::updateProportionValue(float value)
+{
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
+    if (m_lastSetValues.propertyNeedsWrite[4] || (std::exchange(m_lastSetValues.proportion, value) != value))
+        [m_scrollerImp setKnobProportion:m_lastSetValues.proportion];
+    m_lastSetValues.propertyNeedsWrite[4] = false;
+
+    END_BLOCK_OBJC_EXCEPTIONS
+}
+
 void ScrollerMac::updateValues()
 {
     auto values = m_pair.valuesForOrientation(m_orientation);
 
-    BEGIN_BLOCK_OBJC_EXCEPTIONS
-
-    [m_scrollerImp setEnabled:!!m_hostLayer];
-    [m_scrollerImp setBoundsSize:NSSizeFromCGSize([m_hostLayer bounds].size)];
-    [m_scrollerImp setDoubleValue:values.value];
-    [m_scrollerImp setPresentationValue:values.value];
-    [m_scrollerImp setKnobProportion:values.proportion];
-
-    END_BLOCK_OBJC_EXCEPTIONS
+    updateEnabledValue(!!m_hostLayer);
+    updateBoundsSizeValue(NSSizeFromCGSize([m_hostLayer bounds].size));
+    updateDoubleValue(values.value);
+    updatePresentationValue(values.value);
+    updateProportionValue(values.proportion);
 }
 
 void ScrollerMac::updateScrollbarStyle()
@@ -380,6 +428,8 @@ void ScrollerMac::updatePairScrollerImps()
         m_pair.setVerticalScrollerImp(scrollerImp);
     else
         m_pair.setHorizontalScrollerImp(scrollerImp);
+    for (int i = 0; i < 5; i++)
+        m_lastSetValues.propertyNeedsWrite[i] = true;
 }
 
 void ScrollerMac::mouseEnteredScrollbar()

@@ -61,6 +61,21 @@ public:
     void updateScrollbarStyle();
     void updatePairScrollerImps();
 
+    struct Values {
+        bool enabled;
+        CGSize boundsSize;
+        float doubleValue;
+        float presentationValue;
+        float proportion;
+        bool propertyNeedsWrite[5];
+    };
+
+    void updateEnabledValue(bool);
+    void updateBoundsSizeValue(NSSize);
+    void updateDoubleValue(float);
+    void updatePresentationValue(float);
+    void updateProportionValue(float);
+
     void updateValues();
     
     String scrollbarState() const;
@@ -80,6 +95,7 @@ private:
     RetainPtr<CALayer> m_hostLayer;
     RetainPtr<NSScrollerImp> m_scrollerImp;
     RetainPtr<WebScrollerImpDelegateMac> m_scrollerImpDelegate;
+    Values m_lastSetValues;
 };
 
 }

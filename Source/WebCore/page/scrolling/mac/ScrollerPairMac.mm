@@ -225,12 +225,12 @@ void ScrollerPairMac::setUsePresentationValues(bool inMomentumPhase)
 
 void ScrollerPairMac::setHorizontalScrollbarPresentationValue(float scrollbValue)
 {
-    [scrollerImpHorizontal() setPresentationValue:scrollbValue];
+    m_horizontalScroller.updatePresentationValue(scrollbValue);
 }
 
 void ScrollerPairMac::setVerticalScrollbarPresentationValue(float scrollbValue)
 {
-    [scrollerImpVertical() setPresentationValue:scrollbValue];
+    m_verticalScroller.updatePresentationValue(scrollbValue);
 }
 
 void ScrollerPairMac::updateValues()
