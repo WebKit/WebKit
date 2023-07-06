@@ -887,7 +887,7 @@ void NetworkConnectionToWebProcess::allCookiesDeleted()
 
 #endif
 
-void NetworkConnectionToWebProcess::registerFileBlobURL(const URL& url, const String& path, const String& replacementPath, SandboxExtension::Handle&& extensionHandle, const String& contentType)
+void NetworkConnectionToWebProcess::registerInternalFileBlobURL(const URL& url, const String& path, const String& replacementPath, SandboxExtension::Handle&& extensionHandle, const String& contentType)
 {
     NETWORK_PROCESS_MESSAGE_CHECK(!url.isEmpty());
 
@@ -896,20 +896,20 @@ void NetworkConnectionToWebProcess::registerFileBlobURL(const URL& url, const St
         return;
 
     m_blobURLs.add(url);
-    session->blobRegistry().registerFileBlobURL(url, BlobDataFileReferenceWithSandboxExtension::create(path, replacementPath, SandboxExtension::create(WTFMove(extensionHandle))), contentType);
+    session->blobRegistry().registerInternalFileBlobURL(url, BlobDataFileReferenceWithSandboxExtension::create(path, replacementPath, SandboxExtension::create(WTFMove(extensionHandle))), contentType);
 }
 
-void NetworkConnectionToWebProcess::registerBlobURL(const URL& url, Vector<BlobPart>&& blobParts, const String& contentType)
+void NetworkConnectionToWebProcess::registerInternalBlobURL(const URL& url, Vector<BlobPart>&& blobParts, const String& contentType)
 {
     auto* session = networkSession();
     if (!session)
         return;
 
     m_blobURLs.add(url);
-    session->blobRegistry().registerBlobURL(url, WTFMove(blobParts), contentType);
+    session->blobRegistry().registerInternalBlobURL(url, WTFMove(blobParts), contentType);
 }
 
-void NetworkConnectionToWebProcess::registerBlobURLFromURL(const URL& url, const URL& srcURL, PolicyContainer&& policyContainer)
+void NetworkConnectionToWebProcess::registerBlobURL(const URL& url, const URL& srcURL, PolicyContainer&& policyContainer)
 {
     auto* session = networkSession();
     if (!session)
@@ -919,7 +919,7 @@ void NetworkConnectionToWebProcess::registerBlobURLFromURL(const URL& url, const
     session->blobRegistry().registerBlobURL(url, srcURL, WTFMove(policyContainer));
 }
 
-void NetworkConnectionToWebProcess::registerBlobURLOptionallyFileBacked(const URL& url, const URL& srcURL, const String& fileBackedPath, const String& contentType)
+void NetworkConnectionToWebProcess::registerInternalBlobURLOptionallyFileBacked(const URL& url, const URL& srcURL, const String& fileBackedPath, const String& contentType)
 {
     NETWORK_PROCESS_MESSAGE_CHECK(!url.isEmpty() && !srcURL.isEmpty() && !fileBackedPath.isEmpty());
 
@@ -928,17 +928,17 @@ void NetworkConnectionToWebProcess::registerBlobURLOptionallyFileBacked(const UR
         return;
 
     m_blobURLs.add(url);
-    session->blobRegistry().registerBlobURLOptionallyFileBacked(url, srcURL, BlobDataFileReferenceWithSandboxExtension::create(fileBackedPath), contentType, { });
+    session->blobRegistry().registerInternalBlobURLOptionallyFileBacked(url, srcURL, BlobDataFileReferenceWithSandboxExtension::create(fileBackedPath), contentType, { });
 }
 
-void NetworkConnectionToWebProcess::registerBlobURLForSlice(const URL& url, const URL& srcURL, int64_t start, int64_t end, const String& contentType)
+void NetworkConnectionToWebProcess::registerInternalBlobURLForSlice(const URL& url, const URL& srcURL, int64_t start, int64_t end, const String& contentType)
 {
     auto* session = networkSession();
     if (!session)
         return;
 
     m_blobURLs.add(url);
-    session->blobRegistry().registerBlobURLForSlice(url, srcURL, start, end, contentType);
+    session->blobRegistry().registerInternalBlobURLForSlice(url, srcURL, start, end, contentType);
 }
 
 void NetworkConnectionToWebProcess::unregisterBlobURL(const URL& url)

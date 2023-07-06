@@ -129,7 +129,7 @@ Blob::Blob(ScriptExecutionContext* context)
     , m_internalURL(BlobURL::createInternalURL())
     , m_topOrigin(context ? context->topOrigin().data() : SecurityOriginData::createOpaque())
 {
-    ThreadableBlobRegistry::registerBlobURL(m_internalURL, { }, { });
+    ThreadableBlobRegistry::registerInternalBlobURL(m_internalURL, { }, { });
 }
 
 static size_t computeMemoryCost(const Vector<BlobPartVariant>& blobPartVariants)
@@ -169,7 +169,7 @@ Blob::Blob(ScriptExecutionContext& context, Vector<BlobPartVariant>&& blobPartVa
     , m_internalURL(BlobURL::createInternalURL())
     , m_topOrigin(context.topOrigin().data())
 {
-    ThreadableBlobRegistry::registerBlobURL(m_internalURL, buildBlobData(WTFMove(blobPartVariants), propertyBag), m_type);
+    ThreadableBlobRegistry::registerInternalBlobURL(m_internalURL, buildBlobData(WTFMove(blobPartVariants), propertyBag), m_type);
 }
 
 Blob::Blob(ScriptExecutionContext* context, Vector<uint8_t>&& data, const String& contentType)
@@ -180,7 +180,7 @@ Blob::Blob(ScriptExecutionContext* context, Vector<uint8_t>&& data, const String
     , m_internalURL(BlobURL::createInternalURL())
     , m_topOrigin(context ? context->topOrigin().data() : SecurityOriginData::createOpaque())
 {
-    ThreadableBlobRegistry::registerBlobURL(m_internalURL, { BlobPart(WTFMove(data)) }, contentType);
+    ThreadableBlobRegistry::registerInternalBlobURL(m_internalURL, { BlobPart(WTFMove(data)) }, contentType);
 }
 
 Blob::Blob(ReferencingExistingBlobConstructor, ScriptExecutionContext* context, const Blob& blob)
@@ -191,7 +191,7 @@ Blob::Blob(ReferencingExistingBlobConstructor, ScriptExecutionContext* context, 
     , m_internalURL(BlobURL::createInternalURL())
     , m_topOrigin(context ? context->topOrigin().data() : SecurityOriginData::createOpaque())
 {
-    ThreadableBlobRegistry::registerBlobURL(m_internalURL, { BlobPart(blob.url()) } , m_type);
+    ThreadableBlobRegistry::registerInternalBlobURL(m_internalURL, { BlobPart(blob.url()) } , m_type);
 }
 
 Blob::Blob(DeserializationContructor, ScriptExecutionContext* context, const URL& srcURL, const String& type, std::optional<unsigned long long> size, unsigned long long memoryCost, const String& fileBackedPath)
@@ -205,7 +205,7 @@ Blob::Blob(DeserializationContructor, ScriptExecutionContext* context, const URL
     if (fileBackedPath.isEmpty())
         ThreadableBlobRegistry::registerBlobURL(nullptr, { }, m_internalURL, srcURL);
     else
-        ThreadableBlobRegistry::registerBlobURLOptionallyFileBacked(m_internalURL, srcURL, fileBackedPath, m_type);
+        ThreadableBlobRegistry::registerInternalBlobURLOptionallyFileBacked(m_internalURL, srcURL, fileBackedPath, m_type);
 }
 
 Blob::Blob(ScriptExecutionContext* context, const URL& srcURL, long long start, long long end, unsigned long long memoryCost, const String& type)
@@ -216,7 +216,7 @@ Blob::Blob(ScriptExecutionContext* context, const URL& srcURL, long long start, 
     , m_topOrigin(context ? context->topOrigin().data() : SecurityOriginData::createOpaque())
     // m_size is not necessarily equal to end - start so we do not initialize it here.
 {
-    ThreadableBlobRegistry::registerBlobURLForSlice(m_internalURL, srcURL, start, end, m_type);
+    ThreadableBlobRegistry::registerInternalBlobURLForSlice(m_internalURL, srcURL, start, end, m_type);
 }
 
 Blob::~Blob()

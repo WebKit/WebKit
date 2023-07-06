@@ -53,7 +53,7 @@ Ref<File> File::create(ScriptExecutionContext* context, const String& path, cons
     computeNameAndContentType(effectivePath, nameOverride, name, type);
 
     auto internalURL = BlobURL::createInternalURL();
-    ThreadableBlobRegistry::registerFileBlobURL(internalURL, path, replacementPath, type);
+    ThreadableBlobRegistry::registerInternalFileBlobURL(internalURL, path, replacementPath, type);
 
     auto file = adoptRef(*new File(context, WTFMove(internalURL), WTFMove(type), WTFMove(effectivePath), WTFMove(name), fileID));
     file->suspendIfNeeded();
