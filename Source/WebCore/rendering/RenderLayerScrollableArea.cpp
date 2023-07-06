@@ -1098,8 +1098,13 @@ void RenderLayerScrollableArea::computeScrollDimensions()
 {
     m_scrollDimensionsDirty = false;
 
-    m_scrollWidth = roundToInt(overflowRight() - overflowLeft());
-    m_scrollHeight = roundToInt(overflowBottom() - overflowTop());
+    RenderBox* box = m_layer.renderBox();
+    ASSERT(box);
+
+    LayoutRect overflowRect(box->layoutOverflowRect());
+
+    m_scrollWidth = roundToInt(overflowRect.width());
+    m_scrollHeight = roundToInt(overflowRect.height());
 
     computeScrollOrigin();
     computeHasCompositedScrollableOverflow(LayoutUpToDate::Yes);
