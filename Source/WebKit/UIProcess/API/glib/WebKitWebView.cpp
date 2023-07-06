@@ -524,6 +524,18 @@ WebKitWebResourceLoadManager* WebKitWebViewClient::webResourceLoadManager()
 {
     return webkitWebViewGetWebResourceLoadManager(m_webView);
 }
+
+#if ENABLE(FULLSCREEN_API)
+void WebKitWebViewClient::enterFullScreen(WKWPE::View&)
+{
+    webkitWebViewEnterFullScreen(m_webView);
+}
+
+void WebKitWebViewClient::exitFullScreen(WKWPE::View&)
+{
+    webkitWebViewExitFullScreen(m_webView);
+}
+#endif
 #endif
 
 static gboolean webkitWebViewLoadFail(WebKitWebView* webView, WebKitLoadEvent, const char* failingURI, GError* error)

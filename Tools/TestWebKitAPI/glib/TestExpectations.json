@@ -177,10 +177,7 @@
                 "expected": {"all": {"slow": true }}
             },
             "/webkit/WebKitWebView/fullscreen": {
-                "expected": {
-                        "gtk": {"status": ["SKIP"], "bug": "webkit.org/b/248203"},
-                        "wpe": {"status": ["TIMEOUT", "PASS"]}
-                }
+                "expected": {"gtk": {"status": ["SKIP"], "bug": "webkit.org/b/248203"}}
             }
         }
     },

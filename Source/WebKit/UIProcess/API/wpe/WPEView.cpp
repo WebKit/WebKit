@@ -456,6 +456,10 @@ bool View::setFullScreen(bool fullScreenState)
         return false;
 #endif
     m_fullScreenModeActive = fullScreenState;
+    if (m_fullScreenModeActive)
+        m_client->enterFullScreen(*this);
+    else
+        m_client->exitFullScreen(*this);
     return true;
 };
 #endif
