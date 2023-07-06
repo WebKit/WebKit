@@ -930,6 +930,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     profiler/ProfilerCompilationKind.h
     profiler/ProfilerCompiledBytecode.h
     profiler/ProfilerDatabase.h
+    profiler/ProfilerDumper.h
     profiler/ProfilerEvent.h
     profiler/ProfilerExecutionCounter.h
     profiler/ProfilerJettisonReason.h

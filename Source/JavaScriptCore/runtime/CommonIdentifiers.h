@@ -70,7 +70,6 @@
     macro(__lookupGetter__) \
     macro(__lookupSetter__) \
     macro(add) \
-    macro(additionalJettisonReason) \
     macro(anonymous) \
     macro(arguments) \
     macro(as) \
@@ -79,10 +78,6 @@
     macro(bind) \
     macro(byteLength) \
     macro(byteOffset) \
-    macro(bytecode) \
-    macro(bytecodeIndex) \
-    macro(bytecodes) \
-    macro(bytecodesID) \
     macro(calendar) \
     macro(callee) \
     macro(caller) \
@@ -91,14 +86,10 @@
     macro(clear) \
     macro(collation) \
     macro(column) \
-    macro(compilationKind) \
-    macro(compilationUID) \
-    macro(compilations) \
     macro(compile) \
     macro(configurable) \
     macro(constructor) \
     macro(count) \
-    macro(counters) \
     macro(dateStyle) \
     macro(day) \
     macro(days) \
@@ -107,7 +98,6 @@
     macro(defineProperty) \
     macro(deref) \
     macro(description) \
-    macro(descriptions) \
     macro(detail) \
     macro(displayName) \
     macro(done) \
@@ -117,10 +107,7 @@
     macro(eraYear) \
     macro(errors) \
     macro(eval) \
-    macro(events) \
     macro(exec) \
-    macro(executionCount) \
-    macro(exitKind) \
     macro(exports) \
     macro(fallback) \
     macro(flags) \
@@ -156,7 +143,6 @@
     macro(ignorePunctuation) \
     macro(index) \
     macro(indices) \
-    macro(inferredName) \
     macro(input) \
     macro(isoDay) \
     macro(isoHour) \
@@ -167,15 +153,12 @@
     macro(isoNanosecond) \
     macro(isoSecond) \
     macro(isoYear) \
-    macro(instructionCount) \
     macro(isArray) \
     macro(isEnabled) \
     macro(isPrototypeOf) \
     macro(isView) \
-    macro(isWatchpoint) \
     macro(isWellFormed) \
     macro(isWordLike) \
-    macro(jettisonReason) \
     macro(join) \
     macro(language) \
     macro(languageDisplay) \
@@ -212,22 +195,14 @@
     macro(nanosecondsDisplay) \
     macro(next) \
     macro(now) \
-    macro(numInlinedCalls) \
-    macro(numInlinedGetByIds) \
-    macro(numInlinedPutByIds) \
     macro(numberingSystem) \
     macro(numeric) \
     macro(of) \
-    macro(opcode) \
-    macro(origin) \
-    macro(osrExitSites) \
-    macro(osrExits) \
     macro(overflow) \
     macro(ownKeys) \
     macro(parse) \
     macro(parseInt) \
     macro(parseFloat) \
-    macro(profiledBytecodes) \
     macro(propertyIsEnumerable) \
     macro(prototype) \
     macro(raw) \
@@ -251,14 +226,12 @@
     macro(slice) \
     macro(smallestUnit) \
     macro(source) \
-    macro(sourceCode) \
     macro(sourceURL) \
     macro(stack) \
     macro(stackTraceLimit) \
     macro(sticky) \
     macro(style) \
     macro(subarray) \
-    macro(summary) \
     macro(target) \
     macro(test) \
     macro(then) \
@@ -278,7 +251,6 @@
     macro(trailingZeroDisplay) \
     macro(transfer) \
     macro(type) \
-    macro(uid) \
     macro(unicode) \
     macro(unicodeSets) \
     macro(unit) \

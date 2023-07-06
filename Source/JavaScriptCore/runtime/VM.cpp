@@ -315,12 +315,14 @@ VM::VM(VMType vmType, HeapType heapType, WTF::RunLoop* runLoop, bool* success)
     if (UNLIKELY(Options::useProfiler())) {
         m_perBytecodeProfiler = makeUnique<Profiler::Database>(*this);
 
-        StringPrintStream pathOut;
-        const char* profilerPath = getenv("JSC_PROFILER_PATH");
-        if (profilerPath)
-            pathOut.print(profilerPath, "/");
-        pathOut.print("JSCProfile-", getCurrentProcessID(), "-", m_perBytecodeProfiler->databaseID(), ".json");
-        m_perBytecodeProfiler->registerToSaveAtExit(pathOut.toCString().data());
+        if (UNLIKELY(Options::dumpProfilerDataAtExit())) {
+            StringPrintStream pathOut;
+            const char* profilerPath = getenv("JSC_PROFILER_PATH");
+            if (profilerPath)
+                pathOut.print(profilerPath, "/");
+            pathOut.print("JSCProfile-", getCurrentProcessID(), "-", m_perBytecodeProfiler->databaseID(), ".json");
+            m_perBytecodeProfiler->registerToSaveAtExit(pathOut.toCString().data());
+        }
     }
 
     // Initialize this last, as a free way of asserting that VM initialization itself

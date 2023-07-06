@@ -38,6 +38,8 @@
 
 namespace WTF {
 
+class PrintStream;
+
 // Make sure compiled symbols contain the WTF namespace prefix, but
 // use a different inner namespace name so that JSON::Value is not ambigious.
 // Otherwise, the compiler would have both WTF::JSON::Value and JSON::Value
@@ -103,10 +105,11 @@ public:
     virtual RefPtr<Array> asArray();
 
     static RefPtr<Value> parseJSON(StringView);
-    static void escapeString(StringBuilder&, StringView);
 
     String toJSONString() const;
     virtual void writeJSON(StringBuilder& output) const;
+
+    void dump(PrintStream&) const;
 
     virtual size_t memoryCost() const;
 
@@ -163,6 +166,7 @@ private:
 
 class ObjectBase : public Value {
 private:
+    friend class Value;
     using DataStorage = HashMap<String, Ref<Value>>;
     using OrderStorage = Vector<String>;
 
@@ -257,6 +261,7 @@ public:
 
 class WTF_EXPORT_PRIVATE ArrayBase : public Value {
 private:
+    friend class Value;
     using DataStorage = Vector<Ref<Value>>;
 
 public:

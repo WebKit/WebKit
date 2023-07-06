@@ -269,7 +269,9 @@ bool canUseWebAssemblyFastMemory();
     v(Int32, priorityDeltaOfWasmCompilerThreads, computePriorityDeltaOfWorkerThreads(-1, 0), Normal, nullptr) \
     \
     v(Bool, useProfiler, false, Normal, nullptr) \
+    v(Bool, dumpProfilerDataAtExit, false, Normal, nullptr) \
     v(Bool, disassembleBaselineForProfiler, true, Normal, nullptr) \
+    v(Unsigned, abbreviateSourceCodeForProfiler, 0, Normal, nullptr) \
     \
     v(Bool, useArchitectureSpecificOptimizations, true, Normal, nullptr) \
     \

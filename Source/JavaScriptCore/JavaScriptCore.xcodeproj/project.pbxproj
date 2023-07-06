@@ -1941,6 +1941,7 @@
 		E3BFA5D021E853A1009C0EBA /* DFGDesiredGlobalProperty.h in Headers */ = {isa = PBXBuildFile; fileRef = E3BFA5CD21E853A1009C0EBA /* DFGDesiredGlobalProperty.h */; };
 		E3BFD0BC1DAF808E0065DEA2 /* AccessCaseSnippetParams.h in Headers */ = {isa = PBXBuildFile; fileRef = E3BFD0BA1DAF807C0065DEA2 /* AccessCaseSnippetParams.h */; };
 		E3C091E929B07D4C00CD6D97 /* WasmBBQJIT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FED5FA3329A0859C00798A7F /* WasmBBQJIT.cpp */; };
+		E3C0ECCA2A4C01E9002C9D2B /* ProfilerDumper.h in Headers */ = {isa = PBXBuildFile; fileRef = E3C0ECC92A4C01E8002C9D2B /* ProfilerDumper.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E3C295DD1ED2CBDA00D3016F /* ObjectPropertyChangeAdaptiveWatchpoint.h in Headers */ = {isa = PBXBuildFile; fileRef = E3C295DC1ED2CBAA00D3016F /* ObjectPropertyChangeAdaptiveWatchpoint.h */; };
 		E3C4131D289E08EA001150F8 /* SyntheticModuleRecord.h in Headers */ = {isa = PBXBuildFile; fileRef = E3C4131C289E08E5001150F8 /* SyntheticModuleRecord.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E3C694B323026877006FBE42 /* WasmOSREntryData.h in Headers */ = {isa = PBXBuildFile; fileRef = E3C694B123026873006FBE42 /* WasmOSREntryData.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -5472,6 +5473,7 @@
 		E3BFA5CD21E853A1009C0EBA /* DFGDesiredGlobalProperty.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGDesiredGlobalProperty.h; path = dfg/DFGDesiredGlobalProperty.h; sourceTree = "<group>"; };
 		E3BFD0B91DAF807C0065DEA2 /* AccessCaseSnippetParams.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AccessCaseSnippetParams.cpp; sourceTree = "<group>"; };
 		E3BFD0BA1DAF807C0065DEA2 /* AccessCaseSnippetParams.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessCaseSnippetParams.h; sourceTree = "<group>"; };
+		E3C0ECC92A4C01E8002C9D2B /* ProfilerDumper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProfilerDumper.h; path = profiler/ProfilerDumper.h; sourceTree = "<group>"; };
 		E3C295DC1ED2CBAA00D3016F /* ObjectPropertyChangeAdaptiveWatchpoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjectPropertyChangeAdaptiveWatchpoint.h; sourceTree = "<group>"; };
 		E3C4131B289E08E5001150F8 /* SyntheticModuleRecord.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SyntheticModuleRecord.cpp; sourceTree = "<group>"; };
 		E3C4131C289E08E5001150F8 /* SyntheticModuleRecord.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SyntheticModuleRecord.h; sourceTree = "<group>"; };
@@ -8837,6 +8839,7 @@
 				0FF7299B166AD347000F5BA3 /* ProfilerCompiledBytecode.h */,
 				0FF7299C166AD347000F5BA3 /* ProfilerDatabase.cpp */,
 				0FF7299D166AD347000F5BA3 /* ProfilerDatabase.h */,
+				E3C0ECC92A4C01E8002C9D2B /* ProfilerDumper.h */,
 				DC605B591CE26E9800593718 /* ProfilerEvent.cpp */,
 				DC605B5A1CE26E9800593718 /* ProfilerEvent.h */,
 				0FF7299E166AD347000F5BA3 /* ProfilerExecutionCounter.h */,
@@ -10971,6 +10974,7 @@
 				0FF729BB166AD360000F5BA3 /* ProfilerCompilationKind.h in Headers */,
 				0FF729BC166AD360000F5BA3 /* ProfilerCompiledBytecode.h in Headers */,
 				0FF729BD166AD360000F5BA3 /* ProfilerDatabase.h in Headers */,
+				E3C0ECCA2A4C01E9002C9D2B /* ProfilerDumper.h in Headers */,
 				DC605B5E1CE26EA200593718 /* ProfilerEvent.h in Headers */,
 				0FF729BE166AD360000F5BA3 /* ProfilerExecutionCounter.h in Headers */,
 				0F190CAD189D82F6000AE5F0 /* ProfilerJettisonReason.h in Headers */,

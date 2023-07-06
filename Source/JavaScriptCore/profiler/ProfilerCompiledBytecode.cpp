@@ -28,6 +28,7 @@
 
 #include "JSCInlines.h"
 #include "ObjectConstructor.h"
+#include "ProfilerDumper.h"
 
 namespace JSC { namespace Profiler {
 
@@ -41,14 +42,13 @@ CompiledBytecode::~CompiledBytecode()
 {
 }
 
-JSValue CompiledBytecode::toJS(JSGlobalObject* globalObject) const
+Ref<JSON::Value> CompiledBytecode::toJSON(Dumper& dumper) const
 {
-    VM& vm = globalObject->vm();
-    JSObject* result = constructEmptyObject(globalObject);
-    
-    result->putDirect(vm, vm.propertyNames->origin, m_origin.toJS(globalObject));
-    result->putDirect(vm, vm.propertyNames->description, jsString(vm, String::fromUTF8(m_description)));
-    
+    auto result = JSON::Object::create();
+
+    result->setValue(dumper.keys().m_origin, m_origin.toJSON(dumper));
+    result->setString(dumper.keys().m_description, String::fromUTF8(m_description));
+
     return result;
 }
 

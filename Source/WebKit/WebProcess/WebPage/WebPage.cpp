@@ -7523,7 +7523,7 @@ void WebPage::getBytecodeProfile(CompletionHandler<void(const String&)>&& callba
     if (LIKELY(!commonVM().m_perBytecodeProfiler))
         return callback({ });
 
-    String result = commonVM().m_perBytecodeProfiler->toJSON();
+    String result = commonVM().m_perBytecodeProfiler->toJSON()->toJSONString();
     ASSERT(result.length());
     callback(result);
 }
