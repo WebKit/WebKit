@@ -160,7 +160,15 @@ void RemoteVideoCodecFactory::createEncoder(const String& codec, const WebCore::
         return;
     }
 
-    WebProcess::singleton().libWebRTCCodecs().createEncoderAndWaitUntilReady(*type, { }, config.isRealtime, config.useAnnexB, [config, createCallback = WTFMove(createCallback), descriptionCallback = WTFMove(descriptionCallback), outputCallback = WTFMove(outputCallback), postTaskCallback = WTFMove(postTaskCallback)](auto& internalEncoder) mutable {
+    std::map<std::string, std::string> parameters;
+    if (type == VideoCodecType::H264) {
+        if (auto position = codec.find('.');position != notFound && position != codec.length()) {
+            auto profileLevelId = StringView(codec).substring(position + 1);
+            parameters["profile-level-id"] = std::string(reinterpret_cast<const char*>(profileLevelId.characters8()), profileLevelId.length());
+        }
+    }
+
+    WebProcess::singleton().libWebRTCCodecs().createEncoderAndWaitUntilReady(*type, parameters, config.isRealtime, config.useAnnexB, [config, createCallback = WTFMove(createCallback), descriptionCallback = WTFMove(descriptionCallback), outputCallback = WTFMove(outputCallback), postTaskCallback = WTFMove(postTaskCallback)](auto& internalEncoder) mutable {
         auto callbacks = RemoteVideoEncoderCallbacks::create(WTFMove(descriptionCallback), WTFMove(outputCallback), WTFMove(postTaskCallback));
         UniqueRef<VideoEncoder> encoder = makeUniqueRef<RemoteVideoEncoder>(internalEncoder, config, callbacks.copyRef());
         callbacks->postTask([createCallback = WTFMove(createCallback), encoder = WTFMove(encoder)]() mutable {
