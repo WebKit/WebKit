@@ -23,11 +23,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#if PLATFORM(VISION)
 /* Enable container queries */
 
 .media-controls-container {
     container-type: size;
 }
+#endif
 
 /* Default values for some constants */
 
