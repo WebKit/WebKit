@@ -714,6 +714,47 @@ NEVER_INLINE NO_RETURN_DUE_TO_CRASH static void deliberateCrashForTesting()
 #endif
 
 #if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
+static void prewarmLogs()
+{
+    static std::array<std::pair<const char*, const char*>, 29> logs { {
+        { "com.apple.CFBundle", "strings" },
+        { "com.apple.containermanager", "unspecified" },
+        { "com.apple.containermanager", "cache" },
+        { "com.apple.containermanager", "sandbox" },
+        { "com.apple.containermanager", "xpc" },
+        { "com.apple.containermanager", "query" },
+        { "com.apple.containermanager", "paths" },
+        { "com.apple.containermanager", "locking" },
+        { "com.apple.containermanager", "database" },
+        { "com.apple.containermanager", "upcall" },
+        { "com.apple.containermanager", "lifecycle" },
+        { "com.apple.containermanager", "fs" },
+        { "com.apple.containermanager", "startup" },
+        { "com.apple.containermanager", "test" },
+        { "com.apple.containermanager", "metadata" },
+        { "com.apple.containermanager", "codesignmapping" },
+        { "com.apple.containermanager", "longterm" },
+        { "com.apple.containermanager", "schema" },
+        { "com.apple.containermanager", "codesign" },
+        { "com.apple.containermanager", "repair" },
+        { "com.apple.containermanager", "disk" },
+        { "com.apple.containermanager", "persona" },
+        { "com.apple.containermanager", "command" },
+        { "com.apple.containermanager", "telemetry" },
+        { "com.apple.network", "" },
+        { "com.apple.CFNetwork", "ATS" },
+        { "com.apple.coremedia", "" },
+        { "com.apple.coremedia", "" },
+        { "com.apple.SafariShared", "Translation" },
+    } };
+
+    for (auto& log : logs) {
+        auto logHandle = os_log_create(log.first, log.second);
+        bool enabled = os_log_type_enabled(logHandle, OS_LOG_TYPE_ERROR);
+        UNUSED_PARAM(enabled);
+    }
+}
+
 static void registerLogHook()
 {
     if (os_trace_get_mode() != OS_TRACE_MODE_DISABLE && os_trace_get_mode() != OS_TRACE_MODE_OFF)
@@ -771,6 +812,7 @@ static void registerLogHook()
 void WebProcess::platformInitializeProcess(const AuxiliaryProcessInitializationParameters& parameters)
 {
 #if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
+    prewarmLogs();
     registerLogHook();
 #endif
 
