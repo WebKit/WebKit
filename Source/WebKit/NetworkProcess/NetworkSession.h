@@ -272,7 +272,7 @@ public:
 
 #if HAVE(NW_PROXY_CONFIG)
     virtual void clearProxyConfigData() { }
-    virtual void setProxyConfigData(Vector<std::pair<Vector<uint8_t>, UUID>>&&) { };
+    virtual void setProxyConfigData(Vector<std::pair<Vector<uint8_t>, WTF::UUID>>&&) { };
 #endif
                                     
 protected:

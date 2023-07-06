@@ -151,7 +151,7 @@ public:
     const Vector<RetainPtr<nw_proxy_config_t>> proxyConfigs() const { return m_nwProxyConfigs; }
 
     void clearProxyConfigData() final;
-    void setProxyConfigData(Vector<std::pair<Vector<uint8_t>, UUID>>&&) final;
+    void setProxyConfigData(Vector<std::pair<Vector<uint8_t>, WTF::UUID>>&&) final;
 #endif
 
 private:

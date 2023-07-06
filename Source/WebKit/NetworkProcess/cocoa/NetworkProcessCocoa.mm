@@ -246,7 +246,7 @@ void NetworkProcess::clearProxyConfigData(PAL::SessionID sessionID)
     session->clearProxyConfigData();
 }
 
-void NetworkProcess::setProxyConfigData(PAL::SessionID sessionID, Vector<std::pair<Vector<uint8_t>, UUID>>&& proxyConfigurations)
+void NetworkProcess::setProxyConfigData(PAL::SessionID sessionID, Vector<std::pair<Vector<uint8_t>, WTF::UUID>>&& proxyConfigurations)
 {
     auto* session = networkSession(sessionID);
     if (!session)
