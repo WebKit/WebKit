@@ -57,7 +57,6 @@ class GCReachableRef {
     WTF_MAKE_NONCOPYABLE(GCReachableRef);
 public:
 
-    template<typename = std::enable_if_t<std::is_base_of<Node, T>::value>>
     GCReachableRef(T& object)
         : m_ptr(&object)
     {
