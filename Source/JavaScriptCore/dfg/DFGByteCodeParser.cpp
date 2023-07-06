@@ -1029,6 +1029,8 @@ private:
         CodeBlock* codeBlock = m_inlineStackTop->m_profiledBlock;
         ConcurrentJSLocker locker(codeBlock->m_lock);
         ArrayProfile* profile = codeBlock->getArrayProfile(locker, codeBlock->bytecodeIndex(m_currentInstruction));
+        if (!profile)
+            return { };
         return getArrayMode(locker, *profile, action);
     }
 

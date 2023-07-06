@@ -2739,12 +2739,16 @@ bool CodeBlock::shouldReoptimizeFromLoopNow()
 ArrayProfile* CodeBlock::getArrayProfile(const ConcurrentJSLocker&, BytecodeIndex bytecodeIndex)
 {
     auto instruction = instructions().at(bytecodeIndex);
+
+    if (instruction->opcodeID() == op_iterator_next)
+        return &instruction->as<OpIteratorNext>().metadata(this).m_iterableProfile;
+
     switch (instruction->opcodeID()) {
 #define CASE(Op) \
     case Op::opcodeID: \
         return &instruction->as<Op>().metadata(this).m_arrayProfile;
 
-    FOR_EACH_OPCODE_WITH_ARRAY_PROFILE(CASE)
+    FOR_EACH_OPCODE_WITH_SIMPLE_ARRAY_PROFILE(CASE)
 
 #undef CASE
 
@@ -2918,7 +2922,7 @@ void CodeBlock::updateAllArrayProfilePredictions(const ConcurrentJSLocker& locke
 #define VISIT(__op) \
     m_metadata->forEach<__op>([&] (auto& metadata) { process(metadata.m_arrayProfile); });
 
-    FOR_EACH_OPCODE_WITH_ARRAY_PROFILE(VISIT)
+    FOR_EACH_OPCODE_WITH_SIMPLE_ARRAY_PROFILE(VISIT)
 
 #undef VISIT
 

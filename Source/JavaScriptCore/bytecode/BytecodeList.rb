@@ -97,7 +97,6 @@ op :tail_call_varargs,
     },
     metadata: {
         callLinkInfo: BaselineCallLinkInfo,
-        arrayProfile: ArrayProfile,
         profile: ValueProfile,
     },
     tmps: {
@@ -119,7 +118,6 @@ op :call_varargs,
     },
     metadata: {
         callLinkInfo: BaselineCallLinkInfo,
-        arrayProfile: ArrayProfile,
         profile: ValueProfile,
     },
     tmps: {
@@ -147,7 +145,6 @@ op :iterator_next,
         doneProfile: ValueProfile,
         valueModeMetadata: GetByIdModeMetadata,
         valueProfile: ValueProfile,
-        arrayProfile: ArrayProfile,
         iterableProfile: ArrayProfile,
         iterationMetadata: IterationModeMetadata,
     },
@@ -171,7 +168,6 @@ op :construct_varargs,
     },
     metadata: {
         callLinkInfo: BaselineCallLinkInfo,
-        arrayProfile: ArrayProfile,
         profile: ValueProfile,
     },
     tmps: {
@@ -253,7 +249,6 @@ op :construct,
     },
     metadata: {
         callLinkInfo: BaselineCallLinkInfo,
-        arrayProfile: ArrayProfile,
         profile: ValueProfile,
     }
 
@@ -322,7 +317,6 @@ op :call_direct_eval,
     },
     metadata: {
         callLinkInfo: BaselineCallLinkInfo,
-        arrayProfile: ArrayProfile,
         profile: ValueProfile,
     }
 
@@ -337,7 +331,6 @@ op :tail_call_forward_arguments,
     },
     metadata: {
         callLinkInfo: BaselineCallLinkInfo,
-        arrayProfile: ArrayProfile,
         profile: ValueProfile,
     }
 
