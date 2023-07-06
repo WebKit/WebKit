@@ -489,7 +489,7 @@ public:
     const WeakHashSet<WebProcessProxy>* sharedWorkerClientProcesses() const;
 
     static void permissionChanged(WebCore::PermissionName, const WebCore::SecurityOriginData&);
-    void sendPermissionChanged(WebCore::PermissionName, const WebCore::SecurityOriginData&);
+    void processPermissionChanged(WebCore::PermissionName, const WebCore::SecurityOriginData&);
 
     void addAllowedFirstPartyForCookies(const WebCore::RegistrableDomain&);
 

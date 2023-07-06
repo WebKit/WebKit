@@ -167,6 +167,7 @@ enum class MediaProducerMutedState : uint8_t;
 enum class ModalContainerControlType : uint8_t;
 enum class ModalContainerDecision : uint8_t;
 enum class MouseEventPolicy : uint8_t;
+enum class PermissionName : uint8_t;
 enum class PermissionState : uint8_t;
 enum class PolicyAction : uint8_t;
 enum class ReasonForDismissingAlternativeText : uint8_t;
@@ -2096,6 +2097,7 @@ public:
 
 #if ENABLE(MEDIA_STREAM)
     WebCore::CaptureSourceOrError createRealtimeMediaSourceForSpeechRecognition();
+    void clearUserMediaPermissionRequestHistory(WebCore::PermissionName);
 #endif
 
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)

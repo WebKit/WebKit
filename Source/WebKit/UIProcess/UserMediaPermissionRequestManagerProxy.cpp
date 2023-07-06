@@ -40,6 +40,7 @@
 #include <WebCore/CaptureDeviceWithCapabilities.h>
 #include <WebCore/MediaConstraints.h>
 #include <WebCore/MockRealtimeMediaSourceCenter.h>
+#include <WebCore/PermissionName.h>
 #include <WebCore/PlatformMediaSessionManager.h>
 #include <WebCore/RealtimeMediaSource.h>
 #include <WebCore/SecurityOriginData.h>
@@ -752,6 +753,16 @@ bool UserMediaPermissionRequestManagerProxy::shouldChangePromptToGrantForCamera(
 bool UserMediaPermissionRequestManagerProxy::shouldChangePromptToGrantForMicrophone(const ClientOrigin& origin) const
 {
     return searchForGrantedRequest({ }, origin.clientOrigin.securityOrigin().get(), origin.topOrigin.securityOrigin().get(), true, false);
+}
+
+void UserMediaPermissionRequestManagerProxy::clearUserMediaPermissionRequestHistory(WebCore::PermissionName permissionName)
+{
+    m_deniedRequests.removeAllMatching([permissionName](auto& request) {
+        return (request.isAudioDenied && permissionName == WebCore::PermissionName::Microphone) || (request.isVideoDenied && permissionName == WebCore::PermissionName::Camera);
+    });
+    m_grantedRequests.removeAllMatching([permissionName](auto& request) {
+        return (request->requiresAudioCapture() && permissionName == WebCore::PermissionName::Microphone) || (request->requiresVideoCapture() && permissionName == WebCore::PermissionName::Camera);
+    });
 }
 
 #if !PLATFORM(COCOA)
