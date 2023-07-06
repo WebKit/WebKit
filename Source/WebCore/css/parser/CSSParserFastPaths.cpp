@@ -604,6 +604,14 @@ static bool isUniversalKeyword(StringView string)
         || equalLettersIgnoringASCIICase(string, "revert-layer"_s);
 }
 
+static bool isFastPathDisplayString(StringView string)
+{
+    // Fast path keywords for `display` value.
+    return equalLettersIgnoringASCIICase(string, "none"_s)
+        || equalLettersIgnoringASCIICase(string, "block"_s)
+        || equalLettersIgnoringASCIICase(string, "inline"_s);
+}
+
 static RefPtr<CSSValue> parseKeywordValue(CSSPropertyID propertyId, StringView string, const CSSParserContext& context)
 {
     ASSERT(!string.isEmpty());
@@ -636,6 +644,10 @@ static RefPtr<CSSValue> parseKeywordValue(CSSPropertyID propertyId, StringView s
 
     if (CSSParserFastPaths::isKeywordValidForStyleProperty(propertyId, valueID, context))
         return CSSPrimitiveValue::create(valueID);
+
+    if (propertyId == CSSPropertyDisplay && isFastPathDisplayString(string))
+        return CSSPrimitiveValue::create(valueID);
+
     return nullptr;
 }
 
