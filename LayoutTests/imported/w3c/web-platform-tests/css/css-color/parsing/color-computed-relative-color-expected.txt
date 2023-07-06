@@ -955,7 +955,7 @@ PASS Property color value 'lab(from var(--mycolor) l a b / 100%)'
 PASS Property color value 'lab(from var(--mycolor) l a b / calc(alpha * 0.8))'
 PASS Property color value 'lab(from var(--mycolor) l a b / calc(alpha - 20%))'
 PASS Property color value 'lab(from var(--mycolor) l 0 0)'
-PASS Property color value 'lch(from peru calc(l * 0.8) c h)'
+FAIL Property color value 'lch(from peru calc(l * 0.8) c h)' assert_equals: expected "lch(49.80138 54.003296 63.680317)" but got "lch(49.801384 54.003284 63.68035)"
 PASS Property color value 'LCH(from var(--accent) l c calc(h + 180deg))'
 PASS Property color value 'lch(from var(--mycolor) l 0 h)'
 PASS Property color value 'var(--mygray)'

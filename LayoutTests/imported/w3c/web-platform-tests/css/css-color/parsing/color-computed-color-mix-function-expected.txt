@@ -1,126 +1,126 @@
 
-PASS Property color value 'color-mix(in hsl, hsl(120deg 10% 20%), hsl(30deg 30% 40%))'
-PASS Property color value 'color-mix(in hsl, hsl(120deg 10% 20%) 25%, hsl(30deg 30% 40%))'
-PASS Property color value 'color-mix(in hsl, 25% hsl(120deg 10% 20%), hsl(30deg 30% 40%))'
-PASS Property color value 'color-mix(in hsl, hsl(120deg 10% 20%), 25% hsl(30deg 30% 40%))'
-PASS Property color value 'color-mix(in hsl, hsl(120deg 10% 20%), hsl(30deg 30% 40%) 25%)'
-PASS Property color value 'color-mix(in hsl, hsl(120deg 10% 20%) 25%, hsl(30deg 30% 40%) 75%)'
-PASS Property color value 'color-mix(in hsl, hsl(120deg 10% 20%) 30%, hsl(30deg 30% 40%) 90%)'
-PASS Property color value 'color-mix(in hsl, hsl(120deg 10% 20%) 12.5%, hsl(30deg 30% 40%) 37.5%)'
-PASS Property color value 'color-mix(in hsl, hsl(120deg 10% 20%) 0%, hsl(30deg 30% 40%))'
-PASS Property color value 'color-mix(in hsl, hsl(120deg 10% 20% / .4), hsl(30deg 30% 40% / .8))'
-PASS Property color value 'color-mix(in hsl, hsl(120deg 10% 20%) 25%, hsl(30deg 30% 40% / .8))'
-PASS Property color value 'color-mix(in hsl, 25% hsl(120deg 10% 20% / .4), hsl(30deg 30% 40% / .8))'
-PASS Property color value 'color-mix(in hsl, hsl(120deg 10% 20% / .4), 25% hsl(30deg 30% 40% / .8))'
-PASS Property color value 'color-mix(in hsl, hsl(120deg 10% 20% / .4), hsl(30deg 30% 40% / .8) 25%)'
-PASS Property color value 'color-mix(in hsl, hsl(120deg 10% 20% / .4) 25%, hsl(30deg 30% 40% / .8) 75%)'
-PASS Property color value 'color-mix(in hsl, hsl(120deg 10% 20% / .4) 30%, hsl(30deg 30% 40% / .8) 90%)'
-PASS Property color value 'color-mix(in hsl, hsl(120deg 10% 20% / .4) 12.5%, hsl(30deg 30% 40% / .8) 37.5%)'
-PASS Property color value 'color-mix(in hsl, hsl(120deg 10% 20% / .4) 0%, hsl(30deg 30% 40% / .8))'
-FAIL Property color value 'color-mix(in hsl, transparent, hsl(30deg 30% 40%))' assert_equals: expected "rgba(133, 102, 71, 0.5)" but got "rgba(133, 87, 71, 0.5)"
-FAIL Property color value 'color-mix(in hsl, transparent 10%, hsl(30deg 30% 40%))' assert_equals: expected "rgba(133, 102, 71, 0.9)" but got "rgba(133, 99, 71, 0.9)"
-FAIL Property color value 'color-mix(in hsl, hsl(120deg 10% 20% / 0), hsl(30deg 30% 40%))' assert_equals: expected "rgba(117, 133, 71, 0.5)" but got "rgba(118, 133, 71, 0.5)"
-PASS Property color value 'color-mix(in hsl, hsl(120deg 10% 20% / 0) 10%, hsl(30deg 30% 40%))'
-PASS Property color value 'color-mix(in hsl, hsl(40deg 50% 50%), hsl(60deg 50% 50%))'
-PASS Property color value 'color-mix(in hsl, hsl(60deg 50% 50%), hsl(40deg 50% 50%))'
-PASS Property color value 'color-mix(in hsl, hsl(50deg 50% 50%), hsl(330deg 50% 50%))'
-PASS Property color value 'color-mix(in hsl, hsl(330deg 50% 50%), hsl(50deg 50% 50%))'
-PASS Property color value 'color-mix(in hsl, hsl(20deg 50% 50%), hsl(320deg 50% 50%))'
-PASS Property color value 'color-mix(in hsl, hsl(320deg 50% 50%), hsl(20deg 50% 50%))'
-PASS Property color value 'color-mix(in hsl shorter hue, hsl(40deg 50% 50%), hsl(60deg 50% 50%))'
-PASS Property color value 'color-mix(in hsl shorter hue, hsl(60deg 50% 50%), hsl(40deg 50% 50%))'
-PASS Property color value 'color-mix(in hsl shorter hue, hsl(50deg 50% 50%), hsl(330deg 50% 50%))'
-PASS Property color value 'color-mix(in hsl shorter hue, hsl(330deg 50% 50%), hsl(50deg 50% 50%))'
-PASS Property color value 'color-mix(in hsl shorter hue, hsl(20deg 50% 50%), hsl(320deg 50% 50%))'
-PASS Property color value 'color-mix(in hsl shorter hue, hsl(320deg 50% 50%), hsl(20deg 50% 50%))'
-PASS Property color value 'color-mix(in hsl longer hue, hsl(40deg 50% 50%), hsl(60deg 50% 50%))'
-PASS Property color value 'color-mix(in hsl longer hue, hsl(60deg 50% 50%), hsl(40deg 50% 50%))'
-PASS Property color value 'color-mix(in hsl longer hue, hsl(50deg 50% 50%), hsl(330deg 50% 50%))'
-PASS Property color value 'color-mix(in hsl longer hue, hsl(330deg 50% 50%), hsl(50deg 50% 50%))'
-PASS Property color value 'color-mix(in hsl longer hue, hsl(20deg 50% 50%), hsl(320deg 50% 50%))'
-PASS Property color value 'color-mix(in hsl longer hue, hsl(320deg 50% 50%), hsl(20deg 50% 50%))'
-PASS Property color value 'color-mix(in hsl increasing hue, hsl(40deg 50% 50%), hsl(60deg 50% 50%))'
-PASS Property color value 'color-mix(in hsl increasing hue, hsl(60deg 50% 50%), hsl(40deg 50% 50%))'
-PASS Property color value 'color-mix(in hsl increasing hue, hsl(50deg 50% 50%), hsl(330deg 50% 50%))'
-PASS Property color value 'color-mix(in hsl increasing hue, hsl(330deg 50% 50%), hsl(50deg 50% 50%))'
-PASS Property color value 'color-mix(in hsl increasing hue, hsl(20deg 50% 50%), hsl(320deg 50% 50%))'
-PASS Property color value 'color-mix(in hsl increasing hue, hsl(320deg 50% 50%), hsl(20deg 50% 50%))'
-PASS Property color value 'color-mix(in hsl decreasing hue, hsl(40deg 50% 50%), hsl(60deg 50% 50%))'
-PASS Property color value 'color-mix(in hsl decreasing hue, hsl(60deg 50% 50%), hsl(40deg 50% 50%))'
-PASS Property color value 'color-mix(in hsl decreasing hue, hsl(50deg 50% 50%), hsl(330deg 50% 50%))'
-PASS Property color value 'color-mix(in hsl decreasing hue, hsl(330deg 50% 50%), hsl(50deg 50% 50%))'
-PASS Property color value 'color-mix(in hsl decreasing hue, hsl(20deg 50% 50%), hsl(320deg 50% 50%))'
-PASS Property color value 'color-mix(in hsl decreasing hue, hsl(320deg 50% 50%), hsl(20deg 50% 50%))'
-PASS Property color value 'color-mix(in hsl, hsl(none none none), hsl(none none none))'
-PASS Property color value 'color-mix(in hsl, hsl(none none none), hsl(30deg 40% 80%))'
-PASS Property color value 'color-mix(in hsl, hsl(120deg 20% 40%), hsl(none none none))'
-PASS Property color value 'color-mix(in hsl, hsl(120deg 20% none), hsl(30deg 40% 60%))'
-PASS Property color value 'color-mix(in hsl, hsl(120deg 20% 40%), hsl(30deg 20% none))'
-PASS Property color value 'color-mix(in hsl, hsl(none 20% 40%), hsl(30deg none 80%))'
-PASS Property color value 'color-mix(in hsl, hsl(120deg 40% 40% / none), hsl(0deg 40% 40%))'
-PASS Property color value 'color-mix(in hsl, hsl(120deg 40% 40% / none), hsl(0deg 40% 40% / 0.5))'
-PASS Property color value 'color-mix(in hsl, hsl(120deg 40% 40% / none), hsl(0deg 40% 40% / none))'
-PASS Property color value 'color-mix(in hwb, hwb(120deg 10% 20%), hwb(30deg 30% 40%))'
-PASS Property color value 'color-mix(in hwb, hwb(120deg 10% 20%) 25%, hwb(30deg 30% 40%))'
-PASS Property color value 'color-mix(in hwb, 25% hwb(120deg 10% 20%), hwb(30deg 30% 40%))'
-PASS Property color value 'color-mix(in hwb, hwb(120deg 10% 20%), 25% hwb(30deg 30% 40%))'
-PASS Property color value 'color-mix(in hwb, hwb(120deg 10% 20%), hwb(30deg 30% 40%) 25%)'
-PASS Property color value 'color-mix(in hwb, hwb(120deg 10% 20%) 25%, hwb(30deg 30% 40%) 75%)'
-PASS Property color value 'color-mix(in hwb, hwb(120deg 10% 20%) 30%, hwb(30deg 30% 40%) 90%)'
-PASS Property color value 'color-mix(in hwb, hwb(120deg 10% 20%) 12.5%, hwb(30deg 30% 40%) 37.5%)'
-PASS Property color value 'color-mix(in hwb, hwb(120deg 10% 20%) 0%, hwb(30deg 30% 40%))'
-PASS Property color value 'color-mix(in hwb, hwb(120deg 10% 20% / .4), hwb(30deg 30% 40% / .8))'
-PASS Property color value 'color-mix(in hwb, hwb(120deg 10% 20% / .4) 25%, hwb(30deg 30% 40% / .8))'
-PASS Property color value 'color-mix(in hwb, 25% hwb(120deg 10% 20% / .4), hwb(30deg 30% 40% / .8))'
-PASS Property color value 'color-mix(in hwb, hwb(120deg 10% 20%), 25% hwb(30deg 30% 40% / .8))'
-PASS Property color value 'color-mix(in hwb, hwb(120deg 10% 20% / .4), hwb(30deg 30% 40% / .8) 25%)'
-PASS Property color value 'color-mix(in hwb, hwb(120deg 10% 20% / .4) 25%, hwb(30deg 30% 40% / .8) 75%)'
-PASS Property color value 'color-mix(in hwb, hwb(120deg 10% 20% / .4) 30%, hwb(30deg 30% 40% / .8) 90%)'
-PASS Property color value 'color-mix(in hwb, hwb(120deg 10% 20% / .4) 12.5%, hwb(30deg 30% 40% / .8) 37.5%)'
-PASS Property color value 'color-mix(in hwb, hwb(120deg 10% 20% / .4) 0%, hwb(30deg 30% 40% / .8))'
-FAIL Property color value 'color-mix(in hwb, transparent, hwb(30deg 30% 40%))' assert_equals: expected "rgba(153, 115, 77, 0.5)" but got "rgba(153, 96, 77, 0.5)"
-FAIL Property color value 'color-mix(in hwb, transparent 10%, hwb(30deg 30% 40%))' assert_equals: expected "rgba(153, 115, 77, 0.9)" but got "rgba(153, 111, 77, 0.9)"
-PASS Property color value 'color-mix(in hwb, hwb(120deg 10% 20% / 0), hwb(30deg 30% 40%))'
-PASS Property color value 'color-mix(in hwb, hwb(120deg 10% 20% / 0) 10%, hwb(30deg 30% 40%))'
-PASS Property color value 'color-mix(in hwb, hwb(40deg 30% 40%), hwb(60deg 30% 40%))'
-PASS Property color value 'color-mix(in hwb, hwb(60deg 30% 40%), hwb(40deg 30% 40%))'
-PASS Property color value 'color-mix(in hwb, hwb(50deg 30% 40%), hwb(330deg 30% 40%))'
-PASS Property color value 'color-mix(in hwb, hwb(330deg 30% 40%), hwb(50deg 30% 40%))'
-PASS Property color value 'color-mix(in hwb, hwb(20deg 30% 40%), hwb(320deg 30% 40%))'
-PASS Property color value 'color-mix(in hwb, hwb(320deg 30% 40%), hwb(20deg 30% 40%))'
-PASS Property color value 'color-mix(in hwb shorter hue, hwb(40deg 30% 40%), hwb(60deg 30% 40%))'
-PASS Property color value 'color-mix(in hwb shorter hue, hwb(60deg 30% 40%), hwb(40deg 30% 40%))'
-PASS Property color value 'color-mix(in hwb shorter hue, hwb(50deg 30% 40%), hwb(330deg 30% 40%))'
-PASS Property color value 'color-mix(in hwb shorter hue, hwb(330deg 30% 40%), hwb(50deg 30% 40%))'
-PASS Property color value 'color-mix(in hwb shorter hue, hwb(20deg 30% 40%), hwb(320deg 30% 40%))'
-PASS Property color value 'color-mix(in hwb shorter hue, hwb(320deg 30% 40%), hwb(20deg 30% 40%))'
-PASS Property color value 'color-mix(in hwb longer hue, hwb(40deg 30% 40%), hwb(60deg 30% 40%))'
-PASS Property color value 'color-mix(in hwb longer hue, hwb(60deg 30% 40%), hwb(40deg 30% 40%))'
-PASS Property color value 'color-mix(in hwb longer hue, hwb(50deg 30% 40%), hwb(330deg 30% 40%))'
-PASS Property color value 'color-mix(in hwb longer hue, hwb(330deg 30% 40%), hwb(50deg 30% 40%))'
-PASS Property color value 'color-mix(in hwb longer hue, hwb(20deg 30% 40%), hwb(320deg 30% 40%))'
-PASS Property color value 'color-mix(in hwb longer hue, hwb(320deg 30% 40%), hwb(20deg 30% 40%))'
-PASS Property color value 'color-mix(in hwb increasing hue, hwb(40deg 30% 40%), hwb(60deg 30% 40%))'
-PASS Property color value 'color-mix(in hwb increasing hue, hwb(60deg 30% 40%), hwb(40deg 30% 40%))'
-PASS Property color value 'color-mix(in hwb increasing hue, hwb(50deg 30% 40%), hwb(330deg 30% 40%))'
-PASS Property color value 'color-mix(in hwb increasing hue, hwb(330deg 30% 40%), hwb(50deg 30% 40%))'
-PASS Property color value 'color-mix(in hwb increasing hue, hwb(20deg 30% 40%), hwb(320deg 30% 40%))'
-PASS Property color value 'color-mix(in hwb increasing hue, hwb(320deg 30% 40%), hwb(20deg 30% 40%))'
-PASS Property color value 'color-mix(in hwb decreasing hue, hwb(40deg 30% 40%), hwb(60deg 30% 40%))'
-PASS Property color value 'color-mix(in hwb decreasing hue, hwb(60deg 30% 40%), hwb(40deg 30% 40%))'
-PASS Property color value 'color-mix(in hwb decreasing hue, hwb(50deg 30% 40%), hwb(330deg 30% 40%))'
-PASS Property color value 'color-mix(in hwb decreasing hue, hwb(330deg 30% 40%), hwb(50deg 30% 40%))'
-PASS Property color value 'color-mix(in hwb decreasing hue, hwb(20deg 30% 40%), hwb(320deg 30% 40%))'
-PASS Property color value 'color-mix(in hwb decreasing hue, hwb(320deg 30% 40%), hwb(20deg 30% 40%))'
-PASS Property color value 'color-mix(in hwb, hwb(none none none), hwb(none none none))'
-PASS Property color value 'color-mix(in hwb, hwb(none none none), hwb(30deg 30% 40%))'
-PASS Property color value 'color-mix(in hwb, hwb(120deg 10% 20%), hwb(none none none))'
-PASS Property color value 'color-mix(in hwb, hwb(120deg 10% none), hwb(30deg 30% 40%))'
-PASS Property color value 'color-mix(in hwb, hwb(120deg 10% 20%), hwb(30deg 30% none))'
-PASS Property color value 'color-mix(in hwb, hwb(none 10% 20%), hwb(30deg none 40%))'
-PASS Property color value 'color-mix(in hwb, hwb(120deg 10% 20% / none), hwb(30deg 30% 40%))'
-PASS Property color value 'color-mix(in hwb, hwb(120deg 10% 20% / none), hwb(30deg 30% 40% / 0.5))'
-PASS Property color value 'color-mix(in hwb, hwb(120deg 10% 20% / none), hwb(30deg 30% 40% / none))'
+FAIL Property color value 'color-mix(in hsl, hsl(120deg 10% 20%), hsl(30deg 30% 40%))' assert_equals: expected "color(srgb 0.33 0.36 0.24)" but got "rgb(84, 92, 61)"
+FAIL Property color value 'color-mix(in hsl, hsl(120deg 10% 20%) 25%, hsl(30deg 30% 40%))' assert_equals: expected "color(srgb 0.4375 0.415625 0.2625)" but got "rgb(112, 106, 67)"
+FAIL Property color value 'color-mix(in hsl, 25% hsl(120deg 10% 20%), hsl(30deg 30% 40%))' assert_equals: expected "color(srgb 0.4375 0.415625 0.2625)" but got "rgb(112, 106, 67)"
+FAIL Property color value 'color-mix(in hsl, hsl(120deg 10% 20%), 25% hsl(30deg 30% 40%))' assert_equals: expected "color(srgb 0.240625 0.2875 0.2125)" but got "rgb(61, 73, 54)"
+FAIL Property color value 'color-mix(in hsl, hsl(120deg 10% 20%), hsl(30deg 30% 40%) 25%)' assert_equals: expected "color(srgb 0.240625 0.2875 0.2125)" but got "rgb(61, 73, 54)"
+FAIL Property color value 'color-mix(in hsl, hsl(120deg 10% 20%) 25%, hsl(30deg 30% 40%) 75%)' assert_equals: expected "color(srgb 0.4375 0.415625 0.2625)" but got "rgb(112, 106, 67)"
+FAIL Property color value 'color-mix(in hsl, hsl(120deg 10% 20%) 30%, hsl(30deg 30% 40%) 90%)' assert_equals: expected "color(srgb 0.4375 0.415625 0.2625)" but got "rgb(112, 106, 67)"
+FAIL Property color value 'color-mix(in hsl, hsl(120deg 10% 20%) 12.5%, hsl(30deg 30% 40%) 37.5%)' assert_equals: expected "color(srgb 0.4375 0.415625 0.2625 / 0.5)" but got "rgba(112, 106, 67, 0.5)"
+FAIL Property color value 'color-mix(in hsl, hsl(120deg 10% 20%) 0%, hsl(30deg 30% 40%))' assert_equals: expected "color(srgb 0.52 0.4 0.28)" but got "rgb(133, 102, 71)"
+FAIL Property color value 'color-mix(in hsl, hsl(120deg 10% 20% / .4), hsl(30deg 30% 40% / .8))' assert_equals: expected "color(srgb 0.372222 0.411111 0.255556 / 0.6)" but got "rgba(95, 105, 65, 0.6)"
+FAIL Property color value 'color-mix(in hsl, hsl(120deg 10% 20%) 25%, hsl(30deg 30% 40% / .8))' assert_equals: expected "color(srgb 0.42346 0.402889 0.258893 / 0.85)" but got "rgba(108, 103, 66, 0.85)"
+FAIL Property color value 'color-mix(in hsl, 25% hsl(120deg 10% 20% / .4), hsl(30deg 30% 40% / .8))' assert_equals: expected "color(srgb 0.472245 0.447041 0.270612 / 0.7)" but got "rgba(121, 114, 69, 0.7)"
+FAIL Property color value 'color-mix(in hsl, hsl(120deg 10% 20% / .4), 25% hsl(30deg 30% 40% / .8))' assert_equals: expected "color(srgb 0.2674 0.3304 0.2296 / 0.5)" but got "rgba(68, 84, 59, 0.5)"
+FAIL Property color value 'color-mix(in hsl, hsl(120deg 10% 20% / .4), hsl(30deg 30% 40% / .8) 25%)' assert_equals: expected "color(srgb 0.2674 0.3304 0.2296 / 0.5)" but got "rgba(68, 84, 59, 0.5)"
+FAIL Property color value 'color-mix(in hsl, hsl(120deg 10% 20% / .4) 25%, hsl(30deg 30% 40% / .8) 75%)' assert_equals: expected "color(srgb 0.472245 0.447041 0.270612 / 0.7)" but got "rgba(121, 114, 69, 0.7)"
+FAIL Property color value 'color-mix(in hsl, hsl(120deg 10% 20% / .4) 30%, hsl(30deg 30% 40% / .8) 90%)' assert_equals: expected "color(srgb 0.472245 0.447041 0.270612 / 0.7)" but got "rgba(121, 114, 69, 0.7)"
+FAIL Property color value 'color-mix(in hsl, hsl(120deg 10% 20% / .4) 12.5%, hsl(30deg 30% 40% / .8) 37.5%)' assert_equals: expected "color(srgb 0.472245 0.447041 0.270612 / 0.35)" but got "rgba(121, 114, 69, 0.35)"
+FAIL Property color value 'color-mix(in hsl, hsl(120deg 10% 20% / .4) 0%, hsl(30deg 30% 40% / .8))' assert_equals: expected "color(srgb 0.52 0.4 0.28 / 0.8)" but got "rgba(133, 102, 71, 0.8)"
+FAIL Property color value 'color-mix(in hsl, transparent, hsl(30deg 30% 40%))' assert_equals: expected "color(srgb 0.52 0.4 0.28 / 0.5)" but got "rgba(133, 87, 71, 0.5)"
+FAIL Property color value 'color-mix(in hsl, transparent 10%, hsl(30deg 30% 40%))' assert_equals: expected "color(srgb 0.52 0.4 0.28 / 0.9)" but got "rgba(133, 99, 71, 0.9)"
+FAIL Property color value 'color-mix(in hsl, hsl(120deg 10% 20% / 0), hsl(30deg 30% 40%))' assert_equals: expected "color(srgb 0.46 0.52 0.28 / 0.5)" but got "rgba(118, 133, 71, 0.5)"
+FAIL Property color value 'color-mix(in hsl, hsl(120deg 10% 20% / 0) 10%, hsl(30deg 30% 40%))' assert_equals: expected "color(srgb 0.52 0.436 0.28 / 0.9)" but got "rgba(133, 111, 71, 0.9)"
+FAIL Property color value 'color-mix(in hsl, hsl(40deg 50% 50%), hsl(60deg 50% 50%))' assert_equals: expected "color(srgb 0.75 0.666667 0.25)" but got "rgb(191, 170, 64)"
+FAIL Property color value 'color-mix(in hsl, hsl(60deg 50% 50%), hsl(40deg 50% 50%))' assert_equals: expected "color(srgb 0.75 0.666667 0.25)" but got "rgb(191, 170, 64)"
+FAIL Property color value 'color-mix(in hsl, hsl(50deg 50% 50%), hsl(330deg 50% 50%))' assert_equals: expected "color(srgb 0.75 0.333333 0.25)" but got "rgb(191, 85, 64)"
+FAIL Property color value 'color-mix(in hsl, hsl(330deg 50% 50%), hsl(50deg 50% 50%))' assert_equals: expected "color(srgb 0.75 0.333333 0.25)" but got "rgb(191, 85, 64)"
+FAIL Property color value 'color-mix(in hsl, hsl(20deg 50% 50%), hsl(320deg 50% 50%))' assert_equals: expected "color(srgb 0.75 0.25 0.333333)" but got "rgb(191, 64, 85)"
+FAIL Property color value 'color-mix(in hsl, hsl(320deg 50% 50%), hsl(20deg 50% 50%))' assert_equals: expected "color(srgb 0.75 0.25 0.333333)" but got "rgb(191, 64, 85)"
+FAIL Property color value 'color-mix(in hsl shorter hue, hsl(40deg 50% 50%), hsl(60deg 50% 50%))' assert_equals: expected "color(srgb 0.75 0.666667 0.25)" but got "rgb(191, 170, 64)"
+FAIL Property color value 'color-mix(in hsl shorter hue, hsl(60deg 50% 50%), hsl(40deg 50% 50%))' assert_equals: expected "color(srgb 0.75 0.666667 0.25)" but got "rgb(191, 170, 64)"
+FAIL Property color value 'color-mix(in hsl shorter hue, hsl(50deg 50% 50%), hsl(330deg 50% 50%))' assert_equals: expected "color(srgb 0.75 0.333333 0.25)" but got "rgb(191, 85, 64)"
+FAIL Property color value 'color-mix(in hsl shorter hue, hsl(330deg 50% 50%), hsl(50deg 50% 50%))' assert_equals: expected "color(srgb 0.75 0.333333 0.25)" but got "rgb(191, 85, 64)"
+FAIL Property color value 'color-mix(in hsl shorter hue, hsl(20deg 50% 50%), hsl(320deg 50% 50%))' assert_equals: expected "color(srgb 0.75 0.25 0.333333)" but got "rgb(191, 64, 85)"
+FAIL Property color value 'color-mix(in hsl shorter hue, hsl(320deg 50% 50%), hsl(20deg 50% 50%))' assert_equals: expected "color(srgb 0.75 0.25 0.333333)" but got "rgb(191, 64, 85)"
+FAIL Property color value 'color-mix(in hsl longer hue, hsl(40deg 50% 50%), hsl(60deg 50% 50%))' assert_equals: expected "color(srgb 0.25 0.333333 0.75)" but got "rgb(64, 85, 191)"
+FAIL Property color value 'color-mix(in hsl longer hue, hsl(60deg 50% 50%), hsl(40deg 50% 50%))' assert_equals: expected "color(srgb 0.25 0.333333 0.75)" but got "rgb(64, 85, 191)"
+FAIL Property color value 'color-mix(in hsl longer hue, hsl(50deg 50% 50%), hsl(330deg 50% 50%))' assert_equals: expected "color(srgb 0.25 0.666667 0.75)" but got "rgb(64, 170, 191)"
+FAIL Property color value 'color-mix(in hsl longer hue, hsl(330deg 50% 50%), hsl(50deg 50% 50%))' assert_equals: expected "color(srgb 0.25 0.666667 0.75)" but got "rgb(64, 170, 191)"
+FAIL Property color value 'color-mix(in hsl longer hue, hsl(20deg 50% 50%), hsl(320deg 50% 50%))' assert_equals: expected "color(srgb 0.25 0.75 0.666667)" but got "rgb(64, 191, 170)"
+FAIL Property color value 'color-mix(in hsl longer hue, hsl(320deg 50% 50%), hsl(20deg 50% 50%))' assert_equals: expected "color(srgb 0.25 0.75 0.666667)" but got "rgb(64, 191, 170)"
+FAIL Property color value 'color-mix(in hsl increasing hue, hsl(40deg 50% 50%), hsl(60deg 50% 50%))' assert_equals: expected "color(srgb 0.75 0.666667 0.25)" but got "rgb(191, 170, 64)"
+FAIL Property color value 'color-mix(in hsl increasing hue, hsl(60deg 50% 50%), hsl(40deg 50% 50%))' assert_equals: expected "color(srgb 0.25 0.333333 0.75)" but got "rgb(64, 85, 191)"
+FAIL Property color value 'color-mix(in hsl increasing hue, hsl(50deg 50% 50%), hsl(330deg 50% 50%))' assert_equals: expected "color(srgb 0.25 0.666667 0.75)" but got "rgb(64, 170, 191)"
+FAIL Property color value 'color-mix(in hsl increasing hue, hsl(330deg 50% 50%), hsl(50deg 50% 50%))' assert_equals: expected "color(srgb 0.75 0.333333 0.25)" but got "rgb(191, 85, 64)"
+FAIL Property color value 'color-mix(in hsl increasing hue, hsl(20deg 50% 50%), hsl(320deg 50% 50%))' assert_equals: expected "color(srgb 0.25 0.75 0.666667)" but got "rgb(64, 191, 170)"
+FAIL Property color value 'color-mix(in hsl increasing hue, hsl(320deg 50% 50%), hsl(20deg 50% 50%))' assert_equals: expected "color(srgb 0.75 0.25 0.333333)" but got "rgb(191, 64, 85)"
+FAIL Property color value 'color-mix(in hsl decreasing hue, hsl(40deg 50% 50%), hsl(60deg 50% 50%))' assert_equals: expected "color(srgb 0.25 0.333333 0.75)" but got "rgb(64, 85, 191)"
+FAIL Property color value 'color-mix(in hsl decreasing hue, hsl(60deg 50% 50%), hsl(40deg 50% 50%))' assert_equals: expected "color(srgb 0.75 0.666667 0.25)" but got "rgb(191, 170, 64)"
+FAIL Property color value 'color-mix(in hsl decreasing hue, hsl(50deg 50% 50%), hsl(330deg 50% 50%))' assert_equals: expected "color(srgb 0.75 0.333333 0.25)" but got "rgb(191, 85, 64)"
+FAIL Property color value 'color-mix(in hsl decreasing hue, hsl(330deg 50% 50%), hsl(50deg 50% 50%))' assert_equals: expected "color(srgb 0.25 0.666667 0.75)" but got "rgb(64, 170, 191)"
+FAIL Property color value 'color-mix(in hsl decreasing hue, hsl(20deg 50% 50%), hsl(320deg 50% 50%))' assert_equals: expected "color(srgb 0.75 0.25 0.333333)" but got "rgb(191, 64, 85)"
+FAIL Property color value 'color-mix(in hsl decreasing hue, hsl(320deg 50% 50%), hsl(20deg 50% 50%))' assert_equals: expected "color(srgb 0.25 0.75 0.666667)" but got "rgb(64, 191, 170)"
+FAIL Property color value 'color-mix(in hsl, hsl(none none none), hsl(none none none))' assert_equals: expected "color(srgb none none none)" but got "rgb(0, 0, 0)"
+FAIL Property color value 'color-mix(in hsl, hsl(none none none), hsl(30deg 40% 80%))' assert_equals: expected "color(srgb 0.88 0.8 0.72)" but got "rgb(224, 204, 184)"
+FAIL Property color value 'color-mix(in hsl, hsl(120deg 20% 40%), hsl(none none none))' assert_equals: expected "color(srgb 0.32 0.48 0.32)" but got "rgb(82, 122, 82)"
+FAIL Property color value 'color-mix(in hsl, hsl(120deg 20% none), hsl(30deg 40% 60%))' assert_equals: expected "color(srgb 0.66 0.72 0.48)" but got "rgb(168, 184, 122)"
+FAIL Property color value 'color-mix(in hsl, hsl(120deg 20% 40%), hsl(30deg 20% none))' assert_equals: expected "color(srgb 0.44 0.48 0.32)" but got "rgb(112, 122, 82)"
+FAIL Property color value 'color-mix(in hsl, hsl(none 20% 40%), hsl(30deg none 80%))' assert_equals: expected "color(srgb 0.68 0.6 0.52)" but got "rgb(173, 153, 133)"
+FAIL Property color value 'color-mix(in hsl, hsl(120deg 40% 40% / none), hsl(0deg 40% 40%))' assert_equals: expected "color(srgb 0.56 0.56 0.24)" but got "rgb(143, 143, 61)"
+FAIL Property color value 'color-mix(in hsl, hsl(120deg 40% 40% / none), hsl(0deg 40% 40% / 0.5))' assert_equals: expected "color(srgb 0.56 0.56 0.24 / 0.5)" but got "rgba(143, 143, 61, 0.5)"
+FAIL Property color value 'color-mix(in hsl, hsl(120deg 40% 40% / none), hsl(0deg 40% 40% / none))' assert_equals: expected "color(srgb 0.56 0.56 0.24 / none)" but got "rgba(143, 143, 61, 0)"
+FAIL Property color value 'color-mix(in hwb, hwb(120deg 10% 20%), hwb(30deg 30% 40%))' assert_equals: expected "color(srgb 0.575 0.7 0.2)" but got "rgb(147, 179, 52)"
+FAIL Property color value 'color-mix(in hwb, hwb(120deg 10% 20%) 25%, hwb(30deg 30% 40%))' assert_equals: expected "color(srgb 0.65 0.6 0.25)" but got "rgb(166, 153, 64)"
+FAIL Property color value 'color-mix(in hwb, 25% hwb(120deg 10% 20%), hwb(30deg 30% 40%))' assert_equals: expected "color(srgb 0.65 0.6 0.25)" but got "rgb(166, 153, 64)"
+FAIL Property color value 'color-mix(in hwb, hwb(120deg 10% 20%), 25% hwb(30deg 30% 40%))' assert_equals: expected "color(srgb 0.375 0.75 0.15)" but got "rgb(96, 191, 39)"
+FAIL Property color value 'color-mix(in hwb, hwb(120deg 10% 20%), hwb(30deg 30% 40%) 25%)' assert_equals: expected "color(srgb 0.375 0.75 0.15)" but got "rgb(96, 191, 39)"
+FAIL Property color value 'color-mix(in hwb, hwb(120deg 10% 20%) 25%, hwb(30deg 30% 40%) 75%)' assert_equals: expected "color(srgb 0.65 0.6 0.25)" but got "rgb(166, 153, 64)"
+FAIL Property color value 'color-mix(in hwb, hwb(120deg 10% 20%) 30%, hwb(30deg 30% 40%) 90%)' assert_equals: expected "color(srgb 0.65 0.6 0.25)" but got "rgb(166, 153, 64)"
+FAIL Property color value 'color-mix(in hwb, hwb(120deg 10% 20%) 12.5%, hwb(30deg 30% 40%) 37.5%)' assert_equals: expected "color(srgb 0.65 0.6 0.25 / 0.5)" but got "rgba(166, 153, 64, 0.5)"
+FAIL Property color value 'color-mix(in hwb, hwb(120deg 10% 20%) 0%, hwb(30deg 30% 40%))' assert_equals: expected "color(srgb 0.6 0.45 0.3)" but got "rgb(153, 115, 77)"
+FAIL Property color value 'color-mix(in hwb, hwb(120deg 10% 20% / .4), hwb(30deg 30% 40% / .8))' assert_equals: expected "color(srgb 0.558333 0.666667 0.233333 / 0.6)" but got "rgba(143, 170, 60, 0.6)"
+FAIL Property color value 'color-mix(in hwb, hwb(120deg 10% 20% / .4) 25%, hwb(30deg 30% 40% / .8))' assert_equals: expected "color(srgb 0.628571 0.583929 0.271429 / 0.7)" but got "rgba(160, 149, 70, 0.7)"
+FAIL Property color value 'color-mix(in hwb, 25% hwb(120deg 10% 20% / .4), hwb(30deg 30% 40% / .8))' assert_equals: expected "color(srgb 0.628571 0.583929 0.271429 / 0.7)" but got "rgba(160, 149, 70, 0.7)"
+FAIL Property color value 'color-mix(in hwb, hwb(120deg 10% 20%), 25% hwb(30deg 30% 40% / .8))' assert_equals: expected "color(srgb 0.373026 0.757895 0.142105 / 0.95)" but got "rgba(95, 193, 37, 0.95)"
+FAIL Property color value 'color-mix(in hwb, hwb(120deg 10% 20% / .4), hwb(30deg 30% 40% / .8) 25%)' assert_equals: expected "color(srgb 0.3825 0.72 0.18 / 0.5)" but got "rgba(98, 184, 46, 0.5)"
+FAIL Property color value 'color-mix(in hwb, hwb(120deg 10% 20% / .4) 25%, hwb(30deg 30% 40% / .8) 75%)' assert_equals: expected "color(srgb 0.628571 0.583929 0.271429 / 0.7)" but got "rgba(160, 149, 70, 0.7)"
+FAIL Property color value 'color-mix(in hwb, hwb(120deg 10% 20% / .4) 30%, hwb(30deg 30% 40% / .8) 90%)' assert_equals: expected "color(srgb 0.628571 0.583929 0.271429 / 0.7)" but got "rgba(160, 149, 70, 0.7)"
+FAIL Property color value 'color-mix(in hwb, hwb(120deg 10% 20% / .4) 12.5%, hwb(30deg 30% 40% / .8) 37.5%)' assert_equals: expected "color(srgb 0.628571 0.583929 0.271429 / 0.35)" but got "rgba(160, 149, 70, 0.35)"
+FAIL Property color value 'color-mix(in hwb, hwb(120deg 10% 20% / .4) 0%, hwb(30deg 30% 40% / .8))' assert_equals: expected "color(srgb 0.6 0.45 0.3 / 0.8)" but got "rgba(153, 115, 77, 0.8)"
+FAIL Property color value 'color-mix(in hwb, transparent, hwb(30deg 30% 40%))' assert_equals: expected "color(srgb 0.6 0.45 0.3 / 0.5)" but got "rgba(153, 96, 77, 0.5)"
+FAIL Property color value 'color-mix(in hwb, transparent 10%, hwb(30deg 30% 40%))' assert_equals: expected "color(srgb 0.6 0.45 0.3 / 0.9)" but got "rgba(153, 111, 77, 0.9)"
+FAIL Property color value 'color-mix(in hwb, hwb(120deg 10% 20% / 0), hwb(30deg 30% 40%))' assert_equals: expected "color(srgb 0.525 0.6 0.3 / 0.5)" but got "rgba(134, 153, 77, 0.5)"
+FAIL Property color value 'color-mix(in hwb, hwb(120deg 10% 20% / 0) 10%, hwb(30deg 30% 40%))' assert_equals: expected "color(srgb 0.6 0.495 0.3 / 0.9)" but got "rgba(153, 126, 77, 0.9)"
+FAIL Property color value 'color-mix(in hwb, hwb(40deg 30% 40%), hwb(60deg 30% 40%))' assert_equals: expected "color(srgb 0.6 0.55 0.3)" but got "rgb(153, 140, 77)"
+FAIL Property color value 'color-mix(in hwb, hwb(60deg 30% 40%), hwb(40deg 30% 40%))' assert_equals: expected "color(srgb 0.6 0.55 0.3)" but got "rgb(153, 140, 77)"
+FAIL Property color value 'color-mix(in hwb, hwb(50deg 30% 40%), hwb(330deg 30% 40%))' assert_equals: expected "color(srgb 0.6 0.35 0.3)" but got "rgb(153, 89, 77)"
+FAIL Property color value 'color-mix(in hwb, hwb(330deg 30% 40%), hwb(50deg 30% 40%))' assert_equals: expected "color(srgb 0.6 0.35 0.3)" but got "rgb(153, 89, 77)"
+FAIL Property color value 'color-mix(in hwb, hwb(20deg 30% 40%), hwb(320deg 30% 40%))' assert_equals: expected "color(srgb 0.6 0.3 0.35)" but got "rgb(153, 77, 89)"
+FAIL Property color value 'color-mix(in hwb, hwb(320deg 30% 40%), hwb(20deg 30% 40%))' assert_equals: expected "color(srgb 0.6 0.3 0.35)" but got "rgb(153, 77, 89)"
+FAIL Property color value 'color-mix(in hwb shorter hue, hwb(40deg 30% 40%), hwb(60deg 30% 40%))' assert_equals: expected "color(srgb 0.6 0.55 0.3)" but got "rgb(153, 140, 77)"
+FAIL Property color value 'color-mix(in hwb shorter hue, hwb(60deg 30% 40%), hwb(40deg 30% 40%))' assert_equals: expected "color(srgb 0.6 0.55 0.3)" but got "rgb(153, 140, 77)"
+FAIL Property color value 'color-mix(in hwb shorter hue, hwb(50deg 30% 40%), hwb(330deg 30% 40%))' assert_equals: expected "color(srgb 0.6 0.35 0.3)" but got "rgb(153, 89, 77)"
+FAIL Property color value 'color-mix(in hwb shorter hue, hwb(330deg 30% 40%), hwb(50deg 30% 40%))' assert_equals: expected "color(srgb 0.6 0.35 0.3)" but got "rgb(153, 89, 77)"
+FAIL Property color value 'color-mix(in hwb shorter hue, hwb(20deg 30% 40%), hwb(320deg 30% 40%))' assert_equals: expected "color(srgb 0.6 0.3 0.35)" but got "rgb(153, 77, 89)"
+FAIL Property color value 'color-mix(in hwb shorter hue, hwb(320deg 30% 40%), hwb(20deg 30% 40%))' assert_equals: expected "color(srgb 0.6 0.3 0.35)" but got "rgb(153, 77, 89)"
+FAIL Property color value 'color-mix(in hwb longer hue, hwb(40deg 30% 40%), hwb(60deg 30% 40%))' assert_equals: expected "color(srgb 0.3 0.35 0.6)" but got "rgb(77, 89, 153)"
+FAIL Property color value 'color-mix(in hwb longer hue, hwb(60deg 30% 40%), hwb(40deg 30% 40%))' assert_equals: expected "color(srgb 0.3 0.35 0.6)" but got "rgb(77, 89, 153)"
+FAIL Property color value 'color-mix(in hwb longer hue, hwb(50deg 30% 40%), hwb(330deg 30% 40%))' assert_equals: expected "color(srgb 0.3 0.55 0.6)" but got "rgb(77, 140, 153)"
+FAIL Property color value 'color-mix(in hwb longer hue, hwb(330deg 30% 40%), hwb(50deg 30% 40%))' assert_equals: expected "color(srgb 0.3 0.55 0.6)" but got "rgb(77, 140, 153)"
+FAIL Property color value 'color-mix(in hwb longer hue, hwb(20deg 30% 40%), hwb(320deg 30% 40%))' assert_equals: expected "color(srgb 0.3 0.6 0.55)" but got "rgb(77, 153, 140)"
+FAIL Property color value 'color-mix(in hwb longer hue, hwb(320deg 30% 40%), hwb(20deg 30% 40%))' assert_equals: expected "color(srgb 0.3 0.6 0.55)" but got "rgb(77, 153, 140)"
+FAIL Property color value 'color-mix(in hwb increasing hue, hwb(40deg 30% 40%), hwb(60deg 30% 40%))' assert_equals: expected "color(srgb 0.6 0.55 0.3)" but got "rgb(153, 140, 77)"
+FAIL Property color value 'color-mix(in hwb increasing hue, hwb(60deg 30% 40%), hwb(40deg 30% 40%))' assert_equals: expected "color(srgb 0.3 0.35 0.6)" but got "rgb(77, 89, 153)"
+FAIL Property color value 'color-mix(in hwb increasing hue, hwb(50deg 30% 40%), hwb(330deg 30% 40%))' assert_equals: expected "color(srgb 0.3 0.55 0.6)" but got "rgb(77, 140, 153)"
+FAIL Property color value 'color-mix(in hwb increasing hue, hwb(330deg 30% 40%), hwb(50deg 30% 40%))' assert_equals: expected "color(srgb 0.6 0.35 0.3)" but got "rgb(153, 89, 77)"
+FAIL Property color value 'color-mix(in hwb increasing hue, hwb(20deg 30% 40%), hwb(320deg 30% 40%))' assert_equals: expected "color(srgb 0.3 0.6 0.55)" but got "rgb(77, 153, 140)"
+FAIL Property color value 'color-mix(in hwb increasing hue, hwb(320deg 30% 40%), hwb(20deg 30% 40%))' assert_equals: expected "color(srgb 0.6 0.3 0.35)" but got "rgb(153, 77, 89)"
+FAIL Property color value 'color-mix(in hwb decreasing hue, hwb(40deg 30% 40%), hwb(60deg 30% 40%))' assert_equals: expected "color(srgb 0.3 0.35 0.6)" but got "rgb(77, 89, 153)"
+FAIL Property color value 'color-mix(in hwb decreasing hue, hwb(60deg 30% 40%), hwb(40deg 30% 40%))' assert_equals: expected "color(srgb 0.6 0.55 0.3)" but got "rgb(153, 140, 77)"
+FAIL Property color value 'color-mix(in hwb decreasing hue, hwb(50deg 30% 40%), hwb(330deg 30% 40%))' assert_equals: expected "color(srgb 0.6 0.35 0.3)" but got "rgb(153, 89, 77)"
+FAIL Property color value 'color-mix(in hwb decreasing hue, hwb(330deg 30% 40%), hwb(50deg 30% 40%))' assert_equals: expected "color(srgb 0.3 0.55 0.6)" but got "rgb(77, 140, 153)"
+FAIL Property color value 'color-mix(in hwb decreasing hue, hwb(20deg 30% 40%), hwb(320deg 30% 40%))' assert_equals: expected "color(srgb 0.6 0.3 0.35)" but got "rgb(153, 77, 89)"
+FAIL Property color value 'color-mix(in hwb decreasing hue, hwb(320deg 30% 40%), hwb(20deg 30% 40%))' assert_equals: expected "color(srgb 0.3 0.6 0.55)" but got "rgb(77, 153, 140)"
+FAIL Property color value 'color-mix(in hwb, hwb(none none none), hwb(none none none))' assert_equals: expected "color(srgb none none none)" but got "rgb(255, 0, 0)"
+FAIL Property color value 'color-mix(in hwb, hwb(none none none), hwb(30deg 30% 40%))' assert_equals: expected "color(srgb 0.6 0.45 0.3)" but got "rgb(153, 115, 77)"
+FAIL Property color value 'color-mix(in hwb, hwb(120deg 10% 20%), hwb(none none none))' assert_equals: expected "color(srgb 0.1 0.8 0.1)" but got "rgb(26, 204, 26)"
+FAIL Property color value 'color-mix(in hwb, hwb(120deg 10% none), hwb(30deg 30% 40%))' assert_equals: expected "color(srgb 0.5 0.6 0.2)" but got "rgb(128, 153, 51)"
+FAIL Property color value 'color-mix(in hwb, hwb(120deg 10% 20%), hwb(30deg 30% none))' assert_equals: expected "color(srgb 0.65 0.8 0.2)" but got "rgb(166, 204, 51)"
+FAIL Property color value 'color-mix(in hwb, hwb(none 10% 20%), hwb(30deg none 40%))' assert_equals: expected "color(srgb 0.7 0.4 0.1)" but got "rgb(179, 102, 26)"
+FAIL Property color value 'color-mix(in hwb, hwb(120deg 10% 20% / none), hwb(30deg 30% 40%))' assert_equals: expected "color(srgb 0.575 0.7 0.2)" but got "rgb(147, 179, 51)"
+FAIL Property color value 'color-mix(in hwb, hwb(120deg 10% 20% / none), hwb(30deg 30% 40% / 0.5))' assert_equals: expected "color(srgb 0.575 0.7 0.2 / 0.5)" but got "rgba(147, 179, 51, 0.5)"
+FAIL Property color value 'color-mix(in hwb, hwb(120deg 10% 20% / none), hwb(30deg 30% 40% / none))' assert_equals: expected "color(srgb 0.575 0.7 0.2 / none)" but got "rgba(147, 179, 51, 0)"
 PASS Property color value 'color-mix(in lch, lch(10 20 30deg), lch(50 60 70deg))'
 PASS Property color value 'color-mix(in lch, lch(10 20 30deg) 25%, lch(50 60 70deg))'
 PASS Property color value 'color-mix(in lch, 25% lch(10 20 30deg), lch(50 60 70deg))'

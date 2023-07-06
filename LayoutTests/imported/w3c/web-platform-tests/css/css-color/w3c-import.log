@@ -87,6 +87,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/color-mix-currentcolor-003-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/color-mix-currentcolor-003-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/color-mix-currentcolor-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-color/color-mix-currentcolor-nested-for-color-property-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-color/color-mix-currentcolor-nested-for-color-property-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-color/color-mix-currentcolor-nested-for-color-property.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/color-mix-non-srgb-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/color-mix-non-srgb-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/color-mix-non-srgb-001.html
@@ -311,6 +314,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/oklab-007.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/oklab-008-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/oklab-008.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-color/oklab-009-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-color/oklab-009.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/oklch-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/oklch-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/oklch-002-expected.html
@@ -335,6 +340,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/oklch-009.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/oklch-010-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/oklch-010.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-color/oklch-011-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-color/oklch-011.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/opacity-overlapping-letters-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/opacity-overlapping-letters-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/opacity-overlapping-letters.html

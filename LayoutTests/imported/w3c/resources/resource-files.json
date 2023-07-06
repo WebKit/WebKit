@@ -1033,6 +1033,7 @@
         "web-platform-tests/css/css-color/color-mix-currentcolor-001-ref.html",
         "web-platform-tests/css/css-color/color-mix-currentcolor-002-ref.html",
         "web-platform-tests/css/css-color/color-mix-currentcolor-003-ref.html",
+        "web-platform-tests/css/css-color/color-mix-currentcolor-nested-for-color-property-ref.html",
         "web-platform-tests/css/css-color/color-mix-non-srgb-001-ref.html",
         "web-platform-tests/css/css-color/color-mix-percents-01-ref.html",
         "web-platform-tests/css/css-color/composited-filters-under-opacity-ref.html",

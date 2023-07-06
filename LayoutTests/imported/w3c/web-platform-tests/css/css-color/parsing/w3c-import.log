@@ -36,6 +36,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/parsing/color-invalid-relative-color.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/parsing/color-invalid-rgb.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/parsing/color-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-color/parsing/color-mix-out-of-gamut.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/parsing/color-valid-color-contrast-function.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/parsing/color-valid-color-function.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/parsing/color-valid-color-mix-function.html
@@ -46,7 +47,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/parsing/color-valid-rgb.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/parsing/color-valid-system-color.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/parsing/color-valid.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-color/parsing/gamut-mapping.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/parsing/opacity-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/parsing/opacity-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-color/parsing/opacity-valid.html

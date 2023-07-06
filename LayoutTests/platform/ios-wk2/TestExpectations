@@ -2393,6 +2393,9 @@ fast/forms/date/date-validity-badinput.html [ Skip ]
 fast/forms/datetimelocal/datetimelocal-validity-badinput.html [ Skip ]
 fast/forms/time/time-validity-badinput.html [ Skip ]
 
+imported/w3c/web-platform-tests/css/css-color/system-color-compute.html [ Failure ]
+imported/w3c/web-platform-tests/css/css-color/system-color-consistency.html [ Failure ]
+
 # Skipping scrollbar-width tests that don't work with overlay scrollbars
 imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-width-001.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-width-002.html [ Skip ]
