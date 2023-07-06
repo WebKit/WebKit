@@ -1,5 +1,3 @@
-set(wrapper_DEFINITIONS USE_CONSOLE_ENTRY_POINT)
-
 set(WebDriver_Process_OUTPUT_NAME WebViewDriver)
 
 list(APPEND WebDriver_SOURCES
@@ -18,9 +16,3 @@ list(APPEND WebDriver_PRIVATE_INCLUDE_DIRECTORIES
 list(APPEND WebDriver_FRAMEWORKS
     JavaScriptCore
 )
-
-WEBKIT_WRAP_EXECUTABLE(WebDriver
-    SOURCES "${JAVASCRIPTCORE_DIR}/shell/DLLLauncherMain.cpp"
-    LIBRARIES shlwapi
-)
-target_compile_definitions(WebDriver PRIVATE ${wrapper_DEFINITIONS})
