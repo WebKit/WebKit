@@ -606,7 +606,7 @@ void Resolver::clearCachedDeclarationsAffectedByViewportUnits()
 void Resolver::applyMatchedProperties(State& state, const MatchResult& matchResult)
 {
     unsigned cacheHash = MatchedDeclarationsCache::computeHash(matchResult);
-    auto includedProperties = PropertyCascade::IncludedProperties::All;
+    auto includedProperties = PropertyCascade::allProperties();
 
     auto& style = *state.style();
     auto& parentStyle = *state.parentStyle();
@@ -634,7 +634,10 @@ void Resolver::applyMatchedProperties(State& state, const MatchResult& matchResu
             return;
         }
 
-        includedProperties = PropertyCascade::IncludedProperties::InheritedOnly;
+        includedProperties = { PropertyCascade::PropertyType::Inherited };
+
+        if (!parentStyle.inheritedCustomPropertiesEqual(*cacheEntry->parentRenderStyle))
+            includedProperties.add(PropertyCascade::PropertyType::VariableReference);
     }
 
     if (elementTypeHasAppearanceFromUAStyle(element)) {

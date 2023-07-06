@@ -662,7 +662,7 @@ HashSet<AnimatableProperty> TreeResolver::applyCascadeAfterAnimation(RenderStyle
         WTFMove(builderContext),
         matchResult,
         CascadeLevel::Author,
-        isTransition ? PropertyCascade::IncludedProperties::AfterTransition : PropertyCascade::IncludedProperties::AfterAnimation,
+        isTransition ? PropertyCascade::PropertyType::AfterTransition : PropertyCascade::PropertyType::AfterAnimation,
         &animatedProperties
     };
 

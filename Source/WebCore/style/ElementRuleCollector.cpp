@@ -686,9 +686,6 @@ void ElementRuleCollector::addMatchedProperties(MatchedProperties&& matchedPrope
             // which is an inherited value, making the non-inherited property implicitly inherited.
             if (is<CSSPrimitiveValue>(value) && StyleColor::containsCurrentColor(downcast<CSSPrimitiveValue>(value)))
                 return false;
-
-            if (value.hasVariableReferences())
-                return false;
         }
 
         return true;
