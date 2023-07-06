@@ -4409,6 +4409,9 @@ void GraphicsLayerCA::dumpAdditionalProperties(TextStream& textStream, OptionSet
     if (options & LayerTreeAsTextOptions::IncludeDeviceScale)
         textStream << indent << "(device scale " << deviceScaleFactor() << ")\n";
 
+    if (!m_shapeLayerPath.isEmpty())
+        textStream << indent << "(shape layer path " << m_shapeLayerPath << ")\n";
+
     if ((options & LayerTreeAsTextOptions::IncludeDeepColor) && m_layer->wantsDeepColorBackingStore())
         textStream << indent << "(deep color 1)\n";
 

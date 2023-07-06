@@ -81,6 +81,7 @@ public:
     const SVGElement* element() const;
     const std::optional<Path> getPath(const FloatRect&) const final { return m_path; }
     const std::optional<Path> path() const { return m_path; }
+
 private:
     bool operator==(const PathOperation& other) const override
     {

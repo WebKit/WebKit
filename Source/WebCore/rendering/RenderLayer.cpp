@@ -116,6 +116,7 @@
 #include "RenderSVGInline.h"
 #include "RenderSVGModelObject.h"
 #include "RenderSVGResourceClipper.h"
+#include "RenderSVGResourceClipperInlines.h"
 #include "RenderSVGRoot.h"
 #include "RenderSVGText.h"
 #include "RenderScrollbar.h"
@@ -128,6 +129,7 @@
 #include "RenderTreeAsText.h"
 #include "RenderTreeMutationDisallowedScope.h"
 #include "RenderView.h"
+#include "SVGClipPathElement.h"
 #include "SVGNames.h"
 #include "ScaleTransformOperation.h"
 #include "ScrollAnimator.h"
@@ -3052,15 +3054,34 @@ bool RenderLayer::setupFontSubpixelQuantization(GraphicsContext& context, bool& 
     return false;
 }
 
-std::pair<Path, WindRule> RenderLayer::computeClipPath(const LayoutSize& offsetFromRoot, const LayoutRect& rootRelativeBoundsForNonBoxes) const
+bool RenderLayer::canUsePathClip() const
 {
     const RenderStyle& style = renderer().style();
+
+    if (is<ShapePathOperation>(*style.clipPath()))
+        return true;
+
+    if (is<BoxPathOperation>(*style.clipPath()) && is<RenderBox>(renderer()))
+        return true;
+
+    if (is<ReferencePathOperation>(*style.clipPath()) && is<RenderBox>(renderer())) {
+        auto& referenceClipPathOperation = downcast<ReferencePathOperation>(*style.clipPath());
+        if (auto* clipperRenderer = renderer().ensureReferencedSVGResources().referencedClipperRenderer(renderer().treeScopeForSVGReferences(), referenceClipPathOperation))
+            return clipperRenderer->canUsePathOnlyClip();
+    }
+
+    return false;
+}
+
+std::optional<std::pair<Path, WindRule>> RenderLayer::computeClipPath(const LayoutSize& offsetFromRoot, const LayoutRect& rootRelativeBoundsForNonBoxes) const
+{
+    const auto& style = renderer().style();
 
     if (is<ShapePathOperation>(*style.clipPath())) {
         auto& clipPath = downcast<ShapePathOperation>(*style.clipPath());
         auto referenceBoxRect = referenceBoxRectForClipPath(clipPath.referenceBox(), offsetFromRoot, rootRelativeBoundsForNonBoxes);
         auto snappedReferenceBoxRect = snapRectToDevicePixelsIfNeeded(referenceBoxRect, renderer());
-        return { clipPath.pathForReferenceRect(snappedReferenceBoxRect), clipPath.windRule() };
+        return std::make_pair(clipPath.pathForReferenceRect(snappedReferenceBoxRect), clipPath.windRule());
     }
 
     if (is<BoxPathOperation>(*style.clipPath()) && is<RenderBox>(renderer())) {
@@ -3069,10 +3090,27 @@ std::pair<Path, WindRule> RenderLayer::computeClipPath(const LayoutSize& offsetF
         auto shapeRect = computeRoundedRectForBoxShape(clipPath.referenceBox(), downcast<RenderBox>(renderer())).pixelSnappedRoundedRectForPainting(renderer().document().deviceScaleFactor());
         shapeRect.move(offsetFromRoot);
 
-        return { clipPath.pathForReferenceRect(shapeRect), WindRule::NonZero };
+        return std::make_pair(clipPath.pathForReferenceRect(shapeRect), WindRule::NonZero);
     }
 
-    return { Path(), WindRule::NonZero };
+    if (is<ReferencePathOperation>(*style.clipPath()) && is<RenderBox>(renderer())) {
+        auto& referenceClipPathOperation = downcast<ReferencePathOperation>(*style.clipPath());
+        if (auto* clipperRenderer = renderer().ensureReferencedSVGResources().referencedClipperRenderer(renderer().treeScopeForSVGReferences(), referenceClipPathOperation)) {
+            auto referenceBox = referenceBoxRectForClipPath(CSSBoxType::BorderBox, offsetFromRoot, rootRelativeBoundsForNonBoxes);
+            auto snappedReferenceBox = snapRectToDevicePixelsIfNeeded(referenceBox, renderer());
+            auto offset = snappedReferenceBox.location();
+
+            auto snappedClippingBounds = snapRectToDevicePixelsIfNeeded(rootRelativeBoundsForNonBoxes, renderer());
+            snappedClippingBounds.moveBy(-offset);
+
+            auto animatedLocalTransform = clipperRenderer->clipPathElement().animatedLocalTransform();
+            auto pathClip = clipperRenderer->pathOnlyClip({ { }, referenceBox.size() }, renderer().style().effectiveZoom(), animatedLocalTransform);
+            if (pathClip)
+                return *pathClip;
+        }
+    }
+
+    return { };
 }
 
 void RenderLayer::setupClipPath(GraphicsContext& context, GraphicsContextStateSaver& stateSaver, RegionContextStateSaver& regionContextStateSaver, const LayerPaintingInfo& paintingInfo, OptionSet<PaintLayerFlag> paintFlags, const LayoutSize& offsetFromRoot)
@@ -3092,15 +3130,17 @@ void RenderLayer::setupClipPath(GraphicsContext& context, GraphicsContextStateSa
     ASSERT(style.clipPath());
     if (is<ShapePathOperation>(*style.clipPath()) || (is<BoxPathOperation>(*style.clipPath()) && is<RenderBox>(renderer()))) {
         // clippedContentBounds is used as the reference box for inlines, which is also poorly specified: https://github.com/w3c/csswg-drafts/issues/6383.
-        auto [path, windRule] = computeClipPath(paintingOffsetFromRoot, clippedContentBounds);
+        auto pathAndWinding = computeClipPath(paintingOffsetFromRoot, clippedContentBounds);
+        if (!pathAndWinding)
+            return;
 
         if (isCollectingRegions) {
-            regionContextStateSaver.pushClip(path);
+            regionContextStateSaver.pushClip(pathAndWinding->first);
             return;
         }
 
         stateSaver.save();
-        context.clipPath(path, windRule);
+        context.clipPath(pathAndWinding->first, pathAndWinding->second);
         return;
     }
 
@@ -3120,7 +3160,7 @@ void RenderLayer::setupClipPath(GraphicsContext& context, GraphicsContextStateSa
             context.translate(offset);
             clipperRenderer->applyClippingToContext(context, renderer(), { { }, referenceBox.size() }, snappedClippingBounds, renderer().style().effectiveZoom());
             context.translate(-offset);
-            
+
             // FIXME: Support event regions.
         }
         

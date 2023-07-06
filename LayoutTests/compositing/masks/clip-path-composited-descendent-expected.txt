@@ -12,6 +12,11 @@
           (mask layer)
             (GraphicsLayer
               (bounds 200.00 200.00)
+              (shape layer path add rounded rect (0,100) width=100 height=100
+              (top-left width=0 height=0)
+              (top-right width=0 height=0)
+              (bottom-left width=0 height=0)
+              (bottom-right width=0 height=0))
             )
           (children 1
             (GraphicsLayer

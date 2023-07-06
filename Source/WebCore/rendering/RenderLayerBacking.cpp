@@ -1695,20 +1695,22 @@ void RenderLayerBacking::updateMaskingLayerGeometry()
     
     if (!m_maskLayer->drawsContent()) {
         if (renderer().hasClipPath()) {
-            ASSERT(renderer().style().clipPath()->type() != PathOperation::Reference);
-
             // FIXME: Use correct reference box for inlines: https://bugs.webkit.org/show_bug.cgi?id=129047, https://github.com/w3c/csswg-drafts/issues/6383
             LayoutRect boundingBox = m_owningLayer.boundingBox(&m_owningLayer);
             LayoutRect referenceBoxForClippedInline = LayoutRect(snapRectToDevicePixelsIfNeeded(boundingBox, renderer()));
             LayoutSize offset = LayoutSize(snapSizeToDevicePixel(-m_subpixelOffsetFromRenderer, LayoutPoint(), deviceScaleFactor()));
-            auto [clipPath, windRule] = m_owningLayer.computeClipPath(offset, referenceBoxForClippedInline);
+            auto pathAndWinding = m_owningLayer.computeClipPath(offset, referenceBoxForClippedInline);
+            if (!pathAndWinding) {
+                ASSERT_NOT_REACHED();
+                return;
+            }
 
-            FloatSize pathOffset = m_maskLayer->offsetFromRenderer();
+            auto pathOffset = m_maskLayer->offsetFromRenderer();
             if (!pathOffset.isZero())
-                clipPath.translate(-pathOffset);
+                pathAndWinding->first.translate(-pathOffset);
             
-            m_maskLayer->setShapeLayerPath(clipPath);
-            m_maskLayer->setShapeLayerWindRule(windRule);
+            m_maskLayer->setShapeLayerPath(pathAndWinding->first);
+            m_maskLayer->setShapeLayerWindRule(pathAndWinding->second);
         }
     }
 }
@@ -2464,10 +2466,17 @@ bool RenderLayerBacking::updateMaskingLayer(bool hasMask, bool hasClipPath)
         OptionSet<GraphicsLayerPaintingPhase> maskPhases;
         if (hasMask)
             maskPhases = GraphicsLayerPaintingPhase::Mask;
-        
+
         if (hasClipPath) {
+            auto shouldPaintClipPath = [&]() {
+                if (!GraphicsLayer::supportsLayerType(GraphicsLayer::Type::Shape))
+                    return true;
+
+                return !m_owningLayer.canUsePathClip();
+            };
+
             // If we have a mask, we need to paint the combined clip-path and mask into the mask layer.
-            if (hasMask || renderer().style().clipPath()->type() == PathOperation::Reference || !GraphicsLayer::supportsLayerType(GraphicsLayer::Type::Shape))
+            if (hasMask || shouldPaintClipPath())
                 maskPhases.add(GraphicsLayerPaintingPhase::ClipPath);
         }
 

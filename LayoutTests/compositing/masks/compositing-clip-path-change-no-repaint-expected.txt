@@ -17,6 +17,11 @@ Only the second box should have a repaint.
           (mask layer)
             (GraphicsLayer
               (bounds 300.00 300.00)
+              (shape layer path add rounded rect (70,0) width=160 height=300
+              (top-left width=0 height=0)
+              (top-right width=0 height=0)
+              (bottom-left width=0 height=0)
+              (bottom-right width=0 height=0))
             )
         )
         (GraphicsLayer

@@ -85,55 +85,80 @@ bool RenderSVGResourceClipper::applyResource(RenderElement& renderer, const Rend
     return applyClippingToContext(*context, renderer, boundingBox, boundingBox);
 }
 
-bool RenderSVGResourceClipper::pathOnlyClipping(GraphicsContext& context, const AffineTransform& animatedLocalTransform, const FloatRect& objectBoundingBox, float effectiveZoom)
+// If clip-path only contains one visible shape or path, we can use path-based clipping. Invisible
+// shapes don't affect the clipping and can be ignored. If clip-path contains more than one
+// visible shape, the additive clipping may not work, caused by the clipRule. EvenOdd
+// as well as NonZero can cause self-clipping of the elements.
+// See also http://www.w3.org/TR/SVG/painting.html#FillRuleProperty
+RefPtr<SVGGraphicsElement> RenderSVGResourceClipper::pathOnlyClipSourceElement() const
 {
     // If the current clip-path gets clipped itself, we have to fall back to masking.
     if (style().clipPath())
-        return false;
-    WindRule clipRule = WindRule::NonZero;
-    Path clipPath;
+        return nullptr;
 
-    auto rendererRequiresMaskClipping = [&clipPath](RenderObject& renderer) {
+    auto rendererRequiresMaskClipping = [](const RenderObject& renderer, bool haveNonEmptyClipPath) {
         // Only shapes or paths are supported for direct clipping. We need to fall back to masking for texts.
         if (is<RenderSVGText>(renderer))
             return true;
+
         auto& style = renderer.style();
         if (style.display() == DisplayType::None || style.visibility() != Visibility::Visible)
             return false;
+
         // Current shape in clip-path gets clipped too. Fall back to masking.
         if (style.clipPath())
             return true;
+
         // Fall back to masking if there is more than one clipping path.
-        if (!clipPath.isEmpty())
+        if (haveNonEmptyClipPath)
             return true;
+
         return false;
     };
 
-    // If clip-path only contains one visible shape or path, we can use path-based clipping. Invisible
-    // shapes don't affect the clipping and can be ignored. If clip-path contains more than one
-    // visible shape, the additive clipping may not work, caused by the clipRule. EvenOdd
-    // as well as NonZero can cause self-clipping of the elements.
-    // See also http://www.w3.org/TR/SVG/painting.html#FillRuleProperty
-    for (Node* childNode = clipPathElement().firstChild(); childNode; childNode = childNode->nextSibling()) {
+    bool haveNonEmptyClipPath = false;
+    RefPtr<SVGGraphicsElement> sourceElement;
+    for (auto* childNode = clipPathElement().firstChild(); childNode; childNode = childNode->nextSibling()) {
         auto* graphicsElement = dynamicDowncast<SVGGraphicsElement>(*childNode);
         if (!graphicsElement)
             continue;
+
         auto* renderer = graphicsElement->renderer();
         if (!renderer)
             continue;
-        if (rendererRequiresMaskClipping(*renderer))
-            return false;
+
+        if (rendererRequiresMaskClipping(*renderer, haveNonEmptyClipPath))
+            return nullptr;
 
         // For <use> elements, delegate the decision whether to use mask clipping or not to the referenced element.
         if (auto* useElement = dynamicDowncast<SVGUseElement>(graphicsElement)) {
             auto* clipChildRenderer = useElement->rendererClipChild();
-            if (clipChildRenderer && rendererRequiresMaskClipping(*clipChildRenderer))
-                return false;
+            if (clipChildRenderer && rendererRequiresMaskClipping(*clipChildRenderer, haveNonEmptyClipPath))
+                return nullptr;
         }
 
-        clipPath = graphicsElement->toClipPath();
-        clipRule = renderer->style().svgStyle().clipRule();
+        auto clipPath = graphicsElement->toClipPath();
+        haveNonEmptyClipPath = !clipPath.isEmpty();
+
+        sourceElement = graphicsElement;
     }
+
+    return sourceElement;
+}
+
+bool RenderSVGResourceClipper::canUsePathOnlyClip() const
+{
+    return !!pathOnlyClipSourceElement();
+}
+
+std::optional<std::pair<Path, WindRule>> RenderSVGResourceClipper::pathOnlyClip(const FloatRect& objectBoundingBox, float effectiveZoom, const AffineTransform& animatedLocalTransform) const
+{
+    auto sourceElement = pathOnlyClipSourceElement();
+    if (!sourceElement)
+        return { };
+
+    auto clipPath = sourceElement->toClipPath();
+    auto clipRule = sourceElement->renderer()->style().svgStyle().clipRule();
 
     // Only one visible shape/path was found. Directly continue clipping and transform the content to userspace if necessary.
     if (clipPathElement().clipPathUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX) {
@@ -147,13 +172,22 @@ bool RenderSVGResourceClipper::pathOnlyClipping(GraphicsContext& context, const 
         clipPath.transform(transform);
     }
 
-    // Transform path by animatedLocalTransform.
     clipPath.transform(animatedLocalTransform);
 
     // The SVG specification wants us to clip everything, if clip-path doesn't have a child.
     if (clipPath.isEmpty())
         clipPath.addRect(FloatRect());
-    context.clipPath(clipPath, clipRule);
+
+    return std::make_pair(clipPath, clipRule);
+}
+
+bool RenderSVGResourceClipper::applyPathOnlyClipping(GraphicsContext& context, const AffineTransform& animatedLocalTransform, const FloatRect& objectBoundingBox, float effectiveZoom) const
+{
+    auto pathClip = pathOnlyClip(objectBoundingBox, effectiveZoom, animatedLocalTransform);
+    if (!pathClip)
+        return false;
+
+    context.clipPath(pathClip->first, pathClip->second);
     return true;
 }
 
@@ -176,7 +210,7 @@ bool RenderSVGResourceClipper::applyClippingToContext(GraphicsContext& context, 
 
     AffineTransform animatedLocalTransform = clipPathElement().animatedLocalTransform();
 
-    if (pathOnlyClipping(context, animatedLocalTransform, objectBoundingBox, effectiveZoom)) {
+    if (applyPathOnlyClipping(context, animatedLocalTransform, objectBoundingBox, effectiveZoom)) {
         auto it = m_clipperMap.find(&renderer);
         if (it != m_clipperMap.end())
             it->value->imageBuffer = nullptr;
