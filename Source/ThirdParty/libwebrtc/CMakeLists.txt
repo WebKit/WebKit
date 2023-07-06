@@ -1792,7 +1792,7 @@ if (WTF_CPU_X86_64 OR WTF_CPU_X86)
         Source/webrtc/modules/audio_processing/agc2/rnn_vad/vector_math_avx2.cc
     )
     set_source_files_properties(webrtc_avx_SOURCES PROPERTIES COMPILE_OPTIONS "-mavx2;-mfma")
-    list(APPEND webrtc_SOURCES webrtc_avx_SOURCES)
+    list(APPEND webrtc_SOURCES ${webrtc_avx_SOURCES})
     add_definitions(-DWEBRTC_ENABLE_AVX2)
 endif()
 
