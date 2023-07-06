@@ -256,7 +256,7 @@ void ImageBuffer::flushDrawingContext()
 
 bool ImageBuffer::flushDrawingContextAsync()
 {
-    // This function is only really useful for the Remote subclass, where the prefersPreparationForDisplay() == true.
+    // This function is only really useful for the Remote subclass.
     flushDrawingContext();
     return true;
 }

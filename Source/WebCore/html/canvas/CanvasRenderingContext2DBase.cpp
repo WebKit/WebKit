@@ -2276,21 +2276,6 @@ GraphicsContext* CanvasRenderingContext2DBase::drawingContext() const
     return canvasBase().drawingContext();
 }
 
-void CanvasRenderingContext2DBase::prepareForDisplay()
-{
-    if (auto buffer = canvasBase().buffer())
-        buffer->flushDrawingContextAsync();
-}
-
-bool CanvasRenderingContext2DBase::needsPreparationForDisplay() const
-{
-    RefPtr buffer = canvasBase().buffer();
-    if (buffer && buffer->prefersPreparationForDisplay())
-        return true;
-
-    return false;
-}
-
 static void initializeEmptyImageData(const ImageData& imageData)
 {
     imageData.data().zeroFill();
