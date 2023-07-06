@@ -62,7 +62,14 @@ public:
     RefPtr<DeferredPromise> addElementDefinition(Ref<JSCustomElementInterface>&&);
 
     bool& elementDefinitionIsRunning() { return m_elementDefinitionIsRunning; }
+    bool elementCountsAreSet() const { return m_elementCountsAreSet; }
 
+    struct Entry {
+        RefPtr<JSCustomElementInterface> elementInterface;
+        unsigned elementCount { 0 };
+    };
+
+    Entry* entryForElement(const Element&);
     JSCustomElementInterface* findInterface(const Element&) const;
     JSCustomElementInterface* findInterface(const QualifiedName&) const;
     JSCustomElementInterface* findInterface(const AtomString&) const;
@@ -80,13 +87,17 @@ public:
 private:
     CustomElementRegistry(LocalDOMWindow&, ScriptExecutionContext*);
 
+    bool enqueueKnownNumberOfUpgradesInShadowIncludingTreeOrder(ContainerNode&, JSCustomElementInterface&, unsigned&);
+    void enqueueUpgradesInShadowIncludingTreeOrderAndUpdateElementCounts(ContainerNode&, JSCustomElementInterface&);
+
     LocalDOMWindow& m_window;
-    HashMap<AtomString, Ref<JSCustomElementInterface>> m_nameMap;
+    HashMap<AtomString, Entry> m_nameMap;
     HashMap<const JSC::JSObject*, JSCustomElementInterface*> m_constructorMap WTF_GUARDED_BY_LOCK(m_constructorMapLock);
     MemoryCompactRobinHoodHashMap<AtomString, Ref<DeferredPromise>> m_promiseMap;
     MemoryCompactRobinHoodHashSet<AtomString> m_disabledShadowSet;
 
     bool m_elementDefinitionIsRunning { false };
+    bool m_elementCountsAreSet { false };
     mutable Lock m_constructorMapLock;
 
     friend class ElementDefinitionIsRunningSetForScope;

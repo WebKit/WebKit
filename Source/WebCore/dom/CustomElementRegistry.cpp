@@ -61,16 +61,37 @@ Document* CustomElementRegistry::document() const
     return m_window.document();
 }
 
-// https://dom.spec.whatwg.org/#concept-shadow-including-tree-order
-static void enqueueUpgradeInShadowIncludingTreeOrder(ContainerNode& node, JSCustomElementInterface& elementInterface)
+bool CustomElementRegistry::enqueueKnownNumberOfUpgradesInShadowIncludingTreeOrder(ContainerNode& node, JSCustomElementInterface& elementInterface, unsigned& remainingUpgrades)
 {
-    for (Element* element = ElementTraversal::firstWithin(node); element; element = ElementTraversal::next(*element)) {
-        if (element->isCustomElementUpgradeCandidate() && element->tagQName().matches(elementInterface.name()))
-            element->enqueueToUpgrade(elementInterface);
-        if (auto* shadowRoot = element->shadowRoot()) {
-            if (shadowRoot->mode() != ShadowRootMode::UserAgent)
-                enqueueUpgradeInShadowIncludingTreeOrder(*shadowRoot, elementInterface);
+    for (RefPtr element = ElementTraversal::firstWithin(node); element; element = ElementTraversal::next(*element)) {
+        if (element->isCustomElementUpgradeCandidate()) {
+            if (element->tagQName().matches(elementInterface.name())) {
+                element->enqueueToUpgrade(elementInterface);
+                ASSERT(remainingUpgrades > 0);
+                --remainingUpgrades;
+                if (!remainingUpgrades)
+                    return true;
+            }
         }
+        if (RefPtr shadowRoot = element->shadowRoot(); shadowRoot && shadowRoot->mode() != ShadowRootMode::UserAgent) {
+            if (enqueueKnownNumberOfUpgradesInShadowIncludingTreeOrder(*shadowRoot, elementInterface, remainingUpgrades))
+                return true;
+        }
+    }
+    return false;
+}
+
+void CustomElementRegistry::enqueueUpgradesInShadowIncludingTreeOrderAndUpdateElementCounts(ContainerNode& node, JSCustomElementInterface& elementInterface)
+{
+    for (RefPtr element = ElementTraversal::firstWithin(node); element; element = ElementTraversal::next(*element)) {
+        if (element->isCustomElementUpgradeCandidate()) {
+            if (element->tagQName().matches(elementInterface.name()))
+                element->enqueueToUpgrade(elementInterface);
+            else if (auto* entry = entryForElement(*element)) // returns nullptr for non-HTML elements.
+                entry->elementCount++;
+        }
+        if (RefPtr shadowRoot = element->shadowRoot(); shadowRoot && shadowRoot->mode() != ShadowRootMode::UserAgent)
+            enqueueUpgradesInShadowIncludingTreeOrderAndUpdateElementCounts(*shadowRoot, elementInterface);
     }
 }
 
@@ -79,24 +100,41 @@ RefPtr<DeferredPromise> CustomElementRegistry::addElementDefinition(Ref<JSCustom
     static MainThreadNeverDestroyed<const AtomString> extendsLi("extends-li"_s);
 
     AtomString localName = elementInterface->name().localName();
-    ASSERT(!m_nameMap.contains(localName));
-    m_nameMap.add(localName, elementInterface.copyRef());
+    auto& entry = m_nameMap.add(localName, Entry { }).iterator->value;
+    entry.elementInterface = WTFMove(elementInterface);
     {
         Locker locker { m_constructorMapLock };
-        m_constructorMap.add(elementInterface->constructor(), elementInterface.ptr());
+        m_constructorMap.add(entry.elementInterface->constructor(), entry.elementInterface.get());
     }
 
-    if (elementInterface->isShadowDisabled())
+    if (entry.elementInterface->isShadowDisabled())
         m_disabledShadowSet.add(localName);
 
-    if (auto* document = m_window.document()) {
+    if (RefPtr document = m_window.document()) {
         // ungap/@custom-elements detection for quirk (rdar://problem/111008826).
         if (localName == extendsLi.get())
             document->quirks().setNeedsConfigurableIndexedPropertiesQuirk();
-        enqueueUpgradeInShadowIncludingTreeOrder(*document, elementInterface.get());
+        if (LIKELY(m_elementCountsAreSet)) {
+            if (auto elementCount = entry.elementCount) {
+                bool exitedEarly = enqueueKnownNumberOfUpgradesInShadowIncludingTreeOrder(*document, *entry.elementInterface, elementCount);
+                ASSERT_UNUSED(exitedEarly, exitedEarly);
+            }
+        } else {
+            // This is the very first customElements.upgarde call. Traverse the entire document and update element counts.
+            enqueueUpgradesInShadowIncludingTreeOrderAndUpdateElementCounts(*document, *entry.elementInterface);
+            m_elementCountsAreSet = true;
+        }
     }
 
     return m_promiseMap.take(localName);
+}
+
+auto CustomElementRegistry::entryForElement(const Element& element) -> Entry*
+{
+    auto& qualifiedName = element.tagQName();
+    if (qualifiedName.namespaceURI() != HTMLNames::xhtmlNamespaceURI)
+        return nullptr;
+    return &m_nameMap.ensure(qualifiedName.localName(), []() { return Entry { }; }).iterator->value;
 }
 
 JSCustomElementInterface* CustomElementRegistry::findInterface(const Element& element) const
@@ -108,12 +146,15 @@ JSCustomElementInterface* CustomElementRegistry::findInterface(const QualifiedNa
 {
     if (name.namespaceURI() != HTMLNames::xhtmlNamespaceURI)
         return nullptr;
-    return m_nameMap.get(name.localName());
+    return findInterface(name.localName());
 }
 
 JSCustomElementInterface* CustomElementRegistry::findInterface(const AtomString& name) const
 {
-    return m_nameMap.get(name);
+    auto it = m_nameMap.find(name);
+    if (it == m_nameMap.end())
+        return nullptr;
+    return it->value.elementInterface.get();
 }
 
 JSCustomElementInterface* CustomElementRegistry::findInterface(const JSC::JSObject* constructor) const
@@ -130,7 +171,7 @@ bool CustomElementRegistry::containsConstructor(const JSC::JSObject* constructor
 
 JSC::JSValue CustomElementRegistry::get(const AtomString& name)
 {
-    if (auto* elementInterface = m_nameMap.get(name))
+    if (auto* elementInterface = findInterface(name))
         return elementInterface->constructor();
     return JSC::jsUndefined();
 }

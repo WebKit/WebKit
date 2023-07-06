@@ -174,6 +174,46 @@ void CustomElementReactionQueue::tryToUpgradeElement(Element& element)
     element.enqueueToUpgrade(*elementInterface);
 }
 
+void CustomElementReactionQueue::didInsertUpgradeCandidate(Element& element)
+{
+    ASSERT(CustomElementReactionDisallowedScope::isReactionAllowed());
+    ASSERT(element.isCustomElementUpgradeCandidate());
+    auto* window = element.document().domWindow();
+    if (!window)
+        return;
+
+    auto* registry = window->customElementRegistry();
+    if (!registry)
+        return;
+
+    auto* entry = registry->entryForElement(element);
+    if (!entry)
+        return; // Wrong namespace.
+
+    if (entry->elementInterface)
+        element.enqueueToUpgrade(*entry->elementInterface);
+    else if (registry->elementCountsAreSet())
+        entry->elementCount++;
+}
+
+void CustomElementReactionQueue::didRemoveUpgradeCandidate(Element& element)
+{
+    ASSERT(element.isCustomElementUpgradeCandidate());
+    auto* window = element.document().domWindow();
+    if (!window)
+        return;
+
+    auto* registry = window->customElementRegistry();
+    if (!registry || !registry->elementCountsAreSet())
+        return;
+
+    auto* entry = registry->entryForElement(element);
+    if (!entry)
+        return; // Wrong namespace.
+
+    entry->elementCount--;
+}
+
 void CustomElementReactionQueue::enqueueConnectedCallbackIfNeeded(Element& element)
 {
     ASSERT(CustomElementReactionDisallowedScope::isReactionAllowed());

@@ -75,6 +75,8 @@ public:
 
     static void enqueueElementUpgrade(Element&, bool alreadyScheduledToUpgrade);
     static void tryToUpgradeElement(Element&);
+    static void didInsertUpgradeCandidate(Element&);
+    static void didRemoveUpgradeCandidate(Element&);
     static void enqueueConnectedCallbackIfNeeded(Element&);
     static void enqueueDisconnectedCallbackIfNeeded(Element&);
     static void enqueueAdoptedCallbackIfNeeded(Element&, Document& oldDocument, Document& newDocument);

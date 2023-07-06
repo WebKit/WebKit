@@ -2662,7 +2662,7 @@ Node::InsertedIntoAncestorResult Element::insertedIntoAncestor(InsertionType ins
         if (becomeConnected) {
             if (UNLIKELY(isCustomElementUpgradeCandidate())) {
                 ASSERT(isConnected());
-                CustomElementReactionQueue::tryToUpgradeElement(*this);
+                CustomElementReactionQueue::didInsertUpgradeCandidate(*this);
             }
             if (UNLIKELY(isDefinedCustomElement()))
                 CustomElementReactionQueue::enqueueConnectedCallbackIfNeeded(*this);
@@ -2749,8 +2749,12 @@ void Element::removedFromAncestor(RemovalType removalType, ContainerNode& oldPar
         if (oldDocument && oldDocument->cssTarget() == this)
             oldDocument->setCSSTarget(nullptr);
 
-        if (removalType.disconnectedFromDocument && UNLIKELY(isDefinedCustomElement()))
-            CustomElementReactionQueue::enqueueDisconnectedCallbackIfNeeded(*this);
+        if (removalType.disconnectedFromDocument) {
+            if (UNLIKELY(isDefinedCustomElement()))
+                CustomElementReactionQueue::enqueueDisconnectedCallbackIfNeeded(*this);
+            else if (UNLIKELY(isCustomElementUpgradeCandidate()))
+                CustomElementReactionQueue::didRemoveUpgradeCandidate(*this);
+        }
     }
 
     if (!parentNode()) {
