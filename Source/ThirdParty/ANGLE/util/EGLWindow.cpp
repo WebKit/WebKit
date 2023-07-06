@@ -816,6 +816,11 @@ EGLint EGLWindow::getEGLError()
     return eglGetError();
 }
 
+EGLWindow::Display EGLWindow::getCurrentDisplay()
+{
+    return eglGetCurrentDisplay();
+}
+
 GLWindowBase::Surface EGLWindow::createPbufferSurface(const EGLint *attrib_list)
 {
     return eglCreatePbufferSurface(getDisplay(), getConfig(), attrib_list);

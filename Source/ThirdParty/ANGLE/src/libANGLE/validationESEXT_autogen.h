@@ -94,7 +94,7 @@ bool ValidateDrawElementsInstancedBaseVertexBaseInstanceANGLE(const Context *con
                                                               PrimitiveMode modePacked,
                                                               GLsizei count,
                                                               DrawElementsType typePacked,
-                                                              const GLvoid *indices,
+                                                              const void *indices,
                                                               GLsizei instanceCount,
                                                               GLint baseVertex,
                                                               GLuint baseInstance);
@@ -111,7 +111,7 @@ bool ValidateMultiDrawElementsInstancedBaseVertexBaseInstanceANGLE(const Context
                                                                    PrimitiveMode modePacked,
                                                                    const GLsizei *counts,
                                                                    DrawElementsType typePacked,
-                                                                   const GLvoid *const *indices,
+                                                                   const void *const *indices,
                                                                    const GLsizei *instanceCounts,
                                                                    const GLint *baseVertices,
                                                                    const GLuint *baseInstances,
@@ -316,18 +316,24 @@ bool ValidateMultiDrawElementsANGLE(const Context *context,
                                     PrimitiveMode modePacked,
                                     const GLsizei *counts,
                                     DrawElementsType typePacked,
-                                    const GLvoid *const *indices,
+                                    const void *const *indices,
                                     GLsizei drawcount);
 bool ValidateMultiDrawElementsInstancedANGLE(const Context *context,
                                              angle::EntryPoint entryPoint,
                                              PrimitiveMode modePacked,
                                              const GLsizei *counts,
                                              DrawElementsType typePacked,
-                                             const GLvoid *const *indices,
+                                             const void *const *indices,
                                              const GLsizei *instanceCounts,
                                              GLsizei drawcount);
 
 // GL_ANGLE_pack_reverse_row_order
+
+// GL_ANGLE_polygon_mode
+bool ValidatePolygonModeANGLE(const Context *context,
+                              angle::EntryPoint entryPoint,
+                              GLenum face,
+                              PolygonMode modePacked);
 
 // GL_ANGLE_program_binary
 
@@ -536,7 +542,7 @@ bool ValidateCompressedTexImage2DRobustANGLE(const Context *context,
                                              GLint border,
                                              GLsizei imageSize,
                                              GLsizei dataSize,
-                                             const GLvoid *data);
+                                             const void *data);
 bool ValidateCompressedTexSubImage2DRobustANGLE(const Context *context,
                                                 angle::EntryPoint entryPoint,
                                                 TextureTarget targetPacked,
@@ -548,7 +554,7 @@ bool ValidateCompressedTexSubImage2DRobustANGLE(const Context *context,
                                                 GLenum format,
                                                 GLsizei imageSize,
                                                 GLsizei dataSize,
-                                                const GLvoid *data);
+                                                const void *data);
 bool ValidateCompressedTexImage3DRobustANGLE(const Context *context,
                                              angle::EntryPoint entryPoint,
                                              TextureTarget targetPacked,
@@ -560,7 +566,7 @@ bool ValidateCompressedTexImage3DRobustANGLE(const Context *context,
                                              GLint border,
                                              GLsizei imageSize,
                                              GLsizei dataSize,
-                                             const GLvoid *data);
+                                             const void *data);
 bool ValidateCompressedTexSubImage3DRobustANGLE(const Context *context,
                                                 angle::EntryPoint entryPoint,
                                                 TextureTarget targetPacked,
@@ -574,7 +580,7 @@ bool ValidateCompressedTexSubImage3DRobustANGLE(const Context *context,
                                                 GLenum format,
                                                 GLsizei imageSize,
                                                 GLsizei dataSize,
-                                                const GLvoid *data);
+                                                const void *data);
 bool ValidateGetQueryivRobustANGLE(const Context *context,
                                    angle::EntryPoint entryPoint,
                                    QueryType targetPacked,
@@ -2134,6 +2140,12 @@ bool ValidateBlitFramebufferNV(const Context *context,
                                GLenum filter);
 
 // GL_NV_pixel_buffer_object
+
+// GL_NV_polygon_mode
+bool ValidatePolygonModeNV(const Context *context,
+                           angle::EntryPoint entryPoint,
+                           GLenum face,
+                           PolygonMode modePacked);
 
 // GL_NV_read_depth
 

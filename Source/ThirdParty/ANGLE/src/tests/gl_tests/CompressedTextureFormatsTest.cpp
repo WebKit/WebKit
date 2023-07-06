@@ -58,7 +58,7 @@ class CompressedTextureFormatsTest : public ANGLETest<CompressedTextureTestParam
         mDisableTexture3D = IsMetal() && !IsMetalCompressedTexture3DAvailable();
 
         // Apple platforms require PVRTC1 textures to be squares.
-        mSquarePvrtc1 = IsApple();
+        mSquarePvrtc1 = IsAppleGPU();
     }
 
     void checkSubImage2D(FormatDesc desc, int numX)

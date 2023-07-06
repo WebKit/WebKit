@@ -26,10 +26,10 @@
 #include "common/platform.h"
 
 #if ANGLE_ENABLE_CGL
-#include "libANGLE/renderer/gl/cgl/DeviceCGL.cpp"
-#include "libANGLE/renderer/gl/cgl/PbufferSurfaceCGL.cpp"
-#include "libANGLE/renderer/gl/cgl/ContextCGL.cpp"
-#include "libANGLE/renderer/gl/cgl/RendererCGL.cpp"
-#include "libANGLE/renderer/gl/cgl/IOSurfaceSurfaceCGL.cpp"
-#include "common/gl/cgl/FunctionsCGL.cpp"
+#    include "common/gl/cgl/FunctionsCGL.cpp"
+#    include "libANGLE/renderer/gl/cgl/ContextCGL.cpp"
+#    include "libANGLE/renderer/gl/cgl/DeviceCGL.cpp"
+#    include "libANGLE/renderer/gl/cgl/IOSurfaceSurfaceCGL.cpp"
+#    include "libANGLE/renderer/gl/cgl/PbufferSurfaceCGL.cpp"
+#    include "libANGLE/renderer/gl/cgl/RendererCGL.cpp"
 #endif

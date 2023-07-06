@@ -2270,6 +2270,10 @@ const char *GetEntryPointName(EntryPoint ep)
             return "glPointSizex";
         case EntryPoint::GLPolygonMode:
             return "glPolygonMode";
+        case EntryPoint::GLPolygonModeANGLE:
+            return "glPolygonModeANGLE";
+        case EntryPoint::GLPolygonModeNV:
+            return "glPolygonModeNV";
         case EntryPoint::GLPolygonOffset:
             return "glPolygonOffset";
         case EntryPoint::GLPolygonOffsetClamp:

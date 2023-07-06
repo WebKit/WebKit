@@ -876,9 +876,7 @@ void GL_APIENTRY GL_DeleteBuffers(GLsizei n, const GLuint *buffers)
         SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid =
             (context->skipValidation() ||
-             (ValidatePixelLocalStorageInactive(context, angle::EntryPoint::GLDeleteBuffers) &&
-              ValidateDeleteBuffers(context, angle::EntryPoint::GLDeleteBuffers, n,
-                                    buffersPacked)));
+             ValidateDeleteBuffers(context, angle::EntryPoint::GLDeleteBuffers, n, buffersPacked));
         if (isCallValid)
         {
             context->deleteBuffers(n, buffersPacked);
@@ -904,9 +902,8 @@ void GL_APIENTRY GL_DeleteFramebuffers(GLsizei n, const GLuint *framebuffers)
         SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid =
             (context->skipValidation() ||
-             (ValidatePixelLocalStorageInactive(context, angle::EntryPoint::GLDeleteFramebuffers) &&
-              ValidateDeleteFramebuffers(context, angle::EntryPoint::GLDeleteFramebuffers, n,
-                                         framebuffersPacked)));
+             ValidateDeleteFramebuffers(context, angle::EntryPoint::GLDeleteFramebuffers, n,
+                                        framebuffersPacked));
         if (isCallValid)
         {
             context->deleteFramebuffers(n, framebuffersPacked);
@@ -931,8 +928,7 @@ void GL_APIENTRY GL_DeleteProgram(GLuint program)
         SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid =
             (context->skipValidation() ||
-             (ValidatePixelLocalStorageInactive(context, angle::EntryPoint::GLDeleteProgram) &&
-              ValidateDeleteProgram(context, angle::EntryPoint::GLDeleteProgram, programPacked)));
+             ValidateDeleteProgram(context, angle::EntryPoint::GLDeleteProgram, programPacked));
         if (isCallValid)
         {
             context->deleteProgram(programPacked);
@@ -959,10 +955,8 @@ void GL_APIENTRY GL_DeleteRenderbuffers(GLsizei n, const GLuint *renderbuffers)
         SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid =
             (context->skipValidation() ||
-             (ValidatePixelLocalStorageInactive(context,
-                                                angle::EntryPoint::GLDeleteRenderbuffers) &&
-              ValidateDeleteRenderbuffers(context, angle::EntryPoint::GLDeleteRenderbuffers, n,
-                                          renderbuffersPacked)));
+             ValidateDeleteRenderbuffers(context, angle::EntryPoint::GLDeleteRenderbuffers, n,
+                                         renderbuffersPacked));
         if (isCallValid)
         {
             context->deleteRenderbuffers(n, renderbuffersPacked);
@@ -987,8 +981,7 @@ void GL_APIENTRY GL_DeleteShader(GLuint shader)
         SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid =
             (context->skipValidation() ||
-             (ValidatePixelLocalStorageInactive(context, angle::EntryPoint::GLDeleteShader) &&
-              ValidateDeleteShader(context, angle::EntryPoint::GLDeleteShader, shaderPacked)));
+             ValidateDeleteShader(context, angle::EntryPoint::GLDeleteShader, shaderPacked));
         if (isCallValid)
         {
             context->deleteShader(shaderPacked);
@@ -1012,11 +1005,9 @@ void GL_APIENTRY GL_DeleteTextures(GLsizei n, const GLuint *textures)
     {
         const TextureID *texturesPacked = PackParam<const TextureID *>(textures);
         SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid =
-            (context->skipValidation() ||
-             (ValidatePixelLocalStorageInactive(context, angle::EntryPoint::GLDeleteTextures) &&
-              ValidateDeleteTextures(context, angle::EntryPoint::GLDeleteTextures, n,
-                                     texturesPacked)));
+        bool isCallValid = (context->skipValidation() ||
+                            ValidateDeleteTextures(context, angle::EntryPoint::GLDeleteTextures, n,
+                                                   texturesPacked));
         if (isCallValid)
         {
             context->deleteTextures(n, texturesPacked);

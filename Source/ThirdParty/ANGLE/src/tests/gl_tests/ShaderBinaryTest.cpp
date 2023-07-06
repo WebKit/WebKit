@@ -33,8 +33,14 @@ class ShaderBinaryTest : public ANGLETest<>
     {
         ASSERT_EQ(sh::Initialize(), true);
 
+        if (!supported())
+        {
+            // Must return early because the initialization below will crash otherwise.
+            // Individal tests will skip themselves as well.
+            return;
+        }
+
         mCompileOptions.objectCode                    = true;
-        mCompileOptions.variables                     = true;
         mCompileOptions.emulateGLDrawID               = true;
         mCompileOptions.initializeUninitializedLocals = true;
 
@@ -74,6 +80,13 @@ class ShaderBinaryTest : public ANGLETest<>
     void testTearDown() override
     {
         sh::Finalize();
+
+        if (!supported())
+        {
+            // Return early because the initialization didn't complete.
+            return;
+        }
+
         glDeleteBuffers(1, &mBuffer);
     }
 
@@ -308,7 +321,6 @@ class ShaderBinaryTestES31 : public ShaderBinaryTest
         ASSERT_EQ(sh::Initialize(), true);
 
         mCompileOptions.objectCode                    = true;
-        mCompileOptions.variables                     = true;
         mCompileOptions.emulateGLDrawID               = true;
         mCompileOptions.initializeUninitializedLocals = true;
 

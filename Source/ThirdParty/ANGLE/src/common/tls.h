@@ -47,14 +47,22 @@ typedef pthread_key_t TLSIndex;
 #    error Unsupported platform.
 #endif
 
+#if defined(ANGLE_PLATFORM_ANDROID)
+
 // TLS_SLOT_OPENGL and TLS_SLOT_OPENGL_API aren't used by bionic itself, but allow the graphics code
 // to access TLS directly rather than using the pthread API.
 //
 // Choose the TLS_SLOT_OPENGL TLS slot with the value that matches value in the header file in
 // bionic(tls_defines.h).  Note that this slot cannot be used when the GLES backend of is in use.
+#    if defined(__arm__) || defined(__aarch64__)
 constexpr size_t kAndroidOpenGLTlsSlot = 3;
-
-#if defined(ANGLE_PLATFORM_ANDROID)
+#    elif defined(__i386__) || defined(__x86_64__)
+constexpr size_t kAndroidOpenGLTlsSlot = 3;
+#    elif defined(__riscv)
+constexpr int kAndroidOpenGLTlsSlot = -5;
+#    else
+#        error Unsupported platform.
+#    endif
 
 // The following ASM variant provides a much more performant store/retrieve interface
 // compared to those provided by the pthread library. These have been derived from code

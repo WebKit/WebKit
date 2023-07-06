@@ -674,7 +674,7 @@ angle::Result Renderer9::finish(const gl::Context *context)
     while (result == S_FALSE)
     {
         // Keep polling, but allow other threads to do something useful first
-        ScheduleYield();
+        std::this_thread::yield();
 
         result = query->GetData(nullptr, 0, D3DGETDATA_FLUSH);
         attempt++;

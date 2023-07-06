@@ -17,6 +17,11 @@ declare_args() {
 declare_args() {
   build_angle_trace_tests = is_clang && (build_angle_trace_perf_tests ||
                                          checkout_angle_restricted_traces)
+  if (!build_with_chromium && is_android) {
+    assert(
+        !is_official_build,
+        "is_official_build not supported by ANGLE for Android (https://anglebug.com/7381)")
+  }
 }
 
 if (is_android) {
@@ -493,65 +498,60 @@ if (build_angle_perftests) {
 }
 
 if (build_angle_trace_tests) {
-  _angle_trace_common_sources = [
-    "angle_trace_tests_main.cpp",
-    "perf_tests/TracePerfTest.cpp",
-  ]
-  _angle_trace_common_deps = [
-    ":angle_perftests_shared",
-    "$angle_root:angle_compression",
-    "$angle_root/util:angle_frame_capture_test_utils",
-    "$angle_root/util:angle_png_utils",
-  ]
-
-  # These go together, either inside or outside of the APK depending on the config
-  _angle_trace_libs = [
-    "$angle_root/util:angle_trace_interpreter",
-    "restricted_traces:angle_restricted_traces",
-  ]
-
-  # Allows us to edit traces and remove chunks of code without compile warnings.
-  _angle_trace_common_clang_flags = [ "-Wno-unused-const-variable" ]
-
-  if (restricted_traces_outside_of_apk) {
-    # If this flag is set, we want to build the trace libraries independent of the APK, i.e. not packaged.
-    # We're doing this for size reasons - the APK is too large if you include all the traces.
-    # We've repurposed the `angle_test` template for this, although we don't plan to run `restricted_traces_outside_of_apk` as a test itself.
-    # It will be used in conjunction with `angle_trace_tests`.
-    angle_test("angle_trace_tests_android_binaries") {
-      use_raw_android_executable = true
-
-      sources = _angle_trace_common_sources
-      deps = _angle_trace_common_deps +
-             [ "$angle_root/util:angle_trace_fixture" ] + _angle_trace_libs
-      cflags_cc = _angle_trace_common_clang_flags
-    }
-  }
-
   angle_test("angle_trace_tests") {
     # http://anglebug.com/6009: Traces with long shaders are hitting string literal
     # limit in MSVC, so only compile them when using clang
     assert(is_clang, "angle trace tests require clang")
+
+    if (is_android && target_cpu == "arm64") {
+      # TODO: http://b/278955379
+      # Disable CFI to avoid SIGILL on armv9
+      assert(
+          arm_control_flow_integrity == "none",
+          "Set arm_control_flow_integrity = \"none\" in your GN args to disable CFI (http://crbug.com/1441148)")
+    }
 
     if (is_ios) {
       # shared libraries are hidden inside ios_framework_bundle, but we include headers from them
       check_includes = false
     }
 
-    sources = _angle_trace_common_sources
+    sources = [
+      "angle_trace_tests_main.cpp",
+      "perf_tests/TracePerfTest.cpp",
+    ]
 
-    deps = _angle_trace_common_deps
+    deps = [
+      ":angle_perftests_shared",
+      "$angle_root:angle_compression",
+      "$angle_root/util:angle_frame_capture_test_utils",
+      "$angle_root/util:angle_png_utils",
+    ]
+
+    # If this flag is set, we want to build the trace libraries independent of the APK, i.e. not packaged.
+    # We're doing this for size reasons - the APK is too large if you include all the traces.
     if (restricted_traces_outside_of_apk) {
       deps += [ "$angle_root/util:angle_trace_loader" ]
     } else {
-      deps += _angle_trace_libs
+      deps += [
+        "$angle_root/util:angle_trace_interpreter",
+        "restricted_traces:angle_restricted_traces",
+      ]
     }
 
     data = [ "$angle_root/src/tests/py_utils/android_helper.py" ]
+
+    if (is_android) {
+      data += [ "$angle_root/src/tests/angle_android_test_runner.py" ]
+      android_test_runner_script =
+          "$angle_root/src/tests/angle_android_test_runner.py"
+    }
+
     data_deps = [ "${angle_root}:angle" ]
 
     if (is_clang) {
-      cflags_cc = _angle_trace_common_clang_flags
+      # Allows us to edit traces and remove chunks of code without compile warnings.
+      cflags_cc = [ "-Wno-unused-const-variable" ]
     }
   }
 
@@ -571,7 +571,7 @@ if (build_angle_trace_tests) {
     ]
 
     if (restricted_traces_outside_of_apk) {
-      data_deps += [ ":angle_trace_tests_android_binaries" ]
+      deps = [ "restricted_traces:angle_restricted_traces__unpacked_libs" ]
     }
   }
 
@@ -582,6 +582,15 @@ if (build_angle_trace_tests) {
       "restricted_traces/retrace_restricted_traces.py",
     ]
     data_deps = [ ":angle_trace_perf_tests" ]
+  }
+
+  group("angle_capture_tests") {
+    testonly = true
+    data = [
+      "capture_tests/capture_tests.py",
+      "capture_tests/expected",
+    ]
+    data_deps = [ ":angle_end2end_tests" ]
   }
 }
 
@@ -1481,6 +1490,8 @@ if (build_angle_deqp_tests && !is_fuchsia) {
   }
 
   _android_mustpass = "$deqp_path/android/cts/main"
+  _aosp_egl_mustpass =
+      "$deqp_path/external/openglcts/data/mustpass/egl/aosp_mustpass/main"
   _aosp_mustpass =
       "$deqp_path/external/openglcts/data/mustpass/gles/aosp_mustpass/main"
   _khronos_gl_mustpass =
@@ -1556,7 +1567,7 @@ if (build_angle_deqp_tests && !is_fuchsia) {
   angle_deqp_core_gtest("egl") {
     defines = [ "ANGLE_DEQP_EGL_TESTS" ]
     sources = deqp_egl_sources
-    mustpass_dir = _android_mustpass
+    mustpass_dir = _aosp_egl_mustpass
   }
 
   # The CTS also includes a set of "KHR" tests that are separate from the main body of dEQP tests.
@@ -1741,6 +1752,7 @@ group("angle_tests") {
   }
   if (build_angle_trace_tests) {
     deps += [ ":angle_trace_perf_tests" ]
+    deps += [ "capture_tests:angle_capture_tests_trace" ]
   }
   if (is_clang) {
     deps += [ "capture_replay_tests" ]

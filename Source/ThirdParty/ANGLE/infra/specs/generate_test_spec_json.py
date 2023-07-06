@@ -13,6 +13,7 @@ import os
 import pprint
 import sys
 import subprocess
+import tempfile
 
 d = os.path.dirname
 THIS_DIR = d(os.path.abspath(__file__))
@@ -84,18 +85,44 @@ def main():
         outputs = ['angle.json', 'mixins.pyl']
         if sys.argv[1] == 'inputs':
             print(','.join(inputs))
-        elif sys.argv[1] == 'outputs':
+            return 0
+        if sys.argv[1] == 'outputs':
             print(','.join(outputs))
-        else:
-            print('Invalid script parameters')
-            return 1
-        return 0
+            return 0
 
-    chromium_args = generate_buildbot_json.BBJSONGenerator.parse_args(sys.argv[1:])
+    # --verify-only enables dirty checks without relying on checked in hashes.
+    # Compares the content of the existing file with the generated content.
+    verify_only = '--verify-only' in sys.argv
+
+    if verify_only:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            return run_generator(verify_only, temp_dir)
+    else:
+        return run_generator(verify_only, None)
+
+
+def write_or_verify_file(filename, content, verify_only):
+    if verify_only:
+        try:
+            with open(filename) as f:
+                # Note: .gitattributes "* text=auto" handles LF <-> CRLF on Windows
+                return f.read() == content
+        except FileNotFoundError:
+            return False
+    else:
+        with open(filename, 'w') as fout:
+            fout.write(content)
+            return True
+
+
+def run_generator(verify_only, temp_dir):
+    chromium_args = generate_buildbot_json.BBJSONGenerator.parse_args([])
     chromium_generator = generate_buildbot_json.BBJSONGenerator(chromium_args)
     chromium_generator.load_configuration_files()
 
-    override_args = sys.argv[1:] + ['--pyl-files-dir', THIS_DIR]
+    override_args = ['--pyl-files-dir', THIS_DIR]
+    if verify_only:
+        override_args += ['--output-dir', temp_dir]
     angle_args = generate_buildbot_json.BBJSONGenerator.parse_args(override_args)
     angle_generator = generate_buildbot_json.BBJSONGenerator(angle_args)
     angle_generator.load_configuration_files()
@@ -131,11 +158,25 @@ def main():
     }
     generated_mixin_pyl = MIXINS_PYL_TEMPLATE.format(**format_data)
 
-    with open(MIXIN_FILE_NAME, 'w') as f:
-        f.write(generated_mixin_pyl)
-        f.close()
+    if not write_or_verify_file(MIXIN_FILE_NAME, generated_mixin_pyl, verify_only):
+        print('infra/specs/mixins.pyl dirty')
+        return 1
 
-    return angle_generator.main()
+    if angle_generator.main() != 0:
+        print('buildbot (pyl to json) generation failed')
+        return 1
+
+    if verify_only:
+        for waterfall in angle_generator.waterfalls:
+            filename = waterfall['name'] + '.json'  # angle.json, might have more in future
+            with open(os.path.join(temp_dir, filename)) as f:
+                content = f.read()
+            angle_filename = os.path.join(THIS_DIR, filename)
+            if not write_or_verify_file(angle_filename, content, True):
+                print('infra/specs/%s dirty' % filename)
+                return 1
+
+    return 0
 
 
 if __name__ == '__main__':  # pragma: no cover

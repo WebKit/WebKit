@@ -67,8 +67,6 @@ bool TranslatorGLSL::translate(TIntermBlock *root,
     if (compileOptions.flattenPragmaSTDGLInvariantAll && getPragma().stdgl.invariantAll &&
         !sh::RemoveInvariant(getShaderType(), getShaderVersion(), getOutputType(), compileOptions))
     {
-        ASSERT(wereVariablesCollected());
-
         switch (getShaderType())
         {
             case GL_VERTEX_SHADER:
@@ -223,12 +221,6 @@ bool TranslatorGLSL::shouldFlattenPragmaStdglInvariantAll()
     // Required when outputting to any GLSL version greater than 1.20, but since ANGLE doesn't
     // translate to that version, return true for the next higher version.
     return IsGLSL130OrNewer(getOutputType());
-}
-
-bool TranslatorGLSL::shouldCollectVariables(const ShCompileOptions &compileOptions)
-{
-    return compileOptions.flattenPragmaSTDGLInvariantAll ||
-           TCompiler::shouldCollectVariables(compileOptions);
 }
 
 void TranslatorGLSL::writeVersion(TIntermNode *root)

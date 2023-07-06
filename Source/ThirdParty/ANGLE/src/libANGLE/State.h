@@ -33,6 +33,8 @@
 namespace egl
 {
 class ShareGroup;
+class ContextMutex;
+class SingleContextMutex;
 }  // namespace egl
 
 namespace gl
@@ -84,6 +86,131 @@ class ActiveTexturesCache final : angle::NonCopyable
     ActiveTextureArray<Texture *> mTextures;
 };
 
+namespace state
+{
+enum DirtyBitType
+{
+    // Note: process draw framebuffer binding first, so that other dirty bits whose effect
+    // depend on the current draw framebuffer are not processed while the old framebuffer is
+    // still bound.
+    DIRTY_BIT_DRAW_FRAMEBUFFER_BINDING,
+    DIRTY_BIT_READ_FRAMEBUFFER_BINDING,
+    DIRTY_BIT_SCISSOR_TEST_ENABLED,
+    DIRTY_BIT_SCISSOR,
+    DIRTY_BIT_VIEWPORT,
+    DIRTY_BIT_DEPTH_RANGE,
+    DIRTY_BIT_BLEND_ENABLED,
+    DIRTY_BIT_BLEND_COLOR,
+    DIRTY_BIT_BLEND_FUNCS,
+    DIRTY_BIT_BLEND_EQUATIONS,
+    DIRTY_BIT_COLOR_MASK,
+    DIRTY_BIT_SAMPLE_ALPHA_TO_COVERAGE_ENABLED,
+    DIRTY_BIT_SAMPLE_COVERAGE_ENABLED,
+    DIRTY_BIT_SAMPLE_COVERAGE,
+    DIRTY_BIT_SAMPLE_MASK_ENABLED,
+    DIRTY_BIT_SAMPLE_MASK,
+    DIRTY_BIT_DEPTH_TEST_ENABLED,
+    DIRTY_BIT_DEPTH_FUNC,
+    DIRTY_BIT_DEPTH_MASK,
+    DIRTY_BIT_STENCIL_TEST_ENABLED,
+    DIRTY_BIT_STENCIL_FUNCS_FRONT,
+    DIRTY_BIT_STENCIL_FUNCS_BACK,
+    DIRTY_BIT_STENCIL_OPS_FRONT,
+    DIRTY_BIT_STENCIL_OPS_BACK,
+    DIRTY_BIT_STENCIL_WRITEMASK_FRONT,
+    DIRTY_BIT_STENCIL_WRITEMASK_BACK,
+    DIRTY_BIT_CULL_FACE_ENABLED,
+    DIRTY_BIT_CULL_FACE,
+    DIRTY_BIT_FRONT_FACE,
+    DIRTY_BIT_POLYGON_OFFSET_FILL_ENABLED,
+    DIRTY_BIT_POLYGON_OFFSET,
+    DIRTY_BIT_RASTERIZER_DISCARD_ENABLED,
+    DIRTY_BIT_LINE_WIDTH,
+    DIRTY_BIT_PRIMITIVE_RESTART_ENABLED,
+    DIRTY_BIT_CLEAR_COLOR,
+    DIRTY_BIT_CLEAR_DEPTH,
+    DIRTY_BIT_CLEAR_STENCIL,
+    DIRTY_BIT_UNPACK_STATE,
+    DIRTY_BIT_UNPACK_BUFFER_BINDING,
+    DIRTY_BIT_PACK_STATE,
+    DIRTY_BIT_PACK_BUFFER_BINDING,
+    DIRTY_BIT_DITHER_ENABLED,
+    DIRTY_BIT_RENDERBUFFER_BINDING,
+    DIRTY_BIT_VERTEX_ARRAY_BINDING,
+    DIRTY_BIT_DRAW_INDIRECT_BUFFER_BINDING,
+    DIRTY_BIT_DISPATCH_INDIRECT_BUFFER_BINDING,
+    // Note: Fine-grained dirty bits for each index could be an optimization.
+    DIRTY_BIT_PROGRAM_BINDING,  // Must be before DIRTY_BIT_PROGRAM_EXECUTABLE
+    DIRTY_BIT_PROGRAM_EXECUTABLE,
+    // Note: Fine-grained dirty bits for each texture/sampler could be an optimization.
+    DIRTY_BIT_SAMPLER_BINDINGS,
+    DIRTY_BIT_TEXTURE_BINDINGS,
+    DIRTY_BIT_IMAGE_BINDINGS,
+    DIRTY_BIT_TRANSFORM_FEEDBACK_BINDING,
+    DIRTY_BIT_UNIFORM_BUFFER_BINDINGS,
+    DIRTY_BIT_SHADER_STORAGE_BUFFER_BINDING,
+    DIRTY_BIT_ATOMIC_COUNTER_BUFFER_BINDING,
+    DIRTY_BIT_MULTISAMPLING,
+    DIRTY_BIT_SAMPLE_ALPHA_TO_ONE,
+    DIRTY_BIT_COVERAGE_MODULATION,                  // CHROMIUM_framebuffer_mixed_samples
+    DIRTY_BIT_FRAMEBUFFER_SRGB_WRITE_CONTROL_MODE,  // GL_EXT_sRGB_write_control
+    DIRTY_BIT_CURRENT_VALUES,
+    DIRTY_BIT_PROVOKING_VERTEX,
+    DIRTY_BIT_SAMPLE_SHADING,
+    DIRTY_BIT_PATCH_VERTICES,
+    DIRTY_BIT_EXTENDED,  // clip distances, mipmap generation hint, derivative hint,
+                         // EXT_clip_control, EXT_depth_clamp
+
+    DIRTY_BIT_INVALID,
+    DIRTY_BIT_MAX = DIRTY_BIT_INVALID,
+};
+static_assert(DIRTY_BIT_MAX <= 64, "State dirty bits must be capped at 64");
+using DirtyBits = angle::BitSet<DIRTY_BIT_MAX>;
+
+enum ExtendedDirtyBitType
+{
+    EXTENDED_DIRTY_BIT_CLIP_CONTROL,                  // EXT_clip_control
+    EXTENDED_DIRTY_BIT_CLIP_DISTANCES,                // clip distances
+    EXTENDED_DIRTY_BIT_DEPTH_CLAMP_ENABLED,           // EXT_depth_clamp
+    EXTENDED_DIRTY_BIT_MIPMAP_GENERATION_HINT,        // mipmap generation hint
+    EXTENDED_DIRTY_BIT_POLYGON_MODE,                  // NV_polygon_mode
+    EXTENDED_DIRTY_BIT_POLYGON_OFFSET_POINT_ENABLED,  // NV_polygon_mode
+    EXTENDED_DIRTY_BIT_POLYGON_OFFSET_LINE_ENABLED,   // NV_polygon_mode
+    EXTENDED_DIRTY_BIT_SHADER_DERIVATIVE_HINT,        // shader derivative hint
+    EXTENDED_DIRTY_BIT_SHADING_RATE,                  // QCOM_shading_rate
+    EXTENDED_DIRTY_BIT_LOGIC_OP_ENABLED,              // ANGLE_logic_op
+    EXTENDED_DIRTY_BIT_LOGIC_OP,                      // ANGLE_logic_op
+
+    EXTENDED_DIRTY_BIT_INVALID,
+    EXTENDED_DIRTY_BIT_MAX = EXTENDED_DIRTY_BIT_INVALID,
+};
+static_assert(EXTENDED_DIRTY_BIT_MAX <= 32, "State extended dirty bits must be capped at 32");
+using ExtendedDirtyBits = angle::BitSet32<EXTENDED_DIRTY_BIT_MAX>;
+
+// TODO(jmadill): Consider storing dirty objects in a list instead of by binding.
+enum DirtyObjectType
+{
+    DIRTY_OBJECT_ACTIVE_TEXTURES,  // Top-level dirty bit. Also see mDirtyActiveTextures.
+    DIRTY_OBJECT_TEXTURES_INIT,
+    DIRTY_OBJECT_IMAGES_INIT,
+    DIRTY_OBJECT_READ_ATTACHMENTS,
+    DIRTY_OBJECT_DRAW_ATTACHMENTS,
+    DIRTY_OBJECT_READ_FRAMEBUFFER,
+    DIRTY_OBJECT_DRAW_FRAMEBUFFER,
+    DIRTY_OBJECT_VERTEX_ARRAY,
+    DIRTY_OBJECT_TEXTURES,  // Top-level dirty bit. Also see mDirtyTextures.
+    DIRTY_OBJECT_IMAGES,    // Top-level dirty bit. Also see mDirtyImages.
+    DIRTY_OBJECT_SAMPLERS,  // Top-level dirty bit. Also see mDirtySamplers.
+    DIRTY_OBJECT_PROGRAM,
+    DIRTY_OBJECT_PROGRAM_PIPELINE_OBJECT,
+
+    DIRTY_OBJECT_INVALID,
+    DIRTY_OBJECT_MAX = DIRTY_OBJECT_INVALID,
+};
+using DirtyObjects = angle::BitSet<DIRTY_OBJECT_MAX>;
+
+}  // namespace state
+
 class State : angle::NonCopyable
 {
   public:
@@ -91,6 +218,8 @@ class State : angle::NonCopyable
           egl::ShareGroup *shareGroup,
           TextureManager *shareTextures,
           SemaphoreManager *shareSemaphores,
+          egl::ContextMutex *sharedContextMutex,
+          egl::SingleContextMutex *singleContextMutex,
           const OverlayType *overlay,
           const EGLenum clientType,
           const Version &clientVersion,
@@ -233,8 +362,16 @@ class State : angle::NonCopyable
     GLint getStencilRef() const { return mStencilRef; }
     GLint getStencilBackRef() const { return mStencilBackRef; }
 
+    PolygonMode getPolygonMode() const { return mRasterizer.polygonMode; }
+    void setPolygonMode(PolygonMode mode);
+
     // Depth bias/polygon offset state manipulation
+    bool isPolygonOffsetPointEnabled() const { return mRasterizer.polygonOffsetPoint; }
+    bool isPolygonOffsetLineEnabled() const { return mRasterizer.polygonOffsetLine; }
     bool isPolygonOffsetFillEnabled() const { return mRasterizer.polygonOffsetFill; }
+    bool isPolygonOffsetEnabled() const { return mRasterizer.isPolygonOffsetEnabled(); }
+    void setPolygonOffsetPoint(bool enabled);
+    void setPolygonOffsetLine(bool enabled);
     void setPolygonOffsetFill(bool enabled);
     void setPolygonOffsetParams(GLfloat factor, GLfloat units, GLfloat clamp);
 
@@ -322,7 +459,7 @@ class State : angle::NonCopyable
     }
 
     TextureID getSamplerTextureId(unsigned int sampler, TextureType type) const;
-    void detachTexture(const Context *context, const TextureMap &zeroTextures, TextureID texture);
+    void detachTexture(Context *context, const TextureMap &zeroTextures, TextureID texture);
     void initializeZeroTextures(const Context *context, const TextureMap &zeroTextures);
 
     void invalidateTextureBindings(TextureType type);
@@ -345,7 +482,7 @@ class State : angle::NonCopyable
     void setRenderbufferBinding(const Context *context, Renderbuffer *renderbuffer);
     RenderbufferID getRenderbufferId() const { return mRenderbuffer.id(); }
     Renderbuffer *getCurrentRenderbuffer() const { return mRenderbuffer.get(); }
-    void detachRenderbuffer(const Context *context, RenderbufferID renderbuffer);
+    void detachRenderbuffer(Context *context, RenderbufferID renderbuffer);
 
     // Framebuffer binding manipulation
     void setReadFramebufferBinding(Framebuffer *framebuffer);
@@ -521,7 +658,7 @@ class State : angle::NonCopyable
     {
         mVertexArray->setVertexAttribPointer(context, attribNum, boundBuffer, size, type,
                                              normalized, stride, pointer);
-        mDirtyObjects.set(DIRTY_OBJECT_VERTEX_ARRAY);
+        mDirtyObjects.set(state::DIRTY_OBJECT_VERTEX_ARRAY);
     }
 
     ANGLE_INLINE void setVertexAttribIPointer(const Context *context,
@@ -534,7 +671,7 @@ class State : angle::NonCopyable
     {
         mVertexArray->setVertexAttribIPointer(context, attribNum, boundBuffer, size, type, stride,
                                               pointer);
-        mDirtyObjects.set(DIRTY_OBJECT_VERTEX_ARRAY);
+        mDirtyObjects.set(state::DIRTY_OBJECT_VERTEX_ARRAY);
     }
 
     void setVertexAttribDivisor(const Context *context, GLuint index, GLuint divisor);
@@ -566,7 +703,7 @@ class State : angle::NonCopyable
     void setVertexAttribBinding(const Context *context, GLuint attribIndex, GLuint bindingIndex)
     {
         mVertexArray->setVertexAttribBinding(context, attribIndex, bindingIndex);
-        mDirtyObjects.set(DIRTY_OBJECT_VERTEX_ARRAY);
+        mDirtyObjects.set(state::DIRTY_OBJECT_VERTEX_ARRAY);
     }
 
     void setVertexBindingDivisor(const Context *context, GLuint bindingIndex, GLuint divisor);
@@ -638,7 +775,7 @@ class State : angle::NonCopyable
 
     bool isDrawFramebufferBindingDirty() const
     {
-        return mDirtyBits.test(DIRTY_BIT_DRAW_FRAMEBUFFER_BINDING);
+        return mDirtyBits.test(state::DIRTY_BIT_DRAW_FRAMEBUFFER_BINDING);
     }
 
     // Sets the dirty bit for the program executable.
@@ -646,124 +783,9 @@ class State : angle::NonCopyable
     // Sets the dirty bit for the program pipeline executable.
     angle::Result onProgramPipelineExecutableChange(const Context *context);
 
-    enum DirtyBitType
-    {
-        // Note: process draw framebuffer binding first, so that other dirty bits whose effect
-        // depend on the current draw framebuffer are not processed while the old framebuffer is
-        // still bound.
-        DIRTY_BIT_DRAW_FRAMEBUFFER_BINDING,
-        DIRTY_BIT_READ_FRAMEBUFFER_BINDING,
-        DIRTY_BIT_SCISSOR_TEST_ENABLED,
-        DIRTY_BIT_SCISSOR,
-        DIRTY_BIT_VIEWPORT,
-        DIRTY_BIT_DEPTH_RANGE,
-        DIRTY_BIT_BLEND_ENABLED,
-        DIRTY_BIT_BLEND_COLOR,
-        DIRTY_BIT_BLEND_FUNCS,
-        DIRTY_BIT_BLEND_EQUATIONS,
-        DIRTY_BIT_COLOR_MASK,
-        DIRTY_BIT_SAMPLE_ALPHA_TO_COVERAGE_ENABLED,
-        DIRTY_BIT_SAMPLE_COVERAGE_ENABLED,
-        DIRTY_BIT_SAMPLE_COVERAGE,
-        DIRTY_BIT_SAMPLE_MASK_ENABLED,
-        DIRTY_BIT_SAMPLE_MASK,
-        DIRTY_BIT_DEPTH_TEST_ENABLED,
-        DIRTY_BIT_DEPTH_FUNC,
-        DIRTY_BIT_DEPTH_MASK,
-        DIRTY_BIT_STENCIL_TEST_ENABLED,
-        DIRTY_BIT_STENCIL_FUNCS_FRONT,
-        DIRTY_BIT_STENCIL_FUNCS_BACK,
-        DIRTY_BIT_STENCIL_OPS_FRONT,
-        DIRTY_BIT_STENCIL_OPS_BACK,
-        DIRTY_BIT_STENCIL_WRITEMASK_FRONT,
-        DIRTY_BIT_STENCIL_WRITEMASK_BACK,
-        DIRTY_BIT_CULL_FACE_ENABLED,
-        DIRTY_BIT_CULL_FACE,
-        DIRTY_BIT_FRONT_FACE,
-        DIRTY_BIT_POLYGON_OFFSET_FILL_ENABLED,
-        DIRTY_BIT_POLYGON_OFFSET,
-        DIRTY_BIT_RASTERIZER_DISCARD_ENABLED,
-        DIRTY_BIT_LINE_WIDTH,
-        DIRTY_BIT_PRIMITIVE_RESTART_ENABLED,
-        DIRTY_BIT_CLEAR_COLOR,
-        DIRTY_BIT_CLEAR_DEPTH,
-        DIRTY_BIT_CLEAR_STENCIL,
-        DIRTY_BIT_UNPACK_STATE,
-        DIRTY_BIT_UNPACK_BUFFER_BINDING,
-        DIRTY_BIT_PACK_STATE,
-        DIRTY_BIT_PACK_BUFFER_BINDING,
-        DIRTY_BIT_DITHER_ENABLED,
-        DIRTY_BIT_RENDERBUFFER_BINDING,
-        DIRTY_BIT_VERTEX_ARRAY_BINDING,
-        DIRTY_BIT_DRAW_INDIRECT_BUFFER_BINDING,
-        DIRTY_BIT_DISPATCH_INDIRECT_BUFFER_BINDING,
-        // TODO(jmadill): Fine-grained dirty bits for each index.
-        DIRTY_BIT_PROGRAM_BINDING,  // Must be before DIRTY_BIT_PROGRAM_EXECUTABLE
-        DIRTY_BIT_PROGRAM_EXECUTABLE,
-        // TODO(jmadill): Fine-grained dirty bits for each texture/sampler.
-        DIRTY_BIT_SAMPLER_BINDINGS,
-        DIRTY_BIT_TEXTURE_BINDINGS,
-        DIRTY_BIT_IMAGE_BINDINGS,
-        DIRTY_BIT_TRANSFORM_FEEDBACK_BINDING,
-        DIRTY_BIT_UNIFORM_BUFFER_BINDINGS,
-        DIRTY_BIT_SHADER_STORAGE_BUFFER_BINDING,
-        DIRTY_BIT_ATOMIC_COUNTER_BUFFER_BINDING,
-        DIRTY_BIT_MULTISAMPLING,
-        DIRTY_BIT_SAMPLE_ALPHA_TO_ONE,
-        DIRTY_BIT_COVERAGE_MODULATION,                  // CHROMIUM_framebuffer_mixed_samples
-        DIRTY_BIT_FRAMEBUFFER_SRGB_WRITE_CONTROL_MODE,  // GL_EXT_sRGB_write_control
-        DIRTY_BIT_CURRENT_VALUES,
-        DIRTY_BIT_PROVOKING_VERTEX,
-        DIRTY_BIT_SAMPLE_SHADING,
-        DIRTY_BIT_PATCH_VERTICES,
-        DIRTY_BIT_EXTENDED,  // clip distances, mipmap generation hint, derivative hint,
-                             // EXT_clip_control, EXT_depth_clamp
-        DIRTY_BIT_INVALID,
-        DIRTY_BIT_MAX = DIRTY_BIT_INVALID,
-    };
-
-    static_assert(DIRTY_BIT_MAX <= 64, "State dirty bits must be capped at 64");
-
-    enum ExtendedDirtyBitType
-    {
-        EXTENDED_DIRTY_BIT_CLIP_CONTROL,            // EXT_clip_control
-        EXTENDED_DIRTY_BIT_CLIP_DISTANCES,          // clip distances
-        EXTENDED_DIRTY_BIT_DEPTH_CLAMP_ENABLED,     // EXT_depth_clamp
-        EXTENDED_DIRTY_BIT_MIPMAP_GENERATION_HINT,  // mipmap generation hint
-        EXTENDED_DIRTY_BIT_SHADER_DERIVATIVE_HINT,  // shader derivative hint
-        EXTENDED_DIRTY_BIT_SHADING_RATE,            // QCOM_shading_rate
-        EXTENDED_DIRTY_BIT_LOGIC_OP_ENABLED,        // ANGLE_logic_op
-        EXTENDED_DIRTY_BIT_LOGIC_OP,                // ANGLE_logic_op
-        EXTENDED_DIRTY_BIT_INVALID,
-        EXTENDED_DIRTY_BIT_MAX = EXTENDED_DIRTY_BIT_INVALID,
-    };
-
-    static_assert(EXTENDED_DIRTY_BIT_MAX <= 32, "State extended dirty bits must be capped at 32");
-
-    // TODO(jmadill): Consider storing dirty objects in a list instead of by binding.
-    enum DirtyObjectType
-    {
-        DIRTY_OBJECT_ACTIVE_TEXTURES,  // Top-level dirty bit. Also see mDirtyActiveTextures.
-        DIRTY_OBJECT_TEXTURES_INIT,
-        DIRTY_OBJECT_IMAGES_INIT,
-        DIRTY_OBJECT_READ_ATTACHMENTS,
-        DIRTY_OBJECT_DRAW_ATTACHMENTS,
-        DIRTY_OBJECT_READ_FRAMEBUFFER,
-        DIRTY_OBJECT_DRAW_FRAMEBUFFER,
-        DIRTY_OBJECT_VERTEX_ARRAY,
-        DIRTY_OBJECT_TEXTURES,  // Top-level dirty bit. Also see mDirtyTextures.
-        DIRTY_OBJECT_IMAGES,    // Top-level dirty bit. Also see mDirtyImages.
-        DIRTY_OBJECT_SAMPLERS,  // Top-level dirty bit. Also see mDirtySamplers.
-        DIRTY_OBJECT_PROGRAM,
-        DIRTY_OBJECT_PROGRAM_PIPELINE_OBJECT,
-        DIRTY_OBJECT_UNKNOWN,
-        DIRTY_OBJECT_MAX = DIRTY_OBJECT_UNKNOWN,
-    };
-
-    using DirtyBits = angle::BitSet<DIRTY_BIT_MAX>;
-    const DirtyBits &getDirtyBits() const { return mDirtyBits; }
+    const state::DirtyBits &getDirtyBits() const { return mDirtyBits; }
     void clearDirtyBits() { mDirtyBits.reset(); }
-    void clearDirtyBits(const DirtyBits &bitset) { mDirtyBits &= ~bitset; }
+    void clearDirtyBits(const state::DirtyBits &bitset) { mDirtyBits &= ~bitset; }
     void setAllDirtyBits()
     {
         mDirtyBits.set();
@@ -771,16 +793,17 @@ class State : angle::NonCopyable
         mDirtyCurrentValues.set();
     }
 
-    using ExtendedDirtyBits = angle::BitSet32<EXTENDED_DIRTY_BIT_MAX>;
-    const ExtendedDirtyBits &getExtendedDirtyBits() const { return mExtendedDirtyBits; }
+    const state::ExtendedDirtyBits &getExtendedDirtyBits() const { return mExtendedDirtyBits; }
     void clearExtendedDirtyBits() { mExtendedDirtyBits.reset(); }
-    void clearExtendedDirtyBits(const ExtendedDirtyBits &bitset) { mExtendedDirtyBits &= ~bitset; }
+    void clearExtendedDirtyBits(const state::ExtendedDirtyBits &bitset)
+    {
+        mExtendedDirtyBits &= ~bitset;
+    }
 
-    using DirtyObjects = angle::BitSet<DIRTY_OBJECT_MAX>;
     void clearDirtyObjects() { mDirtyObjects.reset(); }
     void setAllDirtyObjects() { mDirtyObjects.set(); }
     angle::Result syncDirtyObjects(const Context *context,
-                                   const DirtyObjects &bitset,
+                                   const state::DirtyObjects &bitset,
                                    Command command);
     angle::Result syncDirtyObject(const Context *context, GLenum target);
     void setObjectDirty(GLenum target);
@@ -789,14 +812,14 @@ class State : angle::NonCopyable
 
     ANGLE_INLINE void setReadFramebufferDirty()
     {
-        mDirtyObjects.set(DIRTY_OBJECT_READ_FRAMEBUFFER);
-        mDirtyObjects.set(DIRTY_OBJECT_READ_ATTACHMENTS);
+        mDirtyObjects.set(state::DIRTY_OBJECT_READ_FRAMEBUFFER);
+        mDirtyObjects.set(state::DIRTY_OBJECT_READ_ATTACHMENTS);
     }
 
     ANGLE_INLINE void setDrawFramebufferDirty()
     {
-        mDirtyObjects.set(DIRTY_OBJECT_DRAW_FRAMEBUFFER);
-        mDirtyObjects.set(DIRTY_OBJECT_DRAW_ATTACHMENTS);
+        mDirtyObjects.set(state::DIRTY_OBJECT_DRAW_FRAMEBUFFER);
+        mDirtyObjects.set(state::DIRTY_OBJECT_DRAW_ATTACHMENTS);
     }
 
     // This actually clears the current value dirty bits.
@@ -856,18 +879,18 @@ class State : angle::NonCopyable
     ProvokingVertexConvention getProvokingVertex() const { return mProvokingVertex; }
     void setProvokingVertex(ProvokingVertexConvention val)
     {
-        mDirtyBits.set(State::DIRTY_BIT_PROVOKING_VERTEX);
+        mDirtyBits.set(state::DIRTY_BIT_PROVOKING_VERTEX);
         mProvokingVertex = val;
     }
 
     ANGLE_INLINE void setReadFramebufferBindingDirty()
     {
-        mDirtyBits.set(State::DIRTY_BIT_READ_FRAMEBUFFER_BINDING);
+        mDirtyBits.set(state::DIRTY_BIT_READ_FRAMEBUFFER_BINDING);
     }
 
     ANGLE_INLINE void setDrawFramebufferBindingDirty()
     {
-        mDirtyBits.set(State::DIRTY_BIT_DRAW_FRAMEBUFFER_BINDING);
+        mDirtyBits.set(state::DIRTY_BIT_DRAW_FRAMEBUFFER_BINDING);
     }
 
     using ClipDistanceEnableBits = angle::BitSet32<IMPLEMENTATION_MAX_CLIP_DISTANCES>;
@@ -992,7 +1015,7 @@ class State : angle::NonCopyable
 
     using DirtyObjectHandler = angle::Result (State::*)(const Context *context, Command command);
 
-    static constexpr DirtyObjectHandler kDirtyObjectHandlers[DIRTY_OBJECT_MAX] = {
+    static constexpr DirtyObjectHandler kDirtyObjectHandlers[state::DIRTY_OBJECT_MAX] = {
         &State::syncActiveTextures,
         &State::syncTexturesInit,
         &State::syncImagesInit,
@@ -1008,25 +1031,35 @@ class State : angle::NonCopyable
         &State::syncProgramPipelineObject};
 
     // Robust init must happen before Framebuffer init for the Vulkan back-end.
-    static_assert(DIRTY_OBJECT_ACTIVE_TEXTURES < DIRTY_OBJECT_TEXTURES_INIT, "init order");
-    static_assert(DIRTY_OBJECT_TEXTURES_INIT < DIRTY_OBJECT_DRAW_FRAMEBUFFER, "init order");
-    static_assert(DIRTY_OBJECT_IMAGES_INIT < DIRTY_OBJECT_DRAW_FRAMEBUFFER, "init order");
-    static_assert(DIRTY_OBJECT_DRAW_ATTACHMENTS < DIRTY_OBJECT_DRAW_FRAMEBUFFER, "init order");
-    static_assert(DIRTY_OBJECT_READ_ATTACHMENTS < DIRTY_OBJECT_READ_FRAMEBUFFER, "init order");
+    static_assert(state::DIRTY_OBJECT_ACTIVE_TEXTURES < state::DIRTY_OBJECT_TEXTURES_INIT,
+                  "init order");
+    static_assert(state::DIRTY_OBJECT_TEXTURES_INIT < state::DIRTY_OBJECT_DRAW_FRAMEBUFFER,
+                  "init order");
+    static_assert(state::DIRTY_OBJECT_IMAGES_INIT < state::DIRTY_OBJECT_DRAW_FRAMEBUFFER,
+                  "init order");
+    static_assert(state::DIRTY_OBJECT_DRAW_ATTACHMENTS < state::DIRTY_OBJECT_DRAW_FRAMEBUFFER,
+                  "init order");
+    static_assert(state::DIRTY_OBJECT_READ_ATTACHMENTS < state::DIRTY_OBJECT_READ_FRAMEBUFFER,
+                  "init order");
 
-    static_assert(DIRTY_OBJECT_ACTIVE_TEXTURES == 0, "check DIRTY_OBJECT_ACTIVE_TEXTURES index");
-    static_assert(DIRTY_OBJECT_TEXTURES_INIT == 1, "check DIRTY_OBJECT_TEXTURES_INIT index");
-    static_assert(DIRTY_OBJECT_IMAGES_INIT == 2, "check DIRTY_OBJECT_IMAGES_INIT index");
-    static_assert(DIRTY_OBJECT_READ_ATTACHMENTS == 3, "check DIRTY_OBJECT_READ_ATTACHMENTS index");
-    static_assert(DIRTY_OBJECT_DRAW_ATTACHMENTS == 4, "check DIRTY_OBJECT_DRAW_ATTACHMENTS index");
-    static_assert(DIRTY_OBJECT_READ_FRAMEBUFFER == 5, "check DIRTY_OBJECT_READ_FRAMEBUFFER index");
-    static_assert(DIRTY_OBJECT_DRAW_FRAMEBUFFER == 6, "check DIRTY_OBJECT_DRAW_FRAMEBUFFER index");
-    static_assert(DIRTY_OBJECT_VERTEX_ARRAY == 7, "check DIRTY_OBJECT_VERTEX_ARRAY index");
-    static_assert(DIRTY_OBJECT_TEXTURES == 8, "check DIRTY_OBJECT_TEXTURES index");
-    static_assert(DIRTY_OBJECT_IMAGES == 9, "check DIRTY_OBJECT_IMAGES index");
-    static_assert(DIRTY_OBJECT_SAMPLERS == 10, "check DIRTY_OBJECT_SAMPLERS index");
-    static_assert(DIRTY_OBJECT_PROGRAM == 11, "check DIRTY_OBJECT_PROGRAM index");
-    static_assert(DIRTY_OBJECT_PROGRAM_PIPELINE_OBJECT == 12,
+    static_assert(state::DIRTY_OBJECT_ACTIVE_TEXTURES == 0,
+                  "check DIRTY_OBJECT_ACTIVE_TEXTURES index");
+    static_assert(state::DIRTY_OBJECT_TEXTURES_INIT == 1, "check DIRTY_OBJECT_TEXTURES_INIT index");
+    static_assert(state::DIRTY_OBJECT_IMAGES_INIT == 2, "check DIRTY_OBJECT_IMAGES_INIT index");
+    static_assert(state::DIRTY_OBJECT_READ_ATTACHMENTS == 3,
+                  "check DIRTY_OBJECT_READ_ATTACHMENTS index");
+    static_assert(state::DIRTY_OBJECT_DRAW_ATTACHMENTS == 4,
+                  "check DIRTY_OBJECT_DRAW_ATTACHMENTS index");
+    static_assert(state::DIRTY_OBJECT_READ_FRAMEBUFFER == 5,
+                  "check DIRTY_OBJECT_READ_FRAMEBUFFER index");
+    static_assert(state::DIRTY_OBJECT_DRAW_FRAMEBUFFER == 6,
+                  "check DIRTY_OBJECT_DRAW_FRAMEBUFFER index");
+    static_assert(state::DIRTY_OBJECT_VERTEX_ARRAY == 7, "check DIRTY_OBJECT_VERTEX_ARRAY index");
+    static_assert(state::DIRTY_OBJECT_TEXTURES == 8, "check DIRTY_OBJECT_TEXTURES index");
+    static_assert(state::DIRTY_OBJECT_IMAGES == 9, "check DIRTY_OBJECT_IMAGES index");
+    static_assert(state::DIRTY_OBJECT_SAMPLERS == 10, "check DIRTY_OBJECT_SAMPLERS index");
+    static_assert(state::DIRTY_OBJECT_PROGRAM == 11, "check DIRTY_OBJECT_PROGRAM index");
+    static_assert(state::DIRTY_OBJECT_PROGRAM_PIPELINE_OBJECT == 12,
                   "check DIRTY_OBJECT_PROGRAM_PIPELINE_OBJECT index");
 
     // Dispatch table for buffer update functions.
@@ -1049,6 +1082,10 @@ class State : angle::NonCopyable
     Limitations mLimitations;
 
     egl::ShareGroup *mShareGroup;
+    egl::ContextMutex *const mSharedContextMutex;
+    egl::SingleContextMutex *const mSingleContextMutex;
+    std::atomic<egl::ContextMutex *> mContextMutex;  // Simple pointer without reference counting
+    bool mIsSharedContextMutexActive;
 
     // Resource managers.
     BufferManager *mBufferManager;
@@ -1206,9 +1243,9 @@ class State : angle::NonCopyable
     // GLES1 emulation: state specific to GLES1
     GLES1State mGLES1State;
 
-    DirtyBits mDirtyBits;
-    mutable ExtendedDirtyBits mExtendedDirtyBits;
-    DirtyObjects mDirtyObjects;
+    state::DirtyBits mDirtyBits;
+    state::ExtendedDirtyBits mExtendedDirtyBits;
+    state::DirtyObjects mDirtyObjects;
     mutable AttributesMask mDirtyCurrentValues;
     ActiveTextureMask mDirtyActiveTextures;
     ActiveTextureMask mDirtyTextures;
@@ -1248,10 +1285,10 @@ class State : angle::NonCopyable
 };
 
 ANGLE_INLINE angle::Result State::syncDirtyObjects(const Context *context,
-                                                   const DirtyObjects &bitset,
+                                                   const state::DirtyObjects &bitset,
                                                    Command command)
 {
-    const DirtyObjects &dirtyObjects = mDirtyObjects & bitset;
+    const state::DirtyObjects &dirtyObjects = mDirtyObjects & bitset;
 
     for (size_t dirtyObject : dirtyObjects)
     {

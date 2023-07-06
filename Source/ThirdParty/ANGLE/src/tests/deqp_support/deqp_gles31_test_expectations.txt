@@ -37,12 +37,6 @@
 1442 D3D11 : dEQP-GLES31.functional.image_load_store.*.format_reinterpret.rgba8_snorm_r32i = SKIP
 7345 D3D11 : dEQP-GLES31.functional.image_load_store.*.qualifiers.* = SKIP
 
-// Times out shader compilation because it uses so many resources.
-3445 : dEQP-GLES31.functional.ssbo.layout.random.all_shared_buffer.48 = SKIP
-
-// Slow tests.
-6021 : dEQP-GLES31.functional.ssbo.layout.random.all_shared_buffer.36 = TIMEOUT
-
 // D3D11 Failing Tests
 // Below cases are failed due to binding multi-UAVs to a single buffer is not supported in D3D backend.
 // http://anglebug.com/3032
@@ -182,7 +176,7 @@ b/266710445 WIN OPENGL NVIDIA : dEQP-GLES31.functional.image_load_store.buffer.a
 ////
 
 // Cannot create 2D (array) view of 3D texture.  These fail with validation errors, and cause a crash in syncval.
-3886 VULKAN : dEQP-GLES31.functional.image_load_store.3d.*single_layer = SKIP
+3886 VULKAN NVIDIA : dEQP-GLES31.functional.image_load_store.3d.*single_layer = SKIP
 
 // Emulated advanced blend equations (only Nvidia and SwiftShader support the Vulkan extension):
 3586 AMD VULKAN : dEQP-GLES31.functional.blend_equation_advanced.msaa.* = FAIL
@@ -210,9 +204,6 @@ b/266710445 WIN OPENGL NVIDIA : dEQP-GLES31.functional.image_load_store.buffer.a
 // Frambuffer without attachments still fail on Pixel 4. Rendering is crossing over the default framebuffer size
 3579 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.fbo.no_attachments.* = SKIP
 
-// Need to support non-color when staging image updates
-4080 ANDROID VULKAN : dEQP-GLES31.functional.stencil_texturing.misc.base_level = SKIP
-
 // Fail on tests that use an unsupported extension!
 4371 SWIFTSHADER : dEQP-GLES31.functional.shaders.implicit_conversions.* = FAIL
 
@@ -230,9 +221,9 @@ b/266710445 WIN OPENGL NVIDIA : dEQP-GLES31.functional.image_load_store.buffer.a
 7415 NVIDIA VULKAN : dEQP-GLES31.functional.copy_image.mixed.*astc* = FAIL
 7415 NVIDIA VULKAN : dEQP-GLES31.functional.copy_image.compressed.viewclass_astc* = FAIL
 
-// Vulkan Android failures with these formats
-5277 VULKAN ANDROID : dEQP-GLES31.functional.copy_image.non_compressed.viewclass_32_bits.rgba8_snorm_rgb10_a2* = FAIL
-5277 VULKAN ANDROID : dEQP-GLES31.functional.copy_image.non_compressed.viewclass_32_bits.rgba8_snorm_rgb9_e5* = FAIL
+// Vulkan Pixel4 failures with these formats
+5277 VULKAN PIXEL4ORXL : dEQP-GLES31.functional.copy_image.non_compressed.viewclass_32_bits.rgba8_snorm_rgb10_a2* = FAIL
+5277 VULKAN PIXEL4ORXL : dEQP-GLES31.functional.copy_image.non_compressed.viewclass_32_bits.rgba8_snorm_rgb9_e5* = FAIL
 
 // When ANGLE allows non-conformant features, imageAtomicExchange with r32f fails
 5503 SWIFTSHADER : dEQP-GLES31.functional.image_load_store.*.atomic.exchange_r32f* = SKIP
@@ -358,13 +349,101 @@ b/266710445 WIN OPENGL NVIDIA : dEQP-GLES31.functional.image_load_store.buffer.a
 5990 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.synchronization.in_invocation.ssbo_atomic_read_write = SKIP
 5990 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.synchronization.inter_call.with_memory_barrier.image_atomic_write_read = SKIP
 
+
+// b/224537784 Test failures after enabling GLES3.2 context creation on all devices
+// Swift shader does not fully support tessellation and geometry shaders
+b/224537784 SWIFTSHADER : dEQP-GLES31.functional.*geometry* = SKIP
+b/224537784 SWIFTSHADER : dEQP-GLES31.functional.*tess* = SKIP
+b/224537784 SWIFTSHADER : dEQP-GLES31.functional.primitive_bounding_box.depth.builtin_depth.per_primitive_bbox_equal = SKIP
+b/224537784 SWIFTSHADER : dEQP-GLES31.functional.primitive_bounding_box.depth.builtin_depth.per_primitive_bbox_larger = SKIP
+b/224537784 SWIFTSHADER : dEQP-GLES31.functional.primitive_bounding_box.depth.user_defined_depth.per_primitive_bbox_equal = SKIP
+b/224537784 SWIFTSHADER : dEQP-GLES31.functional.primitive_bounding_box.depth.user_defined_depth.per_primitive_bbox_larger = SKIP
+b/224537784 SWIFTSHADER : dEQP-GLES31.functional.primitive_bounding_box.clear.full_clear_with_triangles = SKIP
+b/224537784 SWIFTSHADER : dEQP-GLES31.functional.primitive_bounding_box.clear.full_clear_with_triangles_per_primitive_bbox = SKIP
+b/224537784 SWIFTSHADER : dEQP-GLES31.functional.primitive_bounding_box.clear.scissored_clear_with_triangles = SKIP
+b/224537784 SWIFTSHADER : dEQP-GLES31.functional.primitive_bounding_box.clear.scissored_clear_with_triangles_per_primitive_bbox = SKIP
+b/224537784 SWIFTSHADER : dEQP-GLES31.functional.primitive_bounding_box.clear.scissored_full_clear_with_triangles = SKIP
+b/224537784 SWIFTSHADER : dEQP-GLES31.functional.primitive_bounding_box.clear.scissored_full_clear_with_triangles_per_primitive_bbox = SKIP
+b/224537784 SWIFTSHADER : dEQP-GLES31.functional.primitive_bounding_box.call_order.viewport_first_bbox_second = SKIP
+b/224537784 SWIFTSHADER : dEQP-GLES31.functional.primitive_bounding_box.call_order.bbox_first_viewport_second = SKIP
+b/224537784 SWIFTSHADER : dEQP-GLES31.functional.shaders.opaque_type_indexing.atomic_counter.const_expression_vertex = SKIP
+b/224537784 SWIFTSHADER : dEQP-GLES31.functional.shaders.opaque_type_indexing.atomic_counter.uniform_vertex = SKIP
+b/224537784 SWIFTSHADER : dEQP-GLES31.functional.shaders.opaque_type_indexing.atomic_counter.dynamically_uniform_vertex = SKIP
+b/224537784 SWIFTSHADER : dEQP-GLES31.functional.shaders.functions.es31.overloading.arrays_of_arrays_size_vertex = SKIP
+b/224537784 SWIFTSHADER : dEQP-GLES31.functional.shaders.builtin_constants.core.* = SKIP
+b/224537784 SWIFTSHADER : dEQP-GLES31.functional.shaders.builtin_constants.sample_variables.* = SKIP
+b/224537784 SWIFTSHADER : dEQP-GLES31.functional.shaders.helper_invocation.value.lines_8_samples = SKIP
+b/224537784 SWIFTSHADER : dEQP-GLES31.functional.shaders.helper_invocation.value.points_8_samples = SKIP
+b/224537784 SWIFTSHADER : dEQP-GLES31.functional.shaders.helper_invocation.value.triangles_max_samples = SKIP
+b/224537784 SWIFTSHADER : dEQP-GLES31.functional.shaders.helper_invocation.derivate.triangles_8_samples_dfdy = SKIP
+b/224537784 SWIFTSHADER : dEQP-GLES31.functional.shaders.helper_invocation.derivate.lines_8_samples_dfdx = SKIP
+b/224537784 SWIFTSHADER : dEQP-GLES31.functional.shaders.helper_invocation.derivate.lines_8_samples_fwidth = SKIP
+b/224537784 SWIFTSHADER : dEQP-GLES31.functional.shaders.helper_invocation.derivate.wide_lines_8_samples_dfdy = SKIP
+b/224537784 SWIFTSHADER : dEQP-GLES31.functional.shaders.helper_invocation.derivate.points_8_samples_dfdx = SKIP
+b/224537784 SWIFTSHADER : dEQP-GLES31.functional.shaders.helper_invocation.derivate.points_8_samples_fwidth = SKIP
+b/224537784 SWIFTSHADER : dEQP-GLES31.functional.shaders.helper_invocation.derivate.wide_points_8_samples_dfdy = SKIP
+b/224537784 SWIFTSHADER : dEQP-GLES31.functional.shaders.helper_invocation.derivate.triangles_max_samples_dfdx = SKIP
+b/224537784 SWIFTSHADER : dEQP-GLES31.functional.state_query.integer.* = SKIP
+b/224537784 SWIFTSHADER : dEQP-GLES31.functional.program_interface_query.* = SKIP
+b/224537784 SWIFTSHADER : dEQP-GLES31.functional.layout_binding.negative.image.* = SKIP
+b/224537784 SWIFTSHADER : dEQP-GLES31.functional.layout_binding.negative.ssbo.* = SKIP
+b/224537784 SWIFTSHADER : dEQP-GLES31.functional.layout_binding.negative.ubo.* = SKIP
+b/224537784 SWIFTSHADER : dEQP-GLES31.functional.layout_binding.negative.sampler.* = SKIP
+b/224537784 SWIFTSHADER : dEQP-GLES31.functional.android_extension_pack.shaders.es31.extension_directive.ext_primitive_bounding_box = SKIP
+b/224537784 SWIFTSHADER : dEQP-GLES31.functional.android_extension_pack.shaders.es32.extension_macros.android_extension_pack_es31a = SKIP
+b/224537784 SWIFTSHADER : dEQP-GLES31.functional.android_extension_pack.shaders.es32.extension_directive.ext_primitive_bounding_box = SKIP
+
+// Swiftshader hits AddressSanitizer in SwiftShader/src/Pipeline/SpirvShader.cpp
+b/224537784 SWIFTSHADER : dEQP-GLES31.functional.texture.gather.offset_dynamic.* = SKIP
+b/224537784 SWIFTSHADER : dEQP-GLES31.functional.texture.gather.offsets.* = SKIP
+
+// Swiftshader hits assert in State.cpp getTargetFramebuffer
+b/224537784 SWIFTSHADER : dEQP-GLES31.functional.debug.negative_coverage.* = SKIP
+b/224537784 SWIFTSHADER : dEQP-GLES31.functional.debug.error_filters.case_9 = SKIP
+b/224537784 SWIFTSHADER : dEQP-GLES31.functional.debug.error_groups.case_9 = SKIP
+
+// NVIDIA on LINUX bot is missing VkPhysicalDeviceCustomBorderColorFeaturesEXT.customBorderColors
+// and VkPhysicalDeviceCustomBorderColorFeaturesEXT.customBorderColorWithoutFormat
+b/224537784 LINUX NVIDIA VULKAN : dEQP-GLES31.functional.texture.border_clamp.* = SKIP
+
+// NVIDIA on LINUX bot misses GL_EXT_texture_border_clamp extension support
+// TODO: b/286572199
+b/224537784 LINUX NVIDIA VULKAN : dEQP-GLES31.functional.debug.negative_coverage.* = SKIP
+b/224537784 LINUX NVIDIA VULKAN : dEQP-GLES31.functional.debug.error_filters.case_22 = SKIP
+b/224537784 LINUX NVIDIA VULKAN : dEQP-GLES31.functional.primitive_bounding_box.*tessellation* = SKIP
+b/224537784 LINUX NVIDIA VULKAN : dEQP-GLES31.functional.android_extension_pack.shaders.es32.extension_macros.android_extension_pack_es31a = FAIL
+
+// Pixel 4 does not support VK_EXT_transform_feedback (required for geometry/tessellation).
+// Pixel 4 Bugs in tessellation and geometry shader support
+b/224537784 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.*geometry* = SKIP
+b/224537784 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.*tess* = SKIP
+b/224537784 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.shaders.builtin_constants.core.* = SKIP
+b/224537784 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.shaders.builtin_constants.sample_variables.* = SKIP
+b/224537784 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.state_query.integer.* = SKIP
+b/224537784 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.program_interface_query.* = SKIP
+b/224537784 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.layout_binding.negative.ssbo.* = SKIP
+b/224537784 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.layout_binding.negative.ubo.* = SKIP
+b/224537784 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.layout_binding.negative.sampler.* = SKIP
+b/224537784 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.layout_binding.negative.image.* = SKIP
+b/224537784 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.android_extension_pack.shaders.es31.extension_directive.ext_primitive_bounding_box = SKIP
+b/224537784 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.android_extension_pack.shaders.es32.extension_macros.android_extension_pack_es31a = SKIP
+b/224537784 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.android_extension_pack.shaders.es32.extension_directive.ext_primitive_bounding_box = SKIP
+
+// Pixel 4 does not support VkPhysicalDeviceCustomBorderColorFeaturesEXT.customBorderColors
+// and VkPhysicalDeviceCustomBorderColorFeaturesEXT.customBorderColorWithoutFormat
+b/224537784 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.texture.border_clamp.* = SKIP
+b/224537784 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.debug.negative_coverage.* = SKIP
+b/224537784 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.debug.error_filters.case_22 = SKIP
+
+// Pixel 4 hits asserts in FramebufferVk
+b/224537784 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.ubo.2_level_array* = SKIP
+
+// Pixel 4 hits asserts in State.cpp getTargetFramebuffer
+b/224537784 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.debug.error_filters.case_9 = SKIP
+b/224537784 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.debug.error_groups.case_9 = SKIP
+
 // Fails when the expression being interpolated as an indexed varying array.
 6194 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.shaders.multisample_interpolation.interpolate_at_offset.array_element.* = FAIL
-
-// Pixel 6 expectations
-// We added back the spirv precision match fixer code because IMG needs it, but the code added back was causing the test to
-// crash on ARM. Skip this test for now until we add a feature to only enable the precision match ficer on IMG
-7488 PIXEL6 VULKAN : dEQP-GLES31.functional.shaders.linkage.es31.tessellation.varying.rules.internal_different_precision = SKIP
 
 // Geometry shader support:
 // This fails on pre-release Android T drivers as of 3/25/22:
@@ -372,7 +451,6 @@ b/266710445 WIN OPENGL NVIDIA : dEQP-GLES31.functional.image_load_store.buffer.a
 
 // ASAN Test bugs
 6678 ASAN : dEQP-GLES31.functional.ssbo.array_length.* = SKIP
-6678 ASAN : dEQP-GLES31.functional.debug.negative_coverage.*.texparameter*v = SKIP
 6678 ASAN : dEQP-GLES31.functional.debug.error_filters.case_11 = SKIP
 6678 ASAN : dEQP-GLES31.functional.debug.error_filters.case_18 = SKIP
 6678 ASAN : dEQP-GLES31.functional.debug.error_groups.case_11 = SKIP
@@ -391,3 +469,15 @@ b/266710445 WIN OPENGL NVIDIA : dEQP-GLES31.functional.image_load_store.buffer.a
 6678 UBSAN : dEQP-GLES31.functional.shaders.framebuffer_fetch.framebuffer_format.rgb565 = SKIP
 6678 UBSAN : dEQP-GLES31.functional.shaders.framebuffer_fetch.framebuffer_format.rgb8 = SKIP
 6678 UBSAN : dEQP-GLES31.functional.shaders.framebuffer_fetch.framebuffer_format.rgba32i = SKIP
+
+// Samsung Galaxy S23
+8157 GALAXYS23 VULKAN : dEQP-GLES31.functional.blend_equation_advanced.barrier.* = SKIP
+8157 GALAXYS23 VULKAN : dEQP-GLES31.functional.blend_equation_advanced.basic.* = SKIP
+8157 GALAXYS23 VULKAN : dEQP-GLES31.functional.blend_equation_advanced.msaa.* = SKIP
+8157 GALAXYS23 VULKAN : dEQP-GLES31.functional.blend_equation_advanced.srgb.* = SKIP
+8157 GALAXYS23 VULKAN : dEQP-GLES31.functional.copy_image.non_compressed.* = SKIP
+8157 GALAXYS23 VULKAN : dEQP-GLES31.functional.fbo.no_attachments.* = SKIP
+8157 GALAXYS23 VULKAN : dEQP-GLES31.functional.image_load_store.* = SKIP
+8157 GALAXYS23 VULKAN : dEQP-GLES31.functional.shaders.builtin_functions.pack_unpack.* = SKIP
+8157 GALAXYS23 VULKAN : dEQP-GLES31.functional.shaders.linkage.es31.geometry.varying.types.float_struct = SKIP
+8157 GALAXYS23 VULKAN : dEQP-GLES31.functional.texture.border_clamp.* = SKIP

@@ -307,7 +307,6 @@ void CompilerPerfTest::step()
 
     ShCompileOptions compileOptions              = {};
     compileOptions.objectCode                    = true;
-    compileOptions.variables                     = true;
     compileOptions.initializeUninitializedLocals = true;
     compileOptions.initOutputVariables           = true;
 

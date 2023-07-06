@@ -26,8 +26,8 @@
 #include "libANGLE/renderer/gl/TextureGL.h"
 #include "libANGLE/renderer/gl/formatutilsgl.h"
 #include "libANGLE/renderer/gl/renderergl_utils.h"
-#include "platform/FeaturesGL_autogen.h"
 #include "platform/PlatformMethods.h"
+#include "platform/autogen/FeaturesGL_autogen.h"
 
 using namespace gl;
 using angle::CheckedNumeric;

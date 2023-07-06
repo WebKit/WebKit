@@ -36,7 +36,6 @@ class WorkGroupSizeTest : public testing::Test
     bool compile(const std::string &shaderString)
     {
         ShCompileOptions compileOptions = {};
-        compileOptions.variables        = true;
         compileOptions.intermediateTree = true;
 
         const char *shaderStrings[] = {shaderString.c_str()};

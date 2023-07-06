@@ -471,7 +471,8 @@ angle::Result Context11::drawElementsIndirect(const gl::Context *context,
             context, mode, startVertex, cmd->count, type, indices, cmd->primCount, cmd->baseVertex,
             cmd->baseInstance, true));
         return mRenderer->drawElements(context, mode, static_cast<GLint>(indexRange.start),
-                                       cmd->count, type, indices, cmd->primCount, 0, 0, true);
+                                       cmd->count, type, indices, cmd->primCount, 0,
+                                       cmd->baseInstance, true);
     }
     else
     {
@@ -796,10 +797,10 @@ angle::Result Context11::popDebugGroup(const gl::Context *context)
 }
 
 angle::Result Context11::syncState(const gl::Context *context,
-                                   const gl::State::DirtyBits &dirtyBits,
-                                   const gl::State::DirtyBits &bitMask,
-                                   const gl::State::ExtendedDirtyBits &extendedDirtyBits,
-                                   const gl::State::ExtendedDirtyBits &extendedBitMask,
+                                   const gl::state::DirtyBits &dirtyBits,
+                                   const gl::state::DirtyBits &bitMask,
+                                   const gl::state::ExtendedDirtyBits &extendedDirtyBits,
+                                   const gl::state::ExtendedDirtyBits &extendedBitMask,
                                    gl::Command command)
 {
     mRenderer->getStateManager()->syncState(context, dirtyBits, extendedDirtyBits, command);

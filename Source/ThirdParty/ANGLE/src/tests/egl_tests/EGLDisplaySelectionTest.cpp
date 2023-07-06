@@ -459,7 +459,7 @@ TEST_P(EGLDisplaySelectionTestMultiDisplay, BackendDefaultVulkan)
     ANGLE_SKIP_TEST_IF(missingBackends);
 
     // http://anglebug.com/6999
-    ANGLE_SKIP_TEST_IF(IsOSX());
+    ANGLE_SKIP_TEST_IF(IsMac());
 
     runMultiDisplayBackendDefault(EGL_PLATFORM_ANGLE_TYPE_VULKAN_ANGLE, IsVulkan);
 }

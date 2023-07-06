@@ -108,6 +108,7 @@ using data from registry_xml.py and gl.xml.
 | [GL_KHR_parallel_shader_compile](https://khronos.org/registry/OpenGL/extensions/KHR/KHR_parallel_shader_compile.txt) |  |  |  |  |  |  |  |
 | [GL_AMD_performance_monitor](https://khronos.org/registry/OpenGL/extensions/AMD/AMD_performance_monitor.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
 | [GL_NV_pixel_buffer_object](https://khronos.org/registry/OpenGL/extensions/NV/NV_pixel_buffer_object.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
+| [GL_NV_polygon_mode](https://khronos.org/registry/OpenGL/extensions/NV/NV_polygon_mode.txt) |  |  |  |  |  |  |  |
 | [GL_EXT_polygon_offset_clamp](https://khronos.org/registry/OpenGL/extensions/EXT/EXT_polygon_offset_clamp.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
 | [GL_EXT_primitive_bounding_box](https://khronos.org/registry/OpenGL/extensions/EXT/EXT_primitive_bounding_box.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
 | [GL_OES_primitive_bounding_box](https://khronos.org/registry/OpenGL/extensions/OES/OES_primitive_bounding_box.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
@@ -223,6 +224,7 @@ using data from registry_xml.py and gl.xml.
 | [GL_ANGLE_memory_size](https://chromium.googlesource.com/angle/angle/+/refs/heads/main/extensions/ANGLE_memory_size.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
 | [GL_ANGLE_multi_draw](https://chromium.googlesource.com/angle/angle/+/refs/heads/main/extensions/ANGLE_multi_draw.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
 | [GL_ANGLE_multiview_multisample](https://chromium.googlesource.com/angle/angle/+/refs/heads/main/extensions/ANGLE_multiview_multisample.txt) |  |  |  |  |  |  |  |
+| [GL_ANGLE_polygon_mode](https://chromium.googlesource.com/angle/angle/+/refs/heads/main/extensions/ANGLE_polygon_mode.txt) |  |  |  |  |  |  |  |
 | [GL_ANGLE_program_binary](https://chromium.googlesource.com/angle/angle/+/refs/heads/main/extensions/ANGLE_program_binary.txt) |  |  |  |  |  |  |  |
 | [GL_ANGLE_program_cache_control](https://chromium.googlesource.com/angle/angle/+/refs/heads/main/extensions/ANGLE_program_cache_control.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
 | [GL_ANGLE_provoking_vertex](https://chromium.googlesource.com/angle/angle/+/refs/heads/main/extensions/ANGLE_provoking_vertex.txt) |  |  |  |  |  |  |  |

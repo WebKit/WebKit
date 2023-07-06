@@ -20,7 +20,7 @@ class Ref
     Ref(T &ref) : mPtr(&ref) {}
 
     Ref &operator=(const Ref &) = default;
-    Ref &operator=(Ref &&) = default;
+    Ref &operator=(Ref &&)      = default;
 
     bool operator==(const Ref &other) const { return *mPtr == *other.mPtr; }
     bool operator!=(const Ref &other) const { return *mPtr != *other.mPtr; }
@@ -34,9 +34,6 @@ class Ref
 
     operator T &() { return *mPtr; }
     operator T const &() const { return *mPtr; }
-
-    operator T *() { return *mPtr; }
-    operator T const *() const { return *mPtr; }
 
   private:
     T *mPtr;

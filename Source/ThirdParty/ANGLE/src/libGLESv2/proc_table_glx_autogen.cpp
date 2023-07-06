@@ -935,6 +935,8 @@ const ProcEntry g_procTable[] = {
     {"glPointSizePointerOES", P(GL_PointSizePointerOES)},
     {"glPointSizex", P(GL_PointSizex)},
     {"glPolygonMode", P(GL_PolygonMode)},
+    {"glPolygonModeANGLE", P(GL_PolygonModeANGLE)},
+    {"glPolygonModeNV", P(GL_PolygonModeNV)},
     {"glPolygonOffset", P(GL_PolygonOffset)},
     {"glPolygonOffsetClamp", P(GL_PolygonOffsetClamp)},
     {"glPolygonOffsetClampEXT", P(GL_PolygonOffsetClampEXT)},

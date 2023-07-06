@@ -88,12 +88,12 @@ TEST_P(TimerQueriesTest, ProcAddresses)
 TEST_P(TimerQueriesTest, TimeElapsed)
 {
     // TODO(anglebug.com/5360): Failing on ARM-based Apple DTKs.
-    ANGLE_SKIP_TEST_IF(IsOSX() && IsARM64() && IsDesktopOpenGL());
+    ANGLE_SKIP_TEST_IF(IsMac() && IsARM64() && IsDesktopOpenGL());
 
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_disjoint_timer_query"));
 
     // http://anglebug.com/5154
-    ANGLE_SKIP_TEST_IF(IsOSX() && IsOpenGL());
+    ANGLE_SKIP_TEST_IF(IsMac() && IsOpenGL());
 
     GLint queryTimeElapsedBits = 0;
     glGetQueryivEXT(GL_TIME_ELAPSED_EXT, GL_QUERY_COUNTER_BITS_EXT, &queryTimeElapsedBits);
@@ -177,7 +177,7 @@ TEST_P(TimerQueriesTest, TimeElapsed)
 TEST_P(TimerQueriesTest, TimeElapsedTextureTest)
 {
     // OSX drivers don't seem to properly time non-draw calls so we skip the test on Mac
-    ANGLE_SKIP_TEST_IF(IsOSX());
+    ANGLE_SKIP_TEST_IF(IsMac());
 
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_disjoint_timer_query"));
 
@@ -283,7 +283,7 @@ TEST_P(TimerQueriesTest, TimeElapsedMulticontextTest)
     ANGLE_SKIP_TEST_IF(IsAMD() && IsOpenGL());
 
     // TODO(anglebug.com/5360): Failing on ARM-based Apple DTKs.
-    ANGLE_SKIP_TEST_IF(IsOSX() && IsARM64() && IsDesktopOpenGL());
+    ANGLE_SKIP_TEST_IF(IsMac() && IsARM64() && IsDesktopOpenGL());
 
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_disjoint_timer_query"));
 

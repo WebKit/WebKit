@@ -410,11 +410,9 @@ struct PackedInputAssemblyState final
         // Dynamic in VK_EXT_extended_dynamic_state2
         uint32_t primitiveRestartEnable : 1;  // ds2
 
-        // Support for VK_EXT_extended_dynamic_state.  Used by GraphicsPipelineDesc::hash() to
-        // exclude |vertexStrides| from the hash
-        uint32_t supportsDynamicState1 : 1;
-        // Workaround driver bug with dynamic vertex stride.
-        uint32_t forceStaticVertexStrideState : 1;
+        // Whether dynamic state for vertex stride from VK_EXT_extended_dynamic_state can be used
+        // for.  Used by GraphicsPipelineDesc::hash() to exclude |vertexStrides| from the hash
+        uint32_t useVertexInputBindingStrideDynamicState : 1;
 
         // Whether the pipeline is robust (vertex input copy)
         uint32_t isRobustContext : 1;
@@ -424,7 +422,7 @@ struct PackedInputAssemblyState final
         // Which attributes are actually active in the program and should affect the pipeline.
         uint32_t programActiveAttributeLocations : gl::MAX_VERTEX_ATTRIBS;
 
-        uint32_t padding : 23 - gl::MAX_VERTEX_ATTRIBS;
+        uint32_t padding : 24 - gl::MAX_VERTEX_ATTRIBS;
     } bits;
 };
 
@@ -451,6 +449,7 @@ struct PackedPreRasterizationAndFragmentStates final
 
         // Affecting VkPipelineRasterizationStateCreateInfo
         uint32_t depthClampEnable : 1;
+        uint32_t polygonMode : 2;
         // Dynamic in VK_EXT_extended_dynamic_state
         uint32_t cullMode : 4;
         uint32_t frontFace : 4;
@@ -478,8 +477,6 @@ struct PackedPreRasterizationAndFragmentStates final
         uint32_t isRobustContext : 1;
         // Whether the pipeline needs access to protected content (shader stages copy)
         uint32_t isProtectedContext : 1;
-
-        uint32_t padding : 2;
     } bits;
 
     // Affecting specialization constants
@@ -646,7 +643,6 @@ struct GraphicsPipelineShadersVulkanStructs
     VkPipelineViewportDepthClipControlCreateInfoEXT depthClipControl              = {};
     VkPipelineRasterizationLineStateCreateInfoEXT rasterLineState                 = {};
     VkPipelineRasterizationProvokingVertexStateCreateInfoEXT provokingVertexState = {};
-    VkPipelineRasterizationDepthClipStateCreateInfoEXT depthClipState             = {};
     VkPipelineRasterizationStateStreamCreateInfoEXT rasterStreamState             = {};
     VkSpecializationInfo specializationInfo                                       = {};
 
@@ -738,6 +734,7 @@ class GraphicsPipelineDesc final
     void updateDepthClipControl(GraphicsPipelineTransitionBits *transition, bool negativeOneToOne);
 
     // Raster states
+    void updatePolygonMode(GraphicsPipelineTransitionBits *transition, gl::PolygonMode polygonMode);
     void updateCullMode(GraphicsPipelineTransitionBits *transition,
                         const gl::RasterizerState &rasterState);
     void updateFrontFace(GraphicsPipelineTransitionBits *transition,
@@ -824,6 +821,7 @@ class GraphicsPipelineDesc final
                                 const gl::Framebuffer *drawFramebuffer);
     void updateDepthFunc(GraphicsPipelineTransitionBits *transition,
                          const gl::DepthStencilState &depthStencilState);
+    void updateDepthClampEnabled(GraphicsPipelineTransitionBits *transition, bool enabled);
     void updateDepthWriteEnabled(GraphicsPipelineTransitionBits *transition,
                                  const gl::DepthStencilState &depthStencilState,
                                  const gl::Framebuffer *drawFramebuffer);
@@ -840,7 +838,7 @@ class GraphicsPipelineDesc final
                               const gl::DepthStencilState &depthStencilState);
 
     // Depth offset.
-    void updatePolygonOffsetFillEnabled(GraphicsPipelineTransitionBits *transition, bool enabled);
+    void updatePolygonOffsetEnabled(GraphicsPipelineTransitionBits *transition, bool enabled);
 
     // Tessellation
     void updatePatchVertices(GraphicsPipelineTransitionBits *transition, GLuint value);
@@ -863,9 +861,8 @@ class GraphicsPipelineDesc final
 
     void setSupportsDynamicStateForTest(bool supports)
     {
-        mVertexInput.inputAssembly.bits.supportsDynamicState1        = supports;
-        mVertexInput.inputAssembly.bits.forceStaticVertexStrideState = false;
-        mShaders.shaders.bits.nonZeroStencilWriteMaskWorkaround      = false;
+        mVertexInput.inputAssembly.bits.useVertexInputBindingStrideDynamicState = supports;
+        mShaders.shaders.bits.nonZeroStencilWriteMaskWorkaround                 = false;
     }
 
     // Helpers to dump the state
@@ -1533,87 +1530,121 @@ struct DescriptorDescHandles
     VkBufferView bufferView;
 };
 
-class DescriptorSetDesc
+class WriteDescriptorDescs
 {
   public:
-    DescriptorSetDesc()  = default;
-    ~DescriptorSetDesc() = default;
-
-    DescriptorSetDesc(const DescriptorSetDesc &other)
-        : mWriteDescriptors(other.mWriteDescriptors), mDescriptorInfos(other.mDescriptorInfos)
-    {}
-
-    DescriptorSetDesc &operator=(const DescriptorSetDesc &other)
-    {
-        mWriteDescriptors = other.mWriteDescriptors;
-        mDescriptorInfos  = other.mDescriptorInfos;
-        return *this;
-    }
-
-    size_t hash() const;
-
     void reset()
     {
-        mWriteDescriptors.clear();
-        mDescriptorInfos.clear();
+        mDescs.clear();
+        mDynamicDescriptorSetCount = 0;
+        mCurrentInfoIndex          = 0;
     }
 
-    size_t getKeySizeBytes() const
+    void updateShaderBuffers(const ShaderInterfaceVariableInfoMap &variableInfoMap,
+                             const std::vector<gl::InterfaceBlock> &blocks,
+                             VkDescriptorType descriptorType);
+
+    void updateAtomicCounters(const ShaderInterfaceVariableInfoMap &variableInfoMap,
+                              const std::vector<gl::AtomicCounterBuffer> &atomicCounterBuffers);
+
+    void updateImages(const gl::ProgramExecutable &executable,
+                      const ShaderInterfaceVariableInfoMap &variableInfoMap);
+
+    void updateInputAttachments(const gl::ProgramExecutable &executable,
+                                const ShaderInterfaceVariableInfoMap &variableInfoMap,
+                                FramebufferVk *framebufferVk);
+
+    void updateExecutableActiveTextures(const ShaderInterfaceVariableInfoMap &variableInfoMap,
+                                        const gl::ProgramExecutable &executable);
+
+    void updateDefaultUniform(gl::ShaderBitSet shaderTypes,
+                              const ShaderInterfaceVariableInfoMap &variableInfoMap,
+                              const gl::ProgramExecutable &executable);
+
+    void updateTransformFeedbackWrite(const ShaderInterfaceVariableInfoMap &variableInfoMap,
+                                      const gl::ProgramExecutable &executable);
+
+    void updateDynamicDescriptorsCount();
+
+    size_t size() const { return mDescs.size(); }
+    bool empty() const { return mDescs.size() == 0; }
+
+    const WriteDescriptorDesc &operator[](uint32_t bindingIndex) const
     {
-        return mWriteDescriptors.size() * sizeof(WriteDescriptorDesc) +
-               mDescriptorInfos.size() * sizeof(DescriptorInfoDesc);
+        return mDescs[bindingIndex];
     }
 
-    bool operator==(const DescriptorSetDesc &other) const
-    {
-        return (mDescriptorInfos == other.mDescriptorInfos);
-    }
+    size_t getTotalDescriptorCount() const { return mCurrentInfoIndex; }
+    size_t getDynamicDescriptorSetCount() const { return mDynamicDescriptorSetCount; }
 
+    void streamOut(std::ostream &os) const;
+
+  private:
     bool hasWriteDescAtIndex(uint32_t bindingIndex) const
     {
-        return bindingIndex < mWriteDescriptors.size() &&
-               mWriteDescriptors[bindingIndex].descriptorCount > 0;
-    }
-
-    // Returns the info desc offset.
-    void updateWriteDesc(const WriteDescriptorDesc &writeDesc);
-
-    void updateInfoDesc(uint32_t infoDescIndex, const DescriptorInfoDesc &infoDesc)
-    {
-        mDescriptorInfos[infoDescIndex] = infoDesc;
+        return bindingIndex < mDescs.size() && mDescs[bindingIndex].descriptorCount > 0;
     }
 
     void incrementDescriptorCount(uint32_t bindingIndex, uint32_t count)
     {
         // Validate we have no subsequent writes.
         ASSERT(hasWriteDescAtIndex(bindingIndex));
-        mWriteDescriptors[bindingIndex].descriptorCount += count;
+        mDescs[bindingIndex].descriptorCount += count;
     }
 
-    uint32_t getDescriptorSetCount(uint32_t bindingIndex) const
+    void updateWriteDesc(uint32_t bindingIndex,
+                         VkDescriptorType descriptorType,
+                         uint32_t descriptorCount);
+
+    // After a preliminary minimum size, use heap memory.
+    angle::FastMap<WriteDescriptorDesc, kFastDescriptorSetDescLimit> mDescs;
+    size_t mDynamicDescriptorSetCount = 0;
+    uint32_t mCurrentInfoIndex        = 0;
+};
+
+class DescriptorSetDesc
+{
+  public:
+    DescriptorSetDesc()  = default;
+    ~DescriptorSetDesc() = default;
+
+    DescriptorSetDesc(const DescriptorSetDesc &other) : mDescriptorInfos(other.mDescriptorInfos) {}
+
+    DescriptorSetDesc &operator=(const DescriptorSetDesc &other)
     {
-        ASSERT(hasWriteDescAtIndex(bindingIndex));
-        return mWriteDescriptors[bindingIndex].descriptorCount;
+        mDescriptorInfos = other.mDescriptorInfos;
+        return *this;
+    }
+
+    size_t hash() const;
+
+    void resize(size_t count) { mDescriptorInfos.resize(count); }
+
+    size_t getKeySizeBytes() const { return mDescriptorInfos.size() * sizeof(DescriptorInfoDesc); }
+
+    bool operator==(const DescriptorSetDesc &other) const
+    {
+        return mDescriptorInfos.size() == other.mDescriptorInfos.size() &&
+               memcmp(mDescriptorInfos.data(), other.mDescriptorInfos.data(),
+                      mDescriptorInfos.size() * sizeof(DescriptorInfoDesc)) == 0;
+    }
+
+    DescriptorInfoDesc &getInfoDesc(uint32_t infoDescIndex)
+    {
+        return mDescriptorInfos[infoDescIndex];
     }
 
     void updateDescriptorSet(Context *context,
+                             const WriteDescriptorDescs &writeDescriptorDescs,
                              UpdateDescriptorSetsBuilder *updateBuilder,
                              const DescriptorDescHandles *handles,
                              VkDescriptorSet descriptorSet) const;
 
-    bool empty() const { return mWriteDescriptors.size() == 0; }
-
     void streamOut(std::ostream &os) const;
-
-    uint32_t getInfoDescIndex(uint32_t bindingIndex) const
-    {
-        return mWriteDescriptors[bindingIndex].descriptorInfoIndex;
-    }
 
   private:
     // After a preliminary minimum size, use heap memory.
-    angle::FastMap<WriteDescriptorDesc, kFastDescriptorSetDescLimit> mWriteDescriptors;
-    angle::FastMap<DescriptorInfoDesc, kFastDescriptorSetDescLimit> mDescriptorInfos;
+    angle::FastVector<DescriptorInfoDesc, kFastDescriptorSetDescLimit> mDescriptorInfos;
 };
 
 class DescriptorPoolHelper;
@@ -1643,6 +1674,7 @@ class DescriptorSetDescBuilder final
 {
   public:
     DescriptorSetDescBuilder();
+    DescriptorSetDescBuilder(size_t descriptorCount);
     ~DescriptorSetDescBuilder();
 
     DescriptorSetDescBuilder(const DescriptorSetDescBuilder &other);
@@ -1650,17 +1682,22 @@ class DescriptorSetDescBuilder final
 
     const DescriptorSetDesc &getDesc() const { return mDesc; }
 
-    void reset();
+    void resize(size_t descriptorCount)
+    {
+        mDesc.resize(descriptorCount);
+        mHandles.resize(descriptorCount);
+        mDynamicOffsets.resize(descriptorCount);
+    }
 
     // Specific helpers for uniforms/xfb descriptors.
-    void updateUniformWrite(uint32_t shaderStageCount);
     void updateUniformBuffer(uint32_t shaderIndex,
+                             const WriteDescriptorDescs &writeDescriptorDescs,
                              const BufferHelper &bufferHelper,
                              VkDeviceSize bufferRange);
-    void updateTransformFeedbackWrite(const ShaderInterfaceVariableInfoMap &variableInfoMap,
-                                      uint32_t xfbBufferCount);
+
     void updateTransformFeedbackBuffer(const Context *context,
                                        const ShaderInterfaceVariableInfoMap &variableInfoMap,
+                                       const WriteDescriptorDescs &writeDescriptorDescs,
                                        uint32_t xfbBufferIndex,
                                        const BufferHelper &bufferHelper,
                                        VkDeviceSize bufferOffset,
@@ -1669,37 +1706,54 @@ class DescriptorSetDescBuilder final
     void updateUniformsAndXfb(Context *context,
                               const gl::ProgramExecutable &executable,
                               const ProgramExecutableVk &executableVk,
+                              const WriteDescriptorDescs &writeDescriptorDescs,
                               const BufferHelper *currentUniformBuffer,
                               const BufferHelper &emptyBuffer,
                               bool activeUnpaused,
                               TransformFeedbackVk *transformFeedbackVk);
 
     // Specific helpers for shader resource descriptors.
-    void updateShaderBuffers(gl::ShaderType shaderType,
-                             ShaderVariableType variableType,
+    template <typename CommandBufferT>
+    void updateOneShaderBuffer(ContextVk *contextVk,
+                               CommandBufferT *commandBufferHelper,
+                               const ShaderInterfaceVariableInfoMap &variableInfoMap,
+                               const gl::BufferVector &buffers,
+                               const std::vector<gl::InterfaceBlock> &blocks,
+                               uint32_t blockIndex,
+                               VkDescriptorType descriptorType,
+                               VkDeviceSize maxBoundBufferRange,
+                               const BufferHelper &emptyBuffer,
+                               const WriteDescriptorDescs &writeDescriptorDescs);
+    template <typename CommandBufferT>
+    void updateShaderBuffers(ContextVk *contextVk,
+                             CommandBufferT *commandBufferHelper,
                              const ShaderInterfaceVariableInfoMap &variableInfoMap,
                              const gl::BufferVector &buffers,
                              const std::vector<gl::InterfaceBlock> &blocks,
                              VkDescriptorType descriptorType,
                              VkDeviceSize maxBoundBufferRange,
-                             const BufferHelper &emptyBuffer);
-    void updateAtomicCounters(gl::ShaderType shaderType,
+                             const BufferHelper &emptyBuffer,
+                             const WriteDescriptorDescs &writeDescriptorDescs);
+    template <typename CommandBufferT>
+    void updateAtomicCounters(ContextVk *contextVk,
+                              CommandBufferT *commandBufferHelper,
                               const ShaderInterfaceVariableInfoMap &variableInfoMap,
                               const gl::BufferVector &buffers,
                               const std::vector<gl::AtomicCounterBuffer> &atomicCounterBuffers,
                               const VkDeviceSize requiredOffsetAlignment,
-                              vk::BufferHelper *emptyBuffer);
+                              const BufferHelper &emptyBuffer,
+                              const WriteDescriptorDescs &writeDescriptorDescs);
     angle::Result updateImages(Context *context,
-                               gl::ShaderType shaderType,
                                const gl::ProgramExecutable &executable,
                                const ShaderInterfaceVariableInfoMap &variableInfoMap,
                                const gl::ActiveTextureArray<TextureVk *> &activeImages,
-                               const std::vector<gl::ImageUnit> &imageUnits);
+                               const std::vector<gl::ImageUnit> &imageUnits,
+                               const WriteDescriptorDescs &writeDescriptorDescs);
     angle::Result updateInputAttachments(vk::Context *context,
-                                         gl::ShaderType shaderType,
                                          const gl::ProgramExecutable &executable,
                                          const ShaderInterfaceVariableInfoMap &variableInfoMap,
-                                         FramebufferVk *framebufferVk);
+                                         FramebufferVk *framebufferVk,
+                                         const WriteDescriptorDescs &writeDescriptorDescs);
 
     // Specific helpers for image descriptors.
     void updatePreCacheActiveTextures(const gl::ActiveTextureMask &activeTextures,
@@ -1708,6 +1762,7 @@ class DescriptorSetDescBuilder final
 
     angle::Result updateFullActiveTextures(Context *context,
                                            const ShaderInterfaceVariableInfoMap &variableInfoMap,
+                                           const WriteDescriptorDescs &writeDescriptorDescs,
                                            const gl::ProgramExecutable &executable,
                                            const gl::ActiveTextureArray<TextureVk *> &textures,
                                            const gl::SamplerBindingVector &samplers,
@@ -1716,44 +1771,21 @@ class DescriptorSetDescBuilder final
                                            const SharedDescriptorSetCacheKey &sharedCacheKey);
 
     void updateDescriptorSet(Context *context,
+                             const WriteDescriptorDescs &writeDescriptorDescs,
                              UpdateDescriptorSetsBuilder *updateBuilder,
                              VkDescriptorSet descriptorSet) const;
-
-    // If sharedCacheKey is not null, it means a new cache entry for descriptoret has been created.
-    // This function will store the new shared cache key in the buffer or textures that the
-    // descriptorSet is created so that the descriptorSet cache can be destroyed when any of these
-    // is release or destroyed.
-    void updateImagesAndBuffersWithSharedCacheKey(
-        const SharedDescriptorSetCacheKey &sharedCacheKey);
 
     const uint32_t *getDynamicOffsets() const { return mDynamicOffsets.data(); }
     size_t getDynamicOffsetsSize() const { return mDynamicOffsets.size(); }
 
   private:
-    angle::Result updateExecutableActiveTexturesForShader(
-        Context *context,
-        gl::ShaderType shaderType,
-        const ShaderInterfaceVariableInfoMap &variableInfoMap,
-        const gl::ProgramExecutable &executable,
-        const gl::ActiveTextureArray<TextureVk *> &textures,
-        const gl::SamplerBindingVector &samplers,
-        bool emulateSeamfulCubeMapSampling,
-        PipelineType pipelineType,
-        const SharedDescriptorSetCacheKey &sharedCacheKey);
-
-    void updateWriteDesc(uint32_t bindingIndex,
-                         VkDescriptorType descriptorType,
-                         uint32_t descriptorCount);
+    void setEmptyBuffer(uint32_t infoDescIndex,
+                        VkDescriptorType descriptorType,
+                        const BufferHelper &emptyBuffer);
 
     DescriptorSetDesc mDesc;
-    angle::FastMap<DescriptorDescHandles, kFastDescriptorSetDescLimit> mHandles;
-    angle::FastMap<uint32_t, kFastDescriptorSetDescLimit> mDynamicOffsets;
-    uint32_t mCurrentInfoIndex = 0;
-
-    // Track textures and buffers that used for this descriptorSet.
-    std::vector<TextureVk *> mUsedImages;
-    std::vector<BufferBlock *> mUsedBufferBlocks;
-    std::vector<BufferHelper *> mUsedBufferHelpers;
+    angle::FastVector<DescriptorDescHandles, kFastDescriptorSetDescLimit> mHandles;
+    angle::FastVector<uint32_t, kFastDescriptorSetDescLimit> mDynamicOffsets;
 };
 
 // Specialized update for textures.

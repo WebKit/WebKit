@@ -69,8 +69,8 @@ set(d3d_shared_sources
 
 if(NOT angle_is_winuwp)
     list(APPEND d3d_shared_sources
-        "src/libANGLE/renderer/d3d/../../../third_party/systeminfo/SystemInfo.cpp"
-        "src/libANGLE/renderer/d3d/../../../third_party/systeminfo/SystemInfo.h"
+        "src/libANGLE/renderer/d3d/../../../gpu_info_util/SystemInfo.cpp"
+        "src/libANGLE/renderer/d3d/../../../gpu_info_util/SystemInfo.h"
     )
 endif()
 

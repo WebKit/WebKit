@@ -194,9 +194,6 @@ class TranslatorMetalDirect : public TCompiler
     // pixel local storage bans gl_SampleMask, so we can just not use it when PLS is active.
     bool isSampleMaskAllowed() const { return !hasPixelLocalStorageUniforms(); }
 
-    // Need to collect variables so that RemoveInactiveInterfaceVariables works.
-    bool shouldCollectVariables(const ShCompileOptions &compileOptions) override { return true; }
-
     [[nodiscard]] bool translateImpl(TInfoSinkBase &sink,
                                      TIntermBlock *root,
                                      const ShCompileOptions &compileOptions,

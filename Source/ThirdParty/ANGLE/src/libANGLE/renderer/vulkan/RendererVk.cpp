@@ -30,6 +30,7 @@
 #include "libANGLE/renderer/vulkan/FramebufferVk.h"
 #include "libANGLE/renderer/vulkan/ProgramVk.h"
 #include "libANGLE/renderer/vulkan/ResourceVk.h"
+#include "libANGLE/renderer/vulkan/SyncVk.h"
 #include "libANGLE/renderer/vulkan/VertexArrayVk.h"
 #include "libANGLE/renderer/vulkan/vk_caps_utils.h"
 #include "libANGLE/renderer/vulkan/vk_format_utils.h"
@@ -71,6 +72,10 @@ constexpr uint32_t kPreferredDefaultUniformBufferSize = 64 * 1024u;
 // value will use a dedicated VkDeviceMemory.
 constexpr size_t kImageSizeThresholdForDedicatedMemoryAllocation = 4 * 1024 * 1024;
 
+// Pipeline cache header version. It should be incremented any time there is an update to the cache
+// header or data structure.
+constexpr uint16_t kPipelineCacheVersion = 1;
+
 // Update the pipeline cache every this many swaps.
 constexpr uint32_t kPipelineCacheVkUpdatePeriod = 60;
 // Per the Vulkan specification, ANGLE must indicate the highest version of Vulkan functionality
@@ -82,13 +87,6 @@ constexpr uint32_t kPipelineCacheVkUpdatePeriod = 60;
 // later versions, they always do so in practice.  Avoiding later core versions helps keep the
 // initialization logic simpler.
 constexpr uint32_t kPreferredVulkanAPIVersion = VK_API_VERSION_1_1;
-
-// For pipeline cache, the values stored in key data has the following format: {originalCacheSize,
-// compressedDataCRC, numChunks, chunkIndex; chunkCompressedData}. The header values are used to
-// validate the data. For example, if the original and compressed sizes are 70000 bytes (68k) and
-// 68841 bytes (67k), the compressed data will be divided into two chunks: {70000,crc0,2,0;34421
-// bytes} and {70000,crc1,2,1;34420 bytes}.
-constexpr size_t kBlobHeaderSize = 8 * sizeof(uint8_t);
 
 bool IsVulkan11(uint32_t apiVersion)
 {
@@ -221,6 +219,7 @@ constexpr const char *kSkippedMessages[] = {
     "VUID-VkGraphicsPipelineCreateInfo-Vertex-07722",
     // http://anglebug.com/7861
     "VUID-vkCmdDraw-None-06887",
+    "VUID-vkCmdDraw-None-06886",
     "VUID-vkCmdDrawIndexed-None-06887",
     // http://anglebug.com/7865
     "VUID-VkDescriptorImageInfo-imageView-06711",
@@ -231,6 +230,7 @@ constexpr const char *kSkippedMessages[] = {
     // http://anglebug.com/8076
     "VUID-VkGraphicsPipelineCreateInfo-None-06573",
     // http://anglebug.com/8119
+    "VUID-VkGraphicsPipelineCreateInfo-Input-07904",
     "VUID-VkGraphicsPipelineCreateInfo-Input-07905",
     "VUID-vkCmdDraw-None-02859",
     "VUID-vkCmdDrawIndexed-None-02859",
@@ -238,6 +238,16 @@ constexpr const char *kSkippedMessages[] = {
     "VUID-vkCmdDrawIndexedIndirect-None-02859",
     "VUID-vkCmdDrawIndirect-None-02859",
     "VUID-VkGraphicsPipelineCreateInfo-Input-08733",
+    // http://anglebug.com/8151
+    "VUID-vkCmdDraw-None-07844",
+    "VUID-vkCmdDraw-None-07845",
+    "VUID-vkCmdDraw-None-07848",
+    // https://anglebug.com/8128#c3
+    "VUID-VkBufferViewCreateInfo-buffer-00934",
+    // https://anglebug.com/8203
+    "VUID-VkVertexInputBindingDivisorDescriptionEXT-divisor-01870",
+    // https://anglebug.com/8237
+    "VUID-VkGraphicsPipelineCreateInfo-topology-08890",
 };
 
 // Validation messages that should be ignored only when VK_EXT_primitive_topology_list_restart is
@@ -560,7 +570,7 @@ DebugMessageReport ShouldReportDebugMessage(RendererVk *renderer,
                                             const char *messageId,
                                             const char *message)
 {
-    if (message == nullptr)
+    if (message == nullptr || messageId == nullptr)
     {
         return DebugMessageReport::Print;
     }
@@ -864,35 +874,77 @@ uint16_t ComputeCRC16(const uint8_t *data, const size_t size)
     return rem;
 }
 
-// Pack header data for the pipeline cache key data.
-void PackHeaderDataForPipelineCache(uint32_t cacheDataSize,
-                                    uint16_t compressedDataCRC,
-                                    uint8_t numChunks,
-                                    uint8_t chunkIndex,
-                                    uint64_t *dataOut)
-{
-    uint64_t concatenatedData = cacheDataSize;
-    concatenatedData          = (concatenatedData << 16) | compressedDataCRC;
-    concatenatedData          = (concatenatedData << 8) | numChunks;
-    concatenatedData          = (concatenatedData << 8) | chunkIndex;
+// Header data type used for the pipeline cache.
+ANGLE_ENABLE_STRUCT_PADDING_WARNINGS
 
-    *dataOut = concatenatedData;
+class CacheDataHeader
+{
+  public:
+    void setData(uint16_t compressedDataCRC,
+                 uint32_t cacheDataSize,
+                 uint16_t numChunks,
+                 uint16_t chunkIndex)
+    {
+        mVersion           = kPipelineCacheVersion;
+        mCompressedDataCRC = compressedDataCRC;
+        mCacheDataSize     = cacheDataSize;
+        mNumChunks         = numChunks;
+        mChunkIndex        = chunkIndex;
+    }
+
+    void getData(uint16_t *versionOut,
+                 uint16_t *compressedDataCRCOut,
+                 uint32_t *cacheDataSizeOut,
+                 size_t *numChunksOut,
+                 size_t *chunkIndexOut) const
+    {
+        *versionOut           = mVersion;
+        *compressedDataCRCOut = mCompressedDataCRC;
+        *cacheDataSizeOut     = mCacheDataSize;
+        *numChunksOut         = static_cast<size_t>(mNumChunks);
+        *chunkIndexOut        = static_cast<size_t>(mChunkIndex);
+    }
+
+  private:
+    // For pipeline cache, the values stored in key data has the following order:
+    // {headerVersion, compressedDataCRC, originalCacheSize, numChunks, chunkIndex;
+    // chunkCompressedData}. The header values are used to validate the data. For example, if the
+    // original and compressed sizes are 70000 bytes (68k) and 68841 bytes (67k), the compressed
+    // data will be divided into two chunks: {ver,crc0,70000,2,0;34421 bytes} and
+    // {ver,crc1,70000,2,1;34420 bytes}.
+    // The version is used to keep track of the cache format. Please note that kPipelineCacheVersion
+    // must be incremented by 1 in case of any updates to the cache header or data structure. While
+    // it is possible to modify the fields in the header, it is recommended to keep the version on
+    // top and the same size unless absolutely necessary.
+
+    uint16_t mVersion;
+    uint16_t mCompressedDataCRC;
+    uint32_t mCacheDataSize;
+    uint16_t mNumChunks;
+    uint16_t mChunkIndex;
+};
+
+ANGLE_DISABLE_STRUCT_PADDING_WARNINGS
+
+// Pack header data for the pipeline cache key data.
+void PackHeaderDataForPipelineCache(uint16_t compressedDataCRC,
+                                    uint32_t cacheDataSize,
+                                    uint16_t numChunks,
+                                    uint16_t chunkIndex,
+                                    CacheDataHeader *dataOut)
+{
+    dataOut->setData(compressedDataCRC, cacheDataSize, numChunks, chunkIndex);
 }
 
 // Unpack header data from the pipeline cache key data.
-void UnpackHeaderDataForPipelineCache(uint64_t data,
-                                      uint32_t *cacheDataSizeOut,
+void UnpackHeaderDataForPipelineCache(CacheDataHeader *data,
+                                      uint16_t *versionOut,
                                       uint16_t *compressedDataCRCOut,
+                                      uint32_t *cacheDataSizeOut,
                                       size_t *numChunksOut,
                                       size_t *chunkIndexOut)
 {
-    *chunkIndexOut = data & 0xFF;
-    data >>= 8;
-    *numChunksOut = data & 0xFF;
-    data >>= 8;
-    *compressedDataCRCOut = data & 0xFFFF;
-    data >>= 16;
-    *cacheDataSizeOut = static_cast<uint32_t>(data);
+    data->getData(versionOut, compressedDataCRCOut, cacheDataSizeOut, numChunksOut, chunkIndexOut);
 }
 
 void ComputePipelineCacheVkChunkKey(VkPhysicalDeviceProperties physicalDeviceProperties,
@@ -912,7 +964,7 @@ void ComputePipelineCacheVkChunkKey(VkPhysicalDeviceProperties physicalDevicePro
     hashStream << std::hex << physicalDeviceProperties.deviceID;
 
     // Add chunkIndex to generate unique key for chunks.
-    hashStream << std::hex << chunkIndex;
+    hashStream << std::hex << static_cast<uint32_t>(chunkIndex);
 
     const std::string &hashString = hashStream.str();
     angle::base::SHA1HashBytes(reinterpret_cast<const unsigned char *>(hashString.c_str()),
@@ -954,9 +1006,10 @@ void CompressAndStorePipelineCacheVk(VkPhysicalDeviceProperties physicalDevicePr
     size_t compressedOffset            = 0;
 
     const size_t numChunks = UnsignedCeilDivide(static_cast<unsigned int>(compressedData.size()),
-                                                kMaxBlobCacheSize - kBlobHeaderSize);
-    size_t chunkSize       = UnsignedCeilDivide(static_cast<unsigned int>(compressedData.size()),
-                                                static_cast<unsigned int>(numChunks));
+                                                kMaxBlobCacheSize - sizeof(CacheDataHeader));
+    ASSERT(numChunks <= UINT16_MAX);
+    size_t chunkSize = UnsignedCeilDivide(static_cast<unsigned int>(compressedData.size()),
+                                          static_cast<unsigned int>(numChunks));
     uint16_t compressedDataCRC = 0;
     if (kEnableCRCForPipelineCache)
     {
@@ -971,7 +1024,7 @@ void CompressAndStorePipelineCacheVk(VkPhysicalDeviceProperties physicalDevicePr
         }
 
         angle::MemoryBuffer keyData;
-        if (!keyData.resize(kBlobHeaderSize + chunkSize))
+        if (!keyData.resize(sizeof(CacheDataHeader) + chunkSize))
         {
             ANGLE_PERF_WARNING(contextVk->getDebug(), GL_DEBUG_SEVERITY_LOW,
                                "Skip syncing pipeline cache data due to out of memory.");
@@ -979,14 +1032,13 @@ void CompressAndStorePipelineCacheVk(VkPhysicalDeviceProperties physicalDevicePr
         }
 
         // Add the header data, followed by the compressed data.
-        ASSERT(numChunks <= UINT8_MAX && chunkIndex <= UINT8_MAX && cacheData.size() <= UINT32_MAX);
-        uint64_t headerData;
-        PackHeaderDataForPipelineCache(static_cast<uint32_t>(cacheData.size()), compressedDataCRC,
-                                       static_cast<uint8_t>(numChunks),
-                                       static_cast<uint8_t>(chunkIndex), &headerData);
-        *reinterpret_cast<uint64_t *>(keyData.data()) = headerData;
-
-        memcpy(keyData.data() + kBlobHeaderSize, compressedData.data() + compressedOffset,
+        ASSERT(cacheData.size() <= UINT32_MAX);
+        CacheDataHeader headerData = {};
+        PackHeaderDataForPipelineCache(compressedDataCRC, static_cast<uint32_t>(cacheData.size()),
+                                       static_cast<uint16_t>(numChunks),
+                                       static_cast<uint16_t>(chunkIndex), &headerData);
+        memcpy(keyData.data(), &headerData, sizeof(CacheDataHeader));
+        memcpy(keyData.data() + sizeof(CacheDataHeader), compressedData.data() + compressedOffset,
                chunkSize);
         compressedOffset += chunkSize;
 
@@ -1053,24 +1105,57 @@ angle::Result GetAndDecompressPipelineCacheVk(VkPhysicalDeviceProperties physica
 
     if (!displayVk->getBlobCache()->get(displayVk->getScratchBuffer(), chunkCacheHash, &keyData,
                                         &keySize) ||
-        keyData.size() < kBlobHeaderSize)
+        keyData.size() < sizeof(CacheDataHeader))
     {
         // Nothing in the cache.
         return angle::Result::Continue;
     }
 
     // Get the number of chunks and other values from the header for data validation.
-    uint32_t uncompressedCacheDataSize;
+    uint16_t cacheVersion;
     uint16_t compressedDataCRC;
+    uint32_t uncompressedCacheDataSize;
     size_t numChunks;
     size_t chunkIndex0;
 
-    uint64_t headerData = *reinterpret_cast<const uint64_t *>(keyData.data());
-    UnpackHeaderDataForPipelineCache(headerData, &uncompressedCacheDataSize, &compressedDataCRC,
-                                     &numChunks, &chunkIndex0);
-    ASSERT(chunkIndex0 == 0);
+    CacheDataHeader headerData = {};
+    memcpy(&headerData, keyData.data(), sizeof(CacheDataHeader));
+    UnpackHeaderDataForPipelineCache(&headerData, &cacheVersion, &compressedDataCRC,
+                                     &uncompressedCacheDataSize, &numChunks, &chunkIndex0);
+    if (cacheVersion == kPipelineCacheVersion)
+    {
+        // The data must not contain corruption.
+        if (chunkIndex0 != 0 || numChunks == 0 || uncompressedCacheDataSize == 0)
+        {
+            FATAL() << "Unexpected values while unpacking chunk index 0: "
+                    << "cacheVersion = " << cacheVersion << ", chunkIndex = " << chunkIndex0
+                    << ", numChunks = " << numChunks
+                    << ", uncompressedCacheDataSize = " << uncompressedCacheDataSize;
+        }
+    }
+    else
+    {
+        // Either the header structure has been updated, or the header value has been changed.
+        if (cacheVersion > kPipelineCacheVersion + (1 << 8))
+        {
+            // TODO(abdolrashidi): Data corruption in the version should result in a fatal error.
+            // For now, a warning is shown instead, but it should change when the version field is
+            // no longer new.
+            WARN() << "Existing cache version is significantly greater than the new version"
+                      ", possibly due to data corruption: "
+                   << "newVersion = " << kPipelineCacheVersion
+                   << ", existingVersion = " << cacheVersion;
+        }
+        else
+        {
+            WARN() << "Change in cache header version detected: "
+                   << "newVersion = " << kPipelineCacheVersion
+                   << ", existingVersion = " << cacheVersion;
+        }
+        return angle::Result::Continue;
+    }
 
-    size_t chunkSize      = keySize - kBlobHeaderSize;
+    size_t chunkSize      = keySize - sizeof(CacheDataHeader);
     size_t compressedSize = 0;
 
     // Allocate enough memory.
@@ -1086,7 +1171,7 @@ angle::Result GetAndDecompressPipelineCacheVk(VkPhysicalDeviceProperties physica
 
         if (!displayVk->getBlobCache()->get(displayVk->getScratchBuffer(), chunkCacheHash, &keyData,
                                             &keySize) ||
-            keyData.size() < kBlobHeaderSize)
+            keyData.size() < sizeof(CacheDataHeader))
         {
             // Can't find every part of the cache data.
             WARN() << "Failed to get pipeline cache chunk " << chunkIndex << " of " << numChunks;
@@ -1094,26 +1179,29 @@ angle::Result GetAndDecompressPipelineCacheVk(VkPhysicalDeviceProperties physica
         }
 
         // Validate the header values and ensure there is enough space to store.
-        uint32_t checkUncompressedCacheDataSize;
+        uint16_t checkCacheVersion;
         uint16_t checkCompressedDataCRC;
+        uint32_t checkUncompressedCacheDataSize;
         size_t checkNumChunks;
         size_t checkChunkIndex;
 
-        headerData = *reinterpret_cast<const uint64_t *>(keyData.data());
-        UnpackHeaderDataForPipelineCache(headerData, &checkUncompressedCacheDataSize,
-                                         &checkCompressedDataCRC, &checkNumChunks,
+        memcpy(&headerData, keyData.data(), sizeof(CacheDataHeader));
+        UnpackHeaderDataForPipelineCache(&headerData, &checkCacheVersion, &checkCompressedDataCRC,
+                                         &checkUncompressedCacheDataSize, &checkNumChunks,
                                          &checkChunkIndex);
 
-        chunkSize = keySize - kBlobHeaderSize;
+        chunkSize = keySize - sizeof(CacheDataHeader);
         bool isHeaderDataCorrupted =
-            (checkNumChunks != numChunks) ||
+            (checkCacheVersion != cacheVersion) || (checkNumChunks != numChunks) ||
             (checkUncompressedCacheDataSize != uncompressedCacheDataSize) ||
             (checkCompressedDataCRC != compressedDataCRC) || (checkChunkIndex != chunkIndex) ||
             (compressedData.size() < compressedSize + chunkSize);
         if (isHeaderDataCorrupted)
         {
             WARN() << "Pipeline cache chunk header corrupted: "
-                   << "checkNumChunks = " << checkNumChunks << ", numChunks = " << numChunks
+                   << "checkCacheVersion = " << checkCacheVersion
+                   << ", cacheVersion = " << cacheVersion << ", checkNumChunks = " << checkNumChunks
+                   << ", numChunks = " << numChunks
                    << ", checkUncompressedCacheDataSize = " << checkUncompressedCacheDataSize
                    << ", uncompressedCacheDataSize = " << uncompressedCacheDataSize
                    << ", checkCompressedDataCRC = " << checkCompressedDataCRC
@@ -1124,7 +1212,8 @@ angle::Result GetAndDecompressPipelineCacheVk(VkPhysicalDeviceProperties physica
             return angle::Result::Continue;
         }
 
-        memcpy(compressedData.data() + compressedSize, keyData.data() + kBlobHeaderSize, chunkSize);
+        memcpy(compressedData.data() + compressedSize, keyData.data() + sizeof(CacheDataHeader),
+               chunkSize);
         compressedSize += chunkSize;
     }
 
@@ -1134,9 +1223,26 @@ angle::Result GetAndDecompressPipelineCacheVk(VkPhysicalDeviceProperties physica
         uint16_t computedCompressedDataCRC = ComputeCRC16(compressedData.data(), compressedSize);
         if (computedCompressedDataCRC != compressedDataCRC)
         {
-            WARN() << "Expected CRC = " << compressedDataCRC
-                   << ", Actual CRC = " << computedCompressedDataCRC;
-            return angle::Result::Continue;
+            if (compressedDataCRC == 0)
+            {
+                // This could be due to the cache being populated before kEnableCRCForPipelineCache
+                // was enabled.
+                WARN() << "Expected CRC = " << compressedDataCRC
+                       << ", Actual CRC = " << computedCompressedDataCRC;
+                return angle::Result::Continue;
+            }
+
+            // If the expected CRC is non-zero and does not match the actual CRC from the data,
+            // there has been an unexpected data corruption.
+            ERR() << "Expected CRC = " << compressedDataCRC
+                  << ", Actual CRC = " << computedCompressedDataCRC;
+
+            ERR() << "Data extracted from the cache headers: " << std::hex
+                  << ", compressedDataCRC = 0x" << compressedDataCRC << "numChunks = 0x"
+                  << numChunks << ", uncompressedCacheDataSize = 0x" << uncompressedCacheDataSize;
+
+            FATAL() << "CRC check failed; possible pipeline cache data corruption.";
+            return angle::Result::Stop;
         }
     }
 
@@ -1308,17 +1414,7 @@ RendererVk::RendererVk()
     ASSERT(IsLittleEndian());
 }
 
-RendererVk::~RendererVk()
-{
-    mAllocator.release();
-    mPipelineCache.release();
-    ASSERT(!hasSharedGarbage());
-
-    if (mLibVulkanLibrary)
-    {
-        angle::CloseSystemLibrary(mLibVulkanLibrary);
-    }
-}
+RendererVk::~RendererVk() {}
 
 bool RendererVk::hasSharedGarbage()
 {
@@ -1392,6 +1488,14 @@ void RendererVk::onDestroy(vk::Context *context)
 
     mEnabledInstanceExtensions.clear();
     mEnabledDeviceExtensions.clear();
+
+    ASSERT(!hasSharedGarbage());
+
+    if (mLibVulkanLibrary)
+    {
+        angle::CloseSystemLibrary(mLibVulkanLibrary);
+        mLibVulkanLibrary = nullptr;
+    }
 }
 
 void RendererVk::notifyDeviceLost()
@@ -1508,6 +1612,15 @@ angle::Result RendererVk::enableInstanceExtensions(
             ExtensionFound(VK_KHR_EXTERNAL_SEMAPHORE_CAPABILITIES_EXTENSION_NAME,
                            instanceExtensionNames));
 
+    // On macOS, there is no native Vulkan driver, so we need to enable the
+    // portability enumeration extension to allow use of MoltenVK.
+    ANGLE_FEATURE_CONDITION(
+        &mFeatures, supportsPortabilityEnumeration,
+        ExtensionFound(VK_KHR_PORTABILITY_ENUMERATION_EXTENSION_NAME, instanceExtensionNames));
+
+    ANGLE_FEATURE_CONDITION(&mFeatures, enablePortabilityEnumeration,
+                            mFeatures.supportsPortabilityEnumeration.enabled && IsApple());
+
     // Enable extensions that could be used
     if (displayVk->isUsingSwapchain())
     {
@@ -1570,6 +1683,11 @@ angle::Result RendererVk::enableInstanceExtensions(
             mEnabledInstanceExtensions.push_back(
                 VK_KHR_EXTERNAL_SEMAPHORE_CAPABILITIES_EXTENSION_NAME);
         }
+    }
+
+    if (mFeatures.enablePortabilityEnumeration.enabled)
+    {
+        mEnabledInstanceExtensions.push_back(VK_KHR_PORTABILITY_ENUMERATION_EXTENSION_NAME);
     }
 
     // Verify the required extensions are in the extension names set. Fail if not.
@@ -1693,6 +1811,13 @@ angle::Result RendererVk::initialize(DisplayVk *displayVk,
 
     instanceInfo.enabledLayerCount   = static_cast<uint32_t>(enabledInstanceLayerNames.size());
     instanceInfo.ppEnabledLayerNames = enabledInstanceLayerNames.data();
+
+    // On macOS, there is no native Vulkan driver, so we need to enable the
+    // portability enumeration extension to allow use of MoltenVK.
+    if (mFeatures.enablePortabilityEnumeration.enabled)
+    {
+        instanceInfo.flags |= VK_INSTANCE_CREATE_ENUMERATE_PORTABILITY_BIT_KHR;
+    }
 
     // http://anglebug.com/7050 - Shader validation caching is broken on Android
     VkValidationFeaturesEXT validationFeatures       = {};
@@ -1967,6 +2092,7 @@ angle::Result RendererVk::initializeMemoryAllocator(DisplayVk *displayVk)
 //                                                     sampler2DViewOf3D (feature)
 // - VK_EXT_custom_border_color:                       customBorderColors (feature)
 //                                                     customBorderColorWithoutFormat (feature)
+// - VK_EXT_depth_clamp_zero_one:                      depthClampZeroOne (feature)
 // - VK_EXT_depth_clip_enable:                         depthClipEnable (feature)
 // - VK_EXT_depth_clip_control:                        depthClipControl (feature)
 // - VK_EXT_primitives_generated_query:                primitivesGeneratedQuery (feature),
@@ -1982,7 +2108,8 @@ angle::Result RendererVk::initializeMemoryAllocator(DisplayVk *displayVk)
 // - VK_EXT_rasterization_order_attachment_access or
 //   VK_ARM_rasterization_order_attachment_access:     rasterizationOrderColorAttachmentAccess
 //                                                                                   (feature)
-// - VK_EXT_swapchain_maintenance1                     swapchainMaintenance1 (feature)
+// - VK_EXT_swapchain_maintenance1:                    swapchainMaintenance1 (feature)
+// - VK_EXT_legacy_dithering:                          supportsLegacyDithering (feature)
 // - VK_EXT_physical_device_drm:                       hasPrimary (property),
 //                                                     hasRender (property)
 //
@@ -2041,6 +2168,11 @@ void RendererVk::appendDeviceExtensionFeaturesNotPromoted(
     if (ExtensionFound(VK_EXT_CUSTOM_BORDER_COLOR_EXTENSION_NAME, deviceExtensionNames))
     {
         vk::AddToPNextChain(deviceFeatures, &mCustomBorderColorFeatures);
+    }
+
+    if (ExtensionFound(VK_EXT_DEPTH_CLAMP_ZERO_ONE_EXTENSION_NAME, deviceExtensionNames))
+    {
+        vk::AddToPNextChain(deviceFeatures, &mDepthClampZeroOneFeatures);
     }
 
     if (ExtensionFound(VK_EXT_DEPTH_CLIP_ENABLE_EXTENSION_NAME, deviceExtensionNames))
@@ -2104,6 +2236,11 @@ void RendererVk::appendDeviceExtensionFeaturesNotPromoted(
     if (ExtensionFound(VK_EXT_SWAPCHAIN_MAINTENANCE_1_EXTENSION_NAME, deviceExtensionNames))
     {
         vk::AddToPNextChain(deviceFeatures, &mSwapchainMaintenance1Features);
+    }
+
+    if (ExtensionFound(VK_EXT_LEGACY_DITHERING_EXTENSION_NAME, deviceExtensionNames))
+    {
+        vk::AddToPNextChain(deviceFeatures, &mDitheringFeatures);
     }
 
     if (ExtensionFound(VK_EXT_PHYSICAL_DEVICE_DRM_EXTENSION_NAME, deviceExtensionNames))
@@ -2317,6 +2454,10 @@ void RendererVk::queryDeviceExtensionFeatures(const vk::ExtensionNameList &devic
     mHostQueryResetFeatures       = {};
     mHostQueryResetFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_HOST_QUERY_RESET_FEATURES_EXT;
 
+    mDepthClampZeroOneFeatures = {};
+    mDepthClampZeroOneFeatures.sType =
+        VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEPTH_CLAMP_ZERO_ONE_FEATURES_EXT;
+
     mDepthClipEnableFeatures = {};
     mDepthClipEnableFeatures.sType =
         VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEPTH_CLIP_ENABLE_FEATURES_EXT;
@@ -2381,6 +2522,9 @@ void RendererVk::queryDeviceExtensionFeatures(const vk::ExtensionNameList &devic
     mSwapchainMaintenance1Features.sType =
         VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SWAPCHAIN_MAINTENANCE_1_FEATURES_EXT;
 
+    mDitheringFeatures       = {};
+    mDitheringFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LEGACY_DITHERING_FEATURES_EXT;
+
     mDrmProperties       = {};
     mDrmProperties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DRM_PROPERTIES_EXT;
 
@@ -2432,6 +2576,7 @@ void RendererVk::queryDeviceExtensionFeatures(const vk::ExtensionNameList &devic
     mSamplerYcbcrConversionFeatures.pNext                   = nullptr;
     mProtectedMemoryFeatures.pNext                          = nullptr;
     mHostQueryResetFeatures.pNext                           = nullptr;
+    mDepthClampZeroOneFeatures.pNext                        = nullptr;
     mDepthClipEnableFeatures.pNext                          = nullptr;
     mDepthClipControlFeatures.pNext                         = nullptr;
     mPrimitivesGeneratedQueryFeatures.pNext                 = nullptr;
@@ -2448,6 +2593,7 @@ void RendererVk::queryDeviceExtensionFeatures(const vk::ExtensionNameList &devic
     mPipelineProtectedAccessFeatures.pNext                  = nullptr;
     mRasterizationOrderAttachmentAccessFeatures.pNext       = nullptr;
     mSwapchainMaintenance1Features.pNext                    = nullptr;
+    mDitheringFeatures.pNext                                = nullptr;
     mDrmProperties.pNext                                    = nullptr;
 }
 
@@ -2472,6 +2618,7 @@ void RendererVk::queryDeviceExtensionFeatures(const vk::ExtensionNameList &devic
 // - VK_EXT_external_memory_dma_buf
 // - VK_EXT_image_drm_format_modifier
 // - VK_EXT_blend_operation_advanced
+// - VK_EXT_full_screen_exclusive
 //
 void RendererVk::enableDeviceExtensionsNotPromoted(
     const vk::ExtensionNameList &deviceExtensionNames)
@@ -2481,9 +2628,10 @@ void RendererVk::enableDeviceExtensionsNotPromoted(
         mEnabledDeviceExtensions.push_back(VK_KHR_SHARED_PRESENTABLE_IMAGE_EXTENSION_NAME);
     }
 
-    if (mFeatures.depthClamping.enabled)
+    if (mFeatures.supportsDepthClampZeroOne.enabled)
     {
-        mEnabledDeviceExtensions.push_back(VK_EXT_DEPTH_CLIP_ENABLE_EXTENSION_NAME);
+        mEnabledDeviceExtensions.push_back(VK_EXT_DEPTH_CLAMP_ZERO_ONE_EXTENSION_NAME);
+        vk::AddToPNextChain(&mEnabledFeatures, &mDepthClampZeroOneFeatures);
     }
 
     if (mFeatures.supportsMemoryBudget.enabled)
@@ -2703,6 +2851,35 @@ void RendererVk::enableDeviceExtensionsNotPromoted(
         }
         vk::AddToPNextChain(&mEnabledFeatures, &mRasterizationOrderAttachmentAccessFeatures);
     }
+
+    if (mFeatures.supportsImage2dViewOf3d.enabled)
+    {
+        mEnabledDeviceExtensions.push_back(VK_EXT_IMAGE_2D_VIEW_OF_3D_EXTENSION_NAME);
+        vk::AddToPNextChain(&mEnabledFeatures, &mImage2dViewOf3dFeatures);
+    }
+
+    if (mFeatures.supportsSwapchainMaintenance1.enabled)
+    {
+        mEnabledDeviceExtensions.push_back(VK_EXT_SWAPCHAIN_MAINTENANCE_1_EXTENSION_NAME);
+        vk::AddToPNextChain(&mEnabledFeatures, &mSwapchainMaintenance1Features);
+    }
+
+    if (mFeatures.supportsLegacyDithering.enabled)
+    {
+        mEnabledDeviceExtensions.push_back(VK_EXT_LEGACY_DITHERING_EXTENSION_NAME);
+        vk::AddToPNextChain(&mEnabledFeatures, &mDitheringFeatures);
+    }
+
+#if defined(ANGLE_PLATFORM_WINDOWS)
+    // We only need the VK_EXT_full_screen_exclusive extension if we are opting
+    // out of it via VK_FULL_SCREEN_EXCLUSIVE_DISALLOWED_EXT (i.e. working
+    // around driver bugs).
+    if (getFeatures().supportsFullScreenExclusive.enabled &&
+        getFeatures().forceDisableFullScreenExclusive.enabled)
+    {
+        mEnabledDeviceExtensions.push_back(VK_EXT_FULL_SCREEN_EXCLUSIVE_EXTENSION_NAME);
+    }
+#endif
 }
 
 // See comment above appendDeviceExtensionFeaturesPromotedTo11.  Additional extensions are enabled
@@ -3016,7 +3193,7 @@ void RendererVk::initDeviceExtensionEntryPoints()
     {
         InitTransformFeedbackEXTFunctions(mDevice);
     }
-    if (mFeatures.supportsLogicOpDynamicState.enabled)
+    if (useLogicOpDynamicState())
     {
         // VK_EXT_extended_dynamic_state2 is only partially core in Vulkan 1.3.  If the logicOp
         // dynamic state (only from the extension) is used, need to load the entry points from the
@@ -3108,6 +3285,8 @@ angle::Result RendererVk::initializeDevice(DisplayVk *displayVk, uint32_t queueF
     mEnabledFeatures.features.independentBlend = mPhysicalDeviceFeatures.independentBlend;
     // Used to support multi_draw_indirect
     mEnabledFeatures.features.multiDrawIndirect = mPhysicalDeviceFeatures.multiDrawIndirect;
+    mEnabledFeatures.features.drawIndirectFirstInstance =
+        mPhysicalDeviceFeatures.drawIndirectFirstInstance;
     // Used to support robust buffer access, if VK_EXT_pipeline_robustness is not supported.
     if (!mFeatures.supportsPipelineRobustness.enabled)
     {
@@ -3141,10 +3320,12 @@ angle::Result RendererVk::initializeDevice(DisplayVk *displayVk, uint32_t queueF
     mEnabledFeatures.features.shaderClipDistance = mPhysicalDeviceFeatures.shaderClipDistance;
     // Used to support OES_sample_shading
     mEnabledFeatures.features.sampleRateShading = mPhysicalDeviceFeatures.sampleRateShading;
-    // Used to support depth clears through draw calls.
+    // Used to support EXT_depth_clamp and depth clears through draw calls
     mEnabledFeatures.features.depthClamp = mPhysicalDeviceFeatures.depthClamp;
     // Used to support EXT_polygon_offset_clamp
     mEnabledFeatures.features.depthBiasClamp = mPhysicalDeviceFeatures.depthBiasClamp;
+    // Used to support NV_polygon_mode / ANGLE_polygon_mode
+    mEnabledFeatures.features.fillModeNonSolid = mPhysicalDeviceFeatures.fillModeNonSolid;
     // Used to support EXT_clip_cull_distance
     mEnabledFeatures.features.shaderCullDistance = mPhysicalDeviceFeatures.shaderCullDistance;
     // Used to support tessellation Shader:
@@ -3249,11 +3430,14 @@ angle::Result RendererVk::initializeDevice(DisplayVk *displayVk, uint32_t queueF
         mDefaultUniformBufferSize, getPhysicalDeviceProperties().limits.maxUniformBufferRange);
 
     // Initialize the vulkan pipeline cache.
-    bool success = false;
     {
         std::unique_lock<std::mutex> lock(mPipelineCacheMutex);
-        ANGLE_TRY(initPipelineCache(displayVk, &mPipelineCache, &success));
-        ANGLE_TRY(getPipelineCacheSize(displayVk, &mPipelineCacheSizeAtLastSync));
+        bool loadedFromBlobCache = false;
+        ANGLE_TRY(initPipelineCache(displayVk, &mPipelineCache, &loadedFromBlobCache));
+        if (loadedFromBlobCache)
+        {
+            ANGLE_TRY(getPipelineCacheSize(displayVk, &mPipelineCacheSizeAtLastSync));
+        }
     }
 
     // Track the set of supported pipeline stages.  This is used when issuing image layout
@@ -3671,6 +3855,7 @@ void RendererVk::initFeatures(DisplayVk *displayVk,
     constexpr uint32_t kPixel4DriverWithWorkingSpecConstSupport = 0x80201000;
 
     const bool isAMD      = IsAMD(mPhysicalDeviceProperties.vendorID);
+    const bool isApple    = IsAppleGPU(mPhysicalDeviceProperties.vendorID);
     const bool isARM      = IsARM(mPhysicalDeviceProperties.vendorID);
     const bool isIntel    = IsIntel(mPhysicalDeviceProperties.vendorID);
     const bool isNvidia   = IsNvidia(mPhysicalDeviceProperties.vendorID);
@@ -3683,6 +3868,9 @@ void RendererVk::initFeatures(DisplayVk *displayVk,
 
     // MESA Virtio-GPU Venus driver: https://docs.mesa3d.org/drivers/venus.html
     const bool isVenus = IsVenus(mDriverProperties.driverID, mPhysicalDeviceProperties.deviceName);
+
+    const bool isGalaxyS23 =
+        IsGalaxyS23(mPhysicalDeviceProperties.vendorID, mPhysicalDeviceProperties.deviceID);
 
     // Distinguish between the open source and proprietary Qualcomm drivers
     const bool isQualcommOpenSource =
@@ -3717,7 +3905,7 @@ void RendererVk::initFeatures(DisplayVk *displayVk,
     // deteriorating performance on the other.  ANGLE will accordingly make some decisions based on
     // the device architecture for optimal performance on both.
     const bool isImmediateModeRenderer = isNvidia || isAMD || isIntel || isSamsung || isSwiftShader;
-    const bool isTileBasedRenderer     = isARM || isPowerVR || isQualcomm || isBroadcom;
+    const bool isTileBasedRenderer     = isARM || isPowerVR || isQualcomm || isBroadcom || isApple;
 
     // Make sure all known architectures are accounted for.
     if (!isImmediateModeRenderer && !isTileBasedRenderer && !isMockICDEnabled())
@@ -3729,7 +3917,7 @@ void RendererVk::initFeatures(DisplayVk *displayVk,
         isVulkan11Device() ||
         ExtensionFound(VK_KHR_MAINTENANCE1_EXTENSION_NAME, deviceExtensionNames);
 
-    ANGLE_FEATURE_CONDITION(&mFeatures, appendAliasedMemoryDecorationsToSsbo, true);
+    ANGLE_FEATURE_CONDITION(&mFeatures, appendAliasedMemoryDecorations, true);
 
     ANGLE_FEATURE_CONDITION(
         &mFeatures, supportsSharedPresentableImageExtension,
@@ -3797,14 +3985,12 @@ void RendererVk::initFeatures(DisplayVk *displayVk,
     ANGLE_FEATURE_CONDITION(&mFeatures, supportsDepthClipEnable,
                             mDepthClipEnableFeatures.depthClipEnable == VK_TRUE);
 
-    // http://anglebug.com/3970#c25.
-    // The workaround requires the VK_EXT_depth_clip_enable extension and the 'depthClamp' physical
-    // device feature. This workaround caused test failures on Quadro P400/driver 418.56/Linux.
-    // Therefore, on Linux we require a major version > 418.
-    ANGLE_FEATURE_CONDITION(&mFeatures, depthClamping,
-                            isNvidia && mPhysicalDeviceFeatures.depthClamp &&
-                                mFeatures.supportsDepthClipEnable.enabled &&
-                                (!IsLinux() || nvidiaVersion.major > 418u));
+    // Vulkan implementations are not required to clamp gl_FragDepth to [0, 1] by default.
+    ANGLE_FEATURE_CONDITION(&mFeatures, supportsDepthClampZeroOne,
+                            mDepthClampZeroOneFeatures.depthClampZeroOne == VK_TRUE);
+
+    ANGLE_FEATURE_CONDITION(&mFeatures, clampFragDepth,
+                            isNvidia && !mFeatures.supportsDepthClampZeroOne.enabled);
 
     ANGLE_FEATURE_CONDITION(
         &mFeatures, supportsRenderpass2,
@@ -3832,6 +4018,22 @@ void RendererVk::initFeatures(DisplayVk *displayVk,
     ANGLE_FEATURE_CONDITION(
         &mFeatures, supportsExternalMemoryFd,
         ExtensionFound(VK_KHR_EXTERNAL_MEMORY_FD_EXTENSION_NAME, deviceExtensionNames));
+
+#if defined(ANGLE_PLATFORM_WINDOWS)
+    ANGLE_FEATURE_CONDITION(
+        &mFeatures, supportsFullScreenExclusive,
+        ExtensionFound(VK_EXT_FULL_SCREEN_EXCLUSIVE_EXTENSION_NAME, deviceExtensionNames));
+
+    // On Windows+AMD, drivers before version 0x800106 (2.0.262) would
+    // implicitly enable VK_EXT_full_screen_exclusive and start returning
+    // extension-specific error codes in swapchain functions. Since the
+    // extension was not enabled by ANGLE, it was impossible to handle these
+    // error codes correctly. On these earlier drivers, we want to explicitly
+    // enable the extension and opt out of it to avoid seeing those error codes
+    // entirely.
+    ANGLE_FEATURE_CONDITION(&mFeatures, forceDisableFullScreenExclusive,
+                            isAMD && mPhysicalDeviceProperties.driverVersion < 0x800106);
+#endif
 
     ANGLE_FEATURE_CONDITION(
         &mFeatures, supportsExternalMemoryFuchsia,
@@ -3950,7 +4152,14 @@ void RendererVk::initFeatures(DisplayVk *displayVk,
                 VK_TRUE);
 
     ANGLE_FEATURE_CONDITION(&mFeatures, supportsImage2dViewOf3d,
-                            mImage2dViewOf3dFeatures.image2DViewOf3D == VK_TRUE &&
+                            mImage2dViewOf3dFeatures.image2DViewOf3D == VK_TRUE);
+
+    // Note: sampler2DViewOf3D is only useful for supporting EGL_KHR_gl_texture_3D_image.  If the
+    // VK_IMAGE_CREATE_2D_VIEW_COMPATIBLE_BIT_EXT added to 3D images measurable hurts sampling
+    // performance, it might be better to remove support for EGL_KHR_gl_texture_3D_image in favor of
+    // faster 3D images.
+    ANGLE_FEATURE_CONDITION(&mFeatures, supportsSampler2dViewOf3d,
+                            mFeatures.supportsImage2dViewOf3d.enabled &&
                                 mImage2dViewOf3dFeatures.sampler2DViewOf3D == VK_TRUE);
 
     ANGLE_FEATURE_CONDITION(&mFeatures, supportsMultiview, mMultiviewFeatures.multiview == VK_TRUE);
@@ -4203,6 +4412,10 @@ void RendererVk::initFeatures(DisplayVk *displayVk,
     ANGLE_FEATURE_CONDITION(&mFeatures, supportsSwapchainMaintenance1,
                             mSwapchainMaintenance1Features.swapchainMaintenance1 == VK_TRUE);
 
+    // The VK_EXT_legacy_dithering extension enables dithering support without emulation
+    ANGLE_FEATURE_CONDITION(&mFeatures, supportsLegacyDithering,
+                            mDitheringFeatures.legacyDithering == VK_TRUE);
+
     // http://anglebug.com/6872
     // On ARM hardware, framebuffer-fetch-like behavior on Vulkan is already coherent, so we can
     // expose the coherent version of the GL extension despite unofficial Vulkan support.
@@ -4271,28 +4484,58 @@ void RendererVk::initFeatures(DisplayVk *displayVk,
         &mFeatures, preferDeviceLocalMemoryHostVisible,
         canPreferDeviceLocalMemoryHostVisible(mPhysicalDeviceProperties.deviceType));
 
-    ANGLE_FEATURE_CONDITION(&mFeatures, supportsExtendedDynamicState,
-                            mExtendedDynamicStateFeatures.extendedDynamicState == VK_TRUE);
+    // http://issuetracker.google.com/287318431
+    // There are multiple issues with dynamic states, disabling on ARM driver temporarily
+    ANGLE_FEATURE_CONDITION(
+        &mFeatures, supportsExtendedDynamicState,
+        mExtendedDynamicStateFeatures.extendedDynamicState == VK_TRUE && !isARM);
 
-    ANGLE_FEATURE_CONDITION(&mFeatures, supportsExtendedDynamicState2,
-                            mExtendedDynamicState2Features.extendedDynamicState2 == VK_TRUE);
+    // By default, use all state from VK_EXT_extended_dynamic_state, unless they hit driver bugs.
+    ANGLE_FEATURE_CONDITION(&mFeatures, useVertexInputBindingStrideDynamicState,
+                            mFeatures.supportsExtendedDynamicState.enabled && !isARM);
+    // http://issuetracker.google.com/285196249
+    // Dynamic cull mode not working on some ARM drivers
+    ANGLE_FEATURE_CONDITION(&mFeatures, useCullModeDynamicState,
+                            mFeatures.supportsExtendedDynamicState.enabled && !isARM);
+    ANGLE_FEATURE_CONDITION(&mFeatures, useDepthCompareOpDynamicState,
+                            mFeatures.supportsExtendedDynamicState.enabled);
+    ANGLE_FEATURE_CONDITION(&mFeatures, useDepthTestEnableDynamicState,
+                            mFeatures.supportsExtendedDynamicState.enabled);
+    // http://issuetracker.google.com/286224923
+    // Dynamic depth write not working on some ARM drivers
+    ANGLE_FEATURE_CONDITION(&mFeatures, useDepthWriteEnableDynamicState,
+                            mFeatures.supportsExtendedDynamicState.enabled && !isARM);
+    ANGLE_FEATURE_CONDITION(&mFeatures, useFrontFaceDynamicState,
+                            mFeatures.supportsExtendedDynamicState.enabled);
+    ANGLE_FEATURE_CONDITION(&mFeatures, useStencilOpDynamicState,
+                            mFeatures.supportsExtendedDynamicState.enabled);
+    ANGLE_FEATURE_CONDITION(&mFeatures, useStencilTestEnableDynamicState,
+                            mFeatures.supportsExtendedDynamicState.enabled);
+
+    // http://issuetracker.google.com/287318431
+    // There are multiple issues with dynamic states, disabling on ARM driver temporarily
+    ANGLE_FEATURE_CONDITION(
+        &mFeatures, supportsExtendedDynamicState2,
+        mExtendedDynamicState2Features.extendedDynamicState2 == VK_TRUE && !isARM);
+
+    // By default, use all state from VK_EXT_extended_dynamic_state, unless they hit driver bugs.
+    ANGLE_FEATURE_CONDITION(&mFeatures, usePrimitiveRestartEnableDynamicState,
+                            mFeatures.supportsExtendedDynamicState2.enabled && !isARM);
+    ANGLE_FEATURE_CONDITION(&mFeatures, useRasterizerDiscardEnableDynamicState,
+                            mFeatures.supportsExtendedDynamicState2.enabled);
+    ANGLE_FEATURE_CONDITION(&mFeatures, useDepthBiasEnableDynamicState,
+                            mFeatures.supportsExtendedDynamicState2.enabled);
 
     // Disabled on Intel/Mesa due to driver bug (crbug.com/1379201).  This bug is fixed since Mesa
     // 22.2.0.
-    const bool isAtLeastMesa22_2 =
-        mesaVersion.major >= 22 || (mesaVersion.major == 22 && mesaVersion.minor >= 2);
+    const bool isMesaLessThan22_2 =
+        mesaVersion.major < 22 || (mesaVersion.major == 22 && mesaVersion.minor < 2);
+
     ANGLE_FEATURE_CONDITION(
         &mFeatures, supportsLogicOpDynamicState,
-        mExtendedDynamicState2Features.extendedDynamicState2LogicOp == VK_TRUE &&
-            (!(IsLinux() && isIntel) || isAtLeastMesa22_2));
-
-    // Avoid dynamic state for vertex input binding stride on buggy drivers.
-    ANGLE_FEATURE_CONDITION(&mFeatures, forceStaticVertexStrideState,
-                            mFeatures.supportsExtendedDynamicState.enabled && isARM);
-
-    // Avoid dynamic state for primitive restart on buggy drivers.
-    ANGLE_FEATURE_CONDITION(&mFeatures, forceStaticPrimitiveRestartState,
-                            mFeatures.supportsExtendedDynamicState2.enabled && isARM);
+        mFeatures.supportsExtendedDynamicState2.enabled &&
+            mExtendedDynamicState2Features.extendedDynamicState2LogicOp == VK_TRUE &&
+            !(IsLinux() && isIntel && isMesaLessThan22_2) && !(IsAndroid() && isGalaxyS23));
 
     // Support GL_QCOM_shading_rate extension
     ANGLE_FEATURE_CONDITION(&mFeatures, supportsFragmentShadingRate,
@@ -4319,8 +4562,12 @@ void RendererVk::initFeatures(DisplayVk *displayVk,
                             mPipelineProtectedAccessFeatures.pipelineProtectedAccess == VK_TRUE &&
                                 mProtectedMemoryFeatures.protectedMemory == VK_TRUE);
 
+    // VK_EXT_graphics_pipeline_library is available on NVIDIA drivers earlier
+    // than version 531, but there are transient visual glitches with rendering
+    // on those earlier versions.
     ANGLE_FEATURE_CONDITION(&mFeatures, supportsGraphicsPipelineLibrary,
-                            mGraphicsPipelineLibraryFeatures.graphicsPipelineLibrary == VK_TRUE);
+                            mGraphicsPipelineLibraryFeatures.graphicsPipelineLibrary == VK_TRUE &&
+                                (!isNvidia || nvidiaVersion.major >= 531));
 
     // The following drivers are known to key the pipeline cache blobs with vertex input and
     // fragment output state, causing draw-time pipeline creation to miss the cache regardless of
@@ -4372,7 +4619,7 @@ void RendererVk::initFeatures(DisplayVk *displayVk,
                                 (mFeatures.preferMonolithicPipelinesOverLibraries.enabled &&
                                  libraryBlobsAreReusedByMonolithicPipelines));
 
-    ANGLE_FEATURE_CONDITION(&mFeatures, enableAsyncPipelineCacheCompression, isVenus);
+    ANGLE_FEATURE_CONDITION(&mFeatures, enableAsyncPipelineCacheCompression, true);
 
     // Sync monolithic pipelines to the blob cache occasionally on platforms that would benefit from
     // it:
@@ -4398,7 +4645,7 @@ void RendererVk::initFeatures(DisplayVk *displayVk,
     // discard or alpha to coverage, if the static state provided when creating the pipeline has a
     // value of 0.
     ANGLE_FEATURE_CONDITION(&mFeatures, useNonZeroStencilWriteMaskStaticState,
-                            isARM && armDriverVersion < ARMDriverVersion(40, 0, 0));
+                            isARM && armDriverVersion < ARMDriverVersion(43, 0, 0));
 
     // On ARM, per-sample shading is not enabled despite the presence of a Sample decoration.  As a
     // workaround, per-sample shading is inferred by ANGLE and explicitly enabled by the API.
@@ -4487,6 +4734,8 @@ void RendererVk::initFeatures(DisplayVk *displayVk,
     // in virtualized environment. https://issuetracker.google.com/246218584
     ANGLE_FEATURE_CONDITION(&mFeatures, mapUnspecifiedColorSpaceToPassThrough, isVenus);
 
+    ANGLE_FEATURE_CONDITION(&mFeatures, enablePipelineCacheDataCompression, true);
+
     ApplyFeatureOverrides(&mFeatures, displayVk->getState());
 
     // Disable memory report feature overrides if extension is not supported.
@@ -4551,17 +4800,18 @@ angle::Result RendererVk::getPipelineCache(vk::PipelineCacheAccess *pipelineCach
     {
         // We should now recreate the pipeline cache with the blob cache pipeline data.
         vk::PipelineCache pCache;
-        bool success = false;
-        ANGLE_TRY(initPipelineCache(displayVk, &pCache, &success));
-        if (success)
+        bool loadedFromBlobCache = false;
+        ANGLE_TRY(initPipelineCache(displayVk, &pCache, &loadedFromBlobCache));
+        if (loadedFromBlobCache)
         {
             // Merge the newly created pipeline cache into the existing one.
             mPipelineCache.merge(mDevice, 1, pCache.ptr());
+
+            ANGLE_TRY(getPipelineCacheSize(displayVk, &mPipelineCacheSizeAtLastSync));
         }
+
         mPipelineCacheInitialized = true;
         pCache.destroy(mDevice);
-
-        ANGLE_TRY(getPipelineCacheSize(displayVk, &mPipelineCacheSizeAtLastSync));
     }
 
     pipelineCacheOut->init(&mPipelineCache, &mPipelineCacheMutex);
@@ -4785,7 +5035,6 @@ angle::Result RendererVk::queueSubmitOneOff(vk::Context *context,
                                             egl::ContextPriority priority,
                                             VkSemaphore waitSemaphore,
                                             VkPipelineStageFlags waitSemaphoreStageMasks,
-                                            const vk::Fence *fence,
                                             vk::SubmitPolicy submitPolicy,
                                             QueueSerial *queueSerialOut)
 {
@@ -4796,20 +5045,17 @@ angle::Result RendererVk::queueSubmitOneOff(vk::Context *context,
     ANGLE_TRY(allocateScopedQueueSerialIndex(&index));
     QueueSerial submitQueueSerial(index.get(), generateQueueSerial(index.get()));
 
-    ASSERT(fence == nullptr || fence->valid());
-    const VkFence vkFence = fence ? fence->getHandle() : VK_NULL_HANDLE;
-
     if (isAsyncCommandQueueEnabled())
     {
         ANGLE_TRY(mCommandProcessor.enqueueSubmitOneOffCommands(
             context, protectionType, priority, primary.getHandle(), waitSemaphore,
-            waitSemaphoreStageMasks, vkFence, submitPolicy, submitQueueSerial));
+            waitSemaphoreStageMasks, submitPolicy, submitQueueSerial));
     }
     else
     {
         ANGLE_TRY(mCommandQueue.queueSubmitOneOff(
             context, protectionType, priority, primary.getHandle(), waitSemaphore,
-            waitSemaphoreStageMasks, vkFence, submitPolicy, submitQueueSerial));
+            waitSemaphoreStageMasks, submitPolicy, submitQueueSerial));
     }
 
     *queueSerialOut = submitQueueSerial;
@@ -4834,15 +5080,15 @@ angle::Result RendererVk::queueSubmitWaitSemaphore(vk::Context *context,
     {
         ANGLE_TRY(mCommandProcessor.enqueueSubmitOneOffCommands(
             context, vk::ProtectionType::Unprotected, priority, VK_NULL_HANDLE,
-            waitSemaphore.getHandle(), waitSemaphoreStageMasks, VK_NULL_HANDLE,
-            vk::SubmitPolicy::AllowDeferred, submitQueueSerial));
+            waitSemaphore.getHandle(), waitSemaphoreStageMasks, vk::SubmitPolicy::AllowDeferred,
+            submitQueueSerial));
     }
     else
     {
         ANGLE_TRY(mCommandQueue.queueSubmitOneOff(
             context, vk::ProtectionType::Unprotected, priority, VK_NULL_HANDLE,
-            waitSemaphore.getHandle(), waitSemaphoreStageMasks, VK_NULL_HANDLE,
-            vk::SubmitPolicy::AllowDeferred, submitQueueSerial));
+            waitSemaphore.getHandle(), waitSemaphoreStageMasks, vk::SubmitPolicy::AllowDeferred,
+            submitQueueSerial));
     }
 
     return angle::Result::Continue;
@@ -5150,21 +5396,30 @@ angle::Result RendererVk::submitCommands(vk::Context *context,
                                          vk::ProtectionType protectionType,
                                          egl::ContextPriority contextPriority,
                                          const vk::Semaphore *signalSemaphore,
+                                         const vk::SharedExternalFence *externalFence,
                                          const QueueSerial &submitQueueSerial)
 {
     ASSERT(signalSemaphore == nullptr || signalSemaphore->valid());
     const VkSemaphore signalVkSemaphore =
         signalSemaphore ? signalSemaphore->getHandle() : VK_NULL_HANDLE;
 
+    vk::SharedExternalFence externalFenceCopy;
+    if (externalFence != nullptr)
+    {
+        externalFenceCopy = *externalFence;
+    }
+
     if (isAsyncCommandQueueEnabled())
     {
-        ANGLE_TRY(mCommandProcessor.enqueueSubmitCommands(context, protectionType, contextPriority,
-                                                          signalVkSemaphore, submitQueueSerial));
+        ANGLE_TRY(mCommandProcessor.enqueueSubmitCommands(
+            context, protectionType, contextPriority, signalVkSemaphore,
+            std::move(externalFenceCopy), submitQueueSerial));
     }
     else
     {
         ANGLE_TRY(mCommandQueue.submitCommands(context, protectionType, contextPriority,
-                                               signalVkSemaphore, submitQueueSerial));
+                                               signalVkSemaphore, std::move(externalFenceCopy),
+                                               submitQueueSerial));
     }
 
     ANGLE_TRY(mCommandQueue.postSubmitCheck(context));
@@ -5201,7 +5456,7 @@ angle::Result RendererVk::submitPriorityDependency(vk::Context *context,
             signalSemaphore = &semaphore.get().get();
         }
         ANGLE_TRY(submitCommands(context, protectionType, srcContextPriority, signalSemaphore,
-                                 queueSerial));
+                                 nullptr, queueSerial));
     }
 
     // Submit only Wait Semaphore into the destination Priority (VkQueue).
@@ -5507,6 +5762,13 @@ void RendererVk::releaseQueueSerialIndex(SerialIndex index)
     mQueueSerialIndexAllocator.release(index);
 }
 
+angle::Result RendererVk::finishOneCommandBatchAndCleanup(vk::Context *context,
+                                                          bool *anyBatchCleaned)
+{
+    return mCommandQueue.finishOneCommandBatchAndCleanup(context, getMaxFenceWaitTimeNs(),
+                                                         anyBatchCleaned);
+}
+
 // static
 const char *RendererVk::GetVulkanObjectTypeName(VkObjectType type)
 {
@@ -5520,8 +5782,9 @@ ImageMemorySuballocator::~ImageMemorySuballocator() {}
 
 void ImageMemorySuballocator::destroy(RendererVk *renderer) {}
 
-VkResult ImageMemorySuballocator::allocateAndBindMemory(RendererVk *renderer,
+VkResult ImageMemorySuballocator::allocateAndBindMemory(Context *context,
                                                         Image *image,
+                                                        const VkImageCreateInfo *imageCreateInfo,
                                                         VkMemoryPropertyFlags requiredFlags,
                                                         VkMemoryPropertyFlags preferredFlags,
                                                         MemoryAllocationType memoryAllocationType,
@@ -5532,6 +5795,7 @@ VkResult ImageMemorySuballocator::allocateAndBindMemory(RendererVk *renderer,
 {
     ASSERT(image && image->valid());
     ASSERT(allocationOut && !allocationOut->valid());
+    RendererVk *renderer       = context->getRenderer();
     const Allocator &allocator = renderer->getAllocator();
 
     VkMemoryRequirements memoryRequirements;
@@ -5539,18 +5803,85 @@ VkResult ImageMemorySuballocator::allocateAndBindMemory(RendererVk *renderer,
     bool allocateDedicatedMemory =
         memoryRequirements.size >= kImageSizeThresholdForDedicatedMemoryAllocation;
 
-    // Allocate and bind memory for the image.
-    VkResult result = vma::AllocateAndBindMemoryForImage(
-        allocator.getHandle(), &image->mHandle, requiredFlags, preferredFlags,
-        allocateDedicatedMemory, &allocationOut->mHandle, memoryTypeIndexOut, sizeOut);
+    // Allocate and bind memory for the image. Try allocating on the device first. If unsuccessful,
+    // it is possible to retry allocation after cleaning the garbage.
+    VkResult result;
+    bool anyBatchCleaned             = false;
+    uint32_t batchesWaitedAndCleaned = 0;
+
+    do
+    {
+        result = vma::AllocateAndBindMemoryForImage(
+            allocator.getHandle(), &image->mHandle, requiredFlags, preferredFlags,
+            allocateDedicatedMemory, &allocationOut->mHandle, memoryTypeIndexOut, sizeOut);
+
+        if (result != VK_SUCCESS)
+        {
+            // If there is an error in command batch finish, a device OOM error will be returned.
+            if (renderer->finishOneCommandBatchAndCleanup(context, &anyBatchCleaned) ==
+                angle::Result::Stop)
+            {
+                return VK_ERROR_OUT_OF_DEVICE_MEMORY;
+            }
+
+            if (anyBatchCleaned)
+            {
+                batchesWaitedAndCleaned++;
+            }
+        }
+    } while (result != VK_SUCCESS && anyBatchCleaned);
+
+    if (batchesWaitedAndCleaned > 0)
+    {
+        INFO() << "Initial allocation failed. Waited for " << batchesWaitedAndCleaned
+               << " commands to finish and free garbage | Allocation result: "
+               << ((result == VK_SUCCESS) ? "SUCCESS" : "FAIL");
+    }
+
+    // If there is still no space for the new allocation, the allocation may still be made outside
+    // the device, although it will result in performance penalty.
     if (result != VK_SUCCESS)
     {
+        requiredFlags &= (~VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+        result = vma::AllocateAndBindMemoryForImage(
+            allocator.getHandle(), &image->mHandle, requiredFlags, preferredFlags,
+            allocateDedicatedMemory, &allocationOut->mHandle, memoryTypeIndexOut, sizeOut);
+
+        INFO()
+            << "Allocation failed. Removed the DEVICE_LOCAL bit requirement | Allocation result: "
+            << ((result == VK_SUCCESS) ? "SUCCESS" : "FAIL");
+    }
+
+    // At the end, if all available options fail, we should return the appropriate out-of-memory
+    // error.
+    if (result != VK_SUCCESS)
+    {
+        // Record the failed memory allocation.
+        uint32_t pendingMemoryTypeIndex;
+        if (vma::FindMemoryTypeIndexForImageInfo(
+                allocator.getHandle(), imageCreateInfo, requiredFlags, preferredFlags,
+                allocateDedicatedMemory, &pendingMemoryTypeIndex) == VK_SUCCESS)
+        {
+            renderer->getMemoryAllocationTracker()->setPendingMemoryAlloc(
+                memoryAllocationType, memoryRequirements.size, pendingMemoryTypeIndex);
+        }
+
         return result;
     }
 
     // We need to get the property flags of the allocated memory.
     *memoryFlagsOut =
         renderer->getMemoryProperties().getMemoryType(*memoryTypeIndexOut).propertyFlags;
+    if ((~(*memoryFlagsOut) & preferredFlags & VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT) != 0)
+    {
+        // For images allocated here, although allocation is preferred on the device, it is not
+        // required.
+        ASSERT((requiredFlags & VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT) == 0);
+        renderer->getMemoryAllocationTracker()->compareExpectedFlagsWithAllocatedFlags(
+            requiredFlags, preferredFlags, *memoryFlagsOut,
+            reinterpret_cast<void *>(allocationOut->getHandle()));
+        context->getPerfCounters().deviceMemoryImageAllocationFallbacks++;
+    }
 
     renderer->onMemoryAlloc(memoryAllocationType, *sizeOut, *memoryTypeIndexOut,
                             allocationOut->getHandle());

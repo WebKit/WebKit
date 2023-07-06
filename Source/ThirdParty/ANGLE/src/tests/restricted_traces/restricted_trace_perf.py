@@ -187,8 +187,6 @@ def get_trace_width(mode):
 
 def run_trace(trace, args):
     mode = get_mode(args)
-    if mode != '':
-        mode = '_' + mode
 
     # Kick off a subprocess that collects peak gpu memory periodically
     # Note the 0.25 below is the delay (in seconds) between memory checks
@@ -200,6 +198,8 @@ def run_trace(trace, args):
     adb_command += '-e org.chromium.native_test.NativeTestInstrumentationTestRunner.StdoutFile /sdcard/Download/out.txt '
     adb_command += '-e org.chromium.native_test.NativeTest.CommandLineFlags "--gtest_filter=TraceTest.' + trace + '\ '
     adb_command += '--use-gl=native\ '
+    if mode != '':
+        adb_command += '--{}\ '.format(mode)
     if args.maxsteps != '':
         adb_command += '--max-steps-performed\ ' + args.maxsteps + '\ '
     if args.fixedtime != '':

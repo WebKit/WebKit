@@ -18,7 +18,7 @@
 #include "libANGLE/renderer/ProgramImpl.h"
 #include "libANGLE/renderer/d3d/DynamicHLSL.h"
 #include "libANGLE/renderer/d3d/RendererD3D.h"
-#include "platform/FeaturesD3D_autogen.h"
+#include "platform/autogen/FeaturesD3D_autogen.h"
 
 namespace rx
 {

@@ -1508,17 +1508,19 @@ struct ANGLE_TextureEnv
 
 PROGRAM_PRELUDE_DECLARE(functionConstants,
                         R"(
-#define ANGLE_SAMPLE_COMPARE_GRADIENT_INDEX 0
-#define ANGLE_SAMPLE_COMPARE_LOD_INDEX      1
-#define ANGLE_RASTERIZATION_DISCARD_INDEX   2
-#define ANGLE_MULTISAMPLED_RENDERING_INDEX  3
-#define ANGLE_DEPTH_WRITE_ENABLED_INDEX     4
+#define ANGLE_SAMPLE_COMPARE_GRADIENT_INDEX   0
+#define ANGLE_SAMPLE_COMPARE_LOD_INDEX        1
+#define ANGLE_RASTERIZATION_DISCARD_INDEX     2
+#define ANGLE_MULTISAMPLED_RENDERING_INDEX    3
+#define ANGLE_DEPTH_WRITE_ENABLED_INDEX       4
+#define ANGLE_EMULATE_ALPHA_TO_COVERAGE_INDEX 5
 
 constant bool ANGLEUseSampleCompareGradient [[function_constant(ANGLE_SAMPLE_COMPARE_GRADIENT_INDEX)]];
 constant bool ANGLEUseSampleCompareLod      [[function_constant(ANGLE_SAMPLE_COMPARE_LOD_INDEX)]];
 constant bool ANGLERasterizerDisabled       [[function_constant(ANGLE_RASTERIZATION_DISCARD_INDEX)]];
 constant bool ANGLEMultisampledRendering    [[function_constant(ANGLE_MULTISAMPLED_RENDERING_INDEX)]];
 constant bool ANGLEDepthWriteEnabled        [[function_constant(ANGLE_DEPTH_WRITE_ENABLED_INDEX)]];
+constant bool ANGLEEmulateAlphaToCoverage   [[function_constant(ANGLE_EMULATE_ALPHA_TO_COVERAGE_INDEX)]];
 
 #define ANGLE_ALPHA0
 )")
@@ -4066,7 +4068,8 @@ void ProgramPrelude::visitVariable(const Name &name, const TType &type)
     else
     {
         if (name.rawName() == sh::mtl::kRasterizerDiscardEnabledConstName ||
-            name.rawName() == sh::mtl::kDepthWriteEnabledConstName)
+            name.rawName() == sh::mtl::kDepthWriteEnabledConstName ||
+            name.rawName() == sh::mtl::kEmulateAlphaToCoverageConstName)
         {
             functionConstants();
         }

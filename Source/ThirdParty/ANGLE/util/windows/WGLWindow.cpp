@@ -432,6 +432,11 @@ EGLint WGLWindow::getEGLError()
     return EGL_SUCCESS;
 }
 
+WGLWindow::Display WGLWindow::getCurrentDisplay()
+{
+    return nullptr;
+}
+
 WGLWindow::Surface WGLWindow::createPbufferSurface(const EGLint *attrib_list)
 {
     std::cerr << "WGLWindow::createPbufferSurface not implemented.\n";

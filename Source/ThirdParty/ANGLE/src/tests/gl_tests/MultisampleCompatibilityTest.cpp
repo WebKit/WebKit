@@ -173,7 +173,7 @@ TEST_P(EXTMultisampleCompatibilityTest, DrawAndResolve)
         return;
 
     // http://anglebug.com/5270
-    ANGLE_SKIP_TEST_IF(IsOSX() && IsIntelUHD630Mobile() && IsDesktopOpenGL());
+    ANGLE_SKIP_TEST_IF(IsMac() && IsIntelUHD630Mobile() && IsDesktopOpenGL());
 
     static const float kBlue[]  = {0.0f, 0.0f, 1.0f, 1.0f};
     static const float kGreen[] = {0.0f, 1.0f, 0.0f, 1.0f};

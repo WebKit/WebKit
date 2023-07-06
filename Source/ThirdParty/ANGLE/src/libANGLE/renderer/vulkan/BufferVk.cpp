@@ -669,8 +669,8 @@ angle::Result BufferVk::mapRangeImpl(ContextVk *contextVk,
             // If there are unflushed write commands for the resource, flush them.
             if (contextVk->hasUnsubmittedUse(mBuffer.getWriteResourceUse()))
             {
-                ANGLE_TRY(
-                    contextVk->flushImpl(nullptr, RenderPassClosureReason::BufferWriteThenMap));
+                ANGLE_TRY(contextVk->flushImpl(nullptr, nullptr,
+                                               RenderPassClosureReason::BufferWriteThenMap));
             }
             ANGLE_TRY(renderer->finishResourceUse(contextVk, mBuffer.getWriteResourceUse()));
         }

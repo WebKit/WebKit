@@ -258,8 +258,12 @@ def angle_builder(name, cpu):
         short_name = get_gpu_type_from_builder_name(name)
     elif is_asan:
         short_name = "asan"
+        if is_exp:
+            short_name = "asan-exp"
     elif is_tsan:
         short_name = "tsan"
+        if is_exp:
+            short_name = "tsan-exp"
     elif is_debug:
         short_name = "dbg"
     elif is_exp:
@@ -312,12 +316,22 @@ def angle_builder(name, cpu):
         execution_timeout = timeout_hours * time.hour,
     )
 
-    luci.console_view_entry(
-        console_view = "ci",
-        builder = "ci/" + name,
-        category = category + "|" + os_toolchain_name + "|" + cpu,
-        short_name = short_name,
-    )
+    active_experimental_builders = [
+        "android-arm64-exp-test",
+    ]
+
+    if (not is_exp) or (name in active_experimental_builders):
+        luci.console_view_entry(
+            console_view = "ci",
+            builder = "ci/" + name,
+            category = category + "|" + os_toolchain_name + "|" + cpu,
+            short_name = short_name,
+        )
+    else:
+        luci.list_view_entry(
+            list_view = "exp",
+            builder = "ci/" + name,
+        )
 
     # Do not include perf tests in "try".
     if not is_perf:
@@ -413,7 +427,9 @@ angle_builder("android-arm64-dbg-compile", cpu = "arm64")
 angle_builder("android-arm64-exp-test", cpu = "arm64")
 angle_builder("android-arm64-test", cpu = "arm64")
 angle_builder("linux-asan-test", cpu = "x64")
+angle_builder("linux-exp-asan-test", cpu = "x64")
 angle_builder("linux-exp-test", cpu = "x64")
+angle_builder("linux-exp-tsan-test", cpu = "x64")
 angle_builder("linux-tsan-test", cpu = "x64")
 angle_builder("linux-dbg-compile", cpu = "x64")
 angle_builder("linux-test", cpu = "x64")
@@ -449,6 +465,11 @@ luci.console_view(
     name = "ci",
     title = "ANGLE CI Builders",
     repo = "https://chromium.googlesource.com/angle/angle",
+)
+
+luci.list_view(
+    name = "exp",
+    title = "ANGLE Experimental CI Builders",
 )
 
 luci.list_view(

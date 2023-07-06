@@ -189,6 +189,23 @@ VkResult FindMemoryTypeIndexForBufferInfo(VmaAllocator allocator,
                                                pMemoryTypeIndexOut);
 }
 
+VkResult FindMemoryTypeIndexForImageInfo(VmaAllocator allocator,
+                                         const VkImageCreateInfo *pImageCreateInfo,
+                                         VkMemoryPropertyFlags requiredFlags,
+                                         VkMemoryPropertyFlags preferredFlags,
+                                         bool allocateDedicatedMemory,
+                                         uint32_t *pMemoryTypeIndexOut)
+{
+    VmaAllocationCreateInfo allocationCreateInfo = {};
+    allocationCreateInfo.requiredFlags           = requiredFlags;
+    allocationCreateInfo.preferredFlags          = preferredFlags;
+    allocationCreateInfo.flags =
+        allocateDedicatedMemory ? VMA_ALLOCATION_CREATE_DEDICATED_MEMORY_BIT : 0;
+
+    return vmaFindMemoryTypeIndexForImageInfo(allocator, pImageCreateInfo, &allocationCreateInfo,
+                                              pMemoryTypeIndexOut);
+}
+
 void GetMemoryTypeProperties(VmaAllocator allocator,
                              uint32_t memoryTypeIndex,
                              VkMemoryPropertyFlags *pFlags)

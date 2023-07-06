@@ -19,8 +19,9 @@ namespace sh
 {
 namespace
 {
-constexpr ImmutableString kAtomicCountersVarName  = ImmutableString("atomicCounters");
-constexpr ImmutableString kAtomicCounterFieldName = ImmutableString("counters");
+constexpr ImmutableString kAtomicCountersVarName   = ImmutableString("atomicCounters");
+constexpr ImmutableString kAtomicCountersBlockName = ImmutableString("ANGLEAtomicCounters");
+constexpr ImmutableString kAtomicCounterFieldName  = ImmutableString("counters");
 
 // DeclareAtomicCountersBuffer adds a storage buffer array that's used with atomic counters.
 const TVariable *DeclareAtomicCountersBuffers(TIntermBlock *root, TSymbolTable *symbolTable)
@@ -47,8 +48,7 @@ const TVariable *DeclareAtomicCountersBuffers(TIntermBlock *root, TSymbolTable *
     layoutQualifier.blockStorage     = EbsStd430;
 
     return DeclareInterfaceBlock(root, symbolTable, fieldList, EvqBuffer, layoutQualifier,
-                                 coherentMemory, kMaxAtomicCounterBuffers,
-                                 ImmutableString(vk::kAtomicCountersBlockName),
+                                 coherentMemory, kMaxAtomicCounterBuffers, kAtomicCountersBlockName,
                                  kAtomicCountersVarName);
 }
 
@@ -317,9 +317,14 @@ class RewriteAtomicCountersTraverser : public TIntermTraverser
 bool RewriteAtomicCounters(TCompiler *compiler,
                            TIntermBlock *root,
                            TSymbolTable *symbolTable,
-                           const TIntermTyped *acbBufferOffsets)
+                           const TIntermTyped *acbBufferOffsets,
+                           const TVariable **atomicCountersOut)
 {
     const TVariable *atomicCounters = DeclareAtomicCountersBuffers(root, symbolTable);
+    if (atomicCountersOut)
+    {
+        *atomicCountersOut = atomicCounters;
+    }
 
     RewriteAtomicCountersTraverser traverser(symbolTable, atomicCounters, acbBufferOffsets);
     root->traverse(&traverser);

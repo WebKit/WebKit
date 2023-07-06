@@ -60,6 +60,7 @@ struct Extensions
     bool framebufferBlitAny() const { return (framebufferBlitANGLE || framebufferBlitNV); }
     bool geometryShaderAny() const { return (geometryShaderEXT || geometryShaderOES); }
     bool instancedArraysAny() const { return (instancedArraysANGLE || instancedArraysEXT); }
+    bool polygonModeAny() const { return (polygonModeANGLE || polygonModeNV); }
     bool primitiveBoundingBoxAny() const
     {
         return (primitiveBoundingBoxEXT || primitiveBoundingBoxOES);
@@ -333,6 +334,9 @@ struct Extensions
 
     // GL_NV_pixel_buffer_object
     bool pixelBufferObjectNV = false;
+
+    // GL_NV_polygon_mode
+    bool polygonModeNV = false;
 
     // GL_EXT_polygon_offset_clamp
     bool polygonOffsetClampEXT = false;
@@ -660,6 +664,9 @@ struct Extensions
 
     // GL_ANGLE_multiview_multisample
     bool multiviewMultisampleANGLE = false;
+
+    // GL_ANGLE_polygon_mode
+    bool polygonModeANGLE = false;
 
     // GL_ANGLE_program_binary
     bool programBinaryANGLE = false;

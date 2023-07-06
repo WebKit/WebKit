@@ -24,7 +24,7 @@
 #include "libANGLE/renderer/d3d/formatutilsD3D.h"
 #include "libANGLE/renderer/renderer_utils.h"
 #include "libANGLE/renderer/serial_utils.h"
-#include "platform/FeaturesD3D_autogen.h"
+#include "platform/autogen/FeaturesD3D_autogen.h"
 
 namespace egl
 {

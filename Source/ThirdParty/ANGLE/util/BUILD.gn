@@ -14,8 +14,8 @@ _util_sources = [
   "OSPixmap.h",
   "OSWindow.cpp",
   "OSWindow.h",
-  "angle_features_autogen.cpp",
-  "angle_features_autogen.h",
+  "autogen/angle_features_autogen.cpp",
+  "autogen/angle_features_autogen.h",
   "com_utils.h",
   "geometry_utils.cpp",
   "geometry_utils.h",
@@ -220,6 +220,7 @@ angle_source_set("angle_trace_fixture") {
     "capture/angle_trace_gl.h",
     "capture/trace_fixture.cpp",
     "capture/trace_fixture.h",
+    "capture/trace_interface.h",
   ]
   public_deps = [
     ":angle_trace_loader",
@@ -248,6 +249,7 @@ if (angle_has_frame_capture) {
     sources = [
       "capture/frame_capture_test_utils.cpp",
       "capture/frame_capture_test_utils.h",
+      "capture/trace_interface.h",
     ]
     deps = [ "$angle_root/third_party/rapidjson" ]
 

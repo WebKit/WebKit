@@ -17,18 +17,18 @@
 #include "libANGLE/renderer/metal/ContextMtl.h"
 #include "libANGLE/renderer/metal/mtl_resources.h"
 #include "libANGLE/renderer/metal/mtl_utils.h"
-#include "platform/FeaturesMtl_autogen.h"
+#include "platform/autogen/FeaturesMtl_autogen.h"
 
 #define ANGLE_OBJC_CP_PROPERTY(DST, SRC, PROPERTY) \
     (DST).PROPERTY = static_cast<__typeof__((DST).PROPERTY)>(ToObjC((SRC).PROPERTY))
-#define ANGLE_OBJC_CP_PROPERTY2(DST, SRC, PROPERTY, DST_PROPERTY)  \
+#define ANGLE_OBJC_CP_PROPERTY2(DST, SRC, PROPERTY, DST_PROPERTY) \
     (DST).DST_PROPERTY = static_cast<__typeof__((DST).DST_PROPERTY)>(ToObjC((SRC).PROPERTY))
 
 #define ANGLE_PROP_EQ(LHS, RHS, PROP) ((LHS).PROP == (RHS).PROP)
 
 #if (defined(__MAC_13_0) && __MAC_OS_X_VERSION_MIN_REQUIRED >= __MAC_13_0) || \
     (defined(__IPHONE_16_0) && __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_16_0)
-#   define ANGLE_MTL_RENDER_PIPELINE_DESC_RASTER_SAMPLE_COUNT_AVAILABLE 1
+#    define ANGLE_MTL_RENDER_PIPELINE_DESC_RASTER_SAMPLE_COUNT_AVAILABLE 1
 #endif
 
 namespace rx
@@ -137,41 +137,6 @@ inline AutoObjCPtr<MTLRenderPipelineColorAttachmentDescriptor *> ToObjC(
     ANGLE_OBJC_CP_PROPERTY(objCDesc.get(), desc, sourceAlphaBlendFactor);
     ANGLE_OBJC_CP_PROPERTY(objCDesc.get(), desc, sourceRGBBlendFactor);
     ANGLE_OBJC_CP_PROPERTY(objCDesc.get(), desc, blendingEnabled);
-    return objCDesc;
-}
-
-AutoObjCPtr<MTLRenderPipelineDescriptor *> CreateMTLRenderPipelineDescriptor(
-    id<MTLFunction> vertexShader,
-    id<MTLFunction> fragmentShader,
-    const RenderPipelineDesc &desc)
-{
-    auto objCDesc = adoptObjCObj([[MTLRenderPipelineDescriptor alloc] init]);
-    [objCDesc reset];
-
-    ANGLE_OBJC_CP_PROPERTY(objCDesc.get(), desc, vertexDescriptor);
-
-    for (uint8_t i = 0; i < desc.outputDescriptor.numColorAttachments; ++i)
-    {
-        [objCDesc.get().colorAttachments setObject:ToObjC(desc.outputDescriptor.colorAttachments[i])
-                                atIndexedSubscript:i];
-    }
-    ANGLE_OBJC_CP_PROPERTY(objCDesc.get(), desc.outputDescriptor, depthAttachmentPixelFormat);
-    ANGLE_OBJC_CP_PROPERTY(objCDesc.get(), desc.outputDescriptor, stencilAttachmentPixelFormat);
-    ANGLE_APPLE_ALLOW_DEPRECATED_BEGIN
-    ANGLE_OBJC_CP_PROPERTY(objCDesc.get(), desc.outputDescriptor, sampleCount);
-    ANGLE_APPLE_ALLOW_DEPRECATED_END
-
-#if ANGLE_MTL_PRIMITIVE_TOPOLOGY_CLASS_AVAILABLE
-    ANGLE_OBJC_CP_PROPERTY(objCDesc.get(), desc, inputPrimitiveTopology);
-#endif
-    ANGLE_OBJC_CP_PROPERTY(objCDesc.get(), desc, alphaToCoverageEnabled);
-
-    // rasterizationEnabled will be true for both EmulatedDiscard & Enabled.
-    objCDesc.get().rasterizationEnabled = desc.rasterizationEnabled();
-
-    objCDesc.get().vertexFunction   = vertexShader;
-    objCDesc.get().fragmentFunction = objCDesc.get().rasterizationEnabled ? fragmentShader : nil;
-
     return objCDesc;
 }
 
@@ -676,6 +641,40 @@ bool RenderPipelineDesc::rasterizationEnabled() const
     return rasterizationType != RenderPipelineRasterization::Disabled;
 }
 
+AutoObjCPtr<MTLRenderPipelineDescriptor *> RenderPipelineDesc::createMetalDesc(
+    id<MTLFunction> vertexShader,
+    id<MTLFunction> fragmentShader) const
+{
+    auto objCDesc = adoptObjCObj([[MTLRenderPipelineDescriptor alloc] init]);
+    [objCDesc reset];
+
+    ANGLE_OBJC_CP_PROPERTY(objCDesc.get(), *this, vertexDescriptor);
+
+    for (uint8_t i = 0; i < outputDescriptor.numColorAttachments; ++i)
+    {
+        [objCDesc.get().colorAttachments setObject:ToObjC(outputDescriptor.colorAttachments[i])
+                                atIndexedSubscript:i];
+    }
+    ANGLE_OBJC_CP_PROPERTY(objCDesc.get(), outputDescriptor, depthAttachmentPixelFormat);
+    ANGLE_OBJC_CP_PROPERTY(objCDesc.get(), outputDescriptor, stencilAttachmentPixelFormat);
+    ANGLE_APPLE_ALLOW_DEPRECATED_BEGIN
+    ANGLE_OBJC_CP_PROPERTY(objCDesc.get(), outputDescriptor, sampleCount);
+    ANGLE_APPLE_ALLOW_DEPRECATED_END
+
+#if ANGLE_MTL_PRIMITIVE_TOPOLOGY_CLASS_AVAILABLE
+    ANGLE_OBJC_CP_PROPERTY(objCDesc.get(), *this, inputPrimitiveTopology);
+#endif
+    ANGLE_OBJC_CP_PROPERTY(objCDesc.get(), *this, alphaToCoverageEnabled);
+
+    // rasterizationEnabled will be true for both EmulatedDiscard & Enabled.
+    objCDesc.get().rasterizationEnabled = rasterizationEnabled();
+
+    objCDesc.get().vertexFunction   = vertexShader;
+    objCDesc.get().fragmentFunction = objCDesc.get().rasterizationEnabled ? fragmentShader : nil;
+
+    return objCDesc;
+}
+
 // RenderPassDesc implementation
 RenderPassAttachmentDesc::RenderPassAttachmentDesc()
 {
@@ -871,14 +870,12 @@ void RenderPassDesc::convertToMetalDesc(MTLRenderPassDescriptor *objCDesc,
 }
 
 // RenderPipelineCache implementation
-RenderPipelineCache::RenderPipelineCache() : RenderPipelineCache(nullptr) {}
+RenderPipelineCache::RenderPipelineCache() {}
 
-RenderPipelineCache::RenderPipelineCache(
-    RenderPipelineCacheSpecializeShaderFactory *specializedShaderFactory)
-    : mSpecializedShaderFactory(specializedShaderFactory)
-{}
-
-RenderPipelineCache::~RenderPipelineCache() {}
+RenderPipelineCache::~RenderPipelineCache()
+{
+    clearPipelineStates();
+}
 
 void RenderPipelineCache::setVertexShader(ContextMtl *context, id<MTLFunction> shader)
 {
@@ -1017,62 +1014,14 @@ static bool ValidateRenderPipelineState(const MTLRenderPipelineDescriptor *descr
 
 AutoObjCPtr<id<MTLRenderPipelineState>> RenderPipelineCache::createRenderPipelineState(
     ContextMtl *context,
-    const RenderPipelineDesc &originalDesc,
+    const RenderPipelineDesc &desc,
     bool insertDefaultAttribLayout)
 {
     ANGLE_MTL_OBJC_SCOPE
     {
-        // Disable coverage if the render pipeline's sample count is only 1.
-        RenderPipelineDesc desc = originalDesc;
-        if (desc.outputDescriptor.sampleCount == 1)
-        {
-            desc.alphaToCoverageEnabled = false;
-        }
-
-        // Choose shader variant
-        id<MTLFunction> vertShader = nil;
-        id<MTLFunction> fragShader = nil;
-        if (mSpecializedShaderFactory &&
-            mSpecializedShaderFactory->hasSpecializedShader(gl::ShaderType::Vertex, desc))
-        {
-            if (IsError(mSpecializedShaderFactory->getSpecializedShader(
-                    context, gl::ShaderType::Vertex, desc, &vertShader)))
-            {
-                return nil;
-            }
-        }
-        else
-        {
-            // Non-specialized version
-            vertShader = mVertexShader;
-        }
-
-        if (mSpecializedShaderFactory &&
-            mSpecializedShaderFactory->hasSpecializedShader(gl::ShaderType::Fragment, desc))
-        {
-            if (IsError(mSpecializedShaderFactory->getSpecializedShader(
-                    context, gl::ShaderType::Fragment, desc, &fragShader)))
-            {
-                return nil;
-            }
-        }
-        else
-        {
-            // Non-specialized version
-            fragShader = mFragmentShader;
-        }
-
-        if (!vertShader)
-        {
-            // Render pipeline without vertex shader is invalid.
-            ANGLE_MTL_HANDLE_ERROR(context, "Render pipeline without vertex shader is invalid.",
-                                   GL_INVALID_OPERATION);
-            return nil;
-        }
-
         const mtl::ContextDevice &metalDevice = context->getMetalDevice();
 
-        auto objCDesc = CreateMTLRenderPipelineDescriptor(vertShader, fragShader, desc);
+        auto objCDesc = desc.createMetalDesc(mVertexShader, mFragmentShader);
 
         if (!ValidateRenderPipelineState(objCDesc, context, metalDevice))
         {

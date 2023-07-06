@@ -133,7 +133,7 @@ namespace impl
 {
 static constexpr size_t kSwapHistorySize = 2;
 
-// Old swapchain and associated present semaphores that need to be scheduled for
+// Old swapchain and associated present fences/semaphores that need to be scheduled for
 // recycling/destruction when appropriate.
 struct SwapchainCleanupData : angle::NonCopyable
 {
@@ -141,22 +141,32 @@ struct SwapchainCleanupData : angle::NonCopyable
     SwapchainCleanupData(SwapchainCleanupData &&other);
     ~SwapchainCleanupData();
 
-    void destroy(VkDevice device, vk::Recycler<vk::Semaphore> *semaphoreRecycler);
+    // Fences must not be empty (VK_EXT_swapchain_maintenance1 is supported).
+    VkResult getFencesStatus(VkDevice device) const;
+    // Waits fences if any. Use before force destroying the swapchain.
+    void waitFences(VkDevice device, uint64_t timeout) const;
+    void destroy(VkDevice device,
+                 vk::Recycler<vk::Fence> *fenceRecycler,
+                 vk::Recycler<vk::Semaphore> *semaphoreRecycler);
 
     // The swapchain to be destroyed.
     VkSwapchainKHR swapchain = VK_NULL_HANDLE;
-    // Any present semaphores that were pending recycle at the time the swapchain was recreated will
-    // be scheduled for recycling at the same time as the swapchain's destruction.
+    // Any present fences/semaphores that were pending recycle at the time the swapchain was
+    // recreated will be scheduled for recycling at the same time as the swapchain's destruction.
+    // fences must be in the present operation order.
+    std::vector<vk::Fence> fences;
     std::vector<vk::Semaphore> semaphores;
 };
 
 // Each present operation is associated with a wait semaphore.  To know when that semaphore can be
-// recycled, a fence is used in the call to vkAcquireNextImageKHR.  When that fence is signaled, the
-// semaphore used in the last present operation involving the returned image can be recycled.  See
-// doc/PresentSemaphores.md for details.
+// recycled, a swapSerial is used.  When that swapSerial is finished, the semaphore used in the
+// previous present operation involving imageIndex can be recycled.  See doc/PresentSemaphores.md
+// for details.
+// When VK_EXT_swapchain_maintenance1 is supported, present fence is used instead of the swapSerial.
 //
 // Old swapchains are scheduled to be destroyed at the same time as the last wait semaphore used to
-// present an image to the old swapchains can be recycled.
+// present an image to the old swapchains can be recycled (only relevant when
+// VK_EXT_swapchain_maintenance1 is not supported).
 struct ImagePresentOperation : angle::NonCopyable
 {
     ImagePresentOperation();
@@ -168,14 +178,15 @@ struct ImagePresentOperation : angle::NonCopyable
                  vk::Recycler<vk::Fence> *fenceRecycler,
                  vk::Recycler<vk::Semaphore> *semaphoreRecycler);
 
+    // fence is only used when VK_EXT_swapchain_maintenance1 is supported.
     vk::Fence fence;
     vk::Semaphore semaphore;
-    std::vector<SwapchainCleanupData> oldSwapchains;
 
-    // Used to associate an acquire fence with the previous present operation of the image.
-    // Only relevant when VK_EXT_swapchain_maintenance1 is not supported; otherwise a fence is
-    // always associated with the present operation.
+    // Below members only relevant when VK_EXT_swapchain_maintenance1 is not supported.
+    // Used to associate a swapSerial with the previous present operation of the image.
     uint32_t imageIndex;
+    QueueSerial queueSerial;
+    std::deque<SwapchainCleanupData> oldSwapchains;
 };
 
 // Swapchain images and their associated objects.
@@ -192,6 +203,72 @@ struct SwapchainImage : angle::NonCopyable
     vk::Framebuffer framebufferResolveMS;
 
     uint64_t frameNumber = 0;
+};
+
+// Associated data for a call to vkAcquireNextImageKHR without necessarily holding the share group
+// lock.
+struct UnlockedTryAcquireData : angle::NonCopyable
+{
+    // A mutex to protect against concurrent attempts to call vkAcquireNextImageKHR.
+    std::mutex mutex;
+
+    // Given that the CPU is throttled after a number of swaps, there is an upper bound to the
+    // number of semaphores that are used to acquire swapchain images, and that is
+    // kSwapHistorySize+1:
+    //
+    //             Unrelated submission in     Submission as part of
+    //               the middle of frame          buffer swap
+    //                              |                 |
+    //                              V                 V
+    //     Frame i:     ... ANI ... QS (fence Fa) ... QS (Fence Fb) QP Wait(..)
+    //     Frame i+1:   ... ANI ... QS (fence Fc) ... QS (Fence Fd) QP Wait(..) <--\
+    //     Frame i+2:   ... ANI ... QS (fence Fe) ... QS (Fence Ff) QP Wait(Fb)    |
+    //                                                                  ^          |
+    //                                                                  |          |
+    //                                                           CPU throttling    |
+    //                                                                             |
+    //                               Note: app should throttle itself here (equivalent of Wait(Fb))
+    //
+    // In frame i+2 (2 is kSwapHistorySize), ANGLE waits on fence Fb which means that the semaphore
+    // used for Frame i's ANI can be reused (because Fb-is-signalled implies Fa-is-signalled).
+    // Before this wait, there were three acquire semaphores in use corresponding to frames i, i+1
+    // and i+2.  Frame i+3 can reuse the semaphore of frame i.
+    angle::CircularBuffer<vk::Semaphore, impl::kSwapHistorySize + 1> acquireImageSemaphores;
+};
+
+struct UnlockedTryAcquireResult : angle::NonCopyable
+{
+    // The result of the call to vkAcquireNextImageKHR.  This result is processed later under the
+    // share group lock.
+    VkResult result = VK_SUCCESS;
+
+    // Semaphore to signal.
+    VkSemaphore acquireSemaphore = VK_NULL_HANDLE;
+
+    // Image index that was acquired
+    uint32_t imageIndex = std::numeric_limits<uint32_t>::max();
+};
+
+struct ImageAcquireOperation : angle::NonCopyable
+{
+    ImageAcquireOperation();
+
+    // True when acquiring the next image is deferred.
+    std::atomic<bool> needToAcquireNextSwapchainImage;
+
+    // Data used to call vkAcquireNextImageKHR without necessarily holding the share group lock.
+    // The result of this operation can be found in mAcquireOperation.unlockedTryAcquireResult,
+    // which is processed once the share group lock is taken in the future.
+    //
+    // |unlockedTryAcquireData::mutex| is necessary to hold when making the vkAcquireNextImageKHR
+    // call as multiple contexts in the share group may end up provoking it (only one may be calling
+    // it without the share group lock though, the one calling eglPrepareSwapBuffersANGLE).  During
+    // processing of the results however (for example in the following eglSwapBuffers call, or if
+    // called during a GL call, immediately afterwards), the contents of |unlockedTryAcquireResult|
+    // can be accessed without |unlockedTryAcquireData::mutex| because the share group lock is
+    // already taken, and no thread can be attempting an unlocked vkAcquireNextImageKHR.
+    UnlockedTryAcquireData unlockedTryAcquireData;
+    UnlockedTryAcquireResult unlockedTryAcquireResult;
 };
 }  // namespace impl
 
@@ -322,14 +399,21 @@ class WindowSurfaceVk : public SurfaceVk
     void setTimestampsEnabled(bool enabled) override;
 
   protected:
-    angle::Result prepareSwapImpl(const gl::Context *context);
     angle::Result swapImpl(const gl::Context *context,
                            const EGLint *rects,
                            EGLint n_rects,
                            const void *pNextChain);
     // Called when a swapchain image whose acquisition was deferred must be acquired.  This method
-    // will recreate the swapchain (if needed) and call the acquireNextSwapchainImage() method.
+    // will recreate the swapchain (if needed due to present returning OUT_OF_DATE, swap interval
+    // changing, surface size changing etc, by calling prepareForAcquireNextSwapchainImage()) and
+    // call the doDeferredAcquireNextImageWithUsableSwapchain() method.
     angle::Result doDeferredAcquireNextImage(const gl::Context *context, bool presentOutOfDate);
+    // Calls acquireNextSwapchainImage() and sets up the acquired image.  On some platforms,
+    // vkAcquireNextImageKHR returns OUT_OF_DATE instead of present, so this function may still
+    // recreate the swapchain.  The main difference with doDeferredAcquireNextImage is that it does
+    // not check for surface property changes for the purposes of swapchain recreation (because
+    // that's already done by prepareForAcquireNextSwapchainImage.
+    angle::Result doDeferredAcquireNextImageWithUsableSwapchain(const gl::Context *context);
 
     EGLNativeWindowType mNativeWindowType;
     VkSurfaceKHR mSurface;
@@ -347,17 +431,28 @@ class WindowSurfaceVk : public SurfaceVk
                                   VkSwapchainKHR oldSwapchain);
     angle::Result queryAndAdjustSurfaceCaps(ContextVk *contextVk,
                                             VkSurfaceCapabilitiesKHR *surfaceCaps);
-    angle::Result checkForOutOfDateSwapchain(ContextVk *contextVk, bool presentOutOfDate);
+    angle::Result checkForOutOfDateSwapchain(ContextVk *contextVk,
+                                             bool presentOutOfDate,
+                                             bool *swapchainRecreatedOut);
     angle::Result resizeSwapchainImages(vk::Context *context, uint32_t imageCount);
     void releaseSwapchainImages(ContextVk *contextVk);
     void destroySwapChainImages(DisplayVk *displayVk);
+    angle::Result prepareForAcquireNextSwapchainImage(const gl::Context *context,
+                                                      bool presentOutOfDate,
+                                                      bool *swapchainRecreatedOut);
     // This method calls vkAcquireNextImageKHR() to acquire the next swapchain image.  It is called
     // when the swapchain is initially created and when present() finds the swapchain out of date.
     // Otherwise, it is scheduled to be called later by deferAcquireNextImage().
     VkResult acquireNextSwapchainImage(vk::Context *context);
+    // Process the result of vkAcquireNextImageKHR, which may have been done previously without
+    // holding a lock.
+    VkResult postProcessUnlockedTryAcquire(vk::Context *context);
+    // Whether vkAcquireNextImageKHR needs to be called or its results processed
+    bool needsAcquireImageOrProcessResult() const;
     // This method is called when a swapchain image is presented.  It schedules
     // acquireNextSwapchainImage() to be called later.
     void deferAcquireNextImage();
+    bool skipAcquireNextSwapchainImageForSharedPresentMode() const;
 
     angle::Result computePresentOutOfDate(vk::Context *context,
                                           VkResult result,
@@ -370,12 +465,13 @@ class WindowSurfaceVk : public SurfaceVk
                           bool *presentOutOfDate);
 
     angle::Result cleanUpPresentHistory(vk::Context *context);
+    angle::Result cleanUpOldSwapchains(vk::Context *context);
 
     // Throttle the CPU such that application's logic and command buffer recording doesn't get more
     // than two frame ahead of the frame being rendered (and three frames ahead of the one being
     // presented).  This is a failsafe, as the application should ensure command buffer recording is
     // not ahead of the frame being rendered by *one* frame.
-    angle::Result throttleCPU(ContextVk *contextVk, const QueueSerial &currentSubmitSerial);
+    angle::Result throttleCPU(DisplayVk *displayVk, const QueueSerial &currentSubmitSerial);
 
     // Finish all GPU operations on the surface
     angle::Result finish(vk::Context *context);
@@ -410,44 +506,22 @@ class WindowSurfaceVk : public SurfaceVk
     // swap. The CPU is throttled by waiting for the 2nd previous serial to finish.  This should
     // normally be a no-op, as the application should pace itself to avoid input lag, and is
     // implemented in ANGLE as a fail safe.  Removing this throttling requires untangling it from
-    // acquire semaphore recycling (see mAcquireImageSemaphores below)
+    // acquire semaphore recycling (see mAcquireImageSemaphores above)
     angle::CircularBuffer<QueueSerial, impl::kSwapHistorySize> mSwapHistory;
 
     // The previous swapchain which needs to be scheduled for destruction when appropriate.  This
-    // will be done when the first image of the current swapchain is presented.  If there were
-    // older swapchains pending destruction when the swapchain is recreated, they will accumulate
-    // and be destroyed with the previous swapchain.
+    // will be done when the first image of the current swapchain is presented or when fences are
+    // signaled (when VK_EXT_swapchain_maintenance1 is supported).  If there were older swapchains
+    // pending destruction when the swapchain is recreated, they will accumulate and be destroyed
+    // with the previous swapchain.
     //
     // Note that if the user resizes the window such that the swapchain is recreated every frame,
     // this array can go grow indefinitely.
-    std::vector<impl::SwapchainCleanupData> mOldSwapchains;
+    std::deque<impl::SwapchainCleanupData> mOldSwapchains;
 
     std::vector<impl::SwapchainImage> mSwapchainImages;
     std::vector<angle::ObserverBinding> mSwapchainImageBindings;
     uint32_t mCurrentSwapchainImageIndex;
-
-    // Given that the CPU is throttled after a number of swaps, there is an upper bound to the
-    // number of semaphores that are used to acquire swapchain images, and that is
-    // kSwapHistorySize+1:
-    //
-    //             Unrelated submission in     Submission as part of
-    //               the middle of frame          buffer swap
-    //                              |                 |
-    //                              V                 V
-    //     Frame i:     ... ANI ... QS (fence Fa) ... QS (Fence Fb) QP Wait(..)
-    //     Frame i+1:   ... ANI ... QS (fence Fc) ... QS (Fence Fd) QP Wait(..) <--\
-    //     Frame i+2:   ... ANI ... QS (fence Fe) ... QS (Fence Ff) QP Wait(Fb)    |
-    //                                                                  ^          |
-    //                                                                  |          |
-    //                                                           CPU throttling    |
-    //                                                                             |
-    //                               Note: app should throttle itself here (equivalent of Wait(Fb))
-    //
-    // In frame i+2 (2 is kSwapHistorySize), ANGLE waits on fence Fb which means that the semaphore
-    // used for Frame i's ANI can be reused (because Fb-is-signalled implies Fa-is-signalled).
-    // Before this wait, there were three acquire semaphores in use corresponding to frames i, i+1
-    // and i+2.  Frame i+3 can reuse the semaphore of frame i.
-    angle::CircularBuffer<vk::Semaphore, impl::kSwapHistorySize + 1> mAcquireImageSemaphores;
 
     // There is no direct signal from Vulkan regarding when a Present semaphore can be be reused.
     // During window resizing when swapchains are recreated every frame, the number of in-flight
@@ -470,8 +544,7 @@ class WindowSurfaceVk : public SurfaceVk
     angle::ObserverBinding mColorImageMSBinding;
     vk::Framebuffer mFramebufferMS;
 
-    // True when acquiring the next image is deferred.
-    bool mNeedToAcquireNextSwapchainImage;
+    impl::ImageAcquireOperation mAcquireOperation;
 
     // EGL_EXT_buffer_age: Track frame count.
     uint64_t mFrameCount;

@@ -97,7 +97,7 @@ angle::Result FenceNV11::finish(const gl::Context *context)
                          "Device was lost while querying result of an event query.");
         }
 
-        ScheduleYield();
+        std::this_thread::yield();
     }
 
     return angle::Result::Continue;
@@ -181,7 +181,7 @@ angle::Result Sync11::clientWait(const gl::Context *context,
     while (currentCounter.QuadPart < endCounter && !result)
     {
         loopCount++;
-        ScheduleYield();
+        std::this_thread::yield();
         success = QueryPerformanceCounter(&currentCounter);
         ASSERT(success);
 

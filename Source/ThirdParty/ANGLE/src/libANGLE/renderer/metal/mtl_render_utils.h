@@ -196,7 +196,6 @@ class ClearUtils final : angle::NonCopyable
   public:
     ClearUtils() = delete;
     ClearUtils(const std::string &fragmentShaderName);
-    ClearUtils(const ClearUtils &src);
 
     void onDestroy();
 
@@ -228,7 +227,6 @@ class ColorBlitUtils final : angle::NonCopyable
   public:
     ColorBlitUtils() = delete;
     ColorBlitUtils(const std::string &fragmentShaderName);
-    ColorBlitUtils(const ColorBlitUtils &src);
 
     void onDestroy();
 
@@ -480,7 +478,6 @@ class CopyPixelsUtils final : angle::NonCopyable
   public:
     CopyPixelsUtils() = default;
     CopyPixelsUtils(const std::string &readShaderName, const std::string &writeShaderName);
-    CopyPixelsUtils(const CopyPixelsUtils &src);
 
     void onDestroy();
 

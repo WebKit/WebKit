@@ -38,14 +38,17 @@ Thread *AllocateCurrentThread()
 {
     Thread *thread;
     {
-        // Global thread intentionally leaked
+        // Global thread intentionally leaked.
+        // Display TLS data is also intentionally leaked.
         ANGLE_SCOPED_DISABLE_LSAN();
         thread = new Thread();
-#if defined(ANGLE_PLATFORM_APPLE)
+#if defined(ANGLE_PLATFORM_APPLE) || defined(ANGLE_USE_STATIC_THREAD_LOCAL_VARIABLES)
         SetCurrentThreadTLS(thread);
 #else
         gCurrentThread = thread;
 #endif
+
+        Display::InitTLS();
     }
 
     // Initialize current-context TLS slot
@@ -100,6 +103,16 @@ void SetCurrentThreadTLS(Thread *thread)
     ASSERT(CurrentThreadIndex != TLS_INVALID_INDEX);
     angle::SetTLSValue(CurrentThreadIndex, thread);
 }
+#elif defined(ANGLE_USE_STATIC_THREAD_LOCAL_VARIABLES)
+static thread_local Thread *gCurrentThread = nullptr;
+Thread *GetCurrentThreadTLS()
+{
+    return gCurrentThread;
+}
+void SetCurrentThreadTLS(Thread *thread)
+{
+    gCurrentThread = thread;
+}
 #else
 thread_local Thread *gCurrentThread = nullptr;
 #endif
@@ -118,7 +131,7 @@ void SetGlobalLastContext(gl::Context *context)
 // It also causes a flaky false positive in TSAN. http://crbug.com/1223970
 ANGLE_NO_SANITIZE_MEMORY ANGLE_NO_SANITIZE_THREAD Thread *GetCurrentThread()
 {
-#if defined(ANGLE_PLATFORM_APPLE)
+#if defined(ANGLE_PLATFORM_APPLE) || defined(ANGLE_USE_STATIC_THREAD_LOCAL_VARIABLES)
     Thread *current = GetCurrentThreadTLS();
 #else
     Thread *current       = gCurrentThread;
@@ -128,7 +141,7 @@ ANGLE_NO_SANITIZE_MEMORY ANGLE_NO_SANITIZE_THREAD Thread *GetCurrentThread()
 
 void SetContextCurrent(Thread *thread, gl::Context *context)
 {
-#if defined(ANGLE_PLATFORM_APPLE)
+#if defined(ANGLE_PLATFORM_APPLE) || defined(ANGLE_USE_STATIC_THREAD_LOCAL_VARIABLES)
     Thread *currentThread = GetCurrentThreadTLS();
 #else
     Thread *currentThread = gCurrentThread;

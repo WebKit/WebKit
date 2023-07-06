@@ -86,6 +86,7 @@ class ANGLE_UTIL_EXPORT GLWindowBase : angle::NonCopyable
     using Boolean      = unsigned int;
     using Surface      = void *;
     using Sync         = void *;
+    using Display      = void *;
 
     // It should also be possible to set multisample and floating point framebuffers.
     EGLint getClientMajorVersion() const { return mClientMajorVersion; }
@@ -139,6 +140,7 @@ class ANGLE_UTIL_EXPORT GLWindowBase : angle::NonCopyable
                                      EGLTimeKHR timeout)                                       = 0;
 
     virtual EGLint getEGLError()                                    = 0;
+    virtual Display getCurrentDisplay()                             = 0;
     virtual Surface createPbufferSurface(const EGLint *attrib_list) = 0;
     virtual EGLBoolean destroySurface(Surface surface)              = 0;
 
@@ -259,6 +261,7 @@ class ANGLE_UTIL_EXPORT EGLWindow : public GLWindowBase
     EGLint clientWaitSyncKHR(EGLDisplay dpy, Sync sync, EGLint flags, EGLTimeKHR timeout) override;
 
     EGLint getEGLError() override;
+    Display getCurrentDisplay() override;
     Surface createPbufferSurface(const EGLint *attrib_list) override;
     EGLBoolean destroySurface(Surface surface) override;
 

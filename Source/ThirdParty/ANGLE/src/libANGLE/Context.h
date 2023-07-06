@@ -37,6 +37,7 @@
 #include "libANGLE/RefCountObject.h"
 #include "libANGLE/ResourceManager.h"
 #include "libANGLE/ResourceMap.h"
+#include "libANGLE/SharedContextMutex.h"
 #include "libANGLE/State.h"
 #include "libANGLE/VertexAttribute.h"
 #include "libANGLE/angletypes.h"
@@ -164,27 +165,23 @@ class StateCache final : angle::NonCopyable
     // 14. onColorMaskChange.
     // 15. onBufferBindingChange.
     // 16. onBlendFuncIndexedChange.
-    bool hasBasicDrawStatesError(Context *context) const
+    intptr_t getBasicDrawStatesErrorString(const Context *context) const
     {
-        if (mCachedBasicDrawStatesError == 0)
+        if (mCachedBasicDrawStatesErrorString != kInvalidPointer)
         {
-            return false;
-        }
-        if (mCachedBasicDrawStatesError != kInvalidPointer)
-        {
-            return true;
-        }
-        return getBasicDrawStatesErrorImpl(context) != 0;
-    }
-
-    intptr_t getBasicDrawStatesError(const Context *context) const
-    {
-        if (mCachedBasicDrawStatesError != kInvalidPointer)
-        {
-            return mCachedBasicDrawStatesError;
+            return mCachedBasicDrawStatesErrorString;
         }
 
         return getBasicDrawStatesErrorImpl(context);
+    }
+
+    // The GL error enum to use when generating errors due to failed draw states. Only valid if
+    // getBasicDrawStatesErrorString returns non-zero.
+    GLenum getBasicDrawElementsErrorCode() const
+    {
+        ASSERT(mCachedBasicDrawStatesErrorString != kInvalidPointer);
+        ASSERT(mCachedBasicDrawStatesErrorCode != GL_NO_ERROR);
+        return mCachedBasicDrawStatesErrorCode;
     }
 
     // Places that can trigger updateProgramPipelineError:
@@ -327,7 +324,8 @@ class StateCache final : angle::NonCopyable
     bool mCachedHasAnyEnabledClientAttrib;
     GLint64 mCachedNonInstancedVertexElementLimit;
     GLint64 mCachedInstancedVertexElementLimit;
-    mutable intptr_t mCachedBasicDrawStatesError;
+    mutable intptr_t mCachedBasicDrawStatesErrorString;
+    mutable GLenum mCachedBasicDrawStatesErrorCode;
     mutable intptr_t mCachedBasicDrawElementsError;
     // mCachedProgramPipelineError checks only the
     // current-program-exists subset of mCachedBasicDrawStatesError.
@@ -373,6 +371,7 @@ class Context final : public egl::LabeledObject, angle::NonCopyable, public angl
             const Context *shareContext,
             TextureManager *shareTextures,
             SemaphoreManager *shareSemaphores,
+            egl::ContextMutex *sharedContextMutex,
             MemoryProgramCache *memoryProgramCache,
             MemoryShaderCache *memoryShaderCache,
             const EGLenum clientType,
@@ -662,6 +661,29 @@ class Context final : public egl::LabeledObject, angle::NonCopyable, public angl
 
     egl::ShareGroup *getShareGroup() const { return mState.getShareGroup(); }
 
+    // Note: mutex may be changed during the API call, including from other thread.
+    egl::ContextMutex *getContextMutex() const
+    {
+        return mState.mContextMutex.load(std::memory_order_relaxed);
+    }
+
+    // For debugging purposes. "ContextMutex" MUST be locked during this call.
+    bool isSharedContextMutexActive() const;
+    // For debugging purposes. "ContextMutex" MUST be locked during this call.
+    bool isContextMutexStateConsistent() const;
+
+    // Important note:
+    //   It is possible that this Context will continue to use "SingleContextMutex" in its current
+    //   thread after this call. Probability of that is controlled by the "kActivationDelayMicro"
+    //   constant. If problem happens or extra safety is critical - increase the
+    //   "kActivationDelayMicro".
+    //   For absolute 100% safety "SingleContextMutex" should not be used.
+    egl::ScopedContextMutexLock lockAndActivateSharedContextMutex();
+
+    // "SharedContextMutex" MUST be locked and active during this call.
+    // Merges "SharedContextMutex" of the Context with other "ShareContextMutex".
+    void mergeSharedContextMutexes(egl::ContextMutex *otherMutex);
+
     bool supportsGeometryOrTesselation() const;
     void dirtyAllState();
 
@@ -690,21 +712,24 @@ class Context final : public egl::LabeledObject, angle::NonCopyable, public angl
     // The implementation's ShPixelLocalStorageType must be "PixelLocalStorageEXT".
     void drawPixelLocalStorageEXTDisable(const PixelLocalStoragePlane[], const GLenum storeops[]);
 
+    // Ends the currently active pixel local storage session with GL_STORE_OP_STORE on all planes.
+    void endPixelLocalStorageWithStoreOpsStore();
+
   private:
     void initializeDefaultResources();
 
     angle::Result prepareForDraw(PrimitiveMode mode);
     angle::Result prepareForClear(GLbitfield mask);
     angle::Result prepareForClearBuffer(GLenum buffer, GLint drawbuffer);
-    angle::Result syncState(const State::DirtyBits &bitMask,
-                            const State::ExtendedDirtyBits &extendedBitMask,
-                            const State::DirtyObjects &objectMask,
+    angle::Result syncState(const state::DirtyBits &bitMask,
+                            const state::ExtendedDirtyBits &extendedBitMask,
+                            const state::DirtyObjects &objectMask,
                             Command command);
-    angle::Result syncDirtyBits(Command command);
-    angle::Result syncDirtyBits(const State::DirtyBits &bitMask,
-                                const State::ExtendedDirtyBits &extendedBitMask,
+    angle::Result syncAllDirtyBits(Command command);
+    angle::Result syncDirtyBits(const state::DirtyBits &bitMask,
+                                const state::ExtendedDirtyBits &extendedBitMask,
                                 Command command);
-    angle::Result syncDirtyObjects(const State::DirtyObjects &objectMask, Command command);
+    angle::Result syncDirtyObjects(const state::DirtyObjects &objectMask, Command command);
     angle::Result syncStateForReadPixels();
     angle::Result syncStateForTexImage();
     angle::Result syncStateForBlit(GLbitfield mask);
@@ -816,37 +841,37 @@ class Context final : public egl::LabeledObject, angle::NonCopyable, public angl
     MemoryProgramCache *mMemoryProgramCache;
     MemoryShaderCache *mMemoryShaderCache;
 
-    State::DirtyObjects mDrawDirtyObjects;
+    state::DirtyObjects mDrawDirtyObjects;
 
     StateCache mStateCache;
 
-    State::DirtyBits mAllDirtyBits;
-    State::ExtendedDirtyBits mAllExtendedDirtyBits;
-    State::DirtyBits mTexImageDirtyBits;
-    State::ExtendedDirtyBits mTexImageExtendedDirtyBits;
-    State::DirtyObjects mTexImageDirtyObjects;
-    State::DirtyBits mReadPixelsDirtyBits;
-    State::ExtendedDirtyBits mReadPixelsExtendedDirtyBits;
-    State::DirtyObjects mReadPixelsDirtyObjects;
-    State::DirtyBits mClearDirtyBits;
-    State::ExtendedDirtyBits mClearExtendedDirtyBits;
-    State::DirtyObjects mClearDirtyObjects;
-    State::DirtyBits mBlitDirtyBits;
-    State::ExtendedDirtyBits mBlitExtendedDirtyBits;
-    State::DirtyObjects mBlitDirtyObjects;
-    State::DirtyBits mComputeDirtyBits;
-    State::ExtendedDirtyBits mComputeExtendedDirtyBits;
-    State::DirtyObjects mComputeDirtyObjects;
-    State::DirtyBits mCopyImageDirtyBits;
-    State::ExtendedDirtyBits mCopyImageExtendedDirtyBits;
-    State::DirtyObjects mCopyImageDirtyObjects;
-    State::DirtyBits mReadInvalidateDirtyBits;
-    State::ExtendedDirtyBits mReadInvalidateExtendedDirtyBits;
-    State::DirtyBits mDrawInvalidateDirtyBits;
-    State::ExtendedDirtyBits mDrawInvalidateExtendedDirtyBits;
-    State::DirtyBits mPixelLocalStorageEXTEnableDisableDirtyBits;
-    State::ExtendedDirtyBits mPixelLocalStorageEXTEnableDisableExtendedDirtyBits;
-    State::DirtyObjects mPixelLocalStorageEXTEnableDisableDirtyObjects;
+    state::DirtyBits mAllDirtyBits;
+    state::ExtendedDirtyBits mAllExtendedDirtyBits;
+    state::DirtyBits mTexImageDirtyBits;
+    state::ExtendedDirtyBits mTexImageExtendedDirtyBits;
+    state::DirtyObjects mTexImageDirtyObjects;
+    state::DirtyBits mReadPixelsDirtyBits;
+    state::ExtendedDirtyBits mReadPixelsExtendedDirtyBits;
+    state::DirtyObjects mReadPixelsDirtyObjects;
+    state::DirtyBits mClearDirtyBits;
+    state::ExtendedDirtyBits mClearExtendedDirtyBits;
+    state::DirtyObjects mClearDirtyObjects;
+    state::DirtyBits mBlitDirtyBits;
+    state::ExtendedDirtyBits mBlitExtendedDirtyBits;
+    state::DirtyObjects mBlitDirtyObjects;
+    state::DirtyBits mComputeDirtyBits;
+    state::ExtendedDirtyBits mComputeExtendedDirtyBits;
+    state::DirtyObjects mComputeDirtyObjects;
+    state::DirtyBits mCopyImageDirtyBits;
+    state::ExtendedDirtyBits mCopyImageExtendedDirtyBits;
+    state::DirtyObjects mCopyImageDirtyObjects;
+    state::DirtyBits mReadInvalidateDirtyBits;
+    state::ExtendedDirtyBits mReadInvalidateExtendedDirtyBits;
+    state::DirtyBits mDrawInvalidateDirtyBits;
+    state::ExtendedDirtyBits mDrawInvalidateExtendedDirtyBits;
+    state::DirtyBits mPixelLocalStorageEXTEnableDisableDirtyBits;
+    state::ExtendedDirtyBits mPixelLocalStorageEXTEnableDisableExtendedDirtyBits;
+    state::DirtyObjects mPixelLocalStorageEXTEnableDisableDirtyObjects;
 
     // Binding to container objects that use dependent state updates.
     angle::ObserverBinding mVertexArrayObserverBinding;
@@ -904,7 +929,7 @@ class [[nodiscard]] ScopedContextRef
 };
 
 // Thread-local current valid context bound to the thread.
-#if defined(ANGLE_PLATFORM_APPLE)
+#if defined(ANGLE_PLATFORM_APPLE) || defined(ANGLE_USE_STATIC_THREAD_LOCAL_VARIABLES)
 extern Context *GetCurrentValidContextTLS();
 extern void SetCurrentValidContextTLS(Context *context);
 #else

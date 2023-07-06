@@ -234,6 +234,10 @@ struct RasterizerState final
     CullFaceMode cullMode;
     GLenum frontFace;
 
+    PolygonMode polygonMode;
+
+    bool polygonOffsetPoint;
+    bool polygonOffsetLine;
     bool polygonOffsetFill;
     GLfloat polygonOffsetFactor;
     GLfloat polygonOffsetUnits;
@@ -248,6 +252,15 @@ struct RasterizerState final
     bool rasterizerDiscard;
 
     bool dither;
+
+    bool isPolygonOffsetEnabled() const
+    {
+        static_assert(static_cast<int>(PolygonMode::Point) == 0, "PolygonMode::Point");
+        static_assert(static_cast<int>(PolygonMode::Line) == 1, "PolygonMode::Line");
+        static_assert(static_cast<int>(PolygonMode::Fill) == 2, "PolygonMode::Fill");
+        return (1 << static_cast<int>(polygonMode)) &
+               ((polygonOffsetPoint << 0) | (polygonOffsetLine << 1) | (polygonOffsetFill << 2));
+    }
 };
 
 bool operator==(const RasterizerState &a, const RasterizerState &b);
@@ -493,6 +506,9 @@ struct PixelPackState : PixelStoreStateBase
 {
     bool reverseRowOrder = false;
 };
+
+// Used in VertexArray.
+using VertexArrayBufferBindingMask = angle::BitSet<MAX_VERTEX_ATTRIB_BINDINGS>;
 
 // Used in Program and VertexArray.
 using AttributesMask = angle::BitSet<MAX_VERTEX_ATTRIBS>;

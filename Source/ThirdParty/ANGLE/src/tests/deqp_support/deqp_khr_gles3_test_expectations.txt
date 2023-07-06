@@ -7,10 +7,13 @@
 // For now we only log Vulkan test expectations. More back-ends can follow as we need them.
 
 // Depth/stencil related failures due to Vulkan driver bugs.
-3683 VULKAN ANDROID : KHR-GLES3.packed_depth_stencil.clear_buffer.depth32f_stencil8 = FAIL
+3683 VULKAN PIXEL4ORXL : KHR-GLES3.packed_depth_stencil.clear_buffer.depth32f_stencil8 = FAIL
 
 // Test bug - fails in ASAN
-6678 : KHR-GLES3.packed_pixels.varied_rectangle.* = SKIP
+6678 VULKAN ANDROID : KHR-GLES3.packed_pixels.varied_rectangle.* = SKIP
+6678 VULKAN NVIDIA : KHR-GLES3.packed_pixels.varied_rectangle.r8_snorm = SKIP
+6678 VULKAN NVIDIA : KHR-GLES3.packed_pixels.varied_rectangle.rg8_snorm = SKIP
+6678 VULKAN NVIDIA : KHR-GLES3.packed_pixels.varied_rectangle.rgba8_snorm = SKIP
 
 5976 LINUX VULKAN NVIDIA : KHR-GLES3.shaders.indexing.tmp_array.vertexid = FAIL
 
@@ -55,12 +58,18 @@
 4019 SWIFTSHADER : KHR-GLES3.shaders.indexing.matrix_subscript.mat4_static_write_static_loop_read_vertex = FAIL
 
 // https://gitlab.khronos.org/opengl/API/-/issues/180
-8048 : KHR-GLES3.packed_pixels.pbo_rectangle.r8_snorm = SKIP
-8048 : KHR-GLES3.packed_pixels.pbo_rectangle.rg8_snorm = SKIP
-8048 : KHR-GLES3.packed_pixels.pbo_rectangle.rgba8_snorm = SKIP
-8048 : KHR-GLES3.packed_pixels.rectangle.r8_snorm = SKIP
-8048 : KHR-GLES3.packed_pixels.rectangle.rg8_snorm = SKIP
-8048 : KHR-GLES3.packed_pixels.rectangle.rgba8_snorm = SKIP
+8048 VULKAN NVIDIA : KHR-GLES3.packed_pixels.pbo_rectangle.r8_snorm = SKIP
+8048 VULKAN NVIDIA : KHR-GLES3.packed_pixels.pbo_rectangle.rg8_snorm = SKIP
+8048 VULKAN NVIDIA : KHR-GLES3.packed_pixels.pbo_rectangle.rgba8_snorm = SKIP
+8048 VULKAN NVIDIA : KHR-GLES3.packed_pixels.rectangle.r8_snorm = SKIP
+8048 VULKAN NVIDIA : KHR-GLES3.packed_pixels.rectangle.rg8_snorm = SKIP
+8048 VULKAN NVIDIA : KHR-GLES3.packed_pixels.rectangle.rgba8_snorm = SKIP
+8048 VULKAN ANDROID : KHR-GLES3.packed_pixels.pbo_rectangle.r8_snorm = SKIP
+8048 VULKAN ANDROID : KHR-GLES3.packed_pixels.pbo_rectangle.rg8_snorm = SKIP
+8048 VULKAN ANDROID : KHR-GLES3.packed_pixels.pbo_rectangle.rgba8_snorm = SKIP
+8048 VULKAN ANDROID : KHR-GLES3.packed_pixels.rectangle.r8_snorm = SKIP
+8048 VULKAN ANDROID : KHR-GLES3.packed_pixels.rectangle.rg8_snorm = SKIP
+8048 VULKAN ANDROID : KHR-GLES3.packed_pixels.rectangle.rgba8_snorm = SKIP
 
 // New failures with latest dEQP roll (2020-04-28)
 4593 SWIFTSHADER : KHR-GLES3.core.nearest_edge.offset_left = FAIL
@@ -69,5 +78,8 @@
 6678 UBSAN : KHR-GLES3.packed_pixels.* = SKIP
 6678 UBSAN : KHR-GLES3.copy_tex_image_conversions.required.* = SKIP
 
-// Failure since VK-GL-CTS roll (2023-02-28)
-8045 : KHR-GLES3.shaders.negative.non_precision_qualifiers_in_struct_members = SKIP
+// Samsung Galaxy S23
+8157 GALAXYS23 VULKAN : KHR-GLES3.shaders.function.global_variable_aliasing_fragment = SKIP
+
+// Mali G710
+8212 MALIG710 VULKAN : KHR-GLES3.number_parsing.* = FAIL

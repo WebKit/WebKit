@@ -11,14 +11,12 @@
 
 #include "common/angleutils.h"
 #include "common/debug.h"
-#include "common/platform.h"
+#include "common/platform_helpers.h"
 #include "common/string_utils.h"
 #include "gpu_info_util/SystemInfo.h"
 
 #if defined(ANGLE_PLATFORM_APPLE)
 #    include "GPUTestConfig_mac.h"
-#elif defined(ANGLE_PLATFORM_WINDOWS)
-#    include <versionhelpers.h>
 #endif
 
 namespace angle
@@ -52,86 +50,6 @@ inline bool OperatingSystemVersionNumbers(int32_t *majorVersion, int32_t *minorV
     return ret;
 }
 #endif
-
-// Check if the OS is any version of Windows
-inline bool IsWin()
-{
-#if defined(ANGLE_PLATFORM_WINDOWS)
-    return true;
-#else
-    return false;
-#endif
-}
-
-// Check if the OS is Windows XP
-inline bool IsWinXP()
-{
-#if defined(ANGLE_PLATFORM_WINDOWS)
-    return IsWindowsXPOrGreater() && !IsWindowsVistaOrGreater();
-#else
-    return false;
-#endif
-}
-
-// Check if the OS is Windows Vista
-inline bool IsWinVista()
-{
-#if defined(ANGLE_PLATFORM_WINDOWS)
-    return IsWindowsVistaOrGreater() && !IsWindows7OrGreater();
-#else
-    return false;
-#endif
-}
-
-// Check if the OS is Windows 7
-inline bool IsWin7()
-{
-#if defined(ANGLE_PLATFORM_WINDOWS)
-    return IsWindows7OrGreater() && !IsWindows8OrGreater();
-#else
-    return false;
-#endif
-}
-
-// Check if the OS is Windows 8
-inline bool IsWin8()
-{
-#if defined(ANGLE_PLATFORM_WINDOWS)
-    return IsWindows8OrGreater() && !IsWindows10OrGreater();
-#else
-    return false;
-#endif
-}
-
-// Check if the OS is Windows 10
-inline bool IsWin10()
-{
-#if defined(ANGLE_PLATFORM_WINDOWS)
-    return IsWindows10OrGreater();
-#else
-    return false;
-#endif
-}
-
-// Check if the OS is any version of iOS
-inline bool IsIOS()
-{
-#if ANGLE_PLATFORM_IOS_FAMILY
-    return true;
-#else
-    return false;
-#endif
-}
-
-// Check if the OS is any version of OSX
-inline bool IsMac()
-{
-#if defined(ANGLE_PLATFORM_MACOS)
-    return true;
-#else
-    return false;
-#endif
-}
 
 // Check if the OS is a specific major and minor version of OSX
 inline bool IsMacVersion(const int32_t majorVersion, const int32_t minorVersion)
@@ -250,26 +168,6 @@ inline bool IsMacMojave()
     return false;
 }
 
-// Check if the OS is any version of Linux
-inline bool IsLinux()
-{
-#if defined(ANGLE_PLATFORM_LINUX)
-    return true;
-#else
-    return false;
-#endif
-}
-
-// Check if the OS is any version of Android
-inline bool IsAndroid()
-{
-#if defined(ANGLE_PLATFORM_ANDROID)
-    return true;
-#else
-    return false;
-#endif
-}
-
 // Generic function call to populate the SystemInfo struct. This function will
 // also cache the SystemInfo struct for future calls. Returns false if the
 // struct was not fully populated. Guaranteed to set sysInfo to a valid pointer
@@ -374,9 +272,9 @@ inline bool IsVMWare()
 }
 
 // Check whether the active GPU is Apple.
-inline bool IsApple()
+inline bool IsAppleGPU()
 {
-    return angle::IsApple(GetActiveGPUVendorID());
+    return angle::IsAppleGPU(GetActiveGPUVendorID());
 }
 
 // Check whether this is a debug build.
@@ -442,6 +340,51 @@ inline bool IsPixel4XL()
 inline bool IsPixel6()
 {
     return IsAndroidDevice("Pixel 6");
+}
+
+inline bool IsPixel7()
+{
+    return IsAndroidDevice("Pixel 7");
+}
+
+inline bool IsOppoFlipN2()
+{
+    return IsAndroidDevice("CPH2437");
+}
+
+inline bool IsMaliG710()
+{
+    return IsPixel7() || IsOppoFlipN2();
+}
+
+inline bool IsGalaxyA23()
+{
+    return IsAndroidDevice("SM-A236U1");
+}
+
+inline bool IsGalaxyA34()
+{
+    return IsAndroidDevice("SM-A346M");
+}
+
+inline bool IsGalaxyA54()
+{
+    return IsAndroidDevice("SM-A546E");
+}
+
+inline bool IsGalaxyS23()
+{
+    return IsAndroidDevice("SM-S911U1");
+}
+
+inline bool IsGalaxyQualcomm()
+{
+    return IsGalaxyA23() || IsGalaxyS23();
+}
+
+inline bool IsFindX6()
+{
+    return IsAndroidDevice("PGFM10");
 }
 
 // Check whether the active GPU is a specific device based on the string device ID.
@@ -517,12 +460,12 @@ GPUTestConfig::GPUTestConfig() : GPUTestConfig(false) {}
 GPUTestConfig::GPUTestConfig(bool isSwiftShader)
 {
     mConditions[kConditionNone]            = false;
-    mConditions[kConditionWinXP]           = IsWinXP();
-    mConditions[kConditionWinVista]        = IsWinVista();
-    mConditions[kConditionWin7]            = IsWin7();
-    mConditions[kConditionWin8]            = IsWin8();
-    mConditions[kConditionWin10]           = IsWin10();
-    mConditions[kConditionWin]             = IsWin();
+    mConditions[kConditionWinXP]           = IsWindowsXP();
+    mConditions[kConditionWinVista]        = IsWindowsVista();
+    mConditions[kConditionWin7]            = IsWindows7();
+    mConditions[kConditionWin8]            = IsWindows8();
+    mConditions[kConditionWin10]           = IsWindows10OrLater();
+    mConditions[kConditionWin]             = IsWindows();
     mConditions[kConditionMacLeopard]      = IsMacLeopard();
     mConditions[kConditionMacSnowLeopard]  = IsMacSnowLeopard();
     mConditions[kConditionMacLion]         = IsMacLion();
@@ -542,7 +485,7 @@ GPUTestConfig::GPUTestConfig(bool isSwiftShader)
     mConditions[kConditionAMD]         = !isSwiftShader && IsAMD();
     mConditions[kConditionIntel]       = !isSwiftShader && IsIntel();
     mConditions[kConditionVMWare]      = !isSwiftShader && IsVMWare();
-    mConditions[kConditionApple]       = !isSwiftShader && IsApple();
+    mConditions[kConditionApple]       = !isSwiftShader && IsAppleGPU();
     mConditions[kConditionSwiftShader] = isSwiftShader;
 
     mConditions[kConditionRelease] = IsRelease();
@@ -560,6 +503,15 @@ GPUTestConfig::GPUTestConfig(bool isSwiftShader)
     mConditions[kConditionPixel2OrXL]       = !isSwiftShader && (IsPixel2() || IsPixel2XL());
     mConditions[kConditionPixel4OrXL]       = !isSwiftShader && (IsPixel4() || IsPixel4XL());
     mConditions[kConditionPixel6]           = !isSwiftShader && (IsPixel6());
+    mConditions[kConditionPixel7]           = !isSwiftShader && (IsPixel7());
+    mConditions[kConditionFlipN2]           = !isSwiftShader && (IsOppoFlipN2());
+    mConditions[kConditionMaliG710]         = !isSwiftShader && (IsMaliG710());
+    mConditions[kConditionGalaxyA23]        = !isSwiftShader && (IsGalaxyA23());
+    mConditions[kConditionGalaxyA34]        = !isSwiftShader && (IsGalaxyA34());
+    mConditions[kConditionGalaxyA54]        = !isSwiftShader && (IsGalaxyA54());
+    mConditions[kConditionGalaxyS23]        = !isSwiftShader && (IsGalaxyS23());
+    mConditions[kConditionGalaxyQualcomm]   = !isSwiftShader && (IsGalaxyQualcomm());
+    mConditions[kConditionFindX6]           = !isSwiftShader && (IsFindX6());
     mConditions[kConditionNVIDIAQuadroP400] = !isSwiftShader && IsNVIDIAQuadroP400();
     mConditions[kConditionNVIDIAGTX1660]    = !isSwiftShader && IsNVIDIAGTX1660();
 

@@ -72,12 +72,9 @@ void GL_APIENTRY GL_DeletePerfMonitorsAMD(GLsizei n, GLuint *monitors)
     if (context)
     {
         SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid =
-            (context->skipValidation() ||
-             (ValidatePixelLocalStorageInactive(context,
-                                                angle::EntryPoint::GLDeletePerfMonitorsAMD) &&
-              ValidateDeletePerfMonitorsAMD(context, angle::EntryPoint::GLDeletePerfMonitorsAMD, n,
-                                            monitors)));
+        bool isCallValid = (context->skipValidation() ||
+                            ValidateDeletePerfMonitorsAMD(
+                                context, angle::EntryPoint::GLDeletePerfMonitorsAMD, n, monitors));
         if (isCallValid)
         {
             context->deletePerfMonitors(n, monitors);
@@ -412,7 +409,7 @@ void GL_APIENTRY GL_DrawArraysInstancedBaseInstanceANGLE(GLenum mode,
 void GL_APIENTRY GL_DrawElementsInstancedBaseVertexBaseInstanceANGLE(GLenum mode,
                                                                      GLsizei count,
                                                                      GLenum type,
-                                                                     const GLvoid *indices,
+                                                                     const void *indices,
                                                                      GLsizei instanceCount,
                                                                      GLint baseVertex,
                                                                      GLuint baseInstance)
@@ -495,7 +492,7 @@ void GL_APIENTRY
 GL_MultiDrawElementsInstancedBaseVertexBaseInstanceANGLE(GLenum mode,
                                                          const GLsizei *counts,
                                                          GLenum type,
-                                                         const GLvoid *const *indices,
+                                                         const void *const *indices,
                                                          const GLsizei *instanceCounts,
                                                          const GLint *baseVertices,
                                                          const GLuint *baseInstances,
@@ -1358,7 +1355,7 @@ void GL_APIENTRY GL_MultiDrawArraysInstancedANGLE(GLenum mode,
 void GL_APIENTRY GL_MultiDrawElementsANGLE(GLenum mode,
                                            const GLsizei *counts,
                                            GLenum type,
-                                           const GLvoid *const *indices,
+                                           const void *const *indices,
                                            GLsizei drawcount)
 {
     Context *context = GetValidGlobalContext();
@@ -1396,7 +1393,7 @@ void GL_APIENTRY GL_MultiDrawElementsANGLE(GLenum mode,
 void GL_APIENTRY GL_MultiDrawElementsInstancedANGLE(GLenum mode,
                                                     const GLsizei *counts,
                                                     GLenum type,
-                                                    const GLvoid *const *indices,
+                                                    const void *const *indices,
                                                     const GLsizei *instanceCounts,
                                                     GLsizei drawcount)
 {
@@ -1436,6 +1433,36 @@ void GL_APIENTRY GL_MultiDrawElementsInstancedANGLE(GLenum mode,
 }
 
 // GL_ANGLE_pack_reverse_row_order
+
+// GL_ANGLE_polygon_mode
+void GL_APIENTRY GL_PolygonModeANGLE(GLenum face, GLenum mode)
+{
+    Context *context = GetValidGlobalContext();
+    EVENT(context, GLPolygonModeANGLE, "context = %d, face = %s, mode = %s", CID(context),
+          GLenumToString(GLESEnum::TriangleFace, face),
+          GLenumToString(GLESEnum::PolygonMode, mode));
+
+    if (context)
+    {
+        PolygonMode modePacked = PackParam<PolygonMode>(mode);
+        SCOPED_SHARE_CONTEXT_LOCK(context);
+        bool isCallValid =
+            (context->skipValidation() ||
+             (ValidatePixelLocalStorageInactive(context, angle::EntryPoint::GLPolygonModeANGLE) &&
+              ValidatePolygonModeANGLE(context, angle::EntryPoint::GLPolygonModeANGLE, face,
+                                       modePacked)));
+        if (isCallValid)
+        {
+            context->polygonMode(face, modePacked);
+        }
+        ANGLE_CAPTURE_GL(PolygonModeANGLE, isCallValid, context, face, modePacked);
+    }
+    else
+    {
+        GenerateContextLostErrorOnCurrentGlobalContext();
+    }
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
+}
 
 // GL_ANGLE_program_binary
 
@@ -2349,7 +2376,7 @@ void GL_APIENTRY GL_CompressedTexImage2DRobustANGLE(GLenum target,
                                                     GLint border,
                                                     GLsizei imageSize,
                                                     GLsizei dataSize,
-                                                    const GLvoid *data)
+                                                    const void *data)
 {
     Context *context = GetValidGlobalContext();
     EVENT(context, GLCompressedTexImage2DRobustANGLE,
@@ -2394,7 +2421,7 @@ void GL_APIENTRY GL_CompressedTexSubImage2DRobustANGLE(GLenum target,
                                                        GLenum format,
                                                        GLsizei imageSize,
                                                        GLsizei dataSize,
-                                                       const GLvoid *data)
+                                                       const void *data)
 {
     Context *context = GetValidGlobalContext();
     EVENT(context, GLCompressedTexSubImage2DRobustANGLE,
@@ -2438,7 +2465,7 @@ void GL_APIENTRY GL_CompressedTexImage3DRobustANGLE(GLenum target,
                                                     GLint border,
                                                     GLsizei imageSize,
                                                     GLsizei dataSize,
-                                                    const GLvoid *data)
+                                                    const void *data)
 {
     Context *context = GetValidGlobalContext();
     EVENT(context, GLCompressedTexImage3DRobustANGLE,
@@ -2485,7 +2512,7 @@ void GL_APIENTRY GL_CompressedTexSubImage3DRobustANGLE(GLenum target,
                                                        GLenum format,
                                                        GLsizei imageSize,
                                                        GLsizei dataSize,
-                                                       const GLvoid *data)
+                                                       const void *data)
 {
     Context *context = GetValidGlobalContext();
     EVENT(context, GLCompressedTexSubImage3DRobustANGLE,
@@ -4868,7 +4895,7 @@ void GL_APIENTRY GL_EGLImageTargetTexStorageEXT(GLenum target,
     if (context)
     {
         egl::ImageID imagePacked = PackParam<egl::ImageID>(image);
-        SCOPED_GLOBAL_AND_SHARE_CONTEXT_LOCK(context);
+        SCOPED_EGL_IMAGE_SHARE_CONTEXT_LOCK(context, imagePacked);
         bool isCallValid = (context->skipValidation() ||
                             (ValidatePixelLocalStorageInactive(
                                  context, angle::EntryPoint::GLEGLImageTargetTexStorageEXT) &&
@@ -4901,7 +4928,7 @@ void GL_APIENTRY GL_EGLImageTargetTextureStorageEXT(GLuint texture,
     if (context)
     {
         egl::ImageID imagePacked = PackParam<egl::ImageID>(image);
-        SCOPED_GLOBAL_AND_SHARE_CONTEXT_LOCK(context);
+        SCOPED_EGL_IMAGE_SHARE_CONTEXT_LOCK(context, imagePacked);
         bool isCallValid = (context->skipValidation() ||
                             (ValidatePixelLocalStorageInactive(
                                  context, angle::EntryPoint::GLEGLImageTargetTextureStorageEXT) &&
@@ -5535,11 +5562,9 @@ void GL_APIENTRY GL_DeleteQueriesEXT(GLsizei n, const GLuint *ids)
     {
         const QueryID *idsPacked = PackParam<const QueryID *>(ids);
         SCOPED_SHARE_CONTEXT_LOCK(context);
-        bool isCallValid =
-            (context->skipValidation() ||
-             (ValidatePixelLocalStorageInactive(context, angle::EntryPoint::GLDeleteQueriesEXT) &&
-              ValidateDeleteQueriesEXT(context, angle::EntryPoint::GLDeleteQueriesEXT, n,
-                                       idsPacked)));
+        bool isCallValid = (context->skipValidation() ||
+                            ValidateDeleteQueriesEXT(context, angle::EntryPoint::GLDeleteQueriesEXT,
+                                                     n, idsPacked));
         if (isCallValid)
         {
             context->deleteQueries(n, idsPacked);
@@ -6599,10 +6624,8 @@ void GL_APIENTRY GL_DeleteMemoryObjectsEXT(GLsizei n, const GLuint *memoryObject
         SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid =
             (context->skipValidation() ||
-             (ValidatePixelLocalStorageInactive(context,
-                                                angle::EntryPoint::GLDeleteMemoryObjectsEXT) &&
-              ValidateDeleteMemoryObjectsEXT(context, angle::EntryPoint::GLDeleteMemoryObjectsEXT,
-                                             n, memoryObjectsPacked)));
+             ValidateDeleteMemoryObjectsEXT(context, angle::EntryPoint::GLDeleteMemoryObjectsEXT, n,
+                                            memoryObjectsPacked));
         if (isCallValid)
         {
             context->deleteMemoryObjects(n, memoryObjectsPacked);
@@ -7372,10 +7395,8 @@ void GL_APIENTRY GL_DeleteSemaphoresEXT(GLsizei n, const GLuint *semaphores)
         SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid =
             (context->skipValidation() ||
-             (ValidatePixelLocalStorageInactive(context,
-                                                angle::EntryPoint::GLDeleteSemaphoresEXT) &&
-              ValidateDeleteSemaphoresEXT(context, angle::EntryPoint::GLDeleteSemaphoresEXT, n,
-                                          semaphoresPacked)));
+             ValidateDeleteSemaphoresEXT(context, angle::EntryPoint::GLDeleteSemaphoresEXT, n,
+                                         semaphoresPacked));
         if (isCallValid)
         {
             context->deleteSemaphores(n, semaphoresPacked);
@@ -7740,10 +7761,8 @@ void GL_APIENTRY GL_DeleteProgramPipelinesEXT(GLsizei n, const GLuint *pipelines
         SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid =
             (context->skipValidation() ||
-             (ValidatePixelLocalStorageInactive(context,
-                                                angle::EntryPoint::GLDeleteProgramPipelinesEXT) &&
-              ValidateDeleteProgramPipelinesEXT(
-                  context, angle::EntryPoint::GLDeleteProgramPipelinesEXT, n, pipelinesPacked)));
+             ValidateDeleteProgramPipelinesEXT(
+                 context, angle::EntryPoint::GLDeleteProgramPipelinesEXT, n, pipelinesPacked));
         if (isCallValid)
         {
             context->deleteProgramPipelines(n, pipelinesPacked);
@@ -10121,9 +10140,7 @@ void GL_APIENTRY GL_DeleteFencesNV(GLsizei n, const GLuint *fences)
         SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid =
             (context->skipValidation() ||
-             (ValidatePixelLocalStorageInactive(context, angle::EntryPoint::GLDeleteFencesNV) &&
-              ValidateDeleteFencesNV(context, angle::EntryPoint::GLDeleteFencesNV, n,
-                                     fencesPacked)));
+             ValidateDeleteFencesNV(context, angle::EntryPoint::GLDeleteFencesNV, n, fencesPacked));
         if (isCallValid)
         {
             context->deleteFencesNV(n, fencesPacked);
@@ -10355,6 +10372,36 @@ void GL_APIENTRY GL_BlitFramebufferNV(GLint srcX0,
 
 // GL_NV_pixel_buffer_object
 
+// GL_NV_polygon_mode
+void GL_APIENTRY GL_PolygonModeNV(GLenum face, GLenum mode)
+{
+    Context *context = GetValidGlobalContext();
+    EVENT(context, GLPolygonModeNV, "context = %d, face = %s, mode = %s", CID(context),
+          GLenumToString(GLESEnum::TriangleFace, face),
+          GLenumToString(GLESEnum::PolygonMode, mode));
+
+    if (context)
+    {
+        PolygonMode modePacked = PackParam<PolygonMode>(mode);
+        SCOPED_SHARE_CONTEXT_LOCK(context);
+        bool isCallValid =
+            (context->skipValidation() ||
+             (ValidatePixelLocalStorageInactive(context, angle::EntryPoint::GLPolygonModeNV) &&
+              ValidatePolygonModeNV(context, angle::EntryPoint::GLPolygonModeNV, face,
+                                    modePacked)));
+        if (isCallValid)
+        {
+            context->polygonModeNV(face, modePacked);
+        }
+        ANGLE_CAPTURE_GL(PolygonModeNV, isCallValid, context, face, modePacked);
+    }
+    else
+    {
+        GenerateContextLostErrorOnCurrentGlobalContext();
+    }
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
+}
+
 // GL_NV_read_depth
 
 // GL_NV_read_depth_stencil
@@ -10376,7 +10423,7 @@ void GL_APIENTRY GL_EGLImageTargetRenderbufferStorageOES(GLenum target, GLeglIma
     if (context)
     {
         egl::ImageID imagePacked = PackParam<egl::ImageID>(image);
-        SCOPED_GLOBAL_AND_SHARE_CONTEXT_LOCK(context);
+        SCOPED_EGL_IMAGE_SHARE_CONTEXT_LOCK(context, imagePacked);
         bool isCallValid =
             (context->skipValidation() ||
              (ValidatePixelLocalStorageInactive(
@@ -10409,7 +10456,7 @@ void GL_APIENTRY GL_EGLImageTargetTexture2DOES(GLenum target, GLeglImageOES imag
     {
         TextureType targetPacked = PackParam<TextureType>(target);
         egl::ImageID imagePacked = PackParam<egl::ImageID>(image);
-        SCOPED_GLOBAL_AND_SHARE_CONTEXT_LOCK(context);
+        SCOPED_EGL_IMAGE_SHARE_CONTEXT_LOCK(context, imagePacked);
         bool isCallValid = (context->skipValidation() ||
                             (ValidatePixelLocalStorageInactive(
                                  context, angle::EntryPoint::GLEGLImageTargetTexture2DOES) &&
@@ -11160,10 +11207,8 @@ void GL_APIENTRY GL_DeleteFramebuffersOES(GLsizei n, const GLuint *framebuffers)
         SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid =
             (context->skipValidation() ||
-             (ValidatePixelLocalStorageInactive(context,
-                                                angle::EntryPoint::GLDeleteFramebuffersOES) &&
-              ValidateDeleteFramebuffersOES(context, angle::EntryPoint::GLDeleteFramebuffersOES, n,
-                                            framebuffersPacked)));
+             ValidateDeleteFramebuffersOES(context, angle::EntryPoint::GLDeleteFramebuffersOES, n,
+                                           framebuffersPacked));
         if (isCallValid)
         {
             context->deleteFramebuffers(n, framebuffersPacked);
@@ -11191,10 +11236,8 @@ void GL_APIENTRY GL_DeleteRenderbuffersOES(GLsizei n, const GLuint *renderbuffer
         SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid =
             (context->skipValidation() ||
-             (ValidatePixelLocalStorageInactive(context,
-                                                angle::EntryPoint::GLDeleteRenderbuffersOES) &&
-              ValidateDeleteRenderbuffersOES(context, angle::EntryPoint::GLDeleteRenderbuffersOES,
-                                             n, renderbuffersPacked)));
+             ValidateDeleteRenderbuffersOES(context, angle::EntryPoint::GLDeleteRenderbuffersOES, n,
+                                            renderbuffersPacked));
         if (isCallValid)
         {
             context->deleteRenderbuffers(n, renderbuffersPacked);
@@ -12914,10 +12957,8 @@ void GL_APIENTRY GL_DeleteVertexArraysOES(GLsizei n, const GLuint *arrays)
         SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid =
             (context->skipValidation() ||
-             (ValidatePixelLocalStorageInactive(context,
-                                                angle::EntryPoint::GLDeleteVertexArraysOES) &&
-              ValidateDeleteVertexArraysOES(context, angle::EntryPoint::GLDeleteVertexArraysOES, n,
-                                            arraysPacked)));
+             ValidateDeleteVertexArraysOES(context, angle::EntryPoint::GLDeleteVertexArraysOES, n,
+                                           arraysPacked));
         if (isCallValid)
         {
             context->deleteVertexArrays(n, arraysPacked);

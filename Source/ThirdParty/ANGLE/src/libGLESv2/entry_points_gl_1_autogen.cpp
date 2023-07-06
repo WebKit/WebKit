@@ -1101,8 +1101,7 @@ void GL_APIENTRY GL_DeleteLists(GLuint list, GLsizei range)
         SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid =
             (context->skipValidation() ||
-             (ValidatePixelLocalStorageInactive(context, angle::EntryPoint::GLDeleteLists) &&
-              ValidateDeleteLists(context, angle::EntryPoint::GLDeleteLists, list, range)));
+             ValidateDeleteLists(context, angle::EntryPoint::GLDeleteLists, list, range));
         if (isCallValid)
         {
             context->deleteLists(list, range);
@@ -3462,16 +3461,17 @@ void GL_APIENTRY GL_PolygonMode(GLenum face, GLenum mode)
 
     if (context)
     {
+        PolygonMode modePacked = PackParam<PolygonMode>(mode);
         SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid =
             (context->skipValidation() ||
              (ValidatePixelLocalStorageInactive(context, angle::EntryPoint::GLPolygonMode) &&
-              ValidatePolygonMode(context, angle::EntryPoint::GLPolygonMode, face, mode)));
+              ValidatePolygonMode(context, angle::EntryPoint::GLPolygonMode, face, modePacked)));
         if (isCallValid)
         {
-            context->polygonMode(face, mode);
+            context->polygonMode(face, modePacked);
         }
-        ANGLE_CAPTURE_GL(PolygonMode, isCallValid, context, face, mode);
+        ANGLE_CAPTURE_GL(PolygonMode, isCallValid, context, face, modePacked);
     }
     else
     {

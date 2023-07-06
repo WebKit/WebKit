@@ -49,7 +49,6 @@ struct VaryingInShaderRef : angle::NonCopyable
 
     // Struct name
     std::string parentStructName;
-    std::string parentStructMappedName;
 };
 
 struct PackedVarying : angle::NonCopyable
@@ -205,6 +204,27 @@ enum class PackMode
     ANGLE_NON_CONFORMANT_D3D9,
 };
 
+enum class PerVertexMember
+{
+    // The gl_Pervertex struct is defined as:
+    //
+    //     out gl_PerVertex
+    //     {
+    //         vec4 gl_Position;
+    //         float gl_PointSize;
+    //         float gl_ClipDistance[];
+    //         float gl_CullDistance[];
+    //     };
+    Position,
+    PointSize,
+    ClipDistance,
+    CullDistance,
+
+    EnumCount,
+    InvalidEnum = EnumCount,
+};
+using PerVertexMemberBitSet = angle::PackedEnumBitSet<PerVertexMember, uint8_t>;
+
 class VaryingPacking final : angle::NonCopyable
 {
   public:
@@ -239,14 +259,14 @@ class VaryingPacking final : angle::NonCopyable
         return static_cast<unsigned int>(mRegisterList.size());
     }
 
-    const ShaderMap<std::vector<std::string>> &getInactiveVaryingMappedNames() const
+    const ShaderMap<std::vector<uint32_t>> &getInactiveVaryingIds() const
     {
-        return mInactiveVaryingMappedNames;
+        return mInactiveVaryingIds;
     }
 
-    const ShaderMap<std::vector<std::string>> &getActiveOutputBuiltInNames() const
+    const ShaderMap<PerVertexMemberBitSet> &getOutputPerVertexActiveMembers() const
     {
-        return mActiveOutputBuiltIns;
+        return mOutputPerVertexActiveMembers;
     }
 
     void reset();
@@ -293,8 +313,8 @@ class VaryingPacking final : angle::NonCopyable
     std::vector<Register> mRegisterMap;
     std::vector<PackedVaryingRegister> mRegisterList;
     std::vector<PackedVarying> mPackedVaryings;
-    ShaderMap<std::vector<std::string>> mInactiveVaryingMappedNames;
-    ShaderMap<std::vector<std::string>> mActiveOutputBuiltIns;
+    ShaderMap<std::vector<uint32_t>> mInactiveVaryingIds;
+    ShaderMap<PerVertexMemberBitSet> mOutputPerVertexActiveMembers;
 };
 
 class ProgramVaryingPacking final : angle::NonCopyable

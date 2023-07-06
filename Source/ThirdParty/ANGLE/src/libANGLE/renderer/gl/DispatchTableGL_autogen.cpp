@@ -2157,6 +2157,11 @@ void DispatchTableGL::initProcsGLES(const gl::Version &version,
         ASSIGN("glBlitFramebufferNV", blitFramebufferNV);
     }
 
+    if (extensions.count("GL_NV_polygon_mode") != 0)
+    {
+        ASSIGN("glPolygonModeNV", polygonModeNV);
+    }
+
     if (extensions.count("GL_OES_EGL_image") != 0)
     {
         ASSIGN("glEGLImageTargetRenderbufferStorageOES", eGLImageTargetRenderbufferStorageOES);
@@ -4976,6 +4981,11 @@ void DispatchTableGL::initProcsGLESNULL(const gl::Version &version,
     if (extensions.count("GL_NV_framebuffer_blit") != 0)
     {
         blitFramebufferNV = &glBlitFramebufferNVNULL;
+    }
+
+    if (extensions.count("GL_NV_polygon_mode") != 0)
+    {
+        polygonModeNV = &glPolygonModeNVNULL;
     }
 
     if (extensions.count("GL_OES_EGL_image") != 0)

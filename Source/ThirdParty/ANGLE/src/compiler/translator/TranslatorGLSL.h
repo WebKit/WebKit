@@ -25,7 +25,6 @@ class TranslatorGLSL : public TCompiler
                                  const ShCompileOptions &compileOptions,
                                  PerformanceDiagnostics *perfDiagnostics) override;
     bool shouldFlattenPragmaStdglInvariantAll() override;
-    bool shouldCollectVariables(const ShCompileOptions &compileOptions) override;
 
   private:
     void writeVersion(TIntermNode *root);

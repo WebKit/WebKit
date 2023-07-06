@@ -410,6 +410,30 @@ uint64_t MemoryAllocationTracker::getActiveHeapMemoryAllocationsCount(uint32_t a
     return mActivePerHeapMemoryAllocationsCount[allocTypeIndex][heapIndex];
 }
 
+void MemoryAllocationTracker::compareExpectedFlagsWithAllocatedFlags(
+    VkMemoryPropertyFlags requiredFlags,
+    VkMemoryPropertyFlags preferredFlags,
+    VkMemoryPropertyFlags allocatedFlags,
+    void *handle)
+{
+    if (!kTrackMemoryAllocationDebug)
+    {
+        return;
+    }
+
+    ASSERT((requiredFlags & ~allocatedFlags) == 0);
+    if (((preferredFlags | requiredFlags) & ~allocatedFlags) != 0)
+    {
+        INFO() << "Memory type index chosen for object " << handle
+               << " lacks some of the preferred property flags.";
+    }
+
+    if ((~allocatedFlags & preferredFlags & VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT) != 0)
+    {
+        WARN() << "Device-local memory allocation fallback to system memory.";
+    }
+}
+
 VkDeviceSize MemoryAllocationTracker::getPendingMemoryAllocationSize() const
 {
     if (!kTrackMemoryAllocationSizes)

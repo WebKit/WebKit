@@ -121,11 +121,7 @@ class ShaderImageTest : public ShaderCompileTreeTest
     ShaderImageTest() {}
 
   protected:
-    void SetUp() override
-    {
-        ShaderCompileTreeTest::SetUp();
-        mCompileOptions.variables = true;
-    }
+    void SetUp() override { ShaderCompileTreeTest::SetUp(); }
 
     ::GLenum getShaderType() const override { return GL_COMPUTE_SHADER; }
     ShShaderSpec getShaderSpec() const override { return SH_GLES3_1_SPEC; }

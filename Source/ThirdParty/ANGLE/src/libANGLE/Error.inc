@@ -82,6 +82,11 @@ bool Error::isError() const
     return (mCode != EGL_SUCCESS);
 }
 
+void Error::setCode(EGLint code)
+{
+    mCode = code;
+}
+
 // Static
 Error Error::NoError()
 {

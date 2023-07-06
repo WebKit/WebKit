@@ -744,8 +744,7 @@ deqp_gles31_sources = [
   "$deqp_path/modules/gles31/stress/es31sTessellationGeometryInteractionTests.hpp",
   "$deqp_path/modules/gles31/stress/es31sVertexAttributeBindingTests.cpp",
   "$deqp_path/modules/gles31/stress/es31sVertexAttributeBindingTests.hpp",
-
-  #  "$deqp_path/modules/gles31/tes31Context.cpp",  # 3688/3687: Override to prevent 3.2 context creation
+  "$deqp_path/modules/gles31/tes31Context.cpp",
   "$deqp_path/modules/gles31/tes31Context.hpp",
   "$deqp_path/modules/gles31/tes31InfoTests.cpp",
   "$deqp_path/modules/gles31/tes31InfoTests.hpp",
@@ -757,10 +756,6 @@ deqp_gles31_sources = [
   "$deqp_path/modules/gles31/tes31TestPackageEntry.cpp",
   "$deqp_path/modules/gles31/tgl45es31TestPackage.cpp",
   "$deqp_path/modules/gles31/tgl45es31TestPackage.hpp",
-
-  # Overrides
-  "deqp_support/tes31Context_override.cpp",  # 3688/3687: Override to prevent
-                                             # 3.2 context creation
 ]
 
 deqp_egl_sources = [

@@ -108,6 +108,7 @@
 6180 : GLSLTest_ES31.InterpolateAtWithSwizzle/* = NOT_RUN
 
 6741 : VulkanImageTest.* = SKIP_FOR_CAPTURE
+6741 : VulkanMemoryTest.* = SKIP_FOR_CAPTURE
 
 6941 : Texture2DTestES3RobustInit.TextureCOMPRESSEDRGB8A1ETC2/* = NOT_RUN
 6941 : Texture2DTestES3RobustInit.TextureCOMPRESSEDSRGB8A1ETC2/* = NOT_RUN

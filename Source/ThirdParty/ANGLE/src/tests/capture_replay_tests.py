@@ -895,6 +895,11 @@ def main(args):
     logger = multiprocessing.log_to_stderr()
     logger.setLevel(level=args.log.upper())
 
+    is_bot = bool(args.goma_dir)  # flag set in recipes/recipe_modules/angle/api.py
+    if sys.platform == 'linux' and is_bot:
+        logger.warning('Test is currently a no-op https://anglebug.com/6085')
+        return EXIT_SUCCESS
+
     ninja_lock = multiprocessing.Semaphore(args.max_ninja_jobs)
     child_processes_manager = ChildProcessesManager(args, logger, ninja_lock)
     try:

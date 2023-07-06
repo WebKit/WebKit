@@ -2371,12 +2371,14 @@ const Display *GetDisplayIfValid(const Display *display)
 
 const Surface *GetSurfaceIfValid(const Display *display, SurfaceID surfaceID)
 {
-    return ValidateSurface(nullptr, display, surfaceID) ? display->getSurface(surfaceID) : nullptr;
+    // display->getSurface() - validates surfaceID
+    return ValidateDisplay(nullptr, display) ? display->getSurface(surfaceID) : nullptr;
 }
 
 const Image *GetImageIfValid(const Display *display, ImageID imageID)
 {
-    return ValidateImage(nullptr, display, imageID) ? display->getImage(imageID) : nullptr;
+    // display->getImage() - validates imageID
+    return ValidateDisplay(nullptr, display) ? display->getImage(imageID) : nullptr;
 }
 
 const Stream *GetStreamIfValid(const Display *display, const Stream *stream)
@@ -2386,7 +2388,13 @@ const Stream *GetStreamIfValid(const Display *display, const Stream *stream)
 
 const gl::Context *GetContextIfValid(const Display *display, gl::ContextID contextID)
 {
-    return ValidateContext(nullptr, display, contextID) ? display->getContext(contextID) : nullptr;
+    // display->getContext() - validates contextID
+    return ValidateDisplay(nullptr, display) ? display->getContext(contextID) : nullptr;
+}
+
+gl::Context *GetContextIfValid(Display *display, gl::ContextID contextID)
+{
+    return ValidateDisplay(nullptr, display) ? display->getContext(contextID) : nullptr;
 }
 
 const Device *GetDeviceIfValid(const Device *device)
@@ -2396,7 +2404,8 @@ const Device *GetDeviceIfValid(const Device *device)
 
 const Sync *GetSyncIfValid(const Display *display, SyncID syncID)
 {
-    return ValidateSync(nullptr, display, syncID) ? display->getSync(syncID) : nullptr;
+    // display->getSync() - validates syncID
+    return ValidateDisplay(nullptr, display) ? display->getSync(syncID) : nullptr;
 }
 
 const LabeledObject *GetLabeledObjectIfValid(Thread *thread,

@@ -556,6 +556,110 @@ void main()
     glDeleteProgram(mFragProg);
 }
 
+// Test glUniformBlockBinding and then glBufferData
+TEST_P(ProgramPipelineTest31, FragmentStageUniformBlockBufferDataTest)
+{
+    ANGLE_SKIP_TEST_IF(!IsVulkan());
+
+    // Create two separable program objects from a
+    // single source string respectively (vertSrc and fragSrc)
+    const GLchar *vertString = essl31_shaders::vs::Simple();
+    const GLchar *fragString = R"(#version 310 es
+precision highp float;
+layout (std140) uniform color_ubo
+{
+    float redColorIn;
+    float greenColorIn;
+};
+
+out vec4 my_FragColor;
+void main()
+{
+    my_FragColor = vec4(redColorIn, greenColorIn, 0.0, 1.0);
+})";
+
+    bindProgramPipeline(vertString, fragString);
+
+    // Set the output color to yellow
+    glActiveShaderProgram(mPipeline, mFragProg);
+    GLint uboIndex = glGetUniformBlockIndex(mFragProg, "color_ubo");
+    GLBuffer uboBuf;
+    glBindBufferBase(GL_UNIFORM_BUFFER, 0, uboBuf);
+    glBufferData(GL_UNIFORM_BUFFER, sizeof(GLColor32F), &kFloatRed, GL_STATIC_DRAW);
+    glUniformBlockBinding(mFragProg, uboIndex, 0);
+    drawQuadWithPPO(essl31_shaders::PositionAttrib(), 0.5f, 1.0f);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+
+    // Clear and test again
+    glClearColor(0.0, 0.0, 0.0, 0.0);
+    glClear(GL_COLOR_BUFFER_BIT);
+    drawQuadWithPPO(essl31_shaders::PositionAttrib(), 0.5f, 1.0f);
+    // Set the output color to red
+    glBufferData(GL_UNIFORM_BUFFER, sizeof(GLColor32F), &kFloatGreen, GL_STATIC_DRAW);
+    glBindBufferBase(GL_UNIFORM_BUFFER, 0, uboBuf);
+    drawQuadWithPPO(essl31_shaders::PositionAttrib(), 0.5f, 1.0f);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+
+    glDeleteProgram(mVertProg);
+    glDeleteProgram(mFragProg);
+}
+
+// Test glUniformBlockBinding and followed by glBindBufferRange
+TEST_P(ProgramPipelineTest31, FragmentStageUniformBlockBindBufferRangeTest)
+{
+    ANGLE_SKIP_TEST_IF(!IsVulkan());
+
+    // Create two separable program objects from a
+    // single source string respectively (vertSrc and fragSrc)
+    const GLchar *vertString = essl31_shaders::vs::Simple();
+    const GLchar *fragString = R"(#version 310 es
+precision highp float;
+layout (std140) uniform color_ubo
+{
+    float redColorIn;
+    float greenColorIn;
+};
+
+out vec4 my_FragColor;
+void main()
+{
+    my_FragColor = vec4(redColorIn, greenColorIn, 0.0, 1.0);
+})";
+
+    // Setup two uniform buffers, one with red and one with green
+    GLBuffer uboBufRed;
+    glBindBuffer(GL_UNIFORM_BUFFER, uboBufRed);
+    glBufferData(GL_UNIFORM_BUFFER, sizeof(GLColor32F), &kFloatRed, GL_STATIC_DRAW);
+    GLBuffer uboBufGreen;
+    glBindBuffer(GL_UNIFORM_BUFFER, uboBufGreen);
+    glBufferData(GL_UNIFORM_BUFFER, sizeof(GLColor32F), &kFloatGreen, GL_STATIC_DRAW);
+
+    // Setup pipeline program using red uniform buffer
+    bindProgramPipeline(vertString, fragString);
+    glActiveShaderProgram(mPipeline, mFragProg);
+    GLint uboIndex = glGetUniformBlockIndex(mFragProg, "color_ubo");
+    glBindBufferBase(GL_UNIFORM_BUFFER, 0, uboBufRed);
+    glUniformBlockBinding(mFragProg, uboIndex, 0);
+    drawQuadWithPPO(essl31_shaders::PositionAttrib(), 0.5f, 1.0f);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+
+    // Clear and test again
+    glClearColor(0.0, 0.0, 0.0, 0.0);
+    glClear(GL_COLOR_BUFFER_BIT);
+    drawQuadWithPPO(essl31_shaders::PositionAttrib(), 0.5f, 1.0f);
+    // bind to green uniform buffer
+    glBindBufferBase(GL_UNIFORM_BUFFER, 0, uboBufGreen);
+    drawQuadWithPPO(essl31_shaders::PositionAttrib(), 0.5f, 1.0f);
+    ASSERT_GL_NO_ERROR();
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+
+    glDeleteProgram(mVertProg);
+    glDeleteProgram(mFragProg);
+}
+
 // Test varyings
 TEST_P(ProgramPipelineTest31, ProgramPipelineVaryings)
 {
@@ -1432,6 +1536,10 @@ TEST_P(ProgramPipelineTest31, ImageUniforms)
 {
     ANGLE_SKIP_TEST_IF(!IsVulkan());
 
+    GLint maxVertexImageUniforms;
+    glGetIntegerv(GL_MAX_VERTEX_IMAGE_UNIFORMS, &maxVertexImageUniforms);
+    ANGLE_SKIP_TEST_IF(maxVertexImageUniforms == 0);
+
     const GLchar *vertString = R"(#version 310 es
 precision highp float;
 precision highp image2D;
@@ -1450,20 +1558,69 @@ void main()
     GLfloat value = 1.0;
 
     glBindTexture(GL_TEXTURE_2D, texture);
-
-    glTexStorage2D(GL_TEXTURE_2D, 1 /*levels*/, GL_R32F, 1 /*width*/, 1 /*height*/);
-
-    glTexSubImage2D(GL_TEXTURE_2D, 0 /*level*/, 0 /*xoffset*/, 0 /*yoffset*/, 1 /*width*/,
-                    1 /*height*/, GL_RED, GL_FLOAT, &value);
-
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_R32F, 1, 1);
+    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 1, 1, GL_RED, GL_FLOAT, &value);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
-    glBindImageTexture(0, texture, 0 /*level*/, GL_FALSE /*is layered?*/, 0 /*layer*/, GL_READ_ONLY,
-                       GL_R32F);
+    glBindImageTexture(0, texture, 0, GL_FALSE, 0, GL_READ_ONLY, GL_R32F);
 
     glDrawArrays(GL_POINTS, 0, 6);
+    ASSERT_GL_NO_ERROR();
+}
+
+// Verify that image uniforms can link in separable programs
+TEST_P(ProgramPipelineTest31, LinkedImageUniforms)
+{
+    ANGLE_SKIP_TEST_IF(!IsVulkan());
+
+    GLint maxVertexImageUniforms;
+    glGetIntegerv(GL_MAX_VERTEX_IMAGE_UNIFORMS, &maxVertexImageUniforms);
+    ANGLE_SKIP_TEST_IF(maxVertexImageUniforms == 0);
+
+    const GLchar *vertString = R"(#version 310 es
+precision highp float;
+precision highp image2D;
+layout(binding = 0, r32f) uniform image2D img;
+
+void main()
+{
+    vec2 position = -imageLoad(img, ivec2(0, 0)).rr;
+    if (gl_VertexID == 1)
+        position = vec2(3, -1);
+    else if (gl_VertexID == 2)
+        position = vec2(-1, 3);
+
+    gl_Position = vec4(position, 0, 1);
+})";
+
+    const GLchar *fragString = R"(#version 310 es
+precision highp float;
+precision highp image2D;
+layout(binding = 0, r32f) uniform image2D img;
+layout(location = 0) out vec4 color;
+
+void main()
+{
+    color = imageLoad(img, ivec2(0, 0));
+})";
+
+    bindProgramPipeline(vertString, fragString);
+
+    GLTexture texture;
+    GLfloat value = 1.0;
+
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_R32F, 1, 1);
+    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 1, 1, GL_RED, GL_FLOAT, &value);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    glBindImageTexture(0, texture, 0, GL_FALSE, 0, GL_READ_ONLY, GL_R32F);
+
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+
+    EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
     ASSERT_GL_NO_ERROR();
 }
 
@@ -1760,18 +1917,12 @@ void main()
         GLint value = index + 1;
 
         glBindTexture(GL_TEXTURE_2D, textures[index]);
-
-        glTexStorage2D(GL_TEXTURE_2D, 1 /*levels*/, GL_R32I, 1 /*width*/, 1 /*height*/);
-
-        glTexSubImage2D(GL_TEXTURE_2D, 0 /*level*/, 0 /*xoffset*/, 0 /*yoffset*/, 1 /*width*/,
-                        1 /*height*/, GL_RED_INTEGER, GL_INT, &value);
-
+        glTexStorage2D(GL_TEXTURE_2D, 1, GL_R32I, 1, 1);
+        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 1, 1, GL_RED_INTEGER, GL_INT, &value);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
-        glBindImageTexture(index, textures[index], 0 /*level*/, GL_FALSE /*is layered?*/,
-                           0 /*layer*/, GL_READ_ONLY, GL_R32I);
+        glBindImageTexture(index, textures[index], 0, GL_FALSE, 0, GL_READ_ONLY, GL_R32I);
     }
 
     glDrawArrays(GL_POINTS, 0, 6);

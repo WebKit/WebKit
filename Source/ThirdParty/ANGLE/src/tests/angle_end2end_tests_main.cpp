@@ -26,13 +26,14 @@ constexpr char kTestExpectationsPath[] = "src/tests/angle_end2end_tests_expectat
 
 int main(int argc, char **argv)
 {
-    angle::TestSuite testSuite(&argc, argv);
+    auto registerTestsCallback = [] {
+        if (!IsTSan())
+        {
+            RegisterContextCompatibilityTests();
+        }
+    };
+    angle::TestSuite testSuite(&argc, argv, registerTestsCallback);
     ANGLEProcessTestArgs(&argc, argv);
-
-    if (!IsTSan())
-    {
-        RegisterContextCompatibilityTests();
-    }
 
     constexpr size_t kMaxPath = 512;
     std::array<char, kMaxPath> foundDataPath;

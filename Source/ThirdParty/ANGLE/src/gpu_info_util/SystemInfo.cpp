@@ -192,7 +192,7 @@ bool IsVivante(VendorID vendorId)
     return vendorId == kVendorID_Vivante;
 }
 
-bool IsApple(VendorID vendorId)
+bool IsAppleGPU(VendorID vendorId)
 {
     return vendorId == kVendorID_Apple;
 }

@@ -95,6 +95,7 @@ class TransformFeedbackVk : public TransformFeedbackImpl, public angle::Observer
         const vk::Context *context,
         const gl::ProgramExecutable &executable,
         const ShaderInterfaceVariableInfoMap &variableInfoMap,
+        const vk::WriteDescriptorDescs &writeDescriptorDescs,
         const vk::BufferHelper &emptyBuffer,
         bool activeUnpaused,
         vk::DescriptorSetDescBuilder *builder) const;
@@ -106,14 +107,10 @@ class TransformFeedbackVk : public TransformFeedbackImpl, public angle::Observer
 
     void onSubjectStateChange(angle::SubjectIndex index, angle::SubjectMessage message) override;
 
-  private:
-    void writeDescriptorSet(vk::Context *context,
-                            UpdateDescriptorSetsBuilder *updateBuilder,
-                            const ShaderInterfaceVariableInfoMap &variableInfoMap,
-                            size_t xfbBufferCount,
-                            VkDescriptorBufferInfo *bufferInfo,
-                            VkDescriptorSet descSet) const;
+    void onNewDescriptorSet(const gl::ProgramExecutable &executable,
+                            const vk::SharedDescriptorSetCacheKey &sharedCacheKey);
 
+  private:
     void initializeXFBVariables(ContextVk *contextVk, uint32_t xfbBufferCount);
 
     void releaseCounterBuffers(RendererVk *renderer);

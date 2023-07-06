@@ -895,6 +895,16 @@ PlatformParameters ES3_EGL()
     return PlatformParameters(EGL_OPENGL_ES_API, 3, 0, 0, GLESDriverType::SystemEGL);
 }
 
+PlatformParameters ES31_EGL()
+{
+    return PlatformParameters(EGL_OPENGL_ES_API, 3, 1, 0, GLESDriverType::SystemEGL);
+}
+
+PlatformParameters ES32_EGL()
+{
+    return PlatformParameters(EGL_OPENGL_ES_API, 3, 2, 0, GLESDriverType::SystemEGL);
+}
+
 PlatformParameters ES1_ANGLE_Vulkan_Secondaries()
 {
     return WithVulkanSecondaries(ES1_VULKAN());

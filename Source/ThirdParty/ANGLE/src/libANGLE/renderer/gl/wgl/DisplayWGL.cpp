@@ -42,8 +42,8 @@ std::string GetErrorMessage()
     DWORD errorCode     = GetLastError();
     LPSTR messageBuffer = nullptr;
     size_t size         = FormatMessageA(
-                FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
-                NULL, errorCode, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPSTR)&messageBuffer, 0, NULL);
+        FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+        NULL, errorCode, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPSTR)&messageBuffer, 0, NULL);
     std::string message(messageBuffer, size);
     if (size == 0)
     {
@@ -226,7 +226,7 @@ egl::Error DisplayWGL::initializeImpl(egl::Display *display)
 
     const egl::AttributeMap &displayAttributes = display->getAttributeMap();
     EGLint requestedDisplayType                = static_cast<EGLint>(displayAttributes.get(
-                       EGL_PLATFORM_ANGLE_TYPE_ANGLE, EGL_PLATFORM_ANGLE_TYPE_DEFAULT_ANGLE));
+        EGL_PLATFORM_ANGLE_TYPE_ANGLE, EGL_PLATFORM_ANGLE_TYPE_DEFAULT_ANGLE));
     if (requestedDisplayType == EGL_PLATFORM_ANGLE_TYPE_OPENGLES_ANGLE &&
         !mFunctionsWGL->hasExtension("WGL_EXT_create_context_es2_profile") &&
         !mFunctionsWGL->hasExtension("WGL_EXT_create_context_es_profile"))
@@ -412,7 +412,10 @@ SurfaceImpl *DisplayWGL::createWindowSurface(const egl::SurfaceState &state,
                                              const egl::AttributeMap &attribs)
 {
     EGLint orientation = static_cast<EGLint>(attribs.get(EGL_SURFACE_ORIENTATION_ANGLE, 0));
-    if (mUseDXGISwapChains)
+    // TODO(crbug.com/540829, anglebug.com/8201) other orientations
+    // are still unsupported, so allow fallback instead of crashing
+    // later in eglCreateWindowSurface
+    if (mUseDXGISwapChains && orientation == EGL_SURFACE_ORIENTATION_INVERT_Y_ANGLE)
     {
         egl::Error error = initializeD3DDevice();
         if (error.isError())

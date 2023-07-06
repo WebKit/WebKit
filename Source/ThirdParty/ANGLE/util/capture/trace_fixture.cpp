@@ -22,68 +22,7 @@ void UpdateResourceMap(GLuint *resourceMap, GLuint id, GLsizei readBufferOffset)
     resourceMap[id] = returnedID;
 }
 
-DecompressCallback gDecompressCallback;
-DeleteCallback gDeleteCallback;
-
-void DeleteBinaryData()
-{
-    if (gBinaryData)
-    {
-        if (gDeleteCallback)
-        {
-            gDeleteCallback(gBinaryData);
-        }
-        else
-        {
-            delete[] gBinaryData;
-        }
-        gBinaryData = nullptr;
-    }
-}
-
-void LoadBinaryData(const char *fileName)
-{
-    DeleteBinaryData();
-    char pathBuffer[1000] = {};
-
-    snprintf(pathBuffer, sizeof(pathBuffer), "%s/%s", gBinaryDataDir.c_str(), fileName);
-    FILE *fp = fopen(pathBuffer, "rb");
-    if (fp == 0)
-    {
-        fprintf(stderr, "Error loading binary data file: %s\n", fileName);
-        return;
-    }
-    fseek(fp, 0, SEEK_END);
-    long size = ftell(fp);
-    fseek(fp, 0, SEEK_SET);
-    if (gDecompressCallback)
-    {
-        if (!strstr(fileName, ".gz"))
-        {
-            fprintf(stderr, "Filename does not end in .gz");
-            exit(1);
-        }
-        std::vector<uint8_t> compressedData(size);
-        (void)fread(compressedData.data(), 1, size, fp);
-        gBinaryData = gDecompressCallback(compressedData);
-        if (gBinaryData == nullptr)
-        {
-            // Error already printed by the callback
-            exit(1);
-        }
-    }
-    else
-    {
-        if (!strstr(fileName, ".angledata"))
-        {
-            fprintf(stderr, "Filename does not end in .angledata");
-            exit(1);
-        }
-        gBinaryData = new uint8_t[size];
-        (void)fread(gBinaryData, 1, size, fp);
-    }
-    fclose(fp);
-}
+angle::TraceCallbacks *gTraceCallbacks = nullptr;
 
 EGLClientBuffer GetClientBuffer(EGLenum target, uintptr_t key)
 {
@@ -196,20 +135,9 @@ EGLSurface *gSurfaceMap2;
 EGLContext *gContextMap2;
 GLsync *gSyncMap2;
 EGLSync *gEGLSyncMap;
+EGLDisplay gEGLDisplay;
 
 std::string gBinaryDataDir = ".";
-
-void SetBinaryDataDecompressCallback(DecompressCallback decompressCallback,
-                                     DeleteCallback deleteCallback)
-{
-    gDecompressCallback = decompressCallback;
-    gDeleteCallback     = deleteCallback;
-}
-
-void SetBinaryDataDir(const char *dataDir)
-{
-    gBinaryDataDir = dataDir;
-}
 
 template <typename T>
 T *AllocateZeroedValues(size_t count)
@@ -254,6 +182,7 @@ void InitializeReplay4(const char *binaryDataFileName,
                       maxSemaphore, maxShaderProgram, maxSurface, maxSync, maxTexture,
                       maxTransformFeedback, maxVertexArray);
     gEGLSyncMap = AllocateZeroedValues<EGLSync>(maxEGLSyncID);
+    gEGLDisplay = eglGetCurrentDisplay();
 }
 
 void InitializeReplay3(const char *binaryDataFileName,
@@ -341,7 +270,7 @@ void InitializeReplay(const char *binaryDataFileName,
                       uint32_t maxTransformFeedback,
                       uint32_t maxVertexArray)
 {
-    LoadBinaryData(binaryDataFileName);
+    gBinaryData = gTraceCallbacks->LoadBinaryData(binaryDataFileName);
 
     for (uint8_t *&clientArray : gClientArrays)
     {
@@ -382,6 +311,7 @@ void FinishReplay()
     delete[] gBufferMap;
     delete[] gContextMap2;
     delete[] gEGLImageMap2;
+    delete[] gEGLSyncMap;
     delete[] gRenderbufferMap;
     delete[] gTextureMap;
     delete[] gFramebufferMap;
@@ -396,8 +326,6 @@ void FinishReplay()
     delete[] gSyncMap2;
     delete[] gTransformFeedbackMap;
     delete[] gVertexArrayMap;
-
-    DeleteBinaryData();
 }
 
 void SetValidateSerializedStateCallback(ValidateSerializedStateCallback callback)
@@ -405,17 +333,32 @@ void SetValidateSerializedStateCallback(ValidateSerializedStateCallback callback
     gValidateSerializedStateCallback = callback;
 }
 
-std::vector<std::string> gTraceFiles;
+angle::TraceInfo gTraceInfo;
 std::string gTraceGzPath;
 
-void SetTraceInfo(const std::vector<std::string> &traceFiles)
+struct TraceFunctionsImpl : angle::TraceFunctions
 {
-    gTraceFiles = traceFiles;
-}
+    void SetupReplay() override { ::SetupReplay(); }
 
-void SetTraceGzPath(const std::string &traceGzPath)
+    void ReplayFrame(uint32_t frameIndex) override { ::ReplayFrame(frameIndex); }
+
+    void ResetReplay() override { ::ResetReplay(); }
+
+    void FinishReplay() override { ::FinishReplay(); }
+
+    void SetBinaryDataDir(const char *dataDir) override { gBinaryDataDir = dataDir; }
+
+    void SetTraceInfo(const angle::TraceInfo &traceInfo) override { gTraceInfo = traceInfo; }
+
+    void SetTraceGzPath(const std::string &traceGzPath) override { gTraceGzPath = traceGzPath; }
+};
+
+TraceFunctionsImpl gTraceFunctionsImpl;
+
+void SetupEntryPoints(angle::TraceCallbacks *traceCallbacks, angle::TraceFunctions **traceFunctions)
 {
-    gTraceGzPath = traceGzPath;
+    gTraceCallbacks = traceCallbacks;
+    *traceFunctions = &gTraceFunctionsImpl;
 }
 
 void UpdateClientArrayPointer(int arrayIndex, const void *data, uint64_t size)

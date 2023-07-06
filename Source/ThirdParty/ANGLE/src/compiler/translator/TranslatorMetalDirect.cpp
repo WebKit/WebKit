@@ -430,7 +430,7 @@ void AddFragDepthEXTDeclaration(TCompiler &compiler, TIntermBlock &root, TSymbol
                                             TIntermBlock &root,
                                             TSymbolTable &symbolTable,
                                             const DriverUniformMetal *driverUniforms,
-                                            bool emulateAlphaToCoverage,
+                                            bool includeEmulateAlphaToCoverage,
                                             bool usesSampleMask)
 {
     // uint32_t ANGLE_metal_SampleMask [[sample_mask]]
@@ -457,7 +457,7 @@ void AddFragDepthEXTDeclaration(TCompiler &compiler, TIntermBlock &root, TSymbol
             EOpBitwiseAndAssign, new TIntermSymbol(angleSampleMask), glSampleMask0));
     }
 
-    if (emulateAlphaToCoverage)
+    if (includeEmulateAlphaToCoverage)
     {
         // Some Metal drivers ignore alpha-to-coverage state when a fragment
         // shader writes to [[sample_mask]]. Moreover, Metal pipeline state
@@ -615,8 +615,19 @@ void AddFragDepthEXTDeclaration(TCompiler &compiler, TIntermBlock &root, TSymbol
         alphaBlock->appendStatement(new TIntermBinary(
             EOpBitwiseAndAssign, new TIntermSymbol(angleSampleMask), new TIntermSymbol(alphaMask)));
 
-        block->appendStatement(
+        TIntermBlock *emulateAlphaToCoverageEnabledBlock = new TIntermBlock;
+        emulateAlphaToCoverageEnabledBlock->appendStatement(
             new TIntermIfElse(driverUniforms->getAlphaToCoverage(), alphaBlock, nullptr));
+
+        TVariable *emulateAlphaToCoverageVar =
+            new TVariable(&symbolTable, sh::ImmutableString(mtl::kEmulateAlphaToCoverageConstName),
+                          StaticType::Get<EbtBool, EbpUndefined, EvqSpecConst, 1, 1>(),
+                          SymbolType::AngleInternal);
+        TIntermIfElse *useAlphaToCoverage =
+            new TIntermIfElse(new TIntermSymbol(emulateAlphaToCoverageVar),
+                              emulateAlphaToCoverageEnabledBlock, nullptr);
+
+        block->appendStatement(useAlphaToCoverage);
     }
 
     // Sample mask assignment is guarded by ANGLEMultisampledRendering specialization constant
@@ -1040,7 +1051,7 @@ bool TranslatorMetalDirect::translateImpl(TInfoSinkBase &sink,
     if (atomicCounterCount > 0)
     {
         const TIntermTyped *acbBufferOffsets = driverUniforms->getAcbBufferOffsets();
-        if (!RewriteAtomicCounters(this, root, &symbolTable, acbBufferOffsets))
+        if (!RewriteAtomicCounters(this, root, &symbolTable, acbBufferOffsets, nullptr))
         {
             return false;
         }
@@ -1269,7 +1280,8 @@ bool TranslatorMetalDirect::translateImpl(TInfoSinkBase &sink,
             DeclareRightBeforeMain(*root, *BuiltInVariable::gl_PointCoord());
         }
 
-        if (usesFragCoord || compileOptions.emulateAlphaToCoverage)
+        if (usesFragCoord || compileOptions.emulateAlphaToCoverage ||
+            compileOptions.metal.generateShareableShaders)
         {
             if (!InsertFragCoordCorrection(this, compileOptions, root, GetMainSequence(root),
                                            &getSymbolTable(), driverUniforms))
@@ -1391,7 +1403,9 @@ bool TranslatorMetalDirect::translateImpl(TInfoSinkBase &sink,
         {
             mValidateASTOptions.validateVariableReferences = false;
             if (!AddSampleMaskDeclaration(*this, *root, symbolTable, driverUniforms,
-                                          compileOptions.emulateAlphaToCoverage, usesSampleMask))
+                                          compileOptions.emulateAlphaToCoverage ||
+                                              compileOptions.metal.generateShareableShaders,
+                                          usesSampleMask))
             {
                 return false;
             }

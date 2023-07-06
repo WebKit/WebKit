@@ -8,10 +8,10 @@
     ],
     "features": [
         {
-            "name": "append_aliased_memory_decorations_to_ssbo",
+            "name": "append_aliased_memory_decorations",
             "category": "Workarounds",
             "description": [
-                "Append aliased memory decoration to ssbo in SpirV if the ssbo in GLSL is not declared with restrict memory qualifier"
+                "Append aliased memory decoration to ssbo and image in SpirV if they are not declared with restrict memory qualifier in GLSL"
             ],
             "issue": "b/266235549"
         },
@@ -53,11 +53,19 @@
             "issue": "http://anglebug.com/3970"
         },
         {
-             "name": "depth_clamping",
-             "category": "Workarounds",
+             "name": "supports_depth_clamp_zero_one",
+             "category": "Features",
              "description": [
-                 "The depth value is not clamped to [0,1] for floating point depth buffers."
+                 "VkDevice supports the VK_EXT_depth_clamp_zero_one extension"
              ],
+            "issue": "http://anglebug.com/3970"
+        },
+        {
+            "name": "clamp_frag_depth",
+            "category": "Workarounds",
+            "description": [
+                "gl_FragDepth is not clamped when rendering to a floating point depth buffer without VK_EXT_depth_clamp_zero_one"
+            ],
             "issue": "http://anglebug.com/3970"
         },
         {
@@ -878,24 +886,6 @@
             "issue": "http://anglebug.com/7047"
         },
         {
-            "name": "force_static_vertex_stride_state",
-            "category": "Workarounds",
-            "description": [
-                "Force static state for VK_DYNAMIC_STATE_VERTEX_INPUT_BINDING_STRIDE_EXT due to ",
-                "driver bugs"
-            ],
-            "issue": "https://bugs.fuchsia.dev/p/fuchsia/issues/detail?id=107106"
-        },
-        {
-            "name": "force_static_primitive_restart_state",
-            "category": "Workarounds",
-            "description": [
-                "Force static state for VK_DYNAMIC_STATE_PRIMITIVE_RESTART_ENABLE due to ",
-                "driver bugs"
-            ],
-            "issue": "https://issuetracker.google.com/275210062"
-        },
-        {
             "name": "supports_extended_dynamic_state",
             "category": "Features",
             "description": [
@@ -904,10 +894,98 @@
             "issue": "http://anglebug.com/5906"
         },
         {
+            "name": "use_vertex_input_binding_stride_dynamic_state",
+            "category": "Workarounds",
+            "description": [
+                "Use the Vertex Input Bininding Stride dynamic state from VK_EXT_extended_dynamic_state"
+            ],
+            "issue": "http://anglebug.com/5906"
+        },
+        {
+            "name": "use_cull_mode_dynamic_state",
+            "category": "Workarounds",
+            "description": [
+                "Use the Cull Mode dynamic state from VK_EXT_extended_dynamic_state"
+            ],
+            "issue": "http://anglebug.com/5906"
+        },
+        {
+            "name": "use_front_face_dynamic_state",
+            "category": "Workarounds",
+            "description": [
+                "Use the Front Face dynamic state from VK_EXT_extended_dynamic_state"
+            ],
+            "issue": "http://anglebug.com/5906"
+        },
+        {
+            "name": "use_depth_test_enable_dynamic_state",
+            "category": "Workarounds",
+            "description": [
+                "Use the Depth Test Enable dynamic state from VK_EXT_extended_dynamic_state"
+            ],
+            "issue": "http://anglebug.com/5906"
+        },
+        {
+            "name": "use_depth_write_enable_dynamic_state",
+            "category": "Workarounds",
+            "description": [
+                "Use the Depth Write Enable dynamic state from VK_EXT_extended_dynamic_state"
+            ],
+            "issue": "http://anglebug.com/5906"
+        },
+        {
+            "name": "use_depth_compare_op_dynamic_state",
+            "category": "Workarounds",
+            "description": [
+                "Use the Depth Compare Op dynamic state from VK_EXT_extended_dynamic_state"
+            ],
+            "issue": "http://anglebug.com/5906"
+        },
+        {
+            "name": "use_stencil_test_enable_dynamic_state",
+            "category": "Workarounds",
+            "description": [
+                "Use the Stencil Test Enable dynamic state from VK_EXT_extended_dynamic_state"
+            ],
+            "issue": "http://anglebug.com/5906"
+        },
+        {
+            "name": "use_stencil_op_dynamic_state",
+            "category": "Workarounds",
+            "description": [
+                "Use the Stencil Op dynamic state from VK_EXT_extended_dynamic_state"
+            ],
+            "issue": "http://anglebug.com/5906"
+        },
+        {
             "name": "supports_extended_dynamic_state2",
             "category": "Features",
             "description": [
                 "VkDevice supports VK_EXT_extended_dynamic_state2 extension"
+            ],
+            "issue": "http://anglebug.com/5906"
+        },
+        {
+            "name": "use_primitive_restart_enable_dynamic_state",
+            "category": "Workarounds",
+            "description": [
+                "Use the Primitive Restart Enable dynamic state from VK_EXT_extended_dynamic_state2"
+            ],
+            "issue": "http://anglebug.com/5906"
+        },
+        {
+            "name": "use_rasterizer_discard_enable_dynamic_state",
+            "category": "Workarounds",
+            "description": [
+                "Use the Rasterizer Discard Enable dynamic state from VK_EXT_extended_dynamic_state2"
+            ],
+            "issue": "http://anglebug.com/5906"
+        },
+        {
+            "name": "use_depth_bias_enable_dynamic_state",
+            "category": "Workarounds",
+            "description": [
+                "Use the Depth Bias Enable dynamic state from VK_EXT_extended_dynamic_state2"
             ],
             "issue": "http://anglebug.com/5906"
         },
@@ -965,6 +1043,14 @@
             "category": "Features",
             "description": [
                 "VkDevice supports VK_EXT_image_2d_view_of_3d"
+            ],
+            "issue": "https://anglebug.com/7320"
+        },
+        {
+            "name": "supports_sampler_2d_view_of_3d",
+            "category": "Features",
+            "description": [
+                "VkDevice supports the sampler2DViewOf3D feature of VK_EXT_image_2d_view_of_3d"
             ],
             "issue": "https://anglebug.com/7320"
         },
@@ -1204,6 +1290,60 @@
                 "Use VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT for initializing ",
                 "SecondaryCommandPools when using VulkanSecondaryCommandBuffer. "
             ]
+        },
+        {
+            "name": "enable_pipeline_cache_data_compression",
+            "category": "Features",
+            "description":["enable pipeline cache data compression."],
+            "issue": "https://issuetracker.google.com/258207403"
+        },
+        {
+            "name": "supports_legacy_dithering",
+            "category": "Features",
+            "description": [
+                "VkDevice supports the VK_EXT_legacy_dithering extension"
+            ],
+            "issue": "https://issuetracker.google.com/284462263"
+        },
+        {
+            "name": "limit_sample_count_to_2",
+            "category": "Workarounds",
+            "description": [
+              "Limit sample count to 2 to save memory on low end devices."
+            ],
+            "issue": "http://anglebug.com/8162"
+        },
+        {
+            "name": "supports_full_screen_exclusive",
+            "category": "Features",
+            "description": [
+                "VkDevice supports the VK_EXT_full_screen_exclusive extension"
+            ],
+            "issue": "http://anglebug.com/8215"
+        },
+        {
+            "name": "force_disable_full_screen_exclusive",
+            "category": "Workarounds",
+            "description": [
+                "Device needs VK_EXT_full_screen_exclusive explicitly disabled"
+            ],
+            "issue": "http://anglebug.com/8215"
+        },
+        {
+            "name": "supports_portability_enumeration",
+            "category": "Features",
+            "description": [
+                "Vulkan supports VK_KHR_portability_enumeration extension"
+            ],
+            "issue": "http://anglebug.com/8229"
+        },
+        {
+            "name": "enable_portability_enumeration",
+            "category": "Workarounds",
+            "description": [
+                "Enable use of VK_KHR_portability_enumeration extension"
+            ],
+            "issue": "http://anglebug.com/8229"
         }
     ]
 }

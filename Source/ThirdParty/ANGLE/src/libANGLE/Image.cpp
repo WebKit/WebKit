@@ -315,6 +315,17 @@ Image::Image(rx::EGLImplFactory *factory,
     ASSERT(mImplementation != nullptr);
     ASSERT(buffer != nullptr);
 
+    if (kIsSharedContextMutexEnabled && context != nullptr)
+    {
+        ASSERT(context->isSharedContextMutexActive());
+        mSharedContextMutex = context->getContextMutex();
+        mSharedContextMutex->addRef();
+    }
+    else
+    {
+        mSharedContextMutex = nullptr;
+    }
+
     mState.source->addImageSource(this);
 }
 
@@ -350,6 +361,12 @@ void Image::onDestroy(const Display *display)
 Image::~Image()
 {
     SafeDelete(mImplementation);
+
+    if (mSharedContextMutex != nullptr)
+    {
+        mSharedContextMutex->release();
+        mSharedContextMutex = nullptr;
+    }
 }
 
 void Image::setLabel(EGLLabelKHR label)

@@ -1141,6 +1141,8 @@ enum class EntryPoint
     GLPointSizePointerOES,
     GLPointSizex,
     GLPolygonMode,
+    GLPolygonModeANGLE,
+    GLPolygonModeNV,
     GLPolygonOffset,
     GLPolygonOffsetClamp,
     GLPolygonOffsetClampEXT,
