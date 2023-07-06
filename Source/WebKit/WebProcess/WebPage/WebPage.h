@@ -999,7 +999,7 @@ public:
     void didChangeSelection(WebCore::LocalFrame&);
     void didChangeOverflowScrollPosition();
     void didChangeContents();
-    void discardedComposition();
+    void discardedComposition(const WebCore::Document&);
     void canceledComposition();
     void didUpdateComposition();
     void didEndUserTriggeredSelectionChanges();

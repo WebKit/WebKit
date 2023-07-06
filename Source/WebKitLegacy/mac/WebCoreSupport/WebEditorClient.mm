@@ -384,7 +384,7 @@ void WebEditorClient::respondToChangedSelection(LocalFrame* frame)
 #endif // ENABLE(TEXT_CARET)
 }
 
-void WebEditorClient::discardedComposition(LocalFrame*)
+void WebEditorClient::discardedComposition(const Document&)
 {
     // The effects of this function are currently achieved via -[WebHTMLView _updateSelectionForInputManager].
 }

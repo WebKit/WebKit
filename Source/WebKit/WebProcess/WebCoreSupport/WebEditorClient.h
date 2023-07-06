@@ -82,7 +82,7 @@ private:
     void respondToChangedSelection(WebCore::LocalFrame*) final;
     void didEndUserTriggeredSelectionChanges() final;
     void updateEditorStateAfterLayoutIfEditabilityChanged() final;
-    void discardedComposition(WebCore::LocalFrame*) final;
+    void discardedComposition(const WebCore::Document&) final;
     void canceledComposition() final;
     void didUpdateComposition() final;
     void didEndEditing() final;
