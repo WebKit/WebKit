@@ -3347,6 +3347,9 @@ void WebPageProxy::sendWheelEvent(const WebWheelEvent& event, OptionSet<WheelEve
             if (!protectedThis)
                 return;
 
+            if (protectedThis->isClosed())
+                return;
+
             protectedThis->handleWheelEventReply(wheelEvent, nodeID, gestureState, wasHandledForScrolling, handled);
         });
     }
@@ -3386,7 +3389,8 @@ void WebPageProxy::wheelEventHandlingCompleted(bool wasHandled)
 
     if (oldestProcessedEvent && !wasHandled) {
         m_uiClient->didNotHandleWheelEvent(this, *oldestProcessedEvent);
-        pageClient().wheelEventWasNotHandledByWebCore(*oldestProcessedEvent);
+        if (m_pageClient)
+            m_pageClient->wheelEventWasNotHandledByWebCore(*oldestProcessedEvent);
     }
 
     if (auto eventToSend = wheelEventCoalescer().nextEventToDispatch()) {
@@ -4026,7 +4030,8 @@ void WebPageProxy::receivedPolicyDecision(PolicyAction action, API::Navigation* 
     if (action == PolicyAction::Download) {
         // Create a download proxy.
         auto download = m_process->processPool().createDownloadProxy(m_websiteDataStore, internals().decidePolicyForResponseRequest, this, navigation ? navigation->originatingFrameInfo() : FrameInfoData { });
-        download->setDidStartCallback([this, weakThis = WeakPtr { *this }, navigationActionOrResponse = WTFMove(navigationActionOrResponse)] (auto* downloadProxy) {            if (!weakThis || !downloadProxy)
+        download->setDidStartCallback([this, weakThis = WeakPtr { *this }, navigationActionOrResponse = WTFMove(navigationActionOrResponse)] (auto* downloadProxy) {
+            if (!weakThis || !downloadProxy)
                 return;
             WTF::switchOn(navigationActionOrResponse,
                 [&] (const Ref<API::NavigationResponse>& response) {
@@ -12463,7 +12468,6 @@ Vector<SandboxExtension::Handle> WebPageProxy::createNetworkExtensionsSandboxExt
 void WebPageProxy::createMediaSessionCoordinator(Ref<MediaSessionCoordinatorProxyPrivate>&& privateCoordinator, CompletionHandler<void(bool)>&& completionHandler)
 {
     sendWithAsyncReply(Messages::WebPage::CreateMediaSessionCoordinator(privateCoordinator->identifier()), [weakThis = WeakPtr { *this }, privateCoordinator = WTFMove(privateCoordinator), completionHandler = WTFMove(completionHandler)](bool success) mutable {
-
         if (!weakThis || !success) {
             completionHandler(false);
             return;
