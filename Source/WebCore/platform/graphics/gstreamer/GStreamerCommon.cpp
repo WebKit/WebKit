@@ -677,6 +677,15 @@ static std::optional<RefPtr<JSON::Value>> gstStructureValueToJSON(const GValue* 
         }
         return array->asArray()->asValue();
     }
+    if (GST_VALUE_HOLDS_LIST(value)) {
+        unsigned size = gst_value_list_get_size(value);
+        auto array = JSON::Array::create();
+        for (unsigned i = 0; i < size; i++) {
+            if (auto innerJson = gstStructureValueToJSON(gst_value_list_get_value(value, i)))
+                array->pushValue(innerJson->releaseNonNull());
+        }
+        return array->asArray()->asValue();
+    }
     auto valueType = G_VALUE_TYPE(value);
     if (valueType == G_TYPE_BOOLEAN)
         return JSON::Value::create(g_value_get_boolean(value))->asValue();
