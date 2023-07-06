@@ -35,6 +35,11 @@ UniqueRef<PathStream> PathStream::create()
     return makeUniqueRef<PathStream>();
 }
 
+UniqueRef<PathStream> PathStream::create(const PathStream& pathStream)
+{
+    return makeUniqueRef<PathStream>(pathStream);
+}
+
 UniqueRef<PathStream> PathStream::create(Vector<PathSegment>&& segments)
 {
     return makeUniqueRef<PathStream>(WTFMove(segments));
@@ -59,71 +64,82 @@ UniqueRef<PathStream> PathStream::create(const Vector<FloatPoint>& points)
     return stream;
 }
 
+PathStream::PathStream()
+    : m_segmentsData(SegmentsData::create())
+{
+}
+
 PathStream::PathStream(Vector<PathSegment>&& segments)
-    : m_segments(WTFMove(segments))
+    : m_segmentsData(SegmentsData::create(WTFMove(segments)))
 {
 }
 
 PathStream::PathStream(const Vector<PathSegment>& segments)
-    : m_segments(segments)
+    : m_segmentsData(SegmentsData::create(segments))
+{
+}
+
+PathStream::PathStream(const PathStream& pathStream)
+    : m_segmentsData(pathStream.m_segmentsData)
 {
 }
 
 UniqueRef<PathImpl> PathStream::clone() const
 {
-    return create(m_segments);
+    return create(*this);
 }
 
 bool PathStream::operator==(const PathImpl& other) const
 {
     if (!is<PathStream>(other))
         return false;
-    return m_segments == downcast<PathStream>(other).m_segments;
+
+    return m_segmentsData == downcast<PathStream>(other).m_segmentsData;
 }
 
 const PathMoveTo* PathStream::lastIfMoveTo() const
 {
-    if (m_segments.isEmpty())
+    if (isEmpty())
         return nullptr;
 
-    return std::get_if<PathMoveTo>(&m_segments.last().data());
+    return std::get_if<PathMoveTo>(&m_segmentsData->segments.last().data());
 }
 
 void PathStream::moveTo(const FloatPoint& point)
 {
-    m_segments.append(PathMoveTo { point });
+    segments().append(PathMoveTo { point });
 }
 
 void PathStream::addLineTo(const FloatPoint& point)
 {
     if (const auto* moveTo = lastIfMoveTo())
-        m_segments.last() = { PathDataLine { moveTo->point, point } };
+        segments().last() = { PathDataLine { moveTo->point, point } };
     else
-        m_segments.append(PathLineTo { point });
+        segments().append(PathLineTo { point });
 }
 
 void PathStream::addQuadCurveTo(const FloatPoint& controlPoint, const FloatPoint& endPoint)
 {
     if (const auto* moveTo = lastIfMoveTo())
-        m_segments.last() = { PathDataQuadCurve { moveTo->point, controlPoint, endPoint } };
+        segments().last() = { PathDataQuadCurve { moveTo->point, controlPoint, endPoint } };
     else
-        m_segments.append(PathQuadCurveTo { controlPoint, endPoint });
+        segments().append(PathQuadCurveTo { controlPoint, endPoint });
 }
 
 void PathStream::addBezierCurveTo(const FloatPoint& controlPoint1, const FloatPoint& controlPoint2, const FloatPoint& endPoint)
 {
     if (const auto* moveTo = lastIfMoveTo())
-        m_segments.last() = { PathDataBezierCurve { moveTo->point, controlPoint1, controlPoint2, endPoint } };
+        segments().last() = { PathDataBezierCurve { moveTo->point, controlPoint1, controlPoint2, endPoint } };
     else
-        m_segments.append(PathBezierCurveTo { controlPoint1, controlPoint2, endPoint });
+        segments().append(PathBezierCurveTo { controlPoint1, controlPoint2, endPoint });
 }
 
 void PathStream::addArcTo(const FloatPoint& point1, const FloatPoint& point2, float radius)
 {
     if (const auto* moveTo = lastIfMoveTo())
-        m_segments.last() = { PathDataArc { moveTo->point, point1, point2, radius } };
+        segments().last() = { PathDataArc { moveTo->point, point1, point2, radius } };
     else
-        m_segments.append(PathArcTo { point1, point2, radius });
+        segments().append(PathArcTo { point1, point2, radius });
 }
 
 void PathStream::addArc(const FloatPoint& point, float radius, float startAngle, float endAngle, RotationDirection direction)
@@ -134,56 +150,57 @@ void PathStream::addArc(const FloatPoint& point, float radius, float startAngle,
     if (!std::isfinite(radius) || !std::isfinite(startAngle) || !std::isfinite(endAngle))
         return;
 
-    m_segments.append(PathArc { point, radius, startAngle, endAngle, direction });
+    segments().append(PathArc { point, radius, startAngle, endAngle, direction });
 }
 
 void PathStream::addRect(const FloatRect& rect)
 {
-    m_segments.append(PathRect { rect });
+    segments().append(PathRect { rect });
 }
 
 void PathStream::addEllipse(const FloatPoint& point, float radiusX, float radiusY, float rotation, float startAngle, float endAngle, RotationDirection direction)
 {
-    m_segments.append(PathEllipse { point, radiusX, radiusY, rotation, startAngle, endAngle, direction });
+    segments().append(PathEllipse { point, radiusX, radiusY, rotation, startAngle, endAngle, direction });
 }
 
 void PathStream::addEllipseInRect(const FloatRect& rect)
 {
-    m_segments.append(PathEllipseInRect { rect });
+    segments().append(PathEllipseInRect { rect });
 }
 
 void PathStream::addRoundedRect(const FloatRoundedRect& roundedRect, PathRoundedRect::Strategy strategy)
 {
-    m_segments.append(PathRoundedRect { roundedRect, strategy });
+    segments().append(PathRoundedRect { roundedRect, strategy });
 }
 
 void PathStream::closeSubpath()
 {
-    m_segments.append(std::monostate());
+    segments().append(std::monostate());
 }
 
 const Vector<PathSegment>& PathStream::segments() const
 {
-    return m_segments;
+    return m_segmentsData->segments;
 }
 
 void PathStream::applySegments(const PathSegmentApplier& applier) const
 {
-    for (auto& segment : m_segments)
+    for (auto& segment : m_segmentsData->segments)
         applier(segment);
 }
 
 void PathStream::applyElements(const PathElementApplier& applier) const
 {
-    for (auto& segment : m_segments)
+    for (auto& segment : m_segmentsData->segments)
         segment.applyElements(applier);
 }
 
 std::optional<PathSegment> PathStream::singleSegment() const
 {
-    if (m_segments.size() != 1)
+    if (m_segmentsData->segments.size() != 1)
         return std::nullopt;
-    return m_segments.first();
+
+    return m_segmentsData->segments.first();
 }
 
 template<class DataType>
@@ -223,7 +240,7 @@ bool PathStream::isClosed() const
     if (isEmpty())
         return false;
 
-    return m_segments.last().isCloseSubPath();
+    return m_segmentsData->segments.last().isCloseSubPath();
 }
 
 FloatPoint PathStream::currentPoint() const
@@ -231,7 +248,7 @@ FloatPoint PathStream::currentPoint() const
     FloatPoint lastMoveToPoint;
     FloatPoint currentPoint;
 
-    for (auto& segment : m_segments)
+    for (auto& segment : m_segmentsData->segments)
         currentPoint = segment.calculateEndPoint(currentPoint, lastMoveToPoint);
 
     return currentPoint;
@@ -243,7 +260,7 @@ FloatRect PathStream::fastBoundingRect() const
     FloatPoint currentPoint;
     FloatRect boundingRect = FloatRect::smallestRect();
 
-    for (auto& segment : m_segments) {
+    for (auto& segment : m_segmentsData->segments) {
         segment.extendFastBoundingRect(currentPoint, lastMoveToPoint, boundingRect);
         currentPoint = segment.calculateEndPoint(currentPoint, lastMoveToPoint);
     }
@@ -260,7 +277,7 @@ FloatRect PathStream::boundingRect() const
     FloatPoint currentPoint;
     FloatRect boundingRect = FloatRect::smallestRect();
 
-    for (auto& segment : m_segments) {
+    for (auto& segment : m_segmentsData->segments) {
         segment.extendBoundingRect(currentPoint, lastMoveToPoint, boundingRect);
         currentPoint = segment.calculateEndPoint(currentPoint, lastMoveToPoint);
     }
