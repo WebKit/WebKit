@@ -45,6 +45,7 @@ typedef struct _GstWebRTCRTPReceiver GstWebRTCRTPReceiver;
 typedef struct _GstWebRTCRTPSender GstWebRTCRTPSender;
 typedef struct _GstWebRTCRTPTransceiver GstWebRTCRTPTransceiver;
 typedef struct _GstRTPHeaderExtension GstRTPHeaderExtension;
+typedef struct _GstWebRTCICE GstWebRTCICE;
 #endif
 
 namespace WTF {
@@ -213,6 +214,10 @@ template <> void derefGPtr<GstPromise>(GstPromise*);
 template<> GRefPtr<GstRTPHeaderExtension> adoptGRef(GstRTPHeaderExtension*);
 template<> GstRTPHeaderExtension* refGPtr<GstRTPHeaderExtension>(GstRTPHeaderExtension*);
 template<> void derefGPtr<GstRTPHeaderExtension>(GstRTPHeaderExtension*);
+
+template<> GRefPtr<GstWebRTCICE> adoptGRef(GstWebRTCICE*);
+template<> GstWebRTCICE* refGPtr<GstWebRTCICE>(GstWebRTCICE*);
+template<> void derefGPtr<GstWebRTCICE>(GstWebRTCICE*);
 
 #endif
 

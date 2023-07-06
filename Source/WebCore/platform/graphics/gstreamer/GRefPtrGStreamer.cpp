@@ -836,6 +836,25 @@ template<> void derefGPtr<GstRTPHeaderExtension>(GstRTPHeaderExtension* ptr)
         gst_object_unref(ptr);
 }
 
+template<> GRefPtr<GstWebRTCICE> adoptGRef(GstWebRTCICE* ptr)
+{
+    return GRefPtr<GstWebRTCICE>(ptr, GRefPtrAdopt);
+}
+
+template<> GstWebRTCICE* refGPtr<GstWebRTCICE>(GstWebRTCICE* ptr)
+{
+    if (ptr)
+        gst_object_ref(GST_OBJECT(ptr));
+
+    return ptr;
+}
+
+template<> void derefGPtr<GstWebRTCICE>(GstWebRTCICE* ptr)
+{
+    if (ptr)
+        gst_object_unref(ptr);
+}
+
 #endif // USE(GSTREAMER_WEBRTC)
 
 } // namespace WTF

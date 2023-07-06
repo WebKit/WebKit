@@ -448,7 +448,7 @@ void GStreamerMediaEndpoint::doSetRemoteDescription(const RTCSessionDescription&
 
             // https://gitlab.freedesktop.org/gstreamer/gst-plugins-bad/-/merge_requests/1907
             if (sdpMediaHasAttributeKey(media, "ice-lite")) {
-                GRefPtr<GObject> ice;
+                GRefPtr<GstWebRTCICE> ice;
                 g_object_get(m_webrtcBin.get(), "ice-agent", &ice.outPtr(), nullptr);
                 g_object_set(ice.get(), "ice-lite", TRUE, nullptr);
             }
