@@ -577,7 +577,9 @@ void VideoFullscreenManagerProxy::removeClientForContext(PlaybackSessionContextI
     clientCount--;
 
     if (clientCount <= 0) {
-        ensureInterface(contextId).setVideoFullscreenModel(nullptr);
+        auto& interface = ensureInterface(contextId);
+        interface.setVideoFullscreenModel(nullptr);
+        interface.invalidate();
         m_playbackSessionManagerProxy->removeClientForContext(contextId);
         m_clientCounts.remove(contextId);
         m_contextMap.remove(contextId);
