@@ -811,6 +811,24 @@ bool Quirks::shouldIgnoreAriaForFastPathContentObservationCheck() const
     return false;
 }
 
+static bool isWikipediaDomain(const URL& url)
+{
+    static NeverDestroyed wikipediaDomain = RegistrableDomain { URL { "https://wikipedia.org"_s } };
+    return wikipediaDomain->matches(url);
+}
+
+// wikipedia.org https://webkit.org/b/247636
+bool Quirks::shouldIgnoreViewportArgumentsToAvoidExcessiveZoom() const
+{
+    if (!needsQuirks())
+        return false;
+
+#if ENABLE(META_VIEWPORT)
+    return isWikipediaDomain(m_document->url());
+#endif
+    return false;
+}
+
 // docs.google.com https://bugs.webkit.org/show_bug.cgi?id=199933
 bool Quirks::shouldOpenAsAboutBlank(const String& stringToOpen) const
 {
@@ -1020,7 +1038,7 @@ bool Quirks::shouldLayOutAtMinimumWindowWidthWhenIgnoringScalingConstraints() co
 
     // FIXME: We should consider replacing this with a heuristic to determine whether
     // or not the edges of the page mostly lack content after shrinking to fit.
-    return m_document->url().host().endsWithIgnoringASCIICase(".wikipedia.org"_s);
+    return isWikipediaDomain(m_document->url());
 }
 
 // shutterstock.com rdar://58843932
