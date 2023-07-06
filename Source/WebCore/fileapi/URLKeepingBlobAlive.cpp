@@ -27,10 +27,11 @@
 #include "URLKeepingBlobAlive.h"
 
 #include "ThreadableBlobRegistry.h"
+#include <wtf/CrossThreadCopier.h>
 
 namespace WebCore {
 
-URLKeepingBlobAlive::URLKeepingBlobAlive(const URL& url, const SecurityOriginData& topOrigin)
+URLKeepingBlobAlive::URLKeepingBlobAlive(const URL& url, const std::optional<SecurityOriginData>& topOrigin)
     : m_url(url)
     , m_topOrigin(topOrigin)
 {
@@ -46,7 +47,7 @@ void URLKeepingBlobAlive::clear()
 {
     unregisterBlobURLHandleIfNecessary();
     m_url = { };
-    m_topOrigin = { };
+    m_topOrigin = std::nullopt;
 }
 
 URLKeepingBlobAlive& URLKeepingBlobAlive::operator=(URLKeepingBlobAlive&& other)
@@ -74,7 +75,7 @@ void URLKeepingBlobAlive::unregisterBlobURLHandleIfNecessary()
 
 URLKeepingBlobAlive URLKeepingBlobAlive::isolatedCopy() const
 {
-    return { m_url.isolatedCopy(), m_topOrigin.isolatedCopy() };
+    return { m_url.isolatedCopy(), crossThreadCopy(m_topOrigin) };
 }
 
 } // namespace WebCore

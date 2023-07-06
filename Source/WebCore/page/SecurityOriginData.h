@@ -188,6 +188,10 @@ struct SecurityOriginDataHash {
     static const bool safeToCompareToEmptyOrDeleted = false;
 };
 
+struct SecurityOriginDataMarkableTraits {
+    static bool isEmptyValue(const SecurityOriginData& value) { return value.isNull(); }
+    static SecurityOriginData emptyValue() { return { }; }
+};
 } // namespace WebCore
 
 namespace WTF {

@@ -34,7 +34,7 @@ namespace WebCore {
 class URLKeepingBlobAlive {
 public:
     URLKeepingBlobAlive() = default;
-    URLKeepingBlobAlive(const URL&, const SecurityOriginData&);
+    URLKeepingBlobAlive(const URL&, const std::optional<SecurityOriginData>& = std::nullopt);
     WEBCORE_EXPORT ~URLKeepingBlobAlive();
 
     URLKeepingBlobAlive(URLKeepingBlobAlive&&) = default;
@@ -46,7 +46,7 @@ public:
     operator const URL&() const { return m_url; }
     const URL& url() const { return m_url; }
     bool isEmpty() const { return m_url.isEmpty(); }
-    const SecurityOriginData& topOrigin() const { return m_topOrigin; }
+    std::optional<SecurityOriginData> topOrigin() const { return m_topOrigin; }
 
     void clear();
 
@@ -58,7 +58,7 @@ private:
     void unregisterBlobURLHandleIfNecessary();
 
     URL m_url;
-    SecurityOriginData m_topOrigin;
+    Markable<SecurityOriginData, SecurityOriginDataMarkableTraits> m_topOrigin;
 };
 
 } // namespace WebCore

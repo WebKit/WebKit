@@ -413,7 +413,7 @@ const char* Blob::activeDOMObjectName() const
 
 URLKeepingBlobAlive Blob::handle() const
 {
-    return { m_internalURL, m_topOrigin };
+    return { m_internalURL };
 }
 
 WebCoreOpaqueRoot root(Blob* blob)
