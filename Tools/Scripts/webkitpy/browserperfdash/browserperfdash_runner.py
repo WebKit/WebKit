@@ -28,6 +28,7 @@ import json
 import logging
 import os
 import re
+import subprocess
 import tempfile
 import urllib
 from datetime import datetime
@@ -54,11 +55,13 @@ def parse_args():
     parser.add_argument('--local-copy', dest='localCopy', help='Path to a local copy of the benchmark (e.g. PerformanceTests/SunSpider/).')
     parser.add_argument('--count', dest='countOverride', type=int, help='Number of times to run the benchmark (e.g. 5).')
     parser.add_argument('--timeout', dest='timeoutOverride', type=int, help='Number of seconds to wait for the benchmark to finish (e.g. 600).')
-    parser.add_argument('--timestamp', dest='timestamp', type=int, help='Date of when the benchmark was run that will be sent to the performance dashboard server. Format is Unix timestamp (second since epoch). Optional. The server will use as date "now" if not specified.')
-    mutual_group = parser.add_mutually_exclusive_group(required=True)
-    mutual_group.add_argument('--plan', dest='plan', help='Benchmark plan to run. e.g. speedometer, jetstream')
-    mutual_group.add_argument('--plans-from-config', action='store_true', help='Run the list of plans specified in the config file.')
-    mutual_group.add_argument('--allplans', action='store_true', help='Run all available benchmark plans sequentially')
+    parser_group_timestamp = parser.add_mutually_exclusive_group(required=False)
+    parser_group_timestamp.add_argument('--timestamp', dest='timestamp', type=int, help='Date of when the benchmark was run that will be sent to the performance dashboard server. Format is Unix timestamp (second since epoch). Optional. The server will use as date "now" if not specified.')
+    parser_group_timestamp.add_argument('--timestamp-from-repo', dest='local_path_to_repo', default=None, help='Use the commit date of the checked-out git commit (HEAD) on the specified local path as the date to send to the server of when the benchmark was run. Useful for running bots in parallel (or even re-testing old checkouts) and ensuring that the timestamps of the benchmark data on the server gets the same value than the commit date of the checked-out commit on the given repository.')
+    parser_group_plan_selection = parser.add_mutually_exclusive_group(required=True)
+    parser_group_plan_selection.add_argument('--plan', dest='plan', help='Benchmark plan to run. e.g. speedometer, jetstream')
+    parser_group_plan_selection.add_argument('--plans-from-config', action='store_true', help='Run the list of plans specified in the config file.')
+    parser_group_plan_selection.add_argument('--allplans', action='store_true', help='Run all available benchmark plans sequentially')
 
     parser.add_argument('browser_args', nargs='*', help='Additional arguments to pass to the browser process. These are positional arguments and must follow all other arguments. If the pass through arguments begin with a dash, use `--` before the argument list begins.')
     args = parser.parse_args()
@@ -91,6 +94,20 @@ class BrowserPerfDashRunner(object):
             self._result_data['timestamp'] = args.timestamp
             date_str = datetime.fromtimestamp(self._result_data['timestamp']).isoformat()
             _log.info('Will send the benchmark data as if it was generated on date: {date}'.format(date=date_str))
+        elif args.local_path_to_repo is not None:
+            if not os.path.isdir(args.local_path_to_repo):
+                raise ValueError('The value "{path}" to the local repository is not a valid directory'.format(path=args.local_path_to_repo))
+            _log.info('Checking the timestamp of the git commit checked-out (HEAD) on the repository at path "{repo_path}"'.format(repo_path=args.local_path_to_repo))
+            timestamp = subprocess.check_output(['git', 'log', '-1', '--pretty=%ct', 'HEAD'], cwd=args.local_path_to_repo)
+            timestamp = timestamp.decode('utf-8').strip()
+            if not timestamp.isnumeric():
+                raise ValueError('The git command to find the timestamp on the HEAD git commit returned an unexpected string: {timestamp}'.format(timestamp=timestamp))
+            timestamp = int(timestamp)
+            if timestamp < 0:
+                raise ValueError('The git command to find the timestamp on the HEAD git commit returned a negative timestamp: {timestamp}'.format(timestamp=timestamp))
+            date_str = datetime.fromtimestamp(timestamp).isoformat()
+            _log.info('Will send the benchmark data as if it was generated on date: {date}'.format(date=date_str))
+            self._result_data['timestamp'] = timestamp
 
     # The precedence order for setting the value for the arguments is:
     # 1 - What the user defines via command line switches (current_value is not None).

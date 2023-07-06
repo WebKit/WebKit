@@ -1237,7 +1237,8 @@ class RunBenchmarkTests(shell.Test):
     descriptionDone = ["benchmark tests"]
     command = ["python3", "Tools/Scripts/browserperfdash-benchmark", "--plans-from-config",
                "--config-file", "../../browserperfdash-benchmark-config.txt",
-               "--browser-version", WithProperties("%(archive_revision)s")]
+               "--browser-version", WithProperties("%(archive_revision)s"),
+               "--timestamp-from-repo", "."]
 
     def start(self):
         platform = self.getProperty("platform")
