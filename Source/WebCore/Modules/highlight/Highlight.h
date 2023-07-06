@@ -73,7 +73,7 @@ public:
     void setType(Type type) { m_type = type; }
 
     int priority() const { return m_priority; }
-    void setPriority(int priority) { m_priority = priority; }
+    void setPriority(int);
 
     void repaint();
     const Vector<Ref<HighlightRangeData>>& rangesData() const { return m_rangesData; }

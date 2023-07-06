@@ -103,5 +103,12 @@ void Highlight::repaint()
         repaintRange(data->range());
 }
 
-} // namespace WebCore
+void Highlight::setPriority(int priority)
+{
+    if (m_priority == priority)
+        return;
+    m_priority = priority;
+    repaint();
+}
 
+} // namespace WebCore

@@ -369,6 +369,9 @@ void TextBoxPainter<TextBoxPath>::paintForegroundAndDecorations()
         // Coalesce styles of adjacent marked texts to minimize the number of drawing commands.
         auto coalescedStyledMarkedTexts = StyledMarkedText::coalesceAdjacentWithEqualForeground(styledMarkedTexts);
 
+        if (coalescedStyledMarkedTexts.isEmpty())
+            return;
+
         for (auto& markedText : coalescedStyledMarkedTexts)
             paintCompositionForeground(markedText);
     }

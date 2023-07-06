@@ -26,6 +26,7 @@
 #include "config.h"
 #include "StyledMarkedText.h"
 
+#include "ColorBlending.h"
 #include "ElementRuleCollector.h"
 #include "RenderElement.h"
 #include "RenderStyleInlines.h"
@@ -120,12 +121,83 @@ StyledMarkedText::Style StyledMarkedText::computeStyleForUnmarkedMarkedText(cons
     return style;
 }
 
+static Vector<StyledMarkedText> coalesceAdjacentWithSameRanges(Vector<StyledMarkedText>&& styledTexts)
+{
+    ASSERT(!styledTexts.isEmpty());
+    Vector<StyledMarkedText> frontmostMarkedTexts;
+    frontmostMarkedTexts.append(styledTexts[0]);
+    for (auto it = styledTexts.begin() + 1, end = styledTexts.end(); it != end; ++it) {
+        StyledMarkedText& previousStyledMarkedText = frontmostMarkedTexts.last();
+        // StyledMarkedTexts completely cover each other.
+        if (previousStyledMarkedText.startOffset == it->startOffset && previousStyledMarkedText.endOffset == it->endOffset) {
+            // If either background for two different custom highlight StyledMarkedTexts are not opaque, blend colors together.
+            if (previousStyledMarkedText.highlightName != it->highlightName
+                && (!previousStyledMarkedText.style.backgroundColor.isOpaque()
+                    || !it->style.backgroundColor.isOpaque()
+                    || (it->highlightName.isNull() && it->style.backgroundColor.isVisible())))
+                        previousStyledMarkedText.style.backgroundColor = blendSourceOver(previousStyledMarkedText.style.backgroundColor, it->style.backgroundColor);
+            // Take text color of the StyledMarkedText that has set it, maintaining insertion order.
+            // FIXME: Case of user setting color to CanvasText, will not choose CanvasText as prioritized color to paint.
+            if (it->type != MarkedText::Type::Unmarked && it->style.textStyles.fillColor != RenderTheme::singleton().systemColor(CSSValueCanvastext, { }))
+                previousStyledMarkedText.style.textStyles.fillColor = it->style.textStyles.fillColor;
+            // Take the highlightName of the latest StyledMarkedText, regardless of priority.
+            if (!it->highlightName.isNull())
+                previousStyledMarkedText.highlightName = it->highlightName;
+
+            if (previousStyledMarkedText.priority <= it->priority) {
+                previousStyledMarkedText.priority = it->priority;
+                // If highlight, take textDecorationStyles of latest StyledMarkedText.
+                // FIXME: Check for taking textDecorationStyles needs to be changed to accommodate other MarkedText type
+                if (!it->highlightName.isNull())
+                    previousStyledMarkedText.style.textDecorationStyles = it->style.textDecorationStyles;
+                // If higher or same priority and opaque, just override background color.
+                if (it->style.backgroundColor.isOpaque())
+                    previousStyledMarkedText.style.backgroundColor = it->style.backgroundColor;
+            }
+            continue;
+        }
+        frontmostMarkedTexts.append(WTFMove(*it));
+    }
+    return frontmostMarkedTexts;
+}
+
+static void orderHighlights(const ListHashSet<AtomString>& markedTextsNames, Vector<MarkedText>& markedTexts)
+{
+    if (markedTexts.isEmpty())
+        return;
+
+    HashMap<AtomString, int> markedTextsNamesPriority;
+    int index = 0;
+    for (auto& highlightName : markedTextsNames) {
+        markedTextsNamesPriority.add(highlightName, index);
+        index++;
+    }
+
+    index = 0;
+    while (index < static_cast<int>(markedTexts.size() - 1)) {
+        // If two adjacent highlights with same ranges are not in correct priority order, swap them and move on.
+        if (!markedTexts[index].highlightName.isNull()
+            && !markedTexts[index + 1].highlightName.isNull()
+            && markedTextsNamesPriority.get(markedTexts[index].highlightName) > markedTextsNamesPriority.get(markedTexts[index + 1].highlightName)
+            && markedTexts[index].startOffset == markedTexts[index + 1].startOffset
+            && markedTexts[index].endOffset == markedTexts[index + 1].endOffset) {
+            std::swap(markedTexts[index], markedTexts[index + 1]);
+        }
+        ++index;
+    }
+}
+
 Vector<StyledMarkedText> StyledMarkedText::subdivideAndResolve(const Vector<MarkedText>& textsToSubdivide, const RenderText& renderer, bool isFirstLine, const PaintInfo& paintInfo)
 {
     if (textsToSubdivide.isEmpty())
         return { };
 
-    Vector<StyledMarkedText> frontmostMarkedTexts;
+    // Keep track of original order of highlights.
+    ListHashSet<AtomString> markedTextsNames;
+    for (auto& markedText : textsToSubdivide) {
+        if (!markedText.highlightName.isNull())
+            markedTextsNames.add(markedText.highlightName);
+    }
 
     auto& lineStyle = isFirstLine ? renderer.firstLineStyle() : renderer.style();
     auto baseStyle = computeStyleForUnmarkedMarkedText(renderer, lineStyle, isFirstLine, paintInfo);
@@ -136,18 +208,37 @@ Vector<StyledMarkedText> StyledMarkedText::subdivideAndResolve(const Vector<Mark
         return { styledMarkedText };
     }
 
-    auto markedTexts = MarkedText::subdivide(textsToSubdivide);
+    auto markedTexts = MarkedText::subdivide(textsToSubdivide, OverlapStrategy::None);
     ASSERT(!markedTexts.isEmpty());
     if (UNLIKELY(markedTexts.isEmpty()))
         return { };
 
+    if (!markedTexts.isEmpty()) {
+        // Check if vector contains custom highlights.
+        bool containsHighlights = markedTexts.containsIf([](const auto& item) {
+            return item.type == MarkedText::Type::Highlight;
+        });
+
+        // Sort custom highlights to follow correct priority/insertion order.
+        if (containsHighlights) {
+            orderHighlights(markedTextsNames, markedTexts);
+
+            auto frontmostMarkedTexts = WTF::map(markedTexts, [&](auto& markedText) {
+                return resolveStyleForMarkedText(markedText, baseStyle, renderer, lineStyle, paintInfo);
+            });
+
+            return coalesceAdjacentWithSameRanges(WTFMove(frontmostMarkedTexts));
+        }
+    }
+
     // Compute frontmost overlapping styled marked texts.
+    Vector<StyledMarkedText> frontmostMarkedTexts;
     frontmostMarkedTexts.reserveInitialCapacity(markedTexts.size());
     frontmostMarkedTexts.uncheckedAppend(resolveStyleForMarkedText(markedTexts[0], baseStyle, renderer, lineStyle, paintInfo));
     for (auto it = markedTexts.begin() + 1, end = markedTexts.end(); it != end; ++it) {
         StyledMarkedText& previousStyledMarkedText = frontmostMarkedTexts.last();
+        // Marked texts completely cover each other.
         if (previousStyledMarkedText.startOffset == it->startOffset && previousStyledMarkedText.endOffset == it->endOffset) {
-            // Marked texts completely cover each other.
             previousStyledMarkedText = resolveStyleForMarkedText(*it, previousStyledMarkedText.style, renderer, lineStyle, paintInfo);
             continue;
         }
@@ -202,5 +293,4 @@ Vector<StyledMarkedText> StyledMarkedText::coalesceAdjacentWithEqualDecorations(
         return a.textDecorationStyles == b.textDecorationStyles && a.textStyles == b.textStyles && a.textShadow == b.textShadow && a.alpha == b.alpha;
     });
 }
-
 }
