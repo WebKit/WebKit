@@ -95,7 +95,11 @@ void WebSharedWorkerServer::requestSharedWorker(WebCore::SharedWorkerKey&& share
     ASSERT(!sharedWorker->isRunning());
 
     auto* serverConnection = m_connections.get(sharedWorkerObjectIdentifier.processIdentifier());
-    ASSERT(serverConnection);
+    if (!serverConnection) {
+        // sharedWorkerObject is gone if there is no longer a server connection.
+        sharedWorker->removeSharedWorkerObject(sharedWorkerObjectIdentifier);
+        return;
+    }
 
     RELEASE_LOG(SharedWorker, "WebSharedWorkerServer::requestSharedWorker: Fetching shared worker script in client");
     serverConnection->fetchScriptInClient(*sharedWorker, sharedWorkerObjectIdentifier, [weakThis = WeakPtr { *this }, sharedWorker = WeakPtr { *sharedWorker }](auto&& fetchResult, auto&& initializationData) {
