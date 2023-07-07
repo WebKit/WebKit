@@ -8,12 +8,15 @@
 [webkitscmpy "remotes.origin"]
         url = git@github.com:WebKit/WebKit.git
         security-level = 0
+        secrets-scanning = true
 [webkitscmpy "remotes.security"]
         url = git@github.com:WebKit/WebKit-security.git
         security-level = 1
+        secrets-scanning = false
 [webkitscmpy "remotes.apple"]
         url = git@github.com:apple/WebKit.git
         security-level = 2
+        secrets-scanning = false
 [webkitscmpy "access"]
         apple = apple/teams/WebKit
         security = WebKit/teams/security
