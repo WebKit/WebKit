@@ -195,7 +195,7 @@ void RenderTreeUpdater::updateRenderTree(ContainerNode& root)
 
         auto mayHaveRenderedDescendants = [&]() {
             if (element.renderer())
-                return !(element.isInTopLayer() && element.renderer()->style().effectiveSkipsContent());
+                return !(element.isInTopLayer() && element.renderer()->style().effectiveSkippedContent());
             return element.hasDisplayContents() && shouldCreateRenderer(element, renderTreePosition().parent());
         }();
 
@@ -324,7 +324,7 @@ void RenderTreeUpdater::updateElementRenderer(Element& element, const Style::Ele
     auto elementUpdateStyle = RenderStyle::cloneIncludingPseudoElements(*elementUpdate.style);
 
     bool shouldTearDownRenderers = [&]() {
-        if (element.isInTopLayer() && elementUpdate.change == Style::Change::Inherited && elementUpdate.style->effectiveSkipsContent())
+        if (element.isInTopLayer() && elementUpdate.change == Style::Change::Inherited && elementUpdate.style->effectiveSkippedContent())
             return true;
         return elementUpdate.change == Style::Change::Renderer && (element.renderer() || element.hasDisplayContents());
     }();
@@ -364,7 +364,7 @@ void RenderTreeUpdater::updateElementRenderer(Element& element, const Style::Ele
         }
     });
 
-    bool shouldCreateNewRenderer = !element.renderer() && !hasDisplayContents && !(element.isInTopLayer() && renderTreePosition().parent().style().effectiveSkipsContent());
+    bool shouldCreateNewRenderer = !element.renderer() && !hasDisplayContents && !(element.isInTopLayer() && renderTreePosition().parent().style().effectiveSkippedContent());
     if (shouldCreateNewRenderer) {
         if (element.hasCustomStyleResolveCallbacks())
             element.willAttachRenderers();

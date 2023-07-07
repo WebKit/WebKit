@@ -154,7 +154,7 @@ inline void RenderStyle::setContainerType(ContainerType type) { SET_NESTED(m_non
 inline void RenderStyle::setContentVisibility(ContentVisibility value) { SET_NESTED(m_nonInheritedData, rareData, contentVisibility, static_cast<unsigned>(value)); }
 inline void RenderStyle::setEffectiveAppearance(StyleAppearance a) { SET_NESTED(m_nonInheritedData, miscData, effectiveAppearance, static_cast<unsigned>(a)); }
 inline void RenderStyle::setEffectiveInert(bool effectiveInert) { SET(m_rareInheritedData, effectiveInert, effectiveInert); }
-inline void RenderStyle::setEffectiveSkipsContent(bool effectiveSkipsContent) { SET(m_rareInheritedData, effectiveSkipsContent, effectiveSkipsContent); }
+inline void RenderStyle::setEffectiveSkippedContent(bool effectiveSkippedContent) { SET(m_rareInheritedData, effectiveSkippedContent, effectiveSkippedContent); }
 inline void RenderStyle::setEffectiveTouchActions(OptionSet<TouchAction> touchActions) { SET(m_rareInheritedData, effectiveTouchActions, touchActions); }
 inline void RenderStyle::setEventListenerRegionTypes(OptionSet<EventListenerRegionType> eventListenerTypes) { SET(m_rareInheritedData, eventListenerRegionTypes, eventListenerTypes); }
 inline void RenderStyle::setFilter(const FilterOperations& ops) { SET_DOUBLY_NESTED(m_nonInheritedData, miscData, filter, operations, ops); }

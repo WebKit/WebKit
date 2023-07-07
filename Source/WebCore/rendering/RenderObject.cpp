@@ -2673,7 +2673,7 @@ String RenderObject::debugDescription() const
 
 bool RenderObject::isSkippedContent() const
 {
-    return parent() && parent()->style().effectiveSkipsContent();
+    return parent() && parent()->style().effectiveSkippedContent();
 }
 
 bool RenderObject::isSkippedContentRoot() const

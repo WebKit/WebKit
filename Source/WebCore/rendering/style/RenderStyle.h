@@ -694,7 +694,7 @@ public:
 
     inline ContentVisibility contentVisibility() const;
 
-    inline bool effectiveSkipsContent() const;
+    inline bool effectiveSkippedContent() const;
 
     inline ContainIntrinsicSizeType containIntrinsicWidthType() const;
     inline ContainIntrinsicSizeType containIntrinsicHeightType() const;
@@ -1266,7 +1266,7 @@ public:
 
     inline void setContentVisibility(ContentVisibility);
 
-    inline void setEffectiveSkipsContent(bool);
+    inline void setEffectiveSkippedContent(bool);
 
     inline void setListStyleType(ListStyleType);
     void setListStyleImage(RefPtr<StyleImage>&&);

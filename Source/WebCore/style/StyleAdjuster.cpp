@@ -606,7 +606,7 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
     }
 
     if (style.contentVisibility() == ContentVisibility::Hidden)
-        style.setEffectiveSkipsContent(true);
+        style.setEffectiveSkippedContent(true);
 
     adjustForSiteSpecificQuirks(style);
 }
