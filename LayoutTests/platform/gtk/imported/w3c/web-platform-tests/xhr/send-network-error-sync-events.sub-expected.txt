@@ -1,4 +1,0 @@
-
-PASS http URL
-PASS data URL
-

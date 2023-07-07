@@ -1,6 +1,0 @@
-
-FAIL Display value of children of the <semantics> element assert_equals: Child undefined has display: none expected "none" but got "block"
-FAIL Display value of children of the <maction> element assert_equals: Child undefined has display: none expected "none" but got "block"
-1
-1
-

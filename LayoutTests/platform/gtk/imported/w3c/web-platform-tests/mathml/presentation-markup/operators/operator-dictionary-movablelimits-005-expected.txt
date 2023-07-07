@@ -1,6 +1,0 @@
-
-PASS Operator dictionary chunk 1 - movablelimits
-PASS Operator dictionary chunk 2 - movablelimits
-PASS Operator dictionary chunk 3 - movablelimits
-PASS Operator dictionary chunk 4 - movablelimits
-
