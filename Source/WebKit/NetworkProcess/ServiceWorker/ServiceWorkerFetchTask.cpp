@@ -205,7 +205,7 @@ void ServiceWorkerFetchTask::processRedirectResponse(ResourceResponse&& response
 
     if (shouldSetSource == ShouldSetSource::Yes)
         response.setSource(ResourceResponse::Source::ServiceWorker);
-    auto newRequest = m_currentRequest.redirectedRequest(response, m_loader.parameters().shouldClearReferrerOnHTTPSToHTTPRedirect);
+    auto newRequest = m_currentRequest.redirectedRequest(response, m_loader.parameters().shouldClearReferrerOnHTTPSToHTTPRedirect, ResourceRequest::ShouldSetHash::Yes);
 
     m_loader.willSendServiceWorkerRedirectedRequest(ResourceRequest(m_currentRequest), WTFMove(newRequest), WTFMove(response));
 }

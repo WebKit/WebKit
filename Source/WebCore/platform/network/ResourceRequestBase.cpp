@@ -154,7 +154,7 @@ void ResourceRequestBase::redirectAsGETIfNeeded(const ResourceRequestBase &redir
     }
 }
 
-ResourceRequest ResourceRequestBase::redirectedRequest(const ResourceResponse& redirectResponse, bool shouldClearReferrerOnHTTPSToHTTPRedirect) const
+ResourceRequest ResourceRequestBase::redirectedRequest(const ResourceResponse& redirectResponse, bool shouldClearReferrerOnHTTPSToHTTPRedirect, ShouldSetHash shouldSetHash) const
 {
     ASSERT(redirectResponse.isRedirection());
     // This method is based on https://fetch.spec.whatwg.org/#http-redirect-fetch.
@@ -163,7 +163,12 @@ ResourceRequest ResourceRequestBase::redirectedRequest(const ResourceResponse& r
     auto request = asResourceRequest();
     auto location = redirectResponse.httpHeaderField(HTTPHeaderName::Location);
 
-    request.setURL(location.isEmpty() ? URL { } : URL { redirectResponse.url(), location });
+    // https://fetch.spec.whatwg.org/#concept-response-location-url
+    auto url = location.isEmpty() ? URL { } : URL { redirectResponse.url(), location };
+    if (shouldSetHash == ShouldSetHash::Yes && url.fragmentIdentifier().isEmpty() && !redirectResponse.url().fragmentIdentifier().isEmpty())
+        url.setFragmentIdentifier(redirectResponse.url().fragmentIdentifier());
+
+    request.setURL(WTFMove(url));
 
     request.redirectAsGETIfNeeded(*this, redirectResponse);
 

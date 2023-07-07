@@ -128,7 +128,9 @@ public:
     WEBCORE_EXPORT void setURL(const URL& url);
 
     void redirectAsGETIfNeeded(const ResourceRequestBase &, const ResourceResponse&);
-    WEBCORE_EXPORT ResourceRequest redirectedRequest(const ResourceResponse&, bool shouldClearReferrerOnHTTPSToHTTPRedirect) const;
+
+    enum class ShouldSetHash : bool { No, Yes };
+    WEBCORE_EXPORT ResourceRequest redirectedRequest(const ResourceResponse&, bool shouldClearReferrerOnHTTPSToHTTPRedirect, ShouldSetHash = ShouldSetHash::No) const;
 
     WEBCORE_EXPORT void removeCredentials();
 
