@@ -357,7 +357,7 @@ void RenderTreeUpdater::updateElementRenderer(Element& element, const Style::Ele
     auto scopeExit = makeScopeExit([&] {
         if (!hasDisplayContents) {
             auto* box = element.renderBox();
-            if (box && box->style().hasAutoLengthContainIntrinsicSize() && !box->shouldSkipContent())
+            if (box && box->style().hasAutoLengthContainIntrinsicSize() && !box->isSkippedContentRoot())
                 m_document.observeForContainIntrinsicSize(element);
             else
                 m_document.unobserveForContainIntrinsicSize(element);

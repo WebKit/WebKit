@@ -288,7 +288,7 @@ void RenderReplaced::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
     }
 
     if (!completelyClippedOut) {
-        if (!shouldSkipContent())
+        if (!isSkippedContentRoot())
             paintReplaced(paintInfo, adjustedPaintOffset);
 
         if (style().hasBorderRadius())

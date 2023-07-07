@@ -1140,7 +1140,7 @@ void RenderBlock::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 
 void RenderBlock::paintContents(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
-    if (shouldSkipContent())
+    if (isSkippedContentRoot())
         return;
 
     if (childrenInline())

@@ -804,7 +804,7 @@ public:
 
     bool isSkippedContent() const;
 
-    bool shouldSkipContent() const;
+    bool isSkippedContentRoot() const;
 
 protected:
     //////////////////////////////////////////

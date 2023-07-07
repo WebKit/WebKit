@@ -2676,7 +2676,7 @@ bool RenderObject::isSkippedContent() const
     return parent() && parent()->style().effectiveSkipsContent();
 }
 
-bool RenderObject::shouldSkipContent() const
+bool RenderObject::isSkippedContentRoot() const
 {
     return style().contentVisibility() == ContentVisibility::Hidden;
 }

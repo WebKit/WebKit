@@ -333,7 +333,7 @@ void RenderWidget::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
         BackgroundPainter::clipRoundedInnerRect(paintInfo.context(), borderRect, roundedInnerRect);
     }
 
-    if (m_widget && !shouldSkipContent())
+    if (m_widget && !isSkippedContentRoot())
         paintContents(paintInfo, paintOffset);
 
     if (style().hasBorderRadius())

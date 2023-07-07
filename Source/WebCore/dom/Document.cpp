@@ -412,7 +412,7 @@ static void CallbackForContainIntrinsicSize(const Vector<Ref<ResizeObserverEntry
                 observer.unobserve(*target);
                 continue;
             }
-            ASSERT(!box->shouldSkipContent());
+            ASSERT(!box->isSkippedContentRoot());
             ASSERT(box->style().hasAutoLengthContainIntrinsicSize());
 
             auto contentBoxSize = entry->contentBoxSize().at(0);
@@ -1671,7 +1671,7 @@ std::optional<BoundaryPoint> Document::caretPositionFromPoint(const LayoutPoint&
     if (!renderer)
         return std::nullopt;
 
-    if (renderer->shouldSkipContent())
+    if (renderer->isSkippedContentRoot())
         return { { *node, 0 } };
 
     auto rangeCompliantPosition = renderer->positionForPoint(localPoint).parentAnchoredEquivalent();

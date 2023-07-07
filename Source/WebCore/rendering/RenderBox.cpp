@@ -1811,7 +1811,7 @@ bool RenderBox::foregroundIsKnownToBeOpaqueInRect(const LayoutRect& localRect, u
     if (!maxDepthToTest)
         return false;
 
-    if (shouldSkipContent())
+    if (isSkippedContentRoot())
         return false;
 
     for (auto& childBox : childrenOfType<RenderBox>(*this)) {
@@ -5676,7 +5676,7 @@ std::optional<LayoutUnit> RenderBox::explicitIntrinsicInnerWidth() const
     if (style().containIntrinsicWidthType() == ContainIntrinsicSizeType::None)
         return std::nullopt;
 
-    if (element() && style().containIntrinsicWidthHasAuto() && shouldSkipContent()) {
+    if (element() && style().containIntrinsicWidthHasAuto() && isSkippedContentRoot()) {
         if (auto width = isHorizontalWritingMode() ? element()->lastRememberedLogicalWidth() : element()->lastRememberedLogicalHeight())
             return width;
     }
@@ -5695,7 +5695,7 @@ std::optional<LayoutUnit> RenderBox::explicitIntrinsicInnerHeight() const
     if (style().containIntrinsicHeightType() == ContainIntrinsicSizeType::None)
         return std::nullopt;
 
-    if (element() && style().containIntrinsicHeightHasAuto() && shouldSkipContent()) {
+    if (element() && style().containIntrinsicHeightHasAuto() && isSkippedContentRoot()) {
         if (auto height = isHorizontalWritingMode() ? element()->lastRememberedLogicalHeight() : element()->lastRememberedLogicalWidth())
             return height;
     }
