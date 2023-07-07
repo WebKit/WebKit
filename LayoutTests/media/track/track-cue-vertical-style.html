@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>track-cue-vertical-style</title>
+    <script src=../media-file.js></script>
+    <script src=../video-test.js></script>
+    <script>
+    function firstCueElement() {
+        return internals.shadowRoot(video).querySelector('[pseudo="cue"]');
+    }
+
+    async function runTest() {
+        findMediaElement();
+        run('video.src = findMediaFile("video", "../content/test")');
+        await waitFor(video, 'canplay');
+
+        window.textTrack = video.addTextTrack("subtitles");
+        textTrack.mode = 'showing';
+
+        run('cue = new VTTCue(0, 1, "vertical")');
+        run('textTrack.addCue(cue)');
+
+        if (!window.testRunner) {
+            consoleWrite('Test requires internals; manually verify <code>vertical</code> cue is vertical.');
+            endTest();
+        }
+
+        await testExpectedEventually('firstCueElement()', null, '!=');
+
+        await testExpectedEventually(`window.getComputedStyle(firstCueElement()).writingMode`, 'horizontal-tb')
+
+        run('cue.vertical = "rl"');
+
+        await testExpectedEventually(`window.getComputedStyle(firstCueElement()).writingMode`, 'vertical-rl')
+
+        run('cue.vertical = "lr"');
+
+        await testExpectedEventually(`window.getComputedStyle(firstCueElement()).writingMode`, 'vertical-lr')
+    }
+
+    window.addEventListener('load', event => {
+        runTest().then(endTest).catch(failTest);
+    });
+    </script>
+</head>
+<body>
+    <video></video>
+</body>
+</html>
