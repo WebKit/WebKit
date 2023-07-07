@@ -13,7 +13,6 @@ Attributed string with range: ello
         AXFontFamily = Times;
         AXFontName = "Times-Roman";
         AXFontSize = 16;
-        AXVisibleName = "Times Roman";
     };
     AXForegroundColor = " [ (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1)] ( 0 0 0 1 )";
 }worl{
@@ -23,7 +22,6 @@ Attributed string with range: ello
         AXFontFamily = Times;
         AXFontName = "Times-Bold";
         AXFontSize = 16;
-        AXVisibleName = "Times Bold";
     };
     AXForegroundColor = " [ (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1)] ( 0 0 0 1 )";
     AXMarkedMisspelled = 1;

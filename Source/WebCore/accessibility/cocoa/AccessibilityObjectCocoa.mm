@@ -290,7 +290,7 @@ void attributedStringSetFont(NSMutableAttributedString *attributedString, CTFont
         [fontAttributes setValue:@YES forKey:UIAccessibilityTokenItalic];
 
     [attributedString addAttributes:fontAttributes.get() range:range];
-#endif
+#endif // PLATFORM(IOS_FAMILY)
 
 #if PLATFORM(MAC)
     [fontAttributes setValue:size forKey:NSAccessibilityFontSizeKey];
@@ -300,9 +300,6 @@ void attributedStringSetFont(NSMutableAttributedString *attributedString, CTFont
     auto postScriptName = adoptCF(CTFontCopyPostScriptName(font));
     if (postScriptName)
         [fontAttributes setValue:bridge_cast(postScriptName.get()) forKey:NSAccessibilityFontNameKey];
-    auto displayName = adoptCF(CTFontCopyDisplayName(font));
-    if (displayName)
-        [fontAttributes setValue:bridge_cast(displayName.get()) forKey:NSAccessibilityVisibleNameKey];
     auto traits = CTFontGetSymbolicTraits(font);
     if (traits & kCTFontTraitBold)
         [fontAttributes setValue:@YES forKey:@"AXFontBold"];
