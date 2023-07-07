@@ -208,17 +208,11 @@ void MemoryBackingStoreTransaction::recordValueChanged(MemoryObjectStore& object
 void MemoryBackingStoreTransaction::abort()
 {
     LOG(IndexedDB, "MemoryBackingStoreTransaction::abort()");
+
     SetForScope change(m_isAborting, true);
 
-    for (const auto& iterator : m_originalIndexNames) {
-        auto* index = iterator.key;
-        auto identifier = index->objectStore().info().identifier();
-        auto indexToReRegister = index->objectStore().takeIndexByIdentifier(identifier).releaseNonNull();
-        index->objectStore().info().deleteIndex(identifier);
-        index->rename(iterator.value);
-        index->objectStore().info().addExistingIndex(index->info());
-        index->objectStore().registerIndex(WTFMove(indexToReRegister));
-    }
+    for (const auto& iterator : m_originalIndexNames)
+        iterator.key->rename(iterator.value);
     m_originalIndexNames.clear();
 
     for (const auto& iterator : m_originalObjectStoreNames)
