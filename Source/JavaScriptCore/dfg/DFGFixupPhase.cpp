@@ -442,9 +442,7 @@ private:
             
         case UInt32ToNumber: {
             fixIntConvertingEdge(node->child1());
-            if (bytecodeCanTruncateInteger(node->arithNodeFlags()))
-                node->convertToIdentity();
-            else if (node->canSpeculateInt32(FixupPass))
+            if (bytecodeCanTruncateInteger(node->arithNodeFlags()) || node->canSpeculateInt32(FixupPass))
                 node->setArithMode(Arith::CheckOverflow);
             else {
                 node->setArithMode(Arith::DoOverflow);

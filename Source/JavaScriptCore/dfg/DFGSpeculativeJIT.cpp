@@ -3544,7 +3544,6 @@ void SpeculativeJIT::compileUInt32ToNumber(Node* node)
     GPRTemporary result(this);
 
     move(op1.gpr(), result.gpr());
-
     speculationCheck(ExitKind::Overflow, JSValueRegs(), nullptr, Base::branch32(LessThan, result.gpr(), TrustedImm32(0)));
 
     strictInt32Result(result.gpr(), node, op1.format());
