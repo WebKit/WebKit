@@ -89,6 +89,7 @@
 #import <WebCore/PlatformMediaSessionManager.h>
 #import <WebCore/PlatformScreen.h>
 #import <WebCore/ProcessCapabilities.h>
+#import <WebCore/PublicSuffix.h>
 #import <WebCore/RuntimeApplicationChecks.h>
 #import <WebCore/SWContextManager.h>
 #import <WebCore/SystemBattery.h>
@@ -716,41 +717,22 @@ NEVER_INLINE NO_RETURN_DUE_TO_CRASH static void deliberateCrashForTesting()
 #if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
 static void prewarmLogs()
 {
-    static std::array<std::pair<const char*, const char*>, 29> logs { {
+    // This call will create container manager log objects.
+    // FIXME: this can be removed if we move all calls to topPrivatelyControlledDomain out of the WebContent process.
+    // This would be desirable, since the WebContent process is blocking access to the container manager daemon.
+    topPrivatelyControlledDomain("apple.com"_s);
+
+    static std::array<std::pair<const char*, const char*>, 5> logs { {
         { "com.apple.CFBundle", "strings" },
-        { "com.apple.containermanager", "unspecified" },
-        { "com.apple.containermanager", "cache" },
-        { "com.apple.containermanager", "sandbox" },
-        { "com.apple.containermanager", "xpc" },
-        { "com.apple.containermanager", "query" },
-        { "com.apple.containermanager", "paths" },
-        { "com.apple.containermanager", "locking" },
-        { "com.apple.containermanager", "database" },
-        { "com.apple.containermanager", "upcall" },
-        { "com.apple.containermanager", "lifecycle" },
-        { "com.apple.containermanager", "fs" },
-        { "com.apple.containermanager", "startup" },
-        { "com.apple.containermanager", "test" },
-        { "com.apple.containermanager", "metadata" },
-        { "com.apple.containermanager", "codesignmapping" },
-        { "com.apple.containermanager", "longterm" },
-        { "com.apple.containermanager", "schema" },
-        { "com.apple.containermanager", "codesign" },
-        { "com.apple.containermanager", "repair" },
-        { "com.apple.containermanager", "disk" },
-        { "com.apple.containermanager", "persona" },
-        { "com.apple.containermanager", "command" },
-        { "com.apple.containermanager", "telemetry" },
         { "com.apple.network", "" },
         { "com.apple.CFNetwork", "ATS" },
-        { "com.apple.coremedia", "" },
         { "com.apple.coremedia", "" },
         { "com.apple.SafariShared", "Translation" },
     } };
 
     for (auto& log : logs) {
-        auto logHandle = os_log_create(log.first, log.second);
-        bool enabled = os_log_type_enabled(logHandle, OS_LOG_TYPE_ERROR);
+        auto logHandle = adoptOSObject(os_log_create(log.first, log.second));
+        bool enabled = os_log_type_enabled(logHandle.get(), OS_LOG_TYPE_ERROR);
         UNUSED_PARAM(enabled);
     }
 }
