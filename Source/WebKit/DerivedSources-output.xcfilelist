@@ -32,7 +32,6 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/GPUProcessMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/GPUProcessMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/GPUProcessProxyMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/GPUProcessProxyMessages.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/GeneratedSerializers.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/GeneratedSerializers.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/GeneratedSerializers.mm
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/IPCConnectionTesterMessageReceiver.cpp
@@ -416,6 +415,7 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebInspectorUIMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebInspectorUIMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebInspectorUIProxyMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebInspectorUIProxyMessages.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebKitPlatformGeneratedSerializers.mm
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebLockRegistryProxyMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebLockRegistryProxyMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebMDNSRegisterMessageReceiver.cpp

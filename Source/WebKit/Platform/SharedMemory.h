@@ -159,12 +159,3 @@ private:
 };
 
 } // namespace WebKit
-
-namespace IPC {
-
-template<> struct ArgumentCoder<WebKit::SharedMemoryHandle, void> {
-    static void encode(Encoder&, WebKit::SharedMemoryHandle&&);
-    static std::optional<WebKit::SharedMemoryHandle> decode(Decoder&);
-};
-
-} // namespace IPC

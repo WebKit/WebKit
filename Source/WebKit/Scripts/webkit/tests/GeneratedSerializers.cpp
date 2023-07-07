@@ -98,9 +98,7 @@ template<> struct ArgumentCoder<Namespace::OtherClass> {
     static std::optional<Namespace::OtherClass> decode(Decoder&);
 };
 
-
 #if ENABLE(TEST_FEATURE)
-
 void ArgumentCoder<Namespace::Subnamespace::StructName>::encode(Encoder& encoder, const Namespace::Subnamespace::StructName& instance)
 {
     static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.firstMemberName)>, FirstMemberType>);
@@ -192,7 +190,6 @@ std::optional<Namespace::Subnamespace::StructName> ArgumentCoder<Namespace::Subn
 
 #endif
 
-
 void ArgumentCoder<Namespace::OtherClass>::encode(Encoder& encoder, const Namespace::OtherClass& instance)
 {
     static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.a)>, int>);
@@ -229,7 +226,6 @@ std::optional<Namespace::OtherClass> ArgumentCoder<Namespace::OtherClass>::decod
     };
 }
 
-
 void ArgumentCoder<Namespace::ReturnRefClass>::encode(Encoder& encoder, const Namespace::ReturnRefClass& instance)
 {
     static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.functionCall().member1)>, double>);
@@ -256,7 +252,6 @@ std::optional<Ref<Namespace::ReturnRefClass>> ArgumentCoder<Namespace::ReturnRef
     };
 }
 
-
 void ArgumentCoder<Namespace::EmptyConstructorStruct>::encode(Encoder& encoder, const Namespace::EmptyConstructorStruct& instance)
 {
     static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.m_int)>, int>);
@@ -276,7 +271,6 @@ std::optional<Namespace::EmptyConstructorStruct> ArgumentCoder<Namespace::EmptyC
     result.m_double = WTFMove(*m_double);
     return { WTFMove(result) };
 }
-
 
 void ArgumentCoder<Namespace::EmptyConstructorWithIf>::encode(Encoder& encoder, const Namespace::EmptyConstructorWithIf& instance)
 {
@@ -331,7 +325,6 @@ std::optional<Namespace::EmptyConstructorWithIf> ArgumentCoder<Namespace::EmptyC
     return { WTFMove(result) };
 }
 
-
 void ArgumentCoder<WithoutNamespace>::encode(Encoder& encoder, const WithoutNamespace& instance)
 {
     static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.a)>, int>);
@@ -356,7 +349,6 @@ std::optional<WithoutNamespace> ArgumentCoder<WithoutNamespace>::decode(Decoder&
         }
     };
 }
-
 
 void ArgumentCoder<WithoutNamespaceWithAttributes>::encode(Encoder& encoder, const WithoutNamespaceWithAttributes& instance)
 {
@@ -396,7 +388,6 @@ std::optional<WithoutNamespaceWithAttributes> ArgumentCoder<WithoutNamespaceWith
     };
 }
 
-
 void ArgumentCoder<WebCore::InheritsFrom>::encode(Encoder& encoder, const WebCore::InheritsFrom& instance)
 {
     static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.a)>, int>);
@@ -426,7 +417,6 @@ std::optional<WebCore::InheritsFrom> ArgumentCoder<WebCore::InheritsFrom>::decod
         }
     };
 }
-
 
 void ArgumentCoder<WebCore::InheritanceGrandchild>::encode(Encoder& encoder, const WebCore::InheritanceGrandchild& instance)
 {
@@ -467,7 +457,6 @@ std::optional<WebCore::InheritanceGrandchild> ArgumentCoder<WebCore::Inheritance
     };
 }
 
-
 void ArgumentCoder<WTF::Seconds>::encode(Encoder& encoder, const WTF::Seconds& instance)
 {
     static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.value())>, double>);
@@ -485,7 +474,6 @@ std::optional<WTF::Seconds> ArgumentCoder<WTF::Seconds>::decode(Decoder& decoder
         }
     };
 }
-
 
 void ArgumentCoder<WTF::CreateUsingClass>::encode(Encoder& encoder, const WTF::CreateUsingClass& instance)
 {
@@ -511,7 +499,6 @@ std::optional<WTF::CreateUsingClass> ArgumentCoder<WTF::CreateUsingClass>::decod
         )
     };
 }
-
 
 void ArgumentCoder<WebCore::FloatBoxExtent>::encode(Encoder& encoder, const WebCore::FloatBoxExtent& instance)
 {
@@ -542,7 +529,6 @@ std::optional<WebCore::FloatBoxExtent> ArgumentCoder<WebCore::FloatBoxExtent>::d
         }
     };
 }
-
 
 void ArgumentCoder<NullableSoftLinkedMember>::encode(Encoder& encoder, const NullableSoftLinkedMember& instance)
 {
@@ -651,7 +637,6 @@ std::optional<Ref<WebCore::TimingFunction>> ArgumentCoder<WebCore::TimingFunctio
 }
 
 #if ENABLE(TEST_FEATURE)
-
 void ArgumentCoder<Namespace::ConditionalCommonClass>::encode(Encoder& encoder, const Namespace::ConditionalCommonClass& instance)
 {
     static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.value)>, int>);
@@ -679,7 +664,6 @@ std::optional<Namespace::ConditionalCommonClass> ArgumentCoder<Namespace::Condit
 
 #endif
 
-
 void ArgumentCoder<Namespace::CommonClass>::encode(Encoder& encoder, const Namespace::CommonClass& instance)
 {
     static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.value)>, int>);
@@ -704,7 +688,6 @@ std::optional<Namespace::CommonClass> ArgumentCoder<Namespace::CommonClass>::dec
         }
     };
 }
-
 
 void ArgumentCoder<Namespace::AnotherCommonClass>::encode(Encoder& encoder, const Namespace::AnotherCommonClass& instance)
 {
@@ -763,7 +746,6 @@ std::optional<WebCore::MoveOnlyBaseClass> ArgumentCoder<WebCore::MoveOnlyBaseCla
     ASSERT_NOT_REACHED();
     return std::nullopt;
 }
-
 
 void ArgumentCoder<WebCore::MoveOnlyDerivedClass>::encode(Encoder& encoder, WebCore::MoveOnlyDerivedClass&& instance)
 {

@@ -38,6 +38,7 @@ VPATH = \
     $(WebKit2)/NetworkProcess/ServiceWorker \
     $(WebKit2)/NetworkProcess/WebStorage \
     $(WebKit2)/NetworkProcess/storage \
+    $(WebKit2)/Platform \
     $(WebKit2)/Resources/SandboxProfiles/ios \
     $(WebKit2)/Shared/Plugins \
     $(WebKit2)/Shared \
@@ -469,6 +470,7 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	GPUProcess/media/TextTrackPrivateRemoteConfiguration.serialization.in \
 	GPUProcess/media/TrackPrivateRemoteConfiguration.serialization.in \
 	GPUProcess/media/VideoTrackPrivateRemoteConfiguration.serialization.in \
+	Platform/SharedMemory.serialization.in \
 	NetworkProcess/NetworkProcessCreationParameters.serialization.in \
 	Shared/API/APIData.serialization.in \
 	Shared/API/APIError.serialization.in \
@@ -616,9 +618,9 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	WebProcess/WebCoreSupport/WebSpeechSynthesisVoice.serialization.in \
 #
 
-all : GeneratedSerializers.h GeneratedSerializers.mm SerializedTypeInfo.mm
+all : GeneratedSerializers.h GeneratedSerializers.mm SerializedTypeInfo.mm WebKitPlatformGeneratedSerializers.mm
 
-GeneratedSerializers.h GeneratedSerializers.mm SerializedTypeInfo.mm : $(WebKit2)/Scripts/generate-serializers.py $(SERIALIZATION_DESCRIPTION_FILES) $(WebKit2)/DerivedSources.make
+GeneratedSerializers.h GeneratedSerializers.mm SerializedTypeInfo.mm WebKitPlatformGeneratedSerializers.mm : $(WebKit2)/Scripts/generate-serializers.py $(SERIALIZATION_DESCRIPTION_FILES) $(WebKit2)/DerivedSources.make
 	$(PYTHON) $(WebKit2)/Scripts/generate-serializers.py mm $(WebKit2)/ $(SERIALIZATION_DESCRIPTION_FILES)
 
 EXTENSIONS_DIR = $(WebKit2)/WebProcess/Extensions

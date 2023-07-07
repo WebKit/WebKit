@@ -1325,6 +1325,7 @@
 		5C9A9111228F69CC005C5B17 /* XPCServiceMain.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC82839616B47EC400A278FE /* XPCServiceMain.mm */; };
 		5C9A9112228F69CC005C5B17 /* XPCServiceMain.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC82839616B47EC400A278FE /* XPCServiceMain.mm */; };
 		5C9A9113228F69CD005C5B17 /* XPCServiceMain.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC82839616B47EC400A278FE /* XPCServiceMain.mm */; };
+		5C9E0F992A577EDD00FC2664 /* WebKitPlatformGeneratedSerializers.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C9E0F972A577EC400FC2664 /* WebKitPlatformGeneratedSerializers.mm */; };
 		5C9E56831DF7F1B300C9EE33 /* WKWebsitePolicies.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C9E56811DF7F05500C9EE33 /* WKWebsitePolicies.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5CA26D81217ABD5B00F97A35 /* WKSafeBrowsingWarning.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CA26D80217ABBB600F97A35 /* WKSafeBrowsingWarning.h */; };
 		5CA26D83217AD1B800F97A35 /* WKSafeBrowsingWarning.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5CA26D7F217ABBB600F97A35 /* WKSafeBrowsingWarning.mm */; };
@@ -5405,6 +5406,7 @@
 		5C96003F28C02EAF00F2693B /* SerializedTypeInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SerializedTypeInfo.h; sourceTree = "<group>"; };
 		5C9C5C022430535800BB6740 /* UserContentControllerParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserContentControllerParameters.h; sourceTree = "<group>"; };
 		5C9C5C032430535800BB6740 /* UserContentControllerParameters.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UserContentControllerParameters.cpp; sourceTree = "<group>"; };
+		5C9E0F972A577EC400FC2664 /* WebKitPlatformGeneratedSerializers.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WebKitPlatformGeneratedSerializers.mm; path = WebKitPlatformGeneratedSerializers.mm; sourceTree = "<group>"; };
 		5C9E56801DF7F05500C9EE33 /* WKWebsitePolicies.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKWebsitePolicies.cpp; sourceTree = "<group>"; };
 		5C9E56811DF7F05500C9EE33 /* WKWebsitePolicies.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKWebsitePolicies.h; sourceTree = "<group>"; };
 		5C9EF2E721F058F9003BDC56 /* NetworkStorageSessionProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkStorageSessionProvider.h; sourceTree = "<group>"; };
@@ -13522,6 +13524,7 @@
 				1CBBE49F19B66C53006B7D81 /* WebInspectorUIMessages.h */,
 				1CA8B943127C882A00576C2B /* WebInspectorUIProxyMessageReceiver.cpp */,
 				1CA8B944127C882A00576C2B /* WebInspectorUIProxyMessages.h */,
+				5C9E0F972A577EC400FC2664 /* WebKitPlatformGeneratedSerializers.mm */,
 				51F060DD1654317500F3282F /* WebMDNSRegisterMessageReceiver.cpp */,
 				31BA9248148830810062EDB5 /* WebNotificationManagerMessageReceiver.cpp */,
 				31BA9249148830810062EDB5 /* WebNotificationManagerMessages.h */,
@@ -16955,6 +16958,7 @@
 				7B9FC5D328A5301D007570E7 /* PlatformUnifiedSource3.cpp in Sources */,
 				7B9FC5D228A53018007570E7 /* PlatformUnifiedSource4.cpp in Sources */,
 				7B9FC5DC28A53C24007570E7 /* PlatformUnifiedSource5.cpp in Sources */,
+				5C9E0F992A577EDD00FC2664 /* WebKitPlatformGeneratedSerializers.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

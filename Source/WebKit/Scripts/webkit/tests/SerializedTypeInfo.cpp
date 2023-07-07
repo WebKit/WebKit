@@ -33,6 +33,7 @@
 #include "FirstMemberType.h"
 #endif
 #include "HeaderWithoutCondition"
+#include "PlatformClass.h"
 #if ENABLE(TEST_FEATURE)
 #include "SecondMemberType.h"
 #endif
@@ -203,6 +204,12 @@ Vector<SerializedTypeInfo> allSerializedTypes()
             }, {
                 "int"_s,
                 "secondMember"_s
+            }
+        } },
+        { "WebKit::PlatformClass"_s, {
+            {
+                "int"_s,
+                "value"_s
             }
         } },
         { "WebCore::SharedStringHash"_s, {

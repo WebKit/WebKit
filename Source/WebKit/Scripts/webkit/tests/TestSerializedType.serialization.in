@@ -163,3 +163,8 @@ headers: "CommonHeader.h"
     [Nullable] int firstMember;
     int secondMember;
 }
+
+webkit_platform_headers: "PlatformClass.h"
+[CustomHeader, WebKitPlatform] class WebKit::PlatformClass {
+  int value;
+};

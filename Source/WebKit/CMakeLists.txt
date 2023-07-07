@@ -357,6 +357,8 @@ set(WebKit_SERIALIZATION_IN_FILES
     NetworkProcess/NetworkProcessCreationParameters.serialization.in
     NetworkProcess/NetworkResourceLoadParameters.serialization.in
 
+    Platform/SharedMemory.serialization.in
+
     Shared/BackgroundFetchState.serialization.in
     Shared/CallbackID.serialization.in
     Shared/DisplayListArgumentCoders.serialization.in
@@ -671,6 +673,7 @@ list(APPEND WebKit_DERIVED_SOURCES
     ${WebKit_DERIVED_SOURCES_DIR}/GeneratedSerializers.h
     ${WebKit_DERIVED_SOURCES_DIR}/GeneratedSerializers.cpp
     ${WebKit_DERIVED_SOURCES_DIR}/SerializedTypeInfo.cpp
+    ${WebKit_DERIVED_SOURCES_DIR}/WebKitPlatformGeneratedSerializers.cpp
 )
 
 add_custom_command(
@@ -678,6 +681,7 @@ add_custom_command(
         ${WebKit_DERIVED_SOURCES_DIR}/GeneratedSerializers.h
         ${WebKit_DERIVED_SOURCES_DIR}/GeneratedSerializers.cpp
         ${WebKit_DERIVED_SOURCES_DIR}/SerializedTypeInfo.cpp
+        ${WebKit_DERIVED_SOURCES_DIR}/WebKitPlatformGeneratedSerializers.cpp
     MAIN_DEPENDENCY ${WEBKIT_DIR}/Scripts/generate-serializers.py
     DEPENDS
         ${WebKit_SERIALIZATION_IN_FILES}
