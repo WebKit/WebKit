@@ -329,6 +329,11 @@ DOMRectReadOnly* HTMLAttachmentElement::saveButtonClientRect() const
     return m_saveButtonClientRect.get();
 }
 
+HTMLElement* HTMLAttachmentElement::wideLayoutImageElement() const
+{
+    return m_imageElement.get();
+}
+
 RenderPtr<RenderElement> HTMLAttachmentElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
     return createRenderer<RenderAttachment>(*this, WTFMove(style));

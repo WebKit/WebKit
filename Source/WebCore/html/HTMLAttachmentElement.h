@@ -92,6 +92,7 @@ public:
 
     bool isWideLayout() const { return m_implementation == Implementation::WideLayout; }
     HTMLElement* wideLayoutShadowContainer() const { return m_containerElement.get(); }
+    HTMLElement* wideLayoutImageElement() const;
 
 private:
     friend class AttachmentSaveEventListener;

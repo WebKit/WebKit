@@ -97,8 +97,18 @@ void RenderAttachment::layout()
         layoutShadowContent(newIntrinsicSize);
 }
 
-LayoutUnit RenderAttachment::baselinePosition(FontBaseline, bool, LineDirectionMode, LinePositionMode) const
+LayoutUnit RenderAttachment::baselinePosition(FontBaseline fontBaseline, bool firstLine, LineDirectionMode lineDirectionMode, LinePositionMode linePositionMode) const
 {
+    if (auto* baselineElement = attachmentElement().wideLayoutImageElement()) {
+        bool unusedIsReplaced;
+        auto attachmentRect = attachmentElement().renderRect(&unusedIsReplaced);
+        auto baselineElementRect = baselineElement->renderRect(&unusedIsReplaced);
+        auto baselineElementTop = baselineElementRect.y() - attachmentRect.y();
+        if (auto* baselineElementRenderBox = baselineElement->renderBoxModelObject())
+            return baselineElementTop + baselineElementRenderBox->baselinePosition(fontBaseline, firstLine, lineDirectionMode, linePositionMode);
+        return baselineElementTop + baselineElementRect.height();
+    }
+
     return theme().attachmentBaseline(*this);
 }
 
