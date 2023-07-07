@@ -3461,42 +3461,6 @@ bool FrameLoader::dispatchBeforeUnloadEvent(Chrome& chrome, FrameLoader* frameLo
     return chrome.runBeforeUnloadConfirmPanel(text, m_frame);
 }
 
-void FrameLoader::executeJavaScriptURL(const URL& url, const NavigationAction& action)
-{
-    ASSERT(url.protocolIsJavaScript());
-
-    bool isFirstNavigationInFrame = false;
-    if (!m_stateMachine.committedFirstRealDocumentLoad()) {
-        m_stateMachine.advanceTo(FrameLoaderStateMachine::DisplayingInitialEmptyDocumentPostCommit);
-        isFirstNavigationInFrame = true;
-    }
-
-    RefPtr ownerDocument = m_frame.ownerElement() ? &m_frame.ownerElement()->document() : nullptr;
-    if (ownerDocument)
-        ownerDocument->incrementLoadEventDelayCount();
-
-    bool didReplaceDocument = false;
-    bool requesterSandboxedFromScripts = action.requester() ? (action.requester()->sandboxFlags & SandboxScripts) : false;
-    if (requesterSandboxedFromScripts) {
-        // FIXME: This message should be moved off the console once a solution to https://bugs.webkit.org/show_bug.cgi?id=103274 exists.
-        // This message is identical to the message in ScriptController::canExecuteScripts.
-        if (auto* document = m_frame.document())
-            document->addConsoleMessage(MessageSource::Security, MessageLevel::Error, "Blocked script execution in '" + action.requester()->url.stringCenterEllipsizedToLength() + "' because the document's frame is sandboxed and the 'allow-scripts' permission is not set.");
-    } else
-        m_frame.script().executeJavaScriptURL(url, action.requester() ? action.requester()->securityOrigin.ptr() : nullptr, action.shouldReplaceDocumentIfJavaScriptURL(), didReplaceDocument);
-
-    // We need to communicate that a load happened, even if the JavaScript URL execution didn't end up replacing the document.
-    if (auto* document = m_frame.document(); isFirstNavigationInFrame && !didReplaceDocument)
-        document->dispatchWindowLoadEvent();
-
-    checkCompleted();
-
-    if (ownerDocument)
-        ownerDocument->decrementLoadEventDelayCount();
-
-    m_quickRedirectComing = false;
-}
-
 void FrameLoader::continueLoadAfterNavigationPolicy(const ResourceRequest& request, FormState* formState, NavigationPolicyDecision navigationPolicyDecision, AllowNavigationToInvalidURL allowNavigationToInvalidURL)
 {
     // If we loaded an alternate page to replace an unreachableURL, we'll get in here with a
