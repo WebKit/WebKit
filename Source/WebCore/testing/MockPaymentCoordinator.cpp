@@ -101,7 +101,9 @@ MockPaymentCoordinator::~MockPaymentCoordinator()
 
 void MockPaymentCoordinator::dispatchIfShowing(Function<void()>&& function)
 {
-    ASSERT(showCount > hideCount);
+    if (showCount <= hideCount)
+        return;
+
     RunLoop::main().dispatch([currentShowCount = showCount, function = WTFMove(function)]() {
         if (showCount > hideCount && showCount == currentShowCount)
             function();

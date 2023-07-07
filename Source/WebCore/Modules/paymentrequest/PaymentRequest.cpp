@@ -440,6 +440,10 @@ void PaymentRequest::show(Document& document, RefPtr<DOMPromise>&& detailsPromis
 
 void PaymentRequest::abortWithException(Exception&& exception)
 {
+    // If state is "closed", then the request has already been aborted.
+    if (m_state == State::Closed)
+        return;
+
     ASSERT(m_state == State::Interactive);
     closeActivePaymentHandler();
 
