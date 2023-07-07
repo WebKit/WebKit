@@ -1074,6 +1074,14 @@ protected:
     // Returns true if underlying context had errors.
     bool updateErrors();
 
+protected:
+    TextureUnitState& activeTextureUnitState()
+    {
+        RELEASE_ASSERT_WITH_MESSAGE(m_activeTextureUnit < m_textureUnits.size(),
+            "active texture unit %lu >= texture unit count %zu", m_activeTextureUnit, m_textureUnits.size());
+        return m_textureUnits[m_activeTextureUnit];
+    }
+
 private:
     void scheduleTaskToDispatchContextLostEvent();
     // Helper for restoration after context lost.

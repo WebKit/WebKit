@@ -383,10 +383,10 @@ RefPtr<WebGLTexture> WebGL2RenderingContext::validateTextureStorage2DBinding(con
     RefPtr<WebGLTexture> texture;
     switch (target) {
     case GraphicsContextGL::TEXTURE_2D:
-        texture = m_textureUnits[m_activeTextureUnit].texture2DBinding;
+        texture = activeTextureUnitState().texture2DBinding;
         break;
     case GraphicsContextGL::TEXTURE_CUBE_MAP:
-        texture = m_textureUnits[m_activeTextureUnit].textureCubeMapBinding;
+        texture = activeTextureUnitState().textureCubeMapBinding;
         break;
     default:
         synthesizeGLError(GraphicsContextGL::INVALID_ENUM, functionName, "invalid texture target");
@@ -403,10 +403,10 @@ RefPtr<WebGLTexture> WebGL2RenderingContext::validateTexture3DBinding(const char
     RefPtr<WebGLTexture> texture;
     switch (target) {
     case GraphicsContextGL::TEXTURE_2D_ARRAY:
-        texture = m_textureUnits[m_activeTextureUnit].texture2DArrayBinding;
+        texture = activeTextureUnitState().texture2DArrayBinding;
         break;
     case GraphicsContextGL::TEXTURE_3D:
-        texture = m_textureUnits[m_activeTextureUnit].texture3DBinding;
+        texture = activeTextureUnitState().texture3DBinding;
         break;
     default:
         synthesizeGLError(GraphicsContextGL::INVALID_ENUM, functionName, "invalid texture target");
@@ -3115,9 +3115,9 @@ WebGLAny WebGL2RenderingContext::getParameter(GCGLenum pname)
     case GraphicsContextGL::SAMPLER_BINDING:
         return m_boundSamplers[m_activeTextureUnit];
     case GraphicsContextGL::TEXTURE_BINDING_2D_ARRAY:
-        return m_textureUnits[m_activeTextureUnit].texture2DArrayBinding;
+        return activeTextureUnitState().texture2DArrayBinding;
     case GraphicsContextGL::TEXTURE_BINDING_3D:
-        return m_textureUnits[m_activeTextureUnit].texture3DBinding;
+        return activeTextureUnitState().texture3DBinding;
     case GraphicsContextGL::TRANSFORM_FEEDBACK_ACTIVE:
         return getBooleanParameter(pname);
     case GraphicsContextGL::TRANSFORM_FEEDBACK_BUFFER_BINDING:

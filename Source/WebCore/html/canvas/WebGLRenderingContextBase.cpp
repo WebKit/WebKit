@@ -1167,7 +1167,17 @@ void WebGLRenderingContextBase::reshape(int width, int height)
     // clear (and this matches what reshape will do).
     m_context->reshape(width, height);
 
-    auto& textureUnit = m_textureUnits[m_activeTextureUnit];
+    if (m_activeTextureUnit >= m_textureUnits.size()) {
+        // rdar://111695432: We are seeing invalid indexing into m_textureUnits
+        // in the wild. m_textureUnits was validated in initializeNewContext(),
+        // so assume that m_activeTextureUnit is invalid. Signal that the
+        // context is lost for internal inconsistent state.
+        FATAL("active texture unit %lu >= texture unit count %zu", m_activeTextureUnit, m_textureUnits.size());
+        forceContextLost();
+        return;
+    }
+
+    auto& textureUnit = activeTextureUnitState();
     m_context->bindTexture(GraphicsContextGL::TEXTURE_2D, objectOrZero(textureUnit.texture2DBinding.get()));
     m_context->bindRenderbuffer(GraphicsContextGL::RENDERBUFFER, objectOrZero(m_renderbufferBinding.get()));
     if (m_framebufferBinding)
@@ -1396,7 +1406,7 @@ void WebGLRenderingContextBase::bindTexture(GCGLenum target, WebGLTexture* textu
         synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "bindTexture", "textures can not be used with multiple targets");
         return;
     }
-    auto& textureUnit = m_textureUnits[m_activeTextureUnit];
+    auto& textureUnit = activeTextureUnitState();
     if (target == GraphicsContextGL::TEXTURE_2D) {
         textureUnit.texture2DBinding = texture;
     } else if (target == GraphicsContextGL::TEXTURE_CUBE_MAP) {
@@ -2445,9 +2455,9 @@ WebGLAny WebGLRenderingContextBase::getParameter(GCGLenum pname)
     case GraphicsContextGL::SUBPIXEL_BITS:
         return getIntParameter(pname);
     case GraphicsContextGL::TEXTURE_BINDING_2D:
-        return m_textureUnits[m_activeTextureUnit].texture2DBinding;
+        return activeTextureUnitState().texture2DBinding;
     case GraphicsContextGL::TEXTURE_BINDING_CUBE_MAP:
-        return m_textureUnits[m_activeTextureUnit].textureCubeMapBinding;
+        return activeTextureUnitState().textureCubeMapBinding;
     case GraphicsContextGL::UNPACK_ALIGNMENT:
         return m_unpackParameters.alignment;
     case GraphicsContextGL::UNPACK_FLIP_Y_WEBGL:
@@ -5234,24 +5244,24 @@ RefPtr<WebGLTexture> WebGLRenderingContextBase::validateTextureBinding(const cha
     RefPtr<WebGLTexture> texture;
     switch (target) {
     case GraphicsContextGL::TEXTURE_2D:
-        texture = m_textureUnits[m_activeTextureUnit].texture2DBinding;
+        texture = activeTextureUnitState().texture2DBinding;
         break;
     case GraphicsContextGL::TEXTURE_CUBE_MAP:
-        texture = m_textureUnits[m_activeTextureUnit].textureCubeMapBinding;
+        texture = activeTextureUnitState().textureCubeMapBinding;
         break;
     case GraphicsContextGL::TEXTURE_3D:
         if (!isWebGL2()) {
             synthesizeGLError(GraphicsContextGL::INVALID_ENUM, functionName, "invalid texture target");
             return nullptr;
         }
-        texture = m_textureUnits[m_activeTextureUnit].texture3DBinding;
+        texture = activeTextureUnitState().texture3DBinding;
         break;
     case GraphicsContextGL::TEXTURE_2D_ARRAY:
         if (!isWebGL2()) {
             synthesizeGLError(GraphicsContextGL::INVALID_ENUM, functionName, "invalid texture target");
             return nullptr;
         }
-        texture = m_textureUnits[m_activeTextureUnit].texture2DArrayBinding;
+        texture = activeTextureUnitState().texture2DArrayBinding;
         break;
     default:
         synthesizeGLError(GraphicsContextGL::INVALID_ENUM, functionName, "invalid texture target");
@@ -5272,7 +5282,7 @@ RefPtr<WebGLTexture> WebGLRenderingContextBase::validateTexture2DBinding(const c
     RefPtr<WebGLTexture> texture;
     switch (target) {
     case GraphicsContextGL::TEXTURE_2D:
-        texture = m_textureUnits[m_activeTextureUnit].texture2DBinding;
+        texture = activeTextureUnitState().texture2DBinding;
         break;
     case GraphicsContextGL::TEXTURE_CUBE_MAP_POSITIVE_X:
     case GraphicsContextGL::TEXTURE_CUBE_MAP_NEGATIVE_X:
@@ -5280,7 +5290,7 @@ RefPtr<WebGLTexture> WebGLRenderingContextBase::validateTexture2DBinding(const c
     case GraphicsContextGL::TEXTURE_CUBE_MAP_NEGATIVE_Y:
     case GraphicsContextGL::TEXTURE_CUBE_MAP_POSITIVE_Z:
     case GraphicsContextGL::TEXTURE_CUBE_MAP_NEGATIVE_Z:
-        texture = m_textureUnits[m_activeTextureUnit].textureCubeMapBinding;
+        texture = activeTextureUnitState().textureCubeMapBinding;
         break;
     default:
         synthesizeGLError(GraphicsContextGL::INVALID_ENUM, functionName, "invalid texture target");
@@ -5892,7 +5902,7 @@ void WebGLRenderingContextBase::restoreCurrentFramebuffer()
 
 void WebGLRenderingContextBase::restoreCurrentTexture2D()
 {
-    auto texture = m_textureUnits[m_activeTextureUnit].texture2DBinding.get();
+    auto texture = activeTextureUnitState().texture2DBinding.get();
     bindTexture(GraphicsContextGL::TEXTURE_2D, texture);
 }
 
