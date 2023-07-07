@@ -48,14 +48,11 @@
          2. LayoutTests/imported/w3c/resources/ImportExpectations list the test suites or tests to NOT import.
 
     - All files are converted to work in WebKit:
-         1. Paths to testharness.js files are modified to point to Webkit's copy of them in
-            LayoutTests/resources, using the correct relative path from the new location.
-            This is applied to CSS tests but not to WPT tests.
-         2. All CSS properties requiring the -webkit-vendor prefix are prefixed - this current
+         1. All CSS properties requiring the -webkit-vendor prefix are prefixed - this current
             list of what needs prefixes is read from Source/WebCore/CSS/CSSProperties.in
-         3. Each reftest has its own copy of its reference file following the naming conventions
+         2. Each reftest has its own copy of its reference file following the naming conventions
             new-run-webkit-tests expects
-         4. If a reference files lives outside the directory of the test that uses it, it is checked
+         3. If a reference files lives outside the directory of the test that uses it, it is checked
             for paths to support files as it will be imported into a different relative position to the
             test file (in the same directory)
 
@@ -121,8 +118,6 @@ To import a web-platform-tests suite from a specific folder, use 'import-w3c-tes
 
     parser.add_argument('-n', '--no-overwrite', dest='overwrite', action='store_false', default=True,
         help='Flag to prevent duplicate test files from overwriting existing tests. By default, they will be overwritten')
-    parser.add_argument('-l', '--no-links-conversion', dest='convert_test_harness_links', action='store_false', default=True,
-       help='Do not change links (testharness js or css e.g.). This option only applies when providing a source directory, in which case by default, links are converted to point to WebKit testharness files. When tests are downloaded from W3C repository, links are converted for CSS tests and remain unchanged for WPT tests')
 
     parser.add_argument('-t', '--tip-of-tree', dest='use_tip_of_tree', action='store_true', default=False,
         help='Import all tests using the latest repository revision')
@@ -380,14 +375,6 @@ class TestImporter(object):
                 self.import_list.append({'dirname': root, 'copy_list': copy_list,
                     'reftests': reftests, 'jstests': jstests, 'crashtests': crashtests, 'total_tests': total_tests})
 
-    def should_convert_test_harness_links(self, test):
-        if self._importing_downloaded_tests:
-            for test_repository in self.test_downloader().test_repositories:
-                if test.startswith(test_repository['name']):
-                    return 'convert_test_harness_links' in test_repository['import_options']
-            return True
-        return self.options.convert_test_harness_links
-
     def _webkit_test_runner_options(self, path):
         if not(self.filesystem.isfile(path)):
             return ''
@@ -546,7 +533,7 @@ class TestImporter(object):
                                         and ('html' in str(mimetype[0]) or 'xml' in str(mimetype[0])  or 'css' in str(mimetype[0]) or 'javascript' in str(mimetype[0])):
                     _log.info("Rewriting: %s" % new_filepath)
                     try:
-                        converted_file = convert_for_webkit(new_path, filename=orig_filepath, reference_support_info=reference_support_info, host=self.host, convert_test_harness_links=self.should_convert_test_harness_links(subpath), webkit_test_runner_options=self._webkit_test_runner_options(new_filepath))
+                        converted_file = convert_for_webkit(new_path, filename=orig_filepath, reference_support_info=reference_support_info, host=self.host, webkit_test_runner_options=self._webkit_test_runner_options(new_filepath))
                     except:
                         _log.warn('Failed converting %s', orig_filepath)
                         failed_conversion_files.append(orig_filepath)
