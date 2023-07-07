@@ -84,7 +84,7 @@ private:
     void clearStream();
     void getSizeForNext();
     void dispatchDidReceiveResponse();
-    void seek();
+    std::optional<Error> seek();
     void consumeData(const uint8_t* data, int bytesRead);
     void read();
     void readData(const WebCore::BlobDataItem&);

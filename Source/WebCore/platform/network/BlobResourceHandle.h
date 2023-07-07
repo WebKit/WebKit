@@ -78,7 +78,7 @@ private:
 
     void doStart();
     void getSizeForNext();
-    void seek();
+    std::optional<Error> seek();
     void consumeData(const uint8_t* data, int bytesRead);
     void failed(Error);
 

@@ -187,6 +187,7 @@ void BlobResourceHandle::start()
 void BlobResourceHandle::doStart()
 {
     ASSERT(isMainThread());
+    Ref protectedThis { *this };
 
     // Do not continue if the request is aborted or an error occurs.
     if (erroredOrAborted())
@@ -227,13 +228,14 @@ void BlobResourceHandle::getSizeForNext()
 
     // Do we finish validating and counting size for all items?
     if (m_sizeItemCount >= m_blobData->items().size()) {
-        seek();
+        if (auto error = seek()) {
+            notifyFail(*error);
+            return;
+        }
 
         // Start reading if in asynchronous mode.
-        if (m_async) {
-            Ref<BlobResourceHandle> protectedThis(*this);
+        if (m_async)
             notifyResponse();
-        }
         return;
     }
 
@@ -257,6 +259,7 @@ void BlobResourceHandle::getSizeForNext()
 void BlobResourceHandle::didGetSize(long long size)
 {
     ASSERT(isMainThread());
+    Ref protectedThis { *this };
 
     // Do not continue if the request is aborted or an error occurs.
     if (erroredOrAborted())
@@ -284,23 +287,21 @@ void BlobResourceHandle::didGetSize(long long size)
     getSizeForNext();
 }
 
-void BlobResourceHandle::seek()
+auto BlobResourceHandle::seek() -> std::optional<Error>
 {
     ASSERT(isMainThread());
 
     // Bail out if the range is not provided.
     if (!m_isRangeRequest)
-        return;
+        return std::nullopt;
 
     // Adjust m_rangeStart / m_rangeEnd
     if (m_rangeStart == kPositionNotSpecified) {
         m_rangeStart = m_totalSize - m_rangeEnd;
         m_rangeEnd = m_rangeStart + m_rangeEnd - 1;
     } else {
-        if (m_rangeStart >= m_totalSize) {
-            notifyFail(Error::RangeError);
-            return;
-        }
+        if (m_rangeStart >= m_totalSize)
+            return Error::RangeError;
         if (m_rangeEnd == kPositionNotSpecified || m_rangeEnd >= m_totalSize)
             m_rangeEnd = m_totalSize - 1;
     }
@@ -317,6 +318,7 @@ void BlobResourceHandle::seek()
     long long rangeSize = m_rangeEnd - m_rangeStart + 1;
     if (m_totalRemainingSize > rangeSize)
         m_totalRemainingSize = rangeSize;
+    return std::nullopt;
 }
 
 int BlobResourceHandle::readSync(uint8_t* buf, int length)
