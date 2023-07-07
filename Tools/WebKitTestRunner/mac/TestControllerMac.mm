@@ -171,8 +171,6 @@ void TestController::initializeTestPluginDirectory()
 
 bool TestController::platformResetStateToConsistentValues(const TestOptions& options)
 {
-    [LayoutTestSpellChecker uninstallAndReset];
-
     cocoaResetStateToConsistentValues(options);
 
     while ([NSApp nextEventMatchingMask:NSEventMaskGesture | NSEventMaskScrollWheel untilDate:nil inMode:NSDefaultRunLoopMode dequeue:YES]) {

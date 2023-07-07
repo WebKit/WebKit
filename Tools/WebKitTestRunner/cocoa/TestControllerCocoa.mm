@@ -27,6 +27,7 @@
 #import "TestController.h"
 
 #import "CrashReporterInfo.h"
+#import "LayoutTestSpellChecker.h"
 #import "Options.h"
 #import "PlatformWebView.h"
 #import "StringFunctions.h"
@@ -367,6 +368,8 @@ void TestController::cocoaResetStateToConsistentValues(const TestOptions& option
         [platformView _resetNavigationGestureStateForTesting];
         [platformView.configuration.preferences setTextInteractionEnabled:options.textInteractionEnabled()];
     }
+
+    [LayoutTestSpellChecker uninstallAndReset];
 
     WebCoreTestSupport::setAdditionalSupportedImageTypesForTesting(String::fromLatin1(options.additionalSupportedImageTypes().c_str()));
 }

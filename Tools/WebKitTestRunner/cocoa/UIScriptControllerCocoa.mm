@@ -26,6 +26,7 @@
 #import "config.h"
 #import "UIScriptControllerCocoa.h"
 
+#import "LayoutTestSpellChecker.h"
 #import "PlatformWebView.h"
 #import "StringFunctions.h"
 #import "TestController.h"
@@ -311,5 +312,10 @@ uint64_t UIScriptControllerCocoa::currentImageAnalysisRequestID() const
 }
 
 #endif // ENABLE(IMAGE_ANALYSIS)
+
+void UIScriptControllerCocoa::setSpellCheckerResults(JSValueRef results)
+{
+    [[LayoutTestSpellChecker checker] setResultsFromJSValue:results inContext:m_context->jsContext()];
+}
 
 } // namespace WTR

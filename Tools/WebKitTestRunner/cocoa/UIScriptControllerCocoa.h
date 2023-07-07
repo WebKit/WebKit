@@ -84,6 +84,8 @@ private:
 #if ENABLE(IMAGE_ANALYSIS)
     uint64_t currentImageAnalysisRequestID() const final;
 #endif
+
+    void setSpellCheckerResults(JSValueRef) final;
 };
 
 } // namespace WTR

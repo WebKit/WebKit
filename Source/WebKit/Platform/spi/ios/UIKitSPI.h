@@ -1184,6 +1184,7 @@ typedef enum {
 - (id)_initWithAsynchronousLoading:(BOOL)asynchronousLoading;
 - (BOOL)_doneLoading;
 - (NSRange)rangeOfMisspelledWordInString:(NSString *)stringToCheck range:(NSRange)range startingAt:(NSInteger)startingOffset wrap:(BOOL)wrapFlag languages:(NSArray *)languagesArray;
+- (NSArray<NSTextAlternatives *> *)grammarAlternativesForString:(NSString *)string;
 @end
 
 @interface UIKeyboardInputMode : UITextInputMode <NSCopying>

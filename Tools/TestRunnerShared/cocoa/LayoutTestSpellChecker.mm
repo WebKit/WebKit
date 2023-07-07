@@ -26,106 +26,106 @@
 #import "config.h"
 #import "LayoutTestSpellChecker.h"
 
+#import "InstanceMethodSwizzler.h"
 #import "JSBasics.h"
 #import <objc/runtime.h>
 #import <wtf/Assertions.h>
 #import <wtf/BlockPtr.h>
 
+#if PLATFORM(IOS_FAMILY)
+#import "UIKitSPI.h"
+#endif
+
 #if PLATFORM(MAC)
-
 using TextCheckingCompletionHandler = void(^)(NSInteger, NSArray<NSTextCheckingResult *> *, NSOrthography *, NSInteger);
+#else
+static NSString *NSGrammarRange = @"NSGrammarRange";
+static NSString *NSGrammarCorrections = @"NSGrammarCorrections";
+#endif
 
-static RetainPtr<LayoutTestSpellChecker> globalSpellChecker;
+static LayoutTestSpellChecker *globalSpellChecker = nil;
 static BOOL hasSwizzledLayoutTestSpellChecker = NO;
+
+#if PLATFORM(MAC)
 static IMP globallySwizzledSharedSpellCheckerImplementation;
 static Method originalSharedSpellCheckerMethod;
+#else
+static IMP globallySwizzledInitializeTextCheckerImplementation;
+static Method originalInitializeTextCheckerMethod;
+
+@protocol TextComposerPostEditorProtocol <NSObject>
+- (NSDictionary<NSString *, id> *)grammarDetailForString:(NSString *)stringToCheck range:(NSRange)range language:(NSString *)language;
+@end
+
+@interface UITextChecker (TestingSupport)
+@property (readonly, nonatomic) id<TextComposerPostEditorProtocol> postEditor;
+@end
+#endif
 
 static LayoutTestSpellChecker *ensureGlobalLayoutTestSpellChecker()
 {
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        globalSpellChecker = adoptNS([[LayoutTestSpellChecker alloc] init]);
+        globalSpellChecker = [[LayoutTestSpellChecker alloc] init];
     });
-    return globalSpellChecker.get();
+    return globalSpellChecker;
 }
 
-static const char *stringForCorrectionResponse(NSCorrectionResponse correctionResponse)
+static NSTextCheckingType nsTextCheckingType(NSString *typeString)
 {
-    switch (correctionResponse) {
-    case NSCorrectionResponseNone:
-        return "none";
-    case NSCorrectionResponseAccepted:
-        return "accepted";
-    case NSCorrectionResponseRejected:
-        return "rejected";
-    case NSCorrectionResponseIgnored:
-        return "ignored";
-    case NSCorrectionResponseEdited:
-        return "edited";
-    case NSCorrectionResponseReverted:
-        return "reverted";
-    }
-    return "invalid";
-}
-
-static NSTextCheckingType nsTextCheckingType(JSStringRef jsType)
-{
-    auto cfType = adoptCF(JSStringCopyCFString(kCFAllocatorDefault, jsType));
-    if (CFStringCompare(cfType.get(), CFSTR("orthography"), kCFCompareCaseInsensitive) == kCFCompareEqualTo)
+    if ([typeString isEqualToString:@"orthography"])
         return NSTextCheckingTypeOrthography;
 
-    if (CFStringCompare(cfType.get(), CFSTR("spelling"), kCFCompareCaseInsensitive) == kCFCompareEqualTo)
+    if ([typeString isEqualToString:@"spelling"])
         return NSTextCheckingTypeSpelling;
 
-    if (CFStringCompare(cfType.get(), CFSTR("grammar"), kCFCompareCaseInsensitive) == kCFCompareEqualTo)
+    if ([typeString isEqualToString:@"grammar"])
         return NSTextCheckingTypeGrammar;
 
-    if (CFStringCompare(cfType.get(), CFSTR("date"), kCFCompareCaseInsensitive) == kCFCompareEqualTo)
+    if ([typeString isEqualToString:@"date"])
         return NSTextCheckingTypeDate;
 
-    if (CFStringCompare(cfType.get(), CFSTR("address"), kCFCompareCaseInsensitive) == kCFCompareEqualTo)
+    if ([typeString isEqualToString:@"address"])
         return NSTextCheckingTypeAddress;
 
-    if (CFStringCompare(cfType.get(), CFSTR("link"), kCFCompareCaseInsensitive) == kCFCompareEqualTo)
+    if ([typeString isEqualToString:@"link"])
         return NSTextCheckingTypeLink;
 
-    if (CFStringCompare(cfType.get(), CFSTR("quote"), kCFCompareCaseInsensitive) == kCFCompareEqualTo)
+    if ([typeString isEqualToString:@"quote"])
         return NSTextCheckingTypeQuote;
 
-    if (CFStringCompare(cfType.get(), CFSTR("dash"), kCFCompareCaseInsensitive) == kCFCompareEqualTo)
+    if ([typeString isEqualToString:@"dash"])
         return NSTextCheckingTypeDash;
 
-    if (CFStringCompare(cfType.get(), CFSTR("replacement"), kCFCompareCaseInsensitive) == kCFCompareEqualTo)
+    if ([typeString isEqualToString:@"replacement"])
         return NSTextCheckingTypeReplacement;
 
-    if (CFStringCompare(cfType.get(), CFSTR("correction"), kCFCompareCaseInsensitive) == kCFCompareEqualTo)
+    if ([typeString isEqualToString:@"correction"])
         return NSTextCheckingTypeCorrection;
 
-    if (CFStringCompare(cfType.get(), CFSTR("regular-expression"), kCFCompareCaseInsensitive) == kCFCompareEqualTo)
+    if ([typeString isEqualToString:@"regular-expression"])
         return NSTextCheckingTypeRegularExpression;
 
-    if (CFStringCompare(cfType.get(), CFSTR("phone-number"), kCFCompareCaseInsensitive) == kCFCompareEqualTo)
+    if ([typeString isEqualToString:@"phone-number"])
         return NSTextCheckingTypePhoneNumber;
 
-    if (CFStringCompare(cfType.get(), CFSTR("transit-information"), kCFCompareCaseInsensitive) == kCFCompareEqualTo)
+    if ([typeString isEqualToString:@"transit-information"])
         return NSTextCheckingTypeTransitInformation;
 
     ASSERT_NOT_REACHED();
     return NSTextCheckingTypeSpelling;
 }
 
-@interface LayoutTestTextCheckingResult : NSTextCheckingResult {
-@private
+@interface LayoutTestTextCheckingResult : NSTextCheckingResult
+- (instancetype)initWithType:(NSTextCheckingType)type range:(NSRange)range replacement:(NSString *)replacement details:(NSArray<NSDictionary<NSString *, id> *> *)details;
+@end
+
+@implementation LayoutTestTextCheckingResult {
     RetainPtr<NSString> _replacement;
     NSTextCheckingType _type;
     NSRange _range;
     RetainPtr<NSArray<NSDictionary *>> _details;
 }
-
-- (instancetype)initWithType:(NSTextCheckingType)type range:(NSRange)range replacement:(NSString *)replacement details:(NSArray<NSDictionary<NSString *, id> *> *)details;
-@end
-
-@implementation LayoutTestTextCheckingResult
 
 - (instancetype)initWithType:(NSTextCheckingType)type range:(NSRange)range replacement:(NSString *)replacement details:(NSArray<NSDictionary<NSString *, id> *> *)details
 {
@@ -162,7 +162,7 @@ static NSTextCheckingType nsTextCheckingType(JSStringRef jsType)
 
 - (NSString *)description
 {
-    return [NSString stringWithFormat:@"<%@ %p type=%llu range=[%tu, %tu] replacement='%@'>", self.class, self, _type, _range.location, _range.location + _range.length, _replacement.get()];
+    return [NSString stringWithFormat:@"<%@ %p type=%llu range=[%u, %u] replacement='%@'>", self.class, self, _type, static_cast<unsigned>(_range.location), static_cast<unsigned>(_range.location + _range.length), _replacement.get()];
 }
 
 @end
@@ -177,8 +177,14 @@ static NSTextCheckingType nsTextCheckingType(JSStringRef jsType)
     if (hasSwizzledLayoutTestSpellChecker)
         return spellChecker;
 
+#if PLATFORM(MAC)
     originalSharedSpellCheckerMethod = class_getClassMethod(objc_getMetaClass("NSSpellChecker"), @selector(sharedSpellChecker));
     globallySwizzledSharedSpellCheckerImplementation = method_setImplementation(originalSharedSpellCheckerMethod, reinterpret_cast<IMP>(ensureGlobalLayoutTestSpellChecker));
+#else
+    originalInitializeTextCheckerMethod = class_getInstanceMethod(UITextChecker.class, @selector(_initWithAsynchronousLoading:));
+    globallySwizzledInitializeTextCheckerImplementation = method_setImplementation(originalInitializeTextCheckerMethod, reinterpret_cast<IMP>(ensureGlobalLayoutTestSpellChecker));
+#endif
+
     hasSwizzledLayoutTestSpellChecker = YES;
     return spellChecker;
 }
@@ -189,7 +195,12 @@ static NSTextCheckingType nsTextCheckingType(JSStringRef jsType)
     if (!hasSwizzledLayoutTestSpellChecker)
         return;
 
+#if PLATFORM(MAC)
     method_setImplementation(originalSharedSpellCheckerMethod, globallySwizzledSharedSpellCheckerImplementation);
+#else
+    method_setImplementation(originalInitializeTextCheckerMethod, globallySwizzledInitializeTextCheckerImplementation);
+#endif
+
     hasSwizzledLayoutTestSpellChecker = NO;
 }
 
@@ -209,54 +220,51 @@ static NSTextCheckingType nsTextCheckingType(JSStringRef jsType)
     _results = adoptNS(results.copy);
 }
 
-- (void)setResultsFromJSValue:(JSValueRef)resultsValue inContext:(JSContextRef)context
+- (void)setResultsFromJSValue:(JSValueRef)resultsValue inContext:(JSContextRef)jsContext
 {
-    auto resultsObject = JSValueToObject(context, resultsValue, nullptr);
-    auto fromPropertyName = WTR::createJSString("from");
-    auto toPropertyName = WTR::createJSString("to");
-    auto typePropertyName = WTR::createJSString("type");
-    auto replacementPropertyName = WTR::createJSString("replacement");
-    auto detailsPropertyName = WTR::createJSString("details");
-    auto results = adoptNS([[NSMutableDictionary alloc] init]);
-
-    // FIXME: Using the Objective-C API would make this logic easier to follow.
-    auto properties = JSObjectCopyPropertyNames(context, resultsObject);
-    for (size_t index = 0; index < JSPropertyNameArrayGetCount(properties); ++index) {
-        JSStringRef textToCheck = JSPropertyNameArrayGetNameAtIndex(properties, index);
-        JSObjectRef resultsArray = JSValueToObject(context, JSObjectGetProperty(context, resultsObject, textToCheck, nullptr), nullptr);
-        auto resultsArrayPropertyNames = JSObjectCopyPropertyNames(context, resultsArray);
-        auto resultsForWord = adoptNS([[NSMutableArray alloc] init]);
-        for (size_t resultIndex = 0; resultIndex < JSPropertyNameArrayGetCount(resultsArrayPropertyNames); ++resultIndex) {
-            auto resultsObject = JSValueToObject(context, JSObjectGetPropertyAtIndex(context, resultsArray, resultIndex, nullptr), nullptr);
-            long fromValue = JSValueToNumber(context, JSObjectGetProperty(context, resultsObject, fromPropertyName.get(), nullptr), nullptr);
-            long toValue = JSValueToNumber(context, JSObjectGetProperty(context, resultsObject, toPropertyName.get(), nullptr), nullptr);
-            auto typeValue = WTR::createJSString(context, JSObjectGetProperty(context, resultsObject, typePropertyName.get(), nullptr));
-            auto replacementValue = JSObjectGetProperty(context, resultsObject, replacementPropertyName.get(), nullptr);
-            RetainPtr<CFStringRef> replacementText;
-            if (!JSValueIsUndefined(context, replacementValue))
-                replacementText = adoptCF(JSStringCopyCFString(kCFAllocatorDefault, WTR::createJSString(context, replacementValue).get()));
-            auto details = adoptNS([[NSMutableArray alloc] init]);
-            auto detailsValue = JSObjectGetProperty(context, resultsObject, detailsPropertyName.get(), nullptr);
-            if (!JSValueIsUndefined(context, detailsValue)) {
-                auto detailsObject = JSValueToObject(context, detailsValue, nullptr);
-                auto detailsObjectProperties = JSObjectCopyPropertyNames(context, detailsObject);
-                for (size_t detailIndex = 0; detailIndex < JSPropertyNameArrayGetCount(detailsObjectProperties); ++detailIndex) {
-                    auto detailObject = JSValueToObject(context, JSObjectGetPropertyAtIndex(context, detailsObject, detailIndex, nullptr), nullptr);
-                    long from = lroundl(JSValueToNumber(context, JSObjectGetProperty(context, detailObject, fromPropertyName.get(), nullptr), nullptr));
-                    long to = lroundl(JSValueToNumber(context, JSObjectGetProperty(context, detailObject, toPropertyName.get(), nullptr), nullptr));
-                    [details addObject:@{ NSGrammarRange: [NSValue valueWithRange:NSMakeRange(from, to - from)] }];
-                }
-                JSPropertyNameArrayRelease(detailsObjectProperties);
+    auto context = [JSContext contextWithJSGlobalContextRef:JSContextGetGlobalContext(jsContext)];
+    auto resultsDictionary = [JSValue valueWithJSValueRef:resultsValue inContext:context].toDictionary;
+    auto finalResults = adoptNS([NSMutableDictionary new]);
+    for (NSString *stringToCheck in resultsDictionary) {
+        auto resultsForWord = adoptNS([NSMutableArray new]);
+        for (NSDictionary *result in resultsDictionary[stringToCheck]) {
+            auto from = [result[@"from"] intValue];
+            auto to = [result[@"to"] intValue];
+            NSString *type = result[@"type"];
+            NSString *replacement = result[@"replacement"];
+            auto details = adoptNS([NSMutableArray<NSDictionary *> new]);
+            for (NSDictionary *detail in result[@"details"]) {
+                NSNumber *detailFrom = detail[@"from"];
+                NSNumber *detailTo = detail[@"to"];
+                auto detailRange = NSMakeRange(detailFrom.intValue, detailTo.intValue - detailFrom.intValue);
+                [details addObject:@{ NSGrammarRange: [NSValue valueWithRange:detailRange], NSGrammarCorrections: detail[@"corrections"] ?: @[ ] }];
             }
-            [resultsForWord addObject:adoptNS([[LayoutTestTextCheckingResult alloc] initWithType:nsTextCheckingType(typeValue.get()) range:NSMakeRange(fromValue, toValue - fromValue) replacement:(__bridge NSString *)replacementText.get() details:details.get()]).get()];
+            [resultsForWord addObject:adoptNS([[LayoutTestTextCheckingResult alloc] initWithType:nsTextCheckingType(type) range:NSMakeRange(from, to - from) replacement:replacement details:details.get()]).get()];
         }
-        auto cfTextToCheck = adoptCF(JSStringCopyCFString(kCFAllocatorDefault, textToCheck));
-        [results setObject:resultsForWord.get() forKey:(__bridge NSString *)cfTextToCheck.get()];
-        JSPropertyNameArrayRelease(resultsArrayPropertyNames);
+        [finalResults setObject:resultsForWord.get() forKey:stringToCheck];
     }
-    JSPropertyNameArrayRelease(properties);
+    _results = WTFMove(finalResults);
+}
 
-    _results = WTFMove(results);
+#if PLATFORM(MAC)
+
+static const char *stringForCorrectionResponse(NSCorrectionResponse correctionResponse)
+{
+    switch (correctionResponse) {
+    case NSCorrectionResponseNone:
+        return "none";
+    case NSCorrectionResponseAccepted:
+        return "accepted";
+    case NSCorrectionResponseRejected:
+        return "rejected";
+    case NSCorrectionResponseIgnored:
+        return "ignored";
+    case NSCorrectionResponseEdited:
+        return "edited";
+    case NSCorrectionResponseReverted:
+        return "reverted";
+    }
+    return "invalid";
 }
 
 - (NSArray<NSTextCheckingResult *> *)checkString:(NSString *)stringToCheck range:(NSRange)range types:(NSTextCheckingTypes)checkingTypes options:(NSDictionary<NSString *, id> *)options inSpellDocumentWithTag:(NSInteger)tag orthography:(NSOrthography **)orthography wordCount:(NSInteger *)wordCount
@@ -288,6 +296,45 @@ static NSTextCheckingType nsTextCheckingType(JSStringRef jsType)
     }];
 }
 
-@end
-
 #endif // PLATFORM(MAC)
+
+#if PLATFORM(IOS_FAMILY) && ENABLE(POST_EDITING_GRAMMAR_CHECKING)
+
+static NSDictionary *swizzledGrammarDetailsForString(id, SEL, NSString *stringToCheck, NSRange range, NSString *language)
+{
+    for (LayoutTestTextCheckingResult *result in [globalSpellChecker->_results objectForKey:stringToCheck]) {
+        if (!NSEqualRanges(result.range, range))
+            continue;
+
+        if (result.resultType != NSTextCheckingTypeGrammar)
+            continue;
+
+        if (NSDictionary *details = result.grammarDetails.firstObject)
+            return details;
+    }
+    return @{ };
+}
+
+- (NSArray<NSTextAlternatives *> *)grammarAlternativesForString:(NSString *)string
+{
+    InstanceMethodSwizzler swizzler { self.postEditor.class, @selector(grammarDetailForString:range:language:), reinterpret_cast<IMP>(swizzledGrammarDetailsForString) };
+
+    return [super grammarAlternativesForString:string];
+}
+
+- (NSArray<NSTextCheckingResult *> *)checkString:(NSString *)stringToCheck range:(NSRange)range types:(NSTextCheckingTypes)checkingTypes languages:(NSArray<NSString *> *)languagesArray options:(NSDictionary<NSString *, id> *)options
+{
+    if (auto *overrideResult = [_results objectForKey:stringToCheck])
+        return overrideResult;
+
+    return [super checkString:stringToCheck range:range types:checkingTypes languages:languagesArray options:options];
+}
+
+- (BOOL)_doneLoading
+{
+    return YES;
+}
+
+#endif // PLATFORM(IOS_FAMILY) && ENABLE(POST_EDITING_GRAMMAR_CHECKING)
+
+@end
