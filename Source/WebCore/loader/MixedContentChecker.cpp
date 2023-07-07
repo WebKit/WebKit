@@ -34,6 +34,7 @@
 #include "Document.h"
 #include "Frame.h"
 #include "SecurityOrigin.h"
+#include <wtf/TypeCasts.h>
 
 namespace WebCore {
 
@@ -41,7 +42,7 @@ static bool isMixedContent(const Document& document, const URL& url)
 {
     // sandboxed iframes have an opaque origin so we should perform the mixed content check considering the origin
     // the iframe would have had if it were not sandboxed.
-    if (document.securityOrigin().protocol() == "https"_s || (document.securityOrigin().isOpaque() && document.url().protocolIs("https"_s)))
+    if (document.securityOrigin().protocol() == "https"_s || (document.securityOrigin().toString() == "null"_s && document.url().protocolIs("https"_s)))
         return !SecurityOrigin::isSecure(url);
 
     return false;
