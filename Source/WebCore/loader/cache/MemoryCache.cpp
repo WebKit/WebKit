@@ -221,12 +221,15 @@ void MemoryCache::pruneLiveResources(bool shouldDestroyDecodedDataForAllLiveReso
 
 void MemoryCache::forEachResource(const Function<void(CachedResource&)>& function)
 {
-    for (auto& unprotectedLRUList : m_allResources) {
-        for (auto& resource : copyToVector(*unprotectedLRUList)) {
-            if (!resource)
-                continue;
-            function(*resource);
-        }
+    Vector<WeakPtr<CachedResource>> allResources;
+    for (auto& lruList : m_allResources) {
+        allResources.reserveCapacity(allResources.size() + lruList->computeSize());
+        for (auto& resource : *lruList)
+            allResources.uncheckedAppend(resource);
+    }
+    for (auto& resource : allResources) {
+        if (CachedResourceHandle resourceHandle = resource.get())
+            function(*resourceHandle);
     }
 }
 
@@ -242,12 +245,11 @@ void MemoryCache::forEachSessionResource(PAL::SessionID sessionID, const Functio
 
 void MemoryCache::destroyDecodedDataForAllImages()
 {
-    MemoryCache::singleton().forEachResource([](CachedResource& resource) {
-        if (!resource.isImage())
-            return;
-
-        if (auto image = downcast<CachedImage>(resource).image())
-            image->destroyDecodedData();
+    forEachResource([](CachedResource& resource) {
+        if (auto cachedImage = dynamicDowncast<CachedImage>(resource)) {
+            if (RefPtr image = cachedImage->image())
+                image->destroyDecodedData();
+        }
     });
 }
 
