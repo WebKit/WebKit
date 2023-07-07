@@ -51,4 +51,11 @@ void WebCookieManager::setCookiePersistentStorage(PAL::SessionID sessionID, cons
         static_cast<NetworkSessionSoup&>(*networkSession).setCookiePersistentStorage(storagePath, storageType);
 }
 
+void WebCookieManager::replaceCookies(PAL::SessionID sessionID, const Vector<WebCore::Cookie>& cookies, CompletionHandler<void()>&& completionHandler)
+{
+    if (auto* storageSession = m_process.storageSession(sessionID))
+        storageSession->replaceCookies(cookies);
+    completionHandler();
+}
+
 } // namespace WebKit

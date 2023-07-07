@@ -155,6 +155,30 @@ WEBKIT_DEPRECATED_FOR(webkit_website_data_manager_clear) void
 webkit_cookie_manager_delete_all_cookies              (WebKitCookieManager          *cookie_manager);
 #endif
 
+WEBKIT_API void
+webkit_cookie_manager_replace_cookies                 (WebKitCookieManager          *cookie_manager,
+                                                       GList                        *cookies,
+                                                       GCancellable                 *cancellable,
+                                                       GAsyncReadyCallback           callback,
+                                                       gpointer                      user_data);
+
+WEBKIT_API gboolean
+webkit_cookie_manager_replace_cookies_finish          (WebKitCookieManager          *cookie_manager,
+                                                       GAsyncResult                 *result,
+                                                       GError                      **error);
+
+WEBKIT_API void
+webkit_cookie_manager_get_all_cookies                 (WebKitCookieManager          *cookie_manager,
+                                                       GCancellable                 *cancellable,
+                                                       GAsyncReadyCallback           callback,
+                                                       gpointer                      user_data);
+
+WEBKIT_API GList *
+webkit_cookie_manager_get_all_cookies_finish          (WebKitCookieManager          *cookie_manager,
+                                                       GAsyncResult                 *result,
+                                                       GError                      **error);
+
+
 G_END_DECLS
 
 #endif

@@ -83,6 +83,9 @@ public:
     void filterAppBoundCookies(Vector<WebCore::Cookie>&&, CompletionHandler<void(Vector<WebCore::Cookie>&&)>&&);
 
 #if USE(SOUP)
+    void replaceCookies(Vector<WebCore::Cookie>&&, CompletionHandler<void()>&&);
+    void getAllCookies(CompletionHandler<void(const Vector<WebCore::Cookie>&)>&&);
+
     void setCookiePersistentStorage(const WTF::String& storagePath, WebKit::SoupCookiePersistentStorageType);
 #endif
 
