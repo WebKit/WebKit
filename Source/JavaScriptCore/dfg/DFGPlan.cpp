@@ -372,6 +372,8 @@ Plan::CompilationPath Plan::compileInThreadImpl()
         RUN_PHASE(performSSALowering);
         
         // Ideally, these would be run to fixpoint with the object allocation sinking phase.
+        if (Options::usePutStackSinking())
+            RUN_PHASE(performPutStackSinking);
         RUN_PHASE(performArgumentsElimination);
         if (Options::usePutStackSinking())
             RUN_PHASE(performPutStackSinking);
