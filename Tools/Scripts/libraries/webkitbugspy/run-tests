@@ -1,4 +1,6 @@
-# Copyright (C) 2021-2023 Apple Inc. All rights reserved.
+#!/usr/bin/env python3
+
+# Copyright (C) 2023 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -20,41 +22,27 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from setuptools import setup
+import os
+import logging
+import platform
+import sys
+import webkitbugspy
+
+from webkitcorepy import AutoInstall, Package, Version, log, __path__ as wcp_paths
+from webkitcorepy.testing import PythonTestRunner
 
 
-def readme():
-    with open('README.md') as f:
-        return f.read()
+libraries = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+AutoInstall.set_directory(os.path.join(libraries, 'autoinstalled', 'python-{}-{}'.format(sys.version_info[0], platform.machine())))
 
+if __name__ == '__main__':
+    logging.basicConfig(level=logging.WARNING)
 
-setup(
-    name='webkitbugspy',
-    version='0.12.1',
-    description='Library containing a shared API for various bug trackers.',
-    long_description=readme(),
-    classifiers=[
-        'Development Status :: 5 - Production/Stable',
-        'Intended Audience :: Developers',
-        'License :: Other/Proprietary License',
-        'Operating System :: MacOS',
-        'Natural Language :: English',
-        'Programming Language :: Python :: 3',
-        'Topic :: Software Development :: Libraries :: Python Modules',
-    ],
-    keywords='python unicode',
-    url='https://github.com/WebKit/WebKit/tree/main/Tools/Scripts/libraries/webkitbugspy',
-    author='Jonathan Bedard',
-    author_email='jbedard@apple.com',
-    license='Modified BSD',
-    packages=[
-        'webkitbugspy',
-        'webkitbugspy.mocks',
-        'webkitbugspy.tests',
-    ],
-    install_requires=[
-        'webkitcorepy',
-    ],
-    include_package_data=True,
-    zip_safe=False,
-)
+    sys.exit(PythonTestRunner(
+        description='Run unit tests for the webkitbugspy module.',
+        modules={
+            os.path.dirname(__file__): ['webkitbugspy'],
+            os.path.dirname(wcp_paths[0]): ['webkitcorepy'],
+        }, loggers=[logging.getLogger(), log],
+    ).main(*sys.argv[1:]))
+
