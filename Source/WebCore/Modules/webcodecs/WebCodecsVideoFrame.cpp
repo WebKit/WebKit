@@ -280,7 +280,7 @@ ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::create(ScriptExecutio
         return parsedRectOrExtension.releaseException();
 
     auto parsedRect = parsedRectOrExtension.releaseReturnValue();
-    auto layoutOrException = computeLayoutAndAllocationSize(parsedRect, init.layout, init.format);
+    auto layoutOrException = computeLayoutAndAllocationSize(defaultRect, init.layout, init.format);
     if (layoutOrException.hasException())
         return layoutOrException.releaseException();
     
