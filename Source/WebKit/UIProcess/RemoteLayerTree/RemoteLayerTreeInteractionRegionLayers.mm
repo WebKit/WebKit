@@ -121,9 +121,9 @@ static NSString * interactionRegionGroupNameForLayer(CALayer *layer)
     return [layer valueForKey:interactionRegionGroupNameKey];
 }
 
-static NSString* interactionRegionGroupNameForRegion(const WebCore::InteractionRegion& interactionRegion)
+static NSString* interactionRegionGroupNameForRegion(const WebCore::PlatformLayerIdentifier& layerID, const WebCore::InteractionRegion& interactionRegion)
 {
-    return makeString("WKInteractionRegion-"_s, interactionRegion.elementIdentifier.toUInt64());
+    return makeString("WKInteractionRegion-"_s, layerID.toString(), interactionRegion.elementIdentifier.toUInt64());
 }
 
 static bool isAnyInteractionRegionLayer(CALayer *layer)
@@ -176,9 +176,11 @@ void insertInteractionRegionLayersForLayer(NSMutableArray *sublayers, CALayer *l
     }
 }
 
-void updateLayersForInteractionRegions(CALayer *layer, RemoteLayerTreeHost& host, const RemoteLayerTreeTransaction::LayerProperties& properties)
+void updateLayersForInteractionRegions(const RemoteLayerTreeNode& node, const RemoteLayerTreeTransaction::LayerProperties& properties)
 {
     ASSERT(properties.changedProperties & LayerChange::EventRegionChanged);
+
+    CALayer *layer = node.interactionRegionsLayer();
 
     HashMap<std::pair<IntRect, InteractionRegion::Type>, CALayer *>existingLayers;
     for (CALayer *sublayer in layer.sublayers) {
@@ -196,7 +198,7 @@ void updateLayersForInteractionRegions(CALayer *layer, RemoteLayerTreeHost& host
         RetainPtr<CALayer> regionLayer;
         IntRect rect = region.rectInLayerCoordinates;
         auto key = std::make_pair(rect, region.type);
-        auto interactionRegionGroupName = interactionRegionGroupNameForRegion(region);
+        auto interactionRegionGroupName = interactionRegionGroupNameForRegion(node.layerID(), region);
 
         auto layerIterator = existingLayers.find(key);
         if (layerIterator != existingLayers.end()) {

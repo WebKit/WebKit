@@ -319,7 +319,7 @@ void RemoteLayerTreePropertyApplier::applyProperties(RemoteLayerTreeNode& node, 
     if (properties.changedProperties & LayerChange::AnimationsChanged)
         PlatformCAAnimationRemote::updateLayerAnimations(node.interactionRegionsLayer(), nullptr, properties.addedAnimations, properties.keysOfAnimationsToRemove);
     if (properties.changedProperties & LayerChange::EventRegionChanged)
-        updateLayersForInteractionRegions(node.interactionRegionsLayer(), *layerTreeHost, properties);
+        updateLayersForInteractionRegions(node, properties);
 #endif
     updateMask(node, properties, relatedLayers);
 
