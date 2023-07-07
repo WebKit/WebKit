@@ -551,6 +551,7 @@ typedef (FetchRequest or FetchResponse) FetchObject;
     boolean hasGrammarMarker(long from, long length);
     boolean hasAutocorrectedMarker(long from, long length);
     boolean hasDictationAlternativesMarker(long from, long length);
+    boolean hasCorrectionIndicatorMarker(long from, long length);
     undefined setContinuousSpellCheckingEnabled(boolean enabled);
     undefined setAutomaticQuoteSubstitutionEnabled(boolean enabled);
     undefined setAutomaticLinkDetectionEnabled(boolean enabled);

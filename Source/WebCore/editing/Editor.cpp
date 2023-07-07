@@ -1249,7 +1249,7 @@ void Editor::appliedEditing(CompositeEditCommand& command)
     if (command.isTopLevelCommand()) {
         updateEditorUINowIfScheduled();
 
-        m_alternativeTextController->respondToAppliedEditing(m_document, &command);
+        m_alternativeTextController->respondToAppliedEditing(&command);
 
         if (!command.preservesTypingStyle())
             m_document.selection().clearTypingStyle();

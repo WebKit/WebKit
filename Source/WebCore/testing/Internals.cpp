@@ -2642,7 +2642,7 @@ void Internals::updateEditorUINowIfScheduled()
     }
 }
 
-bool Internals::hasSpellingMarker(int from, int length)
+bool Internals::hasMarkerFor(DocumentMarker::MarkerType type, int from, int length)
 {
     Document* document = contextDocument();
     if (!document || !document->frame())
@@ -2650,29 +2650,32 @@ bool Internals::hasSpellingMarker(int from, int length)
 
     updateEditorUINowIfScheduled();
 
-    return document->editor().selectionStartHasMarkerFor(DocumentMarker::Spelling, from, length);
+    return document->editor().selectionStartHasMarkerFor(type, from, length);
+}
+
+bool Internals::hasSpellingMarker(int from, int length)
+{
+    return hasMarkerFor(DocumentMarker::Spelling, from, length);
+}
+
+bool Internals::hasGrammarMarker(int from, int length)
+{
+    return hasMarkerFor(DocumentMarker::Grammar, from, length);
 }
 
 bool Internals::hasAutocorrectedMarker(int from, int length)
 {
-    Document* document = contextDocument();
-    if (!document || !document->frame())
-        return false;
-
-    updateEditorUINowIfScheduled();
-
-    return document->editor().selectionStartHasMarkerFor(DocumentMarker::Autocorrected, from, length);
+    return hasMarkerFor(DocumentMarker::Autocorrected, from, length);
 }
 
 bool Internals::hasDictationAlternativesMarker(int from, int length)
 {
-    auto* document = contextDocument();
-    if (!document || !document->frame())
-        return false;
+    return hasMarkerFor(DocumentMarker::DictationAlternatives, from, length);
+}
 
-    updateEditorUINowIfScheduled();
-
-    return document->frame()->editor().selectionStartHasMarkerFor(DocumentMarker::DictationAlternatives, from, length);
+bool Internals::hasCorrectionIndicatorMarker(int from, int length)
+{
+    return hasMarkerFor(DocumentMarker::CorrectionIndicator, from, length);
 }
 
 void Internals::setContinuousSpellCheckingEnabled(bool enabled)
@@ -3016,15 +3019,6 @@ ExceptionOr<void> Internals::setInspectorIsUnderTest(bool isUnderTest)
 
     page->inspectorController().setIsUnderTest(isUnderTest);
     return { };
-}
-
-bool Internals::hasGrammarMarker(int from, int length)
-{
-    Document* document = contextDocument();
-    if (!document || !document->frame())
-        return false;
-
-    return document->editor().selectionStartHasMarkerFor(DocumentMarker::Grammar, from, length);
 }
 
 unsigned Internals::numberOfScrollableAreas()

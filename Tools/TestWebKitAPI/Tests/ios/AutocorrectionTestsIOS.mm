@@ -31,6 +31,7 @@
 #import "TestInputDelegate.h"
 #import "TestWKWebView.h"
 #import "UIKitSPI.h"
+#import "WKWebViewConfigurationExtras.h"
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
@@ -143,6 +144,50 @@ TEST(AutocorrectionTests, AutocorrectionContextDoesNotIncludeNewlineInTextField)
     EXPECT_EQ(0U, [contextAfterTyping selectedText].length);
     EXPECT_EQ(0U, [contextAfterTyping contextAfterSelection].length);
 }
+
+#if HAVE(AUTOCORRECTION_ENHANCEMENTS)
+TEST(AutocorrectionTests, AutocorrectionIndicatorsDismissAfterNextWord)
+{
+    auto configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 568) configuration:configuration]);
+    auto inputDelegate = adoptNS([[TestInputDelegate alloc] init]);
+    [inputDelegate setFocusStartsInputSessionPolicyHandler:[] (WKWebView *, id<_WKFocusedElementInfo>) -> _WKFocusStartsInputSessionPolicy {
+        return _WKFocusStartsInputSessionPolicyAllow;
+    }];
+
+    [webView _setInputDelegate:inputDelegate.get()];
+    [webView synchronouslyLoadTestPageNamed:@"autofocused-text-input"];
+
+    auto *contentView = [webView textInputContentView];
+    [contentView insertText:@"Is it diferent"];
+
+    [webView waitForNextPresentationUpdate];
+
+    NSString *hasCorrectionIndicatorMarkerJavaScript = @"internals.hasCorrectionIndicatorMarker(6, 9);";
+
+    __block bool done = false;
+
+    [webView applyAutocorrection:@"different" toString:@"diferent" isCandidate:YES withCompletionHandler:^{
+        NSString *hasCorrectionIndicatorMarker = [webView stringByEvaluatingJavaScript:hasCorrectionIndicatorMarkerJavaScript];
+        EXPECT_WK_STREQ("1", hasCorrectionIndicatorMarker);
+        done = true;
+    }];
+
+    TestWebKitAPI::Util::run(&done);
+
+    [contentView insertText:@" than"];
+    [webView waitForNextPresentationUpdate];
+
+    [contentView insertText:@" "];
+    [webView waitForNextPresentationUpdate];
+
+    TestWebKitAPI::Util::runFor(3_s);
+
+    NSString *hasCorrectionIndicatorMarker = [webView stringByEvaluatingJavaScript:hasCorrectionIndicatorMarkerJavaScript];
+    EXPECT_WK_STREQ("0", hasCorrectionIndicatorMarker);
+}
+#endif
 
 TEST(AutocorrectionTests, AutocorrectionContextBeforeAndAfterEditing)
 {

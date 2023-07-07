@@ -30,6 +30,7 @@
 #include "CSSComputedStyleDeclaration.h"
 #include "ContextDestructionObserver.h"
 #include "Cookie.h"
+#include "DocumentMarker.h"
 #include "EpochTimeStamp.h"
 #include "EventTrackingRegions.h"
 #include "ExceptionOr.h"
@@ -419,6 +420,7 @@ public:
     bool hasGrammarMarker(int from, int length);
     bool hasAutocorrectedMarker(int from, int length);
     bool hasDictationAlternativesMarker(int from, int length);
+    bool hasCorrectionIndicatorMarker(int from, int length);
     void setContinuousSpellCheckingEnabled(bool);
     void setAutomaticQuoteSubstitutionEnabled(bool);
     void setAutomaticLinkDetectionEnabled(bool);
@@ -1410,6 +1412,8 @@ private:
     static RefPtr<SharedBuffer> pngDataForTesting();
 
     CachedResource* resourceFromMemoryCache(const String& url);
+
+    bool hasMarkerFor(DocumentMarker::MarkerType, int from, int length);
 
 #if ENABLE(MEDIA_STREAM)
     // RealtimeMediaSource::Observer API
