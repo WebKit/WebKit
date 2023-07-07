@@ -118,7 +118,7 @@ void RemoteLayerTreeEventDispatcher::invalidate()
 {
     m_displayLinkClient->invalidate();
 
-    stopDisplayLinkObserver();
+    removeDisplayLinkClient();
 
     {
         Locker locker { m_scrollingTreeLock };
@@ -393,7 +393,7 @@ void RemoteLayerTreeEventDispatcher::stopDisplayLinkObserver()
     if (!m_displayRefreshObserverID)
         return;
 
-    auto* displayLink = this->displayLink();
+    auto* displayLink = existingDisplayLink();
     if (!displayLink)
         return;
 
