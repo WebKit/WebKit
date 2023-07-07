@@ -637,7 +637,7 @@ bool HTMLCanvasElement::paintsIntoCanvasBuffer() const
 
 
 
-void HTMLCanvasElement::paint(GraphicsContext& context, const LayoutRect& r, CompositeOperator op)
+void HTMLCanvasElement::paint(GraphicsContext& context, const LayoutRect& r)
 {
     if (m_context)
         m_context->clearAccumulatedDirtyRect();
@@ -656,7 +656,7 @@ void HTMLCanvasElement::paint(GraphicsContext& context, const LayoutRect& r, Com
         if (shouldPaint) {
             if (hasCreatedImageBuffer()) {
                 if (ImageBuffer* imageBuffer = buffer())
-                    context.drawImageBuffer(*imageBuffer, snappedIntRect(r), op);
+                    context.drawImageBuffer(*imageBuffer, snappedIntRect(r), context.compositeOperation());
             }
         }
     }

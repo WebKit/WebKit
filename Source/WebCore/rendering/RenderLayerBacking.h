@@ -289,6 +289,7 @@ public:
     WEBCORE_EXPORT void setIsTrackingDisplayListReplay(bool);
     WEBCORE_EXPORT String replayDisplayListAsText(OptionSet<DisplayList::AsTextFlag>) const;
 
+    bool shouldPaintUsingCompositeCopy() const { return m_shouldPaintUsingCompositeCopy; }
 private:
     friend class PaintedContentsInfo;
 
@@ -456,6 +457,7 @@ private:
 #if ENABLE(ASYNC_SCROLLING)
     bool m_needsEventRegionUpdate { true };
 #endif
+    bool m_shouldPaintUsingCompositeCopy { false };
 };
 
 enum CanvasCompositingStrategy {

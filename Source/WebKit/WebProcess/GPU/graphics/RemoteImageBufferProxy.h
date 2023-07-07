@@ -94,8 +94,6 @@ private:
     void convertToLuminanceMask() final;
     void transformToColorSpace(const WebCore::DestinationColorSpace&) final;
 
-    bool prefersPreparationForDisplay() final { return true; }
-    
     void flushDrawingContext() final;
     bool flushDrawingContextAsync() final;
 

@@ -1135,14 +1135,12 @@ bool RenderLayerBacking::updateConfiguration(const RenderLayer* compositingAnces
         layerConfigChanged = true;
     }
 
-#if ENABLE(CSS_COMPOSITING)
     bool shouldPaintUsingCompositeCopy = unscaledBitmap && is<RenderHTMLCanvas>(renderer());
-    if (shouldPaintUsingCompositeCopy != m_owningLayer.shouldPaintUsingCompositeCopy()) {
-        m_owningLayer.setShouldPaintUsingCompositeCopy(shouldPaintUsingCompositeCopy);
+    if (shouldPaintUsingCompositeCopy != m_shouldPaintUsingCompositeCopy) {
+        m_shouldPaintUsingCompositeCopy = shouldPaintUsingCompositeCopy;
         m_graphicsLayer->setShouldPaintUsingCompositeCopy(shouldPaintUsingCompositeCopy);
         layerConfigChanged = true;
     }
-#endif
 
     if (is<RenderEmbeddedObject>(renderer()) && downcast<RenderEmbeddedObject>(renderer()).allowsAcceleratedCompositing()) {
         auto* pluginViewBase = downcast<PluginViewBase>(downcast<RenderWidget>(renderer()).widget());
@@ -3443,7 +3441,6 @@ void RenderLayerBacking::paintIntoLayer(const GraphicsLayer* graphicsLayer, Grap
 #endif
         return;
     }
-
     auto paintFlags = paintFlagsForLayer(*graphicsLayer);
 
     if (is<EventRegionContext>(regionContext))
@@ -3464,8 +3461,16 @@ void RenderLayerBacking::paintIntoLayer(const GraphicsLayer* graphicsLayer, Grap
         paintingInfo.regionContext = regionContext;
 
         if (&layer == &m_owningLayer) {
-            layer.paintLayerContents(context, paintingInfo, paintFlags);
-
+            {
+                bool shouldResetCompositeMode = false;
+                if (m_shouldPaintUsingCompositeCopy && context.compositeMode() == CompositeMode { CompositeOperator::SourceOver, BlendMode::Normal }) {
+                    context.setCompositeMode({ CompositeOperator::Copy, BlendMode::Normal });
+                    shouldResetCompositeMode = true;
+                }
+                layer.paintLayerContents(context, paintingInfo, paintFlags);
+                if (shouldResetCompositeMode)
+                    context.setCompositeMode({ CompositeOperator::SourceOver, BlendMode::Normal });
+            }
             auto* scrollableArea = layer.scrollableArea();
             if (scrollableArea && scrollableArea->containsDirtyOverlayScrollbars() && !regionContext)
                 layer.paintLayerContents(context, paintingInfo, paintFlags | RenderLayer::PaintLayerFlag::PaintingOverlayScrollbars);

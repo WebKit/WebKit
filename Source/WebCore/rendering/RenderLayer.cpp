@@ -337,7 +337,6 @@ RenderLayer::RenderLayer(RenderLayerModelObject& renderer)
     , m_hasTransformedAncestor(false)
     , m_has3DTransformedAncestor(false)
     , m_insideSVGForeignObject(false)
-    , m_shouldPaintUsingCompositeCopy(false)
     , m_indirectCompositingReason(static_cast<unsigned>(IndirectCompositingReason::None))
     , m_viewportConstrainedNotCompositedReason(NoNotCompositedReason)
 #if ASSERT_ENABLED
