@@ -208,7 +208,7 @@ class TestImporter(object):
             for test_path in test_paths:
                 self.clean_destination_directory(test_path)
             if self._test_resource_files:
-                test_paths_tuple = tuple(test_paths)
+                test_paths_tuple = tuple(p.rstrip(self.filesystem.sep) + self.filesystem.sep for p in test_paths)
                 self._test_resource_files["files"] = [t for t in self._test_resource_files["files"]
                                                       if not t.startswith(test_paths_tuple)]
                 if self._tests_options:
