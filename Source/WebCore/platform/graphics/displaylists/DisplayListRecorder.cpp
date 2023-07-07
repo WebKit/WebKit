@@ -558,6 +558,7 @@ void Recorder::resetClip()
     currentState().clipBounds = m_initialClip;
 
     recordResetClip();
+    clip(m_initialClip);
 }
 
 void Recorder::clip(const FloatRect& rect)

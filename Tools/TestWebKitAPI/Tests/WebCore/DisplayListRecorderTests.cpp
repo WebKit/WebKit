@@ -286,7 +286,9 @@ struct ResetClipRect {
     static String description()
     {
         return R"DL(
-(reset-clip))DL"_s;
+(reset-clip)
+(clip
+  (rect at (0,0) size 77x88)))DL"_s;
     }
 };
 
