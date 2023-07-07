@@ -88,7 +88,11 @@ AutoInstall.register(Package('whichcraft', Version(0, 6, 1)))
 AutoInstall.register(Package('cffi', Version(1, 15, 1)))
 
 if sys.version_info > (3, 0):
-    AutoInstall.register(Package('cryptography', Version(36, 0, 2), wheel=True, implicit_deps=['cffi']))
+    # There are no prebuilt binaries for arm-32 of 'cryptography' and building it requires cargo/rust
+    # Since this dep is not really needed for the current arm-32 bots we skip it instead of
+    # adding the overhead of a cargo/rust toolchain into the yocto-based image the bots run.
+    if not (platform.machine().startswith('arm') and platform.architecture()[0] == '32bit'):
+        AutoInstall.register(Package('cryptography', Version(36, 0, 2), wheel=True, implicit_deps=['cffi']))
 
 if sys.version_info >= (3, 6):
     if sys.platform == 'linux':
