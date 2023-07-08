@@ -64,10 +64,16 @@ public:
 
     enum class Type : bool { Repeating, OneShot };
     RunLoopObserver(WellKnownOrder order, RunLoopObserverCallback&& callback, Type type = Type::Repeating)
-        : m_order(order)
-        , m_callback(WTFMove(callback))
+        : m_callback(WTFMove(callback))
         , m_type(type)
+#if USE(CF)
+        , m_order(order)
     { }
+#else
+    {
+        UNUSED_PARAM(order);
+    }
+#endif
 
     WEBCORE_EXPORT ~RunLoopObserver();
 
@@ -85,13 +91,12 @@ public:
 private:
     void runLoopObserverFired();
 
-    WellKnownOrder m_order { WellKnownOrder::GraphicsCommit };
     RunLoopObserverCallback m_callback;
+    Type m_type { Type::Repeating };
 #if USE(CF)
+    WellKnownOrder m_order { WellKnownOrder::GraphicsCommit };
     RetainPtr<PlatformRunLoopObserver> m_runLoopObserver;
 #endif
-    Type m_type { Type::Repeating };
 };
 
 } // namespace WebCore
-
