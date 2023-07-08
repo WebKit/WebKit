@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2023 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -288,7 +288,12 @@ JSLock::DropAllLocks::DropAllLocks(VM* vm)
 {
     if (!m_vm)
         return;
-    RELEASE_ASSERT(!m_vm->apiLock().currentThreadIsHoldingLock() || !m_vm->isCollectorBusyOnCurrentThread());
+
+    // Contrary to intuition, DropAllLocks does not require that we are actually holding
+    // the JSLock before getting here. Its goal is to release the lock if it is held. So,
+    // if the lock isn't already held, there's nothing to do, and that's fine.
+    // See https://bugs.webkit.org/show_bug.cgi?id=139654#c11.
+    RELEASE_ASSERT(!m_vm->apiLock().currentThreadIsHoldingLock() || !m_vm->isCollectorBusyOnCurrentThread(), m_vm->apiLock().currentThreadIsHoldingLock(), m_vm->isCollectorBusyOnCurrentThread());
     m_droppedLockCount = m_vm->apiLock().dropAllLocks(this);
 }
 
