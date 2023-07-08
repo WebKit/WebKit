@@ -41,6 +41,7 @@
 #include "Logging.h"
 #include "PlatformWheelEvent.h"
 #include "ScrollAnimator.h"
+#include "ScrollbarGutter.h"
 #include "ScrollbarTheme.h"
 #include "ScrollbarsControllerMock.h"
 #include <wtf/text/TextStream.h>
@@ -506,6 +507,11 @@ String ScrollableArea::horizontalScrollbarStateForTesting() const
 String ScrollableArea::verticalScrollbarStateForTesting() const
 {
     return scrollbarsController().verticalScrollbarStateForTesting();
+}
+
+ScrollbarGutter ScrollableArea::scrollbarGutterStyle() const
+{
+    return { };
 }
 
 const LayoutScrollSnapOffsetsInfo* ScrollableArea::snapOffsetsInfo() const

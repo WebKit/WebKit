@@ -54,6 +54,8 @@ class TiledBacking;
 
 enum class WheelScrollGestureState : uint8_t;
 
+struct ScrollbarGutter;
+
 inline int offsetForOrientation(ScrollOffset offset, ScrollbarOrientation orientation)
 {
     switch (orientation) {
@@ -141,6 +143,7 @@ public:
     virtual OverscrollBehavior horizontalOverscrollBehavior() const { return OverscrollBehavior::Auto; }
     virtual OverscrollBehavior verticalOverscrollBehavior() const { return OverscrollBehavior::Auto; }
 
+    WEBCORE_EXPORT virtual ScrollbarGutter scrollbarGutterStyle() const;
     virtual ScrollbarWidth scrollbarWidthStyle() const { return ScrollbarWidth::Auto; }
 
     bool allowsHorizontalScrolling() const;

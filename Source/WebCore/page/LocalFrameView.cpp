@@ -6307,6 +6307,15 @@ OverscrollBehavior LocalFrameView::verticalOverscrollBehavior()  const
     return OverscrollBehavior::Auto;
 }
 
+ScrollbarGutter LocalFrameView::scrollbarGutterStyle()  const
+{
+    auto* document = m_frame->document();
+    auto scrollingObject = document && document->documentElement() ? document->documentElement()->renderer() : nullptr;
+    if (scrollingObject)
+        return scrollingObject->style().scrollbarGutter();
+    return { };
+}
+
 ScrollbarWidth LocalFrameView::scrollbarWidthStyle()  const
 {
     auto* document = m_frame->document();
