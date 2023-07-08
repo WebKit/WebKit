@@ -37,6 +37,7 @@
 #include "Logging.h"
 #include <wtf/Algorithms.h>
 #include <wtf/ListHashSet.h>
+#include <wtf/MathExtras.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
@@ -1369,7 +1370,16 @@ double CSSCalcOperationNode::evaluateOperator(CalcOperator op, const Vector<doub
     case CalcOperator::Tan: {
         if (children.size() != 1)
             return std::numeric_limits<double>::quiet_NaN();
-        return std::tan(children[0]);
+        double x = std::fmod(children[0], piDouble * 2);
+        // std::fmod can return negative values.
+        x = x < 0 ? piDouble * 2 + x : x;
+        ASSERT(!(x < 0));
+        ASSERT(!(x > piDouble * 2));
+        if (x == piOverTwoDouble)
+            return std::numeric_limits<double>::infinity();
+        if (x == 3 * piOverTwoDouble)
+            return -std::numeric_limits<double>::infinity();
+        return std::tan(x);
     }
     case CalcOperator::Log: {
         if (children.size() != 1 && children.size() != 2)

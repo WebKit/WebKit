@@ -27,6 +27,7 @@
 #include "CalcExpressionOperation.h"
 
 #include <cmath>
+#include <wtf/MathExtras.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
@@ -132,7 +133,16 @@ float CalcExpressionOperation::evaluate(float maxValue) const
     case CalcOperator::Tan: {
         if (m_children.size() != 1)
             return std::numeric_limits<double>::quiet_NaN();
-        return std::tan(m_children[0]->evaluate(maxValue));
+        double x = std::fmod(m_children[0]->evaluate(maxValue), piDouble * 2);
+        // std::fmod can return negative values.
+        x = x < 0 ? piDouble * 2 + x : x;
+        ASSERT(!(x < 0));
+        ASSERT(!(x > piDouble * 2));
+        if (x == piOverTwoDouble)
+            return std::numeric_limits<double>::infinity();
+        if (x == 3 * piOverTwoDouble)
+            return -std::numeric_limits<double>::infinity();
+        return std::tan(x);
     }
     case CalcOperator::Log: {
         if (m_children.size() != 1 && m_children.size() != 2)
