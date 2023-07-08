@@ -70,6 +70,7 @@
 #import "RenderTextControl.h"
 #import "RenderView.h"
 #import "RenderWidget.h"
+#import "RuntimeApplicationChecks.h"
 #import "ScrollView.h"
 #import "TextIterator.h"
 #import "VisibleUnits.h"
@@ -3700,6 +3701,13 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     return [super accessibilityArrayAttributeCount:attribute];
 }
 ALLOW_DEPRECATED_DECLARATIONS_END
+
+// Implement this for performance reasons, as the default AppKit implementation will iterate upwards
+// until it finds something that responds to this method.
+- (pid_t)accessibilityPresenterProcessIdentifier
+{
+    return WebCore::presentingApplicationPID();
+}
 
 - (NSArray *)accessibilityArrayAttributeValues:(NSString *)attribute index:(NSUInteger)index maxCount:(NSUInteger)maxCount
 {

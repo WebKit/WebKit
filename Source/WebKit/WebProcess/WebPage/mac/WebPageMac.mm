@@ -128,8 +128,6 @@ void WebPage::platformInitializeAccessibility()
 
     // Get the pid for the starting process.
     pid_t pid = WebCore::presentingApplicationPID();
-    // FIXME: WKAccessibilityWebPageObject doesn't respond to -accessibilitySetPresenterProcessIdentifier:.
-    // Either it needs to or this call should be removed.
     if ([mockAccessibilityElement respondsToSelector:@selector(accessibilitySetPresenterProcessIdentifier:)])
         [(id)mockAccessibilityElement.get() accessibilitySetPresenterProcessIdentifier:pid];
     [mockAccessibilityElement setWebPage:this];
