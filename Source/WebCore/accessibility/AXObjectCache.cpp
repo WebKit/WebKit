@@ -1204,6 +1204,36 @@ void AXObjectCache::updateLoadingProgress(double newProgressValue)
 #endif
 }
 
+void AXObjectCache::handleAllDeferredChildrenChanged()
+{
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    RefPtr<AXIsolatedTree> tree;
+    if (!m_deferredChildrenChangedList.isEmpty())
+        tree = AXIsolatedTree::treeForPageID(m_pageID);
+#endif
+
+    // Because m_deferredChildrenChangedList can be appended to while we iterate, we have to process
+    // this list in two steps (repeatedly until empty) to ensure the isolated tree is updated correctly.
+    // Specifically, it's possible for an entry to be appended during AXIsolatedTree::updateChildren (e.g.
+    // due to an object re-computing is-ignored to a different value).
+    while (!m_deferredChildrenChangedList.isEmpty()) {
+        // Perform AXObjectCache::handleChildrenChanged on all objects first, then update the isolated tree
+        // afterwards. Doing it in two steps prevents thrashing m_subtreeDirty (i.e. AXObjectCache::handleChildrenChanged
+        // setting m_subtreeDirty on some high-in-the-tree object, clearing that during AXIsolatedTree::updateChildren,
+        // then having it set again by the next children-changed entry, repeat).
+        auto deferredChildrenChangedList = std::exchange(m_deferredChildrenChangedList, { });
+        for (auto& child : deferredChildrenChangedList)
+            handleChildrenChanged(*child);
+
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+        if (!tree)
+            continue;
+        for (auto& child : deferredChildrenChangedList)
+            tree->updateChildren(*child);
+#endif
+    }
+}
+
 void AXObjectCache::handleChildrenChanged(AccessibilityObject& object)
 {
     // Handle MenuLists and MenuListPopups as special cases.
@@ -1253,10 +1283,6 @@ void AXObjectCache::handleChildrenChanged(AccessibilityObject& object)
             shouldUpdateParent = false;
         }
     }
-
-#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-    updateIsolatedTree(object, AXChildrenChanged);
-#endif
 
     // The role of list objects is dependent on their children, so we'll need to re-compute it here.
     if (is<AccessibilityList>(object))
@@ -3749,9 +3775,7 @@ void AXObjectCache::performDeferredCacheUpdate()
     m_deferredNodeAddedOrRemovedList.clear();
 
     AXLOGDeferredCollection("ChildrenChangedList"_s, m_deferredChildrenChangedList);
-    for (auto& child : m_deferredChildrenChangedList)
-        handleChildrenChanged(*child);
-    m_deferredChildrenChangedList.clear();
+    handleAllDeferredChildrenChanged();
 
     AXLOGDeferredCollection("RecomputeTableCellSlotsList"_s, m_deferredRecomputeTableCellSlotsList);
     m_deferredRecomputeTableCellSlotsList.forEach([this] (auto& axTable) {

@@ -143,6 +143,8 @@ void AccessibilityTableRow::addChildren()
     if (ownedObjects.size()) {
         for (auto& object : ownedObjects)
             addChild(object.get(), DescendIfIgnored::No);
+        m_childrenInitialized = true;
+        m_subtreeDirty = false;
     }
     else
         AccessibilityRenderObject::addChildren();

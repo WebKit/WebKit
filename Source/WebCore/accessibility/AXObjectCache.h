@@ -556,6 +556,7 @@ private:
     void passwordNotificationPostTimerFired();
 
     void handleChildrenChanged(AccessibilityObject&);
+    void handleAllDeferredChildrenChanged();
     void handleRoleChanged(Element*, const AtomString&, const AtomString&);
     void handleRoleDescriptionChanged(Element*);
     void handleMenuOpened(Node*);
@@ -756,6 +757,7 @@ inline void AXObjectCache::frameLoadingEventNotification(LocalFrame*, AXLoadingE
 inline void AXObjectCache::frameLoadingEventPlatformNotification(AccessibilityObject*, AXLoadingEvent) { }
 inline void AXObjectCache::handleAriaExpandedChange(Node*) { }
 inline void AXObjectCache::deferModalChange(Element*) { }
+inline void AXObjectCache::handleAllDeferredChildrenChanged() { }
 inline void AXObjectCache::handleRoleChanged(AccessibilityObject*) { }
 inline void AXObjectCache::deferAttributeChangeIfNeeded(Element*, const QualifiedName&, const AtomString&, const AtomString&) { }
 inline void AXObjectCache::handleAttributeChange(Element*, const QualifiedName&, const AtomString&, const AtomString&) { }

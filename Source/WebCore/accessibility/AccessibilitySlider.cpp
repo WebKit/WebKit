@@ -36,6 +36,7 @@
 #include "RenderStyleInlines.h"
 #include "SliderThumbElement.h"
 #include "StyleAppearance.h"
+#include <wtf/Scope.h>
 
 namespace WebCore {
     
@@ -85,6 +86,9 @@ void AccessibilitySlider::addChildren()
 {
     ASSERT(!m_childrenInitialized); 
     m_childrenInitialized = true;
+    auto clearDirtySubtree = makeScopeExit([&] {
+        m_subtreeDirty = false;
+    });
 
     auto* cache = axObjectCache();
     if (!cache)

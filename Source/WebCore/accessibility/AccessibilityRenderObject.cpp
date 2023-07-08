@@ -112,6 +112,7 @@
 #include "VisibleUnits.h"
 #include <algorithm>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/Scope.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/unicode/CharacterNames.h>
 
@@ -2429,9 +2430,12 @@ void AccessibilityRenderObject::addChildren()
     // If the need to add more children in addition to existing children arises,
     // childrenChanged should have been called, leaving the object with no children.
     ASSERT(!m_childrenInitialized); 
-
     m_childrenInitialized = true;
-    
+
+    auto clearDirtySubtree = makeScopeExit([&] {
+        m_subtreeDirty = false;
+    });
+
     if (!canHaveChildren())
         return;
 

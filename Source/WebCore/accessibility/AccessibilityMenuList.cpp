@@ -29,6 +29,7 @@
 #include "AXObjectCache.h"
 #include "AccessibilityMenuListPopup.h"
 #include "RenderMenuList.h"
+#include <wtf/Scope.h>
 
 namespace WebCore {
 
@@ -67,6 +68,10 @@ bool AccessibilityMenuList::press()
 
 void AccessibilityMenuList::addChildren()
 {
+    auto clearDirtySubtree = makeScopeExit([&] {
+        m_subtreeDirty = false;
+    });
+
     if (!m_renderer)
         return;
     

@@ -80,6 +80,7 @@
 #include "TextControlInnerElements.h"
 #include "UserGestureIndicator.h"
 #include "VisibleUnits.h"
+#include <wtf/Scope.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/unicode/CharacterNames.h>
@@ -517,8 +518,11 @@ void AccessibilityNodeObject::addChildren()
     // If the need to add more children in addition to existing children arises, 
     // childrenChanged should have been called, leaving the object with no children.
     ASSERT(!m_childrenInitialized);
-    
     m_childrenInitialized = true;
+
+    auto clearDirtySubtree = makeScopeExit([&] {
+        m_subtreeDirty = false;
+    });
 
     WeakPtr node = this->node();
     if (!node || !canHaveChildren())
@@ -536,7 +540,6 @@ void AccessibilityNodeObject::addChildren()
         addChild(objectCache->getOrCreate(child));
 
     updateOwnedChildren();
-    m_subtreeDirty = false;
 }
 
 bool AccessibilityNodeObject::canHaveChildren() const
