@@ -1629,13 +1629,8 @@ void VM::removeDebugger(Debugger& debugger)
 
 void VM::performOpportunisticallyScheduledTasks(MonotonicTime deadline)
 {
-    bool hasPendingWork;
-    {
-        JSLockHolder locker { *this };
-        hasPendingWork = deferredWorkTimer->hasAnyPendingWork();
-    }
-
-    if (!hasPendingWork)
+    JSLockHolder locker { *this };
+    if (!deferredWorkTimer->hasAnyPendingWork())
         heap.sweeper().doWorkUntil(*this, deadline);
 }
 
