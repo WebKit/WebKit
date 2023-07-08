@@ -242,6 +242,8 @@ void PrintContext::spoolPage(GraphicsContext& ctx, int pageNumber, float width)
 
     RELEASE_LOG(Printing, "Spooling page. pageNumber = %d pageRects size = %zu", pageNumber, m_pageRects.size());
 
+    RELEASE_ASSERT(pageNumber < static_cast<int>(m_pageRects.size()));
+
     // FIXME: Not correct for vertical text.
     IntRect pageRect = m_pageRects[pageNumber];
     float scale = width / pageRect.width();
