@@ -893,7 +893,7 @@ Ref<CSSCalcExpressionNode> CSSCalcOperationNode::simplifyNode(Ref<CSSCalcExpress
             calcOperationNode.hoistChildrenWithOperator(CalcOperator::Multiply);
         }
         
-        if (calcOperationNode.isMinOrMaxNode() || calcOperationNode.isHypotNode() || calcOperationNode.isCalcProductNode() || calcOperationNode.isCalcSumNode() || (calcOperationNode.shouldPreserveFunction() && depth))
+        if (calcOperationNode.shouldNotPreserveFunction() || calcOperationNode.isCalcProductNode() || calcOperationNode.isCalcSumNode() || (calcOperationNode.shouldPreserveFunction() && depth))
             calcOperationNode.combineChildren();
 
         // If only one child remains, return the child (except at the root).
