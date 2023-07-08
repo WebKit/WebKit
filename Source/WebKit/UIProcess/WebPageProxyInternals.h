@@ -35,6 +35,7 @@
 #include "ScrollingAccelerationCurve.h"
 #include "VisibleWebPageCounter.h"
 #include "WebColorPicker.h"
+#include "WebFrameProxy.h"
 #include "WebNotificationManagerMessageHandler.h"
 #include "WebPageProxy.h"
 #include "WebPageProxyMessageReceiverRegistration.h"
@@ -219,6 +220,8 @@ struct WebPageProxy::Internals final : WebPopupMenuProxy::Client
     RefPtr<RemotePageProxy> remotePageProxyInOpenerProcess;
     HashSet<Ref<RemotePageProxy>> openedRemotePageProxies;
     WebPageProxyMessageReceiverRegistration messageReceiverRegistration;
+
+    WeakHashSet<WebPageProxy> m_openedPages;
 
 #if ENABLE(APPLE_PAY)
     std::unique_ptr<WebPaymentCoordinatorProxy> paymentCoordinator;

@@ -2173,6 +2173,9 @@ public:
 
     void createRemoteSubframesInOtherProcesses(WebFrameProxy&);
 
+    void addOpenedPage(WebPageProxy&);
+    bool hasOpenedPage() const;
+
     void requestImageBitmap(const WebCore::ElementContext&, CompletionHandler<void(ShareableBitmapHandle&&, const String& sourceMIMEType)>&&);
 
 #if PLATFORM(MAC)

@@ -6787,9 +6787,12 @@ void WebPageProxy::createNewPage(FrameInfoData&& originatingFrameInfoData, WebPa
 
         if (openerAppInitiatedState)
             newPage->m_lastNavigationWasAppInitiated = *openerAppInitiatedState;
-        if (openerFrameID && preferences().processSwapOnCrossSiteWindowOpenEnabled()) {
-            if (auto* openerFrame = WebFrameProxy::webFrame(*openerFrameID))
+        if (openerFrameID) {
+            if (auto* openerFrame = WebFrameProxy::webFrame(*openerFrameID)) {
                 newPage->m_openerFrame = openerFrame;
+                if (auto* page = openerFrame->page())
+                    page->addOpenedPage(*newPage);
+            }
         }
 
         reply(newPage->webPageID(), newPage->creationParameters(m_process, *newPage->drawingArea()));
@@ -6834,6 +6837,16 @@ void WebPageProxy::createNewPage(FrameInfoData&& originatingFrameInfoData, WebPa
 void WebPageProxy::showPage()
 {
     m_uiClient->showPage(this);
+}
+
+bool WebPageProxy::hasOpenedPage() const
+{
+    return !internals().m_openedPages.isEmptyIgnoringNullReferences();
+}
+
+void WebPageProxy::addOpenedPage(WebPageProxy& page)
+{
+    internals().m_openedPages.add(page);
 }
 
 void WebPageProxy::exitFullscreenImmediately()
