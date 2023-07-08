@@ -91,6 +91,7 @@ struct WebKit::EditorState {
     bool atStartOfSentence;
     bool selectionStartIsAtParagraphBoundary;
     bool selectionEndIsAtParagraphBoundary;
+    bool hasGrammarDocumentMarkers;
     std::optional<WebCore::ElementContext> selectedEditableImage;
 #endif
 #if PLATFORM(MAC)

@@ -114,8 +114,9 @@ struct EditorState {
         bool atStartOfSentence { false };
         bool selectionStartIsAtParagraphBoundary { false };
         bool selectionEndIsAtParagraphBoundary { false };
+        bool hasGrammarDocumentMarkers { false };
         std::optional<WebCore::ElementContext> selectedEditableImage;
-#endif
+#endif // PLATFORM(IOS_FAMILY)
 #if PLATFORM(MAC)
         WebCore::IntRect selectionBoundingRect; // FIXME: Maybe this should be on VisualData?
         uint64_t candidateRequestStartPosition { 0 };

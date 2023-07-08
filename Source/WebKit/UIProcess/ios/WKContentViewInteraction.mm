@@ -5192,7 +5192,15 @@ static void logTextInteractionAssistantSelectionChange(const char* methodName, U
         return;
     }
 
-    if ([UIKeyboard usesInputSystemUI]) {
+    // FIXME: We can remove this code and unconditionally ignore autocorrection context requests when
+    // out-of-process keyboard is enabled, once rdar://111936621 is addressed; we'll also be able to
+    // remove `EditorState::PostLayoutData::hasGrammarDocumentMarkers` then.
+    bool requiresContextToShowGrammarCheckingResults = [&] {
+        auto& state = _page->editorState();
+        return state.hasPostLayoutData() && state.postLayoutData->hasGrammarDocumentMarkers;
+    }();
+
+    if ([UIKeyboard usesInputSystemUI] && !requiresContextToShowGrammarCheckingResults) {
         completionHandler(WKAutocorrectionContext.emptyAutocorrectionContext);
         return;
     }
