@@ -160,13 +160,13 @@ static inline short pressedMouseButtons(uint32_t modifiers)
 static inline unsigned clickCount(struct wpe_input_pointer_event* event)
 {
     static const uint32_t doubleClickTime = 500; // Milliseconds.
-    static const unsigned pixelThreshold = 5;
+    static const int pixelThreshold = 5;
     static struct wpe_input_pointer_event gLastClickEvent = { };
     static unsigned gLastClickCount = 1;
 
     bool cancelPreviousClick = (event->time - gLastClickEvent.time) > doubleClickTime
-        || abs(event->x == gLastClickEvent.x) > pixelThreshold
-        || abs(event->y == gLastClickEvent.y) > pixelThreshold;
+        || std::abs(event->x - gLastClickEvent.x) > pixelThreshold
+        || std::abs(event->y - gLastClickEvent.y) > pixelThreshold;
 
     if (event->type == wpe_input_pointer_event_type_button && event->state) {
         if (!cancelPreviousClick && (event->button == gLastClickEvent.button))
