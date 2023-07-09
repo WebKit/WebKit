@@ -5,7 +5,7 @@ PASS exp(0) should be used-value-equivalent to 1
 PASS calc(log(e) ) should be used-value-equivalent to 1
 PASS calc(e - exp(1)) should be used-value-equivalent to 0
 PASS calc(log( 1 + 1 + 2 /2 - 2) ) should be used-value-equivalent to 0
-PASS calc(log(1) + exp(0)) should be used-value-equivalent to 2
+PASS calc(log(1) + exp(0)) should be used-value-equivalent to 1
 PASS calc(exp(log(1) + exp(0)*2)) should be used-value-equivalent to 7.4
 PASS calc(log(log(1) + exp(0)*10)) should be used-value-equivalent to 2.3
 PASS calc(log(log(1) + exp(0)*20, 10)) should be used-value-equivalent to 1.3

@@ -30,6 +30,12 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/support/cat.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/support/import-green.css
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/support/import-red.css
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/support/mixed-units-01.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/support/mixed-units-02.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/support/mixed-units-03.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/support/mixed-units-04.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/support/mixed-units-05.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-values/support/mixed-units-06.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/support/pattern-grg-rgr-grg.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/support/pattern-grg-rrg-rgg.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-values/support/pattern-rgr-grg-rgr.png

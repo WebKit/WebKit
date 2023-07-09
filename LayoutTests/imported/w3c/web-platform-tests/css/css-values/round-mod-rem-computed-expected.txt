@@ -6,7 +6,7 @@ PASS calc(round(100,10)) should be used-value-equivalent to 100
 PASS calc(round(up, 101,10)) should be used-value-equivalent to 110
 PASS calc(round(down, 106,10)) should be used-value-equivalent to 100
 PASS calc(round(to-zero,105, 10)) should be used-value-equivalent to 100
-FAIL calc(round(to-zero,-105, 10)) should be used-value-equivalent to 100 assert_equals: calc(round(to-zero,-105, 10)) and 100 serialize to the same thing in used values. expected "matrix(100, 0, 0, 100, 0, 0)" but got "matrix(-100, 0, 0, -100, 0, 0)"
+PASS calc(round(to-zero,-105, 10)) should be used-value-equivalent to -100
 PASS calc(round(-100,10)) should be used-value-equivalent to -100
 PASS calc(round(up, -103,10)) should be used-value-equivalent to -100
 PASS mod(18,5) should be used-value-equivalent to 3
@@ -26,10 +26,7 @@ PASS calc(mod(18,5) * 2 + mod(17,5)) should be used-value-equivalent to 8
 PASS calc(rem(mod(18,5),5)) should be used-value-equivalent to 3
 PASS calc(rem(mod(18,5),mod(17,5))) should be used-value-equivalent to 1
 PASS calc(mod(-140,-90)) should be used-value-equivalent to -50
-PASS calc(mod(rem(1,18)* -1,5)) should be used-value-equivalent to -1
-PASS calc(round(1px + 0%, 1px + 0%)) should be used-value-equivalent to 1px
-PASS calc(mod(1px + 0%, 1px + 0%)) should be used-value-equivalent to 0px
-PASS calc(rem(1px + 0%, 1px + 0%)) should be used-value-equivalent to 0px
+FAIL calc(mod(rem(1,18)* -1,5)) should be used-value-equivalent to 4 assert_equals: calc(mod(rem(1,18)* -1,5)) and 4 serialize to the same thing in used values. expected "matrix(4, 0, 0, 4, 0, 0)" but got "matrix(-1, 0, 0, -1, 0, 0)"
 PASS round(10px,6px) should be used-value-equivalent to 12px
 PASS round(10cm,6cm) should be used-value-equivalent to 12cm
 PASS round(10mm,6mm) should be used-value-equivalent to 12mm
@@ -91,4 +88,35 @@ PASS rem(10deg,6deg) should be used-value-equivalent to 4deg
 PASS rem(10grad,6grad) should be used-value-equivalent to 4grad
 PASS rem(10rad,6rad) should be used-value-equivalent to 4rad
 PASS rem(10turn,6turn) should be used-value-equivalent to 4turn
+PASS round(10%,1px) should be used-value-equivalent to 8px
+PASS round(10%,5px) should be used-value-equivalent to 10px
+PASS round(2rem,5px) should be used-value-equivalent to 30px
+PASS round(100px,1rem) should be used-value-equivalent to 96px
+PASS round(10s,6000ms) should be used-value-equivalent to 12s
+PASS round(10000ms,6s) should be used-value-equivalent to 12s
+PASS mod(10%,1px) should be used-value-equivalent to 0.5px
+PASS mod(10%,5px) should be used-value-equivalent to 2.5px
+PASS mod(2rem,5px) should be used-value-equivalent to 2px
+PASS mod(100px,1rem) should be used-value-equivalent to 4px
+PASS mod(10s,6000ms) should be used-value-equivalent to 4s
+PASS mod(10000ms,6s) should be used-value-equivalent to 4s
+PASS mod(18px,100% / 15) should be used-value-equivalent to 3px
+PASS mod(-18px,100% / 10) should be used-value-equivalent to 4.5px
+PASS mod(18%,5%) should be used-value-equivalent to 3%
+PASS mod(-19%,5%) should be used-value-equivalent to 1%
+PASS mod(18vw,5vw) should be used-value-equivalent to 3vw
+PASS mod(-18vw,5vw) should be used-value-equivalent to 2vw
+PASS rem(10%,1px) should be used-value-equivalent to 0.5px
+PASS rem(10%,5px) should be used-value-equivalent to 2.5px
+PASS rem(2rem,5px) should be used-value-equivalent to 2px
+PASS rem(100px,1rem) should be used-value-equivalent to 4px
+PASS rem(10s,6000ms) should be used-value-equivalent to 4s
+PASS rem(10000ms,6s) should be used-value-equivalent to 4s
+PASS rem(18px,100% / 15) should be used-value-equivalent to 3px
+PASS rem(-18px,100% / 15) should be used-value-equivalent to -3px
+PASS rem(18vw,5vw) should be used-value-equivalent to 3vw
+PASS rem(-18vw,5vw) should be used-value-equivalent to -3vw
+PASS calc(round(1px + 0%, 1px + 0%)) should be used-value-equivalent to 1px
+PASS calc(mod(3px + 0%, 2px + 0%)) should be used-value-equivalent to 1px
+PASS calc(rem(3px + 0%, 2px + 0%)) should be used-value-equivalent to 1px
 
