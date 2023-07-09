@@ -21,23 +21,23 @@ PASS element.style['width'] is "calc(200px)"
 PASS getComputedStyle(element).getPropertyValue('width') is "200px"
 
 element.style["width"] = "clamp(100px,123px,200px)"
-PASS element.style['width'] is "clamp(100px, 123px, 200px)"
+PASS element.style['width'] is "calc(123px)"
 PASS getComputedStyle(element).getPropertyValue('width') is "123px"
 
 element.style["width"] = "clamp(100px,300px,200px)"
-PASS element.style['width'] is "clamp(100px, 300px, 200px)"
+PASS element.style['width'] is "calc(200px)"
 PASS getComputedStyle(element).getPropertyValue('width') is "200px"
 
 element.style["width"] = "clamp(200px,300px,100px)"
-PASS element.style['width'] is "clamp(200px, 300px, 100px)"
+PASS element.style['width'] is "calc(200px)"
 PASS getComputedStyle(element).getPropertyValue('width') is "200px"
 
 element.style["width"] = "clamp((50px + 50px),40px,200px)"
-PASS element.style['width'] is "clamp(100px, 40px, 200px)"
+PASS element.style['width'] is "calc(100px)"
 PASS getComputedStyle(element).getPropertyValue('width') is "100px"
 
 element.style["width"] = "clamp(50px + 50px,40px,200px)"
-PASS element.style['width'] is "clamp(100px, 40px, 200px)"
+PASS element.style['width'] is "calc(100px)"
 PASS getComputedStyle(element).getPropertyValue('width') is "100px"
 
 element.style["width"] = "min(100px,0%)"
@@ -308,23 +308,23 @@ PASS element.style['min-width'] is "calc(200px)"
 PASS getComputedStyle(element).getPropertyValue('min-width') is "200px"
 
 element.style["min-width"] = "clamp(100px,123px,200px)"
-PASS element.style['min-width'] is "clamp(100px, 123px, 200px)"
+PASS element.style['min-width'] is "calc(123px)"
 PASS getComputedStyle(element).getPropertyValue('min-width') is "123px"
 
 element.style["min-width"] = "clamp(100px,300px,200px)"
-PASS element.style['min-width'] is "clamp(100px, 300px, 200px)"
+PASS element.style['min-width'] is "calc(200px)"
 PASS getComputedStyle(element).getPropertyValue('min-width') is "200px"
 
 element.style["min-width"] = "clamp(200px,300px,100px)"
-PASS element.style['min-width'] is "clamp(200px, 300px, 100px)"
+PASS element.style['min-width'] is "calc(200px)"
 PASS getComputedStyle(element).getPropertyValue('min-width') is "200px"
 
 element.style["min-width"] = "clamp((50px + 50px),40px,200px)"
-PASS element.style['min-width'] is "clamp(100px, 40px, 200px)"
+PASS element.style['min-width'] is "calc(100px)"
 PASS getComputedStyle(element).getPropertyValue('min-width') is "100px"
 
 element.style["min-width"] = "clamp(50px + 50px,40px,200px)"
-PASS element.style['min-width'] is "clamp(100px, 40px, 200px)"
+PASS element.style['min-width'] is "calc(100px)"
 PASS getComputedStyle(element).getPropertyValue('min-width') is "100px"
 
 element.style["min-width"] = "min(100px,0%)"

@@ -34,11 +34,11 @@
                 testExpression('max(100px + 200px)', 'calc(300px)', '300px');
                 testExpression('max(100px , 200px)', 'calc(200px)', '200px');
                 testExpression('max(100px,200px)', 'calc(200px)', '200px');
-                testExpression('clamp(100px,123px,200px)', 'clamp(100px, 123px, 200px)', '123px');
-                testExpression('clamp(100px,300px,200px)', 'clamp(100px, 300px, 200px)', '200px');
-                testExpression('clamp(200px,300px,100px)', 'clamp(200px, 300px, 100px)', '200px');
-                testExpression('clamp((50px + 50px),40px,200px)', 'clamp(100px, 40px, 200px)', '100px');
-                testExpression('clamp(50px + 50px,40px,200px)', 'clamp(100px, 40px, 200px)', '100px');
+                testExpression('clamp(100px,123px,200px)', 'calc(123px)', '123px');
+                testExpression('clamp(100px,300px,200px)', 'calc(200px)', '200px');
+                testExpression('clamp(200px,300px,100px)', 'calc(200px)', '200px');
+                testExpression('clamp((50px + 50px),40px,200px)', 'calc(100px)', '100px');
+                testExpression('clamp(50px + 50px,40px,200px)', 'calc(100px)', '100px');
                 testExpression('min(100px,0%)', 'min(100px, 0%)', propertyName == 'width' ? '0px' : "min(100px, 0%)");
                 testExpression('max(100px,0%)', 'max(100px, 0%)', propertyName == 'width' ? '100px' : "max(100px, 0%)");
                 testExpression('clamp(100px,0%,1%)', 'clamp(100px, 0%, 1%)', propertyName == 'width' ? '100px' : "clamp(100px, 0%, 1%)");
