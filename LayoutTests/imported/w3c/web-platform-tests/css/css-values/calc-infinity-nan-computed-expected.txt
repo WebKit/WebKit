@@ -2,6 +2,6 @@ CONSOLE MESSAGE: ReferenceError: Can't find variable: testComputedValueGreaterOr
 
 Harness Error (FAIL), message = ReferenceError: Can't find variable: testComputedValueGreaterOrLowerThan
 
-FAIL Property width value 'calc(NaN * 1px)' assert_equals: expected "0px" but got "33554428px"
-FAIL Property width value 'calc(NaN * 1%)' assert_equals: expected "0px" but got "33554432px"
+PASS Property width value 'calc(NaN * 1px)'
+PASS Property width value 'calc(NaN * 1%)'
 

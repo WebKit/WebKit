@@ -20,8 +20,8 @@ PASS Property color value 'lab(none none none)'
 PASS Property color value 'lab(20 none none / none)'
 PASS Property color value 'lab(none none none / 0.5)'
 PASS Property color value 'lab(0 0 0 / none)'
-FAIL Property color value 'lab(calc(NaN) 0 0)' assert_equals: expected "lab(0 0 0)" but got "lab(Infinity 0 0)"
-FAIL Property color value 'lab(calc(0 / 0) 0 0)' assert_equals: expected "lab(0 0 0)" but got "lab(Infinity 0 0)"
+PASS Property color value 'lab(calc(NaN) 0 0)'
+PASS Property color value 'lab(calc(0 / 0) 0 0)'
 PASS Property color value 'oklab(0 0 0)'
 PASS Property color value 'oklab(0 0 0 / 1)'
 PASS Property color value 'oklab(0 0 0 / 0.5)'
@@ -45,8 +45,8 @@ PASS Property color value 'oklab(none none none / 0.5)'
 PASS Property color value 'oklab(0 0 0 / none)'
 PASS Property color value 'lab(20% -50% 90%/0.5)'
 PASS Property color value 'oklab(20% 70% -80%/0.5)'
-FAIL Property color value 'oklab(calc(NaN) 0 0)' assert_equals: expected "oklab(0 0 0)" but got "oklab(Infinity 0 0)"
-FAIL Property color value 'oklab(calc(0 / 0) 0 0)' assert_equals: expected "oklab(0 0 0)" but got "oklab(Infinity 0 0)"
+PASS Property color value 'oklab(calc(NaN) 0 0)'
+PASS Property color value 'oklab(calc(0 / 0) 0 0)'
 PASS Property color value 'lch(0 0 0deg)'
 PASS Property color value 'lch(0 0 0deg / 1)'
 PASS Property color value 'lch(0 0 0deg / 0.5)'
@@ -72,8 +72,8 @@ PASS Property color value 'lch(none none none)'
 PASS Property color value 'lch(20 none none / none)'
 PASS Property color value 'lch(none none none / 0.5)'
 PASS Property color value 'lch(0 0 0 / none)'
-FAIL Property color value 'lch(calc(NaN) 0 0)' assert_equals: expected "lch(0 0 0)" but got "lch(Infinity 0 0)"
-FAIL Property color value 'lch(calc(0 / 0) 0 0)' assert_equals: expected "lch(0 0 0)" but got "lch(Infinity 0 0)"
+PASS Property color value 'lch(calc(NaN) 0 0)'
+PASS Property color value 'lch(calc(0 / 0) 0 0)'
 PASS Property color value 'oklch(0 0 0deg)'
 PASS Property color value 'oklch(0 0 0deg / 1)'
 PASS Property color value 'oklch(0 0 0deg / 0.5)'
@@ -101,6 +101,6 @@ PASS Property color value 'oklch(none none none / 0.5)'
 PASS Property color value 'oklch(0 0 0 / none)'
 PASS Property color value 'lch(20% 80% 10/0.5)'
 PASS Property color value 'oklch(20% 60% 10/0.5)'
-FAIL Property color value 'oklch(calc(NaN) 0 0)' assert_equals: expected "oklch(0 0 0)" but got "oklch(Infinity 0 0)"
-FAIL Property color value 'oklch(calc(0 / 0) 0 0)' assert_equals: expected "oklch(0 0 0)" but got "oklch(Infinity 0 0)"
+PASS Property color value 'oklch(calc(NaN) 0 0)'
+PASS Property color value 'oklch(calc(0 / 0) 0 0)'
 

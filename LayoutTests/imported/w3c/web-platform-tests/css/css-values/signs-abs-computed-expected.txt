@@ -25,7 +25,7 @@ PASS calc(calc(sign(0))) should be used-value-equivalent to 0
 PASS clamp(-1, calc( 1 / sign(calc(sign(0)))), 1) should be used-value-equivalent to 1
 PASS abs(infinity) should be used-value-equivalent to calc(infinity)
 PASS abs(-infinity) should be used-value-equivalent to calc(infinity)
-FAIL abs(NaN) should be used-value-equivalent to calc(NaN) assert_equals: abs(NaN) and calc(NaN) serialize to the same thing in used values. expected "matrix3d(infinity, NaN, NaN, NaN, NaN, infinity, NaN, NaN, 0, 0, 1, 0, 0, 0, 0, 1)" but got "matrix3d(NaN, NaN, NaN, NaN, NaN, NaN, NaN, NaN, 0, 0, 1, 0, 0, 0, 0, 1)"
+PASS abs(NaN) should be used-value-equivalent to calc(NaN)
 PASS sign(1px) should be used-value-equivalent to 1
 PASS sign(1cm) should be used-value-equivalent to 1
 PASS sign(1mm) should be used-value-equivalent to 1

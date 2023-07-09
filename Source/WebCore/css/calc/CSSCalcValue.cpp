@@ -339,7 +339,10 @@ bool CSSCalcValue::equals(const CSSCalcValue& other) const
 
 inline double CSSCalcValue::clampToPermittedRange(double value) const
 {
-    if (primitiveType() == CSSUnitType::CSS_DEG && (isnan(value) || isinf(value)))
+    value = CSSCalcOperationNode::convertToTopLevelValue(value);
+    // If an <angle> must be converted due to exceeding the implementation-defined range of supported values,
+    // it must be clamped to the nearest supported multiple of 360deg.
+    if (primitiveType() == CSSUnitType::CSS_DEG && std::isinf(value))
         return 0;
     return m_shouldClampToNonNegative && value < 0 ? 0 : value;
 }

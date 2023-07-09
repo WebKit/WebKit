@@ -88,6 +88,15 @@ public:
     const Vector<Ref<CSSCalcExpressionNode>>& children() const { return m_children; }
     Vector<Ref<CSSCalcExpressionNode>>& children() { return m_children; }
 
+    static double convertToTopLevelValue(double value)
+    {
+        // If a top-level calculation would produce a value whose numeric part is NaN,
+        // it instead act as though the numeric part is 0.
+        if (std::isnan(value))
+            value = 0;
+        return value;
+    }
+
 private:
     CSSCalcOperationNode(CalculationCategory category, CalcOperator op, Ref<CSSCalcExpressionNode>&& leftSide, Ref<CSSCalcExpressionNode>&& rightSide)
         : CSSCalcExpressionNode(category)
@@ -130,13 +139,6 @@ private:
         if (rightSide.category() == CalculationCategory::Number)
             return &rightSide;
         return nullptr;
-    }
-    
-    static double convertToTopLevelValue(double value)
-    {
-        if (std::isnan(value))
-            value = std::numeric_limits<double>::infinity();
-        return value;
     }
     
     double evaluate(const Vector<double>& children) const
