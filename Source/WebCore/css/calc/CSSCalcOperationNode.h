@@ -63,7 +63,8 @@ public:
     bool isExpNode() const { return m_operator == CalcOperator::Exp || m_operator == CalcOperator::Log; }
     bool isInverseTrigNode() const { return m_operator == CalcOperator::Asin || m_operator == CalcOperator::Acos || m_operator == CalcOperator::Atan; }
     bool isAtan2Node() const { return m_operator == CalcOperator::Atan2; }
-    bool isSignNode() const { return m_operator == CalcOperator::Abs || m_operator == CalcOperator::Sign; }
+    bool isSignNode() const { return m_operator == CalcOperator::Sign; }
+    bool isAbsOrSignNode() const { return m_operator == CalcOperator::Abs || isSignNode(); }
     bool shouldSortChildren() const { return isCalcSumNode() || isCalcProductNode(); }
     bool isSteppedNode() const { return m_operator == CalcOperator::Mod || m_operator == CalcOperator::Rem || m_operator == CalcOperator::Round; }
     bool isRoundOperation() const { return m_operator == CalcOperator::Down || m_operator == CalcOperator::Up || m_operator == CalcOperator::ToZero || m_operator == CalcOperator::Nearest; }
@@ -145,7 +146,7 @@ private:
     }
 
     void makeTopLevelCalc();
-    bool shouldNotPreserveFunction() const { return isSignNode() || isClampNode() || isMinOrMaxNode() || isExpNode() || isHypotNode() || isSteppedNode() || isPowOrSqrtNode() || isInverseTrigNode() || isAtan2Node() || isTrigNode(); }
+    bool shouldNotPreserveFunction() const { return isAbsOrSignNode() || isClampNode() || isMinOrMaxNode() || isExpNode() || isHypotNode() || isSteppedNode() || isPowOrSqrtNode() || isInverseTrigNode() || isAtan2Node() || isTrigNode(); }
     static double evaluateOperator(CalcOperator, const Vector<double>&);
     static Ref<CSSCalcExpressionNode> simplifyNode(Ref<CSSCalcExpressionNode>&&, int depth);
     static Ref<CSSCalcExpressionNode> simplifyRecursive(Ref<CSSCalcExpressionNode>&&, int depth);

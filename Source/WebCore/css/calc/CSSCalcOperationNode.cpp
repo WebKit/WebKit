@@ -662,11 +662,9 @@ void CSSCalcOperationNode::combineChildren()
             m_children.clear();
             m_children.append(WTFMove(newChild));
         }
-        if (isSignNode() || (isHypotNode() && canCombineAllChildren())) {
-            auto combinedUnitType = m_children[0]->primitiveType();
-            if (calcOperator() == CalcOperator::Sign)
-                combinedUnitType = CSSUnitType::CSS_NUMBER;
+        if ((isAbsOrSignNode() || isHypotNode()) && canCombineAllChildren()) {
             double resolvedValue = doubleValue(m_children[0]->primitiveType());
+            auto combinedUnitType = isSignNode() ? CSSUnitType::CSS_NUMBER : m_children[0]->primitiveType();
             auto newChild = CSSCalcPrimitiveValueNode::create(CSSPrimitiveValue::create(resolvedValue, combinedUnitType));
             m_children.clear();
             m_children.append(WTFMove(newChild));
@@ -1037,9 +1035,7 @@ double CSSCalcOperationNode::doubleValue(CSSUnitType unitType) const
             childType = CSSUnitType::CSS_RAD;
         if (isInverseTrigNode())
             childType = CSSUnitType::CSS_NUMBER;
-        if (isAtan2Node())
-            childType = child->primitiveType();
-        if (isSignNode())
+        if (isAtan2Node() || isAbsOrSignNode())
             childType = child->primitiveType();
         return child->doubleValue(childType);
     }));
