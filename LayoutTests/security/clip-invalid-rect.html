@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<style>
+    div {
+        transform: scaleX(1000000);
+        font-size-adjust: 10;
+    }
+
+    #b {
+        transform: scaleX(-1) skewX(100deg);
+    }
+</style>
+<script>
+    onload = () => {
+        let body = document.createElement('body');
+        body.id = 'b';
+        d.append(body);
+        document.execCommand('SelectAll');
+
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            alert("Test passed because nothing crashed");
+        }
+    };
+</script>
+<div id="d"></div>
+<video></video>
+</html>
