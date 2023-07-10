@@ -86,8 +86,8 @@ void PDFDocumentImage::decodedSizeChanged(size_t newCachedBytes)
     if (!m_cachedBytes && !newCachedBytes)
         return;
 
-    if (imageObserver())
-        imageObserver()->decodedSizeChanged(*this, -static_cast<long long>(m_cachedBytes) + newCachedBytes);
+    if (auto observer = imageObserver())
+        observer->decodedSizeChanged(*this, -static_cast<long long>(m_cachedBytes) + newCachedBytes);
 
     m_cachedBytes = newCachedBytes;
 }
@@ -154,8 +154,8 @@ ImageDrawResult PDFDocumentImage::drawPDFDocument(GraphicsContext& context, cons
     context.scale({ 1, -1 });
     drawPDFPage(context);
 
-    if (imageObserver())
-        imageObserver()->didDraw(*this);
+    if (auto observer = imageObserver())
+        observer->didDraw(*this);
 
     return ImageDrawResult::DidDraw;
 }
