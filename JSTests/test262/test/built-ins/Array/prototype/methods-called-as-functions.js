@@ -15,7 +15,7 @@ info: |
 
     Argument Type: Undefined
     Result: Throw a TypeError exception.
-features: [Symbol, Symbol.isConcatSpreadable, Symbol.iterator, Symbol.species, Array.prototype.flat, Array.prototype.flatMap]
+features: [Symbol, Symbol.isConcatSpreadable, Symbol.iterator, Symbol.species, Array.prototype.flat, Array.prototype.flatMap, Array.prototype.includes]
 ---*/
 
 ["constructor", "length", "0", Symbol.isConcatSpreadable, Symbol.species].forEach(function(key) {

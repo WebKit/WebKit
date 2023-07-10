@@ -21,7 +21,7 @@ info: |
     undefined as comparefn, that contains the unique values of simple unit
     identifiers listed in every row of Table 1, except the header row.
 includes: [compareArray.js, testIntl.js]
-features: [Intl-enumeration]
+features: [Intl-enumeration, Array.prototype.includes]
 ---*/
 
 const units = Intl.supportedValuesOf("unit");

@@ -9,8 +9,10 @@ features: [Temporal]
 ---*/
 
 const expected = [
-  // ToTemporalTimeZone
-  "has timeZone.timeZone",
+  // ToTemporalTimeZoneSlotValue
+  "has timeZone.getOffsetNanosecondsFor",
+  "has timeZone.getPossibleInstantsFor",
+  "has timeZone.id",
   // ToTemporalDisambiguation
   "get options.disambiguation",
   "get options.disambiguation.toString",

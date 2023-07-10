@@ -8,6 +8,7 @@ description: >
   Checks the output of 'relatedYear' and 'yearName' type, and
   the choice of pattern based on calendar.
 locale: [zh-u-ca-chinese]
+features: [Array.prototype.includes]
 ---*/
 
 const df = new Intl.DateTimeFormat("zh-u-ca-chinese", {year: "numeric"});

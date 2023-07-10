@@ -11,15 +11,10 @@ const tests = [
   ["1970-01-01T00:00[UTC][u-ca=iso8601]", "without !"],
   ["1970-01-01T00:00[UTC][!u-ca=iso8601]", "with !"],
   ["1970-01-01T00:00[UTC][u-ca=iso8601][u-ca=discord]", "second annotation ignored"],
-  ["1970-01-01T00:00[UTC][u-ca=iso8601][!u-ca=discord]", "second annotation ignored even with !"],
 ];
 
 tests.forEach(([arg, description]) => {
   const result = Temporal.ZonedDateTime.from(arg);
 
-  assert.sameValue(
-    result.calendar.toString(),
-    "iso8601",
-    `calendar annotation (${description})`
-  );
+  assert.sameValue(result.calendarId, "iso8601", `calendar annotation (${description})`);
 });

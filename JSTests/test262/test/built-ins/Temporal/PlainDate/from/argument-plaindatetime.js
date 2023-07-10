@@ -17,5 +17,5 @@ features: [Temporal]
 TemporalHelpers.checkPlainDateTimeConversionFastPath((datetime, calendar) => {
   const result = Temporal.PlainDate.from(datetime);
   TemporalHelpers.assertPlainDate(result, 2000, 5, "M05", 2);
-  assert.sameValue(result.calendar, calendar, "calendar result");
+  assert.sameValue(result.getCalendar(), calendar, "calendar result");
 });

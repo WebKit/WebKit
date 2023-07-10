@@ -25,7 +25,7 @@ info: |
 
   The host may use this hook to add properties to the ShadowRealm's global
   object. Those properties must be configurable.
-features: [ShadowRealm]
+features: [ShadowRealm, Array.prototype.includes]
 ---*/
 
 assert.sameValue(

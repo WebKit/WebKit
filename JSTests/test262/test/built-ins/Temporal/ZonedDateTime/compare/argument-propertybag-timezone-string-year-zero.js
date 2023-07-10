@@ -23,15 +23,4 @@ invalidStrings.forEach((timeZone) => {
     () => Temporal.ZonedDateTime.compare(datetime, { year: 2020, month: 5, day: 2, timeZone }),
     "reject minus zero as extended year (second argument)"
   );
-
-  assert.throws(
-    RangeError,
-    () => Temporal.ZonedDateTime.compare({ year: 2020, month: 5, day: 2, timeZone: { timeZone } }, datetime),
-    "reject minus zero as extended year (nested property, first argument)"
-  );
-  assert.throws(
-    RangeError,
-    () => Temporal.ZonedDateTime.compare(datetime, { year: 2020, month: 5, day: 2, timeZone: { timeZone } }),
-    "reject minus zero as extended year (nested property, second argument)"
-  );
 });

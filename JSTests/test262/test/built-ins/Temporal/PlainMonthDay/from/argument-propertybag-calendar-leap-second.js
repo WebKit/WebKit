@@ -10,18 +10,10 @@ features: [Temporal]
 
 const calendar = "2016-12-31T23:59:60";
 
-let arg = { monthCode: "M11", day: 18, calendar };
-const result1 = Temporal.PlainMonthDay.from(arg);
+const arg = { monthCode: "M11", day: 18, calendar };
+const result = Temporal.PlainMonthDay.from(arg);
 TemporalHelpers.assertPlainMonthDay(
-  result1,
+  result,
   "M11", 18,
   "leap second is a valid ISO string for calendar"
-);
-
-arg = { monthCode: "M11", day: 18, calendar: { calendar } };
-const result2 = Temporal.PlainMonthDay.from(arg);
-TemporalHelpers.assertPlainMonthDay(
-  result2,
-  "M11", 18,
-  "leap second is a valid ISO string for calendar (nested property)"
 );

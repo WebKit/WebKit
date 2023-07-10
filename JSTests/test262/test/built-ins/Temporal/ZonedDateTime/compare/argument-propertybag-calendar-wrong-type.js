@@ -17,36 +17,24 @@ const rangeErrorTests = [
   ["", "empty string"],
   [1, "number that doesn't convert to a valid ISO string"],
   [1n, "bigint"],
-  [new Temporal.TimeZone("UTC"), "time zone instance"],
 ];
 
 for (const [calendar, description] of rangeErrorTests) {
-  let arg = { year: 2019, monthCode: "M11", day: 1, calendar };
+  const arg = { year: 2019, monthCode: "M11", day: 1, calendar };
   assert.throws(RangeError, () => Temporal.ZonedDateTime.compare(arg, datetime), `${description} does not convert to a valid ISO string (first argument)`);
   assert.throws(RangeError, () => Temporal.ZonedDateTime.compare(datetime, arg), `${description} does not convert to a valid ISO string (second argument)`);
-
-  arg = { year: 2019, monthCode: "M11", day: 1, calendar: { calendar } };
-  assert.throws(RangeError, () => Temporal.ZonedDateTime.compare(arg, datetime), `${description} does not convert to a valid ISO string (nested property, first argument)`);
-  assert.throws(RangeError, () => Temporal.ZonedDateTime.compare(datetime, arg), `${description} does not convert to a valid ISO string (nested property, second argument)`);
 }
 
 const typeErrorTests = [
   [Symbol(), "symbol"],
-  [{}, "plain object"],  // TypeError due to missing dateFromFields()
-  [Temporal.Calendar, "Temporal.Calendar, object"],  // ditto
+  [{}, "plain object that doesn't implement the protocol"],
+  [new Temporal.TimeZone("UTC"), "time zone instance"],
+  [Temporal.Calendar, "Temporal.Calendar, object"],
   [Temporal.Calendar.prototype, "Temporal.Calendar.prototype, object"],  // fails brand check in dateFromFields()
 ];
 
 for (const [calendar, description] of typeErrorTests) {
-  let arg = { year: 2019, monthCode: "M11", day: 1, calendar };
+  const arg = { year: 2019, monthCode: "M11", day: 1, calendar };
   assert.throws(TypeError, () => Temporal.ZonedDateTime.compare(arg, datetime), `${description} is not a valid property bag and does not convert to a string (first argument)`);
   assert.throws(TypeError, () => Temporal.ZonedDateTime.compare(datetime, arg), `${description} is not a valid property bag and does not convert to a string (second argument)`);
-
-  arg = { year: 2019, monthCode: "M11", day: 1, calendar: { calendar } };
-  assert.throws(TypeError, () => Temporal.ZonedDateTime.compare(arg, datetime), `${description} is not a valid property bag and does not convert to a string (nested property, first argument)`);
-  assert.throws(TypeError, () => Temporal.ZonedDateTime.compare(datetime, arg), `${description} is not a valid property bag and does not convert to a string (nested property, second argument)`);
 }
-
-const arg = { year: 2019, monthCode: "M11", day: 1, calendar: { calendar: undefined } };
-assert.throws(RangeError, () => Temporal.ZonedDateTime.compare(arg, datetime), `nested undefined calendar property is always a RangeError (first argument)`);
-assert.throws(RangeError, () => Temporal.ZonedDateTime.compare(datetime, arg), `nested undefined calendar property is always a RangeError (second argument)`);

@@ -4,15 +4,39 @@
 /*---
 esid: sec-temporal.zoneddatetime.protoype.tostring
 description: Number of observable 'toString' calls on the calendar for each value of calendarName
+includes: [temporalHelpers.js]
 features: [Temporal]
 ---*/
 
 let calls;
 const customCalendar = {
-  toString() {
+  get id() {
     ++calls;
     return "custom";
-  }
+  },
+  toString() {
+    TemporalHelpers.assertUnreachable('toString should not be called');
+  },
+  dateAdd() {},
+  dateFromFields() {},
+  dateUntil() {},
+  day() {},
+  dayOfWeek() {},
+  dayOfYear() {},
+  daysInMonth() {},
+  daysInWeek() {},
+  daysInYear() {},
+  fields() {},
+  inLeapYear() {},
+  mergeFields() {},
+  month() {},
+  monthCode() {},
+  monthDayFromFields() {},
+  monthsInYear() {},
+  weekOfYear() {},
+  year() {},
+  yearMonthFromFields() {},
+  yearOfWeek() {},
 };
 const date = new Temporal.ZonedDateTime(1_000_000_000_987_654_321n, "UTC", customCalendar);
 [
@@ -24,6 +48,6 @@ const date = new Temporal.ZonedDateTime(1_000_000_000_987_654_321n, "UTC", custo
 ].forEach(([calendarName, expectedResult, expectedCalls]) => {
   calls = 0;
   const result = date.toString({ calendarName });
-  assert.sameValue(result, expectedResult, `toString output for calendarName = ${calendarName}`);
-  assert.sameValue(calls, expectedCalls, `calls to toString for calendarName = ${calendarName}`);
+  assert.sameValue(result, expectedResult, `id for calendarName = ${calendarName}`);
+  assert.sameValue(calls, expectedCalls, `calls to id getter for calendarName = ${calendarName}`);
 });

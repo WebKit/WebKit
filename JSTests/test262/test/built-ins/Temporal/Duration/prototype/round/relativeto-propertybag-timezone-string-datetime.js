@@ -11,7 +11,6 @@ const instance = new Temporal.Duration(1);
 
 let timeZone = "2021-08-19T17:30";
 assert.throws(RangeError, () => instance.round({ largestUnit: "months", relativeTo: { year: 2000, month: 5, day: 2, timeZone } }), "bare date-time string is not a time zone");
-assert.throws(RangeError, () => instance.round({ largestUnit: "months", relativeTo: { year: 2000, month: 5, day: 2, timeZone: { timeZone } } }), "bare date-time string is not a time zone");
 
 // The following are all valid strings so should not throw:
 
@@ -32,5 +31,4 @@ assert.throws(RangeError, () => instance.round({ largestUnit: "months", relative
   "2021-08-19T1730-0700[UTC]",
 ].forEach((timeZone) => {
   instance.round({ largestUnit: "months", relativeTo: { year: 2000, month: 5, day: 2, timeZone } });
-  instance.round({ largestUnit: "months", relativeTo: { year: 2000, month: 5, day: 2, timeZone: { timeZone } } });
 });

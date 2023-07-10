@@ -36,7 +36,6 @@ const expected = [
   "2000-01-01T00:00:00", // called once on the input relativeTo object
   "2001-02-09T00:00:00", // called once on relativeTo plus years, months, weeks, days from the receiver
   "2001-02-10T00:00:00", // called once on the previous value plus the calendar days difference between that and the time part of the duration
-  "2001-02-01T00:00:00", // called once on relativeTo plus the years, months, and weeks part of the balance result
 ];
 
 TemporalHelpers.checkTimeZonePossibleInstantsIterable((timeZone) => {

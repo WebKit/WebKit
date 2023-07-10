@@ -15,6 +15,7 @@ info: |
   ...
   19. Perform ? Set(O, "length", len - actualDeleteCount + itemCount, true).
   ...
+features: [exponentiation]
 ---*/
 
 var arrayLike = {};

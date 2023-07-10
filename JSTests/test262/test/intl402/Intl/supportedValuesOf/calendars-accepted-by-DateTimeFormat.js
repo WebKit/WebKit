@@ -22,7 +22,7 @@ info: |
     Intl.DateTimeFormat objects. The list must include "gregory".
 includes: [testIntl.js]
 locale: [en]
-features: [Intl-enumeration]
+features: [Intl-enumeration, Array.prototype.includes]
 ---*/
 
 const calendars = Intl.supportedValuesOf("calendar");

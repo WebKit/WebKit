@@ -16,7 +16,6 @@ const tests = [
   ["2000-05-02T15:23[!u-ca=iso8601]", "with ! and no time zone"],
   ["2000-05-02T15:23[UTC][!u-ca=iso8601]", "with ! and time zone"],
   ["2000-05-02T15:23[u-ca=iso8601][u-ca=discord]", "second annotation ignored"],
-  ["2000-05-02T15:23[u-ca=iso8601][!u-ca=discord]", "second annotation ignored even with !"],
 ];
 
 const instance = new Temporal.PlainDate(2000, 5, 2);

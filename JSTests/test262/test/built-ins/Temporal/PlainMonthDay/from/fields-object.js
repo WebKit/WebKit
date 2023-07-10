@@ -22,5 +22,5 @@ for (const [argument, description = argument] of tests) {
   const plainMonthDay = Temporal.PlainMonthDay.from(argument);
   assert.notSameValue(plainMonthDay, argument, `from ${description} converts`);
   TemporalHelpers.assertPlainMonthDay(plainMonthDay, "M10", 1, `from ${description}`);
-  assert.sameValue(plainMonthDay.calendar.id, "iso8601", `from ${description} calendar`);
+  assert.sameValue(plainMonthDay.calendarId, "iso8601", `from ${description} calendar`);
 }

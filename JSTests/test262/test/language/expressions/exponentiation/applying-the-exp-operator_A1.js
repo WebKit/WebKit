@@ -4,6 +4,7 @@
 /*---
 esid: sec-applying-the-exp-operator
 description: If exponent is NaN, the result is NaN.
+features: [exponentiation]
 ---*/
 
 var exponent = NaN;

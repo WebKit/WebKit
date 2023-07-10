@@ -56,5 +56,4 @@ const fields = TemporalHelpers.propertyBagObserver(actual, {
 }, "fields");
 const result = instance.subtract(fields);
 TemporalHelpers.assertPlainTime(result, 11, 33, 55, 986, 653, 320);
-assert.sameValue(result.calendar.id, "iso8601", "calendar result");
 assert.compareArray(actual, expected, "order of operations");

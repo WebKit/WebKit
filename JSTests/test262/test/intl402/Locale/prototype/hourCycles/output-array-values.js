@@ -13,7 +13,7 @@ info: |
   be lower case String values indicating either the 12-hour format ("h11",
   "h12") or the 24-hour format ("h23", "h24"), sorted in descending preference
   of those in common use for date and time formatting in locale.
-features: [Intl.Locale,Intl.Locale-info]
+features: [Intl.Locale, Intl.Locale-info, Array.prototype.includes]
 ---*/
 
 const output = new Intl.Locale('en').hourCycles;

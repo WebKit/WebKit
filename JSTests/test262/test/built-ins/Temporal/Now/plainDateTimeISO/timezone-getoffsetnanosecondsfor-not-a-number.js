@@ -21,6 +21,8 @@ for (const dateTime of invalidValues) {
   let callCount = 0;
 
   const timeZone = {
+    id: 'Etc/Test',
+    getPossibleInstantsFor() { return []; },
     getOffsetNanosecondsFor(instant, calendar) {
       callCount += 1;
       return dateTime;

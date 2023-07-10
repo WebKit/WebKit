@@ -25,7 +25,7 @@ info: |
     value of every row of Table 4, except the header row.
 includes: [testIntl.js]
 locale: [en]
-features: [Intl-enumeration, Intl.RelativeTimeFormat]
+features: [Intl-enumeration, Intl.RelativeTimeFormat, Array.prototype.includes]
 ---*/
 
 const numberingSystems = Intl.supportedValuesOf("numberingSystem");

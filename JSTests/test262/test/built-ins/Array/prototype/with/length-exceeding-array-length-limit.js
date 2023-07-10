@@ -17,7 +17,7 @@ info: |
   ArrayCreate ( length [, proto ] )
 
   1. If length > 2 ** 32 - 1, throw a RangeError exception.
-features: [change-array-by-copy]
+features: [change-array-by-copy, exponentiation]
 ---*/
 
 // Object with large "length" property

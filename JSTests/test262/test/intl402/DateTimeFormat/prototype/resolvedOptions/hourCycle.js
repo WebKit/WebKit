@@ -10,6 +10,7 @@ info: |
   12.4.5 Intl.DateTimeFormat.prototype.resolvedOptions()
 
 includes: [propertyHelper.js]
+features: [Array.prototype.includes]
 ---*/
 
 /* Values passed via unicode extension key work */

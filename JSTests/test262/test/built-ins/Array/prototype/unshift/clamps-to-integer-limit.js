@@ -11,6 +11,7 @@ info: |
   3. Let argCount be the number of actual arguments.
   4. If argCount > 0, then ...
   5. Perform ? Set(O, "length", len+argCount, true).
+features: [exponentiation]
 ---*/
 
 var arrayLike = {};

@@ -12,9 +12,7 @@ const expected = [
   "get options.calendarName",
   "get options.calendarName.toString",
   "call options.calendarName.toString",
-  "get this.calendar[Symbol.toPrimitive]",
-  "get this.calendar.toString",
-  "call this.calendar.toString",
+  "get this.calendar.id",
 ];
 const actual = [];
 

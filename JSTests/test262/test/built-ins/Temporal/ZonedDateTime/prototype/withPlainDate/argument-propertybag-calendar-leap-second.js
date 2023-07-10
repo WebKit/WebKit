@@ -12,18 +12,10 @@ const instance = new Temporal.ZonedDateTime(1_000_000_000_000_000_000n, timeZone
 
 const calendar = "2016-12-31T23:59:60+00:00[UTC]";
 
-let arg = { year: 1976, monthCode: "M11", day: 18, calendar };
-const result1 = instance.withPlainDate(arg);
+const arg = { year: 1976, monthCode: "M11", day: 18, calendar };
+const result = instance.withPlainDate(arg);
 assert.sameValue(
-  result1.epochNanoseconds,
+  result.epochNanoseconds,
   217_129_600_000_000_000n,
   "leap second is a valid ISO string for calendar"
-);
-
-arg = { year: 1976, monthCode: "M11", day: 18, calendar: { calendar } };
-const result2 = instance.withPlainDate(arg);
-assert.sameValue(
-  result2.epochNanoseconds,
-  217_129_600_000_000_000n,
-  "leap second is a valid ISO string for calendar (nested property)"
 );

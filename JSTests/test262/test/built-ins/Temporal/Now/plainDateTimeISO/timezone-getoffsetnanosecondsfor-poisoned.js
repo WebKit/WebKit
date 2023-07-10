@@ -7,6 +7,8 @@ features: [Temporal]
 ---*/
 
 var timeZone = {
+  id: 'Etc/Test',
+  getPossibleInstantsFor() { return []; },
   get getOffsetNanosecondsFor() {
     throw new Test262Error();
   }

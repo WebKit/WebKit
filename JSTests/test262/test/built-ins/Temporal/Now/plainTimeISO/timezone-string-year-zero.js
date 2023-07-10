@@ -17,9 +17,4 @@ invalidStrings.forEach((timeZone) => {
     () => Temporal.Now.plainTimeISO(timeZone),
     "reject minus zero as extended year"
   );
-  assert.throws(
-    RangeError,
-    () => Temporal.Now.plainTimeISO({ timeZone }),
-    "reject minus zero as extended year (nested property)"
-  );
 });

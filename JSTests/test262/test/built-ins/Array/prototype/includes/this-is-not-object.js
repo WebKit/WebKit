@@ -9,6 +9,7 @@ info: |
 
   1. Let O be ? ToObject(this value).
   ...
+features: [Array.prototype.includes]
 ---*/
 
 var includes = Array.prototype.includes;

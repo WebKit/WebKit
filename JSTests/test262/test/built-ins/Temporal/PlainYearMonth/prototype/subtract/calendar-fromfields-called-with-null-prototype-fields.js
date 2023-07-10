@@ -12,5 +12,5 @@ features: [Temporal]
 const calendar = TemporalHelpers.calendarCheckFieldsPrototypePollution();
 const instance = new Temporal.PlainYearMonth(2000, 5, calendar);
 instance.subtract(new Temporal.Duration(1));
-assert.sameValue(calendar.dateFromFieldsCallCount, 1, "dateFromFields should have been called on the calendar");
+assert.sameValue(calendar.dateFromFieldsCallCount, 2, "dateFromFields should have been called twice on the calendar");
 assert.sameValue(calendar.yearMonthFromFieldsCallCount, 1, "yearMonthFromFields should have been called on the calendar");

@@ -12,18 +12,10 @@ const instance = new Temporal.PlainTime(12, 34, 56, 987, 654, 321);
 
 const calendar = "2016-12-31T23:59:60";
 
-let arg = { year: 1976, monthCode: "M11", day: 18, calendar };
-const result1 = instance.toPlainDateTime(arg);
+const arg = { year: 1976, monthCode: "M11", day: 18, calendar };
+const result = instance.toPlainDateTime(arg);
 TemporalHelpers.assertPlainDateTime(
-  result1,
+  result,
   1976, 11, "M11", 18, 12, 34, 56, 987, 654, 321,
   "leap second is a valid ISO string for calendar"
-);
-
-arg = { year: 1976, monthCode: "M11", day: 18, calendar: { calendar } };
-const result2 = instance.toPlainDateTime(arg);
-TemporalHelpers.assertPlainDateTime(
-  result2,
-  1976, 11, "M11", 18, 12, 34, 56, 987, 654, 321,
-  "leap second is a valid ISO string for calendar (nested property)"
 );

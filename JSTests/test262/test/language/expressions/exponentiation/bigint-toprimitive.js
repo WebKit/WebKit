@@ -3,7 +3,7 @@
 /*---
 description: exponentiation operator ToNumeric with BigInt operands
 esid: sec-exp-operator-runtime-semantics-evaluation
-features: [BigInt, Symbol.toPrimitive, computed-property-names]
+features: [BigInt, Symbol.toPrimitive, computed-property-names, exponentiation]
 ---*/
 function err() {
   throw new Test262Error();

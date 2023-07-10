@@ -5,7 +5,7 @@
 esid: sec-temporal.timezone.prototype.getoffsetnanosecondsfor
 description: >
   Test offset when nanoseconds are subtracted or added from DST transition.
-features: [Temporal]
+features: [Temporal, exponentiation]
 ---*/
 
 // From <https://github.com/eggert/tz/blob/main/northamerica>:

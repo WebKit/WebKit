@@ -12,7 +12,7 @@ function test(isoString, components) {
   var yearMonth = Temporal.PlainYearMonth.from(isoString);
   assert.sameValue(yearMonth.year, y);
   assert.sameValue(yearMonth.month, m);
-  assert.sameValue(yearMonth.calendar.id, cid);
+  assert.sameValue(yearMonth.calendarId, cid);
 }
 function generateTest(dateTimeString, zoneString) {
   var components = [

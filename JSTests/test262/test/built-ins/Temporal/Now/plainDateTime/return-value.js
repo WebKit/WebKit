@@ -8,6 +8,8 @@ features: [BigInt, Temporal]
 const calendar = Temporal.Calendar.from('iso8601');
 
 const timeZone = {
+  id: 'Etc/Test',
+  getPossibleInstantsFor() { return []; },
   getOffsetNanosecondsFor(instant) {
     return -Number(instant.epochNanoseconds % 86400000000000n);
   }

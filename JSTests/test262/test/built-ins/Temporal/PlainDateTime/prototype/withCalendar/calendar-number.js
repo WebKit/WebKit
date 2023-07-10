@@ -7,12 +7,34 @@ description: A number is converted to a string, then to Temporal.Calendar
 features: [Temporal]
 ---*/
 
-const instance = new Temporal.PlainDateTime(1976, 11, 18, 15, 23, 30, 123, 456, 789, { id: "replace-me" });
+const instance = new Temporal.PlainDateTime(1976, 11, 18, 15, 23, 30, 123, 456, 789, {
+  dateAdd() {},
+  dateFromFields() {},
+  dateUntil() {},
+  day() {},
+  dayOfWeek() {},
+  dayOfYear() {},
+  daysInMonth() {},
+  daysInWeek() {},
+  daysInYear() {},
+  fields() {},
+  id: "replace-me",
+  inLeapYear() {},
+  mergeFields() {},
+  month() {},
+  monthCode() {},
+  monthDayFromFields() {},
+  monthsInYear() {},
+  weekOfYear() {},
+  year() {},
+  yearMonthFromFields() {},
+  yearOfWeek() {},
+});
 
 const arg = 19761118;
 
 const result = instance.withCalendar(arg);
-assert.sameValue(result.calendar.id, "iso8601", "19761118 is a valid ISO string for Calendar");
+assert.sameValue(result.calendarId, "iso8601", "19761118 is a valid ISO string for Calendar");
 
 const numbers = [
   1,

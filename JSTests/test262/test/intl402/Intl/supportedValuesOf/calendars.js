@@ -21,7 +21,7 @@ info: |
     calendars for which the implementation provides the functionality of
     Intl.DateTimeFormat objects. The list must include "gregory".
 includes: [compareArray.js]
-features: [Intl-enumeration, Intl.Locale]
+features: [Intl-enumeration, Intl.Locale, Array.prototype.includes]
 ---*/
 
 const calendars = Intl.supportedValuesOf("calendar");

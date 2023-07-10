@@ -16,11 +16,27 @@ const cal = {
   year() { return 2008; },
   month() { return 9; },
   monthCode() { return "M09"; },
-  day() { return 6; }
+  day() { return 6; },
+  dateAdd() {},
+  dateFromFields() {},
+  dateUntil() {},
+  dayOfWeek() {},
+  dayOfYear() {},
+  daysInMonth() {},
+  daysInWeek() {},
+  daysInYear() {},
+  fields() {},
+  inLeapYear() {},
+  mergeFields() {},
+  monthDayFromFields() {},
+  monthsInYear() {},
+  weekOfYear() {},
+  yearMonthFromFields() {},
+  yearOfWeek() {},
 };
 const pdt = new Temporal.PlainDateTime(1995, 12, 7, 3, 24, 30, 0, 0, 0, cal);
 const pd = new Temporal.PlainDate(2010, 11, 12);
-assert.sameValue(pd.calendar.toString(), "iso8601", "PlainDate with ISO calendar");
+assert.sameValue(pd.calendarId, "iso8601", "PlainDate with ISO calendar");
 const shifted = pdt.withPlainDate(pd);
 
 TemporalHelpers.assertPlainDateTime(
@@ -32,7 +48,7 @@ TemporalHelpers.assertPlainDateTime(
 );
 
 assert.sameValue(
-  shifted.calendar,
+  shifted.getCalendar(),
   cal,
   "calendar is unchanged if input has ISO calendar (2)"
 );

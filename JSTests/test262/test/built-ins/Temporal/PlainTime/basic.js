@@ -11,4 +11,3 @@ features: [Temporal]
 const args = [15, 23, 30, 123, 456, 789];
 const plainTime = new Temporal.PlainTime(...args);
 TemporalHelpers.assertPlainTime(plainTime, ...args);
-assert.sameValue(plainTime.calendar.id, "iso8601", "calendar");

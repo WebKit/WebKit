@@ -6,6 +6,7 @@ esid: sec-applying-the-exp-operator
 description: >
     Using -(2**31) as exponent with the exponentiation operator should behave
     as expected.
+features: [exponentiation]
 ---*/
 
 const INT32_MIN = -2147483648;

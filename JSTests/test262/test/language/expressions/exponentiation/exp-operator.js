@@ -6,6 +6,7 @@ author: Rick Waldron
 esid: sec-exp-operator
 description: >
     Performs exponential calculation on operands. Same algorithm as %MathPow%(base, exponent)
+features: [exponentiation]
 ---*/
 
 var exponent = 2;

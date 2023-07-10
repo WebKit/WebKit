@@ -13,6 +13,24 @@ const customCalendar = {
   month() { return 2; },
   day() { return 5; },
   toString() { return "custom-calendar"; },
+  dateAdd() {},
+  dateFromFields() {},
+  dateUntil() {},
+  dayOfWeek() {},
+  dayOfYear() {},
+  daysInMonth() {},
+  daysInWeek() {},
+  daysInYear() {},
+  fields() {},
+  id: "custom-calendar",
+  inLeapYear() {},
+  mergeFields() {},
+  monthCode() {},
+  monthDayFromFields() {},
+  monthsInYear() {},
+  weekOfYear() {},
+  yearMonthFromFields() {},
+  yearOfWeek() {},
 };
 
 TemporalHelpers.checkSubclassingIgnored(
@@ -31,6 +49,6 @@ TemporalHelpers.checkSubclassingIgnored(
     assert.sameValue(result.millisecond, 0, "millisecond result");
     assert.sameValue(result.microsecond, 0, "microsecond result");
     assert.sameValue(result.nanosecond, 10, "nanosecond result");
-    assert.sameValue(result.calendar, customCalendar, "calendar result");
+    assert.sameValue(result.getCalendar(), customCalendar, "calendar result");
   },
 );

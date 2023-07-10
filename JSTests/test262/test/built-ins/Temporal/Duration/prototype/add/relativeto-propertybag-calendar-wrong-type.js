@@ -18,20 +18,17 @@ const rangeErrorTests = [
   ["", "empty string"],
   [1, "number that doesn't convert to a valid ISO string"],
   [1n, "bigint"],
-  [new Temporal.TimeZone("UTC"), "time zone instance"],
 ];
 
 for (const [calendar, description] of rangeErrorTests) {
-  let relativeTo = { year: 2019, monthCode: "M11", day: 1, calendar };
+  const relativeTo = { year: 2019, monthCode: "M11", day: 1, calendar };
   assert.throws(RangeError, () => instance.add(new Temporal.Duration(0, 0, 0, 0, -24), { relativeTo }), `${description} does not convert to a valid ISO string`);
-
-  relativeTo = { year: 2019, monthCode: "M11", day: 1, calendar: { calendar } };
-  assert.throws(RangeError, () => instance.add(new Temporal.Duration(0, 0, 0, 0, -24), { relativeTo }), `${description} does not convert to a valid ISO string (nested property)`);
 }
 
 const typeErrorTests = [
   [Symbol(), "symbol"],
-  [{}, "plain object"],
+  [{}, "plain object that doesn't implement the protocol"],
+  [new Temporal.TimeZone("UTC"), "time zone instance"],
   [Temporal.PlainDate, "Temporal.PlainDate, object"],
   [Temporal.PlainDate.prototype, "Temporal.PlainDate.prototype, object"],
   [Temporal.ZonedDateTime, "Temporal.ZonedDateTime, object"],
@@ -39,12 +36,6 @@ const typeErrorTests = [
 ];
 
 for (const [calendar, description] of typeErrorTests) {
-  let relativeTo = { year: 2019, monthCode: "M11", day: 1, calendar };
+  const relativeTo = { year: 2019, monthCode: "M11", day: 1, calendar };
   assert.throws(TypeError, () => instance.add(new Temporal.Duration(0, 0, 0, 0, -24), { relativeTo }), `${description} is not a valid property bag and does not convert to a string`);
-
-  relativeTo = { year: 2019, monthCode: "M11", day: 1, calendar: { calendar } };
-  assert.throws(TypeError, () => instance.add(new Temporal.Duration(0, 0, 0, 0, -24), { relativeTo }), `${description} is not a valid property bag and does not convert to a string (nested property)`);
 }
-
-const relativeTo = { year: 2019, monthCode: "M11", day: 1, calendar: { calendar: undefined } };
-assert.throws(RangeError, () => instance.add(new Temporal.Duration(0, 0, 0, 0, -24), { relativeTo }), `nested undefined calendar property is always a RangeError`);

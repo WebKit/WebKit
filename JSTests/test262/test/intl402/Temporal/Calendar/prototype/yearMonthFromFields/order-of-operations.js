@@ -68,5 +68,5 @@ const arg2 = new Proxy(options, {
 
 const result = instance.yearMonthFromFields(arg1, arg2);
 TemporalHelpers.assertPlainYearMonth(result, 1, 1, "M01", "yearMonth result", "ce", 1);
-assert.sameValue(result.calendar, instance, "calendar result");
+assert.sameValue(result.getISOFields().calendar, "gregory", "calendar slot should store a string");
 assert.compareArray(actual, expected, "order of operations");

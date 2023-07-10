@@ -12,7 +12,7 @@ const instance = new Temporal.TimeZone("UTC");
 const arg = 19761118;
 
 const result = instance.getPlainDateTimeFor(new Temporal.Instant(0n), arg);
-assert.sameValue(result.calendar.id, "iso8601", "19761118 is a valid ISO string for Calendar");
+assert.sameValue(result.calendarId, "iso8601", "19761118 is a valid ISO string for Calendar");
 
 const numbers = [
   1,

@@ -25,13 +25,16 @@ const expected = [
 ];
 const options = TemporalHelpers.propertyBagObserver(actual, { extra: 5 }, "options");
 
+let dateAddCalls = 0;
 class CustomCalendar extends Temporal.Calendar {
   constructor() {
     super("iso8601");
   }
   dateAdd(date, duration, options) {
     const result = super.dateAdd(date, duration, options);
-    options.overflow = 'meatloaf';
+    dateAddCalls++;
+    if (dateAddCalls == 3)
+      options.overflow = 'meatloaf';
     return result;
   }
   yearMonthFromFields(...args) {

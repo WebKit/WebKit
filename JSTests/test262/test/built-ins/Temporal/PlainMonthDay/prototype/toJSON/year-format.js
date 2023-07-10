@@ -11,7 +11,7 @@ features: [Temporal]
 // the calendar is not ISO 8601
 class NotISO extends Temporal.Calendar {
   constructor() { super("iso8601"); }
-  toString() { return "not-iso"; }
+  get id() { return "not-iso"; }
 }
 const calendar = new NotISO();
 

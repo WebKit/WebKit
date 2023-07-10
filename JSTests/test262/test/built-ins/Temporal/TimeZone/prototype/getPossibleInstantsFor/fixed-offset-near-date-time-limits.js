@@ -5,7 +5,7 @@
 esid: sec-temporal.timezone.prototype.getpossibleinstantsfor
 description: >
   Call getPossibleInstantsFor with values near the date/time limit and a fixed offset.
-features: [Temporal]
+features: [Temporal, exponentiation]
 ---*/
 
 const oneHour = 1n * 60n * 60n * 1000n**3n;

@@ -12,9 +12,6 @@ const expected = [
   "get options.overflow",
   "get options.overflow.toString",
   "call options.overflow.toString",
-  "get fields.calendar",
-  "get fields.calendar.toString",
-  "call fields.calendar.toString",
   // ToTemporalTimeRecord
   "get fields.hour",
   "get fields.hour.valueOf",

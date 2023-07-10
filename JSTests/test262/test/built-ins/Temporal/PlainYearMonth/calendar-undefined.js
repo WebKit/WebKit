@@ -16,7 +16,7 @@ Object.defineProperty(Temporal.Calendar, "from", {
 });
 
 const dateExplicit = new Temporal.PlainYearMonth(...args, undefined);
-assert.sameValue(dateExplicit.calendar.toString(), "iso8601");
+assert.sameValue(dateExplicit.calendarId, "iso8601");
 
 const dateImplicit = new Temporal.PlainYearMonth(...args);
-assert.sameValue(dateImplicit.calendar.toString(), "iso8601");
+assert.sameValue(dateImplicit.calendarId, "iso8601");

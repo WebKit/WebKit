@@ -11,10 +11,6 @@ const instance = new Temporal.Calendar("iso8601");
 
 const calendar = "IsO8601";
 
-let arg = { year: 1976, monthCode: "M11", day: 18, calendar };
-const result1 = instance.era(arg);
-assert.sameValue(result1, undefined, "Calendar is case-insensitive");
-
-arg = { year: 1976, monthCode: "M11", day: 18, calendar: { calendar } };
-const result2 = instance.era(arg);
-assert.sameValue(result2, undefined, "Calendar is case-insensitive (nested property)");
+const arg = { year: 1976, monthCode: "M11", day: 18, calendar };
+const result = instance.era(arg);
+assert.sameValue(result, undefined, "Calendar is case-insensitive");

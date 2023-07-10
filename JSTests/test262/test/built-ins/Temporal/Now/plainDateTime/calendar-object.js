@@ -9,26 +9,33 @@ features: [Proxy, Temporal]
 ---*/
 
 const actual = [];
-const expectedWithout = [
-  'has calendar.calendar',
-  'get calendar.calendar',
-  'has nestedCalendar.calendar'
+const expected = [
+  "has calendar.dateAdd",
+  "has calendar.dateFromFields",
+  "has calendar.dateUntil",
+  "has calendar.day",
+  "has calendar.dayOfWeek",
+  "has calendar.dayOfYear",
+  "has calendar.daysInMonth",
+  "has calendar.daysInWeek",
+  "has calendar.daysInYear",
+  "has calendar.fields",
+  "has calendar.id",
+  "has calendar.inLeapYear",
+  "has calendar.mergeFields",
+  "has calendar.month",
+  "has calendar.monthCode",
+  "has calendar.monthDayFromFields",
+  "has calendar.monthsInYear",
+  "has calendar.weekOfYear",
+  "has calendar.year",
+  "has calendar.yearMonthFromFields",
+  "has calendar.yearOfWeek",
 ];
-const expectedWith = [
-  'has calendar.calendar',
-  'get calendar.calendar',
-  'has nestedCalendar.calendar',
-  'get nestedCalendar[Symbol.toPrimitive]',
-  'get nestedCalendar.toString',
-  'call nestedCalendar.toString'
-];
-const nestedCalendar = TemporalHelpers.calendarObserver(actual, "nestedCalendar", {
-  toString: "iso8601",
-});
+
 const calendar = TemporalHelpers.calendarObserver(actual, "calendar", {
   toString: "iso8601",
 });
-calendar.calendar = nestedCalendar;
 
 Object.defineProperty(Temporal.Calendar, 'from', {
   get() {
@@ -39,11 +46,4 @@ Object.defineProperty(Temporal.Calendar, 'from', {
 
 Temporal.Now.plainDateTime(calendar);
 
-assert.compareArray(actual, expectedWithout, 'Observable interactions without `calendar` property');
-
-actual.length = 0;
-nestedCalendar.calendar = null;
-
-Temporal.Now.plainDateTime(calendar);
-
-assert.compareArray(actual, expectedWith, 'Observable interactions with `calendar` property');
+assert.compareArray(actual, expected, 'order of observable operations');

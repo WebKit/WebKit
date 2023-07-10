@@ -13,7 +13,7 @@ function test(isoString, components) {
     assert.sameValue(date.year, y);
     assert.sameValue(date.month, m);
     assert.sameValue(date.day, d);
-    assert.sameValue(date.calendar.id, cid);
+    assert.sameValue(date.calendarId, cid);
 }
 function generateTest(dateTimeString, zoneString) {
   var components = [

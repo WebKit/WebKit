@@ -11,13 +11,9 @@ const instance = new Temporal.TimeZone("UTC");
 
 const calendar = 19970327;
 
-let arg = { year: 1976, monthCode: "M11", day: 18, calendar };
-const result1 = instance.getInstantFor(arg);
-assert.sameValue(result1.epochNanoseconds, 217_123_200_000_000_000n, "19970327 is a valid ISO string for calendar");
-
-arg = { year: 1976, monthCode: "M11", day: 18, calendar: { calendar } };
-const result2 = instance.getInstantFor(arg);
-assert.sameValue(result2.epochNanoseconds, 217_123_200_000_000_000n, "19970327 is a valid ISO string for calendar (nested property)");
+const arg = { year: 1976, monthCode: "M11", day: 18, calendar };
+const result = instance.getInstantFor(arg);
+assert.sameValue(result.epochNanoseconds, 217_123_200_000_000_000n, "19970327 is a valid ISO string for calendar");
 
 const numbers = [
   1,
@@ -26,16 +22,10 @@ const numbers = [
 ];
 
 for (const calendar of numbers) {
-  let arg = { year: 1976, monthCode: "M11", day: 18, calendar };
+  const arg = { year: 1976, monthCode: "M11", day: 18, calendar };
   assert.throws(
     RangeError,
     () => instance.getInstantFor(arg),
     `Number ${calendar} does not convert to a valid ISO string for calendar`
-  );
-  arg = { year: 1976, monthCode: "M11", day: 18, calendar: { calendar } };
-  assert.throws(
-    RangeError,
-    () => instance.getInstantFor(arg),
-    `Number ${calendar} does not convert to a valid ISO string for calendar (nested property)`
   );
 }

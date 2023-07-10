@@ -23,7 +23,7 @@ info: |
     for which the implementation provides the functionality of Intl.DisplayNames
     and Intl.NumberFormat objects.
 locale: [en]
-features: [Intl-enumeration, Intl.DisplayNames]
+features: [Intl-enumeration, Intl.DisplayNames, Array.prototype.includes]
 ---*/
 
 const currencies = Intl.supportedValuesOf("currency");

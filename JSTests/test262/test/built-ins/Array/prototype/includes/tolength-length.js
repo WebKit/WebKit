@@ -17,6 +17,7 @@ info: |
   2. If len ≤ +0, return +0.
   3. If len is +∞, return 253-1.
   4. Return min(len, 253-1).
+features: [Array.prototype.includes]
 ---*/
 
 var obj = {

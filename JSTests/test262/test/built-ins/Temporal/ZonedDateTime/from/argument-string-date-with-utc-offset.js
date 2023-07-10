@@ -18,7 +18,7 @@ for (const arg of validStrings) {
   const result = Temporal.ZonedDateTime.from(arg);
 
   assert.sameValue(
-    result.timeZone.toString(),
+    result.timeZoneId,
     "UTC",
     `"${arg}" is a valid UTC offset with time for ZonedDateTime`
   );

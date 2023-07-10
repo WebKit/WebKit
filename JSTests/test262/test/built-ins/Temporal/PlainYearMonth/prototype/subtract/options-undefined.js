@@ -12,10 +12,12 @@ features: [Temporal]
 class CheckedAdd extends Temporal.Calendar {
   constructor() {
     super("iso8601");
+    this.called = 0;
   }
   dateAdd(date, duration, options, constructor) {
-    this.called = true;
-    assert.notSameValue(options, undefined, "options not undefined");
+    this.called += 1;
+    if (this.called == 3)
+      assert.notSameValue(options, undefined, "options not undefined");
     return super.dateAdd(date, duration, options, constructor);
   }
 }
@@ -25,6 +27,8 @@ const yearmonth = new Temporal.PlainYearMonth(2000, 3, calendar);
 const duration = { months: 1 };
 
 yearmonth.subtract(duration, undefined);
-yearmonth.subtract(duration);
+assert(calendar.called == 3);
 
-assert(calendar.called);
+calendar.called = 0;
+yearmonth.subtract(duration);
+assert(calendar.called == 3);

@@ -10,7 +10,9 @@ features: [Temporal]
 
 const actual = [];
 const expected = [
-  "has timeZone.timeZone",
+  "has timeZone.getOffsetNanosecondsFor",
+  "has timeZone.getPossibleInstantsFor",
+  "has timeZone.id",
 ];
 
 const instant = Temporal.Instant.from("1975-02-02T14:25:36.123456789Z");

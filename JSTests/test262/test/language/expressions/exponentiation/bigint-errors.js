@@ -3,7 +3,7 @@
 /*---
 description: exponentiation operator ToNumeric with BigInt operands
 esid: sec-exp-operator-runtime-semantics-evaluation
-features: [BigInt, Symbol, Symbol.toPrimitive, computed-property-names]
+features: [BigInt, Symbol, Symbol.toPrimitive, computed-property-names, exponentiation]
 ---*/
 assert.throws(TypeError, function() {
   Symbol('1') ** 0n;

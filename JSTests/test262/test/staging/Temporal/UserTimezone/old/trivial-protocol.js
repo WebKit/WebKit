@@ -18,9 +18,7 @@ var obj = {
     var epochNs = MakeDate(dayNum, time);
     return [new Temporal.Instant(epochNs)];
   },
-  toString() {
-    return "Etc/Custom/UTC_Protocol";
-  }
+  id: "Etc/Custom/UTC_Protocol",
 };
 var inst = Temporal.Instant.fromEpochNanoseconds(0n);
 
@@ -32,7 +30,29 @@ var zdt = new Temporal.ZonedDateTime(0n, obj);
 assert.sameValue(zdt.toString(), "1970-01-01T00:00:00+00:00[Etc/Custom/UTC_Protocol]");
 
 // works in Temporal.Now
-var fakeGregorian = { toString() { return "gregory"; }};
+var fakeGregorian = {
+  dateAdd() {},
+  dateFromFields() {},
+  dateUntil() {},
+  day() {},
+  dayOfWeek() {},
+  dayOfYear() {},
+  daysInMonth() {},
+  daysInWeek() {},
+  daysInYear() {},
+  fields() {},
+  id: "gregory",
+  inLeapYear() {},
+  mergeFields() {},
+  month() {},
+  monthCode() {},
+  monthDayFromFields() {},
+  monthsInYear() {},
+  weekOfYear() {},
+  year() {},
+  yearMonthFromFields() {},
+  yearOfWeek() {},
+};
 assert(Temporal.Now.plainDateTimeISO(obj) instanceof Temporal.PlainDateTime);
 assert(Temporal.Now.plainDateTime(fakeGregorian, obj) instanceof Temporal.PlainDateTime);
 assert(Temporal.Now.plainDateISO(obj) instanceof Temporal.PlainDate);

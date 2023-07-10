@@ -8,7 +8,7 @@ info: |
     Intl.Segmenter ([ locales [ , options ]])
 
     3. Let _requestedLocales_ be ? CanonicalizeLocaleList(_locales_).
-features: [Intl.Segmenter]
+features: [Intl.Segmenter, Array.prototype.includes]
 ---*/
 
 const defaultLocale = new Intl.Segmenter().resolvedOptions().locale;

@@ -10,10 +10,6 @@ features: [Temporal]
 
 const calendar = "IsO8601";
 
-let arg = { monthCode: "M11", day: 18, calendar };
-const result1 = Temporal.PlainMonthDay.from(arg);
-TemporalHelpers.assertPlainMonthDay(result1, "M11", 18, "Calendar is case-insensitive");
-
-arg = { monthCode: "M11", day: 18, calendar: { calendar } };
-const result2 = Temporal.PlainMonthDay.from(arg);
-TemporalHelpers.assertPlainMonthDay(result2, "M11", 18, "Calendar is case-insensitive (nested property)");
+const arg = { monthCode: "M11", day: 18, calendar };
+const result = Temporal.PlainMonthDay.from(arg);
+TemporalHelpers.assertPlainMonthDay(result, "M11", 18, "Calendar is case-insensitive");

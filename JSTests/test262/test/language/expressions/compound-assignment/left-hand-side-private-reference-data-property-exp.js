@@ -4,7 +4,7 @@
 /*---
 description: Compound exponentiation assignment with target being a private reference (to a field)
 esid: sec-assignment-operators-runtime-semantics-evaluation
-features: [class-fields-private]
+features: [exponentiation, class-fields-private]
 flags: [generated]
 info: |
     sec-assignment-operators-runtime-semantics-evaluation

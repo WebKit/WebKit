@@ -12,7 +12,7 @@ description: >
     If n equals 4, return true.
     If n equals 8, return AR.[[IsLockFree8]].
     Return false.
-features: [Atomics]
+features: [Atomics, Array.prototype.includes]
 ---*/
 
 // These are the only counts that we care about tracking.

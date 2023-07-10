@@ -36,9 +36,11 @@ info: |
                   SameValue(resolution.[[BindingName]],
                   starResolution.[[BindingName]]) is false, return "ambiguous".
 negative:
-  phase: runtime
+  phase: resolution
   type: SyntaxError
 flags: [module]
 ---*/
+
+$DONOTEVALUATE();
 
 import { x as y } from './instn-named-err-ambiguous_FIXTURE.js';
