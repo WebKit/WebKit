@@ -160,7 +160,7 @@ public:
     constexpr iterator begin() const { return m_storage; }
     constexpr iterator end() const { return 0; }
 
-    constexpr explicit operator bool() { return !isEmpty(); }
+    constexpr explicit operator bool() const { return !isEmpty(); }
 
     constexpr bool contains(E option) const
     {
