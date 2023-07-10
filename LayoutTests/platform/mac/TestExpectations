@@ -2807,10 +2807,3 @@ webkit.org/b/251710 webaudio/AudioBuffer/huge-buffer.html [ Pass Timeout ]
 
 http/wpt/service-workers/basic-fetch-with-contentfilter-allow-after-adding-data.html [ Pass ]
 http/wpt/service-workers/basic-fetch-with-contentfilter.https.html [ Pass ]
-
-#rdar://108628398 ([ Branch EWS ] 5x imported/w3c/web-platform-tests/css/ (Layout-tests) are constant failures)
-imported/w3c/web-platform-tests/css/css-conditional/js/001.html [ Failure ]
-imported/w3c/web-platform-tests/css/css-nesting/cssom.html [ Failure ]
-imported/w3c/web-platform-tests/css/css-nesting/invalid-inner-rules.html [ Failure ]
-imported/w3c/web-platform-tests/css/css-nesting/parsing.html [ Failure ]
-imported/w3c/web-platform-tests/css/css-nesting/serialize-group-rules-with-decls.tentative.html [ Failure ]

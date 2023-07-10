@@ -4242,10 +4242,3 @@ imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/
 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-dynamics-compressor-connections.html [ Failure ]
 transforms/3d/hit-testing/overlapping-layers-hit-test.html [ Failure ]
 webaudio/ScriptProcessor/scriptprocessor-offlineaudiocontext.html [ Failure ]
-
-#rdar://108628398 ([ Branch EWS ] 5x imported/w3c/web-platform-tests/css/ (Layout-tests) are constant failures)
-imported/w3c/web-platform-tests/css/css-conditional/js/001.html [ Failure ]
-imported/w3c/web-platform-tests/css/css-nesting/cssom.html [ Failure ]
-imported/w3c/web-platform-tests/css/css-nesting/invalid-inner-rules.html [ Failure ]
-imported/w3c/web-platform-tests/css/css-nesting/parsing.html [ Failure ]
-imported/w3c/web-platform-tests/css/css-nesting/serialize-group-rules-with-decls.tentative.html [ Failure ]

@@ -6,8 +6,8 @@
 <style>
   .test {
     background-color: red;
-    width: 100px;
-    height: 100px;
+    width: 30px;
+    height: 30px;
     display: grid;
   }
 
@@ -80,10 +80,12 @@
     background-color: green !important;
   }
 
-  & {
-    :not(&).test-12 {
-      background-color: green;
-    }
+  /* & at top level counts as :scope, i.e. the root element here */
+  & .test-12 {
+    background-color: green;
+  }
+  & > .test-12 {
+    background-color: red !important;
   }
 
   body * + * {
@@ -106,5 +108,5 @@
   <div class="test test-9 t9-- t9-"><div></div></div>
   <div class="test test-10"><div></div></div>
   <div class="test test-11"><div></div></div>
-  <div class="test test-12"><div></div></div>
+  <div class="test test-12"></div>
 </body>

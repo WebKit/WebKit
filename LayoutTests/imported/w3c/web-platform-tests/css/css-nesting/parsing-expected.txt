@@ -13,6 +13,15 @@ PASS .foo {
   & > .bar { color: green; }
 }
 PASS .foo {
+  > .bar { color: green; }
+}
+PASS .foo {
+  > & .bar { color: green; }
+}
+PASS .foo {
+  + .bar & { color: green; }
+}
+PASS .foo {
   .test > & .bar { color: green; }
 }
 PASS .foo {
