@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<style>
+    body {
+        letter-spacing: 1000000000px;
+    }
+</style>
+<script>
+    onload = () => {
+        document.execCommand('SelectAll');
+
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            alert("Test passed because nothing crashed");
+        }
+    };
+</script>
+some text
+</html>

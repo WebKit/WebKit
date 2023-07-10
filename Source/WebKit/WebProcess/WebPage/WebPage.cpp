@@ -1362,6 +1362,9 @@ EditorState WebPage::editorState(ShouldPerformLayout shouldPerformLayout) const
     Ref frame = CheckedRef(m_page->focusController())->focusedOrMainFrame();
 
     EditorState result;
+    auto sanitizeEditorStateOnceCreated = makeScopeExit([&result] {
+        result.clipOwnedRectExtentsToNumericLimits();
+    });
 
 #if ENABLE(PDFKIT_PLUGIN)
     if (PluginView* pluginView = focusedPluginViewForFrame(frame)) {
@@ -4086,7 +4089,7 @@ IntPoint WebPage::screenToRootView(const IntPoint& point)
     
 IntRect WebPage::rootViewToScreen(const IntRect& rect)
 {
-    auto sendResult = sendSync(Messages::WebPageProxy::RootViewToScreen(rect));
+    auto sendResult = sendSync(Messages::WebPageProxy::RootViewToScreen(rect.toRectWithExtentsClippedToNumericLimits()));
     auto [screenRect] = sendResult.takeReplyOr(IntRect { });
     return screenRect;
 }
