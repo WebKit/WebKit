@@ -1184,5 +1184,24 @@ TEST(WKWebsiteDataStorePrivate, CompletionHandlerForRemovalFromNetworkProcess)
     EXPECT_EQ(completionHandlerNumber, 2u);
 }
 
+#if PLATFORM(MAC)
+
+TEST(WKWebsiteDataStore, DoNotLogNetworkConnectionsInEphemeralSessions)
+{
+    HTTPServer server { { }, HTTPServer::Protocol::Http };
+    server.addResponse("/index.html"_s, { "<html><body>Hello world</body></html>"_s });
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration setWebsiteDataStore:WKWebsiteDataStore.nonPersistentDataStore];
+
+    auto urlToLoad = [NSURL URLWithString:[NSString stringWithFormat:@"http://localhost:%u/index.html", server.port()]];
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView synchronouslyLoadRequest:[NSURLRequest requestWithURL:urlToLoad]];
+
+    EXPECT_EQ(server.totalConnections(), 1U);
+    EXPECT_EQ([webView collectLogsForNewConnections].count, 0U);
+}
+
+#endif // PLATFORM(MAC)
 
 } // namespace TestWebKitAPI

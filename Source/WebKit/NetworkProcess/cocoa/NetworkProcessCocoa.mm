@@ -78,6 +78,8 @@ static void initializeNetworkSettings()
 
 void NetworkProcess::platformInitializeNetworkProcessCocoa(const NetworkProcessCreationParameters& parameters)
 {
+    m_isParentProcessFullWebBrowserOrRunningTest = parameters.isParentProcessFullWebBrowserOrRunningTest;
+
     _CFNetworkSetATSContext(parameters.networkATSContext.get());
     IPC::setStrictSecureDecodingForAllObjCEnabled(parameters.strictSecureDecodingForAllObjCEnabled);
 
