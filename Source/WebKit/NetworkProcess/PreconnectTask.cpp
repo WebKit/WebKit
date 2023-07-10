@@ -47,7 +47,7 @@ PreconnectTask::PreconnectTask(NetworkSession& networkSession, NetworkLoadParame
     RELEASE_LOG(Network, "%p - PreconnectTask::PreconnectTask()", this);
 
     ASSERT(parameters.shouldPreconnectOnly == PreconnectOnly::Yes);
-    m_networkLoad = makeUnique<NetworkLoad>(*this, nullptr, WTFMove(parameters), networkSession);
+    m_networkLoad = makeUnique<NetworkLoad>(*this, WTFMove(parameters), networkSession);
 }
 
 void PreconnectTask::setH2PingCallback(const URL& url, CompletionHandler<void(Expected<WTF::Seconds, WebCore::ResourceError>&&)>&& completionHandler)

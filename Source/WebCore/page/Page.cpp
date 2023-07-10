@@ -3984,9 +3984,9 @@ void Page::abortApplePayAMSUISession(ApplePayAMSUIPaymentHandler& paymentHandler
 #endif // ENABLE(APPLE_PAY_AMS_UI)
 
 #if USE(SYSTEM_PREVIEW)
-void Page::handleSystemPreview(const URL& url, const SystemPreviewInfo& systemPreviewInfo)
+void Page::beginSystemPreview(const URL& url, const SystemPreviewInfo& systemPreviewInfo, CompletionHandler<void()>&& completionHandler)
 {
-    chrome().client().handleSystemPreview(url, systemPreviewInfo);
+    chrome().client().beginSystemPreview(url, systemPreviewInfo, WTFMove(completionHandler));
 }
 #endif
 

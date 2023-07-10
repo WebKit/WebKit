@@ -12808,10 +12808,11 @@ bool WebPageProxy::hasSleepDisabler() const
 }
 
 #if USE(SYSTEM_PREVIEW)
-void WebPageProxy::handleSystemPreview(const URL& url, const SystemPreviewInfo& systemPreviewInfo)
+void WebPageProxy::beginSystemPreview(const URL& url, const SystemPreviewInfo& systemPreviewInfo, CompletionHandler<void()>&& completionHandler)
 {
-    if (m_systemPreviewController)
-        m_systemPreviewController->begin(url, systemPreviewInfo);
+    if (!m_systemPreviewController)
+        return completionHandler();
+    m_systemPreviewController->begin(url, systemPreviewInfo, WTFMove(completionHandler));
 }
 
 void WebPageProxy::setSystemPreviewCompletionHandlerForLoadTesting(CompletionHandler<void(bool)>&& handler)

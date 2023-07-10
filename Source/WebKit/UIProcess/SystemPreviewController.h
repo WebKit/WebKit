@@ -55,7 +55,7 @@ public:
 
     bool canPreview(const String& mimeType) const;
 
-    void begin(const URL&, const WebCore::SystemPreviewInfo&);
+    void begin(const URL&, const WebCore::SystemPreviewInfo&, CompletionHandler<void()>&&);
     void updateProgress(float);
     void loadStarted(const URL& localFileURL);
     void loadCompleted(const URL& localFileURL);

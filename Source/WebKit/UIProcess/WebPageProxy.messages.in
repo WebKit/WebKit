@@ -623,7 +623,7 @@ messages -> WebPageProxy {
 #endif
 
 #if USE(SYSTEM_PREVIEW)
-    HandleSystemPreview(URL url, struct WebCore::SystemPreviewInfo systemPreviewInfo)
+    BeginSystemPreview(URL url, struct WebCore::SystemPreviewInfo systemPreviewInfo) -> ()
 #endif
 
     DidCreateSleepDisabler(WebCore::SleepDisablerIdentifier identifier, String reason, bool display)

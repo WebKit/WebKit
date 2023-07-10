@@ -59,7 +59,7 @@ void DownloadManager::startDownload(PAL::SessionID sessionID, DownloadID downloa
         parameters.blobFileReferences = client().networkSession(sessionID)->blobRegistry().filesInBlob(request.url());
     parameters.storedCredentialsPolicy = sessionID.isEphemeral() ? StoredCredentialsPolicy::DoNotUse : StoredCredentialsPolicy::Use;
 
-    m_pendingDownloads.add(downloadID, makeUnique<PendingDownload>(m_client.parentProcessConnectionForDownloads(), WTFMove(parameters), downloadID, *networkSession, &client().networkSession(sessionID)->blobRegistry(), suggestedName));
+    m_pendingDownloads.add(downloadID, makeUnique<PendingDownload>(m_client.parentProcessConnectionForDownloads(), WTFMove(parameters), downloadID, *networkSession, suggestedName));
 }
 
 void DownloadManager::dataTaskBecameDownloadTask(DownloadID downloadID, std::unique_ptr<Download>&& download)

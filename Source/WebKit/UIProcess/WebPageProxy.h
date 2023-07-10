@@ -2187,7 +2187,7 @@ public:
     void pageWillLikelyUseNotifications();
 
 #if USE(SYSTEM_PREVIEW)
-    void handleSystemPreview(const URL&, const WebCore::SystemPreviewInfo&);
+    void beginSystemPreview(const URL&, const WebCore::SystemPreviewInfo&, CompletionHandler<void()>&&);
     void setSystemPreviewCompletionHandlerForLoadTesting(CompletionHandler<void(bool)>&&);
 #endif
 

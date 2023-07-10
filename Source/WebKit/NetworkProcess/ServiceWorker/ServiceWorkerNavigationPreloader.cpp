@@ -148,7 +148,7 @@ void ServiceWorkerNavigationPreloader::loadFromNetwork()
     if (m_state.enabled)
         m_parameters.request.addHTTPHeaderField(HTTPHeaderName::ServiceWorkerNavigationPreload, m_state.headerValue);
 
-    m_networkLoad = makeUnique<NetworkLoad>(*this, nullptr, WTFMove(m_parameters), *m_session);
+    m_networkLoad = makeUnique<NetworkLoad>(*this, WTFMove(m_parameters), *m_session);
     m_networkLoad->start();
 }
 

@@ -619,7 +619,7 @@ public:
 #endif
 
 #if USE(SYSTEM_PREVIEW)
-    void handleSystemPreview(const URL&, const SystemPreviewInfo&);
+    void beginSystemPreview(const URL&, const SystemPreviewInfo&, CompletionHandler<void()>&&);
 #endif
 
 #if ENABLE(WEB_AUTHN)

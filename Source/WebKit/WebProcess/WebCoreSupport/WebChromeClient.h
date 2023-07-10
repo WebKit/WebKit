@@ -482,7 +482,7 @@ private:
 #endif
 
 #if USE(SYSTEM_PREVIEW)
-    void handleSystemPreview(const URL&, const WebCore::SystemPreviewInfo&) final;
+    void beginSystemPreview(const URL&, const WebCore::SystemPreviewInfo&, CompletionHandler<void()>&&) final;
 #endif
 
     void requestCookieConsent(CompletionHandler<void(WebCore::CookieConsentDecisionResult)>&&) final;

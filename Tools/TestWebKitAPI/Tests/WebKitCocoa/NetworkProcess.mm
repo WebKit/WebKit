@@ -510,7 +510,7 @@ TEST(_WKDataTask, Basic)
 
     done = false;
     __block RetainPtr<_WKDataTask> retainedTask;
-    [webView _dataTaskWithRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"blob:blank"]] completionHandler:^(_WKDataTask *task) {
+    [webView _dataTaskWithRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"unsupported:blank"]] completionHandler:^(_WKDataTask *task) {
         retainedTask = task;
         auto delegate = adoptNS([TestDataTaskDelegate new]);
         task.delegate = delegate.get();
@@ -727,6 +727,38 @@ TEST(_WKDataTask, Crash)
         };
     }];
     Util::run(&done);
+}
+
+TEST(_WKDataTask, Blob)
+{
+    __block bool done { false };
+    auto webView = adoptNS([WKWebView new]);
+    NSString *html = @"<script>alert(window.URL.createObjectURL(new Blob(['Blob hello'], {type: 'application/octet-stream'})));</script>";
+    [webView loadHTMLString:html baseURL:[NSURL URLWithString:@"https://webkit.org/"]];
+    NSString *url = [webView _test_waitForAlert];
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:url]];
+    [webView _dataTaskWithRequest:request completionHandler:^(_WKDataTask *task) {
+        auto delegate = adoptNS([TestDataTaskDelegate new]);
+        task.delegate = delegate.get();
+        __block bool receivedResponse = false;
+        delegate.get().didReceiveResponse = ^(_WKDataTask *, NSURLResponse *response, void (^decisionHandler)(_WKDataTaskResponsePolicy)) {
+            receivedResponse = true;
+            decisionHandler(_WKDataTaskResponsePolicyAllow);
+        };
+        __block bool receivedData = false;
+        delegate.get().didReceiveData = ^(_WKDataTask *, NSData *data) {
+            EXPECT_TRUE(receivedResponse);
+            auto dataString = adoptNS([[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
+            EXPECT_WK_STREQ(dataString.get(), "Blob hello");
+            receivedData = true;
+        };
+        delegate.get().didCompleteWithError = ^(_WKDataTask *, NSError *error) {
+            EXPECT_TRUE(receivedData);
+            EXPECT_NULL(error);
+            done = true;
+        };
+    }];
+    TestWebKitAPI::Util::run(&done);
 }
 
 #endif // HAVE(NSURLSESSION_TASK_DELEGATE)
