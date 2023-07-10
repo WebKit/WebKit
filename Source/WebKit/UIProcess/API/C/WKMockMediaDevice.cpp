@@ -63,7 +63,16 @@ void WKAddMockMediaDevice(WKContextRef context, WKStringRef persistentId, WKStri
     else if (typeString != "microphone"_s)
         return;
 
-    toImpl(context)->addMockMediaDevice({ WebKit::toImpl(persistentId)->string(), WebKit::toImpl(label)->string(), false, WTFMove(deviceProperties) });
+    WebCore::MockMediaDevice::Flags flags;
+    if (properties) {
+        auto invalidKey = adoptWK(WKStringCreateWithUTF8CString("invalid"));
+        if (auto invalid = WKDictionaryGetItemForKey(properties, invalidKey.get())) {
+            if (WKStringIsEqualToUTF8CString(static_cast<WKStringRef>(invalid), "true"))
+                flags.add(WebCore::MockMediaDevice::Flag::Invalid);
+        }
+    }
+
+    toImpl(context)->addMockMediaDevice({ WebKit::toImpl(persistentId)->string(), WebKit::toImpl(label)->string(), flags, WTFMove(deviceProperties) });
 #endif
 }
 
