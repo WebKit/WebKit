@@ -353,8 +353,9 @@ inline float FontCascade::tabWidth(const Font& font, const TabSize& tabSize, flo
     if (!baseTabWidth)
         result = letterSpacing();
     else {
-        float tabDeltaWidth = baseTabWidth - fmodf(position, baseTabWidth);
-        result = (tabDeltaWidth < font.spaceWidth() / 2) ? baseTabWidth : tabDeltaWidth;
+        result = baseTabWidth - fmodf(position, baseTabWidth);
+        if (result < font.spaceWidth() / 2)
+            result += baseTabWidth;
     }
     // If our caller passes in SyntheticBoldInclusion::Exclude, that means they're going to apply synthetic bold themselves later.
     // However, regardless of that, the space characters that are fed into the width calculation need to have their correct width, including the synthetic bold.
