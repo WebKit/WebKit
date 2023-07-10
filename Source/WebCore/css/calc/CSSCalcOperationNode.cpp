@@ -891,7 +891,7 @@ Ref<CSSCalcExpressionNode> CSSCalcOperationNode::simplifyNode(Ref<CSSCalcExpress
             calcOperationNode.hoistChildrenWithOperator(CalcOperator::Multiply);
         }
         
-        if (calcOperationNode.shouldNotPreserveFunction() || calcOperationNode.isCalcProductNode() || calcOperationNode.isCalcSumNode() || (calcOperationNode.shouldPreserveFunction() && depth))
+        if (calcOperationNode.isNonCalcFunction() || calcOperationNode.isCalcProductNode() || calcOperationNode.isCalcSumNode())
             calcOperationNode.combineChildren();
 
         // If only one child remains, return the child (except at the root).
@@ -904,7 +904,7 @@ Ref<CSSCalcExpressionNode> CSSCalcOperationNode::simplifyNode(Ref<CSSCalcExpress
             if (depth)
                 return true;
             
-            if (parent.shouldNotPreserveFunction() && is<CSSCalcPrimitiveValueNode>(parent.children()[0])) {
+            if (parent.isNonCalcFunction() && is<CSSCalcPrimitiveValueNode>(parent.children()[0])) {
                 parent.makeTopLevelCalc();
                 return false;
             }

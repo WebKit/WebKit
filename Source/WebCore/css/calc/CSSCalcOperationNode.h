@@ -72,7 +72,6 @@ public:
     bool isHypotNode() const { return m_operator == CalcOperator::Hypot; }
     bool isSqrtNode() const { return m_operator == CalcOperator::Sqrt; }
     bool isPowOrSqrtNode() const { return m_operator == CalcOperator::Pow || isSqrtNode(); }
-    bool shouldPreserveFunction() const { return isRoundOperation(); }
     bool isClampNode() const { return m_operator == CalcOperator::Clamp; }
 
     void hoistChildrenWithOperator(CalcOperator);
@@ -148,7 +147,7 @@ private:
     }
 
     void makeTopLevelCalc();
-    bool shouldNotPreserveFunction() const { return isAbsOrSignNode() || isClampNode() || isMinOrMaxNode() || isExpNode() || isHypotNode() || isSteppedNode() || isPowOrSqrtNode() || isInverseTrigNode() || isAtan2Node() || isTrigNode(); }
+    bool isNonCalcFunction() const { return isAbsOrSignNode() || isClampNode() || isMinOrMaxNode() || isExpNode() || isHypotNode() || isRoundOperation() || isSteppedNode() || isPowOrSqrtNode() || isInverseTrigNode() || isAtan2Node() || isTrigNode(); }
     static double evaluateOperator(CalcOperator, const Vector<double>&);
     static Ref<CSSCalcExpressionNode> simplifyNode(Ref<CSSCalcExpressionNode>&&, int depth);
     static Ref<CSSCalcExpressionNode> simplifyRecursive(Ref<CSSCalcExpressionNode>&&, int depth);

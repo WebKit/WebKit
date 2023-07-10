@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include <cmath>
 #include <wtf/Forward.h>
 #include <wtf/MathExtras.h>
 
