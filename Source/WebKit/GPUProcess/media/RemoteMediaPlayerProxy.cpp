@@ -98,8 +98,7 @@ RemoteMediaPlayerProxy::RemoteMediaPlayerProxy(RemoteMediaPlayerManagerProxy& ma
     m_renderingCanBeAccelerated = m_configuration.renderingCanBeAccelerated;
     m_playerContentBoxRect = m_configuration.playerContentBoxRect;
     m_player = MediaPlayer::create(*this, m_engineIdentifier);
-    if (auto* playerPrivate = m_player->playerPrivate())
-        playerPrivate->setResourceOwner(resourceOwner);
+    m_player->setResourceOwner(resourceOwner);
     m_player->setPresentationSize(m_configuration.presentationSize);
 }
 

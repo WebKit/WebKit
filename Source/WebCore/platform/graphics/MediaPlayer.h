@@ -36,6 +36,7 @@
 #include "MediaPlayerIdentifier.h"
 #include "PlatformLayer.h"
 #include "PlatformTextTrack.h"
+#include "ProcessIdentity.h"
 #include "SecurityOriginData.h"
 #include "Timer.h"
 #include "VideoPlaybackQualityMetrics.h"
@@ -719,6 +720,8 @@ public:
 
     bool requiresRemotePlayback() const { return m_requiresRemotePlayback; }
 
+    void setResourceOwner(const ProcessIdentity&);
+
 private:
     MediaPlayer(MediaPlayerClient&);
     MediaPlayer(MediaPlayerClient&, MediaPlayerEnums::MediaEngineIdentifier);
@@ -767,6 +770,7 @@ private:
     bool m_isGatheringVideoFrameMetadata { false };
     bool m_requiresRemotePlayback { false };
     String m_lastErrorMessage;
+    ProcessIdentity m_processIdentity;
 };
 
 class MediaPlayerFactory {
