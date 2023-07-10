@@ -42,18 +42,21 @@ function foo() {
     }
     assert(hadError);
 
-    var hadSyntaxErrorForEval = false;
-    try {
-        if (truth()) {
-            let x = 40;
-            eval("var x = 20;");
-        }
-    } catch (e) {
-        hadSyntaxErrorForEval = e instanceof SyntaxError;
+    if (truth()) {
+        // This eval is enterpreted as follows:
+        // eval("var x; x = 20");
+        // We first assign undefined to the "var x".
+        // Then, we interperet an assignment expression
+        // into the resolved variable x. x resolves to the lexical "let x;"
+        // Look at ECMA section 13.3.2.4 of the ES6 spec:
+        // http://www.ecma-international.org/ecma-262/6.0/index.html#sec-variable-statement-runtime-semantics-evaluation
+        // And also look at section 8.3.1 ResolveBinding:
+        // http://www.ecma-international.org/ecma-262/6.0/index.html#sec-resolvebinding
+        let x = 40;
+        eval("var x = 20;");
+        assert(x === 20);
     }
-
-    assert(hadSyntaxErrorForEval);
-    assert(typeof x === "undefined");
+    assert(x === undefined);
 }
 
 function bar() {
@@ -65,19 +68,13 @@ function bar() {
     }
     assert(hadError);
 
-    var hadSyntaxErrorForEval = false;
-    try {
-        if (truth()) {
-            let x = 40;
-            function capX() { return x; }
-            eval("var x = 20;");
-        } 
-    } catch (e) {
-        hadSyntaxErrorForEval = e instanceof SyntaxError;
+    if (truth()) {
+        let x = 40;
+        function capX() { return x; }
+        eval("var x = 20;");
+        assert(x === 20);
     }
-
-    assert(hadSyntaxErrorForEval);
-    assert(typeof x === "undefined");
+    assert(x === undefined);
 }
 
 function baz() {

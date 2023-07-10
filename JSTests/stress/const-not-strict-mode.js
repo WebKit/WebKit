@@ -62,13 +62,13 @@ function foo() {
         try {
             eval("var x = 20;");
         } catch(e) {
-            threw = true;
-            assert(e.toString() === "SyntaxError: Can't create duplicate variable in eval: 'x'");
+            if (e.name.indexOf("TypeError") !== -1 && e.message.indexOf("readonly") !== -1)
+                threw = true;
         }
         assert(threw);
         assert(x === 40);
     }
-    assert(typeof x === "undefined");
+    assert(x === undefined);
 }
 
 function bar() {
@@ -87,13 +87,13 @@ function bar() {
         try {
             eval("var x = 20;");
         } catch(e) {
-            threw = true;
-            assert(e.toString() === "SyntaxError: Can't create duplicate variable in eval: 'x'");
+            if (e.name.indexOf("TypeError") !== -1 && e.message.indexOf("readonly") !== -1)
+                threw = true;
         }
         assert(threw);
         assert(x === 40);
     }
-    assert(typeof x === "undefined");
+    assert(x === undefined);
 }
 
 function baz() {

@@ -285,7 +285,9 @@ JSValue JSScope::resolveScopeForHoistingFuncDeclInEval(JSGlobalObject* globalObj
     bool result = false;
     if (JSScope* scope = jsDynamicCast<JSScope*>(object)) {
         if (SymbolTable* scopeSymbolTable = scope->symbolTable()) {
-            result = scope->isGlobalObject() || scopeSymbolTable->scopeType() == SymbolTable::ScopeType::VarScope;
+            result = scope->isGlobalObject()
+                ? JSObject::isExtensible(object, globalObject)
+                : scopeSymbolTable->scopeType() == SymbolTable::ScopeType::VarScope;
         }
     }
 
