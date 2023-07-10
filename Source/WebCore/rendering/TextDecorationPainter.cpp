@@ -190,13 +190,13 @@ bool TextDecorationPainter::Styles::operator==(const Styles& other) const
         && underlineStyle == other.underlineStyle && overlineStyle == other.overlineStyle && linethroughStyle == other.linethroughStyle;
 }
 
-TextDecorationPainter::TextDecorationPainter(GraphicsContext& context, OptionSet<TextDecorationLine> decorations, const RenderText& renderer, bool isFirstLine, const FontCascade& font, std::optional<Styles> styles)
+TextDecorationPainter::TextDecorationPainter(GraphicsContext& context, OptionSet<TextDecorationLine> decorations, const RenderText& renderer, bool isFirstLine, const FontCascade& font, OptionSet<PaintBehavior> paintBehavior, std::optional<Styles> styles)
     : m_context { context }
     , m_decorations { decorations }
     , m_wavyOffset { wavyOffsetFromDecoration() }
     , m_isPrinting { renderer.document().printing() }
     , m_font { font }
-    , m_styles { styles ? *WTFMove(styles) : stylesForRenderer(renderer, decorations, isFirstLine, PseudoId::None) }
+    , m_styles { styles ? *WTFMove(styles) : stylesForRenderer(renderer, decorations, isFirstLine, paintBehavior, PseudoId::None) }
     , m_lineStyle { isFirstLine ? renderer.firstLineStyle() : renderer.style() }
 {
 }
@@ -333,10 +333,10 @@ void TextDecorationPainter::paintLineThrough(const Color& color, float thickness
         m_context.drawLineForText(rect, m_isPrinting, style == TextDecorationStyle::Double, strokeStyle);
 }
 
-static void collectStylesForRenderer(TextDecorationPainter::Styles& result, const RenderObject& renderer, OptionSet<TextDecorationLine> remainingDecorations, bool firstLineStyle, PseudoId pseudoId)
+static void collectStylesForRenderer(TextDecorationPainter::Styles& result, const RenderObject& renderer, OptionSet<TextDecorationLine> remainingDecorations, bool firstLineStyle, OptionSet<PaintBehavior> paintBehavior, PseudoId pseudoId)
 {
     auto extractDecorations = [&] (const RenderStyle& style, OptionSet<TextDecorationLine> decorations) {
-        auto color = TextDecorationPainter::decorationColor(style);
+        auto color = TextDecorationPainter::decorationColor(style, paintBehavior);
         auto decorationStyle = style.textDecorationStyle();
 
         if (decorations.contains(TextDecorationLine::Underline)) {
@@ -388,9 +388,9 @@ static void collectStylesForRenderer(TextDecorationPainter::Styles& result, cons
         extractDecorations(styleForRenderer(*current), remainingDecorations);
 }
 
-Color TextDecorationPainter::decorationColor(const RenderStyle& style)
+Color TextDecorationPainter::decorationColor(const RenderStyle& style, OptionSet<PaintBehavior> paintBehavior)
 {
-    return style.visitedDependentColorWithColorFilter(CSSPropertyTextDecorationColor);
+    return style.visitedDependentColorWithColorFilter(CSSPropertyTextDecorationColor, paintBehavior);
 }
 
 OptionSet<TextDecorationLine> TextDecorationPainter::textDecorationsInEffectForStyle(const TextDecorationPainter::Styles& style)
@@ -405,12 +405,12 @@ OptionSet<TextDecorationLine> TextDecorationPainter::textDecorationsInEffectForS
     return decorations;
 };
 
-auto TextDecorationPainter::stylesForRenderer(const RenderObject& renderer, OptionSet<TextDecorationLine> requestedDecorations, bool firstLineStyle, PseudoId pseudoId) -> Styles
+auto TextDecorationPainter::stylesForRenderer(const RenderObject& renderer, OptionSet<TextDecorationLine> requestedDecorations, bool firstLineStyle, OptionSet<PaintBehavior> paintBehavior, PseudoId pseudoId) -> Styles
 {
     Styles result;
-    collectStylesForRenderer(result, renderer, requestedDecorations, false, pseudoId);
+    collectStylesForRenderer(result, renderer, requestedDecorations, false, paintBehavior, pseudoId);
     if (firstLineStyle)
-        collectStylesForRenderer(result, renderer, requestedDecorations, true, pseudoId);
+        collectStylesForRenderer(result, renderer, requestedDecorations, true, paintBehavior, pseudoId);
     return result;
 }
 

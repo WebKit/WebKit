@@ -377,7 +377,7 @@ TextDecorationPainter TextBoxPainter::createDecorationPainter(const StyledMarked
     const FontCascade& font = fontCascade();
     auto textDecorations = m_style.textDecorationsInEffect();
     textDecorations.add(TextDecorationPainter::textDecorationsInEffectForStyle(markedText.style.textDecorationStyles));
-    TextDecorationPainter decorationPainter { context, textDecorations, m_renderer, m_isFirstLine, font, markedText.style.textDecorationStyles };
+    TextDecorationPainter decorationPainter { context, textDecorations, m_renderer, m_isFirstLine, font, m_paintInfo.paintBehavior, markedText.style.textDecorationStyles };
     decorationPainter.setTextBox(m_textBox);
     decorationPainter.setWidth(snappedSelectionRect.width());
     decorationPainter.setIsHorizontal(textBox().isHorizontal());
