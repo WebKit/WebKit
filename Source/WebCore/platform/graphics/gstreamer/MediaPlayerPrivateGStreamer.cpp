@@ -2245,7 +2245,7 @@ void MediaPlayerPrivateGStreamer::configureElement(GstElement* element)
         g_object_set(element, "use-buffering", FALSE, nullptr);
 
     // Collect processing time metrics for video decoders and converters.
-    if ((classifiers.contains("Converter"_s) || classifiers.contains("Decoder"_s)) && classifiers.contains("Video"_s) && !classifiers.contains("Parser"_s))
+    if ((classifiers.contains("Converter"_s) || classifiers.contains("Decoder"_s)) && classifiers.contains("Video"_s) && !classifiers.contains("Parser"_s) && !classifiers.contains("Sink"_s))
         webkitGstTraceProcessingTimeForElement(element);
 
     // This will set the multiqueue size to the default value.

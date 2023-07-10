@@ -117,10 +117,18 @@ void webkitGstTraceProcessingTimeForElement(GstElement* element)
         GST_DEBUG_CATEGORY_INIT(webkit_video_frame_meta_debug, "webkitvideoframemeta", 0, "Video frame processing metrics");
     });
 
-    GST_DEBUG("Tracing processing time for %" GST_PTR_FORMAT, element);
-    auto probeType = static_cast<GstPadProbeType>(GST_PAD_PROBE_TYPE_PUSH | GST_PAD_PROBE_TYPE_BUFFER);
-
     auto sinkPad = adoptGRef(gst_element_get_static_pad(element, "sink"));
+    auto srcPad = adoptGRef(gst_element_get_static_pad(element, "src"));
+    if (!sinkPad || !srcPad) {
+        GST_WARNING("Can't add the processing time probes for %s", GST_OBJECT_NAME(element));
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    GST_DEBUG("Tracing processing time for %" GST_PTR_FORMAT, element);
+
+    static auto probeType = static_cast<GstPadProbeType>(GST_PAD_PROBE_TYPE_PUSH | GST_PAD_PROBE_TYPE_BUFFER);
+
     gst_pad_add_probe(sinkPad.get(), probeType, [](GstPad*, GstPadProbeInfo* info, gpointer userData) -> GstPadProbeReturn {
         auto [modifiedBuffer, meta] = ensureVideoFrameMetadata(GST_PAD_PROBE_INFO_BUFFER(info));
         GST_PAD_PROBE_INFO_DATA(info) = modifiedBuffer;
@@ -129,7 +137,6 @@ void webkitGstTraceProcessingTimeForElement(GstElement* element)
         return GST_PAD_PROBE_OK;
     }, element, nullptr);
 
-    auto srcPad = adoptGRef(gst_element_get_static_pad(element, "src"));
     gst_pad_add_probe(srcPad.get(), probeType, [](GstPad*, GstPadProbeInfo* info, gpointer userData) -> GstPadProbeReturn {
         auto* meta = getInternalVideoFrameMetadata(GST_PAD_PROBE_INFO_BUFFER(info));
         // Some decoders (such as theoradec) do not always copy the input meta to the output frame,
