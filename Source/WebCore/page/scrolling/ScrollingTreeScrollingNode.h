@@ -130,7 +130,9 @@ public:
     
     OverscrollBehavior horizontalOverscrollBehavior() const { return m_scrollableAreaParameters.horizontalOverscrollBehavior; }
     OverscrollBehavior verticalOverscrollBehavior() const { return m_scrollableAreaParameters.verticalOverscrollBehavior; }
-    
+
+    ScrollbarWidth scrollbarWidthStyle() const { return m_scrollableAreaParameters.scrollbarWidthStyle; }
+
     virtual String scrollbarStateForOrientation(ScrollbarOrientation) const { return ""_s; }
     
     void scrollbarVisibilityDidChange(ScrollbarOrientation, bool);

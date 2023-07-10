@@ -89,6 +89,8 @@ struct ScrollableAreaParameters {
 
     bool useDarkAppearanceForScrollbars { false };
 
+    ScrollbarWidth scrollbarWidthStyle { ScrollbarWidth::Auto };
+
     bool operator==(const ScrollableAreaParameters& other) const
     {
         return horizontalScrollElasticity == other.horizontalScrollElasticity
@@ -101,7 +103,8 @@ struct ScrollableAreaParameters {
             && allowsVerticalScrolling == other.allowsVerticalScrolling
             && horizontalNativeScrollbarVisibility == other.horizontalNativeScrollbarVisibility
             && verticalNativeScrollbarVisibility == other.verticalNativeScrollbarVisibility
-            && useDarkAppearanceForScrollbars == other.useDarkAppearanceForScrollbars;
+            && useDarkAppearanceForScrollbars == other.useDarkAppearanceForScrollbars
+            && scrollbarWidthStyle == other.scrollbarWidthStyle;
     }
 };
 

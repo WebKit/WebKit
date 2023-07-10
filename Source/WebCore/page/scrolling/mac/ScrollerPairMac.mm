@@ -262,8 +262,7 @@ bool ScrollerPairMac::useDarkAppearance() const
 
 ScrollbarWidth ScrollerPairMac::scrollbarWidthStyle() const
 {
-    // FIXME: This should be based on the element style. See <https://webkit.org/b/257430>
-    return ScrollbarWidth::Auto;
+    return m_scrollingNode.scrollbarWidthStyle();
 }
 
 ScrollerPairMac::Values ScrollerPairMac::valuesForOrientation(ScrollbarOrientation orientation)
