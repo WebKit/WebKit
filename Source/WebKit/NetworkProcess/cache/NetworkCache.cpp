@@ -233,6 +233,11 @@ static UseDecision makeUseDecision(NetworkProcess& networkProcess, PAL::SessionI
     if (cachePolicyAllowsExpired(request.cachePolicy()))
         return UseDecision::Use;
 
+    // We could have cached a redirect without a fragment and now may have
+    // a fragment in the URL.
+    if (request.url().hasFragmentIdentifier() && entry.redirectRequest())
+        return UseDecision::NoDueToRequestContainingFragments;
+
     auto decision = responseNeedsRevalidation(*networkProcess.networkSession(sessionID), entry.response(), request, entry.timeStamp());
     if (decision != UseDecision::Validate)
         return decision;
@@ -283,6 +288,11 @@ static StoreDecision makeStoreDecision(const WebCore::ResourceRequest& originalR
         if (!expirationHeadersAllowCaching)
             return StoreDecision::NoDueToHTTPStatusCode;
     }
+
+    // FIXME: We are not correctly computing the redirected request URL in case original request
+    // has a fragment identifier and response location URL does not have one. Let's not store it for now.
+    if ((response.isRedirection() || response.isRedirected()) && originalRequest.url().hasFragmentIdentifier())
+        return StoreDecision::NoDueToRequestContainingFragments;
 
     bool isMainResource = originalRequest.requester() == WebCore::ResourceRequestRequester::Main;
     bool storeUnconditionallyForHistoryNavigation = isMainResource || originalRequest.priority() == WebCore::ResourceLoadPriority::VeryHigh;

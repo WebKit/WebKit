@@ -115,7 +115,7 @@ enum class RetrieveDecision {
     NoDueToHTTPMethod,
     NoDueToConditionalRequest,
     NoDueToReloadIgnoringCache,
-    NoDueToStreamingMedia,
+    NoDueToStreamingMedia
 };
 
 enum class StoreDecision {
@@ -127,6 +127,7 @@ enum class StoreDecision {
     NoDueToNoStoreRequest,
     NoDueToUnlikelyToReuse,
     NoDueToStreamingMedia,
+    NoDueToRequestContainingFragments
 };
 
 enum class UseDecision {
@@ -136,7 +137,8 @@ enum class UseDecision {
     NoDueToVaryingHeaderMismatch,
     NoDueToMissingValidatorFields,
     NoDueToDecodeFailure,
-    NoDueToExpiredRedirect
+    NoDueToExpiredRedirect,
+    NoDueToRequestContainingFragments
 };
 
 enum class CacheOption : uint8_t {
