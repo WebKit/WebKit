@@ -41,9 +41,8 @@ namespace JSC { namespace DFG {
 
 class BackwardsPropagationPhase {
 public:
-    BackwardsPropagationPhase(Graph& graph, bool fixupHasRun)
+    BackwardsPropagationPhase(Graph& graph)
         : m_graph(graph)
-        , m_fixupHasRun(fixupHasRun)
         , m_flagsAtHead(graph)
     {
     }
@@ -297,12 +296,12 @@ private:
             mergeFlags(m_currentFlags.operand(variableAccessData->operand()), VariableIsUsed);
             break;
         }
-
+            
         case MovHint:
         case Check:
         case CheckVarargs:
             break;
-
+            
         case ValueBitNot:
         case ArithBitNot: {
             flags |= NodeBytecodeUsesAsInt;
@@ -573,39 +572,24 @@ private:
         }
 
         case Identity: 
-            RELEASE_ASSERT(m_fixupHasRun);
-            node->child1()->mergeFlags(flags);
+            // This would be trivial to handle but we just assert that we cannot see these yet.
+            RELEASE_ASSERT_NOT_REACHED();
             break;
-
-        case ValueRep:
-        case DoubleRep:
-        case Int52Rep: {
-            // Since fixup has already run, we are not asking "how should I sepculate," but rather
-            // precisely how this particular value is going to be used.
-            if (m_fixupHasRun && isDouble(node->child1().useKind())) {
-                node->child1()->mergeFlags(NodeBytecodeUsesAsNumber);
-                break;
-            }
-            if (m_fixupHasRun && node->child1().useKind() == Int32Use)
-                break;
-            FALLTHROUGH;
-        }
-
+            
         // Note: ArithSqrt, ArithUnary and other math intrinsics don't have special
         // rules in here because they are always followed by Phantoms to signify that if the
         // method call speculation fails, the bytecode may use the arguments in arbitrary ways.
         // This corresponds to that possibility of someone doing something like:
         // Math.sin = function(x) { doArbitraryThingsTo(x); }
-
+            
         default:
             mergeDefaultFlags(node);
             break;
         }
     }
-
+    
     Graph& m_graph;
     bool m_allowNestedOverflowingAdditions;
-    bool m_fixupHasRun;
 
     BlockMap<Operands<NodeFlags>> m_flagsAtHead;
     Operands<NodeFlags> m_currentFlags;
@@ -613,14 +597,7 @@ private:
 
 void performBackwardsPropagation(Graph& graph)
 {
-    constexpr bool fixupHasRun = false;
-    BackwardsPropagationPhase(graph, fixupHasRun).run();
-}
-
-bool performBackwardsPropagationAfterFixup(Graph& graph)
-{
-    constexpr bool fixupHasRun = true;
-    return BackwardsPropagationPhase(graph, fixupHasRun).run();
+    BackwardsPropagationPhase(graph).run();
 }
 
 } } // namespace JSC::DFG
