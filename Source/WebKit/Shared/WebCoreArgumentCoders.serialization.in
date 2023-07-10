@@ -4348,6 +4348,12 @@ class WebCore::RealtimeMediaSourceCapabilities {
     WebCore::RealtimeMediaSourceSupportedConstraints supportedConstraints();
 };
 
+header: <WebCore/MockMediaDevice.h>
+[Nested, OptionSet] enum class WebCore::MockMediaDevice::Flag : uint8_t {
+    Ephemeral
+    Invalid
+};
+
 #endif
 
 enum class WebCore::PlatformVideoColorPrimaries : uint8_t {

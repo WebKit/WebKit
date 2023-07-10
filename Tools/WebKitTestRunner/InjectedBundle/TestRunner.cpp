@@ -1884,7 +1884,7 @@ void TestRunner::addMockMediaDevice(JSStringRef persistentId, JSStringRef label,
     }));
 }
 
-void TestRunner::addMockCameraDevice(JSStringRef persistentId, JSStringRef label, JSValueRef properties)
+static WKRetainPtr<WKDictionaryRef> captureDeviceProperties(JSValueRef properties)
 {
     auto context = mainFrameJSContext();
 
@@ -1899,10 +1899,10 @@ void TestRunner::addMockCameraDevice(JSStringRef persistentId, JSStringRef label
         for (size_t i = 0; i < length; ++i) {
             JSStringRef jsPropertyName = JSPropertyNameArrayGetNameAtIndex(propertyNameArray, i);
             auto jsPropertyValue = JSObjectGetProperty(context, object, jsPropertyName, 0);
-            
+
             auto propertyName = toWK(jsPropertyName);
             auto propertyValue = toWKString(context, jsPropertyValue);
-            
+
             keys.append(propertyName.get());
             values.append(propertyValue.get());
             strings.append(WTFMove(propertyName));
@@ -1911,13 +1911,17 @@ void TestRunner::addMockCameraDevice(JSStringRef persistentId, JSStringRef label
         JSPropertyNameArrayRelease(propertyNameArray);
     }
 
-    auto wkProperties = adoptWK(WKDictionaryCreate(keys.data(), values.data(), keys.size()));
-    addMockMediaDevice(persistentId, label, "camera", wkProperties.get());
+    return adoptWK(WKDictionaryCreate(keys.data(), values.data(), keys.size()));
 }
 
-void TestRunner::addMockMicrophoneDevice(JSStringRef persistentId, JSStringRef label)
+void TestRunner::addMockCameraDevice(JSStringRef persistentId, JSStringRef label, JSValueRef properties)
 {
-    addMockMediaDevice(persistentId, label, "microphone", nullptr);
+    addMockMediaDevice(persistentId, label, "camera", captureDeviceProperties(properties).get());
+}
+
+void TestRunner::addMockMicrophoneDevice(JSStringRef persistentId, JSStringRef label, JSValueRef properties)
+{
+    addMockMediaDevice(persistentId, label, "microphone", captureDeviceProperties(properties).get());
 }
 
 void TestRunner::addMockScreenDevice(JSStringRef persistentId, JSStringRef label)

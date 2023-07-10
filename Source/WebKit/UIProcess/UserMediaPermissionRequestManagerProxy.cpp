@@ -813,13 +813,23 @@ static inline bool haveMicrophoneDevice(const Vector<CaptureDeviceWithCapabiliti
 void UserMediaPermissionRequestManagerProxy::platformGetMediaStreamDevices(bool revealIdsAndLabels, CompletionHandler<void(Vector<CaptureDeviceWithCapabilities>&&)>&& completionHandler)
 {
     RealtimeMediaSourceCenter::singleton().getMediaStreamDevices([revealIdsAndLabels, completionHandler = WTFMove(completionHandler)](auto&& devices) mutable {
-        auto deviceWithCapabilities = map(devices, [revealIdsAndLabels](auto&& device) -> CaptureDeviceWithCapabilities {
-            RealtimeMediaSourceCapabilities capabilities;
+        Vector<CaptureDeviceWithCapabilities> devicesWithCapabilities;
+
+        devicesWithCapabilities.reserveInitialCapacity(devices.size());
+        for (auto& device : devices) {
+            RealtimeMediaSourceCapabilities deviceCapabilities;
+
+            auto capabilities = RealtimeMediaSourceCenter::singleton().getCapabilities(device);
+            if (!capabilities)
+                continue;
+
             if (revealIdsAndLabels)
-                capabilities = RealtimeMediaSourceCenter::singleton().getCapabilities(device);
-            return { WTFMove(device), WTFMove(capabilities) };
-        });
-        completionHandler(WTFMove(deviceWithCapabilities));
+                deviceCapabilities = WTFMove(*capabilities);
+
+            devicesWithCapabilities.uncheckedAppend({ WTFMove(device), WTFMove(deviceCapabilities) });
+        }
+
+        completionHandler(WTFMove(devicesWithCapabilities));
     });
 }
 #endif

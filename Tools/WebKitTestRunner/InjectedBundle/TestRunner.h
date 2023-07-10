@@ -518,7 +518,7 @@ public:
     bool shouldDumpAllHTTPRedirectedResponseHeaders() const { return m_dumpAllHTTPRedirectedResponseHeaders; }
 
     void addMockCameraDevice(JSStringRef persistentId, JSStringRef label, JSValueRef properties);
-    void addMockMicrophoneDevice(JSStringRef persistentId, JSStringRef label);
+    void addMockMicrophoneDevice(JSStringRef persistentId, JSStringRef label, JSValueRef propertie);
     void addMockScreenDevice(JSStringRef persistentId, JSStringRef label);
     void clearMockMediaDevices();
     void removeMockMediaDevice(JSStringRef persistentId);
