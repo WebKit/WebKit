@@ -30,6 +30,7 @@
 
 #include "EmptyClients.h"
 #include "SVGImage.h"
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
@@ -47,7 +48,7 @@ public:
     }
     
     bool isSVGImageChromeClient() const final { return true; }
-    SVGImage* image() const { return m_image; }
+    SVGImage* image() const { return m_image.get(); }
     
 private:
     void chromeDestroyed() final
@@ -55,27 +56,32 @@ private:
         m_image = nullptr;
     }
     
-    void invalidateContentsAndRootView(const IntRect& r) final
+    void invalidateContentsAndRootView(const IntRect& rect) final
     {
-        // If m_image->m_page is null, we're being destroyed.
-        if (!m_image || !m_image->m_page)
+        RefPtr image { m_image.get() };
+
+        // If m_image->internalPage() is null, we're being destroyed.
+        if (!image || !image->internalPage())
             return;
 
-        auto* imageObserver = m_image->imageObserver();
+        auto imageObserver = image->imageObserver();
         if (!imageObserver)
             return;
 
-        imageObserver->imageFrameAvailable(*m_image, m_image->isAnimating() ? ImageAnimatingState::Yes : ImageAnimatingState::No, &r);
+        imageObserver->imageFrameAvailable(*image, image->isAnimating() ? ImageAnimatingState::Yes : ImageAnimatingState::No, &rect);
     }
 
     bool scheduleRenderingUpdate() final
     {
-        if (m_image && m_image->imageObserver())
-            m_image->imageObserver()->scheduleRenderingUpdate(*m_image);
+        RefPtr image { m_image.get() };
+        if (!image)
+            return true;
+        if (auto imageObserver = image->imageObserver())
+            imageObserver->scheduleRenderingUpdate(*image);
         return true;
     }
 
-    SVGImage* m_image;
+    WeakPtr<SVGImage> m_image;
 };
 
 } // namespace WebCore
