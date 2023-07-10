@@ -56,6 +56,7 @@
 #include "SecurityOrigin.h"
 #include "SecurityPolicy.h"
 #include "Settings.h"
+#include "URLKeepingBlobAlive.h"
 #include "UserGestureIndicator.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/WeakHashMap.h>
@@ -614,7 +615,7 @@ void HTMLAnchorElement::handleClick(Event& event)
             systemPreviewInfo.previewRect = child->boundsInRootViewSpace();
 
         if (auto* page = document().page())
-            page->handleSystemPreview(WTFMove(completedURL), WTFMove(systemPreviewInfo));
+            page->beginSystemPreview(completedURL, WTFMove(systemPreviewInfo), [keepBlobAlive = URLKeepingBlobAlive(completedURL, document().topOrigin().data())] { });
         return;
     }
 #endif

@@ -639,7 +639,7 @@ public:
 #endif
 
 #if USE(SYSTEM_PREVIEW)
-    virtual void handleSystemPreview(const URL&, const SystemPreviewInfo&) { }
+    virtual void beginSystemPreview(const URL&, const SystemPreviewInfo&, CompletionHandler<void()>&&) { }
 #endif
 
     virtual void requestCookieConsent(CompletionHandler<void(CookieConsentDecisionResult)>&&) = 0;

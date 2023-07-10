@@ -34,9 +34,11 @@
 #import "Download.h"
 #import "LegacyCustomProtocolManager.h"
 #import "Logging.h"
+#import "NetworkDataTaskBlob.h"
 #import "NetworkDataTaskCocoa.h"
 #import "NetworkLoad.h"
 #import "NetworkProcess.h"
+#import "NetworkProcessProxyMessages.h"
 #import "NetworkSessionCreationParameters.h"
 #import "PrivateRelayed.h"
 #import "WKURLSessionTaskDelegate.h"
@@ -1976,9 +1978,71 @@ void NetworkSessionCocoa::addWebPageNetworkParameters(WebPageProxyIdentifier pag
     m_attributedBundleIdentifierFromPageIdentifiers.add(pageID, parameters.attributedBundleIdentifier());
 }
 
+// FIXME: This and WKURLSessionTaskDelegate are kind of duplicate code. Remove this.
+// NetworkSessionCocoa::dataTaskWithRequest and NetworkLoad's constructor are also kind of duplicate code.
+// Make NetworkLoad's redirection and challenge handling code pass everything to the NetworkLoadClient
+// and use NetworkLoad and a new NetworkLoadClient instead of BlobDataTaskClient and WKURLSessionTaskDelegate.
+class NetworkSessionCocoa::BlobDataTaskClient final : public NetworkDataTaskClient {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    BlobDataTaskClient(WebCore::ResourceRequest&& request, NetworkSessionCocoa& session, IPC::Connection* connection, DataTaskIdentifier identifier)
+        : m_task(NetworkDataTaskBlob::create(session, *this, request, session.blobRegistry().filesInBlob(request.url())))
+        , m_connection(connection)
+        , m_identifier(identifier)
+    {
+        m_task->resume();
+    }
+    void cancel() { m_task->cancel(); }
+private:
+    void willPerformHTTPRedirection(WebCore::ResourceResponse&&, WebCore::ResourceRequest&&, RedirectCompletionHandler&&) final { ASSERT_NOT_REACHED(); }
+    void didReceiveChallenge(WebCore::AuthenticationChallenge&&, NegotiatedLegacyTLS, ChallengeCompletionHandler&&) final { ASSERT_NOT_REACHED(); }
+    void didSendData(uint64_t totalBytesSent, uint64_t totalBytesExpectedToSend) final { ASSERT_NOT_REACHED(); }
+    void wasBlocked() final { ASSERT_NOT_REACHED(); }
+    void cannotShowURL() final { ASSERT_NOT_REACHED(); }
+    void wasBlockedByRestrictions() final { ASSERT_NOT_REACHED(); }
+    void wasBlockedByDisabledFTP() final { ASSERT_NOT_REACHED(); }
+
+    void didReceiveResponse(WebCore::ResourceResponse&& response, NegotiatedLegacyTLS, PrivateRelayed, ResponseCompletionHandler&& completionHandler)
+    {
+        if (!m_connection)
+            return completionHandler(WebCore::PolicyAction::Ignore);
+        m_connection->sendWithAsyncReply(Messages::NetworkProcessProxy::DataTaskDidReceiveResponse(m_identifier, response), [completionHandler = WTFMove(completionHandler)] (bool allowed) mutable {
+            completionHandler(allowed ? WebCore::PolicyAction::Use : WebCore::PolicyAction::Ignore);
+        });
+    }
+
+    void didReceiveData(const WebCore::SharedBuffer& buffer)
+    {
+        if (!m_connection)
+            return;
+        buffer.forEachSegment([&] (auto& segment) {
+            m_connection->send(Messages::NetworkProcessProxy::DataTaskDidReceiveData(m_identifier, segment), 0);
+        });
+    }
+
+    void didCompleteWithError(const WebCore::ResourceError& error, const WebCore::NetworkLoadMetrics&)
+    {
+        if (!m_connection)
+            return;
+        m_connection->send(Messages::NetworkProcessProxy::DataTaskDidCompleteWithError(m_identifier, error), 0);
+        if (m_session)
+            m_session->removeBlobDataTask(m_identifier);
+    }
+
+    Ref<NetworkDataTask> m_task;
+    RefPtr<IPC::Connection> m_connection;
+    WeakPtr<NetworkSessionCocoa> m_session;
+    const DataTaskIdentifier m_identifier;
+};
+
 void NetworkSessionCocoa::dataTaskWithRequest(WebPageProxyIdentifier pageID, WebCore::ResourceRequest&& request, CompletionHandler<void(DataTaskIdentifier)>&& completionHandler)
 {
     auto identifier = DataTaskIdentifier::generate();
+    if (request.url().protocolIsBlob()) {
+        m_blobDataTasksForAPI.add(identifier, makeUniqueRef<BlobDataTaskClient>(WTFMove(request), *this, networkProcess().parentProcessConnection(), identifier));
+        return completionHandler(identifier);
+    }
+
     auto nsRequest = request.nsURLRequest(WebCore::HTTPBodyUpdatePolicy::UpdateHTTPBody);
     auto session = sessionWrapperForTask(pageID, request, WebCore::StoredCredentialsPolicy::Use, std::nullopt).session;
     auto task = [session dataTaskWithRequest:nsRequest];
@@ -1994,12 +2058,22 @@ void NetworkSessionCocoa::dataTaskWithRequest(WebPageProxyIdentifier pageID, Web
 
 void NetworkSessionCocoa::cancelDataTask(DataTaskIdentifier identifier)
 {
-    [m_dataTasksForAPI.take(identifier) cancel];
+    if (auto dataTask = m_dataTasksForAPI.take(identifier))
+        [dataTask cancel];
+    else if (auto blobDataTask = m_blobDataTasksForAPI.take(identifier))
+        blobDataTask->cancel();
+    else
+        ASSERT_NOT_REACHED();
 }
 
 void NetworkSessionCocoa::removeDataTask(DataTaskIdentifier identifier)
 {
     m_dataTasksForAPI.remove(identifier);
+}
+
+void NetworkSessionCocoa::removeBlobDataTask(DataTaskIdentifier identifier)
+{
+    m_blobDataTasksForAPI.remove(identifier);
 }
 
 void NetworkSessionCocoa::removeWebPageNetworkParameters(WebPageProxyIdentifier pageID)
