@@ -904,9 +904,10 @@ Ref<CSSCalcExpressionNode> CSSCalcOperationNode::simplifyNode(Ref<CSSCalcExpress
             if (depth)
                 return true;
             
-            if (parent.isNonCalcFunction() && is<CSSCalcPrimitiveValueNode>(parent.children()[0])) {
+            if (parent.isNonCalcFunction() && (parent.isIdentity() || is<CSSCalcPrimitiveValueNode>(parent.children()[0]))) {
                 parent.makeTopLevelCalc();
-                return false;
+                if (is<CSSCalcPrimitiveValueNode>(parent.children()[0]))
+                    return false;
             }
 
             // At the root, preserve the root function by only merging nodes with the same function.
