@@ -666,14 +666,25 @@ GRefPtr<GstPad> GStreamerMediaEndpoint::requestPad(std::optional<unsigned> mLine
 {
     auto caps = adoptGRef(gst_caps_copy(allowedCaps.get()));
     int availablePayloadType = pickAvailablePayloadType();
-    for (unsigned i = 0; i < gst_caps_get_size(caps.get()); i++) {
+    unsigned i = 0;
+    while (i < gst_caps_get_size(caps.get())) {
         auto* structure = gst_caps_get_structure(caps.get(), i);
-        if (gst_structure_has_field(structure, "payload"))
+        if (gst_structure_has_field(structure, "payload")) {
+            i++;
             continue;
+        }
         auto payloadType = payloadTypeForEncodingName(gst_structure_get_string(structure, "encoding-name"));
-        if (!payloadType)
-            payloadType = availablePayloadType++;
+        if (!payloadType) {
+            if (availablePayloadType < 128)
+                payloadType = availablePayloadType++;
+        }
+        if (!payloadType) {
+            GST_WARNING_OBJECT(m_pipeline.get(), "Payload type will not fit in SDP offer. Removing codec from preferences: %" GST_PTR_FORMAT, structure);
+            gst_caps_remove_structure(caps.get(), i);
+            continue;
+        }
         gst_structure_set(structure, "payload", G_TYPE_INT, *payloadType, nullptr);
+        i++;
     }
 
     auto requestPad = [&](const String& padId) -> GRefPtr<GstPad> {
