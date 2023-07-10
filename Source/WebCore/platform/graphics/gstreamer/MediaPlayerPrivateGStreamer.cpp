@@ -3317,6 +3317,12 @@ static uint32_t fourccValue(GstVideoFormat format)
         return uint32_t(DMABufFormat::FourCC::BGRA8888);
     case GST_VIDEO_FORMAT_ABGR:
         return uint32_t(DMABufFormat::FourCC::RGBA8888);
+    case GST_VIDEO_FORMAT_P010_10LE:
+    case GST_VIDEO_FORMAT_P010_10BE:
+        return uint32_t(DMABufFormat::FourCC::P010);
+    case GST_VIDEO_FORMAT_P016_LE:
+    case GST_VIDEO_FORMAT_P016_BE:
+        return uint32_t(DMABufFormat::FourCC::P016);
     default:
         break;
     }

@@ -47,7 +47,7 @@ struct _WebKitDMABufVideoSinkPrivate {
 GST_DEBUG_CATEGORY_STATIC(webkit_dmabuf_video_sink_debug);
 #define GST_CAT_DEFAULT webkit_dmabuf_video_sink_debug
 
-#define GST_WEBKIT_DMABUF_SINK_CAPS_FORMAT_LIST "{ RGBA, RGBx, BGRA, BGRx, I420, YV12, A420, NV12, NV21, Y444, Y41B, Y42B, VUYA }"
+#define GST_WEBKIT_DMABUF_SINK_CAPS_FORMAT_LIST "{ RGBA, RGBx, BGRA, BGRx, I420, YV12, A420, NV12, NV21, Y444, Y41B, Y42B, VUYA, P010_10LE, P010_10BE, P016_LE, P016BE }"
 static GstStaticPadTemplate sinkTemplate = GST_STATIC_PAD_TEMPLATE("sink", GST_PAD_SINK, GST_PAD_ALWAYS, GST_STATIC_CAPS_ANY);
 
 // TODO: this is a list of remaining YUV formats we want to support, but don't currently work (due to improper handling in TextureMapper):
