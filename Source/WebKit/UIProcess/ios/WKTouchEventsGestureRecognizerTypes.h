@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 - 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,23 +23,24 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#pragma once
+
 #if PLATFORM(IOS_FAMILY)
 
-#import "UIKitSPI.h"
+namespace WebKit {
 
-@class WKTouchEventsGestureRecognizer;
+enum class WKTouchEventType : uint8_t {
+    Begin = 0,
+    Change,
+    End,
+    Cancel
+};
 
-// The purpose of this class is to call a target/action when
-// the gesture is recognized, as well as the typical time when
-// a gesture should be handled. This allows it to be used while
-// it is waiting for another gesture recognizer to fail.
-@interface WKSyntheticTapGestureRecognizer : UITapGestureRecognizer
-- (void)setGestureIdentifiedTarget:(id)target action:(SEL)action;
-- (void)setGestureFailedTarget:(id)target action:(SEL)action;
-- (void)setResetTarget:(id)target action:(SEL)action;
-@property (nonatomic, weak) WKTouchEventsGestureRecognizer *supportingTouchEventsGestureRecognizer;
-@property (nonatomic, readonly) NSNumber *lastActiveTouchIdentifier;
-@property (nonatomic, readonly, weak) UIScrollView *lastTouchedScrollView;
-@end
+enum class WKTouchPointType : uint8_t {
+    Direct = 0,
+    Stylus,
+};
 
-#endif
+} // namespace WebKit
+
+#endif // PLATFORM(IOS_FAMILY)

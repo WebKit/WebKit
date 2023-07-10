@@ -91,7 +91,6 @@
 #import <UIKit/UIWebGeolocationPolicyDecider.h>
 #import <UIKit/UIWebScrollView.h>
 #import <UIKit/UIWebTiledView.h>
-#import <UIKit/UIWebTouchEventsGestureRecognizer.h>
 #import <UIKit/UIWindowScene_Private.h>
 #import <UIKit/UIWindow_Private.h>
 #import <UIKit/_UIApplicationRotationFollowing.h>
@@ -951,69 +950,7 @@ typedef NS_ENUM(NSInteger, UIWKGestureType) {
 - (void)decidePolicyForGeolocationRequestFromOrigin:(id)securityOrigin requestingURL:(NSURL *)requestingURL view:(UIView *)view listener:(id)listener;
 @end
 
-typedef enum {
-    UIWebTouchEventTouchBegin = 0,
-    UIWebTouchEventTouchChange = 1,
-    UIWebTouchEventTouchEnd = 2,
-    UIWebTouchEventTouchCancel = 3,
-} UIWebTouchEventType;
-
-typedef enum {
-    UIWebTouchPointTypeDirect = 0,
-    UIWebTouchPointTypeStylus
-} UIWebTouchPointType;
-
-struct _UIWebTouchPoint {
-    CGPoint locationInScreenCoordinates;
-    CGPoint locationInDocumentCoordinates;
-    unsigned identifier;
-    UITouchPhase phase;
-    CGFloat majorRadiusInScreenCoordinates;
-    CGFloat force;
-    CGFloat altitudeAngle;
-    CGFloat azimuthAngle;
-    UIWebTouchPointType touchType;
-};
-
-struct _UIWebTouchEvent {
-    UIWebTouchEventType type;
-    NSTimeInterval timestamp;
-    CGPoint locationInScreenCoordinates;
-    CGPoint locationInDocumentCoordinates;
-    CGFloat scale;
-    CGFloat rotation;
-
-    bool inJavaScriptGesture;
-
-    struct _UIWebTouchPoint* touchPoints;
-    unsigned touchPointCount;
-
-    bool isPotentialTap;
-};
-
 @interface _UILookupGestureRecognizer : UIGestureRecognizer
-@end
-
-@class UIWebTouchEventsGestureRecognizer;
-
-@protocol UIWebTouchEventsGestureRecognizerDelegate <NSObject>
-- (BOOL)isAnyTouchOverActiveArea:(NSSet *)touches;
-@optional
-- (BOOL)gestureRecognizer:(UIWebTouchEventsGestureRecognizer *)gestureRecognizer shouldIgnoreWebTouchWithEvent:(UIEvent *)event;
-@end
-
-@interface UIWebTouchEventsGestureRecognizer : UIGestureRecognizer
-@end
-
-@interface UIWebTouchEventsGestureRecognizer ()
-- (id)initWithTarget:(id)target action:(SEL)action touchDelegate:(id <UIWebTouchEventsGestureRecognizerDelegate>)delegate;
-- (void)cancel;
-@property (nonatomic, getter=isDefaultPrevented) BOOL defaultPrevented;
-@property (nonatomic, readonly) BOOL inJavaScriptGesture;
-@property (nonatomic, readonly) CGPoint locationInWindow;
-@property (nonatomic, readonly) UIWebTouchEventType type;
-@property (nonatomic, readonly) const struct _UIWebTouchEvent *lastTouchEvent;
-@property (nonatomic, readonly) NSMapTable<NSNumber *, UITouch *> *activeTouchesByIdentifier;
 @end
 
 typedef NS_ENUM(NSInteger, _UIBackdropViewStylePrivate) {
