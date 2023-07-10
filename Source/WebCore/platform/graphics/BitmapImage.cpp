@@ -326,8 +326,8 @@ ImageDrawResult BitmapImage::draw(GraphicsContext& context, const FloatRect& des
 
     m_currentFrameDecodingStatus = frameDecodingStatusAtIndex(m_currentFrame);
 
-    if (imageObserver())
-        imageObserver()->didDraw(*this);
+    if (auto observer = imageObserver())
+        observer->didDraw(*this);
 
     return result;
 }
@@ -352,14 +352,14 @@ void BitmapImage::drawPattern(GraphicsContext& ctxt, const FloatRect& destRect, 
         if (!buffer)
             return;
 
-        ImageObserver* observer = imageObserver();
+        auto observer = imageObserver();
 
         // Temporarily reset image observer, we don't want to receive any changeInRect() calls due to this relayout.
         setImageObserver(nullptr);
 
         draw(buffer->context(), tileRect, tileRect, { options, DecodingMode::Synchronous, ImageOrientation::FromImage });
 
-        setImageObserver(observer);
+        setImageObserver(WTFMove(observer));
         buffer->convertToLuminanceMask();
 
         m_cachedImage = ImageBuffer::sinkIntoImage(WTFMove(buffer), PreserveResolution::Yes);
@@ -536,8 +536,8 @@ void BitmapImage::internalAdvanceAnimation()
 
     callDecodingCallbacks();
 
-    if (imageObserver())
-        imageObserver()->imageFrameAvailable(*this, ImageAnimatingState::Yes, nullptr, decodingStatus);
+    if (auto observer = imageObserver())
+        observer->imageFrameAvailable(*this, ImageAnimatingState::Yes, nullptr, decodingStatus);
 
     LOG(Images, "BitmapImage::%s - %p - url: %s [m_currentFrame = %ld]", __FUNCTION__, this, sourceURL().string().utf8().data(), m_currentFrame);
 }
@@ -649,8 +649,8 @@ void BitmapImage::imageFrameAvailableAtIndex(size_t index)
     if (frameHasDecodedNativeImageCompatibleWithOptionsAtIndex(m_currentFrame, m_currentSubsamplingLevel, std::optional<IntSize>()))
         callDecodingCallbacks();
 
-    if (imageObserver())
-        imageObserver()->imageFrameAvailable(*this, ImageAnimatingState::No, nullptr, decodingStatus);
+    if (auto observer = imageObserver())
+        observer->imageFrameAvailable(*this, ImageAnimatingState::No, nullptr, decodingStatus);
 }
 
 DestinationColorSpace BitmapImage::colorSpace()
