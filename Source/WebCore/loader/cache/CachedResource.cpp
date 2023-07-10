@@ -453,6 +453,12 @@ void CachedResource::redirectReceived(ResourceRequest&& request, const ResourceR
 {
     CACHEDRESOURCE_RELEASE_LOG("redirectReceived:");
 
+    // Remove redirect urls from the memory cache if they contain a fragment.
+    // If we cache localhost/#key=foo we will return the same parameters key=foo
+    // on the next visit to the domain even if the parameters have been updated.
+    if (request.url().hasFragmentIdentifier())
+        MemoryCache::singleton().remove(*this);
+
     m_requestedFromNetworkingLayer = true;
     if (!response.isNull())
         updateRedirectChainStatus(m_redirectChainCacheStatus, response);

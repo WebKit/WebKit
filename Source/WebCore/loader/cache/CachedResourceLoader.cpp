@@ -1494,6 +1494,11 @@ CachedResourceLoader::RevalidationPolicy CachedResourceLoader::determineRevalida
         return Reload;
     }
 
+    // FIXME: We should be able to USE the data here, but cannot currently due to a bug
+    // concerning redirect and URL fragments. https://bugs.webkit.org/show_bug.cgi?id=258934
+    if (cachedResourceRequest.hasFragmentIdentifier() && existingResource->hasRedirections())
+        return Load;
+
     return Use;
 }
 
