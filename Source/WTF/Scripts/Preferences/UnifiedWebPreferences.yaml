@@ -7325,6 +7325,21 @@ WebCodecsEnabled:
       "USE(GSTREAMER)": true
       default: false
 
+WebCodecsHEVCEnabled:
+  type: bool
+  status: preview
+  category: media
+  humanReadableName: "WebCodecs HEVC codec"
+  humanReadableDescription: "Enable WebCodecs HEVC codec"
+  condition: ENABLE(WEB_CODECS)
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 WebCryptoSafeCurvesEnabled:
   type: bool
   status: stable
