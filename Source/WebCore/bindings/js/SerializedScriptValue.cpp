@@ -319,6 +319,8 @@ static bool isTypeExposedToGlobalObject(JSC::JSGlobalObject& globalObject, Seria
     }
     return false;
 #else
+    UNUSED_PARAM(globalObject);
+    UNUSED_PARAM(tag);
     return true;
 #endif
 }
