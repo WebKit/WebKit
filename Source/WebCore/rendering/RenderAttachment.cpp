@@ -97,16 +97,15 @@ void RenderAttachment::layout()
         layoutShadowContent(newIntrinsicSize);
 }
 
-LayoutUnit RenderAttachment::baselinePosition(FontBaseline fontBaseline, bool firstLine, LineDirectionMode lineDirectionMode, LinePositionMode linePositionMode) const
+LayoutUnit RenderAttachment::baselinePosition(FontBaseline, bool, LineDirectionMode, LinePositionMode) const
 {
     if (auto* baselineElement = attachmentElement().wideLayoutImageElement()) {
-        bool unusedIsReplaced;
-        auto attachmentRect = attachmentElement().renderRect(&unusedIsReplaced);
-        auto baselineElementRect = baselineElement->renderRect(&unusedIsReplaced);
-        auto baselineElementTop = baselineElementRect.y() - attachmentRect.y();
-        if (auto* baselineElementRenderBox = baselineElement->renderBoxModelObject())
-            return baselineElementTop + baselineElementRenderBox->baselinePosition(fontBaseline, firstLine, lineDirectionMode, linePositionMode);
-        return baselineElementTop + baselineElementRect.height();
+        if (auto* baselineElementRenderBox = baselineElement->renderBox()) {
+            // This is the bottom of the image assuming it is vertically centered.
+            return (height() + baselineElementRenderBox->height()) / 2;
+        }
+        // Fallback to the bottom of the attachment if there is no image.
+        return height();
     }
 
     return theme().attachmentBaseline(*this);

@@ -1,8 +1,8 @@
-layer at (0,0) size 800x813
+layer at (0,0) size 800x777
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x813
-  RenderBlock {HTML} at (0,0) size 800x813
-    RenderBody {BODY} at (8,8) size 784x797
+layer at (0,0) size 800x777
+  RenderBlock {HTML} at (0,0) size 800x777
+    RenderBody {BODY} at (8,8) size 784x761
       RenderBlock {DIV} at (0,0) size 784x94
         RenderText {#text} at (0,67) size 47x19
           text run at (0,67) width 47: "Blank: "
@@ -51,18 +51,18 @@ layer at (0,0) size 800x813
                 RenderBlock {DIV} at (190,0) size 40x40
                   RenderButton {BUTTON} at (0,0) size 40x40 [bgcolor=#7676801F]
                     RenderBlock (anonymous) at (11,0) size 18x40
-      RenderBlock {DIV} at (0,470) size 784x109
-        RenderText {#text} at (0,0) size 97x19
-          text run at (0,0) width 97: "Zero progress: "
-        RenderAttachment {ATTACHMENT} at (97,16) size 339x92 [color=#007AFF]
+      RenderBlock {DIV} at (0,470) size 784x97
+        RenderText {#text} at (0,77) size 97x19
+          text run at (0,77) width 97: "Zero progress: "
+        RenderAttachment {ATTACHMENT} at (97,1) size 339x92 [color=#007AFF]
           RenderFlexibleBox {DIV} at (0,0) size 338x92 [bgcolor=#74748014]
             RenderGrid {DIV} at (0,0) size 82x92
             RenderFlexibleBox {DIV} at (82,0) size 230x92
               RenderGrid {DIV} at (0,37) size 230x18
-      RenderBlock {DIV} at (0,579) size 784x109
-        RenderText {#text} at (0,0) size 96x19
-          text run at (0,0) width 96: "75% progress: "
-        RenderAttachment {ATTACHMENT} at (96,16) size 339x92 [color=#007AFF]
+      RenderBlock {DIV} at (0,567) size 784x97
+        RenderText {#text} at (0,77) size 96x19
+          text run at (0,77) width 96: "75% progress: "
+        RenderAttachment {ATTACHMENT} at (96,1) size 339x92 [color=#007AFF]
           RenderFlexibleBox {DIV} at (0,0) size 338x92 [bgcolor=#74748014]
             RenderGrid {DIV} at (0,0) size 82x92
               RenderBlock {DIV} at (10,10) size 72x72 [color=#3C3C4399]
@@ -70,10 +70,10 @@ layer at (0,0) size 800x813
                   RenderText at (0,0) size 0x0
             RenderFlexibleBox {DIV} at (82,0) size 230x92
               RenderGrid {DIV} at (0,37) size 230x18
-      RenderBlock {DIV} at (0,688) size 784x109
-        RenderText {#text} at (0,0) size 104x19
-          text run at (0,0) width 104: "100% progress: "
-        RenderAttachment {ATTACHMENT} at (104,16) size 339x92 [color=#007AFF]
+      RenderBlock {DIV} at (0,664) size 784x97
+        RenderText {#text} at (0,77) size 104x19
+          text run at (0,77) width 104: "100% progress: "
+        RenderAttachment {ATTACHMENT} at (104,1) size 339x92 [color=#007AFF]
           RenderFlexibleBox {DIV} at (0,0) size 338x92 [bgcolor=#74748014]
             RenderGrid {DIV} at (0,0) size 82x92
               RenderBlock {DIV} at (10,10) size 72x72 [color=#3C3C4399]
@@ -125,22 +125,22 @@ layer at (131,419) size 118x24 backgroundClip at (131,419) size 117x24 clip at (
         text run at (0,0) width 56: "\x{200E}\x{2068}Title\x{2069}\x{200B}.pdf"
 layer at (131,443) size 118x8 backgroundClip at (131,443) size 117x8 clip at (131,443) size 117x8
   RenderDeprecatedFlexibleBox {DIV} at (0,32) size 118x8 [color=#3C3C4399]
-layer at (188,532) size 230x17
+layer at (188,517) size 230x17
   RenderDeprecatedFlexibleBox {DIV} at (0,0) size 230x17 [color=#000000]
     RenderBlock (anonymous) at (0,0) size 230x17
       RenderText {#text} at (0,0) size 56x17
         text run at (0,0) width 56: "\x{200E}\x{2068}Title\x{2069}\x{200B}.pdf"
-layer at (187,641) size 230x17
+layer at (187,614) size 230x17
   RenderDeprecatedFlexibleBox {DIV} at (0,0) size 230x17 [color=#000000]
     RenderBlock (anonymous) at (0,0) size 230x17
       RenderText {#text} at (0,0) size 56x17
         text run at (0,0) width 56: "\x{200E}\x{2068}Title\x{2069}\x{200B}.pdf"
-layer at (195,750) size 230x17
+layer at (195,711) size 230x17
   RenderDeprecatedFlexibleBox {DIV} at (0,0) size 230x17 [color=#000000]
     RenderBlock (anonymous) at (0,0) size 230x17
       RenderText {#text} at (0,0) size 56x17
         text run at (0,0) width 56: "\x{200E}\x{2068}Title\x{2069}\x{200B}.pdf"
 layer at (332,411) size 18x40
   RenderBlock {DIV} at (0,0) size 18x40 [bgcolor=#007AFF]
-layer at (116,504) size 72x72
+layer at (116,489) size 72x72
   RenderBlock {DIV} at (10,10) size 72x72 [bgcolor=#000000]
