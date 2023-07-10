@@ -1291,6 +1291,26 @@ JSValue Interpreter::executeEval(EvalExecutable* eval, JSValue thisValue, JSScop
     }
     UnlinkedEvalCodeBlock* unlinkedCodeBlock = codeBlock->unlinkedEvalCodeBlock();
 
+    // We can't declare a "var"/"function" that overwrites a global "let"/"const"/"class" in a sloppy-mode eval.
+    if (variableObject->isGlobalObject() && !eval->isInStrictContext() && (numVariables || numTopLevelFunctionDecls)) {
+        JSGlobalLexicalEnvironment* globalLexicalEnvironment = jsCast<JSGlobalObject*>(variableObject)->globalLexicalEnvironment();
+        for (unsigned i = 0; i < numVariables; ++i) {
+            const Identifier& ident = unlinkedCodeBlock->variable(i);
+            PropertySlot slot(globalLexicalEnvironment, PropertySlot::InternalMethodType::VMInquiry, &vm);
+            if (JSGlobalLexicalEnvironment::getOwnPropertySlot(globalLexicalEnvironment, globalObject, ident, slot)) {
+                return throwTypeError(globalObject, throwScope, makeString("Can't create duplicate global variable in eval: '"_s, StringView(ident.impl()), '\''));
+            }
+        }
+
+        for (unsigned i = 0; i < numTopLevelFunctionDecls; ++i) {
+            FunctionExecutable* function = codeBlock->functionDecl(i);
+            PropertySlot slot(globalLexicalEnvironment, PropertySlot::InternalMethodType::VMInquiry, &vm);
+            if (JSGlobalLexicalEnvironment::getOwnPropertySlot(globalLexicalEnvironment, globalObject, function->name(), slot)) {
+                return throwTypeError(globalObject, throwScope, makeString("Can't create duplicate global variable in eval: '"_s, StringView(function->name().impl()), '\''));
+            }
+        }
+    }
+
     if (variableObject->structure()->isUncacheableDictionary())
         variableObject->flattenDictionaryObject(vm);
 
@@ -1298,16 +1318,6 @@ JSValue Interpreter::executeEval(EvalExecutable* eval, JSValue thisValue, JSScop
         BatchedTransitionOptimizer optimizer(vm, variableObject);
         if (variableObject->next() && !eval->isInStrictContext())
             variableObject->globalObject()->varInjectionWatchpointSet().fireAll(vm, "Executed eval, fired VarInjection watchpoint");
-
-        if (!eval->isInStrictContext()) {
-            for (unsigned i = 0; i < numVariables; ++i) {
-                const Identifier& ident = unlinkedCodeBlock->variable(i);
-                JSValue resolvedScope = JSScope::resolveScopeForHoistingFuncDeclInEval(globalObject, scope, ident);
-                RETURN_IF_EXCEPTION(throwScope, throwScope.exception());
-                if (resolvedScope.isUndefined())
-                    return throwSyntaxError(globalObject, throwScope, makeString("Can't create duplicate variable in eval: '"_s, StringView(ident.impl()), '\''));
-            }
-        }
 
         for (unsigned i = 0; i < numVariables; ++i) {
             const Identifier& ident = unlinkedCodeBlock->variable(i);
@@ -1321,16 +1331,28 @@ JSValue Interpreter::executeEval(EvalExecutable* eval, JSValue thisValue, JSScop
                 RETURN_IF_EXCEPTION(throwScope, throwScope.exception());
             }
         }
+        
+        if (eval->isInStrictContext()) {
+            for (unsigned i = 0; i < numTopLevelFunctionDecls; ++i) {
+                FunctionExecutable* function = codeBlock->functionDecl(i);
+                PutPropertySlot slot(variableObject);
+                // We need create this variables because it will be used to emits code by bytecode generator
+                variableObject->methodTable()->put(variableObject, globalObject, function->name(), jsUndefined(), slot);
+                RETURN_IF_EXCEPTION(throwScope, throwScope.exception());
+            }
+        } else {
+            for (unsigned i = 0; i < numTopLevelFunctionDecls; ++i) {
+                FunctionExecutable* function = codeBlock->functionDecl(i);
+                JSValue resolvedScope = JSScope::resolveScopeForHoistingFuncDeclInEval(globalObject, scope, function->name());
+                RETURN_IF_EXCEPTION(throwScope, throwScope.exception());
+                if (resolvedScope.isUndefined())
+                    return throwSyntaxError(globalObject, throwScope, makeString("Can't create duplicate variable in eval: '"_s, StringView(function->name().impl()), '\''));
+                PutPropertySlot slot(variableObject);
+                // We need create this variables because it will be used to emits code by bytecode generator
+                variableObject->methodTable()->put(variableObject, globalObject, function->name(), jsUndefined(), slot);
+                RETURN_IF_EXCEPTION(throwScope, throwScope.exception());
+            }
 
-        for (unsigned i = 0; i < numTopLevelFunctionDecls; ++i) {
-            FunctionExecutable* function = codeBlock->functionDecl(i);
-            PutPropertySlot slot(variableObject);
-            // We need create this variables because it will be used to emits code by bytecode generator
-            variableObject->methodTable()->put(variableObject, globalObject, function->name(), jsUndefined(), slot);
-            RETURN_IF_EXCEPTION(throwScope, throwScope.exception());
-        }
-
-        if (!eval->isInStrictContext()) {
             for (unsigned i = 0; i < numFunctionHoistingCandidates; ++i) {
                 const Identifier& ident = unlinkedCodeBlock->functionHoistingCandidate(i);
                 JSValue resolvedScope = JSScope::resolveScopeForHoistingFuncDeclInEval(globalObject, scope, ident);
