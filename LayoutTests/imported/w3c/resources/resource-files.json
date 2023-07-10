@@ -1256,6 +1256,7 @@
         "web-platform-tests/css/css-contain/content-visibility/content-visibility-079-ref.html",
         "web-platform-tests/css/css-contain/content-visibility/content-visibility-auto-in-iframe-ref.html",
         "web-platform-tests/css/css-contain/content-visibility/content-visibility-auto-nested-ref.html",
+        "web-platform-tests/css/css-contain/content-visibility/content-visibility-auto-nested-scroll-ref.html",
         "web-platform-tests/css/css-contain/content-visibility/content-visibility-canvas-ref.html",
         "web-platform-tests/css/css-contain/content-visibility/content-visibility-fieldset-size-ref.html",
         "web-platform-tests/css/css-contain/content-visibility/content-visibility-resize-observer-no-error-ref.html",

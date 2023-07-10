@@ -188,6 +188,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-auto-intrinsic-width.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-auto-nested-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-auto-nested-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-auto-nested-scroll-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-auto-nested-scroll-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-auto-nested-scroll.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-auto-nested.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-auto-selection-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-auto-state-changed-first-observation.html
@@ -246,6 +249,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-with-top-layer-006.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-with-top-layer-hide-after-addition-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-with-top-layer-hide-after-addition.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-with-top-layer-in-auto-subtree-removal-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-with-top-layer-in-auto-subtree-removal.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-with-popover-top-layer-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-with-top-layer-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-contain/content-visibility/contentvisibility-nestedslot-crash.html
