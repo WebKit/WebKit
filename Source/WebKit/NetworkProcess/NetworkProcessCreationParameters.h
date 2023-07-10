@@ -60,6 +60,7 @@ struct NetworkProcessCreationParameters {
     String uiProcessBundleIdentifier;
     RetainPtr<CFDataRef> networkATSContext;
     bool strictSecureDecodingForAllObjCEnabled { false };
+    bool isParentProcessFullWebBrowserOrRunningTest { false };
 #endif
 
 #if USE(SOUP)

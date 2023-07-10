@@ -94,6 +94,7 @@
 #endif
 
 #if PLATFORM(COCOA)
+#include "DefaultWebBrowserChecks.h"
 #include "LegacyCustomProtocolManagerClient.h"
 #endif
 
@@ -227,6 +228,10 @@ void NetworkProcessProxy::sendCreationParametersToNewProcess()
 #endif
 
     parameters.allowedFirstPartiesForCookies = WebProcessProxy::allowedFirstPartiesForCookies();
+
+#if PLATFORM(COCOA)
+    parameters.isParentProcessFullWebBrowserOrRunningTest = isFullWebBrowserOrRunningTest();
+#endif
 
     WebProcessPool::platformInitializeNetworkProcess(parameters);
     sendWithAsyncReply(Messages::NetworkProcess::InitializeNetworkProcess(parameters), [weakThis = WeakPtr { *this }] {

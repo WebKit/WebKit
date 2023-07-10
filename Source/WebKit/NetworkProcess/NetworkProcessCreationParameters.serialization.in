@@ -37,7 +37,8 @@ struct WebKit::NetworkProcessCreationParameters {
 #if PLATFORM(COCOA)
     String uiProcessBundleIdentifier
     RetainPtr<CFDataRef> networkATSContext
-    bool strictSecureDecodingForAllObjCEnabled;
+    bool strictSecureDecodingForAllObjCEnabled
+    bool isParentProcessFullWebBrowserOrRunningTest
 #endif
 
 #if USE(SOUP)

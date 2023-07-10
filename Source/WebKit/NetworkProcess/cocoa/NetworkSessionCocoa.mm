@@ -1332,6 +1332,7 @@ void SessionWrapper::initialize(NSURLSessionConfiguration *configuration, Networ
 {
     UNUSED_PARAM(isNavigatingToAppBoundDomain);
 
+    // FIXME: The following `isParentProcessAFullWebBrowser` check is inaccurate in Safari on macOS.
     auto isFullBrowser = isParentProcessAFullWebBrowser(networkSession.networkProcess());
 #if PLATFORM(MAC)
     isFullBrowser = WebCore::MacApplication::isSafari();
@@ -1398,7 +1399,7 @@ NetworkSessionCocoa::NetworkSessionCocoa(NetworkProcess& networkProcess, const N
     sessionsCreated = true;
 #endif
 
-    NSURLSessionConfiguration *configuration = configurationForSessionID(m_sessionID, isParentProcessAFullWebBrowser(networkProcess));
+    auto configuration = configurationForSessionID(m_sessionID, networkProcess.isParentProcessFullWebBrowserOrRunningTest());
 
     if (!m_sessionID.isEphemeral())
         m_blobRegistry.setFileDirectory(FileSystem::createTemporaryDirectory(@"BlobRegistryFiles"));
@@ -1568,6 +1569,7 @@ SessionWrapper& SessionSet::initializeEphemeralStatelessSessionIfNeeded(Navigati
 SessionWrapper& NetworkSessionCocoa::sessionWrapperForTask(WebPageProxyIdentifier webPageProxyID, const WebCore::ResourceRequest& request, WebCore::StoredCredentialsPolicy storedCredentialsPolicy, std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain)
 {
     auto shouldBeConsideredAppBound = isNavigatingToAppBoundDomain ? *isNavigatingToAppBoundDomain : NavigatingToAppBoundDomain::Yes;
+    // FIXME: The following `isParentProcessAFullWebBrowser` check is inaccurate in Safari on macOS.
     if (isParentProcessAFullWebBrowser(networkProcess()))
         shouldBeConsideredAppBound = NavigatingToAppBoundDomain::No;
 
@@ -2184,6 +2186,7 @@ void NetworkSessionCocoa::removeNetworkWebsiteData(std::optional<WallTime> modif
     }
 
     auto bundleID = WebCore::applicationBundleIdentifier();
+    // FIXME: The following `isParentProcessAFullWebBrowser` check is inaccurate in Safari on macOS.
     if (!isParentProcessAFullWebBrowser(networkProcess()) && !isActingOnBehalfOfAFullWebBrowser(bundleID))
         return completionHandler();
 

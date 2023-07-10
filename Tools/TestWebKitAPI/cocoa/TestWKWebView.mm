@@ -983,6 +983,32 @@ static WKContentView *recursiveFindWKContentView(UIView *view)
     [self keyUp:[NSEvent keyEventWithType:keyUpEventType location:NSZeroPoint modifierFlags:modifiers timestamp:self.eventTimestamp windowNumber:[_hostWindow windowNumber] context:nil characters:characterAsString charactersIgnoringModifiers:characterAsString isARepeat:NO keyCode:character]];
 }
 
+// Note: this testing strategy makes a couple of assumptions:
+// 1. The network process hasn't already died and allowed the system to reuse the same PID.
+// 2. The API test did not take more than ~120 seconds to run.
+- (NSArray<NSString *> *)collectLogsForNewConnections
+{
+    auto predicate = [NSString stringWithFormat:@"subsystem == 'com.apple.network'"
+        " AND category == 'connection'"
+        " AND eventMessage endswith 'start'"
+        " AND processIdentifier == %d", self._networkProcessIdentifier];
+    RetainPtr pipe = [NSPipe pipe];
+    // FIXME: This is currently reliant on `NSTask`, which is absent on iOS. We should find a way to
+    // make this helper work on both platforms.
+    auto task = adoptNS([NSTask new]);
+    [task setLaunchPath:@"/usr/bin/log"];
+    [task setArguments:@[ @"show", @"--last", @"2m", @"--style", @"json", @"--predicate", predicate ]];
+    [task setStandardOutput:pipe.get()];
+    [task launch];
+    [task waitUntilExit];
+
+    auto rawData = [pipe fileHandleForReading].availableData;
+    auto messages = [NSMutableArray<NSString *> array];
+    for (id messageData in dynamic_objc_cast<NSArray>([NSJSONSerialization JSONObjectWithData:rawData options:0 error:nil]))
+        [messages addObject:dynamic_objc_cast<NSString>([messageData objectForKey:@"eventMessage"])];
+    return messages;
+}
+
 @end
 
 #endif // PLATFORM(MAC)

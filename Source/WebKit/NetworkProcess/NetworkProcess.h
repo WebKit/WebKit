@@ -377,6 +377,8 @@ public:
 #if PLATFORM(COCOA)
     void appPrivacyReportTestingData(PAL::SessionID, CompletionHandler<void(const AppPrivacyReportTestingData&)>&&);
     void clearAppPrivacyReportTestingData(PAL::SessionID, CompletionHandler<void()>&&);
+
+    bool isParentProcessFullWebBrowserOrRunningTest() const { return m_isParentProcessFullWebBrowserOrRunningTest; }
 #endif
 
 #if ENABLE(WEB_RTC)
@@ -577,6 +579,7 @@ private:
     bool m_didSyncCookiesForClose { false };
 #if PLATFORM(COCOA)
     int m_mediaStreamingActivitityToken { NOTIFY_TOKEN_INVALID };
+    bool m_isParentProcessFullWebBrowserOrRunningTest { false };
 #endif
 };
 
