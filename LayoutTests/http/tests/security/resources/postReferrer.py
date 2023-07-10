@@ -20,7 +20,7 @@ sys.stdout.write(
     '<html>\n'
     '<body>\n'
     '<script>\n'
-    'window.opener.postMessage({}, "*");\n'
+    'top.postMessage({}, \'*\');\n'
     '</script>\n'
     '</body>\n'.format(payload)
 )

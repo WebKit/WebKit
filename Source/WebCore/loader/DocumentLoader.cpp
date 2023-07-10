@@ -706,10 +706,11 @@ void DocumentLoader::willSendRequest(ResourceRequest&& newRequest, const Resourc
         newRequest.clearHTTPOrigin();
 
     if (&topFrame != m_frame) {
-        // We shouldn't check for mixed content against the current frame when navigating; we only need to be concerned with the ancestor frames.
-        auto* parentFrame = dynamicDowncast<Frame>(m_frame->tree().parent());
-        ASSERT(parentFrame && topFrame);
-        if (!MixedContentChecker::frameAndAncestorsCanDisplayInsecureContent(*parentFrame, MixedContentChecker::ContentType::Active, newRequest.url())) {
+        if (!MixedContentChecker::canDisplayInsecureContent(*m_frame, m_frame->document()->securityOrigin(), MixedContentChecker::ContentType::Active, newRequest.url(), MixedContentChecker::AlwaysDisplayInNonStrictMode::Yes)) {
+            cancelMainResourceLoad(frameLoader()->cancelledError(newRequest));
+            return completionHandler(WTFMove(newRequest));
+        }
+        if (!MixedContentChecker::canDisplayInsecureContent(*m_frame, topFrame.document()->securityOrigin(), MixedContentChecker::ContentType::Active, newRequest.url())) {
             cancelMainResourceLoad(frameLoader()->cancelledError(newRequest));
             return completionHandler(WTFMove(newRequest));
         }

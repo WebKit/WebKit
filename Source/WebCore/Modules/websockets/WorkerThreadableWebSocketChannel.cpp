@@ -412,10 +412,14 @@ void WorkerThreadableWebSocketChannel::Bridge::connect(const URL& url, const Str
         ASSERT(peer);
 
         auto& document = downcast<Document>(context);
-
-        if (document.frame() && !MixedContentChecker::frameAndAncestorsCanRunInsecureContent(*document.frame(), document.securityOrigin(), url, MixedContentChecker::ShouldLogWarning::No)) {
-            peer->fail(makeString("The page at ", document.url().stringCenterEllipsizedToLength(), " was blocked from connecting insecurely to ", url.stringCenterEllipsizedToLength(), " either because the protocol is insecure or the page is embedded from an insecure page."));
-            return;
+        
+        // FIXME: make this mixed content check equivalent to the document mixed content check currently in WebSocket::connect()
+        if (auto* frame = document.frame()) {
+            std::optional<String> errorString = MixedContentChecker::checkForMixedContentInFrameTree(*frame, url);
+            if (errorString) {
+                peer->fail(errorString.value());
+                return;
+            }
         }
 
         if (peer->connect(url, protocol) == ThreadableWebSocketChannel::ConnectStatus::KO)

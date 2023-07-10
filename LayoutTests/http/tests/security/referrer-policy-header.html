@@ -8,9 +8,9 @@
 <script>
 description("Tests support for Referrer-Policy HTTP header.");
 jsTestIsAsync = true;
-runTests(false);
+
 if (window.testRunner)
-    testRunner.setStatisticsShouldDowngradeReferrer(false, async () => { await runTests(false /* multipart */); });
+    testRunner.setStatisticsShouldDowngradeReferrer(false, () => { runTests(false /* multipart */); });
 </script>
 </body>
 </html>
