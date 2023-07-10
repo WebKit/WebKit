@@ -315,7 +315,9 @@ public:
         DecoderOrError(Error inError)
             : decoder(nullptr)
             , error(inError)
-        { }
+        {
+            ASSERT(error != Error::NoError);
+        }
     };
 
     static RefPtr<Connection> connection(UniqueID);
@@ -703,8 +705,10 @@ template<typename T> Connection::SendSyncResult<T> Connection::sendSync(T&& mess
 
     // Now send the message and wait for a reply.
     auto replyDecoderOrError = sendSyncMessage(syncRequestID, WTFMove(encoder), timeout, sendSyncOptions);
-    if (!replyDecoderOrError.decoder)
+    if (!replyDecoderOrError.decoder) {
+        ASSERT(replyDecoderOrError.error != Error::NoError);
         return { nullptr, std::nullopt, replyDecoderOrError.error };
+    }
 
     SendSyncResult<T> result;
     *replyDecoderOrError.decoder >> result.replyArguments;
