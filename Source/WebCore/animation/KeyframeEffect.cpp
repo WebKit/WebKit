@@ -2013,6 +2013,7 @@ void KeyframeEffect::applyPendingAcceleratedActionsOrUpdateTimingProperties()
 
     if (m_pendingAcceleratedActions.isEmpty()) {
         m_pendingAcceleratedActions.append(AcceleratedAction::UpdateProperties);
+        m_lastRecordedAcceleratedAction = AcceleratedAction::Play;
         applyPendingAcceleratedActions();
         m_pendingAcceleratedActions.clear();
     } else
