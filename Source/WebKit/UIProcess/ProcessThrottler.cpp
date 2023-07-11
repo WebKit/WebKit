@@ -399,6 +399,8 @@ void ProcessThrottler::clearAssertion()
         PROCESSTHROTTLER_RELEASE_LOG("clearAssertion: Releasing near-suspended assertion");
         m_prepareToDropLastAssertionTimeoutTimer.stop();
         m_assertionToClearAfterPrepareToDropLastAssertion = nullptr;
+        if (!m_assertion)
+            m_process.didDropLastAssertion();
     });
 }
 
