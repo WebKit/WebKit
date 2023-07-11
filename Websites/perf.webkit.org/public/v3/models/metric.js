@@ -9,7 +9,7 @@ class Metric extends LabeledObject {
         this._test = object.test;
         this._platforms = [];
 
-        const suffix = this.name().match('([A-z][a-z]+|FrameRate)$')[0];
+        const suffix = this.name().match('([A-Z][a-z]+|FrameRate)$')[0];
         this._unit = {
             'FrameRate': 'fps',
             'Runs': '/s',
