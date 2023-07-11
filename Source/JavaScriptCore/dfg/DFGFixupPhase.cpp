@@ -3753,6 +3753,10 @@ private:
                     convertStringAddUse<Int32Use>(node, edge);
                     return;
                 }
+                if (edge->op() == ToPrimitive) {
+                    convertStringAddUse<KnownPrimitiveUse>(node, edge);
+                    return;
+                }
                 if (!Options::useConcurrentJIT())
                     ASSERT(m_graph.canOptimizeStringObjectAccess(node->origin.semantic));
                 if (edge->shouldSpeculateStringObject()) {
@@ -3763,10 +3767,6 @@ private:
                 if (edge->shouldSpeculateStringOrStringObject()) {
                     addCheckStructureForOriginalStringObjectUse(StringOrStringObjectUse, node->origin, edge.node());
                     convertStringAddUse<StringOrStringObjectUse>(node, edge);
-                    return;
-                }
-                if (edge->op() == ToPrimitive) {
-                    convertStringAddUse<KnownPrimitiveUse>(node, edge);
                     return;
                 }
                 RELEASE_ASSERT_NOT_REACHED();
