@@ -50,7 +50,7 @@ layer at (0,0) size 785x678
               RenderGrid {DIV} at (0,26) size 172x28
                 RenderBlock {DIV} at (144,0) size 28x28
                   RenderButton {BUTTON} at (0,0) size 28x28 [color=#00000019] [border: (1px solid #00000019)]
-                    RenderBlock (anonymous) at (7,3) size 14x21
+                    RenderBlock (anonymous) at (1,1) size 26x26
       RenderBlock {DIV} at (0,410) size 769x84
         RenderText {#text} at (0,66) size 97x18
           text run at (0,66) width 97: "Zero progress: "
@@ -140,7 +140,8 @@ layer at (183,619) size 172x16
     RenderBlock (anonymous) at (0,0) size 172x16
       RenderText {#text} at (0,0) size 56x16
         text run at (0,0) width 56: "\x{200E}\x{2068}Title\x{2069}\x{200B}.pdf"
-layer at (270,366) size 14x21
-  RenderBlock {DIV} at (0,0) size 14x21 [bgcolor=#0000007F]
+layer at (264,364) size 26x26
+  RenderBlock (generated) at (0,0) size 26x26 [bgcolor=#0000007F]
+    RenderText at (0,0) size 0x0
 layer at (120,433) size 52x52
   RenderBlock {DIV} at (14,14) size 52x52 [bgcolor=#000000D8]
