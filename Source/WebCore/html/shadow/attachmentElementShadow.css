@@ -38,7 +38,7 @@ div#attachment-container {
     width: 266px;
     background-color: -apple-system-tertiary-fill;
 #endif
-    height: calc(var(--icon-size) + var(--icon-margin) * 2);
+    min-height: calc(var(--icon-size) + var(--icon-margin) * 2);
     display: flex;
     border-radius: 8px;
     font: caption;
