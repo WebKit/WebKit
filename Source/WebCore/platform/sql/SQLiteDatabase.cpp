@@ -49,6 +49,10 @@
 #define ENABLE_SQLITE_FAST_MALLOC (BENABLE(MALLOC_SIZE) && BENABLE(MALLOC_GOOD_SIZE))
 #endif
 
+#if PLATFORM(COCOA)
+#include <sys/xattr.h>
+#endif
+
 namespace WebCore {
 
 static const char notOpenErrorMessage[] = "database is not open";
@@ -117,7 +121,7 @@ SQLiteDatabase::~SQLiteDatabase()
     close();
 }
 
-bool SQLiteDatabase::open(const String& filename, OpenMode openMode)
+bool SQLiteDatabase::open(const String& filename, OpenMode openMode, OptionSet<OpenOptions> options)
 {
     initializeSQLiteIfNecessary();
     close();
@@ -155,7 +159,18 @@ bool SQLiteDatabase::open(const String& filename, OpenMode openMode)
         int result = SQLITE_OK;
         {
             SQLiteTransactionInProgressAutoCounter transactionCounter;
-            result = sqlite3_open_v2(FileSystem::fileSystemRepresentation(filename).data(), &m_db, flags, nullptr);
+            auto fsFilename = FileSystem::fileSystemRepresentation(filename);
+            result = sqlite3_open_v2(fsFilename.data(), &m_db, flags, nullptr);
+#if PLATFORM(COCOA)
+            if (result == SQLITE_OK && options.contains(OpenOptions::CanSuspendWhileLocked)) {
+                char excluded = 0xff;
+                auto err = setxattr(fsFilename.data(), "com.apple.runningboard.can-suspend-locked", &excluded, sizeof(excluded), 0, 0);
+                if (err < 0)
+                    RELEASE_LOG_ERROR(SQLDatabase, "SQLiteDatabase::open: setxattr failed: %" PUBLIC_LOG_STRING, strerror(errno));
+            }
+#else
+            UNUSED_PARAM(options);
+#endif
         }
 
         if (result != SQLITE_OK) {
