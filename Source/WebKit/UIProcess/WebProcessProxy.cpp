@@ -1726,6 +1726,12 @@ void WebProcessProxy::didChangeThrottleState(ProcessThrottleState type)
     }
 
     ASSERT(!m_backgroundToken || !m_foregroundToken);
+    m_backgroundResponsivenessTimer.updateState();
+}
+
+void WebProcessProxy::didDropLastAssertion()
+{
+    m_backgroundResponsivenessTimer.updateState();
 }
 
 void WebProcessProxy::prepareToDropLastAssertion(CompletionHandler<void()>&& completionHandler)
