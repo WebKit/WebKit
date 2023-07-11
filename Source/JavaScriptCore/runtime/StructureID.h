@@ -37,7 +37,7 @@ class Structure;
 #if CPU(ADDRESS64)
 
 // We would like to define this value in PlatformEnable.h, but it is not possible since the following is relying on MACH_VM_MAX_ADDRESS.
-#if CPU(ARM64) && OS(DARWIN)
+#if CPU(ARM64) && OS(DARWIN) && !PLATFORM(IOS_FAMILY_SIMULATOR)
 #if MACH_VM_MAX_ADDRESS_RAW < (1ULL << 36)
 #define ENABLE_STRUCTURE_ID_WITH_SHIFT 1
 static_assert(MACH_VM_MAX_ADDRESS_RAW == MACH_VM_MAX_ADDRESS);

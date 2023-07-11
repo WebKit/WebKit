@@ -133,19 +133,6 @@
 #define WTF_OS_UNIX 1
 #endif
 
-
-#if CPU(ADDRESS64)
-#if OS(DARWIN)
-#define WTF_OS_CONSTANT_EFFECTIVE_ADDRESS_WIDTH (WTF::getMSBSetConstexpr(MACH_VM_MAX_ADDRESS) + 1)
-#else
-/* We strongly assume that effective address width is <= 48 in 64bit architectures (e.g. NaN boxing). */
-#define WTF_OS_CONSTANT_EFFECTIVE_ADDRESS_WIDTH 48
-#endif
-#else
-#define WTF_OS_CONSTANT_EFFECTIVE_ADDRESS_WIDTH 32
-#endif
-
-
 /* Asserts, invariants for macro definitions */
 
 #define WTF_OS_WIN ERROR "USE WINDOWS WITH OS NOT WIN"
