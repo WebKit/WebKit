@@ -26,7 +26,9 @@
 #include "config.h"
 #include "CookieJar.h"
 
+#include "Cookie.h"
 #include "CookieRequestHeaderFieldProxy.h"
+#include "CookieStoreGetOptions.h"
 #include "Document.h"
 #include "DocumentLoader.h"
 #include "FrameDestructionObserverInlines.h"
@@ -38,6 +40,7 @@
 #include "Page.h"
 #include "PlatformStrategies.h"
 #include "StorageSessionProvider.h"
+#include <wtf/CompletionHandler.h>
 #include <wtf/SystemTracing.h>
 
 namespace WebCore {
@@ -184,6 +187,11 @@ void CookieJar::deleteCookie(const Document&, const URL& url, const String& cook
         ASSERT_NOT_REACHED();
         completionHandler();
     }
+}
+
+void CookieJar::getCookiesAsync(Document&, const URL&, const CookieStoreGetOptions&, CompletionHandler<void(Vector<Cookie>&&)>&& completionHandler) const
+{
+    completionHandler({ });
 }
 
 }

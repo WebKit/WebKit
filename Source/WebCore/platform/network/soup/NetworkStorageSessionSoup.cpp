@@ -33,6 +33,7 @@
 
 #include "Cookie.h"
 #include "CookieRequestHeaderFieldProxy.h"
+#include "CookieStoreGetOptions.h"
 #include "GUniquePtrSoup.h"
 #include "HTTPCookieAcceptPolicy.h"
 #include "SoupNetworkSession.h"
@@ -41,6 +42,7 @@
 #include <wtf/DateMath.h>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/Vector.h>
 #include <wtf/glib/GUniquePtr.h>
 
 #if USE(LIBSECRET)
@@ -655,6 +657,12 @@ static std::pair<String, bool> cookiesForSession(const NetworkStorageSession& se
 std::pair<String, bool> NetworkStorageSession::cookiesForDOM(const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, std::optional<FrameIdentifier> frameID, std::optional<PageIdentifier> pageID, IncludeSecureCookies includeSecureCookies, ApplyTrackingPrevention applyTrackingPrevention, ShouldRelaxThirdPartyCookieBlocking relaxThirdPartyCookieBlocking) const
 {
     return cookiesForSession(*this, firstParty, url, sameSiteInfo, frameID, pageID, false, includeSecureCookies, applyTrackingPrevention, relaxThirdPartyCookieBlocking);
+}
+
+Vector<Cookie> NetworkStorageSession::cookiesForDOMAsVector(const URL&, const SameSiteInfo&, const URL&, std::optional<FrameIdentifier>, std::optional<PageIdentifier>, IncludeSecureCookies, ApplyTrackingPrevention, ShouldRelaxThirdPartyCookieBlocking, const CookieStoreGetOptions&) const
+{
+    // FIXME: Implement for the Cookie Store API.
+    return { };
 }
 
 std::pair<String, bool> NetworkStorageSession::cookieRequestHeaderFieldValue(const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, std::optional<FrameIdentifier> frameID, std::optional<PageIdentifier> pageID, IncludeSecureCookies includeSecureCookies, ApplyTrackingPrevention applyTrackingPrevention, ShouldRelaxThirdPartyCookieBlocking relaxThirdPartyCookieBlocking) const

@@ -30,6 +30,7 @@
 #import "Cookie.h"
 #import "CookieRequestHeaderFieldProxy.h"
 #import "CookieStorageObserver.h"
+#import "CookieStoreGetOptions.h"
 #import "HTTPCookieAcceptPolicyCocoa.h"
 #import "ResourceRequest.h"
 #import "SameSiteInfo.h"
@@ -390,9 +391,44 @@ std::pair<String, bool> NetworkStorageSession::cookiesForSession(const URL& firs
     return { String(), false };
 }
 
+Vector<Cookie> NetworkStorageSession::cookiesForSessionAsVector(const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, std::optional<FrameIdentifier> frameID, std::optional<PageIdentifier> pageID, IncludeHTTPOnlyOrNot includeHTTPOnly, IncludeSecureCookies includeSecureCookies, ApplyTrackingPrevention applyTrackingPrevention, ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking, const CookieStoreGetOptions& options) const
+{
+    ASSERT(hasProcessPrivilege(ProcessPrivilege::CanAccessRawCookies) || m_isInMemoryCookieStore);
+
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
+
+    auto cookies = cookiesForURL(firstParty, sameSiteInfo, url, frameID, pageID, applyTrackingPrevention, shouldRelaxThirdPartyCookieBlocking);
+    if (![cookies count])
+        return { };
+
+    Vector<Cookie> cookiesVector;
+    NSString *name = options.name;
+    for (NSHTTPCookie *cookie in cookies.get()) {
+        if (![[cookie name] length])
+            continue;
+        if (!includeHTTPOnly && [cookie isHTTPOnly])
+            continue;
+        if ([cookie isSecure] && includeSecureCookies == IncludeSecureCookies::No)
+            continue;
+        if (!options.name.isNull() && ![[cookie name] isEqualToString:name])
+            continue;
+
+        cookiesVector.append(Cookie(cookie));
+    }
+    return cookiesVector;
+
+    END_BLOCK_OBJC_EXCEPTIONS
+    return { };
+}
+
 std::pair<String, bool> NetworkStorageSession::cookiesForDOM(const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, std::optional<FrameIdentifier> frameID, std::optional<PageIdentifier> pageID, IncludeSecureCookies includeSecureCookies, ApplyTrackingPrevention applyTrackingPrevention, ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking) const
 {
     return cookiesForSession(firstParty, sameSiteInfo, url, frameID, pageID, DoNotIncludeHTTPOnly, includeSecureCookies, applyTrackingPrevention, shouldRelaxThirdPartyCookieBlocking);
+}
+
+Vector<Cookie> NetworkStorageSession::cookiesForDOMAsVector(const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, std::optional<FrameIdentifier> frameID, std::optional<PageIdentifier> pageID, IncludeSecureCookies includeSecureCookies, ApplyTrackingPrevention applyTrackingPrevention, ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking, const CookieStoreGetOptions& options) const
+{
+    return cookiesForSessionAsVector(firstParty, sameSiteInfo, url, frameID, pageID, DoNotIncludeHTTPOnly, includeSecureCookies, applyTrackingPrevention, shouldRelaxThirdPartyCookieBlocking, options);
 }
 
 std::pair<String, bool> NetworkStorageSession::cookieRequestHeaderFieldValue(const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, std::optional<FrameIdentifier> frameID, std::optional<PageIdentifier> pageID, IncludeSecureCookies includeSecureCookies, ApplyTrackingPrevention applyTrackingPrevention, ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking) const

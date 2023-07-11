@@ -5303,3 +5303,8 @@ header: <WebCore/WebGPUPredefinedColorSpace.h>
 enum class WebCore::WebGPU::PredefinedColorSpace : uint8_t {
     SRGB
 };
+
+struct WebCore::CookieStoreGetOptions {
+    String name;
+    String url;
+};

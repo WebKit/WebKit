@@ -2807,7 +2807,7 @@ WebCoreOpaqueRoot root(LocalDOMWindow* window)
 CookieStore& LocalDOMWindow::cookieStore()
 {
     if (!m_cookieStore)
-        m_cookieStore = CookieStore::create();
+        m_cookieStore = CookieStore::create(document());
     return *m_cookieStore;
 }
 

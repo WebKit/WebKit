@@ -35,6 +35,7 @@
 #include <wtf/Function.h>
 #include <wtf/HashMap.h>
 #include <wtf/RobinHoodHashMap.h>
+#include <wtf/Vector.h>
 #include <wtf/WallTime.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
@@ -75,6 +76,7 @@ class ResourceRequest;
 struct ClientOrigin;
 struct Cookie;
 struct CookieRequestHeaderFieldProxy;
+struct CookieStoreGetOptions;
 struct SameSiteInfo;
 
 enum class HTTPCookieAcceptPolicy : uint8_t;
@@ -172,6 +174,7 @@ public:
     WEBCORE_EXPORT bool getRawCookies(const URL& firstParty, const SameSiteInfo&, const URL&, std::optional<FrameIdentifier>, std::optional<PageIdentifier>, ApplyTrackingPrevention, ShouldRelaxThirdPartyCookieBlocking, Vector<Cookie>&) const;
     WEBCORE_EXPORT void getHostnamesWithCookies(HashSet<String>& hostnames);
     WEBCORE_EXPORT std::pair<String, bool> cookiesForDOM(const URL& firstParty, const SameSiteInfo&, const URL&, std::optional<FrameIdentifier>, std::optional<PageIdentifier>, IncludeSecureCookies, ApplyTrackingPrevention, ShouldRelaxThirdPartyCookieBlocking) const;
+    WEBCORE_EXPORT Vector<Cookie> cookiesForDOMAsVector(const URL& firstParty, const SameSiteInfo&, const URL&, std::optional<FrameIdentifier>, std::optional<PageIdentifier>, IncludeSecureCookies, ApplyTrackingPrevention, ShouldRelaxThirdPartyCookieBlocking, const CookieStoreGetOptions&) const;
     WEBCORE_EXPORT std::pair<String, bool> cookieRequestHeaderFieldValue(const URL& firstParty, const SameSiteInfo&, const URL&, std::optional<FrameIdentifier>, std::optional<PageIdentifier>, IncludeSecureCookies, ApplyTrackingPrevention, ShouldRelaxThirdPartyCookieBlocking) const;
     WEBCORE_EXPORT std::pair<String, bool> cookieRequestHeaderFieldValue(const CookieRequestHeaderFieldProxy&) const;
 
@@ -237,6 +240,7 @@ private:
 #if PLATFORM(COCOA)
     enum IncludeHTTPOnlyOrNot { DoNotIncludeHTTPOnly, IncludeHTTPOnly };
     std::pair<String, bool> cookiesForSession(const URL& firstParty, const SameSiteInfo&, const URL&, std::optional<FrameIdentifier>, std::optional<PageIdentifier>, IncludeHTTPOnlyOrNot, IncludeSecureCookies, ApplyTrackingPrevention, ShouldRelaxThirdPartyCookieBlocking) const;
+    Vector<Cookie> cookiesForSessionAsVector(const URL& firstParty, const SameSiteInfo&, const URL&, std::optional<FrameIdentifier>, std::optional<PageIdentifier>, IncludeHTTPOnlyOrNot, IncludeSecureCookies, ApplyTrackingPrevention, ShouldRelaxThirdPartyCookieBlocking, const CookieStoreGetOptions&) const;
     RetainPtr<NSArray> httpCookies(CFHTTPCookieStorageRef) const;
     RetainPtr<NSArray> httpCookiesForURL(CFHTTPCookieStorageRef, NSURL *firstParty, const std::optional<SameSiteInfo>&, NSURL *) const;
     RetainPtr<NSArray> cookiesForURL(const URL& firstParty, const SameSiteInfo&, const URL&, std::optional<FrameIdentifier>, std::optional<PageIdentifier>, ApplyTrackingPrevention, ShouldRelaxThirdPartyCookieBlocking) const;

@@ -26,35 +26,83 @@
 #include "config.h"
 #include "CookieStore.h"
 
+#include "Cookie.h"
 #include "CookieInit.h"
+#include "CookieJar.h"
+#include "CookieListItem.h"
 #include "CookieStoreDeleteOptions.h"
 #include "CookieStoreGetOptions.h"
+#include "Document.h"
+#include "JSCookieListItem.h"
 #include "JSDOMPromiseDeferred.h"
+#include "ScriptExecutionContext.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/Ref.h>
+#include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(CookieStore);
 
-Ref<CookieStore> CookieStore::create()
+Ref<CookieStore> CookieStore::create(Document* document)
 {
-    return adoptRef(*new CookieStore());
+    auto cookieStore = adoptRef(*new CookieStore(document));
+    cookieStore->suspendIfNeeded();
+    return cookieStore;
 }
 
-CookieStore::CookieStore() = default;
+CookieStore::CookieStore(Document* document)
+    : ActiveDOMObject(document)
+{
+}
 
 CookieStore::~CookieStore() = default;
 
-void CookieStore::get(const String&, Ref<DeferredPromise>&& promise)
+void CookieStore::get(String&& name, Ref<DeferredPromise>&& promise)
 {
-    promise->reject(NotSupportedError);
+    get(CookieStoreGetOptions { WTFMove(name), { } }, WTFMove(promise));
 }
 
-void CookieStore::get(CookieStoreGetOptions&&, Ref<DeferredPromise>&& promise)
+void CookieStore::get(CookieStoreGetOptions&& options, Ref<DeferredPromise>&& promise)
 {
-    promise->reject(NotSupportedError);
+    auto* context = scriptExecutionContext();
+    if (!context) {
+        promise->reject(SecurityError);
+        return;
+    }
+
+    auto* origin = context->securityOrigin();
+    if (!origin) {
+        promise->reject(SecurityError);
+        return;
+    }
+
+    if (origin->isOpaque()) {
+        promise->reject(Exception { SecurityError, "The origin is opaque"_s });
+        return;
+    }
+
+    auto& document = *downcast<Document>(context);
+    auto* page = document.page();
+    if (!page) {
+        promise->reject(SecurityError);
+        return;
+    }
+
+    auto& url = document.url();
+    auto& cookieJar = page->cookieJar();
+    auto completionHandler = [promise = WTFMove(promise)] (Vector<Cookie>&& cookies) {
+        if (cookies.isEmpty()) {
+            promise->resolveWithJSValue(JSC::jsNull());
+            return;
+        }
+
+        auto& cookie = cookies[0];
+        promise->resolve<IDLDictionary<CookieListItem>>(CookieListItem { WTFMove(cookie.name), WTFMove(cookie.value) });
+    };
+
+    cookieJar.getCookiesAsync(document, url, options, WTFMove(completionHandler));
 }
 
 void CookieStore::getAll(const String&, Ref<DeferredPromise>&& promise)
@@ -87,6 +135,11 @@ void CookieStore::remove(CookieStoreDeleteOptions&&, Ref<DeferredPromise>&& prom
     promise->reject(NotSupportedError);
 }
 
+const char* CookieStore::activeDOMObjectName() const
+{
+    return "CookieStore";
+}
+
 EventTargetInterface CookieStore::eventTargetInterface() const
 {
     return CookieStoreEventTargetInterfaceType;
@@ -94,7 +147,7 @@ EventTargetInterface CookieStore::eventTargetInterface() const
 
 ScriptExecutionContext* CookieStore::scriptExecutionContext() const
 {
-    return nullptr;
+    return ActiveDOMObject::scriptExecutionContext();
 }
 
 }

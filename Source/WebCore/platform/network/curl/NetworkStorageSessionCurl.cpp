@@ -28,12 +28,15 @@
 
 #if USE(CURL)
 
+#include "Cookie.h"
 #include "CookieJarDB.h"
 #include "CookieRequestHeaderFieldProxy.h"
+#include "CookieStoreGetOptions.h"
 #include "CurlContext.h"
 #include "HTTPCookieAcceptPolicy.h"
 #include <wtf/FileSystem.h>
 #include <wtf/URL.h>
+#include <wtf/Vector.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
@@ -151,6 +154,12 @@ HTTPCookieAcceptPolicy NetworkStorageSession::cookieAcceptPolicy() const
 std::pair<String, bool> NetworkStorageSession::cookiesForDOM(const URL& firstParty, const SameSiteInfo&, const URL& url, std::optional<FrameIdentifier>, std::optional<PageIdentifier>, IncludeSecureCookies includeSecureCookies, ApplyTrackingPrevention, ShouldRelaxThirdPartyCookieBlocking) const
 {
     return cookiesForSession(*this, firstParty, url, false, includeSecureCookies);
+}
+
+Vector<Cookie> NetworkStorageSession::cookiesForDOMAsVector(const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, std::optional<FrameIdentifier> frameID, std::optional<PageIdentifier> pageID, IncludeSecureCookies includeSecureCookies, ApplyTrackingPrevention applyTrackingPrevention, ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking, const CookieStoreGetOptions& options) const
+{
+    // FIXME: Implement for the Cookie Store API.
+    return { };
 }
 
 void NetworkStorageSession::setCookies(const Vector<Cookie>& cookies, const URL&, const URL& /* mainDocumentURL */)

@@ -31,7 +31,9 @@
 #include "WebFrame.h"
 #include "WebPage.h"
 #include "WebProcess.h"
+#include <WebCore/Cookie.h>
 #include <WebCore/CookieRequestHeaderFieldProxy.h>
+#include <WebCore/CookieStoreGetOptions.h>
 #include <WebCore/DeprecatedGlobalSettings.h>
 #include <WebCore/Document.h>
 #include <WebCore/FrameDestructionObserverInlines.h>
@@ -41,6 +43,7 @@
 #include <WebCore/Page.h>
 #include <WebCore/Settings.h>
 #include <WebCore/StorageSessionProvider.h>
+#include <wtf/Vector.h>
 
 namespace WebKit {
 
@@ -257,6 +260,30 @@ void WebCookieJar::setRawCookie(const WebCore::Document& document, const Cookie&
 void WebCookieJar::deleteCookie(const WebCore::Document& document, const URL& url, const String& cookieName, CompletionHandler<void()>&& completionHandler)
 {
     WebProcess::singleton().ensureNetworkProcessConnection().connection().sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::DeleteCookie(url, cookieName), WTFMove(completionHandler));
+}
+
+void WebCookieJar::getCookiesAsync(WebCore::Document& document, const URL& url, const WebCore::CookieStoreGetOptions& options, CompletionHandler<void(Vector<WebCore::Cookie>&&)>&& completionHandler) const
+{
+    auto* webFrame = document.frame() ? WebFrame::fromCoreFrame(*document.frame()) : nullptr;
+    if (!webFrame || !webFrame->page()) {
+        completionHandler({ });
+        return;
+    }
+
+    ApplyTrackingPrevention applyTrackingPreventionInNetworkProcess = ApplyTrackingPrevention::No;
+#if ENABLE(TRACKING_PREVENTION)
+    if (shouldBlockCookies(webFrame, document.firstPartyForCookies(), url, applyTrackingPreventionInNetworkProcess)) {
+        completionHandler({ });
+        return;
+    }
+#endif
+
+    auto sameSiteInfo = CookieJar::sameSiteInfo(document, IsForDOMCookieAccess::Yes);
+    auto includeSecureCookies = CookieJar::shouldIncludeSecureCookies(document, url);
+    auto frameID = webFrame->frameID();
+    auto pageID = webFrame->page()->identifier();
+
+    WebProcess::singleton().ensureNetworkProcessConnection().connection().sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::CookiesForDOMAsync(document.firstPartyForCookies(), sameSiteInfo, url, frameID, pageID, includeSecureCookies, applyTrackingPreventionInNetworkProcess, shouldRelaxThirdPartyCookieBlocking(webFrame), options), WTFMove(completionHandler));
 }
 
 } // namespace WebKit

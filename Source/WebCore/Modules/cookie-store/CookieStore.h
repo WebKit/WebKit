@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "ActiveDOMObject.h"
 #include "EventTarget.h"
 #include <optional>
 #include <wtf/Forward.h>
@@ -35,15 +36,16 @@ namespace WebCore {
 struct CookieInit;
 struct CookieStoreDeleteOptions;
 struct CookieStoreGetOptions;
+class Document;
 class DeferredPromise;
 
-class CookieStore final : public RefCounted<CookieStore>, public EventTarget {
+class CookieStore final : public RefCounted<CookieStore>, public EventTarget, public ActiveDOMObject {
     WTF_MAKE_ISO_ALLOCATED(CookieStore);
 public:
-    static Ref<CookieStore> create();
+    static Ref<CookieStore> create(Document*);
     ~CookieStore();
 
-    void get(const String& name, Ref<DeferredPromise>&&);
+    void get(String&& name, Ref<DeferredPromise>&&);
     void get(CookieStoreGetOptions&&, Ref<DeferredPromise>&&);
 
     void getAll(const String& name, Ref<DeferredPromise>&&);
@@ -59,7 +61,10 @@ public:
     using RefCounted::deref;
 
 private:
-    CookieStore();
+    explicit CookieStore(Document*);
+
+    // ActiveDOMObject
+    const char* activeDOMObjectName() const final;
 
     // EventTarget
     EventTargetInterface eventTargetInterface() const final;
