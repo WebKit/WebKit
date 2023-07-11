@@ -1499,7 +1499,6 @@ webkit.org/b/257624 imported/w3c/web-platform-tests/encoding/unsupported-labels.
 webkit.org/b/257624 imported/w3c/web-platform-tests/fetch/api/cors/cors-redirect-credentials.any.html [ Failure Pass ]
 webkit.org/b/257624 imported/w3c/web-platform-tests/fetch/api/request/request-cache-no-store.any.worker.html [ Failure Pass ]
 webkit.org/b/257624 imported/w3c/web-platform-tests/fetch/metadata/generated/element-meta-refresh.optional.sub.html [ Failure Pass ]
-webkit.org/b/257624 imported/w3c/web-platform-tests/fetch/metadata/generated/svg-image.https.sub.html [ Failure Pass ]
 webkit.org/b/257624 imported/w3c/web-platform-tests/html/canvas/offscreen/the-offscreen-canvas/size.large.html [ Failure Pass ]
 webkit.org/b/257624 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/coop-popup-opener-navigates.https.html [ Failure Pass ]
 webkit.org/b/257624 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/header-parsing-failures.https.html?12-last [ Failure Pass ]
