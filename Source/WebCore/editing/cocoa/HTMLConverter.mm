@@ -58,6 +58,7 @@
 #import "HTMLTextAreaElement.h"
 #import "LoaderNSURLExtras.h"
 #import "LocalFrame.h"
+#import "Quirks.h"
 #import "RenderImage.h"
 #import "RenderText.h"
 #import "StyleProperties.h"
@@ -256,6 +257,7 @@ private:
     HashMap<RefPtr<Element>, RetainPtr<NSDictionary>> m_aggregatedAttributesForElements;
 
     UserSelectNoneStateCache m_userSelectNoneStateCache;
+    bool m_ignoreUserSelectNoneContent { false };
 
     RetainPtr<NSMutableAttributedString> _attrStr;
     RetainPtr<NSMutableDictionary> _documentAttrs;
@@ -328,6 +330,7 @@ HTMLConverter::HTMLConverter(const SimpleRange& range)
     : m_start(makeContainerOffsetPosition(range.start))
     , m_end(makeContainerOffsetPosition(range.end))
     , m_userSelectNoneStateCache(ComposedTree)
+    , m_ignoreUserSelectNoneContent(!range.start.document().quirks().needsToCopyUserSelectNoneQuirk())
 {
     _attrStr = adoptNS([[NSMutableAttributedString alloc] init]);
     _documentAttrs = adoptNS([[NSMutableDictionary alloc] init]);
@@ -1598,7 +1601,7 @@ BOOL HTMLConverter::_enterElement(Element& element, BOOL embedded)
 
     if (element.hasTagName(headTag) && !embedded)
         _processHeadElement(element);
-    else if (!m_userSelectNoneStateCache.nodeOnlyContainsUserSelectNone(element) && (!displayValue.length() || !(displayValue == noneAtom() || displayValue == "table-column"_s || displayValue == "table-column-group"_s))) {
+    else if ((!m_ignoreUserSelectNoneContent || !m_userSelectNoneStateCache.nodeOnlyContainsUserSelectNone(element)) && (!displayValue.length() || !(displayValue == noneAtom() || displayValue == "table-column"_s || displayValue == "table-column-group"_s))) {
         if (_caches->isBlockElement(element) && !element.hasTagName(brTag) && !(displayValue == "table-cell"_s && ![_textTables count])
             && !([_textLists count] > 0 && displayValue == "block"_s && !element.hasTagName(liTag) && !element.hasTagName(ulTag) && !element.hasTagName(olTag)))
             _newParagraphForElement(element, element.tagName(), NO, YES);
@@ -2074,7 +2077,7 @@ void HTMLConverter::_exitElement(Element& element, NSInteger depth, NSUInteger s
 
 void HTMLConverter::_processText(CharacterData& characterData)
 {
-    if (m_userSelectNoneStateCache.nodeOnlyContainsUserSelectNone(characterData))
+    if (m_ignoreUserSelectNoneContent && m_userSelectNoneStateCache.nodeOnlyContainsUserSelectNone(characterData))
         return;
     NSUInteger textLength = [_attrStr length];
     unichar lastChar = (textLength > 0) ? [[_attrStr string] characterAtIndex:textLength - 1] : '\n';

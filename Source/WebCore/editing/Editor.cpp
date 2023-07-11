@@ -88,6 +88,7 @@
 #include "Page.h"
 #include "PagePasteboardContext.h"
 #include "Pasteboard.h"
+#include "Quirks.h"
 #include "Range.h"
 #include "RemoveFormatCommand.h"
 #include "RenderBlock.h"
@@ -3473,12 +3474,18 @@ void Editor::changeSelectionAfterCommand(const VisibleSelection& newSelection, O
 
 String Editor::selectedText() const
 {
-    return selectedText({ TextIteratorBehavior::TraversesFlatTree, TextIteratorBehavior::IgnoresUserSelectNone });
+    auto options = OptionSet { TextIteratorBehavior::TraversesFlatTree };
+    if (!m_document.quirks().needsToCopyUserSelectNoneQuirk())
+        options.add(TextIteratorBehavior::IgnoresUserSelectNone);
+    return selectedText(options);
 }
 
 String Editor::selectedTextForDataTransfer() const
 {
-    return selectedText(OptionSet { TextIteratorBehavior::EmitsImageAltText, TextIteratorBehavior::TraversesFlatTree, TextIteratorBehavior::IgnoresUserSelectNone });
+    auto options = OptionSet { TextIteratorBehavior::EmitsImageAltText, TextIteratorBehavior::TraversesFlatTree };
+    if (!m_document.quirks().needsToCopyUserSelectNoneQuirk())
+        options.add(TextIteratorBehavior::IgnoresUserSelectNone);
+    return selectedText(options);
 }
 
 String Editor::selectedText(TextIteratorBehaviors behaviors) const
