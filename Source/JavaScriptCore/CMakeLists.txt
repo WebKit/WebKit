@@ -1106,6 +1106,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/JSGlobalProxy.h
     runtime/JSImmutableButterfly.h
     runtime/JSInternalFieldObjectImpl.h
+    runtime/JSInternalFieldObjectImplInlines.h
     runtime/JSInternalPromise.h
     runtime/JSLexicalEnvironment.h
     runtime/JSLock.h
