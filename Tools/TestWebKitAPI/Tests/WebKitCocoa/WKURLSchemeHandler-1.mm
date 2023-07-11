@@ -1495,43 +1495,43 @@ TEST(URLSchemeHandler, Frames)
         TestWebKitAPI::Util::spinRunLoop();
     
     [webView _frames:^(_WKFrameTreeNode *mainFrame) {
-        EXPECT_WK_STREQ(mainFrame.securityOrigin.host, "host1");
-        EXPECT_WK_STREQ(mainFrame.request.URL.host, "host1");
+        EXPECT_WK_STREQ(mainFrame.info.securityOrigin.host, "host1");
+        EXPECT_WK_STREQ(mainFrame.info.request.URL.host, "host1");
         EXPECT_EQ(mainFrame.childFrames.count, 1u);
-        EXPECT_TRUE(mainFrame.isMainFrame);
+        EXPECT_TRUE(mainFrame.info.isMainFrame);
 
         _WKFrameTreeNode *child = mainFrame.childFrames[0];
-        EXPECT_WK_STREQ(child.request.URL.host, "host2");
-        EXPECT_WK_STREQ(child.securityOrigin.host, "host2");
+        EXPECT_WK_STREQ(child.info.request.URL.host, "host2");
+        EXPECT_WK_STREQ(child.info.securityOrigin.host, "host2");
         EXPECT_EQ(child.childFrames.count, 2u);
-        EXPECT_FALSE(child.isMainFrame);
+        EXPECT_FALSE(child.info.isMainFrame);
 
         _WKFrameTreeNode *grandchild1 = child.childFrames[0];
-        EXPECT_WK_STREQ(grandchild1.request.URL.host, "host3");
-        EXPECT_WK_STREQ(grandchild1.securityOrigin.host, "host3");
+        EXPECT_WK_STREQ(grandchild1.info.request.URL.host, "host3");
+        EXPECT_WK_STREQ(grandchild1.info.securityOrigin.host, "host3");
         EXPECT_EQ(grandchild1.childFrames.count, 0u);
-        EXPECT_FALSE(grandchild1.isMainFrame);
+        EXPECT_FALSE(grandchild1.info.isMainFrame);
 
         _WKFrameTreeNode *grandchild2 = child.childFrames[1];
-        EXPECT_WK_STREQ(grandchild2.request.URL.host, "host4");
-        EXPECT_WK_STREQ(grandchild2.securityOrigin.host, "host4");
+        EXPECT_WK_STREQ(grandchild2.info.request.URL.host, "host4");
+        EXPECT_WK_STREQ(grandchild2.info.securityOrigin.host, "host4");
         EXPECT_EQ(grandchild2.childFrames.count, 0u);
-        EXPECT_FALSE(grandchild2.isMainFrame);
+        EXPECT_FALSE(grandchild2.info.isMainFrame);
 
-        EXPECT_NE(mainFrame._handle.frameID, child._handle.frameID);
-        EXPECT_NE(mainFrame._handle.frameID, grandchild1._handle.frameID);
-        EXPECT_NE(mainFrame._handle.frameID, grandchild2._handle.frameID);
-        EXPECT_NE(child._handle.frameID, grandchild1._handle.frameID);
-        EXPECT_NE(child._handle.frameID, grandchild2._handle.frameID);
-        EXPECT_NE(grandchild1._handle.frameID, grandchild2._handle.frameID);
+        EXPECT_NE(mainFrame.info._handle.frameID, child.info._handle.frameID);
+        EXPECT_NE(mainFrame.info._handle.frameID, grandchild1.info._handle.frameID);
+        EXPECT_NE(mainFrame.info._handle.frameID, grandchild2.info._handle.frameID);
+        EXPECT_NE(child.info._handle.frameID, grandchild1.info._handle.frameID);
+        EXPECT_NE(child.info._handle.frameID, grandchild2.info._handle.frameID);
+        EXPECT_NE(grandchild1.info._handle.frameID, grandchild2.info._handle.frameID);
 
-        EXPECT_NULL(mainFrame._parentFrameHandle);
-        EXPECT_EQ(mainFrame._handle.frameID, child._parentFrameHandle.frameID);
-        EXPECT_EQ(child._handle.frameID, grandchild1._parentFrameHandle.frameID);
-        EXPECT_EQ(child._handle.frameID, grandchild2._parentFrameHandle.frameID);
+        EXPECT_NULL(mainFrame.info._parentFrameHandle);
+        EXPECT_EQ(mainFrame.info._handle.frameID, child.info._parentFrameHandle.frameID);
+        EXPECT_EQ(child.info._handle.frameID, grandchild1.info._parentFrameHandle.frameID);
+        EXPECT_EQ(child.info._handle.frameID, grandchild2.info._parentFrameHandle.frameID);
 
-        [webView _callAsyncJavaScript:@"window.customProperty = 'customValue'" arguments:nil inFrame:grandchild1 inContentWorld:[WKContentWorld defaultClientWorld] completionHandler:^(id, NSError *error) {
-            [webView _evaluateJavaScript:@"window.location.href + window.customProperty" inFrame:grandchild1 inContentWorld:[WKContentWorld defaultClientWorld] completionHandler:^(id result, NSError *error) {
+        [webView _callAsyncJavaScript:@"window.customProperty = 'customValue'" arguments:nil inFrame:grandchild1.info inContentWorld:[WKContentWorld defaultClientWorld] completionHandler:^(id, NSError *error) {
+            [webView _evaluateJavaScript:@"window.location.href + window.customProperty" inFrame:grandchild1.info inContentWorld:[WKContentWorld defaultClientWorld] completionHandler:^(id result, NSError *error) {
                 EXPECT_WK_STREQ(result, "frame://host3/customValue");
                 done = true;
             }];
@@ -1542,11 +1542,11 @@ TEST(URLSchemeHandler, Frames)
     done = false;
     auto emptyWebView = adoptNS([WKWebView new]);
     [emptyWebView _frames:^(_WKFrameTreeNode *mainFrame) {
-        EXPECT_NOT_NULL(mainFrame._handle);
+        EXPECT_NOT_NULL(mainFrame.info._handle);
 #if PLATFORM(MAC)
-        EXPECT_EQ(mainFrame._handle.frameID, 0u);
+        EXPECT_EQ(mainFrame.info._handle.frameID, 0u);
 #endif
-        [emptyWebView _evaluateJavaScript:@"window.location.href" inFrame:mainFrame inContentWorld:[WKContentWorld defaultClientWorld] completionHandler:^(id result, NSError *error) {
+        [emptyWebView _evaluateJavaScript:@"window.location.href" inFrame:mainFrame.info inContentWorld:[WKContentWorld defaultClientWorld] completionHandler:^(id result, NSError *error) {
             EXPECT_WK_STREQ(result, "about:blank");
             done = true;
         }];

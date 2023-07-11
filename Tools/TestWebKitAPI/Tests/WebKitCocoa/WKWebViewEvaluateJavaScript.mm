@@ -322,7 +322,7 @@ TEST(WKWebView, EvaluateJavaScriptInWorldsWithGlobalObjectAvailableInCrossOrigin
     
     __block bool done = false;
     [webView _frames:^(_WKFrameTreeNode *mainFrame) {
-        [webView _evaluateJavaScript:@"window.worldName" inFrame:mainFrame.childFrames[0] inContentWorld:[WKContentWorld worldWithName:@"testName"] completionHandler:^(id result, NSError *error) {
+        [webView _evaluateJavaScript:@"window.worldName" inFrame:mainFrame.childFrames[0].info inContentWorld:[WKContentWorld worldWithName:@"testName"] completionHandler:^(id result, NSError *error) {
             EXPECT_WK_STREQ(result, "testName");
             done = true;
         }];
