@@ -87,7 +87,7 @@ auto DatabaseUtilities::openDatabaseAndCreateSchemaIfNecessary() -> CreatedNewFi
         createdNewFile = CreatedNewFile::Yes;
     }
 
-    if (!m_database.open(m_storageFilePath)) {
+    if (!m_database.open(m_storageFilePath, WebCore::SQLiteDatabase::OpenMode::ReadWriteCreate, WebCore::SQLiteDatabase::OpenOptions::CanSuspendWhileLocked)) {
         RELEASE_LOG_ERROR(PrivateClickMeasurement, "%p - DatabaseUtilities::open failed, error message: %" PUBLIC_LOG_STRING ", database path: %" PUBLIC_LOG_STRING, this, m_database.lastErrorMsg(), m_storageFilePath.utf8().data());
         return createdNewFile;
     }
