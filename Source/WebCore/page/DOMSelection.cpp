@@ -35,6 +35,7 @@
 #include "Editing.h"
 #include "FrameSelection.h"
 #include "LocalFrame.h"
+#include "Quirks.h"
 #include "Range.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
@@ -510,12 +511,17 @@ String DOMSelection::toString() const
     auto frame = this->frame();
     if (!frame)
         return String();
+
+    OptionSet<TextIteratorBehavior> options;
+    if (!frame->document()->quirks().needsToCopyUserSelectNoneQuirk())
+        options.add(TextIteratorBehavior::IgnoresUserSelectNone);
+
     if (frame->settings().liveRangeSelectionEnabled()) {
         auto range = frame->selection().selection().range();
-        return range ? plainText(*range, TextIteratorBehavior::IgnoresUserSelectNone) : emptyString();
+        return range ? plainText(*range, options) : emptyString();
     }
     auto range = frame->selection().selection().firstRange();
-    return range ? plainText(*range, TextIteratorBehavior::IgnoresUserSelectNone) : emptyString();
+    return range ? plainText(*range, options) : emptyString();
 }
 
 RefPtr<Node> DOMSelection::shadowAdjustedNode(const Position& position) const

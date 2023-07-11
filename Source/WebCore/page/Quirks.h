@@ -170,6 +170,10 @@ public:
     void setNeedsConfigurableIndexedPropertiesQuirk() { m_needsConfigurableIndexedPropertiesQuirk = true; }
     bool needsConfigurableIndexedPropertiesQuirk() const;
 
+    // webkit.org/b/259091.
+    bool needsToCopyUserSelectNoneQuirk() const { return m_needsToCopyUserSelectNoneQuirk; }
+    void setNeedsToCopyUserSelectNoneQuirk() { m_needsToCopyUserSelectNoneQuirk = true; }
+
 private:
     bool needsQuirks() const;
 
@@ -232,6 +236,7 @@ private:
     mutable std::optional<bool> m_shouldAdvertiseSupportForHLSSubtitleTypes;
 #endif
     bool m_needsConfigurableIndexedPropertiesQuirk { false };
+    bool m_needsToCopyUserSelectNoneQuirk { false };
 };
 
 } // namespace WebCore
