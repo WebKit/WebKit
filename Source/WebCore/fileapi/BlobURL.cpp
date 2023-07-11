@@ -80,13 +80,12 @@ URL BlobURL::getOriginURL(const URL& url)
 bool BlobURL::isSecureBlobURL(const URL& url)
 {
     ASSERT_UNUSED(kBlobProtocol, url.protocolIs(kBlobProtocol));
-
     // As per https://github.com/w3c/webappsec-mixed-content/issues/41, Blob URL is secure if the document that created it is secure.
     if (auto origin = ThreadableBlobRegistry::getCachedOrigin(url)) {
         if (auto* document = blobOwner(*origin))
             return document->isSecureContext();
     }
-    return SecurityOrigin::isSecure(url);
+    return false;
 }
 
 URL BlobURL::createBlobURL(StringView originString)

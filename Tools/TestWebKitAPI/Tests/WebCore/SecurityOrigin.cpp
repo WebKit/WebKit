@@ -321,4 +321,10 @@ TEST_F(SecurityOriginTest, SecurityOriginHash)
     EXPECT_TRUE(set.remove(o2->data()));
     EXPECT_FALSE(set.contains(o1->data()));
 }
+
+TEST_F(SecurityOriginTest, IsSecureBlobURL)
+{
+    EXPECT_FALSE(SecurityOrigin::isSecure(URL { "blob:"_str }));
+}
+
 } // namespace TestWebKitAPI
