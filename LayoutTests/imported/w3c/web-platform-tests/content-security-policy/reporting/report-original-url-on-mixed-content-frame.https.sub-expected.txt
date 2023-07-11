@@ -1,3 +1,3 @@
 
-FAIL Violation report status OK. assert_true: blocked-uri value of  "http://localhost:8800" did not match https://localhost:9443/common/redirect.py?location=http%3A%2F%2Flocalhost%3A8800%2Fcontent-security-policy%2Fsupport%2Ffail.html%3Ft%3D1. expected true got false
+FAIL Violation report status OK. undefined is not an object (evaluating 'data[0]["body"]')
 
