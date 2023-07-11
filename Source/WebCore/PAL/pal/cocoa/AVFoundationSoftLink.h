@@ -369,4 +369,7 @@ SOFT_LINK_CLASS_FOR_HEADER(PAL, AVAudioPCMBuffer)
 SOFT_LINK_CONSTANT_FOR_HEADER(PAL, AVFoundation, AVAssetExportPresetHighestQuality, NSString *)
 #define AVAssetExportPresetHighestQuality PAL::get_AVFoundation_AVAssetExportPresetHighestQuality()
 
+SOFT_LINK_CONSTANT_MAY_FAIL_FOR_HEADER(PAL, AVFoundation, AVURLAssetExtendedMIMETypePlayabilityTreatSupportedPlaylistMIMETypesAsISOBMFFMediaDataContainersKey, NSString *)
+#define AVURLAssetExtendedMIMETypePlayabilityTreatSupportedPlaylistMIMETypesAsISOBMFFMediaDataContainersKey PAL::get_AVFoundation_AVURLAssetExtendedMIMETypePlayabilityTreatSupportedPlaylistMIMETypesAsISOBMFFMediaDataContainersKey()
+
 #endif // USE(AVFOUNDATION)

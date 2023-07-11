@@ -103,6 +103,14 @@ bool AVAssetMIMETypeCache::canDecodeExtendedType(const ContentType& type)
 #endif
 
     ASSERT(isAvailable());
+
+#if HAVE(AVURLASSET_ISPLAYABLEEXTENDEDMIMETYPEWITHOPTIONS)
+    if (PAL::canLoad_AVFoundation_AVURLAssetExtendedMIMETypePlayabilityTreatSupportedPlaylistMIMETypesAsISOBMFFMediaDataContainersKey()
+        && [PAL::getAVURLAssetClass() respondsToSelector:@selector(isPlayableExtendedMIMEType:options:)]) {
+        if ([PAL::getAVURLAssetClass() isPlayableExtendedMIMEType:type.raw() options:@{ AVURLAssetExtendedMIMETypePlayabilityTreatSupportedPlaylistMIMETypesAsISOBMFFMediaDataContainersKey: @YES }])
+            return true;
+    } else
+#endif
     if ([PAL::getAVURLAssetClass() isPlayableExtendedMIMEType:type.raw()])
         return true;
 
