@@ -1,0 +1,10 @@
+
+EXPECTED (internals.isMonitoringWirelessRoutes == 'false') OK
+RUN(video.src = findMediaFile("video", "content/test"))
+EVENT(canplaythrough)
+EXPECTED (internals.isMonitoringWirelessRoutes == 'true') OK
+RUN(internals.setPageVisibility(false))
+RUN(internals.suspendAllMediaBuffering())
+EXPECTED (internals.isMonitoringWirelessRoutes == 'false') OK
+END OF TEST
+

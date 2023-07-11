@@ -63,6 +63,7 @@ imported/w3c/web-platform-tests/speech-api/ [ Pass ]
 http/tests/media/fairplay [ Pass ]
 media/track/track-description-cue.html [ Pass ]
 media/track/track-extended-descriptions.html [ Pass ]
+media/wireless-route-monitoring.html [ Pass ]
 
 # mac-only IPC test
 ipc/webpageproxy-correctionpanel-no-crash.html [ Skip ]

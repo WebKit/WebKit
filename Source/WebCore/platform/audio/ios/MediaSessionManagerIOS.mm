@@ -87,7 +87,12 @@ bool MediaSessionManageriOS::hasWirelessTargetsAvailable()
     return MediaSessionHelper::sharedHelper().isExternalOutputDeviceAvailable();
 }
 
-void MediaSessionManageriOS::configureWireLessTargetMonitoring()
+bool MediaSessionManageriOS::isMonitoringWirelessTargets() const
+{
+    return m_isMonitoringWirelessRoutes;
+}
+
+void MediaSessionManageriOS::configureWirelessTargetMonitoring()
 {
 #if !PLATFORM(WATCHOS)
     bool requiresMonitoring = anyOfSessions([] (auto& session) {
@@ -228,6 +233,5 @@ void MediaSessionManageriOS::applicationWillBecomeInactive()
 }
 
 } // namespace WebCore
-
 
 #endif // PLATFORM(IOS_FAMILY)
