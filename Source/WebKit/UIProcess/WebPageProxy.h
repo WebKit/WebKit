@@ -30,6 +30,7 @@
 #include "MessageSender.h"
 #include <WebCore/SleepDisablerIdentifier.h>
 #include <wtf/CheckedRef.h>
+#include <wtf/CompletionHandler.h>
 #include <wtf/ProcessID.h>
 #include <wtf/UniqueRef.h>
 
@@ -1508,7 +1509,7 @@ public:
     bool canRunModal();
 
     void beginPrinting(WebFrameProxy*, const PrintInfo&);
-    void endPrinting();
+    void endPrinting(CompletionHandler<void()>&& = [] { });
     IPC::AsyncReplyID computePagesForPrinting(WebCore::FrameIdentifier, const PrintInfo&, CompletionHandler<void(const Vector<WebCore::IntRect>&, double, const WebCore::FloatBoxExtent&)>&&);
     void getPDFFirstPageSize(WebCore::FrameIdentifier, CompletionHandler<void(WebCore::FloatSize)>&&);
 #if PLATFORM(COCOA)
