@@ -32,7 +32,6 @@
 namespace WebCore {
 
 class PluginBlocklist;
-class WebGLBlocklist;
 
 class BlocklistUpdater {
 public:
@@ -40,14 +39,12 @@ public:
 
     static WorkQueue& queue();
     static PluginBlocklist* pluginBlocklist() { return s_pluginBlocklist; }
-    static WebGLBlocklist* webGLBlocklist() { return s_webGLBlocklist; };
 
 private:
 
     static NSDictionary *readBlocklistData();
 
     static PluginBlocklist* s_pluginBlocklist;
-    static WebGLBlocklist* s_webGLBlocklist;
 };
 
 }

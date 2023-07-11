@@ -597,7 +597,6 @@ platform/mac/WebCoreFullScreenWindow.mm
 platform/mac/WebCoreNSFontManagerExtras.mm
 platform/mac/WebCoreNSURLExtras.mm
 platform/mac/WebCoreObjCExtras.mm
-platform/mac/WebGLBlocklist.mm
 platform/mac/WebNSAttributedStringExtras.mm
 platform/mac/WebPlaybackControlsManager.mm
 platform/mac/WidgetMac.mm

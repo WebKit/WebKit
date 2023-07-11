@@ -116,7 +116,6 @@
 #import <WebCore/SubresourceLoader.h>
 #import <WebCore/WebCoreJITOperations.h>
 #import <WebCore/WebCoreObjCExtras.h>
-#import <WebCore/WebGLBlocklist.h>
 #import <WebCore/WebScriptObjectPrivate.h>
 #import <WebCore/Widget.h>
 #import <WebKitLegacy/DOMElement.h>

@@ -29,7 +29,6 @@
 #if PLATFORM(MAC)
 
 #import "PluginBlocklist.h"
-#import "WebGLBlocklist.h"
 #import <sys/stat.h>
 #import <sys/time.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
@@ -52,7 +51,6 @@ NSString * const blocklistPath = @"/System/Library/CoreServices/XProtect.bundle/
 namespace WebCore {
 
 PluginBlocklist* BlocklistUpdater::s_pluginBlocklist = nullptr;
-WebGLBlocklist* BlocklistUpdater::s_webGLBlocklist = nullptr;
 
 WorkQueue& BlocklistUpdater::queue()
 {
@@ -99,13 +97,7 @@ void BlocklistUpdater::reloadIfNecessary()
         s_pluginBlocklist = 0;
     }
 
-    if (s_webGLBlocklist) {
-        delete s_webGLBlocklist;
-        s_webGLBlocklist = 0;
-    }
-
     s_pluginBlocklist = PluginBlocklist::create(propertyList).release();
-    s_webGLBlocklist = WebGLBlocklist::create(propertyList).release();
 
     blocklistUpdateTime = statBuf.st_mtimespec.tv_sec;
 }
