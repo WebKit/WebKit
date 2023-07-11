@@ -1,0 +1,20 @@
+
+NOTRUN Test isConfigSupported() hev1.1.6.L60.90 unsupported
+NOTRUN Test isConfigSupported() with 1080p crop hev1.1.6.L60.90 unsupported
+NOTRUN Test that isConfigSupported() returns a parsed configuration hev1.1.6.L60.90 unsupported
+NOTRUN Test invalid configs hev1.1.6.L60.90 unsupported
+NOTRUN Test configure() hev1.1.6.L60.90 unsupported
+NOTRUN Decode a key frame hev1.1.6.L60.90 unsupported
+NOTRUN Decode a non key frame first fails hev1.1.6.L60.90 unsupported
+NOTRUN Verify reset() suppresses outputs hev1.1.6.L60.90 unsupported
+NOTRUN Test unconfigured VideoDecoder operations hev1.1.6.L60.90 unsupported
+NOTRUN Test closed VideoDecoder operations hev1.1.6.L60.90 unsupported
+NOTRUN Decode empty frame hev1.1.6.L60.90 unsupported
+NOTRUN Decode corrupt frame hev1.1.6.L60.90 unsupported
+NOTRUN Close while decoding corrupt frame hev1.1.6.L60.90 unsupported
+NOTRUN Test decoding after flush hev1.1.6.L60.90 unsupported
+NOTRUN Test decoding a with negative timestamp hev1.1.6.L60.90 unsupported
+NOTRUN Test reset during flush hev1.1.6.L60.90 unsupported
+NOTRUN Test low-latency decoding hev1.1.6.L60.90 unsupported
+NOTRUN VideoDecoder decodeQueueSize test hev1.1.6.L60.90 unsupported
+
