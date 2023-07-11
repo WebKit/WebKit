@@ -140,8 +140,8 @@ layer at (195,711) size 230x17
     RenderBlock (anonymous) at (0,0) size 230x17
       RenderText {#text} at (0,0) size 56x17
         text run at (0,0) width 56: "\x{200E}\x{2068}Title\x{2069}\x{200B}.pdf"
-layer at (321,411) size 40x40
-  RenderBlock (generated) at (0,0) size 40x40 [bgcolor=#007AFF]
+layer at (332,411) size 18x40
+  RenderBlock (generated) at (0,0) size 18x40 [bgcolor=#007AFF]
     RenderText at (0,0) size 0x0
 layer at (116,489) size 72x72
   RenderBlock {DIV} at (10,10) size 72x72 [bgcolor=#000000]
