@@ -56,6 +56,7 @@
     pointer-events: inherit;
     -webkit-cursor-visibility: inherit;
     position: relative;
+    container-type: size; /* Used by WebVTT & visionOS controls */
     will-change: z-index;
 }
 

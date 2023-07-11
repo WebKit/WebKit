@@ -3857,6 +3857,9 @@ void Element::addToTopLayer()
         layer.establishesTopLayerWillChange();
     });
 
+    auto* renderer = this->renderer();
+    auto* oldContainingBlock = renderer ? renderer->containingBlock() : nullptr;
+
     document().addTopLayerElement(*this);
     setNodeFlag(NodeFlag::IsInTopLayer);
 
@@ -3868,6 +3871,16 @@ void Element::addToTopLayer()
     forEachRenderLayer(*this, [](RenderLayer& layer) {
         layer.establishesTopLayerDidChange();
     });
+
+    // The containing block may have changed after adding to the top layer,
+    // since top layer forces the containing block to be the RenderView.
+    // This requires a layout. In most cases, this isn't useful since we usually
+    // change pseudo-class styles at the same time as adding to the top layer, which
+    // marks them for layout anyway.
+    renderer = this->renderer();
+    auto* newContainingBlock = renderer ? renderer->containingBlock() : nullptr;
+    if (oldContainingBlock != newContainingBlock && !renderer->needsLayout())
+        renderer->setNeedsLayout();
 }
 
 void Element::removeFromTopLayer()
@@ -3889,6 +3902,9 @@ void Element::removeFromTopLayer()
         }
     }
 
+    auto* renderer = this->renderer();
+    auto* oldContainingBlock = renderer ? renderer->containingBlock() : nullptr;
+
     document().removeTopLayerElement(*this);
     clearNodeFlag(NodeFlag::IsInTopLayer);
 
@@ -3902,6 +3918,16 @@ void Element::removeFromTopLayer()
     forEachRenderLayer(*this, [](RenderLayer& layer) {
         layer.establishesTopLayerDidChange();
     });
+
+    // The containing block may have changed after adding to the top layer,
+    // since top layer forces the containing block to be the RenderView.
+    // This requires a layout. In most cases, this isn't useful since we usually
+    // apply pseudo-class styles at the same time as adding to the top layer, which
+    // marks them for layout anyway.
+    renderer = this->renderer();
+    auto* newContainingBlock = renderer ? renderer->containingBlock() : nullptr;
+    if (oldContainingBlock != newContainingBlock && !renderer->needsLayout())
+        renderer->setNeedsLayout();
 }
 
 static PseudoElement* beforeOrAfterPseudoElement(const Element& host, PseudoId pseudoElementSpecifier)
