@@ -363,6 +363,8 @@ void WebFrame::didCommitLoadInAnotherProcess(std::optional<WebCore::LayerHosting
     auto* ownerRenderer = localFrame->ownerRenderer();
     localFrame->setView(nullptr);
 
+    if (localFrame->isRootFrame())
+        corePage->removeRootFrame(*localFrame);
     if (parent)
         parent->tree().removeChild(*coreFrame);
     if (ownerElement)

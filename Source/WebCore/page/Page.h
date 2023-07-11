@@ -1053,6 +1053,7 @@ public:
 
     const WeakHashSet<LocalFrame>& rootFrames() const { return m_rootFrames; }
     WEBCORE_EXPORT void addRootFrame(LocalFrame&);
+    WEBCORE_EXPORT void removeRootFrame(LocalFrame&);
 
     void performOpportunisticallyScheduledTasks(MonotonicTime deadline);
 

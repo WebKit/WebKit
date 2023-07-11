@@ -355,9 +355,9 @@ void ProvisionalPageProxy::didCommitLoadForFrame(FrameIdentifier frameID, FrameI
         auto* openerFrame = m_page->openerFrame();
         if (auto* openerPage = openerFrame ? openerFrame->page() : nullptr) {
             auto& page = this->page();
-            RegistrableDomain navigationDomain(request.url());
+            RegistrableDomain openerDomain(openerFrame->url());
             page.send(Messages::WebPage::DidCommitLoadInAnotherProcess(page.mainFrame()->frameID(), std::nullopt, m_process->coreProcessIdentifier()));
-            page.setRemotePageProxyInOpenerProcess(RemotePageProxy::create(page, openerPage->process(), navigationDomain, &page.messageReceiverRegistration()));
+            page.setRemotePageProxyInOpenerProcess(RemotePageProxy::create(page, openerPage->process(), openerDomain, &page.messageReceiverRegistration()));
             page.mainFrame()->setProcess(m_process.get());
         }
     }

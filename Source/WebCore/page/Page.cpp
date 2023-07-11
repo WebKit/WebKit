@@ -4440,7 +4440,15 @@ void Page::didFinishScrolling()
 void Page::addRootFrame(LocalFrame& frame)
 {
     ASSERT(frame.isRootFrame());
+    ASSERT(!m_rootFrames.contains(frame));
     m_rootFrames.add(frame);
+}
+
+void Page::removeRootFrame(LocalFrame& frame)
+{
+    ASSERT(frame.isRootFrame());
+    ASSERT(m_rootFrames.contains(frame));
+    m_rootFrames.remove(frame);
 }
 
 void Page::reloadExecutionContextsForOrigin(const ClientOrigin& origin, std::optional<FrameIdentifier> triggeringFrame) const

@@ -960,7 +960,7 @@ TEST(SiteIsolation, ChildBeingNavigatedToMainFrameDomainByParent)
     [navigationDelegate allowAnyTLSCertificate];
 
     auto configuration = server.httpsProxyConfiguration();
-    // FIXME: Fix failures and enable site isolation
+    enableSiteIsolation(configuration);
 
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration]);
     webView.get().navigationDelegate = navigationDelegate.get();
@@ -974,13 +974,18 @@ TEST(SiteIsolation, ChildBeingNavigatedToMainFrameDomainByParent)
         pid_t childFramePid = childFrame._processIdentifier;
         EXPECT_NE(mainFramePid, 0);
         EXPECT_NE(childFramePid, 0);
-        // FIXME: Switch to EXPECT_NE once siteIsolation is enabled.
         EXPECT_EQ(mainFramePid, childFramePid);
         EXPECT_WK_STREQ(mainFrame.securityOrigin.host, "example.com");
         EXPECT_WK_STREQ(childFrame.securityOrigin.host, "example.com");
         done = true;
     }];
     Util::run(&done);
+
+    checkFrameTreesInProcesses(webView.get(), {
+        { "https://example.com"_s,
+            { { "https://example.com"_s } }
+        }
+    });
 }
 
 TEST(SiteIsolation, ChildBeingNavigatedToSameDomainByParent)
@@ -994,7 +999,7 @@ TEST(SiteIsolation, ChildBeingNavigatedToSameDomainByParent)
     [navigationDelegate allowAnyTLSCertificate];
 
     auto configuration = server.httpsProxyConfiguration();
-    // FIXME: Fix failures and enable site isolation
+    enableSiteIsolation(configuration);
 
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration]);
     webView.get().navigationDelegate = navigationDelegate.get();
@@ -1008,13 +1013,47 @@ TEST(SiteIsolation, ChildBeingNavigatedToSameDomainByParent)
         pid_t childFramePid = childFrame._processIdentifier;
         EXPECT_NE(mainFramePid, 0);
         EXPECT_NE(childFramePid, 0);
-        // FIXME: Switch to EXPECT_NE once siteIsolation is enabled.
-        EXPECT_EQ(mainFramePid, childFramePid);
+        EXPECT_NE(mainFramePid, childFramePid);
         EXPECT_WK_STREQ(mainFrame.securityOrigin.host, "example.com");
         EXPECT_WK_STREQ(childFrame.securityOrigin.host, "webkit.org");
         done = true;
     }];
     Util::run(&done);
+
+    checkFrameTreesInProcesses(webView.get(), {
+        { "https://example.com"_s,
+            { { RemoteFrame } }
+        }, { RemoteFrame,
+            { { "https://webkit.org"_s } }
+        }
+    });
+}
+
+TEST(SiteIsolation, ChildBeingNavigatedToNewDomainByParent)
+{
+    HTTPServer server({
+        { "/example"_s, { "<iframe id='webkit_frame' src='https://webkit.org/webkit'></iframe><script>onload = () => { document.getElementById('webkit_frame').src = 'https://apple.com/apple' }</script>"_s } },
+        { "/webkit"_s, { "<html></html>"_s } },
+        { "/apple"_s, { "<script>alert('done')</script>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [navigationDelegate allowAnyTLSCertificate];
+
+    auto configuration = server.httpsProxyConfiguration();
+    enableSiteIsolation(configuration);
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration]);
+    webView.get().navigationDelegate = navigationDelegate.get();
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "done");
+
+    checkFrameTreesInProcesses(webView.get(), {
+        { "https://example.com"_s,
+            { { RemoteFrame } }
+        }, { RemoteFrame,
+            { { "https://apple.com"_s } }
+        }
+    });
 }
 
 }
