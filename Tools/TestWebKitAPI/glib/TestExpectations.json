@@ -364,20 +364,6 @@
             }
         }
     },
-    "TestResources": {
-        "subtests": {
-            "/webkit/WebKitWebResource/get-data-error": {
-                "expected": {
-                    "wpe": {"status": ["FAIL"]}
-                }
-            },
-            "/webkit/WebKitWebResource/get-data-empty": {
-                "expected": {
-                    "wpe": {"status": ["FAIL"]}
-                }
-            }
-        }
-    },
     "TestJSC": {
         "subtests": {
             "/jsc/vm": {
