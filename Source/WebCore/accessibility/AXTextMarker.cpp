@@ -298,4 +298,11 @@ std::partial_ordering partialOrder(const AXTextMarker& marker1, const AXTextMark
     return result;
 }
 
+bool AXTextMarkerRange::isConfinedTo(AXID objectID) const
+{
+    return m_start.objectID() == objectID
+        && m_end.objectID() == objectID
+        && LIKELY(m_start.treeID() == m_end.treeID());
+}
+
 } // namespace WebCore
