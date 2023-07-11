@@ -30,6 +30,7 @@
 #include <wtf/Forward.h>
 #include <wtf/GetPtr.h>
 #include <wtf/HashFunctions.h>
+#include <wtf/Platform.h>
 #include <wtf/RawPtrTraits.h>
 #include <wtf/StdLibExtras.h>
 
@@ -40,7 +41,7 @@
 namespace WTF {
 
 #if CPU(ADDRESS64)
-#if CPU(ARM64) && OS(DARWIN)
+#if CPU(ARM64) && OS(DARWIN) && !PLATFORM(IOS_FAMILY_SIMULATOR)
 #if MACH_VM_MAX_ADDRESS_RAW < (1ULL << 36)
 #define HAVE_36BIT_ADDRESS 1
 #endif
