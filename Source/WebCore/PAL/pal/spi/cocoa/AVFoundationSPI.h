@@ -36,6 +36,7 @@
 #if USE(APPLE_INTERNAL_SDK)
 
 #import <AVFoundation/AVAssetCache_Private.h>
+#import <AVFoundation/AVAsset_Private.h>
 #import <AVFoundation/AVCaptureSession_Private.h>
 #import <AVFoundation/AVContentKeySession_Private.h>
 #import <AVFoundation/AVMediaSelectionGroup_Private.h>
@@ -486,3 +487,13 @@ NS_ASSUME_NONNULL_END
 @property (nonatomic) BOOL preferSandboxedParsing;
 @end
 #endif
+
+// FIXME: Move into !USE(APPLE_INTERNAL_SDK) section once rdar://111695863 has been in the build a while
+#if HAVE(AVURLASSET_ISPLAYABLEEXTENDEDMIMETYPEWITHOPTIONS)
+NS_ASSUME_NONNULL_BEGIN
+@interface AVURLAsset (IsPlayableExtendedMIMETypeWithOptions)
++ (BOOL)isPlayableExtendedMIMEType:(NSString *)extendedMIMEType options:(nullable NSDictionary<NSString *, id> *)options;
+@end
+NS_ASSUME_NONNULL_END
+#endif
+
