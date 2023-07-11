@@ -900,7 +900,10 @@ static inline InlineLayoutUnit availableWidth(const LineCandidate::InlineContent
     for (auto& run : candidateContent.continuousContent().runs()) {
         if (!run.inlineItem.isInlineBoxEnd())
             continue;
-        availableWidth += inlineBoxListWithClonedDecorationEnd.get(&run.inlineItem.layoutBox());
+        auto decorationEntry = inlineBoxListWithClonedDecorationEnd.find(&run.inlineItem.layoutBox());
+        if (decorationEntry == inlineBoxListWithClonedDecorationEnd.end())
+            continue;
+        availableWidth += decorationEntry->value;
     }
     return std::isnan(availableWidth) ? maxInlineLayoutUnit() : availableWidth;
 }
