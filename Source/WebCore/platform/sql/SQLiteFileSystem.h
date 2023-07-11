@@ -80,6 +80,10 @@ public:
     // fileName - The file name.
     WEBCORE_EXPORT static bool deleteDatabaseFile(const String& filePath);
 
+#if PLATFORM(COCOA)
+    static void setCanSuspendLockedFileAttribute(const String& filePath);
+#endif
+
     // Moves a database file to a new place.
     WEBCORE_EXPORT static bool moveDatabaseFile(const String& oldFilePath, const String& newFilePath);
     WEBCORE_EXPORT static String computeHashForFileName(StringView filePath);

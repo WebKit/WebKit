@@ -41,6 +41,10 @@
 #include <pal/spi/ios/SQLite3SPI.h>
 #endif
 
+#if PLATFORM(COCOA)
+#include <sys/xattr.h>
+#endif
+
 namespace WebCore {
 
 static constexpr std::array<const char *, 3> databaseFileSuffixes { "", "-shm", "-wal" };
@@ -90,6 +94,19 @@ bool SQLiteFileSystem::deleteDatabaseFile(const String& filePath)
 
     return !fileExists;
 }
+
+#if PLATFORM(COCOA)
+void SQLiteFileSystem::setCanSuspendLockedFileAttribute(const String& filePath)
+{
+    for (const auto* suffix : databaseFileSuffixes) {
+        String path = filePath + suffix;
+        char excluded = 0xff;
+        auto result = setxattr(FileSystem::fileSystemRepresentation(path).data(), "com.apple.runningboard.can-suspend-locked", &excluded, sizeof(excluded), 0, 0);
+        if (result < 0 && !strcmp(suffix, ""))
+            RELEASE_LOG_ERROR(SQLDatabase, "SQLiteFileSystem::setCanSuspendLockedFileAttribute: setxattr failed: %" PUBLIC_LOG_STRING, strerror(errno));
+    }
+}
+#endif
 
 bool SQLiteFileSystem::moveDatabaseFile(const String& oldFilePath, const String& newFilePath)
 {
