@@ -52,6 +52,10 @@ private:
             return true;
         }
 
+        auto bytesRemaining = view.byteLength() - localOffset;
+        if (characterCount > bytesRemaining)
+            return false;
+
         Vector<LChar> characters;
         characters.reserveInitialCapacity(static_cast<size_t>(characterCount));
         while (characterCount--) {
