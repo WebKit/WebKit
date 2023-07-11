@@ -148,7 +148,7 @@ std::optional<RealtimeMediaSourceCapabilities> RealtimeMediaSourceCenter::getCap
             return std::nullopt;
         return source.source()->capabilities();
     }
-    if (device.type() == CaptureDevice::DeviceType::Microphone || device.type() == CaptureDevice::DeviceType::Speaker) {
+    if (device.type() == CaptureDevice::DeviceType::Microphone) {
         auto source = audioCaptureFactory().createAudioCaptureSource({ device }, { "fake"_s, "fake"_s }, nullptr, { });
         if (!source)
             return std::nullopt;

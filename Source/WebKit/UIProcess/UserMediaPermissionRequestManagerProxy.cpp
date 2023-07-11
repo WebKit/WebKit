@@ -819,12 +819,14 @@ void UserMediaPermissionRequestManagerProxy::platformGetMediaStreamDevices(bool 
         for (auto& device : devices) {
             RealtimeMediaSourceCapabilities deviceCapabilities;
 
-            auto capabilities = RealtimeMediaSourceCenter::singleton().getCapabilities(device);
-            if (!capabilities)
-                continue;
+            if (device.isInputDevice()) {
+                auto capabilities = RealtimeMediaSourceCenter::singleton().getCapabilities(device);
+                if (!capabilities)
+                    continue;
 
-            if (revealIdsAndLabels)
-                deviceCapabilities = WTFMove(*capabilities);
+                if (revealIdsAndLabels)
+                    deviceCapabilities = WTFMove(*capabilities);
+            }
 
             devicesWithCapabilities.uncheckedAppend({ WTFMove(device), WTFMove(deviceCapabilities) });
         }
