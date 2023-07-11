@@ -1,0 +1,28 @@
+Tests that using the WebArea to retrieve AttributedStrings from element TextMarkerRanges works properly.
+
+"AXFont - {
+    AXFontFamily = Times;
+    AXFontName = "Times-Roman";
+    AXFontSize = 16;
+}, This is a test."
+"AXFont - {
+    AXFontFamily = Times;
+    AXFontName = "Times-Roman";
+    AXFontSize = 16;
+}, This is a test.
+
+Second"
+"AXFont - {
+    AXFontFamily = Times;
+    AXFontName = "Times-Roman";
+    AXFontSize = 16;
+}, This is a test.
+
+Second paragraph."
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+This is a test.
+
+Second paragraph.
