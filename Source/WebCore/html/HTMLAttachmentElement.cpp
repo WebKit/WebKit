@@ -177,12 +177,6 @@ static const AtomString& attachmentSaveButtonIdentifier()
     return identifier;
 }
 
-static const AtomString& attachmentSaveIconIdentifier()
-{
-    static MainThreadNeverDestroyed<const AtomString> identifier("attachment-save-icon"_s);
-    return identifier;
-}
-
 static const AtomString& saveAtom()
 {
     static MainThreadNeverDestroyed<const AtomString> identifier("save"_s);
@@ -313,8 +307,6 @@ void HTMLAttachmentElement::updateSaveButton(bool show)
 
         m_saveButton = createContainedElement<HTMLButtonElement>(*m_saveArea, attachmentSaveButtonIdentifier());
         m_saveButton->addEventListener(eventNames().clickEvent, AttachmentSaveEventListener::create(*this), { });
-
-        createContainedElement<HTMLDivElement>(*m_saveButton, attachmentSaveIconIdentifier());
     }
 }
 
