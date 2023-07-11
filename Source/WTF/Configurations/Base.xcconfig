@@ -113,6 +113,7 @@ STRIP_INSTALLED_PRODUCT = YES;
 STRIP_INSTALLED_PRODUCT[config=Debug] = NO;
 
 SDKROOT = macosx.internal;
+ADDITIONAL_SDKS = $(WK_ADDITIONAL_SDKS);
 
 OTHER_CPLUSPLUSFLAGS = $(inherited) -isystem $(SDKROOT)/System/Library/Frameworks/System.framework/PrivateHeaders;
 EXCLUDED_SOURCE_FILE_NAMES = libWebKitAdditions.a

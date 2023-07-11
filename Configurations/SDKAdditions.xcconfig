@@ -1,4 +1,4 @@
-// Copyright (C) 2020-2022 Apple Inc. All rights reserved.
+// Copyright (C) 2023 Apple Inc. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions
@@ -21,29 +21,18 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "../../../../Configurations/CommonBase.xcconfig"
+#include "WebKitTargetConditionals.xcconfig"
 
-ALWAYS_SEARCH_USER_PATHS = NO;
-CLANG_ENABLE_MODULES = YES;
-CLANG_ENABLE_OBJC_ARC = YES;
-CLANG_ENABLE_OBJC_WEAK = YES;
-ENABLE_BITCODE = NO;
-ENABLE_TESTABILITY[config=Debug] = YES;
-ONLY_ACTIVE_ARCH[config=Debug] = YES;
-SWIFT_COMPILATION_MODE[config=Release] = wholemodule;
-SWIFT_VERSION = 5.0;
+// FIXME: Add unversioned sparse SDKs for headers and framework stubs that we can share between OS versions.
+//WK_HAS_UNVERSIONED_SDK_ADDITIONS = ;
 
-SWIFT_OPTIMIZATION_LEVEL[config=Debug] = -Onone;
-SWIFT_OPTIMIZATION_LEVEL[config=Release] = -O;
+WK_HAS_VERSIONED_SDK_ADDITIONS = YES;
+WK_HAS_VERSIONED_SDK_ADDITIONS[sdk=macos*] = $(WK_HAS_VERSIONED_SDK_ADDITIONS_$(USE_INTERNAL_SDK);
+WK_HAS_VERSIONED_SDK_ADDITIONS_ = $(WK_HAS_VERSIONED_SDK_ADDITIONS$(WK_MACOS_1400));
+WK_HAS_VERSIONED_SDK_ADDITIONS_MACOS_SINCE_1400 = YES;
 
-DEBUG_INFORMATION_FORMAT[config=Debug] = dwarf;
-DEBUG_INFORMATION_FORMAT[config=Release] = dwarf-with-dsym;
-
-ONLY_ACTIVE_ARCH[config=Debug] = YES;
-ONLY_ACTIVE_ARCH[config=Release] = NO;
-
-SDKROOT = macosx.internal;
-SDKROOT[sdk=iphoneos*] = iphoneos.internal;
-SDKROOT[sdk=appletv*] = appletvos.internal;
-SDKROOT[sdk=watchos*] = watchos.internal;
-ADDITIONAL_SDKS = $(WK_ADDITIONAL_SDKS);
+WK_ADDITIONAL_SDKS = $(WK_ADDITIONAL_SDKS_UNVERSIONED_$(WK_HAS_UNVERSIONED_SDK_ADDITIONS)_VERSIONED_$(WK_HAS_VERSIONED_SDK_ADDITIONS));
+WK_ADDITIONAL_SDKS_UNVERSIONED__VERSIONED_ = ;
+WK_ADDITIONAL_SDKS_UNVERSIONED__VERSIONED_YES = $(WK_VERSIONED_SDK_ADDITIONS_PATH);
+WK_ADDITIONAL_SDKS_UNVERSIONED_YES_VERSIONED_ = $(WK_UNVERSIONED_SDK_ADDITIONS_PATH);
+WK_ADDITIONAL_SDKS_UNVERSIONED_YES_VERSIONED_YES = $(WK_UNVERSIONED_SDK_ADDITIONS_PATH) $(WK_VERSIONED_SDK_ADDITIONS_PATH);
