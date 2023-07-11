@@ -115,6 +115,8 @@ void MemoryBackingStoreTransaction::objectStoreDeleted(Ref<MemoryObjectStore>&& 
 {
     ASSERT(m_objectStores.contains(&objectStore.get()));
     m_objectStores.remove(&objectStore.get());
+    if (m_originalObjectStoreNames.contains(&objectStore.get()))
+        m_originalObjectStoreNames.remove(&objectStore.get());
     objectStore->deleteAllIndexes(*this);
 
     // If the store removed is previously added in this transaction, we don't need to
