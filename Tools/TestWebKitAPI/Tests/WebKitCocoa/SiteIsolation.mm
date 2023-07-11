@@ -898,8 +898,6 @@ TEST(SiteIsolation, ChildNavigatingToDomainLoadedOnADifferentPage)
     Util::run(&done);
 }
 
-// FIXME: This test times out on the iOS simulator. Investigate and fix.
-#if PLATFORM(MAC)
 TEST(SiteIsolation, MainFrameWithTwoIFramesInTheSameProcess)
 {
     HTTPServer server({
@@ -911,8 +909,7 @@ TEST(SiteIsolation, MainFrameWithTwoIFramesInTheSameProcess)
     [navigationDelegate allowAnyTLSCertificate];
 
     auto configuration = server.httpsProxyConfiguration();
-    // FIXME: call enableSiteIsolation to make this actually use site isolation
-    // once we make changes so that this isn't flaky.
+    enableSiteIsolation(configuration);
 
     auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration]);
     webView.get().navigationDelegate = navigationDelegate.get();
@@ -938,8 +935,7 @@ TEST(SiteIsolation, MainFrameWithTwoIFramesInTheSameProcess)
         EXPECT_NE(childFramePid, 0);
         EXPECT_NE(otherChildFramePid, 0);
         EXPECT_EQ(childFramePid, otherChildFramePid);
-        // FIXME: Switch to EXPECT_NE once siteIsolation is enabled.
-        EXPECT_EQ(mainFramePid, childFramePid);
+        EXPECT_NE(mainFramePid, childFramePid);
         EXPECT_WK_STREQ(mainFrame.securityOrigin.host, "example.com");
         EXPECT_WK_STREQ(childFrame.securityOrigin.host, "webkit.org");
         EXPECT_WK_STREQ(otherChildFrame.securityOrigin.host, "webkit.org");
@@ -947,7 +943,6 @@ TEST(SiteIsolation, MainFrameWithTwoIFramesInTheSameProcess)
     }];
     Util::run(&done);
 }
-#endif
 
 TEST(SiteIsolation, ChildBeingNavigatedToMainFrameDomainByParent)
 {
