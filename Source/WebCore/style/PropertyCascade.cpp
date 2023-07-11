@@ -203,7 +203,7 @@ bool PropertyCascade::addMatch(const MatchedProperties& matchedProperties, Casca
     auto propertyAllowlist = matchedProperties.allowlistType;
     bool hasImportantProperties = false;
 
-    for (auto current : *matchedProperties.properties) {
+    for (auto current : matchedProperties.properties.get()) {
         if (current.isImportant())
             hasImportantProperties = true;
         if (important != current.isImportant())
@@ -344,7 +344,7 @@ void PropertyCascade::addImportantMatches(CascadeLevel cascadeLevel)
     for (unsigned i = 0; i < matchedDeclarations.size(); ++i) {
         const MatchedProperties& matchedProperties = matchedDeclarations[i];
 
-        if (!hasImportantProperties(*matchedProperties.properties))
+        if (!hasImportantProperties(matchedProperties.properties))
             continue;
 
         importantMatches.append({ i, matchedProperties.styleScopeOrdinal, matchedProperties.cascadeLayerPriority, matchedProperties.fromStyleAttribute });
