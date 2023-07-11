@@ -73,12 +73,14 @@ void UserMediaCaptureManager::getMediaStreamDevices(bool revealIdsAndLabels, Get
         for (auto& device : devices) {
             RealtimeMediaSourceCapabilities deviceCapabilities;
 
-            auto capabilities = RealtimeMediaSourceCenter::singleton().getCapabilities(device);
-            if (!capabilities)
-                continue;
+            if (device.isInputDevice()) {
+                auto capabilities = RealtimeMediaSourceCenter::singleton().getCapabilities(device);
+                if (!capabilities)
+                    continue;
 
-            if (revealIdsAndLabels)
-                deviceCapabilities = *capabilities;
+                if (revealIdsAndLabels)
+                    deviceCapabilities = *capabilities;
+            }
 
             devicesWithCapabilities.uncheckedAppend({ WTFMove(device), WTFMove(deviceCapabilities) });
         }
