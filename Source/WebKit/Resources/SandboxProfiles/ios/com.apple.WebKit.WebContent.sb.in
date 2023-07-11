@@ -1372,6 +1372,8 @@
 (define (kernel-mig-routine-in-use-watchos)
     (kernel-mig-routine
         io_connect_set_notification_port
+        io_registry_entry_get_property
+        io_server_version
         mach_make_memory_entry
         mach_make_memory_entry_64
         vm_copy
