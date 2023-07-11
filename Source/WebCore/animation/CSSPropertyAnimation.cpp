@@ -3791,6 +3791,8 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         CSSPropertyMargin,
         CSSPropertyOutline,
         CSSPropertyPadding,
+        CSSPropertyPaddingBlock,
+        CSSPropertyPaddingInline,
         CSSPropertyPageBreakAfter,
         CSSPropertyPageBreakBefore,
         CSSPropertyPageBreakInside,
@@ -3937,8 +3939,6 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         case CSSPropertyOverscrollBehaviorInline:
         case CSSPropertyOverscrollBehaviorX:
         case CSSPropertyOverscrollBehaviorY:
-        case CSSPropertyPaddingBlock: // logical shorthand
-        case CSSPropertyPaddingInline: // logical shorthand
         case CSSPropertyPage:
         case CSSPropertyPlaceContent:
         case CSSPropertyPlaceItems:
