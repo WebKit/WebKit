@@ -4741,6 +4741,19 @@ void Internals::endAudioSessionInterruption()
 #endif
 }
 
+void Internals::suspendAllMediaBuffering()
+{
+    auto frame = this->frame();
+    if (!frame)
+        return;
+
+    auto page = frame->page();
+    if (!page)
+        return;
+
+    page->suspendAllMediaBuffering();
+}
+
 #endif // ENABLE(VIDEO)
 
 #if ENABLE(WEB_AUDIO)
@@ -4938,6 +4951,11 @@ void Internals::mockMediaPlaybackTargetPickerDismissPopup()
     frame->page()->mockMediaPlaybackTargetPickerDismissPopup();
 }
 #endif
+
+bool Internals::isMonitoringWirelessRoutes() const
+{
+    return PlatformMediaSessionManager::sharedManager().isMonitoringWirelessTargets();
+}
 
 ExceptionOr<Ref<MockPageOverlay>> Internals::installMockPageOverlay(PageOverlayType type)
 {
