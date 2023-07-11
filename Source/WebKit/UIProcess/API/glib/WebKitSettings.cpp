@@ -213,6 +213,7 @@ static void webKitSettingsSetProperty(GObject* object, guint propId, const GValu
 {
     WebKitSettings* settings = WEBKIT_SETTINGS(object);
 
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     switch (propId) {
     case PROP_ENABLE_JAVASCRIPT:
         webkit_settings_set_enable_javascript(settings, g_value_get_boolean(value));
@@ -416,12 +417,14 @@ static void webKitSettingsSetProperty(GObject* object, guint propId, const GValu
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propId, paramSpec);
         break;
     }
+ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 static void webKitSettingsGetProperty(GObject* object, guint propId, GValue* value, GParamSpec* paramSpec)
 {
     WebKitSettings* settings = WEBKIT_SETTINGS(object);
 
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     switch (propId) {
     case PROP_ENABLE_JAVASCRIPT:
         g_value_set_boolean(value, webkit_settings_get_enable_javascript(settings));
@@ -622,6 +625,7 @@ static void webKitSettingsGetProperty(GObject* object, guint propId, GValue* val
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propId, paramSpec);
         break;
     }
+ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 static void webkit_settings_class_init(WebKitSettingsClass* klass)
@@ -677,7 +681,7 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
             _("Load icons ignoring image load setting"),
             _("Whether to load site icons ignoring image load setting."),
             FALSE,
-            readWriteConstructParamFlags);
+            static_cast<GParamFlags>(readWriteConstructParamFlags | G_PARAM_DEPRECATED));
 
     /**
      * WebKitSettings:enable-offline-web-application-cache:
@@ -787,7 +791,7 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
             _("Enable Java"),
             _("Whether Java support should be enabled."),
             FALSE,
-            readWriteConstructParamFlags);
+            static_cast<GParamFlags>(readWriteConstructParamFlags | G_PARAM_DEPRECATED));
 #endif
 
     /**

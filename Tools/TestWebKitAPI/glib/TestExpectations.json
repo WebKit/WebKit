@@ -62,12 +62,6 @@
         "subtests": {
             "/webkit/WebKitSettings/javascript-markup": {
                 "expected": {"all@Debug": {"status": ["CRASH"], "bug": "webkit.org/b/221119"}}
-            },
-            "/webkit/WebKitSettings/webkit-settings": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/256557"}}
-            },
-            "/webkit/WebKitSettings/new-with-settings": {
-                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/256557"}}
             }
         }
     },
