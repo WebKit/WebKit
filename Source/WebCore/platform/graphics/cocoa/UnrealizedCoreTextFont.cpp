@@ -450,6 +450,8 @@ RetainPtr<CTFontRef> UnrealizedCoreTextFont::realize() const
             }
             return iterator->value.clamp(value);
 #else
+            UNUSED_PARAM(variationDefaults);
+            UNUSED_PARAM(fontTag);
             return value;
 #endif
         };
