@@ -32,7 +32,10 @@
 #include "DrawingAreaProxy.h"
 #include "FrameTreeCreationParameters.h"
 #include "FrameTreeNodeData.h"
+#include "LoadedWebArchive.h"
+#include "LocalFrameCreationParameters.h"
 #include "MessageSenderInlines.h"
+#include "NetworkProcessMessages.h"
 #include "ProvisionalFrameProxy.h"
 #include "ProvisionalPageProxy.h"
 #include "RemotePageProxy.h"
@@ -379,10 +382,30 @@ void WebFrameProxy::didCreateSubframe(WebCore::FrameIdentifier frameID)
     m_childFrames.add(WTFMove(child));
 }
 
-void WebFrameProxy::swapToProcess(Ref<WebProcessProxy>&& process, const WebCore::ResourceRequest& request)
+void WebFrameProxy::prepareForProvisionalNavigationInProcess(WebProcessProxy& process, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(!isMainFrame());
-    m_provisionalFrame = makeUnique<ProvisionalFrameProxy>(*this, WTFMove(process), request);
+
+    if (m_provisionalFrame && m_provisionalFrame->process().processID() == process.processID())
+        return completionHandler();
+
+    if (!m_provisionalFrame) {
+        m_provisionalFrame = makeUnique<ProvisionalFrameProxy>(*this, Ref { process });
+        // FIXME: This gives too much cookie access. This should be removed when a RemoteFrame is given a topOrigin member.
+        auto giveAllCookieAccess = LoadedWebArchive::Yes;
+        WebCore::RegistrableDomain domain { };
+        page()->websiteDataStore().networkProcess().sendWithAsyncReply(Messages::NetworkProcess::AddAllowedFirstPartyForCookies(process.coreProcessIdentifier(), domain, giveAllCookieAccess), WTFMove(completionHandler));
+    }
+
+    if (m_process->processID() != process.processID()) {
+        LocalFrameCreationParameters localFrameCreationParameters {
+            m_provisionalFrame->layerHostingContextIdentifier()
+        };
+        process.send(Messages::WebPage::TransitionFrameToLocal(localFrameCreationParameters, frameID()), page()->webPageID());
+    }
+
+    if (completionHandler)
+        completionHandler();
 }
 
 void WebFrameProxy::commitProvisionalFrame(FrameIdentifier frameID, FrameInfoData&& frameInfo, ResourceRequest&& request, uint64_t navigationID, const String& mimeType, bool frameHasCustomContentProvider, WebCore::FrameLoadType frameLoadType, const WebCore::CertificateInfo& certificateInfo, bool usedLegacyTLS, bool privateRelayed, bool containsPluginDocument, WebCore::HasInsecureContent hasInsecureContent, WebCore::MouseEventPolicy mouseEventPolicy, const UserData& userData)

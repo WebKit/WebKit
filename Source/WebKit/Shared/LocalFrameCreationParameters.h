@@ -31,7 +31,7 @@
 namespace WebKit {
 
 struct LocalFrameCreationParameters {
-    WebCore::LayerHostingContextIdentifier layerHostingContextIdentifier;
+    std::optional<WebCore::LayerHostingContextIdentifier> layerHostingContextIdentifier;
 };
 
 } // namespace WebKit

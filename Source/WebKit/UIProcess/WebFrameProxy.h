@@ -151,7 +151,7 @@ public:
     void disconnect();
     void didCreateSubframe(WebCore::FrameIdentifier);
     ProcessID processID() const;
-    void swapToProcess(Ref<WebProcessProxy>&&, const WebCore::ResourceRequest&);
+    void prepareForProvisionalNavigationInProcess(WebProcessProxy&, CompletionHandler<void()>&&);
 
     void commitProvisionalFrame(WebCore::FrameIdentifier, FrameInfoData&&, WebCore::ResourceRequest&&, uint64_t navigationID, const String& mimeType, bool frameHasCustomContentProvider, WebCore::FrameLoadType, const WebCore::CertificateInfo&, bool usedLegacyTLS, bool privateRelayed, bool containsPluginDocument, WebCore::HasInsecureContent, WebCore::MouseEventPolicy, const UserData&);
     void setRemotePageProxy(RemotePageProxy&);

@@ -4153,21 +4153,15 @@ void WebPageProxy::continueNavigationInNewProcess(API::Navigation& navigation, W
     bool isServerSideRedirect = shouldTreatAsContinuingLoad == ShouldTreatAsContinuingLoad::YesAfterNavigationPolicyDecision && navigation.currentRequestIsRedirect();
     bool isProcessSwappingOnNavigationResponse = shouldTreatAsContinuingLoad == ShouldTreatAsContinuingLoad::YesAfterProvisionalLoadStarted;
     if (!frame.isMainFrame() && preferences().siteIsolationEnabled()) {
-        if (newProcess->coreProcessIdentifier() != frame.process().coreProcessIdentifier())
-            frame.swapToProcess(WTFMove(newProcess), navigation.currentRequest());
-        else {
-            LoadParameters loadParameters;
-            loadParameters.request = navigation.currentRequest();
-            loadParameters.shouldTreatAsContinuingLoad = WebCore::ShouldTreatAsContinuingLoad::YesAfterNavigationPolicyDecision;
-            loadParameters.frameIdentifier = frame.frameID();
 
-            // FIXME: This layer hosting context identifier isn't hooked up right.
-            LocalFrameCreationParameters localFrameCreationParameters {
-                WebCore::LayerHostingContextIdentifier::generate()
-            };
-            newProcess->send(Messages::WebPage::TransitionFrameToLocal(localFrameCreationParameters, frame.frameID()), webPageID());
-            newProcess->send(Messages::WebPage::LoadRequest(loadParameters), webPageID());
-        }
+        LoadParameters loadParameters;
+        loadParameters.request = navigation.currentRequest();
+        loadParameters.shouldTreatAsContinuingLoad = WebCore::ShouldTreatAsContinuingLoad::YesAfterNavigationPolicyDecision;
+        loadParameters.frameIdentifier = frame.frameID();
+
+        frame.prepareForProvisionalNavigationInProcess(newProcess, [loadParameters = WTFMove(loadParameters), newProcess = WTFMove(newProcess), webPageID = webPageID()] {
+            newProcess->send(Messages::WebPage::LoadRequest(loadParameters), webPageID);
+        });
         return;
     }
 
