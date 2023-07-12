@@ -25,6 +25,9 @@
 
 #pragma once
 
+#include "WebPageProxy.h"
+#include "WebProcessProxy.h"
+
 namespace WebKit {
 
 class RemotePageVisitedLinkStoreRegistration {

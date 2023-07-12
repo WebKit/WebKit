@@ -53,6 +53,10 @@
 #include "UnixMessage.h"
 #endif
 
+#if OS(WINDOWS)
+#include "ArgumentCodersWin.h"
+#endif
+
 namespace IPC {
 
 #if PLATFORM(COCOA)

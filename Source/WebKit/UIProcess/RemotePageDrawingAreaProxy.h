@@ -27,6 +27,7 @@
 
 #include "DrawingAreaInfo.h"
 #include "MessageReceiver.h"
+#include "MessageReceiverMap.h"
 
 namespace WebKit {
 

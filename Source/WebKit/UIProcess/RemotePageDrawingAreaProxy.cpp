@@ -26,6 +26,10 @@
 #include "config.h"
 #include "RemotePageDrawingAreaProxy.h"
 
+#include "DrawingAreaProxy.h"
+#include "WebPageProxy.h"
+#include "WebProcessProxy.h"
+
 namespace WebKit {
 
 RemotePageDrawingAreaProxy::RemotePageDrawingAreaProxy(DrawingAreaProxy& drawingArea, WebProcessProxy& process)
