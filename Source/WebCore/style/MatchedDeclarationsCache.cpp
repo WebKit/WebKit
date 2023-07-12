@@ -34,6 +34,7 @@
 #include "Document.h"
 #include "FontCascade.h"
 #include "RenderStyleInlines.h"
+#include <wtf/SetForScope.h>
 #include <wtf/text/StringHash.h>
 
 namespace WebCore {
@@ -44,7 +45,10 @@ MatchedDeclarationsCache::MatchedDeclarationsCache()
 {
 }
 
-MatchedDeclarationsCache::~MatchedDeclarationsCache() = default;
+MatchedDeclarationsCache::~MatchedDeclarationsCache()
+{
+    RELEASE_ASSERT(!m_isMutating);
+}
 
 bool MatchedDeclarationsCache::isCacheable(const Element& element, const RenderStyle& style, const RenderStyle& parentStyle)
 {
@@ -104,6 +108,7 @@ const MatchedDeclarationsCache::Entry* MatchedDeclarationsCache::find(unsigned h
     if (!hash)
         return nullptr;
 
+    RELEASE_ASSERT(!m_isMutating);
     auto it = m_entries.find(hash);
     if (it == m_entries.end())
         return nullptr;
@@ -132,21 +137,26 @@ void MatchedDeclarationsCache::add(const RenderStyle& style, const RenderStyle& 
     ASSERT(hash);
     // Note that we don't cache the original RenderStyle instance. It may be further modified.
     // The RenderStyle in the cache is really just a holder for the substructures and never used as-is.
+    RELEASE_ASSERT(!m_isMutating);
     m_entries.add(hash, Entry { matchResult, RenderStyle::clonePtr(style), RenderStyle::clonePtr(parentStyle), userAgentAppearanceStyleCopy() });
 }
 
 void MatchedDeclarationsCache::remove(unsigned hash)
 {
+    RELEASE_ASSERT(!m_isMutating);
     m_entries.remove(hash);
 }
 
 void MatchedDeclarationsCache::invalidate()
 {
+    RELEASE_ASSERT(!m_isMutating);
     m_entries.clear();
 }
 
 void MatchedDeclarationsCache::clearEntriesAffectedByViewportUnits()
 {
+    RELEASE_ASSERT(!m_isMutating);
+    SetForScope isMutating { m_isMutating, true };
     m_entries.removeIf([](auto& keyValue) {
         return keyValue.value.renderStyle->usesViewportUnits();
     });
@@ -165,6 +175,8 @@ void MatchedDeclarationsCache::sweep()
         return false;
     };
 
+    RELEASE_ASSERT(!m_isMutating);
+    SetForScope isMutating { m_isMutating, true };
     m_entries.removeIf([&](auto& keyValue) {
         auto& matchResult = keyValue.value.matchResult;
         return hasOneRef(matchResult.userAgentDeclarations) || hasOneRef(matchResult.userDeclarations) || hasOneRef(matchResult.authorDeclarations);

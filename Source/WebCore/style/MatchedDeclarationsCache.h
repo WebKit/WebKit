@@ -66,6 +66,7 @@ private:
     HashMap<unsigned, Entry, AlreadyHashed> m_entries;
     Timer m_sweepTimer;
     unsigned m_additionsSinceLastSweep { 0 };
+    bool m_isMutating { false };
 };
 
 }
