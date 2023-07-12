@@ -2491,6 +2491,9 @@ http/tests/media/modern-media-controls/time-control/10-minutes-to-1-hour.html [ 
 # DASH media playback support is disabled in the GStreamer ports.
 platform/glib/media/media-can-play-dash.html [ Skip ]
 
+# The CookieStore API is not fully implemented on GTK/WPE yet.
+imported/w3c/web-platform-tests/cookie-store [ Skip ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of UNSUPPORTED tests.
 #////////////////////////////////////////////////////////////////////////////////////////

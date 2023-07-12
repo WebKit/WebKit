@@ -34,6 +34,7 @@
 #include "CookieStoreGetOptions.h"
 #include "CurlContext.h"
 #include "HTTPCookieAcceptPolicy.h"
+#include <optional>
 #include <wtf/FileSystem.h>
 #include <wtf/URL.h>
 #include <wtf/Vector.h>
@@ -156,10 +157,10 @@ std::pair<String, bool> NetworkStorageSession::cookiesForDOM(const URL& firstPar
     return cookiesForSession(*this, firstParty, url, false, includeSecureCookies);
 }
 
-Vector<Cookie> NetworkStorageSession::cookiesForDOMAsVector(const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, std::optional<FrameIdentifier> frameID, std::optional<PageIdentifier> pageID, IncludeSecureCookies includeSecureCookies, ApplyTrackingPrevention applyTrackingPrevention, ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking, const CookieStoreGetOptions& options) const
+std::optional<Vector<Cookie>> NetworkStorageSession::cookiesForDOMAsVector(const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, std::optional<FrameIdentifier> frameID, std::optional<PageIdentifier> pageID, IncludeSecureCookies includeSecureCookies, ApplyTrackingPrevention applyTrackingPrevention, ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking, const CookieStoreGetOptions& options) const
 {
     // FIXME: Implement for the Cookie Store API.
-    return { };
+    return std::nullopt;
 }
 
 void NetworkStorageSession::setCookies(const Vector<Cookie>& cookies, const URL&, const URL& /* mainDocumentURL */)

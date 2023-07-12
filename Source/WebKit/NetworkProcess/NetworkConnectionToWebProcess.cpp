@@ -86,6 +86,7 @@
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/SameSiteInfo.h>
 #include <WebCore/SecurityPolicy.h>
+#include <optional>
 #include <wtf/LogInitialization.h>
 
 #if PLATFORM(COCOA)
@@ -800,13 +801,13 @@ void NetworkConnectionToWebProcess::setCookiesFromDOM(const URL& firstParty, con
 #endif
 }
 
-void NetworkConnectionToWebProcess::cookiesForDOMAsync(const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, FrameIdentifier frameID, PageIdentifier pageID, IncludeSecureCookies includeSecureCookies, ApplyTrackingPrevention applyTrackingPrevention, ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking, const WebCore::CookieStoreGetOptions& options, CompletionHandler<void(Vector<WebCore::Cookie>&&)>&& completionHandler)
+void NetworkConnectionToWebProcess::cookiesForDOMAsync(const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, FrameIdentifier frameID, PageIdentifier pageID, IncludeSecureCookies includeSecureCookies, ApplyTrackingPrevention applyTrackingPrevention, ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking, const WebCore::CookieStoreGetOptions& options, CompletionHandler<void(std::optional<Vector<WebCore::Cookie>>&&)>&& completionHandler)
 {
-    NETWORK_PROCESS_MESSAGE_CHECK_COMPLETION(m_networkProcess->allowsFirstPartyForCookies(m_webProcessIdentifier, firstParty), completionHandler({ }));
+    NETWORK_PROCESS_MESSAGE_CHECK_COMPLETION(m_networkProcess->allowsFirstPartyForCookies(m_webProcessIdentifier, firstParty), completionHandler(std::nullopt));
 
     auto* networkStorageSession = storageSession();
     if (!networkStorageSession)
-        return completionHandler({ });
+        return completionHandler(std::nullopt);
     auto result = networkStorageSession->cookiesForDOMAsVector(firstParty, sameSiteInfo, url, frameID, pageID, includeSecureCookies, applyTrackingPrevention, shouldRelaxThirdPartyCookieBlocking, options);
 #if ENABLE(TRACKING_PREVENTION) && !RELEASE_LOG_DISABLED
     if (auto* session = networkSession()) {

@@ -43,6 +43,7 @@
 #include <WebCore/Page.h>
 #include <WebCore/Settings.h>
 #include <WebCore/StorageSessionProvider.h>
+#include <optional>
 #include <wtf/Vector.h>
 
 namespace WebKit {
@@ -262,7 +263,7 @@ void WebCookieJar::deleteCookie(const WebCore::Document& document, const URL& ur
     WebProcess::singleton().ensureNetworkProcessConnection().connection().sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::DeleteCookie(url, cookieName), WTFMove(completionHandler));
 }
 
-void WebCookieJar::getCookiesAsync(WebCore::Document& document, const URL& url, const WebCore::CookieStoreGetOptions& options, CompletionHandler<void(Vector<WebCore::Cookie>&&)>&& completionHandler) const
+void WebCookieJar::getCookiesAsync(WebCore::Document& document, const URL& url, const WebCore::CookieStoreGetOptions& options, CompletionHandler<void(std::optional<Vector<WebCore::Cookie>>&&)>&& completionHandler) const
 {
     auto* webFrame = document.frame() ? WebFrame::fromCoreFrame(*document.frame()) : nullptr;
     if (!webFrame || !webFrame->page()) {

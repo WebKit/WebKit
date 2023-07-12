@@ -36,6 +36,7 @@
 #include "JSCookieListItem.h"
 #include "JSDOMPromiseDeferred.h"
 #include "ScriptExecutionContext.h"
+#include <optional>
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/Ref.h>
 #include <wtf/Vector.h>
@@ -92,13 +93,19 @@ void CookieStore::get(CookieStoreGetOptions&& options, Ref<DeferredPromise>&& pr
 
     auto& url = document.url();
     auto& cookieJar = page->cookieJar();
-    auto completionHandler = [promise = WTFMove(promise)] (Vector<Cookie>&& cookies) {
-        if (cookies.isEmpty()) {
+    auto completionHandler = [promise = WTFMove(promise)] (std::optional<Vector<Cookie>>&& cookies) {
+        if (!cookies) {
+            promise->reject(TypeError);
+            return;
+        }
+
+        auto& cookiesVector = *cookies;
+        if (cookiesVector.isEmpty()) {
             promise->resolveWithJSValue(JSC::jsNull());
             return;
         }
 
-        auto& cookie = cookies[0];
+        auto& cookie = cookiesVector[0];
         promise->resolve<IDLDictionary<CookieListItem>>(CookieListItem { WTFMove(cookie.name), WTFMove(cookie.value) });
     };
 

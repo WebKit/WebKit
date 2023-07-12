@@ -28,6 +28,7 @@
 #include "FrameIdentifier.h"
 #include "PageIdentifier.h"
 #include "SameSiteInfo.h"
+#include <optional>
 #include <wtf/Forward.h>
 #include <wtf/text/WTFString.h>
 
@@ -63,7 +64,7 @@ public:
     virtual void setRawCookie(const Document&, const Cookie&);
     virtual void deleteCookie(const Document&, const URL&, const String& cookieName, CompletionHandler<void()>&&);
 
-    virtual void getCookiesAsync(Document&, const URL&, const CookieStoreGetOptions&, CompletionHandler<void(Vector<Cookie>&&)>&&) const;
+    virtual void getCookiesAsync(Document&, const URL&, const CookieStoreGetOptions&, CompletionHandler<void(std::optional<Vector<Cookie>>&&)>&&) const;
 
     // Cookie Cache.
     virtual void clearCache() { }

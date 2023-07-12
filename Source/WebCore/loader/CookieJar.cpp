@@ -40,6 +40,7 @@
 #include "Page.h"
 #include "PlatformStrategies.h"
 #include "StorageSessionProvider.h"
+#include <optional>
 #include <wtf/CompletionHandler.h>
 #include <wtf/SystemTracing.h>
 
@@ -189,9 +190,9 @@ void CookieJar::deleteCookie(const Document&, const URL& url, const String& cook
     }
 }
 
-void CookieJar::getCookiesAsync(Document&, const URL&, const CookieStoreGetOptions&, CompletionHandler<void(Vector<Cookie>&&)>&& completionHandler) const
+void CookieJar::getCookiesAsync(Document&, const URL&, const CookieStoreGetOptions&, CompletionHandler<void(std::optional<Vector<Cookie>>&&)>&& completionHandler) const
 {
-    completionHandler({ });
+    completionHandler(std::nullopt);
 }
 
 }

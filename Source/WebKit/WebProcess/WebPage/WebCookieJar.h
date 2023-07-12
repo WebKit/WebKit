@@ -27,6 +27,7 @@
 
 #include "WebCookieCache.h"
 #include <WebCore/CookieJar.h>
+#include <optional>
 #include <wtf/CompletionHandler.h>
 
 namespace WebCore {
@@ -50,7 +51,7 @@ public:
     void setRawCookie(const WebCore::Document&, const WebCore::Cookie&) final;
     void deleteCookie(const WebCore::Document&, const URL&, const String& cookieName, CompletionHandler<void()>&&) final;
 
-    void getCookiesAsync(WebCore::Document&, const URL&, const WebCore::CookieStoreGetOptions&, CompletionHandler<void(Vector<WebCore::Cookie>&&)>&&) const final;
+    void getCookiesAsync(WebCore::Document&, const URL&, const WebCore::CookieStoreGetOptions&, CompletionHandler<void(std::optional<Vector<WebCore::Cookie>>&&)>&&) const final;
 
     void cookiesAdded(const String& host, const Vector<WebCore::Cookie>&);
     void cookiesDeleted(const String& host, const Vector<WebCore::Cookie>&);
