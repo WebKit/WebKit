@@ -54,6 +54,7 @@
 #include "SharedBuffer.h"
 #include "UserAgentStyleSheets.h"
 #include <pal/FileSizeFormatter.h>
+#include <unicode/ubidi.h>
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/UUID.h>
 #include <wtf/URLParser.h>
@@ -231,10 +232,13 @@ void HTMLAttachmentElement::ensureWideLayoutShadowTree(ShadowRoot& root)
     m_informationBlock = createContainedElement<HTMLDivElement>(informationArea, attachmentInformationBlockIdentifier());
 
     m_actionTextElement = createContainedElement<HTMLDivElement>(*m_informationBlock, attachmentActionIdentifier(), String { attachmentActionForDisplay() });
+    m_actionTextElement->setAttributeWithoutSynchronization(HTMLNames::dirAttr, autoAtom());
 
     m_titleElement = createContainedElement<HTMLDivElement>(*m_informationBlock, attachmentTitleIdentifier(), String { attachmentTitleForDisplay() });
+    m_titleElement->setAttributeWithoutSynchronization(HTMLNames::dirAttr, autoAtom());
 
     m_subtitleElement = createContainedElement<HTMLDivElement>(*m_informationBlock, attachmentSubtitleIdentifier(), String { attachmentSubtitleForDisplay() });
+    m_subtitleElement->setAttributeWithoutSynchronization(HTMLNames::dirAttr, autoAtom());
 
     updateSaveButton(!attributeWithoutSynchronization(saveAttr).isNull());
 }
@@ -530,13 +534,31 @@ String HTMLAttachmentElement::attachmentTitleForDisplay() const
     if (indexOfLastDot == notFound)
         return title;
 
+    auto filename = StringView(title).left(indexOfLastDot);
+    auto extension = StringView(title).substring(indexOfLastDot);
+
+    if (isWideLayout() && !filename.is8Bit() && ubidi_getBaseDirection(filename.characters16(), filename.length()) == UBIDI_RTL) {
+        // The filename is deemed RTL, it should be exposed as RTL overall, but keeping the extension to the right.
+        return makeString(
+            rightToLeftMark, // Make this whole text appear as RTL, the element's `dir="auto"` will right-align and put ellipsis on the left (if needed)
+            leftToRightIsolate, // Isolate the filename+extension, and force LTR to ensure that the extension always stays on the right.
+            firstStrongIsolate, // Isolate the filename.
+            filename, // Note: The filename contains its own bidi characters.
+            popDirectionalIsolate, // End isolation of the filename.
+            zeroWidthSpace, // Add a preferred breakpoint before the extension when word-wrapping (so the extension doesn't get split).
+            extension,
+            popDirectionalIsolate // And end the filename+extension LTR isolation.
+        );
+    }
+
+    // Non-RTL or narrow layout: Keep the extension to the right, but the overall direction doesn't need to be exposed.
     return makeString(
-        leftToRightMark,
-        firstStrongIsolate,
-        StringView(title).left(indexOfLastDot),
-        popDirectionalIsolate,
-        zeroWidthSpace,
-        StringView(title).substring(indexOfLastDot)
+        leftToRightMark, // Force LTR to ensure that the extension always stays on the right.
+        firstStrongIsolate, // Isolate the filename.
+        filename, // Note: The filename contains its own bidi characters.
+        popDirectionalIsolate, // End isolation of the filename.
+        zeroWidthSpace, // Add a preferred breakpoint before the extension when word-wrapping (so the extension doesn't get split).
+        extension
     );
 }
 
