@@ -48,6 +48,9 @@ void UIGamepadProvider::platformSetDefaultGamepadProvider()
 
 WebPageProxy* UIGamepadProvider::platformWebPageProxyForGamepadInput()
 {
+    if (GamepadProvider::singleton().isMockGamepadProvider())
+        return nullptr;
+
 #if PLATFORM(WPE)
     return WKWPE::View::platformWebPageProxyForGamepadInput();
 #else

@@ -2542,6 +2542,9 @@ webkit.org/b/218220 editing/execCommand/switch-list-type-with-orphaned-li.html [
 # Console log lines may appear in a different order so we silence them.
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-embed-element/embed-network-error.sub.html [ DumpJSConsoleLogInStdErr ]
 
+# Remove console message: 'Navigator.getGamepads() will be removed from insecure contexts in a future release'.
+imported/w3c/web-platform-tests/gamepad/gamepad-secure-context.html [ DumpJSConsoleLogInStdErr ]
+
 # Common failures between GTK and WPE.
 
 # TODO: Needs bug ticket.
