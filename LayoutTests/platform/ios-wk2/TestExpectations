@@ -2461,3 +2461,5 @@ imported/w3c/web-platform-tests/css/css-highlight-api/painting/custom-highlight-
 
 # Requires grammar checking to be enabled (rdar://103646683)
 editing/selection/ios/show-grammar-replacements-on-tap.html [ Skip ]
+
+webkit.org/b/259132 imported/w3c/web-platform-tests/html/semantics/disabled-elements/disabled-event-dispatch.tentative.html [ Failure ]
