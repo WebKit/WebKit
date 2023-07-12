@@ -545,9 +545,9 @@ void CurlRequest::setupSendData(bool forPutMethod)
         m_curlHandle->appendRequestHeader("Transfer-Encoding: chunked"_s);
     else {
         if (forPutMethod)
-            m_curlHandle->setInFileSizeLarge(static_cast<curl_off_t>(m_formDataStream.totalSize()));
+            m_curlHandle->setInFileSize(static_cast<curl_off_t>(m_formDataStream.totalSize()));
         else
-            m_curlHandle->setPostFieldLarge(static_cast<curl_off_t>(m_formDataStream.totalSize()));
+            m_curlHandle->setPostFieldSize(static_cast<curl_off_t>(m_formDataStream.totalSize()));
     }
 
     m_curlHandle->setReadCallbackFunction(willSendDataCallback, this);

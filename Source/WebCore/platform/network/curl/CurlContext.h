@@ -260,9 +260,9 @@ public:
     void enableHttpGetRequest();
     void enableHttpHeadRequest();
     void enableHttpPostRequest();
-    void setPostFieldLarge(curl_off_t);
+    void setPostFieldSize(curl_off_t);
     void enableHttpPutRequest();
-    void setInFileSizeLarge(curl_off_t);
+    void setInFileSize(curl_off_t);
     void setHttpCustomRequest(const String&);
 
     void enableConnectionOnly();

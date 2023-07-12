@@ -487,10 +487,10 @@ void CurlHandle::enableHttpPostRequest()
 {
     enableHttp();
     curl_easy_setopt(m_handle, CURLOPT_POST, 1L);
-    curl_easy_setopt(m_handle, CURLOPT_POSTFIELDSIZE, 0L);
+    curl_easy_setopt(m_handle, CURLOPT_POSTFIELDSIZE_LARGE, static_cast<curl_off_t>(0));
 }
 
-void CurlHandle::setPostFieldLarge(curl_off_t size)
+void CurlHandle::setPostFieldSize(curl_off_t size)
 {
     if (expectedSizeOfCurlOffT() != sizeof(long long))
         size = static_cast<int>(size);
@@ -502,10 +502,10 @@ void CurlHandle::enableHttpPutRequest()
 {
     enableHttp();
     curl_easy_setopt(m_handle, CURLOPT_UPLOAD, 1L);
-    curl_easy_setopt(m_handle, CURLOPT_INFILESIZE, 0L);
+    curl_easy_setopt(m_handle, CURLOPT_INFILESIZE_LARGE, static_cast<curl_off_t>(0));
 }
 
-void CurlHandle::setInFileSizeLarge(curl_off_t size)
+void CurlHandle::setInFileSize(curl_off_t size)
 {
     if (expectedSizeOfCurlOffT() != sizeof(long long))
         size = static_cast<int>(size);
