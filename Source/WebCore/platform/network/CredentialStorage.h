@@ -46,8 +46,10 @@ public:
     WEBCORE_EXPORT void removeCredentialsWithOrigin(const SecurityOriginData&);
     WEBCORE_EXPORT void clearCredentials();
 
+#if PLATFORM(COCOA)
     // OS credential storage.
     WEBCORE_EXPORT static Credential getFromPersistentStorage(const ProtectionSpace&);
+#endif
 
     // These methods work for authentication schemes that support sending credentials without waiting for a request. E.g., for HTTP Basic authentication scheme
     // a client should assume that all paths at or deeper than the depth of a known protected resource share are within the same protection space.
