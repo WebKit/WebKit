@@ -197,3 +197,4 @@ testRegExp(/(?<A>)|(?<A>)*\k<A>/, "", ["", "", undefined], { A: "" });
 
 // Test 31
 testRegExp(/(?:(?<A>a)|(?<A>b)*)\k<A>/, "bb", ["bb",undefined,"b"], { A: "b" });
+testRegExp(/((?<A>A+)(?<B>B+)(?<C>C+)(?<D>D+))+|((?<B>B+)(?<C>C+)(?<D>D+))+|((?<A>A+)(?<C>C+)(?<D>D+))+|((?<C>C+)(?<D>D+))+|((?<B>B+)(?<D>D+))+|((?<A>A+)(?<D>D+))+|((?<D>D+))/, "AAD", ["AAD", undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, "AAD", "AA", "D", undefined, undefined], { A: "AA", B: undefined, C: undefined, D: "D" });
