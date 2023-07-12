@@ -71,7 +71,10 @@ public:
 
     void startMonitoringWirelessRoutes();
     void stopMonitoringWirelessRoutes();
-    virtual void providePresentingApplicationPID(int) = 0;
+
+    enum class ShouldOverride : bool { No, Yes };
+    void providePresentingApplicationPID(int pid) { providePresentingApplicationPID(pid, ShouldOverride::No); }
+    virtual void providePresentingApplicationPID(int, ShouldOverride) = 0;
 
     void setIsExternalOutputDeviceAvailable(bool);
 

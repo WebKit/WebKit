@@ -220,11 +220,14 @@ private:
     }
 #endif
 
-    void startProducingData(RealtimeMediaSource::Type type) final
+    void startProducingData(CaptureDevice::DeviceType type) final
     {
-        if (type != RealtimeMediaSource::Type::Audio)
-            return;
-        m_process.startCapturingAudio();
+        if (type == CaptureDevice::DeviceType::Microphone)
+            m_process.startCapturingAudio();
+#if PLATFORM(IOS)
+        else if (type == CaptureDevice::DeviceType::Camera)
+            m_process.overridePresentingApplicationPIDIfNeeded();
+#endif
     }
 
     const ProcessIdentity& resourceOwner() const final
@@ -747,6 +750,11 @@ RemoteMediaSessionHelperProxy& GPUConnectionToWebProcess::mediaSessionHelperProx
 void GPUConnectionToWebProcess::ensureMediaSessionHelper()
 {
     mediaSessionHelperProxy();
+}
+
+void GPUConnectionToWebProcess::overridePresentingApplicationPIDIfNeeded()
+{
+    mediaSessionHelperProxy().overridePresentingApplicationPIDIfNeeded();
 }
 #endif
 
