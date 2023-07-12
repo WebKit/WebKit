@@ -35,6 +35,9 @@ namespace WebCore {
 
 void NetworkStateNotifier::updateStateWithoutNotifying()
 {
+    if (!m_store)
+        return;
+
     auto key = adoptCF(SCDynamicStoreKeyCreateNetworkInterface(0, kSCDynamicStoreDomainState));
     auto propertyList = dynamic_cf_cast<CFDictionaryRef>(adoptCF(SCDynamicStoreCopyValue(m_store.get(), key.get())));
     if (!propertyList)
