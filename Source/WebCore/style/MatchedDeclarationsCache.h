@@ -28,15 +28,18 @@
 #include "MatchResult.h"
 #include "RenderStyle.h"
 #include "Timer.h"
+#include <wtf/CheckedRef.h>
 
 namespace WebCore {
 
 namespace Style {
 
+class Resolver;
+
 class MatchedDeclarationsCache {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    MatchedDeclarationsCache();
+    explicit MatchedDeclarationsCache(const Resolver&);
     ~MatchedDeclarationsCache();
 
     static bool isCacheable(const Element&, const RenderStyle&, const RenderStyle& parentStyle);
@@ -60,9 +63,13 @@ public:
     void invalidate();
     void clearEntriesAffectedByViewportUnits();
 
+    void ref() const;
+    void deref() const;
+
 private:
     void sweep();
 
+    CheckedRef<const Resolver> m_owner;
     HashMap<unsigned, Entry, AlreadyHashed> m_entries;
     Timer m_sweepTimer;
     unsigned m_additionsSinceLastSweep { 0 };
