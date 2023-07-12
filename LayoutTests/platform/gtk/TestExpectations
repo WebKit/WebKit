@@ -50,10 +50,6 @@ imported/w3c/web-platform-tests/css/css-multicol/multicol-width-ch-001.xht [ Pas
 
 fast/events/keyboardevent-modifier.html [ Pass ]
 
-# permessage-deflate WebSocket extension
-
-# css-values passing for us
-
 # PointerEvents not enabled globally, but enabled for GTK (EXPERIMENTAL_FEATURES)
 pointerevents/mouse [ Pass ]
 imported/w3c/web-platform-tests/pointerevents [ Pass ]
@@ -126,8 +122,6 @@ imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-svg-none
 imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-table-none-test_touch.html [ Skip ]
 imported/w3c/web-platform-tests/pointerevents/pointerlock/pointerevent_movementxy.html [ Skip ]
 imported/w3c/web-platform-tests/pointerevents/pointerevent_sequence_at_implicit_release_on_click.html [ Skip ]
-
-webkit.org/b/206885 imported/w3c/web-platform-tests/css/css-fonts/font-default-04.html [ Pass ]
 
 http/tests/cookies/same-site [ Pass ]
 
@@ -454,8 +448,6 @@ webkit.org/b/245840 webgl/pending/conformance/context/context-attributes-alpha-d
 webkit.org/b/245840 webgl/1.0.x/conformance/extensions/oes-texture-float-with-video.html [ Pass Timeout ]
 webkit.org/b/245840 webgl/1.0.x/conformance/extensions/oes-texture-half-float-with-video.html [ Pass Timeout ]
 webkit.org/b/245840 webgl/pending/conformance/textures/misc/tex-image-video-repeated.html [ Pass Timeout ]
-webkit.org/b/245840 fast/canvas/webgl/texImage2D-video-flipY-false.html [ Timeout Failure ]
-webkit.org/b/245840 fast/canvas/webgl/texImage2D-video-flipY-true.html [ Timeout Failure ]
 webkit.org/b/245840 fast/canvas/webgl/texImage2DImageDataTest.html [ Pass Failure ]
 webkit.org/b/245840 fast/canvas/webgl/texture-active-bind.html [ Pass Failure ]
 webkit.org/b/245840 fast/canvas/webgl/texture-alternating-npot.html [ Pass Failure ]
@@ -893,8 +885,6 @@ http/tests/ssl/applepay [ Skip ]
 # This test assumes that color on sliders is not reversed for RTL, so failing is good.
 fast/forms/range/input-appearance-range-rtl.html [ ImageOnlyFailure ]
 
-# Service-workers tests that fail, time out or crash.
-
 # GTK doesn't support multiple items in the clipboard
 # FIXME: add platform specific tests equivalent to these but using single item.
 editing/async-clipboard/clipboard-read-write-images.html [ Skip ]
@@ -1044,8 +1034,15 @@ webkit.org/b/219614 inspector/css/getComputedPrimaryFontForNode.html [ Failure ]
 webkit.org/b/249364 imported/w3c/web-platform-tests/css/css-grid/masonry/tentative/intrinsic-sizing/masonry-intrinsic-sizing-006.html [ ImageOnlyFailure ]
 
 webkit.org/b/229738 fast/text/whitespace/pre-break-word.html [ Failure ]
+webkit.org/b/229738 fast/text/word-break.html [ Failure ]
 
 webkit.org/b/232386 fast/text/line-breaks-after-white-space.html [ Failure ]
+webkit.org/b/232386 fast/block/basic/minheight.html [ Failure ]
+webkit.org/b/232386 fast/css/background-shorthand-invalid-url.html [ Failure ]
+webkit.org/b/232386 fast/dom/rtl-scroll-to-leftmost-and-resize.html [ Failure ]
+webkit.org/b/232386 fast/overflow/clip-rects-fixed-ancestor.html [ Failure ]
+webkit.org/b/232386 svg/text/remove-text-node-from-tspan.html [ Failure ]
+webkit.org/b/232386 svg/text/text-rescale.html [ Failure ]
 
 webkit.org/b/236298 fast/forms/basic-textareas-quirks-simple-lines.html [ ImageOnlyFailure ]
 webkit.org/b/236298 fast/inline-block/hidpi-margin-top-with-subpixel-value-and-overflow-hidden.html [ ImageOnlyFailure ]
@@ -1169,8 +1166,6 @@ webkit.org/b/128255 compositing/columns/composited-lr-paginated-repaint.html [ P
 webkit.org/b/128255 compositing/columns/composited-rl-paginated-repaint.html [ Pass Failure ]
 
 webkit.org/b/194382 mathml/presentation/stretchy-depth-height-symmetric.html [ Failure ]
-imported/w3c/web-platform-tests/mathml/relations/css-styling/mi-fontstyle-fontweight.html [ Pass ]
-imported/w3c/web-platform-tests/mathml/relations/css-styling/mathvariant-double-struck-font-style-font-weight.html [ Pass ]
 imported/w3c/web-platform-tests/mathml/presentation-markup/tables/table-002.html [ Pass ]
 imported/w3c/web-platform-tests/mathml/relations/css-styling/ignored-properties-001.html [ Pass ]
 imported/w3c/web-platform-tests/mathml/relations/css-styling/not-participating-to-parent-layout.html [ Pass ]
@@ -1227,8 +1222,6 @@ webkit.org/b/213386 fast/images/low-memory-decode.html [ Timeout ]
 webkit.org/b/214801 fast/forms/datalist/datalist-show-hide.html [ Failure Pass ]
 
 webkit.org/b/214802 http/tests/navigation/ping-attribute/anchor-ping-and-follow-redirect-when-sending-ping.html [ Failure Pass ]
-
-# Flaky on skip-failing-test bot (EWS)
 
 webkit.org/b/230017 http/wpt/cross-origin-opener-policy/non-secure-to-secure-context-navigation.https.html [ Failure Pass ]
 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/iframe-popup-same-origin-allow-popups-to-same-origin-allow-popups.https.html [ Failure ]
@@ -1473,7 +1466,6 @@ webkit.org/b/252878 webrtc/datachannel/bufferedAmountLowThreshold-default.html [
 webkit.org/b/252878 webrtc/h264-packetization-mode.html [ Failure Pass Timeout ]
 webkit.org/b/252878 webrtc/video-h264.html [ Pass Timeout ]
 webkit.org/b/252878 webrtc/video-mute-vp8.html [ Pass Timeout ]
-webkit.org/b/252878 webrtc/vp9-profile2.html [ Skip ]
 
 # Flaky tests detected on May2023
 webkit.org/b/257624 compositing/reflections/mask-and-reflection.html [ ImageOnlyFailure Pass ]
@@ -1599,9 +1591,6 @@ imported/w3c/web-platform-tests/css/cssom-view/scroll-behavior-subframe-root.htm
 imported/w3c/web-platform-tests/css/cssom-view/scroll-behavior-element.html [ Slow ]
 imported/w3c/web-platform-tests/css/cssom-view/scroll-behavior-main-frame-window.html [ Slow ]
 imported/w3c/web-platform-tests/css/cssom-view/scroll-behavior-subframe-window.html [ Slow ]
-
-# Uncomment when webkit.org/b/231811 is fixed and glib expectation is removed.
-# webrtc/concurrentVideoPlayback2.html [ Slow ]
 
 webgl/1.0.x/conformance/glsl/literals/float_literal.vert.html [ Slow ]
 webgl/1.0.x/conformance/glsl/bugs/long-expressions-should-not-crash.html [ Slow ]
@@ -1741,7 +1730,6 @@ webkit.org/b/157179 fast/events/dropzone-003.html [ Failure ]
 webkit.org/b/157179 fast/events/input-events-drag-and-drop.html [ Failure ]
 webkit.org/b/157179 fast/events/input-events-insert-by-drop.html [ Failure ]
 webkit.org/b/157179 fast/events/ondrop-text-html.html [ Failure ]
-webkit.org/b/157179 fast/events/selectstart-by-drag.html [ Failure ]
 webkit.org/b/157179 fast/events/standalone-image-drag-to-editable.html [ Failure Timeout ]
 webkit.org/b/157179 fast/forms/drag-into-textarea.html [ Failure ]
 webkit.org/b/157179 fast/forms/drag-out-of-textarea.html [ Failure ]
@@ -1900,8 +1888,6 @@ webkit.org/b/180581 imported/w3c/web-platform-tests/css/css-shapes/shape-outside
 webkit.org/b/180581 imported/w3c/web-platform-tests/css/css-shapes/shape-outside/values/shape-outside-ellipse-005.html [ Failure ]
 webkit.org/b/180581 imported/w3c/web-platform-tests/css/css-shapes/shape-outside/values/shape-outside-inset-003.html [ Failure ]
 webkit.org/b/180581 imported/w3c/web-platform-tests/css/css-shapes/shape-outside/values/shape-outside-polygon-004.html [ Failure ]
-
-webkit.org/b/203675 imported/w3c/web-platform-tests/css/css-shapes/spec-examples/shape-outside-013.html [ Failure ]
 
 webkit.org/b/124566 fast/dom/SelectorAPI/resig-SelectorsAPI-test.xhtml [ Failure ]
 
@@ -2230,8 +2216,6 @@ webkit.org/b/160119 fast/repaint/selection-gap-flipped-fixed-child.html [ Failur
 # UNSORTED Expectations. When in doubt, put it here.
 #////////////////////////////////////////////////////////////////////////////////////////
 
-webkit.org/b/240270 imported/w3c/web-platform-tests/css/motion/offset-rotate-001.html [ ImageOnlyFailure ]
-webkit.org/b/240270 imported/w3c/web-platform-tests/css/motion/offset-rotate-002.html [ ImageOnlyFailure ]
 
 # These failures occur on GTK only (moved from LayoutTests/TestExpectations)
 webkit.org/b/200208 imported/w3c/web-platform-tests/css/css-images/gradients-with-transparent.html [ ImageOnlyFailure ]
@@ -2314,3 +2298,21 @@ fast/canvas/webgl/lose-context-on-timeout.html [ Skip ]
 fast/repaint/fixed-move-after-keyboard-scroll.html [ Skip ]
 http/tests/inspector/network/intercept-request-main-resource.html [ Skip ]
 webgl/2.0.y/conformance2/offscreencanvas/offscreencanvas-transfer-image-bitmap.html [ Skip ]
+
+imported/w3c/web-platform-tests/html/canvas/offscreen/manual/the-offscreen-canvas/offscreencanvas.getcontext.html [ Failure ]
+imported/w3c/web-platform-tests/html/canvas/offscreen/manual/the-offscreen-canvas/offscreencanvas.transfer.to.imagebitmap.html [ Failure ]
+imported/w3c/web-platform-tests/html/canvas/offscreen/manual/the-offscreen-canvas/offscreencanvas.transferrable.html [ Failure ]
+imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/interpolation-per-property-002.html [ DumpJSConsoleLogInStdErr ]
+
+webkit.org/b/192150 imported/w3c/web-platform-tests/xhr/setrequestheader-content-type.htm [ Failure ]
+
+webkit.org/b/202745 fast/css/invalidation-errors-2.html [ Failure ]
+webkit.org/b/202745 fast/css/invalidation-errors.html [ Failure ]
+
+webkit.org/b/203676 svg/custom/pointer-events-image-css-transform.svg [ Failure ]
+webkit.org/b/203676 svg/custom/pointer-events-image.svg [ Failure ]
+webkit.org/b/203676 svg/custom/pointer-events-path.svg [ Failure ]
+webkit.org/b/203676 svg/custom/pointer-events-text-css-transform.svg [ Failure ]
+webkit.org/b/203676 svg/custom/pointer-events-text.svg [ Failure ]
+
+webkit.org/b/245324 http/tests/notifications/notification.html  [ Crash ]
