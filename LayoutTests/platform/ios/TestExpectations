@@ -4366,3 +4366,5 @@ webkit.org/b/258328 [ Debug ] imported/w3c/web-platform-tests/webcodecs/videoFra
 
 webkit.org/b/258532 svg/zoom/page/text-with-non-scaling-stroke.html [ Pass ImageOnlyFailure ]
 webkit.org/b/258532 fast/forms/input-placeholder-text-indent.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/259160 http/tests/privateClickMeasurement/triggering-event-with-attribution-source-through-fetch-keepalive.html [ Pass Failure ]
