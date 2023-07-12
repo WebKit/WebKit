@@ -464,6 +464,7 @@ constexpr TextEmphasisFill RenderStyle::initialTextEmphasisFill() { return TextE
 constexpr TextEmphasisMark RenderStyle::initialTextEmphasisMark() { return TextEmphasisMark::None; }
 constexpr OptionSet<TextEmphasisPosition> RenderStyle::initialTextEmphasisPosition() { return { TextEmphasisPosition::Over, TextEmphasisPosition::Right }; }
 inline StyleColor RenderStyle::initialTextFillColor() { return StyleColor::currentColor(); }
+inline bool RenderStyle::hasExplicitlySetFillColor() const { return m_inheritedFlags.hasSetFillColor; }
 constexpr TextGroupAlign RenderStyle::initialTextGroupAlign() { return TextGroupAlign::None; }
 inline Length RenderStyle::initialTextIndent() { return zeroLength(); }
 constexpr TextIndentLine RenderStyle::initialTextIndentLine() { return TextIndentLine::FirstLine; }
@@ -802,7 +803,8 @@ inline bool RenderStyle::InheritedFlags::operator==(const InheritedFlags& other)
         && pointerEvents == other.pointerEvents
         && insideLink == other.insideLink
         && insideDefaultButton == other.insideDefaultButton
-        && writingMode == other.writingMode;
+        && writingMode == other.writingMode
+        && hasSetFillColor == other.hasSetFillColor;
 }
 
 inline bool RenderStyle::NonInheritedFlags::operator==(const NonInheritedFlags& other) const

@@ -165,6 +165,7 @@ public:
     static void applyValueCustomProperty(BuilderState&, const CSSRegisteredCustomProperty*, const CSSCustomPropertyValue&);
 
     static void applyValueColor(BuilderState&, CSSValue&);
+    static void applyInitialColor(BuilderState&);
 
 private:
     static void resetEffectiveZoom(BuilderState&);
@@ -2034,6 +2035,17 @@ inline void BuilderCustom::applyValueColor(BuilderState& builderState, CSSValue&
         auto color = builderState.colorFromPrimitiveValue(primitiveValue, ForVisitedLink::Yes);
         builderState.style().setVisitedLinkColor(resolveColor(color));
     }
+    builderState.style().setDisallowsFastPathInheritance();
+    if (builderState.isAuthorOrigin())
+        builderState.style().setHasExplicitlySetFillColor(true);
+}
+
+inline void BuilderCustom::applyInitialColor(BuilderState& builderState)
+{
+    if (builderState.applyPropertyToRegularStyle())
+        builderState.style().setColor(RenderStyle::initialColor());
+    if (builderState.applyPropertyToVisitedLinkStyle())
+        builderState.style().setVisitedLinkColor(RenderStyle::initialColor());
     builderState.style().setDisallowsFastPathInheritance();
 }
 

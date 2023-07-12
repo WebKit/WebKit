@@ -54,6 +54,7 @@ static StyledMarkedText resolveStyleForMarkedText(const MarkedText& markedText, 
             style.backgroundColor = renderStyle->colorResolvingCurrentColor(renderStyle->backgroundColor());
             style.textStyles.fillColor = renderStyle->computedStrokeColor();
             style.textStyles.strokeColor = renderStyle->computedStrokeColor();
+            style.textStyles.hasExplicitlySetFillColor = renderStyle->hasExplicitlySetFillColor();
 
             auto color = TextDecorationPainter::decorationColor(*renderStyle.get());
             auto decorationStyle = renderStyle->textDecorationStyle();
@@ -90,6 +91,8 @@ static StyledMarkedText resolveStyleForMarkedText(const MarkedText& markedText, 
         break;
     case MarkedText::Type::Selection: {
         style.textStyles = computeTextSelectionPaintStyle(style.textStyles, renderer, lineStyle, paintInfo, style.textShadow);
+        if (auto renderStyle = renderer.parent()->selectionPseudoStyle())
+            style.textStyles.hasExplicitlySetFillColor = renderStyle->hasExplicitlySetFillColor();
 
         Color selectionBackgroundColor = renderer.selectionBackgroundColor();
         style.backgroundColor = selectionBackgroundColor;
@@ -137,8 +140,7 @@ static Vector<StyledMarkedText> coalesceAdjacentWithSameRanges(Vector<StyledMark
                     || (it->highlightName.isNull() && it->style.backgroundColor.isVisible())))
                         previousStyledMarkedText.style.backgroundColor = blendSourceOver(previousStyledMarkedText.style.backgroundColor, it->style.backgroundColor);
             // Take text color of the StyledMarkedText that has set it, maintaining insertion order.
-            // FIXME: Case of user setting color to CanvasText, will not choose CanvasText as prioritized color to paint.
-            if (it->type != MarkedText::Type::Unmarked && it->style.textStyles.fillColor != RenderTheme::singleton().systemColor(CSSValueCanvastext, { }))
+            if (it->type != MarkedText::Type::Unmarked && it->style.textStyles.hasExplicitlySetFillColor)
                 previousStyledMarkedText.style.textStyles.fillColor = it->style.textStyles.fillColor;
             // Take the highlightName of the latest StyledMarkedText, regardless of priority.
             if (!it->highlightName.isNull())

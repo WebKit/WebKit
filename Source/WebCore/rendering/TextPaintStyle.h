@@ -48,6 +48,7 @@ struct TextPaintStyle {
     Color strokeColor;
     Color emphasisMarkColor;
     float strokeWidth { 0 };
+    bool hasExplicitlySetFillColor { false };
 #if HAVE(OS_DARK_MODE_SUPPORT)
     bool useDarkAppearance { false };
 #endif
