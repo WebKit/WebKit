@@ -3921,10 +3921,13 @@ bool Document::isNavigationBlockedByThirdPartyIFrameRedirectBlocking(LocalFrame&
 
     // Only prevent cross-site navigations.
     RefPtr targetDocument = targetFrame.document();
-    if (targetDocument && (targetDocument->securityOrigin().isSameOriginDomain(SecurityOrigin::create(destinationURL)) || areRegistrableDomainsEqual(targetDocument->url(), destinationURL)))
-        return false;
+    if (!targetDocument)
+        return true;
 
-    return true;
+    if (targetDocument->securityOrigin().protocol() != destinationURL.protocol())
+        return true;
+
+    return !(targetDocument->securityOrigin().isSameOriginDomain(SecurityOrigin::create(destinationURL)) || areRegistrableDomainsEqual(targetDocument->url(), destinationURL));
 }
 
 void Document::didRemoveAllPendingStylesheet()

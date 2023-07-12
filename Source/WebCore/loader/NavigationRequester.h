@@ -40,6 +40,7 @@ struct NavigationRequester {
     Ref<SecurityOrigin> securityOrigin;
     Ref<SecurityOrigin> topOrigin;
     PolicyContainer policyContainer;
+    ScriptExecutionContextIdentifier documentIdentifier;
     std::optional<GlobalFrameIdentifier> globalFrameIdentifier;
 };
 
