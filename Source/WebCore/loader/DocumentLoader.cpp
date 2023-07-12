@@ -676,7 +676,7 @@ void DocumentLoader::willSendRequest(ResourceRequest&& newRequest, const Resourc
                         , "'. The frame attempting navigation of the top-level window is cross-origin or untrusted and the user has never interacted with the frame.");
                     m_frame->document()->addConsoleMessage(MessageSource::Security, MessageLevel::Error, message);
                 }
-                cancelMainResourceLoad(frameLoader()->blockedError(newRequest));
+                cancelMainResourceLoad(frameLoader()->cancelledError(newRequest));
                 return completionHandler(WTFMove(newRequest));
             }
         }
