@@ -3789,6 +3789,8 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         CSSPropertyBorderSpacing,
         CSSPropertyListStyle, // for list-style-image
         CSSPropertyMargin,
+        CSSPropertyMarginBlock,
+        CSSPropertyMarginInline,
         CSSPropertyOutline,
         CSSPropertyPadding,
         CSSPropertyPaddingBlock,
@@ -3928,8 +3930,6 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         case CSSPropertyInsetInlineStart:
         case CSSPropertyJustifyTracks:
         case CSSPropertyListStyle:
-        case CSSPropertyMarginBlock: // logical shorthand
-        case CSSPropertyMarginInline: // logical shorthand
         case CSSPropertyMarker:
         case CSSPropertyMasonryAutoFlow:
         case CSSPropertyMathStyle:
