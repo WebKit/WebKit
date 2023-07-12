@@ -234,21 +234,21 @@ static RefPtr<CSSFontFaceSrcResourceValue> consumeFontFaceSrcURI(CSSParserTokenR
         return nullptr;
 
     String format;
-    Vector<FontTechnology> supportedTechnologies;
+    Vector<FontTechnology> technologies;
     if (range.peek().functionId() == CSSValueFormat) {
         format = CSSPropertyParserHelpers::consumeFontFormat(range);
         if (format.isNull())
             return nullptr;
     }
     if (range.peek().functionId() == CSSValueTech) {
-        supportedTechnologies = CSSPropertyParserHelpers::consumeFontTech(range);
-        if (supportedTechnologies.isEmpty())
+        technologies = CSSPropertyParserHelpers::consumeFontTech(range);
+        if (technologies.isEmpty())
             return nullptr;
     }
     if (!range.atEnd())
         return nullptr;
 
-    return CSSFontFaceSrcResourceValue::create(WTFMove(location), WTFMove(format), WTFMove(supportedTechnologies), context.isContentOpaque ? LoadedFromOpaqueSource::Yes : LoadedFromOpaqueSource::No);
+    return CSSFontFaceSrcResourceValue::create(WTFMove(location), WTFMove(format), WTFMove(technologies), context.isContentOpaque ? LoadedFromOpaqueSource::Yes : LoadedFromOpaqueSource::No);
 }
 
 static RefPtr<CSSValue> consumeFontFaceSrcLocal(CSSParserTokenRange& range)
