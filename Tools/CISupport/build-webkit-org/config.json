@@ -655,6 +655,8 @@
                                      "WinCairo-64-bit-Release-Build", "WinCairo-64-bit-Debug-Build",
                                      "WPE-Linux-64-bit-Release-Build", "WPE-Linux-64-bit-Debug-Build",
                                      "WPE-Linux-64-bit-Release-Clang-Build",
+                                     "WPE-Linux-ARM64-bit-Release-Debian-Stable-Build",
+                                     "WPE-Linux-ARM32-bit-Release-Debian-Stable-Build",
                                      "WPE-Linux-64-bit-Release-Non-Unified-Build"]
                   },
 
