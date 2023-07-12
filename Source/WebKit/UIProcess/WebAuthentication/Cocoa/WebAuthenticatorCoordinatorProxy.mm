@@ -384,6 +384,11 @@ static std::optional<AuthenticationExtensionsClientOutputs> toExtensionOutputs(N
     return AuthenticationExtensionsClientOutputs::fromCBOR(vectorFromNSData(extensionOutputsCBOR));
 }
 
+bool WebAuthenticatorCoordinatorProxy::isASCAvailable()
+{
+    return isAuthenticationServicesCoreFrameworkAvailable();
+}
+
 RetainPtr<ASCCredentialRequestContext> WebAuthenticatorCoordinatorProxy::contextForRequest(WebAuthenticationRequestData&& requestData)
 {
     RetainPtr<ASCCredentialRequestContext> result;
