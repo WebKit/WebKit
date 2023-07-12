@@ -48,8 +48,7 @@ public:
     Element& element() { return m_element; }
     const Element& element() const { return m_element; }
 
-    enum LegacyTypeSupport { DisallowLegacyTypeInTypeAttribute, AllowLegacyTypeInTypeAttribute };
-    bool prepareScript(const TextPosition& scriptStartPosition = TextPosition(), LegacyTypeSupport = DisallowLegacyTypeInTypeAttribute);
+    bool prepareScript(const TextPosition& scriptStartPosition = TextPosition());
 
     String scriptCharset() const { return m_characterEncoding; }
     WEBCORE_EXPORT String scriptContent() const;
@@ -81,7 +80,7 @@ public:
     void ref();
     void deref();
 
-    static std::optional<ScriptType> determineScriptType(const String& typeAttribute, const String& languageAttribute, bool isHTMLDocument = true, LegacyTypeSupport = DisallowLegacyTypeInTypeAttribute);
+    static std::optional<ScriptType> determineScriptType(const String& typeAttribute, const String& languageAttribute, bool isHTMLDocument = true);
 
 protected:
     ScriptElement(Element&, bool createdByParser, bool isEvaluated);
@@ -108,7 +107,7 @@ protected:
 private:
     void executeScriptAndDispatchEvent(LoadableScript&);
 
-    std::optional<ScriptType> determineScriptType(LegacyTypeSupport) const;
+    std::optional<ScriptType> determineScriptType() const;
     bool ignoresLoadRequest() const;
     void dispatchLoadEventRespectingUserGestureIndicator();
 

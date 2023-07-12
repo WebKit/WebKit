@@ -59,8 +59,6 @@
 #include "TextNodeTraversal.h"
 #include <JavaScriptCore/ImportMap.h>
 #include <wtf/Scope.h>
-#include <wtf/SortedArrayMap.h>
-#include <wtf/StdLibExtras.h>
 #include <wtf/SystemTracing.h>
 
 namespace WebCore {
@@ -107,52 +105,25 @@ void ScriptElement::handleAsyncAttribute()
     m_forceAsync = false;
 }
 
-static bool isLegacySupportedJavaScriptLanguage(const String& language)
-{
-    static constexpr ComparableLettersLiteral languageArray[] = {
-        "ecmascript",
-        "javascript",
-        "javascript1.0",
-        "javascript1.1",
-        "javascript1.2",
-        "javascript1.3",
-        "javascript1.4",
-        "javascript1.5",
-        "javascript1.6",
-        "javascript1.7",
-        "jscript",
-        "livescript",
-    };
-    static constexpr SortedArraySet languageSet { languageArray };
-    return languageSet.contains(language);
-}
-
 void ScriptElement::dispatchErrorEvent()
 {
     m_element.dispatchEvent(Event::create(eventNames().errorEvent, Event::CanBubble::No, Event::IsCancelable::No));
 }
 
 // https://html.spec.whatwg.org/multipage/scripting.html#prepare-a-script
-std::optional<ScriptType> ScriptElement::determineScriptType(const String& type, const String& language, bool isHTMLDocument, LegacyTypeSupport supportLegacyTypes)
+std::optional<ScriptType> ScriptElement::determineScriptType(const String& type, const String& language, bool isHTMLDocument)
 {
-    // FIXME: isLegacySupportedJavaScriptLanguage() is not valid HTML5. It is used here to maintain backwards compatibility with existing layout tests. The specific violations are:
-    // - Allowing type=javascript. type= should only support MIME types, such as text/javascript.
-    // - Allowing a different set of languages for language= and type=. language= supports Javascript 1.1 and 1.4-1.6, but type= does not.
     if (type.isNull()) {
         if (language.isEmpty())
-            return ScriptType::Classic; // Assume text/javascript.
-        if (MIMETypeRegistry::isSupportedJavaScriptMIMEType("text/" + language))
             return ScriptType::Classic;
-        if (isLegacySupportedJavaScriptLanguage(language))
+        if (MIMETypeRegistry::isSupportedJavaScriptMIMEType("text/" + language))
             return ScriptType::Classic;
         return std::nullopt;
     }
     if (type.isEmpty())
         return ScriptType::Classic; // Assume text/javascript.
 
-    if (MIMETypeRegistry::isSupportedJavaScriptMIMEType(type.trim(deprecatedIsSpaceOrNewline)))
-        return ScriptType::Classic;
-    if (supportLegacyTypes == AllowLegacyTypeInTypeAttribute && isLegacySupportedJavaScriptLanguage(type))
+    if (MIMETypeRegistry::isSupportedJavaScriptMIMEType(type.trim(isASCIIWhitespace)))
         return ScriptType::Classic;
 
     // FIXME: XHTML spec defines "defer" attribute. But WebKit does not implement it for a long time.
@@ -175,13 +146,13 @@ std::optional<ScriptType> ScriptElement::determineScriptType(const String& type,
     return std::nullopt;
 }
 
-std::optional<ScriptType> ScriptElement::determineScriptType(LegacyTypeSupport supportLegacyTypes) const
+std::optional<ScriptType> ScriptElement::determineScriptType() const
 {
-    return determineScriptType(typeAttributeValue(), languageAttributeValue(), m_element.document().isHTMLDocument(), supportLegacyTypes);
+    return determineScriptType(typeAttributeValue(), languageAttributeValue(), m_element.document().isHTMLDocument());
 }
 
 // https://html.spec.whatwg.org/multipage/scripting.html#prepare-the-script-element
-bool ScriptElement::prepareScript(const TextPosition& scriptStartPosition, LegacyTypeSupport supportLegacyTypes)
+bool ScriptElement::prepareScript(const TextPosition& scriptStartPosition)
 {
     if (m_alreadyStarted)
         return false;
@@ -204,7 +175,7 @@ bool ScriptElement::prepareScript(const TextPosition& scriptStartPosition, Legac
         return false;
 
     ScriptType scriptType = ScriptType::Classic;
-    if (std::optional<ScriptType> result = determineScriptType(supportLegacyTypes))
+    if (std::optional<ScriptType> result = determineScriptType())
         scriptType = result.value();
     else
         return false;

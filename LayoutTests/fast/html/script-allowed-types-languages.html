@@ -104,10 +104,10 @@ function test()
     for (var i = 0; i < languages.length; ++i)
         document.body.appendChild(createScriptElement(null, languages[i]));
 
+    log('When a type is specified, the language attribute should be ignored.');
     for (var i = 0; i < languages.length; ++i)
         document.body.appendChild(createScriptElement("", languages[i]));
 
-    log('When a type is specified, the language attribute should be ignored.');
     for (var i = 0; i < languages.length; ++i)
         document.body.appendChild(createScriptElement("text/javascript", languages[i]));
 }
