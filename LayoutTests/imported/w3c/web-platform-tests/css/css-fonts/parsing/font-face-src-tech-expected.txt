@@ -4,9 +4,9 @@ PASS Check that src: url("foo.ttf") tech() is invalid
 PASS Check that src: url("foo.ttf") tech(features-opentype) is valid
 PASS Check that src: url("foo.ttf") tech(features-aat) is valid
 PASS Check that src: url("foo.ttf") tech(color-COLRv0) is valid
-FAIL Check that src: url("foo.ttf") tech(color-COLRv1) is valid assert_equals: expected true but got false
+PASS Check that src: url("foo.ttf") tech(color-COLRv1) is valid
 PASS Check that src: url("foo.ttf") tech(color-sbix) is valid
-FAIL Check that src: url("foo.ttf") tech(color-CBDT) is valid assert_equals: expected true but got false
+PASS Check that src: url("foo.ttf") tech(color-CBDT) is valid
 PASS Check that src: url("foo.ttf") tech(variations) is valid
 PASS Check that src: url("foo.ttf") tech(palettes) is valid
 PASS Check that src: url("foo.ttf") tech("features-opentype") is invalid

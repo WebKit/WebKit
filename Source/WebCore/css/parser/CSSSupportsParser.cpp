@@ -33,6 +33,7 @@
 #include "CSSParserImpl.h"
 #include "CSSPropertyParserHelpers.h"
 #include "CSSSelectorParser.h"
+#include "FontCustomPlatformData.h"
 #include "StyleRule.h"
 
 namespace WebCore {
@@ -177,8 +178,11 @@ CSSSupportsParser::SupportsResult CSSSupportsParser::consumeSupportsFontFormatFu
 CSSSupportsParser::SupportsResult CSSSupportsParser::consumeSupportsFontTechFunction(CSSParserTokenRange& range)
 {
     ASSERT(range.peek().type() == FunctionToken && range.peek().functionId() == CSSValueFontTech);
-    auto supportedTechnologies = CSSPropertyParserHelpers::consumeFontTech(range, true);
-    return supportedTechnologies.isEmpty() ? Unsupported : Supported;
+    auto technologies = CSSPropertyParserHelpers::consumeFontTech(range, true);
+    if (technologies.isEmpty())
+        return Unsupported;
+    ASSERT(technologies.size() == 1);
+    return FontCustomPlatformData::supportsTechnology(technologies[0]) ? Supported : Unsupported;
 }
 
 // <supports-in-parens> = ( <supports-condition> ) | <supports-feature> | <general-enclosed>

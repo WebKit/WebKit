@@ -8239,7 +8239,7 @@ Vector<FontTechnology> consumeFontTech(CSSParserTokenRange& range, bool singleVa
         if (arg.type() != IdentToken)
             return { };
         auto technology = fromCSSValueID<FontTechnology>(arg.id());
-        if (technology != FontTechnology::Invalid && FontCustomPlatformData::supportsTechnology(technology))
+        if (technology != FontTechnology::Invalid)
             technologies.append(technology);
     } while (consumeCommaIncludingWhitespace(args) && !singleValue);
     if (!args.atEnd())
