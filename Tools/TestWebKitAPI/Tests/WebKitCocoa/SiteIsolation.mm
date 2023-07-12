@@ -935,7 +935,7 @@ TEST(SiteIsolation, MainFrameWithTwoIFramesInTheSameProcess)
         EXPECT_NE(childFramePid, 0);
         EXPECT_NE(otherChildFramePid, 0);
         EXPECT_EQ(childFramePid, otherChildFramePid);
-        EXPECT_EQ(mainFramePid, childFramePid);
+        EXPECT_NE(mainFramePid, childFramePid);
         EXPECT_WK_STREQ(mainFrame.info.securityOrigin.host, "example.com");
         EXPECT_WK_STREQ(childFrame.info.securityOrigin.host, "webkit.org");
         EXPECT_WK_STREQ(otherChildFrame.info.securityOrigin.host, "webkit.org");
