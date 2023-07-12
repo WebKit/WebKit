@@ -4513,10 +4513,19 @@ void LocalFrameView::updateScrollCorner()
     RenderElement* renderer = nullptr;
     std::unique_ptr<RenderStyle> cornerStyle;
     IntRect cornerRect = scrollCornerRect();
-    
-    if (!cornerRect.isEmpty()) {
+    Document* doc = m_frame->document();
+
+    auto usesStandardScrollbarStyle = [](auto& doc) {
+        if (!doc || !doc->documentElement())
+            return false;
+        if (!doc->documentElement()->renderer())
+            return false;
+
+        return doc->documentElement()->renderer()->style().usesStandardScrollbarStyle();
+    };
+
+    if (!(usesStandardScrollbarStyle(doc) || cornerRect.isEmpty())) {
         // Try the <body> element first as a scroll corner source.
-        Document* doc = m_frame->document();
         Element* body = doc ? doc->bodyOrFrameset() : nullptr;
         if (body && body->renderer()) {
             renderer = body->renderer();

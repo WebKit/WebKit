@@ -1041,6 +1041,7 @@ public:
 
     bool shouldPlaceVerticalScrollbarOnLeft() const;
 
+    inline bool usesStandardScrollbarStyle() const;
     inline bool usesLegacyScrollbarStyle() const;
 
 #if ENABLE(APPLE_PAY)
