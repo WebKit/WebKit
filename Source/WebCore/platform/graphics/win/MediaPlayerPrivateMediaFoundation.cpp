@@ -63,6 +63,8 @@ public:
     {
     }
 
+    virtual ~AsyncCallback() { }
+
     HRESULT STDMETHODCALLTYPE QueryInterface(_In_ REFIID riid, __RPC__deref_out void __RPC_FAR *__RPC_FAR *ppvObject) override
     {
         static const QITAB qit[] = {
@@ -2831,7 +2833,6 @@ void MediaPlayerPrivateMediaFoundation::Direct3DPresenter::paintCurrentFrame(Web
 
         ASSERT(cairoFormat != CAIRO_FORMAT_INVALID);
 
-        cairo_surface_t* image = nullptr;
         if (cairoFormat != CAIRO_FORMAT_INVALID) {
             auto surface = adoptRef(cairo_image_surface_create_for_data(static_cast<unsigned char*>(data), cairoFormat, width, height, pitch));
             auto image = NativeImage::create(WTFMove(surface));

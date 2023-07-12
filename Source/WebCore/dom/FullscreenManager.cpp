@@ -297,6 +297,9 @@ void FullscreenManager::cancelFullscreen()
     m_pendingExitFullscreen = true;
 
     m_document.eventLoop().queueTask(TaskSource::MediaElement, [this, weakThis = WeakPtr { *this }, topDocument = WTFMove(topDocument), identifier = LOGIDENTIFIER] {
+#if RELEASE_LOG_DISABLED
+        UNUSED_PARAM(this);
+#endif
         if (!weakThis)
             return;
 

@@ -156,7 +156,7 @@ void ClipboardItemBindingsDataSource::collectDataForWriting(Clipboard& destinati
                 return;
 
             Ref itemTypeLoader { *weakItemTypeLoader };
-#if !COMPILER(MSVC)
+#if !(COMPILER(MSVC) && !COMPILER(CLANG))
             ASSERT_UNUSED(this, notFound != m_itemTypeLoaders.findIf([&] (auto& loader) { return loader.ptr() == itemTypeLoader.ptr(); }));
 #endif
 

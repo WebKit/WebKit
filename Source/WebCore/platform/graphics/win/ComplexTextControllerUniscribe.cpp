@@ -138,7 +138,6 @@ static Vector<unsigned> stringIndicesFromClusters(const Vector<WORD>& clusters, 
     BidiRange<unsigned> stringIndicesRange(stringIndices, isLTR);
     auto glyphIndex = stringIndicesRange.begin();
     unsigned stringIndex = 0;
-    int i = 0;
     for (;;) {
         auto startStringIndex = stringIndex;
         auto startGlyphIndex = clusters[stringIndex];

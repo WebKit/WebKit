@@ -245,6 +245,8 @@ std::unique_ptr<GLContext> GLContext::createWindowContext(GLNativeWindowType win
     case PlatformDisplay::Type::Surfaceless:
         RELEASE_ASSERT_NOT_REACHED();
         break;
+    default:
+        break;
     }
 
     if (surface == EGL_NO_SURFACE) {
@@ -377,6 +379,8 @@ std::unique_ptr<GLContext> GLContext::createOffscreen(PlatformDisplay& platformD
             // Do not fallback to pbuffers.
             WTFLogAlways("Could not create EGL surfaceless context: %s.", lastErrorString());
             return nullptr;
+        default:
+            break;
         }
     }
     if (!context) {
@@ -424,6 +428,8 @@ std::unique_ptr<GLContext> GLContext::createSharing(PlatformDisplay& platformDis
             // Do not fallback to pbuffers.
             WTFLogAlways("Could not create EGL surfaceless context: %s.", lastErrorString());
             return nullptr;
+        default:
+            break;
         }
     }
     if (!context) {
