@@ -240,4 +240,19 @@ WTF::MachSendRight SharedMemory::createSendRight(Protection protection) const
     return makeMemoryEntry(m_size, toVMAddress(m_data), protection, MACH_PORT_NULL);
 }
 
+void SharedMemory::makeReadOnly()
+{
+    if (m_protection == Protection::ReadOnly)
+        return;
+
+    kern_return_t kr = mach_vm_protect(mach_task_self(), toVMAddress(m_data), m_size, true, VM_PROT_READ);
+    if (kr != KERN_SUCCESS) {
+        RELEASE_LOG_ERROR(VirtualMemory, "%p - SharedMemory::makeReadOnly: Failed to make region read-only. %" PUBLIC_LOG_STRING " (%x)", this, mach_error_string(kr), kr);
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    m_protection = Protection::ReadOnly;
+}
+
 } // namespace WebKit

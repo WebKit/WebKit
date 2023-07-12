@@ -128,7 +128,7 @@ public:
 
     // Create a shareable bitmap from a NativeImage.
 #if USE(CG)
-    static RefPtr<ShareableBitmap> createFromImagePixels(WebCore::NativeImage&);
+    static std::optional<ShareableBitmap::Handle> createHandleFromImagePixels(WebCore::NativeImage&);
 #endif
     static RefPtr<ShareableBitmap> createFromImageDraw(WebCore::NativeImage&);
 
@@ -181,6 +181,10 @@ public:
 
 private:
     ShareableBitmap(ShareableBitmapConfiguration, Ref<SharedMemory>&&);
+
+#if OS(DARWIN)
+    void makeReadOnly();
+#endif
 
 #if USE(CG)
     RetainPtr<CGImageRef> createCGImage(CGDataProviderRef, WebCore::ShouldInterpolate) const;

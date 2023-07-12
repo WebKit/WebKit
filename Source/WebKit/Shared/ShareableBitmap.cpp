@@ -100,6 +100,13 @@ RefPtr<ShareableBitmap> ShareableBitmap::create(const ShareableBitmapConfigurati
     return adoptRef(new ShareableBitmap(configuration, WTFMove(sharedMemory)));
 }
 
+#if OS(DARWIN)
+void ShareableBitmap::makeReadOnly()
+{
+    m_sharedMemory->makeReadOnly();
+}
+#endif
+
 RefPtr<ShareableBitmap> ShareableBitmap::createFromImageDraw(NativeImage& image)
 {
     auto imageSize = image.size();
@@ -113,6 +120,9 @@ RefPtr<ShareableBitmap> ShareableBitmap::createFromImageDraw(NativeImage& image)
         return nullptr;
 
     context->drawNativeImage(image, imageSize, FloatRect({ }, imageSize), FloatRect({ }, imageSize), { CompositeOperator::Copy });
+#if OS(DARWIN)
+    bitmap->makeReadOnly();
+#endif
     return bitmap;
 }
 

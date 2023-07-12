@@ -106,31 +106,33 @@ inline static std::optional<ShareableBitmap::Handle> createShareableBitmapFromNa
 {
     RefPtr<ShareableBitmap> bitmap;
     PlatformImagePtr platformImage;
+    std::optional<ShareableBitmapHandle> handle;
 
 #if USE(CG)
-    bitmap = ShareableBitmap::createFromImagePixels(image);
-    if (bitmap)
-        platformImage = bitmap->createPlatformImage(DontCopyBackingStore, ShouldInterpolate::Yes);
+    handle = ShareableBitmap::createHandleFromImagePixels(image);
 #endif
+    if (!handle) {
+        // If we failed to create ShareableBitmap or PlatformImage, fall back to image-draw method.
+        if (!platformImage)
+            bitmap = ShareableBitmap::createFromImageDraw(image);
+        
+        if (!platformImage && bitmap)
+            platformImage = bitmap->createPlatformImage(DontCopyBackingStore, ShouldInterpolate::Yes);
+        
+        if (!platformImage)
+            return std::nullopt;
+        
+        handle = bitmap->createHandle(SharedMemory::Protection::ReadOnly);
+        if (!handle)
+            return std::nullopt;
+        
+        // Replace the PlatformImage of the input NativeImage with the shared one.
+        image.setPlatformImage(WTFMove(platformImage));
+    }
 
-    // If we failed to create ShareableBitmap or PlatformImage, fall back to image-draw method.
-    if (!platformImage)
-        bitmap = ShareableBitmap::createFromImageDraw(image);
+    if (handle)
+        handle->takeOwnershipOfMemory(MemoryLedger::Graphics);
 
-    if (!platformImage && bitmap)
-        platformImage = bitmap->createPlatformImage(DontCopyBackingStore, ShouldInterpolate::Yes);
-
-    if (!platformImage)
-        return std::nullopt;
-
-    auto handle = bitmap->createHandle();
-    if (!handle)
-        return std::nullopt;
-
-    handle->takeOwnershipOfMemory(MemoryLedger::Graphics);
-
-    // Replace the PlatformImage of the input NativeImage with the shared one.
-    image.setPlatformImage(WTFMove(platformImage));
     return handle;
 }
 

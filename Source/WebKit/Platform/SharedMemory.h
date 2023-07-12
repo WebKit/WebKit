@@ -127,6 +127,10 @@ public:
         return m_data;
     }
 
+#if PLATFORM(COCOA)
+    void makeReadOnly();
+#endif
+
 #if OS(WINDOWS)
     HANDLE handle() const { return m_handle.get(); }
 #endif

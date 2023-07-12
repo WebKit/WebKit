@@ -29,6 +29,7 @@
 #if USE(CG)
 
 #include "FourCC.h"
+#include "GraphicsContextCG.h"
 #include "ImageOrientation.h"
 #include "ImageResolution.h"
 #include "IntPoint.h"
@@ -38,10 +39,12 @@
 #include "ProcessCapabilities.h"
 #include "SharedBuffer.h"
 #include "UTIRegistry.h"
+#include <mach/mach_error.h>
 #include <pal/spi/cg/ImageIOSPI.h>
 #include <ImageIO/ImageIO.h>
 #include <pal/spi/cg/CoreGraphicsSPI.h>
 #include <wtf/FlipBytes.h>
+#include <wtf/spi/cocoa/MachVMSPI.h>
 
 #include "MediaAccessibilitySoftLink.h"
 
@@ -88,7 +91,8 @@ static RetainPtr<CFMutableDictionaryRef> createImageSourceMetadataOptions()
     CFDictionarySetValue(options.get(), kCGImageSourceSkipMetadata, kCFBooleanFalse);
     return options;
 }
-    
+
+#if 0
 static RetainPtr<CFMutableDictionaryRef> createImageSourceThumbnailOptions()
 {
     RetainPtr<CFMutableDictionaryRef> options = createImageSourceOptions();
@@ -96,6 +100,7 @@ static RetainPtr<CFMutableDictionaryRef> createImageSourceThumbnailOptions()
     CFDictionarySetValue(options.get(), kCGImageSourceCreateThumbnailFromImageAlways, kCFBooleanTrue);
     return options;
 }
+#endif
 
 static RetainPtr<CFMutableDictionaryRef> appendImageSourceOption(RetainPtr<CFMutableDictionaryRef>&& options, SubsamplingLevel subsamplingLevel)
 {
@@ -106,6 +111,7 @@ static RetainPtr<CFMutableDictionaryRef> appendImageSourceOption(RetainPtr<CFMut
     return WTFMove(options);
 }
 
+#if 0
 static RetainPtr<CFMutableDictionaryRef> appendImageSourceOption(RetainPtr<CFMutableDictionaryRef>&& options, const IntSize& sizeForDrawing)
 {
     unsigned maxDimension = sizeForDrawing.maxDimension();
@@ -122,7 +128,8 @@ static RetainPtr<CFMutableDictionaryRef> appendImageSourceOptions(RetainPtr<CFMu
     options = appendImageSourceOption(WTFMove(options), sizeForDrawing);
     return WTFMove(options);
 }
-    
+#endif
+
 static RetainPtr<CFDictionaryRef> imageSourceOptions(SubsamplingLevel subsamplingLevel = SubsamplingLevel::Default)
 {
     static const auto options = createImageSourceOptions().leakRef();
@@ -131,6 +138,7 @@ static RetainPtr<CFDictionaryRef> imageSourceOptions(SubsamplingLevel subsamplin
     return appendImageSourceOption(adoptCF(CFDictionaryCreateMutableCopy(nullptr, 0, options)), subsamplingLevel);
 }
 
+#if 0
 static RetainPtr<CFDictionaryRef> imageSourceThumbnailOptions(SubsamplingLevel subsamplingLevel, const IntSize& sizeForDrawing)
 {
     static CFMutableDictionaryRef options;
@@ -140,6 +148,7 @@ static RetainPtr<CFDictionaryRef> imageSourceThumbnailOptions(SubsamplingLevel s
     });
     return appendImageSourceOptions(adoptCF(CFDictionaryCreateMutableCopy(nullptr, 0, options)), subsamplingLevel, sizeForDrawing);
 }
+#endif
 
 static CFDictionaryRef animationPropertiesFromProperties(CFDictionaryRef properties)
 {
@@ -519,6 +528,61 @@ unsigned ImageDecoderCG::frameBytesAtIndex(size_t index, SubsamplingLevel subsam
     return frameSizeAtIndex(index, subsamplingLevel).area() * 4;
 }
 
+static void deallocateSharedMemory(void*, const void* data, size_t size)
+{
+    mach_vm_deallocate(mach_task_self(), static_cast<mach_vm_address_t>(reinterpret_cast<uintptr_t>(data)), size);
+}
+
+// FIXME: Use the existing code in WebKit::ShareableBitmap or WebCore::GraphicsContextCG instead.
+static RetainPtr<CGImageRef> createSRGBImageByDrawing(Ref<NativeImage> image, IntSize size)
+{
+    size_t bytesPerRow = 4 * size.width();
+    size_t alignmentMask = IOSurface::bytesPerRowAlignment() - 1;
+    bytesPerRow = (bytesPerRow + alignmentMask) & ~alignmentMask;
+    
+    CGBitmapInfo bitmapInfo = kCGBitmapByteOrder32Host | (image->hasAlpha() ? kCGImageAlphaPremultipliedFirst : kCGImageAlphaNoneSkipFirst);
+
+    // Copied From SharedMemory::allocate and deallocated by the data provider in deallocateSharedMemory.
+    size_t allocationSize = bytesPerRow * size.height();
+    mach_vm_address_t address = 0;
+    kern_return_t kr = mach_vm_allocate(mach_task_self(), &address, allocationSize, VM_FLAGS_ANYWHERE | VM_FLAGS_PURGABLE);
+    if (kr != KERN_SUCCESS) {
+        RELEASE_LOG_ERROR(Images, "Failed to allocate mach_vm_allocate shared memory (%zu bytes). %" PUBLIC_LOG_STRING " (%x)", allocationSize, mach_error_string(kr), kr);
+        return nullptr;
+    }
+    void* data = reinterpret_cast<void*>(static_cast<uintptr_t>(address));
+
+    auto bitmapContext = adoptCF(CGBitmapContextCreate(
+        data, /* data */
+        size.width(),
+        size.height(),
+        8, /* bitsPerComponent */
+        bytesPerRow,
+        sRGBColorSpaceRef(),
+        bitmapInfo));
+
+    // We want the origin to be in the top left corner so we flip the backing store context.
+    CGContextTranslateCTM(bitmapContext.get(), 0, size.height());
+    CGContextScaleCTM(bitmapContext.get(), 1, -1);
+
+    GraphicsContextCG context(bitmapContext.get(), GraphicsContextCG::CGContextSource::Unknown, RenderingMode::Unaccelerated);
+    auto imageSize = image->size();
+    context.drawNativeImage(image, imageSize, FloatRect({ }, size), FloatRect({ }, imageSize), { CompositeOperator::Copy });
+
+    auto protectResult = mach_vm_protect(mach_task_self(), address, allocationSize, true, VM_PROT_READ);
+    RELEASE_LOG_ERROR_IF(protectResult != KERN_SUCCESS, Images, "Failed to change protection to read-only: %d", protectResult);
+
+    // Instead of calling CGBitmapContextCreateImage here (which creates a read-only VM copy of the bitmap context's data),
+    // create our own data provider that directly references the bitmap.
+    auto provider = adoptCF(CGDataProviderCreateWithData(nullptr, data, allocationSize, &deallocateSharedMemory));
+    auto decodedImage = adoptCF(CGImageCreate(size.width(), size.height(), 8, 32, bytesPerRow, sRGBColorSpaceRef(), bitmapInfo, provider.get(), nullptr, true, kCGRenderingIntentDefault));
+    
+    // hack consumed by WebKit at remote txn build time
+    CGImageSetProperty(decodedImage.get(), CFSTR("WebKitShareableImage"), kCFBooleanTrue);
+    
+    return decodedImage;
+}
+
 PlatformImagePtr ImageDecoderCG::createFrameImageAtIndex(size_t index, SubsamplingLevel subsamplingLevel, const DecodingOptions& decodingOptions)
 {
     LOG(Images, "ImageDecoder %p createFrameImageAtIndex %lu", this, index);
@@ -541,8 +605,20 @@ PlatformImagePtr ImageDecoderCG::createFrameImageAtIndex(size_t index, Subsampli
                 size = *sizeForDrawing;
         }
 
+#if 0
         options = imageSourceThumbnailOptions(subsamplingLevel, size);
         image = adoptCF(CGImageSourceCreateThumbnailAtIndex(m_nativeDecoder.get(), index, options.get()));
+#else
+        // FIXME: Why are we leaving a copy of the image in the RIP cache with shouldCache=1 here?
+        // FIXME: what to do with subsamplingLevel?
+        options = imageSourceOptions(subsamplingLevel);
+        auto undecodedCGImage = adoptCF(CGImageSourceCreateImageAtIndex(m_nativeDecoder.get(), index, options.get()));
+        auto undecodedImage = NativeImage::create(WTFMove(undecodedCGImage));
+        if (!undecodedImage)
+            return nullptr;
+
+        image = createSRGBImageByDrawing(undecodedImage.releaseNonNull(), size);
+#endif
     }
     
 #if PLATFORM(IOS_FAMILY)

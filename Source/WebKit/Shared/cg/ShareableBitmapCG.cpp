@@ -35,6 +35,7 @@
 #include <WebCore/PlatformScreen.h>
 #include <pal/spi/cg/CoreGraphicsSPI.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/Scope.h>
 #include <wtf/spi/cocoa/IOSurfaceSPI.h>
 
 namespace WebKit {
@@ -109,40 +110,38 @@ CGBitmapInfo ShareableBitmapConfiguration::calculateBitmapInfo(const Destination
     return info;
 }
 
-RefPtr<ShareableBitmap> ShareableBitmap::createFromImagePixels(NativeImage& image)
+auto ShareableBitmap::createHandleFromImagePixels(NativeImage& image) -> std::optional<Handle>
 {
-    auto colorSpace = image.colorSpace();
-    if (colorSpace != DestinationColorSpace::SRGB())
-        return nullptr;
-
-    auto pixels = adoptCF(CGDataProviderCopyData(CGImageGetDataProvider(image.platformImage().get())));
-    if (!pixels)
-        return nullptr;
-
-    const auto* bytes = reinterpret_cast<const uint8_t*>(CFDataGetBytePtr(pixels.get()));
-    CheckedUint32 sizeInBytes = CFDataGetLength(pixels.get());
-    if (!bytes || !sizeInBytes || sizeInBytes.hasOverflowed())
-        return nullptr;
-
-    auto configuration = ShareableBitmapConfiguration(image);
-    if (configuration.sizeInBytes() != sizeInBytes) {
-        LOG_WITH_STREAM(Images, stream
-            << "ShareableBitmap::createFromImagePixels() " << image. platformImage().get()
-            << " CGImage size: " << configuration.size()
-            << " CGImage bytesPerRow: " << configuration.bytesPerRow()
-            << " CGImage sizeInBytes: " << configuration.sizeInBytes()
-            << " CGDataProvider sizeInBytes: " << sizeInBytes
-            << " CGImage and its CGDataProvider disagree about how many bytes are in pixels buffer. CGImage is a sub-image; bailing.");
-        return nullptr;
+    if (!CGImageGetProperty(image.platformImage().get(), CFSTR("WebKitShareableImage"))) {
+        return std::nullopt;
     }
 
-    RefPtr<SharedMemory> sharedMemory = SharedMemory::allocate(sizeInBytes);
+    auto dataProvider = CGImageGetDataProvider(image.platformImage().get());
+    if (!CGDataProviderHasDataPtr(dataProvider))
+        return std::nullopt;
+    
+    // This returns a negative value if this isn't a direct-access provider;
+    auto configuration = ShareableBitmapConfiguration(image);
+    CheckedUint32 dataProviderSize = CGDataProviderGetSizeOfData(dataProvider);
+    if (configuration.sizeInBytes() != dataProviderSize)
+        return std::nullopt;
+
+    auto data = CGDataProviderRetainBytePtr(dataProvider);
+    if (!data)
+        return std::nullopt;
+
+    auto dataReleaser = makeScopeExit([&] { CGDataProviderReleaseBytePtr(dataProvider); });
+    
+    // FIXME: change the protection to read-only
+    auto sharedMemory = SharedMemory::wrapMap(const_cast<void*>(data), configuration.sizeInBytes(), SharedMemory::Protection::ReadOnly);
     if (!sharedMemory)
-        return nullptr;
+        return std::nullopt;
 
-    memcpy(sharedMemory->data(), bytes, sizeInBytes);
+    auto sharedMemoryHandle = sharedMemory->createHandle(SharedMemory::Protection::ReadOnly);
+    if (!sharedMemoryHandle)
+        return std::nullopt;
 
-    return adoptRef(new ShareableBitmap(configuration, sharedMemory.releaseNonNull()));
+    return ShareableBitmapHandle(WTFMove(*sharedMemoryHandle), configuration);
 }
 
 std::unique_ptr<GraphicsContext> ShareableBitmap::createGraphicsContext()
