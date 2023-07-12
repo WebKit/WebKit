@@ -2393,7 +2393,7 @@ static void handleVarargsCheckpoint(VM& vm, CallFrame* callFrame, JSGlobalObject
     unsigned firstVarArg = bytecode.m_firstVarArg;
 
     MarkedArgumentBuffer args;
-    args.fill(argumentCountIncludingThis - 1, [&] (JSValue* buffer) {
+    args.fill(vm, argumentCountIncludingThis - 1, [&](JSValue* buffer) {
         loadVarargs(globalObject, buffer, callFrame->r(bytecode.m_arguments).jsValue(), firstVarArg, argumentCountIncludingThis - 1);
     });
     if (args.hasOverflowed()) {
