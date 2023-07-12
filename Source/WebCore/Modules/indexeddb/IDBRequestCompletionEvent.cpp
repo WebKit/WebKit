@@ -26,6 +26,7 @@
 #include "config.h"
 #include "IDBRequestCompletionEvent.h"
 
+#include <JavaScriptCore/StructureInlines.h>
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {

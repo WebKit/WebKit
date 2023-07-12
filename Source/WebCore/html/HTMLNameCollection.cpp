@@ -33,6 +33,7 @@
 #include "HTMLObjectElement.h"
 #include "NodeRareData.h"
 #include "NodeTraversal.h"
+#include <JavaScriptCore/StructureInlines.h>
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {

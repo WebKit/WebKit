@@ -29,6 +29,7 @@
 #include "IDBConnectionToServer.h"
 #include "IDBDatabase.h"
 #include "IDBOpenDBRequest.h"
+#include <JavaScriptCore/StructureInlines.h>
 
 namespace WebCore {
 

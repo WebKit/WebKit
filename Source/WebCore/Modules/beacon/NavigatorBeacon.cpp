@@ -35,6 +35,7 @@
 #include "LocalFrame.h"
 #include "Navigator.h"
 #include "Page.h"
+#include <JavaScriptCore/StructureInlines.h>
 #include <wtf/URL.h>
 
 namespace WebCore {

@@ -40,6 +40,7 @@
 #include "ResourceError.h"
 #include "ScriptExecutionContext.h"
 #include <JavaScriptCore/JSONObject.h>
+#include <JavaScriptCore/StructureInlines.h>
 #include <wtf/text/StringConcatenateNumbers.h>
 
 namespace WebCore {

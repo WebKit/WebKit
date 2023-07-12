@@ -38,6 +38,7 @@
 #include "IDBResultData.h"
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
+#include <JavaScriptCore/StructureInlines.h>
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/MainThread.h>
 

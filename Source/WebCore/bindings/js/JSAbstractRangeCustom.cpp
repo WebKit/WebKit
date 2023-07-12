@@ -30,6 +30,7 @@
 #include "JSRange.h"
 #include "JSStaticRange.h"
 #include <JavaScriptCore/JSCJSValueInlines.h>
+#include <JavaScriptCore/StructureInlines.h>
 
 namespace WebCore {
 

@@ -95,6 +95,7 @@
 #include "UserContentProvider.h"
 #include "UserContentURLPattern.h"
 #include "ViolationReportType.h"
+#include <JavaScriptCore/StructureInlines.h>
 #include <wtf/Assertions.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/NeverDestroyed.h>

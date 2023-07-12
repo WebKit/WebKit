@@ -27,6 +27,7 @@
 
 #include "HTTPParsers.h"
 #include "JSFetchReferrerPolicy.h"
+#include <JavaScriptCore/StructureInlines.h>
 
 namespace WebCore {
 

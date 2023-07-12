@@ -27,6 +27,7 @@
 #include "CacheStorageConnection.h"
 
 #include "FetchResponse.h"
+#include <JavaScriptCore/StructureInlines.h>
 #include <wtf/CryptographicallyRandomNumber.h>
 
 namespace WebCore {

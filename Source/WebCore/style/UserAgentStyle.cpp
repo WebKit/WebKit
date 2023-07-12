@@ -61,6 +61,7 @@
 #include "SVGElement.h"
 #include "StyleSheetContents.h"
 #include "UserAgentStyleSheets.h"
+#include <JavaScriptCore/StructureInlines.h>
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {

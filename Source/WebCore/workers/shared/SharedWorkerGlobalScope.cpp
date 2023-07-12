@@ -33,6 +33,7 @@
 #include "ServiceWorkerThread.h"
 #include "SharedWorkerThread.h"
 #include "WorkerThread.h"
+#include <JavaScriptCore/StructureInlines.h>
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {

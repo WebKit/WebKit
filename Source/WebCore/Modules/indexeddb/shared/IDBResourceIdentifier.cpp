@@ -29,6 +29,7 @@
 #include "IDBConnectionToClient.h"
 #include "IDBConnectionToServer.h"
 #include "IDBRequest.h"
+#include <JavaScriptCore/StructureInlines.h>
 #include <wtf/MainThread.h>
 #include <wtf/text/StringConcatenateNumbers.h>
 

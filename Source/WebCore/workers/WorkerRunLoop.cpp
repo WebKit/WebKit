@@ -45,6 +45,7 @@
 #include <JavaScriptCore/CatchScope.h>
 #include <JavaScriptCore/JSCJSValueInlines.h>
 #include <JavaScriptCore/JSRunLoopTimer.h>
+#include <JavaScriptCore/StructureInlines.h>
 
 #if USE(GLIB)
 #include <glib.h>

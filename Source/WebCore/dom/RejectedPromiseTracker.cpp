@@ -42,6 +42,7 @@
 #include <JavaScriptCore/ScriptCallStackFactory.h>
 #include <JavaScriptCore/Strong.h>
 #include <JavaScriptCore/StrongInlines.h>
+#include <JavaScriptCore/StructureInlines.h>
 #include <JavaScriptCore/Weak.h>
 #include <JavaScriptCore/WeakGCMapInlines.h>
 #include <JavaScriptCore/WeakInlines.h>

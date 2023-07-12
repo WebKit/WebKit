@@ -48,6 +48,7 @@
 #include "SimpleRange.h"
 #include "TextBoundaries.h"
 #include "TextIterator.h"
+#include <JavaScriptCore/StructureInlines.h>
 
 namespace WebCore {
 namespace FragmentDirectiveRangeFinder {

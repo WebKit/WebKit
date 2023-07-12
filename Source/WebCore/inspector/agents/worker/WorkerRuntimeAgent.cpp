@@ -37,6 +37,7 @@
 #include "WorkerOrWorkletScriptController.h"
 #include <JavaScriptCore/InjectedScript.h>
 #include <JavaScriptCore/InjectedScriptManager.h>
+#include <JavaScriptCore/StructureInlines.h>
 
 namespace WebCore {
 

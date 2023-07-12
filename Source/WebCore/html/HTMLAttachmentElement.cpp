@@ -53,6 +53,7 @@
 #include "ShadowRoot.h"
 #include "SharedBuffer.h"
 #include "UserAgentStyleSheets.h"
+#include <JavaScriptCore/StructureInlines.h>
 #include <pal/FileSizeFormatter.h>
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/UUID.h>

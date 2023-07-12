@@ -35,6 +35,7 @@
 #include "ScheduledAction.h"
 #include "ScriptExecutionContext.h"
 #include "Settings.h"
+#include <JavaScriptCore/StructureInlines.h>
 #include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/HashMap.h>
 #include <wtf/MathExtras.h>

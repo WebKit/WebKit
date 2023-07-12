@@ -30,6 +30,7 @@
 #include "runtime_object.h"
 #include <JavaScriptCore/JSGlobalObject.h>
 #include <JavaScriptCore/StrongInlines.h>
+#include <JavaScriptCore/StructureInlines.h>
 #include <JavaScriptCore/Weak.h>
 #include <JavaScriptCore/WeakInlines.h>
 #include <wtf/HashSet.h>

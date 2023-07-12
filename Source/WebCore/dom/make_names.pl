@@ -1684,6 +1684,7 @@ END
 #include "NodeName.h"
 #include "Settings.h"
 #include "TagName.h"
+#include <JavaScriptCore/StructureInlines.h>
 #include <wtf/RobinHoodHashMap.h>
 #include <wtf/NeverDestroyed.h>
 

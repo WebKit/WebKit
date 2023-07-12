@@ -49,6 +49,7 @@
 #include "Logging.h"
 #include "ThreadableBlobRegistry.h"
 #include "URLKeepingBlobAlive.h"
+#include <JavaScriptCore/StructureInlines.h>
 #include <wtf/CompletionHandler.h>
 
 #if USE(QUICK_LOOK)

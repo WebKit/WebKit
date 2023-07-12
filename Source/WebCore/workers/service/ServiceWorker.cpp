@@ -43,6 +43,7 @@
 #include "StructuredSerializeOptions.h"
 #include "WorkerSWClientConnection.h"
 #include <JavaScriptCore/JSCJSValueInlines.h>
+#include <JavaScriptCore/StructureInlines.h>
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/NeverDestroyed.h>
 

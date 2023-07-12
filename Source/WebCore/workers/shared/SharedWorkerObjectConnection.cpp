@@ -35,6 +35,7 @@
 #include "WorkerFetchResult.h"
 #include "WorkerInitializationData.h"
 #include "WorkerScriptLoader.h"
+#include <JavaScriptCore/StructureInlines.h>
 
 namespace WebCore {
 

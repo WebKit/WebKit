@@ -61,6 +61,7 @@
 #include "SubmitEvent.h"
 #include "TypedElementDescendantIteratorInlines.h"
 #include "UserGestureIndicator.h"
+#include <JavaScriptCore/StructureInlines.h>
 #include <limits>
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/Ref.h>

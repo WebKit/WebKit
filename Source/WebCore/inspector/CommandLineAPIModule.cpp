@@ -31,6 +31,7 @@
 #include "WebInjectedScriptManager.h"
 #include <JavaScriptCore/HeapInlines.h>
 #include <JavaScriptCore/InjectedScript.h>
+#include <JavaScriptCore/StructureInlines.h>
 
 namespace WebCore {
 

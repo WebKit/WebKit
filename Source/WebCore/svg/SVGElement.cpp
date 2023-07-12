@@ -60,6 +60,7 @@
 #include "StyleAdjuster.h"
 #include "StyleResolver.h"
 #include "XMLNames.h"
+#include <JavaScriptCore/StructureInlines.h>
 #include <wtf/HashMap.h>
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/NeverDestroyed.h>

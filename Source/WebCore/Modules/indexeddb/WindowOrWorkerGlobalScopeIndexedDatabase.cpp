@@ -36,6 +36,7 @@
 #include "Page.h"
 #include "Supplementable.h"
 #include "WorkerGlobalScope.h"
+#include <JavaScriptCore/StructureInlines.h>
 
 namespace WebCore {
 

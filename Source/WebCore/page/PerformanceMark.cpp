@@ -36,6 +36,7 @@
 #include "SerializedScriptValue.h"
 #include "WorkerGlobalScope.h"
 #include <JavaScriptCore/JSCJSValueInlines.h>
+#include <JavaScriptCore/StructureInlines.h>
 
 namespace WebCore {
 

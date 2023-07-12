@@ -22,6 +22,7 @@
 #include "config.h"
 #include "JSDOMConstructorWithDocument.h"
 
+#include <JavaScriptCore/StructureInlines.h>
 
 namespace WebCore {
 using namespace JSC;

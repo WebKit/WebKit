@@ -36,6 +36,7 @@
 #include "Logging.h"
 #include "WebCoreOpaqueRoot.h"
 #include <JavaScriptCore/HeapInlines.h>
+#include <JavaScriptCore/StructureInlines.h>
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {

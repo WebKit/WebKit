@@ -72,6 +72,7 @@
 #include "TypedElementDescendantIteratorInlines.h"
 #include "VisibleUnits.h"
 #include "markup.h"
+#include <JavaScriptCore/StructureInlines.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RobinHoodHashSet.h>
 #include <wtf/StdLibExtras.h>

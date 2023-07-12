@@ -34,6 +34,7 @@
 #include "Page.h"
 #include "UserContentController.h"
 #include "UserMessageHandler.h"
+#include <JavaScriptCore/StructureInlines.h>
 
 namespace WebCore {
 

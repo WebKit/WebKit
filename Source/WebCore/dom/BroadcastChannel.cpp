@@ -36,6 +36,7 @@
 #include "WorkerGlobalScope.h"
 #include "WorkerLoaderProxy.h"
 #include "WorkerThread.h"
+#include <JavaScriptCore/StructureInlines.h>
 #include <wtf/CallbackAggregator.h>
 #include <wtf/HashMap.h>
 #include <wtf/IsoMallocInlines.h>

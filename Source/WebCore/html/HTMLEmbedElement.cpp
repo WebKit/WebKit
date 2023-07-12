@@ -38,6 +38,7 @@
 #include "RenderWidget.h"
 #include "Settings.h"
 #include "SubframeLoader.h"
+#include <JavaScriptCore/StructureInlines.h>
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/Ref.h>
 

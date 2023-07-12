@@ -28,6 +28,7 @@
 #include "Exception.h"
 #include "WebLockManager.h"
 #include "WebLockManagerSnapshot.h"
+#include <JavaScriptCore/StructureInlines.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RobinHoodHashMap.h>

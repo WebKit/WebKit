@@ -29,6 +29,7 @@
 #include "IDBDatabase.h"
 #include "IDBTransaction.h"
 #include "IndexedDB.h"
+#include <JavaScriptCore/StructureInlines.h>
 #include <wtf/text/StringConcatenateNumbers.h>
 
 namespace WebCore {

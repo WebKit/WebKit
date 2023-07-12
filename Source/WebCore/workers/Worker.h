@@ -35,6 +35,7 @@
 #include "WorkerScriptLoaderClient.h"
 #include "WorkerType.h"
 #include <JavaScriptCore/RuntimeFlags.h>
+#include <JavaScriptCore/StructureInlines.h>
 #include <wtf/Deque.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/text/AtomStringHash.h>

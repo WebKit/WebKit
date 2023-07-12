@@ -71,6 +71,7 @@
 #include "WorkerThread.h"
 #include <JavaScriptCore/ScriptArguments.h>
 #include <JavaScriptCore/ScriptCallStack.h>
+#include <JavaScriptCore/StructureInlines.h>
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/Lock.h>
 #include <wtf/WorkQueue.h>

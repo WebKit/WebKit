@@ -29,6 +29,7 @@
 #include "JSReadableStream.h"
 #include "JSReadableStreamSource.h"
 #include "ScriptExecutionContext.h"
+#include <JavaScriptCore/StructureInlines.h>
 
 namespace WebCore {
 

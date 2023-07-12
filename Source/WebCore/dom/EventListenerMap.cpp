@@ -37,6 +37,7 @@
 #include "Event.h"
 #include "EventTarget.h"
 #include "JSEventListener.h"
+#include <JavaScriptCore/StructureInlines.h>
 #include <wtf/MainThread.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>

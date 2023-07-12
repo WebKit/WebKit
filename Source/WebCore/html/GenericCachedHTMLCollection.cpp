@@ -31,6 +31,7 @@
 #include "HTMLNames.h"
 #include "HTMLObjectElement.h"
 #include "HTMLOptionElement.h"
+#include <JavaScriptCore/StructureInlines.h>
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {

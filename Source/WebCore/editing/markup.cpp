@@ -82,6 +82,7 @@
 #include "VisibleSelection.h"
 #include "VisibleUnits.h"
 #include <JavaScriptCore/JSCJSValueInlines.h>
+#include <JavaScriptCore/StructureInlines.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/URL.h>
 #include <wtf/URLParser.h>

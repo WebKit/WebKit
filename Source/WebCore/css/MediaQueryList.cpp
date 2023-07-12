@@ -26,6 +26,7 @@
 #include "MediaQueryEvaluator.h"
 #include "MediaQueryListEvent.h"
 #include "MediaQueryParser.h"
+#include <JavaScriptCore/StructureInlines.h>
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/text/StringBuilder.h>
 

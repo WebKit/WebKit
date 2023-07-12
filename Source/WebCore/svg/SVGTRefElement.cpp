@@ -38,6 +38,7 @@
 #include "ShadowRoot.h"
 #include "StyleInheritedData.h"
 #include "Text.h"
+#include <JavaScriptCore/StructureInlines.h>
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {

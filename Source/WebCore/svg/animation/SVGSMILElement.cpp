@@ -48,6 +48,7 @@
 #include "SVGURIReference.h"
 #include "SVGUseElement.h"
 #include "XLinkNames.h"
+#include <JavaScriptCore/StructureInlines.h>
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/MathExtras.h>
 #include <wtf/RobinHoodHashSet.h>

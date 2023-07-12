@@ -43,6 +43,7 @@
 #include "SharedBuffer.h"
 #include "TextResourceDecoder.h"
 #include "ThreadableBlobRegistry.h"
+#include <JavaScriptCore/StructureInlines.h>
 
 namespace WebCore {
 

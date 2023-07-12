@@ -81,6 +81,7 @@
 #include "StyleResolver.h"
 #include "Styleable.h"
 #include "TiledBacking.h"
+#include <JavaScriptCore/StructureInlines.h>
 #include <wtf/SystemTracing.h>
 #include <wtf/text/TextStream.h>
 

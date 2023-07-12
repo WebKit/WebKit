@@ -35,6 +35,7 @@
 #include "HTMLObjectElement.h"
 #include "IdTargetObserver.h"
 #include "LocalFrame.h"
+#include <JavaScriptCore/StructureInlines.h>
 
 namespace WebCore {
 

@@ -62,6 +62,7 @@
 #include "VTTCue.h"
 #include "VoidCallback.h"
 #include <JavaScriptCore/JSCJSValueInlines.h>
+#include <JavaScriptCore/StructureInlines.h>
 #include <variant>
 #include <wtf/Function.h>
 #include <wtf/JSONValues.h>

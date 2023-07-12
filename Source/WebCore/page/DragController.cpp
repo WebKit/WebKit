@@ -29,7 +29,7 @@
 #include "HTMLAnchorElement.h"
 #include "SVGAElement.h"
 #include "SVGElementTypeHelpers.h"
-
+#include <JavaScriptCore/StructureInlines.h>
 
 #if ENABLE(DRAG_SUPPORT)
 #include "CachedImage.h"

@@ -37,6 +37,7 @@
 #include "Logging.h"
 #include "SecurityOrigin.h"
 #include "TransactionOperation.h"
+#include <JavaScriptCore/StructureInlines.h>
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/MainThread.h>
 

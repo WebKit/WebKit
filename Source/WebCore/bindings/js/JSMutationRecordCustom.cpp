@@ -27,6 +27,7 @@
 #include "JSMutationRecord.h"
 
 #include "MutationRecord.h"
+#include <JavaScriptCore/StructureInlines.h>
 
 namespace WebCore {
 

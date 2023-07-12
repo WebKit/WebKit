@@ -39,6 +39,7 @@
 #include "MediaEncodingConfiguration.h"
 #include "MediaEncodingType.h"
 #include "VideoConfiguration.h"
+#include <JavaScriptCore/StructureInlines.h>
 #include <wtf/JSONValues.h>
 
 namespace WebCore {

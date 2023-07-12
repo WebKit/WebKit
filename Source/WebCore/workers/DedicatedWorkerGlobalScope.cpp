@@ -44,6 +44,7 @@
 #include "StructuredSerializeOptions.h"
 #include "Worker.h"
 #include "WorkerObjectProxy.h"
+#include <JavaScriptCore/StructureInlines.h>
 #include <wtf/IsoMallocInlines.h>
 
 #if ENABLE(NOTIFICATIONS)

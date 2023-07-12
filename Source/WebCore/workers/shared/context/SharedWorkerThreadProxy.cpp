@@ -49,6 +49,7 @@
 #include "WorkerInitializationData.h"
 #include "WorkerThread.h"
 #include <JavaScriptCore/IdentifiersFactory.h>
+#include <JavaScriptCore/StructureInlines.h>
 
 namespace WebCore {
 

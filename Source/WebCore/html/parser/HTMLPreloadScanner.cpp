@@ -46,6 +46,7 @@
 #include "SecurityPolicy.h"
 #include "Settings.h"
 #include "SizesAttributeParser.h"
+#include <JavaScriptCore/StructureInlines.h>
 #include <wtf/MainThread.h>
 #include <wtf/SortedArrayMap.h>
 

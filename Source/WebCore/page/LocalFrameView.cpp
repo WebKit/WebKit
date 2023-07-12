@@ -123,6 +123,7 @@
 #include "VelocityData.h"
 #include "VisualViewport.h"
 #include "WheelEventTestMonitor.h"
+#include <JavaScriptCore/StructureInlines.h>
 #include <wtf/HexNumber.h>
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/MemoryPressureHandler.h>

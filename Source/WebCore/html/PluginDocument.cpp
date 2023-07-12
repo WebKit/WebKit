@@ -38,6 +38,7 @@
 #include "PluginViewBase.h"
 #include "RawDataDocumentParser.h"
 #include "RenderEmbeddedObject.h"
+#include <JavaScriptCore/StructureInlines.h>
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {

@@ -29,6 +29,7 @@
 #if ENABLE(USER_MESSAGE_HANDLERS)
 
 #include "DOMWrapperWorld.h"
+#include <JavaScriptCore/StructureInlines.h>
 
 namespace WebCore {
 

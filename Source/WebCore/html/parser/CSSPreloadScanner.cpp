@@ -28,6 +28,7 @@
 #include "config.h"
 #include "CSSPreloadScanner.h"
 
+#include <JavaScriptCore/StructureInlines.h>
 #include <wtf/SetForScope.h>
 
 namespace WebCore {

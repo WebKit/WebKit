@@ -32,6 +32,7 @@
 #include "HTMLObjectElement.h"
 #include "LiveNodeListInlines.h"
 #include "NodeRareData.h"
+#include <JavaScriptCore/StructureInlines.h>
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {

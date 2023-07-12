@@ -28,6 +28,7 @@
 #include "FetchBodySource.h"
 
 #include "FetchResponse.h"
+#include <JavaScriptCore/StructureInlines.h>
 
 namespace WebCore {
 

@@ -34,6 +34,7 @@
 #include "StructuredSerializeOptions.h"
 #include <JavaScriptCore/Exception.h>
 #include <JavaScriptCore/JSCJSValueInlines.h>
+#include <JavaScriptCore/StructureInlines.h>
 
 namespace WebCore {
 

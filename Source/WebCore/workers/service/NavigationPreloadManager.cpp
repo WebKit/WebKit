@@ -30,6 +30,7 @@
 
 #include "ServiceWorkerContainer.h"
 #include "ServiceWorkerRegistration.h"
+#include <JavaScriptCore/StructureInlines.h>
 
 namespace WebCore {
 

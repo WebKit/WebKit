@@ -40,6 +40,7 @@
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
 #include "ViolationReportType.h"
+#include <JavaScriptCore/StructureInlines.h>
 #include <wtf/persistence/PersistentCoders.h>
 
 namespace WebCore {

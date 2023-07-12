@@ -32,6 +32,7 @@
 #include "LocalDOMWindow.h"
 #include "LocalFrame.h"
 #include "LocalFrameLoaderClient.h"
+#include <JavaScriptCore/StructureInlines.h>
 #include <wtf/Ref.h>
 
 namespace WebCore {

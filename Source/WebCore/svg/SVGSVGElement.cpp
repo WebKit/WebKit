@@ -53,6 +53,7 @@
 #include "SVGViewSpec.h"
 #include "StaticNodeList.h"
 #include "TypedElementDescendantIteratorInlines.h"
+#include <JavaScriptCore/StructureInlines.h>
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {

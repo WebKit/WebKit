@@ -33,6 +33,7 @@
 #include "RequestPriority.h"
 #include "Settings.h"
 #include "Text.h"
+#include <JavaScriptCore/StructureInlines.h>
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/Ref.h>
 

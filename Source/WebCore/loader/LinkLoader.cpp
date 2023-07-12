@@ -62,6 +62,7 @@
 #include "Settings.h"
 #include "SizesAttributeParser.h"
 #include "StyleResolver.h"
+#include <JavaScriptCore/StructureInlines.h>
 
 namespace WebCore {
 

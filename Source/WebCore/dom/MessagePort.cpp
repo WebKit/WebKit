@@ -37,6 +37,7 @@
 #include "WebCoreOpaqueRoot.h"
 #include "WorkerGlobalScope.h"
 #include "WorkerThread.h"
+#include <JavaScriptCore/StructureInlines.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/Lock.h>

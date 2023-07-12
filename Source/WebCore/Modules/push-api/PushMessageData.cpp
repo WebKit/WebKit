@@ -34,6 +34,7 @@
 #include <JavaScriptCore/JSCJSValueInlines.h>
 #include <JavaScriptCore/JSLock.h>
 #include <JavaScriptCore/JSONObject.h>
+#include <JavaScriptCore/StructureInlines.h>
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {

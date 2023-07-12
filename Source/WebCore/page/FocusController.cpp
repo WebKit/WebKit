@@ -63,6 +63,7 @@
 #include "ShadowRoot.h"
 #include "SpatialNavigation.h"
 #include "Widget.h"
+#include <JavaScriptCore/StructureInlines.h>
 #include <limits>
 #include <wtf/Ref.h>
 

@@ -32,6 +32,7 @@
 #include "JSDOMPromise.h"
 #include "ScriptExecutionContext.h"
 #include <JavaScriptCore/Microtask.h>
+#include <JavaScriptCore/StructureInlines.h>
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {

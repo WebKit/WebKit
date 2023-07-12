@@ -61,6 +61,7 @@
 #include "StyleRule.h"
 #include "StyleSheetContents.h"
 #include "Text.h"
+#include <JavaScriptCore/StructureInlines.h>
 #include <pal/text/TextEncoding.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>

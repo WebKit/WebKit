@@ -42,6 +42,7 @@
 #include "NodeName.h"
 #include "RenderFrameSet.h"
 #include "Text.h"
+#include <JavaScriptCore/StructureInlines.h>
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {

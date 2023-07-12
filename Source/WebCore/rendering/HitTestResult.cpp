@@ -53,6 +53,7 @@
 #include "UserGestureIndicator.h"
 #include "VisibleUnits.h"
 #include "XLinkNames.h"
+#include <JavaScriptCore/StructureInlines.h>
 
 #if ENABLE(SERVICE_CONTROLS)
 #include "ImageControlsMac.h"

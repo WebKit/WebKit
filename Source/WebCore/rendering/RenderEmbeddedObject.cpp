@@ -56,6 +56,7 @@
 #include "SystemFontDatabase.h"
 #include "Text.h"
 #include "TextRun.h"
+#include <JavaScriptCore/StructureInlines.h>
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/StackStats.h>
 

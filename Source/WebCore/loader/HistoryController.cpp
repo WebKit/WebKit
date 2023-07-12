@@ -51,6 +51,7 @@
 #include "SharedStringHash.h"
 #include "ShouldTreatAsContinuingLoad.h"
 #include "VisitedLinkStore.h"
+#include <JavaScriptCore/StructureInlines.h>
 #include <wtf/text/CString.h>
 
 namespace WebCore {

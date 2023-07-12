@@ -34,6 +34,7 @@
 #include <JavaScriptCore/InjectedScriptManager.h>
 #include <JavaScriptCore/ScriptCallStack.h>
 #include <JavaScriptCore/ScriptCallStackFactory.h>
+#include <JavaScriptCore/StructureInlines.h>
 
 namespace WebCore {
 

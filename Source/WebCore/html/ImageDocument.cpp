@@ -49,6 +49,7 @@
 #include "RawDataDocumentParser.h"
 #include "RenderElement.h"
 #include "Settings.h"
+#include <JavaScriptCore/StructureInlines.h>
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/text/StringConcatenateNumbers.h>
 

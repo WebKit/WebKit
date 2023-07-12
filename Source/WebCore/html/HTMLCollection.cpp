@@ -26,6 +26,7 @@
 #include "CachedHTMLCollectionInlines.h"
 #include "HTMLNames.h"
 #include "NodeRareDataInlines.h"
+#include <JavaScriptCore/StructureInlines.h>
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {

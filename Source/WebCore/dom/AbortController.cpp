@@ -29,6 +29,7 @@
 #include "AbortSignal.h"
 #include "DOMException.h"
 #include "JSDOMException.h"
+#include <JavaScriptCore/StructureInlines.h>
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {

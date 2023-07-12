@@ -36,6 +36,7 @@
 #include "Supplementable.h"
 #include "WorkerCacheStorageConnection.h"
 #include "WorkerGlobalScope.h"
+#include <JavaScriptCore/StructureInlines.h>
 
 namespace WebCore {
 

@@ -83,6 +83,7 @@
 #include "VisitedLinkStore.h"
 #include "WebRTCProvider.h"
 #include <JavaScriptCore/HeapInlines.h>
+#include <JavaScriptCore/StructureInlines.h>
 #include <pal/SessionID.h>
 #include <wtf/NeverDestroyed.h>
 

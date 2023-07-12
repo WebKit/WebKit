@@ -31,6 +31,7 @@
 #include "JSDOMGlobalObject.h"
 #include "ReadableStream.h"
 #include "SharedBuffer.h"
+#include <JavaScriptCore/StructureInlines.h>
 #include <JavaScriptCore/Uint8Array.h>
 
 namespace WebCore {

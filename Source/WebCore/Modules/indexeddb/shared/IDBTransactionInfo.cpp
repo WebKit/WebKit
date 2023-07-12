@@ -27,6 +27,7 @@
 #include "IDBTransactionInfo.h"
 
 #include "IDBTransaction.h"
+#include <JavaScriptCore/StructureInlines.h>
 
 namespace WebCore {
 

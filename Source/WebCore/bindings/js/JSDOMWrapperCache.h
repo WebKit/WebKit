@@ -30,6 +30,7 @@
 #include "WebCoreTypedArrayController.h"
 #include <JavaScriptCore/InternalFunction.h>
 #include <JavaScriptCore/JSArrayBuffer.h>
+#include <JavaScriptCore/StructureInlines.h>
 #include <JavaScriptCore/Weak.h>
 #include <JavaScriptCore/WeakInlines.h>
 

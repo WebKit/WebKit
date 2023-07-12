@@ -36,6 +36,7 @@
 #include "RenderElement.h"
 #include "ScriptDisallowedScope.h"
 #include "TypedElementDescendantIteratorInlines.h"
+#include <JavaScriptCore/StructureInlines.h>
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/StdLibExtras.h>
 

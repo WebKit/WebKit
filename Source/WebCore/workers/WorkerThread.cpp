@@ -34,6 +34,7 @@
 #include "WorkerGlobalScope.h"
 #include "WorkerScriptFetcher.h"
 #include <JavaScriptCore/ScriptCallStack.h>
+#include <JavaScriptCore/StructureInlines.h>
 #include <wtf/SetForScope.h>
 #include <wtf/Threading.h>
 
