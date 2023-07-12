@@ -4367,3 +4367,5 @@ webkit.org/b/258532 svg/zoom/page/text-with-non-scaling-stroke.html [ Pass Image
 webkit.org/b/258532 fast/forms/input-placeholder-text-indent.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/259157 imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir_auto-textarea-script-mixed.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/259160 http/tests/privateClickMeasurement/triggering-event-with-attribution-source-through-fetch-keepalive.html [ Pass Failure ]

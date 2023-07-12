@@ -1815,3 +1815,5 @@ webkit.org/b/258865 fast/attachment/cocoa/wide-attachment-folder-icon.html [ Pas
 webkit.org/b/258865 fast/attachment/cocoa/wide-attachment-icon-from-file-extension.html [ Pass ImageOnlyFailure ]
 webkit.org/b/258865 fast/attachment/mac/wide-attachment-title-with-rtl.html [ Pass ImageOnlyFailure ]
 webkit.org/b/258865 fast/attachment/mac/wide-attachment-type-attribute.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/259160 http/tests/privateClickMeasurement/triggering-event-with-attribution-source-through-fetch-keepalive.html [ Pass Failure ]
