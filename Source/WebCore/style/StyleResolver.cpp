@@ -147,6 +147,7 @@ Resolver::Resolver(Document& document, ScopeType scopeType)
     : m_document(document)
     , m_scopeType(scopeType)
     , m_ruleSets(*this)
+    , m_matchedDeclarationsCache(*this)
     , m_matchAuthorAndUserStyles(settings().authorAndUserStylesEnabled())
 {
     initialize();
