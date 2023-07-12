@@ -5199,9 +5199,10 @@ FloatSize WebPage::screenSizeForFingerprintingProtections(const LocalFrame&, Flo
         return m_viewportConfiguration.minimumLayoutSize();
 
     static constexpr std::array fixedSizes {
-        FloatSize { 320,  568 },
-        FloatSize { 375,  667 },
-        FloatSize { 414,  736 },
+        FloatSize { 320, 568 },
+        FloatSize { 375, 667 },
+        FloatSize { 390, 844 },
+        FloatSize { 414, 896 },
     };
 
     for (auto fixedSize : fixedSizes) {
