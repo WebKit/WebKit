@@ -591,7 +591,7 @@ namespace JSC { namespace DFG {
 
 // This enum generates a monotonically increasing id for all Node types,
 // and is used by the subsequent enum to fill out the id (as accessed via the NodeIdMask).
-enum NodeType {
+enum NodeType : uint16_t {
 #define DFG_OP_ENUM(opcode, flags) opcode,
     FOR_EACH_DFG_OP(DFG_OP_ENUM)
 #undef DFG_OP_ENUM
@@ -601,6 +601,7 @@ enum NodeType {
 #define DFG_OP_COUNT(opcode, flags) + 1
 constexpr unsigned numberOfNodeTypes = FOR_EACH_DFG_OP(DFG_OP_COUNT);
 #undef DFG_OP_COUNT
+static_assert(numberOfNodeTypes <= UINT16_MAX);
 
 // Specifies the default flags for each node.
 inline NodeFlags defaultFlags(NodeType op)

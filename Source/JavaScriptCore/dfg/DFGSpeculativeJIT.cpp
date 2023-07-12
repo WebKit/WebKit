@@ -6967,6 +6967,7 @@ void SpeculativeJIT::compileArithDiv(Node* node)
         if (shouldCheckOverflow(node->arithMode()))
             speculationCheck(ExitKind::Overflow, JSValueRegs(), nullptr, branchTest32(Zero, op2GPR));
 
+        // Note that it is fine that sdiv with 0-divisor. The resulted value is zero (no trap).
         assembler().sdiv<32>(quotient.gpr(), op1GPR, op2GPR);
 
         // Check that there was no remainder. If there had been, then we'd be obligated to

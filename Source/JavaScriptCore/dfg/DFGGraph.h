@@ -366,7 +366,7 @@ public:
             NodeFlags flags = node->flags() & NodeBytecodeBackPropMask;
             if (!flags)
                 return false;
-            return (flags & (NodeBytecodeUsesAsNumber | NodeBytecodeNeedsNegZero | NodeBytecodeUsesAsInt | NodeBytecodeUsesAsArrayIndex)) == flags;
+            return (flags & (NodeBytecodeUsesAsNumber | NodeBytecodeNeedsNegZero | NodeBytecodeNeedsNaNOrInfinity | NodeBytecodeUsesAsInt | NodeBytecodePrefersArrayIndex)) == flags;
         };
 
         // Wrapping Int52 to Value is also not so cheap. Thus, we allow Int52 addition only when the node is used as number.

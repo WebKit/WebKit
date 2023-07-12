@@ -81,9 +81,10 @@ private:
         if (optimizeForX86() || optimizeForARM64() || optimizeForARMv7IDIVSupported()) {
             fixIntOrBooleanEdge(leftChild);
             fixIntOrBooleanEdge(rightChild);
-            // FIXME: We should attempt to remove checks.
-            if (bytecodeCanTruncateInteger(node->arithNodeFlags()))
-                node->setArithMode(Arith::CheckOverflow);
+            // We need to be careful about skipping overflow check because div / mod can generate non integer values
+            // from (Int32, Int32) inputs. For now, we always check non-zero divisor.
+            if (bytecodeCanTruncateInteger(node->arithNodeFlags()) && bytecodeCanIgnoreNaNAndInfinity(node->arithNodeFlags()) && bytecodeCanIgnoreNegativeZero(node->arithNodeFlags()))
+                node->setArithMode(Arith::Unchecked);
             else if (bytecodeCanIgnoreNegativeZero(node->arithNodeFlags()))
                 node->setArithMode(Arith::CheckOverflow);
             else

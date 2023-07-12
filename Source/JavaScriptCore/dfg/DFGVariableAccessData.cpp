@@ -121,7 +121,7 @@ bool VariableAccessData::tallyVotesForShouldUseDoubleFormat()
     ASSERT(isRoot());
         
     if (operand().isArgument() || shouldNeverUnbox()
-        || (flags() & NodeBytecodeUsesAsArrayIndex))
+        || (flags() & NodeBytecodePrefersArrayIndex))
         return DFG::mergeDoubleFormatState(m_doubleFormatState, NotUsingDoubleFormat);
     
     if (m_doubleFormatState == CantUseDoubleFormat)
