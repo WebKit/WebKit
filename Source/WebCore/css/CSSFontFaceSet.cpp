@@ -175,7 +175,7 @@ void CSSFontFaceSet::addToFacesLookupTable(CSSFontFace& face)
 
     for (auto& item : *families) {
         auto familyName = AtomString { CSSFontFaceSet::familyNameFromPrimitive(downcast<CSSPrimitiveValue>(item)) };
-        if (familyName.isEmpty())
+        if (familyName.isNull())
             continue;
 
         auto addResult = m_facesLookupTable.add(familyName, Vector<Ref<CSSFontFace>>());
@@ -223,7 +223,7 @@ void CSSFontFaceSet::removeFromFacesLookupTable(const CSSFontFace& face, const C
 {
     for (auto& item : familiesToSearchFor) {
         String familyName = CSSFontFaceSet::familyNameFromPrimitive(downcast<CSSPrimitiveValue>(item));
-        if (familyName.isEmpty())
+        if (familyName.isNull())
             continue;
 
         auto iterator = m_facesLookupTable.find(familyName);
@@ -399,7 +399,7 @@ ExceptionOr<Vector<std::reference_wrapper<CSSFontFace>>> CSSFontFaceSet::matchin
             familyAtom = familyString;
         });
 
-        if (!familyAtom.isEmpty() && uniqueFamilies.add(familyAtom).isNewEntry)
+        if (!familyAtom.isNull() && uniqueFamilies.add(familyAtom).isNewEntry)
             familyOrder.append(familyAtom);
     }
 

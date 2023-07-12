@@ -811,7 +811,15 @@ RefPtr<StyleRuleFontPaletteValues> CSSParserImpl::consumeFontPaletteValuesRule(C
     auto declarations = consumeDeclarationListInNewNestingContext(block, StyleRuleType::FontPaletteValues);
     auto properties = createStyleProperties(declarations, m_context.mode);
 
-    AtomString fontFamily { properties->getPropertyValue(CSSPropertyFontFamily) };
+    auto fontFamily = [&] () -> AtomString {
+        auto cssFontFamily = properties->getPropertyCSSValue(CSSPropertyFontFamily);
+        if (!cssFontFamily)
+            return { };
+        auto cssPrimitiveFontFamily = dynamicDowncast<CSSPrimitiveValue>(*cssFontFamily);
+        if (!cssPrimitiveFontFamily || !cssPrimitiveFontFamily->isFontFamily())
+            return { };
+        return AtomString { cssPrimitiveFontFamily->stringValue() };
+    }();
 
     std::optional<FontPaletteIndex> basePalette;
     if (auto basePaletteValue = properties->getPropertyCSSValue(CSSPropertyBasePalette)) {

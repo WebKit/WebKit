@@ -147,7 +147,7 @@ static FontRanges realizeNextFallback(const FontCascadeDescription& description,
     auto& fontCache = FontCache::forCurrentThread();
     while (index < description.effectiveFamilyCount()) {
         auto visitor = WTF::makeVisitor([&](const AtomString& family) -> FontRanges {
-            if (family.isEmpty())
+            if (family.isNull())
                 return FontRanges();
             if (fontSelector) {
                 auto ranges = fontSelector->fontRangesForFamily(description, family);
