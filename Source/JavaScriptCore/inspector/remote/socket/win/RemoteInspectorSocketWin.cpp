@@ -169,7 +169,7 @@ std::optional<PlatformSocketType> connect(const char* serverAddress, uint16_t se
         hints.ai_socktype = SOCK_STREAM;
         hints.ai_family = AF_INET;
         if (!getaddrinfo(serverAddress, 0, &hints, &res)) {
-            address.sin_addr = ((struct sockaddr_in*)(res->ai_addr))->sin_addr;
+            address.sin_addr = reinterpret_cast<struct sockaddr_in*>(res->ai_addr)->sin_addr;
             freeaddrinfo(res);
         }
     }
