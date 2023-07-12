@@ -2046,6 +2046,9 @@ JSC_DEFINE_HOST_FUNCTION(stringProtoFuncToWellFormed, (JSGlobalObject* globalObj
     String string = stringValue->value(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
 
+    if (string.is8Bit())
+        return JSValue::encode(stringValue);
+
     const UChar* characters = string.characters16();
     unsigned length = string.length();
     auto firstIllFormedIndex = illFormedIndex(characters, length);
