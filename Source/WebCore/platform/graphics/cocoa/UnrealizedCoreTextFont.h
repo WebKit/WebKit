@@ -88,6 +88,17 @@ private:
     static void addAttributesForOpticalSizing(CFMutableDictionaryRef attributes, VariationsMap& variationsToBeApplied, const OpticalSizingType&, CGFloat size);
     static void applyVariations(CFMutableDictionaryRef attributes, const VariationsMap& variationsToBeApplied);
 
+    struct RebuildReason {
+        bool gxVariations { false };
+        std::optional<VariationDefaultsMap> variationDefaults;
+
+        bool hasEffect() const
+        {
+            return gxVariations || variationDefaults;
+        }
+    };
+    RebuildReason rebuildReason(CTFontRef) const;
+
     std::variant<RetainPtr<CTFontRef>, RetainPtr<CTFontDescriptorRef>> m_baseFont;
     RetainPtr<CFMutableDictionaryRef> m_attributes { adoptCF(CFDictionaryCreateMutable(kCFAllocatorDefault, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks)) };
 
