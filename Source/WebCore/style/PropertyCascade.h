@@ -90,6 +90,7 @@ private:
     void setDeferred(CSSPropertyID, CSSValue&, const MatchedProperties&, CascadeLevel);
     static void setPropertyInternal(Property&, CSSPropertyID, CSSValue&, const MatchedProperties&, CascadeLevel);
 
+    bool hasProperty(CSSPropertyID, const CSSValue&);
 
     unsigned deferredPropertyIndex(CSSPropertyID) const;
     void setDeferredPropertyIndex(CSSPropertyID, unsigned);
