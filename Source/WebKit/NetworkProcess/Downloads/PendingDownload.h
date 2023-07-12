@@ -46,7 +46,7 @@ class NetworkLoad;
 class NetworkLoadParameters;
 class NetworkSession;
 
-class PendingDownload : public NetworkLoadClient, public IPC::MessageSender {
+class PendingDownload : public NetworkLoadClient, public IPC::MessageSender, public CanMakeWeakPtr<PendingDownload> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     PendingDownload(IPC::Connection*, NetworkLoadParameters&&, DownloadID, NetworkSession&, const String& suggestedName);
