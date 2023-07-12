@@ -36,7 +36,6 @@
 #import "WKSharedAPICast.h"
 #import "WKStringCF.h"
 #import "WebProcessPool.h"
-#import <WebCore/PluginBlocklist.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/RetainPtr.h>
 
