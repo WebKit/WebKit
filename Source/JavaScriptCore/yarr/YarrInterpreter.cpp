@@ -149,9 +149,11 @@ public:
                 output[(firstSubpatternId << 1) + i] = offsetNoMatch;
             }
 
+            unsigned nameGroupIdx = 0;
             for (unsigned duplicateNamedGroupId : m_duplicateNamedGroups) {
-                subpatternAndGroupIdBackup[backupOffsetForDuplicateNamedGroup(duplicateNamedGroupId)] = output[m_pattern->offsetForDuplicateNamedGroupId(duplicateNamedGroupId)];
+                subpatternAndGroupIdBackup[backupOffsetForDuplicateNamedGroup(nameGroupIdx)] = output[m_pattern->offsetForDuplicateNamedGroupId(duplicateNamedGroupId)];
                 output[pattern->offsetForDuplicateNamedGroupId(duplicateNamedGroupId)] = 0;
+                ++nameGroupIdx;
             }
 
             new (getDisjunctionContext()) DisjunctionContext();
@@ -167,8 +169,11 @@ public:
             for (unsigned i = 0; i < (m_numNestedSubpatterns << 1); ++i)
                 output[(firstSubpatternId << 1) + i] = subpatternAndGroupIdBackup[i];
 
-            for (unsigned duplicateNamedGroupId : m_duplicateNamedGroups)
-                output[m_pattern->offsetForDuplicateNamedGroupId(duplicateNamedGroupId)] = subpatternAndGroupIdBackup[backupOffsetForDuplicateNamedGroup(duplicateNamedGroupId)];
+            unsigned nameGroupIdx = 0;
+            for (unsigned duplicateNamedGroupId : m_duplicateNamedGroups) {
+                output[m_pattern->offsetForDuplicateNamedGroupId(duplicateNamedGroupId)] = subpatternAndGroupIdBackup[backupOffsetForDuplicateNamedGroup(nameGroupIdx)];
+                ++nameGroupIdx;
+            }
         }
 
         DisjunctionContext* getDisjunctionContext()
@@ -178,8 +183,9 @@ public:
 
         unsigned backupOffsetForDuplicateNamedGroup(unsigned duplicateNamedGroup)
         {
-            ASSERT(duplicateNamedGroup);
-            return (m_numNestedSubpatterns << 1) + duplicateNamedGroup - 1;
+            unsigned offset = (m_numNestedSubpatterns << 1) + duplicateNamedGroup;
+            ASSERT(offset < m_numBackupIds);
+            return offset;
         }
 
         static size_t allocationSize(unsigned numberOfSubpatterns, unsigned numDuplicateNamedGroups)
