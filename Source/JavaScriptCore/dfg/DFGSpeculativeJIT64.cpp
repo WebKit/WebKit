@@ -6831,7 +6831,7 @@ void SpeculativeJIT::compileNewBoundFunction(Node* node)
     JumpList slowPath;
 
     auto butterfly = TrustedImmPtr(nullptr);
-    emitAllocateJSObjectWithKnownSize<JSBoundFunction>(resultGPR, TrustedImmPtr(structure), butterfly, scratch1GPR, scratch2GPR, slowPath, sizeof(JSBoundFunction));
+    emitAllocateJSObjectWithKnownSize<JSBoundFunction>(resultGPR, TrustedImmPtr(structure), butterfly, scratch1GPR, scratch2GPR, slowPath, sizeof(JSBoundFunction), SlowAllocationResult::UndefinedBehavior);
     storeLinkableConstant(LinkableConstant::globalObject(*this, node), Address(resultGPR, JSBoundFunction::offsetOfScopeChain()));
     storeLinkableConstant(LinkableConstant(*this, executable), Address(resultGPR, JSBoundFunction::offsetOfExecutableOrRareData()));
     storeValue(JSValueRegs { targetGPR }, Address(resultGPR, JSBoundFunction::offsetOfTargetFunction()));
@@ -7072,7 +7072,7 @@ void SpeculativeJIT::compileCreateClonedArguments(Node* node)
             emitInitializeOutOfLineStorage(storageGPR, outOfLineCapacity, scratchGPR);
         }
 
-        emitAllocateJSObject<ClonedArguments>(resultGPR, TrustedImmPtr(m_graph.registerStructure(globalObject->clonedArgumentsStructure())), storageGPR, scratchGPR, scratch2GPR, slowCases);
+        emitAllocateJSObject<ClonedArguments>(resultGPR, TrustedImmPtr(m_graph.registerStructure(globalObject->clonedArgumentsStructure())), storageGPR, scratchGPR, scratch2GPR, slowCases, SlowAllocationResult::UndefinedBehavior);
 
         emitGetCallee(node->origin.semantic, scratchGPR);
         storePtr(scratchGPR, Address(resultGPR, ClonedArguments::offsetOfCallee()));
