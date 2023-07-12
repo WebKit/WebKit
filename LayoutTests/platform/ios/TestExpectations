@@ -4366,6 +4366,10 @@ webkit.org/b/258328 [ Debug ] imported/w3c/web-platform-tests/webcodecs/videoFra
 webkit.org/b/258532 svg/zoom/page/text-with-non-scaling-stroke.html [ Pass ImageOnlyFailure ]
 webkit.org/b/258532 fast/forms/input-placeholder-text-indent.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b/259157 imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir_auto-textarea-script-mixed.html [ Pass ImageOnlyFailure ]
-
 webkit.org/b/259160 http/tests/privateClickMeasurement/triggering-event-with-attribution-source-through-fetch-keepalive.html [ Pass Failure ]
+
+# webkit.org/b/259157REGRESSION(264419@Main): [ iOS ] 264419@Main introduced multiple flaky ImageOnlyFailures (259157)
+imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir_auto-textarea-script-mixed.html [ Pass ImageOnlyFailure ]
+fast/block/transparent-outline-with-and-without-border-radius.html [ Pass ImageOnlyFailure ]
+fast/forms/basic-textareas-quirks-simple-lines.html [ Pass ImageOnlyFailure ]
+imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir_auto-textarea-mixed.html [ Pass ImageOnlyFailure ]
