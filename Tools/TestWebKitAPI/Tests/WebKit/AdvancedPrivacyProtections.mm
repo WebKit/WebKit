@@ -779,9 +779,10 @@ TEST(AdvancedPrivacyProtections, ClampScreenSizeToFixedValues)
         EXPECT_EQ(expectedSize.height, sizeForBindings.height);
     };
 
-    runTestWithScreenSize(CGSizeMake(393, 852), CGSizeMake(414, 736));
-    runTestWithScreenSize(CGSizeMake(320,  568), CGSizeMake(320,  568));
-    runTestWithScreenSize(CGSizeMake(440,  900), CGSizeMake(414,  736));
+    runTestWithScreenSize(CGSizeMake(320, 568), CGSizeMake(320, 568));
+    runTestWithScreenSize(CGSizeMake(388, 844), CGSizeMake(390, 844));
+    runTestWithScreenSize(CGSizeMake(390, 848), CGSizeMake(390, 844));
+    runTestWithScreenSize(CGSizeMake(440, 900), CGSizeMake(414, 896));
 }
 
 #endif // PLATFORM(IOS_FAMILY)
