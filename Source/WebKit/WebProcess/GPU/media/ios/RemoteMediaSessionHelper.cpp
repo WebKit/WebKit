@@ -72,8 +72,9 @@ void RemoteMediaSessionHelper::stopMonitoringWirelessRoutesInternal()
     ensureConnection().send(Messages::RemoteMediaSessionHelperProxy::StopMonitoringWirelessRoutes(), { });
 }
 
-void RemoteMediaSessionHelper::providePresentingApplicationPID(int pid)
+void RemoteMediaSessionHelper::providePresentingApplicationPID(int pid, ShouldOverride shouldOverride)
 {
+    ASSERT_UNUSED(shouldOverride, shouldOverride == ShouldOverride::No);
     ensureConnection().send(Messages::RemoteMediaSessionHelperProxy::ProvidePresentingApplicationPID(pid), { });
 }
 

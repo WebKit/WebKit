@@ -44,6 +44,8 @@ public:
 
     void didReceiveMessageFromWebProcess(IPC::Connection& connection, IPC::Decoder& decoder) { didReceiveMessage(connection, decoder); }
 
+    void overridePresentingApplicationPIDIfNeeded();
+
 private:
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
@@ -65,6 +67,7 @@ private:
 
     bool m_isMonitoringWirelessRoutes { false };
     GPUConnectionToWebProcess& m_gpuConnection;
+    std::optional<int> m_presentingApplicationPID;
 };
 
 }

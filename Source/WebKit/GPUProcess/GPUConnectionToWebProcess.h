@@ -235,6 +235,10 @@ public:
     void performWithMediaPlayerOnMainThread(WebCore::MediaPlayerIdentifier, Function<void(WebCore::MediaPlayer&)>&&);
 #endif
 
+#if PLATFORM(IOS_FAMILY)
+    void overridePresentingApplicationPIDIfNeeded();
+#endif
+
 private:
     GPUConnectionToWebProcess(GPUProcess&, WebCore::ProcessIdentifier, PAL::SessionID, IPC::Connection::Handle&&, GPUProcessConnectionParameters&&);
 

@@ -66,7 +66,7 @@ private:
     // MediaSessionHelper
     void startMonitoringWirelessRoutesInternal() final;
     void stopMonitoringWirelessRoutesInternal() final;
-    void providePresentingApplicationPID(int) final;
+    void providePresentingApplicationPID(int, ShouldOverride) final;
 
     // Messages
     void activeVideoRouteDidChange(SupportsAirPlayVideo, WebCore::MediaPlaybackTargetContext&&);
