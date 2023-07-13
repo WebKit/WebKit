@@ -273,6 +273,7 @@ static NSString * const _WKARQLWebsiteURLParameterKey = @"ARQLWebsiteURLParamete
         return nil;
 
     _previewController = previewController;
+    _fileHandle = FileSystem::invalidPlatformFileHandle;
     return self;
 }
 
@@ -346,6 +347,7 @@ static NSString * const _WKARQLWebsiteURLParameterKey = @"ARQLWebsiteURLParamete
 
 - (void)completeLoad
 {
+    ASSERT(_fileHandle != FileSystem::invalidPlatformFileHandle);
     size_t byteCount = FileSystem::writeToFile(_fileHandle, [_data bytes], [_data length]);
     FileSystem::closeFile(_fileHandle);
 
