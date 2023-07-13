@@ -34,38 +34,34 @@ namespace WebCore {
 
 enum class RunAsAsyncFunction : bool { No, Yes };
 enum class ForceUserGesture : bool { No, Yes };
-enum class RemoveTransientActivation : bool { No, Yes };
 
 using ArgumentWireBytesMap = HashMap<String, Vector<uint8_t>>;
 
 struct RunJavaScriptParameters {
-    RunJavaScriptParameters(String&& source, URL&& sourceURL, RunAsAsyncFunction runAsAsyncFunction, std::optional<ArgumentWireBytesMap>&& arguments, ForceUserGesture forceUserGesture, RemoveTransientActivation removeTransientActivation)
+    RunJavaScriptParameters(String&& source, URL&& sourceURL, RunAsAsyncFunction runAsAsyncFunction, std::optional<ArgumentWireBytesMap>&& arguments, ForceUserGesture forceUserGesture)
         : source(WTFMove(source))
         , sourceURL(WTFMove(sourceURL))
         , runAsAsyncFunction(runAsAsyncFunction)
         , arguments(WTFMove(arguments))
         , forceUserGesture(forceUserGesture)
-        , removeTransientActivation(removeTransientActivation)
     {
     }
 
-    RunJavaScriptParameters(const String& source, URL&& sourceURL, bool runAsAsyncFunction, std::optional<ArgumentWireBytesMap>&& arguments, bool forceUserGesture, RemoveTransientActivation removeTransientActivation)
+    RunJavaScriptParameters(const String& source, URL&& sourceURL, bool runAsAsyncFunction, std::optional<ArgumentWireBytesMap>&& arguments, bool forceUserGesture)
         : source(source)
         , sourceURL(WTFMove(sourceURL))
         , runAsAsyncFunction(runAsAsyncFunction ? RunAsAsyncFunction::Yes : RunAsAsyncFunction::No)
         , arguments(WTFMove(arguments))
         , forceUserGesture(forceUserGesture ? ForceUserGesture::Yes : ForceUserGesture::No)
-        , removeTransientActivation(removeTransientActivation)
     {
     }
 
-    RunJavaScriptParameters(String&& source, URL&& sourceURL, bool runAsAsyncFunction, std::optional<ArgumentWireBytesMap>&& arguments, bool forceUserGesture, RemoveTransientActivation removeTransientActivation)
+    RunJavaScriptParameters(String&& source, URL&& sourceURL, bool runAsAsyncFunction, std::optional<ArgumentWireBytesMap>&& arguments, bool forceUserGesture)
         : source(WTFMove(source))
         , sourceURL(WTFMove(sourceURL))
         , runAsAsyncFunction(runAsAsyncFunction ? RunAsAsyncFunction::Yes : RunAsAsyncFunction::No)
         , arguments(WTFMove(arguments))
         , forceUserGesture(forceUserGesture ? ForceUserGesture::Yes : ForceUserGesture::No)
-        , removeTransientActivation(removeTransientActivation)
     {
     }
 
@@ -74,11 +70,10 @@ struct RunJavaScriptParameters {
     RunAsAsyncFunction runAsAsyncFunction;
     std::optional<ArgumentWireBytesMap> arguments;
     ForceUserGesture forceUserGesture;
-    RemoveTransientActivation removeTransientActivation;
 
     template<typename Encoder> void encode(Encoder& encoder) const
     {
-        encoder << source << sourceURL << runAsAsyncFunction << arguments << forceUserGesture << removeTransientActivation;
+        encoder << source << sourceURL << runAsAsyncFunction << arguments << forceUserGesture;
     }
 
     template<typename Decoder> static std::optional<RunJavaScriptParameters> decode(Decoder& decoder)
@@ -103,11 +98,7 @@ struct RunJavaScriptParameters {
         if (!decoder.decode(forceUserGesture))
             return std::nullopt;
 
-        RemoveTransientActivation removeTransientActivation;
-        if (!decoder.decode(removeTransientActivation))
-            return std::nullopt;
-
-        return { RunJavaScriptParameters { WTFMove(source), WTFMove(sourceURL), runAsAsyncFunction, WTFMove(arguments), forceUserGesture, removeTransientActivation } };
+        return { RunJavaScriptParameters { WTFMove(source), WTFMove(sourceURL), runAsAsyncFunction, WTFMove(arguments), forceUserGesture } };
     }
 };
 
