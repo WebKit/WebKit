@@ -1263,7 +1263,7 @@
 		F6F49C6B15545CA70007F39D /* DOMWindowExtensionNoCache_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F6F49C6615545C8D0007F39D /* DOMWindowExtensionNoCache_Bundle.cpp */; };
 		F6FDDDD614241C6F004F1729 /* push-state.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F6FDDDD514241C48004F1729 /* push-state.html */; };
 		FE2BCDC72470FDA300DEC33B /* StdLibExtrasTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE2BCDC62470FC7000DEC33B /* StdLibExtrasTests.cpp */; };
-		FE2D9474245EB2F400E48135 /* Bitmap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE2D9473245EB2DF00E48135 /* Bitmap.cpp */; };
+		FE2D9474245EB2F400E48135 /* BitSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE2D9473245EB2DF00E48135 /* BitSet.cpp */; };
 		FEC2A85424CE975F00ADBC35 /* DisallowVMEntry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FEC2A85324CE974E00ADBC35 /* DisallowVMEntry.cpp */; };
 		FEC2A85624CEB65F00ADBC35 /* PropertySlot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FEC2A85524CEB65F00ADBC35 /* PropertySlot.cpp */; };
 		FF10AAF92831B1E600B9875B /* CompactPtr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FF10AAF82831B1E600B9875B /* CompactPtr.cpp */; };
@@ -3592,7 +3592,7 @@
 		F6FDDDD214241AD4004F1729 /* PrivateBrowsingPushStateNoHistoryCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PrivateBrowsingPushStateNoHistoryCallback.cpp; sourceTree = "<group>"; };
 		F6FDDDD514241C48004F1729 /* push-state.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "push-state.html"; sourceTree = "<group>"; };
 		FE2BCDC62470FC7000DEC33B /* StdLibExtrasTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StdLibExtrasTests.cpp; sourceTree = "<group>"; };
-		FE2D9473245EB2DF00E48135 /* Bitmap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Bitmap.cpp; sourceTree = "<group>"; };
+		FE2D9473245EB2DF00E48135 /* BitSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BitSet.cpp; sourceTree = "<group>"; };
 		FEB6F74E1B2BA44E009E4922 /* NakedPtr.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NakedPtr.cpp; sourceTree = "<group>"; };
 		FEC2A85324CE974E00ADBC35 /* DisallowVMEntry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DisallowVMEntry.cpp; sourceTree = "<group>"; };
 		FEC2A85524CEB65F00ADBC35 /* PropertySlot.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PropertySlot.cpp; sourceTree = "<group>"; };
@@ -5154,7 +5154,7 @@
 				BC029B1A1486B23800817DA9 /* ns */,
 				FF25942A2834B7A7006892D6 /* AlignedRefLogger.h */,
 				26F1B44215CA434F00D1E4BF /* AtomString.cpp */,
-				FE2D9473245EB2DF00E48135 /* Bitmap.cpp */,
+				FE2D9473245EB2DF00E48135 /* BitSet.cpp */,
 				E40019301ACE9B5C001B0A2A /* BloomFilter.cpp */,
 				93A427AE180DA60F00CD24D7 /* BoxPtr.cpp */,
 				0451A5A6235E438E009DF945 /* BumpPointerAllocator.cpp */,
@@ -6124,7 +6124,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				7C83DE991D0A590C00FEBCF3 /* AtomString.cpp in Sources */,
-				FE2D9474245EB2F400E48135 /* Bitmap.cpp in Sources */,
+				FE2D9474245EB2F400E48135 /* BitSet.cpp in Sources */,
 				1ADAD1501D77A9F600212586 /* BlockPtr.mm in Sources */,
 				7C83DE9C1D0A590C00FEBCF3 /* BloomFilter.cpp in Sources */,
 				7C83DF181D0A590C00FEBCF3 /* BoxPtr.cpp in Sources */,

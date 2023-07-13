@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,7 +26,7 @@
 #pragma once
 
 #include "MarkedBlock.h"
-#include <wtf/Bitmap.h>
+#include <wtf/BitSet.h>
 #include <wtf/ConcurrentVector.h>
 #include <wtf/FastBitVector.h>
 #include <wtf/Noncopyable.h>
@@ -71,14 +71,14 @@ public:
 private:
     friend class IsoSubspace;
     
-    Bitmap<MarkedBlock::atomsPerBlock>* addSlow(unsigned blockIndex);
+    WTF::BitSet<MarkedBlock::atomsPerBlock>* addSlow(unsigned blockIndex);
     
     void didResizeBits(unsigned newSize);
     void didRemoveBlock(unsigned blockIndex);
     void sweepToFreeList(MarkedBlock::Handle*);
     void clearLowerTierCell(unsigned);
     
-    Bitmap<MarkedBlock::maxNumberOfLowerTierCells> m_lowerTierBits;
+    WTF::BitSet<MarkedBlock::maxNumberOfLowerTierCells> m_lowerTierBits;
 
     IsoSubspace& m_subspace;
     
@@ -87,7 +87,7 @@ private:
     // clears all bits for a block, we keep it set in blocksWithBits.
     
     FastBitVector m_blocksWithBits;
-    ConcurrentVector<std::unique_ptr<Bitmap<MarkedBlock::atomsPerBlock>>> m_bits;
+    ConcurrentVector<std::unique_ptr<WTF::BitSet<MarkedBlock::atomsPerBlock>>> m_bits;
 };
 
 } // namespace JSC

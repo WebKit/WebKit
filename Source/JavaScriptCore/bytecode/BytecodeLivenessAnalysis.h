@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,7 +28,7 @@
 #include "BytecodeBasicBlock.h"
 #include "BytecodeGraph.h"
 #include "CodeBlock.h"
-#include <wtf/Bitmap.h>
+#include <wtf/BitSet.h>
 #include <wtf/FastBitVector.h>
 
 namespace JSC {
@@ -95,7 +95,7 @@ private:
     BytecodeGraph m_graph;
 };
 
-Bitmap<maxNumCheckpointTmps> tmpLivenessForCheckpoint(const CodeBlock&, BytecodeIndex);
+WTF::BitSet<maxNumCheckpointTmps> tmpLivenessForCheckpoint(const CodeBlock&, BytecodeIndex);
 
 inline bool operandIsAlwaysLive(int operand);
 inline bool operandThatIsNotAlwaysLiveIsLive(const FastBitVector& out, int operand);

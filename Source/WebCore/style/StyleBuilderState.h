@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,7 +31,7 @@
 #include "PropertyCascade.h"
 #include "RuleSet.h"
 #include "SelectorChecker.h"
-#include <wtf/Bitmap.h>
+#include <wtf/BitSet.h>
 
 namespace WebCore {
 
@@ -133,8 +133,8 @@ private:
     HashSet<String> m_appliedCustomProperties;
     HashSet<String> m_inProgressCustomProperties;
     HashSet<String> m_inCycleCustomProperties;
-    Bitmap<numCSSProperties> m_inProgressProperties;
-    Bitmap<numCSSProperties> m_inUnitCycleProperties;
+    WTF::BitSet<numCSSProperties> m_inProgressProperties;
+    WTF::BitSet<numCSSProperties> m_inUnitCycleProperties;
 
     const PropertyCascade::Property* m_currentProperty { nullptr };
     SelectorChecker::LinkMatchMask m_linkMatch { };
@@ -145,5 +145,5 @@ private:
     bool m_isBuildingKeyframeStyle { false };
 };
 
-}
-}
+} // namespace Style
+} // namespace WebCore

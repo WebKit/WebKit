@@ -472,7 +472,7 @@
 		DD3DC97827A4BF8E007E5B61 /* EnumClassOperatorOverloads.h in Headers */ = {isa = PBXBuildFile; fileRef = 5338EBA423AB04D100382662 /* EnumClassOperatorOverloads.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD3DC97927A4BF8E007E5B61 /* HashFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A472B4151A825A004123FF /* HashFunctions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD3DC97A27A4BF8E007E5B61 /* StackStats.h in Headers */ = {isa = PBXBuildFile; fileRef = FEDACD3C1630F83F00C69634 /* StackStats.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DD3DC97B27A4BF8E007E5B61 /* Bitmap.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A4725F151A825A004123FF /* Bitmap.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		DD3DC97B27A4BF8E007E5B61 /* BitSet.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A4725F151A825A004123FF /* BitSet.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD3DC97C27A4BF8E007E5B61 /* ThreadSafetyAnalysis.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B2739DC2624DAAA0040F182 /* ThreadSafetyAnalysis.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD3DC97D27A4BF8E007E5B61 /* WTFSemaphore.h in Headers */ = {isa = PBXBuildFile; fileRef = A36E16F7216FF828008DD87E /* WTFSemaphore.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD3DC97E27A4BF8E007E5B61 /* AutomaticThread.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F43D8F01DB5ADDC00108FB6 /* AutomaticThread.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1304,7 +1304,7 @@
 		A8A4725B151A825A004123FF /* Assertions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Assertions.cpp; sourceTree = "<group>"; };
 		A8A4725C151A825A004123FF /* Assertions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Assertions.h; sourceTree = "<group>"; };
 		A8A4725D151A825A004123FF /* Atomics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Atomics.h; sourceTree = "<group>"; };
-		A8A4725F151A825A004123FF /* Bitmap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Bitmap.h; sourceTree = "<group>"; };
+		A8A4725F151A825A004123FF /* BitSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BitSet.h; sourceTree = "<group>"; };
 		A8A47260151A825A004123FF /* BitVector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BitVector.cpp; sourceTree = "<group>"; };
 		A8A47261151A825A004123FF /* BitVector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BitVector.h; sourceTree = "<group>"; };
 		A8A47265151A825A004123FF /* BloomFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BloomFilter.h; sourceTree = "<group>"; };
@@ -1981,7 +1981,7 @@
 				0FEBA64120CF37100074941C /* Bag.cpp */,
 				0FB14E18180FA218009B6B4D /* Bag.h */,
 				0FB14E1A1810E1DA009B6B4D /* BagToHashMap.h */,
-				A8A4725F151A825A004123FF /* Bitmap.h */,
+				A8A4725F151A825A004123FF /* BitSet.h */,
 				A8A47260151A825A004123FF /* BitVector.cpp */,
 				A8A47261151A825A004123FF /* BitVector.h */,
 				DCEE21FC1CEA7551000C2396 /* BlockObjCExceptions.h */,
@@ -2944,7 +2944,7 @@
 				DDF3078727C086CD006A526F /* bignum-dtoa.h in Headers */,
 				DDF307B227C086CD006A526F /* bignum.h in Headers */,
 				DDF307F127C086EA006A526F /* BinarySemaphore.h in Headers */,
-				DD3DC97B27A4BF8E007E5B61 /* Bitmap.h in Headers */,
+				DD3DC97B27A4BF8E007E5B61 /* BitSet.h in Headers */,
 				DD3DC8CF27A4BF8E007E5B61 /* BitVector.h in Headers */,
 				DD3DC95927A4BF8E007E5B61 /* BlockObjCExceptions.h in Headers */,
 				DD3DC98527A4BF8E007E5B61 /* BlockPtr.h in Headers */,

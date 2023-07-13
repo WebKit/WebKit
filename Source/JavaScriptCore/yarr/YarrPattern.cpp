@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2013-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Peter Varga (pvarga@inf.u-szeged.hu), University of Szeged
  *
  * Redistribution and use in source and binary forms, with or without
@@ -32,7 +32,7 @@
 #include "YarrCanonicalize.h"
 #include "YarrParser.h"
 #include <limits>
-#include <wtf/Bitmap.h>
+#include <wtf/BitSet.h>
 #include <wtf/DataLog.h>
 #include <wtf/StackCheck.h>
 #include <wtf/Vector.h>
@@ -665,37 +665,37 @@ private:
     {
         Vector<UChar32> resultMatches;
         Vector<CharacterRange> resultRanges;
-        Bitmap<0x80> lhsASCIIBitmap;
-        Bitmap<0x80> rhsASCIIBitmap;
+        WTF::BitSet<0x80> lhsASCIIBitSet;
+        WTF::BitSet<0x80> rhsASCIIBitSet;
 
         for (auto match : m_matches)
-            lhsASCIIBitmap.set(match);
+            lhsASCIIBitSet.set(match);
 
         for (auto range : m_ranges) {
             for (UChar32 ch = range.begin; ch <= range.end; ch++)
-                lhsASCIIBitmap.set(ch);
+                lhsASCIIBitSet.set(ch);
         }
 
         for (auto match : rhsMatches)
-            rhsASCIIBitmap.set(match);
+            rhsASCIIBitSet.set(match);
 
         for (auto range : rhsRanges) {
             for (UChar32 ch = range.begin; ch <= range.end; ch++)
-                rhsASCIIBitmap.set(ch);
+                rhsASCIIBitSet.set(ch);
         }
 
         switch (m_setOp) {
         case CharacterClassSetOp::Default:
         case CharacterClassSetOp::Union:
-            lhsASCIIBitmap.merge(rhsASCIIBitmap);
+            lhsASCIIBitSet.merge(rhsASCIIBitSet);
             break;
 
         case CharacterClassSetOp::Intersection:
-            lhsASCIIBitmap.filter(rhsASCIIBitmap);
+            lhsASCIIBitSet.filter(rhsASCIIBitSet);
             break;
 
         case CharacterClassSetOp::Subtraction:
-            lhsASCIIBitmap.exclude(rhsASCIIBitmap);
+            lhsASCIIBitSet.exclude(rhsASCIIBitSet);
             break;
         }
 
@@ -710,7 +710,7 @@ private:
                 resultRanges.append(CharacterRange(lo, hi));
         };
 
-        for (auto setVal : lhsASCIIBitmap) {
+        for (auto setVal : lhsASCIIBitSet) {
             UChar32 ch = static_cast<UChar32>(setVal);
             if (firstCharUnset) {
                 lo = hi = ch;
@@ -738,8 +738,8 @@ private:
         Vector<CharacterRange> resultRanges;
 
         constexpr size_t chunkSize = 2048;
-        Bitmap<chunkSize> lhsChunkBitmap;
-        Bitmap<chunkSize> rhsChunkBitmap;
+        WTF::BitSet<chunkSize> lhsChunkBitSet;
+        WTF::BitSet<chunkSize> rhsChunkBitSet;
 
         UChar32 chunkLo = INT_MAX, chunkHi;
 
@@ -777,7 +777,7 @@ private:
                 if (ch > chunkHi)
                     break;
 
-                lhsChunkBitmap.set(ch - chunkLo);
+                lhsChunkBitSet.set(ch - chunkLo);
             }
 
             for (; lhsRangeIndex < m_rangesUnicode.size(); ++lhsRangeIndex) {
@@ -789,7 +789,7 @@ private:
                 auto end = std::min(range.end, chunkHi);
 
                 for (UChar32 ch = begin; ch <= end; ch++)
-                    lhsChunkBitmap.set(ch - chunkLo);
+                    lhsChunkBitSet.set(ch - chunkLo);
 
                 if (range.end > chunkHi)
                     break;
@@ -800,7 +800,7 @@ private:
                 if (ch > chunkHi)
                     break;
 
-                rhsChunkBitmap.set(ch - chunkLo);
+                rhsChunkBitSet.set(ch - chunkLo);
             }
 
             for (; rhsRangeIndex < rhsRangesUnicode.size(); ++rhsRangeIndex) {
@@ -812,7 +812,7 @@ private:
                 auto end = std::min(range.end, chunkHi);
 
                 for (UChar32 ch = begin; ch <= end; ch++)
-                    rhsChunkBitmap.set(ch - chunkLo);
+                    rhsChunkBitSet.set(ch - chunkLo);
 
                 if (range.end > chunkHi)
                     break;
@@ -821,15 +821,15 @@ private:
             switch (m_setOp) {
             case CharacterClassSetOp::Default:
             case CharacterClassSetOp::Union:
-                lhsChunkBitmap.merge(rhsChunkBitmap);
+                lhsChunkBitSet.merge(rhsChunkBitSet);
                 break;
 
             case CharacterClassSetOp::Intersection:
-                lhsChunkBitmap.filter(rhsChunkBitmap);
+                lhsChunkBitSet.filter(rhsChunkBitSet);
                 break;
 
             case CharacterClassSetOp::Subtraction:
-                lhsChunkBitmap.exclude(rhsChunkBitmap);
+                lhsChunkBitSet.exclude(rhsChunkBitSet);
                 break;
             }
 
@@ -844,7 +844,7 @@ private:
                     resultRanges.append(CharacterRange(lo, hi));
             };
 
-            for (auto setVal : lhsChunkBitmap) {
+            for (auto setVal : lhsChunkBitSet) {
                 UChar32 ch = static_cast<UChar32>(setVal) + chunkLo;
                 if (firstCharUnset) {
                     lo = hi = ch;
@@ -863,8 +863,8 @@ private:
                 addCharToResults();
 
             chunkLo = chunkHi + 1;
-            lhsChunkBitmap.clearAll();
-            rhsChunkBitmap.clearAll();
+            lhsChunkBitSet.clearAll();
+            rhsChunkBitSet.clearAll();
         }
 
         m_matchesUnicode.swap(resultMatches);

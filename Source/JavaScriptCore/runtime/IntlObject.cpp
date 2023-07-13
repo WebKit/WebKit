@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2015 Andy VanWagoner (andy@vanwagoner.family)
  * Copyright (C) 2015 Sukolsak Sakshuwong (sukolsak@gmail.com)
- * Copyright (C) 2016-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2020 Sony Interactive Entertainment Inc.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -1442,7 +1442,7 @@ bool LanguageTagParser::parseExtensionsAndPUExtensions()
     //
     // pu_extensions = sep [xX] (sep alphanum{1,8})+ ;
     ASSERT(!isEOS());
-    Bitmap<numberOfUnicodeSingletons> singletonsSet { };
+    WTF::BitSet<numberOfUnicodeSingletons> singletonsSet { };
     while (true) {
         if (m_current.length() != 1)
             return true;

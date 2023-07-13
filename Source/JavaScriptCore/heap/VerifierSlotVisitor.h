@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,7 +31,7 @@
 #include "VisitRaceKey.h"
 #include "Weak.h"
 #include <memory>
-#include <wtf/Bitmap.h>
+#include <wtf/BitSet.h>
 #include <wtf/Deque.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/HashMap.h>
@@ -120,12 +120,12 @@ private:
         WTF_MAKE_FAST_ALLOCATED;
         WTF_MAKE_NONCOPYABLE(MarkedBlockData);
     public:
-        using AtomsBitmap = Bitmap<MarkedBlock::atomsPerBlock>;
+        using AtomsBitSet = WTF::BitSet<MarkedBlock::atomsPerBlock>;
 
         MarkedBlockData(MarkedBlock*);
 
         MarkedBlock* block() const { return m_block; }
-        const AtomsBitmap& atoms() const { return m_atoms; }
+        const AtomsBitSet& atoms() const { return m_atoms; }
 
         bool isMarked(unsigned atomNumber) { return m_atoms.get(atomNumber); }
         bool testAndSetMarked(unsigned atomNumber) { return m_atoms.testAndSet(atomNumber); }
@@ -135,7 +135,7 @@ private:
 
     private:
         MarkedBlock* m_block { nullptr };
-        AtomsBitmap m_atoms;
+        AtomsBitSet m_atoms;
         Vector<MarkerData> m_markers;
     };
 

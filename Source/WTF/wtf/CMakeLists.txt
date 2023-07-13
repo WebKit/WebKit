@@ -13,8 +13,8 @@ set(WTF_PUBLIC_HEADERS
     BackwardsGraph.h
     Bag.h
     BagToHashMap.h
+    BitSet.h
     BitVector.h
-    Bitmap.h
     BlockObjCExceptions.h
     BlockPtr.h
     BloomFilter.h
