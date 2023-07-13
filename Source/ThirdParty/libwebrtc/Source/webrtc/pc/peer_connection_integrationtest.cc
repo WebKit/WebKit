@@ -1831,6 +1831,10 @@ TEST_P(PeerConnectionIntegrationTest,
   EXPECT_EQ_WAIT(webrtc::PeerConnectionInterface::kIceConnectionConnected,
                  callee()->ice_connection_state(), kDefaultTimeout);
 
+  // Part of reporting the stats will occur on the network thread, so flush it
+  // before checking NumEvents.
+  SendTask(network_thread(), [] {});
+
   EXPECT_METRIC_EQ(1, webrtc::metrics::NumEvents(
                           "WebRTC.PeerConnection.CandidatePairType_UDP",
                           webrtc::kIceCandidatePairHostNameHostName));
@@ -1958,6 +1962,10 @@ TEST_P(PeerConnectionIntegrationIceStatesTest, MAYBE_VerifyBestConnection) {
                  caller()->ice_connection_state(), kDefaultTimeout);
   EXPECT_EQ_WAIT(webrtc::PeerConnectionInterface::kIceConnectionConnected,
                  callee()->ice_connection_state(), kDefaultTimeout);
+
+  // Part of reporting the stats will occur on the network thread, so flush it
+  // before checking NumEvents.
+  SendTask(network_thread(), [] {});
 
   // TODO(bugs.webrtc.org/9456): Fix it.
   const int num_best_ipv4 = webrtc::metrics::NumEvents(

@@ -405,7 +405,7 @@ void ApplySpatialLayerBitrateLimits(
     return;
   }
   if (VideoStreamEncoderResourceManager::IsSimulcastOrMultipleSpatialLayers(
-          encoder_config) ||
+          encoder_config, *codec) ||
       encoder_config.simulcast_layers.size() <= 1) {
     // Resolution bitrate limits usage is restricted to singlecast.
     return;

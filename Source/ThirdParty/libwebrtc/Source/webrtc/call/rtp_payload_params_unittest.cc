@@ -567,6 +567,7 @@ TEST(RtpPayloadParamsVp9ToGenericTest, NoScalability) {
   EncodedImage encoded_image;
   CodecSpecificInfo codec_info;
   codec_info.codecType = kVideoCodecVP9;
+  codec_info.codecSpecific.VP9.flexible_mode = true;
   codec_info.codecSpecific.VP9.num_spatial_layers = 1;
   codec_info.codecSpecific.VP9.temporal_idx = kNoTemporalIdx;
   codec_info.codecSpecific.VP9.first_frame_in_picture = true;
@@ -611,6 +612,55 @@ TEST(RtpPayloadParamsVp9ToGenericTest, NoScalability) {
   EXPECT_EQ(header.generic->chain_diffs[0], 3 - 1);
 }
 
+TEST(RtpPayloadParamsVp9ToGenericTest, NoScalabilityNonFlexibleMode) {
+  RtpPayloadState state;
+  RtpPayloadParams params(/*ssrc=*/123, &state, FieldTrialBasedConfig());
+
+  EncodedImage encoded_image;
+  CodecSpecificInfo codec_info;
+  codec_info.codecType = kVideoCodecVP9;
+  codec_info.codecSpecific.VP9.flexible_mode = false;
+  codec_info.codecSpecific.VP9.num_spatial_layers = 1;
+  codec_info.codecSpecific.VP9.temporal_idx = kNoTemporalIdx;
+  codec_info.codecSpecific.VP9.first_frame_in_picture = true;
+  codec_info.end_of_picture = true;
+
+  // Key frame.
+  encoded_image._frameType = VideoFrameType::kVideoFrameKey;
+  codec_info.codecSpecific.VP9.inter_pic_predicted = false;
+  RTPVideoHeader key_header =
+      params.GetRtpVideoHeader(encoded_image, &codec_info,
+                               /*shared_frame_id=*/1);
+
+  ASSERT_TRUE(key_header.generic);
+  EXPECT_EQ(key_header.generic->spatial_index, 0);
+  EXPECT_EQ(key_header.generic->temporal_index, 0);
+  EXPECT_EQ(key_header.generic->frame_id, 1);
+  ASSERT_THAT(key_header.generic->decode_target_indications, Not(IsEmpty()));
+  EXPECT_EQ(key_header.generic->decode_target_indications[0],
+            DecodeTargetIndication::kSwitch);
+  EXPECT_THAT(key_header.generic->dependencies, IsEmpty());
+  ASSERT_THAT(key_header.generic->chain_diffs, Not(IsEmpty()));
+  EXPECT_EQ(key_header.generic->chain_diffs[0], 0);
+
+  encoded_image._frameType = VideoFrameType::kVideoFrameDelta;
+  codec_info.codecSpecific.VP9.inter_pic_predicted = true;
+  RTPVideoHeader delta_header =
+      params.GetRtpVideoHeader(encoded_image, &codec_info,
+                               /*shared_frame_id=*/3);
+
+  ASSERT_TRUE(delta_header.generic);
+  EXPECT_EQ(delta_header.generic->spatial_index, 0);
+  EXPECT_EQ(delta_header.generic->temporal_index, 0);
+  EXPECT_EQ(delta_header.generic->frame_id, 3);
+  ASSERT_THAT(delta_header.generic->decode_target_indications, Not(IsEmpty()));
+  EXPECT_EQ(delta_header.generic->decode_target_indications[0],
+            DecodeTargetIndication::kSwitch);
+  EXPECT_THAT(delta_header.generic->dependencies, ElementsAre(1));
+  ASSERT_THAT(delta_header.generic->chain_diffs, Not(IsEmpty()));
+  EXPECT_EQ(delta_header.generic->chain_diffs[0], 3 - 1);
+}
+
 TEST(RtpPayloadParamsVp9ToGenericTest, TemporalScalabilityWith2Layers) {
   // Test with 2 temporal layers structure that is not used by webrtc:
   //    1---3   5
@@ -622,6 +672,7 @@ TEST(RtpPayloadParamsVp9ToGenericTest, TemporalScalabilityWith2Layers) {
   EncodedImage image;
   CodecSpecificInfo info;
   info.codecType = kVideoCodecVP9;
+  info.codecSpecific.VP9.flexible_mode = true;
   info.codecSpecific.VP9.num_spatial_layers = 1;
   info.codecSpecific.VP9.first_frame_in_picture = true;
   info.end_of_picture = true;
@@ -732,6 +783,7 @@ TEST(RtpPayloadParamsVp9ToGenericTest, TemporalScalabilityWith3Layers) {
   EncodedImage image;
   CodecSpecificInfo info;
   info.codecType = kVideoCodecVP9;
+  info.codecSpecific.VP9.flexible_mode = true;
   info.codecSpecific.VP9.num_spatial_layers = 1;
   info.codecSpecific.VP9.first_frame_in_picture = true;
   info.end_of_picture = true;
@@ -885,6 +937,7 @@ TEST(RtpPayloadParamsVp9ToGenericTest, SpatialScalabilityKSvc) {
   EncodedImage image;
   CodecSpecificInfo info;
   info.codecType = kVideoCodecVP9;
+  info.codecSpecific.VP9.flexible_mode = true;
   info.codecSpecific.VP9.num_spatial_layers = 2;
   info.codecSpecific.VP9.first_frame_in_picture = true;
 
@@ -993,6 +1046,7 @@ TEST(RtpPayloadParamsVp9ToGenericTest,
   EncodedImage image;
   CodecSpecificInfo info;
   info.codecType = kVideoCodecVP9;
+  info.codecSpecific.VP9.flexible_mode = true;
   info.codecSpecific.VP9.num_spatial_layers = 1;
   info.codecSpecific.VP9.first_frame_in_picture = true;
 

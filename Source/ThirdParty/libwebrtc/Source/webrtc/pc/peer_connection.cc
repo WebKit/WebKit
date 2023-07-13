@@ -739,9 +739,6 @@ JsepTransportController* PeerConnection::InitializeTransportController_n(
   transport_controller_->SubscribeIceConnectionState(
       [this](cricket::IceConnectionState s) {
         RTC_DCHECK_RUN_ON(network_thread());
-        if (s == cricket::kIceConnectionConnected) {
-          ReportTransportStats();
-        }
         signaling_thread()->PostTask(
             SafeTask(signaling_thread_safety_.flag(), [this, s]() {
               RTC_DCHECK_RUN_ON(signaling_thread());
@@ -2405,6 +2402,20 @@ void PeerConnection::OnTransportControllerConnectionState(
     case cricket::kIceConnectionConnected:
       RTC_LOG(LS_INFO) << "Changing to ICE connected state because "
                           "all transports are writable.";
+      {
+        std::vector<RtpTransceiverProxyRefPtr> transceivers;
+        if (ConfiguredForMedia()) {
+          transceivers = rtp_manager()->transceivers()->List();
+        }
+
+        network_thread()->PostTask(
+            SafeTask(network_thread_safety_,
+                     [this, transceivers = std::move(transceivers)] {
+                       RTC_DCHECK_RUN_ON(network_thread());
+                       ReportTransportStats(std::move(transceivers));
+                     }));
+      }
+
       SetIceConnectionState(PeerConnectionInterface::kIceConnectionConnected);
       NoteUsageEvent(UsageEvent::ICE_STATE_CONNECTED);
       break;
@@ -2748,20 +2759,18 @@ void PeerConnection::OnTransportControllerGatheringState(
 }
 
 // Runs on network_thread().
-void PeerConnection::ReportTransportStats() {
+void PeerConnection::ReportTransportStats(
+    std::vector<RtpTransceiverProxyRefPtr> transceivers) {
   TRACE_EVENT0("webrtc", "PeerConnection::ReportTransportStats");
   rtc::Thread::ScopedDisallowBlockingCalls no_blocking_calls;
   std::map<std::string, std::set<cricket::MediaType>>
       media_types_by_transport_name;
-  if (ConfiguredForMedia()) {
-    for (const auto& transceiver :
-         rtp_manager()->transceivers()->UnsafeList()) {
-      if (transceiver->internal()->channel()) {
-        std::string transport_name(
-            transceiver->internal()->channel()->transport_name());
-        media_types_by_transport_name[transport_name].insert(
-            transceiver->media_type());
-      }
+  for (const auto& transceiver : transceivers) {
+    if (transceiver->internal()->channel()) {
+      std::string transport_name(
+          transceiver->internal()->channel()->transport_name());
+      media_types_by_transport_name[transport_name].insert(
+          transceiver->media_type());
     }
   }
 

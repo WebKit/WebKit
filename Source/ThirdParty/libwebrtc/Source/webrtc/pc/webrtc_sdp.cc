@@ -3542,6 +3542,11 @@ bool ParseSsrcGroupAttribute(absl::string_view line,
     if (!GetValueFromString(line, fields[i], &ssrc, error)) {
       return false;
     }
+    // Reject duplicates. While not forbidden by RFC 5576,
+    // they don't make sense.
+    if (absl::c_linear_search(ssrcs, ssrc)) {
+      return ParseFailed(line, "Duplicate SSRC in ssrc-group", error);
+    }
     ssrcs.push_back(ssrc);
   }
   ssrc_groups->push_back(SsrcGroup(semantics, ssrcs));

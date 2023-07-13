@@ -181,9 +181,15 @@ class VideoEncoderConfig {
   // down to lower layers for the video encoding.
   // `simulcast_layers` is also used for configuring non-simulcast (when there
   // is a single VideoStream).
+  // We have the same number of `simulcast_layers` as we have negotiated
+  // encodings, for example 3 are used in both simulcast and legacy kSVC.
   std::vector<VideoStream> simulcast_layers;
 
   // Max number of encoded VideoStreams to produce.
+  // This is the same as the number of encodings negotiated (i.e. SSRCs),
+  // whether or not those encodings are `active`, except for when legacy kSVC
+  // is used. In this case we have three SSRCs but `number_of_streams` is
+  // changed to 1 to tell lower layers to limit the number of streams.
   size_t number_of_streams;
 
   // Legacy Google conference mode flag for simulcast screenshare
