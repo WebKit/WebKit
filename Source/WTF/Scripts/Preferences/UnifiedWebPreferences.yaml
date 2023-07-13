@@ -3405,7 +3405,6 @@ InterruptVideoOnPageVisibilityChangeEnabled:
     WebCore:
       default: false
 
-# FIXME: This is on by default in WebKit2. Perhaps we should consider turning it on for WebKitLegacy as well.
 IntersectionObserverEnabled:
   type: bool
   status: mature
