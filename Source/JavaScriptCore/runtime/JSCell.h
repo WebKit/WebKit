@@ -138,12 +138,12 @@ public:
     
     // Each cell has a built-in lock. Currently it's simply available for use if you need it. It's
     // a full-blown WTF::Lock. Note that this lock is currently used in JSArray and that lock's
-    // ordering with the Structure lock is that the Structure lock must be acquired first.
+    // ordering with the Structure lock is that the cell lock must be acquired first.
 
     // We use this abstraction to make it easier to grep for places where we lock cells.
     // to lock a cell you can just do:
-    // Locker locker { cell->cellLocker() };
-    JSCellLock& cellLock() { return *reinterpret_cast<JSCellLock*>(this); }
+    // Locker locker { cell->cellLock() };
+    JSCellLock& cellLock() const { return *reinterpret_cast<JSCellLock*>(const_cast<JSCell*>(this)); }
     
     JSType type() const;
     IndexingType indexingTypeAndMisc() const;
