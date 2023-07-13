@@ -663,9 +663,6 @@ void ElementRuleCollector::addMatchedProperties(MatchedProperties&& matchedPrope
         if (!m_result->isCacheable)
             return false;
 
-        if (matchedProperties.styleScopeOrdinal != ScopeOrdinal::Element)
-            return false;
-
         for (auto current : matchedProperties.properties.get()) {
             // Currently the property cache only copy the non-inherited values and resolve
             // the inherited ones.
