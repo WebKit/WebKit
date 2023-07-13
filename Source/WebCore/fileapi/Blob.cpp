@@ -59,7 +59,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(Blob);
 class BlobURLRegistry final : public URLRegistry {
 public:
     void registerURL(const ScriptExecutionContext&, const URL&, URLRegistrable&) final;
-    void unregisterURL(const URL&) final;
+    void unregisterURL(const URL&, const SecurityOriginData&) final;
     void unregisterURLsForContext(const ScriptExecutionContext&) final;
 
     static URLRegistry& registry();
@@ -75,10 +75,10 @@ void BlobURLRegistry::registerURL(const ScriptExecutionContext& context, const U
         Locker locker { m_urlsPerContextLock };
         m_urlsPerContext.add(context.identifier(), HashSet<URL>()).iterator->value.add(publicURL.isolatedCopy());
     }
-    ThreadableBlobRegistry::registerBlobURL(context.securityOrigin(), context.policyContainer(), publicURL, static_cast<Blob&>(blob).url());
+    ThreadableBlobRegistry::registerBlobURL(context.securityOrigin(), context.policyContainer(), publicURL, static_cast<Blob&>(blob).url(), context.topOrigin().data());
 }
 
-void BlobURLRegistry::unregisterURL(const URL& url)
+void BlobURLRegistry::unregisterURL(const URL& url, const SecurityOriginData& topOrigin)
 {
     bool isURLRegistered = false;
     {
@@ -95,7 +95,7 @@ void BlobURLRegistry::unregisterURL(const URL& url)
     if (!isURLRegistered)
         return;
 
-    ThreadableBlobRegistry::unregisterBlobURL(url);
+    ThreadableBlobRegistry::unregisterBlobURL(url, topOrigin);
 }
 
 void BlobURLRegistry::unregisterURLsForContext(const ScriptExecutionContext& context)
@@ -106,7 +106,7 @@ void BlobURLRegistry::unregisterURLsForContext(const ScriptExecutionContext& con
         urlsForContext = m_urlsPerContext.take(context.identifier());
     }
     for (auto& url : urlsForContext)
-        ThreadableBlobRegistry::unregisterBlobURL(url);
+        ThreadableBlobRegistry::unregisterBlobURL(url, context.topOrigin().data());
 }
 
 URLRegistry& BlobURLRegistry::registry()
@@ -197,7 +197,7 @@ Blob::Blob(DeserializationContructor, ScriptExecutionContext* context, const URL
     , m_internalURL(BlobURL::createInternalURL())
 {
     if (fileBackedPath.isEmpty())
-        ThreadableBlobRegistry::registerBlobURL(nullptr, { }, m_internalURL, srcURL);
+        ThreadableBlobRegistry::registerBlobURL(nullptr, { }, m_internalURL, srcURL, std::nullopt);
     else
         ThreadableBlobRegistry::registerInternalBlobURLOptionallyFileBacked(m_internalURL, srcURL, fileBackedPath, m_type);
 }
@@ -214,7 +214,7 @@ Blob::Blob(ScriptExecutionContext* context, const URL& srcURL, long long start, 
 
 Blob::~Blob()
 {
-    ThreadableBlobRegistry::unregisterBlobURL(m_internalURL);
+    ThreadableBlobRegistry::unregisterBlobURL(m_internalURL, std::nullopt);
     while (!m_blobLoaders.isEmpty())
         (*m_blobLoaders.begin())->cancel();
 }

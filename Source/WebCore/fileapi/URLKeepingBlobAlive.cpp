@@ -64,13 +64,13 @@ URLKeepingBlobAlive& URLKeepingBlobAlive::operator=(URLKeepingBlobAlive&& other)
 void URLKeepingBlobAlive::registerBlobURLHandleIfNecessary()
 {
     if (m_url.protocolIsBlob())
-        ThreadableBlobRegistry::registerBlobURLHandle(m_url);
+        ThreadableBlobRegistry::registerBlobURLHandle(m_url, m_topOrigin);
 }
 
 void URLKeepingBlobAlive::unregisterBlobURLHandleIfNecessary()
 {
     if (m_url.protocolIsBlob())
-        ThreadableBlobRegistry::unregisterBlobURLHandle(m_url);
+        ThreadableBlobRegistry::unregisterBlobURLHandle(m_url, m_topOrigin);
 }
 
 URLKeepingBlobAlive URLKeepingBlobAlive::isolatedCopy() const

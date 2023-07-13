@@ -36,6 +36,7 @@
 namespace WebCore {
 
 class ScriptExecutionContext;
+class SecurityOriginData;
 class URLRegistry;
 
 class URLRegistrable {
@@ -53,7 +54,7 @@ public:
 
     virtual ~URLRegistry();
     virtual void registerURL(const ScriptExecutionContext&, const URL&, URLRegistrable&) = 0;
-    virtual void unregisterURL(const URL&) = 0;
+    virtual void unregisterURL(const URL&, const SecurityOriginData& topOrigin) = 0;
     virtual void unregisterURLsForContext(const ScriptExecutionContext&) = 0;
 
     // This is an optional API

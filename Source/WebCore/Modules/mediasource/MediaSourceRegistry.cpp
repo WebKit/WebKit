@@ -62,7 +62,7 @@ void MediaSourceRegistry::registerURL(const ScriptExecutionContext& context, con
     m_mediaSources.add(urlString, std::pair { RefPtr { &source }, context.identifier() });
 }
 
-void MediaSourceRegistry::unregisterURL(const URL& url)
+void MediaSourceRegistry::unregisterURL(const URL& url, const SecurityOriginData&)
 {
     // MediaSource objects are not exposed to workers.
     if (!isMainThread())
