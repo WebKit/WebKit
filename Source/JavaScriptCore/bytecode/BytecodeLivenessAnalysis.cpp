@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -165,9 +165,9 @@ constexpr bool enumValuesEqualAsIntegral(EnumType1 v1, EnumType2 v2)
         return static_cast<IntType2>(v1) == static_cast<IntType2>(v2);
 }
 
-Bitmap<maxNumCheckpointTmps> tmpLivenessForCheckpoint(const CodeBlock& codeBlock, BytecodeIndex bytecodeIndex)
+WTF::BitSet<maxNumCheckpointTmps> tmpLivenessForCheckpoint(const CodeBlock& codeBlock, BytecodeIndex bytecodeIndex)
 {
-    Bitmap<maxNumCheckpointTmps> result;
+    WTF::BitSet<maxNumCheckpointTmps> result;
     Checkpoint checkpoint = bytecodeIndex.checkpoint();
 
     if (!checkpoint)
