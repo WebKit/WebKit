@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,6 +26,7 @@
 #pragma once
 
 #include <array>
+#include <wtf/EnumTraits.h>
 
 namespace WTF {
 
@@ -33,7 +34,7 @@ namespace WTF {
 // This assumes the values of the enum start at 0 and monotonically increase by 1
 // (so the conversion function between size_t and the enum is just a simple static_cast).
 // LastValue is the maximum value of the enum, which determines the size of the array.
-template <typename Key, typename T, Key LastValue>
+template <typename Key, typename T, Key LastValue = EnumTraits<Key>::values::max>
 class EnumeratedArray {
     WTF_MAKE_FAST_ALLOCATED;
 public:

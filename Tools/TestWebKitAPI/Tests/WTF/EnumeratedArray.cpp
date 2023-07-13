@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,6 +26,8 @@
 #include "config.h"
 #include <wtf/EnumeratedArray.h>
 
+#include <wtf/EnumTraits.h>
+
 namespace TestWebKitAPI {
 
 enum class Foo {
@@ -33,6 +35,23 @@ enum class Foo {
     Two,
     Three,
 };
+
+} // namespace TestWebKitAPI
+
+namespace WTF {
+
+template<> struct EnumTraits<TestWebKitAPI::Foo> {
+    using values = EnumValues<
+        TestWebKitAPI::Foo,
+        TestWebKitAPI::Foo::One,
+        TestWebKitAPI::Foo::Two,
+        TestWebKitAPI::Foo::Three
+    >;
+};
+
+} // namespace WTF
+
+namespace TestWebKitAPI {
 
 TEST(WTF_EnumeratedArray, Basic)
 {
@@ -144,6 +163,13 @@ TEST(WTF_EnumeratedArray, Iteration)
         }
         ++index;
     }
+}
+
+TEST(WTF_EnumeratedArray, InferMax)
+{
+    EnumeratedArray<Foo, int> array1 { { 3, 10, 17 } };
+    EXPECT_EQ(array1.front(), 3);
+    EXPECT_EQ(array1.back(), 17);
 }
 
 } // namespace TestWebKitAPI

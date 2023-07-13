@@ -2,7 +2,7 @@
 #
 # Copyright (C) 2009, 2010, 2012 Google Inc. All rights reserved.
 # Copyright (C) 2009 Torch Mobile Inc.
-# Copyright (C) 2009-2022 Apple Inc. All rights reserved.
+# Copyright (C) 2009-2023 Apple Inc. All rights reserved.
 # Copyright (C) 2010 Chris Jerdonek (cjerdonek@webkit.org)
 #
 # Redistribution and use in source and binary forms, with or without
@@ -1364,6 +1364,8 @@ class _EnumState(object):
                 if self.is_webidl_enum:
                     return False
                 if enum_name in _ALLOW_ALL_UPPERCASE_ENUM:
+                    return False
+                if len(all_uppercase.group('value')) < 2:
                     return False
                 return not all_uppercase.group('value') in _ALLOW_ABBREVIATION_ENUM_VALUES
             return match(expr_starts_lowercase, value_declaration)

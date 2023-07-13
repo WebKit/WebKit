@@ -25,7 +25,6 @@
 
 #pragma once
 
-#import <wtf/EnumeratedArray.h>
 #import <wtf/FastMalloc.h>
 #import <wtf/HashMap.h>
 #import <wtf/HashTraits.h>
