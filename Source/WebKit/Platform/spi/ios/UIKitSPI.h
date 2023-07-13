@@ -34,7 +34,6 @@
 #import <UIKit/UIApplication_Private.h>
 #import <UIKit/UIBarButtonItem_Private.h>
 #import <UIKit/UIBlurEffect_Private.h>
-#import <UIKit/UICalloutBar.h>
 #import <UIKit/UIClickInteraction_Private.h>
 #import <UIKit/UIClickPresentationInteraction_Private.h>
 #import <UIKit/UIColorEffect.h>
@@ -1197,11 +1196,6 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 @property (nonatomic) BOOL dontDismiss;
 @end
 ALLOW_DEPRECATED_DECLARATIONS_END
-
-@interface UICalloutBar : UIView
-+ (UICalloutBar *)activeCalloutBar;
-+ (void)fadeSharedCalloutBar;
-@end
 
 @interface UIAutoRotatingWindow : UIApplicationRotationFollowingWindow
 @end

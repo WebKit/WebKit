@@ -4820,8 +4820,8 @@ static void selectionChangedWithTouch(WKContentView *view, const WebCore::IntPoi
         }
 
         // Give the page some time to present custom editing UI before attempting to detect and evade it.
-        auto delayBeforeShowingCalloutBar = std::max(0_s, 0.25_s - (ApproximateTime::now() - startTime));
-        WorkQueue::main().dispatchAfter(delayBeforeShowingCalloutBar, [completion = WTFMove(completion), weakSelf]() mutable {
+        auto delayBeforeShowingEditMenu = std::max(0_s, 0.25_s - (ApproximateTime::now() - startTime));
+        WorkQueue::main().dispatchAfter(delayBeforeShowingEditMenu, [completion = WTFMove(completion), weakSelf]() mutable {
             auto strongSelf = weakSelf.get();
             if (!strongSelf) {
                 completion({ });
@@ -9131,13 +9131,13 @@ static std::optional<WebCore::DragOperation> coreDragOperationForUIDropOperation
     }
 
     [[WebItemProviderPasteboard sharedInstance] clearRegistrationLists];
-    [self _restoreCalloutBarIfNeeded];
+    [self _restoreEditMenuIfNeeded];
 
     [self _removeContainerForDragPreviews];
     [std::exchange(_visibleContentViewSnapshot, nil) removeFromSuperview];
     [_editDropCaretView remove];
     _editDropCaretView = nil;
-    _shouldRestoreCalloutBarAfterDrop = NO;
+    _shouldRestoreEditMenuAfterDrop = NO;
 
     _dragDropInteractionState.dragAndDropSessionsDidEnd();
     _dragDropInteractionState = { };
@@ -9329,14 +9329,14 @@ static NSArray<NSItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
     return _dragDropInteractionState.dragSession();
 }
 
-- (void)_restoreCalloutBarIfNeeded
+- (void)_restoreEditMenuIfNeeded
 {
-    if (!_shouldRestoreCalloutBarAfterDrop)
+    if (!_shouldRestoreEditMenuAfterDrop)
         return;
 
     // FIXME: This SPI should be renamed in UIKit to reflect a more general purpose of revealing hidden interaction assistant controls.
     [_textInteractionAssistant didEndScrollingOverflow];
-    _shouldRestoreCalloutBarAfterDrop = NO;
+    _shouldRestoreEditMenuAfterDrop = NO;
 }
 
 - (NSArray<UIDragItem *> *)_itemsForBeginningOrAddingToSessionWithRegistrationLists:(NSArray<WebItemProviderRegistrationInfoList *> *)registrationLists stagedDragSource:(const WebKit::DragSourceState&)stagedDragSource
@@ -9859,10 +9859,10 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
     RELEASE_LOG(DragAndDrop, "Drag session willAnimateLiftWithAnimator: %p", session);
     if (_dragDropInteractionState.anyActiveDragSourceContainsSelection()) {
         [self cancelActiveTextInteractionGestures];
-        if (!_shouldRestoreCalloutBarAfterDrop) {
+        if (!_shouldRestoreEditMenuAfterDrop) {
             // FIXME: This SPI should be renamed in UIKit to reflect a more general purpose of hiding interaction assistant controls.
             [_textInteractionAssistant willStartScrollingOverflow];
-            _shouldRestoreCalloutBarAfterDrop = YES;
+            _shouldRestoreEditMenuAfterDrop = YES;
         }
     }
 
@@ -9901,7 +9901,7 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
 {
     RELEASE_LOG(DragAndDrop, "Drag session ended: %p (with operation: %tu, performing operation: %d, began dragging: %d)", session, operation, _dragDropInteractionState.isPerformingDrop(), _dragDropInteractionState.didBeginDragging());
 
-    [self _restoreCalloutBarIfNeeded];
+    [self _restoreEditMenuIfNeeded];
 
     id <WKUIDelegatePrivate> uiDelegate = self.webViewUIDelegate;
     if ([uiDelegate respondsToSelector:@selector(_webView:dataInteraction:session:didEndWithOperation:)])

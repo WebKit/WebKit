@@ -1170,20 +1170,6 @@ WebCore::FloatRect UIScriptControllerIOS::rectForMenuAction(CFStringRef action) 
 {
     UIView *viewForAction = nil;
 
-    if (UIView *calloutBar = UICalloutBar.activeCalloutBar; calloutBar.window) {
-        for (UIButton *button in findAllViewsInHierarchyOfType(calloutBar, UIButton.class)) {
-            NSString *buttonTitle = [button titleForState:UIControlStateNormal];
-            if (!buttonTitle.length)
-                continue;
-
-            if (![buttonTitle isEqualToString:(__bridge NSString *)action])
-                continue;
-
-            viewForAction = button;
-            break;
-        }
-    }
-
     auto searchForLabel = [&](UIWindow *window) -> UILabel * {
         for (UILabel *label in findAllViewsInHierarchyOfType(window, UILabel.class)) {
             if ([label.text isEqualToString:(__bridge NSString *)action])
@@ -1204,11 +1190,7 @@ WebCore::FloatRect UIScriptControllerIOS::rectForMenuAction(CFStringRef action) 
 
 JSObjectRef UIScriptControllerIOS::menuRect() const
 {
-    UIView *containerView = nil;
-    if (auto *calloutBar = UICalloutBar.activeCalloutBar; calloutBar.window)
-        containerView = calloutBar;
-    else
-        containerView = findAllViewsInHierarchyOfType(webView().textEffectsWindow, internalClassNamed(@"_UIEditMenuListView")).firstObject;
+    auto containerView = findAllViewsInHierarchyOfType(webView().textEffectsWindow, internalClassNamed(@"_UIEditMenuListView")).firstObject;
     return containerView ? toObject([containerView convertRect:containerView.bounds toView:platformContentView()]) : nullptr;
 }
 

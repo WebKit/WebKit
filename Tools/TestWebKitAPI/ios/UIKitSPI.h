@@ -35,7 +35,6 @@
 #import <UIKit/UIAction_Private.h>
 #import <UIKit/UIApplication_Private.h>
 #import <UIKit/UIBarButtonItemGroup_Private.h>
-#import <UIKit/UICalloutBar.h>
 #import <UIKit/UIKeyboardImpl.h>
 #import <UIKit/UIKeyboard_Private.h>
 #import <UIKit/UIResponder_Private.h>
@@ -141,11 +140,6 @@ WTF_EXTERN_C_END
 @end
 
 @interface UIKeyboard : UIView
-@end
-
-@interface UICalloutBar : UIView
-+ (UICalloutBar *)sharedCalloutBar;
-+ (UICalloutBar *)activeCalloutBar;
 @end
 
 @interface _UINavigationInteractiveTransitionBase : UIPercentDrivenInteractiveTransition

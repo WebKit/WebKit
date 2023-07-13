@@ -509,7 +509,7 @@ struct ImageAnalysisContextMenuActionData {
     RetainPtr<UIDragInteraction> _dragInteraction;
     RetainPtr<UIDropInteraction> _dropInteraction;
     BOOL _isAnimatingDragCancel;
-    BOOL _shouldRestoreCalloutBarAfterDrop;
+    BOOL _shouldRestoreEditMenuAfterDrop;
     RetainPtr<UIView> _visibleContentViewSnapshot;
     RetainPtr<UIView> _unselectedContentSnapshot;
     RetainPtr<_UITextDragCaretView> _editDropCaretView;
