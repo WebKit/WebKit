@@ -120,6 +120,9 @@ public:
     }
 
     JSString* fiber(unsigned index) const { return m_fibers[index]; }
+    JSString* fiber0() const { return m_fibers[0]; }
+    JSString* fiber1() const { return m_fibers[1]; }
+    JSString* fiber2() const { return m_fibers[2]; }
 
 private:
     std::array<JSString*, JSRopeString::s_maxInternalRopeLength> m_fibers { };
@@ -177,28 +180,88 @@ void JSRopeString::resolveToBufferSlow(Fibers* fibers, CharacterType* buffer, un
 }
 
 template<typename Fibers, typename CharacterType>
-inline void JSRopeString::resolveToBuffer(Fibers* fibers, CharacterType* buffer, unsigned length)
+inline void JSRopeString::resolveToBuffer(Fibers* fibers, CharacterType* buffer, unsigned length, uint8_t* stackLimit)
 {
-    for (size_t i = 0; i < JSRopeString::s_maxInternalRopeLength; ++i) {
-        JSString* fiber = fibers->fiber(i);
-        if (!fiber)
-            break;
-        if (fiber->isRope()) {
-            JSRopeString::resolveToBufferSlow(fibers, buffer, length);
-            return;
+    if (UNLIKELY(bitwise_cast<uint8_t*>(currentStackPointer()) < stackLimit))
+        return JSRopeString::resolveToBufferSlow(fibers, buffer, length);
+
+    static_assert(3 == JSRopeString::s_maxInternalRopeLength);
+    CharacterType* position = buffer;
+    auto* fiber0 = fibers->fiber0();
+    auto* fiber1 = fibers->fiber1();
+    auto* fiber2 = fibers->fiber2();
+
+    // 3 fibers.
+    if (fiber2) {
+        if (fiber0->isRope() || fiber1->isRope() || fiber2->isRope())
+            return JSRopeString::resolveToBufferSlow(fibers, buffer, length);
+
+        for (size_t i = 0; i < JSRopeString::s_maxInternalRopeLength; ++i) {
+            JSString* fiber = fibers->fiber(i);
+            ASSERT(!fiber->isRope());
+            StringView view = fiber->valueInternal().impl();
+            view.getCharacters(position);
+            position += view.length();
         }
+        return;
     }
 
-    CharacterType* position = buffer;
-    for (size_t i = 0; i < JSRopeString::s_maxInternalRopeLength; ++i) {
-        JSString* fiber = fibers->fiber(i);
-        if (!fiber)
-            break;
-        StringView view = fiber->valueInternal().impl();
-        view.getCharacters(position);
-        position += view.length();
+    // 2 fibers.
+    if (LIKELY(fiber1)) {
+        if (fiber0->isRope()) {
+            if (fiber1->isRope())
+                return JSRopeString::resolveToBufferSlow(fibers, buffer, length);
+
+            auto* rope0 = static_cast<const JSRopeString*>(fiber0);
+            StringView view1 = fiber1->valueInternal().impl();
+            view1.getCharacters(position + rope0->length());
+            if (rope0->isSubstring()) {
+                StringView view0 = *rope0->substringBase()->valueInternal().impl();
+                unsigned offset = rope0->substringOffset();
+                unsigned length = rope0->length();
+                view0.substring(offset, length).getCharacters(position);
+                return;
+            }
+            return resolveToBuffer(rope0, position, rope0->length(), stackLimit);
+        }
+
+        if (fiber1->isRope()) {
+            StringView view0 = fiber0->valueInternal().impl();
+            view0.getCharacters(position);
+            auto* rope1 = static_cast<const JSRopeString*>(fiber1);
+            if (rope1->isSubstring()) {
+                StringView view1 = *rope1->substringBase()->valueInternal().impl();
+                unsigned offset = rope1->substringOffset();
+                unsigned length = rope1->length();
+                view1.substring(offset, length).getCharacters(position + view0.length());
+                return;
+            }
+            return resolveToBuffer(rope1, position + view0.length(), rope1->length(), stackLimit);
+        }
+
+        StringView view0 = fiber0->valueInternal().impl();
+        view0.getCharacters(position);
+        StringView view1 = fiber1->valueInternal().impl();
+        view1.getCharacters(position + view0.length());
+        return;
     }
-    ASSERT((buffer + length) == position);
+
+    // 1 fiber.
+    if (!fiber0->isRope()) {
+        StringView view0 = fiber0->valueInternal().impl();
+        view0.getCharacters(position);
+        return;
+    }
+
+    auto* rope0 = static_cast<const JSRopeString*>(fiber0);
+    if (rope0->isSubstring()) {
+        StringView view0 = *rope0->substringBase()->valueInternal().impl();
+        unsigned offset = rope0->substringOffset();
+        unsigned length = rope0->length();
+        view0.substring(offset, length).getCharacters(position);
+        return;
+    }
+    return resolveToBuffer(rope0, position, rope0->length(), stackLimit);
 }
 
 inline JSString* jsAtomString(JSGlobalObject* globalObject, VM& vm, JSString* string)
@@ -241,14 +304,15 @@ inline JSString* jsAtomString(JSGlobalObject* globalObject, VM& vm, JSString* st
 
     AtomString atomString;
     if (!ropeString->isSubstring()) {
+        uint8_t* stackLimit = bitwise_cast<uint8_t*>(vm.softStackLimit());
         if (ropeString->is8Bit()) {
             LChar characters[KeyAtomStringCache::maxStringLengthForCache];
-            JSRopeString::resolveToBuffer(ropeString, characters, length);
+            JSRopeString::resolveToBuffer(ropeString, characters, length, stackLimit);
             WTF::HashTranslatorCharBuffer<LChar> buffer { characters, length };
             return vm.keyAtomStringCache.make(vm, buffer, createFromRope);
         }
         UChar characters[KeyAtomStringCache::maxStringLengthForCache];
-        JSRopeString::resolveToBuffer(ropeString, characters, length);
+        JSRopeString::resolveToBuffer(ropeString, characters, length, stackLimit);
         WTF::HashTranslatorCharBuffer<UChar> buffer { characters, length };
         return vm.keyAtomStringCache.make(vm, buffer, createFromRope);
     }
@@ -291,15 +355,16 @@ inline JSString* jsAtomString(JSGlobalObject* globalObject, VM& vm, JSString* s1
         return jsString(vm, String { AtomStringImpl::add(buffer) });
     };
 
+    uint8_t* stackLimit = bitwise_cast<uint8_t*>(vm.softStackLimit());
     JSStringFibers fibers(s1, s2, nullptr);
     if (s1->is8Bit() && s2->is8Bit()) {
         LChar characters[KeyAtomStringCache::maxStringLengthForCache];
-        JSRopeString::resolveToBuffer(&fibers, characters, length);
+        JSRopeString::resolveToBuffer(&fibers, characters, length, stackLimit);
         WTF::HashTranslatorCharBuffer<LChar> buffer { characters, length };
         return vm.keyAtomStringCache.make(vm, buffer, createFromFibers);
     }
     UChar characters[KeyAtomStringCache::maxStringLengthForCache];
-    JSRopeString::resolveToBuffer(&fibers, characters, length);
+    JSRopeString::resolveToBuffer(&fibers, characters, length, stackLimit);
     WTF::HashTranslatorCharBuffer<UChar> buffer { characters, length };
     return vm.keyAtomStringCache.make(vm, buffer, createFromFibers);
 }
@@ -339,15 +404,16 @@ inline JSString* jsAtomString(JSGlobalObject* globalObject, VM& vm, JSString* s1
         return jsString(vm, String { AtomStringImpl::add(buffer) });
     };
 
+    uint8_t* stackLimit = bitwise_cast<uint8_t*>(vm.softStackLimit());
     JSStringFibers fibers(s1, s2, s3);
     if (s1->is8Bit() && s2->is8Bit() && s3->is8Bit()) {
         LChar characters[KeyAtomStringCache::maxStringLengthForCache];
-        JSRopeString::resolveToBuffer(&fibers, characters, length);
+        JSRopeString::resolveToBuffer(&fibers, characters, length, stackLimit);
         WTF::HashTranslatorCharBuffer<LChar> buffer { characters, length };
         return vm.keyAtomStringCache.make(vm, buffer, createFromFibers);
     }
     UChar characters[KeyAtomStringCache::maxStringLengthForCache];
-    JSRopeString::resolveToBuffer(&fibers, characters, length);
+    JSRopeString::resolveToBuffer(&fibers, characters, length, stackLimit);
     WTF::HashTranslatorCharBuffer<UChar> buffer { characters, length };
     return vm.keyAtomStringCache.make(vm, buffer, createFromFibers);
 }
