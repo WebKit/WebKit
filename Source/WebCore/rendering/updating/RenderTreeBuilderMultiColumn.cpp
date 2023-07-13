@@ -373,7 +373,10 @@ RenderObject* RenderTreeBuilder::MultiColumn::processPossibleSpannerDescendant(R
             // column set at the end of the multicol container. We don't really check here if the
             // child inserted precedes any spanner or not (as that's an expensive operation). Just
             // make sure we have a column set at the end. It's no big deal if it remains unused.
-            if (!lastSet->nextSibling())
+
+            // Legends are siblings of RenderMultiColumnSets not because they are spanners, but because they don't participate in multi-column context.
+            auto hasMultiColumnSet = !lastSet->nextSibling() || lastSet->nextSibling()->isLegend();
+            if (hasMultiColumnSet)
                 return nextDescendant;
         }
     }
