@@ -99,6 +99,24 @@ static bool copyI420BufferToPixelBuffer(CVPixelBufferRef pixelBuffer, const uint
     auto* sourceV = buffer + layout.offsetV;
     int sourceStrideV = layout.strideV;
 
+    RTC_DCHECK(layout.strideY);
+    RTC_DCHECK(layout.strideU);
+    RTC_DCHECK(layout.strideV);
+    if (!layout.strideY || !layout.strideU || !layout.strideV)
+        return false;
+
+    auto* sourceEnd = buffer + length;
+    size_t sourceULength, sourceVLength, sourceYLength = 0;
+    if (__builtin_mul_overflow(sourceHeightUV, layout.strideU, &sourceULength)
+        || __builtin_mul_overflow(sourceHeightUV, layout.strideV, &sourceVLength)
+        || __builtin_mul_overflow(sourceHeightY, layout.strideY, &sourceYLength))
+        return false;
+
+    RTC_DCHECK(sourceEnd >= sourceY + sourceYLength);
+    RTC_DCHECK(sourceEnd >= sourceU + sourceULength);
+    RTC_DCHECK(sourceEnd >= sourceV + sourceVLength);
+    if ((sourceEnd < sourceY + sourceYLength) || (sourceEnd < sourceU + sourceULength) || (sourceEnd < sourceV + sourceVLength))
+        return false;
     return !libyuv::I420ToNV12(
         sourceY, sourceStrideY,
         sourceU, sourceStrideU,

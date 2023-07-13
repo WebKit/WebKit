@@ -212,7 +212,8 @@ ExceptionOr<CombinedPlaneLayout> computeLayoutAndAllocationSize(const DOMRectIni
         computedLayout.sourceHeight = parsedRect.height / sampleHeight;
         computedLayout.sourceLeftBytes = pixelSampleCount * parsedRect.x / sampleWidthBytes;
         computedLayout.sourceWidthBytes = pixelSampleCount * parsedRect.width / sampleWidthBytes;
-
+        if (!computedLayout.sourceWidthBytes)
+            return Exception { TypeError, "layout width bytes is zero"_s };
         if (layout) {
             if (layout.value()[i].stride < computedLayout.sourceWidthBytes)
                 return Exception { TypeError, "layout stride is invalid"_s };
