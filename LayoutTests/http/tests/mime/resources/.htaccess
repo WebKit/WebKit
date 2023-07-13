@@ -1,0 +1,6 @@
+<Files xml-with-html.xml>
+ForceType "text/plain"
+</Files>
+<Files svg-with-html.svg>
+ForceType "text/plain"
+</Files>
