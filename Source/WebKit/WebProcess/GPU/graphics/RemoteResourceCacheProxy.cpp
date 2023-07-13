@@ -160,7 +160,8 @@ void RemoteResourceCacheProxy::recordFilterUse(Filter& filter)
 
 void RemoteResourceCacheProxy::recordNativeImageUse(NativeImage& image)
 {
-    WebProcess::singleton().deferNonVisibleProcessEarlyMemoryCleanupTimer();
+    if (isMainRunLoop())
+        WebProcess::singleton().deferNonVisibleProcessEarlyMemoryCleanupTimer();
 
     if (cachedNativeImage(image.renderingResourceIdentifier()))
         return;
