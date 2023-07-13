@@ -46,7 +46,7 @@ function then(onFulfilled, onRejected)
         promise = promiseOrCapability;
     } else {
         promiseOrCapability = @newPromiseCapabilitySlow(constructor);
-        promise = promiseOrCapability.@promise;
+        promise = promiseOrCapability.promise;
     }
 
     @performPromiseThen(this, onFulfilled, onRejected, promiseOrCapability, @undefined);

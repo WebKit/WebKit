@@ -140,7 +140,7 @@ function fulfillFetch(entry, source)
     "use strict";
 
     if (!entry.fetch)
-        entry.fetch = @newPromiseCapability(@InternalPromise).@promise;
+        entry.fetch = @newPromiseCapability(@InternalPromise).promise;
     @forceFulfillPromise(entry.fetch, source);
     @setStateToMax(entry, @ModuleInstantiate);
 }

@@ -57,28 +57,28 @@ function newPromiseCapabilitySlow(constructor)
     "use strict";
 
     var promiseCapability = {
-        @resolve: @undefined,
-        @reject: @undefined,
-        @promise: @undefined,
+        resolve: @undefined,
+        reject: @undefined,
+        promise: @undefined,
     };
 
     var promise = new constructor((resolve, reject) => {
-        if (promiseCapability.@resolve !== @undefined)
+        if (promiseCapability.resolve !== @undefined)
             @throwTypeError("resolve function is already set");
-        if (promiseCapability.@reject !== @undefined)
+        if (promiseCapability.reject !== @undefined)
             @throwTypeError("reject function is already set");
 
-        promiseCapability.@resolve = resolve;
-        promiseCapability.@reject = reject;
+        promiseCapability.resolve = resolve;
+        promiseCapability.reject = reject;
     });
 
-    if (!@isCallable(promiseCapability.@resolve))
+    if (!@isCallable(promiseCapability.resolve))
         @throwTypeError("executor did not take a resolve function");
 
-    if (!@isCallable(promiseCapability.@reject))
+    if (!@isCallable(promiseCapability.reject))
         @throwTypeError("executor did not take a reject function");
 
-    promiseCapability.@promise = promise;
+    promiseCapability.promise = promise;
 
     return promiseCapability;
 }
@@ -97,7 +97,7 @@ function newPromiseCapability(constructor)
         function @reject(reason) {
             return @rejectPromiseWithFirstResolvingFunctionCallCheck(capturedPromise, reason);
         }
-        return { @resolve, @reject, @promise: promise };
+        return { resolve: @resolve, reject: @reject, promise };
     }
 
     return @newPromiseCapabilitySlow(constructor);
@@ -127,8 +127,8 @@ function promiseResolveSlow(constructor, value)
 
     @assert(constructor !== @Promise);
     var promiseCapability = @newPromiseCapabilitySlow(constructor);
-    promiseCapability.@resolve.@call(@undefined, value);
-    return promiseCapability.@promise;
+    promiseCapability.resolve.@call(@undefined, value);
+    return promiseCapability.promise;
 }
 
 @linkTimeConstant
@@ -138,8 +138,8 @@ function promiseRejectSlow(constructor, reason)
 
     @assert(constructor !== @Promise);
     var promiseCapability = @newPromiseCapabilitySlow(constructor);
-    promiseCapability.@reject.@call(@undefined, reason);
-    return promiseCapability.@promise;
+    promiseCapability.reject.@call(@undefined, reason);
+    return promiseCapability.promise;
 }
 
 @linkTimeConstant
@@ -304,7 +304,7 @@ function createResolvingFunctions(promise)
         return @rejectPromise(promise, reason);
     });
 
-    return { @resolve: resolve, @reject: reject };
+    return { resolve, reject };
 }
 
 @linkTimeConstant
@@ -413,7 +413,7 @@ function createResolvingFunctionsWithoutPromise(onFulfilled, onRejected, context
         @rejectWithoutPromise(reason, onFulfilled, onRejected, context);
     });
 
-    return { @resolve: resolve, @reject: reject };
+    return { resolve, reject };
 }
 
 @linkTimeConstant
@@ -458,7 +458,7 @@ function promiseReactionJob(promiseOrCapability, handler, argument, contextOrSta
             @rejectPromise(promiseOrCapability, error);
             return;
         }
-        promiseOrCapability.@reject.@call(@undefined, error);
+        promiseOrCapability.reject.@call(@undefined, error);
         return;
     }
 
@@ -466,7 +466,7 @@ function promiseReactionJob(promiseOrCapability, handler, argument, contextOrSta
         @resolvePromise(promiseOrCapability, result);
         return;
     }
-    promiseOrCapability.@resolve.@call(@undefined, result);
+    promiseOrCapability.resolve.@call(@undefined, result);
 }
 
 @linkTimeConstant
@@ -535,9 +535,9 @@ function promiseResolveThenableJob(thenable, then, resolvingFunctions)
     "use strict";
 
     try {
-        return then.@call(thenable, resolvingFunctions.@resolve, resolvingFunctions.@reject);
+        return then.@call(thenable, resolvingFunctions.resolve, resolvingFunctions.reject);
     } catch (error) {
-        return resolvingFunctions.@reject.@call(@undefined, error);
+        return resolvingFunctions.reject.@call(@undefined, error);
     }
 }
 
@@ -548,10 +548,10 @@ function promiseResolveThenableJobWithDerivedPromise(thenable, constructor, reso
 
     try {
         var promiseOrCapability = @newPromiseCapabilitySlow(constructor);
-        @performPromiseThen(thenable, resolvingFunctions.@resolve, resolvingFunctions.@reject, promiseOrCapability, @undefined);
-        return promiseOrCapability.@promise;
+        @performPromiseThen(thenable, resolvingFunctions.resolve, resolvingFunctions.reject, promiseOrCapability, @undefined);
+        return promiseOrCapability.promise;
     } catch (error) {
-        return resolvingFunctions.@reject.@call(@undefined, error);
+        return resolvingFunctions.reject.@call(@undefined, error);
     }
 }
 

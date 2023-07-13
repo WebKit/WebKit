@@ -233,10 +233,10 @@ function readableStreamReaderGenericInitialize(reader, stream)
     if (@getByIdDirectPrivate(stream, "state") === @streamReadable)
         @putByIdDirectPrivate(reader, "closedPromiseCapability", @newPromiseCapability(@Promise));
     else if (@getByIdDirectPrivate(stream, "state") === @streamClosed)
-        @putByIdDirectPrivate(reader, "closedPromiseCapability", { @promise: @Promise.@resolve() });
+        @putByIdDirectPrivate(reader, "closedPromiseCapability", { promise: @Promise.@resolve() });
     else {
         @assert(@getByIdDirectPrivate(stream, "state") === @streamErrored);
-        @putByIdDirectPrivate(reader, "closedPromiseCapability", { @promise: @newHandledRejectedPromise(@getByIdDirectPrivate(stream, "storedError")) });
+        @putByIdDirectPrivate(reader, "closedPromiseCapability", { promise: @newHandledRejectedPromise(@getByIdDirectPrivate(stream, "storedError")) });
     }
 }
 
@@ -307,7 +307,7 @@ function readableStreamPipeTo(stream, sink)
 
     const reader = @acquireReadableStreamDefaultReader(stream);
 
-    @getByIdDirectPrivate(reader, "closedPromiseCapability").@promise.@then(() => { }, (e) => { sink.error(e); });
+    @getByIdDirectPrivate(reader, "closedPromiseCapability").promise.@then(() => { }, (e) => { sink.error(e); });
 
     function doPipe() {
         @readableStreamDefaultReaderRead(reader).@then(function(result) {
@@ -359,7 +359,7 @@ function readableStreamPipeToWritableStream(source, destination, preventClose, p
     pipeState.shuttingDown = false;
     pipeState.promiseCapability = @newPromiseCapability(@Promise);
     pipeState.pendingReadPromiseCapability = @newPromiseCapability(@Promise);
-    pipeState.pendingReadPromiseCapability.@resolve.@call();
+    pipeState.pendingReadPromiseCapability.resolve.@call();
     pipeState.pendingWritePromise = @Promise.@resolve();
 
     if (signal !== @undefined) {
@@ -378,19 +378,19 @@ function readableStreamPipeToWritableStream(source, destination, preventClose, p
                         shouldWait = false;
                         return;
                     }
-                    promiseCapability.@resolve.@call();
+                    promiseCapability.resolve.@call();
                 }
                 let handleRejectedPromise = (e) => {
-                    promiseCapability.@reject.@call(@undefined, e);
+                    promiseCapability.reject.@call(@undefined, e);
                 }
                 promiseDestination.@then(handleResolvedPromise, handleRejectedPromise);
                 promiseSource.@then(handleResolvedPromise, handleRejectedPromise);
-                return promiseCapability.@promise;
+                return promiseCapability.promise;
             }, reason);
         };
         pipeState.abortAlgorithmIdentifier = @addAbortAlgorithmToSignal(signal, algorithm)
         if (!pipeState.abortAlgorithmIdentifier)
-            return pipeState.promiseCapability.@promise;
+            return pipeState.promiseCapability.promise;
         pipeState.signal = signal;
     }
 
@@ -401,7 +401,7 @@ function readableStreamPipeToWritableStream(source, destination, preventClose, p
 
     @pipeToLoop(pipeState);
 
-    return pipeState.promiseCapability.@promise;
+    return pipeState.promiseCapability.promise;
 }
 
 function pipeToLoop(pipeState)
@@ -420,32 +420,32 @@ function pipeToDoReadWrite(pipeState)
     @assert(!pipeState.shuttingDown);
 
     pipeState.pendingReadPromiseCapability = @newPromiseCapability(@Promise);
-    @getByIdDirectPrivate(pipeState.writer, "readyPromise").@promise.@then(() => {
+    @getByIdDirectPrivate(pipeState.writer, "readyPromise").promise.@then(() => {
         if (pipeState.shuttingDown) {
-            pipeState.pendingReadPromiseCapability.@resolve.@call(@undefined, false);
+            pipeState.pendingReadPromiseCapability.resolve.@call(@undefined, false);
             return;
         }
 
         @readableStreamDefaultReaderRead(pipeState.reader).@then((result) => {
             const canWrite = !result.done && @getByIdDirectPrivate(pipeState.writer, "stream") !== @undefined;
-            pipeState.pendingReadPromiseCapability.@resolve.@call(@undefined, canWrite);
+            pipeState.pendingReadPromiseCapability.resolve.@call(@undefined, canWrite);
             if (!canWrite)
                 return;
 
             pipeState.pendingWritePromise = @writableStreamDefaultWriterWrite(pipeState.writer, result.value).@then(@undefined, () => { });
         }, (e) => {
-            pipeState.pendingReadPromiseCapability.@resolve.@call(@undefined, false);
+            pipeState.pendingReadPromiseCapability.resolve.@call(@undefined, false);
         });
     }, (e) => {
-        pipeState.pendingReadPromiseCapability.@resolve.@call(@undefined, false);
+        pipeState.pendingReadPromiseCapability.resolve.@call(@undefined, false);
     });
-    return pipeState.pendingReadPromiseCapability.@promise;
+    return pipeState.pendingReadPromiseCapability.promise;
 }
 
 function pipeToErrorsMustBePropagatedForward(pipeState)
 {
     const action = () => {
-        pipeState.pendingReadPromiseCapability.@resolve.@call(@undefined, false);
+        pipeState.pendingReadPromiseCapability.resolve.@call(@undefined, false);
         const error = @getByIdDirectPrivate(pipeState.source, "storedError");
         if (!pipeState.preventAbort) {
             @pipeToShutdownWithAction(pipeState, () => @writableStreamAbort(pipeState.destination, error), error);
@@ -459,7 +459,7 @@ function pipeToErrorsMustBePropagatedForward(pipeState)
         return;
     }
 
-    @getByIdDirectPrivate(pipeState.reader, "closedPromiseCapability").@promise.@then(@undefined, action);
+    @getByIdDirectPrivate(pipeState.reader, "closedPromiseCapability").promise.@then(@undefined, action);
 }
 
 function pipeToErrorsMustBePropagatedBackward(pipeState)
@@ -476,13 +476,13 @@ function pipeToErrorsMustBePropagatedBackward(pipeState)
         action();
         return;
     }
-    @getByIdDirectPrivate(pipeState.writer, "closedPromise").@promise.@then(@undefined, action);
+    @getByIdDirectPrivate(pipeState.writer, "closedPromise").promise.@then(@undefined, action);
 }
 
 function pipeToClosingMustBePropagatedForward(pipeState)
 {
     const action = () => {
-        pipeState.pendingReadPromiseCapability.@resolve.@call(@undefined, false);
+        pipeState.pendingReadPromiseCapability.resolve.@call(@undefined, false);
         const error = @getByIdDirectPrivate(pipeState.source, "storedError");
         if (!pipeState.preventClose) {
             @pipeToShutdownWithAction(pipeState, () => @writableStreamDefaultWriterCloseWithErrorPropagation(pipeState.writer));
@@ -494,7 +494,7 @@ function pipeToClosingMustBePropagatedForward(pipeState)
         action();
         return;
     }
-    @getByIdDirectPrivate(pipeState.reader, "closedPromiseCapability").@promise.@then(action, () => { });
+    @getByIdDirectPrivate(pipeState.reader, "closedPromiseCapability").promise.@then(action, () => { });
 }
 
 function pipeToClosingMustBePropagatedBackward(pipeState)
@@ -534,7 +534,7 @@ function pipeToShutdownWithAction(pipeState, action)
     };
 
     if (@getByIdDirectPrivate(pipeState.destination, "state") === "writable" && !@writableStreamCloseQueuedOrInFlight(pipeState.destination)) {
-        pipeState.pendingReadPromiseCapability.@promise.@then(() => {
+        pipeState.pendingReadPromiseCapability.promise.@then(() => {
             pipeState.pendingWritePromise.@then(finalize, finalize);
         }, (e) => @pipeToFinalize(pipeState, e));
         return;
@@ -560,7 +560,7 @@ function pipeToShutdown(pipeState)
     };
 
     if (@getByIdDirectPrivate(pipeState.destination, "state") === "writable" && !@writableStreamCloseQueuedOrInFlight(pipeState.destination)) {
-        pipeState.pendingReadPromiseCapability.@promise.@then(() => {
+        pipeState.pendingReadPromiseCapability.promise.@then(() => {
             pipeState.pendingWritePromise.@then(finalize, finalize);
         }, (e) => @pipeToFinalize(pipeState, e));
         return;
@@ -577,9 +577,9 @@ function pipeToFinalize(pipeState)
         @removeAbortAlgorithmFromSignal(pipeState.signal, pipeState.abortAlgorithmIdentifier)
 
     if (arguments.length > 1)
-        pipeState.promiseCapability.@reject.@call(@undefined, arguments[1]);
+        pipeState.promiseCapability.reject.@call(@undefined, arguments[1]);
     else
-        pipeState.promiseCapability.@resolve.@call();
+        pipeState.promiseCapability.resolve.@call();
 }
 
 function readableStreamTee(stream, shouldClone)
@@ -616,11 +616,11 @@ function readableStreamTee(stream, shouldClone)
     const branch1 = @createInternalReadableStreamFromUnderlyingSource(branch1Source);
     const branch2 = @createInternalReadableStreamFromUnderlyingSource(branch2Source);
 
-    @getByIdDirectPrivate(reader, "closedPromiseCapability").@promise.@then(@undefined, function(e) {
+    @getByIdDirectPrivate(reader, "closedPromiseCapability").promise.@then(@undefined, function(e) {
         @readableStreamDefaultControllerError(branch1.@readableStreamController, e);
         @readableStreamDefaultControllerError(branch2.@readableStreamController, e);
         if (!teeState.canceled1 || !teeState.canceled2)
-            teeState.cancelPromiseCapability.@resolve.@call();
+            teeState.cancelPromiseCapability.resolve.@call();
     });
 
     // Additional fields compared to the spec, as they are needed within pull/cancel functions.
@@ -651,7 +651,7 @@ function readableStreamTeePullFunction(teeState, reader, shouldClone)
                 if (!teeState.canceled2)
                     @readableStreamDefaultControllerClose(teeState.branch2.@readableStreamController);
                 if (!teeState.canceled1 || !teeState.canceled2)
-                    teeState.cancelPromiseCapability.@resolve.@call();
+                    teeState.cancelPromiseCapability.resolve.@call();
                 return;
             }
             // chunk steps.
@@ -664,7 +664,7 @@ function readableStreamTeePullFunction(teeState, reader, shouldClone)
                 } catch (e) {
                     @readableStreamDefaultControllerError(teeState.branch1.@readableStreamController, e);
                     @readableStreamDefaultControllerError(teeState.branch2.@readableStreamController, e);
-                    @readableStreamCancel(teeState.stream, e).@then(teeState.cancelPromiseCapability.@resolve, teeState.cancelPromiseCapability.@reject);
+                    @readableStreamCancel(teeState.stream, e).@then(teeState.cancelPromiseCapability.resolve, teeState.cancelPromiseCapability.reject);
                     return;
                 }
             }
@@ -696,10 +696,10 @@ function readableStreamTeeBranch1CancelFunction(teeState, stream)
         teeState.reason1 = r;
         if (teeState.canceled2) {
             @readableStreamCancel(stream, [teeState.reason1, teeState.reason2]).@then(
-                teeState.cancelPromiseCapability.@resolve,
-                teeState.cancelPromiseCapability.@reject);
+                teeState.cancelPromiseCapability.resolve,
+                teeState.cancelPromiseCapability.reject);
         }
-        return teeState.cancelPromiseCapability.@promise;
+        return teeState.cancelPromiseCapability.promise;
     }
 }
 
@@ -712,10 +712,10 @@ function readableStreamTeeBranch2CancelFunction(teeState, stream)
         teeState.reason2 = r;
         if (teeState.canceled1) {
             @readableStreamCancel(stream, [teeState.reason1, teeState.reason2]).@then(
-                teeState.cancelPromiseCapability.@resolve,
-                teeState.cancelPromiseCapability.@reject);
+                teeState.cancelPromiseCapability.resolve,
+                teeState.cancelPromiseCapability.reject);
         }
-        return teeState.cancelPromiseCapability.@promise;
+        return teeState.cancelPromiseCapability.promise;
     }
 }
 
@@ -764,8 +764,8 @@ function readableStreamError(stream, error)
 
     const reader = @getByIdDirectPrivate(stream, "reader");
 
-    @getByIdDirectPrivate(reader, "closedPromiseCapability").@reject.@call(@undefined, error);
-    const promise = @getByIdDirectPrivate(reader, "closedPromiseCapability").@promise;
+    @getByIdDirectPrivate(reader, "closedPromiseCapability").reject.@call(@undefined, error);
+    const promise = @getByIdDirectPrivate(reader, "closedPromiseCapability").promise;
     @markPromiseAsHandled(promise);
 
     if (@isReadableStreamDefaultReader(reader))
@@ -929,7 +929,7 @@ function readableStreamClose(stream)
             @fulfillPromise(requests[index], { value: @undefined, done: true });
     }
 
-    @getByIdDirectPrivate(reader, "closedPromiseCapability").@resolve.@call();
+    @getByIdDirectPrivate(reader, "closedPromiseCapability").resolve.@call();
 }
 
 function readableStreamFulfillReadRequest(stream, chunk, done)
@@ -1018,11 +1018,11 @@ function readableStreamReaderGenericRelease(reader)
     @assert(@getByIdDirectPrivate(@getByIdDirectPrivate(reader, "ownerReadableStream"), "reader") === reader);
 
     if (@getByIdDirectPrivate(@getByIdDirectPrivate(reader, "ownerReadableStream"), "state") === @streamReadable)
-        @getByIdDirectPrivate(reader, "closedPromiseCapability").@reject.@call(@undefined, @makeTypeError("releasing lock of reader whose stream is still in readable state"));
+        @getByIdDirectPrivate(reader, "closedPromiseCapability").reject.@call(@undefined, @makeTypeError("releasing lock of reader whose stream is still in readable state"));
     else
-        @putByIdDirectPrivate(reader, "closedPromiseCapability", { @promise: @newHandledRejectedPromise(@makeTypeError("reader released lock")) });
+        @putByIdDirectPrivate(reader, "closedPromiseCapability", { promise: @newHandledRejectedPromise(@makeTypeError("reader released lock")) });
 
-    const promise = @getByIdDirectPrivate(reader, "closedPromiseCapability").@promise;
+    const promise = @getByIdDirectPrivate(reader, "closedPromiseCapability").promise;
     @markPromiseAsHandled(promise);
     @putByIdDirectPrivate(@getByIdDirectPrivate(reader, "ownerReadableStream"), "reader", @undefined);
     @putByIdDirectPrivate(reader, "ownerReadableStream", @undefined);
