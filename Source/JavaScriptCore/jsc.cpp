@@ -1408,11 +1408,11 @@ JSC_DEFINE_HOST_FUNCTION(functionAtob, (JSGlobalObject* globalObject, CallFrame*
     if (encodedString.isNull())
         return JSValue::encode(jsEmptyString(vm));
 
-    auto decodedData = base64Decode(encodedString, Base64DecodeMode::DefaultValidatePaddingAndIgnoreWhitespace);
-    if (!decodedData)
+    auto decodedString = base64DecodeToString(encodedString, Base64DecodeMode::DefaultValidatePaddingAndIgnoreWhitespace);
+    if (decodedString.isNull())
         return JSValue::encode(throwException(globalObject, scope, createError(globalObject, "Invalid character in argument for atob."_s)));
 
-    return JSValue::encode(jsString(vm, String(decodedData->data(), decodedData->size())));
+    return JSValue::encode(jsString(vm, decodedString));
 }
 
 JSC_DEFINE_HOST_FUNCTION(functionBtoa, (JSGlobalObject* globalObject, CallFrame* callFrame))

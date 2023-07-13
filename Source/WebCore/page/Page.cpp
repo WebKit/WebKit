@@ -2270,8 +2270,9 @@ void Page::userStyleSheetLocationChanged()
     if (url.protocolIsData() && url.string().startsWith("data:text/css;charset=utf-8;base64,"_s)) {
         m_didLoadUserStyleSheet = true;
 
-        if (auto styleSheetAsUTF8 = base64Decode(PAL::decodeURLEscapeSequences(StringView(url.string()).substring(35)), Base64DecodeMode::DefaultValidatePaddingAndIgnoreWhitespace))
-            m_userStyleSheet = String::fromUTF8(styleSheetAsUTF8->data(), styleSheetAsUTF8->size());
+        String styleSheetAsBase64 = base64DecodeToString(PAL::decodeURLEscapeSequences(StringView(url.string()).substring(35)), Base64DecodeMode::DefaultValidatePaddingAndIgnoreWhitespace);
+        if (!styleSheetAsBase64.isNull())
+            m_userStyleSheet = styleSheetAsBase64;
     }
 
     forEachDocument([] (Document& document) {
