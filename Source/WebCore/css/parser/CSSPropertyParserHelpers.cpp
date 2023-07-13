@@ -8248,6 +8248,22 @@ Vector<FontTechnology> consumeFontTech(CSSParserTokenRange& range, bool singleVa
     return technologies;
 }
 
+static bool isFontFormatKeywordValid(CSSValueID id)
+{
+    switch (id) {
+    case CSSValueCollection:
+    case CSSValueEmbeddedOpentype:
+    case CSSValueOpentype:
+    case CSSValueSvg:
+    case CSSValueTruetype:
+    case CSSValueWoff:
+    case CSSValueWoff2:
+        return true;
+    default:
+        return false;
+    }
+}
+
 String consumeFontFormat(CSSParserTokenRange& range, bool rejectStringValues)
 {
     // https://drafts.csswg.org/css-fonts/#descdef-font-face-src
@@ -8256,12 +8272,11 @@ String consumeFontFormat(CSSParserTokenRange& range, bool rejectStringValues)
     auto& arg = args.consumeIncludingWhitespace();
     if (!args.atEnd())
         return nullString();
-    if (arg.type() != IdentToken && (rejectStringValues || arg.type() != StringToken))
-        return nullString();
-    auto format = arg.value().toString();
-    if (arg.type() == IdentToken && !FontCustomPlatformData::supportsFormat(format))
-        return nullString();
-    return format;
+    if (arg.type() == IdentToken && isFontFormatKeywordValid(arg.id()))
+        return arg.value().toString();
+    if (arg.type() == StringToken && !rejectStringValues)
+        return arg.value().toString();
+    return nullString();
 }
 
 // MARK: @font-palette-values

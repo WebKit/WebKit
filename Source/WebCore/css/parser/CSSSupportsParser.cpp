@@ -171,7 +171,9 @@ CSSSupportsParser::SupportsResult CSSSupportsParser::consumeSupportsFontFormatFu
 {
     ASSERT(range.peek().type() == FunctionToken && range.peek().functionId() == CSSValueFontFormat);
     auto format = CSSPropertyParserHelpers::consumeFontFormat(range, true);
-    return format.isNull() ? Unsupported : Supported;
+    if (format.isNull())
+        return Unsupported;
+    return FontCustomPlatformData::supportsFormat(format) ? Supported : Unsupported;
 }
 
 // <supports-font-tech-fn>
