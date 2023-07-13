@@ -621,23 +621,42 @@ void RtpPayloadParams::Vp9ToGeneric(const CodecSpecificInfoVP9& vp9_info,
     // Create the array only if it is ever used.
     last_vp9_frame_id_.resize(kPictureDiffLimit);
   }
-  if (vp9_header.inter_layer_predicted && spatial_index > 0) {
-    result.dependencies.push_back(
-        last_vp9_frame_id_[vp9_header.picture_id % kPictureDiffLimit]
-                          [spatial_index - 1]);
-  }
-  if (vp9_header.inter_pic_predicted) {
-    for (size_t i = 0; i < vp9_header.num_ref_pics; ++i) {
-      // picture_id is 15 bit number that wraps around. Though undeflow may
-      // produce picture that exceeds 2^15, it is ok because in this
-      // code block only last 7 bits of the picture_id are used.
-      uint16_t depend_on = vp9_header.picture_id - vp9_header.pid_diff[i];
+
+  if (vp9_header.flexible_mode) {
+    if (vp9_header.inter_layer_predicted && spatial_index > 0) {
       result.dependencies.push_back(
-          last_vp9_frame_id_[depend_on % kPictureDiffLimit][spatial_index]);
+          last_vp9_frame_id_[vp9_header.picture_id % kPictureDiffLimit]
+                            [spatial_index - 1]);
     }
+    if (vp9_header.inter_pic_predicted) {
+      for (size_t i = 0; i < vp9_header.num_ref_pics; ++i) {
+        // picture_id is 15 bit number that wraps around. Though undeflow may
+        // produce picture that exceeds 2^15, it is ok because in this
+        // code block only last 7 bits of the picture_id are used.
+        uint16_t depend_on = vp9_header.picture_id - vp9_header.pid_diff[i];
+        result.dependencies.push_back(
+            last_vp9_frame_id_[depend_on % kPictureDiffLimit][spatial_index]);
+      }
+    }
+    last_vp9_frame_id_[vp9_header.picture_id % kPictureDiffLimit]
+                      [spatial_index] = shared_frame_id;
+  } else {
+    // Implementing general conversion logic for non-flexible mode requires some
+    // work and we will almost certainly never need it, so for now support only
+    // non-layerd streams.
+    if (spatial_index > 0 || temporal_index > 0) {
+      // Prefer to generate no generic layering than an inconsistent one.
+      rtp_video_header.generic.reset();
+      return;
+    }
+
+    if (vp9_header.inter_pic_predicted) {
+      // Since we only support non-scalable streams we only need to save the
+      // last frame id.
+      result.dependencies.push_back(last_vp9_frame_id_[0][0]);
+    }
+    last_vp9_frame_id_[0][0] = shared_frame_id;
   }
-  last_vp9_frame_id_[vp9_header.picture_id % kPictureDiffLimit][spatial_index] =
-      shared_frame_id;
 
   result.active_decode_targets =
       ((uint32_t{1} << num_temporal_layers * num_active_spatial_layers) - 1);

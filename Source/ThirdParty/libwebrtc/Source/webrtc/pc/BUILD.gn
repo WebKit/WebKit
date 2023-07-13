@@ -2430,6 +2430,7 @@ if (rtc_include_tests && !build_with_chromium) {
       "../api/transport:field_trial_based_config",
       "../api/transport:sctp_transport_factory_interface",
       "../api/transport/rtp:rtp_source",
+      "../api/units:data_rate",
       "../api/units:time_delta",
       "../api/units:timestamp",
       "../api/video:builtin_video_bitrate_allocator_factory",

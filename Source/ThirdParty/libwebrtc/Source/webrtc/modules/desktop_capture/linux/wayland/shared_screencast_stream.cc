@@ -144,7 +144,6 @@ class SharedScreenCastStreamPrivate {
   uint32_t frame_rate_ = 60;
 
   bool use_damage_region_ = true;
-  DesktopRegion last_damage_region_;
 
   // Specifies whether the pipewire stream has been initialized with a request
   // to embed cursor into the captured frames.
@@ -159,9 +158,7 @@ class SharedScreenCastStreamPrivate {
   void ProcessBuffer(pw_buffer* buffer);
   bool ProcessMemFDBuffer(pw_buffer* buffer,
                           DesktopFrame& frame,
-                          const DesktopFrame* previous_frame,
-                          const DesktopVector& offset,
-                          bool effectively_new_frame);
+                          const DesktopVector& offset);
   bool ProcessDMABuffer(pw_buffer* buffer,
                         DesktopFrame& frame,
                         const DesktopVector& offset);
@@ -828,22 +825,17 @@ void SharedScreenCastStreamPrivate::ProcessBuffer(pw_buffer* buffer) {
     }
   }
 
-  bool effectively_new_frame = false;
   if (!queue_.current_frame() ||
       !queue_.current_frame()->size().equals(frame_size_)) {
     std::unique_ptr<DesktopFrame> frame(new BasicDesktopFrame(
         DesktopSize(frame_size_.width(), frame_size_.height())));
     queue_.ReplaceCurrentFrame(SharedDesktopFrame::Wrap(std::move(frame)));
-    effectively_new_frame = true;
   }
-
-  UpdateFrameUpdatedRegions(spa_buffer, *queue_.current_frame());
 
   bool bufferProcessed = false;
   if (spa_buffer->datas[0].type == SPA_DATA_MemFd) {
-    bufferProcessed = ProcessMemFDBuffer(buffer, *queue_.current_frame(),
-                                         queue_.previous_frame(), offset,
-                                         effectively_new_frame);
+    bufferProcessed =
+        ProcessMemFDBuffer(buffer, *queue_.current_frame(), offset);
   } else if (spa_buffer->datas[0].type == SPA_DATA_DmaBuf) {
     bufferProcessed = ProcessDMABuffer(buffer, *queue_.current_frame(), offset);
   }
@@ -870,6 +862,7 @@ void SharedScreenCastStreamPrivate::ProcessBuffer(pw_buffer* buffer) {
     observer_->OnDesktopFrameChanged();
   }
 
+  UpdateFrameUpdatedRegions(spa_buffer, *queue_.current_frame());
   queue_.current_frame()->set_may_contain_cursor(is_cursor_embedded_);
 
   if (callback_) {
@@ -885,9 +878,7 @@ RTC_NO_SANITIZE("cfi-icall")
 bool SharedScreenCastStreamPrivate::ProcessMemFDBuffer(
     pw_buffer* buffer,
     DesktopFrame& frame,
-    const DesktopFrame* previous_frame,
-    const DesktopVector& offset,
-    bool effectively_new_frame) {
+    const DesktopVector& offset) {
   spa_buffer* spa_buffer = buffer->buffer;
   ScopedBuf map;
   uint8_t* src = nullptr;
@@ -913,31 +904,9 @@ bool SharedScreenCastStreamPrivate::ProcessMemFDBuffer(
   uint8_t* updated_src =
       src + (src_stride * offset.y()) + (kBytesPerPixel * offset.x());
 
-  const int stride = src_stride - (kBytesPerPixel * offset.x());
-
-  if (effectively_new_frame || !previous_frame || !use_damage_region_ ||
-      damage_region_.is_empty()) {
-    frame.CopyPixelsFrom(
-        updated_src, stride,
-        DesktopRect::MakeWH(frame.size().width(), frame.size().height()));
-  } else {
-    for (DesktopRegion::Iterator it(last_damage_region_); !it.IsAtEnd();
-         it.Advance()) {
-      const DesktopRect& r = it.rect();
-      frame.CopyPixelsFrom(*previous_frame, r.top_left(), r);
-    }
-
-    for (DesktopRegion::Iterator it(damage_region_); !it.IsAtEnd();
-         it.Advance()) {
-      const auto& rect = it.rect();
-      frame.CopyPixelsFrom(src + rect.top() * stride +
-                               rect.left() * DesktopFrame::kBytesPerPixel,
-                           stride,
-                           DesktopRect::MakeXYWH(rect.left(), rect.top(),
-                                                 rect.width(), rect.height()));
-    }
-  }
-  last_damage_region_ = damage_region_;
+  frame.CopyPixelsFrom(
+      updated_src, (src_stride - (kBytesPerPixel * offset.x())),
+      DesktopRect::MakeWH(frame.size().width(), frame.size().height()));
 
   return true;
 }

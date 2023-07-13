@@ -47,7 +47,7 @@ void FillCodecConfig(VideoCodec* video_codec,
                      bool svc) {
   size_t num_layers = params.size();
   video_codec->codecType = kVideoCodecVP8;
-  video_codec->numberOfSimulcastStreams = num_layers;
+  video_codec->numberOfSimulcastStreams = svc ? 1 : num_layers;
 
   encoder_config->number_of_streams = svc ? 1 : num_layers;
   encoder_config->simulcast_layers.resize(num_layers);
