@@ -3960,7 +3960,7 @@ void webkitWebViewRunJavascriptWithoutForcedUserGestures(WebKitWebView* webView,
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
     g_return_if_fail(script);
 
-    RunJavaScriptParameters params = { String::fromUTF8(script), URL { }, false, std::nullopt, false, RemoveTransientActivation::No };
+    RunJavaScriptParameters params = { String::fromUTF8(script), URL { }, false, std::nullopt, false };
     webkitWebViewRunJavaScriptWithParams(webView, script, WTFMove(params), cancellable, callback, userData);
 }
 
@@ -3985,7 +3985,7 @@ void webkit_web_view_run_javascript(WebKitWebView* webView, const gchar* script,
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
     g_return_if_fail(script);
 
-    RunJavaScriptParameters params = { String::fromUTF8(script), URL { }, false, std::nullopt, true, RemoveTransientActivation::No };
+    RunJavaScriptParameters params = { String::fromUTF8(script), URL { }, false, std::nullopt, true };
     webkitWebViewRunJavaScriptWithParams(webView, script, WTFMove(params), cancellable, callback, userData);
 }
 
