@@ -3239,6 +3239,8 @@ http/tests/privateClickMeasurement [ Skip ]
 # Application Manifest tests
 webkit.org/b/153152 http/tests/security/contentSecurityPolicy/manifest-src-allowed.html [ Skip ]
 webkit.org/b/153152 http/tests/security/contentSecurityPolicy/manifest-src-blocked.html [ Skip ]
+webkit.org/b/153152 http/wpt/content-security-policy/sandbox-manifest-blocked.html [ Skip ]
+webkit.org/b/153152 http/wpt/content-security-policy/sandbox-manifest-blocked-cross-origin.sub.html [ Skip ]
 webkit.org/b/158205 applicationmanifest/ [ Skip ]
 
 webkit.org/b/178785 perf/object-keys.html [ Pass Failure ]
