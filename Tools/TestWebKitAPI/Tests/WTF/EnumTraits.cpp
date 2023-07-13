@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,9 +34,27 @@ enum class TestEnum {
     C,
 };
 
+enum class TestNonContiguousEnum {
+    A = 0,
+    B = 1,
+    C = 3,
+};
+
+enum class TestNonZeroBasedEnum {
+    A = 1,
+    B = 2,
+    C = 3,
+};
+
 namespace WTF {
 template<> struct EnumTraits<TestEnum> {
     using values = EnumValues<TestEnum, TestEnum::A, TestEnum::B, TestEnum::C>;
+};
+template<> struct EnumTraits<TestNonContiguousEnum> {
+    using values = EnumValues<TestNonContiguousEnum, TestNonContiguousEnum::A, TestNonContiguousEnum::B, TestNonContiguousEnum::C>;
+};
+template<> struct EnumTraits<TestNonZeroBasedEnum> {
+    using values = EnumValues<TestNonZeroBasedEnum, TestNonZeroBasedEnum::A, TestNonZeroBasedEnum::B, TestNonZeroBasedEnum::C>;
 };
 }
 
@@ -65,4 +83,14 @@ TEST(WTF_EnumTraits, ValuesTraits)
     EXPECT_EQ(expectedValues.size(), 0UL);
 }
 
+TEST(WTF_EnumTraits, ZeroBasedContiguousEnum)
+{
+    static_assert(isZeroBasedContiguousEnum<TestEnum>());
+    EXPECT_TRUE(isZeroBasedContiguousEnum<TestEnum>());
+    static_assert(!isZeroBasedContiguousEnum<TestNonContiguousEnum>());
+    EXPECT_FALSE(isZeroBasedContiguousEnum<TestNonContiguousEnum>());
+    static_assert(!isZeroBasedContiguousEnum<TestNonZeroBasedEnum>());
+    EXPECT_FALSE(isZeroBasedContiguousEnum<TestNonZeroBasedEnum>());
 }
+
+} // namespace TestWebKitAPI
