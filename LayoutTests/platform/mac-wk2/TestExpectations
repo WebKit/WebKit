@@ -129,6 +129,7 @@ fast/animation/request-animation-frame-in-two-pages.html [ Pass ]
 fast/forms/file/entries-api/image-transcode-open-panel.html [ Pass ]
 fast/forms/file/entries-api/pages-jpeg-open-panel.html [ Pass ]
 fast/forms/file/entries-api/pdf-jpeg-open-panel.html [ Pass ]
+fast/forms/file/entries-api/png-raw-open-panel.html [ Pass ]
 
 storage/indexeddb/database-transaction-cycle.html [ Pass ]
 
