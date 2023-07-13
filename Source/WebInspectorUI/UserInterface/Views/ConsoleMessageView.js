@@ -809,14 +809,12 @@ WI.ConsoleMessageView = class ConsoleMessageView extends WI.Object
 
         function floatFormatter(obj, token)
         {
-            let value = typeof obj.value === "number" ? obj.value : obj.description;
-            return String.standardFormatters.f(value, token);
+            return parseFloat(typeof obj.value === "number" ? obj.value : obj.description).maxDecimals(token.precision);
         }
 
         function integerFormatter(obj)
         {
-            let value = typeof obj.value === "number" ? obj.value : obj.description;
-            return String.standardFormatters.d(value);
+            return parseInt(typeof obj.value === "number" ? obj.value : obj.description);
         }
 
         var currentStyle = null;
