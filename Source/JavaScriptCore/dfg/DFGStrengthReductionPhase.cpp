@@ -1186,6 +1186,15 @@ private:
             break;
         }
 
+        case HasOwnProperty: {
+            Edge& keyEdge = m_graph.child(m_node, 1);
+            if (keyEdge->op() == MakeRope) {
+                keyEdge->setOp(MakeAtomString);
+                m_changed = true;
+            }
+            break;
+        }
+
         case Call:
         case Construct:
         case TailCallInlinedCaller:
