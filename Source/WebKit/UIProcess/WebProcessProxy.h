@@ -498,6 +498,8 @@ public:
 
     Logger& logger();
 
+    void resetState();
+
 protected:
     WebProcessProxy(WebProcessPool&, WebsiteDataStore*, IsPrewarmed, WebCore::CrossOriginMode, LockdownMode);
 
