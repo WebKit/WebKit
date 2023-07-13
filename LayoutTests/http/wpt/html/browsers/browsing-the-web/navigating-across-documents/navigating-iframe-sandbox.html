@@ -1,0 +1,48 @@
+<!doctype html>
+<title>iframe sandboxing when navigation fails</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<div id="log"></div>
+<iframe id="myframe1"></iframe>
+<iframe id="myframe2"></iframe>
+<script>
+promise_test(async t => {
+    const promise = new Promise(resolve => window.onmessage = e => resolve(e.data));
+    myframe1.src = "resources/frame-posting-messages.html";
+    assert_equals(await promise, "hello");
+
+    myframe1.contentWindow.location = "http://127.0.0.1:8800/WebKit/html/browsers/browsing-the-web/navigating-across-documents/resources/only-same-origin-allowed.py";
+    await new Promise(resolve => setTimeout(resolve, 200));
+
+    // Navigation is blocked, previous document should be replaced with an error document
+    let counter = 0;
+    let isOk = false;
+    while (++counter < 10 && !isOk) {
+        isOk = await new Promise(resolve => {
+            window.onmessage = () => resolve(false);
+            setTimeout(() => resolve(true), 200);
+        });
+    }
+    assert_true(isOk);
+}, "Ensure document gets replaced with an error document in case of blocked navigation");
+
+promise_test(async t => {
+    const promise = new Promise(resolve => window.onmessage = e => resolve(e.data));
+    myframe2.src = "resources/frame-posting-messages.html";
+    assert_equals(await promise, "hello");
+
+    myframe2.contentWindow.location = "http://localhost:8800/html/browsers/browsing-the-web/navigating-across-documents/resources/redirect.py?location=data:text/html,FAIL";
+    await new Promise(resolve => setTimeout(resolve, 200));
+
+    // Redirection is blocked, previous document should be replaced with an error document
+    let counter = 0;
+    let isOk = false;
+    while (++counter < 10 && !isOk) {
+        isOk = await new Promise(resolve => {
+            window.onmessage = () => resolve(false);
+            setTimeout(() => resolve(true), 200);
+        });
+    }
+    assert_true(isOk);
+}, "Ensure document gets replaced with an error document in case of blocked redirection");
+</script>

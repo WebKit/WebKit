@@ -549,6 +549,7 @@ private:
     void dataReceived(const SharedBuffer&);
 
     bool maybeLoadEmpty();
+    void loadErrorDocument();
 
     bool isMultipartReplacingLoad() const;
     bool isPostOrRedirectAfterPost(const ResourceRequest&, const ResourceResponse&);
