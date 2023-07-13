@@ -368,6 +368,19 @@ function resolve(value)
     return @promiseResolve(this, value);
 }
 
+function withResolvers()
+{
+    "use strict";
+
+    var promiseCapability = @newPromiseCapability(this);
+
+    return {
+        promise: promiseCapability.@promise,
+        resolve: promiseCapability.@resolve,
+        reject: promiseCapability.@reject,
+    };
+}
+
 @nakedConstructor
 function Promise(executor)
 {
