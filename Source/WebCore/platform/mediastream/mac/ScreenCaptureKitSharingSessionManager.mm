@@ -540,13 +540,12 @@ void ScreenCaptureKitSharingSessionManager::cleanupSessionSource(ScreenCaptureSe
         return;
     }
 
-    auto activeSource = m_activeSources[index];
     m_activeSources.remove(index);
 
-    if (!activeSource)
-        return;
+    if (!promptingInProgress())
+        cancelPicking();
 
-    auto sharingSession = activeSource->sharingSession();
+    auto sharingSession = source.sharingSession();
     if (!sharingSession)
         return;
 
