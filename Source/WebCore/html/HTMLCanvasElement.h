@@ -142,6 +142,9 @@ public:
     void queueTaskKeepingObjectAlive(TaskSource, Function<void()>&&) final;
     void dispatchEvent(Event&) final;
 
+    using HTMLElement::ref;
+    using HTMLElement::deref;
+
 private:
     HTMLCanvasElement(const QualifiedName&, Document&);
 
