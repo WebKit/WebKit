@@ -24,6 +24,8 @@ PASS Check that src: url("foo.ttf") tech(initial) is invalid
 PASS Check that src: url("foo.ttf") tech(none) is invalid
 PASS Check that src: url("foo.ttf") tech(normal) is invalid
 PASS Check that src: url("foo.ttf") tech(xyzzy) is invalid
+PASS Check that src: url("foo.ttf") tech(xyzzy, features-opentype) is invalid
+PASS Check that src: url("foo.ttf") tech(features-opentype, xyzzy) is invalid
 PASS Check that src: url("foo.ttf") format(opentype) tech(features-opentype) is valid
 PASS Check that src: url("foo.ttf") tech(features-opentype) format(opentype) is invalid
 PASS Check that src: url("foo.ttf") tech(incremental), url("bar.html") is valid
