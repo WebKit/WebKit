@@ -1070,6 +1070,11 @@ private:
             break;
         }
 
+        case StringIndexOf: {
+            setPrediction(SpecInt32Only);
+            break;
+        }
+
         case StringLocaleCompare: {
             setPrediction(SpecInt32Only);
             break;
