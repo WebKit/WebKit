@@ -41,6 +41,7 @@ class RegistrableDomain;
 
 namespace WebKit {
 
+class RemotePageProxy;
 class WebBackForwardCache;
 class WebPageProxy;
 class WebProcessPool;
@@ -64,6 +65,7 @@ public:
     WebCore::PageIdentifier webPageID() const { return m_webPageID; }
     WebProcessProxy& process() const { return m_process.get(); }
     WebFrameProxy& mainFrame() { return m_mainFrame.get(); }
+    HashMap<WebCore::RegistrableDomain, WeakPtr<RemotePageProxy>> takeRemotePageMap();
 
     WebBackForwardCache& backForwardCache() const;
 
@@ -125,6 +127,7 @@ private:
     LayerHostingContextID m_contextIDForVisibilityPropagationInGPUProcess { 0 };
 #endif
 #endif
+    HashMap<WebCore::RegistrableDomain, WeakPtr<RemotePageProxy>> m_remotePageMap;
 };
 
 } // namespace WebKit

@@ -1140,6 +1140,9 @@ void WebPageProxy::swapToProvisionalPage(std::unique_ptr<ProvisionalPageProxy> p
     ASSERT(!m_mainFrame);
     m_mainFrame = provisionalPage->mainFrame();
 
+    if (auto map = provisionalPage->takeRemotePageMap())
+        internals().domainToRemotePageProxyMap = WTFMove(*map);
+
     m_process->addExistingWebPage(*this, WebProcessProxy::BeginsUsingDataStore::No);
     addAllMessageReceivers();
 
@@ -12660,6 +12663,11 @@ void WebPageProxy::setRemotePageProxyInOpenerProcess(Ref<RemotePageProxy>&& page
 void WebPageProxy::addOpenedRemotePageProxy(Ref<RemotePageProxy>&& page)
 {
     internals().openedRemotePageProxies.add(WTFMove(page));
+}
+
+HashMap<WebCore::RegistrableDomain, WeakPtr<RemotePageProxy>> WebPageProxy::takeRemotePageMap()
+{
+    return std::exchange(internals().domainToRemotePageProxyMap, { });
 }
 
 #if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)

@@ -103,6 +103,7 @@ ProvisionalPageProxy::ProvisionalPageProxy(WebPageProxy& page, Ref<WebProcessPro
         ASSERT(&suspendedPage->process() == m_process.ptr());
         suspendedPage->unsuspend();
         m_mainFrame = &suspendedPage->mainFrame();
+        m_remotePageMap = suspendedPage->takeRemotePageMap();
     }
 
     initializeWebPage(websitePolicies);
@@ -150,6 +151,11 @@ void ProvisionalPageProxy::setNavigation(API::Navigation& navigation)
 
     m_navigationID = navigation.navigationID();
     navigation.setProcessID(m_process->coreProcessIdentifier());
+}
+
+std::optional<HashMap<WebCore::RegistrableDomain, WeakPtr<RemotePageProxy>>> ProvisionalPageProxy::takeRemotePageMap()
+{
+    return std::exchange(m_remotePageMap, std::nullopt);
 }
 
 void ProvisionalPageProxy::cancel()

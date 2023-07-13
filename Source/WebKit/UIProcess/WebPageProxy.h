@@ -2167,9 +2167,9 @@ public:
     RemotePageProxy* remotePageProxyForRegistrableDomain(WebCore::RegistrableDomain) const;
     void addRemotePageProxy(const WebCore::RegistrableDomain&, WeakPtr<RemotePageProxy>&&);
     void removeRemotePageProxy(const WebCore::RegistrableDomain&);
-
     void setRemotePageProxyInOpenerProcess(Ref<RemotePageProxy>&&);
     void addOpenedRemotePageProxy(Ref<RemotePageProxy>&&);
+    HashMap<WebCore::RegistrableDomain, WeakPtr<RemotePageProxy>> takeRemotePageMap();
 
     void createRemoteSubframesInOtherProcesses(WebFrameProxy&);
 
