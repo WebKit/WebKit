@@ -184,6 +184,30 @@ TEST(WebKit, SystemPreviewBlobRevokedImmediately)
     Util::run(&wasTriggered);
 }
 
+TEST(WebKit, SystemPreviewBlob)
+{
+    auto *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
+    [configuration _setSystemPreviewEnabled:YES];
+
+    auto viewController = adoptNS([[UIViewController alloc] init]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero configuration:configuration]);
+    auto uiDelegate = adoptNS([[TestSystemPreviewUIDelegate alloc] init]);
+    uiDelegate.get().viewController = viewController.get();
+    [webView setUIDelegate:uiDelegate.get()];
+    [viewController setView:webView.get()];
+
+    [webView synchronouslyLoadTestPageNamed:@"system-preview"];
+
+    [webView _setSystemPreviewCompletionHandlerForLoadTesting:^(bool success) {
+        EXPECT_FALSE(success);
+        wasTriggered = true;
+    }];
+
+    [webView evaluateJavaScript:@"bloblink.click()" completionHandler:nil];
+
+    Util::run(&wasTriggered);
+}
+
 TEST(WebKit, SystemPreviewTriggered)
 {
     auto *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
