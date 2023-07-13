@@ -140,9 +140,9 @@ void JSString::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 DEFINE_VISIT_CHILDREN(JSString);
 
 template<typename CharacterType>
-void JSRopeString::resolveRopeInternalNoSubstring(CharacterType* buffer) const
+void JSRopeString::resolveRopeInternalNoSubstring(CharacterType* buffer, uint8_t* stackLimit) const
 {
-    resolveToBuffer(this, buffer, length());
+    resolveToBuffer(this, buffer, length(), stackLimit);
 }
 
 AtomString JSRopeString::resolveRopeToAtomString(JSGlobalObject* globalObject) const
@@ -163,14 +163,15 @@ AtomString JSRopeString::resolveRopeToAtomString(JSGlobalObject* globalObject) c
     }
 
     AtomString atomString;
+    uint8_t* stackLimit = bitwise_cast<uint8_t*>(vm.softStackLimit());
     if (!isSubstring()) {
         if (is8Bit()) {
             LChar buffer[maxLengthForOnStackResolve];
-            resolveRopeInternalNoSubstring(buffer);
+            resolveRopeInternalNoSubstring(buffer, stackLimit);
             atomString = AtomString(buffer, length());
         } else {
             UChar buffer[maxLengthForOnStackResolve];
-            resolveRopeInternalNoSubstring(buffer);
+            resolveRopeInternalNoSubstring(buffer, stackLimit);
             atomString = AtomString(buffer, length());
         }
     } else
@@ -204,13 +205,14 @@ RefPtr<AtomStringImpl> JSRopeString::resolveRopeToExistingAtomString(JSGlobalObj
     
     RefPtr<AtomStringImpl> existingAtomString;
     if (!isSubstring()) {
+        uint8_t* stackLimit = bitwise_cast<uint8_t*>(vm.softStackLimit());
         if (is8Bit()) {
             LChar buffer[maxLengthForOnStackResolve];
-            resolveRopeInternalNoSubstring(buffer);
+            resolveRopeInternalNoSubstring(buffer, stackLimit);
             existingAtomString = AtomStringImpl::lookUp(buffer, length());
         } else {
             UChar buffer[maxLengthForOnStackResolve];
-            resolveRopeInternalNoSubstring(buffer);
+            resolveRopeInternalNoSubstring(buffer, stackLimit);
             existingAtomString = AtomStringImpl::lookUp(buffer, length());
         }
     } else
@@ -243,7 +245,8 @@ const String& JSRopeString::resolveRopeWithFunction(JSGlobalObject* nullOrGlobal
         }
         vm.heap.reportExtraMemoryAllocated(newImpl->cost());
 
-        resolveRopeInternalNoSubstring(buffer);
+        uint8_t* stackLimit = bitwise_cast<uint8_t*>(vm.softStackLimit());
+        resolveRopeInternalNoSubstring(buffer, stackLimit);
         convertToNonRope(function(newImpl.releaseNonNull()));
         return valueInternal();
     }
@@ -256,7 +259,8 @@ const String& JSRopeString::resolveRopeWithFunction(JSGlobalObject* nullOrGlobal
     }
     vm.heap.reportExtraMemoryAllocated(newImpl->cost());
     
-    resolveRopeInternalNoSubstring(buffer);
+    uint8_t* stackLimit = bitwise_cast<uint8_t*>(vm.softStackLimit());
+    resolveRopeInternalNoSubstring(buffer, stackLimit);
     convertToNonRope(function(newImpl.releaseNonNull()));
     return valueInternal();
 }
