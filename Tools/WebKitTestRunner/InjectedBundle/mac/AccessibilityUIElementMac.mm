@@ -997,6 +997,16 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::valueDescription()
     return nullptr;
 }
 
+unsigned AccessibilityUIElement::numberOfCharacters() const
+{
+    BEGIN_AX_OBJC_EXCEPTIONS
+    auto value = attributeValue(NSAccessibilityNumberOfCharactersAttribute);
+    if ([value isKindOfClass:[NSNumber class]])
+        return [(NSNumber *)value unsignedIntValue];
+    END_AX_OBJC_EXCEPTIONS
+    return 0;
+}
+
 int AccessibilityUIElement::insertionPointLineNumber()
 {
     BEGIN_AX_OBJC_EXCEPTIONS

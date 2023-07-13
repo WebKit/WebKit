@@ -61,6 +61,7 @@
     readonly attribute DOMString liveRegionRelevant;
     readonly attribute DOMString liveRegionStatus;
     readonly attribute DOMString orientation;
+    readonly attribute unsigned long numberOfCharacters;
     readonly attribute long insertionPointLineNumber;
     readonly attribute DOMString selectedTextRange;
     readonly attribute DOMString textInputMarkedRange;

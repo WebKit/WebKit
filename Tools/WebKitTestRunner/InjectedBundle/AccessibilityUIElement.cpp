@@ -114,6 +114,7 @@ void AccessibilityUIElement::setValue(JSStringRef) { }
 JSValueRef AccessibilityUIElement::searchTextWithCriteria(JSContextRef, JSValueRef, JSStringRef, JSStringRef) { return nullptr; }
 bool AccessibilityUIElement::isOnScreen() const { return true; }
 JSValueRef AccessibilityUIElement::mathRootRadicand() const { return { }; }
+unsigned AccessibilityUIElement::numberOfCharacters() const { return 0; }
 #endif
 
 #if !PLATFORM(COCOA) || !ENABLE(ACCESSIBILITY)

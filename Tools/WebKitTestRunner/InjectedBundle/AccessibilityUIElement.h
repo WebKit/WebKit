@@ -175,6 +175,7 @@ public:
     double minValue();
     double maxValue();
     JSRetainPtr<JSStringRef> valueDescription();
+    unsigned numberOfCharacters() const;
     int insertionPointLineNumber();
     JSRetainPtr<JSStringRef> selectedTextRange();
     JSRetainPtr<JSStringRef> textInputMarkedRange() const;
