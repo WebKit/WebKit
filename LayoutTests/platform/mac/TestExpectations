@@ -2728,9 +2728,9 @@ webkit.org/b/237415 webgl/1.0.x/conformance/rendering/clipping-wide-points.html 
 [ Monterey ] imported/w3c/web-platform-tests/css/css-fonts/variations/variable-opsz-size-adjust.html [ Skip ]
 
 # webkit.org/b/255178 [ Ventura iOS arm64 ] 3X imported/w3c/web-platform-tests/css/css-color/parsing (layout-tests) are constant text failures
-[ Ventura ] imported/w3c/web-platform-tests/css/css-color/parsing/color-computed-color-mix-function.html [ Failure ]
-[ Ventura ] imported/w3c/web-platform-tests/css/css-color/parsing/color-computed-relative-color.html [ Failure ]
-[ Ventura ] imported/w3c/web-platform-tests/css/css-color/parsing/color-valid-relative-color.html [ Failure ]
+[ Ventura x86_64 ] imported/w3c/web-platform-tests/css/css-color/parsing/color-computed-color-mix-function.html [ Failure ]
+[ Ventura x86_64 ] imported/w3c/web-platform-tests/css/css-color/parsing/color-computed-relative-color.html [ Failure ]
+[ Ventura x86_64 ] imported/w3c/web-platform-tests/css/css-color/parsing/color-valid-relative-color.html [ Failure ]
 
 # webkit.org/b/255427 [ Ventura ] 4/13 batch mark expectations and branch bugs
 [ Ventura ] http/tests/media/hls/track-in-band-hls-metadata-cue-duration.html [ Pass Failure ]
