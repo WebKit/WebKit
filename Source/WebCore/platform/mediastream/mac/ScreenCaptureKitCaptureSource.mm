@@ -183,15 +183,12 @@ void ScreenCaptureKitCaptureSource::stop()
 
     auto stopHandler = makeBlockPtr([weakThis = WeakPtr { *this }] (NSError *error) mutable {
         callOnMainRunLoop([weakThis = WTFMove(weakThis), error = RetainPtr { error }]() mutable {
-            if (!weakThis)
-                return;
-
-            weakThis->m_sessionSource = nullptr;
-            if (error)
+            if (weakThis && error)
                 weakThis->sessionFailedWithError(WTFMove(error), "-[SCStream stopCaptureWithCompletionHandler:] failed"_s);
         });
     });
     [contentStream() stopCaptureWithCompletionHandler:stopHandler.get()];
+    m_sessionSource = nullptr;
 }
 
 void ScreenCaptureKitCaptureSource::sessionFailedWithError(RetainPtr<NSError>&& error, const String& message)

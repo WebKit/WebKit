@@ -111,6 +111,8 @@ private:
     bool promptWithSCContentSharingSession(DisplayCapturePromptType);
     bool promptWithSCContentSharingPicker(DisplayCapturePromptType);
 
+    bool promptingInProgress() const { return !!m_completionHandler; }
+
     void cleanupSessionSource(ScreenCaptureSessionSource&);
 
     WeakPtr<ScreenCaptureSessionSource> findActiveSource(SCContentSharingSession*);
