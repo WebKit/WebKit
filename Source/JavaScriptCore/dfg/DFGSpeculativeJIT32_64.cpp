@@ -3100,6 +3100,11 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
+    case StringIndexOf: {
+        compileStringIndexOf(node);
+        break;
+    }
+
     case FunctionToString:
         compileFunctionToString(node);
         break;

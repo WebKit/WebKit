@@ -3486,6 +3486,11 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
 
+    case StringIndexOf: {
+        compileStringIndexOf(node);
+        break;
+    }
+
     case StringCharAt: {
         // Relies on StringCharAt node having same basic layout as GetByVal
         JSValueRegsTemporary result;

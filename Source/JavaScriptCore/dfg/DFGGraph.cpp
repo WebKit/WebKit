@@ -1945,6 +1945,18 @@ void Graph::freeDFGIRAfterLowering()
     m_controlEquivalenceAnalysis = nullptr;
 }
 
+const BoyerMooreHorspoolTable<uint8_t>* Graph::tryAddStringSearchTable8(const String& string)
+{
+    constexpr unsigned minPatternLength = 9;
+    if (string.length() > BoyerMooreHorspoolTable<uint8_t>::maxPatternLength)
+        return nullptr;
+    if (string.length() < minPatternLength)
+        return nullptr;
+    return m_stringSearchTable8.ensure(string, [&]() {
+        return makeUnique<BoyerMooreHorspoolTable<uint8_t>>(string);
+    }).iterator->value.get();
+}
+
 void Prefix::dump(PrintStream& out) const
 {
     if (!m_enabled)

@@ -230,6 +230,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case GetGlobalObject:
     case StringCharCodeAt:
     case StringCodePointAt:
+    case StringIndexOf:
     case CompareStrictEq:
     case SameValue:
     case IsEmpty:
