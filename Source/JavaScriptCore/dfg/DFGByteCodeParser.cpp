@@ -2879,6 +2879,28 @@ auto ByteCodeParser::handleIntrinsicCall(Node* callee, Operand result, CallVaria
             return CallOptimizationResult::Inlined;
         }
 
+        case StringPrototypeIndexOfIntrinsic: {
+            if (argumentCountIncludingThis < 2)
+                return CallOptimizationResult::DidNothing;
+
+            if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, Uncountable) || m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadType))
+                return CallOptimizationResult::DidNothing;
+
+            insertChecks();
+            Node* thisValue = get(virtualRegisterForArgumentIncludingThis(0, registerOffset));
+            Node* search = get(virtualRegisterForArgumentIncludingThis(1, registerOffset));
+            Node* result = nullptr;
+            if (argumentCountIncludingThis == 2)
+                result = addToGraph(StringIndexOf, OpInfo(ArrayMode(Array::String, Array::Read).asWord()), thisValue, search);
+            else {
+                Node* index = get(virtualRegisterForArgumentIncludingThis(2, registerOffset));
+                result = addToGraph(StringIndexOf, OpInfo(ArrayMode(Array::String, Array::Read).asWord()), thisValue, search, index);
+            }
+
+            setResult(result);
+            return CallOptimizationResult::Inlined;
+        }
+
         case CharAtIntrinsic: {
             if (argumentCountIncludingThis < 2)
                 return CallOptimizationResult::DidNothing;

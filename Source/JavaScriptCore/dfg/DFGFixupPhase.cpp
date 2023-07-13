@@ -1025,6 +1025,14 @@ private:
             break;
         }
 
+        case StringIndexOf: {
+            fixEdge<StringUse>(node->child1());
+            fixEdge<StringUse>(node->child2());
+            if (node->child3())
+                fixEdge<Int32Use>(node->child3());
+            break;
+        }
+
         case StringLocaleCompare: {
             fixEdge<StringUse>(node->child1());
             fixEdge<StringUse>(node->child2());

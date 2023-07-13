@@ -339,6 +339,14 @@ private:
             break;
         }
 
+        case StringIndexOf: {
+            node->child1()->mergeFlags(NodeBytecodeUsesAsValue);
+            node->child2()->mergeFlags(NodeBytecodeUsesAsValue);
+            if (node->child3())
+                node->child3()->mergeFlags(NodeBytecodeUsesAsValue | NodeBytecodeUsesAsInt | NodeBytecodePrefersArrayIndex);
+            break;
+        }
+
         case StringSlice:
         case StringSubstring: {
             node->child1()->mergeFlags(NodeBytecodeUsesAsValue);

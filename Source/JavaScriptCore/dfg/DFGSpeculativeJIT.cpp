@@ -17062,6 +17062,61 @@ void SpeculativeJIT::compileStringLocaleCompare(Node* node)
     strictInt32Result(resultGPR, node);
 }
 
+void SpeculativeJIT::compileStringIndexOf(Node* node)
+{
+    std::optional<UChar> character;
+    String searchString = node->child2()->tryGetString(m_graph);
+    if (!!searchString) {
+        if (searchString.length() == 1)
+            character = searchString.characterAt(0);
+    }
+
+    if (node->child3()) {
+        SpeculateCellOperand base(this, node->child1());
+        SpeculateCellOperand argument(this, node->child2());
+        SpeculateInt32Operand index(this, node->child3());
+
+        GPRReg baseGPR = base.gpr();
+        GPRReg argumentGPR = argument.gpr();
+        GPRReg indexGPR = index.gpr();
+
+        speculateString(node->child1(), baseGPR);
+        speculateString(node->child2(), argumentGPR);
+
+        flushRegisters();
+        GPRFlushedCallResult result(this);
+        GPRReg resultGPR = result.gpr();
+        if (character)
+            callOperation(operationStringIndexOfWithIndexWithOneChar, resultGPR, LinkableConstant::globalObject(*this, node), baseGPR, indexGPR, TrustedImm32(character.value()));
+        else
+            callOperation(operationStringIndexOfWithIndex, resultGPR, LinkableConstant::globalObject(*this, node), baseGPR, argumentGPR, indexGPR);
+        exceptionCheck();
+
+        strictInt32Result(resultGPR, node);
+        return;
+    }
+
+    SpeculateCellOperand base(this, node->child1());
+    SpeculateCellOperand argument(this, node->child2());
+
+    GPRReg baseGPR = base.gpr();
+    GPRReg argumentGPR = argument.gpr();
+
+    speculateString(node->child1(), baseGPR);
+    speculateString(node->child2(), argumentGPR);
+
+    flushRegisters();
+    GPRFlushedCallResult result(this);
+    GPRReg resultGPR = result.gpr();
+    if (character)
+        callOperation(operationStringIndexOfWithOneChar, resultGPR, LinkableConstant::globalObject(*this, node), baseGPR, TrustedImm32(character.value()));
+    else
+        callOperation(operationStringIndexOf, resultGPR, LinkableConstant::globalObject(*this, node), baseGPR, argumentGPR);
+    exceptionCheck();
+
+    strictInt32Result(resultGPR, node);
+}
+
 void SpeculativeJIT::compileGlobalIsNaN(Node* node)
 {
     switch (node->child1().useKind()) {
