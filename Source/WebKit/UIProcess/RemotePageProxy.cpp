@@ -80,16 +80,6 @@ RemotePageProxy::~RemotePageProxy()
         m_page->removeRemotePageProxy(m_domain);
 }
 
-IPC::Connection* RemotePageProxy::messageSenderConnection() const
-{
-    return m_process->connection();
-}
-
-uint64_t RemotePageProxy::messageSenderDestinationID() const
-{
-    return m_webPageID.toUInt64();
-}
-
 void RemotePageProxy::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
