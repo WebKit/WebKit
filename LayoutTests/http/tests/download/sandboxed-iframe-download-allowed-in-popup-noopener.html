@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+<p>This test passes if a download is started.</p>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+    testRunner.setShouldLogDownloadCallbacks(true);
+    testRunner.waitUntilDownloadFinished();
+}
+
+let iframe = document.createElement("iframe");
+iframe.srcdoc = "<a target='_blank' rel='noopener'>Download</a>";
+iframe.sandbox = "allow-same-origin allow-popups allow-downloads";
+iframe.onload = () => {
+    iframe.contentWindow.addEventListener("unload", () => {
+       console.log("FAIL: Unexpected frame navigation");
+    });
+    let anchor = iframe.contentDocument.getElementsByTagName('a')[0];
+    anchor.href = 'resources/content-disposition-pass.py';
+    anchor.click();
+};
+
+document.body.appendChild(iframe);
+</script>
+</body>
+</html>

@@ -1107,6 +1107,11 @@ void TestRunner::setShouldLogDownloadCallbacks(bool value)
     postPageMessage("SetShouldLogDownloadCallbacks", value);
 }
 
+void TestRunner::setShouldDownloadContentDispositionAttachments(bool value)
+{
+    postPageMessage("SetShouldDownloadContentDispositionAttachments", value);
+}
+
 void TestRunner::setShouldLogDownloadSize(bool value)
 {
     postPageMessage("SetShouldLogDownloadSize", value);

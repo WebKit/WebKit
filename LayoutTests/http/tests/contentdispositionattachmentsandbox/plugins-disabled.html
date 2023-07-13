@@ -5,6 +5,8 @@ if (window.internals)
 
 if (window.testRunner) {
     testRunner.waitUntilDone();
+    if (testRunner.setShouldDownloadContentDispositionAttachments)
+        testRunner.setShouldDownloadContentDispositionAttachments(false);
 
     // The doubly-nested setTimeout() is meant to account for two timers in the object fallback content rendering process.
     // We can't rely on object's onerror event since we cannot run script in the sandboxed frame, so we must wait for the

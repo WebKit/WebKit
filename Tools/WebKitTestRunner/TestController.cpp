@@ -2992,9 +2992,16 @@ void TestController::decidePolicyForNavigationResponse(WKNavigationResponseRef n
 {
     WKRetainPtr<WKNavigationResponseRef> retainedNavigationResponse { navigationResponse };
     WKRetainPtr<WKFramePolicyListenerRef> retainedListener { listener };
+    auto response = adoptWK(WKNavigationResponseCopyResponse(navigationResponse));
 
     bool shouldDownloadUndisplayableMIMETypes = m_shouldDownloadUndisplayableMIMETypes;
-    auto decisionFunction = [shouldDownloadUndisplayableMIMETypes, retainedNavigationResponse, retainedListener]() {
+    bool responseIsAttachment = WKURLResponseIsAttachment(response.get());
+    auto decisionFunction = [shouldDownloadUndisplayableMIMETypes, retainedNavigationResponse, retainedListener, responseIsAttachment, shouldDownloadContentDispositionAttachments = m_shouldDownloadContentDispositionAttachments]() {
+        if (responseIsAttachment && shouldDownloadContentDispositionAttachments) {
+            WKFramePolicyListenerDownload(retainedListener.get());
+            return;
+        }
+
         // Even though Response was already checked by WKBundlePagePolicyClient, the check did not include plugins
         // so we have to re-check again.
         if (WKNavigationResponseCanShowMIMEType(retainedNavigationResponse.get())) {
@@ -3008,9 +3015,8 @@ void TestController::decidePolicyForNavigationResponse(WKNavigationResponseRef n
             WKFramePolicyListenerIgnore(retainedListener.get());
     };
 
-    auto response = adoptWK(WKNavigationResponseCopyResponse(navigationResponse));
     if (m_policyDelegateEnabled) {
-        if (WKURLResponseIsAttachment(response.get()))
+        if (responseIsAttachment)
             m_currentInvocation->outputText(makeString("Policy delegate: resource is an attachment, suggested file name \'", toWTFString(adoptWK(WKURLResponseCopySuggestedFilename(response.get())).get()), "'\n"));
     }
 

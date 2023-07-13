@@ -5,6 +5,8 @@ if (window.testRunner) {
     testRunner.dumpAsText();
     testRunner.dumpChildFramesAsText();
     testRunner.waitUntilDone();
+    if (testRunner.setShouldDownloadContentDispositionAttachments)
+        testRunner.setShouldDownloadContentDispositionAttachments(false);
 }
 
 onload = function() {
