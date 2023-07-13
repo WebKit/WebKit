@@ -78,6 +78,53 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     return extensionsForMIMETypeMap;
 }
 
+// Specify MIME type <-> extension mappings for type identifiers recognized by the system that are missing MIME type values.
+static const HashMap<String, String, ASCIICaseInsensitiveHash>& additionalMimeTypesMap()
+{
+    static NeverDestroyed<HashMap<String, String, ASCIICaseInsensitiveHash>> mimeTypesMap = [] {
+        HashMap<String, String, ASCIICaseInsensitiveHash> map;
+        static constexpr TypeExtensionPair additionalTypes[] = {
+            // FIXME: Remove this list once rdar://112044000 (Many camera RAW image type identifiers are missing MIME types) is resolved.
+            { "image/x-canon-cr2"_s, "cr2"_s },
+            { "image/x-canon-cr3"_s, "cr3"_s },
+            { "image/x-epson-erf"_s, "erf"_s },
+            { "image/x-fuji-raf"_s, "raf"_s },
+            { "image/x-hasselblad-3fr"_s, "3fr"_s },
+            { "image/x-hasselblad-fff"_s, "fff"_s },
+            { "image/x-leaf-mos"_s, "mos"_s },
+            { "image/x-leica-rwl"_s, "rwl"_s },
+            { "image/x-minolta-mrw"_s, "mrw"_s },
+            { "image/x-nikon-nef"_s, "nef"_s },
+            { "image/x-olympus-orf"_s, "orf"_s },
+            { "image/x-panasonic-raw"_s, "raw"_s },
+            { "image/x-panasonic-rw2"_s, "rw2"_s },
+            { "image/x-pentax-pef"_s, "pef"_s },
+            { "image/x-phaseone-iiq"_s, "iiq"_s },
+            { "image/x-samsung-srw"_s, "srw"_s },
+            { "image/x-sony-arw"_s, "arw"_s },
+            { "image/x-sony-srf"_s, "srf"_s },
+        };
+        for (auto& [type, extension] : additionalTypes)
+            map.add(extension, type);
+        return map;
+    }();
+    return mimeTypesMap;
+}
+
+static const HashMap<String, Vector<String>, ASCIICaseInsensitiveHash>& additionalExtensionsMap()
+{
+    static NeverDestroyed<HashMap<String, Vector<String>, ASCIICaseInsensitiveHash>> extensionsMap = [] {
+        HashMap<String, Vector<String>, ASCIICaseInsensitiveHash> map;
+        for (auto& [extension, type] : additionalMimeTypesMap()) {
+            map.ensure(type, [] {
+                return Vector<String>();
+            }).iterator->value.append(extension);
+        }
+        return map;
+    }();
+    return extensionsMap;
+}
+
 static Vector<String> extensionsForWildcardMIMEType(const String& type)
 {
     Vector<String> extensions;
@@ -92,14 +139,32 @@ static Vector<String> extensionsForWildcardMIMEType(const String& type)
 String MIMETypeRegistry::mimeTypeForExtension(StringView extension)
 {
     auto string = extension.createNSStringWithoutCopying();
-    return [[NSURLFileTypeMappings sharedMappings] MIMETypeForExtension:string.get()];
+
+    NSString *mimeType = [[NSURLFileTypeMappings sharedMappings] MIMETypeForExtension:string.get()];
+    if (mimeType.length)
+        return mimeType;
+
+    auto mapEntry = additionalMimeTypesMap().find<ASCIICaseInsensitiveStringViewHashTranslator>(extension);
+    if (mapEntry != additionalMimeTypesMap().end())
+        return mapEntry->value;
+
+    return nullString();
 }
 
 Vector<String> MIMETypeRegistry::extensionsForMIMEType(const String& type)
 {
     if (type.endsWith('*'))
         return extensionsForWildcardMIMEType(type);
-    return makeVector<String>([[NSURLFileTypeMappings sharedMappings] extensionsForMIMEType:type]);
+
+    NSArray *extensions = [[NSURLFileTypeMappings sharedMappings] extensionsForMIMEType:type];
+    if (extensions.count)
+        return makeVector<String>(extensions);
+
+    auto mapEntry = additionalExtensionsMap().find(type);
+    if (mapEntry != additionalExtensionsMap().end())
+        return mapEntry->value;
+
+    return { };
 }
 
 String MIMETypeRegistry::preferredExtensionForMIMEType(const String& type)
@@ -109,7 +174,15 @@ String MIMETypeRegistry::preferredExtensionForMIMEType(const String& type)
     if (isUSDMIMEType(type))
         return "usdz"_s;
 
-    return [[NSURLFileTypeMappings sharedMappings] preferredExtensionForMIMEType:(NSString *)type];
+    NSString *preferredExtension = [[NSURLFileTypeMappings sharedMappings] preferredExtensionForMIMEType:(NSString *)type];
+    if (preferredExtension.length)
+        return preferredExtension;
+
+    auto mapEntry = additionalExtensionsMap().find(type);
+    if (mapEntry != additionalExtensionsMap().end())
+        return mapEntry->value.first();
+
+    return nullString();
 }
 
 bool MIMETypeRegistry::isApplicationPluginMIMEType(const String& MIMEType)
