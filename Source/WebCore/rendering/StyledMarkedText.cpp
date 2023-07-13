@@ -147,10 +147,10 @@ static Vector<StyledMarkedText> coalesceAdjacentWithSameRanges(Vector<StyledMark
             if (previousStyledMarkedText.priority <= it->priority) {
                 previousStyledMarkedText.priority = it->priority;
                 // If highlight, take textDecorationStyles of latest StyledMarkedText.
-                // FIXME: Check for taking textDecorationStyles needs to be changed to accommodate other MarkedText type
+                // FIXME: Check for taking textDecorationStyles needs to be changed to accommodate other MarkedText type.
                 if (!it->highlightName.isNull())
                     previousStyledMarkedText.style.textDecorationStyles = it->style.textDecorationStyles;
-                // If higher or same priority and opaque, just override background color.
+                // If higher or same priority and opaque, override background color.
                 if (it->style.backgroundColor.isOpaque())
                     previousStyledMarkedText.style.backgroundColor = it->style.backgroundColor;
             }

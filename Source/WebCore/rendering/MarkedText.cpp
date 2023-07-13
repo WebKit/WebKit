@@ -122,6 +122,20 @@ Vector<MarkedText> MarkedText::collectForHighlights(const RenderText& renderer, 
                 for (auto& rangeData : highlightRegister->map().get(highlightName)->rangesData()) {
                     if (!highlightData.setRenderRange(rangeData))
                         continue;
+                    if (auto* staticRange = dynamicDowncast<StaticRange>(rangeData->range()); staticRange
+                        && (!staticRange->computeValidity() || staticRange->collapsed()))
+                        continue;
+                    // FIXME: Potentially move this check elsewhere, to where we collect this range information.
+                    auto hasRenderer = [&] {
+                        IntersectingNodeRange nodes(makeSimpleRange(rangeData->range()));
+                        for (auto& iterator : nodes) {
+                            if (iterator.renderer())
+                                return true;
+                        }
+                        return false;
+                    }();
+                    if (!hasRenderer)
+                        continue;
 
                     auto [highlightStart, highlightEnd] = highlightData.rangeForTextBox(renderer, selectableRange);
 
