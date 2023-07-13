@@ -445,9 +445,10 @@ void NetworkConnectionToWebProcess::didClose(IPC::Connection& connection)
 
     if (auto* networkSession = this->networkSession()) {
         networkSession->broadcastChannelRegistry().removeConnection(connection);
-        for (auto& url : m_blobURLs)
+        for (auto& [url, topOrigin] : m_blobURLs)
             networkSession->blobRegistry().unregisterBlobURL(url);
-        for (auto& [url, count] : m_blobURLHandles) {
+        for (auto& [urlAndOrigin, count] : m_blobURLHandles) {
+            auto& [url, topOrigin] = urlAndOrigin;
             for (unsigned i = 0; i < count; ++i)
                 networkSession->blobRegistry().unregisterBlobURLHandle(url);
         }
@@ -917,7 +918,7 @@ void NetworkConnectionToWebProcess::registerInternalFileBlobURL(const URL& url, 
     if (!session)
         return;
 
-    m_blobURLs.add(url);
+    m_blobURLs.add({ url, std::nullopt });
     session->blobRegistry().registerInternalFileBlobURL(url, BlobDataFileReferenceWithSandboxExtension::create(path, replacementPath, SandboxExtension::create(WTFMove(extensionHandle))), contentType);
 }
 
@@ -927,7 +928,7 @@ void NetworkConnectionToWebProcess::registerInternalBlobURL(const URL& url, Vect
     if (!session)
         return;
 
-    m_blobURLs.add(url);
+    m_blobURLs.add({ url, std::nullopt });
     session->blobRegistry().registerInternalBlobURL(url, WTFMove(blobParts), contentType);
 }
 
@@ -937,7 +938,7 @@ void NetworkConnectionToWebProcess::registerBlobURL(const URL& url, const URL& s
     if (!session)
         return;
 
-    m_blobURLs.add(url);
+    m_blobURLs.add({ url, std::nullopt });
     session->blobRegistry().registerBlobURL(url, srcURL, WTFMove(policyContainer));
 }
 
@@ -949,7 +950,7 @@ void NetworkConnectionToWebProcess::registerInternalBlobURLOptionallyFileBacked(
     if (!session)
         return;
 
-    m_blobURLs.add(url);
+    m_blobURLs.add({ url, std::nullopt });
     session->blobRegistry().registerInternalBlobURLOptionallyFileBacked(url, srcURL, BlobDataFileReferenceWithSandboxExtension::create(fileBackedPath), contentType, { });
 }
 
@@ -959,7 +960,7 @@ void NetworkConnectionToWebProcess::registerInternalBlobURLForSlice(const URL& u
     if (!session)
         return;
 
-    m_blobURLs.add(url);
+    m_blobURLs.add({ url, std::nullopt });
     session->blobRegistry().registerInternalBlobURLForSlice(url, srcURL, start, end, contentType);
 }
 
@@ -969,7 +970,7 @@ void NetworkConnectionToWebProcess::unregisterBlobURL(const URL& url)
     if (!session)
         return;
 
-    m_blobURLs.remove(url);
+    m_blobURLs.remove({ url, std::nullopt });
     session->blobRegistry().unregisterBlobURL(url);
 }
 
@@ -979,7 +980,7 @@ void NetworkConnectionToWebProcess::registerBlobURLHandle(const URL& url)
     if (!session)
         return;
 
-    m_blobURLHandles.add(url);
+    m_blobURLHandles.add({ url, std::nullopt });
     session->blobRegistry().registerBlobURLHandle(url);
 }
 
@@ -989,7 +990,7 @@ void NetworkConnectionToWebProcess::unregisterBlobURLHandle(const URL& url)
     if (!session)
         return;
 
-    m_blobURLHandles.remove(url);
+    m_blobURLHandles.remove({ url, std::nullopt });
     session->blobRegistry().unregisterBlobURLHandle(url);
 }
 

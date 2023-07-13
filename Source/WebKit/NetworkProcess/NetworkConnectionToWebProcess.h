@@ -447,8 +447,9 @@ private:
     Ref<NetworkSchemeRegistry> m_schemeRegistry;
     UniqueRef<NetworkOriginAccessPatterns> m_originAccessPatterns;
         
-    HashSet<URL> m_blobURLs;
-    HashCountedSet<URL> m_blobURLHandles;
+    using BlobURLKey = std::pair<URL, std::optional<WebCore::SecurityOriginData>>;
+    HashSet<BlobURLKey> m_blobURLs;
+    HashCountedSet<BlobURLKey> m_blobURLHandles;
 #if ENABLE(IPC_TESTING_API)
     IPCTester m_ipcTester;
 #endif
