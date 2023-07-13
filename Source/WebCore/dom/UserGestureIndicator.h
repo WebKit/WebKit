@@ -105,8 +105,6 @@ public:
 
     bool isValidForDocument(const Document&) const;
 
-    void forEachImpactedDocument(Function<void(Document&)>&&);
-
 private:
     UserGestureToken(ProcessingUserGestureState, UserGestureType, Document*);
 
