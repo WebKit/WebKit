@@ -1125,6 +1125,16 @@ imported/w3c/web-platform-tests/webcodecs/temporal-svc-encoding.https.any.html?h
 imported/w3c/web-platform-tests/webcodecs/temporal-svc-encoding.https.any.html?vp8 [ Failure ]
 imported/w3c/web-platform-tests/webcodecs/temporal-svc-encoding.https.any.html?vp9 [ Failure ]
 
+# HEVC support
+imported/w3c/web-platform-tests/webcodecs/full-cycle-test.https.any.html?h265_annexb [ Failure ]
+imported/w3c/web-platform-tests/webcodecs/full-cycle-test.https.any.html?h265_hevc [ Failure ]
+imported/w3c/web-platform-tests/webcodecs/full-cycle-test.https.any.worker.html?h265_annexb [ Failure ]
+imported/w3c/web-platform-tests/webcodecs/full-cycle-test.https.any.worker.html?h265_hevc [ Failure ]
+imported/w3c/web-platform-tests/webcodecs/videoDecoder-codec-specific.https.any.html?h265_annexb [ Skip ]
+imported/w3c/web-platform-tests/webcodecs/videoDecoder-codec-specific.https.any.html?h265_hevc [ Skip ]
+imported/w3c/web-platform-tests/webcodecs/videoDecoder-codec-specific.https.any.worker.html?h265_annexb [ Skip ]
+imported/w3c/web-platform-tests/webcodecs/videoDecoder-codec-specific.https.any.worker.html?h265_hevc [ Skip ]
+
 imported/w3c/web-platform-tests/webcodecs/videoFrame-createImageBitmap.any.worker.html [ Pass ]
 
 # Likely bugs related with dav1ddec.

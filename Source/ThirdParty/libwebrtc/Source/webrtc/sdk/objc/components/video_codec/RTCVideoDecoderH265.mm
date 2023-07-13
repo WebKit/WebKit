@@ -138,6 +138,10 @@ CMSampleBufferRef H265BufferToCMSampleBuffer(const uint8_t* buffer, size_t buffe
     _error = noErr;
     return WEBRTC_VIDEO_CODEC_ERROR;
   }
+  if (!data || !size) {
+    RTC_LOG(LS_WARNING) << "Empty frame.";
+    return WEBRTC_VIDEO_CODEC_ERROR;
+  }
 
   rtc::ScopedCFTypeRef<CMVideoFormatDescriptionRef> inputFormat =
       rtc::ScopedCF(webrtc::CreateH265VideoFormatDescription(
@@ -223,7 +227,7 @@ CMSampleBufferRef H265BufferToCMSampleBuffer(const uint8_t* buffer, size_t buffe
     &kCFTypeDictionaryValueCallBacks);
 
   CMVideoFormatDescriptionRef videoFormatDescription = nullptr;
-  auto err = CMVideoFormatDescriptionCreate(NULL, kCMVideoCodecType_H264, width, height, extensionsDict, &videoFormatDescription);
+  auto err = CMVideoFormatDescriptionCreate(NULL, kCMVideoCodecType_HEVC, width, height, extensionsDict, &videoFormatDescription);
   CFRelease(codecConfig);
   CFRelease(atomsDict);
   CFRelease(extensionsDict);

@@ -93,7 +93,9 @@ std::optional<VideoCodecType> LibWebRTCCodecs::videoCodecTypeFromWebCodec(const 
     if (codec.startsWith("avc1."_s))
         return VideoCodecType::H264;
 
-    // FIXME: Expose H265 if available.
+    if (codec.startsWith("hev1."_s) || codec.startsWith("hvc1."_s))
+        return VideoCodecType::H265;
+
     return { };
 }
 

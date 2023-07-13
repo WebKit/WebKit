@@ -107,6 +107,7 @@
 - (void)setLowLatency:(bool)lowLatencyEnabled {
     if (m_h264Encoder)
         [m_h264Encoder setH264LowLatencyEncoderEnabled:lowLatencyEnabled];
+    [m_h265Encoder setLowLatency:lowLatencyEnabled];
 }
 
 - (void)setUseAnnexB:(bool)useAnnexB {
