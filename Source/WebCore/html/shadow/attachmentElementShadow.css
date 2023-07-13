@@ -24,14 +24,18 @@
 
 div#attachment-container {
 #if (defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY)
-    --icon-size: 72px;
+#if (defined(WTF_PLATFORM_VISION) && WTF_PLATFORM_VISION)
+    --icon-margin: 8px;
+    --information-margin-end: 8px;
+    width: 187px;
+#else
     --icon-margin: 10px;
-    gap: 0;
     --information-margin-end: 26px;
     width: 338px;
+#endif
+    gap: 0;
     background-color: -apple-system-quaternary-fill;
 #else
-    --icon-size: 52px;
     --icon-margin: 14px;
     gap: 4px;
     --information-margin-end: 24px;
@@ -48,22 +52,30 @@ div#attachment-container {
 }
 
 div#attachment-preview-area {
-    width: calc(var(--icon-size) + var(--icon-margin));
     display: grid;
     align-items: center;
     justify-items: end;
     flex-shrink: 0;
+    margin: var(--icon-margin);
 }
 
 img#attachment-icon,
 div#attachment-placeholder,
 div#attachment-progress {
     grid-area: 1 / 1;
-    width: var(--icon-size);
-    aspect-ratio: 1;
+    align-self: center;
+    justify-self: center;
+}
+
+div#attachment-placeholder,
+div#attachment-progress {
+    width: calc(3/4 * var(--icon-size));
+    height: calc(3/4 * var(--icon-size));
 }
 
 img#attachment-icon {
+    max-width: var(--icon-size);
+    max-height: var(--icon-size);
     object-fit: contain;
 }
 
@@ -105,10 +117,14 @@ div#attachment-information-block {
 }
 
 div#attachment-action {
+#if (defined(WTF_PLATFORM_VISION) && WTF_PLATFORM_VISION)
+    font-size: x-small;
+#else
+    font-size: small;
+#endif
     grid-row: 1;
     grid-column: 1;
     justify-self: stretch;
-    font-size: small;
     font-weight: bold;
     color: -apple-system-secondary-label;
     display: -webkit-box;
@@ -118,10 +134,14 @@ div#attachment-action {
 }
 
 div#attachment-title {
+#if (defined(WTF_PLATFORM_VISION) && WTF_PLATFORM_VISION)
+    font-size: x-small;
+#else
+    font-size: small;
+#endif
     grid-row: 2;
     grid-column: 1;
     justify-self: stretch;
-    font-size: small;
     font-weight: bold;
     color: -apple-system-label;
     overflow-wrap: anywhere;
@@ -132,10 +152,14 @@ div#attachment-title {
 }
 
 div#attachment-subtitle {
+#if (defined(WTF_PLATFORM_VISION) && WTF_PLATFORM_VISION)
+    font-size: xx-small;
+#else
+    font-size: x-small;
+#endif
     grid-row: 3;
     grid-column: 1;
     justify-self: stretch;
-    font-size: x-small;
     color: -apple-system-secondary-label;
     display: -webkit-box;
     -webkit-line-clamp: 1;
@@ -153,8 +177,13 @@ div#attachment-save-area {
 
 button#attachment-save-button {
 #if (defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY)
+#if (defined(WTF_PLATFORM_VISION) && WTF_PLATFORM_VISION)
+    width: 28px;
+    height: 28px;
+#else
     width: 40px;
     height: 40px;
+#endif
     background-color: -apple-system-tertiary-fill;
     border: 0;
 #else
@@ -170,6 +199,17 @@ button#attachment-save-button {
 }
 
 button#attachment-save-button::before {
+#if (defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY)
+#if (defined(WTF_PLATFORM_VISION) && WTF_PLATFORM_VISION)
+    mask-size: 14px;
+#else
+    mask-size: 18px;
+#endif
+    background-color: -apple-system-blue;
+#else
+    mask-size: 14px;
+    background-color: -apple-system-secondary-label;
+#endif
     content: "";
     display: block;
     /* SF Symbol square-and-arrow-down from https://copysfsymbols.apple.com/bold.html */
@@ -178,11 +218,4 @@ button#attachment-save-button::before {
     mask-position: center;
     width: 100%;
     height: 100%;
-#if (defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY)
-    mask-size: 18px;
-    background-color: -apple-system-blue;
-#else
-    mask-size: 14px;
-    background-color: -apple-system-secondary-label;
-#endif
 }

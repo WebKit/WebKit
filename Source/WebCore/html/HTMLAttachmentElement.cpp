@@ -74,6 +74,14 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(HTMLAttachmentElement);
 
 using namespace HTMLNames;
 
+#if PLATFORM(VISION)
+constexpr float attachmentIconSize = 40;
+#elif PLATFORM(IOS_FAMILY)
+constexpr float attachmentIconSize = 72;
+#else
+constexpr float attachmentIconSize = 52;
+#endif
+
 HTMLAttachmentElement::HTMLAttachmentElement(const QualifiedName& tagName, Document& document)
     : HTMLElement(tagName, document)
 {
@@ -178,6 +186,12 @@ static const AtomString& attachmentSaveButtonIdentifier()
     return identifier;
 }
 
+static const AtomString& attachmentIconSizeProperty()
+{
+    static MainThreadNeverDestroyed<const AtomString> identifier("--icon-size"_s);
+    return identifier;
+}
+
 static const AtomString& saveAtom()
 {
     static MainThreadNeverDestroyed<const AtomString> identifier("save"_s);
@@ -208,6 +222,7 @@ void HTMLAttachmentElement::ensureWideLayoutShadowTree(ShadowRoot& root)
 
     m_containerElement = HTMLDivElement::create(document());
     m_containerElement->setIdAttribute(attachmentContainerIdentifier());
+    m_containerElement->setInlineStyleCustomProperty(attachmentIconSizeProperty(), makeString(attachmentIconSize, "px"_s));
     root.appendChild(*m_containerElement);
 
     auto previewArea = createContainedElement<HTMLDivElement>(*m_containerElement, attachmentPreviewAreaIdentifier());
@@ -682,14 +697,9 @@ void HTMLAttachmentElement::requestWideLayoutIconIfNeeded()
     if (!m_imageElement || !document().page() || !document().page()->attachmentElementClient())
         return;
 
-    bool unusedIsReplaced;
-    auto rect = m_imageElement->renderRect(&unusedIsReplaced);
-    if (rect.isEmpty())
-        return;
-
     m_needsWideLayoutIconRequest = false;
 
-    document().page()->attachmentElementClient()->requestAttachmentIcon(uniqueIdentifier(), FloatSize(rect.width().toFloat(), rect.height().toFloat()));
+    document().page()->attachmentElementClient()->requestAttachmentIcon(uniqueIdentifier(), FloatSize(attachmentIconSize, attachmentIconSize));
 }
 
 void HTMLAttachmentElement::requestIconWithSize(const FloatSize& size) const
