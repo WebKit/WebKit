@@ -163,7 +163,7 @@ Getting own properties...
 Properties:
     "__proto__"  =>  "Promise" (object)  [writable | configurable | isOwn]
 Internal Properties:
-    "status"  =>  "resolved" (string)  []
+    "status"  =>  "fulfilled" (string)  []
     "result"  =>  123 (number)  []
 
 -- Running test case: Runtime.getProperties.Promise.Rejected
