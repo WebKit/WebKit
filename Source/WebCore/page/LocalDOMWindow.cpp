@@ -1610,12 +1610,17 @@ bool LocalDOMWindow::consumeTransientActivation()
         RefPtr localFrame = dynamicDowncast<LocalFrame>(frame.get());
         if (!localFrame)
             continue;
-        auto* window = localFrame->window();
-        if (!window || window->lastActivationTimestamp() != MonotonicTime::infinity())
-            window->setLastActivationTimestamp(-MonotonicTime::infinity());
+        if (auto* window = localFrame->window())
+            window->consumeLastActivationIfNecessary();
     }
 
     return true;
+}
+
+void LocalDOMWindow::consumeLastActivationIfNecessary()
+{
+    if (!std::isinf(m_lastActivationTimestamp))
+        m_lastActivationTimestamp = -MonotonicTime::infinity();
 }
 
 // https://html.spec.whatwg.org/multipage/interaction.html#activation-notification
