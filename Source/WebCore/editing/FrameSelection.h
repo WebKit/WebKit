@@ -58,7 +58,7 @@ class CaretBase {
     WTF_MAKE_NONCOPYABLE(CaretBase);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    WEBCORE_EXPORT static Color computeCaretColor(const RenderStyle& elementStyle, const Node*, const std::optional<VisibleSelection>&);
+    WEBCORE_EXPORT static Color computeCaretColor(const RenderStyle& elementStyle, const Node*);
 protected:
     enum class CaretVisibility : bool { Visible, Hidden };
     explicit CaretBase(CaretVisibility = CaretVisibility::Hidden);
@@ -67,7 +67,7 @@ protected:
     void clearCaretRect();
     bool updateCaretRect(Document&, const VisiblePosition& caretPosition);
     bool shouldRepaintCaret(const RenderView*, bool isContentEditable) const;
-    void paintCaret(const Node&, GraphicsContext&, const LayoutPoint&, CaretAnimator*, const std::optional<VisibleSelection>&) const;
+    void paintCaret(const Node&, GraphicsContext&, const LayoutPoint&, CaretAnimator*) const;
 
     const LayoutRect& localCaretRectWithoutUpdate() const { return m_caretLocalRect; }
 

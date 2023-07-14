@@ -369,7 +369,7 @@
             "codegen-properties": {
                 "visited-link-color-support": true,
                 "color-property": true,
-                "custom": "Value",
+                "custom": "All",
                 "high-priority": true,
                 "fast-path-inherited": true,
                 "parser-grammar": "<color accept-quirky-colors-in-quirks-mode>"

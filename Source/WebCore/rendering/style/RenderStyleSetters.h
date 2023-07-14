@@ -299,6 +299,7 @@ inline void RenderStyle::setTextEmphasisFill(TextEmphasisFill fill) { SET(m_rare
 inline void RenderStyle::setTextEmphasisMark(TextEmphasisMark mark) { SET(m_rareInheritedData, textEmphasisMark, static_cast<unsigned>(mark)); }
 inline void RenderStyle::setTextEmphasisPosition(OptionSet<TextEmphasisPosition> position) { SET(m_rareInheritedData, textEmphasisPosition, static_cast<unsigned>(position.toRaw())); }
 inline void RenderStyle::setTextFillColor(const StyleColor& color) { SET(m_rareInheritedData, textFillColor, color); }
+inline void RenderStyle::setHasExplicitlySetColor(bool value) { m_inheritedFlags.hasExplicitlySetColor = value; }
 inline void RenderStyle::setTextGroupAlign(TextGroupAlign value) { SET_NESTED(m_nonInheritedData, rareData, textGroupAlign, static_cast<unsigned>(value)); }
 inline void RenderStyle::setTextIndent(Length&& length) { SET(m_rareInheritedData, indent, WTFMove(length)); }
 inline void RenderStyle::setTextIndentLine(TextIndentLine value) { SET(m_rareInheritedData, textIndentLine, static_cast<unsigned>(value)); }

@@ -1373,7 +1373,7 @@ Color RenderThemeIOS::insertionPointColor()
 
 Color RenderThemeIOS::autocorrectionReplacementMarkerColor(const RenderText& renderer) const
 {
-    auto caretColor = CaretBase::computeCaretColor(renderer.style(), renderer.textNode(), std::nullopt);
+    auto caretColor = CaretBase::computeCaretColor(renderer.style(), renderer.textNode());
     if (!caretColor.isValid())
         caretColor = insertionPointColor();
 

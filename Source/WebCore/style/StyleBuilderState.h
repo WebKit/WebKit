@@ -106,6 +106,11 @@ public:
 
     void setIsBuildingKeyframeStyle() { m_isBuildingKeyframeStyle = true; }
 
+    bool isAuthorOrigin() const
+    {
+        return m_currentProperty && m_currentProperty->cascadeLevel == CascadeLevel::Author;
+    }
+
 private:
     // See the comment in maybeUpdateFontForLetterSpacing() about why this needs to be a friend.
     friend void maybeUpdateFontForLetterSpacing(BuilderState&, CSSValue&);

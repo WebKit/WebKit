@@ -89,6 +89,7 @@ public:
     DECLARE_PROPERTY_CUSTOM_HANDLERS(BoxShadow);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(CaretColor);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(Clip);
+    DECLARE_PROPERTY_CUSTOM_HANDLERS(Color);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(Contain);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(ContainIntrinsicWidth);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(ContainIntrinsicHeight);
@@ -163,8 +164,6 @@ public:
     static void applyInitialCustomProperty(BuilderState&, const CSSRegisteredCustomProperty*, const AtomString& name);
     static void applyInheritCustomProperty(BuilderState&, const CSSRegisteredCustomProperty*, const AtomString& name);
     static void applyValueCustomProperty(BuilderState&, const CSSRegisteredCustomProperty*, const CSSCustomPropertyValue&);
-
-    static void applyValueColor(BuilderState&, CSSValue&);
 
 private:
     static void resetEffectiveZoom(BuilderState&);
@@ -2034,7 +2033,31 @@ inline void BuilderCustom::applyValueColor(BuilderState& builderState, CSSValue&
         auto color = builderState.colorFromPrimitiveValue(primitiveValue, ForVisitedLink::Yes);
         builderState.style().setVisitedLinkColor(resolveColor(color));
     }
+
     builderState.style().setDisallowsFastPathInheritance();
+    builderState.style().setHasExplicitlySetColor(builderState.isAuthorOrigin());
+}
+
+inline void BuilderCustom::applyInitialColor(BuilderState& builderState)
+{
+    if (builderState.applyPropertyToRegularStyle())
+        builderState.style().setColor(RenderStyle::initialColor());
+    if (builderState.applyPropertyToVisitedLinkStyle())
+        builderState.style().setVisitedLinkColor(RenderStyle::initialColor());
+
+    builderState.style().setDisallowsFastPathInheritance();
+    builderState.style().setHasExplicitlySetColor(builderState.isAuthorOrigin());
+}
+
+inline void BuilderCustom::applyInheritColor(BuilderState& builderState)
+{
+    if (builderState.applyPropertyToRegularStyle())
+        builderState.style().setColor(builderState.parentStyle().color());
+    if (builderState.applyPropertyToVisitedLinkStyle())
+        builderState.style().setVisitedLinkColor(builderState.parentStyle().color());
+
+    builderState.style().setDisallowsFastPathInheritance();
+    builderState.style().setHasExplicitlySetColor(builderState.isAuthorOrigin());
 }
 
 inline void BuilderCustom::applyInitialCustomProperty(BuilderState& builderState, const CSSRegisteredCustomProperty* registered, const AtomString& name)
