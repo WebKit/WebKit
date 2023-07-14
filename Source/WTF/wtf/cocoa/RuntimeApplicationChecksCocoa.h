@@ -105,6 +105,7 @@ enum class SDKAlignedBehavior {
     ProgrammaticFocusDuringUserScriptShowsInputViews,
     UsesGameControllerPhysicalInputProfile,
     ScreenOrientationAPIEnabled,
+    EvaluateJavaScriptWithoutTransientActivation,
 
     NumberOfBehaviors
 };
