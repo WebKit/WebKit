@@ -281,6 +281,18 @@
 #define NOT_TAIL_CALLED
 #endif
 
+/* MUST_TAIL_CALL */
+
+#if !defined(MUST_TAIL_CALL) && defined(__cplusplus) && defined(__has_cpp_attribute)
+#if __has_cpp_attribute(clang::musttail)
+#define MUST_TAIL_CALL [[clang::musttail]]
+#endif
+#endif
+
+#if !defined(MUST_TAIL_CALL)
+#define MUST_TAIL_CALL
+#endif
+
 /* RETURNS_NONNULL */
 #if !defined(RETURNS_NONNULL) && COMPILER(GCC_COMPATIBLE)
 #define RETURNS_NONNULL __attribute__((returns_nonnull))
