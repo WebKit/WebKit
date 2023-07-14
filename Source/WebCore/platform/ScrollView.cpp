@@ -36,6 +36,7 @@
 #include "PlatformWheelEvent.h"
 #include "ScrollAnimator.h"
 #include "Scrollbar.h"
+#include "ScrollbarGutter.h"
 #include "ScrollbarTheme.h"
 #include <wtf/HexNumber.h>
 #include <wtf/SetForScope.h>
@@ -441,7 +442,7 @@ void ScrollView::cacheCurrentScrollState()
 ScrollPosition ScrollView::documentScrollPositionRelativeToViewOrigin() const
 {
     return scrollPosition() - IntSize(
-        shouldPlaceVerticalScrollbarOnLeft() && m_verticalScrollbar ? m_verticalScrollbar->occupiedWidth() : 0,
+        (shouldPlaceVerticalScrollbarOnLeft() || scrollbarGutterStyle().bothEdges) ? verticalScrollbarWidth() : 0,
         headerHeight() + topContentInset(TopContentInsetType::WebCoreOrPlatformContentInset));
 }
 
@@ -837,6 +838,33 @@ IntRect ScrollView::rectToCopyOnScroll() const
         scrollViewRect.setHeight(scrollViewRect.height() - horizontalScrollbarHeight);
     }
     return scrollViewRect;
+}
+
+int ScrollView::verticalScrollbarWidth(bool isHorizontalWritingMode) const
+{
+    WTFLogAlways("Test");
+    // TODO should this check overlay scrollbars and return width at the end not occupiedWidth
+
+    if (!m_verticalScrollbar && !(scrollbarGutterStyle().isAuto || ScrollbarTheme::theme().usesOverlayScrollbars()) && isHorizontalWritingMode)
+        return ScrollbarTheme::theme().scrollbarThickness(scrollbarWidthStyle());
+
+    if (!m_verticalScrollbar)
+        return 0;
+
+    return m_verticalScrollbar->occupiedWidth();
+}
+
+int ScrollView::horizontalScrollbarHeight(bool isHorizontalWritingMode) const
+{
+    // TODO should this check overlay scrollbars and return height at the end not occupiedHeight
+
+    if (!m_horizontalScrollbar && !(scrollbarGutterStyle().isAuto || ScrollbarTheme::theme().usesOverlayScrollbars()) && !isHorizontalWritingMode)
+        return ScrollbarTheme::theme().scrollbarThickness(scrollbarWidthStyle());
+
+    if (!m_horizontalScrollbar)
+        return 0;
+
+    return m_horizontalScrollbar->occupiedHeight();
 }
 
 void ScrollView::scrollContents(const IntSize& scrollDelta)
@@ -1613,8 +1641,8 @@ void ScrollView::styleAndRenderTreeDidChange()
 IntPoint ScrollView::locationOfContents() const
 {
     IntPoint result = location();
-    if (shouldPlaceVerticalScrollbarOnLeft() && m_verticalScrollbar)
-        result.move(m_verticalScrollbar->occupiedWidth(), 0);
+    if ((shouldPlaceVerticalScrollbarOnLeft() || scrollbarGutterStyle().bothEdges))
+        result.move(verticalScrollbarWidth(), 0);
     return result;
 }
 

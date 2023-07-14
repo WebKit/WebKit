@@ -918,9 +918,18 @@ bool RenderBox::fixedElementLaysOutRelativeToFrame(const LocalFrameView& frameVi
 
 bool RenderBox::includeVerticalScrollbarSize() const
 {
-    return hasNonVisibleOverflow() && layer() && !layer()->hasOverlayScrollbars()
-        && (style().overflowY() == Overflow::Scroll || style().overflowY() == Overflow::Auto
+    if (layer() && layer()->hasOverlayScrollbars())
+        return false;
+
+    if (hasNonVisibleOverflow()) {
+        return (style().overflowY() == Overflow::Scroll || style().overflowY() == Overflow::Auto
             || (style().overflowY() == Overflow::Hidden && !style().scrollbarGutter().isAuto));
+    }
+
+    if (isDocumentElementRenderer())
+        return !style().scrollbarGutter().isAuto;
+
+    return false;
 }
 
 bool RenderBox::includeHorizontalScrollbarSize() const
@@ -935,6 +944,9 @@ int RenderBox::verticalScrollbarWidth() const
     auto* scrollableArea = layer() ? layer()->scrollableArea() : nullptr;
     if (!scrollableArea)
         return 0;
+
+    if (isDocumentElementRenderer())
+        return includeVerticalScrollbarSize() ? view().frameView().verticalScrollbarWidth(isHorizontalWritingMode()) : 0;
     return includeVerticalScrollbarSize() ? scrollableArea->verticalScrollbarWidth(IgnoreOverlayScrollbarSize, isHorizontalWritingMode()) : 0;
 }
 

@@ -124,6 +124,9 @@ public:
     void setVerticalScrollbarLock(bool lock = true) { m_verticalScrollbarLock = lock; }
     bool verticalScrollbarLock() const { return m_verticalScrollbarLock; }
 
+    int verticalScrollbarWidth(bool isHorizontalWritingMode = true) const;
+    int horizontalScrollbarHeight(bool isHorizontalWritingMode = true) const;
+
     void setScrollingModesLock(bool lock = true) { m_horizontalScrollbarLock = m_verticalScrollbarLock = lock; }
 
     WEBCORE_EXPORT virtual void setCanHaveScrollbars(bool);
