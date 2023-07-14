@@ -663,6 +663,14 @@ static bool shouldEnableStrictMode(Decoder& decoder, NSArray<Class> *allowedClas
         return false;
 #endif
 
+#if HAVE(STRICT_DECODABLE_NSTEXTTABLE) \
+    && HAVE(STRICT_DECODABLE_PKCONTACT) \
+    && HAVE(STRICT_DECODABLE_CNCONTACT)
+    // Shortcut the following unnecessary Class checks on newer OSes to fix rdar://111926152.
+    if (strictSecureDecodingForAllObjCEnabled())
+        return true;
+#endif
+
 #if ENABLE(DATA_DETECTION)
     // rdar://107553330 - don't re-introduce rdar://107676726
     if (PAL::isDataDetectorsCoreFrameworkAvailable() && [allowedClasses containsObject:PAL::getDDScannerResultClass()])
