@@ -249,7 +249,7 @@
     --inline-controls-bar-height: 32px;
 }
 
-.media-controls.vision > .bottom.controls-bar {
+.media-controls.vision:not(.audio) > .bottom.controls-bar {
     bottom: var(--inline-controls-inside-margin);
 }
 
