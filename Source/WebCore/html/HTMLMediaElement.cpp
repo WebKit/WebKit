@@ -8123,7 +8123,9 @@ bool HTMLMediaElement::ensureMediaControls()
 
         mediaControlsHostJSWrapperObject->putDirect(vm, controller, controllerValue, JSC::PropertyAttribute::DontDelete | JSC::PropertyAttribute::DontEnum | JSC::PropertyAttribute::ReadOnly);
 
-        updatePageScaleFactorJSProperty();
+        if (m_mediaControlsDependOnPageScaleFactor)
+            updatePageScaleFactorJSProperty();
+
         RETURN_IF_EXCEPTION(scope, reportExceptionAndReturnFalse());
 
         updateUsesLTRUserInterfaceLayoutDirectionJSProperty();
