@@ -1713,3 +1713,21 @@ TEST(URLSchemeHandler, HandleURLRewrittenByPlugIn)
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://webkit.org/testpath"]]];
     TestWebKitAPI::Util::run(&done);
 }
+
+TEST(URLSchemeHandler, ModulePreload)
+{
+    __block bool done = false;
+    auto handler = adoptNS([TestURLSchemeHandler new]);
+    [handler setStartURLSchemeTaskHandler:^(WKWebView *, id<WKURLSchemeTask> task) {
+        if ([task.request.URL.path isEqualToString:@"/main.html"])
+            return respond(task, "<link rel=modulepreload href='test://webkit.org/module.js'/><script>import('test://webkit.org/module.js')</script>");
+        EXPECT_WK_STREQ(task.request.URL.path, "/module.js");
+        EXPECT_WK_STREQ(task.request.allHTTPHeaderFields[@"Origin"], "test://webkit.org");
+        done = true;
+    }];
+    auto configuration = adoptNS([WKWebViewConfiguration new]);
+    [configuration setURLSchemeHandler:handler.get() forURLScheme:@"test"];
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration.get()]);
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"test://webkit.org/main.html"]]];
+    TestWebKitAPI::Util::run(&done);
+}

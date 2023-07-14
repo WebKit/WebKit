@@ -1,13 +1,10 @@
-CONSOLE MESSAGE: Origin http://localhost:8800 is not allowed by Access-Control-Allow-Origin. Status code: 500
-CONSOLE MESSAGE: Origin http://localhost:8800 is not allowed by Access-Control-Allow-Origin. Status code: 500
-CONSOLE MESSAGE: Origin http://localhost:8800 is not allowed by Access-Control-Allow-Origin. Status code: 500
 
 PASS link rel=modulepreload
 PASS same-origin link rel=modulepreload crossorigin=anonymous
 PASS same-origin link rel=modulepreload crossorigin=use-credentials
-FAIL cross-origin link rel=modulepreload promise_test: Unhandled rejection with value: object "[object Event]"
-FAIL cross-origin link rel=modulepreload crossorigin=anonymous promise_test: Unhandled rejection with value: object "[object Event]"
-FAIL cross-origin link rel=modulepreload crossorigin=use-credentials promise_test: Unhandled rejection with value: object "[object Event]"
+PASS cross-origin link rel=modulepreload
+PASS cross-origin link rel=modulepreload crossorigin=anonymous
+PASS cross-origin link rel=modulepreload crossorigin=use-credentials
 PASS link rel=modulepreload with submodules
 PASS link rel=modulepreload for a module with syntax error
 PASS link rel=modulepreload for a module with network error
