@@ -3904,9 +3904,11 @@ bool Document::isNavigationBlockedByThirdPartyIFrameRedirectBlocking(LocalFrame&
     if (m_frame->hasHadUserInteraction())
         return false;
 
-    // Only prevent navigations by unsandboxed iframes. Such navigations by unsandboxed iframes would have already been blocked unless
+    // Only prevent navigations by unsandboxed iframes. Such navigations by sandboxed iframes would have already been blocked unless
     // "allow-top-navigation" / "allow-top-navigation-by-user-activation" was explicitly specified.
-    if (sandboxFlags() != SandboxNone) {
+    // We also want to guard against bypassing this block via an iframe-provided CSP sandbox.
+    auto* ownerElement = m_frame->ownerElement();
+    if ((!ownerElement || ownerElement->sandboxFlags() == sandboxFlags()) && sandboxFlags() != SandboxNone) {
         // Navigation is only allowed if the parent of the sandboxed iframe is first-party.
         RefPtr parentFrame = dynamicDowncast<LocalFrame>(m_frame->tree().parent());
         RefPtr parentDocument = parentFrame ? parentFrame->document() : nullptr;
