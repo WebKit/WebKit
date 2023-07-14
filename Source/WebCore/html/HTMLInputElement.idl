@@ -90,7 +90,7 @@
 
     [CEReactions=NotNeeded, Reflect] attribute DOMString align;
     [CEReactions=NotNeeded, Reflect] attribute DOMString useMap;
-    [CEReactions=NotNeeded, Reflect] attribute boolean incremental;
+    [EnabledBySetting=SearchInputIncrementalAttributeAndSearchEventEnabled, CEReactions=NotNeeded, Reflect] attribute boolean incremental;
 
     // See http://www.w3.org/TR/html-media-capture/
     [CEReactions=NotNeeded, Conditional=MEDIA_CAPTURE, Reflect] attribute DOMString capture;

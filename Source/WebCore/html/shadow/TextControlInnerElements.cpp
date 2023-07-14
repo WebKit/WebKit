@@ -349,7 +349,8 @@ void SearchFieldCancelButtonElement::defaultEventHandler(Event& event)
 
     if (event.type() == eventNames().clickEvent) {
         input->setValue(emptyString(), DispatchChangeEvent);
-        input->onSearch();
+        if (input->document().settings().searchInputIncrementalAttributeAndSearchEventEnabled())
+            input->onSearch();
         event.setDefaultHandled();
     }
 

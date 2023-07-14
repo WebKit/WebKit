@@ -1361,8 +1361,6 @@ webkit.org/b/72698 media/audio-garbage-collect.html [ Skip ]
 # This test times out.
 webkit.org/b/172527 fast/mediacapturefromelement/CanvasCaptureMediaStream-request-frame-events.html [ Skip ]
 
-webkit.org/b/53990 fast/forms/search-event-delay.html [ Pass Failure ]
-
 webkit.org/b/124932 media/video-size.html [ Pass Failure ]
 
 webkit.org/b/126166 [ Debug ] js/dfg-int32array.html [ Skip ]

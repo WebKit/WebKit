@@ -5676,6 +5676,20 @@ ScrollingPerformanceTestingEnabled:
     WebCore:
       default: false
 
+SearchInputIncrementalAttributeAndSearchEventEnabled:
+  type: bool
+  status: embedder
+  category: html
+  humanReadableName: "Search control incremental attribute and search event"
+  humanReadableDescription: "Enable search control incremental attribute and search event support"
+  defaultValue:
+    WebKitLegacy:
+      default: WebKit::defaultSearchInputIncrementalAttributeAndSearchEventEnabled()
+    WebKit:
+      default: WebKit::defaultSearchInputIncrementalAttributeAndSearchEventEnabled()
+    WebCore:
+      default: false
+
 SecureContextChecksEnabled:
   type: bool
   status: internal

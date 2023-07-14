@@ -314,4 +314,14 @@ bool defaultUseGPUProcessForDOMRenderingEnabled()
     return false;
 }
 
+bool defaultSearchInputIncrementalAttributeAndSearchEventEnabled()
+{
+#if PLATFORM(COCOA)
+    static bool newSDK = linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::NoSearchInputIncrementalAttributeAndSearchEvent);
+    return !newSDK;
+#else
+    return false;
+#endif
+}
+
 } // namespace WebKit

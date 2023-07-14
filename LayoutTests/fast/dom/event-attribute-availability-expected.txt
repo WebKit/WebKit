@@ -40,7 +40,6 @@ PASS 'oncopy' in element is true
 PASS 'onbeforepaste' in element is true
 PASS 'onpaste' in element is true
 PASS 'onreset' in element is true
-PASS 'onsearch' in element is true
 PASS 'onselectstart' in element is true
 Test SVGElement
 PASS 'onabort' in svgelement is true
@@ -79,7 +78,6 @@ PASS 'oncopy' in svgelement is true
 PASS 'onbeforepaste' in svgelement is true
 PASS 'onpaste' in svgelement is true
 PASS 'onreset' in svgelement is true
-PASS 'onsearch' in svgelement is true
 PASS 'onselectstart' in svgelement is true
 
 Test Document
@@ -119,7 +117,6 @@ PASS 'oncopy' in document is true
 PASS 'onbeforepaste' in document is true
 PASS 'onpaste' in document is true
 PASS 'onreset' in document is true
-PASS 'onsearch' in document is true
 PASS 'onselectstart' in document is true
 
 Test Window
@@ -159,7 +156,6 @@ PASS 'oncopy' in window is true
 FAIL 'onbeforepaste' in window should be true. Was false.
 PASS 'onpaste' in window is true
 PASS 'onreset' in window is true
-PASS 'onsearch' in window is true
 PASS 'onselectstart' in window is true
 
 Test Text Node
@@ -199,7 +195,6 @@ PASS 'oncopy' in textNode is false
 PASS 'onbeforepaste' in textNode is false
 PASS 'onpaste' in textNode is false
 PASS 'onreset' in textNode is false
-PASS 'onsearch' in textNode is false
 PASS 'onselectstart' in textNode is false
 
 Test Attribute
@@ -239,7 +234,6 @@ PASS 'oncopy' in attribute is false
 PASS 'onbeforepaste' in attribute is false
 PASS 'onpaste' in attribute is false
 PASS 'onreset' in attribute is false
-PASS 'onsearch' in attribute is false
 PASS 'onselectstart' in attribute is false
 
 Test HTMLBodyElement
@@ -279,7 +273,6 @@ PASS 'oncopy' in body is true
 PASS 'onbeforepaste' in body is true
 PASS 'onpaste' in body is true
 PASS 'onreset' in body is true
-PASS 'onsearch' in body is true
 PASS 'onselectstart' in body is true
 PASS 'onbeforeunload' in body is true
 PASS 'onmessage' in body is true
@@ -330,7 +323,6 @@ PASS 'oncopy' in frameSet is true
 PASS 'onbeforepaste' in frameSet is true
 PASS 'onpaste' in frameSet is true
 PASS 'onreset' in frameSet is true
-PASS 'onsearch' in frameSet is true
 PASS 'onselectstart' in frameSet is true
 PASS 'onbeforeunload' in frameSet is true
 PASS 'onmessage' in frameSet is true

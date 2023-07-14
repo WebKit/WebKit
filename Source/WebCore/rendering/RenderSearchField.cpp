@@ -235,7 +235,8 @@ void RenderSearchField::valueChanged(unsigned listIndex, bool fireEvents)
         }
     } else {
         inputElement().setValue(itemText(listIndex));
-        if (fireEvents)
+        if (inputElement().document().settings().searchInputIncrementalAttributeAndSearchEventEnabled()
+            && fireEvents)
             inputElement().onSearch();
         inputElement().select();
     }

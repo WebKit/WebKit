@@ -145,7 +145,6 @@ PASS var object = window['onmousewheel']; isEqualObjC(object, object); is true
 PASS var object = window['onreset']; isEqualObjC(object, object); is true
 PASS var object = window['onresize']; isEqualObjC(object, object); is true
 PASS var object = window['onscroll']; isEqualObjC(object, object); is true
-PASS var object = window['onsearch']; isEqualObjC(object, object); is true
 PASS var object = window['onselect']; isEqualObjC(object, object); is true
 PASS var object = window['onsubmit']; isEqualObjC(object, object); is true
 PASS var object = window['onunload']; isEqualObjC(object, object); is true

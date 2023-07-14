@@ -131,7 +131,6 @@ CONSOLE MESSAGE: PASS: window.onmousewheel should be 'null' and is.
 CONSOLE MESSAGE: PASS: window.onreset should be 'null' and is.
 CONSOLE MESSAGE: PASS: window.onresize should be 'null' and is.
 CONSOLE MESSAGE: PASS: window.onscroll should be 'null' and is.
-CONSOLE MESSAGE: PASS: window.onsearch should be 'null' and is.
 CONSOLE MESSAGE: PASS: window.onselect should be 'null' and is.
 CONSOLE MESSAGE: PASS: window.onsubmit should be 'null' and is.
 CONSOLE MESSAGE: PASS: window.onunload should be 'null' and is.
@@ -317,7 +316,6 @@ PASS: Unable to set property onmousewheel: SecurityError: Blocked a frame with o
 PASS: Unable to set property onreset: SecurityError: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a cross-origin frame. Protocols, domains, and ports must match.
 PASS: Unable to set property onresize: SecurityError: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a cross-origin frame. Protocols, domains, and ports must match.
 PASS: Unable to set property onscroll: SecurityError: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a cross-origin frame. Protocols, domains, and ports must match.
-PASS: Unable to set property onsearch: SecurityError: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a cross-origin frame. Protocols, domains, and ports must match.
 PASS: Unable to set property onselect: SecurityError: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a cross-origin frame. Protocols, domains, and ports must match.
 PASS: Unable to set property onsubmit: SecurityError: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a cross-origin frame. Protocols, domains, and ports must match.
 PASS: Unable to set property onunload: SecurityError: Blocked a frame with origin "http://127.0.0.1:8000" from accessing a cross-origin frame. Protocols, domains, and ports must match.
