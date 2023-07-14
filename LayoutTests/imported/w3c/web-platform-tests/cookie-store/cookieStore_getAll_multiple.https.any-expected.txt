@@ -1,3 +1,5 @@
 
+Harness Error (FAIL), message = Test named 'cookieStore.getAll returns multiple cookies written by cookieStore.set' specified 3 'cleanup' functions, and 3 failed.
+
 FAIL cookieStore.getAll returns multiple cookies written by cookieStore.set promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
 

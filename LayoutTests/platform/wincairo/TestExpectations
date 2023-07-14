@@ -611,6 +611,7 @@ fast/dom/Window/window-special-properties.html [ Pass Failure ]
 
 # The CookieStore API is not fully implemented on WinCario yet.
 imported/w3c/web-platform-tests/cookie-store [ Skip ]
+imported/w3c/web-platform-tests/cookies/partitioned-cookies/partitioned-cookies.tentative.https.html [ Skip ]
 
 #//////////////////////////////////////////////////////////////////////////////////////////
 # Following tests are labeled "Skip" because not working well and causes crash or timeout

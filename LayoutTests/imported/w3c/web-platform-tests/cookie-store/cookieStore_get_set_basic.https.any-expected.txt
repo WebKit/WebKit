@@ -1,3 +1,5 @@
 
-FAIL cookieStore.get returns the cookie written by cookieStore.set promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+Harness Error (FAIL), message = Test named 'cookieStore.get returns the cookie written by cookieStore.set' specified 1 'cleanup' function, and 1 failed.
+
+PASS cookieStore.get returns the cookie written by cookieStore.set
 

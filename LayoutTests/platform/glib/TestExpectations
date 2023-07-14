@@ -2505,6 +2505,7 @@ platform/glib/media/media-can-play-dash.html [ Skip ]
 
 # The CookieStore API is not fully implemented on GTK/WPE yet.
 imported/w3c/web-platform-tests/cookie-store [ Skip ]
+imported/w3c/web-platform-tests/cookies/partitioned-cookies/partitioned-cookies.tentative.https.html [ Skip ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of UNSUPPORTED tests.

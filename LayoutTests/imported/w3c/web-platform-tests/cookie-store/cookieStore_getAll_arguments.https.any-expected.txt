@@ -1,11 +1,13 @@
 
+Harness Error (FAIL), message = Test named 'cookieStore.getAll with no arguments' specified 2 'cleanup' functions, and 2 failed.
+
 FAIL cookieStore.getAll with no arguments promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
-FAIL cookieStore.getAll with empty options promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
-FAIL cookieStore.getAll with positional name promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
-FAIL cookieStore.getAll with name in options promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
-FAIL cookieStore.getAll with name in both positional arguments and options promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
-FAIL cookieStore.getAll with absolute url in options promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
-FAIL cookieStore.getAll with relative url in options promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
-FAIL cookieStore.getAll with invalid url path in options promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
-FAIL cookieStore.getAll with invalid url host in options promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+NOTRUN cookieStore.getAll with empty options
+NOTRUN cookieStore.getAll with positional name
+NOTRUN cookieStore.getAll with name in options
+NOTRUN cookieStore.getAll with name in both positional arguments and options
+NOTRUN cookieStore.getAll with absolute url in options
+NOTRUN cookieStore.getAll with relative url in options
+NOTRUN cookieStore.getAll with invalid url path in options
+NOTRUN cookieStore.getAll with invalid url host in options
 

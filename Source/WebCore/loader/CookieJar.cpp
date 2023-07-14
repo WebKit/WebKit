@@ -195,4 +195,9 @@ void CookieJar::getCookiesAsync(Document&, const URL&, const CookieStoreGetOptio
     completionHandler(std::nullopt);
 }
 
+void CookieJar::setCookieAsync(Document&, const URL&, const Cookie&, CompletionHandler<void(bool)>&& completionHandler) const
+{
+    completionHandler(false);
+}
+
 }

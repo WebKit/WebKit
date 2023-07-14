@@ -1,11 +1,13 @@
 
-FAIL cookieStore.get with no arguments returns TypeError promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
-FAIL cookieStore.get with empty options returns TypeError promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
-FAIL cookieStore.get with positional name promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
-FAIL cookieStore.get with name in options promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
-FAIL cookieStore.get with name in both positional arguments and options promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
-FAIL cookieStore.get with absolute url in options promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
-FAIL cookieStore.get with relative url in options promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
-FAIL cookieStore.get with invalid url path in options assert_unreached: Should have rejected: undefined Reached unreachable code
-FAIL cookieStore.get with invalid url host in options assert_unreached: Should have rejected: undefined Reached unreachable code
+Harness Error (FAIL), message = Test named 'cookieStore.get with no arguments returns TypeError' specified 1 'cleanup' function, and 1 failed.
+
+FAIL cookieStore.get with no arguments returns TypeError assert_unreached: Should have rejected: undefined Reached unreachable code
+NOTRUN cookieStore.get with empty options returns TypeError
+NOTRUN cookieStore.get with positional name
+NOTRUN cookieStore.get with name in options
+NOTRUN cookieStore.get with name in both positional arguments and options
+NOTRUN cookieStore.get with absolute url in options
+NOTRUN cookieStore.get with relative url in options
+NOTRUN cookieStore.get with invalid url path in options
+NOTRUN cookieStore.get with invalid url host in options
 

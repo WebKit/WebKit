@@ -993,6 +993,7 @@ webkit.org/b/251113 inspector/timeline/timeline-event-screenshots.html [ Skip ]
 
 # The CookieStore API is not fully implemented on macOS WK1 yet.
 imported/w3c/web-platform-tests/cookie-store [ Skip ]
+imported/w3c/web-platform-tests/cookies/partitioned-cookies/partitioned-cookies.tentative.https.html [ Skip ]
 
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End features not supported in WebKit1

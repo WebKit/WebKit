@@ -42,7 +42,9 @@
 #include <wtf/CompletionHandler.h>
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/Ref.h>
+#include <wtf/URL.h>
 #include <wtf/Vector.h>
+#include <wtf/WallTime.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -125,14 +127,69 @@ void CookieStore::getAll(CookieStoreGetOptions&&, Ref<DeferredPromise>&& promise
     promise->reject(NotSupportedError);
 }
 
-void CookieStore::set(const String&, const String&, Ref<DeferredPromise>&& promise)
+void CookieStore::set(String&& name, String&& value, Ref<DeferredPromise>&& promise)
 {
-    promise->reject(NotSupportedError);
+    set(CookieInit { WTFMove(name), WTFMove(value) }, WTFMove(promise));
 }
 
-void CookieStore::set(CookieInit&&, Ref<DeferredPromise>&& promise)
+void CookieStore::set(CookieInit&& options, Ref<DeferredPromise>&& promise)
 {
-    promise->reject(NotSupportedError);
+    auto* context = scriptExecutionContext();
+    if (!context) {
+        promise->reject(SecurityError);
+        return;
+    }
+
+    auto* origin = context->securityOrigin();
+    if (!origin) {
+        promise->reject(SecurityError);
+        return;
+    }
+
+    if (origin->isOpaque()) {
+        promise->reject(Exception { SecurityError, "The origin is opaque"_s });
+        return;
+    }
+
+    auto& document = *downcast<Document>(context);
+    auto* page = document.page();
+    if (!page) {
+        promise->reject(SecurityError);
+        return;
+    }
+
+    auto& url = document.url();
+    auto& cookieJar = page->cookieJar();
+    auto completionHandler = [promise = WTFMove(promise)] (bool setSuccessfully) {
+        if (!setSuccessfully)
+            promise->reject(TypeError);
+        else
+            promise->resolve();
+    };
+
+    Cookie cookie;
+    cookie.name = WTFMove(options.name);
+    cookie.value = WTFMove(options.value);
+    cookie.domain = options.domain.isNull() ? document.domain() : WTFMove(options.domain);
+    cookie.path = WTFMove(options.path);
+    cookie.created = WallTime::now().secondsSinceEpoch().milliseconds();
+
+    if (options.expires)
+        cookie.expires = *options.expires;
+
+    switch (options.sameSite) {
+    case CookieSameSite::Strict:
+        cookie.sameSite = Cookie::SameSitePolicy::Strict;
+        break;
+    case CookieSameSite::Lax:
+        cookie.sameSite = Cookie::SameSitePolicy::Lax;
+        break;
+    case CookieSameSite::None:
+        cookie.sameSite = Cookie::SameSitePolicy::None;
+        break;
+    }
+
+    cookieJar.setCookieAsync(document, url, cookie, WTFMove(completionHandler));
 }
 
 void CookieStore::remove(const String&, Ref<DeferredPromise>&& promise)

@@ -52,6 +52,7 @@ public:
     void deleteCookie(const WebCore::Document&, const URL&, const String& cookieName, CompletionHandler<void()>&&) final;
 
     void getCookiesAsync(WebCore::Document&, const URL&, const WebCore::CookieStoreGetOptions&, CompletionHandler<void(std::optional<Vector<WebCore::Cookie>>&&)>&&) const final;
+    void setCookieAsync(WebCore::Document&, const URL&, const WebCore::Cookie&, CompletionHandler<void(bool)>&&) const final;
 
     void cookiesAdded(const String& host, const Vector<WebCore::Cookie>&);
     void cookiesDeleted(const String& host, const Vector<WebCore::Cookie>&);

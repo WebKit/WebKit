@@ -287,4 +287,27 @@ void WebCookieJar::getCookiesAsync(WebCore::Document& document, const URL& url, 
     WebProcess::singleton().ensureNetworkProcessConnection().connection().sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::CookiesForDOMAsync(document.firstPartyForCookies(), sameSiteInfo, url, frameID, pageID, includeSecureCookies, applyTrackingPreventionInNetworkProcess, shouldRelaxThirdPartyCookieBlocking(webFrame), options), WTFMove(completionHandler));
 }
 
+void WebCookieJar::setCookieAsync(WebCore::Document& document, const URL& url, const WebCore::Cookie& cookie, CompletionHandler<void(bool)>&& completionHandler) const
+{
+    auto* webFrame = document.frame() ? WebFrame::fromCoreFrame(*document.frame()) : nullptr;
+    if (!webFrame || !webFrame->page()) {
+        completionHandler(false);
+        return;
+    }
+
+    ApplyTrackingPrevention applyTrackingPreventionInNetworkProcess = ApplyTrackingPrevention::No;
+#if ENABLE(TRACKING_PREVENTION)
+    if (shouldBlockCookies(webFrame, document.firstPartyForCookies(), url, applyTrackingPreventionInNetworkProcess)) {
+        completionHandler(false);
+        return;
+    }
+#endif
+
+    auto sameSiteInfo = CookieJar::sameSiteInfo(document, IsForDOMCookieAccess::Yes);
+    auto frameID = webFrame->frameID();
+    auto pageID = webFrame->page()->identifier();
+
+    WebProcess::singleton().ensureNetworkProcessConnection().connection().sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::SetCookieFromDOMAsync(document.firstPartyForCookies(), sameSiteInfo, url, frameID, pageID, applyTrackingPreventionInNetworkProcess, shouldRelaxThirdPartyCookieBlocking(webFrame), cookie), WTFMove(completionHandler));
+}
+
 } // namespace WebKit

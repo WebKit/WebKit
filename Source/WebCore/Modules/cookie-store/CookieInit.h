@@ -35,8 +35,8 @@ namespace WebCore {
 struct CookieInit {
     String name;
     String value;
-    std::optional<DOMHighResTimeStamp> expires;
-    String domain;
+    std::optional<DOMHighResTimeStamp> expires { };
+    String domain { };
     String path { "/"_s };
     CookieSameSite sameSite { CookieSameSite::Strict };
 };

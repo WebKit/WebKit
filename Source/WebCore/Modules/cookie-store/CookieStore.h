@@ -27,7 +27,6 @@
 
 #include "ActiveDOMObject.h"
 #include "EventTarget.h"
-#include <optional>
 #include <wtf/Forward.h>
 #include <wtf/IsoMalloc.h>
 
@@ -51,7 +50,7 @@ public:
     void getAll(const String& name, Ref<DeferredPromise>&&);
     void getAll(CookieStoreGetOptions&&, Ref<DeferredPromise>&&);
 
-    void set(const String& name, const String& value, Ref<DeferredPromise>&&);
+    void set(String&& name, String&& value, Ref<DeferredPromise>&&);
     void set(CookieInit&&, Ref<DeferredPromise>&&);
 
     void remove(const String& name, Ref<DeferredPromise>&&);

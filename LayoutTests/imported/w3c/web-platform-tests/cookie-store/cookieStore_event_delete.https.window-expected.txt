@@ -1,3 +1,5 @@
 
+Harness Error (FAIL), message = Test named 'cookieStore fires change event for cookie deleted by cookieStore.delete()' specified 1 'cleanup' function, and 1 failed.
+
 FAIL cookieStore fires change event for cookie deleted by cookieStore.delete() promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
 
