@@ -106,7 +106,7 @@ TextPaintStyle computeTextPaintStyle(const LocalFrame& frame, const RenderStyle&
         }
     }
 
-    paintStyle.fillColor = lineStyle.visitedDependentColorWithColorFilter(CSSPropertyWebkitTextFillColor);
+    paintStyle.fillColor = lineStyle.visitedDependentColorWithColorFilter(CSSPropertyWebkitTextFillColor, paintInfo.paintBehavior);
 
     bool forceBackgroundToWhite = false;
     if (frame.document() && frame.document()->printing()) {
