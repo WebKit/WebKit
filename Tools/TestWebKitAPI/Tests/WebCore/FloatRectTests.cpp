@@ -568,7 +568,7 @@ TEST(FloatRect, Transpose)
     EXPECT_FLOAT_EQ(120.0f, transposed.maxY());
 }
 
-#if USE(CG) || PLATFORM(WIN)
+#if USE(CG)
 static void checkCastRect(const WebCore::FloatRect& rect)
 {
     EXPECT_FLOAT_EQ(10.0f, rect.x());

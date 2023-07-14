@@ -45,7 +45,6 @@ namespace TestWebKitAPI {
 
 static bool loadBeforeCrash = false;
 static bool loadAfterCrash = false;
-static bool calledCrashHandler = false;
 
 static void didFinishLoad(WKPageRef page, WKNavigationRef, WKTypeRef userData, const void* clientInfo)
 {
@@ -99,6 +98,8 @@ TEST(WebKit, ReloadPageAfterCrash)
 }
 
 #if !PLATFORM(WIN)
+
+static bool calledCrashHandler = false;
 
 static void nullJavaScriptCallback(WKSerializedScriptValueRef, WKErrorRef, void*)
 {

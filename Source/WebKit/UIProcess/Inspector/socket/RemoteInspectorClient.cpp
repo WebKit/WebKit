@@ -86,7 +86,7 @@ public:
         m_inspectorClient.closeFromFrontend(m_connectionID, m_targetID);
     }
 
-    Ref<API::InspectorConfiguration> configurationForRemoteInspector(RemoteWebInspectorUIProxy&)
+    Ref<API::InspectorConfiguration> configurationForRemoteInspector(RemoteWebInspectorUIProxy&) override
     {
         return API::InspectorConfiguration::create();
     }

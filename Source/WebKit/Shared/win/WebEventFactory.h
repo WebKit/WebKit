@@ -48,6 +48,6 @@ public:
 #endif
 };
 
-inline MSG createNativeEvent(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) { return { hwnd, message, wParam, lParam }; }
+inline MSG createNativeEvent(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) { return { hwnd, message, wParam, lParam, 0, { } }; }
 
 } // namespace WebKit

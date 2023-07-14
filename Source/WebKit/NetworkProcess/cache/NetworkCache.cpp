@@ -435,6 +435,9 @@ void Cache::retrieve(const WebCore::ResourceRequest& request, const GlobalFrameI
 #else
             UNUSED_PARAM(frameID);
             UNUSED_PARAM(this);
+            UNUSED_PARAM(isNavigatingToAppBoundDomain);
+            UNUSED_PARAM(allowPrivacyProxy);
+            UNUSED_PARAM(advancedPrivacyProtections);
 #endif
             FALLTHROUGH;
         }

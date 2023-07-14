@@ -123,9 +123,11 @@ TEST(WTF_StdLibExtras, MakeUniqueFunctionLocalTypeCompiles)
     struct LocalStruct {
         WTF_MAKE_STRUCT_FAST_ALLOCATED;
     };
+    IGNORE_CLANG_WARNINGS_BEGIN("unused-local-typedef")
     class LocalClass {
         WTF_MAKE_FAST_ALLOCATED;
     };
+    IGNORE_CLANG_WARNINGS_END
     auto s = makeUnique<LocalStruct>();
     auto c = makeUnique<LocalClass>();
 }
