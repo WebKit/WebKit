@@ -4,7 +4,6 @@
 <script>
 if (window.testRunner) {
     testRunner.dumpAsText();
-    testRunner.dumpChildFramesAsText();
     testRunner.waitUntilDone();
 }
 </script>
@@ -14,6 +13,13 @@ if (window.testRunner) {
 This test checks the default referrer policy when navigating from a secure URL
 to an insecure URL. The test passes if the printed referrer is empty.
 </p>
-<iframe src="https://127.0.0.1:8443/security/resources/referrer-policy-start.html?no-referrer-when-downgrade"></iframe>
+<script>
+onmessage = (event) => {
+    document.getElementById("log").innerText = event.data;
+    testRunner.notifyDone();
+};
+window.open("https://127.0.0.1:8443/security/resources/referrer-policy-start.html?no-referrer-when-downgrade", "testPopup", "popup");
+</script>
+<div id="log"></div>
 </body>
 </html>
