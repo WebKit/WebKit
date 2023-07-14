@@ -122,7 +122,10 @@ bool MemoryCache::add(CachedResource& resource)
 
     auto key = std::make_pair(resource.url(), resource.cachePartition());
 
-    ensureSessionResourceMap(resource.sessionID()).set(key, &resource);
+    auto& resources = ensureSessionResourceMap(resource.sessionID());
+
+    RELEASE_ASSERT(!resources.get(key));
+    resources.set(key, &resource);
     resource.setInCache(true);
     
     resourceAccessed(resource);
@@ -149,7 +152,7 @@ void MemoryCache::revalidationSucceeded(CachedResource& revalidatingResource, co
     auto& resources = ensureSessionResourceMap(resource.sessionID());
     auto key = std::make_pair(resource.url(), resource.cachePartition());
 
-    ASSERT(!resources.get(key));
+    RELEASE_ASSERT(!resources.get(key));
     resources.set(key, &resource);
     resource.setInCache(true);
     resource.updateResponseAfterRevalidation(response);
