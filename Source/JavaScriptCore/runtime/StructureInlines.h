@@ -67,21 +67,6 @@ private:
     const Structure* m_structure;
 };
 
-inline Structure* Structure::create(VM& vm, JSGlobalObject* globalObject, JSValue prototype, const TypeInfo& typeInfo, const ClassInfo* classInfo, IndexingType indexingModeIncludingHistory, unsigned inlineCapacity)
-{
-    ASSERT(vm.structureStructure);
-    ASSERT(classInfo);
-    if (auto* object = prototype.getObject()) {
-        ASSERT(!object->anyObjectInChainMayInterceptIndexedAccesses() || hasSlowPutArrayStorage(indexingModeIncludingHistory) || !hasIndexedProperties(indexingModeIncludingHistory));
-        object->didBecomePrototype(vm);
-    }
-
-    Structure* structure = new (NotNull, allocateCell<Structure>(vm)) Structure(vm, globalObject, prototype, typeInfo, classInfo, indexingModeIncludingHistory, inlineCapacity);
-    structure->finishCreation(vm);
-    ASSERT(structure->type() == StructureType);
-    return structure;
-}
-
 inline Structure* Structure::createStructure(VM& vm)
 {
     ASSERT(!vm.structureStructure);
