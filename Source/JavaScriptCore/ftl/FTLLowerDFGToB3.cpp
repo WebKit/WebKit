@@ -10038,7 +10038,7 @@ IGNORE_CLANG_WARNINGS_END
             return;
         }
 
-        DFG_ASSERT(m_graph, m_node, childEdge.useKind() == Int32Use, childEdge.useKind());
+        DFG_ASSERT(m_graph, m_node, childEdge.useKind() == Int32Use || childEdge.useKind() == KnownInt32Use, childEdge.useKind());
 
         LValue value = lowInt32(childEdge);
         
