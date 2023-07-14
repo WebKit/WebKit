@@ -114,7 +114,6 @@ private:
     void appendAcceptLanguageHeader(HTTPHeaderMap&);
     void setupPOST();
     void setupPUT();
-    void setupSendData(bool forPutMethod);
 
     // Processing for DidReceiveResponse
     bool needToInvokeDidReceiveResponse() const { return m_didReceiveResponse && !m_didNotifyResponse; }

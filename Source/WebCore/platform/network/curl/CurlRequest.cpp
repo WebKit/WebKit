@@ -511,46 +511,28 @@ void CurlRequest::appendAcceptLanguageHeader(HTTPHeaderMap& header)
 
 void CurlRequest::setupPUT()
 {
-    m_curlHandle->enableHttpPutRequest();
+    curl_off_t totalSize = m_formDataStream.totalSize();
 
-    // Disable the Expect: 100 continue header
+    m_curlHandle->enableHttpPutRequest(totalSize);
+    m_curlHandle->setReadCallbackFunction(willSendDataCallback, this);
+
+    // Disable a "Expect: 100-continue" header
     m_curlHandle->removeRequestHeader("Expect"_s);
-
-    auto elementSize = m_formDataStream.elementSize();
-    if (!elementSize)
-        return;
-
-    setupSendData(true);
 }
 
 void CurlRequest::setupPOST()
 {
-    m_curlHandle->enableHttpPostRequest();
+    curl_off_t totalSize = m_formDataStream.totalSize();
 
-    auto elementSize = m_formDataStream.elementSize();
+    m_curlHandle->enableHttpPostRequest(totalSize);
+    m_curlHandle->setReadCallbackFunction(willSendDataCallback, this);
 
-    if (!m_request.hasHTTPHeader(HTTPHeaderName::ContentType) && !elementSize)
+    // Override the default POST Content-Type: header
+    if (!m_request.hasHTTPHeader(HTTPHeaderName::ContentType) && !totalSize)
         m_curlHandle->removeRequestHeader("Content-Type"_s);
 
-    if (!elementSize)
-        return;
-
-    setupSendData(false);
-}
-
-void CurlRequest::setupSendData(bool forPutMethod)
-{
-    // curl guesses that we want chunked encoding as long as we specify the header
-    if (m_formDataStream.shouldUseChunkTransfer())
-        m_curlHandle->appendRequestHeader("Transfer-Encoding: chunked"_s);
-    else {
-        if (forPutMethod)
-            m_curlHandle->setInFileSize(static_cast<curl_off_t>(m_formDataStream.totalSize()));
-        else
-            m_curlHandle->setPostFieldSize(static_cast<curl_off_t>(m_formDataStream.totalSize()));
-    }
-
-    m_curlHandle->setReadCallbackFunction(willSendDataCallback, this);
+    // Disable a "Expect: 100-continue" header
+    m_curlHandle->removeRequestHeader("Expect"_s);
 }
 
 void CurlRequest::invokeDidReceiveResponseForFile(const URL& url)

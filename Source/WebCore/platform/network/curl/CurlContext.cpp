@@ -126,6 +126,7 @@ CurlContext::CurlContext()
     m_scheduler = makeUnique<CurlRequestScheduler>(maxConnects, maxTotalConnections, maxHostConnections);
 
     auto info = curl_version_info(CURLVERSION_NOW);
+    RELEASE_ASSERT(info->features & CURL_VERSION_LARGEFILE);
     m_isAltSvcEnabled = info->features & CURL_VERSION_ALTSVC;
     m_isHttp2Enabled = info->features & CURL_VERSION_HTTP2;
 #if ENABLE_CURL_HTTP3
@@ -483,33 +484,17 @@ void CurlHandle::enableHttpHeadRequest()
     curl_easy_setopt(m_handle, CURLOPT_NOBODY, 1L);
 }
 
-void CurlHandle::enableHttpPostRequest()
+void CurlHandle::enableHttpPostRequest(curl_off_t size)
 {
     enableHttp();
     curl_easy_setopt(m_handle, CURLOPT_POST, 1L);
-    curl_easy_setopt(m_handle, CURLOPT_POSTFIELDSIZE_LARGE, static_cast<curl_off_t>(0));
-}
-
-void CurlHandle::setPostFieldSize(curl_off_t size)
-{
-    if (expectedSizeOfCurlOffT() != sizeof(long long))
-        size = static_cast<int>(size);
-
     curl_easy_setopt(m_handle, CURLOPT_POSTFIELDSIZE_LARGE, size);
 }
 
-void CurlHandle::enableHttpPutRequest()
+void CurlHandle::enableHttpPutRequest(curl_off_t size)
 {
     enableHttp();
     curl_easy_setopt(m_handle, CURLOPT_UPLOAD, 1L);
-    curl_easy_setopt(m_handle, CURLOPT_INFILESIZE_LARGE, static_cast<curl_off_t>(0));
-}
-
-void CurlHandle::setInFileSize(curl_off_t size)
-{
-    if (expectedSizeOfCurlOffT() != sizeof(long long))
-        size = static_cast<int>(size);
-
     curl_easy_setopt(m_handle, CURLOPT_INFILESIZE_LARGE, size);
 }
 
@@ -946,22 +931,6 @@ std::optional<CertificateInfo> CurlHandle::certificateInfo() const
     }
 
     return std::nullopt;
-}
-
-int CurlHandle::expectedSizeOfCurlOffT()
-{
-    // The size of a curl_off_t could be different in WebKit and in cURL depending on
-    // compilation flags of both.
-    static int expectedSizeOfCurlOffT = 0;
-    if (!expectedSizeOfCurlOffT) {
-        curl_version_info_data* infoData = curl_version_info(CURLVERSION_NOW);
-        if (infoData->features & CURL_VERSION_LARGEFILE)
-            expectedSizeOfCurlOffT = sizeof(long long);
-        else
-            expectedSizeOfCurlOffT = sizeof(int);
-    }
-
-    return expectedSizeOfCurlOffT;
 }
 
 #ifndef NDEBUG

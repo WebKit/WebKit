@@ -259,10 +259,8 @@ public:
     void enableHttp();
     void enableHttpGetRequest();
     void enableHttpHeadRequest();
-    void enableHttpPostRequest();
-    void setPostFieldSize(curl_off_t);
-    void enableHttpPutRequest();
-    void setInFileSize(curl_off_t);
+    void enableHttpPostRequest(curl_off_t size);
+    void enableHttpPutRequest(curl_off_t size);
     void setHttpCustomRequest(const String&);
 
     void enableConnectionOnly();
@@ -326,7 +324,6 @@ private:
     };
 
     void enableRequestHeaders();
-    static int expectedSizeOfCurlOffT();
 
     static CURLcode willSetupSslCtxCallback(CURL*, void* sslCtx, void* userData);
     CURLcode willSetupSslCtx(void* sslCtx);
