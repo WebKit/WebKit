@@ -598,7 +598,7 @@ ValueOrException ScriptController::executeScriptInWorld(DOMWrapperWorld& world, 
         UserGestureIndicator::currentUserGesture()->addDestructionObserver([](UserGestureToken& token) {
             token.forEachImpactedDocument([](Document& document) {
                 if (auto* window = document.domWindow())
-                    window->consumeTransientActivation();
+                    window->consumeLastActivationIfNecessary();
             });
         });
     }

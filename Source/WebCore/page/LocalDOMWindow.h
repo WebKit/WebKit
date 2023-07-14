@@ -173,6 +173,7 @@ public:
 
     WEBCORE_EXPORT static void overrideTransientActivationDurationForTesting(std::optional<Seconds>&&);
     void setLastActivationTimestamp(MonotonicTime lastActivationTimestamp) { m_lastActivationTimestamp = lastActivationTimestamp; }
+    void consumeLastActivationIfNecessary();
     MonotonicTime lastActivationTimestamp() const { return m_lastActivationTimestamp; }
     void notifyActivated(MonotonicTime);
     WEBCORE_EXPORT bool hasTransientActivation() const;
