@@ -4372,3 +4372,5 @@ imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir_auto-tex
 fast/block/transparent-outline-with-and-without-border-radius.html [ Pass ImageOnlyFailure ]
 fast/forms/basic-textareas-quirks-simple-lines.html [ Pass ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir_auto-textarea-mixed.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/259228 [ Release ] fast/dom/lazy-image-loading-document-leak.html [ Pass Failure ]

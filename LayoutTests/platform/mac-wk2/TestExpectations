@@ -1818,3 +1818,5 @@ webkit.org/b/258865 fast/attachment/mac/wide-attachment-title-with-rtl.html [ Pa
 webkit.org/b/258865 fast/attachment/mac/wide-attachment-type-attribute.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/259160 http/tests/privateClickMeasurement/triggering-event-with-attribution-source-through-fetch-keepalive.html [ Pass Failure ]
+
+webkit.org/b/259228 [ Release ] fast/dom/lazy-image-loading-document-leak.html [ Pass Failure ]
