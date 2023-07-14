@@ -68,9 +68,9 @@ private:
     bool setupFramebuffer();
     PlatformGLObject allocateRenderbufferStorage(GraphicsContextGL&, GCGLsizei, GCGLenum, IntSize);
     PlatformGLObject allocateColorStorage(GraphicsContextGL&, GCGLsizei, IntSize);
-    std::tuple<PlatformGLObject, PlatformGLObject> allocateDepthStencilStorage(GraphicsContextGL&, GCGLsizei, IntSize);
+    PlatformGLObject allocateDepthStencilStorage(GraphicsContextGL&, GCGLsizei, IntSize);
     void bindColorBuffer(GraphicsContextGL&, PlatformGLObject);
-    void bindDepthStencilBuffer(GraphicsContextGL&, PlatformGLObject, PlatformGLObject);
+    void bindDepthStencilBuffer(GraphicsContextGL&, PlatformGLObject);
 
     PlatformXR::LayerHandle m_handle;
     Ref<WebGLFramebuffer> m_framebuffer;
@@ -78,14 +78,15 @@ private:
     Attributes m_attributes;
     IntSize m_framebufferSize;
     GCGLOwnedRenderbuffer m_depthStencilBuffer;
-    GCGLOwnedRenderbuffer m_stencilBuffer;
     GCGLOwnedRenderbuffer m_multisampleColorBuffer;
+    GCGLOwnedRenderbuffer m_multisampleDepthStencilBuffer;
     GCGLOwnedFramebuffer m_resolvedFBO;
 #if USE(IOSURFACE_FOR_XR_LAYER_DATA) || USE(MTLTEXTURE_FOR_XR_LAYER_DATA)
-    GCGLOwnedTexture m_opaqueTexture;
-    GCEGLImage m_opaqueImage;
+    GCGLOwnedTexture m_colorTexture;
+    GCEGLImage m_colorImage { };
+    GCEGLImage m_depthStencilImage { };
 #else
-    PlatformGLObject m_opaqueTexture;
+    PlatformGLObject m_colorTexture;
 #endif
 #if USE(MTLSHAREDEVENT_FOR_XR_FRAME_COMPLETION)
     GraphicsContextGL::ExternalEGLSyncEvent m_completionSyncEvent;
