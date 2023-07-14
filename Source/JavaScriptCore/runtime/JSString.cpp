@@ -142,7 +142,7 @@ DEFINE_VISIT_CHILDREN(JSString);
 template<typename CharacterType>
 void JSRopeString::resolveRopeInternalNoSubstring(CharacterType* buffer, uint8_t* stackLimit) const
 {
-    resolveToBuffer(this, buffer, length(), stackLimit);
+    resolveToBuffer(fiber0(), fiber1(), fiber2(), buffer, length(), stackLimit);
 }
 
 AtomString JSRopeString::resolveRopeToAtomString(JSGlobalObject* globalObject) const
