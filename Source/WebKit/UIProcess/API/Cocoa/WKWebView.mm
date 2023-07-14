@@ -35,6 +35,7 @@
 #import "CocoaImage.h"
 #import "CompletionHandlerCallChecker.h"
 #import "ContentAsStringIncludesChildFrames.h"
+#import "DefaultWebBrowserChecks.h"
 #import "DiagnosticLoggingClient.h"
 #import "FindClient.h"
 #import "FullscreenClient.h"
@@ -1163,7 +1164,8 @@ static WKMediaPlaybackState toWKMediaPlaybackState(WebKit::MediaPlaybackState me
             frameID = frame._handle->_frameHandle->frameID();
     }
 
-    _page->runJavaScriptInFrameInScriptWorld({ javaScriptString, sourceURL, !!asAsyncFunction, WTFMove(argumentsMap), !!forceUserGesture }, frameID, *world->_contentWorld.get(), [handler] (auto&& result) {
+    auto removeTransientActivation = WebKit::shouldEvaluateJavaScriptWithoutTransientActivation() ? WebCore::RemoveTransientActivation::Yes : WebCore::RemoveTransientActivation::No;
+    _page->runJavaScriptInFrameInScriptWorld({ javaScriptString, sourceURL, !!asAsyncFunction, WTFMove(argumentsMap), !!forceUserGesture, removeTransientActivation }, frameID, *world->_contentWorld.get(), [handler] (auto&& result) {
         if (!handler)
             return;
 
