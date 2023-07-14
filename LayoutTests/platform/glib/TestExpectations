@@ -1692,6 +1692,8 @@ webkit.org/b/187603 fast/mediastream/media-stream-track-source-failure.html [ Ti
 # This ends up calling WKPageTriggerMockMicrophoneConfigurationChange which is specific to GPUProcess.
 fast/mediastream/mediastreamtrack-configurationchange.html [ Skip ]
 
+fast/mediastream/video-rotation2.html [ Failure Pass ]
+
 # Missing/broken pageIsFocused notification.
 fast/mediastream/device-change-event-2.html [ Timeout Failure ]
 

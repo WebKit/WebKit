@@ -373,7 +373,12 @@ static inline CGAffineTransform videoTransformationMatrix(VideoFrame& videoFrame
     if (!width || !height)
         return CGAffineTransformIdentity;
 
-    auto videoTransform = CGAffineTransformMakeRotation(static_cast<int>(videoFrame.rotation()) * M_PI / 180);
+#if PLATFORM(MAC)
+    int rotationAngle = -static_cast<int>(videoFrame.rotation());
+#else
+    int rotationAngle = static_cast<int>(videoFrame.rotation());
+#endif
+    auto videoTransform = CGAffineTransformMakeRotation(rotationAngle * M_PI / 180);
     if (videoFrame.isMirrored())
         videoTransform = CGAffineTransformScale(videoTransform, -1, 1);
 
