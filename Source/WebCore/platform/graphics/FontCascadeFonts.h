@@ -27,6 +27,8 @@
 #include "GlyphPage.h"
 #include "WidthCache.h"
 #include <wtf/Forward.h>
+#include <wtf/HashFunctions.h>
+#include <wtf/HashTraits.h>
 #include <wtf/MainThread.h>
 
 #if PLATFORM(IOS_FAMILY)
@@ -100,8 +102,7 @@ private:
         std::unique_ptr<MixedFontGlyphPage> m_mixedFont;
     };
 
-    GlyphPageCacheEntry m_cachedPageZero;
-    HashMap<int, GlyphPageCacheEntry> m_cachedPages;
+    HashMap<unsigned, GlyphPageCacheEntry, IntHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> m_cachedPages;
 
     HashSet<RefPtr<Font>> m_systemFallbackFontSet;
 

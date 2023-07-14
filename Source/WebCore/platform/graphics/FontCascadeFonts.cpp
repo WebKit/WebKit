@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2013-2015 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006-2023 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -500,7 +500,7 @@ GlyphData FontCascadeFonts::glyphDataForCharacter(UChar32 c, const FontCascadeDe
 
     const unsigned pageNumber = GlyphPage::pageNumberForCodePoint(c);
 
-    auto& cacheEntry = pageNumber ? m_cachedPages.add(pageNumber, GlyphPageCacheEntry()).iterator->value : m_cachedPageZero;
+    auto& cacheEntry = m_cachedPages.add(pageNumber, GlyphPageCacheEntry()).iterator->value;
 
     // Initialize cache with a full page of glyph mappings from a single font.
     if (cacheEntry.isNull())
@@ -523,8 +523,6 @@ void FontCascadeFonts::pruneSystemFallbacks()
     if (m_systemFallbackFontSet.isEmpty())
         return;
     // Mutable glyph pages may reference fallback fonts.
-    if (m_cachedPageZero.isMixedFont())
-        m_cachedPageZero = { };
     m_cachedPages.removeIf([](auto& keyAndValue) {
         return keyAndValue.value.isMixedFont();
     });
