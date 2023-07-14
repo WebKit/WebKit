@@ -166,6 +166,8 @@ constexpr unsigned maximumGPUProcessRelaunchAttemptsBeforeKillingWebProcesses { 
 bool WebProcessPool::s_shouldCrashWhenCreatingWebProcess = false;
 #endif
 
+static constexpr Seconds audibleActivityClearDelay = 5_s;
+
 bool WebProcessPool::s_didGlobalStaticInitialization = false;
 
 Ref<WebProcessPool> WebProcessPool::create(API::ProcessPoolConfiguration& configuration)
@@ -233,6 +235,7 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
     , m_backForwardCache(makeUniqueRef<WebBackForwardCache>(*this))
     , m_webProcessCache(makeUniqueRef<WebProcessCache>(*this))
     , m_webProcessWithAudibleMediaCounter([this](RefCounterEvent) { updateAudibleMediaAssertions(); })
+    , m_audibleActivityTimer(RunLoop::main(), this, &WebProcessPool::clearAudibleActivity)
     , m_webProcessWithMediaStreamingCounter([this](RefCounterEvent) { updateMediaStreamingActivity(); })
 {
     if (!s_didGlobalStaticInitialization) {
@@ -2156,14 +2159,24 @@ WebProcessWithAudibleMediaToken WebProcessPool::webProcessWithAudibleMediaToken(
     return m_webProcessWithAudibleMediaCounter.count();
 }
 
+void WebProcessPool::clearAudibleActivity()
+{
+    ASSERT(!m_webProcessWithAudibleMediaCounter.value());
+    m_audibleMediaActivity = std::nullopt;
+}
+
 void WebProcessPool::updateAudibleMediaAssertions()
 {
     if (!m_webProcessWithAudibleMediaCounter.value()) {
         WEBPROCESSPOOL_RELEASE_LOG(ProcessSuspension, "updateAudibleMediaAssertions: The number of processes playing audible media now zero. Releasing UI process assertion.");
-        m_audibleMediaActivity = std::nullopt;
+        // We clear the audible activity on a timer for 2 reasons:
+        // 1. Media may start playing shortly after (e.g. switching from one track to another)
+        // 2. It minimizes the risk of the GPUProcess getting suspended while shutting down the media stack.
+        m_audibleActivityTimer.startOneShot(audibleActivityClearDelay);
         return;
     }
 
+    m_audibleActivityTimer.stop();
     if (m_audibleMediaActivity)
         return;
 
