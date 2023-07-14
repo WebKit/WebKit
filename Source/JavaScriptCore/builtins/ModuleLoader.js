@@ -66,8 +66,7 @@ function newRegistryEntry(key)
     //     Ready to request the dependent modules (or now requesting & resolving).
     //     Without this state, the current draft causes infinite recursion when there is circular dependency.
     //     a. If the status is Satisfy and there is no entry.satisfy promise, the entry is ready to resolve the dependencies.
-    //     b. If the status is Satisfy and there is the entry.satisfy promise, the entry is just resolving
-    //        the dependencies.
+    //     b. If the status is Satisfy and there is the entry.satisfy promise, the entry has resolved the dependencies.
     //
     // 4. Link
     //     Ready to link the module with the other modules.
@@ -94,6 +93,7 @@ function newRegistryEntry(key)
         fetch: @undefined,
         instantiate: @undefined,
         satisfy: @undefined,
+        isSatisfied: false,
         dependencies: [], // To keep the module order, we store the module keys in the array.
         module: @undefined, // JSModuleRecord
         linkError: @undefined,
@@ -225,8 +225,137 @@ function requestInstantiate(entry, parameters, fetcher)
     return instantiatePromise;
 }
 
+@linkTimeConstant
+function cacheSatisfy(entry)
+{
+    "use strict";
+
+    @setStateToMax(entry, @ModuleLink);
+    entry.satisfy = (async () => {
+        return entry;
+    })();
+}
+
+@linkTimeConstant
+function cacheSatisfyAndReturn(entry, depEntries, satisfyingEntries)
+{
+    "use strict";
+
+    entry.isSatisfied = true;
+    for (var i = 0, length = depEntries.length; i < length; ++i) {
+        if (!depEntries[i].isSatisfied) {
+            entry.isSatisfied = false;
+            break;
+        }
+    }
+
+    if (entry.isSatisfied)
+        @cacheSatisfy(entry);
+    else
+        satisfyingEntries.@add(entry);
+    return entry;
+}
+
 @visibility=PrivateRecursive
 function requestSatisfy(entry, parameters, fetcher, visited)
+{
+    // If the root's requestSatisfyUtil is fulfilled, then all reachable entries by the root
+    // should be fulfilled. And this is why:
+    // 
+    // 1. The satisfyingEntries set is only updated when encountering
+    //    an entry that has a visited and unSatisfied dependency. Given
+    //    the following dependency graph and assume requestInstantiate(d)
+    //    consuming much more time than others. Then, the satisfyingEntries
+    //    would contain entries (a), (b), and (c).
+    //
+    // 2. The way we handle visited entry (a) is to check wether it's
+    //    instantiated instead of satisfied. This helps us to avoid infinitely looping
+    //    but we shouldn't mark the entry (c) as satisfied since we don't know
+    //    whether the first entry (a) of the loop has it's dependencies (d) satisfied.
+    //    A counter example for previous requestSatisfy implementation is shown below [1].
+    //
+    // 3. If requestSatisfyUtil(a) is fulfilled, then entry (d) must be satisfied.
+    //    Then, we can say entries (a), (b), and (c) are satisfied.
+    //
+    // 4. A dependency graph may have multiple circles. Once requestSatisfyUtil(r) is fulfilled,
+    //    then all requestSatisfyUtil promises for the first entries of the circles must be fulfilled.
+    //    In that case, all entries added to satisfyingEntries set are satisfied.
+    //
+    //      d
+    //      ^
+    //      |
+    // r -> a -> b -> c -> e
+    //      ^         |
+    //      |         |
+    //      -----------
+    //
+    // FIXME: Ideally we should use DFS (https://tc39.es/ecma262/#sec-moduledeclarationlinking) 
+    // to track strongly connected component (SCC). If the requestSatisfyUtil
+    // promise for the start entry of the SCC is fulfilled, then we can mark all entries
+    // of the SCC satisfied. However, current requestSatisfyUtil cannot guarantee DFS due 
+    // to various requestInstantiate time for children. And we don't prefer to force DFS.
+    // This is because if one child requests a lot of time in requestInstantiate, then the
+    // other children have to wait for it. And this is expensive. BTW, we don't have concept
+    // satisfy in spec see:
+    //  1. https://tc39.es/ecma262/#sec-import-calls
+    //  2. https://tc39.es/ecma262/#sec-ContinueDynamicImport
+    //  3. https://tc39.es/ecma262/#sec-LoadRequestedModules
+    //  4. https://tc39.es/ecma262/#sec-InnerModuleLoading
+    //
+    // [1] Counter Example
+    //
+    // Given module dependency graph:
+    //
+    //   r1 ---> b ---> c
+    //    |      ^
+    //    |      |
+    //    -----> a <--- r2
+    // 
+    // Note that here we treat requestInstantiate as a background execution for simplification. 
+    // And requestInstantiate1 is the 1st requestInstantiate call in requestSatisfyUtil and 
+    // requestInstantiate2 is the 2nd requestInstantiate call for visited depEntry.
+    // `->` means goto in below steps.
+    // 
+    // Step 1: Dynamically import r1 and r2
+    //         -> requestImportModule(r1) -> requestSatisfyUtil(r1, v1) -> v1.add(r1) -> requestInstantiate1(r1)
+    //         -> requestImportModule(r2) -> requestSatisfyUtil(r2, v2) -> v2.add(r2) -> requestInstantiate1(r2)
+    //     Background Executions = [ requestInstantiate1(r1), requestInstantiate1(r2) ]
+    //
+    // Step 2: requestInstantiate1(r1) is done then go for it's dependencies [ b, a ]
+    //         -> !v1.has(b) -> requestSatisfyUtil(b, v1) -> v1.add(b) -> requestInstantiate1(b)
+    //         -> !v1.has(a) -> requestSatisfyUtil(a, v1) -> v1.add(a) -> requestInstantiate1(a)
+    //     Background Executions = [ requestInstantiate1(r2), requestInstantiate1(b), requestInstantiate1(a) ]
+    //
+    // Step 3: requestInstantiate1(b) is done then go for it's dependencies [ c ]
+    //         -> !v1.has(c) -> requestSatisfyUtil(c, v1) -> v1.add(c) -> requestInstantiate1(c)
+    //     Background Executions = [ requestInstantiate1(r2), requestInstantiate1(a), requestInstantiate1(c) ]
+    //
+    // Step 4: requestInstantiate1(a) is done then go for it's dependencies [ b ]
+    //         -> v1.has(b) -> requestInstantiate2(b)
+    //         -> Since requestInstantiate1(b) cached in Step 3 and b is the only dependency a has, requestSatisfyUtil(a, v1) is fulfilled and cached to Entry(a).satisfy.
+    //     Background Executions = [ requestInstantiate1(r2), requestInstantiate1(c) ]
+    //
+    // Step 5: requestInstantiate1(r2) is done then go for it's dependencies [ a ]
+    //         -> !v2.has(a) -> requestSatisfyUtil(a, v2)
+    //         -> Since requestSatisfyUtil(a) is cached in Step 4 and a is the only dependency r2 has, requestSatisfyUtil(r2, v2) is fulfilled and cached.
+    //         -> linkAndEvaluateModule(r2) -> link(r2) crashes since c is not instantiated.
+    //     Background Executions = [ requestInstantiate1(c) ]
+    // 
+
+    "use strict";
+    
+    var satisfyingEntries = new @Set;
+    return this.requestSatisfyUtil(entry, parameters, fetcher, visited, satisfyingEntries).then((entry) => {
+        satisfyingEntries.@forEach((satisfyingEntry) => {
+            @cacheSatisfy(satisfyingEntry);
+            satisfyingEntry.isSatisfied = true;
+        });
+        return entry;
+    });
+}
+
+@visibility=PrivateRecursive
+function requestSatisfyUtil(entry, parameters, fetcher, visited, satisfyingEntries)
 {
     // https://html.spec.whatwg.org/#internal-module-script-graph-fetching-procedure
 
@@ -259,17 +388,49 @@ function requestSatisfy(entry, parameters, fetcher, visited)
                 promise = this.requestInstantiate(depEntry, parameters, fetcher);
             else {
                 // Currently, module loader do not pass any information for non-top-level module fetching.
-                promise = this.requestSatisfy(depEntry, parameters, fetcher, visited);
+                promise = this.requestSatisfyUtil(depEntry, parameters, fetcher, visited, satisfyingEntries);
             }
             @putByValDirect(depLoads, i, promise);
         }
 
-        return @InternalPromise.internalAll(depLoads).then((entries) => {
+        // We cannot cache the following promise chain to Entry.satisfy since there might be a infinite recursive 
+        // promise resolution chain. See example:
+        // 
+        //     r1 ---> a ---> b <--- r2
+        //      ^      |            
+        //      |-------
+        //
+        // Step 1: Dynamically import r1 and r2
+        //     requestImportModule(r1) -> requestSatisfyUtil(r1, v1) -> v1.add(r1) -> requestInstantiate1(r1)
+        //     requestImportModule(r2) -> requestSatisfyUtil(r2, v2) -> v2.add(r2) -> requestInstantiate1(r2)
+        //     Background Executions = [ requestInstantiate1(r1), requestInstantiate1(r2) ]
+        //
+        // Step 2: requestInstantiate1(r1) is done then go for it's dependencies [ a ]
+        //     -> !v1.has(a) -> requestSatisfyUtil(a, v1, r1) -> v1.add(a) -> requestInstantiate1(a, r1)
+        //     -> Entry(r1).satisfy = promise.all(requestSatisfyUtil(a, v1, r1)).then(...)
+        //     Background Executions = [ requestInstantiate1(r2), requestInstantiate1(a, r1) ]
+        //
+        // Step 3: requestInstantiate1(r2) is done then go for it's dependencies [ b ]
+        //     -> !v2.has(b) -> requestSatisfyUtil(b, v2, r2) -> v2.add(b) -> requestInstantiate1(b, r2)
+        //     -> Entry(r2).satisfy = promise.all(requestSatisfyUtil(b, v2, r2)).then(...)
+        //     Background Executions = [ requestInstantiate1(a, r1), requestInstantiate1(b, r2) ]
+        //
+        // Step 4: requestInstantiate1(b, r2) is done then go for it's dependencies [ a ]
+        //     -> !v2.has(a) -> requestSatisfyUtil(a, v2, r2) -> v2.add(b) -> requestInstantiate1(a, r2)
+        //     -> Entry(b).satisfy = promise.all(requestSatisfyUtil(a, v2, r2)).then(...)
+        //     Background Executions = [ requestInstantiate1(a, r1), requestInstantiate1(a, r2) ]
+        //
+        // Step 4: requestInstantiate1(a, r1) is done then got for it's dependencies [ b ]
+        //     -> !v1.has(b) -> requestSatisfyUtil(b, v1, r1) -> returns Entry(b).satisfy since step 4
+        //     -> Entry(a).satisfy = promise.all(promise.all(requestSatisfyUtil(a, v2, r2)).then(...)) // infinite recursive promise resolution chain
+        //     Background Executions = [ requestInstantiate1(a, r2) ]
+        //
+        // From now on, module a will be satisfied if module a is satisfied.
+        //
+        return @InternalPromise.internalAll(depLoads).then((depEntries) => {
             if (entry.satisfy)
                 return entry;
-            @setStateToMax(entry, @ModuleLink);
-            entry.satisfy = satisfyPromise;
-            return entry;
+            return @cacheSatisfyAndReturn(entry, depEntries, satisfyingEntries);
         });
     });
 
@@ -285,6 +446,8 @@ function link(entry, fetcher)
 
     "use strict";
 
+    if (entry.state < @ModuleLink)
+        @throwTypeError("Requested module is not instantiated yet.");
     if (!entry.linkSucceeded)
         throw entry.linkError;
     if (entry.state === @ModuleReady)
@@ -395,9 +558,6 @@ function linkAndEvaluateModule(key, fetcher)
     "use strict";
 
     var entry = this.ensureRegistered(key);
-    if (entry.state < @ModuleLink)
-        @throwTypeError("Requested module is not instantiated yet.");
-
     this.link(entry, fetcher);
     return this.moduleEvaluation(entry, fetcher);
 }
