@@ -39,6 +39,7 @@
 #include "CrossOriginOpenerPolicy.h"
 #include "PolicyContainer.h"
 #include "SecurityOrigin.h"
+#include "URLKeepingBlobAlive.h"
 #include <mutex>
 #include <wtf/CrossThreadQueue.h>
 #include <wtf/CrossThreadTask.h>

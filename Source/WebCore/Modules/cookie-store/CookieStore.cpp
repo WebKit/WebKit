@@ -35,8 +35,11 @@
 #include "Document.h"
 #include "JSCookieListItem.h"
 #include "JSDOMPromiseDeferred.h"
+#include "Page.h"
 #include "ScriptExecutionContext.h"
+#include "SecurityOrigin.h"
 #include <optional>
+#include <wtf/CompletionHandler.h>
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/Ref.h>
 #include <wtf/Vector.h>

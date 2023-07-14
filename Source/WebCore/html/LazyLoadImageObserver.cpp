@@ -28,6 +28,7 @@
 
 #include "HTMLImageElement.h"
 #include "IntersectionObserverCallback.h"
+#include "IntersectionObserverEntry.h"
 #include "LocalFrame.h"
 #include <limits>
 

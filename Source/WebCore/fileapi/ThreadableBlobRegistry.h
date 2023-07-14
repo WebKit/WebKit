@@ -37,6 +37,8 @@ namespace WebCore {
 
 class BlobPart;
 class SecurityOrigin;
+class SecurityOriginData;
+class URLKeepingBlobAlive;
 
 struct PolicyContainer;
 

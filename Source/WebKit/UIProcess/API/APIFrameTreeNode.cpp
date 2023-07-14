@@ -26,6 +26,8 @@
 #include "config.h"
 #include "APIFrameTreeNode.h"
 
+#include "WebPageProxy.h"
+
 namespace API {
 
 FrameTreeNode::~FrameTreeNode() = default;

@@ -26,6 +26,10 @@
 #include "config.h"
 #include "ProvisionalFrameProxy.h"
 
+#include "VisitedLinkStore.h"
+#include "WebFrameProxy.h"
+#include "WebPageProxy.h"
+
 namespace WebKit {
 
 ProvisionalFrameProxy::ProvisionalFrameProxy(WebFrameProxy& frame, Ref<WebProcessProxy>&& process)
