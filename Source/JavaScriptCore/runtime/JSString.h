@@ -594,12 +594,12 @@ public:
     // The rope value will remain a null string in that case.
     JS_EXPORT_PRIVATE const String& resolveRope(JSGlobalObject* nullOrGlobalObjectForOOM) const;
 
-    template<typename Fibers, typename CharacterType>
-    static void resolveToBuffer(Fibers*, CharacterType* buffer, unsigned length, uint8_t* stackLimit);
+    template<typename CharacterType>
+    static void resolveToBuffer(JSString*, JSString*, JSString*, CharacterType* buffer, unsigned length, uint8_t* stackLimit);
 
 private:
-    template<typename Fibers, typename CharacterType>
-    static void resolveToBufferSlow(Fibers*, CharacterType* buffer, unsigned length);
+    template<typename CharacterType>
+    static void resolveToBufferSlow(JSString*, JSString*, JSString*, CharacterType* buffer, unsigned length, uint8_t* stackLimit);
 
     static JSRopeString* create(VM& vm, JSString* s1, JSString* s2)
     {
