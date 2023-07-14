@@ -80,7 +80,7 @@ void WebMDNSRegister::registerMDNSName(ScriptExecutionContextIdentifier identifi
 
     // FIXME: Use async reply.
     auto& connection = WebProcess::singleton().ensureNetworkProcessConnection().connection();
-    if (connection.send(Messages::NetworkMDNSRegister::RegisterMDNSName { requestIdentifier, identifier, ipAddress }, 0) != IPC::Error::NoError)
+    if (connection.send(Messages::NetworkMDNSRegister::RegisterMDNSName { requestIdentifier, identifier, ipAddress }, 0))
         finishedRegisteringMDNSName(requestIdentifier, { }, MDNSRegisterError::Internal);
 }
 

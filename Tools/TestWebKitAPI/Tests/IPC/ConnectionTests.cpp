@@ -312,7 +312,7 @@ TEST_P(ConnectionTestABBA, ReceiveAlreadyInvalidatedClientNoAssert)
 TEST_P(ConnectionTestABBA, DISABLED_UnopenedWaitForAndDispatchImmediatelyIsInvalidConnection)
 {
     IPC::Error error = a()->waitForAndDispatchImmediately<MockTestMessage1>(0, kWaitForAbsenceTimeout);
-    EXPECT_EQ(IPC::Error::InvalidConnection, error);
+    EXPECT_EQ(IPC::ErrorType::InvalidConnection, *error);
 }
 
 TEST_P(ConnectionTestABBA, InvalidatedWaitForAndDispatchImmediatelyIsInvalidConnection)
@@ -320,14 +320,14 @@ TEST_P(ConnectionTestABBA, InvalidatedWaitForAndDispatchImmediatelyIsInvalidConn
     ASSERT_TRUE(openA());
     a()->invalidate();
     IPC::Error error = a()->waitForAndDispatchImmediately<MockTestMessage1>(0, kWaitForAbsenceTimeout);
-    EXPECT_EQ(IPC::Error::InvalidConnection, error);
+    EXPECT_EQ(IPC::ErrorType::InvalidConnection, *error);
 }
 
 TEST_P(ConnectionTestABBA, UnsentWaitForAndDispatchImmediatelyIsTimeout)
 {
     ASSERT_TRUE(openA());
     IPC::Error error = a()->waitForAndDispatchImmediately<MockTestMessage1>(0, kWaitForAbsenceTimeout);
-    EXPECT_EQ(IPC::Error::Timeout, error);
+    EXPECT_EQ(IPC::ErrorType::Timeout, *error);
 }
 
 template<typename C>
@@ -587,7 +587,7 @@ TEST_P(ConnectionRunLoopTest, RunLoopWaitForAndDispatchImmediately)
 
         for (uint64_t i = 0u; i < 55u; ++i) {
             IPC::Error error = b()->waitForAndDispatchImmediately<MockTestMessage1>(i, kDefaultWaitForTimeout);
-            ASSERT_EQ(IPC::Error::NoError, error);
+            ASSERT_FALSE(error);
 
             auto message = bClient().waitForMessage(0_s);
             EXPECT_EQ(message.messageName, MockTestMessage1::name());
@@ -596,7 +596,7 @@ TEST_P(ConnectionRunLoopTest, RunLoopWaitForAndDispatchImmediately)
     });
     for (uint64_t i = 100u; i < 160u; ++i) {
         IPC::Error error = a()->waitForAndDispatchImmediately<MockTestMessage1>(i, kDefaultWaitForTimeout);
-        ASSERT_EQ(IPC::Error::NoError, error);
+        ASSERT_FALSE(error);
 
         auto message = aClient().waitForMessage(0_s);
         EXPECT_EQ(message.messageName, MockTestMessage1::name());

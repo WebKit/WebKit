@@ -174,6 +174,12 @@ TEST(WTF_Expected, expected)
         EXPECT_EQ(e.value_or(3.14), 3);
     }
     {
+        E e = Expected<int, const char*>(unexpect, oops);
+        EXPECT_FALSE(e.has_value());
+        EXPECT_EQ(e.error(), oops);
+        EXPECT_EQ(e.value_or(3.14), 3);
+    }
+    {
         auto e = FooChar(42);
         EXPECT_EQ(e->v, 42);
         EXPECT_EQ((*e).v, 42);
@@ -528,6 +534,58 @@ TEST(WTF_Expected, Address)
     Expected<NeedsStdAddress, float> b(WTFMove(a));
     Expected<NeedsStdAddress, float> c(WTFMove(b));
     (void)c;
+}
+
+TEST(WTF_Expected, AndThen)
+{
+    {
+        Expected<int, std::string> e1(42);
+        Expected<std::string, std::string> e2 = e1.and_then([](int v) {
+            return Expected<std::string, std::string>(std::to_string(v));
+        });
+        EXPECT_TRUE(e2.has_value());
+        EXPECT_EQ(*e2, "42");
+    }
+    {
+        const Expected<int, std::string> e1(42);
+        Expected<std::string, std::string> e2 = e1.and_then([](const int &v) {
+            return Expected<std::string, std::string>(std::to_string(v));
+        });
+        EXPECT_TRUE(e2.has_value());
+        EXPECT_EQ(*e2, "42");
+    }
+    {
+        Expected<NonCopyable<int>, std::string> e1(42);
+        Expected<std::string, std::string> e2 = WTFMove(e1).and_then([](NonCopyable<int>&& v) {
+            return Expected<std::string, std::string>(std::to_string(v.value));
+        });
+        EXPECT_TRUE(e2.has_value());
+        EXPECT_EQ(*e2, "42");
+    }
+    {
+        Expected<int, std::string> u1(unexpect, oops);
+        Expected<std::string, std::string> u2 = u1.and_then([](int v) {
+            return Expected<std::string, std::string>(std::to_string(v));
+        });
+        EXPECT_FALSE(u2.has_value());
+        EXPECT_EQ(u2.error(), oops);
+    }
+    {
+        const Expected<int, std::string> u1(unexpect, oops);
+        Expected<std::string, std::string> u2 = u1.and_then([](const int& v) {
+            return Expected<std::string, std::string>(std::to_string(v));
+        });
+        EXPECT_FALSE(u2.has_value());
+        EXPECT_EQ(u2.error(), oops);
+    }
+    {
+        Expected<NonCopyable<int>, std::string> u1(unexpect, oops);
+        Expected<std::string, std::string> u2 = WTFMove(u1).and_then([](NonCopyable<int>&& v) {
+            return Expected<std::string, std::string>(std::to_string(v.value));
+        });
+        EXPECT_FALSE(u2.has_value());
+        EXPECT_EQ(u2.error(), oops);
+    }
 }
 
 } // namespace TestWebkitAPI
