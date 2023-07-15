@@ -42,7 +42,7 @@ namespace LayoutIntegration {
 
 FlexLayout::FlexLayout(RenderFlexibleBox& flexBoxRenderer)
     : m_boxTree(flexBoxRenderer)
-    , m_layoutState(flexBoxRenderer.view().ensureLayoutState())
+    , m_layoutState(flexBoxRenderer.view().layoutState())
     , m_flexFormattingState(layoutState().ensureFlexFormattingState(flexBox()))
 {
 }

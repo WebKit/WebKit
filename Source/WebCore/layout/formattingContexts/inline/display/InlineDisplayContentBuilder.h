@@ -84,6 +84,7 @@ private:
     const InlineFormattingContext& m_formattingContext;
     InlineFormattingState& m_formattingState;
     const InlineDisplay::Line& m_displayLine;
+    IntSize m_initialContaingBlockSize;
     const size_t m_lineIndex { 0 };
     // FIXME: This should take DisplayLine::isTruncatedInBlockDirection() for non-prefixed line-clamp.
     bool m_lineIsFullyTruncatedInBlockDirection { false };

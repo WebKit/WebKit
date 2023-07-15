@@ -87,6 +87,8 @@ InlineDisplayContentBuilder::InlineDisplayContentBuilder(const InlineFormattingC
     , m_displayLine(displayLine)
     , m_lineIndex(lineIndex)
 {
+    auto& initialContainingBlockGeometry = m_formattingState.layoutState().geometryForBox(FormattingContext::initialContainingBlock(root()));
+    m_initialContaingBlockSize = ceiledIntSize(LayoutSize { initialContainingBlockGeometry.contentBoxWidth(), initialContainingBlockGeometry.contentBoxHeight() });
 }
 
 InlineDisplay::Boxes InlineDisplayContentBuilder::build(const LineBuilder::LayoutResult& lineLayoutResult, const LineBox& lineBox)
@@ -166,11 +168,7 @@ void InlineDisplayContentBuilder::appendTextDisplayBox(const Line::Run& lineRun,
         auto inkOverflow = textRunRect;
 
         auto addStrokeOverflow = [&] {
-            auto initialContaingBlockSize = formattingState().layoutState().isInlineFormattingContextIntegration()
-                ? formattingState().layoutState().viewportSize()
-                : formattingState().layoutState().geometryForBox(FormattingContext::initialContainingBlock(inlineTextBox)).contentBox().size();
-            auto strokeOverflow = ceilf(style.computedStrokeWidth(ceiledIntSize(initialContaingBlockSize)));
-            inkOverflow.inflate(strokeOverflow);
+            inkOverflow.inflate(ceilf(style.computedStrokeWidth(m_initialContaingBlockSize)));
         };
         addStrokeOverflow();
 

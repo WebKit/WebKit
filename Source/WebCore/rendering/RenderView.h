@@ -77,7 +77,7 @@ public:
 
     Layout::InitialContainingBlock& initialContainingBlock() { return m_initialContainingBlock.get(); }
     const Layout::InitialContainingBlock& initialContainingBlock() const { return m_initialContainingBlock.get(); }
-    Layout::LayoutState& ensureLayoutState();
+    Layout::LayoutState& layoutState() { return *m_layoutState; }
     void updateQuirksMode();
 
     bool needsRepaintHackAfterCompositingLayerUpdateForDebugOverlaysOnly() const { return m_needsRepaintHackAfterCompositingLayerUpdateForDebugOverlaysOnly; };
@@ -230,13 +230,15 @@ private:
 
     Node* nodeForHitTest() const override;
 
+    void updateInitialContainingBlockSize();
+
     LocalFrameView& m_frameView;
 
     // Include this RenderView.
     uint64_t m_rendererCount { 1 };
 
     UniqueRef<Layout::InitialContainingBlock> m_initialContainingBlock;
-    std::unique_ptr<Layout::LayoutState> m_layoutState;
+    UniqueRef<Layout::LayoutState> m_layoutState;
 
     mutable std::unique_ptr<Region> m_accumulatedRepaintRegion;
     SelectionRangeData m_selection;
