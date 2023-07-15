@@ -123,8 +123,27 @@ ALWAYS_INLINE bool isCanonicalNumericIndexString(UniquedStringImpl* propertyName
         return false;
     if (propertyName->isSymbol())
         return false;
-    if (equal(propertyName, "-0"_s))
-        return true;
+
+    StringView view(propertyName);
+    unsigned length = view.length();
+    if (!length)
+        return false;
+    UChar first = view[0];
+    if (length == 1)
+        return isASCIIDigit(first);
+    UChar second = view[1];
+    if (first == '-') {
+        // -Infinity case should go to the slow path. -NaN cannot exist since it becomes NaN.
+        if (!isASCIIDigit(second) && (length != strlen("-Infinity") || second != 'I'))
+            return false;
+        if (length == 2) // Including -0, and it should be accepted.
+            return true;
+    } else if (!isASCIIDigit(first)) {
+        // Infinity and NaN should go to the slow path.
+        if (!(length == strlen("Infinity") || first == 'I') && !(length == strlen("NaN") || first == 'N'))
+            return false;
+    }
+
     double index = jsToNumber(propertyName);
     NumberToStringBuffer buffer;
     const char* indexString = WTF::numberToString(index, buffer);
