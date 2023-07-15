@@ -146,7 +146,6 @@ public:
     // Custom handling of value setting only.
     static void applyValueDirection(BuilderState&, CSSValue&);
     static void applyValueWebkitLocale(BuilderState&, CSSValue&);
-    static void applyValueTextOrientation(BuilderState&, CSSValue&);
 #if ENABLE(TEXT_AUTOSIZING)
     static void applyValueWebkitTextSizeAdjust(BuilderState&, CSSValue&);
 #endif
@@ -806,11 +805,6 @@ inline void BuilderCustom::applyValueWritingMode(BuilderState& builderState, CSS
 {
     builderState.setWritingMode(fromCSSValue<WritingMode>(value));
     builderState.style().setHasExplicitlySetWritingMode();
-}
-
-inline void BuilderCustom::applyValueTextOrientation(BuilderState& builderState, CSSValue& value)
-{
-    builderState.setTextOrientation(fromCSSValue<TextOrientation>(value));
 }
 
 #if ENABLE(TEXT_AUTOSIZING)

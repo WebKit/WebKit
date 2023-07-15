@@ -1120,7 +1120,7 @@
                 "upright"
             ],
             "codegen-properties": {
-                "custom": "Value",
+                "converter": "TextOrientation",
                 "high-priority": true,
                 "parser-grammar": "<<values>>"
             },

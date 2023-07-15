@@ -132,6 +132,7 @@ public:
     static int convertMarqueeRepetition(BuilderState&, const CSSValue&);
     static int convertMarqueeSpeed(BuilderState&, const CSSValue&);
     static RefPtr<QuotesData> convertQuotes(BuilderState&, const CSSValue&);
+    static TextOrientation convertTextOrientation(BuilderState&, const CSSValue&);
     static OptionSet<TextUnderlinePosition> convertTextUnderlinePosition(BuilderState&, const CSSValue&);
     static TextUnderlineOffset convertTextUnderlineOffset(BuilderState&, const CSSValue&);
     static TextDecorationThickness convertTextDecorationThickness(BuilderState&, const CSSValue&);
@@ -968,6 +969,11 @@ inline RefPtr<StyleReflection> BuilderConverter::convertReflection(BuilderState&
     reflection->setOffset(reflectValue.offset().convertToLength<FixedIntegerConversion | PercentConversion | CalculatedConversion>(builderState.cssToLengthConversionData()));
     reflection->setMask(mask);
     return reflection;
+}
+
+inline TextOrientation BuilderConverter::convertTextOrientation(BuilderState&, const CSSValue& value)
+{
+    return fromCSSValue<TextOrientation>(value);
 }
 
 inline TextBoxEdge BuilderConverter::convertTextBoxEdge(BuilderState&, const CSSValue& value)
