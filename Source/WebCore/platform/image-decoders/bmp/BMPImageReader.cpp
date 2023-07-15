@@ -260,6 +260,11 @@ bool BMPImageReader::readInfoHeader()
 
     // Detect top-down BMPs.
     if (m_infoHeader.biHeight < 0) {
+        // We can't negate INT32_MIN below to get a positive int32_t.
+        // isInfoHeaderValid() will reject heights of 1 << 16 or larger anyway,
+        // so just reject this bitmap now.
+        if (m_infoHeader.biHeight == INT32_MIN)
+            return m_parent->setFailed();
         m_isTopDown = true;
         m_infoHeader.biHeight = -m_infoHeader.biHeight;
     }
