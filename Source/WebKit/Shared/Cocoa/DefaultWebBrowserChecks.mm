@@ -273,6 +273,18 @@ bool isFullWebBrowserOrRunningTest(const String& bundleIdentifier)
     return fullWebBrowser || isRunningTest(bundleIdentifier);
 }
 
+bool shouldEvaluateJavaScriptWithoutTransientActivation()
+{
+    static bool staticShouldEvaluateJavaScriptWithoutTransientActivation = [] {
+        if (linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::EvaluateJavaScriptWithoutTransientActivation))
+            return true;
+
+        return isFullWebBrowserOrRunningTest();
+    }();
+
+    return staticShouldEvaluateJavaScriptWithoutTransientActivation;
+}
+
 bool isFullWebBrowserOrRunningTest()
 {
     ASSERT(!isInWebKitChildProcess());

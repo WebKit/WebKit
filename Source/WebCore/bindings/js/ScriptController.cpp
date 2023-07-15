@@ -576,7 +576,7 @@ JSC::JSValue ScriptController::executeScriptIgnoringException(const String& scri
 
 JSC::JSValue ScriptController::executeScriptInWorldIgnoringException(DOMWrapperWorld& world, const String& script, bool forceUserGesture)
 {
-    auto result = executeScriptInWorld(world, { script, URL { }, false, std::nullopt, forceUserGesture });
+    auto result = executeScriptInWorld(world, { script, URL { }, false, std::nullopt, forceUserGesture, RemoveTransientActivation::No });
     return result ? result.value() : JSC::JSValue { };
 }
 
@@ -594,19 +594,14 @@ ValueOrException ScriptController::executeScriptInWorld(DOMWrapperWorld& world, 
 
     UserGestureIndicator gestureIndicator(parameters.forceUserGesture == ForceUserGesture::Yes ? std::optional<ProcessingUserGestureState>(ProcessingUserGesture) : std::nullopt, m_frame.document());
 
-#if PLATFORM(COCOA)
-    if (linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::EvaluateJavaScriptWithoutTransientActivation)) {
-        // Script executed by the user agent under simulated user gesture should not leave behind transient activation
-        if (parameters.forceUserGesture == ForceUserGesture::Yes && UserGestureIndicator::currentUserGesture()) {
-            UserGestureIndicator::currentUserGesture()->addDestructionObserver([](UserGestureToken& token) {
-                token.forEachImpactedDocument([](Document& document) {
-                    if (auto* window = document.domWindow())
-                        window->consumeTransientActivation();
-                });
+    if (parameters.forceUserGesture == ForceUserGesture::Yes && UserGestureIndicator::currentUserGesture() && parameters.removeTransientActivation == RemoveTransientActivation::Yes) {
+        UserGestureIndicator::currentUserGesture()->addDestructionObserver([](UserGestureToken& token) {
+            token.forEachImpactedDocument([](Document& document) {
+                if (auto* window = document.domWindow())
+                    window->consumeTransientActivation();
             });
-        }
+        });
     }
-#endif
 
     if (!canExecuteScripts(ReasonForCallingCanExecuteScripts::AboutToExecuteScript) || isPaused())
         return makeUnexpected(ExceptionDetails { "Cannot execute JavaScript in this document"_s });
@@ -719,7 +714,7 @@ JSC::JSValue ScriptController::executeUserAgentScriptInWorldIgnoringException(DO
 }
 ValueOrException ScriptController::executeUserAgentScriptInWorld(DOMWrapperWorld& world, const String& script, bool forceUserGesture)
 {
-    return executeScriptInWorld(world, { script, URL { }, false, std::nullopt, forceUserGesture });
+    return executeScriptInWorld(world, { script, URL { }, false, std::nullopt, forceUserGesture, RemoveTransientActivation::No });
 }
 
 void ScriptController::executeAsynchronousUserAgentScriptInWorld(DOMWrapperWorld& world, RunJavaScriptParameters&& parameters, ResolveFunction&& resolveCompletionHandler)
