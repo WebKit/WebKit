@@ -5410,20 +5410,6 @@
                 "url": "https://www.w3.org/TR/SVG11/painting.html#ShapeRenderingProperty"
             }
         },
-        "size": {
-            "codegen-properties": {
-                "computable": false,
-                "custom": "All",
-                "parser-function": "consumeSize",
-                "parser-function-requires-context-mode": true,
-                "parser-grammar-unused": "<length>{1,2} | auto | [ <page-size> || [ portrait | landscape ] ]",
-                "parser-grammar-unused-reason": "Needs support for '||' groups and the '{A,B}' multiplier."
-            },
-            "specification": {
-                "category": "css-page",
-                "url": "https://www.w3.org/TR/css3-page/#page-size-prop"
-            }
-        },
         "stop-color": {
             "codegen-properties": {
                 "svg": true,
@@ -9696,6 +9682,21 @@
                 }
             }
         },
+        "@page": {
+            "size": {
+                "codegen-properties": {
+                    "custom": "All",
+                    "parser-function": "consumeSize",
+                    "parser-function-requires-context-mode": true,
+                    "parser-grammar-unused": "<length>{1,2} | auto | [ <page-size> || [ portrait | landscape ] ]",
+                    "parser-grammar-unused-reason": "Needs support for '||' groups and the '{A,B}' multiplier."
+                },
+                "specification": {
+                    "category": "css-page",
+                    "url": "https://drafts.csswg.org/css-page/#page-size-prop"
+                }
+            }
+        },
         "@property": {
             "syntax": {
                 "codegen-properties": {
@@ -9883,7 +9884,7 @@
         "css-page": {
             "shortname": "CSS Paged Media",
             "longname": "CSS Paged Media Module",
-            "url": "https://www.w3.org/TR/css3-page/"
+            "url": "https://drafts.csswg.org/css-page/"
         },
         "css-properties-and-values": {
             "shortname": "CSS Properties and Values API",
