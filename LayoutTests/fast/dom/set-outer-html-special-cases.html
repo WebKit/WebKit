@@ -16,7 +16,7 @@
         // say this should be a no-op though.
         a = document.createElement("a");
         shouldBe("a.parentNode", "null");
-        shouldThrowErrorName("a.outerHTML = ''", "NoModificationAllowedError");
+        shouldNotThrow("a.outerHTML = ''");
     }
     </script>
 </head>

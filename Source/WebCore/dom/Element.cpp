@@ -3738,11 +3738,11 @@ String Element::outerHTML() const
 ExceptionOr<void> Element::setOuterHTML(const String& html)
 {
     // The specification allows setting outerHTML on an Element whose parent is a DocumentFragment and Gecko supports this.
-    // However, as of June 2021, Blink matches our behavior and throws a NoModificationAllowedError for non-Element parents.
+    // https://w3c.github.io/DOM-Parsing/#dom-element-outerhtml
     RefPtr parent = parentElement();
     if (UNLIKELY(!parent)) {
         if (!parentNode())
-            return Exception { NoModificationAllowedError, "Cannot set outerHTML on element because it doesn't have a parent"_s };
+            return { };
         return Exception { NoModificationAllowedError, "Cannot set outerHTML on element because its parent is not an Element"_s };
     }
 
