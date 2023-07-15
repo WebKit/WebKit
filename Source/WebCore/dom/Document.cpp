@@ -52,6 +52,7 @@
 #include "CompositionEvent.h"
 #include "ConstantPropertyMap.h"
 #include "ContentSecurityPolicy.h"
+#include "ContentVisibilityDocumentState.h"
 #include "ContentfulPaintChecker.h"
 #include "CookieJar.h"
 #include "CustomEffect.h"
@@ -4909,6 +4910,8 @@ bool Document::setFocusedElement(Element* element, const FocusOptions& options)
         oldFocusedElement->setFocus(false);
         setFocusNavigationStartingNode(nullptr);
 
+        scheduleContentRelevancyUpdate(ContentRelevancyStatus::Focused);
+
         if (options.removalEventsMode == FocusRemovalEventsMode::Dispatch) {
             // Dispatch a change event for form control elements that have been edited.
             if (is<HTMLFormControlElement>(*oldFocusedElement)) {
@@ -4987,6 +4990,8 @@ bool Document::setFocusedElement(Element* element, const FocusOptions& options)
         m_focusedElement->setFocus(true, options.visibility);
         if (options.trigger != FocusTrigger::Bindings)
             m_latestFocusTrigger = options.trigger;
+
+        scheduleContentRelevancyUpdate(ContentRelevancyStatus::Focused);
 
         // The setFocus call triggers a blur and a focus event. Event handlers could cause the focused element to be cleared.
         if (m_focusedElement != newFocusedElement) {
@@ -9547,6 +9552,34 @@ std::optional<uint64_t> Document::noiseInjectionHashSalt() const
     if (!page() || noiseInjectionPolicy() == NoiseInjectionPolicy::None)
         return std::nullopt;
     return page()->noiseInjectionHashSaltForDomain(RegistrableDomain { m_url });
+}
+
+ContentVisibilityDocumentState& Document::contentVisibilityDocumentState()
+{
+    if (!m_contentVisibilityDocumentState)
+        m_contentVisibilityDocumentState = makeUnique<ContentVisibilityDocumentState>();
+    return *m_contentVisibilityDocumentState;
+}
+
+bool Document::isObservingContentVisibilityTargets() const
+{
+    return m_contentVisibilityDocumentState && m_contentVisibilityDocumentState->hasObservationTargets();
+}
+
+void Document::updateRelevancyOfContentVisibilityElements()
+{
+    if (!isObservingContentVisibilityTargets())
+        return;
+    if (m_contentVisibilityDocumentState->updateRelevancyOfContentVisibilityElements(m_contentRelevancyStatusUpdate))
+        updateLayoutIgnorePendingStylesheets();
+    m_contentRelevancyStatusUpdate = { };
+}
+
+void Document::scheduleContentRelevancyUpdate(ContentRelevancyStatus status)
+{
+    if (!isObservingContentVisibilityTargets())
+        return;
+    m_contentRelevancyStatusUpdate.add(status);
 }
 
 } // namespace WebCore

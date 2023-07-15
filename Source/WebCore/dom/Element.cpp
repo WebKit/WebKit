@@ -39,6 +39,7 @@
 #include "ComposedTreeIterator.h"
 #include "ComputedStylePropertyMapReadOnly.h"
 #include "ContainerNodeAlgorithms.h"
+#include "ContentVisibilityDocumentState.h"
 #include "CustomElementReactionQueue.h"
 #include "CustomElementRegistry.h"
 #include "DOMRect.h"
@@ -768,8 +769,13 @@ Vector<String> Element::getAttributeNames() const
 
 bool Element::hasFocusableStyle() const
 {
-    if (renderer() && renderer()->isSkippedContent())
-        return false;
+    if (renderer() && renderer()->isSkippedContent()) {
+        auto* candidate = this;
+        while ((candidate = candidate->parentElementInComposedTree())) {
+            if (candidate->renderer() && candidate->renderStyle()->contentVisibility() == ContentVisibility::Hidden)
+                return false;
+        }
+    }
 
     auto isFocusableStyle = [](const RenderStyle* style) {
         return style && style->display() != DisplayType::None && style->display() != DisplayType::Contents
@@ -1066,6 +1072,8 @@ static std::optional<std::pair<RenderElement*, LayoutRect>> listBoxElementScroll
 
 void Element::scrollIntoView(std::optional<std::variant<bool, ScrollIntoViewOptions>>&& arg)
 {
+    document().contentVisibilityDocumentState().updateContentRelevancyStatusForScrollIfNeeded(*this);
+
     document().updateLayoutIgnorePendingStylesheets();
 
     RenderElement* renderer = nullptr;
@@ -1131,6 +1139,8 @@ void Element::scrollIntoView(bool alignToTop)
 
 void Element::scrollIntoViewIfNeeded(bool centerIfNeeded)
 {
+    document().contentVisibilityDocumentState().updateContentRelevancyStatusForScrollIfNeeded(*this);
+
     document().updateLayoutIgnorePendingStylesheets();
 
     if (!renderer())
@@ -3520,6 +3530,8 @@ void Element::focus(const FocusOptions& options)
         return;
     }
 
+    document->contentVisibilityDocumentState().updateContentRelevancyStatusForScrollIfNeeded(*this);
+
     RefPtr<Element> newTarget = this;
 
     // If we don't have renderer yet, isFocusable will compute it without style update.
@@ -3860,6 +3872,8 @@ void Element::addToTopLayer()
     document().addTopLayerElement(*this);
     setNodeFlag(NodeFlag::IsInTopLayer);
 
+    document().scheduleContentRelevancyUpdate(ContentRelevancyStatus::IsInTopLayer);
+
     // Invalidate inert state
     invalidateStyleInternal();
     if (document().documentElement())
@@ -3891,6 +3905,8 @@ void Element::removeFromTopLayer()
 
     document().removeTopLayerElement(*this);
     clearNodeFlag(NodeFlag::IsInTopLayer);
+
+    document().scheduleContentRelevancyUpdate(ContentRelevancyStatus::IsInTopLayer);
 
     // Invalidate inert state
     invalidateStyleInternal();
@@ -5361,6 +5377,30 @@ void Element::setHasDuplicateAttribute(bool hasDuplicateAttribute)
 bool Element::isPopoverShowing() const
 {
     return popoverData() && popoverData()->visibilityState() == PopoverVisibilityState::Showing;
+}
+
+// https://drafts.csswg.org/css-contain/#relevant-to-the-user
+bool Element::isRelevantToUser() const
+{
+    return hasRareData() && elementRareData()->contentRelevancyStatus();
+}
+
+OptionSet<ContentRelevancyStatus> Element::contentRelevancyStatus() const
+{
+    if (!hasRareData())
+        return { };
+    return elementRareData()->contentRelevancyStatus();
+}
+
+void Element::setContentRelevancyStatus(OptionSet<ContentRelevancyStatus> contentRelvancyStatus)
+{
+    ensureElementRareData().setContentRelevancyStatus(contentRelvancyStatus);
+}
+
+void Element::contentVisibilityViewportChange(bool)
+{
+    ASSERT(renderStyle() && renderStyle()->contentVisibility() == ContentVisibility::Auto);
+    document().scheduleContentRelevancyUpdate(ContentRelevancyStatus::OnScreen);
 }
 
 } // namespace WebCore

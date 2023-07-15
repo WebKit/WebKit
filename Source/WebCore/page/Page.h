@@ -243,6 +243,7 @@ enum class RenderingUpdateStep : uint32_t {
     AccessibilityRegionUpdate       = 1 << 20,
 #endif
     RestoreScrollPositionAndViewState = 1 << 21,
+    UpdateContentRelevancy          = 1 << 22,
 };
 
 enum class LinkDecorationFilteringTrigger : uint8_t {
@@ -271,6 +272,7 @@ constexpr OptionSet<RenderingUpdateStep> updateRenderingSteps = {
 #endif
     RenderingUpdateStep::PrepareCanvasesForDisplay,
     RenderingUpdateStep::CaretAnimation,
+    RenderingUpdateStep::UpdateContentRelevancy,
 };
 
 constexpr auto allRenderingUpdateSteps = updateRenderingSteps | OptionSet<RenderingUpdateStep> {

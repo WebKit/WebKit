@@ -1261,6 +1261,8 @@
         "web-platform-tests/css/css-contain/content-visibility/content-visibility-fieldset-size-ref.html",
         "web-platform-tests/css/css-contain/content-visibility/content-visibility-resize-observer-no-error-ref.html",
         "web-platform-tests/css/css-contain/content-visibility/content-visibility-video-ref.html",
+        "web-platform-tests/css/css-contain/content-visibility/content-visibility-with-popover-top-layer-and-auto-descendant-ref.html",
+        "web-platform-tests/css/css-contain/content-visibility/content-visibility-with-top-layer-and-auto-descendant-ref.html",
         "web-platform-tests/css/css-contain/content-visibility/content-with-popover-top-layer-ref.html",
         "web-platform-tests/css/css-contain/content-visibility/content-with-top-layer-ref.html",
         "web-platform-tests/css/css-contain/content-visibility/crashtests/content-visibility-transition-finished-001.html",

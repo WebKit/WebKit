@@ -258,6 +258,9 @@ bool SharingResolver::canShareStyleWithElement(const Context& context, const Sty
     if (elementHasDirectionAuto(candidateElement))
         return false;
 
+    if (candidateElement.isRelevantToUser() != element.isRelevantToUser())
+        return false;
+
     if (candidateElement.isLink() && context.elementLinkState != style->insideLink())
         return false;
 

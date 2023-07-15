@@ -2573,3 +2573,9 @@ imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-eleme
 
 # rdar://111704637 - 'mousemove' not emitted from 'eventSender.moveMouseTo()'
 fast/html/transient-activation.html [ Skip ]
+
+webkit.org/b/259075 imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-079.html [ ImageOnlyFailure ]
+webkit.org/b/259075 imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-auto-in-iframe.html [ ImageOnlyFailure ]
+webkit.org/b/259075 imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-auto-intrinsic-width.html [ ImageOnlyFailure ]
+webkit.org/b/259075 imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-auto-nested.html [ ImageOnlyFailure  ]
+webkit.org/b/259075 imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-resize-observer-no-error.html [ ImageOnlyFailure ]

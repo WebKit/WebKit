@@ -3559,8 +3559,6 @@ imported/w3c/web-platform-tests/css/css-contain/contain-size-select-001.html [ P
 imported/w3c/web-platform-tests/css/css-contain/contain-size-select-002.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-contain/contain-size-select-elem-001.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-contain/contain-size-select-elem-002.html [ Pass ]
-imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-075.html [ Pass ]
-imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-076.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-content/quotes-006.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-content/quotes-007.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-content/quotes-012.html [ Pass ]

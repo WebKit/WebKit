@@ -26,6 +26,7 @@
 
 #include "AnimationList.h"
 #include "CSSLineBoxContainValue.h"
+#include "Element.h"
 #include "FontCascadeDescription.h"
 #include "GraphicsTypes.h"
 #include "ImageOrientation.h"
@@ -965,6 +966,21 @@ constexpr bool RenderStyle::preserveNewline(WhiteSpace mode)
 {
     // Normal and nowrap do not preserve newlines.
     return mode != WhiteSpace::Normal && mode != WhiteSpace::NoWrap;
+}
+
+inline bool isSkippedContentRoot(const RenderStyle& style, const Element* element)
+{
+    switch (style.contentVisibility()) {
+    case ContentVisibility::Visible:
+        return false;
+    case ContentVisibility::Hidden:
+        return true;
+    case ContentVisibility::Auto:
+        return element && !element->isRelevantToUser();
+    };
+
+    ASSERT_NOT_REACHED();
+    return false;
 }
 
 inline float adjustFloatForAbsoluteZoom(float value, const RenderStyle& style)

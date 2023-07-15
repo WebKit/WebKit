@@ -99,6 +99,7 @@ class CanvasRenderingContext2D;
 class CharacterData;
 class Comment;
 class ConstantPropertyMap;
+class ContentVisibilityDocumentState;
 class DOMImplementation;
 class DOMSelection;
 class LocalDOMWindow;
@@ -266,6 +267,7 @@ enum class CollectionType : uint8_t;
 enum CSSPropertyID : uint16_t;
 
 enum class CompositeOperator : uint8_t;
+enum class ContentRelevancyStatus : uint8_t;
 enum class DOMAudioSessionType : uint8_t;
 enum class DisabledAdaptations : uint8_t;
 enum class FireEvents : bool;
@@ -1726,6 +1728,8 @@ public:
 
     LazyLoadImageObserver& lazyLoadImageObserver();
 
+    ContentVisibilityDocumentState& contentVisibilityDocumentState();
+
     void setHasVisuallyNonEmptyCustomContent() { m_hasVisuallyNonEmptyCustomContent = true; }
     bool hasVisuallyNonEmptyCustomContent() const { return m_hasVisuallyNonEmptyCustomContent; }
     void enqueuePaintTimingEntryIfNeeded();
@@ -1776,6 +1780,9 @@ public:
 #endif
 
     virtual void didChangeViewSize() { }
+
+    void updateRelevancyOfContentVisibilityElements();
+    void scheduleContentRelevancyUpdate(ContentRelevancyStatus);
 
 protected:
     enum class ConstructionFlag : uint8_t {
@@ -1910,6 +1917,8 @@ private:
     RefPtr<ResizeObserver> ensureResizeObserverForContainIntrinsicSize();
     void parentOrShadowHostNode() const = delete; // Call parentNode() instead.
 
+    bool isObservingContentVisibilityTargets() const;
+
     const Ref<const Settings> m_settings;
 
     UniqueRef<Quirks> m_quirks;
@@ -1995,6 +2004,8 @@ private:
     WeakPtr<Element, WeakPtrImplWithEventTargetData> m_cssTarget;
 
     std::unique_ptr<LazyLoadImageObserver> m_lazyLoadImageObserver;
+
+    std::unique_ptr<ContentVisibilityDocumentState> m_contentVisibilityDocumentState;
 
 #if !LOG_DISABLED
     MonotonicTime m_documentCreationTime;
@@ -2287,6 +2298,8 @@ private:
 #if ENABLE(DOM_AUDIO_SESSION)
     DOMAudioSessionType m_audioSessionType { };
 #endif
+
+    OptionSet<ContentRelevancyStatus> m_contentRelevancyStatusUpdate;
 
     StandaloneStatus m_xmlStandalone { StandaloneStatus::Unspecified };
     bool m_hasXMLDeclaration { false };

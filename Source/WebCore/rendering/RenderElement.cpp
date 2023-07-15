@@ -29,6 +29,7 @@
 #include "BorderPainter.h"
 #include "CachedResourceLoader.h"
 #include "ContentData.h"
+#include "ContentVisibilityDocumentState.h"
 #include "CursorList.h"
 #include "DocumentInlines.h"
 #include "ElementChildIteratorInlines.h"
@@ -795,6 +796,19 @@ void RenderElement::styleWillChange(StyleDifference diff, const RenderStyle& new
     ASSERT(settings().shouldAllowUserInstalledFonts() || newStyle.fontDescription().shouldAllowUserInstalledFonts() == AllowUserInstalledFonts::No);
 
     auto* oldStyle = hasInitializedStyle() ? &style() : nullptr;
+
+    auto updateContentVisibilityDocumentStateIfNeeded = [&] () {
+        if (!element())
+            return;
+        bool contentVisibilityChanged = oldStyle && oldStyle->contentVisibility() != newStyle.contentVisibility();
+        if (contentVisibilityChanged) {
+            if (oldStyle->contentVisibility() == ContentVisibility::Auto)
+                ContentVisibilityDocumentState::unobserve(*element());
+        }
+        if ((contentVisibilityChanged || !oldStyle) && newStyle.contentVisibility() == ContentVisibility::Auto)
+            ContentVisibilityDocumentState::observe(*element());
+    };
+
     if (oldStyle) {
         // If our z-index changes value or our visibility changes,
         // we need to dirty our stacking context's z-order list.
@@ -866,6 +880,8 @@ void RenderElement::styleWillChange(StyleDifference diff, const RenderStyle& new
         setHasTransformRelatedProperty(false);
         setHasReflection(false);
     }
+
+    updateContentVisibilityDocumentStateIfNeeded();
 
     bool hadOutline = oldStyle && oldStyle->hasOutline();
     bool hasOutline = newStyle.hasOutline();
@@ -1081,6 +1097,9 @@ void RenderElement::willBeDestroyed()
 
     if (m_hasPausedImageAnimations)
         view().removeRendererWithPausedImageAnimations(*this);
+
+    if (style().contentVisibility() == ContentVisibility::Auto && element())
+        ContentVisibilityDocumentState::unobserve(*element());
 }
 
 void RenderElement::setNeedsPositionedMovementLayout(const RenderStyle* oldStyle)
@@ -2243,6 +2262,11 @@ FloatRect RenderElement::referenceBoxRect(CSSBoxType boxType) const
 
     ASSERT_NOT_REACHED();
     return { };
+}
+
+bool RenderElement::isSkippedContentRoot() const
+{
+    return WebCore::isSkippedContentRoot(style(), element());
 }
 
 }

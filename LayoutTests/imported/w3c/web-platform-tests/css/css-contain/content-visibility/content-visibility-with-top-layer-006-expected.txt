@@ -1,4 +1,3 @@
-content
 
-FAIL CSS Content Visibility: offscreen c-v auto content is relevant when in top layer assert_equals: expected 100 but got 200
+PASS CSS Content Visibility: offscreen c-v auto content is relevant when in top layer
 

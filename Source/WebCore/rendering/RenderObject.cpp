@@ -2676,11 +2676,6 @@ bool RenderObject::isSkippedContent() const
     return parent() && parent()->style().effectiveSkippedContent();
 }
 
-bool RenderObject::isSkippedContentRoot() const
-{
-    return style().contentVisibility() == ContentVisibility::Hidden;
-}
-
 TextStream& operator<<(TextStream& ts, const RenderObject& renderer)
 {
     ts << renderer.debugDescription();

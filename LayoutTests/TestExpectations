@@ -4925,16 +4925,15 @@ webanimations/translate-property-and-translate-animation-with-delay-on-forced-la
 imported/w3c/web-platform-tests/css/css-contain/contain-inline-size-bfc-floats-001.html [ ImageOnlyFailure ]
 # forced layout
 imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-035.html [ Skip ]
-# c-v: auto
-imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-075.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-076.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-auto-nested-scroll.html [ Skip ]
+# off-screen selection
+imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-070.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-071.html [ Skip ]
+# c-v: auto contentvisibilityautostatechanged event
 imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-auto-state-changed.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-auto-state-changed-first-observation.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-auto-state-changed-removed.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-fieldset-size.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-video.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-with-top-layer-in-auto-subtree-removal.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-contain/counter-scoping-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-contain/counter-scoping-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-contain/quote-scoping-001.html [ ImageOnlyFailure ]

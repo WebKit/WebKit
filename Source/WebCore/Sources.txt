@@ -1032,6 +1032,7 @@ dom/CompositionEvent.cpp
 dom/ConstantPropertyMap.cpp
 dom/ContainerNode.cpp
 dom/ContainerNodeAlgorithms.cpp
+dom/ContentVisibilityDocumentState.cpp
 dom/ContextDestructionObserver.cpp
 dom/CustomElementDefaultARIA.cpp
 dom/CustomElementReactionQueue.cpp

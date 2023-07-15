@@ -36,6 +36,7 @@
 #include "ChromeClient.h"
 #include "ColorBlending.h"
 #include "ContainerNode.h"
+#include "ContentVisibilityDocumentState.h"
 #include "DebugPageOverlays.h"
 #include "DocumentInlines.h"
 #include "DocumentLoader.h"
@@ -2406,6 +2407,9 @@ void LocalFrameView::maintainScrollPositionAtAnchor(ContainerNode* anchorNode)
         return;
 
     cancelScheduledScrolls();
+
+    if (is<Element>(anchorNode))
+        m_frame->document()->contentVisibilityDocumentState().updateContentRelevancyStatusForScrollIfNeeded(downcast<Element>(*anchorNode));
 
     // We need to update the layout before scrolling, otherwise we could
     // really mess things up if an anchor scroll comes at a bad moment.

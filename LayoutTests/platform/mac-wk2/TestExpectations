@@ -1349,8 +1349,6 @@ webkit.org/b/228713 [ BigSur Debug arm64 ] compositing/video/video-object-fit.ht
 
 webkit.org/b/224698 [ BigSur Release arm64 ] inspector/console/console-oom.html [ Pass Crash ]
 
-webkit.org/b/238033 imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-050.html [ Pass Failure ]
-
 webkit.org/b/224963 [ BigSur arm64 ] webrtc/captureCanvas-webrtc.html [ Pass Timeout ]
 
 webkit.org/b/225430 [ BigSur arm64 ] http/tests/inspector/network/resource-sizes-network.html [ Pass Failure ]

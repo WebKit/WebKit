@@ -1,4 +1,3 @@
-hello
 
-FAIL Content Visibility: off-screen selection assert_equals: step1 height expected 100 but got 10
+FAIL Content Visibility: off-screen selection assert_equals: step3 height expected 10 but got 100
 

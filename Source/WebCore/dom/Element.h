@@ -105,6 +105,14 @@ struct ShadowRootInit;
 using ElementName = NodeName;
 using ExplicitlySetAttrElementsMap = HashMap<QualifiedName, Vector<WeakPtr<Element, WeakPtrImplWithEventTargetData>>>;
 
+// https://drafts.csswg.org/css-contain/#relevant-to-the-user
+enum class ContentRelevancyStatus : uint8_t {
+    OnScreen = 1 << 0,
+    Focused = 1 << 1,
+    IsInTopLayer = 1 << 2,
+    // FIXME: add Selected (see https://bugs.webkit.org/show_bug.cgi?id=258194).
+};
+
 namespace Style {
 class Resolver;
 enum class Change : uint8_t;
@@ -726,6 +734,13 @@ public:
 
     ExplicitlySetAttrElementsMap& explicitlySetAttrElementsMap();
     ExplicitlySetAttrElementsMap* explicitlySetAttrElementsMapIfExists() const;
+
+    bool isRelevantToUser() const;
+
+    void contentVisibilityViewportChange(bool);
+
+    OptionSet<ContentRelevancyStatus> contentRelevancyStatus() const;
+    void setContentRelevancyStatus(OptionSet<ContentRelevancyStatus>);
 
 protected:
     Element(const QualifiedName&, Document&, ConstructionType);

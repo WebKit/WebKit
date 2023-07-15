@@ -40,6 +40,7 @@ class Color;
 class ContentData;
 class CounterContent;
 class CursorList;
+class Element;
 class FillLayer;
 class FilterOperations;
 class FloatPoint;
@@ -2262,5 +2263,7 @@ constexpr BorderStyle collapsedBorderStyle(BorderStyle);
 inline bool pseudoElementRendererIsNeeded(const RenderStyle*);
 inline bool generatesBox(const RenderStyle&);
 inline bool isNonVisibleOverflow(Overflow);
+
+inline bool isSkippedContentRoot(const RenderStyle&, const Element*);
 
 } // namespace WebCore

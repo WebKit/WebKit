@@ -1823,6 +1823,10 @@ void Page::updateRendering()
         }
     });
 
+    runProcessingStep(RenderingUpdateStep::UpdateContentRelevancy, [] (Document& document) {
+        document.updateRelevancyOfContentVisibilityElements();
+    });
+
     runProcessingStep(RenderingUpdateStep::IntersectionObservations, [] (Document& document) {
         document.updateIntersectionObservations();
     });
@@ -4188,6 +4192,7 @@ WTF::TextStream& operator<<(WTF::TextStream& ts, RenderingUpdateStep step)
     case RenderingUpdateStep::Fullscreen: ts << "Fullscreen"; break;
     case RenderingUpdateStep::AnimationFrameCallbacks: ts << "AnimationFrameCallbacks"; break;
     case RenderingUpdateStep::IntersectionObservations: ts << "IntersectionObservations"; break;
+    case RenderingUpdateStep::UpdateContentRelevancy: ts << "UpdateContentRelevancy"; break;
     case RenderingUpdateStep::ResizeObservations: ts << "ResizeObservations"; break;
     case RenderingUpdateStep::Images: ts << "Images"; break;
     case RenderingUpdateStep::WheelEventMonitorCallbacks: ts << "WheelEventMonitorCallbacks"; break;
