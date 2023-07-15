@@ -169,7 +169,7 @@ static BOOL shouldForwardScrollViewDelegateMethodToExternalDelegate(SEL selector
 
     self.alwaysBounceVertical = YES;
     self.directionalLockEnabled = YES;
-    [self _setIndicatorInsetAdjustmentBehavior:UIScrollViewIndicatorInsetAdjustmentAlways];
+    self.automaticallyAdjustsScrollIndicatorInsets = YES;
 
 // FIXME: Likely we can remove this special case for watchOS and tvOS.
 #if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)

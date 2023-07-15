@@ -534,12 +534,6 @@ typedef struct CGSVGDocument *CGSVGDocumentRef;
 @property (nonatomic, readonly, retain) FBSDisplayConfiguration *displayConfiguration;
 @end
 
-typedef NS_ENUM(NSInteger, UIScrollViewIndicatorInsetAdjustmentBehavior) {
-    UIScrollViewIndicatorInsetAdjustmentAutomatic,
-    UIScrollViewIndicatorInsetAdjustmentAlways,
-    UIScrollViewIndicatorInsetAdjustmentNever
-};
-
 #if PLATFORM(IOS) && !defined(__IPHONE_13_4)
 typedef enum {
     UIAxisNeither = 0,
@@ -565,9 +559,7 @@ typedef enum {
 @property (nonatomic) CGFloat verticalScrollDecelerationFactor;
 @property (nonatomic, readonly) BOOL _isInterruptingDeceleration;
 @property (nonatomic, getter=_contentScrollInset, setter=_setContentScrollInset:) UIEdgeInsets contentScrollInset;
-@property (nonatomic, getter=_indicatorInsetAdjustmentBehavior, setter=_setIndicatorInsetAdjustmentBehavior:) UIScrollViewIndicatorInsetAdjustmentBehavior indicatorInsetAdjustmentBehavior;
 @property (nonatomic, readonly) UIEdgeInsets _systemContentInset;
-@property (nonatomic, readonly) UIEdgeInsets _effectiveContentInset;
 @property (nonatomic, getter=_allowsAsyncScrollEvent, setter=_setAllowsAsyncScrollEvent:) BOOL _allowsAsyncScrollEvent;
 @property (nonatomic, getter=_isFirstResponderKeyboardAvoidanceEnabled, setter=_setFirstResponderKeyboardAvoidanceEnabled:) BOOL firstResponderKeyboardAvoidanceEnabled;
 @property (nonatomic) BOOL bouncesHorizontally;

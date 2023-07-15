@@ -1559,7 +1559,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     CGFloat verticalSpaceInWebViewCoordinates = (visibleSize.height - focusedElementRectInNewScale.height()) / 2.0;
 
     auto topLeft = CGPointZero;
-    auto scrollViewInsets = [_scrollView _effectiveContentInset];
+    auto scrollViewInsets = [_scrollView adjustedContentInset];
     auto currentTopLeft = [_scrollView contentOffset];
 
     if (_haveSetObscuredInsets) {
