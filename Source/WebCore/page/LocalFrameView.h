@@ -596,7 +596,6 @@ public:
     WEBCORE_EXPORT bool addScrollableArea(ScrollableArea*);
     // Returns whether the scrollable area has just been removed.
     WEBCORE_EXPORT bool removeScrollableArea(ScrollableArea*);
-    bool containsScrollableArea(ScrollableArea*) const;
     const ScrollableAreaSet* scrollableAreas() const { return m_scrollableAreas.get(); }
     
     void addScrollableAreaForAnimatedScroll(ScrollableArea*);

@@ -5624,6 +5624,7 @@ void LocalFrameView::removeScrollableAreaForAnimatedScroll(ScrollableArea* scrol
 
 bool LocalFrameView::addScrollableArea(ScrollableArea* scrollableArea)
 {
+    ASSERT(scrollableArea);
     if (!m_scrollableAreas)
         m_scrollableAreas = makeUnique<ScrollableAreaSet>();
     
@@ -5642,11 +5643,6 @@ bool LocalFrameView::removeScrollableArea(ScrollableArea* scrollableArea)
         return true;
     }
     return false;
-}
-
-bool LocalFrameView::containsScrollableArea(ScrollableArea* scrollableArea) const
-{
-    return m_scrollableAreas && m_scrollableAreas->contains(*scrollableArea);
 }
 
 void LocalFrameView::scrollableAreaSetChanged()
