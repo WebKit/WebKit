@@ -2492,6 +2492,16 @@
    },
    {
       "emails" : [
+         "fantasai.bugs@inkedblade.net",
+         "fantasai@apple.com"
+      ],
+      "name" : "Elika Etemad",
+      "nicks" : [
+         "fantasai"
+      ]
+   },
+   {
+      "emails" : [
          "eepskamphunt@apple.com"
       ],
       "expertise" : "Safari Extensions, Web Extensions",
