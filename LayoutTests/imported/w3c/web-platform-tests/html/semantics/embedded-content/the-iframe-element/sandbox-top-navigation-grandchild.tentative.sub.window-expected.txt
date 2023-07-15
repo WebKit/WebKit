@@ -1,0 +1,9 @@
+Blocked access to external URL https://google.com/
+Blocked access to external URL https://google.com/
+Blocked access to external URL https://google.com/
+
+PASS A fully sandboxed same-origin grandchild can't navigate top
+PASS An unsandboxed same-origin grandchild can navigate top
+PASS A same-origin grandchild in a cross-origin parent can navigate top
+PASS A same-origin sandboxed grandchild in a cross-origin parent can navigate top
+
