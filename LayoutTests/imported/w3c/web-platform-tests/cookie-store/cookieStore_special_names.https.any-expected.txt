@@ -1,10 +1,10 @@
 
 FAIL cookieStore.set with __Secure- name on secure origin promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating '(await cookieStore.get(`${prefix}cookie-name`)).value')"
 PASS cookieStore.set of expired __Secure- cookie name on secure origin
-FAIL cookieStore.delete with __Secure- name on secure origin promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+PASS cookieStore.delete with __Secure- name on secure origin
 FAIL cookieStore.set with __Host- name on secure origin promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating '(await cookieStore.get(`${prefix}cookie-name`)).value')"
 PASS cookieStore.set of expired __Host- cookie name on secure origin
-FAIL cookieStore.delete with __Host- name on secure origin promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+PASS cookieStore.delete with __Host- name on secure origin
 FAIL cookieStore.set with __Host- prefix and a domain option assert_unreached: Should have rejected: undefined Reached unreachable code
 FAIL cookieStore.set with __Host- prefix a path option promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating '(await cookieStore.get(`__Host-cookie-name`)).value')"
 PASS cookieStore.set with malformed name.

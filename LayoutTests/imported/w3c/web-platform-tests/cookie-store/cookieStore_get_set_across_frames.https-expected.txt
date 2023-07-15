@@ -1,6 +1,4 @@
 
-Harness Error (FAIL), message = Test named 'cookieStore.get() sees cookieStore.set() in frame' specified 1 'cleanup' function, and 1 failed.
-
 FAIL cookieStore.get() sees cookieStore.set() in frame promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'frameCookie.value')"
-NOTRUN cookieStore.get() in frame sees cookieStore.set()
+FAIL cookieStore.get() in frame sees cookieStore.set() promise_test: Unhandled rejection with value: object "TypeError: null is not an object (evaluating 'cookie.value')"
 

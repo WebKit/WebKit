@@ -1,5 +1,3 @@
 
-Harness Error (FAIL), message = Test named 'cookieStore.get returns null for a cookie deleted by cookieStore.delete' specified 1 'cleanup' function, and 1 failed.
-
-FAIL cookieStore.get returns null for a cookie deleted by cookieStore.delete promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+PASS cookieStore.get returns null for a cookie deleted by cookieStore.delete
 

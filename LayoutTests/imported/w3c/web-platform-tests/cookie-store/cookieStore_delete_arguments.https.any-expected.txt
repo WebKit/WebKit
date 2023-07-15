@@ -1,18 +1,16 @@
 
-Harness Error (FAIL), message = Test named 'cookieStore.delete with name in options' specified 1 'cleanup' function, and 1 failed.
-
-FAIL cookieStore.delete with positional name promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
-FAIL cookieStore.delete with name in options promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
-NOTRUN cookieStore.delete domain starts with "."
-NOTRUN cookieStore.delete with domain that is not equal current host
-NOTRUN cookieStore.delete with domain set to the current hostname
-NOTRUN cookieStore.delete with domain set to a subdomain of the current hostname
-NOTRUN cookieStore.delete with domain set to a non-domain-matching suffix of the current hostname
-NOTRUN cookieStore.delete with path set to the current directory
-NOTRUN cookieStore.delete with path set to subdirectory of the current directory
-NOTRUN cookieStore.delete with missing / at the end of path
-NOTRUN cookieStore.delete with path that does not start with /
-NOTRUN cookieStore.delete with get result
-NOTRUN cookieStore.delete with positional empty name
-NOTRUN cookieStore.delete with empty name in options
+PASS cookieStore.delete with positional name
+PASS cookieStore.delete with name in options
+FAIL cookieStore.delete domain starts with "." assert_unreached: Should have rejected: undefined Reached unreachable code
+FAIL cookieStore.delete with domain that is not equal current host assert_unreached: Should have rejected: undefined Reached unreachable code
+FAIL cookieStore.delete with domain set to the current hostname assert_equals: expected null but got object "[object Object]"
+FAIL cookieStore.delete with domain set to a subdomain of the current hostname assert_unreached: Should have rejected: undefined Reached unreachable code
+FAIL cookieStore.delete with domain set to a non-domain-matching suffix of the current hostname assert_unreached: Should have rejected: undefined Reached unreachable code
+FAIL cookieStore.delete with path set to the current directory assert_equals: expected null but got object "[object Object]"
+PASS cookieStore.delete with path set to subdirectory of the current directory
+FAIL cookieStore.delete with missing / at the end of path assert_equals: expected null but got object "[object Object]"
+FAIL cookieStore.delete with path that does not start with / assert_unreached: Should have rejected: undefined Reached unreachable code
+FAIL cookieStore.delete with get result assert_equals: expected null but got object "[object Object]"
+FAIL cookieStore.delete with positional empty name promise_test: Unhandled rejection with value: object "TypeError: Type error"
+FAIL cookieStore.delete with empty name in options promise_test: Unhandled rejection with value: object "TypeError: Type error"
 

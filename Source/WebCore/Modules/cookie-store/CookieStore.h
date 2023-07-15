@@ -53,7 +53,7 @@ public:
     void set(String&& name, String&& value, Ref<DeferredPromise>&&);
     void set(CookieInit&&, Ref<DeferredPromise>&&);
 
-    void remove(const String& name, Ref<DeferredPromise>&&);
+    void remove(String&& name, Ref<DeferredPromise>&&);
     void remove(CookieStoreDeleteOptions&&, Ref<DeferredPromise>&&);
 
     using RefCounted::ref;

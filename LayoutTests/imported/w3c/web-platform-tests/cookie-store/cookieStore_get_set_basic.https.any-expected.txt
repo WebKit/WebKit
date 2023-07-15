@@ -1,5 +1,3 @@
 
-Harness Error (FAIL), message = Test named 'cookieStore.get returns the cookie written by cookieStore.set' specified 1 'cleanup' function, and 1 failed.
-
 PASS cookieStore.get returns the cookie written by cookieStore.set
 

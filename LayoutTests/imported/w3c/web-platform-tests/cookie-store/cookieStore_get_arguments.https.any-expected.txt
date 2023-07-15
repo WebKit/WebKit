@@ -1,13 +1,11 @@
 
-Harness Error (FAIL), message = Test named 'cookieStore.get with no arguments returns TypeError' specified 1 'cleanup' function, and 1 failed.
-
 FAIL cookieStore.get with no arguments returns TypeError assert_unreached: Should have rejected: undefined Reached unreachable code
-NOTRUN cookieStore.get with empty options returns TypeError
-NOTRUN cookieStore.get with positional name
-NOTRUN cookieStore.get with name in options
-NOTRUN cookieStore.get with name in both positional arguments and options
-NOTRUN cookieStore.get with absolute url in options
-NOTRUN cookieStore.get with relative url in options
-NOTRUN cookieStore.get with invalid url path in options
-NOTRUN cookieStore.get with invalid url host in options
+FAIL cookieStore.get with empty options returns TypeError assert_unreached: Should have rejected: undefined Reached unreachable code
+PASS cookieStore.get with positional name
+PASS cookieStore.get with name in options
+PASS cookieStore.get with name in both positional arguments and options
+PASS cookieStore.get with absolute url in options
+PASS cookieStore.get with relative url in options
+FAIL cookieStore.get with invalid url path in options assert_unreached: Should have rejected: undefined Reached unreachable code
+FAIL cookieStore.get with invalid url host in options assert_unreached: Should have rejected: undefined Reached unreachable code
 

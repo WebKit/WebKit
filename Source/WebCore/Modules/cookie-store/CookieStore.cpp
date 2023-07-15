@@ -42,6 +42,7 @@
 #include <wtf/CompletionHandler.h>
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/Ref.h>
+#include <wtf/Seconds.h>
 #include <wtf/URL.h>
 #include <wtf/Vector.h>
 #include <wtf/WallTime.h>
@@ -192,14 +193,38 @@ void CookieStore::set(CookieInit&& options, Ref<DeferredPromise>&& promise)
     cookieJar.setCookieAsync(document, url, cookie, WTFMove(completionHandler));
 }
 
-void CookieStore::remove(const String&, Ref<DeferredPromise>&& promise)
+void CookieStore::remove(String&& name, Ref<DeferredPromise>&& promise)
 {
-    promise->reject(NotSupportedError);
+    remove(CookieStoreDeleteOptions { WTFMove(name), { } }, WTFMove(promise));
 }
 
-void CookieStore::remove(CookieStoreDeleteOptions&&, Ref<DeferredPromise>&& promise)
+void CookieStore::remove(CookieStoreDeleteOptions&& options, Ref<DeferredPromise>&& promise)
 {
-    promise->reject(NotSupportedError);
+    auto* context = scriptExecutionContext();
+    if (!context) {
+        promise->reject(SecurityError);
+        return;
+    }
+
+    auto* origin = context->securityOrigin();
+    if (!origin) {
+        promise->reject(SecurityError);
+        return;
+    }
+
+    if (origin->isOpaque()) {
+        promise->reject(Exception { SecurityError, "The origin is opaque"_s });
+        return;
+    }
+
+    CookieInit initOptions;
+    initOptions.name = WTFMove(options.name);
+    initOptions.value = emptyString();
+    initOptions.domain = WTFMove(options.domain);
+    initOptions.path = WTFMove(options.path);
+    initOptions.expires = (WallTime::now() - 24_h).secondsSinceEpoch().milliseconds();
+
+    set(WTFMove(initOptions), WTFMove(promise));
 }
 
 const char* CookieStore::activeDOMObjectName() const
