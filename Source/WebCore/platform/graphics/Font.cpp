@@ -404,11 +404,6 @@ static RefPtr<GlyphPage> createAndFillGlyphPage(unsigned pageNumber, const Font&
 
 const GlyphPage* Font::glyphPage(unsigned pageNumber) const
 {
-    if (!pageNumber) {
-        if (!m_glyphPageZero)
-            m_glyphPageZero = createAndFillGlyphPage(0, *this);
-        return m_glyphPageZero.get();
-    }
     auto addResult = m_glyphPages.add(pageNumber, nullptr);
     if (addResult.isNewEntry)
         addResult.iterator->value = createAndFillGlyphPage(pageNumber, *this);
