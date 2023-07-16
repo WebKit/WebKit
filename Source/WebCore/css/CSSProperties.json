@@ -6371,7 +6371,8 @@
         },
         "contain": {
             "codegen-properties": {
-                "custom": "All",
+                "converter": "Contain",
+                "initial": "initialContainment",
                 "settings-flag": "cssContainmentEnabled",
                 "parser-function": "consumeContain",
                 "parser-grammar-unused": "none | strict | content | [ size || layout || paint ]",

@@ -90,7 +90,6 @@ public:
     DECLARE_PROPERTY_CUSTOM_HANDLERS(CaretColor);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(Clip);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(Color);
-    DECLARE_PROPERTY_CUSTOM_HANDLERS(Contain);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(ContainIntrinsicWidth);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(ContainIntrinsicHeight);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(Content);
@@ -134,8 +133,6 @@ public:
     static void applyInheritWebkitMaskImage(BuilderState&) { }
 
     // Custom handling of inherit + value setting only.
-    static void applyInheritDisplay(BuilderState&);
-    static void applyValueDisplay(BuilderState&, CSSValue&);
     static void applyInheritVerticalAlign(BuilderState&);
     static void applyValueVerticalAlign(BuilderState&, CSSValue&);
     static void applyInheritBaselineShift(BuilderState&);
@@ -1178,56 +1175,6 @@ inline void BuilderCustom::applyValueAspectRatio(BuilderState& builderState, CSS
     else
         builderState.style().setAspectRatioType(AspectRatioType::Ratio);
     builderState.style().setAspectRatio(width, height);
-}
-
-inline void BuilderCustom::applyInitialContain(BuilderState& builderState)
-{
-    builderState.style().setContain(RenderStyle::initialContainment());
-}
-
-inline void BuilderCustom::applyInheritContain(BuilderState& builderState)
-{
-    builderState.style().setContain(forwardInheritedValue(builderState.parentStyle().contain()));
-}
-
-inline void BuilderCustom::applyValueContain(BuilderState& builderState, CSSValue& value)
-{
-    if (is<CSSPrimitiveValue>(value)) {
-        if (value.valueID() == CSSValueNone)
-            return builderState.style().setContain(RenderStyle::initialContainment());
-        if (value.valueID() == CSSValueStrict)
-            return builderState.style().setContain(RenderStyle::strictContainment());
-        return builderState.style().setContain(RenderStyle::contentContainment());
-    }
-
-    if (!is<CSSValueList>(value))
-        return;
-
-    OptionSet<Containment> containment;
-    auto& list = downcast<CSSValueList>(value);
-    for (auto& item : list) {
-        auto& value = downcast<CSSPrimitiveValue>(item);
-        switch (value.valueID()) {
-        case CSSValueSize:
-            containment.add(Containment::Size);
-            break;
-        case CSSValueInlineSize:
-            containment.add(Containment::InlineSize);
-            break;
-        case CSSValueLayout:
-            containment.add(Containment::Layout);
-            break;
-        case CSSValuePaint:
-            containment.add(Containment::Paint);
-            break;
-        case CSSValueStyle:
-            containment.add(Containment::Style);
-            break;
-        default:
-            break;
-        };
-    }
-    return builderState.style().setContain(containment);
 }
 
 inline void BuilderCustom::applyValueTextEmphasisStyle(BuilderState& builderState, CSSValue& value)
