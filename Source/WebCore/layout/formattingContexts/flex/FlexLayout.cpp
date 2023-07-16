@@ -212,15 +212,9 @@ FlexLayout::FlexBaseAndHypotheticalMainSizeList FlexLayout::flexBaseAndHypotheti
             return usedMainSize;
         };
         auto flexBaseSize = computedFlexBase();
-
-        auto hypotheticalMainSize = [&] {
-            // The hypothetical main size is the item's flex base size clamped according to its used min and max main sizes (and flooring the content box size at zero).
-            auto hypotheticalValue = flexBaseSize;
-            auto maximum = flexItem.mainAxis().maximumSize.value_or(hypotheticalValue);
-            auto minimum = flexItem.mainAxis().minimumSize.value_or(hypotheticalValue);
-            return std::min(maximum, std::max(minimum, hypotheticalValue));
-        };
-        flexBaseAndHypotheticalMainSizeList.append({ flexBaseSize, hypotheticalMainSize() });
+        // The hypothetical main size is the item's flex base size clamped according to its used min and max main sizes (and flooring the content box size at zero).
+        auto hypotheticalMainSize = std::min(flexItem.mainAxis().maximumUsedSize, std::max(flexItem.mainAxis().minimumUsedSize, flexBaseSize));
+        flexBaseAndHypotheticalMainSizeList.append({ flexBaseSize, hypotheticalMainSize });
     }
     return flexBaseAndHypotheticalMainSizeList;
 }
@@ -391,16 +385,15 @@ FlexLayout::SizeList FlexLayout::computeMainSizeForFlexItems(const LogicalFlexIt
             //    If the item's target main size was made larger by this, it's a min violation.
             auto totalViolation = LayoutUnit { };
             for (auto nonFrozenIndex : nonFrozenSet) {
-                auto mainSize = mainSizeList[nonFrozenIndex];
-                auto maximum = flexItems[nonFrozenIndex].mainAxis().maximumSize.value_or(mainSize);
-                auto minimum = flexItems[nonFrozenIndex].mainAxis().minimumSize.value_or(mainSize);
-                mainSize = std::min(maximum, std::max(minimum, mainSize));
-                auto mainContentBoxSize = std::max(0_lu, mainSize - flexItems[nonFrozenIndex].mainAxis().borderAndPadding);
-                if (mainContentBoxSize < mainSize)
+                auto unclampedMainSize = mainSizeList[nonFrozenIndex];
+                auto& flexItem = flexItems[nonFrozenIndex];
+                auto clampedMainSize = std::min(flexItem.mainAxis().maximumUsedSize, std::max(flexItem.mainAxis().minimumUsedSize, unclampedMainSize));
+                // FIXME: ...and floor its content-box size at zero
+                if (clampedMainSize < unclampedMainSize)
                     maximumViolationList.append(nonFrozenIndex);
-                else if (mainContentBoxSize > mainSize)
+                else if (clampedMainSize > unclampedMainSize)
                     minimumViolationList.append(nonFrozenIndex);
-                mainSizeList[nonFrozenIndex] = mainSize;
+                mainSizeList[nonFrozenIndex] = clampedMainSize;
             }
 
             // e. Freeze over-flexed items. The total violation is the sum of the adjustments from the previous step
