@@ -6117,7 +6117,7 @@
         },
         "will-change": {
             "codegen-properties": {
-                "custom": "Value",
+                "converter": "WillChange",
                 "parser-function": "consumeWillChange",
                 "parser-function-requires-context": true,
                 "parser-grammar-unused": "auto | [ scroll-position | contents | <custom-ident> ]#",

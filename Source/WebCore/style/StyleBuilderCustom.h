@@ -56,7 +56,6 @@
 #include "StyleResolver.h"
 #include "StyleScope.h"
 #include "TextSizeAdjustment.h"
-#include "WillChangeData.h"
 
 namespace WebCore {
 namespace Style {
@@ -148,7 +147,6 @@ public:
     static void applyValueWebkitTextZoom(BuilderState&, CSSValue&);
     static void applyValueWritingMode(BuilderState&, CSSValue&);
     static void applyValueAlt(BuilderState&, CSSValue&);
-    static void applyValueWillChange(BuilderState&, CSSValue&);
     static void applyValueFontSizeAdjust(BuilderState&, CSSValue&);
 
 #if ENABLE(DARK_MODE_CSS)
@@ -1908,43 +1906,6 @@ void BuilderCustom::applyValueAlt(BuilderState& builderState, CSSValue& value)
         builderState.registerContentAttribute(attr.localName());
     } else
         builderState.style().setContentAltText(emptyAtom());
-}
-
-inline void BuilderCustom::applyValueWillChange(BuilderState& builderState, CSSValue& value)
-{
-    if (value.valueID() == CSSValueAuto) {
-        builderState.style().setWillChange(nullptr);
-        return;
-    }
-
-    auto willChange = WillChangeData::create();
-    auto processSingleValue = [&](const CSSValue& item) {
-        if (!is<CSSPrimitiveValue>(item))
-            return;
-        auto& primitiveValue = downcast<CSSPrimitiveValue>(item);
-        switch (primitiveValue.valueID()) {
-        case CSSValueScrollPosition:
-            willChange->addFeature(WillChangeData::Feature::ScrollPosition);
-            break;
-        case CSSValueContents:
-            willChange->addFeature(WillChangeData::Feature::Contents);
-            break;
-        default:
-            if (primitiveValue.isPropertyID()) {
-                if (!isExposed(primitiveValue.propertyID(), &builderState.document().settings()))
-                    break;
-                willChange->addFeature(WillChangeData::Feature::Property, primitiveValue.propertyID());
-            }
-            break;
-        }
-    };
-    if (is<CSSValueList>(value)) {
-        for (auto& item : downcast<CSSValueList>(value))
-            processSingleValue(item);
-    } else
-        processSingleValue(value);
-
-    builderState.style().setWillChange(WTFMove(willChange));
 }
 
 inline void BuilderCustom::applyValueStrokeWidth(BuilderState& builderState, CSSValue& value)
