@@ -1,7 +1,5 @@
 /*
- * This file is part of the internal font implementation.
- *
- * Copyright (C) 2006-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2007-2008 Torch Mobile, Inc.
  *
  * This library is free software; you can redistribute it and/or
@@ -30,6 +28,7 @@
 #include "GlyphMetricsMap.h"
 #include "GlyphPage.h"
 #include "RenderingResourceIdentifier.h"
+#include <variant>
 #include <wtf/BitVector.h>
 #include <wtf/Hasher.h>
 #include <wtf/text/StringHash.h>
@@ -171,7 +170,7 @@ public:
     bool supportsCodePoint(UChar32) const;
     bool platformSupportsCodePoint(UChar32, std::optional<UChar32> variation = std::nullopt) const;
 
-    RefPtr<Font> systemFallbackFontForCharacter(UChar32, const FontDescription&, IsForPlatformFont) const;
+    RefPtr<Font> systemFallbackFontForCharacter(UChar32, const FontDescription&, ResolvedEmojiPolicy, IsForPlatformFont) const;
 
     const GlyphPage* glyphPage(unsigned pageNumber) const;
 
@@ -225,6 +224,8 @@ public:
         Font::OrientationFallback isTextOrientationFallback : 1;
     };
     const Attributes& attributes() const { return m_attributes; }
+
+    ColorGlyphType colorGlyphType(Glyph) const;
 
 private:
     WEBCORE_EXPORT Font(const FontPlatformData&, Origin, Interstitial, Visibility, OrientationFallback, std::optional<RenderingResourceIdentifier>);
@@ -316,6 +317,14 @@ private:
     };
 
     mutable std::unique_ptr<DerivedFonts> m_derivedFontData;
+
+    struct NoEmojiGlyphs { };
+    struct AllEmojiGlyphs { };
+    struct SomeEmojiGlyphs {
+        BitVector colorGlyphs;
+    };
+    using EmojiType = std::variant<NoEmojiGlyphs, AllEmojiGlyphs, SomeEmojiGlyphs>;
+    EmojiType m_emojiType { NoEmojiGlyphs { } };
 
 #if PLATFORM(COCOA)
     mutable std::optional<PAL::OTSVGTable> m_otSVGTable;

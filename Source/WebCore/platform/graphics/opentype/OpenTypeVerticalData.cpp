@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2012 Koji Ishii <kojiishi@gmail.com>
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -557,10 +558,10 @@ void OpenTypeVerticalData::substituteWithVerticalGlyphs(const Font* font, GlyphP
     for (unsigned index = 0; index < GlyphPage::size; ++index) {
         Glyph glyph = glyphPage->glyphForIndex(index);
         if (glyph) {
-            ASSERT_UNUSED(font, &glyphPage->font() == font);
+            ASSERT(&glyphPage->font() == font);
             Glyph to = map.get(glyph);
             if (to)
-                glyphPage->setGlyphForIndex(index, to);
+                glyphPage->setGlyphForIndex(index, to, font->colorGlyphType(to));
         }
     }
 }

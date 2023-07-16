@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006-2023 Apple Inc.  All rights reserved.
  * Copyright (C) 2006 Michael Emmel mike.emmel@gmail.com
  * Copyright (C) 2007, 2008 Alp Toker <alp@atoker.com>
  * Copyright (C) 2009 Dirk Schulze <krit@webkit.org>
@@ -45,6 +45,7 @@
 #include "Pattern.h"
 #include "RefPtrCairo.h"
 #include "ShadowBlur.h"
+#include <unicode/uchar.h>
 
 namespace WebCore {
 
@@ -124,6 +125,22 @@ float Font::platformWidthForGlyph(Glyph glyph) const
     cairo_scaled_font_glyph_extents(m_platformData.scaledFont(), &cairoGlyph, 1, &extents);
     float width = platformData().orientation() == FontOrientation::Horizontal ? extents.x_advance : -extents.y_advance;
     return width ? width : m_spaceWidth;
+}
+
+ResolvedEmojiPolicy FontCascade::resolveEmojiPolicy(FontVariantEmoji fontVariantEmoji, UChar32)
+{
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=259205 We can't return RequireText or RequireEmoji
+    // unless we have a way of knowing whether a font/glyph is color or not.
+    switch (fontVariantEmoji) {
+    case FontVariantEmoji::Normal:
+    case FontVariantEmoji::Unicode:
+        return ResolvedEmojiPolicy::NoPreference;
+    case FontVariantEmoji::Text:
+        return ResolvedEmojiPolicy::RequireText;
+    case FontVariantEmoji::Emoji:
+        return ResolvedEmojiPolicy::RequireEmoji;
+    }
+    return ResolvedEmojiPolicy::NoPreference;
 }
 
 } // namespace WebCore

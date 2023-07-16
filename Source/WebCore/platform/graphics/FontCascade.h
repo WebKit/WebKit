@@ -287,6 +287,8 @@ public:
     FontCascadeFonts* fonts() const { return m_fonts.get(); }
     bool isLoadingCustomFonts() const;
 
+    static ResolvedEmojiPolicy resolveEmojiPolicy(FontVariantEmoji, UChar32);
+
 private:
 
     bool advancedTextRenderingMode() const
@@ -363,4 +365,4 @@ inline float FontCascade::tabWidth(const Font& font, const TabSize& tabSize, flo
     return result - (syntheticBoldInclusion == Font::SyntheticBoldInclusion::Exclude ? font.syntheticBoldOffset() : 0);
 }
 
-}
+} // namespace WebCore

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Alexey Proskuryakov
  *
  * Redistribution and use in source and binary forms, with or without
@@ -32,6 +32,7 @@
 
 #include "FontCache.h"
 #include "FontCascade.h"
+#include <wtf/unicode/CharacterNames.h>
 
 namespace WebCore {
 
@@ -40,7 +41,7 @@ SystemFallbackFontCache& SystemFallbackFontCache::forCurrentThread()
     return FontCache::forCurrentThread().systemFallbackFontCache();
 }
 
-RefPtr<Font> SystemFallbackFontCache::systemFallbackFontForCharacter(const Font* font, UChar32 character, const FontDescription& description, IsForPlatformFont isForPlatformFont)
+RefPtr<Font> SystemFallbackFontCache::systemFallbackFontForCharacter(const Font* font, UChar32 character, const FontDescription& description, ResolvedEmojiPolicy resolvedEmojiPolicy, IsForPlatformFont isForPlatformFont)
 {
     auto fontAddResult = m_characterFallbackMaps.add(font, CharacterFallbackMap());
 
@@ -49,9 +50,9 @@ RefPtr<Font> SystemFallbackFontCache::systemFallbackFontForCharacter(const Font*
         return FontCache::forCurrentThread().systemFallbackForCharacters(description, *font, isForPlatformFont, FontCache::PreferColoredFont::No, &codeUnit, 1);
     }
 
-    auto key = CharacterFallbackMapKey { description.computedLocale(), character, isForPlatformFont != IsForPlatformFont::No };
+    auto key = CharacterFallbackMapKey { description.computedLocale(), character, isForPlatformFont != IsForPlatformFont::No, resolvedEmojiPolicy };
     return fontAddResult.iterator->value.ensure(WTFMove(key), [&] {
-        UChar codeUnits[2];
+        UChar codeUnits[3];
         unsigned codeUnitsLength;
         if (U_IS_BMP(character)) {
             codeUnits[0] = FontCascade::normalizeSpaces(character);
@@ -61,6 +62,24 @@ RefPtr<Font> SystemFallbackFontCache::systemFallbackFontForCharacter(const Font*
             codeUnits[1] = U16_TRAIL(character);
             codeUnitsLength = 2;
         }
+
+        // FIXME: Is this the right place to add the variation selectors?
+        // Should this be done in platform-specific code instead?
+        // The fact that Core Text accepts this information in the form of variation selectors
+        // seems like a platform-specific quirk.
+        // However, if we do this later in platform-specific code, we'd have to reallocate
+        // the array and copy its contents, which seems wasteful.
+        switch (resolvedEmojiPolicy) {
+        case ResolvedEmojiPolicy::NoPreference:
+            break;
+        case ResolvedEmojiPolicy::RequireText:
+            codeUnits[codeUnitsLength++] = textVariationSelector;
+            break;
+        case ResolvedEmojiPolicy::RequireEmoji:
+            codeUnits[codeUnitsLength++] = emojiVariationSelector;
+            break;
+        }
+
         auto fallbackFont = FontCache::forCurrentThread().systemFallbackForCharacters(description, *font, isForPlatformFont, FontCache::PreferColoredFont::No, codeUnits, codeUnitsLength).get();
         if (fallbackFont)
             fallbackFont->setIsUsedInSystemFallbackFontCache();

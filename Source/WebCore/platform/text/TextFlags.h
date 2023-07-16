@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003, 2006, 2017, 2022 Apple Inc.  All rights reserved.
+ * Copyright (C) 2003-2023 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +29,7 @@
 #include <optional>
 #include <variant>
 #include <vector>
+#include <wtf/EnumTraits.h>
 #include <wtf/Hasher.h>
 #include <wtf/Markable.h>
 
@@ -484,4 +485,35 @@ enum class AllowUserInstalledFonts : bool { No, Yes };
 using FeaturesMap = HashMap<FontTag, int, FourCharacterTagHash, FourCharacterTagHashTraits>;
 FeaturesMap computeFeatureSettingsFromVariants(const FontVariantSettings&, RefPtr<FontFeatureValues>);
 
-}
+enum class FontVariantEmoji : uint8_t {
+    Normal,
+    Text,
+    Emoji,
+    Unicode,
+};
+
+enum class ResolvedEmojiPolicy : uint8_t {
+    NoPreference,
+    RequireText,
+    RequireEmoji,
+};
+
+enum class ColorGlyphType : uint8_t {
+    Outline,
+    Color,
+};
+
+} // namespace WebCore
+
+namespace WTF {
+
+template<> struct EnumTraits<WebCore::ResolvedEmojiPolicy> {
+    using values = EnumValues<
+        WebCore::ResolvedEmojiPolicy,
+        WebCore::ResolvedEmojiPolicy::NoPreference,
+        WebCore::ResolvedEmojiPolicy::RequireText,
+        WebCore::ResolvedEmojiPolicy::RequireEmoji
+    >;
+};
+
+} // namespace WTF

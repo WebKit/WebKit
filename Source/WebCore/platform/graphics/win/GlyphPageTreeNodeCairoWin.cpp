@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -46,6 +46,7 @@ bool GlyphPage::fill(UChar* buffer, unsigned bufferLength)
     SaveDC(dc);
     SelectObject(dc, font.platformData().hfont());
 
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=259205 Determine if the glyph is a color glyph or not.
     if (bufferLength == GlyphPage::size) {
         WORD localGlyphBuffer[GlyphPage::size * 2];
         DWORD result = GetGlyphIndices(dc, wcharFrom(buffer), bufferLength, localGlyphBuffer, GGI_MARK_NONEXISTING_GLYPHS);
@@ -55,9 +56,9 @@ bool GlyphPage::fill(UChar* buffer, unsigned bufferLength)
             for (unsigned i = 0; i < GlyphPage::size; i++) {
                 Glyph glyph = localGlyphBuffer[i];
                 if (glyph == 0xffff)
-                    setGlyphForIndex(i, 0);
+                    setGlyphForIndex(i, 0, ColorGlyphType::Outline);
                 else {
-                    setGlyphForIndex(i, glyph);
+                    setGlyphForIndex(i, glyph, font.colorGlyphType(glyph));
                     haveGlyphs = true;
                 }
             }
@@ -80,9 +81,9 @@ bool GlyphPage::fill(UChar* buffer, unsigned bufferLength)
             if (success) {
                 auto glyph = glyphs[0];
                 if (glyph == fp.wgBlank || glyph == fp.wgInvalid || glyph == fp.wgDefault)
-                    setGlyphForIndex(i, 0);
+                    setGlyphForIndex(i, 0, ColorGlyphType::Outline);
                 else {
-                    setGlyphForIndex(i, glyph);
+                    setGlyphForIndex(i, glyph, font.colorGlyphType(glyph));
                     haveGlyphs = true;
                 }
             }

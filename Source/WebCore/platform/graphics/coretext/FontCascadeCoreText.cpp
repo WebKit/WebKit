@@ -458,4 +458,57 @@ const Font* FontCascade::fontForCombiningCharacterSequence(const UChar* characte
     return Font::systemFallback();
 }
 
+ResolvedEmojiPolicy FontCascade::resolveEmojiPolicy(FontVariantEmoji fontVariantEmoji, UChar32 character)
+{
+    // You may think that this function should be different between macOS and iOS. And you may even be right!
+    //
+    // For "unqualified" characters on https://unicode.org/Public/emoji/latest/emoji-test.txt the apparent behavior
+    // of macOS and iOS is different. Both OSes cascade through the default cascade list, but on macOS,
+    // STIXTwo is ahead of AppleColorEmoji in the list. On iOS, however, AppleColorEmoji is really early in the list
+    // (it appears before almost everything else). So the observed effect is that a lot of these "unqualified"
+    // characters will be emoji style on iOS whereas they will be text style on macOS.
+    //
+    // On the other hand, when Unicode says that a character is Emoji_Presentation, then it needs to be rendered a
+    // emoji style, regardless of which OS you're on. Them's the rules.
+    //
+    // The fact that this function is the same on macOS and iOS is a somewhat-intentional choice. We *could* gather up
+    // all the characters that apparently render differently on macOS and iOS, and force them to maintain those
+    // differences here. However, that has 2 downsides:
+    // 1. Having a big list of characters in WebKit source code is unmaintanable. And generating it at build time is a
+    //        bit of a science project, given Apple's internal build system.
+    // 2. More importantly, it probably isn't what authors want. If authors have their own font-family fallback list,
+    //        they probably don't want us to sidestep _most_ of it in search of an emoji font, just because of the
+    //        particular order of Core Text's native cascade list for native apps.
+    //
+    // So, where we end up here is a situation where these characters will get platform-specific rendering, but only if
+    // the author is using `font-family: system-ui` or we end up falling off the end of the fallback list altogether.
+    // Otherwise, we honor the author's given font-family list. This is probably the best of both words:
+    // 1. If we have a positive signal from Unicode that a character has gotta be rendered in emoji style, then we'll
+    //        honor that,
+    // 2. In all other cases we'll honor the author's fallback list...
+    // 3. Unless the author has (intentionally or unintentionally) asked us to perform a platform-specific fallback
+    //        (via either asking for system-ui or by falling off the end of the list).
+
+    switch (fontVariantEmoji) {
+    case FontVariantEmoji::Normal:
+    case FontVariantEmoji::Unicode:
+        // https://www.unicode.org/reports/tr51/#Presentation_Style
+        // There had been no clear line for implementers between three categories of Unicode characters:
+        // 1. emoji-default: those expected to have an emoji presentation by default, but can also have a text presentation
+        // 2. text-default: those expected to have a text presentation by default, but could also have an emoji presentation
+        // 3. text-only: those that should only have a text presentation
+        // These categories can be distinguished using properties listed in Annex A: Emoji Properties and Data Files.
+        // The first category are characters with Emoji=Yes and Emoji_Presentation=Yes.
+        // The second category are characters with Emoji=Yes and Emoji_Presentation=No.
+        // The third category are characters with Emoji=No.
+        if (u_hasBinaryProperty(character, UCHAR_EMOJI_PRESENTATION))
+            return ResolvedEmojiPolicy::RequireEmoji;
+        return ResolvedEmojiPolicy::NoPreference;
+    case FontVariantEmoji::Text:
+        return ResolvedEmojiPolicy::RequireText;
+    case FontVariantEmoji::Emoji:
+        return ResolvedEmojiPolicy::RequireEmoji;
+    }
 }
+
+} // namespace WebCore

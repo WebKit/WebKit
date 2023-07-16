@@ -344,14 +344,14 @@ static const Font* findBestFallbackFont(FontCascadeFonts& fontCascadeFonts, cons
     return nullptr;
 }
 
-GlyphData FontCascadeFonts::glyphDataForSystemFallback(UChar32 character, const FontCascadeDescription& description, FontVariant variant, bool systemFallbackShouldBeInvisible)
+GlyphData FontCascadeFonts::glyphDataForSystemFallback(UChar32 character, const FontCascadeDescription& description, FontVariant variant, ResolvedEmojiPolicy resolvedEmojiPolicy, bool systemFallbackShouldBeInvisible)
 {
     const Font* font = findBestFallbackFont(*this, description, character);
 
     if (!font)
         font = &realizeFallbackRangesAt(description, 0).fontForFirstRange();
 
-    auto systemFallbackFont = font->systemFallbackFontForCharacter(character, description, m_isForPlatformFont ? IsForPlatformFont::Yes : IsForPlatformFont::No);
+    auto systemFallbackFont = font->systemFallbackFontForCharacter(character, description, resolvedEmojiPolicy, m_isForPlatformFont ? IsForPlatformFont::Yes : IsForPlatformFont::No);
     if (!systemFallbackFont)
         return GlyphData();
 
@@ -399,7 +399,7 @@ static void opportunisticallyStartFontDataURLLoading(const FontCascadeDescriptio
         fontSelector->opportunisticallyStartFontDataURLLoading(description, description.familyAt(i));
 }
 
-GlyphData FontCascadeFonts::glyphDataForVariant(UChar32 character, const FontCascadeDescription& description, FontVariant variant, unsigned fallbackIndex)
+GlyphData FontCascadeFonts::glyphDataForVariant(UChar32 character, const FontCascadeDescription& description, FontVariant variant, ResolvedEmojiPolicy resolvedEmojiPolicy, unsigned fallbackIndex)
 {
     FallbackVisibility fallbackVisibility = FallbackVisibility::Immaterial;
     ExternalResourceDownloadPolicy policy = ExternalResourceDownloadPolicy::Allow;
@@ -412,6 +412,11 @@ GlyphData FontCascadeFonts::glyphDataForVariant(UChar32 character, const FontCas
 
         GlyphData data = fontRanges.glyphDataForCharacter(character, policy);
         if (!data.font)
+            continue;
+
+        if (resolvedEmojiPolicy == ResolvedEmojiPolicy::RequireText && data.colorGlyphType == ColorGlyphType::Color)
+            continue;
+        if (resolvedEmojiPolicy == ResolvedEmojiPolicy::RequireEmoji && data.colorGlyphType == ColorGlyphType::Outline)
             continue;
 
         if (data.font->isInterstitial()) {
@@ -434,7 +439,7 @@ GlyphData FontCascadeFonts::glyphDataForVariant(UChar32 character, const FontCas
                 if (!data.font->hasVerticalGlyphs()) {
                     // Use the broken ideograph font data. The broken ideograph font will use the horizontal width of glyphs
                     // to make sure you get a square (even for broken glyphs like symbols used for punctuation).
-                    return glyphDataForVariant(character, description, BrokenIdeographVariant, fallbackIndex);
+                    return glyphDataForVariant(character, description, BrokenIdeographVariant, resolvedEmojiPolicy, fallbackIndex);
                 }
             }
         } else {
@@ -449,7 +454,7 @@ GlyphData FontCascadeFonts::glyphDataForVariant(UChar32 character, const FontCas
 
     if (loadingResult.font)
         return loadingResult;
-    return glyphDataForSystemFallback(character, description, variant, fallbackVisibility == FallbackVisibility::Invisible);
+    return glyphDataForSystemFallback(character, description, variant, resolvedEmojiPolicy, fallbackVisibility == FallbackVisibility::Invisible);
 }
 
 static RefPtr<GlyphPage> glyphPageFromFontRanges(unsigned pageNumber, const FontRanges& fontRanges)
@@ -490,17 +495,17 @@ static RefPtr<GlyphPage> glyphPageFromFontRanges(unsigned pageNumber, const Font
     return const_cast<GlyphPage*>(font->glyphPage(pageNumber));
 }
 
-GlyphData FontCascadeFonts::glyphDataForCharacter(UChar32 c, const FontCascadeDescription& description, FontVariant variant)
+GlyphData FontCascadeFonts::glyphDataForCharacter(UChar32 c, const FontCascadeDescription& description, FontVariant variant, ResolvedEmojiPolicy resolvedEmojiPolicy)
 {
     ASSERT(m_thread ? m_thread->ptr() == &Thread::current() : isMainThread());
     ASSERT(variant != AutoVariant);
 
     if (variant != NormalVariant)
-        return glyphDataForVariant(c, description, variant);
+        return glyphDataForVariant(c, description, variant, resolvedEmojiPolicy);
 
     const unsigned pageNumber = GlyphPage::pageNumberForCodePoint(c);
 
-    auto& cacheEntry = m_cachedPages.add(pageNumber, GlyphPageCacheEntry()).iterator->value;
+    auto& cacheEntry = m_cachedPages[resolvedEmojiPolicy].add(pageNumber, GlyphPageCacheEntry()).iterator->value;
 
     // Initialize cache with a full page of glyph mappings from a single font.
     if (cacheEntry.isNull())
@@ -510,7 +515,7 @@ GlyphData FontCascadeFonts::glyphDataForCharacter(UChar32 c, const FontCascadeDe
     if (!glyphData.glyph) {
         // No glyph, resolve per-character.
         ASSERT(variant == NormalVariant);
-        glyphData = glyphDataForVariant(c, description, variant);
+        glyphData = glyphDataForVariant(c, description, variant, resolvedEmojiPolicy);
         // Cache the results.
         cacheEntry.setGlyphDataForCharacter(c, glyphData);
     }
@@ -523,10 +528,12 @@ void FontCascadeFonts::pruneSystemFallbacks()
     if (m_systemFallbackFontSet.isEmpty())
         return;
     // Mutable glyph pages may reference fallback fonts.
-    m_cachedPages.removeIf([](auto& keyAndValue) {
-        return keyAndValue.value.isMixedFont();
-    });
+    for (auto& cachedPages : m_cachedPages) {
+        cachedPages.removeIf([](auto& keyAndValue) {
+            return keyAndValue.value.isMixedFont();
+        });
+    }
     m_systemFallbackFontSet.clear();
 }
 
-}
+} // namespace WebCore
