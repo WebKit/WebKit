@@ -87,14 +87,11 @@
 #import <UIKit/UIWebBrowserView.h>
 #import <UIKit/UIWebDocumentView.h>
 #import <UIKit/UIWebFormAccessory.h>
-#import <UIKit/UIWebGeolocationPolicyDecider.h>
 #import <UIKit/UIWebScrollView.h>
 #import <UIKit/UIWebTiledView.h>
 #import <UIKit/UIWindowScene_Private.h>
 #import <UIKit/UIWindow_Private.h>
 #import <UIKit/_UIApplicationRotationFollowing.h>
-#import <UIKit/_UIBackdropViewSettings.h>
-#import <UIKit/_UIBackdropView_Private.h>
 #import <UIKit/_UIHighlightView.h>
 #import <UIKit/_UINavigationInteractiveTransition.h>
 #import <UIKit/_UINavigationParallaxTransition.h>
@@ -598,7 +595,6 @@ typedef NS_ENUM(NSUInteger, UIScrollPhase) {
 @property (nonatomic, getter=_allowableSeparation, setter=_setAllowableSeparation:) CGFloat allowableSeparation;
 @property (nonatomic, readonly) CGPoint location;
 @property (nonatomic) CGFloat allowableMovement;
-@property (nonatomic, readonly) CGPoint centroid;
 @property (nonatomic) CFTimeInterval maximumIntervalBetweenSuccessiveTaps;
 @end
 
@@ -767,10 +763,6 @@ typedef NS_ENUM (NSInteger, _UIBackdropMaskViewFlags) {
 - (NSString *)recursiveDescription;
 @end
 
-@protocol UISelectionInteractionAssistant
-- (void)showSelectionCommands;
-@end
-
 typedef NS_ENUM(NSInteger, UIWKSelectionTouch) {
     UIWKSelectionTouchStarted = 0,
     UIWKSelectionTouchMoved = 1,
@@ -932,37 +924,7 @@ typedef NS_ENUM(NSInteger, UIWKGestureType) {
 - (void)accessoryTab:(BOOL)isNext;
 @end
 
-@interface UIWebGeolocationPolicyDecider : NSObject
-@end
-
-@interface UIWebGeolocationPolicyDecider ()
-+ (instancetype)sharedPolicyDecider;
-- (void)decidePolicyForGeolocationRequestFromOrigin:(id)securityOrigin requestingURL:(NSURL *)requestingURL window:(UIWindow *)window listener:(id)listener;
-- (void)decidePolicyForGeolocationRequestFromOrigin:(id)securityOrigin requestingURL:(NSURL *)requestingURL view:(UIView *)view listener:(id)listener;
-@end
-
 @interface _UILookupGestureRecognizer : UIGestureRecognizer
-@end
-
-typedef NS_ENUM(NSInteger, _UIBackdropViewStylePrivate) {
-    _UIBackdropViewStyle_Light = 2020,
-};
-
-@interface _UIBackdropViewSettings : NSObject
-@end
-
-@interface _UIBackdropViewSettings ()
-+ (_UIBackdropViewSettings *)settingsForPrivateStyle:(_UIBackdropViewStylePrivate)style;
-@property (nonatomic, assign) CGFloat scale;
-@end
-
-@interface _UIBackdropView : UIView
-@end
-
-@interface _UIBackdropView ()
-- (instancetype)initWithPrivateStyle:(_UIBackdropViewStylePrivate)style;
-- (instancetype)initWithSettings:(_UIBackdropViewSettings *)settings;
-@property (nonatomic, strong, readonly) UIView *contentView;
 @end
 
 @interface _UIHighlightView : UIView
@@ -980,7 +942,7 @@ typedef NS_ENUM(NSInteger, _UIBackdropViewStylePrivate) {
 @end
 
 @interface _UINavigationParallaxTransition ()
-- (instancetype) initWithCurrentOperation:(UINavigationControllerOperation)operation;
+- (instancetype)initWithCurrentOperation:(UINavigationControllerOperation)operation;
 @end
 
 @protocol _UINavigationInteractiveTransitionBaseDelegate;
@@ -1143,7 +1105,6 @@ typedef enum {
 WTF_EXTERN_C_BEGIN
 
 NSTimeInterval _UIDragInteractionDefaultLiftDelay(void);
-CGFloat UIRoundToScreenScale(CGFloat value, UIScreen *);
 
 WTF_EXTERN_C_END
 
@@ -1224,20 +1185,8 @@ typedef NSInteger UICompositingMode;
 + (UIColorEffect *)colorEffectSaturate:(CGFloat)saturationAmount;
 @end
 
-@interface UIBlurEffect ()
-+ (UIBlurEffect *)effectWithBlurRadius:(CGFloat)blurRadius;
-@end
-
-typedef NS_ENUM(NSInteger, _UIPopoverPresentationHorizontalAlignment) {
-    _UIPopoverPresentationHorizontalAlignmentCenter,
-    _UIPopoverPresentationHorizontalAlignmentLeading,
-    _UIPopoverPresentationHorizontalAlignmentTrailing,
-};
-
 @interface UIPopoverPresentationController ()
 @property (assign, nonatomic, setter=_setCentersPopoverIfSourceViewNotSet:, getter=_centersPopoverIfSourceViewNotSet) BOOL _centersPopoverIfSourceViewNotSet;
-@property (assign, nonatomic, setter=_setShouldHideArrow:, getter=_shouldHideArrow) BOOL _shouldHideArrow;
-@property (assign, nonatomic, setter=_setPreferredHorizontalAlignment:) _UIPopoverPresentationHorizontalAlignment _preferredHorizontalAlignment;
 @end
 
 @interface UIWKDocumentContext : NSObject
@@ -1302,7 +1251,6 @@ typedef NS_ENUM(NSUInteger, UIMenuOptionsPrivate) {
 @interface UIContextMenuInteraction ()
 @property (nonatomic, readonly) UIGestureRecognizer *gestureRecognizerForFailureRelationships;
 - (void)_presentMenuAtLocation:(CGPoint)location;
-- (void)dismissMenu;
 @end
 
 #endif // USE(UICONTEXTMENU)

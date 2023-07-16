@@ -356,13 +356,6 @@ typedef NS_ENUM(NSUInteger, _UIClickInteractionEvent) {
 @property (nonatomic, readonly) BOOL _requiresKeyboardWhenFirstResponder;
 @end
 
-@interface UIWebGeolocationPolicyDecider : NSObject
-@end
-
-@interface UIWebGeolocationPolicyDecider ()
-+ (instancetype)sharedPolicyDecider;
-@end
-
 @protocol UIWKInteractionViewProtocol_Staging_91919121 <UIWKInteractionViewProtocol>
 @optional
 - (void)willInsertFinalDictationResult;

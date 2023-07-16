@@ -466,8 +466,6 @@ constexpr double fasterTapSignificantZoomThreshold = 0.8;
 + (BOOL)_addCompletion:(void(^)(BOOL))completion;
 @end
 
-@protocol UISelectionInteractionAssistant;
-
 @interface WKFocusedElementInfo : NSObject <_WKFocusedElementInfo>
 - (instancetype)initWithFocusedElementInformation:(const WebKit::FocusedElementInformation&)information isUserInitiated:(BOOL)isUserInitiated userObject:(NSObject <NSSecureCoding> *)userObject;
 @end
