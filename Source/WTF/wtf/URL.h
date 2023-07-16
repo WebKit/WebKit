@@ -96,13 +96,6 @@ public:
     // when placing a URL in an if statment.
     operator bool() const = delete;
 
-    // Returns true if you can set the host and port for the URL.
-    // Non-hierarchical URLs don't have a host and port.
-    bool canSetHostOrPort() const { return isHierarchical(); }
-
-    bool canSetPathname() const { return isHierarchical(); }
-    WTF_EXPORT_PRIVATE bool isHierarchical() const;
-
     const String& string() const { return m_string; }
     WTF_EXPORT_PRIVATE String stringCenterEllipsizedToLength(unsigned length = 1024) const;
 
@@ -149,7 +142,7 @@ public:
     WTF_EXPORT_PRIVATE bool protocolIsJavaScript() const;
     bool protocolIsInFTPFamily() const { return protocolIs("ftp"_s) || protocolIs("ftps"_s); }
     bool protocolIsInHTTPFamily() const { return m_protocolIsInHTTPFamily; }
-    bool cannotBeABaseURL() const { return m_cannotBeABaseURL; }
+    bool hasOpaquePath() const { return m_hasOpaquePath; }
 
     WTF_EXPORT_PRIVATE bool isAboutBlank() const;
     WTF_EXPORT_PRIVATE bool isAboutSrcDoc() const;
@@ -230,7 +223,7 @@ private:
 
     unsigned m_isValid : 1;
     unsigned m_protocolIsInHTTPFamily : 1;
-    unsigned m_cannotBeABaseURL : 1;
+    unsigned m_hasOpaquePath : 1;
 
     // This is out of order to align the bits better. The port is after the host.
     unsigned m_portLength : 3;

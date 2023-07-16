@@ -59,7 +59,7 @@ String URLDecomposition::username() const
 void URLDecomposition::setUsername(StringView user)
 {
     auto fullURL = this->fullURL();
-    if (fullURL.host().isEmpty() || fullURL.cannotBeABaseURL() || fullURL.protocolIsFile())
+    if (fullURL.host().isEmpty() || fullURL.protocolIsFile())
         return;
     fullURL.setUser(user);
     setFullURL(fullURL);
@@ -73,7 +73,7 @@ String URLDecomposition::password() const
 void URLDecomposition::setPassword(StringView password)
 {
     auto fullURL = this->fullURL();
-    if (fullURL.host().isEmpty() || fullURL.cannotBeABaseURL() || fullURL.protocolIsFile())
+    if (fullURL.host().isEmpty() || fullURL.protocolIsFile())
         return;
     fullURL.setPassword(password);
     setFullURL(fullURL);
@@ -104,7 +104,7 @@ void URLDecomposition::setHost(StringView value)
     if (!separator)
         return;
 
-    if (fullURL.cannotBeABaseURL() || !fullURL.canSetHostOrPort())
+    if (fullURL.hasOpaquePath())
         return;
 
     // No port if no colon or rightmost colon is within the IPv6 section.
@@ -140,7 +140,7 @@ void URLDecomposition::setHostname(StringView host)
     auto fullURL = this->fullURL();
     if (host.isEmpty() && !fullURL.protocolIsFile() && fullURL.hasSpecialScheme())
         return;
-    if (fullURL.cannotBeABaseURL() || !fullURL.canSetHostOrPort())
+    if (fullURL.hasOpaquePath())
         return;
     fullURL.setHost(host);
     if (fullURL.isValid())
@@ -185,7 +185,7 @@ static std::optional<std::optional<uint16_t>> parsePort(StringView string, Strin
 void URLDecomposition::setPort(StringView value)
 {
     auto fullURL = this->fullURL();
-    if (fullURL.host().isEmpty() || fullURL.cannotBeABaseURL() || fullURL.protocolIsFile() || !fullURL.canSetHostOrPort())
+    if (fullURL.host().isEmpty() || fullURL.protocolIsFile())
         return;
     auto port = parsePort(value, fullURL.protocol());
     if (!port)
@@ -202,7 +202,7 @@ String URLDecomposition::pathname() const
 void URLDecomposition::setPathname(StringView value)
 {
     auto fullURL = this->fullURL();
-    if (fullURL.cannotBeABaseURL() || !fullURL.canSetPathname())
+    if (fullURL.hasOpaquePath())
         return;
     fullURL.setPath(value);
     setFullURL(fullURL);

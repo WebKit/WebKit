@@ -1082,7 +1082,7 @@ URLParser::URLParser(String&& input, const URL& base, const URLTextEncoding* non
     : m_inputString(WTFMove(input))
 {
     if (m_inputString.isNull()) {
-        if (base.isValid() && !base.m_cannotBeABaseURL) {
+        if (base.isValid() && !base.m_hasOpaquePath) {
             m_url = base;
             m_url.removeFragmentIdentifier();
         }
@@ -1160,7 +1160,7 @@ void URLParser::parse(const CharacterType* input, const unsigned length, const U
         FileHost,
         PathStart,
         Path,
-        CannotBeABaseURLPath,
+        OpaquePath,
         UTF8Query,
         NonUTF8Query,
         Fragment,
@@ -1258,8 +1258,8 @@ void URLParser::parse(const CharacterType* input, const unsigned length, const U
                         m_url.m_hostEnd = m_url.m_userStart;
                         m_url.m_portLength = 0;
                         m_url.m_pathAfterLastSlash = m_url.m_userStart;
-                        m_url.m_cannotBeABaseURL = true;
-                        state = State::CannotBeABaseURLPath;
+                        m_url.m_hasOpaquePath = true;
+                        state = State::OpaquePath;
                     }
                     break;
                 }
@@ -1279,11 +1279,11 @@ void URLParser::parse(const CharacterType* input, const unsigned length, const U
             break;
         case State::NoScheme:
             LOG_STATE("NoScheme");
-            if (!base.isValid() || (base.m_cannotBeABaseURL && *c != '#')) {
+            if (!base.isValid() || (base.m_hasOpaquePath && *c != '#')) {
                 failure();
                 return;
             }
-            if (base.m_cannotBeABaseURL && *c == '#') {
+            if (base.m_hasOpaquePath && *c == '#') {
                 copyURLPartsUntil(base, URLPart::QueryEnd, c, nonUTF8QueryEncoding);
                 state = State::Fragment;
                 appendToASCIIBuffer('#');
@@ -1747,8 +1747,8 @@ void URLParser::parse(const CharacterType* input, const unsigned length, const U
             utf8PercentEncode<isInDefaultEncodeSet>(c);
             ++c;
             break;
-        case State::CannotBeABaseURLPath:
-            LOG_STATE("CannotBeABaseURLPath");
+        case State::OpaquePath:
+            LOG_STATE("OpaquePath");
             if (*c == '?') {
                 m_url.m_pathEnd = currentPosition(c);
                 appendToASCIIBuffer('?');
@@ -1808,7 +1808,7 @@ void URLParser::parse(const CharacterType* input, const unsigned length, const U
     switch (state) {
     case State::SchemeStart:
         LOG_FINAL_STATE("SchemeStart");
-        if (!currentPosition(c) && base.isValid() && !base.m_cannotBeABaseURL) {
+        if (!currentPosition(c) && base.isValid() && !base.m_hasOpaquePath) {
             m_url = base;
             m_url.removeFragmentIdentifier();
             return;
@@ -1998,8 +1998,8 @@ void URLParser::parse(const CharacterType* input, const unsigned length, const U
         m_url.m_pathEnd = currentPosition(c);
         m_url.m_queryEnd = m_url.m_pathEnd;
         break;
-    case State::CannotBeABaseURLPath:
-        LOG_FINAL_STATE("CannotBeABaseURLPath");
+    case State::OpaquePath:
+        LOG_FINAL_STATE("OpaquePath");
         m_url.m_pathEnd = currentPosition(c);
         m_url.m_queryEnd = m_url.m_pathEnd;
         break;
@@ -2977,7 +2977,7 @@ bool URLParser::allValuesEqual(const URL& a, const URL& b)
 {
     URL_PARSER_LOG("%d %d %d %d %d %d %d %d %d %d %d %d %s\n%d %d %d %d %d %d %d %d %d %d %d %d %s",
         a.m_isValid,
-        a.m_cannotBeABaseURL,
+        a.m_hasOpaquePath,
         a.m_protocolIsInHTTPFamily,
         a.m_schemeEnd,
         a.m_userStart,
@@ -2990,7 +2990,7 @@ bool URLParser::allValuesEqual(const URL& a, const URL& b)
         a.m_queryEnd,
         a.m_string.utf8().data(),
         b.m_isValid,
-        b.m_cannotBeABaseURL,
+        b.m_hasOpaquePath,
         b.m_protocolIsInHTTPFamily,
         b.m_schemeEnd,
         b.m_userStart,
@@ -3005,7 +3005,7 @@ bool URLParser::allValuesEqual(const URL& a, const URL& b)
 
     return a.m_string == b.m_string
         && a.m_isValid == b.m_isValid
-        && a.m_cannotBeABaseURL == b.m_cannotBeABaseURL
+        && a.m_hasOpaquePath == b.m_hasOpaquePath
         && a.m_protocolIsInHTTPFamily == b.m_protocolIsInHTTPFamily
         && a.m_schemeEnd == b.m_schemeEnd
         && a.m_userStart == b.m_userStart

@@ -50,7 +50,7 @@ void URL::invalidate()
 {
     m_isValid = false;
     m_protocolIsInHTTPFamily = false;
-    m_cannotBeABaseURL = false;
+    m_hasOpaquePath = false;
     m_schemeEnd = 0;
     m_userStart = 0;
     m_userEnd = 0;
@@ -794,14 +794,6 @@ bool URL::isMatchingDomain(StringView domain) const
 String encodeWithURLEscapeSequences(const String& input)
 {
     return percentEncodeCharacters(input, URLParser::isInUserInfoEncodeSet);
-}
-
-bool URL::isHierarchical() const
-{
-    if (!m_isValid)
-        return false;
-    ASSERT(m_string[m_schemeEnd] == ':');
-    return m_string[m_schemeEnd + 1] == '/';
 }
 
 static bool protocolIsInternal(StringView string, ASCIILiteral protocolLiteral)
