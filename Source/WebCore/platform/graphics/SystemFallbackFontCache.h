@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Alexey Proskuryakov
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,6 +29,7 @@
 
 #pragma once
 
+#include "TextFlags.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashTraits.h>
 #include <wtf/Hasher.h>
@@ -44,16 +45,14 @@ struct CharacterFallbackMapKey {
     AtomString locale;
     UChar32 character { 0 };
     bool isForPlatformFont { false };
+    ResolvedEmojiPolicy resolvedEmojiPolicy { ResolvedEmojiPolicy::NoPreference };
 
-    bool operator==(const CharacterFallbackMapKey& other) const
-    {
-        return locale == other.locale && character == other.character && isForPlatformFont == other.isForPlatformFont;
-    }
+    bool operator==(const CharacterFallbackMapKey& other) const = default;
 };
 
 inline void add(Hasher& hasher, const CharacterFallbackMapKey& key)
 {
-    add(hasher, key.locale, key.character, key.isForPlatformFont);
+    add(hasher, key.locale, key.character, key.isForPlatformFont, key.resolvedEmojiPolicy);
 }
 
 struct CharacterFallbackMapKeyHash {
@@ -70,7 +69,7 @@ public:
 
     SystemFallbackFontCache() = default;
 
-    RefPtr<Font> systemFallbackFontForCharacter(const Font*, UChar32 character, const FontDescription&, IsForPlatformFont);
+    RefPtr<Font> systemFallbackFontForCharacter(const Font*, UChar32 character, const FontDescription&, ResolvedEmojiPolicy, IsForPlatformFont);
     void remove(Font*);
 
 private:

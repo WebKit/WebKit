@@ -221,6 +221,25 @@ void Font::platformInit()
             xHeight = verticalRightOrientationFont().fontMetrics().xHeight();
     }
 
+    if (CTFontGetSymbolicTraits(m_platformData.font()) & kCTFontTraitColorGlyphs) {
+#if HAVE(CTFONTCOPYCOLORGLYPHCOVERAGE)
+        // The reason this is guarded with both a preprocessor define and soft linking is that
+        // we want to get rid of the soft linking soon,
+        // once people have a chance to update to an SDK that includes it.
+        // At that point, only the preprocessor define will remain.
+        if (PAL::canLoad_CoreText_CTFontCopyColorGlyphCoverage()) {
+            if (auto cfBitVector = adoptCF(PAL::softLink_CoreText_CTFontCopyColorGlyphCoverage(m_platformData.font())))
+                m_emojiType = SomeEmojiGlyphs { BitVector(cfBitVector.get()) };
+            else
+                m_emojiType = NoEmojiGlyphs { };
+        } else
+#endif
+        {
+            m_emojiType = AllEmojiGlyphs { };
+        }
+    } else
+        m_emojiType = NoEmojiGlyphs { };
+
     m_fontMetrics.setUnitsPerEm(unitsPerEm);
     m_fontMetrics.setAscent(ascent);
     m_fontMetrics.setDescent(descent);

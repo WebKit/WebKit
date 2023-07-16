@@ -33,6 +33,10 @@
 #include <wtf/PrintStream.h>
 #include <wtf/StdLibExtras.h>
 
+#if USE(CF)
+#include <CoreFoundation/CoreFoundation.h>
+#endif
+
 namespace JSC {
 class CachedBitVector;
 }
@@ -84,6 +88,15 @@ public:
         (*this) = other;
     }
 
+#if USE(CF)
+    BitVector(CFBitVectorRef bitVector)
+        : BitVector(CFBitVectorGetCount(bitVector))
+    {
+        auto count = CFBitVectorGetCount(bitVector);
+        for (CFIndex i = 0; i < count; ++i)
+            quickSet(i, CFBitVectorGetBitAtIndex(bitVector, i));
+    }
+#endif
     
     ~BitVector()
     {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2023 Apple Inc. All rights reserved.
  * Copyright (C) Research In Motion Limited 2011. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,7 +31,9 @@
 #define GlyphPage_h
 
 #include "Glyph.h"
+#include "TextFlags.h"
 #include <unicode/utypes.h>
+#include <wtf/BitSet.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Ref.h>
 
@@ -42,8 +44,9 @@ class Font;
 // Holds the glyph index and the corresponding Font information for a given
 // character.
 struct GlyphData {
-    GlyphData(Glyph glyph = 0, const Font* font = nullptr)
+    GlyphData(Glyph glyph = 0, const Font* font = nullptr, ColorGlyphType colorGlyphType = ColorGlyphType::Outline)
         : glyph(glyph)
+        , colorGlyphType(colorGlyphType)
         , font(font)
     {
     }
@@ -51,6 +54,7 @@ struct GlyphData {
     bool isValid() const { return glyph || font; }
 
     Glyph glyph;
+    ColorGlyphType colorGlyphType;
     const Font* font;
 };
 
@@ -92,20 +96,28 @@ public:
     GlyphData glyphDataForIndex(unsigned index) const
     {
         Glyph glyph = glyphForIndex(index);
-        return GlyphData(glyph, glyph ? &m_font : nullptr);
+        auto colorGlyphType = colorGlyphTypeForIndex(index);
+        return GlyphData(glyph, glyph ? &m_font : nullptr, colorGlyphType);
     }
 
     Glyph glyphForIndex(unsigned index) const
     {
-        ASSERT_WITH_SECURITY_IMPLICATION(index < size);
+        RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(index < size);
         return m_glyphs[index];
     }
 
+    ColorGlyphType colorGlyphTypeForIndex(unsigned index) const
+    {
+        RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(index < size);
+        return m_isColor.get(index) ? ColorGlyphType::Color : ColorGlyphType::Outline;
+    }
+
     // FIXME: Pages are immutable after initialization. This should be private.
-    void setGlyphForIndex(unsigned index, Glyph glyph)
+    void setGlyphForIndex(unsigned index, Glyph glyph, ColorGlyphType colorGlyphType)
     {
         ASSERT_WITH_SECURITY_IMPLICATION(index < size);
         m_glyphs[index] = glyph;
+        m_isColor.set(index, colorGlyphType == ColorGlyphType::Color);
     }
 
     const Font& font() const
@@ -125,6 +137,7 @@ private:
 
     const Font& m_font;
     Glyph m_glyphs[size] { };
+    WTF::BitSet<size> m_isColor;
 
     WEBCORE_EXPORT static unsigned s_count;
 };

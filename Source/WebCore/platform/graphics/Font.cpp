@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Alexey Proskuryakov
  *
  * Redistribution and use in source and binary forms, with or without
@@ -551,9 +551,9 @@ GlyphBufferAdvance Font::applyTransforms(GlyphBuffer&, unsigned, unsigned, bool,
 }
 #endif
 
-RefPtr<Font> Font::systemFallbackFontForCharacter(UChar32 character, const FontDescription& description, IsForPlatformFont isForPlatformFont) const
+RefPtr<Font> Font::systemFallbackFontForCharacter(UChar32 character, const FontDescription& description, ResolvedEmojiPolicy resolvedEmojiPolicy, IsForPlatformFont isForPlatformFont) const
 {
-    return SystemFallbackFontCache::forCurrentThread().systemFallbackFontForCharacter(this, character, description, isForPlatformFont);
+    return SystemFallbackFontCache::forCurrentThread().systemFallbackFontForCharacter(this, character, description, resolvedEmojiPolicy, isForPlatformFont);
 }
 
 #if !PLATFORM(COCOA) && !USE(FREETYPE)
@@ -629,6 +629,20 @@ Path Font::pathForGlyph(Glyph glyph) const
 
     m_glyphPathMap->setMetricsForGlyph(glyph, path);
     return *m_glyphPathMap->existingMetricsForGlyph(glyph);
+}
+
+ColorGlyphType Font::colorGlyphType(Glyph glyph) const
+{
+    if (glyph == deletedGlyph)
+        return ColorGlyphType::Outline;
+
+    return WTF::switchOn(m_emojiType, [](NoEmojiGlyphs) {
+        return ColorGlyphType::Outline;
+    }, [](AllEmojiGlyphs) {
+        return ColorGlyphType::Color;
+    }, [glyph](const SomeEmojiGlyphs& someEmojiGlyphs) {
+        return someEmojiGlyphs.colorGlyphs.get(glyph) ? ColorGlyphType::Color : ColorGlyphType::Outline;
+    });
 }
 
 #if !LOG_DISABLED

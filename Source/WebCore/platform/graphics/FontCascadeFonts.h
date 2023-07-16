@@ -26,6 +26,7 @@
 #include "FontSelector.h"
 #include "GlyphPage.h"
 #include "WidthCache.h"
+#include <wtf/EnumeratedArray.h>
 #include <wtf/Forward.h>
 #include <wtf/HashFunctions.h>
 #include <wtf/HashTraits.h>
@@ -56,7 +57,7 @@ public:
 
     bool isForPlatformFont() const { return m_isForPlatformFont; }
 
-    GlyphData glyphDataForCharacter(UChar32, const FontCascadeDescription&, FontVariant);
+    GlyphData glyphDataForCharacter(UChar32, const FontCascadeDescription&, FontVariant, ResolvedEmojiPolicy);
 
     bool isFixedPitch(const FontCascadeDescription&);
     void determinePitch(const FontCascadeDescription&);
@@ -80,8 +81,8 @@ private:
     FontCascadeFonts(RefPtr<FontSelector>&&);
     FontCascadeFonts(const FontPlatformData&);
 
-    GlyphData glyphDataForSystemFallback(UChar32, const FontCascadeDescription&, FontVariant, bool systemFallbackShouldBeInvisible);
-    GlyphData glyphDataForVariant(UChar32, const FontCascadeDescription&, FontVariant, unsigned fallbackIndex = 0);
+    GlyphData glyphDataForSystemFallback(UChar32, const FontCascadeDescription&, FontVariant, ResolvedEmojiPolicy, bool systemFallbackShouldBeInvisible);
+    GlyphData glyphDataForVariant(UChar32, const FontCascadeDescription&, FontVariant, ResolvedEmojiPolicy, unsigned fallbackIndex = 0);
 
     Vector<FontRanges, 1> m_realizedFallbackRanges;
     unsigned m_lastRealizedFallbackIndex { 0 };
@@ -102,7 +103,7 @@ private:
         std::unique_ptr<MixedFontGlyphPage> m_mixedFont;
     };
 
-    HashMap<unsigned, GlyphPageCacheEntry, IntHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> m_cachedPages;
+    EnumeratedArray<ResolvedEmojiPolicy, HashMap<unsigned, GlyphPageCacheEntry, IntHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>>> m_cachedPages;
 
     HashSet<RefPtr<Font>> m_systemFallbackFontSet;
 

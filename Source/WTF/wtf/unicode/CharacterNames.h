@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2009, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,8 +27,7 @@
 
 #include <unicode/utypes.h>
 
-namespace WTF {
-namespace Unicode {
+namespace WTF::Unicode {
 
 // Names here are taken from the Unicode standard.
 
@@ -66,6 +65,7 @@ constexpr UChar hebrewPunctuationGeresh = 0x05F3;
 constexpr UChar hebrewPunctuationGershayim = 0x05F4;
 constexpr UChar horizontalEllipsis = 0x2026;
 constexpr UChar hyphen = 0x2010;
+constexpr UChar emojiVariationSelector = 0xFE0F; // Technical name is "VARIATION SELECTOR-16"
 constexpr UChar enDash = 0x2013;
 constexpr UChar formFeed = 0x000C;
 constexpr UChar hyphenMinus = 0x002D;
@@ -120,6 +120,7 @@ constexpr UChar smallLetterSharpS = 0x00DF;
 constexpr UChar softHyphen = 0x00AD;
 constexpr UChar space = 0x0020;
 constexpr UChar tabCharacter = 0x0009;
+constexpr UChar textVariationSelector = 0xFE0E; // Technical name is "VARIATION SELECTOR-15"
 constexpr UChar thinSpace = 0x2009;
 constexpr UChar tibetanMarkDelimiterTshegBstar = 0x0F0C;
 constexpr UChar tibetanMarkIntersyllabicTsheg = 0x0F0B;
@@ -138,8 +139,7 @@ constexpr UChar zeroWidthNoBreakSpace = 0xFEFF;
 constexpr UChar zeroWidthNonJoiner = 0x200C;
 constexpr UChar zeroWidthSpace = 0x200B;
 
-} // namespace Unicode
-} // namespace WTF
+} // namespace WTF::Unicode
 
 using WTF::Unicode::HiraganaLetterSmallA;
 using WTF::Unicode::aegeanWordSeparatorDot;
@@ -164,6 +164,7 @@ using WTF::Unicode::hebrewPunctuationGeresh;
 using WTF::Unicode::hebrewPunctuationGershayim;
 using WTF::Unicode::horizontalEllipsis;
 using WTF::Unicode::hyphen;
+using WTF::Unicode::emojiVariationSelector;
 using WTF::Unicode::enDash;
 using WTF::Unicode::formFeed;
 using WTF::Unicode::hyphenMinus;
@@ -223,6 +224,7 @@ using WTF::Unicode::sesameDot;
 using WTF::Unicode::softHyphen;
 using WTF::Unicode::space;
 using WTF::Unicode::tabCharacter;
+using WTF::Unicode::textVariationSelector;
 using WTF::Unicode::thinSpace;
 using WTF::Unicode::tibetanMarkDelimiterTshegBstar;
 using WTF::Unicode::tibetanMarkIntersyllabicTsheg;
