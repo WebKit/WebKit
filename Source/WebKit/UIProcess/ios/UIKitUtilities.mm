@@ -30,6 +30,15 @@
 
 #import "UIKitSPI.h"
 
+@implementation UIScrollView (WebKitInternal)
+
+- (BOOL)_wk_isInterruptingDeceleration
+{
+    return self.decelerating && self.tracking;
+}
+
+@end
+
 namespace WebKit {
 
 RetainPtr<UIAlertController> createUIAlertController(NSString *title, NSString *message)

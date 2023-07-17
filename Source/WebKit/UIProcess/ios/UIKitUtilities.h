@@ -27,11 +27,12 @@
 
 #if PLATFORM(IOS_FAMILY)
 
+#import <UIKit/UIKit.h>
 #import <wtf/RetainPtr.h>
 
-OBJC_CLASS UIAlertController;
-OBJC_CLASS UIScrollView;
-OBJC_CLASS UITouch;
+@interface UIScrollView (WebKitInternal)
+@property (readonly, nonatomic) BOOL _wk_isInterruptingDeceleration;
+@end
 
 namespace WebKit {
 

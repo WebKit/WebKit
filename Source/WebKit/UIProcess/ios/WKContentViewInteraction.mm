@@ -47,6 +47,7 @@
 #import "TextInputSPI.h"
 #import "TextRecognitionUpdateResult.h"
 #import "UIKitSPI.h"
+#import "UIKitUtilities.h"
 #import "UserInterfaceIdiom.h"
 #import "WKActionSheetAssistant.h"
 #import "WKContextMenuElementInfoInternal.h"
@@ -2902,7 +2903,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 - (BOOL)_isInterruptingDecelerationForScrollViewOrAncestor:(UIScrollView *)scrollView
 {
     return [self _hasEnclosingScrollView:scrollView matchingCriteria:[](UIScrollView *scrollView) {
-        return scrollView._isInterruptingDeceleration;
+        return scrollView._wk_isInterruptingDeceleration;
     }];
 }
 
@@ -8368,10 +8369,10 @@ static bool canUseQuickboardControllerFor(UITextContentType type)
 {
     NSSet<UITouch *> *touches = [event touchesForGestureRecognizer:gestureRecognizer];
     for (UITouch *touch in touches) {
-        if ([touch.view isKindOfClass:[UIScrollView class]] && [(UIScrollView *)touch.view _isInterruptingDeceleration])
+        if (dynamic_objc_cast<UIScrollView>(touch.view)._wk_isInterruptingDeceleration)
             return YES;
     }
-    return self._scroller._isInterruptingDeceleration;
+    return self._scroller._wk_isInterruptingDeceleration;
 }
 
 - (BOOL)isAnyTouchOverActiveArea:(NSSet *)touches
