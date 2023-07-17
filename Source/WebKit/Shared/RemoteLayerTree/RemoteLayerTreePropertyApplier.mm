@@ -313,18 +313,20 @@ void RemoteLayerTreePropertyApplier::applyProperties(RemoteLayerTreeNode& node, 
     BEGIN_BLOCK_OBJC_EXCEPTIONS
 
     applyPropertiesToLayer(node.layer(), &node, layerTreeHost, properties, layerContentsType);
+    if (properties.changedProperties & LayerChange::EventRegionChanged)
+        node.setEventRegion(properties.eventRegion);
+    updateMask(node, properties, relatedLayers);
+
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+    if (properties.changedProperties & LayerChange::CoverageRectChanged)
+        node.setCoverageRect(properties.coverageRect);
     applyCommonPropertiesToLayer(node.interactionRegionsLayer(), properties);
     // Replicate animations on the InteractionRegion layers, the LayerTreeHost only keeps track of the original animations.
     if (properties.changedProperties & LayerChange::AnimationsChanged)
         PlatformCAAnimationRemote::updateLayerAnimations(node.interactionRegionsLayer(), nullptr, properties.addedAnimations, properties.keysOfAnimationsToRemove);
-    if (properties.changedProperties & LayerChange::EventRegionChanged)
-        updateLayersForInteractionRegions(node, properties);
+    if (properties.changedProperties & LayerChange::EventRegionChanged || properties.changedProperties & LayerChange::CoverageRectChanged)
+        updateLayersForInteractionRegions(node);
 #endif
-    updateMask(node, properties, relatedLayers);
-
-    if (properties.changedProperties & LayerChange::EventRegionChanged)
-        node.setEventRegion(properties.eventRegion);
 
 #if ENABLE(SCROLLING_THREAD)
     if (properties.changedProperties & LayerChange::ScrollingNodeIDChanged)

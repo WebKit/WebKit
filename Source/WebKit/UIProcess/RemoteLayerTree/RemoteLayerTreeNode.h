@@ -58,6 +58,21 @@ public:
     CALayer *layer() const { return m_layer.get(); }
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
     CALayer *interactionRegionsLayer() const { return m_interactionRegionsLayer.get(); }
+
+    struct CoverageRectMarkableTraits {
+        static bool isEmptyValue(const WebCore::FloatRect& value)
+        {
+            return value.isEmpty();
+        }
+
+        static WebCore::FloatRect emptyValue()
+        {
+            return { };
+        }
+    };
+
+    const Markable<WebCore::FloatRect, CoverageRectMarkableTraits> coverageRect() const { return m_coverageRect; }
+    void setCoverageRect(const WebCore::FloatRect& value) { m_coverageRect = value; }
 #endif
 #if PLATFORM(IOS_FAMILY)
     UIView *uiView() const { return m_uiView.get(); }
@@ -124,6 +139,7 @@ private:
     RetainPtr<CALayer> m_layer;
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
     RetainPtr<CALayer> m_interactionRegionsLayer;
+    Markable<WebCore::FloatRect, CoverageRectMarkableTraits> m_coverageRect;
 #endif
 #if PLATFORM(IOS_FAMILY)
     RetainPtr<UIView> m_uiView;

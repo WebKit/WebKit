@@ -2723,6 +2723,10 @@ void GraphicsLayerCA::updateCoverage(const CommitState& commitState)
         backing->setCoverageRect(m_coverageRect);
     }
 
+#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+    m_layer->setCoverageRect(m_coverageRect);
+#endif
+
     bool requiresBacking = m_intersectsCoverageRect
         || !allowsBackingStoreDetaching()
         || commitState.ancestorWithTransformAnimationIntersectsCoverageRect // FIXME: Compute backing exactly for descendants of animating layers.

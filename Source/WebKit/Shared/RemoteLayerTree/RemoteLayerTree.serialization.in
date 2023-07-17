@@ -70,6 +70,9 @@ header: "RemoteLayerTreeTransaction.h"
 #endif
     ScrollingNodeIDChanged
     VideoGravityChanged
+#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+    CoverageRectChanged
+#endif
 };
 #endif
 
