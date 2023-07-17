@@ -6328,7 +6328,7 @@ static NSString *contentTypeFromFieldName(WebCore::AutofillFieldName fieldName)
         privateTraits.shortcutConversionType = _focusedElementInformation.elementType == WebKit::InputType::Password ? UITextShortcutConversionTypeNo : UITextShortcutConversionTypeDefault;
 
 #if HAVE(INLINE_PREDICTIONS)
-    traits.inlinePredictionType = self.webView.configuration.allowsInlinePredictions ? UITextInlinePredictionTypeDefault : UITextInlinePredictionTypeNo;
+    traits.inlinePredictionType = (self.webView.configuration.allowsInlinePredictions || _page->preferences().inlinePredictionsInAllEditableElementsEnabled()) ? UITextInlinePredictionTypeDefault : UITextInlinePredictionTypeNo;
 #endif
 
     if ([traits isKindOfClass:UITextInputTraits.class])

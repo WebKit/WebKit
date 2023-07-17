@@ -5188,7 +5188,10 @@ void WebViewImpl::setMarkedText(id string, NSRange selectedRange, NSRange replac
 #if HAVE(INLINE_PREDICTIONS)
 bool WebViewImpl::allowsInlinePredictions() const
 {
-    return m_page->preferences().inlinePredictionsEnabled() && [NSSpellChecker respondsToSelector:@selector(isAutomaticInlineCompletionEnabled)] && NSSpellChecker.isAutomaticInlineCompletionEnabled;
+    if (!m_page->preferences().inlinePredictionsEnabled() && !m_page->preferences().inlinePredictionsInAllEditableElementsEnabled())
+        return false;
+
+    return NSSpellChecker.isAutomaticInlineCompletionEnabled;
 }
 
 void WebViewImpl::showInlinePredictionsForCandidate(NSTextCheckingResult *candidate, NSRange absoluteSelectedRange, NSRange oldRelativeSelectedRange)
