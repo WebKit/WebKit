@@ -2974,6 +2974,10 @@ void NetworkProcess::requestBackgroundFetchPermission(PAL::SessionID sessionID, 
 #if USE(RUNNINGBOARD)
 void NetworkProcess::setIsHoldingLockedFiles(bool isHoldingLockedFiles)
 {
+#if PLATFORM(MAC)
+    // The sandbox doesn't allow the network process to talk to runningboardd on macOS.
+    UNUSED_PARAM(isHoldingLockedFiles);
+#else
     if (!isHoldingLockedFiles) {
         m_holdingLockedFileAssertion = nullptr;
         return;
@@ -2985,6 +2989,7 @@ void NetworkProcess::setIsHoldingLockedFiles(bool isHoldingLockedFiles)
     // We synchronously take a process assertion when beginning a SQLite transaction so that we don't get suspended
     // while holding a locked file. We would get killed if suspended while holding locked files.
     m_holdingLockedFileAssertion = ProcessAssertion::create(getCurrentProcessID(), "Network Process is holding locked files"_s, ProcessAssertionType::FinishTaskInterruptable, ProcessAssertion::Mode::Sync);
+#endif
 }
 #endif
 
