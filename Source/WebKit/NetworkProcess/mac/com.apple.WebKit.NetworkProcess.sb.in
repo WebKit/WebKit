@@ -850,8 +850,3 @@
     (global-name "com.apple.WebPrivacy.Service"))
 
 #endif
-
-#if USE(RUNNINGBOARD)
-(allow mach-lookup
-    (global-name "com.apple.runningboard"))
-#endif
