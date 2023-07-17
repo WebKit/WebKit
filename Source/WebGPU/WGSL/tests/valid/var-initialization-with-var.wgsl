@@ -10,6 +10,6 @@ fn main() {
   var b = a;
   // CHECK: local\d+ = 0
   b = 0.0;
-  // CHECK: f\(local\d+\)
+  // CHECK: function\d\(local\d+\)
   _ = f(b);
 }
