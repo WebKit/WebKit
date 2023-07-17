@@ -3021,9 +3021,10 @@ void Document::updateHighlightPositions()
                 endPosition = visibleSelection.visibleEnd().deepEquivalent();
             if (!weakRangeData.get())
                 continue;
-
-            rangeData->setStartPosition(WTFMove(startPosition));
-            rangeData->setEndPosition(WTFMove(endPosition));
+            if (!startPosition.isNull())
+                rangeData->setStartPosition(WTFMove(startPosition));
+            if (!endPosition.isNull())
+                rangeData->setEndPosition(WTFMove(endPosition));
         }
     }
 }
