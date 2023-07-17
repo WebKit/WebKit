@@ -171,6 +171,15 @@ static NSTextCheckingType nsTextCheckingType(NSString *typeString)
 
 @synthesize spellCheckerLoggingEnabled = _spellCheckerLoggingEnabled;
 
+#if PLATFORM(IOS_FAMILY)
+
+static LayoutTestSpellChecker *swizzledInitializeTextChecker()
+{
+    return [ensureGlobalLayoutTestSpellChecker() retain];
+}
+
+#endif
+
 + (instancetype)checker
 {
     auto *spellChecker = ensureGlobalLayoutTestSpellChecker();
@@ -182,7 +191,7 @@ static NSTextCheckingType nsTextCheckingType(NSString *typeString)
     globallySwizzledSharedSpellCheckerImplementation = method_setImplementation(originalSharedSpellCheckerMethod, reinterpret_cast<IMP>(ensureGlobalLayoutTestSpellChecker));
 #else
     originalInitializeTextCheckerMethod = class_getInstanceMethod(UITextChecker.class, @selector(_initWithAsynchronousLoading:));
-    globallySwizzledInitializeTextCheckerImplementation = method_setImplementation(originalInitializeTextCheckerMethod, reinterpret_cast<IMP>(ensureGlobalLayoutTestSpellChecker));
+    globallySwizzledInitializeTextCheckerImplementation = method_setImplementation(originalInitializeTextCheckerMethod, reinterpret_cast<IMP>(swizzledInitializeTextChecker));
 #endif
 
     hasSwizzledLayoutTestSpellChecker = YES;
