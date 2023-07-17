@@ -69,17 +69,6 @@ private:
 
 } // namespace WebCore
 
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::AppKitControlSystemImageType> {
-    using values = EnumValues<
-        WebCore::AppKitControlSystemImageType,
-        WebCore::AppKitControlSystemImageType::ScrollbarTrackCorner
-    >;
-};
-
-} // namespace WTF
-
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::AppKitControlSystemImage)
     static bool isType(const WebCore::SystemImage& systemImage) { return systemImage.systemImageType() == WebCore::SystemImageType::AppKitControl; }
 SPECIALIZE_TYPE_TRAITS_END()

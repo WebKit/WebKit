@@ -35,7 +35,7 @@ namespace WebCore {
 // Any: any font binary will be downloaded, no checks will be done during load.
 // Restricted: any font binary will be donwloaded but just binaries listed by WebKit will be allowed loaded. A not allowed binary will be deleted after the check is done (see CachedFont::shouldAllowCustomFont()).
 // None: No font binary will be downloaded or loaded.
-enum class DownloadableBinaryFontAllowedTypes: uint8_t {
+enum class DownloadableBinaryFontAllowedTypes : uint8_t {
     Any,
     Restricted,
     None
@@ -45,18 +45,3 @@ bool isFontBinaryAllowed(std::span<const uint8_t>, DownloadableBinaryFontAllowed
 bool isFontBinaryAllowed(const void*, size_t, DownloadableBinaryFontAllowedTypes);
 
 } // namespace WebCore
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::DownloadableBinaryFontAllowedTypes> {
-    using values = EnumValues<
-        WebCore::DownloadableBinaryFontAllowedTypes,
-        WebCore::DownloadableBinaryFontAllowedTypes::Any,
-        WebCore::DownloadableBinaryFontAllowedTypes::Restricted,
-        WebCore::DownloadableBinaryFontAllowedTypes::None
-    >;
-};
-
-} // namespace WTF
-
-

@@ -37,17 +37,4 @@ enum class MediaSessionCoordinatorState : uint8_t {
 
 } // namespace WebCore
 
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::MediaSessionCoordinatorState> {
-    using values = EnumValues<
-        WebCore::MediaSessionCoordinatorState,
-        WebCore::MediaSessionCoordinatorState::Waiting,
-        WebCore::MediaSessionCoordinatorState::Joined,
-        WebCore::MediaSessionCoordinatorState::Closed
-    >;
-};
-
-}
-
 #endif // ENABLE(MEDIA_SESSION_COORDINATOR)

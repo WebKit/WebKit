@@ -36,6 +36,388 @@ header: <WebCore/DOMCacheEngine.h>
     bool hadStorageError;
 };
 
+#if ENABLE(APPLE_PAY)
+header: <WebCore/ApplePayFeature.h>
+enum class WebCore::ApplePayFeature : uint8_t {
+#if ENABLE(APPLE_PAY_LATER)
+    ApplePayLater,
+#endif
+#if ENABLE(APPLE_PAY_LATER_AVAILABILITY)
+    ApplePayLaterAvailability,
+#endif
+#if ENABLE(APPLE_PAY_PAYMENT_ORDER_DETAILS)
+    AuthorizationResultOrderDetails,
+#endif
+    LineItemPaymentTiming,
+#if ENABLE(APPLE_PAY_AUTOMATIC_RELOAD_PAYMENTS)
+    PaymentRequestAutomaticReload,
+#endif
+#if ENABLE(APPLE_PAY_COUPON_CODE)
+    PaymentRequestCouponCode,
+#endif
+#if ENABLE(APPLE_PAY_MULTI_MERCHANT_PAYMENTS)
+    PaymentRequestMultiTokenContexts,
+#endif
+#if ENABLE(APPLE_PAY_RECURRING_PAYMENTS)
+    PaymentRequestRecurring,
+#endif
+#if ENABLE(APPLE_PAY_SHIPPING_CONTACT_EDITING_MODE)
+    PaymentRequestShippingContactEditingMode,
+#endif
+#if ENABLE(APPLE_PAY_AUTOMATIC_RELOAD_LINE_ITEM)
+    PaymentTimingAutomaticReload,
+#endif
+#if ENABLE(APPLE_PAY_DEFERRED_PAYMENTS)
+    PaymentRequestDeferred,
+#endif
+#if ENABLE(APPLE_PAY_DEFERRED_LINE_ITEM)
+    PaymentTimingDeferred,
+#endif
+    PaymentTimingImmediate,
+#if ENABLE(APPLE_PAY_RECURRING_LINE_ITEM)
+    PaymentTimingRecurring,
+#endif
+#if ENABLE(APPLE_PAY_SHIPPING_CONTACT_EDITING_MODE)
+    ShippingContactEditingModeEnabled,
+    ShippingContactEditingModeStorePickup,
+#endif
+#if ENABLE(APPLE_PAY_SHIPPING_METHOD_DATE_COMPONENTS_RANGE)
+    ShippingMethodDateComponentsRange,
+#endif
+};
+
+enum class WebCore::ApplePayPaymentTiming : uint8_t {
+    Immediate,
+#if ENABLE(APPLE_PAY_RECURRING_LINE_ITEM)
+    Recurring,
+#endif
+#if ENABLE(APPLE_PAY_DEFERRED_LINE_ITEM)
+    Deferred,
+#endif
+#if ENABLE(APPLE_PAY_AUTOMATIC_RELOAD_LINE_ITEM)
+    AutomaticReload,
+#endif
+};
+
+#endif // ENABLE(APPLE_PAY)
+
+#if ENABLE(APPLE_PAY_RECURRING_LINE_ITEM)
+enum class WebCore::ApplePayRecurringPaymentDateUnit : uint8_t {
+    Year,
+    Month,
+    Day,
+    Hour,
+    Minute,
+};
+#endif // ENABLE(APPLE_PAY_RECURRING_LINE_ITEM)
+
+enum class WebCore::ContactProperty : uint8_t {
+    Email,
+    Name,
+    Tel
+};
+
+header: <WebCore/CookieConsentDecisionResult.h>
+enum class WebCore::CookieConsentDecisionResult : uint8_t {
+    NotSupported,
+    Consent,
+    Dissent,
+};
+
+header: <WebCore/IDBResultData.h>
+enum class WebCore::IDBResultType : uint8_t {
+    Error,
+    OpenDatabaseSuccess,
+    OpenDatabaseUpgradeNeeded,
+    DeleteDatabaseSuccess,
+    CreateObjectStoreSuccess,
+    DeleteObjectStoreSuccess,
+    ClearObjectStoreSuccess,
+    PutOrAddSuccess,
+    GetRecordSuccess,
+    GetAllRecordsSuccess,
+    GetCountSuccess,
+    DeleteRecordSuccess,
+    CreateIndexSuccess,
+    DeleteIndexSuccess,
+    OpenCursorSuccess,
+    IterateCursorSuccess,
+    RenameObjectStoreSuccess,
+    RenameIndexSuccess,
+};
+
+enum class WebCore::IDBTransactionDurability : uint8_t {
+    Strict,
+    Relaxed,
+    Default
+};
+
+enum class WebCore::IDBTransactionMode : uint8_t {
+    Readonly,
+    Readwrite,
+    Versionchange
+};
+
+#if ENABLE(MEDIA_SESSION)
+header: <WebCore/MediaSessionAction.h>
+enum class WebCore::MediaSessionAction : uint8_t {
+    Play,
+    Pause,
+    Seekbackward,
+    Seekforward,
+    Previoustrack,
+    Nexttrack,
+    Skipad,
+    Stop,
+    Seekto,
+    Settrack,
+};
+
+header: <WebCore/MediaSessionPlaybackState.h>
+enum class WebCore::MediaSessionPlaybackState : uint8_t {
+    None,
+    Paused,
+    Playing,
+};
+#endif // ENABLE(MEDIA_SESSION)
+
+#if ENABLE(MEDIA_SESSION_COORDINATOR)
+header: <WebCore/MediaSessionCoordinatorState.h>
+enum class WebCore::MediaSessionCoordinatorState : uint8_t {
+    Waiting,
+    Joined,
+    Closed,
+};
+
+header: <WebCore/MediaSessionReadyState.h>
+enum class WebCore::MediaSessionReadyState : uint8_t {
+    Havenothing,
+    Havemetadata,
+    Havecurrentdata,
+    Havefuturedata,
+    Haveenoughdata,
+};
+#endif // ENABLE(MEDIA_SESSION_COORDINATOR)
+
+header: <WebCore/RTCErrorDetailType.h>
+enum class WebCore::RTCErrorDetailType : uint8_t {
+    DataChannelFailure,
+    DtlsFailure,
+    FingerprintFailure,
+    SctpFailure,
+    SdpSyntaxError
+};
+
+enum class WebCore::NotificationEventType : bool;
+
+enum class WebCore::PermissionName : uint8_t {
+    Accelerometer,
+    BackgroundFetch,
+    Bluetooth,
+    Camera,
+    DisplayCapture,
+    Geolocation,
+    Gyroscope,
+    Magnetometer,
+    Microphone,
+    Midi,
+    Nfc,
+    Notifications,
+    Push,
+    ScreenWakeLock,
+    SpeakerSelection
+};
+
+header: <WebCore/PermissionQuerySource.h>
+enum class WebCore::PermissionQuerySource : uint8_t {
+    Window,
+    DedicatedWorker,
+    SharedWorker,
+    ServiceWorker
+};
+
+header: <WebCore/PermissionState.h>
+enum class WebCore::PermissionState : uint8_t {
+    Granted,
+    Denied,
+    Prompt
+};
+
+#if ENABLE(SERVICE_WORKER)
+header: <WebCore/PushPermissionState.h>
+enum class WebCore::PushPermissionState : uint8_t {
+    Denied,
+    Granted,
+    Prompt
+};
+#endif // ENABLE(SERVICE_WORKER)
+
+header: <WebCore/Autofill.h>
+enum class WebCore::AutofillFieldName : uint8_t {
+    None,
+    Name,
+    HonorificPrefix,
+    GivenName,
+    AdditionalName,
+    FamilyName,
+    HonorificSuffix,
+    Nickname,
+    Username,
+    NewPassword,
+    CurrentPassword,
+    OrganizationTitle,
+    Organization,
+    StreetAddress,
+    AddressLine1,
+    AddressLine2,
+    AddressLine3,
+    AddressLevel4,
+    AddressLevel3,
+    AddressLevel2,
+    AddressLevel1,
+    Country,
+    CountryName,
+    PostalCode,
+    CcName,
+    CcGivenName,
+    CcAdditionalName,
+    CcFamilyName,
+    CcNumber,
+    CcExp,
+    CcExpMonth,
+    CcExpYear,
+    CcCsc,
+    CcType,
+    TransactionCurrency,
+    TransactionAmount,
+    Language,
+    Bday,
+    BdayDay,
+    BdayMonth,
+    BdayYear,
+    Sex,
+    URL,
+    Photo,
+    Tel,
+    TelCountryCode,
+    TelNational,
+    TelAreaCode,
+    TelLocal,
+    TelLocalPrefix,
+    TelLocalSuffix,
+    TelExtension,
+    Email,
+    Impp,
+    WebAuthn
+};
+
+enum class WebCore::NonAutofillCredentialType : bool;
+
+enum class WebCore::EnterKeyHint : uint8_t {
+    Unspecified,
+    Enter,
+    Done,
+    Go,
+    Next,
+    Previous,
+    Search,
+    Send
+};
+
+enum class WebCore::DownloadableBinaryFontAllowedTypes : uint8_t {
+    Any,
+    Restricted,
+    None
+};
+
+header: <WebCore/LoadSchedulingMode.h>
+enum class WebCore::LoadSchedulingMode : uint8_t {
+    Direct,
+    Prioritized
+};
+
+header: <WebCore/ResourceLoaderOptions.h>
+enum class WebCore::ServiceWorkersMode : uint8_t {
+    All,
+    None,
+    Only
+};
+
+header: <WebCore/ShouldTreatAsContinuingLoad.h>
+enum class WebCore::ShouldTreatAsContinuingLoad : uint8_t {
+    No,
+    YesAfterNavigationPolicyDecision,
+    YesAfterProvisionalLoadStarted
+};
+
+header: <WebCore/ContentSecurityPolicy.h>
+enum class WebCore::ContentSecurityPolicyModeForExtension : uint8_t {
+    None,
+    ManifestV2,
+    ManifestV3
+};
+
+header: <WebCore/MediaProducer.h>
+enum class WebCore::MediaProducerMediaCaptureKind : uint8_t {
+    Microphone,
+    Camera,
+    Display,
+    SystemAudio,
+    EveryKind,
+};
+
+header: <WebCore/ScreenOrientationType.h>
+enum class WebCore::ScreenOrientationType : uint8_t {
+    PortraitPrimary,
+    PortraitSecondary,
+    LandscapePrimary,
+    LandscapeSecondary
+};
+
+enum class WebCore::StorageBlockingPolicy : uint8_t {
+    AllowAll,
+    BlockThirdParty,
+    BlockAll
+};
+
+#if HAVE(TRANSLATION_UI_SERVICES) && ENABLE(CONTEXT_MENUS)
+struct WebCore::TranslationContextMenuInfo {
+    String text;
+    WebCore::IntRect selectionBoundsInRootView;
+    WebCore::IntPoint locationInRootView;
+    WebCore::TranslationContextMenuMode mode;
+    WebCore::TranslationContextMenuSource source;
+};
+
+header: <WebCore/TranslationContextMenuInfo.h>
+enum class WebCore::TranslationContextMenuMode : bool;
+enum class WebCore::TranslationContextMenuSource : bool;
+#endif // HAVE(TRANSLATION_UI_SERVICES) && ENABLE(CONTEXT_MENUS)
+
+#if USE(APPKIT)
+header: <WebCore/AppKitControlSystemImage.h>
+enum class WebCore::AppKitControlSystemImageType : uint8_t {
+    ScrollbarTrackCorner,
+};
+#endif // USE(APPKIT)
+
+header: <WebCore/ListStyleType.h>
+[Nested] enum class WebCore::ListStyleType::Type : uint8_t {
+    CounterStyle,
+    String,
+    None
+}
+
+header: <WebCore/ScrollTypes.h>
+enum class WebCore::ScrollIsAnimated : bool;
+
+enum class WebCore::ScrollGranularity : uint8_t {
+    Line,
+    Page,
+    Document,
+    Pixel
+};
+
 [CustomHeader] struct WebCore::DOMCacheEngine::CrossThreadRecord {
     uint64_t identifier;
     uint64_t updateResponseCounter;
@@ -920,6 +1302,7 @@ struct WebCore::DetachedRTCDataChannel {
 
 header: <WebCore/WebCodecsEncodedVideoChunk.h>
 #if ENABLE(WEB_CODECS)
+enum class WebCore::WebCodecsEncodedVideoChunkType : bool;
 struct WebCore::WebCodecsEncodedVideoChunkData {
     WebCore::WebCodecsEncodedVideoChunkType type;
     int64_t timestamp;

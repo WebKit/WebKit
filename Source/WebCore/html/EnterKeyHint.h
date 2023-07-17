@@ -45,21 +45,3 @@ EnterKeyHint enterKeyHintForAttributeValue(StringView);
 String attributeValueForEnterKeyHint(EnterKeyHint);
 
 } // namespace WebCore
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::EnterKeyHint> {
-    using values = EnumValues<
-        WebCore::EnterKeyHint,
-        WebCore::EnterKeyHint::Unspecified,
-        WebCore::EnterKeyHint::Enter,
-        WebCore::EnterKeyHint::Done,
-        WebCore::EnterKeyHint::Go,
-        WebCore::EnterKeyHint::Next,
-        WebCore::EnterKeyHint::Previous,
-        WebCore::EnterKeyHint::Search,
-        WebCore::EnterKeyHint::Send
-    >;
-};
-
-} // namespace WTF

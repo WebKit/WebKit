@@ -35,13 +35,3 @@ enum class LoadSchedulingMode : uint8_t {
 };
 
 }
-
-namespace WTF {
-template<> struct EnumTraits<WebCore::LoadSchedulingMode> {
-    using values = EnumValues<
-        WebCore::LoadSchedulingMode,
-        WebCore::LoadSchedulingMode::Direct,
-        WebCore::LoadSchedulingMode::Prioritized
-    >;
-};
-}

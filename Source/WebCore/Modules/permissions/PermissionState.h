@@ -36,16 +36,3 @@ enum class PermissionState : uint8_t {
 };
 
 } // namespace WebCore
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::PermissionState> {
-    using values = EnumValues<
-        WebCore::PermissionState,
-        WebCore::PermissionState::Granted,
-        WebCore::PermissionState::Denied,
-        WebCore::PermissionState::Prompt
-    >;
-};
-
-} // namespace WTF

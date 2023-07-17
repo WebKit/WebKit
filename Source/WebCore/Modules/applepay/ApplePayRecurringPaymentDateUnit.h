@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-enum class ApplePayRecurringPaymentDateUnit {
+enum class ApplePayRecurringPaymentDateUnit : uint8_t {
     Year,
     Month,
     Day,
@@ -40,20 +40,5 @@ enum class ApplePayRecurringPaymentDateUnit {
 };
 
 } // namespace WebCore
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::ApplePayRecurringPaymentDateUnit> {
-    using values = EnumValues<
-        WebCore::ApplePayRecurringPaymentDateUnit,
-        WebCore::ApplePayRecurringPaymentDateUnit::Year,
-        WebCore::ApplePayRecurringPaymentDateUnit::Month,
-        WebCore::ApplePayRecurringPaymentDateUnit::Day,
-        WebCore::ApplePayRecurringPaymentDateUnit::Hour,
-        WebCore::ApplePayRecurringPaymentDateUnit::Minute
-    >;
-};
-
-} // namespace WTF
 
 #endif // ENABLE(APPLE_PAY_RECURRING_LINE_ITEM)
