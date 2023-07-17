@@ -169,6 +169,7 @@ enum class ModalContainerDecision : uint8_t;
 enum class MouseEventPolicy : uint8_t;
 enum class PermissionName : uint8_t;
 enum class PermissionState : uint8_t;
+enum class PlatformEventModifier : uint8_t;
 enum class PolicyAction : uint8_t;
 enum class ReasonForDismissingAlternativeText : uint8_t;
 enum class ReloadOption : uint8_t;
@@ -2523,6 +2524,7 @@ private:
 
 #if PLATFORM(GTK)
     void showEmojiPicker(const WebCore::IntRect&, CompletionHandler<void(String)>&&);
+    OptionSet<WebCore::PlatformEventModifier> currentStateOfModifierKeys();
 #endif
 
     // Popup Menu.

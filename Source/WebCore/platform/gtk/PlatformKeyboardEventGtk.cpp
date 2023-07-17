@@ -38,7 +38,6 @@
 #include <gdk/gdkkeysyms.h>
 #include <pal/text/TextEncoding.h>
 #include <wtf/HexNumber.h>
-#include <wtf/glib/GUniquePtr.h>
 
 namespace WebCore {
 
@@ -1350,58 +1349,10 @@ void PlatformKeyboardEvent::disambiguateKeyDownEvent(Type type, bool backwardCom
 
 OptionSet<PlatformEvent::Modifier> PlatformKeyboardEvent::currentStateOfModifierKeys()
 {
-    GdkModifierType state;
-#if USE(GTK4)
-    state = static_cast<GdkModifierType>(0); // FIXME: Implement.
-#else
-    gtk_get_current_event_state(&state);
-#endif
+    if (s_currentModifiers)
+        return *s_currentModifiers;
 
-    OptionSet<PlatformEvent::Modifier> modifiers;
-
-    if (state & GDK_SHIFT_MASK)
-        modifiers.add(PlatformEvent::Modifier::ShiftKey);
-    if (state & GDK_CONTROL_MASK)
-        modifiers.add(PlatformEvent::Modifier::ControlKey);
-    if (state & GDK_MOD1_MASK)
-        modifiers.add(PlatformEvent::Modifier::AltKey);
-    if (state & GDK_META_MASK)
-        modifiers.add(PlatformEvent::Modifier::MetaKey);
-
-#if USE(GTK4)
-    bool capsLockActive = gdk_device_get_caps_lock_state(gdk_seat_get_keyboard(gdk_display_get_default_seat(gdk_display_get_default())));
-#else
-    bool capsLockActive = gdk_keymap_get_caps_lock_state(gdk_keymap_get_for_display(gdk_display_get_default()));
-#endif
-    if (capsLockActive)
-        modifiers.add(PlatformEvent::Modifier::CapsLockKey);
-
-    return modifiers;
-}
-
-bool PlatformKeyboardEvent::modifiersContainCapsLock(unsigned modifier)
-{
-    if (!(modifier & GDK_LOCK_MASK))
-        return false;
-
-    // In X11 GDK_LOCK_MASK could be CapsLock or ShiftLock, depending on the modifier mapping of the X server.
-    // What GTK+ does in the X11 backend is checking if there is a key bound to GDK_KEY_Caps_Lock, so we do
-    // the same here. This will also return true in Wayland if there's a caps lock key, so it's not worth it
-    // checking the actual display here.
-    static bool lockMaskIsCapsLock = false;
-#if !USE(GTK4)
-    static bool initialized = false;
-    if (!initialized) {
-        GUniqueOutPtr<GdkKeymapKey> keys;
-        int entriesCount;
-#if USE(GTK4)
-        lockMaskIsCapsLock = gdk_display_map_keyval(gdk_display_get_default(), GDK_KEY_Caps_Lock, &keys.outPtr(), &entriesCount) && entriesCount;
-#else
-        lockMaskIsCapsLock = gdk_keymap_get_entries_for_keyval(gdk_keymap_get_for_display(gdk_display_get_default()), GDK_KEY_Caps_Lock, &keys.outPtr(), &entriesCount) && entriesCount;
-#endif
-    }
-#endif
-    return lockMaskIsCapsLock;
+    return { };
 }
 
 }

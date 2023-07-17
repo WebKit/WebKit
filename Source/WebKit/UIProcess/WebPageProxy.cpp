@@ -11756,8 +11756,12 @@ void WebPageProxy::getIsViewVisible(bool& result)
 
 void WebPageProxy::updateCurrentModifierState()
 {
+#if PLATFORM(COCOA) || PLATFORM(GTK)
 #if PLATFORM(COCOA)
     auto modifiers = PlatformKeyboardEvent::currentStateOfModifierKeys();
+#elif PLATFORM(GTK)
+    auto modifiers = currentStateOfModifierKeys();
+#endif
     send(Messages::WebPage::UpdateCurrentModifierState(modifiers));
 #endif
 }

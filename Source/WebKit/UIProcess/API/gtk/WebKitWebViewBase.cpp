@@ -2139,6 +2139,24 @@ static void webkitWebViewBaseTouchPress(WebKitWebViewBase* webViewBase, int nPre
     webViewBase->priv->isLongPressed = false;
 }
 
+static unsigned modifiersForSynthesizedEvent(GdkEvent* event)
+{
+    if (!event)
+        return 0;
+
+    GdkModifierType state;
+    if (!gdk_event_get_state(event, &state))
+        return 0;
+
+    unsigned modifiers = state;
+    // For synthesized events we assume GDK_LOCK_MASK is always CapsLock
+    // so we remove the flag if present and caps lock state is disabled.
+    if (modifiers & GDK_LOCK_MASK && !eventModifiersContainCapsLock(event))
+        modifiers &= ~GDK_LOCK_MASK;
+
+    return modifiers;
+}
+
 static void webkitWebViewBaseTouchRelease(WebKitWebViewBase* webViewBase, int nPress, double x, double y, GtkGesture* gesture)
 {
     WebKitWebViewBasePrivate* priv = webViewBase->priv;
@@ -2157,7 +2175,7 @@ static void webkitWebViewBaseTouchRelease(WebKitWebViewBase* webViewBase, int nP
         buttons = GDK_BUTTON1_MASK;
     }
 
-    unsigned modifiers = gtk_event_controller_get_current_event_state(GTK_EVENT_CONTROLLER(gesture));
+    unsigned modifiers = modifiersForSynthesizedEvent(gtk_event_controller_get_current_event(GTK_EVENT_CONTROLLER(gesture)));
     webkitWebViewBaseSynthesizeMouseEvent(webViewBase, MouseEventType::Motion, 0, 0, x, y, modifiers, nPress, mousePointerEventType(), PlatformMouseEvent::IsTouch::Yes);
     webkitWebViewBaseSynthesizeMouseEvent(webViewBase, MouseEventType::Press, button, 0, x, y, modifiers, nPress, mousePointerEventType(), PlatformMouseEvent::IsTouch::Yes);
     webkitWebViewBaseSynthesizeMouseEvent(webViewBase, MouseEventType::Release, button, buttons, x, y, modifiers, nPress, mousePointerEventType(), PlatformMouseEvent::IsTouch::Yes);
@@ -2187,7 +2205,7 @@ static void webkitWebViewBaseTouchDragUpdate(WebKitWebViewBase* webViewBase, dou
     auto* sequence = gtk_gesture_single_get_current_sequence(GTK_GESTURE_SINGLE(gesture));
     auto* event = gtk_gesture_get_last_event(gesture, sequence);
 
-    unsigned modifiers = gtk_event_controller_get_current_event_state(GTK_EVENT_CONTROLLER(gesture));
+    unsigned modifiers = modifiersForSynthesizedEvent(gtk_event_controller_get_current_event(GTK_EVENT_CONTROLLER(gesture)));
     if (!priv->isBeingDragged) {
         if (!gtk_drag_check_threshold(GTK_WIDGET(webViewBase), 0, 0, static_cast<int>(offsetX), static_cast<int>(offsetY)))
             return;
@@ -2231,7 +2249,7 @@ static void webkitWebViewBaseTouchDragEnd(WebKitWebViewBase* webViewBase, gdoubl
     if (priv->isLongPressed) {
         double x, y;
         gtk_gesture_drag_get_start_point(GTK_GESTURE_DRAG(gesture), &x, &y);
-        unsigned modifiers = gtk_event_controller_get_current_event_state(GTK_EVENT_CONTROLLER(gesture));
+        unsigned modifiers = modifiersForSynthesizedEvent(gtk_event_controller_get_current_event(GTK_EVENT_CONTROLLER(gesture)));
         webkitWebViewBaseSynthesizeMouseEvent(webViewBase, MouseEventType::Release, GDK_BUTTON_PRIMARY, GDK_BUTTON1_MASK, x + offsetX, y + offsetY, modifiers, 0, mousePointerEventType(), PlatformMouseEvent::IsTouch::Yes);
     }
 }
@@ -3049,7 +3067,7 @@ static inline OptionSet<WebEventModifier> toWebKitModifiers(unsigned modifiers)
         webEventModifiers.add(WebEventModifier::AltKey);
     if (modifiers & GDK_META_MASK)
         webEventModifiers.add(WebEventModifier::MetaKey);
-    if (PlatformKeyboardEvent::modifiersContainCapsLock(modifiers))
+    if (modifiers & GDK_LOCK_MASK)
         webEventModifiers.add(WebEventModifier::CapsLockKey);
     return webEventModifiers;
 }
