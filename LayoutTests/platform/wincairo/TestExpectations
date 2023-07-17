@@ -2846,3 +2846,8 @@ fast/css-grid-layout/grid-item-display.html [ Failure Pass ]
 fast/canvas/canvas-ellipse-connecting-line.html [ ImageOnlyFailure ]
 
 fast/html/transient-activation.html [ Skip ]
+
+fast/css/caret-color-with-inherited-color-property.html [ Skip ] # ImageOnlyFailure
+fast/css/caret-color-with-initial-color-property.html [ Skip ] # ImageOnlyFailure
+
+webkit.org/b/257624 fast/dom/SelectorAPI/caseID.html [ Failure Pass ]
