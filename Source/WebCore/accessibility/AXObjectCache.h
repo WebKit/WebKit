@@ -227,7 +227,9 @@ public:
         , Vector<std::pair<Node*, Node*>>
         , WeakHashSet<Element, WeakPtrImplWithEventTargetData>
         , WeakHashSet<HTMLTableElement, WeakPtrImplWithEventTargetData>
-        , WeakHashSet<AccessibilityTable>>;
+        , WeakHashSet<AccessibilityTable>
+        , WeakListHashSet<Node, WeakPtrImplWithEventTargetData>>;
+    void deferFocusedUIElementChangeIfNeeded(Node* oldFocusedNode, Node* newFocusedNode);
     void deferModalChange(Element*);
     void deferMenuListValueChange(Element*);
     void deferNodeAddedOrRemoved(Node*);
@@ -651,7 +653,7 @@ private:
     ListHashSet<Node*> m_deferredTextChangedList;
     WeakHashSet<Element, WeakPtrImplWithEventTargetData> m_deferredSelectedChildredChangedList;
     ListHashSet<RefPtr<AccessibilityObject>> m_deferredChildrenChangedList;
-    ListHashSet<Node*> m_deferredNodeAddedOrRemovedList;
+    WeakListHashSet<Node, WeakPtrImplWithEventTargetData> m_deferredNodeAddedOrRemovedList;
     WeakHashSet<Element, WeakPtrImplWithEventTargetData> m_deferredModalChangedList;
     WeakHashSet<Element, WeakPtrImplWithEventTargetData> m_deferredMenuListChange;
     WeakHashSet<ScrollView> m_deferredScrollbarUpdateChangeList;
