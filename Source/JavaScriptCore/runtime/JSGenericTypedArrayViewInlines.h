@@ -360,7 +360,7 @@ bool JSGenericTypedArrayView<Adaptor>::setFromArrayLike(JSGlobalObject* globalOb
 
     if constexpr (TypedArrayStorageType != TypeBigInt64 || TypedArrayStorageType != TypeBigUint64) {
         if (JSArray* array = jsDynamicCast<JSArray*>(object); LIKELY(array)) {
-            if (safeLength == length && (safeLength + objectOffset) >= array->length() && array->isIteratorProtocolFastAndNonObservable()) {
+            if (safeLength == length && (safeLength + objectOffset) <= array->length() && array->isIteratorProtocolFastAndNonObservable()) {
                 IndexingType indexingType = array->indexingType() & IndexingShapeMask;
                 if (indexingType == Int32Shape) {
                     for (size_t i = 0; i < safeLength; ++i) {
