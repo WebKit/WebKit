@@ -2073,8 +2073,10 @@ inline void BuilderCustom::applyInitialContainIntrinsicWidth(BuilderState& build
     builderState.style().setContainIntrinsicWidth(RenderStyle::initialContainIntrinsicWidth());
 }
 
-inline void BuilderCustom::applyInheritContainIntrinsicWidth(BuilderState&)
+inline void BuilderCustom::applyInheritContainIntrinsicWidth(BuilderState& builderState)
 {
+    builderState.style().setContainIntrinsicWidthType(builderState.parentStyle().containIntrinsicWidthType());
+    builderState.style().setContainIntrinsicWidth(builderState.parentStyle().containIntrinsicWidth());
 }
 
 inline void BuilderCustom::applyValueContainIntrinsicWidth(BuilderState& builderState, CSSValue& value)
@@ -2116,8 +2118,10 @@ inline void BuilderCustom::applyInitialContainIntrinsicHeight(BuilderState& buil
     builderState.style().setContainIntrinsicHeight(RenderStyle::initialContainIntrinsicHeight());
 }
 
-inline void BuilderCustom::applyInheritContainIntrinsicHeight(BuilderState&)
+inline void BuilderCustom::applyInheritContainIntrinsicHeight(BuilderState& builderState)
 {
+    builderState.style().setContainIntrinsicHeightType(builderState.parentStyle().containIntrinsicHeightType());
+    builderState.style().setContainIntrinsicHeight(builderState.parentStyle().containIntrinsicHeight());
 }
 
 inline void BuilderCustom::applyValueContainIntrinsicHeight(BuilderState& builderState, CSSValue& value)
