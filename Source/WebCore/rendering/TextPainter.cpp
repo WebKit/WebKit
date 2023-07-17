@@ -74,7 +74,7 @@ ShadowApplier::ShadowApplier(const RenderStyle& style, GraphicsContext& context,
     }
 
     if (!m_avoidDrawingShadow)
-        context.setShadow(shadowOffset, shadowRadius.value(), shadowColor);
+        context.setDropShadow({ shadowOffset, shadowRadius.value(), shadowColor, ShadowRadiusMode::Default });
 }
 
 inline bool ShadowApplier::isLastShadowIteration()

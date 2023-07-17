@@ -111,15 +111,6 @@ void GraphicsContext::drawRaisedEllipse(const FloatRect& rect, const Color& elli
     restore();
 }
 
-bool GraphicsContext::getShadow(FloatSize& offset, float& blur, Color& color) const
-{
-    offset = dropShadow().offset;
-    blur = dropShadow().blurRadius;
-    color = dropShadow().color;
-
-    return hasShadow();
-}
-
 void GraphicsContext::beginTransparencyLayer(float)
 {
     ++m_transparencyLayerCount;

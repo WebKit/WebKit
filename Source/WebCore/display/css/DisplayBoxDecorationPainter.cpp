@@ -1301,7 +1301,7 @@ void BoxDecorationPainter::paintBoxShadow(PaintingContext& paintingContext, Shad
         auto shadowRectOrigin = fillRect.rect().location() + shadowOffset;
         auto adjustedShadowOffset = shadowRectOrigin - adjustedFillRect.rect().location();
 
-        paintingContext.context.setShadow(adjustedShadowOffset, shadowRadius.value(), resolveColor(shadow.color()), shadow.isWebkitBoxShadow() ? ShadowRadiusMode::Legacy : ShadowRadiusMode::Default);
+        paintingContext.context.setDropShadow({ adjustedShadowOffset, shadowRadius.value(), resolveColor(shadow.color()), shadow.isWebkitBoxShadow() ? ShadowRadiusMode::Legacy : ShadowRadiusMode::Default });
 
         if (hasBorderRadius) {
             // If the box is opaque, it is unnecessary to clip it out. However, doing so saves time
@@ -1412,7 +1412,7 @@ void BoxDecorationPainter::paintBoxShadow(PaintingContext& paintingContext, Shad
         paintingContext.context.translate(extraOffset);
         shadowOffset -= extraOffset;
 
-        paintingContext.context.setShadow(shadowOffset, shadowRadius.value(), resolveColor(shadow.color()), shadow.isWebkitBoxShadow() ? ShadowRadiusMode::Legacy : ShadowRadiusMode::Default);
+        paintingContext.context.setDropShadow({ shadowOffset, shadowRadius.value(), resolveColor(shadow.color()), shadow.isWebkitBoxShadow() ? ShadowRadiusMode::Legacy : ShadowRadiusMode::Default });
         paintingContext.context.fillRectWithRoundedHole(shadowCastingRect, roundedHoleRect, fillColor);
     };
 

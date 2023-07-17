@@ -601,7 +601,7 @@ void RenderThemeIOS::paintTextFieldInnerShadow(const PaintInfo& paintInfo, const
     const FloatSize innerShadowOffset { 0, 5 };
     constexpr auto innerShadowBlur = 10.0f;
     auto innerShadowColor = DisplayP3<float> { 0, 0, 0, 0.04f };
-    context.setShadow(innerShadowOffset, innerShadowBlur, innerShadowColor);
+    context.setDropShadow({ innerShadowOffset, innerShadowBlur, innerShadowColor, ShadowRadiusMode::Default });
     context.setFillColor(Color::black);
 
     Path innerShadowPath;
@@ -1852,7 +1852,7 @@ void RenderThemeIOS::paintCheckboxRadioInnerShadow(const PaintInfo& paintInfo, c
 
     bool isEmpty = !states.containsAny({ ControlStates::States::Checked, ControlStates::States::Indeterminate });
     auto firstShadowColor = DisplayP3<float> { 0, 0, 0, isEmpty ? 0.05f : 0.1f };
-    context.setShadow(innerShadowOffset, innerShadowBlur, firstShadowColor);
+    context.setDropShadow({ innerShadowOffset, innerShadowBlur, firstShadowColor, ShadowRadiusMode::Default });
     context.setFillColor(Color::black);
 
     Path innerShadowPath;
@@ -1869,7 +1869,7 @@ void RenderThemeIOS::paintCheckboxRadioInnerShadow(const PaintInfo& paintInfo, c
     context.fillPath(innerShadowPath);
 
     constexpr auto secondShadowColor = DisplayP3<float> { 1, 1, 1, 0.5f };
-    context.setShadow(FloatSize { 0, 0 }, 1, secondShadowColor);
+    context.setDropShadow({ FloatSize { 0, 0 }, 1, secondShadowColor, ShadowRadiusMode::Default });
 
     context.fillPath(innerShadowPath);
 }
