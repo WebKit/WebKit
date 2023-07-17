@@ -85,10 +85,21 @@ bool ProcessThrottler::addActivity(Activity& activity)
 void ProcessThrottler::removeActivity(Activity& activity)
 {
     ASSERT(isMainRunLoop());
+    if (!m_allowsActivities) {
+        ASSERT(m_foregroundActivities.isEmpty());
+        ASSERT(m_backgroundActivities.isEmpty());
+        return;
+    }
+
+    bool wasRemoved;
     if (activity.isForeground())
-        m_foregroundActivities.remove(&activity);
+        wasRemoved = m_foregroundActivities.remove(&activity);
     else
-        m_backgroundActivities.remove(&activity);
+        wasRemoved = m_backgroundActivities.remove(&activity);
+    ASSERT(wasRemoved);
+    if (!wasRemoved)
+        return;
+
     updateThrottleStateIfNeeded();
 }
 

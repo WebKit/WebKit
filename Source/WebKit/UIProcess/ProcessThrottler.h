@@ -93,6 +93,7 @@ class ProcessThrottlerTimedActivity {
     public:
         explicit ProcessThrottlerTimedActivity(Seconds timeout, ActivityVariant&& = nullptr);
         ProcessThrottlerTimedActivity& operator=(ActivityVariant&&);
+        const ActivityVariant& activity() const { return m_activity; }
 
     private:
         void activityTimedOut();
