@@ -97,27 +97,32 @@ class TestRunner(object):
                 incremental = self.run_test(test)
                 results = self.combine(results, incremental)
 
+                sys.stdout.write(' ')
+                result = False
                 for description, attribute in (('failed', 'failures'), ('erred', 'errors')):
                     value = getattr(incremental, attribute)
                     if not value:
                         continue
-                    sys.stdout.write(' {}\n'.format(description))
+                    sys.stdout.write('{}\n'.format(description))
                     if args.log_level <= logging.ERROR:
-                        sys.stderr.write('\n')
+                        if not result:
+                            sys.stderr.write('\n')
                         for member in value:
                             sys.stderr.write(member[1] + '\n')
-                    break
-                else:
-                    if incremental.skipped or not incremental.testsRun:
-                        chars += 8
-                        sys.stdout.write(' skipped\n')
-                    else:
-                        chars += 7
-                        sys.stdout.write(' passed\n')
+                    result = True
+                if result:
+                    continue
 
-                    if args.log_level >= logging.WARNING and sys.stdout.isatty():
-                        _, columns = Terminal.size()
-                        sys.stdout.write('\033[F\033[K' * math.ceil(chars / (columns or chars)))
+                if incremental.skipped or not incremental.testsRun:
+                    chars += 8
+                    sys.stdout.write('skipped\n')
+                else:
+                    chars += 7
+                    sys.stdout.write('passed\n')
+
+                if args.log_level >= logging.WARNING and sys.stdout.isatty():
+                    _, columns = Terminal.size()
+                    sys.stdout.write('\033[F\033[K' * math.ceil(chars / (columns or chars)))
 
         except KeyboardInterrupt:
             sys.stderr.write('\nUser interupted the program\n\n')
