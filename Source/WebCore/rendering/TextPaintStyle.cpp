@@ -149,6 +149,7 @@ TextPaintStyle computeTextSelectionPaintStyle(const TextPaintStyle& textPaintSty
         selectionPaintStyle.emphasisMarkColor = emphasisMarkForeground;
 
     if (auto pseudoStyle = renderer.selectionPseudoStyle()) {
+        selectionPaintStyle.hasExplicitlySetFillColor = pseudoStyle->hasExplicitlySetColor();
         selectionShadow = ShadowData::clone(paintInfo.forceTextColor() ? nullptr : pseudoStyle->textShadow());
         auto viewportSize = renderer.frame().view() ? renderer.frame().view()->size() : IntSize();
         float strokeWidth = pseudoStyle->computedStrokeWidth(viewportSize);
