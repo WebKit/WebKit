@@ -54,6 +54,18 @@
 		]
 	},
 	{
+		"name": "Test-import",
+		"pickable": false,
+		"headers": ["[Ii]mport", "[Ss]ync"],
+		"paths": [
+			"LayoutTests/TestExpectations",
+			"LayoutTests/imported",
+			"LayoutTests/platform/.+/TestExpectations",
+			"LayoutTests/platform/.+/imported",
+			"LayoutTests/tests-options.json"
+		]
+	},
+	{
 		"name": "Tools",
 		"pickable": true,
 		"paths": [
