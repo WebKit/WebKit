@@ -5073,7 +5073,9 @@ void WebPageProxy::getContentsAsAttributedString(CompletionHandler<void(const We
         return;
     }
 
-    sendWithAsyncReply(Messages::WebPage::GetContentsAsAttributedString(), WTFMove(completionHandler));
+    sendWithAsyncReply(Messages::WebPage::GetContentsAsAttributedString(), [completionHandler = WTFMove(completionHandler), activity = process().throttler().foregroundActivity("getContentsAsAttributedString"_s)](const WebCore::AttributedString& string) mutable {
+        completionHandler(string);
+    });
 }
 #endif
 
