@@ -455,6 +455,14 @@ private:
 
     WeakHashSet<WebsiteDataStore> m_websiteDataStores;
     HashMap<DataTaskIdentifier, Ref<API::DataTask>> m_dataTasks;
+#if PLATFORM(MAC)
+    // On macOS, we prevent suspension of the NetworkProcess to avoid kills when holding
+    // locked database files. The WebSQLiteDatabaseTracker is not functional on macOS
+    // because the network process is not allowed to talk to talk to runningboardd due
+    // to sandboxing. See rdar://112406083 & rdar://112086186 for potential long-term
+    // fixes.
+    UniqueRef<ProcessThrottlerActivity> m_backgroundActivityToPreventSuspension;
+#endif
 
 #if PLATFORM(IOS_FAMILY)
     RetainPtr<id> m_backgroundObserver;

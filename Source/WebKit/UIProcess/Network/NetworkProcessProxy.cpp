@@ -258,6 +258,9 @@ NetworkProcessProxy::NetworkProcessProxy()
     , m_customProtocolManagerClient(makeUniqueRef<API::CustomProtocolManagerClient>())
 #endif
     , m_throttler(*this, WebProcessPool::anyProcessPoolNeedsUIBackgroundAssertion())
+#if PLATFORM(MAC)
+    , m_backgroundActivityToPreventSuspension(m_throttler.backgroundActivity("Prevent suspension"_s))
+#endif
 {
     RELEASE_LOG(Process, "%p - NetworkProcessProxy::NetworkProcessProxy", this);
 
