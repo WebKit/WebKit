@@ -245,3 +245,6 @@ depends:
 - freedesktop-sdk.bst:components/zip.bst
 - freedesktop-sdk.bst:components/zstd.bst
 - freedesktop-sdk.bst:integration/mtab.bst
+- freedesktop-sdk.bst:components/x265.bst
+- freedesktop-sdk.bst:components/x265-10bits.bst
+- freedesktop-sdk.bst:components/x265-12bits.bst

@@ -22,6 +22,8 @@ sources:
   path: patches/fdo-0007-components-Bump-GLib-to-version-2.76.patch
 - kind: patch
   path: patches/fdo-0008-components-Bump-g-i-to-version-1.76.patch
+- kind: patch
+  path: patches/fdo-0009-gst-plugins-bad-Enable-x265-encoder.patch
 config:
   options:
     target_arch: '%{arch}'
