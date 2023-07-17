@@ -649,6 +649,14 @@ bool PlatformCALayerRemote::backingStoreAttached() const
     return m_properties.backingStoreAttached;
 }
 
+#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+void PlatformCALayerRemote::setCoverageRect(const FloatRect& value)
+{
+    m_properties.coverageRect = value;
+    m_properties.notePropertiesChanged(LayerChange::CoverageRectChanged);
+}
+#endif
+
 void PlatformCALayerRemote::setGeometryFlipped(bool value)
 {
     m_properties.geometryFlipped = value;

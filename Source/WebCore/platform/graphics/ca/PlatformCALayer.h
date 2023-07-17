@@ -213,6 +213,10 @@ public:
     virtual void setBackingStoreAttached(bool) = 0;
     virtual bool backingStoreAttached() const = 0;
 
+#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+    virtual void setCoverageRect(const FloatRect&) = 0;
+#endif
+
     virtual void setMinificationFilter(FilterType) = 0;
     virtual void setMagnificationFilter(FilterType) = 0;
 

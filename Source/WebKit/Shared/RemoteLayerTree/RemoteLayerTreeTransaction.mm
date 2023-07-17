@@ -169,6 +169,9 @@ RemoteLayerTreeTransaction::LayerProperties::LayerProperties(const LayerProperti
     , contentsHidden(other.contentsHidden)
     , userInteractionEnabled(other.userInteractionEnabled)
     , eventRegion(other.eventRegion)
+#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+    , coverageRect(other.coverageRect)
+#endif
 #if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
     , isSeparated(other.isSeparated)
 #if HAVE(CORE_ANIMATION_SEPARATED_PORTALS)
@@ -323,6 +326,10 @@ void RemoteLayerTreeTransaction::LayerProperties::encode(IPC::Encoder& encoder) 
     if (changedProperties & LayerChange::EventRegionChanged)
         encoder << eventRegion;
 
+#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+    if (changedProperties & LayerChange::CoverageRectChanged)
+        encoder << coverageRect;
+#endif
 #if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
     if (changedProperties & LayerChange::SeparatedChanged)
         encoder << isSeparated;
@@ -583,6 +590,12 @@ bool RemoteLayerTreeTransaction::LayerProperties::decode(IPC::Decoder& decoder, 
         result.eventRegion = WTFMove(*eventRegion);
     }
 
+#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+    if (result.changedProperties & LayerChange::CoverageRectChanged) {
+        if (!decoder.decode(result.coverageRect))
+            return false;
+    }
+#endif
 #if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
     if (result.changedProperties & LayerChange::SeparatedChanged) {
         if (!decoder.decode(result.isSeparated))
@@ -1002,6 +1015,10 @@ static void dumpChangedLayers(TextStream& ts, const RemoteLayerTreeTransaction::
         if (layerProperties.changedProperties & LayerChange::EventRegionChanged)
             ts.dumpProperty("eventRegion", layerProperties.eventRegion);
 
+#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+        if (layerProperties.changedProperties & LayerChange::CoverageRectChanged)
+            ts.dumpProperty("coverageRect", layerProperties.coverageRect);
+#endif
 #if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
         if (layerProperties.changedProperties & LayerChange::SeparatedChanged)
             ts.dumpProperty("isSeparated", layerProperties.isSeparated);

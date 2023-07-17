@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<style>
+    body { margin: 0; }
+    #test a {
+        display: block;
+        margin: 50px;
+        font-size: 30px;
+    }
+</style>
+<script src="../resources/ui-helper.js"></script>
+<body>
+<section id="test">
+</div>
+
+</section>
+
+<pre id="results"></pre>
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+let testEl = document.getElementById("test");
+for (let i = 0; i < 1000; i++) {
+    let link = document.createElement("a");
+    link.textContent = `Link ${i}`;
+    link.href = "#";
+    testEl.appendChild(link);
+}
+
+window.onload = async function () {
+    if (!window.internals)
+        return;
+
+    await UIHelper.animationFrame();
+    await UIHelper.ensureStablePresentationUpdate();
+    results.textContent = await UIHelper.getCALayerTree();
+    testEl.remove();
+
+    testRunner.notifyDone();
+};
+</script>
+</body>
+</html>
+

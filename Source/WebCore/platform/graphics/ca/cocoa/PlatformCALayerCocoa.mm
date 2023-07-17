@@ -695,6 +695,12 @@ bool PlatformCALayerCocoa::backingStoreAttached() const
     return m_backingStoreAttached;
 }
 
+#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+void PlatformCALayerCocoa::setCoverageRect(const FloatRect&)
+{
+}
+#endif
+
 bool PlatformCALayerCocoa::geometryFlipped() const
 {
     return [m_layer isGeometryFlipped];

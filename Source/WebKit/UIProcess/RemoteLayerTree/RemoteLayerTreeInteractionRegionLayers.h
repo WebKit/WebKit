@@ -35,7 +35,7 @@ OBJC_CLASS NSMutableArray;
 
 namespace WebKit {
 
-void updateLayersForInteractionRegions(const RemoteLayerTreeNode&, const RemoteLayerTreeTransaction::LayerProperties&);
+void updateLayersForInteractionRegions(const RemoteLayerTreeNode&);
 void insertInteractionRegionLayersForLayer(NSMutableArray *, CALayer *);
 
 } // namespace WebKit

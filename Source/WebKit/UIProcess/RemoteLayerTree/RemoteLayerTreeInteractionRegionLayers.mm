@@ -176,10 +176,8 @@ void insertInteractionRegionLayersForLayer(NSMutableArray *sublayers, CALayer *l
     }
 }
 
-void updateLayersForInteractionRegions(const RemoteLayerTreeNode& node, const RemoteLayerTreeTransaction::LayerProperties& properties)
+void updateLayersForInteractionRegions(const RemoteLayerTreeNode& node)
 {
-    ASSERT(properties.changedProperties & LayerChange::EventRegionChanged);
-
     CALayer *layer = node.interactionRegionsLayer();
 
     HashMap<std::pair<IntRect, InteractionRegion::Type>, CALayer *>existingLayers;
@@ -193,10 +191,14 @@ void updateLayersForInteractionRegions(const RemoteLayerTreeNode& node, const Re
     bool applyBackgroundColorForDebugging = [[NSUserDefaults standardUserDefaults] boolForKey:@"WKInteractionRegionDebugFill"];
 
     NSUInteger insertionPoint = 0;
-    for (const WebCore::InteractionRegion& region : properties.eventRegion.interactionRegions()) {
+    for (const WebCore::InteractionRegion& region : node.eventRegion().interactionRegions()) {
+        IntRect rect = region.rectInLayerCoordinates;
+
+        if (node.coverageRect() && !node.coverageRect()->intersects(rect))
+            continue;
+
         bool foundInPosition = false;
         RetainPtr<CALayer> regionLayer;
-        IntRect rect = region.rectInLayerCoordinates;
         auto key = std::make_pair(rect, region.type);
         auto interactionRegionGroupName = interactionRegionGroupNameForRegion(node.layerID(), region);
 
