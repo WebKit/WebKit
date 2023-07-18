@@ -63,6 +63,7 @@
 #import "WebAutocorrectionContext.h"
 #import "WebAutocorrectionData.h"
 #import "WebCoreArgumentCoders.h"
+#import "WebPage.h"
 #import "WebPageMessages.h"
 #import "WebPageProxyInternals.h"
 #import "WebProcessMessages.h"
@@ -229,7 +230,7 @@ WebCore::FloatRect WebPageProxy::computeLayoutViewportRect(const FloatRect& unob
         constrainedUnobscuredRect.intersect(documentRect);
 
     double minimumScale = pageClient().minimumZoomScale();
-    bool isBelowMinimumScale = displayedContentScale < minimumScale;
+    bool isBelowMinimumScale = displayedContentScale < minimumScale && !WebKit::scalesAreEssentiallyEqual(displayedContentScale, minimumScale);
     if (isBelowMinimumScale) {
         const CGFloat slope = 12;
         CGFloat factor = std::max<CGFloat>(1 - slope * (minimumScale - displayedContentScale), 0);
