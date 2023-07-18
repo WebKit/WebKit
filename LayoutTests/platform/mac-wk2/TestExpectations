@@ -1812,11 +1812,6 @@ http/tests/media/media-stream/audio-capture-and-category.https.html [ Pass Crash
 # Lack of support for WPT custom domains.
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-element/sandbox-top-navigation-escalate-privileges.tentative.sub.window.html [ Failure ]
 
-webkit.org/b/258865 fast/attachment/cocoa/wide-attachment-folder-icon.html [ Pass ImageOnlyFailure ]
-webkit.org/b/258865 fast/attachment/cocoa/wide-attachment-icon-from-file-extension.html [ Pass ImageOnlyFailure ]
-webkit.org/b/258865 fast/attachment/mac/wide-attachment-title-with-rtl.html [ Pass ImageOnlyFailure ]
-webkit.org/b/258865 fast/attachment/mac/wide-attachment-type-attribute.html [ Pass ImageOnlyFailure ]
-
 webkit.org/b/259160 http/tests/privateClickMeasurement/triggering-event-with-attribution-source-through-fetch-keepalive.html [ Pass Failure ]
 
 webkit.org/b/259228 [ Release ] fast/dom/lazy-image-loading-document-leak.html [ Pass Failure ]

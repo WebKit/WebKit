@@ -1,5 +1,5 @@
 <!DOCTYPE html><!-- webkit-test-runner [ AttachmentElementEnabled=true AttachmentWideLayoutEnabled=true ] -->
-<html>
+<html class="reftest-wait">
 <style type="text/css">
 .class1 { transform: translate(0, 2px); }
 .class2 { transform: translate(2px, 0); }
@@ -7,5 +7,9 @@
 <body>
 <attachment class="class1" type="public.data"></attachment>
 <attachment class="class2" title="Title"></attachment>
+<script src="../resources/attachment-test-utils.js"></script>
+<script>
+takeActualScreenshotWhenAttachmentsSettled();
+</script>
 </body>
 </html>

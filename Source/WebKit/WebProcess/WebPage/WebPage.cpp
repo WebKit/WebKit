@@ -8024,10 +8024,18 @@ void WebPage::updateAttachmentIcon(const String& identifier, ShareableBitmap::Ha
                     icon->paint(imageBuffer->context(), IntPoint::zero(), IntRect(IntPoint::zero(), icon->size()));
                     auto data = imageBuffer->toData("image/png"_s);
                     attachment->updateIconForWideLayout(WTFMove(data));
+                    return;
                 }
-            } else
+            } else {
                 attachment->updateIconForNarrowLayout(icon->createImage(), size);
+                return;
+            }
         }
+
+        if (attachment->isWideLayout())
+            attachment->updateIconForWideLayout({ });
+        else
+            attachment->updateIconForNarrowLayout({ }, size);
     }
 }
 
