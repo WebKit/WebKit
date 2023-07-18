@@ -6,7 +6,7 @@ layer at (0,0) size 800x600
       RenderBlock (anonymous) at (0,0) size 784x20
         RenderText {#text} at (0,0) size 163x19
           text run at (0,0) width 163: "table width includes border"
-      RenderBlock {HR} at (0,28) size 202x2 [border: (1px inset #000000)]
+      RenderBlock {HR} at (0,28) size 202x2 [color=#808080] [border: (1px inset #808080)]
       RenderTable {TABLE} at (0,38) size 200x48 [border: (10px outset #808080)]
         RenderTableSection {TBODY} at (10,10) size 180x28
           RenderTableRow {TR} at (0,2) size 180x24

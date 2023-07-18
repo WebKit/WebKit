@@ -91,4 +91,4 @@ layer at (0,0) size 785x1116
             text run at (55,0) width 91: "tablewidth.html"
         RenderText {#text} at (146,0) size 4x19
           text run at (146,0) width 4: "."
-      RenderBlock {HR} at (0,1098) size 769x2 [border: (1px inset #000000)]
+      RenderBlock {HR} at (0,1098) size 769x2 [color=#808080] [border: (1px inset #808080)]

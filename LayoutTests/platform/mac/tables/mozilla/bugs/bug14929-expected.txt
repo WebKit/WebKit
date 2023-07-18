@@ -54,8 +54,8 @@ layer at (0,0) size 800x600
                 RenderText {#text} at (2,2) size 48x18
                   text run at (2,2) width 48: "SLmail"
 layer at (8,150) size 130x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,142) size 130x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,142) size 130x2 [color=#808080] [border: (1px inset #808080)]
 layer at (8,262) size 130x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,254) size 130x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,254) size 130x2 [color=#808080] [border: (1px inset #808080)]
 layer at (8,392) size 130x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,384) size 130x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,384) size 130x2 [color=#808080] [border: (1px inset #808080)]

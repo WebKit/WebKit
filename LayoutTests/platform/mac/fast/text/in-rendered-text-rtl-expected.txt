@@ -25,5 +25,5 @@ layer at (0,0) size 800x600
             text run at (61,1) width 84 RTL: "\x{5D0}\x{5DB}\x{5DC}\x{5EA} \x{5E4}\x{5DC}\x{5E4}\x{5DC} "
         RenderText {#text} at (0,0) size 0x0
 layer at (8,94) size 784x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,86) size 784x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,86) size 784x2 [color=#808080] [border: (1px inset #808080)]
 caret: position 3 of child 0 {#text} of child 7 {SPAN} of body

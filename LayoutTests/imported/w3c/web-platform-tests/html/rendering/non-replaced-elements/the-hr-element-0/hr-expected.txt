@@ -1,7 +1,7 @@
 
 PASS display
 PASS unicodeBidi
-FAIL color assert_equals: expected "rgb(128, 128, 128)" but got "rgb(0, 0, 0)"
+PASS color
 PASS borderTopStyle
 PASS borderRightStyle
 PASS borderBottomStyle

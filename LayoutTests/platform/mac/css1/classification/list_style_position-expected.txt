@@ -50,4 +50,4 @@ layer at (0,0) size 800x600
                     text run at (14,0) width 705: "The text in this item should not behave as expected; that is, it should line up with the bullet on the left margin,"
                     text run at (0,18) width 268: "leaving no blank space beneath the bullet."
 layer at (8,100) size 784x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,92) size 784x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,92) size 784x2 [color=#808080] [border: (1px inset #808080)]

@@ -71,4 +71,4 @@ layer at (0,0) size 800x600
                       RenderText {#text} at (2,2) size 118x19
                         text run at (2,2) width 118: "100% nested table"
 layer at (8,110) size 202x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,102) size 202x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,102) size 202x2 [color=#808080] [border: (1px inset #808080)]

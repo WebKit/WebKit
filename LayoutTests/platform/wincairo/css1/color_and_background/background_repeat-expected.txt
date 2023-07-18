@@ -308,4 +308,4 @@ layer at (0,0) size 785x1993
                   text run at (449,80) width 291: "A background color is present, although if it is"
                   text run at (0,100) width 357: "visible, then the image may not have been tiled correctly."
 layer at (8,297) size 769x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,289) size 769x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,289) size 769x2 [color=#808080] [border: (1px inset #808080)]

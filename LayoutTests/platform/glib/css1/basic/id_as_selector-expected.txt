@@ -90,4 +90,4 @@ layer at (0,0) size 785x627
                   RenderText {#text} at (0,0) size 237x17
                     text run at (0,0) width 237: "This sentence should NOT be purple."
 layer at (8,175) size 769x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,167) size 769x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,167) size 769x2 [color=#808080] [border: (1px inset #808080)]

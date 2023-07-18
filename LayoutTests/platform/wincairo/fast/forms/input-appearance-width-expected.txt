@@ -6,15 +6,15 @@ layer at (0,0) size 800x600
       RenderText {#text} at (0,0) size 328x19
         text run at (0,0) width 328: "This tests that the new text fields use the correct width."
       RenderBR {BR} at (328,15) size 0x0
-      RenderTextControl {INPUT} at (2,22) size 150x22 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+      RenderTextControl {INPUT} at (2,22) size 150x22 [bgcolor=#FFFFFF] [border: (2px inset #808080)]
       RenderBR {BR} at (154,38) size 0x0
-      RenderTextControl {INPUT} at (0,48) size 200x22 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+      RenderTextControl {INPUT} at (0,48) size 200x22 [bgcolor=#FFFFFF] [border: (2px inset #808080)]
       RenderBR {BR} at (200,64) size 0x0
-      RenderTextControl {INPUT} at (2,74) size 360x22 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+      RenderTextControl {INPUT} at (2,74) size 360x22 [bgcolor=#FFFFFF] [border: (2px inset #808080)]
       RenderBR {BR} at (364,90) size 0x0
-      RenderTextControl {INPUT} at (0,100) size 200x22 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+      RenderTextControl {INPUT} at (0,100) size 200x22 [bgcolor=#FFFFFF] [border: (2px inset #808080)]
       RenderBR {BR} at (200,116) size 0x0
-      RenderTextControl {INPUT} at (2,126) size 80x22 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+      RenderTextControl {INPUT} at (2,126) size 80x22 [bgcolor=#FFFFFF] [border: (2px inset #808080)]
       RenderBR {BR} at (84,142) size 0x0
 layer at (12,33) size 146x16
   RenderBlock {DIV} at (2,3) size 146x16

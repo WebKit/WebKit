@@ -18,7 +18,7 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,56) size 784x20
         RenderText {#text} at (0,0) size 660x19
           text run at (0,0) width 660: "The rightmost two words in the Hebrew text should be selectable by dragging or double-clicking them."
-      RenderBlock {HR} at (0,92) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {HR} at (0,92) size 784x2 [color=#808080] [border: (1px inset #808080)]
       RenderBlock (anonymous) at (0,102) size 784x20
         RenderInline {SPAN} at (0,0) size 115x19
           RenderText {#text} at (0,0) size 115x19

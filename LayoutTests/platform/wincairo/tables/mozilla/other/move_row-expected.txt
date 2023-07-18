@@ -30,10 +30,10 @@ layer at (0,0) size 800x600
               RenderText {#text} at (1,1) size 41x19
                 text run at (1,1) width 41: "Row 5"
       RenderBlock (anonymous) at (0,146) size 784x26
-        RenderTextControl {INPUT} at (2,2) size 17x22 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+        RenderTextControl {INPUT} at (2,2) size 17x22 [bgcolor=#FFFFFF] [border: (2px inset #808080)]
         RenderText {#text} at (21,3) size 4x19
           text run at (21,3) width 4: " "
-        RenderTextControl {INPUT} at (27,2) size 17x22 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+        RenderTextControl {INPUT} at (27,2) size 17x22 [bgcolor=#FFFFFF] [border: (2px inset #808080)]
         RenderText {#text} at (46,3) size 4x19
           text run at (46,3) width 4: " "
         RenderButton {INPUT} at (52,2) size 32x22 [bgcolor=#F0F0F0] [border: (2px outset #F0F0F0)]

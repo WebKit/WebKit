@@ -170,4 +170,4 @@ layer at (0,0) size 785x1673
                   text run at (18,193) width 642: "'x' in this element's font, as well as solid"
                   text run at (18,241) width 112: "purple."
 layer at (8,233) size 769x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,225) size 769x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,225) size 769x2 [color=#808080] [border: (1px inset #808080)]

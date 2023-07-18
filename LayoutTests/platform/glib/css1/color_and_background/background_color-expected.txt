@@ -81,4 +81,4 @@ layer at (0,0) size 800x600
                   text run at (0,0) width 462: "This element should allow the document background to \"shine through.\" "
                   text run at (462,0) width 282: "There should be no green backgrounds here!"
 layer at (8,115) size 784x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,107) size 784x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,107) size 784x2 [color=#808080] [border: (1px inset #808080)]

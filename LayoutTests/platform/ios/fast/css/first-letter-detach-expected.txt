@@ -42,4 +42,4 @@ layer at (0,0) size 800x600
         RenderText {#text} at (8,0) size 31x19
           text run at (8,0) width 31: "ASS"
 layer at (8,100) size 784x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,92) size 784x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,92) size 784x2 [color=#808080] [border: (1px inset #808080)]

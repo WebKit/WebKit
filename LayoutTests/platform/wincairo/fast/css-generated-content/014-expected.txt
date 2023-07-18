@@ -104,4 +104,4 @@ layer at (0,0) size 785x915
             RenderText at (0,0) size 111x19
               text run at (0,0) width 111: "generated content"
 layer at (8,414) size 769x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,392) size 769x3 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,392) size 769x3 [color=#808080] [border: (1px inset #808080)]

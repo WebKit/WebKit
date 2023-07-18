@@ -519,4 +519,4 @@ layer at (0,0) size 800x600
                       text run at (0,18) width 439: "single game in the Philadelphia Warriors' 169-147 defeat of the New"
                       text run at (0,36) width 304: "York Knicks on March 2, 1962, in Hershey, Pa."
 layer at (276,313) size 250x1 clip at (0,0) size 0x0
-  RenderBlock {HR} at (2,266) size 250x1 [border: (1px inset #000000) none (1px inset #000000)]
+  RenderBlock {HR} at (2,266) size 250x1 [color=#808080] [border: (1px inset #808080) none (1px inset #808080)]

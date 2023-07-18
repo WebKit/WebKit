@@ -95,4 +95,4 @@ layer at (0,0) size 800x600
                   text run at (355,39) width 363: ", which should have no left border width or visible border"
                   text run at (25,57) width 202: "because no border style was set."
 layer at (8,100) size 784x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,92) size 784x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,92) size 784x2 [color=#808080] [border: (1px inset #808080)]

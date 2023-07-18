@@ -449,12 +449,12 @@ layer at (0,0) size 785x2031
                       RenderText {#text} at (11,11) size 156x18
                         text run at (11,11) width 156: "Nested single-cell table!"
 layer at (8,34) size 769x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,26) size 769x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,26) size 769x2 [color=#808080] [border: (1px inset #808080)]
 layer at (8,448) size 769x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,440) size 769x3 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,440) size 769x3 [color=#808080] [border: (1px inset #808080)]
 layer at (8,806) size 769x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,797) size 769x3 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,797) size 769x3 [color=#808080] [border: (1px inset #808080)]
 layer at (8,1220) size 769x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,1212) size 769x3 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,1212) size 769x3 [color=#808080] [border: (1px inset #808080)]
 layer at (8,1578) size 769x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,1569) size 769x3 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,1569) size 769x3 [color=#808080] [border: (1px inset #808080)]

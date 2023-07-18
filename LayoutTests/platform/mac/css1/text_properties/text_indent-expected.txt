@@ -134,4 +134,4 @@ layer at (0,0) size 785x1246
                   text run at (0,18) width 651: "BLOCKQUOTE element should have a text indent equal to 50% of the BODY element's width, since"
                   text run at (0,36) width 512: "BLOCKQUOTE is a child of BODY; in the second half, it is a child of TABLE."
 layer at (8,220) size 769x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,212) size 769x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,212) size 769x2 [color=#808080] [border: (1px inset #808080)]

@@ -83,10 +83,10 @@ layer at (0,0) size 785x2350
         RenderText {#text} at (0,36) size 135x17
           text run at (0,36) width 135: "Column Two is: 67%"
 layer at (8,252) size 769x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,244) size 769x3 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,244) size 769x3 [color=#808080] [border: (1px inset #808080)]
 layer at (8,948) size 769x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,940) size 769x3 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,940) size 769x3 [color=#808080] [border: (1px inset #808080)]
 layer at (8,1644) size 769x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,1636) size 769x3 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,1636) size 769x3 [color=#808080] [border: (1px inset #808080)]
 layer at (8,2340) size 769x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,2332) size 769x3 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,2332) size 769x3 [color=#808080] [border: (1px inset #808080)]

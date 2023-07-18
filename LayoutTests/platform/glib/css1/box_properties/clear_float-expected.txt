@@ -159,4 +159,4 @@ layer at (0,0) size 785x793
                     text run at (0,18) width 283: "this paragraph belongs) should be vertically"
                     text run at (0,36) width 269: "aligned with the top of the green rectangle."
 layer at (8,187) size 769x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,179) size 769x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,179) size 769x2 [color=#808080] [border: (1px inset #808080)]

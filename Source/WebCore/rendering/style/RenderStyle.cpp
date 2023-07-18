@@ -2401,24 +2401,6 @@ Color RenderStyle::colorResolvingCurrentColor(CSSPropertyID colorProperty, bool 
             return colorResolvingCurrentColor(CSSPropertyWebkitTextFillColor, visitedLink);
         }
 
-        auto borderStyle = [&] {
-            switch (colorProperty) {
-            case CSSPropertyBorderLeftColor:
-                return borderLeftStyle();
-            case CSSPropertyBorderRightColor:
-                return borderRightStyle();
-            case CSSPropertyBorderTopColor:
-                return borderTopStyle();
-            case CSSPropertyBorderBottomColor:
-                return borderBottomStyle();
-            default:
-                return BorderStyle::None;
-            }
-        }();
-
-        if (!visitedLink && (borderStyle == BorderStyle::Inset || borderStyle == BorderStyle::Outset || borderStyle == BorderStyle::Ridge || borderStyle == BorderStyle::Groove))
-            return { SRGBA<uint8_t> { 238, 238, 238 } };
-
         return visitedLink ? visitedLinkColor() : color();
     }
 

@@ -17,7 +17,7 @@ layer at (0,0) size 785x1432
         RenderBlock (floating) {DIV} at (569,0) size 200x200 [bgcolor=#FF0000]
       RenderBlock {DIV} at (0,408) size 769x200
         RenderBlock (floating) {DIV} at (569,0) size 200x200 [bgcolor=#FF0000]
-        RenderBlock {HR} at (0,0) size 569x2 [border: (1px inset #000000)]
+        RenderBlock {HR} at (0,0) size 569x2 [color=#808080] [border: (1px inset #808080)]
       RenderBlock {DIV} at (0,608) size 769x200
         RenderBlock (floating) {DIV} at (569,0) size 200x200 [bgcolor=#FF0000]
         RenderTable {TABLE} at (184,0) size 385x50 [border: (2px solid #008000)]
@@ -32,7 +32,7 @@ layer at (0,0) size 785x1432
         RenderBlock (floating) {DIV} at (569,0) size 200x200 [bgcolor=#FF0000]
       RenderBlock {DIV} at (0,1016) size 769x200
         RenderBlock (floating) {DIV} at (569,0) size 200x200 [bgcolor=#FF0000]
-        RenderBlock {HR} at (182,0) size 387x2 [border: (1px inset #000000)]
+        RenderBlock {HR} at (182,0) size 387x2 [color=#808080] [border: (1px inset #808080)]
       RenderBlock {DIV} at (0,1216) size 769x200
         RenderBlock (floating) {DIV} at (569,0) size 200x200 [bgcolor=#FF0000]
         RenderImage {IMG} at (184,0) size 385x50 [bgcolor=#008000]

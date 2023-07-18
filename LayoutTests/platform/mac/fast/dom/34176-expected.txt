@@ -379,18 +379,18 @@ layer at (0,0) size 785x1458
       RenderBlock (anonymous) at (0,1442) size 769x0
         RenderInline {B} at (0,0) size 0x0
 layer at (8,86) size 769x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,70) size 769x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,70) size 769x2 [color=#808080] [border: (1px inset #808080)]
 layer at (8,204) size 769x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,188) size 769x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,188) size 769x2 [color=#808080] [border: (1px inset #808080)]
 layer at (8,355) size 769x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,339) size 769x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,339) size 769x2 [color=#808080] [border: (1px inset #808080)]
 layer at (8,487) size 769x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,471) size 769x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,471) size 769x2 [color=#808080] [border: (1px inset #808080)]
 layer at (8,619) size 769x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,603) size 769x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,603) size 769x2 [color=#808080] [border: (1px inset #808080)]
 layer at (8,751) size 769x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,0) size 769x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,0) size 769x2 [color=#808080] [border: (1px inset #808080)]
 layer at (8,956) size 769x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,205) size 769x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,205) size 769x2 [color=#808080] [border: (1px inset #808080)]
 selection start: position 0 of child 0 {#text} of child 14 {DIV} of child 56 {B} of body
 selection end:   position 4 of child 0 {#text} of child 14 {DIV} of child 56 {B} of body

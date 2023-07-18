@@ -556,4 +556,4 @@ layer at (0,0) size 785x654
         RenderText {#text} at (0,1) size 383x17
           text run at (0,1) width 383: "Modified and used with the author\x{2019}s permission."
 layer at (8,531) size 769x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,509) size 769x3 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,509) size 769x3 [color=#808080] [border: (1px inset #808080)]

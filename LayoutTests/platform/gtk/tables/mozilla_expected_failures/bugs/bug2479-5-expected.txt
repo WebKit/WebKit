@@ -161,7 +161,7 @@ layer at (8,8) size 769x1273
                 RenderInline {LABEL} at (0,0) size 262x17
                   RenderText {#text} at (0,52) size 70x17
                     text run at (0,52) width 70: "Comment: "
-                  RenderTextControl {INPUT} at (70,49) size 192x24 [color=#000000] [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+                  RenderTextControl {INPUT} at (70,49) size 192x24 [color=#000000] [bgcolor=#FFFFFF] [border: (2px inset #808080)]
                 RenderText {#text} at (262,52) size 4x17
                   text run at (262,52) width 4: " "
                 RenderButton {INPUT} at (266,48) size 66x27 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
@@ -194,4 +194,4 @@ layer at (8,8) size 769x1273
 layer at (242,1062) size 186x18
   RenderBlock {DIV} at (3,3) size 186x18
 layer at (168,1118) size 601x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (21,1053) size 601x2 [border: (1px dotted #FFFF00)]
+  RenderBlock {HR} at (21,1053) size 601x2 [color=#808080] [border: (1px dotted #808080)]

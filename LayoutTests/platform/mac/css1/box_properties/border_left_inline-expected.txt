@@ -60,4 +60,4 @@ layer at (0,0) size 800x600
                   text run at (0,36) width 184: "thin solid purple left border. "
                   text run at (183,36) width 438: "The line-height of the parent element should not change on any line."
 layer at (8,115) size 784x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,107) size 784x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,107) size 784x2 [color=#808080] [border: (1px inset #808080)]

@@ -105,4 +105,4 @@ layer at (0,0) size 800x378
                     text run at (1,1) width 200: "Lorem ipsum dolor sit amet,"
                     text run at (1,21) width 173: "consectetuer adipiscing elit."
 layer at (8,100) size 784x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,84) size 784x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,84) size 784x2 [color=#808080] [border: (1px inset #808080)]

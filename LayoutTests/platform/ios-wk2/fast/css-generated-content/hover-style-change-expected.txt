@@ -34,4 +34,4 @@ layer at (0,0) size 800x222
           text run at (0,20) width 72: "every time "
           text run at (71,20) width 89: "like it should."
 layer at (8,36) size 784x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,28) size 784x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,28) size 784x2 [color=#808080] [border: (1px inset #808080)]

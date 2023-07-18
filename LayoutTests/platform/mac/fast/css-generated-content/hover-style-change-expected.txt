@@ -34,5 +34,5 @@ layer at (0,0) size 800x208
           text run at (0,18) width 72: "every time "
           text run at (71,18) width 89: "like it should."
 layer at (8,34) size 784x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,26) size 784x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,26) size 784x2 [color=#808080] [border: (1px inset #808080)]
 caret: position 3 of child 0 {#text} of child 1 {DIV} of body

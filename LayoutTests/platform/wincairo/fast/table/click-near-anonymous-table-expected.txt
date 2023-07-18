@@ -19,7 +19,7 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,56) size 784x20
         RenderText {#text} at (0,0) size 587x19
           text run at (0,0) width 587: "If the browser does not crash as you click to the right of each of the lines below, it passes the test."
-      RenderBlock {HR} at (0,92) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {HR} at (0,92) size 784x2 [color=#808080] [border: (1px inset #808080)]
       RenderBlock {DIV} at (0,102) size 784x80
         RenderTable at (0,0) size 166x80
           RenderTableSection (anonymous) at (0,20) size 166x40

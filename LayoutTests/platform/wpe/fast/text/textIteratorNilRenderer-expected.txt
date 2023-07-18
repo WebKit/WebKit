@@ -12,7 +12,7 @@ layer at (0,0) size 800x600
                   RenderText {#text} at (0,-1) size 4x19
                     text run at (0,0) width 4: " "
                 RenderTableCell {TD} at (150,1) size 333x25 [r=0 c=1 rs=1 cs=1]
-                  RenderTextControl {INPUT} at (0,0) size 333x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+                  RenderTextControl {INPUT} at (0,0) size 333x24 [bgcolor=#FFFFFF] [border: (2px inset #808080)]
                   RenderText {#text} at (0,0) size 0x0
                 RenderTableCell {TD} at (483,0) size 112x27 [r=0 c=2 rs=1 cs=1]
                   RenderButton {INPUT} at (0,0) size 112x27 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]

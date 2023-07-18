@@ -148,4 +148,4 @@ layer at (0,0) size 785x1729
                 RenderText {#text} at (0,0) size 238x18
                   text run at (0,0) width 238: "This element also has a class of zero."
 layer at (8,190) size 769x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,182) size 769x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,182) size 769x2 [color=#808080] [border: (1px inset #808080)]

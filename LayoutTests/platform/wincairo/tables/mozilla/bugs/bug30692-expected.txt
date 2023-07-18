@@ -16,19 +16,19 @@ layer at (0,0) size 800x600
           RenderListMarker at (-1,0) size 7x19: bullet
           RenderText {#text} at (15,0) size 169x19
             text run at (15,0) width 169: "\"width:x%\" works correctly."
-        RenderBlock {HR} at (0,28) size 784x2 [border: (1px inset #000000)]
+        RenderBlock {HR} at (0,28) size 784x2 [color=#808080] [border: (1px inset #808080)]
         RenderTable {TABLE} at (0,38) size 784x100
           RenderTableSection {TBODY} at (0,0) size 784x100
             RenderTableRow {TR} at (0,2) size 784x96
               RenderTableCell {TD} at (2,13) size 780x74 [bgcolor=#FF0000] [r=0 c=0 rs=1 cs=1]
                 RenderText {#text} at (0,0) size 0x0
-        RenderBlock {HR} at (0,146) size 784x2 [border: (1px inset #000000)]
+        RenderBlock {HR} at (0,146) size 784x2 [color=#808080] [border: (1px inset #808080)]
         RenderTable {TABLE} at (0,156) size 784x100
           RenderTableSection {TBODY} at (0,0) size 784x100
             RenderTableRow {TR} at (0,2) size 784x96
               RenderTableCell {TD} at (2,9) size 780x82 [bgcolor=#FF0000] [r=0 c=0 rs=1 cs=1]
                 RenderText {#text} at (0,0) size 0x0
-        RenderBlock {HR} at (0,264) size 784x2 [border: (1px inset #000000)]
+        RenderBlock {HR} at (0,264) size 784x2 [color=#808080] [border: (1px inset #808080)]
         RenderTable {TABLE} at (0,274) size 784x100
           RenderTableSection {TBODY} at (0,0) size 784x100
             RenderTableRow {TR} at (0,2) size 784x96
@@ -36,7 +36,7 @@ layer at (0,0) size 800x600
                 RenderBlock {P} at (1,1) size 623x76 [bgcolor=#FFFFE0]
                   RenderText {#text} at (0,0) size 216x19
                     text run at (0,0) width 216: "BUG: the height of the P is not 80%"
-        RenderBlock {HR} at (0,382) size 784x2 [border: (1px inset #000000)]
+        RenderBlock {HR} at (0,382) size 784x2 [color=#808080] [border: (1px inset #808080)]
         RenderTable {TABLE} at (0,392) size 784x100
           RenderTableSection {TBODY} at (0,0) size 784x100
             RenderTableRow {TR} at (0,2) size 784x96

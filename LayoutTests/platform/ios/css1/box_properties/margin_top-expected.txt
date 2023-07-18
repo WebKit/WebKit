@@ -135,4 +135,4 @@ layer at (0,0) size 800x1715
                   text run at (549,20) width 209: "In all other respects, the element"
                   text run at (0,40) width 116: "should be normal."
 layer at (8,166) size 784x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,158) size 784x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,158) size 784x2 [color=#808080] [border: (1px inset #808080)]

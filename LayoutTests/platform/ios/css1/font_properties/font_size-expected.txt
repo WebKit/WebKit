@@ -254,4 +254,4 @@ layer at (0,0) size 800x2817
                 RenderText {#text} at (0,0) size 686x19
                   text run at (0,0) width 686: "This sentence should be normal size, since no negative values are allowed and therefore should be ignored."
 layer at (8,337) size 784x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,329) size 784x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,329) size 784x2 [color=#808080] [border: (1px inset #808080)]

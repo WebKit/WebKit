@@ -160,4 +160,4 @@ layer at (0,0) size 800x1959
                   text run at (391,96) width 331: "There is no padding set on this paragraph"
                   text run at (0,120) width 95: "whatsoever."
 layer at (8,183) size 784x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,175) size 784x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,175) size 784x2 [color=#808080] [border: (1px inset #808080)]

@@ -94,4 +94,4 @@ layer at (0,0) size 785x779
                   text run at (172,48) width 4: " "
                   text run at (175,48) width 415: "The line spacing in the whole paragraph should be 12pt, with font-size 10pt."
 layer at (8,160) size 769x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,152) size 769x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,152) size 769x2 [color=#808080] [border: (1px inset #808080)]

@@ -66,4 +66,4 @@ layer at (0,0) size 800x600
                   text run at (614,0) width 98: "This is because"
                   text run at (0,20) width 659: "declarations marked important have more weight than normal declarations given in a STYLE attribute."
 layer at (8,113) size 784x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,105) size 784x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,105) size 784x2 [color=#808080] [border: (1px inset #808080)]

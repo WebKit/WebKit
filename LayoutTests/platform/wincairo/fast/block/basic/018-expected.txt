@@ -6,19 +6,19 @@ layer at (0,0) size 800x268
       RenderBlock {P} at (0,0) size 784x20
         RenderText {#text} at (0,0) size 265x19
           text run at (0,0) width 265: "This <hr width=\"25%\"> should be centered:"
-      RenderBlock {HR} at (293,36) size 198x2 [border: (1px inset #000000)]
+      RenderBlock {HR} at (293,36) size 198x2 [color=#808080] [border: (1px inset #808080)]
       RenderBlock {P} at (0,54) size 784x20
         RenderText {#text} at (0,0) size 187x19
           text run at (0,0) width 187: "This one should be left-aligned."
-      RenderBlock {HR} at (0,90) size 198x2 [border: (1px inset #000000)]
+      RenderBlock {HR} at (0,90) size 198x2 [color=#808080] [border: (1px inset #808080)]
       RenderBlock {P} at (0,108) size 784x20
         RenderText {#text} at (0,0) size 195x19
           text run at (0,0) width 195: "This one should be right-aligned."
-      RenderBlock {HR} at (586,144) size 198x2 [border: (1px inset #000000)]
+      RenderBlock {HR} at (586,144) size 198x2 [color=#808080] [border: (1px inset #808080)]
       RenderBlock {P} at (0,162) size 784x20
         RenderText {#text} at (0,0) size 173x19
           text run at (0,0) width 173: "This one should be centered."
-      RenderBlock {HR} at (293,198) size 198x2 [border: (1px inset #000000)]
+      RenderBlock {HR} at (293,198) size 198x2 [color=#808080] [border: (1px inset #808080)]
       RenderBlock {P} at (0,216) size 784x20
         RenderText {#text} at (0,0) size 52x19
           text run at (0,0) width 52: "(W3C: \x{201C}"

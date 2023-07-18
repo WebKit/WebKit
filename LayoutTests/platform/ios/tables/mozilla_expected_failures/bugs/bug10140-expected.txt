@@ -441,4 +441,4 @@ layer at (0,0) size 800x2991
           RenderText {#text} at (40,0) size 158x19
             text run at (40,0) width 158: "dbaron@fas.harvard.edu"
 layer at (8,2849) size 784x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,2827) size 784x3 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,2827) size 784x3 [color=#808080] [border: (1px inset #808080)]

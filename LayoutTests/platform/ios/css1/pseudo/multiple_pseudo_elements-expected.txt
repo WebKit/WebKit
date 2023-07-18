@@ -102,4 +102,4 @@ layer at (0,0) size 800x1071
                   text run at (0,106) width 114: "is recommended. "
                   text run at (113,106) width 462: "In addition, the entire first line should be in a small-caps font and green."
 layer at (8,155) size 784x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,147) size 784x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,147) size 784x2 [color=#808080] [border: (1px inset #808080)]

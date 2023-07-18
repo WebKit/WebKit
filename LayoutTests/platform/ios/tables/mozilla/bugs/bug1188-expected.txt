@@ -136,6 +136,6 @@ layer at (0,0) size 800x600
                     RenderTableRow {TR} at (0,0) size 0x1
                       RenderTableCell {TD} at (0,0) size 0x0 [r=0 c=0 rs=1 cs=1]
 layer at (8,8) size 602x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,0) size 602x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,0) size 602x2 [color=#808080] [border: (1px inset #808080)]
 layer at (270,79) size 211x14
   RenderBlock {DIV} at (6,3) size 213x15

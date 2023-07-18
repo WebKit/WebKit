@@ -81,4 +81,4 @@ layer at (0,0) size 785x655
                   text run at (567,36) width 167: "This is extra text included"
                   text run at (0,54) width 526: "for the purposes of making the paragraph long enough to have more than one line."
 layer at (8,115) size 769x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,107) size 769x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,107) size 769x2 [color=#808080] [border: (1px inset #808080)]

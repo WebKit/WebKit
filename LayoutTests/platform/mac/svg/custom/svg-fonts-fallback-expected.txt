@@ -12,13 +12,13 @@ layer at (0,0) size 800x450
           RenderText {#text} at (0,46) size 87x46
             text run at (0,46) width 87: "a \x{BE2} o"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {hr} at (0,108) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {hr} at (0,108) size 784x2 [color=#808080] [border: (1px inset #808080)]
       RenderBlock {p} at (0,126) size 784x56
         RenderInline {span} at (0,0) size 93x52
           RenderText {#text} at (0,2) size 93x52
             text run at (0,2) width 93: "a \x{BE2} o"
         RenderBR {br} at (92,30) size 1x18
-      RenderBlock {hr} at (0,198) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {hr} at (0,198) size 784x2 [color=#808080] [border: (1px inset #808080)]
       RenderBlock {p} at (0,216) size 784x112
         RenderInline {span} at (0,0) size 92x52
           RenderText {#text} at (0,2) size 92x52
@@ -28,7 +28,7 @@ layer at (0,0) size 800x450
           RenderText {#text} at (0,58) size 92x52
             text run at (0,58) width 92: "a \x{BE2} o"
         RenderText {#text} at (0,0) size 0x0
-      RenderBlock {hr} at (0,344) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {hr} at (0,344) size 784x2 [color=#808080] [border: (1px inset #808080)]
       RenderBlock {p} at (0,362) size 784x56
         RenderInline {span} at (0,0) size 113x52
           RenderText {#text} at (0,2) size 113x52

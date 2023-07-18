@@ -21,4 +21,4 @@ layer at (0,0) size 800x600
           text run at (581,18) width 5 RTL: "."
           text run at (585,18) width 199: "normal right margin of the page"
 layer at (8,60) size 784x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,52) size 784x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,52) size 784x2 [color=#808080] [border: (1px inset #808080)]

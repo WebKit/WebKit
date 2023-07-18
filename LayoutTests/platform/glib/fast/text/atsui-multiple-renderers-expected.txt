@@ -98,6 +98,6 @@ layer at (0,0) size 800x600
             text run at (1,1) width 308: "\x{E01}\x{E02}\x{E03}\x{E04}\x{E05}\x{E06}\x{E07}\x{E08}\x{E01}\x{E02}\x{E03}\x{E04}\x{E05}\x{E06}\x{E07}\x{E08}\x{E01}\x{E02}\x{E03}\x{E04}\x{E05}\x{E06}\x{E07}\x{E08}\x{E01}\x{E02}\x{E03}\x{E04}\x{E05}\x{E06}\x{E07}\x{E08}"
         RenderText {#text} at (0,0) size 0x0
 layer at (8,60) size 784x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,52) size 784x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,52) size 784x2 [color=#808080] [border: (1px inset #808080)]
 layer at (8,251) size 784x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,243) size 784x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,243) size 784x2 [color=#808080] [border: (1px inset #808080)]

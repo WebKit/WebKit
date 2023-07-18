@@ -227,4 +227,4 @@ layer at (0,0) size 785x4228
                     text run at (0,382) width 170: "interline spacing."
                 RenderText {#text} at (0,0) size 0x0
 layer at (8,214) size 769x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,206) size 769x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,206) size 769x2 [color=#808080] [border: (1px inset #808080)]

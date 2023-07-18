@@ -14,12 +14,12 @@ layer at (0,0) size 800x600
                 RenderBR {BR} at (0,20) size 0x19
                 RenderText {#text} at (0,40) size 30x19
                   text run at (0,40) width 30: "<hr>"
-              RenderBlock {HR} at (1,69) size 214x2 [border: (1px inset #000000)]
+              RenderBlock {HR} at (1,69) size 214x2 [color=#808080] [border: (1px inset #808080)]
               RenderBlock (anonymous) at (1,79) size 214x40
                 RenderBR {BR} at (0,0) size 0x19
                 RenderText {#text} at (0,20) size 92x19
                   text run at (0,20) width 92: "<hr width=30>"
-              RenderBlock {HR} at (92,127) size 32x2 [border: (1px inset #000000)]
+              RenderBlock {HR} at (92,127) size 32x2 [color=#808080] [border: (1px inset #808080)]
           RenderTableRow {TR} at (0,142) size 220x22
             RenderTableCell {TD} at (2,142) size 216x22 [bgcolor=#CCCCCC] [r=1 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 4x19
@@ -33,9 +33,9 @@ layer at (0,0) size 800x600
                 RenderBR {BR} at (0,20) size 0x19
                 RenderText {#text} at (0,40) size 30x19
                   text run at (0,40) width 30: "<hr>"
-              RenderBlock {HR} at (1,69) size 214x2 [border: (1px inset #000000)]
+              RenderBlock {HR} at (1,69) size 214x2 [color=#808080] [border: (1px inset #808080)]
               RenderBlock (anonymous) at (1,79) size 214x40
                 RenderBR {BR} at (0,0) size 0x19
                 RenderText {#text} at (0,20) size 92x19
                   text run at (0,20) width 92: "<hr width=30>"
-              RenderBlock {HR} at (92,127) size 32x2 [border: (1px inset #000000)]
+              RenderBlock {HR} at (92,127) size 32x2 [color=#808080] [border: (1px inset #808080)]

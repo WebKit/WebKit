@@ -33,11 +33,11 @@ layer at (0,0) size 800x600
                 RenderBR {BR} at (301,16) size 1x36
                 RenderText {#text} at (0,54) size 376x36
                   text run at (0,54) width 376: "Here are some form elements"
-                RenderTextControl {INPUT} at (376,66) size 192x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+                RenderTextControl {INPUT} at (376,66) size 192x24 [bgcolor=#FFFFFF] [border: (2px inset #808080)]
                 RenderBR {BR} at (568,54) size 0x36
                 RenderText {#text} at (0,91) size 334x36
                   text run at (0,91) width 334: "that we can use for testing"
-                RenderTextControl {INPUT} at (334,103) size 192x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+                RenderTextControl {INPUT} at (334,103) size 192x24 [bgcolor=#FFFFFF] [border: (2px inset #808080)]
                 RenderBR {BR} at (526,91) size 0x36
                 RenderBlock {INPUT} at (2,145) size 12x12
                 RenderText {#text} at (16,128) size 73x36
@@ -96,7 +96,7 @@ layer at (0,0) size 800x600
                   RenderText {#text} at (0,0) size 531x36
                     text run at (0,0) width 531: "This is an anchor point named \"anchor1\"."
         layer at (8,283) size 769x2 clip at (0,0) size 0x0
-          RenderBlock {HR} at (0,275) size 769x2 [border: (1px inset #000000)]
+          RenderBlock {HR} at (0,275) size 769x2 [color=#808080] [border: (1px inset #808080)]
         layer at (387,370) size 186x18 scrollWidth 191
           RenderBlock {DIV} at (3,3) size 186x18
             RenderText {#text} at (0,0) size 190x17
@@ -111,7 +111,7 @@ layer at (0,0) size 800x600
                 text run at (234,0) width 0: " "
               RenderBR {BR} at (0,18) size 0x17
         layer at (8,825) size 769x2 clip at (0,0) size 0x0
-          RenderBlock {HR} at (0,817) size 769x2 [border: (1px inset #000000)]
+          RenderBlock {HR} at (0,817) size 769x2 [color=#808080] [border: (1px inset #808080)]
       RenderFrame {FRAME} at (0,540) size 800x60
         layer at (0,0) size 785x90
           RenderView at (0,0) size 785x60

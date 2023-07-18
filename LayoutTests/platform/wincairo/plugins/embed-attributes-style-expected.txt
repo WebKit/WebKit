@@ -8,7 +8,7 @@ layer at (0,0) size 800x600
           text run at (0,0) width 378: "This page tests using attributes to set style on embed elements. "
           text run at (378,0) width 391: "Previous versions of WebKit supported valign and border, which"
           text run at (0,20) width 431: "didn't match IE and FF. The only special support should be for 'hidden.'"
-      RenderBlock {HR} at (0,56) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {HR} at (0,56) size 784x2 [color=#808080] [border: (1px inset #808080)]
       RenderBlock {DIV} at (0,66) size 784x0
       RenderBlock {DIV} at (0,66) size 784x105
         RenderText {#text} at (50,85) size 115x19

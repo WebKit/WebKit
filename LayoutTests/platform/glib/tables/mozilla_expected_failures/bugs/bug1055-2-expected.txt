@@ -164,6 +164,6 @@ layer at (0,0) size 785x895
         RenderText {#text} at (0,0) size 163x17
           text run at (0,0) width 163: "Auteur : Daniel Glazman."
 layer at (203,161) size 573x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (1,9) size 573x2 [bgcolor=#808080] [border: (1px solid #808080)]
+  RenderBlock {HR} at (1,9) size 573x2 [color=#808080] [bgcolor=#808080] [border: (1px solid #808080)]
 layer at (203,770) size 573x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (1,9) size 573x2 [bgcolor=#808080] [border: (1px solid #808080)]
+  RenderBlock {HR} at (1,9) size 573x2 [color=#808080] [bgcolor=#808080] [border: (1px solid #808080)]

@@ -103,4 +103,4 @@ layer at (0,0) size 785x646
           text run at (24,15) width 0: " "
           text run at (0,30) width 48: "   bar"
 layer at (8,60) size 769x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,52) size 769x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,52) size 769x2 [color=#808080] [border: (1px inset #808080)]

@@ -15,7 +15,7 @@ layer at (0,0) size 800x600
             text run at (518,0) width 251: "Text shadow does not repaint correctly"
         RenderText {#text} at (769,0) size 4x19
           text run at (769,0) width 4: "."
-      RenderBlock {HR} at (0,36) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {HR} at (0,36) size 784x2 [color=#808080] [border: (1px inset #808080)]
       RenderBlock {DIV} at (30,68) size 724x21
         RenderInline {SPAN} at (0,0) size 199x20 [bgcolor=#C0C0C0]
           RenderText {#text} at (0,0) size 199x20

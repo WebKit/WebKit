@@ -22,4 +22,4 @@ layer at (0,0) size 210x35 clip at (0,0) size 210x20 scrollX 39 scrollWidth 249
     RenderText {#text} at (0,0) size 249x19
       text run at (0,0) width 249: "Seals and caribou live in the arctic, too"
 layer at (0,43) size 800x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,43) size 800x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,43) size 800x2 [color=#808080] [border: (1px inset #808080)]

@@ -28,6 +28,6 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 513x17
           text run at (0,0) width 513: "200*150 =3000twips 100*150=1500twips 180*150=1200twips sum: 5700 twips"
 layer at (8,133) size 204x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,125) size 204x3 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,125) size 204x3 [color=#808080] [border: (1px inset #808080)]
 layer at (8,143) size 385x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,135) size 385x3 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,135) size 385x3 [color=#808080] [border: (1px inset #808080)]

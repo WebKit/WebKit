@@ -75,7 +75,7 @@ layer at (0,0) size 800x600
                   RenderText {#text} at (0,0) size 4x18
                     text run at (0,1) width 4: " "
                 RenderTableCell {TD} at (153,0) size 458x59 [r=0 c=1 rs=1 cs=1]
-                  RenderTextControl {INPUT} at (2,2) size 453x24 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+                  RenderTextControl {INPUT} at (2,2) size 453x24 [bgcolor=#FFFFFF] [border: (2px inset #808080)]
                   RenderBR {BR} at (457,5) size 0x17
                   RenderButton {INPUT} at (105,30) size 111x27 [color=#2E3436] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
                     RenderBlock (anonymous) at (8,4) size 94x18

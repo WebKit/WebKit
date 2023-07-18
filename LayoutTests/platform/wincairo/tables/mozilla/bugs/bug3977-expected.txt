@@ -37,7 +37,7 @@ layer at (0,0) size 785x965
             RenderTableCell {TH} at (118,227) size 478x25 [border: (1px inset #808080)] [r=3 c=1 rs=1 cs=2]
               RenderText {#text} at (208,2) size 62x20
                 text run at (208,3) width 62: "text links"
-      RenderBlock {HR} at (0,273) size 769x2 [border: (1px inset #000000)]
+      RenderBlock {HR} at (0,273) size 769x2 [color=#808080] [border: (1px inset #808080)]
       RenderBlock {P} at (0,291) size 769x20
         RenderInline {B} at (0,0) size 461x19
           RenderText {#text} at (0,0) size 461x19
@@ -77,7 +77,7 @@ layer at (0,0) size 785x965
             RenderTableCell {TH} at (113,161) size 474x24 [border: (1px inset #808080)] [r=3 c=1 rs=1 cs=2]
               RenderText {#text} at (205,2) size 63x19
                 text run at (205,2) width 63: "text links"
-      RenderBlock {HR} at (0,524) size 769x2 [border: (1px inset #000000)]
+      RenderBlock {HR} at (0,524) size 769x2 [color=#808080] [border: (1px inset #808080)]
       RenderBlock {P} at (0,542) size 769x20
         RenderInline {B} at (0,0) size 493x19
           RenderText {#text} at (0,0) size 493x19
@@ -105,7 +105,7 @@ layer at (0,0) size 785x965
               RenderBlock {P} at (2,74) size 455x20
                 RenderText {#text} at (0,0) size 68x19
                   text run at (0,0) width 68: "etc., etc. ..."
-      RenderBlock {HR} at (0,767) size 769x2 [border: (1px inset #000000)]
+      RenderBlock {HR} at (0,767) size 769x2 [color=#808080] [border: (1px inset #808080)]
       RenderBlock {P} at (0,785) size 769x20
         RenderInline {B} at (0,0) size 509x19
           RenderText {#text} at (0,0) size 509x19

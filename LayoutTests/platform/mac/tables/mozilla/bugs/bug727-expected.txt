@@ -18,4 +18,4 @@ layer at (0,0) size 800x600
                 text run at (2,2) width 133: "Thursday September"
                 text run at (2,20) width 78: "17th, 1998>"
 layer at (304,8) size 192x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (296,0) size 192x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (296,0) size 192x2 [color=#808080] [border: (1px inset #808080)]

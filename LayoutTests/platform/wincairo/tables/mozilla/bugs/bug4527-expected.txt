@@ -36,7 +36,7 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (126,70) size 239x26 [bgcolor=#CCCCCC] [r=1 c=1 rs=1 cs=1]
               RenderImage {IMG} at (0,0) size 232x25
             RenderTableCell {TD} at (364,70) size 114x26 [bgcolor=#CCCCCC] [r=1 c=2 rs=1 cs=1]
-              RenderTextControl {INPUT} at (3,2) size 81x22 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
+              RenderTextControl {INPUT} at (3,2) size 81x22 [bgcolor=#FFFFFF] [border: (2px inset #808080)]
               RenderImage {INPUT} at (85,6) size 26x18
             RenderTableCell {TD} at (477,70) size 137x26 [bgcolor=#CCCCCC] [r=1 c=3 rs=1 cs=1]
               RenderBlock {INPUT} at (5,3) size 13x13

@@ -133,4 +133,4 @@ layer at (0,0) size 785x1171
                   text run at (415,18) width 332: "The text has been right-aligned in order to make the"
                   text run at (527,36) width 220: "lack of right padding easier to see."
 layer at (8,145) size 769x2 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,137) size 769x2 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,137) size 769x2 [color=#808080] [border: (1px inset #808080)]

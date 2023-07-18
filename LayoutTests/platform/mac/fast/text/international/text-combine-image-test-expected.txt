@@ -122,12 +122,12 @@ layer at (169,0) size 631x600
       RenderBlock (anonymous) at (623,0) size 0x584
         RenderInline {SPAN} at (0,0) size 0x0
 layer at (790,8) size 2x584 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,0) size 2x584 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,0) size 2x584 [color=#808080] [border: (1px inset #808080)]
 layer at (724,8) size 2x584 clip at (0,0) size 0x0
-  RenderBlock {HR} at (66,0) size 2x584 [border: (1px inset #000000)]
+  RenderBlock {HR} at (66,0) size 2x584 [color=#808080] [border: (1px inset #808080)]
 layer at (658,8) size 2x584 clip at (0,0) size 0x0
-  RenderBlock {HR} at (132,0) size 2x584 [border: (1px inset #000000)]
+  RenderBlock {HR} at (132,0) size 2x584 [color=#808080] [border: (1px inset #808080)]
 layer at (595,8) size 2x584 clip at (0,0) size 0x0
-  RenderBlock {HR} at (195,0) size 2x584 [border: (1px inset #000000)]
+  RenderBlock {HR} at (195,0) size 2x584 [color=#808080] [border: (1px inset #808080)]
 layer at (473,8) size 2x584 clip at (0,0) size 0x0
-  RenderBlock {HR} at (0,0) size 2x584 [border: (1px inset #000000)]
+  RenderBlock {HR} at (0,0) size 2x584 [color=#808080] [border: (1px inset #808080)]
