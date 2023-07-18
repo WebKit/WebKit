@@ -87,6 +87,9 @@ void VideoTrackPrivateGStreamer::capsChanged(const String& streamId, const GRefP
     ASSERT(isMainThread());
     updateConfigurationFromCaps(caps);
 
+    if (!m_player)
+        return;
+
     auto codec = m_player->codecForStreamId(streamId);
     if (codec.isEmpty())
         return;
