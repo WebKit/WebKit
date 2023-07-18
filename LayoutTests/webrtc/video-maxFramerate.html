@@ -1,0 +1,57 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Testing macFramerate</title>
+        <script src="../resources/testharness.js"></script>
+        <script src="../resources/testharnessreport.js"></script>
+    </head>
+    <body>
+        <video id="video" autoplay=""></video>
+        <canvas id="canvas" width="640" height="480"></canvas>
+        <script src ="routines.js"></script>
+        <script>
+var pc1, pc2;
+promise_test(async (test) => {
+    const localStream = await navigator.mediaDevices.getUserMedia({video:true});
+    const stream = await new Promise((resolve, reject) => {
+        createConnections((firstConnection) => {
+            pc1 = firstConnection;
+            const sender = firstConnection.addTrack(localStream.getVideoTracks()[0], localStream);
+        }, (secondConnection) => {
+            pc2 = secondConnection;
+            secondConnection.ontrack = (trackEvent) => {
+                resolve(trackEvent.streams[0]);
+            };
+        });
+        setTimeout(() => reject("Test timed out"), 5000);
+    });
+
+    video.srcObject = stream;
+    await video.play();
+
+    let settings = stream.getVideoTracks()[0].getSettings();
+    assert_equals(settings.width, 640, "remote track settings width");
+    assert_equals(settings.height, 480, "remote track settings height");
+
+    let counter = 0;
+    while (++counter < 100 && settings.frameRate < 5) {
+        await new Promise(resolve => setTimeout(resolve, 50));
+        settings = stream.getVideoTracks()[0].getSettings();
+    }
+    assert_greater_than(settings.frameRate, 5, "remote track settings frame rate");
+
+    const parameters = pc1.getSenders()[0].getParameters();
+    parameters.encodings[0].maxFramerate = 1;
+    await pc1.getSenders()[0].setParameters(parameters);
+
+    counter = 0;
+    while (++counter < 100 && settings.frameRate > 4) {
+        await new Promise(resolve => setTimeout(resolve, 50));
+        settings = stream.getVideoTracks()[0].getSettings();
+    }
+    assert_less_than(settings.frameRate, 4, "remote track settings reduced frame rate");
+}, "Testing that maxFramerate has an effect");
+        </script>
+    </body>
+</html>

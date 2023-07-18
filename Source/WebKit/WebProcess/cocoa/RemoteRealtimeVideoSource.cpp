@@ -86,6 +86,18 @@ Ref<RealtimeMediaSource> RemoteRealtimeVideoSource::clone()
 
 void RemoteRealtimeVideoSource::remoteVideoFrameAvailable(VideoFrame& frame, VideoFrameTimeMetadata metadata)
 {
+    MediaTime sampleTime = frame.presentationTime();
+
+    auto frameTime = sampleTime.toDouble();
+    m_observedFrameTimeStamps.append(frameTime);
+    m_observedFrameTimeStamps.removeAllMatching([&](auto time) {
+        return time <= frameTime - 2;
+    });
+
+    auto interval = m_observedFrameTimeStamps.last() - m_observedFrameTimeStamps.first();
+    if (interval > 1)
+        m_observedFrameRate = (m_observedFrameTimeStamps.size() / interval);
+
     setIntrinsicSize(expandedIntSize(frame.presentationSize()));
     videoFrameAvailable(frame, metadata);
 }

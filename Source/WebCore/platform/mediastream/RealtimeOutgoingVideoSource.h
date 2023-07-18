@@ -130,6 +130,7 @@ private:
 
     void sourceMutedChanged();
     void sourceEnabledChanged();
+    void startObservingVideoFrames();
 
     // MediaStreamTrackPrivate::Observer API
     void trackMutedChanged(MediaStreamTrackPrivate&) final { sourceMutedChanged(); }
@@ -152,6 +153,8 @@ private:
     bool m_muted { false };
     uint32_t m_width { 0 };
     uint32_t m_height { 0 };
+    std::optional<double> m_maxFrameRate;
+    bool m_isObservingVideoFrames { false };
 
 #if !RELEASE_LOG_DISABLED
     Ref<const Logger> m_logger;
