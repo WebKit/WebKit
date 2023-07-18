@@ -94,5 +94,18 @@ bool RemoteScrollbarsController::shouldDrawIntoScrollbarLayer(WebCore::Scrollbar
     return scrollbar.isCustomScrollbar() || scrollbar.isMockScrollbar();
 }
 
+void RemoteScrollbarsController::setScrollbarMinimumThumbLength(WebCore::ScrollbarOrientation orientation, int minimumThumbLength)
+{
+    if (orientation == WebCore::ScrollbarOrientation::Horizontal)
+        m_horizontalMinimumThumbLength = minimumThumbLength;
+    else
+        m_verticalMinimumThumbLength = minimumThumbLength;
+}
+
+int RemoteScrollbarsController::minimumThumbLength(WebCore::ScrollbarOrientation orientation)
+{
+    return orientation == WebCore::ScrollbarOrientation::Horizontal ? m_horizontalMinimumThumbLength : m_verticalMinimumThumbLength;
+}
+
 }
 #endif // PLATFORM(MAC)

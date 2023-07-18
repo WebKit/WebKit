@@ -165,6 +165,7 @@ public:
     void sendScrollingTreeNodeDidScroll();
     
     void scrollingTreeNodeScrollbarVisibilityDidChange(WebCore::ScrollingNodeID, WebCore::ScrollbarOrientation, bool);
+    void scrollingTreeNodeScrollbarMinimumThumbLengthDidChange(WebCore::ScrollingNodeID, WebCore::ScrollbarOrientation, int);
 
 protected:
     RemoteScrollingTree* scrollingTree() const { return m_scrollingTree.get(); }

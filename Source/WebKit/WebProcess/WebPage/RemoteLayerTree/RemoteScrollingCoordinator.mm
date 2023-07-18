@@ -44,6 +44,7 @@
 #import <WebCore/Page.h>
 #import <WebCore/RenderLayerCompositor.h>
 #import <WebCore/RenderView.h>
+#import <WebCore/ScrollbarsController.h>
 #import <WebCore/ScrollingStateFrameScrollingNode.h>
 #import <WebCore/ScrollingTreeFixedNodeCocoa.h>
 #import <WebCore/ScrollingTreeStickyNodeCocoa.h>
@@ -186,9 +187,24 @@ WheelEventHandlingResult RemoteScrollingCoordinator::handleWheelEventForScrollin
     return WheelEventHandlingResult::handled();
 }
 
-void RemoteScrollingCoordinator::scrollingTreeNodeScrollbarVisibilityDidChange(ScrollingNodeID nodeID, WebCore::ScrollbarOrientation orientation, bool isVisible)
+void RemoteScrollingCoordinator::scrollingTreeNodeScrollbarVisibilityDidChange(ScrollingNodeID nodeID, ScrollbarOrientation orientation, bool isVisible)
 {
-    AsyncScrollingCoordinator::scrollingTreeNodeScrollbarVisibilityDidChange(nodeID, orientation, isVisible);
+    auto* frameView = frameViewForScrollingNode(nodeID);
+    if (!frameView)
+        return;
+
+    if (auto* scrollableArea = frameView->scrollableAreaForScrollingNodeID(nodeID))
+        scrollableArea->scrollbarsController().setScrollbarVisibilityState(orientation, isVisible);
+}
+
+void RemoteScrollingCoordinator::scrollingTreeNodeScrollbarMinimumThumbLengthDidChange(ScrollingNodeID nodeID, ScrollbarOrientation orientation, int minimumThumbLength)
+{
+    auto* frameView = frameViewForScrollingNode(nodeID);
+    if (!frameView)
+        return;
+
+    if (auto* scrollableArea = frameView->scrollableAreaForScrollingNodeID(nodeID))
+        scrollableArea->scrollbarsController().setScrollbarMinimumThumbLength(orientation, minimumThumbLength);
 }
 
 } // namespace WebKit

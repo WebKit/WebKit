@@ -134,6 +134,7 @@ public:
     virtual String scrollbarStateForOrientation(ScrollbarOrientation) const { return ""_s; }
     
     void scrollbarVisibilityDidChange(ScrollbarOrientation, bool);
+    void scrollbarMinimumThumbLengthDidChange(ScrollbarOrientation, int);
 
 protected:
     ScrollingTreeScrollingNode(ScrollingTree&, ScrollingNodeType, ScrollingNodeID);
