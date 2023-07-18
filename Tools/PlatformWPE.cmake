@@ -51,6 +51,12 @@ if (ENABLE_COG)
         set(COG_MESON_BUILDTYPE debugoptimized)
     endif ()
 
+    if (ENABLE_SANITIZERS)
+        set(COG_MESON_SANITIZE_OPTION "${ENABLE_SANITIZERS}")
+    else ()
+        set(COG_MESON_SANITIZE_OPTION "none")
+    endif ()
+
     ExternalProject_Add(cog
         GIT_REPOSITORY "${WPE_COG_REPO}"
         GIT_TAG "${WPE_COG_TAG}"
@@ -62,6 +68,7 @@ if (ENABLE_COG)
             --pkg-config-path ${WPE_COG_PKG_CONFIG_PATH}
             -Dwpe_api=${WPE_API_VERSION}
             -Dplatforms=${WPE_COG_PLATFORMS}
+            -Db_sanitize=${COG_MESON_SANITIZE_OPTION}
         BUILD_COMMAND
             meson compile -C <BINARY_DIR>
         INSTALL_COMMAND "")
