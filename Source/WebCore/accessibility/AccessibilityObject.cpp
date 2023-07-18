@@ -405,39 +405,32 @@ std::optional<SimpleRange> AccessibilityObject::misspellingRange(const SimpleRan
     return std::nullopt;
 }
 
-bool AccessibilityObject::isNodeForComposition(const Editor& editor) const
-{
-    WeakPtr compositionNode = editor.compositionNode();
-    if (!compositionNode)
-        return false;
-
-    WeakPtr cache = axObjectCache();
-    if (!cache)
-        return false;
-
-    if (auto* compositionObject = cache->textCompositionObjectForNode(*compositionNode))
-        return compositionObject->objectID() == objectID();
-
-    return false;
-}
-
-std::optional<CharacterRange> AccessibilityObject::textInputMarkedRange() const
+AXTextMarkerRange AccessibilityObject::textInputMarkedTextMarkerRange() const
 {
     WeakPtr node = this->node();
     if (!node)
-        return std::nullopt;
+        return { };
 
     auto* frame = node->document().frame();
     if (!frame)
-        return std::nullopt;
+        return { };
+
+    auto* cache = axObjectCache();
+    if (!cache)
+        return { };
 
     auto& editor = frame->editor();
-    auto range = editor.compositionRange();
-    if (!range || !isNodeForComposition(editor))
-        return std::nullopt;
+    auto* object = cache->getOrCreate(editor.compositionNode());
+    if (!object)
+        return { };
 
-    auto scope = makeRangeSelectingNodeContents(*node);
-    return characterRange(scope, *range);
+    if (auto* observableObject = object->observableObject())
+        object = observableObject;
+
+    if (object->objectID() != objectID())
+        return { };
+
+    return { editor.compositionRange() };
 }
 
 unsigned AccessibilityObject::blockquoteLevel() const

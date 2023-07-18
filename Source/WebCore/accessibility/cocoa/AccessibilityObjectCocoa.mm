@@ -334,11 +334,11 @@ RetainPtr<NSArray> AccessibilityObject::contentForRange(const SimpleRange& range
         if (it.text().length()) {
             auto listMarkerText = listMarkerTextForNodeAndPosition(&node, makeContainerOffsetPosition(it.range().start));
             if (!listMarkerText.isEmpty()) {
-                if (auto attrString = attributedStringCreate(&node, listMarkerText, SpellCheck::No))
+                if (auto attrString = attributedStringCreate(&node, listMarkerText, it.range(), SpellCheck::No))
                     [result addObject:attrString.get()];
             }
 
-            if (auto attrString = attributedStringCreate(&node, it.text(), spellCheck))
+            if (auto attrString = attributedStringCreate(&node, it.text(), it.range(), spellCheck))
                 [result addObject:attrString.get()];
         } else {
             if (Node* replacedNode = it.node()) {

@@ -499,6 +499,11 @@ void AccessibilityUIElement::resetSelectedTextMarkerRange()
 {
 }
 
+AccessibilityTextMarkerRange AccessibilityUIElement::textInputMarkedTextMarkerRange() const
+{
+    return nullptr;
+}
+
 int AccessibilityUIElement::textMarkerRangeLength(AccessibilityTextMarkerRange* range)
 {
     id textMarkers = range->platformTextMarkerRange();

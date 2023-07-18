@@ -988,7 +988,7 @@ public:
     bool isStaticText() const { return roleValue() == AccessibilityRole::StaticText; }
     virtual bool hasUnderline() const = 0;
     virtual bool hasHighlighting() const = 0;
-    virtual std::optional<CharacterRange> textInputMarkedRange() const = 0;
+    virtual AXTextMarkerRange textInputMarkedTextMarkerRange() const = 0;
 
     virtual bool supportsDatetimeAttribute() const = 0;
     virtual String datetimeAttributeValue() const = 0;

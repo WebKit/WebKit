@@ -300,6 +300,7 @@ public:
     bool setSelectedTextMarkerRange(AccessibilityTextMarkerRange*);
     bool replaceTextInRange(JSStringRef, int position, int length);
     bool insertText(JSStringRef);
+    AccessibilityTextMarkerRange textInputMarkedTextMarkerRange() const;
 
     JSRetainPtr<JSStringRef> stringForTextMarkerRange(AccessibilityTextMarkerRange*);
     JSRetainPtr<JSStringRef> attributedStringForTextMarkerRange(AccessibilityTextMarkerRange*);

@@ -488,6 +488,10 @@ using namespace WebCore;
 #define NSAccessibilityTextInputMarkedRangeAttribute @"AXTextInputMarkedRange"
 #endif
 
+#ifndef NSAccessibilityTextInputMarkedTextMarkerRangeAttribute
+#define NSAccessibilityTextInputMarkedTextMarkerRangeAttribute @"AXTextInputMarkedTextMarkerRange"
+#endif
+
 @implementation WebAccessibilityObjectWrapper
 
 - (void)detach
@@ -919,6 +923,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         NSAccessibilityEditableAncestorAttribute,
         NSAccessibilityHighestEditableAncestorAttribute,
         NSAccessibilityTextInputMarkedRangeAttribute,
+        NSAccessibilityTextInputMarkedTextMarkerRangeAttribute,
     ];
     static NeverDestroyed spinButtonCommonAttributes = [] {
         auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:attributes.get().get()]);
@@ -2249,8 +2254,14 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         return [NSNumber numberWithBool: backingObject->isIndeterminate()];
 
     if ([attributeName isEqualToString:NSAccessibilityTextInputMarkedRangeAttribute]) {
-        auto range = backingObject->textInputMarkedRange();
-        return range ? [NSValue valueWithRange:*range] : nil;
+        auto range = backingObject->textInputMarkedTextMarkerRange();
+        auto nsRange = range.nsRange();
+        return range && nsRange ? [NSValue valueWithRange:*nsRange] : nil;
+    }
+
+    if ([attributeName isEqualToString:NSAccessibilityTextInputMarkedTextMarkerRangeAttribute]) {
+        auto range = backingObject->textInputMarkedTextMarkerRange();
+        return range ? range.platformData().bridgingAutorelease() : nil;
     }
 
     return nil;

@@ -13,15 +13,17 @@
             var element = accessibilityController.accessibleElementById("editable");
 
             // Test with composition and no attributes
-            textInputController.setMarkedText("testing");
-            var attrString = element.attributedStringForRange(0, 7);
+            textInputController.setMarkedText("test");
+            var attrString = element.attributedStringForRange(0, 4);
             shouldBe("attrString.indexOf('AXTextCompletion = 1')", "-1");
 
             // Test with composition and attributes
-            textInputController.setMarkedText("favorite", 0, 8, false, undefined, [
-                { from: "4", length: "4", annotation: "NSTextCompletion" }
+            const message = " message";
+            textInputController.unmarkText();
+            textInputController.setMarkedText(message, 4, message.length, false, undefined, [
+                { from: "4", length: message.length, annotation: "NSTextCompletion" }
             ]);
-            attrString = element.attributedStringForRange(0, 8);
+            attrString = element.attributedStringForRange(0, 4 + message.length);
             shouldBeTrue("attrString.indexOf('AXTextCompletion = 1') != -1");
         }
     </script>

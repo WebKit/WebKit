@@ -155,6 +155,7 @@ public:
     operator bool() const { return m_start && m_end; }
     operator VisiblePositionRange() const;
     std::optional<SimpleRange> simpleRange() const;
+    std::optional<CharacterRange> characterRange() const;
 
 #if PLATFORM(MAC)
     RetainPtr<AXTextMarkerRangeRef> platformData() const;

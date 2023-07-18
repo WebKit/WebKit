@@ -1600,6 +1600,7 @@ accessibility/mac/isolated-tree-mode-on-off.html [ Skip ]
 
 # Requires (INLINE_PREDICTIONS)
 accessibility/mac/attributed-string/attributed-string-has-completion-annotation.html [ Skip ]
+accessibility/mac/text-input-session-notifications.html [ Skip ]
 
 webkit.org/b/202064 webaudio/silent-audio-interrupted-in-background.html [ Pass Crash ]
 

@@ -241,6 +241,7 @@
     undefined resetSelectedTextMarkerRange();
     boolean replaceTextInRange(DOMString string, long position, long length);
     boolean insertText(DOMString text);
+    AccessibilityTextMarkerRange textInputMarkedTextMarkerRange();
     AccessibilityTextMarker startTextMarkerForTextMarkerRange(AccessibilityTextMarkerRange range);
     AccessibilityTextMarker endTextMarkerForTextMarkerRange(AccessibilityTextMarkerRange range);
     AccessibilityTextMarker endTextMarkerForBounds(long x, long y, long width, long height);

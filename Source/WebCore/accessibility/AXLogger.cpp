@@ -645,6 +645,12 @@ TextStream& operator<<(TextStream& stream, AXObjectCache::AXNotification notific
     case AXObjectCache::AXNotification::AXDraggingExitedDropZone:
         stream << "AXDraggingExitedDropZone";
         break;
+    case AXObjectCache::AXNotification::AXTextCompositionBegan:
+        stream << "AXTextCompositionBegan";
+        break;
+    case AXObjectCache::AXNotification::AXTextCompositionEnded:
+        stream << "AXTextCompositionEnded";
+        break;
     }
 
     return stream;

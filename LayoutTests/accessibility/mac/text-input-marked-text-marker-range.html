@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<input id="editable" type="text">
+<script type="text/javascript">
+description("This test ensures that the input method marked range is available to accessibility clients as text marker range.");
+editable.focus();
+if (window.textInputController && window.accessibilityController) {
+    var element = accessibilityController.accessibleElementById("editable");
+    
+    var text = element.stringForTextMarkerRange(element.textInputMarkedTextMarkerRange());
+    shouldBeTrue("!text");
+    
+    textInputController.setMarkedText("test");
+    text = element.stringForTextMarkerRange(element.textInputMarkedTextMarkerRange());
+    shouldBe("text", "'test'");
+
+    textInputController.unmarkText();
+    text = element.stringForTextMarkerRange(element.textInputMarkedTextMarkerRange());
+    shouldBeTrue("!text");
+    shouldBe("element.stringValue", "'AXValue: test'");
+
+    textInputController.setMarkedText(" message", 4, " message".length);
+    text = element.stringForTextMarkerRange(element.textInputMarkedTextMarkerRange());
+    shouldBe("text", "' message'");
+    shouldBe("element.stringValue", "'AXValue: test message'");
+}
+</script>
+</body>
+</html>

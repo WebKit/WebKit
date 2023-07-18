@@ -184,6 +184,8 @@ private:
     void attachWrapper(AccessibilityObject*);
 
 public:
+    enum class CompositionState : uint8_t { Started, InProgress, Ended };
+
     void onPageActivityStateChange(OptionSet<ActivityState>);
     void setPageActivityState(OptionSet<ActivityState> state) { m_pageActivityState = state; }
     OptionSet<ActivityState> pageActivityState() const { return m_pageActivityState; }
@@ -198,7 +200,7 @@ public:
     void onTextSecurityChanged(HTMLInputElement&);
     void onTitleChange(Document&);
     void onValidityChange(Element&);
-    void onTextCompositionChange(Node&);
+    void onTextCompositionChange(Node&, CompositionState, bool);
     void valueChanged(Element*);
     void checkedStateChanged(Node*);
     void autofillTypeChanged(Node*);
@@ -367,6 +369,8 @@ public:
         AXSelectedTextChanged,
         AXSetSizeChanged,
         AXTableHeadersChanged,
+        AXTextCompositionBegan,
+        AXTextCompositionEnded,
         AXURLChanged,
         AXValueChanged,
         AXScrolledToAnchor,
@@ -462,8 +466,6 @@ public:
     // Returns the IDs of the objects that relate to the given object with the specified relationship.
     std::optional<Vector<AXID>> relatedObjectIDsFor(const AXCoreObject&, AXRelationType);
     void updateRelations(Element&, const QualifiedName&);
-
-    AccessibilityObject* textCompositionObjectForNode(Node&);
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     void scheduleObjectRegionsUpdate(bool scheduleImmediately = false) { m_geometryManager->scheduleObjectRegionsUpdate(scheduleImmediately); }
@@ -738,7 +740,7 @@ inline void AXObjectCache::onSelectedChanged(Node*) { }
 inline void AXObjectCache::onTextSecurityChanged(HTMLInputElement&) { }
 inline void AXObjectCache::onTitleChange(Document&) { }
 inline void AXObjectCache::onValidityChange(Element&) { }
-inline void AXObjectCache::onTextCompositionChange(Node&) { }
+inline void AXObjectCache::onTextCompositionChange(Node&, CompositionState, bool) { }
 inline void AXObjectCache::valueChanged(Element*) { }
 inline void AXObjectCache::onFocusChange(Node*, Node*) { }
 inline void AXObjectCache::onPageActivityStateChange(OptionSet<ActivityState>) { }
@@ -790,7 +792,6 @@ inline void AXObjectCache::updateLoadingProgress(double) { }
 inline SimpleRange AXObjectCache::rangeForNodeContents(Node& node) { return makeRangeSelectingNodeContents(node); }
 inline std::optional<Vector<AXID>> AXObjectCache::relatedObjectIDsFor(const AXCoreObject&, AXRelationType) { return std::nullopt; }
 inline void AXObjectCache::updateRelations(Element&, const QualifiedName&) { }
-inline AccessibilityObject* AXObjectCache::textCompositionObjectForNode(Node&) { return nullptr; }
 inline void AXObjectCache::remove(AXID) { }
 inline void AXObjectCache::remove(RenderObject*) { }
 inline void AXObjectCache::remove(Node&) { }

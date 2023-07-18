@@ -2177,14 +2177,14 @@ void Editor::setComposition(const String& text, SetCompositionMode mode)
     else
         selectComposition();
 
-    auto* previousCompositionNode = compositionNode();
+    RefPtr previousCompositionNode = m_compositionNode;
     m_compositionNode = nullptr;
     m_customCompositionUnderlines.clear();
     m_customCompositionHighlights.clear();
     m_customCompositionAnnotations.clear();
 
     if (auto* cache = m_document.existingAXObjectCache(); cache && previousCompositionNode)
-        cache->onTextCompositionChange(*previousCompositionNode);
+        cache->onTextCompositionChange(*previousCompositionNode, AXObjectCache::CompositionState::Ended, false);
 
     if (m_document.selection().isNone())
         return;
@@ -2282,7 +2282,7 @@ void Editor::setComposition(const String& text, const Vector<CompositionUnderlin
             target->dispatchEvent(CompositionEvent::create(eventNames().compositionendEvent, document().windowProxy(), text));
     }
 
-    auto* previousCompositionNode = compositionNode();
+    RefPtr previousCompositionNode = m_compositionNode;
     m_compositionNode = nullptr;
     m_customCompositionUnderlines.clear();
     m_customCompositionHighlights.clear();
@@ -2330,11 +2330,14 @@ void Editor::setComposition(const String& text, const Vector<CompositionUnderlin
     }
 
     if (auto* cache = m_document.existingAXObjectCache()) {
-        auto* currentCompositionNode = compositionNode();
-        if (previousCompositionNode && previousCompositionNode != currentCompositionNode)
-            cache->onTextCompositionChange(*previousCompositionNode);
-        if (currentCompositionNode)
-            cache->onTextCompositionChange(*currentCompositionNode);
+        if (previousCompositionNode && previousCompositionNode != m_compositionNode) {
+            auto state = m_compositionNode ? AXObjectCache::CompositionState::InProgress : AXObjectCache::CompositionState::Ended;
+            cache->onTextCompositionChange(*previousCompositionNode, state, true);
+        }
+        if (m_compositionNode) {
+            auto state = previousCompositionNode ? AXObjectCache::CompositionState::InProgress : AXObjectCache::CompositionState::Started;
+            cache->onTextCompositionChange(*m_compositionNode, state, true);
+        }
     }
 
 #if PLATFORM(IOS_FAMILY)        

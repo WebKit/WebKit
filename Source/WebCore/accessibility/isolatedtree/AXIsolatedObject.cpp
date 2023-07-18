@@ -1611,6 +1611,17 @@ bool AXIsolatedObject::hasSameStyle(const AXCoreObject& otherObject) const
     });
 }
 
+AXTextMarkerRange AXIsolatedObject::textInputMarkedTextMarkerRange() const
+{
+    auto value = optionalAttributeValue<std::pair<AXID, CharacterRange>>(AXPropertyName::TextInputMarkedTextMarkerRange);
+    if (!value)
+        return { };
+
+    auto start = static_cast<unsigned>(value->second.location);
+    auto end = start + static_cast<unsigned>(value->second.length);
+    return { tree()->treeID(), value->first, start, end };
+}
+
 // The attribute this value is exposed as is not used by VoiceOver or any other AX client on macOS, so we intentionally don't cache it.
 // Re-visit if ITM expands to more platforms, or if AX clients need to start using this.
 String AXIsolatedObject::linkRelValue() const

@@ -644,23 +644,30 @@ static void attributedStringSetElement(NSMutableAttributedString *attrString, NS
         [attrString addAttribute:attribute value:(__bridge id)axElement.get() range:range];
 }
 
-static void attributedStringSetCompositionAttributes(NSMutableAttributedString *attrString, Node& node)
+static void attributedStringSetCompositionAttributes(NSMutableAttributedString *attrString, Node& node, const SimpleRange& textSimpleRange)
 {
 #if HAVE(INLINE_PREDICTIONS)
     auto& editor = node.document().editor();
     if (&node != editor.compositionNode())
         return;
 
+    auto scope = makeRangeSelectingNodeContents(node);
+    auto textRange = characterRange(scope, textSimpleRange);
+
     auto& annotations = editor.customCompositionAnnotations();
     if (auto it = annotations.find(NSTextCompletionAttributeName); it != annotations.end()) {
-        for (auto& range : it->value) {
-            if (attributedStringContainsRange(attrString, range))
-                attributedStringSetNumber(attrString, NSAccessibilityTextCompletionAttribute, @YES, range);
+        for (auto& annotationRange : it->value) {
+            auto intersectionRange = NSIntersectionRange(textRange, annotationRange);
+            if (intersectionRange.length) {
+                auto completionRange = NSMakeRange(intersectionRange.location - textRange.location, intersectionRange.length);
+                attributedStringSetNumber(attrString, NSAccessibilityTextCompletionAttribute, @YES, completionRange);
+            }
         }
     }
 #else
     UNUSED_PARAM(attrString);
     UNUSED_PARAM(node);
+    UNUSED_PARAM(textSimpleRange);
 #endif
 }
 
@@ -714,7 +721,7 @@ void attributedStringSetSpelling(NSMutableAttributedString *attrString, Node& no
     }
 }
 
-RetainPtr<NSAttributedString> attributedStringCreate(Node* node, StringView text, AXCoreObject::SpellCheck spellCheck)
+RetainPtr<NSAttributedString> attributedStringCreate(Node* node, StringView text, const SimpleRange& textRange, AXCoreObject::SpellCheck spellCheck)
 {
     if (!node || !text.length())
         return nil;
@@ -733,7 +740,7 @@ RetainPtr<NSAttributedString> attributedStringCreate(Node* node, StringView text
     attributedStringSetBlockquoteLevel(result.get(), renderer.get(), range);
     attributedStringSetExpandedText(result.get(), renderer.get(), range);
     attributedStringSetElement(result.get(), NSAccessibilityLinkTextAttribute, AccessibilityObject::anchorElementForNode(node), range);
-    attributedStringSetCompositionAttributes(result.get(), *node);
+    attributedStringSetCompositionAttributes(result.get(), *node, textRange);
     // Do spelling last because it tends to break up the range.
     if (spellCheck == AXCoreObject::SpellCheck::Yes) {
         if (AXObjectCache::shouldSpellCheck())
