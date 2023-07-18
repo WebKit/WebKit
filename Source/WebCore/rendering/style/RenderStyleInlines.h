@@ -170,9 +170,11 @@ inline OptionSet<Containment> RenderStyle::contain() const { return m_nonInherit
 inline std::optional<Length> RenderStyle::containIntrinsicHeight() const { return m_nonInheritedData->rareData->containIntrinsicHeight; }
 inline ContainIntrinsicSizeType RenderStyle::containIntrinsicHeightType() const { return static_cast<ContainIntrinsicSizeType>(m_nonInheritedData->rareData->containIntrinsicHeightType); }
 inline bool RenderStyle::containIntrinsicHeightHasAuto() const { return containIntrinsicHeightType() == ContainIntrinsicSizeType::AutoAndLength || containIntrinsicHeightType() == ContainIntrinsicSizeType::AutoAndNone; }
+inline bool RenderStyle::containIntrinsicLogicalHeightHasAuto() const { return isHorizontalWritingMode() ? containIntrinsicHeightHasAuto() : containIntrinsicWidthHasAuto(); }
 inline ContainIntrinsicSizeType RenderStyle::containIntrinsicLogicalHeightType() const { return isHorizontalWritingMode() ? containIntrinsicHeightType() : containIntrinsicWidthType(); }
 inline ContainIntrinsicSizeType RenderStyle::containIntrinsicLogicalWidthType() const { return isHorizontalWritingMode() ? containIntrinsicWidthType() : containIntrinsicHeightType(); }
 inline bool RenderStyle::containIntrinsicWidthHasAuto() const { return containIntrinsicWidthType() == ContainIntrinsicSizeType::AutoAndLength || containIntrinsicWidthType() == ContainIntrinsicSizeType::AutoAndNone; }
+inline bool RenderStyle::containIntrinsicLogicalWidthHasAuto() const { return isHorizontalWritingMode() ? containIntrinsicWidthHasAuto() : containIntrinsicHeightHasAuto(); }
 inline std::optional<Length> RenderStyle::containIntrinsicWidth() const { return m_nonInheritedData->rareData->containIntrinsicWidth; }
 inline ContainIntrinsicSizeType RenderStyle::containIntrinsicWidthType() const { return static_cast<ContainIntrinsicSizeType>(m_nonInheritedData->rareData->containIntrinsicWidthType); }
 inline const Vector<AtomString>& RenderStyle::containerNames() const { return m_nonInheritedData->rareData->containerNames; }
