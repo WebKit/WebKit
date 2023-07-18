@@ -1209,3 +1209,4 @@ yarr/YarrUnicodeProperties.cpp
 // Derived Sources
 yarr/YarrCanonicalizeUnicode.cpp
 
+runtime/InternalFieldTuple.cpp
