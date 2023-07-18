@@ -168,9 +168,10 @@ void RemoteLayerTreeDrawingAreaProxy::commitLayerTree(IPC::Connection& connectio
         commitLayerTreeTransaction(connection, transaction.first, transaction.second);
     }
 
-    // Keep IOSurface send rights alive until the commit makes it to the render server, otherwise we will
+    // Keep IOSurface send rights alive until the commit has completed, otherwise we will
     // prematurely drop the only reference to them, and `inUse` will be wrong for a brief window.
-    [CATransaction addCommitHandler:[sendRights = WTFMove(sendRights)]() { } forPhase:kCATransactionPhasePostSynchronize];
+    if (!sendRights.isEmpty())
+        [CATransaction addCommitHandler:[sendRights = WTFMove(sendRights)]() { } forPhase:kCATransactionPhasePostCommit];
 }
 
 void RemoteLayerTreeDrawingAreaProxy::commitLayerTreeTransaction(IPC::Connection& connection, const RemoteLayerTreeTransaction& layerTreeTransaction, const RemoteScrollingCoordinatorTransaction& scrollingTreeTransaction)
