@@ -673,16 +673,21 @@ bool SQLiteDatabase::turnOnIncrementalAutoVacuum()
         if (!statement)
             return false;
         autoVacuumMode = statement->columnInt(0);
-    }
 
-    // Check if we got an error while trying to get the value of the auto_vacuum flag.
-    // If we got a SQLITE_BUSY error, then there's probably another transaction in
-    // progress on this database. In this case, keep the current value of the
-    // auto_vacuum flag and try to set it to INCREMENTAL the next time we open this
-    // database. If the error is not SQLITE_BUSY, then we probably ran into a more
-    // serious problem and should return false (to log an error message).
-    if (lastError() != SQLITE_ROW)
-        return false;
+        // Check if we got an error while trying to get the value of the auto_vacuum flag.
+        // If we got a SQLITE_BUSY error, then there's probably another transaction in
+        // progress on this database. In this case, keep the current value of the
+        // auto_vacuum flag and try to set it to INCREMENTAL the next time we open this
+        // database. If the error is not SQLITE_BUSY, then we probably ran into a more
+        // serious problem and should return false (to log an error message).
+        //
+        // The call to lastError() here MUST be made immediately after the call to columnInt
+        // and before the destructor of the PRAGMA auto_vacuum statement. This is because we
+        // want to get the return value of the sqlite3_step issued by columnInt, not the
+        // return value of the sqlite3_finalize issued by the statement destructor.
+        if (lastError() != SQLITE_ROW)
+            return false;
+    }
 
     switch (autoVacuumMode) {
     case AutoVacuumIncremental:
