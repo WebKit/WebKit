@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 <script src="resources/common.js"></script>
 </head>
 <body>
@@ -32,10 +32,7 @@ function getXFooConstructor() {
             const value = this._parseFormValue(this.dataset.submissionValue);
             const state = this._parseFormValue(this.dataset.state);
 
-            if (state == null)
-                this._internals.setFormValue(value);
-            else
-                this._internals.setFormValue(value, state);
+            this._internals.setFormValue(value, state);
         }
 
         formStateRestoreCallback(state) {
@@ -115,27 +112,27 @@ function runTest()
         makeForms(2);
 
         debug('\nUpgraded form-associated custom elements without an owner:');
-        shouldBeEqualToString('$("noowner-upgrade1").restoredState', 'foo');
+        shouldBe('$("noowner-upgrade1").restoredState', 'undefined');
         shouldBeEqualToString('$("noowner-upgrade2").restoredState', 'bar');
-        shouldBeTrue('isFormDataEqual($("noowner-upgrade3").restoredState, __formData2)');
+        shouldBe('$("noowner-upgrade3").restoredState', 'undefined');
         shouldBeTrue('isFormDataEqual($("noowner-upgrade4").restoredState, __formData1)');
 
         debug('\nUpgraded form-associated custom elements with a form owner:');
-        shouldBeTrue('isFormDataEqual($("upgrade1").restoredState, __formData2)');
-        shouldBeEqualToString('$("upgrade2").restoredState', 'foo');
+        shouldBe('$("upgrade1").restoredState', 'undefined');
+        shouldBe('$("upgrade2").restoredState', 'undefined');
         shouldBeTrue('isFormDataEqual($("upgrade3").restoredState, __formData1)');
         shouldBeEqualToString('$("upgrade4").restoredState', 'bar');
 
         debug('\nPredefined form-associated custom elements without an owner:');
-        shouldBeEqualToString('$("noowner-predefined1").restoredState', 'foo');
+        shouldBe('$("noowner-predefined1").restoredState', 'undefined');
         shouldBeEqualToString('$("noowner-predefined2").restoredState', 'bar');
-        shouldBeTrue('isFormDataEqual($("noowner-predefined3").restoredState, __formData1)');
+        shouldBe('$("noowner-predefined3").restoredState', 'undefined');
         shouldBeTrue('isFormDataEqual($("noowner-predefined4").restoredState, __formData2)');
 
         debug('\nPredefined form-associated custom elements with a form owner:');
-        shouldBeEqualToString('$("predefined1").restoredState', 'foo');
+        shouldBe('$("predefined1").restoredState', 'undefined');
         shouldBeTrue('isFormDataEqual($("predefined2").restoredState, __formData1)');
-        shouldBeEqualToString('$("predefined3").restoredState', 'bar');
+        shouldBe('$("predefined3").restoredState', 'undefined');
         shouldBeEqualToString('$("predefined4").restoredState', 'foo');
 
         $('parent').innerHTML = '';
@@ -145,5 +142,4 @@ function runTest()
 
 runTest();
 </script>
-<script src="../../resources/js-test-post.js"></script>
 </body>
