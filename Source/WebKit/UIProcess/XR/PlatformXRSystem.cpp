@@ -74,7 +74,7 @@ void PlatformXRSystem::enumerateImmersiveXRDevices(CompletionHandler<void(Vector
     });
 }
 
-void PlatformXRSystem::requestPermissionOnSessionFeatures(const WebCore::SecurityOriginData& securityOriginData, PlatformXR::SessionMode mode, const PlatformXR::Device::FeatureList& granted, const PlatformXR::Device::FeatureList& consentRequired, const PlatformXR::Device::FeatureList& consentOptional,  CompletionHandler<void(std::optional<PlatformXR::Device::FeatureList>&&)>&& completionHandler)
+void PlatformXRSystem::requestPermissionOnSessionFeatures(const WebCore::SecurityOriginData& securityOriginData, PlatformXR::SessionMode mode, const PlatformXR::Device::FeatureList& granted, const PlatformXR::Device::FeatureList& consentRequired, const PlatformXR::Device::FeatureList& consentOptional, const PlatformXR::Device::FeatureList& requiredFeaturesRequested, const PlatformXR::Device::FeatureList& optionalFeaturesRequested, CompletionHandler<void(std::optional<PlatformXR::Device::FeatureList>&&)>&& completionHandler)
 {
     auto* xrCoordinator = PlatformXRSystem::xrCoordinator();
     if (!xrCoordinator) {
@@ -82,7 +82,7 @@ void PlatformXRSystem::requestPermissionOnSessionFeatures(const WebCore::Securit
         return;
     }
 
-    xrCoordinator->requestPermissionOnSessionFeatures(m_page, securityOriginData, mode, granted, consentRequired, consentOptional, WTFMove(completionHandler));
+    xrCoordinator->requestPermissionOnSessionFeatures(m_page, securityOriginData, mode, granted, consentRequired, consentOptional, requiredFeaturesRequested, optionalFeaturesRequested, WTFMove(completionHandler));
 }
 
 void PlatformXRSystem::initializeTrackingAndRendering(const WebCore::SecurityOriginData& securityOriginData, PlatformXR::SessionMode mode, const PlatformXR::Device::FeatureList& requestedFeatures)
