@@ -654,7 +654,7 @@ void GraphicsLayer::setContentsDisplayDelegate(RefPtr<GraphicsLayerContentsDispl
 {
 }
 
-RefPtr<GraphicsLayerAsyncContentsDisplayDelegate> GraphicsLayer::createAsyncContentsDisplayDelegate()
+RefPtr<GraphicsLayerAsyncContentsDisplayDelegate> GraphicsLayer::createAsyncContentsDisplayDelegate(GraphicsLayerAsyncContentsDisplayDelegate*)
 {
     return nullptr;
 }

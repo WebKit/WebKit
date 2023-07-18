@@ -163,6 +163,8 @@ public:
         m_layerID = layerID;
     }
 
+    bool isGraphicsLayerCARemoteAsyncContentsDisplayDelegate() const final { return true; }
+
 private:
     Ref<IPC::Connection> m_connection;
     DrawingAreaIdentifier m_drawingArea;
@@ -172,12 +174,19 @@ private:
     WebCore::RenderingResourceIdentifier m_surfaceIdentifier WTF_GUARDED_BY_LOCK(m_surfaceLock);
 };
 
-RefPtr<WebCore::GraphicsLayerAsyncContentsDisplayDelegate> GraphicsLayerCARemote::createAsyncContentsDisplayDelegate()
+RefPtr<WebCore::GraphicsLayerAsyncContentsDisplayDelegate> GraphicsLayerCARemote::createAsyncContentsDisplayDelegate(GraphicsLayerAsyncContentsDisplayDelegate* existing)
 {
     if (!m_context || !m_context->drawingAreaIdentifier() || !WebProcess::singleton().parentProcessConnection())
         return nullptr;
 
-    auto delegate = adoptRef(new GraphicsLayerCARemoteAsyncContentsDisplayDelegate(*WebProcess::singleton().parentProcessConnection(), m_context->drawingAreaIdentifier()));
+    RefPtr<GraphicsLayerCARemoteAsyncContentsDisplayDelegate> delegate;
+    if (existing && existing->isGraphicsLayerCARemoteAsyncContentsDisplayDelegate())
+        delegate = static_cast<GraphicsLayerCARemoteAsyncContentsDisplayDelegate*>(existing);
+
+    if (!delegate) {
+        ASSERT(!existing);
+        delegate = adoptRef(new GraphicsLayerCARemoteAsyncContentsDisplayDelegate(*WebProcess::singleton().parentProcessConnection(), m_context->drawingAreaIdentifier()));
+    }
 
     auto layerID = setContentsToAsyncDisplayDelegate(delegate, ContentsLayerPurpose::Canvas);
 
