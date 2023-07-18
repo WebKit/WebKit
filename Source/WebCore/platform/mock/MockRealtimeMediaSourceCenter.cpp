@@ -60,6 +60,7 @@ static inline Vector<MockMediaDevice> defaultDevices()
     return Vector<MockMediaDevice> {
         MockMediaDevice { "239c24b0-2b15-11e3-8224-0800200c9a66"_s, "Mock audio device 1"_s, { }, MockMicrophoneProperties { 44100 } },
         MockMediaDevice { "239c24b1-2b15-11e3-8224-0800200c9a66"_s, "Mock audio device 2"_s, { },  MockMicrophoneProperties { 48000 } },
+        MockMediaDevice { "239c24b1-3b15-11e3-8224-0800200c9a66"_s, "Mock audio device 3"_s, { },  MockMicrophoneProperties { 96000 } },
 
         MockMediaDevice { "239c24b0-2b15-11e3-8224-0800200c9a67"_s, "Mock speaker device 1"_s, { },  MockSpeakerProperties { "239c24b0-2b15-11e3-8224-0800200c9a66"_s, 44100 } },
         MockMediaDevice { "239c24b1-2b15-11e3-8224-0800200c9a67"_s, "Mock speaker device 2"_s, { },  MockSpeakerProperties { "239c24b1-2b15-11e3-8224-0800200c9a66"_s, 48000 } },

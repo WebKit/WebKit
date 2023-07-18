@@ -135,7 +135,12 @@ bool AudioSampleBufferCompressor::initAudioConverterForSourceFormatDescription(C
     }
 
     AudioConverterRef converter;
-    if (auto error = PAL::AudioConverterNew(&m_sourceFormat, &m_destinationFormat, &converter)) {
+    auto error = PAL::AudioConverterNew(&m_sourceFormat, &m_destinationFormat, &converter);
+    if (error == 'fmt?') {
+        m_destinationFormat.mSampleRate = 44100;
+        error = PAL::AudioConverterNew(&m_sourceFormat, &m_destinationFormat, &converter);
+    }
+    if (error) {
         RELEASE_LOG_ERROR(MediaStream, "AudioSampleBufferCompressor AudioConverterNew failed with %d", error);
         return false;
     }
