@@ -1291,6 +1291,7 @@ void GraphicsLayerCA::setContentsToPlatformLayer(PlatformLayer* platformLayer, C
             m_contentsLayer = WTFMove(platformCALayer);
         else
             m_contentsLayer = createPlatformCALayer(platformLayer, this);
+        m_contentsLayer->setBackingStoreAttached(false);
     } else
         m_contentsLayer = nullptr;
 
@@ -5001,8 +5002,12 @@ Vector<std::pair<String, double>> GraphicsLayerCA::acceleratedAnimationsForTesti
     return animations;
 }
 
-RefPtr<GraphicsLayerAsyncContentsDisplayDelegate> GraphicsLayerCA::createAsyncContentsDisplayDelegate()
+RefPtr<GraphicsLayerAsyncContentsDisplayDelegate> GraphicsLayerCA::createAsyncContentsDisplayDelegate(GraphicsLayerAsyncContentsDisplayDelegate* existing)
 {
+    if (existing && existing->isGraphicsLayerAsyncContentsDisplayDelegateCocoa()) {
+        static_cast<GraphicsLayerAsyncContentsDisplayDelegateCocoa*>(existing)->updateGraphicsLayerCA(*this);
+        return existing;
+    }
     return adoptRef(new GraphicsLayerAsyncContentsDisplayDelegateCocoa(*this));
 }
 

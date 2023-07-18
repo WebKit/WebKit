@@ -203,7 +203,7 @@ public:
 
     constexpr static CompositingCoordinatesOrientation defaultContentsOrientation = CompositingCoordinatesOrientation::TopDown;
 
-    WEBCORE_EXPORT RefPtr<GraphicsLayerAsyncContentsDisplayDelegate> createAsyncContentsDisplayDelegate() override;
+    WEBCORE_EXPORT RefPtr<GraphicsLayerAsyncContentsDisplayDelegate> createAsyncContentsDisplayDelegate(GraphicsLayerAsyncContentsDisplayDelegate*) override;
 
 #if ENABLE(THREADED_ANIMATION_RESOLUTION)
     WEBCORE_EXPORT void setAcceleratedEffectsAndBaseValues(AcceleratedEffects&&, AcceleratedEffectValues&&) override;

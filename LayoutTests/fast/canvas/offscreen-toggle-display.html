@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="fuzzy" content="maxDifference=63; totalPixels=400" />
+</head>
+<body>
+<canvas id="offscreen" width="200" height="200"></canvas>
+<script>
+const canvas = document.getElementById('offscreen');
+
+const offscreenCanvas = canvas.transferControlToOffscreen();
+const offscreenContext = offscreenCanvas.getContext('2d');
+
+
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+requestAnimationFrame(function() {
+    const square = new Path2D();
+    square.rect(50, 50, 100, 100);
+    offscreenContext.fillStyle = 'green';
+    offscreenContext.fill(square);
+    offscreenContext.commit();
+
+    requestAnimationFrame(function() {
+        canvas.style.display = "none";
+
+        requestAnimationFrame(function() {
+            canvas.style.display = "inline";
+            if (window.testRunner)
+                testRunner.notifyDone();
+        });
+    });
+});
+</script>
+</body>
+</html>

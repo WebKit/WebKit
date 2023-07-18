@@ -42,16 +42,23 @@ GraphicsLayerAsyncContentsDisplayDelegateCocoa::GraphicsLayerAsyncContentsDispla
 
 bool GraphicsLayerAsyncContentsDisplayDelegateCocoa::tryCopyToLayer(ImageBuffer& image)
 {
-    auto native = image.clone()->sinkIntoNativeImage();
+    m_image = image.clone()->sinkIntoNativeImage();
 
     [CATransaction begin];
     [CATransaction setDisableActions:YES];
 
-    [m_layer setContents:(__bridge id)native->platformImage().get()];
+    [m_layer setContents:(__bridge id)m_image->platformImage().get()];
 
     [CATransaction commit];
 
     return true;
+}
+
+void GraphicsLayerAsyncContentsDisplayDelegateCocoa::updateGraphicsLayerCA(GraphicsLayerCA& layer)
+{
+    layer.setContentsToPlatformLayer(m_layer.get(), GraphicsLayer::ContentsLayerPurpose::Canvas);
+    if (m_image)
+        [m_layer setContents:(__bridge id)m_image->platformImage().get()];
 }
 
 }

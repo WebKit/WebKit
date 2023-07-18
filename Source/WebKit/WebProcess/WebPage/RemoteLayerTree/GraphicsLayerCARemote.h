@@ -63,7 +63,7 @@ private:
 
     WebCore::Color pageTiledBackingBorderColor() const override;
 
-    RefPtr<WebCore::GraphicsLayerAsyncContentsDisplayDelegate> createAsyncContentsDisplayDelegate() final;
+    RefPtr<WebCore::GraphicsLayerAsyncContentsDisplayDelegate> createAsyncContentsDisplayDelegate(WebCore::GraphicsLayerAsyncContentsDisplayDelegate*) final;
 
     RemoteLayerTreeContext* m_context;
 };
