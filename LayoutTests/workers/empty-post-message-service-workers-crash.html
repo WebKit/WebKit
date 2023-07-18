@@ -1,0 +1,26 @@
+<!-- webkit-test-runner [ useEphemeralSession=true ] -->
+<script>
+  if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+  }
+  onload = () => {
+    document.createElement('audio').src = 'data:application/vnd.apple.mpegURL;base64,xx';
+    for (let i = 0; i <= 50; i++) {
+      if (50 == i) {
+        if (window.testRunner)
+          testRunner.notifyDone();
+      }
+      let w = new Worker('empty-post-message-service-workers-crash.js');
+      w.onmessage = () => {
+        w.postMessage(undefined);
+      };
+      w.postMessage(undefined);
+    }
+  };
+</script>
+<html>
+  <body>
+    <p>PASS if no crash</p>
+  </body>
+</html>
