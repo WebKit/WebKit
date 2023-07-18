@@ -36,6 +36,7 @@
 #include "ArrayConstructor.h"
 #include "ArrayIteratorPrototype.h"
 #include "ArrayPrototype.h"
+#include "InternalFieldTuple.h"
 #include "AsyncFromSyncIteratorPrototype.h"
 #include "AsyncFunctionConstructor.h"
 #include "AsyncFunctionPrototype.h"
@@ -1655,6 +1656,21 @@ capitalName ## Constructor* lowerName ## Constructor = featureFlag ? capitalName
         init.set(init.vm.emptyPropertyNameEnumerator());
     });
 
+    // Link Time Constant would be faster, but it seems OpGetInternalField does not expect having a linkTimeConstant,
+    // so `@getInternalField(@asyncContext, 0)` will crash. If we can read/write to the internal field from JS in a better way, that could improve perf.
+    // m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::asyncContext)].initLater([](const Initializer<JSCell>& init) {
+    //     auto* globalObject = jsCast<JSGlobalObject*>(init.owner);
+    //     init.set(AsyncContext::create(init.vm, AsyncContext::createStructure(init.vm, globalObject, globalObject->objectPrototype())));
+    // });
+
+    m_internalFieldTupleStructure.set(vm, this, InternalFieldTuple::createStructure(vm, this));
+
+    InternalFieldTuple* asyncContext = InternalFieldTuple::create(vm, internalFieldTupleStructure(), jsUndefined(), jsUndefined());
+    putDirectWithoutTransition(
+        vm, vm.propertyNames->builtinNames().asyncContextPrivateName(),
+        asyncContext, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
+    m_asyncContextData.set(vm, this, asyncContext);
+
     if (Options::exposeProfilersOnGlobalObject()) {
 #if ENABLE(SAMPLING_PROFILER)
         putDirectWithoutTransition(vm, Identifier::fromString(vm, "__enableSamplingProfiler"_s), JSFunction::create(vm, this, 1, "enableSamplingProfiler"_s, enableSamplingProfiler, ImplementationVisibility::Public), PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly);
@@ -1709,7 +1725,6 @@ capitalName ## Constructor* lowerName ## Constructor = featureFlag ? capitalName
 #endif // ENABLE(WEBASSEMBLY)
 
 #undef CREATE_PROTOTYPE_FOR_LAZY_TYPE
-
 
     {
         ObjectPropertyCondition condition = setupAdaptiveWatchpoint(this, arrayIteratorPrototype, vm.propertyNames->next);
@@ -2318,6 +2333,8 @@ void JSGlobalObject::visitChildrenImpl(JSCell* cell, Visitor& visitor)
     Base::visitChildren(thisObject, visitor);
 
     visitor.append(thisObject->m_globalThis);
+    visitor.append(thisObject->m_asyncContextData);
+    visitor.append(thisObject->m_internalFieldTupleStructure);
 
     visitor.append(thisObject->m_globalLexicalEnvironment);
     visitor.append(thisObject->m_globalScopeExtension);

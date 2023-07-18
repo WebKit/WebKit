@@ -116,6 +116,7 @@ void printInternal(PrintStream& out, JSC::JSType type)
     CASE(WebAssemblyGCObjectType)
     CASE(StringObjectType)
     CASE(DerivedStringObjectType)
+    CASE(InternalFieldTupleType)
     CASE(MaxJSType)
     }
 }

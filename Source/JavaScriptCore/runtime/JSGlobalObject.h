@@ -28,6 +28,7 @@
 #include "StructureCache.h"
 #include "Watchpoint.h"
 #include "WeakGCSet.h"
+#include "InternalFieldTuple.h"
 #include <wtf/FixedVector.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/WeakPtr.h>
@@ -195,6 +196,7 @@ public:
     template<typename T> using Initializer = typename LazyProperty<JSGlobalObject, T>::Initializer;
 
     WriteBarrier<JSObject> m_globalThis;
+    WriteBarrier<InternalFieldTuple> m_asyncContextData;
 
     WriteBarrier<JSGlobalLexicalEnvironment> m_globalLexicalEnvironment;
     WriteBarrier<JSScope> m_globalScopeExtension;
@@ -300,6 +302,8 @@ public:
     WriteBarrierStructureID m_clonedArgumentsStructure;
 
     WriteBarrierStructureID m_objectStructureForObjectConstructor;
+
+    WriteBarrierStructureID m_internalFieldTupleStructure;
 
     // Lists the actual structures used for having these particular indexing shapes.
     WriteBarrierStructureID m_originalArrayStructureForIndexingShape[NumberOfArrayIndexingModes];
@@ -853,6 +857,7 @@ public:
     Structure* plainDateTimeStructure() { return m_plainDateTimeStructure.get(this); }
     Structure* plainTimeStructure() { return m_plainTimeStructure.get(this); }
     Structure* timeZoneStructure() { return m_timeZoneStructure.get(this); }
+    Structure* internalFieldTupleStructure() const { return m_internalFieldTupleStructure.get(); }
 
     JS_EXPORT_PRIVATE void setInspectable(bool);
     JS_EXPORT_PRIVATE bool inspectable() const;
