@@ -95,11 +95,15 @@ void WebKit::NetworkSessionCocoa::removeNetworkWebsiteData(std::optional<WallTim
 #endif
 
 #if HAVE(NW_PROXY_CONFIG)
+#if __has_include(<Network/NSURLSession+Network.h>)
+#include <Network/NSURLSession+Network.h>
+#endif
 SOFT_LINK_LIBRARY_OPTIONAL(libnetwork)
 SOFT_LINK_OPTIONAL(libnetwork, nw_context_add_proxy, void, __cdecl, (nw_context_t, nw_proxy_config_t))
 SOFT_LINK_OPTIONAL(libnetwork, nw_context_clear_proxies, void, __cdecl, (nw_context_t))
 #if __has_include(<Network/proxy_config_private.h>)
 SOFT_LINK_OPTIONAL(libnetwork, nw_proxy_config_create_with_agent_data, nw_proxy_config_t, __cdecl, (const uint8_t*, size_t, const uuid_t))
+SOFT_LINK_OPTIONAL(libnetwork, nw_proxy_config_stack_requires_http_protocols, bool, __cdecl, (nw_proxy_config_t))
 #endif
 #endif // HAVE(NW_PROXY_CONFIG)
 
@@ -483,6 +487,7 @@ static String stringForSSLCipher(SSLCipherSuite cipher)
 > {
     WeakPtr<WebKit::NetworkSessionCocoa> _session;
     WeakPtr<WebKit::SessionWrapper> _sessionWrapper;
+@public
     bool _withCredentials;
 }
 
@@ -1330,6 +1335,23 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
+void SessionWrapper::recreateSessionWithUpdatedProxyConfigurations(NetworkSessionCocoa& networkSession)
+{
+    RELEASE_ASSERT(session);
+    RELEASE_ASSERT(delegate);
+
+    auto withCredentials = delegate->_withCredentials;
+    auto *configuration = session.get().configuration;
+
+#if HAVE(NW_PROXY_CONFIG)
+    networkSession.applyProxyConfigurationToSessionConfiguration(configuration);
+#endif
+
+    [delegate sessionInvalidated];
+    delegate = adoptNS([[WKNetworkSessionDelegate alloc] initWithNetworkSession:networkSession wrapper:*this withCredentials:withCredentials]);
+    session = [NSURLSession sessionWithConfiguration:configuration delegate:delegate.get() delegateQueue:[NSOperationQueue mainQueue]];
+}
+
 void SessionWrapper::initialize(NSURLSessionConfiguration *configuration, NetworkSessionCocoa& networkSession, WebCore::StoredCredentialsPolicy storedCredentialsPolicy, NavigatingToAppBoundDomain isNavigatingToAppBoundDomain)
 {
     UNUSED_PARAM(isNavigatingToAppBoundDomain);
@@ -1342,24 +1364,12 @@ void SessionWrapper::initialize(NSURLSessionConfiguration *configuration, Networ
     if (!configuration._sourceApplicationSecondaryIdentifier && isFullBrowser)
         configuration._sourceApplicationSecondaryIdentifier = @"com.apple.WebKit.InAppBrowser";
 
+#if HAVE(NW_PROXY_CONFIG)
+    networkSession.applyProxyConfigurationToSessionConfiguration(configuration);
+#endif
+
     delegate = adoptNS([[WKNetworkSessionDelegate alloc] initWithNetworkSession:networkSession wrapper:*this withCredentials:storedCredentialsPolicy == WebCore::StoredCredentialsPolicy::Use]);
     session = [NSURLSession sessionWithConfiguration:configuration delegate:delegate.get() delegateQueue:[NSOperationQueue mainQueue]];
-    
-#if HAVE(NW_PROXY_CONFIG)
-    auto* clearProxies = nw_context_clear_proxiesPtr();
-    auto* addProxy = nw_context_add_proxyPtr();
-    if (!clearProxies || !addProxy)
-        return;
-
-    if (auto networkContext = session.get()._networkContext) {
-        auto proxyConfigs = networkSession.proxyConfigs();
-        if (!proxyConfigs.isEmpty())
-            clearProxies(networkContext);
-
-        for (auto& proxyConfig : proxyConfigs)
-            addProxy(networkContext, proxyConfig.get());
-    }
-#endif
 }
 
 #if HAVE(SESSION_CLEANUP)
@@ -2211,8 +2221,36 @@ void NetworkSessionCocoa::setProxyConfigData(Vector<std::pair<Vector<uint8_t>, W
     auto* clearProxies = nw_context_clear_proxiesPtr();
     auto* addProxy = nw_context_add_proxyPtr();
     auto* createProxyConfig = nw_proxy_config_create_with_agent_dataPtr();
-    if (!clearProxies || !addProxy || !createProxyConfig)
+    auto* requiresHTTPProtocols = nw_proxy_config_stack_requires_http_protocolsPtr();
+    if (!clearProxies || !addProxy || !createProxyConfig || !requiresHTTPProtocols)
         return;
+
+    m_nwProxyConfigs.clear();
+
+    // If any of the proxies pass the `nw_proxy_config_stack_requires_http_protocols` check,
+    // then we cannot set the proxy on the live nw_context_t and instead must destroy and recreate the NSURLSession
+    bool recreateSessions = false;
+    for (auto& config : proxyConfigurations) {
+        uuid_t identifier;
+        memcpy(identifier, config.second.toSpan().data(), sizeof(uuid_t));
+
+#if __has_include(<Network/proxy_config_private.h>)
+        auto nwProxyConfig = adoptNS(createProxyConfig(config.first.data(), config.first.size(), identifier));
+
+        if (requiresHTTPProtocols(nwProxyConfig.get()))
+            recreateSessions = true;
+
+        m_nwProxyConfigs.append(WTFMove(nwProxyConfig));
+#endif
+    }
+
+    if (recreateSessions) {
+        forEachSessionWrapper([this](SessionWrapper& sessionWrapper) {
+            if (sessionWrapper.session)
+                sessionWrapper.recreateSessionWithUpdatedProxyConfigurations(*this);
+        });
+        return;
+    }
 
     RetainPtr<NSMutableSet> contexts = adoptNS([[NSMutableSet alloc] init]);
     forEachSessionWrapper([&contexts] (SessionWrapper& sessionWrapper) {
@@ -2221,23 +2259,24 @@ void NetworkSessionCocoa::setProxyConfigData(Vector<std::pair<Vector<uint8_t>, W
         [contexts.get() addObject:sessionWrapper.session.get()._networkContext];
     });
 
-    for (nw_context_t context in contexts.get())
-        clearProxies(context);
-    m_nwProxyConfigs.clear();
-
-    for (auto& config : proxyConfigurations) {
-        uuid_t identifier;
-        memcpy(identifier, config.second.toSpan().data(), sizeof(uuid_t));
-
-#if __has_include(<Network/proxy_config_private.h>)
-        m_nwProxyConfigs.append(adoptNS(createProxyConfig(config.first.data(), config.first.size(), identifier)));
-#endif
-    }
-    
     for (nw_context_t context in contexts.get()) {
+        clearProxies(context);
+
         for (auto& proxyConfig : m_nwProxyConfigs)
             addProxy(context, proxyConfig.get());
     }
+}
+
+void NetworkSessionCocoa::applyProxyConfigurationToSessionConfiguration(NSURLSessionConfiguration *configuration)
+{
+    if (!m_nwProxyConfigs.isEmpty()) {
+        RetainPtr nwProxyConfigurations = adoptNS([[NSMutableArray alloc] initWithCapacity:m_nwProxyConfigs.size()]);
+        for (auto& proxyConfig : m_nwProxyConfigs)
+            [nwProxyConfigurations addObject:proxyConfig.get()];
+
+        configuration.proxyConfigurations = nwProxyConfigurations.get();
+    } else
+        configuration.proxyConfigurations = @[ ];
 }
 #endif // HAVE(NW_PROXY_CONFIG)
 

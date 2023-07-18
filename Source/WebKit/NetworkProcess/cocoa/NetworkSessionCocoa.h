@@ -60,6 +60,8 @@ class NetworkSessionCocoa;
 struct SessionWrapper : public CanMakeWeakPtr<SessionWrapper> {
     void initialize(NSURLSessionConfiguration *, NetworkSessionCocoa&, WebCore::StoredCredentialsPolicy, NavigatingToAppBoundDomain);
 
+    void recreateSessionWithUpdatedProxyConfigurations(NetworkSessionCocoa&);
+
     RetainPtr<NSURLSession> session;
     RetainPtr<WKNetworkSessionDelegate> delegate;
     HashMap<NetworkDataTaskCocoa::TaskIdentifier, NetworkDataTaskCocoa*> dataTaskMap;
@@ -153,6 +155,8 @@ public:
 
     void clearProxyConfigData() final;
     void setProxyConfigData(Vector<std::pair<Vector<uint8_t>, WTF::UUID>>&&) final;
+
+    void applyProxyConfigurationToSessionConfiguration(NSURLSessionConfiguration *);
 #endif
 
 private:

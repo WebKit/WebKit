@@ -113,7 +113,10 @@ WK_CLASS_AVAILABLE(macos(10.11), ios(9.0))
     || ((TARGET_OS_IOS || TARGET_OS_MACCATALYST) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 170000) \
     || (TARGET_OS_WATCH && __WATCH_OS_VERSION_MAX_ALLOWED >= 100000) \
     || (TARGET_OS_TV && __TV_OS_VERSION_MAX_ALLOWED >= 170000))
-/*! @abstract Gets or sets the proxy configurations to be used to override networking in all WKWebViews that use this WKWebsiteDataStore. */
+/*! @abstract Gets or sets the proxy configurations to be used to override networking in all WKWebViews that use this WKWebsiteDataStore.
+ @discussion Changing the proxy configurations might interupt current networking operations in any WKWebView that use this WKWebsiteDataStore,
+ so it is encouraged to finish setting the proxy configurations before starting any page loads.
+*/
 @property (nullable, nonatomic, copy) NSArray<nw_proxy_config_t> *proxyConfigurations NS_REFINED_FOR_SWIFT API_AVAILABLE(macos(14.0), ios(17.0));
 #endif
 
