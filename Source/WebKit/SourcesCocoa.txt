@@ -137,7 +137,7 @@ Shared/WebSQLiteDatabaseTracker.cpp
 Shared/cf/ArgumentCodersCF.cpp @no-unify
 Shared/cf/CookieStorageUtilsCF.mm
 
-Shared/cg/ShareableBitmapCG.cpp
+Shared/cg/ShareableBitmapCG.mm
 
 Shared/Authentication/cocoa/AuthenticationChallengeDispositionCocoa.mm
 Shared/Authentication/cocoa/AuthenticationManagerCocoa.mm
