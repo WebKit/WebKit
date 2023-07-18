@@ -226,7 +226,7 @@ enum class AXPropertyName : uint16_t {
     SupportsSetSize,
     TableLevel,
     TextContent,
-    TextInputMarkedRange,
+    TextInputMarkedTextMarkerRange,
     Title,
     TitleAttributeValue,
     TitleUIElement,
@@ -239,7 +239,7 @@ enum class AXPropertyName : uint16_t {
     VisibleRows,
 };
 
-using AXPropertyValueVariant = std::variant<std::nullptr_t, AXID, String, bool, int, unsigned, double, float, uint64_t, AccessibilityButtonState, Color, URL, LayoutRect, FloatPoint, FloatRect, IntPoint, IntRect, PAL::SessionID, std::pair<unsigned, unsigned>, Vector<AccessibilityText>, Vector<AXID>, Vector<std::pair<AXID, AXID>>, Vector<String>, Path, OptionSet<AXAncestorFlag>, RetainPtr<NSAttributedString>, InsideLink, Vector<Vector<AXID>>, CharacterRange>;
+using AXPropertyValueVariant = std::variant<std::nullptr_t, AXID, String, bool, int, unsigned, double, float, uint64_t, AccessibilityButtonState, Color, URL, LayoutRect, FloatPoint, FloatRect, IntPoint, IntRect, PAL::SessionID, std::pair<unsigned, unsigned>, Vector<AccessibilityText>, Vector<AXID>, Vector<std::pair<AXID, AXID>>, Vector<String>, Path, OptionSet<AXAncestorFlag>, RetainPtr<NSAttributedString>, InsideLink, Vector<Vector<AXID>>, CharacterRange, std::pair<AXID, CharacterRange>>;
 using AXPropertyMap = HashMap<AXPropertyName, AXPropertyValueVariant, IntHash<AXPropertyName>, WTF::StrongEnumHashTraits<AXPropertyName>>;
 
 struct AXPropertyChange {

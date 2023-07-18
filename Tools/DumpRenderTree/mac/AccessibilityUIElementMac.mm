@@ -79,6 +79,10 @@
 #define NSAccessibilityTextInputMarkedRangeAttribute @"AXTextInputMarkedRange"
 #endif
 
+#ifndef NSAccessibilityTextInputMarkedTextMarkerRangeAttribute
+#define NSAccessibilityTextInputMarkedTextMarkerRangeAttribute @"AXTextInputMarkedTextMarkerRange"
+#endif
+
 typedef void (*AXPostedNotificationCallback)(id element, NSString* notification, void* context);
 
 @interface NSObject (WebKitAccessibilityAdditions)
@@ -172,7 +176,9 @@ static NSString* attributesOfElement(id accessibilityObject)
         id valueObject = [accessibilityObject accessibilityAttributeValue:attribute];
         NSString* value = descriptionOfValue(valueObject, accessibilityObject);
 
-        if ([attribute isEqualToString:NSAccessibilityTextInputMarkedRangeAttribute] && !value)
+        if (!value
+            && ([attribute isEqualToString:NSAccessibilityTextInputMarkedRangeAttribute]
+                || [attribute isEqualToString:NSAccessibilityTextInputMarkedTextMarkerRangeAttribute]))
             continue;
 
         [attributesString appendFormat:@"%@: %@\n", attribute, value];
@@ -1757,6 +1763,16 @@ bool AccessibilityUIElement::insertText(JSStringRef text)
     return [m_element accessibilityInsertText:[NSString stringWithJSStringRef:text]];
     END_AX_OBJC_EXCEPTIONS
     return false;
+}
+
+AccessibilityTextMarkerRange AccessibilityUIElement::textInputMarkedTextMarkerRange() const
+{
+    BEGIN_AX_OBJC_EXCEPTIONS
+    id textMarkerRange = [m_element accessibilityAttributeValue:NSAccessibilityTextInputMarkedTextMarkerRangeAttribute];
+    return AccessibilityTextMarkerRange(textMarkerRange);
+    END_AX_OBJC_EXCEPTIONS
+
+    return nullptr;
 }
 
 int AccessibilityUIElement::textMarkerRangeLength(AccessibilityTextMarkerRange* range)

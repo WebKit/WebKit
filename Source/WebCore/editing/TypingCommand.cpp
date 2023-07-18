@@ -252,7 +252,12 @@ void TypingCommand::insertText(Document& document, const String& text, const Vis
         lastTypingCommand->setCompositionType(compositionType);
         lastTypingCommand->setShouldRetainAutocorrectionIndicator(options.contains(Option::RetainAutocorrectionIndicator));
         lastTypingCommand->setShouldPreventSpellChecking(options.contains(Option::PreventSpellChecking));
-        lastTypingCommand->insertTextAndNotifyAccessibility(newText, options.contains(Option::SelectInsertedText));
+#if HAVE(INLINE_PREDICTIONS)
+        if (compositionType != TextCompositionType::None)
+            lastTypingCommand->insertText(newText, options.contains(Option::SelectInsertedText));
+        else
+#endif
+            lastTypingCommand->insertTextAndNotifyAccessibility(newText, options.contains(Option::SelectInsertedText));
         return;
     }
 

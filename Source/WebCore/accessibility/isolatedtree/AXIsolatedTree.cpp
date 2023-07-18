@@ -580,13 +580,14 @@ void AXIsolatedTree::updateNodeProperties(AXCoreObject& axObject, const Vector<A
         case AXPropertyName::SupportsSetSize:
             propertyMap.set(AXPropertyName::SupportsSetSize, axObject.supportsSetSize());
             break;
-        case AXPropertyName::TextInputMarkedRange:
-            // FIXME: We should have a mechanism to remove a property from the map for when textInputMarkedRange is std::nullopt.
-            if (auto textInputMarkedRange = axObject.textInputMarkedRange())
-                propertyMap.set(AXPropertyName::TextInputMarkedRange, *textInputMarkedRange);
-            else
-                propertyMap.set(AXPropertyName::TextInputMarkedRange, nullptr);
+        case AXPropertyName::TextInputMarkedTextMarkerRange: {
+            std::pair<AXID, CharacterRange> value;
+            auto range = axObject.textInputMarkedTextMarkerRange();
+            if (auto characterRange = range.characterRange(); range && characterRange)
+                value = { range.start().objectID(), *characterRange };
+            propertyMap.set(AXPropertyName::TextInputMarkedTextMarkerRange, value);
             break;
+        }
         case AXPropertyName::URL:
             propertyMap.set(AXPropertyName::URL, axObject.url().isolatedCopy());
             break;

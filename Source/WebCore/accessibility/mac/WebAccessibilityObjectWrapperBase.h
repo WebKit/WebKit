@@ -53,7 +53,7 @@ void attributedStringSetNumber(NSMutableAttributedString *, NSString *, NSNumber
 void attributedStringSetFont(NSMutableAttributedString *, CTFontRef, const NSRange&);
 void attributedStringSetSpelling(NSMutableAttributedString *, Node&, StringView, const NSRange&);
 void attributedStringSetNeedsSpellCheck(NSMutableAttributedString *, Node&);
-RetainPtr<NSAttributedString> attributedStringCreate(Node*, StringView, AXCoreObject::SpellCheck);
+RetainPtr<NSAttributedString> attributedStringCreate(Node*, StringView, const SimpleRange&, AXCoreObject::SpellCheck);
 }
 
 @interface WebAccessibilityObjectWrapperBase : NSObject {

@@ -846,6 +846,11 @@ static JSValueRef insertTextCallback(JSContextRef context, JSObjectRef function,
     return JSValueMakeBoolean(context, toAXElement(thisObject)->insertText(text.get()));
 }
 
+static JSValueRef textInputMarkedTextMarkerRangeCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    return AccessibilityTextMarkerRange::makeJSAccessibilityTextMarkerRange(context, toAXElement(thisObject)->textInputMarkedTextMarkerRange());
+}
+
 static JSValueRef attributedStringForTextMarkerRangeContainsAttributeCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     AccessibilityTextMarkerRange* markerRange = 0;
@@ -1779,6 +1784,11 @@ bool AccessibilityUIElement::insertText(JSStringRef)
     return false;
 }
 
+AccessibilityTextMarkerRange AccessibilityUIElement::textInputMarkedTextMarkerRange() const
+{
+    return nullptr;
+}
+
 int AccessibilityUIElement::textMarkerRangeLength(AccessibilityTextMarkerRange*)
 {
     return 0;
@@ -2133,6 +2143,7 @@ JSClassRef AccessibilityUIElement::getJSClass()
         { "misspellingTextMarkerRange", misspellingTextMarkerRangeCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "textMarkerRangeForElement", textMarkerRangeForElementCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "selectedTextMarkerRange", selectedTextMarkerRangeCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "textInputMarkedTextMarkerRange", textInputMarkedTextMarkerRangeCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "resetSelectedTextMarkerRange", resetSelectedTextMarkerRangeCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "replaceTextInRange", replaceTextInRangeCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "insertText", insertTextCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },

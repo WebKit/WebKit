@@ -275,6 +275,19 @@ std::optional<SimpleRange> AXTextMarkerRange::simpleRange() const
     return { { *startBoundaryPoint, *endBoundaryPoint } };
 }
 
+std::optional<CharacterRange> AXTextMarkerRange::characterRange() const
+{
+    if (m_start.m_data.objectID != m_end.m_data.objectID
+        || m_start.m_data.treeID != m_end.m_data.treeID)
+        return std::nullopt;
+
+    if (m_start.m_data.characterOffset > m_end.m_data.characterOffset) {
+        ASSERT_NOT_REACHED();
+        return std::nullopt;
+    }
+    return { { m_start.m_data.characterOffset, m_end.m_data.characterOffset - m_start.m_data.characterOffset } };
+}
+
 std::partial_ordering partialOrder(const AXTextMarker& marker1, const AXTextMarker& marker2)
 {
     if (marker1.objectID() == marker2.objectID() && marker1.treeID() == marker2.treeID()) {

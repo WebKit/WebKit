@@ -127,6 +127,14 @@
 #define kAXDraggingDestinationDragNotAcceptedNotification CFSTR("AXDraggingDestinationDragNotAccepted")
 #endif
 
+#ifndef NSAccessibilityTextInputMarkingSessionBeganNotification
+#define NSAccessibilityTextInputMarkingSessionBeganNotification @"AXTextInputMarkingSessionBegan"
+#endif
+
+#ifndef NSAccessibilityTextInputMarkingSessionEndedNotification
+#define NSAccessibilityTextInputMarkingSessionEndedNotification @"AXTextInputMarkingSessionEnded"
+#endif
+
 // Very large strings can negatively impact the performance of notifications, so this length is chosen to try to fit an average paragraph or line of text, but not allow strings to be large enough to hurt performance.
 static const NSUInteger AXValueChangeTruncationLength = 1000;
 
@@ -430,6 +438,12 @@ void AXObjectCache::postPlatformNotification(AXCoreObject* object, AXNotificatio
         break;
     case AXDraggingExitedDropZone:
         macNotification = (id)kAXDraggingDestinationDragNotAcceptedNotification;
+        break;
+    case AXTextCompositionBegan:
+        macNotification = NSAccessibilityTextInputMarkingSessionBeganNotification;
+        break;
+    case AXTextCompositionEnded:
+        macNotification = NSAccessibilityTextInputMarkingSessionEndedNotification;
         break;
     default:
         return;

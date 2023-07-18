@@ -1680,13 +1680,33 @@ void AXObjectCache::onValidityChange(Element& element)
     postNotification(get(&element), nullptr, AXInvalidStatusChanged);
 }
 
-void AXObjectCache::onTextCompositionChange(Node& node)
+void AXObjectCache::onTextCompositionChange(Node& node, CompositionState compositionState, bool valueChanged)
 {
+#if HAVE(INLINE_PREDICTIONS)
+    auto* object = getOrCreate(&node);
+    if (!object)
+        return;
+
+    if (auto* observableObject = object->observableObject())
+        object = observableObject;
+
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-    updateIsolatedTree(textCompositionObjectForNode(node), AXTextCompositionChanged);
+    updateIsolatedTree(object, AXTextCompositionChanged);
+#endif // ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+
+    if (compositionState == CompositionState::Started)
+        postNotification(object, &node.document(), AXTextCompositionBegan);
+
+    if (valueChanged)
+        postNotification(object, &node.document(), AXValueChanged);
+
+    if (compositionState == CompositionState::Ended)
+        postNotification(object, &node.document(), AXTextCompositionEnded);
 #else
     UNUSED_PARAM(node);
-#endif
+    UNUSED_PARAM(compositionState);
+    UNUSED_PARAM(valueChanged);
+#endif // HAVE(INLINE_PREDICTIONS)
 }
 
 #ifndef NDEBUG
@@ -4017,7 +4037,7 @@ void AXObjectCache::updateIsolatedTree(const Vector<std::pair<RefPtr<Accessibili
             tree->updateNodeProperty(*notification.first, AXPropertyName::ColumnHeaders);
             break;
         case AXTextCompositionChanged:
-            tree->updateNodeProperty(*notification.first, AXPropertyName::TextInputMarkedRange);
+            tree->updateNodeProperty(*notification.first, AXPropertyName::TextInputMarkedTextMarkerRange);
             break;
         case AXURLChanged:
             tree->updateNodeProperty(*notification.first, AXPropertyName::URL);
@@ -4601,20 +4621,6 @@ AXTextChange AXObjectCache::textChangeForEditType(AXTextEditType type)
     return AXTextInserted;
 }
 #endif
-
-AccessibilityObject* AXObjectCache::textCompositionObjectForNode(Node& node)
-{
-    WeakPtr object = get(&node);
-    if (object)
-        object = object->observableObject();
-
-#if PLATFORM(MAC)
-    // In our Mac implementations for posting text notifications, we fall back on the web area if the observable object is nullptr.
-    if (!object)
-        object = rootWebArea();
-#endif
-    return object.get();
-}
 
 } // namespace WebCore
 

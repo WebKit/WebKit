@@ -11,12 +11,15 @@
         if (window.textInputController && window.accessibilityController) {
             var element = accessibilityController.accessibleElementById("editable");
             shouldBeTrue("!element.textInputMarkedRange");
+            
             textInputController.setMarkedText("test", 1, 0);
             shouldBe("element.textInputMarkedRange", "'{0, 4}'");
+            
             textInputController.insertText("t");
             shouldBeTrue("!element.textInputMarkedRange");
+            
             textInputController.setMarkedText("test2", 1, 0);
-            shouldBe("element.textInputMarkedRange", "'{0, 5}'");
+            shouldBe("element.textInputMarkedRange", "'{1, 5}'");
         }
     </script>
 </body>
