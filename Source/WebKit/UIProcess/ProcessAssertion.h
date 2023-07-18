@@ -44,7 +44,7 @@ OBJC_CLASS WKRBSAssertionDelegate;
 
 namespace WebKit {
 
-enum class ProcessAssertionType {
+enum class ProcessAssertionType : uint8_t {
     NearSuspended,
     Background,
     UnboundedNetworking,
