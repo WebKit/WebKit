@@ -51,7 +51,7 @@ public:
 
     ExceptionOr<RefPtr<HTMLFormElement>> form() const;
 
-    ExceptionOr<void> setFormValue(std::optional<CustomElementFormValue>&&, std::optional<CustomElementFormValue>&& = std::nullopt);
+    ExceptionOr<void> setFormValue(CustomElementFormValue&&, std::optional<CustomElementFormValue>&& state);
 
     ExceptionOr<void> setValidity(ValidityStateFlags, String&& message, HTMLElement* validationAnchor);
     ExceptionOr<bool> willValidate() const;
