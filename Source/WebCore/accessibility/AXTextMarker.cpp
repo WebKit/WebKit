@@ -204,9 +204,11 @@ RefPtr<AXCoreObject> AXTextMarker::object() const
 String AXTextMarker::debugDescription() const
 {
     auto separator = ", ";
+    RefPtr object = this->object();
     return makeString(
         "treeID ", treeID().loggingString()
         , separator, "objectID ", objectID().loggingString()
+        , separator, "role ", object ? accessibilityRoleToString(object->roleValue()) : String("no object"_s)
         , separator, isMainThread() ? node()->debugDescription()
             : makeString("node 0x", hex(reinterpret_cast<uintptr_t>(m_data.node)))
         , separator, "offset ", m_data.offset

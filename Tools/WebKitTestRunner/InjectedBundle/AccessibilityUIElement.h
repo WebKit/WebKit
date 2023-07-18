@@ -328,9 +328,13 @@ public:
     void scrollToMakeVisible();
     void scrollToGlobalPoint(int x, int y);
     void scrollToMakeVisibleWithSubFocus(int x, int y, int width, int height);
-    
+
     // Text markers.
     RefPtr<AccessibilityTextMarkerRange> lineTextMarkerRangeForTextMarker(AccessibilityTextMarker*);
+    RefPtr<AccessibilityTextMarkerRange> rightLineTextMarkerRangeForTextMarker(AccessibilityTextMarker*);
+    RefPtr<AccessibilityTextMarkerRange> leftLineTextMarkerRangeForTextMarker(AccessibilityTextMarker*);
+    RefPtr<AccessibilityTextMarker> previousLineStartTextMarkerForTextMarker(AccessibilityTextMarker*);
+    RefPtr<AccessibilityTextMarker> nextLineEndTextMarkerForTextMarker(AccessibilityTextMarker*);
     int lineIndexForTextMarker(AccessibilityTextMarker*) const;
     RefPtr<AccessibilityTextMarkerRange> misspellingTextMarkerRange(AccessibilityTextMarkerRange* start, bool forward);
     RefPtr<AccessibilityTextMarkerRange> textMarkerRangeForElement(AccessibilityUIElement*);
