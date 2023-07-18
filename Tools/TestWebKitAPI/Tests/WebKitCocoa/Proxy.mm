@@ -40,7 +40,7 @@
 #import <wtf/SoftLinking.h>
 #import <wtf/text/StringConcatenateNumbers.h>
 
-#if HAVE(NW_PROXY_CONFIG) && __has_include(<Network/proxy_config_private.h>)
+#if HAVE(NW_PROXY_CONFIG)
 // FIXME: Soft link libnetwork on the simulator after rdar://110076935 is resolved
 #if !PLATFORM(IOS_FAMILY_SIMULATOR)
 SOFT_LINK_LIBRARY_OPTIONAL(libnetwork)
@@ -168,7 +168,7 @@ TEST(WebKit, SOCKS5)
 // FIXME: Try to re-enable on the simulator after rdar://110076935 is resolved
 #if !PLATFORM(IOS_FAMILY_SIMULATOR)
 
-#if HAVE(NW_PROXY_CONFIG) && __has_include(<Network/proxy_config_private.h>)
+#if HAVE(NW_PROXY_CONFIG)
 TEST(WebKit, HTTPSProxyAPI)
 {
     auto* createProxyConfig = nw_proxy_config_create_http_connectPtr();
@@ -294,7 +294,7 @@ TEST(WebKit, SOCKS5API)
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"http://example.com/"]]];
     EXPECT_WK_STREQ([webView _test_waitForAlert], "success!");
 }
-#endif // HAVE(NW_PROXY_CONFIG) && __has_include(<Network/proxy_config_private.h>)
+#endif // HAVE(NW_PROXY_CONFIG)
 #endif // !PLATFORM(IOS_FAMILY_SIMULATOR)
 
 static HTTPServer proxyAuthenticationServer()
