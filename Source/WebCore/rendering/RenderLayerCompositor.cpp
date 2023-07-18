@@ -3250,8 +3250,18 @@ bool RenderLayerCompositor::requiresCompositingForTransform(RenderLayerModelObje
     // but the renderer may be an inline that doesn't suppport them.
     if (!renderer.isTransformed())
         return false;
+
+    auto compositingPolicy = m_compositingPolicy;
+#if !USE(COMPOSITING_FOR_SMALL_CANVASES)
+    if (is<HTMLCanvasElement>(renderer.element())) {
+        auto* canvas = downcast<HTMLCanvasElement>(renderer.element());
+        auto canvasArea = canvas->size().area<RecordOverflow>();
+        if (!canvasArea.hasOverflowed() && canvasArea < canvasAreaThresholdRequiringCompositing)
+            compositingPolicy = CompositingPolicy::Conservative;
+    }
+#endif
     
-    switch (m_compositingPolicy) {
+    switch (compositingPolicy) {
     case CompositingPolicy::Normal:
         return styleHas3DTransformOperation(renderer.style());
     case CompositingPolicy::Conservative:
