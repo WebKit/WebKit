@@ -178,6 +178,7 @@ inline namespace fundamentals_v3 {
 */
 
 #include <cstdlib>
+#include <functional>
 #include <initializer_list>
 #include <type_traits>
 #include <utility>
@@ -445,7 +446,7 @@ public:
     constexpr expected(unexpected_type&& u) : base(__expected_detail::error_tag, std::forward<unexpected_type>(u).value()) { }
     template<class Err> constexpr expected(const unexpected<Err>& u) : base(__expected_detail::error_tag, u.value()) { }
     template<class Err> constexpr expected(unexpected<Err>&& u) : base(__expected_detail::error_tag, std::forward<Err>(u.value())) { }
-    template<class... Args> constexpr explicit expected(unexpected_t, Args&&... args) : base(__expected_detail::value_tag, unexpected_type(std::forward<Args>(args)...)) { }
+    template<class... Args> constexpr explicit expected(unexpected_t, Args&&... args) : base(__expected_detail::error_tag, std::forward<Args>(args)...) { }
     // template<class U, class... Args> constexpr explicit expected(unexpected_t, std::initializer_list<U>, Args&&...);
 
     ~expected() = default;
@@ -499,6 +500,42 @@ public:
     constexpr const error_type&& error() const && { return std::move(!base::has ? base::s.err : (__EXPECTED_THROW(bad_expected_access<void>()), base::s.err)); }
     template<class U> constexpr value_type value_or(U&& u) const & { return base::has ? **this : static_cast<value_type>(std::forward<U>(u)); }
     template<class U> value_type value_or(U&& u) && { return base::has ? std::move(**this) : static_cast<value_type>(std::forward<U>(u)); }
+
+    template<class F> constexpr auto and_then(F&& f) & {
+        using U = remove_cvref_t<std::invoke_result_t<F, T&>>;
+        static_assert(is_same_v<typename U::error_type, E>, "The result of f(value()) must have the same error_type as this expected");
+        static_assert(is_constructible_v<E, E&>, "The error_type must be constructible from error_type&");
+        if (base::has)
+            return std::invoke(std::forward<F>(f), value());
+        return U(unexpect, error());
+    }
+
+    template <class F> constexpr auto and_then(F&& f) const& {
+        using U = remove_cvref_t<std::invoke_result_t<F, const T&>>;
+        static_assert(is_same_v<typename U::error_type, E>, "The result of f(value()) must have the same error_type as this expected");
+        static_assert(is_constructible_v<E, const E&>, "The error_type must be constructible from const error_type&");
+        if (base::has)
+            return std::invoke(std::forward<F>(f), value());
+        return U(unexpect, error());
+    }
+
+    template<class F> constexpr auto and_then(F&& f) && {
+        using U = remove_cvref_t<std::invoke_result_t<F, T&&>>;
+        static_assert(is_same_v<typename U::error_type, E>, "The result of f(value()) must have the same error_type as this expected.");
+        static_assert(is_constructible_v<E, E&&>, "The error_type must be constructible from error_type&&");
+        if (base::has)
+            return std::invoke(std::forward<F>(f), WTFMove(value()));
+        return U(unexpect, WTFMove(error()));
+    }
+
+    template<class F> constexpr auto and_then(F&& f) const&& {
+        using U = remove_cvref_t<std::invoke_result_t<F, const T&&>>;
+        static_assert(is_same_v<typename U::error_type, E>, "The result of f(value()) must have the same error_type as this expected.");
+        static_assert(is_constructible_v<E, const E&&>, "The error_type must be constructible from const error_type&&");
+        if (base::has)
+            return std::invoke(std::forward<F>(f), WTFMove(value()));
+        return U(unexpect, WTFMove(error()));
+    }
 };
 
 template<class E>

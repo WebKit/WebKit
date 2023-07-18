@@ -167,7 +167,7 @@ ImageBufferBackend* RemoteImageBufferProxy::ensureBackendCreated() const
 {
     if (!m_backend && m_remoteRenderingBackendProxy) {
         auto error = streamConnection().waitForAndDispatchImmediately<Messages::RemoteImageBufferProxy::DidCreateBackend>(m_renderingResourceIdentifier, RemoteRenderingBackendProxy::defaultTimeout);
-        if (error != IPC::Error::NoError) {
+        if (error) {
 #if !RELEASE_LOG_DISABLED
             auto& parameters = m_remoteRenderingBackendProxy->parameters();
 #endif

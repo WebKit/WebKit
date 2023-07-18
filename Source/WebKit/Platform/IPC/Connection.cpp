@@ -518,7 +518,7 @@ UniqueRef<Encoder> Connection::createSyncMessageEncoder(MessageName messageName,
 Error Connection::sendMessage(UniqueRef<Encoder>&& encoder, OptionSet<SendOption> sendOptions, std::optional<Thread::QOS> qos)
 {
     if (!isValid())
-        return Error::InvalidConnection;
+        return ErrorType::InvalidConnection;
 
 #if ENABLE(IPC_TESTING_API)
     if (isMainRunLoop()) {
@@ -539,7 +539,10 @@ Error Connection::sendMessage(UniqueRef<Encoder>&& encoder, OptionSet<SendOption
         auto wrappedMessage = createSyncMessageEncoder(MessageName::WrappedAsyncMessageForTesting, encoder->destinationID(), syncRequestID);
         wrappedMessage->setFullySynchronousModeForTesting();
         wrappedMessage->wrapForTesting(WTFMove(encoder));
-        return sendSyncMessage(syncRequestID, WTFMove(wrappedMessage), Timeout::infinity(), { }).error;
+        auto sendResult = sendSyncMessage(syncRequestID, WTFMove(wrappedMessage), Timeout::infinity(), { });
+        if (sendResult)
+            return { };
+        return sendResult.error();
     }
 
 #if ENABLE(IPC_TESTING_API)
@@ -596,7 +599,7 @@ Error Connection::sendMessage(UniqueRef<Encoder>&& encoder, OptionSet<SendOption
             m_connectionQueue->dispatch(WTFMove(sendOutgoingMessages));
     }
 
-    return Error::NoError;
+    return { };
 }
 
 Error Connection::sendMessageWithAsyncReply(UniqueRef<Encoder>&& encoder, AsyncReplyHandler replyHandler, OptionSet<SendOption> sendOptions, std::optional<Thread::QOS> qos)
@@ -607,8 +610,8 @@ Error Connection::sendMessageWithAsyncReply(UniqueRef<Encoder>&& encoder, AsyncR
     encoder.get() << replyID;
     addAsyncReplyHandler(WTFMove(replyHandler));
     auto error = sendMessage(WTFMove(encoder), sendOptions, qos);
-    if (error == Error::NoError)
-        return Error::NoError;
+    if (!error)
+        return { };
 
     // replyHandlerToCancel might be already cancelled if invalidate() happened in-between.
     if (auto replyHandlerToCancel = takeAsyncReplyHandler(replyID)) {
@@ -634,7 +637,7 @@ Timeout Connection::timeoutRespectingIgnoreTimeoutsForTesting(Timeout timeout) c
 auto Connection::waitForMessage(MessageName messageName, uint64_t destinationID, Timeout timeout, OptionSet<WaitForOption> waitForOptions) -> DecoderOrError
 {
     if (!isValid())
-        return Error::InvalidConnection;
+        return makeUnexpected(ErrorType::InvalidConnection);
 
     assertIsCurrent(dispatcher());
     Ref protectedThis { *this };
@@ -649,12 +652,12 @@ auto Connection::waitForMessage(MessageName messageName, uint64_t destinationID,
         // We don't support having multiple clients waiting for messages.
         ASSERT(!m_waitingForMessage);
         if (m_waitingForMessage)
-            return Error::MultipleWaitingClients;
+            return makeUnexpected(ErrorType::MultipleWaitingClients);
 
         // If the connection is already invalidated, don't even start waiting.
         // Once m_waitingForMessage is set, messageWaitingInterrupted will cover this instead.
         if (!m_shouldWaitForMessages)
-            return Error::AttemptingToWaitOnClosedConnection;
+            return makeUnexpected(ErrorType::AttemptingToWaitOnClosedConnection);
 
         bool hasIncomingSynchronousMessage = false;
 
@@ -678,7 +681,7 @@ auto Connection::waitForMessage(MessageName messageName, uint64_t destinationID,
 
         // Don't even start waiting if we have InterruptWaitingIfSyncMessageArrives and there's a sync message already in the queue.
         if (hasIncomingSynchronousMessage && waitForOptions.contains(WaitForOption::InterruptWaitingIfSyncMessageArrives))
-            return { Error::SyncMessageInterruptedWait };
+            return makeUnexpected(ErrorType::SyncMessageInterruptedWait);
 
         m_waitingForMessage = &waitingForMessage;
     }
@@ -695,13 +698,13 @@ auto Connection::waitForMessage(MessageName messageName, uint64_t destinationID,
 
         if (wasMessageToWaitForAlreadyDispatched) {
             m_waitingForMessage = nullptr;
-            return { Error::WaitingOnAlreadyDispatchedMessage };
+            return makeUnexpected(ErrorType::WaitingOnAlreadyDispatchedMessage);
         }
 
         if (UNLIKELY(m_inDispatchSyncMessageCount && !timeout.isInfinity())) {
             RELEASE_LOG_ERROR(IPC, "Connection::waitForMessage(%" PUBLIC_LOG_STRING "): Exiting immediately, since we're handling a sync message already", description(messageName));
             m_waitingForMessage = nullptr;
-            return { Error::AttemptingToWaitInsideSyncMessageHandling };
+            return makeUnexpected(ErrorType::AttemptingToWaitInsideSyncMessageHandling);
         }
 
         if (m_waitingForMessage->decoder) {
@@ -712,21 +715,21 @@ auto Connection::waitForMessage(MessageName messageName, uint64_t destinationID,
 
         if (!isValid()) {
             m_waitingForMessage = nullptr;
-            return Error::InvalidConnection;
+            return makeUnexpected(ErrorType::InvalidConnection);
         }
 
         bool didTimeout = !m_waitForMessageCondition.waitUntil(m_waitForMessageLock, timeout.deadline());
         if (didTimeout) {
             m_waitingForMessage = nullptr;
-            return Error::Timeout;
+            return makeUnexpected(ErrorType::Timeout);
         }
         if (m_waitingForMessage->messageWaitingInterrupted) {
             m_waitingForMessage = nullptr;
-            return Error::SyncMessageInterruptedWait;
+            return makeUnexpected(ErrorType::SyncMessageInterruptedWait);
         }
     }
 
-    return Error::Unspecified;
+    return makeUnexpected(ErrorType::Unspecified);
 }
 
 bool Connection::pushPendingSyncRequestID(SyncRequestID syncRequestID)
@@ -753,13 +756,13 @@ auto Connection::sendSyncMessage(SyncRequestID syncRequestID, UniqueRef<Encoder>
 {
     ASSERT(syncRequestID);
     if (!isValid()) {
-        didFailToSendSyncMessage(Error::InvalidConnection);
-        return Error::InvalidConnection;
+        didFailToSendSyncMessage(ErrorType::InvalidConnection);
+        return makeUnexpected(ErrorType::InvalidConnection);
     }
     assertIsCurrent(dispatcher());
     if (!pushPendingSyncRequestID(syncRequestID)) {
-        didFailToSendSyncMessage(Error::CantWaitForSyncReplies);
-        return { Error::CantWaitForSyncReplies };
+        didFailToSendSyncMessage(ErrorType::CantWaitForSyncReplies);
+        return makeUnexpected(ErrorType::CantWaitForSyncReplies);
     }
 
     // First send the message.
@@ -783,11 +786,8 @@ auto Connection::sendSyncMessage(SyncRequestID syncRequestID, UniqueRef<Encoder>
 
     popPendingSyncRequestID(syncRequestID);
 
-    if (!replyOrError.decoder) {
-        if (replyOrError.error == Error::NoError)
-            replyOrError.error = Error::Unspecified;
-        didFailToSendSyncMessage(replyOrError.error);
-    }
+    if (!replyOrError)
+        didFailToSendSyncMessage(replyOrError.error());
 
     return replyOrError;
 }
@@ -821,7 +821,7 @@ auto Connection::waitForSyncReply(SyncRequestID syncRequestID, MessageName messa
             // The connection was closed.
             if (!m_shouldWaitForSyncReplies) {
                 didReceiveSyncReply(sendSyncOptions);
-                return Error::InvalidConnection;
+                return makeUnexpected(ErrorType::InvalidConnection);
             }
         }
 
@@ -832,7 +832,7 @@ auto Connection::waitForSyncReply(SyncRequestID syncRequestID, MessageName messa
         if (!isValid()) {
             RELEASE_LOG_ERROR(IPC, "Connection::waitForSyncReply: Connection no longer valid, id=%" PRIu64, syncRequestID.toUInt64());
             didReceiveSyncReply(sendSyncOptions);
-            return Error::InvalidConnection;
+            return makeUnexpected(ErrorType::InvalidConnection);
         }
 
         // We didn't find a sync reply yet, keep waiting.
@@ -849,7 +849,7 @@ auto Connection::waitForSyncReply(SyncRequestID syncRequestID, MessageName messa
 
     didReceiveSyncReply(sendSyncOptions);
 
-    return Error::Timeout;
+    return makeUnexpected(ErrorType::Timeout);
 }
 
 void Connection::processIncomingSyncReply(std::unique_ptr<Decoder> decoder)
@@ -1488,25 +1488,27 @@ std::optional<Connection::Handle> Connection::Handle::decode(Decoder& decoder)
 
 const char* errorAsString(Error error)
 {
-    switch (error) {
-    case Error::NoError: return "NoError";
-    case Error::InvalidConnection: return "InvalidConnection";
-    case Error::NoConnectionForIdentifier: return "NoConnectionForIdentifier";
-    case Error::NoMessageSenderConnection: return "NoMessageSenderConnection";
-    case Error::Timeout: return "Timeout";
-    case Error::Unspecified: return "Unspecified";
-    case Error::MultipleWaitingClients: return "MultipleWaitingClients";
-    case Error::AttemptingToWaitOnClosedConnection: return "AttemptingToWaitOnClosedConnection";
-    case Error::WaitingOnAlreadyDispatchedMessage: return "WaitingOnAlreadyDispatchedMessage";
-    case Error::AttemptingToWaitInsideSyncMessageHandling: return "AttemptingToWaitInsideSyncMessageHandling";
-    case Error::SyncMessageInterruptedWait: return "SyncMessageInterruptedWait";
-    case Error::CantWaitForSyncReplies: return "CantWaitForSyncReplies";
-    case Error::FailedToEncodeMessageArguments: return "FailedToEncodeMessageArguments";
-    case Error::FailedToDecodeReplyArguments: return "FailedToDecodeReplyArguments";
-    case Error::FailedToFindReplyHandler: return "FailedToFindReplyHandler";
-    case Error::FailedToAcquireBufferSpan: return "FailedToAcquireBufferSpan";
-    case Error::FailedToAcquireReplyBufferSpan: return "FailedToAcquireReplyBufferSpan";
-    case Error::StreamConnectionEncodingError: return "StreamConnectionEncodingError";
+    if (!error)
+        return "NoError";
+
+    switch (*error) {
+    case ErrorType::InvalidConnection: return "InvalidConnection";
+    case ErrorType::NoConnectionForIdentifier: return "NoConnectionForIdentifier";
+    case ErrorType::NoMessageSenderConnection: return "NoMessageSenderConnection";
+    case ErrorType::Timeout: return "Timeout";
+    case ErrorType::Unspecified: return "Unspecified";
+    case ErrorType::MultipleWaitingClients: return "MultipleWaitingClients";
+    case ErrorType::AttemptingToWaitOnClosedConnection: return "AttemptingToWaitOnClosedConnection";
+    case ErrorType::WaitingOnAlreadyDispatchedMessage: return "WaitingOnAlreadyDispatchedMessage";
+    case ErrorType::AttemptingToWaitInsideSyncMessageHandling: return "AttemptingToWaitInsideSyncMessageHandling";
+    case ErrorType::SyncMessageInterruptedWait: return "SyncMessageInterruptedWait";
+    case ErrorType::CantWaitForSyncReplies: return "CantWaitForSyncReplies";
+    case ErrorType::FailedToEncodeMessageArguments: return "FailedToEncodeMessageArguments";
+    case ErrorType::FailedToDecodeReplyArguments: return "FailedToDecodeReplyArguments";
+    case ErrorType::FailedToFindReplyHandler: return "FailedToFindReplyHandler";
+    case ErrorType::FailedToAcquireBufferSpan: return "FailedToAcquireBufferSpan";
+    case ErrorType::FailedToAcquireReplyBufferSpan: return "FailedToAcquireReplyBufferSpan";
+    case ErrorType::StreamConnectionEncodingError: return "StreamConnectionEncodingError";
     }
 
     return "";

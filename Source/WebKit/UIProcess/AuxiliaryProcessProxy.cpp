@@ -231,10 +231,10 @@ bool AuxiliaryProcessProxy::sendMessage(UniqueRef<IPC::Encoder>&& encoder, Optio
 
     case State::Running:
         if (asyncReplyHandler) {
-            if (connection()->sendMessageWithAsyncReply(WTFMove(encoder), WTFMove(*asyncReplyHandler), sendOptions) == IPC::Error::NoError)
+            if (!connection()->sendMessageWithAsyncReply(WTFMove(encoder), WTFMove(*asyncReplyHandler), sendOptions))
                 return true;
         } else {
-            if (connection()->sendMessage(WTFMove(encoder), sendOptions) == IPC::Error::NoError)
+            if (!connection()->sendMessage(WTFMove(encoder), sendOptions))
                 return true;
         }
         break;

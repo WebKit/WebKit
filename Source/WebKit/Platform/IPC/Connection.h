@@ -38,6 +38,7 @@
 #include <wtf/CompletionHandler.h>
 #include <wtf/Condition.h>
 #include <wtf/Deque.h>
+#include <wtf/Expected.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/Lock.h>
@@ -99,9 +100,8 @@ enum class WaitForOption {
     DispatchIncomingSyncMessagesWhileWaiting = 1 << 1,
 };
 
-enum class Error : uint8_t {
-    NoError = 0,
-    InvalidConnection,
+enum class ErrorType : uint8_t {
+    InvalidConnection = 1,
     NoConnectionForIdentifier,
     NoMessageSenderConnection,
     Timeout,
@@ -119,6 +119,7 @@ enum class Error : uint8_t {
     FailedToAcquireReplyBufferSpan,
     StreamConnectionEncodingError,
 };
+using Error = Markable<ErrorType, EnumMarkableTraits<ErrorType, 0>>;
 
 extern const char* errorAsString(Error);
 
@@ -155,29 +156,38 @@ class WorkQueueMessageReceiver;
 struct AsyncReplyIDType;
 using AsyncReplyID = AtomicObjectIdentifier<AsyncReplyIDType>;
 
-template<typename T> struct ConnectionSendSyncResult {
+template<typename T> struct ConnectionSendSyncReply {
     std::unique_ptr<Decoder> decoder;
-    std::optional<typename T::ReplyArguments> replyArguments;
-    Error error { Error::NoError };
+    typename T::ReplyArguments arguments;
+};
 
-    bool succeeded() const { return error == Error::NoError; }
+template<typename T> struct ConnectionSendSyncResult : public Expected<ConnectionSendSyncReply<T>, Error> {
+    using Expected<ConnectionSendSyncReply<T>, Error>::Expected;
+    using Expected<ConnectionSendSyncReply<T>, Error>::has_value;
+    using Expected<ConnectionSendSyncReply<T>, Error>::value;
+    using Expected<ConnectionSendSyncReply<T>, Error>::error;
+
+    bool succeeded() const
+    {
+        return has_value();
+    }
 
     typename T::ReplyArguments& reply()
     {
-        ASSERT(!!replyArguments);
-        return *replyArguments;
+        ASSERT(has_value());
+        return value().arguments;
     }
 
     typename T::ReplyArguments takeReply()
     {
-        ASSERT(!!replyArguments);
-        return WTFMove(replyArguments).value();
+        ASSERT(has_value());
+        return WTFMove(value().arguments);
     }
 
     template<typename... U>
     typename T::ReplyArguments takeReplyOr(U&&... defaultValues)
     {
-        return WTFMove(replyArguments).value_or(typename T::ReplyArguments { std::forward<U>(defaultValues)... });
+        return has_value() ? WTFMove(value().arguments) : typename T::ReplyArguments { std::forward<U>(defaultValues)... };
     }
 };
 
@@ -304,21 +314,7 @@ public:
     enum UniqueIDType { };
     using UniqueID = AtomicObjectIdentifier<UniqueIDType>;
 
-    struct DecoderOrError {
-        std::unique_ptr<Decoder> decoder;
-        Error error { Error::NoError };
-
-        DecoderOrError(std::unique_ptr<Decoder>&& inDecoder)
-            : decoder(WTFMove(inDecoder))
-        { }
-
-        DecoderOrError(Error inError)
-            : decoder(nullptr)
-            , error(inError)
-        {
-            ASSERT(error != Error::NoError);
-        }
-    };
+    using DecoderOrError = Expected<std::unique_ptr<Decoder>, Error>;
 
     static RefPtr<Connection> connection(UniqueID);
     UniqueID uniqueID() const { return m_uniqueID; }
@@ -369,6 +365,7 @@ public:
     // Sync senders should check the SendSyncResult for true/false in case they need to know if the result was really received.
     // Sync senders should hold on to the SendSyncResult in case they reference the contents of the reply via DataRefererence / ArrayReference.
 
+    template<typename T> using SendSyncReply = ConnectionSendSyncReply<T>;
     template<typename T> using SendSyncResult = ConnectionSendSyncResult<T>;
     template<typename T> SendSyncResult<T> sendSync(T&& message, uint64_t destinationID, Timeout = Timeout::infinity(), OptionSet<SendSyncOption> sendSyncOptions = { }); // Main thread only.
 
@@ -671,7 +668,7 @@ Error Connection::send(UniqueID connectionID, T&& message, uint64_t destinationI
     Locker locker { s_connectionMapLock };
     auto* connection = connectionMap().get(connectionID);
     if (!connection)
-        return Error::NoConnectionForIdentifier;
+        return ErrorType::NoConnectionForIdentifier;
     return connection->send(WTFMove(message), destinationID, sendOptions, qos);
 }
 
@@ -683,7 +680,7 @@ Connection::AsyncReplyID Connection::sendWithAsyncReply(T&& message, C&& complet
     auto replyID = handler.replyID;
     auto encoder = makeUniqueRef<Encoder>(T::name(), destinationID);
     encoder.get() << message.arguments();
-    if (sendMessageWithAsyncReply(WTFMove(encoder), WTFMove(handler), sendOptions) == Error::NoError)
+    if (!sendMessageWithAsyncReply(WTFMove(encoder), WTFMove(handler), sendOptions))
         return replyID;
     // FIXME: Propagate the error back.
     return { };
@@ -704,50 +701,49 @@ template<typename T> Connection::SendSyncResult<T> Connection::sendSync(T&& mess
     encoder.get() << message.arguments();
 
     // Now send the message and wait for a reply.
-    auto replyDecoderOrError = sendSyncMessage(syncRequestID, WTFMove(encoder), timeout, sendSyncOptions);
-    if (!replyDecoderOrError.decoder) {
-        ASSERT(replyDecoderOrError.error != Error::NoError);
-        return { nullptr, std::nullopt, replyDecoderOrError.error };
-    }
-
-    SendSyncResult<T> result;
-    *replyDecoderOrError.decoder >> result.replyArguments;
-    if (!result.replyArguments)
-        return { nullptr, std::nullopt, Error::FailedToDecodeReplyArguments };
-
-    result.decoder = WTFMove(replyDecoderOrError.decoder);
-    return result;
+    return sendSyncMessage(syncRequestID, WTFMove(encoder), timeout, sendSyncOptions)
+        .and_then([](std::unique_ptr<Decoder>&& decoder) -> Connection::SendSyncResult<T> {
+            std::optional<typename T::ReplyArguments> replyArguments;
+            (*decoder) >> replyArguments;
+            if (!replyArguments)
+                return makeUnexpected(ErrorType::FailedToDecodeReplyArguments);
+            return Connection::SendSyncReply<T> {
+                .decoder = WTFMove(decoder),
+                .arguments = WTFMove(*replyArguments)
+            };
+        });
 }
 
 template<typename T> Error Connection::waitForAndDispatchImmediately(uint64_t destinationID, Timeout timeout, OptionSet<WaitForOption> waitForOptions)
 {
     auto decoderOrError = waitForMessage(T::name(), destinationID, timeout, waitForOptions);
-    if (!decoderOrError.decoder)
-        return decoderOrError.error;
+    if (!decoderOrError)
+        return decoderOrError.error();
 
     if (!isValid())
-        return Error::InvalidConnection;
+        return ErrorType::InvalidConnection;
 
-    ASSERT(decoderOrError.decoder->destinationID() == destinationID);
-    m_client->didReceiveMessage(*this, *decoderOrError.decoder);
-    return Error::NoError;
+    ASSERT((*decoderOrError)->destinationID() == destinationID);
+    m_client->didReceiveMessage(*this, **decoderOrError);
+    return { };
 }
 
 template<typename T> Error Connection::waitForAsyncReplyAndDispatchImmediately(AsyncReplyID replyID, Timeout timeout)
 {
     auto decoderOrError = waitForMessage(T::asyncMessageReplyName(), replyID.toUInt64(), timeout, { });
-    if (!decoderOrError.decoder)
-        return decoderOrError.error;
+    if (!decoderOrError)
+        return decoderOrError.error();
 
-    ASSERT(decoderOrError.decoder->messageReceiverName() == ReceiverName::AsyncReply);
-    ASSERT(decoderOrError.decoder->destinationID() == replyID.toUInt64());
-    auto handler = takeAsyncReplyHandler(AtomicObjectIdentifier<AsyncReplyIDType>(decoderOrError.decoder->destinationID()));
+    auto& decoder = *decoderOrError;
+    ASSERT(decoder->messageReceiverName() == ReceiverName::AsyncReply);
+    ASSERT(decoder->destinationID() == replyID.toUInt64());
+    auto handler = takeAsyncReplyHandler(AtomicObjectIdentifier<AsyncReplyIDType>(decoder->destinationID()));
     if (!handler) {
         ASSERT_NOT_REACHED();
-        return Error::FailedToFindReplyHandler;
+        return ErrorType::FailedToFindReplyHandler;
     }
-    handler(decoderOrError.decoder.get());
-    return Error::NoError;
+    handler(decoder.get());
+    return { };
 }
 
 #if ENABLE(IPC_TESTING_API)

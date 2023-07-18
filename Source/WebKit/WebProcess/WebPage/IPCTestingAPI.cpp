@@ -554,9 +554,9 @@ static JSValueRef sendSyncMessageWithJSArguments(IPC::Connection& connection, JS
     }
 
     auto replyDecoderOrError = connection.sendSyncMessage(syncRequestID, WTFMove(encoder), timeout, { });
-    if (replyDecoderOrError.decoder) {
+    if (replyDecoderOrError) {
         auto scope = DECLARE_CATCH_SCOPE(globalObject->vm());
-        auto* jsResult = jsResultFromReplyDecoder(globalObject, messageName, *replyDecoderOrError.decoder);
+        auto* jsResult = jsResultFromReplyDecoder(globalObject, messageName, **replyDecoderOrError);
         if (scope.exception()) {
             *exception = toRef(globalObject, scope.exception());
             scope.clearException();
@@ -579,9 +579,9 @@ static JSValueRef waitForMessageWithJSArguments(IPC::Connection& connection, JSC
 
     auto [destinationID, messageName, timeout] = *info;
     auto decoderOrError = connection.waitForMessageForTesting(messageName, destinationID, timeout, { });
-    if (decoderOrError.decoder) {
+    if (decoderOrError) {
         auto scope = DECLARE_CATCH_SCOPE(globalObject->vm());
-        auto jsResult = jsValueForArguments(globalObject, messageName, *decoderOrError.decoder);
+        auto jsResult = jsValueForArguments(globalObject, messageName, **decoderOrError);
         if (scope.exception()) {
             *exception = toRef(globalObject, scope.exception());
             scope.clearException();
@@ -1030,7 +1030,7 @@ bool JSIPCStreamClientConnection::prepareToSendOutOfStreamMessage(JSContextRef c
             return false;
     }
 
-    if (streamConnection.trySendDestinationIDIfNeeded(destinationID, timeout) != IPC::Error::NoError)
+    if (streamConnection.trySendDestinationIDIfNeeded(destinationID, timeout))
         return false;
 
     auto span = streamConnection.bufferForTesting().tryAcquire(timeout);
@@ -1093,9 +1093,9 @@ JSValueRef JSIPCStreamClientConnection::sendSyncMessage(JSContextRef context, JS
         return JSValueMakeUndefined(context);
 
     auto replyDecoderOrError = connection.sendSyncMessage(syncRequestID, WTFMove(encoder), timeout, { });
-    if (replyDecoderOrError.decoder) {
+    if (replyDecoderOrError) {
         auto scope = DECLARE_CATCH_SCOPE(globalObject->vm());
-        auto* jsResult = jsResultFromReplyDecoder(globalObject, messageName, *replyDecoderOrError.decoder);
+        auto* jsResult = jsResultFromReplyDecoder(globalObject, messageName, **replyDecoderOrError);
         if (scope.exception()) {
             *exception = toRef(globalObject, scope.exception());
             scope.clearException();
