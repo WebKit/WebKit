@@ -3432,6 +3432,9 @@ void Document::enqueuePaintTimingEntryIfNeeded()
     if (!ContentfulPaintChecker::qualifiesForContentfulPaint(*view()))
         return;
 
+    if (frame() && frame()->isMainFrame())
+        WTFEmitSignpost(this, "Page Load: First Contentful Paint");
+
     domWindow()->performance().reportFirstContentfulPaint();
     m_didEnqueueFirstContentfulPaint = true;
 }
@@ -6468,7 +6471,15 @@ void Document::finishedParsing()
     bool isInMiddleOfInitializingIframe = documentLoader && documentLoader->isInFinishedLoadingOfEmptyDocument();
     if (!isInMiddleOfInitializingIframe)
         eventLoop().performMicrotaskCheckpoint();
+
+    bool isMainFrame = m_frame && m_frame->isMainFrame();
+    if (isMainFrame)
+        WTFBeginSignpost(this, "Page Load: DOM Content Loaded");
+
     dispatchEvent(Event::create(eventNames().DOMContentLoadedEvent, Event::CanBubble::Yes, Event::IsCancelable::No));
+
+    if (isMainFrame)
+        WTFEndSignpost(this, "Page Load: DOM Content Loaded");
 
     if (!m_eventTiming.domContentLoadedEventEnd) {
         auto now = MonotonicTime::now();

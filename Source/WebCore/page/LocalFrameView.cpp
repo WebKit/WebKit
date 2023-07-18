@@ -5938,6 +5938,7 @@ void LocalFrameView::firePaintRelatedMilestonesIfNeeded()
         if (page->requestedLayoutMilestones() & DidFirstMeaningfulPaint)
             milestonesAchieved.add(DidFirstMeaningfulPaint);
         if (m_frame->isMainFrame()) {
+            WTFEmitSignpost(m_frame->document(), "Page Load: First Meaningful Paint");
             if (auto* page = m_frame->page())
                 page->didFirstMeaningfulPaint();
         }

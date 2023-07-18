@@ -134,6 +134,7 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Ref.h>
 #include <wtf/SetForScope.h>
+#include <wtf/SystemTracing.h>
 #include <wtf/URL.h>
 #include <wtf/text/WTFString.h>
 
@@ -2355,7 +2356,14 @@ void LocalDOMWindow::dispatchLoadEvent()
             navigationTiming->documentLoadTiming().setLoadEventStart(now);
     }
 
+    bool isMainFrame = frame() && frame()->isMainFrame();
+    if (isMainFrame)
+        WTFBeginSignpost(document(), "Page Load: Load Event");
+
     dispatchEvent(Event::create(eventNames().loadEvent, Event::CanBubble::No, Event::IsCancelable::No), document());
+
+    if (isMainFrame)
+        WTFEndSignpost(document(), "Page Load: Load Event");
 
     if (shouldMarkLoadEventTimes) {
         auto now = MonotonicTime::now();
