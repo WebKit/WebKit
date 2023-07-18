@@ -438,9 +438,12 @@ IntRect ScrollbarThemeMac::trackRect(Scrollbar& scrollbar, bool painting)
 
 int ScrollbarThemeMac::minimumThumbLength(Scrollbar& scrollbar)
 {
-    BEGIN_BLOCK_OBJC_EXCEPTIONS
-    return [scrollbarMap().get(&scrollbar) knobMinLength];
-    END_BLOCK_OBJC_EXCEPTIONS
+    if (scrollbar.shouldRegisterScrollbar()) {
+        BEGIN_BLOCK_OBJC_EXCEPTIONS
+        return [scrollbarMap().get(&scrollbar) knobMinLength];
+        END_BLOCK_OBJC_EXCEPTIONS
+    } else
+        return scrollbar.minimumThumbLength();
 }
 
 static bool shouldCenterOnThumb(const PlatformMouseEvent& evt)

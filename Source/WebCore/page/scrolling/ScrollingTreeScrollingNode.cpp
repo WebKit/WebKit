@@ -497,6 +497,11 @@ void ScrollingTreeScrollingNode::scrollbarVisibilityDidChange(ScrollbarOrientati
     scrollingTree().scrollingTreeNodeScrollbarVisibilityDidChange(scrollingNodeID(), orientation, isVisible);
 }
 
+void ScrollingTreeScrollingNode::scrollbarMinimumThumbLengthDidChange(ScrollbarOrientation orientation, int minimumThumbLength)
+{
+    scrollingTree().scrollingTreeNodeScrollbarMinimumThumbLengthDidChange(scrollingNodeID(), orientation, minimumThumbLength);
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(ASYNC_SCROLLING)

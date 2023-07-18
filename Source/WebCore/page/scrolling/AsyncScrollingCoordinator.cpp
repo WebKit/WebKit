@@ -1173,16 +1173,6 @@ bool AsyncScrollingCoordinator::scrollAnimatorEnabled() const
     return settings.scrollAnimatorEnabled();
 }
 
-void AsyncScrollingCoordinator::scrollingTreeNodeScrollbarVisibilityDidChange(ScrollingNodeID nodeID, ScrollbarOrientation orientation, bool isVisible)
-{
-    auto* frameView = frameViewForScrollingNode(nodeID);
-    if (!frameView)
-        return;
-    
-    if (auto* scrollableArea = frameView->scrollableAreaForScrollingNodeID(nodeID))
-        scrollableArea->scrollbarsController().setScrollbarVisibilityState(orientation, isVisible);
-}
-
 } // namespace WebCore
 
 #endif // ENABLE(ASYNC_SCROLLING)

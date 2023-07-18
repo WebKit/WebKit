@@ -518,6 +518,14 @@ void RemoteScrollingTreeMac::scrollingTreeNodeScrollbarVisibilityDidChange(Scrol
     });
 }
 
+void RemoteScrollingTreeMac::scrollingTreeNodeScrollbarMinimumThumbLengthDidChange(ScrollingNodeID nodeID, ScrollbarOrientation orientation, int minimumThumbLength)
+{
+    RunLoop::main().dispatch([strongThis = Ref { *this }, nodeID, orientation, minimumThumbLength] {
+        if (auto* scrollingCoordinatorProxy = strongThis->scrollingCoordinatorProxy())
+            scrollingCoordinatorProxy->scrollingTreeNodeScrollbarMinimumThumbLengthDidChange(nodeID, orientation, minimumThumbLength);
+    });
+}
+
 } // namespace WebKit
 
 #endif // PLATFORM(MAC) && ENABLE(UI_SIDE_COMPOSITING)

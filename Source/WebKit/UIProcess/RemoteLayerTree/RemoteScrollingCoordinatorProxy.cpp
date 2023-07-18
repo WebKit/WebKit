@@ -434,6 +434,11 @@ void RemoteScrollingCoordinatorProxy::scrollingTreeNodeScrollbarVisibilityDidCha
     m_webPageProxy.send(Messages::RemoteScrollingCoordinator::ScrollingTreeNodeScrollbarVisibilityDidChange(nodeID, orientation, isVisible));
 }
 
+void RemoteScrollingCoordinatorProxy::scrollingTreeNodeScrollbarMinimumThumbLengthDidChange(WebCore::ScrollingNodeID nodeID, ScrollbarOrientation orientation, int minimumThumbLength)
+{
+    m_webPageProxy.send(Messages::RemoteScrollingCoordinator::ScrollingTreeNodeScrollbarMinimumThumbLengthDidChange(nodeID, orientation, minimumThumbLength));
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(UI_SIDE_COMPOSITING)

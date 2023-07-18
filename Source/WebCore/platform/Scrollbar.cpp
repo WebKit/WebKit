@@ -533,4 +533,9 @@ bool Scrollbar::shouldRegisterScrollbar() const
     return m_scrollableArea.scrollbarsController().shouldRegisterScrollbars();
 }
 
+int Scrollbar::minimumThumbLength() const
+{
+    return m_scrollableArea.scrollbarsController().minimumThumbLength(m_orientation);
+}
+
 } // namespace WebCore

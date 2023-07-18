@@ -47,6 +47,7 @@ public:
     virtual ~RemoteScrollingTreeMac();
 
     void scrollingTreeNodeScrollbarVisibilityDidChange(WebCore::ScrollingNodeID, ScrollbarOrientation, bool) override;
+    void scrollingTreeNodeScrollbarMinimumThumbLengthDidChange(WebCore::ScrollingNodeID, ScrollbarOrientation, int) override;
 
 private:
     void handleWheelEventPhase(WebCore::ScrollingNodeID, WebCore::PlatformWheelEventPhase) override;
