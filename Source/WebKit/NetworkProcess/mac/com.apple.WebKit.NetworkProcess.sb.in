@@ -78,18 +78,25 @@
     (require-all
         (socket-option-level SOL_SOCKET)
         (socket-option-name
-            131072
+            0 ;; Replace with 131072 when 32 bit size is supported
             SO_DELEGATED
             SO_DELEGATED_UUID
+            SO_FLOW_DIVERT_TOKEN
+            SO_LINGER
             SO_MARK_KNOWN_TRACKER
+            SO_MARK_KNOWN_TRACKER_NON_APP_INITIATED
             SO_NECP_ATTRIBUTES
             SO_NECP_CLIENTUUID
             SO_NECP_LISTENUUID
             SO_NOSIGPIPE
             SO_RCVBUF
+            SO_RCVLOWAT
+            SO_RESTRICTIONS
             SO_REUSEADDR
             SO_REUSEPORT
-            SO_SNDLOWAT)))
+            SO_SNDBUF
+            SO_SNDLOWAT
+            SO_TIMESTAMP)))
 
 (allow socket-option-get
     (require-all
@@ -97,6 +104,8 @@
         (socket-option-name
             SO_ERROR
             SO_NREAD
+            SO_NWRITE
+            SO_RCVBUF
             SO_SNDBUF)))
 
 (allow socket-option-set
@@ -107,7 +116,7 @@
 (allow socket-option-set
     (require-all
         (socket-option-level IPPROTO_IP)
-        (socket-option-name 7 20 25 27)))
+        (socket-option-name 3 7 20 25 27 28)))
 
 (allow socket-option-get
     (require-all
@@ -117,7 +126,12 @@
 (allow socket-option-set
     (require-all
         (socket-option-level IPPROTO_IPV6)
-        (socket-option-name 27 61)))
+        (socket-option-name 27 35 36 61 62)))
+
+(allow socket-option-get
+    (require-all
+        (socket-option-level IPPROTO_IPV6)
+        (socket-option-name 125)))
 
 (allow socket-option-get
     (require-all
