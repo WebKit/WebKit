@@ -558,6 +558,10 @@
                             "display-rotation"
                             "display-scale"))))
 
+(with-filter (iokit-registry-entry-class "AppleMobileADBE0")
+    (allow iokit-get-properties
+        (iokit-property "GainMapVersion")))
+
 (with-filter (iokit-registry-entry-class "IOPlatformDevice")
     (deny iokit-get-properties (with no-report)
         (iokit-property
