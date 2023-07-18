@@ -35,11 +35,11 @@ private:
 
         GRefPtr<JSCContext> jsContext = adoptGRef(webkit_frame_get_js_context(frame));
         g_assert_true(JSC_IS_CONTEXT(jsContext.get()));
-        assertObjectIsDeletedWhenTestFinishes(G_OBJECT(jsContext.get()));
+        s_watcher.assertObjectIsDeletedWhenTestFinishes(G_OBJECT(jsContext.get()));
 
         GRefPtr<JSCValue> jsInputElement = adoptGRef(jsc_context_evaluate(jsContext.get(), "document.getElementById('auto-fill')", -1));
         g_assert_true(JSC_IS_VALUE(jsInputElement.get()));
-        assertObjectIsDeletedWhenTestFinishes(G_OBJECT(jsInputElement.get()));
+        s_watcher.assertObjectIsDeletedWhenTestFinishes(G_OBJECT(jsInputElement.get()));
         g_assert_true(jsc_value_is_object(jsInputElement.get()));
         g_assert_true(jsc_value_object_is_instance_of(jsInputElement.get(), "HTMLInputElement"));
         g_assert_false(webkit_web_form_manager_input_element_is_auto_filled(jsInputElement.get()));
