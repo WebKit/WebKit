@@ -105,6 +105,10 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::sentenceAtOffset(int) { return 
 
 #if !PLATFORM(MAC) || !ENABLE(ACCESSIBILITY)
 bool AccessibilityUIElement::isTextMarkerNull(AccessibilityTextMarker* marker) { return !isTextMarkerValid(marker); }
+RefPtr<AccessibilityTextMarkerRange> AccessibilityUIElement::rightLineTextMarkerRangeForTextMarker(AccessibilityTextMarker*) { return nullptr; }
+RefPtr<AccessibilityTextMarkerRange> AccessibilityUIElement::leftLineTextMarkerRangeForTextMarker(AccessibilityTextMarker*) { return nullptr; }
+RefPtr<AccessibilityTextMarker> AccessibilityUIElement::previousLineStartTextMarkerForTextMarker(AccessibilityTextMarker*) { return nullptr; }
+RefPtr<AccessibilityTextMarker> AccessibilityUIElement::nextLineEndTextMarkerForTextMarker(AccessibilityTextMarker*) { return nullptr; }
 int AccessibilityUIElement::lineIndexForTextMarker(AccessibilityTextMarker*) const { return -1; }
 RefPtr<AccessibilityTextMarkerRange> AccessibilityUIElement::textMarkerRangeForRange(unsigned, unsigned) { return nullptr; }
 RefPtr<AccessibilityTextMarkerRange> AccessibilityUIElement::selectedTextMarkerRange() { return nullptr; }

@@ -857,6 +857,8 @@ accessibility/mac/date-input-increment-decrement.html [ Skip ]
 accessibility/display-contents/dynamically-added-children.html [ Skip ]
 accessibility/display-contents/aria-owns.html [ Skip ]
 
+accessibility/mac/text-field-number-of-characters.html [ Skip ]
+accessibility/mac/content-editable-attributed-string.html [ Skip ]
 accessibility/mac/lazy-spellchecking.html [ Skip ]
 
 # DOM paste access requests are not implemented in WebKit1.

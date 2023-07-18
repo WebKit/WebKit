@@ -232,6 +232,10 @@
 
     // Text markers.
     AccessibilityTextMarkerRange lineTextMarkerRangeForTextMarker(AccessibilityTextMarker textMarker);
+    AccessibilityTextMarkerRange rightLineTextMarkerRangeForTextMarker(AccessibilityTextMarker textMarker);
+    AccessibilityTextMarkerRange leftLineTextMarkerRangeForTextMarker(AccessibilityTextMarker textMarker);
+    AccessibilityTextMarker previousLineStartTextMarkerForTextMarker(AccessibilityTextMarker textMarker);
+    AccessibilityTextMarker nextLineEndTextMarkerForTextMarker(AccessibilityTextMarker textMarker);
     long lineIndexForTextMarker(AccessibilityTextMarker textMarker);
     AccessibilityTextMarkerRange misspellingTextMarkerRange(AccessibilityTextMarkerRange start, boolean forward);
     AccessibilityTextMarkerRange textMarkerRangeForElement(AccessibilityUIElement element);

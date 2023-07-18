@@ -1878,7 +1878,54 @@ RefPtr<AccessibilityTextMarkerRange> AccessibilityUIElement::lineTextMarkerRange
     auto textMarkerRange = attributeValueForParameter(@"AXLineTextMarkerRangeForTextMarker", textMarker->platformTextMarker());
     return AccessibilityTextMarkerRange::create(textMarkerRange.get());
     END_AX_OBJC_EXCEPTIONS
+    return nullptr;
+}
 
+RefPtr<AccessibilityTextMarkerRange> AccessibilityUIElement::rightLineTextMarkerRangeForTextMarker(AccessibilityTextMarker* textMarker)
+{
+    if (!textMarker)
+        return nullptr;
+
+    BEGIN_AX_OBJC_EXCEPTIONS
+    auto textMarkerRange = attributeValueForParameter(@"AXRightLineTextMarkerRangeForTextMarker", textMarker->platformTextMarker());
+    return AccessibilityTextMarkerRange::create(textMarkerRange.get());
+    END_AX_OBJC_EXCEPTIONS
+    return nullptr;
+}
+
+RefPtr<AccessibilityTextMarkerRange> AccessibilityUIElement::leftLineTextMarkerRangeForTextMarker(AccessibilityTextMarker* textMarker)
+{
+    if (!textMarker)
+        return nullptr;
+
+    BEGIN_AX_OBJC_EXCEPTIONS
+    auto textMarkerRange = attributeValueForParameter(@"AXLeftLineTextMarkerRangeForTextMarker", textMarker->platformTextMarker());
+    return AccessibilityTextMarkerRange::create(textMarkerRange.get());
+    END_AX_OBJC_EXCEPTIONS
+    return nullptr;
+}
+
+RefPtr<AccessibilityTextMarker> AccessibilityUIElement::previousLineStartTextMarkerForTextMarker(AccessibilityTextMarker* textMarker)
+{
+    if (!textMarker)
+        return nullptr;
+
+    BEGIN_AX_OBJC_EXCEPTIONS
+    auto marker = attributeValueForParameter(@"AXPreviousLineStartTextMarkerForTextMarker", textMarker->platformTextMarker());
+    return AccessibilityTextMarker::create(marker.get());
+    END_AX_OBJC_EXCEPTIONS
+    return nullptr;
+}
+
+RefPtr<AccessibilityTextMarker> AccessibilityUIElement::nextLineEndTextMarkerForTextMarker(AccessibilityTextMarker* textMarker)
+{
+    if (!textMarker)
+        return nullptr;
+
+    BEGIN_AX_OBJC_EXCEPTIONS
+    auto marker = attributeValueForParameter(@"AXNextLineEndTextMarkerForTextMarker", textMarker->platformTextMarker());
+    return AccessibilityTextMarker::create(marker.get());
+    END_AX_OBJC_EXCEPTIONS
     return nullptr;
 }
 
@@ -2299,7 +2346,6 @@ RefPtr<AccessibilityTextMarker> AccessibilityUIElement::previousWordStartTextMar
     auto previousWordStartMarker = attributeValueForParameter(@"AXPreviousWordStartTextMarkerForTextMarker", textMarker->platformTextMarker());
     return AccessibilityTextMarker::create(previousWordStartMarker.get());
     END_AX_OBJC_EXCEPTIONS
-
     return nullptr;
 }
 
@@ -2312,7 +2358,6 @@ RefPtr<AccessibilityTextMarker> AccessibilityUIElement::nextWordEndTextMarkerFor
     auto nextWordEndMarker = attributeValueForParameter(@"AXNextWordEndTextMarkerForTextMarker", textMarker->platformTextMarker());
     return AccessibilityTextMarker::create(nextWordEndMarker.get());
     END_AX_OBJC_EXCEPTIONS
-
     return nullptr;
 }
 
