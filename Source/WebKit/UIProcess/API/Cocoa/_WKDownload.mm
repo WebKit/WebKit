@@ -32,6 +32,7 @@
 #import "WKFrameInfoInternal.h"
 #import "WKNSData.h"
 #import "WKWebViewInternal.h"
+#import "WebPageProxy.h"
 #import <wtf/WeakObjCPtr.h>
 #import <wtf/cocoa/VectorCocoa.h>
 

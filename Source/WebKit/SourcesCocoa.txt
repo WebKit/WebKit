@@ -308,7 +308,6 @@ UIProcess/API/Cocoa/NSAttributedString.mm
 UIProcess/API/Cocoa/WKBackForwardList.mm
 UIProcess/API/Cocoa/WKBackForwardListItem.mm
 UIProcess/API/Cocoa/WKBrowsingContextController.mm
-UIProcess/API/Cocoa/WKBrowsingContextGroup.mm
 UIProcess/API/Cocoa/WKConnection.mm
 UIProcess/API/Cocoa/WKContentRuleList.mm
 UIProcess/API/Cocoa/WKContentRuleListStore.mm

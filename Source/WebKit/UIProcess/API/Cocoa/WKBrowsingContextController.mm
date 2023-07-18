@@ -35,7 +35,6 @@
 #import "WKAPICast.h"
 #import "WKBackForwardListInternal.h"
 #import "WKBackForwardListItemInternal.h"
-#import "WKBrowsingContextGroupInternal.h"
 #import "WKBrowsingContextHandleInternal.h"
 #import "WKBrowsingContextLoadDelegatePrivate.h"
 #import "WKBrowsingContextPolicyDelegate.h"

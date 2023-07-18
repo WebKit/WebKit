@@ -26,7 +26,6 @@
 #import "WKApplicationStateTrackingView.h"
 #import "WKBase.h"
 #import "WKBrowsingContextController.h"
-#import "WKBrowsingContextGroup.h"
 #import "WKProcessGroup.h"
 #import <WebCore/InspectorOverlay.h>
 #import <wtf/NakedRef.h>

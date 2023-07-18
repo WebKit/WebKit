@@ -28,6 +28,7 @@
 #if PLATFORM(IOS_FAMILY)
 
 #import "WKTouchEventsGestureRecognizerTypes.h"
+#import <UIKit/UIKit.h>
 #import <wtf/Vector.h>
 
 namespace WebKit {

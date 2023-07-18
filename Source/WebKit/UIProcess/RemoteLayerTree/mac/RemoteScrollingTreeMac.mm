@@ -34,11 +34,13 @@
 #import "ScrollingTreeFrameScrollingNodeRemoteMac.h"
 #import "ScrollingTreeOverflowScrollingNodeRemoteMac.h"
 #import <WebCore/FrameView.h>
+#import <WebCore/LocalFrameView.h>
 #import <WebCore/ScrollingThread.h>
 #import <WebCore/ScrollingTreeFixedNodeCocoa.h>
 #import <WebCore/ScrollingTreeOverflowScrollProxyNode.h>
 #import <WebCore/ScrollingTreePositionedNode.h>
 #import <WebCore/WebCoreCALayerExtras.h>
+#import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/text/TextStream.h>
 
 namespace WebKit {

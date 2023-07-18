@@ -82,16 +82,6 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 @implementation WKView
 ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
-- (id)initWithFrame:(NSRect)frame processGroup:(WKProcessGroup *)processGroup browsingContextGroup:(WKBrowsingContextGroup *)browsingContextGroup
-{
-    return nil;
-}
-
-- (id)initWithFrame:(NSRect)frame processGroup:(WKProcessGroup *)processGroup browsingContextGroup:(WKBrowsingContextGroup *)browsingContextGroup relatedToView:(WKView *)relatedView
-{
-    return nil;
-}
-
 - (void)dealloc
 {
     [super dealloc];

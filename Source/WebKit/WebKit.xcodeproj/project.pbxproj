@@ -1474,7 +1474,6 @@
 		7C89D2BC1A6B0F5B003A5FDE /* _WKUserContentFilterInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C89D2BB1A6B0F5B003A5FDE /* _WKUserContentFilterInternal.h */; };
 		7C89D2D71A6C6BE6003A5FDE /* _WKProcessPoolConfigurationInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C89D2D61A6C6BE6003A5FDE /* _WKProcessPoolConfigurationInternal.h */; };
 		7C8EB11718DB6A19007917C2 /* WKPreferencesPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C8EB11618DB6A19007917C2 /* WKPreferencesPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		7C9D1537184584DA009D3918 /* WKBrowsingContextGroupInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C9D1536184584DA009D3918 /* WKBrowsingContextGroupInternal.h */; };
 		7CA254EB182993CE00FC8A41 /* WKBrowsingContextPolicyDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CA254EA182993CE00FC8A41 /* WKBrowsingContextPolicyDelegate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7CA3793E1AC378B30079DC37 /* _WKUserContentExtensionStorePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CA3793D1AC378B30079DC37 /* _WKUserContentExtensionStorePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7CB100F11FA3858A001729EE /* WebPreferencesKeys.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CB100EE1FA2D74A001729EE /* WebPreferencesKeys.cpp */; };
@@ -5788,7 +5787,6 @@
 		7C89D2BB1A6B0F5B003A5FDE /* _WKUserContentFilterInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKUserContentFilterInternal.h; sourceTree = "<group>"; };
 		7C89D2D61A6C6BE6003A5FDE /* _WKProcessPoolConfigurationInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKProcessPoolConfigurationInternal.h; sourceTree = "<group>"; };
 		7C8EB11618DB6A19007917C2 /* WKPreferencesPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKPreferencesPrivate.h; sourceTree = "<group>"; };
-		7C9D1536184584DA009D3918 /* WKBrowsingContextGroupInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBrowsingContextGroupInternal.h; sourceTree = "<group>"; };
 		7CA254EA182993CE00FC8A41 /* WKBrowsingContextPolicyDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBrowsingContextPolicyDelegate.h; sourceTree = "<group>"; };
 		7CA3793D1AC378B30079DC37 /* _WKUserContentExtensionStorePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKUserContentExtensionStorePrivate.h; sourceTree = "<group>"; };
 		7CB100EE1FA2D74A001729EE /* WebPreferencesKeys.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebPreferencesKeys.cpp; sourceTree = "<group>"; };
@@ -6632,7 +6630,6 @@
 		BCBAACE6145225CA0053F82F /* WKProcessGroup.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKProcessGroup.mm; sourceTree = "<group>"; };
 		BCBAACE7145225CB0053F82F /* WKProcessGroupPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKProcessGroupPrivate.h; sourceTree = "<group>"; };
 		BCBAACEE145232430053F82F /* WKBrowsingContextGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBrowsingContextGroup.h; sourceTree = "<group>"; };
-		BCBAACEF145232440053F82F /* WKBrowsingContextGroup.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKBrowsingContextGroup.mm; sourceTree = "<group>"; };
 		BCBAACF0145232480053F82F /* WKBrowsingContextGroupPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBrowsingContextGroupPrivate.h; sourceTree = "<group>"; };
 		BCBAAD0A14560A430053F82F /* WKBrowsingContextLoadDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBrowsingContextLoadDelegate.h; sourceTree = "<group>"; };
 		BCBD38FA125BAB9A00D2C29F /* WebPageProxy.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebPageProxy.messages.in; sourceTree = "<group>"; };
@@ -7767,8 +7764,6 @@
 				BCBAAC6E144E61920053F82F /* WKBrowsingContextControllerInternal.h */,
 				3788A05B14743C90006319E5 /* WKBrowsingContextControllerPrivate.h */,
 				BCBAACEE145232430053F82F /* WKBrowsingContextGroup.h */,
-				BCBAACEF145232440053F82F /* WKBrowsingContextGroup.mm */,
-				7C9D1536184584DA009D3918 /* WKBrowsingContextGroupInternal.h */,
 				BCBAACF0145232480053F82F /* WKBrowsingContextGroupPrivate.h */,
 				370F34A61829CFF3009027C8 /* WKBrowsingContextHistoryDelegate.h */,
 				BCBAAD0A14560A430053F82F /* WKBrowsingContextLoadDelegate.h */,
@@ -15119,7 +15114,6 @@
 				BCBAAC74144E61A50053F82F /* WKBrowsingContextControllerInternal.h in Headers */,
 				3788A05C14743C90006319E5 /* WKBrowsingContextControllerPrivate.h in Headers */,
 				BCBAACF41452324F0053F82F /* WKBrowsingContextGroup.h in Headers */,
-				7C9D1537184584DA009D3918 /* WKBrowsingContextGroupInternal.h in Headers */,
 				BCBAACF61452324F0053F82F /* WKBrowsingContextGroupPrivate.h in Headers */,
 				1AE00D4D182D6EB000087DD7 /* WKBrowsingContextHandle.h in Headers */,
 				1AE00D4F182D6F5000087DD7 /* WKBrowsingContextHandleInternal.h in Headers */,
