@@ -1693,7 +1693,6 @@ webkit.org/b/255407 [ Monterey x86_64 ] imported/w3c/web-platform-tests/html/sem
 [ Monterey+ x86_64 ] imported/w3c/web-platform-tests/css/css-grid/alignment/grid-item-aspect-ratio-stretch-2.html [ ImageOnlyFailure ]
 [ Monterey+ x86_64 ] imported/mozilla/svg/blend-luminosity.svg [ ImageOnlyFailure ]
 [ Ventura+ Debug x86_64 ] fast/visual-viewport/viewport-dimensions-exclude-custom-scrollbars.html [ Pass Failure ]
-[ Ventura+ Debug x86_64 ] fast/text/international/system-language/han-text-style.html [ ImageOnlyFailure ]
 [ Ventura+ Debug x86_64 ] fast/visual-viewport/tiled-drawing/zoomed-fixed-scrolled-down-then-up.html [ Failure ]
 [ Ventura+ Debug x86_64 ] fast/visual-viewport/tiled-drawing/zoomed-fixed-scrolled-down.html [ Failure ]
 [ Ventura+ Debug x86_64 ] fast/visual-viewport/tiled-drawing/zoomed-fixed-scrolling-layers-state.html [ Failure ]
