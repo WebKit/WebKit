@@ -44,7 +44,8 @@ class RoundedRect;
 class Path {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    WEBCORE_EXPORT Path();
+    Path() = default;
+    WEBCORE_EXPORT Path(PathSegment&&);
     WEBCORE_EXPORT Path(Vector<PathSegment>&&);
     explicit Path(const Vector<FloatPoint>& points);
     Path(UniqueRef<PathImpl>&&);
@@ -87,7 +88,7 @@ public:
 
     static constexpr float circleControlPoint() { return PathImpl::circleControlPoint(); }
 
-    std::optional<PathSegment> singleSegment() const;
+    WEBCORE_EXPORT std::optional<PathSegment> singleSegment() const;
     std::optional<PathDataLine> singleDataLine() const;
     std::optional<PathArc> singleArc() const;
     std::optional<PathDataQuadCurve> singleQuadCurve() const;
@@ -96,6 +97,7 @@ public:
     WEBCORE_EXPORT bool isEmpty() const;
     WEBCORE_EXPORT PlatformPathPtr platformPath() const;
 
+    const PathSegment* singleSegmentIfExists() const { return asSingle(); }
     WEBCORE_EXPORT const Vector<PathSegment>* segmentsIfExists() const;
     WEBCORE_EXPORT Vector<PathSegment> segments() const;
 
@@ -114,8 +116,18 @@ public:
 
 private:
     PlatformPathImpl& ensurePlatformPathImpl();
+    PathImpl& setImpl(UniqueRef<PathImpl>);
+    PathImpl& ensureImpl();
 
-    UniqueRef<PathImpl> m_impl;
+    PathSegment* asSingle() { return std::get_if<PathSegment>(&m_data); }
+    const PathSegment* asSingle() const { return std::get_if<PathSegment>(&m_data); }
+
+    PathImpl* asImpl();
+    const PathImpl* asImpl() const;
+
+    const PathMoveTo* asSingleMoveTo() const;
+
+    std::variant<std::monostate, PathSegment, UniqueRef<PathImpl>> m_data;
 };
 
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const Path&);

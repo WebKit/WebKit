@@ -40,6 +40,11 @@ UniqueRef<PathStream> PathStream::create(const PathStream& pathStream)
     return makeUniqueRef<PathStream>(pathStream);
 }
 
+UniqueRef<PathStream> PathStream::create(PathSegment&& segment)
+{
+    return makeUniqueRef<PathStream>(WTFMove(segment));
+}
+
 UniqueRef<PathStream> PathStream::create(Vector<PathSegment>&& segments)
 {
     return makeUniqueRef<PathStream>(WTFMove(segments));
@@ -81,6 +86,11 @@ PathStream::PathStream(const Vector<PathSegment>& segments)
 
 PathStream::PathStream(const PathStream& pathStream)
     : m_segmentsData(pathStream.m_segmentsData)
+{
+}
+
+PathStream::PathStream(PathSegment&& segment)
+    : m_segmentsData(SegmentsData::create(WTFMove(segment)))
 {
 }
 
@@ -144,12 +154,6 @@ void PathStream::addArcTo(const FloatPoint& point1, const FloatPoint& point2, fl
 
 void PathStream::addArc(const FloatPoint& point, float radius, float startAngle, float endAngle, RotationDirection direction)
 {
-    // Workaround for <rdar://problem/5189233> CGPathAddArc hangs or crashes when passed inf as start or end angle,
-    // as well as http://bugs.webkit.org/show_bug.cgi?id=16449, since cairo_arc() functions hang or crash when
-    // passed inf as radius or start/end angle.
-    if (!std::isfinite(radius) || !std::isfinite(startAngle) || !std::isfinite(endAngle))
-        return;
-
     segments().append(PathArc { point, radius, startAngle, endAngle, direction });
 }
 
@@ -254,14 +258,36 @@ FloatPoint PathStream::currentPoint() const
     return currentPoint;
 }
 
-FloatRect PathStream::fastBoundingRect() const
+FloatRect PathStream::computeFastBoundingRect(std::span<const PathSegment> segments)
 {
     FloatPoint lastMoveToPoint;
     FloatPoint currentPoint;
     FloatRect boundingRect = FloatRect::smallestRect();
 
-    for (auto& segment : m_segmentsData->segments) {
+    for (auto& segment : segments) {
         segment.extendFastBoundingRect(currentPoint, lastMoveToPoint, boundingRect);
+        currentPoint = segment.calculateEndPoint(currentPoint, lastMoveToPoint);
+    }
+
+    if (boundingRect.isSmallest())
+        boundingRect.extend(currentPoint);
+
+    return boundingRect;
+}
+
+FloatRect PathStream::fastBoundingRect() const
+{
+    return computeFastBoundingRect(m_segmentsData->segments.span());
+}
+
+FloatRect PathStream::computeBoundingRect(std::span<const PathSegment> segments)
+{
+    FloatPoint lastMoveToPoint;
+    FloatPoint currentPoint;
+    FloatRect boundingRect = FloatRect::smallestRect();
+
+    for (auto& segment : segments) {
+        segment.extendBoundingRect(currentPoint, lastMoveToPoint, boundingRect);
         currentPoint = segment.calculateEndPoint(currentPoint, lastMoveToPoint);
     }
 
@@ -273,19 +299,7 @@ FloatRect PathStream::fastBoundingRect() const
 
 FloatRect PathStream::boundingRect() const
 {
-    FloatPoint lastMoveToPoint;
-    FloatPoint currentPoint;
-    FloatRect boundingRect = FloatRect::smallestRect();
-
-    for (auto& segment : m_segmentsData->segments) {
-        segment.extendBoundingRect(currentPoint, lastMoveToPoint, boundingRect);
-        currentPoint = segment.calculateEndPoint(currentPoint, lastMoveToPoint);
-    }
-
-    if (boundingRect.isSmallest())
-        boundingRect.extend(currentPoint);
-
-    return boundingRect;
+    return computeBoundingRect(m_segmentsData->segments.span());
 }
 
 } // namespace WebCore
