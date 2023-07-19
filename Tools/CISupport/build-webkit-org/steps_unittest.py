@@ -413,12 +413,12 @@ class TestCompileWebKit(BuildStepMixinAdditions, unittest.TestCase):
 
     def test_bigsur_timeout(self):
         self.setupStep(CompileWebKit())
-        self.setProperty('fullPlatform', 'mac-bigsur')
+        self.setProperty('fullPlatform', 'mac-ventura')
         self.setProperty('configuration', 'release')
         self.expectRemoteCommands(
             ExpectShell(
                 workdir='wkdir',
-                timeout=3600,
+                timeout=1800,
                 logEnviron=True,
                 command=['perl', 'Tools/Scripts/build-webkit', '--no-fatal-warnings', '--release'],
             ) + 0,

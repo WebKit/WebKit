@@ -1,3 +1,0 @@
-
-FAIL WebSockets: bufferedAmount after send()ing assert_equals: bufferedAmount after sent "x" expected 1 but got 0
-
