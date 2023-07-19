@@ -1311,7 +1311,6 @@ int DumpRenderTreeMain(int argc, const char *argv[])
     atexit(atexitFunction);
 
     WTF::setProcessPrivileges(allPrivileges());
-    WebCore::NetworkStorageSession::permitProcessToUseCookieAPI(true);
     WebCoreTestSupport::setLinkedOnOrAfterEverythingForTesting();
 
 #if PLATFORM(IOS_FAMILY)

@@ -32,9 +32,9 @@
 #import "DumpRenderTree.h"
 #import "TestRunner.h"
 #import <JavaScriptCore/RegularExpression.h>
-#import <WebCore/ProtectionSpaceCocoa.h>
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebKitLegacy.h>
+#import <pal/spi/cf/CFNetworkSPI.h>
 #import <wtf/Assertions.h>
 
 using namespace std;
@@ -294,20 +294,20 @@ BOOL canAuthenticateServerTrustAgainstProtectionSpace(NSString *host)
     return gTestRunner->shouldPaintBrokenImage();
 }
 
--(BOOL)webView:(WebView *)webView resource:(id)identifier canAuthenticateAgainstProtectionSpace:(NSURLProtectionSpace *)protectionSpaceNS forDataSource:(WebDataSource *)dataSource
+-(BOOL)webView:(WebView *)webView resource:(id)identifier canAuthenticateAgainstProtectionSpace:(NSURLProtectionSpace *)protectionSpace forDataSource:(WebDataSource *)dataSource
 {
     if (!done && gTestRunner->dumpResourceLoadCallbacks()) {
         NSString *string = [NSString stringWithFormat:@"%@ - canAuthenticateAgainstProtectionSpace", identifier];
         printf("%s\n", [string UTF8String]);
     }
 
-    WebCore::ProtectionSpace protectionSpace(protectionSpaceNS);
-
-    auto scheme = protectionSpace.authenticationScheme();
-    if (scheme == WebCore::ProtectionSpaceBase::AuthenticationScheme::ServerTrustEvaluationRequested)
-        return canAuthenticateServerTrustAgainstProtectionSpace(protectionSpaceNS.host);
-
-    return scheme <= WebCore::ProtectionSpaceBase::AuthenticationScheme::HTTPDigest || scheme == WebCore::ProtectionSpaceBase::AuthenticationScheme::OAuth;
+    auto method = protectionSpace.authenticationMethod;
+    if ([method isEqualToString:NSURLAuthenticationMethodServerTrust])
+        return canAuthenticateServerTrustAgainstProtectionSpace(protectionSpace.host);
+    return [method isEqualToString:NSURLAuthenticationMethodDefault]
+        || [method isEqualToString:NSURLAuthenticationMethodHTTPBasic]
+        || [method isEqualToString:NSURLAuthenticationMethodHTTPDigest]
+        || [method isEqualToString:NSURLAuthenticationMethodOAuth];
 }
 
 @end

@@ -67,6 +67,9 @@
 
 #if ENABLE(IMAGE_ANALYSIS)
 
+SOFT_LINK_PRIVATE_FRAMEWORK(VisionKitCore)
+SOFT_LINK_CLASS(VisionKitCore, VKCImageAnalyzer)
+
 static VKImageAnalysisRequestID gCurrentImageAnalysisRequestID = 0;
 
 VKImageAnalysisRequestID swizzledProcessImageAnalysisRequest(id, SEL, VKCImageAnalyzerRequest *, void (^progressHandler)(double), void (^completionHandler)(VKCImageAnalysis *, NSError *))
@@ -147,7 +150,7 @@ void TestController::cocoaPlatformInitialize(const Options& options)
 
 #if ENABLE(IMAGE_ANALYSIS)
     m_imageAnalysisRequestSwizzler = makeUnique<InstanceMethodSwizzler>(
-        PAL::getVKCImageAnalyzerClass(),
+        getVKCImageAnalyzerClass(),
         @selector(processRequest:progressHandler:completionHandler:),
         reinterpret_cast<IMP>(swizzledProcessImageAnalysisRequest)
     );
