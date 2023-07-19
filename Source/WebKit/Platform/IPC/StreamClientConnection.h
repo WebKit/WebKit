@@ -203,11 +203,11 @@ StreamClientConnection::SendSyncResult<T> StreamClientConnection::sendSync(T&& m
     static_assert(T::isSync, "Message is not sync!");
     auto error = trySendDestinationIDIfNeeded(destinationID.toUInt64(), timeout);
     if (error != Error::NoError)
-        return { nullptr, std::nullopt, error };
+        return { error };
 
     auto span = m_buffer.tryAcquire(timeout);
     if (!span)
-        return { nullptr, std::nullopt, Error::FailedToAcquireBufferSpan };
+        return { Error::FailedToAcquireBufferSpan };
 
     if constexpr(T::isStreamEncodable) {
         auto maybeSendResult = trySendSyncStream(message, timeout, *span);
@@ -231,7 +231,7 @@ std::optional<StreamClientConnection::SendSyncResult<T>> StreamClientConnection:
     // std::nullopt means we couldn't send through the stream, so try sending out of stream.
     auto syncRequestID = m_connection->makeSyncRequestID();
     if (!m_connection->pushPendingSyncRequestID(syncRequestID))
-        return { { nullptr, std::nullopt, Error::CantWaitForSyncReplies } };
+        return { { Error::CantWaitForSyncReplies } };
 
     auto decoderResult = [&]() -> std::optional<Connection::DecoderOrError> {
         StreamConnectionEncoder messageEncoder { T::name(), span.data(), span.size() };
@@ -260,17 +260,15 @@ std::optional<StreamClientConnection::SendSyncResult<T>> StreamClientConnection:
     if (!decoderResult)
         return std::nullopt;
 
-    SendSyncResult<T> result;
     if (decoderResult->decoder) {
+        std::optional<typename T::ReplyArguments> replyArguments;
         auto& decoder = decoderResult->decoder;
-        *decoder >> result.replyArguments;
-        if (result.replyArguments)
-            result.decoder = WTFMove(decoder);
-        else
-            result.error = Error::FailedToDecodeReplyArguments;
+        *decoder >> replyArguments;
+        if (replyArguments)
+            return { { WTFMove(decoder), WTFMove(replyArguments) } };
+        return { Error::FailedToDecodeReplyArguments };
     } else
-        result.error = decoderResult->error;
-    return result;
+        return { decoderResult->error };
 }
 
 inline Error StreamClientConnection::trySendDestinationIDIfNeeded(uint64_t destinationID, Timeout timeout)
