@@ -246,7 +246,7 @@ AuxiliaryProcessProxy::SendSyncResult<T> AuxiliaryProcessProxy::sendSync(T&& mes
     static_assert(T::isSync, "Sync message expected");
 
     if (!m_connection)
-        return { };
+        return { IPC::Error::InvalidConnection };
 
     TraceScope scope(SyncMessageStart, SyncMessageEnd);
 

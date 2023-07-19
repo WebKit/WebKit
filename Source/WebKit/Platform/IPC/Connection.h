@@ -160,7 +160,20 @@ template<typename T> struct ConnectionSendSyncResult {
     std::optional<typename T::ReplyArguments> replyArguments;
     Error error { Error::NoError };
 
-    bool succeeded() const { return error == Error::NoError; }
+    ConnectionSendSyncResult(Error error)
+        : error(error)
+    {
+        ASSERT(error != Error::NoError);
+    }
+
+    ConnectionSendSyncResult(std::unique_ptr<Decoder>&& decoder, std::optional<typename T::ReplyArguments>&& replyArguments)
+        : decoder(WTFMove(decoder)), replyArguments(WTFMove(replyArguments))
+    {
+        ASSERT(this->replyArguments.has_value());
+        error = !this->replyArguments ? Error::Unspecified : Error::NoError;
+    }
+
+    bool succeeded() const { return error == Error::NoError && replyArguments.has_value(); }
 
     typename T::ReplyArguments& reply()
     {
@@ -703,16 +716,17 @@ template<typename T> Connection::SendSyncResult<T> Connection::sendSync(T&& mess
 
     // Now send the message and wait for a reply.
     auto replyDecoderOrError = sendSyncMessage(syncRequestID, WTFMove(encoder), timeout, sendSyncOptions);
-    if (!replyDecoderOrError.decoder)
-        return { nullptr, std::nullopt, replyDecoderOrError.error };
+    if (!replyDecoderOrError.decoder) {
+        ASSERT(replyDecoderOrError.error != Error::NoError);
+        return { replyDecoderOrError.error };
+    }
 
-    SendSyncResult<T> result;
-    *replyDecoderOrError.decoder >> result.replyArguments;
-    if (!result.replyArguments)
-        return { nullptr, std::nullopt, Error::FailedToDecodeReplyArguments };
+    std::optional<typename T::ReplyArguments> replyArguments;
+    *replyDecoderOrError.decoder >> replyArguments;
+    if (!replyArguments)
+        return { Error::FailedToDecodeReplyArguments };
 
-    result.decoder = WTFMove(replyDecoderOrError.decoder);
-    return result;
+    return { WTFMove(replyDecoderOrError.decoder), WTFMove(replyArguments) };
 }
 
 template<typename T> Error Connection::waitForAndDispatchImmediately(uint64_t destinationID, Timeout timeout, OptionSet<WaitForOption> waitForOptions)
