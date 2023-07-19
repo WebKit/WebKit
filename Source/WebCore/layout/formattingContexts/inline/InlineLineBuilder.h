@@ -100,6 +100,7 @@ public:
         IsFirstLast isFirstLast { };
         // Misc
         size_t nonSpanningInlineLevelBoxCount { 0 };
+        std::optional<InlineLayoutUnit> hintForNextLineTopToAvoidIntrusiveFloat { }; // This is only used for cases when intrusive floats prevent any content placement at current vertical position.
     };
     LayoutResult layoutInlineContent(const LineInput&, const std::optional<PreviousLine>&);
 
@@ -176,6 +177,7 @@ private:
     InlineRect m_lineLogicalRect;
     InlineLayoutUnit m_lineMarginStart { 0.f };
     InlineLayoutUnit m_initialIntrusiveFloatsWidth { 0.f };
+    InlineLayoutUnit m_candidateInlineContentEnclosingHeight { 0.f };
     const InlineItems& m_inlineItems;
     PlacedFloatList m_placedFloats;
     SuspendedFloatList m_suspendedFloats;
