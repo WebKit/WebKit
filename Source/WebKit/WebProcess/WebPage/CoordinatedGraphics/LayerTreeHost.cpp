@@ -369,7 +369,10 @@ void LayerTreeHost::deviceOrPageScaleFactorChanged()
 
     m_coordinator.deviceOrPageScaleFactorChanged();
     m_webPage.corePage()->pageOverlayController().didChangeDeviceScaleFactor();
-    m_compositor->setScaleFactor(m_webPage.deviceScaleFactor() * m_viewportController.pageScaleFactor());
+    IntSize scaledSize(m_webPage.size());
+    scaledSize.scale(m_webPage.deviceScaleFactor());
+    m_compositor->setViewportSize(scaledSize, m_webPage.deviceScaleFactor() * m_viewportController.pageScaleFactor());
+    didChangeViewport();
 }
 
 RefPtr<DisplayRefreshMonitor> LayerTreeHost::createDisplayRefreshMonitor(PlatformDisplayID displayID)

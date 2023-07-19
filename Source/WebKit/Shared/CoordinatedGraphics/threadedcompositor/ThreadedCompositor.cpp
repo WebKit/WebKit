@@ -163,13 +163,6 @@ void ThreadedCompositor::resume()
     m_compositingRunLoop->resume();
 }
 
-void ThreadedCompositor::setScaleFactor(float scale)
-{
-    Locker locker { m_attributes.lock };
-    m_attributes.scaleFactor = scale;
-    m_compositingRunLoop->scheduleUpdate();
-}
-
 void ThreadedCompositor::setScrollPosition(const IntPoint& scrollPosition, float scale)
 {
     Locker locker { m_attributes.lock };
