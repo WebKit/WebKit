@@ -1,4 +1,4 @@
 
-FAIL cookieStore in non-sandboxed iframe should not throw assert_equals: cookieStore ${apiCall} should not throw expected "no exception" but got "NotSupportedError"
-FAIL cookieStore in sandboxed iframe should throw SecurityError assert_equals: cookieStore ${apiCall} should throw SecurityError expected "SecurityError" but got "NotSupportedError"
+PASS cookieStore in non-sandboxed iframe should not throw
+PASS cookieStore in sandboxed iframe should throw SecurityError
 

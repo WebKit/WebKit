@@ -1,5 +1,7 @@
 
-FAIL HttpOnly cookies are not observed promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
-FAIL HttpOnly cookies can not be set by document.cookie promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
-FAIL HttpOnly cookies can not be set by CookieStore promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT HttpOnly cookies are not observed Test timed out
+NOTRUN HttpOnly cookies can not be set by document.cookie
+NOTRUN HttpOnly cookies can not be set by CookieStore
 

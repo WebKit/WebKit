@@ -47,7 +47,7 @@ public:
     void get(String&& name, Ref<DeferredPromise>&&);
     void get(CookieStoreGetOptions&&, Ref<DeferredPromise>&&);
 
-    void getAll(const String& name, Ref<DeferredPromise>&&);
+    void getAll(String&& name, Ref<DeferredPromise>&&);
     void getAll(CookieStoreGetOptions&&, Ref<DeferredPromise>&&);
 
     void set(String&& name, String&& value, Ref<DeferredPromise>&&);

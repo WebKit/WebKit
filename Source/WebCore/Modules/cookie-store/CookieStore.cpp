@@ -118,14 +118,64 @@ void CookieStore::get(CookieStoreGetOptions&& options, Ref<DeferredPromise>&& pr
     cookieJar.getCookiesAsync(document, url, options, WTFMove(completionHandler));
 }
 
-void CookieStore::getAll(const String&, Ref<DeferredPromise>&& promise)
+void CookieStore::getAll(String&& name, Ref<DeferredPromise>&& promise)
 {
-    promise->reject(NotSupportedError);
+    getAll(CookieStoreGetOptions { WTFMove(name), { } }, WTFMove(promise));
 }
 
-void CookieStore::getAll(CookieStoreGetOptions&&, Ref<DeferredPromise>&& promise)
+void CookieStore::getAll(CookieStoreGetOptions&& options, Ref<DeferredPromise>&& promise)
 {
-    promise->reject(NotSupportedError);
+    auto* context = scriptExecutionContext();
+    if (!context) {
+        promise->reject(SecurityError);
+        return;
+    }
+
+    auto* origin = context->securityOrigin();
+    if (!origin) {
+        promise->reject(SecurityError);
+        return;
+    }
+
+    if (origin->isOpaque()) {
+        promise->reject(Exception { SecurityError, "The origin is opaque"_s });
+        return;
+    }
+
+    auto& document = *downcast<Document>(context);
+    auto* page = document.page();
+    if (!page) {
+        promise->reject(SecurityError);
+        return;
+    }
+
+    auto url = document.url();
+    if (!options.url.isNull()) {
+        auto parsed = document.completeURL(options.url);
+        if (scriptExecutionContext()->isDocument() && parsed != url) {
+            promise->reject(TypeError);
+            return;
+        }
+        if (!origin->isSameOriginDomain(SecurityOrigin::create(parsed))) {
+            promise->reject(TypeError);
+            return;
+        }
+        url = WTFMove(parsed);
+    }
+
+    auto& cookieJar = page->cookieJar();
+    auto completionHandler = [promise = WTFMove(promise)] (std::optional<Vector<Cookie>>&& cookies) {
+        if (!cookies) {
+            promise->reject(TypeError);
+            return;
+        }
+
+        promise->resolve<IDLSequence<IDLDictionary<CookieListItem>>>(cookies->map([](auto& cookie) {
+            return CookieListItem { cookie.name, cookie.value };
+        }));
+    };
+
+    cookieJar.getCookiesAsync(document, url, options, WTFMove(completionHandler));
 }
 
 void CookieStore::set(String&& name, String&& value, Ref<DeferredPromise>&& promise)

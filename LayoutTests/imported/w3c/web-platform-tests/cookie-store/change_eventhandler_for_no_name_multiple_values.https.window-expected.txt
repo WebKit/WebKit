@@ -1,3 +1,3 @@
 
-FAIL Verify behavior of multiple no-name cookies promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+FAIL Verify behavior of multiple no-name cookies promise_test: Unhandled rejection with value: object "TypeError: Type error"
 

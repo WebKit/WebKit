@@ -12,10 +12,10 @@ FAIL cookieStore.set with domain that is not equal current host assert_unreached
 PASS cookieStore.set with domain set to the current hostname
 FAIL cookieStore.set with domain set to a subdomain of the current hostname assert_unreached: Should have rejected: undefined Reached unreachable code
 FAIL cookieStore.set with domain set to a non-domain-matching suffix of the current hostname assert_unreached: Should have rejected: undefined Reached unreachable code
-FAIL cookieStore.set default domain is null and differs from current hostname promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+FAIL cookieStore.set default domain is null and differs from current hostname assert_array_equals: expected property 0 to be "cookie-value1" but got "cookie-value" (expected array ["cookie-value1", "cookie-value2"] got ["cookie-value", "cookie-value2"])
 PASS cookieStore.set with path set to the current directory
 FAIL cookieStore.set with path set to a subdirectory of the current directory assert_equals: expected null but got object "[object Object]"
-FAIL cookieStore.set default path is / promise_test: Unhandled rejection with value: object "NotSupportedError: The operation is not supported."
+FAIL cookieStore.set default path is / assert_equals: expected 1 but got 2
 FAIL cookieStore.set adds / to path that does not end with / assert_equals: expected (string) "/cookie-store/" but got (undefined) undefined
 FAIL cookieStore.set with path that does not start with / assert_unreached: Should have rejected: undefined Reached unreachable code
 FAIL cookieStore.set with get result assert_equals: expected "old-cookie-value" but got "cookie-value"
