@@ -477,16 +477,9 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
         pageConfiguration->setWeakWebExtensionController(&controller._webExtensionController);
 #endif
 
-#if PLATFORM(MAC)
-    if (auto pageGroup = WebKit::toImpl([_configuration _pageGroup]))
-        pageConfiguration->setPageGroup(pageGroup);
-    else
-#endif
-    {
-        NSString *groupIdentifier = [_configuration _groupIdentifier];
-        if (groupIdentifier.length)
-            pageConfiguration->setPageGroup(WebKit::WebPageGroup::create(groupIdentifier).ptr());
-    }
+    NSString *groupIdentifier = [_configuration _groupIdentifier];
+    if (groupIdentifier.length)
+        pageConfiguration->setPageGroup(WebKit::WebPageGroup::create(groupIdentifier).ptr());
 
     pageConfiguration->setAdditionalSupportedImageTypes(makeVector<String>([_configuration _additionalSupportedImageTypes]));
 

@@ -58,7 +58,7 @@ extern "C" {
 WK_EXPORT WKTypeID WKPageGetTypeID(void);
 
 WK_EXPORT WKContextRef WKPageGetContext(WKPageRef page);
-WK_EXPORT WKPageGroupRef WKPageGetPageGroup(WKPageRef page);
+WK_EXPORT WKPageGroupRef WKPageGetPageGroup(WKPageRef page) WK_C_API_DEPRECATED;
 
 WK_EXPORT WKPageConfigurationRef WKPageCopyPageConfiguration(WKPageRef page);
 

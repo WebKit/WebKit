@@ -51,14 +51,12 @@ TEST(WebKit, EnumerateDevices)
 {
     auto context = adoptWK(WKContextCreateWithConfiguration(nullptr));
 
-    WKRetainPtr<WKPageGroupRef> pageGroup = adoptWK(WKPageGroupCreateWithIdentifier(Util::toWK("EnumerateDevices").get()));
-
     WKPageUIClientV6 uiClient;
     memset(&uiClient, 0, sizeof(uiClient));
     uiClient.base.version = 6;
     uiClient.checkUserMediaPermissionForOrigin = checkUserMediaPermissionCallback;
 
-    PlatformWebView webView(context.get(), pageGroup.get());
+    PlatformWebView webView(context.get());
     WKPageSetPageUIClient(webView.page(), &uiClient.base);
 
     auto configuration = adoptWK(WKPageCopyPageConfiguration(webView.page()));

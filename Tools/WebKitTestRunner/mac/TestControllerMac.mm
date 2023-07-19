@@ -33,7 +33,6 @@
 #import "TestRunnerWKWebView.h"
 #import "WebKitTestRunnerPasteboard.h"
 #import <WebKit/WKContextPrivate.h>
-#import <WebKit/WKPageGroup.h>
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKStringCF.h>
 #import <WebKit/WKURLCF.h>

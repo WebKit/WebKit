@@ -33,12 +33,11 @@
 
 namespace TestWebKitAPI {
 
-PlatformWebView::PlatformWebView(WKContextRef contextRef, WKPageGroupRef pageGroupRef)
+PlatformWebView::PlatformWebView(WKContextRef contextRef)
     : m_window(nullptr)
 {
     WKRetainPtr<WKPageConfigurationRef> configuration = adoptWK(WKPageConfigurationCreate());
     WKPageConfigurationSetContext(configuration.get(), contextRef);
-    WKPageConfigurationSetPageGroup(configuration.get(), pageGroupRef);
 
     initialize(configuration.get());
 }
@@ -54,7 +53,6 @@ PlatformWebView::PlatformWebView(WKPageRef relatedPage)
 {
     WKRetainPtr<WKPageConfigurationRef> configuration = adoptWK(WKPageConfigurationCreate());
     WKPageConfigurationSetContext(configuration.get(), WKPageGetContext(relatedPage));
-    WKPageConfigurationSetPageGroup(configuration.get(), WKPageGetPageGroup(relatedPage));
     WKPageConfigurationSetRelatedPage(configuration.get(), relatedPage);
 
     auto relatedConfiguration = adoptWK(WKPageCopyPageConfiguration(relatedPage));

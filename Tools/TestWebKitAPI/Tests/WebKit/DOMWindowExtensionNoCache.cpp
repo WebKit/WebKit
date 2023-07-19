@@ -83,9 +83,7 @@ static void didReceiveMessageFromInjectedBundle(WKContextRef, WKStringRef messag
 
 TEST(WebKit, DISABLED_DOMWindowExtensionNoCache)
 {
-    WKRetainPtr<WKPageGroupRef> pageGroup = adoptWK(WKPageGroupCreateWithIdentifier(WKStringCreateWithUTF8CString("DOMWindowExtensionNoCachePageGroup")));
-
-    WKRetainPtr<WKContextRef> context = adoptWK(Util::createContextForInjectedBundleTest("DOMWindowExtensionNoCache", pageGroup.get()));
+    WKRetainPtr<WKContextRef> context = adoptWK(Util::createContextForInjectedBundleTest("DOMWindowExtensionNoCache"));
 
     WKContextInjectedBundleClientV1 injectedBundleClient;
     memset(&injectedBundleClient, 0, sizeof(injectedBundleClient));
@@ -98,7 +96,7 @@ TEST(WebKit, DISABLED_DOMWindowExtensionNoCache)
     // Disable the back/forward cache.
     WKContextSetCacheModel(context.get(), kWKCacheModelDocumentViewer);
 
-    PlatformWebView webView(context.get(), pageGroup.get());
+    PlatformWebView webView(context.get());
 
     // Make sure the extensions for each frame are installed in each world.
     WKRetainPtr<WKURLRef> url1 = adoptWK(Util::createURLForResource("simple-iframe", "html"));

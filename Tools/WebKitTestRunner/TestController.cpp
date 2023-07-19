@@ -58,7 +58,6 @@
 #include <WebKit/WKNotificationPermissionRequest.h>
 #include <WebKit/WKNumber.h>
 #include <WebKit/WKOpenPanelResultListener.h>
-#include <WebKit/WKPageGroup.h>
 #include <WebKit/WKPageInjectedBundleClient.h>
 #include <WebKit/WKPagePrivate.h>
 #include <WebKit/WKPluginInformation.h>
@@ -630,8 +629,7 @@ void TestController::initialize(int argc, const char* argv[])
     WebCoreTestSupport::installMockGamepadProvider();
 #endif
 
-    m_pageGroup.adopt(WKPageGroupCreateWithIdentifier(toWK("WebKitTestRunnerPageGroup").get()));
-
+    m_preferences = adoptWK(WKPreferencesCreate());
     m_eventSenderProxy = makeUnique<EventSenderProxy>(this);
 }
 
@@ -778,7 +776,7 @@ WKRetainPtr<WKPageConfigurationRef> TestController::generatePageConfiguration(co
 
     auto pageConfiguration = adoptWK(WKPageConfigurationCreate());
     WKPageConfigurationSetContext(pageConfiguration.get(), m_context.get());
-    WKPageConfigurationSetPageGroup(pageConfiguration.get(), m_pageGroup.get());
+    WKPageConfigurationSetPreferences(pageConfiguration.get(), m_preferences.get());
     
     if (options.useEphemeralSession()) {
         auto ephemeralDataStore = adoptWK(WKWebsiteDataStoreCreateNonPersistentDataStore());
@@ -3148,7 +3146,6 @@ UniqueRef<PlatformWebView> TestController::platformCreateOtherPage(PlatformWebVi
 
 WKContextRef TestController::platformAdjustContext(WKContextRef context, WKContextConfigurationRef)
 {
-    WKPageGroupSetPreferences(m_pageGroup.get(), adoptWK(WKPreferencesCreate()).get());
     return context;
 }
 

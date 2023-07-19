@@ -55,14 +55,13 @@ void WKPageConfigurationSetContext(WKPageConfigurationRef configuration, WKConte
     toImpl(configuration)->setProcessPool(toImpl(context));
 }
 
-WKPageGroupRef WKPageConfigurationGetPageGroup(WKPageConfigurationRef configuration)
+WKPageGroupRef WKPageConfigurationGetPageGroup(WKPageConfigurationRef)
 {
-    return toAPI(toImpl(configuration)->pageGroup());
+    return nullptr;
 }
 
-void WKPageConfigurationSetPageGroup(WKPageConfigurationRef configuration, WKPageGroupRef pageGroup)
+void WKPageConfigurationSetPageGroup(WKPageConfigurationRef, WKPageGroupRef)
 {
-    toImpl(configuration)->setPageGroup(toImpl(pageGroup));
 }
 
 WKUserContentControllerRef WKPageConfigurationGetUserContentController(WKPageConfigurationRef configuration)

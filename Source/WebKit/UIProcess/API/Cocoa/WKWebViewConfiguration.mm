@@ -160,7 +160,6 @@ static bool defaultShouldDecidePolicyBeforeLoadingQuickLookPreview()
     BOOL _mainContentUserGestureOverrideEnabled;
 
 #if PLATFORM(MAC)
-    WKRetainPtr<WKPageGroupRef> _pageGroup;
     BOOL _showsURLsInToolTips;
     BOOL _serviceControlsEnabled;
     BOOL _imageControlsEnabled;
@@ -459,7 +458,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     configuration->_serviceControlsEnabled = self->_serviceControlsEnabled;
     configuration->_imageControlsEnabled = self->_imageControlsEnabled;
     configuration->_contextMenuQRCodeDetectionEnabled = self->_contextMenuQRCodeDetectionEnabled;
-    configuration->_pageGroup = self._pageGroup;
 #endif
 #if ENABLE(DATA_DETECTION) && PLATFORM(IOS_FAMILY)
     configuration->_dataDetectorTypes = self->_dataDetectorTypes;
@@ -1274,12 +1272,11 @@ static WebKit::AttributionOverrideTesting toAttributionOverrideTesting(_WKAttrib
 
 - (WKPageGroupRef)_pageGroup
 {
-    return _pageGroup.get();
+    return nullptr;
 }
 
 - (void)_setPageGroup:(WKPageGroupRef)pageGroup
 {
-    _pageGroup = pageGroup;
 }
 
 - (void)_setCPULimit:(double)cpuLimit

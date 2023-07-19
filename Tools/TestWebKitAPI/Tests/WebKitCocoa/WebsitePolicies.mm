@@ -783,9 +783,7 @@ TEST(WebpagePreferences, WebsitePoliciesAutoplayQuirks)
     auto delegate = adoptNS([[AutoplayPoliciesDelegate alloc] init]);
     [webView setNavigationDelegate:delegate.get()];
 
-    WKRetainPtr<WKPreferencesRef> preferences = adoptWK(WKPreferencesCreate());
-    WKPreferencesSetNeedsSiteSpecificQuirks(preferences.get(), true);
-    WKPageGroupSetPreferences(WKPageGetPageGroup([webView _pageForTesting]), preferences.get());
+    configuration.get().preferences._needsSiteSpecificQuirks = YES;
 
     NSURLRequest *requestWithAudio = [NSURLRequest requestWithURL:[[NSBundle mainBundle] URLForResource:@"autoplay-check" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"]];
 
@@ -841,9 +839,7 @@ TEST(WebpagePreferences, WebsitePoliciesPerDocumentAutoplayBehaviorQuirks)
     auto delegate = adoptNS([[AutoplayPoliciesDelegate alloc] init]);
     [webView setNavigationDelegate:delegate.get()];
 
-    WKRetainPtr<WKPreferencesRef> preferences = adoptWK(WKPreferencesCreate());
-    WKPreferencesSetNeedsSiteSpecificQuirks(preferences.get(), true);
-    WKPageGroupSetPreferences(WKPageGetPageGroup([webView _pageForTesting]), preferences.get());
+    configuration.preferences._needsSiteSpecificQuirks = YES;
 
     receivedAutoplayEvent = std::nullopt;
 

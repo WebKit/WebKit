@@ -76,10 +76,9 @@ TEST(WebKit, CloseFromWithinCreatePage)
     WKPageSetPageUIClient(webView.page(), &uiClient.base);
 
     // Allow file URLs to load non-file resources
-    WKRetainPtr<WKPreferencesRef> preferences = adoptWK(WKPreferencesCreate());
-    WKPageGroupRef pageGroup = WKPageGetPageGroup(webView.page());
-    WKPreferencesSetUniversalAccessFromFileURLsAllowed(preferences.get(), true);
-    WKPageGroupSetPreferences(pageGroup, preferences.get());
+    auto configuration = adoptWK(WKPageCopyPageConfiguration(webView.page()));
+    auto preferences = WKPageConfigurationGetPreferences(configuration.get());
+    WKPreferencesSetUniversalAccessFromFileURLsAllowed(preferences, true);
     
     WKRetainPtr<WKURLRef> url = adoptWK(Util::createURLForResource("close-from-within-create-page", "html"));
     WKPageLoadURL(webView.page(), url.get());
@@ -121,10 +120,9 @@ TEST(WebKit, CreatePageThenDocumentOpenMIMEType)
     WKPageSetPageUIClient(webView.page(), &uiClient.base);
 
     // Allow file URLs to load non-file resources
-    WKRetainPtr<WKPreferencesRef> preferences = adoptWK(WKPreferencesCreate());
-    WKPageGroupRef pageGroup = WKPageGetPageGroup(webView.page());
-    WKPreferencesSetUniversalAccessFromFileURLsAllowed(preferences.get(), true);
-    WKPageGroupSetPreferences(pageGroup, preferences.get());
+    auto configuration = adoptWK(WKPageCopyPageConfiguration(webView.page()));
+    auto preferences = WKPageConfigurationGetPreferences(configuration.get());
+    WKPreferencesSetUniversalAccessFromFileURLsAllowed(preferences, true);
 
     testDone = false;
     WKRetainPtr<WKURLRef> url = adoptWK(Util::createURLForResource("window-open-then-document-open", "html"));

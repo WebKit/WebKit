@@ -675,7 +675,6 @@
 		7C8BFF7123C0107A00C009B3 /* HexNumber.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7C8BFF7023C0106700C009B3 /* HexNumber.cpp */; };
 		7C9ED98B17A19F4B00E4DC33 /* attributedStringStrikethrough.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 7C9ED98A17A19D0600E4DC33 /* attributedStringStrikethrough.html */; };
 		7CB184C61AA3F2100066EDFD /* ContentExtensions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CB184C41AA3F2100066EDFD /* ContentExtensions.cpp */; };
-		7CCB4DA91C83AE7300CC6918 /* PageGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7CCB4DA71C83AE7300CC6918 /* PageGroup.cpp */; };
 		7CCB99231D3B4A46003922F6 /* open-multiple-external-url.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 7CCB99221D3B44E7003922F6 /* open-multiple-external-url.html */; };
 		7CCE7EA51A411A0800447C4C /* JavaScriptTestMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = C081224013FC172400DC39AE /* JavaScriptTestMac.mm */; };
 		7CCE7EA61A411A0F00447C4C /* PlatformUtilitiesMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC131884117114B600B69727 /* PlatformUtilitiesMac.mm */; };
@@ -2845,7 +2844,6 @@
 		7CB184C41AA3F2100066EDFD /* ContentExtensions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ContentExtensions.cpp; sourceTree = "<group>"; };
 		7CBBA07619BB8A9100BBF025 /* OSObjectPtr.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OSObjectPtr.cpp; sourceTree = "<group>"; };
 		7CC3E1FA197E234100BE6252 /* UserContentController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = UserContentController.mm; sourceTree = "<group>"; };
-		7CCB4DA71C83AE7300CC6918 /* PageGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PageGroup.cpp; sourceTree = "<group>"; };
 		7CCB99201D3B41F6003922F6 /* UserInitiatedActionInNavigationAction.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = UserInitiatedActionInNavigationAction.mm; sourceTree = "<group>"; };
 		7CCB99221D3B44E7003922F6 /* open-multiple-external-url.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "open-multiple-external-url.html"; sourceTree = "<group>"; };
 		7CCE7E8C1A41144E00447C4C /* libTestWebKitAPI.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libTestWebKitAPI.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -5086,7 +5084,6 @@
 				93F7E86E14DC8E5B00C84A99 /* NewFirstVisuallyNonEmptyLayoutFrames_Bundle.cpp */,
 				0F5651F61FCE4DDB00310FBC /* NoHistoryItemScrollToFragment.mm */,
 				1CB2F27B24F88379000A5BC1 /* OrthogonalFlowAvailableSize.mm */,
-				7CCB4DA71C83AE7300CC6918 /* PageGroup.cpp */,
 				BC909779125571AB00083756 /* PageLoadBasic.cpp */,
 				BC2D004812A9FDFA00E732A3 /* PageLoadDidChangeLocationWithinPageForFrame.cpp */,
 				272A690F22F012C7000FDABB /* PageLoadState.cpp */,
@@ -6493,7 +6490,6 @@
 				1CB2F27C24F88379000A5BC1 /* OrthogonalFlowAvailableSize.mm in Sources */,
 				0F34077623037FDC0060A1A0 /* OverflowScrollViewTests.mm in Sources */,
 				C104BC1F2547237100C078C9 /* OverrideAppleLanguagesPreference.mm in Sources */,
-				7CCB4DA91C83AE7300CC6918 /* PageGroup.cpp in Sources */,
 				7CCE7F071A411AE600447C4C /* PageLoadBasic.cpp in Sources */,
 				7CCE7F081A411AE600447C4C /* PageLoadDidChangeLocationWithinPageForFrame.cpp in Sources */,
 				272A691022F012DA000FDABB /* PageLoadState.cpp in Sources */,

@@ -185,7 +185,7 @@ WKContextRef WKPageGetContext(WKPageRef pageRef)
 
 WKPageGroupRef WKPageGetPageGroup(WKPageRef pageRef)
 {
-    return toAPI(&toImpl(pageRef)->pageGroup());
+    return nullptr;
 }
 
 WKPageConfigurationRef WKPageCopyPageConfiguration(WKPageRef pageRef)

@@ -73,7 +73,6 @@ std::unique_ptr<WebViewWindow> WebViewWindow::create(Client&& windowClient, WKPa
 
     WKRetainPtr<WKPageConfigurationRef> configuration = adoptWK(WKPageConfigurationCreate());
     WKPageConfigurationSetContext(configuration.get(), context->context());
-    WKPageConfigurationSetPageGroup(configuration.get(), context->pageGroup());
     return std::make_unique<WebViewWindow>(configuration.get(), std::move(windowClient));
 }
 

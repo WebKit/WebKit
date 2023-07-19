@@ -50,10 +50,8 @@ static void runJavaScriptAlertEnabled(WKPageRef page, WKStringRef alertText, WKF
 
 TEST(WebKit, InjectedBundleNoDisableOverrideBuiltinsBehaviorTest)
 {
-    WKRetainPtr<WKPageGroupRef> pageGroup = adoptWK(WKPageGroupCreateWithIdentifier(WKStringCreateWithUTF8CString("InjectedBundleNoDisableOverrideBuiltinsBehaviorTestPageGroup")));
-
     WKRetainPtr<WKContextRef> context = adoptWK(Util::createContextForInjectedBundleTest("InjectedBundleNoDisableOverrideBuiltinsBehaviorTest"));
-    PlatformWebView webView(context.get(), pageGroup.get());
+    PlatformWebView webView(context.get());
 
     WKPageUIClientV0 uiClient;
     memset(&uiClient, 0, sizeof(uiClient));
@@ -84,10 +82,8 @@ static void runJavaScriptAlertDisabled(WKPageRef page, WKStringRef alertText, WK
 
 TEST(WebKit, InjectedBundleDisableOverrideBuiltinsBehaviorTest)
 {
-    WKRetainPtr<WKPageGroupRef> pageGroup = adoptWK(WKPageGroupCreateWithIdentifier(WKStringCreateWithUTF8CString("InjectedBundleDisableOverrideBuiltinsBehaviorTestPageGroup")));
-
     WKRetainPtr<WKContextRef> context = adoptWK(Util::createContextForInjectedBundleTest("InjectedBundleDisableOverrideBuiltinsBehaviorTest"));
-    PlatformWebView webView(context.get(), pageGroup.get());
+    PlatformWebView webView(context.get());
 
     WKPageUIClientV0 uiClient;
     memset(&uiClient, 0, sizeof(uiClient));

@@ -117,9 +117,7 @@ TEST(WebKit, MSEIsPlayingAudio)
 {
     WKRetainPtr<WKContextRef> context = adoptWK(WKContextCreateWithConfiguration(nullptr));
 
-    WKRetainPtr<WKPageGroupRef> pageGroup = adoptWK(WKPageGroupCreateWithIdentifier(Util::toWK("MSEIsPlayingAudioPageGroup").get()));
-
-    PlatformWebView webView(context.get(), pageGroup.get());
+    PlatformWebView webView(context.get());
     setUpClients(webView.page());
 
     auto configuration = adoptWK(WKPageCopyPageConfiguration(webView.page()));

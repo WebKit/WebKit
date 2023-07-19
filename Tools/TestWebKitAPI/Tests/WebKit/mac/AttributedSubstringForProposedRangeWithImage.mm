@@ -58,8 +58,7 @@ static void invalidMessageFunction(WKStringRef messageName)
 TEST(WebKit, AttributedSubstringForProposedRangeWithImage)
 {
     WKRetainPtr<WKContextRef> context = adoptWK(Util::createContextWithInjectedBundle());
-    WKRetainPtr<WKPageGroupRef> pageGroup = adoptWK(WKPageGroupCreateWithIdentifier(Util::toWK("AttributedSubstringForProposedRangeWithImagePageGroup").get()));
-    PlatformWebView webView(context.get(), pageGroup.get());
+    PlatformWebView webView(context.get());
 
     WKPageNavigationClientV0 loaderClient;
     memset(&loaderClient, 0, sizeof(loaderClient));

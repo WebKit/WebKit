@@ -49,16 +49,16 @@ static void didFinishNavigation(WKPageRef page, WKNavigationRef, WKTypeRef userD
 
 TEST(WebKit, ScrollPinningBehaviors)
 {
-    WKRetainPtr<WKContextRef> context = adoptWK(WKContextCreateWithConfiguration(nullptr));
+    auto configuration = adoptWK(WKPageConfigurationCreate());
+    auto preferences = adoptWK(WKPreferencesCreate());
+    WKPageConfigurationSetPreferences(configuration.get(), preferences.get());
 
     // Turn off threaded scrolling; synchronously waiting for the main thread scroll position to
     // update using WKPageForceRepaint would be better, but for some reason doesn't block until
     // it's updated after the initial WKPageSetScrollPinningBehavior above.
-    WKRetainPtr<WKPageGroupRef> pageGroup = adoptWK(WKPageGroupCreateWithIdentifier(Util::toWK("NoThreadedScrollingPageGroup").get()));
-    WKPreferencesRef preferences = WKPageGroupGetPreferences(pageGroup.get());
-    WKPreferencesSetThreadedScrollingEnabled(preferences, false);
+    WKPreferencesSetThreadedScrollingEnabled(preferences.get(), false);
 
-    PlatformWebView webView(context.get(), pageGroup.get());
+    PlatformWebView webView(configuration.get());
 
     WKPageNavigationClientV0 loaderClient;
     memset(&loaderClient, 0, sizeof(loaderClient));

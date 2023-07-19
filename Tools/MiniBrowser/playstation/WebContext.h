@@ -27,7 +27,6 @@
 
 #include <WebKit/WKContext.h>
 #include <WebKit/WKPageConfigurationRef.h>
-#include <WebKit/WKPageGroup.h>
 #include <WebKit/WKRetainPtr.h>
 #include <list>
 
@@ -41,7 +40,6 @@ public:
     static std::shared_ptr<WebContext> singleton();
 
     WKContextRef context() { return m_context.get(); }
-    WKPageGroupRef pageGroup() { return m_pageGroup.get(); }
     WKPreferencesRef preferences() { return m_preferencesMaster.get(); }
     WKWebsiteDataStoreRef websiteDataStore() { return m_websiteDataStore.get(); }
 
@@ -51,7 +49,6 @@ public:
 private:
     static std::weak_ptr<WebContext> s_instance;
     WKRetainPtr<WKContextRef> m_context;
-    WKRetainPtr<WKPageGroupRef> m_pageGroup;
     WKRetainPtr<WKPreferencesRef> m_preferencesMaster;
     WKRetainPtr<WKWebsiteDataStoreRef> m_websiteDataStore;
     std::list<WebViewWindow*> m_windows;

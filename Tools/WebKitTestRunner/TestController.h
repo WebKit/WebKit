@@ -392,7 +392,7 @@ public:
     void setIsMediaKeySystemPermissionGranted(bool);
     WKRetainPtr<WKStringRef> takeViewPortSnapshot();
 
-    WKPreferencesRef platformPreferences();
+    WKPreferencesRef platformPreferences() { return m_preferences.get(); }
 
     bool grantNotificationPermission(WKStringRef origin);
     bool denyNotificationPermission(WKStringRef origin);
@@ -634,7 +634,7 @@ private:
     std::unique_ptr<PlatformWebView> m_mainWebView;
     Vector<UniqueRef<PlatformWebView>> m_auxiliaryWebViews;
     WKRetainPtr<WKContextRef> m_context;
-    WKRetainPtr<WKPageGroupRef> m_pageGroup;
+    WKRetainPtr<WKPreferencesRef> m_preferences;
     WKRetainPtr<WKUserContentControllerRef> m_userContentController;
 
 #if PLATFORM(IOS_FAMILY)
