@@ -146,9 +146,9 @@ void MemoryCache::revalidationSucceeded(CachedResource& revalidatingResource, co
     ASSERT(response.source() == ResourceResponse::Source::MemoryCacheAfterValidation);
     ASSERT(revalidatingResource.resourceToRevalidate());
     CachedResourceHandle protectedRevalidatingResource { revalidatingResource };
-    CachedResource& resource = *revalidatingResource.resourceToRevalidate();
-    ASSERT(!resource.inCache());
-    ASSERT(resource.isLoaded());
+    auto* resource = revalidatingResource.resourceToRevalidate();
+    ASSERT(!resource->inCache());
+    ASSERT(resource->isLoaded());
 
     // Calling remove() can potentially delete revalidatingResource, which we use
     // below. This mustn't be the case since revalidation means it is loaded
@@ -157,23 +157,31 @@ void MemoryCache::revalidationSucceeded(CachedResource& revalidatingResource, co
 
     remove(revalidatingResource);
 
-    auto& resources = ensureSessionResourceMap(resource.sessionID());
-    auto key = std::make_pair(resource.url(), resource.cachePartition());
+    auto& resources = ensureSessionResourceMap(resource->sessionID());
+    std::pair key { resource->url(), resource->cachePartition() };
 
-    RELEASE_ASSERT(!resources.get(key));
-    resources.set(key, &resource);
-    resource.setInCache(true);
-    resource.updateResponseAfterRevalidation(response);
-    insertInLRUList(resource);
-    long long delta = resource.size();
-    if (resource.decodedSize() && resource.hasClients())
-        insertInLiveDecodedResourcesList(resource);
-    if (delta)
-        adjustSize(resource.hasClients(), delta);
+    auto addResult = resources.add(key, resource);
+    if (addResult.isNewEntry) {
+        resource->setInCache(true);
+        resource->updateResponseAfterRevalidation(response);
+        insertInLRUList(*resource);
+        long long delta = resource->size();
+        if (resource->decodedSize() && resource->hasClients())
+            insertInLiveDecodedResourcesList(*resource);
+        if (delta)
+            adjustSize(resource->hasClients(), delta);
+    } else {
+        // The resource was re-inserted in the cache during its revalidation.
+        // Ignore the revalidated resource and switch clients to the one that
+        // is already in the cache.
+        resource = addResult.iterator->value.get();
+        ASSERT(resource);
+        revalidatingResource.replaceResourceToRevalidate(*resource);
+    }
 
     revalidatingResource.switchClientsToRevalidatedResource();
     ASSERT(!revalidatingResource.m_deleted);
-    // this deletes the revalidating resource
+    // This deletes the revalidating resource.
     revalidatingResource.clearResourceToRevalidate();
 }
 
