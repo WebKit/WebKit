@@ -80,14 +80,15 @@ void RemoteScrollingCoordinatorProxyMac::handleWheelEvent(const WebWheelEvent& w
 #endif
 }
 
-void RemoteScrollingCoordinatorProxyMac::wheelEventHandlingCompleted(const PlatformWheelEvent& wheelEvent, ScrollingNodeID scrollingNodeID, std::optional<WheelScrollGestureState> gestureState)
+void RemoteScrollingCoordinatorProxyMac::wheelEventHandlingCompleted(const PlatformWheelEvent& wheelEvent, ScrollingNodeID scrollingNodeID, std::optional<WheelScrollGestureState> gestureState, bool wasHandled)
 {
 #if ENABLE(SCROLLING_THREAD)
-    m_wheelEventDispatcher->wheelEventHandlingCompleted(wheelEvent, scrollingNodeID, gestureState);
+    m_wheelEventDispatcher->wheelEventHandlingCompleted(wheelEvent, scrollingNodeID, gestureState, wasHandled);
 #else
     UNUSED_PARAM(wheelEvent);
     UNUSED_PARAM(scrollingNodeID);
     UNUSED_PARAM(gestureState);
+    UNUSED_PARAM(wasHandled);
 #endif
 }
 

@@ -323,11 +323,12 @@ private:
         bool scrollEventCanInfluenceSwipe(PlatformScrollEvent);
         WebCore::FloatSize scrollEventGetScrollingDeltas(PlatformScrollEvent);
 
-        enum class State {
+        enum class State : uint8_t {
             None,
             WaitingForWebCore,
             InsufficientMagnitude
         };
+        static const char* stateToString(State);
 
         State m_state { State::None };
         SwipeDirection m_direction;

@@ -74,7 +74,7 @@ public:
     void cacheWheelEventScrollingAccelerationCurve(const NativeWebWheelEvent&);
 
     void handleWheelEvent(const WebWheelEvent&, WebCore::RectEdges<bool> rubberBandableEdges);
-    void wheelEventHandlingCompleted(const WebCore::PlatformWheelEvent&, WebCore::ScrollingNodeID, std::optional<WebCore::WheelScrollGestureState>);
+    void wheelEventHandlingCompleted(const WebCore::PlatformWheelEvent&, WebCore::ScrollingNodeID, std::optional<WebCore::WheelScrollGestureState>, bool wasHandled);
 
     void setScrollingTree(RefPtr<RemoteScrollingTree>&&);
 
