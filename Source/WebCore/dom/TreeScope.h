@@ -106,7 +106,7 @@ public:
     bool shouldCacheLabelsByForAttribute() const { return !!m_labelsByForAttribute; }
     void addLabel(const AtomStringImpl& forAttributeValue, HTMLLabelElement&);
     void removeLabel(const AtomStringImpl& forAttributeValue, HTMLLabelElement&);
-    HTMLLabelElement* labelElementForId(const AtomString& forAttributeValue);
+    const Vector<Element*>* labelElementsForId(const AtomString& forAttributeValue);
 
     WEBCORE_EXPORT RefPtr<Element> elementFromPoint(double clientX, double clientY);
     WEBCORE_EXPORT Vector<RefPtr<Element>> elementsFromPoint(double clientX, double clientY);

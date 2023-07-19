@@ -105,7 +105,7 @@ String AccessibilityObject::descriptionAttributeValue() const
     // Determine if any visible text is available, which influences our usage of title tag.
     bool visibleTextAvailable = false;
     for (const auto& text : textOrder) {
-        if (isVisibleText(text.textSource)) {
+        if (isVisibleText(text.textSource) && !text.text.isEmpty()) {
             visibleTextAvailable = true;
             break;
         }
@@ -188,7 +188,7 @@ String AccessibilityObject::helpTextAttributeValue() const
     // Determine if any descriptive text is available, which influences our usage of title tag.
     bool descriptiveTextAvailable = false;
     for (const auto& text : textOrder) {
-        if (isDescriptiveText(text.textSource)) {
+        if (isDescriptiveText(text.textSource) && !text.text.isEmpty()) {
             descriptiveTextAvailable = true;
             break;
         }

@@ -301,7 +301,7 @@ void TreeScope::removeLabel(const AtomStringImpl& forAttributeValue, HTMLLabelEl
     m_labelsByForAttribute->remove(forAttributeValue, element);
 }
 
-HTMLLabelElement* TreeScope::labelElementForId(const AtomString& forAttributeValue)
+const Vector<Element*>* TreeScope::labelElementsForId(const AtomString& forAttributeValue)
 {
     if (forAttributeValue.isEmpty())
         return nullptr;
@@ -317,7 +317,7 @@ HTMLLabelElement* TreeScope::labelElementForId(const AtomString& forAttributeVal
         }
     }
 
-    return m_labelsByForAttribute->getElementByLabelForAttribute(*forAttributeValue.impl(), *this);
+    return m_labelsByForAttribute->getElementsByLabelForAttribute(*forAttributeValue.impl(), *this);
 }
 
 static std::optional<LayoutPoint> absolutePointIfNotClipped(Document& document, const LayoutPoint& clientPoint)
