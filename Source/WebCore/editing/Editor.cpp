@@ -235,6 +235,10 @@ TemporarySelectionChange::TemporarySelectionChange(Document& document, std::opti
 
     if (temporarySelection) {
         m_selectionToRestore = document.selection().selection();
+#if PLATFORM(IOS_FAMILY)
+        if (document.selection().isUpdateAppearanceEnabled())
+            document.selection().setNeedsSelectionUpdate();
+#endif
         setSelection(temporarySelection.value(), IsTemporarySelection::Yes);
     }
 }
