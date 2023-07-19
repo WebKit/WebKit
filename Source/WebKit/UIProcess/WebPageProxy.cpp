@@ -3367,7 +3367,7 @@ void WebPageProxy::handleWheelEventReply(const WebWheelEvent& event, ScrollingNo
 
 #if ENABLE(ASYNC_SCROLLING) && PLATFORM(MAC)
     if (auto* scrollingCoordinatorProxy = this->scrollingCoordinatorProxy()) {
-        scrollingCoordinatorProxy->wheelEventHandlingCompleted(platform(event), nodeID, gestureState);
+        scrollingCoordinatorProxy->wheelEventHandlingCompleted(platform(event), nodeID, gestureState, wasHandledForScrolling || wasHandledByWebProcess);
         return;
     }
 #else
