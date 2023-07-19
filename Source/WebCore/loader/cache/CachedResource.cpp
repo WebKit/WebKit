@@ -451,6 +451,7 @@ Seconds CachedResource::freshnessLifetime(const ResourceResponse& response) cons
 
 void CachedResource::redirectReceived(ResourceRequest&& request, const ResourceResponse& response, CompletionHandler<void(ResourceRequest&&)>&& completionHandler)
 {
+    CachedResourceHandle protectedThis { *this };
     CACHEDRESOURCE_RELEASE_LOG("redirectReceived:");
 
     // Remove redirect urls from the memory cache if they contain a fragment.

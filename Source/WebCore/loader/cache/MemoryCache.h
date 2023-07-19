@@ -168,7 +168,7 @@ public:
     WEBCORE_EXPORT void pruneLiveResourcesToSize(unsigned targetSize, bool shouldDestroyDecodedDataForAllLiveResources = false);
 
 private:
-    using CachedResourceMap = HashMap<std::pair<URL, String /* partitionName */>, CachedResource*>;
+    using CachedResourceMap = HashMap<std::pair<URL, String /* partitionName */>, WeakPtr<CachedResource>>;
     using LRUList = WeakListHashSet<CachedResource>;
 
     MemoryCache();

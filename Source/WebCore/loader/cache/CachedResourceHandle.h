@@ -45,7 +45,8 @@ public:
 
 protected:
     CachedResourceHandleBase();
-    CachedResourceHandleBase(CachedResource*);
+    explicit CachedResourceHandleBase(CachedResource*);
+    explicit CachedResourceHandleBase(CachedResource&);
     CachedResourceHandleBase(const CachedResourceHandleBase&);
 
     void setResource(CachedResource*);
@@ -61,6 +62,7 @@ private:
 template <class R> class CachedResourceHandle : public CachedResourceHandleBase {
 public: 
     CachedResourceHandle() { }
+    CachedResourceHandle(R& res) : CachedResourceHandleBase(res) { }
     CachedResourceHandle(R* res) : CachedResourceHandleBase(res) { }
     CachedResourceHandle(const CachedResourceHandle<R>& o) : CachedResourceHandleBase(o) { }
     template<typename U> CachedResourceHandle(const CachedResourceHandle<U>& o) : CachedResourceHandleBase(o.get()) { }
