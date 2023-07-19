@@ -22,26 +22,14 @@
 #include "config.h"
 #include "CSSRuleList.h"
 
-#include "CSSRule.h"
-
 namespace WebCore {
 
 CSSRuleList::CSSRuleList() = default;
 
 CSSRuleList::~CSSRuleList() = default;
 
-StaticCSSRuleList::StaticCSSRuleList() 
-    : m_refCount(1)
-{ 
-}
+StaticCSSRuleList::StaticCSSRuleList() = default;
 
 StaticCSSRuleList::~StaticCSSRuleList() = default;
-
-void StaticCSSRuleList::deref()
-{ 
-    ASSERT(m_refCount);
-    if (!--m_refCount)
-        delete this;
-}
 
 } // namespace WebCore

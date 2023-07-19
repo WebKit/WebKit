@@ -64,18 +64,6 @@ Ref<CSSComputedStyleDeclaration> CSSComputedStyleDeclaration::create(Element& el
     return adoptRef(*new CSSComputedStyleDeclaration(element, allowVisitedStyle, pseudoElementName));
 }
 
-void CSSComputedStyleDeclaration::ref()
-{
-    ++m_refCount;
-}
-
-void CSSComputedStyleDeclaration::deref()
-{
-    ASSERT(m_refCount);
-    if (!--m_refCount)
-        delete this;
-}
-
 String CSSComputedStyleDeclaration::cssText() const
 {
     return emptyString();

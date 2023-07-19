@@ -58,6 +58,7 @@ static Style::Scope& styleScopeFor(ContainerNode& treeScope)
 }
 
 class StyleSheetCSSRuleList final : public CSSRuleList {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     StyleSheetCSSRuleList(CSSStyleSheet* sheet) : m_styleSheet(sheet) { }
     
