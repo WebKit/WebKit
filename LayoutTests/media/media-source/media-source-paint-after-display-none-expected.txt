@@ -1,0 +1,11 @@
+EVENT(sourceopen)
+EVENT(canplay)
+EXPECTED (canvas.getContext("2d").getImageData(1, 1, 1, 1).data[0] > '128') OK
+EXPECTED (canvas.getContext("2d").getImageData(1, 1, 1, 1).data[1] < '128') OK
+RUN(video.style.display = "none")
+EVENT(canplay)
+EVENT(playing)
+EXPECTED (canvas.getContext("2d").getImageData(1, 1, 1, 1).data[0] < '128') OK
+EXPECTED (canvas.getContext("2d").getImageData(1, 1, 1, 1).data[1] > '128') OK
+END OF TEST
+

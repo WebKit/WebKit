@@ -978,6 +978,14 @@ void HTMLMediaElement::willDetachRenderers()
 void HTMLMediaElement::didDetachRenderers()
 {
     scheduleUpdateShouldAutoplay();
+
+    queueTaskKeepingObjectAlive(*this, TaskSource::MediaElement, [this] {
+        // If we detach a media element from a renderer, we may no longer need the MediaPlayerPrivate
+        // to vend a PlatformLayer. However, the renderer may be torn down and re-attached during a
+        // single run-loop as a result of layout or due to the element being re-parented.
+        if (!renderer() && m_player)
+            m_player->acceleratedRenderingStateChanged();
+    });
 }
 
 void HTMLMediaElement::didRecalcStyle(Style::Change)
@@ -8923,6 +8931,9 @@ void HTMLMediaElement::setFullscreenMode(VideoFullscreenMode mode)
     m_videoFullscreenMode = mode;
     visibilityStateChanged();
     schedulePlaybackControlsManagerUpdate();
+
+    if (m_player)
+        m_player->acceleratedRenderingStateChanged();
 }
 
 #if !RELEASE_LOG_DISABLED
