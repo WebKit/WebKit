@@ -2764,3 +2764,6 @@ webkit.org/b/258181 [ Monterey+ Debug ] inspector/debugger/async-stack-trace-tru
 webkit.org/b/236128 imported/w3c/web-platform-tests/html/user-activation/activation-trigger-mouse-right.html [ Skip ]
 
 webkit.org/b/252322 [ X86_64 ] media/media-source/media-source-video-renders.html [ ImageOnlyFailure ]
+
+# Requires Ventura or later
+[ BigSur Monterey ] media/media-source/media-source-paint-after-display-none.html [ Skip ]
