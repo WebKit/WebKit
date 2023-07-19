@@ -9,6 +9,9 @@ accessibility/slider-with-lost-renderer.html [ Timeout ]
 accessibility/mac/combobox-activedescendant-notifications.html [ Timeout ]
 accessibility/mac/relationships-in-frames.html [ Timeout ]
 
+# Times out because `innerText` changes on linked <label>s don't update cached AXTitle value.
+accessibility/multiple-label-input.html [ Timeout ]
+
 # Text failures
 accessibility/aria-current.html [ Failure ]
 accessibility/aria-labelledby-overrides-aria-label.html [ Failure ]
@@ -51,7 +54,6 @@ accessibility/scroll-to-make-visible-nested.html [ Failure ]
 accessibility/scroll-to-make-visible-with-subfocus.html [ Failure ]
 accessibility/slider-with-lost-renderer.html [ Failure ]
 accessibility/textarea-insertion-point-line-number.html [ Failure ]
-accessibility/title-ui-element-correctness.html [ Failure ]
 accessibility/text-alternative-calculation-hidden-nodes.html [ Failure ]
 accessibility/math-multiscript-attributes.html [ Failure ]
 

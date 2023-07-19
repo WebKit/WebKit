@@ -1,10 +1,12 @@
-<!DOCTYPE HTML>
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
-<body>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
 <script src="../resources/js-test.js"></script>
+</head>
+<body>
 
 <div id="container">
-
   <div>
     <label id="label1" for="control1">Label 1</label>
     <input id="control1" type="text">
@@ -40,11 +42,12 @@
   </div>
 </div>
 
-<div id="console"></div>
 <script>
-description("This tests that titleUIElement works correctly even when things change dynamically.");
+var output = "This tests that titleUIElement works correctly even when things change dynamically.\n\n";
 
-if (window.testRunner && window.accessibilityController) {
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
     function hasTitleUIElement(axElement) {
         var label1 = accessibilityController.accessibleElementById("label1");
         var titleUIElement = axElement.titleUIElement();
@@ -70,40 +73,46 @@ if (window.testRunner && window.accessibilityController) {
         return accessibilityController.accessibleElementById(id);
     }
 
-    shouldBe("axElement('control1').titleUIElement().isEqual(axElement('label1'))", "true");
+    output += expect("axElement('control1').titleUIElement().isEqual(axElement('label1'))", "true");
+    output += expect("axElement('control2').titleUIElement().isEqual(axElement('label2'))", "true");
 
-    shouldBe("axElement('control2').titleUIElement().isEqual(axElement('label2'))", "true");
-
+    var label4Element;
     // Test changing the "for" attribute dynamically.
-    shouldBe("hasTitleUIElement(axElement('control3'))", "false");
-    shouldBe("document.getElementById('label3').setAttribute('for', 'control3'); axElement('control3').titleUIElement().isEqual(axElement('label3'))", "true");
+    output += expect("hasTitleUIElement(axElement('control3'))", "false");
+    output += evalAndReturn("document.getElementById('label3').setAttribute('for', 'control3');");
+    setTimeout(async function() {
+        output += await expectAsync("axElement('control3').titleUIElement().isEqual(axElement('label3'))", "true");
 
-    // Test unattached label element that's subsequently attached.
-    var label4Element = document.createElement("label");
-    label4Element.id = "label4";
-    label4Element.setAttribute("for", "control4");
-    label4Element.innerText = "Label 4";
-    shouldBe("var label4Element = createLabelWithIdAndForAttribute('label4', 'control4'); hasTitleUIElement(axElement('control4'))", "false");
-    shouldBe("document.getElementById('container').appendChild(label4Element); hasTitleUIElement(axElement('control4'))", "true");
-    shouldBe("axElement('control4').titleUIElement().isEqual(axElement('label4'))", "true");
+        // Test unattached label element that's subsequently attached.
+        output += evalAndReturn("label4Element = createLabelWithIdAndForAttribute('label4', 'control4');");
+        output += await expectAsync("hasTitleUIElement(axElement('control4'))", "false");
+        output += evalAndReturn("document.getElementById('container').appendChild(label4Element);");
+        output += await expectAsync("hasTitleUIElement(axElement('control4'))", "true");
+        output += await expectAsync("axElement('control4').titleUIElement().isEqual(axElement('label4'))", "true");
 
-    // Test what happens when the label is detached.
-    shouldBe("label4Element.parentElement.removeChild(label4Element); hasTitleUIElement(axElement('control4'))", "false");
+        // Test what happens when the label is detached.
+        output += evalAndReturn("label4Element.parentElement.removeChild(label4Element);");
+        output += await expectAsync("hasTitleUIElement(axElement('control4'))", "false");
 
-    // Test label that gets a control reparented into it.
-    shouldBe("hasTitleUIElement(axElement('control5'))", "false");
+        // Test label that gets a control reparented into it.
+        output += expect("hasTitleUIElement(axElement('control5'))", "false");
+        output += evalAndReturn("reparentNodeIntoContainer(document.getElementById('control5'), document.getElementById('label5'));");
+        output += await expectAsync("axElement('control5').titleUIElement() != null", "true");
+        output += await expectAsync("axElement('control5').titleUIElement().isEqual(axElement('label5'))", "true");
 
-    shouldBe("reparentNodeIntoContainer(document.getElementById('control5'), document.getElementById('label5')); axElement('control5').titleUIElement() != null", "true");
-    shouldBe("axElement('control5').titleUIElement().isEqual(axElement('label5'))", "true");
+        // On Cocoa platforms, when there is no singular title UI element for an element (e.g. multiple <label for="some-id">), none should be returned.
+        const platform = accessibilityController.platformName;
+        const isCocoa = platform === "ios" || platform === "mac";
+        output += expect("hasTitleUIElement(axElement('control6'))", isCocoa ? "false" : "true");
+        output += evalAndReturn("document.getElementById('label6c').remove()");
+        output += await expectAsync("axElement('control6').titleUIElement().isEqual(axElement('label6b'))", "true");
+        document.getElementById('container').style.display = 'none';
 
-    // Make sure the first label is returned, even as labels are added and removed.
-    shouldBe("axElement('control6').titleUIElement().isEqual(axElement('label6b'))", "true");
-    shouldBe("newLabel6Element = createLabelWithIdAndForAttribute('label6a', 'control6'); document.body.insertBefore(newLabel6Element, document.body.firstChild); axElement('control6').titleUIElement().isEqual(axElement('label6a'))", "true");
-    shouldBe("document.body.removeChild(newLabel6Element); axElement('control6').titleUIElement().isEqual(axElement('label6b'))", "true");
-
-    document.getElementById('container').style.display = 'none';
+        debug(output);
+        finishJSTest();
+    }, 0);
 }
-
 </script>
 </body>
 </html>
+

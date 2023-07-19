@@ -16,7 +16,7 @@ PASS: hasTitleUIElement(axElement('control5')) === false
 reparentNodeIntoContainer(document.getElementById('control5'), document.getElementById('label5'));
 PASS: axElement('control5').titleUIElement() != null === true
 PASS: axElement('control5').titleUIElement().isEqual(axElement('label5')) === true
-PASS: hasTitleUIElement(axElement('control6')) === false
+PASS: hasTitleUIElement(axElement('control6')) === true
 document.getElementById('label6c').remove()
 PASS: axElement('control6').titleUIElement().isEqual(axElement('label6b')) === true
 
