@@ -63,18 +63,15 @@ void SampleBufferDisplayLayer::initialize(bool hideRootLayer, IntSize size, Comp
     m_connection->sendWithAsyncReply(Messages::RemoteSampleBufferDisplayLayerManager::CreateLayer { m_identifier, hideRootLayer, size }, [this, weakThis = WeakPtr { *this }, callback = WTFMove(callback)](auto contextId) mutable {
         if (!weakThis)
             return callback(false);
-        if (contextId) {
-            m_hostingContextID = *contextId;
-            m_videoLayer = LayerHostingContext::createPlatformLayerForHostingContext(*contextId);
-        }
-        callback(!!m_videoLayer);
+        m_hostingContextID = contextId;
+        callback(!!contextId);
     });
 }
 
 #if !RELEASE_LOG_DISABLED
 void SampleBufferDisplayLayer::setLogIdentifier(String&& logIdentifier)
 {
-    ASSERT(m_videoLayer);
+    ASSERT(m_hostingContextID);
     m_connection->send(Messages::RemoteSampleBufferDisplayLayer::SetLogIdentifier { logIdentifier }, m_identifier);
 }
 #endif
@@ -153,6 +150,8 @@ void SampleBufferDisplayLayer::clearVideoFrames()
 
 PlatformLayer* SampleBufferDisplayLayer::rootLayer()
 {
+    if (!m_videoLayer && m_hostingContextID)
+        m_videoLayer = LayerHostingContext::createPlatformLayerForHostingContext(*m_hostingContextID);
     return m_videoLayer.get();
 }
 
