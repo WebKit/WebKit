@@ -40,6 +40,7 @@
 #import <WebCore/BufferSource.h>
 #import <WebCore/ExceptionData.h>
 #import <WebCore/PublicKeyCredentialCreationOptions.h>
+#import <WebCore/RegistrableDomain.h>
 #import <WebCore/SecurityOrigin.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/CompletionHandler.h>
@@ -310,7 +311,7 @@ static inline RetainPtr<ASCPublicKeyCredentialAssertionOptions> configureAsserti
             [assertionOptions setExtensions:toASCExtensions(*options.extensions).get()];
     }
     if (parentOrigin && [assertionOptions respondsToSelector:@selector(setDestinationSiteForCrossSiteAssertion:)])
-        assertionOptions.get().destinationSiteForCrossSiteAssertion = parentOrigin->toString();
+        assertionOptions.get().destinationSiteForCrossSiteAssertion = RegistrableDomain { *parentOrigin }.string();
     else if (parentOrigin && ![assertionOptions respondsToSelector:@selector(setDestinationSiteForCrossSiteAssertion:)])
         return nil;
     if (options.timeout && [assertionOptions respondsToSelector:@selector(setTimeout:)])
