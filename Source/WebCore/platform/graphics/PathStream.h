@@ -36,11 +36,13 @@ namespace WebCore {
 class PathStream final : public PathImpl {
 public:
     static UniqueRef<PathStream> create();
+    static UniqueRef<PathStream> create(PathSegment&&);
     static UniqueRef<PathStream> create(const Vector<FloatPoint>&);
     static UniqueRef<PathStream> create(Vector<PathSegment>&&);
 
     PathStream();
     PathStream(const PathStream&);
+    PathStream(PathSegment&&);
     PathStream(Vector<PathSegment>&&);
     PathStream(const Vector<PathSegment>&);
 
@@ -71,6 +73,9 @@ public:
     FloatRect fastBoundingRect() const final;
     FloatRect boundingRect() const final;
 
+    static FloatRect computeFastBoundingRect(std::span<const PathSegment>);
+    static FloatRect computeBoundingRect(std::span<const PathSegment>);
+
 private:
     struct SegmentsData : public ThreadSafeRefCounted<SegmentsData> {
         WTF_MAKE_STRUCT_FAST_ALLOCATED;
@@ -78,6 +83,13 @@ private:
         static Ref<SegmentsData> create()
         {
             return adoptRef(*new SegmentsData);
+        }
+
+        static Ref<SegmentsData> create(PathSegment&& segment)
+        {
+            auto result = adoptRef(*new SegmentsData);
+            result->segments.append(WTFMove(segment));
+            return result;
         }
 
         static Ref<SegmentsData> create(Vector<PathSegment>&& segments)

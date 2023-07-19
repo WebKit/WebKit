@@ -36,49 +36,109 @@
 
 namespace WebCore {
 
-Path::Path()
-    : m_impl(PathStream::create())
-{
-}
-
 Path::Path(const Vector<FloatPoint>& points)
-    : m_impl(PathStream::create(points))
+    : m_data(PathStream::create(points))
 {
 }
 
 Path::Path(Vector<PathSegment>&& segments)
-    : m_impl(PathStream::create(WTFMove(segments)))
 {
+    if (segments.isEmpty())
+        return;
+
+    if (segments.size() == 1)
+        m_data = WTFMove(segments[0]);
+    else
+        m_data = PathStream::create(WTFMove(segments));
 }
 
 Path::Path(UniqueRef<PathImpl>&& impl)
-    : m_impl(WTFMove(impl))
+    : m_data(WTFMove(impl))
 {
 }
 
 Path::Path(const Path& other)
-    : m_impl(other.m_impl->clone())
 {
+    *this = other;
+}
+
+Path::Path(PathSegment&& segment)
+{
+    m_data = WTFMove(segment);
 }
 
 Path& Path::operator=(const Path& other)
 {
-    if (this != &other)
-        m_impl = other.m_impl->clone();
+    if (auto segment = other.asSingle())
+        m_data = *segment;
+    else if (auto impl = other.asImpl())
+        m_data = impl->clone();
+    else
+        m_data = std::monostate { };
     return *this;
 }
 
 bool Path::operator==(const Path& other) const
 {
-    return *m_impl == *other.m_impl;
+    if (auto segment = asSingle()) {
+        if (auto otherSegment = other.asSingle())
+            return *segment == *otherSegment;
+        return false;
+    }
+
+    if (auto impl = asImpl()) {
+        if (auto otherImpl = other.asImpl())
+            return *impl == *otherImpl;
+        return false;
+    }
+
+    return true;
+}
+
+PathImpl& Path::setImpl(UniqueRef<PathImpl> impl)
+{
+    auto& platformPathImpl = impl.get();
+    m_data = WTFMove(impl);
+    return platformPathImpl;
 }
 
 PlatformPathImpl& Path::ensurePlatformPathImpl()
 {
-    if (auto* stream = dynamicDowncast<PathStream>(*m_impl))
-        m_impl = PlatformPathImpl::create(*stream);
+    if (auto segment = asSingle())
+        return downcast<PlatformPathImpl>(setImpl(PlatformPathImpl::create(WTFMove(*segment))));
 
-    return downcast<PlatformPathImpl>(*m_impl);
+    if (auto impl = asImpl()) {
+        if (auto* stream = dynamicDowncast<PathStream>(*impl))
+            return downcast<PlatformPathImpl>(setImpl(PlatformPathImpl::create(*stream)));
+        return downcast<PlatformPathImpl>(*impl);
+    }
+
+    return downcast<PlatformPathImpl>(setImpl(PlatformPathImpl::create()));
+}
+
+PathImpl& Path::ensureImpl()
+{
+    if (auto segment = asSingle())
+        return setImpl(PathStream::create(WTFMove(*segment)));
+
+    if (auto impl = asImpl())
+        return *impl;
+
+    return setImpl(PathStream::create());
+}
+
+PathImpl* Path::asImpl()
+{
+    if (auto ref = std::get_if<UniqueRef<PathImpl>>(&m_data))
+        return ref->ptr();
+    return nullptr;
+}
+
+const PathImpl* Path::asImpl() const
+{
+    if (auto ref = std::get_if<UniqueRef<PathImpl>>(&m_data))
+        return ref->ptr();
+    return nullptr;
 }
 
 Path Path::polygonPathFromPoints(const Vector<FloatPoint>& points)
@@ -88,55 +148,95 @@ Path Path::polygonPathFromPoints(const Vector<FloatPoint>& points)
 
 void Path::moveTo(const FloatPoint& point)
 {
-    m_impl->moveTo(point);
+    if (isEmpty())
+        m_data = PathSegment(PathMoveTo { point });
+    else
+        ensureImpl().moveTo(point);
+}
+
+const PathMoveTo* Path::asSingleMoveTo() const
+{
+    if (auto segment = asSingle())
+        return std::get_if<PathMoveTo>(&segment->data());
+    return nullptr;
 }
 
 void Path::addLineTo(const FloatPoint& point)
 {
     if (isEmpty())
-        m_impl->moveTo({ });
-    m_impl->addLineTo(point);
+        m_data = PathSegment(PathDataLine { { }, point });
+    else if (auto moveTo = asSingleMoveTo())
+        m_data = PathSegment(PathDataLine { moveTo->point, point });
+    else
+        ensureImpl().addLineTo(point);
 }
 
 void Path::addQuadCurveTo(const FloatPoint& controlPoint, const FloatPoint& endPoint)
 {
     if (isEmpty())
-        m_impl->moveTo({ });
-    m_impl->addQuadCurveTo(controlPoint, endPoint);
+        m_data = PathSegment(PathDataQuadCurve { { }, controlPoint, endPoint });
+    else if (auto moveTo = asSingleMoveTo())
+        m_data = PathSegment(PathDataQuadCurve { moveTo->point, controlPoint, endPoint });
+    else
+        ensureImpl().addQuadCurveTo(controlPoint, endPoint);
 }
 
 void Path::addBezierCurveTo(const FloatPoint& controlPoint1, const FloatPoint& controlPoint2, const FloatPoint& endPoint)
 {
     if (isEmpty())
-        m_impl->moveTo({ });
-    m_impl->addBezierCurveTo(controlPoint1, controlPoint2, endPoint);
+        m_data = PathSegment(PathDataBezierCurve { { }, controlPoint1, controlPoint2, endPoint });
+    else if (auto moveTo = asSingleMoveTo())
+        m_data = PathSegment(PathDataBezierCurve { moveTo->point, controlPoint1, controlPoint2, endPoint });
+    else
+        ensureImpl().addBezierCurveTo(controlPoint1, controlPoint2, endPoint);
 }
 
 void Path::addArcTo(const FloatPoint& point1, const FloatPoint& point2, float radius)
 {
     if (isEmpty())
-        m_impl->moveTo({ });
-    m_impl->addArcTo(point1, point2, radius);
+        m_data = PathSegment(PathDataArc { { }, point1, point2, radius });
+    else if (auto moveTo = asSingleMoveTo())
+        m_data = PathSegment(PathDataArc { moveTo->point, point1, point2, radius });
+    else
+        ensureImpl().addArcTo(point1, point2, radius);
 }
 
 void Path::addArc(const FloatPoint& point, float radius, float startAngle, float endAngle, RotationDirection direction)
 {
-    m_impl->addArc(point, radius, startAngle, endAngle, direction);
+    // Workaround for <rdar://problem/5189233> CGPathAddArc hangs or crashes when passed inf as start or end angle,
+    // as well as http://bugs.webkit.org/show_bug.cgi?id=16449, since cairo_arc() functions hang or crash when
+    // passed inf as radius or start/end angle.
+    if (!std::isfinite(radius) || !std::isfinite(startAngle) || !std::isfinite(endAngle))
+        return;
+
+    if (isEmpty())
+        m_data = PathSegment(PathArc { point, radius, startAngle, endAngle, direction });
+    else
+        ensureImpl().addArc(point, radius, startAngle, endAngle, direction);
 }
 
 void Path::addEllipse(const FloatPoint& point, float radiusX, float radiusY, float rotation, float startAngle, float endAngle, RotationDirection direction)
 {
-    m_impl->addEllipse(point, radiusX, radiusY, rotation, startAngle, endAngle, direction);
+    if (isEmpty())
+        m_data = PathSegment(PathEllipse { point, radiusX, radiusY, rotation, startAngle, endAngle, direction });
+    else
+        ensureImpl().addEllipse(point, radiusX, radiusY, rotation, startAngle, endAngle, direction);
 }
 
 void Path::addEllipseInRect(const FloatRect& rect)
 {
-    m_impl->addEllipseInRect(rect);
+    if (isEmpty())
+        m_data = PathSegment(PathEllipseInRect { rect });
+    else
+        ensureImpl().addEllipseInRect(rect);
 }
 
 void Path::addRect(const FloatRect& rect)
 {
-    m_impl->addRect(rect);
+    if (isEmpty())
+        m_data = PathSegment(PathRect { rect });
+    else
+        ensureImpl().addRect(rect);
 }
 
 static FloatRoundedRect calculateEvenRoundedRect(const FloatRect& rect, const FloatSize& roundingRadii)
@@ -175,7 +275,10 @@ void Path::addRoundedRect(const FloatRoundedRect& roundedRect, PathRoundedRect::
         return;
     }
 
-    m_impl->addRoundedRect(roundedRect, strategy);
+    if (isEmpty())
+        m_data = PathSegment(PathRoundedRect { roundedRect, strategy });
+    else
+        ensureImpl().addRoundedRect(roundedRect, strategy);
 }
 
 void Path::addRoundedRect(const FloatRect& rect, const FloatSize& roundingRadii, PathRoundedRect::Strategy strategy)
@@ -183,7 +286,10 @@ void Path::addRoundedRect(const FloatRect& rect, const FloatSize& roundingRadii,
     if (rect.isEmpty())
         return;
 
-    addRoundedRect(calculateEvenRoundedRect(rect, roundingRadii), strategy);
+    if (isEmpty())
+        m_data = PathSegment(PathRoundedRect { calculateEvenRoundedRect(rect, roundingRadii), strategy });
+    else
+        ensureImpl().addRoundedRect(calculateEvenRoundedRect(rect, roundingRadii), strategy);
 }
 
 void Path::addRoundedRect(const RoundedRect& rect)
@@ -196,7 +302,7 @@ void Path::closeSubpath()
     if (isEmpty())
         return;
 
-    m_impl->closeSubpath();
+    ensureImpl().closeSubpath();
 }
 
 void Path::addPath(const Path& path, const AffineTransform& transform)
@@ -209,7 +315,10 @@ void Path::addPath(const Path& path, const AffineTransform& transform)
 
 void Path::applySegments(const PathSegmentApplier& applier) const
 {
-    m_impl->applySegments(applier);
+    if (auto segment = asSingle())
+        applier(*segment);
+    else if (auto impl = asImpl())
+        impl->applySegments(applier);
 }
 
 void Path::applyElements(const PathElementApplier& applier) const
@@ -219,7 +328,7 @@ void Path::applyElements(const PathElementApplier& applier) const
 
 void Path::clear()
 {
-    m_impl = PathStream::create();
+    m_data = std::monostate { };
 }
 
 void Path::translate(const FloatSize& delta)
@@ -237,32 +346,76 @@ void Path::transform(const AffineTransform& transform)
 
 std::optional<PathSegment> Path::singleSegment() const
 {
-    return m_impl->singleSegment();
+    if (auto segment = asSingle())
+        return *segment;
+
+    if (auto impl = asImpl())
+        return impl->singleSegment();
+
+    return std::nullopt;
 }
 
 std::optional<PathDataLine> Path::singleDataLine() const
 {
-    return m_impl->singleDataLine();
+    if (auto segment = asSingle()) {
+        if (auto data = std::get_if<PathDataLine>(&segment->data()))
+            return *data;
+    }
+
+    if (auto impl = asImpl())
+        return impl->singleDataLine();
+
+    return std::nullopt;
 }
 
 std::optional<PathArc> Path::singleArc() const
 {
-    return m_impl->singleArc();
+    if (auto segment = asSingle()) {
+        if (auto data = std::get_if<PathArc>(&segment->data()))
+            return *data;
+    }
+
+    if (auto impl = asImpl())
+        return impl->singleArc();
+
+    return std::nullopt;
 }
 
 std::optional<PathDataQuadCurve> Path::singleQuadCurve() const
 {
-    return m_impl->singleQuadCurve();
+    if (auto segment = asSingle()) {
+        if (auto data = std::get_if<PathDataQuadCurve>(&segment->data()))
+            return *data;
+    }
+
+    if (auto impl = asImpl())
+        return impl->singleQuadCurve();
+
+    return std::nullopt;
 }
 
 std::optional<PathDataBezierCurve> Path::singleBezierCurve() const
 {
-    return m_impl->singleBezierCurve();
+    if (auto segment = asSingle()) {
+        if (auto data = std::get_if<PathDataBezierCurve>(&segment->data()))
+            return *data;
+    }
+
+    if (auto impl = asImpl())
+        return impl->singleBezierCurve();
+
+    return std::nullopt;
 }
 
 bool Path::isEmpty() const
 {
-    return m_impl->isEmpty();
+    if (std::holds_alternative<std::monostate>(m_data))
+        return true;
+
+    if (auto impl = asImpl())
+        return impl->isEmpty();
+
+    return false;
 }
 
 PlatformPathPtr Path::platformPath() const
@@ -272,8 +425,10 @@ PlatformPathPtr Path::platformPath() const
 
 const Vector<PathSegment>* Path::segmentsIfExists() const
 {
-    if (auto* stream = dynamicDowncast<PathStream>(*m_impl))
-        return &stream->segments();
+    if (auto impl = asImpl()) {
+        if (auto* stream = dynamicDowncast<PathStream>(*impl))
+            return &stream->segments();
+    }
 
     return nullptr;
 }
@@ -304,18 +459,23 @@ float Path::length() const
 
 bool Path::isClosed() const
 {
-    if (isEmpty())
-        return false;
+    if (auto impl = asImpl())
+        return impl->isClosed();
 
-    return m_impl->isClosed();
+    return false;
 }
 
 FloatPoint Path::currentPoint() const
 {
-    if (isEmpty())
-        return { };
+    if (auto segment = asSingle()) {
+        FloatPoint lastMoveToPoint;
+        return segment->calculateEndPoint({ }, lastMoveToPoint);
+    }
 
-    return m_impl->currentPoint();
+    if (auto impl = asImpl())
+        return impl->currentPoint();
+
+    return { };
 }
 
 PathTraversalState Path::traversalStateAtLength(float length) const
@@ -354,18 +514,24 @@ bool Path::strokeContains(const FloatPoint& point, const Function<void(GraphicsC
 
 FloatRect Path::fastBoundingRect() const
 {
-    if (isEmpty())
-        return { };
+    if (auto segment = asSingle())
+        return PathStream::computeFastBoundingRect({ segment, 1 });
 
-    return m_impl->fastBoundingRect();
+    if (auto impl = asImpl())
+        return impl->fastBoundingRect();
+
+    return { };
 }
 
 FloatRect Path::boundingRect() const
 {
-    if (isEmpty())
-        return { };
+    if (auto segment = asSingle())
+        return PathStream::computeBoundingRect({ segment, 1 });
 
-    return m_impl->boundingRect();
+    if (auto impl = asImpl())
+        return impl->boundingRect();
+
+    return { };
 }
 
 FloatRect Path::strokeBoundingRect(const Function<void(GraphicsContext&)>& strokeStyleApplier) const

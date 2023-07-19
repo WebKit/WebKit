@@ -2256,10 +2256,12 @@ std::optional<Ref<Filter>> ArgumentCoder<Filter>::decode(Decoder& decoder)
 template<typename Encoder>
 void ArgumentCoder<Path>::encode(Encoder& encoder, const Path& path)
 {
-    if (auto* segments = path.segmentsIfExists())
-        encoder << *segments;
+    if (auto segment = path.singleSegment())
+        encoder << false << *segment;
+    else if (auto* segments = path.segmentsIfExists())
+        encoder << true << *segments;
     else
-        encoder << path.segments();
+        encoder << true << path.segments();
 }
 
 template
@@ -2269,6 +2271,20 @@ void ArgumentCoder<Path>::encode<StreamConnectionEncoder>(StreamConnectionEncode
 
 std::optional<Path> ArgumentCoder<Path>::decode(Decoder& decoder)
 {
+    std::optional<bool> hasVector;
+    decoder >> hasVector;
+    if (!hasVector)
+        return std::nullopt;
+
+    if (!*hasVector) {
+        std::optional<PathSegment> segment;
+        decoder >> segment;
+        if (!segment)
+            return std::nullopt;
+
+        return Path(WTFMove(*segment));
+    }
+
     std::optional<Vector<PathSegment>> segments;
     decoder >> segments;
     if (!segments)
