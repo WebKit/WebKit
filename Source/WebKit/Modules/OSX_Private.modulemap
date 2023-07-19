@@ -879,11 +879,6 @@ framework module WebKit_Private [system] {
     export *
   }
 
-  explicit module WKPageLoadTypesPrivate {
-    header "WKPageLoadTypesPrivate.h"
-    export *
-  }
-
   explicit module WKPageLoaderClient {
     header "WKPageLoaderClient.h"
     export *

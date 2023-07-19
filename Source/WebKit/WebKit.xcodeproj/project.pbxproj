@@ -1604,7 +1604,6 @@
 		93B631E827ABA65D00443A44 /* IDBStorageManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B631E627ABA65C00443A44 /* IDBStorageManager.h */; };
 		93B631ED27ABA6B400443A44 /* IDBStorageRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B631EB27ABA6B300443A44 /* IDBStorageRegistry.h */; };
 		93B631F327ABAD8000443A44 /* QuotaIncreaseRequestIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B631F227ABAD7F00443A44 /* QuotaIncreaseRequestIdentifier.h */; };
-		93BDEB01171DD7AF00BFEE1B /* WKPageLoadTypesPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 93BDEB00171DD7AF00BFEE1B /* WKPageLoadTypesPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93D1EEF529669D74009B31D6 /* UnifiedOriginStorageLevel.h in Headers */ = {isa = PBXBuildFile; fileRef = 93D1EEF429669D73009B31D6 /* UnifiedOriginStorageLevel.h */; };
 		93D6B772254BB5190058DD3A /* SpeechRecognitionServer.h in Headers */ = {isa = PBXBuildFile; fileRef = 93D6B76C254B89580058DD3A /* SpeechRecognitionServer.h */; };
 		93D6B773254BB8C70058DD3A /* WebSpeechRecognitionConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 93D6B768254B7BC60058DD3A /* WebSpeechRecognitionConnection.h */; };
@@ -6049,7 +6048,6 @@
 		93BA04DF2151ADF4007F455F /* WebSWOriginStore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebSWOriginStore.cpp; sourceTree = "<group>"; };
 		93BA04E02151ADF4007F455F /* WebSWServerConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSWServerConnection.h; sourceTree = "<group>"; };
 		93BA04E12151ADF4007F455F /* WebSWServerConnection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebSWServerConnection.cpp; sourceTree = "<group>"; };
-		93BDEB00171DD7AF00BFEE1B /* WKPageLoadTypesPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKPageLoadTypesPrivate.h; sourceTree = "<group>"; };
 		93D1EEF429669D73009B31D6 /* UnifiedOriginStorageLevel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UnifiedOriginStorageLevel.h; sourceTree = "<group>"; };
 		93D6B767254B7BC60058DD3A /* WebSpeechRecognitionConnection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebSpeechRecognitionConnection.cpp; sourceTree = "<group>"; };
 		93D6B768254B7BC60058DD3A /* WebSpeechRecognitionConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSpeechRecognitionConnection.h; sourceTree = "<group>"; };
@@ -13206,7 +13204,6 @@
 				BC4075E5124FF0270068F20A /* WKNumber.cpp */,
 				BC4075E6124FF0270068F20A /* WKNumber.h */,
 				BC2D021812AC426C00E732A3 /* WKPageLoadTypes.h */,
-				93BDEB00171DD7AF00BFEE1B /* WKPageLoadTypesPrivate.h */,
 				A5EFD38B16B0E88C00B2F0E8 /* WKPageVisibilityTypes.h */,
 				7C135AA6173B0BCA00586AE2 /* WKPluginInformation.cpp */,
 				7C135AA7173B0BCA00586AE2 /* WKPluginInformation.h */,
@@ -15350,7 +15347,6 @@
 				2D9EA30D1A96CB59002D2807 /* WKPageInjectedBundleClient.h in Headers */,
 				1AB8A1EC1840080900E9AE69 /* WKPageLoaderClient.h in Headers */,
 				BC2D021912AC426C00E732A3 /* WKPageLoadTypes.h in Headers */,
-				93BDEB01171DD7AF00BFEE1B /* WKPageLoadTypesPrivate.h in Headers */,
 				2D7303791A7C2B7500F8F487 /* WKPageNavigationClient.h in Headers */,
 				1AB8A1EE18400ACB00E9AE69 /* WKPagePolicyClient.h in Headers */,
 				373CEAD81859553F008C363D /* WKPagePolicyClientInternal.h in Headers */,

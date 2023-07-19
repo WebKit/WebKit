@@ -5923,12 +5923,6 @@ void LocalFrameView::firePaintRelatedMilestonesIfNeeded()
 
     OptionSet<LayoutMilestone> milestonesAchieved;
 
-    // Make sure the pending paint milestones have actually been requested before we send them.
-    if (m_milestonesPendingPaint & DidFirstFlushForHeaderLayer) {
-        if (page->requestedLayoutMilestones() & DidFirstFlushForHeaderLayer)
-            milestonesAchieved.add(DidFirstFlushForHeaderLayer);
-    }
-
     if (m_milestonesPendingPaint & DidFirstPaintAfterSuppressedIncrementalRendering) {
         if (page->requestedLayoutMilestones() & DidFirstPaintAfterSuppressedIncrementalRendering)
             milestonesAchieved.add(DidFirstPaintAfterSuppressedIncrementalRendering);

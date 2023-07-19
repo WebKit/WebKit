@@ -4069,7 +4069,6 @@ GraphicsLayer* RenderLayerCompositor::updateLayerForHeader(bool wantsLayer)
         m_layerForHeader = GraphicsLayer::create(graphicsLayerFactory(), *this);
         m_layerForHeader->setName(MAKE_STATIC_STRING_IMPL("header"));
         m_scrolledContentsLayer->addChildAbove(*m_layerForHeader, m_rootContentsLayer.get());
-        m_renderView.frameView().addPaintPendingMilestones(DidFirstFlushForHeaderLayer);
     }
 
     m_layerForHeader->setPosition(FloatPoint(0,
