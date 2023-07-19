@@ -368,6 +368,7 @@ LineBuilder::LayoutResult LineBuilder::layoutInlineContent(const LineInput& line
         , { computedVisualOrder(m_line), inlineBaseDirection }
         , { isFirstFormattedLine() ? LayoutResult::IsFirstLast::FirstFormattedLine::WithinIFC : LayoutResult::IsFirstLast::FirstFormattedLine::No, isLastLine }
         , m_line.nonSpanningInlineLevelBoxCount()
+        , lineContent.range.isEmpty() ? std::make_optional(m_lineLogicalRect.top() + m_candidateInlineContentEnclosingHeight) : std::nullopt
     };
 }
 
@@ -383,6 +384,7 @@ void LineBuilder::initialize(const InlineRect& initialLineLogicalRect, const Use
     m_overflowingLogicalWidth = { };
     m_partialLeadingTextItem = { };
     m_initialLetterClearGap = { };
+    m_candidateInlineContentEnclosingHeight = { };
 
     auto createLineSpanningInlineBoxes = [&] {
         auto isRootLayoutBox = [&](auto& elementBox) {
@@ -1175,6 +1177,8 @@ LineBuilder::Result LineBuilder::handleInlineContent(InlineContentBreaker& inlin
 
     // While the floats are not considered to be on the line, they make the line contentful for line breaking.
     auto [adjustedLineForCandidateContent, candidateContentIsConstrainedByFloat] = lineBoxForCandidateInlineContent(lineCandidate);
+    // Note that adjusted line height never shrinks.
+    m_candidateInlineContentEnclosingHeight = adjustedLineForCandidateContent.height();
     auto availableWidthForCandidateContent = availableWidth(inlineContent, m_line, adjustedLineForCandidateContent.width());
     auto lineIsConsideredContentful = m_line.hasContentOrListMarker() || m_lineIsConstrainedByFloat || candidateContentIsConstrainedByFloat;
     auto lineStatus = InlineContentBreaker::LineStatus {

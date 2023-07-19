@@ -64,15 +64,19 @@ InlineLayoutUnit InlineFormattingGeometry::logicalTopForNextLine(const LineBuild
         return std::max(lineLogicalRect.bottom(), InlineLayoutUnit(positionWithClearance->position));
     }
 
-    auto intrusiveFloatBottom = [&]() -> InlineLayoutUnit {
+    auto intrusiveFloatBottom = [&]() -> std::optional<InlineLayoutUnit> {
         // Floats must have prevented us placing any content on the line.
-        // Move the next line below the intrusive float(s).
+        // Move next line below the intrusive float(s).
         ASSERT(lineLayoutResult.inlineContent.isEmpty() || lineLayoutResult.inlineContent[0].isLineSpanningInlineBoxStart());
         ASSERT(lineLayoutResult.floatContent.hasIntrusiveFloat);
-        // FIXME: Moving the bottom position by the initial line height may be too much meaning that we miss vertical positions where atomic inline content could very well fit.
-        // The spec is unclear of how much we should move down at this point and while 1px should be the most precise it's also rather expensive.
-        auto inflatedLineRectBottom = lineLogicalRect.top() + formattingContext().root().style().computedLineHeight();
-        auto floatConstraints = floatingContext.constraints(toLayoutUnit(lineLogicalRect.top()), toLayoutUnit(inflatedLineRectBottom), FloatingContext::MayBeAboveLastFloat::Yes);
+        auto nextLineLogicalTop = [&]() -> LayoutUnit {
+            if (auto nextLineLogicalTopCandidate = lineLayoutResult.hintForNextLineTopToAvoidIntrusiveFloat)
+                return LayoutUnit { *nextLineLogicalTopCandidate };
+            // We have to have a hit when intrusive floats prevented any inline content placement.
+            ASSERT_NOT_REACHED();
+            return LayoutUnit { lineLogicalRect.top() + formattingContext().root().style().computedLineHeight() };
+        };
+        auto floatConstraints = floatingContext.constraints(toLayoutUnit(lineLogicalRect.top()), nextLineLogicalTop(), FloatingContext::MayBeAboveLastFloat::Yes);
         if (floatConstraints.left && floatConstraints.right) {
             // In case of left and right constraints, we need to pick the one that's closer to the current line.
             return std::min(floatConstraints.left->y, floatConstraints.right->y);
@@ -82,13 +86,14 @@ InlineLayoutUnit InlineFormattingGeometry::logicalTopForNextLine(const LineBuild
         if (floatConstraints.right)
             return floatConstraints.right->y;
         // If we didn't manage to place a content on this vertical position due to intrusive floats, we have to have
-        // at least one float here. However due to bugs in float positioning, we may end up with gaps between floats in vertical direction.
-        // In such cases let's just go with the bottom most float we have here.
+        // at least one float here.
         ASSERT_NOT_REACHED();
-        return std::max<InlineLayoutUnit>(lineLogicalRect.bottom(), floatingContext.bottom().value_or(0_lu));
+        return { };
     };
-    // Do not get stuck on the same vertical position.
-    return std::max(intrusiveFloatBottom(), nextafter(lineLogicalRect.bottom(), std::numeric_limits<float>::max()));
+    if (auto firstAvailableVerticalPosition = intrusiveFloatBottom())
+        return *firstAvailableVerticalPosition;
+    // Do not get stuck on the same vertical position even when we find ourselves in this unexpected state.
+    return ceil(nextafter(lineLogicalRect.bottom(), std::numeric_limits<float>::max()));
 }
 
 ContentWidthAndMargin InlineFormattingGeometry::inlineBlockContentWidthAndMargin(const Box& formattingContextRoot, const HorizontalConstraints& horizontalConstraints, const OverriddenHorizontalValues& overriddenHorizontalValues) const
