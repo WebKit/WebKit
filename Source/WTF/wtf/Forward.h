@@ -95,6 +95,7 @@ template<typename> class StringBuffer;
 template<typename> class StringParsingBuffer;
 template<typename, typename = void> class StringTypeAdapter;
 template<typename> class UniqueRef;
+template<typename T, class... Args> UniqueRef<T> makeUniqueRef(Args&&...);
 template<typename, size_t = 0, typename = CrashOnOverflow, size_t = 16, typename = VectorBufferMalloc> class Vector;
 template<typename, typename = DefaultWeakPtrImpl> class WeakPtr;
 
@@ -152,6 +153,7 @@ using WTF::LazyNeverDestroyed;
 using WTF::Lock;
 using WTF::Logger;
 using WTF::MachSendRight;
+using WTF::makeUniqueRef;
 using WTF::MonotonicTime;
 using WTF::NeverDestroyed;
 using WTF::ObjectIdentifier;

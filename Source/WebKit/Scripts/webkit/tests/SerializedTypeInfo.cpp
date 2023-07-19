@@ -29,6 +29,7 @@
 #if ENABLE(TEST_FEATURE)
 #include "CommonHeader.h"
 #endif
+#include "CustomEncoded.h"
 #if ENABLE(TEST_FEATURE)
 #include "FirstMemberType.h"
 #endif
@@ -207,6 +208,12 @@ Vector<SerializedTypeInfo> allSerializedTypes()
             }
         } },
         { "WebKit::PlatformClass"_s, {
+            {
+                "int"_s,
+                "value"_s
+            }
+        } },
+        { "WebKit::CustomEncoded"_s, {
             {
                 "int"_s,
                 "value"_s

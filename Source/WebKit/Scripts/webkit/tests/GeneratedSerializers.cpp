@@ -29,6 +29,7 @@
 #if ENABLE(TEST_FEATURE)
 #include "CommonHeader.h"
 #endif
+#include "CustomEncoded.h"
 #if ENABLE(TEST_FEATURE)
 #include "FirstMemberType.h"
 #endif
@@ -783,6 +784,18 @@ std::optional<WebCore::MoveOnlyDerivedClass> ArgumentCoder<WebCore::MoveOnlyDeri
         WebCore::MoveOnlyDerivedClass {
             WTFMove(*firstMember),
             WTFMove(*secondMember)
+        }
+    };
+}
+
+std::optional<WebKit::CustomEncoded> ArgumentCoder<WebKit::CustomEncoded>::decode(Decoder& decoder)
+{
+    auto value = decoder.decode<int>();
+    if (UNLIKELY(!decoder.isValid()))
+        return std::nullopt;
+    return {
+        WebKit::CustomEncoded {
+            WTFMove(*value)
         }
     };
 }

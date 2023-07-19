@@ -28,6 +28,7 @@
 
 #import "DrawingAreaMessages.h"
 #import "DrawingAreaProxyMessages.h"
+#import "LayerProperties.h"
 #import "Logging.h"
 #import "MessageSenderInlines.h"
 #import "RemoteLayerTreeDrawingAreaProxyMessages.h"

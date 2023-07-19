@@ -20,7 +20,6 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#if PLATFORM(COCOA)
 header: "RemoteLayerTreeTransaction.h"
 [OptionSet] enum class WebKit::LayerChange : uint64_t {
     NameChanged
@@ -74,7 +73,6 @@ header: "RemoteLayerTreeTransaction.h"
     CoverageRectChanged
 #endif
 };
-#endif
 
 header: "SwapBuffersDisplayRequirement.h"
 enum class WebKit::SwapBuffersDisplayRequirement : uint8_t {
@@ -88,3 +86,60 @@ header: "RemoteScrollingUIState.h"
     ScrollSnapNodes
     UserScrollNodes
 };
+
+[LegacyPopulateFromEmptyConstructor] class WebKit::RemoteLayerTreeTransaction {
+{
+    WebCore::PlatformLayerIdentifier m_rootLayerID;
+    WebKit::ChangedLayers m_changedLayers;
+
+    Markable<WebCore::LayerHostingContextIdentifier> m_remoteContextHostedIdentifier;
+
+    Vector<WebKit::RemoteLayerTreeTransaction::LayerCreationProperties> m_createdLayers;
+    Vector<WebCore::PlatformLayerIdentifier> m_destroyedLayerIDs;
+    Vector<WebCore::PlatformLayerIdentifier> m_videoLayerIDsPendingFullscreen;
+    Vector<WebCore::PlatformLayerIdentifier> m_layerIDsWithNewlyUnreachableBackingStore;
+
+    Vector<IPC::AsyncReplyID> m_callbackIDs;
+
+    WebCore::IntSize m_contentsSize;
+    WebCore::IntPoint m_scrollOrigin;
+    WebCore::LayoutSize m_baseLayoutViewportSize;
+    WebCore::LayoutPoint m_minStableLayoutViewportOrigin;
+    WebCore::LayoutPoint m_maxStableLayoutViewportOrigin;
+    WebCore::IntPoint m_scrollPosition;
+    WebCore::Color m_themeColor;
+    WebCore::Color m_pageExtendedBackgroundColor;
+    WebCore::Color m_sampledPageTopColor;
+
+#if PLATFORM(MAC)
+    Markable<WebCore::PlatformLayerIdentifier> m_pageScalingLayerID;
+    Markable<WebCore::PlatformLayerIdentifier> m_scrolledContentsLayerID;
+#endif
+
+    double m_pageScaleFactor;
+    double m_minimumScaleFactor;
+    double m_maximumScaleFactor;
+    double m_initialScaleFactor;
+    double m_viewportMetaTagWidth;
+    uint64_t m_renderTreeSize;
+    WebKit::TransactionID m_transactionID;
+    WebKit::ActivityStateChangeID m_activityStateChangeID;
+    OptionSet<WebCore::LayoutMilestone> m_newlyReachedPaintingMilestones;
+    bool m_scaleWasSetByUIProcess;
+    bool m_allowsUserScaling;
+    bool m_avoidsUnsafeArea;
+    bool m_viewportMetaTagWidthWasExplicit;
+    bool m_viewportMetaTagCameFromImageDocument;
+    bool m_isInStableState;
+
+    std::optional<WebKit::EditorState> m_editorState;
+#if PLATFORM(IOS_FAMILY)
+    std::optional<uint64_t> m_dynamicViewportSizeUpdateID;
+#endif
+}
+
+headers: "LayerProperties.h" "PlatformCALayerRemote.h"
+[CustomEncoder, CustomHeader] struct WebKit::ChangedLayers {
+    [NotSerialized] HashSet<Ref<PlatformCALayerRemote>> changedLayers;
+    HashMap<WebCore::PlatformLayerIdentifier, UniqueRef<WebKit::LayerProperties>> changedLayerProperties;
+}

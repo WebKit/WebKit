@@ -64,6 +64,7 @@ namespace Namespace { class AnotherCommonClass; }
 namespace WebCore { class MoveOnlyBaseClass; }
 namespace WebCore { class MoveOnlyDerivedClass; }
 namespace WebKit { class PlatformClass; }
+namespace WebKit { class CustomEncoded; }
 
 namespace IPC {
 
@@ -170,6 +171,11 @@ template<> struct ArgumentCoder<WebCore::MoveOnlyDerivedClass> {
 template<> struct ArgumentCoder<WebKit::PlatformClass> {
     static void encode(Encoder&, const WebKit::PlatformClass&);
     static std::optional<WebKit::PlatformClass> decode(Decoder&);
+};
+
+template<> struct ArgumentCoder<WebKit::CustomEncoded> {
+    static void encode(Encoder&, const WebKit::CustomEncoded&);
+    static std::optional<WebKit::CustomEncoded> decode(Decoder&);
 };
 
 } // namespace IPC

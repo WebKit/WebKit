@@ -149,7 +149,7 @@ static void updateCustomAppearance(CALayer *layer, GraphicsLayer::CustomAppearan
 #endif
 }
 
-static void applyCommonPropertiesToLayer(CALayer *layer, const RemoteLayerTreeTransaction::LayerProperties& properties)
+static void applyCommonPropertiesToLayer(CALayer *layer, const LayerProperties& properties)
 {
     if (properties.changedProperties & LayerChange::PositionChanged) {
         layer.position = CGPointMake(properties.position.x(), properties.position.y());
@@ -188,7 +188,7 @@ static void applyCommonPropertiesToLayer(CALayer *layer, const RemoteLayerTreeTr
         layer.masksToBounds = properties.masksToBounds;
 }
 
-void RemoteLayerTreePropertyApplier::applyPropertiesToLayer(CALayer *layer, RemoteLayerTreeNode* layerTreeNode, RemoteLayerTreeHost* layerTreeHost, const RemoteLayerTreeTransaction::LayerProperties& properties, RemoteLayerBackingStoreProperties::LayerContentsType layerContentsType)
+void RemoteLayerTreePropertyApplier::applyPropertiesToLayer(CALayer *layer, RemoteLayerTreeNode* layerTreeNode, RemoteLayerTreeHost* layerTreeHost, const LayerProperties& properties, RemoteLayerBackingStoreProperties::LayerContentsType layerContentsType)
 {
     applyCommonPropertiesToLayer(layer, properties);
 
@@ -308,7 +308,7 @@ void RemoteLayerTreePropertyApplier::applyPropertiesToLayer(CALayer *layer, Remo
 #endif
 }
 
-void RemoteLayerTreePropertyApplier::applyProperties(RemoteLayerTreeNode& node, RemoteLayerTreeHost* layerTreeHost, const RemoteLayerTreeTransaction::LayerProperties& properties, const RelatedLayerMap& relatedLayers, RemoteLayerBackingStoreProperties::LayerContentsType layerContentsType)
+void RemoteLayerTreePropertyApplier::applyProperties(RemoteLayerTreeNode& node, RemoteLayerTreeHost* layerTreeHost, const LayerProperties& properties, const RelatedLayerMap& relatedLayers, RemoteLayerBackingStoreProperties::LayerContentsType layerContentsType)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
 
@@ -341,7 +341,7 @@ void RemoteLayerTreePropertyApplier::applyProperties(RemoteLayerTreeNode& node, 
 }
 
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
-static void applyInteractionRegionsHierarchyUpdate(RemoteLayerTreeNode& node, const RemoteLayerTreeTransaction::LayerProperties& properties, const RemoteLayerTreePropertyApplier::RelatedLayerMap& relatedLayers)
+static void applyInteractionRegionsHierarchyUpdate(RemoteLayerTreeNode& node, const LayerProperties& properties, const RemoteLayerTreePropertyApplier::RelatedLayerMap& relatedLayers)
 {
     auto sublayers = createNSArray(properties.children, [&] (auto& child) -> CALayer * {
         auto* childNode = relatedLayers.get(child);
@@ -356,7 +356,7 @@ static void applyInteractionRegionsHierarchyUpdate(RemoteLayerTreeNode& node, co
 }
 #endif
 
-void RemoteLayerTreePropertyApplier::applyHierarchyUpdates(RemoteLayerTreeNode& node, const RemoteLayerTreeTransaction::LayerProperties& properties, const RelatedLayerMap& relatedLayers)
+void RemoteLayerTreePropertyApplier::applyHierarchyUpdates(RemoteLayerTreeNode& node, const LayerProperties& properties, const RelatedLayerMap& relatedLayers)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
 
@@ -411,7 +411,7 @@ void RemoteLayerTreePropertyApplier::applyHierarchyUpdates(RemoteLayerTreeNode& 
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
-void RemoteLayerTreePropertyApplier::updateMask(RemoteLayerTreeNode& node, const RemoteLayerTreeTransaction::LayerProperties& properties, const RelatedLayerMap& relatedLayers)
+void RemoteLayerTreePropertyApplier::updateMask(RemoteLayerTreeNode& node, const LayerProperties& properties, const RelatedLayerMap& relatedLayers)
 {
     if (!properties.changedProperties.contains(LayerChange::MaskLayerChanged))
         return;
@@ -435,7 +435,7 @@ void RemoteLayerTreePropertyApplier::updateMask(RemoteLayerTreeNode& node, const
 }
 
 #if PLATFORM(IOS_FAMILY)
-void RemoteLayerTreePropertyApplier::applyPropertiesToUIView(UIView *view, const RemoteLayerTreeTransaction::LayerProperties& properties, const RelatedLayerMap& relatedLayers)
+void RemoteLayerTreePropertyApplier::applyPropertiesToUIView(UIView *view, const LayerProperties& properties, const RelatedLayerMap& relatedLayers)
 {
     if (properties.changedProperties.containsAny({ LayerChange::ContentsHiddenChanged, LayerChange::UserInteractionEnabledChanged }))
         view.userInteractionEnabled = !properties.contentsHidden && properties.userInteractionEnabled;

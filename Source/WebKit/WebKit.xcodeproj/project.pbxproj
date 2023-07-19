@@ -5306,6 +5306,7 @@
 		5C157A0B2717CA1C00ED5280 /* WebPushDaemonMain.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebPushDaemonMain.mm; sourceTree = "<group>"; };
 		5C19A51E1FD0B14600EEA323 /* URLSchemeTaskParameters.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = URLSchemeTaskParameters.cpp; sourceTree = "<group>"; };
 		5C19A51F1FD0B14700EEA323 /* URLSchemeTaskParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = URLSchemeTaskParameters.h; sourceTree = "<group>"; };
+		5C19EF1A2A6657DA0022B4B3 /* LayerProperties.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LayerProperties.h; sourceTree = "<group>"; };
 		5C1B38DF2667140700B1545B /* WebPageNetworkParameters.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebPageNetworkParameters.h; sourceTree = "<group>"; };
 		5C1B38E02667140700B1545B /* WebPageNetworkParameters.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebPageNetworkParameters.cpp; sourceTree = "<group>"; };
 		5C20CB9B1BB0DCD200895BB1 /* NetworkSessionCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NetworkSessionCocoa.mm; sourceTree = "<group>"; };
@@ -9203,6 +9204,7 @@
 				2D478B8F288F333500F3B73A /* CGDisplayList.h */,
 				BCE579A42634836700F5C5E9 /* CGDisplayListImageBufferBackend.h */,
 				BCE579A52634836700F5C5E9 /* CGDisplayListImageBufferBackend.mm */,
+				5C19EF1A2A6657DA0022B4B3 /* LayerProperties.h */,
 				2D47B56B1810714E003A3AEE /* RemoteLayerBackingStore.h */,
 				2D47B56A1810714E003A3AEE /* RemoteLayerBackingStore.mm */,
 				2DDF731318E95060004F5A66 /* RemoteLayerBackingStoreCollection.h */,

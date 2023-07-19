@@ -38,6 +38,7 @@ import sys
 # OptionSet - for enum classes, instead of only allowing deserialization of the exact values, allow deserialization of any bit combination of the values.
 # RValue - serializer takes an rvalue reference, instead of an lvalue.
 # WebKitPlatform - put serializer into a file built as part of WebKitPlatform
+# CustomEncoder - Only generate the decoder, not the encoder.
 #
 # Supported member attributes:
 #
@@ -66,6 +67,7 @@ class SerializedType(object):
         self.webkit_platform = False
         self.members_are_subclasses = False
         self.custom_member_layout = False
+        self.custom_encoder = False
         if attributes is not None:
             for attribute in attributes.split(', '):
                 if '=' in attribute:
@@ -89,6 +91,8 @@ class SerializedType(object):
                         self.custom_member_layout = True
                     elif attribute == 'LegacyPopulateFromEmptyConstructor':
                         self.populate_from_empty_constructor = True
+                    elif attribute == 'CustomEncoder':
+                        self.custom_encoder = True
         if other_metadata:
             if other_metadata == 'subclasses':
                 self.members_are_subclasses = True
@@ -607,6 +611,8 @@ def generate_impl(serialized_types, serialized_enums, headers, generating_webkit
             result.append('};')
             result.append('')
         for encoder in type.encoders:
+            if type.custom_encoder:
+                continue
             if type.rvalue:
                 result.append('void ArgumentCoder<' + type.namespace_and_name() + '>::encode(' + encoder + '& encoder, ' + type.namespace_and_name() + '&& instance)')
             else:

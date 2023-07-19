@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "LayerProperties.h"
 #include "RemoteLayerTreeTransaction.h"
 #include <WebCore/HTMLMediaElementIdentifier.h>
 #include <WebCore/PlatformCALayer.h>
@@ -228,8 +229,8 @@ public:
 
     void setClonedLayer(const PlatformCALayer*);
 
-    RemoteLayerTreeTransaction::LayerProperties& properties() { return m_properties; }
-    const RemoteLayerTreeTransaction::LayerProperties& properties() const { return m_properties; }
+    LayerProperties& properties() { return m_properties; }
+    const LayerProperties& properties() const { return m_properties; }
 
     void didCommit();
 
@@ -259,7 +260,7 @@ private:
 
     WebCore::LayerPool& layerPool() override;
 
-    RemoteLayerTreeTransaction::LayerProperties m_properties;
+    LayerProperties m_properties;
     WebCore::PlatformCALayerList m_children;
     PlatformCALayerRemote* m_superlayer { nullptr };
     PlatformCALayerRemote* m_maskLayer { nullptr };
