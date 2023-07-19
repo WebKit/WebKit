@@ -121,12 +121,12 @@ public:
         bool hasEmptyDirtyRegion { false };
     };
     
+#if PLATFORM(COCOA)
     struct SwapBuffersResult {
         BufferSet buffers;
         SwapBuffersDisplayRequirement displayRequirement;
     };
 
-#if PLATFORM(COCOA)
     Vector<SwapBuffersResult> prepareBuffersForDisplay(const Vector<LayerPrepareBuffersData>&);
 #endif
 
