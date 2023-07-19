@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="#"?>
+
+<xsl:stylesheet id="color-change" version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+
+ <xsl:template match="/">
+	<svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 1000 1000">
+		<foreignObject id="myObj" width="1000" height="1000">
+		    <div style="font-size:xxx-large" xmlns="http://www.w3.org/1999/xhtml">
+			document() <xsl:copy-of  select="document('xslt2.py')"/>
+		    </div>
+		</foreignObject>
+	</svg>
+ </xsl:template>
+</xsl:stylesheet>
