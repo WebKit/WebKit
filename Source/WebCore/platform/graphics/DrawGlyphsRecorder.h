@@ -76,7 +76,7 @@ private:
 
     void populateInternalState(const GraphicsContextState&);
     void populateInternalContext(const GraphicsContextState&);
-    void prepareInternalContext(const Font&, FontSmoothingMode);
+    void prepareInternalContext(const Font&, FontSmoothingMode, const FloatPoint& startPoint);
     void recordInitialColors();
     void concludeInternalContext();
 
@@ -108,6 +108,8 @@ private:
     FontSmoothingMode m_smoothingMode { FontSmoothingMode::AutoSmoothing };
 
     AffineTransform m_originalTextMatrix;
+    FloatPoint m_originalStartPoint;
+    std::optional<FloatSize> m_startPointOffset;
 
     struct State {
         SourceBrush fillBrush;
