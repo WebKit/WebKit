@@ -3376,7 +3376,6 @@
             }
         },
         "dominant-baseline": {
-            "inherited": true,
             "values": [
                 "auto",
                 "use-script",

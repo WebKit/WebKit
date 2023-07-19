@@ -2,13 +2,12 @@
     Copyright (C) 2004, 2005, 2007 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005, 2010 Rob Buis <buis@kde.org>
     Copyright (C) Research In Motion Limited 2010. All rights reserved.
-    Copyright (C) 2015 Google Inc. All rights reserved.
 
     Based on khtml code by:
     Copyright (C) 1999 Antti Koivisto (koivisto@kde.org)
     Copyright (C) 1999-2003 Lars Knoll (knoll@kde.org)
     Copyright (C) 2002-2003 Dirk Mueller (mueller@kde.org)
-    Copyright (C) 2002-2023 Apple Inc. All rights reserved.
+    Copyright (C) 2002 Apple Inc.
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -163,8 +162,8 @@ bool SVGRenderStyle::changeRequiresLayout(const SVGRenderStyle& other) const
     if (m_inheritedFlags.textAnchor != other.m_inheritedFlags.textAnchor
         || m_inheritedFlags.glyphOrientationHorizontal != other.m_inheritedFlags.glyphOrientationHorizontal
         || m_inheritedFlags.glyphOrientationVertical != other.m_inheritedFlags.glyphOrientationVertical
-        || m_inheritedFlags.dominantBaseline != other.m_inheritedFlags.dominantBaseline
         || m_nonInheritedFlags.flagBits.alignmentBaseline != other.m_nonInheritedFlags.flagBits.alignmentBaseline
+        || m_nonInheritedFlags.flagBits.dominantBaseline != other.m_nonInheritedFlags.flagBits.dominantBaseline
         || m_nonInheritedFlags.flagBits.baselineShift != other.m_nonInheritedFlags.flagBits.baselineShift)
         return true;
 
