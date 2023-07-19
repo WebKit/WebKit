@@ -4204,6 +4204,16 @@ std::optional<VideoPlaybackQualityMetrics> MediaPlayerPrivateGStreamer::videoPla
     };
 }
 
+unsigned MediaPlayerPrivateGStreamer::decodedFrameCount() const
+{
+    return const_cast<MediaPlayerPrivateGStreamer*>(this)->videoPlaybackQualityMetrics().value_or(VideoPlaybackQualityMetrics()).totalVideoFrames;
+}
+
+unsigned MediaPlayerPrivateGStreamer::droppedFrameCount() const
+{
+    return const_cast<MediaPlayerPrivateGStreamer*>(this)->videoPlaybackQualityMetrics().value_or(VideoPlaybackQualityMetrics()).droppedVideoFrames;
+}
+
 #if ENABLE(ENCRYPTED_MEDIA)
 InitData MediaPlayerPrivateGStreamer::parseInitDataFromProtectionMessage(GstMessage* message)
 {
