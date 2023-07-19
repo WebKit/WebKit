@@ -394,8 +394,9 @@ void MediaPlayerPrivateMediaStreamAVFObjC::ensureLayers()
     if (activeVideoTrack->source().isCaptureSource())
         m_sampleBufferDisplayLayer->setRenderPolicy(SampleBufferDisplayLayer::RenderPolicy::Immediately);
 
-    m_sampleBufferDisplayLayer->initialize(hideRootLayer(), size, [weakThis = WeakPtr { *this }, size](auto didSucceed) {
-        if (weakThis)
+    m_sampleBufferDisplayLayer->initialize(hideRootLayer(), size, [weakThis = WeakPtr { *this }, weakLayer = ThreadSafeWeakPtr { *m_sampleBufferDisplayLayer }, size](auto didSucceed) {
+        auto layer = weakLayer.get();
+        if (weakThis && layer && layer.get() == weakThis->m_sampleBufferDisplayLayer.get())
             weakThis->layersAreInitialized(size, didSucceed);
     });
 }
