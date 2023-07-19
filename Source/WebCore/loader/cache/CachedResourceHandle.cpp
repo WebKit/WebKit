@@ -35,6 +35,12 @@ CachedResourceHandleBase::CachedResourceHandleBase()
 {
 }
 
+CachedResourceHandleBase::CachedResourceHandleBase(CachedResource& resource)
+    : m_resource(&resource)
+{
+    m_resource->registerHandle(this);
+}
+
 CachedResourceHandleBase::CachedResourceHandleBase(CachedResource* resource)
     : m_resource(resource)
 {

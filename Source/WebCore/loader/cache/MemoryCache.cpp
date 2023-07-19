@@ -203,7 +203,7 @@ CachedResource* MemoryCache::resourceForRequestImpl(const ResourceRequest& reque
     URL url = removeFragmentIdentifierIfNeeded(request.url());
 
     auto key = std::make_pair(url, request.cachePartition());
-    return resources.get(key);
+    return resources.get(key).get();
 }
 
 unsigned MemoryCache::deadCapacity() const 
@@ -252,8 +252,10 @@ void MemoryCache::forEachSessionResource(PAL::SessionID sessionID, const Functio
     if (it == m_sessionResources.end())
         return;
 
-    for (auto& resource : copyToVector(it->value->values()))
-        function(*resource);
+    for (auto& resource : copyToVector(it->value->values())) {
+        if (resource)
+            function(*resource);
+    }
 }
 
 void MemoryCache::destroyDecodedDataForAllImages()
@@ -416,7 +418,9 @@ void MemoryCache::setCapacities(unsigned minDeadBytes, unsigned maxDeadBytes, un
 
 void MemoryCache::remove(CachedResource& resource)
 {
-    ASSERT(isMainThread());
+    RELEASE_ASSERT(isMainThread());
+    CachedResourceHandle protectedResource { resource };
+
     LOG(ResourceLoading, "Evicting resource %p for '%.255s' from cache", &resource, resource.url().string().latin1().data());
     // The resource may have already been removed by someone other than our caller,
     // who needed a fresh copy for a reload. See <http://bugs.webkit.org/show_bug.cgi?id=12479#c6>.
@@ -443,9 +447,7 @@ void MemoryCache::remove(CachedResource& resource)
             LOG(ResourceLoading, "  resource %p is not in cache", &resource);
         }
     }
-
-    if (resource.canDelete())
-        resource.deleteThis();
+    RELEASE_ASSERT(!resource.inCache());
 }
 
 auto MemoryCache::lruListFor(CachedResource& resource) -> LRUList&
@@ -516,23 +518,26 @@ bool MemoryCache::inLiveDecodedResourcesList(CachedResource& resource) const
 
 void MemoryCache::removeResourcesWithOrigin(const SecurityOrigin& origin, const String& cachePartition)
 {
-    Vector<CachedResource*> resourcesWithOrigin;
+    RELEASE_ASSERT(isMainThread());
+    Vector<WeakPtr<CachedResource>> resourcesWithOrigin;
     for (auto& resources : m_sessionResources.values()) {
         for (auto& keyValue : *resources) {
             auto& resource = *keyValue.value;
             auto& partitionName = keyValue.key.second;
             if (partitionName == cachePartition) {
-                resourcesWithOrigin.append(&resource);
+                resourcesWithOrigin.append(resource);
                 continue;
             }
             auto resourceOrigin = SecurityOrigin::create(resource.url());
             if (resourceOrigin->equal(&origin))
-                resourcesWithOrigin.append(&resource);
+                resourcesWithOrigin.append(resource);
         }
     }
 
-    for (auto* resource : resourcesWithOrigin)
-        remove(*resource);
+    for (auto& resource : resourcesWithOrigin) {
+        if (resource)
+            remove(*resource);
+    }
 }
 
 void MemoryCache::removeResourcesWithOrigin(const SecurityOrigin& origin)
@@ -558,20 +563,22 @@ void MemoryCache::removeResourcesWithOrigins(PAL::SessionID sessionID, const Has
     for (auto& origin : origins)
         originPartitions.add(ResourceRequest::partitionName(origin->host()));
 
-    Vector<CachedResource*> resourcesToRemove;
+    Vector<WeakPtr<CachedResource>> resourcesToRemove;
     for (auto& keyValuePair : *resourceMap) {
         auto& resource = *keyValuePair.value;
         auto& partitionName = keyValuePair.key.second;
         if (originPartitions.contains(partitionName)) {
-            resourcesToRemove.append(&resource);
+            resourcesToRemove.append(resource);
             continue;
         }
         if (origins.contains(SecurityOrigin::create(resource.url()).ptr()))
-            resourcesToRemove.append(&resource);
+            resourcesToRemove.append(resource);
     }
 
-    for (auto& resource : resourcesToRemove)
-        remove(*resource);
+    for (auto& resource : resourcesToRemove) {
+        if (resource)
+            remove(*resource);
+    }
 }
 
 void MemoryCache::getOriginsWithCache(SecurityOriginSet& origins)
@@ -671,7 +678,7 @@ MemoryCache::Statistics MemoryCache::getStatistics()
     Statistics stats;
 
     for (auto& resources : m_sessionResources.values()) {
-        for (auto* resource : resources->values()) {
+        for (auto& resource : resources->values()) {
             switch (resource->type()) {
             case CachedResource::Type::ImageResource:
                 stats.images.addResource(*resource);
