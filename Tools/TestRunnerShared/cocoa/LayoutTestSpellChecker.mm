@@ -39,8 +39,8 @@
 #if PLATFORM(MAC)
 using TextCheckingCompletionHandler = void(^)(NSInteger, NSArray<NSTextCheckingResult *> *, NSOrthography *, NSInteger);
 #else
-static NSString *NSGrammarRange = @"NSGrammarRange";
-static NSString *NSGrammarCorrections = @"NSGrammarCorrections";
+#define NSGrammarRange @"NSGrammarRange"
+#define NSGrammarCorrections @"NSGrammarCorrections"
 #endif
 
 static LayoutTestSpellChecker *globalSpellChecker = nil;
