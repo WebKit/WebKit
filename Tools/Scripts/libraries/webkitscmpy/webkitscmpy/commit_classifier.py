@@ -128,7 +128,7 @@ class CommitClassifier(object):
                 continue
 
             if klass.paths and paths_for.value and not all([
-                any([c.match(path) for c in klass.paths]) for path in paths_for.value
+                any([c.match(path) for c in klass.paths]) for path in paths_for.value if not path.endswith('ChangeLog')
             ]):
                 continue
             return klass
