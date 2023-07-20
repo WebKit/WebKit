@@ -377,7 +377,7 @@ public:
         
     inline bool mayInterceptIndexedAccesses() const;
     
-    bool holesMustForwardToPrototype(JSObject*) const;
+    inline bool holesMustForwardToPrototype(JSObject*) const;
         
     JSGlobalObject* globalObject() const { return m_globalObject.get(); }
 
@@ -1008,6 +1008,8 @@ private:
     void startWatchingInternalProperties(VM&);
 
     void clearCachedPrototypeChain();
+
+    bool holesMustForwardToPrototypeSlow(JSObject*) const;
 
     // These need to be properly aligned at the beginning of the 'Structure'
     // part of the object.

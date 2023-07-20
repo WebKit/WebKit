@@ -125,6 +125,21 @@ inline bool Structure::mayInterceptIndexedAccesses() const
     return globalObject->isHavingABadTime();
 }
 
+inline bool Structure::holesMustForwardToPrototype(JSObject* base) const
+{
+    ASSERT(base->structure() == this);
+    if (typeInfo().type() == ArrayType) {
+        JSGlobalObject* globalObject = this->globalObject();
+        if (LIKELY(globalObject->isOriginalArrayStructure(const_cast<Structure*>(this)) && globalObject->arrayPrototypeChainIsSane()))
+            return false;
+    }
+
+    if (this->mayInterceptIndexedAccesses())
+        return true;
+
+    return holesMustForwardToPrototypeSlow(base);
+}
+
 inline JSObject* Structure::storedPrototypeObject() const
 {
     ASSERT(hasMonoProto());
