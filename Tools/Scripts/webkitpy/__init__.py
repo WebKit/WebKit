@@ -54,7 +54,7 @@ elif sys.version_info >= (2, 7) and sys.version_info < (3,):
     AutoInstall.register(Package('logilab.astng', Version(0, 24, 1), pypi_name='logilab-astng', aliases=['logilab']))
     AutoInstall.register(Package('pathlib2', Version(2, 3, 5)))
 else:
-    raise ImportError("Unsupported Python version! (%s)" % sys.version)
+    sys.stderr.write("pytest, pylint and websockets do not support Python version! (%s)\n" % sys.version)
 
 if sys.version_info >= (3, 6):
     AutoInstall.register(Package('importlib_metadata', Version(4, 8, 1)))
