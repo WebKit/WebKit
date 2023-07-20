@@ -47,6 +47,7 @@ FontCustomPlatformData::FontCustomPlatformData(FT_Face freeTypeFace, FontPlatfor
     , creationData(WTFMove(data))
     , m_renderingResourceIdentifier(RenderingResourceIdentifier::generate())
 {
+//    __debugbreak();
     // Cairo doesn't do FreeType reference counting, so we need to ensure that when
     // this cairo_font_face_t is destroyed, it cleans up the FreeType face as well.
     cairo_font_face_set_user_data(m_fontFace.get(), &freeTypeFaceKey, freeTypeFace,
@@ -134,6 +135,7 @@ static bool initializeFreeTypeLibrary(FT_Library& library)
 
 RefPtr<FontCustomPlatformData> createFontCustomPlatformData(SharedBuffer& buffer, const String& itemInCollection)
 {
+   // __debugbreak();
     static FT_Library library;
     if (!library && !initializeFreeTypeLibrary(library)) {
         library = nullptr;
@@ -143,6 +145,7 @@ RefPtr<FontCustomPlatformData> createFontCustomPlatformData(SharedBuffer& buffer
     FT_Face freeTypeFace;
     if (FT_New_Memory_Face(library, reinterpret_cast<const FT_Byte*>(buffer.data()), buffer.size(), 0, &freeTypeFace))
         return nullptr;
+    
     FontPlatformData::CreationData creationData = { buffer, itemInCollection };
     return adoptRef(new FontCustomPlatformData(freeTypeFace, WTFMove(creationData)));
 }

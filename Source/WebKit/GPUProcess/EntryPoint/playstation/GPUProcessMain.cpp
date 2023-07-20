@@ -26,7 +26,6 @@
 #include "config.h"
 #include "GPUProcessMain.h"
 
-#include <EnvVarUtils.h>
 #include <dlfcn.h>
 #include <process-initialization/nk-gpuprocess.h>
 #include <stdio.h>
@@ -44,12 +43,20 @@ static void loadLibraryOrExit(const char* name)
 int main(int argc, char** argv)
 {
     loadLibraryOrExit(WebKitRequirements_LOAD_AT);
+    loadLibraryOrExit(ICU_LOAD_AT);
+#if defined(Brotli_LOAD_AT)
+    loadLibraryOrExit(Brotli_LOAD_AT);
+#endif
+    loadLibraryOrExit(Freetype_LOAD_AT);
+    loadLibraryOrExit(Fontconfig_LOAD_AT);
     loadLibraryOrExit(Cairo_LOAD_AT);
+#if defined(WPE_LOAD_AT)
+    loadLibraryOrExit(WPE_LOAD_AT);
+#endif
     loadLibraryOrExit("libWebKit");
     // load backend libraries as needed here
 
     char* coreProcessIdentifier = argv[1];
-    WebKit::parseAndSetEnvVars(argv[2]);
 
     char connectionIdentifier[16];
     snprintf(connectionIdentifier, sizeof(connectionIdentifier), "%d", PlayStation::getConnectionIdentifier());

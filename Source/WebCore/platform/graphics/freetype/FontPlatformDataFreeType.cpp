@@ -322,4 +322,31 @@ HbUniquePtr<hb_font_t> FontPlatformData::createOpenTypeMathHarfBuzzFont() const
 }
 #endif
 
+static RefPtr<FcPattern> defaultFontconfigOptions()
+{
+    // Get some generic default settings from fontconfig for web fonts. Strategy
+    // from Behdad Esfahbod in https://code.google.com/p/chromium/issues/detail?id=173207#c35
+    static FcPattern* pattern = nullptr;
+    static std::once_flag flag;
+    std::call_once(flag, [](FcPattern*) {
+        pattern = FcPatternCreate();
+        FcConfigSubstitute(nullptr, pattern, FcMatchPattern);
+        cairo_ft_font_options_substitute(getDefaultCairoFontOptions(), pattern);
+        FcDefaultSubstitute(pattern);
+        FcPatternDel(pattern, FC_FAMILY);
+        FcConfigSubstitute(nullptr, pattern, FcMatchFont);
+    }, pattern);
+    return adoptRef(FcPatternDuplicate(pattern));
+}
+
+FontPlatformData FontPlatformData::create(const Attributes& data, const FontCustomPlatformData* custom)
+{
+    return FontPlatformData(custom->m_fontFace.get(), defaultFontconfigOptions(), data.m_size, false, data.m_syntheticBold, data.m_syntheticOblique, data.m_orientation, custom);
+}
+
+FontPlatformData::Attributes FontPlatformData::attributes() const
+{
+    return Attributes(m_size, m_orientation, m_widthVariant, m_textRenderingMode, m_syntheticBold, m_syntheticOblique);
+}
+
 } // namespace WebCore

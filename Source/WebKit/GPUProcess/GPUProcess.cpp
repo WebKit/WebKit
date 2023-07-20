@@ -236,6 +236,7 @@ void GPUProcess::initializeGPUProcess(GPUProcessCreationParameters&& parameters)
 {
     applyProcessCreationParameters(parameters.auxiliaryProcessParameters);
     RELEASE_LOG(Process, "%p - GPUProcess::initializeGPUProcess:", this);
+    platformInitializeGPUProcess(parameters);
     WTF::Thread::setCurrentThreadIsUserInitiated();
     WebCore::initializeCommonAtomStrings();
 

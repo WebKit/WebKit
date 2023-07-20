@@ -38,7 +38,7 @@ namespace WebKit {
 
 void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& parameters)
 {
-#if USE(WPE_RENDERER)
+#if USE(WPE_RENDERER) && !ENABLE(GPU_PROCESS)
     if (!parameters.isServiceWorkerProcess) {
         RELEASE_ASSERT(is<WebCore::PlatformDisplayLibWPE>(WebCore::PlatformDisplay::sharedDisplay()));
         downcast<WebCore::PlatformDisplayLibWPE>(WebCore::PlatformDisplay::sharedDisplay()).initialize(parameters.hostClientFileDescriptor.release());

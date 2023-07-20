@@ -147,6 +147,7 @@ private:
 
     // Message Handlers
     void initializeGPUProcess(GPUProcessCreationParameters&&);
+    void platformInitializeGPUProcess(GPUProcessCreationParameters&);
     void updateGPUProcessPreferences(GPUProcessPreferences&&);
     void createGPUConnectionToWebProcess(WebCore::ProcessIdentifier, PAL::SessionID, IPC::Connection::Handle&&, GPUProcessConnectionParameters&&, CompletionHandler<void()>&&);
     void updateWebGPUEnabled(WebCore::ProcessIdentifier, bool webGPUEnabled);

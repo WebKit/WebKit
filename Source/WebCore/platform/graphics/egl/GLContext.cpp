@@ -47,6 +47,11 @@
 #include <X11/Xutil.h>
 #endif
 
+#if PLATFORM(PLAYSTATION)
+#include<compositor.h> 
+#pragma comment(lib, "SceComposite_stub_weak")
+#endif
+
 namespace WebCore {
 
 static ThreadSpecific<GLContext*>& currentContext()
@@ -395,6 +400,10 @@ std::unique_ptr<GLContext> GLContext::createOffscreen(PlatformDisplay& platformD
 
 std::unique_ptr<GLContext> GLContext::createSharing(PlatformDisplay& platformDisplay)
 {
+    //__debugbreak();
+    if (!initializeOpenGLShimsIfNeeded())
+        return nullptr;
+
     if (platformDisplay.eglDisplay() == EGL_NO_DISPLAY) {
         WTFLogAlways("Cannot create EGL sharing context: invalid display (last error: %s)", lastErrorString());
         return nullptr;
@@ -526,6 +535,11 @@ void GLContext::swapBuffers()
         return;
 
     ASSERT(m_surface);
+#if PLATFORM(PLAYSTATION)
+    sceCompositorSetPostEventCommand(0);
+    uint32_t handle;
+    sceCompositorGetCanvasHandle(0, &handle);
+#endif
     eglSwapBuffers(m_display.eglDisplay(), m_surface);
 }
 

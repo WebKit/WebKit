@@ -84,7 +84,7 @@ WebViewWindow::WebViewWindow(WKPageConfigurationRef configuration, Client&& wind
     m_preferences = WKPreferencesCreateCopy(m_context->preferences());
     WKPageConfigurationSetPreferences(configuration, m_preferences.get());
 
-    WKPreferencesSetAcceleratedCompositingEnabled(m_preferences.get(), false);
+    WKPreferencesSetAcceleratedCompositingEnabled(m_preferences.get(), true);
     WKPreferencesSetFullScreenEnabled(m_preferences.get(), true);
 
 #if defined(USE_WPE_BACKEND_PLAYSTATION) && USE_WPE_BACKEND_PLAYSTATION
@@ -94,6 +94,8 @@ WebViewWindow::WebViewWindow(WKPageConfigurationRef configuration, Client&& wind
     m_view = WKViewCreate(configuration);
 #endif
     m_context->addWindow(this);
+
+    setCanvasHandle(5);
 
     WKViewClientV0 viewClient {
         { 0, this },

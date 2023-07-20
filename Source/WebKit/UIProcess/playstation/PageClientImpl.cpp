@@ -31,9 +31,11 @@
 #include "WebPageProxy.h"
 #include <WebCore/DOMPasteAccess.h>
 #include <WebCore/NotImplemented.h>
+#include "WebPreferences.h"
 
 #if USE(GRAPHICS_LAYER_WC)
 #include "DrawingAreaProxyWC.h"
+#include <EGL/egl.h>
 #endif
 
 #if USE(WPE_RENDERER)
@@ -350,6 +352,17 @@ void PageClientImpl::requestDOMPasteAccess(WebCore::DOMPasteAccessCategory, cons
 UnixFileDescriptor PageClientImpl::hostFileDescriptor()
 {
     return UnixFileDescriptor { wpe_view_backend_get_renderer_host_fd(m_view.backend()), UnixFileDescriptor::Adopt };
+}
+#endif
+
+#if USE(GRAPHICS_LAYER_WC)
+uint64_t PageClientImpl::viewWidget()
+{
+    static _EGLNativeWindowType window;
+    window.uHeight = 1920;
+    window.uWidth = 1080;
+    window.uID = 255;
+    return reinterpret_cast<uint64_t>(&window);
 }
 #endif
 

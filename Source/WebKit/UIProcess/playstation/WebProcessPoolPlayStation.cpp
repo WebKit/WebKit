@@ -46,7 +46,7 @@ void WebProcessPool::platformInitializeNetworkProcess(NetworkProcessCreationPara
 
 void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process, WebProcessCreationParameters& parameters)
 {
-#if USE(WPE_RENDERER)
+#if USE(WPE_RENDERER) && !ENABLE(GPU_PROCESS)
     parameters.isServiceWorkerProcess = process.isRunningServiceWorkers();
 
     if (!parameters.isServiceWorkerProcess)

@@ -109,7 +109,8 @@ MainWindow::MainWindow(const std::vector<std::string>& options)
 
     createNewWebView(nullptr);
 
-    std::string requestedURL = "https://webkit.org";
+    std::string requestedURL = "http://10.125.167.9:8080/morphing_cubes";
+    //std::string requestedURL = "http://www.google.com";
 
     parseOptions(options, requestedURL);
 

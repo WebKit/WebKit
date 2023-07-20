@@ -25,12 +25,22 @@
 
 #include "config.h"
 #include "GPUProcess.h"
+#include <WebCore/PlatformDisplay.h>
+#include <WebCore/PlatformDisplayLibWPE.h>
 
 #if ENABLE(GPU_PROCESS)
 
 #include "GPUProcessCreationParameters.h"
 
 namespace WebKit {
+
+void GPUProcess::platformInitializeGPUProcess(GPUProcessCreationParameters&)
+{
+#if USE(WPE_RENDERER)
+    RELEASE_ASSERT(is<WebCore::PlatformDisplayLibWPE>(WebCore::PlatformDisplay::sharedDisplay()));
+    downcast<WebCore::PlatformDisplayLibWPE>(WebCore::PlatformDisplay::sharedDisplay()).initialize(0);
+#endif
+}
 
 void GPUProcess::initializeProcess(const AuxiliaryProcessInitializationParameters&)
 {

@@ -29,29 +29,82 @@
 #if USE(FREETYPE)
 
 #include <WebCore/Font.h>
+#include <WebCore/FontCustomPlatformData.h>
 
 namespace IPC {
 
-void ArgumentCoder<WebCore::Font>::encodePlatformData(Encoder&, const WebCore::Font&)
+void ArgumentCoder<WebCore::Font>::encodePlatformData(Encoder& encoder, const WebCore::Font& font)
 {
-    ASSERT_NOT_REACHED();
+   // __debugbreak();
+    const auto& platformData = font.platformData();
+    encoder << platformData.size();
+    encoder << platformData.isFixedWidth();
+    encoder << platformData.syntheticBold();
+    encoder << platformData.syntheticOblique();
+    encoder << platformData.orientation();
+
+    const auto& customPlatformData = platformData.customPlatformData();
+    encoder << static_cast<bool>(customPlatformData);
+    if (customPlatformData)
+        encoder << *customPlatformData;
 }
 
-std::optional<WebCore::FontPlatformData> ArgumentCoder<WebCore::Font>::decodePlatformData(Decoder&)
+std::optional<WebCore::FontPlatformData> ArgumentCoder<WebCore::Font>::decodePlatformData(Decoder& decoder)
 {
-    ASSERT_NOT_REACHED();
-    return std::nullopt;
+    //__debugbreak();
+    std::optional<float> size;
+    decoder >> size;
+    if (!size)
+        return std::nullopt;
+
+    std::optional<bool> fixedWidth;
+    decoder >> fixedWidth;
+    if (!fixedWidth)
+        return std::nullopt;
+
+    std::optional<bool> syntheticBold;
+    decoder >> syntheticBold;
+    if (!syntheticBold)
+        return std::nullopt;
+
+    std::optional<bool> syntheticOblique;
+    decoder >> syntheticOblique;
+    if (!syntheticOblique)
+        return std::nullopt;
+
+    std::optional<WebCore::FontOrientation> orientation;
+    decoder >> orientation;
+    if (!orientation)
+        return std::nullopt;
+
+    std::optional<bool> includesCreationData;
+    decoder >> includesCreationData;
+    if (!includesCreationData)
+        return std::nullopt;
+
+    // Currently creation data is always required
+    if (*includesCreationData)
+        return std::nullopt;
+
+    std::optional<Ref<WebCore::FontCustomPlatformData>> fontCustomPlatformData;
+    decoder >> fontCustomPlatformData;
+    if (!fontCustomPlatformData)
+        return std::nullopt;
+
+    // Need FCPattern
+
+    return WebCore::FontPlatformData((*fontCustomPlatformData)->m_fontFace.get(), nullptr, *size, *fixedWidth, *syntheticBold, *syntheticOblique, *orientation, (*fontCustomPlatformData).ptr());
 }
 
 void ArgumentCoder<WebCore::FontPlatformData::Attributes>::encodePlatformData(Encoder&, const WebCore::FontPlatformData::Attributes&)
 {
-    ASSERT_NOT_REACHED();
+    // No FreeType specific fields on Attributes
 }
 
 bool ArgumentCoder<WebCore::FontPlatformData::Attributes>::decodePlatformData(Decoder&, WebCore::FontPlatformData::Attributes&)
 {
-    ASSERT_NOT_REACHED();
-    return false;
+    // No FreeType specific fields on Attributes
+    return true;
 }
 
 } // namespace IPC

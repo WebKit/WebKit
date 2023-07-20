@@ -217,6 +217,7 @@ FontPlatformData* FontCache::cachedFontPlatformData(const FontDescription& fontD
     FontPlatformDataCache::iterator it = addResult.iterator;
     if (addResult.isNewEntry) {
         it->value = createFontPlatformData(fontDescription, familyName, fontCreationContext);
+//        __debugbreak();
         if (!it->value && !checkingAlternateName) {
             // We were unable to find a font. We have a small set of fonts that we alias to other names,
             // e.g., Arial/Helvetica, Courier/Courier New, etc. Try looking up the font under the aliased name.

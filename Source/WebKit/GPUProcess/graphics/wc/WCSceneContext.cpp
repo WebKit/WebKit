@@ -31,11 +31,14 @@
 #include <WebCore/GLContext.h>
 #include <WebCore/TextureMapperGL.h>
 
+#include <EGL/egl.h>
+
 namespace WebKit {
 
 WCSceneContext::WCSceneContext(uint64_t nativeWindow)
 {
-    m_glContext = WebCore::GLContext::create(reinterpret_cast<GLNativeWindowType>(nativeWindow), WebCore::PlatformDisplay::sharedDisplay());
+    _EGLNativeWindowType window { 255, 1920, 1080 };
+    m_glContext = WebCore::GLContext::create(reinterpret_cast<GLNativeWindowType>(&window), WebCore::PlatformDisplay::sharedDisplay());
 }
 
 WCSceneContext::~WCSceneContext() = default;
