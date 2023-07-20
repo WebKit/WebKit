@@ -1544,6 +1544,19 @@ bool Quirks::shouldDisableFetchMetadata() const
     return equalLettersIgnoringASCIICase(host, "victoriassecret.com"_s) || host.endsWithIgnoringASCIICase(".victoriassecret.com"_s);
 }
 
+// Push state file path restrictions break Mimeo Photo Plugin (rdar://112445672).
+bool Quirks::shouldDisablePushStateFilePathRestrictions() const
+{
+    if (!needsQuirks())
+        return false;
+
+#if PLATFORM(MAC)
+    return MacApplication::isMimeoPhotoProject();
+#else
+    return false;
+#endif
+}
+
 #if PLATFORM(COCOA)
 bool Quirks::shouldAdvertiseSupportForHLSSubtitleTypes() const
 {

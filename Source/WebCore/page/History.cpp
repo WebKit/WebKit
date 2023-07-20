@@ -37,6 +37,7 @@
 #include "NavigationScheduler.h"
 #include "OriginAccessPatterns.h"
 #include "Page.h"
+#include "Quirks.h"
 #include "ScriptController.h"
 #include "SecurityOrigin.h"
 #include <wtf/CheckedArithmetic.h>
@@ -213,6 +214,7 @@ ExceptionOr<void> History::stateObjectAdded(RefPtr<SerializedScriptValue>&& data
 #if PLATFORM(COCOA)
         && linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::PushStateFilePathRestriction)
 #endif
+        && !frame->document()->quirks().shouldDisablePushStateFilePathRestrictions()
         && fullURL.fileSystemPath() != documentURL.fileSystemPath()) {
         return createBlockedURLSecurityErrorWithMessageSuffix("Only differences in query and fragment are allowed for file: URLs.");
     }

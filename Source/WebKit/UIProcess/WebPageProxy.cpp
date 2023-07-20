@@ -7633,8 +7633,12 @@ void WebPageProxy::backForwardAddItemShared(Ref<WebProcessProxy>&& process, Back
     URL itemURL { itemState.pageState.mainFrameState.urlString };
     URL itemOriginalURL { itemState.pageState.mainFrameState.originalURLString };
 #if PLATFORM(COCOA)
-    if (linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::PushStateFilePathRestriction)) {
-#endif
+    if (linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::PushStateFilePathRestriction)
+#if PLATFORM(MAC)
+        && !MacApplication::isMimeoPhotoProject() // rdar://112445672.
+#endif // PLATFORM(MAC)
+    ) {
+#endif // PLATFORM(COCOA)
         ASSERT(!itemURL.protocolIsFile() || process->wasPreviouslyApprovedFileURL(itemURL));
         MESSAGE_CHECK(process, !itemURL.protocolIsFile() || process->wasPreviouslyApprovedFileURL(itemURL));
         MESSAGE_CHECK(process, !itemOriginalURL.protocolIsFile() || process->wasPreviouslyApprovedFileURL(itemOriginalURL));
