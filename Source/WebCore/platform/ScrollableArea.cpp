@@ -413,6 +413,8 @@ void ScrollableArea::setScrollbarOverlayStyle(ScrollbarOverlayStyle overlayStyle
 
 void ScrollableArea::invalidateScrollbars()
 {
+    invalidateScrollCorner(scrollCornerRect());
+
     if (auto* scrollbar = horizontalScrollbar()) {
         scrollbar->invalidate();
         scrollbarsController().invalidateScrollbarPartLayers(scrollbar);

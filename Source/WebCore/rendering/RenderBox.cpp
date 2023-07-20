@@ -356,6 +356,13 @@ void RenderBox::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle
         }
     }
 
+#if ENABLE(DARK_MODE_CSS)
+    if (layer() && oldStyle && oldStyle->colorScheme() != newStyle.colorScheme()) {
+        if (auto* scrollableArea = layer()->scrollableArea())
+            scrollableArea->invalidateScrollbars();
+    }
+#endif
+
     // Our opaqueness might have changed without triggering layout.
     if (diff >= StyleDifference::Repaint && diff <= StyleDifference::RepaintLayer) {
         auto parentToInvalidate = parent();
