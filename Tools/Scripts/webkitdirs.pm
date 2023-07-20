@@ -1,4 +1,4 @@
-# Copyright (C) 2005-2022 Apple Inc. All rights reserved.
+# Copyright (C) 2005-2023 Apple Inc. All rights reserved.
 # Copyright (C) 2009 Google Inc. All rights reserved.
 # Copyright (C) 2011 Research In Motion Limited. All rights reserved.
 # Copyright (C) 2013 Nokia Corporation and/or its subsidiary(-ies).
@@ -409,13 +409,13 @@ sub determineBaseProductDir
         $setSharedPrecompsDir = 1 if $buildLocationStyle ne "DeterminedByTargets";
 
         if (!defined($baseProductDir)) {
-            $baseProductDir = join '', readXcodeUserDefault("IDEApplicationwideBuildSettings");
-            $baseProductDir = $1 if $baseProductDir =~ /SYMROOT\s*=\s*\"(.*?)\";/s;
+            my $customPaths = join '', readXcodeUserDefault("IDEApplicationwideBuildSettings");
+            $baseProductDir = $1 if $customPaths =~ /SYMROOT\s*=\s*\"(.*?)\";/s;
         }
 
-        # Expand tilde in pathnames for compatibility
+        # Glob to expand tilde in pathnames
         # (https://bugs.webkit.org/show_bug.cgi?id=249442).
-        ($baseProductDir) = bsd_glob($baseProductDir, GLOB_TILDE) if defined($baseProductDir);
+        ($baseProductDir) = bsd_glob($baseProductDir) if defined($baseProductDir);
 
         if (defined($baseProductDir) && $baseProductDir !~ /^\//) {
             # webkitdirs can be run from arbitrary directories, so any
@@ -440,7 +440,7 @@ sub determineBaseProductDir
         $baseProductDir =~ s|^~/|$ENV{HOME}/|;
         die "Can't handle Xcode product directory with a ~ in it.\n" if $baseProductDir =~ /~/;
         die "Can't handle Xcode product directory with a variable in it.\n" if $baseProductDir =~ /\$/;
-        $baseProductDir = realpath($baseProductDir);
+        $baseProductDir = realpath($baseProductDir) if -e $baseProductDir;
         @baseProductDirOption = ("SYMROOT=$baseProductDir", "OBJROOT=$baseProductDir");
         push(@baseProductDirOption, "SHARED_PRECOMPS_DIR=${baseProductDir}/PrecompiledHeaders") if $setSharedPrecompsDir;
         push(@baseProductDirOption, "INDEX_ENABLE_DATA_STORE=YES", "INDEX_DATA_STORE_DIR=${indexDataStoreDir}") if $indexDataStoreDir;
