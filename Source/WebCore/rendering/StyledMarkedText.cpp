@@ -122,6 +122,30 @@ StyledMarkedText::Style StyledMarkedText::computeStyleForUnmarkedMarkedText(cons
     return style;
 }
 
+static TextDecorationPainter::Styles computeStylesForTextDecorations(const TextDecorationPainter::Styles& previousTextDecorationStyles, const TextDecorationPainter::Styles& currentTextDecorationStyles)
+{
+    auto textDecorations = TextDecorationPainter::textDecorationsInEffectForStyle(currentTextDecorationStyles);
+
+    if (textDecorations.isEmpty())
+        return previousTextDecorationStyles;
+
+    auto textDecorationStyles = previousTextDecorationStyles;
+
+    if (textDecorations.contains(TextDecorationLine::Underline)) {
+        textDecorationStyles.underline.color = currentTextDecorationStyles.underline.color;
+        textDecorationStyles.underline.decorationStyle = currentTextDecorationStyles.underline.decorationStyle;
+    }
+    if (textDecorations.contains(TextDecorationLine::Overline)) {
+        textDecorationStyles.overline.color = currentTextDecorationStyles.overline.color;
+        textDecorationStyles.overline.decorationStyle = currentTextDecorationStyles.overline.decorationStyle;
+    }
+    if (textDecorations.contains(TextDecorationLine::LineThrough)) {
+        textDecorationStyles.linethrough.color = currentTextDecorationStyles.linethrough.color;
+        textDecorationStyles.linethrough.decorationStyle = currentTextDecorationStyles.linethrough.decorationStyle;
+    }
+    return textDecorationStyles;
+}
+
 static Vector<StyledMarkedText> coalesceAdjacentWithSameRanges(Vector<StyledMarkedText>&& styledTexts)
 {
     ASSERT(!styledTexts.isEmpty());
@@ -146,10 +170,10 @@ static Vector<StyledMarkedText> coalesceAdjacentWithSameRanges(Vector<StyledMark
 
             if (previousStyledMarkedText.priority <= it->priority) {
                 previousStyledMarkedText.priority = it->priority;
-                // If highlight, take textDecorationStyles of latest StyledMarkedText.
-                // FIXME: Check for taking textDecorationStyles needs to be changed to accommodate other MarkedText type.
+                // If highlight, combine textDecorationStyles accordingly.
+                // FIXME: Check for taking textDecorationStyles needs to accommodate other MarkedText type.
                 if (!it->highlightName.isNull())
-                    previousStyledMarkedText.style.textDecorationStyles = it->style.textDecorationStyles;
+                    previousStyledMarkedText.style.textDecorationStyles = computeStylesForTextDecorations(previousStyledMarkedText.style.textDecorationStyles, it->style.textDecorationStyles);
                 // If higher or same priority and opaque, override background color.
                 if (it->style.backgroundColor.isOpaque())
                     previousStyledMarkedText.style.backgroundColor = it->style.backgroundColor;
