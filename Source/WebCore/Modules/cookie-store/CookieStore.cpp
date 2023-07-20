@@ -111,8 +111,7 @@ void CookieStore::get(CookieStoreGetOptions&& options, Ref<DeferredPromise>&& pr
             return;
         }
 
-        auto& cookie = cookiesVector[0];
-        promise->resolve<IDLDictionary<CookieListItem>>(CookieListItem { WTFMove(cookie.name), WTFMove(cookie.value) });
+        promise->resolve<IDLDictionary<CookieListItem>>(CookieListItem(WTFMove(cookiesVector[0])));
     };
 
     cookieJar.getCookiesAsync(document, url, options, WTFMove(completionHandler));
@@ -170,8 +169,8 @@ void CookieStore::getAll(CookieStoreGetOptions&& options, Ref<DeferredPromise>&&
             return;
         }
 
-        promise->resolve<IDLSequence<IDLDictionary<CookieListItem>>>(cookies->map([](auto& cookie) {
-            return CookieListItem { cookie.name, cookie.value };
+        promise->resolve<IDLSequence<IDLDictionary<CookieListItem>>>(WTF::map(WTFMove(*cookies), [](auto&& cookie) {
+            return CookieListItem { WTFMove(cookie) };
         }));
     };
 
