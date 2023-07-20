@@ -407,11 +407,8 @@ bool GraphicsContextGLCocoa::platformInitialize()
     }
 #endif // PLATFORM(MAC) || PLATFORM(MACCATALYST)
 #if ENABLE(WEBXR)
-    if (attributes.xrCompatible) {
-        requiredExtensions.append("GL_OES_EGL_image"_s);
-        requiredExtensions.append("GL_EXT_sRGB"_s);
-        requiredExtensions.append("GL_ANGLE_framebuffer_multisample"_s);
-    }
+    if (attributes.xrCompatible && !enableRequiredWebXRExtensions())
+        return false;
 #endif
     if (m_isForWebGL2)
         requiredExtensions.append("GL_ANGLE_framebuffer_multisample"_s);
@@ -761,6 +758,26 @@ GCEGLSync GraphicsContextGLCocoa::createEGLSync(ExternalEGLSyncEvent syncEvent)
     }
 
     return createEGLSync(sharedEvent.get(), signalValue);
+}
+
+bool GraphicsContextGLCocoa::enableRequiredWebXRExtensions()
+{
+#if ENABLE(WEBXR)
+    String requiredExtensions[] = {
+        "GL_ANGLE_framebuffer_multisample"_str,
+        "GL_ANGLE_framebuffer_blit"_str,
+        "GL_EXT_sRGB"_str,
+        "GL_OES_EGL_image"_str,
+        "GL_OES_rgb8_rgba8"_str
+    };
+
+    for (const auto& ext : requiredExtensions) {
+        if (!supportsExtension(ext))
+            return false;
+        ensureExtensionEnabled(ext);
+    }
+#endif
+    return true;
 }
 
 GCEGLSync GraphicsContextGLCocoa::createEGLSync(id sharedEvent, uint64_t signalValue)

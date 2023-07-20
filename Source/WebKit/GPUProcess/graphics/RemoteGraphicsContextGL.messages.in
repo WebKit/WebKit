@@ -330,6 +330,7 @@ messages -> RemoteGraphicsContextGL NotRefCounted Stream {
     void PaintRenderingResultsToPixelBuffer() -> (RefPtr<WebCore::PixelBuffer> returnValue) Synchronous
     void DestroyEGLSync(uint64_t arg0) -> (bool returnValue) Synchronous
     void ClientWaitEGLSyncWithFlush(uint64_t arg0, uint64_t timeout)
+    void EnableRequiredWebXRExtensions() -> (bool returnValue) Synchronous
 }
 
 #endif

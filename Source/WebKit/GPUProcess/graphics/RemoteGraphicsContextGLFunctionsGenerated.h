@@ -1501,4 +1501,11 @@
         assertIsCurrent(workQueue());
         m_context->clientWaitEGLSyncWithFlush(reinterpret_cast<GCEGLSync>(static_cast<intptr_t>(arg0)), timeout);
     }
+    void enableRequiredWebXRExtensions(CompletionHandler<void(bool)>&& completionHandler)
+    {
+        bool returnValue = { };
+        assertIsCurrent(workQueue());
+        returnValue = m_context->enableRequiredWebXRExtensions();
+        completionHandler(returnValue);
+    }
 

@@ -3097,6 +3097,19 @@ void RemoteGraphicsContextGLProxy::clientWaitEGLSyncWithFlush(GCEGLSync arg0, ui
     }
 }
 
+bool RemoteGraphicsContextGLProxy::enableRequiredWebXRExtensions()
+{
+    if (isContextLost())
+        return { };
+    auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::EnableRequiredWebXRExtensions());
+    if (!sendResult.succeeded()) {
+        markContextLost();
+        return { };
+    }
+    auto& [returnValue] = sendResult.reply();
+    return returnValue;
+}
+
 }
 
 #endif

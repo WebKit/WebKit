@@ -75,6 +75,8 @@ public:
     // Short term support for in-process WebGL.
     GCEGLSync createEGLSync(id, uint64_t);
 
+    bool enableRequiredWebXRExtensions() final;
+
     void waitUntilWorkScheduled();
 
     // GraphicsContextGLANGLE overrides.

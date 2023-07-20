@@ -368,6 +368,8 @@ public:
     RefPtr<WebCore::PixelBuffer> paintRenderingResultsToPixelBuffer() final;
     bool destroyEGLSync(GCEGLSync) final;
     void clientWaitEGLSyncWithFlush(GCEGLSync, uint64_t timeout) final;
+
+    bool enableRequiredWebXRExtensions() final;
     // End of list used by generate-gpup-webgl script.
 
     static bool handleMessageToRemovedDestination(IPC::Connection&, IPC::Decoder&);
