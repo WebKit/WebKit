@@ -986,6 +986,8 @@ void MediaPlayerPrivateGStreamer::syncOnClock(bool sync)
 #if !USE(WESTEROS_SINK)
     setSyncOnClock(videoSink(), sync);
     setSyncOnClock(audioSink(), sync);
+#else
+    UNUSED_PARAM(sync);
 #endif
 }
 
@@ -2301,44 +2303,6 @@ void MediaPlayerPrivateGStreamer::configureElementPlatformQuirks(GstElement* ele
         g_object_set(element, "low_latency", TRUE, "low_latency_max_queued_ms", 60, nullptr);
     }
 #endif
-#endif
-
-#if USE(WESTEROS_SINK)
-    static GstCaps* westerosSinkCaps = nullptr;
-    static GType westerosSinkType = G_TYPE_INVALID;
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [] {
-        GRefPtr<GstElementFactory> westerosfactory = adoptGRef(gst_element_factory_find("westerossink"));
-        if (westerosfactory) {
-            gst_object_unref(gst_plugin_feature_load(GST_PLUGIN_FEATURE(westerosfactory.get())));
-            westerosSinkType = gst_element_factory_get_element_type(westerosfactory.get());
-            for (auto* t = gst_element_factory_get_static_pad_templates(westerosfactory.get()); t; t = g_list_next(t)) {
-                GstStaticPadTemplate* padtemplate = static_cast<GstStaticPadTemplate*>(t->data);
-                if (padtemplate->direction != GST_PAD_SINK)
-                    continue;
-                if (westerosSinkCaps)
-                    westerosSinkCaps = gst_caps_merge(westerosSinkCaps, gst_static_caps_get(&padtemplate->static_caps));
-                else
-                    westerosSinkCaps = gst_static_caps_get(&padtemplate->static_caps);
-            }
-        }
-    });
-#if ENABLE(MEDIA_STREAM)
-    if (G_TYPE_CHECK_INSTANCE_TYPE(G_OBJECT(element), westerosSinkType)) {
-        if (m_streamPrivate && gstObjectHasProperty(element, "immediate-output")) {
-            GST_DEBUG_OBJECT(pipeline(), "Enable 'immediate-output' in WesterosSink");
-            g_object_set(G_OBJECT(element), "immediate-output", TRUE, nullptr);
-        }
-    }
-#endif
-    // FIXME: Following is a hack needed to get westeros-sink autoplug correctly with playbin3.
-    if (!m_isLegacyPlaybin && westerosSinkCaps && g_str_has_prefix(GST_ELEMENT_NAME(element), "uridecodebin3")) {
-        GRefPtr<GstCaps> defaultCaps;
-        g_object_get(element, "caps", &defaultCaps.outPtr(), NULL);
-        defaultCaps = adoptGRef(gst_caps_merge(gst_caps_ref(westerosSinkCaps), defaultCaps.leakRef()));
-        g_object_set(element, "caps", defaultCaps.get(), NULL);
-        GST_INFO_OBJECT(pipeline(), "setting stop caps tp %" GST_PTR_FORMAT, defaultCaps.get());
-    }
 #endif
 
 #if ENABLE(MEDIA_STREAM) && PLATFORM(REALTEK)
