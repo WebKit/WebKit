@@ -29,6 +29,7 @@ namespace JSC { namespace Wasm {
 
 enum class CompilationMode : uint8_t {
     LLIntMode,
+    IPIntMode,
     BBQMode,
     BBQForOSREntryMode,
     OMGMode,
@@ -45,6 +46,7 @@ constexpr inline bool isOSREntry(CompilationMode compilationMode)
 {
     switch (compilationMode) {
     case CompilationMode::LLIntMode:
+    case CompilationMode::IPIntMode:
     case CompilationMode::BBQMode:
     case CompilationMode::OMGMode:
     case CompilationMode::JSEntrypointMode:
@@ -66,6 +68,7 @@ constexpr inline bool isAnyBBQ(CompilationMode compilationMode)
         return true;
     case CompilationMode::OMGForOSREntryMode:
     case CompilationMode::LLIntMode:
+    case CompilationMode::IPIntMode:
     case CompilationMode::OMGMode:
     case CompilationMode::JSEntrypointMode:
     case CompilationMode::JSToWasmICMode:
@@ -84,6 +87,7 @@ constexpr inline bool isAnyOMG(CompilationMode compilationMode)
     case CompilationMode::BBQMode:
     case CompilationMode::BBQForOSREntryMode:
     case CompilationMode::LLIntMode:
+    case CompilationMode::IPIntMode:
     case CompilationMode::JSEntrypointMode:
     case CompilationMode::JSToWasmICMode:
     case CompilationMode::WasmToJSMode:

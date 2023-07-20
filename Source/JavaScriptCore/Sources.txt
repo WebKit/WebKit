@@ -702,6 +702,7 @@ jit/TagRegistersMode.cpp
 jit/ThunkGenerators.cpp
 jit/Width.cpp
 
+llint/InPlaceInterpreter.cpp
 llint/LLIntCLoop.cpp
 llint/LLIntData.cpp
 llint/LLIntEntrypoint.cpp
@@ -1116,11 +1117,14 @@ wasm/WasmEntryPlan.cpp
 wasm/WasmFaultSignalHandler.cpp
 wasm/WasmFormat.cpp
 wasm/WasmFunctionCodeBlockGenerator.cpp
+wasm/WasmFunctionIPIntMetadataGenerator.cpp
 wasm/WasmGlobal.cpp
 wasm/WasmHandlerInfo.cpp
 wasm/WasmIndexOrName.cpp
 wasm/WasmInstance.cpp
 wasm/WasmInstance.h
+wasm/WasmIPIntGenerator.cpp
+wasm/WasmIPIntPlan.cpp
 wasm/WasmLLIntGenerator.cpp
 wasm/WasmLLIntPlan.cpp
 wasm/WasmLLIntTierUpCounter.cpp

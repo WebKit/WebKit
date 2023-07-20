@@ -212,6 +212,7 @@ set(BUILD_VARIANTS
 )
 
 set(LLINT_ASM
+    llint/InPlaceInterpreter.asm
     llint/LowLevelInterpreter.asm
     llint/LowLevelInterpreter32_64.asm
     llint/LowLevelInterpreter64.asm
@@ -1283,7 +1284,9 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     wasm/WasmFaultSignalHandler.h
     wasm/WasmFormat.h
     wasm/WasmFunctionCodeBlockGenerator.h
+    wasm/WasmFunctionIPIntMetadataGenerator.h
     wasm/WasmHandlerInfo.h
+    wasm/WasmIPIntGenerator.h
     wasm/WasmIndexOrName.h
     wasm/WasmJS.h
     wasm/WasmLLIntBuiltin.h

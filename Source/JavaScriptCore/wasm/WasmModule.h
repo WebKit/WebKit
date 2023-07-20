@@ -43,6 +43,7 @@ class VM;
 namespace Wasm {
 
 class LLIntPlan;
+class IPIntPlan;
 struct ModuleInformation;
 
 class Module : public ThreadSafeRefCounted<Module> {
@@ -55,6 +56,10 @@ public:
     static void validateAsync(VM&, Vector<uint8_t>&& source, Module::AsyncValidationCallback&&);
 
     static Ref<Module> create(LLIntPlan& plan)
+    {
+        return adoptRef(*new Module(plan));
+    }
+    static Ref<Module> create(IPIntPlan& plan)
     {
         return adoptRef(*new Module(plan));
     }
@@ -77,9 +82,11 @@ private:
     Ref<CalleeGroup> getOrCreateCalleeGroup(VM&, MemoryMode);
 
     Module(LLIntPlan&);
+    Module(IPIntPlan&);
     Ref<ModuleInformation> m_moduleInformation;
     RefPtr<CalleeGroup> m_calleeGroups[numberOfMemoryModes];
     Ref<LLIntCallees> m_llintCallees;
+    Ref<IPIntCallees> m_ipintCallees;
     Ref<WasmToJSCallee> m_wasmToJSCallee;
     MacroAssemblerCodeRef<JITCompilationPtrTag> m_llintEntryThunks;
     Lock m_lock;

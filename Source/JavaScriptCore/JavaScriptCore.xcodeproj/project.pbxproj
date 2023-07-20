@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 52;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXAggregateTarget section */
@@ -1971,6 +1971,10 @@
 		E3FF75331D9CEA1800C7E16D /* DOMJITGetterSetter.h in Headers */ = {isa = PBXBuildFile; fileRef = E3FF752F1D9CEA1200C7E16D /* DOMJITGetterSetter.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E49DC16C12EF294E00184A1F /* SourceProviderCache.h in Headers */ = {isa = PBXBuildFile; fileRef = E49DC15112EF272200184A1F /* SourceProviderCache.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E49DC16D12EF295300184A1F /* SourceProviderCacheItem.h in Headers */ = {isa = PBXBuildFile; fileRef = E49DC14912EF261A00184A1F /* SourceProviderCacheItem.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		F323932D2A43748000421AD2 /* WasmFunctionIPIntMetadataGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = F323932B2A43748000421AD2 /* WasmFunctionIPIntMetadataGenerator.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		F395BE252A43C5920083DE3A /* InPlaceInterpreter.h in Headers */ = {isa = PBXBuildFile; fileRef = F395BE242A43C58B0083DE3A /* InPlaceInterpreter.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		F3D9C2392A426CB8006EE152 /* WasmIPIntGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = F3D9C2352A426CB7006EE152 /* WasmIPIntGenerator.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		F3D9C23B2A426CB8006EE152 /* WasmIPIntPlan.h in Headers */ = {isa = PBXBuildFile; fileRef = F3D9C2372A426CB7006EE152 /* WasmIPIntPlan.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		F6D67D4026F902E9006E0349 /* TemporalInstant.h in Headers */ = {isa = PBXBuildFile; fileRef = F6D67D3A26F902E5006E0349 /* TemporalInstant.h */; };
 		F6D67D4226F902E9006E0349 /* TemporalInstantConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = F6D67D3C26F902E7006E0349 /* TemporalInstantConstructor.h */; };
 		F6D67D4426F902E9006E0349 /* TemporalInstantPrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = F6D67D3E26F902E8006E0349 /* TemporalInstantPrototype.h */; };
@@ -5530,7 +5534,16 @@
 		E49DC14912EF261A00184A1F /* SourceProviderCacheItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SourceProviderCacheItem.h; sourceTree = "<group>"; };
 		E49DC15112EF272200184A1F /* SourceProviderCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SourceProviderCache.h; sourceTree = "<group>"; };
 		E49DC15512EF277200184A1F /* SourceProviderCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SourceProviderCache.cpp; sourceTree = "<group>"; };
+		F323932B2A43748000421AD2 /* WasmFunctionIPIntMetadataGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmFunctionIPIntMetadataGenerator.h; sourceTree = "<group>"; };
+		F323932C2A43748000421AD2 /* WasmFunctionIPIntMetadataGenerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WasmFunctionIPIntMetadataGenerator.cpp; sourceTree = "<group>"; };
 		F3459D7423973ABD00DCD27A /* InspectorTarget.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorTarget.cpp; sourceTree = "<group>"; };
+		F395BE222A43C58B0083DE3A /* InPlaceInterpreter.asm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm.asm; name = InPlaceInterpreter.asm; path = llint/InPlaceInterpreter.asm; sourceTree = "<group>"; };
+		F395BE232A43C58B0083DE3A /* InPlaceInterpreter.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = InPlaceInterpreter.cpp; path = llint/InPlaceInterpreter.cpp; sourceTree = "<group>"; };
+		F395BE242A43C58B0083DE3A /* InPlaceInterpreter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = InPlaceInterpreter.h; path = llint/InPlaceInterpreter.h; sourceTree = "<group>"; };
+		F3D9C2352A426CB7006EE152 /* WasmIPIntGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmIPIntGenerator.h; sourceTree = "<group>"; };
+		F3D9C2362A426CB7006EE152 /* WasmIPIntPlan.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WasmIPIntPlan.cpp; sourceTree = "<group>"; };
+		F3D9C2372A426CB7006EE152 /* WasmIPIntPlan.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WasmIPIntPlan.h; sourceTree = "<group>"; };
+		F3D9C2382A426CB7006EE152 /* WasmIPIntGenerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WasmIPIntGenerator.cpp; sourceTree = "<group>"; };
 		F5BB2BC5030F772101FCFE1D /* Completion.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = Completion.h; sourceTree = "<group>"; tabWidth = 8; };
 		F5C290E60284F98E018635CA /* JavaScriptCorePrefix.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = JavaScriptCorePrefix.h; sourceTree = "<group>"; tabWidth = 8; };
 		F68EBB8C0255D4C601FF60F7 /* config.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; tabWidth = 8; };
@@ -5982,6 +5995,9 @@
 		0F46809C14BA7F4D00BFE272 /* llint */ = {
 			isa = PBXGroup;
 			children = (
+				F395BE222A43C58B0083DE3A /* InPlaceInterpreter.asm */,
+				F395BE232A43C58B0083DE3A /* InPlaceInterpreter.cpp */,
+				F395BE242A43C58B0083DE3A /* InPlaceInterpreter.h */,
 				FE20CE9B15F04A9500DF3430 /* LLIntCLoop.cpp */,
 				FE20CE9C15F04A9500DF3430 /* LLIntCLoop.h */,
 				0F4680C514BBB16900BFE272 /* LLIntCommon.h */,
@@ -7407,6 +7423,8 @@
 				7BC547D21B69599B00959B58 /* WasmFormat.h */,
 				14C5AD6722F33FBF00F1FB83 /* WasmFunctionCodeBlockGenerator.cpp */,
 				14C5AD6B22F33FC000F1FB83 /* WasmFunctionCodeBlockGenerator.h */,
+				F323932C2A43748000421AD2 /* WasmFunctionIPIntMetadataGenerator.cpp */,
+				F323932B2A43748000421AD2 /* WasmFunctionIPIntMetadataGenerator.h */,
 				53F40E8A1D5901BB0099A1B6 /* WasmFunctionParser.h */,
 				1487CE16237741000044429C /* WasmGeneratorTraits.h */,
 				E38350082390D9370036316D /* WasmGlobal.cpp */,
@@ -7417,6 +7435,10 @@
 				AD8FF3951EB5BD850087FF82 /* WasmIndexOrName.h */,
 				AD5C36DE1F699EB6000BCAAF /* WasmInstance.cpp */,
 				AD5C36DF1F699EB6000BCAAF /* WasmInstance.h */,
+				F3D9C2382A426CB7006EE152 /* WasmIPIntGenerator.cpp */,
+				F3D9C2352A426CB7006EE152 /* WasmIPIntGenerator.h */,
+				F3D9C2362A426CB7006EE152 /* WasmIPIntPlan.cpp */,
+				F3D9C2372A426CB7006EE152 /* WasmIPIntPlan.h */,
 				52FDABC22788076900C15B59 /* WasmIRGeneratorHelpers.h */,
 				AD5C36DC1F688B5F000BCAAF /* WasmJS.h */,
 				AD00659D1ECAC7FE000CA926 /* WasmLimits.h */,
@@ -10498,6 +10520,7 @@
 				0FF9CE741B9CD6D0004EDCA6 /* InlineCacheCompiler.h in Headers */,
 				148A7BF01B82975A002D9157 /* InlineCallFrame.h in Headers */,
 				0F24E55617F0B71C00ABB217 /* InlineCallFrameSet.h in Headers */,
+				F395BE252A43C5920083DE3A /* InPlaceInterpreter.h in Headers */,
 				A584032018BFFBE1005A0811 /* InspectorAgent.h in Headers */,
 				A593CF7F1840362C00BFCE27 /* InspectorAgentBase.h in Headers */,
 				A593CF87184038CA00BFCE27 /* InspectorAgentRegistry.h in Headers */,
@@ -11263,11 +11286,14 @@
 				5381B9391E60E97D0090F794 /* WasmFaultSignalHandler.h in Headers */,
 				7BC547D31B6959A100959B58 /* WasmFormat.h in Headers */,
 				1450FA1C2357BDBE0093CD4D /* WasmFunctionCodeBlockGenerator.h in Headers */,
+				F323932D2A43748000421AD2 /* WasmFunctionIPIntMetadataGenerator.h in Headers */,
 				53F40E8B1D5901BB0099A1B6 /* WasmFunctionParser.h in Headers */,
 				E383500A2390D93B0036316D /* WasmGlobal.h in Headers */,
 				148521D826EAEBFE00CC1D1A /* WasmHandlerInfo.h in Headers */,
 				AD8FF3981EB5BDB20087FF82 /* WasmIndexOrName.h in Headers */,
 				AD5C36E21F699EC0000BCAAF /* WasmInstance.h in Headers */,
+				F3D9C2392A426CB8006EE152 /* WasmIPIntGenerator.h in Headers */,
+				F3D9C23B2A426CB8006EE152 /* WasmIPIntPlan.h in Headers */,
 				52FDABC32788076B00C15B59 /* WasmIRGeneratorHelpers.h in Headers */,
 				AD5C36DD1F688B65000BCAAF /* WasmJS.h in Headers */,
 				AD00659E1ECAC812000CA926 /* WasmLimits.h in Headers */,

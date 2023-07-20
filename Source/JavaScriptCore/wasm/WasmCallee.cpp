@@ -51,6 +51,9 @@ template<typename Func>
 inline void Callee::runWithDowncast(const Func& func)
 {
     switch (m_compilationMode) {
+    case CompilationMode::IPIntMode:
+        func(static_cast<IPIntCallee*>(this));
+        break;
     case CompilationMode::LLIntMode:
         func(static_cast<LLIntCallee*>(this));
         break;
@@ -159,6 +162,51 @@ WasmToJSCallee::WasmToJSCallee()
     : Callee(Wasm::CompilationMode::WasmToJSMode)
 {
     CalleeRegistry::singleton().registerCallee(this);
+}
+
+IPIntCallee::IPIntCallee(FunctionIPIntMetadataGenerator& generator, size_t index, std::pair<const Name*, RefPtr<NameSection>>&& name)
+    : Callee(Wasm::CompilationMode::IPIntMode, index, WTFMove(name))
+    , m_bytecode(generator.m_bytecode + generator.m_bytecodeOffset)
+    , m_bytecodeLength(generator.m_bytecodeLength - generator.m_bytecodeOffset)
+    , m_metadata(generator.m_metadata.data())
+    , m_metadataVector(WTFMove(generator.m_metadata))
+    // size to allocate = 16 + number of stack arguments + number of non-argument locals
+    , m_localSizeToAlloc(roundUpToMultipleOf(16, 16 + generator.m_numArgumentsOnStack + generator.m_numLocals - generator.m_numArguments))
+    , m_numLocals(generator.m_numLocals)
+    , m_numArgumentsOnStack(generator.m_numArgumentsOnStack)
+{
+}
+
+void IPIntCallee::setEntrypoint(CodePtr<WasmEntryPtrTag> entrypoint)
+{
+    ASSERT(!m_entrypoint);
+    m_entrypoint = entrypoint;
+    CalleeRegistry::singleton().registerCallee(this);
+}
+
+RegisterAtOffsetList* IPIntCallee::calleeSaveRegistersImpl()
+{
+    static LazyNeverDestroyed<RegisterAtOffsetList> calleeSaveRegisters;
+    static std::once_flag initializeFlag;
+    std::call_once(initializeFlag, [] {
+        RegisterSet registers;
+        registers.add(GPRInfo::regCS0, IgnoreVectors); // Wasm::Instance
+#if CPU(X86_64)
+        registers.add(GPRInfo::regCS1, IgnoreVectors); // PM (pointer to metadata)
+        registers.add(GPRInfo::regCS2, IgnoreVectors); // PB
+#elif CPU(ARM64) || CPU(RISCV64)
+        registers.add(GPRInfo::regCS6, IgnoreVectors); // PM
+        registers.add(GPRInfo::regCS7, IgnoreVectors); // PB
+#elif CPU(ARM)
+        registers.add(GPRInfo::regCS0, IgnoreVectors); // PM
+        registers.add(GPRInfo::regCS1, IgnoreVectors); // PB
+#else
+#error Unsupported architecture.
+#endif
+        ASSERT(registers.numberOfSetRegisters() == numberOfIPIntCalleeSaveRegisters);
+        calleeSaveRegisters.construct(WTFMove(registers));
+    });
+    return &calleeSaveRegisters.get();
 }
 
 LLIntCallee::LLIntCallee(FunctionCodeBlockGenerator& generator, size_t index, std::pair<const Name*, RefPtr<NameSection>>&& name)

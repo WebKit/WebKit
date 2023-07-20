@@ -31,6 +31,7 @@
 
 #include "AssemblyComments.h"
 #include "ExecutableAllocator.h"
+#include "InPlaceInterpreter.h"
 #include "JITOperationList.h"
 #include "JSCConfig.h"
 #include "JSCPtrTag.h"
@@ -102,6 +103,8 @@ void initialize()
         JITOperationList::populatePointersInJavaScriptCore();
 
         AssemblyCommentRegistry::initialize();
+        if (UNLIKELY(Options::useWasmIPInt()))
+            IPInt::initialize();
         LLInt::initialize();
         DisallowGC::initialize();
 

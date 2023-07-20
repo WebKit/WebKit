@@ -1046,6 +1046,7 @@ class Label < NoChildren
         @definedInFile = definedInFile
         @extern = true
         @global = false
+        @aligned = true
     end
     
     def self.forName(codeOrigin, name, definedInFile = false)
@@ -1068,6 +1069,18 @@ class Label < NoChildren
         else
             newLabel = Label.new(codeOrigin, name)
             newLabel.setGlobal()
+            $labelMapping[name] = newLabel
+        end
+    end
+
+    def self.setAsUnalignedGlobal(codeOrigin, name)
+        if $labelMapping[name]
+            label = $labelMapping[name]
+            raise "Label: #{name} declared global multiple times" unless not label.global?
+            label.setUnalignedGlobal()
+        else
+            newLabel = Label.new(codeOrigin, name)
+            newLabel.setUnalignedGlobal()
             $labelMapping[name] = newLabel
         end
     end
@@ -1095,8 +1108,17 @@ class Label < NoChildren
         @global = true
     end
 
+    def setUnalignedGlobal
+        @global = true
+        @aligned = false
+    end
+
     def global?
         @global
+    end
+
+    def aligned?
+        @aligned
     end
 
     def name
