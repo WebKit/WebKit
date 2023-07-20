@@ -774,6 +774,132 @@ No pre-PR checks to run""")
             ],
         )
 
+    def test_github_branch_number(self):
+        with OutputCapture(level=logging.INFO) as captured, mocks.remote.GitHub(
+                projects=bmocks.PROJECTS) as remote, bmocks.Bugzilla(
+                self.BUGZILLA.split('://')[-1],
+                projects=bmocks.PROJECTS, issues=bmocks.ISSUES,
+                environment=Environment(
+                    BUGS_EXAMPLE_COM_USERNAME='tcontributor@example.com',
+                    BUGS_EXAMPLE_COM_PASSWORD='password',
+                )), patch(
+            'webkitbugspy.Tracker._trackers', [bugzilla.Tracker(self.BUGZILLA)],
+        ), mocks.local.Git(
+            self.path, remote='https://{}'.format(remote.remote),
+            remotes=dict(fork='https://{}/Contributor/WebKit'.format(remote.hosts[0])),
+        ) as repo, mocks.local.Svn():
+            repo.staged['added.txt'] = 'added'
+            self.assertEqual(0, program.main(
+                args=('pull-request', '-i', '1', '-v', '--no-history'),
+                path=self.path,
+            ))
+
+            self.assertEqual(
+                Tracker.instance().issue(1).comments[-1].content,
+                'Pull request: https://github.example.com/WebKit/WebKit/pull/1',
+            )
+            gh_issue = github.Tracker('https://github.example.com/WebKit/WebKit').issue(1)
+            self.assertEqual(gh_issue.project, 'WebKit')
+            self.assertEqual(gh_issue.component, 'Text')
+
+        self.assertEqual(
+            captured.stdout.getvalue(),
+            "Created the local development branch 'eng/Example-issue-1'\n"
+            "Created 'PR 1 | Example issue 1'!\n"
+            "Posted pull request link to https://bugs.example.com/show_bug.cgi?id=1\n"
+            "https://github.example.com/WebKit/WebKit/pull/1\n",
+        )
+        self.assertEqual(captured.stderr.getvalue(), '')
+        log = captured.root.log.getvalue().splitlines()
+        self.assertEqual(
+            [line for line in log if 'Mock process' not in line], [
+                "Creating the local development branch 'eng/Example-issue-1'...",
+                'Creating commit...',
+                "Rebasing 'eng/Example-issue-1' on 'main'...",
+                "Rebased 'eng/Example-issue-1' on 'main!'",
+                'Running pre-PR checks...',
+                'No pre-PR checks to run',
+                'Checking if PR already exists...',
+                'PR not found.',
+                "Updating 'main' on 'https://github.example.com/Contributor/WebKit'",
+                "Pushing 'eng/Example-issue-1' to 'fork'...",
+                "Creating pull-request for 'eng/Example-issue-1'...",
+                'Checking issue assignee...',
+                'Checking for pull request link in associated issue...',
+                'Syncing PR labels with issue component...',
+                'Synced PR labels with issue component!',
+            ],
+        )
+
+    def test_github_number_reentrance(self):
+        self.maxDiff = None
+        with OutputCapture(level=logging.INFO) as captured, mocks.remote.GitHub(
+                projects=bmocks.PROJECTS) as remote, bmocks.Bugzilla(
+                self.BUGZILLA.split('://')[-1],
+                projects=bmocks.PROJECTS, issues=bmocks.ISSUES,
+                environment=Environment(
+                    BUGS_EXAMPLE_COM_USERNAME='tcontributor@example.com',
+                    BUGS_EXAMPLE_COM_PASSWORD='password',
+                )), patch(
+            'webkitbugspy.Tracker._trackers', [bugzilla.Tracker(self.BUGZILLA)],
+        ), mocks.local.Git(
+            self.path, remote='https://{}'.format(remote.remote),
+            remotes=dict(fork='https://{}/Contributor/WebKit'.format(remote.hosts[0])),
+        ) as repo, mocks.local.Svn():
+            repo.commits['eng/Example-issue-1'] = [
+                repo.commits[repo.default_branch][-1],
+                Commit(
+                    hash='06de5d56554e693db72313f4ca1fb969c30b8ccb',
+                    branch='eng/Example-issue-1',
+                    author=dict(name='Tim Contributor', emails=['tcontributor@example.com']),
+                    identifier="5.1@eng/Example-issue-1",
+                    timestamp=int(time.time()),
+                    message='[Testing] Existing commit\nbugs.example.com/show_bug.cgi?id=1\n'
+                ),
+            ]
+            repo.head = repo.commits['eng/Example-issue-1'][-1]
+
+            repo.staged['added.txt'] = 'added'
+            self.assertEqual(0, program.main(
+                args=('pull-request', '-i', '1', '-v', '--no-history'),
+                path=self.path,
+            ))
+
+            self.assertEqual(
+                Tracker.instance().issue(1).comments[-1].content,
+                'Pull request: https://github.example.com/WebKit/WebKit/pull/1',
+            )
+            gh_issue = github.Tracker('https://github.example.com/WebKit/WebKit').issue(1)
+            self.assertEqual(gh_issue.project, 'WebKit')
+            self.assertEqual(gh_issue.component, 'Text')
+
+        self.assertEqual(
+            captured.stdout.getvalue(),
+            "Created 'PR 1 | Example issue 1'!\n"
+            "Posted pull request link to https://bugs.example.com/show_bug.cgi?id=1\n"
+            "https://github.example.com/WebKit/WebKit/pull/1\n",
+        )
+        self.assertEqual(captured.stderr.getvalue(), '')
+        log = captured.root.log.getvalue().splitlines()
+        self.assertEqual(
+            [line for line in log if 'Mock process' not in line], [
+                'Amending commit...',
+                "Rebasing 'eng/Example-issue-1' on 'main'...",
+                "Rebased 'eng/Example-issue-1' on 'main!'",
+                'Running pre-PR checks...',
+                'No pre-PR checks to run',
+                'Checking if PR already exists...',
+                'PR not found.',
+                "Updating 'main' on 'https://github.example.com/Contributor/WebKit'",
+                "Pushing 'eng/Example-issue-1' to 'fork'...",
+                "Creating pull-request for 'eng/Example-issue-1'...",
+                'Checking issue assignee...',
+                'Checking for pull request link in associated issue...',
+                'Syncing PR labels with issue component...',
+                'Synced PR labels with issue component!',
+            ],
+        )
+
     def test_github_bugzilla_commit_on_main(self):
         # This test doesn't mock the whole process because we don't have a functional remote
         with OutputCapture(level=logging.INFO) as captured, mocks.remote.GitHub(projects=bmocks.PROJECTS) as remote, bmocks.Bugzilla(
