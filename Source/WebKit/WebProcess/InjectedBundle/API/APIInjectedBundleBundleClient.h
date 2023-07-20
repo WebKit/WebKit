@@ -30,7 +30,6 @@
 namespace WebKit {
 class InjectedBundle;
 class WebPage;
-class WebPageGroupProxy;
 }
 
 namespace API {

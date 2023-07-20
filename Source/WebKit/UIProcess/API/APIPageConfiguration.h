@@ -41,7 +41,6 @@ OBJC_PROTOCOL(_UIClickInteractionDriving);
 
 namespace WebKit {
 class VisitedLinkStore;
-class WebPageGroup;
 class WebPageProxy;
 class WebPreferences;
 class WebProcessPool;
@@ -94,8 +93,8 @@ public:
     void setWeakWebExtensionController(WebKit::WebExtensionController*);
 #endif
 
-    WebKit::WebPageGroup* pageGroup();
-    void setPageGroup(WebKit::WebPageGroup*);
+    const WTF::String& groupIdentifier() const { return m_data.groupIdentifier; }
+    void setGroupIdentifier(WTF::String&& identifier) { m_data.groupIdentifier = WTFMove(identifier); }
 
     WebKit::WebPreferences* preferences();
     void setPreferences(WebKit::WebPreferences*);
@@ -228,7 +227,7 @@ private:
         RefPtr<WebKit::WebExtensionController> webExtensionController;
         WeakPtr<WebKit::WebExtensionController> weakWebExtensionController;
 #endif
-        RefPtr<WebKit::WebPageGroup> pageGroup;
+        WTF::String groupIdentifier;
         RefPtr<WebKit::WebPreferences> preferences;
         RefPtr<WebKit::WebPageProxy> relatedPage;
         WeakPtr<WebKit::WebPageProxy> pageToCloneSessionStorageFrom;

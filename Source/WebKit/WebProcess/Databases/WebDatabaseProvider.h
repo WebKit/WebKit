@@ -33,15 +33,13 @@ namespace WebKit {
 
 class WebDatabaseProvider final : public WebCore::DatabaseProvider {
 public:
-    static Ref<WebDatabaseProvider> getOrCreate(PageGroupIdentifier);
+    static Ref<WebDatabaseProvider> getOrCreate();
     virtual ~WebDatabaseProvider();
 
     WebCore::IDBClient::IDBConnectionToServer& idbConnectionToServerForSession(PAL::SessionID) final;
 
 private:
-    explicit WebDatabaseProvider(PageGroupIdentifier);
-
-    const PageGroupIdentifier m_identifier;
+    explicit WebDatabaseProvider();
 };
 
 }

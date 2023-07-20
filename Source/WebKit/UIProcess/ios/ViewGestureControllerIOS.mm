@@ -37,7 +37,6 @@
 #import "WKBackForwardListItemInternal.h"
 #import "WKWebViewInternal.h"
 #import "WebBackForwardList.h"
-#import "WebPageGroup.h"
 #import "WebPageMessages.h"
 #import "WebPageProxy.h"
 #import "WebProcessProxy.h"

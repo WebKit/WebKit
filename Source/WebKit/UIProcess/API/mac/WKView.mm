@@ -38,7 +38,6 @@
 #import "WKWebViewMac.h"
 #import "WebBackForwardListItem.h"
 #import "WebKit2Initialize.h"
-#import "WebPageGroup.h"
 #import "WebPageProxy.h"
 #import "WebPreferences.h"
 #import "WebProcessPool.h"

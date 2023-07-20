@@ -30,7 +30,6 @@
 #include "APIWebsitePolicies.h"
 #include "Logging.h"
 #include "WebInspectorUtilities.h"
-#include "WebPageGroup.h"
 #include "WebPageProxy.h"
 #include "WebPreferences.h"
 #include "WebProcessPool.h"
@@ -106,16 +105,6 @@ void PageConfiguration::setWeakWebExtensionController(WebExtensionController* we
     m_data.weakWebExtensionController = webExtensionController;
 }
 #endif // ENABLE(WK_WEB_EXTENSIONS)
-
-WebPageGroup* PageConfiguration::pageGroup()
-{
-    return m_data.pageGroup.get();
-}
-
-void PageConfiguration::setPageGroup(WebPageGroup* pageGroup)
-{
-    m_data.pageGroup = pageGroup;
-}
 
 WebPreferences* PageConfiguration::preferences()
 {

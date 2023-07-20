@@ -35,7 +35,6 @@
 #import "WKInspectorViewController.h"
 #import "WKWebViewInternal.h"
 #import "WebInspectorUIProxy.h"
-#import "WebPageGroup.h"
 #import "WebPageProxy.h"
 #import "_WKInspectorConfigurationInternal.h"
 #import <SecurityInterface/SFCertificatePanel.h>

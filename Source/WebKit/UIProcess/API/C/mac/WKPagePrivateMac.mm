@@ -33,7 +33,6 @@
 #import "WKNavigationInternal.h"
 #import "WKViewInternal.h"
 #import "WKWebViewInternal.h"
-#import "WebPageGroup.h"
 #import "WebPageProxy.h"
 #import "WebPreferences.h"
 #import "WebProcessPool.h"

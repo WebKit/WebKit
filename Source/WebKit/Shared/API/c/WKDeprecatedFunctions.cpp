@@ -35,7 +35,6 @@
 #include "WKMutableDictionary.h"
 #include "WKPageGroup.h"
 #include "WKPreferencesRefPrivate.h"
-#include "WebPageGroup.h"
 #include "WebUserContentControllerProxy.h"
 
 // Deprecated functions that should be removed from the framework once nobody uses them.

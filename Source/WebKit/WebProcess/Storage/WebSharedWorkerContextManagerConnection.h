@@ -49,7 +49,7 @@ struct RemoteWorkerInitializationData;
 
 class WebSharedWorkerContextManagerConnection final : public WebCore::SharedWorkerContextManager::Connection, public IPC::MessageReceiver {
 public:
-    WebSharedWorkerContextManagerConnection(Ref<IPC::Connection>&&, WebCore::RegistrableDomain&&, PageGroupIdentifier, WebPageProxyIdentifier, WebCore::PageIdentifier, const WebPreferencesStore&, RemoteWorkerInitializationData&&);
+    WebSharedWorkerContextManagerConnection(Ref<IPC::Connection>&&, WebCore::RegistrableDomain&&, WebPageProxyIdentifier, WebCore::PageIdentifier, const WebPreferencesStore&, RemoteWorkerInitializationData&&);
     ~WebSharedWorkerContextManagerConnection();
 
     void establishConnection(CompletionHandler<void()>&&) final;
@@ -67,7 +67,6 @@ private:
 
     Ref<IPC::Connection> m_connectionToNetworkProcess;
     WebCore::RegistrableDomain m_registrableDomain;
-    PageGroupIdentifier m_pageGroupID;
     WebPageProxyIdentifier m_webPageProxyID;
     WebCore::PageIdentifier m_pageID;
     String m_userAgent;

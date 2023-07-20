@@ -27,7 +27,6 @@
 #include "WebInspectorUtilities.h"
 
 #include "APIProcessPoolConfiguration.h"
-#include "WebPageGroup.h"
 #include "WebPageProxy.h"
 #include "WebProcessPool.h"
 #include "WebProcessProxy.h"

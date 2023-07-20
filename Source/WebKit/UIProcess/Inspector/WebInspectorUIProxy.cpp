@@ -40,7 +40,6 @@
 #include "WebInspectorUIExtensionControllerProxy.h"
 #include "WebInspectorUIMessages.h"
 #include "WebInspectorUIProxyMessages.h"
-#include "WebPageGroup.h"
 #include "WebPageInspectorController.h"
 #include "WebPageProxy.h"
 #include "WebPreferences.h"
@@ -98,7 +97,7 @@ unsigned WebInspectorUIProxy::inspectionLevel() const
 WebPreferences& WebInspectorUIProxy::inspectorPagePreferences() const
 {
     ASSERT(m_inspectorPage);
-    return m_inspectorPage->pageGroup().preferences();
+    return m_inspectorPage->preferences();
 }
 
 void WebInspectorUIProxy::invalidate()

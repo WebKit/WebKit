@@ -93,7 +93,6 @@
 #import "WebBackForwardList.h"
 #import "WebFrameProxy.h"
 #import "WebFullScreenManagerProxy.h"
-#import "WebPageGroup.h"
 #import "WebPageInspectorController.h"
 #import "WebPageProxy.h"
 #import "WebPreferences.h"
@@ -479,7 +478,7 @@ static void hardwareKeyboardAvailabilityChangedCallback(CFNotificationCenterRef,
 
     NSString *groupIdentifier = [_configuration _groupIdentifier];
     if (groupIdentifier.length)
-        pageConfiguration->setPageGroup(WebKit::WebPageGroup::create(groupIdentifier).ptr());
+        pageConfiguration->setGroupIdentifier(groupIdentifier);
 
     pageConfiguration->setAdditionalSupportedImageTypes(makeVector<String>([_configuration _additionalSupportedImageTypes]));
 

@@ -35,36 +35,17 @@
 namespace WebKit {
 using namespace WebCore;
 
-static HashMap<PageGroupIdentifier, WebDatabaseProvider*>& databaseProviders()
+Ref<WebDatabaseProvider> WebDatabaseProvider::getOrCreate()
 {
-    static NeverDestroyed<HashMap<PageGroupIdentifier, WebDatabaseProvider*>> databaseProviders;
-
-    return databaseProviders;
+    static NeverDestroyed<RefPtr<WebDatabaseProvider>> instance;
+    if (!instance.get())
+        instance.get() = adoptRef(*new WebDatabaseProvider());
+    return *instance.get();
 }
 
-Ref<WebDatabaseProvider> WebDatabaseProvider::getOrCreate(PageGroupIdentifier identifier)
-{
-    auto& slot = databaseProviders().add(identifier, nullptr).iterator->value;
-    if (slot)
-        return *slot;
+WebDatabaseProvider::WebDatabaseProvider() = default;
 
-    Ref<WebDatabaseProvider> databaseProvider = adoptRef(*new WebDatabaseProvider(identifier));
-    slot = databaseProvider.ptr();
-
-    return databaseProvider;
-}
-
-WebDatabaseProvider::WebDatabaseProvider(PageGroupIdentifier identifier)
-    : m_identifier(identifier)
-{
-}
-
-WebDatabaseProvider::~WebDatabaseProvider()
-{
-    ASSERT(databaseProviders().contains(m_identifier));
-
-    databaseProviders().remove(m_identifier);
-}
+WebDatabaseProvider::~WebDatabaseProvider() = default;
 
 WebCore::IDBClient::IDBConnectionToServer& WebDatabaseProvider::idbConnectionToServerForSession(PAL::SessionID)
 {

@@ -34,7 +34,6 @@
 #import "ViewGestureGeometryCollectorMessages.h"
 #import "WKContentView.h"
 #import "WKScrollView.h"
-#import "WebPageGroup.h"
 #import "WebPageMessages.h"
 #import "WebPageProxy.h"
 #import "WebProcessProxy.h"

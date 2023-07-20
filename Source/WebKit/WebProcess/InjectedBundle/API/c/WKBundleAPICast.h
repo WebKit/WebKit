@@ -47,7 +47,6 @@ class PageBanner;
 class WebFrame;
 class WebInspector;
 class WebPage;
-class WebPageGroupProxy;
 class WebPageOverlay;
 
 WK_ADD_API_MAPPING(WKBundleBackForwardListItemRef, InjectedBundleBackForwardListItem)

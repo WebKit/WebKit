@@ -263,7 +263,6 @@ Shared/WebKeyboardEvent.cpp
 Shared/WebKit2Initialize.cpp
 Shared/WebMemorySampler.cpp
 Shared/WebMouseEvent.cpp
-Shared/WebPageGroupData.cpp
 Shared/WebPageNetworkParameters.cpp
 Shared/WebPlatformTouchPoint.cpp
 Shared/WebPopupItem.cpp
@@ -443,7 +442,6 @@ UIProcess/WebLockRegistryProxy.cpp
 UIProcess/WebNavigationState.cpp
 UIProcess/WebOpenPanelResultListenerProxy.cpp
 UIProcess/WebPageDiagnosticLoggingClient.cpp
-UIProcess/WebPageGroup.cpp
 UIProcess/WebPageInjectedBundleClient.cpp
 UIProcess/WebPageProxy.cpp
 UIProcess/WebPageProxyMessageReceiverRegistration.cpp
@@ -853,7 +851,6 @@ WebProcess/WebPage/WebFoundTextRangeController.cpp
 WebProcess/WebPage/WebFrame.cpp
 WebProcess/WebPage/WebOpenPanelResultListener.cpp
 WebProcess/WebPage/WebPage.cpp @no-unify
-WebProcess/WebPage/WebPageGroupProxy.cpp
 WebProcess/WebPage/WebPageOverlay.cpp
 WebProcess/WebPage/WebURLSchemeHandlerProxy.cpp
 WebProcess/WebPage/WebURLSchemeTaskProxy.cpp

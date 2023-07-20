@@ -333,7 +333,6 @@ class WebKeyboardEvent;
 class WebMouseEvent;
 class WebNotificationClient;
 class WebOpenPanelResultListener;
-class WebPageGroupProxy;
 class WebPageInspectorTargetController;
 class WebPageOverlay;
 class WebPaymentCoordinator;
@@ -410,6 +409,7 @@ public:
 
     WebCore::Page* corePage() const { return m_page.get(); }
     WebCore::PageIdentifier identifier() const { return m_identifier; }
+    const String& groupIdentifier() const { return m_groupIdentifier; }
     inline StorageNamespaceIdentifier sessionStorageNamespaceIdentifier() const;
     PAL::SessionID sessionID() const;
     bool usesEphemeralSession() const;
@@ -423,8 +423,6 @@ public:
 #if ENABLE(ASYNC_SCROLLING)
     WebCore::ScrollingCoordinator* scrollingCoordinator() const;
 #endif
-
-    WebPageGroupProxy* pageGroup() const { return m_pageGroup.get(); }
 
     void scrollMainFrameIfNotAtMaxScrollPosition(const WebCore::IntSize& scrollOffset);
 
@@ -2131,12 +2129,11 @@ private:
 
     void useRedirectionForCurrentNavigation(WebCore::ResourceResponse&&);
 
-    WebCore::PageIdentifier m_identifier;
+    const WebCore::PageIdentifier m_identifier;
+    const String m_groupIdentifier;
 
     std::unique_ptr<WebCore::Page> m_page;
     Ref<WebFrame> m_mainFrame;
-
-    RefPtr<WebPageGroupProxy> m_pageGroup;
 
     String m_userAgent;
 

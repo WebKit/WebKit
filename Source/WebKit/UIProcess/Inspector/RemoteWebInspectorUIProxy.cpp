@@ -32,7 +32,6 @@
 #include "RemoteWebInspectorUIMessages.h"
 #include "RemoteWebInspectorUIProxyMessages.h"
 #include "WebInspectorUIProxy.h"
-#include "WebPageGroup.h"
 #include "WebPageProxy.h"
 #include <WebCore/CertificateInfo.h>
 #include <WebCore/NotImplemented.h>

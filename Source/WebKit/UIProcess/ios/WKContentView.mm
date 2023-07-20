@@ -50,7 +50,6 @@
 #import "WKWebViewIOS.h"
 #import "WebFrameProxy.h"
 #import "WebKit2Initialize.h"
-#import "WebPageGroup.h"
 #import "WebPageMessages.h"
 #import "WebPageProxyMessages.h"
 #import "WebProcessPool.h"

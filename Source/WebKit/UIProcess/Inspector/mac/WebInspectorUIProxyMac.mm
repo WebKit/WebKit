@@ -39,7 +39,6 @@
 #import "WKViewInternal.h"
 #import "WKWebViewInternal.h"
 #import "WebInspectorUIMessages.h"
-#import "WebPageGroup.h"
 #import "WebPageProxy.h"
 #import "_WKInspectorConfigurationInternal.h"
 #import "_WKInspectorInternal.h"
@@ -472,7 +471,7 @@ void WebInspectorUIProxy::platformCreateFrontendWindow()
 
     NSRect savedWindowFrame = NSZeroRect;
     if (inspectedPage()) {
-        NSString *savedWindowFrameString = inspectedPage()->pageGroup().preferences().inspectorWindowFrame();
+        NSString *savedWindowFrameString = inspectedPage()->preferences().inspectorWindowFrame();
         savedWindowFrame = NSRectFromString(savedWindowFrameString);
     }
 
@@ -552,7 +551,7 @@ void WebInspectorUIProxy::platformHide()
 void WebInspectorUIProxy::platformResetState()
 {
     if (inspectedPage())
-        inspectedPage()->pageGroup().preferences().deleteInspectorWindowFrame();
+        inspectedPage()->preferences().deleteInspectorWindowFrame();
 }
 
 void WebInspectorUIProxy::platformBringToFront()
@@ -718,7 +717,7 @@ void WebInspectorUIProxy::windowFrameDidChange()
         return;
 
     NSString *frameString = NSStringFromRect([m_inspectorWindow frame]);
-    inspectedPage()->pageGroup().preferences().setInspectorWindowFrame(frameString);
+    inspectedPage()->preferences().setInspectorWindowFrame(frameString);
 }
 
 void WebInspectorUIProxy::windowFullScreenDidChange()

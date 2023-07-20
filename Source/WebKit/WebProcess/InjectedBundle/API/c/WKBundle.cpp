@@ -43,7 +43,6 @@
 #include "WebConnection.h"
 #include "WebFrame.h"
 #include "WebPage.h"
-#include "WebPageGroupProxy.h"
 #include <WebCore/DatabaseTracker.h>
 #include <WebCore/MemoryRelease.h>
 #include <WebCore/ResourceLoadObserver.h>
