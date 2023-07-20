@@ -79,9 +79,10 @@ public:
         return m_immutableBaseTransform * GraphicsContextCG::getCTM(includeDeviceScale);
     }
 
-    WebCore::FloatRect roundToDevicePixels(const WebCore::FloatRect& rect, RoundingMode = RoundAllSides) const final
+    std::optional<std::pair<float, float>> scaleForRoundingToDevicePixels() const final
     {
-        return rect;
+        auto scale = WebCore::GraphicsContextCG::scaleForRoundingToDevicePixels().value_or(std::make_pair<float>(1, 1));
+        return { { scale.first * m_resolutionScale, scale.second * m_resolutionScale } };
     }
 
     bool canUseShadowBlur() const final { return false; }
