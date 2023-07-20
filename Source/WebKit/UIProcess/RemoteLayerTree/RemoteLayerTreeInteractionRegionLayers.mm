@@ -47,7 +47,9 @@ SOFT_LINK_CONSTANT_MAY_FAIL(RealitySystemSupport, RCPAllowedInputTypesUserInfoKe
 
 @interface CALayer ()
 @property (nonatomic) CGFloat sizeMultiplier;
+#if PLATFORM(VISION)
 @property (nonatomic, copy) void (^effectGroupConfigurator)(CARemoteEffectGroup *group);
+#endif
 @end
 
 namespace WebKit {
@@ -93,11 +95,6 @@ static void configureLayerForInteractionRegion(CALayer *layer, NSString *groupNa
         }];
     }
 }
-#else
-static Class interactionRegionLayerClass() { return [CALayer class]; }
-static void configureLayerForInteractionRegion(CALayer *, NSString *) { }
-static NSDictionary *interactionRegionEffectUserInfo() { return @{ }; }
-#endif // !PLATFORM(VISION)
 
 static void configureLayerAsGuard(CALayer *layer, NSString *groupName)
 {
@@ -107,6 +104,11 @@ static void configureLayerAsGuard(CALayer *layer, NSString *groupName)
     group.userInfo = interactionRegionEffectUserInfo();
     layer.remoteEffects = @[ group ];
 }
+#else
+static Class interactionRegionLayerClass() { return [CALayer class]; }
+static void configureLayerForInteractionRegion(CALayer *, NSString *) { }
+static void configureLayerAsGuard(CALayer *, NSString *) { }
+#endif // !PLATFORM(VISION)
 
 static std::optional<WebCore::InteractionRegion::Type> interactionRegionTypeForLayer(CALayer *layer)
 {
