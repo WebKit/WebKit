@@ -2884,7 +2884,7 @@ void MediaPlayerPrivateGStreamer::updateDownloadBufferingFlag()
     }
 }
 
-static void setPlaybackFlags(GstElement* pipeline, bool isMediaStream)
+void MediaPlayerPrivateGStreamer::setPlaybackFlags(bool isMediaStream)
 {
     unsigned hasAudio = getGstPlayFlag("audio");
     unsigned hasVideo = getGstPlayFlag("video");
@@ -2894,8 +2894,8 @@ static void setPlaybackFlags(GstElement* pipeline, bool isMediaStream)
     unsigned hasSoftwareColorBalance = getGstPlayFlag("soft-colorbalance");
 
     unsigned flags = 0;
-    g_object_get(pipeline, "flags", &flags, nullptr);
-    GST_TRACE_OBJECT(pipeline, "default flags %x", flags);
+    g_object_get(pipeline(), "flags", &flags, nullptr);
+    GST_TRACE_OBJECT(pipeline(), "default flags %x", flags);
     flags = flags & ~hasText;
     flags = flags & ~hasNativeAudio;
     flags = flags & ~hasNativeVideo;
@@ -2918,12 +2918,17 @@ static void setPlaybackFlags(GstElement* pipeline, bool isMediaStream)
     hasNativeAudio = 0x0;
 #endif
 
-    GST_INFO_OBJECT(pipeline, "text %s, audio %s (native %s), video %s (native %s, software color balance %s)", boolForPrinting(hasText),
+    GST_INFO_OBJECT(pipeline(), "text %s, audio %s (native %s), video %s (native %s, software color balance %s)", boolForPrinting(hasText),
         boolForPrinting(hasAudio), boolForPrinting(hasNativeAudio), boolForPrinting(hasVideo), boolForPrinting(hasNativeVideo),
         boolForPrinting(hasSoftwareColorBalance));
     flags |= hasText | hasAudio | hasVideo | hasNativeVideo | hasNativeAudio | hasSoftwareColorBalance;
-    g_object_set(pipeline, "flags", flags, nullptr);
-    GST_DEBUG_OBJECT(pipeline, "current pipeline flags %x", flags);
+    g_object_set(pipeline(), "flags", flags, nullptr);
+    GST_DEBUG_OBJECT(pipeline(), "current pipeline flags %x", flags);
+
+    if (m_shouldPreservePitch && hasAudio && hasNativeAudio) {
+        GST_WARNING_OBJECT(pipeline(), "can't preserve pitch with native audio");
+        setPreservesPitch(false);
+    }
 }
 
 void MediaPlayerPrivateGStreamer::createGSTPlayBin(const URL& url)
@@ -2965,7 +2970,7 @@ void MediaPlayerPrivateGStreamer::createGSTPlayBin(const URL& url)
 
     GST_INFO_OBJECT(pipeline(), "Using legacy playbin element: %s", boolForPrinting(m_isLegacyPlaybin));
 
-    setPlaybackFlags(pipeline(), isMediaStream);
+    setPlaybackFlags(isMediaStream);
 
     // Let also other listeners subscribe to (application) messages in this bus.
     auto bus = adoptGRef(gst_pipeline_get_bus(GST_PIPELINE(m_pipeline.get())));
