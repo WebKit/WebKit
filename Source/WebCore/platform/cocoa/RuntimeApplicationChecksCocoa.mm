@@ -188,6 +188,12 @@ bool MacApplication::isEpsonSoftwareUpdater()
     return isEpsonSoftwareUpdater;
 }
 
+bool MacApplication::isMimeoPhotoProject()
+{
+    static bool isMimeoPhotoProject = applicationBundleIsEqualTo("com.mimeo.Mimeo.PhotoProject"_s);
+    return isMimeoPhotoProject;
+}
+
 #endif // PLATFORM(MAC)
 
 #if PLATFORM(IOS_FAMILY)

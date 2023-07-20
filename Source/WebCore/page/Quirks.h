@@ -160,6 +160,7 @@ public:
     bool shouldDisableLazyIframeLoadingQuirk() const;
 
     bool shouldDisableFetchMetadata() const;
+    bool shouldDisablePushStateFilePathRestrictions() const;
 
 #if PLATFORM(COCOA)
     bool shouldAdvertiseSupportForHLSSubtitleTypes() const;
