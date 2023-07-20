@@ -466,7 +466,7 @@ PropertyTable* Structure::materializePropertyTable(VM& vm, bool setPropertyTable
     return table;
 }
 
-bool Structure::holesMustForwardToPrototype(JSObject* base) const
+bool Structure::holesMustForwardToPrototypeSlow(JSObject* base) const
 {
     ASSERT(base->structure() == this);
 
