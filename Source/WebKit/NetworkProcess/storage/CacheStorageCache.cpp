@@ -75,6 +75,12 @@ CacheStorageCache::CacheStorageCache(CacheStorageManager& manager, const String&
     assertIsOnCorrectQueue();
 }
 
+CacheStorageCache::~CacheStorageCache()
+{
+    for (auto& callback : m_pendingInitializationCallbacks)
+        callback(makeUnexpected(WebCore::DOMCacheEngine::Error::Internal));
+}
+
 CacheStorageManager* CacheStorageCache::manager()
 {
     return m_manager.get();
@@ -109,10 +115,14 @@ void CacheStorageCache::open(WebCore::DOMCacheEngine::CacheIdentifierCallback&& 
     if (m_isInitialized)
         return callback(WebCore::DOMCacheEngine::CacheIdentifierOperationResult { m_identifier, false });
 
-    m_store->readAllRecordInfos([this, weakThis = WeakPtr { *this }, callback = WTFMove(callback)](auto&& recordInfos) mutable {
+    m_pendingInitializationCallbacks.append(WTFMove(callback));
+    if (m_pendingInitializationCallbacks.size() > 1)
+        return;
+
+    m_store->readAllRecordInfos([this, weakThis = WeakPtr { *this }](auto&& recordInfos) mutable {
         if (!weakThis)
-            return callback(makeUnexpected(WebCore::DOMCacheEngine::Error::Internal));
-        
+            return;
+
         assertIsOnCorrectQueue();
 
         std::sort(recordInfos.begin(), recordInfos.end(), [](auto& a, auto& b) {
@@ -128,7 +138,9 @@ void CacheStorageCache::open(WebCore::DOMCacheEngine::CacheIdentifierCallback&& 
         }
 
         m_isInitialized = true;
-        callback(WebCore::DOMCacheEngine::CacheIdentifierOperationResult { m_identifier, false });
+        for (auto& callback : m_pendingInitializationCallbacks)
+            callback(WebCore::DOMCacheEngine::CacheIdentifierOperationResult { m_identifier, false });
+        m_pendingInitializationCallbacks.clear();
     });
 }
 
