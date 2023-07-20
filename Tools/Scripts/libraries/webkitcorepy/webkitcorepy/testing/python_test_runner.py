@@ -65,7 +65,9 @@ class PythonTestRunner(TestRunner):
     def tests(self, args=None):
         filters = [] if not args or not args.tests else args.tests
         matched_filters = {pattern.pattern: 0 for pattern in filters}
+        example = None
         for name in self._tests.keys():
+            example = name
             if not filters:
                 yield name
             did_match = False
@@ -82,6 +84,9 @@ class PythonTestRunner(TestRunner):
             if count:
                 continue
             sys.stderr.write("No tests match '{}'\n".format(pattern.replace('.*', '*').replace('**', '*')))
+            sys.stderr.write("Specify tests names in the form '<module>.<file>.<class>.<function>'\n")
+            if example:
+                sys.stderr.write("For example: '{} {}'\n".format(sys.argv[0].split('/')[-1], example.split('.')[0]))
             must_exit = True
         if must_exit:
             sys.exit(-1)
