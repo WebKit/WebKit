@@ -56,7 +56,7 @@ RefPtr<AccessibilityUIElement> AccessibilityController::focusedElement()
 
     RetainPtr<PlatformUIElement> focus;
     executeOnAXThreadAndWait([&focus] () {
-        focus = static_cast<PlatformUIElement>(WKAccessibilityFocusedObject(0));
+        focus = static_cast<PlatformUIElement>(WKAccessibilityFocusedUIElement());
     });
     if (focus)
         return AccessibilityUIElement::create(focus.get());
