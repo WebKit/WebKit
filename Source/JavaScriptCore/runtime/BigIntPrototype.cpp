@@ -50,6 +50,11 @@ namespace JSC {
 
 const ClassInfo BigIntPrototype::s_info = { "BigInt"_s, &Base::s_info, &bigIntPrototypeTable, nullptr, CREATE_METHOD_TABLE(BigIntPrototype) };
 
+Structure* BigIntPrototype::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+{
+    return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
+}
+
 /* Source for BigIntPrototype.lut.h
 @begin bigIntPrototypeTable
   toString          bigIntProtoFuncToString         DontEnum|Function 0

@@ -38,6 +38,11 @@ namespace JSC {
 
 const ClassInfo StringConstructor::s_info = { "Function"_s, &Base::s_info, &stringConstructorTable, nullptr, CREATE_METHOD_TABLE(StringConstructor) };
 
+Structure* StringConstructor::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+{
+    return Structure::create(vm, globalObject, prototype, TypeInfo(JSFunctionType, StructureFlags), info());
+}
+
 /* Source for StringConstructor.lut.h
 @begin stringConstructorTable
   fromCharCode          stringFromCharCode         DontEnum|Function 1 FromCharCodeIntrinsic

@@ -30,6 +30,11 @@ STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(ErrorConstructor);
 
 const ClassInfo ErrorConstructor::s_info = { "Function"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(ErrorConstructor) };
 
+Structure* ErrorConstructor::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+{
+    return Structure::create(vm, globalObject, prototype, TypeInfo(InternalFunctionType, StructureFlags), info());
+}
+
 static JSC_DECLARE_HOST_FUNCTION(callErrorConstructor);
 static JSC_DECLARE_HOST_FUNCTION(constructErrorConstructor);
 

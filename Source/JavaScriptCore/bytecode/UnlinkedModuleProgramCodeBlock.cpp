@@ -27,10 +27,16 @@
 #include "UnlinkedModuleProgramCodeBlock.h"
 
 #include "JSCellInlines.h"
+#include "StructureInlines.h"
 
 namespace JSC {
 
 const ClassInfo UnlinkedModuleProgramCodeBlock::s_info = { "UnlinkedModuleProgramCodeBlock"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(UnlinkedModuleProgramCodeBlock) };
+
+Structure* UnlinkedModuleProgramCodeBlock::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue proto)
+{
+    return Structure::create(vm, globalObject, proto, TypeInfo(UnlinkedModuleProgramCodeBlockType, StructureFlags), info());
+}
 
 void UnlinkedModuleProgramCodeBlock::destroy(JSCell* cell)
 {

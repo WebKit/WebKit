@@ -35,6 +35,11 @@ STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(FunctionPrototype);
 
 const ClassInfo FunctionPrototype::s_info = { "Function"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(FunctionPrototype) };
 
+Structure* FunctionPrototype::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue proto)
+{
+    return Structure::create(vm, globalObject, proto, TypeInfo(InternalFunctionType, StructureFlags), info());
+}
+
 static JSC_DECLARE_HOST_FUNCTION(functionProtoFuncToString);
 static JSC_DECLARE_HOST_FUNCTION(functionProtoFuncBind);
 static JSC_DECLARE_HOST_FUNCTION(callFunctionPrototype);

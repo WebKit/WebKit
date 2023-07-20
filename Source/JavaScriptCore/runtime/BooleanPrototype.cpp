@@ -37,6 +37,11 @@ namespace JSC {
 
 const ClassInfo BooleanPrototype::s_info = { "Boolean"_s, &BooleanObject::s_info, &booleanPrototypeTable, nullptr, CREATE_METHOD_TABLE(BooleanPrototype) };
 
+Structure* BooleanPrototype::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+{
+    return Structure::create(vm, globalObject, prototype, TypeInfo(BooleanObjectType, StructureFlags), info());
+}
+
 /* Source for BooleanPrototype.lut.h
 @begin booleanPrototypeTable
   toString  booleanProtoFuncToString    DontEnum|Function 0

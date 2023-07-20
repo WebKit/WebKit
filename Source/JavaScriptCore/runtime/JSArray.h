@@ -148,10 +148,7 @@ public:
 
     JS_EXPORT_PRIVATE bool isIteratorProtocolFastAndNonObservable();
 
-    static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype, IndexingType indexingType)
-    {
-        return Structure::create(vm, globalObject, prototype, TypeInfo(ArrayType, StructureFlags), info(), indexingType);
-    }
+    inline static Structure* createStructure(VM&, JSGlobalObject*, JSValue, IndexingType);
         
 protected:
 #if ASSERT_ENABLED
@@ -292,5 +289,7 @@ inline bool isJSArray(JSValue v) { return v.isCell() && isJSArray(v.asCell()); }
 JS_EXPORT_PRIVATE JSArray* constructArray(JSGlobalObject*, Structure*, const ArgList& values);
 JS_EXPORT_PRIVATE JSArray* constructArray(JSGlobalObject*, Structure*, const JSValue* values, unsigned length);
 JS_EXPORT_PRIVATE JSArray* constructArrayNegativeIndexed(JSGlobalObject*, Structure*, const JSValue* values, unsigned length);
+
+ALWAYS_INLINE uint64_t toLength(JSGlobalObject*, JSObject*);
 
 } // namespace JSC

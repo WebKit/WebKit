@@ -212,6 +212,11 @@ static bool fillStructuresUsingDateArgs(JSGlobalObject* globalObject, CallFrame*
 
 const ClassInfo DatePrototype::s_info = { "Object"_s, &Base::s_info, &datePrototypeTable, nullptr, CREATE_METHOD_TABLE(DatePrototype) };
 
+Structure* DatePrototype::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+{
+    return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
+}
+
 /* Source for DatePrototype.lut.h
 @begin datePrototypeTable
   toString              dateProtoFuncToString                DontEnum|Function       0

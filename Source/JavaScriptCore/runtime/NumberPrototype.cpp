@@ -53,6 +53,11 @@ namespace JSC {
 
 const ClassInfo NumberPrototype::s_info = { "Number"_s, &NumberObject::s_info, &numberPrototypeTable, nullptr, CREATE_METHOD_TABLE(NumberPrototype) };
 
+Structure* NumberPrototype::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+{
+    return Structure::create(vm, globalObject, prototype, TypeInfo(NumberObjectType, StructureFlags), info());
+}
+
 /* Source for NumberPrototype.lut.h
 @begin numberPrototypeTable
   toLocaleString    numberProtoFuncToLocaleString   DontEnum|Function 0

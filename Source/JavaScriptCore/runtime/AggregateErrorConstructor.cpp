@@ -43,6 +43,11 @@ const ClassInfo AggregateErrorConstructor::s_info = { "Function"_s, &Base::s_inf
 static JSC_DECLARE_HOST_FUNCTION(callAggregateErrorConstructor);
 static JSC_DECLARE_HOST_FUNCTION(constructAggregateErrorConstructor);
 
+Structure* AggregateErrorConstructor::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+{
+    return Structure::create(vm, globalObject, prototype, TypeInfo(InternalFunctionType, StructureFlags), info());
+}
+
 AggregateErrorConstructor::AggregateErrorConstructor(VM& vm, Structure* structure)
     : Base(vm, structure, callAggregateErrorConstructor, constructAggregateErrorConstructor)
 {

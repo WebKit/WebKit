@@ -27,11 +27,17 @@
 #include "DOMAttributeGetterSetter.h"
 
 #include "JSCellInlines.h"
+#include "StructureInlines.h"
 
 namespace JSC {
 
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(DOMAttributeGetterSetter);
 
 const ClassInfo DOMAttributeGetterSetter::s_info = { "DOMAttributeGetterSetter"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(DOMAttributeGetterSetter) };
+
+Structure* DOMAttributeGetterSetter::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+{
+    return Structure::create(vm, globalObject, prototype, TypeInfo(CustomGetterSetterType, StructureFlags), info());
+}
 
 } // namespace JSC

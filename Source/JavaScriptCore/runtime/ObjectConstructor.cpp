@@ -58,6 +58,11 @@ STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(ObjectConstructor);
 
 const ClassInfo ObjectConstructor::s_info = { "Function"_s, &InternalFunction::s_info, &objectConstructorTable, nullptr, CREATE_METHOD_TABLE(ObjectConstructor) };
 
+Structure* ObjectConstructor::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+{
+    return Structure::create(vm, globalObject, prototype, TypeInfo(InternalFunctionType, StructureFlags), info());
+}
+
 /* Source for ObjectConstructor.lut.h
 @begin objectConstructorTable
   getPrototypeOf            objectConstructorGetPrototypeOf             DontEnum|Function 1 ObjectGetPrototypeOfIntrinsic

@@ -39,6 +39,11 @@ namespace JSC {
 
 const ClassInfo FinalizationRegistryConstructor::s_info = { "Function"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(FinalizationRegistryConstructor) };
 
+Structure* FinalizationRegistryConstructor::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+{
+    return Structure::create(vm, globalObject, prototype, TypeInfo(InternalFunctionType, StructureFlags), info());
+}
+
 void FinalizationRegistryConstructor::finishCreation(VM& vm, FinalizationRegistryPrototype* prototype)
 {
     Base::finishCreation(vm, 1, "FinalizationRegistry"_s, PropertyAdditionMode::WithoutStructureTransition);

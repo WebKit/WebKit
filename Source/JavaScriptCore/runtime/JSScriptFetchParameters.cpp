@@ -27,10 +27,16 @@
 #include "JSScriptFetchParameters.h"
 
 #include "JSCellInlines.h"
+#include "StructureInlines.h"
 
 namespace JSC {
 
 const ClassInfo JSScriptFetchParameters::s_info = { "JSScriptFetchParameters"_s, nullptr, nullptr, nullptr, CREATE_METHOD_TABLE(JSScriptFetchParameters) };
+
+Structure* JSScriptFetchParameters::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+{
+    return Structure::create(vm, globalObject, prototype, TypeInfo(JSScriptFetchParametersType, StructureFlags), info());
+}
 
 void JSScriptFetchParameters::destroy(JSCell* cell)
 {

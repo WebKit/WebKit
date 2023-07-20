@@ -31,6 +31,11 @@ STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(StringObject);
 
 const ClassInfo StringObject::s_info = { "String"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(StringObject) };
 
+Structure* StringObject::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+{
+    return Structure::create(vm, globalObject, prototype, TypeInfo(StringObjectType, StructureFlags), info());
+}
+
 StringObject::StringObject(VM& vm, Structure* structure)
     : Base(vm, structure)
 {

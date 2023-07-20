@@ -27,11 +27,17 @@
 #include "CustomGetterSetter.h"
 
 #include "JSCellInlines.h"
+#include "StructureInlines.h"
 
 namespace JSC {
 
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(CustomGetterSetter);
 
 const ClassInfo CustomGetterSetter::s_info = { "CustomGetterSetter"_s, nullptr, nullptr, nullptr, CREATE_METHOD_TABLE(CustomGetterSetter) };
+
+Structure* CustomGetterSetter::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+{
+    return Structure::create(vm, globalObject, prototype, TypeInfo(CustomGetterSetterType, StructureFlags), info());
+}
 
 } // namespace JSC

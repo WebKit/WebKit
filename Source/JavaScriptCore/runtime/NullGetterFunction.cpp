@@ -32,6 +32,11 @@ namespace JSC {
 
 const ClassInfo NullGetterFunction::s_info = { "Function"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(NullGetterFunction) };
 
+Structure* NullGetterFunction::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+{
+    return Structure::create(vm, globalObject, prototype, TypeInfo(InternalFunctionType, StructureFlags), info());
+}
+
 namespace NullGetterFunctionInternal {
 
 static JSC_DECLARE_HOST_FUNCTION(callReturnUndefined);

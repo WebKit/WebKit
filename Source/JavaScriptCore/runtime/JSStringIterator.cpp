@@ -34,6 +34,11 @@ namespace JSC {
 
 const ClassInfo JSStringIterator::s_info = { "String Iterator"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSStringIterator) };
 
+Structure* JSStringIterator::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+{
+    return Structure::create(vm, globalObject, prototype, TypeInfo(JSStringIteratorType, StructureFlags), info());
+}
+
 void JSStringIterator::finishCreation(VM& vm, JSString* iteratedString)
 {
     Base::finishCreation(vm);

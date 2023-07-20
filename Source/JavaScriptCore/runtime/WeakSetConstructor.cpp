@@ -36,6 +36,11 @@ namespace JSC {
 
 const ClassInfo WeakSetConstructor::s_info = { "Function"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(WeakSetConstructor) };
 
+Structure* WeakSetConstructor::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+{
+    return Structure::create(vm, globalObject, prototype, TypeInfo(InternalFunctionType, StructureFlags), info());
+}
+
 void WeakSetConstructor::finishCreation(VM& vm, WeakSetPrototype* prototype)
 {
     Base::finishCreation(vm, 0, "WeakSet"_s, PropertyAdditionMode::WithoutStructureTransition);

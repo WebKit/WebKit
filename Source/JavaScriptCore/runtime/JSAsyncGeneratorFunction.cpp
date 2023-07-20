@@ -35,6 +35,12 @@ namespace JSC {
 
 const ClassInfo JSAsyncGeneratorFunction::s_info = { "JSAsyncGeneratorFunction"_s,  &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSAsyncGeneratorFunction) };
 
+Structure* JSAsyncGeneratorFunction::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+{
+    ASSERT(globalObject);
+    return Structure::create(vm, globalObject, prototype, TypeInfo(JSFunctionType, StructureFlags), info());
+}
+
 JSAsyncGeneratorFunction::JSAsyncGeneratorFunction(VM& vm, FunctionExecutable* executable, JSScope* scope, Structure* structure)
     : Base(vm, executable, scope, structure)
 {

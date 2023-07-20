@@ -50,6 +50,11 @@ namespace JSC {
 
 const ClassInfo ShadowRealmPrototype::s_info = { "ShadowRealm"_s, &Base::s_info, &shadowRealmPrototypeTable, nullptr, CREATE_METHOD_TABLE(ShadowRealmPrototype) };
 
+Structure* ShadowRealmPrototype::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+{
+    return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
+}
+
 ShadowRealmPrototype::ShadowRealmPrototype(VM& vm, Structure* structure)
     : JSNonFinalObject(vm, structure)
 {

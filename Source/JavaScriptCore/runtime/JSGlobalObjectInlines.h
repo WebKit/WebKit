@@ -38,6 +38,7 @@
 #include "LinkTimeConstant.h"
 #include "ObjectPrototype.h"
 #include "StrongInlines.h"
+#include "StructureInlines.h"
 #include <wtf/Hasher.h>
 
 namespace JSC {

@@ -35,6 +35,11 @@ const ASCIILiteral WeakMapInvalidKeyError { "WeakMap keys must be objects or non
 
 const ClassInfo WeakMapPrototype::s_info = { "WeakMap"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(WeakMapPrototype) };
 
+Structure* WeakMapPrototype::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+{
+    return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
+}
+
 static JSC_DECLARE_HOST_FUNCTION(protoFuncWeakMapDelete);
 static JSC_DECLARE_HOST_FUNCTION(protoFuncWeakMapGet);
 static JSC_DECLARE_HOST_FUNCTION(protoFuncWeakMapHas);

@@ -42,6 +42,11 @@ STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(NumberConstructor);
 
 const ClassInfo NumberConstructor::s_info = { "Function"_s, &Base::s_info, &numberConstructorTable, nullptr, CREATE_METHOD_TABLE(NumberConstructor) };
 
+Structure* NumberConstructor::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue proto)
+{
+    return Structure::create(vm, globalObject, proto, TypeInfo(JSFunctionType, StructureFlags), info());
+}
+
 /* Source for NumberConstructor.lut.h
 @begin numberConstructorTable
   isFinite       JSBuiltin                           DontEnum|Function 1

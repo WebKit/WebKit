@@ -35,6 +35,11 @@ STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(GeneratorFunctionPrototype);
 
 const ClassInfo GeneratorFunctionPrototype::s_info = { "GeneratorFunction"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(GeneratorFunctionPrototype) };
 
+Structure* GeneratorFunctionPrototype::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue proto)
+{
+    return Structure::create(vm, globalObject, proto, TypeInfo(ObjectType, StructureFlags), info());
+}
+
 GeneratorFunctionPrototype::GeneratorFunctionPrototype(VM& vm, Structure* structure)
     : JSNonFinalObject(vm, structure)
 {

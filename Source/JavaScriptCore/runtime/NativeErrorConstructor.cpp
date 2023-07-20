@@ -31,6 +31,11 @@ STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(NativeErrorConstructorBase);
 
 const ClassInfo NativeErrorConstructorBase::s_info = { "Function"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(NativeErrorConstructorBase) };
 
+Structure* NativeErrorConstructorBase::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+{
+    return Structure::create(vm, globalObject, prototype, TypeInfo(InternalFunctionType, StructureFlags), info());
+}
+
 static JSC_DECLARE_HOST_FUNCTION(callEvalError);
 static JSC_DECLARE_HOST_FUNCTION(constructEvalError);
 static JSC_DECLARE_HOST_FUNCTION(callRangeError);

@@ -35,6 +35,10 @@ STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(BigIntObject);
 
 const ClassInfo BigIntObject::s_info = { "BigInt"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(BigIntObject) };
 
+Structure* BigIntObject::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+{
+    return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
+}
 
 BigIntObject* BigIntObject::create(VM& vm, JSGlobalObject* globalObject, JSValue bigInt)
 {

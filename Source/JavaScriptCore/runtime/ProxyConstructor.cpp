@@ -37,6 +37,11 @@ STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(ProxyConstructor);
 
 const ClassInfo ProxyConstructor::s_info = { "Proxy"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(ProxyConstructor) };
 
+Structure* ProxyConstructor::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+{
+    return Structure::create(vm, globalObject, prototype, TypeInfo(InternalFunctionType, StructureFlags), info());
+}
+
 ProxyConstructor* ProxyConstructor::create(VM& vm, Structure* structure)
 {
     ProxyConstructor* constructor = new (NotNull, allocateCell<ProxyConstructor>(vm)) ProxyConstructor(vm, structure);

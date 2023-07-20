@@ -534,4 +534,10 @@ ALWAYS_INLINE void HashMapImpl<HashMapBucketType>::assertBufferIsEmpty(HashMapBu
 #endif
 }
 
+template <typename Data>
+inline Structure* HashMapBucket<Data>::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+{
+    return Structure::create(vm, globalObject, prototype, TypeInfo(CellType, StructureFlags), info());
+}
+
 } // namespace JSC

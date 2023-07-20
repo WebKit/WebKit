@@ -33,6 +33,10 @@ namespace JSC {
 
 const ClassInfo NullSetterFunction::s_info = { "Function"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(NullSetterFunction) };
 
+Structure* NullSetterFunction::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+{
+    return Structure::create(vm, globalObject, prototype, TypeInfo(NullSetterFunctionType, StructureFlags), info());
+}
 
 #if ASSERT_ENABLED
 

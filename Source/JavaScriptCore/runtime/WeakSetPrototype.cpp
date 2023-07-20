@@ -37,6 +37,11 @@ const ASCIILiteral WeakSetInvalidValueError { "WeakSet values must be objects or
 
 const ClassInfo WeakSetPrototype::s_info = { "WeakSet"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(WeakSetPrototype) };
 
+Structure* WeakSetPrototype::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+{
+    return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
+}
+
 static JSC_DECLARE_HOST_FUNCTION(protoFuncWeakSetDelete);
 static JSC_DECLARE_HOST_FUNCTION(protoFuncWeakSetHas);
 

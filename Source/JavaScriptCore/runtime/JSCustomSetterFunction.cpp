@@ -32,6 +32,13 @@
 namespace JSC {
 
 const ClassInfo JSCustomSetterFunction::s_info = { "Function"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSCustomSetterFunction) };
+
+Structure* JSCustomSetterFunction::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+{
+    ASSERT(globalObject);
+    return Structure::create(vm, globalObject, prototype, TypeInfo(JSFunctionType, StructureFlags), info());
+}
+
 static JSC_DECLARE_HOST_FUNCTION(customSetterFunctionCall);
 
 JSC_DEFINE_HOST_FUNCTION(customSetterFunctionCall, (JSGlobalObject* globalObject, CallFrame* callFrame))

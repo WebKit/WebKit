@@ -21,7 +21,14 @@
 #include "config.h"
 #include "NativeErrorPrototype.h"
 
+#include "StructureInlines.h"
+
 namespace JSC {
+
+Structure* NativeErrorPrototype::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+{
+    return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
+}
 
 NativeErrorPrototype::NativeErrorPrototype(VM& vm, Structure* structure)
     : Base(vm, structure)

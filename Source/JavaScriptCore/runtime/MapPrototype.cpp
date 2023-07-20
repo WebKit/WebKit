@@ -36,6 +36,11 @@ namespace JSC {
 
 const ClassInfo MapPrototype::s_info = { "Map"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(MapPrototype) };
 
+Structure* MapPrototype::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+{
+    return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
+}
+
 static JSC_DECLARE_HOST_FUNCTION(mapProtoFuncClear);
 static JSC_DECLARE_HOST_FUNCTION(mapProtoFuncDelete);
 static JSC_DECLARE_HOST_FUNCTION(mapProtoFuncGet);

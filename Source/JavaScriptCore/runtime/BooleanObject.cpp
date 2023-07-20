@@ -29,6 +29,11 @@ STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(BooleanObject);
 
 const ClassInfo BooleanObject::s_info = { "Boolean"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(BooleanObject) };
 
+Structure* BooleanObject::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+{
+    return Structure::create(vm, globalObject, prototype, TypeInfo(BooleanObjectType, StructureFlags), info());
+}
+
 BooleanObject::BooleanObject(VM& vm, Structure* structure)
     : Base(vm, structure)
 {

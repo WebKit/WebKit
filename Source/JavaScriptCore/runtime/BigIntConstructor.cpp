@@ -57,6 +57,11 @@ const ClassInfo BigIntConstructor::s_info = { "Function"_s, &Base::s_info, &bigI
 static JSC_DECLARE_HOST_FUNCTION(callBigIntConstructor);
 static JSC_DECLARE_HOST_FUNCTION(constructBigIntConstructor);
 
+Structure* BigIntConstructor::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue proto)
+{
+    return Structure::create(vm, globalObject, proto, TypeInfo(InternalFunctionType, StructureFlags), info());
+}
+
 BigIntConstructor::BigIntConstructor(VM& vm, Structure* structure)
     : InternalFunction(vm, structure, callBigIntConstructor, constructBigIntConstructor)
 {

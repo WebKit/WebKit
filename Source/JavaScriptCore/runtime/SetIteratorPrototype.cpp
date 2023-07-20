@@ -33,6 +33,11 @@ namespace JSC {
 
 const ClassInfo SetIteratorPrototype::s_info = { "Set Iterator"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(SetIteratorPrototype) };
 
+Structure* SetIteratorPrototype::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+{
+    return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
+}
+
 void SetIteratorPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
 {
     Base::finishCreation(vm);

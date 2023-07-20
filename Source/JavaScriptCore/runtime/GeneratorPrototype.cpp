@@ -36,6 +36,11 @@ namespace JSC {
 
 const ClassInfo GeneratorPrototype::s_info = { "Generator"_s, &Base::s_info, &generatorPrototypeTable, nullptr, CREATE_METHOD_TABLE(GeneratorPrototype) };
 
+Structure* GeneratorPrototype::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+{
+    return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
+}
+
 /* Source for GeneratorPrototype.lut.h
 @begin generatorPrototypeTable
   next      JSBuiltin    DontEnum|Function 1

@@ -46,6 +46,11 @@ STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(SymbolConstructor);
 
 const ClassInfo SymbolConstructor::s_info = { "Function"_s, &Base::s_info, &symbolConstructorTable, nullptr, CREATE_METHOD_TABLE(SymbolConstructor) };
 
+Structure* SymbolConstructor::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+{
+    return Structure::create(vm, globalObject, prototype, TypeInfo(InternalFunctionType, StructureFlags), info());
+}
+
 /* Source for SymbolConstructor.lut.h
 @begin symbolConstructorTable
   for       symbolConstructorFor       DontEnum|Function 1

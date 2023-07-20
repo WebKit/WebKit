@@ -35,6 +35,11 @@ STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSGlobalProxy);
 
 const ClassInfo JSGlobalProxy::s_info = { "JSGlobalProxy"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSGlobalProxy) };
 
+Structure* JSGlobalProxy::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+{
+    return Structure::create(vm, globalObject, prototype, TypeInfo(GlobalProxyType, StructureFlags), info());
+}
+
 template<typename Visitor>
 void JSGlobalProxy::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {

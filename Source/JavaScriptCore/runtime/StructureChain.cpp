@@ -32,6 +32,11 @@ namespace JSC {
     
 const ClassInfo StructureChain::s_info = { "StructureChain"_s, nullptr, nullptr, nullptr, CREATE_METHOD_TABLE(StructureChain) };
 
+Structure* StructureChain::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+{
+    return Structure::create(vm, globalObject, prototype, TypeInfo(CellType, StructureFlags), info());
+}
+
 StructureChain::StructureChain(VM& vm, Structure* structure, StructureID* vector)
     : Base(vm, structure)
     , m_vector(vector, WriteBarrierEarlyInit)

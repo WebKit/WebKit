@@ -51,6 +51,11 @@ static JSC_DECLARE_HOST_FUNCTION(regExpProtoGetterFlags);
 
 const ClassInfo RegExpPrototype::s_info = { "Object"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(RegExpPrototype) };
 
+Structure* RegExpPrototype::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+{
+    return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
+}
+
 RegExpPrototype::RegExpPrototype(VM& vm, Structure* structure)
     : JSNonFinalObject(vm, structure)
 {

@@ -33,6 +33,11 @@ namespace JSC {
 
 const ClassInfo ShadowRealmConstructor::s_info = { "Function"_s, &InternalFunction::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(ShadowRealmConstructor) };
 
+Structure* ShadowRealmConstructor::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+{
+    return Structure::create(vm, globalObject, prototype, TypeInfo(InternalFunctionType, StructureFlags), info());
+}
+
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(ShadowRealmConstructor);
 
 static JSC_DECLARE_HOST_FUNCTION(callShadowRealm);

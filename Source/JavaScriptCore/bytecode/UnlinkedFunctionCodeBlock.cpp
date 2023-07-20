@@ -27,10 +27,16 @@
 #include "UnlinkedFunctionCodeBlock.h"
 
 #include "JSCellInlines.h"
+#include "StructureInlines.h"
 
 namespace JSC {
 
 const ClassInfo UnlinkedFunctionCodeBlock::s_info = { "UnlinkedFunctionCodeBlock"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(UnlinkedFunctionCodeBlock) };
+
+Structure* UnlinkedFunctionCodeBlock::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue proto)
+{
+    return Structure::create(vm, globalObject, proto, TypeInfo(UnlinkedFunctionCodeBlockType, StructureFlags), info());
+}
 
 void UnlinkedFunctionCodeBlock::destroy(JSCell* cell)
 {

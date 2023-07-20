@@ -36,6 +36,11 @@ namespace JSC {
 
 const ClassInfo JSModuleEnvironment::s_info = { "JSModuleEnvironment"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSModuleEnvironment) };
 
+Structure* JSModuleEnvironment::createStructure(VM& vm, JSGlobalObject* globalObject)
+{
+    return Structure::create(vm, globalObject, jsNull(), TypeInfo(ModuleEnvironmentType, StructureFlags), info());
+}
+
 JSModuleEnvironment* JSModuleEnvironment::create(
     VM& vm, Structure* structure, JSScope* currentScope, SymbolTable* symbolTable, JSValue initialValue, AbstractModuleRecord* moduleRecord)
 {

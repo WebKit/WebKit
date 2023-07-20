@@ -34,6 +34,11 @@ DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(PropertyTable);
 
 const ClassInfo PropertyTable::s_info = { "PropertyTable"_s, nullptr, nullptr, nullptr, CREATE_METHOD_TABLE(PropertyTable) };
 
+Structure* PropertyTable::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+{
+    return Structure::create(vm, globalObject, prototype, TypeInfo(CellType, StructureFlags), info());
+}
+
 PropertyTable* PropertyTable::create(VM& vm, unsigned initialCapacity)
 {
     PropertyTable* table = new (NotNull, allocateCell<PropertyTable>(vm)) PropertyTable(vm, initialCapacity);

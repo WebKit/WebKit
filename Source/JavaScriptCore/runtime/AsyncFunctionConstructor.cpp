@@ -51,6 +51,11 @@ JSC_DEFINE_HOST_FUNCTION(constructAsyncFunctionConstructor, (JSGlobalObject* glo
     return JSValue::encode(constructFunction(globalObject, callFrame, args, FunctionConstructionMode::Async, callFrame->newTarget()));
 }
 
+Structure* AsyncFunctionConstructor::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+{
+    return Structure::create(vm, globalObject, prototype, TypeInfo(InternalFunctionType, StructureFlags), info());
+}
+
 AsyncFunctionConstructor::AsyncFunctionConstructor(VM& vm, Structure* structure)
     : InternalFunction(vm, structure, callAsyncFunctionConstructor, constructAsyncFunctionConstructor)
 {

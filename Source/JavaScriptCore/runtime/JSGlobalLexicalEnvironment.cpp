@@ -32,6 +32,11 @@ namespace JSC {
 
 const ClassInfo JSGlobalLexicalEnvironment::s_info = { "JSGlobalLexicalEnvironment"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSGlobalLexicalEnvironment) };
 
+Structure* JSGlobalLexicalEnvironment::createStructure(VM& vm, JSGlobalObject* globalObject)
+{
+    return Structure::create(vm, globalObject, jsNull(), TypeInfo(GlobalLexicalEnvironmentType, StructureFlags), info());
+}
+
 void JSGlobalLexicalEnvironment::destroy(JSCell* cell)
 {
     static_cast<JSGlobalLexicalEnvironment*>(cell)->JSGlobalLexicalEnvironment::~JSGlobalLexicalEnvironment();

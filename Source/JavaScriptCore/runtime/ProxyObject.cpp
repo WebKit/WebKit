@@ -42,6 +42,17 @@ STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(ProxyObject);
 
 const ClassInfo ProxyObject::s_info = { "ProxyObject"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(ProxyObject) };
 
+Structure* ProxyObject::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype, bool isCallable)
+{
+    unsigned flags = StructureFlags;
+    if (isCallable)
+        flags |= (ImplementsHasInstance | ImplementsDefaultHasInstance);
+    Structure* result = Structure::create(vm, globalObject, prototype, TypeInfo(ProxyObjectType, flags), info(), NonArray | MayHaveIndexedAccessors);
+    RELEASE_ASSERT(!result->canAccessPropertiesQuicklyForEnumeration());
+    RELEASE_ASSERT(!result->canCachePropertyNameEnumerator(vm));
+    return result;
+}
+
 static JSC_DECLARE_HOST_FUNCTION(performProxyCall);
 static JSC_DECLARE_HOST_FUNCTION(performProxyConstruct);
 

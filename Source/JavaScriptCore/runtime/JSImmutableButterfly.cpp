@@ -37,6 +37,11 @@ namespace JSC {
 
 const ClassInfo JSImmutableButterfly::s_info = { "Immutable Butterfly"_s, nullptr, nullptr, nullptr, CREATE_METHOD_TABLE(JSImmutableButterfly) };
 
+Structure* JSImmutableButterfly::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype, IndexingType indexingType)
+{
+    return Structure::create(vm, globalObject, prototype, TypeInfo(JSImmutableButterflyType, StructureFlags), info(), indexingType);
+}
+
 template<typename Visitor>
 void JSImmutableButterfly::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {

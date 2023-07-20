@@ -35,6 +35,11 @@ namespace JSC {
 
 const ClassInfo WeakObjectRefConstructor::s_info = { "Function"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(WeakObjectRefConstructor) };
 
+Structure* WeakObjectRefConstructor::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+{
+    return Structure::create(vm, globalObject, prototype, TypeInfo(InternalFunctionType, StructureFlags), info());
+}
+
 void WeakObjectRefConstructor::finishCreation(VM& vm, WeakObjectRefPrototype* prototype)
 {
     Base::finishCreation(vm, 1, "WeakRef"_s, PropertyAdditionMode::WithoutStructureTransition);

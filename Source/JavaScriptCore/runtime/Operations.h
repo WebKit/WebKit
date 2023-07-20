@@ -24,7 +24,7 @@
 #include "CallFrame.h"
 #include "ExceptionHelpers.h"
 #include "JSBigInt.h"
-#include "JSCJSValueInlines.h"
+#include "JSGlobalObject.h"
 
 namespace JSC {
 

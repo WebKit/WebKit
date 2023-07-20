@@ -47,6 +47,11 @@ namespace JSC {
 
 const ClassInfo RegExpConstructor::s_info = { "Function"_s, &InternalFunction::s_info, &regExpConstructorTable, nullptr, CREATE_METHOD_TABLE(RegExpConstructor) };
 
+Structure* RegExpConstructor::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+{
+    return Structure::create(vm, globalObject, prototype, TypeInfo(InternalFunctionType, StructureFlags), info());
+}
+
 /* Source for RegExpConstructor.lut.h
 @begin regExpConstructorTable
     input           regExpConstructorInput          CustomAccessor|DontEnum

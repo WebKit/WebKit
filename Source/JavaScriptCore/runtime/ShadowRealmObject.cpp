@@ -42,6 +42,11 @@ namespace JSC {
 
 const ClassInfo ShadowRealmObject::s_info = { "ShadowRealm"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(ShadowRealmObject) };
 
+Structure* ShadowRealmObject::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+{
+    return Structure::create(vm, globalObject, prototype, TypeInfo(ShadowRealmType, StructureFlags), info());
+}
+
 ShadowRealmObject::ShadowRealmObject(VM& vm, Structure* structure)
     : Base(vm, structure)
 {

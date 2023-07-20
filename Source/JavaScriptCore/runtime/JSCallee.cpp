@@ -32,6 +32,12 @@ namespace JSC {
 
 const ClassInfo JSCallee::s_info = { "Callee"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSCallee) };
 
+Structure* JSCallee::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+{
+    ASSERT(globalObject);
+    return Structure::create(vm, globalObject, prototype, TypeInfo(JSCalleeType, StructureFlags), info());
+}
+
 JSCallee::JSCallee(VM& vm, JSGlobalObject* globalObject, Structure* structure)
     : Base(vm, structure)
     , m_scope(globalObject, WriteBarrierEarlyInit)

@@ -33,6 +33,11 @@ STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(GetterSetter);
 
 const ClassInfo GetterSetter::s_info = { "GetterSetter"_s, nullptr, nullptr, nullptr, CREATE_METHOD_TABLE(GetterSetter) };
 
+Structure* GetterSetter::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+{
+    return Structure::create(vm, globalObject, prototype, TypeInfo(GetterSetterType, StructureFlags), info());
+}
+
 template<typename Visitor>
 void GetterSetter::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {

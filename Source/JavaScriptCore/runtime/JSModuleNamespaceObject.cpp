@@ -34,6 +34,11 @@ namespace JSC {
 
 const ClassInfo JSModuleNamespaceObject::s_info = { "ModuleNamespaceObject"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSModuleNamespaceObject) };
 
+Structure* JSModuleNamespaceObject::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+{
+    return Structure::create(vm, globalObject, prototype, TypeInfo(ModuleNamespaceObjectType, StructureFlags), info());
+}
+
 JSModuleNamespaceObject::JSModuleNamespaceObject(VM& vm, Structure* structure)
     : Base(vm, structure)
     , m_exports()

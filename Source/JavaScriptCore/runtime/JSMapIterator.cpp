@@ -34,6 +34,11 @@ namespace JSC {
 
 const ClassInfo JSMapIterator::s_info = { "Map Iterator"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSMapIterator) };
 
+Structure* JSMapIterator::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+{
+    return Structure::create(vm, globalObject, prototype, TypeInfo(JSMapIteratorType, StructureFlags), info());
+}
+
 JSMapIterator* JSMapIterator::createWithInitialValues(VM& vm, Structure* structure)
 {
     JSMapIterator* iterator = new (NotNull, allocateCell<JSMapIterator>(vm)) JSMapIterator(vm, structure);

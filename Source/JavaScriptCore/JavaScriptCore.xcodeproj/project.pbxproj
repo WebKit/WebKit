@@ -793,6 +793,7 @@
 		262D85B71C0D650F006ACB61 /* AirFixPartialRegisterStalls.h in Headers */ = {isa = PBXBuildFile; fileRef = 262D85B51C0D650F006ACB61 /* AirFixPartialRegisterStalls.h */; };
 		2684D4381C00161C0081D663 /* AirLiveness.h in Headers */ = {isa = PBXBuildFile; fileRef = 2684D4371C00161C0081D663 /* AirLiveness.h */; };
 		269D636E1BFBE5D100101B1D /* FTLOutput.h in Headers */ = {isa = PBXBuildFile; fileRef = 269D636D1BFBE5D000101B1D /* FTLOutput.h */; };
+		2707DB792A6963300019B777 /* CallVariantInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 2707DB782A6963300019B777 /* CallVariantInlines.h */; };
 		2A05ABD61961DF2400341750 /* JSPropertyNameEnumerator.h in Headers */ = {isa = PBXBuildFile; fileRef = 2A05ABD41961DF2400341750 /* JSPropertyNameEnumerator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2A111246192FCE79005EE18D /* CustomGetterSetter.h in Headers */ = {isa = PBXBuildFile; fileRef = 2A111244192FCE79005EE18D /* CustomGetterSetter.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2A48D1911772365B00C65A5F /* APICallbackFunction.h in Headers */ = {isa = PBXBuildFile; fileRef = C211B574176A224D000E2A23 /* APICallbackFunction.h */; };
@@ -3641,6 +3642,7 @@
 		264091FA1BE2FD4100684DB2 /* AirOpcode.opcodes */ = {isa = PBXFileReference; lastKnownFileType = text; name = AirOpcode.opcodes; path = b3/air/AirOpcode.opcodes; sourceTree = "<group>"; };
 		2684D4371C00161C0081D663 /* AirLiveness.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AirLiveness.h; path = b3/air/AirLiveness.h; sourceTree = "<group>"; };
 		269D636D1BFBE5D000101B1D /* FTLOutput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTLOutput.h; path = ftl/FTLOutput.h; sourceTree = "<group>"; };
+		2707DB782A6963300019B777 /* CallVariantInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CallVariantInlines.h; sourceTree = "<group>"; };
 		28806E21155E478A93FA7B02 /* MachineContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MachineContext.h; sourceTree = "<group>"; };
 		2A05ABD31961DF2400341750 /* JSPropertyNameEnumerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSPropertyNameEnumerator.cpp; sourceTree = "<group>"; };
 		2A05ABD41961DF2400341750 /* JSPropertyNameEnumerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSPropertyNameEnumerator.h; sourceTree = "<group>"; };
@@ -8973,6 +8975,7 @@
 				627673221B680C1E00FD9F2E /* CallMode.h */,
 				0F3B7E2419A11B8000D9BC56 /* CallVariant.cpp */,
 				0F3B7E2519A11B8000D9BC56 /* CallVariant.h */,
+				2707DB782A6963300019B777 /* CallVariantInlines.h */,
 				E3E6E9CB28F3C33F00EDE7C0 /* ChainedWatchpoint.h */,
 				86281EF525B61B0600367004 /* CheckPrivateBrandStatus.cpp */,
 				86281EF325B61AF000367004 /* CheckPrivateBrandStatus.h */,
@@ -9992,6 +9995,7 @@
 				0F93329E14CA7DC50085F3C6 /* CallLinkStatus.h in Headers */,
 				627673241B680C1E00FD9F2E /* CallMode.h in Headers */,
 				0F3B7E2B19A11B8000D9BC56 /* CallVariant.h in Headers */,
+				2707DB792A6963300019B777 /* CallVariantInlines.h in Headers */,
 				FE80C1971D775CDD008510C0 /* CatchScope.h in Headers */,
 				0F24E54217EA9F5900ABB217 /* CCallHelpers.h in Headers */,
 				0F96303A1D4192C8005609D9 /* CellAttributes.h in Headers */,

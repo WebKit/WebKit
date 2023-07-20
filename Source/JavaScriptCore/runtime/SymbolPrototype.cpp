@@ -45,6 +45,11 @@ namespace JSC {
 
 const ClassInfo SymbolPrototype::s_info = { "Symbol"_s, &Base::s_info, &symbolPrototypeTable, nullptr, CREATE_METHOD_TABLE(SymbolPrototype) };
 
+Structure* SymbolPrototype::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+{
+    return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
+}
+
 /* Source for SymbolPrototype.lut.h
 @begin symbolPrototypeTable
   description       symbolProtoGetterDescription    DontEnum|ReadOnly|CustomAccessor

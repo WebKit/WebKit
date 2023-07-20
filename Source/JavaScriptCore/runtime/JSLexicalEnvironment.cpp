@@ -36,6 +36,11 @@ namespace JSC {
 
 const ClassInfo JSLexicalEnvironment::s_info = { "JSLexicalEnvironment"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSLexicalEnvironment) };
 
+Structure* JSLexicalEnvironment::createStructure(VM& vm, JSGlobalObject* globalObject)
+{
+    return Structure::create(vm, globalObject, jsNull(), TypeInfo(LexicalEnvironmentType, StructureFlags), info());
+}
+
 template<typename Visitor>
 void JSLexicalEnvironment::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {

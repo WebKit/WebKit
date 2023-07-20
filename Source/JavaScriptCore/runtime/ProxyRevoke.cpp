@@ -35,6 +35,11 @@ STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(ProxyRevoke);
 
 const ClassInfo ProxyRevoke::s_info = { "ProxyRevoke"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(ProxyRevoke) };
 
+Structure* ProxyRevoke::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+{
+    return Structure::create(vm, globalObject, prototype, TypeInfo(InternalFunctionType, StructureFlags), info());
+}
+
 ProxyRevoke* ProxyRevoke::create(VM& vm, Structure* structure, ProxyObject* proxy)
 {
     ProxyRevoke* revoke = new (NotNull, allocateCell<ProxyRevoke>(vm)) ProxyRevoke(vm, structure, proxy);

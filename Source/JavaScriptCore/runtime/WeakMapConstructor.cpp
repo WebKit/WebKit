@@ -35,6 +35,11 @@ namespace JSC {
 
 const ClassInfo WeakMapConstructor::s_info = { "Function"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(WeakMapConstructor) };
 
+Structure* WeakMapConstructor::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+{
+    return Structure::create(vm, globalObject, prototype, TypeInfo(InternalFunctionType, StructureFlags), info());
+}
+
 void WeakMapConstructor::finishCreation(VM& vm, WeakMapPrototype* prototype)
 {
     Base::finishCreation(vm, 0, "WeakMap"_s, PropertyAdditionMode::WithoutStructureTransition);

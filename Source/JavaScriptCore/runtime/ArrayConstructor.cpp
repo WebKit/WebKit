@@ -50,6 +50,11 @@ const ClassInfo ArrayConstructor::s_info = { "Function"_s, &InternalFunction::s_
 static JSC_DECLARE_HOST_FUNCTION(callArrayConstructor);
 static JSC_DECLARE_HOST_FUNCTION(constructWithArrayConstructor);
 
+Structure* ArrayConstructor::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+{
+    return Structure::create(vm, globalObject, prototype, TypeInfo(InternalFunctionType, StructureFlags), info());
+}
+
 ArrayConstructor::ArrayConstructor(VM& vm, Structure* structure)
     : InternalFunction(vm, structure, callArrayConstructor, constructWithArrayConstructor)
 {

@@ -42,6 +42,11 @@ namespace JSC {
 
 const ClassInfo DateConstructor::s_info = { "Function"_s, &InternalFunction::s_info, &dateConstructorTable, nullptr, CREATE_METHOD_TABLE(DateConstructor) };
 
+Structure* DateConstructor::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+{
+    return Structure::create(vm, globalObject, prototype, TypeInfo(InternalFunctionType, StructureFlags), info());
+}
+
 /* Source for DateConstructor.lut.h
 @begin dateConstructorTable
   parse     dateParse   DontEnum|Function 1

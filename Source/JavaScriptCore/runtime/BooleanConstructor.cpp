@@ -30,6 +30,11 @@ STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(BooleanConstructor);
 
 const ClassInfo BooleanConstructor::s_info = { "Function"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(BooleanConstructor) };
 
+Structure* BooleanConstructor::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+{
+    return Structure::create(vm, globalObject, prototype, TypeInfo(JSFunctionType, StructureFlags), info());
+}
+
 static JSC_DECLARE_HOST_FUNCTION(callBooleanConstructor);
 static JSC_DECLARE_HOST_FUNCTION(constructWithBooleanConstructor);
 

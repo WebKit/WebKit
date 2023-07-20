@@ -40,6 +40,11 @@ namespace JSC {
 
 const ClassInfo ErrorPrototype::s_info = { "Object"_s, &Base::s_info, &errorPrototypeTable, nullptr, CREATE_METHOD_TABLE(ErrorPrototype) };
 
+Structure* ErrorPrototype::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+{
+    return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
+}
+
 /* Source for ErrorPrototype.lut.h
 @begin errorPrototypeTable
   toString          errorProtoFuncToString         DontEnum|Function 0

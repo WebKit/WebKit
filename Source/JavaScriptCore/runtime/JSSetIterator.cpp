@@ -34,6 +34,11 @@ namespace JSC {
 
 const ClassInfo JSSetIterator::s_info = { "Set Iterator"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSSetIterator) };
 
+Structure* JSSetIterator::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+{
+    return Structure::create(vm, globalObject, prototype, TypeInfo(JSSetIteratorType, StructureFlags), info());
+}
+
 JSSetIterator* JSSetIterator::createWithInitialValues(VM& vm, Structure* structure)
 {
     JSSetIterator* iterator = new (NotNull, allocateCell<JSSetIterator>(vm)) JSSetIterator(vm, structure);

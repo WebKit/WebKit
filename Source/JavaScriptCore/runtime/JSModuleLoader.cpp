@@ -65,6 +65,11 @@ STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSModuleLoader);
 
 const ClassInfo JSModuleLoader::s_info = { "ModuleLoader"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSModuleLoader) };
 
+Structure* JSModuleLoader::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+{
+    return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
+}
+
 JSModuleLoader::JSModuleLoader(VM& vm, Structure* structure)
     : JSNonFinalObject(vm, structure)
 {

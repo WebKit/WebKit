@@ -37,6 +37,12 @@ namespace JSC {
 
 const ClassInfo JSRemoteFunction::s_info = { "Function"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSRemoteFunction) };
 
+Structure* JSRemoteFunction::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+{
+    ASSERT(globalObject);
+    return Structure::create(vm, globalObject, prototype, TypeInfo(JSFunctionType, StructureFlags), info());
+}
+
 JSRemoteFunction::JSRemoteFunction(VM& vm, NativeExecutable* executable, JSGlobalObject* globalObject, Structure* structure, JSObject* targetFunction)
     : Base(vm, executable, globalObject, structure)
     , m_targetFunction(targetFunction, WriteBarrierEarlyInit)

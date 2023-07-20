@@ -39,6 +39,11 @@ namespace JSC {
 
 const ClassInfo MapConstructor::s_info = { "Function"_s, &Base::s_info, &mapConstructorTable, nullptr, CREATE_METHOD_TABLE(MapConstructor) };
 
+Structure* MapConstructor::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+{
+    return Structure::create(vm, globalObject, prototype, TypeInfo(InternalFunctionType, StructureFlags), info());
+}
+
 /* Source for MapConstructor.lut.h
 @begin mapConstructorTable
 @end

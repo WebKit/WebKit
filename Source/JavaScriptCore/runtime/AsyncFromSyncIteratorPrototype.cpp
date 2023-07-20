@@ -35,6 +35,11 @@ namespace JSC {
 
 const ClassInfo AsyncFromSyncIteratorPrototype::s_info = { "AsyncFromSyncIterator"_s, &Base::s_info, &asyncFromSyncIteratorPrototypeTable, nullptr, CREATE_METHOD_TABLE(AsyncFromSyncIteratorPrototype) };
 
+Structure* AsyncFromSyncIteratorPrototype::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue proto)
+{
+    return Structure::create(vm, globalObject, proto, TypeInfo(ObjectType, StructureFlags), info());
+}
+
 AsyncFromSyncIteratorPrototype::AsyncFromSyncIteratorPrototype(VM& vm, Structure* structure)
     : Base(vm, structure)
 {

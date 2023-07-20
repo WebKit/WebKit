@@ -31,6 +31,7 @@
 #include "ModuleProgramCodeBlock.h"
 
 #include "JSCellInlines.h"
+#include "StructureInlines.h"
 
 namespace JSC {
 
@@ -38,5 +39,10 @@ const ClassInfo ModuleProgramCodeBlock::s_info = {
     "ModuleProgramCodeBlock"_s, &Base::s_info, nullptr, nullptr,
     CREATE_METHOD_TABLE(ModuleProgramCodeBlock)
 };
+
+Structure* ModuleProgramCodeBlock::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+{
+    return Structure::create(vm, globalObject, prototype, TypeInfo(CodeBlockType, StructureFlags), info());
+}
 
 } // namespace JSC

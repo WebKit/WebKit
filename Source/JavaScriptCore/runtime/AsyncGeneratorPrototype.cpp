@@ -43,6 +43,11 @@ const ClassInfo AsyncGeneratorPrototype::s_info = { "AsyncGenerator"_s, &Base::s
 @end
 */
 
+Structure* AsyncGeneratorPrototype::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+{
+    return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
+}
+
 void AsyncGeneratorPrototype::finishCreation(VM& vm)
 {
     Base::finishCreation(vm);

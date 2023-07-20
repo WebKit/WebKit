@@ -35,6 +35,10 @@ namespace JSC {
 
 const ClassInfo JSTemplateObjectDescriptor::s_info = { "TemplateObjectDescriptor"_s, nullptr, nullptr, nullptr, CREATE_METHOD_TABLE(JSTemplateObjectDescriptor) };
 
+Structure* JSTemplateObjectDescriptor::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+{
+    return Structure::create(vm, globalObject, prototype, TypeInfo(CellType, StructureFlags), info());
+}
 
 JSTemplateObjectDescriptor::JSTemplateObjectDescriptor(VM& vm, Ref<TemplateObjectDescriptor>&& descriptor, int endOffset)
     : Base(vm, vm.templateObjectDescriptorStructure.get())

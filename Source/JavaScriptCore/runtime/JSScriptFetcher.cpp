@@ -27,10 +27,16 @@
 #include "JSScriptFetcher.h"
 
 #include "JSCellInlines.h"
+#include "StructureInlines.h"
 
 namespace JSC {
 
 const ClassInfo JSScriptFetcher::s_info = { "JSScriptFetcher"_s, nullptr, nullptr, nullptr, CREATE_METHOD_TABLE(JSScriptFetcher) };
+
+Structure* JSScriptFetcher::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+{
+    return Structure::create(vm, globalObject, prototype, TypeInfo(JSScriptFetcherType, StructureFlags), info());
+}
 
 void JSScriptFetcher::destroy(JSCell* cell)
 {

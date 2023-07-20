@@ -33,6 +33,12 @@ namespace JSC {
 
 const ClassInfo JSNativeStdFunction::s_info = { "Function"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSNativeStdFunction) };
 
+Structure* JSNativeStdFunction::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+{
+    ASSERT(globalObject);
+    return Structure::create(vm, globalObject, prototype, TypeInfo(JSFunctionType, StructureFlags), info());
+}
+
 static JSC_DECLARE_HOST_FUNCTION(runStdFunction);
 
 JSNativeStdFunction::JSNativeStdFunction(VM& vm, NativeExecutable* executable, JSGlobalObject* globalObject, Structure* structure, NativeStdFunction&& function)

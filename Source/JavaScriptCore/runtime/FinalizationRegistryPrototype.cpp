@@ -35,6 +35,11 @@ namespace JSC {
 
 const ClassInfo FinalizationRegistryPrototype::s_info = { "FinalizationRegistry"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(FinalizationRegistryPrototype) };
 
+Structure* FinalizationRegistryPrototype::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+{
+    return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
+}
+
 static JSC_DECLARE_HOST_FUNCTION(protoFuncFinalizationRegistryRegister);
 static JSC_DECLARE_HOST_FUNCTION(protoFuncFinalizationRegistryUnregister);
 

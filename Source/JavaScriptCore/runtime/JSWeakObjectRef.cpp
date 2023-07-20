@@ -32,6 +32,11 @@ namespace JSC {
 
 const ClassInfo JSWeakObjectRef::s_info = { "WeakRef"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSWeakObjectRef) };
 
+Structure* JSWeakObjectRef::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+{
+    return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
+}
+
 void JSWeakObjectRef::finishCreation(VM& vm, JSCell* value)
 {
     m_lastAccessVersion = vm.currentWeakRefVersion();

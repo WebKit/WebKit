@@ -27,10 +27,16 @@
 #include "UnlinkedEvalCodeBlock.h"
 
 #include "JSCellInlines.h"
+#include "StructureInlines.h"
 
 namespace JSC {
 
 const ClassInfo UnlinkedEvalCodeBlock::s_info = { "UnlinkedEvalCodeBlock"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(UnlinkedEvalCodeBlock) };
+
+Structure* UnlinkedEvalCodeBlock::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue proto)
+{
+    return Structure::create(vm, globalObject, proto, TypeInfo(UnlinkedEvalCodeBlockType, StructureFlags), info());
+}
 
 void UnlinkedEvalCodeBlock::destroy(JSCell* cell)
 {

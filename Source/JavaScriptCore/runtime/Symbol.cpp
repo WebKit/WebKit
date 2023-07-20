@@ -34,6 +34,11 @@ namespace JSC {
 
 const ClassInfo Symbol::s_info = { "symbol"_s, nullptr, nullptr, nullptr, CREATE_METHOD_TABLE(Symbol) };
 
+Structure* Symbol::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+{
+    return Structure::create(vm, globalObject, prototype, TypeInfo(SymbolType, StructureFlags), info());
+}
+
 Symbol::Symbol(VM& vm)
     : Base(vm, vm.symbolStructure.get())
     , m_privateName(SymbolImpl::createNullSymbol())

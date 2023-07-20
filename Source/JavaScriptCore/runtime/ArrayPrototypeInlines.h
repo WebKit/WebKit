@@ -101,4 +101,9 @@ ALWAYS_INLINE std::pair<SpeciesConstructResult, JSObject*> speciesConstructArray
     return std::pair { SpeciesConstructResult::CreatedObject, newObject };
 }
 
+inline Structure* ArrayPrototype::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+{
+    return Structure::create(vm, globalObject, prototype, TypeInfo(DerivedArrayType, StructureFlags), info(), ArrayClass);
+}
+
 } // namespace JSC

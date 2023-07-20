@@ -33,6 +33,11 @@ namespace JSC {
 
 const ClassInfo MapIteratorPrototype::s_info = { "Map Iterator"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(MapIteratorPrototype) };
 
+Structure* MapIteratorPrototype::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+{
+    return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
+}
+
 void MapIteratorPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject)
 {
     Base::finishCreation(vm);

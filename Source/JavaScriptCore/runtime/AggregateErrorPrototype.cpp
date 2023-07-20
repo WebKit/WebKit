@@ -33,6 +33,11 @@
 
 namespace JSC {
 
+Structure* AggregateErrorPrototype::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+{
+    return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
+}
+
 AggregateErrorPrototype::AggregateErrorPrototype(VM& vm, Structure* structure)
     : Base(vm, structure)
 {

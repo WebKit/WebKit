@@ -34,6 +34,11 @@ STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(StrictEvalActivation);
 
 const ClassInfo StrictEvalActivation::s_info = { "Object"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(StrictEvalActivation) };
 
+Structure* StrictEvalActivation::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+{
+    return Structure::create(vm, globalObject, prototype, TypeInfo(StrictEvalActivationType, StructureFlags), info());
+}
+
 StrictEvalActivation::StrictEvalActivation(VM& vm, Structure* structure, JSScope* currentScope)
     : Base(vm, structure, currentScope)
 {

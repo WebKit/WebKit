@@ -76,6 +76,11 @@ static JSC_DECLARE_HOST_FUNCTION(consoleProtoFuncScreenshot);
 
 const ClassInfo ConsoleObject::s_info = { "console"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(ConsoleObject) };
 
+Structure* ConsoleObject::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+{
+    return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
+}
+
 ConsoleObject::ConsoleObject(VM& vm, Structure* structure)
     : JSNonFinalObject(vm, structure)
 {

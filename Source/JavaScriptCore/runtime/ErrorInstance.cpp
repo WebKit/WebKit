@@ -33,6 +33,11 @@ namespace JSC {
 
 const ClassInfo ErrorInstance::s_info = { "Error"_s, &JSNonFinalObject::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(ErrorInstance) };
 
+Structure* ErrorInstance::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+{
+    return Structure::create(vm, globalObject, prototype, TypeInfo(ErrorInstanceType, StructureFlags), info());
+}
+
 ErrorInstance::ErrorInstance(VM& vm, Structure* structure, ErrorType errorType)
     : Base(vm, structure)
     , m_errorType(errorType)

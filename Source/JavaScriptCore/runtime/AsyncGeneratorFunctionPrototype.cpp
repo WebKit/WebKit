@@ -33,6 +33,11 @@ namespace JSC {
 
 const ClassInfo AsyncGeneratorFunctionPrototype::s_info = { "AsyncGeneratorFunction"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(AsyncGeneratorFunctionPrototype) };
 
+Structure* AsyncGeneratorFunctionPrototype::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue proto)
+{
+    return Structure::create(vm, globalObject, proto, TypeInfo(ObjectType, StructureFlags), info());
+}
+
 AsyncGeneratorFunctionPrototype::AsyncGeneratorFunctionPrototype(VM& vm, Structure* structure)
     : JSC::JSNonFinalObject(vm, structure)
 {

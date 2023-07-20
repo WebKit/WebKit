@@ -32,4 +32,9 @@ namespace JSC {
 
 const ClassInfo JSWeakSet::s_info = { "WeakSet"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSWeakSet) };
 
+Structure* JSWeakSet::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+{
+    return Structure::create(vm, globalObject, prototype, TypeInfo(JSWeakSetType, StructureFlags), info());
+}
+
 }

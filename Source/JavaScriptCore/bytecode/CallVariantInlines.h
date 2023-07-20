@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -20,48 +20,21 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
 #pragma once
 
-#include "HashMapImpl.h"
-#include "JSObject.h"
+#include "CallVariant.h"
+#include "ExecutableBaseInlines.h"
 
 namespace JSC {
 
-class JSSet final : public HashMapImpl<HashMapBucket<HashMapBucketDataKey>> {
-    using Base = HashMapImpl<HashMapBucket<HashMapBucketDataKey>>;
-public:
+inline Intrinsic CallVariant::intrinsicFor(CodeSpecializationKind kind) const
+{
+    if (ExecutableBase* executable = this->executable())
+        return executable->intrinsicFor(kind);
+    return NoIntrinsic;
+}
 
-    DECLARE_EXPORT_INFO;
-
-    template<typename CellType, SubspaceAccess mode>
-    static GCClient::IsoSubspace* subspaceFor(VM& vm)
-    {
-        return vm.setSpace<mode>();
-    }
-
-    inline static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
-
-    static JSSet* create(VM& vm, Structure* structure)
-    {
-        JSSet* instance = new (NotNull, allocateCell<JSSet>(vm)) JSSet(vm, structure);
-        instance->finishCreation(vm);
-        return instance;
-    }
-
-    static bool isAddFastAndNonObservable(Structure*);
-    bool isIteratorProtocolFastAndNonObservable();
-    JSSet* clone(JSGlobalObject*, VM&, Structure*);
-
-private:
-    JSSet(VM& vm, Structure* structure)
-        : Base(vm, structure)
-    {
-    }
-};
-
-static_assert(std::is_final<JSSet>::value, "Required for JSType based casting");
-
-} // namespace JSC
+} // namespace WTF

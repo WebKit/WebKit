@@ -65,6 +65,11 @@ static JSC_DECLARE_HOST_FUNCTION(mathProtoFuncIMul);
 
 const ClassInfo MathObject::s_info = { "Math"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(MathObject) };
 
+Structure* MathObject::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
+{
+    return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
+}
+
 MathObject::MathObject(VM& vm, Structure* structure)
     : JSNonFinalObject(vm, structure)
 {
