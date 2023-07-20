@@ -1815,3 +1815,5 @@ imported/w3c/web-platform-tests/html/semantics/embedded-content/the-iframe-eleme
 webkit.org/b/259160 http/tests/privateClickMeasurement/triggering-event-with-attribution-source-through-fetch-keepalive.html [ Pass Failure ]
 
 webkit.org/b/259228 [ Release ] fast/dom/lazy-image-loading-document-leak.html [ Pass Failure ]
+
+webkit.org/b/259374 http/tests/inspector/network/xhr-request-type.html [ Failure ]
