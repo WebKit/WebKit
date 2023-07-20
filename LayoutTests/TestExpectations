@@ -4987,7 +4987,7 @@ webkit.org/b/225247 [ Debug ] fast/multicol/span/float-becomes-spanner-crash.htm
 
 # Needs display box support.
 [ Debug ] fast/layoutformattingcontext/ [ Skip ]
-[ Release ] fast/layoutformattingcontext/ [ ImageOnlyFailure Pass ]
+[ Release ] fast/layoutformattingcontext/ [ Skip ]
 
 # This webstorage test has crashed since it was imported.
 imported/w3c/web-platform-tests/webstorage/storage_session_setitem_quotaexceedederr.window.html [ Skip ]
