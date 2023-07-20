@@ -107,4 +107,100 @@ TEST(WTF_StringCommon, FindIgnoringASCIICaseWithoutLengthIdentical)
     EXPECT_EQ(WTF::findIgnoringASCIICaseWithoutLength("needley", "needle"), 0UL);
 }
 
+TEST(WTF_StringCommon, CopyElements64To8)
+{
+    Vector<uint8_t> destination;
+    destination.resize(4096);
+
+    Vector<uint64_t> source;
+    source.reserveInitialCapacity(4096);
+    for (unsigned i = 0; i < 4096; ++i)
+        source.append(i);
+
+    WTF::copyElements(destination.data(), source.data(), 4096);
+    for (unsigned i = 0; i < 4096; ++i)
+        EXPECT_EQ(destination[i], static_cast<uint8_t>(i));
+}
+
+TEST(WTF_StringCommon, CopyElements64To16)
+{
+    Vector<uint16_t> destination;
+    destination.resize(4096 + 4 + 4096);
+
+    Vector<uint64_t> source;
+    source.reserveInitialCapacity(4096 + 4 + 4096);
+    for (unsigned i = 0; i < 4096; ++i)
+        source.append(i);
+    source.append(0xffff);
+    source.append(0x10000);
+    source.append(UINT64_MAX);
+    source.append(0x7fff);
+    for (unsigned i = 0; i < 4096; ++i)
+        source.append(i);
+
+    WTF::copyElements(destination.data(), source.data(), 4096 + 4 + 4096);
+    for (unsigned i = 0; i < 4096; ++i)
+        EXPECT_EQ(destination[i], static_cast<uint16_t>(i));
+    EXPECT_EQ(destination[4096 + 0], 0xffffU);
+    EXPECT_EQ(destination[4096 + 1], 0x0000U);
+    EXPECT_EQ(destination[4096 + 2], 0xffffU);
+    EXPECT_EQ(destination[4096 + 3], 0x7fffU);
+    for (unsigned i = 0; i < 4096; ++i)
+        EXPECT_EQ(destination[4096 + 4 + i], static_cast<uint16_t>(i));
+}
+
+TEST(WTF_StringCommon, CopyElements64To32)
+{
+    Vector<uint32_t> destination;
+    destination.resize(4096 + 4 + 4096);
+
+    Vector<uint64_t> source;
+    source.reserveInitialCapacity(4096 + 4 + 4096);
+    for (unsigned i = 0; i < 4096; ++i)
+        source.append(i);
+    source.append(0xffffffffU);
+    source.append(0x100000000ULL);
+    source.append(UINT64_MAX);
+    source.append(0x7fffffffU);
+    for (unsigned i = 0; i < 4096; ++i)
+        source.append(i);
+
+    WTF::copyElements(destination.data(), source.data(), 4096 + 4 + 4096);
+    for (unsigned i = 0; i < 4096; ++i)
+        EXPECT_EQ(destination[i], static_cast<uint32_t>(i));
+    EXPECT_EQ(destination[4096 + 0], 0xffffffffU);
+    EXPECT_EQ(destination[4096 + 1], 0x00000000U);
+    EXPECT_EQ(destination[4096 + 2], 0xffffffffU);
+    EXPECT_EQ(destination[4096 + 3], 0x7fffffffU);
+    for (unsigned i = 0; i < 4096; ++i)
+        EXPECT_EQ(destination[4096 + 4 + i], static_cast<uint32_t>(i));
+}
+
+TEST(WTF_StringCommon, CopyElements32To16)
+{
+    Vector<uint16_t> destination;
+    destination.resize(4096 + 4 + 4096);
+
+    Vector<uint32_t> source;
+    source.reserveInitialCapacity(4096 + 4 + 4096);
+    for (unsigned i = 0; i < 4096; ++i)
+        source.append(i);
+    source.append(0xffff);
+    source.append(0x10000);
+    source.append(UINT32_MAX);
+    source.append(0x7fff);
+    for (unsigned i = 0; i < 4096; ++i)
+        source.append(i);
+
+    WTF::copyElements(destination.data(), source.data(), 4096 + 4 + 4096);
+    for (unsigned i = 0; i < 4096; ++i)
+        EXPECT_EQ(destination[i], static_cast<uint16_t>(i));
+    EXPECT_EQ(destination[4096 + 0], 0xffffU);
+    EXPECT_EQ(destination[4096 + 1], 0x0000U);
+    EXPECT_EQ(destination[4096 + 2], 0xffffU);
+    EXPECT_EQ(destination[4096 + 3], 0x7fffU);
+    for (unsigned i = 0; i < 4096; ++i)
+        EXPECT_EQ(destination[4096 + 4 + i], static_cast<uint16_t>(i));
+}
+
 } // namespace

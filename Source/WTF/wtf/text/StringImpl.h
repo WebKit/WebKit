@@ -42,10 +42,6 @@
 #include <wtf/text/UTF8ConversionError.h>
 #include <wtf/unicode/UTF8Conversion.h>
 
-#if CPU(ARM64)
-#include <arm_neon.h>
-#endif
-
 #if USE(CF)
 typedef const struct __CFString * CFStringRef;
 #endif
@@ -406,9 +402,29 @@ public:
     ALWAYS_INLINE static StringImpl* empty() { return reinterpret_cast<StringImpl*>(&s_emptyAtomString); }
 
     // FIXME: Do these functions really belong in StringImpl?
-    template<typename CharacterType> static void copyCharacters(CharacterType* destination, const CharacterType* source, unsigned length);
-    static void copyCharacters(UChar* destination, const LChar* source, unsigned length);
-    static void copyCharacters(LChar* destination, const UChar* source, unsigned length);
+    template<typename CharacterType>
+    ALWAYS_INLINE static void copyCharacters(CharacterType* destination, const CharacterType* source, unsigned length)
+    {
+        return copyElements(destination, source, length);
+    }
+
+    ALWAYS_INLINE static void copyCharacters(UChar* destination, const LChar* source, unsigned length)
+    {
+        static_assert(sizeof(UChar) == sizeof(uint16_t));
+        static_assert(sizeof(LChar) == sizeof(uint8_t));
+        return copyElements(bitwise_cast<uint16_t*>(destination), bitwise_cast<const uint8_t*>(source), length);
+    }
+
+    ALWAYS_INLINE static void copyCharacters(LChar* destination, const UChar* source, unsigned length)
+    {
+        static_assert(sizeof(UChar) == sizeof(uint16_t));
+        static_assert(sizeof(LChar) == sizeof(uint8_t));
+#if ASSERT_ENABLED
+        for (unsigned i = 0; i < length; ++i)
+            ASSERT(isLatin1(source[i]));
+#endif
+        return copyElements(bitwise_cast<uint8_t*>(destination), bitwise_cast<const uint16_t*>(source), length);
+    }
 
     // Some string features, like reference counting and the atomicity flag, are not
     // thread-safe. We achieve thread safety by isolation, giving each thread
@@ -1141,128 +1157,6 @@ inline void StringImpl::deref()
         return;
     }
     m_refCount = tempRefCount;
-}
-
-template<typename CharacterType> inline void StringImpl::copyCharacters(CharacterType* destination, const CharacterType* source, unsigned length)
-{
-    if (length == 1)
-        *destination = *source;
-    else if (length)
-        std::memcpy(destination, source, length * sizeof(CharacterType));
-}
-
-inline void StringImpl::copyCharacters(UChar* destination, const LChar* source, unsigned length)
-{
-#if CPU(ARM64)
-    // SIMD Upconvert.
-    const auto* end = destination + length;
-    constexpr uintptr_t memoryAccessSize = 64;
-
-    if (length >= memoryAccessSize) {
-        constexpr uintptr_t memoryAccessMask = memoryAccessSize - 1;
-        const auto* simdEnd = destination + (length & ~memoryAccessMask);
-        uint8x16_t zeros = vdupq_n_u8(0);
-        do {
-            uint8x16x4_t bytes = vld1q_u8_x4(bitwise_cast<const uint8_t*>(source));
-            source += memoryAccessSize;
-
-            vst2q_u8(bitwise_cast<uint8_t*>(destination), (uint8x16x2_t { bytes.val[0], zeros }));
-            destination += memoryAccessSize / 4;
-            vst2q_u8(bitwise_cast<uint8_t*>(destination), (uint8x16x2_t { bytes.val[1], zeros }));
-            destination += memoryAccessSize / 4;
-            vst2q_u8(bitwise_cast<uint8_t*>(destination), (uint8x16x2_t { bytes.val[2], zeros }));
-            destination += memoryAccessSize / 4;
-            vst2q_u8(bitwise_cast<uint8_t*>(destination), (uint8x16x2_t { bytes.val[3], zeros }));
-            destination += memoryAccessSize / 4;
-        } while (destination != simdEnd);
-    }
-
-    while (destination != end)
-        *destination++ = *source++;
-#else
-    for (unsigned i = 0; i < length; ++i)
-        destination[i] = source[i];
-#endif
-}
-
-inline void StringImpl::copyCharacters(LChar* destination, const UChar* source, unsigned length)
-{
-#if ASSERT_ENABLED
-    for (unsigned i = 0; i < length; ++i)
-        ASSERT(isLatin1(source[i]));
-#endif
-
-#if CPU(X86_SSE2)
-    const uintptr_t memoryAccessSize = 16; // Memory accesses on 16 byte (128 bit) alignment
-    const uintptr_t memoryAccessMask = memoryAccessSize - 1;
-
-    unsigned i = 0;
-    for (; i < length && !isAlignedTo<memoryAccessMask>(&source[i]); ++i)
-        destination[i] = source[i];
-
-    const uintptr_t sourceLoadSize = 32; // Process 32 bytes (16 UChars) each iteration
-    const unsigned ucharsPerLoop = sourceLoadSize / sizeof(UChar);
-    if (length > ucharsPerLoop) {
-        const unsigned endLength = length - ucharsPerLoop + 1;
-        for (; i < endLength; i += ucharsPerLoop) {
-            __m128i first8UChars = _mm_load_si128(reinterpret_cast<const __m128i*>(&source[i]));
-            __m128i second8UChars = _mm_load_si128(reinterpret_cast<const __m128i*>(&source[i+8]));
-            __m128i packedChars = _mm_packus_epi16(first8UChars, second8UChars);
-            _mm_storeu_si128(reinterpret_cast<__m128i*>(&destination[i]), packedChars);
-        }
-    }
-
-    for (; i < length; ++i)
-        destination[i] = source[i];
-#elif COMPILER(GCC_COMPATIBLE) && CPU(ARM64) && !defined(__ILP32__) && defined(NDEBUG)
-    const LChar* const end = destination + length;
-    const uintptr_t memoryAccessSize = 16;
-
-    if (length >= memoryAccessSize) {
-        const uintptr_t memoryAccessMask = memoryAccessSize - 1;
-
-        // Vector interleaved unpack, we only store the lower 8 bits.
-        const uintptr_t lengthLeft = end - destination;
-        const LChar* const simdEnd = destination + (lengthLeft & ~memoryAccessMask);
-        do {
-            asm("ld2   { v0.16B, v1.16B }, [%[SOURCE]], #32\n\t"
-                "st1   { v0.16B }, [%[DESTINATION]], #16\n\t"
-                : [SOURCE]"+r" (source), [DESTINATION]"+r" (destination)
-                :
-                : "memory", "v0", "v1");
-        } while (destination != simdEnd);
-    }
-
-    while (destination != end)
-        *destination++ = static_cast<LChar>(*source++);
-#elif COMPILER(GCC_COMPATIBLE) && CPU(ARM_NEON) && !(CPU(BIG_ENDIAN) || CPU(MIDDLE_ENDIAN)) && defined(NDEBUG)
-    const LChar* const end = destination + length;
-    const uintptr_t memoryAccessSize = 8;
-
-    if (length >= (2 * memoryAccessSize) - 1) {
-        // Prefix: align dst on 64 bits.
-        const uintptr_t memoryAccessMask = memoryAccessSize - 1;
-        while (!isAlignedTo<memoryAccessMask>(destination))
-            *destination++ = static_cast<LChar>(*source++);
-
-        // Vector interleaved unpack, we only store the lower 8 bits.
-        const uintptr_t lengthLeft = end - destination;
-        const LChar* const simdEnd = end - (lengthLeft % memoryAccessSize);
-        do {
-            asm("vld2.8   { d0-d1 }, [%[SOURCE]] !\n\t"
-                "vst1.8   { d0 }, [%[DESTINATION],:64] !\n\t"
-                : [SOURCE]"+r" (source), [DESTINATION]"+r" (destination)
-                :
-                : "memory", "d0", "d1");
-        } while (destination != simdEnd);
-    }
-
-    while (destination != end)
-        *destination++ = static_cast<LChar>(*source++);
-#else
-    for (unsigned i = 0; i < length; ++i)
-        destination[i] = static_cast<LChar>(source[i]);
-#endif
 }
 
 inline UChar StringImpl::at(unsigned i) const
