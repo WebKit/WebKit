@@ -52,6 +52,8 @@ public:
     void flush(Function<void()>&&);
     void close() { m_isClosed = true; }
 
+    bool isStarted() const { return m_harness->isStarted(); }
+
 private:
     GStreamerInternalVideoDecoder(const String& codecName, const VideoDecoder::Config&, VideoDecoder::OutputCallback&&, VideoDecoder::PostTaskCallback&&, GRefPtr<GstElement>&&);
 
@@ -79,6 +81,11 @@ bool GStreamerVideoDecoder::create(const String& codecName, const Config& config
 
     GRefPtr<GstElement> element = gst_element_factory_create(lookupResult.factory.get(), nullptr);
     auto decoder = makeUniqueRef<GStreamerVideoDecoder>(codecName, config, WTFMove(outputCallback), WTFMove(postTaskCallback), WTFMove(element));
+    if (!decoder->m_internalDecoder->isStarted()) {
+        GST_WARNING("Internal video decoder failed to configure for codec %s", codecName.ascii().data());
+        return false;
+    }
+
     gstDecoderWorkQueue().dispatch([callback = WTFMove(callback), decoder = WTFMove(decoder)]() mutable {
         auto internalDecoder = decoder->m_internalDecoder;
         internalDecoder->postTask([callback = WTFMove(callback), decoder = WTFMove(decoder)]() mutable {
