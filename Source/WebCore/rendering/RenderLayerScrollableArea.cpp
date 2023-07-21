@@ -253,18 +253,16 @@ ScrollOffset RenderLayerScrollableArea::clampScrollOffset(const ScrollOffset& sc
     return scrollOffset.constrainedBetween(minimumScrollOffset(), maximumScrollOffset());
 }
 
-bool RenderLayerScrollableArea::requestScrollToPosition(const ScrollPosition& position, ScrollType scrollType, ScrollClamping clamping, ScrollIsAnimated animated)
+bool RenderLayerScrollableArea::requestScrollToPosition(const ScrollPosition& position, const ScrollPositionChangeOptions& options)
 {
 #if ENABLE(ASYNC_SCROLLING)
-    LOG_WITH_STREAM(Scrolling, stream << "RenderLayerScrollableArea::requestScrollToPosition " << position << " animated  " << (animated == ScrollIsAnimated::Yes));
+    LOG_WITH_STREAM(Scrolling, stream << "RenderLayerScrollableArea::requestScrollToPosition " << position << " options  " << options);
 
     if (auto* scrollingCoordinator = m_layer.page().scrollingCoordinator())
-        return scrollingCoordinator->requestScrollToPosition(*this, position, scrollType, clamping, animated);
+        return scrollingCoordinator->requestScrollToPosition(*this, position, options);
 #else
     UNUSED_PARAM(position);
-    UNUSED_PARAM(scrollType);
-    UNUSED_PARAM(clamping);
-    UNUSED_PARAM(animated);
+    UNUSED_PARAM(options);
 #endif
     return false;
 }
@@ -312,8 +310,8 @@ ScrollOffset RenderLayerScrollableArea::scrollToOffset(const ScrollOffset& scrol
     auto snappedPosition = scrollPositionFromOffset(snappedOffset);
     if (options.animated == ScrollIsAnimated::Yes) {
         registerScrollableAreaForAnimatedScroll();
-        ScrollableArea::scrollToPositionWithAnimation(snappedPosition);
-    } else if (!requestScrollToPosition(snappedPosition, options.type, options.clamping))
+        ScrollableArea::scrollToPositionWithAnimation(snappedPosition, options);
+    } else if (!requestScrollToPosition(snappedPosition, options))
         scrollToPositionWithoutAnimation(snappedPosition, options.clamping);
 
     setCurrentScrollType(previousScrollType);

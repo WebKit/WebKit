@@ -3138,11 +3138,11 @@ header: <WebCore/ScrollingStateNode.h>
 
 [CustomHeader] struct WebCore::RequestedScrollData {
     WebCore::ScrollRequestType requestType;
-    WebCore::FloatPoint scrollPosition;
+    std::variant<WebCore::FloatPoint, WebCore::FloatSize> scrollPositionOrDelta;
     WebCore::ScrollType scrollType;
     WebCore::ScrollClamping clamping;
     WebCore::ScrollIsAnimated animated;
-    std::optional<std::tuple<WebCore::FloatPoint, WebCore::ScrollType, WebCore::ScrollClamping>> requestedDataBeforeAnimatedScroll;
+    std::optional<std::tuple<WebCore::ScrollRequestType, std::variant<WebCore::FloatPoint, WebCore::FloatSize>, WebCore::ScrollType, WebCore::ScrollClamping>> requestedDataBeforeAnimatedScroll;
 }
 
 [Alias=struct ScrollSnapOffsetsInfo<float,WebCore::FloatRect>, CustomHeader] alias WebCore::FloatScrollSnapOffsetsInfo {

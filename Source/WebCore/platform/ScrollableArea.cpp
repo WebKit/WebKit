@@ -170,13 +170,13 @@ void ScrollableArea::scrollToPositionWithoutAnimation(const FloatPoint& position
     scrollAnimator().scrollToPositionWithoutAnimation(position, clamping);
 }
 
-void ScrollableArea::scrollToPositionWithAnimation(const FloatPoint& position, ScrollClamping clamping)
+void ScrollableArea::scrollToPositionWithAnimation(const FloatPoint& position, const ScrollPositionChangeOptions& options)
 {
     LOG_WITH_STREAM(Scrolling, stream << "ScrollableArea " << this << " scrollToPositionWithAnimation " << position);
 
-    bool startedAnimation = requestScrollToPosition(roundedIntPoint(position), ScrollType::Programmatic, clamping, ScrollIsAnimated::Yes);
+    bool startedAnimation = requestScrollToPosition(roundedIntPoint(position), { ScrollType::Programmatic, options.clamping, ScrollIsAnimated::Yes, options.snapPointSelectionMethod, options.originalScrollDelta });
     if (!startedAnimation)
-        startedAnimation = scrollAnimator().scrollToPositionWithAnimation(position, clamping);
+        startedAnimation = scrollAnimator().scrollToPositionWithAnimation(position, options.clamping);
 
     if (startedAnimation)
         setScrollAnimationStatus(ScrollAnimationStatus::Animating);
@@ -272,7 +272,7 @@ void ScrollableArea::setScrollPositionFromAnimation(const ScrollPosition& positi
     // An early return here if the position hasn't changed breaks an iOS RTL scrolling test: webkit.org/b/230450.
     auto scrollType = currentScrollType();
     auto clamping = scrollType == ScrollType::User ? ScrollClamping::Unclamped : ScrollClamping::Clamped;
-    if (requestScrollToPosition(position, scrollType, clamping, ScrollIsAnimated::No))
+    if (requestScrollToPosition(position, { scrollType, clamping, ScrollIsAnimated::No }))
         return;
 
     scrollPositionChanged(position);

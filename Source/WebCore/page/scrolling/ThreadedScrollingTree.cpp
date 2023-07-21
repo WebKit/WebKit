@@ -171,7 +171,8 @@ void ThreadedScrollingTree::didCommitTreeOnScrollingThread()
         if (!is<ScrollingTreeScrollingNode>(targetNode))
             continue;
 
-        downcast<ScrollingTreeScrollingNode>(*targetNode).startAnimatedScrollToPosition(it.value.scrollPosition);
+        auto& node = downcast<ScrollingTreeScrollingNode>(*targetNode);
+        node.startAnimatedScrollToPosition(it.value.destinationPosition(node.currentScrollPosition()));
     }
 
     auto nodesWithPendingKeyboardScrollAnimations = std::exchange(m_nodesWithPendingKeyboardScrollAnimations, { });

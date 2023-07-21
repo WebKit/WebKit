@@ -33,11 +33,11 @@ void RequestedScrollData::merge(RequestedScrollData&& other)
     if (other.requestType == ScrollRequestType::CancelAnimatedScroll && animated == ScrollIsAnimated::No) {
         // Carry over the previously requested scroll position so that we can set `requestedDataBeforeAnimatedScroll`
         // below in the case where the cancelled animated scroll is immediately followed by another animated scroll.
-        other.scrollPosition = scrollPosition;
-    } else if (other.requestType == ScrollRequestType::PositionUpdate && other.animated == ScrollIsAnimated::Yes) {
+        other.scrollPositionOrDelta = scrollPositionOrDelta;
+    } else if ((other.requestType == ScrollRequestType::PositionUpdate || other.requestType == ScrollRequestType::DeltaUpdate) && other.animated == ScrollIsAnimated::Yes) {
         switch (animated) {
         case ScrollIsAnimated::No:
-            other.requestedDataBeforeAnimatedScroll = { scrollPosition, scrollType, clamping };
+            other.requestedDataBeforeAnimatedScroll = { requestType, scrollPositionOrDelta, scrollType, clamping };
             break;
         case ScrollIsAnimated::Yes:
             other.requestedDataBeforeAnimatedScroll = requestedDataBeforeAnimatedScroll;
@@ -45,6 +45,11 @@ void RequestedScrollData::merge(RequestedScrollData&& other)
         }
     }
     *this = WTFMove(other);
+}
+
+FloatPoint RequestedScrollData::destinationPosition(const FloatPoint& currentScrollPosition) const
+{
+    return requestType == ScrollRequestType::DeltaUpdate ? (currentScrollPosition + std::get<FloatSize>(scrollPositionOrDelta)) : std::get<FloatPoint>(scrollPositionOrDelta);
 }
 
 TextStream& operator<<(TextStream& ts, SynchronousScrollingReason reason)
@@ -168,6 +173,43 @@ TextStream& operator<<(TextStream& ts, ScrollUpdateType type)
     case ScrollUpdateType::AnimatedScrollDidEnd: ts << "animated scroll did end"; break;
     case ScrollUpdateType::WheelEventScrollWillStart: ts << "wheel event scroll will start"; break;
     case ScrollUpdateType::WheelEventScrollDidEnd: ts << "wheel event scroll did end"; break;
+    }
+    return ts;
+}
+
+TextStream& operator<<(WTF::TextStream& ts, ScrollRequestType type)
+{
+    switch (type) {
+    case ScrollRequestType::CancelAnimatedScroll: ts << "cancel animated scroll"; break;
+    case ScrollRequestType::PositionUpdate: ts << "position update"; break;
+    case ScrollRequestType::DeltaUpdate: ts << "delta update"; break;
+    }
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, RequestedScrollData requestedScrollData)
+{
+    ts.dumpProperty("requested-type", requestedScrollData.requestType);
+
+    if (requestedScrollData.requestType != ScrollRequestType::CancelAnimatedScroll) {
+        if (requestedScrollData.requestType == ScrollRequestType::DeltaUpdate)
+            ts.dumpProperty("requested-scroll-delta", std::get<FloatSize>(requestedScrollData.scrollPositionOrDelta));
+        else
+            ts.dumpProperty("requested-scroll-position", std::get<FloatPoint>(requestedScrollData.scrollPositionOrDelta));
+        ts.dumpProperty("requested-scroll-position-is-programatic", requestedScrollData.scrollType);
+        ts.dumpProperty("requested-scroll-position-clamping", requestedScrollData.clamping);
+        ts.dumpProperty("requested-scroll-position-animated", requestedScrollData.animated == ScrollIsAnimated::Yes);
+        if (requestedScrollData.requestedDataBeforeAnimatedScroll) {
+            auto oldType = std::get<0>(*requestedScrollData.requestedDataBeforeAnimatedScroll);
+            ts.dumpProperty("requested-scroll-position-old-data-type", oldType);
+
+            if (oldType == ScrollRequestType::DeltaUpdate)
+                ts.dumpProperty("requested-scroll-position-old-delta", std::get<FloatSize>(std::get<1>(*requestedScrollData.requestedDataBeforeAnimatedScroll)));
+            else
+                ts.dumpProperty("requested-scroll-position-old-position", std::get<FloatPoint>(std::get<1>(*requestedScrollData.requestedDataBeforeAnimatedScroll)));
+            ts.dumpProperty("requested-scroll-position-old-data-is-programatic", std::get<2>(*requestedScrollData.requestedDataBeforeAnimatedScroll));
+            ts.dumpProperty("requested-scroll-position-old-data-animated", std::get<3>(*requestedScrollData.requestedDataBeforeAnimatedScroll));
+        }
     }
     return ts;
 }

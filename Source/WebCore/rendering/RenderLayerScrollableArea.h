@@ -213,7 +213,7 @@ public:
     bool requestStartKeyboardScrollAnimation(const KeyboardScroll&) final;
     bool requestStopKeyboardScrollAnimation(bool immediate) final;
 
-    bool requestScrollToPosition(const ScrollPosition&, ScrollType = ScrollType::Programmatic, ScrollClamping = ScrollClamping::Clamped, ScrollIsAnimated = ScrollIsAnimated::No) final;
+    bool requestScrollToPosition(const ScrollPosition&, const ScrollPositionChangeOptions& options) final;
     void stopAsyncAnimatedScroll() final;
 
     bool containsDirtyOverlayScrollbars() const { return m_containsDirtyOverlayScrollbars; }

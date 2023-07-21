@@ -549,7 +549,7 @@ void ScrollView::setScrollPosition(const ScrollPosition& scrollPosition, const S
         return;
     }
 
-    if (!requestScrollToPosition(newScrollPosition, currentScrollType(), options.clamping))
+    if (!requestScrollToPosition(newScrollPosition, options))
         updateScrollbars(newScrollPosition);
 }
 

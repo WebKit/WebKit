@@ -652,10 +652,13 @@ static void dump(TextStream& ts, const ScrollingStateScrollingNode& node, bool c
 
     if (!changedPropertiesOnly || node.hasChangedProperty(ScrollingStateNode::Property::RequestedScrollPosition)) {
         const auto& requestedScrollData = node.requestedScrollData();
-        if (requestedScrollData.requestType == ScrollRequestType::CancelAnimatedScroll)
-            ts.dumpProperty("requested-type", "cancel animated scroll");
-        else {
-            ts.dumpProperty("requested-scroll-position", requestedScrollData.scrollPosition);
+        ts.dumpProperty("requested-type", requestedScrollData.requestType);
+        if (requestedScrollData.requestType != ScrollRequestType::CancelAnimatedScroll) {
+            if (requestedScrollData.requestType == ScrollRequestType::DeltaUpdate)
+                ts.dumpProperty("requested-scroll-delta", std::get<FloatSize>(requestedScrollData.scrollPositionOrDelta));
+            else
+                ts.dumpProperty("requested-scroll-position", std::get<FloatPoint>(requestedScrollData.scrollPositionOrDelta));
+
             ts.dumpProperty("requested-scroll-position-is-programatic", requestedScrollData.scrollType);
             ts.dumpProperty("requested-scroll-position-clamping", requestedScrollData.clamping);
             ts.dumpProperty("requested-scroll-position-animated", requestedScrollData.animated == ScrollIsAnimated::Yes);
