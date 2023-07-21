@@ -514,7 +514,7 @@ static String stringForSSLCipher(SSLCipherSuite cipher)
     _sessionWrapper = nullptr;
 }
 
-- (NetworkDataTaskCocoa*)existingTask:(NSURLSessionTask *)task
+- (RefPtr<NetworkDataTaskCocoa>)existingTask:(NSURLSessionTask *)task
 {
     if (!_sessionWrapper)
         return nullptr;
@@ -522,7 +522,7 @@ static String stringForSSLCipher(SSLCipherSuite cipher)
     if (!task)
         return nullptr;
 
-    return _sessionWrapper->dataTaskMap.get(task.taskIdentifier);
+    return _sessionWrapper->dataTaskMap.get(task.taskIdentifier).get();
 }
 
 - (void)URLSession:(NSURLSession *)session didBecomeInvalidWithError:(NSError *)error
@@ -532,13 +532,13 @@ static String stringForSSLCipher(SSLCipherSuite cipher)
 
 - (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task didSendBodyData:(int64_t)bytesSent totalBytesSent:(int64_t)totalBytesSent totalBytesExpectedToSend:(int64_t)totalBytesExpectedToSend
 {
-    if (auto* networkDataTask = [self existingTask:task])
+    if (auto networkDataTask = [self existingTask:task])
         networkDataTask->didSendData(totalBytesSent, totalBytesExpectedToSend);
 }
 
 - (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task needNewBodyStream:(void (^)(NSInputStream *bodyStream))completionHandler
 {
-    auto* networkDataTask = [self existingTask:task];
+    auto networkDataTask = [self existingTask:task];
     if (!networkDataTask) {
         completionHandler(nil);
         return;
@@ -615,7 +615,7 @@ static void updateIgnoreStrictTransportSecuritySetting(RetainPtr<NSURLRequest>& 
     auto taskIdentifier = task.taskIdentifier;
     LOG(NetworkSession, "%llu willPerformHTTPRedirection from %s to %s", taskIdentifier, response.URL.absoluteString.UTF8String, request.URL.absoluteString.UTF8String);
 
-    if (auto* networkDataTask = [self existingTask:task]) {
+    if (auto networkDataTask = [self existingTask:task]) {
         bool shouldIgnoreHSTS = false;
 #if ENABLE(TRACKING_PREVENTION)
         if (auto* sessionCocoa = networkDataTask->networkSession()) {
@@ -669,7 +669,7 @@ static void updateIgnoreStrictTransportSecuritySetting(RetainPtr<NSURLRequest>& 
     auto taskIdentifier = task.taskIdentifier;
     LOG(NetworkSession, "%llu _schemeUpgraded %s", taskIdentifier, request.URL.absoluteString.UTF8String);
 
-    if (auto* networkDataTask = [self existingTask:task]) {
+    if (auto networkDataTask = [self existingTask:task]) {
         bool shouldIgnoreHSTS = false;
 #if ENABLE(TRACKING_PREVENTION)
         if (auto* sessionCocoa = networkDataTask->networkSession()) {
@@ -717,7 +717,7 @@ static inline void processServerTrustEvaluation(NetworkSessionCocoa& session, Se
 }
 
 - (NetworkSessionCocoa*)sessionFromTask:(NSURLSessionTask *)task {
-    if (auto* networkDataTask = [self existingTask:task])
+    if (auto networkDataTask = [self existingTask:task])
         return static_cast<NetworkSessionCocoa*>(networkDataTask->networkSession());
 
     if (!_sessionWrapper)
@@ -730,7 +730,7 @@ static inline void processServerTrustEvaluation(NetworkSessionCocoa& session, Se
     }
 
 #if HAVE(NSURLSESSION_WEBSOCKET)
-    if (auto* webSocketTask = _sessionWrapper->webSocketDataTaskMap.get(task.taskIdentifier))
+    if (auto webSocketTask = _sessionWrapper->webSocketDataTaskMap.get(task.taskIdentifier).get())
         return webSocketTask->networkSession();
 #endif
 
@@ -789,7 +789,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
         // Handle server trust evaluation at platform-level if requested, for performance reasons and to use ATS defaults.
         if (sessionCocoa->fastServerTrustEvaluationEnabled() && negotiatedLegacyTLS == NegotiatedLegacyTLS::No) {
-            auto* networkDataTask = [self existingTask:task];
+            auto networkDataTask = [self existingTask:task];
             if (networkDataTask) {
                 NSURLProtectionSpace *protectionSpace = challenge.protectionSpace;
                 networkDataTask->didNegotiateModernTLS(URL { makeString(String(protectionSpace.protocol), "://", String(protectionSpace.host), ':', protectionSpace.port) });
@@ -889,7 +889,7 @@ static NSDictionary<NSString *, id> *extractResolutionReport(NSError *error)
         NSDictionary *oldUserInfo = [error userInfo];
         NSMutableDictionary *newUserInfo = oldUserInfo ? [NSMutableDictionary dictionaryWithDictionary:oldUserInfo] : [NSMutableDictionary dictionary];
         newUserInfo[@"networkTaskDescription"] = [task description];
-        if (RefPtr networkDataTask = [self existingTask:task]) {
+        if (auto networkDataTask = [self existingTask:task]) {
 #if HAVE(NETWORK_CONNECTION_PRIVACY_STANCE)
             newUserInfo[@"networkTaskMetricsPrivacyStance"] = privacyStanceToString(networkDataTask->networkLoadMetrics().privacyStance);
 #endif
@@ -905,7 +905,7 @@ static NSDictionary<NSString *, id> *extractResolutionReport(NSError *error)
         error = [NSError errorWithDomain:[error domain] code:[error code] userInfo:newUserInfo];
     }
 
-    if (auto* networkDataTask = [self existingTask:task])
+    if (auto networkDataTask = [self existingTask:task])
         networkDataTask->didCompleteWithError(error, networkDataTask->networkLoadMetrics());
     else if (error) {
         if (!_sessionWrapper)
@@ -939,7 +939,7 @@ static NSDictionary<NSString *, id> *extractResolutionReport(NSError *error)
 - (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task didFinishCollectingMetrics:(NSURLSessionTaskMetrics *)metrics
 {
     LOG(NetworkSession, "%llu didFinishCollectingMetrics", task.taskIdentifier);
-    if (auto* networkDataTask = [self existingTask:task]) {
+    if (auto networkDataTask = [self existingTask:task]) {
         NSArray<NSURLSessionTaskTransactionMetrics *> *transactionMetrics = metrics.transactionMetrics;
         NSURLSessionTaskTransactionMetrics *m = transactionMetrics.lastObject;
 
@@ -1050,7 +1050,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task didReceiveInformationalResponse:(NSHTTPURLResponse *)response
 {
-    if (auto* networkDataTask = [self existingTask:task]) {
+    if (auto networkDataTask = [self existingTask:task]) {
         ASSERT(RunLoop::isMain());
 
         WebCore::ResourceResponse resourceResponse(response);
@@ -1069,7 +1069,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 {
     auto taskIdentifier = dataTask.taskIdentifier;
     LOG(NetworkSession, "%llu didReceiveResponse", taskIdentifier);
-    if (auto* networkDataTask = [self existingTask:dataTask]) {
+    if (auto networkDataTask = [self existingTask:dataTask]) {
         ASSERT(RunLoop::isMain());
 
         NegotiatedLegacyTLS negotiatedLegacyTLS = NegotiatedLegacyTLS::No;
@@ -1123,7 +1123,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)dataTask didReceiveData:(NSData *)data
 {
-    if (auto* networkDataTask = [self existingTask:dataTask])
+    if (auto networkDataTask = [self existingTask:dataTask])
         networkDataTask->didReceiveData(WebCore::SharedBuffer::create(data));
 }
 
@@ -1161,7 +1161,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)dataTask didBecomeDownloadTask:(NSURLSessionDownloadTask *)downloadTask
 {
-    auto* networkDataTask = [self existingTask:dataTask];
+    auto networkDataTask = [self existingTask:dataTask];
     if (!networkDataTask)
         return;
     auto* sessionCocoa = networkDataTask->networkSession();
@@ -1190,7 +1190,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (!task)
         return nullptr;
 
-    return _sessionWrapper->webSocketDataTaskMap.get(task.taskIdentifier);
+    return _sessionWrapper->webSocketDataTaskMap.get(task.taskIdentifier).get();
 }
 
 
@@ -1851,11 +1851,11 @@ static CompletionHandler<void(WebKit::AuthenticationChallengeDisposition disposi
     };
 }
 
-void NetworkSessionCocoa::continueDidReceiveChallenge(SessionWrapper& sessionWrapper, const WebCore::AuthenticationChallenge& challenge, NegotiatedLegacyTLS negotiatedLegacyTLS, NetworkDataTaskCocoa::TaskIdentifier taskIdentifier, NetworkDataTaskCocoa* networkDataTask, CompletionHandler<void(WebKit::AuthenticationChallengeDisposition, const WebCore::Credential&)>&& completionHandler)
+void NetworkSessionCocoa::continueDidReceiveChallenge(SessionWrapper& sessionWrapper, const WebCore::AuthenticationChallenge& challenge, NegotiatedLegacyTLS negotiatedLegacyTLS, NetworkDataTaskCocoa::TaskIdentifier taskIdentifier, RefPtr<NetworkDataTaskCocoa> networkDataTask, CompletionHandler<void(WebKit::AuthenticationChallengeDisposition, const WebCore::Credential&)>&& completionHandler)
 {
     if (!networkDataTask) {
 #if HAVE(NSURLSESSION_WEBSOCKET)
-        if (auto* webSocketTask = sessionWrapper.webSocketDataTaskMap.get(taskIdentifier)) {
+        if (auto webSocketTask = sessionWrapper.webSocketDataTaskMap.get(taskIdentifier).get()) {
             auto challengeCompletionHandler = createChallengeCompletionHandler(networkProcess(), sessionID(), challenge, webSocketTask->partition(), 0, WTFMove(completionHandler));
             networkProcess().authenticationManager().didReceiveAuthenticationChallenge(sessionID(), webSocketTask->webProxyPageID(), !webSocketTask->topOrigin().isNull() ? &webSocketTask->topOrigin() : nullptr, challenge, negotiatedLegacyTLS, WTFMove(challengeCompletionHandler));
             return;

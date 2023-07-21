@@ -336,8 +336,11 @@ NetworkDataTaskCocoa::~NetworkDataTaskCocoa()
         WTFEndSignpost(m_task.get(), "DataTask");
 
     if (m_task && m_sessionWrapper) {
-        auto dataTask = m_sessionWrapper->dataTaskMap.take([m_task taskIdentifier]);
-        RELEASE_ASSERT(dataTask == this);
+        auto& map = m_sessionWrapper->dataTaskMap;
+        auto iterator = map.find([m_task taskIdentifier]);
+        RELEASE_ASSERT(iterator != map.end());
+        ASSERT(!iterator->value.get());
+        map.remove(iterator);
     }
 }
 
