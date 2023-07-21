@@ -1279,8 +1279,6 @@ webkit.org/b/222183 [ Monterey+ ] imported/w3c/web-platform-tests/media-source/m
 
 webkit.org/b/222365 inspector/dom/attributeModified.html [ Pass Timeout ]
 
-webkit.org/b/222500 fast/canvas/webgl/texImage2D-video-flipY-false.html [ Pass Timeout ]
-
 webkit.org/b/222677 inspector/model/auditTestCase.html [ Pass Timeout ]
 
 webkit.org/b/221487 imported/w3c/web-platform-tests/server-timing/server_timing_header-parsing.https.html [ Pass Failure ]
@@ -1819,3 +1817,5 @@ webkit.org/b/259228 [ Release ] fast/dom/lazy-image-loading-document-leak.html [
 webkit.org/b/259374 http/tests/inspector/network/xhr-request-type.html [ Failure ]
 
 webkit.org/b/259379 http/wpt/webcodecs/videoFrame-video-element.html [ Pass Failure ]
+
+webkit.org/b/259403 [ x86_64 ] fast/canvas/webgl/texImage2D-video-flipY-false.html [ Failure ]
