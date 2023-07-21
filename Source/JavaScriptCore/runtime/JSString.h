@@ -110,11 +110,8 @@ public:
     static constexpr unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero | StructureIsImmortal | OverridesPut;
 
     static constexpr bool needsDestruction = true;
-    static ALWAYS_INLINE void destroy(JSCell* cell)
-    {
-        static_cast<JSString*>(cell)->JSString::~JSString();
-    }
-    
+    static void destroy(JSCell*);
+
     // We specialize the string subspace to get the fastest possible sweep. This wouldn't be
     // necessary if JSString didn't have a destructor.
     template<typename, SubspaceAccess>
@@ -201,8 +198,6 @@ protected:
     DECLARE_DEFAULT_FINISH_CREATION;
 
 public:
-    ~JSString();
-
     Identifier toIdentifier(JSGlobalObject*) const;
     AtomString toAtomString(JSGlobalObject*) const;
     AtomString toExistingAtomString(JSGlobalObject*) const;
@@ -292,6 +287,8 @@ private:
 class JSRopeString final : public JSString {
     friend class JSString;
 public:
+    static void destroy(JSCell*);
+
     template<typename, SubspaceAccess>
     static GCClient::IsoSubspace* subspaceFor(VM& vm)
     {

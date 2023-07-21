@@ -30,12 +30,19 @@
 #include "KeyAtomStringCacheInlines.h"
 
 namespace JSC {
-    
-inline JSString::~JSString()
+
+ALWAYS_INLINE void JSString::destroy(JSCell* cell)
 {
-    if (isRope())
+    auto* string = static_cast<JSString*>(cell);
+    string->valueInternal().~String();
+}
+
+ALWAYS_INLINE void JSRopeString::destroy(JSCell* cell)
+{
+    auto* string = static_cast<JSRopeString*>(cell);
+    if (string->isRope())
         return;
-    valueInternal().~String();
+    string->valueInternal().~String();
 }
 
 bool JSString::equal(JSGlobalObject* globalObject, JSString* other) const

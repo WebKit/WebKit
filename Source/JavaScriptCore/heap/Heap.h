@@ -78,6 +78,7 @@ class JITStubRoutine;
 class JITStubRoutineSet;
 class JSCell;
 class JSImmutableButterfly;
+class JSRopeString;
 class JSString;
 class JSValue;
 class MachineThreads;
@@ -133,7 +134,7 @@ class Heap;
     v(propertyTableSpace, destructibleCellHeapCellType, PropertyTable) \
     v(regExpSpace, destructibleCellHeapCellType, RegExp) \
     v(regExpObjectSpace, cellHeapCellType, RegExpObject) \
-    v(ropeStringSpace, stringHeapCellType, JSRopeString) \
+    v(ropeStringSpace, ropeStringHeapCellType, JSRopeString) \
     v(scopedArgumentsSpace, cellHeapCellType, ScopedArguments) \
     v(sparseArrayValueMapSpace, destructibleCellHeapCellType, SparseArrayValueMap) \
     v(stringSpace, stringHeapCellType, JSString) \
@@ -943,6 +944,7 @@ public:
     IsoHeapCellType moduleNamespaceObjectHeapCellType;
     IsoHeapCellType nativeStdFunctionHeapCellType;
     IsoInlinedHeapCellType<JSString> stringHeapCellType;
+    IsoInlinedHeapCellType<JSRopeString> ropeStringHeapCellType;
     IsoHeapCellType weakMapHeapCellType;
     IsoHeapCellType weakSetHeapCellType;
     JSDestructibleObjectHeapCellType destructibleObjectHeapCellType;
