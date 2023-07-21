@@ -28,6 +28,10 @@
 
 namespace WebCore {
 
-unsigned LayoutDisallowedScope::s_currentScopeCount = 0;
+#if ASSERT_ENABLED
+
+LayoutDisallowedScope* LayoutDisallowedScope::s_currentAssertion = nullptr;
+
+#endif
 
 }

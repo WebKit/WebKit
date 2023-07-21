@@ -25,42 +25,33 @@
 
 #pragma once
 
-#include "RuntimeApplicationChecks.h"
-#include <wtf/Compiler.h>
-
 namespace WebCore {
 
 class LayoutDisallowedScope {
 public:
-    enum class Reason : bool { PerformanceOptimization, ReentrancyAvoidance };
+    enum class Reason { PerformanceOptimization, ReentrancyAvoidance };
 
-    LayoutDisallowedScope(Reason) { ++s_currentScopeCount; }
-    ~LayoutDisallowedScope() { --s_currentScopeCount; }
+#if !ASSERT_ENABLED
+    LayoutDisallowedScope(Reason) { }
+    static bool isLayoutAllowed() { return true; }
+#else // ASSERT_ENABLED
+    LayoutDisallowedScope(Reason)
+        : m_previousAssertion(s_currentAssertion)
+    {
+        s_currentAssertion = this;
+    }
 
-    static bool isLayoutAllowed() { return LIKELY(!s_currentScopeCount) || UNLIKELY(!isInWebProcess()); }
+    ~LayoutDisallowedScope()
+    {
+        s_currentAssertion = m_previousAssertion;
+    }
 
-    class AllowedScope {
-    public:
-        AllowedScope();
-        ~AllowedScope();
-
-    private:
-        unsigned m_originalCount;
-    };
+    static bool isLayoutAllowed() { return !s_currentAssertion; }
 
 private:
-    static unsigned s_currentScopeCount;
+    LayoutDisallowedScope* m_previousAssertion;
+    static LayoutDisallowedScope* s_currentAssertion;
+#endif // ASSERT_ENABLED
 };
-
-ALWAYS_INLINE LayoutDisallowedScope::AllowedScope::AllowedScope()
-    : m_originalCount { s_currentScopeCount }
-{
-    s_currentScopeCount = 0;
-}
-
-ALWAYS_INLINE LayoutDisallowedScope::AllowedScope::~AllowedScope()
-{
-    s_currentScopeCount = m_originalCount;
-}
 
 }
