@@ -48,10 +48,10 @@
 
 namespace WebKit {
 
-RemoteGPU::RemoteGPU(PerformWithMediaPlayerOnMainThread&& performWithMediaPlayerOnMainThread, WebGPUIdentifier identifier, GPUConnectionToWebProcess& gpuConnectionToWebProcess, RemoteRenderingBackend& renderingBackend, IPC::StreamServerConnection::Handle&& connectionHandle)
+RemoteGPU::RemoteGPU(PerformWithMediaPlayerOnMainThread&& performWithMediaPlayerOnMainThread, WebGPUIdentifier identifier, GPUConnectionToWebProcess& gpuConnectionToWebProcess, RemoteRenderingBackend& renderingBackend, Ref<IPC::StreamServerConnection>&& streamConnection)
     : m_gpuConnectionToWebProcess(gpuConnectionToWebProcess)
     , m_workQueue(IPC::StreamConnectionWorkQueue::create("WebGPU work queue"))
-    , m_streamConnection(IPC::StreamServerConnection::create(WTFMove(connectionHandle)))
+    , m_streamConnection(WTFMove(streamConnection))
     , m_objectHeap(WebGPU::ObjectHeap::create())
     , m_performWithMediaPlayerOnMainThread(WTFMove(performWithMediaPlayerOnMainThread))
     , m_identifier(identifier)

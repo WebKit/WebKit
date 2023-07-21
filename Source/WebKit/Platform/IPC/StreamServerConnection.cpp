@@ -30,13 +30,16 @@
 #include "StreamConnectionWorkQueue.h"
 #include <mutex>
 #include <wtf/NeverDestroyed.h>
+
 namespace IPC {
 
-Ref<StreamServerConnection> StreamServerConnection::create(Handle&& handle)
+RefPtr<StreamServerConnection> StreamServerConnection::tryCreate(Handle&& handle)
 {
-    auto connection = IPC::Connection::createClientConnection(IPC::Connection::Identifier { WTFMove(handle.outOfStreamConnection) });
     auto buffer = StreamServerConnectionBuffer::map(WTFMove(handle.buffer));
-    RELEASE_ASSERT(buffer); // FIXME: make callers call this outside constructor.
+    if (!buffer)
+        return { };
+
+    auto connection = IPC::Connection::createClientConnection(IPC::Connection::Identifier { WTFMove(handle.outOfStreamConnection) });
     return adoptRef(*new StreamServerConnection(WTFMove(connection), WTFMove(*buffer)));
 }
 

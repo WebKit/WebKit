@@ -51,7 +51,7 @@ RefPtr<IPCStreamTester> IPCStreamTester::create(IPCStreamTesterIdentifier identi
 
 IPCStreamTester::IPCStreamTester(IPCStreamTesterIdentifier identifier, IPC::StreamServerConnection::Handle&& connectionHandle)
     : m_workQueue(IPC::StreamConnectionWorkQueue::create("IPCStreamTester work queue"))
-    , m_streamConnection(IPC::StreamServerConnection::create(WTFMove(connectionHandle)))
+    , m_streamConnection(IPC::StreamServerConnection::tryCreate(WTFMove(connectionHandle)).releaseNonNull())
     , m_identifier(identifier)
 {
 }
