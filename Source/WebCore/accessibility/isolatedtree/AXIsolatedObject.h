@@ -137,7 +137,6 @@ private:
     
     // Table support.
     AXIsolatedObject* exposedTableAncestor(bool includeSelf = false) const final { return Accessibility::exposedTableAncestor(*this, includeSelf); }
-    int tableLevel() const override { return intAttributeValue(AXPropertyName::TableLevel); }
     bool supportsSelectedRows() const override { return boolAttributeValue(AXPropertyName::SupportsSelectedRows); }
     AccessibilityChildrenVector columns() final { return tree()->objectsForIDs(vectorAttributeValue<AXID>(AXPropertyName::Columns)); }
     AccessibilityChildrenVector rows() final { return tree()->objectsForIDs(vectorAttributeValue<AXID>(AXPropertyName::Rows)); }

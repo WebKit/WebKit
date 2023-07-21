@@ -785,17 +785,6 @@ unsigned AccessibilityTable::rowCount()
     return m_rows.size();
 }
 
-int AccessibilityTable::tableLevel() const
-{
-    int level = 0;
-    for (AccessibilityObject* obj = static_cast<AccessibilityObject*>(const_cast<AccessibilityTable*>(this)); obj; obj = obj->parentObject()) {
-        if (is<AccessibilityTable>(*obj) && downcast<AccessibilityTable>(*obj).isExposable())
-            ++level;
-    }
-    
-    return level;
-}
-
 AXCoreObject* AccessibilityTable::cellForColumnAndRow(unsigned column, unsigned row)
 {
     updateChildrenIfNecessary();

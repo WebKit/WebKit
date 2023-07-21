@@ -139,7 +139,6 @@ public:
     // Table support.
     bool isTable() const override { return false; }
     bool isExposable() const override { return true; }
-    int tableLevel() const override { return 0; }
     bool supportsSelectedRows() const override { return false; }
     AccessibilityChildrenVector columns() override { return AccessibilityChildrenVector(); }
     AccessibilityChildrenVector rows() override { return AccessibilityChildrenVector(); }

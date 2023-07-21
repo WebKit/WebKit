@@ -224,7 +224,6 @@ enum class AXPropertyName : uint16_t {
     SupportsRequiredAttribute,
     SupportsSelectedRows,
     SupportsSetSize,
-    TableLevel,
     TextContent,
     TextInputMarkedTextMarkerRange,
     Title,
