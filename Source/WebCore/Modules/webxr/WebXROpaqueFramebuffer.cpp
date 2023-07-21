@@ -138,7 +138,7 @@ void WebXROpaqueFramebuffer::startFrame(const PlatformXR::Device::FrameData::Lay
     GCGLint boundRenderbuffer = gl.getInteger(GL::RENDERBUFFER_BINDING);
     GCGLint boundTexture = gl.getInteger(textureTargetBinding);
 
-    auto scopedBindings = makeScopeExit([=, &gl]() {
+    auto scopedBindings = makeScopeExit([=, textureTarget = textureTarget, &gl]() {
         gl.bindFramebuffer(GL::FRAMEBUFFER, boundFBO);
         gl.bindRenderbuffer(GL::RENDERBUFFER, boundRenderbuffer);
         gl.bindTexture(textureTarget, boundTexture);

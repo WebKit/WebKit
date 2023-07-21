@@ -728,7 +728,8 @@ take_last_empty_consider_view(pas_segregated_directory_iterate_config* config)
     PAS_ASSERT(!PAS_SEGREGATED_DIRECTORY_GET_BIT(directory, index, eligible));
 
     /* It's totally possible that the empty bit got set again. We should clear it for sure now. */
-    PAS_SEGREGATED_DIRECTORY_SET_BIT(directory, index, empty, false);
+    bool result = PAS_SEGREGATED_DIRECTORY_SET_BIT(directory, index, empty, false);
+    PAS_UNUSED_PARAM(result);
 
     PAS_TESTING_ASSERT(pas_segregated_page_qualifies_for_decommit(page, my_page_config));
     
