@@ -30,6 +30,7 @@
 
 #pragma once
 
+#include <span>
 #include <sys/types.h>
 #include <time.h>
 #include <utility>
@@ -242,6 +243,9 @@ class MappedFileData {
 public:
     MappedFileData() { }
     MappedFileData(MappedFileData&&);
+    static std::optional<MappedFileData> create(const String& filePath, MappedFileMode);
+    static std::optional<MappedFileData> create(PlatformFileHandle, MappedFileMode);
+    static std::optional<MappedFileData> create(PlatformFileHandle, FileOpenMode, MappedFileMode);
     WTF_EXPORT_PRIVATE MappedFileData(const String& filePath, MappedFileMode, bool& success);
     WTF_EXPORT_PRIVATE MappedFileData(PlatformFileHandle, MappedFileMode, bool& success);
     WTF_EXPORT_PRIVATE MappedFileData(PlatformFileHandle, FileOpenMode, MappedFileMode, bool& success);
@@ -251,6 +255,7 @@ public:
     explicit operator bool() const { return !!m_fileData; }
     const void* data() const { return m_fileData; }
     unsigned size() const { return m_fileSize; }
+    std::span<const uint8_t> toSpan() { return { static_cast<const uint8_t *>(data()), size() }; }
 
 #if PLATFORM(COCOA)
     void* leakHandle() { return std::exchange(m_fileData, nullptr); }
@@ -268,6 +273,36 @@ private:
     Win32Handle m_fileMapping;
 #endif
 };
+
+inline std::optional<MappedFileData> MappedFileData::create(const String& filePath, MappedFileMode mode)
+{
+    std::optional<MappedFileData> result;
+    bool success = false;
+    auto data = MappedFileData { filePath, mode, success };
+    if (success)
+        result = WTFMove(data);
+    return result;
+}
+
+inline std::optional<MappedFileData> MappedFileData::create(PlatformFileHandle handle, MappedFileMode mode)
+{
+    std::optional<MappedFileData> result;
+    bool success = false;
+    auto data = MappedFileData { handle, mode, success };
+    if (success)
+        result = WTFMove(data);
+    return result;
+}
+
+inline std::optional<MappedFileData> MappedFileData::create(PlatformFileHandle handle, FileOpenMode openMode, MappedFileMode mappedFileMode)
+{
+    std::optional<MappedFileData> result;
+    bool success = false;
+    auto data = MappedFileData { handle, openMode, mappedFileMode, success };
+    if (success)
+        result = WTFMove(data);
+    return result;
+}
 
 inline MappedFileData::MappedFileData(PlatformFileHandle handle, MappedFileMode mapMode, bool& success)
 {

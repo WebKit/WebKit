@@ -27,6 +27,7 @@
 
 #include "CacheStorageStore.h"
 #include "NetworkCacheKey.h"
+#include <wtf/FileSystem.h>
 #include <wtf/WorkQueue.h>
 #include <wtf/text/WTFString.h>
 
@@ -52,8 +53,8 @@ private:
     String recordBlobFilePath(const String&) const;
     String blobsDirectoryPath() const;
     String blobFilePath(const String&) const;
-    std::optional<CacheStorageRecord> readRecordFromFileData(const Vector<uint8_t>&, const Vector<uint8_t>&);
-    using FileDatas = Vector<Vector<uint8_t>>;
+    std::optional<CacheStorageRecord> readRecordFromFileData(std::span<const uint8_t>, FileSystem::MappedFileData&&);
+    using FileDatas = Vector<FileSystem::MappedFileData>;
     void readAllRecordInfosInternal(CompletionHandler<void(FileDatas&&)>&&);
     void readRecordsInternal(Vector<String>&&, CompletionHandler<void(FileDatas&&, FileDatas&&)>&&);
 
