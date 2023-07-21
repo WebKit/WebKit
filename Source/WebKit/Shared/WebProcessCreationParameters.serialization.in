@@ -173,7 +173,7 @@ struct WebKit::WebProcessCreationParameters {
 #endif
 
 #if PLATFORM(GTK)
-    bool useDMABufSurfaceForCompositing;
+    OptionSet<WebKit::DMABufRendererBufferMode> dmaBufRendererBufferMode;
     bool useSystemAppearanceForScrollbars;
     WebKit::GtkSettingsState gtkSettings;
 #endif

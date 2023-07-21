@@ -32,6 +32,7 @@
 #include <WebCore/RefPtrCairo.h>
 #include <gtk/gtk.h>
 #include <wtf/CompletionHandler.h>
+#include <wtf/OptionSet.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/unix/UnixFileDescriptor.h>
 
@@ -54,10 +55,12 @@ namespace WebKit {
 class ShareableBitmap;
 class ShareableBitmapHandle;
 class WebPageProxy;
+enum class DMABufRendererBufferMode : uint8_t;
 
 class AcceleratedBackingStoreDMABuf final : public AcceleratedBackingStore, public IPC::MessageReceiver {
     WTF_MAKE_NONCOPYABLE(AcceleratedBackingStoreDMABuf); WTF_MAKE_FAST_ALLOCATED;
 public:
+    static OptionSet<DMABufRendererBufferMode> rendererBufferMode();
     static bool checkRequirements();
     static std::unique_ptr<AcceleratedBackingStoreDMABuf> create(WebPageProxy&);
     ~AcceleratedBackingStoreDMABuf();

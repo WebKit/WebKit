@@ -28,6 +28,7 @@
 
 #include "AcceleratedBackingStoreDMABufMessages.h"
 #include "AcceleratedSurfaceDMABufMessages.h"
+#include "DMABufRendererBufferMode.h"
 #include "LayerTreeContext.h"
 #include "ShareableBitmap.h"
 #include "WebPageProxy.h"
@@ -49,23 +50,32 @@
 
 namespace WebKit {
 
-bool AcceleratedBackingStoreDMABuf::checkRequirements()
+OptionSet<DMABufRendererBufferMode> AcceleratedBackingStoreDMABuf::rendererBufferMode()
 {
-    static bool available;
+    static OptionSet<DMABufRendererBufferMode> mode;
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
         const char* disableDMABuf = getenv("WEBKIT_DISABLE_DMABUF_RENDERER");
-        if (disableDMABuf && strcmp(disableDMABuf, "0")) {
-            available = false;
+        if (disableDMABuf && strcmp(disableDMABuf, "0"))
+            return;
+
+        const char* platformExtensions = eglQueryString(nullptr, EGL_EXTENSIONS);
+        if (!WebCore::GLContext::isExtensionSupported(platformExtensions, "EGL_KHR_platform_gbm")
+            && !WebCore::GLContext::isExtensionSupported(platformExtensions, "EGL_MESA_platform_surfaceless")) {
             return;
         }
 
+        mode.add(DMABufRendererBufferMode::SharedMemory);
+
         const auto& eglExtensions = WebCore::PlatformDisplay::sharedDisplay().eglExtensions();
-        available = eglExtensions.KHR_image_base
-            && eglExtensions.KHR_surfaceless_context
-            && WebCore::GLContext::isExtensionSupported(eglQueryString(nullptr, EGL_EXTENSIONS), "EGL_MESA_platform_surfaceless");
+        if (eglExtensions.KHR_image_base && eglExtensions.EXT_image_dma_buf_import)
+            mode.add(DMABufRendererBufferMode::Hardware);
     });
-    return available;
+    return mode;
+}
+bool AcceleratedBackingStoreDMABuf::checkRequirements()
+{
+    return !rendererBufferMode().isEmpty();
 }
 
 std::unique_ptr<AcceleratedBackingStoreDMABuf> AcceleratedBackingStoreDMABuf::create(WebPageProxy& webPage)

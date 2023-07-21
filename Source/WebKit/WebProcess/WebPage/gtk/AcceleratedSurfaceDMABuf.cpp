@@ -442,7 +442,7 @@ void AcceleratedSurfaceDMABuf::clientResize(const WebCore::IntSize& size)
     auto& display = WebCore::PlatformDisplay::sharedDisplayForCompositing();
     switch (display.type()) {
     case WebCore::PlatformDisplay::Type::Surfaceless:
-        if (display.eglExtensions().MESA_image_dma_buf_export)
+        if (display.eglExtensions().MESA_image_dma_buf_export && WebProcess::singleton().dmaBufRendererBufferMode().contains(DMABufRendererBufferMode::Hardware))
             m_target = RenderTargetTexture::create(m_id, size);
         else
             m_target = RenderTargetSHMImage::create(m_id, size);

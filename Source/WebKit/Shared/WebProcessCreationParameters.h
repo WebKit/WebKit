@@ -57,6 +57,7 @@
 #endif
 
 #if PLATFORM(GTK)
+#include "DMABufRendererBufferMode.h"
 #include "GtkSettingsState.h"
 #endif
 
@@ -219,7 +220,7 @@ struct WebProcessCreationParameters {
 #endif
 
 #if PLATFORM(GTK)
-    bool useDMABufSurfaceForCompositing { false };
+    OptionSet<DMABufRendererBufferMode> dmaBufRendererBufferMode;
     bool useSystemAppearanceForScrollbars { false };
     GtkSettingsState gtkSettings;
 #endif

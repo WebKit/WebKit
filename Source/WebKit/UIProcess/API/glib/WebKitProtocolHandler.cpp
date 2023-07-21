@@ -46,6 +46,7 @@
 
 #if PLATFORM(GTK)
 #include "AcceleratedBackingStoreDMABuf.h"
+#include "DMABufRendererBufferMode.h"
 #include <WebCore/PlatformDisplaySurfaceless.h>
 #include <gtk/gtk.h>
 
@@ -157,6 +158,24 @@ static const char* openGLAPI()
         return "OpenGL (libepoxy)";
     return "OpenGL ES 2 (libepoxy)";
 }
+
+#if PLATFORM(GTK)
+static String dmabufRendererWithSupportedBuffers()
+{
+    StringBuilder buffers;
+    buffers.append("DMABuf (Supported buffers: "_s);
+    auto mode = AcceleratedBackingStoreDMABuf::rendererBufferMode();
+    if (mode.contains(DMABufRendererBufferMode::Hardware))
+        buffers.append("Hardware"_s);
+    if (mode.contains(DMABufRendererBufferMode::SharedMemory)) {
+        if (mode.contains(DMABufRendererBufferMode::Hardware))
+            buffers.append(", ");
+        buffers.append("Shared Memory"_s);
+    }
+    buffers.append(')');
+    return buffers.toString();
+}
+#endif
 
 void WebKitProtocolHandler::handleGPU(WebKitURISchemeRequest* request)
 {
@@ -324,11 +343,11 @@ void WebKitProtocolHandler::handleGPU(WebKitURISchemeRequest* request)
         addTableRow(jsonObject, "API"_s, String::fromUTF8(openGLAPI()));
 #if PLATFORM(WAYLAND)
         if (PlatformDisplay::sharedDisplay().type() == PlatformDisplay::Type::Wayland)
-            addTableRow(hardwareAccelerationObject, "Renderer"_s, usingDMABufRenderer ? "DMABuf"_s : "WPE"_s);
+            addTableRow(hardwareAccelerationObject, "Renderer"_s, usingDMABufRenderer ? dmabufRendererWithSupportedBuffers() : "WPE"_s);
 #endif
 #if PLATFORM(X11)
         if (PlatformDisplay::sharedDisplay().type() == PlatformDisplay::Type::X11)
-            addTableRow(hardwareAccelerationObject, "Renderer"_s, usingDMABufRenderer ? "DMABuf"_s : "XWindow"_s);
+            addTableRow(hardwareAccelerationObject, "Renderer"_s, usingDMABufRenderer ? dmabufRendererWithSupportedBuffers() : "XWindow"_s);
 #endif
         addTableRow(hardwareAccelerationObject, "Native interface"_s, uiProcessContextIsEGL() ? "EGL"_s : "None"_s);
 

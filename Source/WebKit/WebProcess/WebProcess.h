@@ -416,6 +416,10 @@ public:
     void revokeLaunchServicesSandboxExtension();
 #endif
 
+#if PLATFORM(GTK)
+    const OptionSet<DMABufRendererBufferMode>& dmaBufRendererBufferMode() const { return m_dmaBufRendererBufferMode; }
+#endif
+
 private:
     WebProcess();
     ~WebProcess();
@@ -739,8 +743,9 @@ private:
 
     WeakHashMap<WebCore::UserGestureToken, uint64_t> m_userGestureTokens;
 
-#if PLATFORM(GTK) && USE(EGL)
+#if PLATFORM(GTK)
     std::unique_ptr<WebCore::PlatformDisplay> m_displayForCompositing;
+    OptionSet<DMABufRendererBufferMode> m_dmaBufRendererBufferMode;
 #endif
 
     bool m_hasSuspendedPageProxy { false };
