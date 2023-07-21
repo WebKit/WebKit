@@ -1,19 +1,26 @@
-<!DOCTYPE html>
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
 <head>
+<script src="../resources/accessibility-helper.js"></script>
 <script src="../resources/js-test.js"></script>
 </head>
 <body>
 
-<p id="description"></p>
-
 <iframe id="frame" src="data:text/html,<body><button id='upper_target'>Upper Target</button><div style='border: 1px solid %23000; height: 5000px;'>5000-pixel box</div><button id='lower_target'>Lower Target</button></body>"></iframe>
 
-<div id="console"></div>
-
 <script>
-description("Tests that scrolling to make an element visible successfully scrolls an iframe.");
-
+var output = "Tests that scrolling to make an element visible successfully scrolls an iframe.\n\n";
 window.jsTestIsAsync = true;
+
+async function waitForAXFocus(domElement) {
+    domElement.focus();
+    var axElement;
+    await waitFor(() => {
+        axElement = accessibilityController.focusedElement;
+        return axElement && axElement.domIdentifier === domElement.id;
+    });
+    return axElement;
+}
 
 function runTest() {
     window.frame = document.getElementById("frame");
@@ -25,41 +32,43 @@ function runTest() {
 
     var lowerTargetAccessibleObject;
     var upperTargetAccessibleObject;
-    if (window.accessibilityController) {
-        lowerTarget.focus();
-        lowerTargetAccessibleObject = accessibilityController.focusedElement;
-        upperTarget.focus();
-        upperTargetAccessibleObject = accessibilityController.focusedElement;
-    }
+    setTimeout(async function() {
+        lowerTargetAccessibleObject = await waitForAXFocus(lowerTarget);
+        upperTargetAccessibleObject = await waitForAXFocus(upperTarget);
 
-    // Reset the initial scroll position (since calling focus() can scroll the page too).
-    frameWindow.scrollTo(0, 0);
-    shouldBeZero("frameWindow.pageYOffset");
+        // Reset the initial scroll position (since calling focus() can scroll the page too).
+        frameWindow.scrollTo(0, 0);
+        output += expect("frameWindow.pageYOffset", "0");
 
-    // Scroll to make lower target visible and check.
-    if (window.accessibilityController)
+        // Scroll to make lower target visible and check.
         lowerTargetAccessibleObject.scrollToMakeVisible();
-    window.minYOffset = lowerTarget.offsetTop + lowerTarget.offsetHeight - frameWindow.innerHeight;
-    window.maxYOffset = lowerTarget.offsetTop;
-    shouldBeTrue("frameWindow.pageYOffset >= minYOffset");
-    shouldBeTrue("frameWindow.pageYOffset <= maxYOffset");
+        await waitFor(() => {
+            window.minYOffset = lowerTarget.offsetTop + lowerTarget.offsetHeight - frameWindow.innerHeight;
+            window.maxYOffset = lowerTarget.offsetTop;
+            return frameWindow.pageYOffset >= minYOffset && frameWindow.pageYOffset <= maxYOffset;
+        });
+        output += expect("frameWindow.pageYOffset >= minYOffset", "true");
+        output += expect("frameWindow.pageYOffset <= maxYOffset", "true");
 
-    // Scroll to make upper target visible and check.
-    if (window.accessibilityController)
+        // Scroll to make upper target visible and check.
         upperTargetAccessibleObject.scrollToMakeVisible();
-    window.minYOffset = upperTarget.offsetTop + upperTarget.offsetHeight - frameWindow.innerHeight;
-    window.maxYOffset = upperTarget.offsetTop;
-    shouldBeTrue("frameWindow.pageYOffset >= minYOffset");
-    shouldBeTrue("frameWindow.pageYOffset <= maxYOffset");
+        await waitFor(() => {
+            window.minYOffset = upperTarget.offsetTop + upperTarget.offsetHeight - frameWindow.innerHeight;
+            window.maxYOffset = upperTarget.offsetTop;
+            return frameWindow.pageYOffset >= minYOffset && frameWindow.pageYOffset <= maxYOffset;
+        });
+        output += expect("frameWindow.pageYOffset >= minYOffset", "true");
+        output += expect("frameWindow.pageYOffset <= maxYOffset", "true");
 
-    finishJSTest();
+        debug(output);
+        finishJSTest();
+    }, 0);
 }
 
 window.addEventListener("load", function() {
     setTimeout(runTest, 0);
 }, false);
-
 </script>
-
 </body>
 </html>
+

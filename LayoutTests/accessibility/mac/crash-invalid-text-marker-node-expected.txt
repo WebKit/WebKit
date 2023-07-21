@@ -1,4 +1,3 @@
-
 This protects against a crash when a text marker still holds a reference to a node that's been deallocated.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
