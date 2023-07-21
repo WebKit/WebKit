@@ -15,7 +15,7 @@ sources:
 - kind: patch
   path: patches/fdo-0004-gst-plugins-ugly-Enable-x264-encoder.patch
 - kind: patch
-  path: patches/fdo-0005-GStreamer-Bump-to-1.22.4.patch
+  path: patches/fdo-0005-GStreamer-Bump-to-1.22.5.patch
 - kind: patch
   path: patches/fdo-0006-gst-plugins-bad-Enable-soundtouch.patch
 - kind: patch
@@ -24,6 +24,8 @@ sources:
   path: patches/fdo-0008-components-Bump-g-i-to-version-1.76.patch
 - kind: patch
   path: patches/fdo-0009-gst-plugins-bad-Enable-x265-encoder.patch
+- kind: patch
+  path: patches/fdo-0001-gst-plugins-base-Vendor-patch-scheduled-for-1.22.6.patch
 config:
   options:
     target_arch: '%{arch}'

@@ -49,7 +49,7 @@ index e73a056ab..ee16131c9 100644
    match:
    - 1.*[02468].*
 -  ref: 1.20.6-0-gb7d3037cca2fe72c5b7daab5e0617e61ae013dcc
-+  ref: 1.22.4-0-g064711d8b382c106afffe75cefbabe8f7bac8532
++  ref: 1.22.5-0-gbf6ce1d64a0697e7910826147b48f8f658366a5a
  - kind: patch_queue
    path: patches/gstreamer
 diff --git a/patches/gstreamer/gst-libav-no-cache-generator.patch b/patches/gstreamer/gst-libav-no-cache-generator.patch
