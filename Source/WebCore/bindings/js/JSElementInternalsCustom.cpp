@@ -31,6 +31,7 @@
 #include "JSDOMConvertInterface.h"
 #include "JSDOMConvertNullable.h"
 #include "JSDOMConvertSequences.h"
+#include "JSDOMConvertUnion.h"
 #include "JSDOMFormData.h"
 #include "JSElement.h"
 #include "JSFile.h"

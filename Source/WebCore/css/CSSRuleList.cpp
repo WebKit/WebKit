@@ -22,6 +22,8 @@
 #include "config.h"
 #include "CSSRuleList.h"
 
+#include "CSSRule.h"
+
 namespace WebCore {
 
 CSSRuleList::CSSRuleList() = default;
