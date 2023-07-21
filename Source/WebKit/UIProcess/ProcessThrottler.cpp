@@ -351,10 +351,16 @@ void ProcessThrottler::setAllowsActivities(bool allow)
         return;
 
     PROCESSTHROTTLER_RELEASE_LOG("setAllowsActivities %d", allow);
-    m_allowsActivities = allow;
 
-    if (!allow)
+    if (!allow) {
+        // Invalidate the activities before setting m_allowsActivities to false, so that the activities
+        // are able to remove themselves from the map.
         invalidateAllActivities();
+    }
+
+    ASSERT(m_foregroundActivities.isEmpty());
+    ASSERT(m_backgroundActivities.isEmpty());
+    m_allowsActivities = allow;
 }
 
 void ProcessThrottler::setShouldTakeNearSuspendedAssertion(bool shouldTakeNearSuspendedAssertion)
