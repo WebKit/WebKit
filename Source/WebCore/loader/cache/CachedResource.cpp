@@ -754,17 +754,6 @@ void CachedResource::setResourceToRevalidate(CachedResource* resource)
     m_resourceToRevalidate = resource;
 }
 
-void CachedResource::replaceResourceToRevalidate(CachedResource& resource)
-{
-    ASSERT(m_resourceToRevalidate);
-
-    m_resourceToRevalidate->m_proxyResource = nullptr;
-    m_resourceToRevalidate->deleteIfPossible();
-    m_resourceToRevalidate = &resource;
-    ASSERT(!resource.m_proxyResource);
-    resource.m_proxyResource = this;
-}
-
 void CachedResource::clearResourceToRevalidate() 
 {
     ASSERT(m_resourceToRevalidate);
