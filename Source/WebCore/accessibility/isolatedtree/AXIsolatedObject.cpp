@@ -193,7 +193,6 @@ void AXIsolatedObject::initializeProperties(const Ref<AccessibilityObject>& axOb
     if (object.isTable()) {
         setProperty(AXPropertyName::IsTable, true);
         setProperty(AXPropertyName::IsExposable, object.isExposable());
-        setProperty(AXPropertyName::TableLevel, object.tableLevel());
         setProperty(AXPropertyName::SupportsSelectedRows, object.supportsSelectedRows());
         setObjectVectorProperty(AXPropertyName::Columns, object.columns());
         setObjectVectorProperty(AXPropertyName::Rows, object.rows());

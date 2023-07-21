@@ -867,7 +867,7 @@ public:
     // Table support.
     virtual bool isTable() const = 0;
     virtual bool isExposable() const = 0;
-    virtual int tableLevel() const = 0;
+    unsigned tableLevel() const;
     virtual bool supportsSelectedRows() const = 0;
     virtual AccessibilityChildrenVector columns() = 0;
     virtual AccessibilityChildrenVector rows() = 0;
@@ -1756,6 +1756,20 @@ inline bool AXCoreObject::hasPopup() const
             return true;
     }
     return false;
+}
+
+inline unsigned AXCoreObject::tableLevel() const
+{
+    if (!isTable())
+        return 0;
+
+    unsigned level = 0;
+    auto* current = exposedTableAncestor(true /* includeSelf */);
+    while (current) {
+        level++;
+        current = current->exposedTableAncestor(false);
+    }
+    return level;
 }
 
 inline String AXCoreObject::ariaLandmarkRoleDescription() const

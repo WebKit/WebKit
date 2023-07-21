@@ -56,7 +56,6 @@ public:
 
     unsigned columnCount() final;
     unsigned rowCount() final;
-    int tableLevel() const final;
 
     String title() const final;
 
