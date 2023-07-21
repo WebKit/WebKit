@@ -141,6 +141,7 @@ BEGIN {
        &jscProductDir
        &launcherName
        &launcherPath
+       &libFuzzerIsEnabled
        &ltoMode
        &markBaseProductDirectoryAsCreatedByXcodeBuildSystem
        &maxCPULoad
@@ -243,6 +244,7 @@ my %nativeArchitectureMap = ();
 my $asanIsEnabled;
 my $tsanIsEnabled;
 my $ubsanIsEnabled;
+my $libFuzzerIsEnabled;
 my $coverageIsEnabled;
 my $forceOptimizationLevel;
 my $ltoMode;
@@ -614,6 +616,13 @@ sub determineUBSanIsEnabled
     return if defined $ubsanIsEnabled;
     determineBaseProductDir();
     $ubsanIsEnabled = readSanitizerConfiguration("UBSan");
+}
+
+sub determineLibFuzzerIsEnabled
+{
+    return if defined $libFuzzerIsEnabled;
+    determineBaseProductDir();
+    $libFuzzerIsEnabled = readSanitizerConfiguration("LibFuzzer");
 }
 
 sub determineForceOptimizationLevel
@@ -1118,6 +1127,12 @@ sub ubsanIsEnabled()
     return $ubsanIsEnabled;
 }
 
+sub libFuzzerIsEnabled()
+{
+    determineLibFuzzerIsEnabled();
+    return $libFuzzerIsEnabled;
+}
+
 sub coverageIsEnabled()
 {
     determineCoverageIsEnabled();
@@ -1203,6 +1218,7 @@ sub XcodeOptions
     determineASanIsEnabled();
     determineTSanIsEnabled();
     determineUBSanIsEnabled();
+    determineLibFuzzerIsEnabled();
     determineForceOptimizationLevel();
     determineCoverageIsEnabled();
     determineLTOMode();
@@ -1222,6 +1238,7 @@ sub XcodeOptions
     push @options, ("ENABLE_ADDRESS_SANITIZER=YES") if $asanIsEnabled;
     push @options, ("ENABLE_THREAD_SANITIZER=YES") if $tsanIsEnabled;
     push @options, ("ENABLE_UNDEFINED_BEHAVIOR_SANITIZER=YES") if $ubsanIsEnabled;
+    push @options, ("ENABLE_LIBFUZZER=YES") if $libFuzzerIsEnabled;
     push @options, XcodeCoverageSupportOptions() if $coverageIsEnabled;
     push @options, "GCC_OPTIMIZATION_LEVEL=$forceOptimizationLevel" if $forceOptimizationLevel;
     push @options, "WK_LTO_MODE=$ltoMode" if $ltoMode;
@@ -2622,6 +2639,7 @@ sub generateBuildSystemFromCMakeProject
     push @args, "-DENABLE_SANITIZERS=address" if asanIsEnabled();
     push @args, "-DENABLE_SANITIZERS=thread" if tsanIsEnabled();
     push @args, "-DENABLE_SANITIZERS=undefined" if ubsanIsEnabled();
+    push @args, "-DENABLE_SANITIZERS=fuzzer" if libFuzzerIsEnabled();
 
     push @args, "-DLTO_MODE=$ltoMode" if ltoMode();
 

@@ -44,6 +44,7 @@ Usage: $programName [options]
   --[no-]asan                        Enable or disable clang address sanitizer
   --[no-]tsan                        Enable or disable clang thread sanitizer
   --[no-]ubsan                       Enable or disable clang undefined behavior sanitizer
+  --[no-]libFuzzer                   Enable or disable clang libFuzzer
   --[no-]coverage                    Enable or disable LLVM Source-based Code Coverage
   --force-optimization-level=<level> Optimization level: O3, O2, O1, O0, Os, Ofast, Og, or none
   --lto-mode=<mode>                  Set LTO mode: full, thin, or none
@@ -66,6 +67,8 @@ my $enableTSAN = checkForArgumentAndRemoveFromARGV("--tsan");
 my $disableTSAN = checkForArgumentAndRemoveFromARGV("--no-tsan");
 my $enableUBSAN = checkForArgumentAndRemoveFromARGV("--ubsan");
 my $disableUBSAN = checkForArgumentAndRemoveFromARGV("--no-ubsan");
+my $enableLibFuzzer = checkForArgumentAndRemoveFromARGV("--libFuzzer");
+my $disableLibFuzzer = checkForArgumentAndRemoveFromARGV("--no-libFuzzer");
 my $enableCoverage = checkForArgumentAndRemoveFromARGV("--coverage");
 my $disableCoverage = checkForArgumentAndRemoveFromARGV("--no-coverage");
 my $ltoMode;
@@ -162,6 +165,7 @@ updateOrDeleteConfigurationFile("ASan", $enableASAN, $disableASAN);
 updateOrDeleteConfigurationFile("Coverage", $enableCoverage, $disableCoverage);
 updateOrDeleteConfigurationFile("TSan", $enableTSAN, $disableTSAN);
 updateOrDeleteConfigurationFile("UBSan", $enableUBSAN, $disableUBSAN);
+updateOrDeleteConfigurationFile("LibFuzzer", $enableLibFuzzer, $disableLibFuzzer);
 
 if ($forceOptimizationLevel && $forceOptimizationLevel eq "none") {
     unlink "$baseProductDir/ForceOptimizationLevel";
@@ -189,6 +193,7 @@ sub printCurrentSettings()
     $result .= " ASan" if asanIsEnabled();
     $result .= " TSan" if tsanIsEnabled();
     $result .= " UBSan" if ubsanIsEnabled();
+    $result .= " LibFuzzer" if libFuzzerIsEnabled();
     $result .= " Coverage" if coverageIsEnabled();
     $result .= " LTOMode:" . ltoMode() if ltoMode();
     $result .= " ForceOptimizationLevel:O" . forceOptimizationLevel() if forceOptimizationLevel();
