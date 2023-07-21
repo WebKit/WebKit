@@ -75,7 +75,7 @@ using PerformWithMediaPlayerOnMainThread = Function<void()>;
 class RemoteGPU final : public IPC::StreamMessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static Ref<RemoteGPU> create(PerformWithMediaPlayerOnMainThread&& performWithMediaPlayerOnMainThread, WebGPUIdentifier identifier, GPUConnectionToWebProcess& gpuConnectionToWebProcess, RemoteRenderingBackend& renderingBackend, IPC::StreamServerConnection::Handle&& serverConnection)
+    static Ref<RemoteGPU> create(PerformWithMediaPlayerOnMainThread&& performWithMediaPlayerOnMainThread, WebGPUIdentifier identifier, GPUConnectionToWebProcess& gpuConnectionToWebProcess, RemoteRenderingBackend& renderingBackend, Ref<IPC::StreamServerConnection>&& serverConnection)
     {
         auto result = adoptRef(*new RemoteGPU(WTFMove(performWithMediaPlayerOnMainThread), identifier, gpuConnectionToWebProcess, renderingBackend, WTFMove(serverConnection)));
         result->initialize();
@@ -89,7 +89,7 @@ public:
 private:
     friend class WebGPU::ObjectHeap;
 
-    RemoteGPU(PerformWithMediaPlayerOnMainThread&&, WebGPUIdentifier, GPUConnectionToWebProcess&, RemoteRenderingBackend&, IPC::StreamServerConnection::Handle&&);
+    RemoteGPU(PerformWithMediaPlayerOnMainThread&&, WebGPUIdentifier, GPUConnectionToWebProcess&, RemoteRenderingBackend&, Ref<IPC::StreamServerConnection>&&);
 
     RemoteGPU(const RemoteGPU&) = delete;
     RemoteGPU(RemoteGPU&&) = delete;

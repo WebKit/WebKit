@@ -68,7 +68,7 @@ public:
         void encode(Encoder&) &&;
         static std::optional<Handle> decode(Decoder&);
     };
-    static Ref<StreamServerConnection> create(Handle&&);
+    static RefPtr<StreamServerConnection> tryCreate(Handle&&);
     ~StreamServerConnection() final;
 
     void startReceivingMessages(StreamMessageReceiver&, ReceiverName, uint64_t destinationID);
