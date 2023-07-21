@@ -39,7 +39,6 @@
 #include "ImageObserver.h"
 #include "IntRect.h"
 #include "JSDOMWindowBase.h"
-#include "LayoutDisallowedScope.h"
 #include "LegacyRenderSVGRoot.h"
 #include "LocalDOMWindow.h"
 #include "LocalFrame.h"
@@ -191,8 +190,6 @@ ImageDrawResult SVGImage::drawForContainer(GraphicsContext& context, const Float
     if (!m_page)
         return ImageDrawResult::DidNothing;
 
-    LayoutDisallowedScope::AllowedScope layoutAllowedScope; // Allow layout in the SVG document for this image.
-
     ImageObserver* observer = imageObserver();
     ASSERT(observer);
 
@@ -315,7 +312,6 @@ ImageDrawResult SVGImage::draw(GraphicsContext& context, const FloatRect& dstRec
 
     {
         ScriptDisallowedScope::DisableAssertionsInScope disabledScope;
-        LayoutDisallowedScope::AllowedScope layoutAllowedScope;
         if (view->needsLayout())
             view->layoutContext().layout();
     }
