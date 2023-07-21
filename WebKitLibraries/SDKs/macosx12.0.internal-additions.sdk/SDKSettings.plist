@@ -3,12 +3,12 @@
 <plist version="1.0">
 <dict>
         <key>CanonicalName</key>
-        <string>macosx14.0-additions</string>
+        <string>macosx12.0.internal-additions</string>
         <key>IsBaseSDK</key>
         <string>NO</string>
-        <key>HeaderSearchPaths</key>
+        <key>FrameworkSearchPaths</key>
         <array>
-            <string>usr/local/include</string>
+            <string>System/Library/PrivateFrameworks</string>
         </array>
 </dict>
 </plist>

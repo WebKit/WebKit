@@ -74,19 +74,15 @@ WK_WEBKITADDITIONS_HEADERS_FOLDER_PATH = $(BUILT_PRODUCTS_DIR)$(WK_LIBRARY_HEADE
 WK_WEBKITADDITIONS_HEADERS_FOLDER_PATH[config=Production] = $(SDK_DIR)$(WK_LIBRARY_HEADERS_FOLDER_PATH)/WebKitAdditions;
 
 // The root directory of the workspace / WebKit repo is determined by how many directories up "Source" or "Tools" is from the SRCROOT.
-WK_WORKSPACE_DIR = $(WK_WORKSPACE_DIR_1_$(SRCROOT:dir:standardizepath:file):standardizepath)$(WK_WORKSPACE_DIR_2_$(SRCROOT:dir:standardizepath:dir:standardizepath:file):standardizepath)$(WK_WORKSPACE_DIR_3_$(SRCROOT:dir:standardizepath:dir:standardizepath:dir:standardizepath:file):standardizepath)$(WK_WORKSPACE_DIR_4_$(SRCROOT:dir:standardizepath:dir:standardizepath:dir:standardizepath:dir:standardizepath:file):standardizepath);
+WK_WORKSPACE_DIR = $(WK_WORKSPACE_DIR_1_$(SRCROOT:dir:standardizepath:file):standardizepath)$(WK_WORKSPACE_DIR_2_$(SRCROOT:dir:standardizepath:dir:standardizepath:file):standardizepath)$(WK_WORKSPACE_DIR_3_$(SRCROOT:dir:standardizepath:dir:standardizepath:dir:standardizepath:file):standardizepath)$(WK_WORKSPACE_DIR_4_$(SRCROOT:dir:standardizepath:dir:standardizepath:dir:standardizepath:dir:standardizepath:file):standardizepath)$(WK_WORKSPACE_DIR_5_$(SRCROOT:dir:standardizepath:dir:standardizepath:dir:standardizepath:dir:standardizepath:dir:standardizepath:file):standardizepath)$(WK_WORKSPACE_DIR_6_$(SRCROOT:dir:standardizepath:dir:standardizepath:dir:standardizepath:dir:standardizepath:dir:standardizepath:dir:standardizepath:file):standardizepath);
 WK_WORKSPACE_DIR_1_Source = $(SRCROOT)/../..;
 WK_WORKSPACE_DIR_1_Tools = $(SRCROOT)/../..;
 WK_WORKSPACE_DIR_2_Source = $(SRCROOT)/../../..;
 WK_WORKSPACE_DIR_2_Tools = $(SRCROOT)/../../..;
 WK_WORKSPACE_DIR_3_Source = $(SRCROOT)/../../../..;
 WK_WORKSPACE_DIR_4_Source = $(SRCROOT)/../../../../..;
-
-WK_PRIVATE_FRAMEWORK_STUBS_DIR = $(WK_PRIVATE_FRAMEWORK_STUBS_DIR_$(USE_INTERNAL_SDK));
-WK_PRIVATE_FRAMEWORK_STUBS_DIR_[sdk=macos*] = $(WK_WORKSPACE_DIR)/WebKitLibraries/WebKitPrivateFrameworkStubs/Mac/$(TARGET_MAC_OS_X_VERSION_MAJOR);
-WK_PRIVATE_FRAMEWORK_STUBS_DIR_[sdk=iphone*] = $(WK_WORKSPACE_DIR)/WebKitLibraries/WebKitPrivateFrameworkStubs/iOS/$(WK_TARGET_IOS_VERSION_MAJOR);
-WK_PRIVATE_FRAMEWORK_STUBS_DIR_[sdk=appletv*] = $(WK_WORKSPACE_DIR)/WebKitLibraries/WebKitPrivateFrameworkStubs/appletvos/$(WK_TARGET_TVOS_VERSION_MAJOR);
-WK_PRIVATE_FRAMEWORK_STUBS_DIR_[sdk=watch*] = $(WK_WORKSPACE_DIR)/WebKitLibraries/WebKitPrivateFrameworkStubs/watchos/$(WK_TARGET_WATCHOS_VERSION_MAJOR);
+WK_WORKSPACE_DIR_5_Source = $(SRCROOT)/../../../../../..;
+WK_WORKSPACE_DIR_6_Source = $(SRCROOT)/../../../../../../..;
 
 WK_DOWNLEVEL_FRAMEWORK_STUBS_DIR[sdk=macos*] = $(WK_DOWNLEVEL_FRAMEWORK_STUBS_DIR$(WK_MACOS_1400);
 WK_DOWNLEVEL_FRAMEWORK_STUBS_DIR_MACOS_BEFORE_1400 = $(WK_WORKSPACE_DIR)/WebKitLibraries/DownlevelFrameworkStubs/$(TARGET_MAC_OS_X_VERSION_MAJOR);

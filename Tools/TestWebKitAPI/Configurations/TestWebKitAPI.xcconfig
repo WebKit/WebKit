@@ -28,8 +28,8 @@ GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 GCC_PREPROCESSOR_DEFINITIONS = $(inherited) GTEST_API_=
 
 FRAMEWORK_SEARCH_PATHS = $(FRAMEWORK_SEARCH_PATHS_$(WK_COCOA_TOUCH));
-FRAMEWORK_SEARCH_PATHS_ = $(inherited) $(WK_PRIVATE_FRAMEWORK_STUBS_DIR) $(SYSTEM_LIBRARY_DIR)/PrivateFrameworks $(SYSTEM_LIBRARY_DIR)/Frameworks/WebKit.framework/Versions/A/Frameworks;
-FRAMEWORK_SEARCH_PATHS_cocoatouch = $(inherited) $(WK_PRIVATE_FRAMEWORK_STUBS_DIR);
+FRAMEWORK_SEARCH_PATHS_ = $(inherited) $(SYSTEM_LIBRARY_DIR)/PrivateFrameworks $(SYSTEM_LIBRARY_DIR)/Frameworks/WebKit.framework/Versions/A/Frameworks;
+FRAMEWORK_SEARCH_PATHS_cocoatouch = $(inherited);
 
 WK_APPSERVERSUPPORT_LDFLAGS[sdk=iphone*] = -framework AppServerSupport
 

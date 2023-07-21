@@ -235,6 +235,12 @@ if (isAppleCocoaWebKit()) {
         overrideConfiguredXcodeWorkspace("");
     }
 
+    if (xcodeVersion() ge "14.0" && xcodeVersion() lt "15.0" && !defined($ENV{UseSRCROOTSupportForTAPI})) {
+        # The call to XcodeOptions below checks this environment variable and
+        # sets TAPI_USE_SRCROOT for xcconfigs.
+        $ENV{UseSRCROOTSupportForTAPI} = "YES";
+    }
+
     push @options, XcodeOptions();
 
     sub option($$)
