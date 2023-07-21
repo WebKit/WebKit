@@ -275,12 +275,11 @@ static std::optional<RecordHeader> decodeRecordHeader(std::span<const uint8_t> h
     };
 }
 
-static std::optional<StoredRecordInformation> readRecordInfoFromFileData(const FileSystem::Salt& salt, const Vector<uint8_t>& buffer)
+static std::optional<StoredRecordInformation> readRecordInfoFromFileData(const FileSystem::Salt& salt, std::span<const uint8_t> fileData)
 {
-    if (buffer.isEmpty())
+    if (!fileData.size())
         return std::nullopt;
 
-    auto fileData = std::span(buffer.data(), buffer.size());
     auto metaData = decodeRecordMetaData(fileData);
     if (!metaData)
         return std::nullopt;
@@ -301,7 +300,7 @@ static std::optional<StoredRecordInformation> readRecordInfoFromFileData(const F
     return StoredRecordInformation { info, WTFMove(*metaData), WTFMove(*header) };
 }
 
-std::optional<CacheStorageRecord> CacheStorageDiskStore::readRecordFromFileData(const Vector<uint8_t>& buffer, const Vector<uint8_t>& blobBuffer)
+std::optional<CacheStorageRecord> CacheStorageDiskStore::readRecordFromFileData(std::span<const uint8_t> buffer, FileSystem::MappedFileData&& blobBuffer)
 {
     auto storedInfo = readRecordInfoFromFileData(m_salt, buffer);
     if (!storedInfo)
@@ -318,12 +317,14 @@ std::optional<CacheStorageRecord> CacheStorageDiskStore::readRecordFromFileData(
         if (storedInfo->metaData.bodyHash != computeSHA1(bodyData, m_salt))
             return std::nullopt;
 
+        // FIXME: avoid copying inline body data here, perhaps by adding offset support to
+        // MappedFileData, or by taking a read-only virtual copy of bodyData.
         responseBody = WebCore::SharedBuffer::create(bodyData.data(), bodyData.size());
     } else {
-        if (blobBuffer.isEmpty())
+        if (!blobBuffer)
             return std::nullopt;
 
-        auto sharedBuffer = WebCore::SharedBuffer::create(blobBuffer.data(), blobBuffer.size());
+        auto sharedBuffer = WebCore::SharedBuffer::create(WTFMove(blobBuffer));
         auto bodyData = std::span(sharedBuffer->data(), sharedBuffer->size());
         if (storedInfo->metaData.bodyHash != computeSHA1(bodyData, m_salt))
             return std::nullopt;
@@ -351,13 +352,13 @@ void CacheStorageDiskStore::readAllRecordInfosInternal(CompletionHandler<void(Fi
                     continue;
 
                 auto recordFile = FileSystem::pathByAppendingComponent(cacheDirectory, recordName);
-                auto fileData = FileSystem::readEntireFile(recordFile);
+                auto fileData = FileSystem::MappedFileData::create(recordFile, FileSystem::MappedFileMode::Private);
                 if (fileData)
                     fileDatas.append(WTFMove(*fileData));
             }
         }
 
-        m_callbackQueue->dispatch([protectedThis = WTFMove(protectedThis), fileDatas = crossThreadCopy(WTFMove(fileDatas)), callback = WTFMove(callback)]() mutable {
+        m_callbackQueue->dispatch([protectedThis = WTFMove(protectedThis), fileDatas = WTFMove(fileDatas), callback = WTFMove(callback)]() mutable {
             callback(WTFMove(fileDatas));
         });
     });
@@ -369,7 +370,7 @@ void CacheStorageDiskStore::readAllRecordInfos(ReadAllRecordInfosCallback&& call
         Vector<CacheStorageRecordInformation> result;
         result.reserveInitialCapacity(fileDatas.size());
         for (auto& fileData : fileDatas) {
-            if (auto storedInfo = readRecordInfoFromFileData(m_salt, fileData))
+            if (auto storedInfo = readRecordInfoFromFileData(m_salt, fileData.toSpan()))
                 result.uncheckedAppend(WTFMove(storedInfo->info));
             else
                 RELEASE_LOG(CacheStorage, "%p - CacheStorageDiskStore::readAllRecordInfos fails to decode record from file", this);
@@ -384,13 +385,13 @@ void CacheStorageDiskStore::readRecordsInternal(Vector<String>&& recordFiles, Co
         FileDatas fileDatas;
         FileDatas blobDatas;
         for (auto& recordFile : recordFiles) {
-            auto fileData = valueOrDefault(FileSystem::readEntireFile(recordFile));
-            auto blobData = fileData.isEmpty()? Vector<uint8_t> { } : valueOrDefault(FileSystem::readEntireFile(recordBlobFilePath(recordFile)));
+            auto fileData = valueOrDefault(FileSystem::MappedFileData::create(recordFile, FileSystem::MappedFileMode::Private));
+            auto blobData = !fileData.size() ? FileSystem::MappedFileData { } : valueOrDefault(FileSystem::MappedFileData::create(recordBlobFilePath(recordFile), FileSystem::MappedFileMode::Private));
             fileDatas.append(WTFMove(fileData));
             blobDatas.append(WTFMove(blobData));
         }
 
-        m_callbackQueue->dispatch([protectedThis = WTFMove(protectedThis), fileDatas = crossThreadCopy(WTFMove(fileDatas)), blobDatas = crossThreadCopy(WTFMove(blobDatas)), callback = WTFMove(callback)]() mutable {
+        m_callbackQueue->dispatch([protectedThis = WTFMove(protectedThis), fileDatas = WTFMove(fileDatas), blobDatas = WTFMove(blobDatas), callback = WTFMove(callback)]() mutable {
             callback(WTFMove(fileDatas), WTFMove(blobDatas));
         });
     });
@@ -408,7 +409,7 @@ void CacheStorageDiskStore::readRecords(const Vector<CacheStorageRecordInformati
 
         Vector<std::optional<CacheStorageRecord>> result;
         for (size_t index = 0; index < recordInfos.size(); ++index) {
-            auto record = readRecordFromFileData(fileDatas[index], blobDatas[index]);
+            auto record = readRecordFromFileData(fileDatas[index].toSpan(), WTFMove(blobDatas[index]));
             if (record) {
                 auto recordInfo = recordInfos[index];
                 if (recordInfo.insertionTime != record->info.insertionTime || recordInfo.size != record->info.size || recordInfo.url != record->info.url)
