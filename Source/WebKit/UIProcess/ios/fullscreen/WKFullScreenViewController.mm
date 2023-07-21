@@ -140,6 +140,7 @@ private:
 
 @implementation WKFullScreenViewController {
     BOOL _valid;
+    WeakObjCPtr<id<WKFullScreenViewControllerDelegate>> _delegate;
     RetainPtr<UILongPressGestureRecognizer> _touchGestureRecognizer;
     RetainPtr<UIView> _animatingView;
     RetainPtr<UIStackView> _stackView;
@@ -209,10 +210,17 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 - (void)dealloc
 {
     [self invalidate];
-
-    [_target release];
-
     [super dealloc];
+}
+
+- (id<WKFullScreenViewControllerDelegate>)delegate
+{
+    return _delegate.get().get();
+}
+
+- (void)setDelegate:(id<WKFullScreenViewControllerDelegate>)delegate
+{
+    _delegate = delegate;
 }
 
 - (void)setSupportedOrientations:(UIInterfaceOrientationMask)supportedOrientations
@@ -244,6 +252,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         [self performSelector:@selector(hideUI) withObject:nil afterDelay:hideDelay];
     }
     [UIView animateWithDuration:showHideAnimationDuration animations:^{
+        [[self delegate] showUI];
         [_stackView setHidden:NO];
         [_stackView setAlpha:1];
         self.prefersStatusBarHidden = NO;
@@ -262,7 +271,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     ASSERT(_valid);
     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(hideUI) object:nil];
     [UIView animateWithDuration:showHideAnimationDuration animations:^{
-
+        [[self delegate] hideUI];
         if (_topConstraint)
             [NSLayoutConstraint deactivateConstraints:@[_topConstraint.get()]];
         _topConstraint = [[_topGuide topAnchor] constraintEqualToAnchor:self.view.topAnchor constant:self.view.safeAreaInsets.top];
@@ -676,7 +685,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 - (void)_cancelAction:(id)sender
 {
     ASSERT(_valid);
-    [[self target] performSelector:[self exitFullScreenAction]];
+    [[self delegate] requestExitFullScreen];
 }
 
 - (void)_togglePiPAction:(id)sender
@@ -706,7 +715,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 - (void)_toggleDimmingAction:(id)sender
 {
     ASSERT(_valid);
-    [[self target] performSelector:[self toggleDimmingAction]];
+    [[self delegate] toggleDimming];
 }
 
 #endif // PLATFORM(VISION)
