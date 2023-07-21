@@ -224,7 +224,7 @@ void ScrollingStateScrollingNode::setRequestedScrollData(RequestedScrollData&& s
 
 bool ScrollingStateScrollingNode::hasScrollPositionRequest() const
 {
-    return hasChangedProperty(Property::RequestedScrollPosition) && m_requestedScrollData.requestType == ScrollRequestType::PositionUpdate;
+    return hasChangedProperty(Property::RequestedScrollPosition) && m_requestedScrollData.requestType != ScrollRequestType::CancelAnimatedScroll;
 }
 
 void ScrollingStateScrollingNode::setIsMonitoringWheelEvents(bool isMonitoringWheelEvents)
@@ -330,12 +330,24 @@ void ScrollingStateScrollingNode::dumpProperties(TextStream& ts, OptionSet<Scrol
     if (m_reachableContentsSize != m_totalContentsSize)
         ts.dumpProperty("reachable contents size", m_reachableContentsSize);
 
-    if (!m_requestedScrollData.scrollPosition.isZero()) {
-        TextStream::GroupScope scope(ts);
-        ts << "requested scroll position "
-            << TextStream::FormatNumberRespectingIntegers(m_requestedScrollData.scrollPosition.x()) << " "
-            << TextStream::FormatNumberRespectingIntegers(m_requestedScrollData.scrollPosition.y());
+    if (m_requestedScrollData.requestType == ScrollRequestType::PositionUpdate) {
+        auto scrollPosition = std::get<FloatPoint>(m_requestedScrollData.scrollPositionOrDelta);
+        if (!scrollPosition.isZero()) {
+            TextStream::GroupScope scope(ts);
+            ts << "requested scroll position "
+            << TextStream::FormatNumberRespectingIntegers(scrollPosition.x()) << " "
+            << TextStream::FormatNumberRespectingIntegers(scrollPosition.y());
+        }
+    } else if (m_requestedScrollData.requestType == ScrollRequestType::DeltaUpdate) {
+        auto scrollDelta = std::get<FloatSize>(m_requestedScrollData.scrollPositionOrDelta);
+        if (!scrollDelta.isZero()) {
+            TextStream::GroupScope scope(ts);
+            ts << "requested scroll delta "
+            << TextStream::FormatNumberRespectingIntegers(scrollDelta.width()) << " "
+            << TextStream::FormatNumberRespectingIntegers(scrollDelta.height());
+        }
     }
+
     if (m_requestedScrollData.scrollType == ScrollType::Programmatic)
         ts.dumpProperty("requested scroll position represents programmatic scroll", true);
 

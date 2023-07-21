@@ -116,23 +116,33 @@ enum class ViewportRectStability {
 
 enum class ScrollRequestType : uint8_t {
     PositionUpdate,
+    DeltaUpdate,
     CancelAnimatedScroll
 };
 
 struct RequestedScrollData {
     ScrollRequestType requestType { ScrollRequestType::PositionUpdate };
-    FloatPoint scrollPosition;
+    std::variant<FloatPoint, FloatSize> scrollPositionOrDelta;
     ScrollType scrollType { ScrollType::User };
     ScrollClamping clamping { ScrollClamping::Clamped };
     ScrollIsAnimated animated { ScrollIsAnimated::No };
-    std::optional<std::tuple<FloatPoint, ScrollType, ScrollClamping>> requestedDataBeforeAnimatedScroll { };
+    std::optional<std::tuple<ScrollRequestType, std::variant<FloatPoint, FloatSize>, ScrollType, ScrollClamping>> requestedDataBeforeAnimatedScroll { };
 
     void merge(RequestedScrollData&&);
+    WEBCORE_EXPORT FloatPoint destinationPosition(const FloatPoint&) const;
+    bool comparePositionOrDelta(const RequestedScrollData& other) const
+    {
+        if (requestType == ScrollRequestType::PositionUpdate)
+            return std::get<FloatPoint>(scrollPositionOrDelta) == std::get<FloatPoint>(other.scrollPositionOrDelta);
+        if (requestType == ScrollRequestType::DeltaUpdate)
+            return std::get<FloatSize>(scrollPositionOrDelta) == std::get<FloatSize>(other.scrollPositionOrDelta);
+        return true;
+    }
 
     bool operator==(const RequestedScrollData& other) const
     {
         return requestType == other.requestType
-            && scrollPosition == other.scrollPosition
+            && comparePositionOrDelta(other)
             && scrollType == other.scrollType
             && clamping == other.clamping
             && animated == other.animated
@@ -216,7 +226,9 @@ WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, ScrollableAreaParam
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, ViewportRectStability);
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, WheelEventHandlingResult);
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, WheelEventProcessingSteps);
+WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, ScrollRequestType);
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, ScrollUpdateType);
+WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, RequestedScrollData);
 
 } // namespace WebCore
 
@@ -238,6 +250,7 @@ template<> struct EnumTraits<WebCore::ScrollRequestType> {
     using values = EnumValues<
         WebCore::ScrollRequestType,
         WebCore::ScrollRequestType::PositionUpdate,
+        WebCore::ScrollRequestType::DeltaUpdate,
         WebCore::ScrollRequestType::CancelAnimatedScroll
     >;
 };

@@ -112,7 +112,7 @@ private:
     WEBCORE_EXPORT bool requestStartKeyboardScrollAnimation(ScrollableArea&, const KeyboardScroll&) final;
     WEBCORE_EXPORT bool requestStopKeyboardScrollAnimation(ScrollableArea&, bool) final;
 
-    WEBCORE_EXPORT bool requestScrollToPosition(ScrollableArea&, const ScrollPosition&, ScrollType, ScrollClamping, ScrollIsAnimated) final;
+    WEBCORE_EXPORT bool requestScrollToPosition(ScrollableArea&, const ScrollPosition&, const ScrollPositionChangeOptions& options) final;
     WEBCORE_EXPORT void stopAnimatedScroll(ScrollableArea&) final;
 
     WEBCORE_EXPORT void applyScrollingTreeLayerPositions() override;

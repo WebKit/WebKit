@@ -2464,7 +2464,7 @@ void LocalFrameView::setScrollPosition(const ScrollPosition& scrollPosition, con
     auto snappedPosition = scrollPositionFromOffset(snappedOffset);
 
     if (options.animated == ScrollIsAnimated::Yes)
-        scrollToPositionWithAnimation(snappedPosition, currentScrollType(), options.clamping);
+        scrollToPositionWithAnimation(snappedPosition, options);
     else
         ScrollView::setScrollPosition(snappedPosition, options);
 
@@ -3085,12 +3085,12 @@ bool LocalFrameView::requestStopKeyboardScrollAnimation(bool immediate)
     return false;
 }
 
-bool LocalFrameView::requestScrollToPosition(const ScrollPosition& position, ScrollType scrollType, ScrollClamping clamping, ScrollIsAnimated animated)
+bool LocalFrameView::requestScrollToPosition(const ScrollPosition& position, const ScrollPositionChangeOptions& options)
 {
-    LOG_WITH_STREAM(Scrolling, stream << "LocalFrameView::requestScrollToPosition " << position << " animated  " << (animated == ScrollIsAnimated::Yes));
+    LOG_WITH_STREAM(Scrolling, stream << "LocalFrameView::requestScrollToPosition " << position << " options  " << options);
 
 #if ENABLE(ASYNC_SCROLLING)
-    if (auto* tiledBacking = this->tiledBacking(); tiledBacking && animated == ScrollIsAnimated::No) {
+    if (auto* tiledBacking = this->tiledBacking(); tiledBacking && options.animated == ScrollIsAnimated::No) {
 #if PLATFORM(IOS_FAMILY)
         auto contentSize = exposedContentRect().size();
 #else
@@ -3102,12 +3102,10 @@ bool LocalFrameView::requestScrollToPosition(const ScrollPosition& position, Scr
 
 #if ENABLE(ASYNC_SCROLLING) || USE(COORDINATED_GRAPHICS)
     if (auto scrollingCoordinator = this->scrollingCoordinator())
-        return scrollingCoordinator->requestScrollToPosition(*this, position, scrollType, clamping, animated);
+        return scrollingCoordinator->requestScrollToPosition(*this, position, options);
 #else
     UNUSED_PARAM(position);
-    UNUSED_PARAM(scrollType);
-    UNUSED_PARAM(clamping);
-    UNUSED_PARAM(animated);
+    UNUSED_PARAM(options);
 #endif
 
     return false;
@@ -4269,17 +4267,17 @@ void LocalFrameView::scrollTo(const ScrollPosition& newPosition)
     didChangeScrollOffset();
 }
 
-void LocalFrameView::scrollToPositionWithAnimation(const ScrollPosition& position, ScrollType scrollType, ScrollClamping)
+void LocalFrameView::scrollToPositionWithAnimation(const ScrollPosition& position, const ScrollPositionChangeOptions& options)
 {
     // FIXME: Why isn't all this in ScrollableArea?
     auto previousScrollType = currentScrollType();
-    setCurrentScrollType(scrollType);
+    setCurrentScrollType(options.type);
 
     if (scrollAnimationStatus() == ScrollAnimationStatus::Animating)
         scrollAnimator().cancelAnimations();
 
     if (position != scrollPosition())
-        ScrollableArea::scrollToPositionWithAnimation(position);
+        ScrollableArea::scrollToPositionWithAnimation(position, options);
 
     setCurrentScrollType(previousScrollType);
 }

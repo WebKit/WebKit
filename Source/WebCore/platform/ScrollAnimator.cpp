@@ -89,7 +89,9 @@ bool ScrollAnimator::singleAxisScroll(ScrollEventAxis axis, float scrollDelta, O
         if (m_scrollController.retargetAnimatedScrollBy(delta))
             return true;
 
-        m_scrollableArea.scrollToPositionWithAnimation(m_currentPosition + delta);
+        auto options = ScrollPositionChangeOptions::createProgrammatic();
+        options.originalScrollDelta = delta;
+        m_scrollableArea.scrollToPositionWithAnimation(m_currentPosition + delta, options);
         return true;
     }
 
