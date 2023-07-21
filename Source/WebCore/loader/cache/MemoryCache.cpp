@@ -146,9 +146,9 @@ void MemoryCache::revalidationSucceeded(CachedResource& revalidatingResource, co
     ASSERT(response.source() == ResourceResponse::Source::MemoryCacheAfterValidation);
     ASSERT(revalidatingResource.resourceToRevalidate());
     CachedResourceHandle protectedRevalidatingResource { revalidatingResource };
-    auto* resource = revalidatingResource.resourceToRevalidate();
-    ASSERT(!resource->inCache());
-    ASSERT(resource->isLoaded());
+    auto& resource = *revalidatingResource.resourceToRevalidate();
+    ASSERT(!resource.inCache());
+    ASSERT(resource.isLoaded());
 
     // Calling remove() can potentially delete revalidatingResource, which we use
     // below. This mustn't be the case since revalidation means it is loaded
@@ -157,27 +157,28 @@ void MemoryCache::revalidationSucceeded(CachedResource& revalidatingResource, co
 
     remove(revalidatingResource);
 
-    auto& resources = ensureSessionResourceMap(resource->sessionID());
-    std::pair key { resource->url(), resource->cachePartition() };
-
-    auto addResult = resources.add(key, resource);
-    if (addResult.isNewEntry) {
-        resource->setInCache(true);
-        resource->updateResponseAfterRevalidation(response);
-        insertInLRUList(*resource);
-        long long delta = resource->size();
-        if (resource->decodedSize() && resource->hasClients())
-            insertInLiveDecodedResourcesList(*resource);
-        if (delta)
-            adjustSize(resource->hasClients(), delta);
-    } else {
-        // The resource was re-inserted in the cache during its revalidation.
-        // Ignore the revalidated resource and switch clients to the one that
-        // is already in the cache.
-        resource = addResult.iterator->value.get();
-        ASSERT(resource);
-        revalidatingResource.replaceResourceToRevalidate(*resource);
+    // A resource with the same URL may have been added back in the cache during revalidation.
+    // In this case, we remove the cached resource and replace it with our freshly revalidated
+    // one.
+    std::pair key { resource.url(), resource.cachePartition() };
+    if (auto* existingResources = sessionResourceMap(resource.sessionID())) {
+        if (auto existingResource = existingResources->get(key))
+            remove(*existingResource);
     }
+
+    // Don't move the call to ensureSessionResourceMap() in this function as the calls to
+    // remove() above could invalidate the reference returned by ensureSessionResourceMap().
+    auto& resources = ensureSessionResourceMap(resource.sessionID());
+    ASSERT(!resources.contains(key));
+    resources.add(key, &resource);
+    resource.setInCache(true);
+    resource.updateResponseAfterRevalidation(response);
+    insertInLRUList(resource);
+    long long delta = resource.size();
+    if (resource.decodedSize() && resource.hasClients())
+        insertInLiveDecodedResourcesList(resource);
+    if (delta)
+        adjustSize(resource.hasClients(), delta);
 
     revalidatingResource.switchClientsToRevalidatedResource();
     ASSERT(!revalidatingResource.m_deleted);
