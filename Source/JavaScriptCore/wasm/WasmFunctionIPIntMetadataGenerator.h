@@ -84,8 +84,7 @@ private:
 
     void addBlankSpace(uint32_t size);
     void addRawValue(uint64_t value);
-    void addLEB128ConstantInt32(uint32_t value);
-    void addLEB128ConstantInt32AndLengthOfOtherInt32(uint32_t value, uint32_t otherValue);
+    void addLEB128ConstantInt32AndLength(uint32_t value, uint32_t length);
     void addLEB128ConstantAndLengthForType(Type, uint64_t value, uint32_t length);
     void addReturnData(const Vector<Type>& types);
 

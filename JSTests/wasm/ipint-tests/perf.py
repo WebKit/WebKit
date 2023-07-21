@@ -1,5 +1,6 @@
 #!/usr/local/bin/python3
 
+import math
 import re
 import subprocess
 import sys
@@ -102,16 +103,39 @@ jsc_mem = []
 
 runs = int(sys.argv[2])
 
+RUNS_DONE = 0
+TOTAL_RUNS = runs * 4
+BAR_WIDTH = 20
+
+START_TIME = None
+
+
+def progressBar():
+    pct = RUNS_DONE / TOTAL_RUNS
+    bars = math.floor(pct * BAR_WIDTH)
+    empty = BAR_WIDTH - bars
+    estimate = MEMORY_SLEEP * TOTAL_RUNS
+    if RUNS_DONE != 0:
+        estimate = (TOTAL_RUNS - RUNS_DONE) / RUNS_DONE * (time.time() - START_TIME)
+    print(f'[{"█" * bars}{" " * empty}] ({RUNS_DONE} / {TOTAL_RUNS}, {pct:.2f}%); {time.time() - START_TIME:.2f} seconds since start (expected finish in {estimate:.2f} s)', end='', flush=True)
+    print('\r', end='', flush=True)
+
+
+START_TIME = time.time()
+progressBar()
 for _ in range(runs):
     ipint_totals.append(run_ipint())
-    print('i', end='', flush=True)
+    RUNS_DONE += 1
+    progressBar()
     llint_totals.append(run_llint())
-    print('l', end='', flush=True)
+    RUNS_DONE += 1
+    progressBar()
     bbq_totals.append(run_bbq())
-    print('b', end='', flush=True)
+    RUNS_DONE += 1
+    progressBar()
     jsc_totals.append(run_jsc())
-    print('j', flush=True)
-
+    RUNS_DONE += 1
+    progressBar()
 
 def memValue(o):
     return int(o[1]) * (0.001 if o[2] == 'KB' else (1 if o[2] == 'MB' else 1000))

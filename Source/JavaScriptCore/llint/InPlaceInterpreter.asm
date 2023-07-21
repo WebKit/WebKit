@@ -157,6 +157,10 @@ macro advanceMC(amount)
     addq amount, MC
 end
 
+macro advanceMCByReg(amount)
+    addq amount, MC
+end
+
 macro nextIPIntInstruction()
     loadb [PB, PC, 1], t0
 if ARM64 or ARM64E
@@ -390,13 +394,14 @@ if WEBASSEMBLY and (ARM64 or ARM64E or X86_64)
     jmp .localLoop
 .endlocals:
 
+    loadp CodeBlock[cfr], wasmInstance
+    if ARM64 or ARM64E
+        pcrtoaddr _ipint_unreachable, IB
+    end
     loadp Wasm::IPIntCallee::m_bytecode[ws0], PB
     move 0, PC
     loadp Wasm::IPIntCallee::m_metadata[ws0], PM
     move 0, MC
-    if ARM64 or ARM64E
-        pcrtoaddr _ipint_unreachable, IB
-    end
 
     nextIPIntInstruction()
 
@@ -485,8 +490,7 @@ instructionLabel(_end)
 .ipint_end_ret:
     # Get number of returns
     loadh [PM, MC], t1
-    move 0, t0
-    addq MC, t0
+    move MC, t0
     addq 2, t0
     addq MC, t1
 .ipint_ret_loop:
@@ -561,7 +565,10 @@ instructionLabel(_return)
     # dispatch and end of program check for speed
     jmp .ipint_end_ret
 
-unimplementedInstruction(_call)
+instructionLabel(_call)
+    # call
+    jmp _ipint_call_impl
+
 unimplementedInstruction(_call_indirect)
 
 reservedOpcode(0x12)
@@ -826,39 +833,220 @@ instructionLabel(_i32_ge_u)
     # 0x50 - 0x5a: i64 comparison #
     ###############################
 
-unimplementedInstruction(_i64_eqz)
-unimplementedInstruction(_i64_eq)
-unimplementedInstruction(_i64_ne)
-unimplementedInstruction(_i64_lt_s)
-unimplementedInstruction(_i64_lt_u)
-unimplementedInstruction(_i64_gt_s)
-unimplementedInstruction(_i64_gt_u)
-unimplementedInstruction(_i64_le_s)
-unimplementedInstruction(_i64_le_u)
-unimplementedInstruction(_i64_ge_s)
-unimplementedInstruction(_i64_ge_u)
+instructionLabel(_i64_eqz)
+    # i64.eqz
+    popInt64(t0, t2)
+    cqeq t0, 0, t0
+    pushInt32(t0)
+    advancePC(1)
+    nextIPIntInstruction()
+
+instructionLabel(_i64_eq)
+    # i64.eq
+    popInt64(t1, t2)
+    popInt64(t0, t2)
+    cqeq t0, t1, t0
+    pushInt32(t0)
+    advancePC(1)
+    nextIPIntInstruction()
+
+instructionLabel(_i64_ne)
+    # i64.ne
+    popInt64(t1, t2)
+    popInt64(t0, t2)
+    cqneq t0, t1, t0
+    pushInt32(t0)
+    advancePC(1)
+    nextIPIntInstruction()
+
+instructionLabel(_i64_lt_s)
+    # i64.lt_s
+    popInt64(t1, t2)
+    popInt64(t0, t2)
+    cqlt t0, t1, t0
+    pushInt32(t0)
+    advancePC(1)
+    nextIPIntInstruction()
+
+instructionLabel(_i64_lt_u)
+    # i64.lt_u
+    popInt64(t1, t2)
+    popInt64(t0, t2)
+    cqb t0, t1, t0
+    pushInt32(t0)
+    advancePC(1)
+    nextIPIntInstruction()
+
+instructionLabel(_i64_gt_s)
+    # i64.gt_s
+    popInt64(t1, t2)
+    popInt64(t0, t2)
+    cqgt t0, t1, t0
+    pushInt32(t0)
+    advancePC(1)
+    nextIPIntInstruction()
+
+instructionLabel(_i64_gt_u)
+    # i64.gt_u
+    popInt64(t1, t2)
+    popInt64(t0, t2)
+    cqa t0, t1, t0
+    pushInt32(t0)
+    advancePC(1)
+    nextIPIntInstruction()
+
+instructionLabel(_i64_le_s)
+    # i64.le_s
+    popInt64(t1, t2)
+    popInt64(t0, t2)
+    cqlteq t0, t1, t0
+    pushInt32(t0)
+    advancePC(1)
+    nextIPIntInstruction()
+
+instructionLabel(_i64_le_u)
+    # i64.le_u
+    popInt64(t1, t2)
+    popInt64(t0, t2)
+    cqbeq t0, t1, t0
+    pushInt32(t0)
+    advancePC(1)
+    nextIPIntInstruction()
+
+instructionLabel(_i64_ge_s)
+    # i64.ge_s
+    popInt64(t1, t2)
+    popInt64(t0, t2)
+    cqgteq t0, t1, t0
+    pushInt32(t0)
+    advancePC(1)
+    nextIPIntInstruction()
+
+instructionLabel(_i64_ge_u)
+    # i64.ge_u
+    popInt64(t1, t2)
+    popInt64(t0, t2)
+    cqaeq t0, t1, t0
+    pushInt32(t0)
+    advancePC(1)
+    nextIPIntInstruction()
 
     ###############################
     # 0x5b - 0x60: f32 comparison #
     ###############################
 
-unimplementedInstruction(_f32_eq)
-unimplementedInstruction(_f32_ne)
-unimplementedInstruction(_f32_lt)
-unimplementedInstruction(_f32_gt)
-unimplementedInstruction(_f32_le)
-unimplementedInstruction(_f32_ge)
+instructionLabel(_f32_eq)
+    # f32.eq
+    popFloat32FT1()
+    popFloat32FT0()
+    cfeq ft0, ft1, t0
+    pushInt32(t0)
+    advancePC(1)
+    nextIPIntInstruction()
+
+instructionLabel(_f32_ne)
+    # f32.ne
+    popFloat32FT1()
+    popFloat32FT0()
+    cfnequn ft0, ft1, t0
+    pushInt32(t0)
+    advancePC(1)
+    nextIPIntInstruction()
+
+instructionLabel(_f32_lt)
+    # f32.lt
+    popFloat32FT1()
+    popFloat32FT0()
+    cflt ft0, ft1, t0
+    pushInt32(t0)
+    advancePC(1)
+    nextIPIntInstruction()
+
+instructionLabel(_f32_gt)
+    # f32.gt
+    popFloat32FT1()
+    popFloat32FT0()
+    cfgt ft0, ft1, t0
+    pushInt32(t0)
+    advancePC(1)
+    nextIPIntInstruction()
+
+instructionLabel(_f32_le)
+    # f32.le
+    popFloat32FT1()
+    popFloat32FT0()
+    cflteq ft0, ft1, t0
+    pushInt32(t0)
+    advancePC(1)
+    nextIPIntInstruction()
+
+instructionLabel(_f32_ge)
+    # f32.ge
+    popFloat32FT1()
+    popFloat32FT0()
+    cfgteq ft0, ft1, t0
+    pushInt32(t0)
+    advancePC(1)
+    nextIPIntInstruction()
+
 
     ###############################
     # 0x61 - 0x66: f64 comparison #
     ###############################
 
-unimplementedInstruction(_f64_eq)
-unimplementedInstruction(_f64_ne)
-unimplementedInstruction(_f64_lt)
-unimplementedInstruction(_f64_gt)
-unimplementedInstruction(_f64_le)
-unimplementedInstruction(_f64_ge)
+instructionLabel(_f64_eq)
+    # f64.eq
+    popFloat64FT1()
+    popFloat64FT0()
+    cdeq ft0, ft1, t0
+    pushInt32(t0)
+    advancePC(1)
+    nextIPIntInstruction()
+
+instructionLabel(_f64_ne)
+    # f64.ne
+    popFloat64FT1()
+    popFloat64FT0()
+    cdnequn ft0, ft1, t0
+    pushInt32(t0)
+    advancePC(1)
+    nextIPIntInstruction()
+
+instructionLabel(_f64_lt)
+    # f64.lt
+    popFloat64FT1()
+    popFloat64FT0()
+    cdlt ft0, ft1, t0
+    pushInt32(t0)
+    advancePC(1)
+    nextIPIntInstruction()
+
+instructionLabel(_f64_gt)
+    # f64.gt
+    popFloat64FT1()
+    popFloat64FT0()
+    cdgt ft0, ft1, t0
+    pushInt32(t0)
+    advancePC(1)
+    nextIPIntInstruction()
+
+instructionLabel(_f64_le)
+    # f64.le
+    popFloat64FT1()
+    popFloat64FT0()
+    cdlteq ft0, ft1, t0
+    pushInt32(t0)
+    advancePC(1)
+    nextIPIntInstruction()
+
+instructionLabel(_f64_ge)
+    # f64.ge
+    popFloat64FT1()
+    popFloat64FT0()
+    cdgteq ft0, ft1, t0
+    pushInt32(t0)
+    advancePC(1)
+    nextIPIntInstruction()
 
     ###############################
     # 0x67 - 0x78: i32 operations #
@@ -1194,13 +1382,68 @@ instructionLabel(_i64_rotr)
     # 0x8b - 0x98: f32 operations #
     ###############################
 
-unimplementedInstruction(_f32_abs)
-unimplementedInstruction(_f32_neg)
-unimplementedInstruction(_f32_ceil)
-unimplementedInstruction(_f32_floor)
-unimplementedInstruction(_f32_trunc)
-unimplementedInstruction(_f32_nearest)
-unimplementedInstruction(_f32_sqrt)
+instructionLabel(_f32_abs)
+    # f32.abs
+    popFloat32FT0()
+    absf ft0, ft0
+    pushFloat32FT0()
+
+    advancePC(1)
+    nextIPIntInstruction()
+
+instructionLabel(_f32_neg)
+    # f32.neg
+    popFloat32FT0()
+    negf ft0, ft0
+    pushFloat32FT0()
+
+    advancePC(1)
+    nextIPIntInstruction()
+
+instructionLabel(_f32_ceil)
+    # f32.ceil
+    popFloat32FT0()
+    ceilf ft0, ft0
+    pushFloat32FT0()
+
+    advancePC(1)
+    nextIPIntInstruction()
+
+instructionLabel(_f32_floor)
+    # f32.floor
+    popFloat32FT0()
+    floorf ft0, ft0
+    pushFloat32FT0()
+
+    advancePC(1)
+    nextIPIntInstruction()
+
+instructionLabel(_f32_trunc)
+    # f32.trunc
+    popFloat32FT0()
+    truncatef ft0, ft0
+    pushFloat32FT0()
+
+    advancePC(1)
+    nextIPIntInstruction()
+
+instructionLabel(_f32_nearest)
+    # f32.nearest
+    popFloat32FT0()
+    roundf ft0, ft0
+    pushFloat32FT0()
+
+    advancePC(1)
+    nextIPIntInstruction()
+
+instructionLabel(_f32_sqrt)
+    # f32.sqrt
+    popFloat32FT0()
+    sqrtf ft0, ft0
+    pushFloat32FT0()
+
+    advancePC(1)
+    nextIPIntInstruction()
     
 instructionLabel(_f32_add)
     # f32.add
@@ -1212,12 +1455,119 @@ instructionLabel(_f32_add)
     advancePC(1)
     nextIPIntInstruction()
 
-unimplementedInstruction(_f32_sub)
-unimplementedInstruction(_f32_mul)
-unimplementedInstruction(_f32_div)
-unimplementedInstruction(_f32_min)
-unimplementedInstruction(_f32_max)
-unimplementedInstruction(_f32_copysign)
+instructionLabel(_f32_sub)
+    # f32.sub
+    popFloat32FT1()
+    popFloat32FT0()
+    subf ft1, ft0
+    pushFloat32FT0()
+
+    advancePC(1)
+    nextIPIntInstruction()
+
+instructionLabel(_f32_mul)
+    # f32.mul
+    popFloat32FT1()
+    popFloat32FT0()
+    mulf ft1, ft0
+    pushFloat32FT0()
+
+    advancePC(1)
+    nextIPIntInstruction()
+
+instructionLabel(_f32_div)
+    # f32.div
+    popFloat32FT1()
+    popFloat32FT0()
+    divf ft1, ft0
+    pushFloat32FT0()
+
+    advancePC(1)
+    nextIPIntInstruction()
+
+instructionLabel(_f32_min)
+    # f32.min
+    popFloat32FT1()
+    popFloat32FT0()
+    bfeq ft0, ft1, .ipint_f32_min_equal
+    bflt ft0, ft1, .ipint_f32_min_lt
+    bfgt ft0, ft1, .ipint_f32_min_return
+
+.ipint_f32_min_NaN:
+    addf ft0, ft1
+    pushFloat32FT1()
+    advancePC(1)
+    nextIPIntInstruction()
+
+.ipint_f32_min_equal:
+    orf ft0, ft1
+    pushFloat32FT1()
+    advancePC(1)
+    nextIPIntInstruction()
+
+.ipint_f32_min_lt:
+    moved ft0, ft1
+    pushFloat32FT1()
+    advancePC(1)
+    nextIPIntInstruction()
+
+.ipint_f32_min_return:
+    pushFloat32FT1()
+    advancePC(1)
+    nextIPIntInstruction()
+
+instructionLabel(_f32_max)
+    # f32.max
+    popFloat32FT1()
+    popFloat32FT0()
+
+    bfeq ft1, ft0, .ipint_f32_max_equal
+    bflt ft1, ft0, .ipint_f32_max_lt
+    bfgt ft1, ft0, .ipint_f32_max_return
+
+.ipint_f32_max_NaN:
+    addf ft0, ft1
+    pushFloat32FT1()
+    advancePC(1)
+    nextIPIntInstruction()
+
+.ipint_f32_max_equal:
+    andf ft0, ft1
+    pushFloat32FT1()
+    advancePC(1)
+    nextIPIntInstruction()
+
+.ipint_f32_max_lt:
+    moved ft0, ft1
+    pushFloat32FT1()
+    advancePC(1)
+    nextIPIntInstruction()
+
+.ipint_f32_max_return:
+    pushFloat32FT1()
+    advancePC(1)
+    nextIPIntInstruction()
+
+instructionLabel(_f32_copysign)
+    # f32.copysign
+    popFloat32FT1()
+    popFloat32FT0()
+
+    ff2i ft1, t1
+    move 0x80000000, t2
+    andi t2, t1
+
+    ff2i ft0, t0
+    move 0x7fffffff, t2
+    andi t2, t0
+
+    ori t1, t0
+    fi2f t0, ft0
+
+    pushFloat32FT0()
+
+    advancePC(1)
+    nextIPIntInstruction()
 
     ###############################
     # 0x99 - 0xa6: f64 operations #
@@ -1338,6 +1688,148 @@ unimplementedInstruction(_fc_block)
 unimplementedInstruction(_simd)
 reservedOpcode(0xfe)
 reservedOpcode(0xff)
+
+_ipint_call_impl:
+    # function index
+    loadi [PM, MC], t0
+
+    # Get function data
+    move t0, a1
+    move wasmInstance, a0
+    cCall2(_doWasmIPIntCall)
+
+    move MC, PB
+    pushQuad(PL)
+
+    move t0, ws0
+    move t1, wasmInstance
+
+    # Set up arguments in registers
+    loadb 8[PM, PB], ws1
+    lshiftq 4, ws1
+    loadq 16[sp, ws1], a0
+    loadb 9[PM, PB], ws1
+    lshiftq 4, ws1
+    loadq 16[sp, ws1], a1
+    loadb 10[PM, PB], ws1
+    lshiftq 4, ws1
+    loadq 16[sp, ws1], a2
+    loadb 11[PM, PB], ws1
+    lshiftq 4, ws1
+    loadq 16[sp, ws1], a3
+    loadb 12[PM, PB], ws1
+if ARM64 or ARM64E
+    lshiftq 4, ws1
+    loadq 16[sp, ws1], a4
+    loadb 13[PM, PB], ws1
+    lshiftq 4, ws1
+    loadq 16[sp, ws1], a5
+    loadb 14[PM, PB], ws1
+    lshiftq 4, ws1
+    loadq 16[sp, ws1], a6
+    loadb 15[PM, PB], ws1
+    lshiftq 4, ws1
+    loadq 16[sp, ws1], a7
+end
+
+    loadb 16[PM, PB], ws1
+    lshiftq 4, ws1
+    loadd 16[sp, ws1], wfa0
+    loadb 17[PM, PB], ws1
+    lshiftq 4, ws1
+    loadd 16[sp, ws1], wfa1
+    loadb 18[PM, PB], ws1
+    lshiftq 4, ws1
+    loadd 16[sp, ws1], wfa2
+    loadb 19[PM, PB], ws1
+    lshiftq 4, ws1
+    loadd 16[sp, ws1], wfa3
+    loadb 20[PM, PB], ws1
+    lshiftq 4, ws1
+    loadd 16[sp, ws1], wfa4
+    loadb 21[PM, PB], ws1
+    lshiftq 4, ws1
+    loadd 16[sp, ws1], wfa5
+if ARM64 or ARM64E
+    loadb 22[PM, PB], ws1
+    lshiftq 4, ws1
+    loadd 16[sp, ws1], wfa6
+    loadb 23[PM, PB], ws1
+    lshiftq 4, ws1
+    loadd 16[sp, ws1], wfa7
+end
+
+    loadq [sp], ws1
+    addq 16, sp
+
+    # TODO: STACK
+
+    # number of arguments popped
+    loadh 26[PM, PB], PM
+    lshiftq 4, PM
+    addq PM, sp
+
+    pushQuad(ws1)
+
+    # Space for caller frame
+
+    subq CallerFrameAndPCSize, sp
+
+    # Make the call
+    move wasmInstance, PM
+    call ws0, JSEntrySlowPathPtrTag
+
+    addq CallerFrameAndPCSize, sp
+
+    # Post-call: restore instance and MC
+
+    move PM, wasmInstance
+    getIPIntCallee()
+    # Saved MC
+    move PB, ws1
+    # Throw away PM value since it's already in wasmInstance
+    popQuad(PB, PM)
+    loadp Wasm::IPIntCallee::m_metadata[ws0], PM
+
+    # ws0 = limit
+    # csr3 = index
+    # csr4 = value
+    move ws1, csr3
+    addq 24, csr3
+    # Load size of parameter group
+    loadh [PM, csr3], ws0
+    addq ws0, csr3
+
+    # Load size of return group
+    loadh [PM, csr3], ws0
+    addq csr3, ws0
+.ipint_call_ret_loop:
+    bqeq ws0, csr3, .ipint_call_ret_loop_end
+    loadb 2[PM, csr3], csr4
+    bqeq csr4, 0, .ipint_call_ret_loop_end
+    addq 1, csr3
+    bqgteq csr4, 6, .ipint_call_ret_stack
+    bqeq csr4, 5, .ipint_call_ret_fpr
+    pushQuad(t0)
+    jmp .ipint_call_ret_loop
+.ipint_call_ret_fpr:
+    pushFPR()
+    jmp .ipint_call_ret_loop
+.ipint_call_ret_stack:
+    # TODO
+    break
+.ipint_call_ret_loop_end:
+
+    move ws0, MC
+    move PB, PL
+
+    # Restore PC
+    loadi 4[PM, ws1], PC
+    # Restore ws1
+    getIPIntCallee()
+    loadp Wasm::IPIntCallee::m_bytecode[ws0], PB
+
+    nextIPIntInstruction()
 
 # Put all operations before this `else`, or else 32-bit architectures will fail to build.
 else

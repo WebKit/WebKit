@@ -168,8 +168,8 @@ IPIntCallee::IPIntCallee(FunctionIPIntMetadataGenerator& generator, size_t index
     : Callee(Wasm::CompilationMode::IPIntMode, index, WTFMove(name))
     , m_bytecode(generator.m_bytecode + generator.m_bytecodeOffset)
     , m_bytecodeLength(generator.m_bytecodeLength - generator.m_bytecodeOffset)
-    , m_metadata(generator.m_metadata.data())
     , m_metadataVector(WTFMove(generator.m_metadata))
+    , m_metadata(m_metadataVector.data())
     // size to allocate = 16 + number of stack arguments + number of non-argument locals
     , m_localSizeToAlloc(roundUpToMultipleOf(16, 16 + generator.m_numArgumentsOnStack + generator.m_numLocals - generator.m_numArguments))
     , m_numLocals(generator.m_numLocals)

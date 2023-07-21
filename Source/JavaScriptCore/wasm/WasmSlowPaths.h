@@ -72,6 +72,9 @@ WASM_SLOW_PATH_HIDDEN_DECL(grow_memory);
 WASM_SLOW_PATH_HIDDEN_DECL(memory_init);
 WASM_SLOW_PATH_HIDDEN_DECL(call);
 WASM_SLOW_PATH_HIDDEN_DECL(call_indirect);
+
+extern "C" UGPRPair doWasmIPIntCall(Wasm::Instance* instance, unsigned functionIndex) REFERENCED_FROM_ASM WTF_INTERNAL;
+
 WASM_SLOW_PATH_HIDDEN_DECL(call_ref);
 WASM_SLOW_PATH_HIDDEN_DECL(tail_call);
 WASM_SLOW_PATH_HIDDEN_DECL(tail_call_indirect);

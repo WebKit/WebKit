@@ -585,18 +585,20 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::addLocal(Type, uint32_t count)
 
 PartialResult WARN_UNUSED_RETURN IPIntGenerator::getLocal(uint32_t index, ExpressionType&)
 {
+    auto len = m_parser->offset() - m_parser->currentOpcodeStartingOffset() - 1;
     if (index >= m_metadata->m_numArguments)
-        m_metadata->addLEB128ConstantInt32AndLengthOfOtherInt32(index + m_metadata->m_nonArgLocalOffset, index);
+        m_metadata->addLEB128ConstantInt32AndLength(index + m_metadata->m_nonArgLocalOffset, len);
     else
-        m_metadata->addLEB128ConstantInt32AndLengthOfOtherInt32(m_metadata->m_argumentLocations[index], index);
+        m_metadata->addLEB128ConstantInt32AndLength(m_metadata->m_argumentLocations[index], len);
     return { };
 }
 PartialResult WARN_UNUSED_RETURN IPIntGenerator::setLocal(uint32_t index, ExpressionType)
 {
+    auto len = m_parser->offset() - m_parser->currentOpcodeStartingOffset() - 1;
     if (index >= m_metadata->m_numArguments)
-        m_metadata->addLEB128ConstantInt32AndLengthOfOtherInt32(index + m_metadata->m_nonArgLocalOffset, index);
+        m_metadata->addLEB128ConstantInt32AndLength(index + m_metadata->m_nonArgLocalOffset, len);
     else
-        m_metadata->addLEB128ConstantInt32AndLengthOfOtherInt32(m_metadata->m_argumentLocations[index], index);
+        m_metadata->addLEB128ConstantInt32AndLength(m_metadata->m_argumentLocations[index], len);
     return { };
 }
 
@@ -1019,11 +1021,73 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::addEndToUnreachable(ControlEntr
 
 // Implementation status: UNIMPLEMENTED
 
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addCall(uint32_t, const TypeDefinition& type, Vector<ExpressionType>&, ResultList& results, CallType)
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addCall(uint32_t index, const TypeDefinition& type, Vector<ExpressionType>&, ResultList& results, CallType)
 {
     const FunctionSignature& signature = *type.as<FunctionSignature>();
     for (unsigned i = 0; i < signature.returnCount(); i ++)
         results.append(Value { });
+
+    // Function index:
+    // 4B for decoded index
+    // 4B for new PC
+    auto newPC = m_parser->offset() - m_metadata->m_bytecodeOffset;
+    auto size = m_metadata->m_metadata.size();
+    m_metadata->addBlankSpace(8);
+    auto functionIndexMetadata = m_metadata->m_metadata.data() + size;
+    WRITE_TO_METADATA(functionIndexMetadata, index, uint32_t);
+    WRITE_TO_METADATA(functionIndexMetadata + 4, newPC, uint16_t);
+
+    // Add function signature
+    // 8B for offsets of GPR, 8B for offsets of FPR, 2B for length of total metadata, 2B for number of arguments, 2B per stack argument
+    size = m_metadata->m_metadata.size();
+    m_metadata->addBlankSpace(16);
+    auto signatureMetadata = m_metadata->m_metadata.data() + size;
+
+    uint16_t stackOffset = 0;
+    uint8_t gprsUsed = 0;
+    uint8_t fprsUsed = 0;
+
+    Vector<uint16_t> locations;
+
+#if CPU(X86_64)
+    uint8_t maxGPRs = 6;
+#elif CPU(ARM64)
+    uint8_t maxGPRs = 8;
+#else
+    uint8_t maxGPRs = 0;
+#endif
+    uint8_t maxFPRs = 8;
+
+    WRITE_TO_METADATA(signatureMetadata, 0, uint64_t);
+    WRITE_TO_METADATA(signatureMetadata + 8, 0, uint64_t);
+
+    // These are allowed to be 1B! No way for the argument number to ever go past 16.
+    for (size_t i = 0; i < signature.argumentCount(); ++i, ++stackOffset) {
+        auto argType = signature.argumentType(i);
+        if ((argType.isI32() || argType.isI64()) && gprsUsed != maxGPRs)
+            WRITE_TO_METADATA(signatureMetadata + gprsUsed++, stackOffset, uint8_t);
+        else if ((argType.isF32() || argType.isF64()) && fprsUsed != maxFPRs)
+            WRITE_TO_METADATA(signatureMetadata + 8 + fprsUsed++, stackOffset, uint8_t);
+        else
+            locations.append(stackOffset);
+    }
+
+    // We can just leave the rest as 0. Doesn't matter what those register values are going into the function
+
+    auto extraSize = roundUpToMultipleOf(8, locations.size() * 2 + 4);
+    size = m_metadata->m_metadata.size();
+    m_metadata->addBlankSpace(extraSize);
+    auto extraMetadata = m_metadata->m_metadata.data() + size;
+    WRITE_TO_METADATA(extraMetadata, extraSize, uint16_t);
+    WRITE_TO_METADATA(extraMetadata + 2, signature.argumentCount(), uint16_t);
+    for (size_t i = 0; i < locations.size(); ++i)
+        WRITE_TO_METADATA(extraMetadata + 4 + i, locations[i], uint16_t);
+
+    // Returns
+    Vector<Type> returns(signature.returnCount());
+    for (size_t i = 0; i < signature.returnCount(); ++i)
+        returns[i] = signature.returnType(i);
+    m_metadata->addReturnData(returns);
     return { };
 }
 

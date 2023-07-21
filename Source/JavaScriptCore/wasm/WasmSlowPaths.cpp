@@ -614,6 +614,11 @@ inline UGPRPair doWasmCall(Wasm::Instance* instance, unsigned functionIndex)
     WASM_CALL_RETURN(instance, codePtr.taggedPtr(), WasmEntryPtrTag);
 }
 
+extern "C" UGPRPair doWasmIPIntCall(Wasm::Instance* instance, unsigned functionIndex)
+{
+    return doWasmCall(instance, functionIndex);
+}
+
 WASM_SLOW_PATH_DECL(call)
 {
     UNUSED_PARAM(callFrame);

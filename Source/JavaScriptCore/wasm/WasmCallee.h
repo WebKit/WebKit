@@ -352,9 +352,8 @@ public:
     // So just making these public.
     const uint8_t* m_bytecode;
     const uint32_t m_bytecodeLength;
-    const uint8_t* m_metadata;
-
     Vector<uint8_t> m_metadataVector;
+    const uint8_t* m_metadata;
 
     unsigned m_localSizeToAlloc;
     unsigned m_numLocals;
