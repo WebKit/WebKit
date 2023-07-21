@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2010 Google Inc. All rights reserved.
  * Copyright (C) 2014 University of Washington. All rights reserved.
- * Copyright (C) 2017-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -33,6 +33,7 @@
 #include "config.h"
 #include <wtf/JSONValues.h>
 
+#include <functional>
 #include <wtf/CommaPrinter.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -460,6 +461,38 @@ RefPtr<JSON::Value> buildValue(const CodeUnit* start, const CodeUnit* end, const
 
 } // anonymous namespace
 
+template<typename Visitor> constexpr decltype(auto) Value::visitDerived(Visitor&& visitor)
+{
+    switch (m_type) {
+    case Type::Null:
+    case Type::Boolean:
+    case Type::Double:
+    case Type::Integer:
+    case Type::String:
+        return std::invoke(std::forward<Visitor>(visitor), static_cast<Value&>(*this));
+    case Type::Object:
+        return std::invoke(std::forward<Visitor>(visitor), static_cast<Object&>(*this));
+    case Type::Array:
+        return std::invoke(std::forward<Visitor>(visitor), static_cast<Array&>(*this));
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+template<typename Visitor> constexpr decltype(auto) Value::visitDerived(Visitor&& visitor) const
+{
+    return const_cast<Value&>(*this).visitDerived([&](auto& derived) {
+        return std::invoke(std::forward<Visitor>(visitor), std::as_const(derived));
+    });
+}
+
+void Value::operator delete(Value* value, std::destroying_delete_t)
+{
+    value->visitDerived([](auto& derived) {
+        std::destroy_at(&derived);
+        std::decay_t<decltype(derived)>::freeAfterDestruction(&derived);
+    });
+}
+
 Ref<Value> Value::null()
 {
     return adoptRef(*new Value);
@@ -483,26 +516,6 @@ Ref<Value> Value::create(double value)
 Ref<Value> Value::create(const String& value)
 {
     return adoptRef(*new Value(value));
-}
-
-RefPtr<Value> Value::asValue()
-{
-    return this;
-}
-
-RefPtr<Object> Value::asObject()
-{
-    return nullptr;
-}
-
-RefPtr<const Object> Value::asObject() const
-{
-    return nullptr;
-}
-
-RefPtr<Array> Value::asArray()
-{
-    return nullptr;
 }
 
 RefPtr<Value> Value::parseJSON(StringView json)
@@ -625,6 +638,13 @@ void Value::dump(PrintStream& out) const
 
 void Value::writeJSON(StringBuilder& output) const
 {
+    visitDerived([&](auto& derived) {
+        derived.writeJSONImpl(output);
+    });
+}
+
+void Value::writeJSONImpl(StringBuilder& output) const
+{
     switch (m_type) {
     case Type::Null:
         output.append("null");
@@ -646,38 +666,32 @@ void Value::writeJSON(StringBuilder& output) const
             output.append(m_value.number);
         break;
     }
-    default:
+    case Type::Object:
+    case Type::Array:
         ASSERT_NOT_REACHED();
     }
 }
 
 size_t Value::memoryCost() const
 {
-    size_t memoryCost = sizeof(this);
+    return visitDerived([&](auto& derived) {
+        return derived.memoryCostImpl();
+    });
+}
+
+size_t Value::memoryCostImpl() const
+{
+    size_t memoryCost = sizeof(*this);
     if (m_type == Type::String && m_value.string)
         memoryCost += m_value.string->sizeInBytes();
     return memoryCost;
 }
 
-ObjectBase::~ObjectBase()
-{
-}
+ObjectBase::~ObjectBase() = default;
 
-RefPtr<Object> ObjectBase::asObject()
+size_t ObjectBase::memoryCostImpl() const
 {
-    static_assert(sizeof(Object) == sizeof(ObjectBase), "cannot cast");
-    return static_cast<Object*>(this);
-}
-
-RefPtr<const Object> ObjectBase::asObject() const
-{
-    static_assert(sizeof(Object) == sizeof(ObjectBase), "cannot cast");
-    return static_cast<const Object*>(this);
-}
-
-size_t ObjectBase::memoryCost() const
-{
-    size_t memoryCost = Value::memoryCost();
+    size_t memoryCost = sizeof(*this);
     for (const auto& entry : m_map)
         memoryCost += entry.key.sizeInBytes() + entry.value->memoryCost();
     return memoryCost;
@@ -745,7 +759,7 @@ void ObjectBase::remove(const String& name)
     m_order.removeFirst(name);
 }
 
-void ObjectBase::writeJSON(StringBuilder& output) const
+void ObjectBase::writeJSONImpl(StringBuilder& output) const
 {
     output.append('{');
     for (size_t i = 0; i < m_order.size(); ++i) {
@@ -765,17 +779,9 @@ ObjectBase::ObjectBase()
 {
 }
 
-ArrayBase::~ArrayBase()
-{
-}
+ArrayBase::~ArrayBase() = default;
 
-RefPtr<Array> ArrayBase::asArray()
-{
-    static_assert(sizeof(ArrayBase) == sizeof(Array), "cannot cast");
-    return static_cast<Array*>(this);
-}
-
-void ArrayBase::writeJSON(StringBuilder& output) const
+void ArrayBase::writeJSONImpl(StringBuilder& output) const
 {
     output.append('[');
     for (auto it = m_map.begin(); it != m_map.end(); ++it) {
@@ -807,9 +813,9 @@ Ref<Array> Array::create()
     return adoptRef(*new Array);
 }
 
-size_t ArrayBase::memoryCost() const
+size_t ArrayBase::memoryCostImpl() const
 {
-    size_t memoryCost = Value::memoryCost();
+    size_t memoryCost = sizeof(*this);
     for (const auto& item : m_map)
         memoryCost += item->memoryCost();
     return memoryCost;
