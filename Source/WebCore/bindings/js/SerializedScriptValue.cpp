@@ -283,12 +283,12 @@ static bool isTypeExposedToGlobalObject(JSC::JSGlobalObject& globalObject, Seria
     case ResizableArrayBufferTag:
     case ErrorInstanceTag:
     case ErrorTag:
+    case MessagePortReferenceTag:
         return true;
     case FileTag:
     case FileListTag:
     case ImageDataTag:
     case BlobTag:
-    case MessagePortReferenceTag:
 #if ENABLE(WEB_CRYPTO)
     case CryptoKeyTag:
 #endif
