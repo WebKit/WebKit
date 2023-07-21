@@ -1,4 +1,12 @@
 ================
+WebKitGTK 2.40.4
+================
+
+What's new in WebKitGTK 2.40.4?
+
+  - Fix a bug in JavaScript reading variable arguments in a call.
+
+================
 WebKitGTK 2.40.3
 ================
 
