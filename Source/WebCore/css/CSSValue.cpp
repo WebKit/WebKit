@@ -171,6 +171,8 @@ template<typename Visitor> constexpr decltype(auto) CSSValue::visitDerived(Visit
         return std::invoke(std::forward<Visitor>(visitor), downcast<CSSLineBoxContainValue>(*this));
     case LinearGradientClass:
         return std::invoke(std::forward<Visitor>(visitor), downcast<CSSLinearGradientValue>(*this));
+    case LinearTimingFunctionClass:
+        return std::invoke(std::forward<Visitor>(visitor), downcast<CSSLinearTimingFunctionValue>(*this));
     case NamedImageClass:
         return std::invoke(std::forward<Visitor>(visitor), downcast<CSSNamedImageValue>(*this));
     case PrefixedLinearGradientClass:

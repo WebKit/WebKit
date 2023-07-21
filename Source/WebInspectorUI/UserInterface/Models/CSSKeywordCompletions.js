@@ -817,10 +817,10 @@ WI.CSSKeywordCompletions._propertyKeywordMap = {
         "auto", "alphabetic", "under"
     ],
     "transition": [
-        "none", "ease", "linear", "ease-in", "ease-out", "ease-in-out", "step-start", "step-end", "steps()", "cubic-bezier()", "spring()", "all", WI.CSSKeywordCompletions.AllPropertyNamesPlaceholder
+        "none", "ease", "linear", "ease-in", "ease-out", "ease-in-out", "step-start", "step-end", "steps()", "cubic-bezier()", "linear()", "spring()", "all", WI.CSSKeywordCompletions.AllPropertyNamesPlaceholder
     ],
     "transition-timing-function": [
-        "ease", "linear", "ease-in", "ease-out", "ease-in-out", "step-start", "step-end", "steps()", "cubic-bezier()", "spring()"
+        "ease", "linear", "ease-in", "ease-out", "ease-in-out", "step-start", "step-end", "steps()", "cubic-bezier()", "linear()", "spring()"
     ],
     "transition-property": [
         "all", "none", WI.CSSKeywordCompletions.AllPropertyNamesPlaceholder
@@ -838,7 +838,7 @@ WI.CSSKeywordCompletions._propertyKeywordMap = {
         "paused", "running"
     ],
     "animation-timing-function": [
-        "ease", "linear", "ease-in", "ease-out", "ease-in-out", "step-start", "step-end", "steps()", "cubic-bezier()", "spring()"
+        "ease", "linear", "ease-in", "ease-out", "ease-in-out", "step-start", "step-end", "steps()", "cubic-bezier()", "linear()", "spring()"
     ],
     "align-content": [
         "auto",
@@ -1006,7 +1006,7 @@ WI.CSSKeywordCompletions._propertyKeywordMap = {
         "paused", "running",
     ],
     "-webkit-animation-timing-function": [
-        "ease", "linear", "ease-in", "ease-out", "ease-in-out", "step-start", "step-end", "steps()", "cubic-bezier()", "spring()",
+        "ease", "linear", "ease-in", "ease-out", "ease-in-out", "step-start", "step-end", "steps()", "cubic-bezier()", "linear()", "spring()",
     ],
     "-webkit-appearance": [
         "none", "checkbox", "radio", "push-button", "square-button", "button", "button-bevel", "default-button", "inner-spin-button", "listbox", "listitem", "media-controls-background", "media-controls-dark-bar-background", "media-controls-fullscreen-background", "media-controls-light-bar-background", "media-current-time-display", "media-enter-fullscreen-button", "media-exit-fullscreen-button", "media-fullscreen-volume-slider", "media-fullscreen-volume-slider-thumb", "media-mute-button", "media-overlay-play-button", "media-play-button", "media-return-to-realtime-button", "media-rewind-button", "media-seek-back-button", "media-seek-forward-button", "media-slider", "media-sliderthumb", "media-time-remaining-display", "media-toggle-closed-captions-button", "media-volume-slider", "media-volume-slider-container", "media-volume-slider-mute-button", "media-volume-sliderthumb", "menulist", "menulist-button", "menulist-text", "menulist-textfield", "meter", "progress-bar", "progress-bar-value", "slider-horizontal", "slider-vertical", "sliderthumb-horizontal", "sliderthumb-vertical", "caret", "searchfield", "searchfield-decoration", "searchfield-results-decoration", "searchfield-results-button", "searchfield-cancel-button", "snapshotted-plugin-overlay", "textfield", "relevancy-level-indicator", "continuous-capacity-level-indicator", "discrete-capacity-level-indicator", "rating-level-indicator", "-apple-pay-button", "textarea", "attachment", "borderless-attachment", "caps-lock-indicator",

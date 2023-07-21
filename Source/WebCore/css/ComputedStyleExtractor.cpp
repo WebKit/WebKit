@@ -1574,8 +1574,12 @@ static Ref<CSSValue> valueForAnimationTimingFunction(const TimingFunction& timin
         auto& function = downcast<SpringTimingFunction>(timingFunction);
         return CSSSpringTimingFunctionValue::create(function.mass(), function.stiffness(), function.damping(), function.initialVelocity());
     }
-    case TimingFunction::Type::LinearFunction:
-        return CSSPrimitiveValue::create(CSSValueLinear);
+    case TimingFunction::Type::LinearFunction: {
+        auto& function = downcast<LinearTimingFunction>(timingFunction);
+        if (function.points().isEmpty())
+            return CSSPrimitiveValue::create(CSSValueLinear);
+        return CSSLinearTimingFunctionValue::create(function.points());
+    }
     }
     RELEASE_ASSERT_NOT_REACHED();
 }

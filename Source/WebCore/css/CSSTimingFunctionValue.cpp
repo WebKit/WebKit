@@ -26,9 +26,33 @@
 #include "config.h"
 #include "CSSTimingFunctionValue.h"
 
+#include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringConcatenateNumbers.h>
 
 namespace WebCore {
+
+String CSSLinearTimingFunctionValue::customCSSText() const
+{
+    if (m_points.isEmpty())
+        return "linear"_s;
+
+    StringBuilder builder;
+    builder.append("linear(");
+    for (size_t i = 0; i < m_points.size(); ++i) {
+        if (i)
+            builder.append(", ");
+
+        const auto& point = m_points[i];
+        builder.append(FormattedNumber::fixedPrecision(point.value), ' ', FormattedNumber::fixedPrecision(point.progress * 100.0), '%');
+    }
+    builder.append(')');
+    return builder.toString();
+}
+
+bool CSSLinearTimingFunctionValue::equals(const CSSLinearTimingFunctionValue& other) const
+{
+    return m_points == other.m_points;
+}
 
 String CSSCubicBezierTimingFunctionValue::customCSSText() const
 {

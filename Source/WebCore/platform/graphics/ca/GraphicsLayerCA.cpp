@@ -1051,8 +1051,13 @@ static bool keyframeValueListHasSingleIntervalWithLinearOrEquivalentTimingFuncti
         return false;
 
     auto* timingFunction = valueList.at(0).timingFunction();
-    if (!timingFunction || is<LinearTimingFunction>(timingFunction))
+    if (!timingFunction)
         return true;
+
+    if (is<LinearTimingFunction>(timingFunction)) {
+        ASSERT(LinearTimingFunction::identity() == *timingFunction);
+        return true;
+    }
 
     return is<CubicBezierTimingFunction>(timingFunction) && downcast<CubicBezierTimingFunction>(*timingFunction).isLinear();
 }
@@ -3707,7 +3712,7 @@ const TimingFunction& GraphicsLayerCA::timingFunctionForAnimationValue(const Ani
         return *animValue.timingFunction();
     if (anim.defaultTimingFunctionForKeyframes())
         return *anim.defaultTimingFunctionForKeyframes();
-    return LinearTimingFunction::sharedLinearTimingFunction();
+    return LinearTimingFunction::identity();
 }
 
 bool GraphicsLayerCA::setAnimationEndpoints(const KeyframeValueList& valueList, const Animation* animation, PlatformCAAnimation* basicAnim)

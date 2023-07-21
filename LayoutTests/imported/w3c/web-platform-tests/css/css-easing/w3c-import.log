@@ -16,6 +16,11 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-easing/META.yml
 /LayoutTests/imported/w3c/web-platform-tests/css/css-easing/cubic-bezier-timing-functions-output.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-easing/linear-timing-functions-output.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-easing/linear-timing-functions-syntax.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-easing/step-timing-functions-output.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-easing/step-timing-functions-syntax.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-easing/testcommon.js
+/LayoutTests/imported/w3c/web-platform-tests/css/css-easing/timing-functions-syntax-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-easing/timing-functions-syntax-invalid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-easing/timing-functions-syntax-valid.html

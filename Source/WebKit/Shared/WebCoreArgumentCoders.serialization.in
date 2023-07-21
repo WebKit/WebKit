@@ -718,7 +718,13 @@ struct CGAffineTransform {
     WebCore::FloatSize size()
 }
 
+[Nested] struct WebCore::LinearTimingFunction::Point {
+    double value
+    double progress
+}
+
 [RefCounted, CustomHeader] class WebCore::LinearTimingFunction {
+    Vector<WebCore::LinearTimingFunction::Point> points()
 };
 
 [Nested] enum class WebCore::CubicBezierTimingFunction::TimingFunctionPreset : uint8_t {
