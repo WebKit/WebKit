@@ -1817,3 +1817,5 @@ webkit.org/b/259160 http/tests/privateClickMeasurement/triggering-event-with-att
 webkit.org/b/259228 [ Release ] fast/dom/lazy-image-loading-document-leak.html [ Pass Failure ]
 
 webkit.org/b/259374 http/tests/inspector/network/xhr-request-type.html [ Failure ]
+
+webkit.org/b/259379 http/wpt/webcodecs/videoFrame-video-element.html [ Pass Failure ]
