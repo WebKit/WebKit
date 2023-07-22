@@ -1639,14 +1639,6 @@ test/language/block-scope/syntax/redeclaration/var-redeclaration-attempt-after-f
   default: 'Test262: This statement should not be evaluated.'
 test/language/block-scope/syntax/redeclaration/var-redeclaration-attempt-after-generator.js:
   default: 'Test262: This statement should not be evaluated.'
-test/language/eval-code/direct/arrow-fn-a-following-parameter-is-named-arguments-arrow-func-declare-arguments-assign-incl-def-param-arrow-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/arrow-fn-a-following-parameter-is-named-arguments-arrow-func-declare-arguments-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/arrow-fn-a-preceding-parameter-is-named-arguments-arrow-func-declare-arguments-assign-incl-def-param-arrow-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/arrow-fn-a-preceding-parameter-is-named-arguments-arrow-func-declare-arguments-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
 test/language/eval-code/direct/arrow-fn-body-cntns-arguments-func-decl-arrow-func-declare-arguments-assign-incl-def-param-arrow-arguments.js:
   default: 'Test262Error: globalThis.arguments unchanged Expected SameValue(«param», «undefined») to be true'
 test/language/eval-code/direct/arrow-fn-body-cntns-arguments-func-decl-arrow-func-declare-arguments-assign.js:
@@ -1663,270 +1655,6 @@ test/language/eval-code/direct/arrow-fn-no-pre-existing-arguments-bindings-are-p
   default: 'Test262Error: globalThis.arguments unchanged Expected SameValue(«param», «undefined») to be true'
 test/language/eval-code/direct/arrow-fn-no-pre-existing-arguments-bindings-are-present-arrow-func-declare-arguments-assign.js:
   default: 'Test262Error: globalThis.arguments unchanged Expected SameValue(«param», «undefined») to be true'
-test/language/eval-code/direct/async-gen-func-decl-a-following-parameter-is-named-arguments-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/async-gen-func-decl-a-following-parameter-is-named-arguments-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/async-gen-func-decl-a-preceding-parameter-is-named-arguments-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/async-gen-func-decl-a-preceding-parameter-is-named-arguments-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/async-gen-func-decl-fn-body-cntns-arguments-func-decl-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/async-gen-func-decl-fn-body-cntns-arguments-func-decl-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/async-gen-func-decl-fn-body-cntns-arguments-lex-bind-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/async-gen-func-decl-fn-body-cntns-arguments-lex-bind-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/async-gen-func-decl-fn-body-cntns-arguments-var-bind-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/async-gen-func-decl-fn-body-cntns-arguments-var-bind-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/async-gen-func-decl-no-pre-existing-arguments-bindings-are-present-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/async-gen-func-decl-no-pre-existing-arguments-bindings-are-present-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/async-gen-func-expr-a-following-parameter-is-named-arguments-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/async-gen-func-expr-a-following-parameter-is-named-arguments-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/async-gen-func-expr-a-preceding-parameter-is-named-arguments-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/async-gen-func-expr-a-preceding-parameter-is-named-arguments-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/async-gen-func-expr-fn-body-cntns-arguments-func-decl-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/async-gen-func-expr-fn-body-cntns-arguments-func-decl-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/async-gen-func-expr-fn-body-cntns-arguments-lex-bind-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/async-gen-func-expr-fn-body-cntns-arguments-lex-bind-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/async-gen-func-expr-fn-body-cntns-arguments-var-bind-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/async-gen-func-expr-fn-body-cntns-arguments-var-bind-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/async-gen-func-expr-no-pre-existing-arguments-bindings-are-present-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/async-gen-func-expr-no-pre-existing-arguments-bindings-are-present-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/async-gen-meth-a-following-parameter-is-named-arguments-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/async-gen-meth-a-following-parameter-is-named-arguments-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/async-gen-meth-a-preceding-parameter-is-named-arguments-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/async-gen-meth-a-preceding-parameter-is-named-arguments-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/async-gen-meth-fn-body-cntns-arguments-func-decl-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/async-gen-meth-fn-body-cntns-arguments-func-decl-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/async-gen-meth-fn-body-cntns-arguments-lex-bind-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/async-gen-meth-fn-body-cntns-arguments-lex-bind-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/async-gen-meth-fn-body-cntns-arguments-var-bind-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/async-gen-meth-fn-body-cntns-arguments-var-bind-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/async-gen-meth-no-pre-existing-arguments-bindings-are-present-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/async-gen-meth-no-pre-existing-arguments-bindings-are-present-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/async-gen-named-func-expr-a-following-parameter-is-named-arguments-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/async-gen-named-func-expr-a-following-parameter-is-named-arguments-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/async-gen-named-func-expr-a-preceding-parameter-is-named-arguments-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/async-gen-named-func-expr-a-preceding-parameter-is-named-arguments-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/async-gen-named-func-expr-fn-body-cntns-arguments-func-decl-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/async-gen-named-func-expr-fn-body-cntns-arguments-func-decl-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/async-gen-named-func-expr-fn-body-cntns-arguments-lex-bind-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/async-gen-named-func-expr-fn-body-cntns-arguments-lex-bind-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/async-gen-named-func-expr-fn-body-cntns-arguments-var-bind-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/async-gen-named-func-expr-fn-body-cntns-arguments-var-bind-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/async-gen-named-func-expr-no-pre-existing-arguments-bindings-are-present-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/async-gen-named-func-expr-no-pre-existing-arguments-bindings-are-present-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/func-decl-a-following-parameter-is-named-arguments-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/func-decl-a-following-parameter-is-named-arguments-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/func-decl-a-preceding-parameter-is-named-arguments-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/func-decl-a-preceding-parameter-is-named-arguments-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/func-decl-fn-body-cntns-arguments-func-decl-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/func-decl-fn-body-cntns-arguments-func-decl-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/func-decl-fn-body-cntns-arguments-lex-bind-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/func-decl-fn-body-cntns-arguments-lex-bind-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/func-decl-fn-body-cntns-arguments-var-bind-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/func-decl-fn-body-cntns-arguments-var-bind-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/func-decl-no-pre-existing-arguments-bindings-are-present-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/func-decl-no-pre-existing-arguments-bindings-are-present-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/func-expr-a-following-parameter-is-named-arguments-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/func-expr-a-following-parameter-is-named-arguments-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/func-expr-a-preceding-parameter-is-named-arguments-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/func-expr-a-preceding-parameter-is-named-arguments-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/func-expr-fn-body-cntns-arguments-func-decl-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/func-expr-fn-body-cntns-arguments-func-decl-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/func-expr-fn-body-cntns-arguments-lex-bind-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/func-expr-fn-body-cntns-arguments-lex-bind-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/func-expr-fn-body-cntns-arguments-var-bind-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/func-expr-fn-body-cntns-arguments-var-bind-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/func-expr-no-pre-existing-arguments-bindings-are-present-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/func-expr-no-pre-existing-arguments-bindings-are-present-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/gen-func-decl-a-following-parameter-is-named-arguments-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/gen-func-decl-a-following-parameter-is-named-arguments-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/gen-func-decl-a-preceding-parameter-is-named-arguments-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/gen-func-decl-a-preceding-parameter-is-named-arguments-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/gen-func-decl-fn-body-cntns-arguments-func-decl-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/gen-func-decl-fn-body-cntns-arguments-func-decl-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/gen-func-decl-fn-body-cntns-arguments-lex-bind-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/gen-func-decl-fn-body-cntns-arguments-lex-bind-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/gen-func-decl-fn-body-cntns-arguments-var-bind-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/gen-func-decl-fn-body-cntns-arguments-var-bind-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/gen-func-decl-no-pre-existing-arguments-bindings-are-present-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/gen-func-decl-no-pre-existing-arguments-bindings-are-present-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/gen-func-expr-named-a-following-parameter-is-named-arguments-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/gen-func-expr-named-a-following-parameter-is-named-arguments-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/gen-func-expr-named-a-preceding-parameter-is-named-arguments-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/gen-func-expr-named-a-preceding-parameter-is-named-arguments-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/gen-func-expr-named-fn-body-cntns-arguments-func-decl-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/gen-func-expr-named-fn-body-cntns-arguments-func-decl-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/gen-func-expr-named-fn-body-cntns-arguments-lex-bind-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/gen-func-expr-named-fn-body-cntns-arguments-lex-bind-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/gen-func-expr-named-fn-body-cntns-arguments-var-bind-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/gen-func-expr-named-fn-body-cntns-arguments-var-bind-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/gen-func-expr-named-no-pre-existing-arguments-bindings-are-present-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/gen-func-expr-named-no-pre-existing-arguments-bindings-are-present-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/gen-func-expr-nameless-a-following-parameter-is-named-arguments-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/gen-func-expr-nameless-a-following-parameter-is-named-arguments-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/gen-func-expr-nameless-a-preceding-parameter-is-named-arguments-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/gen-func-expr-nameless-a-preceding-parameter-is-named-arguments-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/gen-func-expr-nameless-fn-body-cntns-arguments-func-decl-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/gen-func-expr-nameless-fn-body-cntns-arguments-func-decl-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/gen-func-expr-nameless-fn-body-cntns-arguments-lex-bind-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/gen-func-expr-nameless-fn-body-cntns-arguments-lex-bind-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/gen-func-expr-nameless-fn-body-cntns-arguments-var-bind-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/gen-func-expr-nameless-fn-body-cntns-arguments-var-bind-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/gen-func-expr-nameless-no-pre-existing-arguments-bindings-are-present-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/gen-func-expr-nameless-no-pre-existing-arguments-bindings-are-present-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/gen-meth-a-following-parameter-is-named-arguments-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/gen-meth-a-following-parameter-is-named-arguments-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/gen-meth-a-preceding-parameter-is-named-arguments-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/gen-meth-a-preceding-parameter-is-named-arguments-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/gen-meth-fn-body-cntns-arguments-func-decl-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/gen-meth-fn-body-cntns-arguments-func-decl-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/gen-meth-fn-body-cntns-arguments-lex-bind-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/gen-meth-fn-body-cntns-arguments-lex-bind-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/gen-meth-fn-body-cntns-arguments-var-bind-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/gen-meth-fn-body-cntns-arguments-var-bind-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/gen-meth-no-pre-existing-arguments-bindings-are-present-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/gen-meth-no-pre-existing-arguments-bindings-are-present-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/meth-a-following-parameter-is-named-arguments-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/meth-a-following-parameter-is-named-arguments-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/meth-a-preceding-parameter-is-named-arguments-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/meth-a-preceding-parameter-is-named-arguments-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/meth-fn-body-cntns-arguments-func-decl-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/meth-fn-body-cntns-arguments-func-decl-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/meth-fn-body-cntns-arguments-lex-bind-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/meth-fn-body-cntns-arguments-lex-bind-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/meth-fn-body-cntns-arguments-var-bind-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/meth-fn-body-cntns-arguments-var-bind-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/meth-no-pre-existing-arguments-bindings-are-present-declare-arguments-and-assign.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/eval-code/direct/meth-no-pre-existing-arguments-bindings-are-present-declare-arguments.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
 test/language/eval-code/direct/non-definable-function-with-function.js:
   default: 'Test262Error: Expected SameValue(«[object Object]», «undefined») to be true'
 test/language/eval-code/direct/non-definable-function-with-variable.js:
@@ -1937,10 +1665,6 @@ test/language/eval-code/direct/non-definable-global-generator.js:
   default: 'Test262Error: Expected true but got false'
 test/language/eval-code/direct/var-env-func-init-global-update-configurable.js:
   default: 'Test262Error: Expected obj[f] to have enumerable:true.'
-test/language/eval-code/direct/var-env-global-lex-non-strict.js:
-  default: "TypeError: Can't create duplicate global variable in eval: 'x'"
-test/language/eval-code/direct/var-env-lower-lex-non-strict.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
 test/language/eval-code/indirect/non-definable-function-with-function.js:
   default: 'Test262Error: declaration preceding Expected SameValue(«[object Object]», «undefined») to be true'
   strict mode: 'Test262Error: declaration preceding Expected SameValue(«[object Object]», «undefined») to be true'
@@ -1956,13 +1680,6 @@ test/language/eval-code/indirect/non-definable-global-generator.js:
 test/language/eval-code/indirect/var-env-func-init-global-update-configurable.js:
   default: 'Test262Error: Expected obj[f] to have enumerable:true.'
   strict mode: 'Test262Error: Expected obj[f] to have enumerable:true.'
-test/language/eval-code/indirect/var-env-global-lex-non-strict.js:
-  default: 'Test262Error: Expected SameValue(«function TypeError() {'
-  strict mode: 'Test262Error: Expected SameValue(«function TypeError() {'
-test/language/expressions/arrow-function/eval-var-scope-syntax-err.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/expressions/arrow-function/scope-body-lex-distinct.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
 test/language/expressions/arrow-function/scope-param-rest-elem-var-open.js:
   default: 'Test262Error: Expected SameValue(«outside», «inside») to be true'
 test/language/expressions/assignment/S11.13.1_A7_T3.js:
@@ -2049,13 +1766,9 @@ test/language/expressions/assignmenttargettype/parenthesized-callexpression-argu
   default: 'Test262: This statement should not be evaluated.'
 test/language/expressions/async-generator/early-errors-expression-yield-as-function-binding-identifier.js:
   default: 'Test262: This statement should not be evaluated.'
-test/language/expressions/async-generator/eval-var-scope-syntax-err.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
 test/language/expressions/async-generator/generator-created-after-decl-inst.js:
   default: 'Test262Error: Expected SameValue(«[object AsyncGenerator]», «[object AsyncGenerator]») to be false'
   strict mode: 'Test262Error: Expected SameValue(«[object AsyncGenerator]», «[object AsyncGenerator]») to be false'
-test/language/expressions/async-generator/named-eval-var-scope-syntax-err.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
 test/language/expressions/call/eval-realm-indirect.js:
   default: 'Test262Error: Expected SameValue(«inside», «outside») to be true'
 test/language/expressions/call/eval-spread-empty-leading.js:
@@ -2133,19 +1846,11 @@ test/language/expressions/dynamic-import/catch/nested-async-gen-return-await-eva
 test/language/expressions/dynamic-import/for-await-resolution-and-error-agen-yield.js:
   default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: f Expected SameValue(«null», «foo») to be true'
   strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: f Expected SameValue(«null», «foo») to be true'
-test/language/expressions/function/eval-var-scope-syntax-err.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/expressions/function/scope-body-lex-distinct.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
 test/language/expressions/function/scope-param-rest-elem-var-open.js:
   default: 'Test262Error: Expected SameValue(«outside», «inside») to be true'
-test/language/expressions/generators/eval-var-scope-syntax-err.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
 test/language/expressions/generators/generator-created-after-decl-inst.js:
   default: 'Test262Error: Expected SameValue(«[object Generator]», «[object Generator]») to be false'
   strict mode: 'Test262Error: Expected SameValue(«[object Generator]», «[object Generator]») to be false'
-test/language/expressions/generators/scope-body-lex-distinct.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
 test/language/expressions/generators/scope-param-rest-elem-var-open.js:
   default: 'Test262Error: Expected SameValue(«outside», «inside») to be true'
 test/language/expressions/instanceof/prototype-getter-with-primitive.js:
@@ -2160,24 +1865,10 @@ test/language/expressions/logical-assignment/lgcl-or-assignment-operator-non-sim
 test/language/expressions/new/non-ctor-err-realm.js:
   default: 'Test262Error: production including Arguments Expected a TypeError but got a different error constructor with the same name'
   strict mode: 'Test262Error: production including Arguments Expected a TypeError but got a different error constructor with the same name'
-test/language/expressions/object/method-definition/async-gen-meth-eval-var-scope-syntax-err.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/expressions/object/method-definition/gen-meth-eval-var-scope-syntax-err.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/expressions/object/method-definition/meth-eval-var-scope-syntax-err.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/expressions/object/scope-gen-meth-body-lex-distinct.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
 test/language/expressions/object/scope-gen-meth-param-rest-elem-var-open.js:
   default: 'Test262Error: Expected SameValue(«outside», «inside») to be true'
-test/language/expressions/object/scope-getter-body-lex-distinc.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/expressions/object/scope-meth-body-lex-distinct.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
 test/language/expressions/object/scope-meth-param-rest-elem-var-open.js:
   default: 'Test262Error: Expected SameValue(«outside», «inside») to be true'
-test/language/expressions/object/scope-setter-body-lex-distinc.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
 test/language/expressions/postfix-decrement/S11.3.2_A6_T3.js:
   default: 'Test262Error: Expected true but got false'
   strict mode: 'Test262Error: Expected true but got false'
@@ -2266,8 +1957,6 @@ test/language/module-code/parse-err-hoist-lex-fun.js:
   module: 'Test262: This statement should not be evaluated.'
 test/language/module-code/parse-err-hoist-lex-gen.js:
   module: 'Test262: This statement should not be evaluated.'
-test/language/statements/async-generator/eval-var-scope-syntax-err.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
 test/language/statements/async-generator/generator-created-after-decl-inst.js:
   default: 'Test262Error: Expected SameValue(«[object AsyncGenerator]», «[object AsyncGenerator]») to be false'
   strict mode: 'Test262Error: Expected SameValue(«[object AsyncGenerator]», «[object AsyncGenerator]») to be false'
@@ -2427,19 +2116,11 @@ test/language/statements/for/head-lhs-let.js:
 test/language/statements/for/scope-body-lex-open.js:
   default: 'Test262Error: Expected SameValue(«inside», «outside») to be true'
   strict mode: 'Test262Error: Expected SameValue(«inside», «outside») to be true'
-test/language/statements/function/eval-var-scope-syntax-err.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
-test/language/statements/function/scope-body-lex-distinct.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
 test/language/statements/function/scope-param-rest-elem-var-open.js:
   default: 'Test262Error: Expected SameValue(«outside», «inside») to be true'
-test/language/statements/generators/eval-var-scope-syntax-err.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
 test/language/statements/generators/generator-created-after-decl-inst.js:
   default: 'Test262Error: Expected SameValue(«[object Generator]», «[object Generator]») to be false'
   strict mode: 'Test262Error: Expected SameValue(«[object Generator]», «[object Generator]») to be false'
-test/language/statements/generators/scope-body-lex-distinct.js:
-  default: 'Test262Error: Expected a SyntaxError to be thrown but no exception was thrown at all'
 test/language/statements/generators/scope-param-rest-elem-var-open.js:
   default: 'Test262Error: Expected SameValue(«outside», «inside») to be true'
 test/language/statements/labeled/decl-async-function.js:

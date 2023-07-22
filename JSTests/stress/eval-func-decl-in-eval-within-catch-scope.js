@@ -1,4 +1,5 @@
 var err = new Error();
+err.e = "foo";
 
 function assert(x) {
     if (!x)
@@ -25,7 +26,31 @@ function shouldThrow(func, errorMessage) {
         throw err;
     } catch (e) {
         eval(`function e() { return 1; }`); // no error
+        assert(e === err);
     }
+    assert(e() === 1);
+})();
+
+(function() {
+    var e = 1;
+    try {
+        throw err;
+    } catch (e) {
+        eval(`if (true) { function e() { return 1; } }`); // no error
+        assert(e === err);
+    }
+    assert(e() === 1);
+})();
+
+(function() {
+    var e = 1;
+    try {
+        throw err;
+    } catch ({e}) {
+        eval(`if (true) { function e() { return 1; } }`); // no error
+        assert(e === "foo");
+    }
+    assert(e === 1);
 })();
 
 shouldThrow(function() {
@@ -34,5 +59,22 @@ shouldThrow(function() {
         throw err;
     } catch ({e}) {
         eval(`function e() { return 1; }`); // syntax error
+    }
+}, "SyntaxError: Can't create duplicate variable in eval: 'e'");
+
+shouldThrow(function() {
+    var e = 2;
+    try {
+        throw err;
+    } catch ({e}) {
+        eval(`var e = 1;`); // syntax error
+    }
+}, "SyntaxError: Can't create duplicate variable in eval: 'e'");
+
+shouldThrow(function() {
+    try {
+        throw err;
+    } catch ({...e}) {
+        eval(`var e;`); // syntax error
     }
 }, "SyntaxError: Can't create duplicate variable in eval: 'e'");

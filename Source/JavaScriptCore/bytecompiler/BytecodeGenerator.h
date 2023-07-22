@@ -845,6 +845,7 @@ namespace JSC {
         RegisterID* emitResolveScope(RegisterID* dst, const Variable&);
         RegisterID* emitGetFromScope(RegisterID* dst, RegisterID* scope, const Variable&, ResolveMode);
         RegisterID* emitPutToScope(RegisterID* scope, const Variable&, RegisterID* value, ResolveMode, InitializationMode);
+        RegisterID* emitPutToScopeDynamic(RegisterID* scope, const Identifier&, RegisterID* value, ResolveMode, InitializationMode);
 
         RegisterID* emitResolveScopeForHoistingFuncDeclInEval(RegisterID* dst, const Identifier&);
 

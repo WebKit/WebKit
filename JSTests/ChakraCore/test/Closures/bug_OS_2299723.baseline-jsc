@@ -1,4 +1,5 @@
+eval('var x = 5') threw 'Can't create duplicate variable in eval: 'x''
 x: 5
-eval('var y = 5') threw 'Attempted to assign to readonly property.'
+eval('var y = 5') threw 'Can't create duplicate variable in eval: 'y''
 eval('y = 5') threw 'Attempted to assign to readonly property.'
 y: 1

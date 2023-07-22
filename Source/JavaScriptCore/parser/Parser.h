@@ -719,14 +719,14 @@ public:
             // that function's name. Note that we would only cause a syntax error if we had a let/const/class
             // variable with the same name.
             if (!m_lexicalVariables.contains(function)) {
-                auto iter = m_declaredVariables.find(function);
-                bool isParameter = iter != m_declaredVariables.end() && iter->value.isParameter();
-                if (!isParameter) {
-                    auto addResult = m_declaredVariables.add(function);
-                    addResult.iterator->value.setIsVar();
+                auto addResult = m_declaredVariables.add(function);
+                if (addResult.isNewEntry)
                     addResult.iterator->value.setIsSloppyModeHoistingCandidate();
-                    sloppyModeHoistedFunctions.add(function);
-                }
+                else if (addResult.iterator->value.isParameter())
+                    continue;
+
+                addResult.iterator->value.setIsVar();
+                sloppyModeHoistedFunctions.add(function);
             }
         }
     }
