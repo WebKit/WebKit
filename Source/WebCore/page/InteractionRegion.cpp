@@ -173,7 +173,12 @@ static bool isOverlay(const RenderElement& renderer)
 
     if (auto* renderBox = dynamicDowncast<RenderBox>(renderer)) {
         auto refContentBox = renderBox->absoluteContentBox();
+        auto lastRenderer = renderBox;
         for (auto& ancestor : ancestorsOfType<RenderBox>(renderer)) {
+            // We don't want to occlude any previous siblings.
+            if (ancestor.firstChildBox() != lastRenderer)
+                return false;
+            lastRenderer = &ancestor;
             if (ancestor.absoluteContentBox() != refContentBox)
                 return false;
             if (ancestor.isFixedPositioned())
