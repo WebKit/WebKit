@@ -3230,13 +3230,13 @@ void GraphicsContextGLANGLE::withDisplayBufferAsNativeImage(Function<void(Native
     func(*displayImage);
 }
 
-RefPtr<PixelBuffer> GraphicsContextGLANGLE::paintRenderingResultsToPixelBuffer()
+RefPtr<PixelBuffer> GraphicsContextGLANGLE::paintRenderingResultsToPixelBuffer(FlipY flipY)
 {
     // Reading premultiplied alpha would involve unpremultiplying, which is lossy.
     if (contextAttributes().premultipliedAlpha)
         return nullptr;
     auto results = readRenderingResultsForPainting();
-    if (results && !results->size().isEmpty()) {
+    if (flipY == FlipY::Yes && results && !results->size().isEmpty()) {
         ASSERT(results->format().pixelFormat == PixelFormat::RGBA8 || results->format().pixelFormat == PixelFormat::BGRA8);
         // FIXME: Make PixelBufferConversions support negative rowBytes and in-place conversions.
         const auto size = results->size();

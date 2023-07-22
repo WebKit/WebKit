@@ -961,7 +961,7 @@ void GraphicsContextGLCocoa::withDrawingBufferAsNativeImage(Function<void(Native
         // that does the conversion.
         //
         // FIXME: Can the IOSurface be read into a buffer to avoid the read back via GL?
-        auto drawingPixelBuffer = paintRenderingResultsToPixelBuffer();
+        auto drawingPixelBuffer = paintRenderingResultsToPixelBuffer(FlipY::No);
         if (!drawingPixelBuffer)
             return;
 

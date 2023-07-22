@@ -791,7 +791,7 @@ RefPtr<ImageData> HTMLCanvasElement::getImageData()
     if (document().settings().webAPIStatisticsEnabled())
         ResourceLoadObserver::shared().logCanvasRead(document());
 
-    auto pixelBuffer = downcast<WebGLRenderingContextBase>(*m_context).paintRenderingResultsToPixelBuffer();
+    auto pixelBuffer = downcast<WebGLRenderingContextBase>(*m_context).paintRenderingResultsToPixelBuffer(GraphicsContextGL::FlipY::Yes);
     if (!is<ByteArrayPixelBuffer>(pixelBuffer))
         return nullptr;
 

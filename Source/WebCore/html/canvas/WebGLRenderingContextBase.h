@@ -440,7 +440,7 @@ public:
 
     void prepareForDisplayWithPaint() final;
     void paintRenderingResultsToCanvas() final;
-    RefPtr<PixelBuffer> paintRenderingResultsToPixelBuffer();
+    RefPtr<PixelBuffer> paintRenderingResultsToPixelBuffer(GraphicsContextGL::FlipY);
 #if ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)
     RefPtr<VideoFrame> paintCompositedResultsToVideoFrame();
 #endif

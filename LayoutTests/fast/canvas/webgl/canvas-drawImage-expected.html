@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="../../resources/js-test.js"></script>
+    <script src="resources/webgl-test.js"></script>
+    <script src="resources/webgl-test-utils.js"></script>
+    <script id="quadFragmentShader" type="x-shader/x-fragment">
+      precision highp float;
+      varying vec2 texCoord;
+
+      void main() {
+          gl_FragColor = vec4(texCoord, 0.5, 1.0);
+      }
+    </script>
+    <script>
+      "use strict";
+
+      var wtu = WebGLTestUtils;
+
+      function runTest(canvas)
+      {
+          const gl = wtu.create3DContext(canvas);
+          const program = wtu.setupProgram(gl,
+                                           [wtu.setupSimpleTextureVertexShader(gl), "quadFragmentShader"],
+                                           ['vPosition', 'texCoord0']);
+          const quadParameters = wtu.setupUnitQuad(gl);
+          wtu.clearAndDrawUnitQuad(gl);
+      }
+
+      function init()
+      {
+          runTest(document.getElementById("canvas0"));
+          runTest(document.getElementById("canvas1"));
+          finishTest();
+      }
+    </script>
+  </head>
+  <body onload="init()">
+    <canvas id="canvas0" width="256" height="256"></canvas>
+    <canvas id="canvas1" width="256" height="256"></canvas>
+  </body>
+</html>
