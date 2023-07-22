@@ -1,8 +1,8 @@
 diff --git a/resources/benchmark-runner.mjs b/resources/benchmark-runner.mjs
-index bce469d..9cebc9d 100644
+index 06596a7..5db38cf 100644
 --- a/resources/benchmark-runner.mjs
 +++ b/resources/benchmark-runner.mjs
-@@ -348,6 +348,8 @@ export class BenchmarkRunner {
+@@ -441,6 +441,8 @@ export class BenchmarkRunner {
          const syncEndLabel = `${suite.name}.${test.name}-sync-end`;
          const asyncStartLabel = `${suite.name}.${test.name}-async-start`;
          const asyncEndLabel = `${suite.name}.${test.name}-async-end`;
@@ -11,7 +11,7 @@ index bce469d..9cebc9d 100644
  
          let syncTime;
          let asyncStartTime;
-@@ -362,14 +364,17 @@ export class BenchmarkRunner {
+@@ -455,21 +457,25 @@ export class BenchmarkRunner {
                  performance.mark("warmup-end");
              }
              performance.mark(startLabel);
@@ -25,15 +25,15 @@ index bce469d..9cebc9d 100644
              syncTime = syncEndTime - syncStartTime;
  
              performance.mark(asyncStartLabel);
-+            __signpostStart(asyncName);
              asyncStartTime = performance.now();
++            __signpostStart(asyncName);
          };
          const measureAsync = () => {
-@@ -379,6 +384,7 @@ export class BenchmarkRunner {
+             // Some browsers don't immediately update the layout for paint.
+             // Force the layout here to ensure we're measuring the layout time.
+             const height = this._frame.contentDocument.body.getBoundingClientRect().height;
              const asyncEndTime = performance.now();
++            __signpostStop(asyncName);
              asyncTime = asyncEndTime - asyncStartTime;
              this._frame.contentWindow._unusedHeightValue = height; // Prevent dead code elimination.
-+            __signpostStop(asyncName);
              performance.mark(asyncEndLabel);
-             if (params.warmupBeforeSync)
-                 performance.measure("warmup", "warmup-start", "warmup-end");
