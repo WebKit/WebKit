@@ -93,13 +93,12 @@ static RetainPtr<TestWebsiteDataStoreDelegate>& globalWebsiteDataStoreDelegateCl
     return globalWebsiteDataStoreDelegateClient;
 }
 
-void initializeWebViewConfiguration(const char* libraryPath, WKStringRef injectedBundlePath, WKContextRef context, WKContextConfigurationRef contextConfiguration, WKPreferences *preferences)
+void initializeWebViewConfiguration(const char* libraryPath, WKStringRef injectedBundlePath, WKContextRef context, WKContextConfigurationRef contextConfiguration)
 {
     globalWebViewConfiguration() = [&] {
         auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
 
         [configuration setProcessPool:(__bridge WKProcessPool *)context];
-        [configuration setPreferences:preferences];
         [configuration setWebsiteDataStore:(__bridge WKWebsiteDataStore *)TestController::defaultWebsiteDataStore()];
         [configuration _setAllowUniversalAccessFromFileURLs:YES];
         [configuration _setAllowTopNavigationToDataURLs:YES];
@@ -282,7 +281,8 @@ void TestController::finishCreatingPlatformWebView(PlatformWebView* view, const 
 
 WKContextRef TestController::platformAdjustContext(WKContextRef context, WKContextConfigurationRef contextConfiguration)
 {
-    initializeWebViewConfiguration(libraryPathForTesting(), injectedBundlePath(), context, contextConfiguration, (__bridge WKPreferences *)m_preferences.get());
+    initializeWebViewConfiguration(libraryPathForTesting(), injectedBundlePath(), context, contextConfiguration);
+    m_preferences = (__bridge WKPreferencesRef)[globalWebViewConfiguration() preferences];
     return (__bridge WKContextRef)[globalWebViewConfiguration() processPool];
 }
 
