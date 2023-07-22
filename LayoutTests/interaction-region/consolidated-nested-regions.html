@@ -41,6 +41,20 @@
         height: 120px;
         border: 1px blue dotted;
     }
+    .tap-and-hover {
+        position: relative;
+        cursor: pointer;
+        width: 200px;
+        height: 60px;
+        padding: 20px;
+        background: lightblue;
+    }
+    .tap-and-hover:hover {
+        background: blue;
+    }
+    .tap-and-hover span {
+        line-height: 60px;
+    }
 </style>
 <body>
 <div class="nested" style="border-radius: 12px;">
@@ -80,6 +94,12 @@
             </div>
         </div>
     </div>
+</div>
+<div class="tap-and-hover">
+    <span>labels</span>
+    <span>y</span>
+    <span>aligned</span>
+    <a href="#" class="secondary">Secondary</a>
 </div>
 
 <pre id="results"></pre>

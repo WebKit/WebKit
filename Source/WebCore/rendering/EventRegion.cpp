@@ -197,18 +197,24 @@ bool EventRegionContext::shouldConsolidateInteractionRegion(IntRect bounds, Rend
         if (!ancestorBounds.contains(bounds))
             return false;
 
+        constexpr auto maxMargin = 50;
         float marginLeft = bounds.x() - ancestorBounds.x();
         float marginRight = ancestorBounds.maxX() - bounds.maxX();
         float marginTop = bounds.y() - ancestorBounds.y();
         float marginBottom = ancestorBounds.maxY() - bounds.maxY();
-
-        constexpr auto maxMargin = 50;
-
-        bool canConsolidate = marginLeft <= maxMargin
+        bool majorOverlap = marginLeft <= maxMargin
             && marginRight <= maxMargin
             && marginTop <= maxMargin
-            && marginBottom <= maxMargin
-            && !renderer.hasVisibleBoxDecorations();
+            && marginBottom <= maxMargin;
+
+        constexpr auto offCenterThreshold = 2;
+        bool centered = std::abs(bounds.center().x() - ancestorBounds.center().x()) < offCenterThreshold
+            || std::abs(bounds.center().y() - ancestorBounds.center().y()) < offCenterThreshold;
+
+        bool hasNoVisualBorders = !renderer.hasVisibleBoxDecorations();
+
+        bool canConsolidate = hasNoVisualBorders
+            && (majorOverlap || (centered && elementMatchesHoverRules(*ancestor.element())));
 
         // We're consolidating the region based on this ancestor, it shouldn't be removed or candidate for removal.
         if (canConsolidate) {
@@ -218,7 +224,7 @@ bool EventRegionContext::shouldConsolidateInteractionRegion(IntRect bounds, Rend
         }
 
         // We can't consolidate this region but it might be a container we can remove later.
-        if (!renderer.hasVisibleBoxDecorations() && is<RenderElement>(renderer)) {
+        if (hasNoVisualBorders && is<RenderElement>(renderer)) {
             auto& renderElement = downcast<RenderElement>(renderer);
             m_containerRemovalCandidates.add(renderElement.element()->identifier());
         }
