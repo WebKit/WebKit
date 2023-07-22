@@ -4929,7 +4929,6 @@ imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visib
 imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-auto-state-changed.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-auto-state-changed-first-observation.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-auto-state-changed-removed.html [ Skip ]
-imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-fieldset-size.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-video.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-contain/counter-scoping-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-contain/counter-scoping-002.html [ ImageOnlyFailure ]

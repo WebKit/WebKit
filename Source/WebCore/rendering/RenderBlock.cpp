@@ -3356,7 +3356,7 @@ RenderBox* RenderBlock::findFieldsetLegend(FieldsetFindLegendOption option) cons
 
 void RenderBlock::adjustBorderBoxRectForPainting(LayoutRect& paintRect)
 {
-    if (!isFieldset() || !intrinsicBorderForFieldset())
+    if (!isFieldset() || isSkippedContentRoot() || !intrinsicBorderForFieldset())
         return;
     
     auto* legend = findFieldsetLegend();
@@ -3379,7 +3379,7 @@ void RenderBlock::adjustBorderBoxRectForPainting(LayoutRect& paintRect)
 LayoutRect RenderBlock::paintRectToClipOutFromBorder(const LayoutRect& paintRect)
 {
     LayoutRect clipRect;
-    if (!isFieldset())
+    if (!isFieldset() || isSkippedContentRoot())
         return clipRect;
     auto* legend = findFieldsetLegend();
     if (!legend)
@@ -3522,7 +3522,7 @@ LayoutUnit RenderBlock::adjustIntrinsicLogicalHeightForBoxSizing(LayoutUnit heig
 
 void RenderBlock::paintExcludedChildrenInBorder(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
-    if (!isFieldset())
+    if (!isFieldset() || isSkippedContentRoot())
         return;
     
     RenderBox* box = findFieldsetLegend();
