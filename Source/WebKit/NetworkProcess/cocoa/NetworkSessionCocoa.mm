@@ -1345,9 +1345,16 @@ void SessionWrapper::recreateSessionWithUpdatedProxyConfigurations(NetworkSessio
     networkSession.applyProxyConfigurationToSessionConfiguration(configuration);
 #endif
 
+    [session invalidateAndCancel];
     [delegate sessionInvalidated];
     delegate = adoptNS([[WKNetworkSessionDelegate alloc] initWithNetworkSession:networkSession wrapper:*this withCredentials:withCredentials]);
     session = [NSURLSession sessionWithConfiguration:configuration delegate:delegate.get() delegateQueue:[NSOperationQueue mainQueue]];
+
+    dataTaskMap.clear();
+    downloadMap.clear();
+#if HAVE(NSURLSESSION_WEBSOCKET)
+    webSocketDataTaskMap.clear();
+#endif
 }
 
 void SessionWrapper::initialize(NSURLSessionConfiguration *configuration, NetworkSessionCocoa& networkSession, WebCore::StoredCredentialsPolicy storedCredentialsPolicy, NavigatingToAppBoundDomain isNavigatingToAppBoundDomain)
