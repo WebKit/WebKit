@@ -89,11 +89,7 @@ RegExpFunctionalTestCollector::~RegExpFunctionalTestCollector()
 
 void RegExpFunctionalTestCollector::outputEscapedString(const String& s, bool escapeSlash)
 {
-    int len = s.length();
-    
-    for (int i = 0; i < len; ++i) {
-        UChar c = s[i];
-
+    for (UChar c : s) {
         switch (c) {
         case '\0':
             fputs("\\0", m_file);
@@ -123,7 +119,7 @@ void RegExpFunctionalTestCollector::outputEscapedString(const String& s, bool es
             if (escapeSlash)
                 fputs("\\/", m_file);
             else
-                fputs("/", m_file);
+                fputc('/', m_file);
             break;
         case '\"':
             fputs("\\\"", m_file);

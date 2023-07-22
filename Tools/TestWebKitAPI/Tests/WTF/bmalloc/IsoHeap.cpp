@@ -69,7 +69,7 @@ static void assertEmptyPointerSet(const std::set<void*>& pointers)
     printf("Pointers:");
     for (void* ptr : pointers)
         printf(" %p", ptr);
-    printf("\n");
+    putchar('\n');
     EXPECT_TRUE(pointers.empty());
 }
 

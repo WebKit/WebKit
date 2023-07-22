@@ -192,8 +192,8 @@ void Scavenger::scavenge()
     UniqueLockHolder lock(m_scavengingMutex);
 
     if (verbose) {
-        fprintf(stderr, "--------------------------------\n");
-        fprintf(stderr, "--before scavenging--\n");
+        fputs("--------------------------------\n", stderr);
+        fputs("--before scavenging--\n", stderr);
         dumpStats();
     }
 
@@ -242,9 +242,9 @@ void Scavenger::scavenge()
     }
 
     if (verbose) {
-        fprintf(stderr, "--after scavenging--\n");
+        fputs("--after scavenging--\n", stderr);
         dumpStats();
-        fprintf(stderr, "--------------------------------\n");
+        fputs("--------------------------------\n", stderr);
     }
 
     {
@@ -328,10 +328,10 @@ void Scavenger::threadRunLoop()
         setSelfQOSClass();
         
         if (verbose) {
-            fprintf(stderr, "--------------------------------\n");
-            fprintf(stderr, "considering running scavenger\n");
+            fputs("--------------------------------\n", stderr);
+            fputs("considering running scavenger\n", stderr);
             dumpStats();
-            fprintf(stderr, "--------------------------------\n");
+            fputs("--------------------------------\n", stderr);
         }
 
         std::chrono::steady_clock::time_point start { std::chrono::steady_clock::now() };

@@ -306,10 +306,8 @@ void Node::dumpStatistics()
     printf("  Mixed use: %zu\n", mixedRareDataUseCount);
     for (auto it : rareDataSingleUseTypeCounts)
         printf("  %s: %zu\n", stringForRareDataUseType(static_cast<NodeRareData::UseType>(it.key)), it.value);
-    printf("\n");
 
-
-    printf("NodeType distribution:\n");
+    puts("\nNodeType distribution:\n");
     printf("  Number of Element nodes: %zu\n", elementNodes);
     printf("  Number of Attribute nodes: %zu\n", attrNodes);
     printf("  Number of Text nodes: %zu\n", textNodes);
@@ -321,11 +319,11 @@ void Node::dumpStatistics()
     printf("  Number of DocumentFragment nodes: %zu\n", fragmentNodes);
     printf("  Number of ShadowRoot nodes: %zu\n", shadowRootNodes);
 
-    printf("Element tag name distibution:\n");
+    puts("Element tag name distibution:\n");
     for (auto& stringSizePair : perTagCount)
         printf("  Number of <%s> tags: %zu\n", stringSizePair.key.utf8().data(), stringSizePair.value);
 
-    printf("Attributes:\n");
+    puts("Attributes:\n");
     printf("  Number of Attributes (non-Node and Node): %zu [%zu]\n", attributes, sizeof(Attribute));
     printf("  Number of Attributes with an Attr: %zu\n", attributesWithAttr);
     printf("  Number of Elements with attribute storage: %zu [%zu]\n", elementsWithAttributeStorage, sizeof(ElementData));
@@ -1952,7 +1950,7 @@ void Node::showNodePathForThis() const
             break;
         }
         case TEXT_NODE:
-            fprintf(stderr, "/text()");
+            fputs("/text()", stderr);
             break;
         case ATTRIBUTE_NODE:
             fprintf(stderr, "/@%s", node->nodeName().utf8().data());
@@ -2009,17 +2007,17 @@ static ContainerNode* parentOrShadowHostOrFrameOwner(const Node* node)
 static void showSubTreeAcrossFrame(const Node* node, const Node* markedNode, const String& indent)
 {
     if (node == markedNode)
-        fputs("*", stderr);
+        fputc('*', stderr);
     fputs(indent.utf8().data(), stderr);
     node->showNode();
     if (!node->isShadowRoot()) {
         if (node->isFrameOwnerElement())
             showSubTreeAcrossFrame(static_cast<const HTMLFrameOwnerElement*>(node)->contentDocument(), markedNode, indent + "\t");
         if (ShadowRoot* shadowRoot = node->shadowRoot())
-            showSubTreeAcrossFrame(shadowRoot, markedNode, indent + "\t");
+            showSubTreeAcrossFrame(shadowRoot, markedNode, indent + '\t');
     }
     for (Node* child = node->firstChild(); child; child = child->nextSibling())
-        showSubTreeAcrossFrame(child, markedNode, indent + "\t");
+        showSubTreeAcrossFrame(child, markedNode, indent + '\t');
 }
 
 void Node::showTreeForThisAcrossFrame() const

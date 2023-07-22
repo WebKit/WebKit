@@ -1513,7 +1513,7 @@ JSC_DEFINE_HOST_FUNCTION(functionJSCStack, (JSGlobalObject* globalObject, CallFr
 
     FunctionJSCStackFunctor functor(trace);
     StackVisitor::visit(callFrame, vm, functor);
-    fprintf(stderr, "%s", trace.toString().utf8().data());
+    fputs(trace.toString().utf8().data(), stderr);
     return JSValue::encode(jsUndefined());
 }
 
@@ -3257,7 +3257,7 @@ int main(int argc, char** argv)
     finalizeStatsAtEndOfTesting();
     if (getenv("JS_SHELL_WAIT_FOR_INPUT_TO_EXIT")) {
         WTF::fastDisableScavenger();
-        fprintf(stdout, "\njs shell waiting for input to exit\n");
+        fputs("\njs shell waiting for input to exit\n", stdout);
         fflush(stdout);
         getc(stdin);
     }
@@ -3265,12 +3265,12 @@ int main(int argc, char** argv)
 #if OS(UNIX)
     if (getenv("JS_SHELL_WAIT_FOR_SIGUSR2_TO_EXIT")) {
         WTF::fastDisableScavenger();
-        fprintf(stdout, "\njs shell waiting for `kill -USR2 [pid]` to exit\n");
+        fputs("\njs shell waiting for `kill -USR2 [pid]` to exit\n", stdout);
         fflush(stdout);
 
         waitToExit.wait();
 
-        fprintf(stdout, "\njs shell exiting\n");
+        fputs("\njs shell exiting\n", stdout);
         fflush(stdout);
     }
 #endif
@@ -3296,7 +3296,7 @@ static void dumpException(GlobalObject* globalObject, JSValue exception)
     if (expectedCString)
         printf("Exception: %s\n", expectedCString.value().data());
     else
-        printf("Exception: <out of memory while extracting exception string>\n");
+        puts("Exception: <out of memory while extracting exception string>\n");
 
     Identifier nameID = Identifier::fromString(vm, "name"_s);
     CHECK_EXCEPTION();
@@ -3557,7 +3557,7 @@ static void runInteractive(GlobalObject* globalObject)
 
         Expected<CString, UTF8ConversionError> utf8;
         if (evaluationException) {
-            fputs("Exception: ", stdout);
+            puts("Exception: ");
             utf8 = evaluationException->value().toWTFString(globalObject).tryGetUTF8();
         } else
             utf8 = returnValue.toWTFStringForConsole(globalObject).tryGetUTF8();
@@ -3575,40 +3575,40 @@ static void runInteractive(GlobalObject* globalObject)
         scope.clearException();
         vm.drainMicrotasks();
     }
-    printf("\n");
+    putchar('\n');
 }
 
 static NO_RETURN void printUsageStatement(bool help = false)
 {
-    fprintf(stderr, "Usage: jsc [options] [files] [-- arguments]\n");
-    fprintf(stderr, "  -d         Dumps bytecode (debug builds only)\n");
-    fprintf(stderr, "  -e         Evaluate argument as script code\n");
-    fprintf(stderr, "  -f         Specifies a source file (deprecated)\n");
-    fprintf(stderr, "  -h|--help  Prints this help message\n");
-    fprintf(stderr, "  -i         Enables interactive mode (default if no files are specified)\n");
-    fprintf(stderr, "  -m         Execute as a module\n");
+    fputs("Usage: jsc [options] [files] [-- arguments]\n", stderr);
+    fputs("  -d         Dumps bytecode (debug builds only)\n", stderr);
+    fputs("  -e         Evaluate argument as script code\n", stderr);
+    fputs("  -f         Specifies a source file (deprecated)\n", stderr);
+    fputs("  -h|--help  Prints this help message\n", stderr);
+    fputs("  -i         Enables interactive mode (default if no files are specified)\n", stderr);
+    fputs("  -m         Execute as a module\n", stderr);
 #if OS(UNIX)
-    fprintf(stderr, "  -s         Installs signal handlers that exit on a crash (Unix platforms only, lldb will not work with this option) \n");
+    fputs("  -s         Installs signal handlers that exit on a crash (Unix platforms only, lldb will not work with this option) \n", stderr);
 #endif
-    fprintf(stderr, "  -p <file>  Outputs profiling data to a file\n");
-    fprintf(stderr, "  -x         Output exit code before terminating\n");
-    fprintf(stderr, "\n");
-    fprintf(stderr, "  --sample                   Collects and outputs sampling profiler data\n");
-    fprintf(stderr, "  --test262-async            Check that some script calls the print function with the string 'Test262:AsyncTestComplete'\n");
-    fprintf(stderr, "  --strict-file=<file>       Parse the given file as if it were in strict mode (this option may be passed more than once)\n");
-    fprintf(stderr, "  --module-file=<file>       Parse and evaluate the given file as module (this option may be passed more than once)\n");
-    fprintf(stderr, "  --exception=<name>         Check the last script exits with an uncaught exception with the specified name\n");
-    fprintf(stderr, "  --watchdog-exception-ok    Uncaught watchdog exceptions exit with success\n");
-    fprintf(stderr, "  --dumpException            Dump uncaught exception text\n");
-    fprintf(stderr, "  --footprint                Dump memory footprint after done executing\n");
-    fprintf(stderr, "  --options                  Dumps all JSC VM options and exits\n");
-    fprintf(stderr, "  --dumpOptions              Dumps all non-default JSC VM options before continuing\n");
-    fprintf(stderr, "  --<jsc VM option>=<value>  Sets the specified JSC VM option\n");
-    fprintf(stderr, "  --destroy-vm               Destroy VM before exiting\n");
-    fprintf(stderr, "  --can-block-is-false       Make main thread's Atomics.wait throw\n");
-    fprintf(stderr, "\n");
-    fprintf(stderr, "Files with a .mjs extension will always be evaluated as modules.\n");
-    fprintf(stderr, "\n");
+    fputs("  -p <file>  Outputs profiling data to a file\n", stderr);
+    fputs("  -x         Output exit code before terminating\n", stderr);
+    fputc('\n', stderr);
+    fputs("  --sample                   Collects and outputs sampling profiler data\n", stderr);
+    fputs("  --test262-async            Check that some script calls the print function with the string 'Test262:AsyncTestComplete'\n", stderr);
+    fputs("  --strict-file=<file>       Parse the given file as if it were in strict mode (this option may be passed more than once)\n", stderr);
+    fputs("  --module-file=<file>       Parse and evaluate the given file as module (this option may be passed more than once)\n", stderr);
+    fputs("  --exception=<name>         Check the last script exits with an uncaught exception with the specified name\n", stderr);
+    fputs("  --watchdog-exception-ok    Uncaught watchdog exceptions exit with success\n", stderr);
+    fputs("  --dumpException            Dump uncaught exception text\n", stderr);
+    fputs("  --footprint                Dump memory footprint after done executing\n", stderr);
+    fputs("  --options                  Dumps all JSC VM options and exits\n", stderr);
+    fputs("  --dumpOptions              Dumps all non-default JSC VM options before continuing\n", stderr);
+    fputs("  --<jsc VM option>=<value>  Sets the specified JSC VM option\n", stderr);
+    fputs("  --destroy-vm               Destroy VM before exiting\n", stderr);
+    fputs("  --can-block-is-false       Make main thread's Atomics.wait throw\n", stderr);
+    fputc('\n', stderr);
+    fputs("Files with a .mjs extension will always be evaluated as modules.\n", stderr);
+    fputc('\n', stderr);
 
     jscExit(help ? EXIT_SUCCESS : EXIT_FAILURE);
 }
@@ -3644,7 +3644,7 @@ void CommandLine::parseArguments(int argc, char** argv)
 #endif // PLATFORM(COCOA)
         for (int i = 0; i < argc; ++i)
             printf(" %s", argv[i]);
-        printf("\n");
+        putchar('\n');
     }
 
     int i = 1;
@@ -3885,13 +3885,13 @@ int runJSC(const CommandLine& options, bool isWorker, const Func& func)
         printf("jsc exiting %d", result);
         if (asyncTestExpectedPasses != asyncTestPasses)
             printf(" because expected: %d async test passes but got: %d async test passes", asyncTestExpectedPasses, asyncTestPasses);
-        printf("\n");
+        putchar('\n');
     }
 
     if (Options::useProfiler()) {
         JSLockHolder locker(vm);
         if (!vm.m_perBytecodeProfiler->save(options.m_profilerOutput.utf8().data()))
-            fprintf(stderr, "could not save profiler output.\n");
+            fputs("could not save profiler output.\n", stderr);
     }
 
 #if ENABLE(JIT)

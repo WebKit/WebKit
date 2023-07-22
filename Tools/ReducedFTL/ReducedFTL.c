@@ -55,7 +55,7 @@
 static void usage()
 {
     printf("Usage: ReducedFTL <file1> [<file2> ...]\n");
-    printf("\n");
+    putchar('\n');
     printf("Options:\n");
     printf("--verbose        Display more information, including module dumps.\n");
     printf("--timing         Measure the time it takes to compile.\n");
@@ -65,7 +65,7 @@ static void usage()
     printf("--loop           Keep recompiling forever. Useful when attaching a profiler.\n");
     printf("--fast-isel      Enable the \"fast\" instruction selector.\n");
     printf("--help           Print this message.\n");
-    printf("\n");
+    putchar('\n');
     printf("Unless you specify one of --verbose, --timing, or --disassemble, you will\n");
     printf("not see any output.\n");
     exit(1);

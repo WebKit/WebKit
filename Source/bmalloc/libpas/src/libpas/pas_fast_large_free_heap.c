@@ -109,7 +109,7 @@ static void dump_heap(pas_fast_large_free_heap* heap)
 {
     pas_cartesian_tree_node* tree_node;
     
-    printf("Fast free list:");
+    puts("Fast free list:");
     
     for (tree_node = pas_cartesian_tree_minimum(&heap->tree);
          tree_node;
@@ -121,7 +121,7 @@ static void dump_heap(pas_fast_large_free_heap* heap)
         printf(" [%p, %p)", (void*)((uintptr_t)node->free.begin), (void*)((uintptr_t)node->free.end));
     }
     
-    printf("\n");
+    putchar('\n');
 }
 
 static PAS_ALWAYS_INLINE void fast_find_first(

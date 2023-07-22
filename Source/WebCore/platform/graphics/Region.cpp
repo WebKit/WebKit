@@ -373,10 +373,10 @@ void Region::Shape::dump() const
 
         for (auto segment = segments_begin(span), end = segments_end(span); segment != end; ++segment)
             printf("%d ", *segment);
-        printf(")\n");
+        puts(")\n");
     }
 
-    printf("\n");
+    putchar('\n');
 }
 #endif
 

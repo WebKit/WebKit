@@ -11,7 +11,7 @@
 #endif
 
 static void usage(void) {
-    fprintf(stderr, "Usage: tsf_ir_speed [<count>]\n");
+    fputs("Usage: tsf_ir_speed [<count>]\n", stderr);
     exit(1);
 }
 

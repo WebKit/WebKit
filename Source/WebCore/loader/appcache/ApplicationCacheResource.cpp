@@ -87,17 +87,17 @@ int64_t ApplicationCacheResource::estimatedSizeInStorage()
 void ApplicationCacheResource::dumpType(unsigned type)
 {
     if (type & Master)
-        printf("master ");
+        puts("master ");
     if (type & Manifest)
-        printf("manifest ");
+        puts("manifest ");
     if (type & Explicit)
-        printf("explicit ");
+        puts("explicit ");
     if (type & Foreign)
-        printf("foreign ");
+        puts("foreign ");
     if (type & Fallback)
-        printf("fallback ");
+        puts("fallback ");
     
-    printf("\n");
+    putchar('\n');
 }
 #endif
 

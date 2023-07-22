@@ -207,15 +207,15 @@ void gpc_proto_print(gpc_proto_t *proto,
                 gpc_instruction_to_string(proto->stream[i]);
             if (strlen(name) < 35) {
                 for (j = 0; j < 35 - strlen(name); ++j) {
-                    fprintf(out, " ");
+                    fputc(' ', out);
                 }
             }
-            fprintf(out, "%s", name);
+            fputs(name, out);
             for (j = 1; j < size; ++j) {
                 fprintf(out, "\t" fui64, (uint64_t)proto->stream[i + j]);
             }
         }
-        fprintf(out, "\n");
+        fputc('\n', out);
         i += size;
     }
 }
