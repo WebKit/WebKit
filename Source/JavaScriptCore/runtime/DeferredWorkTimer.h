@@ -45,6 +45,12 @@ class JS_EXPORT_PRIVATE DeferredWorkTimer final : public JSRunLoopTimer {
 public:
     using Base = JSRunLoopTimer;
 
+    enum class WorkKind : uint8_t {
+        Other,
+        Atomics,
+        WebAssembly,
+    };
+
     struct TicketData {
     private:
         WTF_MAKE_FAST_ALLOCATED;
@@ -65,7 +71,7 @@ public:
 
     void doWork(VM&) final;
 
-    Ticket addPendingWork(VM&, JSObject* target, Vector<Strong<JSCell>>&& dependencies);
+    Ticket addPendingWork(VM&, JSObject* target, Vector<Strong<JSCell>>&& dependencies, WorkKind kind = WorkKind::Other);
     bool hasPendingWork(Ticket);
     bool hasDependancyInPendingWork(Ticket, JSCell* dependency);
     bool cancelPendingWork(Ticket);
@@ -83,6 +89,10 @@ public:
     void runRunLoop();
 
     static Ref<DeferredWorkTimer> create(VM& vm) { return adoptRef(*new DeferredWorkTimer(vm)); }
+
+    WTF::Function<void(std::unique_ptr<TicketData>, WorkKind)> onAddPendingWork;
+    WTF::Function<void(Ticket, Task&&)> onScheduleWorkSoon;
+    WTF::Function<void(Ticket)> onCancelPendingWork;
 private:
     DeferredWorkTimer(VM&);
 

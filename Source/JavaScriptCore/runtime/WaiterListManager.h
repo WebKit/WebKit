@@ -48,7 +48,7 @@ public:
 
     Waiter(JSPromise* promise)
         : m_vm(&promise->vm())
-        , m_ticket(m_vm->deferredWorkTimer->addPendingWork(*m_vm, promise, { }))
+        , m_ticket(m_vm->deferredWorkTimer->addPendingWork(*m_vm, promise, { }, DeferredWorkTimer::WorkKind::Atomics))
         , m_isAsync(true)
     {
     }
