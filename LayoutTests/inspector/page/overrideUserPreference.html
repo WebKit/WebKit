@@ -136,6 +136,41 @@ function test()
         },
     });
 
+    suite.addTestCase({
+        name: "Page.overrideUserPreference.InvertedColors",
+        description: "",
+        async test() {
+            let cssPropertyName = "--test-inverted-colors";
+            let mediaQuery = "(inverted-colors: inverted)";
+            let testCases = [
+                {
+                    expectedValue: "none",
+                    expectedMatchMedia: false,
+                },
+                {
+                    preferenceName: InspectorBackend.Enum.Page.UserPreferenceName.InvertedColors,
+                    preferenceValue: InspectorBackend.Enum.Page.UserPreferenceValue.Inverted,
+                    expectedValue: "inverted",
+                    expectedMatchMedia: true,
+                },
+                {
+                    preferenceName: InspectorBackend.Enum.Page.UserPreferenceName.InvertedColors,
+                    preferenceValue: InspectorBackend.Enum.Page.UserPreferenceValue.None,
+                    expectedValue: "none",
+                    expectedMatchMedia: false,
+                },
+                {
+                    preferenceName: InspectorBackend.Enum.Page.UserPreferenceName.InvertedColors,
+                    preferenceValue: null,
+                    expectedValue: "none",
+                    expectedMatchMedia: false,
+                },
+                ];
+
+            await testOverridePreference({cssPropertyName, mediaQuery, testCases});
+        },
+    });
+
     suite.runTestCasesAndFinish();
 }
 

@@ -843,6 +843,8 @@ localizedStrings["Historical @ Font Details Sidebar Property Value"] = "Historic
 localizedStrings["Historical Forms @ Font Details Sidebar Property Value"] = "Historical Forms";
 localizedStrings["Host"] = "Host";
 localizedStrings["ICO"] = "ICO";
+/* Label for input to override the preference for inverted colors. */
+localizedStrings["Invert colors @ User Preferences Overrides"] = "Invert colors";
 localizedStrings["IP"] = "IP";
 localizedStrings["IP Address"] = "IP Address";
 localizedStrings["ITML Context"] = "ITML Context";

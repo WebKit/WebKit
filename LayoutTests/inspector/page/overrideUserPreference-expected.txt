@@ -41,3 +41,16 @@ Removing PrefersColorScheme override
 PASS: (prefers-color-scheme: dark) media query does not match.
 PASS: --test-prefers-color-scheme: light
 
+-- Running test case: Page.overrideUserPreference.InvertedColors
+PASS: (inverted-colors: inverted) media query does not match.
+PASS: --test-inverted-colors: none
+Overriding InvertedColors value to Inverted
+PASS: (inverted-colors: inverted) media query matches.
+PASS: --test-inverted-colors: inverted
+Overriding InvertedColors value to None
+PASS: (inverted-colors: inverted) media query does not match.
+PASS: --test-inverted-colors: none
+Removing InvertedColors override
+PASS: (inverted-colors: inverted) media query does not match.
+PASS: --test-inverted-colors: none
+

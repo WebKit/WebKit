@@ -86,7 +86,7 @@ WI.OverrideUserPreferencesPopover = class OverrideUserPreferencesPopover extends
             });
         }
 
-        if (InspectorBackend.Enum.Page?.UserPreferenceName?.PrefersReducedMotion || InspectorBackend.Enum.Page?.UserPreferenceName?.PrefersContrast) {
+        if (InspectorBackend.Enum.Page?.UserPreferenceName?.PrefersReducedMotion || InspectorBackend.Enum.Page?.UserPreferenceName?.PrefersContrast || InspectorBackend.Enum.Page?.UserPreference?.Inverted) {
             let accessibilityHeader = contentElement.appendChild(document.createElement("h1"));
             accessibilityHeader.textContent = WI.UIString("Accessibility", "Accessibility @ User Preferences Overrides", "Header for section with accessibility user preferences.");
         }
@@ -110,6 +110,17 @@ WI.OverrideUserPreferencesPopover = class OverrideUserPreferencesPopover extends
                 label: WI.UIString("Increase contrast", "Increase contrast @ User Preferences Overrides", "Label for input to override the preference for high contrast."),
                 preferenceName: InspectorBackend.Enum.Page.UserPreferenceName.PrefersContrast,
                 preferenceValues: [InspectorBackend.Enum.Page.UserPreferenceValue.More, InspectorBackend.Enum.Page.UserPreferenceValue.NoPreference],
+                defaultValue: WI.CSSManager.UserPreferenceDefaultValue,
+            });
+
+        // COMPATIBILITY (macOS 13.0, iOS 16.0): `InvertedColors` value for `Page.UserPreferenceName` did not exist yet.
+        if (InspectorBackend.Enum.Page?.UserPreferenceName?.InvertedColors)
+            this._createSelectElement({
+                contentElement,
+                id: "override-inverted-colors",
+                label: WI.UIString("Inverte colors", "Invert colors @ User Preferences Overrides", "Label for input to override the preference for inverted colors."),
+                preferenceName: InspectorBackend.Enum.Page.UserPreferenceName.InvertedColors,
+                preferenceValues: [InspectorBackend.Enum.Page.UserPreferenceValue.Inverted, InspectorBackend.Enum.Page.UserPreferenceValue.None],
                 defaultValue: WI.CSSManager.UserPreferenceDefaultValue,
             });
 
@@ -164,8 +175,10 @@ WI.OverrideUserPreferencesPopover = class OverrideUserPreferencesPopover extends
             return WI.UIString("System (%s)", "System @ User Preferences Overrides", "Label for a preference that matches the default system value. The system value is shown in parentheses.").format(this._userPreferenceValueLabel(systemValue));
         case InspectorBackend.Enum.Page.UserPreferenceValue?.Reduce:
         case InspectorBackend.Enum.Page.UserPreferenceValue?.More:
+        case InspectorBackend.Enum.Page.UserPreferenceValue?.Inverted:
             return WI.UIString("On", "On @ User Preferences Overrides", "Label for a preference that is turned on.");
         case InspectorBackend.Enum.Page.UserPreferenceValue?.NoPreference:
+        case InspectorBackend.Enum.Page.UserPreferenceValue?.None:
             return WI.UIString("Off", "Off @ User Preferences Overrides", "Label for a preference that is turned off.");
         case InspectorBackend.Enum.Page.UserPreferenceValue?.Light:
         case WI.CSSManager.Appearance.Light:
