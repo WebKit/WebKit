@@ -1,16 +1,17 @@
 Nested  Nested  Nested Secondary
 Tappable! Secondary
+labels y aligned Secondary
 (GraphicsLayer
   (anchor 0.00 0.00)
-  (bounds 800.00 600.00)
+  (bounds 800.00 613.00)
   (children 1
     (GraphicsLayer
-      (bounds 800.00 600.00)
+      (bounds 800.00 613.00)
       (contentsOpaque 1)
       (drawsContent 1)
       (backgroundColor #FFFFFF)
       (event region
-        (rect (0,0) width=800 height=600)
+        (rect (0,0) width=800 height=613)
 
       (interaction regions [
         (interaction (0,0) width=125 height=100)
@@ -28,6 +29,10 @@ Tappable! Secondary
         (interaction (200,150) width=122 height=122)
         (borderRadius 0.00),
         (interaction (253,151) width=68 height=20)
+        (borderRadius 5.00),
+        (interaction (0,500) width=240 height=100)
+        (borderRadius 0.00),
+        (interaction (172,500) width=68 height=20)
         (borderRadius 5.00)])
       )
     )
