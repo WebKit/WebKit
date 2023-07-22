@@ -1123,12 +1123,12 @@ void WebGLRenderingContextBase::paintRenderingResultsToCanvas()
     }
 }
 
-RefPtr<PixelBuffer> WebGLRenderingContextBase::paintRenderingResultsToPixelBuffer()
+RefPtr<PixelBuffer> WebGLRenderingContextBase::paintRenderingResultsToPixelBuffer(GraphicsContextGL::FlipY flipY)
 {
     if (isContextLost())
         return nullptr;
     clearIfComposited(CallerTypeOther);
-    return m_context->paintRenderingResultsToPixelBuffer();
+    return m_context->paintRenderingResultsToPixelBuffer(flipY);
 }
 
 #if ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)

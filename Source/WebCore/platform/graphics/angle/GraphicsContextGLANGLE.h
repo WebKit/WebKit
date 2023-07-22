@@ -345,7 +345,7 @@ public:
     void deleteTexture(PlatformGLObject) final;
     void simulateEventForTesting(SimulatedEventForTesting) override;
     void paintRenderingResultsToCanvas(ImageBuffer&) override;
-    RefPtr<PixelBuffer> paintRenderingResultsToPixelBuffer() override;
+    RefPtr<PixelBuffer> paintRenderingResultsToPixelBuffer(FlipY) override;
     void paintCompositedResultsToCanvas(ImageBuffer&) override;
 
     RefPtr<PixelBuffer> readRenderingResultsForPainting();

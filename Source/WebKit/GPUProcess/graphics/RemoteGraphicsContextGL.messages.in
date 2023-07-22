@@ -327,7 +327,7 @@ messages -> RemoteGraphicsContextGL NotRefCounted Stream {
     void BlitFramebufferANGLE(int32_t srcX0, int32_t srcY0, int32_t srcX1, int32_t srcY1, int32_t dstX0, int32_t dstY0, int32_t dstX1, int32_t dstY1, uint32_t mask, uint32_t filter)
     void GetInternalformativ(uint32_t target, uint32_t internalformat, uint32_t pname, size_t paramsSize) -> (IPC::ArrayReference<int32_t> params) Synchronous
     void SetDrawingBufferColorSpace(WebCore::DestinationColorSpace arg0)
-    void PaintRenderingResultsToPixelBuffer() -> (RefPtr<WebCore::PixelBuffer> returnValue) Synchronous
+    void PaintRenderingResultsToPixelBuffer(WebCore::GraphicsContextGL::FlipY arg0) -> (RefPtr<WebCore::PixelBuffer> returnValue) Synchronous
     void DestroyEGLSync(uint64_t arg0) -> (bool returnValue) Synchronous
     void ClientWaitEGLSyncWithFlush(uint64_t arg0, uint64_t timeout)
     void EnableRequiredWebXRExtensions() -> (bool returnValue) Synchronous
