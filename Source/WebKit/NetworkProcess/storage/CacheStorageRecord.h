@@ -42,7 +42,7 @@ struct CacheStorageRecordInformation {
         }
 
         varyValue.split(',', [&](StringView view) {
-            if (!hasVaryStar && view.trim(WebCore::isHTTPSpace) == "*"_s)
+            if (!hasVaryStar && view.trim(isJSONOrHTTPWhitespace<UChar>) == "*"_s)
                 hasVaryStar = true;
             varyHeaders.add(view.toString(), request.httpHeaderField(view));
         });

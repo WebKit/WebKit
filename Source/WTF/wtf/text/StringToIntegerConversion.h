@@ -34,7 +34,7 @@ namespace WTF {
 // The parseIntegerAllowingTrailingJunk function template is like parseInteger, but allows any characters after the integer.
 
 // FIXME: Should we add a version that does not allow "+"?
-// FIXME: Should we add a version that allows other definitions of spaces, like isASCIIWhitespace or isHTTPSpace?
+// FIXME: Should we add a version that allows other definitions of spaces, like isASCIIWhitespace or isJSONOrHTTPWhitespace?
 // FIXME: Should we add a version that does not allow leading and trailing spaces?
 
 template<typename IntegralType> std::optional<IntegralType> parseInteger(StringView, uint8_t base = 10);

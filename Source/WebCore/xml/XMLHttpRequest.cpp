@@ -796,7 +796,7 @@ ExceptionOr<void> XMLHttpRequest::setRequestHeader(const String& name, const Str
     if (readyState() != OPENED || m_sendFlag)
         return Exception { InvalidStateError };
 
-    String normalizedValue = value.trim(isHTTPSpace);
+    String normalizedValue = value.trim(isJSONOrHTTPWhitespace<UChar>);
     if (!isValidHTTPToken(name) || !isValidHTTPHeaderValue(normalizedValue))
         return Exception { SyntaxError };
 

@@ -183,7 +183,7 @@ MathMLElement::Length MathMLPresentationElement::parseMathMLLength(const String&
 
     // We first skip whitespace from both ends of the string.
     StringView stringView = string;
-    StringView trimmedLength = stringView.trim(isHTTPSpace);
+    StringView trimmedLength = stringView.trim(isJSONOrHTTPWhitespace<UChar>);
 
     if (trimmedLength.isEmpty())
         return Length();

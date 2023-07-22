@@ -97,7 +97,7 @@ bool queryCacheMatch(const ResourceRequest& request, const ResourceRequest& cach
     varyValue.split(',', [&](StringView view) {
         if (isVarying)
             return;
-        auto nameView = view.trim(isHTTPSpace);
+        auto nameView = view.trim(isJSONOrHTTPWhitespace<UChar>);
         if (nameView == "*"_s) {
             isVarying = true;
             return;

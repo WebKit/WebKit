@@ -870,7 +870,7 @@ bool ResourceResponseBase::equalForWebKitLegacyChallengeComparison(const Resourc
 bool ResourceResponseBase::containsInvalidHTTPHeaders() const
 {
     for (auto& header : httpHeaderFields()) {
-        if (!isValidHTTPHeaderValue(header.value.trim(isHTTPSpace)))
+        if (!isValidHTTPHeaderValue(header.value.trim(isJSONOrHTTPWhitespace<UChar>)))
             return true;
     }
     return false;

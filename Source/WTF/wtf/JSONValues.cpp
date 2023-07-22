@@ -207,7 +207,7 @@ bool parseStringToken(const CodeUnit* start, const CodeUnit* end, const CodeUnit
 template<typename CodeUnit>
 Token parseToken(const CodeUnit* start, const CodeUnit* end, const CodeUnit** tokenStart, const CodeUnit** tokenEnd)
 {
-    while (start < end && deprecatedIsSpaceOrNewline(*start))
+    while (start < end && isJSONOrHTTPWhitespace(*start))
         ++start;
 
     if (start == end)
@@ -524,7 +524,7 @@ RefPtr<Value> Value::parseJSON(StringView json)
         if (!begin)
             return false;
         for (const auto* it = begin; it < end; it++) {
-            if (!deprecatedIsSpaceOrNewline(*it))
+            if (!isJSONOrHTTPWhitespace(*it))
                 return true;
         }
         return false;

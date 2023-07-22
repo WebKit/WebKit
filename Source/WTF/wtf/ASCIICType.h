@@ -154,6 +154,18 @@ template<typename CharacterType> constexpr bool isASCIIWhitespace(CharacterType 
     return character <= ' ' && (character == ' ' || character == '\n' || character == '\t' || character == '\r' || character == '\f');
 }
 
+template<typename CharacterType> constexpr bool isJSONOrHTTPWhitespace(CharacterType character)
+{
+    // This is different from isASCIIWhitespace: JSON does not accept \v as a space.
+    // ECMA-404 specifies the followings.
+    // > Whitespace is any sequence of one or more of the following code points:
+    // > character tabulation (U+0009), line feed (U+000A), carriage return (U+000D), and space (U+0020).
+    //
+    // Also, this definition is the same to HTTP whitespace.
+    // https://fetch.spec.whatwg.org/#http-whitespace-byte
+    return character <= ' ' && (character == ' ' || character == '\n' || character == '\t' || character == '\r');
+}
+
 /*
     Statistics from a run of Apple's page load test for callers of isUnicodeCompatibleASCIIWhitespace:
 
@@ -276,6 +288,7 @@ using WTF::isASCIIOctalDigit;
 using WTF::isASCIIPrintable;
 using WTF::isTabOrSpace;
 using WTF::isASCIIWhitespace;
+using WTF::isJSONOrHTTPWhitespace;
 using WTF::isUnicodeCompatibleASCIIWhitespace;
 using WTF::isASCIIUpper;
 using WTF::isNotASCIIWhitespace;

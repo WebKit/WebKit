@@ -646,6 +646,7 @@ TEST(JSONValue, ParseJSON)
         EXPECT_TRUE(JSON::Value::parseJSON("\"\\xFF\""_s));
         EXPECT_TRUE(JSON::Value::parseJSON("\"\\u1234\""_s));
 
+        EXPECT_FALSE(JSON::Value::parseJSON("\v1"_s));
         EXPECT_FALSE(JSON::Value::parseJSON("1 1"_s));
         EXPECT_FALSE(JSON::Value::parseJSON("{} {}"_s));
         EXPECT_FALSE(JSON::Value::parseJSON("[] []"_s));
