@@ -105,7 +105,6 @@ class WebBackForwardListItem;
 class WebCompiledContentRuleListData;
 class WebFrameProxy;
 class WebLockRegistryProxy;
-class WebPageGroup;
 class WebPageProxy;
 class WebPermissionControllerProxy;
 class WebProcessPool;

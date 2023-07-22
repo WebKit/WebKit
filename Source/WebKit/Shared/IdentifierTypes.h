@@ -36,9 +36,6 @@ using AuthenticationChallengeIdentifier = ObjectIdentifier<AuthenticationChallen
 struct FormSubmitListenerIdentifierType;
 using FormSubmitListenerIdentifier = ObjectIdentifier<FormSubmitListenerIdentifierType>;
 
-struct PageGroupIdentifierType;
-using PageGroupIdentifier = ObjectIdentifier<PageGroupIdentifierType>;
-
 struct TapIdentifierType;
 using TapIdentifier = ObjectIdentifier<TapIdentifierType>;
 

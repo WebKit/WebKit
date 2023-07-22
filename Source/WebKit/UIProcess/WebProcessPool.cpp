@@ -76,7 +76,6 @@
 #include "WebKit2Initialize.h"
 #include "WebMemorySampler.h"
 #include "WebNotificationManagerProxy.h"
-#include "WebPageGroup.h"
 #include "WebPageProxy.h"
 #include "WebPreferences.h"
 #include "WebPreferencesKeys.h"
@@ -212,7 +211,6 @@ Vector<String> WebProcessPool::urlSchemesWithCustomProtocolHandlers()
 
 WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
     : m_configuration(configuration.copy())
-    , m_defaultPageGroup(WebPageGroup::create())
     , m_injectedBundleClient(makeUnique<API::InjectedBundleClient>())
     , m_automationClient(makeUnique<API::AutomationClient>())
     , m_historyClient(makeUnique<API::LegacyContextHistoryClient>())
@@ -600,8 +598,10 @@ void WebProcessPool::establishRemoteWorkerContextConnectionToNetworkProcess(Remo
     if (!preferencesStore && processPool->m_remoteWorkerPreferences)
         preferencesStore = &processPool->m_remoteWorkerPreferences.value();
 
-    if (!preferencesStore)
-        preferencesStore = &processPool->m_defaultPageGroup->preferences().store();
+    if (!preferencesStore) {
+        static NeverDestroyed<WebPreferencesStore> defaultStore;
+        preferencesStore = &defaultStore.get();
+    }
 
     ASSERT(preferencesStore);
 
@@ -1108,12 +1108,10 @@ UserContentControllerIdentifier WebProcessPool::userContentControllerIdentifierF
 
 Ref<WebPageProxy> WebProcessPool::createWebPage(PageClient& pageClient, Ref<API::PageConfiguration>&& pageConfiguration)
 {
-    if (!pageConfiguration->pageGroup())
-        pageConfiguration->setPageGroup(m_defaultPageGroup.ptr());
     if (!pageConfiguration->preferences())
-        pageConfiguration->setPreferences(&pageConfiguration->pageGroup()->preferences());
+        pageConfiguration->setPreferences(WebPreferences::createWithLegacyDefaults("UnusedIdentifier"_s, ".WebKit2"_s, "WebKit2."_s).ptr());
     if (!pageConfiguration->userContentController())
-        pageConfiguration->setUserContentController(&pageConfiguration->pageGroup()->userContentController());
+        pageConfiguration->setUserContentController(WebUserContentControllerProxy::create().ptr());
     if (!pageConfiguration->visitedLinkStore())
         pageConfiguration->setVisitedLinkStore(m_visitedLinkStore.ptr());
 

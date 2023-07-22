@@ -386,7 +386,6 @@ class WebMouseEvent;
 class WebNavigationState;
 class WebOpenPanelResultListenerProxy;
 class WebPageDebuggable;
-class WebPageGroup;
 class WebPageInjectedBundleClient;
 class WebPageInspectorController;
 class WebPageProxyMessageReceiverRegistration;
@@ -1448,8 +1447,6 @@ public:
     const WebPreferences& preferences() const { return m_preferences; }
     WebPreferences& preferences() { return m_preferences; }
     void setPreferences(WebPreferences&);
-
-    WebPageGroup& pageGroup() { return m_pageGroup; }
 
     bool hasRunningProcess() const;
     void launchInitialProcessIfNecessary();
@@ -2897,7 +2894,6 @@ private:
     std::unique_ptr<RemoteScrollingCoordinatorProxy> m_scrollingCoordinatorProxy;
 #endif
     Ref<WebProcessProxy> m_process;
-    Ref<WebPageGroup> m_pageGroup;
     Ref<WebPreferences> m_preferences;
 
     Ref<WebUserContentControllerProxy> m_userContentController;

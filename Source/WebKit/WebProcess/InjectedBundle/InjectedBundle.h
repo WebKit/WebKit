@@ -72,7 +72,6 @@ class InjectedBundleScriptWorld;
 class WebConnection;
 class WebFrame;
 class WebPage;
-class WebPageGroupProxy;
 struct WebProcessCreationParameters;
 
 class InjectedBundle : public API::ObjectImpl<API::Object::Type::Bundle> {

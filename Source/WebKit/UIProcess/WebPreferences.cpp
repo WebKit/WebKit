@@ -26,7 +26,6 @@
 #include "config.h"
 #include "WebPreferences.h"
 
-#include "WebPageGroup.h"
 #include "WebPageProxy.h"
 #include "WebPreferencesKeys.h"
 #include "WebProcessPool.h"

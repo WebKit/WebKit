@@ -32,7 +32,6 @@
 #include "SessionState.h"
 #include "UserContentControllerParameters.h"
 #include "WebCoreArgumentCoders.h"
-#include "WebPageGroupData.h"
 #include "WebPageProxyIdentifier.h"
 #include "WebPreferencesStore.h"
 #include "WebURLSchemeHandlerIdentifier.h"
@@ -85,7 +84,7 @@ struct WebPageCreationParameters {
     DrawingAreaType drawingAreaType;
     DrawingAreaIdentifier drawingAreaIdentifier;
     WebPageProxyIdentifier webPageProxyIdentifier;
-    WebPageGroupData pageGroupData;
+    String groupIdentifier;
 
     bool isEditable;
 

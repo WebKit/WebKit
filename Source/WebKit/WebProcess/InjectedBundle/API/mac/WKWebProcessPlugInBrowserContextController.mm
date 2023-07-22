@@ -51,7 +51,6 @@
 #import "WKWebProcessPlugInRangeHandleInternal.h"
 #import "WKWebProcessPlugInScriptWorldInternal.h"
 #import "WebPage.h"
-#import "WebPageGroupProxy.h"
 #import "WebProcess.h"
 #import "_WKRemoteObjectRegistryInternal.h"
 #import "_WKRenderingProgressEventsInternal.h"
@@ -717,7 +716,7 @@ static inline WKEditorInsertAction toWK(WebCore::EditorInsertAction action)
 
 - (NSString *)_groupIdentifier
 {
-    return _page->pageGroup()->identifier();
+    return _page->groupIdentifier();
 }
 
 @end

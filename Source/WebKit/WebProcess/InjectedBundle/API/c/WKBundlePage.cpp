@@ -54,7 +54,6 @@
 #include "WebImage.h"
 #include "WebInspector.h"
 #include "WebPage.h"
-#include "WebPageGroupProxy.h"
 #include "WebPageOverlay.h"
 #include "WebProcess.h"
 #include <WebCore/AXObjectCache.h>
@@ -858,7 +857,7 @@ void WKBundlePageRemoveAllUserContent(WKBundlePageRef pageRef)
 
 WKStringRef WKBundlePageCopyGroupIdentifier(WKBundlePageRef pageRef)
 {
-    return WebKit::toCopiedAPI(WebKit::toImpl(pageRef)->pageGroup()->identifier());
+    return WebKit::toCopiedAPI(WebKit::toImpl(pageRef)->groupIdentifier());
 }
 
 void WKBundlePageClearApplicationCache(WKBundlePageRef page)

@@ -38,7 +38,6 @@
 #include "Logging.h"
 #include "OverrideLanguages.h"
 #include "ProvisionalPageProxy.h"
-#include "WebPageGroup.h"
 #include "WebPageMessages.h"
 #include "WebPageProxy.h"
 #include "WebPreferences.h"

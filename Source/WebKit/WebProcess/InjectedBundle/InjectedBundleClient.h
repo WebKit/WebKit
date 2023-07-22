@@ -43,7 +43,6 @@ namespace WebKit {
 
 class InjectedBundle;
 class WebPage;
-class WebPageGroupProxy;
 
 class InjectedBundleClient : public API::InjectedBundle::Client, public API::Client<WKBundleClientBase> {
 public:

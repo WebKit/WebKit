@@ -142,8 +142,6 @@
 #include "WebPage.h"
 #include "WebPageCreationParameters.h"
 #include "WebPageDebuggable.h"
-#include "WebPageGroup.h"
-#include "WebPageGroupData.h"
 #include "WebPageInjectedBundleClient.h"
 #include "WebPageInspectorController.h"
 #include "WebPageMessages.h"
@@ -593,7 +591,6 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, Ref
 #endif
     , m_navigationState(makeUnique<WebNavigationState>())
     , m_process(process)
-    , m_pageGroup(*m_configuration->pageGroup())
     , m_preferences(*m_configuration->preferences())
     , m_userContentController(*m_configuration->userContentController())
 #if ENABLE(WK_WEB_EXTENSIONS)
@@ -649,7 +646,6 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, Ref
     WebProcessPool::statistics().wkPageCount++;
 
     m_preferences->addPage(*this);
-    m_pageGroup->addPage(*this);
 
 #if ENABLE(WK_WEB_EXTENSIONS)
     if (m_webExtensionController)
@@ -726,7 +722,6 @@ WebPageProxy::~WebPageProxy()
         TextChecker::closeSpellDocumentWithTag(m_spellDocumentTag.value());
 
     m_preferences->removePage(*this);
-    m_pageGroup->removePage(*this);
 
 #ifndef NDEBUG
     webPageProxyCounter.decrement();
@@ -9277,7 +9272,7 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
     parameters.drawingAreaIdentifier = drawingArea.identifier();
     parameters.webPageProxyIdentifier = internals().identifier;
     parameters.store = preferencesStore();
-    parameters.pageGroupData = m_pageGroup->data();
+    parameters.groupIdentifier = configuration().groupIdentifier();
     parameters.isEditable = m_isEditable;
     parameters.underlayColor = internals().underlayColor;
     parameters.useFixedLayout = m_useFixedLayout;

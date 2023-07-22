@@ -31,7 +31,7 @@ struct WebKit::WebPageCreationParameters {
     WebKit::DrawingAreaType drawingAreaType;
     WebKit::DrawingAreaIdentifier drawingAreaIdentifier;
     WebKit::WebPageProxyIdentifier webPageProxyIdentifier;
-    WebKit::WebPageGroupData pageGroupData;
+    String groupIdentifier;
 
     bool isEditable;
 
