@@ -1426,9 +1426,10 @@ applet, embed, object, img {
     }
 }
 
-/* Default support for "Smart Invert" where all content color except media is inverted. */ 
+/* Default support for "Smart Invert" where all content color except media is inverted. */
+/* https://drafts.csswg.org/mediaqueries-5/#inverted */
 @media (inverted-colors) {
-    img, picture, video { filter: invert(100%); } /* Images and videos double-inverted. */
+    img:not(picture>img), picture, video { filter: invert(100%); } /* Images and videos double-inverted. */
 }
 
 /* https://drafts.csswg.org/css-text-decor-4/#text-decoration-skipping */
