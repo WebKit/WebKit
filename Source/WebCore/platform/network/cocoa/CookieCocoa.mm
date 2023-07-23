@@ -124,10 +124,7 @@ Cookie::Cookie(NSHTTPCookie *cookie)
     , commentURL { cookie.commentURL }
     , ports { portVectorFromList(cookie.portList) }
 {
-ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
-    if ([cookie respondsToSelector:@selector(sameSitePolicy)])
-        sameSite = coreSameSitePolicy(cookie.sameSitePolicy);
-ALLOW_NEW_API_WITHOUT_GUARDS_END
+    sameSite = coreSameSitePolicy(cookie.sameSitePolicy);
 }
 
 Cookie::operator NSHTTPCookie * _Nullable () const

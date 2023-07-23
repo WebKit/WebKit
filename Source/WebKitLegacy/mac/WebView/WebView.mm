@@ -9586,7 +9586,7 @@ static NSTextAlignment nsTextAlignmentFromRenderStyle(const WebCore::RenderStyle
 
     auto translationViewController = adoptNS([PAL::allocLTUITranslationViewControllerInstance() init]);
     [translationViewController setText:adoptNS([[NSAttributedString alloc] initWithString:info.text]).get()];
-    if (info.mode == WebCore::TranslationContextMenuMode::Editable && [translationViewController respondsToSelector:@selector(setReplacementHandler:)]) {
+    if (info.mode == WebCore::TranslationContextMenuMode::Editable) {
         [translationViewController setIsSourceEditable:YES];
         [translationViewController setReplacementHandler:[weakSelf = WeakObjCPtr<WebView>(self)](NSAttributedString *string) {
             auto strongSelf = weakSelf.get();

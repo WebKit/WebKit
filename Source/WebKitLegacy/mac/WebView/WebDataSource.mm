@@ -376,7 +376,7 @@ void addTypesFromClass(NSMutableDictionary *allTypes, Class objCClass, NSArray *
 
 #if PLATFORM(IOS_FAMILY)
     if ([repClass respondsToSelector:@selector(_representationClassForWebFrame:)])
-        repClass = [repClass performSelector:@selector(_representationClassForWebFrame:) withObject:[self webFrame]];
+        repClass = [repClass _representationClassForWebFrame:[self webFrame]];
 #endif
 
     // Check if the data source was already bound?

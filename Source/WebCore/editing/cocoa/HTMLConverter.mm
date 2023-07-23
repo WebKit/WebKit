@@ -1275,7 +1275,7 @@ BOOL HTMLConverter::_addAttachmentForElement(Element& element, NSURL *url, BOOL 
             NSTextAttachment *mimeTextAttachment = nil;
             [WebMessageDocumentClass document:NULL attachment:&mimeTextAttachment forURL:url];
             if (mimeTextAttachment && [mimeTextAttachment respondsToSelector:@selector(fileWrapper)]) {
-                fileWrapper = [mimeTextAttachment performSelector:@selector(fileWrapper)];
+                fileWrapper = [mimeTextAttachment fileWrapper];
                 ignoreOrientation = NO;
             }
         }

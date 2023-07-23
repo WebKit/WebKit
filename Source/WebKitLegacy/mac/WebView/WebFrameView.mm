@@ -284,7 +284,7 @@ enum {
 
 #if PLATFORM(IOS_FAMILY)   
     if ([retVal respondsToSelector:@selector(_representationClassForWebFrame:)])
-        retVal = [retVal performSelector:@selector(_representationClassForWebFrame:) withObject:[self webFrame]];
+        retVal = [retVal _representationClassForWebFrame:[self webFrame]];
 #endif
         
     return retVal;
