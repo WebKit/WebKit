@@ -1,0 +1,23 @@
+<style>
+* {
+  margin: 0;
+  padding: 0;
+}
+#container {
+  width: 200px;
+  height: 200px;
+  background: green;
+}
+#children {
+  font-size: 1000%;
+  width: 1000%;
+  height: 1000%;
+  transform-origin: top left;
+  transform: scale(0.1);
+}
+span {
+  background: yellow;
+}
+</style>
+<div id="container" draggable="true"><div id="children">DRAG ME</div></div>
+<span>PASS if this line is not visible on the drag preview image</span>

@@ -529,6 +529,7 @@
 		636353A71E98665D0009F8AF /* GeolocationGetCurrentPositionResult.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 636353A61E9861940009F8AF /* GeolocationGetCurrentPositionResult.html */; };
 		63A61B8B1FAD251100F06885 /* display-mode.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 63A61B8A1FAD204D00F06885 /* display-mode.html */; };
 		6B0A07F721FA9C2B00D57391 /* PrivateClickMeasurement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6B0A07F621FA9C2B00D57391 /* PrivateClickMeasurement.cpp */; };
+		6B1CD58C2A6B839900752069 /* drag-image-paints-subtree.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 6B1CD58B2A6B837800752069 /* drag-image-paints-subtree.html */; };
 		6B306106218A372900F5A802 /* ClosingWebView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 6B306105218A372900F5A802 /* ClosingWebView.mm */; };
 		6B4E861C2220A5520022F389 /* RegistrableDomain.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6B4E861B2220A5520022F389 /* RegistrableDomain.cpp */; };
 		6B9ABE122086952F00D75DE6 /* HTTPParsers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6B9ABE112086952F00D75DE6 /* HTTPParsers.cpp */; };
@@ -1565,6 +1566,7 @@
 				5714ECB91CA8B5B000051AC8 /* DownloadRequestOriginalURL.html in Copy Resources */,
 				5714ECBD1CA8C22A00051AC8 /* DownloadRequestOriginalURL2.html in Copy Resources */,
 				5714ECBB1CA8BFE400051AC8 /* DownloadRequestOriginalURLFrame.html in Copy Resources */,
+				6B1CD58C2A6B839900752069 /* drag-image-paints-subtree.html in Copy Resources */,
 				F4A32EC41F05F3850047C544 /* dragstart-change-selection-offscreen.html in Copy Resources */,
 				F4D5E4E81F0C5D38008C1A49 /* dragstart-clear-selection.html in Copy Resources */,
 				F46BD56924870643008282D6 /* dragstart-data.html in Copy Resources */,
@@ -2733,6 +2735,7 @@
 		63A61B8A1FAD204D00F06885 /* display-mode.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "display-mode.html"; sourceTree = "<group>"; };
 		63F668201F97C3AA0032EE51 /* ApplicationManifest.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ApplicationManifest.mm; sourceTree = "<group>"; };
 		6B0A07F621FA9C2B00D57391 /* PrivateClickMeasurement.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PrivateClickMeasurement.cpp; sourceTree = "<group>"; };
+		6B1CD58B2A6B837800752069 /* drag-image-paints-subtree.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "drag-image-paints-subtree.html"; sourceTree = "<group>"; };
 		6B25A75125DC8D4E0070744F /* EventAttribution.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = EventAttribution.mm; sourceTree = "<group>"; };
 		6B306105218A372900F5A802 /* ClosingWebView.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ClosingWebView.mm; sourceTree = "<group>"; };
 		6B4E861B2220A5520022F389 /* RegistrableDomain.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RegistrableDomain.cpp; sourceTree = "<group>"; };
@@ -4663,6 +4666,7 @@
 				5714ECB81CA8B58800051AC8 /* DownloadRequestOriginalURL.html */,
 				5714ECBC1CA8C21800051AC8 /* DownloadRequestOriginalURL2.html */,
 				5714ECBA1CA8BFD100051AC8 /* DownloadRequestOriginalURLFrame.html */,
+				6B1CD58B2A6B837800752069 /* drag-image-paints-subtree.html */,
 				F4A32EC31F05F3780047C544 /* dragstart-change-selection-offscreen.html */,
 				F4D5E4E71F0C5D27008C1A49 /* dragstart-clear-selection.html */,
 				F46BD5682487062D008282D6 /* dragstart-data.html */,

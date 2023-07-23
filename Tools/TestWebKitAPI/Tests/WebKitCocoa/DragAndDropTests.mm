@@ -171,6 +171,23 @@ TEST(DragAndDropTests, DragAndDropOnEmptyView)
 
     EXPECT_WK_STREQ("Simple HTML file.", [webView stringByEvaluatingJavaScript:@"document.body.innerText"]);
 }
+
+TEST(DragAndDropTests, DragImageShouldOnlyPaintSubtreeOfElement)
+{
+    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebViewFrame:NSMakeRect(0, 0, 400, 400)]);
+    TestWKWebView *webView = [simulator webView];
+    [webView synchronouslyLoadTestPageNamed:@"drag-image-paints-subtree"];
+
+    [simulator runFrom:CGPointMake(100, 100) to:CGPointMake(100, 300)];
+    NSData *actualImageTIFF = [[[simulator draggingInfo] draggedImage] TIFFRepresentation];
+
+    [webView objectByEvaluatingJavaScript:@"document.querySelector(\"span\").remove()"];
+
+    [simulator runFrom:CGPointMake(100, 100) to:CGPointMake(100, 300)];
+    NSData *expectedImageTIFF = [[[simulator draggingInfo] draggedImage] TIFFRepresentation];
+
+    EXPECT_TRUE([actualImageTIFF isEqual:expectedImageTIFF]);
+}
 #endif // PLATFORM(MAC)
 
 TEST(DragAndDropTests, PreventingMouseDownShouldPreventDragStart)

@@ -50,7 +50,7 @@ InlineContentPainter::InlineContentPainter(PaintInfo& paintInfo, const LayoutPoi
 
 void InlineContentPainter::paintEllipsis(size_t lineIndex)
 {
-    if (m_paintInfo.phase != PaintPhase::Foreground || root().style().visibility() != Visibility::Visible)
+    if (!m_paintInfo.shouldPaintWithinRoot(root()) || m_paintInfo.phase != PaintPhase::Foreground || root().style().visibility() != Visibility::Visible)
         return;
 
     auto lineBox = InlineIterator::LineBox { InlineIterator::LineBoxIteratorModernPath { m_inlineContent, lineIndex } };
@@ -88,7 +88,13 @@ void InlineContentPainter::paintDisplayBox(const InlineDisplay::Box& box)
         return;
     }
 
+    auto& boxRenderer = m_boxTree.rendererForLayoutBox(box.layoutBox());
+    auto shouldPaintBoxWithinRoot = m_paintInfo.shouldPaintWithinRoot(boxRenderer);
+
     if (box.isText()) {
+        if (!shouldPaintBoxWithinRoot)
+            return;
+
         auto hasVisibleDamage = box.text().length() && box.isVisible() && hasDamage(box); 
         if (!hasVisibleDamage)
             return;
@@ -97,8 +103,8 @@ void InlineContentPainter::paintDisplayBox(const InlineDisplay::Box& box)
         return;
     }
 
-    if (auto* renderer = dynamicDowncast<RenderBox>(m_boxTree.rendererForLayoutBox(box.layoutBox())); renderer && renderer->isReplacedOrInlineBlock()) {
-        if (m_paintInfo.shouldPaintWithinRoot(*renderer)) {
+    if (auto* renderer = dynamicDowncast<RenderBox>(boxRenderer); renderer && renderer->isReplacedOrInlineBlock()) {
+        if (shouldPaintBoxWithinRoot) {
             // FIXME: Painting should not require a non-const renderer.
             const_cast<RenderBox*>(renderer)->paintAsInlineBlock(m_paintInfo, flippedContentOffsetIfNeeded(*renderer));
         }
