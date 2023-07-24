@@ -183,9 +183,12 @@ static void testWebsiteDataConfiguration(WebsiteDataTest* test, gconstpointer)
     test->loadURI(kServer->getURIForPath("/empty").data());
     test->waitUntilLoadFinished();
     test->runJavaScriptAndWaitUntilFinished("window.localStorage.myproperty = 42;", nullptr);
-    GUniquePtr<char> localStorageDirectory(g_build_filename(Test::dataDirectory(), "localstorage", nullptr));
 #if !ENABLE(2022_GLIB_API)
+    GUniquePtr<char> localStorageDirectory(g_build_filename(Test::dataDirectory(), "localstorage", nullptr));
     g_assert_cmpstr(localStorageDirectory.get(), ==, webkit_website_data_manager_get_local_storage_directory(test->m_manager));
+#endif
+#if ENABLE(2022_GLIB_API)
+    GUniquePtr<char> localStorageDirectory(g_build_filename(Test::dataDirectory(), "storage", nullptr));
 #endif
     test->assertFileIsCreated(localStorageDirectory.get());
     g_assert_true(g_file_test(localStorageDirectory.get(), G_FILE_TEST_IS_DIR));
@@ -194,9 +197,12 @@ static void testWebsiteDataConfiguration(WebsiteDataTest* test, gconstpointer)
     test->loadURI(kServer->getURIForPath("/empty").data());
     test->waitUntilLoadFinished();
     test->runJavaScriptAndWaitUntilFinished("window.indexedDB.open('TestDatabase');", nullptr);
-    GUniquePtr<char> indexedDBDirectory(g_build_filename(Test::dataDirectory(), "databases", "indexeddb", nullptr));
 #if !ENABLE(2022_GLIB_API)
+    GUniquePtr<char> indexedDBDirectory(g_build_filename(Test::dataDirectory(), "databases", "indexeddb", nullptr));
     g_assert_cmpstr(indexedDBDirectory.get(), ==, webkit_website_data_manager_get_indexeddb_directory(test->m_manager));
+#endif
+#if ENABLE(2022_GLIB_API)
+    GUniquePtr<char> indexedDBDirectory(g_build_filename(Test::dataDirectory(), "storage", nullptr));
 #endif
     test->assertFileIsCreated(indexedDBDirectory.get());
     g_assert_true(g_file_test(indexedDBDirectory.get(), G_FILE_TEST_IS_DIR));
